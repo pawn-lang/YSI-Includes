@@ -50,7 +50,10 @@ Legal:
 Version:
 	1.0
 Changelog:
-	-
+	03/01/12:
+		Added void: and string: returns.
+	04/10/12:
+		Added local versions of the function for no master system servers.
 Functions:
 	Public:
 		-
@@ -73,9 +76,9 @@ Definitions:
 Enums:
 	-
 Macros:
-	remote - Define a function to be called remotely (use like "stock").
+	remotefunc - Define a function to be called remotely (use like "stock").
 	broadcastfunc - Call the function, but in all scripts.
-	local - Call the function by name, not address, in the current script.
+	localfunc - Call the function by name, not address, in the current script.
 Tags:
 	-
 Variables:
@@ -86,7 +89,7 @@ Variables:
 Commands:
 	-
 Compile options:
-	-
+	YSI_NO_MASTER - Disable all knowledge of other scripts.
 Operators:
 	-
 Natives:
@@ -99,90 +102,70 @@ Natives:
 
 #include "y_utils"
 
-// IMPORTANT NOTE!  To avoid polluting the global name space (any more that is),
-// "y_inline" uses @Ru, @Rv, @Rw, @Rx and @Ry, as both files are low usage.
-// "y_testing" uses @Rf-@Ro.
-
-//#define remote remote%0(%1) stock%0@(%1)if(J@)W@(#%0,@Ra:@Rb:@Rc:#i#,I@);
-
-
-
-
-
-
-
-//#define remote%0(%1) stock%0@(%1) {return I@==-1?(J@?(W@(_:@Rz:#%0##,_YM@CR:%1,,))
-//#define remote%0(%1) stock%0@(%1)return I@==-1?(J@?(W@(_:@Rz:#%0##,_YM@CR:%1,,)):(P@(#%0))):(W@(#%0_@));%0_@(__m,%1);%0(%1);public %0_@(__m,%1)
-#define remotefunc%0(%1) stock%0_(%1)return J@?(W@(_:@Rz:#%0@##,_YM@CR:%1,,)):(%0());%0@(__m);public %0@(__m)if(__m==-1||__m==_@)%0();%0(%1)
-
-
-
-//:(P@(#%0##%1,,))):(W@(#%0_@##%1,,));%0(%1);}//_YM@CT:%0_@(%1,_YM@CU);public _YM@CT:%0_@(%1,_YM@CU)//if(_@==_:_YM@CV:_YM@CU)%0(%1,,);public%0(%1)
-//if(FALSE){}else
-
-//#define _YM@CR:%0,%1)):P@(%0##%2,%3))): @Ra:@Rb:@Rc:##|||%0|||%1)):P@(%0##,##|||%2|||%3))):
-
-// One macro to rule them all.  Instead of doing the parameter validation and
-// extraction multiple times, we just do it once and copy the values when we're
-// done with them all.  The macro is designed to be almost entirely right if the
-// function has no parameters.
-#define _YM@CR:%0,%1) @Ra:@Rb:@Rc:##|||%0|||%1)
-
-#define @Ra:@Rb:@Rc:#%0#%1|||%3[%4]%9|||%5,%6) @Rd:@Re:#%0#%1|||%3|||%5,%6)
-
-#define @Rd:@Re:#%0#%1|||%2string:%3|||%5,%6) @Ra:@Rb:@Rc:#%0s#%1,%3|||%5|||%6)
-#define @Re:#%0#%1|||%3|||%5,%6,%7) @Ra:@Rb:@Rc:#%0a#%1,%3|||%5|||%6,%7)
-
-#define @Rb:@Rc:#%0#%1|||%3|||%5,%6) @Ra:@Rb:@Rc:#%0i#%1,%3|||%5|||%6)
-
-#define @Rc:#%0#,%1||||||)):(%2());%3(__m);%5(__m)if(%7)%8();%4(%6) #%0i,%1,I@)):(%2(%1));%3(%6,__m);%5(%6,__m)if(%7)%8(%1);%4(%6)
-
-#define @Rz:#%0##,_YM@CR:,,) #%0,#i,I@)
-
-//#define __m,) __m)
-
-
-#define localfunc%0(%1) (J@=0,I@=-1,%0_(%1))
-#define broadcastfunc%0(%1) (J@=1,I@=-1,%0_(%1))
-// This cunningly supports "target<master> func()" and "target func<master>()".
-#define targetfunc%3<%2>%0(%1) (J@=1,I@=(%2),%3%0_(%1))
-
-
-/*#define @Rp:#%0##,_YM@CR:,I@,,) #%0##,#i,I@)
-
-#define local%0(%1) (J@=0,%0@(%1))
-#define broadcastfunc%0(%1) (J@=1,I@=-1,%0@(%1))
-#define target%0(%1)<%2> (J@=1,I@=(%2),%0@(%1))
-
-#define _YM@CT:%0(,%1) _YM@CT:%0(__m)
-
-//#define @Rq:@Rr:@Rs:@Rt:__m)%0(%1|||%2string:%3[%4]%9|||%7,%8) @Rq:@Rr:@Rs:@Rt:__m)%0(%1,%3|||%7|||%8)
-//#define @Rr:@Rs:@Rt:__m)%0(%1|||%3[%4]%9|||%7,%8) @Rq:@Rr:@Rs:@Rt:__m)%0(%1,%3|||%7|||%8)
-//#define @Rs:@Rt:__m)%0(%1|||%3|||%7,%8) @Rq:@Rr:@Rs:@Rt:__m)%0(%1,%3|||%7|||%8)
-//#define @Rt:__m)%0(%1||||||) __m)%0(%1)
-
-#define _YM@CV:_YM@CU)%0(,,) __m)%0()
-
-#define _YM@CU)%0(%1,%2) @Rq:@Rr:@Rs:@Rt:__m)%0(|||%1|||%2)*/
-
-/*#define remote%0(%1) stock%0@(%1)if(J@)W@(_:@Rz:#%0##,_YM@CR:%1,,);else P@(_:@Rz:#%0##,_YM@CR:%1,,);%0(%1);public%0(%1)//if(FALSE){}else
-
-#define _YM@CR:%0,%1) @Ra:@Rb:@Rc:##|||%0|||%1)
-
-#define @Ra:@Rb:@Rc:#%0#%1|||%3[%4]|||%5,%6) @Rd:@Re:#%0#%1|||%3|||%5,%6)
-
-#define @Rd:@Re:#%0#%1|||%2string:%3|||%5,%6) @Ra:@Rb:@Rc:#%0s#%1,%3|||%5|||%6)
-#define @Re:#%0#%1|||%3|||%5,%6,%7) @Ra:@Rb:@Rc:#%0a#%1,%3|||%5|||%6,%7)
-
-#define @Rb:@Rc:#%0#%1|||%3|||%5,%6) @Ra:@Rb:@Rc:#%0i#%1,%3|||%5|||%6)
-
-#define @Rc:%0||||||) %0)
-
-#define @Rz:#%0##,_YM@CR:,,) #%0##,#i,I@)*/
-
-//if(I@==-1){if(J@);else ;}else ;
-//return I@==-1?(J@?():()):();
-
-//target Moo(5, 6)<7>;
-//target Moo<7>(5, 6);
-//target<7> Moo(5, 6);
+// This VERY LOOSELY uses the master system to figure out if it should even
+// bother with complex remote calls.  However, it isn't fully bound by the
+// whole system because it's rules are different (and will work regardless).
+#if defined YSI_NO_MASTER
+	// This DOESN'T use "stock" as it can't be called from another script.
+	#define remotefunc
+	#define localfunc%0(%1) (%0(%1))
+	#define broadcastfunc%0(%1) (%0(%1))
+	#define targetfunc%3<%2>%0(%1) (%3%0(%1))
+#else	
+	// IMPORTANT NOTE!  To avoid polluting the global name space (any more that
+	// is), "y_inline" uses @Ru, @Rv, @Rw, @Rx and @Ry, as both files are low
+	// usage. "y_testing" uses @Rf-@Ro.  "y_phone" uses @R0-@R9 and @RA-@RF
+	// This now also uses @RH
+	
+	// This uses "stock" as it may be called from another script.
+	//#define remotefunc%0(%1) stock%0_(%1)return J@?(W@(_:@Rz:#%0@##,_YM@CR:%1,,)):%0(%1);//%0@(__m);public %0@(__m)if(__m==-1||__m==_@)%0();%0(%1)
+	#define remotefunc%0(%1) stock%0_(%1)if(@RN:@RO:%0:J@)return(W@(_:@Rz:#%0@##,_YM@CR:%1,,));else return(%0(%1));
+	//return J@?(W@(_:@Rz:#%0@##,_YM@CR:%1,,)):%0(%1);//%0@(__m);public %0@(__m)if(__m==-1||__m==_@)%0();%0(%1)
+	
+	//if(@RN:@RO:%0:J@)return();else return();
+	
+	#define @RN:@RO:%9void:%0:J@)return(%2);else%8(%3); J@)(%2);else(%3);
+	#define @RO:%0:J@) J@)
+	
+	// One macro to rule them all.  Instead of doing the parameter validation
+	// and extraction multiple times, we just do it once and copy the values
+	// when we're done with them all.  The macro is designed to be almost
+	// entirely right if the function has no parameters.
+	#define _YM@CR:%0,%1) @Ra:@Rb:@Rc:##|||%0|||%1)
+	
+	#define @Ra:@Rb:@Rc:#%0#%1|||%3[%4]%9|||%5,%6) @Rd:@Re:#%0#%1|||%3|||%5,%6)
+	
+	#define @Rd:@Re:#%0#%1|||%2string:%3|||%5,%6) @Ra:@Rb:@Rc:#%0s#%1,%3|||%5|||%6)
+	#define @Re:#%0#%1|||%3|||%5,%6,%7) @Ra:@Rb:@Rc:#%0a#%1,%3|||%5|||%6,%7)
+	
+	#define @Rb:@Rc:#%0#%1|||%3|||%5,%6) @Ra:@Rb:@Rc:#%0i#%1,%3|||%5|||%6)
+	
+	//#define @Rc:#%0#,%1||||||)):%2();%3(__m);%5(__m)if(%7)%8();%4(%6) #%0i,%1,I@),V@(8,YSIM_RETURN)):%2(%1);%3(%6,__m);%5(%6,__m)if(%7)X@(%8(%1));%4(%6)
+	#define @Rc:#%0#,%1||||||));%7(%2(%3)); @RH:@RI:@RJ:#%0#,%1));%7(%2(%3));
+	
+	// Detect "void:"
+	#define @RH:@RI:@RJ:#%0#,%1));%7(%9void:%2(%3)); #%0i,%1,I@));%7(%2(%1));%2@(%3,__m);public %2@(%3,__m)if(__m==-1||__m==_@)%2(%1);%2(%3)
+	// Detect "string:"
+	#define @RI:@RJ:#%0#,%1));%7(%9string:%2(%3)); #%0i,%1,I@),F@());%7(%2(%1));%2@(%3,__m);public %2@(%3,__m)if(__m==-1||__m==_@)R@(%2(%1));%2(%3)
+	// Detect other
+	#define @RJ:#%0#,%1));%7(%2(%3)); #%0i,%1,I@),V@(8,YSIM_RETURN));%7(%2(%1));%2@(%3,__m);public %2@(%3,__m)if(__m==-1||__m==_@)X@(%2(%1));%2(%3)
+	//%3(__m);%5(__m)if(%7)%8();%4(%6) #%0i,%1,_:@RH:@RI:@RJ:I@),V@(8,YSIM_RETURN)):%2(%1);%3(%6,__m);%5(%6,__m)if(%7)X@(%8(%1));%4(%6)
+	
+	// Zero parameters.
+	#define @Rz:#%0##,_YM@CR:,,));%7(%2()); #%0,@RK:@RL:@RM:#i,I@));%7(%2());
+	// Detect "void:"
+	#define @RK:@RL:@RM:#i,I@));%7(%9void:%2()); #i,I@));%7(%2());%2@(__m);public %2@(__m)if(__m==-1||__m==_@)%2();%2()
+	// Detect "string:"
+	#define @RL:@RM:#i,I@));%7(%9string:%2()); #i,I@),F@());%7(%2());%2@(__m);public %2@(__m)if(__m==-1||__m==_@)R@(%2());%2()
+	// Detect other
+	#define @RM:#i,I@));%7(%2()); #i,I@),V@(8,YSIM_RETURN));%7(%2());%2@(__m);public %2@(__m)if(__m==-1||__m==_@)X@(%2());%2()
+	
+	#define localfunc%0(%1) (J@=0,I@=-1,%0_(%1))
+	#define broadcastfunc%0(%1) (J@=1,I@=-1,%0_(%1))
+	// This supports "target<master> func()" and "target func<master>()".
+	#define targetfunc%3<%2>%0(%1) (J@=1,I@=(%2),%3%0_(%1))
+	
+	//target Moo(5, 6)<7>;
+	//target Moo<7>(5, 6);
+	//target<7> Moo(5, 6);
+#endif

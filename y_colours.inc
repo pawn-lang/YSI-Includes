@@ -190,7 +190,7 @@ static stock
 	YSI_g_sColours[MAX_TEXT_COLOURS][2],
 	bool:YSI_g_sCheckSpaces = X11_ALLOW_SPACES;
 
-remotefunc _SetColoursCanHaveSpaces(bool:set)
+remotefunc void:_SetColoursCanHaveSpaces(bool:set)
 {
 	YSI_g_sCheckSpaces = set;
 }
@@ -233,7 +233,7 @@ stock SetColourHash(hash, color)
 }
 
 #define SetColorHash SetColourHash
-remotefunc _SetColourHash(hash, color)
+remotefunc void:_SetColourHash(hash, color)
 {
 	P:3("SetColourHash called: %i, %i", hash, color);
 	color &= 0xFFFFFF00;

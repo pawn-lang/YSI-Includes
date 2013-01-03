@@ -1,10 +1,10 @@
 /*----------------------------------------------------------------------------*\
-					=======================================
-					 y_groups - Player group abstractions! 
-					=======================================
+					  ===================================
+					   y_plugins - Used plugin detection 
+					  ===================================
 Description:
-	Admin levels, gangs, teams etc - they're all "groups" of people, this
-	provides an abstraction for all of these collections.
+	Configuration and detection for third-party SA:MP plugins (including
+	ones by Y_Less).
 Legal:
 	Version: MPL 1.1
 	
@@ -50,44 +50,61 @@ Legal:
 Version:
 	1.0
 Changelog:
-	29/11/10:
+	21/10/12:
 		First version
 \*----------------------------------------------------------------------------*/
 
-// This file defines functions which are called if the group system is not used.
+// All the code in here relies on detecting FEATURES, not FILENAMES.
+#if defined Streamer_IncludeFileVersion
+	#define _YSI_PLUGINS_STREAMER
+	
+	#if !defined IPS_MAX_OBJECTS
+		#define IPS_MAX_OBJECTS (20000)
+	#endif
+	
+	#if !defined IPS_MAX_PICKUPS
+		#define IPS_MAX_PICKUPS (5000)
+	#endif
+	
+	#if !defined IPS_MAX_CPS
+		#define IPS_MAX_CPS (1000)
+	#endif
+	
+	#if !defined IPS_MAX_RACE_CPS
+		#define IPS_MAX_RACE_CPS (1000)
+	#endif
+	
+	#if !defined IPS_MAX_MAP_ICONS
+		#define IPS_MAX_MAP_ICONS (2000)
+	#endif
+	
+	#if !defined IPS_MAX_3D_TEXT_LABELS
+		#define IPS_MAX_3D_TEXT_LABELS (1000)
+	#endif
+	
+	#if !defined IPS_MAX_AREAS
+		#define IPS_MAX_AREAS (1000)
+	#endif
+#endif
 
-static stock _Groups_DefineStates_() <YSI_has_groups:n>
-{
-}
+#if defined WP_Hash
+	#define _YSI_PLUGINS_WHIRLPOOL
+#endif
 
-static stock _Groups_DefineStates_() <YSI_has_groups:y>
-{
-}
-
-// Now you can use the default fallback to define functions:
-//  
-//  stock Class_InitialiseFromGroups() <YSI_has_groups:n>
-//  {
-//      // Enable the class for all players.
-//  }
-//  
-//  stock Class_InitialiseFromGroups() <>
-//  {
-//      // Enable the class for all players.
-//  }
-//  
-
-#define _GROUP_LOCAL_NAME               _GROUP_MAKE_TAG:e
-#define _GROUP_INITIALISE               _GROUP_MAKE_NAME<..._InitialiseFromGroups>
-
-// Dummy values.
-#define _GROUP_MAKE_NAME<%0...%1>       %0_%1
-#define _GROUP_MAKE_LIMIT               0
-
-#define INVALID_GROUP (Group:-1)
-#define GROUP_MASK                      (Group:0x80000000)
-#define GROUP_GLOBAL                    (Group:_MAX_GROUPS | GROUP_MASK) //-1)
-#define GROUP_FIX(%0)                   ((%0)&=~GROUP_MASK)
-#define GROUP_TEMP_FIX(%0)              ((%0)&~GROUP_MASK)
-
-#define NO_GROUPS(%0) if(!_GROUP_INITIALISE(%0))
+/*
+#if defined mysql_function_query
+	// BlueG R7 MySQL
+	#define _YSI_PLUGINS_MYSQL 7
+#elseif defined mysql_init
+	// StrickenKid MySQL
+	#define _YSI_PLUGINS_MYSQL 1
+#elseif defined mysql_debug
+	// BlueG R5/R6 MySQL
+	#define _YSI_PLUGINS_MYSQL 6
+#else
+	// No MySQL
+*/
+	#define _YSI_PLUGINS_MYSQL 0
+/*
+#endif
+*/

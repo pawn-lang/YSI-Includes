@@ -110,8 +110,8 @@ Natives:
 #define YSI_VERSION_RESPO               2
 
 #define YSI_VERSION_MAJOR               1
-#define YSI_VERSION_MINOR               04
-#define YSI_VERSION_BUILD               0000
+#define YSI_VERSION_MINOR               06
+#define YSI_VERSION_BUILD               0002
 
 #define YSI_VERSION                     #YSI_VERSION_MAJOR "." #YSI_VERSION_MINOR "." #YSI_VERSION_BUILD
 
@@ -126,13 +126,13 @@ Natives:
 			YSI_gLockData[YSI_gLockData[2]++] = (YSI_gLockData[3] | 0x09) & ~0x04;
 			YSI_gLockData[2] *= (6 * x) - 5;
 		#endif
-		CallLocalFunction("YVers_OnScriptInit", "");
+		YVers_OnScriptInit();
 		return 1;
 	}
 	
 	#undef OnScriptInit
-	#define OnScriptInit YVers_OnScriptInit
-	forward OnScriptInit();
+	#define OnScriptInit(%0) YVers_OnScriptInit(%0) <_ALS_:hooked>
+	forward YVers_OnScriptInit();public YVers_OnScriptInit()<_ALS_:unhooked>{return 1;}public YVers_OnScriptInit()<>{return 1;}
 	
 #else
 	/*------------------------------------------------------------------------*\
@@ -157,6 +157,8 @@ Natives:
 				YSI_gLockData[1] = (YSI_gLockData[2] - YSI_gLockData[3]) / 2 + YSI_gLockData[3];
 			#endif
 			print(" ");
+			print(" ");
+			print(" ");
 			print(" ======================================= ");
 			print(" |                                     | ");
 			print(" |        YSI version " YSI_VERSION "        | ");
@@ -167,13 +169,13 @@ Natives:
 			print(" |                                     | ");
 			print(" ======================================= ");
 			print(" ");
-			CallLocalFunction("YVers_OnScriptInit", "");
+			YVers_OnScriptInit();
 			return 1;
 		}
 		
 		#undef OnScriptInit
-		#define OnScriptInit YVers_OnScriptInit
-		forward OnScriptInit();
+		#define OnScriptInit(%0) YVers_OnScriptInit(%0) <_ALS_:hooked>
+		forward YVers_OnScriptInit();public YVers_OnScriptInit()<_ALS_:unhooked>{return 1;}public YVers_OnScriptInit()<>{return 1;}
 		
 		#endinput
 	#endif
@@ -195,6 +197,8 @@ Natives:
 			YSI_gLockData[0] -= 1;
 			YSI_gLockData[1] = YSI_gLockData[0] + 7;
 		#endif
+		print(" ");
+		print(" ");
 		print(" ");
 		print(" ======================================= ");
 		print(" |                                     | ");
@@ -228,13 +232,13 @@ Natives:
 		// This remote script has now been updated to include changelog
 		// information and keeps a record of what IPs are connecting.
 		HTTP(0, HTTP_GET, "ysi-version.y-less.com/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, "", "YVers_Callback");
-		CallLocalFunction("YVers_OnScriptInit", "");
+		YVers_OnScriptInit();
 		return 1;
 	}
 	
 	#undef OnScriptInit
-	#define OnScriptInit YVers_OnScriptInit
-	forward OnScriptInit();
+	#define OnScriptInit(%0) YVers_OnScriptInit(%0) <_ALS_:hooked>
+	forward YVers_OnScriptInit();public YVers_OnScriptInit()<_ALS_:unhooked>{return 1;}public YVers_OnScriptInit()<>{return 1;}
 	
 	/*------------------------------------------------------------------------*\
 	Function:

@@ -142,6 +142,11 @@ static stock
 	YSI_g_sCurFile[32] = "\1\0",
 	YSI_g_sCur3D;
 
+stock _Style_Init(id)
+{
+	YSI_g_sStyleData[id] = YSI_g_sStyleBlankData;
+}
+
 forward _Styles_SpecialInit();
 
 stock Styles_GetData(index, style[E_STYLE_DATA], label[E_3D_DATA])

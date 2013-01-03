@@ -535,6 +535,7 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
 	{
 		P:5("Malloc_SetVAS: In check.");
 		index += _:array;
+		YSI_gMallocMemory[index] = 0;
 		// Blank and copy the string.
 		//#emit LOAD.S.pri arg
 		//#emit SMUL.C     4

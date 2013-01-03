@@ -401,11 +401,15 @@ hook OnScriptInit()
 				#if _YSIM_IS_CLOUD
 					// Set to uninitialised.
 					state _YCM:u;
+					//_YCM = _YCM@u;
+					_YCM@ = _E_YCM@u;
 				#endif
 				CallRemoteFunction(#_YCM, "");
 				#if _YSIM_IS_CLOUD
 					// Fully master.
 					state _YCM:y;
+					//_YCM = _YCM@y;
+					_YCM@ = _E_YCM@y;
 				#endif
 			#endif
 		}
@@ -539,11 +543,6 @@ public _Class_OtherRequestClass(playerid, classid)
 					}
 				}
 			}
-			new Group:oldgroup = YSI_g_sClasses[(YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_SKIN)][E_CLASS_GROUP];
-			
-			if (oldgroup != GROUP_GLOBAL)
-				Group_SetPlayer(oldgroup, playerid, false);
-			
 			// Store which class they are now on.
 			//printf("%d %d %d %d", classid, YSI_g_sMiddle, YSI_g_sLeft, YSI_g_sRight);
 			if (classid == YSI_g_sMiddle)
@@ -649,9 +648,9 @@ public _Class_OtherRequestClass(playerid, classid)
 		}
 #endif
 
-foreign Class_Goto(playerid, playerclass);
+foreign void:Class_Goto(playerid, playerclass);
 
-global Class_Goto(playerid, playerclass)
+global void:Class_Goto(playerid, playerclass)
 {
 	P:2("Class_Goto called: %i, %i", playerid, playerclass);
 	// This now sets the REAL spawn information, including spawn location.
@@ -661,7 +660,7 @@ global Class_Goto(playerid, playerclass)
 	// Save the last viewed class so that we know which direction the person
 	// went next time OnPlayerRequestClass is called.
 	P:2("Class_Goto() end %08h %08h %d", YSI_g_sSettings, _:e_CLASS_SETTING_OPRCE, playerclass);
-	return 1;
+	//return 1;
 }
 
 /*----------------------------------------------------------------------------*\
@@ -695,7 +694,7 @@ public _Class_OtherRequestSpawn(playerid)
 
 //mhook OnPlayerRequestSpawn(playerid)
 
-#if !defined YSI_NO_MASTER && _YSIM_IS_CLIENT
+#if !defined YSI_NO_MASTER && (_YSIM_IS_CLIENT || _YSIM_IS_STUB)
 	public _Class_OnPlayerRequestSpawn(playerid)
 	{
 		return 1;
@@ -940,6 +939,16 @@ mhook OnPlayerConnect(playerid)
 	//printf("OnPlayerConnect %d", playerid);
 	YSI_g_sPlayerClass[playerid] = (e_PLAYER_CLASS_NONE);
 	YSI_g_sTimer[playerid] = SetTimerEx("_Class_NotSpawned", 500, 0, "i", playerid);
+	NO_GROUPS()
+	{
+		new
+			slot = Bit_Slot(playerid) + 1,
+			Bit:mask = Bit_Mask(playerid); //Bit:(1 << (playerid & (cellbits - 1)));
+		for (new i = 0; i != MAX_CLASSES; ++i)
+		{
+			YSI_g_sClasses[i][E_CLASS_PLAYERS][slot] |= mask;
+		}
+	}
 	return 1;
 }
 
@@ -977,7 +986,8 @@ Notes:
 
 stock Class_Add(skin, Float:x, Float:y, Float:z, Float:a, ...)
 {
-	P:3("Class_Add called: %i, %i, %i, %i, %i, %i (+%i)", skin, x, y, z, a, numargs() - 5);
+	//printf("Class_Add called: %i, %f, %f, %f, %f, (+%i)", skin, x, y, z, a, numargs() - 5);
+	P:3("Class_Add called: %i, %f, %f, %f, %f, (+%i)", skin, x, y, z, a, numargs() - 5);
 	new
 		n = numargs(),
 		w = 5,
@@ -1105,7 +1115,8 @@ foreign Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,w[],c,Group:f,Group:g);
 
 global Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,w[],c,Group:f,Group:g)
 {
-	P:2("Class_AddClass called: %i, %f, %f, %f, %f, %a, %i, %i, %i", s, x, y, z, a, w, c, _:f, _:g);
+	//printf("Class_AddClass called: %i, %f, %f, %f, %f, %s, %i, %i, %i", s, x, y, z, a, Debug_PrintArray(w, c), c, _:f, _:g);
+	P:2("Class_AddClass called: %i, %f, %f, %f, %f, %s, %i, %i, %i", s, x, y, z, a, Debug_PrintArray(w, c), c, _:f, _:g);
 	new
 		i;
 	while (i < MAX_CLASSES)
@@ -1128,12 +1139,46 @@ global Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,w[],c,Group:f,Group:g)
 		YSI_g_sClasses[i][E_CLASS_WEAPONS][j] = w[j];
 		++j;
 	}
+	//printf("Class_AddClass: weapon %d %d %d", j, c, i);
 	PA_FastInit(YSI_g_sClasses[i][E_CLASS_PLAYERS]);
+	//printf("Class_AddClass: weapon %d %d %d", j, c, f);
 	Class_ResolveGroups(i, f, false);
+	//printf("Class_AddClass: weapon %d %d %d", j, c, g);
 	YSI_g_sClasses[i][E_CLASS_GROUP] = g;
 	YSI_g_sClassCount++;
+	//printf("Class_AddClass: weapon %d %d %d", j, c, YSI_g_sClassCount);
 	return i;
 }
+
+/*----------------------------------------------------------------------------*\
+Function:
+	Class_HasGroup
+Params:
+	classid - The class to test.
+	Group:group - The group to test setting of.
+Return:
+	Does this class add players to the given group on spawn?
+Notes:
+	-
+\*----------------------------------------------------------------------------*/
+
+foreign Class_HasGroup(classid, Group:group);
+
+global Class_HasGroup(classid, Group:group)
+{
+	return YSI_g_sClasses[classid][E_CLASS_GROUP] == group;
+}
+
+/*----------------------------------------------------------------------------*\
+Function:
+	Class_Enable
+Params:
+	-
+Return:
+	-
+Notes:
+	-
+\*----------------------------------------------------------------------------*/
 
 foreign Class_Enable(classid, bool:toggle);
 
@@ -1176,16 +1221,16 @@ Notes:
 	Completely removes a class from the system.
 \*----------------------------------------------------------------------------*/
 
-foreign Class_Delete(classid);
+foreign void:Class_Delete(classid);
 
-global Class_Delete(classid)
+global void:Class_Delete(classid)
 {
 	P:2("Class_Delete called: %i", classid);
 	if (Class_Enable(classid, false))
 	{
 		YSI_g_sClasses[classid][E_CLASS_FLAGS] = e_CLASS_FLAGS:0;
 	}
-	return 1;
+	//return 1;
 }
 
 /*----------------------------------------------------------------------------*\
@@ -1201,12 +1246,12 @@ Notes:
 	-
 \*----------------------------------------------------------------------------*/
 
-foreign Class_SetPlayer(cl, pid, bool:s);
+foreign void:Class_SetPlayer(cl, pid, bool:s);
 
-global Class_SetPlayer(cl, pid, bool:s)
+global void:Class_SetPlayer(cl, pid, bool:s)
 {
 	//printf("CLASS SET PLAYER: %d %d %d", cl, pid, s);
-	return PA_Set(YSI_g_sClasses[cl][E_CLASS_PLAYERS], pid, s);
+	PA_Set(YSI_g_sClasses[cl][E_CLASS_PLAYERS], pid, s);
 }
 
 /*----------------------------------------------------------------------------*\
@@ -1250,53 +1295,53 @@ global Class_Get(playerid)
 	return -1;
 }
 
-foreign Class_DisableSelection(playerid);
+foreign void:Class_DisableSelection(playerid);
 
-global Class_DisableSelection(playerid)
+global void:Class_DisableSelection(playerid)
 {
 	if (YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_INSELECT)
 	{
 		Class_Spectate(playerid);
 		Class_TK(playerid);
 	}
-	return 1;
+	//return 1;
 }
 
-foreign Class_DisableReselection(playerid);
+foreign void:Class_DisableReselection(playerid);
 
-global Class_DisableReselection(playerid)
+global void:Class_DisableReselection(playerid)
 {
 	YSI_g_sPlayerClass[playerid] |= (e_PLAYER_CLASS_DISABLED);
 	// Disable "F4".
 	//ForceClassSelection(playerid);
-	return 1;
+	//return 1;
 }
 
-foreign Class_EnableReselection(playerid);
+foreign void:Class_EnableReselection(playerid);
 
-global Class_EnableReselection(playerid)
+global void:Class_EnableReselection(playerid)
 {
 	YSI_g_sPlayerClass[playerid] &= ~(e_PLAYER_CLASS_DISABLED);
-	return 1;
+	//return 1;
 }
 
-foreign Class_ForceReselection(playerid);
+foreign void:Class_ForceReselection(playerid);
 
-global Class_ForceReselection(playerid)
+global void:Class_ForceReselection(playerid)
 {
 	YSI_g_sPlayerClass[playerid] = (YSI_g_sPlayerClass[playerid] | e_PLAYER_CLASS_RETURNED) & ~(e_PLAYER_CLASS_SPAWNSINCE);
 	ForceClassSelection(playerid);
-	return 1;
+	//return 1;
 }
 
-foreign Class_ReturnToSelection(playerid);
+foreign void:Class_ReturnToSelection(playerid);
 
-global Class_ReturnToSelection(playerid)
+global void:Class_ReturnToSelection(playerid)
 {
 	YSI_g_sPlayerClass[playerid] |= (e_PLAYER_CLASS_INSTANT);
 	Class_ForceReselection(playerid);
 	TogglePlayerSpectating(playerid, false);
-	return 1;
+	//return 1;
 }
 
 static stock Class_Spectate(playerid)

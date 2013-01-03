@@ -136,6 +136,8 @@ static stock
 stock _Text_SetDialogMode()
 {
 	YSI_g_sTempStyle[E_STYLE_DATA_TYPE] = e_STYLE_TYPE_DIALOG;
+	state y_render_show : y_render_show_scm;
+	YSI_g_sJustOne = true;
 }
 
 stock _Format_SetStyleData(master, index, style[E_STYLE_DATA], label[E_3D_DATA])
@@ -369,7 +371,7 @@ static stock Format_AddColour(str[], pos, &rem, &curCol, newCol) <y_render_show 
 			}
 		}
 	}
-	if (pos == 0)
+	if (YSI_g_sTempStyle[E_STYLE_DATA_TYPE] != e_STYLE_TYPE_DIALOG && pos == 0)
 	{
 		gInitialColour = curCol;
 		// Don't add the colour - this is handled in the text display function.
@@ -1618,10 +1620,10 @@ Format_Render_start:
 				}
 				else if (YSI_g_sTempStyle[E_STYLE_DATA_TYPE] == e_STYLE_TYPE_DIALOG)
 				{
-					printf("NL 1");
+					//printf("NL 1");
 					// This works even for GTs which are always 0 by this point.
 					Y_RENDER_ADD(scDialogLineString)
-					printf("NL 2");
+					//printf("NL 2");
 				}
 				else
 				{
@@ -1648,9 +1650,9 @@ Format_Render_start:
 				else if (YSI_g_sTempStyle[E_STYLE_DATA_TYPE] == e_STYLE_TYPE_DIALOG)
 				{
 					// This works even for GTs which are always 0 by this point.
-					printf("NL 3");
+					//printf("NL 3");
 					Y_RENDER_ADD(scDialogLineString)
-					printf("NL 4");
+					//printf("NL 4");
 				}
 				else
 				{

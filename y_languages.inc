@@ -236,9 +236,9 @@ global Language:Langs_GetLanguageAt(id)
 	return NO_LANGUAGE;
 }
 
-foreign Langs_RemoveLanguage(Language:l);
+foreign void:Langs_RemoveLanguage(Language:l);
 
-global Langs_RemoveLanguage(Language:l)
+global void:Langs_RemoveLanguage(Language:l)
 {
 	if (Language_IsValid(l))
 	{
@@ -247,9 +247,9 @@ global Langs_RemoveLanguage(Language:l)
 		// strcat used in strcpy).  It just so happens that they map well here.
 		strdel(YSI_g_sLanguageCodes, _:l * 3, _:l * 3 + 3);
 		YSI_g_sLanguages[l][0] = '\0';
-		return 1;
+		//return 1;
 	}
-	return 0;
+	//return 0;
 }
 
 foreign Language:Langs_GetLanguage(string:identifier[]);

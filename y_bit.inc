@@ -55,6 +55,8 @@ Legal:
 Version:
 	0.2
 Changelog:
+	21/10/12:
+		Changed "Bit_Display" to print in the correct order.
 	22/02/12:
 		Added the "BITS" iterator.
 	01/12/08:
@@ -110,6 +112,7 @@ Compile options:
 #include "internal\y_version"
 #include "y_debug"
 #include "y_utils"
+#include "y_cell"
 
 // This is redefined below, don't worry.  It's like this so the function
 // prototypes can use a familiar syntax.
@@ -313,12 +316,14 @@ stock Bit_GetCount(BitArray:array<>, size = sizeof (array))
 stock Bit_Display(BitArray:array<>, size = sizeof (array))
 {
 	new
-		ret[YSI_MAX_STRING];
+		ret[YSI_MAX_STRING],
+		val;
 	while (size--)
 	{
-		format(ret, sizeof (ret), "%s%016b%016b", ret, _:array[size] >>> 16, _:array[size] & 0xFFFF);
+		val = Cell_ReverseBits(array[size]);
+		format(ret, sizeof (ret), "%016b%016b%s", val >>> 16, val & 0xFFFF, ret);
 	}
-	P:3("Bit_Display called: %s, %i", ret, size);
+	P:7("Bit_Display called: %s, %i", ret, size);
 	return ret;
 }
 
@@ -326,7 +331,7 @@ stock Bit_Display(BitArray:array<>, size = sizeof (array))
 
 stock Bits@YSII_Ag(BitArray:data<>, start, size = sizeof (data))
 {
-	P:3("YSI_gABITSFunc called: %s, %i", Bit_Display(data), start);
+	P:3("YSI_gABITSFunc called: %s, %i", Bit_Display(data, size), start);
 	static const
 		scDeBruijn[] =
 			{
@@ -337,9 +342,14 @@ stock Bits@YSII_Ag(BitArray:data<>, start, size = sizeof (data))
 	new
 		cur,
 		i = Bit_Slot(start);
-	// Blank out the lowest bits to get the lowest bit not yet used.
-	if ((cur = (_:data[i] & (~((1 << start) - 1)))))
+	if (i == size)
 	{
+		return -1;
+	}
+	// Blank out the lowest bits to get the lowest bit not yet used.
+	if ((cur = (_:data[i] & ~((1 << (start & (cellbits - 1))) - 1))))
+	{
+		//printf("%d %d %d %d", cur, data[i], start, ~((1 << (start & (cellbits - 1))) - 1));
 		// Bits left in the current cell.
 		return (i * cellbits) + scDeBruijn[((cur & -cur) * 0x077CB531) >>> 27];
 	}
@@ -364,11 +374,15 @@ stock Blanks@YSII_Ag(BitArray:data<>, start, size = sizeof (data))
 				0,  1,  28, 2,  29, 14, 24, 3,  30, 22, 20, 15, 25, 17, 4,  8,
 				31, 27, 13, 23, 21, 19, 16, 7,  26, 12, 18, 6,  11, 5,  10, 9
 			};
-	++start;
+	//++start;
 	new
 		cur,
 		i = Bit_Slot(start);
-	if ((cur = ~(_:data[i] & (~((1 << start) - 1)))))
+	if (i == size)
+	{
+		return -1;
+	}
+	if ((cur = ~(_:(data[i] & ~((1 << (start & (cellbits - 1))) - 1)))))
 	{
 		// Bits left in the current cell.
 		return (i * cellbits) + scDeBruijn[((cur & -cur) * 0x077CB531) >>> 27];

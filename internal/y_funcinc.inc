@@ -70,6 +70,8 @@ public _@_y_funcinc_@_()
 	strcat(_funcinc_a, "", 0);
 	strlen("");
 	CallRemoteFunction("", "");
+	CallLocalFunction("", "");
+	SetTimerEx("", 0, 0, "");
 }
 
 //#include "..\y_utils"

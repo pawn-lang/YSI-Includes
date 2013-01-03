@@ -128,7 +128,7 @@ forward _y_uvar_include_@();
 
 public _y_uvar_include_@()
 {
-	memset("", 0, 0, 0);
+	memset("", 0, 0);
 	Player_WriteArray("", "", 0);
 }
 
@@ -406,7 +406,7 @@ hook OnPlayerConnect(playerid)
 		if (playerid < temp)
 		{
 			// Get the data enum size.
-			#emit PUSH.C     8
+			//#emit PUSH.C     8
 			#emit PUSH.C     0
 			#emit LOAD.S.pri p
 			#emit ADD.C      12
@@ -429,7 +429,7 @@ hook OnPlayerConnect(playerid)
 			#emit LREF.S.pri p
 			#emit STOR.S.pri p
 			// Now push the size of data put on the stack.
-			#emit PUSH.C     16
+			#emit PUSH.C     12
 			// Now get the return address and push it.
 			#emit LCTRL      6
 			#emit ADD.C      28

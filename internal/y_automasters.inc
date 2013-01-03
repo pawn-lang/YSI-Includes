@@ -141,7 +141,7 @@ Natives:
 // have to say, VERY smooth adding in a new YSI mastered library!  Actually, I
 // need to remember to add the "revert" code, but it's only hard with groups.
 #if defined _inc_y_languages
-	#if !defined _YCM_v@ // B is letter 21
+	#if !defined _YCM_v@ // v is letter 21
 		#define MASTER                  21
 		#endinput
 	#endif
@@ -149,7 +149,7 @@ Natives:
 
 // Players are set as master number 20
 #if defined _inc_y_users
-	#if !defined _YCM_u@ // C is letter 20
+	#if !defined _YCM_u@ // u is letter 20
 		#define MASTER                  20
 		#endinput
 	#endif
@@ -157,7 +157,7 @@ Natives:
 
 // Dialogs are set as master number 19
 #if defined _inc_y_dialog
-	#if !defined _YCM_t@ // C is letter 20
+	#if !defined _YCM_t@ // t is letter 19
 		#define MASTER                  19
 		#endinput
 	#endif
@@ -165,7 +165,7 @@ Natives:
 
 // Areas are set as master number 18
 #if defined _inc_y_areas
-	#if !defined _YCM_s@ // x is letter 23
+	#if !defined _YCM_s@ // s is letter 18
 		#define MASTER                  18
 		#endinput
 	#endif
@@ -173,8 +173,24 @@ Natives:
 
 // PHP is set as master number 17
 #if defined _inc_y_php
-	#if !defined _YCM_r@ // x is letter 23
+	#if !defined _YCM_r@ // r is letter 17
 		#define MASTER                  17
+		#endinput
+	#endif
+#endif
+
+// Incognito's streamer is set as master number 16
+#if defined _inc_streamer
+	#if !defined _YCM_q@ // q is letter 16
+		#define MASTER                  16
+		#endinput
+	#endif
+#endif
+
+// Incognito's streamer is set as master number 16
+#if defined _inc_y_phone
+	#if !defined _YCM_p@ // q is letter 16
+		#define MASTER                  15
 		#endinput
 	#endif
 #endif

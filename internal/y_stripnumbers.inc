@@ -96,6 +96,9 @@ Natives:
 	-
 \*----------------------------------------------------------------------------*/
 
+// This code uses the "@S.:" prefix, where "." is a number or underscore (for
+// any other symbol.  y_stringise (aka. y_stringize) uses several letters from
+// this same set.
 #define STRIP_NUMBERS:%0|||%1:%2||| _:@S0:@S1:@S2:@S3:@S4:@S5:@S6:@S7:@S8:@S9:@S_:%0|||%1:%2|||
 
 #define @S0:@S1:@S2:@S3:@S4:@S5:@S6:@S7:@S8:@S9:@S_:%0|||0%1:%2||| %0[%2]

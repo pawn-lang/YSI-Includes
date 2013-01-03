@@ -90,8 +90,9 @@ Operators:
 \*----------------------------------------------------------------------------*/
 
 #include "internal\y_version"
-#include "y_hooks"
+#include "y_iterate"
 #include "y_debug"
+#include "y_hooks"
 
 enum e_FLOOD_ACTION (+= 0x00010000)
 {

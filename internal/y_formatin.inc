@@ -889,7 +889,7 @@ stock Format_Standardise(input[], output[], len = sizeof (output), pt = false)
 			}
 			ch = input[++cur];
 		}
-		P:7("Format_Standardise: loop pt 5");
+		P:7("Format_Standardise: loop pt 5 %c %d %d %d %s", ch, iIn, cur, num, input[iIn]);
 		//while ((ch = input[++idx]));
 		if (ch == '\0')
 		{

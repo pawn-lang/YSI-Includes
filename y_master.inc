@@ -447,6 +447,7 @@ Natives:
 
 #if defined _YCM
 	#undef _YCM
+	#undef _YCM@
 #endif
 
 // Now set the current script data.
@@ -473,6 +474,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM a@
+	#define _YCM@ _YCM_ga@
 #elseif MASTER == 1
 	#if defined _YCM_b@
 		#define YSIM_DEFINED
@@ -494,6 +496,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM b@
+	#define _YCM@ _YCM_gb@
 #elseif MASTER == 2
 	#if defined _YCM_c@
 		#define YSIM_DEFINED
@@ -515,6 +518,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM c@
+	#define _YCM@ _YCM_gc@
 #elseif MASTER == 3
 	#if defined _YCM_d@
 		#define YSIM_DEFINED
@@ -536,6 +540,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM d@
+	#define _YCM@ _YCM_gd@
 #elseif MASTER == 4
 	#if defined _YCM_e@
 		#define YSIM_DEFINED
@@ -557,6 +562,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM e@
+	#define _YCM@ _YCM_ge@
 #elseif MASTER == 5
 	#if defined _YCM_f@
 		#define YSIM_DEFINED
@@ -578,6 +584,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM f@
+	#define _YCM@ _YCM_gf@
 #elseif MASTER == 6
 	#if defined _YCM_g@
 		#define YSIM_DEFINED
@@ -599,6 +606,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM g@
+	#define _YCM@ _YCM_gg@
 #elseif MASTER == 7
 	#if defined _YCM_h@
 		#define YSIM_DEFINED
@@ -620,6 +628,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM h@
+	#define _YCM@ _YCM_gh@
 #elseif MASTER == 8
 	#if defined _YCM_i@
 		#define YSIM_DEFINED
@@ -641,6 +650,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM i@
+	#define _YCM@ _YCM_gi@
 #elseif MASTER == 9
 	#if defined _YCM_j@
 		#define YSIM_DEFINED
@@ -662,6 +672,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM j@
+	#define _YCM@ _YCM_gj@
 #elseif MASTER == 10
 	#if defined _YCM_k@
 		#define YSIM_DEFINED
@@ -683,6 +694,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM k@
+	#define _YCM@ _YCM_gk@
 #elseif MASTER == 11
 	#if defined _YCM_l@
 		#define YSIM_DEFINED
@@ -704,6 +716,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM l@
+	#define _YCM@ _YCM_gl@
 #elseif MASTER == 12
 	#if defined _YCM_m@
 		#define YSIM_DEFINED
@@ -725,6 +738,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM m@
+	#define _YCM@ _YCM_gm@
 #elseif MASTER == 13
 	#if defined _YCM_n@
 		#define YSIM_DEFINED
@@ -746,6 +760,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM n@
+	#define _YCM@ _YCM_gn@
 #elseif MASTER == 14
 	#if defined _YCM_o@
 		#define YSIM_DEFINED
@@ -767,6 +782,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM o@
+	#define _YCM@ _YCM_go@
 #elseif MASTER == 15
 	#if defined _YCM_p@
 		#define YSIM_DEFINED
@@ -788,6 +804,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM p@
+	#define _YCM@ _YCM_gp@
 #elseif MASTER == 16
 	#if defined _YCM_q@
 		#define YSIM_DEFINED
@@ -809,6 +826,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM q@
+	#define _YCM@ _YCM_gq@
 #elseif MASTER == 17
 	#if defined _YCM_r@
 		#define YSIM_DEFINED
@@ -830,6 +848,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM r@
+	#define _YCM@ _YCM_gr@
 #elseif MASTER == 18
 	#if defined _YCM_s@
 		#define YSIM_DEFINED
@@ -851,6 +870,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM s@
+	#define _YCM@ _YCM_gs@
 #elseif MASTER == 19
 	#if defined _YCM_t@
 		#define YSIM_DEFINED
@@ -872,6 +892,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM t@
+	#define _YCM@ _YCM_gt@
 #elseif MASTER == 20
 	#if defined _YCM_u@
 		#define YSIM_DEFINED
@@ -893,6 +914,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM u@
+	#define _YCM@ _YCM_gu@
 #elseif MASTER == 21
 	#if defined _YCM_v@
 		#define YSIM_DEFINED
@@ -914,6 +936,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM v@
+	#define _YCM@ _YCM_gv@
 #elseif MASTER == 22
 	#if defined _YCM_w@
 		#define YSIM_DEFINED
@@ -935,6 +958,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM w@
+	#define _YCM@ _YCM_gw@
 #elseif MASTER == 23
 	#if defined _YCM_x@
 		#define YSIM_DEFINED
@@ -956,6 +980,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM x@
+	#define _YCM@ _YCM_gx@
 #elseif MASTER == 24
 	#if defined _YCM_y@
 		#define YSIM_DEFINED
@@ -977,6 +1002,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM y@
+	#define _YCM@ _YCM_gy@
 #elseif MASTER == 25
 	#if defined _YCM_z@
 		#define YSIM_DEFINED
@@ -998,6 +1024,7 @@ Natives:
 		#endif
 	#endif
 	#define _YCM z@
+	#define _YCM@ _YCM_gz@
 #endif
 
 // Check for non-unique masters here.
@@ -1012,6 +1039,9 @@ Natives:
 	//#else
 	//	public OnGameModeInit()
 	//#endif
+	stock
+		_E_YCM:_YCM@ = _E_YCM@u;
+	
 	public OnMasterSystemInit()
 	{
 		P:1(#_YCM "_OGM");
@@ -1075,30 +1105,32 @@ Natives:
 		#if _YSIM_IS_SERVER
 			// Steal the master.
 			_Master_Get(#_YCM, true);
+			_YCM@ = _E_YCM@y;
+			// Determine the next unique name.
 			CallRemoteFunction(#_YCM, "");
-		#else
-			#if _YSIM_IS_CLOUD
-				// Determine the next unique name,
-				// See if this script should be master.
-				if (_Master_Get(#_YCM))
-				{
-					P:2("Got master " #_YCM);
-					state _YCM:y;
-				}
-				else
-				{
-					state _YCM:n;
-				}
-			#endif
+		#elseif _YSIM_IS_CLOUD
+			// See if this script should be master.
+			if (_Master_Get(#_YCM))
+			{
+				P:2("Got master " #_YCM);
+				state _YCM:y;
+				_YCM@ = _E_YCM@y;
+			}
+			else
+			{
+				state _YCM:n;
+				_YCM@ = _E_YCM@n;
+			}
 		#endif
 		// FINALLY call the new next one.
-		CallLocalFunction(#_YCM_CALLBACK, "");
+		//CallLocalFunction(#_YCM_CALLBACK, "");
+		return _YCM_CALLBACK();
 	}
 	
 	// Don't need extra checks here as we KNOW it is already defined.
 	#undef OnMasterSystemInit
-	#define OnMasterSystemInit _YCM_CALLBACK
-	forward _YCM_CALLBACK();
+	#define OnMasterSystemInit(%0) _YCM_CALLBACK(%0) <_ALS_:hooked>
+	forward _YCM_CALLBACK();public _YCM_CALLBACK()<_ALS_:unhooked>{return 1;}public _YCM_CALLBACK()<>{return 1;}
 #endif
 
 // The code below is now deprecated in favour of foreign/global!
@@ -1136,9 +1168,10 @@ Natives:
 #if YSIM_HAS_MASTER
 	#if _YSIM_IS_SERVER
 		
-		#define foreign%0(%1); %0(%1);%0@(%1);
+		#define foreign%0(%1) %0(%1);%0@(%1)
+		#define @foreign foreign
 		//#define global%0(%1) %0@(%1);public%0@(%1)X@(_:@Zk:%0(_YM@CP:%1,,));%0(%1)
-		#define global%0(%1) public%0@(%1)X@(_:@Zk:_YM@CP:%0(%1,,));%0(%1)
+		#define global%0(%1) public%0@(%1)(@Zz:X@(@Zk:_YM@CP:%0(%1,,)));%0(%1)
 		
 		
 		
@@ -1209,12 +1242,13 @@ Natives:
 		// default to STUB.  This is NOT a complete definition - the "@Zu:"
 		// definition means that more processing is done (mainly for the
 		// definition of the "_YCM:m" function to not give warnings.
-		#define foreign%0(%1); stock %0(%1)<>{new i=_:@Zu:Y@();W@(#%0@##,_YM@CX:%1,,);return Z@(i);}%0@(%1);%0(%1)<_YCM:m>
-		//#define foreign%0(%1); %0(%1)<>{new i=Y@();W@(#%0@##,_YM@CM:%1,,);return Z@(i);}%0@(%1);
-		//#define foreign%0(%1); %0(%1)<>{new i=Y@();W@(#%0@##,_YM@CX:%1,,);return Z@(i);}%0@(%1);%0(%1)<_YCM:x>{}		
+		//#define foreign%0(%1); stock %0(%1)<>{new i=_:@Zu:Y@();W@(#%0@##,_YM@CX:%1,,);return Z@(i);}%0@(%1);%0(%1)<_YCM:m>
+		#define @foreign%0(%1) stock%0(%1)<>{new i=Y@();W@(@Zu:#%0@#,_YM@Cj:%1,,);return Z@(i);}%0(%1)<_YCM:m>
+		
+		#define foreign%0(%1) stock%0(%1)<>{W@(@Zu:#%0@#,_YM@Cl:%1,,);return V@(8,YSIM_RETURN);}%0(%1)<_YCM:m>
+		
 		#if _YSIM_IS_CLIENT
 			
-			//#define foreign%0(%1); stock %0(%1){new i=Y@();W@(#%0@##,_YM@CM:%1,,);return Z@(i);}
 			#define global%0(%1) stock %0_(%1)
 			
 			
@@ -1223,10 +1257,10 @@ Natives:
 			// Defined the functions as remote calling stubs.  Then rename the
 			// following code with a name unlikely to ever be used and define the
 			// functions as stock so the compiler removes all the code quietly.
-			#define RF:%1[%2](%3) stock %1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2#x,%3),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);stock _@%1(%3)
+			#define RF:%1[%2](%3) stock %1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);stock _@%1(%3)
 			#define RF@p:%1[%2](%3)<%4> stock %1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);stock _@%1(%3)
 			#define RF@c RF
-			#define RF@v:%1[%2](%3) stock %1(%3)U@(8,YSIM_CALLER,_@),W@(#@%1,#%2#x,%3),U@(8,YSIM_CALLER,-1);stock _@%1(%3)
+			#define RF@v:%1[%2](%3) stock %1(%3)U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1);stock _@%1(%3)
 			//#define RF@n:%1[]() stock %1()return U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);stock _@%1()
 			#define RF@pc RF@p
 			#define RF@pv:%1[%2](%3)<%4> stock %1(%3)U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1);stock _@%1(%3)
@@ -1234,13 +1268,13 @@ Natives:
 			#define RF@vc RF@v
 			//#define RF@vn:%1[]() stock %1()U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1);stock _@%1()
 			
-			#define RF@t:%0:%1[%2](%3) stock %0:%1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2#x,%3),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);stock %0:_@%1(%3)
+			#define RF@t:%0:%1[%2](%3) stock %0:%1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);stock %0:_@%1(%3)
 			#define RF@pt:%0:%1[%2](%3)<%4> stock %0:%1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);stock %0:_@%1(%3)
 			#define RF@ct RF@t
 			//#define RF@nt:%0:%1[]() stock %0:%1()return U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);stock %0:_@%1()
 			#define RF@pct RF@pt
 			
-			#define RS:%1[%2](%3) stock %1(%3)return Y@(),W@(#@%1,#%2#x,%3),S@(),Q@;stock _@%1(%3)
+			#define RS:%1[%2](%3) stock %1(%3)return Y@(),W@(#@%1,(x:#%2#),%3),S@(),Q@;stock _@%1(%3)
 			#define RS@p:%1[%2](%3)<%4> stock %1(%3)return Y@(),W@(#@%1,#%2,%4),S@(),Q@;stock _@%1(%3)
 			
 			//#define RC:%1(%3) stock _@%1(%3)
@@ -1260,7 +1294,7 @@ Natives:
 				#define RC:%0(%1) static stock _@yC%0()
 			#endif
 			
-			//#define RP@v:%1[%2](%3) static stock %1(%3)U@(8,YSIM_CALLER,_@),W@(#@%1,#%2#x,%3),U@(8,YSIM_CALLER,-1);static stock _@%1(%3)
+			//#define RP@v:%1[%2](%3) static stock %1(%3)U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1);static stock _@%1(%3)
 			
 			// Remote local - only calls the local version if we're master,
 			// doesn't call the remote version.
@@ -1270,7 +1304,7 @@ Natives:
 			
 			// Shortcut for y_als hooks.
 			#define RA:%0_On%1(%3) public On%1(%3)ALS_CALL<%1> static stock _%0_%1(%3)
-			//#define RA:%0_%1[%2](%3) public %1(%3)<>return Bit_GetBit(Bit:gs_ALS,_:ALS_%0)&&P@(#ALS_PREFIX"_"#%2#x,%3),1;public %1(%3)<_YCM:y>
+			//#define RA:%0_%1[%2](%3) public %1(%3)<>return Bit_GetBit(Bit:gs_ALS,_:ALS_%0)&&P@(#ALS_PREFIX"_"x:#%2#,%3),1;public %1(%3)<_YCM:y>
 			//#define RA@p:%0_%1[%2](%3)<%4> public %1(%3)ALS_CALL<%1,#%2,%4>static stock _%0_%1(%3)
 			//#define RA@p:%0_%1[%2](%3)<%4> public %1(%3)<>return Bit_GetBit(Bit:gs_ALS,_:ALS_%0)&&P@(#ALS_PREFIX"_"#%2,%4),1;public %1(%3)<_YCM:y>
 			
@@ -1301,10 +1335,10 @@ Natives:
 				//  
 				//  RF@p:CreateObject[ifff](modelid,Float:x,Float:y,Float:z)<modelid,x,y,z>;
 				//  
-				#define RF:%1[%2](%3) stock %1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2#x,%3),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN)//;stock _@%1()
+				#define RF:%1[%2](%3) stock %1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN)//;stock _@%1()
 				#define RF@p:%1[%2](%3)<%4> stock %1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN)//;stock _@%1()
 				#define RF@c RF
-				#define RF@v:%1[%2](%3) stock %1(%3)U@(8,YSIM_CALLER,_@),W@(#@%1,#%2#x,%3),U@(8,YSIM_CALLER,-1)//;stock _@%1()
+				#define RF@v:%1[%2](%3) stock %1(%3)U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1)//;stock _@%1()
 				//#define RF@n:%1[]() stock %1()return U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);stock _@%1()
 				#define RF@pc RF@p
 				#define RF@pv:%1[%2](%3)<%4> stock %1(%3)U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1)//;stock _@%1()
@@ -1312,14 +1346,14 @@ Natives:
 				#define RF@vc RF@v
 				//#define RF@vn:%1[]() stock %1()U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1);stock _@%1()
 				
-				#define RF@t:%0:%1[%2](%3) stock %0:%1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2#x,%3),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN)//;stock _@%1()
+				#define RF@t:%0:%1[%2](%3) stock %0:%1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN)//;stock _@%1()
 				#define RF@pt:%0:%1[%2](%3)<%4> stock %0:%1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN)//;stock _@%1()
 				#define RF@ct RF@t
 				//#define RF@nt:%0:%1[]() stock %0:%1()return U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);stock %0:_@%1()
 				#define RF@pct RF@pt
 				
 				// Doesn't have the end bit as the function isn't included.
-				#define RS:%1[%2](%3) stock %1(%3)return Y@(),W@(#@%1,#%2#x,%3),S@(),Q@//;stock _@%1()
+				#define RS:%1[%2](%3) stock %1(%3)return Y@(),W@(#@%1,(x:#%2#),%3),S@(),Q@//;stock _@%1()
 				#define RS@p:%1[%2](%3)<%4> stock %1(%3)return Y@(),W@(#@%1,#%2,%4),S@(),Q@//;stock _@%1()
 				
 				// NOT DEFINED!  Should not be used if this is a stub.
@@ -1356,34 +1390,38 @@ Natives:
 				
 				//#define foreign%0(%1); %0(%1)<>{new i=Y@();W@(#%0@##,_YM@CM:%1,,);return Z@(i);}%0@(%1);%0(%1)<_YCM:x>{}
 				//#define global%0(%1) %0@(%1);public%0@(%1)<>{}public%0@(%1)<_YCM:y>X@(_:@Zk:%0(_YM@CP:%1,,));%0(%1)<_YCM:y>
-				#define global%0(%1) public%0@(%1)<>{}public%0@(%1)<_YCM:y>X@(_:@Zk:_YM@CP:%0(%1,,));stock %0(%1)<_YCM:y>
+				//#define global%0(%1) public%0@(%1)<>{}public%0@(%1)<_YCM:y>X@(_:@Zk:_YM@CP:%0(%1,,));stock %0(%1)<_YCM:y>
+				#define global%0(%1) %0@(%1);public%0@(%1)<>{}public%0@(%1)<_YCM:y>(@Zz:X@(@Zk:_YM@CP:%0(%1,,)));stock%0(%1)<_YCM:y>
 				
 				
-				
+				// TODO: I just realised that I have NEVER used the
+				// "Master_Caller" feature of the master system EVER, despite
+				// all the overhead involved in activating and using it...
+				// Maybe I should just remove it!  Update: Or make it optional.
 				
 				// This is a normal system with the possibility of being the
 				// master.  This is the very complicated one to write!
-				#define RF:%1[%2](%3) @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>U@(8,YSIM_RETURN,%1(%3));%1(%3)<>return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2#x,%3),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);%1(%3)<_YCM:y>
+				#define RF:%1[%2](%3) @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>U@(8,YSIM_RETURN,%1(%3));%1(%3)<>return U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);%1(%3)<_YCM:y>
 				
 				#define RF@p:%1[%2](%3)<%4> @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>U@(8,YSIM_RETURN,%1(%4));%1(%3)<>return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);%1(%3)<_YCM:y>
-				#define RF@c:%1[%2](%3) @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>X@(%1(%3));%1(%3)<>return Y@(),W@(#@%1,#%2#x,%3),Z@();%1(%3)<_YCM:y>
-				#define RF@v:%1[%2](%3) @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>%1(%3);%1(%3)<>U@(8,YSIM_CALLER,_@),W@(#@%1,#%2#x,%3),U@(8,YSIM_CALLER,-1);%1(%3)<_YCM:y>
+				#define RF@c:%1[%2](%3) @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>X@(%1(%3));%1(%3)<>return Y@(),W@(#@%1,(x:#%2#),%3),Z@();%1(%3)<_YCM:y>
+				#define RF@v:%1[%2](%3) @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>%1(%3);%1(%3)<>U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1);%1(%3)<_YCM:y>
 				//#define RF@n:%1[]() forward %1R();public %1R()<>{}public %1R()<_YCM:y>U@(8,YSIM_RETURN,%1());%1()<>return U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);%1()<_YCM:y>
 				#define RF@pc:%1[%2](%3)<%4> @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>X@(%1(%4));%1(%3)<>return Y@(),W@(#@%1,#%2,%4),Z@();%1(%3)<_YCM:y>
 				#define RF@pv:%1[%2](%3)<%4> @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>%1(%4);%1(%3)<>U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1);%1(%3)<_YCM:y>
 				#define RF@pcv:%1[%2](%3)<%4> @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>%1(%4);%1(%3)<>Y@(),W@(#@%1,#%2,%4),T@();%1(%3)<_YCM:y>
-				#define RF@vc:%1[%2](%3) @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>%1(%3);%1(%3)<>Y@(),W@(#@%1,#%2#x,%3),T@();%1(%3)<_YCM:y>
+				#define RF@vc:%1[%2](%3) @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>%1(%3);%1(%3)<>Y@(),W@(#@%1,(x:#%2#),%3),T@();%1(%3)<_YCM:y>
 				//#define RF@vn:%1[]() forward %1R();public %1R()<>{}public %1R()<_YCM:y>%1();%1()<>U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1);%1()<_YCM:y>
 				
-				#define RF@t:%0:%1[%2](%3) %0:%1(%3);@%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>U@(8,YSIM_RETURN,_:%1(%3));%0:%1(%3)<>return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2#x,%3),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);%0:%1(%3)<_YCM:y>
+				#define RF@t:%0:%1[%2](%3) %0:%1(%3);@%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>U@(8,YSIM_RETURN,_:%1(%3));%0:%1(%3)<>return U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);%0:%1(%3)<_YCM:y>
 				#define RF@pt:%0:%1[%2](%3)<%4> %0:%1(%3);@%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>U@(8,YSIM_RETURN,_:%1(%4));%0:%1(%3)<>return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);%0:%1(%3)<_YCM:y>
-				#define RF@ct:%0:%1[%2](%3) %0:%1(%3);@%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>X@(_:%1(%3));%0:%1(%3)<>return Y@(),W@(#@%1,#%2#x,%3),%0:Z@();%0:%1(%3)<_YCM:y>
+				#define RF@ct:%0:%1[%2](%3) %0:%1(%3);@%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>X@(_:%1(%3));%0:%1(%3)<>return Y@(),W@(#@%1,(x:#%2#),%3),%0:Z@();%0:%1(%3)<_YCM:y>
 				//#define RF@nt:%0:%1[]() forward %0:%1();forward %1R();public %1R()<>{}public %1R()<_YCM:y>U@(8,YSIM_RETURN,_:%1());%0:%1()<>return U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);%0:%1()<_YCM:y>
 				#define RF@pct:%0:%1[%2](%3)<%4> %0:%1(%3);@%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>X@(_:%1(%4));%0:%1(%3)<>return Y@(),W@(#@%1,#%2,%4),%0:Z@();%0:%1(%3)<_YCM:y>
 				
-				//#define RS:%1[%2](%3) forward %1R(%3);public %1R(%3)<>{}public %1R(%3)<_YCM:y>R@(%1(%3));%1(%3)<>return Y@(),W@(#@%1,#%2#x,%3),S@();%1(%3)<_YCM:y>
+				//#define RS:%1[%2](%3) forward %1R(%3);public %1R(%3)<>{}public %1R(%3)<_YCM:y>R@(%1(%3));%1(%3)<>return Y@(),W@(#@%1,(x:#%2#),%3),S@();%1(%3)<_YCM:y>
 				// Remote STRING (returns a string).
-				#define RS:%1[%2](%3) @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>R@(%1(%3));%1(%3)<>return Y@(),W@(#@%1,#%2#x,%3),S@(),Q@;%1(%3)<_YCM:y>
+				#define RS:%1[%2](%3) @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>R@(%1(%3));%1(%3)<>return Y@(),W@(#@%1,(x:#%2#),%3),S@(),Q@;%1(%3)<_YCM:y>
 				#define RS@p:%1[%2](%3)<%4> @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>R@(%1(%4));%1(%3)<>return Y@(),W@(#@%1,#%2,%4),S@(),Q@;%1(%3)<_YCM:y>
 				
 				//#define RC:%1(%3) public %1(%3)<>return 1;public %1(%3)<_YCM:y>
@@ -1417,10 +1455,10 @@ Natives:
 					#define RC:%0(%1) @yC_%0(a,b[],c);@yC_%0(a,b[],c)<>{}@yC_%0(a,b[],c)<_YCM:y>U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 				#endif
 				
-				//#define RP@v:%1[%2](%3) forward @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>%1(%3);static %1(%3)<>U@(8,YSIM_CALLER,_@),W@(#@%1,#%2#x,%3),U@(8,YSIM_CALLER,-1);static %1(%3)<_YCM:y>
+				//#define RP@v:%1[%2](%3) forward @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>%1(%3);static %1(%3)<>U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1);static %1(%3)<_YCM:y>
 				
 				#define Master_Caller() \
-					((V@(8,YSIM_CALLER)==-1)?(_@):(V@(8,YSIM_CALLER)))
+					(((I@=V@(8,YSIM_CALLER))==-1)?(_@):(I@))
 				
 				// Remote local - only calls the local version if we're master,
 				// doesn't call the remote version.
@@ -1432,7 +1470,7 @@ Natives:
 				// Shortcut for y_als hooks.
 				//#define RA:%0_%1(%3) public %1(%3)<>ALS_CALL<%1>public %1(%3)<_YCM:y>
 				#define RA:%0_On%1(%3) public On%1(%3)<>ALS_CALL<%1> public On%1(%3)<_YCM:y>
-				//#define RA:%0_%1[%2](%3) public %1(%3)<>return Bit_GetBit(Bit:gs_ALS,_:ALS_%0)&&P@(#ALS_PREFIX"_"#%2#x,%3),1;public %1(%3)<_YCM:y>
+				//#define RA:%0_%1[%2](%3) public %1(%3)<>return Bit_GetBit(Bit:gs_ALS,_:ALS_%0)&&P@(#ALS_PREFIX"_"x:#%2#,%3),1;public %1(%3)<_YCM:y>
 				//#define RA@p:%0_%1[%2](%3)<%4> public %1(%3)<>ALS_CALL<%1,#%2,%4>public %1(%3)<_YCM:y>
 				
 				//#define Master_Get(%1) state (_Master_Get(#%1)) ? (%1:y) : (%1:n)
@@ -1442,8 +1480,9 @@ Natives:
 	#endif
 #else
 	
-	#define foreign%0(%1);
-	#define global%0(%1) stock %0(%1)
+	#define foreign forward
+	#define @foreign forward
+	#define global stock
 	
 	
 	
@@ -1521,12 +1560,14 @@ Natives:
 			{
 				// Master, but not.  A server has claimed this.
 				state _YCM:n;
+				_YCM@ = _E_YCM@n;
 			}
 			else
 			{
 				P:2("%d: " #_YCM ":y called", _@);
 				// Disable the current mastership.
 				state _YCM:p;
+				_YCM@ = _E_YCM@p;
 				setproperty(8, #_YCM, -1);
 				// Called locally to begin the hand off process.
 				CallRemoteFunction(#_YCM, "");
@@ -1542,6 +1583,7 @@ Natives:
 			{
 				P:2("%d: " "Got master " #_YCM, _@);
 				state _YCM:y;
+				_YCM@ = _E_YCM@y;
 			}
 		}
 		
@@ -1558,10 +1600,12 @@ Natives:
 			{
 				P:2("%d: " "Got master " #_YCM, _@);
 				state _YCM:y;
+				_YCM@ = _E_YCM@y;
 			}
 			else
 			{
 				state _YCM:n;
+				_YCM@ = _E_YCM@n;
 			}
 			// Do nothing at all (just define states).
 		}
@@ -1602,6 +1646,12 @@ Natives:
 			{
 			}
 		#endif*/
+	#elseif YSIM_HAS_MASTER
+		stock
+			_E_YCM:_YCM@ = _E_YCM@n;
+	#else
+		stock
+			_E_YCM:_YCM@ = _E_YCM@y;
 	#endif
 #endif
 
@@ -1649,110 +1699,6 @@ Natives:
 #if defined YSIM_STORED_SETTINGS
 	#undef YSIM_STORED_SETTINGS
 #endif
-
-/*
-
-//		@Zs:@Za:@Zd:#d#i @Zr:|||a|||@Ze: string:b[], array:d[], f);
-//@Zs:@Za:@Zs:@Za:@Zd:#d#i @Zr:|||a|||@Ze:string:b[],array:d[], f);
-//#define @Zs:@Za:@Zd:#%0#i%1||||string:%2[%3],%4); @Zs:@Za:@Zd:#%0s#i%1|||%2||||%4);
-
-//#define @Za:@Zd:#%0#i%1||||array:%2[%3],%4); @Zs:@Za:@Zd:#%0a#i%1|||%2||||%4);
-
-//#define @Zd:#%0#i%1||||%2,%4); @Zs:@Za:@Zd:#%0d#i%1|||%2||||%4);
-
-//#define @Zr:%0|||%1hze: ,%0
-
-//#define @Zs:@Zd:#%1|||%0string:%2[%3]|||%4,%5); @Zs:@Zd:#%1,s:%2|||%4|||%5);
-//#define @Zd:#%1|||%2|||%3,%4); @Zs:@Zd:#%1,d:%2|||%3|||%4);
-
-#define @Zs:@Za:@Zd:#%0#%1|||%2string:%3[%4]|||%5,%6) @Zs:@Za:@Zd:#%0s#%1,@Ze:%3|||%5|||%6)
-#define @Za:@Zd:#%0#%1|||%3[%4]|||%5,%6) @Zs:@Za:@Zd:#%0a#%1,@Ze:%3|||%5|||%6)
-#define @Zd:#%0#%1|||%3|||%5,%6) @Zs:@Za:@Zd:#%0i#%1,@Ze:%3|||%5|||%6)
-//#define @Zd:#%1|||%2|||%3,%4); @Zs:@Zd:#%1,d:%2|||%3|||%4);
-
-#define @Ze:%0|||||| @Ze:%0
-#define z,@Ze:||||||) )
-
-//#define @Zc:
-
-#define _YM@CM:%0,%1) @Zf:@Zs:@Za:@Zd:##z|||%0|||%1)
-
-// DO NOT USE THIS HERE AGAIN!  _YM@CR USED IN Y_REMOTE!
-//#define _YM@CR:%0(%1); W@(#%0@##,_YM@CM:%1,,);
-
-#define W@(#%0:%1##,%2);%3Z@(i) W@(#%1,%2);return %0:Z@(%0:i)
-#define Z@(%0string:i) S@(i),Q@
-
-#define string:
-
-#define foreign%0(%1); %0(%1)<>{new i=Y@();W@(#%0@##,_YM@CM:%1,,);return Z@(i);}%0@(%1);
-
-
-
-
-//#define @Zt:@Zb:@Zg:@Zh:%1|||%2:%3[%4]|||%5,%6) //@Zt:@Zb:@Zg:@Zh:%1%2:@Zi:%3,|||%5|||%6)
-//#define @Zb:@Zg:@Zh:%1|||%3[%4]|||%5,%6) @Zt:@Zb:@Zg:@Zh:%1hzi:%3,|||%5|||%6)
-//#define @Zg:@Zh:%1|||%2:%3|||%5,%6) @Zt:@Zb:@Zg:@Zh:%1%2:@Zi:%3,|||%5|||%6)
-//#define @Zh:%1|||%3|||%5,%6) @Zt:@Zb:@Zg:@Zh:%1hzi:%3,|||%5|||%6)
-
-#define @Zt:@Zb:@Zh:%1|||%2:%3|||%5) %1%2:@Zb:@Zh:|||%3|||%5)
-#define @Zb:@Zh:%1|||%3[%4]|||%5,%6) @Zt:@Zb:@Zh:%1hzi:%3,|||%5|||%6)
-//#define @Zg:@Zh:%1|||%2:%3|||%5,%6) @Zt:@Zb:@Zg:@Zh:%1%2:@Zi:%3,|||%5|||%6)
-#define @Zh:%1|||%3|||%5,%6) @Zt:@Zb:@Zh:%1hzi:%3,|||%5|||%6)
-//#define @Zd:#%1|||%2|||%3,%4); @Zs:@Zd:#%1,d:%2|||%3|||%4);
-
-#define @Zi:%0,|||||| @Zi:%0
-#define @Zj:X@(%0(_YM@CP:,,)) X@(%0())
-//#define @Zt:@Zb:@Zg:@Zh:||||||,) )
-//#define z,@Ze:||||||) )
-
-//#define @Zc:
-
-#define _YM@CP:%0,%1) @Zt:@Zb:@Zh:|||%0|||%1)
-
-#define X@(%0string:%1) R@(%1)
-
-#define global%0(%1) public%0@(%1)<>{}public%0@(%1)<_YCM:y>X@(_:%0(_YM@CP:%1,,));%0(%1)<_YCM:y>
-
-*/
-
-
-
-
-
-
-/*
-// "foreign" declaration.
-#define @Zs:@Za:@Zd:#%0#%1|||%2string:%3[%4]|||%5,%6) @Zs:@Za:@Zd:#%0s#%1,@Ze:%3|||%5|||%6)
-#define @Za:@Zd:#%0#%1|||%3[%4]|||%5,%6) @Zs:@Za:@Zd:#%0a#%1,@Ze:%3|||%5|||%6)
-#define @Zd:#%0#%1|||%3|||%5,%6) @Zs:@Za:@Zd:#%0i#%1,@Ze:%3|||%5|||%6)
-
-#define @Ze:%0|||||| @Ze:%0
-#define z,@Ze:||||||) )
-
-#define _YM@CM:%0,%1) @Zf:@Zs:@Za:@Zd:##z|||%0|||%1)
-
-#define W@(#%0:%1##,%2);%3Z@(i) W@(#%1,%2);return %0:Z@(%0:i)
-#define Z@(%0string:i) S@(i),Q@
-
-#define string:
-
-#define foreign%0(%1); %0(%1)<>{new i=Y@();W@(#%0@##,_YM@CM:%1,,);return Z@(i);}%0@(%1);
-
-// "global" declaration
-#define @Zt:@Zb:@Zh:%1|||%2:%3|||%5) %1%2:@Zb:@Zh:|||%3|||%5)
-#define @Zb:@Zh:%1|||%3[%4]|||%5,%6) @Zt:@Zb:@Zh:%1hzi:%3,|||%5|||%6)
-#define @Zh:%1|||%3|||%5,%6) @Zt:@Zb:@Zh:%1hzi:%3,|||%5|||%6)
-
-#define @Zi:%0,|||||| @Zi:%0
-#define @Zj:X@(%0(_YM@CP:,,)) X@(%0())
-
-#define _YM@CP:%0,%1) @Zt:@Zb:@Zh:|||%0|||%1)
-
-#define X@(%0string:%1) R@(%1)
-
-#define global%0(%1) public%0@(%1)<>{}public%0@(%1)<_YCM:y>X@(_:%0(_YM@CP:%1,,));%0(%1)<_YCM:y>
-*/
 
 // Clean up the new library definition code.
 #if defined _YSIM_LAST_LIBRARY_MASTER

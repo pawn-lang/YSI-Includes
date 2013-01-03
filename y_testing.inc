@@ -89,7 +89,11 @@ Changelog:
 
 #include "internal\y_natives"
 
-#if defined RUN_TESTS
+#if defined INCLUDE_TESTS
+	#define RUN_TESTS
+	#define Debug_PrintT va_printf
+#elseif defined RUN_TESTS
+	#define _AUTO_RUN_TESTS
 	#define Debug_PrintT va_printf
 #else
 	#if _DEBUG > 0 || defined _YSI_SPECIAL_DEBUG
@@ -112,24 +116,34 @@ Changelog:
 	#endif
 #endif
 
-#define TEST_TRUE(%0)  Testing_Test(bool:(%0))
-#define TEST_FALSE(%0) Testing_Test(!(%0))
-#define TEST_NULL(%0)  Testing_Test((%0) == 0)
-#define TEST_N(%0,%1)  Testing_Test((%0) == (%1))
+#define TEST_TRUE(%0)  Testing_Test(!!%0)
+#define TEST_FALSE(%0) Testing_Test(!%0)
+#define TEST_NULL(%0)  Testing_Test(0 == %0)
+#define TEST_NOT_NULL(%0)  Testing_Test(0 != %0)
+#define TEST_N(%0,%1)  Testing_Test(%1 == %0)
 
 #define TEST_TRUE_EX(%0,%2)  Testing_Test(bool:(%0), (%2))
 #define TEST_FALSE_EX(%0,%2) Testing_Test(!(%0), (%2))
 #define TEST_NULL_EX(%0,%2)  Testing_Test((%0) == 0, (%2))
 #define TEST_N_EX(%0,%1,%2)  Testing_Test((%0) == (%1), (%2))
 
-#define ASSERT(%0) Testing_Test(%0,__name)
-#define ASSERT_TRUE(%0) Testing_Test(!!%0,__name)
-#define ASSERT_FALSE(%0) Testing_Test(!%0,__name)
-#define ASSERT_NULL(%0) Testing_Test(0==%0,__name)
-#define ASSERT_N:%1(%0) Testing_Test(%1==%0,__name)
+#define TEST_MSG "\2\2\2\2\2"
+#define TEST_FAILED "FAIL:"
+#define TEST_PASSED "PASS!"
+//#define TEST_FAILED "*** Test Failed:"
+//#define TEST_PASSED "*** Test Passed:"
 
-#define TEST_FAILED "*** Test Failed:"
-#define TEST_PASSED "*** Test Passed:"
+#define _Y_TESTEQ(%0) "\"%0\"")
+#define _Y_TESTDQ:_Y_TESTEQ(%0"%1"%2) _Y_TESTDQ:_Y_TESTEQ(%0\x22;%1\x22;%2)
+//#define _Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0)%1) _Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0\x29;%1)
+#define _Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0)%1) _Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0\x29;%1)
+#define _Y_TESTOB:_Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0(%1) _Y_TESTOB:_Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0\x28;%1)
+
+#define ASSERT(%0) Testing_Test(%0,TEST_MSG" %s", _Y_TESTOB:_Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0)
+#define ASSERT_TRUE(%0) ASSERT(!!%0) //Testing_Test(!!%0,__name)
+#define ASSERT_FALSE(%0) ASSERT(!%0) //Testing_Test(!%0,__name)
+#define ASSERT_NULL(%0) ASSERT(0 == %0) //Testing_Test(0==%0,__name)
+#define ASSERT_N:%1(%0) ASSERT(%1 == %0) //Testing_Test(%1==%0,__name)
 
 static stock
 	YSI_g_sTests,
@@ -141,24 +155,38 @@ stock Testing_Test(bool:x, str[] = "", va_args<>)
 	++YSI_g_sTests;
 	if (!x)
 	{
+		++YSI_g_sFails;
 		if (numargs() == 2)
 		{
-			++YSI_g_sFails;
 			P:T(TEST_FAILED " %s", va_start<1>);
 			//printf("*** Test failed: %s", str);
 		}
 		else
 		{
+			if (str[0] == '\2')
+			{
+				strunpack(str, !TEST_FAILED, 6);
+				str[5] = ' ';
+			}
 			P:T(str, va_start<2>);
 		}
 	}
-	else if (numargs() == 2)
+	else /*if (numargs() == 2)
 	{
 		P:T(TEST_PASSED " %s", va_start<1>);
 	}
 	else
 	{
 		P:T(str, va_start<2>);
+		if (str[0] == '\2')
+		{
+			strunpack(str, !TEST_PASSED, 17);
+			str[16] = ' ';
+		}
+		printf(str);
+		P:T(str, va_start<2>);*/
+	{
+		P:T(TEST_PASSED, va_start<2>);
 	}
 }
 

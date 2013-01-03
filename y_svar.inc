@@ -124,7 +124,7 @@ forward _y_svar_include_@();
 
 public _y_svar_include_@()
 {
-	memset("", 0, 0, 0);
+	//memset("", 0, 0, 0);
 	INI_WriteArray(INI_NO_FILE, "", "", 0);
 }
 

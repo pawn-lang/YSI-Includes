@@ -256,12 +256,12 @@ public OnGameModeInit()
 	{
 		if (YSI_g_sCallbacks & 16)
 		{
-			CallLocalFunction("TextInt_OnGameModeInit", "");
+			TextInt_OnGameModeInit();
 		}
 	}
 	else
 	{
-		CallLocalFunction("TextInt_OnGameModeInit", "");
+		TextInt_OnGameModeInit();
 		//Text_SpecialInit();
 		Text_RefreshLoaded();
 		_Styles_SpecialInit();
@@ -275,9 +275,9 @@ public OnGameModeInit()
 #else
 	#define _ALS_OnGameModeInit
 #endif
-#define OnGameModeInit TextInt_OnGameModeInit
+#define OnGameModeInit(%0) TextInt_OnGameModeInit(%0) <_ALS_:hooked>
 
-forward TextInt_OnGameModeInit();
+forward TextInt_OnGameModeInit();public TextInt_OnGameModeInit()<_ALS_:unhooked>{return 1;}public TextInt_OnGameModeInit()<>{return 1;}
 
 public OnFilterScriptInit()
 {
@@ -287,7 +287,7 @@ public OnFilterScriptInit()
 		YSI_g_sCallbacks |= 16;
 	}
 	// DO ALL (MOST) OTHER INITS FIRST.  ENSURE WE COME LATER.
-	CallLocalFunction("TextInt_OnFilterScriptInit", "");
+	TextInt_OnFilterScriptInit();
 	//Text_SpecialInit();
 	Text_RefreshLoaded();
 	_Styles_SpecialInit();
@@ -300,9 +300,9 @@ public OnFilterScriptInit()
 #else
 	#define _ALS_OnFilterScriptInit
 #endif
-#define OnFilterScriptInit TextInt_OnFilterScriptInit
+#define OnFilterScriptInit(%0) TextInt_OnFilterScriptInit(%0) <_ALS_:hooked>
 
-forward TextInt_OnFilterScriptInit();
+forward TextInt_OnFilterScriptInit();public TextInt_OnFilterScriptInit()<_ALS_:unhooked>{return 1;}public TextInt_OnFilterScriptInit()<>{return 1;}
 
 //forward Text_SpecialInit();
 //
@@ -1222,6 +1222,8 @@ static stock Text_AddEntry(set, name[], value[], hash)
 	//strcpy(YSI_g_sTextEntries[entry][e_TEXT_ENTRY_NAME], name, MAX_INI_ENTRY_NAME * 4);
 	YSI_g_sTextEntries[entry][e_TEXT_ENTRY_HASH] = hash;
 	YSI_g_sTextEntries[entry][e_TEXT_ENTRY_POINTERS][YSI_g_sLangIndex] = slot;
+	// Set the default style.
+	_Style_Init(entry);
 	// Insert the identifier.
 	new
 		idx = YSI_g_sTextSets[set][e_TEXT_SETS_INDEX],
@@ -1828,10 +1830,10 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 	new
 		bool:wasOnce[YSI_MAX_LANGUAGES] = {false, ...},
 		bool:gotExtras[YSI_MAX_LANGUAGES] = {false, ...},
-		n = (numargs() - 10) * 4,
-		dialog = Dialog_ObtainID(),
-		maxlen,
-		owned = Text_IsLocalOwner(isearch, iident, maxlen);
+		n = (numargs() - 11) * 4,
+		dialog = Dialog_ObtainID();//,
+		//maxlen,
+		//owned = Text_IsLocalOwner(isearch, iident, maxlen);
 	// Loop through all the players passed to the function (however they were
 	// passed to the function).  This uses "@PlayerArray" instead of
 	// "@PlayerVar" so that we can optimised for multiple languages.
@@ -1881,11 +1883,17 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 							cident[pos - 2] = '\0';
 							if (br) cident[br] = ':', Text_GetText(cident, cident[pos + 1], lang);
 							else Text_GetText(cident[1], cident[pos + 1], lang);
-							strcpy(YSI_g_sCaptionText[lang], YSI_g_sReturnText, sizeof (YSI_g_sCaptionText[]));
+							_Text_SetDialogMode();
+							Format_Render(playerid, lang, YSI_g_sCaptionText[lang], sizeof (YSI_g_sCaptionText[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
 						}
 						else YSI_g_sCaptionText[lang] = "Could not find title source";
 					}
-					default: Text_GetText(csearch, cident, lang), strcpy(YSI_g_sCaptionText[lang], YSI_g_sReturnText, sizeof (YSI_g_sCaptionText[]));
+					default:
+					{
+						Text_GetText(csearch, cident, lang);
+						_Text_SetDialogMode();
+						Format_Render(playerid, lang, YSI_g_sCaptionText[lang], sizeof (YSI_g_sCaptionText[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
+					}
 				}
 				// Get the text for button 1 in this language.
 				switch (b1search[0])
@@ -1900,11 +1908,17 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 							b1ident[pos - 2] = '\0';
 							if (br) b1ident[br] = ':', Text_GetText(b1ident, b1ident[pos + 1], lang);
 							else Text_GetText(b1ident[1], b1ident[pos + 1], lang);
-							strcpy(YSI_g_sButton1Text[lang], YSI_g_sReturnText, sizeof (YSI_g_sButton1Text[]));
+							_Text_SetDialogMode();
+							Format_Render(playerid, lang, YSI_g_sButton1Text[lang], sizeof (YSI_g_sButton1Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
 						}
-						else YSI_g_sButton1Text[lang] = "Not Found";
+						else YSI_g_sButton1Text[lang] = "???";
 					}
-					default: Text_GetText(b1search, b1ident, lang), strcpy(YSI_g_sButton1Text[lang], YSI_g_sReturnText, sizeof (YSI_g_sButton1Text[]));
+					default:
+					{
+						Text_GetText(b1search, b1ident, lang);
+						_Text_SetDialogMode();
+						Format_Render(playerid, lang, YSI_g_sButton1Text[lang], sizeof (YSI_g_sButton1Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
+					}
 				}
 				// Get the text for button 1 in this language.
 				if (b2ident[0])
@@ -1921,11 +1935,17 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 								b2ident[pos - 2] = '\0';
 								if (br) b2ident[br] = ':', Text_GetText(b2ident, b2ident[pos + 1], lang);
 								else Text_GetText(b2ident[1], b2ident[pos + 1], lang);
-								strcpy(YSI_g_sButton2Text[lang], YSI_g_sReturnText, sizeof (YSI_g_sButton2Text[]));
+								_Text_SetDialogMode();
+								Format_Render(playerid, lang, YSI_g_sButton2Text[lang], sizeof (YSI_g_sButton2Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
 							}
 							else YSI_g_sButton2Text[lang] = "";
 						}
-						default: Text_GetText(b2search, b2ident, lang), strcpy(YSI_g_sButton2Text[lang], YSI_g_sReturnText, sizeof (YSI_g_sButton2Text[]));
+						default:
+						{
+							Text_GetText(b2search, b2ident, lang);
+							_Text_SetDialogMode();
+							Format_Render(playerid, lang, YSI_g_sButton2Text[lang], sizeof (YSI_g_sButton2Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
+						}
 					}
 				}
 				else YSI_g_sButton2Text[lang] = "";
@@ -2037,11 +2057,17 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 							cident[pos - 2] = '\0';
 							if (br) cident[br] = ':', Text_GetText(cident, cident[pos + 1], lang);
 							else Text_GetText(cident[1], cident[pos + 1], lang);
-							strcpy(YSI_g_sCaptionText[lang], YSI_g_sReturnText, sizeof (YSI_g_sCaptionText[]));
+							_Text_SetDialogMode();
+							Format_Render(playerid, lang, YSI_g_sCaptionText[lang], sizeof (YSI_g_sCaptionText[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
 						}
 						else YSI_g_sCaptionText[lang] = "Could not find title source";
 					}
-					default: Text_GetText(csearch, cident, lang), strcpy(YSI_g_sCaptionText[lang], YSI_g_sReturnText, sizeof (YSI_g_sCaptionText[]));
+					default:
+					{
+						Text_GetText(csearch, cident, lang);
+						_Text_SetDialogMode();
+						Format_Render(playerid, lang, YSI_g_sCaptionText[lang], sizeof (YSI_g_sCaptionText[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
+					}
 				}
 				// Get the text for button 1 in this language.
 				switch (b1search[0])
@@ -2056,11 +2082,17 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 							b1ident[pos - 2] = '\0';
 							if (br) b1ident[br] = ':', Text_GetText(b1ident, b1ident[pos + 1], lang);
 							else Text_GetText(b1ident[1], b1ident[pos + 1], lang);
-							strcpy(YSI_g_sButton1Text[lang], YSI_g_sReturnText, sizeof (YSI_g_sButton1Text[]));
+							_Text_SetDialogMode();
+							Format_Render(playerid, lang, YSI_g_sButton1Text[lang], sizeof (YSI_g_sButton1Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
 						}
-						else YSI_g_sButton1Text[lang] = "Not Found";
+						else YSI_g_sButton1Text[lang] = "???";
 					}
-					default: Text_GetText(b1search, b1ident, lang), strcpy(YSI_g_sButton1Text[lang], YSI_g_sReturnText, sizeof (YSI_g_sButton1Text[]));
+					default:
+					{
+						Text_GetText(b1search, b1ident, lang);
+						_Text_SetDialogMode();
+						Format_Render(playerid, lang, YSI_g_sButton1Text[lang], sizeof (YSI_g_sButton1Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
+					}
 				}
 				// Get the text for button 1 in this language.
 				if (b2ident[0])
@@ -2077,11 +2109,17 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 								b2ident[pos - 2] = '\0';
 								if (br) b2ident[br] = ':', Text_GetText(b2ident, b2ident[pos + 1], lang);
 								else Text_GetText(b2ident[1], b2ident[pos + 1], lang);
-								strcpy(YSI_g_sButton2Text[lang], YSI_g_sReturnText, sizeof (YSI_g_sButton2Text[]));
+								_Text_SetDialogMode();
+								Format_Render(playerid, lang, YSI_g_sButton2Text[lang], sizeof (YSI_g_sButton2Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
 							}
 							else YSI_g_sButton2Text[lang] = "";
 						}
-						default: Text_GetText(b2search, b2ident, lang), strcpy(YSI_g_sButton2Text[lang], YSI_g_sReturnText, sizeof (YSI_g_sButton2Text[]));
+						default:
+						{
+							Text_GetText(b2search, b2ident, lang);
+							_Text_SetDialogMode();
+							Format_Render(playerid, lang, YSI_g_sButton2Text[lang], sizeof (YSI_g_sButton2Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
+						}
 					}
 				}
 				else YSI_g_sButton2Text[lang] = "";
@@ -2102,7 +2140,7 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 					{
 						// None - just print the string directly.
 						_Text_SetDialogMode();
-						ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, iident, n / 4);
+						ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, iident, 0);
 					}
 					case '\3':
 					{
@@ -2122,14 +2160,14 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 								Text_GetText(iident[1], iident[pos + 1], lang);
 							}
 							_Text_SetDialogMode();
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, n / 4);
+							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
 						}
 						else
 						{
 							// Var - May contain location isearch information in
 							// "name".  Maybe add an "all" isearch parameter...
 							_Text_SetDialogMode();
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, "Could not find text source", n / 4);
+							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, "Could not find text source", 0);
 							// The code generated messes up the pushing.
 						}
 					}
@@ -2137,7 +2175,7 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 					{
 						Text_GetText(isearch, iident, lang);
 						_Text_SetDialogMode();
-						ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, n / 4);
+						ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
 					}
 				}
 				wasOnce[lang] = !ret;
@@ -2151,5 +2189,7 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 		cd[E_CALLBACK_DATA];
 	Callback_Get(callback, cd, _F<iiiis>);
 	Dialog_SetCallbackData(dialog, cd); //AMX_GetPublicPointer(callback));
+	// Automatically free the dialog when we're done.
+	Dialog_Garbage(dialog);
 	return dialog;
 }

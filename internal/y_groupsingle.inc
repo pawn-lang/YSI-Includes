@@ -56,59 +56,24 @@ Changelog:
 
 #undef _inc_y_groupsingle
 
-//#undef GROUP_LOCAL
-//#undef Group
-
-/*#if YSIM_HAS_MASTER
-	#if _YSIM_IS_CLIENT
-		//#define Group:%0_InitialiseFromGroups(%1)
-		stock _GROUP_INITIALISE(x) <YSI_has_groups:n>
-		{
-			#pragma unused x
-		}
-		
-		stock _GROUP_INITIALISE(x) <>
-		{
-			#pragma unused x
-		}
-	#else
-		#if _YSIM_IS_SERVER
-			//#define Group:%0_InitialiseFromGroups(%1) forward _GROUP_INITIALISE(x);_GROUP_INITIALISE(%1)<YSI_has_groups:n>__GROUP_INITIALISE(%1);_GROUP_INITIALISE(%1)<>__GROUP_INITIALISE(%1);static stock __GROUP_INITIALISE(%1)
-			stock bool:_GROUP_INITIALISE(x) <YSI_has_groups:n>
-			{
-				#pragma unused x
-				return false;
-			}
-			
-			stock bool:_GROUP_INITIALISE(x) <>
-			{
-				#pragma unused x
-				return false;
-			}
-		#else
-			#if _YSIM_IS_STUB
-				#error y_groupsingle called with _YSIM_IS_STUB.
-			#else
-				//#define Group:%0_InitialiseFromGroups(%1) forward _GROUP_INITIALISE(x);_GROUP_INITIALISE(%1)<YSI_has_groups:n>__GROUP_INITIALISE(%1);_GROUP_INITIALISE(%1)<>__GROUP_INITIALISE(%1);static stock __GROUP_INITIALISE(%1)
-			#endif
-		#endif
-	#endif
-#else
-	//#define Group:%0_InitialiseFromGroups(%1) forward _GROUP_INITIALISE(x);_GROUP_INITIALISE(%1)<YSI_has_groups:n>__GROUP_INITIALISE(%1);_GROUP_INITIALISE(%1)<>__GROUP_INITIALISE(%1);static stock __GROUP_INITIALISE(%1)
-#endif*/
-
-#if !defined _YSI_HAS_GROUP_SYSTEM
-	forward bool:_GROUP_INITIALISE(x = _GROUP_MAKE_LIMIT);
+#if !defined _GROUP_MAKE_TAG
+	#define _GROUP_MAKE_TAG _
 #endif
 
-stock bool:_GROUP_INITIALISE(x = _GROUP_MAKE_LIMIT) <YSI_has_groups:n>
+#if !defined _YSI_HAS_GROUP_SYSTEM
+	forward bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT);
+#endif
+
+stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT) <YSI_has_groups:n>
 {
 	#pragma unused x
 	return false;
 }
 
-stock bool:_GROUP_INITIALISE(x = _GROUP_MAKE_LIMIT) <>
+stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT) <>
 {
 	#pragma unused x
 	return false;
 }
+
+#undef _GROUP_MAKE_TAG

@@ -62,6 +62,7 @@ Changelog:
 #undef _inc_y_groups
 
 #include "internal\y_nogroups"
+#include "internal\y_plugins"
 
 /*#if defined YSI_GROUPS_LAST
 	#if YSI_GROUPS_LAST == 25
@@ -259,6 +260,21 @@ Changelog:
 		// Include the second half of the file for the methods.
 		#include "internal\y_groupsecond"
 	#endif
+	#if defined _YSI_PLUGINS_STREAMER
+		#if defined _YCM_q@
+			#define _YSIM_OVERRIDE          16
+		#endif
+		#include "y_master"
+		// Include the first half of the file for the call chain.
+		//#include "internal\y_groupfirst"
+		//#undef _GROUP_MAKE_NAME
+		//#undef _GROUP_MAKE_LIMIT
+		//#define _GROUP_MAKE_NAME<%0...%1> %0SObject%1
+		//#define _GROUP_MAKE_LIMIT<%0...%1> 
+		// Include the second half of the file for the methods.
+		//#include "internal\y_groupsecond"
+		#include "internal\y_incognitostreamer"
+	#endif
 	// Internal test library.
 	#if defined _YSI_ALLOW_INTERNAL_TEST
 		#if defined _YSI_GROUP_INTTEST_INCLUDED
@@ -282,6 +298,28 @@ Changelog:
 			#include "internal\y_groupsecond"
 		#endif
 	#endif
+	// Recursive group functions to make groups of groups.  Make this code pure
+	// client code so that 90% of it is not included ever.
+	/*#define _YSIM_OVERRIDE      24
+	//#define YSIM_C_ENABLE
+	#include "y_master"
+	#undef _GROUP_MAKE_NAME
+	#undef _GROUP_MAKE_LIMIT*/
+	/*#define _GROUP_MAKE_NAME        _GROUP_MAKE_NAME_GROUP
+	#define _GROUP_MAKE_LIMIT       _GROUP_MAKE_LIMIT_GROUP
+	#define _GROUP_MAKE_TAG         Group
+	//#include "internal\y_groupsecond"
+	#undef _YSI_GROUPS_FIRST_HALF
+	// Disable the OnPlayerConnect code.
+	#undef ghook
+	#define ghook%0On%1(%2) stock _GROUP_MAKE_NAME<On%2...>(%3)
+	#include "internal\y_groupsecond"
+	#undef ghook
+	#define ghook group_hook
+	#define _YSI_GROUPS_FIRST_HALF
+	#define _GROUP_MAKE_TAG         Group
+	#include "internal\y_groupsingle"*/
+	// These need VERY different defaults.
 #endif
 
 // Now include any user defined libraries.
@@ -298,6 +336,9 @@ Changelog:
 		#undef _GROUP_MAKE_LIMIT
 		#define _GROUP_MAKE_NAME        GROUP_LIBRARY_NAME
 		#define _GROUP_MAKE_LIMIT       GROUP_LIBRARY_SIZE
+		//#if defined GROUP_LIBRARY_TAG
+		//	#define _GROUP_MAKE_TAG       GROUP_LIBRARY_TAG
+		//#endif
 		#undef _YSI_GROUPS_FIRST_HALF
 		// Include the second half of the file for the methods.
 		#include "internal\y_groupsecond"

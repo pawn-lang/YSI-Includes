@@ -100,7 +100,7 @@ Operators:
 #define va_args<%0> GLOBAL_TAG_TYPES:...
 #define va_start<%0> (va_:(%0))
 
-stock va_printf(fmat[], va_:STATIC_ARGS)
+stock va_printf(const fmat[], va_:STATIC_ARGS)
 {
 	new
 		num_args,
@@ -158,7 +158,190 @@ stock va_printf(fmat[], va_:STATIC_ARGS)
 	// Now do the real return.
 }
 
-stock va_format(out[], size, fmat[], va_:STATIC_ARGS)
+stock va_CallRemoteFunction(const function[], const fmat[], va_:STATIC_ARGS)
+{
+	new
+		num_args,
+		arg_start,
+		arg_end;
+	// Get the pointer to the number of arguments to the last function.
+	#emit LOAD.S.pri   0
+	#emit ADD.C        8
+	#emit MOVE.alt
+	// Get the number of arguments.
+	#emit LOAD.I
+	#emit STOR.S.pri   num_args
+	// Get the variable arguments (end).
+	#emit ADD
+	#emit STOR.S.pri   arg_end
+	// Get the variable arguments (start).
+	#emit LOAD.S.pri   STATIC_ARGS
+	#emit SMUL.C       4
+	#emit ADD
+	#emit STOR.S.pri   arg_start
+	// Using an assembly loop here screwed the code up as the labels added some
+	// odd stack/frame manipulation code...
+	while (arg_end != arg_start)
+	{
+		#emit MOVE.pri
+		#emit LOAD.I
+		#emit PUSH.pri
+		#emit CONST.pri    4
+		#emit SUB.alt
+		#emit STOR.S.pri   arg_end
+	}
+	// Push the additional parameters.
+	#emit PUSH.S       fmat
+	#emit PUSH.S       function
+	// Push the argument count.
+	#emit LOAD.S.pri   num_args
+	#emit ADD.C        8
+	#emit LOAD.S.alt   STATIC_ARGS
+	#emit XCHG
+	#emit SMUL.C       4
+	#emit SUB.alt
+	#emit PUSH.pri
+	#emit MOVE.alt
+	// This gets confused if you have a local variable of the same name as it
+	// seems to factor in them first, so you get the offset of the local
+	// variable instead of the index of the native.
+	#emit SYSREQ.C     CallRemoteFunction
+	// Clear the stack.
+	#emit CONST.pri    4
+	#emit ADD
+	#emit MOVE.alt
+	// The three lines above get the total stack data size, now remove it.
+	#emit LCTRL        4
+	#emit ADD
+	#emit SCTRL        4
+	// Now do the real return.
+}
+
+stock va_CallLocalFunction(const function[], const fmat[], va_:STATIC_ARGS)
+{
+	new
+		num_args,
+		arg_start,
+		arg_end;
+	// Get the pointer to the number of arguments to the last function.
+	#emit LOAD.S.pri   0
+	#emit ADD.C        8
+	#emit MOVE.alt
+	// Get the number of arguments.
+	#emit LOAD.I
+	#emit STOR.S.pri   num_args
+	// Get the variable arguments (end).
+	#emit ADD
+	#emit STOR.S.pri   arg_end
+	// Get the variable arguments (start).
+	#emit LOAD.S.pri   STATIC_ARGS
+	#emit SMUL.C       4
+	#emit ADD
+	#emit STOR.S.pri   arg_start
+	// Using an assembly loop here screwed the code up as the labels added some
+	// odd stack/frame manipulation code...
+	while (arg_end != arg_start)
+	{
+		#emit MOVE.pri
+		#emit LOAD.I
+		#emit PUSH.pri
+		#emit CONST.pri    4
+		#emit SUB.alt
+		#emit STOR.S.pri   arg_end
+	}
+	// Push the additional parameters.
+	#emit PUSH.S       fmat
+	#emit PUSH.S       function
+	// Push the argument count.
+	#emit LOAD.S.pri   num_args
+	#emit ADD.C        8
+	#emit LOAD.S.alt   STATIC_ARGS
+	#emit XCHG
+	#emit SMUL.C       4
+	#emit SUB.alt
+	#emit PUSH.pri
+	#emit MOVE.alt
+	// This gets confused if you have a local variable of the same name as it
+	// seems to factor in them first, so you get the offset of the local
+	// variable instead of the index of the native.
+	#emit SYSREQ.C     CallLocalFunction
+	// Clear the stack.
+	#emit CONST.pri    4
+	#emit ADD
+	#emit MOVE.alt
+	// The three lines above get the total stack data size, now remove it.
+	#emit LCTRL        4
+	#emit ADD
+	#emit SCTRL        4
+	// Now do the real return.
+}
+
+stock va_SetTimerEx(const function[], interval, bool:repeating, const fmat[], va_:STATIC_ARGS)
+{
+	static
+		sRet;
+	new
+		num_args,
+		arg_start,
+		arg_end;
+	// Get the pointer to the number of arguments to the last function.
+	#emit LOAD.S.pri   0
+	#emit ADD.C        8
+	#emit MOVE.alt
+	// Get the number of arguments.
+	#emit LOAD.I
+	#emit STOR.S.pri   num_args
+	// Get the variable arguments (end).
+	#emit ADD
+	#emit STOR.S.pri   arg_end
+	// Get the variable arguments (start).
+	#emit LOAD.S.pri   STATIC_ARGS
+	#emit SMUL.C       4
+	#emit ADD
+	#emit STOR.S.pri   arg_start
+	// Using an assembly loop here screwed the code up as the labels added some
+	// odd stack/frame manipulation code...
+	while (arg_end != arg_start)
+	{
+		#emit MOVE.pri
+		#emit LOAD.I
+		#emit PUSH.pri
+		#emit CONST.pri    4
+		#emit SUB.alt
+		#emit STOR.S.pri   arg_end
+	}
+	// Push the additional parameters.
+	#emit PUSH.S       fmat
+	#emit PUSH.S       repeating
+	#emit PUSH.S       interval
+	#emit PUSH.S       function
+	// Push the argument count.
+	#emit LOAD.S.pri   num_args
+	#emit ADD.C        16
+	#emit LOAD.S.alt   STATIC_ARGS
+	#emit XCHG
+	#emit SMUL.C       4
+	#emit SUB.alt
+	#emit PUSH.pri
+	#emit MOVE.alt
+	// This gets confused if you have a local variable of the same name as it
+	// seems to factor in them first, so you get the offset of the local
+	// variable instead of the index of the native.
+	#emit SYSREQ.C     SetTimerEx
+	#emit STOR.pri     sRet
+	// Clear the stack.
+	#emit CONST.pri    4
+	#emit ADD
+	#emit MOVE.alt
+	// The three lines above get the total stack data size, now remove it.
+	#emit LCTRL        4
+	#emit ADD
+	#emit SCTRL        4
+	// Now do the real return.
+	return sRet;
+}
+
+stock va_format(out[], size, const fmat[], va_:STATIC_ARGS)
 {
 	new
 		num_args,
@@ -216,6 +399,70 @@ stock va_format(out[], size, fmat[], va_:STATIC_ARGS)
 	#emit ADD
 	#emit SCTRL        4
 	// Now do the real return.
+}
+
+stock va_return(const fmat[], va_:STATIC_ARGS)
+{
+	static
+		out[YSI_MAX_STRING * 8],
+		size = YSI_MAX_STRING;
+	new
+		num_args,
+		arg_start,
+		arg_end;
+	// Get the pointer to the number of arguments to the last function.
+	#emit LOAD.S.pri   0
+	#emit ADD.C        8
+	#emit MOVE.alt
+	// Get the number of arguments.
+	#emit LOAD.I
+	#emit STOR.S.pri   num_args
+	// Get the variable arguments (end).
+	#emit ADD
+	#emit STOR.S.pri   arg_end
+	// Get the variable arguments (start).
+	#emit LOAD.S.pri   STATIC_ARGS
+	#emit SMUL.C       4
+	#emit ADD
+	#emit STOR.S.pri   arg_start
+	// Using an assembly loop here screwed the code up as the labels added some
+	// odd stack/frame manipulation code...
+	while (arg_end != arg_start)
+	{
+		#emit MOVE.pri
+		#emit LOAD.I
+		#emit PUSH.pri
+		#emit CONST.pri    4
+		#emit SUB.alt
+		#emit STOR.S.pri   arg_end
+	}
+	// Push the additional parameters.
+	#emit PUSH.S       fmat
+	#emit PUSH         size
+	#emit PUSH.C       out
+	// Push the argument count.
+	#emit LOAD.S.pri   num_args
+	#emit ADD.C        12
+	#emit LOAD.S.alt   STATIC_ARGS
+	#emit XCHG
+	#emit SMUL.C       4
+	#emit SUB.alt
+	#emit PUSH.pri
+	#emit MOVE.alt
+	// This gets confused if you have a local variable of the same name as it
+	// seems to factor in them first, so you get the offset of the local
+	// variable instead of the index of the native.
+	#emit SYSREQ.C     format
+	// Clear the stack.
+	#emit CONST.pri    4
+	#emit ADD
+	#emit MOVE.alt
+	// The three lines above get the total stack data size, now remove it.
+	#emit LCTRL        4
+	#emit ADD
+	#emit SCTRL        4
+	// Now do the real return.
+	return out;
 }
 
 stock va_strlen(arg)
@@ -289,4 +536,49 @@ stock va_getstring(dest[], arg, len = sizeof (dest))
 	#emit SYSREQ.C   strcat
 	// Restore the stack to its level before we called this native.
 	#emit STACK      16
+}
+
+stock PlayerText:va_CreatePlayerTextDraw(playerid, Float:x, Float:y, fmat[], va_args<>)
+{
+	return CreatePlayerTextDraw(playerid, x, y, va_return(fmat, va_start<4>));
+}
+
+stock Text:va_TextDrawCreate(Float:x, Float:y, fmat[], va_args<>)
+{
+	return TextDrawCreate(x, y, va_return(fmat, va_start<3>));
+}
+
+stock va_SendClientMessage(playerid, colour, const fmat[], va_args<>)
+{
+	return SendClientMessage(playerid, colour, va_return(fmat, va_start<3>));
+}
+
+stock va_SendClientMessageToAll(colour, const fmat[], va_args<>)
+{
+	return SendClientMessageToAll(colour, va_return(fmat, va_start<2>));
+}
+
+stock va_SendPlayerMessageToPlayer(playerid, senderid, const fmat[], va_args<>)
+{
+	return SendPlayerMessageToPlayer(playerid, senderid, va_return(fmat, va_start<3>));
+}
+
+stock va_SendPlayerMessageToAll(senderid, const fmat[], va_args<>)
+{
+	return SendPlayerMessageToAll(senderid, va_return(fmat, va_start<2>));
+}
+
+stock va_GameTextForPlayer(playerid, const fmat[], time, style, va_args<>)
+{
+	return GameTextForPlayer(playerid, va_return(fmat, va_start<4>), time, style);
+}
+
+stock va_GameTextForAll(const fmat[], time, style, va_args<>)
+{
+	return GameTextForAll(va_return(fmat, va_start<3>), time, style);
+}
+
+stock va_print(const fmat[], va_args<>)
+{
+	return print(va_return(fmat, va_start<1>));
 }

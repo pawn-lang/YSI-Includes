@@ -473,7 +473,7 @@ stock _Timer_H(slot)
 #define _YT@CR:%0,%1)%8>%2||| @Yf:@Yg:@Yh:#i#,@Yx:J@|||%0|||%1;%8>%2|||
 
 // Define for "defer" with timer, parameters and main function.
-#define YSI_timer%0[%1]%3(%2) stock%0_yT@(%2)return _Timer_C(O@(#%0@_yT,I@==-1?(%1):I@,J@,_YT@CR:%2,,)0>%0|||%0|||(%2)
+#define YSI_timer%0[%1]%3(%2) stock%0_yT@(%2)return _Timer_C(O@(#%0@_yT,(I@==-1)?(%1):I@,J@,_YT@CR:%2,,)0>%0|||%0|||(%2)
 
 // Expand additional parameters out to three functions after processing.
 //#define @Yx:%0||||||;%1,%2|||%4||| %0),1);@Yu:%1@_yT(%2);public @Yu:%1@_yT(%2){%4(%2);}%4

@@ -62,6 +62,22 @@ Changelog:
 
 #include "internal\y_natives"
 
+#if !defined _ALS_
+	forward public _ALS_();
+	
+	_ALS_()<_ALS_:unhooked>
+	{
+	}
+	
+	_ALS_()<_ALS_:hooked>
+	{
+	}
+	
+	_ALS_()<>
+	{
+	}
+#endif
+
 forward _ScriptInit_FixState();
 
 #if defined FILTERSCRIPT
@@ -73,7 +89,9 @@ forward _ScriptInit_FixState();
 	public OnFilterScriptInit()
 	{
 		state _script_init_fix_state : true;
-		CallLocalFunction("ScriptInit_OnScriptInit", "");
+		//CallLocalFunction("__YSI_SpecialInit", "");
+		state _ALS_:hooked;
+		ScriptInit_OnScriptInit();
 		#if defined YSI_LOCK_MODE
 			if (strlen(YSI_gLockData[5]) !=
 				floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
@@ -85,36 +103,38 @@ forward _ScriptInit_FixState();
 			}
 		#endif
 		//CallRemoteFunction("ScriptInit_OnAnyScriptInit", "");
-		CallLocalFunction("ScriptInit_OnFilterScriptInit", "");
-		//CallLocalFunction("ScriptInit_OnScriptInitLate", "");
+		//ScriptInit_OnFilterScriptInit();
+		return ScriptInit_OnFilterScriptInit();
+		//ScriptInit_OnScriptInitLate();
 		//CallLocalFunction("Text_Special_OnScriptInit", "");
 	}
+	
+	forward ScriptInit_OnFilterScriptInit();public ScriptInit_OnFilterScriptInit()<_ALS_:unhooked>{return 1;}public ScriptInit_OnFilterScriptInit()<>{return 1;}
+	
+	//public ScriptInit_OnFilterScriptInit() <_ALS_:unhooked> return 1;
+	//public ScriptInit_OnFilterScriptInit() <> return 1;
 	
 	#if defined _ALS_OnFilterScriptInit
 		#undef OnFilterScriptInit
 	#else
 		#define _ALS_OnFilterScriptInit
 	#endif
-	#define OnFilterScriptInit ScriptInit_OnFilterScriptInit
-	
-	forward ScriptInit_OnFilterScriptInit();
+	#define OnFilterScriptInit(%0) ScriptInit_OnFilterScriptInit(%0) <_ALS_:hooked>
 #else
 	// People can't be trusted to use "FILTERSCRIPT"...
-	new
-		#if !defined YSI_FILTERSCRIPT
-			bool:YSI_FILTERSCRIPT = false,
-		#endif
-		bool:YSI_g_sScriptInitGM,
-		bool:YSI_g_sScriptExitGM;
+	#if !defined YSI_FILTERSCRIPT
+		new
+			bool:YSI_FILTERSCRIPT = false;
+	#endif
 	
 	public OnFilterScriptInit()
 	{
 		state _script_init_fix_state : true;
 		//printf("OFSI");
 		YSI_FILTERSCRIPT = true;
-		YSI_g_sScriptInitGM = funcidx("ScriptInit_OnGameModeInit") != -1;
-		YSI_g_sScriptExitGM = funcidx("ScriptInit_OnGameModeExit") != -1;
-		CallLocalFunction("ScriptInit_OnScriptInit", "");
+		//CallLocalFunction("__YSI_SpecialInit", "");
+		state _ALS_:hooked;
+		ScriptInit_OnScriptInit();
 		#if defined YSI_LOCK_MODE
 			new
 				str[16];
@@ -126,9 +146,8 @@ forward _ScriptInit_FixState();
 			}
 		#endif
 		//CallRemoteFunction("ScriptInit_OnAnyScriptInit", "");
-		CallLocalFunction("ScriptInit_OnFilterScriptInit", "");
-		//CallLocalFunction("ScriptInit_OnScriptInitLate", "");
-		//CallLocalFunction("Text_SpecialInit", "");
+		return ScriptInit_OnFilterScriptInit();
+		//ScriptInit_OnScriptInitLate();
 	}
 	
 	public OnGameModeInit()
@@ -136,15 +155,16 @@ forward _ScriptInit_FixState();
 		if (YSI_FILTERSCRIPT)
 		{
 			state _script_init_fix_state : true;
-			if (YSI_g_sScriptInitGM)
-			{
-				CallLocalFunction("ScriptInit_OnGameModeInit", "");
-			}
+			return ScriptInit_OnGameModeInit();
 		}
 		else
 		{
 			state _script_init_fix_state : false;
-			CallLocalFunction("ScriptInit_OnScriptInit", "");
+			//CallLocalFunction("__YSI_SpecialInit", "");
+			state _ALS_:hooked;
+			printf("OnScriptInit 1");
+			ScriptInit_OnScriptInit();
+			printf("OnScriptInit 2");
 			#if defined YSI_LOCK_MODE
 				if (YSI_gLockData[
 					floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
@@ -161,8 +181,12 @@ forward _ScriptInit_FixState();
 				}
 			#endif
 			//CallRemoteFunction("ScriptInit_OnAnyScriptInit", "");
-			CallLocalFunction("ScriptInit_OnGameModeInit", "");
-			//CallLocalFunction("ScriptInit_OnScriptLate", "");
+			printf("OnScriptInit 3");
+			ScriptInit_OnGameModeInit();
+			printf("OnScriptInit 4");
+			return 222;
+//			return ScriptInit_OnGameModeInit();
+			//ScriptInit_OnScriptLate();
 			//CallLocalFunction("Text_SpecialInit", "");
 		}
 	}
@@ -172,26 +196,30 @@ forward _ScriptInit_FixState();
 	#else
 		#define _ALS_OnGameModeInit
 	#endif
-	#define OnGameModeInit ScriptInit_OnGameModeInit
+	#define OnGameModeInit(%0) ScriptInit_OnGameModeInit(%0) <_ALS_:hooked>
 	
 	#if defined _ALS_OnFilterScriptInit
 		#undef OnFilterScriptInit
 	#else
 		#define _ALS_OnFilterScriptInit
 	#endif
-	#define OnFilterScriptInit ScriptInit_OnFilterScriptInit
+	#define OnFilterScriptInit(%0) ScriptInit_OnFilterScriptInit(%0) <_ALS_:hooked>
 	
-	forward ScriptInit_OnFilterScriptInit();
-	forward ScriptInit_OnGameModeInit();
+	forward ScriptInit_OnFilterScriptInit();public ScriptInit_OnFilterScriptInit()<_ALS_:unhooked>{return 1;}public ScriptInit_OnFilterScriptInit()<>{return 1;}
+	forward ScriptInit_OnGameModeInit();public ScriptInit_OnGameModeInit()<_ALS_:unhooked>{return 1;}public ScriptInit_OnGameModeInit()<>{return 1;}
 #endif
 
 #if defined FILTERSCRIPT
 	public OnFilterScriptExit()
 	{
-		CallLocalFunction("ScriptInit_OnScriptExit", "");
+		ScriptInit_OnScriptExit();
 		//CallRemoteFunction("ScriptInit_OnAnyScriptExit", "");
-		CallLocalFunction("ScriptInit_OnFilterScriptExit", "");
-		//CallLocalFunction("ScriptInit_OnScriptExitLate", "");
+		new
+			ret = ScriptInit_OnFilterScriptExit();
+		//ScriptInit_OnScriptExitLate();
+		//CallLocalFunction("__YSI_SpecialExit", "");
+		__YSI_SpecialExit();
+		return ret;
 	}
 	
 	#if defined _ALS_OnFilterScriptExit
@@ -199,40 +227,46 @@ forward _ScriptInit_FixState();
 	#else
 		#define _ALS_OnFilterScriptExit
 	#endif
-	#define OnFilterScriptExit ScriptInit_OnFilterScriptExit
+	#define OnFilterScriptExit(%0) ScriptInit_OnFilterScriptExit(%0) <_ALS_:hooked>
 	
-	forward ScriptInit_OnFilterScriptExit();
+	forward ScriptInit_OnFilterScriptExit();public ScriptInit_OnFilterScriptExit()<_ALS_:unhooked>{return 1;}public ScriptInit_OnFilterScriptExit()<>{return 1;}
 #else
 	public OnFilterScriptExit()
 	{
 		if (YSI_FILTERSCRIPT)
 		{
-			CallLocalFunction("ScriptInit_OnScriptExit", "");
+			ScriptInit_OnScriptExit();
 			//CallRemoteFunction("ScriptInit_OnAnyScriptExit", "");
-			CallLocalFunction("ScriptInit_OnFilterScriptExit", "");
-			//CallLocalFunction("ScriptInit_OnScriptExitLate", "");
+			new
+				ret = ScriptInit_OnFilterScriptExit();
+			//ScriptInit_OnScriptExitLate();
+			//CallLocalFunction("__YSI_SpecialExit", "");
+			__YSI_SpecialExit();
+			return ret;
 		}
+		return 1;
 	}
-
+	
 	public OnGameModeExit()
 	{
 		//printf("ScriptInit_OnGameModeExit");
 		if (YSI_FILTERSCRIPT)
 		{
-			if (YSI_g_sScriptExitGM)
-			{
-				CallLocalFunction("ScriptInit_OnGameModeExit", "");
-			}
+			return ScriptInit_OnGameModeExit();
 		}
 		else
 		{
 			//printf("NF 0");
-			CallLocalFunction("ScriptInit_OnScriptExit", "");
+			ScriptInit_OnScriptExit();
 			//printf("NF 1");
 			//CallRemoteFunction("ScriptInit_OnAnyScriptExit", "");
-			CallLocalFunction("ScriptInit_OnGameModeExit", "");
+			new
+				ret = ScriptInit_OnGameModeExit();
 			//printf("NF 2");
-			//CallLocalFunction("ScriptInit_OnScriptExitLate", "");
+			//ScriptInit_OnScriptExitLate();
+			//CallLocalFunction("__YSI_SpecialExit", "");
+			__YSI_SpecialExit();
+			return ret;
 		}
 	}
 	
@@ -241,36 +275,47 @@ forward _ScriptInit_FixState();
 	#else
 		#define _ALS_OnGameModeExit
 	#endif
-	#define OnGameModeExit ScriptInit_OnGameModeExit
+	#define OnGameModeExit(%0) ScriptInit_OnGameModeExit(%0) <_ALS_:hooked>
 	
 	#if defined _ALS_OnFilterScriptExit
 		#undef OnFilterScriptExit
 	#else
 		#define _ALS_OnFilterScriptExit
 	#endif
-	#define OnFilterScriptExit ScriptInit_OnFilterScriptExit
+	#define OnFilterScriptExit(%0) ScriptInit_OnFilterScriptExit(%0) <_ALS_:hooked>
 	
-	forward ScriptInit_OnFilterScriptExit();
-	forward ScriptInit_OnGameModeExit();
+	forward ScriptInit_OnFilterScriptExit();public ScriptInit_OnFilterScriptExit()<_ALS_:unhooked>{return 1;}public ScriptInit_OnFilterScriptExit()<>{return 1;}
+	forward ScriptInit_OnGameModeExit();public ScriptInit_OnGameModeExit()<_ALS_:unhooked>{return 1;}public ScriptInit_OnGameModeExit()<>{return 1;}
 #endif
 
-#define OnScriptInit ScriptInit_OnScriptInit
-forward OnScriptInit();
+#define OnScriptInit(%0) ScriptInit_OnScriptInit(%0) <_ALS_:hooked>
+#define _ALS_OnScriptInit
+forward ScriptInit_OnScriptInit();public ScriptInit_OnScriptInit()<_ALS_:unhooked>{return 1;}public ScriptInit_OnScriptInit()<>{return 1;}
 
-#define OnScriptExit ScriptInit_OnScriptExit
-forward OnScriptExit();
+#define OnScriptExit(%0) ScriptInit_OnScriptExit(%0) <_ALS_:hooked>
+#define _ALS_OnScriptExit
+forward ScriptInit_OnScriptExit();public ScriptInit_OnScriptExit()<_ALS_:unhooked>{return 1;}public ScriptInit_OnScriptExit()<>{return 1;}
 
-/*#define OnScriptInitLate ScriptInit_OnScriptInitLate
-forward OnScriptInitLate();
+//#define _YSI_SpecialInit __YSI_SpecialInit
+//#define _ALS__YSI_SpecialInit
+//forward _YSI_SpecialInit();
 
-#define OnScriptExitLate ScriptInit_OnScriptExitLate
-forward OnScriptExitLate();
+#define _YSI_SpecialExit(%0) __YSI_SpecialExit(%0) <_ALS_:hooked>
+#define _ALS__YSI_SpecialExit
+//forward _YSI_SpecialExit();
+forward __YSI_SpecialExit();public __YSI_SpecialExit()<_ALS_:unhooked>{return 1;}public __YSI_SpecialExit()<>{return 1;}
 
-#define OnAnyScriptInit ScriptInit_OnAnyScriptInit
-forward OnAnyScriptInit();
+/*#define OnScriptInitLate(%0) ScriptInit_OnScriptInitLate(%0) <_ALS_:hooked>
+forward OnScriptInitLate();public OnScriptInitLate()<_ALS_:unhooked>{return 1;}public OnScriptInitLate()<>{return 1;}
 
-#define OnAnyScriptExit ScriptInit_OnAnyScriptExit
-forward OnAnyScriptExit();*/
+#define OnScriptExitLate(%0) ScriptInit_OnScriptExitLate(%0) <_ALS_:hooked>
+forward OnScriptExitLate();public OnScriptExitLate()<_ALS_:unhooked>{return 1;}public OnScriptExitLate()<>{return 1;}
+
+#define OnAnyScriptInit(%0) ScriptInit_OnAnyScriptInit(%0) <_ALS_:hooked>
+forward OnAnyScriptInit();public OnAnyScriptInit()<_ALS_:unhooked>{return 1;}public OnAnyScriptInit()<>{return 1;}
+
+#define OnAnyScriptExit(%0) ScriptInit_OnAnyScriptExit(%0) <_ALS_:hooked>
+forward OnAnyScriptExit();public OnAnyScriptExit()<_ALS_:unhooked>{return 1;}public OnAnyScriptExit()<>{return 1;}*/
 
 // I'm not quite sure what causes it, but there seems to be a bug in the
 // compiler somewhere which messes up the "ysi_debug" automaton and the

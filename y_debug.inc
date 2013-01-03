@@ -345,6 +345,30 @@ stock Debug_Print0(str[], {Float,_}:...) <>
 	#pragma unused str
 }
 
+stock Debug_PrintArray(arr[], size)
+{
+	new
+		str[96];
+	switch (size)
+	{
+		case 0:
+			str = "<>";
+		case 1:
+			format(str, sizeof (str), "<%d>", arr[0]);
+		case 2:
+			format(str, sizeof (str), "<%d, %d>", arr[0], arr[1]);
+		case 3:
+			format(str, sizeof (str), "<%d, %d, %d>", arr[0], arr[1], arr[2]);
+		case 4:
+			format(str, sizeof (str), "<%d, %d, %d, %d>", arr[0], arr[1], arr[2], arr[3]);
+		case 5:
+			format(str, sizeof (str), "<%d, %d, %d, %d, %d>", arr[0], arr[1], arr[2], arr[3], arr[4]);
+		default:
+			format(str, sizeof (str), "<%d, %d, %d, %d, %d, ... (+ %d)>", arr[0], arr[1], arr[2], arr[3], arr[4], size - 5);
+	}
+	return str;
+}
+
 /*#if _DEBUG > 0
 	#define Debug_Print0(%1); \
 		printf(%1);
@@ -352,20 +376,19 @@ stock Debug_Print0(str[], {Float,_}:...) <>
 
 public OnScriptInit()
 {
-	goto Debug_OnScriptInit_check_fault;
-Debug_OnScriptInit_no_fault:
-	CallLocalFunction("Debug_OnScriptInit", "");
-	// Fake the "return" instruction to avoid warnings we know won't happen.
-	#emit CONST.pri 1
-	#emit RETN
-Debug_OnScriptInit_check_fault:
-	//printf("FILTERSCRIPT: %d, %s", YSI_FILTERSCRIPT, #OnScriptInit);
-	//printf("1");
 	Debug_SetState();
+	new
+		s;
+	// Test the ADDRESS of the variable, not the value.
 	#emit CONST.pri YSI_FILTERSCRIPT
-	//#emit PUSH.C    ysi_debug
-	#emit JNZ       Debug_OnScriptInit_no_fault
+	#emit STOR.S.pri s
+	if (s)
+	{
+		//goto Debug_OnScriptInit_no_fault();
+		return Debug_OnScriptInit();
+	}
 	P:F("YSI_FILTERSCRIPT == 0");
+	while (s != 10000000) ++s;
 	#emit CONST.pri 0
 	#emit SCTRL     6
 	return 1;
@@ -381,5 +404,5 @@ static stock Debug_SetState() <>
 }
 
 #undef OnScriptInit
-#define OnScriptInit Debug_OnScriptInit
-forward OnScriptInit();
+#define OnScriptInit(%0) Debug_OnScriptInit(%0) <_ALS_:hooked>
+forward Debug_OnScriptInit();public Debug_OnScriptInit()<_ALS_:unhooked>{return 1;}public Debug_OnScriptInit()<>{return 1;}
