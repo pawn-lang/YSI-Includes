@@ -126,13 +126,17 @@ Natives:
 			YSI_gLockData[YSI_gLockData[2]++] = (YSI_gLockData[3] | 0x09) & ~0x04;
 			YSI_gLockData[2] *= (6 * x) - 5;
 		#endif
-		YVers_OnScriptInit();
+		#if defined YVers_OnScriptInit
+			YVers_OnScriptInit();
+		#endif
 		return 1;
 	}
 	
 	#undef OnScriptInit
-	#define OnScriptInit(%0) YVers_OnScriptInit(%0) <_ALS_:hooked>
-	forward YVers_OnScriptInit();public YVers_OnScriptInit()<_ALS_:unhooked>{return 1;}public YVers_OnScriptInit()<>{return 1;}
+	#define OnScriptInit YVers_OnScriptInit
+	#if defined YVers_OnScriptInit
+		forward YVers_OnScriptInit();
+	#endif
 	
 #else
 	/*------------------------------------------------------------------------*\
@@ -169,13 +173,17 @@ Natives:
 			print(" |                                     | ");
 			print(" ======================================= ");
 			print(" ");
-			YVers_OnScriptInit();
+			#if defined YVers_OnScriptInit
+				YVers_OnScriptInit();
+			#endif
 			return 1;
 		}
 		
 		#undef OnScriptInit
-		#define OnScriptInit(%0) YVers_OnScriptInit(%0) <_ALS_:hooked>
-		forward YVers_OnScriptInit();public YVers_OnScriptInit()<_ALS_:unhooked>{return 1;}public YVers_OnScriptInit()<>{return 1;}
+		#define OnScriptInit YVers_OnScriptInit
+		#if defined YVers_OnScriptInit
+			forward YVers_OnScriptInit();
+		#endif
 		
 		#endinput
 	#endif
@@ -232,13 +240,17 @@ Natives:
 		// This remote script has now been updated to include changelog
 		// information and keeps a record of what IPs are connecting.
 		HTTP(0, HTTP_GET, "ysi-version.y-less.com/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, "", "YVers_Callback");
-		YVers_OnScriptInit();
+		#if defined YVers_OnScriptInit
+			YVers_OnScriptInit();
+		#endif
 		return 1;
 	}
 	
 	#undef OnScriptInit
-	#define OnScriptInit(%0) YVers_OnScriptInit(%0) <_ALS_:hooked>
-	forward YVers_OnScriptInit();public YVers_OnScriptInit()<_ALS_:unhooked>{return 1;}public YVers_OnScriptInit()<>{return 1;}
+	#define OnScriptInit YVers_OnScriptInit
+	#if defined YVers_OnScriptInit
+		forward YVers_OnScriptInit();
+	#endif
 	
 	/*------------------------------------------------------------------------*\
 	Function:

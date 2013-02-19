@@ -354,17 +354,27 @@ public OnScriptInit()
 	C:1(if (_@ == -1) P:E("MasterID not assigned"););
 	// Make sure this is called before all other YSI initialisations, at least
 	// all the ones which use the master system.
-	YSIM_OnMasterSystemInit();
+	#if defined YSIM_OnMasterSystemInit
+		YSIM_OnMasterSystemInit();
+	#endif
 	// Just use one name...
-	return Master_OnScriptInit();
+	#if defined Master_OnScriptInit
+		return Master_OnScriptInit();
+	#else
+		return 1;
+	#endif
 }
 
 #undef OnScriptInit
-#define OnScriptInit(%0) Master_OnScriptInit(%0) <_ALS_:hooked>
-forward Master_OnScriptInit();public Master_OnScriptInit()<_ALS_:unhooked>{return 1;}public Master_OnScriptInit()<>{return 1;}
+#define OnScriptInit Master_OnScriptInit
+#if defined Master_OnScriptInit
+	forward Master_OnScriptInit();
+#endif
 
-#define OnMasterSystemInit(%0) YSIM_OnMasterSystemInit(%0) <_ALS_:hooked>
-forward YSIM_OnMasterSystemInit();public YSIM_OnMasterSystemInit()<_ALS_:unhooked>{return 1;}public YSIM_OnMasterSystemInit()<>{return 1;}
+#define OnMasterSystemInit YSIM_OnMasterSystemInit
+#if defined YSIM_OnMasterSystemInit
+	forward YSIM_OnMasterSystemInit();
+#endif
 
 /*----------------------------------------------------------------------------*\
 Hook:
@@ -393,14 +403,18 @@ public OnScriptExit()
 		// the case.
 	}
 	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~(1 << _@));
-	YSIM_OnScriptExit();
+	#if defined YSIM_OnScriptExit
+		YSIM_OnScriptExit();
+	#endif
 	CallRemoteFunction("Master_OnScriptClose", "i", _@);
 	return 1;
 }
 
 #undef OnScriptExit
-#define OnScriptExit(%0) YSIM_OnScriptExit(%0) <_ALS_:hooked>
-forward YSIM_OnScriptExit();public YSIM_OnScriptExit()<_ALS_:unhooked>{return 1;}public YSIM_OnScriptExit()<>{return 1;}
+#define OnScriptExit YSIM_OnScriptExit
+#if defined YSIM_OnScriptExit
+	forward YSIM_OnScriptExit();
+#endif
 
 /*----------------------------------------------------------------------------*\
 Function:

@@ -77,29 +77,39 @@ Changelog:
 #endif
 
 #include "internal\y_version"
-#include "y_amx"
-#include "internal\y_shortfunc"
-#include "y_malloc"
-#include "y_iterate"
-// This will be called twice and means there are two separate OnScriptInit
-// functions in this file.
-#include "y_hooks"
-#include "y_debug"
+#include "internal\y_plugins"
 
-#define task%0[%1](%2) %0@yT_(g,p);public%0@yT_(g,p){static s=-1;return _Timer_I(#%0,%1,g,s);}%0();public%0()
-
-#define ptask%0[%1](%2) stock %0_yT@=1;%0@yT_(g,p);public%0@yT_(g,p){static s[MAX_PLAYERS]={-1,...},a[2];return _Timer_D(#%0@_yT,%1,g,p,s,%0_yT@,a);}%0@_yT(p);public%0@_yT(p)if(%0_yT@)%0(p);%0(%2)
-
-#define pause%0; {J@=_:@Ym:%0@yT_(0,-1);}
-#define resume%0; {J@=_:@Ym:%0@yT_(1,-1);}
-#define @Ym:%0:%1@yT_(%2,-1) %0@yT_(%2,%1)
+#if defined _YSI_PLUGINS_FIXES_2
+	// In this case, we don't need any of the malloc code to store strings and
+	// arrays, we can just rely on the plugin to do it for us.
+	#include "y_amx"
+	#include "internal\y_shortfunc"
+	#include "y_iterate"
+	// This will be called twice and means there are two separate OnScriptInit
+	// functions in this file.
+	#include "y_hooks"
+	#include "y_debug"
+	
+	//#define Y_TIMERS_FUNC%0On%1(%2) stock UNIQUE_FUNCTION<%1...>(%2)
+	#define Y_TIMERS_FUNC hook
+#else
+	#include "y_amx"
+	#include "internal\y_shortfunc"
+	#include "y_malloc"
+	#include "y_iterate"
+	// This will be called twice and means there are two separate OnScriptInit
+	// functions in this file.
+	#include "y_hooks"
+	#include "y_debug"
+	#define Y_TIMERS_FUNC hook
+#endif
 
 static stock
 	Alloc:YSI_g_sLastSlot = NO_ALLOC,
 	Alloc:YSI_g_sFirstSlot = NO_ALLOC,
 	YSI_g_sPlayerTimers = -1;
 
-hook OnScriptInit()
+Y_TIMERS_FUNC OnScriptInit()
 {
 	P:1("hook Timers_OnScriptInit called");
 	new
@@ -153,7 +163,9 @@ hook OnScriptInit()
 				#emit LOAD.S.pri pointer2
 				#emit SCTRL      6
 				#emit STOR.S.pri time2
-				if (time2 == time)
+				// Check if the new time is a FACTOR, SAME, or MULTIPLE of this
+				// task, so we don't start different timers together.
+				if (time2 == time || time / time2 * time2 == time || time2 / time * time == time2)
 				{
 					++total;
 					if (idx2 < idx)
@@ -180,7 +192,7 @@ hook OnScriptInit()
 	P:1("hook Timers_OnScriptInit ended");
 }
 
-hook OnPlayerConnect(playerid)
+Y_TIMERS_FUNC OnPlayerConnect(playerid)
 {
 	P:1("hook Timers_OnPlayerConnect called: %d", playerid);
 	// Loop through all the per-player timers.  Correctly finds them all from a
@@ -215,7 +227,7 @@ hook OnPlayerConnect(playerid)
 	P:1("hook Timers_OnPlayerConnect ended");
 }
 
-hook OnPlayerDisconnect(playerid, reason)
+Y_TIMERS_FUNC OnPlayerDisconnect(playerid, reason)
 {
 	P:1("hook Timers_OnPlayerDisconnect called: %d, %d, playerid, reason");
 	// Loop through all the per-player timers.  Correctly finds them all from a
@@ -453,59 +465,107 @@ stock _Timer_H(slot)
 	_Timer_F(~(slot - 1));
 }
 
-// These are the tag-type definitions for the various possible parameter types.
-// Array-like definitions.
-#define @Yf:@Yg:@Yh:#%0#%1|||%3[%4]|||%5,%6;%8>%9||| @Ye:@Yw:#%0#%1|||%3[%4]|||%5,%6;%9|||
+#define task%0[%1](%2) %0@yT_(g,p);public%0@yT_(g,p){static s=-1;return _Timer_I(#%0,%1,g,s);}%0();public%0()
 
-#define @Ye:@Yw:#%0#%1|||%2string:%3[%4]|||%5,%6;%9||| @Yf:@Yg:@Yh:#%0d#%1,_Timer_S(%3)|||%5|||%6;1>%9,@Yv&%3&|||
+#define ptask%0[%1](%2) stock %0_yT@=1;%0@yT_(g,p);public%0@yT_(g,p){static s[MAX_PLAYERS]={-1,...},a[2];return _Timer_D(#%0@_yT,%1,g,p,s,%0_yT@,a);}%0@_yT(p);public%0@_yT(p)if(%0_yT@)%0(p);%0(%2)
 
-// This one has an extra parameter because arrays must always be followed by
-// their length.
-#define @Yw:#%0#%1|||%3[%4]|||%5,%6,%7;%9||| @Yf:@Yg:@Yh:#%0d#%1,_Timer_A(%3,%5)|||%5|||%6,%7;1>%9,@Yv&%3&|||
+#define pause%0; {J@=_:@Ym:%0@yT_(0,-1);}
+#define resume%0; {J@=_:@Ym:%0@yT_(1,-1);}
+#define @Ym:%0:%1@yT_(%2,-1) %0@yT_(%2,%1)
 
-// Tag-like definitions.
-#define @Yg:@Yh:#%0#%1|||%2:%3|||%5,%6;%8>%9||| @Yf:@Yg:@Yh:#%0d#%1,%2:%3|||%5|||%6;%8>%9,%2:%3|||
-
-// Others.
-#define @Yh:#%0#%1|||%3|||%5,%6;%8>%9||| @Yf:@Yg:@Yh:#%0d#%1,%3|||%5|||%6;%8>%9,%3|||
-
-// Main entry point for defer type determination.
-#define _YT@CR:%0,%1)%8>%2||| @Yf:@Yg:@Yh:#i#,@Yx:J@|||%0|||%1;%8>%2|||
-
-// Define for "defer" with timer, parameters and main function.
-#define YSI_timer%0[%1]%3(%2) stock%0_yT@(%2)return _Timer_C(O@(#%0@_yT,(I@==-1)?(%1):I@,J@,_YT@CR:%2,,)0>%0|||%0|||(%2)
-
-// Expand additional parameters out to three functions after processing.
-//#define @Yx:%0||||||;%1,%2|||%4||| %0),1);@Yu:%1@_yT(%2);public @Yu:%1@_yT(%2){%4(%2);}%4
-#define @Yx:%0||||||;%8>%1,%2|||%4||| %0),%8);@Yj:%1@_yT(__r,%2);public @Yj:%1@_yT(__r,%2){%4(%2);}%4
-
-// Can't believe I never thought of this before!  If only there was a way to
-// make it less generic than "id".
-#define id#,@Yx:J@,||||||;%8>%1,%2|||%4||| ),0);%1@_yT();public%1@_yT(){%4();}%4
-
-// Remove excess "_Timer_G" and "_Timer_B".
-#define @Yj:%0(%5){%1(%8&%2&%3)%9} @Yj:%0(%5){%1(%8:YSI_gMallocMemory[%2]%3);@Yl(@Yk:%2)%9}
-//#define @Yu:%0{%1(%8&%2&%3)%9} @Yu:%0{%1(%8:YSI_gMallocMemory[%2]%3)%9}
-#define @Yv&%0& %0
-
-//#define @Yk:%0);@Yl(@Yk:%1); %0,@Yk:%1);
-// I'm not entirely sure why this works in reverse order, but I'm glad it does!
-#define @Yk:%0);@Yl(@Yk:%1); @Yk:%0);
-#define @Yl if(!__r)_Timer_F
-
-//#define string:
-
-#define defer%0(%1) (J@=0,I@=-1,Timer:%0_yT@(%1))
-
-#define repeat%0(%1) (J@=1,I@=-1,Timer:%0_yT@(%1))
-
-// Custom time.
-#define Timer:%0[%1]_yT@(%2) I@=%1,Timer:%0_yT@(%2)
-
-#define stop%0; {_Timer_F(_:%0);}
+#if defined _YSI_PLUGINS_FIXES_2
+	// These are the tag-type definitions for the various possible parameter types.
+	// Array-like definitions.
+	#define @Yf:@Yg:@Yh:@Yx:#%0#%1|||%3[%4]|||%5,%6;%9||| @Ye:@Yw:#%0#%1|||%3[%4]|||%5,%6;%9|||
+	
+	#define @Ye:@Yw:#%0#%1|||%2string:%3[%4]|||%5,%6;%9||| @Yf:@Yg:@Yh:@Yx:#%0s#%1,%3|||%5|||%6;%9,%3|||
+	
+	// This one has an extra parameter because arrays must always be followed by
+	// their length.
+	#define @Yw:#%0#%1|||%3[%4]|||%5,%6,%7;%9||| @Yf:@Yg:@Yh:@Yx:#%0ad#%1,%3,%5|||%6|||%7;%9,%3,%5|||
+	
+	// Tag-like definitions.
+	#define @Yg:@Yh:@Yx:#%0#%1|||%2:%3|||%5,%6;%9||| @Yf:@Yg:@Yh:@Yx:#%0d#%1,%2:%3|||%5|||%6;%9,%2:%3|||
+	
+	// Others.
+	#define @Yh:@Yx:#%0#%1|||%3|||%5,%6;%9||| @Yf:@Yg:@Yh:@Yx:#%0d#%1,%3|||%5|||%6;%9,%3|||
+	
+	// Main entry point for defer type determination.
+	#define _YT@CR:%0,%1)%2||| @Yf:@Yg:@Yh:@Yx:##|||%0|||%1;%2|||
+	
+	// Define for "defer" with timer, parameters and main function.
+	#define YSI_timer%0[%1]%3(%2) stock%0_yT@(%2)return SetTimerEx(#%0,(I@==-1)?(%1):I@,@Yj:J@,_YT@CR:%2,,)%0|||%0|||(%2)
+	
+	// Expand additional parameters out to three functions after processing.
+	#define @Yx:%0||||||;%1,%2|||%4|||(%5) %0);%1(%5);public%4(%5)
+	
+	// Can't believe I never thought of this before!  If only there was a way to
+	// make it less generic than "id".
+	#define @Yj:J@,_YT@CR:,,)%0|||%1|||(%3) J@,#);%0();public%0()
+	
+	#define defer%0(%1) (J@=0,I@=-1,Timer:%0_yT@(%1))
+	
+	#define repeat%0(%1) (J@=1,I@=-1,Timer:%0_yT@(%1))
+	
+	// Custom time.
+	#define Timer:%0[%1]_yT@(%2) I@=%1,Timer:%0_yT@(%2)
+	
+	#define stop%0; {KillTimer(_:%0);}
+#else
+	// These are the tag-type definitions for the various possible parameter types.
+	// Array-like definitions.
+	#define @Yf:@Yg:@Yh:#%0#%1|||%3[%4]|||%5,%6;%8>%9||| @Ye:@Yw:#%0#%1|||%3[%4]|||%5,%6;%9|||
+	
+	#define @Ye:@Yw:#%0#%1|||%2string:%3[%4]|||%5,%6;%9||| @Yf:@Yg:@Yh:#%0d#%1,_Timer_S(%3)|||%5|||%6;1>%9,@Yv&%3&|||
+	
+	// This one has an extra parameter because arrays must always be followed by
+	// their length.
+	#define @Yw:#%0#%1|||%3[%4]|||%5,%6,%7;%9||| @Yf:@Yg:@Yh:#%0d#%1,_Timer_A(%3,%5)|||%5|||%6,%7;1>%9,@Yv&%3&|||
+	
+	// Tag-like definitions.
+	#define @Yg:@Yh:#%0#%1|||%2:%3|||%5,%6;%8>%9||| @Yf:@Yg:@Yh:#%0d#%1,%2:%3|||%5|||%6;%8>%9,%2:%3|||
+	
+	// Others.
+	#define @Yh:#%0#%1|||%3|||%5,%6;%8>%9||| @Yf:@Yg:@Yh:#%0d#%1,%3|||%5|||%6;%8>%9,%3|||
+	
+	// Main entry point for defer type determination.
+	#define _YT@CR:%0,%1)%8>%2||| @Yf:@Yg:@Yh:#i#,@Yx:J@|||%0|||%1;%8>%2|||
+	
+	// Define for "defer" with timer, parameters and main function.
+	#define YSI_timer%0[%1]%3(%2) stock%0_yT@(%2)return _Timer_C(O@(#%0@_yT,(I@==-1)?(%1):I@,J@,_YT@CR:%2,,)0>%0|||%0|||(%2)
+	
+	// Expand additional parameters out to three functions after processing.
+	//#define @Yx:%0||||||;%1,%2|||%4||| %0),1);@Yu:%1@_yT(%2);public @Yu:%1@_yT(%2){%4(%2);}%4
+	#define @Yx:%0||||||;%8>%1,%2|||%4||| %0),%8);@Yj:%1@_yT(__r,%2);public @Yj:%1@_yT(__r,%2){%4(%2);}%4
+	
+	// Can't believe I never thought of this before!  If only there was a way to
+	// make it less generic than "id".
+	#define id#,@Yx:J@,||||||;%8>%1,%2|||%4||| ),0);%1@_yT();public%1@_yT(){%4();}%4
+	
+	// Remove excess "_Timer_G" and "_Timer_B".
+	#define @Yj:%0(%5){%1(%8&%2&%3)%9} @Yj:%0(%5){%1(%8:YSI_gMallocMemory[%2]%3);@Yl(@Yk:%2)%9}
+	//#define @Yu:%0{%1(%8&%2&%3)%9} @Yu:%0{%1(%8:YSI_gMallocMemory[%2]%3)%9}
+	#define @Yv&%0& %0
+	
+	// I'm not entirely sure why this works in reverse order, but I'm glad it does!
+	#define @Yk:%0);@Yl(@Yk:%1); @Yk:%0);
+	#define @Yl if(!__r)_Timer_F
+	
+	#define defer%0(%1) (J@=0,I@=-1,Timer:%0_yT@(%1))
+	
+	#define repeat%0(%1) (J@=1,I@=-1,Timer:%0_yT@(%1))
+	
+	// Custom time.
+	#define Timer:%0[%1]_yT@(%2) I@=%1,Timer:%0_yT@(%2)
+	
+	#define stop%0; {_Timer_F(_:%0);}
+#endif
 
 #define timerfunc YSI_timer
 
 #if !defined YSI_NO_timer
 	#define timer YSI_timer
 #endif
+
+
+#undef Y_TIMERS_FUNC

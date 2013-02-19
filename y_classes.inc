@@ -686,7 +686,7 @@ public _Class_OtherRequestSpawn(playerid)
 		#emit LCTRL      6
 		#emit ADD.C      28
 		#emit PUSH.pri
-		#emit LOAD.pri   YSI_g_sHookC
+		#emit LOAD.pri   YSI_g_sHookS
 		#emit SCTRL      6
 		#emit RETN
 	}

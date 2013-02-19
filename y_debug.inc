@@ -385,7 +385,11 @@ public OnScriptInit()
 	if (s)
 	{
 		//goto Debug_OnScriptInit_no_fault();
-		return Debug_OnScriptInit();
+		#if defined Debug_OnScriptInit
+			return Debug_OnScriptInit();
+		#else
+			return 1;
+		#endif
 	}
 	P:F("YSI_FILTERSCRIPT == 0");
 	while (s != 10000000) ++s;
@@ -404,5 +408,7 @@ static stock Debug_SetState() <>
 }
 
 #undef OnScriptInit
-#define OnScriptInit(%0) Debug_OnScriptInit(%0) <_ALS_:hooked>
-forward Debug_OnScriptInit();public Debug_OnScriptInit()<_ALS_:unhooked>{return 1;}public Debug_OnScriptInit()<>{return 1;}
+#define OnScriptInit Debug_OnScriptInit
+#if defined Debug_OnScriptInit
+	forward Debug_OnScriptInit();
+#endif

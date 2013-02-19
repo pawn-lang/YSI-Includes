@@ -1124,13 +1124,273 @@ Natives:
 		#endif
 		// FINALLY call the new next one.
 		//CallLocalFunction(#_YCM_CALLBACK, "");
-		return _YCM_CALLBACK();
+		#if MASTER == 0
+			#if defined a@OnScriptInit
+				return a@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 1
+			#if defined b@OnScriptInit
+				return b@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 2
+			#if defined c@OnScriptInit
+				return c@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 3
+			#if defined d@OnScriptInit
+				return d@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 4
+			#if defined e@OnScriptInit
+				return e@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 5
+			#if defined f@OnScriptInit
+				return f@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 6
+			#if defined g@OnScriptInit
+				return g@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 7
+			#if defined h@OnScriptInit
+				return h@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 8
+			#if defined i@OnScriptInit
+				return i@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 9
+			#if defined j@OnScriptInit
+				return j@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 10
+			#if defined k@OnScriptInit
+				return k@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 11
+			#if defined l@OnScriptInit
+				return l@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 12
+			#if defined m@OnScriptInit
+				return m@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 13
+			#if defined n@OnScriptInit
+				return n@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 14
+			#if defined o@OnScriptInit
+				return o@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 15
+			#if defined p@OnScriptInit
+				return p@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 16
+			#if defined q@OnScriptInit
+				return q@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 17
+			#if defined r@OnScriptInit
+				return r@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 18
+			#if defined s@OnScriptInit
+				return s@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 19
+			#if defined t@OnScriptInit
+				return t@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 20
+			#if defined u@OnScriptInit
+				return u@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 21
+			#if defined v@OnScriptInit
+				return v@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 22
+			#if defined w@OnScriptInit
+				return w@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 23
+			#if defined x@OnScriptInit
+				return x@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 24
+			#if defined y@OnScriptInit
+				return y@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#elseif MASTER == 25
+			#if defined z@OnScriptInit
+				return z@OnScriptInit();
+			#else
+				return 1;
+			#endif
+		#endif
 	}
 	
 	// Don't need extra checks here as we KNOW it is already defined.
 	#undef OnMasterSystemInit
-	#define OnMasterSystemInit(%0) _YCM_CALLBACK(%0) <_ALS_:hooked>
-	forward _YCM_CALLBACK();public _YCM_CALLBACK()<_ALS_:unhooked>{return 1;}public _YCM_CALLBACK()<>{return 1;}
+	#define OnMasterSystemInit _YCM_CALLBACK
+	#if MASTER == 0
+		#if defined a@OnScriptInit
+			forward a@OnScriptInit();
+		#endif
+	#elseif MASTER == 1
+		#if defined b@OnScriptInit
+			forward b@OnScriptInit();
+		#endif
+	#elseif MASTER == 2
+		#if defined c@OnScriptInit
+			forward c@OnScriptInit();
+		#endif
+	#elseif MASTER == 3
+		#if defined d@OnScriptInit
+			forward d@OnScriptInit();
+		#endif
+	#elseif MASTER == 4
+		#if defined e@OnScriptInit
+			forward e@OnScriptInit();
+		#endif
+	#elseif MASTER == 5
+		#if defined f@OnScriptInit
+			forward f@OnScriptInit();
+		#endif
+	#elseif MASTER == 6
+		#if defined g@OnScriptInit
+			forward g@OnScriptInit();
+		#endif
+	#elseif MASTER == 7
+		#if defined h@OnScriptInit
+			forward h@OnScriptInit();
+		#endif
+	#elseif MASTER == 8
+		#if defined i@OnScriptInit
+			forward i@OnScriptInit();
+		#endif
+	#elseif MASTER == 9
+		#if defined j@OnScriptInit
+			forward j@OnScriptInit();
+		#endif
+	#elseif MASTER == 10
+		#if defined k@OnScriptInit
+			forward k@OnScriptInit();
+		#endif
+	#elseif MASTER == 11
+		#if defined l@OnScriptInit
+			forward l@OnScriptInit();
+		#endif
+	#elseif MASTER == 12
+		#if defined m@OnScriptInit
+			forward m@OnScriptInit();
+		#endif
+	#elseif MASTER == 13
+		#if defined n@OnScriptInit
+			forward n@OnScriptInit();
+		#endif
+	#elseif MASTER == 14
+		#if defined o@OnScriptInit
+			forward o@OnScriptInit();
+		#endif
+	#elseif MASTER == 15
+		#if defined p@OnScriptInit
+			forward p@OnScriptInit();
+		#endif
+	#elseif MASTER == 16
+		#if defined q@OnScriptInit
+			forward q@OnScriptInit();
+		#endif
+	#elseif MASTER == 17
+		#if defined r@OnScriptInit
+			forward r@OnScriptInit();
+		#endif
+	#elseif MASTER == 18
+		#if defined s@OnScriptInit
+			forward s@OnScriptInit();
+		#endif
+	#elseif MASTER == 19
+		#if defined t@OnScriptInit
+			forward t@OnScriptInit();
+		#endif
+	#elseif MASTER == 20
+		#if defined u@OnScriptInit
+			forward u@OnScriptInit();
+		#endif
+	#elseif MASTER == 21
+		#if defined v@OnScriptInit
+			forward v@OnScriptInit();
+		#endif
+	#elseif MASTER == 22
+		#if defined w@OnScriptInit
+			forward w@OnScriptInit();
+		#endif
+	#elseif MASTER == 23
+		#if defined x@OnScriptInit
+			forward x@OnScriptInit();
+		#endif
+	#elseif MASTER == 24
+		#if defined y@OnScriptInit
+			forward y@OnScriptInit();
+		#endif
+	#elseif MASTER == 25
+		#if defined z@OnScriptInit
+			forward z@OnScriptInit();
+		#endif
+	#endif
 #endif
 
 // The code below is now deprecated in favour of foreign/global!

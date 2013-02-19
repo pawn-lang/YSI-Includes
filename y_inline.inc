@@ -113,10 +113,16 @@ Changelog:
 // Defer adding the close bracket till after other macros have run.
 #define _Y_INLINE_END )
 
+////////////////////////////////////////////////////////////////////////////////
+////    IF THESE EVER CHANGE (CAN'T SEE WHY), UPDATE _Inline_GetOpCodesX    ////
+////////////////////////////////////////////////////////////////////////////////
 #define INLINE_LOOP_PATTERN_0 0xA1E7C013
 #define INLINE_LOOP_PATTERN_1 0x42424242
 #define INLINE_LOOP_PATTERN_2 0x13C0E7A1
 #define INLINE_LOOP_PATTERN_3 0x21495359
+////////////////////////////////////////////////////////////////////////////////
+////    IF THESE EVER CHANGE (CAN'T SEE WHY), UPDATE _Inline_GetOpCodesX    ////
+////////////////////////////////////////////////////////////////////////////////
 
 //#define INLINE_LOOP_PATTERNS INLINE_LOOP_PATTERN_0,INLINE_LOOP_PATTERN_1,INLINE_LOOP_PATTERN_2,INLINE_LOOP_PATTERN_3
 
@@ -348,40 +354,148 @@ public _Inline_FixCompiler@@()
 	//memcpy("", "", 0, 0, 0);
 }
 
+forward _Inline_GetOpCodesX();
+
+public _Inline_GetOpCodesX()
+{
+	Inline_Loop();
+	return 0;
+}
+
+/*
+CODE 47	; 835a0
+	proc	; _Inline_GetOpCodesX
+	; line 168
+	; line 169
+	push.c 229b24
+	;$par
+	zero.pri
+	heap 4
+	stor.i
+	push.alt
+	;$par
+	push.c 21495359
+	;$par
+	push.c 13c0e7a1
+	;$par
+	push.c 42424242
+	;$par
+	push.c a1e7c013
+	;$par
+	push.c 18
+	call Inline_Loop
+	heap fffffffc
+	;$exp
+	zero.pri
+	retn
+*/
+/*
+CODE 47	; a333c
+	proc	; _Inline_GetOpCodesX
+	; line 168
+	break	; a3340
+	; line 169
+	break	; a3344
+	const.pri 229b24
+	push.pri
+	;$par
+	const.pri 0
+	heap 4
+	stor.i
+	move.pri
+	push.pri
+	;$par
+	const.pri 21495359
+	push.pri
+	;$par
+	const.pri 13c0e7a1
+	push.pri
+	;$par
+	const.pri 42424242
+	push.pri
+	;$par
+	const.pri a1e7c013
+	push.pri
+	;$par
+	push.c 18
+	call Inline_Loop
+	heap fffffffc
+	;$exp
+	zero.pri
+	retn
+*/
+
 hook OnScriptInit()
 {
 	P:2("Inline_OnScriptInit");
 	static
-		// Default settings.
-		sSearch1[] =
-			{
-				AMX_PUSH_C, INLINE_LOOP_PATTERN_3,
-				AMX_PUSH_C, INLINE_LOOP_PATTERN_2,
-				AMX_PUSH_C, INLINE_LOOP_PATTERN_1,
-				AMX_PUSH_C, INLINE_LOOP_PATTERN_0,
-				AMX_PUSH_C, 0x18,
-				AMX_CALL
-			},
-		// Debug settings.
-		sSearch2[] =
-			{
-				AMX_CONST_PRI, INLINE_LOOP_PATTERN_3,
-				AMX_PUSH_PRI,
-				AMX_CONST_PRI, INLINE_LOOP_PATTERN_2,
-				AMX_PUSH_PRI,
-				AMX_CONST_PRI, INLINE_LOOP_PATTERN_1,
-				AMX_PUSH_PRI,
-				AMX_CONST_PRI, INLINE_LOOP_PATTERN_0,
-				AMX_PUSH_PRI,
-				AMX_PUSH_C, 0x18,
-				AMX_CALL
-			};
+		sAddr,
+		sType = 0,
+		sSearch[15];
+	if (!sType)
+	{
+		// We no longer need explicit assembly code to search for - we just
+		// extract the exact code from "_Inline_GetOpCodesX".  We also need to
+		// later ignore that call to "Inline_Loop" in the search codes so it
+		// doesn't think that reference dummy is a real inline function.
+		new
+			addr;
+		// Get the data address of the function.
+		#emit CONST.pri  _Inline_GetOpCodesX
+		#emit LOAD.alt   AMX_HEADER_COD
+		#emit ADD
+		#emit STOR.S.pri addr
+		if (AMX_Read(addr + 9 * 4) == INLINE_LOOP_PATTERN_3)
+		{
+			sAddr = addr + 8 * 4;
+			P:5("Inline_OnScriptInit: Loading type 1");
+			AMX_ReadArray(sAddr, sSearch, 11);
+			P:7("Inline_OnScriptInit: Loaded type 1");
+			sType = 1;
+		}
+		else if (AMX_Read(addr + 10 * 4) == INLINE_LOOP_PATTERN_3)
+		{
+			sAddr = addr + 9 * 4;
+			P:5("Inline_OnScriptInit: Loading type 3");
+			AMX_ReadArray(sAddr, sSearch, 11);
+			P:7("Inline_OnScriptInit: Loaded type 3");
+			sType = 3;
+		}
+		else if (AMX_Read(addr + 14 * 4) == INLINE_LOOP_PATTERN_3)
+		{
+			sAddr = addr + 13 * 4;
+			P:5("Inline_OnScriptInit: Loading type 2");
+			AMX_ReadArray(sAddr, sSearch, 15);
+			P:7("Inline_OnScriptInit: Loaded type 2");
+			sType = 2;
+		}
+		else
+		{
+			P:E("Could not determine pattern type in y_inline");
+			sType = -1;
+		}
+	}
+	P:7("Inline_OnScriptInit: Beginning search.");
+	switch (sType)
+	{
+		case 1, 3:
+		{
+			Inline_DoSearch(sSearch, 3, 11, sAddr);
+		}
+		case 2:
+		{
+			Inline_DoSearch(sSearch, 5, 15, sAddr);
+		}
+	}
+	
+	// This could be Linux (we just don't know) - test by extracting the
+	// currently used OpCodes from another function.
 	// Different optimisation levels produce different sensibilities of code.
-	if (Inline_DoSearch(sSearch1, 3) == -1)
+	/*if (Inline_DoSearch(sSearch1, 3) == -1)
 	{
 		// Pass the number of extra instructions before this code block.
 		Inline_DoSearch(sSearch2, 5);
-	}
+	}*/
 	/*new
 		p0 = Inline_DoSearch(sSearch1),
 		// I could actually detect compilation flags in this way!
@@ -393,14 +507,7 @@ hook OnScriptInit()
 	}*/
 }
 
-//pp(d, str[])
-//{
-//	#emit LOAD.S.pri        d
-//	#emit STOR.S.pri        str
-//	printf("data = %08x, %x,%x,%x,%x,%x,%x", d, str[0], str[1], str[2], str[3], str[4], str[5]);
-//}
-
-static stock Inline_DoSearch(sSearch[], neg, size = sizeof (sSearch))
+static stock Inline_DoSearch(sSearch[], neg, size, ignore)
 {
 	P:4("Inline_DoSearch called");
 	new
@@ -411,8 +518,10 @@ static stock Inline_DoSearch(sSearch[], neg, size = sizeof (sSearch))
 	static
 		last = -1;
 	//printf("FIND FUNC: %s", sSearch);
-	while (AMX_TraceCode(sSearch, addr, func, size))
+	//while (AMX_TraceCode(sSearch, addr, func, size))
+	for ( ; AMX_TraceCode(sSearch, addr, func, size); addr -= AMX_HEADER_COD - 24)
 	{
+		if (func == ignore) continue;
 		P:4("Inline_DoSearch: %d %d %d", addr, func, size);
 		// Get the function return address (make sure "pri" is always non-zero).
 		func = addr + ((size + 1) * 4);
@@ -489,7 +598,6 @@ static stock Inline_DoSearch(sSearch[], neg, size = sizeof (sSearch))
 		}
 		// Move on to find the next value.  24 is larger than both 12 and 20,
 		// but is still a little hard-coded to the known code types.
-		addr -= (AMX_HEADER_COD - 24);
 	}
 	return last;
 }
@@ -706,6 +814,7 @@ stock Callback_Get(callback:name, result[E_CALLBACK_DATA], expect = -1)
 				#emit STOR.S.pri pos
 				//printf("%d", pos);
 				result[E_CALLBACK_DATA_FORMAT]  = pos;
+				P:5("Callback_Get: Getting inline %s format", name);
 				if (expect != -1 && pos != expect)
 				{
 					P:E("Format specifier didn't match on inline function %s: %04x%04x != %04x%04x", name, pos >>> 16, pos & 0xFFFF, expect >>> 16, expect & 0xFFFF);
@@ -742,6 +851,7 @@ stock Callback_Get(callback:name, result[E_CALLBACK_DATA], expect = -1)
 			new
 				form = name[pos + 4];
 			result[E_CALLBACK_DATA_FORMAT]  = form;
+			P:5("Callback_Get: Getting public %s format", name);
 			if (expect != -1 && form != expect)
 			{
 				P:E("Format specifier didn't match on inline function %s", name);

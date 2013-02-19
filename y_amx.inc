@@ -241,12 +241,18 @@ public OnScriptInit()
 	#if defined YSI_LOCK_MODE
 		GetServerVarAsString(YSI_gLockData, YSI_gLockData[5], sizeof (YSI_gLockData) - 5);
 	#endif
-	return AMX_OnScriptInit();
+	#if defined AMX_OnScriptInit
+		return AMX_OnScriptInit();
+	#else
+		return 1;
+	#endif
 }
 
 #undef OnScriptInit
-#define OnScriptInit(%0) AMX_OnScriptInit(%0) <_ALS_:hooked>
-forward AMX_OnScriptInit();public AMX_OnScriptInit()<_ALS_:unhooked>{return 1;}public AMX_OnScriptInit()<>{return 1;}
+#define OnScriptInit AMX_OnScriptInit
+#if defined AMX_OnScriptInit
+	forward AMX_OnScriptInit();
+#endif
 
 stock AMX_GetGlobalAddress(...)
 {
@@ -955,21 +961,9 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 stock AMX_Read(addr)
 {
 	P:5("AMX_Read called: %i", addr);
-	/*new
-		ret;
-	#emit LREF.S.pri                    addr
-	#emit STOR.S.pri                    ret
-	return ret;*/
 	#emit LREF.S.pri                    addr
 	#emit RETN
 	return 0;
-	// It's a shame about the compiler here - this should be a 1 line function:
-	//  
-	//  #emit LREF.S.pri addr
-	//  
-	// pri is the return value of a function so the data will already be in the
-	// correct place, but the compiler will detect the lack of a return call.
-	// Now fixed!
 }
 
 stock AMX_Write(addr, value)
@@ -983,144 +977,39 @@ stock AMX_ReadArray(addr, dest[], len = sizeof (dest))
 {
 	// I tried to use memcpy, I couldn't get it to work, even when exactly
 	// replicating compiler generated code...
-	//while (len--)
-	#emit LOAD.S.pri                    len
-	#emit JZER                          AMX_ReadArray_done
-	// if (len)
-AMX_ReadArray_loop:
+	while (len--)
 	{
-		// --len
-		#emit DEC.pri
 		// Load the address possibly outside "dat".  Can't be done using only
 		// "pri"/"alt" as it relies on "LREF.S" explicitly.
-		#emit LREF.S.alt                addr
-		#emit SREF.S.alt                dest
-		#emit LOAD.S.alt                addr
+		#emit LREF.S.pri                addr
+		#emit SREF.S.pri                dest
+		#emit LOAD.S.pri                addr
 		#emit ADD.C                     4
-		#emit STOR.S.alt                addr
-		#emit LOAD.S.alt                dest
+		#emit STOR.S.pri                addr
+		#emit LOAD.S.pri                dest
 		#emit ADD.C                     4
-		#emit STOR.S.alt                dest
-		// while (len != 0)
-		#emit JNZ                       AMX_ReadArray_loop
+		#emit STOR.S.pri                dest
 	}
-AMX_ReadArray_done:
-	//	ret;
-	/*while (len--)
-	{
-		#emit LREF.S.pri                    addr
-		#emit SREF.S.pri                    dest
-		#emit LOAD.S.pri                    addr
-		#emit ADD.C                         4
-		#emit STOR.S.pri                    addr
-		#emit LOAD.S.pri                    dest
-		#emit ADD.C                         4
-		#emit STOR.S.pri                    dest
-	}*/
-	//	ret;
-	//#emit LREF.S.pri                    addr
-	//#emit STOR.S.pri                    ret
-	//return ret;
-	/*#emit push.adr len
-	#emit push.adr dest
-	#emit push.adr addr
-	#emit push.c 0x175c
-	#emit push.c 10
-	#emit sysreq.c printf
-	#emit stack 14
-	//printf("1 %d %d %d", addr, dest, len);
-	new src[32];
-
-	printf("1 %d %d %d", addr, dest, len);
-	#emit BREAK
-	#emit PUSH.S                        len
-	#emit LOAD.S.pri                    len
-	#emit SMUL.C                        4
-	#emit PUSH.pri
-	#emit PUSH.C                        0
-	#emit PUSH.adr                      src
-	#emit PUSH.S                        dest
-	#emit PUSH.C                        20
-	#emit SYSREQ.C                      memcpy
-	#emit STACK                         24*/
-	//#emit LOAD.S.pri addr
-	//#emit LOAD.S.alt dest
-	//#emit
-	// It's a shame about the compiler here - this should be a 1 line function:
-	//  
-	//  #emit LREF.S.pri addr
-	//  
-	// pri is the return value of a function so the data will already be in the
-	// correct place, but the compiler will detect the lack of a return call.
-	return;
 }
 
 stock AMX_WriteArray(addr, const src[], len = sizeof (src))
 {
-	#emit LOAD.S.pri                    len
-	#emit JZER                          AMX_WriteArray_done
-	// if (len)
-AMX_WriteArray_loop:
+	while (len--)
 	{
-		// --len
 		#emit DEC.pri
 		// Read the data.
-		#emit LREF.S.alt                dest
-		#emit SREF.S.alt                addr
-		#emit LOAD.S.alt                addr
+		#emit LREF.S.pri                dest
+		#emit SREF.S.pri                addr
+		#emit LOAD.S.pri                addr
 		#emit ADD.C                     4
-		#emit STOR.S.alt                addr
-		#emit LOAD.S.alt                dest
+		#emit STOR.S.pri                addr
+		#emit LOAD.S.pri                dest
 		#emit ADD.C                     4
-		#emit STOR.S.alt                dest
-		// while (len != 0)
-		#emit JNZ                       AMX_WriteArray_loop
+		#emit STOR.S.pri                dest
 	}
-AMX_WriteArray_done:
-	return;
 }
 
-/*#endinput
-
-#define AMX_GetPublicsCount() ((AMX_HEADER_NATIVES-AMX_HEADER_PUBLICS)/8)
-
-#define AMX_GetNativesCount() ((AMX_HEADER_NATIVES-AMX_HEADER_PUBLICS)/8)
-
-#define AMX_GetPublicFast(%0) AMX_GetNamePrefix(AMX_PUBLICS,%0)
-
-#define AMX_GetPublicSuffix(%0) AMX_GetNameSuffix(AMX_PUBLICS,%0)
-
-#define AMX_GetPubvarSuffix(%0) AMX_GetNameSuffix(AMX_PUBVARS,%0)
-
-#define AMX_GetNativeFast(%0) AMX_GetNamePrefix(AMX_NATIVES,%0)
-
-#define AMX_GetPublic(%0) AMX_GetName(AMX_PUBLICS,%0)
-
-#define AMX_GetNative(%0) AMX_GetName(AMX_NATIVES,%0)
-
-stock AMX_GetPublicPointer(name[])
-{
-	P:5("AMX_GetPublicPointer called: \"%s\"", name);
-	new
-		p;
-	AMX_GetPointer(AMX_PUBLICS, 0, p, name);
-	return p;
-}
-
-//#define AMX_GetPointerSuffix(idx, &func, search)
-
-#define AMX_RedirectPublic(name[], pointer)
-
-#define AMX_GetPublicVariable(name[])
-
-#define AMX_SetPublicVariable(name[], value)*/
-
-//#define _A<%0> (_:H_Xe:H_Ye:H_Ze(%0))
 #define _A<%0> (_:H_Re(%0,0))
-
-//#define H_Xe:H_Ye:H_Ze(@y%0) (31040|(_:H_Re(%0,0+8+8)))
-//#define H_Ye:H_Ze(_y%0) (31071|(_:H_Re(%0,0+8+8)))
-//#define H_Ze(%0) H_Re(%0,0)
 
 // Do the next character test as this one failed.
 #define H_Se(%0,%1,%3) H_Ne%1(%0,%3)
@@ -1132,8 +1021,6 @@ stock AMX_GetPublicPointer(name[])
 #define H_Re(%0,%3)    he:H_Ee(%0,%3)
 // Test for the end of a string (4 characters only).
 #define he:H_Ee(%0,0+8+8+8+8)   0
-// Find the length of a string at compile time.
-//#define LEN(%0,%3) _:(H_R(%0,%3),%3)
 
 // Test for the current character.
 

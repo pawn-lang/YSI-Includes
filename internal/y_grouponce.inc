@@ -504,12 +504,18 @@ public OnScriptInit()
 	P:5("Group_OnScriptInit: %d, %d, %d", ni, na, nu);
 	GROUP_CHAIN?<YSI_g_sNextInitFunc>(ni, na, nu);
 	//CallLocalFunction("_Group_SpecialInit", "");
-	return _Group_SpecialInit();
+	#if defined _Group_SpecialInit
+		return _Group_SpecialInit();
+	#else
+		return 1;
+	#endif
 }
 
 #undef OnScriptInit
-#define OnScriptInit(%0) _Group_SpecialInit(%0) <_ALS_:hooked>
-forward _Group_SpecialInit();public _Group_SpecialInit()<_ALS_:unhooked>{return 1;}public _Group_SpecialInit()<>{return 1;}
+#define OnScriptInit _Group_SpecialInit
+#if defined _Group_SpecialInit
+	forward _Group_SpecialInit();
+#endif
 
 /*----------------------------------------------------------------------------*\
 Function:
@@ -528,12 +534,18 @@ public _YSI_SpecialExit()
 {
 	_Group_TryRemove();
 	//CallLocalFunction("_Group_SpecialExit", "");
-	return _Group_SpecialExit();
+	#if defined _Group_SpecialExit
+		_Group_SpecialExit();
+	#else
+		return 1;
+	#endif
 }
 
 #undef _YSI_SpecialExit
-#define _YSI_SpecialExit(%0) _Group_SpecialExit(%0) <_ALS_:hooked>
-forward _Group_SpecialExit();public _Group_SpecialExit()<_ALS_:unhooked>{return 1;}public _Group_SpecialExit()<>{return 1;}
+#define _YSI_SpecialExit _Group_SpecialExit
+#if defined _Group_SpecialExit
+	forward _Group_SpecialExit();
+#endif
 
 /*----------------------------------------------------------------------------*\
 FunctiOn:
@@ -1427,7 +1439,21 @@ foreign Group@YSII_Ag(Group:group, start);
 
 global Group@YSII_Ag(Group:group, start)
 {
-	return Iter_Next(GroupPlayers[_:GROUP_TEMP_FIX(group)], start);
+	GROUP_FIX(group);
+	if (start == -1)
+	{
+		//start = Iter_Begin(GroupPlayers[]);
+		start = Iter_First(GroupPlayers[_:GROUP_TEMP_FIX(group)]);
+	}
+	else
+	{
+		start = Iter_Next(GroupPlayers[_:GROUP_TEMP_FIX(group)], start);
+	}
+	if (start == Iter_End(GroupPlayers[]))
+	{
+		return -1;
+	}
+	return start;
 }
 
 /*----------------------------------------------------------------------------*\

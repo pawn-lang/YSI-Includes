@@ -122,6 +122,7 @@ Variables:
 #define e_FORMAT_FLAGS_NONE  (0x04000000)
 
 static stock
+	YSI_g_sListSep[4] = ", ",
 	YSI_g_sFadeRedoTarget,
 	YSI_g_sFadeLength,
 	YSI_g_sFadeColour,
@@ -138,6 +139,11 @@ stock _Text_SetDialogMode()
 	YSI_g_sTempStyle[E_STYLE_DATA_TYPE] = e_STYLE_TYPE_DIALOG;
 	state y_render_show : y_render_show_scm;
 	YSI_g_sJustOne = true;
+}
+
+stock Format_SetListSeparator(string:lst[])
+{
+	strcpy(YSI_g_sListSep, lst);
 }
 
 stock _Format_SetStyleData(master, index, style[E_STYLE_DATA], label[E_3D_DATA])
@@ -1142,8 +1148,9 @@ Format_Render_start:
 										{
 											// Separate the strings - hard coded
 											// list format currently I'm afraid.
-											ts = ", ";
-											Y_RENDER_ADD(ts)
+											//ts = ", ";
+											//Y_RENDER_ADD(ts)
+											Y_RENDER_ADD(YSI_g_sListSep)
 										}
 										format(ts, sizeof (ts), scSpecifier, width, prec, Q@);
 										Y_RENDER_ADD(ts)
@@ -1162,7 +1169,7 @@ Format_Render_start:
 								// Normal version.  This is ended by a null.
 								// Other functions get the count in advance when
 								// an index of -1 is passed.
-								func[2] = 'r';
+								//func[2] = 'r';
 								// This code mimicks much of the internal
 								// y_master code because wrapping this in a
 								// macro is a) pointless and b) hard.  This code
@@ -1184,8 +1191,9 @@ Format_Render_start:
 										{
 											// Separate the strings - hard coded
 											// list format currently I'm afraid.
-											ts = ", ";
-											Y_RENDER_ADD(ts)
+											//ts = ", ";
+											//Y_RENDER_ADD(ts)
+											Y_RENDER_ADD(YSI_g_sListSep)
 										}
 										// Could do with configuring this to not
 										// need to call "Y_RENDER_SPECIFIER" every

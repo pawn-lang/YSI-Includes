@@ -91,6 +91,10 @@ Changelog:
 	#define _YSI_PLUGINS_WHIRLPOOL
 #endif
 
+#if defined SetTimerEx_
+	#define _YSI_PLUGINS_FIXES_2
+#endif
+
 /*
 #if defined mysql_function_query
 	// BlueG R7 MySQL

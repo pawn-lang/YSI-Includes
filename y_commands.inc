@@ -1052,7 +1052,9 @@ Notes:
 	#if _YSIM_IS_CLOUD
 		public OnScriptClose(script) <>
 		{
-			CallLocalFunction("Command_OnScriptClose", "i", script);
+			#if defined Command_OnScriptClose
+				Command_OnScriptClose(script);
+			#endif
 		}
 		
 		public OnScriptClose(script) <_YCM:y>
@@ -1106,15 +1108,17 @@ Notes:
 		}
 		//YSI_g_sMaster23 = getproperty(8, "x@");
 		// I can add better removal code later.  Done ^
-		CallLocalFunction("Command_OnScriptClose", "i", script);
+		#if defined Command_OnScriptClose
+			Command_OnScriptClose(script);
+		#endif
 	}
 	
 	// Don't need ALS here as we did it supporting it at the start.
 	#undef OnScriptClose
-	//#define OnScriptClose(%0) Command_OnScriptClose(%0) <_ALS_:hooked>
-	//forward Command_OnScriptClose(script);public Command_OnScriptClose(script)<_ALS_:unhooked>{return 1;}public Command_OnScriptClose(script)<>{return 1;}
 	#define OnScriptClose Command_OnScriptClose
-	forward Command_OnScriptClose(script);
+	#if defined Command_OnScriptClose
+		forward Command_OnScriptClose(script);
+	#endif
 #endif
 
 /*----------------------------------------------------------------------------*\

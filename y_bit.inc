@@ -323,7 +323,7 @@ stock Bit_Display(BitArray:array<>, size = sizeof (array))
 		val = Cell_ReverseBits(array[size]);
 		format(ret, sizeof (ret), "%016b%016b%s", val >>> 16, val & 0xFFFF, ret);
 	}
-	P:7("Bit_Display called: %s, %i", ret, size);
+	//P:7("Bit_Display called: %s, %i", ret, size);
 	return ret;
 }
 

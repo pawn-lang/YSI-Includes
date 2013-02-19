@@ -484,7 +484,7 @@ stock isnumeric(str[])
 	Return:
 		value of the passed hex string.
 	Notes:
-		-
+		Now stops on invalid characters.
 	-*------------------------------------------------------------------------*/
 	
 	stock hexstr(string[])
@@ -494,14 +494,25 @@ stock isnumeric(str[])
 			val,
 			i;
 		if (string[0] == '0' && string[1] | 0x20 == 'x') i = 2;
-		while (string[i])
+		for ( ; ; )
 		{
-			ret <<= 4;
-			val = string[i++] - '0';
-			if (val > 0x09) val -= 0x07;
-			if (val > 0x0F) val -= 0x20;
-			if (val < 0x01) continue;
-			if (val < 0x10) ret += val;
+			switch ((val = string[i++]))
+			{
+				case '0' .. '9':
+				{
+					val -= '0';
+				}
+				case 'a' .. 'f':
+				{
+					val -= 'a' - 10;
+				}
+				case 'A' .. 'F':
+				{
+					val -= 'A' - 10;
+				}
+				default: break;
+			}
+			ret = ret << 4 | val;
 		}
 		return ret;
 	}

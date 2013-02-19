@@ -636,9 +636,12 @@ Notes:
 		//{
 		//	CallLocalFunction(YSI_gsOnPlayerConnect, YSI_gsSpecifier@i, playerid);
 		//}
-		Itter_OnPlayerConnect(playerid);
 		P:2("Iter_OnPlayerConnect end");
-		return 1;
+		#if defined Itter_OnPlayerConnect
+			return Itter_OnPlayerConnect(playerid);
+		#else
+			return 1;
+		#endif
 	}
 	
 	#if defined _ALS_OnPlayerConnect
@@ -646,8 +649,10 @@ Notes:
 	#else
 		#define _ALS_OnPlayerConnect
 	#endif
-	#define OnPlayerConnect(%0) Itter_OnPlayerConnect(%0) <_ALS_:hooked>
-	forward Itter_OnPlayerConnect(playerid);public Itter_OnPlayerConnect(playerid)<_ALS_:unhooked>{return 1;}public Itter_OnPlayerConnect(playerid)<>{return 1;}
+	#define OnPlayerConnect Itter_OnPlayerConnect
+	#if defined Itter_OnPlayerConnect
+		forward Itter_OnPlayerConnect(playerid);
+	#endif
 #endif
 
 /*----------------------------------------------------------------------------*\
@@ -665,7 +670,7 @@ Notes:
 #if !defined BOTSYNC_IS_BOT
 	public OnFilterScriptInit()
 	{
-		P:0("Iter_OnFilterScriptInit start: %d", MAX_PLAYERS);
+		P:1("Iter_OnFilterScriptInit start: %d", MAX_PLAYERS);
 		//if (funcidx(YSI_gsOnPlayerDisconnect) != -1)
 		//{
 		//	YSI_g_sCallbacks |= 1;
@@ -732,9 +737,11 @@ Notes:
 		#endif
 		Player@YSII_Ag[lastPlayer] = MAX_PLAYERS;
 		//CallLocalFunction("Itter_OnFilterScriptInit", YSI_gsSpecifier@);
-		Itter_OnFilterScriptInit();
-		P:0("Iter_OnFilterScriptInit end");
-		return 1;
+		#if defined Itter_OnFilterScriptInit
+			return Itter_OnFilterScriptInit();
+		#else
+			return 1;
+		#endif
 	}
 	
 	#if defined _ALS_OnFilterScriptInit
@@ -742,8 +749,10 @@ Notes:
 	#else
 		#define _ALS_OnFilterScriptInit
 	#endif
-	#define OnFilterScriptInit(%0) Itter_OnFilterScriptInit(%0) <_ALS_:hooked>
-	forward Itter_OnFilterScriptInit();public Itter_OnFilterScriptInit()<_ALS_:unhooked>{return 1;}public Itter_OnFilterScriptInit()<>{return 1;}
+	#define OnFilterScriptInit Itter_OnFilterScriptInit
+	#if defined Itter_OnFilterScriptInit
+		forward Itter_OnFilterScriptInit();
+	#endif
 #endif
 
 /*----------------------------------------------------------------------------*\
@@ -763,7 +772,7 @@ Notes:
 #if !defined BOTSYNC_IS_BOT
 	public OnGameModeInit()
 	{
-		P:0("Iter_OnGameModeInit start: %d", MAX_PLAYERS);
+		P:1("Iter_OnGameModeInit start: %d", MAX_PLAYERS);
 		// Clear everything.
 		//if (funcidx(YSI_gsOnPlayerDisconnect) != -1)
 		//{
@@ -788,7 +797,7 @@ Notes:
 				Player@YSII_Ag[MAX_PLAYERS] = 0;
 				Player@YSII_Cg = _Y_ITER_C3:MAX_PLAYERS;
 			#endif
-			P:0("Iter_OnGameModeInit: first");
+			P:1("Iter_OnGameModeInit: first");
 			return 1;
 		}
 		// Do the forward iterator list.
@@ -852,7 +861,7 @@ Notes:
 			Character@YSII_Ag[lastPlayer] = MAX_PLAYERS;
 		#endif
 		Player@YSII_Ag[lastPlayer] = MAX_PLAYERS;
-		P:0("Iter_OnGameModeInit: lastplayer = %d", lastPlayer);
+		P:1("Iter_OnGameModeInit: lastplayer = %d", lastPlayer);
 		CallLocalFunction(YSI_gsOnGameModeInit, YSI_gsSpecifier@);
 		#if defined _YSI_SPECIAL_DEBUG
 			for (new i = 0; i != MAX_PLAYERS; ++i)
@@ -870,10 +879,10 @@ Notes:
 	#else
 		#define _ALS_OnGameModeInit
 	#endif
-	//#define OnGameModeInit(%0) Itter_OnGameModeInit(%0) <_ALS_:hooked>
-	//forward Itter_OnGameModeInit();public Itter_OnGameModeInit()<_ALS_:unhooked>{return 1;}public Itter_OnGameModeInit()<>{return 1;}
 	#define OnGameModeInit Itter_OnGameModeInit
-	forward Itter_OnGameModeInit();
+	#if defined Itter_OnGameModeInit
+		forward Itter_OnGameModeInit();
+	#endif
 #endif
 
 /*----------------------------------------------------------------------------*\
@@ -892,13 +901,12 @@ Notes:
 #if !defined BOTSYNC_IS_BOT
 	public OnPlayerDisconnect(playerid, reason)
 	{
-		//if (YSI_g_sCallbacks & 1)
-		//{
-		//	CallLocalFunction(YSI_gsOnPlayerDisconnect, "ii", playerid, reason);
-		//}
-		Itter_OnPlayerDisconnect(playerid, reason);
 		SetTimerEx("Itter_OPDCInternal", 0, false, "i", playerid);
-		return 1;
+		#if defined Itter_OnPlayerDisconnect
+			return Itter_OnPlayerDisconnect(playerid, reason);
+		#else
+			return 1;
+		#endif
 	}
 	
 	#if defined _ALS_OnPlayerDisconnect
@@ -906,8 +914,10 @@ Notes:
 	#else
 		#define _ALS_OnPlayerDisconnect
 	#endif
-	#define OnPlayerDisconnect(%0) Itter_OnPlayerDisconnect(%0) <_ALS_:hooked>
-	forward Itter_OnPlayerDisconnect(playerid, reason);public Itter_OnPlayerDisconnect(playerid, reason)<_ALS_:unhooked>{return 1;}public Itter_OnPlayerDisconnect(playerid, reason)<>{return 1;}
+	#define OnPlayerDisconnect Itter_OnPlayerDisconnect
+	#if defined Itter_OnPlayerDisconnect
+		forward Itter_OnPlayerDisconnect(playerid, reason);
+	#endif
 #endif
 
 /*----------------------------------------------------------------------------*\

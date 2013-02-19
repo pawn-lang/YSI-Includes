@@ -67,10 +67,17 @@ Changelog:
 // Multiple includes!
 #include "internal\y_unique"
 
-#if defined _INC_y_hooks
-	#endinput
-#endif
+//#if defined _INC_y_hooks
+//	#endinput
+//#endif
 // Everything except including "y_unique" is done once only.
-#define _INC_y_hooks
+//#define _INC_y_hooks
 
-#include "internal\y_dohooks"
+//#include "internal\y_dohooks"
+#include "y_hooks/impl"
+#if defined YSI_TESTS
+	#include "y_testing"
+	#include "y_hooks/tests"
+	// Get some new IDs.
+	//#include "internal\y_unique"
+#endif

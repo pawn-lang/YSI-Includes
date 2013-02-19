@@ -325,11 +325,14 @@ hook OnScriptInit()
 	}
 }
 
-hook OnPlayerLogout(playerid, yid)
+public OnPlayerLogout(playerid, uid)
 {
 	// Loop through all the player data items and write them to a file.
 	//static const
 	//	sc_cellsPerWrite = 
+	#if defined Uvar_OnPlayerLogout
+		Uvar_OnPlayerLogout(playerid, uid);
+	#endif
 	Player_SetTag("y_uvar");
 	new
 		p = YSI_g_sFirstUVarData,
@@ -385,6 +388,15 @@ hook OnPlayerLogout(playerid, yid)
 		}
 	}
 }
+#if defined _ALS_OnPlayerLogout
+	#undef OnPlayerLogout
+#else
+	#define _ALS_OnPlayerLogout
+#endif
+#if defined Uvar_OnPlayerLogout
+	forward Uvar_OnPlayerLogout(playerid, uid);
+#endif
+#define OnPlayerLogout(%0) Uvar_OnPlayerLogout(%0)
 
 hook OnPlayerConnect(playerid)
 {
@@ -440,205 +452,4 @@ hook OnPlayerConnect(playerid)
 			// DO NOT CHANGE THE CODE ABOVE HERE!!!
 		}
 	}
-}
-
-#endinput
-
-/*stock Users_Debug()
-{
-	// Print the first value from every array.
-}*/
-
-//#endinput
-
-Users_DoDataPrint(const playerid, const uid, data[], len, const structure[])
-{
-	#pragma unused len
-	// DO NOT CHANGE THE CODE BELOW HERE!!!
-	// Find and save the information on this function for later.  We don't even
-	// need any checks here because we are saving the address of the instruction
-	// after this code then returning in an invisible way.
-	#emit LCTRL    6
-	#emit ADD.C    20
-	#emit STOR.pri YSI_g_sDoDataPrintAddr
-	#emit RETN
-	// DO NOT CHANGE THE CODE ABOVE HERE!!!
-	//new
-	//	str[64];
-	//strunpack(str, structure);
-	//printf("%d, %d", playerid, uid);
-	//printf("structure: %s, len: %d, data: %d %d", str, len, data[0], data[1]);
-	P:5("Users_DoDataPrint: len: %d, data: %d %d", len, data[0], data[1]);
-	P:C(for(new _i = 0, _j = strlen(structure); _i != _j; ++_i) {P:5("%d: %08x (%c", _i, structure[_i], structure[_i]);});
-	//printf("%d, %d, %d, %s", data[E_USERS_FAKE_DATA_NEXT], data[E_USERS_FAKE_DATA_DATA], data[E_USERS_FAKE_DATA_LEN], str);
-	//printf("hi");
-	//return data[E_USERS_FAKE_DATA_NEXT];
-	//return -1;
-	// OK, let's get started on trying to write code to output these various
-	// arrays, even if at this point they are only printed to the console, it is
-	// still a step in the right direction (and with the speed I'm currently
-	// going ANY step is a good step)!
-	// Print the user data.
-	if (IsPlayerConnected(playerid))
-	{
-		printf("Users_DoDataPrint: %d (%d) = %s", playerid, uid, ReturnPlayerName(playerid));
-	}
-	// Print the variable name.
-	new
-		namelen = structure[0],
-		datalen,
-		datatype,
-		dataOffset = 0,
-		indexOffset = 1;
-	printf("Users_DoDataPrint: %d: %.*s", namelen, namelen, structure[indexOffset]);
-	for ( ; ; )
-	{
-		indexOffset = indexOffset + namelen + 1;
-		namelen = structure[indexOffset - 1];
-		if (!namelen)
-		{
-			// If the returned length is 0, that means we have reached a null
-			// character, and thus the end of the string.
-			break;
-		}
-		else switch (namelen & 0xFF000000)
-		{
-			case 0x00000000:
-			{
-				printf("Variable: %d: %.*s", namelen, namelen, structure[indexOffset]);
-				++dataOffset;
-			}
-			case 0x10000000:
-			{
-				datalen = structure[indexOffset++] + dataOffset;
-				//datalen = structure[indexOffset++];
-				datatype = structure[indexOffset++] - '0';
-				// Remove the flag and excess length at the same time.
-				namelen -= 0x10000002;
-				printf("Special array %d: %d: %.*s (%d)", datatype, namelen, namelen, structure[indexOffset], datalen - dataOffset);
-				switch (datatype)
-				{
-					case BitArray@:
-					{
-						printf("data = %s", Bit_Display(BitArray:data[dataOffset], bits<datalen>));
-					}
-				}
-				dataOffset = datalen;
-			}
-			case 0x20000000:
-			{
-				datalen = structure[indexOffset++] + dataOffset;
-				// Remove the flag and excess length at the same time.
-				namelen -= 0x20000001;
-				printf("Array: %d: %.*s (%d)", namelen, namelen, structure[indexOffset], datalen - dataOffset);
-				for (new i = dataOffset; i != datalen; ++i)
-				{
-					printf("data[%d] = %d", i, data[i]);
-				}
-				dataOffset = datalen;
-			}
-			default:
-			{
-				// Error!
-				P:E("Attempted to save unknown data type, failing!");
-				return;
-			}
-		}
-	}
-	//printf("
-}
-
-hook OnPlayerLogout(playerid, uid)
-{
-//	Users_DoLogout(playerid, uid);
-//}
-//
-//stock Users_DoLogout(playerid, uid)
-//{
-	P:1("hook Users_OnPlayerLogout called: %i, %i", playerid, uid);
-	new
-		p = YSI_g_sFirstUVarData,
-		temp;
-	while (p != -1)
-	{
-		// DO NOT CHANGE THE CODE BELOW HERE!!!
-		// Call a function sort of.  This allows us to push an arbitrary address
-		// as an array to a function.
-		#emit LOAD.S.pri p
-		// Get the structure.
-		#emit ADD.C      12
-		#emit PUSH.pri
-		// Get the length.
-		#emit ADD.C      0xFFFFFFFC // -4
-		#emit STOR.S.pri temp
-		#emit LREF.S.pri temp
-		#emit PUSH.pri
-		// Get the data offset.
-		#emit LOAD.S.alt playerid
-		#emit SMUL
-		#emit SMUL.C     4
-		#emit MOVE.alt
-		// Get the data pointer.
-		#emit LOAD.S.pri p
-		#emit ADD.C      4
-		#emit STOR.S.pri temp
-		#emit LREF.S.alt temp
-		#emit LOAD.S.pri playerid
-		#emit IDXADDR
-		#emit MOVE.alt
-		#emit LOAD.i
-		#emit ADD
-		#emit PUSH.pri
-		// Save the next pointer.
-		#emit LREF.S.pri p
-		#emit STOR.S.pri p
-		// Push the other parameters.
-		#emit PUSH.S     uid
-		#emit PUSH.S     playerid
-		// Now push the size of data put on the stack.
-		#emit PUSH.C     20
-		// Now get the return address and push it.
-		#emit LCTRL      6
-		#emit ADD.C      32
-		#emit PUSH.pri
-		// Now start the function to store certain data.
-		#emit PROC
-		// Now jump in to the middle of the function.
-		#emit LOAD.pri   YSI_g_sDoDataPrintAddr
-		#emit SCTRL      6
-		// Now store the return value.
-		/*#emit STOR.S.pri p*/
-		// DO NOT CHANGE THE CODE ABOVE HERE!!!
-	}
-}
-
-Users_DoDataReset(data[], len)
-{
-	// OK, since it says not to change anything here, I should briefly explain
-	// what it does so that people know why not to change it.  This basically
-	// gets the address of the code after the "#emit" blocks and stores that
-	// address in a variable, then ends the function in a compiler-invisible
-	// way.  This variable is used to call this function directly later on in
-	// the code from more "#emit" blocks so that pure addresses can be passed
-	// instead of having the compiler complain that a variable is not an array
-	// (it isn't, but it holds a reference to an array, and the method used to
-	// pass the variable means the run-time thinks this is correct).
-	// DO NOT CHANGE THE CODE BELOW HERE!!!
-	#emit LCTRL    6
-	#emit ADD.C    20
-	#emit STOR.pri YSI_g_sDoDataResetAddr
-	#emit RETN
-	// DO NOT CHANGE THE CODE ABOVE HERE!!!
-	// Need "memset" really!  I have written a memset function based on looping
-	// through a sub-set of an array, then using memcpy to copy that subset over
-	// the rest of the array (which has shown nice speed-ups), but it needs more
-	// testing to confirm that it does what I think it does.  I also need to
-	// determine the optimal block size (for which I have a script written, I
-	// just need to run it).
-	/*while (len--)
-	{
-		data[len] = 0;
-	}*/
-	// The "0" is the default parameter, but I've specified it anyway.
-	memset(data, len, 0);
 }
