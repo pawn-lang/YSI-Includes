@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*\
+/**--------------------------------------------------------------------------**\
 					=================================
 					 y_textrender - Show text.
 					=================================
@@ -60,7 +60,8 @@ Functions:
 Variables:
 	Global:
 		-
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #include "..\y_utils"
 #include "..\y_colours"
@@ -610,19 +611,18 @@ static stock Format_DoEndFade(output[], &start, end, &rem, colour, &initial) //<
 	return 0;
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Format_DoAddString
-Params:
-	out[] - The destination string.
-	in[] - The data to add.
-	&oidx - The index in "out" at which to add data.
-	len - The length of "in".
-	&orem - Space remaining in "out".
-	&fakePos - Like "oidx", but cumulative over line breaks.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Format_DoAddString</summary>
+<param name="out[]">The destination string.</param>
+<param name="in[]">The data to add.</param>
+<param name="&oidx">The index in "out" at which to add data.</param>
+<param name="len">The length of "in".</param>
+<param name="&orem">Space remaining in "out".</param>
+<param name="&fakePos">Like "oidx", but cumulative over line breaks.</param>
+<returns>
 	The amount of data from "in" not added to "out".
-Notes:
+</returns>
+<remarks>
 	Takes an input string and adds it to an output string.  If the input string
 	is too long to fit in the remainder of the output string, what has been
 	added already (including part of the input string) is displayed and a new
@@ -632,7 +632,8 @@ Notes:
 	the right colour.  This will also require a method of winding back the state
 	to the point just after the initial input string was added to continue on to
 	show the next string including newly determined fade data.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static stock Format_DoAddString(out[], const in[], &oidx, const len, &orem, &fakepos) <y_render_fade : y_render_fade_fake>
 {
@@ -785,17 +786,17 @@ static stock Format_DoDisplay(playerid, colour, out[]) <y_render_show : y_render
 	//out[0] = '\0';
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Format_JustShow
-Params:
-	playerid - Player to show the text to.
-	out[] - What the text to show is.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Format_JustShow</summary>
+<param name="playerid">Player to show the text to.</param>
+<param name="out[]">What the text to show is.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	-
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Format_JustShow(playerid, out[]) <y_render_show : y_render_show_scm>
 {
@@ -817,19 +818,18 @@ stock Format_JustShow(playerid, out[]) <y_render_show : y_render_show_td>
 	TD_ShowForPlayer(playerid, Text:out[0]);
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Text_GetLastID
-Params:
-	-
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Text_GetLastID</summary>
+<returns>
 	The basic ID linking all displayed elements together where appropriate (for
 	example SendClientMessage has no meaningful ID.  3D texts would, but that's
 	not implemented.  So do game texts, but that's not implemented either, so
 	really it's just text draws.
-Notes:
+</returns>
+<remarks>
 	-
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Text_GetLastID() <y_render_show : y_render_show_td>
 {
@@ -841,16 +841,15 @@ stock Text_GetLastID() <>
 	return -1;
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
+/**--------------------------------------------------------------------------**\
+<summary>-</summary>
+<returns>
 	-
-Params:
+</returns>
+<remarks>
 	-
-Return:
-	-
-Notes:
-	-
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 // Generic function to handle rendering for all types of outputs.  Other
 // functions such as Format_AddColour are specialised for different text styles.

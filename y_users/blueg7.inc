@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*-
+/**--------------------------------------------------------------------------**\
 					===================================
 					 y_users - Registration functions.
 					===================================
@@ -91,7 +91,8 @@ Compile options:
 	-
 Operators:
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 loadtext core[ysi_players];
 
@@ -131,16 +132,16 @@ foreign Player_ForceGroup(playerid, string:other[]);
 
 foreign Player_ForceLogin(playerid);
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_Reload
-Params:
-	playerid - Player who changed name.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_Reload</summary>
+<param name="playerid">Player who changed name.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Reload a player's basic data when they change name.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Player_Reload(playerid)
 {
@@ -158,16 +159,16 @@ stock Player_SetPreload(playerid, data[E_USER_PRELOAD])
 	}
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_Preload
-Params:
-	playerid - Player who is logging in.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_Preload</summary>
+<param name="playerid">Player who is logging in.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Loads a player's data to an array.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #if _YSI_PLUGINS_MYSQL == 7
 	public _Player_Preload(ret[E_USER_PRELOAD])
@@ -703,20 +704,20 @@ stock Player_GetYID(playerid)
 	return YSI_g_sPlayerYID[playerid];
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_TryLogin
-Params:
-	playerid - Player who is logging in.
-	password[] - Password they entered.
-	f - Show the failed to login message?
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_TryLogin</summary>
+<param name="playerid">Player who is logging in.</param>
+<param name="password[]">Password they entered.</param>
+<param name="f">Show the failed to login message?</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Tries to log in a player - hashes and checks their password and if it's
 	right calls the core login code.  It doesn't matter WHICH script does this
 	as they ALL get called and ALL track the login status of a player.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 //stock Player_TryLogin(playerid, string:password[], f = 0)
 //{
@@ -772,16 +773,16 @@ global Player_TryLogin(playerid, string:password[])
 	return 0;
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_ForceLogin
-Params:
-	playerid - Player who is logging in.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_ForceLogin</summary>
+<param name="playerid">Player who is logging in.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Like "Player_TryLogin" but doesn't take a password so always works.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 global Player_ForceLogin(playerid)
 {
@@ -836,33 +837,33 @@ global Player_ForceLogin(playerid)
 	//}
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_RemoveEntry
-Params:
-	name[] - Item to remove.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_RemoveEntry</summary>
+<param name="name[]">Item to remove.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Wrapper for Player_AddToBuffer for removing data.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Player_RemoveEntry(name[])
 {
 	INI_RemoveEntry(YSI_g_sPlayerWriteFile, name);
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_WriteString
-Params:
-	name[] - Data name.
-	data[] - Data.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_WriteString</summary>
+<param name="name[]">Data name.</param>
+<param name="data[]">Data.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Wrapper for Player_AddToBuffer for strings.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Player_WriteString(name[], data[])
 {
@@ -878,87 +879,87 @@ stock Player_WriteArray(const name[], data[], len)
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_WriteInt
-Params:
-	name[] - Data name.
-	data - Integer data.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_WriteInt</summary>
+<param name="name[]">Data name.</param>
+<param name="data">Integer data.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Wrapper for Player_AddToBuffer for integers.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Player_WriteInt(name[], data)
 {
 	INI_WriteInt(YSI_g_sPlayerWriteFile, name, data);
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_WriteHex
-Params:
-	name[] - Data name.
-	data - Hex data.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_WriteHex</summary>
+<param name="name[]">Data name.</param>
+<param name="data">Hex data.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Wrapper for Player_AddToBuffer for integers to be written as hex values.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Player_WriteHex(name[], data)
 {
 	INI_WriteHex(YSI_g_sPlayerWriteFile, name, data);
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_WriteBin
-Params:
-	name[] - Data name.
-	data - Binary data.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_WriteBin</summary>
+<param name="name[]">Data name.</param>
+<param name="data">Binary data.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Wrapper for Player_AddToBuffer for integers to be written as binary values.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Player_WriteBin(name[], data)
 {
 	INI_WriteBin(YSI_g_sPlayerWriteFile, name, data);
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_WriteBool
-Params:
-	name[] - Data name.
-	data - Boolean data.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_WriteBool</summary>
+<param name="name[]">Data name.</param>
+<param name="data">Boolean data.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Wrapper for Player_AddToBuffer for booleans.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Player_WriteBool(name[], bool:data)
 {
 	INI_WriteBool(YSI_g_sPlayerWriteFile, name, data);
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_WriteFloat
-Params:
-	name[] - Data name.
-	Float:data - Float data.
-	accuracy - number of decimal places to write.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_WriteFloat</summary>
+<param name="name[]">Data name.</param>
+<param name="Float:data">Float data.</param>
+<param name="accuracy">number of decimal places to write.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Wrapper for Player_AddToBuffer for floats.  Uses custom code instead of
 	format() as it's actually faster for something simple like this.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Player_WriteFloat(name[], Float:data, accuracy = 6)
 {
@@ -1035,17 +1036,17 @@ static stock Player_DoLogout(playerid, uid)
 	}
 }*/
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_HashPass
-Params:
-	pass[] - Data to hash.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_HashPass</summary>
+<param name="pass[]">Data to hash.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Based on my Dad's hash system but slightly modifed.  Updated for reverse
 	compatability with other login systems.  Needs more code for Whirlpool.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static stock Player_HashPass(pass[], target[])
 {
@@ -1137,21 +1138,21 @@ stock Anything7()
 {
 }*/
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_TryRegister
-Params:
-	playerid - Player who is registering.
-	string:password[] - The password they entered.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_TryRegister</summary>
+<param name="playerid">Player who is registering.</param>
+<param name="string:password[]">The password they entered.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Register the player with the given password if there is no-one else with the
 	name already.  Or log them in if the username and password match an existing
 	account.  Note that there is no "Player_ForceRegister" as it would do the
 	same thing with no less parameters (a password MUST be given to write in the
 	file).
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 //#endinput
 global Player_TryRegister(playerid, string:password[])
@@ -1279,17 +1280,17 @@ global Player_ChangePassword(playerid, string:password[])
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_RewritePreload
-Params:
-	playerid - Player whose data should be saved.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_RewritePreload</summary>
+<param name="playerid">Player whose data should be saved.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	When a player's preload data is modifed (new bit data or changed password),
 	it needs to be written back out to file.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static stock Player_RewritePreload(playerid)
 {
@@ -1372,18 +1373,18 @@ static stock Player_RewritePreload(playerid)
 	return 0;
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_TryGroup
-Params:
-	playerid - Player who is joining a group.
-	string:other[] - A player name already in the group.
-	string:password[] - The password of the group.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_TryGroup</summary>
+<param name="playerid">Player who is joining a group.</param>
+<param name="string:other[]">A player name already in the group.</param>
+<param name="string:password[]">The password of the group.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Links a player with an existing player such that they share all stats.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 //#endinput
 global Player_TryGroup(playerid, string:other[], string:password[])
@@ -1485,18 +1486,18 @@ global Player_TryGroup(playerid, string:other[], string:password[])
 	return 0;
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Player_ForceGroup
-Params:
-	playerid - Player who is joining a group.
-	string:other[] - A player name already in the group.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Player_ForceGroup</summary>
+<param name="playerid">Player who is joining a group.</param>
+<param name="string:other[]">A player name already in the group.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Like "Player_TryGroup", but doesn't take a password and instead just uses
 	the password of the old player (hashed).
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 //#endinput
 

@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*\
+/**--------------------------------------------------------------------------**\
 					====================================
 					 y_testing - Run unit tests easilly 
 					====================================
@@ -57,7 +57,8 @@ Changelog:
 		Integrated in to YSI.
 	06/08/10:
 		First version
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 /*#if defined _inc_a_samp || defined _samp_included || defined _inc_y_version
 	#error y_testing must be the VERY FIRST include in your mode if being used.
@@ -169,18 +170,18 @@ static stock
 	YSI_g_sTests,
 	YSI_g_sFails;
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Testing_Ask
-Params:
-	playerid - Player to ask a question to.
-	str[] - What to ask.
-	va_args<> - Additional data.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Testing_Ask</summary>
+<param name="playerid">Player to ask a question to.</param>
+<param name="str[]">What to ask.</param>
+<param name="va_args<>">Additional data.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Calls a dialog to ask the player if the given test actually passed.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Testing_Ask(playerid, str[] = "", va_args<>)
 {
@@ -232,21 +233,21 @@ stock Testing_Test(bool:x, str[] = "", va_args<>)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Testing_Run
-Params:
-	&tests - Number of tests run.
-	&fails - Number of tests which failed.
-	buffer[33] - The name of the first test which failed.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Testing_Run</summary>
+<param name="&tests">Number of tests run.</param>
+<param name="&fails">Number of tests which failed.</param>
+<param name="buffer[33]">The name of the first test which failed.</param>
+<returns>
 	Wether all tests were sucessful or not.
-Notes:
+</returns>
+<remarks>
 	-
 
 native Testing_Run(&tests, &fails, buffer[33] = "");
 
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 {
@@ -313,23 +314,23 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Testing_Player
-Params:
-	playerid - Player to test on.
-	&idx - Next test to run.
-	&tests - Number of tests run.
-	&fails - Number of tests which failed.
-	buffer[33] - The name of the first test which failed.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Testing_Player</summary>
+<param name="playerid">Player to test on.</param>
+<param name="&idx">Next test to run.</param>
+<param name="&tests">Number of tests run.</param>
+<param name="&fails">Number of tests which failed.</param>
+<param name="buffer[33]">The name of the first test which failed.</param>
+<returns>
 	Wether all tests were sucessful or not.
-Notes:
+</returns>
+<remarks>
 	-
 
 native Testing_Run(&tests, &fails, buffer[33] = "");
 
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", bool:p = false)
 {

@@ -69,25 +69,40 @@ Changelog:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-// y_uvars
+// These are the tag-type definitions for the various possible parameter types.
+// Array-like definitions.
+#define @Yf:@Yg:@Yh:@Yx:#%0#%1|||%3[%4]|||%5,%6;%9||| @Ye:@Yw:#%0#%1|||%3[%4]|||%5,%6;%9|||
 
-#if defined USE_Y_TIMERS_V1
-	#error y_timers version 1 has not worked in years!
-	#include "y_timers/v1"
-	#endinput
-#endif
+#define @Ye:@Yw:#%0#%1|||%2string:%3[%4]|||%5,%6;%9||| @Yf:@Yg:@Yh:@Yx:#%0s#%1,%3|||%5|||%6;%9,%3|||
 
-#include "internal\y_plugins"
+// This one has an extra parameter because arrays must always be followed by
+// their length.
+#define @Yw:#%0#%1|||%3[%4]|||%5,%6,%7;%9||| @Yf:@Yg:@Yh:@Yx:#%0ad#%1,%3,%5|||%6|||%7;%9,%3,%5|||
 
-#include "y_timers/impl"
-#if defined _YSI_PLUGINS_FIXES_2
-	//#error V3
-	#include "y_timers/v3"
-#else
-	#include "y_timers/v2"
-#endif
+// Tag-like definitions.
+#define @Yg:@Yh:@Yx:#%0#%1|||%2:%3|||%5,%6;%9||| @Yf:@Yg:@Yh:@Yx:#%0d#%1,%2:%3|||%5|||%6;%9,%2:%3|||
 
-#if defined YSI_TESTS
-	#include "y_testing"
-	#include "y_timers/tests"
-#endif
+// Others.
+#define @Yh:@Yx:#%0#%1|||%3|||%5,%6;%9||| @Yf:@Yg:@Yh:@Yx:#%0d#%1,%3|||%5|||%6;%9,%3|||
+
+// Main entry point for defer type determination.
+#define _YT@CR:%0,%1)%2||| @Yf:@Yg:@Yh:@Yx:##|||%0|||%1;%2|||
+
+// Define for "defer" with timer, parameters and main function.
+#define YSI_timer%0[%1]%3(%2) stock%0_yT@(%2)return SetTimerEx(#%0,(I@==-1)?(%1):I@,@Yj:J@,_YT@CR:%2,,)%0|||%0|||(%2)
+
+// Expand additional parameters out to three functions after processing.
+#define @Yx:%0||||||;%1,%2|||%4|||(%5) %0);%1(%5);public%4(%5)
+
+// Can't believe I never thought of this before!  If only there was a way to
+// make it less generic than "id".
+#define @Yj:J@,_YT@CR:,,)%0|||%1|||(%3) J@,#);%0();public%0()
+
+#define defer%0(%1) (J@=0,I@=-1,Timer:%0_yT@(%1))
+
+#define repeat%0(%1) (J@=1,I@=-1,Timer:%0_yT@(%1))
+
+// Custom time.
+#define Timer:%0[%1]_yT@(%2) I@=%1,Timer:%0_yT@(%2)
+
+#define stop%0; {KillTimer(_:%0);}

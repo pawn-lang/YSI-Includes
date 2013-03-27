@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*\
+/**--------------------------------------------------------------------------**\
 						================================
 						 y_jaggedarray - Uneven arrays. 
 						================================
@@ -52,7 +52,8 @@ Changelog:
 	06/10/12:
 		First version
 		Fixed a bug calling "rawMemset".
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #include "internal\y_version"
 #include "y_utils"
@@ -94,21 +95,21 @@ static stock Jagged_MovePtr(array[][], maxSize, slot, shift)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Jagged_ResizeOne
-Params:
-	array[][] - The array we want to resize a slot in.
-	size1 - The number of slots in the array.
-	size2 - The ORIGINAL size of every slot.
-	slot - The slot to resize.
-	newSize - The new size of the slot.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Jagged_ResizeOne</summary>
+<param name="array[][]">The array we want to resize a slot in.</param>
+<param name="size1">The number of slots in the array.</param>
+<param name="size2">The ORIGINAL size of every slot.</param>
+<param name="slot">The slot to resize.</param>
+<param name="newSize">The new size of the slot.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	The "slot" variable is usually used to hold the NEXT slot - we barely need
 	the number of the current slot once we have its address.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock bool:Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 {
@@ -169,19 +170,19 @@ stock bool:Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 	return false;
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	_Jagged_Resize
-Params:
-	array[][] - The array we want to resize a slot in.
-	size1 - The number of slots in the array.
-	size2 - The ORIGINAL size of every slot.
-	... - Multiple {slot, size} tuples.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>_Jagged_Resize</summary>
+<param name="array[][]">The array we want to resize a slot in.</param>
+<param name="size1">The number of slots in the array.</param>
+<param name="size2">The ORIGINAL size of every slot.</param>
+<param name="...">Multiple {slot, size} tuples.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	-
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock bool:_Jagged_Resize(array[][], size1, size2, ...)
 {
@@ -200,19 +201,19 @@ stock bool:_Jagged_Resize(array[][], size1, size2, ...)
 #define Jagged_Resize(%0,%1) _Jagged_Resize(_Jagged(%0),%1)
 #define _ALS_Jagged_Resize
 
-/*----------------------------------------------------------------------------*\
-Function:
-	_Jagged_SizeOf
-Params:
-	array[][] - The array we want to get the size of a slot in.
-	size1 - The number of slots in the array.
-	size2 - The ORIGINAL size of every slot.
-	slot - The slot to get the size of.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>_Jagged_SizeOf</summary>
+<param name="array[][]">The array we want to get the size of a slot in.</param>
+<param name="size1">The number of slots in the array.</param>
+<param name="size2">The ORIGINAL size of every slot.</param>
+<param name="slot">The slot to get the size of.</param>
+<returns>
 	The current size of this slot.  This is NOT a compile-time operation.
-Notes:
+</returns>
+<remarks>
 	Returns the data in BYTES NOT CELLS.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock _Jagged_SizeOf(array[][], size1, size2, slot)
 {
@@ -238,19 +239,19 @@ stock _Jagged_SizeOf(array[][], size1, size2, slot)
 
 #define jaggedsizeof(%0[%1]) (_Jagged_SizeOf(_Jagged(%0),%1)>>2)
 
-/*----------------------------------------------------------------------------*\
-Function:
-	_Jagged_Address
-Params:
-	array[][] - The array we want to get the address of a slot in.
-	size1 - The number of slots in the array.
-	size2 - The ORIGINAL size of every slot.
-	slot - The slot to get the address of.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>_Jagged_Address</summary>
+<param name="array[][]">The array we want to get the address of a slot in.</param>
+<param name="size1">The number of slots in the array.</param>
+<param name="size2">The ORIGINAL size of every slot.</param>
+<param name="slot">The slot to get the address of.</param>
+<returns>
 	The absolute address of this slot.
-Notes:
+</returns>
+<remarks>
 	-
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #if _DEBUG == 0
 	static
@@ -268,18 +269,18 @@ Notes:
 			return 0;
 		}
 
-/*----------------------------------------------------------------------------*\
-Function:
-	_Jagged_End
-Params:
-	array[][] - The array we want to get the end of.
-	size1 - The number of slots in the array.
-	size2 - The ORIGINAL size of every slot.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>_Jagged_End</summary>
+<param name="array[][]">The array we want to get the end of.</param>
+<param name="size1">The number of slots in the array.</param>
+<param name="size2">The ORIGINAL size of every slot.</param>
+<returns>
 	The absolute address of the end of this array.
-Notes:
+</returns>
+<remarks>
 	-
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #if _DEBUG == 0
 	static

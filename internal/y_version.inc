@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*\
+/**--------------------------------------------------------------------------**\
                               =====================
                                YSI - Version Check
                               =====================
@@ -91,7 +91,8 @@ Operators:
 	-
 Natives:
 	-
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #include <a_samp>
 #tryinclude <a_http>
@@ -139,14 +140,16 @@ Natives:
 	#endif
 	
 #else
-	/*------------------------------------------------------------------------*\
+/**----------------------------------------------------------------------**\
 	Hook:
 		OnScriptInit
-	Notes:
+	</returns>
+<remarks>
 		Constructor.  Checks to see if there is a new version available.  This
 		code can not use ANY of the rest of YSI as it needs to be included by
 		everything first.
-	\*------------------------------------------------------------------------*/
+</remarks>
+\**----------------------------------------------------------------------**/
 	
 	#if !defined _inc_a_http
 	
@@ -252,23 +255,23 @@ Natives:
 		forward YVers_OnScriptInit();
 	#endif
 	
-	/*------------------------------------------------------------------------*\
-	Function:
-		YVers_Callback
-	Params:
-		index - Not used.
-		code - Response code from the server.
-		data[] - HTTP data sent from the server.
-	Return:
+	/**----------------------------------------------------------------------**\
+	<summary>YVers_Callback</summary>
+	<param name="	index">Not used.</param>
+	<param name="	code">Response code from the server.</param>
+	<param name="	data[]">HTTP data sent from the server.</param>
+	<returns>
 		-
-	Notes:
+	</returns>
+	<remarks>
 		This is called when my server responds to the HTTP request sent above
 		(or when it doesn't).  This prints information on the current and any
 		future versions of YSI.  Note that it only does a strcmp to determine if
 		the version is newer - people can't have versions newer than the latest,
 		onlyolder or equal (unless they play with the version numbers, but then
 		that's their own fault).
-	\*------------------------------------------------------------------------*/
+	</remarks>
+	\**----------------------------------------------------------------------**/
 	
 	public YVers_Callback(index, code, data[])
 	{

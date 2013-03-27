@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*\
+/**--------------------------------------------------------------------------**\
 					===============================
 					 y_scripting - Access amx data
 					===============================
@@ -53,7 +53,8 @@ Version:
 Changelog:
 	06/08/10:
 		First version
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #include "internal\y_version"
 
@@ -437,20 +438,6 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "")
 	new
 		base,
 		count;
-	if (table == AMX_TABLE_PUBLICS && idx == 0)
-	{
-		// Special case where we can use native functions.
-		idx = funcidx(pattern);
-		if (idx == -1)
-		{
-			idx = 0;
-		}
-		else
-		{
-			buffer = idx * 8 + AMX_HEADER_PUBLICS;
-			return idx + 1;
-		}
-	}
 	AMX_GetBaseCount(table, base, count);
 	if (idx < count)
 	{
@@ -956,6 +943,14 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 		addr += 4;
 	}
 	while (++idx < len);
+}
+
+stock AMX_GetReturnAddress()
+{
+	// Get the return address of the PREVIOUS function.
+	P:5("AMX_GetReturnAddress called");
+	#emit RETN
+	return 0;
 }
 
 stock AMX_Read(addr)

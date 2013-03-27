@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*-
+/**--------------------------------------------------------------------------**\
 					=============================
 					Y Sever Includes - Areas Core
 					=============================
@@ -135,7 +135,8 @@ Compile options:
 	-
 Operators:
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #include "internal\y_version"
 
@@ -432,18 +433,17 @@ static stock
 
 forward Area_Loop();
 
-/*----------------------------------------------------------------------------*-
-Function:
-	OnScriptInit
-Params:
+/**--------------------------------------------------------------------------**\
+<summary>OnScriptInit</summary>
+<returns>
 	-
-Return:
-	-
-Notes:
+</returns>
+<remarks>
 	Sets up required variables.  Note that this hooks "OnScriptInit",
 	"OnGameModeInit" and "OnFilterScript".  This is because ALL scripts need to
 	initialise some things, and only the master needs to initialise others.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 mhook OnScriptInit()
 {
@@ -486,59 +486,58 @@ hook OnFilterScriptInit()
 	YSI_g_sHasCallbacks |= AMX_GetPublicEntry(0, buffer, "@yH_PlayerLeaveArea") ? 8 : 0;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_GetEmptySlotCount
-Params:
-	-
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_GetEmptySlotCount</summary>
+<returns>
 	Number of unused area slots.
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #define Area_GetEmptySlotCount() \
 	(YSI_g_sFreeCount)
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_AddSlots
-Params:
-	num - Number of slots to add.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_AddSlots</summary>
+<param name="num">Number of slots to add.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Actually removes slots from the unused count.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #define Area_AddSlots(%1) \
 	YSI_g_sFreeCount -= (%1)
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_IsActive
-Params:
-	area - Area to check validity of
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_IsActive</summary>
+<param name="area">Area to check validity of</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	An area slot could be used but still invalid if it's not the first slot in
 	an area set.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #define Area_IsActive(%1) \
 	((%1) >= 0 && (%1) < MAX_AREAS && (YSI_g_sAreas[(%1)][E_AREA_FLAGS] & e_AREA_FLAGS_ACTIVE))
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_Debug
-Params:
-	area - Area to print information about.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_Debug</summary>
+<param name="area">Area to print information about.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 foreign void:Area_Debug(area);
 
@@ -583,16 +582,15 @@ global void:Area_Debug(area)
 	//return 0;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_GetFreeSlot
-Params:
-	-
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_GetFreeSlot</summary>
+<returns>
 	Next available slot.
-Notes:
+</returns>
+<remarks>
 	Gets an empty slot, removes it from the unused list and returs a pointer.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static stock Area_GetFreeSlot()
 {
@@ -606,16 +604,16 @@ static stock Area_GetFreeSlot()
 	return old;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_Delete
-Params:
-	area - Area to remove from the list.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_Delete</summary>
+<param name="area">Area to remove from the list.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	You can only remove areas which are at the start of a list.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 foreign void:Area_Delete(area);
 
@@ -675,19 +673,19 @@ global void:Area_Delete(area)
 	//return 1;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_DoRemove
-Params:
-	zone - The zone this area is in (right shifted 18).
-	start - The first of the allocated areas being removed.
-	end - The area in this zone after the last removed one.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_DoRemove</summary>
+<param name="zone">The zone this area is in (right shifted 18).</param>
+<param name="start">The first of the allocated areas being removed.</param>
+<param name="end">The area in this zone after the last removed one.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Very tightly integrated with "Area_Delete", to the point where I could just
 	make them one function if I wanted (but I won't).
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static stock Area_DoRemove(zone, area, next)
 {
@@ -730,18 +728,18 @@ static stock Area_DoRemove(zone, area, next)
 	return 0;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_GetZones
-Params:
-	Float:x - Start of an area.
-	Float:y - Start of an area.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_GetZones</summary>
+<param name="Float:x">Start of an area.</param>
+<param name="Float:y">Start of an area.</param>
+<returns>
 	All the zones this position overlaps.
-Notes:
+</returns>
+<remarks>
 	The most zones you can be in at once is 9 - I_, I_S, I_E, I_SE, X_, X_S,
 	X_E, X_SE, Z_ (or similar corners - NOT in O_ though).
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static stock Area_GetZones(Float:x, Float:y)
 {
@@ -801,24 +799,24 @@ static stock Area_GetZones(Float:x, Float:y)
 	}
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_DetermineZone
-Params:
-	Float:minx - Start of an area.
-	Float:miny - Start of an area.
-	Float:maxx - End of an area.
-	Float:maxy - End of an area.
-	area - The area to add to the determined zone.
-	last - The last slot that makes up the current zone.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_DetermineZone</summary>
+<param name="Float:minx">Start of an area.</param>
+<param name="Float:miny">Start of an area.</param>
+<param name="Float:maxx">End of an area.</param>
+<param name="Float:maxy">End of an area.</param>
+<param name="area">The area to add to the determined zone.</param>
+<param name="last">The last slot that makes up the current zone.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Finds the smallest zone that this area will fit in completely.  Note that
 	due to a limitation in the code, any zones with a node touching the upper
 	edge of a zone will spill in to the next zone too.  Only lower zone edges
 	are inclusive.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static stock Area_DetermineZone(Float:minx, Float:miny, Float:maxx, Float:maxy, area, last)
 {
@@ -1189,29 +1187,29 @@ static stock Area_DetermineZone(Float:minx, Float:miny, Float:maxx, Float:maxy, 
 	}
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_AddTo
-Params:
-	area - Area to set for.
-	set - Wether or not this area is usable in all worlds.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_AddTo</summary>
+<param name="area">Area to set for.</param>
+<param name="set">Wether or not this area is usable in all worlds.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_SetAllWorlds
-Params:
-	area - Area to set for.
-	set - Wether or not this area is usable in all worlds.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_SetAllWorlds</summary>
+<param name="area">Area to set for.</param>
+<param name="set">Wether or not this area is usable in all worlds.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 foreign void:Area_SetAllWorlds(area, bool:set);
 
@@ -1229,15 +1227,14 @@ global void:Area_SetAllWorlds(area, bool:set)
 	//return 0;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_Add
-Params:
-	type - Type of area.
-	... - Points.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_Add</summary>
+<param name="type">Type of area.</param>
+<param name="...">Points.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Types:
 		CUBE, Cube
 		CUBOID, Cuboid
@@ -1247,7 +1244,8 @@ Notes:
 		OVOID, Ovoid
 		SPHERE, Sphere
 		POLY, Poly
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #define Area_Add(%0,%1) Area_Add%0(%1)
 #define Area_AddCUBE Area_AddCube
@@ -1259,21 +1257,21 @@ Notes:
 #define Area_AddSPHERE Area_AddSphere
 #define Area_AddPOLY Area_AddPoly
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_AddCube
-Params:
-	Float:minx - Lowest X corner of box
-	Float:miny - Lowest Y corner of box.
-	Float:minx - Lowest Z corner of box.
-	Float:maxx - Highest X corner of box.
-	Float:maxy - Highest Y corner of box.
-	Float:maxz - Highest Z corner of box.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_AddCube</summary>
+<param name="Float:minx">Lowest X corner of box</param>
+<param name="Float:miny">Lowest Y corner of box.</param>
+<param name="Float:minx">Lowest Z corner of box.</param>
+<param name="Float:maxx">Highest X corner of box.</param>
+<param name="Float:maxy">Highest Y corner of box.</param>
+<param name="Float:maxz">Highest Z corner of box.</param>
+<returns>
 	Area slot or NO_AREA
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #define _AREA_MIN(%0,%1) if (%1 < %0) %0 ^= %1, %1 ^= %0, %0 ^= %1
 
@@ -1332,19 +1330,19 @@ Notes:
 
 #define Area_AddCube Area_AddCuboid
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_AddBox
-Params:
-	Float:minx - Lowest X corner of box
-	Float:miny - Lowest Y corner of box.
-	Float:maxx - Highest X corner of box.
-	Float:maxy - Highest Y corner of box.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_AddBox</summary>
+<param name="Float:minx">Lowest X corner of box</param>
+<param name="Float:miny">Lowest Y corner of box.</param>
+<param name="Float:maxx">Highest X corner of box.</param>
+<param name="Float:maxy">Highest Y corner of box.</param>
+<returns>
 	Area slot or NO_AREA
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Area_AddBox(Float:minx, Float:miny, Float:maxx, Float:maxy)
 {
@@ -1392,43 +1390,43 @@ stock Area_AddBox(Float:minx, Float:miny, Float:maxx, Float:maxy)
 }
 */
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_AddCircle
-Params:
-	Float:x - X position of circle.
-	Float:y - Y position of circle.
-	Float:r - Radius of circle.
-	Float:height - Ceiling of circle.
-	Float:depth - Bottom of circle.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_AddCircle</summary>
+<param name="Float:x">X position of circle.</param>
+<param name="Float:y">Y position of circle.</param>
+<param name="Float:r">Radius of circle.</param>
+<param name="Float:height">Ceiling of circle.</param>
+<param name="Float:depth">Bottom of circle.</param>
+<returns>
 	Area slot or NO_AREA
-Notes:
+</returns>
+<remarks>
 	Technically a cylinder, no lower bound (ceiling added cos there was a
 	spare slot in the 4 float design which may as well have been used).
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Area_AddCircle(Float:x, Float:y, Float:r, Float:height = FLOAT_INFINITY)
 {
 	return Area_AddOval(x, y, r, r, height, FLOAT_NEGATIVE_INFINITY);
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_AddOval
-Params:
-	Float:x - X position of circle.
-	Float:y - Y position of circle.
-	Float:rx - X Radius of oval.
-	Float:ry - Y Radius of oval.
-	Float:height - Ceiling of circle.
-	Float:depth - Bottom of circle.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_AddOval</summary>
+<param name="Float:x">X position of circle.</param>
+<param name="Float:y">Y position of circle.</param>
+<param name="Float:rx">X Radius of oval.</param>
+<param name="Float:ry">Y Radius of oval.</param>
+<param name="Float:height">Ceiling of circle.</param>
+<param name="Float:depth">Bottom of circle.</param>
+<returns>
 	Area slot or NO_AREA
-Notes:
+</returns>
+<remarks>
 	Technically a cylinder, no lower bound (ceiling added cos there was a
 	spare slot in the 4 float design which may as well have been used).
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 @foreign Area_AddOval(Float:x,Float:y,Float:rx,Float:ry,Float:h,Float:d);
 
@@ -1488,40 +1486,40 @@ Notes:
 	return slot;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_AddSphere
-Params:
-	Float:x - X position of sphere.
-	Float:y - Y position of sphere.
-	Float:z - Z position of sphere.
-	Float:r - Radius of sphere.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_AddSphere</summary>
+<param name="Float:x">X position of sphere.</param>
+<param name="Float:y">Y position of sphere.</param>
+<param name="Float:z">Z position of sphere.</param>
+<param name="Float:r">Radius of sphere.</param>
+<returns>
 	Area slot or NO_AREA
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Area_AddSphere(Float:x, Float:y, Float:z, Float:r)
 {
 	return Area_AddOvoid(x, y, z, r, r, r)
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_AddOvoid
-Params:
-	Float:x - X position of sphere.
-	Float:y - Y position of sphere.
-	Float:z - Z position of sphere.
-	Float:rx - X radius of ovoid.
-	Float:ry - Y radius of ovoid.
-	Float:rz - Z radius of ovoid.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_AddOvoid</summary>
+<param name="Float:x">X position of sphere.</param>
+<param name="Float:y">Y position of sphere.</param>
+<param name="Float:z">Z position of sphere.</param>
+<param name="Float:rx">X radius of ovoid.</param>
+<param name="Float:ry">Y radius of ovoid.</param>
+<param name="Float:rz">Z radius of ovoid.</param>
+<returns>
 	Area slot or NO_AREA
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 @foreign Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz);
 
@@ -1587,14 +1585,13 @@ Notes:
 	return slot;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_AddPoly
-Params:
-	Float:... - X/Ys of points
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_AddPoly</summary>
+<param name="Float:...">X/Ys of points</param>
+<returns>
 	Area slot or NO_AREA
-Notes:
+</returns>
+<remarks>
 	Creates an irregular shape to detect players in.  This is a 2d area made
 	up of a load of XY points.  If an odd number of parameters is passed the
 	extra one is assumed to be a ceiling so you can ignore interiors or planes.
@@ -1603,7 +1600,8 @@ Notes:
 	
 	This is one of a few functions still written using the master system at a
 	low level (the other obvious one is "Class_Add").
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #if YSIM_HAS_MASTER
 	#if _YSIM_IS_SERVER
@@ -1874,16 +1872,16 @@ Notes:
 	return header;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_OnPlayerConnect
-Params:
-	playerid - Player who connected
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_OnPlayerConnect</summary>
+<param name="playerid">Player who connected</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 mhook OnPlayerConnect(playerid)
 {
@@ -1904,17 +1902,17 @@ mhook OnPlayerConnect(playerid)
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_loop
-Params:
-	playerid - The player to check for.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_loop</summary>
+<param name="playerid">The player to check for.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Main processing for the system.  Takes one player and checks if they're in
 	some sort of range of somewhere.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #if defined AREAS_USE_TIMER
 	
@@ -2117,23 +2115,23 @@ Notes:
 	}
 #endif
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_CheckArea
-Params:
-	playerid - Player being checked for.
-	world - VW the player is in.
-	area - Area to check against.
-	Float:x - X position to check.
-	Float:y - Y position to check.
-	Float:z - Z position to check.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_CheckArea</summary>
+<param name="playerid">Player being checked for.</param>
+<param name="world">VW the player is in.</param>
+<param name="area">Area to check against.</param>
+<param name="Float:x">X position to check.</param>
+<param name="Float:y">Y position to check.</param>
+<param name="Float:z">Z position to check.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Checks if the given position is in the give area.  All parameters are passed
 	to avoid calling functions over and over and over again.  If the return is
 	not true, "area" is updated to the next one in the chain.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static stock Area_CheckArea(playerid, world, area, Float:x, Float:y, Float:z, &next, areas[16], already)
 {
@@ -2214,19 +2212,19 @@ static stock Area_CheckArea(playerid, world, area, Float:x, Float:y, Float:z, &n
 	return 0;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_IsInCircle
-Params:
-	Float:x - X position to check.
-	Float:y - Y position to check.
-	Float:z - Z position to check.
-	Float:bounds[] - Data for the area position.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_IsInCircle</summary>
+<param name="Float:x">X position to check.</param>
+<param name="Float:y">Y position to check.</param>
+<param name="Float:z">Z position to check.</param>
+<param name="Float:bounds[]">Data for the area position.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Checks if a point is in a given circle.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static stock Area_IsInCircle(Float:x, Float:y, Float:z, Float:bounds[])
 {
@@ -2235,19 +2233,19 @@ static stock Area_IsInCircle(Float:x, Float:y, Float:z, Float:bounds[])
 	return (bounds[4] <= z <= bounds[5] && ((x * x) / bounds[2] + (y * y) / bounds[3]) < 1.0);
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_IsInSphere
-Params:
-	Float:x - X position to check.
-	Float:y - Y position to check.
-	Float:z - Z position to check.
-	Float:bounds[] - Data for the area position.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_IsInSphere</summary>
+<param name="Float:x">X position to check.</param>
+<param name="Float:y">Y position to check.</param>
+<param name="Float:z">Z position to check.</param>
+<param name="Float:bounds[]">Data for the area position.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Checks if a point is in a given sphere.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 /*static stock Area_IsInSphere(Float:x, Float:y, Float:z, Float:bounds[])
 {
@@ -2257,19 +2255,19 @@ Notes:
 	return (((x * x) + (y * y) + (z * z)) < bounds[3]);
 }*/
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_IsInOvoid
-Params:
-	Float:x - X position to check.
-	Float:y - Y position to check.
-	Float:z - Z position to check.
-	Float:bounds[] - Data for the area position.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_IsInOvoid</summary>
+<param name="Float:x">X position to check.</param>
+<param name="Float:y">Y position to check.</param>
+<param name="Float:z">Z position to check.</param>
+<param name="Float:bounds[]">Data for the area position.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Checks if a point is in a given ovoid.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static stock Area_IsInOvoid(Float:x, Float:y, Float:z, Float:bounds[])
 {
@@ -2279,17 +2277,16 @@ static stock Area_IsInOvoid(Float:x, Float:y, Float:z, Float:bounds[])
 	return (((x * x) / bounds[3] + (y * y) / bounds[4] + (z * z) / bounds[5]) < 1.0);
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_IsInPoly
-Params:
-	Float:x - X position to check.
-	Float:y - Y position to check.
-	Float:z - Z position to check.
-	header - Pointer to the start of the polygon data in the array.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_IsInPoly</summary>
+<param name="Float:x">X position to check.</param>
+<param name="Float:y">Y position to check.</param>
+<param name="Float:z">Z position to check.</param>
+<param name="header">Pointer to the start of the polygon data in the array.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Based on IsPlayerInAreaEx by koolk in the useful functions topic.  The
 	passed pointer is the pointer to the first set of co-ordinates in a one-
 	way not looping linked list of points in the polygod as the data may be
@@ -2306,7 +2303,8 @@ Notes:
 	For simplicity's sake (and thus speed's sake) the lower pointes from the
 	last check are saved amd used as the upper points for the next check to
 	avoid loads of repeated array accesses and saving the last array position.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 /*static*/
 stock Area_IsInPoly(Float:x, Float:y, Float:z, header)
@@ -2393,59 +2391,59 @@ stock Area_IsInPoly(Float:x, Float:y, Float:z, header)
 	}
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_IsInCube
-Params:
-	Float:x - X position to check.
-	Float:y - Y position to check.
-	Float:z - Z position to check.
-	Float:lower[] - The lower corner of the cube.
-	Float:upper[] - The upper corner of the cube.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_IsInCube</summary>
+<param name="Float:x">X position to check.</param>
+<param name="Float:y">Y position to check.</param>
+<param name="Float:z">Z position to check.</param>
+<param name="Float:lower[]">The lower corner of the cube.</param>
+<param name="Float:upper[]">The upper corner of the cube.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Checks if a point is in a given cube.  This is another multi slot shape
 	but is much simpler than the poly as it's always 2 slots so we can easilly
 	get the data in one lump.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static stock Area_IsInCube(Float:x, Float:y, Float:z, Float:bounds[])
 {
 	return (bounds[0] <= x <= bounds[3] && bounds[1] <= y <= bounds[4] && bounds[2] <= z <= bounds[5]);
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_IsInBox
-Params:
-	Float:x - X position to check.
-	Float:y - Y position to check.
-	Float:bounds[] - Data for the area position.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_IsInBox</summary>
+<param name="Float:x">X position to check.</param>
+<param name="Float:y">Y position to check.</param>
+<param name="Float:bounds[]">Data for the area position.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Checks if a point is in a given box.  There is no height check with this
 	one as any one area slot has 4 points which for this are upper and lower
 	x and y, adding a height check would make it require 2 slots and basically
 	make it a cube check.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 /*static stock Area_IsInBox(Float:x, Float:y, Float:bounds[])
 {
 	return (bounds[0] <= x <= bounds[2] && bounds[1] <= y <= bounds[3]);
 }*/
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_GetPlayerArea
-Params:
-	playerid - Player to get area of.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_GetPlayerArea</summary>
+<param name="playerid">Player to get area of.</param>
+<returns>
 	The area a player is in or -1.
-Notes:
+</returns>
+<remarks>
 	Deprecated.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 //foreign Area_GetPlayerArea(playerid);
 
@@ -2460,18 +2458,18 @@ stock Area_GetPlayerArea(playerid)
 }
 
 
-/*----------------------------------------------------------------------------*-
-Function:
-	_Area_SetPlayerAreas
-Params:
-	playerid - Player to set areas of.
-	idx - Which slot to set.
-	area - The area to store in that slot.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>_Area_SetPlayerAreas</summary>
+<param name="playerid">Player to set areas of.</param>
+<param name="idx">Which slot to set.</param>
+<param name="area">The area to store in that slot.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Sets a player as in a slot.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static stock
 	_Area_SetPlayerAreas(playerid, idx, area)
@@ -2497,20 +2495,22 @@ static stock
 	}
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
+/**--------------------------------------------------------------------------**\
+<summary>
 	_Area_GetPlayerAreas
 	Area_GetPlayerAreas
-Params:
-	playerid - Player to get areas of.
-	idx - Which area to get.
-Return:
+</summary>
+<param name="playerid">Player to get areas of.</param>
+<param name="idx">Which area to get.</param>
+<returns>
 	The area a player is in or -1.
-Notes:
+</returns>
+<remarks>
 	Replaces Area_GetPlayerArea for multiple areas.  Includes an internal
 	version for tighter loops within this code to use once it is known that a
 	player exists, and without using the global function system.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static stock
 	_Area_GetPlayerAreas(playerid, idx)
@@ -2547,18 +2547,18 @@ global Area_GetPlayerAreas(playerid, idx)
 	return NO_AREA;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_SetPlayer
-Params:
-	area - Area to set for.
-	playerid - Player to set for.
-	set - Wether or not the player can use the area.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_SetPlayer</summary>
+<param name="area">Area to set for.</param>
+<param name="playerid">Player to set for.</param>
+<param name="set">Wether or not the player can use the area.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 foreign void:Area_SetPlayer(area, playerid, bool:set);
 
@@ -2572,17 +2572,17 @@ global void:Area_SetPlayer(area, playerid, bool:set)
 	//return 0;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_GetPlayer
-Params:
-	area - Area to get for.
-	playerid - Player to get for.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_GetPlayer</summary>
+<param name="area">Area to get for.</param>
+<param name="playerid">Player to get for.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Can the player USE this area (not are they in it)?
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 foreign bool:Area_GetPlayer(area, playerid);
 
@@ -2595,18 +2595,18 @@ global bool:Area_GetPlayer(area, playerid)
 	return false;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_SetWorld
-Params:
-	area - Area to set for.
-	world - World to set for.
-	set - Wether or not the area is active in this world.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_SetWorld</summary>
+<param name="area">Area to set for.</param>
+<param name="world">World to set for.</param>
+<param name="set">Wether or not the area is active in this world.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 foreign void:Area_SetWorld(area, world, bool:set);
 
@@ -2624,17 +2624,17 @@ global void:Area_SetWorld(area, world, bool:set)
 	//return 0;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_GetWorld
-Params:
-	area - Area to set for.
-	world - World to set for.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_GetWorld</summary>
+<param name="area">Area to set for.</param>
+<param name="world">World to set for.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 foreign bool:Area_GetWorld(area, world);
 
@@ -2652,17 +2652,17 @@ global bool:Area_GetWorld(area, world)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_SetAllPlayers
-Params:
-	area - Area to set for.
-	set - Wether or not all players can use this area.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_SetAllPlayers</summary>
+<param name="area">Area to set for.</param>
+<param name="set">Wether or not all players can use this area.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 foreign void:Area_SetAllPlayers(area, bool:set);
 
@@ -2676,16 +2676,16 @@ global void:Area_SetAllPlayers(area, bool:set)
 	//return 0;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_IsValid
-Params:
-	area - Area to check.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_IsValid</summary>
+<param name="area">Area to check.</param>
+<returns>
 	Is the passed area valid and active.
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 foreign bool:Area_IsValid(area);
 
@@ -2694,17 +2694,17 @@ global bool:Area_IsValid(area)
 	return bool:Area_IsActive(area);
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_IsEmpty
-Params:
-	area - Area to check.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_IsEmpty</summary>
+<param name="area">Area to check.</param>
+<returns>
 	Is the passed area valid and empty.
-Notes:
+</returns>
+<remarks>
 	Currently very slow as it has to loop through multiple players!  I may add
 	an entry counter to zones to make this O(1) instead of O(nm).
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 foreign bool:Area_IsEmpty(area);
 
@@ -2733,33 +2733,33 @@ global bool:Area_IsEmpty(area)
 	return true;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_SetCallback
-Params:
-	area - Area to set for.
-	callback:callback - Callback to use.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_SetCallback</summary>
+<param name="area">Area to set for.</param>
+<param name="callback:callback">Callback to use.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Adds a y_inline style callback (publics included) to an area to be called
 	when a player enters it.  This is NOT a remote function and instead records
 	the data locally to call functions in the correct script (or they'll just
 	end up crashing as you will be jumping to an arbitrary address in a script
 	that doesn't have sensible code at that address.
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_DoEnter
-Params:
-	playerid - The player that just entered the area.
-	areaid - The area they entered.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_DoEnter</summary>
+<param name="playerid">The player that just entered the area.</param>
+<param name="areaid">The area they entered.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static stock Area_DoEnter(playerid, areaid, &idx)
 {
@@ -2786,17 +2786,17 @@ static stock Area_DoEnter(playerid, areaid, &idx)
 
 forward OnPlayerEnterArea(playerid, areaid);
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Area_DoLeave
-Params:
-	playerid - The player that just left the area.
-	areaid - The area they left.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Area_DoLeave</summary>
+<param name="playerid">The player that just left the area.</param>
+<param name="areaid">The area they left.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	-
--*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 //remotefunc Area_DoLeave(playerid, areaid)
 static stock Area_DoLeave(playerid, areaid, idx)

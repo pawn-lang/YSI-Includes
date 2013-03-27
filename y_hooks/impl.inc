@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*\
+/**--------------------------------------------------------------------------**\
 					==============================
 					 y_hooks - Hook any callback!
 					==============================
@@ -64,7 +64,8 @@ Changelog:
 		Updated OnPlayerUpdate code using Google63's SCTRL jump code.
 	06/08/10:
 		First version
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #include "internal\y_version"
 
@@ -177,17 +178,17 @@ stock Hooks_RedirectPublic(from[], to[], final = 1)
 	return 0;
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Hooks_AddOne
-Params:
-	idx - Public function table index.
-	&toaddidx - Current slot in the global array.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_AddOne</summary>
+<param name="idx">Public function table index.</param>
+<param name="&toaddidx">Current slot in the global array.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Stores a public function by index in to the array of function pointers.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static Hooks_AddOne(idx, &toaddidx)
 {
@@ -206,20 +207,20 @@ static Hooks_AddOne(idx, &toaddidx)
 	}
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Hooks_FindAll
-Params:
-	name[] - Callback to find.
-	&toaddidx - Current slot in the global array.
-	&start - Where to store the start index.
-	&end - Where to store the end index.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_FindAll</summary>
+<param name="name[]">Callback to find.</param>
+<param name="&toaddidx">Current slot in the global array.</param>
+<param name="&start">Where to store the start index.</param>
+<param name="&end">Where to store the end index.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Finds all public functions with the standard y_hooks prefix and a suffix of
 	the given string, as well as the y_hooks ALS next call (if there is one).
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static Hooks_FindAll(name[], &toaddidx, &start, &end)
 {
@@ -255,18 +256,18 @@ static Hooks_FindAll(name[], &toaddidx, &start, &end)
 	return end - start;
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Hooks_RemovePublic
-Params:
-	from[] - Public function to remove.
-	final - The return address to use instead.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_RemovePublic</summary>
+<param name="from[]">Public function to remove.</param>
+<param name="final">The return address to use instead.</param>
+<returns>
 	The address of "func".
-Notes:
+</returns>
+<remarks>
 	Replaces a public function with another function that only returns the given
 	value (must be -1, 0, or 1).
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 static Hooks_RemovePublic(from[], final)
 {
@@ -404,10 +405,13 @@ public OnScriptInit()
 		YSI_gLockData[YSI_gLockData[2] + 1] -= YSI_gLockData[0];
 		YSI_gLockData[1] += '.' + 5;
 	#endif
-	// Do all but one other callback - we already did the ALS forward first.
 	new
-		end   = _:YSI_g_sCallbackEnd[ALS_OnScriptInit] - 1,
+		end   = _:YSI_g_sCallbackEnd[ALS_OnScriptInit],
 		start = _:YSI_g_sCallbackStart[ALS_OnScriptInit];
+	#if defined S@@_OnScriptInit
+		// Do all but one other callback - we already did the ALS forward first.
+		--end;
+	#endif
 	while (start++ != end)
 	{
 		//printf("%d %d", start, end);

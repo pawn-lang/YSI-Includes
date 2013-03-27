@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*\
+/**--------------------------------------------------------------------------**\
 					========================================
 					 y_stringhash - Fast string comparisons 
 					========================================
@@ -65,7 +65,8 @@ Functions:
 Definitions:
 	_H - Generate a string hash at compile time.
 	_I - Generate a case insensitive string hash at compile time.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #include "internal\y_version"
 #include "y_debug"
@@ -1610,22 +1611,22 @@ enum e_HASH_TYPE
 	hash_fnv1a
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Hash
-Params:
-	str - The string to hash.
-	sensitive - Wether the hash is case sensitive or not.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Hash</summary>
+<param name="str">The string to hash.</param>
+<param name="sensitive">Wether the hash is case sensitive or not.</param>
+<returns>
 	The reverse Bernstein hash of the string.
-Notes:
+</returns>
+<remarks>
 	Based on Bernstein hash, but backwards to match the macros.  The only
 	characters which can be used in the compile time version of this code are:
 	a-z, A-Z, 0-9, _ and space.
 
 native Hash(str[]);
 
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstein, len = -1, pack = false)
 {

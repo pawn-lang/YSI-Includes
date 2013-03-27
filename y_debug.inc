@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*\
+/**--------------------------------------------------------------------------**\
 					==============================
 					Y Sever Includes - Debug Setup
 					==============================
@@ -106,7 +106,8 @@ Compile options:
 	_DEBUG - Debugging level to use.
 Operators:
 	-
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #include "internal\y_version"
 
@@ -123,22 +124,22 @@ Operators:
 #define P:%1(%2); Debug_Print%1(%2);
 #define C:%1(%2); Debug_Code%1(%2);
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Debug_Code
-Params:
-	level - Debug level to run the code at.
-	code - Code to run.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Debug_Code</summary>
+<param name="level">Debug level to run the code at.</param>
+<param name="code">Code to run.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Code is not a variable, it's a code chunk and may be written as so:
 	
 	Debug_Code1(if (bla == 2) { bla++; printf("%d", bla); });
 	
 	The code must all be on one line to avoid errors.
 	This isn't really a function as the first parameter is part of the name.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #define DBGC1 Debug_Code1
 #define DBGC2 Debug_Code2
@@ -188,20 +189,20 @@ Notes:
 	#define Debug_Code6(%1);
 #endif
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Debug_Print
-Params:
-	level - Debug level to print at.
-	format[] - Format.
-	...
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Debug_Print</summary>
+<param name="level">Debug level to print at.</param>
+<param name="format[]">Format.</param>
+<param name="..."></param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	This isn't really a function as the first parameter is part of the name:
 	
 	Debug_Print4("variables: %d, %d", i, j);
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #define DBGP1 Debug_Print1
 #define DBGP2 Debug_Print2

@@ -69,25 +69,50 @@ Changelog:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-// y_uvars
+// These are the tag-type definitions for the various possible parameter types.
+// Array-like definitions.
+#define @Yf:@Yg:@Yh:#%0#%1|||%3[%4]|||%5,%6;%8>%9||| @Ye:@Yw:#%0#%1|||%3[%4]|||%5,%6;%9|||
 
-#if defined USE_Y_TIMERS_V1
-	#error y_timers version 1 has not worked in years!
-	#include "y_timers/v1"
-	#endinput
-#endif
+#define @Ye:@Yw:#%0#%1|||%2string:%3[%4]|||%5,%6;%9||| @Yf:@Yg:@Yh:#%0d#%1,_Timer_S(%3)|||%5|||%6;1>%9,@Yv&%3&|||
 
-#include "internal\y_plugins"
+// This one has an extra parameter because arrays must always be followed by
+// their length.
+#define @Yw:#%0#%1|||%3[%4]|||%5,%6,%7;%9||| @Yf:@Yg:@Yh:#%0d#%1,_Timer_A(%3,%5)|||%5|||%6,%7;1>%9,@Yv&%3&|||
 
-#include "y_timers/impl"
-#if defined _YSI_PLUGINS_FIXES_2
-	//#error V3
-	#include "y_timers/v3"
-#else
-	#include "y_timers/v2"
-#endif
+// Tag-like definitions.
+#define @Yg:@Yh:#%0#%1|||%2:%3|||%5,%6;%8>%9||| @Yf:@Yg:@Yh:#%0d#%1,%2:%3|||%5|||%6;%8>%9,%2:%3|||
 
-#if defined YSI_TESTS
-	#include "y_testing"
-	#include "y_timers/tests"
-#endif
+// Others.
+#define @Yh:#%0#%1|||%3|||%5,%6;%8>%9||| @Yf:@Yg:@Yh:#%0d#%1,%3|||%5|||%6;%8>%9,%3|||
+
+// Main entry point for defer type determination.
+#define _YT@CR:%0,%1)%8>%2||| @Yf:@Yg:@Yh:#i#,@Yx:J@|||%0|||%1;%8>%2|||
+
+// Define for "defer" with timer, parameters and main function.
+#define YSI_timer%0[%1]%3(%2) stock%0_yT@(%2)return _Timer_C(O@(#%0@_yT,(I@==-1)?(%1):I@,J@,_YT@CR:%2,,)0>%0|||%0|||(%2)
+
+// Expand additional parameters out to three functions after processing.
+//#define @Yx:%0||||||;%1,%2|||%4||| %0),1);@Yu:%1@_yT(%2);public @Yu:%1@_yT(%2){%4(%2);}%4
+#define @Yx:%0||||||;%8>%1,%2|||%4||| %0),%8);@Yj:%1@_yT(__r,%2);public @Yj:%1@_yT(__r,%2){%4(%2);}%4
+
+// Can't believe I never thought of this before!  If only there was a way to
+// make it less generic than "id".
+#define id#,@Yx:J@,||||||;%8>%1,%2|||%4||| ),0);%1@_yT();public%1@_yT(){%4();}%4
+
+// Remove excess "_Timer_G" and "_Timer_B".
+#define @Yj:%0(%5){%1(%8&%2&%3)%9} @Yj:%0(%5){%1(%8:YSI_gMallocMemory[%2]%3);@Yl(@Yk:%2)%9}
+//#define @Yu:%0{%1(%8&%2&%3)%9} @Yu:%0{%1(%8:YSI_gMallocMemory[%2]%3)%9}
+#define @Yv&%0& %0
+
+// I'm not entirely sure why this works in reverse order, but I'm glad it does!
+#define @Yk:%0);@Yl(@Yk:%1); @Yk:%0);
+#define @Yl if(!__r)_Timer_F
+
+#define defer%0(%1) (J@=0,I@=-1,Timer:%0_yT@(%1))
+
+#define repeat%0(%1) (J@=1,I@=-1,Timer:%0_yT@(%1))
+
+// Custom time.
+#define Timer:%0[%1]_yT@(%2) I@=%1,Timer:%0_yT@(%2)
+
+#define stop%0; {_Timer_F(_:%0);}

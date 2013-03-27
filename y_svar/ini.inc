@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*\
+/**--------------------------------------------------------------------------**\
 					=================================
 					 y_svar - Automatic data saving.
 					=================================
@@ -59,7 +59,8 @@ Functions:
 Variables:
 	Global:
 		-
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #include "internal\y_version"
 
@@ -245,17 +246,16 @@ public _Config_Load_y_svar(name[], value[])
 	}
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	M@
-Params:
-	volatile vardata[] - Handle to the memory location in which to store info.
-	dataSize - The size of the array (first dimension).
-	&pointer - The start of the data.
-	ds2 = 1 - The second dimension of the data.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>M@</summary>
+<param name="volatile vardata[]">Handle to the memory location in which to store info.</param>
+<param name="dataSize">The size of the array (first dimension).</param>
+<param name="&pointer">The start of the data.</param>
+<param name="ds2 = 1">The second dimension of the data.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	This function modifies "vardata" well beyond its original limits to contain
 	information on the structure of the enum used to define "val".  This code
 	uses the name and size information passed in the additional parameters as
@@ -264,7 +264,8 @@ Notes:
 	but in SA:MP isn't.  This takes a human readable(ish) description of the
 	array elements and converts it in to a much simpler to read format for the
 	computer to use later when loading and storing data.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock M@(volatile const vardata[], dataSize, &pointer, ds2 = 1)
 {

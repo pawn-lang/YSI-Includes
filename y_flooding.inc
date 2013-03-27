@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*\
+/**--------------------------------------------------------------------------**\
 					===================================
 					Y Sever Includes - Connections Core
 					===================================
@@ -87,7 +87,8 @@ Compile options:
 	-
 Operators:
 	-
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 #include "internal\y_version"
 #include "y_iterate"
@@ -109,15 +110,14 @@ static
 	YSI_g_sPlayerIPs[MAX_PLAYERS],
 	e_FLOOD_ACTION:YSI_g_sMaxConnections = e_FLOOD_ACTION_COUNT | e_FLOOD_ACTION_BLOCK;
 
-/*----------------------------------------------------------------------------*\
-Function:
-	SetMaxConnections
-Params:
-	max - Maximum number of connections allowed from the same IP.
-	e_FLOOD_ACTION:action - What to do if there's too many.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>SetMaxConnections</summary>
+<param name="max">Maximum number of connections allowed from the same IP.</param>
+<param name="e_FLOOD_ACTION:action">What to do if there's too many.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Sets the maximum connections allowed from a single IP.
 	
 	Options:
@@ -126,7 +126,8 @@ Notes:
 	e_FLOOD_ACTION_KICK - Kick all players on this IP.
 	e_FLOOD_ACTION_BAN - Ban the IP and have players time out.
 	e_FLOOD_ACTION_FBAN - Ban the IP and kick all the players instantly.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock SetMaxConnections(max = -1, e_FLOOD_ACTION:action = e_FLOOD_ACTION_BLOCK)
 {
@@ -134,20 +135,20 @@ stock SetMaxConnections(max = -1, e_FLOOD_ACTION:action = e_FLOOD_ACTION_BLOCK)
 	YSI_g_sMaxConnections = (e_FLOOD_ACTION:max & e_FLOOD_ACTION_COUNT) | action;
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Conn_OnPlayerConnect
-Params:
-	playerid - Player who joined.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Conn_OnPlayerConnect</summary>
+<param name="playerid">Player who joined.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	Checks for too many connections from the same IP address and acts
 	accordingly.
 	
 	Could be edited to only loop through players once but I'm not sure the
 	extra code required would be faster anyway, definately not easier.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 hook OnPlayerConnect(playerid)
 {

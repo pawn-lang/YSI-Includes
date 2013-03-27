@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*\
+/**--------------------------------------------------------------------------**\
                               ===================
                                YSI - Master Core
                               ===================
@@ -110,7 +110,8 @@ Operators:
 	-
 Natives:
 	-
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 // These parts should only be defined once ever.  This code is not dependent on
 // the current MASTER value, it's all generic.
@@ -289,16 +290,15 @@ static
 	YSI_g_sMasterCount,
 	YSI_g_sMasterData[MAX_MASTERS];
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Master_GetNext
-Params:
-	-
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>Master_GetNext</summary>
+<returns>
 	Next master ID to be assigned.
-Notes:
+</returns>
+<remarks>
 	-
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Master_GetNext()
 {
@@ -317,13 +317,15 @@ stock Master_GetNext()
 	return -1;
 }
 
-/*----------------------------------------------------------------------------*\
+/**--------------------------------------------------------------------------**\
 Hook:
 	OnGameModeInit
-Notes:
+</returns>
+<remarks>
 	Constructor.  Gets the script a master ID.  Now ALWAYS gets an ID, even if
 	the master system is disabled - doing otherwise is just too complicated.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 public OnScriptInit()
 {
@@ -376,12 +378,14 @@ public OnScriptInit()
 	forward YSIM_OnMasterSystemInit();
 #endif
 
-/*----------------------------------------------------------------------------*\
+/**--------------------------------------------------------------------------**\
 Hook:
 	OnGameModeExit
-Notes:
+</returns>
+<remarks>
 	Destructor.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 public OnScriptExit()
 {
@@ -416,16 +420,15 @@ public OnScriptExit()
 	forward YSIM_OnScriptExit();
 #endif
 
-/*----------------------------------------------------------------------------*\
-Function:
-	Master_Reassert
-Params:
+/**--------------------------------------------------------------------------**\
+<summary>Master_Reassert</summary>
+<returns>
 	-
-Return:
-	-
-Notes:
+</returns>
+<remarks>
 	Rebuilds the collection of master data whenever a script is restarted.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 public Master_Reassert()
 {
@@ -451,16 +454,16 @@ public Master_Reassert()
 	}
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	_Master_Get
-Params:
-	library[] - The name of the library to try become master for.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>_Master_Get</summary>
+<param name="library[]">The name of the library to try become master for.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	-
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock bool:_Master_Get(library[], bool:force = false)
 {

@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*\
+/**--------------------------------------------------------------------------**\
 					=================================
 					 y_uvar - Automatic data saving.
 					=================================
@@ -59,7 +59,8 @@ Functions:
 Variables:
 	Global:
 		-
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 // y_uvars
 
@@ -256,16 +257,15 @@ public OnUserData[y_uvar](playerid, name[], value[])
 	}
 }
 
-/*----------------------------------------------------------------------------*\
-Function:
-	N@
-Params:
-	val[][] - Handle to the PAWN data array.
-	volatile vardata[] - Handle to the memory location in which to store info.
-	{K@, L@, M@, N@, _}:... - Array slot size information.
-Return:
+/**--------------------------------------------------------------------------**\
+<summary>N@</summary>
+<param name="val[][]">Handle to the PAWN data array.</param>
+<param name="volatile vardata[]">Handle to the memory location in which to store info.</param>
+<param name="{K@, L@, M@, N@, _}:...">Array slot size information.</param>
+<returns>
 	-
-Notes:
+</returns>
+<remarks>
 	This function modifies "vardata" well beyond its original limits to contain
 	information on the structure of the enum used to define "val".  This code
 	uses the name and size information passed in the additional parameters as
@@ -279,7 +279,8 @@ Notes:
 	size of the data, the number of players in the array, the address of the
 	data, a pointer to another data set and the name of this data.  This is by
 	far much simpler than the old version.
-\*----------------------------------------------------------------------------*/
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock N@(volatile const vardata[], playerCount, dataSize, &pointer)
 {
