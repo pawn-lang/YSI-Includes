@@ -113,15 +113,17 @@ Natives:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#define _Y_MASTER_ONCE
+
 // These parts should only be defined once ever.  This code is not dependent on
 // the current MASTER value, it's all generic.
 
-#include "y_version"
-#include "..\y_debug"
-#include "..\y_hooks"
-#include "y_shortfunc"
+#include "internal\y_version"
+#include "y_debug"
+#include "y_hooks"
+#include "internal\y_shortfunc"
 
-#include "y_natives"
+#include "internal\y_natives"
 
 #define _YSIM_COMPARE -1
 

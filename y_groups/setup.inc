@@ -54,80 +54,50 @@ Changelog:
 		First version
 \**--------------------------------------------------------------------------**/
 
-#include "internal\y_version"
+// This file defines functions which are called if the group system is not used.
 
-#if !defined _inc_y_groups
-	#error Did you do <YSI/y_groups> instead of the required <YSI\y_groups>?
-#endif
-#undef _inc_y_groups
+static stock _Groups_DefineStates_() <YSI_has_groups:n>
+{
+}
 
-// Get basic defines.
-#include "internal\y_plugins"
-#include "y_groups/setup"
+static stock _Groups_DefineStates_() <YSI_has_groups:y>
+{
+}
 
-#if defined GROUP_LIBRARY_NAME
-	#if defined GROUP_LIBRARY_SIZE
-		// Include the generic group code for this new custom group.
-		// User-inclusion.
-		#define _GROUP_MAKE_LIMIT       GROUP_LIBRARY_SIZE
-		#define _GROUP_MAKE_NAME        GROUP_LIBRARY_NAME
-		#if defined GROUP_LIBRARY_TAGS
-			#define _GROUP_MAKE_TAG         GROUP_LIBRARY_TAGS
-		#else
-			#define _GROUP_MAKE_TAG _
-		#endif
-		#include "y_groups\_init"
-		#include "y_groups\_funcs"
-		// Now remove the defines.
-		#if defined GROUP_LIBRARY_TAGS
-			#undef GROUP_LIBRARY_TAGS
-		#endif
-		#undef _GROUP_MAKE_LIMIT
-		#undef _GROUP_MAKE_NAME
-		#undef _GROUP_MAKE_TAG
-		#undef GROUP_LIBRARY_NAME
-		#undef GROUP_LIBRARY_SIZE
-	#else
-		#error You must define both GROUP_LIBRARY_SIZE and GROUP_LIBRARY_NAME.
-	#endif
-#else
-	#if defined GROUP_LIBRARY_SIZE
-		#error You must define both GROUP_LIBRARY_SIZE and GROUP_LIBRARY_NAME.
-	#endif
-	#define _GROUP_MAKE_NAME
-	#define _GROUP_MAKE_LIMIT
-#endif
+// Now you can use the default fallback to define functions:
+//  
+//  stock Class_InitialiseFromGroups() <YSI_has_groups:n>
+//  {
+//      // Enable the class for all players.
+//  }
+//  
+//  stock Class_InitialiseFromGroups() <>
+//  {
+//      // Enable the class for all players.
+//  }
+//  
 
-// Only include the remainder just once.
-#if defined _INC_y_groups
-	#endinput
-#endif
-#define _INC_y_groups
+#define _GROUP_LOCAL_NAME               _GROUP_MAKE_TAG:e
+#define _GROUP_INITIALISE               _GROUP_MAKE_NAME<..._InitialiseFromGroups>
 
-#include "y_groups/impl"
+// Dummy values.
+#define _GROUP_MAKE_NAME<%0...%1>       %0_%1
+#define _GROUP_MAKE_LIMIT               0
 
-#define _Y_GROUPS_FUNCS
+#define INVALID_GROUP (Group:-1)
+#define GROUP_MASK                      (Group:0x80000000)
+#define GROUP_GLOBAL                    (Group:_MAX_GROUPS | GROUP_MASK) //-1)
+#define GROUP_FIX(%0)                   ((%0)&=~GROUP_MASK)
+#define GROUP_TEMP_FIX(%0)              ((%0)&~GROUP_MASK)
 
-#if defined _YSI_HAS_y_commands
-	#include "y_commands"
-	#define _YSI_GROUPS_DO_y_commands
-	#include "y_groups\_inc"
-#endif
-#if defined _YSI_HAS_y_classes
-	#include "y_classes"
-	#define _YSI_GROUPS_DO_y_classes
-	#include "y_groups\_inc"
-	#include "y_groups\y_classes"
-#endif
-#if defined _YSI_HAS_y_areas
-	#include "y_areas"
-	#define _YSI_GROUPS_DO_y_areas
-	#include "y_groups\_inc"
-#endif
-#if defined _YSI_HAS_y_races
-	#include "y_races"
-	#define _YSI_GROUPS_DO_y_races
-	#include "y_groups\_inc"
-#endif
+#define NO_GROUPS(%0) if(_GROUP_INITIALISE(%0))
 
-#undef _Y_GROUPS_FUNCS
+// Define local variable names.  This will go in the single call file.
+#define _GROUP_GROUP_NAME               _GROUP_MAKE_NAME<YSI_gs_Group...Data>
+#define _GROUP_GLOBAL_NAME              //_GROUP_MAKE_NAME<YSI_gs_GroupGlobal...>
+
+#define _GROUP_CREATE                   _GROUP_MAKE_NAME<@yG_Init...>
+#define _GROUP_UPDATE_PLAYER            _GROUP_MAKE_NAME<@yG_Upd...>
+
+#define gforeign%1(%2); _GROUP_MAKE_NAME<foreign%1>(%2);
+#define gglobal%1(%2) _GROUP_MAKE_NAME<global%1>(%2)

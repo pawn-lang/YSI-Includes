@@ -18,7 +18,7 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI groups include.
+	The Original Code is the YSI group include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright (C) 2011
@@ -52,82 +52,23 @@ Version:
 Changelog:
 	29/11/10:
 		First version
+</remarks>
 \**--------------------------------------------------------------------------**/
 
-#include "internal\y_version"
+#undef _inc__init
 
-#if !defined _inc_y_groups
-	#error Did you do <YSI/y_groups> instead of the required <YSI\y_groups>?
-#endif
-#undef _inc_y_groups
+//#if !defined _YSI_HAS_GROUP_SYSTEM
+forward bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT);
+//#endif
 
-// Get basic defines.
-#include "internal\y_plugins"
-#include "y_groups/setup"
+stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT) <YSI_has_groups:n>
+{
+	#pragma unused x
+	return true;
+}
 
-#if defined GROUP_LIBRARY_NAME
-	#if defined GROUP_LIBRARY_SIZE
-		// Include the generic group code for this new custom group.
-		// User-inclusion.
-		#define _GROUP_MAKE_LIMIT       GROUP_LIBRARY_SIZE
-		#define _GROUP_MAKE_NAME        GROUP_LIBRARY_NAME
-		#if defined GROUP_LIBRARY_TAGS
-			#define _GROUP_MAKE_TAG         GROUP_LIBRARY_TAGS
-		#else
-			#define _GROUP_MAKE_TAG _
-		#endif
-		#include "y_groups\_init"
-		#include "y_groups\_funcs"
-		// Now remove the defines.
-		#if defined GROUP_LIBRARY_TAGS
-			#undef GROUP_LIBRARY_TAGS
-		#endif
-		#undef _GROUP_MAKE_LIMIT
-		#undef _GROUP_MAKE_NAME
-		#undef _GROUP_MAKE_TAG
-		#undef GROUP_LIBRARY_NAME
-		#undef GROUP_LIBRARY_SIZE
-	#else
-		#error You must define both GROUP_LIBRARY_SIZE and GROUP_LIBRARY_NAME.
-	#endif
-#else
-	#if defined GROUP_LIBRARY_SIZE
-		#error You must define both GROUP_LIBRARY_SIZE and GROUP_LIBRARY_NAME.
-	#endif
-	#define _GROUP_MAKE_NAME
-	#define _GROUP_MAKE_LIMIT
-#endif
-
-// Only include the remainder just once.
-#if defined _INC_y_groups
-	#endinput
-#endif
-#define _INC_y_groups
-
-#include "y_groups/impl"
-
-#define _Y_GROUPS_FUNCS
-
-#if defined _YSI_HAS_y_commands
-	#include "y_commands"
-	#define _YSI_GROUPS_DO_y_commands
-	#include "y_groups\_inc"
-#endif
-#if defined _YSI_HAS_y_classes
-	#include "y_classes"
-	#define _YSI_GROUPS_DO_y_classes
-	#include "y_groups\_inc"
-	#include "y_groups\y_classes"
-#endif
-#if defined _YSI_HAS_y_areas
-	#include "y_areas"
-	#define _YSI_GROUPS_DO_y_areas
-	#include "y_groups\_inc"
-#endif
-#if defined _YSI_HAS_y_races
-	#include "y_races"
-	#define _YSI_GROUPS_DO_y_races
-	#include "y_groups\_inc"
-#endif
-
-#undef _Y_GROUPS_FUNCS
+stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT) <>
+{
+	#pragma unused x
+	return true;
+}

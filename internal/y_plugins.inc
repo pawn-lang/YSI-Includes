@@ -37,6 +37,7 @@ Legal:
 		yom - French translation.
 		50p - Polish translation.
 		Zamaroht - Spanish translation.
+		Los - Portuguese translation.
 		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
 			for me to strive to better.
 		Pixels^ - Running XScripters where the idea was born.
@@ -47,12 +48,16 @@ Legal:
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
 	
+	Optional plugins:
+		Gamer_Z - GPS.
+		Incognito - Streamer.
+		Me - sscanf2, fixes2, Whirlpool.
+	
 Version:
 	1.0
 Changelog:
 	21/10/12:
 		First version
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 // All the code in here relies on detecting FEATURES, not FILENAMES.
@@ -86,10 +91,19 @@ Changelog:
 	#if !defined IPS_MAX_AREAS
 		#define IPS_MAX_AREAS (1000)
 	#endif
+	#include <streamer>
 #endif
 
 #if defined WP_Hash
 	#define _YSI_PLUGINS_WHIRLPOOL
+#endif
+
+#if defined gps_AddPlayer
+	#define _YSI_PLUGINS_GPS
+	// This plugin was included later on in the script and found first time,
+	// include it here in the second compile pass.
+	#include <RouteConnector>
+	#include "y_gamerzps"
 #endif
 
 #if defined SetTimerEx_

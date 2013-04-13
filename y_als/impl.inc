@@ -65,6 +65,12 @@ enum ALS
 	Bit:ALS_OnPlayerClickPlayerTextDraw,
 	Bit:ALS_OnPlayerEditObject,
 	Bit:ALS_OnPlayerEditAttachedObject,
+	// YSI
+	Bit:ALS_OnPlayerEnterArea,
+	Bit:ALS_OnPlayerLeaveArea,
+	Bit:ALS_OnPlayerFinishRace,
+	Bit:ALS_OnPlayerExitRace,
+	Bit:ALS_OnRaceEnd,
 	#if defined _YSI_PLUGINS_STREAMER
 		Bit:ALS_OnDynamicObjectMoved,
 		Bit:ALS_OnPlayerEditDynamicObject,
@@ -154,6 +160,12 @@ enum ALS
 #define ALS_R_PlayerEditObject 1
 #define ALS_R_PlayerEditAttachedObject 1
 #define ALS_R_PlayerSelectObject 1
+// YSI
+#define ALS_R_PlayerEnterArea 1
+#define ALS_R_PlayerLeaveArea 1
+#define ALS_R_PlayerFinishRace 1
+#define ALS_R_PlayerExitRace 1
+#define ALS_R_RaceEnd 1
 // Streamer plugins.
 #define ALS_R_DynamicObjectMoved 1
 #define ALS_R_PlayerEditDynamicObject 1
@@ -225,6 +237,12 @@ enum ALS
 #define ALS_DO_PlayerEditObject<%0> %0<PlayerEditObject,iiiiffffff>(more:playerid,more:playerobject,more:objectid,more:response,Float:fX,Float:fY,Float:fZ,Float:fRotX,Float:fRotY,end_Float:fRotZ)
 #define ALS_DO_PlayerEditAttachedObject<%0> %0<PlayerEditAttachedObject,iiiiifffffffff>(more:playerid,more:response,more:index,more:modelid,more:boneid,Float:fOffsetX,Float:fOffsetY,Float:fOffsetZ,Float:fRotX,Float:fRotY,Float:fRotZ,Float:fScaleX,Float:fScaleY,end_Float:fScaleZ)
 #define ALS_DO_PlayerSelectObject<%0> %0<PlayerSelectObject,iiiifff>(more:playerid,more:type,more:objectid,more:modelid,Float:fX,Float:fY,end_Float:fZ)
+// YSI
+#define ALS_DO_PlayerEnterArea<%0> %0<PlayerEnterArea,ii>(more:playerid,end:areaid)
+#define ALS_DO_PlayerLeaveArea<%0> %0<PlayerLeaveArea,ii>(more:playerid,end:areaid)
+#define ALS_DO_PlayerFinishRace<%0> %0<PlayerFinishRace,iiiii>(more:playerid,more:race,more:position,more:prize,end:time)
+#define ALS_DO_PlayerExitRace<%0> %0<PlayerExitRace,ii>(more:playerid,end:race)
+#define ALS_DO_RaceEnd<%0> %0<RaceEnd,i>(end:race)
 // Streamer plugin.
 #define ALS_DO_DynamicObjectMoved<%0> %0<DynamicObjectMoved,i>(end:objectid)
 #define ALS_DO_PlayerEditDynamicObject<%0> %0<PlayerEditDynamicObject,iiiiiiiii>(more:playerid,more:objectid,more:response,Float:x,Float:y,Float:z,Float:rx,Float:ry,end_Float:rz)

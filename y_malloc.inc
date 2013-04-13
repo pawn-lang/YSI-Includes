@@ -139,7 +139,7 @@ Operators:
 			#if defined MALLOC_MEMORY_B
 				#define MALLOC_MEMORY (((MALLOC_MEMORY_B) * 8) / cellbits)
 			#else
-				#define MALLOC_MEMORY (1 * 1024 * MALLOC_KB_TO_CELL)
+				#define MALLOC_MEMORY (16 * 1024 * MALLOC_KB_TO_CELL)
 			#endif
 		#endif
 	#endif

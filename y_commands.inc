@@ -177,7 +177,9 @@ Compile options:
 
 #define YSIM_U_DISABLE
 #include "y_master"
-#include "y_groups"
+
+#define _YSI_GROUPS_DO_y_commands
+#include "y_groups\_inc"
 
 #include "y_debug"
 #include "y_hooks"
@@ -188,6 +190,13 @@ Compile options:
 #include "y_utils"
 
 #include "internal\y_natives"
+
+stock _YSI_HAS_y_commands(_do_not_call_me_ever_, _like_never_)
+{
+	P:E("You called _YSI_HAS_y_commands!  Bad, don't do that!", _do_not_call_me_ever_, _like_never_);
+	assert(false);
+	return 0;
+}
 
 // Define the CMD: macro.  This uses the prefix "@yC_" as it's 32 bits so allows
 // for fast command string searching in the publics table and makes the commands
@@ -2526,6 +2535,7 @@ static stock Command_Process(playerid, cmdtext[], help)
 		}
 	}
 	P:5("Command_Process: Not found");
+	#pragma tabsize 4
 	return Command_UnknownReturn();
 }
 

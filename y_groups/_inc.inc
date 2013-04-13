@@ -52,43 +52,40 @@ Version:
 Changelog:
 	29/11/10:
 		First version
-</remarks>
 \**--------------------------------------------------------------------------**/
 
-// This file defines functions which are called if the group system is not used.
+#undef _inc__init
 
-static stock _Groups_DefineStates_() <YSI_has_groups:n>
-{
-}
+// Yes, this is odd; yes, it is correct!
+#include "..\y_groups/setup"
 
-static stock _Groups_DefineStates_() <YSI_has_groups:y>
-{
-}
+#if defined _YSI_GROUPS_DO_y_commands
+	#define _GROUP_MAKE_NAME        _GROUP_MAKE_NAME_COMMANDS
+	#define _GROUP_MAKE_LIMIT       _GROUP_MAKE_LIMIT_COMMANDS
+	#undef _YSI_GROUPS_DO_y_commands
+#elseif defined _YSI_GROUPS_DO_y_classes
+	#define _GROUP_MAKE_NAME        _GROUP_MAKE_NAME_CLASSES
+	#define _GROUP_MAKE_LIMIT       _GROUP_MAKE_LIMIT_CLASSES
+	#undef _YSI_GROUPS_DO_y_classes
+#elseif defined _YSI_GROUPS_DO_y_areas
+	#define _GROUP_MAKE_NAME        _GROUP_MAKE_NAME_AREAS
+	#define _GROUP_MAKE_LIMIT       _GROUP_MAKE_LIMIT_AREAS
+	#undef _YSI_GROUPS_DO_y_areas
+#elseif defined _YSI_GROUPS_DO_y_races
+	#define _GROUP_MAKE_NAME        _GROUP_MAKE_NAME_RACES
+	#define _GROUP_MAKE_LIMIT       _GROUP_MAKE_LIMIT_RACES
+	#undef _YSI_GROUPS_DO_y_races
+#endif
 
-// Now you can use the default fallback to define functions:
-//  
-//  stock Class_InitialiseFromGroups() <YSI_has_groups:n>
-//  {
-//      // Enable the class for all players.
-//  }
-//  
-//  stock Class_InitialiseFromGroups() <>
-//  {
-//      // Enable the class for all players.
-//  }
-//  
+#if !defined _GROUP_MAKE_TAG
+	#define _GROUP_MAKE_TAG _
+#endif
+#if defined _Y_GROUPS_FUNCS
+	#include "_funcs"
+#else
+	#include "_init"
+#endif
 
-#define _GROUP_LOCAL_NAME               _GROUP_MAKE_TAG:e
-#define _GROUP_INITIALISE               _GROUP_MAKE_NAME<..._InitialiseFromGroups>
-
-// Dummy values.
-#define _GROUP_MAKE_NAME<%0...%1>       %0_%1
-#define _GROUP_MAKE_LIMIT               0
-
-#define INVALID_GROUP (Group:-1)
-#define GROUP_MASK                      (Group:0x80000000)
-#define GROUP_GLOBAL                    (Group:_MAX_GROUPS | GROUP_MASK) //-1)
-#define GROUP_FIX(%0)                   ((%0)&=~GROUP_MASK)
-#define GROUP_TEMP_FIX(%0)              ((%0)&~GROUP_MASK)
-
-#define NO_GROUPS(%0) if(!_GROUP_INITIALISE(%0))
+#undef _GROUP_MAKE_LIMIT
+#undef _GROUP_MAKE_NAME
+#undef _GROUP_MAKE_TAG

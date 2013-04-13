@@ -1,10 +1,10 @@
 /**--------------------------------------------------------------------------**\
-					=======================================
-					 y_groups - Player group abstractions! 
-					=======================================
+					=========================================
+					     y_gamerzps - GPS plugin + YSI.
+					=========================================
 Description:
-	Admin levels, gangs, teams etc - they're all "groups" of people, this
-	provides an abstraction for all of these collections.
+	This file unites various YSI features with Gamer_Z's GPS (Gamer_Z's
+	Positioning System) plugin so that you can use hooks and inlines with it.
 Legal:
 	Version: MPL 1.1
 	
@@ -18,7 +18,7 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI group include.
+	The Original Code is the YSI classes include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright (C) 2011
@@ -37,6 +37,7 @@ Legal:
 		yom - French translation.
 		50p - Polish translation.
 		Zamaroht - Spanish translation.
+		Los - Portuguese translation.
 		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
 			for me to strive to better.
 		Pixels^ - Running XScripters where the idea was born.
@@ -47,34 +48,50 @@ Legal:
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
 	
+	Optional plugins:
+		Gamer_Z - GPS.
+		Incognito - Streamer.
+		Me - sscanf2, fixes2, Whirlpool.
+	
 Version:
-	1.0
+	0.1
 Changelog:
-	29/11/10:
-		First version
-</remarks>
+	20/10/12:
+		First version.
+Functions:
+	Public:
+		-
+	Core:
+		-
+	Stock:
+		-
+	Static:
+		-
+	Inline:
+		-
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	-
+Enums:
+	-
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		-
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
 \**--------------------------------------------------------------------------**/
 
-#undef _inc_y_groupsingle
 
-#if !defined _GROUP_MAKE_TAG
-	#define _GROUP_MAKE_TAG _
-#endif
-
-#if !defined _YSI_HAS_GROUP_SYSTEM
-	forward bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT);
-#endif
-
-stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT) <YSI_has_groups:n>
-{
-	#pragma unused x
-	return false;
-}
-
-stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT) <>
-{
-	#pragma unused x
-	return false;
-}
-
-#undef _GROUP_MAKE_TAG

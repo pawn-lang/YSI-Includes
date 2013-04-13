@@ -80,19 +80,9 @@ Changelog:
 #define _YSI_NO_SQUARE:%0);%1(%2[%3]%4);} _YSI_NO_SQUARE:%0);%1(%2%4);}
 
 //#define _YSI_NO_TAG_NATIVE:_YSI_RE_NATIVE<%0:%1|||%2|||%3:%4>%5{%6;%7:%8:%9} _YSI_RE_NATIVE<%1|||%2|||%4>%5{%6;return%8:%9}
-#define _YSI_NO_TAG_NATIVE:_YSI_RE_NATIVE<%0:%1|||%2|||%3:%4>_YSI_RE_STOCK<%5:%6|||%7|||_:%8:%9> _YSI_RE_NATIVE<%1|||%2|||%4>_YSI_RE_STOCK<%5:%6|||%7|||%8:%9>
+#define _YSI_NO_TAG_NATIVE:_YSI_RE_NATIVE<%0:%1|||%2|||%3:%4>_YSI_RE_STOCK<%5:%6|||%7|||_:%8:%9> _YSI_RE_NATIVE<%1|||%2|||%4>_YSI_RE_STOCK<%5:%6|||%7|||%8:%9>*/
 
-#include <a_samp>*/
-
-#include "internal\y_version"
-
-#include "y_amx"
-#include "internal\y_shortfunc"
-#include "y_debug"
-
-#include "y_va"
-
-#include "internal\y_natives"
+#include <a_samp>
 
 #if defined YSI_TESTS
 	#if defined INCLUDE_TESTS
@@ -169,6 +159,37 @@ static stock
 	bool:YSI_g_sAsked,
 	YSI_g_sTests,
 	YSI_g_sFails;
+
+#if defined RUN_TESTS
+	#define Test:%1() forward bool:Tezt_@%1(); public bool:Tezt_@%1() for(new string:__name[]=#%1,bool:__once=(printf("*** Test %s start", __name) || TRUE);__once;__once=(printf(" ") && FALSE))
+	//#define Tests:%1() forward bool:Test_@%1(); public bool:Test_@%1() for(new string:__name[]=#%1,bool:__once=(printf("*** Test %s start", __name) || TRUE);__once;__once=(printf(" ") && FALSE))
+	#define TestInit:%1() forward Init_@%1(); public Init_@%1() for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(printf(" ", __name) && FALSE))
+	#define TestClose:%1() forward Shut_@%1(); public Shut_@%1() for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(printf(" ", __name) && FALSE))
+	
+	#define PTest:%1(%2) forward bool:Tezp_@%1(%2); public bool:Tezp_@%1(%2) for(new string:__name[]=#%1,bool:__once=(printf("*** Player Test %s start", __name) || TRUE);__once;__once=(printf(" ") && FALSE))
+	//#define Tests:%1() forward bool:Test_@%1(); public bool:Test_@%1() for(new string:__name[]=#%1,bool:__once=(printf("*** Test %s start", __name) || TRUE);__once;__once=(printf(" ") && FALSE))
+	#define PTestInit:%1(%2) forward Inip_@%1(%2); public Inip_@%1(%2) for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(printf(" ", __name) && FALSE))
+	#define PTestClose:%1(%2) forward Shup_@%1(%2); public Shup_@%1(%2) for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(printf(" ", __name) && FALSE))
+#else
+	#define Test:%1() stock bool:Test_@%1()
+	#define TestInit:%1() stock Init_@%1()
+	#define TestClose:%1() stock Shut_@%1()
+	
+	#define PTest:%1(%2) stock bool:Test_@%1(%2)
+	#define PTestInit:%1(%2) stock Init_@%1(%2)
+	#define PTestClose:%1(%2) stock Shut_@%1(%2)
+#endif
+
+// These all need to come AFTER the types are defined in case the have tests.
+#include "internal\y_version"
+
+#include "y_amx"
+#include "internal\y_shortfunc"
+#include "y_debug"
+
+#include "internal\y_natives"
+
+#include "y_va"
 
 /**--------------------------------------------------------------------------**\
 <summary>Testing_Ask</summary>
@@ -399,7 +420,7 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 }
 
 #if defined RUN_TESTS
-	#define Test:%1() forward bool:Tezt_@%1(); public bool:Tezt_@%1() for(new string:__name[]=#%1,bool:__once=(printf("*** Test %s start", __name) || TRUE);__once;__once=(printf(" ") && FALSE))
+	/*#define Test:%1() forward bool:Tezt_@%1(); public bool:Tezt_@%1() for(new string:__name[]=#%1,bool:__once=(printf("*** Test %s start", __name) || TRUE);__once;__once=(printf(" ") && FALSE))
 	//#define Tests:%1() forward bool:Test_@%1(); public bool:Test_@%1() for(new string:__name[]=#%1,bool:__once=(printf("*** Test %s start", __name) || TRUE);__once;__once=(printf(" ") && FALSE))
 	#define TestInit:%1() forward Init_@%1(); public Init_@%1() for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(printf(" ", __name) && FALSE))
 	#define TestClose:%1() forward Shut_@%1(); public Shut_@%1() for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(printf(" ", __name) && FALSE))
@@ -407,7 +428,7 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 	#define PTest:%1(%2) forward bool:Tezp_@%1(%2); public bool:Tezp_@%1(%2) for(new string:__name[]=#%1,bool:__once=(printf("*** Player Test %s start", __name) || TRUE);__once;__once=(printf(" ") && FALSE))
 	//#define Tests:%1() forward bool:Test_@%1(); public bool:Test_@%1() for(new string:__name[]=#%1,bool:__once=(printf("*** Test %s start", __name) || TRUE);__once;__once=(printf(" ") && FALSE))
 	#define PTestInit:%1(%2) forward Inip_@%1(%2); public Inip_@%1(%2) for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(printf(" ", __name) && FALSE))
-	#define PTestClose:%1(%2) forward Shup_@%1(%2); public Shup_@%1(%2) for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(printf(" ", __name) && FALSE))
+	#define PTestClose:%1(%2) forward Shup_@%1(%2); public Shup_@%1(%2) for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(printf(" ", __name) && FALSE))*/
 	
 	#if defined _AUTO_RUN_TESTS
 		#if !defined FILTERSCRIPT
@@ -602,11 +623,11 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 	#endif
 #else
 	//#define Tests:%1() stock bool:Tests_@%1()
-	#define Test:%1() stock bool:Test_@%1()
+	/*#define Test:%1() stock bool:Test_@%1()
 	#define TestInit:%1() stock Init_@%1()
 	#define TestClose:%1() stock Shut_@%1()
 	
 	#define PTest:%1(%2) stock bool:Test_@%1(%2)
 	#define PTestInit:%1(%2) stock Init_@%1(%2)
-	#define PTestClose:%1(%2) stock Shut_@%1(%2)
+	#define PTestClose:%1(%2) stock Shut_@%1(%2)*/
 #endif

@@ -102,9 +102,27 @@ Natives:
 // =============================================================================
 // =============================================================================
 
-#undef _inc_y_automasters
+#undef _inc__auto
 
 //#define _YSIM_USED_AUTO
+
+#if defined YSI_TESTS
+	/*#if defined _inc_y_testing
+		#if !defined _YCM_j@
+			#define MASTER              9
+			#endinput
+		#endif
+	#endif*/
+	#if defined _MASTER_TEST_ID
+		#if !defined _YCM_i@
+			#define MASTER              8
+			//#undef _MASTER_TEST_ID
+			#endinput
+		#endif
+	#endif
+	//#include "y_testing"
+	//#define _MASTER_TEST_ID
+#endif
 
 // Commands are set as master number 25
 #if defined _inc_y_commands
@@ -196,6 +214,20 @@ Natives:
 	#endif
 #endif
 
+// Races are set as master number 14
+#if defined _inc_y_races
+	#if !defined _YCM_o@ // o is letter 14
+		#define MASTER                  14
+		#endinput
+	#endif
+#endif
+#if defined _inc_y_zonenames
+	#if !defined _YCM_n@ // o is letter 14
+		#define MASTER                  13
+		#endinput
+	#endif
+#endif
+
 // The help system is set as master number 29
 /*#if defined _inc_y_help
 	#if !defined _YCM_u@ // D is letter 29
@@ -205,7 +237,7 @@ Natives:
 #endif*/
 
 #if defined _YSI_ALLOW_INTERNAL_TEST
-	#if defined _inc_y_inttest
+	/*#if defined _inc_y_inttest
 		#if !defined _YCM_j@
 			#define MASTER              9
 			#endinput
@@ -216,90 +248,5 @@ Natives:
 			#define MASTER              8
 			#endinput
 		#endif
-	#endif
+	#endif*/
 #endif
-
-//#undef _YSIM_USED_AUTO
-
-// We can't have an auto-incrementing master number as there's no way to
-// guarantee that two scripts using the same library will have the same master
-// number for that library!
-/*#if defined _YCM_z@
-	#error "Max masters exceeded."
-#endif
-#if defined _YCM_y@
-	#define MASTER                      25
-#endif
-#if defined _YCM_x@
-	#define MASTER                      24
-#endif
-#if defined _YCM_w@
-	#define MASTER                      23
-#endif
-#if defined _YCM_v@
-	#define MASTER                      22
-#endif
-#if defined _YCM_u@
-	#define MASTER                      21
-#endif
-#if defined _YCM_t@
-	#define MASTER                      20
-#endif
-#if defined _YCM_s@
-	#define MASTER                      19
-#endif
-#if defined _YCM_r@
-	#define MASTER                      18
-#endif
-#if defined _YCM_q@
-	#define MASTER                      17
-#endif
-#if defined _YCM_p@
-	#define MASTER                      16
-#endif
-#if defined _YCM_o@
-	#define MASTER                      15
-#endif
-#if defined _YCM_n@
-	#define MASTER                      14
-#endif
-#if defined _YCM_m@
-	#define MASTER                      13
-#endif
-#if defined _YCM_l@
-	#define MASTER                      12
-#endif
-#if defined _YCM_k@
-	#define MASTER                      11
-#endif
-#if defined _YCM_j@
-	#define MASTER                      10
-#endif
-#if defined _YCM_i@
-	#define MASTER                      9
-#endif
-#if defined _YCM_h@
-	#define MASTER                      8
-#endif
-#if defined _YCM_g@
-	#define MASTER                      7
-#endif
-#if defined _YCM_f@
-	#define MASTER                      6
-#endif
-#if defined _YCM_e@
-	#define MASTER                      5
-#endif
-#if defined _YCM_d@
-	#define MASTER                      4
-#endif
-#if defined _YCM_c@
-	#define MASTER                      3
-#endif
-#if defined _YCM_b@
-	#define MASTER                      2
-#endif
-#if defined _YCM_a@
-	#define MASTER                      1
-#endif
-#define MASTER                          0*/

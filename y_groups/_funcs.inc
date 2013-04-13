@@ -59,7 +59,7 @@ Changelog:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#undef _inc_y_groupsecond
+#undef _inc__funcs
 
 // This code, having been updated to use the later version of y_hooks,
 // unfortunately no longer has one function spread between two files, which was
@@ -380,9 +380,9 @@ _gchain _yGU(&pid, Bit:p[], Bit:c[])
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#if !defined _YSI_GROUPS_FIRST_HALF
-	forward bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT);
-#endif
+//#if !defined _YSI_GROUPS_FIRST_HALF
+forward bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT);
+//#endif
 
 stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT) <YSI_has_groups:y>
 {
@@ -403,7 +403,7 @@ stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIM
 			Group_FU(playerid, _:x, YSI_g_sEmpty, _GROUP_DEFAULTS, YSI_gGroupPlayers[playerid]);
 		}
 	}
-	return true;
+	return false;
 }
 
 /**--------------------------------------------------------------------------**\

@@ -164,12 +164,20 @@ Operators:
 #define _GROUP_MAKE_NAME_AREAS<%0...%1>   %0Area%1
 #define _GROUP_MAKE_LIMIT_AREAS           MAX_AREAS
 
-#include "y_groups"
+#define _YSI_GROUPS_DO_y_areas
+#include "y_groups\_inc"
 
 #define YSIM_U_DISABLE
 #include "y_master"
 
 #include "y_hooks"
+
+stock _YSI_HAS_y_areas(_do_not_call_me_ever_, _like_never_)
+{
+	P:E("You called _YSI_HAS_y_areas!  Bad, don't do that!", _do_not_call_me_ever_, _like_never_);
+	assert(false);
+	return 0;
+}
 
 #define NO_AREA          (-1)
 //#define SINGLE_SLOT_AREA (e_AREA_FLAGS_NEXT)

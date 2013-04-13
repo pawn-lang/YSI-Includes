@@ -377,6 +377,12 @@ public OnScriptInit()
 	HOOKS_DO_ONE_CALLBACK<PlayerEditObject>
 	HOOKS_DO_ONE_CALLBACK<PlayerEditAttachedObject>
 	HOOKS_DO_ONE_CALLBACK<PlayerSelectObject>
+	// YSI
+	HOOKS_DO_ONE_CALLBACK<PlayerEnterArea>
+	HOOKS_DO_ONE_CALLBACK<PlayerLeaveArea>
+	HOOKS_DO_ONE_CALLBACK<PlayerFinishRace>
+	HOOKS_DO_ONE_CALLBACK<PlayerExitRace>
+	HOOKS_DO_ONE_CALLBACK<RaceEnd>
 	// Streamer plugin.
 	#if defined _YSI_PLUGINS_STREAMER
 		HOOKS_DO_ONE_CALLBACK<DynamicObjectMoved>
@@ -2509,6 +2515,248 @@ public OnPlayerLogout(playerid, uid)
 #endif
 #define OnPlayerLogout S@@_OnPlayerLogout
 HOOK_FORWARD<PlayerLogout>
+
+#if !defined _ALS_OnPlayerEnterArea
+	forward OnPlayerEnterArea(playerid, areaid);
+#endif
+
+public OnPlayerEnterArea(playerid, areaid)
+{
+	P:2("Hooks_OnPlayerEnterArea called: %d, %d", playerid, areaid);
+	new
+		end   = _:YSI_g_sCallbackEnd[ALS_OnPlayerEnterArea],
+		start = _:YSI_g_sCallbackStart[ALS_OnPlayerEnterArea],
+		ret = ALS_R_PlayerEnterArea;
+	while (start++ != end)
+	{
+		#emit PUSH.S areaid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit CONST.alt  YSI_g_sCallbackAddresses
+		#emit LOAD.S.pri start
+		//#emit INC.pri
+		//#emit STOR.S.pri start
+		#emit LIDX
+		#emit MOVE.alt
+		#emit LCTRL      6
+		#emit ADD.C      24
+		#emit PUSH.pri
+		#emit MOVE.pri
+		#emit SCTRL      6
+		#emit MOVE.alt
+		#emit CONST.pri  0xFFFFFFFE
+		#emit AND
+		#emit PUSH.pri
+		#emit LOAD.S.pri ret
+		#emit AND
+		#emit POP.alt
+		#emit OR
+		#emit STOR.S.pri ret
+		if (ret < 0) return ret + 1;
+	}
+	return ret;
+}
+#if defined _ALS_OnPlayerEnterArea
+	#undef OnPlayerEnterArea
+#else
+	#define _ALS_OnPlayerEnterArea
+#endif
+#define OnPlayerEnterArea S@@_OnPlayerEnterArea
+HOOK_FORWARD<PlayerEnterArea>
+
+#if !defined _ALS_OnPlayerLeaveArea
+	forward OnPlayerLeaveArea(playerid, areaid);
+#endif
+
+public OnPlayerLeaveArea(playerid, areaid)
+{
+	P:2("Hooks_OnPlayerLeaveArea called: %d, %d", playerid, areaid);
+	new
+		end   = _:YSI_g_sCallbackEnd[ALS_OnPlayerLeaveArea],
+		start = _:YSI_g_sCallbackStart[ALS_OnPlayerLeaveArea],
+		ret = ALS_R_PlayerLeaveArea;
+	while (start++ != end)
+	{
+		#emit PUSH.S areaid
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit CONST.alt  YSI_g_sCallbackAddresses
+		#emit LOAD.S.pri start
+		//#emit INC.pri
+		//#emit STOR.S.pri start
+		#emit LIDX
+		#emit MOVE.alt
+		#emit LCTRL      6
+		#emit ADD.C      24
+		#emit PUSH.pri
+		#emit MOVE.pri
+		#emit SCTRL      6
+		#emit MOVE.alt
+		#emit CONST.pri  0xFFFFFFFE
+		#emit AND
+		#emit PUSH.pri
+		#emit LOAD.S.pri ret
+		#emit AND
+		#emit POP.alt
+		#emit OR
+		#emit STOR.S.pri ret
+		if (ret < 0) return ret + 1;
+	}
+	return ret;
+}
+#if defined _ALS_OnPlayerLeaveArea
+	#undef OnPlayerLeaveArea
+#else
+	#define _ALS_OnPlayerLeaveArea
+#endif
+#define OnPlayerLeaveArea S@@_OnPlayerLeaveArea
+HOOK_FORWARD<PlayerLeaveArea>
+
+#if !defined _ALS_OnPlayerFinishRace
+	forward OnPlayerFinishRace(playerid, race, position, prize, time);
+#endif
+
+public OnPlayerFinishRace(playerid, race, position, prize, time)
+{
+	P:2("Hooks_OnPlayerFinishRace called: %d, %d, %d, %d, %d", playerid, race, position, prize, time);
+	new
+		end   = _:YSI_g_sCallbackEnd[ALS_OnPlayerFinishRace],
+		start = _:YSI_g_sCallbackStart[ALS_OnPlayerFinishRace],
+		ret = ALS_R_PlayerFinishRace;
+	while (start++ != end)
+	{
+		#emit PUSH.S time
+		#emit PUSH.S prize
+		#emit PUSH.S position
+		#emit PUSH.S race
+		#emit PUSH.S playerid
+		#emit PUSH.C     20
+		#emit CONST.alt  YSI_g_sCallbackAddresses
+		#emit LOAD.S.pri start
+		//#emit INC.pri
+		//#emit STOR.S.pri start
+		#emit LIDX
+		#emit MOVE.alt
+		#emit LCTRL      6
+		#emit ADD.C      24
+		#emit PUSH.pri
+		#emit MOVE.pri
+		#emit SCTRL      6
+		#emit MOVE.alt
+		#emit CONST.pri  0xFFFFFFFE
+		#emit AND
+		#emit PUSH.pri
+		#emit LOAD.S.pri ret
+		#emit AND
+		#emit POP.alt
+		#emit OR
+		#emit STOR.S.pri ret
+		if (ret < 0) return ret + 1;
+	}
+	return ret;
+}
+#if defined _ALS_OnPlayerFinishRace
+	#undef OnPlayerFinishRace
+#else
+	#define _ALS_OnPlayerFinishRace
+#endif
+#define OnPlayerFinishRace S@@_OnPlayerFinishRace
+HOOK_FORWARD<PlayerFinishRace>
+
+#if !defined _ALS_OnPlayerExitRace
+	forward OnPlayerExitRace(playerid, race);
+#endif
+
+public OnPlayerExitRace(playerid, race)
+{
+	P:2("Hooks_OnPlayerExitRace called: %d, %d", playerid, race);
+	new
+		end   = _:YSI_g_sCallbackEnd[ALS_OnPlayerExitRace],
+		start = _:YSI_g_sCallbackStart[ALS_OnPlayerExitRace],
+		ret = ALS_R_PlayerExitRace;
+	while (start++ != end)
+	{
+		#emit PUSH.S race
+		#emit PUSH.S playerid
+		#emit PUSH.C     8
+		#emit CONST.alt  YSI_g_sCallbackAddresses
+		#emit LOAD.S.pri start
+		//#emit INC.pri
+		//#emit STOR.S.pri start
+		#emit LIDX
+		#emit MOVE.alt
+		#emit LCTRL      6
+		#emit ADD.C      24
+		#emit PUSH.pri
+		#emit MOVE.pri
+		#emit SCTRL      6
+		#emit MOVE.alt
+		#emit CONST.pri  0xFFFFFFFE
+		#emit AND
+		#emit PUSH.pri
+		#emit LOAD.S.pri ret
+		#emit AND
+		#emit POP.alt
+		#emit OR
+		#emit STOR.S.pri ret
+		if (ret < 0) return ret + 1;
+	}
+	return ret;
+}
+#if defined _ALS_OnPlayerExitRace
+	#undef OnPlayerExitRace
+#else
+	#define _ALS_OnPlayerExitRace
+#endif
+#define OnPlayerExitRace S@@_OnPlayerExitRace
+HOOK_FORWARD<PlayerExitRace>
+
+#if !defined _ALS_OnRaceEnd
+	forward OnRaceEnd(race);
+#endif
+
+public OnRaceEnd(race)
+{
+	P:2("Hooks_OnRaceEnd called: %d", race);
+	new
+		end   = _:YSI_g_sCallbackEnd[ALS_OnRaceEnd],
+		start = _:YSI_g_sCallbackStart[ALS_OnRaceEnd],
+		ret = ALS_R_RaceEnd;
+	while (start++ != end)
+	{
+		#emit PUSH.S race
+		#emit PUSH.C     4
+		#emit CONST.alt  YSI_g_sCallbackAddresses
+		#emit LOAD.S.pri start
+		//#emit INC.pri
+		//#emit STOR.S.pri start
+		#emit LIDX
+		#emit MOVE.alt
+		#emit LCTRL      6
+		#emit ADD.C      24
+		#emit PUSH.pri
+		#emit MOVE.pri
+		#emit SCTRL      6
+		#emit MOVE.alt
+		#emit CONST.pri  0xFFFFFFFE
+		#emit AND
+		#emit PUSH.pri
+		#emit LOAD.S.pri ret
+		#emit AND
+		#emit POP.alt
+		#emit OR
+		#emit STOR.S.pri ret
+		if (ret < 0) return ret + 1;
+	}
+	return ret;
+}
+#if defined _ALS_OnRaceEnd
+	#undef OnRaceEnd
+#else
+	#define _ALS_OnRaceEnd
+#endif
+#define OnRaceEnd S@@_OnRaceEnd
+HOOK_FORWARD<RaceEnd>
 
 #if !defined OnPlayerClickMap
 	#undef ALS_MAKE

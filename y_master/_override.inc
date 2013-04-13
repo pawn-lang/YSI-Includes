@@ -93,7 +93,7 @@ Natives:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#undef _inc_y_overridemaster
+#undef _inc__override
 
 #if _YSIM_OVERRIDE == 0
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_0

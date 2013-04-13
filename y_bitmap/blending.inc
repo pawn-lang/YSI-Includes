@@ -1,10 +1,14 @@
 /**--------------------------------------------------------------------------**\
-					=======================================
-					 y_groups - Player group abstractions! 
-					=======================================
+					=================================
+					   y_bitmap - Generate bitmaps.
+					=================================
 Description:
-	Admin levels, gangs, teams etc - they're all "groups" of people, this
-	provides an abstraction for all of these collections.
+	Code to generate images on the server in the bitmap format.  This is by far
+	the simplest format to write to as it is just a huge array of colours (at
+	least 24-bit bitmaps are, and we only do them).
+	
+	This file combines a colour with alpha on to the pixel already at the given
+	location.
 Legal:
 	Version: MPL 1.1
 	
@@ -18,7 +22,7 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI group include.
+	The Original Code is the YSI utils include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright (C) 2011
@@ -48,28 +52,46 @@ Legal:
 		SA:MP Team past, present and future - SA:MP.
 	
 Version:
-	1.0
+	0.1
 Changelog:
-	29/11/10:
-		First version
-</remarks>
+	29/03/13:
+		First version.
+Functions:
+	Stock:
+		-
+	Inline:
+		-
+Variables:
+	Global:
+		-
 \**--------------------------------------------------------------------------**/
 
-#undef _inc_y_grouprevert
+stock Bitmap_WritePixel(Bitmap:ctx, const x, const y, const colour)
+{
+	new
+		a = colour & 0xFF;
+	switch (a)
+	{
+		case 0: return;
+		case 0xFF: Bitmap_WriteCtx(ctx, x, y, colour);
+		default:
+		{
+			new
+				// 256 - alpha.
+				//n = 256 - a,
+				// Colour components.
+				r = ((colour & 0xFF000000) >>> 8) * a,
+				g = ((colour & 0x00FF0000) >>> 8) * a,
+				b = ((colour & 0x0000FF00) >>> 8) * a,
+				oc = Bitmap_ReadCtx(ctx, x, y);
+			a = 256 - a;
+			oc =
+				((((oc & 0xFF000000) >>> 8) * a + r) & 0xFF000000) |
+				((((oc & 0x00FF0000) >>> 8) * a + g) & 0x00FF0000) |
+				((((oc & 0x0000FF00) >>> 8) * a + b) & 0x0000FF00) ;
+			Bitmap_WriteCtx(ctx, x, y, oc);
+		}
+	}
+}
 
-#if defined _YSIM_LAST_MANUAL
-	#define _YSIM_RESET_USER
-#else
-	#define MASTER 23
-	//GAAA
-	// GAAA?  Clearly something was annoying me...
-#endif
-
-#include "..\y_master"
-
-#if defined GROUP_LIBRARY_NAME && defined GROUP_LIBRARY_SIZE
-	#undef _GROUP_MAKE_NAME
-	#undef _GROUP_MAKE_LIMIT
-	#define _GROUP_MAKE_NAME        GROUP_LIBRARY_NAME
-	#define _GROUP_MAKE_LIMIT       GROUP_LIBRARY_SIZE
-#endif
+//stock _Bitmap_BlendAlpha

@@ -180,10 +180,19 @@ forward _Class_OtherRequestSpawn(playerid);
 
 forward Class_ResolveGroups(class, Group:forgroup, bool:cp);
 
-#include "y_groups"
+#define _YSI_GROUPS_DO_y_classes
+#include "y_groups\_inc"
+
 #include "y_playerarray"
 
 #include "y_iterate"
+
+stock _YSI_HAS_y_classes(_do_not_call_me_ever_, _like_never_)
+{
+	P:E("You called _YSI_HAS_y_classes!  Bad, don't do that!", _do_not_call_me_ever_, _like_never_);
+	assert(false);
+	return 0;
+}
 
 enum e_CLASS_FLAGS (<<= 1)
 {

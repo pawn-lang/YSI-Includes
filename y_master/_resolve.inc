@@ -62,7 +62,7 @@ Variables:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#undef _inc_y_masterresolve
+#undef _inc__resolve
 
 #if (!defined YSI_NO_MASTER || defined YSIM_T_ENABLE) && !defined YSIM_T_DISABLE
 	#define YSIM_HAS_MASTER 1

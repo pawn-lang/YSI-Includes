@@ -95,6 +95,15 @@ Natives:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+// Used to get rid of the "string:" tag once it has been used.
+#if !defined string
+	#define string:
+#endif
+
+#if !defined void
+	#define void:
+#endif
+
 #include "..\y_utils"
 #include "y_globaltags"
 #include "..\y_debug"
@@ -231,13 +240,4 @@ stock F@()
 			y_lock 1;
 		}
 	}
-#endif
-
-// Used to get rid of the "string:" tag once it has been used.
-#if !defined string
-	#define string:
-#endif
-
-#if !defined void
-	#define void:
 #endif

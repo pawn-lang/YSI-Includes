@@ -61,100 +61,22 @@ Changelog:
 
 #include <a_samp>
 
-#include "..\y_scriptinit"
+#include "y_scriptinit"
 
 //#include "..\y_master"
 #define YSIM_U_DISABLE
-#include "..\y_master"
-#include "..\y_playerarray"
+#include "y_master"
+#include "y_playerarray"
 
-#include "..\y_stringhash"
-#include "..\y_debug"
-#include "..\y_remote"
+#include "y_stringhash"
+#include "y_debug"
+#include "y_remote"
 
-//#include "..\y_hooks"
-#include "..\y_amx"
-//#include "..\y_cell"
+#include "y_amx"
 
-#include "..\y_iterate"
+#include "y_iterate"
 
-#include "..\y_hooks"
-
-
-
-//#define _YSI_HAS_GROUP_SYSTEM
-
-//#define _GROUP_MAKE_NAME<%0...%1> %0_%1
-// Dummy value
-//#define _GROUP_MAKE_LIMIT               0
-
-// Dummy values.
-#undef _GROUP_MAKE_NAME
-#undef _GROUP_MAKE_LIMIT
-#define _GROUP_MAKE_NAME<%0...%1>       %0_%1
-#define _GROUP_MAKE_LIMIT               0
-
-#define _GROUP_MAKE_NAME_GROUP<%0...%1> %0Group%1
-#define _GROUP_MAKE_LIMIT_GROUP _MAX_GROUPS
-
-// Example:
-//  #define _GROUP_MAKE_NAME<%0...%1> %0Checkpoint%1
-/*#if !defined _GROUP_MAKE_NAME
-	#error Please define _GROUP_MAKE_NAME before including y_groupsone.
-#endif
-#if !defined _GROUP_MAKE_LIMIT
-	#error Please define _GROUP_MAKE_LIMIT before including y_groupsone.
-#endif*/
-
-// Define local variable names.  This will go in the single call file.
-//#define _GROUP_LOCAL_NAME               _GROUP_MAKE_NAME<i...>
-#define _GROUP_GROUP_NAME               _GROUP_MAKE_NAME<YSI_gs_Group...Data>
-#define _GROUP_GLOBAL_NAME              //_GROUP_MAKE_NAME<YSI_gs_GroupGlobal...>
-
-/*stock _Group_ErrorFunc()
-{
-	// BEST FUNCTION EVER!
-	group group group
-}*/
-
-//#define _GROUP_SET_PLAYER               _GROUP_MAKE_NAME<..._SetPlayer>
-
-/*#define _GROUP_UPDATE                   _GROUP_MAKE_NAME<Group_UpdatePlayer...>
-#define _GROUP_UPDATE_ALL               _GROUP_MAKE_NAME<Group_UpdateAll...>
-
-#define _GROUP_GROUP_FUNC               _GROUP_MAKE_NAME<Group_Set...>
-#define _GROUP_GLOBAL_FUNC              _GROUP_MAKE_NAME<Group_SetGlobal...>
-
-#define _GROUP_GLOBAL_DEF               _GROUP_MAKE_NAME<Group_SetGlobal...Default>
-#define _GROUP_GROUP_DEF                _GROUP_MAKE_NAME<Group_Set...Default>
-
-//#define _GROUP_ON_PLAYER_CONNECT        _GROUP_MAKE_NAME<@yH_PlayerConnect_...@yG>
-#define _GROUP_ON_PLAYER_CONNECT        _GROUP_MAKE_NAME<@yH_PlayerConnect...@yG>
-
-#define _GROUP_DEFAULTS                 _GROUP_MAKE_NAME<Group_...Defaults>
-
-#define _GROUP_INIT                     _GROUP_MAKE_NAME<Group_...Init>*/
-
-#define _GROUP_CREATE                   _GROUP_MAKE_NAME<@yG_Init...>
-#define _GROUP_UPDATE_PLAYER            _GROUP_MAKE_NAME<@yG_Upd...>
-//#define _GROUP_ON_PLAYER_CONNECT        _GROUP_MAKE_NAME<@yG_..._PlayerConnect>
-//#define _GROUP_ON_PLAYER_CONNECT        RH:_GROUP_MAKE_NAME<...@yG_OnPlayerConnect>
-
-/*#define _GROUP_OPC_OTHER_CALLED   _GROUP_MAKE_NAME<_@yGPlayerConnect_...>
-#define _GROUP_OPC_IS_CALLED   _GROUP_MAKE_NAME<_yG@PlayerConnect_...>
-#define _GROUP_OPC_PUBLIC      _GROUP_MAKE_NAME<@yG_PlayerConnect_...>*/
-
-//#define group_hook%0On%1(%2) _GROUP_MAKE_NAME<master_hook On%1...>(%2)
-
-/*#define ghook%0(%1)
-
-#include "y_groupsecond.inc"
-
-#undef ghook
-#define ghook group_hook*/
-
-#define gforeign%1(%2); _GROUP_MAKE_NAME<foreign%1>(%2);
-#define gglobal%1(%2) _GROUP_MAKE_NAME<global%1>(%2)
+#include "y_hooks"
 
 /**--------------------------------------------------------------------------**\
 <summary>GROUP_CHAIN</summary>
@@ -1611,5 +1533,5 @@ global Group_GetGlobalGroup(Group:el)
 	return Group_GetGroup(GROUP_GLOBAL, el);
 }
 
-#define _YSIM_RESET_USER
-#include "..\y_master"
+//#define _YSIM_RESET_USER
+//#include "..\y_master"
