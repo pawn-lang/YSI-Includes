@@ -135,7 +135,6 @@ Compile options:
 	-
 Operators:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #include "internal\y_version"
@@ -161,14 +160,18 @@ Operators:
 	#error This version does not support more than 262142 areas.
 #endif
 
-#define _GROUP_MAKE_NAME_AREAS<%0...%1>   %0Area%1
-#define _GROUP_MAKE_LIMIT_AREAS           MAX_AREAS
-
-#define _YSI_GROUPS_DO_y_areas
-#include "y_groups\_inc"
-
 #define YSIM_U_DISABLE
 #include "y_master"
+
+#include "y_groups/setup"
+#if defined _YSI_HAS_y_groups || COMPILER_1ST_PASS
+	#define _GROUP_MAKE_NAME<%0...%1> %0Area%1
+	#define _GROUP_MAKE_LIMIT         MAX_AREAS
+	#include "y_groups\_funcs"
+#else
+	#define _GROUP_MAKE_NAME
+	#define _GROUP_MAKE_LIMIT
+#endif
 
 #include "y_hooks"
 
@@ -2833,5 +2836,5 @@ static stock Area_DoLeave(playerid, areaid, idx)
 
 forward OnPlayerLeaveArea(playerid, areaid);
 
-//#define YSI_SET_LAST_GROUP 19
-#include "internal\y_grouprevert"
+#undef _GROUP_MAKE_LIMIT
+#undef _GROUP_MAKE_NAME

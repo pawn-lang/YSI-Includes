@@ -1248,6 +1248,8 @@ Natives:
 		// definition means that more processing is done (mainly for the
 		// definition of the "_YCM:m" function to not give warnings.
 		//#define foreign%0(%1); stock %0(%1)<>{new i=_:@Zu:Y@();W@(#%0@##,_YM@CX:%1,,);return Z@(i);}%0@(%1);%0(%1)<_YCM:m>
+		// The "@" versions of the functions are used when the caller's master
+		// ID is needed, the normal version is used when it isn't.
 		#define @foreign%0(%1) stock%0(%1)<>{new i=Y@();W@(@Zu:#%0@#,_YM@Cj:%1,,);return Z@(i);}%0(%1)<_YCM:m>
 		
 		#define foreign%0(%1) stock%0(%1)<>{W@(@Zu:#%0@#,_YM@Cl:%1,,);return V@(8,YSIM_RETURN);}%0(%1)<_YCM:m>

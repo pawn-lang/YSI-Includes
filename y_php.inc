@@ -59,7 +59,6 @@ Functions:
 Variables:
 	Global:
 		-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #include <a_http>
@@ -521,5 +520,3 @@ public _PHP_Result(index, response, data[])
 
 #define phpdata%0(%1) %0@yP_(%1);public%0@yP_(%1)
 #define phpfunc%0(%1) %0_yP@(%1);public%0_yP@(%1)
-
-#include "internal\y_grouprevert"

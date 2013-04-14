@@ -347,7 +347,9 @@ global _Race_Create(l,e,c,a,f,x,i,w,r)
 	PA_Init(YSI_g_sRacers[raceid]);
 	Iter_Clear(YSI_g_sRacePeople[raceid]);
 	YSI_g_sRaceData[raceid][E_RACE_CP_START] = YSI_g_sCPIndex;
-	NO_GROUPS(raceid) {}
+	NO_GROUPS(raceid)
+	{
+	}
 	return raceid;
 }
 
@@ -789,7 +791,9 @@ _Y_RACES_STATIC Race_CheckEnd(slot)
 			RaceArray_Shift(start + count, YSI_g_sCPIndex, start);
 			RaceArray_IndexShift(start, -count);
 			// Reset groups.
-			NO_GROUPS(slot) {}
+			NO_GROUPS(slot)
+			{
+			}
 		}
 		else
 		{

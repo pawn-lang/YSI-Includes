@@ -64,6 +64,7 @@ Changelog:
 // Get basic defines.
 #include "internal\y_plugins"
 #include "y_groups/setup"
+#include "y_groups/impl"
 
 #if defined GROUP_LIBRARY_NAME
 	#if defined GROUP_LIBRARY_SIZE
@@ -76,7 +77,6 @@ Changelog:
 		#else
 			#define _GROUP_MAKE_TAG _
 		#endif
-		#include "y_groups\_init"
 		#include "y_groups\_funcs"
 		// Now remove the defines.
 		#if defined GROUP_LIBRARY_TAGS
@@ -84,7 +84,6 @@ Changelog:
 		#endif
 		#undef _GROUP_MAKE_LIMIT
 		#undef _GROUP_MAKE_NAME
-		#undef _GROUP_MAKE_TAG
 		#undef GROUP_LIBRARY_NAME
 		#undef GROUP_LIBRARY_SIZE
 	#else
@@ -94,8 +93,6 @@ Changelog:
 	#if defined GROUP_LIBRARY_SIZE
 		#error You must define both GROUP_LIBRARY_SIZE and GROUP_LIBRARY_NAME.
 	#endif
-	#define _GROUP_MAKE_NAME
-	#define _GROUP_MAKE_LIMIT
 #endif
 
 // Only include the remainder just once.
@@ -104,30 +101,49 @@ Changelog:
 #endif
 #define _INC_y_groups
 
-#include "y_groups/impl"
+stock _YSI_HAS_y_groups(_do_not_call_me_ever_, _like_never_)
+{
+	P:E("You called _YSI_HAS_y_groups!  Bad, don't do that!", _do_not_call_me_ever_, _like_never_);
+	assert(false);
+	return 0;
+}
+
+/*#include "y_groups/impl"
 
 #define _Y_GROUPS_FUNCS
 
+// This is quite repetative code, but there's no simple way to reduce it.
 #if defined _YSI_HAS_y_commands
 	#include "y_commands"
-	#define _YSI_GROUPS_DO_y_commands
-	#include "y_groups\_inc"
+	#define _GROUP_MAKE_NAME<%0...%1> %0Command%1
+	#define _GROUP_MAKE_LIMIT         MAX_COMMANDS
+	#include "y_groups\_funcs"
+	#undef _GROUP_MAKE_LIMIT
+	#undef _GROUP_MAKE_NAME
 #endif
 #if defined _YSI_HAS_y_classes
 	#include "y_classes"
-	#define _YSI_GROUPS_DO_y_classes
-	#include "y_groups\_inc"
+	#define _GROUP_MAKE_NAME<%0...%1> %0Class%1
+	#define _GROUP_MAKE_LIMIT         MAX_CLASSES
+	#include "y_groups\_funcs"
 	#include "y_groups\y_classes"
+	#undef _GROUP_MAKE_LIMIT
+	#undef _GROUP_MAKE_NAME
 #endif
 #if defined _YSI_HAS_y_areas
 	#include "y_areas"
-	#define _YSI_GROUPS_DO_y_areas
-	#include "y_groups\_inc"
+	#define _GROUP_MAKE_NAME<%0...%1> %0Area%1
+	#define _GROUP_MAKE_LIMIT         MAX_AREAS
+	#include "y_groups\_funcs"
+	#undef _GROUP_MAKE_LIMIT
+	#undef _GROUP_MAKE_NAME
 #endif
 #if defined _YSI_HAS_y_races
 	#include "y_races"
-	#define _YSI_GROUPS_DO_y_races
-	#include "y_groups\_inc"
+	#define _GROUP_MAKE_NAME<%0...%1> %0Race%1
+	#define _GROUP_MAKE_LIMIT         MAX_RACES
+	#include "y_groups\_funcs"
+	#undef _GROUP_MAKE_LIMIT
+	#undef _GROUP_MAKE_NAME
 #endif
-
-#undef _Y_GROUPS_FUNCS
+*/

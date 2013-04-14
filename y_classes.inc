@@ -133,21 +133,9 @@ Compile options:
 	-
 Operators:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #include "internal\y_version"
-#include "y_bit"
-#include "y_debug"
-
-#define YSIM_U_DISABLE
-#include "y_master"
-
-#include "y_iterate"
-
-#include "y_hooks"
-
-#include "internal\y_natives"
 
 #if !defined MAX_CLASSES
 	#define MAX_CLASSES                 (256)
@@ -160,6 +148,28 @@ Operators:
 #if !defined WEAPON_ARMOUR
 	#define WEAPON_ARMOUR               (100)
 #endif
+#include "y_bit"
+#include "y_debug"
+#include "y_iterate"
+#include "y_playerarray"
+#include "y_iterate"
+#include "internal\y_natives"
+
+#define YSIM_U_DISABLE
+#include "y_master"
+
+#include "y_groups/setup"
+#if defined _YSI_HAS_y_groups || COMPILER_1ST_PASS
+	#define _GROUP_MAKE_NAME<%0...%1> %0Class%1
+	#define _GROUP_MAKE_LIMIT         MAX_CLASSES
+	#include "y_groups\_funcs"
+	#include "y_groups\y_classes"
+#else
+	#define _GROUP_MAKE_NAME
+	#define _GROUP_MAKE_LIMIT
+#endif
+
+#include "y_hooks"
 
 //#define OnPlayerRequestClassEx(%0) OnPlayerRequestClassEx_(%0)if(!YSI_gOPRCE)return 0;else
 //#define OnPlayerRequestSpawnEx(%0) OnPlayerRequestSpawnEx_(%0)if(!YSI_gOPRCE)return 0;else
@@ -175,17 +185,7 @@ forward _Class_OtherRequestSpawn(playerid);
 
 #define _CLASS_WEAPON_CODE if((n-w)&0x01)while(w!=n&&s<MAX_CLASS_SPAWN_WEAPONS){cw=getarg(w++);if(cw==WEAPON_ARMOUR)weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(100<<8);else if(w==n)P:E(": Insufficient class weapon data.");else weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);}else while(w!=n&&s<MAX_CLASS_SPAWN_WEAPONS){cw=getarg(w++);if(cw==WEAPON_ARMOUR)weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(getarg(w++)<<8);else weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);}
 
-#define _GROUP_MAKE_NAME_CLASSES<%0...%1>   %0Class%1
-#define _GROUP_MAKE_LIMIT_CLASSES           MAX_CLASSES
-
 forward Class_ResolveGroups(class, Group:forgroup, bool:cp);
-
-#define _YSI_GROUPS_DO_y_classes
-#include "y_groups\_inc"
-
-#include "y_playerarray"
-
-#include "y_iterate"
 
 stock _YSI_HAS_y_classes(_do_not_call_me_ever_, _like_never_)
 {
@@ -1377,5 +1377,5 @@ static stock Class_Spectate(playerid)
 #endif
 #define AddPlayerClass Class_Add
 
-//#define YSI_SET_LAST_GROUP 22	
-#include "internal\y_grouprevert"
+#undef _GROUP_MAKE_LIMIT
+#undef _GROUP_MAKE_NAME

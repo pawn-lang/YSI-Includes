@@ -87,7 +87,6 @@ Compile options:
 	-
 Operators:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #include "internal\y_version"
@@ -520,6 +519,3 @@ mhook OnPlayerConnect(playerid)
 	P:E("No languages set");
 	return 0;
 }
-
-//#define YSI_SET_LAST_GROUP 21
-#include "internal\y_grouprevert"

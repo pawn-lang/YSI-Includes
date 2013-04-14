@@ -91,7 +91,6 @@ Compile options:
 	-
 Operators:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if !defined MODE_NAME
@@ -216,5 +215,3 @@ foreign Player_ChangeLanguage(playerid, string:code[]);
 	#include "y_testing"
 	#include "y_users/tests"
 #endif
-
-#include "internal\y_grouprevert"

@@ -57,7 +57,6 @@ Changelog:
 		Updated OnPlayerUpdate code using Google63's SCTRL jump code.
 	06/08/10:
 		First version
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if !defined _inc_y_races
@@ -81,20 +80,24 @@ Changelog:
 #if defined RACE_POSITION
 	#include "y_timers"
 #endif
-#include "y_hooks"
 
 #if !defined MAX_RACES
 	#define MAX_RACES 16
 #endif
 
-#define _GROUP_MAKE_NAME_RACES<%0...%1>   %0Race%1
-#define _GROUP_MAKE_LIMIT_RACES           MAX_RACES
-
 #define YSIM_U_DISABLE
 #include "y_master"
 
-#define _YSI_GROUPS_DO_y_races
-#include "y_groups\_inc"
+//#if defined _YSI_HAS_y_groups || COMPILER_1ST_PASS
+	#define _GROUP_MAKE_NAME<%0...%1> %0Race%1
+	#define _GROUP_MAKE_LIMIT         MAX_RACES
+	#include "y_groups\_funcs"
+//#else
+//	#define _GROUP_MAKE_NAME
+//	#define _GROUP_MAKE_LIMIT
+//#endif
+
+#include "y_hooks"
 
 stock _YSI_HAS_y_races(_do_not_call_me_ever_, _like_never_)
 {
@@ -134,4 +137,5 @@ foreign Race_SetPlayer(race, playerid, bool:set);
 	// Get some new IDs.
 #endif
 
-#include "internal\y_grouprevert"
+#undef _GROUP_MAKE_LIMIT
+#undef _GROUP_MAKE_NAME

@@ -358,6 +358,3 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 {
 	ShowPlayerDialog(playerid, -1, 0, NULL, NULL, NULL, NULL);
 }*/
-
-//#define YSI_SET_LAST_GROUP 19
-#include "internal\y_grouprevert"

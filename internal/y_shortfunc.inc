@@ -200,6 +200,10 @@ stock H@(GLOBAL_TAG_TYPES:...)
 	return 0;
 }
 
+#define _UNUSED(%0) H@(_:_H@0:_H@1:%0)
+//#define _H@0:_H@1:%0&%1) _H@0:_H@1:%0%1)
+//#define _H@1:%0[%9]%1) _H@1:%0%1)
+
 stock G@(GLOBAL_TAG_TYPES:...)
 {
 	// Just a dead-end for spare parameters which returns a string.

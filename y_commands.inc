@@ -159,7 +159,6 @@ Compile options:
 	COMMAND_SENSITIVE - Make commands case sensitive.
 	COMMAND_ACCURATE - Can use '@' in command names.
 	MAX_COMMANDS - The maximum number of commands which can be used.
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_text
@@ -172,24 +171,28 @@ Compile options:
 	#define MAX_COMMANDS                (1024)
 #endif
 
-#define _GROUP_MAKE_NAME_CMD<%0...%1>   %0Command%1
-#define _GROUP_MAKE_LIMIT_CMD           MAX_COMMANDS
-
-#define YSIM_U_DISABLE
-#include "y_master"
-
-#define _YSI_GROUPS_DO_y_commands
-#include "y_groups\_inc"
-
 #include "y_debug"
-#include "y_hooks"
-
 #include "y_bintree"
 #include "y_amx"
 #include "y_playerarray"
 #include "y_utils"
 
 #include "internal\y_natives"
+
+#define YSIM_U_DISABLE
+#include "y_master"
+
+#include "y_groups/setup"
+#if defined _YSI_HAS_y_groups || COMPILER_1ST_PASS
+	#define _GROUP_MAKE_NAME<%0...%1> %0Command%1
+	#define _GROUP_MAKE_LIMIT         MAX_COMMANDS
+	#include "y_groups\_funcs"
+#else
+	#define _GROUP_MAKE_NAME
+	#define _GROUP_MAKE_LIMIT
+#endif
+
+#include "y_hooks"
 
 stock _YSI_HAS_y_commands(_do_not_call_me_ever_, _like_never_)
 {
@@ -2750,20 +2753,5 @@ global string:Command_GetNext(index, playerid)
 	return buffer;
 }
 
-//#tryinclude <YSI\y_groups>
-
-//#undef _YCM
-
-// This is to allow callback chaining.  When the user includes y_groups and
-// other libraries, the function names will be reset to their custom ones after
-// every inclusion, however if you then include another YSI library you need to
-// revert to the previous library names to get the chaining to work.  However I
-// think this is completely pointless now thanks to "y_hooks".
-
-//#define YSI_SET_LAST_GROUP 25
-#include "internal\y_grouprevert"
-
-// So we can use custom syntax on these two functions and allow command names to
-// be sort of used...
-//#define Group_SetCommand(%0,YCMD:%2,%3) Group_SetCommand(%0,Command_GetID(#%2),%3)
-//#define Group_SetGlobalCommand(YCMD:%2,%3) Group_SetGlobalCommand(Command_GetID(#%2),%3)
+#undef _GROUP_MAKE_LIMIT
+#undef _GROUP_MAKE_NAME

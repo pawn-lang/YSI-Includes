@@ -56,7 +56,6 @@ Changelog:
 		Added group hierarchys.
 	29/11/10:
 		First version
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #include <a_samp>
@@ -77,6 +76,7 @@ Changelog:
 #include "y_iterate"
 
 #include "y_hooks"
+//#include "y_groups/setup"
 
 /**--------------------------------------------------------------------------**\
 <summary>GROUP_CHAIN</summary>
@@ -92,78 +92,6 @@ Changelog:
 	BY REFERENCE - ALL of them!
 </remarks>
 \**--------------------------------------------------------------------------**/
-
-#define GROUP_CHAIN%9<%0>(%1) (J@=_:(_Y_G@C_YES:_Y_G@C_NO:%0%9|||(_:_Y_G@C3:_Y_G@C2:_Y_G@C0:_Y_G@C1:%0(%1))))
-
-#define _Y_G@C3:_Y_G@C2:_Y_G@C0:_Y_G@C1:%0(%1,%2,%3) _Y_G@C_3(%0,_:_Y_G@P:_Y_G@Q:_Y_G@R:%1,_:%2,_:%3|||)
-#define _Y_G@C2:_Y_G@C0:_Y_G@C1:%0(%1,%2) _Y_G@C_2(%0,_:_Y_G@P:_Y_G@Q:_Y_G@R:%1,_:%2|||)
-#define _Y_G@C0:_Y_G@C1:%0() _Y_G@C_0(%0)
-#define _Y_G@C1:%0(%1) _Y_G@C_1(%0,_:_Y_G@P:_Y_G@Q:_Y_G@R:%1|||)
-#define _Y_G@C_YES:_Y_G@C_NO:%0?||| (!(%0))?(0):
-#define _Y_G@C_NO:%0|||
-// Can strip out multiple brackets in one go.
-#define _Y_G@P:%0[]%1||| _Y_G@P:%0%1|||
-#define _Y_G@Q:%0&%1||| _Y_G@Q:%0%1|||
-#define _Y_G@R:%0||| %0
-
-//#define master_hook%0On%2(%3) hook On%2(%3)<>return 1;rehook On%2(%3)<_YCM:y>
-
-#if !defined MAX_GROUP_NAME
-	#define MAX_GROUP_NAME              (24)
-#endif
-
-#if defined MAX_GROUPS
-	// Round up to the next nice number (or not, we could with long macros).
-	#define _MAX_GROUPS                  (_:MAX_GROUPS)
-#else
-	// 1 less than a nice number (with good reason).
-	#define _MAX_GROUPS                  (_:127)
-#endif
-
-#define _MAX_GROUPS_G (_:_MAX_GROUPS + 1)
-
-// Note that these macros always do the last element before all the others
-// (which may or may not be in order).  This is as the last element holds the
-// "default" group, which is the most likely to be a good match.
-#if _MAX_GROUPS < 32
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[0]&%1[0])
-#elseif _MAX_GROUPS < 64
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[1]&%1[1]||%0[0]&%1[0])
-#elseif _MAX_GROUPS < 96
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[2]&%1[2]||%0[0]&%1[0]||%0[1]&%1[1])
-#elseif _MAX_GROUPS < 128
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[3]&%1[3]||%0[0]&%1[0]||%0[1]&%1[1]||%0[2]&%1[2])
-#elseif _MAX_GROUPS < 160
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[4]&%1[4]||%0[0]&%1[0]||%0[1]&%1[1]||%0[2]&%1[2]||%0[3]&%1[3])
-#elseif _MAX_GROUPS < 192
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[5]&%1[5]||%0[0]&%1[0]||%0[1]&%1[1]||%0[2]&%1[2]||%0[3]&%1[3]||%0[4]&%1[4])
-#elseif _MAX_GROUPS < 224
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[6]&%1[6]||%0[0]&%1[0]||%0[1]&%1[1]||%0[2]&%1[2]||%0[3]&%1[3]||%0[4]&%1[4]||%0[5]&%1[5])
-#elseif _MAX_GROUPS < 256
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[7]&%1[7]||%0[0]&%1[0]||%0[1]&%1[1]||%0[2]&%1[2]||%0[3]&%1[3]||%0[4]&%1[4]||%0[5]&%1[5]||%0[6]&%1[6])
-#elseif _MAX_GROUPS < 288
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[8]&%1[8]||%0[0]&%1[0]||%0[1]&%1[1]||%0[2]&%1[2]||%0[3]&%1[3]||%0[4]&%1[4]||%0[5]&%1[5]||%0[6]&%1[6]||%0[7]&%1[7])
-#elseif _MAX_GROUPS < 320
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[9]&%1[9]||%0[0]&%1[0]||%0[1]&%1[1]||%0[2]&%1[2]||%0[3]&%1[3]||%0[4]&%1[4]||%0[5]&%1[5]||%0[6]&%1[6]||%0[7]&%1[7]||%0[8]&%1[8])
-#elseif _MAX_GROUPS < 352
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[10]&%1[10]||%0[0]&%1[0]||%0[1]&%1[1]||%0[2]&%1[2]||%0[3]&%1[3]||%0[4]&%1[4]||%0[5]&%1[5]||%0[6]&%1[6]||%0[7]&%1[7]||%0[8]&%1[8]||%0[9]&%1[9])
-#elseif _MAX_GROUPS < 384
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[11]&%1[11]||%0[0]&%1[0]||%0[1]&%1[1]||%0[2]&%1[2]||%0[3]&%1[3]||%0[4]&%1[4]||%0[5]&%1[5]||%0[6]&%1[6]||%0[7]&%1[7]||%0[8]&%1[8]||%0[9]&%1[9]||%0[10]&%1[10])
-#elseif _MAX_GROUPS < 416
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[12]&%1[12]||%0[0]&%1[0]||%0[1]&%1[1]||%0[2]&%1[2]||%0[3]&%1[3]||%0[4]&%1[4]||%0[5]&%1[5]||%0[6]&%1[6]||%0[7]&%1[7]||%0[8]&%1[8]||%0[9]&%1[9]||%0[10]&%1[10]||%0[11]&%1[11])
-#elseif _MAX_GROUPS < 448
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[13]&%1[13]||%0[0]&%1[0]||%0[1]&%1[1]||%0[2]&%1[2]||%0[3]&%1[3]||%0[4]&%1[4]||%0[5]&%1[5]||%0[6]&%1[6]||%0[7]&%1[7]||%0[8]&%1[8]||%0[9]&%1[9]||%0[10]&%1[10]||%0[11]&%1[11]||%0[12]&%1[12])
-#elseif _MAX_GROUPS < 480
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[14]&%1[14]||%0[0]&%1[0]||%0[1]&%1[1]||%0[2]&%1[2]||%0[3]&%1[3]||%0[4]&%1[4]||%0[5]&%1[5]||%0[6]&%1[6]||%0[7]&%1[7]||%0[8]&%1[8]||%0[9]&%1[9]||%0[10]&%1[10]||%0[11]&%1[11]||%0[12]&%1[12]||%0[13]&%1[13])
-#elseif _MAX_GROUPS < 512
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[15]&%1[15]||%0[0]&%1[0]||%0[1]&%1[1]||%0[2]&%1[2]||%0[3]&%1[3]||%0[4]&%1[4]||%0[5]&%1[5]||%0[6]&%1[6]||%0[7]&%1[7]||%0[8]&%1[8]||%0[9]&%1[9]||%0[10]&%1[10]||%0[11]&%1[11]||%0[12]&%1[12]||%0[13]&%1[13]||%0[14]&%1[14])
-#elseif _MAX_GROUPS < 534
-	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[16]&%1[16]||%0[0]&%1[0]||%0[1]&%1[1]||%0[2]&%1[2]||%0[3]&%1[3]||%0[4]&%1[4]||%0[5]&%1[5]||%0[6]&%1[6]||%0[7]&%1[7]||%0[8]&%1[8]||%0[9]&%1[9]||%0[10]&%1[10]||%0[11]&%1[11]||%0[12]&%1[12]||%0[13]&%1[13]||%0[14]&%1[14]||%0[15]&%1[15])
-#else
-	#define _GROUPS_CHECK_ANY(%0,%1) \
-		for (new __g = bits<_:_MAX_GROUPS + 1>; __g-- != 0; ) if (_:%0[__g] & _:%1[__g])
-		//for (new __g = 0; __g != bits<_:_MAX_GROUPS + 1>; ++__g) if (_:%0[__g] & _:%1[__g])
-#endif
 
 /*
 New groups check:
@@ -217,19 +145,6 @@ enum E_GROUP_DATA
 // Define the groups iterator in terms of the underlying bits, but without the
 // need for users to know about the "YSI_gGroupPlayers" array, just the player.
 #define PlayerGroups@YSII_Ag(%0,%1) Group:Bits@YSII_Ag(YSI_gGroupPlayers[%0],_:%1)|GROUP_MASK
-
-// I have "new", "stock", "static", "static stock" and "static stock const" - 
-// that is pretty much every meaningful combination possible!  The only other
-// vaguely useful one would be "stock const".  In fact I now have that too!
-new //stock
-	//PlayerArray:YSI_gGroupPlayers[_MAX_GROUPS]<MAX_PLAYERS>,
-	BitArray:YSI_gGroupPlayers[MAX_PLAYERS]<_MAX_GROUPS_G>;
-
-stock
-	BitArray:YSI_gTempGroups<_MAX_GROUPS_G>;
-
-stock const
-	BitArray:YSI_g_cEmptyGroups<_MAX_GROUPS_G>;
 
 //#define GROUPS_MAX_LIBRARIES            4
 
@@ -301,6 +216,11 @@ MASTER_DATA<_MAX_GROUPS_G>
 
 #define GROUP_ADD<%0> for(J@=_Group_AddInternal(1,(%0));J@;J@=_Group_AddInternal(0,(%0)))
 
+static remotefunc void:__Group_AddInternal(a,g)
+{
+	GROUP_CHAIN?<YSI_g_sNextInitFunc>(-1, a, g);
+}
+
 stock _Group_AddInternal(a, Group:g)
 {
 	//printf("_Group_AddInternal %d %d", a, _:g);
@@ -315,9 +235,31 @@ stock _Group_AddInternal(a, Group:g)
 	}
 }
 
-static remotefunc void:__Group_AddInternal(a,g)
+/**--------------------------------------------------------------------------**\
+<summary>_Group_FakePlayer</summary>
+<param name="p">Player who connected.</param>
+<param name="Bit:g[]">The player's new groups.</param>
+<param name="s">Size of "g".</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Pretend the player is in all the groups they won't be in shortly so that
+	they have a complete blank slate when they connect - the system KNOWS they
+	are not in some groups and are in others.
+	
+	Uses an unusual size in "g" to reduce the string length.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static remotefunc void:_Group_FakePlayer(p,Bit:g[sizeof RG@],s)
 {
-	GROUP_CHAIN?<YSI_g_sNextInitFunc>(-1, a, g);
+	for (new i = 0; i != s; ++i)
+	{
+		// Set their current groups to the inverse of what they are now in.
+		YSI_gGroupPlayers[p][i] = ~g[i];
+	}
+	_Group_SetPlayer(p, g, s);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -356,7 +298,7 @@ global bool:Group_IsValid(Group:g)
 public OnScriptInit()
 {
 	P:1("Group_OnScriptInit called");
-	state YSI_has_groups:y;
+	//state YSI_has_groups:y;
 	// Set up the global groups.
 	#if !(YSIM_HAS_MASTER && (_YSIM_IS_STUB || _YSIM_IS_CLIENT))
 		#if _YSIM_IS_CLOUD
@@ -421,6 +363,76 @@ public _YSI_SpecialExit()
 #if defined _Group_SpecialExit
 	forward _Group_SpecialExit();
 #endif
+
+/**--------------------------------------------------------------------------**\
+<summary>Group_Destroy</summary>
+<param name="Group:group">Group to destroy from the system.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static remotefunc void:_Group_Destroy(g, gp@YSII_Ag[MAX_PLAYERS + 1], s)
+{
+	#pragma unused s
+	new
+		ps = Bit_Slot(g),
+		Bit:pm = ~Bit_Mask(g);
+	//static
+	//	BitArray:sOld<_MAX_GROUPS_G>;
+	if (YSI_g_sNextUpdFunc)
+	{
+		// Update all players who were in this group as they may have lost
+		// some permissions.  This is the simplest update because we don't
+		// need to worry about the effect of removing this group on the
+		// players' memberships in other groups.  Maybe they were added to
+		// that other group as a direct result of being added to this group,
+		// but maybe they weren't - there's no way to know!
+		// Check it!  Local parameter iterator!
+		foreach (new p : gp)
+		{
+			// TODO: SOMETHING!
+			YSI_gTempGroups = YSI_gGroupPlayers[p];
+			// If these parameters were the other way round I could do this:
+			//GROUP_CHAIN<YSI_g_sNextUpdFunc>(p, (YSI_gGroupPlayers[p], YSI_gGroupPlayers[p][ps] &= pm), YSI_gGroupPlayers[p]);
+			// But they're currently not so I can't.
+			GROUP_CHAIN<YSI_g_sNextUpdFunc>(p, YSI_gTempGroups, YSI_gGroupPlayers[p]);
+			YSI_gGroupPlayers[p][ps] &= pm;
+		}
+	}
+	else
+	{
+		foreach (new p : gp)
+		{
+			// Remove all players from this group.
+			YSI_gGroupPlayers[p][ps] &= pm;
+		}
+	}
+}
+
+// Added for the fun of it.
+foreign void:Group_Destroy(Group:group);
+
+global void:Group_Destroy(Group:group)
+{
+	// TODO: Remove this group from all players and all other groups.
+	P:2("Group_Destroy called: %i", _:group);
+	P:2("Group_Destroy called in %d", _@);
+	// You can't destroy the global group.
+	if (_Group_IsValid(group) && group != GROUP_GLOBAL)
+	{
+		GROUP_FIX(group);
+		broadcastfunc _Group_Destroy(_:group, Iter_InternalArray(GroupPlayers[_:group]), Iter_InternalSize(GroupPlayers[_:group]));
+		YSI_gGroupData[_:group][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS:0;
+		YSI_gGroupData[_:group][E_GROUP_DATA_HASH] = 0;
+		Iter_Clear(GroupPlayers[_:group]);
+		//return 1;
+	}
+	//return 0;
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>_Group_TryRemove</summary>
@@ -490,6 +502,7 @@ hook OnPlayerDisconnect(playerid, reason)
 	//	BitArray:scEmpty<_MAX_GROUPS_G>;
 	//GROUP_CHAIN?<YSI_g_sNextUpdFunc>(playerid, YSI_gGroupPlayers[p], scEmpty);
 	YSI_gGroupPlayers[playerid] = YSI_g_cEmptyGroups;
+	return 1;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -673,33 +686,6 @@ global void:Group_SetPlayer(Group:g,p,bool:s)
 	//return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>_Group_FakePlayer</summary>
-<param name="p">Player who connected.</param>
-<param name="Bit:g[]">The player's new groups.</param>
-<param name="s">Size of "g".</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Pretend the player is in all the groups they won't be in shortly so that
-	they have a complete blank slate when they connect - the system KNOWS they
-	are not in some groups and are in others.
-	
-	Uses an unusual size in "g" to reduce the string length.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-static remotefunc void:_Group_FakePlayer(p,Bit:g[sizeof RG@],s)
-{
-	for (new i = 0; i != s; ++i)
-	{
-		// Set their current groups to the inverse of what they are now in.
-		YSI_gGroupPlayers[p][i] = ~g[i];
-	}
-	_Group_SetPlayer(p, g, s);
-}
-//#endinput
 /**--------------------------------------------------------------------------**\
 <summary>_Group_SetPlayer</summary>
 <param name="p">Player to set.</param>
@@ -1155,6 +1141,11 @@ global Group_GetCount(Group:g)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+static remotefunc void:_Group_CreateChain(Group:g)
+{
+	GROUP_CHAIN?<YSI_g_sNextAddFunc>(g);
+}
+
 @foreign Group:_Group_Create(string:name[]);
 
 @global Group:_Group_Create(string:name[])
@@ -1212,11 +1203,6 @@ global Group_GetCount(Group:g)
 	return Group:i | GROUP_MASK;
 }
 
-static remotefunc void:_Group_CreateChain(Group:g)
-{
-	GROUP_CHAIN?<YSI_g_sNextAddFunc>(g);
-}
-
 stock Group:Group_Create(string:name[] = "")
 {
 	if (name[0])
@@ -1226,76 +1212,6 @@ stock Group:Group_Create(string:name[] = "")
 	else
 	{
 		return _Group_Create(NULL);
-	}
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Group_Destroy</summary>
-<param name="Group:group">Group to destroy from the system.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-// Added for the fun of it.
-foreign void:Group_Destroy(Group:group);
-
-global void:Group_Destroy(Group:group)
-{
-	// TODO: Remove this group from all players and all other groups.
-	P:2("Group_Destroy called: %i", _:group);
-	P:2("Group_Destroy called in %d", _@);
-	// You can't destroy the global group.
-	if (_Group_IsValid(group) && group != GROUP_GLOBAL)
-	{
-		GROUP_FIX(group);
-		broadcastfunc _Group_Destroy(_:group, Iter_InternalArray(GroupPlayers[_:group]), Iter_InternalSize(GroupPlayers[_:group]));
-		YSI_gGroupData[_:group][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS:0;
-		YSI_gGroupData[_:group][E_GROUP_DATA_HASH] = 0;
-		Iter_Clear(GroupPlayers[_:group]);
-		//return 1;
-	}
-	//return 0;
-}
-
-static remotefunc void:_Group_Destroy(g, gp@YSII_Ag[MAX_PLAYERS + 1], s)
-{
-	#pragma unused s
-	new
-		ps = Bit_Slot(g),
-		Bit:pm = ~Bit_Mask(g);
-	//static
-	//	BitArray:sOld<_MAX_GROUPS_G>;
-	if (YSI_g_sNextUpdFunc)
-	{
-		// Update all players who were in this group as they may have lost
-		// some permissions.  This is the simplest update because we don't
-		// need to worry about the effect of removing this group on the
-		// players' memberships in other groups.  Maybe they were added to
-		// that other group as a direct result of being added to this group,
-		// but maybe they weren't - there's no way to know!
-		// Check it!  Local parameter iterator!
-		foreach (new p : gp)
-		{
-			// TODO: SOMETHING!
-			YSI_gTempGroups = YSI_gGroupPlayers[p];
-			// If these parameters were the other way round I could do this:
-			//GROUP_CHAIN<YSI_g_sNextUpdFunc>(p, (YSI_gGroupPlayers[p], YSI_gGroupPlayers[p][ps] &= pm), YSI_gGroupPlayers[p]);
-			// But they're currently not so I can't.
-			GROUP_CHAIN<YSI_g_sNextUpdFunc>(p, YSI_gTempGroups, YSI_gGroupPlayers[p]);
-			YSI_gGroupPlayers[p][ps] &= pm;
-		}
-	}
-	else
-	{
-		foreach (new p : gp)
-		{
-			// Remove all players from this group.
-			YSI_gGroupPlayers[p][ps] &= pm;
-		}
 	}
 }
 
