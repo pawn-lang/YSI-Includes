@@ -88,14 +88,9 @@ Changelog:
 #define YSIM_U_DISABLE
 #include "y_master"
 
-//#if defined _YSI_HAS_y_groups || COMPILER_1ST_PASS
-	#define _GROUP_MAKE_NAME<%0...%1> %0Race%1
-	#define _GROUP_MAKE_LIMIT         MAX_RACES
-	#include "y_groups\_funcs"
-//#else
-//	#define _GROUP_MAKE_NAME
-//	#define _GROUP_MAKE_LIMIT
-//#endif
+#define _GROUP_MAKE_NAME<%0...%1> %0Race%1
+#define _GROUP_MAKE_LIMIT         MAX_RACES
+#include "y_groups\_funcs"
 
 #include "y_hooks"
 

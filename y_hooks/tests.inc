@@ -78,3 +78,22 @@ Test:y_hooks_Callback()
 	ASSERT(YSI_g_sValue == 12);
 	YSI_g_sValue = 0;
 }
+/*
+Test:y_hooks_IsolateName()
+{
+	new
+		name[32];
+	name = "@yH_Hello@Other";
+	Hooks_IsolateName(name);
+	ASSERT_FALSE(strcmp(name, "Hello"));
+	name = "@yH_Hi@@Other";
+	Hooks_IsolateName(name);
+	ASSERT_FALSE(strcmp(name, "Hi@"));
+	name = "@yH_No@Other@More";
+	Hooks_IsolateName(name);
+	ASSERT_FALSE(strcmp(name, "No@Other"));
+	name = "@yH_Yes_Other@N";
+	Hooks_IsolateName(name);
+	ASSERT_FALSE(strcmp(name, "Yes_Other"));
+}
+*/

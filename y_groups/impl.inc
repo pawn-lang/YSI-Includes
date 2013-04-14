@@ -61,10 +61,6 @@ Changelog:
 #include <a_samp>
 
 #include "y_scriptinit"
-
-//#include "..\y_master"
-#define YSIM_U_DISABLE
-#include "y_master"
 #include "y_playerarray"
 
 #include "y_stringhash"
@@ -74,6 +70,10 @@ Changelog:
 #include "y_amx"
 
 #include "y_iterate"
+
+//#include "..\y_master"
+#define YSIM_U_DISABLE
+#include "y_master"
 
 #include "y_hooks"
 //#include "y_groups/setup"

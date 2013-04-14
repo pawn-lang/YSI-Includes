@@ -615,8 +615,11 @@ public OnPlayerConnect(playerid)
 		end   = _:YSI_g_sCallbackEnd[ALS_OnPlayerConnect],
 		start = _:YSI_g_sCallbackStart[ALS_OnPlayerConnect],
 		ret = ALS_R_PlayerConnect;
+	//P:6("Hooks_OnPlayerConnect: %d %d %d", ret, start, end);
 	while (start++ != end)
 	{
+		//P:6("Hooks_OnPlayerConnect: %d %d %d", ret, start, end);
+		//continue;
 		#emit PUSH.S playerid
 		#emit PUSH.C     4
 		#emit CONST.alt  YSI_g_sCallbackAddresses

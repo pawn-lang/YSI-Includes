@@ -108,42 +108,7 @@ stock _YSI_HAS_y_groups(_do_not_call_me_ever_, _like_never_)
 	return 0;
 }
 
-/*#include "y_groups/impl"
-
-#define _Y_GROUPS_FUNCS
-
-// This is quite repetative code, but there's no simple way to reduce it.
-#if defined _YSI_HAS_y_commands
-	#include "y_commands"
-	#define _GROUP_MAKE_NAME<%0...%1> %0Command%1
-	#define _GROUP_MAKE_LIMIT         MAX_COMMANDS
-	#include "y_groups\_funcs"
-	#undef _GROUP_MAKE_LIMIT
-	#undef _GROUP_MAKE_NAME
+#if defined YSI_TESTS
+	#include "y_testing"
+	#include "y_groups/tests"
 #endif
-#if defined _YSI_HAS_y_classes
-	#include "y_classes"
-	#define _GROUP_MAKE_NAME<%0...%1> %0Class%1
-	#define _GROUP_MAKE_LIMIT         MAX_CLASSES
-	#include "y_groups\_funcs"
-	#include "y_groups\y_classes"
-	#undef _GROUP_MAKE_LIMIT
-	#undef _GROUP_MAKE_NAME
-#endif
-#if defined _YSI_HAS_y_areas
-	#include "y_areas"
-	#define _GROUP_MAKE_NAME<%0...%1> %0Area%1
-	#define _GROUP_MAKE_LIMIT         MAX_AREAS
-	#include "y_groups\_funcs"
-	#undef _GROUP_MAKE_LIMIT
-	#undef _GROUP_MAKE_NAME
-#endif
-#if defined _YSI_HAS_y_races
-	#include "y_races"
-	#define _GROUP_MAKE_NAME<%0...%1> %0Race%1
-	#define _GROUP_MAKE_LIMIT         MAX_RACES
-	#include "y_groups\_funcs"
-	#undef _GROUP_MAKE_LIMIT
-	#undef _GROUP_MAKE_NAME
-#endif
-*/

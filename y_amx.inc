@@ -53,8 +53,13 @@ Version:
 Changelog:
 	06/08/10:
 		First version
-</remarks>
 \**--------------------------------------------------------------------------**/
+
+// I debated porting this over to use ZeeX's advanced AMX system, but there's no
+// point - this is stable and works well.  Doing so would mean testing that all
+// the code that uses this file still operates corectly given how differently
+// the two systems do things.  I fully admit that his is FAR more general but
+// there are legacy libraries to consider.
 
 #include "internal\y_version"
 
@@ -107,30 +112,6 @@ enum E_AMX_TABLE
 
 // This is based on the AMX version used in SA:MP - it DOES NOT match the code
 // found in the PAWN documentation as that's for a later version.
-#define AMX_NOP                         000
-#define AMX_LOAD_PRI                    001
-#define AMX_LOAD_ALT                    002
-#define AMX_PUSH_C                      039
-#define AMX_CALL                        049
-#define AMX_STACK                       044
-#define AMX_PUSH_PRI                    036
-#define AMX_CONST_PRI                   011
-
-forward _@_y_amx_inc_@_();
-public _@_y_amx_inc_@_()
-{
-	// This function call is VERY important - it exists but it never used, so
-	// can be found in memory, and it also appears in code before the constant
-	// offset is ever used in #emit code.
-	AMX_TraceFunc(AMX_MEMORY_TRACE_0, AMX_MEMORY_TRACE_1, AMX_MEMORY_TRACE_2, AMX_MEMORY_TRACE_3);
-}
-
-static stock AMX_TraceFunc(b0, b1, b2, b3)
-{
-	// This function is only called to anchor the AMX in memory.
-	#pragma unused b0, b1, b2, b3
-	return 0;
-}
 
 public OnScriptInit()
 {
@@ -207,35 +188,6 @@ public OnScriptInit()
 	AMX_HEADER_NAMETABLE    = data - dat;
 	// Now find the AMX's base address in global memory.  This is VERY handy to
 	// have for more advanced functionality (none of which actually exists yet).
-	/*addr = 0;
-	data = 0;
-	new
-		func;
-	static
-		sSearch[] =
-			{
-				AMX_PUSH_C, AMX_MEMORY_TRACE_3,
-				AMX_PUSH_C, AMX_MEMORY_TRACE_2,
-				AMX_PUSH_C, AMX_MEMORY_TRACE_1,
-				AMX_PUSH_C, AMX_MEMORY_TRACE_0,
-				AMX_PUSH_C, 0x10,
-				AMX_CALL
-			};
-	#emit CONST.pri           AMX_TraceFunc
-	#emit STOR.S.pri          func
-	if (AMX_TraceCode(sSearch, addr, data))
-	{
-		AMX_REAL_ADDRESS = data - func - (AMX_HEADER_COD - AMX_BASE_ADDRESS);
-		addr += 4;
-		if (AMX_TraceCode(sSearch, addr, data))
-		{
-			P:E("Multiple y_amx tracers found!");
-		}
-	}
-	else
-	{
-		P:E("y_amx tracer not found!");
-	}*/
 	AMX_REAL_ADDRESS = AMX_GetGlobal();
 	AMX_REAL_DATA = AMX_REAL_ADDRESS - AMX_BASE_ADDRESS;
 	// Call next ALS callback.
@@ -396,27 +348,27 @@ stock AMX_GetBaseCount(E_AMX_TABLE:table, &base, &count)
 		case AMX_TABLE_PUBLICS:
 		{
 			base = AMX_HEADER_PUBLICS;
-			count = (AMX_HEADER_NATIVES - base) / 8;
+			count = (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / 8;
 		}
 		case AMX_TABLE_NATIVES:
 		{
 			base = AMX_HEADER_NATIVES;
-			count = (AMX_HEADER_LIBRARIES - base) / 8;
+			count = (AMX_HEADER_LIBRARIES - AMX_HEADER_NATIVES) / 8;
 		}
 		case AMX_TABLE_LIBRARIES:
 		{
 			base = AMX_HEADER_LIBRARIES;
-			count = (AMX_HEADER_PUBVARS - base) / 8;
+			count = (AMX_HEADER_PUBVARS - AMX_HEADER_LIBRARIES) / 8;
 		}
 		case AMX_TABLE_PUBVARS:
 		{
 			base = AMX_HEADER_PUBVARS;
-			count = (AMX_HEADER_TAGS - base) / 8;
+			count = (AMX_HEADER_TAGS - AMX_HEADER_PUBVARS) / 8;
 		}
 		case AMX_TABLE_TAGS:
 		{
 			base = AMX_HEADER_TAGS;
-			count = (AMX_HEADER_NAMETABLE - base) / 8;
+			count = (AMX_HEADER_NAMETABLE - AMX_HEADER_TAGS) / 8;
 		}
 		default:
 		{

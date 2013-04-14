@@ -75,6 +75,12 @@ Changelog:
 //#define _INC_y_hooks
 
 //#include "internal\y_dohooks"
+
+#if defined YSI_TESTS
+	#define _Y_HOOKS_STATIC
+#else
+	#define _Y_HOOKS_STATIC static
+#endif
 #include "y_hooks/impl"
 #if defined YSI_TESTS
 	#include "y_testing"
