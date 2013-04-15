@@ -387,7 +387,7 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 <param name="pointers">The hooks to link together.</param>
 <param name="size">The number of hooks.</param>
 <param name="ret">The default return.</param>
-<param name="skipable">Can future versions be ignored?</param>
+<param name="skipable">Can future hooks be ignored on -1?</param>
 <returns>
 	The number of bytes written to memory.
 </returns>
@@ -401,17 +401,9 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	new
 		base = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS,
 		ctx[AsmContext];
-	// Make sure the underlying system doesn't change without us.
-	#assert _:AsmContext_buffer == 0
-	#assert _:AsmContext_buffer_size == 1
-	#assert _:AsmContext_buffer_offset == 2
-	#assert _:AsmContext_error_handler == 3
-	#assert _:AsmContext == 4
-	// Don't call "AsmInit" because we need custom functionality.
-	ctx[AsmContext_buffer] = YSI_g_sCodeSpace;
-	ctx[AsmContext_buffer_size] = YSI_g_sCodeEnd - YSI_g_sCodeSpace;
-	ctx[AsmContext_buffer_offset] = 0;
-	ctx[AsmContext_error_handler] = 0;
+	// Make sure the underlying system doesn't change without us.  Now supported
+	// natively.
+	AsmInitPtr(ctx, YSI_g_sCodeSpace, YSI_g_sCodeEnd - YSI_g_sCodeSpace);
 	#define _ASM_NO:ctx,) ctx)
 	#define _ASM:%0(%1); if((AsmEmit%0(_:_ASM_NO:ctx,%1))!=ASM_ERROR_NONE){P:E("Hooks_WriteFunction");return 0;}
 	
