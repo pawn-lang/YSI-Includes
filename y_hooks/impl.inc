@@ -50,6 +50,9 @@ Legal:
 Version:
 	2.0
 Changelog:
+	15/04/13:
+		Changed the assembly to be shorter by actually using the stack.
+		Now slightly handles return values.
 	14/04/13:
 		Entirely new version - simpler, faster, and more generic.
 	02/01/13:
@@ -85,13 +88,7 @@ Changelog:
 
 _Y_HOOKS_STATIC stock
 	YSI_g_sCodeSpace,
-	YSI_g_sCodeEnd;//,
-	//YSI_g_sParamsStack[128],
-	//YSI_g_sReturnStack[128],
-	//YSI_g_sReturnPtr;
-
-// If you have a (hooked) call stack deeper than this there's something wrong
-// with you!
+	YSI_g_sCodeEnd;
 
 /**--------------------------------------------------------------------------**\
 <summary>_@_y_hooks_@_</summary>
@@ -110,16 +107,12 @@ forward _@_y_hooks_@_0();
 public _@_y_hooks_@_0()
 {
 	memcpy("", "", 0, 0, 0);
-	// This code is here for handy "-a" reference.
-	//YSI_g_sParamsStack[YSI_g_sReturnPtr++] = 0;
-	//YSI_g_sReturnStack[YSI_g_sReturnPtr++] = 0;
-	//YSI_g_sReturnPtr = 0;
 	// Reserve a huge area of "COD" for our own use!
 	static
 		STE[] = "";
 	#define _CODE_1 SetTimerEx(STE,0,0,STE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
 	#define _CODE_2 _CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1;
-	// This reserves about 20kb of space in the 
+	// This reserves about 5kb of space in "COD"
 	_CODE_2
 	_CODE_2
 	_CODE_2
@@ -162,6 +155,8 @@ forward _@_y_hooks_@_1();
 
 public _@_y_hooks_@_1()
 {
+	// This function SHOULD come straight after "_@_y_hooks_@_0" in both the
+	// public functions table and code segment if the compiler is true to form.
 }
 
 /**--------------------------------------------------------------------------**\
@@ -217,8 +212,6 @@ _Y_HOOKS_STATIC Hooks_CompareNextCell(addr0, addr1)
 	else if (!(s1 & 0x0000FF00)) s1 &= 0xFFFF0000;
 	// We need the numbers to be compared as big-endian.  Now any trailing NULLs
 	// don't matter at all.
-	//s0 = Cell_ReverseBytes(s0);
-	//s1 = Cell_ReverseBytes(s1);
 	if (s1 > s0) return 1;
 	else if (s1 < s0) return -1;
 	else return 0;
@@ -259,12 +252,12 @@ _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 				AMX_Write(idx1 + 4, tmpName);
 				return;
 			}
-			//case 0:
 			case 1:
 			{
 				// Already in order - good.
 				return;
 			}
+			// case 0: // Loop.
 		}
 		addr0 += 4;
 		addr1 += 4;
@@ -289,7 +282,6 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 	new
 		diff = Hooks_CountInvalidPublics() * 8,
 		oldCount = (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / 8;
-		//newCount = oldCount + diff;
 	// Now I need to SORT the functions, and I have honestly no idea how to do
 	// that.  Fortunately I don't actually need to move the strings themselves
 	// around as they just sit nicely in the nametable; I only need to sort the
@@ -351,11 +343,7 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 
 _Y_HOOKS_STATIC Hooks_GetName(entry, name[32])
 {
-	//static
-	//	str[32];
-	//AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(idx * 8 + base + 4), str);
 	AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), name);
-	//return str;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -407,21 +395,10 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-/*_Y_HOOKS_STATIC Hooks_JumpAddress(ctx, base, offset)
-{
-	// We aren't in the data section, so the "Rel" functions don't work.
-	//new next_offset = 2 * 4; // offset to the next instruction
-	return base + ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] + 2 * 4 + offset;
-}*/
-
-//#define Hooks_JumpAddress(%0,%2) ((%0[AsmContext_buffer]) + (%0[AsmContext_buffer_offset]) + (2 * 4) + (%2) + AMX_REAL_DATA)
-
 _Y_HOOKS_STATIC Hooks_WriteFunction(pointers[], size, ret = 1)
 {
 	new
-		//start = YSI_g_sCodeSpace - AMX_HEADER_COD,
 		base = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS,
-		//base = AMX_HEADER_COD + AMX_REAL_DATA,
 		ctx[AsmContext];
 	// Make sure the underlying system doesn't change without us.
 	#assert _:AsmContext_buffer == 0
@@ -486,18 +463,27 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(pointers[], size, ret = 1)
 	
 	// Now loop over all our functions and insert "CALL" opcodes for them.
 	for (new i = 0; ; )
+	//for (new i = 0; i != size; ++i)
 	{
 		// =====================================
 		//  THIS SECTION IS CURRENTLY 22 BYTES. 
 		// =====================================
-		// #emit CALL pointers[i]
 		// Get the absolute offset from here.
+		// #emit CALL pointers[i]
 		_ASM:Call(pointers[i] + base); // 2
-		// TODO: Handle "0" and "-1" returns as before.
+		/*_ASM:MoveAlt(); // 3
+		_ASM:LoadSPri(-4); // 5
+		_ASM:And(); // 6
+		_ASM:StorSPri(-4); // 8
+		_ASM:ConstPri(0xFFFFFFFE); // 10
+		_ASM:And(); // 11
+		_ASM:LoadSAlt(-4); // 13
+		_ASM:Or(); // 14
+		_ASM:StorSPri(-4); // 16*/
 		// #emit MOVE.alt
 		_ASM:MoveAlt(); // 3
 		// #emit CONST.pri  0xFFFFFFFE
-		_ASM:ConstPri(~1); // 5
+		_ASM:ConstPri(0x80000000); // 5
 		// #emit AND
 		_ASM:And(); // 6
 		// #emit PUSH.pri
@@ -513,36 +499,39 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(pointers[], size, ret = 1)
 		// #emit STOR.S.pri ret
 		_ASM:StorSPri(-4); // 14
 		
-		// if (ret < 0) return ret + 1;
+		// if (ret < 0) return 0;
 		_ASM:ConstAlt(0); // 16
+		
 		// =========================
 		//  JUMP OVER THIS SECTION. 
 		// =========================
 		if (++i == size)
 		{
-			// We aren't IN the data section, so "JgeqRel" doesn't work.
-			_ASM:JgeqRel(4); // 18
-			//_ASM:Jgeq(Hooks_JumpAddress(ctx, 4)); // 18
-			//_ASM:IncS(-4); // 20
-			_ASM:ZeroS(-4);
+			// The "Rel" functions work relative to "DAT", but despite the fact
+			// that we are writing in "COD", this still works because we are
+			// doing that writing relative to "DAT".
+			_ASM:JsgeqRel(8); // 18
+			//_ASM:IncS(-4);
+			_ASM:ZeroS(-4); // 20
 			// Subtract 8 below to not jump over the jump that isn't here.
 			break;
 		}
 		else
 		{
-			_ASM:JgeqRel(8); // 18
-			//_ASM:Jgeq(Hooks_JumpAddress(ctx, 8)); // 18
-			//_ASM:IncS(-4); // 20
-			_ASM:ZeroS(-4);
+			// I spent AGES reading this code to figure out why it was failing -
+			// turns out I used "JGEQ" instead of "JSGEQ".  Also, I can't count
+			// and did "JSGEQ 8" instead of "16"...
+			_ASM:JsgeqRel(16); // 18
+			//_ASM:IncS(-4);
+			_ASM:ZeroS(-4); // 20
 			// Huge jump (maybe)!
 			_ASM:JumpRel((size - i) * 22 * 4 - 8); // 22
-			//_ASM:Jump(Hooks_JumpAddress(ctx, (size - i) * 22 * 4 - 8)); // 22
 			// ===============================================
 			//  IF THE CODE CHANGES, UPDATE BYTE COUNT ABOVE. 
 			// ===============================================
 		}
 	}
-	// This is the point the large jump above goes to.
+	// This is the point the large "Jump" above goes to.
 	
 	// Remove our fake count.
 	// #emit POP.alt
@@ -557,8 +546,6 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(pointers[], size, ret = 1)
 	_ASM:Add();
 	// #emit SCTRL         4
 	_ASM:Sctrl(4);
-	// #emit MOVE.alt
-	_ASM:MoveAlt();
 	
 	// Get the return value.
 	// #emit POP.pri
@@ -567,101 +554,6 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(pointers[], size, ret = 1)
 	// Return.
 	// #emit RETN
 	_ASM:Retn();
-	
-	/*
-	// We don't call "PROC" because there's no need to save the stack - we don't
-	// do anything relative to it so keep the stack slightly invalid!
-	
-	// Store the current return.
-	// #emit CONST.alt YSI_g_sReturnStack
-	_ASM:ConstAlt(AMX_GetRelativeAddress(YSI_g_sReturnStack));
-	// #emit LOAD.pri YSI_g_sReturnPtr
-	_ASM:LoadPri(AMX_GetRelativeAddress(YSI_g_sReturnPtr));
-	// #emit IDXADDR
-	_ASM:Idxaddr();
-	
-	// Extract and store the return address.
-	// #emit POP.alt
-	_ASM:PopAlt();
-	// #emit XCHG
-	_ASM:Xchg();
-	// #emit STOR.I
-	_ASM:StorI();
-	
-	// Store the current parameters.
-	// #emit CONST.alt YSI_g_sParamsStack
-	_ASM:ConstAlt(AMX_GetRelativeAddress(YSI_g_sParamsStack));
-	// #emit LOAD.pri  YSI_g_sReturnPtr
-	_ASM:LoadPri(AMX_GetRelativeAddress(YSI_g_sReturnPtr));
-	// #emit IDXADDR
-	_ASM:Idxaddr();
-	
-	// Extract and store the parameter count.
-	// #emit POP.alt
-	_ASM:PopAlt();
-	// #emit XCHG
-	_ASM:Xchg();
-	// #emit STOR.I
-	_ASM:StorI();
-	
-	// Increment the pointer.
-	// #emit INC       YSI_g_sReturnPtr
-	_ASM:Inc(AMX_GetRelativeAddress(YSI_g_sReturnPtr));
-	
-	// Mangle the parameters count so "RETN" ADDS ON parameters, or more
-	// specifically so it doesn't remove any at all.  We do this instead of just
-	// pushing all the parameters over and over again because we don't know how
-	// many there are in advance so we would need a loop in that case.
-	// #emit PUSH.C 0xFFFFFFFC
-	_ASM:PushC(-4);
-	
-	// Now loop over all our functions and insert "CALL" opcodes for them.
-	for (new i = 0; i != size; ++i)
-	{
-		// #emit CALL pointers[i]
-		// Get the absolute offset from here.
-		_ASM:Call(pointers[i] + base);
-		// TODO: Handle "0" and "-1" returns as before.
-	}
-	
-	// Pop our mini stack.
-	// #emit DEC       YSI_g_sReturnPtr
-	_ASM:Dec(AMX_GetRelativeAddress(YSI_g_sReturnPtr));
-	
-	// Pop our fake argument count.
-	// #emit POP.alt
-	_ASM:PopAlt();
-	
-	// Get the parameter count.
-	// #emit CONST.alt YSI_g_sParamsStack
-	_ASM:ConstAlt(AMX_GetRelativeAddress(YSI_g_sParamsStack));
-	// #emit LOAD.pri  YSI_g_sReturnPtr
-	_ASM:LoadPri(AMX_GetRelativeAddress(YSI_g_sReturnPtr));
-	// #emit LIDX
-	_ASM:Lidx();
-	// #emit MOVE.alt
-	_ASM:MoveAlt();
-	
-	// Reduce the stack.
-	// #emit LCTRL 4
-	_ASM:Lctrl(4);
-	// #emit ADD
-	_ASM:Add();
-	// #emit SCTRL 4
-	_ASM:Sctrl(4);
-	
-	// Get the return.
-	// #emit CONST.alt YSI_g_sReturnStack
-	_ASM:ConstAlt(AMX_GetRelativeAddress(YSI_g_sReturnStack));
-	// #emit LOAD.pri  YSI_g_sReturnPtr
-	_ASM:LoadPri(AMX_GetRelativeAddress(YSI_g_sReturnPtr));
-	// #emit LIDX
-	_ASM:Lidx();
-	
-	// Don't use "RETN" as we didn't use "PROC".
-	// #emit SCTRL 6
-	_ASM:Sctrl(6);
-	*/
 	
 	#undef _ASM_NO
 	#undef _ASM
@@ -685,7 +577,6 @@ _Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
 {
 	new
 		ret[32 char];
-	//printf("ref: %s", unpack(ref));
 	if (!strcmp(ref, !"OnPlayerEnterRaceCheckpoint")) ret = !"OnPlayerEnterRaceCP";
 	else if (!strcmp(ref, !"OnPlayerEnterRaceCP")) ret = !"OnPlayerEnterRaceCheckpoint";
 	else if (!strcmp(ref, !"OnPlayerLeaveRaceCheckpoint")) ret = !"OnPlayerLeaveRaceCP";
@@ -716,7 +607,6 @@ _Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
 	else if (!strcmp(ref, !"OnPlayerLeaveDynRaceCP")) ret = !"OnPlayerLeaveDynamicRaceCP";
 	else if (!strcmp(ref, !"OnPlayerEnterDynArea")) ret = !"OnPlayerEnterDynamicArea";
 	else if (!strcmp(ref, !"OnPlayerLeaveDynArea")) ret = !"OnPlayerLeaveDynamicArea";
-	//printf("ret: %s", unpack(ret));
 	return ret;
 }
 
@@ -824,7 +714,6 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 public OnScriptInit()
 {
 	P:2("Hooks_OnScriptInit called");
-	//YSI_g_sReturn = 0;
 	new
 		func[32],
 		entry,
@@ -835,7 +724,8 @@ public OnScriptInit()
 	Hooks_InvalidateName(entry);
 	// Determine EXACTLY how much space we have to play with.
 	entry = AMX_HEADER_PUBLICS + funcidx("_@_y_hooks_@_1") * 8;
-	YSI_g_sCodeEnd = AMX_HEADER_COD + AMX_Read(entry);
+	// Scrounge an extra 8 bytes from the following function too.
+	YSI_g_sCodeEnd = AMX_HEADER_COD + AMX_Read(entry) + 8;
 	Hooks_InvalidateName(entry);
 	// Find all hook functions in order (at least find the first one in a set).
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
@@ -875,73 +765,6 @@ public OnScriptInit()
 #if defined S@@_OnScriptInit
 	forward S@@_OnScriptInit();
 #endif
-
-/**
-Basic custom function layout
-
-// We don't call "PROC" because there's no need to save the stack - we don't do
-// anything relative to it so keep the stack slightly invalid!
-
-// Store the current return.
-#emit CONST.alt YSI_g_sReturnStack
-#emit LOAD.pri  YSI_g_sReturnPtr
-#emit IDXADDR
-
-// Extract and store the return address.
-#emit POP.alt
-#emit XCHG
-#emit STOR.I
-
-// Store the current parameters.
-#emit CONST.alt YSI_g_sParamsStack
-#emit LOAD.pri  YSI_g_sReturnPtr
-#emit IDXADDR
-
-// Extract and store the parameter count.
-#emit POP.alt
-#emit XCHG
-#emit STOR.I
-
-// Increment the pointer.
-#emit INC       YSI_g_sReturnPtr
-
-// Mangle the parameters count so "RETN" ADDS ON parameters, or more
-// specifically so it doesn't remove any at all.  We do this instead of just
-// pushing all the parameters over and over again because we don't know how many
-// there are in advance so we would need a loop in that case.
-#emit PUSH.C 0xFFFFFFFC
-
-// Now loop over all our functions and insert "CALL" opcodes for them.
-for ( ; ; )
-{
-	#emit CALL <wherever - here>
-}
-
-// Pop our mini stack.
-#emit DEC       YSI_g_sReturnPtr
-
-// Pop our fake argument count.
-#emit POP.alt
-
-// Get the parameter count.
-#emit CONST.alt YSI_g_sParamsStack
-#emit LOAD.pri  YSI_g_sReturnPtr
-#emit LIDX
-#emit MOVE.alt
-
-// Reduce the stack.
-#emit LCTRL 4
-#emit ADD
-#emit SCTRL 4
-
-// Get the return.
-#emit CONST.alt YSI_g_sReturnStack
-#emit LOAD.pri  YSI_g_sReturnPtr
-#emit LIDX
-
-// Don't use "RETN" as we didn't use "PROC".
-#emit SCTRL 6
-**/
 
 /**
 Second custom function layout
