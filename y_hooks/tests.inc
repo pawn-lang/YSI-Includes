@@ -52,6 +52,7 @@ Test:y_hooks_ReturnM1()
 	YSI_g_sValue = -2;
 	new
 		ret = call OnRconCommand("IGNORE_ME");
+	printf("ret = %d %d", ret, YSI_g_sValue);
 	ASSERT(ret == 0);
 	ASSERT(YSI_g_sValue == -1);
 	YSI_g_sValue = 0;

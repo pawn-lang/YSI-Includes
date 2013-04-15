@@ -85,10 +85,10 @@ Changelog:
 
 _Y_HOOKS_STATIC stock
 	YSI_g_sCodeSpace,
-	YSI_g_sCodeEnd,
-	YSI_g_sParamsStack[128],
-	YSI_g_sReturnStack[128],
-	YSI_g_sReturnPtr;
+	YSI_g_sCodeEnd;//,
+	//YSI_g_sParamsStack[128],
+	//YSI_g_sReturnStack[128],
+	//YSI_g_sReturnPtr;
 
 // If you have a (hooked) call stack deeper than this there's something wrong
 // with you!
@@ -109,10 +109,11 @@ forward _@_y_hooks_@_0();
 
 public _@_y_hooks_@_0()
 {
+	memcpy("", "", 0, 0, 0);
 	// This code is here for handy "-a" reference.
-	YSI_g_sParamsStack[YSI_g_sReturnPtr++] = 0;
-	YSI_g_sReturnStack[YSI_g_sReturnPtr++] = 0;
-	YSI_g_sReturnPtr = 0;
+	//YSI_g_sParamsStack[YSI_g_sReturnPtr++] = 0;
+	//YSI_g_sReturnStack[YSI_g_sReturnPtr++] = 0;
+	//YSI_g_sReturnPtr = 0;
 	// Reserve a huge area of "COD" for our own use!
 	static
 		STE[] = "";
@@ -397,6 +398,7 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 <summary>Hooks_WriteFunction</summary>
 <param name="pointers">The hooks to link together.</param>
 <param name="size">The number of hooks.</param>
+<param name="ret">The default return.</param>
 <returns>
 	The number of bytes written to memory.
 </returns>
@@ -405,7 +407,16 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_WriteFunction(pointers[], size)
+/*_Y_HOOKS_STATIC Hooks_JumpAddress(ctx, base, offset)
+{
+	// We aren't in the data section, so the "Rel" functions don't work.
+	//new next_offset = 2 * 4; // offset to the next instruction
+	return base + ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] + 2 * 4 + offset;
+}*/
+
+//#define Hooks_JumpAddress(%0,%2) ((%0[AsmContext_buffer]) + (%0[AsmContext_buffer_offset]) + (2 * 4) + (%2) + AMX_REAL_DATA)
+
+_Y_HOOKS_STATIC Hooks_WriteFunction(pointers[], size, ret = 1)
 {
 	new
 		//start = YSI_g_sCodeSpace - AMX_HEADER_COD,
@@ -426,6 +437,138 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(pointers[], size)
 	#define _ASM_NO:ctx,) ctx)
 	#define _ASM:%0(%1); if((AsmEmit%0(_:_ASM_NO:ctx,%1))!=ASM_ERROR_NONE){P:E("Hooks_WriteFunction");return 0;}
 	
+	// Start of the function.
+	// #emit PROC
+	_ASM:Proc();
+	
+	// Allocate space for our "ret" variable at "frm - 4".
+	_ASM:PushC(ret);
+	
+	// Copy the stack to itself (memcpy).
+	// Allocate space.
+	// #emit LOAD.S.alt    8
+	_ASM:LoadSAlt(8);
+	// #emit LCTRL         4
+	_ASM:Lctrl(4);
+	// #emit SUB
+	_ASM:Sub();
+	// #emit SCTRL         4
+	_ASM:Sctrl(4);
+	// #emit MOVE.alt
+	_ASM:MoveAlt();
+	
+	// memcpy(stack, frm[3], 0, *(frm + 8), 64);
+	// #emit PUSH.C        64
+	_ASM:PushC(64);
+	// #emit PUSH.S        8
+	_ASM:PushS(8);
+	// #emit PUSH.C        0
+	_ASM:PushC(0);
+	// #emit LCTRL         5
+	_ASM:Lctrl(5);
+	// #emit ADD.C         12
+	_ASM:AddC(12);
+	// #emit PUSH.pri
+	_ASM:PushPri();
+	// Stored (higher) stack point.
+	// #emit PUSH.alt
+	_ASM:PushAlt();
+	// #emit PUSH.C        20
+	_ASM:PushC(20);
+	// #emit SYSREQ.C      memcpy
+	_ASM:CallNative("memcpy");
+	// #emit STACK         24
+	_ASM:Stack(24);
+	
+	// Push the (fake) number of parameters.
+	// #emit PUSH.C        0xFFFFFFFC
+	_ASM:PushC(-4);
+	
+	// Now loop over all our functions and insert "CALL" opcodes for them.
+	for (new i = 0; ; )
+	{
+		// =====================================
+		//  THIS SECTION IS CURRENTLY 22 BYTES. 
+		// =====================================
+		// #emit CALL pointers[i]
+		// Get the absolute offset from here.
+		_ASM:Call(pointers[i] + base); // 2
+		// TODO: Handle "0" and "-1" returns as before.
+		// #emit MOVE.alt
+		_ASM:MoveAlt(); // 3
+		// #emit CONST.pri  0xFFFFFFFE
+		_ASM:ConstPri(~1); // 5
+		// #emit AND
+		_ASM:And(); // 6
+		// #emit PUSH.pri
+		_ASM:PushPri(); // 7
+		// #emit LOAD.S.pri ret
+		_ASM:LoadSPri(-4); // 9
+		// #emit AND
+		_ASM:And(); // 10
+		// #emit POP.alt
+		_ASM:PopAlt(); // 11
+		// #emit OR
+		_ASM:Or(); // 12
+		// #emit STOR.S.pri ret
+		_ASM:StorSPri(-4); // 14
+		
+		// if (ret < 0) return ret + 1;
+		_ASM:ConstAlt(0); // 16
+		// =========================
+		//  JUMP OVER THIS SECTION. 
+		// =========================
+		if (++i == size)
+		{
+			// We aren't IN the data section, so "JgeqRel" doesn't work.
+			_ASM:JgeqRel(4); // 18
+			//_ASM:Jgeq(Hooks_JumpAddress(ctx, 4)); // 18
+			//_ASM:IncS(-4); // 20
+			_ASM:ZeroS(-4);
+			// Subtract 8 below to not jump over the jump that isn't here.
+			break;
+		}
+		else
+		{
+			_ASM:JgeqRel(8); // 18
+			//_ASM:Jgeq(Hooks_JumpAddress(ctx, 8)); // 18
+			//_ASM:IncS(-4); // 20
+			_ASM:ZeroS(-4);
+			// Huge jump (maybe)!
+			_ASM:JumpRel((size - i) * 22 * 4 - 8); // 22
+			//_ASM:Jump(Hooks_JumpAddress(ctx, (size - i) * 22 * 4 - 8)); // 22
+			// ===============================================
+			//  IF THE CODE CHANGES, UPDATE BYTE COUNT ABOVE. 
+			// ===============================================
+		}
+	}
+	// This is the point the large jump above goes to.
+	
+	// Remove our fake count.
+	// #emit POP.alt
+	_ASM:PopAlt();
+	
+	// Remove our parameters.
+	// #emit LOAD.S.alt    8
+	_ASM:LoadSAlt(8);
+	// #emit LCTRL         4
+	_ASM:Lctrl(4);
+	// #emit ADD
+	_ASM:Add();
+	// #emit SCTRL         4
+	_ASM:Sctrl(4);
+	// #emit MOVE.alt
+	_ASM:MoveAlt();
+	
+	// Get the return value.
+	// #emit POP.pri
+	_ASM:PopPri();
+	
+	// Return.
+	// #emit RETN
+	_ASM:Retn();
+	
+	/*
 	// We don't call "PROC" because there's no need to save the stack - we don't
 	// do anything relative to it so keep the stack slightly invalid!
 	
@@ -518,6 +661,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(pointers[], size)
 	// Don't use "RETN" as we didn't use "PROC".
 	// #emit SCTRL 6
 	_ASM:Sctrl(6);
+	*/
 	
 	#undef _ASM_NO
 	#undef _ASM
@@ -797,4 +941,54 @@ for ( ; ; )
 
 // Don't use "RETN" as we didn't use "PROC".
 #emit SCTRL 6
+**/
+
+/**
+Second custom function layout
+
+#emit PROC
+
+// Copy the stack to itself (memcpy).
+// Allocate space.
+#emit LOAD.S.alt    8
+#emit LCTRL         4
+#emit SUB
+#emit SCTRL         4
+#emit MOVE.alt
+
+// memcpy(stack, frm[3], 0, *(frm + 8), 64);
+#emit PUSH.C        64
+#emit PUSH.S        8
+#emit PUSH.C        0
+#emit LCTRL         5
+#emit ADD.C         12
+#emit PUSH.pri
+// Stored (higher) stack point.
+#emit PUSH.alt
+#emit PUSH.C        20
+#emit SYSREQ.C      memcpy
+#emit STACK         24
+
+// Push the (fake) number of parameters.
+#emit PUSH.C        0xFFFFFFFC
+
+// Now loop over all our functions and insert "CALL" opcodes for them.
+for ( ; ; )
+{
+	#emit CALL <wherever - here>
+}
+
+// Remove our fake count.
+#emit POP.alt
+
+// Remove our parameters.
+#emit LOAD.S.alt    8
+#emit LCTRL         4
+#emit ADD
+#emit SCTRL         4
+#emit MOVE.alt
+
+// Return.
+#emit RETN
+
 **/
