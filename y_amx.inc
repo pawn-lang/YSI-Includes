@@ -117,8 +117,7 @@ public OnScriptInit()
 {
 	new
 		addr,
-		data,
-		dat;
+		data;
 	#emit LCTRL                     1
 	#emit STOR.S.pri                addr
 	// Invert to get the prefix offset relative to the data.
@@ -146,46 +145,46 @@ public OnScriptInit()
 	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	dat = data;
+	//dat = data;
 	AMX_HEADER_DAT          = 0;
-	AMX_BASE_ADDRESS = -dat;
-	AMX_HEADER_COD -= dat;
+	AMX_BASE_ADDRESS = -data;
+	AMX_HEADER_COD += AMX_BASE_ADDRESS;
 	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_HEA          = data - dat;
+	AMX_HEADER_HEA          = data + AMX_BASE_ADDRESS;
 	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_STP          = data - dat;
+	AMX_HEADER_STP          = data + AMX_BASE_ADDRESS;
 	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_CIP          = data - dat;
+	AMX_HEADER_CIP          = data + AMX_BASE_ADDRESS;
 	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_PUBLICS      = data - dat;
+	AMX_HEADER_PUBLICS      = data + AMX_BASE_ADDRESS;
 	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_NATIVES      = data - dat;
+	AMX_HEADER_NATIVES      = data + AMX_BASE_ADDRESS;
 	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_LIBRARIES    = data - dat;
+	AMX_HEADER_LIBRARIES    = data + AMX_BASE_ADDRESS;
 	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_PUBVARS      = data - dat;
+	AMX_HEADER_PUBVARS      = data + AMX_BASE_ADDRESS;
 	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_TAGS         = data - dat;
+	AMX_HEADER_TAGS         = data + AMX_BASE_ADDRESS;
 	addr += 4;
 	#emit LREF.S.pri                addr
 	#emit STOR.S.pri                data
-	AMX_HEADER_NAMETABLE    = data - dat;
+	AMX_HEADER_NAMETABLE    = data + AMX_BASE_ADDRESS;
 	// Now find the AMX's base address in global memory.  This is VERY handy to
 	// have for more advanced functionality (none of which actually exists yet).
 	AMX_REAL_ADDRESS = AMX_GetGlobal();

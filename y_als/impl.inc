@@ -177,6 +177,21 @@ enum ALS
 #define ALS_R_PlayerLeaveDynamicRaceCP 1
 #define ALS_R_PlayerEnterDynamicArea 1
 #define ALS_R_PlayerLeaveDynamicArea 1
+// Alternates
+#define ALS_R_PlayerLeaveRaceCP 1
+#define ALS_R_PlayerEnterRaceCP 1
+#define ALS_R_VehicleDamageStatusUpd 1
+#define ALS_R_UnoccupiedVehicleUpd 1
+#define ALS_R_PlayerClickPlayerTD 1
+#define ALS_R_PlayerEditAttachedObj 1
+#define ALS_R_PlayerCmdPerformed 1
+#define ALS_R_PlayerEditDynObject 1
+#define ALS_R_PlayerSelectDynObject 1
+#define ALS_R_PlayerPickUpDynPickup 1
+#define ALS_R_PlayerEnterDynRaceCP 1
+#define ALS_R_PlayerLeaveDynRaceCP 1
+#define ALS_R_PlayerEnterDynArea 1
+#define ALS_R_PlayerLeaveDynArea 1
 
 // Chain call declarations.
 #define ALS_DO_ScriptInit<%0> %0<ScriptInit,>(none:)

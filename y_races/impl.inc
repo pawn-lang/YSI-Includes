@@ -1111,7 +1111,7 @@ Notes:
 	corresponding next checkpoint or calls Race_Finish.
 -*----------------------------------------------------------------------------*/
 
-mhook OnPlayerEnterRaceCheckpoint(playerid)
+mhook OnPlayerEnterRaceCP(playerid)
 {
 	return Race_DoEnterRaceCP(playerid);
 }
