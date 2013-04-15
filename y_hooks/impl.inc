@@ -106,7 +106,7 @@ forward _@_y_hooks_@_0();
 
 public _@_y_hooks_@_0()
 {
-	memcpy("", "", 0, 0, 0);
+	//memcpy("", "", 0, 0, 0);
 	// Reserve a huge area of "COD" for our own use!
 	static
 		STE[] = "";
@@ -387,6 +387,7 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 <param name="pointers">The hooks to link together.</param>
 <param name="size">The number of hooks.</param>
 <param name="ret">The default return.</param>
+<param name="skipable">Can future versions be ignored?</param>
 <returns>
 	The number of bytes written to memory.
 </returns>
@@ -395,7 +396,7 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_WriteFunction(pointers[], size, ret = 1)
+_Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1, const skipable = false)
 {
 	new
 		base = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS,
@@ -421,7 +422,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(pointers[], size, ret = 1)
 	// Allocate space for our "ret" variable at "frm - 4".
 	_ASM:PushC(ret);
 	
-	// Copy the stack to itself (memcpy).
+	// Copy the stack to itself (MOVS).
 	// Allocate space.
 	// #emit LOAD.S.alt    8
 	_ASM:LoadSAlt(8);
@@ -432,8 +433,21 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(pointers[], size, ret = 1)
 	// #emit SCTRL         4
 	_ASM:Sctrl(4);
 	// #emit MOVE.alt
-	_ASM:MoveAlt();
+	_ASM:Xchg();
 	
+	// The "MOVS" OpCode only takes a constant, not a variable, so we need to
+	// generate self-modifying code (just to be UBER meta)!  This code is
+	// generated AFTER the file is loaded so we bypass the data segment checks
+	// and can freely write wherever we want.
+	_ASM:StorPri(ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] + 7 * 4); // 2
+	
+	// Do the copying.  "alt" is already "STK", load the "FRM" offset.
+	_ASM:Lctrl(5); // 4
+	_ASM:AddC(12); // 6
+	// This is the instruction we want to modify...
+	_ASM:Movs(0); // 8 - 1
+	
+	/*
 	// memcpy(stack, frm[3], 0, *(frm + 8), 64);
 	// #emit PUSH.C        64
 	_ASM:PushC(64);
@@ -456,6 +470,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(pointers[], size, ret = 1)
 	_ASM:CallNative("memcpy");
 	// #emit STACK         24
 	_ASM:Stack(24);
+	*/
 	
 	// Push the (fake) number of parameters.
 	// #emit PUSH.C        0xFFFFFFFC
@@ -480,55 +495,100 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(pointers[], size, ret = 1)
 		_ASM:LoadSAlt(-4); // 13
 		_ASM:Or(); // 14
 		_ASM:StorSPri(-4); // 16*/
-		// #emit MOVE.alt
-		_ASM:MoveAlt(); // 3
-		// #emit CONST.pri  0xFFFFFFFE
-		_ASM:ConstPri(0x80000000); // 5
-		// #emit AND
-		_ASM:And(); // 6
-		// #emit PUSH.pri
-		_ASM:PushPri(); // 7
-		// #emit LOAD.S.pri ret
-		_ASM:LoadSPri(-4); // 9
-		// #emit AND
-		_ASM:And(); // 10
-		// #emit POP.alt
-		_ASM:PopAlt(); // 11
-		// #emit OR
-		_ASM:Or(); // 12
-		// #emit STOR.S.pri ret
-		_ASM:StorSPri(-4); // 14
-		
-		// if (ret < 0) return 0;
-		_ASM:ConstAlt(0); // 16
-		
-		// =========================
-		//  JUMP OVER THIS SECTION. 
-		// =========================
-		if (++i == size)
+		if (skipable)
 		{
-			// The "Rel" functions work relative to "DAT", but despite the fact
-			// that we are writing in "COD", this still works because we are
-			// doing that writing relative to "DAT".
-			_ASM:JsgeqRel(8); // 18
-			//_ASM:IncS(-4);
-			_ASM:ZeroS(-4); // 20
-			// Subtract 8 below to not jump over the jump that isn't here.
-			break;
+			if (ret)
+			{
+				// #emit MOVE.alt
+				_ASM:MoveAlt(); // 3
+				// #emit CONST.pri  0xFFFFFFFE
+				_ASM:ConstPri(0x80000000); // 5
+				// #emit AND
+				_ASM:And(); // 6
+				// #emit PUSH.pri
+				_ASM:PushPri(); // 7
+				// #emit LOAD.S.pri ret
+				_ASM:LoadSPri(-4); // 9
+				// #emit AND
+				_ASM:And(); // 10
+				// #emit POP.alt
+				_ASM:PopAlt(); // 11
+				// #emit OR
+				_ASM:Or(); // 12
+				// #emit STOR.S.pri ret
+				_ASM:StorSPri(-4); // 14
+				
+				// if (ret < 0) return 0;
+				_ASM:ZeroAlt(); // 15
+				
+				// =========================
+				//  JUMP OVER THIS SECTION. 
+				// =========================
+				if (++i == size)
+				{
+					// The "Rel" functions work relative to "DAT", but despite the fact
+					// that we are writing in "COD", this still works because we are
+					// doing that writing relative to "DAT".
+					_ASM:JsgeqRel(8); // 17
+					//_ASM:IncS(-4);
+					_ASM:ZeroS(-4); // 19
+					// Subtract 8 below to not jump over the jump that isn't here.
+					break;
+				}
+				else
+				{
+					// I spent AGES reading this code to figure out why it was failing -
+					// turns out I used "JGEQ" instead of "JSGEQ".  Also, I can't count
+					// and did "JSGEQ 8" instead of "16"...
+					_ASM:JsgeqRel(16); // 17
+					//_ASM:IncS(-4);
+					_ASM:ZeroS(-4); // 19
+					// Huge jump (maybe)!
+					_ASM:JumpRel((size - i) * 21 * 4 - 8); // 21
+					// ===============================================
+					//  IF THE CODE CHANGES, UPDATE BYTE COUNT ABOVE. 
+					// ===============================================
+				}
+			}
+			else
+			{
+				_ASM:LoadSAlt(-4); // 4
+				_ASM:Or(); // 5
+				_ASM:StorSPri(-4); // 7
+				_ASM:ZeroAlt(); // 8
+				if (++i == size)
+				{
+					_ASM:JsgeqRel(8); // 10
+					_ASM:ZeroS(-4); // 12
+					break;
+				}
+				else
+				{
+					_ASM:JsgeqRel(16); // 10
+					_ASM:ZeroS(-4); // 12
+					// The "- 8" is because the last call doesn't have the last
+					// jump so we don't need to skip it.  Ironically, the
+					// "JumpRel" functions actually add on 8 to account for this
+					// instruction itself so the two cancel each other out.
+					_ASM:JumpRel((size - i) * 14 * 4 - 8); // 14
+				}
+			}
 		}
 		else
 		{
-			// I spent AGES reading this code to figure out why it was failing -
-			// turns out I used "JGEQ" instead of "JSGEQ".  Also, I can't count
-			// and did "JSGEQ 8" instead of "16"...
-			_ASM:JsgeqRel(16); // 18
-			//_ASM:IncS(-4);
-			_ASM:ZeroS(-4); // 20
-			// Huge jump (maybe)!
-			_ASM:JumpRel((size - i) * 22 * 4 - 8); // 22
-			// ===============================================
-			//  IF THE CODE CHANGES, UPDATE BYTE COUNT ABOVE. 
-			// ===============================================
+			if (ret)
+			{
+				_ASM:LoadSAlt(-4);
+				_ASM:And();
+				_ASM:StorSPri(-4);
+			}
+			else
+			{
+				_ASM:LoadSAlt(-4);
+				_ASM:Or();
+				_ASM:StorSPri(-4);
+			}
+			if (++i == size) break;
 		}
 	}
 	// This is the point the large "Jump" above goes to.
