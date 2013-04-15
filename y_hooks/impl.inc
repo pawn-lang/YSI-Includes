@@ -447,31 +447,6 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	// This is the instruction we want to modify...
 	_ASM:Movs(0); // 8 - 1
 	
-	/*
-	// memcpy(stack, frm[3], 0, *(frm + 8), 64);
-	// #emit PUSH.C        64
-	_ASM:PushC(64);
-	// #emit PUSH.S        8
-	_ASM:PushS(8);
-	// #emit PUSH.C        0
-	_ASM:PushC(0);
-	// #emit LCTRL         5
-	_ASM:Lctrl(5);
-	// #emit ADD.C         12
-	_ASM:AddC(12);
-	// #emit PUSH.pri
-	_ASM:PushPri();
-	// Stored (higher) stack point.
-	// #emit PUSH.alt
-	_ASM:PushAlt();
-	// #emit PUSH.C        20
-	_ASM:PushC(20);
-	// #emit SYSREQ.C      memcpy
-	_ASM:CallNative("memcpy");
-	// #emit STACK         24
-	_ASM:Stack(24);
-	*/
-	
 	// Push the (fake) number of parameters.
 	// #emit PUSH.C        0xFFFFFFFC
 	_ASM:PushC(-4);
@@ -480,71 +455,54 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	for (new i = 0; ; )
 	//for (new i = 0; i != size; ++i)
 	{
-		// =====================================
-		//  THIS SECTION IS CURRENTLY 22 BYTES. 
-		// =====================================
 		// Get the absolute offset from here.
 		// #emit CALL pointers[i]
 		_ASM:Call(pointers[i] + base); // 2
-		/*_ASM:MoveAlt(); // 3
-		_ASM:LoadSPri(-4); // 5
-		_ASM:And(); // 6
-		_ASM:StorSPri(-4); // 8
-		_ASM:ConstPri(0xFFFFFFFE); // 10
-		_ASM:And(); // 11
-		_ASM:LoadSAlt(-4); // 13
-		_ASM:Or(); // 14
-		_ASM:StorSPri(-4); // 16*/
 		if (skipable)
 		{
 			if (ret)
 			{
-				// #emit MOVE.alt
-				_ASM:MoveAlt(); // 3
-				// #emit CONST.pri  0xFFFFFFFE
-				_ASM:ConstPri(0x80000000); // 5
-				// #emit AND
-				_ASM:And(); // 6
-				// #emit PUSH.pri
-				_ASM:PushPri(); // 7
-				// #emit LOAD.S.pri ret
-				_ASM:LoadSPri(-4); // 9
-				// #emit AND
+				// =====================================
+				//  THIS SECTION IS CURRENTLY 19 BYTES. 
+				// =====================================
+				// Note: Including the original call...
+				// ret = func() & (ret | cellmin);
+				_ASM:PushPri(); // 3
+				_ASM:LoadSAlt(-4); // 5
+				// That bit for odd numbers.
+				_ASM:ConstPri(0x80000000); // 7
+				_ASM:Or(); // 8
+				_ASM:PopAlt(); // 9
 				_ASM:And(); // 10
-				// #emit POP.alt
-				_ASM:PopAlt(); // 11
-				// #emit OR
-				_ASM:Or(); // 12
-				// #emit STOR.S.pri ret
-				_ASM:StorSPri(-4); // 14
+				_ASM:StorSPri(-4); // 12
 				
 				// if (ret < 0) return 0;
-				_ASM:ZeroAlt(); // 15
+				_ASM:ZeroAlt(); // 13
 				
 				// =========================
 				//  JUMP OVER THIS SECTION. 
 				// =========================
 				if (++i == size)
 				{
-					// The "Rel" functions work relative to "DAT", but despite the fact
-					// that we are writing in "COD", this still works because we are
-					// doing that writing relative to "DAT".
-					_ASM:JsgeqRel(8); // 17
+					// The "Rel" functions work relative to "DAT", but despite
+					// the fact that we are writing in "COD", this still works
+					// because we are doing that writing relative to "DAT".
+					_ASM:JsgeqRel(8); // 15
 					//_ASM:IncS(-4);
-					_ASM:ZeroS(-4); // 19
-					// Subtract 8 below to not jump over the jump that isn't here.
+					_ASM:ZeroS(-4); // 17
+					// Subtract 8 below for the jump that isn't here.
 					break;
 				}
 				else
 				{
-					// I spent AGES reading this code to figure out why it was failing -
-					// turns out I used "JGEQ" instead of "JSGEQ".  Also, I can't count
-					// and did "JSGEQ 8" instead of "16"...
-					_ASM:JsgeqRel(16); // 17
+					// I spent AGES reading this code to figure out why it was
+					// failing - turns out I used "JGEQ" instead of "JSGEQ".
+					// Also, I can't count and did "JSGEQ 8" instead of "16"...
+					_ASM:JsgeqRel(16); // 15
 					//_ASM:IncS(-4);
-					_ASM:ZeroS(-4); // 19
+					_ASM:ZeroS(-4); // 17
 					// Huge jump (maybe)!
-					_ASM:JumpRel((size - i) * 21 * 4 - 8); // 21
+					_ASM:JumpRel((size - i) * 19 * 4 - 8); // 19
 					// ===============================================
 					//  IF THE CODE CHANGES, UPDATE BYTE COUNT ABOVE. 
 					// ===============================================
@@ -593,23 +551,10 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	}
 	// This is the point the large "Jump" above goes to.
 	
-	// Remove our fake count.
-	// #emit POP.alt
-	_ASM:PopAlt();
-	
-	// Remove our parameters.
-	// #emit LOAD.S.alt    8
-	_ASM:LoadSAlt(8);
-	// #emit LCTRL         4
-	_ASM:Lctrl(4);
-	// #emit ADD
-	_ASM:Add();
-	// #emit SCTRL         4
+	// Remove the whole stack then get the return value.
+	_ASM:Lctrl(5);
 	_ASM:Sctrl(4);
-	
-	// Get the return value.
-	// #emit POP.pri
-	_ASM:PopPri();
+	_ASM:LoadSPri(-4);
 	
 	// Return.
 	// #emit RETN
@@ -825,53 +770,3 @@ public OnScriptInit()
 #if defined S@@_OnScriptInit
 	forward S@@_OnScriptInit();
 #endif
-
-/**
-Second custom function layout
-
-#emit PROC
-
-// Copy the stack to itself (memcpy).
-// Allocate space.
-#emit LOAD.S.alt    8
-#emit LCTRL         4
-#emit SUB
-#emit SCTRL         4
-#emit MOVE.alt
-
-// memcpy(stack, frm[3], 0, *(frm + 8), 64);
-#emit PUSH.C        64
-#emit PUSH.S        8
-#emit PUSH.C        0
-#emit LCTRL         5
-#emit ADD.C         12
-#emit PUSH.pri
-// Stored (higher) stack point.
-#emit PUSH.alt
-#emit PUSH.C        20
-#emit SYSREQ.C      memcpy
-#emit STACK         24
-
-// Push the (fake) number of parameters.
-#emit PUSH.C        0xFFFFFFFC
-
-// Now loop over all our functions and insert "CALL" opcodes for them.
-for ( ; ; )
-{
-	#emit CALL <wherever - here>
-}
-
-// Remove our fake count.
-#emit POP.alt
-
-// Remove our parameters.
-#emit LOAD.S.alt    8
-#emit LCTRL         4
-#emit ADD
-#emit SCTRL         4
-#emit MOVE.alt
-
-// Return.
-#emit RETN
-
-**/
