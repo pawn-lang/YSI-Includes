@@ -68,14 +68,96 @@ Changelog:
 		First version
 \**--------------------------------------------------------------------------**/
 
+#include "internal\y_unique"
+
+#tryinclude "..\amx\asm"
+#include "amx\asm"
+
 #define hook%1(%2) UNIQUE_FUNCTION<@yH_%1@...>(%2);UNIQUE_FUNCTION<@yH_%1@...>(%2)
 #define rehook%1(%2) UNIQUE_FUNCTION<@yH_%1@...>(%2)
 #define Hook:%0_%1(%2) @yH_%1@%0(%2);@yH_%1@%0(%2)
 // Strip out extra spaces (nicely recursive)
 #define @yH_%0\32;%1(%2) @yH_%1(%2)
 
-static
-	YSI_g_sReturn;
+_Y_HOOKS_STATIC stock
+	YSI_g_sCodeSpace,
+	YSI_g_sCodeEnd,
+	YSI_g_sParamsStack[128],
+	YSI_g_sReturnStack[128],
+	YSI_g_sReturnPtr;
+
+// If you have a (hooked) call stack deeper than this there's something wrong
+// with you!
+
+/**--------------------------------------------------------------------------**\
+<summary>_@_y_hooks_@_</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Just makes space in the main code assembly area (so "RETN" will work without
+	thinking that it is leaving valid code space).  This short function stores
+	about 5k of memory.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+forward _@_y_hooks_@_0();
+
+public _@_y_hooks_@_0()
+{
+	// This code is here for handy "-a" reference.
+	YSI_g_sParamsStack[YSI_g_sReturnPtr++] = 0;
+	YSI_g_sReturnStack[YSI_g_sReturnPtr++] = 0;
+	YSI_g_sReturnPtr = 0;
+	// Reserve a huge area of "COD" for our own use!
+	static
+		STE[] = "";
+	#define _CODE_1 SetTimerEx(STE,0,0,STE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+	#define _CODE_2 _CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1;
+	// This reserves about 20kb of space in the 
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	/*
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	_CODE_2
+	*/
+	#undef _CODE_1
+	#undef _CODE_2
+}
+
+forward _@_y_hooks_@_1();
+
+public _@_y_hooks_@_1()
+{
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_CountInvalidPublics</summary>
@@ -244,19 +326,16 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 {
 	new
-		len = strlen(name),
-		pos = 4,
-		np;
-	while ((np = strfind(name, "@", false, pos)) != -1) pos = np;
-	if (pos == 4) P:E("Invalid hook name: %s", name);
-	name[pos] = '\0';
+		pos = strfind(name, "@", false, 4);
+	// Make "pos" a legal value inside the error message.
+	if (pos == -1) P:E("Invalid hook name: %s", unpack(name), ++pos);
+	name{pos} = '\0';
 	strdel(name, 0, 4);
 }
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_GetName</summary>
-<param name="idx">The public function index to get the name of.</param>
-<param name="base">The start of the public functions header.</param>
+<param name="entry">The public entry to get the name of.</param>
 <returns>
 	-
 </returns>
@@ -265,12 +344,13 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_GetName(idx, base)
+_Y_HOOKS_STATIC Hooks_GetName(entry, name[32])
 {
-	new
-		str[32];
-	AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(idx * 8 + base + 4), str);
-	return str;
+	//static
+	//	str[32];
+	//AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(idx * 8 + base + 4), str);
+	AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), name);
+	//return str;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -285,7 +365,7 @@ _Y_HOOKS_STATIC Hooks_GetName(idx, base)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_GetAddr(idx, base)
+_Y_HOOKS_STATIC stock Hooks_GetAddr(idx, base)
 {
 	new
 		str[32];
@@ -310,10 +390,147 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 }
 
 /**--------------------------------------------------------------------------**\
+<summary>Hooks_WriteFunction</summary>
+<param name="pointers">The hooks to link together.</param>
+<param name="size">The number of hooks.</param>
+<returns>
+	The number of bytes written to memory.
+</returns>
+<remarks>
+	Generate some new code, very nicely :D.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC Hooks_WriteFunction(pointers[], size)
+{
+	new
+		start = YSI_g_sCodeSpace - AMX_HEADER_COD,
+		ctx[AsmContext];
+	// Make sure the underlying system doesn't change without us.
+	#assert _:AsmContext_buffer == 0
+	#assert _:AsmContext_buffer_size == 1
+	#assert _:AsmContext_buffer_offset == 2
+	#assert _:AsmContext_error_handler == 3
+	#assert _:AsmContext == 4
+	// Don't call "AsmInit" because we need custom functionality.
+	ctx[AsmContext_buffer] = YSI_g_sCodeSpace;
+	ctx[AsmContext_buffer_size] = YSI_g_sCodeEnd - YSI_g_sCodeSpace;
+	ctx[AsmContext_buffer_offset] = 0;
+	ctx[AsmContext_error_handler] = 0;
+	#define _ASM_NO:ctx,) ctx)
+	#define _ASM:%0(%1); if((AsmEmit%0(_:_ASM_NO:ctx,%1))!=ASM_ERROR_NONE){P:E("Hooks_WriteFunction");return 0;}
+	
+	// We don't call "PROC" because there's no need to save the stack - we don't
+	// do anything relative to it so keep the stack slightly invalid!
+	
+	// Store the current return.
+	// #emit CONST.alt YSI_g_sReturnStack
+	_ASM:ConstAlt(AMX_GetRelativeAddress(YSI_g_sReturnStack));
+	// #emit LOAD.pri YSI_g_sReturnPtr
+	_ASM:LoadPri(AMX_GetRelativeAddress(YSI_g_sReturnPtr));
+	// #emit IDXADDR
+	_ASM:Idxaddr();
+	
+	// Extract and store the return address.
+	// #emit POP.alt
+	_ASM:PopAlt();
+	// #emit XCHG
+	_ASM:Xchg();
+	// #emit STOR.I
+	_ASM:StorI();
+	
+	// Store the current parameters.
+	// #emit CONST.alt YSI_g_sParamsStack
+	_ASM:ConstAlt(AMX_GetRelativeAddress(YSI_g_sParamsStack));
+	// #emit LOAD.pri  YSI_g_sReturnPtr
+	_ASM:LoadPri(AMX_GetRelativeAddress(YSI_g_sReturnPtr));
+	// #emit IDXADDR
+	_ASM:Idxaddr();
+	
+	// Extract and store the parameter count.
+	// #emit POP.alt
+	_ASM:PopAlt();
+	// #emit XCHG
+	_ASM:Xchg();
+	// #emit STOR.I
+	_ASM:StorI();
+	
+	// Increment the pointer.
+	// #emit INC       YSI_g_sReturnPtr
+	_ASM:Inc(AMX_GetRelativeAddress(YSI_g_sReturnPtr));
+	
+	// Mangle the parameters count so "RETN" ADDS ON parameters, or more
+	// specifically so it doesn't remove any at all.  We do this instead of just
+	// pushing all the parameters over and over again because we don't know how
+	// many there are in advance so we would need a loop in that case.
+	// #emit PUSH.C 0xFFFFFFFC
+	_ASM:PushC(-4);
+	
+	// Now loop over all our functions and insert "CALL" opcodes for them.
+	for (new i = 0; i != size; ++i)
+	{
+		// Get the relative offset from here.
+		//_ASM:Call(pointers[i] - (start + ctx[AsmContext_buffer_offset]));
+		// #emit LCTRL      6
+		_ASM:Lctrl(6);
+		// #emit ADD.C      28
+		_ASM:AddC(28);
+		// #emit PUSH.pri
+		_ASM:PushPri();
+		// #emit CONST.pri  Func0
+		_ASM:ConstPri(pointers[i]);
+		// #emit SCTRL      6
+		_ASM:Sctrl(6);
+	}
+	
+	// Pop our mini stack.
+	// #emit DEC       YSI_g_sReturnPtr
+	_ASM:Dec(AMX_GetRelativeAddress(YSI_g_sReturnPtr));
+	
+	// Pop our fake argument count.
+	// #emit POP.alt
+	_ASM:PopAlt();
+	
+	// Get the parameter count.
+	// #emit CONST.alt YSI_g_sParamsStack
+	_ASM:ConstAlt(AMX_GetRelativeAddress(YSI_g_sParamsStack));
+	// #emit LOAD.pri  YSI_g_sReturnPtr
+	_ASM:LoadPri(AMX_GetRelativeAddress(YSI_g_sReturnPtr));
+	// #emit LIDX
+	_ASM:Lidx();
+	// #emit MOVE.alt
+	_ASM:MoveAlt();
+	
+	// Reduce the stack.
+	// #emit LCTRL 4
+	_ASM:Lctrl(4);
+	// #emit ADD
+	_ASM:Add();
+	// #emit SCTRL 4
+	_ASM:Sctrl(4);
+	
+	// Get the return.
+	// #emit CONST.alt YSI_g_sReturnStack
+	_ASM:ConstAlt(AMX_GetRelativeAddress(YSI_g_sReturnStack));
+	// #emit LOAD.pri  YSI_g_sReturnPtr
+	_ASM:LoadPri(AMX_GetRelativeAddress(YSI_g_sReturnPtr));
+	// #emit LIDX
+	_ASM:Lidx();
+	
+	// Don't use "RETN" as we didn't use "PROC".
+	// #emit SCTRL 6
+	_ASM:Sctrl(6);
+	
+	#undef _ASM_NO
+	#undef _ASM
+	// Return the number of bytes written.
+	return ctx[AsmContext_buffer_offset];
+}
+
+/**--------------------------------------------------------------------------**\
 <summary>Hooks_GetSame</summary>
-<param name="ref">The function that's hooking.</param>
-<param name="start">The first index to search from.</param>
-<param name="original">The comparison function's address.</param>
+<param name="ref">The PACKED function that's hooking something.</param>
+<param name="original">The hook function's address.</param>
 <returns>
 	-
 </returns>
@@ -322,24 +539,43 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], idx, const original)
+_Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original)
 {
 	new
 		same[32],
 		sameCount = 1,
 		entry,
+		idx;
+	static
 		name[32];
 	same[0] = AMX_Read(original);
 	// Wipe out the current hook.
 	Hooks_InvalidateName(original);
 	// Loop through all remaining functions to find ones that hook the same
 	// data.
-	while ((idx = AMX_GetEntryPrefix(idx, entry, _A<@yH_>)))
+	//while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
+	while ((idx = AMX_GetPublicEntry(idx, entry, ref))) //, _A<@yH_>)))
 	{
 		// Get the function name and compare it to the current one.
-		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), name);
+		Hooks_GetName(entry, name);
+		/*printf("Partial %d: %s", idx, unpack(name));
+		printf("%04x%04x %04x%04x %04x%04x",
+			name[0] >>> 16,
+			name[0] & 0xFFFF,
+			(_A<@yH_>) >>> 16,
+			(_A<@yH_>) & 0xFFFF,
+			(('@' << 24) | ('y' << 16) | ('H' << 8) | ('_')) >>> 16,
+			(('@' << 24) | ('y' << 16) | ('H' << 8) | ('_')) >>> 16);*/
+		if (name[0] == (('@' << 24) | ('y' << 16) | ('H' << 8) | ('_'))) // "@yH_"
+		{
+			//printf("Maybe...");
+			// A hook, not an original.
+			Hooks_IsolateName(name);
+		}
+		// Not sufficiently identical.
+		if (strcmp(name, ref)) continue;
+		//printf("GOOD");
 		// Get just the useful part of the name.
-		Hooks_IsolateName(name);
 		if (!strcmp(name, ref))
 		{
 			same[sameCount] = AMX_Read(entry);
@@ -351,43 +587,69 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], idx, const original)
 			}
 		}
 	}
-	// Now find the original (easy enough).
-	base = funcidx(ref);
-	if (base == -1)
+	// Now start writing our entirely new version.
+	// First, the function name.
+	AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref, strlen(ref));
+	// I don't know if this will work as they won't be in alphabetical
+	// order any more...
+	if (sameCount == 1)
 	{
-		// No original function to hook!
-		// MAKE ONE!
-		AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref);
-		// I don't know if this will work as they won't be in alphabetical
-		// order any more...
-		if (sameCount == 1)
-		{
-			// Only one hook, just call it directly.
-			return;
-		}
+		// Only one hook, just call it directly (the pointer is already
+		// right so we are done)!
+		return;
 	}
+	// Point "original"'s function pointer to the new function.
 	// Write our new function (HARD).
-	// Replace the original with the new.
+	// entry = Hooks_WriteFunction(same, sameCount);
+	// // for (new i = 0; i != entry; i += 4)
+	// // {
+		// // printf("%08x", AMX_Read(YSI_g_sCodeSpace + i));
+	// // }
+	// //YSI_g_sCodeSpace += Hooks_WriteFunction(same, sameCount);
+	// AMX_Write(original, YSI_g_sCodeSpace - AMX_HEADER_COD);
+	// YSI_g_sCodeSpace += entry;
+	// entry = Hooks_WriteFunction(same, sameCount);
+	// // for (new i = 0; i != entry; i += 4)
+	// // {
+		// // printf("%08x", AMX_Read(YSI_g_sCodeSpace + i));
+	// // }
+	// //YSI_g_sCodeSpace += Hooks_WriteFunction(same, sameCount);
+	AMX_Write(original, YSI_g_sCodeSpace - AMX_HEADER_COD);
+	YSI_g_sCodeSpace += Hooks_WriteFunction(same, sameCount);
 }
 
-/*
 public OnScriptInit()
 {
 	P:2("Hooks_OnScriptInit called");
-	YSI_g_sReturn = 0;
+	//YSI_g_sReturn = 0;
 	new
 		func[32],
 		entry,
 		idx;
+	// Get our code space relative to "DAT".
+	entry = AMX_HEADER_PUBLICS + funcidx("_@_y_hooks_@_0") * 8;
+	YSI_g_sCodeSpace = AMX_HEADER_COD + AMX_Read(entry);
+	//printf("IDX: %d", funcidx("_@_y_hooks_@_0"));
+	Hooks_InvalidateName(entry);
+	// Determine EXACTLY how much space we have to play with.
+	entry = AMX_HEADER_PUBLICS + funcidx("_@_y_hooks_@_1") * 8;
+	YSI_g_sCodeEnd = AMX_HEADER_COD + AMX_Read(entry);
+	//printf("IDX: %d", funcidx("_@_y_hooks_@_1"));
+	Hooks_InvalidateName(entry);
 	// Find all hook functions in order (at least find the first one in a set).
-	while ((idx = AMX_GetEntryPrefix(idx, entry, _A<@yH_>)))
+	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
 	{
-		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), func);
-		Hooks_IsolateName(name);
+		//AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), func);
+		//printf("Start");
+		Hooks_GetName(entry, func);
+		Hooks_IsolateName(func);
+		printf("Deal with %d: %s", idx, unpack(func));
 		// Get all ones the same (and the original).
-		Hooks_GetSame(func, idx, entry);
+		Hooks_GetSame(func, entry);
 	}
-	#if defined S@@_OnScriptInit
+	// Finally, put all our new mashed up publics back in order!
+	Hooks_SortPublics();
+	/*#if defined S@@_OnScriptInit
 		S@@_OnScriptInit();
 	#endif
 	// Do the main code here.
@@ -413,5 +675,72 @@ public OnScriptInit()
 #define OnScriptInit S@@_OnScriptInit
 #if defined S@@_OnScriptInit
 	forward S@@_OnScriptInit();
-#endif
-*/
+#endif*/return 1;}
+
+/**
+Basic custom function layout
+
+// We don't call "PROC" because there's no need to save the stack - we don't do
+// anything relative to it so keep the stack slightly invalid!
+
+// Store the current return.
+#emit CONST.alt YSI_g_sReturnStack
+#emit LOAD.pri  YSI_g_sReturnPtr
+#emit IDXADDR
+
+// Extract and store the return address.
+#emit POP.alt
+#emit XCHG
+#emit STOR.I
+
+// Store the current parameters.
+#emit CONST.alt YSI_g_sParamsStack
+#emit LOAD.pri  YSI_g_sReturnPtr
+#emit IDXADDR
+
+// Extract and store the parameter count.
+#emit POP.alt
+#emit XCHG
+#emit STOR.I
+
+// Increment the pointer.
+#emit INC       YSI_g_sReturnPtr
+
+// Mangle the parameters count so "RETN" ADDS ON parameters, or more
+// specifically so it doesn't remove any at all.  We do this instead of just
+// pushing all the parameters over and over again because we don't know how many
+// there are in advance so we would need a loop in that case.
+#emit PUSH.C 0xFFFFFFFC
+
+// Now loop over all our functions and insert "CALL" opcodes for them.
+for ( ; ; )
+{
+	#emit CALL <wherever - here>
+}
+
+// Pop our mini stack.
+#emit DEC       YSI_g_sReturnPtr
+
+// Pop our fake argument count.
+#emit POP.alt
+
+// Get the parameter count.
+#emit CONST.alt YSI_g_sParamsStack
+#emit LOAD.pri  YSI_g_sReturnPtr
+#emit LIDX
+#emit MOVE.alt
+
+// Reduce the stack.
+#emit LCTRL 4
+#emit ADD
+#emit SCTRL 4
+
+// Get the return.
+#emit CONST.alt YSI_g_sReturnStack
+#emit LOAD.pri  YSI_g_sReturnPtr
+#emit LIDX
+
+// Don't use "RETN" as we didn't use "PROC".
+#emit SCTRL 6
+
+**/
