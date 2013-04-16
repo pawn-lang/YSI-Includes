@@ -101,7 +101,7 @@ stock Bitmap:Bitmap_Create(xSize, ySize, bgColour = 0xFFFFFFFF)
 	//ctx[E_BITMAP_X] = x;
 	//ctx[E_BITMAP_Y] = y;
 	// Raw malloc access.  Set the background colour.
-	memset(YSI_gMallocMemory[_:d + 3], s, bgColour | 0xFF);
+	memset(YSI_gMallocMemory[_:d + 3], bgColour | 0xFF, s);
 	/*for (new y = 0; y != ySize; ++y)
 	{
 		for (new x = 0; x != xSize; ++x)

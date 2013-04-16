@@ -155,12 +155,12 @@ stock bool:Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 			if (shift > 0)
 			{
 				// Blank the remainder of the slot we are growing.
-				rawMemset(slotEnd, shift, 0);
+				rawMemset(slotEnd, 0, shift);
 			}
 			else
 			{
 				// Blank the end of the array.
-				rawMemset(arrayEnd + shift, -shift, 0);
+				rawMemset(arrayEnd + shift, 0, -shift);
 			}
 		}
 		// Do nothing if they're the same.

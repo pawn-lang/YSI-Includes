@@ -423,14 +423,16 @@ hook OnPlayerConnect(playerid)
 		#emit STOR.S.pri temp
 		if (playerid < temp)
 		{
+			// It might be faster here to just use "FILL"...
 			// Get the data enum size.
 			//#emit PUSH.C     8
-			#emit PUSH.C     0
 			#emit LOAD.S.pri p
 			#emit ADD.C      12
 			#emit STOR.S.pri temp
 			#emit LREF.S.pri temp
 			#emit PUSH.pri
+			// Set them all to "0".
+			#emit PUSH.C     0
 			// Get the data offset.
 			#emit LOAD.S.alt playerid
 			#emit SMUL

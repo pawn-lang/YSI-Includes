@@ -404,44 +404,35 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	// Make sure the underlying system doesn't change without us.  Now supported
 	// natively.
 	AsmInitPtr(ctx, YSI_g_sCodeSpace, YSI_g_sCodeEnd - YSI_g_sCodeSpace);
-	#define _ASM_NO:ctx,) ctx)
-	#define _ASM:%0(%1); if((AsmEmit%0(_:_ASM_NO:ctx,%1))!=ASM_ERROR_NONE){P:E("Hooks_WriteFunction");return 0;}
 	
 	// Start of the function.
-	// #emit PROC
-	_ASM:Proc();
+	@emit PROC
 	
 	// Allocate space for our "ret" variable at "frm - 4".
-	_ASM:PushC(ret);
+	@emit PUSH.C        ret
 	
 	// Copy the stack to itself (MOVS).
 	// Allocate space.
-	// #emit LOAD.S.alt    8
-	_ASM:LoadSAlt(8);
-	// #emit LCTRL         4
-	_ASM:Lctrl(4);
-	// #emit SUB
-	_ASM:Sub();
-	// #emit SCTRL         4
-	_ASM:Sctrl(4);
-	// #emit MOVE.alt
-	_ASM:Xchg();
+	@emit LOAD.S.alt    8
+	@emit LCTRL         4
+	@emit SUB
+	@emit SCTRL         4
+	@emit XCHG
 	
 	// The "MOVS" OpCode only takes a constant, not a variable, so we need to
 	// generate self-modifying code (just to be UBER meta)!  This code is
 	// generated AFTER the file is loaded so we bypass the data segment checks
 	// and can freely write wherever we want.
-	_ASM:StorPri(ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] + 7 * 4); // 2
+	@emit STOR.pri      (ctx[AsmContext_buffer] + 18 * 4)
 	
 	// Do the copying.  "alt" is already "STK", load the "FRM" offset.
-	_ASM:Lctrl(5); // 4
-	_ASM:AddC(12); // 6
+	@emit LCTRL         5 // 4
+	@emit ADD.C         12 // 6
 	// This is the instruction we want to modify...
-	_ASM:Movs(0); // 8 - 1
+	@emit MOVS          0 // 8 - 1
 	
 	// Push the (fake) number of parameters.
-	// #emit PUSH.C        0xFFFFFFFC
-	_ASM:PushC(-4);
+	@emit PUSH.C        -4
 	
 	// Now loop over all our functions and insert "CALL" opcodes for them.
 	for (new i = 0; ; )
@@ -449,7 +440,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	{
 		// Get the absolute offset from here.
 		// #emit CALL pointers[i]
-		_ASM:Call(pointers[i] + base); // 2
+		@emit CALL          (pointers[i] + base) // 2
 		if (skipable)
 		{
 			if (ret)
@@ -459,17 +450,17 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 				// =====================================
 				// Note: Including the original call...
 				// ret = func() & (ret | cellmin);
-				_ASM:PushPri(); // 3
-				_ASM:LoadSAlt(-4); // 5
+				@emit PUSH.pri                 // 3
+				@emit LOAD.S.alt    -4         // 5
 				// That bit for odd numbers.
-				_ASM:ConstPri(0x80000000); // 7
-				_ASM:Or(); // 8
-				_ASM:PopAlt(); // 9
-				_ASM:And(); // 10
-				_ASM:StorSPri(-4); // 12
+				@emit CONST.pri     0x80000000 // 7
+				@emit OR                       // 8
+				@emit POP.alt                  // 9
+				@emit AND                      // 10
+				@emit STOR.S.pri    -4         // 12
 				
 				// if (ret < 0) return 0;
-				_ASM:ZeroAlt(); // 13
+				@emit ZERO.alt         // 13
 				
 				// =========================
 				//  JUMP OVER THIS SECTION. 
@@ -479,9 +470,8 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 					// The "Rel" functions work relative to "DAT", but despite
 					// the fact that we are writing in "COD", this still works
 					// because we are doing that writing relative to "DAT".
-					_ASM:JsgeqRel(8); // 15
-					//_ASM:IncS(-4);
-					_ASM:ZeroS(-4); // 17
+					@emit JSGEQ.rel     8  // 15
+					@emit ZERO.S        -4 // 17
 					// Subtract 8 below for the jump that isn't here.
 					break;
 				}
@@ -490,11 +480,10 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 					// I spent AGES reading this code to figure out why it was
 					// failing - turns out I used "JGEQ" instead of "JSGEQ".
 					// Also, I can't count and did "JSGEQ 8" instead of "16"...
-					_ASM:JsgeqRel(16); // 15
-					//_ASM:IncS(-4);
-					_ASM:ZeroS(-4); // 17
+					@emit JSGEQ.rel     16 // 15
+					@emit ZERO.S        -4 // 17
 					// Huge jump (maybe)!
-					_ASM:JumpRel((size - i) * 19 * 4 - 8); // 19
+					@emit JUMP.rel      ((size - i) * 19 * 4 - 8) // 19
 					// ===============================================
 					//  IF THE CODE CHANGES, UPDATE BYTE COUNT ABOVE. 
 					// ===============================================
@@ -502,25 +491,25 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 			}
 			else
 			{
-				_ASM:LoadSAlt(-4); // 4
-				_ASM:Or(); // 5
-				_ASM:StorSPri(-4); // 7
-				_ASM:ZeroAlt(); // 8
+				@emit LOAD.S.alt    -4 // 4
+				@emit OR               // 5
+				@emit STOR.S.pri    -4 // 7
+				@emit ZERO.alt         // 8
 				if (++i == size)
 				{
-					_ASM:JsgeqRel(8); // 10
-					_ASM:ZeroS(-4); // 12
+					@emit JSGEQ.rel      8 // 10
+					@emit ZERO.S        -4 // 12
 					break;
 				}
 				else
 				{
-					_ASM:JsgeqRel(16); // 10
-					_ASM:ZeroS(-4); // 12
+					@emit JSGEQ.rel     16 // 10
+					@emit ZERO.S        -4 // 12
 					// The "- 8" is because the last call doesn't have the last
 					// jump so we don't need to skip it.  Ironically, the
 					// "JumpRel" functions actually add on 8 to account for this
 					// instruction itself so the two cancel each other out.
-					_ASM:JumpRel((size - i) * 14 * 4 - 8); // 14
+					@emit JUMP.rel      ((size - i) * 14 * 4 - 8) // 14
 				}
 			}
 		}
@@ -528,15 +517,15 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		{
 			if (ret)
 			{
-				_ASM:LoadSAlt(-4);
-				_ASM:And();
-				_ASM:StorSPri(-4);
+				@emit LOAD.S.alt    -4
+				@emit AND
+				@emit STOR.S.pri    -4
 			}
 			else
 			{
-				_ASM:LoadSAlt(-4);
-				_ASM:Or();
-				_ASM:StorSPri(-4);
+				@emit LOAD.S.alt    -4
+				@emit OR
+				@emit STOR.S.pri    -4
 			}
 			if (++i == size) break;
 		}
@@ -544,16 +533,13 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	// This is the point the large "Jump" above goes to.
 	
 	// Remove the whole stack then get the return value.
-	_ASM:Lctrl(5);
-	_ASM:Sctrl(4);
-	_ASM:LoadSPri(-4);
+	@emit LCTRL         5
+	@emit SCTRL         4
+	@emit LOAD.S.pri    -4
 	
 	// Return.
-	// #emit RETN
-	_ASM:Retn();
+	@emit RETN
 	
-	#undef _ASM_NO
-	#undef _ASM
 	// Return the number of bytes written.
 	return ctx[AsmContext_buffer_offset];
 }

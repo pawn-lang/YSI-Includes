@@ -87,6 +87,9 @@ Variables:
 #include "y_amx"
 //#tryinclude <sscanf>
 
+#tryinclude "..\amx\asm"
+#include "amx\asm"
+
 /*// "File,Float," must remain last always.
 #if defined CUSTOM_TAG_TYPES
 	#define File,Float, Float,File,CUSTOM_TAG_TYPES
@@ -606,8 +609,8 @@ stock isnumeric(str[])
 	rawMemset
 </summary>
 <param name="arr[], iAddress">Array or address to set to a value.</param>
-<param name="iSize">Number of cells to fill.</param>
 <param name="iValue">What to set the cells to.</param>
+<param name="iSize">Number of cells to fill.</param>
 <returns>
 	-
 </returns>
@@ -622,107 +625,92 @@ stock isnumeric(str[])
 	and sets the whole array to that value.
 	
 	"rawmemset" is similar, but takes an AMX data segment address instead and
-	the size is in bytes, not cells.
+	the size is in bytes, not cells.  However, the size must still be a multiple
+	of 4.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock memset(arr[], size = sizeof (arr), val = 0)
+stock memset(arr[], val = 0, size = sizeof (arr))
 {
 	new
 		addr;
 	#emit LOAD.S.pri arr
 	#emit STOR.S.pri addr
 	// Convert the size from cells to bytes.
-	rawMemset(addr, size * 4, val);
-	return 0;
+	return rawMemset(addr, val, size * 4);
 }
 
-stock rawMemset(iAddress, iSize, iValue)
+stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 {
-	// Loop until there are only little bits left to fill.
-	while (iSize >= 4096)
-	{
-		// I have to do this because the FILL instruction doesn't accept a
-		// dynamic number.
-		#emit LOAD.S.alt iAddress
-		#emit LOAD.S.pri iValue
-		#emit FILL 4096
-		iSize    -= 4096;
-		iAddress += 4096;
-	}
-	if (iSize & 2048)
-	{
-		#emit LOAD.S.alt iAddress
-		#emit LOAD.S.pri iValue
-		#emit FILL 2048
-		iAddress += 2048;
-	}
-	if (iSize & 1024)
-	{
-		#emit LOAD.S.alt iAddress
-		#emit LOAD.S.pri iValue
-		#emit FILL 1024
-		iAddress += 1024;
-	}
-	if (iSize & 512)
-	{
-		#emit LOAD.S.alt iAddress
-		#emit LOAD.S.pri iValue
-		#emit FILL 512
-		iAddress += 512;
-	}
-	if (iSize & 256)
-	{
-		#emit LOAD.S.alt iAddress
-		#emit LOAD.S.pri iValue
-		#emit FILL 256
-		iAddress += 256;
-	}
-	if (iSize & 128)
-	{
-		#emit LOAD.S.alt iAddress
-		#emit LOAD.S.pri iValue
-		#emit FILL 128
-		iAddress += 128;
-	}
-	if (iSize & 64)
-	{
-		#emit LOAD.S.alt iAddress
-		#emit LOAD.S.pri iValue
-		#emit FILL 64
-		iAddress += 64;
-	}
-	if (iSize & 32)
-	{
-		#emit LOAD.S.alt iAddress
-		#emit LOAD.S.pri iValue
-		#emit FILL 32
-		iAddress += 32;
-	}
-	if (iSize & 16)
-	{
-		#emit LOAD.S.alt iAddress
-		#emit LOAD.S.pri iValue
-		#emit FILL 16
-		iAddress += 16;
-	}
-	if (iSize & 8)
-	{
-		#emit LOAD.S.alt iAddress
-		#emit LOAD.S.pri iValue
-		#emit FILL 8
-		iAddress += 8;
-	}
-	if (iSize & 4)
-	{
-		#emit LOAD.S.alt iAddress
-		#emit LOAD.S.pri iValue
-		#emit FILL 4
-		iAddress += 4;
-	}
+	// They are really, trust me!
+	#pragma unused iAddress, iSize, iValue
+	// The first time this is called it rewrites itself.  Any other times it is
+	// called it just uses the new code.  This is like doing:
+	//  
+	//  static
+	//      bInitialised = false;
+	//  if (!bInitialised)
+	//  {
+	//      // Do something
+	//      bInitialised = true;
+	//  }
+	//  // Do rest.
+	//  
+	// But better (though FAR more complex).
+	// There is NO checking here that we don't write the function bigger than
+	// the space available, or even that we don't overwrite "CIP", which would
+	// be bad.  The only way to make sure that doesn't happen is write a little
+	// with a lot of code!
+	new
+		base,
+		ctx[AsmContext];
+	// Get this function.
+	#emit CONST.pri  rawMemset
+	#emit LOAD.alt   AMX_HEADER_COD
+	#emit ADD
+	#emit STOR.S.pri base
+	AsmInitPtr(ctx, base, 80), // Don't need any more than that.
+	// Frankly by this point we have probably already written more code than
+	// will be generated!
+	@emit PROC
+	@emit LOAD.S.pri 20
+	@emit CONST.alt  0xFFFFFFC
+	@emit AND
+	@emit STOR.pri   (ctx[AsmContext_buffer] + 13 * 4)
+	// The documentation says "PRI" should be a pointer, but that's not true!
+	@emit LOAD.S.alt 12
+	@emit LOAD.S.pri 16
+	@emit FILL       0
+	// Return the bytes filled.
+	@emit LOAD.pri   (ctx[AsmContext_buffer] + 13 * 4)
+	@emit RETN
+	// Do the second version.
+	#emit CONST.pri  memset
+	#emit LOAD.alt   AMX_HEADER_COD
+	#emit ADD
+	#emit STOR.S.pri base
+	AsmInitPtr(ctx, base, 80),
+	@emit PROC
+	@emit LOAD.S.pri 20
+	@emit SHL.C.pri  2
+	@emit STOR.pri   (ctx[AsmContext_buffer] + 12 * 4)
+	@emit LOAD.S.alt 12
+	@emit LOAD.S.pri 16
+	@emit FILL       0
+	// Return the bytes filled.
+	@emit LOAD.pri   (ctx[AsmContext_buffer] + 12 * 4)
+	@emit RETN
+	// Call this function again (the new version), but don't let the compiler
+	// know...  First clear the stack.
+	#emit LCTRL      5
+	#emit SCTRL      4
+	#emit CONST.pri  rawMemset
+	#emit ADD.C      4
+	#emit SCTRL      6
+	// Never hit because of going to an earlier "RETN".
+	return memset("", 0, 0);
 }
 
-//#if !defined ReturnPlayerName
 stock ReturnPlayerName(playerid)
 {
 	new
@@ -730,7 +718,6 @@ stock ReturnPlayerName(playerid)
 	GetPlayerName(playerid, str, sizeof (str));
 	return str;
 }
-//#endif
 
 stock ftouch(const filename[])
 {
