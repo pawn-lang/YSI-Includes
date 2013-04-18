@@ -209,7 +209,6 @@ public OnScriptInit()
 			// Found a bounds code.
 			AMX_Write(i, nop);
 			AMX_Write(i += 4, nop);
-			//i += 4;
 		}
 	}
 	// Allocate a ton of space on the heap.
@@ -221,10 +220,6 @@ public OnScriptInit()
 	// Now there's only the normal bit of the stack and heap left.
 	if (YSI_g_sHeapStart != AMX_HEADER_HEA) P:F("y_malloc: Not the first HEAP allocation!");
 	P:2("Malloc_OnScriptInit: %d %d %d", YSI_g_sHeapStart, YSI_g_sUnusedStart, AMX_HEADER_HEA); // + AMX_BASE_ADDRESS);
-	//YSI_g_sHeapStart += 
-	/*#emit CONST.alt     YSI_gMallocMemory
-	#emit STOR.S.alt    nop
-	printf("nop = %d", _:nop);*/
 	#emit CONST.alt     YSI_gMallocMemory
 	#emit LOAD.pri      YSI_g_sHeapStart
 	#emit SUB
@@ -234,9 +229,6 @@ public OnScriptInit()
 	YSI_g_sUnusedStart = YSI_g_sHeapStart + 1;
 	// Blank the whole memory.  Not required - the heap is already empty.
 	//memset(YSI_gMallocMemory[1], 0, MALLOC_MEMORY - 1);
-	/*YSI_gMallocMemory[YSI_g_sHeapStart + 1] = 43;
-	YSI_gMallocMemory[YSI_g_sHeapStart + 2] = 44;
-	YSI_gMallocMemory[YSI_g_sHeapStart + 3] = 45;*/
 	#if _DEBUG > 3
 		#emit CONST.alt     YSI_gMallocMemory
 		#emit STOR.S.alt    nop
@@ -249,18 +241,6 @@ public OnScriptInit()
 	#if defined Malloc_OnScriptInit
 		Malloc_OnScriptInit();
 	#endif
-	//nop = GetAmxAddress();
-	// Adjust where the main AMX runtime thinks the heap starts.
-	// printf("=====");
-	// printf("%d", ReadAmxCell(AMX_OFFSET_HLW));
-	// printf("%d", ReadAmxCell(AMX_OFFSET_HLW) + AMX_REAL_DATA);
-	// printf("%d", ReadAmxCell(AMX_OFFSET_HEA));
-	// printf("%d", ReadAmxCell(AMX_OFFSET_HEA) + AMX_REAL_DATA);
-	// printf("%d", AMX_HEADER_HEA);
-	// printf("%d", ReadAmxCell(AMX_OFFSET_HLW) + MALLOC_MEMORY * 4);
-	// printf("=====");
-	//WriteAmxCell(AMX_OFFSET_HLW, ReadAmxCell(AMX_OFFSET_HLW) + MALLOC_MEMORY * 4);
-	//WriteAmxCell(AMX_OFFSET_HEA, ReadAmxCell(AMX_OFFSET_HEA) + MALLOC_MEMORY * 4);
 	return 1;
 }
 
@@ -275,6 +255,7 @@ static
 	bool:YSI_g_sFILTERSCRIPT = false;
 
 static const
+	// Split in to three because of line length limits.
 	YSI_g_scErrorMessage1[] = 
 		" \n" \
 		" \n" \
@@ -290,56 +271,16 @@ static const
 		"    |  [debug] Run time error 12: \"(sleep mode)\"                               |\n" \
 		"    |  [debug] AMX backtrace:                                                  |",
 	YSI_g_scErrorMessage3[] = 
-		"    |  [debug] #0 <SOME ADDRESS> in public OnGameModeInit () from <YOUR FILE>  |\n" \
+		"    |  [debug] #0 <SOME ADDRESS> in %s () from <YOUR FILE>%s|\n" \
 		"    |                                                                          |\n" \
 		"    | For more information, see the YSI.tl release topic.                      |\n" \
 		"    |                                                                          |\n" \
 		"    ============================================================================\n" \
 		" \n";
 
+forward Malloc_SolidifyHeap(ss);
 
-// forward y_malloc_heap_adjust_function();
-// public y_malloc_heap_adjust_function()
-// {
-	// // Sleep FOREVER!  If I'm right, this will force the VM to adopt our
-	// // modified "HEA" value forever!
-// //	YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 0);
-	// while (TRUE)
-	// {
-		// // print("    ============================================================================");
-		// // print("    |                                                                          |");
-		// // print("    |                            ******************                            |");
-		// // print("    |                            * VERY IMPORTANT *                            |");
-		// // print("    |                            ******************                            |");
-		// // print("    |                                                                          |");
-		// // print("    | If you use the \"crashdetect\" plugin and see the following message:       |");
-		// // print("    |                                                                          |");
-		// // print("    |  [debug] Run time error 12: \"(sleep mode)\"                               |");
-		// // print("    |  [debug] AMX backtrace:                                                  |");
-		// // print("    |  [debug] #0 <SOME ADDRESS> in public OnGameModeInit () from <YOUR FILE>  |");
-		// // print("    |                                                                          |");
-		// // print("    | Directly below this box, IGNORE IT!  It is NOT a mistake or a problem!   |");
-		// // print("    |                                                                          |");
-		// // print("    | This is a nescessary evil and does not affect your mode in any way!  It  |");
-		// // print("    | is simply a side-effect of one of the advanced hacks in YSI to allocate  |");
-		// // print("    | memory dynamically.  For more information, see the YSI.tl release topic. |");
-		// // print("    |                                                                          |");
-		// // print("    ============================================================================");
-		// /*print(YSI_g_scErrorMessage1),
-		// print(YSI_g_scErrorMessage2),
-		// print(YSI_g_scErrorMessage3),
-		// sleep(cellmax);*/
-		// Malloc_SolidifyHeap(cellmax);
-	// }
-	// // #emit CONST.pri cellmax
-	// // #emit ZERO.alt
-	// // #emit HALT 12
-	// return 1;
-// }
-
-forward Malloc_SolidifyHeap();
-
-public Malloc_SolidifyHeap()
+public Malloc_SolidifyHeap(ss)
 {
 	// This code calls "sleep" a second time.  When "sleep" is called "amx_Exec"
 	// sets "amx->reset_hea" to the original value of the heap, so that when the
@@ -352,27 +293,55 @@ public Malloc_SolidifyHeap()
 	// called it sets "reset_hea"
 	print(YSI_g_scErrorMessage1),
 	print(YSI_g_scErrorMessage2),
-	print(YSI_g_scErrorMessage3);
+	printf(YSI_g_scErrorMessage3, ss ? ("main") : ("public OnGameModeInit"), ss ? ("                   ") : ("  "));
 	// First, reset "stk" so that we don't loose any of that in this way.  Also
 	// reset "hea" to the value we want, not whatever it might be as of this
 	// moment.
-	new
-		l = MALLOC_MEMORY * 4;
-	#emit LOAD.pri   AMX_HEADER_HEA
-	#emit LOAD.S.alt l
+	#emit PUSH.S     ss // Copy "ss" (Stack Size).
+	#emit CONST.pri  Malloc_SolidifyHeap
+	#emit STOR.S.pri ss
+	printf("Malloc_SolidifyHeap = %x", ss);
+	#emit CONST.pri  OnGameModeInit
+	#emit STOR.S.pri ss
+/*	printf("OnGameModeInit = %x", ss);
+	#emit CONST.pri  main
+	#emit STOR.S.pri ss
+	printf("main = %x", ss);
+	#emit LOAD.pri  AMX_HEADER_STP
+	#emit STOR.S.pri ss
+	ss -= 4;
+	#emit LREF.S.pri ss
+	#emit STOR.S.pri ss
+	printf("Malloc_SolidifyHeap = %x", ss);
+	#emit LOAD.pri  AMX_HEADER_STP
+	#emit STOR.S.pri ss
+	ss -= 8;
+	#emit LREF.S.pri ss
+	#emit STOR.S.pri ss
+	printf("Malloc_SolidifyHeap = %x", ss);*/
+	ss = MALLOC_MEMORY * 4;
+/*	#emit LOAD.pri   AMX_HEADER_HEA
+	#emit LOAD.S.alt ss
 	#emit ADD
 	#emit SCTRL      2 // Set the new heap pointer.
-	// Get the function parameter BEFORE we mangle the stack.
-	#emit POP.alt
-	#emit ZERO.pri
-	#emit SCTRL      5 // Set the frame pointer.
 	#emit LOAD.pri   AMX_HEADER_STP
+	#emit POP.alt
+	#emit SUB        // Adjust the stack to keep the return address for "CONT".
 	#emit SCTRL      4 // Set the original stack pointer.
-	// sleep();
-	#emit MOVE.pri
-	#emit ZERO.alt   // Sleep 0.
+	#emit SCTRL      5 // Set the frame pointer.*/
+	/*#emit ZERO.alt   // Sleep 0.
+	#emit ZERO.pri
+	#emit HALT       12 // Sleep*/
+/*	#emit CONST.alt  10000
 	#emit ZERO.pri
 	#emit HALT       12 // Sleep
+	#emit RETN*/
+	// Sleep for about 25 days!
+	while (TRUE)
+	{
+		sleep cellmax;
+	}
+//	printf("REsUME");
 	return 0;
 //	sleep(0);
 }
@@ -384,7 +353,7 @@ public OnFilterScriptInit()
 	#endif
 	YSI_g_sFILTERSCRIPT = true;
 	YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 0);
-	return Malloc_SolidifyHeap();
+	return Malloc_SolidifyHeap(0);
 }
 
 #if defined _ALS_OnFilterScriptInit
@@ -405,7 +374,7 @@ public OnGameModeInit()
 	if (!YSI_g_sFILTERSCRIPT)
 	{
 		YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 0);
-		return Malloc_SolidifyHeap();
+		return Malloc_SolidifyHeap(0);
 	}
 	return 1;
 }
@@ -426,7 +395,7 @@ main()
 	#if defined Malloc_main
 		Malloc_main();
 	#endif
-	Malloc_SolidifyHeap();
+	Malloc_SolidifyHeap(12);
 	//Malloc_SolidifyHeap(0);
 }
 
