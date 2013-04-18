@@ -164,13 +164,7 @@ static
 
 #if defined YSI_MALLOC_SECURE
 	#error YSI_MALLOC_SECURE has been removed.
-//	static
-//#else
-//	new
 #endif
-
-//new
-//	YSI_gMallocMemory[MALLOC_MEMORY] = {MALLOC_MEMORY - 1, 0};
 
 new
 	YSI_gMallocMemory[1];
@@ -221,7 +215,14 @@ public OnScriptInit()
 	#emit SCTRL         2
 	// Now there's only the normal bit of the stack and heap left.
 	if (YSI_g_sHeapStart != AMX_HEADER_HEA) P:F("y_malloc: Not the first HEAP allocation!");
-	P:2("Malloc_OnScriptInit: %d %d %d", YSI_g_sHeapStart, YSI_g_sUnusedStart, AMX_HEADER_HEA); // + AMX_BASE_ADDRESS);
+	#if _DEBUG >= 2
+		printf("Malloc_OnScriptInit: %d %d %d", YSI_g_sHeapStart, YSI_g_sUnusedStart, AMX_HEADER_HEA); // + AMX_BASE_ADDRESS);
+	#else
+		// Pretty sure this "SYSREQ" here does something important for the code, but
+		// I'm not sure what...
+		print(" ");
+	#endif
+	//while (FALSE) {}
 	#emit CONST.alt     YSI_gMallocMemory
 	#emit LOAD.pri      YSI_g_sHeapStart
 	#emit SUB
@@ -254,7 +255,7 @@ public OnScriptInit()
 
 static
 	//YSI_g_sSolidifyHeap,
-	bool:YSI_g_sFILTERSCRIPT = false;
+	YSI_g_sHeapSetup = 0;
 
 static const
 	// Split in to three because of line length limits.
@@ -268,7 +269,7 @@ static const
 		"    |                            ******************                            |",
 	YSI_g_scErrorMessage2[] = 
 		"    |                                                                          |\n" \
-		"    | If you use \"crashdetect\", ignore this \"error 12\" message:                |\n" \
+		"    | Your \"crashdetect\" plugin is out of date, ignore the \"error 12\" above!   |\n" \
 		"    |                                                                          |\n" \
 		"    |  [debug] Run time error 12: \"(sleep mode)\"                               |\n" \
 		"    |  [debug] AMX backtrace:                                                  |",
@@ -281,40 +282,42 @@ static const
 		"    ============================================================================\n" \
 		" \n";
 
-/*
-static Malloc_GetName0(ss)
-{
-	new
-		ret[27];
-	switch (ss)
-	{
-		case 0: ret = "public OnGameModeInit";
-		case 1: ret = "public OnFilterScript";
-		case 2: ret = "public Malloc_SolidifyHeap";
-		case 3: ret = "main";
-	}
-	return ret;
-}
+forward OnRuntimeError(code);
 
-static Malloc_GetName1(ss)
+public OnRuntimeError(code)
 {
-	new
-		ret[] = "                        ";
-	switch (ss)
+	if (code == 12)
 	{
-		case 2:  ret[2] = '\0';
-		case 3:  return ret;
-		default: ret[7] = '\0';
+		print(YSI_g_scErrorMessage1),
+		print(YSI_g_scErrorMessage2),
+		print(YSI_g_scErrorMessage3);
 	}
-	return ret;
+	#if defined Malloc_OnRuntimeError
+		Malloc_OnRuntimeError(code);
+	#endif
+	if (code == 12)
+	{
+		// Make sure our heap is correctly set still...
+		return Malloc_SolidifyHeap();
+	}
+	else return 0;
 }
-*/
+#if defined _ALS_OnRuntimeError
+	#undef OnRuntimeError
+#else
+	#define _ALS_OnRuntimeError
+#endif
+#define OnRuntimeError Malloc_OnRuntimeError
+#if defined Malloc_OnRuntimeError
+	forward Malloc_OnRuntimeError(code);
+#endif
 
-#define MALLOC_SOLIDIFYHEAP(%0) Malloc_SolidifyHeap() //while(TRUE){print(YSI_g_scErrorMessage1),print(YSI_g_scErrorMessage2),printf(YSI_g_scErrorMessage3,Malloc_GetName0(%0),Malloc_GetName1(%0));sleep cellmax;}
-//forward Malloc_SolidifyHeap(ss);
-//
-static Malloc_SolidifyHeap() //ss)
+#define MALLOC_SOLIDIFYHEAP(%0) Malloc_SolidifyHeap()
+
+static Malloc_SolidifyHeap()
 {
+	if (YSI_g_sHeapSetup == 2) return 1;
+	++YSI_g_sHeapSetup;
 	// This code calls "sleep" a second time.  When "sleep" is called "amx_Exec"
 	// sets "amx->reset_hea" to the original value of the heap, so that when the
 	// function is resumed and then ends, it can be fully reset.  However, if
@@ -325,10 +328,6 @@ static Malloc_SolidifyHeap() //ss)
 	// that we have fully solidified our new heap value first.  Unfortunately,
 	// this function looses us about 20 cells of the stack, but our stack is far
 	// more vast than the original anyway.  Now it doesn't.
-	print(YSI_g_scErrorMessage1),
-	print(YSI_g_scErrorMessage2),
-	print(YSI_g_scErrorMessage3);
-	//printf(YSI_g_scErrorMessage3, Malloc_GetName0(ss), Malloc_GetName1(ss));
 	new
 		ss = MALLOC_MEMORY * 4;
 	#emit LOAD.pri   AMX_HEADER_HEA
@@ -336,8 +335,6 @@ static Malloc_SolidifyHeap() //ss)
 	#emit ADD
 	#emit SCTRL      2 // Set the new heap pointer.
 	#emit LOAD.pri   AMX_HEADER_STP
-	//#emit POP.alt
-	//#emit SUB        // Adjust the stack to keep the return address for "CONT".
 	#emit SCTRL      4 // Set the original stack pointer.
 	#emit SCTRL      5 // Set the frame pointer.
 	// Sleep for about 25 days!
@@ -345,7 +342,6 @@ static Malloc_SolidifyHeap() //ss)
 	{
 		sleep cellmax;
 	}
-	//MALLOC_SOLIDIFYHEAP(ss)
 	return 0;
 }
 
@@ -354,11 +350,7 @@ public OnFilterScriptInit()
 	#if defined Malloc_OnFilterScriptInit
 		Malloc_OnFilterScriptInit();
 	#endif
-	YSI_g_sFILTERSCRIPT = true;
-	//DumpStack();
-	//YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 2);
 	return MALLOC_SOLIDIFYHEAP(1);
-	//return 0;
 }
 
 #if defined _ALS_OnFilterScriptInit
@@ -376,13 +368,7 @@ public OnGameModeInit()
 	#if defined Malloc_OnGameModeInit
 		Malloc_OnGameModeInit();
 	#endif
-	if (!YSI_g_sFILTERSCRIPT)
-	{
-		//YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 2);
-		return MALLOC_SOLIDIFYHEAP(0);
-		//return 0;
-	}
-	return 1;
+	return MALLOC_SOLIDIFYHEAP(0);
 }
 
 #if defined _ALS_OnGameModeInit
@@ -397,15 +383,10 @@ public OnGameModeInit()
 
 main()
 {
-	//KillTimer(YSI_g_sSolidifyHeap);
 	#if defined Malloc_main
 		Malloc_main();
 	#endif
-	//CallLocalFunction("Malloc_main", "");
-	//sleep(0);
 	return MALLOC_SOLIDIFYHEAP(3);
-	//return 0;
-	//Malloc_SolidifyHeap(0);
 }
 
 #if defined _ALS_main
@@ -414,9 +395,6 @@ main()
 	#define _ALS_main
 #endif
 #define main() forward Malloc_main();public Malloc_main()
-//#if defined Malloc_main
-//	forward Malloc_main();
-//#endif
 
 /**--------------------------------------------------------------------------**\
 <summary>Malloc_GetSlotSize</summary>
@@ -1062,10 +1040,16 @@ stock Alloc:calloc(size)
 		stock Alloc:Malloc_Allocate(size)
 		{
 			P:2("Malloc_Allocate called: %d, %d, %d, %d", size, YSI_g_sUnusedStart, YSI_g_sHeapStart, Malloc_GetSlotSize(YSI_g_sUnusedStart));
+			//P:0("Malloc_Allocate called: %d, %d, %d, %d", size, YSI_g_sUnusedStart, YSI_g_sHeapStart, Malloc_GetSlotSize(YSI_g_sUnusedStart));
 			new
 				slot = YSI_g_sUnusedStart,
 				p = YSI_g_sHeapStart, // Was "0", now an offset to the heap.
 				cs;
+			#if _DEBUG > 3
+				#emit LCTRL         2
+				#emit STOR.S.alt    cs
+				printf("Malloc_Allocate: heap = %d", cs);
+			#endif
 			while (slot)
 			{
 				cs = Malloc_GetSlotSize(slot);
