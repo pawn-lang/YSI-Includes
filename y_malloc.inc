@@ -251,7 +251,7 @@ public OnScriptInit()
 #endif
 
 static
-	YSI_g_sSolidifyHeap,
+	//YSI_g_sSolidifyHeap,
 	bool:YSI_g_sFILTERSCRIPT = false;
 
 static const
@@ -305,11 +305,11 @@ static Malloc_GetName1(ss)
 	return ret;
 }
 
-forward Malloc_SolidifyHeap(ss);
-
-public Malloc_SolidifyHeap(ss)
+#define MALLOC_SOLIDIFYHEAP(%0) Malloc_SolidifyHeap(%0) //while(TRUE){print(YSI_g_scErrorMessage1),print(YSI_g_scErrorMessage2),printf(YSI_g_scErrorMessage3,Malloc_GetName0(%0),Malloc_GetName1(%0));sleep cellmax;}
+//forward Malloc_SolidifyHeap(ss);
+//
+static Malloc_SolidifyHeap(ss)
 {
-	#define MALLOC_SOLIDIFYHEAP(%0) while(TRUE){print(YSI_g_scErrorMessage1),print(YSI_g_scErrorMessage2),printf(YSI_g_scErrorMessage3,Malloc_GetName0(%0),Malloc_GetName1(%0));sleep cellmax;}
 	// This code calls "sleep" a second time.  When "sleep" is called "amx_Exec"
 	// sets "amx->reset_hea" to the original value of the heap, so that when the
 	// function is resumed and then ends, it can be fully reset.  However, if
@@ -317,9 +317,28 @@ public Malloc_SolidifyHeap(ss)
 	// then the process will be repeated and "amx->reset_hea" will be replaced
 	// by our modified "hea", entirely destroying the original value.  The only
 	// place where "sleep" can be resumed is in "main", so we need to make sure
-	// that we have fully solidified our new heap value first.
-	// called it sets "reset_hea"
-	MALLOC_SOLIDIFYHEAP(ss)
+	// that we have fully solidified our new heap value first.  Unfortunately,
+	// this function looses us about 20 cells of the stack, but our stack is far
+	// more vast than the original anyway.  Now it doesn't.
+	print(YSI_g_scErrorMessage1),
+	print(YSI_g_scErrorMessage2),
+	printf(YSI_g_scErrorMessage3, Malloc_GetName0(ss), Malloc_GetName1(ss));
+	ss = MALLOC_MEMORY * 4;
+	#emit LOAD.pri   AMX_HEADER_HEA
+	#emit LOAD.S.alt ss
+	#emit ADD
+	#emit SCTRL      2 // Set the new heap pointer.
+	#emit LOAD.pri   AMX_HEADER_STP
+	//#emit POP.alt
+	//#emit SUB        // Adjust the stack to keep the return address for "CONT".
+	#emit SCTRL      4 // Set the original stack pointer.
+	#emit SCTRL      5 // Set the frame pointer.
+	// Sleep for about 25 days!
+	while (TRUE)
+	{
+		sleep cellmax;
+	}
+	//MALLOC_SOLIDIFYHEAP(ss)
 	return 0;
 }
 
@@ -329,9 +348,9 @@ public OnFilterScriptInit()
 		Malloc_OnFilterScriptInit();
 	#endif
 	YSI_g_sFILTERSCRIPT = true;
-	YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 2);
-	MALLOC_SOLIDIFYHEAP(1)
-	return 0;
+	//YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 2);
+	return MALLOC_SOLIDIFYHEAP(1);
+	//return 0;
 }
 
 #if defined _ALS_OnFilterScriptInit
@@ -351,9 +370,9 @@ public OnGameModeInit()
 	#endif
 	if (!YSI_g_sFILTERSCRIPT)
 	{
-		YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 2);
-		MALLOC_SOLIDIFYHEAP(0)
-		return 0;
+		//YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 2);
+		return MALLOC_SOLIDIFYHEAP(0);
+		//return 0;
 	}
 	return 1;
 }
@@ -370,12 +389,12 @@ public OnGameModeInit()
 
 main()
 {
-	KillTimer(YSI_g_sSolidifyHeap);
+	//KillTimer(YSI_g_sSolidifyHeap);
 	#if defined Malloc_main
 		Malloc_main();
 	#endif
-	MALLOC_SOLIDIFYHEAP(3)
-	return 0;
+	return MALLOC_SOLIDIFYHEAP(3);
+	//return 0;
 	//Malloc_SolidifyHeap(0);
 }
 
