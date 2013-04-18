@@ -129,8 +129,10 @@ Operators:
 
 #tryinclude "..\amx\opcode"
 #include "amx\opcode"
-#tryinclude "..\amx\amx"
-#include "amx\amx"
+//#tryinclude "..\amx\amx"
+//#include "amx\amx"
+//#tryinclude "..\amx\stack_dump"
+//#include "amx\stack_dump"
 
 #define MALLOC_KB_TO_CELL ((1024 * 8) / cellbits)
 
@@ -270,14 +272,16 @@ static const
 		"    |                                                                          |\n" \
 		"    |  [debug] Run time error 12: \"(sleep mode)\"                               |\n" \
 		"    |  [debug] AMX backtrace:                                                  |",
+		//"    |  [debug] #0 <SOME ADDRESS> in %s () from <FILE>%s|\n"
 	YSI_g_scErrorMessage3[] = 
-		"    |  [debug] #0 <SOME ADDRESS> in %s () from <FILE>%s|\n" \
+		"    |  [debug] #0 <SOME NUMBER> in Malloc_SolidifyHeap () from <YOUR FILE>     |\n" \
 		"    |                                                                          |\n" \
 		"    | For more information, see the YSI.tl release topic.                      |\n" \
 		"    |                                                                          |\n" \
 		"    ============================================================================\n" \
 		" \n";
 
+/*
 static Malloc_GetName0(ss)
 {
 	new
@@ -304,11 +308,12 @@ static Malloc_GetName1(ss)
 	}
 	return ret;
 }
+*/
 
-#define MALLOC_SOLIDIFYHEAP(%0) Malloc_SolidifyHeap(%0) //while(TRUE){print(YSI_g_scErrorMessage1),print(YSI_g_scErrorMessage2),printf(YSI_g_scErrorMessage3,Malloc_GetName0(%0),Malloc_GetName1(%0));sleep cellmax;}
+#define MALLOC_SOLIDIFYHEAP(%0) Malloc_SolidifyHeap() //while(TRUE){print(YSI_g_scErrorMessage1),print(YSI_g_scErrorMessage2),printf(YSI_g_scErrorMessage3,Malloc_GetName0(%0),Malloc_GetName1(%0));sleep cellmax;}
 //forward Malloc_SolidifyHeap(ss);
 //
-static Malloc_SolidifyHeap(ss)
+static Malloc_SolidifyHeap() //ss)
 {
 	// This code calls "sleep" a second time.  When "sleep" is called "amx_Exec"
 	// sets "amx->reset_hea" to the original value of the heap, so that when the
@@ -322,8 +327,10 @@ static Malloc_SolidifyHeap(ss)
 	// more vast than the original anyway.  Now it doesn't.
 	print(YSI_g_scErrorMessage1),
 	print(YSI_g_scErrorMessage2),
-	printf(YSI_g_scErrorMessage3, Malloc_GetName0(ss), Malloc_GetName1(ss));
-	ss = MALLOC_MEMORY * 4;
+	print(YSI_g_scErrorMessage3);
+	//printf(YSI_g_scErrorMessage3, Malloc_GetName0(ss), Malloc_GetName1(ss));
+	new
+		ss = MALLOC_MEMORY * 4;
 	#emit LOAD.pri   AMX_HEADER_HEA
 	#emit LOAD.S.alt ss
 	#emit ADD
@@ -348,6 +355,7 @@ public OnFilterScriptInit()
 		Malloc_OnFilterScriptInit();
 	#endif
 	YSI_g_sFILTERSCRIPT = true;
+	//DumpStack();
 	//YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 2);
 	return MALLOC_SOLIDIFYHEAP(1);
 	//return 0;
@@ -393,6 +401,8 @@ main()
 	#if defined Malloc_main
 		Malloc_main();
 	#endif
+	//CallLocalFunction("Malloc_main", "");
+	//sleep(0);
 	return MALLOC_SOLIDIFYHEAP(3);
 	//return 0;
 	//Malloc_SolidifyHeap(0);
@@ -403,7 +413,10 @@ main()
 #else
 	#define _ALS_main
 #endif
-#define main Malloc_main
+#define main() forward Malloc_main();public Malloc_main()
+//#if defined Malloc_main
+//	forward Malloc_main();
+//#endif
 
 /**--------------------------------------------------------------------------**\
 <summary>Malloc_GetSlotSize</summary>
@@ -1048,43 +1061,25 @@ stock Alloc:calloc(size)
 #endif
 		stock Alloc:Malloc_Allocate(size)
 		{
-			P:2("Malloc_Allocate called: %d, %d, %d", size, YSI_g_sUnusedStart, YSI_g_sHeapStart);
+			P:2("Malloc_Allocate called: %d, %d, %d, %d", size, YSI_g_sUnusedStart, YSI_g_sHeapStart, Malloc_GetSlotSize(YSI_g_sUnusedStart));
 			new
 				slot = YSI_g_sUnusedStart,
 				p = YSI_g_sHeapStart, // Was "0", now an offset to the heap.
 				cs;
-			//printf("1");
 			while (slot)
 			{
-				// printf("2 %d", YSI_gMallocMemory[YSI_g_sUnusedStart - 1]);
-				// printf("2 %d %d", slot, YSI_g_sUnusedStart);
-				// printf("2 %d", YSI_gMallocMemory[slot - 1]);
-				// printf("2 %d", Malloc_GetSlotSize(slot));
-				// //new
 				cs = Malloc_GetSlotSize(slot);
-				// //cs = z;
-				// #emit LCTRL 2
-				// #emit STOR.S.pri cs
-				// printf("2h %d", cs);
-				// #emit LCTRL 4
-				// #emit STOR.S.pri cs
-				// printf("2s %d", cs);
-				//cs = 0;
-				//printf("2 %d", YSI_gMallocMemory[YSI_g_sUnusedStart - 1]);
 				if (!cs)
 				{
 					return NO_ALLOC;
 				}
-				//printf("2 %d", YSI_gMallocMemory[YSI_g_sUnusedStart - 1]);
 				if (cs >= size)
 				{
 					break;
 				}
-				//printf("2 %d", YSI_gMallocMemory[YSI_g_sUnusedStart - 1]);
 				p = slot;
 				slot = Malloc_NextSlot(slot);
 			}
-			//printf("3 %d", slot);
 			if (slot)
 			{
 				if (cs == size + 1)
@@ -1155,7 +1150,11 @@ stock Alloc:calloc(size)
 				}
 				if (p)
 				{
-					if (l != YSI_g_sHeapStart)
+					if (l == YSI_g_sHeapStart)
+					{
+						YSI_g_sUnusedStart = _:slot;
+					}
+					else
 					{
 						new
 							tmp = Malloc_GetSlotSize(l);
@@ -1170,10 +1169,6 @@ stock Alloc:calloc(size)
 							Malloc_SetData(slot, 0, p);
 							Malloc_SetData(Alloc:l, 0, _:slot);
 						}
-					}
-					else
-					{
-						YSI_g_sUnusedStart = _:slot;
 					}
 					if (_:slot + size + 1 == p)
 					{

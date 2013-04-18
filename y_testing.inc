@@ -438,9 +438,9 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 				// Disable error messages (as we're likely to generate them).
 				state ysi_debug : off;
 				//CallLocalFunction("Testing_main", "");
-				#if defined Testing_main
-					Testing_main();
-				#endif
+				// Need to do it this way because "y_malloc" screws it up.  But
+				// the new heap is still safe because it is set at this point.
+				//CallLocalFunction("Testing_main", "");
 				new
 					tests,
 					fails;
@@ -460,6 +460,9 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 					printf(" ");
 				}
 				state ysi_debug : on;
+				#if defined Testing_main
+					Testing_main();
+				#endif
 			}
 			
 			#if defined _ALS_main
@@ -467,11 +470,11 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 			#else
 				#define _ALS_main
 			#endif
-			#define main Testing_main
+			//#define main Testing_main
 			//#if defined Testing_main
 			//	forward Testing_main();
 			//#endif
-			//#define main forward Testing_main(); public Testing_main
+			#define main forward Testing_main(); public Testing_main
 			
 			Testing_Next(playerid)
 			{

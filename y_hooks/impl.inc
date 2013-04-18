@@ -86,6 +86,11 @@ Changelog:
 // Strip out extra spaces (nicely recursive)
 #define @yH_%0\32;%1(%2) @yH_%1(%2)
 
+// DO NOT hook the Init functions or we will get stuck in an infinite loop!
+//#define @yH_OnGameModeInit @yH_GameModeInit
+//#define @yH_OnFilterScriptInit @yH_FilterScriptInit
+//#define @yH_OnScriptInit @yH_ScriptInit
+
 _Y_HOOKS_STATIC stock
 	YSI_g_sCodeSpace,
 	YSI_g_sCodeEnd;
@@ -590,6 +595,10 @@ _Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
 	else if (!strcmp(ref, !"OnPlayerLeaveDynRaceCP")) ret = !"OnPlayerLeaveDynamicRaceCP";
 	else if (!strcmp(ref, !"OnPlayerEnterDynArea")) ret = !"OnPlayerEnterDynamicArea";
 	else if (!strcmp(ref, !"OnPlayerLeaveDynArea")) ret = !"OnPlayerLeaveDynamicArea";
+	// Start points.
+	else if (!strcmp(ref, !"OnGameModeInit")) ret = !"S@@_OnGameModeInit";
+	else if (!strcmp(ref, !"OnFilterScriptInit")) ret = !"S@@_OnFilterScriptInit";
+	else if (!strcmp(ref, !"OnScriptInit")) ret = !"S@@_OnScriptInit";
 	return ret;
 }
 
@@ -609,6 +618,8 @@ _Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
 _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:ref2[] = "")
 {
 	new
+		// Uugh, special cases!
+		bool:init = !(strcmp(ref, !"OnGameModeInit") && strcmp(ref, !"OnFilterScriptInit") && strcmp(ref, !"OnScriptInit")),
 		same[32],
 		sameCount = 1,
 		entry,
@@ -629,6 +640,7 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 			// A hook, not an original.
 			Hooks_IsolateName(name);
 		}
+		else if (init) continue; // Don't hook the originals "Init" functions.
 		// Not sufficiently identical.
 		if (strcmp(name, ref)) continue;
 		// Get just the useful part of the name.
@@ -721,9 +733,12 @@ public OnScriptInit()
 	}
 	// Finally, put all our new mashed up publics back in order!
 	Hooks_SortPublics();
-	#if defined S@@_OnScriptInit
-		S@@_OnScriptInit();
-	#endif
+	//#if defined S@@_OnScriptInit
+	//CallLocalFunction("S@@_OnScriptInit", "");
+	//#endif
+	// Old method so we can hook it!
+	//CallLocalFunction("ScriptInit", "");
+	CallLocalFunction("S@@_OnScriptInit", "");
 	// Do the main code here.
 	#if defined YSI_LOCK_MODE
 		YSI_gLockData[1] = floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil);
@@ -745,6 +760,54 @@ public OnScriptInit()
 	#define _ALS_OnScriptInit
 #endif
 #define OnScriptInit S@@_OnScriptInit
-#if defined S@@_OnScriptInit
-	forward S@@_OnScriptInit();
+//#if defined S@@_OnScriptInit
+forward S@@_OnScriptInit();
+//#endif
+
+/**--------------------------------------------------------------------------**\
+<summary>OnFilterScriptInit</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	This is here PURELY to be hooked.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+public OnFilterScriptInit()
+{
+	//CallLocalFunction("FilterScriptInit", "");
+	return CallLocalFunction("S@@_OnFilterScriptInit", "");
+}
+
+#if defined _ALS_OnFilterScriptInit
+	#undef OnFilterScriptInit
+#else
+	#define _ALS_OnFilterScriptInit
 #endif
+#define OnFilterScriptInit S@@_OnFilterScriptInit
+forward S@@_OnFilterScriptInit();
+
+/**--------------------------------------------------------------------------**\
+<summary>OnGameModeInit</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	This is here PURELY to be hooked.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+public OnGameModeInit()
+{
+	//CallLocalFunction("GameModeInit", "");
+	return CallLocalFunction("S@@_OnGameModeInit", "");
+}
+
+#if defined _ALS_OnGameModeInit
+	#undef OnGameModeInit
+#else
+	#define _ALS_OnGameModeInit
+#endif
+#define OnGameModeInit S@@_OnGameModeInit
+forward S@@_OnGameModeInit();

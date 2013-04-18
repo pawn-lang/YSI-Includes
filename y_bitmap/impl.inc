@@ -92,8 +92,11 @@ stock Bitmap:Bitmap_Create(xSize, ySize, bgColour = 0xFFFFFFFF)
 	new
 		s = xSize * ySize,
 		Alloc:d = malloc(s + 3);
+	P:3("Bitmap_Create called: %d %d %d %d", xSize, ySize, s + 3, _:d);
+	//printf("Alloc: %d", _:d);
 	if (!d) //(ctx[E_BITMAP_MEMORY] = d))
 	{
+		//printf("Requested: %d", s + 3);
 		P:E("Could not allocate bitmap buffer");
 		return Bitmap:0;
 	}

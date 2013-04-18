@@ -341,7 +341,7 @@ stock AMX_TraceMemory(pattern[], &addrRet, &dataRet, size = sizeof (pattern))
 
 stock AMX_GetBaseCount(E_AMX_TABLE:table, &base, &count)
 {
-	P:5("AMX_GetBaseCount called: %i, %i, %i", _:table, base, count);
+	P:7("AMX_GetBaseCount called: %i, %i, %i", _:table, base, count);
 	switch (table)
 	{
 		case AMX_TABLE_PUBLICS:
@@ -385,7 +385,7 @@ stock AMX_GetBaseCount(E_AMX_TABLE:table, &base, &count)
 
 stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "")
 {
-	P:5("AMX_GetEntry called: %i, %i, %i, \"%s\"", _:table, idx, buffer, pattern);
+	P:7("AMX_GetEntry called: %i, %i, %i, \"%s\"", _:table, idx, buffer, pattern);
 	new
 		base,
 		count;
@@ -430,7 +430,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "")
 
 stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
-	P:5("AMX_GetEntryPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	P:7("AMX_GetEntryPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		base,
 		count;
@@ -470,7 +470,7 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 
 stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
-	P:5("AMX_GetEntrySuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	P:7("AMX_GetEntrySuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		base,
 		count;
@@ -555,7 +555,7 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 
 stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[32], const pattern[] = "")
 {
-	P:5("AMX_GetName called: %i, %i, \"%s\", \"%s\"", _:table, idx, buffer, pattern);
+	P:7("AMX_GetName called: %i, %i, \"%s\", \"%s\"", _:table, idx, buffer, pattern);
 	new
 		base,
 		count;
@@ -606,7 +606,7 @@ stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[32], const pattern[] = "")
 
 stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[32], pattern)
 {
-	P:5("AMX_GetNamePrefix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
+	P:7("AMX_GetNamePrefix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
 	new
 		base,
 		count;
@@ -648,7 +648,7 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[32], pattern)
 
 stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[32], pattern)
 {
-	P:5("AMX_GetNameSuffix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
+	P:7("AMX_GetNameSuffix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
 	new
 		base,
 		count;
@@ -740,7 +740,7 @@ stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[32], pattern)
 
 stock AMX_GetPointer(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "")
 {
-	P:5("AMX_GetPointer called: %i, %i, %i, \"%s\"", _:table, idx, buffer, pattern);
+	P:7("AMX_GetPointer called: %i, %i, %i, \"%s\"", _:table, idx, buffer, pattern);
 	new
 		pointer;
 	idx = AMX_GetEntry(table, idx, pointer, pattern);
@@ -760,7 +760,7 @@ stock AMX_GetPointer(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "")
 
 stock AMX_GetPointerPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
-	P:5("AMX_GetPointerPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	P:7("AMX_GetPointerPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		pointer;
 	idx = AMX_GetEntryPrefix(table, idx, pointer, pattern);
@@ -780,7 +780,7 @@ stock AMX_GetPointerPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 
 stock AMX_GetPointerSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
-	P:5("AMX_GetPointerSuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	P:7("AMX_GetPointerSuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		pointer;
 	idx = AMX_GetEntrySuffix(table, idx, pointer, pattern);
@@ -800,7 +800,7 @@ stock AMX_GetPointerSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 
 stock AMX_GetValue(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "")
 {
-	P:5("AMX_GetValue called: %i, %i, %i, \"%s\"", _:table, idx, buffer, pattern);
+	P:7("AMX_GetValue called: %i, %i, %i, \"%s\"", _:table, idx, buffer, pattern);
 	new
 		pointer;
 	idx = AMX_GetPointer(table, idx, pointer, pattern);
@@ -820,7 +820,7 @@ stock AMX_GetValue(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "")
 
 stock AMX_GetValuePrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
-	P:5("AMX_GetValuePrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	P:7("AMX_GetValuePrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		pointer;
 	idx = AMX_GetPointerPrefix(table, idx, pointer, pattern);
@@ -840,7 +840,7 @@ stock AMX_GetValuePrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 
 stock AMX_GetValueSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
-	P:5("AMX_GetValueSuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
+	P:7("AMX_GetValueSuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		pointer;
 	idx = AMX_GetPointerSuffix(table, idx, pointer, pattern);
@@ -899,14 +899,14 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 stock AMX_GetReturnAddress()
 {
 	// Get the return address of the PREVIOUS function.
-	P:5("AMX_GetReturnAddress called");
+	P:7("AMX_GetReturnAddress called");
 	#emit RETN
 	return 0;
 }
 
 stock AMX_Read(addr)
 {
-	P:5("AMX_Read called: %i", addr);
+	P:7("AMX_Read called: %i", addr);
 	#emit LREF.S.pri                    addr
 	#emit RETN
 	return 0;
@@ -914,7 +914,7 @@ stock AMX_Read(addr)
 
 stock AMX_Write(addr, value)
 {
-	P:5("AMX_Write called: %i, %i", addr, value);
+	P:7("AMX_Write called: %i, %i", addr, value);
 	#emit LOAD.S.pri                    value
 	#emit SREF.S.pri                    addr
 }
