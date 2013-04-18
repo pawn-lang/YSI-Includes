@@ -190,6 +190,24 @@ forward Alloc:calloc(size);
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#define MALLOC_SOLIDIFYHEAP(%0) Malloc_SolidifyHeap()
+
+main()
+{
+	heapspace();
+	#if defined Malloc_main
+		Malloc_main();
+	#endif
+	return MALLOC_SOLIDIFYHEAP(3);
+}
+
+#if defined _ALS_main
+	#undef main
+#else
+	#define _ALS_main
+#endif
+#define main() forward Malloc_main();public Malloc_main()
+
 public OnScriptInit()
 {
 	new
@@ -218,11 +236,17 @@ public OnScriptInit()
 	#if _DEBUG >= 2
 		printf("Malloc_OnScriptInit: %d %d %d", YSI_g_sHeapStart, YSI_g_sUnusedStart, AMX_HEADER_HEA); // + AMX_BASE_ADDRESS);
 	#else
-		// Pretty sure this "SYSREQ" here does something important for the code, but
-		// I'm not sure what...
-		print(" ");
+		// Pretty sure this "SYSREQ" here does something important for the code,
+		// but I'm not sure what...  The fact that I used "heapspace" here was
+		// simply because I've never used it before and it seemed relevant.  In
+		// actual fact any native with no side effects should do (plus this one
+		// is unlikely to be hooked).  We don't use "heapspace();" here so there
+		// is ZERO chance that it can be hooked by another stock.
+		if (TRUE) {}
+		#emit PUSH.C   0
+		#emit SYSREQ.C heapspace
+		#emit STACK    4
 	#endif
-	//while (FALSE) {}
 	#emit CONST.alt     YSI_gMallocMemory
 	#emit LOAD.pri      YSI_g_sHeapStart
 	#emit SUB
@@ -299,7 +323,7 @@ public OnRuntimeError(code)
 	if (code == 12)
 	{
 		// Make sure our heap is correctly set still...
-		return Malloc_SolidifyHeap();
+		return MALLOC_SOLIDIFYHEAP(4);
 	}
 	else return 0;
 }
@@ -312,8 +336,6 @@ public OnRuntimeError(code)
 #if defined Malloc_OnRuntimeError
 	forward Malloc_OnRuntimeError(code);
 #endif
-
-#define MALLOC_SOLIDIFYHEAP(%0) Malloc_SolidifyHeap()
 
 static Malloc_SolidifyHeap()
 {
@@ -381,21 +403,6 @@ public OnGameModeInit()
 #if defined Malloc_OnGameModeInit
 	forward Malloc_OnGameModeInit();
 #endif
-
-main()
-{
-	#if defined Malloc_main
-		Malloc_main();
-	#endif
-	return MALLOC_SOLIDIFYHEAP(3);
-}
-
-#if defined _ALS_main
-	#undef main
-#else
-	#define _ALS_main
-#endif
-#define main() forward Malloc_main();public Malloc_main()
 
 /**--------------------------------------------------------------------------**\
 <summary>Malloc_GetSlotSize</summary>
