@@ -274,7 +274,7 @@ Operators:
 #define Debug_PrintC(%1); \
 	Debug_Code1(%1);
 
-stock Debug_Print0(str[], {Float,_}:...) <ysi_debug : on>
+stock Debug_Print0(const str[], {Float,_}:...) <ysi_debug : on>
 {
 	// This uses the variable parameter passing method based on code by Zeex.
 	// See page 15 of the code optimisations topic.
@@ -336,12 +336,12 @@ stock Debug_Print0(str[], {Float,_}:...) <ysi_debug : on>
 	}
 }
 
-stock Debug_Print0(str[], {Float,_}:...) <ysi_debug : off>
+stock Debug_Print0(const str[], {Float,_}:...) <ysi_debug : off>
 {
 	#pragma unused str
 }
 
-stock Debug_Print0(str[], {Float,_}:...) <>
+stock Debug_Print0(const str[], {Float,_}:...) <>
 {
 	#pragma unused str
 }
