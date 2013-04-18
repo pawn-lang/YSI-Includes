@@ -74,8 +74,6 @@ forward _ScriptInit_FixState();
 	public OnFilterScriptInit()
 	{
 		state _script_init_fix_state : true;
-		//CallLocalFunction("__YSI_SpecialInit", "");
-		//state _ALS_:hooked;
 		#if defined ScriptInit_OnScriptInit
 			ScriptInit_OnScriptInit();
 		#endif
@@ -89,23 +87,16 @@ forward _ScriptInit_FixState();
 				y_lock 6;
 			}
 		#endif
-		//CallRemoteFunction("ScriptInit_OnAnyScriptInit", "");
-		//ScriptInit_OnFilterScriptInit();
 		#if defined ScriptInit_OnFilterScriptInit
 			return ScriptInit_OnFilterScriptInit();
 		#else
-			return ALS_R_FilterScriptInit;
+			return 1;
 		#endif
-		//ScriptInit_OnScriptInitLate();
-		//CallLocalFunction("Text_Special_OnScriptInit", "");
 	}
 	
 	#if defined ScriptInit_OnFilterScriptInit
 		forward ScriptInit_OnFilterScriptInit();
 	#endif
-	
-	//public ScriptInit_OnFilterScriptInit() <_ALS_:unhooked> return 1;
-	//public ScriptInit_OnFilterScriptInit() <> return 1;
 	
 	#if defined _ALS_OnFilterScriptInit
 		#undef OnFilterScriptInit
@@ -123,10 +114,7 @@ forward _ScriptInit_FixState();
 	public OnFilterScriptInit()
 	{
 		state _script_init_fix_state : true;
-		//printf("OFSI");
 		YSI_FILTERSCRIPT = true;
-		//CallLocalFunction("__YSI_SpecialInit", "");
-		//state _ALS_:hooked;
 		#if defined ScriptInit_OnScriptInit
 			ScriptInit_OnScriptInit();
 		#endif
@@ -140,13 +128,11 @@ forward _ScriptInit_FixState();
 				y_lock 7;
 			}
 		#endif
-		//CallRemoteFunction("ScriptInit_OnAnyScriptInit", "");
 		#if defined ScriptInit_OnFilterScriptInit
 			return ScriptInit_OnFilterScriptInit();
 		#else
 			return 1;
 		#endif
-		//ScriptInit_OnScriptInitLate();
 	}
 	
 	public OnGameModeInit()
@@ -163,13 +149,9 @@ forward _ScriptInit_FixState();
 		else
 		{
 			state _script_init_fix_state : false;
-			//CallLocalFunction("__YSI_SpecialInit", "");
-			//state _ALS_:hooked;
-			//printf("OnScriptInit 1");
 			#if defined ScriptInit_OnScriptInit
 				ScriptInit_OnScriptInit();
 			#endif
-			//printf("OnScriptInit 2");
 			#if defined YSI_LOCK_MODE
 				if (YSI_gLockData[
 					floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
@@ -185,18 +167,11 @@ forward _ScriptInit_FixState();
 					y_lock 8;
 				}
 			#endif
-			//CallRemoteFunction("ScriptInit_OnAnyScriptInit", "");
-			//printf("OnScriptInit 3");
-			//ScriptInit_OnGameModeInit();
-			//printf("OnScriptInit 4");
-			//return 222;
 			#if defined ScriptInit_OnGameModeInit
 				return ScriptInit_OnGameModeInit();
 			#else
 				return 1;
 			#endif
-			//ScriptInit_OnScriptLate();
-			//CallLocalFunction("Text_SpecialInit", "");
 		}
 	}
 	
@@ -227,13 +202,10 @@ forward _ScriptInit_FixState();
 		#if defined ScriptInit_OnScriptExit
 			ScriptInit_OnScriptExit();
 		#endif
-		//CallRemoteFunction("ScriptInit_OnAnyScriptExit", "");
 		#if defined ScriptInit_OnFilterScriptExit
 			new
 				ret = ScriptInit_OnFilterScriptExit();
 		#endif
-		//ScriptInit_OnScriptExitLate();
-		//CallLocalFunction("__YSI_SpecialExit", "");
 		#if defined __YSI_SpecialExit
 			__YSI_SpecialExit();
 		#endif
@@ -262,13 +234,10 @@ forward _ScriptInit_FixState();
 			#if defined ScriptInit_OnScriptExit
 				ScriptInit_OnScriptExit();
 			#endif
-			//CallRemoteFunction("ScriptInit_OnAnyScriptExit", "");
 			#if defined ScriptInit_OnFilterScriptExit
 				new
 					ret = ScriptInit_OnFilterScriptExit();
 			#endif
-			//ScriptInit_OnScriptExitLate();
-			//CallLocalFunction("__YSI_SpecialExit", "");
 			#if defined __YSI_SpecialExit
 				__YSI_SpecialExit();
 			#endif
@@ -283,7 +252,6 @@ forward _ScriptInit_FixState();
 	
 	public OnGameModeExit()
 	{
-		//printf("ScriptInit_OnGameModeExit");
 		if (YSI_FILTERSCRIPT)
 		{
 			#if defined ScriptInit_OnGameModeExit
@@ -294,25 +262,17 @@ forward _ScriptInit_FixState();
 		}
 		else
 		{
-			printf("NF 0");
 			#if defined ScriptInit_OnScriptExit
 				ScriptInit_OnScriptExit();
 			#endif
-			printf("NF 1");
-			//CallRemoteFunction("ScriptInit_OnAnyScriptExit", "");
 			#if defined ScriptInit_OnGameModeExit
 				new
 					ret = ScriptInit_OnGameModeExit();
 			#endif
-			printf("NF 2");
-			//ScriptInit_OnScriptExitLate();
-			//CallLocalFunction("__YSI_SpecialExit", "");
 			#if defined __YSI_SpecialExit
 				__YSI_SpecialExit();
 			#endif
-			printf("NF 3");
 			#if defined ScriptInit_OnGameModeExit
-				printf("NF 4");
 				return ret;
 			#else
 				return 1;

@@ -124,6 +124,13 @@ Operators:
 #include "internal\y_version"
 #include "y_debug"
 #include "internal\y_funcinc"
+#include "internal\y_amx"
+#include "y_utils"
+
+#tryinclude "..\amx\opcode"
+#include "amx\opcode"
+#tryinclude "..\amx\amx"
+#include "amx\amx"
 
 #define MALLOC_KB_TO_CELL ((1024 * 8) / cellbits)
 
@@ -145,15 +152,26 @@ Operators:
 	#endif
 #endif
 
+// Allocate extra memory for the normal stack and heap (64k, 16 times the size
+// of the default stack)!
+#pragma dynamic MALLOC_MEMORY * 4 + 65536
+
 static
-	YSI_g_sUnusedStart = 1;
+	YSI_g_sHeapStart = 0,
+	YSI_g_sUnusedStart = MALLOC_MEMORY * 4;
 
 #if defined YSI_MALLOC_SECURE
-	static
-#else
-	new
+	#error YSI_MALLOC_SECURE has been removed.
+//	static
+//#else
+//	new
 #endif
-		YSI_gMallocMemory[MALLOC_MEMORY] = {MALLOC_MEMORY - 1, 0};
+
+//new
+//	YSI_gMallocMemory[MALLOC_MEMORY] = {MALLOC_MEMORY - 1, 0};
+
+new
+	YSI_gMallocMemory[1];
 
 forward Alloc:Malloc_Allocate(size);
 forward Alloc:calloc(size);
@@ -161,6 +179,263 @@ forward Alloc:calloc(size);
 #if defined YSI_MALLOC_SECURE
 	forward Alloc:malloc(size);
 #endif
+
+/**--------------------------------------------------------------------------**\
+<summary>Malloc_OnScriptInit</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Finds all "BOUNDS 0" OpCodes in the AMX and rewrites them to "NOP NOP".  The
+	byte pattern for this code is "OP_BOUNDS 0", which (AFAIK) can not appear
+	anywhere else in the DAT segment.  You can have "OP_BOUNDS" as a parameter
+	to something, but it would then be followed by an OpCode of "0", which is
+	never valid (OP_NONE).
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+public OnScriptInit()
+{
+	new
+		Opcode:bounds = RelocateOpcode(OP_BOUNDS),
+		nop = _:RelocateOpcode(OP_NOP);
+	for (new i = AMX_HEADER_COD, end = AMX_HEADER_DAT - 4; i < end; i += 4)
+	{
+		// Make sure this isn't just something that LOOKS like "bounds 0",
+		// although I don't think there can be because "0" is nota valid
+		// opcode.
+		if (AMX_Read(i) == _:bounds && AMX_Read(i + 4) == 0)
+		{
+			// Found a bounds code.
+			AMX_Write(i, nop);
+			AMX_Write(i += 4, nop);
+			//i += 4;
+		}
+	}
+	// Allocate a ton of space on the heap.
+	#emit LCTRL         2
+	#emit STOR.pri      YSI_g_sHeapStart
+	#emit LOAD.alt      YSI_g_sUnusedStart
+	#emit ADD
+	#emit SCTRL         2
+	// Now there's only the normal bit of the stack and heap left.
+	if (YSI_g_sHeapStart != AMX_HEADER_HEA) P:F("y_malloc: Not the first HEAP allocation!");
+	P:2("Malloc_OnScriptInit: %d %d %d", YSI_g_sHeapStart, YSI_g_sUnusedStart, AMX_HEADER_HEA); // + AMX_BASE_ADDRESS);
+	//YSI_g_sHeapStart += 
+	/*#emit CONST.alt     YSI_gMallocMemory
+	#emit STOR.S.alt    nop
+	printf("nop = %d", _:nop);*/
+	#emit CONST.alt     YSI_gMallocMemory
+	#emit LOAD.pri      YSI_g_sHeapStart
+	#emit SUB
+	#emit SHR.C.pri     2 // Divide by 4 to get cells.
+	#emit STOR.pri      YSI_g_sHeapStart
+	YSI_gMallocMemory[YSI_g_sHeapStart] = MALLOC_MEMORY - 1;
+	YSI_g_sUnusedStart = YSI_g_sHeapStart + 1;
+	// Blank the whole memory.  Not required - the heap is already empty.
+	//memset(YSI_gMallocMemory[1], 0, MALLOC_MEMORY - 1);
+	/*YSI_gMallocMemory[YSI_g_sHeapStart + 1] = 43;
+	YSI_gMallocMemory[YSI_g_sHeapStart + 2] = 44;
+	YSI_gMallocMemory[YSI_g_sHeapStart + 3] = 45;*/
+	#if _DEBUG > 3
+		#emit CONST.alt     YSI_gMallocMemory
+		#emit STOR.S.alt    nop
+		printf("Malloc_OnScriptInit: AMX_HEADER_HEA = %d, YSI_gMallocMemory = %d, YSI_g_sHeapStart = %d", _:AMX_HEADER_HEA, _:nop, YSI_g_sHeapStart);
+		printf("Malloc_OnScriptInit: YSI_gMallocMemory + 4 * YSI_g_sHeapStart = %d", nop + 4 * YSI_g_sHeapStart);
+	#endif
+	// This is never read, but we now have a spare cell because we HAD to
+	// allocate an array of some size.
+	YSI_gMallocMemory[0] = MALLOC_MEMORY;
+	#if defined Malloc_OnScriptInit
+		Malloc_OnScriptInit();
+	#endif
+	//nop = GetAmxAddress();
+	// Adjust where the main AMX runtime thinks the heap starts.
+	// printf("=====");
+	// printf("%d", ReadAmxCell(AMX_OFFSET_HLW));
+	// printf("%d", ReadAmxCell(AMX_OFFSET_HLW) + AMX_REAL_DATA);
+	// printf("%d", ReadAmxCell(AMX_OFFSET_HEA));
+	// printf("%d", ReadAmxCell(AMX_OFFSET_HEA) + AMX_REAL_DATA);
+	// printf("%d", AMX_HEADER_HEA);
+	// printf("%d", ReadAmxCell(AMX_OFFSET_HLW) + MALLOC_MEMORY * 4);
+	// printf("=====");
+	//WriteAmxCell(AMX_OFFSET_HLW, ReadAmxCell(AMX_OFFSET_HLW) + MALLOC_MEMORY * 4);
+	//WriteAmxCell(AMX_OFFSET_HEA, ReadAmxCell(AMX_OFFSET_HEA) + MALLOC_MEMORY * 4);
+	return 1;
+}
+
+#undef OnScriptInit
+#define OnScriptInit Malloc_OnScriptInit
+#if defined Malloc_OnScriptInit
+	forward Malloc_OnScriptInit();
+#endif
+
+static
+	YSI_g_sSolidifyHeap,
+	bool:YSI_g_sFILTERSCRIPT = false;
+
+static const
+	YSI_g_scErrorMessage1[] = 
+		" \n" \
+		" \n" \
+		"    ============================================================================\n" \
+		"    |                                                                          |\n" \
+		"    |                            ******************                            |\n" \
+		"    |                            * VERY IMPORTANT *                            |\n" \
+		"    |                            ******************                            |",
+	YSI_g_scErrorMessage2[] = 
+		"    |                                                                          |\n" \
+		"    | If you use \"crashdetect\", ignore this \"error 12\" message:                |\n" \
+		"    |                                                                          |\n" \
+		"    |  [debug] Run time error 12: \"(sleep mode)\"                               |\n" \
+		"    |  [debug] AMX backtrace:                                                  |",
+	YSI_g_scErrorMessage3[] = 
+		"    |  [debug] #0 <SOME ADDRESS> in public OnGameModeInit () from <YOUR FILE>  |\n" \
+		"    |                                                                          |\n" \
+		"    | For more information, see the YSI.tl release topic.                      |\n" \
+		"    |                                                                          |\n" \
+		"    ============================================================================\n" \
+		" \n";
+
+
+// forward y_malloc_heap_adjust_function();
+// public y_malloc_heap_adjust_function()
+// {
+	// // Sleep FOREVER!  If I'm right, this will force the VM to adopt our
+	// // modified "HEA" value forever!
+// //	YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 0);
+	// while (TRUE)
+	// {
+		// // print("    ============================================================================");
+		// // print("    |                                                                          |");
+		// // print("    |                            ******************                            |");
+		// // print("    |                            * VERY IMPORTANT *                            |");
+		// // print("    |                            ******************                            |");
+		// // print("    |                                                                          |");
+		// // print("    | If you use the \"crashdetect\" plugin and see the following message:       |");
+		// // print("    |                                                                          |");
+		// // print("    |  [debug] Run time error 12: \"(sleep mode)\"                               |");
+		// // print("    |  [debug] AMX backtrace:                                                  |");
+		// // print("    |  [debug] #0 <SOME ADDRESS> in public OnGameModeInit () from <YOUR FILE>  |");
+		// // print("    |                                                                          |");
+		// // print("    | Directly below this box, IGNORE IT!  It is NOT a mistake or a problem!   |");
+		// // print("    |                                                                          |");
+		// // print("    | This is a nescessary evil and does not affect your mode in any way!  It  |");
+		// // print("    | is simply a side-effect of one of the advanced hacks in YSI to allocate  |");
+		// // print("    | memory dynamically.  For more information, see the YSI.tl release topic. |");
+		// // print("    |                                                                          |");
+		// // print("    ============================================================================");
+		// /*print(YSI_g_scErrorMessage1),
+		// print(YSI_g_scErrorMessage2),
+		// print(YSI_g_scErrorMessage3),
+		// sleep(cellmax);*/
+		// Malloc_SolidifyHeap(cellmax);
+	// }
+	// // #emit CONST.pri cellmax
+	// // #emit ZERO.alt
+	// // #emit HALT 12
+	// return 1;
+// }
+
+forward Malloc_SolidifyHeap();
+
+public Malloc_SolidifyHeap()
+{
+	// This code calls "sleep" a second time.  When "sleep" is called "amx_Exec"
+	// sets "amx->reset_hea" to the original value of the heap, so that when the
+	// function is resumed and then ends, it can be fully reset.  However, if
+	// "amx_Exec" is called a second time before the "sleep" function is resumed
+	// then the process will be repeated and "amx->reset_hea" will be replaced
+	// by our modified "hea", entirely destroying the original value.  The only
+	// place where "sleep" can be resumed is in "main", so we need to make sure
+	// that we have fully solidified our new heap value first.
+	// called it sets "reset_hea"
+	print(YSI_g_scErrorMessage1),
+	print(YSI_g_scErrorMessage2),
+	print(YSI_g_scErrorMessage3);
+	// First, reset "stk" so that we don't loose any of that in this way.  Also
+	// reset "hea" to the value we want, not whatever it might be as of this
+	// moment.
+	new
+		l = MALLOC_MEMORY * 4;
+	#emit LOAD.pri   AMX_HEADER_HEA
+	#emit LOAD.S.alt l
+	#emit ADD
+	#emit SCTRL      2 // Set the new heap pointer.
+	// Get the function parameter BEFORE we mangle the stack.
+	#emit POP.alt
+	#emit ZERO.pri
+	#emit SCTRL      5 // Set the frame pointer.
+	#emit LOAD.pri   AMX_HEADER_STP
+	#emit SCTRL      4 // Set the original stack pointer.
+	// sleep();
+	#emit MOVE.pri
+	#emit ZERO.alt   // Sleep 0.
+	#emit ZERO.pri
+	#emit HALT       12 // Sleep
+	return 0;
+//	sleep(0);
+}
+
+public OnFilterScriptInit()
+{
+	#if defined Malloc_OnFilterScriptInit
+		Malloc_OnFilterScriptInit();
+	#endif
+	YSI_g_sFILTERSCRIPT = true;
+	YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 0);
+	return Malloc_SolidifyHeap();
+}
+
+#if defined _ALS_OnFilterScriptInit
+	#undef OnFilterScriptInit
+#else
+	#define _ALS_OnFilterScriptInit
+#endif
+#define OnFilterScriptInit Malloc_OnFilterScriptInit
+#if defined Malloc_OnFilterScriptInit
+	forward Malloc_OnFilterScriptInit();
+#endif
+
+public OnGameModeInit()
+{
+	#if defined Malloc_OnGameModeInit
+		Malloc_OnGameModeInit();
+	#endif
+	if (!YSI_g_sFILTERSCRIPT)
+	{
+		YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 0);
+		return Malloc_SolidifyHeap();
+	}
+	return 1;
+}
+
+#if defined _ALS_OnGameModeInit
+	#undef OnGameModeInit
+#else
+	#define _ALS_OnGameModeInit
+#endif
+#define OnGameModeInit Malloc_OnGameModeInit
+#if defined Malloc_OnGameModeInit
+	forward Malloc_OnGameModeInit();
+#endif
+
+main()
+{
+	KillTimer(YSI_g_sSolidifyHeap);
+	#if defined Malloc_main
+		Malloc_main();
+	#endif
+	Malloc_SolidifyHeap();
+	//Malloc_SolidifyHeap(0);
+}
+
+#if defined _ALS_main
+	#undef main
+#else
+	#define _ALS_main
+#endif
+#define main Malloc_main
 
 /**--------------------------------------------------------------------------**\
 <summary>Malloc_GetSlotSize</summary>
@@ -783,7 +1058,7 @@ stock Alloc:calloc(size)
 
 /**--------------------------------------------------------------------------**\
 <summary>Malloc_Allocate</summary>
-<param name="size">Ammount of memory to allocate.</param>
+<param name="size">Ammount of memory to allocate IN CELLS.</param>
 <returns>
 	Memory identifier.
 </returns>
@@ -805,24 +1080,43 @@ stock Alloc:calloc(size)
 #endif
 		stock Alloc:Malloc_Allocate(size)
 		{
+			P:2("Malloc_Allocate called: %d, %d, %d", size, YSI_g_sUnusedStart, YSI_g_sHeapStart);
 			new
 				slot = YSI_g_sUnusedStart,
-				p = 0,
+				p = YSI_g_sHeapStart, // Was "0", now an offset to the heap.
 				cs;
+			//printf("1");
 			while (slot)
 			{
+				// printf("2 %d", YSI_gMallocMemory[YSI_g_sUnusedStart - 1]);
+				// printf("2 %d %d", slot, YSI_g_sUnusedStart);
+				// printf("2 %d", YSI_gMallocMemory[slot - 1]);
+				// printf("2 %d", Malloc_GetSlotSize(slot));
+				// //new
 				cs = Malloc_GetSlotSize(slot);
+				// //cs = z;
+				// #emit LCTRL 2
+				// #emit STOR.S.pri cs
+				// printf("2h %d", cs);
+				// #emit LCTRL 4
+				// #emit STOR.S.pri cs
+				// printf("2s %d", cs);
+				//cs = 0;
+				//printf("2 %d", YSI_gMallocMemory[YSI_g_sUnusedStart - 1]);
 				if (!cs)
 				{
 					return NO_ALLOC;
 				}
+				//printf("2 %d", YSI_gMallocMemory[YSI_g_sUnusedStart - 1]);
 				if (cs >= size)
 				{
 					break;
 				}
+				//printf("2 %d", YSI_gMallocMemory[YSI_g_sUnusedStart - 1]);
 				p = slot;
 				slot = Malloc_NextSlot(slot);
 			}
+			//printf("3 %d", slot);
 			if (slot)
 			{
 				if (cs == size + 1)
@@ -831,7 +1125,7 @@ stock Alloc:calloc(size)
 				}
 				if (cs == size)
 				{
-					if (p)
+					if (p != YSI_g_sHeapStart)
 					{
 						Malloc_SetData(Alloc:p, 0, Malloc_NextSlot(slot));
 					}
@@ -846,7 +1140,7 @@ stock Alloc:calloc(size)
 					size++;
 					cs -= size;
 					size += slot;
-					if (p)
+					if (p != YSI_g_sHeapStart)
 					{
 						Malloc_SetData(Alloc:p, 0, size);
 					}
@@ -882,7 +1176,7 @@ stock Alloc:calloc(size)
 			new
 				size = Malloc_GetSlotSize(_:slot),
 				p = YSI_g_sUnusedStart,
-				l = 0;
+				l = YSI_g_sHeapStart; // Was "0", now an offset to the heap.
 			P:5("Malloc_Free: size = %d", size);
 			if (p)
 			{
@@ -893,7 +1187,7 @@ stock Alloc:calloc(size)
 				}
 				if (p)
 				{
-					if (l)
+					if (l != YSI_g_sHeapStart)
 					{
 						new
 							tmp = Malloc_GetSlotSize(l);

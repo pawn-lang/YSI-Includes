@@ -437,7 +437,10 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 			{
 				// Disable error messages (as we're likely to generate them).
 				state ysi_debug : off;
-				CallLocalFunction("Testing_main", "");
+				//CallLocalFunction("Testing_main", "");
+				#if defined Testing_main
+					Testing_main();
+				#endif
 				new
 					tests,
 					fails;
@@ -459,7 +462,16 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 				state ysi_debug : on;
 			}
 			
-			#define main forward Testing_main(); public Testing_main
+			#if defined _ALS_main
+				#undef main
+			#else
+				#define _ALS_main
+			#endif
+			#define main Testing_main
+			//#if defined Testing_main
+			//	forward Testing_main();
+			//#endif
+			//#define main forward Testing_main(); public Testing_main
 			
 			Testing_Next(playerid)
 			{
