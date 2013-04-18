@@ -271,17 +271,45 @@ static const
 		"    |  [debug] Run time error 12: \"(sleep mode)\"                               |\n" \
 		"    |  [debug] AMX backtrace:                                                  |",
 	YSI_g_scErrorMessage3[] = 
-		"    |  [debug] #0 <SOME ADDRESS> in %s () from <YOUR FILE>%s|\n" \
+		"    |  [debug] #0 <SOME ADDRESS> in %s () from <FILE>%s|\n" \
 		"    |                                                                          |\n" \
 		"    | For more information, see the YSI.tl release topic.                      |\n" \
 		"    |                                                                          |\n" \
 		"    ============================================================================\n" \
 		" \n";
 
+static Malloc_GetName0(ss)
+{
+	new
+		ret[27];
+	switch (ss)
+	{
+		case 0: ret = "public OnGameModeInit";
+		case 1: ret = "public OnFilterScript";
+		case 2: ret = "public Malloc_SolidifyHeap";
+		case 3: ret = "main";
+	}
+	return ret;
+}
+
+static Malloc_GetName1(ss)
+{
+	new
+		ret[] = "                        ";
+	switch (ss)
+	{
+		case 2:  ret[2] = '\0';
+		case 3:  return ret;
+		default: ret[7] = '\0';
+	}
+	return ret;
+}
+
 forward Malloc_SolidifyHeap(ss);
 
 public Malloc_SolidifyHeap(ss)
 {
+	#define MALLOC_SOLIDIFYHEAP(%0) while(TRUE){print(YSI_g_scErrorMessage1),print(YSI_g_scErrorMessage2),printf(YSI_g_scErrorMessage3,Malloc_GetName0(%0),Malloc_GetName1(%0));sleep cellmax;}
 	// This code calls "sleep" a second time.  When "sleep" is called "amx_Exec"
 	// sets "amx->reset_hea" to the original value of the heap, so that when the
 	// function is resumed and then ends, it can be fully reset.  However, if
@@ -291,59 +319,8 @@ public Malloc_SolidifyHeap(ss)
 	// place where "sleep" can be resumed is in "main", so we need to make sure
 	// that we have fully solidified our new heap value first.
 	// called it sets "reset_hea"
-	print(YSI_g_scErrorMessage1),
-	print(YSI_g_scErrorMessage2),
-	printf(YSI_g_scErrorMessage3, ss ? ("main") : ("public OnGameModeInit"), ss ? ("                   ") : ("  "));
-	// First, reset "stk" so that we don't loose any of that in this way.  Also
-	// reset "hea" to the value we want, not whatever it might be as of this
-	// moment.
-	#emit PUSH.S     ss // Copy "ss" (Stack Size).
-	#emit CONST.pri  Malloc_SolidifyHeap
-	#emit STOR.S.pri ss
-	printf("Malloc_SolidifyHeap = %x", ss);
-	#emit CONST.pri  OnGameModeInit
-	#emit STOR.S.pri ss
-/*	printf("OnGameModeInit = %x", ss);
-	#emit CONST.pri  main
-	#emit STOR.S.pri ss
-	printf("main = %x", ss);
-	#emit LOAD.pri  AMX_HEADER_STP
-	#emit STOR.S.pri ss
-	ss -= 4;
-	#emit LREF.S.pri ss
-	#emit STOR.S.pri ss
-	printf("Malloc_SolidifyHeap = %x", ss);
-	#emit LOAD.pri  AMX_HEADER_STP
-	#emit STOR.S.pri ss
-	ss -= 8;
-	#emit LREF.S.pri ss
-	#emit STOR.S.pri ss
-	printf("Malloc_SolidifyHeap = %x", ss);*/
-	ss = MALLOC_MEMORY * 4;
-/*	#emit LOAD.pri   AMX_HEADER_HEA
-	#emit LOAD.S.alt ss
-	#emit ADD
-	#emit SCTRL      2 // Set the new heap pointer.
-	#emit LOAD.pri   AMX_HEADER_STP
-	#emit POP.alt
-	#emit SUB        // Adjust the stack to keep the return address for "CONT".
-	#emit SCTRL      4 // Set the original stack pointer.
-	#emit SCTRL      5 // Set the frame pointer.*/
-	/*#emit ZERO.alt   // Sleep 0.
-	#emit ZERO.pri
-	#emit HALT       12 // Sleep*/
-/*	#emit CONST.alt  10000
-	#emit ZERO.pri
-	#emit HALT       12 // Sleep
-	#emit RETN*/
-	// Sleep for about 25 days!
-	while (TRUE)
-	{
-		sleep cellmax;
-	}
-//	printf("REsUME");
+	MALLOC_SOLIDIFYHEAP(ss)
 	return 0;
-//	sleep(0);
 }
 
 public OnFilterScriptInit()
@@ -352,8 +329,9 @@ public OnFilterScriptInit()
 		Malloc_OnFilterScriptInit();
 	#endif
 	YSI_g_sFILTERSCRIPT = true;
-	YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 0);
-	return Malloc_SolidifyHeap(0);
+	YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 2);
+	MALLOC_SOLIDIFYHEAP(1)
+	return 0;
 }
 
 #if defined _ALS_OnFilterScriptInit
@@ -373,8 +351,9 @@ public OnGameModeInit()
 	#endif
 	if (!YSI_g_sFILTERSCRIPT)
 	{
-		YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 0);
-		return Malloc_SolidifyHeap(0);
+		YSI_g_sSolidifyHeap = SetTimerEx("Malloc_SolidifyHeap", 1000, 0, "i", 2);
+		MALLOC_SOLIDIFYHEAP(0)
+		return 0;
 	}
 	return 1;
 }
@@ -395,7 +374,8 @@ main()
 	#if defined Malloc_main
 		Malloc_main();
 	#endif
-	Malloc_SolidifyHeap(12);
+	MALLOC_SOLIDIFYHEAP(3)
+	return 0;
 	//Malloc_SolidifyHeap(0);
 }
 
