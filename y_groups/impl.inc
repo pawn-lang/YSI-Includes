@@ -521,7 +521,7 @@ hook OnPlayerDisconnect(playerid, reason)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-hook OnPlayerConnect9(playerid)
+hook OnPlayerConnect@9(playerid)
 {
 	#if !(YSIM_HAS_MASTER && (_YSIM_IS_STUB || _YSIM_IS_CLIENT))
 		#if _YSIM_IS_CLOUD

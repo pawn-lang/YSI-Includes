@@ -1,7 +1,7 @@
 static
 	YSI_g_sValue;
 
-hook OnRconCommand00(cmd[])
+hook OnRconCommand@00(cmd[])
 {
 	// We test using OnRconCommand because it is the least likely to cause
 	// problems when called unexpectedly at mode start.  Other callbacks use
@@ -10,7 +10,7 @@ hook OnRconCommand00(cmd[])
 	return YSI_g_sValue;
 }
 
-hook OnRconCommand01(cmd[])
+hook OnRconCommand@01(cmd[])
 {
 	// Called second due to forced orderings.
 	++YSI_g_sValue;
@@ -40,9 +40,9 @@ public OnRconCommand(cmd[])
 Test:y_hooks_OnRconCommand()
 {
 	// Check both hooks are called.
-	YSI_g_sValue = 0;
+	YSI_g_sValue = -2;
 	call OnRconCommand("IGNORE_ME");
-	ASSERT(YSI_g_sValue == 2);
+	ASSERT(YSI_g_sValue == 0);
 	YSI_g_sValue = 0;
 }
 
@@ -52,7 +52,7 @@ Test:y_hooks_ReturnM1()
 	YSI_g_sValue = -2;
 	new
 		ret = call OnRconCommand("IGNORE_ME");
-	printf("ret = %d %d", ret, YSI_g_sValue);
+	//printf("ret = %d %d", ret, YSI_g_sValue);
 	ASSERT(ret == 0);
 	ASSERT(YSI_g_sValue == -1);
 	YSI_g_sValue = 0;
@@ -61,11 +61,11 @@ Test:y_hooks_ReturnM1()
 Test:y_hooks_ReturnM2()
 {
 	// Using -1 as a return should stop all processing.
-	YSI_g_sValue = -3;
+	YSI_g_sValue = -2;
 	new
 		ret = call OnRconCommand("IGNORE_ME");
 	ASSERT(ret == -1);
-	ASSERT(YSI_g_sValue == -2);
+	ASSERT(YSI_g_sValue == -1);
 	YSI_g_sValue = 0;
 }
 
@@ -76,7 +76,7 @@ Test:y_hooks_Callback()
 	new
 		ret = call OnRconCommand("IGNORE_ME");
 	ASSERT(ret == 5);
-	ASSERT(YSI_g_sValue == 12);
+	ASSERT(YSI_g_sValue == 5);
 	YSI_g_sValue = 0;
 }
 

@@ -404,6 +404,7 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1, const skipable = true)
 {
 	new
+		bool:multiple = size != 1,
 		base = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS,
 		ctx[AsmContext];
 	// Make sure the underlying system doesn't change without us.  Now supported
@@ -411,141 +412,95 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	AsmInitPtr(ctx, YSI_g_sCodeSpace, YSI_g_sCodeEnd - YSI_g_sCodeSpace);
 	
 	// Start of the function.
-	@emit PROC
+	@emit PROC              // 1
 	
 	// Allocate space for our "ret" variable at "frm - 4".
-	@emit PUSH.C        ret
+	if (multiple) @emit PUSH.C        ret // 3
 	
 	// Copy the stack to itself (MOVS).
 	// Allocate space.
-	@emit LOAD.S.alt    8
-	@emit LCTRL         4
-	@emit SUB
-	@emit SCTRL         4
-	@emit XCHG
+	@emit LOAD.S.alt    8   // 5
+	@emit LCTRL         4   // 7
+	@emit SUB               // 8
+	@emit SCTRL         4   // 10
+	@emit XCHG              // 11
 	
 	// The "MOVS" OpCode only takes a constant, not a variable, so we need to
 	// generate self-modifying code (just to be UBER meta)!  This code is
 	// generated AFTER the file is loaded so we bypass the data segment checks
 	// and can freely write wherever we want.
-	@emit STOR.pri      (ctx[AsmContext_buffer] + 18 * 4)
+	@emit STOR.pri      (YSI_g_sCodeSpace + (18 * 4) - (multiple ? 0 : 8)) // 13
 	
 	// Do the copying.  "alt" is already "STK", load the "FRM" offset.
-	@emit LCTRL         5 // 4
-	@emit ADD.C         12 // 6
+	@emit LCTRL         5   // 15
+	@emit ADD.C         12  // 17
 	// This is the instruction we want to modify...
-	@emit MOVS          0 // 8 - 1
+	@emit MOVS          0   // 19 (- 1)
 	
 	// Push the (fake) number of parameters.
 	@emit PUSH.C        -4
-	
+	printf("size = %d", size);
 	// Now loop over all our functions and insert "CALL" opcodes for them.
-	for (new i = 0; ; )
-	//for (new i = 0; i != size; ++i)
+	if (multiple)
 	{
-		// Get the absolute offset from here.
-		// #emit CALL pointers[i]
-		@emit CALL          (pointers[i] + base) // 2
-		if (skipable)
+		for (new i = 0; ; )
 		{
-			if (ret)
+			// Get the absolute offset from here.
+			// #emit CALL pointers[i]
+			@emit CALL          (pointers[i] + base) // 2
+			if (skipable)
 			{
 				// =====================================
-				//  THIS SECTION IS CURRENTLY 17 BYTES. 
+				//  THIS SECTION IS CURRENTLY 10 CELLS. 
 				// =====================================
 				// Note: Including the original call...
-				// ret = func() & (ret | cellmin);
 				//  
-				//  ret = func() & (ret | cellmin);
+				//  if (func() < 0) break;
+				//  else ret = ret & func();
 				//  
-				// Better to use "+" not "|":
-				//  
-				//  ret = func() & (ret + cellmin);
-				//  
-				@emit LOAD.S.alt    -4         // 4
-				@emit XCHG                     // 5
-				// That bit for odd numbers.
-				@emit ADD.C         cellmin    // 7
-				@emit AND                      // 8
-				@emit STOR.S.pri    -4         // 10
-				
-				// if (ret < 0) return 0;
-				@emit ZERO.alt         // 11
-				
+				@emit ZERO.alt      // 3
+				@emit JSLESS.rel    ((size - i) * (10 * 4) - (5 * 4)) // 5
 				// =========================
 				//  JUMP OVER THIS SECTION. 
 				// =========================
-				if (++i == size)
-				{
-					// The "Rel" functions work relative to "DAT", but despite
-					// the fact that we are writing in "COD", this still works
-					// because we are doing that writing relative to "DAT".
-					@emit JSGEQ.rel     8  // 13
-					@emit ZERO.S        -4 // 15
-					// Subtract 8 below for the jump that isn't here.
-					break;
-				}
-				else
-				{
-					// I spent AGES reading this code to figure out why it was
-					// failing - turns out I used "JGEQ" instead of "JSGEQ".
-					// Also, I can't count and did "JSGEQ 8" instead of "16"...
-					@emit JSGEQ.rel     16 // 13
-					@emit ZERO.S        -4 // 15
-					// Huge jump (maybe)!
-					@emit JUMP.rel      ((size - i) * 17 * 4 - 8) // 17
-					// ===============================================
-					//  IF THE CODE CHANGES, UPDATE BYTE COUNT ABOVE. 
-					// ===============================================
-				}
 			}
-			else
-			{
-				@emit LOAD.S.alt    -4 // 4
-				@emit OR               // 5
-				@emit STOR.S.pri    -4 // 7
-				@emit ZERO.alt         // 8
-				if (++i == size)
-				{
-					@emit JSGEQ.rel      8 // 10
-					@emit ZERO.S        -4 // 12
-					break;
-				}
-				else
-				{
-					@emit JSGEQ.rel     16 // 10
-					@emit ZERO.S        -4 // 12
-					// The "- 8" is because the last call doesn't have the last
-					// jump so we don't need to skip it.  Ironically, the
-					// "JumpRel" functions actually add on 8 to account for this
-					// instruction itself so the two cancel each other out.
-					@emit JUMP.rel      ((size - i) * 14 * 4 - 8) // 14
-				}
-			}
-		}
-		else
-		{
-			if (ret)
-			{
-				@emit LOAD.S.alt    -4
-				@emit AND
-				@emit STOR.S.pri    -4
-			}
-			else
-			{
-				@emit LOAD.S.alt    -4
-				@emit OR
-				@emit STOR.S.pri    -4
-			}
+			@emit LOAD.S.alt    -4   // 7
+			if (ret) @emit AND       // 8
+			else @emit OR            // 8
 			if (++i == size) break;
+			else @emit STOR.S.pri -4 // 10
+		}
+		if (skipable)
+		{
+			@emit JUMP.rel      4    // 10
+			// This is the point the large "JSLESS" above goes to.
+			// -1 = 0, -2 = 1
+			@emit INVERT
 		}
 	}
-	// This is the point the large "Jump" above goes to.
+	else if (skipable)
+	{
+		// Still need this code as they may hook a function that doesn't exist,
+		// but we still need to correctly process -1 or -2.
+		@emit CALL          (pointers[0] + base)
+		@emit ZERO.alt
+		@emit JSGEQ.rel     4
+		@emit INVERT
+	}
+	else
+	{
+		// Just replace the original (turns out, this takes no code).  Basically
+		// just discard everything we've written so far (reclaims the memory).
+		return 0;
+	}
 	
+	// This is the point the small "JUMP" above goes to.
+	@emit MOVE.alt
 	// Remove the whole stack then get the return value.
 	@emit LCTRL         5
 	@emit SCTRL         4
-	@emit LOAD.S.pri    -4
+	//@emit LOAD.S.pri    -4
+	@emit MOVE.pri
 	
 	// Return.
 	@emit RETN
@@ -605,6 +560,25 @@ _Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
 	else if (!strcmp(ref, !"OnFilterScriptInit")) ret = !"S@@_OnFilterScriptInit";
 	else if (!strcmp(ref, !"OnScriptInit")) ret = !"S@@_OnScriptInit";
 	return ret;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_SpecialReturns</summary>
+<param name="ref">The PACKED function that's hooking something.</param>
+<returns>
+	The default return value for this function.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC Hooks_SpecialReturns(const string:ref[])
+{
+	if (!strcmp(ref, !"OnPlayerCommandText")) return 0;
+	else if (!strcmp(ref, !"OnPlayerCommandPerformed")) return 0;
+	else if (!strcmp(ref, !"OnPlayerCmdPerformed")) return 0;
+	return 1;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -695,15 +669,15 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 	else AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref, entry);
 	// I don't know if this will work as they won't be in alphabetical
 	// order any more...
-	if (sameCount == 1)
-	{
-		// Only one hook, just call it directly (the pointer is already
-		// right so we are done)!
-		return;
-	}
+	//if (sameCount == 1)
+	//{
+	//	// Only one hook, just call it directly (the pointer is already
+	//	// right so we are done)!
+	//	return;
+	//}
 	// Point "original"'s function pointer to the new function.
 	// Write our new function (HARD).
-	entry = Hooks_WriteFunction(same, sameCount);
+	entry = Hooks_WriteFunction(same, sameCount, Hooks_SpecialReturns(ref));
 	if (entry)
 	{
 		AMX_Write(original, YSI_g_sCodeSpace - AMX_HEADER_COD);
