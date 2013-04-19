@@ -401,7 +401,7 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1, const skipable = false)
+_Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1, const skipable = true)
 {
 	new
 		base = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS,
@@ -451,21 +451,26 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 			if (ret)
 			{
 				// =====================================
-				//  THIS SECTION IS CURRENTLY 19 BYTES. 
+				//  THIS SECTION IS CURRENTLY 17 BYTES. 
 				// =====================================
 				// Note: Including the original call...
 				// ret = func() & (ret | cellmin);
-				@emit PUSH.pri                 // 3
-				@emit LOAD.S.alt    -4         // 5
+				//  
+				//  ret = func() & (ret | cellmin);
+				//  
+				// Better to use "+" not "|":
+				//  
+				//  ret = func() & (ret + cellmin);
+				//  
+				@emit LOAD.S.alt    -4         // 4
+				@emit XCHG                     // 5
 				// That bit for odd numbers.
-				@emit CONST.pri     0x80000000 // 7
-				@emit OR                       // 8
-				@emit POP.alt                  // 9
-				@emit AND                      // 10
-				@emit STOR.S.pri    -4         // 12
+				@emit ADD.C         cellmin    // 7
+				@emit AND                      // 8
+				@emit STOR.S.pri    -4         // 10
 				
 				// if (ret < 0) return 0;
-				@emit ZERO.alt         // 13
+				@emit ZERO.alt         // 11
 				
 				// =========================
 				//  JUMP OVER THIS SECTION. 
@@ -475,8 +480,8 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 					// The "Rel" functions work relative to "DAT", but despite
 					// the fact that we are writing in "COD", this still works
 					// because we are doing that writing relative to "DAT".
-					@emit JSGEQ.rel     8  // 15
-					@emit ZERO.S        -4 // 17
+					@emit JSGEQ.rel     8  // 13
+					@emit ZERO.S        -4 // 15
 					// Subtract 8 below for the jump that isn't here.
 					break;
 				}
@@ -485,10 +490,10 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 					// I spent AGES reading this code to figure out why it was
 					// failing - turns out I used "JGEQ" instead of "JSGEQ".
 					// Also, I can't count and did "JSGEQ 8" instead of "16"...
-					@emit JSGEQ.rel     16 // 15
-					@emit ZERO.S        -4 // 17
+					@emit JSGEQ.rel     16 // 13
+					@emit ZERO.S        -4 // 15
 					// Huge jump (maybe)!
-					@emit JUMP.rel      ((size - i) * 19 * 4 - 8) // 19
+					@emit JUMP.rel      ((size - i) * 17 * 4 - 8) // 17
 					// ===============================================
 					//  IF THE CODE CHANGES, UPDATE BYTE COUNT ABOVE. 
 					// ===============================================
