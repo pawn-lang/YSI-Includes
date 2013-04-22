@@ -320,8 +320,9 @@ public OnScriptInit()
 		nu = AMX_GetPublicPointerPrefix(0, YSI_g_sNextUpdFunc, _A<_yGU>);
 	//printf("Group_OnScriptInit: %d, %d, %d", ni, na, nu);
 	P:5("Group_OnScriptInit: %d, %d, %d", ni, na, nu);
-	GROUP_CHAIN?<YSI_g_sNextInitFunc>(ni, na, nu);
+	//P:1("Group_OnScriptInit end");
 	//CallLocalFunction("_Group_SpecialInit", "");
+	heapspace();
 	#if defined _Group_SpecialInit
 		return _Group_SpecialInit();
 	#else

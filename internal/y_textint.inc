@@ -556,7 +556,7 @@ public Text_INILoad(offset, tag[], name[], value[])
 	// Get the path.
 	// Get the file.
 	// Get the extension.
-	P:1("Text_INILoad called: %d, %s, %s, %s", offset, tag, name, value);
+	P:5("Text_INILoad called: %d, %s, %s, %s", offset, tag, name, value);
 	P:5("Text_INILoad: IsPacked? %08x%08x", value[0], value[1]);
 	new
 		fname[sizeof (YSI_g_sCurLoadTextFile) - (3 + 9)],

@@ -93,7 +93,10 @@ Changelog:
 
 _Y_HOOKS_STATIC stock
 	YSI_g_sCodeSpace,
-	YSI_g_sCodeEnd;
+	YSI_g_sCodeEnd,
+	YSI_g_sOnGameModeInit,
+	YSI_g_sOnFilterScriptInit,
+	YSI_g_sOnScriptInit;
 
 /**--------------------------------------------------------------------------**\
 <summary>_@_y_hooks_@_</summary>
@@ -111,46 +114,48 @@ forward _@_y_hooks_@_0();
 
 public _@_y_hooks_@_0()
 {
+	P:F("Someone called \"_@_y_hooks_@_0\" and somehow it didn't crash yet!");
+	assert(FALSE); // Always fails.
 	//memcpy("", "", 0, 0, 0);
 	// Reserve a huge area of "COD" for our own use!
 	static
 		STE[] = "";
 	#define _CODE_1 SetTimerEx(STE,0,0,STE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
-	#define _CODE_2 _CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1;
+	#define _CODE_2 _CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1
 	// This reserves about 5kb of space in "COD"
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
 	/*
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
-	_CODE_2
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
+	_CODE_2;
 	*/
 	#undef _CODE_1
 	#undef _CODE_2
@@ -439,7 +444,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	
 	// Push the (fake) number of parameters.
 	@emit PUSH.C        -4
-	printf("size = %d", size);
+	//printf("size = %d", size);
 	// Now loop over all our functions and insert "CALL" opcodes for them.
 	if (multiple)
 	{
@@ -598,11 +603,13 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 {
 	new
 		// Uugh, special cases!
-		bool:init = !(strcmp(ref, !"OnGameModeInit") && strcmp(ref, !"OnFilterScriptInit") && strcmp(ref, !"OnScriptInit")),
+		//bool:init = !(strcmp(ref, !"OnGameModeInit") && strcmp(ref, !"OnFilterScriptInit") && strcmp(ref, !"OnScriptInit")),
+		init = (_:!strcmp(ref, !"OnGameModeInit") << 2) | (_:!strcmp(ref, !"OnFilterScriptInit") << 1) | (_:!strcmp(ref, !"OnScriptInit")),
 		same[32],
 		sameCount = 1,
 		entry,
 		idx;
+	//printf("%s %d", unpack(ref), init);
 	static
 		name[32];
 	same[0] = AMX_Read(original);
@@ -680,8 +687,28 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 	entry = Hooks_WriteFunction(same, sameCount, Hooks_SpecialReturns(ref));
 	if (entry)
 	{
-		AMX_Write(original, YSI_g_sCodeSpace - AMX_HEADER_COD);
+		idx = YSI_g_sCodeSpace - AMX_HEADER_COD;
+		AMX_Write(original, idx);
+		// Save the address for hooks later.  These three can't be done normally
+		// because they have already been started by this point.  I did use
+		// "CallLocalFunction" but that caused issues with "y_malloc".
+		switch (init)
+		{
+			case 1: YSI_g_sOnScriptInit = idx;
+			case 2: YSI_g_sOnFilterScriptInit = idx;
+			case 4: YSI_g_sOnGameModeInit = idx;
+		}
 		YSI_g_sCodeSpace += entry;
+	}
+	else
+	{
+		idx = AMX_Read(original);
+		switch (init)
+		{
+			case 1: YSI_g_sOnScriptInit = idx;
+			case 2: YSI_g_sOnFilterScriptInit = idx;
+			case 4: YSI_g_sOnGameModeInit = idx;
+		}
 	}
 }
 
@@ -717,7 +744,17 @@ public OnScriptInit()
 	//#endif
 	// Old method so we can hook it!
 	//CallLocalFunction("ScriptInit", "");
-	CallLocalFunction("S@@_OnScriptInit", "");
+	//CallLocalFunction("S@@_OnScriptInit", "");
+	P:2("Hooks_OnScriptInit: chain %d", YSI_g_sOnScriptInit);
+	if (YSI_g_sOnScriptInit)
+	{
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.pri   YSI_g_sOnScriptInit
+		#emit SCTRL      6
+	}
 	// Do the main code here.
 	#if defined YSI_LOCK_MODE
 		YSI_gLockData[1] = floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil);
@@ -731,6 +768,7 @@ public OnScriptInit()
 		YSI_gLockData[YSI_gLockData[2] + 1] -= YSI_gLockData[0];
 		YSI_gLockData[1] += '.' + 5;
 	#endif
+	P:1("Hooks_OnScriptInit end");
 	return ALS_R_ScriptInit;
 }
 #if defined _ALS_OnScriptInit
@@ -755,8 +793,17 @@ forward S@@_OnScriptInit();
 
 public OnFilterScriptInit()
 {
-	//CallLocalFunction("FilterScriptInit", "");
-	return CallLocalFunction("S@@_OnFilterScriptInit", "");
+	if (YSI_g_sOnFilterScriptInit)
+	{
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.pri   YSI_g_sOnFilterScriptInit
+		#emit SCTRL      6
+		#emit RETN
+	}
+	return ALS_R_FilterScriptInit;
 }
 
 #if defined _ALS_OnFilterScriptInit
@@ -779,8 +826,17 @@ forward S@@_OnFilterScriptInit();
 
 public OnGameModeInit()
 {
-	//CallLocalFunction("GameModeInit", "");
-	return CallLocalFunction("S@@_OnGameModeInit", "");
+	if (YSI_g_sOnGameModeInit)
+	{
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      28
+		#emit PUSH.pri
+		#emit LOAD.pri   YSI_g_sOnGameModeInit
+		#emit SCTRL      6
+		#emit RETN
+	}
+	return ALS_R_GameModeInit;
 }
 
 #if defined _ALS_OnGameModeInit

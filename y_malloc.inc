@@ -118,13 +118,12 @@ Compile options:
 	YSI_MALLOC_NO_SHORT - Avoid conflicts with mget/mset.
 Operators:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #include "internal\y_version"
 #include "y_debug"
 #include "internal\y_funcinc"
-#include "internal\y_amx"
+#include "y_amx"
 #include "y_utils"
 
 #tryinclude "..\amx\opcode"
@@ -160,7 +159,7 @@ Operators:
 
 static
 	YSI_g_sHeapStart = 0,
-	YSI_g_sUnusedStart = MALLOC_MEMORY * 4;
+	YSI_g_sUnusedStart = 0;
 
 #if defined YSI_MALLOC_SECURE
 	#error YSI_MALLOC_SECURE has been removed.
@@ -176,8 +175,28 @@ forward Alloc:calloc(size);
 	forward Alloc:malloc(size);
 #endif
 
+//#define MALLOC_SOLIDIFYHEAP(%0) Malloc_SolidifyHeap()
+
+main()
+{
+	heapspace();
+	Malloc_TrySetup();
+	#if defined Malloc_main
+		Malloc_main();
+	#endif
+	return 1;
+	//return MALLOC_SOLIDIFYHEAP(3);
+}
+
+#if defined _ALS_main
+	#undef main
+#else
+	#define _ALS_main
+#endif
+#define main() forward Malloc_main();public Malloc_main()
+
 /**--------------------------------------------------------------------------**\
-<summary>Malloc_OnScriptInit</summary>
+<summary>OnScriptInit</summary>
 <returns>
 	-
 </returns>
@@ -187,26 +206,12 @@ forward Alloc:calloc(size);
 	anywhere else in the DAT segment.  You can have "OP_BOUNDS" as a parameter
 	to something, but it would then be followed by an OpCode of "0", which is
 	never valid (OP_NONE).
+	
+	I've tried to make this as resiliant as possible to being called via
+	"CallLocalFunction" as not the first callback in the script but there may
+	still be a few problems - we won't see till people start testing I guess...
 </remarks>
 \**--------------------------------------------------------------------------**/
-
-#define MALLOC_SOLIDIFYHEAP(%0) Malloc_SolidifyHeap()
-
-main()
-{
-	heapspace();
-	#if defined Malloc_main
-		Malloc_main();
-	#endif
-	return MALLOC_SOLIDIFYHEAP(3);
-}
-
-#if defined _ALS_main
-	#undef main
-#else
-	#define _ALS_main
-#endif
-#define main() forward Malloc_main();public Malloc_main()
 
 public OnScriptInit()
 {
@@ -225,16 +230,58 @@ public OnScriptInit()
 			AMX_Write(i += 4, nop);
 		}
 	}
+	Malloc_TrySetup();
+	#if defined Malloc_OnScriptInit
+		Malloc_OnScriptInit();
+	#endif
+	SetTimer("Malloc_SolidifyTimer", 0, 0);
+	SetTimer("Malloc_SolidifyTimer", 0, 0);
+	return 1;
+}
+
+#undef OnScriptInit
+#define OnScriptInit Malloc_OnScriptInit
+#if defined Malloc_OnScriptInit
+	forward Malloc_OnScriptInit();
+#endif
+
+/**--------------------------------------------------------------------------**\
+<summary>Malloc_TrySetup</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Then move the heap pointer up a load.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static Malloc_TrySetup()
+{
+	new
+		temp = MALLOC_MEMORY * 4;
 	// Allocate a ton of space on the heap.
 	#emit LCTRL         2
-	#emit STOR.pri      YSI_g_sHeapStart
-	#emit LOAD.alt      YSI_g_sUnusedStart
+	#emit LOAD.S.alt    temp
 	#emit ADD
-	#emit SCTRL         2
+	#emit STOR.S.pri    temp
 	// Now there's only the normal bit of the stack and heap left.
-	if (YSI_g_sHeapStart != AMX_HEADER_HEA) P:F("y_malloc: Not the first HEAP allocation!");
+	if (temp == AMX_HEADER_HEA + MALLOC_MEMORY * 4 * 2)
+	{
+		// Already allocated and now trying to double allocate.
+		return;
+	}
+	if (temp != AMX_HEADER_HEA + MALLOC_MEMORY * 4)
+	{
+		P:F("y_malloc: Not the first HEAP allocation!");
+		return;
+	}
+	else {}
+	#emit LOAD.S.pri    temp
+	#emit SCTRL         2
+	if (YSI_g_sHeapStart) return;
+	YSI_g_sHeapStart = temp - MALLOC_MEMORY * 4;
 	#if _DEBUG >= 2
-		printf("Malloc_OnScriptInit: %d %d %d", YSI_g_sHeapStart, YSI_g_sUnusedStart, AMX_HEADER_HEA); // + AMX_BASE_ADDRESS);
+		printf("Malloc_OnScriptInit: %d %d %d", YSI_g_sHeapStart, MALLOC_MEMORY * 4, AMX_HEADER_HEA); // + AMX_BASE_ADDRESS);
 	#else
 		// Pretty sure this "SYSREQ" here does something important for the code,
 		// but I'm not sure what...  The fact that I used "heapspace" here was
@@ -258,24 +305,14 @@ public OnScriptInit()
 	//memset(YSI_gMallocMemory[1], 0, MALLOC_MEMORY - 1);
 	#if _DEBUG > 3
 		#emit CONST.alt     YSI_gMallocMemory
-		#emit STOR.S.alt    nop
-		printf("Malloc_OnScriptInit: AMX_HEADER_HEA = %d, YSI_gMallocMemory = %d, YSI_g_sHeapStart = %d", _:AMX_HEADER_HEA, _:nop, YSI_g_sHeapStart);
-		printf("Malloc_OnScriptInit: YSI_gMallocMemory + 4 * YSI_g_sHeapStart = %d", nop + 4 * YSI_g_sHeapStart);
+		#emit STOR.S.alt    temp
+		printf("Malloc_OnScriptInit: AMX_HEADER_HEA = %d, YSI_gMallocMemory = %d, YSI_g_sHeapStart = %d", _:AMX_HEADER_HEA, temp, YSI_g_sHeapStart);
+		printf("Malloc_OnScriptInit: YSI_gMallocMemory + 4 * YSI_g_sHeapStart = %d", temp + 4 * YSI_g_sHeapStart);
 	#endif
 	// This is never read, but we now have a spare cell because we HAD to
 	// allocate an array of some size.
 	YSI_gMallocMemory[0] = MALLOC_MEMORY;
-	#if defined Malloc_OnScriptInit
-		Malloc_OnScriptInit();
-	#endif
-	return 1;
 }
-
-#undef OnScriptInit
-#define OnScriptInit Malloc_OnScriptInit
-#if defined Malloc_OnScriptInit
-	forward Malloc_OnScriptInit();
-#endif
 
 static
 	//YSI_g_sSolidifyHeap,
@@ -323,7 +360,7 @@ public OnRuntimeError(code)
 	if (code == 12)
 	{
 		// Make sure our heap is correctly set still...
-		return MALLOC_SOLIDIFYHEAP(4);
+		return Malloc_SolidifyHeap();
 	}
 	else return 0;
 }
@@ -336,6 +373,14 @@ public OnRuntimeError(code)
 #if defined Malloc_OnRuntimeError
 	forward Malloc_OnRuntimeError(code);
 #endif
+
+forward Malloc_SolidifyTimer();
+
+public Malloc_SolidifyTimer()
+{
+	Malloc_TrySetup();
+	Malloc_SolidifyHeap();
+}
 
 static Malloc_SolidifyHeap()
 {
@@ -368,40 +413,36 @@ static Malloc_SolidifyHeap()
 	return 0;
 }
 
-public OnFilterScriptInit()
+/**--------------------------------------------------------------------------**\
+<summary>Malloc_OnPlayerConnect</summary>
+<param name="playerid">Player that just connected.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	This is the only callback that can be called before our timers when the mode
+	starts.  Make sure the heap is set up correctly.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+public OnPlayerConnect(playerid)
 {
-	#if defined Malloc_OnFilterScriptInit
-		Malloc_OnFilterScriptInit();
+	if (YSI_g_sHeapSetup != 2) Malloc_TrySetup();
+	#if defined Malloc_OnPlayerConnect
+		return Malloc_OnPlayerConnect(playerid);
+	#else
+		return 1;
 	#endif
-	return MALLOC_SOLIDIFYHEAP(1);
 }
 
-#if defined _ALS_OnFilterScriptInit
-	#undef OnFilterScriptInit
+#if defined _ALS_OnPlayerConnect
+	#undef OnPlayerConnect
 #else
-	#define _ALS_OnFilterScriptInit
+	#define _ALS_OnPlayerConnect
 #endif
-#define OnFilterScriptInit Malloc_OnFilterScriptInit
-#if defined Malloc_OnFilterScriptInit
-	forward Malloc_OnFilterScriptInit();
-#endif
-
-public OnGameModeInit()
-{
-	#if defined Malloc_OnGameModeInit
-		Malloc_OnGameModeInit();
-	#endif
-	return MALLOC_SOLIDIFYHEAP(0);
-}
-
-#if defined _ALS_OnGameModeInit
-	#undef OnGameModeInit
-#else
-	#define _ALS_OnGameModeInit
-#endif
-#define OnGameModeInit Malloc_OnGameModeInit
-#if defined Malloc_OnGameModeInit
-	forward Malloc_OnGameModeInit();
+#define OnPlayerConnect Malloc_OnPlayerConnect
+#if defined Malloc_OnPlayerConnect
+	forward Malloc_OnPlayerConnect(playerid);
 #endif
 
 /**--------------------------------------------------------------------------**\

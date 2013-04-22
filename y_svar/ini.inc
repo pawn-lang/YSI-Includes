@@ -154,7 +154,7 @@ forward _Config_Load_y_svar(name[], value[]);
 
 public _Config_Load_y_svar(name[], value[])
 {
-	P:1("_Config_Load_y_svar called: %s %s", name, value);
+	P:7("_Config_Load_y_svar called: %s %s", name, value);
 	// See what the name of the loaded data was.
 	new
 		pos = strfind(name, "-");
