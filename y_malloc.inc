@@ -130,8 +130,10 @@ Operators:
 #include "amx\opcode"
 //#tryinclude "..\amx\amx"
 //#include "amx\amx"
-//#tryinclude "..\amx\stack_dump"
-//#include "amx\stack_dump"
+#tryinclude "..\amx\stack_trace"
+#include "amx\stack_trace"
+#tryinclude "..\amx\stack_dump"
+#include "amx\stack_dump"
 
 #define MALLOC_KB_TO_CELL ((1024 * 8) / cellbits)
 
@@ -179,6 +181,7 @@ forward Alloc:calloc(size);
 
 main()
 {
+	DumpStack();
 	heapspace();
 	Malloc_TrySetup();
 	#if defined Malloc_main
@@ -194,6 +197,39 @@ main()
 	#define _ALS_main
 #endif
 #define main() forward Malloc_main();public Malloc_main()
+
+
+/**--------------------------------------------------------------------------**\
+<summary>Malloc_FindStackTop</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Loop back up through the stackand find the start of the current stack.  If
+	it doesn't equal the top of the true stack then we've been called via
+	"CallLocalFunction" at some point and thus MAY get some memory corruption.
+	
+	Based on ZeeX's GetStackTrace, but gets frames instead of returns.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+//stock GetStackTrace(trace[], skip = 0, max = sizeof(trace))
+static Malloc_FindStackTop()
+{
+	new
+		frm_addr;
+	#emit LCTRL       5
+	#emit STOR.S.pri  frm_addr
+	// Loop until we hit a return address of 0.
+	while (GetReturnAddress(frm_addr))
+	{
+		//printf("%d %d", frm_addr, GetReturnAddress(frm_addr));
+		#emit LREF.S.pri  frm_addr
+		#emit STOR.S.pri  frm_addr
+	}
+	// We can't accurately get the number or parameters because of y_hooks :(.
+	return frm_addr + 12;
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>OnScriptInit</summary>
@@ -236,6 +272,7 @@ public OnScriptInit()
 	#endif
 	SetTimer("Malloc_SolidifyTimer", 0, 0);
 	SetTimer("Malloc_SolidifyTimer", 0, 0);
+	//SetTimer("DumpStack", 500, 0);
 	return 1;
 }
 
@@ -258,7 +295,17 @@ public OnScriptInit()
 static Malloc_TrySetup()
 {
 	new
-		temp = MALLOC_MEMORY * 4;
+		temp;
+	#emit LCTRL       3
+	#emit STOR.S.pri  temp
+	printf("%08x %08x", temp, Malloc_FindStackTop());
+	if (temp > Malloc_FindStackTop() + 4)
+	{
+		P:W("y_malloc set up via \"CallLocalFunction\", memory corruption is a remote possibility");
+	}
+	//nop = Malloc_FindStackTop();
+	//printf("%d %d", nop, _:bounds);
+	temp = MALLOC_MEMORY * 4;
 	// Allocate a ton of space on the heap.
 	#emit LCTRL         2
 	#emit LOAD.S.alt    temp
@@ -275,10 +322,12 @@ static Malloc_TrySetup()
 		P:F("y_malloc: Not the first HEAP allocation!");
 		return;
 	}
-	else {}
-	#emit LOAD.S.pri    temp
-	#emit SCTRL         2
-	if (YSI_g_sHeapStart) return;
+	else
+	{
+		#emit LOAD.S.pri    temp
+		#emit SCTRL         2
+		if (YSI_g_sHeapStart) return;
+	}
 	YSI_g_sHeapStart = temp - MALLOC_MEMORY * 4;
 	#if _DEBUG >= 2
 		printf("Malloc_OnScriptInit: %d %d %d", YSI_g_sHeapStart, MALLOC_MEMORY * 4, AMX_HEADER_HEA); // + AMX_BASE_ADDRESS);
@@ -360,7 +409,7 @@ public OnRuntimeError(code)
 	if (code == 12)
 	{
 		// Make sure our heap is correctly set still...
-		return Malloc_SolidifyHeap();
+		return Malloc_SolidifyHeap(0);
 	}
 	else return 0;
 }
@@ -378,12 +427,15 @@ forward Malloc_SolidifyTimer();
 
 public Malloc_SolidifyTimer()
 {
+	static i = 1;
 	Malloc_TrySetup();
-	Malloc_SolidifyHeap();
+	Malloc_SolidifyHeap(i++);
+	printf("OK");
 }
 
-static Malloc_SolidifyHeap()
+static Malloc_SolidifyHeap(n)
 {
+	printf("-- START %d", n);
 	if (YSI_g_sHeapSetup == 2) return 1;
 	++YSI_g_sHeapSetup;
 	// This code calls "sleep" a second time.  When "sleep" is called "amx_Exec"
@@ -396,20 +448,58 @@ static Malloc_SolidifyHeap()
 	// that we have fully solidified our new heap value first.  Unfortunately,
 	// this function looses us about 20 cells of the stack, but our stack is far
 	// more vast than the original anyway.  Now it doesn't.
-	new
-		ss = MALLOC_MEMORY * 4;
-	#emit LOAD.pri   AMX_HEADER_HEA
-	#emit LOAD.S.alt ss
-	#emit ADD
-	#emit SCTRL      2 // Set the new heap pointer.
-	#emit LOAD.pri   AMX_HEADER_STP
-	#emit SCTRL      4 // Set the original stack pointer.
-	#emit SCTRL      5 // Set the frame pointer.
+	//new
+	//	ss = MALLOC_MEMORY * 4;
+	//#emit LOAD.pri   AMX_HEADER_HEA
+	//#emit LOAD.S.alt ss
+	//#emit ADD
+	//#emit SCTRL      2 // Set the new heap pointer.
+	//#emit LOAD.pri   AMX_HEADER_STP
+	//#emit LCTRL      3
+	//#emit SCTRL      4 // Set the original stack pointer.
+	//#emit SCTRL      5 // Set the frame pointer.
 	// Sleep for about 25 days!
-	while (TRUE)
 	{
-		sleep cellmax;
+		new
+			temp;
+		#emit LCTRL       3
+		#emit STOR.S.pri  temp
+		/*{
+			new
+				trace[100];
+			PrintStackTrace(trace, GetStackTrace(trace));
+		}*/
+		printf("%08x %08x", temp, Malloc_FindStackTop());
 	}
+	DumpStack();
+	printf("-- END   %d", n);
+	//#emit LOAD.pri   AMX_HEADER_STP
+	#emit LCTRL      3
+	#emit MOVE.alt
+	#emit SCTRL      5
+	#emit SCTRL      4 // Set the original stack pointer.
+	// Call to save "stk" and "frm", since they aren't in early builds.
+	#emit PUSH        0
+	#emit SYSREQ.C    heapspace // The pre-processor can't touch this.
+	#emit STACK       4
+	// Unfortunately, "heapspace" has a parameter pushed first so it saves the
+	// wrong stack value (the value 4 below where it should be).  The only other
+	// opcode that reliably saves "stk" in "amx->stk" without trying to call a
+	// native function is "OP_RETN", so let's BADLY invoke it!  Note that we
+	// still need the "heapspace" call (or any function call) to save "hea" and
+	// "frm", which are NOT saved by "OP_RETN" but are by "OP_SYSREQ_C".
+	#emit PUSH        0 // No parameters
+	#emit LCTRL       6 // Return to the next instruction...
+	#emit ADD.C       20
+	#emit PUSH.pri
+	#emit PUSH.alt      // Same frame.
+	#emit RETN
+	// "return" to here...
+	sleep cellmax;
+	//while (TRUE)
+	//{
+	//	sleep cellmax;
+	//}
 	return 0;
 }
 
