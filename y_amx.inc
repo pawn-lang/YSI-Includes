@@ -383,9 +383,9 @@ stock AMX_GetBaseCount(E_AMX_TABLE:table, &base, &count)
 #define AMX_GetPubvarEntry(%0) AMX_GetEntry(AMX_TABLE_PUBVARS,%0)
 #define AMX_GetTagEntry(%0) AMX_GetEntry(AMX_TABLE_TAGS,%0)
 
-stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "")
+stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
-	P:7("AMX_GetEntry called: %i, %i, %i, \"%s\"", _:table, idx, buffer, pattern);
+	P:7("AMX_GetEntry called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
 		base,
 		count;
@@ -409,7 +409,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "")
 				#emit STOR.S.pri addr
 				AMX_ReadString(AMX_BASE_ADDRESS + addr, str);
 				++idx;
-				if (strfind(str, pattern) != -1)
+				if (exact ? (!strcmp(str, pattern)) : (strfind(str, pattern) != -1))
 				{
 					buffer = pos - 4;
 					return idx;
@@ -553,7 +553,7 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 #define AMX_GetPubvarName(%0) AMX_GetName(AMX_TABLE_PUBVARS,%0)
 #define AMX_GetTagName(%0) AMX_GetName(AMX_TABLE_TAGS,%0)
 
-stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[32], const pattern[] = "")
+stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[32], const pattern[] = "", const bool:exact = false)
 {
 	P:7("AMX_GetName called: %i, %i, \"%s\", \"%s\"", _:table, idx, buffer, pattern);
 	new
@@ -585,7 +585,7 @@ stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[32], const pattern[] = "")
 				#emit STOR.S.pri addr
 				AMX_ReadString(AMX_BASE_ADDRESS + addr, buffer);
 				++idx;
-				if (strfind(buffer, pattern) != -1)
+				if (exact ? (!strcmp(str, pattern)) : (strfind(str, pattern) != -1))//if (strfind(buffer, pattern) != -1)
 				{
 					//buffer = idx * 8 + base;
 					return idx;
@@ -738,12 +738,12 @@ stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[32], pattern)
 #define AMX_GetPubvarPointer(%0) AMX_GetPointer(AMX_TABLE_PUBVARS,%0)
 #define AMX_GetTagPointer(%0) AMX_GetPointer(AMX_TABLE_TAGS,%0)
 
-stock AMX_GetPointer(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "")
+stock AMX_GetPointer(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
-	P:7("AMX_GetPointer called: %i, %i, %i, \"%s\"", _:table, idx, buffer, pattern);
+	P:7("AMX_GetPointer called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
 		pointer;
-	idx = AMX_GetEntry(table, idx, pointer, pattern);
+	idx = AMX_GetEntry(table, idx, pointer, pattern, exact);
 	if (idx)
 	{
 		#emit LREF.S.pri pointer
@@ -798,12 +798,12 @@ stock AMX_GetPointerSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 #define AMX_GetPubvarValue(%0) AMX_GetValue(AMX_TABLE_PUBVARS,%0)
 #define AMX_GetTagValue(%0) AMX_GetValue(AMX_TABLE_TAGS,%0)
 
-stock AMX_GetValue(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "")
+stock AMX_GetValue(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const bool:exact = false)
 {
-	P:7("AMX_GetValue called: %i, %i, %i, \"%s\"", _:table, idx, buffer, pattern);
+	P:7("AMX_GetValue called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
 		pointer;
-	idx = AMX_GetPointer(table, idx, pointer, pattern);
+	idx = AMX_GetPointer(table, idx, pointer, pattern, exact);
 	if (idx)
 	{
 		#emit LREF.S.pri pointer

@@ -181,7 +181,6 @@ forward Alloc:calloc(size);
 
 main()
 {
-	DumpStack();
 	heapspace();
 	Malloc_TrySetup();
 	#if defined Malloc_main
@@ -213,7 +212,6 @@ main()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-//stock GetStackTrace(trace[], skip = 0, max = sizeof(trace))
 static Malloc_FindStackTop()
 {
 	new
@@ -223,7 +221,6 @@ static Malloc_FindStackTop()
 	// Loop until we hit a return address of 0.
 	while (GetReturnAddress(frm_addr))
 	{
-		//printf("%d %d", frm_addr, GetReturnAddress(frm_addr));
 		#emit LREF.S.pri  frm_addr
 		#emit STOR.S.pri  frm_addr
 	}
@@ -272,7 +269,6 @@ public OnScriptInit()
 	#endif
 	SetTimer("Malloc_SolidifyTimer", 0, 0);
 	SetTimer("Malloc_SolidifyTimer", 0, 0);
-	//SetTimer("DumpStack", 500, 0);
 	return 1;
 }
 
@@ -288,7 +284,9 @@ public OnScriptInit()
 	-
 </returns>
 <remarks>
-	Then move the heap pointer up a load.
+	Move the heap pointer up a load.  This is called multiple times at the start
+	of the mode because we need to beat protections added in by the virtual
+	machine to steal away its heap area.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -298,13 +296,10 @@ static Malloc_TrySetup()
 		temp;
 	#emit LCTRL       3
 	#emit STOR.S.pri  temp
-	printf("%08x %08x", temp, Malloc_FindStackTop());
 	if (temp > Malloc_FindStackTop() + 4)
 	{
 		P:W("y_malloc set up via \"CallLocalFunction\", memory corruption is a remote possibility");
 	}
-	//nop = Malloc_FindStackTop();
-	//printf("%d %d", nop, _:bounds);
 	temp = MALLOC_MEMORY * 4;
 	// Allocate a ton of space on the heap.
 	#emit LCTRL         2
@@ -329,20 +324,7 @@ static Malloc_TrySetup()
 		if (YSI_g_sHeapStart) return;
 	}
 	YSI_g_sHeapStart = temp - MALLOC_MEMORY * 4;
-	#if _DEBUG >= 2
-		printf("Malloc_OnScriptInit: %d %d %d", YSI_g_sHeapStart, MALLOC_MEMORY * 4, AMX_HEADER_HEA); // + AMX_BASE_ADDRESS);
-	#else
-		// Pretty sure this "SYSREQ" here does something important for the code,
-		// but I'm not sure what...  The fact that I used "heapspace" here was
-		// simply because I've never used it before and it seemed relevant.  In
-		// actual fact any native with no side effects should do (plus this one
-		// is unlikely to be hooked).  We don't use "heapspace();" here so there
-		// is ZERO chance that it can be hooked by another stock.
-		if (TRUE) {}
-		#emit PUSH.C   0
-		#emit SYSREQ.C heapspace
-		#emit STACK    4
-	#endif
+	P:2("Malloc_OnScriptInit: %d %d %d", YSI_g_sHeapStart, MALLOC_MEMORY * 4, AMX_HEADER_HEA);
 	#emit CONST.alt     YSI_gMallocMemory
 	#emit LOAD.pri      YSI_g_sHeapStart
 	#emit SUB
@@ -350,8 +332,9 @@ static Malloc_TrySetup()
 	#emit STOR.pri      YSI_g_sHeapStart
 	YSI_gMallocMemory[YSI_g_sHeapStart] = MALLOC_MEMORY - 1;
 	YSI_g_sUnusedStart = YSI_g_sHeapStart + 1;
-	// Blank the whole memory.  Not required - the heap is already empty.
-	//memset(YSI_gMallocMemory[1], 0, MALLOC_MEMORY - 1);
+	// Blank the whole memory.  Maybe required if the heap has been used
+	// already (better to be safe than sorry).
+	memset(YSI_gMallocMemory[YSI_g_sHeapStart + 1], 0, MALLOC_MEMORY - 1);
 	#if _DEBUG > 3
 		#emit CONST.alt     YSI_gMallocMemory
 		#emit STOR.S.alt    temp
@@ -409,7 +392,7 @@ public OnRuntimeError(code)
 	if (code == 12)
 	{
 		// Make sure our heap is correctly set still...
-		return Malloc_SolidifyHeap(0);
+		return Malloc_SolidifyHeap();
 	}
 	else return 0;
 }
@@ -427,59 +410,21 @@ forward Malloc_SolidifyTimer();
 
 public Malloc_SolidifyTimer()
 {
-	static i = 1;
+	P:1("Malloc_SolidifyTimer called");
 	Malloc_TrySetup();
-	Malloc_SolidifyHeap(i++);
-	printf("OK");
+	Malloc_SolidifyHeap();
 }
 
-static Malloc_SolidifyHeap(n)
+static Malloc_SolidifyHeap()
 {
-	printf("-- START %d", n);
 	if (YSI_g_sHeapSetup == 2) return 1;
 	++YSI_g_sHeapSetup;
-	// This code calls "sleep" a second time.  When "sleep" is called "amx_Exec"
-	// sets "amx->reset_hea" to the original value of the heap, so that when the
-	// function is resumed and then ends, it can be fully reset.  However, if
-	// "amx_Exec" is called a second time before the "sleep" function is resumed
-	// then the process will be repeated and "amx->reset_hea" will be replaced
-	// by our modified "hea", entirely destroying the original value.  The only
-	// place where "sleep" can be resumed is in "main", so we need to make sure
-	// that we have fully solidified our new heap value first.  Unfortunately,
-	// this function looses us about 20 cells of the stack, but our stack is far
-	// more vast than the original anyway.  Now it doesn't.
-	//new
-	//	ss = MALLOC_MEMORY * 4;
-	//#emit LOAD.pri   AMX_HEADER_HEA
-	//#emit LOAD.S.alt ss
-	//#emit ADD
-	//#emit SCTRL      2 // Set the new heap pointer.
-	//#emit LOAD.pri   AMX_HEADER_STP
-	//#emit LCTRL      3
-	//#emit SCTRL      4 // Set the original stack pointer.
-	//#emit SCTRL      5 // Set the frame pointer.
-	// Sleep for about 25 days!
-	{
-		new
-			temp;
-		#emit LCTRL       3
-		#emit STOR.S.pri  temp
-		/*{
-			new
-				trace[100];
-			PrintStackTrace(trace, GetStackTrace(trace));
-		}*/
-		printf("%08x %08x", temp, Malloc_FindStackTop());
-	}
-	DumpStack();
-	printf("-- END   %d", n);
-	//#emit LOAD.pri   AMX_HEADER_STP
 	#emit LCTRL      3
 	#emit MOVE.alt
 	#emit SCTRL      5
 	#emit SCTRL      4 // Set the original stack pointer.
 	// Call to save "stk" and "frm", since they aren't in early builds.
-	#emit PUSH        0
+	#emit PUSH.C      0
 	#emit SYSREQ.C    heapspace // The pre-processor can't touch this.
 	#emit STACK       4
 	// Unfortunately, "heapspace" has a parameter pushed first so it saves the
@@ -488,7 +433,7 @@ static Malloc_SolidifyHeap(n)
 	// native function is "OP_RETN", so let's BADLY invoke it!  Note that we
 	// still need the "heapspace" call (or any function call) to save "hea" and
 	// "frm", which are NOT saved by "OP_RETN" but are by "OP_SYSREQ_C".
-	#emit PUSH        0 // No parameters
+	#emit PUSH.C      0 // No parameters
 	#emit LCTRL       6 // Return to the next instruction...
 	#emit ADD.C       20
 	#emit PUSH.pri
@@ -517,6 +462,35 @@ static Malloc_SolidifyHeap(n)
 
 public OnPlayerConnect(playerid)
 {
+	/*if (YSI_g_sHeapSetup == 2)
+	{
+		// Try remove ourselves.
+		new
+			ret;
+		// Got the call site.
+		#emit LOAD.S.pri  4
+		#emit STOR.S.pri  ret
+		if (ret == 0)
+		{
+			// First call in this stack.
+			new
+				idx,
+				entry;
+			if (AMX_GetPublicEntry(idx, entry, #OnPlayerConnect, true))
+			{
+				// Replace the last call with the new call to the next function
+				// in the chain.
+				#if defined Malloc_OnPlayerConnect
+				// THIS WON'T WORK YET - SLEEP ON IT...
+					#emit CONST.pri  Malloc_OnPlayerConnect
+					#emit SREF.S.pri entry
+			}
+		}
+		else
+		{
+		}
+	}
+	else Malloc_TrySetup();*/
 	if (YSI_g_sHeapSetup != 2) Malloc_TrySetup();
 	#if defined Malloc_OnPlayerConnect
 		return Malloc_OnPlayerConnect(playerid);
