@@ -73,6 +73,7 @@ public _@_y_funcinc_@_()
 	CallRemoteFunction("", "");
 	CallLocalFunction("", "");
 	SetTimerEx("", 0, 0, "");
+	heapspace();
 }
 
 //#include "..\y_utils"

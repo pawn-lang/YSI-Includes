@@ -120,67 +120,183 @@ Operators:
 	-
 \**--------------------------------------------------------------------------**/
 
-#if defined YSI_MALLOC_SECURE
-	#error YSI_MALLOC_SECURE has been removed.
-#endif
+Test:y_malloc_100()
+{
+	new
+		Alloc:a = malloc(1000);
+	ASSERT(bool:a);
+	free(a);
+}
 
-#include "internal\y_version"
-#include "internal\y_funcinc"
-#include "y_debug"
-#include "y_amx"
-#include "y_utils"
+Test:y_malloc_2_100()
+{
+	new
+		Alloc:a = malloc(100);
+	ASSERT(bool:a);
+	free(a);
+	new
+		Alloc:b = malloc(100);
+	ASSERT(bool:b);
+	free(a);
+	ASSERT(a == b);
+}
 
-#tryinclude "..\amx\opcode"
-#include "amx\opcode"
-#tryinclude "..\amx\stack_trace"
-#include "amx\stack_trace"
+Test:y_malloc_2000()
+{
+	new
+		Alloc:a = malloc(2000);
+	ASSERT(bool:a);
+	free(a);
+}
 
-#define MALLOC_KB_TO_CELL ((1024 * 8) / cellbits)
+Test:y_malloc_Loads()
+{
+	// Allocate slightly more memory than we have room for.
+	new
+		Alloc:a = malloc(MALLOC_MEMORY + 1);
+	ASSERT(a == NO_ALLOC);
+	ASSERT(!free(a));
+}
 
-#define NO_ALLOC (Alloc:0)
+#define MALLOC_TEST(%0) for (new Alloc:a = malloc(%0), __loop = 1; a && (__loop || !free(a)); --__loop)
 
-#if !defined MALLOC_MEMORY
-	#if defined MALLOC_MEMORY_KB
-		#define MALLOC_MEMORY ((MALLOC_MEMORY_KB) * MALLOC_KB_TO_CELL)
-	#else
-		#if defined MALLOC_MEMORY_MB
-			#define MALLOC_MEMORY ((MALLOC_MEMORY_MB) * 1024 * MALLOC_KB_TO_CELL)
-		#else
-			#if defined MALLOC_MEMORY_B
-				#define MALLOC_MEMORY (((MALLOC_MEMORY_B) * 8) / cellbits)
-			#else
-				#define MALLOC_MEMORY (16 * 1024 * MALLOC_KB_TO_CELL)
-			#endif
-		#endif
-	#endif
-#endif
+Test:y_malloc_mset()
+{
+	MALLOC_TEST(10)
+	{
+		ASSERT(mget(a, 5) == 0);
+		mset(a, 5, 42);
+		ASSERT(mget(a, 5) == 42);
+	}
+}
 
-// Allocate extra memory for the normal stack and heap (64k, 16 times the size
-// of the default stack)!
-#pragma dynamic MALLOC_MEMORY * 4 + 65536
+Test:y_malloc_mget()
+{
+	MALLOC_TEST(10)
+	{
+		mset(a, 5, 11);
+		ASSERT(mget(a, 5) == 11);
+		mset(a, 5, 42);
+		ASSERT(mget(a, 4) == 0);
+		ASSERT(mget(a, 6) == 0);
+	}
+}
 
-// Sort of "module local" variables.
-stock
-	__YSI_g_sHeapStart = 0,
-	__YSI_g_sUnusedStart = 0;
+Test:y_malloc_SlotSize()
+{
+	MALLOC_TEST(10)
+	{
+		ASSERT(Malloc_SlotSize(a) == 10);
+	}
+	MALLOC_TEST(100)
+	{
+		ASSERT(Malloc_SlotSize(a) == 100);
+	}
+	MALLOC_TEST(1000)
+	{
+		ASSERT(Malloc_SlotSize(a) == 1000);
+	}
+	MALLOC_TEST(1)
+	{
+		ASSERT(Malloc_SlotSize(a) == 1);
+	}
+}
 
-#define YSI_g_sHeapStart __YSI_g_sHeapStart
-#define YSI_g_sUnusedStart __YSI_g_sUnusedStart
+Test:y_malloc_msets()
+{
+	static const
+		str0[] = "1111   ",
+		str1[] = !"2222   ";
+	MALLOC_TEST(10)
+	{
+		ASSERT(msets(a, 0, str0, false) == 8);
+		ASSERT(mget(a, 0) == str0[0]);
+		ASSERT(msets(a, 0, str1, false) == 8);
+		ASSERT(mget(a, 0) == str1{0});
+		ASSERT(msets(a, 0, str0, true) == 8 char);
+		ASSERT(mget(a, 0) == ('1' << 24) | ('1' << 16) | ('1' << 08) | ('1' << 00));
+		ASSERT(msets(a, 0, str1, true) == 8 char);
+		ASSERT(mget(a, 0) == str1[0]);
+	}
+}
 
-new
-	YSI_gMallocMemory[1];
+Test:y_malloc_mgets()
+{
+	static const
+		str0[] = "1111   ";
+	new
+		str2[20];
+	MALLOC_TEST(10)
+	{
+		msets(a, 0, str0, false);
+		mgets(str2, sizeof (str2), a, 0, false);
+		ASSERT(str2[0] == '1');
+		msets(a, 0, str0, false);
+		mgets(str2, sizeof (str2), a, 0, true);
+		ASSERT(str2{0} == '1');
+		msets(a, 0, str0, true);
+		mgets(str2, sizeof (str2), a, 0, false);
+		ASSERT(str2[0] == '1');
+		msets(a, 0, str0, true);
+		mgets(str2, sizeof (str2), a, 0, true);
+		ASSERT(str2{0} == '1');
+	}
+}
+/*
+Test:y_malloc_()
+{
+	MALLOC_TEST(10)
+	{
+	}
+}
 
-forward Alloc:Malloc_Allocate(size, const bool:clear = true);
-forward Alloc:calloc(size);
+Test:y_malloc_()
+{
+	MALLOC_TEST(10)
+	{
+	}
+}
 
-// Allocate space on the heap permanently.
-#include "y_malloc/heapalloc"
-// Functions to access the data on the heap.
-#include "y_malloc/funcs"
-#if defined YSI_TESTS
-	#include "y_testing"
-	#include "y_malloc/tests"
-#endif
+Test:y_malloc_()
+{
+	MALLOC_TEST(10)
+	{
+	}
+}
 
-#undef YSI_g_sHeapStart
-#undef YSI_g_sUnusedStart
+Test:y_malloc_()
+{
+	MALLOC_TEST(10)
+	{
+	}
+}
+*/
+Test:y_malloc_NewS_0()
+{
+	new
+		Alloc:a = Malloc_NewS("Hello There", false);
+	ASSERT(bool:a);
+	if (a)
+	{
+		ASSERT(mget(a, 0) == 'H');
+		ASSERT(mget(a, 5) == ' ');
+		ASSERT(mget(a, 11) == '\0');
+		free(a);
+	}
+}
+
+Test:y_malloc_NewS_1()
+{
+	new
+		Alloc:a = Malloc_NewS("Hello There", true);
+	ASSERT(bool:a);
+	if (a)
+	{
+		static const
+			b[12 char] = !"Hello There";
+		ASSERT(mget(a, 0) == b[0]);
+		ASSERT(mget(a, 1) == b[1]);
+		ASSERT(mget(a, 2) == b[2]);
+		free(a);
+	}
+}

@@ -435,6 +435,9 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 			// Hook main in gamemodes.
 			main()
 			{
+				#if defined Testing_main
+					Testing_main();
+				#endif
 				// Disable error messages (as we're likely to generate them).
 				state ysi_debug : off;
 				//CallLocalFunction("Testing_main", "");
@@ -460,9 +463,6 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 					printf(" ");
 				}
 				state ysi_debug : on;
-				#if defined Testing_main
-					Testing_main();
-				#endif
 			}
 			
 			#if defined _ALS_main

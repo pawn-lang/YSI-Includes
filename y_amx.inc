@@ -585,7 +585,7 @@ stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[32], const pattern[] = "", cons
 				#emit STOR.S.pri addr
 				AMX_ReadString(AMX_BASE_ADDRESS + addr, buffer);
 				++idx;
-				if (exact ? (!strcmp(str, pattern)) : (strfind(str, pattern) != -1))//if (strfind(buffer, pattern) != -1)
+				if (exact ? (!strcmp(buffer, pattern)) : (strfind(buffer, pattern) != -1))//if (strfind(buffer, pattern) != -1)
 				{
 					//buffer = idx * 8 + base;
 					return idx;
