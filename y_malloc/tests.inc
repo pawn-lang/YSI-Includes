@@ -242,6 +242,7 @@ Test:y_malloc_mgets()
 		ASSERT(str2{0} == '1');
 	}
 }
+
 /*
 Test:y_malloc_()
 {
@@ -271,6 +272,7 @@ Test:y_malloc_()
 	}
 }
 */
+
 Test:y_malloc_NewS_0()
 {
 	new
