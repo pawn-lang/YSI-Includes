@@ -350,6 +350,7 @@
  * SEE:      "OnPlayerConnect", "FIXES_Kick".
  * AUTHOR:   Y_Less
  * POST:     http://forum.sa-mp.com/showpost.php?p=1989453
+ * FIXED IN: 0.3x
  * 
  * FIX:      OnVehicleMod
  * PROBLEM:  Crashes other players when invalid mods are applied.
@@ -892,7 +893,11 @@
 #endif
 
 #if !defined FIX_Kick
-	#define FIX_Kick                     (1)
+	#if defined EnableVehicleFriendlyFire
+		#define FIX_Kick                 (0)
+	#else
+		#define FIX_Kick                 (1)
+	#endif
 #elseif _FIXES_IS_UNSET(FIX_Kick)
 	#undef FIX_Kick
 	#define FIX_Kick                     (0)
@@ -3264,7 +3269,7 @@ public OnGameModeInit()
  *
  * Block a player from using OnPlayerUpdate at all.
  */
-#if FIX_OnPlayerEnterVehicle || FIX_Kick || FIX_OnVehicleMod
+#if FIX_OnPlayerEnterVehicle || FIX_OnPlayerEnterVehicle_2 || FIX_Kick || FIX_OnVehicleMod
 	static stock FIXES_BlockUpdate(playerid, bool:block, kick = 6)
 	{
 		if (kick)
