@@ -5621,40 +5621,35 @@ public OnGameModeInit()
 #if FIX_sleep
 	stock FIXES_sleep(ms)
 	{
-		// Call to save "stk" and "frm", since they aren't in early builds.
-		#emit PUSH.C      0
-		#emit SYSREQ.C    heapspace // The pre-processor can't touch this.
-		#emit STACK       4
-		// Unfortunately, "heapspace" has a parameter pushed first so it saves the
-		// wrong stack value (the value 4 below where it should be).  The only other
-		// opcode that reliably saves "stk" in "amx->stk" without trying to call a
-		// native function is "OP_RETN", so let's BADLY invoke it!  Note that we
-		// still need the "heapspace" call (or any function call) to save "hea" and
-		// "frm", which are NOT saved by "OP_RETN" but are by "OP_SYSREQ_C".
-		#emit PUSH.C      0 // Fake function header.
-		#emit LCTRL       6
-		#emit ADD.C       28
-		#emit PUSH.pri    // Push the "return" address.
-		#emit LCTRL       5
-		#emit PUSH.pri    // Push the current frame.
-		#emit RETN        // "return" to the next instruction.
-		#emit ZERO.alt
-		#emit LOAD.S.pri  ms
-		#emit HALT        12
+		// Call a native function that does very little, but saves the current
+		// heap pointer.  Then return to save the accurate stack pointer.
+		return heapspace(), ms;
 	}
 	
 	#if defined _ALS_sleep
 		#undef sleep
 	#else
 		
-		stock BAD_sleep(ms)
-		{
-			sleep ms;
-		}
+		// Uses a little trick to consume part of the line and thus not match
+		// our hooked version.
+		#define BAD_sleep%0\n%9 sleep%0
 		
 		#define _ALS_sleep
 	#endif
-	#define sleep%0; FIXES_sleep(%0);
+	
+	#define sleep%0\n%9 sleep FIXES_sleep(%0)
+	// This fixes another BIZZARE bug.  Just doing:
+	//  
+	//  #define FIXES_sleep(%0;) FIXES_sleep(%0)
+	//  
+	// Results in:
+	//  
+	//  FIXES_sleep(n));
+	//  
+	// Which clearly it shouldn't.  I've stepped through the compilation and that
+	// extra bracket comes from nowhere!
+	#define FIXES_sleep(%0;) FIXES_sleep _FIXES_SLEEP_BRACKET %0);
+	#define _FIXES_SLEEP_BRACKET (
 #endif
 
 #undef _FIXES_CEILDIV
