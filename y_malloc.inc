@@ -157,7 +157,7 @@ Operators:
 
 // Allocate extra memory for the normal stack and heap (64k, 16 times the size
 // of the default stack)!
-#pragma dynamic MALLOC_MEMORY * 4 + 65536
+#pragma dynamic MALLOC_MEMORY + 65536
 
 // Sort of "module local" variables.
 stock

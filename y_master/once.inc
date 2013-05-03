@@ -129,7 +129,7 @@ Natives:
 
 #define MASTER_DATA<%0> static stock Bit:YSI_g_sMasterData[_:(%0)];
 #define MASTER_RESET<%0> YSI_g_sMasterData[_:(%0)] = Bit:0;
-#define MASTER_SET<%0> YSI_g_sMasterData[_:(%0)] = Bit:(1 << Master_Caller());
+#define MASTER_SET<%0> (YSI_g_sMasterData[_:(%0)] = Bit:((1) << (Master_Caller())));
 #define MASTER_ADD<%0> YSI_g_sMasterData[_:(%0)] |= Bit:(1 << Master_Caller());
 #define MASTER_REMOVE<%0> YSI_g_sMasterData[_:(%0)] &= Bit:(~(1 << Master_Caller()));
 #define MASTER_EMPTY<%0> if(!YSI_g_sMasterData[_:(%0)])
@@ -155,24 +155,6 @@ Natives:
 	#endif
 #endif
 
-// Define all the alternate spellings once.
-#define RF@cp  RF@pc
-#define RF@pvc RF@pcv
-#define RF@cpv RF@pcv
-#define RF@cvp RF@pcv
-#define RF@vpc RF@pcv
-#define RF@vcp RF@pcv
-#define RF@vp  RF@pv
-#define RF@cv  RF@vc
-
-#define RF@cpt  RF@pct
-#define RF@tcp  RF@pct
-#define RF@tpc  RF@pct
-#define RF@ctp  RF@pct
-#define RF@ptc  RF@pct
-#define RF@tp  RF@pt
-#define RF@tc  RF@ct
-
 #define mhook master_hook
 
 #define OnScriptClose Master_OnScriptClose
@@ -187,60 +169,29 @@ forward Master_OnScriptClose(script);
 #define V@(%0string:%1) F@()
 
 
-// Second "foreign" declaration.
-//#define @Zu:Y@();W@(#%0##,_YM@CX:,,);return%1(%2);}%3(%4);%5(%6)<%7> Y@();W@(#%0##,#);return%1(%2);}%3(%4);stock %5(%6)<%7>return @Zv:@Zq:%5&H@();
-#define @Zu:#%0,_YM@C%8:,,);return%1(%2);}%5(%6)<%7> @Z%8:#%0,#);return%1(%2);}stock%5(%6)<%7>return @Zv:@Zq:%5&H@()
-//#define @Zu:#%0,_YM@CX:,,) @Zl:#%0,#)
+// "foreign" declaration.
+#define @Zu:#%0,_YM@C%8:,,);return%1(%2);} @Z%8:#%0,#);return%1(%2);}
 
 
 // Second "foreign" declaration.
 // This has been updated to check for arrays, then check if the array is a
 // string, instead of the old method which checked for those separately.
-#define @Zn:@Zo:%2:#%0#%1|||%3[%4]|||%5,%6);%7}%8&H@(%9||| @Zm:@Zr:%2:#%0#%1|||%3|||%5,%6);%7}%8&H@(%9|||
+#define @Zn:@Zo:%2:#%0#%1|||%3[%4]|||%5,%6);%7} @Zm:@Zr:%2:#%0#%1|||%3|||%5,%6);%7}
 
-#define @Zm:@Zr:%2:#%0#%1|||%4string:%3|||%5,%6);%7}%8&H@(%9||| @Zn:@Zo:%2:#%0s#%1,%3|||%5|||%6);%7}%8&H@(%9,%3|||
-#define @Zr:%2:#%0#%1|||%3|||%5,%6);%7}%8&H@(%9||| @Zn:@Zo:%2:#%0a#%1,%3|||%5|||%6);%7}%8&H@(%9,%3|||
+#define @Zm:@Zr:%2:#%0#%1|||%4string:%3|||%5,%6);%7} @Zn:@Zo:%2:#%0s#%1,%3|||%5|||%6);%7}
+#define @Zr:%2:#%0#%1|||%3|||%5,%6);%7} @Zn:@Zo:%2:#%0a#%1,%3|||%5|||%6);%7}
 
-#define @Zo:%2:#%0#%1|||%3|||%5,%6);%7}%8&H@(%9||| @Zn:@Zo:%2:#%0i#%1,%3|||%5|||%6);%7}%8&H@(%9,%3|||
+#define @Zo:%2:#%0#%1|||%3|||%5,%6);%7} @Zn:@Zo:%2:#%0i#%1,%3|||%5|||%6);%7}
 
-#define @Zp:%0||||||);%1}%2&H@(,%4||| @Zl:%0);%1}%2&H@(%4
-#define @Zy:%0||||||);%1}%2&H@(,%4||| @Zj:%0);%1}%2&H@(%4
+#define @Zp:%0||||||);%1} @Zl:%0);%1}
+#define @Zy:%0||||||);%1} @Zj:%0);%1}
 
-#define _YM@Cl:%0,%1);%2}%3(%9)<%4> @Zn:@Zo:@Zp:##|||%0|||%1);%2}stock%3(%9)<%4>return @Zv:@Zq:%3&H@(|||)
-#define _YM@Cj:%0,%1);%2}%3(%9)<%4> @Zn:@Zo:@Zy:##|||%0|||%1);%2}stock%3(%9)<%4>return @Zv:@Zq:%3&H@(|||)
+#define _YM@Cl:%0,%1);%2} @Zn:@Zo:@Zp:##|||%0|||%1);%2}
+#define _YM@Cj:%0,%1);%2} @Zn:@Zo:@Zy:##|||%0|||%1);%2}
 
-#define @Zl:%0);%8void:%3(%1);}%5<%6>return%4&%7; %0);}%5<%6>%7;
-#define @Zj:%0);%8void:%3(%1);}%5<%6>return%4&%7; %0);%3(%1);}%5<%6>%7;
+#define @Zl:%0);%8void:%3(%1);} %0);}
+#define @Zj:%0);%8void:%3(%1);} %0);%3(%1);}
 
-#define @Zv:@Zq:%9:%1&H@( %9:@Zw:@Zx:%9&H@(
-
-#define @Zw:@Zx:%0string%2&H@( G@(
-#define @Zx:%0&H@( H@(
-
-#define @Zq:%1&H@( H@(
-
-/*
-// Second "foreign" declaration.
-// This has been updated to check for arrays, then check if the array is a
-// string, instead of the old method which checked for those separately.
-#define @Zn:@Zo:@Zp:#%0#%1|||%3[%4]|||%5,%6);%7}%8&H@(%9||| @Zm:@Zr:#%0#%1|||%3|||%5,%6);%7}%8&H@(%9|||
-
-#define @Zm:@Zr:#%0#%1|||%2string:%3|||%5,%6);%7}%8&H@(%9||| @Zn:@Zo:@Zp:#%0s#%1,%3|||%5|||%6);%7}%8&H@(%9,%3|||
-#define @Zr:#%0#%1|||%3|||%5,%6);%7}%8&H@(%9||| @Zn:@Zo:@Zp:#%0a#%1,%3|||%5|||%6);%7}%8&H@(%9,%3|||
-
-#define @Zo:@Zp:#%0#%1|||%3|||%5,%6);%7}%8&H@(%9||| @Zn:@Zo:@Zp:#%0i#%1,%3|||%5|||%6);%7}%8&H@(%9,%3|||
-
-#define @Zp:%0||||||);%1}%2&H@(,%4||| %0);%1}%2&H@(%4
-
-#define _YM@CX:%0,%1);%2}%8;%3(%9)<%4> @Zn:@Zo:@Zp:##|||%0|||%1);%2}%8;stock %3(%9)<%4>return @Zv:@Zq:%3&H@(|||);
-
-#define @Zv:@Zq:%9:%1&H@( %9:@Zw:@Zx:%9&H@(
-
-#define @Zw:@Zx:%0string%2&H@( G@(
-#define @Zx:%0&H@( H@(
-
-#define @Zq:%1&H@( H@(
-*/
 // "global" declaration.
 #define @Zt:@Zb:@Zh:@Zi:%0(%1|||%2:%3|||%5,%6) @Zb:@Zh:@Zi:%0(%1|||%3|||%5,%6)
 #define @Zb:@Zh:@Zi:%0(%1|||%3[%4]|||%5,%6) @Zt:@Zb:@Zh:@Zi:%0(%1,%3|||%5|||%6)

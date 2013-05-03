@@ -99,6 +99,9 @@ Changelog:
 #define _Y_G@Q:%0&%1||| _Y_G@Q:%0%1|||
 #define _Y_G@R:%0||| %0
 
+#define _GROUP_UNIQUE_SYMBOL 0
+#define _GROUP_UNIQUE_FUNCTION
+
 //#define master_hook%0On%2(%3) hook On%2(%3)<>return 1;rehook On%2(%3)<_YCM:y>
 
 #if !defined MAX_GROUP_NAME

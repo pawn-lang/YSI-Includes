@@ -116,6 +116,7 @@ public _@_y_hooks_@_0()
 {
 	P:F("Someone called \"_@_y_hooks_@_0\" and somehow it didn't crash yet!");
 	assert(FALSE); // Always fails.
+	Hooks_DoForceReverse("");
 	//memcpy("", "", 0, 0, 0);
 	// Reserve a huge area of "COD" for our own use!
 	static
@@ -169,6 +170,29 @@ public _@_y_hooks_@_1()
 	// public functions table and code segment if the compiler is true to form.
 }
 
+#define mutable
+
+_Y_HOOKS_STATIC Hooks_DoForceReverse(str[])
+{
+	for (new i = 0; i != 32 char; ++i)
+	{
+		str[i] = Cell_ReverseBytes(str[i]);
+	}
+	return 0;
+}
+
+_Y_HOOKS_STATIC Hooks_ForceReverse(mutable const str[32 char])
+{
+	// Modifes constant strings - naughty but meh.
+	#emit PUSH.S     str
+	#emit PUSH.C     4
+	#emit LCTRL      6
+	#emit ADD.C      28
+	#emit PUSH.pri
+	#emit CONST.pri  Hooks_DoForceReverse
+	#emit SCTRL      6
+}
+
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_CountInvalidPublics</summary>
 <returns>
@@ -217,9 +241,11 @@ _Y_HOOKS_STATIC Hooks_CompareNextCell(addr0, addr1)
 	if (!(s0 & 0xFF000000)) s0 = 0;
 	else if (!(s0 & 0x00FF0000)) s0 &= 0xFF000000;
 	else if (!(s0 & 0x0000FF00)) s0 &= 0xFFFF0000;
+	else if (!(s0 & 0x000000FF)) s0 &= 0xFFFFFF00;
 	if (!(s1 & 0xFF000000)) s1 = 0;
 	else if (!(s1 & 0x00FF0000)) s1 &= 0xFF000000;
 	else if (!(s1 & 0x0000FF00)) s1 &= 0xFFFF0000;
+	else if (!(s1 & 0x000000FF)) s1 &= 0xFFFFFF00;
 	// We need the numbers to be compared as big-endian.  Now any trailing NULLs
 	// don't matter at all.
 	if (s1 > s0) return 1;
@@ -368,11 +394,9 @@ _Y_HOOKS_STATIC Hooks_GetName(entry, name[32])
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetAddr(idx, base)
+_Y_HOOKS_STATIC stock Hooks_GetAddr(entry)
 {
-	new
-		str[32];
-	return AMX_Read(idx * 8 + base);
+	return AMX_Read(entry);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -526,44 +550,61 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+static stock const
+	YSI_gscOnPlayerEnterRaceCP     [32 char] = !"OnPlayerEnterRaceCheckpoint\0\0\0\0",
+	YSI_gscOnPlayerLeaveRaceCP     [32 char] = !"OnPlayerLeaveRaceCheckpoint\0\0\0\0",
+	YSI_gscOnVehicleDamageStatusUpd[32 char] = !"OnVehicleDamageStatusUpdate",
+	YSI_gscOnUnoccupiedVehicleUpd  [32 char] = !"OnUnoccupiedVehicleUpdate",
+	YSI_gscOnPlayerClickPlayerTD   [32 char] = !"OnPlayerClickPlayerTextDraw",
+	YSI_gscOnPlayerEditAttachedObj [32 char] = !"OnPlayerEditAttachedObject",
+	YSI_gscOnPlayerCmdPerformed    [32 char] = !"OnPlayerCommandPerformed",
+
+	YSI_gscOnPlayerEditDynObject  [32 char] = !"OnPlayerEditDynamicObject",
+	YSI_gscOnPlayerSelectDynObject[32 char] = !"OnPlayerSelectDynamicObject",
+	YSI_gscOnPlayerPickUpDynPickup[32 char] = !"OnPlayerPickUpDynamicPickup",
+	YSI_gscOnPlayerEnterDynRaceCP [32 char] = !"OnPlayerEnterDynamicRaceCP",
+	YSI_gscOnPlayerLeaveDynRaceCP [32 char] = !"OnPlayerLeaveDynamicRaceCP",
+	YSI_gscOnPlayerEnterDynArea   [32 char] = !"OnPlayerEnterDynamicArea",
+	YSI_gscOnPlayerLeaveDynArea   [32 char] = !"OnPlayerLeaveDynamicArea";
+
 _Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
 {
 	new
 		ret[32 char];
-	if (!strcmp(ref, !"OnPlayerEnterRaceCheckpoint")) ret = !"OnPlayerEnterRaceCP";
-	else if (!strcmp(ref, !"OnPlayerEnterRaceCP")) ret = !"OnPlayerEnterRaceCheckpoint";
-	else if (!strcmp(ref, !"OnPlayerLeaveRaceCheckpoint")) ret = !"OnPlayerLeaveRaceCP";
-	else if (!strcmp(ref, !"OnPlayerLeaveRaceCP")) ret = !"OnPlayerLeaveRaceCheckpoint";
-	else if (!strcmp(ref, !"OnVehicleDamageStatusUpdate")) ret = !"OnVehicleDamageStatusUpd";
-	else if (!strcmp(ref, !"OnVehicleDamageStatusUpd")) ret = !"OnVehicleDamageStatusUpdate";
-	else if (!strcmp(ref, !"OnUnoccupiedVehicleUpdate")) ret = !"OnUnoccupiedVehicleUpd";
-	else if (!strcmp(ref, !"OnUnoccupiedVehicleUpd")) ret = !"OnUnoccupiedVehicleUpdate";
-	else if (!strcmp(ref, !"OnPlayerClickPlayerTextDraw")) ret = !"OnPlayerClickPlayerTD";
-	else if (!strcmp(ref, !"OnPlayerClickPlayerTD")) ret = !"OnPlayerClickPlayerTextDraw";
-	else if (!strcmp(ref, !"OnPlayerEditAttachedObject")) ret = !"OnPlayerEditAttachedObj";
-	else if (!strcmp(ref, !"OnPlayerEditAttachedObj")) ret = !"OnPlayerEditAttachedObject";
+	if      (!strcmp(ref, YSI_gscOnPlayerEnterRaceCP))      ret = !"OnPlayerEnterRaceCP";
+	else if (!strcmp(ref, YSI_gscOnPlayerLeaveRaceCP))      ret = !"OnPlayerLeaveRaceCP";
+	else if (!strcmp(ref, YSI_gscOnVehicleDamageStatusUpd)) ret = !"OnVehicleDamageStatusUpd";
+	else if (!strcmp(ref, YSI_gscOnUnoccupiedVehicleUpd))   ret = !"OnUnoccupiedVehicleUpd";
+	else if (!strcmp(ref, YSI_gscOnPlayerClickPlayerTD))    ret = !"OnPlayerClickPlayerTD";
+	else if (!strcmp(ref, YSI_gscOnPlayerEditAttachedObj))  ret = !"OnPlayerEditAttachedObj";
+	else if (!strcmp(ref, !"OnPlayerEnterRaceCP"))      ret = YSI_gscOnPlayerEnterRaceCP;
+	else if (!strcmp(ref, !"OnPlayerLeaveRaceCP"))      ret = YSI_gscOnPlayerLeaveRaceCP;
+	else if (!strcmp(ref, !"OnVehicleDamageStatusUpd")) ret = YSI_gscOnVehicleDamageStatusUpd;
+	else if (!strcmp(ref, !"OnUnoccupiedVehicleUpd"))   ret = YSI_gscOnUnoccupiedVehicleUpd;
+	else if (!strcmp(ref, !"OnPlayerClickPlayerTD"))    ret = YSI_gscOnPlayerClickPlayerTD;
+	else if (!strcmp(ref, !"OnPlayerEditAttachedObj"))  ret = YSI_gscOnPlayerEditAttachedObj;
 	// YSI.
-	else if (!strcmp(ref, !"OnPlayerCommandPerformed")) ret = !"OnPlayerCmdPerformed";
-	else if (!strcmp(ref, !"OnPlayerCmdPerformed")) ret = !"OnPlayerCommandPerformed";
+	else if (!strcmp(ref, YSI_gscOnPlayerCmdPerformed)) ret = !"OnPlayerCmdPerformed";
+	else if (!strcmp(ref, !"OnPlayerCmdPerformed"))     ret = YSI_gscOnPlayerCmdPerformed;
 	// Streamer.
-	else if (!strcmp(ref, !"OnPlayerEditDynamicObject")) ret = !"OnPlayerEditDynObject";
-	else if (!strcmp(ref, !"OnPlayerSelectDynamicObject")) ret = !"OnPlayerSelectDynObject";
-	else if (!strcmp(ref, !"OnPlayerPickUpDynamicPickup")) ret = !"OnPlayerPickUpDynPickup";
-	else if (!strcmp(ref, !"OnPlayerEnterDynamicRaceCP")) ret = !"OnPlayerEnterDynRaceCP";
-	else if (!strcmp(ref, !"OnPlayerLeaveDynamicRaceCP")) ret = !"OnPlayerLeaveDynRaceCP";
-	else if (!strcmp(ref, !"OnPlayerEnterDynamicArea")) ret = !"OnPlayerEnterDynArea";
-	else if (!strcmp(ref, !"OnPlayerLeaveDynamicArea")) ret = !"OnPlayerLeaveDynArea";
-	else if (!strcmp(ref, !"OnPlayerEditDynObject")) ret = !"OnPlayerEditDynamicObject";
-	else if (!strcmp(ref, !"OnPlayerSelectDynObject")) ret = !"OnPlayerSelectDynamicObject";
-	else if (!strcmp(ref, !"OnPlayerPickUpDynPickup")) ret = !"OnPlayerPickUpDynamicPickup";
-	else if (!strcmp(ref, !"OnPlayerEnterDynRaceCP")) ret = !"OnPlayerEnterDynamicRaceCP";
-	else if (!strcmp(ref, !"OnPlayerLeaveDynRaceCP")) ret = !"OnPlayerLeaveDynamicRaceCP";
-	else if (!strcmp(ref, !"OnPlayerEnterDynArea")) ret = !"OnPlayerEnterDynamicArea";
-	else if (!strcmp(ref, !"OnPlayerLeaveDynArea")) ret = !"OnPlayerLeaveDynamicArea";
+	else if (!strcmp(ref, YSI_gscOnPlayerEditDynObject))   ret = !"OnPlayerEditDynObject";
+	else if (!strcmp(ref, YSI_gscOnPlayerSelectDynObject)) ret = !"OnPlayerSelectDynObject";
+	else if (!strcmp(ref, YSI_gscOnPlayerPickUpDynPickup)) ret = !"OnPlayerPickUpDynPickup";
+	else if (!strcmp(ref, YSI_gscOnPlayerEnterDynRaceCP))  ret = !"OnPlayerEnterDynRaceCP";
+	else if (!strcmp(ref, YSI_gscOnPlayerLeaveDynRaceCP))  ret = !"OnPlayerLeaveDynRaceCP";
+	else if (!strcmp(ref, YSI_gscOnPlayerEnterDynArea))    ret = !"OnPlayerEnterDynArea";
+	else if (!strcmp(ref, YSI_gscOnPlayerLeaveDynArea))    ret = !"OnPlayerLeaveDynArea";
+	else if (!strcmp(ref, !"OnPlayerEditDynObject"))   ret = YSI_gscOnPlayerEditDynObject;
+	else if (!strcmp(ref, !"OnPlayerSelectDynObject")) ret = YSI_gscOnPlayerSelectDynObject;
+	else if (!strcmp(ref, !"OnPlayerPickUpDynPickup")) ret = YSI_gscOnPlayerPickUpDynPickup;
+	else if (!strcmp(ref, !"OnPlayerEnterDynRaceCP"))  ret = YSI_gscOnPlayerEnterDynRaceCP;
+	else if (!strcmp(ref, !"OnPlayerLeaveDynRaceCP"))  ret = YSI_gscOnPlayerLeaveDynRaceCP;
+	else if (!strcmp(ref, !"OnPlayerEnterDynArea"))    ret = YSI_gscOnPlayerEnterDynArea;
+	else if (!strcmp(ref, !"OnPlayerLeaveDynArea"))    ret = YSI_gscOnPlayerLeaveDynArea;
 	// Start points.
-	else if (!strcmp(ref, !"OnGameModeInit")) ret = !"S@@_OnGameModeInit";
+	else if (!strcmp(ref, !"OnGameModeInit"))     ret = !"S@@_OnGameModeInit";
 	else if (!strcmp(ref, !"OnFilterScriptInit")) ret = !"S@@_OnFilterScriptInit";
-	else if (!strcmp(ref, !"OnScriptInit")) ret = !"S@@_OnScriptInit";
+	else if (!strcmp(ref, !"OnScriptInit"))       ret = !"S@@_OnScriptInit";
 	return ret;
 }
 
@@ -598,18 +639,15 @@ _Y_HOOKS_STATIC Hooks_SpecialReturns(const string:ref[])
 	Find all functions with the same name fragment as the one given.
 </remarks>
 \**--------------------------------------------------------------------------**/
-
 _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:ref2[] = "")
 {
 	new
 		// Uugh, special cases!
-		//bool:init = !(strcmp(ref, !"OnGameModeInit") && strcmp(ref, !"OnFilterScriptInit") && strcmp(ref, !"OnScriptInit")),
 		init = (_:!strcmp(ref, !"OnGameModeInit") << 2) | (_:!strcmp(ref, !"OnFilterScriptInit") << 1) | (_:!strcmp(ref, !"OnScriptInit")),
 		same[32],
 		sameCount = 1,
 		entry,
 		idx;
-	//printf("%s %d", unpack(ref), init);
 	static
 		name[32];
 	same[0] = AMX_Read(original);
@@ -632,8 +670,8 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 		// Get just the useful part of the name.
 		if (!strcmp(name, ref))
 		{
+			Hooks_InvalidateName(entry),
 			same[sameCount] = AMX_Read(entry);
-			Hooks_InvalidateName(entry);
 			if (++sameCount == sizeof (same))
 			{
 				P:E("sameCount == sizeof (same) in y_hooks.");
@@ -658,8 +696,8 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 			// Get just the useful part of the name.
 			if (!strcmp(name, ref2))
 			{
+				Hooks_InvalidateName(entry),
 				same[sameCount] = AMX_Read(entry);
-				Hooks_InvalidateName(entry);
 				if (++sameCount == sizeof (same))
 				{
 					P:E("sameCount == sizeof (same) in y_hooks.");
@@ -672,21 +710,41 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 	// First, the (longest) function name as that is always the "base" name.
 	entry = strlen(ref);
 	idx = strlen(ref2);
-	if (idx > entry) AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref2, idx);
-	else AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref, entry);
-	// I don't know if this will work as they won't be in alphabetical
-	// order any more...
-	//if (sameCount == 1)
-	//{
-	//	// Only one hook, just call it directly (the pointer is already
-	//	// right so we are done)!
-	//	return;
-	//}
-	// Point "original"'s function pointer to the new function.
+	if (idx <= entry) AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref, idx);
+	else
+	{
+		// There's a chance this won't be long enough at all!
+		if (!strcmp(ref2, YSI_gscOnPlayerEnterRaceCP))
+		{
+			Hooks_ForceReverse(YSI_gscOnPlayerEnterRaceCP);
+			// VERY special case.  The space used to hold the hook name is not
+			// long enough to hold the original callback's full name!  In this
+			// case we point the function header at somewhere deep inside the
+			// DAT segment, not in the nametable, after first generating our new
+			// function name in C order not packed PAWN order.
+			#emit CONST.pri  YSI_gscOnPlayerEnterRaceCP
+			#emit STOR.S.pri idx
+			idx -= AMX_BASE_ADDRESS;
+			AMX_Write(original + 4, idx);
+		}
+		else if (!strcmp(ref2, YSI_gscOnPlayerLeaveRaceCP))
+		{
+			Hooks_ForceReverse(YSI_gscOnPlayerLeaveRaceCP);
+			#emit CONST.pri  YSI_gscOnPlayerLeaveRaceCP
+			#emit STOR.S.pri idx
+			idx -= AMX_BASE_ADDRESS;
+			AMX_Write(original + 4, idx);
+		}
+		else
+		{
+			AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref2, entry);
+		}
+	}
 	// Write our new function (HARD).
 	entry = Hooks_WriteFunction(same, sameCount, Hooks_SpecialReturns(ref));
 	if (entry)
 	{
+		// Point "original"'s function pointer to the new function.
 		idx = YSI_g_sCodeSpace - AMX_HEADER_COD;
 		AMX_Write(original, idx);
 		// Save the address for hooks later.  These three can't be done normally
@@ -739,12 +797,11 @@ public OnScriptInit()
 	}
 	// Finally, put all our new mashed up publics back in order!
 	Hooks_SortPublics();
-	//#if defined S@@_OnScriptInit
-	//CallLocalFunction("S@@_OnScriptInit", "");
-	//#endif
+	// Detect when there are no hooks for the init functions.
+	if (!YSI_g_sOnFilterScriptInit) AMX_GetPublicPointer(0, YSI_g_sOnFilterScriptInit, "S@@_OnFilterScriptInit", true);
+	if (!YSI_g_sOnGameModeInit) AMX_GetPublicPointer(0, YSI_g_sOnGameModeInit, "S@@_OnGameModeInit", true);
+	if (!YSI_g_sOnScriptInit) AMX_GetPublicPointer(0, YSI_g_sOnScriptInit, "S@@_OnScriptInit", true);
 	// Old method so we can hook it!
-	//CallLocalFunction("ScriptInit", "");
-	//CallLocalFunction("S@@_OnScriptInit", "");
 	P:2("Hooks_OnScriptInit: chain %d", YSI_g_sOnScriptInit);
 	if (YSI_g_sOnScriptInit)
 	{
@@ -803,7 +860,11 @@ public OnFilterScriptInit()
 		#emit SCTRL      6
 		#emit RETN
 	}
+	//#if defined S@@_OnFilterScriptInit
+	//	return S@@_OnFilterScriptInit();
+	//#else
 	return ALS_R_FilterScriptInit;
+	//#endif
 }
 
 #if defined _ALS_OnFilterScriptInit
@@ -812,7 +873,9 @@ public OnFilterScriptInit()
 	#define _ALS_OnFilterScriptInit
 #endif
 #define OnFilterScriptInit S@@_OnFilterScriptInit
+//#if defined S@@_OnFilterScriptInit
 forward S@@_OnFilterScriptInit();
+//#endif
 
 /**--------------------------------------------------------------------------**\
 <summary>OnGameModeInit</summary>
@@ -828,6 +891,7 @@ public OnGameModeInit()
 {
 	if (YSI_g_sOnGameModeInit)
 	{
+		printf("OnGameModeInit %d", YSI_g_sOnGameModeInit);
 		#emit PUSH.C     0
 		#emit LCTRL      6
 		#emit ADD.C      28
@@ -836,7 +900,11 @@ public OnGameModeInit()
 		#emit SCTRL      6
 		#emit RETN
 	}
+	//#if defined S@@_OnGameModeInit
+	//	return S@@_OnGameModeInit();
+	//#else
 	return ALS_R_GameModeInit;
+	//#endif
 }
 
 #if defined _ALS_OnGameModeInit
@@ -845,4 +913,6 @@ public OnGameModeInit()
 	#define _ALS_OnGameModeInit
 #endif
 #define OnGameModeInit S@@_OnGameModeInit
+//#if defined S@@_OnGameModeInit
 forward S@@_OnGameModeInit();
+//#endif

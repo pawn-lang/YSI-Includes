@@ -1178,32 +1178,6 @@ Natives:
 		//#define global%0(%1) %0@(%1);public%0@(%1)X@(_:@Zk:%0(_YM@CP:%1,,));%0(%1)
 		#define global%0(%1) public%0@(%1)(@Zz:X@(@Zk:_YM@CP:%0(%1,,)));%0(%1)
 		
-		
-		
-		
-		#define RF:%1[%2](%3) @%1(%3);@%1(%3)U@(8,YSIM_RETURN,%1(%3));%1(%3)
-		#define RF@p:%1[%2](%3)<%4> @%1(%3);@%1(%3)U@(8,YSIM_RETURN,%1(%4));%1(%3)
-		#define RF@c RF
-		#define RF@v:%1[%2](%3) @%1(%3);@%1(%3)%1(%3);%1(%3)
-		//#define RF@n:%1[]() forward %1R();public %1R()U@(8,YSIM_RETURN,%1());%1()
-		#define RF@pc RF@p
-		#define RF@pv:%1[%2](%3)<%4> @%1(%3);@%1(%3)%1(%4);%1(%3)
-		#define RF@pcv RF@pv
-		#define RF@vc RF@v
-		//#define RF@vn:%1[]() forward %1R();public %1R()%1();%1()
-		
-		#define RF@t:%0:%1[%2](%3) %0:%1(%3);@%1(%3);@%1(%3)U@(8,YSIM_RETURN,_:%1(%3));%0:%1(%3)
-		#define RF@pt:%0:%1[%2](%3)<%4> %0:%1(%3);@%1(%3);@%1(%3)U@(8,YSIM_RETURN,_:%1(%4));%0:%1(%3)
-		#define RF@ct RF@t
-		//#define RF@nt:%0:%1[]() forward %0:%1();forward %1R();public %1R()U@(8,YSIM_RETURN,_:%1());%0:%1()
-		#define RF@pct RF@pt
-		
-		#define RS:%1[%2](%3) @%1(%3);@%1(%3)R@(%1(%3));%1(%3)
-		#define RS@p:%1[%2](%3)<%4> @%1(%3);@%1(%3)R@(%1(%4));%1(%3)
-		
-		//#define RC:%1(%3) public %1(%3)
-		
-		//#define RC@v RC
 		#define RH:On%2(%3) hook On%2(%3)
 		
 		#define master_hook%0On%2(%3) hook On%2(%3)
@@ -1218,28 +1192,20 @@ Natives:
 			#define RC:%0(%1) @yC_%0(a,b[],c);@yC_%0(a,b[],c)U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 		#endif
 		
-		// Remote local - only calls the local version if we're master,
-		// doesn't call the remote version.
-		//#define RL:%1[%2](%3) %1(%3)
-		
-		//#define RP@v:%1[%2](%3) forward @%1(%3);@%1(%3)%1(%3);static %1(%3)
-		
-		// Shortcut for y_als hooks.
 		#define RA:%0_On%1(%3) public On%1(%3)
-		//#define RA@p:%0_%1[%2](%3)<%4> RA:%0_%1[%2](%3)
 		
-		//#define RX:%0(%1) %0@yX_(%1);public %0@yX_(%1)
-		
-		#define Master_Caller() \
-			(V@(8,YSIM_CALLER))
-		
-		//#define Master_Get(%1) state (_Master_Get(#%1)) ? (%1:y) : (%1:n)
-		//#define Master_Init(%1); _Master_Get(#%1);
+		#define Master_Caller() _Master_Caller()
+		#if !defined _Master_Caller_FIRST
+			stock _Master_Caller()
+			{
+				new
+					n = getproperty(8, YSIM_CALLER);
+				if (n == -1) return _@;
+				return n;
+			}
+			#define _Master_Caller_FIRST
+		#endif
 	#else
-		
-		// This definition has "%0(%1)" defined as "public", "stock" AND ""!!!
-		//#define foreign%0(%1); %0(%1);public %0(%1)<_YCM:m>return 0;stock %0(%1)<>{new i=Y@();W@(#%0@##,_YM@CM:%1,,);return Z@(i);}
-		
 		// Define "foreign" more generically.  If you want "server" or "none"
 		// you will need to define this specifically, otherwise you just need to
 		// include the master system and then you can use "#tryinclude".  This
@@ -1247,45 +1213,14 @@ Natives:
 		// default to STUB.  This is NOT a complete definition - the "@Zu:"
 		// definition means that more processing is done (mainly for the
 		// definition of the "_YCM:m" function to not give warnings.
-		//#define foreign%0(%1); stock %0(%1)<>{new i=_:@Zu:Y@();W@(#%0@##,_YM@CX:%1,,);return Z@(i);}%0@(%1);%0(%1)<_YCM:m>
 		// The "@" versions of the functions are used when the caller's master
 		// ID is needed, the normal version is used when it isn't.
-		#define @foreign%0(%1) stock%0(%1)<>{new i=Y@();W@(@Zu:#%0@#,_YM@Cj:%1,,);return Z@(i);}%0(%1)<_YCM:m>
+		#define @foreign%0(%1) stock%0(%1)<>{new i=Y@();W@(@Zu:#%0@#,_YM@Cj:%1,,);return Z@(i);}%0(%1)<_YCM:m>;%0@(%1)
 		
-		#define foreign%0(%1) stock%0(%1)<>{W@(@Zu:#%0@#,_YM@Cl:%1,,);return V@(8,YSIM_RETURN);}%0(%1)<_YCM:m>
+		#define foreign%0(%1) stock%0(%1)<>{W@(@Zu:#%0@#,_YM@Cl:%1,,);return V@(8,YSIM_RETURN);}%0(%1)<_YCM:m>;%0@(%1)
 		
 		#if _YSIM_IS_CLIENT
-			
 			#define global%0(%1) stock %0_(%1)
-			
-			
-			
-			
-			// Defined the functions as remote calling stubs.  Then rename the
-			// following code with a name unlikely to ever be used and define the
-			// functions as stock so the compiler removes all the code quietly.
-			#define RF:%1[%2](%3) stock %1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);stock _@%1(%3)
-			#define RF@p:%1[%2](%3)<%4> stock %1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);stock _@%1(%3)
-			#define RF@c RF
-			#define RF@v:%1[%2](%3) stock %1(%3)U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1);stock _@%1(%3)
-			//#define RF@n:%1[]() stock %1()return U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);stock _@%1()
-			#define RF@pc RF@p
-			#define RF@pv:%1[%2](%3)<%4> stock %1(%3)U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1);stock _@%1(%3)
-			#define RF@pcv RF@pv
-			#define RF@vc RF@v
-			//#define RF@vn:%1[]() stock %1()U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1);stock _@%1()
-			
-			#define RF@t:%0:%1[%2](%3) stock %0:%1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);stock %0:_@%1(%3)
-			#define RF@pt:%0:%1[%2](%3)<%4> stock %0:%1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);stock %0:_@%1(%3)
-			#define RF@ct RF@t
-			//#define RF@nt:%0:%1[]() stock %0:%1()return U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);stock %0:_@%1()
-			#define RF@pct RF@pt
-			
-			#define RS:%1[%2](%3) stock %1(%3)return Y@(),W@(#@%1,(x:#%2#),%3),S@(),Q@;stock _@%1(%3)
-			#define RS@p:%1[%2](%3)<%4> stock %1(%3)return Y@(),W@(#@%1,#%2,%4),S@(),Q@;stock _@%1(%3)
-			
-			//#define RC:%1(%3) stock _@%1(%3)
-			//#define RC@v RC
 			
 			#define RH:On%2(%3)
 			
@@ -1301,67 +1236,12 @@ Natives:
 				#define RC:%0(%1) static stock _@yC%0()
 			#endif
 			
-			//#define RP@v:%1[%2](%3) static stock %1(%3)U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1);static stock _@%1(%3)
-			
-			// Remote local - only calls the local version if we're master,
-			// doesn't call the remote version.
-			//#define RL:%1[%2](%3) stock %1(%3){}static stock _%1(%3)
-			
-			//#define RX:%0(%1) stock %0_yX@(%1)
-			
-			// Shortcut for y_als hooks.
 			#define RA:%0_On%1(%3) public On%1(%3)ALS_CALL<%1> static stock _%0_%1(%3)
-			//#define RA:%0_%1[%2](%3) public %1(%3)<>return Bit_GetBit(Bit:gs_ALS,_:ALS_%0)&&P@(#ALS_PREFIX"_"x:#%2#,%3),1;public %1(%3)<_YCM:y>
-			//#define RA@p:%0_%1[%2](%3)<%4> public %1(%3)ALS_CALL<%1,#%2,%4>static stock _%0_%1(%3)
-			//#define RA@p:%0_%1[%2](%3)<%4> public %1(%3)<>return Bit_GetBit(Bit:gs_ALS,_:ALS_%0)&&P@(#ALS_PREFIX"_"#%2,%4),1;public %1(%3)<_YCM:y>
 			
 			#define Master_Caller() (-1)
 		#else
 			#if _YSIM_IS_STUB
-				
-				//#define foreign%0(%1); stock %0(%1){new i=Y@();W@(#%0@##,_YM@CM:%1,,);return Z@(i);}
 				#define global%0(%1)
-				
-				
-				
-				
-				// This is used to provide abstractions between different
-				// coders on the same team.  Setting a library as a stub means
-				// that people without the main implementation can use the code
-				// through remote function calls and then the whole code can be
-				// integrated in to itself.  Example use:
-				//  
-				//  #tryinclude "streamer_implementation"
-				//  #if defined _inc_streamer_implementation
-				//      #endinput
-				//  #endif
-				//  
-				//  #define YSIM_U_ENABLE
-				//  #define MASTER 10
-				//  #include "y_master"
-				//  
-				//  RF@p:CreateObject[ifff](modelid,Float:x,Float:y,Float:z)<modelid,x,y,z>;
-				//  
-				#define RF:%1[%2](%3) stock %1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN)//;stock _@%1()
-				#define RF@p:%1[%2](%3)<%4> stock %1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN)//;stock _@%1()
-				#define RF@c RF
-				#define RF@v:%1[%2](%3) stock %1(%3)U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1)//;stock _@%1()
-				//#define RF@n:%1[]() stock %1()return U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);stock _@%1()
-				#define RF@pc RF@p
-				#define RF@pv:%1[%2](%3)<%4> stock %1(%3)U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1)//;stock _@%1()
-				#define RF@pcv RF@pv
-				#define RF@vc RF@v
-				//#define RF@vn:%1[]() stock %1()U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1);stock _@%1()
-				
-				#define RF@t:%0:%1[%2](%3) stock %0:%1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN)//;stock _@%1()
-				#define RF@pt:%0:%1[%2](%3)<%4> stock %0:%1(%3)return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN)//;stock _@%1()
-				#define RF@ct RF@t
-				//#define RF@nt:%0:%1[]() stock %0:%1()return U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);stock %0:_@%1()
-				#define RF@pct RF@pt
-				
-				// Doesn't have the end bit as the function isn't included.
-				#define RS:%1[%2](%3) stock %1(%3)return Y@(),W@(#@%1,(x:#%2#),%3),S@(),Q@//;stock _@%1()
-				#define RS@p:%1[%2](%3)<%4> stock %1(%3)return Y@(),W@(#@%1,#%2,%4),S@(),Q@//;stock _@%1()
 				
 				// NOT DEFINED!  Should not be used if this is a stub.
 				#define RC
@@ -1379,61 +1259,13 @@ Natives:
 				// NOT DEFINED!  Should not be used if this is a stub.
 				#define RT
 				
-				// Remote local - only calls the local version if we're master,
-				// doesn't call the remote version.
-				//#define RL:%1[%2](%3)
-				
-				//#define RX
-				
-				//#define RP@v
-				
 				// Shortcut for y_als hooks.
-				#define RA //:%0_%1(%3)
-				//#define RA@p:%0_%1[%2](%3)<%4>
+				#define RA
 				
 				// NOT DEFINED!  Should not be used if this is a stub.
 				#define Master_Caller
 			#else
-				
-				//#define foreign%0(%1); %0(%1)<>{new i=Y@();W@(#%0@##,_YM@CM:%1,,);return Z@(i);}%0@(%1);%0(%1)<_YCM:x>{}
-				//#define global%0(%1) %0@(%1);public%0@(%1)<>{}public%0@(%1)<_YCM:y>X@(_:@Zk:%0(_YM@CP:%1,,));%0(%1)<_YCM:y>
-				//#define global%0(%1) public%0@(%1)<>{}public%0@(%1)<_YCM:y>X@(_:@Zk:_YM@CP:%0(%1,,));stock %0(%1)<_YCM:y>
-				#define global%0(%1) %0@(%1);public%0@(%1)<>{}public%0@(%1)<_YCM:y>(@Zz:X@(@Zk:_YM@CP:%0(%1,,)));stock%0(%1)<_YCM:y>
-				
-				
-				// TODO: I just realised that I have NEVER used the
-				// "Master_Caller" feature of the master system EVER, despite
-				// all the overhead involved in activating and using it...
-				// Maybe I should just remove it!  Update: Or make it optional.
-				
-				// This is a normal system with the possibility of being the
-				// master.  This is the very complicated one to write!
-				#define RF:%1[%2](%3) @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>U@(8,YSIM_RETURN,%1(%3));%1(%3)<>return U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);%1(%3)<_YCM:y>
-				
-				#define RF@p:%1[%2](%3)<%4> @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>U@(8,YSIM_RETURN,%1(%4));%1(%3)<>return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);%1(%3)<_YCM:y>
-				#define RF@c:%1[%2](%3) @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>X@(%1(%3));%1(%3)<>return Y@(),W@(#@%1,(x:#%2#),%3),Z@();%1(%3)<_YCM:y>
-				#define RF@v:%1[%2](%3) @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>%1(%3);%1(%3)<>U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1);%1(%3)<_YCM:y>
-				//#define RF@n:%1[]() forward %1R();public %1R()<>{}public %1R()<_YCM:y>U@(8,YSIM_RETURN,%1());%1()<>return U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1),V@(8,YSIM_RETURN);%1()<_YCM:y>
-				#define RF@pc:%1[%2](%3)<%4> @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>X@(%1(%4));%1(%3)<>return Y@(),W@(#@%1,#%2,%4),Z@();%1(%3)<_YCM:y>
-				#define RF@pv:%1[%2](%3)<%4> @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>%1(%4);%1(%3)<>U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1);%1(%3)<_YCM:y>
-				#define RF@pcv:%1[%2](%3)<%4> @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>%1(%4);%1(%3)<>Y@(),W@(#@%1,#%2,%4),T@();%1(%3)<_YCM:y>
-				#define RF@vc:%1[%2](%3) @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>%1(%3);%1(%3)<>Y@(),W@(#@%1,(x:#%2#),%3),T@();%1(%3)<_YCM:y>
-				//#define RF@vn:%1[]() forward %1R();public %1R()<>{}public %1R()<_YCM:y>%1();%1()<>U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1);%1()<_YCM:y>
-				
-				#define RF@t:%0:%1[%2](%3) %0:%1(%3);@%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>U@(8,YSIM_RETURN,_:%1(%3));%0:%1(%3)<>return U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);%0:%1(%3)<_YCM:y>
-				#define RF@pt:%0:%1[%2](%3)<%4> %0:%1(%3);@%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>U@(8,YSIM_RETURN,_:%1(%4));%0:%1(%3)<>return U@(8,YSIM_CALLER,_@),W@(#@%1,#%2,%4),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);%0:%1(%3)<_YCM:y>
-				#define RF@ct:%0:%1[%2](%3) %0:%1(%3);@%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>X@(_:%1(%3));%0:%1(%3)<>return Y@(),W@(#@%1,(x:#%2#),%3),%0:Z@();%0:%1(%3)<_YCM:y>
-				//#define RF@nt:%0:%1[]() forward %0:%1();forward %1R();public %1R()<>{}public %1R()<_YCM:y>U@(8,YSIM_RETURN,_:%1());%0:%1()<>return U@(8,YSIM_CALLER,_@),W@(#@%1,""),U@(8,YSIM_CALLER,-1),%0:V@(8,YSIM_RETURN);%0:%1()<_YCM:y>
-				#define RF@pct:%0:%1[%2](%3)<%4> %0:%1(%3);@%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>X@(_:%1(%4));%0:%1(%3)<>return Y@(),W@(#@%1,#%2,%4),%0:Z@();%0:%1(%3)<_YCM:y>
-				
-				//#define RS:%1[%2](%3) forward %1R(%3);public %1R(%3)<>{}public %1R(%3)<_YCM:y>R@(%1(%3));%1(%3)<>return Y@(),W@(#@%1,(x:#%2#),%3),S@();%1(%3)<_YCM:y>
-				// Remote STRING (returns a string).
-				#define RS:%1[%2](%3) @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>R@(%1(%3));%1(%3)<>return Y@(),W@(#@%1,(x:#%2#),%3),S@(),Q@;%1(%3)<_YCM:y>
-				#define RS@p:%1[%2](%3)<%4> @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>R@(%1(%4));%1(%3)<>return Y@(),W@(#@%1,#%2,%4),S@(),Q@;%1(%3)<_YCM:y>
-				
-				//#define RC:%1(%3) public %1(%3)<>return 1;public %1(%3)<_YCM:y>
-				
-				//#define RC@v:%1(%3) public %1(%3)<>{}public %1(%3)<_YCM:y>
+				#define global%0(%1) public%0@(%1)<>{}public%0@(%1)<_YCM:y>(@Zz:X@(@Zk:_YM@CP:%0(%1,,)));stock%0(%1)<_YCM:y>
 				
 				// Requires the y_hooks library.
 				#define RH:On%2(%3) hook On%2(%3)<>return ALS_R_%2;rehook On%2(%3)<_YCM:y>
@@ -1445,15 +1277,6 @@ Natives:
 				// Requires the y_timers library.
 				#define RT:%0[%1](%2) @yT_%1_%0();@yT_%1_%0()<>{}@yT_%1_%0()<_YCM:y>
 				
-				/*#if 
-					#define RC:%0(%1) forward @yC_%0(a,b[],c);@yC_%0(a,b[],c)<>{}@yC_%0(a,b[],c)<_YCM:y>U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
-				#else
-					// This code defines two publics so that if the master
-					// doesn't have a copy of the command it can still be called
-					// in another running script.
-					#define RC:%0(%1) forward @yC_%0(a,b[],c);forward @_yC%0(i,a,b,c[]);@yC_%0(a,b[],c)<>{}@yC_%0(a,b[],c)<_YCM:y>U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(i,a,b,c[])return i==_@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
-				#endif*/
-				//#if defined _YSIM_USED_AUTO
 				#if MASTER == 23
 					// Less strict (implicit user master).
 					#define RC:%0(%1) @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==_@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
@@ -1462,26 +1285,24 @@ Natives:
 					#define RC:%0(%1) @yC_%0(a,b[],c);@yC_%0(a,b[],c)<>{}@yC_%0(a,b[],c)<_YCM:y>U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 				#endif
 				
-				//#define RP@v:%1[%2](%3) forward @%1(%3);@%1(%3)<>{}@%1(%3)<_YCM:y>%1(%3);static %1(%3)<>U@(8,YSIM_CALLER,_@),W@(#@%1,(x:#%2#),%3),U@(8,YSIM_CALLER,-1);static %1(%3)<_YCM:y>
+				// This fixes the most bizzare bug I've ever encountered!
+				// Calling a native function and passing a constant string,
+				// while in the condition of the ternary operator causes the
+				// compiler to try allocate vast amounts of heap space for no
+				// apparent reason.
+				#define Master_Caller() _Master_Caller()
+				#if !defined _Master_Caller_FIRST
+					stock _Master_Caller()
+					{
+						new
+							n = getproperty(8, YSIM_CALLER);
+						if (n == -1) return _@;
+						return n;
+					}
+					#define _Master_Caller_FIRST
+				#endif
 				
-				#define Master_Caller() \
-					(((I@=V@(8,YSIM_CALLER))==-1)?(_@):(I@))
-				
-				// Remote local - only calls the local version if we're master,
-				// doesn't call the remote version.
-				//#define RL:%1[%2](%3) %1(%3)<>return 1;%1(%3)<_YCM:y>
-				
-				//#define RX:%0(%1) %0@yX_(%1);public %0@yX_(%1)<>{}public %0@yX_(%1)<_YCM:y>
-				//#define RX:%0(%1) UNIQUE_FUNCTION<@yX_...%0>(%1);UNIQUE_FUNCTION<@yX_...%0>(%1)<>{}UNIQUE_FUNCTION(@yX_...%0>(%1)<_YCM:y>
-				
-				// Shortcut for y_als hooks.
-				//#define RA:%0_%1(%3) public %1(%3)<>ALS_CALL<%1>public %1(%3)<_YCM:y>
 				#define RA:%0_On%1(%3) public On%1(%3)<>ALS_CALL<%1> public On%1(%3)<_YCM:y>
-				//#define RA:%0_%1[%2](%3) public %1(%3)<>return Bit_GetBit(Bit:gs_ALS,_:ALS_%0)&&P@(#ALS_PREFIX"_"x:#%2#,%3),1;public %1(%3)<_YCM:y>
-				//#define RA@p:%0_%1[%2](%3)<%4> public %1(%3)<>ALS_CALL<%1,#%2,%4>public %1(%3)<_YCM:y>
-				
-				//#define Master_Get(%1) state (_Master_Get(#%1)) ? (%1:y) : (%1:n)
-				//#define Master_Init(%1); if (_Master_Get(#%1)) state %1:y; else state %1:n;
 			#endif
 		#endif
 	#endif
@@ -1491,38 +1312,7 @@ Natives:
 	#define @foreign forward
 	#define global stock
 	
-	
-	
-	
-	// Master system isn't used.
-	#define RF:%1[%2](%3) stock %1(%3)
-	#define RF@p:%1[%2](%3)<%4> RF:%1[%2](%3)
-	#define RF@c RF
-	#define RF@v RF
-	//#define RF@n RF
-	#define RF@pc RF@p
-	#define RF@pv RF@p
-	#define RF@pcv RF@p
-	#define RF@vc RF
-	//#define RF@vn RF
-	
-	#define RF@t:%0:%1[%2](%3) stock %0:%1(%3)
-	#define RF@pt:%0:%1[%2](%3)<%4> RF@t:%0:%1[%2](%3)
-	#define RF@ct RF@t
-	//#define RF@nt RF@t
-	#define RF@pct RF@p
-	
-	#define RS:%1[%2](%3) stock %1(%3)
-	#define RS@p:%1[%2](%3)<%4> stock %1(%3)
-	#define RS@c RS
-	#define RS@pc RS@p
-	
-	//#define RC:%1(%3) public %1(%3)
-	//#define RC@v: RC
-	
 	#define RT:%0[%1](%2) @yT_%1_%0();@yT_%1_%0()
-	
-	//#define RP@v:%0[%1](%2) static stock %0(%2)
 	
 	#define RH:On%2(%3) hook On%2(%3)
 	
@@ -1532,18 +1322,10 @@ Natives:
 	
 	#define RC:%0(%1) @yC_%0(%1);@yC_%0(%1)
 	
-	//#define RX:%0(%1) %0@yX_(%1);public %0@yX_(%1)
-	
 	#define Master_Caller() (_@)
-	
-	// Remote local - only calls the local version if we're master,
-	// doesn't call the remote version.
-	//#define RL:%1[%2](%3) stock %1(%3)
 	
 	// Shortcut for y_als hooks.
 	#define RA:%0_On%1(%3) public On%1(%3)
-	//#define RA@p:%0_%1[%2](%3)<%4> RA:%0_%1[%2](%3)
-	//#define Master_Init(%1);
 #endif
 
 #if !YSIM_HAS_MASTER

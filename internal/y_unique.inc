@@ -1,7 +1,7 @@
 /**--------------------------------------------------------------------------**\
-					===========================
-					Y Sever Includes - INI Core
-					===========================
+					============================
+					 y_unique - Similar symbols 
+					============================
 Description:
 	Defines a symbol differently every time it is included.
 Legal:

@@ -248,7 +248,7 @@ new stock
 
 stock StripNL(str[])
 {
-	P:3("StripNL called: \"%s\"", str);
+	P:7("StripNL called: \"%s\"", str);
 	new
 		i = strlen(str);
 	while (i-- && str[i] <= ' ') str[i] = '\0';
@@ -268,7 +268,7 @@ stock StripNL(str[])
 
 stock endofline(line[], pos)
 {
-	P:3("endofline called: \"%s\", %i", line, pos);
+	P:7("endofline called: \"%s\", %i", line, pos);
 	if (pos < 0 || pos > strlen(line)) return 0;
 	while (line[pos]) if (line[pos++] > ' ') return 0;
 	return 1;
@@ -289,7 +289,7 @@ stock endofline(line[], pos)
 
 stock chrfind(needle, haystack[], start = 0)
 {
-	P:3("chrfind called: %c, \"%s\", %i", needle, haystack, start);
+	P:7("chrfind called: %c, \"%s\", %i", needle, haystack, start);
 	if (start < 0)
 	{
 		start = 0;
@@ -303,7 +303,7 @@ stock chrfind(needle, haystack[], start = 0)
 
 stock chrfindp(needle, haystack[], start = 0)
 {
-	P:3("chrfind called: %c, \"%s\", %i", needle, haystack, start);
+	P:7("chrfind called: %c, \"%s\", %i", needle, haystack, start);
 	if (start < 0)
 	{
 		start = 0;
@@ -345,7 +345,7 @@ stock chrfindp(needle, haystack[], start = 0)
 
 stock bernstein(string[])
 {
-	P:3("bernstein called: \"%s\"", string);
+	P:7("bernstein called: \"%s\"", string);
 	new
 		hash = -1,
 		i,
@@ -371,7 +371,7 @@ stock bernstein(string[])
 
 stock ishex(str[])
 {
-	P:3("ishex called: \"%s\"", str);
+	P:7("ishex called: \"%s\"", str);
 	new
 		i,
 		cur;
@@ -398,7 +398,7 @@ stock ishex(str[])
 
 stock unpack(const str[])
 {
-	P:3("unpack called: \"%s\"", str);
+	P:7("unpack called: \"%s\"", str);
 	new
 		ret[YSI_MAX_STRING] = {0};
 	if (strlen(str) <= YSI_MAX_STRING)
@@ -477,7 +477,7 @@ stock getstringarg(addr)
 
 stock isnumeric(str[])
 {
-	P:3("isnumeric called: \"%s\"", str);
+	P:7("isnumeric called: \"%s\"", str);
 	new
 		ch,
 		i;

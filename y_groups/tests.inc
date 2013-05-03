@@ -1,7 +1,8 @@
+#assert MAX_PLAYERS >= 50
+
 Test:000_y_groups_Global()
 {
 	// Need a certain number just to run this code.
-	#assert MAX_PLAYERS >= 50
 	call OnPlayerConnect(42);
 	ASSERT(Group_GetPlayer(GROUP_GLOBAL, 42));
 	//call OnPlayerDisconnect(42, 0);

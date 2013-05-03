@@ -58,6 +58,8 @@ Changelog:
 		First version
 \**--------------------------------------------------------------------------**/
 
+#define _GROUP_STOP_INCLUDES
+
 #include <a_samp>
 
 #include "y_scriptinit"
@@ -254,7 +256,7 @@ stock _Group_AddInternal(a, Group:g)
 
 static remotefunc void:_Group_FakePlayer(p,Bit:g[sizeof RG@],s)
 {
-	for (new i = 0; i != s; ++i)
+	for (new i = 0; i != sizeof (g); ++i)
 	{
 		// Set their current groups to the inverse of what they are now in.
 		YSI_gGroupPlayers[p][i] = ~g[i];
@@ -319,10 +321,18 @@ public OnScriptInit()
 		na = AMX_GetPublicPointerPrefix(0, YSI_g_sNextAddFunc, _A<_yGA>),
 		nu = AMX_GetPublicPointerPrefix(0, YSI_g_sNextUpdFunc, _A<_yGU>);
 	//printf("Group_OnScriptInit: %d, %d, %d", ni, na, nu);
-	P:5("Group_OnScriptInit: %d, %d, %d", ni, na, nu);
-	//P:1("Group_OnScriptInit end");
+	printf("Group_OnScriptInit: %d, %d, %d", ni, na, nu);
+	printf("Group_OnScriptInit: %d, %d, %d", AMX_HEADER_COD - AMX_BASE_ADDRESS, YSI_g_sNextInitFunc, AMX_HEADER_DAT - AMX_BASE_ADDRESS);
+	GROUP_CHAIN?<YSI_g_sNextInitFunc>(ni, na, nu);
 	//CallLocalFunction("_Group_SpecialInit", "");
 	heapspace();
+	#if defined _GROUP_INCLUDE_ALL_PREVIOUS
+		if (FALSE)
+		{
+			_GROUP_UNIQUE_FUNCTION();
+		}
+	#endif
+	P:1("Group_OnScriptInit end");
 	#if defined _Group_SpecialInit
 		return _Group_SpecialInit();
 	#else
@@ -710,7 +720,7 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 			if (_YCM@y)
 		#endif
 			{
-				P:2("Group_SetPlayer called: %i, %s, %s, %i", p, Bit_Display(YSI_gGroupPlayers[p]), Bit_Display(g), s);
+				P:2("_Group_SetPlayer called: %i, %s, %s, %i", p, Bit_Display(YSI_gGroupPlayers[p]), Bit_Display(g), s);
 				// http://supertech.csail.mit.edu/papers/debruijn.pdf
 				static const
 					scDeBruijn[] =
@@ -729,12 +739,12 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 					// Get the difference between the old and new groups.
 					cur = YSI_gGroupPlayers[p][i];
 					exor = g[i] ^ cur;
-					P:7("_Group_SetPlayer: Loop %d %d %d", i, _:cur, _:exor);
+					P:6("_Group_SetPlayer: Loop %d 0x%04x%04x 0x%04x%04x", i, _:cur >>> 16, _:cur & 0xFFFF, _:exor >>> 16, _:exor & 0xFFFF);
 					// Low-level bit twiddling.
 					while ((bit = exor & -exor))
 					{
 						group = i * cellbits + (scDeBruijn[(_:bit * 0x077CB531) >>> 27]);
-						P:7("_Group_SetPlayer: Add %d %d %d", p, group, _:(cur & bit));
+						P:7("_Group_SetPlayer: %d %s %d", p, _:(cur & bit) ? ("remove from") : ("add to"), group);
 						if (cur & bit)
 						{
 							// Used to have this group, now don't.
@@ -757,6 +767,7 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 	#pragma tabsize 4
 	//printf("chain");
 	GROUP_CHAIN?<YSI_g_sNextUpdFunc>(p, YSI_gGroupPlayers[p], g);
+	//printf("done");
 	// NOW save the new version, after everything else has had a chance to
 	// update according to the changes.
 	YSI_gGroupPlayers[p] = g;
@@ -893,6 +904,9 @@ global bool:Group_GetPlayer(Group:g,p)
 	if (_Group_IsValid(g) && 0 <= p < MAX_PLAYERS)
 	{
 		GROUP_FIX(g);
+		printf("%s", Bit_Display(YSI_gGroupPlayers[p]));
+		printf("%d", _:g);
+		printf("%d", _:g);
 		return Bit_Get(YSI_gGroupPlayers[p], _:g);
 		//Bit_Set(YSI_gGroupPlayers[g], p, s, bits<MAX_PLAYERS>);
 	}
@@ -1161,6 +1175,7 @@ static remotefunc void:_Group_CreateChain(Group:g)
 		i = _:Group_GetID(name);
 		if (i != _:INVALID_GROUP)
 		{
+			printf("-1");
 			MASTER_ADD<_:GROUP_TEMP_FIX(Group:i)>
 			return Group:i;
 		}
