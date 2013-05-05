@@ -321,8 +321,8 @@ public OnScriptInit()
 		na = AMX_GetPublicPointerPrefix(0, YSI_g_sNextAddFunc, _A<_yGA>),
 		nu = AMX_GetPublicPointerPrefix(0, YSI_g_sNextUpdFunc, _A<_yGU>);
 	//printf("Group_OnScriptInit: %d, %d, %d", ni, na, nu);
-	printf("Group_OnScriptInit: %d, %d, %d", ni, na, nu);
-	printf("Group_OnScriptInit: %d, %d, %d", AMX_HEADER_COD - AMX_BASE_ADDRESS, YSI_g_sNextInitFunc, AMX_HEADER_DAT - AMX_BASE_ADDRESS);
+	P:4("Group_OnScriptInit: %d, %d, %d", ni, na, nu);
+	P:4("Group_OnScriptInit: %d, %d, %d", AMX_HEADER_COD - AMX_BASE_ADDRESS, YSI_g_sNextInitFunc, AMX_HEADER_DAT - AMX_BASE_ADDRESS);
 	GROUP_CHAIN?<YSI_g_sNextInitFunc>(ni, na, nu);
 	//CallLocalFunction("_Group_SpecialInit", "");
 	heapspace();
@@ -904,9 +904,6 @@ global bool:Group_GetPlayer(Group:g,p)
 	if (_Group_IsValid(g) && 0 <= p < MAX_PLAYERS)
 	{
 		GROUP_FIX(g);
-		printf("%s", Bit_Display(YSI_gGroupPlayers[p]));
-		printf("%d", _:g);
-		printf("%d", _:g);
 		return Bit_Get(YSI_gGroupPlayers[p], _:g);
 		//Bit_Set(YSI_gGroupPlayers[g], p, s, bits<MAX_PLAYERS>);
 	}
