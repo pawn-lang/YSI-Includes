@@ -211,13 +211,7 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 		count;
 	// Search for functions whose names start with nothing.
 	while ((idx = AMX_GetPublicEntryPrefix(idx, buf, 0)))
-	//while ((idx = AMX_GetPublicEntry(idx, buf)))
 	{
-		//new
-		//	name[32];
-		//Hooks_GetName(buf, name);
-		//printf("%s %08x %d %d", unpack(name), Hooks_GetAddr(buf), name[0], name[0] == 0);
-		//if (name[0] == 0) ++count;
 		++count;
 	}
 	return count;
@@ -324,7 +318,6 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 	new
 		diff = Hooks_CountInvalidPublics() * 8,
 		oldCount = (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / 8;
-	printf("diff = %d, oldCount = %d", diff / 8, oldCount);
 	// Now I need to SORT the functions, and I have honestly no idea how to do
 	// that.  Fortunately I don't actually need to move the strings themselves
 	// around as they just sit nicely in the nametable; I only need to sort the
@@ -348,6 +341,10 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 		// Issue pull request for this.
 		ResetStaticAmxHeader();
 	}
+	// TODO: Inform the fixes2 plugin of the change.  That stores indexes, not
+	// addresses so it needs to update itself (somehow - I don't actually know
+	// HOW it will do this...)  Probably inform it first, store the addresses,
+	// then inform it again to track down and replace those addresses.
 }
 
 /**--------------------------------------------------------------------------**\
@@ -473,7 +470,6 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	
 	// Push the (fake) number of parameters.
 	@emit PUSH.C        -4
-	//printf("size = %d", size);
 	// Now loop over all our functions and insert "CALL" opcodes for them.
 	if (multiple)
 	{
@@ -647,7 +643,6 @@ _Y_HOOKS_STATIC Hooks_SpecialReturns(const string:ref[])
 
 _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:ref2[] = !"")
 {
-	printf("ref2 = %s (%s)", ref2, unpack(ref2));
 	new
 		// Uugh, special cases!
 		init = (_:!strcmp(ref, !"OnGameModeInit") << 2) | (_:!strcmp(ref, !"OnFilterScriptInit") << 1) | (_:!strcmp(ref, !"OnScriptInit")),
@@ -798,26 +793,9 @@ public OnScriptInit()
 	Hooks_InvalidateName(entry);
 	// Find all hook functions in order (at least find the first one in a set).
 	P:C(idx=0;);
-	//while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
-	while ((idx = AMX_GetPublicEntry(idx, entry)))
+	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
 	{
 		Hooks_GetName(entry, func);
-		if (func[0] != Cell_ReverseBytes(_A<@yH_>))
-		{
-			if (idx == 21)
-			{
-				printf("Nope: %d (%08x = %s)", idx - 1, Hooks_GetAddr(entry + 4), unpack(func));
-				for (new i = 0; func[i]; ++i)
-				{
-					printf("%08x = %c%c%c%c", func[i], (func[i] >>> 24) & 0xFF, (func[i] >>> 16) & 0xFF, (func[i] >>> 8) & 0xFF, (func[i] >>> 0) & 0xFF);
-				}
-			}
-			else
-			{
-				printf("Nope: %d %s", idx - 1, unpack(func));
-			}
-			continue;
-		}
 		P:2("Hooks_OnScriptInit: %s", unpack(func));
 		Hooks_IsolateName(func);
 		// Get all ones the same (and the original).
@@ -826,13 +804,11 @@ public OnScriptInit()
 	// Finally, put all our new mashed up publics back in order!
 	Hooks_SortPublics();
 	P:C(for (idx = 0; ((idx = AMX_GetPublicEntry(idx, entry))); ) { Hooks_GetName(entry, func); printf("Hooks_OnScriptInit: %03d) %s (%08x) = %08x", idx - 1, unpack(func), Hooks_GetAddr(entry + 4), Hooks_GetAddr(entry)); });
-	printf("Hooks_OnScriptInit: found %d %d %d", YSI_g_sOnFilterScriptInit, YSI_g_sOnGameModeInit, YSI_g_sOnScriptInit);
 	// Detect when there are no hooks for the init functions.
 	if (!YSI_g_sOnFilterScriptInit) AMX_GetPublicPointer(0, YSI_g_sOnFilterScriptInit, "S@@_OnFilterScriptInit", true);
 	if (!YSI_g_sOnGameModeInit) AMX_GetPublicPointer(0, YSI_g_sOnGameModeInit, "S@@_OnGameModeInit", true);
 	if (!YSI_g_sOnScriptInit) AMX_GetPublicPointer(0, YSI_g_sOnScriptInit, "S@@_OnScriptInit", true);
 	// Old method so we can hook it!
-	printf("Hooks_OnScriptInit: chain %d %d %d", YSI_g_sOnFilterScriptInit, YSI_g_sOnGameModeInit, YSI_g_sOnScriptInit);
 	if (YSI_g_sOnScriptInit)
 	{
 		#emit PUSH.C     0
@@ -921,7 +897,6 @@ public OnGameModeInit()
 {
 	if (YSI_g_sOnGameModeInit)
 	{
-		printf("OnGameModeInit %d", YSI_g_sOnGameModeInit);
 		#emit PUSH.C     0
 		#emit LCTRL      6
 		#emit ADD.C      28
