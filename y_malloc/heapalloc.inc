@@ -314,7 +314,7 @@ static const
 		"    |  [debug] AMX backtrace:                                                  |",
 		//"    |  [debug] #0 <SOME ADDRESS> in %s () from <FILE>%s|\n"
 	YSI_g_scErrorMessage3[] = 
-		"    |  [debug] #0 <SOME NUMBER> in Malloc_SolidifyHeap () from <YOUR FILE>     |\n" \
+		"    |  [debug] #0 <HEX NUMBER> in public Malloc_SolidifyTimer ()               |\n" \
 		"    |                                                                          |\n" \
 		"    | For more information, see the YSI.tl release topic.                      |\n" \
 		"    |                                                                          |\n" \

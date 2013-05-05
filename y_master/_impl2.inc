@@ -1194,17 +1194,7 @@ Natives:
 		
 		#define RA:%0_On%1(%3) public On%1(%3)
 		
-		#define Master_Caller() _Master_Caller()
-		#if !defined _Master_Caller_FIRST
-			stock _Master_Caller()
-			{
-				new
-					n = getproperty(8, YSIM_CALLER);
-				if (n == -1) return _@;
-				return n;
-			}
-			#define _Master_Caller_FIRST
-		#endif
+		#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==-1)?(_@):(I@))
 	#else
 		// Define "foreign" more generically.  If you want "server" or "none"
 		// you will need to define this specifically, otherwise you just need to
@@ -1290,17 +1280,7 @@ Natives:
 				// while in the condition of the ternary operator causes the
 				// compiler to try allocate vast amounts of heap space for no
 				// apparent reason.
-				#define Master_Caller() _Master_Caller()
-				#if !defined _Master_Caller_FIRST
-					stock _Master_Caller()
-					{
-						new
-							n = getproperty(8, YSIM_CALLER);
-						if (n == -1) return _@;
-						return n;
-					}
-					#define _Master_Caller_FIRST
-				#endif
+				#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==-1)?(_@):(I@))
 				
 				#define RA:%0_On%1(%3) public On%1(%3)<>ALS_CALL<%1> public On%1(%3)<_YCM:y>
 			#endif
@@ -1328,6 +1308,7 @@ Natives:
 	#define RA:%0_On%1(%3) public On%1(%3)
 #endif
 
+// Never used, purely for "-l" debugging purposes.
 #if !YSIM_HAS_MASTER
 	static stock const THE_CURRENT_MASTER_IS_UNSET   = MASTER;
 #elseif _YSIM_IS_CLIENT

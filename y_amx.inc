@@ -67,6 +67,7 @@ Changelog:
 //#include "internal\y_funcinc"
 #include "y_debug"
 #include "internal\y_natives"
+#include "y_cell"
 
 #define AMX_FastString(%1,%2,%3,%4) \
 	(((%1) << 0) | ((%2) << 8) | ((%3) << 16) | ((%4) << 24))
@@ -877,17 +878,41 @@ stock AMX_ReadString(addr, str[], len = sizeof (str))
 stock AMX_WriteString(addr, const str[], len = sizeof (str))
 {
 	new
+		old,
 		buffer,
 		idx;
 	do
 	{
-		// Write PACKED strings.
 		buffer = str[idx];
-		buffer = (buffer >>> 24) | (buffer >> 8 & 0x0000FF00) | (buffer << 8 & 0x00FF0000) | (buffer << 24);
+		if      (!(buffer & 0xFF000000))
+		{
+			#emit LREF.S.pri                addr
+			#emit STOR.S.pri                old
+			old &= 0xFFFFFF00;
+			#emit LOAD.S.pri                old
+			#emit SREF.S.pri                addr
+			return;
+		}
+		else if (!(buffer & 0x00FF0000))
+		{
+			#emit LREF.S.pri                addr
+			#emit STOR.S.pri                old
+			old = (old & 0xFFFF0000) | (buffer >>> 24);
+			#emit LOAD.S.pri                old
+			#emit SREF.S.pri                addr
+			return;
+		}
+		else if (!(buffer & 0x0000FF00))
+		{
+			#emit LREF.S.pri                addr
+			#emit STOR.S.pri                old
+			buffer = (old & 0xFF000000) | (buffer >>> 24) | (buffer >> 8 & 0x0000FF00);
+		}
 		// Write 4 bytes.
+		buffer = (buffer >>> 24) | (buffer >> 8 & 0x0000FF00) | (buffer << 8 & 0x00FF0000) | (buffer << 24);
 		#emit LOAD.S.pri                buffer
 		#emit SREF.S.pri                addr
-		if (!(buffer & 0x000000FF && buffer & 0x0000FF00 && buffer & 0x00FF0000 && buffer & 0xFF000000))
+		if (!(buffer & 0xFF000000))
 		{
 			return;
 		}

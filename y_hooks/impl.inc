@@ -211,7 +211,13 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 		count;
 	// Search for functions whose names start with nothing.
 	while ((idx = AMX_GetPublicEntryPrefix(idx, buf, 0)))
+	//while ((idx = AMX_GetPublicEntry(idx, buf)))
 	{
+		//new
+		//	name[32];
+		//Hooks_GetName(buf, name);
+		//printf("%s %08x %d %d", unpack(name), Hooks_GetAddr(buf), name[0], name[0] == 0);
+		//if (name[0] == 0) ++count;
 		++count;
 	}
 	return count;
@@ -318,6 +324,7 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 	new
 		diff = Hooks_CountInvalidPublics() * 8,
 		oldCount = (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / 8;
+	printf("diff = %d, oldCount = %d", diff / 8, oldCount);
 	// Now I need to SORT the functions, and I have honestly no idea how to do
 	// that.  Fortunately I don't actually need to move the strings themselves
 	// around as they just sit nicely in the nametable; I only need to sort the
@@ -337,11 +344,9 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 		// Update stored values in y_amx so they reflect the new structure.
 		AMX_Write(AMX_BASE_ADDRESS + 32, AMX_Read(AMX_BASE_ADDRESS + 32) + diff);
 		AMX_HEADER_PUBLICS += diff;
-		#if defined ResetStaticAmxHeader
-			// I'd love to be able to update ZeeX's code as well, but I can't.
-			// Issue pull request for this.
-			ResetStaticAmxHeader();
-		#endif
+		// I'd love to be able to update ZeeX's code as well, but I can't.
+		// Issue pull request for this.
+		ResetStaticAmxHeader();
 	}
 }
 
@@ -639,8 +644,10 @@ _Y_HOOKS_STATIC Hooks_SpecialReturns(const string:ref[])
 	Find all functions with the same name fragment as the one given.
 </remarks>
 \**--------------------------------------------------------------------------**/
-_Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:ref2[] = "")
+
+_Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:ref2[] = !"")
 {
+	printf("ref2 = %s (%s)", ref2, unpack(ref2));
 	new
 		// Uugh, special cases!
 		init = (_:!strcmp(ref, !"OnGameModeInit") << 2) | (_:!strcmp(ref, !"OnFilterScriptInit") << 1) | (_:!strcmp(ref, !"OnScriptInit")),
@@ -710,13 +717,14 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 	// First, the (longest) function name as that is always the "base" name.
 	entry = strlen(ref);
 	idx = strlen(ref2);
-	if (idx <= entry) AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref, idx);
+	if (idx <= entry) AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref, entry);
 	else
 	{
 		// There's a chance this won't be long enough at all!
 		if (!strcmp(ref2, YSI_gscOnPlayerEnterRaceCP))
 		{
 			Hooks_ForceReverse(YSI_gscOnPlayerEnterRaceCP);
+			P:5("Hooks_GetSame: REVERSED: %s", unpack(YSI_gscOnPlayerEnterRaceCP));
 			// VERY special case.  The space used to hold the hook name is not
 			// long enough to hold the original callback's full name!  In this
 			// case we point the function header at somewhere deep inside the
@@ -737,7 +745,8 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 		}
 		else
 		{
-			AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref2, entry);
+			P:5("Hooks_GetSame: WRITE: %08x %08x: %s (%d)", AMX_Read(original + 4), AMX_Read(AMX_BASE_ADDRESS + AMX_Read(original + 4)), unpack(ref2), idx);
+			AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref2, idx);
 		}
 	}
 	// Write our new function (HARD).
@@ -777,6 +786,7 @@ public OnScriptInit()
 		func[32],
 		entry,
 		idx;
+	P:C(for (idx = 0; ((idx = AMX_GetPublicEntry(idx, entry))); ) { Hooks_GetName(entry, func); printf("Hooks_OnScriptInit: %03d) %s (%08x) = %08x", idx - 1, unpack(func), Hooks_GetAddr(entry + 4), Hooks_GetAddr(entry)); });
 	// Get our code space relative to "DAT".
 	entry = AMX_HEADER_PUBLICS + funcidx("_@_y_hooks_@_0") * 8;
 	YSI_g_sCodeSpace = AMX_HEADER_COD + AMX_Read(entry);
@@ -787,9 +797,27 @@ public OnScriptInit()
 	YSI_g_sCodeEnd = AMX_HEADER_COD + AMX_Read(entry) + 8;
 	Hooks_InvalidateName(entry);
 	// Find all hook functions in order (at least find the first one in a set).
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
+	P:C(idx=0;);
+	//while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
+	while ((idx = AMX_GetPublicEntry(idx, entry)))
 	{
 		Hooks_GetName(entry, func);
+		if (func[0] != Cell_ReverseBytes(_A<@yH_>))
+		{
+			if (idx == 21)
+			{
+				printf("Nope: %d (%08x = %s)", idx - 1, Hooks_GetAddr(entry + 4), unpack(func));
+				for (new i = 0; func[i]; ++i)
+				{
+					printf("%08x = %c%c%c%c", func[i], (func[i] >>> 24) & 0xFF, (func[i] >>> 16) & 0xFF, (func[i] >>> 8) & 0xFF, (func[i] >>> 0) & 0xFF);
+				}
+			}
+			else
+			{
+				printf("Nope: %d %s", idx - 1, unpack(func));
+			}
+			continue;
+		}
 		P:2("Hooks_OnScriptInit: %s", unpack(func));
 		Hooks_IsolateName(func);
 		// Get all ones the same (and the original).
@@ -797,12 +825,14 @@ public OnScriptInit()
 	}
 	// Finally, put all our new mashed up publics back in order!
 	Hooks_SortPublics();
+	P:C(for (idx = 0; ((idx = AMX_GetPublicEntry(idx, entry))); ) { Hooks_GetName(entry, func); printf("Hooks_OnScriptInit: %03d) %s (%08x) = %08x", idx - 1, unpack(func), Hooks_GetAddr(entry + 4), Hooks_GetAddr(entry)); });
+	printf("Hooks_OnScriptInit: found %d %d %d", YSI_g_sOnFilterScriptInit, YSI_g_sOnGameModeInit, YSI_g_sOnScriptInit);
 	// Detect when there are no hooks for the init functions.
 	if (!YSI_g_sOnFilterScriptInit) AMX_GetPublicPointer(0, YSI_g_sOnFilterScriptInit, "S@@_OnFilterScriptInit", true);
 	if (!YSI_g_sOnGameModeInit) AMX_GetPublicPointer(0, YSI_g_sOnGameModeInit, "S@@_OnGameModeInit", true);
 	if (!YSI_g_sOnScriptInit) AMX_GetPublicPointer(0, YSI_g_sOnScriptInit, "S@@_OnScriptInit", true);
 	// Old method so we can hook it!
-	P:2("Hooks_OnScriptInit: chain %d", YSI_g_sOnScriptInit);
+	printf("Hooks_OnScriptInit: chain %d %d %d", YSI_g_sOnFilterScriptInit, YSI_g_sOnGameModeInit, YSI_g_sOnScriptInit);
 	if (YSI_g_sOnScriptInit)
 	{
 		#emit PUSH.C     0

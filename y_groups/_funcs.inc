@@ -63,6 +63,7 @@ Changelog:
 #undef _inc__funcs
 #include "..\y_groups/setup"
 #include "..\internal\y_shortfunc"
+#include "..\y_iterate"
 
 #if !defined _GROUP_MAKE_TAG
 	#define _GROUP_MAKE_TAG _
@@ -129,7 +130,7 @@ static stock
 			// Should never be needed.
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Client_Set>
 		#elseif _YSIM_IS_SERVER
-			#define _gchain%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2);for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
+			#define _gchain%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#elseif _YSIM_IS_STUB
 			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
@@ -153,17 +154,17 @@ static stock
 			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Client_Set>
 		#elseif _YSIM_IS_SERVER
-			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)
+			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#elseif _YSIM_IS_STUB
 			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Stub_Set>
 		#else
-			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)<>_UNUSED(%2);stock _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>
+			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);stock _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#endif
 	#else
-		#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)_UNUSED(%2);
+		#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 		#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 	#endif
 #else
@@ -172,17 +173,17 @@ static stock
 			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Client_Set>
 		#elseif _YSIM_IS_SERVER
-			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
+			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#elseif _YSIM_IS_STUB
 			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Stub_Set>
 		#else
-			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)<>_UNUSED(%2);static stock _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>
+			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);static stock _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#endif
 	#else
-		#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
+		#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 		#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 	#endif
 #endif
