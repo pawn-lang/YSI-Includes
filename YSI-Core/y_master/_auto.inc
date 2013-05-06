@@ -141,7 +141,7 @@ Natives:
 
 // Reserve this number (only in terms of not using it).
 //#define DEFAULT_USER_COMMAND_MASTER   23
-
+/*
 // Classes are set as master number 22
 #if defined _inc_y_classes
 	#if !defined _YCM_w@ // w is letter 22
@@ -153,7 +153,7 @@ Natives:
 		#endinput
 	#endif
 #endif
-
+*/
 // Languages are set as master number 21.  This is the first library I've done
 // since largely finishing the y_master system (I hope anyway) and it is now, I
 // have to say, VERY smooth adding in a new YSI mastered library!  Actually, I
@@ -188,7 +188,7 @@ Natives:
 		#endinput
 	#endif
 #endif
-
+/*
 // PHP is set as master number 17
 #if defined _inc_y_php
 	#if !defined _YCM_r@ // r is letter 17
@@ -196,7 +196,7 @@ Natives:
 		#endinput
 	#endif
 #endif
-
+*/
 // Incognito's streamer is set as master number 16
 #if defined _inc_streamer
 	#if !defined _YCM_q@ // q is letter 16
@@ -223,6 +223,28 @@ Natives:
 #if defined _inc_y_zonenames
 	#if !defined _YCM_n@ // o is letter 14
 		#define MASTER                  13
+		#endinput
+	#endif
+#endif
+
+// PHP has been moved to master number 12 to avoid conflicts with ZeeX'z
+// "amx" library.
+#if defined _inc_y_php
+	#if !defined _YCM_m@ // r is letter 17
+		#define MASTER                  12
+		#endinput
+	#endif
+#endif
+
+// Classes have been moved to master number 11 to avoid conflicts with ZeeX'z
+// "amx" library.
+#if defined _inc_y_classes
+	#if !defined _YCM_l@ // w is letter 22
+		#define MASTER                  11
+		//#if defined _inc_y_classes_do
+		//	// Make sure only the implementation file calls y_master.
+		//	#define YSIM_DISABLE_RECALL
+		//#endif
 		#endinput
 	#endif
 #endif
