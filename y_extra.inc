@@ -1,18 +1,16 @@
-#tryinclude <sscanf2>
+#undef _inc_y_ini
+//#include "..\YSI-Storage\y_ini"
 
-#if !defined _inc_sscanf2 || !defined WP_Hash
-	#error y_extra requires plugins - please install sscanf and whirlpool.
-#endif
+static stock Use@@YSI_Storage@y_ini()
+{
+}
 
-// If you want to use y_extra, you need to use these (but nothing else).
-#include "y_commands"
-#include "y_text"
+#pragma deprecated Use@@YSI_Storage@y_ini
 
-#if defined _inc_y_users
-	#include "extra\y_extra_users"
-#endif
+forward YSI@y_ini();
 
-// Don't need to check for y_languages being included as it's done by y_text.
-#include "extra\y_extra_languages"
+public YSI@y_ini()
+{
+	Use@@YSI_Storage@y_ini();
+}
 
-#include "extra\y_extra_other"
