@@ -324,26 +324,21 @@ stock Bitmap_DrawRing(Bitmap:ctx, x, y, Float:inner, Float:outer, colour, patter
 					// Otherwise don't draw anything at all - we are outside the ring.
 					continue;
 				}
-				if (suba <= 0xFF)
+				if (suba >= 0xFF00)
 				{
-					continue;
+					YSI_gMallocMemory[read] = colour;
 				}
-				else if (suba >= 0xFF00)
-				{
-					suba = colour;
-				}
-				else if (suba >= 256)
+				else if (suba > 0xFF)
 				{
 					// This is where we compensate for the odd shifts.
 					na = 0xFF00 - suba,
 					// Want this pixel in the final image.
 					orig = YSI_gMallocMemory[read],
-					suba = 0xFF |
+					YSI_gMallocMemory[read] = 0xFF |
 						((((orig & 0xFF000000) >>> 16) * na + r * suba) & 0xFF000000) |
 						((((orig & 0x00FF0000) >>> 16) * na + g * suba) & 0x00FF0000) |
 						(((((orig & 0x0000FF00) >>> 8) * na + b * suba) & 0x00FF0000) >>> 8) ;
 				}
-				YSI_gMallocMemory[read] = suba;
 			}
 		}
 	}
