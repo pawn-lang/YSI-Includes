@@ -209,6 +209,7 @@ static stock _Bitmap_RectangleRecopy(n, BitArray:pattern<PATTERN_MASK_X>)
 
 stock Bitmap_DrawCircle(Bitmap:ctx, const x, const y, const Float:radius, fillColour, lineColour = 0, linePattern[] = "SOLID", fillPattern[] = "SOLID")
 {
+	P:3("Bitmap_DrawCircle called: %d, %d, %d, %.2f, 0x%04x%04x, 0x%04x%04x, \"%s\", \"%s\"", _:ctx, x, y, radius, fillColour >>> 16, fillColour & 0xFFFF, lineColour >>> 16, lineColour & 0xFFFF, linePattern, fillPattern);
 	Bitmap_DrawRing(ctx, x, y, 0.0, radius, fillColour, fillPattern);
 }
 
@@ -234,7 +235,7 @@ stock Bitmap_DrawCircle(Bitmap:ctx, const x, const y, const Float:radius, fillCo
 
 stock Bitmap_DrawRing(Bitmap:ctx, x, y, Float:inner, Float:outer, colour, pattern[] = "SOLID")
 {
-	if (inner < 0.0) inner = 0.0;
+	P:3("Bitmap_DrawRing called: %d, %d, %d, %.2f, %.2f, 0x%04x%04x, \"%s\"", _:ctx, x, y, inner, outer, colour >>> 16, colour & 0xFFFF, pattern);
 	new
 		rad = max(floatround(outer, floatround_ceil), 0);
 	if (rad == 0) return;
@@ -242,20 +243,34 @@ stock Bitmap_DrawRing(Bitmap:ctx, x, y, Float:inner, Float:outer, colour, patter
 		width = Bitmap_Width(ctx),
 		// Get the circle bounds.
 		minY = max(0, y - rad),
-		maxY = min(y + rad, Bitmap_Height(ctx)),
+		maxY = min(y + rad + 1, Bitmap_Height(ctx)),
 		minX = max(0, x - rad),
-		maxX = min(x + rad, width),
+		maxX = min(x + rad + 1, width),
 		// Get the approximate edges of the circle so we know how much blending
 		// to use on the outer pixels.
-		Float:outerMax = (outer * outer) + 1.0,
-		Float:outerMin = outerMax - 2.0,
-		Float:innerMax = (inner * inner) + 1.0,
-		Float:innerMin = innerMax - 2.0;
+		Float:outerMax = outer + 1.0,
+		Float:rootMax = outer - 1.0,
+		Float:outerMin = rootMax * rootMax,
+		Float:innerMax = inner + 1.0,
+		Float:rootMin = inner - 1.0,
+		Float:innerMin;
+	outerMax *= outerMax,
+	innerMax *= innerMax;
+	if (inner <= 0.0)
+	{
+		inner = 0.0;
+		//innerMin = 0.0;
+	}
+	else innerMin = rootMin * rootMin;
+	//new
+	//	Float:outerDiff = outerMax - outerMin,
+	//	Float:innerDiff = innerMax - innerMin;
 	_Bitmap_MakePattern(pattern, minX, minY, 0, 0);
 	new
 		ya,
 		// Get the float co-ordinates for ease of calculation.
-		Float:fX = float(-rad), // Converted back from the integer version to
+		Float:fX = float(-rad), // Converted back from the integer version to.
+		Float:fXX,
 		Float:fY = float(-rad), // Make up for rounding errors.
 		Float:fYY,
 		Float:pos,
@@ -267,22 +282,53 @@ stock Bitmap_DrawRing(Bitmap:ctx, x, y, Float:inner, Float:outer, colour, patter
 		g = ((colour & 0x00FF0000) >>> 16),
 		b = ((colour & 0x0000FF00) >>>  8),
 		orig;
+	P:5("Bitmap_DrawRing: minX = %d, minY = %d, width = %d, height = %d", minX, minY, width, Bitmap_Height(ctx));
 	for (y = minY; y != maxY; ++y, ++fY)
 	{
 		// "y" portion of the radius calculation.
 		fYY = fY * fY,
 		read = Bitmap_IndexInt(ctx, minX, width, y),
 		ya = y % YSI_gBitmapAlphaY;
-		for (x = minX; x != maxX; ++x, ++fX, ++read)
+		P:6("Bitmap_DrawRing: 4: %.2f, %d, %d", fYY, read, ya);
+		fXX = fX;
+		for (x = minX; x != maxX; ++x, ++fXX, ++read)
 		{
-			pos = fX * fX + fYY;
+			pos = fXX * fXX + fYY;
+			P:7("Bitmap_DrawRing: 5: %.2f <= %.2f <= %.2f", outerMin, pos, outerMax);
 			// Slightly redundant check if "inner" is 0.0, but in that case will
 			// at least never fail!
 			if (pos >= innerMin)
 			{
 				// Calculate the full colour.
 				suba = YSI_gBitmapAlpha[ya]{x % YSI_gBitmapAlphaX} * a;
-				if (suba == 0xFF00)
+				if (inner != 0.0 && pos <= innerMax)
+				{
+					// Draw partially (blending for the ring inner edge).
+					//YSI_gMallocMemory[read] = 0xFF; // Black for now.
+					suba = floatround((floatsqroot(pos) - rootMin) / 2.0 * float(suba));
+				}
+				else if (pos <= outerMin)
+				{
+					// Draw fully (part of the ring).
+					//YSI_gMallocMemory[read] = suba;
+					// Do nothing, but also don't end.
+				}
+				else if (pos <= outerMax)
+				{
+					// Draw partially (blending for the ring outer edge).
+					//YSI_gMallocMemory[read] = 0xFF; // Black for now.
+					suba = floatround((1.0 - (floatsqroot(pos) - rootMax) / 2.0) * float(suba));
+				}
+				else
+				{
+					// Otherwise don't draw anything at all - we are outside the ring.
+					continue;
+				}
+				if (suba <= 0xFF)
+				{
+					continue;
+				}
+				else if (suba >= 0xFF00)
 				{
 					suba = colour;
 				}
@@ -297,28 +343,8 @@ stock Bitmap_DrawRing(Bitmap:ctx, x, y, Float:inner, Float:outer, colour, patter
 						((((orig & 0x00FF0000) >>> 16) * na + g * suba) & 0x00FF0000) |
 						(((((orig & 0x0000FF00) >>> 8) * na + b * suba) & 0x00FF0000) >>> 8) ;
 				}
-				else
-				{
-					// Useless colour.
-					continue;
-				}
-				if (inner != 0.0 && pos <= innerMax)
-				{
-					// Draw partially (blending for the ring inner edge).
-					YSI_gMallocMemory[read] = 0xFF; // Black for now.
-				}
-				else if (pos < outerMin)
-				{
-					// Draw fully (part of the ring).
-					YSI_gMallocMemory[read] = suba;
-				}
-				else if (pos <= outerMax)
-				{
-					// Draw partially (blending for the ring outer edge).
-					YSI_gMallocMemory[read] = 0xFF; // Black for now.
-				}
+				YSI_gMallocMemory[read] = suba;
 			}
-			// Otherwise don't draw anything at all - we are outside the ring.
 		}
 	}
 }
