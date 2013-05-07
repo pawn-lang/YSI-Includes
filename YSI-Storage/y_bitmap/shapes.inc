@@ -184,3 +184,141 @@ static stock _Bitmap_RectangleRecopy(n, BitArray:pattern<PATTERN_MASK_X>)
 		YSI_gBitmapAlpha[y] = pattern;
 	}
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>Bitmap_DrawRectangle</summary>
+<param name="Bitmap:ctx">The bitmap to modify.</param>
+<param name="const x">The x co-ordinate of the circle centre.</param>
+<param name="const y">The y co-ordinate of the circle centre.</param>
+<param name="const Float:radius">The size of the circle.</param>
+<param name="fillColour">The colour of the inside of the circle.</param>
+<param name="lineColour = 0">The colour of the circle border.</param>
+<param name="linePattern[] = \"SOLID\"">How to draw the inside.</param>
+<param name="fillPattern[] = \"SOLID\"">How to draw the border.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	This function draws a circle centered on the given co-ordinates with the
+	given FLOAT radius, not an integer size because of diagonals. It can also
+	draw a border around the circle OUTSIDE the specified area of the circle.
+	If you want the border within the area specified you need to use a smaller
+	area.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Bitmap_DrawCircle(Bitmap:ctx, const x, const y, const Float:radius, fillColour, lineColour = 0, linePattern[] = "SOLID", fillPattern[] = "SOLID")
+{
+	Bitmap_DrawRing(ctx, x, y, 0.0, radius, fillColour, fillPattern);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Bitmap_DrawRectangle</summary>
+<param name="Bitmap:ctx">The bitmap to modify.</param>
+<param name="x">The x co-ordinate of the ring centre.</param>
+<param name="y">The y co-ordinate of the ring centre.</param>
+<param name="const Float:inner">The inner size of the ring.</param>
+<param name="const Float:outer">The outer size of the ring.</param>
+<param name="colour">The colour of the ring.</param>
+<param name="pattern[] = \"SOLID\"">How to draw the inside.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	This function draws a ring centered on the given co-ordinates with the
+	given FLOAT radius, not an integer size because of diagonals.  This does not
+	draw a border as it is used for borders, and a border on a ring is ambiguous
+	- do you have it on the inside or not?  Better to let the user decide.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Bitmap_DrawRing(Bitmap:ctx, x, y, Float:inner, Float:outer, colour, pattern[] = "SOLID")
+{
+	if (inner < 0.0) inner = 0.0;
+	new
+		rad = max(floatround(outer, floatround_ceil), 0);
+	if (rad == 0) return;
+	new
+		width = Bitmap_Width(ctx),
+		// Get the circle bounds.
+		minY = max(0, y - rad),
+		maxY = min(y + rad, Bitmap_Height(ctx)),
+		minX = max(0, x - rad),
+		maxX = min(x + rad, width),
+		// Get the approximate edges of the circle so we know how much blending
+		// to use on the outer pixels.
+		Float:outerMax = (outer * outer) + 1.0,
+		Float:outerMin = outerMax - 2.0,
+		Float:innerMax = (inner * inner) + 1.0,
+		Float:innerMin = innerMax - 2.0;
+	_Bitmap_MakePattern(pattern, minX, minY, 0, 0);
+	new
+		ya,
+		// Get the float co-ordinates for ease of calculation.
+		Float:fX = float(-rad), // Converted back from the integer version to
+		Float:fY = float(-rad), // Make up for rounding errors.
+		Float:fYY,
+		Float:pos,
+		read,
+		a = (colour & 0xFF) + 1,
+		na,
+		suba,
+		r = ((colour & 0xFF000000) >>> 16),
+		g = ((colour & 0x00FF0000) >>> 16),
+		b = ((colour & 0x0000FF00) >>>  8),
+		orig;
+	for (y = minY; y != maxY; ++y, ++fY)
+	{
+		// "y" portion of the radius calculation.
+		fYY = fY * fY,
+		read = Bitmap_IndexInt(ctx, minX, width, y),
+		ya = y % YSI_gBitmapAlphaY;
+		for (x = minX; x != maxX; ++x, ++fX, ++read)
+		{
+			pos = fX * fX + fYY;
+			// Slightly redundant check if "inner" is 0.0, but in that case will
+			// at least never fail!
+			if (pos >= innerMin)
+			{
+				// Calculate the full colour.
+				suba = YSI_gBitmapAlpha[ya]{x % YSI_gBitmapAlphaX} * a;
+				if (suba == 0xFF00)
+				{
+					suba = colour;
+				}
+				else if (suba >= 256)
+				{
+					// This is where we compensate for the odd shifts.
+					na = 0xFF00 - suba,
+					// Want this pixel in the final image.
+					orig = YSI_gMallocMemory[read],
+					suba = 0xFF |
+						((((orig & 0xFF000000) >>> 16) * na + r * suba) & 0xFF000000) |
+						((((orig & 0x00FF0000) >>> 16) * na + g * suba) & 0x00FF0000) |
+						(((((orig & 0x0000FF00) >>> 8) * na + b * suba) & 0x00FF0000) >>> 8) ;
+				}
+				else
+				{
+					// Useless colour.
+					continue;
+				}
+				if (inner != 0.0 && pos <= innerMax)
+				{
+					// Draw partially (blending for the ring inner edge).
+					YSI_gMallocMemory[read] = 0xFF; // Black for now.
+				}
+				else if (pos < outerMin)
+				{
+					// Draw fully (part of the ring).
+					YSI_gMallocMemory[read] = suba;
+				}
+				else if (pos <= outerMax)
+				{
+					// Draw partially (blending for the ring outer edge).
+					YSI_gMallocMemory[read] = 0xFF; // Black for now.
+				}
+			}
+			// Otherwise don't draw anything at all - we are outside the ring.
+		}
+	}
+}
