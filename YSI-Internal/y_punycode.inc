@@ -5,7 +5,12 @@
 Description:
 	Functions for converting unicode strings to and from punycode, to be
 	represented in just ASCII characters.  Based on several public
-	implementations and the RFC, adapted for PAWN.
+	implementations and the RFC, adapted for PAWN.  For more information see:
+	
+	https://en.wikipedia.org/wiki/Punycode
+	
+	Also includes a function that hooks the "HTTP" function to allow for
+	internationalised domain names with that function.
 Legal:
 	Version: MPL 1.1
 	
@@ -19,7 +24,7 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI malloc include.
+	The Original Code is the YSI punycode include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright (C) 2011
@@ -51,6 +56,8 @@ Legal:
 Version:
 	0.1
 Changelog:
+	29/04/13:
+		Added Puny_HTTP.
 	26/04/13:
 		First version.
 Functions:
@@ -61,6 +68,7 @@ Functions:
 	Stock:
 		Puny_Encode - Convert a Unicode string to Punycode.
 		Puny_Decode - Convert a Punycode string to Unicode.
+		Puny_HTTP - Wrapper for "HTTP" to encode domain names.
 	Static:
 		-
 	Inline:
@@ -85,17 +93,23 @@ Variables:
 Commands:
 	-
 Compile options:
-	-
+	PUNY_HTTP_HOOK - Use the new HTTP version?
 Operators:
 	-
 \**--------------------------------------------------------------------------**/
 
-#include "y_version"
-#include "y_shortfunc"
-#include "y_pp"
+#include "..\YSI-Internal\y_version"
+#include "..\YSI-Internal\y_pp"
+#include "..\YSI-Core\y_debug"
+
+#include <a_http>
+
+#define string:
 
 #define PUNY_BASE (36)
 #define PUNY_CHAR ('-')
+// Some versions use "-1" or "cellmax", the RFC uses "PUNY_BASE".
+#define PUNY_INVL PUNY_BASE
 
 static stock const
 	PUNY_TMIN = 1,
@@ -104,21 +118,20 @@ static stock const
 	PUNY_BIAS = 72,
 	PUNY_INIT = 128,
 	PUNY_DAMP = 700,
-	// Some versions use "-1" or "cellmax", the RFC uses "PUNY_BASE".
 	YSI_gscDecoder[128] =
 		{
-			PP_LOOP<48>(PUNY_BASE)(,),
+			PP_LOOP<48>(PUNY_INVL)(,),
 			// '0' - '9'.
 			26, 27, 28, 29, 30, 31, 32, 33, 34, 35,
-			PP_LOOP<7>(PUNY_BASE)(,),
+			PP_LOOP<7>(PUNY_INVL)(,),
 			// 'A' - 'Z'.
 			 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
 			16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
-			PP_LOOP<6>(PUNY_BASE)(,),
+			PP_LOOP<6>(PUNY_INVL)(,),
 			// 'a' - 'z'.
 			 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
 			16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
-			PP_LOOP<5>(PUNY_BASE)(,)
+			PP_LOOP<5>(PUNY_INVL)(,)
 		};
 
 /**--------------------------------------------------------------------------**\
@@ -126,7 +139,7 @@ static stock const
 <param name="dst">Where to store the converted string.</param>
 <param name="src">The string to convert.</param>
 <param name="wlen">The length of the destination.</param>
-<param name="delimiter">What character to place between the parts.</param>
+<param name="delimiter">What character is between the parts.</param>
 <returns>
 	-
 </returns>
@@ -190,7 +203,6 @@ stock Puny_Decode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 		sTinyString[0] = n,
 		strins(dst, sTinyString, delta++, wlen + 1);
 	}
-	//dst[codePointsWritten] = '\0';
 	return 1;
 }
 
@@ -199,7 +211,7 @@ stock Puny_Decode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 <param name="dst">Where to store the converted string.</param>
 <param name="src">The string to convert.</param>
 <param name="wlen">The length of the destination.</param>
-<param name="delimiter">What character is between the parts.</param>
+<param name="delimiter">What character to place between the parts.</param>
 <returns>
 	-
 </returns>
@@ -223,7 +235,7 @@ stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 		}
 	}
 	// Wrote out all the characters.
-	if (widx == rlen) return (dst[widx] = '\0'), 1;
+	if (widx == rlen) return (dst[widx] = '\0'), -1;
 	if (widx < wlen) dst[widx++] = delimiter;
 	else return (dst[widx] = '\0');
 	// Set up punycode variables.
@@ -273,7 +285,7 @@ stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>Puny_Basic</summary>
+<summary>_Puny_Basic</summary>
 <param name="num">The single number to encode.</param>
 <returns>
 	-
@@ -283,7 +295,7 @@ stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Puny_Basic(%0) (((%0) > 25) ? ((%0) + ('0' - 25)) : ((%0) + 'a'))
+#define _Puny_Basic(%0) (((%0) > 25) ? ((%0) + ('0' - 25)) : ((%0) + 'a'))
 
 /**--------------------------------------------------------------------------**\
 <summary>Puny_EncodeVar</summary>
@@ -315,11 +327,11 @@ static stock Puny_EncodeVar(bias, delta, dst[], wlen)
 		if (delta < t) break;
 		new
 			c = t + (delta - t) % (PUNY_BASE - t);
-		dst[i++] = Puny_Basic(c),
+		dst[i++] = _Puny_Basic(c),
 		delta = (delta - t) / (PUNY_BASE - t),
 		k += PUNY_BASE;
 	}
-	if (i < wlen) dst[i++] = Puny_Basic(delta);
+	if (i < wlen) dst[i++] = _Puny_Basic(delta);
 	return i;
 }
 
@@ -339,7 +351,7 @@ static stock Puny_EncodeVar(bias, delta, dst[], wlen)
 
 static stock Puny_Adapt(delta, length, bool:firstTime)
 {
-	if(firstTime) delta /= PUNY_DAMP;
+	if (firstTime) delta /= PUNY_DAMP;
 	else delta >>>= 1;
 	delta += delta / length;
 	new
@@ -352,6 +364,100 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 	return k + (PUNY_BASE - PUNY_TMIN + 1) * delta / (delta + PUNY_SKEW);
 }
 
-#undef Puny_Basic
+
+/**--------------------------------------------------------------------------**\
+<summary>Puny_HTTP</summary>
+<param name="index">The HTTP reference index.</param>
+<param name="type">How the request should be sent.</param>
+<param name="url[]">The (internationalised) URL address.</param>
+<param name="data[]">The GET/POST data.</param>
+<param name="callback[]">Which function to return the data to.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Hooks the "HTTP" function.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#if defined PUNY_HTTP_HOOK
+	stock Puny_HTTP(index, type, url[], data[], callback[])
+	{
+		static
+			sPart[64], // Maximum legal domain part length.
+			sEncoded[256]; // Maximum legal hostname length.
+		new
+			idx = strfind(url, !"://");
+		// Skip any prefix.
+		if (idx != -1) idx += 2;
+		// Add the protocol.
+		sEncoded[0] = '\0',
+		strcat(sEncoded, url, idx + 2);
+		// Encode all parts.
+		new
+			prev = idx + 1,
+			end = strfind(url, !"/", false, prev);
+		if (end == -1) end = strlen(url); // Nothing after the main domain.
+		do
+		{
+			// Find the size of one part.
+			idx = strfind(url, !".", false, prev);
+			// Only encode the domain part.
+			if (!(-1 < idx < end)) idx = end;
+			static
+				ch;
+			// There's no length parameter for "Puny_Encode", so we need a limit.
+			ch = url[idx],
+			url[idx] = sPart[0] = '\0';
+			switch (Puny_Encode(sPart, url[prev]))
+			{
+				// Encoding error.
+				case 0: return 0;
+				// Encoded something, add the prefix.
+				case 1:
+				{
+					// The hyphen at the start is the only one - no latin chars.
+					if (sPart[0] == '-' && strfind(sPart, !"-", false, 1) == -1) format(sEncoded, sizeof (sEncoded), "%sxn-%s%c", sEncoded, sPart, ch);
+					else format(sEncoded, sizeof (sEncoded), "%sxn--%s%c", sEncoded, sPart, ch);
+					#if defined _DEBUG
+						#if _DEBUG >= 1
+							static
+								sDecoded[64];
+							Puny_Decode(sDecoded, sPart);
+							P:5("Puny_HTTP Original: \"%s\", Encoded: \"%s\", Decoded: \"%s\"", url[prev], sPart, sDecoded);
+							if (strcmp(url[prev], sDecoded)) P:E("Puny_Decode did not match Puny_Encode");
+						#endif
+					#endif
+				}
+				// No special characters.
+				case -1: format(sEncoded, sizeof (sEncoded), "%s%s%c", sEncoded, sPart, ch);
+			}
+			// Restore the data.
+			url[idx] = ch,
+			prev = idx + 1;
+		}
+		while (idx < end);
+		// Add the remainder of the domain.
+		if (url[end]) strcat(sEncoded, url[end + 1]);
+		#if defined _DEBUG
+			P:2("Puny_HTTP Domain: \"%s\" -> \"%s\"", url, sEncoded);
+		#endif
+		// Call the original "HTTP".
+		return HTTP(index, type, sEncoded, data, callback);
+	}
+	
+	#if defined _ALS_HTTP
+		#undef HTTP
+	#else
+		
+		native BAD_HTTP(index, type, url[], data[], callback[]) = HTTP;
+		
+		#define _ALS_HTTP
+	#endif
+	#define HTTP Puny_HTTP
+#endif
+
+#undef _Puny_Basic
 #undef PUNY_BASE
 #undef PUNY_CHAR
+#undef PUNY_INVL
