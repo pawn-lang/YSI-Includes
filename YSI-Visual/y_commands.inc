@@ -188,6 +188,8 @@ Compile options:
 
 #include "..\YSI-Coding\y_hooks"
 
+#include "..\YSI-Server\y_punycode"
+
 stock _YSI_HAS_y_commands(_do_not_call_me_ever_, _like_never_)
 {
 	P:E("You called _YSI_HAS_y_commands!  Bad, don't do that!", _do_not_call_me_ever_, _like_never_);
@@ -282,8 +284,8 @@ enum E_COMMANDS
 	#if YSIM_HAS_MASTER
 		E_COMMANDS_MASTERS,
 	#endif
+	E_COMMANDS_AMX_ADDRESS,
 	E_COMMANDS_FUNC_POINTER
-	//E_COMMANDS_AMX_ADDRESS,
 }
 
 static stock
@@ -343,6 +345,7 @@ static stock
 	#define Command_GetPointer(%1) \
 		(YSI_g_sCommands[(%1)][E_COMMANDS_FUNC_POINTER])
 #endif
+
 /**--------------------------------------------------------------------------**\
 <summary>Command_GetProvider</summary>
 <param name="index">Index of the command to operate on.</param>
@@ -869,7 +872,6 @@ foreign void:Command_Generate();
 global void:Command_Generate()
 {
 	P:2("Command_Generate called");
-	P:2("Command_Generate called");
 	if (!Command_IsSorted())
 	{
 		P:2("Command_Generate: Count = %d", YSI_g_sCommandCount);
@@ -1296,8 +1298,8 @@ global void:Command_Touch(command)
 			//}
 		}
 		else
-		{
 	#endif
+		{
 			while ((pointer = Bintree_FindValue(YSI_g_sSearchTree, value, leaf)) != BINTREE_NOT_FOUND)
 			{
 				//new
@@ -1312,9 +1314,7 @@ global void:Command_Touch(command)
 				if (!strcmp(Command_Name(pointer), data)) return pointer;
 				//if (!strcmp(Command_Name(pointer), data) && (Command_GetProvider(pointer) == 0xFF || Command_GetProvider(pointer) == provider)) return pointer;
 			}
-	#if YSIM_HAS_MASTER
 		}
-	#endif
 	P:5("Command_FindFast: Not found");
 	return COMMAND_NOT_FOUND;
 }
@@ -1635,18 +1635,14 @@ static stock Command_Hash(command[], &index, &length)
 	new
 		hash = -1,
 		ch;
-	length = index;
+	//length = index;
 	while ((ch = command[index++]) > ' ') hash = hash * 33 + TOLOWER(ch);
-	length = index - length - 1;
-	while (ch)
+	//--index;
+	length = index--; // - length;
+	while ('\0' < ch <= ' ')
 	{
-		if (ch > ' ')
-		{
-			break;
-		}
-		ch = command[index++];
+		ch = command[++index];
 	}
-	--index;
 	return hash;
 }
 
@@ -2351,7 +2347,7 @@ foreign Command_ReProcess(p,string:c[],h);
 global Command_ReProcess(p,string:c[],h)
 {
 	P:2("Command_ReProcess called: %i, \"%s\", %i", p, c, h);
-	return Command_Process(p,c,h);
+	return Command_Process(p, c, h);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -2374,66 +2370,64 @@ global Command_ReProcess(p,string:c[],h)
 #define Command_CallL(%1,%2) \
 	CallLocalFunction(Command_GetFuncName((%1)), "isi", playerid, %2, help)
 
-static stock Command_Process(playerid, cmdtext[], help)
+static stock Command_Process(const playerid, cmdtext[], const help)
 {
 	P:4("Command_Process FS called: %i, \"%s\", %i", playerid, cmdtext, help);
 	// Support for very old problems!
 	// TODO: Add back.
 	P:2("Command_Process called: %d %s", playerid, cmdtext);
-	/*#if !_DEBUG && !defined _YSI_SPECIAL_DEBUG
-		// For testing purposes.
-		if (!IsPlayerConnected(playerid))
-		{
-			return Command_DisconnectReturn();
-		}
-	#endif*/
 	P:4("Command_Process: Connected");
-	new
+	static
 		idx,
-		prelen = help ? 0 : 1,
-		index = prelen;
-	/*// Shortcuts.
-	if (cmdtext[2] <= ' ')
+		index;
+	if (help)
 	{
-		// Get a player's shortcut information for this letter.
+		index = 0;
+		static
+			length,
+			hash;
+		Command_Hash(cmdtext, index, length);
+		cmdtext[length] = '\0';
+		#if YSIM_HAS_MASTER
+			length = YSI_g_sPlayerProvider{playerid},
+			idx = Command_FindFast(cmdtext, hash, length);
+			if (idx == COMMAND_NOT_FOUND && length != 0xFF)
+		#endif
+				idx = Command_FindFast(cmdtext, hash);
 	}
-	else*/
+	else
 	{
+		index = 1;
 		// No more faffing about with random alternate code - it's all done in
 		// one nice function instead of having to handle both separately.
-		new
+		static
 			length,
-			hash = Command_Hash(cmdtext, index, length);
+			hash;
+		Command_Hash(cmdtext, index, length);
 		P:2("Command_Process: Hash = %d, Length = %d", hash, length);
 		// NOTE: No prefix support here.
-		cmdtext[length + prelen] = '\0';
+		cmdtext[length] = '\0';
 		#if YSIM_HAS_MASTER
-			length = YSI_g_sPlayerProvider{playerid};
+			length = YSI_g_sPlayerProvider{playerid},
+			idx = Command_FindFast(cmdtext[1], hash, length);
 			P:2("Command_Process: Provider: %d", length);
-			idx = Command_FindFast(cmdtext[prelen], hash, length);
 			if (idx == COMMAND_NOT_FOUND && length != 0xFF)
-			{
-				// Check default commands if no specialised commands were found.
-				idx = Command_FindFast(cmdtext[prelen], hash);
-			}
-		#else
-			idx = Command_FindFast(cmdtext[prelen], hash);
 		#endif
-		// TODO: Replace!
-		//idx = Command_FindSlow(cmdtext[prelen]);//, hash);
+				// Check default commands if no specialised commands were found.
+				idx = Command_FindFast(cmdtext[1], hash);
 	}
 	P:2("Command_Process: Index = %d", idx);
 	if (idx != COMMAND_NOT_FOUND)
 	{
 		// Get the master data for the underlying command, not the possibly
 		// changed name.
-		new
-			pointer = Command_GetPointer(idx);
-		P:4("Command_Process: Found %d, %d", idx, pointer);
+		P:4("Command_Process: Found %d, %d", idx, Command_GetPointer(idx));
 		// Found a command with this name - check the permissions.
 		//if (Bit_Get(YSI_g_sCommands[idx][E_COMMANDS_PLAYERS], playerid))
 		if (Command_CheckPlayer(idx, playerid))
 		{
+			new
+				pointer = Command_GetPointer(idx);
 			P:4("Command_Process: Allowed");
 			// Allowed to use the command, get the real function.  Note that
 			// this may well be the same as "idx", but we loose no time.

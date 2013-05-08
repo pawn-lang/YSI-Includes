@@ -1,0 +1,3 @@
+[submodule "amx"]
+	path = amx
+	url = git@github.com:Y-Less/amx_assembly.git

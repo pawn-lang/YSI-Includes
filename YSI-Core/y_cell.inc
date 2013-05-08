@@ -84,7 +84,6 @@ Commands:
 	-
 Compile options:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #include "..\YSI-Internal\y_version"
