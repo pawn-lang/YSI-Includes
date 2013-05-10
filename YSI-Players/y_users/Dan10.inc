@@ -280,11 +280,11 @@ hook OnScriptInit()
 	#define SQL_CLEANUP(%0) if (sql_error((%0))){sql_error_string((%0),error),P:E("SQL Error: %s",error);return sql_free_result((%0)),sql_disconnect(mkH),0;}sql_free_result((%0))
 	YSI_g_sModeNameLength = strlen(MODE_NAME),
 	YSI_g_sPreloadHandle = sql_connect(SQL_HANDLER_MYSQL, Y_USERS_SQL_HOST, Y_USERS_SQL_READ_USER, Y_USERS_SQL_READ_PASS, Y_USERS_SQL_DB),
-	printf("YSI_g_sPreloadHandle = %d", YSI_g_sPreloadHandle);
+	P:5("Users_OnScriptInit: YSI_g_sPreloadHandle = %d", _:YSI_g_sPreloadHandle);
 	YSI_g_sLoadHandle = sql_connect(SQL_HANDLER_MYSQL, Y_USERS_SQL_HOST, Y_USERS_SQL_READ_USER, Y_USERS_SQL_READ_PASS, Y_USERS_SQL_DB),
-	printf("YSI_g_sLoadHandle = %d", YSI_g_sLoadHandle);
+	P:5("Users_OnScriptInit: YSI_g_sLoadHandle = %d", _:YSI_g_sLoadHandle);
 	YSI_g_sWriteHandle = sql_connect(SQL_HANDLER_MYSQL, Y_USERS_SQL_HOST, Y_USERS_SQL_WRITE_USER, Y_USERS_SQL_WRITE_PASS, Y_USERS_SQL_DB);
-	printf("YSI_g_sWriteHandle = %d", YSI_g_sWriteHandle);
+	P:5("Users_OnScriptInit: YSI_g_sWriteHandle = %d", _:YSI_g_sWriteHandle);
 	// There are two main tables.
 	new
 		SQL:mkH = sql_connect(SQL_HANDLER_MYSQL, Y_USERS_SQL_HOST, Y_USERS_SQL_MAKE_USER, Y_USERS_SQL_MAKE_PASS, Y_USERS_SQL_DB),
@@ -298,7 +298,7 @@ hook OnScriptInit()
 			"password_hash CHAR(128), language CHAR(2),"				\
 			"options INT, times INT UNSIGNED, UNIQUE (name),"			\
 			"INDEX (name) USING HASH) ENGINE InnoDB;");
-	printf("mkH = %d", mkH);
+	P:5("Users_OnScriptInit: mkH = %d", _:mkH);
 	// "options" was "BIT(32)".
 	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
 	SQL_CLEANUP(r);
