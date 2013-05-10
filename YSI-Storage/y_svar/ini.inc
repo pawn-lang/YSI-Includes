@@ -293,6 +293,11 @@ stock M@(volatile const vardata[], dataSize, &pointer, ds2 = 1)
 
 hook OnScriptExit()
 {
+	Svar_Save();
+}
+
+Svar_Save()
+{
 	P:1("Svar_OnScriptExit called");
 	// Loop through all the player data items and write them to a file.
 	new

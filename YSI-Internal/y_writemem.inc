@@ -96,6 +96,8 @@ Operators:
 #include "..\YSI-Coding\y_hooks"
 #include "..\YSI-Core\y_utils"
 
+#include "..\amx\windows\import_table"
+
 forward WriteMem(addr, value);
 
 #define asm(%0,%1,%2,%3) ((0x%0<<0)|(0x%1<<8)|(0x%2<<16)|(0x%3<<24))
@@ -129,7 +131,7 @@ BECOMES:
 	push    40h
 	push    4
 	push    ecx
-	call    ds:__imp__VirtualProtect@16
+	call    ds:__imp__VirtualProtect@16 ; LOOK THIS UP FIRST.
 	mov     edx, [esi+4]
 	mov     eax, [esi+8]
 	mov     [edx], eax
@@ -145,15 +147,13 @@ static
 	{
 		asm(CC,CC,CC,CC), asm(CC,CC,CC,CC), asm(CC,CC,CC,CC), asm(CC,CC,CC,CC),
 		asm(55,8B,EC,56), asm(8B,75,0C,83), asm(3E,08,75,1A), asm(8B,4E,04,8D),
-		asm(45,0C,50,6A), asm(40,6A,04,51), asm(FF,15,8C,11), asm(4A,00,8B,56),
+		//asm(45,0C,50,6A), asm(40,6A,04,51), asm(FF,15,8C,11), asm(4A,00,8B,56),
+		asm(45,0C,50,6A), asm(40,6A,04,51), asm(FF,15,00,00), asm(00,00,8B,56),
 		asm(04,8B,46,08), asm(89,02,33,C0), asm(5E,5D,C3,CC)
-	};
-
-static
+	},
 	YSI_g_iWriteMemAddr = 0;
 
-stock
-	WriteMem(addr, value)
+stock WriteMem(addr, value)
 {
 	static ptr = -1;
 	
@@ -170,20 +170,20 @@ stock
 		#emit LOAD.alt   AMX_HEADER_COD
 		#emit ADD
 		#emit ADD.C      84
-		#emit STOR.S.pri ptr
+		#emit STOR.pri   ptr
 		
 		// NOP #1 = SYSREQ.D
 		#emit CONST.pri  135
-		#emit SREF.S.pri ptr
+		#emit SREF.pri   ptr
 		
 		// ptr += 4
-		#emit LOAD.S.pri ptr
+		#emit LOAD.pri   ptr
 		#emit ADD.C      4
-		#emit STOR.S.pri ptr
+		#emit STOR.pri   ptr
 		
 		// NOP #2 = address
 		#emit LOAD.pri   YSI_g_iWriteMemAddr
-		#emit SREF.S.pri ptr
+		#emit SREF.pri   ptr
 	}
 	// Reserve space for SYSREQ.D WriteMem.
 	#emit NOP
@@ -193,8 +193,7 @@ stock
 	#emit STACK 12
 }
 
-static
-	WM_Shift(from, to, data[], len = sizeof (data))
+static WM_Shift(from, to, data[], len = sizeof (data))
 {
 	if (FALSE)
 	{
@@ -208,9 +207,18 @@ static
 
 hook OnScriptInit()
 {
+	// 00 4A 61 98
 	new
-		addr = AMX_GetGlobalAddress(YSI_g_sWriteMem);
+		addr = GetImportPointer("VirtualProtect");
+	#emit LOAD.S.alt      addr
+	// Get the offset to the long call address.
+	#emit CONST.pri       YSI_g_sWriteMem
+	#emit ADD.C           42
+	#emit STOR.S.pri      addr
+	// Write the real address.
+	#emit SREF.S.alt      addr
 	// Align the code to a 16-byte boundary.
+	addr = AMX_GetGlobalAddress(YSI_g_sWriteMem);
 	switch (addr & 15)
 	{
 		case 0:

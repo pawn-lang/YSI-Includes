@@ -197,6 +197,7 @@ foreign Player_ForceLogin(playerid);
 foreign Player_ChangeLanguage(playerid, string:code[]);
 
 #if defined USERS_USE_MYSQL
+	/*
 	#if _YSI_PLUGINS_MYSQL == 7
 		#include "y_users/blueg7"
 	#elseif _YSI_PLUGINS_MYSQL == 6
@@ -206,6 +207,8 @@ foreign Player_ChangeLanguage(playerid, string:code[]);
 	#else
 		#error No MySQL plugin found.
 	#endif
+	*/
+	#include "y_users/dan10"
 #elseif defined USERS_USE_SQLITE
 	#include "y_users/sqlite"
 #else
