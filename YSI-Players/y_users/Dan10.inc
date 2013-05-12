@@ -91,14 +91,11 @@ Compile options:
 	-
 Operators:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
-#define GetUsersSQLHost()     "localhost"
-#define GetUsersSQLReadUser() "root"
-#define GetUsersSQLReadPass() "pri=ret&~1;"
-#define GetUsersSQLDB()       "y_users"
-#define GetUsersSQLPort()     3306
+// I know it is a bit odd that this should need y_ini for database access, but
+// there is a very good reason (loading passwords).
+#include "..\YSI-Storage\y_ini"
 
 #if !defined Y_USERS_SQL_HOST
 	#define Y_USERS_SQL_HOST GetUsersSQLHost()
@@ -138,6 +135,9 @@ enum E_USER_PRELOAD
 	Language:E_USER_PRELOAD_LANG,
 	E_USER_PRELOAD_PASS[MAX_PASSWORD_LENGTH + 1],
 	E_USER_PRELOAD_BITS,
+	/*E_USER_PRELOAD_PLAY_TIME,
+	E_USER_PRELOAD_LAST_IP,
+	E_USER_PRELOAD_LAST_LOGIN,*/
 	E_USER_PRELOAD_DATE
 }
 
@@ -151,6 +151,48 @@ static stock
 	SQL:YSI_g_sWriteHandle,
 	YSI_g_sPlayerYID[MAX_PLAYERS] = {-2, ...},
 	YSI_g_sPreloadData[MAX_PLAYERS][E_USER_PRELOAD];
+
+forward y_users_SQLLoaded(playerid, uid, Result:r);
+forward y_users_SQLCallback(id, Result:r);
+
+/**--------------------------------------------------------------------------**\
+<remarks>
+	This code loads the settings for accessing your database from a file.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define GetUsersSQLHost()     (Player_LoadDBSettings(),YSI_g_sUsersSQLHost)
+#define GetUsersSQLReadUser() (Player_LoadDBSettings(),YSI_g_sUsersSQLReadUser)
+#define GetUsersSQLReadPass() (Player_LoadDBSettings(),YSI_g_sUsersSQLReadPass)
+#define GetUsersSQLDB()       (Player_LoadDBSettings(),YSI_g_sUsersSQLDB)
+#define GetUsersSQLPort()     (Player_LoadDBSettings(),YSI_g_sUsersSQLPort)
+
+static stock
+	YSI_g_sUsersSQLHost[16]     = "localhost",
+	YSI_g_sUsersSQLReadUser[16] = "y_users_make",
+	YSI_g_sUsersSQLReadPass[16] = "y_users_make",
+	YSI_g_sUsersSQLDB[16]       = "y_users",
+	YSI_g_sUsersSQLPort         = 3306;
+
+INI:YSI[y_users](name[], value[])
+{
+	INI_String("Host", YSI_g_sUsersSQLHost, sizeof (YSI_g_sUsersSQLHost));
+	INI_String("User", YSI_g_sUsersSQLReadUser, sizeof (YSI_g_sUsersSQLReadUser));
+	INI_String("Pass", YSI_g_sUsersSQLReadPass, sizeof (YSI_g_sUsersSQLReadPass));
+	INI_String("DB", YSI_g_sUsersSQLDB, sizeof (YSI_g_sUsersSQLDB));
+	INI_Int("Port", YSI_g_sUsersSQLPort);
+}
+
+static stock Player_LoadDBSettings()
+{
+	static
+		bool:sLoad = true;
+	if (sLoad)
+	{
+		Ini_Load("YSI.ini");
+		sLoad = false;
+	}
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>Player_Reload</summary>
@@ -203,7 +245,8 @@ stock Player_Preload(string:name[], ret[E_USER_PRELOAD])
 	new
 		safeName[MAX_PLAYER_NAME];
 	sql_escape_string(YSI_g_sPreloadHandle, name, safeName),
-	format(YSI_g_sSQLQuery, sizeof (YSI_g_sSQLQuery), "SELECT yid, password_hash, language, options, times FROM y_users_preload WHERE name='%s' LIMIT 0,1;", safeName);
+	// I don't normally like "SELECT *" but it is appropriate here.
+	format(YSI_g_sSQLQuery, sizeof (YSI_g_sSQLQuery), "SELECT yp.* FROM y_users_preload AS yp JOIN y_users_users WHERE name='%s';", safeName);
 	new
 		Result:r = sql_query(YSI_g_sPreloadHandle, YSI_g_sSQLQuery);
 	if (sql_error(r))
@@ -214,29 +257,42 @@ stock Player_Preload(string:name[], ret[E_USER_PRELOAD])
 			sql_free_result(r),
 			0;
 	}
-	if (sql_num_rows(r))
+	switch (sql_num_rows(r))
 	{
-		// YID.
-		sql_get_field(r, 0, YSI_g_sSQLQuery),
-		ret[E_USER_PRELOAD_YID] = strval(YSI_g_sSQLQuery),
-		// Hash.
-		sql_get_field(r, 1, YSI_g_sSQLQuery),
-		strcat(ret[E_USER_PRELOAD_PASS], YSI_g_sSQLQuery, MAX_PASSWORD_LENGTH + 1),
-		// Language
-		sql_get_field(r, 2, YSI_g_sSQLQuery),
-		ret[E_USER_PRELOAD_LANG] = Langs_GetLanguage(YSI_g_sSQLQuery),
-		// Load the 32 extra "bits".
-		sql_get_field(r, 3, YSI_g_sSQLQuery),
-		ret[E_USER_PRELOAD_BITS] = strval(YSI_g_sSQLQuery),
-		// Load the user registration date (if they have one).
-		sql_get_field(r, 4, YSI_g_sSQLQuery),
-		ret[E_USER_PRELOAD_DATE] = strval(YSI_g_sSQLQuery);
-		P:6("Player_Preload: %s %d %d %x %x", ret[E_USER_PRELOAD_PASS], ret[E_USER_PRELOAD_YID], _:ret[E_USER_PRELOAD_LANG], ret[E_USER_PRELOAD_BITS], ret[E_USER_PRELOAD_DATE]);
-		return 1;
+		case 0:
+		{
+			ret[E_USER_PRELOAD_YID] = -1;
+		}
+		case 1:
+		{
+			// YID.
+			sql_get_field(r, 0, YSI_g_sSQLQuery),
+			ret[E_USER_PRELOAD_YID] = strval(YSI_g_sSQLQuery),
+			// Hash.
+			sql_get_field(r, 1, YSI_g_sSQLQuery),
+			strcat(ret[E_USER_PRELOAD_PASS], YSI_g_sSQLQuery, MAX_PASSWORD_LENGTH + 1),
+			// Language
+			sql_get_field(r, 2, YSI_g_sSQLQuery),
+			ret[E_USER_PRELOAD_LANG] = Langs_GetLanguage(YSI_g_sSQLQuery),
+			// Load the 32 extra "bits".
+			sql_get_field(r, 3, YSI_g_sSQLQuery),
+			ret[E_USER_PRELOAD_BITS] = strval(YSI_g_sSQLQuery),
+			// Load the user registration date (if they have one).
+			sql_get_field(r, 4, YSI_g_sSQLQuery),
+			ret[E_USER_PRELOAD_DATE] = strval(YSI_g_sSQLQuery);
+			P:6("Player_Preload: %s %d %d %x %x", ret[E_USER_PRELOAD_PASS], ret[E_USER_PRELOAD_YID], _:ret[E_USER_PRELOAD_LANG], ret[E_USER_PRELOAD_BITS], ret[E_USER_PRELOAD_DATE]);
+			// Load their total play time.
+			// Load their last IP.
+			// Load their last login.
+		}
+		default:
+		{
+			P:E("y_users found mutliple YID results for %s", name);
+		}
 	}
 	return
-		ret[E_USER_PRELOAD_YID] = -1,
-		0;
+		sql_free_result(r),
+		(ret[E_USER_PRELOAD_YID] > 0);
 }
 
 stock Language:Player_GetPreloadLanguage(playerid)
@@ -271,7 +327,7 @@ stock Player_GetPreloadDate(playerid)
 
 stock Player_IsRegistered(playerid)
 {
-	return YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID] >= 0;
+	return YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID] > 0;
 }
 
 hook OnScriptInit()
@@ -291,13 +347,13 @@ hook OnScriptInit()
 		error[64],
 		// Create the table for storing users.
 		Result:r = sql_query(mkH,
-		// Main table creation.
 		"CREATE TABLE IF NOT EXISTS y_users_preload ("					\
-			"row BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"	\
-			"yid INT UNSIGNED NOT NULL, name VARCHAR(24),"				\
+			"yid INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"		\
 			"password_hash CHAR(128), language CHAR(2),"				\
-			"options INT, times INT UNSIGNED, UNIQUE (name),"			\
-			"INDEX (name) USING HASH) ENGINE InnoDB;");
+			"options INT UNSIGNED, join_time INT UNSIGNED,"				\
+			"play_time INT UNSIGNED, last_ip INT UNSIGNED,"				\
+			"last_login DATETIME"										\
+			") ENGINE InnoDB;");
 	P:5("Users_OnScriptInit: mkH = %d", _:mkH);
 	// "options" was "BIT(32)".
 	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
@@ -306,35 +362,80 @@ hook OnScriptInit()
 	// Create the table for storing tags.
 	r = sql_query(mkH,
 		"CREATE TABLE IF NOT EXISTS y_users_modes ("					\
-			"tagid BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"\
-			"mode VARCHAR(32),"											\
+			"tagid INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"	\
+			"mode VARCHAR(32) NOT NULL,"								\
 			"tag VARCHAR(32),"											\
 			"INDEX (mode) USING HASH,"									\
-			"UNIQUE KEY (mode, tag)) ENGINE InnoDB;");
+			"UNIQUE KEY (mode, tag)"									\
+			") ENGINE InnoDB;");
+	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
+	SQL_CLEANUP(r);
+	#pragma tabsize 4 // RESTORE FROM THE UGLINESS!
+	// Create the table to map names to YIDs.
+	r = sql_query(mkH,
+		"CREATE TABLE IF NOT EXISTS y_users_users ("					\
+			"name VARCHAR(24) NOT NULL PRIMARY KEY,"					\
+			"yid INT UNSIGNED,"											\
+			"CONSTRAINT FOREIGN KEY (yid)"								\
+				"REFERENCES y_users_preload (yid) ON DELETE CASCADE,"	\
+			"INDEX (name) USING HASH"									\
+			") ENGINE InnoDB;");
 	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
 	SQL_CLEANUP(r);
 	#pragma tabsize 4 // RESTORE FROM THE UGLINESS!
 	// Create the table for storing key/value pairs.
 	r = sql_query(mkH,
 		"CREATE TABLE IF NOT EXISTS y_users_keystore ("					\
-			"row BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"	\
 			"yid INT UNSIGNED NOT NULL,"								\
-			"tagid BIGINT UNSIGNED NOT NULL,"							\
-			"vkey VARCHAR(32),"											\
+			"tagid INT UNSIGNED NOT NULL,"								\
+			"vkey VARCHAR(32) NOT NULL,"								\
 			"value VARCHAR(196),"										\
-			"CONSTRAINT FOREIGN KEY (tagid)"							\
-				"REFERENCES y_users_modes (tagid) ON DELETE CASCADE,"	\
-			"UNIQUE KEY (yid, tagid, vkey)) ENGINE InnoDB;");
+			"CONSTRAINT FOREIGN KEY (tagid) REFERENCES y_users_modes (tagid) ON DELETE CASCADE," \
+			"CONSTRAINT FOREIGN KEY (yid) REFERENCES y_users_preload (yid) ON DELETE CASCADE," \
+			"UNIQUE KEY (yid, tagid, vkey), INDEX (yid)"				\
+			") ENGINE InnoDB;");
 	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
 	SQL_CLEANUP(r);
 	#pragma tabsize 4 // RESTORE FROM THE UGLINESS!
-	// Create an invalid user to initialise the "yid" column.  This also nicely
-	// forbids empty names in the database by already having one.
+	// Create the table to map names to IPs.
 	r = sql_query(mkH,
-		"INSERT INTO y_users_preload VALUES(0, 0, '',"					\
-		"'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',"\
-		"'XX', 0, 0);");
-	sql_free_result(r);
+		"CREATE TABLE IF NOT EXISTS y_users_name_ips ("					\
+			"name VARCHAR(24) NOT NULL,"								\
+			"one_ip INT UNSIGNED,"										\
+			"validated BOOL," 											\
+			"join_time DATETIME,"										\
+			"leave_time DATETIME"										\
+			") ENGINE InnoDB;");
+	// "validated" means that this name/IP combination logged in and was
+	// confirmed to be a valid connecting user, not someone trying to spoof a
+	// login.
+	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
+	SQL_CLEANUP(r);
+	#pragma tabsize 4 // RESTORE FROM THE UGLINESS!
+	// Create the table to map YIDs to IPs.
+	r = sql_query(mkH,
+		"CREATE TABLE IF NOT EXISTS y_users_yid_ips ("					\
+			"yid INT UNSIGNED NOT NULL,"								\
+			"one_ip INT UNSIGNED,"										\
+			"join_time DATETIME,"										\
+			"leave_time DATETIME"										\
+			") ENGINE InnoDB;");
+	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
+	SQL_CLEANUP(r);
+	#pragma tabsize 4 // RESTORE FROM THE UGLINESS!
+	// Create the table to store failed logins.
+	r = sql_query(mkH,
+		"CREATE TABLE IF NOT EXISTS y_users_fails ("					\
+			"row BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"	\
+			"try_yid INT UNSIGNED NOT NULL,"							\
+			"from_name VARCHAR(24),"									\
+			"from_ip INT UNSIGNED,"										\
+			"validated BOOL," 											\
+			"attempt_time DATETIME"										\
+			") ENGINE InnoDB;");
+	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
+	SQL_CLEANUP(r);
+	#pragma tabsize 4 // RESTORE FROM THE UGLINESS!
 	sql_disconnect(mkH);
 	return 1;
 	#undef SQL_CLEANUP
@@ -358,7 +459,7 @@ hook OnPlayerConnect(playerid)
 		new
 			uid = getproperty(8, YSIM_LOG_IN);
 		P:5("Users_OnPlayerConnect: Exists %d", uid);
-		if (uid == -1)
+		if (uid <= 0)
 		{
 			new
 				name[MAX_PLAYER_NAME];
@@ -453,7 +554,7 @@ global Player_TryLogin(playerid, string:password[])
 		{
 			Text_Send(playerid, $YSI_LOGIN_INDERR);
 		}
-		case -1:
+		case -1, 0:
 		{
 			Text_Send(playerid, $YSI_LOGIN_NOTF);
 		}
@@ -473,6 +574,18 @@ global Player_TryLogin(playerid, string:password[])
 			else
 			{
 				Text_Send(playerid, $YSI_LOGIN_WRONG);
+				// Record the failed login in the database.
+				new
+					ip = GetIP(playerid);
+				GetPlayerName(playerid, hash, sizeof (hash)),
+				sql_escape_string(YSI_g_sWriteHandle, hash, hash),
+				format(YSI_g_sSQLQuery, sizeof (YSI_g_sSQLQuery),
+					"INSERT INTO y_users_fails VALUES (DEFAULT, %d, '%s', 0x%04x%04x, 0, NOW())"
+					YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID],
+					hash,
+					ip >>> 16,
+					ip & 0xFFFF),
+				sql_query(YSI_g_sWriteHandle, YSI_g_sSQLQuery, QUERY_THREADED, "y_users_SQLCallback", "ir", 1);
 			}
 		}
 	}
@@ -505,7 +618,7 @@ global Player_ForceLogin(playerid)
 		{
 			Text_Send(playerid, $YSI_LOGIN_INDERR);
 		}
-		case -1:
+		case -1, 0:
 		{
 			Text_Send(playerid, $YSI_LOGIN_NOTF);
 		}
@@ -522,17 +635,15 @@ global Player_ForceLogin(playerid)
 	return 0;
 }
 
-forward y_users_SQLLoaded(playerid, uid, Result:r);
-
 remotefunc void:Player_DoLogin(playerid, uid)
 {
 	// Called when a player logs in - either locally (new script) or globally
 	// (actually only just logged in).
 	YSI_g_sPlayerYID[playerid] = uid;
-	static
-		sQuery[196];
-	format(sQuery, sizeof (sQuery), "SELECT md.tag,ks.vkey,ks.value FROM y_users_modes AS md JOIN y_users_keystore AS ks ON md.tagid=ks.tagid WHERE ks.yid=%d && md.mode='" #MODE_NAME "';", uid);
-	sql_query(YSI_g_sLoadHandle, YSI_g_sSQLBuffer, QUERY_THREADED, "y_users_SQLLoaded", "iir", playerid, uid);
+	// We don't need to specify how to join the tables because the definitions
+	// use a FOREIGN KEY CONSTRAINT to map them to each other.
+	format(YSI_g_sSQLQuery, sizeof (YSI_g_sSQLQuery), "SELECT tag, vkey, value FROM y_users_modes JOIN y_users_keystore WHERE yid=%d && mode='" #MODE_NAME "';", uid);
+	sql_query(YSI_g_sLoadHandle, YSI_g_sSQLQuery, QUERY_THREADED, "y_users_SQLLoaded", "iir", playerid, uid);
 }
 
 public y_users_SQLLoaded(playerid, uid, Result:r)
@@ -566,8 +677,6 @@ public y_users_SQLLoaded(playerid, uid, Result:r)
 		sql_free_result(r),
 		1;
 }
-
-forward y_users_SQLCallback(id, Result:r);
 
 public y_users_SQLCallback(id, Result:r)
 {
@@ -818,11 +927,11 @@ stock Player_SaveData(playerid, bool:logout = false)
 		Player_FlushData();
 		// New player's data.
 		YSI_g_sCurrentYID = YSI_g_sPlayerYID[playerid];
-		Player_SetTag("--none--");
+		Player_SetTag("");
 		CallLocalFunction("OnSavePlayerData", "ii", playerid, YSI_g_sCurrentYID);
-		Player_SetTag("--none--");
 		if (logout)
 		{
+			Player_SetTag("");
 			call OnPlayerLogout(playerid, YSI_g_sCurrentYID);
 		}
 		// Flush new data.
@@ -893,6 +1002,9 @@ static stock Player_HashPass(pass[], target[])
 
 // Hooray for bizare bugs!  I think this is because the function above is
 // secretly a macro with "if/else" and a block statement, not a real function.
+// Only now it isn't, but honestly I'm no longer sure what this was fixing or if
+// it is still needed or not.  Even if it isn't there's no point removing it as
+// it was clearly important at some point in the past!
 
 stock Player_SomeWeirdBugFix()
 {
@@ -932,7 +1044,7 @@ global Player_TryRegister(playerid, string:password[])
 		{
 			Text_Send(playerid, $YSI_LOGIN_INDERR);
 		}
-		case -1:
+		case -1, 0:
 		{
 		}
 		default:
@@ -1134,7 +1246,7 @@ global Player_TryGroup(playerid, string:other[], string:password[])
 			Text_Send(playerid, $YSI_LOGIN_INDERR);
 			return 0;
 		}
-		case -1:
+		case -1, 0:
 		{
 			//Text_Send(playerid, $YSI_LOGIN_NOTF);
 		}
@@ -1154,7 +1266,7 @@ global Player_TryGroup(playerid, string:other[], string:password[])
 		{
 			Text_Send(playerid, $YSI_LOGIN_INDERR);
 		}
-		case -1:
+		case -1, 0:
 		{
 			Text_Send(playerid, $YSI_LOGIN_NOTF);
 		}
@@ -1243,7 +1355,7 @@ global Player_ForceGroup(playerid, string:other[])
 			Text_Send(playerid, $YSI_LOGIN_INDERR);
 			return 0;
 		}
-		case -1:
+		case -1, 0:
 		{
 			//Text_Send(playerid, $YSI_LOGIN_NOTF);
 		}
@@ -1263,7 +1375,7 @@ global Player_ForceGroup(playerid, string:other[])
 		{
 			Text_Send(playerid, $YSI_LOGIN_INDERR);
 		}
-		case -1:
+		case -1, 0:
 		{
 			Text_Send(playerid, $YSI_LOGIN_NOTF);
 		}
