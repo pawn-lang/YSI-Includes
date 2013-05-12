@@ -16,6 +16,8 @@
 
 // New hooks
 #undef master_hook
+#undef master_task
+#undef master_ptask
 #undef group_hook
 #undef @foreign
 #undef foreign

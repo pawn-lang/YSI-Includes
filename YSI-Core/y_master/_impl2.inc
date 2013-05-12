@@ -1181,6 +1181,8 @@ Natives:
 		#define RH:On%2(%3) hook On%2(%3)
 		
 		#define master_hook%0On%2(%3) hook On%2(%3)
+		#define master_task%0(%3) task%0(%3)
+		#define master_ptask%0(%3) ptask%0(%3)
 		#define group_hook%0On%2(%3) _GROUP_MAKE_NAME<hook On%2...>(%3)
 		
 		#define RT:%0[%1](%2) @yT_%1_%0();@yT_%1_%0()
@@ -1215,6 +1217,8 @@ Natives:
 			#define RH:On%2(%3)
 			
 			#define master_hook%0On%2(%3) stock UNIQUE_FUNCTION<_yH@%2...>(%3)
+			#define master_task%0(%3) stock %0(%3)
+			#define master_ptask%0(%3) stock %0(%3)
 			#define group_hook%0On%2(%3) stock _GROUP_MAKE_NAME<On%2...>(%3)
 			
 			#define RT:%0[%1](%2) stock _yT@%1_%0()
@@ -1243,6 +1247,8 @@ Natives:
 				#define RH
 				
 				#define master_hook
+				#define master_task
+				#define master_ptask
 				
 				#define group_hook
 				
@@ -1261,6 +1267,8 @@ Natives:
 				#define RH:On%2(%3) hook On%2(%3)<>return ALS_R_%2;rehook On%2(%3)<_YCM:y>
 				
 				#define master_hook%0On%2(%3) hook On%2(%3)<>return ALS_R_%2;rehook On%2(%3)<_YCM:y>
+				#define master_task%0[%1](%3) task%0[%1](%3)<>return;public%0(%3)<_YCM:y>
+				#define master_ptask%0[%1](%3) ptask%0[%1](%3)<>return;public%0(%3)<_YCM:y>
 				
 				#define group_hook%0On%2(%3) _GROUP_MAKE_NAME<hook On%2...>(%3)<>return ALS_R_%2;_GROUP_MAKE_NAME<rehook On%2...>(%3)<_YCM:y>
 				
@@ -1297,6 +1305,8 @@ Natives:
 	#define RH:On%2(%3) hook On%2(%3)
 	
 	#define master_hook%0On%2(%3) hook On%2(%3)
+	#define master_task%0(%3) task%0(%3)
+	#define master_ptask%0(%3) ptask%0(%3)
 	
 	#define group_hook%0On%2(%3) _GROUP_MAKE_NAME<hook On%2...>(%3)
 	

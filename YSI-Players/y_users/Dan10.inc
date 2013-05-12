@@ -95,8 +95,8 @@ Operators:
 \**--------------------------------------------------------------------------**/
 
 #define GetUsersSQLHost()     "localhost"
-#define GetUsersSQLReadUser() "y_users_make"
-#define GetUsersSQLReadPass() "y_users_make"
+#define GetUsersSQLReadUser() "root"
+#define GetUsersSQLReadPass() "pri=ret&~1;"
 #define GetUsersSQLDB()       "y_users"
 #define GetUsersSQLPort()     3306
 

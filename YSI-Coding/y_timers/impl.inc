@@ -93,7 +93,7 @@ hook OnScriptInit()
 		time,
 		idx,
 		entry;
-	while ((idx = AMX_GetPublicEntrySuffix(idx, entry, _A<@yT_>)))
+	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yT_>)))
 	//while ((idx = AMX_GetPublicPointerSuffix(idx, pointer, _A<@yT_>)))
 	{
 		P:6("Timer_OnScriptInit: entry: %d", entry);
@@ -127,7 +127,7 @@ hook OnScriptInit()
 				idx2,
 				total,
 				pre;
-			while ((idx2 = AMX_GetPublicPointerSuffix(idx2, pointer2, _A<@yT_>)))
+			while ((idx2 = AMX_GetPublicPointerPrefix(idx2, pointer2, _A<@yT_>)))
 			{
 				// Call the functions a second time to guarantee getting
 				#emit PUSH.C     0
@@ -263,7 +263,7 @@ stock _Timer_I(func[], interval, action, &result)
 }
 
 // Attempt to stop or start a task, possibly for a single player.
-stock _Timer_D(func[], interval, const action, who, results[MAX_PLAYERS], &pp, a[2])
+stock _Timer_D(func[], interval, const action, who, results[MAX_PLAYERS], a[2])
 {
 	P:3("_Timer_D called");
 	switch (action)
@@ -272,6 +272,7 @@ stock _Timer_D(func[], interval, const action, who, results[MAX_PLAYERS], &pp, a
 		{
 			if (who)
 			{
+				// Add this timer to the global linked list.
 				a[0] = who;
 				a[1] = YSI_g_sPlayerTimers;
 				// Store the address of the global array.
@@ -284,7 +285,14 @@ stock _Timer_D(func[], interval, const action, who, results[MAX_PLAYERS], &pp, a
 			// Stop the timer.
 			if (who == -1)
 			{
-				pp = 0;
+				foreach (who : Player)
+				{
+					if (results[who] != -1)
+					{
+						KillTimer(results[who]);
+						results[who] = -1;
+					}
+				}
 			}
 			else if (results[who] != -1)
 			{
@@ -297,7 +305,13 @@ stock _Timer_D(func[], interval, const action, who, results[MAX_PLAYERS], &pp, a
 			// Start the timer.
 			if (who == -1)
 			{
-				pp = 1;
+				foreach (who : Player)
+				{
+					if (results[who] == -1)
+					{
+						results[who] = SetTimerEx(func, interval, true, "i", who);
+					}
+				}
 			}
 			else if (results[who] == -1)
 			{
@@ -441,9 +455,13 @@ stock _Timer_H(slot)
 	_Timer_F(~(slot - 1));
 }
 
-#define task%0[%1](%2) %0@yT_(g,p);public%0@yT_(g,p){static s=-1;return _Timer_I(#%0,%1,g,s);}%0();public%0()
+#define task%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s=-1;return _Timer_I(#%0,%1,g,s);}%0();public%0()
 
-#define ptask%0[%1](%2) stock %0_yT@=1;%0@yT_(g,p);public%0@yT_(g,p){static s[MAX_PLAYERS]={-1,...},a[2];return _Timer_D(#%0@_yT,%1,g,p,s,%0_yT@,a);}%0@_yT(p);public%0@_yT(p)if(%0_yT@)%0(p);%0(%2)
+// 
+#define ptask%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s[MAX_PLAYERS]={-1,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public%0(%2)
+
+#define @yT_%0\32;%1(%2) @yT_%0%1(%2)
+//#define @_yT%0;\32%1(%2) @_yT%0%1(%2)
 
 #define pause%0; {J@=_:@Ym:%0@yT_(0,-1);}
 #define resume%0; {J@=_:@Ym:%0@yT_(1,-1);}

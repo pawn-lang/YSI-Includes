@@ -156,6 +156,8 @@ Natives:
 #endif
 
 #define mhook master_hook
+#define mtask master_task
+#define mptask master_ptask
 
 #define OnScriptClose Master_OnScriptClose
 forward Master_OnScriptClose(script);
