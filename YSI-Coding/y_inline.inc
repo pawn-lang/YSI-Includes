@@ -100,46 +100,50 @@ static stock Inline_DecodeVariable(from[], &at, &len)
 {
 	new
 		slot = at >>> 5,
-		type;
-	switch (at & 0x1F)
+		// An encoded value is either 2 or 14 bits depending on type, so there
+		// is no way to ever have odd offsets.  As a result there is no way for
+		// a type to span two cells, so there's no need for complex switches.
+		type = (from[slot] >>> (at & 0x1F)) & 0b11;
+	/*switch (at & 0x1F)
 	{
 		case 0: type = from[slot] & 0x03;
 		#define I@(%0) case %0:type=(from[slot]>>>%0)&3;
-		I@(01)I@(02)I@(03)I@(04)I@(05)I@(06)I@(07)I@(08)I@(09)I@(10)
-		I@(11)I@(12)I@(13)I@(14)I@(15)I@(16)I@(17)I@(18)I@(19)I@(20)
-		I@(21)I@(22)I@(23)I@(24)I@(25)I@(26)I@(27)I@(28)I@(29)I@(30)
-		case 31: type = (from[slot] >>> 31) | ((from[slot + 1] & 1) << 1);
-		#undef I@(%0)
-	}
+		I@(02)I@(04)I@(06)I@(08)I@(10)I@(12)I@(14)I@(16)I@(18)I@(20)I@(22)I@(24)I@(26)I@(28)I@(30)
+		//case 31: type = (from[slot] >>> 31) | ((from[slot + 1] & 1) << 1);
+		P:C(default: P:E("Odd offset in y_inline."););
+		#undef I@
+	}*/
 	at += 2;
-	if (type != INLINE_TYPE_STR) return type;
-	// Fast, cell boundary aware, length extraction.  The length is stored -1
-	// cell, so adjust for that too.
-	switch (at & 0x1F)
+	if (type & 0x01)
 	{
-		// Start of the (next) cell.  For these two, doing "at += 2;" spilled
-		// the pointer over in to the next cell.
-		case 0: len = (from[slot + 1] & 0x0FFF) + 1;
-		case 1: len = ((from[slot + 1] >>> 1) & 0x0FFF) + 1;
-		#define I@(%0) case %0:len=((from[slot]>>>%0)&0x0FFF)+1;
-		// Whole length in one (current) cell.
-		I@(02)I@(03)I@(04)I@(05)I@(06)I@(07)I@(08)I@(09)I@(10)
-		I@(11)I@(12)I@(13)I@(14)I@(15)I@(16)I@(17)I@(18)I@(19)
-		#undef I@
-		// End of the cell.
-		case 20: len = (from[slot] >>> 20) + 1;
-		// Two cells (let the compiler do the maths for us).
-		#define I@(%0) case %0:len=((from[slot]>>>%0)|((from[slot+1]&(0xFFF>>>(32-%0)))<<(32-%0)))+1;
-		I@(21)I@(22)I@(23)I@(24)I@(25)
-		I@(26)I@(27)I@(28)I@(29)I@(30)
-		// Last one (actually the same as the previous 10 for an example).
-		case 31: len = ((from[slot] >>> 31) | ((from[slot + 1] & 0x07FF) << 1)) + 1;
-		#undef I@
+		// Fast, cell boundary aware, length extraction.  The length is stored
+		// -1 cell, so adjust for that too.
+		switch (at & 0x1F)
+		{
+			// Start of the (next) cell.  For these two, doing "at += 2;"
+			// spilled the pointer over in to the next cell.
+			case 0: len = (from[slot + 1] & 0x0FFF) + 1;
+			//case 1: len = ((from[slot + 1] >>> 1) & 0x0FFF) + 1;
+			#define I@(%0) case %0:len=((from[slot]>>>%0)&0x0FFF)+1;
+			// Whole length in one (current) cell.
+			I@(02)I@(04)I@(06)I@(08)I@(10)I@(12)I@(14)I@(16)I@(18)
+			#undef I@
+			// End of the cell.
+			case 20: len = (from[slot] >>> 20) + 1;
+			// Two cells (let the compiler do the maths for us).
+			#define I@(%0) case %0:len=((from[slot]>>>%0)|((from[slot+1]&(0xFFF>>>(32-%0)))<<(32-%0)))+1;
+			I@(22)I@(24)I@(26)I@(28)I@(30)
+			// Last one (actually the same as the previous 10 for an example).
+			//case 31: len = ((from[slot] >>> 31) | ((from[slot + 1] & 0x07FF) << 1)) + 1;
+			P:C(default: P:E("Odd offset in y_inline."););
+			#undef I@
+		}
+		at += 12;
 	}
-	at += 12;
+	return type;
 }
 
-static stock Inline_EncodeVariable(to[], &rem, &at, type, length = 0)
+static stock Inline_EncodeVariable(to[], &rem, &at, type, len = 0)
 {
 	if (rem >= 2)
 	{
@@ -181,7 +185,7 @@ static stock Inline_EncodeVariable(to[], &rem, &at, type, length = 0)
 			}
 			else
 			{
-				P:E("Unable to encode y_inline length.");
+				P:E("Unable to encode y_inline parameters.");
 				// Remove the parameter we just encoded.
 				at -= 2;
 				return;
