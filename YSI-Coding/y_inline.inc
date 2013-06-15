@@ -80,6 +80,101 @@ Changelog:
 // %0 = " in" or " pub" (ignored).
 // "%1 = "ne X" or "c X" (makes a macro).
 
+/*
+New y_inline variable types:
+
+00 - Variable  (a)
+10 - Reference (&a)
+01 - String    (string:a[])
+11 - Array     (a[], aLength)
+*/
+
+#define Inline_AddOneBit(%0,%1,%2) (((%2) ? ((%0[((%1) >>> 5)]) |= (1 << ((%1) & 0x1F))) : ((%0[((%1) >>> 5)]) &= ~(1 << ((%1) & 0x1F)))), (++(%1)))
+
+// Fast, cell boundary aware, length extraction.
+shift = at & 0x1F;
+switch (shift)
+{
+	// Start of the cell.
+	case  0: len = from[slot] & 0x0FFF;
+	// Whole length in one cell.
+	#define I@(%0) case %0:len=(from[slot]>>>%0)&0x0FFF;
+	I@(1)I@(2)I@(3)I@(4)I@(5)I@(6)I@(7)I@(8)I@(9)I@(10)
+	//case 10: len = (from[slot] >>> 10) & 0x0FFF;
+	I@(11)I@(12)I@(13)I@(14)I@(15)I@(16)I@(17)I@(18)I@(19)
+	#undef I@
+	// End of the cell.
+	case 20: len = from[slot] >>> 20;
+	// Two cells.
+	#define I@(%0) case %0:len=(from[slot]>>>%0)|((from[slot+1]&(0xFFF>>>(32-%0)))<<(32-%0));
+	I@(21)
+	case 21: len = (from[slot] >>> 21) | ((from[slot + 1] & 0x0001) << 11);
+	case 22: len = (from[slot] >>> 22) | ((from[slot + 1] & 0x0003) << 10);
+	case 23: len = (from[slot] >>> 23) | ((from[slot + 1] & 0x0007) << 09);
+	case 24: len = (from[slot] >>> 24) | ((from[slot + 1] & 0x000F) << 08);
+	case 25: len = (from[slot] >>> 25) | ((from[slot + 1] & 0x001F) << 07);
+	case 26: len = (from[slot] >>> 26) | ((from[slot + 1] & 0x003F) << 06);
+	case 27: len = (from[slot] >>> 27) | ((from[slot + 1] & 0x007F) << 05);
+	case 28: len = (from[slot] >>> 28) | ((from[slot + 1] & 0x00FF) << 04);
+	case 29: len = (from[slot] >>> 29) | ((from[slot + 1] & 0x01FF) << 03);
+	case 30: len = (from[slot] >>> 30) | ((from[slot + 1] & 0x03FF) << 02);
+	//case 31: len = (from[slot] >>> 31) | ((from[slot + 1] & 0x07FF) << 01);
+	#undef I@
+}
+at += 12;
+
+static stock Inline_EncodeVariable(to[], &rem, &at, type, length = 0)
+{
+	if (rem >= 2)
+	{
+		// Blank the old bits at that point, then write the new ones.
+		Inline_AddOneBit(to, at, type & 0b01);
+		Inline_AddOneBit(to, at, type & 0b10);
+	}
+	else
+	{
+		P:E("Unable to encode y_inline parameters.");
+		return;
+	}
+	if (type & 0b01)
+	{
+		// String.
+		// Array.
+		if (len <= 0)
+		{
+			P:E("Array length too short in y_inline");
+		}
+		else if (len > 4096)
+		{
+			P:E("Array length too large in y_inline");
+		}
+		else
+		{
+			// Encode "1" as "0" etc, and use only 12+2 bits.
+			--len;
+			if (rem >= 12)
+			{
+				// Copy all the bits over.  We can't (easily) do this in one
+				// operation without a loop as the write may span a cell
+				// boundary.  This way handles all bounds correctly.
+				for (type = 0x0001; type != 0x1000; type <<= 1)
+				{
+					Inline_AddOneBit(to, at, len & type);
+				}
+				rem -= 12;
+			}
+			else
+			{
+				P:E("Unable to encode y_inline parameters.");
+				// Remove the parameter we just encoded.
+				at -= 2;
+				return;
+			}
+		}
+	}
+	rem -= 2;
+}
+
 #define using%0) callback_tag:@Ik:@Il:%0)
 
 // Get ONLY this ONE parameter (this is a VERY important stage)!
