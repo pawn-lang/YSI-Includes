@@ -168,11 +168,38 @@ new stock
 
 //#pragma unused TRUE, FALSE, NULL
 
-#define ceildiv(%0,%1) \
-	(((%0)-1)/(%1)+1)
+/**--------------------------------------------------------------------------**\
+<summary>
+	ceildiv(numerator, denominator);
+</summary>
+<param name="numerator">The top of the division.</param>
+<param name="denominator">The bottom of the division.</param>
+<returns>
+	(numerator / denominator) rounded up.
+</returns>
+<remarks>
+	Normal integer division ALWAYS rounds down - this always rounds up.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
-#define floordiv(%0,%1) \
-	((%0)/(%1))
+#define ceildiv(%0,%1) (((%0)-1)/(%1)+1)
+
+/**--------------------------------------------------------------------------**\
+<summary>
+	floordiv(numerator, denominator);
+</summary>
+<param name="numerator">The top of the division.</param>
+<param name="denominator">The bottom of the division.</param>
+<returns>
+	(numerator / denominator) rounded down.
+</returns>
+<remarks>
+	Normal integer division ALWAYS rounds down - this also always rounds down,
+	making it a little pointless, but also more explicit in function.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define floordiv(%0,%1) ((%0)/(%1))
 
 /**--------------------------------------------------------------------------**\
 <summary>isnull</summary>
@@ -711,6 +738,20 @@ stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 	return memset("", 0, 0);
 }
 
+/**--------------------------------------------------------------------------**\
+<summary>
+	ReturnPlayerName
+</summary>
+<param name="playerid">Player whose name you want to get.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Now uses a global array to avoid repeated function calls.  Actually doesn't
+	because that causes issues with multiple scripts.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 stock ReturnPlayerName(playerid)
 {
 	new
@@ -718,6 +759,62 @@ stock ReturnPlayerName(playerid)
 	GetPlayerName(playerid, str, sizeof (str));
 	return str;
 }
+
+/*
+#define ReturnPlayerName(%0) (YSI_gPlayerName[(%0)])
+
+stock
+	YSI_gPlayerName[MAX_PLAYERS][MAX_PLAYER_NAME];
+
+public OnPlayerConnect(playerid)
+{
+	GetPlayerName(playerid, YSI_gPlayerName[playerid], sizeof (YSI_gPlayerName[]));
+	#if defined y_utils_OnPlayerConnect
+		y_utils_OnPlayerConnect(playerid);
+	#endif
+	return 1;
+}
+#if defined _ALS_OnPlayerConnect
+	#undef OnPlayerConnect
+#else
+	#define _ALS_OnPlayerConnect
+#endif
+#if defined y_utils_OnPlayerConnect
+	forward y_utils_OnPlayerConnect(playerid);
+#endif
+
+stock y_utils_SetPlayerName(playerid, name[])
+{
+	if (SetPlayerName(playerid, name))
+	{
+		strcpy(YSI_gPlayerName[playerid], name);
+		return 1;
+	}
+	return 0;
+}
+#if defined _ALS_SetPlayerName
+	#undef SetPlayerName
+#else
+	#define _ALS_SetPlayerName
+#endif
+#define SetPlayerName y_utils_SetPlayerName
+*/
+
+/**--------------------------------------------------------------------------**\
+<summary>
+	ftouch(filename);
+</summary>
+<param name="filename">The file to "touch".</param>
+<returns>
+	0 - File already exists.
+	1 - File was created.
+	-1 - File was not created.
+</returns>
+<remarks>
+	This "touches" a file in the Unix sense of creating it but not opening or
+	editing it in any way.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock ftouch(const filename[])
 {

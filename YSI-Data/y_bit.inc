@@ -257,7 +257,24 @@ stock Bit_Set(BitArray:array<>, slot, bool:set)//, size = sizeof (array))
 	else Bit_Vet(array, slot);
 }
 
-//#define Bit_Set(%0,%1,%2) ((%2)?Bit_Let(%0,(%1)):Bit_Vet(%0,(%1)))
+/**--------------------------------------------------------------------------**\
+<summary>Bit_FastSet</summary>
+<param name="Bit:array[]">Array of bits.</param>
+<param name="slot">Bit slot.</param>
+<param name="bool:set">State to set the slot to.</param>
+<param name="size">Size of array.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Exactly the same as "Bit_Set", but as a macro not a function.
+
+native Bit_FastSet(BitArray:array<>, slot, bool:set, size = sizeof (array));
+
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Bit_FastSet(%0,%1,%2) ((%2)?(Bit_Let(%0,(%1))):(Bit_Vet(%0,(%1))))
 
 /**--------------------------------------------------------------------------**\
 <summary>Bit_SetAll</summary>

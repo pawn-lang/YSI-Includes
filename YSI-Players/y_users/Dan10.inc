@@ -96,6 +96,7 @@ Operators:
 // I know it is a bit odd that this should need y_ini for database access, but
 // there is a very good reason (loading passwords).
 #include "..\YSI-Storage\y_ini"
+#include "..\YSI-Data\y_iterate"
 
 #if !defined Y_USERS_SQL_HOST
 	#define Y_USERS_SQL_HOST GetUsersSQLHost()
@@ -181,6 +182,7 @@ INI:YSI[y_users](name[], value[])
 	INI_String("Pass", YSI_g_sUsersSQLReadPass, sizeof (YSI_g_sUsersSQLReadPass));
 	INI_String("DB", YSI_g_sUsersSQLDB, sizeof (YSI_g_sUsersSQLDB));
 	INI_Int("Port", YSI_g_sUsersSQLPort);
+	return 0;
 }
 
 static stock Player_LoadDBSettings()
@@ -189,7 +191,7 @@ static stock Player_LoadDBSettings()
 		bool:sLoad = true;
 	if (sLoad)
 	{
-		Ini_Load("YSI.ini");
+		INI_Load("YSI.ini");
 		sLoad = false;
 	}
 }
@@ -237,7 +239,7 @@ stock Player_Preload(string:name[], ret[E_USER_PRELOAD])
 	// First, find the player's file.  This should be the ONLY place where the
 	// password is to be loaded.
 	P:4("Player_Preload called: %s", name);
-	ret[E_USER_PRELOAD_YID] = -2,
+	ret[E_USER_PRELOAD_YID] = -1,
 	ret[E_USER_PRELOAD_PASS] = '\0',
 	ret[E_USER_PRELOAD_LANG] = NO_LANGUAGE,
 	ret[E_USER_PRELOAD_BITS] = 0,
@@ -261,7 +263,7 @@ stock Player_Preload(string:name[], ret[E_USER_PRELOAD])
 	{
 		case 0:
 		{
-			ret[E_USER_PRELOAD_YID] = -1;
+			ret[E_USER_PRELOAD_YID] = 0;
 		}
 		case 1:
 		{
@@ -350,9 +352,9 @@ hook OnScriptInit()
 		"CREATE TABLE IF NOT EXISTS y_users_preload ("					\
 			"yid INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"		\
 			"password_hash CHAR(128), language CHAR(2),"				\
-			"options INT UNSIGNED, join_time INT UNSIGNED,"				\
+			"options INT UNSIGNED, registered INT UNSIGNED,"				\
 			"play_time INT UNSIGNED, last_ip INT UNSIGNED,"				\
-			"last_login DATETIME"										\
+			"last_seen DATETIME"										\
 			") ENGINE InnoDB;");
 	P:5("Users_OnScriptInit: mkH = %d", _:mkH);
 	// "options" was "BIT(32)".
@@ -400,10 +402,11 @@ hook OnScriptInit()
 	// Create the table to map names to IPs.
 	r = sql_query(mkH,
 		"CREATE TABLE IF NOT EXISTS y_users_name_ips ("					\
+			"row BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"	\
 			"name VARCHAR(24) NOT NULL,"								\
 			"one_ip INT UNSIGNED,"										\
 			"validated BOOL," 											\
-			"join_time DATETIME,"										\
+			"registered DATETIME,"										\
 			"leave_time DATETIME"										\
 			") ENGINE InnoDB;");
 	// "validated" means that this name/IP combination logged in and was
@@ -415,9 +418,10 @@ hook OnScriptInit()
 	// Create the table to map YIDs to IPs.
 	r = sql_query(mkH,
 		"CREATE TABLE IF NOT EXISTS y_users_yid_ips ("					\
+			"row BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"	\
 			"yid INT UNSIGNED NOT NULL,"								\
 			"one_ip INT UNSIGNED,"										\
-			"join_time DATETIME,"										\
+			"registered DATETIME,"										\
 			"leave_time DATETIME"										\
 			") ENGINE InnoDB;");
 	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
@@ -443,6 +447,11 @@ hook OnScriptInit()
 
 hook OnScriptExit()
 {
+	// Loop through all players.
+	foreach (new i : Player)
+	{
+		Player_DoDisconnect(i);
+	}
 	sql_disconnect(YSI_g_sPreloadHandle),
 	sql_disconnect(YSI_g_sLoadHandle),
 	sql_disconnect(YSI_g_sWriteHandle);
@@ -451,67 +460,148 @@ hook OnScriptExit()
 hook OnPlayerConnect(playerid)
 {
 	P:1("Users_OnPlayerConnect called: %d", playerid);
-	// -2 means unknown.
-	YSI_g_sPlayerYID[playerid] = -2;
+	new
+		name[MAX_PLAYER_NAME];
+	GetPlayerName(playerid, name, sizeof (name)),
+	YSI_g_sPlayerYID[playerid] = 0,
+	// -1 means unknown.
+	YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID] = -1,
+	YSI_g_sPreloadData[playerid][E_USER_PRELOAD_PASS] = '\0',
+	YSI_g_sPreloadData[playerid][E_USER_PRELOAD_LANG] = NO_LANGUAGE,
+	YSI_g_sPreloadData[playerid][E_USER_PRELOAD_BITS] = 0,
+	YSI_g_sPreloadData[playerid][E_USER_PRELOAD_DATE] = 0;
 	broadcastfunc _Player_IsLoggedIn(playerid);
 	if (existproperty(8, YSIM_LOG_IN))
 	{
 		new
 			uid = getproperty(8, YSIM_LOG_IN);
 		P:5("Users_OnPlayerConnect: Exists %d", uid);
-		if (uid <= 0)
+		// We need the preload data even if they're already logged in.
+		if (uid)
 		{
-			new
-				name[MAX_PLAYER_NAME];
-			GetPlayerName(playerid, name, sizeof (name));
 			Player_Preload(name, YSI_g_sPreloadData[playerid]);
-		}
-		else
-		{
-			// This DOES NOT use "broadcastfunc" as it's local only.
-			Player_DoLogin(playerid, uid);
+			if (uid > 0)
+			{
+				// This DOES NOT use "broadcastfunc" as it's local only.
+				Player_DoLogin(playerid, uid);
+			}
 		}
 		deleteproperty(8, YSIM_LOG_IN);
 	}
 	else
 	{
-		P:5("Users_OnPlayerConnect: Doesn't exist");
 		new
-			name[MAX_PLAYER_NAME];
-		GetPlayerName(playerid, name, sizeof (name));
+			safeName[MAX_PLAYER_NAME],
+			ip = GetIP(playerid);
+		// Write this connection.
+		sql_escape_string(YSI_g_sWriteHandle, name, safeName),
+		format(YSI_g_sSQLQuery, sizeof (YSI_g_sSQLQuery),
+			"INSERT INTO y_users_name_ips VALUES (DEFAULT, '%s', 0x%04x%04x, 0, NOW(), 0)",
+			safeName,
+			ip >>> 16,
+			ip & 0xFFFF),
+		sql_query(YSI_g_sWriteHandle, YSI_g_sSQLQuery, QUERY_THREADED, "y_users_SQLCallback", "ir", 1);
+		P:5("Users_OnPlayerConnect: Doesn't exist");
 		Player_Preload(name, YSI_g_sPreloadData[playerid]);
 		P:5("Users_OnPlayerConnect: Done Preload");
 		// Can do checking in here to see if they just rejoined.
 	}
-	YSI_g_sPlayerYID[playerid] = -1;
+	return 1;
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>_Player_IsLoggedIn</summary>
+<param name="playerid">Player to check.</param>
+<returns>
+	-1 - Registered but not logged in.
+	0  - Not registered.
+	1+ - Logged in, and their YID.
+</returns>
+<remarks>
+	This is a remote function called in existing scripts when a new script
+	starts.  If the player is logged in it returns their YID.  If a player is
+	registered but not logged in it returns "-1".  Otherwise it returns 0.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static remotefunc void:_Player_IsLoggedIn(playerid)
+{
+	P:4("_Player_IsLoggedIn called: %d %d", playerid, YSI_g_sPlayerYID[playerid]);
+	if (YSI_g_sPlayerYID[playerid] > 0)
+	{
+		setproperty(8, YSIM_LOG_IN, YSI_g_sPlayerYID[playerid]);
+	}
+	else if (YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID] > 0)
+	{
+		setproperty(8, YSIM_LOG_IN, -1);
+	}
+	else
+	{
+		setproperty(8, YSIM_LOG_IN, 0);
+	}
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>OnPlayerDisconnect</summary>
+<param name="playerid">Player who left.</param>
+<param name="reason">Why they left.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Logs the player out if they're logged in.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 hook OnPlayerDisconnect(playerid, reason)
 {
-	P:2("Users_OnPlayerDisconnect called: %d %d %d", playerid, reason, YSI_g_sPlayerYID[playerid]);
-	if (YSI_g_sPlayerYID[playerid] >= 0)
+	Player_DoDisconnect(playerid);
+}
+
+static stock Player_DoDisconnect(playerid)
+{
+	new
+		yid = YSI_g_sPlayerYID[playerid];
+	P:2("Users_OnPlayerDisconnect called: %d %d %d", playerid, yid);
+	if (yid > 0)
 	{
 		// DO NOT broadcastfunc this in case it's just because of one script being
 		// unloaded, not the player actually leaving (and thus do everything in
 		// different scripts separately).
 		Player_SaveData(playerid, true);
+		new
+			name[MAX_PLAYER_NAME],
+			ip = GetIP(playerid);
+		GetPlayerName(playerid, name, sizeof (name)),
+		// Write this connection.
+		sql_escape_string(YSI_g_sWriteHandle, name, name),
+		// Save the online time for this NAME.
+		format(YSI_g_sSQLQuery, sizeof (YSI_g_sSQLQuery),
+			"UPDATE y_users_name_ips SET leave_time=NOW() WHERE name='%s' ORDER BY row DESC LIMIT 1;",
+			name),
+		sql_query(YSI_g_sWriteHandle, YSI_g_sSQLQuery, QUERY_THREADED, "y_users_SQLCallback", "ir", 1),
+		// Save the total online time for this YID.
+		format(YSI_g_sSQLQuery, sizeof (YSI_g_sSQLQuery),
+			"UPDATE y_users_preload SET last_ip=0x%04x%04x, last_seen=NOW(), play_time=play_time+("			\
+				"SELECT (NOW()-leave_time) FROM y_users_yid_ips WHERE yid=%d ORDER BY row DESC LIMIT 1)"	\
+				"WHERE yid=%d;",
+			ip >>> 16, ip & 0xFFFF, yid, yid),
+		sql_query(YSI_g_sWriteHandle, YSI_g_sSQLQuery, QUERY_THREADED, "y_users_SQLCallback", "ir", 1),
+		// Save the current online time for this YID.
+		format(YSI_g_sSQLQuery, sizeof (YSI_g_sSQLQuery),
+			"UPDATE y_users_yid_ips SET leave_time=NOW() WHERE yid=%d ORDER BY row DESC LIMIT 1;",
+			yid),
+		sql_query(YSI_g_sWriteHandle, YSI_g_sSQLQuery, QUERY_THREADED, "y_users_SQLCallback", "ir", 1);
+		
 	}
-	YSI_g_sPlayerYID[playerid] = -2;
-}
-
-static remotefunc void:_Player_IsLoggedIn(playerid)
-{
-	P:4("_Player_IsLoggedIn called: %d %d", playerid, YSI_g_sPlayerYID[playerid]);
-	if (YSI_g_sPlayerYID[playerid] != -2)
-	{
-		setproperty(8, YSIM_LOG_IN, YSI_g_sPlayerYID[playerid]);
-	}
+	YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID] = -1,
+	YSI_g_sPlayerYID[playerid] = 0;
 }
 
 stock bool:Player_IsLoggedIn(playerid)
 {
 	// -2 should never be an issue, but if it is...
-	return YSI_g_sPlayerYID[playerid] >= 0;
+	return YSI_g_sPlayerYID[playerid] > 0;
 }
 
 stock Player_GetYID(playerid)
@@ -550,11 +640,11 @@ global Player_TryLogin(playerid, string:password[])
 	Player_HashPass(hash, hash);
 	switch (YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID])
 	{
-		case -2:
+		case -1:
 		{
 			Text_Send(playerid, $YSI_LOGIN_INDERR);
 		}
-		case -1, 0:
+		case 0:
 		{
 			Text_Send(playerid, $YSI_LOGIN_NOTF);
 		}
@@ -569,6 +659,19 @@ global Player_TryLogin(playerid, string:password[])
 				Langs_SetPlayerLanguage(playerid, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_LANG]);
 				broadcastfunc Player_DoLogin(playerid, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID]);
 				Text_Send(playerid, $YSI_LOGIN_LOGIN);
+				new
+					name[MAX_PLAYER_NAME],
+					safeName[MAX_PLAYER_NAME],
+					ip = GetIP(playerid);
+				GetPlayerName(playerid, name, sizeof (name)),
+				// Write this connection.
+				sql_escape_string(YSI_g_sWriteHandle, name, safeName),
+				format(YSI_g_sSQLQuery, sizeof (YSI_g_sSQLQuery),
+					"INSERT INTO y_users_yid_ips VALUES (DEFAULT, %d, 0x%04x%04x, NOW(), NOW())",
+					YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID],
+					ip >>> 16,
+					ip & 0xFFFF),
+				sql_query(YSI_g_sWriteHandle, YSI_g_sSQLQuery, QUERY_THREADED, "y_users_SQLCallback", "ir", 1);
 				return 1;
 			}
 			else
@@ -580,7 +683,7 @@ global Player_TryLogin(playerid, string:password[])
 				GetPlayerName(playerid, hash, sizeof (hash)),
 				sql_escape_string(YSI_g_sWriteHandle, hash, hash),
 				format(YSI_g_sSQLQuery, sizeof (YSI_g_sSQLQuery),
-					"INSERT INTO y_users_fails VALUES (DEFAULT, %d, '%s', 0x%04x%04x, 0, NOW())"
+					"INSERT INTO y_users_fails VALUES (DEFAULT, %d, '%s', 0x%04x%04x, 0, NOW())",
 					YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID],
 					hash,
 					ip >>> 16,
@@ -614,11 +717,11 @@ global Player_ForceLogin(playerid)
 	}
 	switch (YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID])
 	{
-		case -2:
+		case -1:
 		{
 			Text_Send(playerid, $YSI_LOGIN_INDERR);
 		}
-		case -1, 0:
+		case 0:
 		{
 			Text_Send(playerid, $YSI_LOGIN_NOTF);
 		}
@@ -629,6 +732,19 @@ global Player_ForceLogin(playerid)
 			Langs_SetPlayerLanguage(playerid, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_LANG]);
 			broadcastfunc Player_DoLogin(playerid, YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID]);
 			Text_Send(playerid, $YSI_LOGIN_LOGIN);
+			new
+				name[MAX_PLAYER_NAME],
+				safeName[MAX_PLAYER_NAME],
+				ip = GetIP(playerid);
+			GetPlayerName(playerid, name, sizeof (name)),
+			// Write this connection.
+			sql_escape_string(YSI_g_sWriteHandle, name, safeName),
+			format(YSI_g_sSQLQuery, sizeof (YSI_g_sSQLQuery),
+				"INSERT INTO y_users_yid_ips VALUES (DEFAULT, %d, 0x%04x%04x, NOW(), NOW())",
+				YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID],
+				ip >>> 16,
+				ip & 0xFFFF),
+			sql_query(YSI_g_sWriteHandle, YSI_g_sSQLQuery, QUERY_THREADED, "y_users_SQLCallback", "ir", 1);
 			return 1;
 		}
 	}
@@ -644,6 +760,9 @@ remotefunc void:Player_DoLogin(playerid, uid)
 	// use a FOREIGN KEY CONSTRAINT to map them to each other.
 	format(YSI_g_sSQLQuery, sizeof (YSI_g_sSQLQuery), "SELECT tag, vkey, value FROM y_users_modes JOIN y_users_keystore WHERE yid=%d && mode='" #MODE_NAME "';", uid);
 	sql_query(YSI_g_sLoadHandle, YSI_g_sSQLQuery, QUERY_THREADED, "y_users_SQLLoaded", "iir", playerid, uid);
+	//UPDATE y_users_name_ips SET validated=1 WHERE name='%s' && one_ip=0x%04x%04x && leave_time=0
+	//format(YSI_g_sSQLQuery, sizeof (YSI_g_sSQLQuery), "SELECT tag, vkey, value FROM y_users_modes JOIN y_users_keystore WHERE yid=%d && mode='" #MODE_NAME "';", uid);
+	//sql_query(YSI_g_sLoadHandle, YSI_g_sSQLQuery, QUERY_THREADED, "y_users_SQLLoaded", "iir", playerid, uid);
 }
 
 public y_users_SQLLoaded(playerid, uid, Result:r)
@@ -659,6 +778,8 @@ public y_users_SQLLoaded(playerid, uid, Result:r)
 			sql_free_result(r),
 			0;
 	}
+	// Finally, they've logged in.
+	call OnPlayerLogin(playerid, uid);
 	// Loop through all the results.
 	new
 		rows = sql_num_rows(r);
@@ -671,8 +792,6 @@ public y_users_SQLLoaded(playerid, uid, Result:r)
 		sql_get_field(r, 2, YSI_g_sSQLQuery),
 		CallLocalFunction(func, "iss", playerid, name, YSI_g_sSQLQuery);
 	}
-	// Finally, they've logged in.
-	call OnPlayerLogin(playerid, uid);
 	return
 		sql_free_result(r),
 		1;
@@ -921,7 +1040,7 @@ stock Player_SaveData(playerid, bool:logout = false)
 	// player's data being saved...
 	new
 		stk = YSI_g_sCurrentYID;
-	if (YSI_g_sPlayerYID[playerid] >= 0)
+	if (YSI_g_sPlayerYID[playerid] > 0)
 	{
 		// Flush any old data.
 		Player_FlushData();
@@ -1040,11 +1159,12 @@ global Player_TryRegister(playerid, string:password[])
 	Player_HashPass(password, hash);
 	switch (YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID])
 	{
-		case -2:
+		case -1:
 		{
 			Text_Send(playerid, $YSI_LOGIN_INDERR);
+			return 0;
 		}
-		case -1, 0:
+		case 0:
 		{
 		}
 		default:
@@ -1069,23 +1189,28 @@ global Player_TryRegister(playerid, string:password[])
 			}
 		}
 	}
+	// Flush pending updates as we need to use "YSI_g_sSQLBuffer", mainly
+	// (entirely) because the hash pushes us well over the 256 limit for using
+	// "YSI_g_sSQLQuery" so we need the larger buffer.
 	Player_FlushData();
 	new
 		name[MAX_PLAYER_NAME + 1];
-	GetPlayerName(playerid, name, sizeof (name));
+	GetPlayerName(playerid, name, sizeof (name)),
 	sql_escape_string(YSI_g_sWriteHandle, name, name);
+	// Hash the password a second time.
 	new
 		d = gettime(),
 		date[9];
 	format(date, sizeof (date), "%04x%04x", d >>> 16, d & 0xFFFF),
 	strcat(hash, date),
 	Player_HashPass(hash, hash),
+	// Create a new YID, then associate this name with it.
 	format(YSI_g_sSQLBuffer, sizeof (YSI_g_sSQLBuffer),
-		"SELECT @Y:=MAX(yid) FROM y_users_preload;"			\
-		"INSERT INTO y_users_preload VALUES"				\
-			"(DEFAULT, @Y + 1, '%s', '%s', '%s', 0, %d);"	\
-		"SELECT (@Y + 1);",
-		name, hash, Langs_GetCode(Langs_GetPlayerLanguage(playerid)), d);
+		"INSERT INTO y_users_preload VALUES (DEFAULT, '%s', '%s', 0, 0x%s, 0, 0, 0);"	\
+		"SELECT @Y:=LAST_INSERT_ID();"													\
+		"INSERT INTO y_users_users VALUES ('%s', @Y);"									\
+		"SELECT @Y;",
+		hash, Langs_GetCode(Langs_GetPlayerLanguage(playerid)), date, name);
 	new
 		Result:r = sql_query(YSI_g_sWriteHandle, YSI_g_sSQLBuffer);
 	YSI_g_sSQLBuffer[0] = '\0';
@@ -1112,7 +1237,7 @@ global Player_ChangePassword(playerid, string:password[])
 	#pragma unused password
 	new
 		uid = Player_GetYID(playerid);
-	if (uid < 0)
+	if (uid <= 0)
 	{
 		return 0;
 	}
@@ -1143,7 +1268,7 @@ global Player_ChangePassword(playerid, string:password[])
 
 static stock Player_RewritePreload(playerid)
 {
-	if (YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID] < 0)
+	if (YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID] <= 0)
 	{
 		return 0;
 	}
@@ -1157,7 +1282,7 @@ static stock Player_RewritePreload(playerid)
 		// Right then, lets get coding...
 		new
 			query[110];
-		mysql_format(YSI_g_sMySQL, query, "SELECT `uid`, `language`, `hash` FROM `y_users_register` WHERE `name` = '%e' LIMIT 0,1", name);
+		mysql_format(YSI_g_sMySQL, query, "SELECT `uid`, `language`, `hash` FROM `y_users_register` WHERE `name` = '%e' LIMIT 1", name);
 		mysql_function_query(YSI_g_sMySQL, query, true, "_Player_Preload", "ii", );
 	#else
 		new
@@ -1208,7 +1333,7 @@ static stock Player_RewritePreload(playerid)
 			P:E("Error reading index %c.", filename[0]);
 			return 0;
 		}
-		//ret[E_USER_PRELOAD_YID] = -1;
+		//ret[E_USER_PRELOAD_YID] = 0;
 	#endif
 	return 0;
 }
@@ -1235,20 +1360,15 @@ global Player_TryGroup(playerid, string:other[], string:password[])
 		Text_Send(playerid, $YSI_LOGIN_ALREADY);
 		return 1;
 	}
-	new
-		hash[MAX_PASSWORD_LENGTH + 1];
-	Player_HashPass(password, hash);
-	// Check if the user is not registered already.
 	switch (YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID])
 	{
-		case -2:
+		case -1:
 		{
 			Text_Send(playerid, $YSI_LOGIN_INDERR);
 			return 0;
 		}
-		case -1, 0:
+		case 0:
 		{
-			//Text_Send(playerid, $YSI_LOGIN_NOTF);
 		}
 		default:
 		{
@@ -1262,67 +1382,60 @@ global Player_TryGroup(playerid, string:other[], string:password[])
 	Player_Preload(other, ret);
 	switch (ret[E_USER_PRELOAD_YID])
 	{
-		case -2:
+		case -1:
 		{
 			Text_Send(playerid, $YSI_LOGIN_INDERR);
 		}
-		case -1, 0:
+		case 0:
 		{
 			Text_Send(playerid, $YSI_LOGIN_NOTF);
 		}
 		default:
 		{
+			new
+				hash[MAX_PASSWORD_LENGTH + 1 + 8],
+				d = ret[E_USER_PRELOAD_DATE],
+				date[9];
+			// Hash the password twice, second time with the salt.
+			Player_HashPass(password, hash),
+			format(date, sizeof (date), "%04x%04x", d >>> 16, d & 0xFFFF),
+			strcat(hash, date),
+			Player_HashPass(hash, hash);
 			// Match the password.
 			if (!strcmp(ret[E_USER_PRELOAD_PASS], hash, false, MAX_PASSWORD_LENGTH) && ret[E_USER_PRELOAD_PASS][0])
 			{
 				new
 					name[MAX_PLAYER_NAME + 1];
-				GetPlayerName(playerid, name, sizeof (name));
+				GetPlayerName(playerid, name, sizeof (name)),
+				sql_escape_string(YSI_g_sWriteHandle, name, name),
+				format(YSI_g_sSQLQuery, sizeof (YSI_g_sSQLQuery),
+					"INSERT INTO y_users_users VALUES ('%s', %d);",
+					name, ret[E_USER_PRELOAD_YID]);
 				new
-					filename[64] = USER_FILE_PATH "ind_X.YSI";
-				Player_GetIndexFile(filename, name[0]);
-				new
-					File:fIndex = fopen(filename, io_append);
-				if (!fIndex)
+					Result:r = sql_query(YSI_g_sWriteHandle, YSI_g_sSQLQuery);
+				if (sql_error(r))
 				{
-					Text_Send(playerid, $YSI_ADDU_INDERR2);
-					return 0;
+					sql_error_string(r, YSI_g_sSQLQuery),
+					P:E("SQL Error: %s", YSI_g_sSQLQuery);
+					return
+						Text_Send(playerid, $YSI_ADDU_INDER2),
+						sql_free_result(r),
+						0;
 				}
-				P:5("Player_TryGroup: Write index.");
-				new
-					uid = ret[E_USER_PRELOAD_YID],
-					line[INDEX_DATA_LINE_LENGTH];
-				// Use the loaded ID.
-				format(line, sizeof (line), "%0" #MAX_INDEX_LENGTH "d %" #MAX_PLAYER_NAME "s %" #MAX_PASSWORD_LENGTH "s %02s" INI_NEW_LINE, uid, name, hash, Langs_GetCode(ret[E_USER_PRELOAD_LANG]));
-				fwrite(fIndex, line);
-				fclose(fIndex);
-				format(filename, sizeof (filename), USER_FILE_PATH "%0" #MAX_INDEX_LENGTH "d.INI", uid);
-				new
-					INI:x = INI_Open(filename);
-				if (x == INI_NO_FILE)
-				{
-					Text_Send(playerid, $YSI_LOGIN_NOLOAD);
-				}
-				else
-				{
-					// Add this name to the list of known names.
-					INI_SetTag(x, "ysi_names");
-					INI_WriteString(x, name, "name");
-					INI_Close(x);
-				}
-				// Call in all scripts.
-				Langs_SetPlayerLanguage(playerid, ret[E_USER_PRELOAD_LANG]);
-				broadcastfunc Player_DoLogin(playerid, uid);
+				sql_free_result(r),
+				// Copy over the preload data.
+				YSI_g_sPreloadData[playerid] = ret,
+				broadcastfunc Player_DoLogin(playerid, ret[E_USER_PRELOAD_YID]),
 				Text_Send(playerid, $YSI_LOGIN_LOGIN);
-				return 1;
 			}
 			else
 			{
 				Text_Send(playerid, $YSI_LOGIN_WRONG);
+				return 0;
 			}
 		}
 	}
-	return 0;
+	return 1;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1347,17 +1460,15 @@ global Player_ForceGroup(playerid, string:other[])
 		Text_Send(playerid, $YSI_LOGIN_ALREADY);
 		return 1;
 	}
-	// Check if the user is not registered already.
 	switch (YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID])
 	{
-		case -2:
+		case -1:
 		{
 			Text_Send(playerid, $YSI_LOGIN_INDERR);
 			return 0;
 		}
-		case -1, 0:
+		case 0:
 		{
-			//Text_Send(playerid, $YSI_LOGIN_NOTF);
 		}
 		default:
 		{
@@ -1371,11 +1482,11 @@ global Player_ForceGroup(playerid, string:other[])
 	Player_Preload(other, ret);
 	switch (ret[E_USER_PRELOAD_YID])
 	{
-		case -2:
+		case -1:
 		{
 			Text_Send(playerid, $YSI_LOGIN_INDERR);
 		}
-		case -1, 0:
+		case 0:
 		{
 			Text_Send(playerid, $YSI_LOGIN_NOTF);
 		}
@@ -1383,78 +1494,28 @@ global Player_ForceGroup(playerid, string:other[])
 		{
 			new
 				name[MAX_PLAYER_NAME + 1];
-			GetPlayerName(playerid, name, sizeof (name));
+			GetPlayerName(playerid, name, sizeof (name)),
+			sql_escape_string(YSI_g_sWriteHandle, name, name),
+			format(YSI_g_sSQLQuery, sizeof (YSI_g_sSQLQuery),
+				"INSERT INTO y_users_users VALUES ('%s', %d);",
+				name, ret[E_USER_PRELOAD_YID]);
 			new
-				filename[64] = USER_FILE_PATH "ind_X.YSI";
-			Player_GetIndexFile(filename, name[0]);
-			new
-				File:fIndex = fopen(filename, io_append);
-			if (!fIndex)
+				Result:r = sql_query(YSI_g_sWriteHandle, YSI_g_sSQLQuery);
+			if (sql_error(r))
 			{
-				Text_Send(playerid, $YSI_ADDU_INDERR2);
-				return 0;
+				sql_error_string(r, YSI_g_sSQLQuery),
+				P:E("SQL Error: %s", YSI_g_sSQLQuery);
+				return
+					Text_Send(playerid, $YSI_ADDU_INDER2),
+					sql_free_result(r),
+					0;
 			}
-			P:5("Player_TryGroup: Write index.");
-			new
-				uid = ret[E_USER_PRELOAD_YID],
-				line[INDEX_DATA_LINE_LENGTH];
-			// Use the loaded ID.
-			format(line, sizeof (line), "%0" #MAX_INDEX_LENGTH "d %" #MAX_PLAYER_NAME "s %" #MAX_PASSWORD_LENGTH "s %02s" INI_NEW_LINE, uid, name, ret[E_USER_PRELOAD_PASS], Langs_GetCode(ret[E_USER_PRELOAD_LANG]));
-			fwrite(fIndex, line);
-			fclose(fIndex);
-			format(filename, sizeof (filename), USER_FILE_PATH "%0" #MAX_INDEX_LENGTH "d.INI", uid);
-			new
-				INI:x = INI_Open(filename);
-			if (x == INI_NO_FILE)
-			{
-				Text_Send(playerid, $YSI_LOGIN_NOLOAD);
-			}
-			else
-			{
-				// Add this name to the list of known names.
-				INI_SetTag(x, "ysi_names");
-				INI_WriteString(x, name, "name");
-				INI_Close(x);
-			}
-			// Call in all scripts.
-			Langs_SetPlayerLanguage(playerid, ret[E_USER_PRELOAD_LANG]);
-			broadcastfunc Player_DoLogin(playerid, uid);
+			sql_free_result(r),
+			// Copy over the preload data.
+			YSI_g_sPreloadData[playerid] = ret,
+			broadcastfunc Player_DoLogin(playerid, ret[E_USER_PRELOAD_YID]),
 			Text_Send(playerid, $YSI_LOGIN_LOGIN);
-			return 1;
 		}
 	}
-	return 0;
-}
-
-static stock Player_GetNewID()
-{
-	new
-		File:fHnd = fopen(USER_FILE_PATH "index.YSI", io_readwrite),
-		num[MAX_INDEX_LENGTH + 9],
-		uid = -1;
-	if (fHnd)
-	{
-		fread(fHnd, num);
-		num[strfind(num, " ")] = '\0';
-		uid = strval(num) + 1;
-		valstr(num, uid);
-		fseek(fHnd, 0, seek_start);
-		fwrite(fHnd, num);
-		fwrite(fHnd, "        ");
-		fclose(fHnd);
-	}
-	return uid;
-}
-
-static stock Player_CreateNewID()
-{
-	new
-		File:fHnd = fopen(USER_FILE_PATH "index.YSI", io_write);
-	if (fHnd)
-	{
-		fwrite(fHnd, "-1        ");
-		fclose(fHnd);
-		return 1;
-	}
-	return 0;
+	return 1;
 }

@@ -75,11 +75,6 @@ Changelog:
 	#error y_inline does not work with "YSI_MALLOC_SECURE" defined.
 #endif
 
-// "with inline X"
-// "with public X"
-// %0 = " in" or " pub" (ignored).
-// "%1 = "ne X" or "c X" (makes a macro).
-
 /*
 New y_inline variable types:
 
@@ -89,39 +84,60 @@ New y_inline variable types:
 11 - Array     (a[], aLength)
 */
 
-#define Inline_AddOneBit(%0,%1,%2) (((%2) ? ((%0[((%1) >>> 5)]) |= (1 << ((%1) & 0x1F))) : ((%0[((%1) >>> 5)]) &= ~(1 << ((%1) & 0x1F)))), (++(%1)))
+#define INLINE_TYPE_VAR (0b00)
+#define INLINE_TYPE_REF (0b10)
+#define INLINE_TYPE_STR (0b01)
+#define INLINE_TYPE_ARR (0b11)
 
-// Fast, cell boundary aware, length extraction.
-shift = at & 0x1F;
-switch (shift)
+//#define Inline_AddOneBit(%0,%1,%2) (((%2) ? ((%0[((%1) >>> 5)]) |= (1 << ((%1) & 0x1F))) : ((%0[((%1) >>> 5)]) &= ~(1 << ((%1) & 0x1F)))), (++(%1)))
+//#define Inline_AddOneBit(%0,%1,%2) (((%2) ? (Bit_Let(Bit:%0,%1)) : (Bit_Vet(Bit:%0,%1))), (++(%1)))
+
+#define Inline_AddOneBit(%0,%1,%2) (Bit_FastSet(Bit:%0,%1,%2),(++(%1)))
+#define Inline_SetOneBit(%0,%1,%2) (Bit_FastSet(Bit:%0,%1,%2))
+#define Inline_GetOneBit(%0,%1)    (Bit_Get(Bit:%0,%1))
+
+static stock Inline_DecodeVariable(from[], &at, &len)
 {
-	// Start of the cell.
-	case  0: len = from[slot] & 0x0FFF;
-	// Whole length in one cell.
-	#define I@(%0) case %0:len=(from[slot]>>>%0)&0x0FFF;
-	I@(1)I@(2)I@(3)I@(4)I@(5)I@(6)I@(7)I@(8)I@(9)I@(10)
-	//case 10: len = (from[slot] >>> 10) & 0x0FFF;
-	I@(11)I@(12)I@(13)I@(14)I@(15)I@(16)I@(17)I@(18)I@(19)
-	#undef I@
-	// End of the cell.
-	case 20: len = from[slot] >>> 20;
-	// Two cells.
-	#define I@(%0) case %0:len=(from[slot]>>>%0)|((from[slot+1]&(0xFFF>>>(32-%0)))<<(32-%0));
-	I@(21)
-	case 21: len = (from[slot] >>> 21) | ((from[slot + 1] & 0x0001) << 11);
-	case 22: len = (from[slot] >>> 22) | ((from[slot + 1] & 0x0003) << 10);
-	case 23: len = (from[slot] >>> 23) | ((from[slot + 1] & 0x0007) << 09);
-	case 24: len = (from[slot] >>> 24) | ((from[slot + 1] & 0x000F) << 08);
-	case 25: len = (from[slot] >>> 25) | ((from[slot + 1] & 0x001F) << 07);
-	case 26: len = (from[slot] >>> 26) | ((from[slot + 1] & 0x003F) << 06);
-	case 27: len = (from[slot] >>> 27) | ((from[slot + 1] & 0x007F) << 05);
-	case 28: len = (from[slot] >>> 28) | ((from[slot + 1] & 0x00FF) << 04);
-	case 29: len = (from[slot] >>> 29) | ((from[slot + 1] & 0x01FF) << 03);
-	case 30: len = (from[slot] >>> 30) | ((from[slot + 1] & 0x03FF) << 02);
-	//case 31: len = (from[slot] >>> 31) | ((from[slot + 1] & 0x07FF) << 01);
-	#undef I@
+	new
+		slot = at >>> 5,
+		type;
+	switch (at & 0x1F)
+	{
+		case 0: type = from[slot] & 0x03;
+		#define I@(%0) case %0:type=(from[slot]>>>%0)&3;
+		I@(01)I@(02)I@(03)I@(04)I@(05)I@(06)I@(07)I@(08)I@(09)I@(10)
+		I@(11)I@(12)I@(13)I@(14)I@(15)I@(16)I@(17)I@(18)I@(19)I@(20)
+		I@(21)I@(22)I@(23)I@(24)I@(25)I@(26)I@(27)I@(28)I@(29)I@(30)
+		case 31: type = (from[slot] >>> 31) | ((from[slot + 1] & 1) << 1);
+		#undef I@(%0)
+	}
+	at += 2;
+	if (type != INLINE_TYPE_STR) return type;
+	// Fast, cell boundary aware, length extraction.  The length is stored -1
+	// cell, so adjust for that too.
+	switch (at & 0x1F)
+	{
+		// Start of the (next) cell.  For these two, doing "at += 2;" spilled
+		// the pointer over in to the next cell.
+		case 0: len = (from[slot + 1] & 0x0FFF) + 1;
+		case 1: len = ((from[slot + 1] >>> 1) & 0x0FFF) + 1;
+		#define I@(%0) case %0:len=((from[slot]>>>%0)&0x0FFF)+1;
+		// Whole length in one (current) cell.
+		I@(02)I@(03)I@(04)I@(05)I@(06)I@(07)I@(08)I@(09)I@(10)
+		I@(11)I@(12)I@(13)I@(14)I@(15)I@(16)I@(17)I@(18)I@(19)
+		#undef I@
+		// End of the cell.
+		case 20: len = (from[slot] >>> 20) + 1;
+		// Two cells (let the compiler do the maths for us).
+		#define I@(%0) case %0:len=((from[slot]>>>%0)|((from[slot+1]&(0xFFF>>>(32-%0)))<<(32-%0)))+1;
+		I@(21)I@(22)I@(23)I@(24)I@(25)
+		I@(26)I@(27)I@(28)I@(29)I@(30)
+		// Last one (actually the same as the previous 10 for an example).
+		case 31: len = ((from[slot] >>> 31) | ((from[slot + 1] & 0x07FF) << 1)) + 1;
+		#undef I@
+	}
+	at += 12;
 }
-at += 12;
 
 static stock Inline_EncodeVariable(to[], &rem, &at, type, length = 0)
 {
@@ -165,7 +181,7 @@ static stock Inline_EncodeVariable(to[], &rem, &at, type, length = 0)
 			}
 			else
 			{
-				P:E("Unable to encode y_inline parameters.");
+				P:E("Unable to encode y_inline length.");
 				// Remove the parameter we just encoded.
 				at -= 2;
 				return;
@@ -174,6 +190,11 @@ static stock Inline_EncodeVariable(to[], &rem, &at, type, length = 0)
 	}
 	rem -= 2;
 }
+
+// "with inline X"
+// "with public X"
+// %0 = " in" or " pub" (ignored).
+// "%1 = "ne X" or "c X" (makes a macro).
 
 #define using%0) callback_tag:@Ik:@Il:%0)
 

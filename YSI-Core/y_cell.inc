@@ -89,6 +89,29 @@ Compile options:
 #include "..\YSI-Internal\y_version"
 #include "..\YSI-Internal\y_globaltags"
 
+/**--------------------------------------------------------------------------**\
+<summary>
+	Cell_ReverseBits(number);
+</summary>
+<param name="number">The number to manipulate.</param>
+<returns>
+	All the bits in the input reversed.
+</returns>
+<remarks>
+	1)
+	Example: 0b11110000000000000000000000000000
+	Becomes: 0b00000000000000000000000000001111
+	
+	2)
+	Example: 0b10110011100011110000111110000010
+	Becomes: 0b01000001111100001111000111001101
+	
+	3)
+	Example: 0b01010101010101010101010101010101
+	Becomes: 0b10101010101010101010101010101010
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 {
 	// Swap adjacent bits.
@@ -101,6 +124,29 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 	return (data >>> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0x0000FF00) << 8) | (data << 24);
 }
 
+/**--------------------------------------------------------------------------**\
+<summary>
+	Cell_ReverseNibbles(number);
+</summary>
+<param name="number">The number to manipulate.</param>
+<returns>
+	All the nibbles (4-bit chunks) in the input reversed.
+</returns>
+<remarks>
+	1)
+	Example: 0x12345678
+	Becomes: 0x87654321
+	
+	2)
+	Example: 0x010F0703
+	Becomes: 0x3070F010
+	
+	3)
+	Example: 0xF0F0F0F0
+	Becomes: 0x0F0F0F0F
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 {
 	// Swap adjacent nibbles.
@@ -109,11 +155,57 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 	return (data >>> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0x0000FF00) << 8) | (data << 24);
 }
 
+/**--------------------------------------------------------------------------**\
+<summary>
+	Cell_ReverseBytes(number);
+</summary>
+<param name="number">The number to manipulate.</param>
+<returns>
+	All the bytes in the input reversed.
+</returns>
+<remarks>
+	1)
+	Example: 0x12345678
+	Becomes: 0x78563412
+	
+	2)
+	Example: 0x01020304
+	Becomes: 0x04030201
+	
+	3)
+	Example: 0xFF00FF00
+	Becomes: 0x00FF00FF
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 {
 	// Swap all bytes.
 	return (data >>> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0x0000FF00) << 8) | (data << 24);
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>
+	Cell_CountBits(number);
+</summary>
+<param name="number">The number to get the number of 1s in.</param>
+<returns>
+	The number of 1s (set bits) in the input.
+</returns>
+<remarks>
+	1)
+	Example: 0
+	Returns: 0
+	
+	2)
+	Example: 1
+	Returns: 1
+	
+	3)
+	Example: 0x01010101
+	Returns: 4
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 {
@@ -121,6 +213,33 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	data = (data & 0x33333333) + ((data >>> 2) & 0x33333333);
 	return ((data + (data >>> 4) & 0xF0F0F0F) * 0x1010101) >>> 24;
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>
+	Cell_CountBits(number);
+</summary>
+<param name="number">The number to get the lowest set bit of.</param>
+<returns>
+	The integer position of the lowest set bit.
+</returns>
+<remarks>
+	1)
+	Example: 0b00000000000000000000000000000001
+	Returns: 0
+	
+	2)
+	Example: 0b00000000000000000000000000001000
+	Returns: 3
+	
+	3)
+	Example: 0b00010001100011000011100010001000
+	Returns: 3
+	
+	NOTE: This function returns "0" for both numbers with the "1" bit set AND
+	the number "0", which has NO bits set.  Check that the number is valid
+	before passing it to this function.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 {
@@ -133,6 +252,32 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 	// http://supertech.csail.mit.edu/papers/debruijn.pdf
 	return scDeBruijn[((data & -data) * 0x077CB531) >>> 27];
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>
+	Cell_GetLowestComponent(number);
+</summary>
+<param name="number">The number to get the number of 1s in.</param>
+<returns>
+	The lowest set bit.
+</returns>
+<remarks>
+	Similar to Cell_GetLowestBit, but returns the bit, not the position of the
+	bit.
+	
+	1)
+	Example: 0b00000000000000000000000000000001
+	Returns: 0b00000000000000000000000000000001
+	
+	2)
+	Example: 0b00000000000000000000000000001000
+	Returns: 0b00000000000000000000000000001000
+	
+	3)
+	Example: 0b00010001100011000011100010001000
+	Returns: 0b00000000000000000000000000001000
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 {
