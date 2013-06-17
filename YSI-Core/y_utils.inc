@@ -632,6 +632,42 @@ stock isnumeric(str[])
 
 /**--------------------------------------------------------------------------**\
 <summary>
+	rawMemcpy
+</summary>
+<param name="dest">Destination address.</param>
+<param name="src">Source data.</param>
+<param name="bytes">Number of bytes to copy.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Like memcpy, but takes addresses instead of arrays.  Also far less secure.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+forward __rawMemcpy__(dest[], src[], bytes);
+
+public __rawMemcpy__(dest[], src[], bytes)
+{
+	memcpy(dest, src, 0, bytes, bytes);
+}
+
+stock rawMemcpy(dest, src, bytes)
+{
+	#emit PUSH.S     bytes
+	#emit PUSH.S     bytes
+	#emit PUSH.C     0
+	#emit PUSH.S     src
+	#emit PUSH.S     dest
+	#emit PUSH.C     20
+	#emit SYSREQ.C   memcpy
+	#emit STACK      24
+	#emit RETN
+	return 0;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>
 	memset
 	rawMemset
 </summary>

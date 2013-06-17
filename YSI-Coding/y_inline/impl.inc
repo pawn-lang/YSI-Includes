@@ -5,6 +5,16 @@
 #include "..\amx\frame_info"
 #include "..\YSI-Storage\y_amx"
 #include "..\YSI-Core\y_debug"
+#include "..\YSI-Core\y_utils"
+#include "y_malloc"
+
+enum E_CALLBACK_DATA
+{
+	// ===== ALWAYS FIRST =====
+	ResolvedAlloc:E_CALLBACK_DATA_ALLOC, // Fully resolved address.
+	// ===== ALWAYS AFTER =====
+	E_CALLBACK_DATA_POINTER
+}
 
 static stock
 	YSI_g_sCurInlineLocals,  // Number of locals in current parent.
@@ -75,7 +85,7 @@ stock Inline_End(mutable const s[])
 	// Store the pointer to the start of this new inline's available code.
 	YSI_g_sCurInlineEntry = start + 8;
 	// Save the data name pointer.
-	printf("s before: %s", s);
+	//printf("s before: %s", s);
 	start = strfind(s, ":");
 	#emit LOAD.S.alt    s
 	#emit LOAD.S.pri    start
@@ -84,14 +94,23 @@ stock Inline_End(mutable const s[])
 	#emit STOR.S.pri    start
 	#emit ADD.C         4
 	#emit STOR.pri      YSI_g_sCurInlinePointer
-	// Write out "NULL" in place of ":".
-	#emit ZERO.pri
+	// Write out "\02" in place of ":".
+	#emit CONST.pri     2
 	#emit SREF.S.pri    start
-	printf("s after: %s", s);
+	//printf("s after: %s", s);
 	// Get the number of local variables already in the parent function.
 	start = GetCurrentFramePreviousFrame();
 	YSI_g_sCurInlineLocals = GetFrameLocalSize(start);
 	YSI_g_sCurInlineParams = GetFrameParameterSize(start);
+	// Save parameter counts, shifted for separate components.
+	start = YSI_g_sCurInlinePointer + 4;
+	#emit LOAD.pri      YSI_g_sCurInlineLocals
+	#emit SHR.C.pri     2
+	#emit LOAD.alt      YSI_g_sCurInlineParams
+	#emit SHL.C.alt     22
+	#emit OR
+	#emit SREF.S.pri    start
+	// TODO: Save next function pointer to linked list.
 	// Return 1 to enter the main "inline" function block.
 	return 1;
 }
@@ -152,10 +171,10 @@ static stock Inline_WriteFunctionProlog(entry, loop, code)
 \**--------------------------------------------------------------------------**/
 
 stock Inline_Filler(
-	a =  1, b =  2, c =  3) //, d =  4, e =  5, f =  6, g =  7, h =  8, i =  9, j = 10, k = 11, l = 12, m = 13,
+	a =  1, b =  2) //, c =  3, d =  4, e =  5, f =  6, g =  7, h =  8, i =  9, j = 10, k = 11, l = 12, m = 13,
 	//n = 14, o = 15, p = 16, q = 17, r = 18, s = 19, t = 20, u = 21, v = 22, w = 23, x = 24, y = 25, z = 26)
 {
-	#pragma unused a, b, c //, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
+	#pragma unused a, b //, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
 	P:2("Inline_Filler called");
 	// This function takes up almost no space in a .pwn, but loads in a .amx.
 	// Or at least as much as I want it to in order to give me code space to
@@ -164,7 +183,11 @@ stock Inline_Filler(
 		start = GetCurrentFrameReturn(),
 		ctx[DisasmContext];
 	// "end" isn't currently used in "disasm", but we can't guarantee that.
-	DisasmInit(ctx, start, start + 8);
+	DisasmInit(ctx, start, start + 16);
+	DisasmDecodeInsn(ctx);
+	if (DisasmGetOpcode(ctx) != OP_JZER) return Debug_Print0(YSI_g_scError);
+	// Get the end of the outer loop.
+	YSI_g_sCurInlineCode = DisasmGetOperand(ctx);
 	if (DisasmDecodeInsn(ctx) && DisasmGetOpcode(ctx) == OP_BREAK)
 	{
 		if (DisasmDecodeInsn(ctx) && DisasmGetOpcode(ctx) == OP_BREAK)
@@ -175,7 +198,8 @@ stock Inline_Filler(
 		else Debug_Print0(YSI_g_scError);
 	}
 	// "start" now (hopefully) points to the main loop start address.
-	YSI_g_sCurInlineLoop = start;
+	YSI_g_sCurInlineLoop = start + 8;
+	return 1;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -227,14 +251,16 @@ stock Inline_Loop(...)
 	}
 	// Get the jump to the end of the main loop.
 	if (DisasmGetOpcode(dctx) != OP_JZER) return Debug_Print0(YSI_g_scError);
-	// Set this function to return there.
-	SetCurrentFrameReturn(DisasmGetOperand(dctx) - AMX_REAL_ADDRESS - (AMX_HEADER_COD - AMX_BASE_ADDRESS)),
+	// Set this function to return to the end of the outer loop.
+	SetCurrentFrameReturn(YSI_g_sCurInlineCode - AMX_REAL_ADDRESS - (AMX_HEADER_COD - AMX_BASE_ADDRESS));
 	// NOW WE CAN DO THE MAIN FUNCTION CODE.
+	new
+		argSize = GetFrameLocalSize(GetCurrentFramePreviousFrame());
 	// Do we have enough space for everything.
 	// Current assembly costs (in cells):
 	//  
 	//  SETUP:
-	//  - Stack:         14
+	//  - Stack:         16
 	//  - Variables:     4 v
 	//  - Arrays:        6 a
 	//  - Jump:          2
@@ -254,7 +280,7 @@ stock Inline_Loop(...)
 	//  - Inline_End:    6
 	//  - Variables:     2 v
 	//  - Arrays:        7 a
-	//  - Inline_Filler: 4 + n
+	//  - Inline_Filler: 8 + n
 	//  
 	//  EXIT 1:
 	//  - Inline_Loop 1: 3 (+5 = 8)
@@ -266,7 +292,7 @@ stock Inline_Loop(...)
 	// I am short:
 	//  
 	//  SETUP:
-	//  - 6 + 2v
+	//  - 4 + 2v
 	//  
 	// Have to make up the difference with Inline_Filler, and steal the extra
 	// "2 v" from "EXIT 2" references.  Can also put 2 cells at code start, so
@@ -279,7 +305,7 @@ stock Inline_Loop(...)
 	if (DisasmDecodeInsn(dctx) && DisasmGetOpcode(dctx) == OP_BREAK) ret += 4;
 	YSI_g_sCurInlineCode = ret;
 	P:5("Inline_Loop: YSI_g_sCurInlineEntry = %x", YSI_g_sCurInlineEntry);
-	P:5("Inline_Loop: YSI_g_sCurInlineLoop = %x",YSI_g_sCurInlineLoop);
+	P:5("Inline_Loop: YSI_g_sCurInlineLoop = %x", YSI_g_sCurInlineLoop);
 	P:5("Inline_Loop: YSI_g_sCurInlineCode = %x", YSI_g_sCurInlineCode);
 	// Get the segment sizes and variable type counts.
 	new
@@ -307,20 +333,29 @@ stock Inline_Loop(...)
 	//     SEGMENT 1
 	// =========================================================================
 	AsmInitPtr(ctx, YSI_g_sCurInlineEntry + AMX_HEADER_COD, YSI_g_sCurInlineLoop - YSI_g_sCurInlineEntry),
-	@emit STACK      (-4 - YSI_g_sCurInlineParams) // Space for params + count.
+	// Space for params + count.
+	@emit STACK      (-12 - YSI_g_sCurInlineParams - YSI_g_sCurInlineLocals)
 	@emit LCTRL      4                             // Get the stack bottom.
-	@emit ADD.C      (-8 - YSI_g_sCurInlineLocals) // Stretch the stack bottom.
+	//@emit ADD.C      (-8 - YSI_g_sCurInlineLocals) // Stretch the stack bottom.
+	//@emit STACK      (-4 - YSI_g_sCurInlineParams) // Space for params + count.
+	//@emit LCTRL      4                             // Get the stack bottom.
+	//@emit ADD.C      (-8 - YSI_g_sCurInlineLocals) // Stretch the stack bottom.
 	@emit LREF.S.alt 12                            // Load "func" variable.
 	@emit XCHG                                     // Copy data from *func to
-	@emit MOVS (YSI_g_sCurInlineParams + YSI_g_sCurInlineLocals + 12) // stack.
+	// Sadly "MOVS" checks that the destination is valid and in the stack, which
+	// is what we didn't want.
+	@emit MOVS      (YSI_g_sCurInlineParams + YSI_g_sCurInlineLocals + 12)
 	// This code copies parameters, header, and locals, but doesn't yet adjust
 	// the stack to point to the bottom of all the locals, just to the header.
+	// Reduce the stack again...
+	@emit STACK      (8 + YSI_g_sCurInlineLocals)
 	ret = ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] + 4;
 	@emit PUSH.C     0 // TODO (in code)  // Add the "return" address.
 	@emit PROC                            // Set up the new frame.
+	// And increase it again!
+	@emit STACK      (-argSize)
 	new
 		i = 0,
-		argSize = 0,
 		// Get the offset to the calling function's passed parameters.
 		// 12 for this function's header, plus this function's parameters, plus
 		// the last function's locals (currently none, MUST BE KEPT UP TO DATE),
@@ -340,7 +375,6 @@ stock Inline_Loop(...)
 			@emit LREF.S.pri load
 			@emit STOR.S.pri stor
 			--varCount;
-			argSize += 4;
 		}
 		else
 		{
@@ -349,7 +383,6 @@ stock Inline_Loop(...)
 			@emit LOAD.S.pri load
 			@emit ADDR.alt   stor
 			@emit MOVS       arg
-			argSize += arg;
 			--arrCount;
 		}
 		++i,
@@ -368,11 +401,10 @@ stock Inline_Loop(...)
 	// =========================================================================
 	AsmInitPtr(ctx, YSI_g_sCurInlineLoop + AMX_HEADER_COD, YSI_g_sCurInlineCode - YSI_g_sCurInlineLoop);
 	// "Return" to the next instruction to clean up the stack.
-	@emit STACK     0 // TODO in code. (YSI_g_sCurInlineLocals + args * 4)
+	@emit STACK     argSize
 	@emit RETN
 	// Write the "return" address now that we know it.
 	AMX_Write(ret, ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] - AMX_HEADER_COD);
-	ret = ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] - 8;
 	// Write the function epilog.
 	// Clean up reference parameters.
 	new
@@ -381,9 +413,8 @@ stock Inline_Loop(...)
 		j = 0;
 	while (j < args)
 	{
-		++j;
 		new
-			arg = getarg(i) * 4;
+			arg = getarg(j++) * 4;
 		switch (arg)
 		{
 			case -4:
@@ -403,9 +434,7 @@ stock Inline_Loop(...)
 	@emit RETN
 	// Write the remainder of the parameters.  First work out EXACTLY how much
 	// space is required to write this data out.
-	//seg2Size = varCount * (4 * 4) + arrCount * (6 * 4) + (2 * 4);
-	//YSI_g_sCurInlineEntry = ctx[AsmContext_buffer_size] - seg2Size;
-	YSI_g_sCurInlineCode = ctx[AsmContext_buffer_size] - (varCount * (4 * 4) + arrCount * (6 * 4) + (2 * 4));
+	YSI_g_sCurInlineCode = ctx[AsmContext_buffer_size] - (varCount * (4 * 4) + arrCount * (6 * 4)); // + (2 * 4));
 	if (YSI_g_sCurInlineCode < ctx[AsmContext_buffer_offset]) return P:E("Unexpected insufficient size in y_inline.");
 	// Pad with "NOPs".
 	while (ctx[AsmContext_buffer_offset] < YSI_g_sCurInlineCode)
@@ -419,14 +448,13 @@ stock Inline_Loop(...)
 	while (i < args)
 	{
 		new
-			arg = getarg(i) * 4;
-		if (arg <= 0) // || arg == cellmin)
+			arg = getarg(i++) * 4;
+		if (arg <= 0)
 		{
 			stor -= 4;
 			// Regular variable at this point.
 			@emit LREF.S.pri load
 			@emit STOR.S.pri stor
-			argSize += 4;
 		}
 		else
 		{
@@ -434,15 +462,9 @@ stock Inline_Loop(...)
 			@emit LOAD.S.pri load
 			@emit ADDR.alt   stor
 			@emit MOVS       arg
-			argSize += arg;
 		}
-		++i,
 		load += 4;
 	}
-	// Allocate the memory for our locals. (they've already been written to).
-	argSize += YSI_g_sCurInlineLocals;
-	AMX_Write(ret, argSize);    // To clean up the stack.
-	@emit STACK      (-argSize) // To allocate the stack.
 	// =========================================================================
 	//     STORAGE.
 	// =========================================================================
@@ -462,6 +484,60 @@ stock Inline_Loop(...)
 	return 0;
 }
 
-stock Inline_Call(func[], ...)
+stock bool:Inline_Get(const name[], ret[E_CALLBACK_DATA])
 {
+	new
+		pos = strfind(name, "\02");
+	if (pos == -1)
+	{
+		// Find the function by name.
+	}
+	else
+	{
+		new
+			//ptr = name[pos + 1],
+			args = name[pos + 2],
+			local = (args & 0x00FFFFFF),
+			params = (args & 0xFF000000) >>> 24;
+		printf("local = %d, params = %d", local, params);
+		ret[E_CALLBACK_DATA_POINTER] = name[pos + 1],
+		args = _:malloc(local + params + 3); // Allocate space for the closure.
+		if (args)
+		{
+			// Get the address of the data.
+			#emit CONST.alt     YSI_gMallocMemory
+			#emit LOAD.S.pri    args
+			#emit IDXADDR
+			#emit STOR.S.pri    args
+			ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:args,
+			// Copy the stack over.  First get the frame of the function that
+			// used an inline function, thus calling us indirectly.
+			pos = GetFramePreviousFrame(GetCurrentFramePreviousFrame()),
+			// Adjust to the bottom of that stack, at least the bottom of the
+			// parts we need (there may be more locals declared later that we
+			// don't need).
+			pos -= (local <<= 2),
+			params = (params << 2) + local + 12,
+			// Copy "params" bytes from "pos" to "args".
+			rawMemcpy(args, pos, params);
+			return true;
+		}
+	}
+	return false;
+}
+
+stock Inline_Call(func[E_CALLBACK_DATA], ...)
+{
+	static
+		addr;
+	addr = func[E_CALLBACK_DATA_POINTER];
+	if (addr & 0x80000000)
+	{
+	}
+	else
+	{
+		// Jump straight in to the code.
+		#emit LOAD.pri  addr
+		#emit SCTRL     6
+	}
 }

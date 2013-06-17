@@ -160,7 +160,7 @@ static Malloc_FindStackTop()
 	#emit LCTRL       5
 	#emit STOR.S.pri  frm_addr
 	// Loop until we hit a return address of 0.
-	while (GetReturnAddress(frm_addr))
+	while (GetFrameReturn(frm_addr))
 	{
 		#emit LREF.S.pri  frm_addr
 		#emit STOR.S.pri  frm_addr
@@ -200,7 +200,7 @@ public OnScriptInit()
 	for (new i = AMX_HEADER_COD, end = AMX_HEADER_DAT - 4; i < end; i += 4)
 	{
 		// Make sure this isn't just something that LOOKS like "bounds 0",
-		// although I don't think there can be because "0" is nota valid
+		// although I don't think there can be because "0" is not a valid
 		// opcode.
 		if (AMX_Read(i) == _:bounds && AMX_Read(i + 4) == 0)
 		{
