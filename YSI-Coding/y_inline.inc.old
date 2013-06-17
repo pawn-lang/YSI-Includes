@@ -75,223 +75,6 @@ Changelog:
 	#error y_inline does not work with "YSI_MALLOC_SECURE" defined.
 #endif
 
-/*
-New y_inline variable types:
-
-00 - Variable  (a)
-10 - Reference (&a)
-01 - String    (string:a[])
-11 - Array     (a[], aLength)
-*/
-
-#define INLINE_TYPE_VAR (0b00)
-#define INLINE_TYPE_REF (0b10)
-#define INLINE_TYPE_STR (0b01)
-#define INLINE_TYPE_ARR (0b11)
-
-#define Inline_AddOneBit(%0,%1,%2) (Bit_FastSet(Bit:%0,%1,%2),(++(%1)))
-#define Inline_SetOneBit(%0,%1,%2) (Bit_FastSet(Bit:%0,%1,%2))
-#define Inline_GetOneBit(%0,%1)    (Bit_Get(Bit:%0,%1))
-
-/**--------------------------------------------------------------------------**\
-<summary>Inline_DecodeSimple</summary>
-<param name="from[]">Array of variable types.</param>
-<param name="at">Type slot.</param>
-<returns>
-	The next variable type stored in the bit array.
-</returns>
-<remarks>
-	Returns data from a bit array when it is known that only basic types are
-	stored (i.e. no arrays with length parameters).
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-/*static stock Inline_DecodeSimple(from[], &at)
-{
-	//static
-	//	type;
-	return
-		I@ = from[at >>> 5] & (2 << (at & 0x1F)),
-		at += 2,
-		I@;
-}*/
-
-#define Inline_DecodeSimple(%0,%1) (I@ = %0[(%1) >>> 5] & (2 << ((%1) & 0x1F)), (%1) += 2, I@)
-
-/**--------------------------------------------------------------------------**\
-<summary>Inline_DecodeComplex</summary>
-<param name="from[]">Array of variable types.</param>
-<param name="at">Type slot.</param>
-<param name="len">Return for array sizes.</param>
-<returns>
-	The next variable type stored in the bit array, and the length of arrays.
-</returns>
-<remarks>
-	Returns data from a bit array when the parameter could be basic (variable or
-	reference), or an array with a length (includes strings).  This requries far
-	more complex code to decode as the lengths may span multiple cells, types
-	can't because they are always 2 bits and always start on an even bit.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-static stock Inline_DecodeComplex(from[], &at, &len)
-{
-	new
-		slot = at >>> 5,
-		// An encoded value is either 2 or 14 bits depending on type, so there
-		// is no way to ever have odd offsets.  As a result there is no way for
-		// a type to span two cells, so there's no need for complex switches.
-		type = (from[slot] >>> (at & 0x1F)) & 0b11;
-	at += 2;
-	if (type & 0x01)
-	{
-		// Fast, cell boundary aware, length extraction.  The length is stored
-		// -1 cell, so adjust for that too.
-		switch (at & 0x1F)
-		{
-			// Start of the (next) cell.  For these two, doing "at += 2;"
-			// spilled the pointer over in to the next cell.
-			case 0: len = (from[slot + 1] & 0x0FFF) + 1;
-			#define I@(%0) case %0:len=((from[slot]>>>%0)&0x0FFF)+1;
-			// Whole length in one (current) cell.
-			I@(02)I@(04)I@(06)I@(08)I@(10)I@(12)I@(14)I@(16)I@(18)
-			#undef I@
-			// End of the cell.
-			case 20: len = (from[slot] >>> 20) + 1;
-			// Two cells (let the compiler do the maths for us).
-			#define I@(%0) case %0:len=((from[slot]>>>%0)|((from[slot+1]&(0xFFF>>>(32-%0)))<<(32-%0)))+1;
-			I@(22)I@(24)I@(26)I@(28)I@(30)
-			P:C(default: P:E("Odd offset in y_inline."););
-			#undef I@
-		}
-		at += 12;
-	}
-	return type;
-}
-
-static stock Inline_EncodeVariable(to[], &rem, &at, type, len = 0)
-{
-	if (rem >= 2)
-	{
-		// Blank the old bits at that point, then write the new ones.
-		Inline_AddOneBit(to, at, type & 0b01),
-		Inline_AddOneBit(to, at, type & 0b10);
-	}
-	else
-	{
-		P:E("Unable to encode y_inline parameters.");
-		return 0;
-	}
-	if (type & 0b01)
-	{
-		// String.
-		// Array.
-		if (len <= 0)
-		{
-			P:E("Array length too short in y_inline");
-		}
-		else if (len > 4096)
-		{
-			P:E("Array length too large in y_inline");
-		}
-		else
-		{
-			// Encode "1" as "0" etc, and use only 12+2 bits.
-			--len;
-			if (rem >= 12)
-			{
-				// Copy all the bits over.  We can't (easily) do this in one
-				// operation without a loop as the write may span a cell
-				// boundary.  This way handles all bounds correctly.
-				for (type = 0x0001; type != 0x1000; type <<= 1)
-				{
-					Inline_AddOneBit(to, at, len & type);
-				}
-				rem -= 12;
-			}
-			else
-			{
-				P:E("Unable to encode y_inline length.");
-				// Remove the parameter we just encoded.
-				at -= 2;
-				return 0;
-			}
-		}
-		return (rem -= 2), 0;
-	}
-	return (rem -= 2), 1;
-}
-
-/*
-new
-	gDat[2];
-
-Decode(const _max)
-{
-	#pragma unused _max
-	new
-		at = 6,
-		mm = (gDat[0] & 0b00111110) + 6;
-	//printf("at = %d, mm = %d", at, mm);
-	if (gDat[0] & 0x01)
-	{
-		while (at < mm)
-		{
-			switch (Inline_DecodeSimple(gDat, at))
-			{
-				case INLINE_TYPE_VAR: print("INLINE_TYPE_VAR");
-				case INLINE_TYPE_REF: print("INLINE_TYPE_REF");
-			}
-		}
-	}
-	else
-	{
-		new
-			len;
-		while (at < mm)
-		{
-			switch (Inline_DecodeComplex(gDat, at, len))
-			{
-				case INLINE_TYPE_VAR: print("INLINE_TYPE_VAR");
-				case INLINE_TYPE_REF: print("INLINE_TYPE_REF");
-				case INLINE_TYPE_STR: printf("INLINE_TYPE_STR: %d", len);
-				case INLINE_TYPE_ARR: printf("INLINE_TYPE_ARR: %d", len);
-			}
-		}
-	}
-}
-
-Encode(...)
-{
-	new
-		simple = 1,
-		at = 6,
-		rem = sizeof (gDat) * cellbits;
-	gDat[0] = 0;
-	for (new i = 0, j = numargs(); i < j; ++i)
-	{
-		if (getarg(i) & 0x01)
-		{
-			simple = simple & Inline_EncodeVariable(gDat, rem, at, getarg(i), getarg(i + 1));
-			++i;
-		}
-		else
-		{
-			simple = simple & Inline_EncodeVariable(gDat, rem, at, getarg(i));
-		}
-		//printf("i = %d", i);
-	}
-	//printf("at = %d, %d", at, at - 6);
-	// "at" will be the position of the last written bit, but if that is at the
-	// very end of the array it will be stored as "0".  However, we know there
-	// is a constant offset of 6, so remove that to make "64" just "58", and so
-	// not represented as "0" after the bit masking.
-	gDat[0] |= ((at - 6) & 0b00111110) | simple;
-	//printf("simple = %d, %08x", simple, gDat[0]);
-	return at;
-}
-*/
-
 // "with inline X"
 // "with public X"
 // %0 = " in" or " pub" (ignored).
@@ -415,12 +198,10 @@ enum e_CALLBACK_FLAGS (<<= 1)
 
 enum E_CALLBACK_DATA
 {
-	// ===== ALWAYS FIRST =====
-	Alloc:E_CALLBACK_DATA_ALLOC, // Where our closure is stored.
-	// ===== ALWAYS AFTER =====
 	e_CALLBACK_FLAGS:E_CALLBACK_DATA_FLAGS,
 	E_CALLBACK_DATA_POINTER, // Pointer to the function.
-	E_CALLBACK_DATA_FORMAT  // Compressed destination format.
+	E_CALLBACK_DATA_FORMAT,  // Compressed destination format.
+	Alloc:E_CALLBACK_DATA_ALLOC // Where our closure is stored.
 }
 
 static stock Inline_DoFormat(data[])
@@ -831,8 +612,6 @@ stock Inline_Loop(p0 = INLINE_LOOP_PATTERN_0, p1 = INLINE_LOOP_PATTERN_1, p2 = I
 	//printf("ret: %d %d", p0, YSI_g_sInInline);
 	if (y)
 	{
-		// This is called when there is no "return" in the inline function, so
-		// the real loop loops.
 		/*#emit LOAD.S.alt 0
 		#emit MOVE.pri
 		#emit ADD.C      4
