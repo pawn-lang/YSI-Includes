@@ -324,8 +324,8 @@ stock Inline_Loop(...)
 		// Get the offset to the calling function's passed parameters.
 		// 12 for this function's header, plus this function's parameters, plus
 		// the last function's locals (currently none, MUST BE KEPT UP TO DATE),
-		// plus the last function's header.
-		load = 12 + YSI_g_sCurInlineParams + 0 + 12,
+		// plus the last function's header, plus the "func" variable.
+		load = 12 + YSI_g_sCurInlineParams + 0 + 12 + 4,
 		stor = -YSI_g_sCurInlineLocals;
 	// Now loop over all the parameter types.
 	while (i < args)
@@ -375,19 +375,28 @@ stock Inline_Loop(...)
 	ret = ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] - 8;
 	// Write the function epilog.
 	// Clean up reference parameters.
-	/*load = 12 + YSI_g_sCurInlineParams + 0 + 12,
-	stor = -YSI_g_sCurInlineLocals;
 	new
+		vload = -12 - YSI_g_sCurInlineParams - YSI_g_sCurInlineLocals,
+		vstor = 16,
 		j = 0;
 	while (j < args)
 	{
 		++j;
 		new
-			arg = getarg(i);
-		if (arg == -1)
+			arg = getarg(i) * 4;
+		switch (arg)
 		{
+			case -4:
+			{
+				vload -= 4;
+				@emit LOAD.S.pri vload
+				@emit SREF.S.pri vstor
+			}
+			case 0: vload -= 4;
+			default: vload -= arg;
 		}
-	}*/
+		vstor += 4;
+	}
 	// Now actually return to finish our code.  Currently this assumes that
 	// "Inline_Call" has no parameters = MUST BE KEPT UP TO DATE.
 	//@emit STACK     0
