@@ -492,13 +492,14 @@ stock Inline_Loop(...)
 	return 0;
 }
 
-stock bool:Inline_Get(const name[], ret[E_CALLBACK_DATA])
+stock bool:Callback_Get(const name[], ret[E_CALLBACK_DATA])
 {
 	new
 		pos = strfind(name, "\02");
 	if (pos == -1)
 	{
 		// Find the function by name.
+		
 	}
 	else
 	{
@@ -538,6 +539,19 @@ stock bool:Inline_Get(const name[], ret[E_CALLBACK_DATA])
 #define Inline_SetOneBit(%0,%1,%2) (Bit_FastSet(Bit:%0,%1,%2))
 #define Inline_GetOneBit(%0,%1)    (Bit_Get(Bit:%0,%1))
 
+/**--------------------------------------------------------------------------**\
+<summary>Inline_DecodeSimple</summary>
+<param name="from[]">Array of variable types.</param>
+<param name="at">Type slot.</param>
+<returns>
+	The next variable type stored in the bit array.
+</returns>
+<remarks>
+	Returns data from a bit array when it is known that only basic types are
+	stored (i.e. no arrays with length parameters).
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 /*static stock Inline_DecodeSimple(from[], &at)
 {
 	//static
@@ -550,7 +564,23 @@ stock bool:Inline_Get(const name[], ret[E_CALLBACK_DATA])
 
 #define Inline_DecodeSimple(%0,%1) (I@ = %0[(%1) >>> 5] & (2 << ((%1) & 0x1F)), (%1) += 2, I@)
 
-static stock Inline_DecodeComplex(from[], &at, &len)
+/**--------------------------------------------------------------------------**\
+<summary>Inline_DecodeComplex</summary>
+<param name="from[]">Array of variable types.</param>
+<param name="at">Type slot.</param>
+<param name="len">Return for array sizes.</param>
+<returns>
+	The next variable type stored in the bit array, and the length of arrays.
+</returns>
+<remarks>
+	Returns data from a bit array when the parameter could be basic (variable or
+	reference), or an array with a length (includes strings).  This requries far
+	more complex code to decode as the lengths may span multiple cells, types
+	can't because they are always 2 bits and always start on an even bit.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+/*static*/ stock Inline_DecodeComplex(from[], &at, &len)
 {
 	new
 		slot = at >>> 5,
@@ -639,7 +669,7 @@ static stock Inline_DecodeComplex(from[], &at, &len)
 	return (rem -= 2), 1;
 }
 
-stock Inline_Call(func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
+stock Callback_Call(func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 {
 	static
 		addr;
@@ -729,4 +759,69 @@ stock Inline_Call(func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 		#emit SCTRL     6
 	}
 	return 1;
+}
+
+// This used to be a compile-time macro to convert its parameters to the
+// compressed format - it isn't anymore.  I tried to figure out if it was
+// possible, and it probably is, but VERY hard, even compared to other macros
+// I've written.
+#define _F<%0> #%0
+
+stock Inline_DecodeFromatString(const str[], ret[2])
+{
+	new
+		size = 0,
+		complex = 0,
+		b0,
+		b1;
+	for (new i = 0; ; ++i)
+	{
+		switch (str[i])
+		{
+			case '\0': break;
+			case 'v':
+			{
+				// Add variable without length.
+				b1 = (b1 << 2) | (b0 >>> 30),
+				b0 = (b0 << 2) | INLINE_TYPE_REF,
+				++size;
+			}
+			case 's', 'a':
+			{
+				if (str[i + 1] == '[')
+				{
+					new
+						j = i + 2,
+						len = 0;
+					while ('0' <= str[j] <= '9') len = (len * 10) + (str[j++] - '0');
+					--len,
+					b1 = (b1 << 14) | (b0 >>> 18);
+					// Add array with length.
+					if (str[i] == 'a') b0 = (b0 << 14) | ((len & 0xFFF) << 2) | INLINE_TYPE_ARR;
+					else b0 = (b0 << 14) | ((len & 0xFFF) << 2) | INLINE_TYPE_STR;
+					if (str[j] != ']') --j;
+					i = j,
+					size += 7,
+					complex = 1;
+				}
+				else
+				{
+					// Add variable without length.
+					b1 = (b1 << 2) | (b0 >>> 30),
+					b0 = (b0 << 2) | INLINE_TYPE_REF,
+					++size;
+				}
+			}
+			default:
+			{
+				// Add variable without length.
+				b1 = (b1 << 2) | (b0 >>> 30),
+				b0 = (b0 << 2) | INLINE_TYPE_VAR,
+				++size;
+			}
+		}
+	}
+	// Add total size.
+	ret[1] = (b1 << 6) | (b0 >>> 26),
+	ret[0] = (b0 << 6) | ((size & 0b00011111) << 1) | (complex ^ 1);
 }
