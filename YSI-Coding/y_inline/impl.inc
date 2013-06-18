@@ -4,16 +4,24 @@
 #include "..\amx\disasm"
 #include "..\amx\frame_info"
 #include "..\YSI-Storage\y_amx"
+#include "..\YSI-Internal\y_shortfunc"
 #include "..\YSI-Core\y_debug"
 #include "..\YSI-Core\y_utils"
+#include "..\YSI-Data\y_bit"
 #include "y_malloc"
+
+#define INLINE_TYPE_VAR (0b00)
+#define INLINE_TYPE_REF (0b10)
+#define INLINE_TYPE_STR (0b01)
+#define INLINE_TYPE_ARR (0b11)
 
 enum E_CALLBACK_DATA
 {
 	// ===== ALWAYS FIRST =====
 	ResolvedAlloc:E_CALLBACK_DATA_ALLOC, // Fully resolved address.
 	// ===== ALWAYS AFTER =====
-	E_CALLBACK_DATA_POINTER
+	E_CALLBACK_DATA_POINTER,
+	E_CALLBACK_DATA_FORMAT[2]
 }
 
 static stock
@@ -526,13 +534,193 @@ stock bool:Inline_Get(const name[], ret[E_CALLBACK_DATA])
 	return false;
 }
 
-stock Inline_Call(func[E_CALLBACK_DATA], ...)
+#define Inline_AddOneBit(%0,%1,%2) (Bit_FastSet(Bit:%0,%1,%2),(++(%1)))
+#define Inline_SetOneBit(%0,%1,%2) (Bit_FastSet(Bit:%0,%1,%2))
+#define Inline_GetOneBit(%0,%1)    (Bit_Get(Bit:%0,%1))
+
+/*static stock Inline_DecodeSimple(from[], &at)
+{
+	//static
+	//	type;
+	return
+		I@ = from[at >>> 5] & (2 << (at & 0x1F)),
+		at += 2,
+		I@;
+}*/
+
+#define Inline_DecodeSimple(%0,%1) (I@ = %0[(%1) >>> 5] & (2 << ((%1) & 0x1F)), (%1) += 2, I@)
+
+static stock Inline_DecodeComplex(from[], &at, &len)
+{
+	new
+		slot = at >>> 5,
+		// An encoded value is either 2 or 14 bits depending on type, so there
+		// is no way to ever have odd offsets.  As a result there is no way for
+		// a type to span two cells, so there's no need for complex switches.
+		type = (from[slot] >>> (at & 0x1F)) & 0b11;
+	at += 2;
+	if (type & 0x01)
+	{
+		// Fast, cell boundary aware, length extraction.  The length is stored
+		// -1 cell, so adjust for that too.
+		switch (at & 0x1F)
+		{
+			// Start of the (next) cell.  For these two, doing "at += 2;"
+			// spilled the pointer over in to the next cell.
+			case 0: len = (from[slot + 1] & 0x0FFF) + 1;
+			#define I@(%0) case %0:len=((from[slot]>>>%0)&0x0FFF)+1;
+			// Whole length in one (current) cell.
+			I@(02)I@(04)I@(06)I@(08)I@(10)I@(12)I@(14)I@(16)I@(18)
+			#undef I@
+			// End of the cell.
+			case 20: len = (from[slot] >>> 20) + 1;
+			// Two cells (let the compiler do the maths for us).
+			#define I@(%0) case %0:len=((from[slot]>>>%0)|((from[slot+1]&(0xFFF>>>(32-%0)))<<(32-%0)))+1;
+			I@(22)I@(24)I@(26)I@(28)I@(30)
+			P:C(default: P:E("Odd offset in y_inline."););
+			#undef I@
+		}
+		at += 12;
+	}
+	return type;
+}
+
+/*static*/ stock Inline_EncodeVariable(to[], &rem, &at, type, len = 0)
+{
+	// CALL THIS FUNCTION IN REVERSE ORDER!
+	if (rem >= 2)
+	{
+		// Blank the old bits at that point, then write the new ones.
+		Inline_AddOneBit(to, at, type & 0b01),
+		Inline_AddOneBit(to, at, type & 0b10);
+	}
+	else
+	{
+		P:E("Unable to encode y_inline parameters.");
+		return 0;
+	}
+	if (type & 0b01)
+	{
+		// String.
+		// Array.
+		if (len <= 0)
+		{
+			P:E("Array length too short in y_inline");
+		}
+		else if (len > 4096)
+		{
+			P:E("Array length too large in y_inline");
+		}
+		else
+		{
+			// Encode "1" as "0" etc, and use only 12+2 bits.
+			--len;
+			if (rem >= 12)
+			{
+				// Copy all the bits over.  We can't (easily) do this in one
+				// operation without a loop as the write may span a cell
+				// boundary.  This way handles all bounds correctly.
+				for (type = 0x0001; type != 0x1000; type <<= 1)
+				{
+					Inline_AddOneBit(to, at, len & type);
+				}
+				rem -= 12;
+			}
+			else
+			{
+				P:E("Unable to encode y_inline length.");
+				// Remove the parameter we just encoded.
+				at -= 2;
+				return 0;
+			}
+		}
+		return (rem -= 2), 0;
+	}
+	return (rem -= 2), 1;
+}
+
+stock Inline_Call(func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 {
 	static
 		addr;
 	addr = func[E_CALLBACK_DATA_POINTER];
 	if (addr & 0x80000000)
 	{
+		static
+			ts[2];
+		addr &= ~0x80000000,
+		ts[0] = func[E_CALLBACK_DATA_FORMAT][0],
+		ts[1] = func[E_CALLBACK_DATA_FORMAT][1];
+		new
+			at = 6,
+			mm = (ts[0] & 0b00111110) + 6,
+			len,
+			end,
+			var; // = (numargs() + 2) * 4;
+		#emit LOAD.S.alt    8 // Get the parameter count.
+		#emit LCTRL         5 // Get the current frame.
+		#emit ADD
+		#emit ADD.C         8 // Adjust for header and "func".
+		#emit STOR.S.pri    var
+		#emit LCTRL         5 // Get the end.
+		#emit ADD.C         12
+		#emit STOR.S.pri    end
+		P:5("Inline_Call: at = %d, mm = %d", at, mm);
+		if (ts[0] & 0x01)
+		{
+			// Only has variables and references, easy to decode.
+			while (at < mm)
+			{
+				if (var == end) return P:E("Insufficient parameters for Callback_Call.");
+				if (Inline_DecodeSimple(ts, at))
+				{
+					P:7("INLINE_TYPE_REF");
+					#emit LREF.S.pri  var
+					#emit PUSH.pri
+				}
+				else
+				{
+					P:7("INLINE_TYPE_VAR");
+					#emit LREF.S.pri  var
+					#emit LOAD.I
+					#emit PUSH.pri
+				}
+				var -= 4;
+			}
+		}
+		else
+		{
+			// Can have arrays, harder to decode.
+			while (at < mm)
+			{
+				if (var == end) return P:E("Insufficient parameters for Callback_Call.");
+				if (Inline_DecodeComplex(ts, at, len) == INLINE_TYPE_VAR)
+				{
+					P:7("INLINE_TYPE_VAR");
+					#emit LREF.S.pri  var
+					#emit LOAD.I
+					#emit PUSH.pri
+				}
+				else
+				{
+					P:7("INLINE_TYPE_REF/STR/ARR: %d", len);
+					#emit LREF.S.pri  var
+					#emit PUSH.pri
+				}
+				var -= 4;
+			}
+		}
+		// Push the parameter count.
+		var = (numargs() - 1) * 4;
+		#emit PUSH.S    var
+		// "Standard" function call.
+		#emit LCTRL     6
+		#emit ADD.C     28
+		#emit PUSH.pri
+		#emit LOAD.pri  addr
+		#emit SCTRL     6
+		#emit STACK     20
+		#emit RETN
 	}
 	else
 	{
@@ -540,4 +728,5 @@ stock Inline_Call(func[E_CALLBACK_DATA], ...)
 		#emit LOAD.pri  addr
 		#emit SCTRL     6
 	}
+	return 1;
 }

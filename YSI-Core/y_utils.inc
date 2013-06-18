@@ -650,10 +650,13 @@ forward __rawMemcpy__(dest[], src[], bytes);
 public __rawMemcpy__(dest[], src[], bytes)
 {
 	memcpy(dest, src, 0, bytes, bytes);
+	memset("", 0, 0);
+	//rawMemset(0, 0, 0);
 }
 
 stock rawMemcpy(dest, src, bytes)
 {
+	// Don't use "MOVS" as these blocks might overlap.
 	#emit PUSH.S     bytes
 	#emit PUSH.S     bytes
 	#emit PUSH.C     0
@@ -771,7 +774,7 @@ stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 	#emit ADD.C      4
 	#emit SCTRL      6
 	// Never hit because of going to an earlier "RETN".
-	return memset("", 0, 0);
+	return 0; //memset("", 0, 0);
 }
 
 /**--------------------------------------------------------------------------**\
