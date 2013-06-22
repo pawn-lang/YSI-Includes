@@ -195,7 +195,7 @@ stock I@E(mutable const s[])
 	// =========================================================================
 	// Build a linked list of inlines that are in scope.
 	AMX_Write(addr2 + 16, YSI_g_sPrevInlineFunc),
-	AMX_Write(addr2 + 20, GetFrameFunction(GetCurrentFramePreviousFrame())),
+	//AMX_Write(addr2 + 20, GetFrameFunction(GetCurrentFramePreviousFrame())),
 	YSI_g_sCurInlinePointer = addr2 + 12,
 	YSI_g_sPrevInlineFunc = ref(s);
 	// Return 1 to enter the main "inline" function block.
@@ -607,13 +607,16 @@ stock Callback_Release(input[E_CALLBACK_DATA])
 	if (!(input[E_CALLBACK_DATA_POINTER] & 0x80000000))
 	{
 		ra = input[E_CALLBACK_DATA_ALLOC];
-		#emit CONST.alt     YSI_gMallocMemory
-		#emit LOAD.pri      ra
-		#emit SUB
-		#emit SHR.C.pri     2
-		#emit STOR.pri      a
-		// Publics don't have any stored data.
-		free(a),
+		if (ra)
+		{
+			#emit CONST.alt     YSI_gMallocMemory
+			#emit LOAD.pri      ra
+			#emit SUB
+			#emit SHR.C.pri     2
+			#emit STOR.pri      a
+			// Publics don't have any stored data.
+			free(a);
+		}
 		input[E_CALLBACK_DATA_POINTER] = 0,
 		input[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:0;
 	}
@@ -654,7 +657,9 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA])
 		//	lstring[32];
 		pos = strlen(name);
 		new
-			cur = YSI_g_sPrevInlineFunc;
+			frm = GetCurrentFramePreviousFrame(),
+			cur = YSI_g_sPrevInlineFunc,
+			res;
 		// Find the function by name.
 		while (cur)
 		{
@@ -665,13 +670,16 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA])
 			#emit PUSH.C      16
 			#emit SYSREQ.C    strcmp
 			#emit STACK       20
-			#emit STOR.S.pri  ret
-			if (ret == 0 && AMX_Read(cur + pos * 4) == '\02')
+			#emit STOR.S.pri  res
+			if (res == 0 && AMX_Read(cur + pos * 4) == '\02')
 			{
-				// Rewrite the value of "name" for the subsequent code.
-				#emit LOAD.S.pri cur
-				#emit STOR.S.pri name
-				break;
+				if (GetFrameFunction(GetFramePreviousFrame(frm)) <= AMX_Read(cur + pos * 4 + 1 * 4) <= GetFrameReturn(frm))
+				{
+					// Rewrite the value of "name" for the subsequent code.
+					#emit LOAD.S.pri cur
+					#emit STOR.S.pri name
+					break;
+				}
 			}
 			static const
 				gsSearch[] = "\02";
@@ -691,7 +699,11 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA])
 		}
 		if (!cur)
 		{
-			
+			if (AMX_GetPublicPointer(0, pos, name, true))
+			{
+				ret[E_CALLBACK_DATA_POINTER] = pos | 0x80000000;
+				return true;
+			}
 			// Try publics...
 			return false;
 		}

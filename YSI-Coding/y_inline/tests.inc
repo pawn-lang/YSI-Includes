@@ -65,9 +65,9 @@ Changelog:
 		First version
 \**--------------------------------------------------------------------------**/
 
-static stock y_inline_Get(callback:c, ret[E_CALLBACK_DATA])
+static stock bool:y_inline_Get(callback:c, ret[E_CALLBACK_DATA])
 {
-	Callback_Get(c, ret);
+	return Callback_Get(c, ret);
 }
 
 Test:y_inline1()
@@ -158,4 +158,56 @@ Test:y_inline6()
 	y_inline_Get(using inline func, cc);
 	Callback_Call(cc, "hello");
 	Callback_Release(cc);
+}
+
+forward y_inline7a();
+
+public y_inline7a()
+{
+	inline func7a()
+	{
+	}
+}
+
+Test:y_inline7b()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	inline func7b()
+	{
+	}
+	ASSERT(y_inline_Get(using func7a, cc) == false);
+	ASSERT(y_inline_Get(using func7b, cc) == true);
+	Callback_Release(cc);
+	ASSERT(y_inline_Get(using public y_inline7a, cc) == true);
+	Callback_Release(cc);
+}
+
+Test:y_inline8()
+{
+	for (new i = 2; i--; )
+	{
+		new
+			cc[E_CALLBACK_DATA];
+		if (i)
+		{
+			inline func8b()
+			{
+			}
+		}
+		if (!i)
+		{
+			ASSERT(y_inline_Get(using func8a, cc) == false);
+			ASSERT(y_inline_Get(using func8b, cc) == true);
+			Callback_Release(cc);
+			ASSERT(y_inline_Get(using public y_inline8, cc) == false);
+			Callback_Release(cc);
+		}
+		if (i)
+		{
+			inline func8a()
+			{
+			}
+		}
+	}
 }

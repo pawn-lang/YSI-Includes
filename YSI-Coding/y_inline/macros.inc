@@ -121,7 +121,7 @@ somewhere_after_this_func:
 
 #endif
 
-#define inline%0(%1) static const %0[]=#%0":.....";if(I@E(_:_YI@CP:%0))for(new%1,,;I@F();)while(I@L())
+#define inline%0(%1) static const %0[]=#%0":....";if(I@E(_:_YI@CP:%0))for(new%1,,;I@F();)while(I@L())
 
 
 #define _YI@CP:%8))for(new%0,%1; @Ia:@Ib:@Ic:@Id:@Iz:%8))for(new|||%0|||%1;
@@ -162,7 +162,7 @@ somewhere_after_this_func:
 #define @Iq:@Im:@Io:@Iw:|||%0public%1||| @Ir:@Is:%1||||
 #define @Im:@Io:@Iw:|||%0anonymous%1||| @In:@It:%0NULL%1||||
 #define @Io:@Iw:|||%0callback%1||| @Ir:@Is:%1||||
-#define @Iw:|||%1||| @In:@It:%1||||
+#define @Iw:|||%1||| @In:@It:#%1||||
 
 // Callbacks with "On" in the name (often overidden by y_hooks and ALS).
 #define @Ir:@Is:%0On%1|||| @In:@It:#%0"On"#%1||||
