@@ -90,10 +90,11 @@ enum E_CALLBACK_DATA
 }
 
 static stock
+	YSI_g_sPrevInlineFunc = 0,
 	YSI_g_sPrevJumpOver = 0,
 	YSI_g_sCurInlineLocals,  // Number of locals in current parent.
 	YSI_g_sCurInlineParams,  // Number of parameters to current parent.
-	YSI_g_sCurInlinePointer, // Pointer to the inline function's name.
+	YSI_g_sCurInlinePointer, // Storage for the inline function's return.
 	YSI_g_sCurInlineEntry,   // Pointer to the start of the data segment.
 	YSI_g_sCurInlineLoop,    // Pointer to the current loopback label.
 	YSI_g_sCurInlineCode;    // Pointer to the start of user code.
@@ -116,6 +117,7 @@ static stock const
 \**--------------------------------------------------------------------------**/
 
 #define mutable
+
 stock I@E(mutable const s[])
 {
 	P:2("Inline_Entry called: %s", s);
@@ -180,17 +182,22 @@ stock I@E(mutable const s[])
 	// Store the pointer to the start of this new inline's available code.
 	// =========================================================================
 	// Save the data name pointer.
-	start = ref(s[strfind(s, ":")]),
-	AMX_Write(start, '\2'),
-	AMX_Write(start + 4, YSI_g_sCurInlineEntry),
+	addr2 = ref(s[strfind(s, ":")]),
+	AMX_Write(addr2, '\2'),
+	AMX_Write(addr2 + 4, YSI_g_sCurInlineEntry),
 	// Get the number of local variables already in the parent function.
 	frm = GetCurrentFramePreviousFrame(),
 	YSI_g_sCurInlineLocals = GetFrameLocalSize(frm),
 	YSI_g_sCurInlineParams = GetFrameParameterSize(frm),
 	// Save parameter counts, shifted for separate components.
-	AMX_Write(start + 8, (YSI_g_sCurInlineLocals >>> 2) | (YSI_g_sCurInlineParams << 22)),
+	AMX_Write(addr2 + 8, (YSI_g_sCurInlineLocals >>> 2) | (YSI_g_sCurInlineParams << 22)),
 	// TODO: Save next function pointer to linked list.
-	YSI_g_sCurInlinePointer = start + 12;
+	// =========================================================================
+	// Build a linked list of inlines that are in scope.
+	AMX_Write(addr2 + 16, YSI_g_sPrevInlineFunc),
+	AMX_Write(addr2 + 20, GetFrameFunction(GetCurrentFramePreviousFrame())),
+	YSI_g_sCurInlinePointer = addr2 + 12,
+	YSI_g_sPrevInlineFunc = ref(s);
 	// Return 1 to enter the main "inline" function block.
 	return 1;
 }
@@ -628,6 +635,14 @@ stock Callback_Release(input[E_CALLBACK_DATA])
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+forward _@_y_inline_@_();
+
+public _@_y_inline_@_()
+{
+	strcmp("", "");
+	strfind("", "");
+}
+
 stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA])
 {
 	P:2("Callback_Get called");
@@ -635,49 +650,89 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA])
 		pos = strfind(name, "\02");
 	if (pos == -1)
 	{
-		// Find the function by name.
-		
-	}
-	else
-	{
-		ret[E_CALLBACK_DATA_POINTER] = name[pos + 1];
+		//static
+		//	lstring[32];
+		pos = strlen(name);
 		new
-			//ptr = name[pos + 1],
-			to = name[pos + 2],
-			local = (to & 0x00FFFFFF),
-			params = (to & 0xFF000000) >>> 24,
-			Alloc:a = malloc(local + params + 3); // Allocate closure space.
-		if (a)
+			cur = YSI_g_sPrevInlineFunc;
+		// Find the function by name.
+		while (cur)
 		{
-			// Get the address of the data.
-			#emit CONST.alt     YSI_gMallocMemory
-			#emit LOAD.S.pri    a
+			#emit PUSH.S      pos
+			#emit PUSH.C      0
+			#emit PUSH.S      name
+			#emit PUSH.S      cur
+			#emit PUSH.C      16
+			#emit SYSREQ.C    strcmp
+			#emit STACK       20
+			#emit STOR.S.pri  ret
+			if (ret == 0 && AMX_Read(cur + pos * 4) == '\02')
+			{
+				// Rewrite the value of "name" for the subsequent code.
+				#emit LOAD.S.pri cur
+				#emit STOR.S.pri name
+				break;
+			}
+			static const
+				gsSearch[] = "\02";
+			#emit PUSH.C      0
+			#emit PUSH.C      0
+			#emit PUSH.C      gsSearch
+			#emit PUSH.S      cur
+			#emit PUSH.C      16
+			#emit SYSREQ.C    strfind
+			#emit STACK       20
+			#emit LOAD.S.alt  cur
 			#emit IDXADDR
-			#emit STOR.S.pri    to
-			ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:to;
-			// Copy the stack over.  First get the frame of the function that
-			// used an inline function, thus calling us indirectly.
-			new
-				from = GetFramePreviousFrame(GetCurrentFramePreviousFrame()) - (local << 2);
-			// Adjust to the bottom of that stack, at least the bottom of the
-			// parts we need (there may be more locals declared later that we
-			// don't need).
-			if (local)
-			{
-				// Copy "params" bytes from "from" to "to".
-				rawMemcpy(to, from, (params << 2) + (local << 2) + 12),
-				mset(a, local + 1, name[pos + 3]);
-			}
-			else
-			{
-				// Copy "params" bytes from "from" to "to".
-				rawMemcpy(to + 4, from + 8, (params << 2) + 4),
-				// Save the "return" address for the inline to our fake stack.
-				mset(a, 0, name[pos + 3]);
-			}
-			P:2("Callback_Get end");
-			return true;
+			#emit ADD.C       16
+			#emit LOAD.I
+			#emit STOR.S.pri  cur
+			//cur = lstring[strfind(name, "\02") + 4];
 		}
+		if (!cur)
+		{
+			
+			// Try publics...
+			return false;
+		}
+	}
+	// Load this inline function's data in to our closure (and allocate memory).
+	ret[E_CALLBACK_DATA_POINTER] = name[pos + 1];
+	new
+		//ptr = name[pos + 1],
+		to = name[pos + 2],
+		local = (to & 0x00FFFFFF),
+		params = (to & 0xFF000000) >>> 24,
+		Alloc:a = malloc(local + params + 3); // Allocate closure space.
+	if (a)
+	{
+		// Get the address of the data.
+		#emit CONST.alt     YSI_gMallocMemory
+		#emit LOAD.S.pri    a
+		#emit IDXADDR
+		#emit STOR.S.pri    to
+		ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:to;
+		// Copy the stack over.  First get the frame of the function that used
+		// an inline function, thus calling us indirectly.
+		new
+			from = GetFramePreviousFrame(GetCurrentFramePreviousFrame()) - (local << 2);
+		// Adjust to the bottom of that stack, at least the bottom of the parts
+		// we need (there may be more locals declared later that we don't need).
+		if (local)
+		{
+			// Copy "params" bytes from "from" to "to".
+			rawMemcpy(to, from, (params << 2) + (local << 2) + 12),
+			mset(a, local + 1, name[pos + 3]);
+		}
+		else
+		{
+			// Copy "params" bytes from "from" to "to".
+			rawMemcpy(to + 4, from + 8, (params << 2) + 4),
+			// Save the "return" address for the inline to our fake stack.
+			mset(a, 0, name[pos + 3]);
+		}
+		P:2("Callback_Get end");
+		return true;
 	}
 	return false;
 }

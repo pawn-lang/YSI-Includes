@@ -74,14 +74,14 @@ inline func(a, &b, c[100])
 }
 
 // Becomes:
-static const func[]="func:....";if(I@E(func2))for(new a, b, c[100];I@F();)while(I@L(0,-1,100))
+static const func[]="func:.....";if(I@E(func2))for(new a, b, c[100];I@F();)while(I@L(0,-1,100))
 {
 	// Inline function code.
 }
 
 // Which is:
 static const
-	func[] = "func:....";
+	func[] = "func:.....";
 
 if (I@E(func2))
 {
@@ -96,7 +96,7 @@ if (I@E(func2))
 
 // Translated:
 static const
-	func[] = "func\02;" #FUNC_ADDRESS #PARAMETERS #INTERNAL_RETURN #PREVIOUS_FUNC_NAME;
+	func[] = "func\02;" #FUNC_ADDRESS #PARAMETERS #INTERNAL_RETURN #PREVIOUS_FUNC_NAME #PARENT_SCOPE_START;
 
 if (Inline_Entry(func))
 {
@@ -121,7 +121,7 @@ somewhere_after_this_func:
 
 #endif
 
-#define inline%0(%1) static const %0[]=#%0":....";if(I@E(_:_YI@CP:%0))for(new%1,,;I@F();)while(I@L())
+#define inline%0(%1) static const %0[]=#%0":.....";if(I@E(_:_YI@CP:%0))for(new%1,,;I@F();)while(I@L())
 
 
 #define _YI@CP:%8))for(new%0,%1; @Ia:@Ib:@Ic:@Id:@Iz:%8))for(new|||%0|||%1;
