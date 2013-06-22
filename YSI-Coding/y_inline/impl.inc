@@ -1127,9 +1127,6 @@ stock
 stock InlineRet:operator+(InlineRet:a, _:b)
 {
 	#pragma unused a
-	/*static
-		cur,
-		frm;*/
 	// Modify the return address.
 	#emit LOAD.S.pri 0
 	#emit ADD.C      4
@@ -1151,13 +1148,6 @@ stock InlineRet:operator+(InlineRet:a, _:b)
 	#emit STOR.S.alt 0
 	// Do the return
 	#emit RETN
-	/*return
-		cur = GetCurrentFrame(),
-		frm = GetFramePreviousFrame(cur),
-		SetFramePreviousFrame(cur, GetFramePreviousFrame(frm)),
-		SetFrameReturn(cur, GetFrameReturn(frm)),
-		SetFrameParameterSize(cur, frm - cur + GetFrameParameterSize(frm)),
-		InlineRet:b;*/
 	return InlineRet:0;
 }
 
