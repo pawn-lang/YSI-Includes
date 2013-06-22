@@ -575,8 +575,8 @@ stock I@L(constFunc, ...)
 		}
 		stor += 4;
 	}
-	// Copy the closure back.
-	if (constFunc)
+	// Copy the closure back (if there is anything that needs copying).
+	if (constFunc && (YSI_g_sCurInlineParams || YSI_g_sCurInlineLocals))
 	{
 		if (!YSI_g_sCurInlineLocals) offset -= 4;
 		@emit STACK      (-offset)
@@ -1249,12 +1249,3 @@ stock Callback_Restore(func[E_CALLBACK_DATA])
 	SetFrameReturn(frm, ret),
 	SetFramePreviousFrame(frm, pfr);
 }
-
-
-
-
-
-
-
-
-
