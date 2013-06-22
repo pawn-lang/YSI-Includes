@@ -23,7 +23,7 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI AMX include.
+	The Original Code is the YSI Inline Function include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright (C) 2011
