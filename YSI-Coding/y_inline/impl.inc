@@ -643,10 +643,24 @@ public _@_y_inline_@_()
 	strfind("", "");
 }
 
-stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect = 0)
+stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
 {
-	#pragma unused expect
 	P:2("Callback_Get called");
+	static
+		fmat[2];
+	Inline_EncodeFromatString(expect, fmat),
+	ret[E_CALLBACK_DATA_FORMAT] = fmat;
+	if (name[0] == callback_tag:'\03')
+	{
+		new
+			ptr;
+		if (AMX_GetPublicPointer(0, ptr, name[1], true))
+		{
+			ret[E_CALLBACK_DATA_POINTER] = ptr | 0x80000000;
+			return true;
+		}
+		return false;
+	}
 	new
 		pos = strfind(name, "\02");
 	if (pos == -1)
@@ -671,7 +685,7 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect = 0)
 			#emit STOR.S.pri  res
 			if (res == 0 && AMX_Read(cur + pos * 4) == '\02')
 			{
-				if (ptr <= AMX_Read(cur + pos * 4 + 1 * 4) <= frm)
+				if (parent <= AMX_Read(cur + pos * 4 + 1 * 4) <= frm)
 				{
 					// Rewrite the value of "name" for the subsequent code.
 					#emit LOAD.S.pri cur
@@ -744,6 +758,21 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect = 0)
 	}
 	return false;
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>Inline_DecodeSimple</summary>
+<param name="from[]">Array of variable types.</param>
+<param name="at">Type slot.</param>
+<returns>
+	The next variable type stored in the bit array.
+</returns>
+<remarks>
+	Returns data from a bit array when it is known that only basic types are
+	stored (i.e. no arrays with length parameters).
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Inline_DecodeSimple(%0,%1) (I@ = %0[(%1) >>> 5] & (2 << ((%1) & 0x1F)), (%1) += 2, I@)
 
 /**--------------------------------------------------------------------------**\
 <summary>Callback_Call</summary>
@@ -991,11 +1020,18 @@ stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (
 	return Callback_Call(func);
 }
 
-// This used to be a compile-time macro to convert its parameters to the
-// compressed format - it isn't anymore.  I tried to figure out if it was
-// possible, and it probably is, but VERY hard, even compared to other macros
-// I've written.
-#define _F<%0> 0
+/**--------------------------------------------------------------------------**\
+<summary>operator+</summary>
+<param name="InlineRet:a">Dummy variable.</param>
+<param name="b">Return value.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	This is a prefix function that takes some value and returns it to the
+	caller's caller.  This makes "@return" in inline functions work.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 // Operators for doing "return" from inside an inline function.
 #define inline_return YSI_gInlineRet+=
@@ -1056,4 +1092,120 @@ stock InlineRet:operator+(InlineRet:a, Float:b)
 	// Do the return
 	#emit RETN
 	return InlineRet:0;
+}
+
+// This used to be a compile-time macro to convert its parameters to the
+// compressed format - it isn't anymore.  I tried to figure out if it was
+// possible, and it probably is, but VERY hard, even compared to other macros
+// I've written.
+#define _F<%0> (#%0)
+
+/**--------------------------------------------------------------------------**\
+<summary>Inline_DecodeComplex</summary>
+<param name="from[]">Array of variable types.</param>
+<param name="at">Type slot.</param>
+<param name="len">Return for array sizes.</param>
+<returns>
+	The next variable type stored in the bit array, and the length of arrays.
+</returns>
+<remarks>
+	Returns data from a bit array when the parameter could be basic (variable or
+	reference), or an array with a length (includes strings).  This requries far
+	more complex code to decode as the lengths may span multiple cells, types
+	can't because they are always 2 bits and always start on an even bit.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static stock Inline_DecodeComplex(from[], &at, &len)
+{
+	new
+		slot = at >>> 5,
+		// An encoded value is either 2 or 14 bits depending on type, so there
+		// is no way to ever have odd offsets.  As a result there is no way for
+		// a type to span two cells, so there's no need for complex switches.
+		type = (from[slot] >>> (at & 0x1F)) & 0b11;
+	at += 2;
+	if (type & 0x01)
+	{
+		// Fast, cell boundary aware, length extraction.  The length is stored
+		// -1 cell, so adjust for that too.
+		switch (at & 0x1F)
+		{
+			// Start of the (next) cell.  For these two, doing "at += 2;"
+			// spilled the pointer over in to the next cell.
+			case 0: len = (from[slot + 1] & 0x0FFF) + 1;
+			#define I@(%0) case %0:len=((from[slot]>>>%0)&0x0FFF)+1;
+			// Whole length in one (current) cell.
+			I@(02)I@(04)I@(06)I@(08)I@(10)I@(12)I@(14)I@(16)I@(18)
+			#undef I@
+			// End of the cell.
+			case 20: len = (from[slot] >>> 20) + 1;
+			// Two cells (let the compiler do the maths for us).
+			#define I@(%0) case %0:len=((from[slot]>>>%0)|((from[slot+1]&(0xFFF>>>(32-%0)))<<(32-%0)))+1;
+			I@(22)I@(24)I@(26)I@(28)I@(30)
+			P:C(default: P:E("Odd offset in y_inline."););
+			#undef I@
+		}
+		at += 12;
+	}
+	return type;
+}
+
+static stock Inline_EncodeFromatString(const str[], ret[2])
+{
+	new
+		size = 0,
+		complex = 0,
+		b0,
+		b1;
+	for (new i = 0; ; ++i)
+	{
+		switch (str[i])
+		{
+			case '\0': break;
+			case 'v':
+			{
+				// Add variable without length.
+				b1 = (b1 << 2) | (b0 >>> 30),
+				b0 = (b0 << 2) | INLINE_TYPE_REF,
+				++size;
+			}
+			case 's', 'a':
+			{
+				if (str[i + 1] == '[')
+				{
+					new
+						j = i + 2,
+						len = 0;
+					while ('0' <= str[j] <= '9') len = (len * 10) + (str[j++] - '0');
+					--len,
+					b1 = (b1 << 14) | (b0 >>> 18);
+					// Add array with length.
+					if (str[i] == 'a') b0 = (b0 << 14) | ((len & 0xFFF) << 2) | INLINE_TYPE_ARR;
+					else b0 = (b0 << 14) | ((len & 0xFFF) << 2) | INLINE_TYPE_STR;
+					if (str[j] != ']') --j;
+					i = j,
+					size += 7,
+					complex = 1;
+				}
+				else
+				{
+					// Add variable without length.
+					b1 = (b1 << 2) | (b0 >>> 30),
+					b0 = (b0 << 2) | INLINE_TYPE_REF,
+					++size;
+				}
+			}
+			default:
+			{
+				// Add variable without length.
+				b1 = (b1 << 2) | (b0 >>> 30),
+				b0 = (b0 << 2) | INLINE_TYPE_VAR,
+				++size;
+			}
+		}
+	}
+	// Add total size.
+	ret[1] = (b1 << 6) | (b0 >>> 26),
+	ret[0] = (b0 << 6) | ((size & 0b00011111) << 1) | (complex ^ 1);
 }

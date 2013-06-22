@@ -65,9 +65,9 @@ Changelog:
 		First version
 \**--------------------------------------------------------------------------**/
 
-static stock bool:y_inline_Get(callback:c, ret[E_CALLBACK_DATA])
+static stock bool:y_inline_Get(callback:c, ret[E_CALLBACK_DATA], f[] = "")
 {
-	return Callback_Get(c, ret);
+	return Callback_Get(c, ret, f);
 }
 
 Test:y_inline1()
@@ -210,4 +210,36 @@ Test:y_inline8()
 			}
 		}
 	}
+}
+
+forward y_inline9(a);
+
+public y_inline9(a)
+{
+	return 12345 + a;
+}
+
+Test:y_inline9()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	ASSERT(y_inline_Get(using public y_inline9, cc, _F<i>));
+	ASSERT(Callback_Call(cc, 67) == 12345 + 67);
+	Callback_Release(cc);
+}
+
+forward y_inline10(a, b[]);
+
+public y_inline10(a, b[])
+{
+	return 12345 + a + b[0];
+}
+
+Test:y_inline10()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	ASSERT(y_inline_Get(using callback y_inline10, cc, _F<is>));
+	ASSERT(Callback_Call(cc, 67, "50") == 12345 + 67 + '5');
+	Callback_Release(cc);
 }

@@ -155,17 +155,16 @@ somewhere_after_this_func:
 #define using%0) callback_tag:@Ik:@Il:%0)
 
 // Get ONLY this ONE parameter (this is a VERY important stage)!
-#define @Ik:@Il:%0, @Ip:@Iq:@Im:@Io:@Iw:|||%0|||,
-#define @Il:%0) @Ip:@Iq:@Im:@Io:@Iw:|||%0|||)
+#define @Ik:@Il:%0, @Ip:@Iq:@Io:@Iw:|||%0|||,
+#define @Il:%0) @Ip:@Iq:@Io:@Iw:|||%0|||)
 
-#define @Ip:@Iq:@Im:@Io:@Iw:|||%0inline%1||| @In:@It:%0%1||||
-#define @Iq:@Im:@Io:@Iw:|||%0public%1||| @Ir:@Is:%1||||
-#define @Im:@Io:@Iw:|||%0anonymous%1||| @In:@It:%0NULL%1||||
-#define @Io:@Iw:|||%0callback%1||| @Ir:@Is:%1||||
+#define @Ip:@Iq:@Io:@Iw:|||%0callback%1||| @Ir:@Is:"\03;"#%1||||
+#define @Iq:@Io:@Iw:|||%0public%1||| @Ir:@Is:"\03;"#%1||||
+#define @Io:@Iw:|||%0inline%1||| @In:@It:%0%1||||
 #define @Iw:|||%1||| @In:@It:#%1||||
 
 // Callbacks with "On" in the name (often overidden by y_hooks and ALS).
-#define @Ir:@Is:%0On%1|||| @In:@It:#%0"On"#%1||||
+#define @Ir:@Is:%0On%1|||| @In:@It:%0"On"#%1||||
 #define @Is:%0|||| @In:@It:#%0|||| //Using_unknown_callback
 
 // Callbacks with additional parameters (MUST have matching parameters (y_ini)).
