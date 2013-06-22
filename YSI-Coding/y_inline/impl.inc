@@ -137,21 +137,11 @@ stock Inline_End(mutable const s[])
 	This function determines the exact address of the start of the main inline
 	function container loop.  That is, the label that things like "continue"
 	jump to so that we know how much space we have to play with and where it is.
-	
-	The parameters are irrelevant, all they do is take up space in the compiled
-	AMX - this is not a bad thing, they are actually explicitly desiged to do
-	exactly that, and take up a known amount of space at that.
-	
-	Note: NEVER try call this function when you have compiled with "-O2", that
-	generates compressed macro opcodes that don't take up enough space.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
 stock Inline_Filler()
-	//a =  1, b =  2) //, c =  3, d =  4, e =  5, f =  6, g =  7, h =  8, i =  9, j = 10, k = 11, l = 12, m = 13,
-	//n = 14, o = 15, p = 16, q = 17, r = 18, s = 19, t = 20, u = 21, v = 22, w = 23, x = 24, y = 25, z = 26)
 {
-	//#pragma unused a, b //, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
 	P:2("Inline_Filler called");
 	// This function takes up almost no space in a .pwn, but loads in a .amx.
 	// Or at least as much as I want it to in order to give me code space to
@@ -296,12 +286,11 @@ stock Inline_Loop(...)
 	}
 	P:5("Inline_Loop: varCount = %d", varCount);
 	//P:5("Inline_Loop: refCount = %d", refCount);
-	P:5("Inline_Loop: arrCount = %d", arrCount);
+	P:5("Inline_Loop: arrCount = %d", args - varCount);
 	// So-far, so-good.  The code above in preliminary tests seems to correctly
 	// identify all the relevant and important points in the user code.
 	new
 		ctx[AsmContext];
-	YSI_g_sJumpAddress = 0,
 	// =========================================================================
 	//     CODE SPACE AVAILABLE
 	// =========================================================================
@@ -327,6 +316,7 @@ stock Inline_Loop(...)
 	// =========================================================================
 	//     SEGMENT 1 - RESOLVE AND PUSH CLOSURE DATA AND PARAMETERS
 	// =========================================================================
+	YSI_g_sJumpAddress = 0,
 	AsmInitPtr(ctx, YSI_g_sCurInlineEntry + AMX_HEADER_COD, YSI_g_sCurInlineLoop - YSI_g_sCurInlineEntry - 8),
 	AsmSetErrorHandler(ctx, GetPublicAddressFromName("Inline_OnAsmError"));
 	// Space for params + count.
@@ -338,30 +328,56 @@ stock Inline_Loop(...)
 		// =====================================================================
 		//     SIMPLE CODE - NO ARRAYS OR STRINGS
 		// =====================================================================
-		YSI_g_sRequiredSpace = 4 * 3 * args + 4 * 11 + ((YSI_g_sCurInlineLocals) ? (2 * 4) : (0));
-		_@emit STACK      (-offset)
-		_@emit ADDR.alt   (-offset) // Like "LCTRL 4; XCHG", but shorter.
-		_@emit LREF.S.pri 12   // Load "func" variable.
-		// Sadly "MOVS" checks that the destination is valid and in the stack, which
-		// is what we didn't want.
-		_@emit MOVS       offset
-		// Reduce the stack again.  This is the shortest way I know (5 cells).
-		_@emit STACK      (4 + YSI_g_sCurInlineLocals)
-		_@emit PROC       // Set up the new frame.
-		if (YSI_g_sCurInlineLocals) _@emit STACK      (-YSI_g_sCurInlineLocals) // Skip other locals again.
-		new
-			// Get the offset to the calling function's passed parameters.
-			// 12 for this function's header, plus this function's parameters, plus
-			// the last function's locals (currently none, MUST BE KEPT UP TO DATE),
-			// plus the last function's header, plus the "func" variable.
-			load = 12 + YSI_g_sCurInlineParams + 0 + 12 + 4,
-			i = 0;
-		while (i++ < args)
+		if (YSI_g_sCurInlineLocals)
 		{
-			// Loop over the arguments and push them.
-			_@emit LREF.S.pri load
-			_@emit PUSH.pri
-			load += 4;
+			YSI_g_sRequiredSpace = 4 * 3 * args + 4 * 13;
+			_@emit STACK      (-offset)
+			_@emit ADDR.alt   (-offset) // Like "LCTRL 4; XCHG", but shorter.
+			_@emit LREF.S.pri 12   // Load "func" variable.
+			// Sadly "MOVS" checks that the destination is valid and in the stack, which
+			// is what we didn't want.
+			_@emit MOVS       offset
+			// Reduce the stack again.  This is the shortest way I know (5 cells).
+			_@emit STACK      (4 + YSI_g_sCurInlineLocals)
+			_@emit PROC       // Set up the new frame.
+			_@emit STACK      (-YSI_g_sCurInlineLocals) // Skip other locals again.
+			new
+				// Get the offset to the calling function's passed parameters.
+				// 12 for this function's header, plus this function's parameters, plus
+				// the last function's locals (currently none, MUST BE KEPT UP TO DATE),
+				// plus the last function's header, plus the "func" variable.
+				load = 12 + YSI_g_sCurInlineParams + 0 + 12 + 4,
+				i = 0;
+			while (i++ < args)
+			{
+				// Loop over the arguments and push them.
+				_@emit LREF.S.pri load
+				_@emit PUSH.pri
+				load += 4;
+			}
+		}
+		else
+		{
+			// This is the simplest of the four versions of the code.  Here
+			// there are no arrays to copy over, nor are there any local
+			// variables from the closure.
+			offset -= 4,
+			YSI_g_sRequiredSpace = 4 * 3 * args + 4 * 9;
+			_@emit STACK      (-offset)
+			_@emit ADDR.alt   (-offset)
+			_@emit LREF.S.pri 12
+			_@emit MOVS       offset
+			_@emit PROC
+			new
+				load = 12 + YSI_g_sCurInlineParams + 0 + 12 + 4,
+				i = 0;
+			while (i++ < args)
+			{
+				_@emit LREF.S.pri load
+				_@emit PUSH.pri
+				load += 4;
+			}
+			offset += 4;
 		}
 	}
 	else
@@ -369,39 +385,76 @@ stock Inline_Loop(...)
 		// =====================================================================
 		//     COMPLEX CODE - ARRAYS OR STRINGS
 		// =====================================================================
-		YSI_g_sRequiredSpace = 4 * 4 * varCount + 4 * 6 * (args - varCount) + 4 * 11 + ((argSize) ? (2 * 4) : (0));
-		_@emit STACK      (-offset)
-		_@emit STACK      (YSI_g_sCurInlineLocals - argSize)
-		_@emit LREF.S.pri 12
-		_@emit MOVS       offset
-		new
-			load = 12 + 4,
-			stor = -offset,
-			i = 0;
-		while (i < args)
+		if (YSI_g_sCurInlineLocals)
 		{
-			varCount = getarg(i++) * 4;
-			if (varCount <= 0)
+			YSI_g_sRequiredSpace = 4 * 4 * varCount + 4 * 6 * (args - varCount) + 4 * 13;
+			_@emit STACK      (-offset)
+			_@emit STACK      (YSI_g_sCurInlineLocals - argSize)
+			_@emit LREF.S.pri 12
+			_@emit MOVS       offset
+			new
+				load = 12 + 4,
+				stor = -offset,
+				i = 0;
+			while (i < args)
 			{
-				stor -= 4;
-				_@emit LREF.S.pri load
-				_@emit STOR.S.pri stor
+				varCount = getarg(i++) * 4;
+				if (varCount <= 0)
+				{
+					stor -= 4;
+					_@emit LREF.S.pri load
+					_@emit STOR.S.pri stor
+				}
+				else
+				{
+					stor -= varCount;
+					_@emit LOAD.S.pri load
+					_@emit ADDR.alt   stor
+					_@emit MOVS       varCount
+				}
+				load += 4;
 			}
-			else
-			{
-				stor -= varCount;
-				_@emit LOAD.S.pri load
-				_@emit ADDR.alt   stor
-				_@emit MOVS       varCount
-			}
-			load += 4;
+			_@emit STACK      (4 + argSize)
+			_@emit PROC
+			_@emit STACK      (-argSize)
 		}
-		_@emit STACK      (4 + argSize)
-		_@emit PROC
-		if (argSize) _@emit STACK      (-argSize)
+		else
+		{
+			offset -= 4,
+			YSI_g_sRequiredSpace = 4 * 4 * varCount + 4 * 6 * (args - varCount) + 4 * 11;
+			_@emit STACK      (-offset)
+			_@emit ADDR.alt   (-offset)
+			_@emit LREF.S.pri 12
+			_@emit MOVS       offset
+			_@emit PROC
+			_@emit STACK      (-argSize)
+			new
+				load = 12 + YSI_g_sCurInlineParams + 0 + 12 + 4,
+				stor = 0,
+				i = 0;
+			while (i < args)
+			{
+				varCount = getarg(i++) * 4;
+				if (varCount <= 0)
+				{
+					stor -= 4;
+					_@emit LREF.S.pri load
+					_@emit STOR.S.pri stor
+				}
+				else
+				{
+					stor -= varCount;
+					_@emit LOAD.S.pri load
+					_@emit ADDR.alt   stor
+					_@emit MOVS       varCount
+				}
+				load += 4;
+			}
+			offset += 4;
+		}
 	}
 	// =========================================================================
-	//     SEGMENT 2 - SAVE REFERENCES BACK.
+	//     SEGMENT 2 - SAVE REFERENCES BACK
 	// =========================================================================
 	if (YSI_g_sJumpAddress == 0)
 	{
@@ -469,14 +522,13 @@ stock bool:Callback_Get(const name[], ret[E_CALLBACK_DATA])
 	}
 	else
 	{
+		ret[E_CALLBACK_DATA_POINTER] = name[pos + 1];
 		new
 			//ptr = name[pos + 1],
 			to = name[pos + 2],
 			local = (to & 0x00FFFFFF),
-			params = (to & 0xFF000000) >>> 24;
-		ret[E_CALLBACK_DATA_POINTER] = name[pos + 1];
-		new
-			Alloc:a = malloc(local + params + 3); // Allocate space for the closure.
+			params = (to & 0xFF000000) >>> 24,
+			Alloc:a = malloc(local + params + 3); // Allocate closure space.
 		if (a)
 		{
 			// Get the address of the data.
@@ -492,10 +544,19 @@ stock bool:Callback_Get(const name[], ret[E_CALLBACK_DATA])
 			// Adjust to the bottom of that stack, at least the bottom of the
 			// parts we need (there may be more locals declared later that we
 			// don't need).
-			params = (params << 2) + (local << 2) + 12,
-			// Copy "params" bytes from "from" to "to".
-			rawMemcpy(to, from, params),
-			mset(a, local + 1, name[pos + 3]);
+			if (local)
+			{
+				// Copy "params" bytes from "from" to "to".
+				rawMemcpy(to, from, (params << 2) + (local << 2) + 12),
+				mset(a, local + 1, name[pos + 3]);
+			}
+			else
+			{
+				// Copy "params" bytes from "from" to "to".
+				rawMemcpy(to + 4, from + 8, (params << 2) + 4),
+				// Save the "return" address for the inline to our fake stack.
+				mset(a, 0, name[pos + 3]);
+			}
 			P:2("Callback_Get end");
 			return true;
 		}
@@ -520,16 +581,6 @@ stock bool:Callback_Get(const name[], ret[E_CALLBACK_DATA])
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-/*static stock Inline_DecodeSimple(from[], &at)
-{
-	//static
-	//	type;
-	return
-		I@ = from[at >>> 5] & (2 << (at & 0x1F)),
-		at += 2,
-		I@;
-}*/
-
 #define Inline_DecodeSimple(%0,%1) (I@ = %0[(%1) >>> 5] & (2 << ((%1) & 0x1F)), (%1) += 2, I@)
 
 /**--------------------------------------------------------------------------**\
@@ -548,7 +599,7 @@ stock bool:Callback_Get(const name[], ret[E_CALLBACK_DATA])
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-/*static*/ stock Inline_DecodeComplex(from[], &at, &len)
+static stock Inline_DecodeComplex(from[], &at, &len)
 {
 	new
 		slot = at >>> 5,
@@ -583,7 +634,7 @@ stock bool:Callback_Get(const name[], ret[E_CALLBACK_DATA])
 	return type;
 }
 
-/*static*/ stock Inline_EncodeVariable(to[], &rem, &at, type, len = 0)
+static stock Inline_EncodeVariable(to[], &rem, &at, type, len = 0)
 {
 	// CALL THIS FUNCTION IN REVERSE ORDER!
 	if (rem >= 2)
@@ -726,7 +777,7 @@ stock Callback_Call(func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 			mm = (ts[0] & 0b00111110) + 6,
 			len,
 			end,
-			var; // = (numargs() + 2) * 4;
+			var;
 		#emit LOAD.S.alt    8 // Get the parameter count.
 		#emit LCTRL         5 // Get the current frame.
 		#emit ADD
