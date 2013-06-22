@@ -37,21 +37,23 @@ static stock const
 	YSI_g_scError[] = "\7\7\7*** YSI Error: Unrecognised compilation in y_inline";
 
 /**--------------------------------------------------------------------------**\
-<summary>Inline_End</summary>
+<summary>I@E</summary>
 <param name="s">The array to store an inline function's data in.</param>
 <returns>
 	-
 </returns>
 <remarks>
+	AKA. Inline_Entry
+	
 	This function gets the start of an inline function's code block.  It then
 	removes itself from the compiled code so that it can never be called agian.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
 #define mutable
-stock Inline_End(mutable const s[])
+stock I@E(mutable const s[])
 {
-	P:2("Inline_End called: %s", s);
+	P:2("Inline_Entry called: %s", s);
 	new
 		start = GetCurrentFrameReturn() - 24,
 		ctx[DisasmContext];
@@ -129,20 +131,22 @@ stock Inline_End(mutable const s[])
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>Inline_Filler</summary>
+<summary>I@F</summary>
 <returns>
 	-
 </returns>
 <remarks>
+	AKA. Inline_Allocator.
+	
 	This function determines the exact address of the start of the main inline
 	function container loop.  That is, the label that things like "continue"
 	jump to so that we know how much space we have to play with and where it is.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock Inline_Filler()
+stock I@F()
 {
-	P:2("Inline_Filler called");
+	P:2("Inline_Allocator called");
 	// This function takes up almost no space in a .pwn, but loads in a .amx.
 	// Or at least as much as I want it to in order to give me code space to
 	// play with.
@@ -170,11 +174,13 @@ stock Inline_Filler()
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>Inline_Loop</summary>
+<summary>I@L</summary>
 <returns>
 	0
 </returns>
 <remarks>
+	AKA. Inline_Main.
+	
 	The code before the start of the function is split in to three parts:
 	
 	The first part comes before the start of the loop condition, and is where
@@ -193,8 +199,8 @@ stock Inline_Filler()
 	AFTER.  That's normally where the stack is restored, but we now have full
 	control of that (so don't forget to write it in to the process exit code).
 	
-	"Inline_Filler" currently marks the end of the first segment, and
-	"Inline_Loop" marks the end of the second segment.
+	"Inline_Allocator" currently marks the end of the first segment, and
+	"Inline_Main" marks the end of the second segment.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -212,7 +218,7 @@ public Inline_OnAsmError(ctx[AsmContext], AsmError:error)
 	{
 		case ASM_ERROR_SPACE:
 		{
-			if (YSI_g_sJumpAddress) P:E("ASM_ERROR_SPACE in Inline_Loop.");
+			if (YSI_g_sJumpAddress) P:E("ASM_ERROR_SPACE in Inline_Main.");
 			else
 			{
 				// Get where the last instruction started to be written.
@@ -233,17 +239,17 @@ public Inline_OnAsmError(ctx[AsmContext], AsmError:error)
 				AMX_Write(YSI_g_sJumpAddress, ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] - AMX_BASE_ADDRESS + AMX_REAL_ADDRESS);
 			}
 		}
-		case ASM_ERROR_OPCODE : P:E("ASM_ERROR_OPCODE in Inline_Loop.");
-		case ASM_ERROR_OPERAND: P:E("ASM_ERROR_OPERAND in Inline_Loop.");
+		case ASM_ERROR_OPCODE : P:E("ASM_ERROR_OPCODE in Inline_Main.");
+		case ASM_ERROR_OPERAND: P:E("ASM_ERROR_OPERAND in Inline_Main.");
 	}
 }
 
 // "tryemit"
 #define _@emit%0\32;%1\10;%3 if(asm_emit_(ctx,%1 ) == ASM_ERROR_SPACE) asm_emit_(ctx,%1 );
 
-stock Inline_Loop(...)
+stock I@L(...)
 {
-	P:2("Inline_Loop called (%d)", numargs());
+	P:2("Inline_Main called (%d)", numargs());
 	// MOST IMPORTANT THING TO DO FIRST!  Get the address to jump back to.
 	new
 		ret = GetCurrentFrameReturn(),
@@ -273,9 +279,9 @@ stock Inline_Loop(...)
 	ret += 8;
 	if (DisasmDecodeInsn(dctx) && DisasmGetOpcode(dctx) == OP_BREAK) ret += 4;
 	YSI_g_sCurInlineCode = ret;
-	P:5("Inline_Loop: YSI_g_sCurInlineEntry = %x", YSI_g_sCurInlineEntry);
-	P:5("Inline_Loop: YSI_g_sCurInlineLoop = %x", YSI_g_sCurInlineLoop);
-	P:5("Inline_Loop: YSI_g_sCurInlineCode = %x", YSI_g_sCurInlineCode);
+	P:5("Inline_Main: YSI_g_sCurInlineEntry = %x", YSI_g_sCurInlineEntry);
+	P:5("Inline_Main: YSI_g_sCurInlineLoop = %x", YSI_g_sCurInlineLoop);
+	P:5("Inline_Main: YSI_g_sCurInlineCode = %x", YSI_g_sCurInlineCode);
 	// Get the segment sizes and variable type counts.
 	new
 		args = numargs(),
@@ -284,9 +290,9 @@ stock Inline_Loop(...)
 	{
 		if (getarg(i) <= 0) ++varCount;
 	}
-	P:5("Inline_Loop: varCount = %d", varCount);
-	//P:5("Inline_Loop: refCount = %d", refCount);
-	P:5("Inline_Loop: arrCount = %d", args - varCount);
+	P:5("Inline_Main: varCount = %d", varCount);
+	//P:5("Inline_Main: refCount = %d", refCount);
+	P:5("Inline_Main: arrCount = %d", args - varCount);
 	// So-far, so-good.  The code above in preliminary tests seems to correctly
 	// identify all the relevant and important points in the user code.
 	new
@@ -295,17 +301,17 @@ stock Inline_Loop(...)
 	//     CODE SPACE AVAILABLE
 	// =========================================================================
 	//  
-	//  Inline_End: 6
+	//  Inline_Entry: 6
 	//  Vars: 2 v+r
 	//  Arrays: 7 a
 	//  JUMP: 2
-	//  Inline_Filler: 6
+	//  Inline_Allocator: 6
 	//  
 	//  Arrays: 6 a
 	//  Vars: 5 v
 	//  Refs: 6 r
 	//  
-	//  Inline_Loop: 8
+	//  Inline_Main: 8
 	//  
 	//  Simple Total: 22 + 7v + 8r
 	//  Complex Total: 22 + 7v + 8r + 17a
@@ -989,6 +995,7 @@ stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (
 		#emit STACK     12
 		#emit RETN
 	}
+	// Never called, but includes the other function.
 	return Callback_Call(func);
 }
 

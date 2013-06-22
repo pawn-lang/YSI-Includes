@@ -105,7 +105,12 @@ Variables:
 
 #define FUNCTION_LENGTH                 (32)
 
-#define NO_VALUE(%0) ((2*%0-1+1)==-1)
+// Better handling of operator precedences and floating point numbers.  This
+// will now work for ALL regular numbers (including -0.5 which broke the old
+// version).  I don't know of any complex expressions that break it with
+// operator precedences, but I'm not ruling it out.  The brackets do try and
+// account for that possibility, but I just don't know.
+#define NO_VALUE(%0) ((2*%0-1)==2*(%0-1))
 
 #if !defined TRUE
 new stock
