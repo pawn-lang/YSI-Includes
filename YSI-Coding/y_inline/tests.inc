@@ -70,6 +70,11 @@ static stock bool:y_inline_Get(callback:c, ret[E_CALLBACK_DATA], f[] = "")
 	return Callback_Get(c, ret, f);
 }
 
+static stock bool:y_inline_Restore(ret[E_CALLBACK_DATA])
+{
+	Callback_Restore(ret);
+}
+
 Test:y_inline1()
 {
 	new
@@ -78,6 +83,7 @@ Test:y_inline1()
 	{
 		@return 42;
 	}
+	printf("%d %d %d %d %d", func[0], func[1], func[2], func[3], func[4]);
 	y_inline_Get(using inline func, cc);
 	ASSERT(Callback_Call(cc) == 42);
 	Callback_Release(cc);
@@ -241,5 +247,62 @@ Test:y_inline10()
 		cc[E_CALLBACK_DATA];
 	ASSERT(y_inline_Get(using callback y_inline10, cc, _F<is>));
 	ASSERT(Callback_Call(cc, 67, "50") == 12345 + 67 + '5');
+	Callback_Release(cc);
+}
+
+Test:y_inline11()
+{
+	new
+		g = 5,
+		cc[E_CALLBACK_DATA];
+	inline func()
+	{
+		g = 11;
+	}
+	y_inline_Get(using inline func, cc);
+	ASSERT(g == 5);
+	Callback_Call(cc);
+	ASSERT(g == 5);
+	y_inline_Restore(cc);
+	ASSERT(g == 11);
+	Callback_Release(cc);
+}
+
+Test:y_inline12()
+{
+	new
+		g = 5,
+		cc[E_CALLBACK_DATA];
+	inline func()
+	{
+		++g;
+	}
+	y_inline_Get(using inline func, cc);
+	Callback_Call(cc);
+	Callback_Call(cc);
+	Callback_Call(cc);
+	Callback_Call(cc);
+	y_inline_Restore(cc);
+	ASSERT(g == 9);
+	Callback_Release(cc);
+}
+
+Test:y_inline13()
+{
+	new
+		g = 5,
+		cc[E_CALLBACK_DATA];
+	inline const func()
+	{
+		ASSERT(g == 5);
+		++g;
+	}
+	y_inline_Get(using inline func, cc);
+	Callback_Call(cc);
+	Callback_Call(cc);
+	Callback_Call(cc);
+	Callback_Call(cc);
+	y_inline_Restore(cc);
+	ASSERT(g == 5);
 	Callback_Release(cc);
 }

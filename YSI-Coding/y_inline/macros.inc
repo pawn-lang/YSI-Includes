@@ -121,8 +121,11 @@ somewhere_after_this_func:
 
 #endif
 
-#define inline%0(%1) static const %0[]=#%0":....";if(I@E(_:_YI@CP:%0))for(new%1,,;I@F();)while(I@L())
+#define inline%0(%1) static %0[_:I@E:32]=#%0":....";if(I@E(_:_YI@CP:%0))for(new%1,,;I@F();)while(I@L(I@K(1)))
 
+#define I@E:32]=#%9const%7\32;%8":....";if(I@E(_:_YI@CP:%9const%7\32;%8))for(%1)while(I@L(I@K(1))) 32]=#%8":....";if(I@E(_:_YI@CP:%8))for(%1)while(I@L(I@K()))
+
+//#define i@Im:%9&%0[]=#%9&%0":....";if(I@E(_:_YI@CP:%9&%0)) %0[]=#%0":....";if(I@E(_:_YI@CP:%0,3))
 
 #define _YI@CP:%8))for(new%0,%1; @Ia:@Ib:@Ic:@Id:@Iz:%8))for(new|||%0|||%1;
 
@@ -140,7 +143,7 @@ somewhere_after_this_func:
 #define @Id:@Iz:%8))for(new%0|||%2|||%4,%5;I@F();)while(I@L(%7)) @Ib:@Ic:@Id:@Iz:%8))for(new%0,%2|||%4|||%5;I@F();)while(I@L(%7,0))
 
 // Detect end of line.
-#define @Iz:%8))for(new%1,%0||||||;I@F();)while(I@L(%1,%7)) %8))for(new %0;I@F();)while(I@L(%7))
+#define @Iz:%8))for(new%1,%0||||||; %8))for(new %0;
 
 // Drop support for anonymous functions.
 #define anonymous%0(%1) anonymous_no_longer_supported;for(new %1;FALSE;)

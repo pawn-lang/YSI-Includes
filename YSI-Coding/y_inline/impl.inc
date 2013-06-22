@@ -86,6 +86,7 @@ enum E_CALLBACK_DATA
 	ResolvedAlloc:E_CALLBACK_DATA_ALLOC, // Fully resolved address.
 	// ===== ALWAYS AFTER =====
 	E_CALLBACK_DATA_POINTER,
+	E_CALLBACK_DATA_OFFSET,
 	E_CALLBACK_DATA_FORMAT[2]
 }
 
@@ -105,6 +106,7 @@ static stock const
 /**--------------------------------------------------------------------------**\
 <summary>I@E</summary>
 <param name="s">The array to store an inline function's data in.</param>
+<param name="constFunc">Should this function copy the stack back?</param>
 <returns>
 	-
 </returns>
@@ -113,6 +115,8 @@ static stock const
 	
 	This function gets the start of an inline function's code block.  It then
 	removes itself from the compiled code so that it can never be called agian.
+	
+	If "constFunc" is 3, copy the stack back, if it isn't don't.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -183,7 +187,7 @@ stock I@E(mutable const s[])
 	// =========================================================================
 	// Save the data name pointer.
 	addr2 = ref(s[strfind(s, ":")]),
-	AMX_Write(addr2, '\2'),
+	AMX_Write(addr2, '\02;'),
 	AMX_Write(addr2 + 4, YSI_g_sCurInlineEntry),
 	// Get the number of local variables already in the parent function.
 	frm = GetCurrentFramePreviousFrame(),
@@ -317,8 +321,15 @@ public Inline_OnAsmError(ctx[AsmContext], AsmError:error)
 // "tryemit"
 #define _@emit%0\32;%1\10;%3 if(asm_emit_(ctx,%1 ) == ASM_ERROR_SPACE) asm_emit_(ctx,%1 );
 
-stock I@L(...)
+stock I@K(...)
 {
+	return numargs() * 3;
+}
+
+stock I@L(constFunc, ...)
+{
+	//new
+	//	bool:constFunc = I@;
 	P:2("Inline_Main called (%d)", numargs());
 	// MOST IMPORTANT THING TO DO FIRST!  Get the address to jump back to.
 	new
@@ -354,9 +365,9 @@ stock I@L(...)
 	P:5("Inline_Main: YSI_g_sCurInlineCode = %x", YSI_g_sCurInlineCode);
 	// Get the segment sizes and variable type counts.
 	new
-		args = numargs(),
+		args = numargs() - 1,
 		varCount = 0;
-	for (new i = 0; i != args; ++i)
+	for (new i = 1; i <= args; ++i)
 	{
 		if (getarg(i) <= 0) ++varCount;
 	}
@@ -380,13 +391,13 @@ stock I@L(...)
 	//  Vars: 5 v
 	//  Refs: 6 r
 	//  
-	//  Inline_Main: 8
+	//  Inline_Main: 19
 	//  
-	//  Simple Total: 22 + 7v + 8r
-	//  Complex Total: 22 + 7v + 8r + 17a
+	//  Simple Total: 14 + 7v + 8r + 19
+	//  Complex Total: 14 + 7v + 8r + 17a + 19
 	//  
-	//  Simple Required: 19 + 3v + 7r
-	//  Complex Required: 19 + 4v + 8r + 6a
+	//  Simple Required: 15 + 3v + 7r + 16
+	//  Complex Required: 15 + 4v + 8r + 6a + 16
 	//  
 	// =========================================================================
 	//     SEGMENT 1 - RESOLVE AND PUSH CLOSURE DATA AND PARAMETERS
@@ -473,7 +484,7 @@ stock I@L(...)
 				i = 0;
 			while (i < args)
 			{
-				varCount = getarg(i++) * 4;
+				varCount = getarg(++i) * 4;
 				if (varCount <= 0)
 				{
 					stor -= 4;
@@ -509,7 +520,7 @@ stock I@L(...)
 				i = 0;
 			while (i < args)
 			{
-				varCount = getarg(i++) * 4;
+				varCount = getarg(++i) * 4;
 				if (varCount <= 0)
 				{
 					stor -= 4;
@@ -550,7 +561,7 @@ stock I@L(...)
 		i = 0;
 	while (i < args)
 	{
-		varCount = getarg(i++) * 4;
+		varCount = getarg(++i) * 4;
 		switch (varCount)
 		{
 			case -4:
@@ -564,12 +575,25 @@ stock I@L(...)
 		}
 		stor += 4;
 	}
+	// Copy the closure back.
+	if (constFunc)
+	{
+		if (!YSI_g_sCurInlineLocals) offset -= 4;
+		@emit STACK      (-offset)
+		@emit PUSH.pri
+		@emit ADDR.pri   (-offset)
+		@emit LREF.S.alt 12
+		@emit MOVS       offset
+		@emit POP.pri
+		@emit STACK      offset
+	}
 	// Finish.
 	@emit RETN
 	// =========================================================================
 	//     STORE THE RETURN ADDRESS
 	// =========================================================================
-	AMX_Write(YSI_g_sCurInlinePointer, YSI_g_sJumpAddress);
+	AMX_Write(YSI_g_sCurInlinePointer, YSI_g_sJumpAddress),
+	AMX_Write(YSI_g_sCurInlinePointer - 12, '\02;');
 	// =========================================================================
 	//     FUNCTION EPILOG
 	// =========================================================================
@@ -645,7 +669,7 @@ public _@_y_inline_@_()
 
 stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
 {
-	P:2("Callback_Get called");
+	P:2("Callback_Get called: %s", name);
 	static
 		fmat[2];
 	Inline_EncodeFromatString(expect, fmat),
@@ -724,8 +748,10 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
 	new
 		to = name[pos + 2],
 		local = (to & 0x00FFFFFF),
-		params = (to & 0xFF000000) >>> 24,
-		Alloc:a = malloc(local + params + 3); // Allocate closure space.
+		params = (to & 0xFF000000) >>> 24;
+	params = local + params + (local ? 3 : 2);
+	new
+		Alloc:a = malloc(params); // Allocate closure space.
 	if (a)
 	{
 		// Get the address of the data.
@@ -733,7 +759,9 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
 		#emit LOAD.S.pri    a
 		#emit IDXADDR
 		#emit STOR.S.pri    to
-		ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:to;
+		params <<= 2,
+		ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:to,
+		ret[E_CALLBACK_DATA_OFFSET] = params;
 		// Copy the stack over.  First get the frame of the function that used
 		// an inline function, thus calling us indirectly.
 		new
@@ -743,13 +771,13 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
 		if (local)
 		{
 			// Copy "params" bytes from "from" to "to".
-			rawMemcpy(to, from, (params << 2) + (local << 2) + 12),
+			rawMemcpy(to, from, params),
 			mset(a, local + 1, name[pos + 3]);
 		}
 		else
 		{
 			// Copy "params" bytes from "from" to "to".
-			rawMemcpy(to + 4, from + 8, (params << 2) + 4),
+			rawMemcpy(to, from + 4, params),
 			// Save the "return" address for the inline to our fake stack.
 			mset(a, 0, name[pos + 3]);
 		}
@@ -1209,3 +1237,24 @@ static stock Inline_EncodeFromatString(const str[], ret[2])
 	ret[1] = (b1 << 6) | (b0 >>> 26),
 	ret[0] = (b0 << 6) | ((size & 0b00011111) << 1) | (complex ^ 1);
 }
+
+stock Callback_Restore(func[E_CALLBACK_DATA])
+{
+	// Copy the closure data back over the calling function.
+	new
+		frm = GetFramePreviousFrame(GetCurrentFramePreviousFrame()),
+		ret = GetFrameReturn(frm),
+		pfr = GetFramePreviousFrame(frm);
+	rawMemcpy(frm + 12 + GetFrameParameterSize(frm) - func[E_CALLBACK_DATA_OFFSET], _:func[E_CALLBACK_DATA_ALLOC], func[E_CALLBACK_DATA_OFFSET]),
+	SetFrameReturn(frm, ret),
+	SetFramePreviousFrame(frm, pfr);
+}
+
+
+
+
+
+
+
+
+
