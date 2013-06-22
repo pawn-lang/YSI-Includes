@@ -451,7 +451,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 	new
 		File:f,
 		filename[64],
-		callbackFormat;
+		callbackFormat[5];
 	if (bExtra)
 	{
 		if (bPassTag) callbackFormat = _F<isss>;

@@ -880,7 +880,7 @@ stock Callback_Call(func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>Callback_Call</summary>
+<summary>Callback_Array</summary>
 <param name="func[E_CALLBACK_DATA]">Info on the function to be called.</param>
 <param name="params[]">Array of data pointers.</param>
 <param name="num">Size of the array.</param>

@@ -154,7 +154,7 @@ Operators:
 #include "..\YSI-Internal\y_unique"
 
 #if !defined _inc_y_text
-	#error Did you do <YSI/y_text> instead of the required <YSI\y_text>?
+	#error Did you do <YSI-Players/y_text> instead of the required <YSI-Players\y_text>?
 #endif
 #undef _inc_y_text
 
@@ -184,14 +184,14 @@ Operators:
 	#define MAX_TEXT_ENTRIES (Y_TEXT_PER_SET * Y_TEXT_MAX_SETS)
 #endif
 
-#include "..\YSI-Internal\y_styles"
+#include "y_text/styles"
 
 // This is a horribly eclectic collection of libraries from all over the place
 // and written at different times with different aims - frankly I'll be AMAZED
 // if it all comes together and works.
-#include "..\YSI-Internal\y_formatin"
-#include "..\YSI-Internal\y_textrender"
-#include "..\YSI-Internal\y_textint"
+#include "y_text/load"
+#include "y_text/render"
+#include "y_text/impl"
 
 #define UNDO_MOVE|||
 #define DO_MOVE|||%0£££ %0DO_MOVE|||

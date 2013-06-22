@@ -1635,6 +1635,7 @@ Format_Render_start:
 				else
 				{
 					Y_RENDER_DO_DISPLAY()
+					gInitialColour = colour;
 				}
 			}
 			case '\r':

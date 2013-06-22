@@ -180,7 +180,7 @@ Changelog:
 //#include "..\YSI-Internal\y_colourparse"
 
 #if _YSI_USE_X11
-	#include "..\YSI-Internal\y_x11def"
+	#include "y_colours/x11def"
 #endif
 
 #if !defined X11_ALLOW_SPACES
@@ -361,7 +361,7 @@ stock GetColourHash(hash, alpha = 0xAA)
 	alpha &= 0xFF;
 	// Do the REVERSE hash from YHash
 	#if _YSI_USE_X11
-		#include "..\YSI-Internal\y_x11switch"
+		#include "y_colours/x11switch"
 	#endif
 	// Do the default code here.
 	for (new i = 0; i != MAX_TEXT_COLOURS; ++i)
@@ -387,7 +387,7 @@ stock GetColourHash(hash, alpha = 0xAA)
 		// with the "{COLOR}" format, this is to save on memory.  It is in
 		// theory possible to get it working with the hash format using an
 		// incremental hash and compare.  NOW SUPPORTED!
-		#include "..\YSI-Internal\y_x11parse"
+		#include "y_colours/x11parse"
 		#pragma tabsize 4
 		return -1;
 	}
