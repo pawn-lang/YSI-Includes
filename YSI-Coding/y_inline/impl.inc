@@ -594,12 +594,21 @@ stock I@L(...)
 
 stock Callback_Release(input[E_CALLBACK_DATA])
 {
+	static
+		ResolvedAlloc:ra,
+		Alloc:a;
 	if (!(input[E_CALLBACK_DATA_POINTER] & 0x80000000))
 	{
+		ra = input[E_CALLBACK_DATA_ALLOC];
+		#emit CONST.alt     YSI_gMallocMemory
+		#emit LOAD.pri      ra
+		#emit SUB
+		#emit SHR.C.pri     2
+		#emit STOR.pri      a
 		// Publics don't have any stored data.
-		free(input[E_CALLBACK_DATA_ALLOC]);
-		input[E_CALLBACK_DATA_POINTER] = 0;
-		input[E_CALLBACK_DATA_ALLOC] = 0;
+		free(a),
+		input[E_CALLBACK_DATA_POINTER] = 0,
+		input[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:0;
 	}
 }
 
@@ -1107,3 +1116,74 @@ stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (
 // possible, and it probably is, but VERY hard, even compared to other macros
 // I've written.
 #define _F<%0> #%0
+
+// Operators for doing "return" from inside an inline function.
+#define inline_return YSI_gInlineRet+=
+#define @return inline_return
+
+stock
+	InlineRet:YSI_gInlineRet;
+
+stock InlineRet:operator+(InlineRet:a, _:b)
+{
+	#pragma unused a
+	/*static
+		cur,
+		frm;*/
+	// Modify the return address.
+	#emit LOAD.S.pri 0
+	#emit ADD.C      4
+	#emit LOAD.I
+	#emit STOR.S.pri 4
+	// Get the last function's parameters.
+	#emit LOAD.S.pri 0
+	#emit ADD.C      8
+	#emit LOAD.I
+	#emit LOAD.S.alt 0
+	#emit ADD
+	#emit ADDR.alt   0
+	#emit SUB
+	#emit STOR.S.pri 8
+	// Load the return value.
+	#emit LOAD.S.pri b
+	// Copy the previous frame.
+	#emit LREF.S.alt 0
+	#emit STOR.S.alt 0
+	// Do the return
+	#emit RETN
+	/*return
+		cur = GetCurrentFrame(),
+		frm = GetFramePreviousFrame(cur),
+		SetFramePreviousFrame(cur, GetFramePreviousFrame(frm)),
+		SetFrameReturn(cur, GetFrameReturn(frm)),
+		SetFrameParameterSize(cur, frm - cur + GetFrameParameterSize(frm)),
+		InlineRet:b;*/
+	return InlineRet:0;
+}
+
+stock InlineRet:operator+(InlineRet:a, Float:b)
+{
+	#pragma unused a
+	// Modify the return address.
+	#emit LOAD.S.pri 0
+	#emit ADD.C      4
+	#emit LOAD.I
+	#emit STOR.S.pri 4
+	// Get the last function's parameters.
+	#emit LOAD.S.pri 0
+	#emit ADD.C      8
+	#emit LOAD.I
+	#emit LOAD.S.alt 0
+	#emit ADD
+	#emit ADDR.alt   0
+	#emit SUB
+	#emit STOR.S.pri 8
+	// Load the return value.
+	#emit LOAD.S.pri b
+	// Copy the previous frame.
+	#emit LREF.S.alt 0
+	#emit STOR.S.alt 0
+	// Do the return
+	#emit RETN
+	return InlineRet:0;
+}

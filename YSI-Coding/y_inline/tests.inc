@@ -65,11 +65,97 @@ Changelog:
 		First version
 \**--------------------------------------------------------------------------**/
 
-// Allocate space on the heap permanently.
-#include "y_inline/macros"
-// Functions to access the data on the heap.
-#include "y_inline/impl"
-#if defined YSI_TESTS
-	#include "..\YSI-Core\y_testing"
-	#include "y_inline/tests"
-#endif
+static stock y_inline_Get(callback:c, ret[E_CALLBACK_DATA])
+{
+	Callback_Get(c, ret);
+}
+
+Test:y_inline1()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	inline func()
+	{
+		@return 42;
+	}
+	y_inline_Get(using inline func, cc);
+	ASSERT(Callback_Call(cc) == 42);
+	Callback_Release(cc);
+}
+
+Test:y_inline2()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	inline func(a)
+	{
+		@return a;
+	}
+	y_inline_Get(using inline func, cc);
+	ASSERT(Callback_Call(cc, 50) == 50);
+	Callback_Release(cc);
+}
+
+Test:y_inline3()
+{
+	new
+		cc[E_CALLBACK_DATA],
+		r = 100;
+	inline func(&r2)
+	{
+		#pragma unused r2
+		r2 = 99;
+	}
+	y_inline_Get(using inline func, cc);
+	Callback_Call(cc, r);
+	ASSERT(r == 99);
+	Callback_Release(cc);
+}
+
+Test:y_inline4()
+{
+	new
+		cc[E_CALLBACK_DATA],
+		r = 100;
+	inline func(&r2)
+	{
+		#pragma unused r2
+		r = 99;
+	}
+	y_inline_Get(using inline func, cc);
+	Callback_Call(cc, r);
+	ASSERT(r == 100);
+	Callback_Release(cc);
+}
+
+Test:y_inline5()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	inline func(a, b, c, d)
+	{
+		ASSERT(a == 1);
+		ASSERT(b == 11);
+		ASSERT(c == 111);
+		ASSERT(d == 1111);
+	}
+	y_inline_Get(using inline func, cc);
+	Callback_Call(cc, 1, 11, 111, 1111);
+	Callback_Release(cc);
+}
+
+Test:y_inline6()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	inline func(string:g[])
+	{
+		#if !(sizeof (g) == YSI_MAX_STRING))
+			#error sizeof (g) != YSI_MAX_STRING
+		#endif
+		ASSERT(!strcmp(g, "hello"));
+	}
+	y_inline_Get(using inline func, cc);
+	Callback_Call(cc, "hello");
+	Callback_Release(cc);
+}
