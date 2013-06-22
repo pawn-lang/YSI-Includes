@@ -25,6 +25,7 @@ enum E_CALLBACK_DATA
 }
 
 static stock
+	YSI_g_sPrevJumpOver = 0,
 	YSI_g_sCurInlineLocals,  // Number of locals in current parent.
 	YSI_g_sCurInlineParams,  // Number of parameters to current parent.
 	YSI_g_sCurInlinePointer, // Pointer to the inline function's name.
@@ -85,78 +86,46 @@ stock Inline_End(mutable const s[])
 	if (DisasmGetOpcode(ctx) != OP_JZER) return Debug_Print0(YSI_g_scError);
 	// Write out the jump for future calls.
 	new
-		ctx2[AsmContext];
-	AsmInitPtr(ctx2, start + AMX_HEADER_COD, 8),
-	// This returns an ABSOLUTE address, despite being compiled as a local jump,
-	// and despite being within the AMX VM.  This is, however, very handy.
-	AsmEmitJump(ctx2, DisasmGetOperand(ctx)),
+		addr1 = AMX_Read(YSI_g_sPrevJumpOver),
+		addr2 = start + AMX_HEADER_COD,
+		frm = DisasmGetOperand(ctx);
+	if (YSI_g_sPrevJumpOver && addr1 == addr2 + AMX_REAL_ADDRESS - AMX_BASE_ADDRESS)
+	{
+		// Multiple inline functions in a row.  Jump over them all.
+		AMX_Write(YSI_g_sPrevJumpOver, frm),
+		YSI_g_sCurInlineEntry = start;
+	}
+	else if (YSI_g_sPrevJumpOver && addr1 == addr2 + AMX_REAL_ADDRESS - AMX_BASE_ADDRESS - 4 && Opcode:AMX_Read(addr2) == RelocateOpcode(OP_BREAK))
+	{
+		// Multiple inline functions in a row.  Jump over them all.
+		AMX_Write(YSI_g_sPrevJumpOver, frm),
+		YSI_g_sCurInlineEntry = start - 4;
+	}
+	else
+	{
+		new
+			ctx2[AsmContext];
+		AsmInitPtr(ctx2, addr2, 8),
+		AsmEmitJump(ctx2, frm),
+		YSI_g_sPrevJumpOver = addr2 + 4,
+		YSI_g_sCurInlineEntry = start + 8;
+	}
 	// Store the pointer to the start of this new inline's available code.
-	YSI_g_sCurInlineEntry = start + 8;
+	// =========================================================================
 	// Save the data name pointer.
-	//printf("s before: %s", s);
-	start = strfind(s, ":");
-	#emit LOAD.S.alt    s
-	#emit LOAD.S.pri    start
-	#emit SHL.C.pri     2
-	#emit ADD
-	#emit STOR.S.pri    start
-	#emit ADD.C         4
-	#emit STOR.pri      YSI_g_sCurInlinePointer
-	// Write out "\02" in place of ":".
-	#emit CONST.pri     2
-	#emit SREF.S.pri    start
-	//printf("s after: %s", s);
+	start = ref(s[strfind(s, ":")]),
+	AMX_Write(start, '\2'),
+	AMX_Write(start + 4, YSI_g_sCurInlineEntry),
 	// Get the number of local variables already in the parent function.
-	start = GetCurrentFramePreviousFrame();
-	YSI_g_sCurInlineLocals = GetFrameLocalSize(start);
-	YSI_g_sCurInlineParams = GetFrameParameterSize(start);
+	frm = GetCurrentFramePreviousFrame(),
+	YSI_g_sCurInlineLocals = GetFrameLocalSize(frm),
+	YSI_g_sCurInlineParams = GetFrameParameterSize(frm),
 	// Save parameter counts, shifted for separate components.
-	start = YSI_g_sCurInlinePointer + 4;
-	#emit LOAD.pri      YSI_g_sCurInlineLocals
-	#emit SHR.C.pri     2
-	#emit LOAD.alt      YSI_g_sCurInlineParams
-	#emit SHL.C.alt     22
-	#emit OR
-	#emit SREF.S.pri    start
+	AMX_Write(start + 8, (YSI_g_sCurInlineLocals >>> 2) | (YSI_g_sCurInlineParams << 22)),
 	// TODO: Save next function pointer to linked list.
+	YSI_g_sCurInlinePointer = start + 12;
 	// Return 1 to enter the main "inline" function block.
 	return 1;
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Inline_WriteFunctionProlog</summary>
-<param name="entry">Address of the start of the inline's code.</param>
-<param name="loop">Address of the loop start.</param>
-<param name="code">Address of the start of user code.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	The code before the start of the function is split in to three parts:
-	
-	The first part comes before the start of the loop condition, and is where
-	all the variables are initialised in the compiled code.  As we don't want to
-	initialise any variables, this can be repurposed for function entry code.
-	The address of this is stored in "entry", and it ends at "loop".
-	
-	The second part is where the function loops back to.  This MUST start with a
-	"RETN" instruction to end the function in all cases, so any startup code in
-	the first segment must jump over that "RETN".  The remainder of this section
-	can be used for any more entry or exit code that is required.  Note that
-	it can also start with a "STACK" opcode when required.  This section starts
-	at "loop" and ends at "code".
-	
-	The final segment is not technically BEFORE the main function code but
-	AFTER.  That's normally where the stack is restored, but we now have full
-	control of that (so don't forget to write it in to the process exit code).
-	
-	"Inline_Filler" currently marks the end of the first segment, and
-	"Inline_Loop" marks the end of the second segment.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-static stock Inline_WriteFunctionProlog(entry, loop, code)
-{
 }
 
 /**--------------------------------------------------------------------------**\
@@ -178,11 +147,11 @@ static stock Inline_WriteFunctionProlog(entry, loop, code)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock Inline_Filler(
-	a =  1, b =  2) //, c =  3, d =  4, e =  5, f =  6, g =  7, h =  8, i =  9, j = 10, k = 11, l = 12, m = 13,
+stock Inline_Filler()
+	//a =  1, b =  2) //, c =  3, d =  4, e =  5, f =  6, g =  7, h =  8, i =  9, j = 10, k = 11, l = 12, m = 13,
 	//n = 14, o = 15, p = 16, q = 17, r = 18, s = 19, t = 20, u = 21, v = 22, w = 23, x = 24, y = 25, z = 26)
 {
-	#pragma unused a, b //, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
+	//#pragma unused a, b //, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
 	P:2("Inline_Filler called");
 	// This function takes up almost no space in a .pwn, but loads in a .amx.
 	// Or at least as much as I want it to in order to give me code space to
@@ -239,6 +208,49 @@ stock Inline_Filler(
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+static stock
+	YSI_g_sJumpAddress,
+	YSI_g_sRequiredSpace;
+
+forward Inline_OnAsmError(ctx[AsmContext], AsmError:error);
+
+public Inline_OnAsmError(ctx[AsmContext], AsmError:error)
+{
+	if (numargs() == 1) error = AsmGetError(ctx);
+	// Actually USE the error to write the "JUMP" instruction correctly.
+	switch (error)
+	{
+		case ASM_ERROR_SPACE:
+		{
+			if (YSI_g_sJumpAddress) P:E("ASM_ERROR_SPACE in Inline_Loop.");
+			else
+			{
+				// Get where the last instruction started to be written.
+				ctx[AsmContext_buffer_offset] = YSI_g_sJumpAddress = AsmGetPreviousWriteOffset(),
+				// Calculate how much of the function header was NOT written.
+				YSI_g_sRequiredSpace -= YSI_g_sJumpAddress,
+				// Save the address of the "JUMP" operand for later.
+				YSI_g_sJumpAddress += 4 + ctx[AsmContext_buffer],
+				// Allocate space for writing the "JUMP" (previously skipped).
+				ctx[AsmContext_buffer_size] = cellmax;
+				// Jump over the function end.
+				@emit JUMP    0
+				new
+					target = YSI_g_sCurInlineCode + AMX_HEADER_COD - ctx[AsmContext_buffer] - YSI_g_sRequiredSpace;
+				// Pad everything with "NOP"s.
+				while (ctx[AsmContext_buffer_offset] != target) @emit NOP
+				// Write the jump target as here.
+				AMX_Write(YSI_g_sJumpAddress, ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] - AMX_BASE_ADDRESS + AMX_REAL_ADDRESS);
+			}
+		}
+		case ASM_ERROR_OPCODE : P:E("ASM_ERROR_OPCODE in Inline_Loop.");
+		case ASM_ERROR_OPERAND: P:E("ASM_ERROR_OPERAND in Inline_Loop.");
+	}
+}
+
+// "tryemit"
+#define _@emit%0\32;%1\10;%3 if(asm_emit_(ctx,%1 ) == ASM_ERROR_SPACE) asm_emit_(ctx,%1 );
+
 stock Inline_Loop(...)
 {
 	P:2("Inline_Loop called (%d)", numargs());
@@ -261,53 +273,12 @@ stock Inline_Loop(...)
 	if (DisasmGetOpcode(dctx) != OP_JZER) return Debug_Print0(YSI_g_scError);
 	// Set this function to return to the end of the outer loop.
 	SetCurrentFrameReturn(YSI_g_sCurInlineCode - AMX_REAL_ADDRESS - (AMX_HEADER_COD - AMX_BASE_ADDRESS));
-	// NOW WE CAN DO THE MAIN FUNCTION CODE.
+	// =========================================================================
+	//     NOW WE CAN DO THE MAIN FUNCTION CODE.
+	// =========================================================================
 	new
 		argSize = GetFrameLocalSize(GetCurrentFramePreviousFrame());
 	// Do we have enough space for everything.
-	// Current assembly costs (in cells):
-	//  
-	//  SETUP:
-	//  - Stack:         16
-	//  - Variables:     4 v
-	//  - Arrays:        6 a
-	//  - Jump:          2
-	//  
-	//  EXIT 1:
-	//  - STACK:         2
-	//  - RETN:          1
-	//  
-	//  EXIT 2:
-	//  - References:    4 v
-	//  - STACK:         2
-	//  - RETN:          1
-	//  
-	// Current assembly available:
-	//  
-	//  SETUP:
-	//  - Inline_End:    6
-	//  - Variables:     2 v
-	//  - Arrays:        7 a
-	//  - Inline_Filler: 8 + n
-	//  
-	//  EXIT 1:
-	//  - Inline_Loop 1: 3 (+5 = 8)
-	//  
-	//  EXIT 2:
-	//  - References:    6 v
-	//  - Inline_Loop 1: 5 (+3 = 8)
-	//  
-	// I am short:
-	//  
-	//  SETUP:
-	//  - 4 + 2v
-	//  
-	// Have to make up the difference with Inline_Filler, and steal the extra
-	// "2 v" from "EXIT 2" references.  Can also put 2 cells at code start, so
-	// we just now need to allocate SIX extra cells with Inline_Filler, that's
-	// just 3 dummy parameters.
-	// 
-	// All this is of course worst case (most optimised compile mode).
 	// Get the start of the user's function code.  The real start of THEIR code.
 	ret += 8;
 	if (DisasmDecodeInsn(dctx) && DisasmGetOpcode(dctx) == OP_BREAK) ret += 4;
@@ -318,169 +289,161 @@ stock Inline_Loop(...)
 	// Get the segment sizes and variable type counts.
 	new
 		args = numargs(),
-		arrCount = 0,
-		varCount = 0,
-		refCount = 0;
+		varCount = 0;
 	for (new i = 0; i != args; ++i)
 	{
-		switch (getarg(i))
-		{
-			case 0 : ++varCount;
-			case -1: ++refCount, ++varCount;
-			default: ++arrCount;
-		}
+		if (getarg(i) <= 0) ++varCount;
 	}
 	P:5("Inline_Loop: varCount = %d", varCount);
-	P:5("Inline_Loop: refCount = %d", refCount);
+	//P:5("Inline_Loop: refCount = %d", refCount);
 	P:5("Inline_Loop: arrCount = %d", arrCount);
 	// So-far, so-good.  The code above in preliminary tests seems to correctly
 	// identify all the relevant and important points in the user code.
 	new
 		ctx[AsmContext];
+	YSI_g_sJumpAddress = 0,
 	// =========================================================================
-	//     SEGMENT 1
+	//     CODE SPACE AVAILABLE
 	// =========================================================================
-	AsmInitPtr(ctx, YSI_g_sCurInlineEntry + AMX_HEADER_COD, YSI_g_sCurInlineLoop - YSI_g_sCurInlineEntry),
+	//  
+	//  Inline_End: 6
+	//  Vars: 2 v+r
+	//  Arrays: 7 a
+	//  JUMP: 2
+	//  Inline_Filler: 6
+	//  
+	//  Arrays: 6 a
+	//  Vars: 5 v
+	//  Refs: 6 r
+	//  
+	//  Inline_Loop: 8
+	//  
+	//  Simple Total: 22 + 7v + 8r
+	//  Complex Total: 22 + 7v + 8r + 17a
+	//  
+	//  Simple Required: 19 + 3v + 7r
+	//  Complex Required: 19 + 4v + 8r + 6a
+	//  
+	// =========================================================================
+	//     SEGMENT 1 - RESOLVE AND PUSH CLOSURE DATA AND PARAMETERS
+	// =========================================================================
+	AsmInitPtr(ctx, YSI_g_sCurInlineEntry + AMX_HEADER_COD, YSI_g_sCurInlineLoop - YSI_g_sCurInlineEntry - 8),
+	AsmSetErrorHandler(ctx, GetPublicAddressFromName("Inline_OnAsmError"));
 	// Space for params + count.
-	@emit STACK      (-12 - YSI_g_sCurInlineParams - YSI_g_sCurInlineLocals)
-	@emit LCTRL      4                             // Get the stack bottom.
-	//@emit ADD.C      (-8 - YSI_g_sCurInlineLocals) // Stretch the stack bottom.
-	//@emit STACK      (-4 - YSI_g_sCurInlineParams) // Space for params + count.
-	//@emit LCTRL      4                             // Get the stack bottom.
-	//@emit ADD.C      (-8 - YSI_g_sCurInlineLocals) // Stretch the stack bottom.
-	@emit LREF.S.alt 12                            // Load "func" variable.
-	@emit XCHG                                     // Copy data from *func to
-	// Sadly "MOVS" checks that the destination is valid and in the stack, which
-	// is what we didn't want.
-	@emit MOVS      (YSI_g_sCurInlineParams + YSI_g_sCurInlineLocals + 12)
-	// This code copies parameters, header, and locals, but doesn't yet adjust
-	// the stack to point to the bottom of all the locals, just to the header.
-	// Reduce the stack again...
-	@emit STACK      (8 + YSI_g_sCurInlineLocals)
-	ret = ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] + 4;
-	@emit PUSH.C     0 // TODO (in code)  // Add the "return" address.
-	@emit PROC                            // Set up the new frame.
-	// And increase it again!
-	@emit STACK      (-argSize)
 	new
-		i = 0,
-		// Get the offset to the calling function's passed parameters.
-		// 12 for this function's header, plus this function's parameters, plus
-		// the last function's locals (currently none, MUST BE KEPT UP TO DATE),
-		// plus the last function's header, plus the "func" variable.
-		load = 12 + YSI_g_sCurInlineParams + 0 + 12 + 4,
-		stor = -YSI_g_sCurInlineLocals;
-	// Now loop over all the parameter types.
-	while (i < args)
+		// Size of stored closure data.
+		offset = (YSI_g_sCurInlineParams + YSI_g_sCurInlineLocals + 12);
+	if (varCount == args) // Only variables.
 	{
+		// =====================================================================
+		//     SIMPLE CODE - NO ARRAYS OR STRINGS
+		// =====================================================================
+		YSI_g_sRequiredSpace = 4 * 3 * args + 4 * 11 + ((YSI_g_sCurInlineLocals) ? (2 * 4) : (0));
+		_@emit STACK      (-offset)
+		_@emit ADDR.alt   (-offset) // Like "LCTRL 4; XCHG", but shorter.
+		_@emit LREF.S.pri 12   // Load "func" variable.
+		// Sadly "MOVS" checks that the destination is valid and in the stack, which
+		// is what we didn't want.
+		_@emit MOVS       offset
+		// Reduce the stack again.  This is the shortest way I know (5 cells).
+		_@emit STACK      (4 + YSI_g_sCurInlineLocals)
+		_@emit PROC       // Set up the new frame.
+		if (YSI_g_sCurInlineLocals) _@emit STACK      (-YSI_g_sCurInlineLocals) // Skip other locals again.
 		new
-			arg = getarg(i) * 4;
-		if (arg <= 0)
+			// Get the offset to the calling function's passed parameters.
+			// 12 for this function's header, plus this function's parameters, plus
+			// the last function's locals (currently none, MUST BE KEPT UP TO DATE),
+			// plus the last function's header, plus the "func" variable.
+			load = 12 + YSI_g_sCurInlineParams + 0 + 12 + 4,
+			i = 0;
+		while (i++ < args)
 		{
-			if (AsmGetBufferSize(ctx) < (4 + 2) * 4) break;
-			stor -= 4;
-			// Regular variable at this point.
-			@emit LREF.S.pri load
-			@emit STOR.S.pri stor
-			--varCount;
+			// Loop over the arguments and push them.
+			_@emit LREF.S.pri load
+			_@emit PUSH.pri
+			load += 4;
 		}
-		else
-		{
-			if (AsmGetBufferSize(ctx) < (6 + 2) * 4) break;
-			stor -= arg;
-			@emit LOAD.S.pri load
-			@emit ADDR.alt   stor
-			@emit MOVS       arg
-			--arrCount;
-		}
-		++i,
-		load += 4;
 	}
-	if (AsmGetBufferSize(ctx) < 2 * 4) return P:E("Error writing inline function header.");
-	new
-		jumpTargetAddress = ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] + 4;
-	@emit JUMP      0
-	while (AsmGetBufferSize(ctx))
+	else
 	{
+		// =====================================================================
+		//     COMPLEX CODE - ARRAYS OR STRINGS
+		// =====================================================================
+		YSI_g_sRequiredSpace = 4 * 4 * varCount + 4 * 6 * (args - varCount) + 4 * 11 + ((argSize) ? (2 * 4) : (0));
+		_@emit STACK      (-offset)
+		_@emit STACK      (YSI_g_sCurInlineLocals - argSize)
+		_@emit LREF.S.pri 12
+		_@emit MOVS       offset
+		new
+			load = 12 + 4,
+			stor = -offset,
+			i = 0;
+		while (i < args)
+		{
+			varCount = getarg(i++) * 4;
+			if (varCount <= 0)
+			{
+				stor -= 4;
+				_@emit LREF.S.pri load
+				_@emit STOR.S.pri stor
+			}
+			else
+			{
+				stor -= varCount;
+				_@emit LOAD.S.pri load
+				_@emit ADDR.alt   stor
+				_@emit MOVS       varCount
+			}
+			load += 4;
+		}
+		_@emit STACK      (4 + argSize)
+		_@emit PROC
+		if (argSize) _@emit STACK      (-argSize)
+	}
+	// =========================================================================
+	//     SEGMENT 2 - SAVE REFERENCES BACK.
+	// =========================================================================
+	if (YSI_g_sJumpAddress == 0)
+	{
+		// Fake an error.
+		ctx[AsmContext_buffer_size] = 0;
 		@emit NOP
 	}
-	// =========================================================================
-	//     SEGMENT 2
-	// =========================================================================
-	AsmInitPtr(ctx, YSI_g_sCurInlineLoop + AMX_HEADER_COD, YSI_g_sCurInlineCode - YSI_g_sCurInlineLoop);
-	// "Return" to the next instruction to clean up the stack.
-	@emit STACK     argSize
+	// The maths should now be correct.
+	AsmInitPtr(ctx, YSI_g_sCurInlineLoop + AMX_HEADER_COD, cellmax);
+	if (argSize) @emit STACK     argSize
 	@emit RETN
-	// Write the "return" address now that we know it.
-	AMX_Write(ret, ctx[AsmContext_buffer] + ctx[AsmContext_buffer_offset] - AMX_HEADER_COD);
-	// Write the function epilog.
-	// Clean up reference parameters.
+	// Save this return address, so the instruction above goes to the one below.
+	YSI_g_sJumpAddress = YSI_g_sCurInlineLoop + 12;
+	// Save references.
 	new
-		vload = -12 - YSI_g_sCurInlineParams - YSI_g_sCurInlineLocals,
-		vstor = 16,
-		j = 0;
-	while (j < args)
+		load = -offset,
+		stor = 12 + 4,
+		i = 0;
+	while (i < args)
 	{
-		new
-			arg = getarg(j++) * 4;
-		switch (arg)
+		varCount = getarg(i++) * 4;
+		switch (varCount)
 		{
 			case -4:
 			{
-				vload -= 4;
-				@emit LOAD.S.pri vload
-				@emit SREF.S.pri vstor
+				load -= 4;
+				@emit LOAD.S.pri load
+				@emit SREF.S.pri stor
 			}
-			case 0: vload -= 4;
-			default: vload -= arg;
+			case 0: load -= 4;
+			default: load -= varCount;
 		}
-		vstor += 4;
+		stor += 4;
 	}
-	// Now actually return to finish our code.  Currently this assumes that
-	// "Inline_Call" has no parameters = MUST BE KEPT UP TO DATE.
-	//@emit STACK     0
+	// Finish.
 	@emit RETN
-	// Write the remainder of the parameters.  First work out EXACTLY how much
-	// space is required to write this data out.
-	YSI_g_sCurInlineCode = ctx[AsmContext_buffer_size] - (varCount * (4 * 4) + arrCount * (6 * 4)); // + (2 * 4));
-	if (YSI_g_sCurInlineCode < ctx[AsmContext_buffer_offset]) return P:E("Unexpected insufficient size in y_inline.");
-	// Pad with "NOPs".
-	while (ctx[AsmContext_buffer_offset] < YSI_g_sCurInlineCode)
-	{
-		@emit NOP
-	}
-	// Write the remainder.
-	// Write the jump offset to our newly written code, which should fall
-	// EXACTLY before the user code.
-	AMX_Write(jumpTargetAddress, ctx[AsmContext_buffer] + YSI_g_sCurInlineCode - AMX_BASE_ADDRESS + AMX_REAL_ADDRESS);
-	while (i < args)
-	{
-		new
-			arg = getarg(i++) * 4;
-		if (arg <= 0)
-		{
-			stor -= 4;
-			// Regular variable at this point.
-			@emit LREF.S.pri load
-			@emit STOR.S.pri stor
-		}
-		else
-		{
-			stor -= arg;
-			@emit LOAD.S.pri load
-			@emit ADDR.alt   stor
-			@emit MOVS       arg
-		}
-		load += 4;
-	}
 	// =========================================================================
-	//     STORAGE.
+	//     STORE THE RETURN ADDRESS
 	// =========================================================================
-	// Write this function's pointer to the original data array.
-	#emit LOAD.pri YSI_g_sCurInlineEntry
-	#emit SREF.pri YSI_g_sCurInlinePointer
+	AMX_Write(YSI_g_sCurInlinePointer, YSI_g_sJumpAddress);
 	// =========================================================================
-	//     FUNCTION EPILOG.
+	//     FUNCTION EPILOG
 	// =========================================================================
 	// Clean up the heap manually because we are jumping straight over the
 	// original cleanup code - in fact we may have destroyed it entirely by
@@ -492,8 +455,11 @@ stock Inline_Loop(...)
 	return 0;
 }
 
+#undef _@emit
+
 stock bool:Callback_Get(const name[], ret[E_CALLBACK_DATA])
 {
+	P:2("Callback_Get called");
 	new
 		pos = strfind(name, "\02");
 	if (pos == -1)
@@ -505,30 +471,32 @@ stock bool:Callback_Get(const name[], ret[E_CALLBACK_DATA])
 	{
 		new
 			//ptr = name[pos + 1],
-			args = name[pos + 2],
-			local = (args & 0x00FFFFFF),
-			params = (args & 0xFF000000) >>> 24;
-		printf("local = %d, params = %d", local, params);
-		ret[E_CALLBACK_DATA_POINTER] = name[pos + 1],
-		args = _:malloc(local + params + 3); // Allocate space for the closure.
-		if (args)
+			to = name[pos + 2],
+			local = (to & 0x00FFFFFF),
+			params = (to & 0xFF000000) >>> 24;
+		ret[E_CALLBACK_DATA_POINTER] = name[pos + 1];
+		new
+			Alloc:a = malloc(local + params + 3); // Allocate space for the closure.
+		if (a)
 		{
 			// Get the address of the data.
 			#emit CONST.alt     YSI_gMallocMemory
-			#emit LOAD.S.pri    args
+			#emit LOAD.S.pri    a
 			#emit IDXADDR
-			#emit STOR.S.pri    args
-			ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:args,
+			#emit STOR.S.pri    to
+			ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:to;
 			// Copy the stack over.  First get the frame of the function that
 			// used an inline function, thus calling us indirectly.
-			pos = GetFramePreviousFrame(GetCurrentFramePreviousFrame()),
+			new
+				from = GetFramePreviousFrame(GetCurrentFramePreviousFrame()) - (local << 2);
 			// Adjust to the bottom of that stack, at least the bottom of the
 			// parts we need (there may be more locals declared later that we
 			// don't need).
-			pos -= (local <<= 2),
-			params = (params << 2) + local + 12,
-			// Copy "params" bytes from "pos" to "args".
-			rawMemcpy(args, pos, params);
+			params = (params << 2) + (local << 2) + 12,
+			// Copy "params" bytes from "from" to "to".
+			rawMemcpy(to, from, params),
+			mset(a, local + 1, name[pos + 3]);
+			P:2("Callback_Get end");
 			return true;
 		}
 	}
@@ -669,6 +637,78 @@ stock bool:Callback_Get(const name[], ret[E_CALLBACK_DATA])
 	return (rem -= 2), 1;
 }
 
+stock Inline_DecodeFromatString(const str[], ret[2])
+{
+	new
+		size = 0,
+		complex = 0,
+		b0,
+		b1;
+	for (new i = 0; ; ++i)
+	{
+		switch (str[i])
+		{
+			case '\0': break;
+			case 'v':
+			{
+				// Add variable without length.
+				b1 = (b1 << 2) | (b0 >>> 30),
+				b0 = (b0 << 2) | INLINE_TYPE_REF,
+				++size;
+			}
+			case 's', 'a':
+			{
+				if (str[i + 1] == '[')
+				{
+					new
+						j = i + 2,
+						len = 0;
+					while ('0' <= str[j] <= '9') len = (len * 10) + (str[j++] - '0');
+					--len,
+					b1 = (b1 << 14) | (b0 >>> 18);
+					// Add array with length.
+					if (str[i] == 'a') b0 = (b0 << 14) | ((len & 0xFFF) << 2) | INLINE_TYPE_ARR;
+					else b0 = (b0 << 14) | ((len & 0xFFF) << 2) | INLINE_TYPE_STR;
+					if (str[j] != ']') --j;
+					i = j,
+					size += 7,
+					complex = 1;
+				}
+				else
+				{
+					// Add variable without length.
+					b1 = (b1 << 2) | (b0 >>> 30),
+					b0 = (b0 << 2) | INLINE_TYPE_REF,
+					++size;
+				}
+			}
+			default:
+			{
+				// Add variable without length.
+				b1 = (b1 << 2) | (b0 >>> 30),
+				b0 = (b0 << 2) | INLINE_TYPE_VAR,
+				++size;
+			}
+		}
+	}
+	// Add total size.
+	ret[1] = (b1 << 6) | (b0 >>> 26),
+	ret[0] = (b0 << 6) | ((size & 0b00011111) << 1) | (complex ^ 1);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Callback_Call</summary>
+<param name="func[E_CALLBACK_DATA]">Info on the function to be called.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Takes an inline function handler and parameters, and either calls the
+	public function while passing through the parameters, or just jumps to the
+	carefully crafted inline function code.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 stock Callback_Call(func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 {
 	static
@@ -761,67 +801,148 @@ stock Callback_Call(func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 	return 1;
 }
 
+/**--------------------------------------------------------------------------**\
+<summary>Callback_Call</summary>
+<param name="func[E_CALLBACK_DATA]">Info on the function to be called.</param>
+<param name="params[]">Array of data pointers.</param>
+<param name="num">Size of the array.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	This is very similar to Callback_Call, but takes an array of ADDRESSES
+	instead of normal parameters.  This is designed to help support some
+	experimental OO code I was working on...
+	
+	If the target is a public function, the parameters are resolved and passed
+	normally.  If the target is an inline function we are optimised for the
+	common case, so move the data on to the stack (currently done value-by-value
+	not all at once) and call "Callback_Call".
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (params))
+{
+	static
+		addr;
+	addr = func[E_CALLBACK_DATA_POINTER];
+	if (addr & 0x80000000)
+	{
+		static
+			ts[2];
+		addr &= ~0x80000000,
+		ts[0] = func[E_CALLBACK_DATA_FORMAT][0],
+		ts[1] = func[E_CALLBACK_DATA_FORMAT][1];
+		new
+			at = 6,
+			mm = (ts[0] & 0b00111110) + 6,
+			len,
+			end,
+			var;
+		// Get "params" into a pointer.
+		#emit LOAD.S.alt    params
+		#emit STOR.S.alt    end
+		#emit LOAD.S.pri    num
+		#emit SHL.C.pri     2
+		#emit ADD
+		#emit STOR.S.pri    var
+		P:5("Inline_Call: at = %d, mm = %d", at, mm);
+		if (ts[0] & 0x01)
+		{
+			// Only has variables and references, easy to decode.
+			while (at < mm)
+			{
+				if (var == end) return P:E("Insufficient parameters for Callback_Array.");
+				var -= 4;
+				if (Inline_DecodeSimple(ts, at))
+				{
+					P:7("INLINE_TYPE_REF");
+					#emit LREF.S.pri  var
+					#emit PUSH.pri
+				}
+				else
+				{
+					P:7("INLINE_TYPE_VAR");
+					#emit LREF.S.pri  var
+					#emit LOAD.I
+					#emit PUSH.pri
+				}
+			}
+		}
+		else
+		{
+			// Can have arrays, harder to decode.
+			while (at < mm)
+			{
+				if (var == end) return P:E("Insufficient parameters for Callback_Array.");
+				var -= 4;
+				if (Inline_DecodeComplex(ts, at, len) == INLINE_TYPE_VAR)
+				{
+					P:7("INLINE_TYPE_VAR");
+					#emit LREF.S.pri  var
+					#emit LOAD.I
+					#emit PUSH.pri
+				}
+				else
+				{
+					P:7("INLINE_TYPE_REF/STR/ARR: %d", len);
+					#emit LREF.S.pri  var
+					#emit PUSH.pri
+				}
+			}
+		}
+		// Push the parameter count.
+		#emit LOAD.S.pri  num
+		#emit SHL.C.pri   2
+		#emit PUSH.pri
+		// "Standard" function call.
+		#emit LCTRL     6
+		#emit ADD.C     28
+		#emit PUSH.pri
+		#emit LOAD.pri  addr
+		#emit SCTRL     6
+		#emit STACK     20
+		#emit RETN
+	}
+	else
+	{
+		new
+			len,
+			end,
+			var;
+		// Get "params" into a pointer.
+		#emit LOAD.S.alt    params
+		#emit STOR.S.alt    end
+		#emit LOAD.S.pri    num
+		#emit SHL.C.pri     2
+		#emit ADD
+		#emit STOR.S.pri    var
+		while (var > end)
+		{
+			var -= 4;
+			#emit LREF.S.pri  var
+			#emit PUSH.pri
+		}
+		#emit PUSH.S      func
+		// Push the parameter count.
+		#emit LOAD.S.pri  num
+		#emit SHL.C.pri   2
+		#emit ADD.C       4
+		#emit PUSH.pri
+		// "Standard" function call.
+		#emit LCTRL     6
+		#emit ADD.C     28
+		#emit PUSH.pri
+		#emit CONST.pri Callback_Call
+		#emit SCTRL     6
+		#emit STACK     12
+		#emit RETN
+	}
+	return Callback_Call(func);
+}
+
 // This used to be a compile-time macro to convert its parameters to the
 // compressed format - it isn't anymore.  I tried to figure out if it was
 // possible, and it probably is, but VERY hard, even compared to other macros
 // I've written.
 #define _F<%0> #%0
-
-stock Inline_DecodeFromatString(const str[], ret[2])
-{
-	new
-		size = 0,
-		complex = 0,
-		b0,
-		b1;
-	for (new i = 0; ; ++i)
-	{
-		switch (str[i])
-		{
-			case '\0': break;
-			case 'v':
-			{
-				// Add variable without length.
-				b1 = (b1 << 2) | (b0 >>> 30),
-				b0 = (b0 << 2) | INLINE_TYPE_REF,
-				++size;
-			}
-			case 's', 'a':
-			{
-				if (str[i + 1] == '[')
-				{
-					new
-						j = i + 2,
-						len = 0;
-					while ('0' <= str[j] <= '9') len = (len * 10) + (str[j++] - '0');
-					--len,
-					b1 = (b1 << 14) | (b0 >>> 18);
-					// Add array with length.
-					if (str[i] == 'a') b0 = (b0 << 14) | ((len & 0xFFF) << 2) | INLINE_TYPE_ARR;
-					else b0 = (b0 << 14) | ((len & 0xFFF) << 2) | INLINE_TYPE_STR;
-					if (str[j] != ']') --j;
-					i = j,
-					size += 7,
-					complex = 1;
-				}
-				else
-				{
-					// Add variable without length.
-					b1 = (b1 << 2) | (b0 >>> 30),
-					b0 = (b0 << 2) | INLINE_TYPE_REF,
-					++size;
-				}
-			}
-			default:
-			{
-				// Add variable without length.
-				b1 = (b1 << 2) | (b0 >>> 30),
-				b0 = (b0 << 2) | INLINE_TYPE_VAR,
-				++size;
-			}
-		}
-	}
-	// Add total size.
-	ret[1] = (b1 << 6) | (b0 >>> 26),
-	ret[0] = (b0 << 6) | ((size & 0b00011111) << 1) | (complex ^ 1);
-}
