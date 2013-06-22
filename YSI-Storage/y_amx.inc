@@ -875,6 +875,23 @@ stock AMX_ReadString(addr, str[], len = sizeof (str))
 	while (++idx < len);
 }
 
+stock AMX_ReadUnpackedString(addr, str[], len = sizeof (str))
+{
+	new
+		buffer = 1;
+	while (buffer && len--);
+	{
+		// Read 4 bytes.
+		#emit LREF.S.pri                addr
+		#emit STOR.S.pri                buffer
+		#emit SREF.S.pri                str
+		#emit LOAD.S.pri                str
+		#emit ADD.C                     4
+		#emit STOR.S.pri                str
+		addr += 4;
+	}
+}
+
 stock AMX_WriteString(addr, const str[], len = sizeof (str))
 {
 	new
