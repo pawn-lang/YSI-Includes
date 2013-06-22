@@ -1,4 +1,69 @@
-
+/**--------------------------------------------------------------------------**\
+					===================================
+					 y_inline - PAWN inline functions.
+					===================================
+Description:
+	This library allows a user to write inline functions in their script.  It
+	first detects all inline functions and generates data on them, such as
+	parameter counts and addresses.  When an inline function is passed in code
+	its current context data is stored.  Finally, when an inline function is
+	found to be called at some point its current local stack is stored in global
+	memory.  When the function actually is called, the stack is restored, and
+	additional parameters which are the inline function parameters, are passed.
+Legal:
+	Version: MPL 1.1
+	
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 (the "License"); you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
+	http://www.mozilla.org/MPL/
+	
+	Software distributed under the License is distributed on an "AS IS" basis,
+	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	for the specific language governing rights and limitations under the
+	License.
+	
+	The Original Code is the YSI AMX include.
+	
+	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright (C) 2011
+	the Initial Developer. All Rights Reserved.
+	
+	Contributors:
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
+	
+	Thanks:
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+		ZeeX - Very productive conversations.
+		koolk - IsPlayerinAreaEx code.
+		TheAlpha - Danish translation.
+		breadfish - German translation.
+		Fireburn - Dutch translation.
+		yom - French translation.
+		50p - Polish translation.
+		Zamaroht - Spanish translation.
+		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
+			for me to strive to better.
+		Pixels^ - Running XScripters where the idea was born.
+		Matite - Pestering me to release it and using it.
+	
+	Very special thanks to:
+		Thiadmer - PAWN, whose limits continue to amaze me!
+		Kye/Kalcor - SA:MP.
+		SA:MP Team past, present and future - SA:MP.
+	
+Version:
+	1.0
+Changelog:
+	22/06/13:
+		Rewrote the library from scratch for better performance all round.
+	20/10/12:
+		Fixed a bug with "Callback_Release" with public functions.
+	15/11/11:
+		Changed the precedence of "using" types.
+	19/09/11:
+		First version
+\**--------------------------------------------------------------------------**/
 
 #include "..\amx\asm"
 #include "..\amx\disasm"
@@ -487,8 +552,8 @@ stock I@L(...)
 			case -4:
 			{
 				load -= 4;
-				@emit LOAD.S.pri load
-				@emit SREF.S.pri stor
+				@emit LOAD.S.alt load
+				@emit SREF.S.alt stor
 			}
 			case 0: load -= 4;
 			default: load -= varCount;
@@ -516,7 +581,45 @@ stock I@L(...)
 
 #undef _@emit
 
-stock bool:Callback_Get(const name[], ret[E_CALLBACK_DATA])
+/**--------------------------------------------------------------------------**\
+<summary>Callback_Release</summary>
+<param name="input[E_CALLBACK_DATA]">Callback to release.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Releases all the data associated with a given callback (closure storage).
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Callback_Release(input[E_CALLBACK_DATA])
+{
+	if (!(input[E_CALLBACK_DATA_POINTER] & 0x80000000))
+	{
+		// Publics don't have any stored data.
+		free(input[E_CALLBACK_DATA_ALLOC]);
+		input[E_CALLBACK_DATA_POINTER] = 0;
+		input[E_CALLBACK_DATA_ALLOC] = 0;
+	}
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Callback_Get</summary>
+<param name="callback:name">Callback to find by name.</param>
+<param name="ret[E_CALLBACK_DATA]">Where to store the pointer.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Looks up the callback by name.  If the name has the correct data embedded
+	within it that's great and we use that directly.  Otherwise this function
+	loops backwards over the callbacks currently in scope (mostly) to the start
+	of the parent function.  If a match is still not found this looks for a
+	public function of the same name.  If that isn't found either it gives up.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA])
 {
 	P:2("Callback_Get called");
 	new
