@@ -63,7 +63,8 @@ somewhere_after_this_func:
 #define @Ia:@Ib:@Ic:@Id:@Iz:%8))for(new||||||,; %8))for(;
 
 // Detect arrays.  Get the size, defaulting to YSI_MAX_STRING.
-#define @Ib:@Ic:@Id:@Iz:%8))for(new%0|||%2[%3]|||%4,%5;I@F();)while(I@L(%7)) @Ib:@Ic:@Id:@Iz:%8))for(new%0,%2[%3+(_:NO_VALUE(%3)*YSI_MAX_STRING)]|||%4|||%5;I@F();)while(I@L(%7,sizeof %2))
+#define @Ib:@Ic:@Id:@Iz:%8))for(new%0|||%2[%3]|||%4,%5;I@F();)while(I@L(%7)) @Ib:@Ic:@Id:@Iz:%8))for(new%0,%2[_:@Iy:%3]|||%4|||%5;I@F();)while(I@L(%7,sizeof %2))
+#define @Iy:] YSI_MAX_STRING]
 
 // Detect references.
 #define @Ic:@Id:@Iz:%8))for(new%0|||%1&%2|||%4,%5;I@F();)while(I@L(%7)) @Ib:@Ic:@Id:@Iz:%8))for(new%0,%2|||%4|||%5;I@F();)while(I@L(%7,-1))
