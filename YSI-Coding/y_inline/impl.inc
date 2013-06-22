@@ -191,11 +191,9 @@ stock I@E(mutable const s[])
 	YSI_g_sCurInlineParams = GetFrameParameterSize(frm),
 	// Save parameter counts, shifted for separate components.
 	AMX_Write(addr2 + 8, (YSI_g_sCurInlineLocals >>> 2) | (YSI_g_sCurInlineParams << 22)),
-	// TODO: Save next function pointer to linked list.
 	// =========================================================================
 	// Build a linked list of inlines that are in scope.
 	AMX_Write(addr2 + 16, YSI_g_sPrevInlineFunc),
-	//AMX_Write(addr2 + 20, GetFrameFunction(GetCurrentFramePreviousFrame())),
 	YSI_g_sCurInlinePointer = addr2 + 12,
 	YSI_g_sPrevInlineFunc = ref(s);
 	// Return 1 to enter the main "inline" function block.
@@ -363,7 +361,6 @@ stock I@L(...)
 		if (getarg(i) <= 0) ++varCount;
 	}
 	P:5("Inline_Main: varCount = %d", varCount);
-	//P:5("Inline_Main: refCount = %d", refCount);
 	P:5("Inline_Main: arrCount = %d", args - varCount);
 	// So-far, so-good.  The code above in preliminary tests seems to correctly
 	// identify all the relevant and important points in the user code.
@@ -646,20 +643,21 @@ public _@_y_inline_@_()
 	strfind("", "");
 }
 
-stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA])
+stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect = 0)
 {
+	#pragma unused expect
 	P:2("Callback_Get called");
 	new
 		pos = strfind(name, "\02");
 	if (pos == -1)
 	{
-		//static
-		//	lstring[32];
-		pos = strlen(name);
 		new
 			frm = GetCurrentFramePreviousFrame(),
 			cur = YSI_g_sPrevInlineFunc,
+			parent = GetFrameFunction(GetFramePreviousFrame(frm)),
 			res;
+		pos = strlen(name),
+		frm = GetFrameReturn(frm);
 		// Find the function by name.
 		while (cur)
 		{
@@ -673,7 +671,7 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA])
 			#emit STOR.S.pri  res
 			if (res == 0 && AMX_Read(cur + pos * 4) == '\02')
 			{
-				if (GetFrameFunction(GetFramePreviousFrame(frm)) <= AMX_Read(cur + pos * 4 + 1 * 4) <= GetFrameReturn(frm))
+				if (ptr <= AMX_Read(cur + pos * 4 + 1 * 4) <= frm)
 				{
 					// Rewrite the value of "name" for the subsequent code.
 					#emit LOAD.S.pri cur
@@ -695,7 +693,6 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA])
 			#emit ADD.C       16
 			#emit LOAD.I
 			#emit STOR.S.pri  cur
-			//cur = lstring[strfind(name, "\02") + 4];
 		}
 		if (!cur)
 		{
@@ -711,7 +708,6 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA])
 	// Load this inline function's data in to our closure (and allocate memory).
 	ret[E_CALLBACK_DATA_POINTER] = name[pos + 1];
 	new
-		//ptr = name[pos + 1],
 		to = name[pos + 2],
 		local = (to & 0x00FFFFFF),
 		params = (to & 0xFF000000) >>> 24,
@@ -747,189 +743,6 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA])
 		return true;
 	}
 	return false;
-}
-
-#define Inline_AddOneBit(%0,%1,%2) (Bit_FastSet(Bit:%0,%1,%2),(++(%1)))
-#define Inline_SetOneBit(%0,%1,%2) (Bit_FastSet(Bit:%0,%1,%2))
-#define Inline_GetOneBit(%0,%1)    (Bit_Get(Bit:%0,%1))
-
-/**--------------------------------------------------------------------------**\
-<summary>Inline_DecodeSimple</summary>
-<param name="from[]">Array of variable types.</param>
-<param name="at">Type slot.</param>
-<returns>
-	The next variable type stored in the bit array.
-</returns>
-<remarks>
-	Returns data from a bit array when it is known that only basic types are
-	stored (i.e. no arrays with length parameters).
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Inline_DecodeSimple(%0,%1) (I@ = %0[(%1) >>> 5] & (2 << ((%1) & 0x1F)), (%1) += 2, I@)
-
-/**--------------------------------------------------------------------------**\
-<summary>Inline_DecodeComplex</summary>
-<param name="from[]">Array of variable types.</param>
-<param name="at">Type slot.</param>
-<param name="len">Return for array sizes.</param>
-<returns>
-	The next variable type stored in the bit array, and the length of arrays.
-</returns>
-<remarks>
-	Returns data from a bit array when the parameter could be basic (variable or
-	reference), or an array with a length (includes strings).  This requries far
-	more complex code to decode as the lengths may span multiple cells, types
-	can't because they are always 2 bits and always start on an even bit.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-static stock Inline_DecodeComplex(from[], &at, &len)
-{
-	new
-		slot = at >>> 5,
-		// An encoded value is either 2 or 14 bits depending on type, so there
-		// is no way to ever have odd offsets.  As a result there is no way for
-		// a type to span two cells, so there's no need for complex switches.
-		type = (from[slot] >>> (at & 0x1F)) & 0b11;
-	at += 2;
-	if (type & 0x01)
-	{
-		// Fast, cell boundary aware, length extraction.  The length is stored
-		// -1 cell, so adjust for that too.
-		switch (at & 0x1F)
-		{
-			// Start of the (next) cell.  For these two, doing "at += 2;"
-			// spilled the pointer over in to the next cell.
-			case 0: len = (from[slot + 1] & 0x0FFF) + 1;
-			#define I@(%0) case %0:len=((from[slot]>>>%0)&0x0FFF)+1;
-			// Whole length in one (current) cell.
-			I@(02)I@(04)I@(06)I@(08)I@(10)I@(12)I@(14)I@(16)I@(18)
-			#undef I@
-			// End of the cell.
-			case 20: len = (from[slot] >>> 20) + 1;
-			// Two cells (let the compiler do the maths for us).
-			#define I@(%0) case %0:len=((from[slot]>>>%0)|((from[slot+1]&(0xFFF>>>(32-%0)))<<(32-%0)))+1;
-			I@(22)I@(24)I@(26)I@(28)I@(30)
-			P:C(default: P:E("Odd offset in y_inline."););
-			#undef I@
-		}
-		at += 12;
-	}
-	return type;
-}
-
-static stock Inline_EncodeVariable(to[], &rem, &at, type, len = 0)
-{
-	// CALL THIS FUNCTION IN REVERSE ORDER!
-	if (rem >= 2)
-	{
-		// Blank the old bits at that point, then write the new ones.
-		Inline_AddOneBit(to, at, type & 0b01),
-		Inline_AddOneBit(to, at, type & 0b10);
-	}
-	else
-	{
-		P:E("Unable to encode y_inline parameters.");
-		return 0;
-	}
-	if (type & 0b01)
-	{
-		// String.
-		// Array.
-		if (len <= 0)
-		{
-			P:E("Array length too short in y_inline");
-		}
-		else if (len > 4096)
-		{
-			P:E("Array length too large in y_inline");
-		}
-		else
-		{
-			// Encode "1" as "0" etc, and use only 12+2 bits.
-			--len;
-			if (rem >= 12)
-			{
-				// Copy all the bits over.  We can't (easily) do this in one
-				// operation without a loop as the write may span a cell
-				// boundary.  This way handles all bounds correctly.
-				for (type = 0x0001; type != 0x1000; type <<= 1)
-				{
-					Inline_AddOneBit(to, at, len & type);
-				}
-				rem -= 12;
-			}
-			else
-			{
-				P:E("Unable to encode y_inline length.");
-				// Remove the parameter we just encoded.
-				at -= 2;
-				return 0;
-			}
-		}
-		return (rem -= 2), 0;
-	}
-	return (rem -= 2), 1;
-}
-
-stock Inline_DecodeFromatString(const str[], ret[2])
-{
-	new
-		size = 0,
-		complex = 0,
-		b0,
-		b1;
-	for (new i = 0; ; ++i)
-	{
-		switch (str[i])
-		{
-			case '\0': break;
-			case 'v':
-			{
-				// Add variable without length.
-				b1 = (b1 << 2) | (b0 >>> 30),
-				b0 = (b0 << 2) | INLINE_TYPE_REF,
-				++size;
-			}
-			case 's', 'a':
-			{
-				if (str[i + 1] == '[')
-				{
-					new
-						j = i + 2,
-						len = 0;
-					while ('0' <= str[j] <= '9') len = (len * 10) + (str[j++] - '0');
-					--len,
-					b1 = (b1 << 14) | (b0 >>> 18);
-					// Add array with length.
-					if (str[i] == 'a') b0 = (b0 << 14) | ((len & 0xFFF) << 2) | INLINE_TYPE_ARR;
-					else b0 = (b0 << 14) | ((len & 0xFFF) << 2) | INLINE_TYPE_STR;
-					if (str[j] != ']') --j;
-					i = j,
-					size += 7,
-					complex = 1;
-				}
-				else
-				{
-					// Add variable without length.
-					b1 = (b1 << 2) | (b0 >>> 30),
-					b0 = (b0 << 2) | INLINE_TYPE_REF,
-					++size;
-				}
-			}
-			default:
-			{
-				// Add variable without length.
-				b1 = (b1 << 2) | (b0 >>> 30),
-				b0 = (b0 << 2) | INLINE_TYPE_VAR,
-				++size;
-			}
-		}
-	}
-	// Add total size.
-	ret[1] = (b1 << 6) | (b0 >>> 26),
-	ret[0] = (b0 << 6) | ((size & 0b00011111) << 1) | (complex ^ 1);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1182,7 +995,7 @@ stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (
 // compressed format - it isn't anymore.  I tried to figure out if it was
 // possible, and it probably is, but VERY hard, even compared to other macros
 // I've written.
-#define _F<%0> #%0
+#define _F<%0> 0
 
 // Operators for doing "return" from inside an inline function.
 #define inline_return YSI_gInlineRet+=
