@@ -1,0 +1,375 @@
+/**--------------------------------------------------------------------------**\
+					================================
+					Y Sever Includes - Commands Core
+					================================
+Description:
+	Runs commands registered with the system and calls the required functions.
+	Also handles alternate names and prefixes.  Based very loosely on dcmd.
+Legal:
+	Version: MPL 1.1
+	
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 (the "License"); you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
+	http://www.mozilla.org/MPL/
+	
+	Software distributed under the License is distributed on an "AS IS" basis,
+	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	for the specific language governing rights and limitations under the
+	License.
+	
+	The Original Code is the YSI commands include.
+	
+	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright (C) 2011
+	the Initial Developer. All Rights Reserved.
+	
+	Contributors:
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
+	
+	Thanks:
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+		ZeeX - Very productive conversations.
+		koolk - IsPlayerinAreaEx code.
+		TheAlpha - Danish translation.
+		breadfish - German translation.
+		Fireburn - Dutch translation.
+		yom - French translation.
+		50p - Polish translation.
+		Zamaroht - Spanish translation.
+		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
+			for me to strive to better.
+		Pixels^ - Running XScripters where the idea was born.
+		Matite - Pestering me to release it and using it.
+	
+	Very special thanks to:
+		Thiadmer - PAWN, whose limits continue to amaze me!
+		Kye/Kalcor - SA:MP.
+		SA:MP Team past, present and future - SA:MP.
+	
+Version:
+	2.0
+Changelog:
+	23/06/13:
+		Rewritten from scratch for MORE speed.
+		Punycode support.
+		More failure messages.
+		Cleaner code.
+	20/10/10:
+		Fixed a bug with insensitive commands - my fault for not testing.
+	06/01/08:
+		Improved master and /help support.
+	04/01/08:
+		Fixed bad element in Command_SetDeniedReturn.
+	12/08/07:
+		Added master support.
+	24/06/07:
+		Modifed a few functions to use Bit_GetBit for speed.
+	04/05/07:
+		Completed command use support.
+		Added invalid character protection.
+	02/05/07:
+		Added YSI_ prefix to all globals.
+	14/04/07:
+		Updated header documentation with more than changelog/functions.
+		Added function name requesting.
+	13/04/07:
+		Added function documentation.
+		Added wrapped functions for e_COMM_FLAG values missing them.
+		Added header function list.
+	12/04/07:
+		Added command removal.
+	11/04/07:
+		Changed system slightly to handle names and alt names separately.  Still
+		need a better way of ignoring names when alt names are used.
+	10/04/07:
+		First version.
+Functions:
+	Public:
+		-
+	Core:
+		-
+	Stock:
+		-
+	Static:
+		-
+	Inline:
+		-
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	-
+Enums:
+	-
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		-
+Commands:
+	-
+Compile options:
+	-
+\**--------------------------------------------------------------------------**/
+
+#define MAX_COMMAND_LENGTH              (32)
+
+#define COMMAND_NOT_FOUND               (-1)
+
+#if !defined MAX_COMMANDS
+	#define MAX_COMMANDS                (512)
+#endif
+
+#include <YSI-Core\y_master>
+#define _inc_y_commands
+#include <YSI-Core\y_master>
+#include <YSI-Data\y_hashmap>
+#include <YSI-Data\y_playerarray>
+#include <YSI-Storage\y_amx>
+#include <YSI-Coding\y_hooks>
+
+#define _GROUP_MAKE_NAME<%0...%1> %0Command%1
+#define _GROUP_MAKE_LIMIT         MAX_COMMANDS
+#include "..\YSI-Players\y_groups\_funcs"
+
+enum E_COMMAND
+{
+	HASH_MAP_DATA<MAX_COMMAND_LENGTH char>,
+	
+	// Share a memory location with the hashmap stored name.
+	E_COMMAND_NAME[MAX_COMMAND_LENGTH char] = 0,
+	
+	// IGNORE THESE, THEY COVER HASH MAP DATA.
+	_E_COMMAND_PAD_0, _E_COMMAND_PAD_1,
+	
+	// Who can use this command?
+	PlayerArray:E_COMMAND_USERS<MAX_PLAYERS>,
+	// Function pointer.
+	E_COMMAND_POINTER
+}
+
+static stock
+	// Quickly reference and store commands by name.
+	HashMap:YSI_g_sCommandMap<MAX_COMMANDS>,
+	YSI_g_sCommands[MAX_COMMANDS][E_COMMAND];
+
+// Store which script(s) own which commands.
+MASTER_DATA<MAX_COMMANDS>
+
+// "YCMD:" macros.  The true core is "RC:", which is in "y_master".
+#define _YCMD_0:_YCMD_1:_YCMD_2:%0(%1[]%2) RC:%0(%1[]%2)
+#define _YCMD_1:_YCMD_2:%0, Command_GetID(#%0),
+#define _YCMD_2:%0)  Command_GetID(#%0))
+#define @YCMD:%0;  Command_TouchNamed(#%0);
+
+#define YCMD: _YCMD_0:_YCMD_1:_YCMD_2:
+
+// ZCMD compatibility.
+#define CMD:%0(%1) RC:%0(%1,__help)if(__help)return 0;else
+#define COMMAND CMD
+
+hook OnScriptInit()
+{
+	P:1("Command_OnScriptInit called");
+	#if YSIM_NOT_CLIENT
+		HashMap_Init(YSI_g_sCommandMap, YSI_g_sCommands);
+	#endif
+	new
+		entry,
+		buffer[32],
+		idx;
+	P:5("Command_OnScriptInit: Pre-loop");
+	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yC_>)))
+	{
+		P:6("Command_OnScriptInit: Adding %d", entry);
+		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), buffer);
+		P:6("Command_OnScriptInit: Name %s", unpack(buffer));
+		Command_Add(buffer, AMX_Read(entry));
+	}
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_GetEmptySlot</summary>
+<returns>
+	The first available slot in "YSI_g_sCommands".
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static stock Command_GetEmptySlot()
+{
+	for (new i = 0; i != MAX_COMMANDS; ++i)
+	{
+		// No name for the command, can't exist.
+		if (!YSI_g_sCommands[i][E_COMMAND_NAME]) return i;
+	}
+	return COMMAND_NOT_FOUND;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_Find</summary>
+<param name="cmd[]">The command name to find.</param>
+<returns>
+	The array slot of this command, or -1.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Command_Find(%0) HashMap_Get(YSI_g_sCommandMap, (%0))
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_GetID</summary>
+<param name="function[]">Function name to find.</param>
+<returns>
+	The ID of the passed function.
+</returns>
+<remarks>
+	-
+
+native Command_GetID(function[])
+
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+foreign Command_GetID(string:function[]);
+
+global Command_GetID(string:function[])
+{
+	P:2("Command_GetID called: \"%s\"", function);
+	return Command_Find(function);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_Add</summary>
+<param name="cmd[]">The command name to add.</param>
+<param name="ptr">The command's pointer.</param>
+<returns>
+	The command's ID.
+</returns>
+<remarks>
+
+native Command_Add(funcname[], script);
+
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+@foreign Command_Add(string:cmd[], ptr);
+
+@global Command_Add(string:cmd[], ptr)
+{
+	// The commands all need to be stored packed.
+	strpack(cmd, cmd, cellmax);
+	P:2("Command_Add: %s, %d", unpack(cmd), ptr);
+	new
+		id = Command_Find(cmd);
+	if (id == COMMAND_NOT_FOUND)
+	{
+		// Command doesn't already exist, add it.
+		id = Command_GetEmptySlot();
+		if (id == COMMAND_NOT_FOUND)
+		{
+			P:E("Could not add command to array.");
+			return COMMAND_NOT_FOUND;
+		}
+		// Save the command's pointer.
+		YSI_g_sCommands[id][E_COMMAND_POINTER] = ptr;
+		// Add all players, or defer to y_groups.
+		PA_FastInit(YSI_g_sCommands[id][E_COMMAND_USERS]);
+		NO_GROUPS(id)
+		{
+			PA_Init(YSI_g_sCommands[id][E_COMMAND_USERS], true);
+		}
+		// Add this command to the hash map (does the name too).
+		HashMap_Add(YSI_g_sCommandMap, cmd, id);
+		// Add the calling script as having this command.
+		MASTER_SET<id>
+	}
+	else
+	{
+		// Add this master as having this command.
+		MASTER_ADD<id>
+	}
+	return id;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_AddAlt</summary>
+<param name="oidx">The function this is an alternate to.</param>
+<param name="cmd[]">The new name.</param>
+<returns>
+	The command's ID.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+foreign Command_AddAlt(oidx, string:cmd[]);
+
+global Command_AddAlt(oidx, string:cmd[])
+{
+	strpack(cmd, cmd, cellmax);
+	new
+		id = Command_Find(cmd);
+	if (id == COMMAND_NOT_FOUND)
+	{
+		// Command doesn't already exist, add it.
+		id = Command_GetEmptySlot();
+		if (id == COMMAND_NOT_FOUND)
+		{
+			P:E("Could not add alt command to array.");
+			return COMMAND_NOT_FOUND;
+		}
+		// Save the command's pointer.
+		YSI_g_sCommands[id][E_COMMAND_POINTER] = YSI_g_sCommands[oidx][E_COMMAND_POINTER];
+		// Add all players, or defer to y_groups.
+		PA_FastInit(YSI_g_sCommands[id][E_COMMAND_USERS]);
+		NO_GROUPS(id)
+		{
+			PA_Init(YSI_g_sCommands[id][E_COMMAND_USERS], true);
+		}
+		// Add this command to the hash map (does the name too).
+		HashMap_Add(YSI_g_sCommandMap, cmd, id);
+		// Copy the master script information.  Note that this won't be kept up
+		// to date with new scripts unfortunately.
+		MASTER_COPY<id, oidx>
+	}
+	return id;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_SetPlayer</summary>
+<param name="command">Command to set for.</param>
+<param name="playerid">Player to set.</param>
+<param name="bool:set">Wether or not this player can use this command.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+
+native bool:Command_SetPlayer(command, playerid, bool:set);
+
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+foreign void:Command_SetPlayer(c, p, bool:s);
+
+global void:Command_SetPlayer(c, p, bool:s)
+{
+	P:2("Command_SetPlayer called: %i, %i, %i", c, p, s);
+	if (0 <= c < MAX_COMMANDS)
+	{
+		PA_Set(YSI_g_sCommands[c][E_COMMAND_USERS], p, s);
+	}
+}
