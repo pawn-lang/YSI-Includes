@@ -137,6 +137,12 @@ enum E_BINTREE_INPUT
 //#define leafs<%1> %1][E_BINTREE_TREE
 //#define Bintree:%1[%2] Bintree:%1[%2][E_BINTREE_TREE]
 #define BinaryTree:%1<%2> Bintree:%1[%2][E_BINTREE_TREE]
+#define BinaryInput:%1<%2> Bintree:%1[%2][E_BINTREE_INPUT]
+
+#if defined YSI_TESTS
+	#include "..\YSI-Core\y_testing"
+	#include "y_bintree/tests"
+#endif
 
 // Update at a later date...
 #define Bintree_DisplayOutput(%0) "<bintree output>"
