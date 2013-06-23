@@ -118,26 +118,6 @@ Compile options:
 	-
 \**--------------------------------------------------------------------------**/
 
-#define MAX_COMMAND_LENGTH              (32)
-
-#define COMMAND_NOT_FOUND               (-1)
-
-#if !defined MAX_COMMANDS
-	#define MAX_COMMANDS                (512)
-#endif
-
-#include <YSI-Core\y_master>
-#define _inc_y_commands
-#include <YSI-Core\y_master>
-#include <YSI-Data\y_hashmap>
-#include <YSI-Data\y_playerarray>
-#include <YSI-Storage\y_amx>
-#include <YSI-Coding\y_hooks>
-
-#define _GROUP_MAKE_NAME<%0...%1> %0Command%1
-#define _GROUP_MAKE_LIMIT         MAX_COMMANDS
-#include "..\YSI-Players\y_groups\_funcs"
-
 enum E_COMMAND
 {
 	HASH_MAP_DATA<MAX_COMMAND_LENGTH char>,
@@ -163,7 +143,8 @@ static stock
 MASTER_DATA<MAX_COMMANDS>
 
 // "YCMD:" macros.  The true core is "RC:", which is in "y_master".
-#define _YCMD_0:_YCMD_1:_YCMD_2:%0(%1[]%2) RC:%0(%1[]%2)
+//#define _YCMD_0:_YCMD_1:_YCMD_2:%0(%1[]%2) RC:%0(%1[]%2)
+#define _YCMD_0:_YCMD_1:_YCMD_2:%0(%1[]%2) forward @yC_%0(%1[]%2);@yC_%0(%1[]%2)
 #define _YCMD_1:_YCMD_2:%0, Command_GetID(#%0),
 #define _YCMD_2:%0)  Command_GetID(#%0))
 #define @YCMD:%0;  Command_TouchNamed(#%0);
@@ -174,6 +155,41 @@ MASTER_DATA<MAX_COMMANDS>
 #define CMD:%0(%1) RC:%0(%1,__help)if(__help)return 0;else
 #define COMMAND CMD
 
+/**--------------------------------------------------------------------------**\
+<summary>Command_IsValid</summary>
+<param name="command">Command to get for.</param>
+<returns>
+	Is this command ID valid?
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define _Command_IsValid(%0) ((0 <= (%0) < MAX_COMMANDS) && YSI_g_sCommands[(%0)][E_COMMAND_NAME][0])
+
+foreign Command_IsValid(cmd);
+
+global Command_IsValid(cmd)
+{
+	return _Command_IsValid(cmd);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_GetPlayer</summary>
+<param name="command">Command to get for.</param>
+<param name="playerid">Player to get.</param>
+<returns>
+	Can this player use this command?
+</returns>
+<remarks>
+	-
+
+native bool:Command_SetPlayer(command, playerid, bool:set);
+
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 hook OnScriptInit()
 {
 	P:1("Command_OnScriptInit called");
@@ -182,15 +198,16 @@ hook OnScriptInit()
 	#endif
 	new
 		entry,
-		buffer[32],
+		buffer[32 char],
 		idx;
 	P:5("Command_OnScriptInit: Pre-loop");
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yC_>)))
 	{
+		// Add the command name and pointer, but skip the leading "@yC_".
 		P:6("Command_OnScriptInit: Adding %d", entry);
 		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), buffer);
-		P:6("Command_OnScriptInit: Name %s", unpack(buffer));
-		Command_Add(buffer, AMX_Read(entry));
+		P:6("Command_OnScriptInit: Name %s", unpack(buffer[1]));
+		Command_Add(buffer[1], AMX_Read(entry));
 	}
 }
 
@@ -292,12 +309,13 @@ native Command_Add(funcname[], script);
 		// Add this command to the hash map (does the name too).
 		HashMap_Add(YSI_g_sCommandMap, cmd, id);
 		// Add the calling script as having this command.
-		MASTER_SET<id>
+		if (Master_Caller() == Master_ID()) MASTER_RESET<id>
+		else MASTER_SET<id>
 	}
 	else
 	{
 		// Add this master as having this command.
-		MASTER_ADD<id>
+		if (Master_Caller() != Master_ID()) MASTER_ADD<id>
 	}
 	return id;
 }
@@ -348,6 +366,32 @@ global Command_AddAlt(oidx, string:cmd[])
 }
 
 /**--------------------------------------------------------------------------**\
+<summary>Command_GetPlayer</summary>
+<param name="command">Command to get for.</param>
+<param name="playerid">Player to get.</param>
+<returns>
+	Can this player use this command?
+</returns>
+<remarks>
+	-
+
+native bool:Command_SetPlayer(command, playerid, bool:set);
+
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+//#define _Command_GetPlayer(%0,%1) (PA_Get(YSI_g_sCommands[(%0)][E_COMMAND_USERS]. (%1)))
+#define _Command_GetPlayer(%0,%1) (PA_Get(YSI_g_sCommands[(%0)][E_COMMAND_USERS], (%1)))
+
+foreign bool:Command_GetPlayer(cmd, pid);
+
+global bool:Command_GetPlayer(cmd, pid)
+{
+	if (_Command_IsValid(cmd) && IsPlayerConnected(pid)) return _Command_GetPlayer(cmd, pid);
+	return false;
+}
+
+/**--------------------------------------------------------------------------**\
 <summary>Command_SetPlayer</summary>
 <param name="command">Command to set for.</param>
 <param name="playerid">Player to set.</param>
@@ -372,4 +416,51 @@ global void:Command_SetPlayer(c, p, bool:s)
 	{
 		PA_Set(YSI_g_sCommands[c][E_COMMAND_USERS], p, s);
 	}
+}
+
+mhook OnPlayerCommandText(playerid, cmdtext[])
+{
+	P:1("Commands_OnPlayerCommandText called: %d %s", playerid, cmdtext);
+	static
+		sCmd[64],
+		sPos,
+		sIdx,
+		sHash;
+	// Get the hashed version of the decoded string.
+	sPos = Puny_EncodeHash(sCmd, cmdtext[1], sHash, .delimiter = '@') + 1;
+	while (cmdtext[sPos] == ' ') ++sPos;
+	// Find the command in the array.
+	sIdx = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd, sHash);
+	P:5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd, sPos, sHash, sIdx);
+	if (sIdx == COMMAND_NOT_FOUND) return 0;
+	// Can the player use this command?
+	if (_Command_GetPlayer(sIdx, playerid))
+	{
+		static
+			sMasters;
+		sMasters = _:MASTER_GET<sIdx>;
+		// This is in another script.
+		if (sMasters && (sMasters = Cell_GetLowestBit(sMasters)) != Master_ID())
+		{
+			
+		}
+		else
+		{
+			// In this script.
+			sIdx = YSI_g_sCommands[sIdx][E_COMMAND_POINTER];
+			#emit PUSH.C      0
+			#emit LOAD.pri    sPos
+			#emit LOAD.S.alt  cmdtext
+			#emit IDXADDR
+			#emit PUSH.pri
+			#emit PUSH.S      playerid
+			#emit PUSH.C      12
+			#emit LCTRL       6
+			#emit ADD.C       28
+			#emit PUSH.pri
+			#emit LOAD.pri    sIdx
+			#emit SCTRL       6
+		}
+	}
+	return 0;
 }
