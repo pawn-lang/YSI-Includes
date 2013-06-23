@@ -115,6 +115,8 @@ Natives:
 
 #define _Y_MASTER_ONCE
 
+#define Master_ID() (_@)
+
 // These parts should only be defined once ever.  This code is not dependent on
 // the current MASTER value, it's all generic.
 
@@ -133,6 +135,7 @@ Natives:
 #define MASTER_ADD<%0> (YSI_g_sMasterData[_:(%0)] |= Bit:(1 << Master_Caller()));
 #define MASTER_REMOVE<%0> (YSI_g_sMasterData[_:(%0)] &= Bit:(~(1 << Master_Caller())));
 #define MASTER_EMPTY<%0> if(!YSI_g_sMasterData[_:(%0)])
+#define MASTER_GET<%0> (YSI_g_sMasterData[_:(%0)])
 #define MASTER_COPY<%0,%1> (YSI_g_sMasterData[_:(%0)] = YSI_g_sMasterData[_:(%1)]);
 
 #if defined YSI_IS_CLIENT
