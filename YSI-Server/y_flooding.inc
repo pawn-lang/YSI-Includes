@@ -167,7 +167,7 @@ hook OnPlayerConnect(playerid)
 		}
 		if (count > _:(YSI_g_sMaxConnections & e_FLOOD_ACTION_COUNT))
 		{
-			P:0("*** Internal Alert: Max Connections exceeded");
+			P:I("Max Connections exceeded");
 			switch (YSI_g_sMaxConnections & e_FLOOD_ACTION_ACTION)
 			{
 				case e_FLOOD_ACTION_BLOCK:
@@ -181,7 +181,7 @@ hook OnPlayerConnect(playerid)
 					// Kick all the players.
 					foreach (new i : Player)
 					{
-						if(YSI_g_sPlayerIPs[i] == IP)
+						if (YSI_g_sPlayerIPs[i] == IP)
 						{
 							Kick(i);
 						}
@@ -200,7 +200,7 @@ hook OnPlayerConnect(playerid)
 					// Kick all the players.
 					foreach (new i : Player)
 					{
-						if(YSI_g_sPlayerIPs[i] == IP)
+						if (YSI_g_sPlayerIPs[i] == IP)
 						{
 							Kick(i);
 						}
