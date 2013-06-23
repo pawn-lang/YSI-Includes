@@ -202,6 +202,10 @@ Compile options:
 
 
 
+#undef _GROUP_MAKE_LIMIT
+#undef _GROUP_MAKE_NAME
+
+
 
 #endinput
 
@@ -2787,3 +2791,5 @@ global string:Command_GetNext(index, playerid)
 
 #undef _GROUP_MAKE_LIMIT
 #undef _GROUP_MAKE_NAME
+
+

@@ -1,4 +1,4 @@
-Test:Hashing()
+Test:y_commands_Hashing()
 {
 	new
 		dst0[32],

@@ -143,8 +143,7 @@ static stock
 MASTER_DATA<MAX_COMMANDS>
 
 // "YCMD:" macros.  The true core is "RC:", which is in "y_master".
-//#define _YCMD_0:_YCMD_1:_YCMD_2:%0(%1[]%2) RC:%0(%1[]%2)
-#define _YCMD_0:_YCMD_1:_YCMD_2:%0(%1[]%2) forward @yC_%0(%1[]%2);@yC_%0(%1[]%2)
+#define _YCMD_0:_YCMD_1:_YCMD_2:%0(%1[]%2) RC:%0(%1[]%2)
 #define _YCMD_1:_YCMD_2:%0, Command_GetID(#%0),
 #define _YCMD_2:%0)  Command_GetID(#%0))
 #define @YCMD:%0;  Command_TouchNamed(#%0);
@@ -176,17 +175,12 @@ global Command_IsValid(cmd)
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>Command_GetPlayer</summary>
-<param name="command">Command to get for.</param>
-<param name="playerid">Player to get.</param>
+<summary>OnScriptInit</summary>
 <returns>
-	Can this player use this command?
+	-
 </returns>
 <remarks>
-	-
-
-native bool:Command_SetPlayer(command, playerid, bool:set);
-
+	Add all local commands in to the system.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -314,8 +308,9 @@ native Command_Add(funcname[], script);
 	}
 	else
 	{
-		// Add this master as having this command.
-		if (Master_Caller() != Master_ID()) MASTER_ADD<id>
+		// Add this script to the list of providers.
+		if (MASTER_GET<id>) MASTER_ADD<id>
+		else YSI_g_sMasterData[_:id] = Bit:((1 << Master_Caller()) | (1 << Master_ID()));
 	}
 	return id;
 }
@@ -421,17 +416,18 @@ global void:Command_SetPlayer(c, p, bool:s)
 mhook OnPlayerCommandText(playerid, cmdtext[])
 {
 	P:1("Commands_OnPlayerCommandText called: %d %s", playerid, cmdtext);
+	CallRemoteFunction("OnPlayerCommandReceived", "is", playerid, cmdtext);
 	static
-		sCmd[64],
+		sCmd[64] = "@yC_",
 		sPos,
 		sIdx,
 		sHash;
 	// Get the hashed version of the decoded string.
-	sPos = Puny_EncodeHash(sCmd, cmdtext[1], sHash, .delimiter = '@') + 1;
+	sPos = Puny_EncodeHash(sCmd[4], cmdtext[1], sHash, .delimiter = '@') + 1;
 	while (cmdtext[sPos] == ' ') ++sPos;
 	// Find the command in the array.
-	sIdx = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd, sHash);
-	P:5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd, sPos, sHash, sIdx);
+	sIdx = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
+	P:5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd[4], sPos, sHash, sIdx);
 	if (sIdx == COMMAND_NOT_FOUND) return 0;
 	// Can the player use this command?
 	if (_Command_GetPlayer(sIdx, playerid))
@@ -440,9 +436,13 @@ mhook OnPlayerCommandText(playerid, cmdtext[])
 			sMasters;
 		sMasters = _:MASTER_GET<sIdx>;
 		// This is in another script.
-		if (sMasters && (sMasters = Cell_GetLowestBit(sMasters)) != Master_ID())
+		if (sMasters)
 		{
-			
+			// Call the command in another script.  If no particular script is
+			// set up as the "master", call it in the first one found...
+			if (cmdtext[sPos]) sIdx = CallRemoteFunction(sCmd, "isii", playerid, cmdtext[sPos], 0, Cell_GetLowestBit(sMasters));
+			else sIdx = CallRemoteFunction(sCmd, "isii", playerid, NULL, 0, Cell_GetLowestBit(sMasters));
+			CallRemoteFunction("OnPlayerCommandPerformed", "isi", playerid, cmdtext, sIdx);
 		}
 		else
 		{
@@ -460,6 +460,8 @@ mhook OnPlayerCommandText(playerid, cmdtext[])
 			#emit PUSH.pri
 			#emit LOAD.pri    sIdx
 			#emit SCTRL       6
+			#emit STOR.pri    sIdx
+			CallRemoteFunction("OnPlayerCommandPerformed", "isi", playerid, cmdtext, sIdx);
 		}
 	}
 	return 0;
