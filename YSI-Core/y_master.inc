@@ -125,15 +125,93 @@ Operators:
 	-
 Natives:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 // ALWAYS!  The compiler defines this automatically, don't use it as this is
 // included multiple times to handle multiple master systems.
 #if !defined _inc_y_master
-	#error Did you do <YSI/y_master> instead of the required <YSI\y_master>?
+	#error Did you do <YSI-Core/y_master> instead of the required <YSI-Core\y_master>?
 #endif
 #undef _inc_y_master
+
+#include "y_master/once"
+
+#if defined YSIM_POP
+	// Get whatever the master before the current one was.
+	#undef YSIM_POP
+	#include "y_master\_pop_master"
+//	#include "y_master\_override"
+//#elseif defined YSIM_OVERRIDE
+//	#include "y_master\_override"
+#else
+	#if !defined MASTER
+		// Set up this master if it doesn't exist.
+		#define MASTER 23
+	#endif
+	#include "y_master\_push_master"
+#endif
+
+#if defined _INC_y_master
+	// Run at least once - clear previous data.
+	#include "y_master\_cleanup"
+#endif
+
+// Initialise the current master if it hasn't already been done.
+#include "y_master\_setup_master"
+
+// Include all the correct macro versions for the settings we have just found.
+#include "y_master\_impl2"
+
+#if !defined _INC_y_master
+	// Only include this lot once.
+	#define _INC_y_master
+	
+	#if defined YSI_TESTS
+		#include "..\YSI-Core\y_testing"
+		// Get the new master.
+		#define MASTER 8
+		#include "y_master"
+		// Include the tests.
+		#include "y_master/tests"
+		// Pop the master.
+		#define YSIM_POP
+		#include "y_master"
+	#endif
+#endif
+
+#endinput
+
+
+
+
+#if !defined MASTER
+	#if defined YSIM_POP
+		// Get some previous data.
+		#if defined YSIM_OVERRIDE
+			#error YSIM_POP and YSIM_OVERRIDE are set
+		#endif
+		#undef YSIM_POP
+		// Get whatever the master before the current one was.
+		#include "y_master\_pop_master"
+	#endif
+	// Restore the values.
+	#if defined YSIM_OVERRIDE
+		//#include "y_master\_override"
+	#endif
+#endif
+
+// If all else fails, use this one.
+#if !defined MASTER
+	#define MASTER 23
+#endif
+
+// Store the previous master, and use our new one.
+//#include "y_master\_push_master"
+#include "y_master\_set_master"
+
+
+
+
 
 #if !defined _INC_y_master
 	// Only do these once.

@@ -1,0 +1,138 @@
+#undef _inc__pop_master
+
+// First, find what number is stored in the current slot.
+#if !defined _YSIM_PUSH_INDEX || _YSIM_PUSH_INDEX < 1
+	#define MASTER 23
+#elseif _YSIM_PUSH_INDEX == 1
+	#define MASTER _YSIM_STACK_SLOT_0
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 0
+#elseif _YSIM_PUSH_INDEX == 2
+	#define MASTER _YSIM_STACK_SLOT_1
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 1
+#elseif _YSIM_PUSH_INDEX == 3
+	#define MASTER _YSIM_STACK_SLOT_2
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 2
+#elseif _YSIM_PUSH_INDEX == 4
+	#define MASTER _YSIM_STACK_SLOT_3
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 3
+#elseif _YSIM_PUSH_INDEX == 5
+	#define MASTER _YSIM_STACK_SLOT_4
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 4
+#elseif _YSIM_PUSH_INDEX == 6
+	#define MASTER _YSIM_STACK_SLOT_5
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 5
+#elseif _YSIM_PUSH_INDEX == 7
+	#define MASTER _YSIM_STACK_SLOT_6
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 6
+#elseif _YSIM_PUSH_INDEX == 8
+	#define MASTER _YSIM_STACK_SLOT_7
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 7
+#elseif _YSIM_PUSH_INDEX == 9
+	#define MASTER _YSIM_STACK_SLOT_8
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 8
+#elseif _YSIM_PUSH_INDEX == 10
+	#define MASTER _YSIM_STACK_SLOT_9
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 9
+#elseif _YSIM_PUSH_INDEX == 11
+	#define MASTER _YSIM_STACK_SLOT_10
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 10
+#elseif _YSIM_PUSH_INDEX == 12
+	#define MASTER _YSIM_STACK_SLOT_11
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 11
+#elseif _YSIM_PUSH_INDEX == 13
+	#define MASTER _YSIM_STACK_SLOT_12
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 12
+#elseif _YSIM_PUSH_INDEX == 14
+	#define MASTER _YSIM_STACK_SLOT_13
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 13
+#elseif _YSIM_PUSH_INDEX == 15
+	#define MASTER _YSIM_STACK_SLOT_14
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 14
+#elseif _YSIM_PUSH_INDEX == 16
+	#define MASTER _YSIM_STACK_SLOT_15
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 15
+#elseif _YSIM_PUSH_INDEX == 17
+	#define MASTER _YSIM_STACK_SLOT_16
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 16
+#elseif _YSIM_PUSH_INDEX == 18
+	#define MASTER _YSIM_STACK_SLOT_17
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 17
+#elseif _YSIM_PUSH_INDEX == 19
+	#define MASTER _YSIM_STACK_SLOT_18
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 18
+#elseif _YSIM_PUSH_INDEX == 20
+	#define MASTER _YSIM_STACK_SLOT_19
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 19
+#elseif _YSIM_PUSH_INDEX == 21
+	#define MASTER _YSIM_STACK_SLOT_20
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 20
+#elseif _YSIM_PUSH_INDEX == 22
+	#define MASTER _YSIM_STACK_SLOT_21
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 21
+#elseif _YSIM_PUSH_INDEX == 23
+	#define MASTER _YSIM_STACK_SLOT_22
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 22
+#elseif _YSIM_PUSH_INDEX == 24
+	#define MASTER _YSIM_STACK_SLOT_23
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 23
+#elseif _YSIM_PUSH_INDEX == 25
+	#define MASTER _YSIM_STACK_SLOT_24
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 24
+#elseif _YSIM_PUSH_INDEX == 26
+	#define MASTER _YSIM_STACK_SLOT_25
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 25
+#elseif _YSIM_PUSH_INDEX == 27
+	#define MASTER _YSIM_STACK_SLOT_26
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 26
+#elseif _YSIM_PUSH_INDEX == 28
+	#define MASTER _YSIM_STACK_SLOT_27
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 27
+#elseif _YSIM_PUSH_INDEX == 29
+	#define MASTER _YSIM_STACK_SLOT_28
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 28
+#elseif _YSIM_PUSH_INDEX == 30
+	#define MASTER _YSIM_STACK_SLOT_29
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 29
+#elseif _YSIM_PUSH_INDEX == 31
+	#define MASTER _YSIM_STACK_SLOT_30
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 30
+#elseif _YSIM_PUSH_INDEX == 32
+	#define MASTER _YSIM_STACK_SLOT_31
+	#undef _YSIM_PUSH_INDEX
+	#define _YSIM_PUSH_INDEX 31
+#else
+	#error y_master MASTER stack overflow.
+#endif
+
+#undef YSIM_POP

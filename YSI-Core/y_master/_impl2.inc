@@ -130,647 +130,95 @@ Natives:
 
 #undef _inc__impl2
 
-// Clear up some artifacts
-#if defined YSIM_DEFINED
-	#undef YSIM_DEFINED
+// Get the settings, regardless of where they came from.
+#if     YSIM_STORED_SETTINGS == 0
+	#define YSIM_HAS_MASTER 0
+	#define _YSIM_IS_CLIENT 0
+	#define _YSIM_IS_SERVER 0
+	#define _YSIM_IS_CLOUD  0
+	#define _YSIM_IS_STUB   0
+#elseif YSIM_STORED_SETTINGS == 1
+	#define YSIM_HAS_MASTER 1
+	#define _YSIM_IS_CLIENT 1
+	#define _YSIM_IS_SERVER 0
+	#define _YSIM_IS_CLOUD  0
+	#define _YSIM_IS_STUB   0
+#elseif YSIM_STORED_SETTINGS == 2
+	#define YSIM_HAS_MASTER 1
+	#define _YSIM_IS_CLIENT 0
+	#define _YSIM_IS_SERVER 1
+	#define _YSIM_IS_CLOUD  0
+	#define _YSIM_IS_STUB   0
+#elseif YSIM_STORED_SETTINGS == 3
+	#define YSIM_HAS_MASTER 1
+	#define _YSIM_IS_CLIENT 0
+	#define _YSIM_IS_SERVER 0
+	#define _YSIM_IS_CLOUD  1
+	#define _YSIM_IS_STUB   0
+#elseif YSIM_STORED_SETTINGS == 4
+	#define YSIM_HAS_MASTER 1
+	#define _YSIM_IS_CLIENT 0
+	#define _YSIM_IS_SERVER 0
+	#define _YSIM_IS_CLOUD  0
+	#define _YSIM_IS_STUB   1
 #endif
 
-#if defined _YCM
-	#undef _YCM
-	#undef _YCM@
-#endif
-
-// Now set the current script data.
-// IDIOT!  These are mostly mutually exclusive!  You don't need a horrible huge
-// bit array to store the fact that this is both a client AND a server!
-#if MASTER == 0
-	#if defined _YCM_a@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_a@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_0 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_0 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_0 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_0 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_0 4
-		#else
-			#error Undefined master type on 0
-		#endif
-	#endif
-	#define _YCM a@
-	#define _YCM@ _YCM_ga@
-#elseif MASTER == 1
-	#if defined _YCM_b@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_b@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_1 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_1 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_1 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_1 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_1 4
-		#else
-			#error Undefined master type on 1
-		#endif
-	#endif
-	#define _YCM b@
-	#define _YCM@ _YCM_gb@
-#elseif MASTER == 2
-	#if defined _YCM_c@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_c@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_2 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_2 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_2 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_2 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_2 4
-		#else
-			#error Undefined master type on 2
-		#endif
-	#endif
-	#define _YCM c@
-	#define _YCM@ _YCM_gc@
-#elseif MASTER == 3
-	#if defined _YCM_d@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_d@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_3 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_3 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_3 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_3 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_3 4
-		#else
-			#error Undefined master type on 3
-		#endif
-	#endif
-	#define _YCM d@
-	#define _YCM@ _YCM_gd@
-#elseif MASTER == 4
-	#if defined _YCM_e@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_e@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_4 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_4 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_4 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_4 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_4 4
-		#else
-			#error Undefined master type on 4
-		#endif
-	#endif
-	#define _YCM e@
-	#define _YCM@ _YCM_ge@
-#elseif MASTER == 5
-	#if defined _YCM_f@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_f@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_5 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_5 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_5 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_5 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_5 4
-		#else
-			#error Undefined master type on 5
-		#endif
-	#endif
-	#define _YCM f@
-	#define _YCM@ _YCM_gf@
-#elseif MASTER == 6
-	#if defined _YCM_g@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_g@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_6 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_6 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_6 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_6 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_6 4
-		#else
-			#error Undefined master type on 6
-		#endif
-	#endif
-	#define _YCM g@
-	#define _YCM@ _YCM_gg@
-#elseif MASTER == 7
-	#if defined _YCM_h@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_h@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_7 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_7 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_7 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_7 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_7 4
-		#else
-			#error Undefined master type on 7
-		#endif
-	#endif
-	#define _YCM h@
-	#define _YCM@ _YCM_gh@
-#elseif MASTER == 8
-	#if defined _YCM_i@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_i@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_8 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_8 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_8 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_8 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_8 4
-		#else
-			#error Undefined master type on 8
-		#endif
-	#endif
-	#define _YCM i@
-	#define _YCM@ _YCM_gi@
-#elseif MASTER == 9
-	#if defined _YCM_j@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_j@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_9 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_9 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_9 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_9 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_9 4
-		#else
-			#error Undefined master type on 9
-		#endif
-	#endif
-	#define _YCM j@
-	#define _YCM@ _YCM_gj@
-#elseif MASTER == 10
-	#if defined _YCM_k@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_k@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_10 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_10 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_10 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_10 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_10 4
-		#else
-			#error Undefined master type on 10
-		#endif
-	#endif
-	#define _YCM k@
-	#define _YCM@ _YCM_gk@
-#elseif MASTER == 11
-	#if defined _YCM_l@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_l@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_11 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_11 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_11 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_11 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_11 4
-		#else
-			#error Undefined master type on 11
-		#endif
-	#endif
-	#define _YCM l@
-	#define _YCM@ _YCM_gl@
-#elseif MASTER == 12
-	#if defined _YCM_m@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_m@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_12 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_12 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_12 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_12 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_12 4
-		#else
-			#error Undefined master type on 12
-		#endif
-	#endif
-	#define _YCM m@
-	#define _YCM@ _YCM_gm@
-#elseif MASTER == 13
-	#if defined _YCM_n@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_n@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_13 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_13 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_13 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_13 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_13 4
-		#else
-			#error Undefined master type on 13
-		#endif
-	#endif
-	#define _YCM n@
-	#define _YCM@ _YCM_gn@
-#elseif MASTER == 14
-	#if defined _YCM_o@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_o@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_14 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_14 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_14 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_14 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_14 4
-		#else
-			#error Undefined master type on 14
-		#endif
-	#endif
-	#define _YCM o@
-	#define _YCM@ _YCM_go@
-#elseif MASTER == 15
-	#if defined _YCM_p@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_p@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_15 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_15 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_15 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_15 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_15 4
-		#else
-			#error Undefined master type on 15
-		#endif
-	#endif
-	#define _YCM p@
-	#define _YCM@ _YCM_gp@
-#elseif MASTER == 16
-	#if defined _YCM_q@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_q@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_16 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_16 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_16 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_16 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_16 4
-		#else
-			#error Undefined master type on 16
-		#endif
-	#endif
-	#define _YCM q@
-	#define _YCM@ _YCM_gq@
-#elseif MASTER == 17
-	#if defined _YCM_r@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_r@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_17 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_17 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_17 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_17 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_17 4
-		#else
-			#error Undefined master type on 17
-		#endif
-	#endif
-	#define _YCM r@
-	#define _YCM@ _YCM_gr@
-#elseif MASTER == 18
-	#if defined _YCM_s@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_s@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_18 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_18 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_18 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_18 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_18 4
-		#else
-			#error Undefined master type on 18
-		#endif
-	#endif
-	#define _YCM s@
-	#define _YCM@ _YCM_gs@
-#elseif MASTER == 19
-	#if defined _YCM_t@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_t@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_19 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_19 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_19 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_19 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_19 4
-		#else
-			#error Undefined master type on 19
-		#endif
-	#endif
-	#define _YCM t@
-	#define _YCM@ _YCM_gt@
-#elseif MASTER == 20
-	#if defined _YCM_u@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_u@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_20 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_20 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_20 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_20 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_20 4
-		#else
-			#error Undefined master type on 20
-		#endif
-	#endif
-	#define _YCM u@
-	#define _YCM@ _YCM_gu@
-#elseif MASTER == 21
-	#if defined _YCM_v@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_v@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_21 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_21 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_21 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_21 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_21 4
-		#else
-			#error Undefined master type on 21
-		#endif
-	#endif
-	#define _YCM v@
-	#define _YCM@ _YCM_gv@
-#elseif MASTER == 22
-	#if defined _YCM_w@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_w@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_22 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_22 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_22 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_22 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_22 4
-		#else
-			#error Undefined master type on 22
-		#endif
-	#endif
-	#define _YCM w@
-	#define _YCM@ _YCM_gw@
-#elseif MASTER == 23
-	#if defined _YCM_x@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_x@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_23 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_23 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_23 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_23 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_23 4
-		#else
-			#error Undefined master type on 23
-		#endif
-	#endif
-	#define _YCM x@
-	#define _YCM@ _YCM_gx@
-#elseif MASTER == 24
-	#if defined _YCM_y@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_y@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_24 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_24 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_24 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_24 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_24 4
-		#else
-			#error Undefined master type on 24
-		#endif
-	#endif
-	#define _YCM y@
-	#define _YCM@ _YCM_gy@
-#elseif MASTER == 25
-	#if defined _YCM_z@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_z@
-		// Save the settings.
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_25 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_25 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_25 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_25 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_25 4
-		#else
-			#error Undefined master type on 25
-		#endif
-	#endif
-	#define _YCM z@
-	#define _YCM@ _YCM_gz@
-#endif
+#undef YSIM_STORED_SETTINGS
 
 // Check for non-unique masters here.
 #if defined YSIM_DEFINED && !defined _YSIM_OVERRIDE && !defined YSIM_LIBRARY_OVERRIDE
 	//#error Non-unique master used.
-	#if MASTER == 0
+	#if _MASTER == 0
 		#error Master 0 already defined (Non-unique master used).
-	#elseif MASTER == 1
+	#elseif _MASTER == 1
 		#error Master 1 already defined (Non-unique master used).
-	#elseif MASTER == 2
+	#elseif _MASTER == 2
 		#error Master 2 already defined (Non-unique master used).
-	#elseif MASTER == 3
+	#elseif _MASTER == 3
 		#error Master 3 already defined (Non-unique master used).
-	#elseif MASTER == 4
+	#elseif _MASTER == 4
 		#error Master 4 already defined (Non-unique master used).
-	#elseif MASTER == 5
+	#elseif _MASTER == 5
 		#error Master 5 already defined (Non-unique master used).
-	#elseif MASTER == 6
+	#elseif _MASTER == 6
 		#error Master 6 already defined (Non-unique master used).
-	#elseif MASTER == 7
+	#elseif _MASTER == 7
 		#error Master 7 already defined (Non-unique master used).
-	#elseif MASTER == 8
+	#elseif _MASTER == 8
 		#error Master 8 already defined (Non-unique master used).
-	#elseif MASTER == 9
+	#elseif _MASTER == 9
 		#error Master 9 already defined (Non-unique master used).
-	#elseif MASTER == 10
+	#elseif _MASTER == 10
 		#error Master 10 already defined (Non-unique master used).
-	#elseif MASTER == 11
+	#elseif _MASTER == 11
 		#error Master 11 already defined (Non-unique master used).
-	#elseif MASTER == 12
+	#elseif _MASTER == 12
 		#error Master 12 already defined (Non-unique master used).
-	#elseif MASTER == 13
+	#elseif _MASTER == 13
 		#error Master 13 already defined (Non-unique master used).
-	#elseif MASTER == 14
+	#elseif _MASTER == 14
 		#error Master 14 already defined (Non-unique master used).
-	#elseif MASTER == 15
+	#elseif _MASTER == 15
 		#error Master 15 already defined (Non-unique master used).
-	#elseif MASTER == 16
+	#elseif _MASTER == 16
 		#error Master 16 already defined (Non-unique master used).
-	#elseif MASTER == 17
+	#elseif _MASTER == 17
 		#error Master 17 already defined (Non-unique master used).
-	#elseif MASTER == 18
+	#elseif _MASTER == 18
 		#error Master 18 already defined (Non-unique master used).
-	#elseif MASTER == 19
+	#elseif _MASTER == 19
 		#error Master 19 already defined (Non-unique master used).
-	#elseif MASTER == 20
+	#elseif _MASTER == 20
 		#error Master 20 already defined (Non-unique master used).
-	#elseif MASTER == 21
+	#elseif _MASTER == 21
 		#error Master 21 already defined (Non-unique master used).
-	#elseif MASTER == 22
+	#elseif _MASTER == 22
 		#error Master 22 already defined (Non-unique master used).
-	#elseif MASTER == 23
+	#elseif _MASTER == 23
 		#error Master 23 already defined (Non-unique master used).
-	#elseif MASTER == 24
+	#elseif _MASTER == 24
 		#error Master 24 already defined (Non-unique master used).
-	#elseif MASTER == 25
+	#elseif _MASTER == 25
 		#error Master 25 already defined (Non-unique master used).
 	#else
 		#error Non-unique (and invalid) master used.
@@ -794,57 +242,57 @@ Natives:
 		#if defined _YCM_CALLBACK
 			#undef _YCM_CALLBACK
 		#endif
-		#if MASTER == 0
+		#if _MASTER == 0
 			#define _YCM_CALLBACK a@OnScriptInit
-		#elseif MASTER == 1
+		#elseif _MASTER == 1
 			#define _YCM_CALLBACK b@OnScriptInit
-		#elseif MASTER == 2
+		#elseif _MASTER == 2
 			#define _YCM_CALLBACK c@OnScriptInit
-		#elseif MASTER == 3
+		#elseif _MASTER == 3
 			#define _YCM_CALLBACK d@OnScriptInit
-		#elseif MASTER == 4
+		#elseif _MASTER == 4
 			#define _YCM_CALLBACK e@OnScriptInit
-		#elseif MASTER == 5
+		#elseif _MASTER == 5
 			#define _YCM_CALLBACK f@OnScriptInit
-		#elseif MASTER == 6
+		#elseif _MASTER == 6
 			#define _YCM_CALLBACK g@OnScriptInit
-		#elseif MASTER == 7
+		#elseif _MASTER == 7
 			#define _YCM_CALLBACK h@OnScriptInit
-		#elseif MASTER == 8
+		#elseif _MASTER == 8
 			#define _YCM_CALLBACK i@OnScriptInit
-		#elseif MASTER == 9
+		#elseif _MASTER == 9
 			#define _YCM_CALLBACK j@OnScriptInit
-		#elseif MASTER == 10
+		#elseif _MASTER == 10
 			#define _YCM_CALLBACK k@OnScriptInit
-		#elseif MASTER == 11
+		#elseif _MASTER == 11
 			#define _YCM_CALLBACK l@OnScriptInit
-		#elseif MASTER == 12
+		#elseif _MASTER == 12
 			#define _YCM_CALLBACK m@OnScriptInit
-		#elseif MASTER == 13
+		#elseif _MASTER == 13
 			#define _YCM_CALLBACK n@OnScriptInit
-		#elseif MASTER == 14
+		#elseif _MASTER == 14
 			#define _YCM_CALLBACK o@OnScriptInit
-		#elseif MASTER == 15
+		#elseif _MASTER == 15
 			#define _YCM_CALLBACK p@OnScriptInit
-		#elseif MASTER == 16
+		#elseif _MASTER == 16
 			#define _YCM_CALLBACK q@OnScriptInit
-		#elseif MASTER == 17
+		#elseif _MASTER == 17
 			#define _YCM_CALLBACK r@OnScriptInit
-		#elseif MASTER == 18
+		#elseif _MASTER == 18
 			#define _YCM_CALLBACK s@OnScriptInit
-		#elseif MASTER == 19
+		#elseif _MASTER == 19
 			#define _YCM_CALLBACK t@OnScriptInit
-		#elseif MASTER == 20
+		#elseif _MASTER == 20
 			#define _YCM_CALLBACK u@OnScriptInit
-		#elseif MASTER == 21
+		#elseif _MASTER == 21
 			#define _YCM_CALLBACK v@OnScriptInit
-		#elseif MASTER == 22
+		#elseif _MASTER == 22
 			#define _YCM_CALLBACK w@OnScriptInit
-		#elseif MASTER == 23
+		#elseif _MASTER == 23
 			#define _YCM_CALLBACK x@OnScriptInit
-		#elseif MASTER == 24
+		#elseif _MASTER == 24
 			#define _YCM_CALLBACK y@OnScriptInit
-		#elseif MASTER == 25
+		#elseif _MASTER == 25
 			#define _YCM_CALLBACK z@OnScriptInit
 		#endif
 		#if _YSIM_IS_SERVER
@@ -869,157 +317,157 @@ Natives:
 		#endif
 		// FINALLY call the new next one.
 		//CallLocalFunction(#_YCM_CALLBACK, "");
-		#if MASTER == 0
+		#if _MASTER == 0
 			#if defined a@OnScriptInit
 				return a@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 1
+		#elseif _MASTER == 1
 			#if defined b@OnScriptInit
 				return b@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 2
+		#elseif _MASTER == 2
 			#if defined c@OnScriptInit
 				return c@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 3
+		#elseif _MASTER == 3
 			#if defined d@OnScriptInit
 				return d@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 4
+		#elseif _MASTER == 4
 			#if defined e@OnScriptInit
 				return e@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 5
+		#elseif _MASTER == 5
 			#if defined f@OnScriptInit
 				return f@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 6
+		#elseif _MASTER == 6
 			#if defined g@OnScriptInit
 				return g@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 7
+		#elseif _MASTER == 7
 			#if defined h@OnScriptInit
 				return h@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 8
+		#elseif _MASTER == 8
 			#if defined i@OnScriptInit
 				return i@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 9
+		#elseif _MASTER == 9
 			#if defined j@OnScriptInit
 				return j@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 10
+		#elseif _MASTER == 10
 			#if defined k@OnScriptInit
 				return k@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 11
+		#elseif _MASTER == 11
 			#if defined l@OnScriptInit
 				return l@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 12
+		#elseif _MASTER == 12
 			#if defined m@OnScriptInit
 				return m@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 13
+		#elseif _MASTER == 13
 			#if defined n@OnScriptInit
 				return n@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 14
+		#elseif _MASTER == 14
 			#if defined o@OnScriptInit
 				return o@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 15
+		#elseif _MASTER == 15
 			#if defined p@OnScriptInit
 				return p@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 16
+		#elseif _MASTER == 16
 			#if defined q@OnScriptInit
 				return q@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 17
+		#elseif _MASTER == 17
 			#if defined r@OnScriptInit
 				return r@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 18
+		#elseif _MASTER == 18
 			#if defined s@OnScriptInit
 				return s@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 19
+		#elseif _MASTER == 19
 			#if defined t@OnScriptInit
 				return t@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 20
+		#elseif _MASTER == 20
 			#if defined u@OnScriptInit
 				return u@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 21
+		#elseif _MASTER == 21
 			#if defined v@OnScriptInit
 				return v@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 22
+		#elseif _MASTER == 22
 			#if defined w@OnScriptInit
 				return w@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 23
+		#elseif _MASTER == 23
 			#if defined x@OnScriptInit
 				return x@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 24
+		#elseif _MASTER == 24
 			#if defined y@OnScriptInit
 				return y@OnScriptInit();
 			#else
 				return 1;
 			#endif
-		#elseif MASTER == 25
+		#elseif _MASTER == 25
 			#if defined z@OnScriptInit
 				return z@OnScriptInit();
 			#else
@@ -1031,107 +479,107 @@ Natives:
 	// Don't need extra checks here as we KNOW it is already defined.
 	#undef OnMasterSystemInit
 	#define OnMasterSystemInit _YCM_CALLBACK
-	#if MASTER == 0
+	#if _MASTER == 0
 		#if defined a@OnScriptInit
 			forward a@OnScriptInit();
 		#endif
-	#elseif MASTER == 1
+	#elseif _MASTER == 1
 		#if defined b@OnScriptInit
 			forward b@OnScriptInit();
 		#endif
-	#elseif MASTER == 2
+	#elseif _MASTER == 2
 		#if defined c@OnScriptInit
 			forward c@OnScriptInit();
 		#endif
-	#elseif MASTER == 3
+	#elseif _MASTER == 3
 		#if defined d@OnScriptInit
 			forward d@OnScriptInit();
 		#endif
-	#elseif MASTER == 4
+	#elseif _MASTER == 4
 		#if defined e@OnScriptInit
 			forward e@OnScriptInit();
 		#endif
-	#elseif MASTER == 5
+	#elseif _MASTER == 5
 		#if defined f@OnScriptInit
 			forward f@OnScriptInit();
 		#endif
-	#elseif MASTER == 6
+	#elseif _MASTER == 6
 		#if defined g@OnScriptInit
 			forward g@OnScriptInit();
 		#endif
-	#elseif MASTER == 7
+	#elseif _MASTER == 7
 		#if defined h@OnScriptInit
 			forward h@OnScriptInit();
 		#endif
-	#elseif MASTER == 8
+	#elseif _MASTER == 8
 		#if defined i@OnScriptInit
 			forward i@OnScriptInit();
 		#endif
-	#elseif MASTER == 9
+	#elseif _MASTER == 9
 		#if defined j@OnScriptInit
 			forward j@OnScriptInit();
 		#endif
-	#elseif MASTER == 10
+	#elseif _MASTER == 10
 		#if defined k@OnScriptInit
 			forward k@OnScriptInit();
 		#endif
-	#elseif MASTER == 11
+	#elseif _MASTER == 11
 		#if defined l@OnScriptInit
 			forward l@OnScriptInit();
 		#endif
-	#elseif MASTER == 12
+	#elseif _MASTER == 12
 		#if defined m@OnScriptInit
 			forward m@OnScriptInit();
 		#endif
-	#elseif MASTER == 13
+	#elseif _MASTER == 13
 		#if defined n@OnScriptInit
 			forward n@OnScriptInit();
 		#endif
-	#elseif MASTER == 14
+	#elseif _MASTER == 14
 		#if defined o@OnScriptInit
 			forward o@OnScriptInit();
 		#endif
-	#elseif MASTER == 15
+	#elseif _MASTER == 15
 		#if defined p@OnScriptInit
 			forward p@OnScriptInit();
 		#endif
-	#elseif MASTER == 16
+	#elseif _MASTER == 16
 		#if defined q@OnScriptInit
 			forward q@OnScriptInit();
 		#endif
-	#elseif MASTER == 17
+	#elseif _MASTER == 17
 		#if defined r@OnScriptInit
 			forward r@OnScriptInit();
 		#endif
-	#elseif MASTER == 18
+	#elseif _MASTER == 18
 		#if defined s@OnScriptInit
 			forward s@OnScriptInit();
 		#endif
-	#elseif MASTER == 19
+	#elseif _MASTER == 19
 		#if defined t@OnScriptInit
 			forward t@OnScriptInit();
 		#endif
-	#elseif MASTER == 20
+	#elseif _MASTER == 20
 		#if defined u@OnScriptInit
 			forward u@OnScriptInit();
 		#endif
-	#elseif MASTER == 21
+	#elseif _MASTER == 21
 		#if defined v@OnScriptInit
 			forward v@OnScriptInit();
 		#endif
-	#elseif MASTER == 22
+	#elseif _MASTER == 22
 		#if defined w@OnScriptInit
 			forward w@OnScriptInit();
 		#endif
-	#elseif MASTER == 23
+	#elseif _MASTER == 23
 		#if defined x@OnScriptInit
 			forward x@OnScriptInit();
 		#endif
-	#elseif MASTER == 24
+	#elseif _MASTER == 24
 		#if defined y@OnScriptInit
 			forward y@OnScriptInit();
 		#endif
-	#elseif MASTER == 25
+	#elseif _MASTER == 25
 		#if defined z@OnScriptInit
 			forward z@OnScriptInit();
 		#endif
@@ -1187,7 +635,7 @@ Natives:
 		
 		#define RT:%0[%1](%2) @yT_%1_%0();@yT_%1_%0()
 		
-		#if MASTER == 23
+		#if _MASTER == 23
 			// Less strict (implicit user master).
 			#define RC:%0(%1) @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==_@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 		#else
@@ -1223,7 +671,7 @@ Natives:
 			
 			#define RT:%0[%1](%2) stock _yT@%1_%0()
 			
-			#if MASTER == 23
+			#if _MASTER == 23
 				// Less strict (implicit user master).
 				#define RC:%0(%1) @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==_@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 			#else
@@ -1275,7 +723,7 @@ Natives:
 				// Requires the y_timers library.
 				#define RT:%0[%1](%2) @yT_%1_%0();@yT_%1_%0()<>{}@yT_%1_%0()<_YCM:y>
 				
-				#if MASTER == 23
+				#if _MASTER == 23
 					// Less strict (implicit user master).
 					#define RC:%0(%1) @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==_@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 				#else
@@ -1320,19 +768,19 @@ Natives:
 
 // Never used, purely for "-l" debugging purposes.
 #if !YSIM_HAS_MASTER
-	static stock const THE_CURRENT_MASTER_IS_UNSET   = MASTER;
+	static stock const THE_CURRENT_MASTER_IS_UNSET   = _MASTER;
 #elseif _YSIM_IS_CLIENT
-	static stock const THE_CURRENT_MASTER_IS_CLIENT  = MASTER;
+	static stock const THE_CURRENT_MASTER_IS_CLIENT  = _MASTER;
 #elseif _YSIM_IS_SERVER
-	static stock const THE_CURRENT_MASTER_IS_SERVER  = MASTER;
+	static stock const THE_CURRENT_MASTER_IS_SERVER  = _MASTER;
 #elseif _YSIM_IS_CLOUD
-	static stock const THE_CURRENT_MASTER_IS_CLOUD   = MASTER;
+	static stock const THE_CURRENT_MASTER_IS_CLOUD   = _MASTER;
 #elseif _YSIM_IS_STUB
-	static stock const THE_CURRENT_MASTER_IS_STUB    = MASTER;
+	static stock const THE_CURRENT_MASTER_IS_STUB    = _MASTER;
 #else
-	static stock const THE_CURRENT_MASTER_IS_UNKNOWN = MASTER;
+	static stock const THE_CURRENT_MASTER_IS_UNKNOWN = _MASTER;
 #endif
-#undef MASTER
+#undef _MASTER
 
 #if !defined YSIM_DEFINED || defined YSIM_LIBRARY_OVERRIDE
 	#if _YSIM_IS_CLOUD || _YSIM_IS_SERVER

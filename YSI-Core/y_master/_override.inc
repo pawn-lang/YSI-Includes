@@ -95,82 +95,85 @@ Natives:
 
 #undef _inc__override
 
-#if _YSIM_OVERRIDE == 0
+// Then restore master settings based on that.
+#if YSIM_OVERRIDE == 0
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_0
 	#define MASTER                      0
-#elseif _YSIM_OVERRIDE == 1
+#elseif YSIM_OVERRIDE == 1
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_1
 	#define MASTER                      1
-#elseif _YSIM_OVERRIDE == 2
+#elseif YSIM_OVERRIDE == 2
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_2
 	#define MASTER                      2
-#elseif _YSIM_OVERRIDE == 3
+#elseif YSIM_OVERRIDE == 3
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_3
 	#define MASTER                      3
-#elseif _YSIM_OVERRIDE == 4
+#elseif YSIM_OVERRIDE == 4
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_4
 	#define MASTER                      4
-#elseif _YSIM_OVERRIDE == 5
+#elseif YSIM_OVERRIDE == 5
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_5
 	#define MASTER                      5
-#elseif _YSIM_OVERRIDE == 6
+#elseif YSIM_OVERRIDE == 6
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_6
 	#define MASTER                      6
-#elseif _YSIM_OVERRIDE == 7
+#elseif YSIM_OVERRIDE == 7
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_7
 	#define MASTER                      7
-#elseif _YSIM_OVERRIDE == 8
+#elseif YSIM_OVERRIDE == 8
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_8
 	#define MASTER                      8
-#elseif _YSIM_OVERRIDE == 9
+#elseif YSIM_OVERRIDE == 9
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_9
 	#define MASTER                      9
-#elseif _YSIM_OVERRIDE == 10
+#elseif YSIM_OVERRIDE == 10
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_10
 	#define MASTER                      10
-#elseif _YSIM_OVERRIDE == 11
+#elseif YSIM_OVERRIDE == 11
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_11
 	#define MASTER                      11
-#elseif _YSIM_OVERRIDE == 12
+#elseif YSIM_OVERRIDE == 12
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_12
 	#define MASTER                      12
-#elseif _YSIM_OVERRIDE == 13
+#elseif YSIM_OVERRIDE == 13
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_13
 	#define MASTER                      13
-#elseif _YSIM_OVERRIDE == 14
+#elseif YSIM_OVERRIDE == 14
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_14
 	#define MASTER                      14
-#elseif _YSIM_OVERRIDE == 15
+#elseif YSIM_OVERRIDE == 15
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_15
 	#define MASTER                      15
-#elseif _YSIM_OVERRIDE == 16
+#elseif YSIM_OVERRIDE == 16
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_16
 	#define MASTER                      16
-#elseif _YSIM_OVERRIDE == 17
+#elseif YSIM_OVERRIDE == 17
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_17
 	#define MASTER                      17
-#elseif _YSIM_OVERRIDE == 18
+#elseif YSIM_OVERRIDE == 18
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_18
 	#define MASTER                      18
-#elseif _YSIM_OVERRIDE == 19
+#elseif YSIM_OVERRIDE == 19
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_19
 	#define MASTER                      19
-#elseif _YSIM_OVERRIDE == 20
+#elseif YSIM_OVERRIDE == 20
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_20
 	#define MASTER                      20
-#elseif _YSIM_OVERRIDE == 21
+#elseif YSIM_OVERRIDE == 21
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_21
 	#define MASTER                      21
-#elseif _YSIM_OVERRIDE == 22
+#elseif YSIM_OVERRIDE == 22
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_22
 	#define MASTER                      22
-#elseif _YSIM_OVERRIDE == 23
+#elseif YSIM_OVERRIDE == 23
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_23
 	#define MASTER                      23
-#elseif _YSIM_OVERRIDE == 24
+#elseif YSIM_OVERRIDE == 24
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_24
 	#define MASTER                      24
-#elseif _YSIM_OVERRIDE == 25
+#elseif YSIM_OVERRIDE == 25
 	#define YSIM_STORED_SETTINGS        YSIM_RECALL_25
 	#define MASTER                      25
 #endif
+
+#undef YSIM_OVERRIDE
