@@ -285,6 +285,95 @@ stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 }
 
 /**--------------------------------------------------------------------------**\
+<summary>Puny_EncodeHash</summary>
+<param name="dst">Where to store the converted string.</param>
+<param name="src">The string to convert.</param>
+<param name="hash">Store the hash value.</param>
+<param name="wlen">The length of the destination.</param>
+<param name="delimiter">What character to place between the parts.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Takes a punycode string and converts it to unicode.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), const delimiter = PUNY_CHAR)
+{
+	new
+		widx,
+		rlen;
+	--wlen,
+	hash = -1;
+	for (new ch, bool:bb = true; ; ++rlen)
+	{
+		if ((ch = src[rlen]) <= '~')
+		{
+			if (ch <= ' ')
+			{
+				if (bb)	return
+						dst[widx] = '\0',
+						widx;
+				break;
+			}
+			dst[widx++] = ch,
+			hash = hash * 33 + ch;
+		}
+		else bb = false;
+	}
+	// Wrote out all the characters.
+	//if (widx == rlen) return (dst[widx] = '\0'), -1;
+	if (widx >= wlen) return (dst[widx] = '\0'), -1;
+	dst[widx++] = delimiter,
+	hash = hash * 33 + delimiter;
+	// Set up punycode variables.
+	for (
+		new
+			n     = PUNY_INIT,
+			bias  = PUNY_BIAS,
+			delta = 0,
+			codePointsWritten = widx - 1,
+			basicPointsWritten = widx;
+		codePointsWritten < rlen;
+		)
+	{
+		new
+			m = cellmax;
+		for (new ridx = 0; ridx != rlen; ++ridx)
+		{
+			if (n <= src[ridx] < m)
+			{
+				// Find the lowest Unicode character.
+				m = src[ridx];
+			}
+		}
+		// Make sure the number isn't too big to encode.
+		if ((m - n) > (cellmax - delta) / (codePointsWritten + 1)) return (dst[widx] = '\0'), -1;
+		// More punycode state machine.
+		delta += (m - n) * (codePointsWritten + 1),
+		n = m;
+		for (new ridx = 0; ridx != rlen; ++ridx)
+		{
+			if (src[ridx] < n)
+			{
+				if (++delta == 0) return (dst[widx] = '\0'), -1;
+			}
+			else if (src[ridx] == n)
+			{
+				widx += Puny_EncodeVarHash(bias, delta, dst[widx], wlen - widx, hash),
+				++codePointsWritten,
+				bias = Puny_Adapt(delta, codePointsWritten, (codePointsWritten == basicPointsWritten)),
+				delta = 0;
+			}
+		}
+		++n,
+		++delta;
+	}
+	return (dst[widx] = '\0'), widx;
+}
+
+/**--------------------------------------------------------------------------**\
 <summary>_Puny_Basic</summary>
 <param name="num">The single number to encode.</param>
 <returns>
@@ -296,6 +385,50 @@ stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 \**--------------------------------------------------------------------------**/
 
 #define _Puny_Basic(%0) (((%0) > 25) ? ((%0) + ('0' - 25)) : ((%0) + 'a'))
+
+/**--------------------------------------------------------------------------**\
+<summary>Puny_EncodeVarHash</summary>
+<param name="bias">Part of the state machine.</param>
+<param name="delta">Part of the state machine.</param>
+<param name="dst">Array to write to.</param>
+<param name="wlen">Size of the array.</param>
+<param name="hash">Hashed string.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	This is part of how the punycode algorithm encodes numbers as very clever
+	strings, but honestly I don't fully understand it!
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static stock Puny_EncodeVarHash(bias, delta, dst[], wlen, &hash)
+{
+	new
+		i = 0,
+		k = PUNY_BASE,
+		t;
+	while (i < wlen)
+	{
+		if (k <= bias) t = PUNY_TMIN;
+		else if (k >= bias + PUNY_TMAX) t = PUNY_TMAX;
+		else t = k - bias;
+		// Find the last digit below the threshold.
+		if (delta < t) break;
+		new
+			c = t + (delta - t) % (PUNY_BASE - t);
+		dst[i] = _Puny_Basic(c),
+		hash = hash * 33 + dst[i++],
+		delta = (delta - t) / (PUNY_BASE - t),
+		k += PUNY_BASE;
+	}
+	if (i < wlen)
+	{
+		dst[i] = _Puny_Basic(delta),
+		hash = hash * 33 + dst[i++];
+	}
+	return i;
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>Puny_EncodeVar</summary>
