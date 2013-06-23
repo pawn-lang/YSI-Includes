@@ -48,7 +48,7 @@ Legal:
 		SA:MP Team past, present and future - SA:MP.
 	
 Version:
-	2.0
+	1.0
 Changelog:
 	23/06/13:
 		First version.

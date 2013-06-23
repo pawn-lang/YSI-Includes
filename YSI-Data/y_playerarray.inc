@@ -74,9 +74,8 @@ Changelog:
 	#define PS_IS_PLAYER_CONNECTED IsPlayerConnected
 #endif
 
-#define PlayerArray:%0<%1> Bit:%0[%1] //={Bit:PA_TYPE_PA,Bit:0,Bit:0,...}
-
-//#define Bit:%0[%1,%2] Bit:%0[%1]={Bit:PA_TYPE_PA,Bit:(-1*_:%2),Bit:(-1*_:%2),...}
+// Redefined later on.  This is just for internal use.
+#define PlayerArray:%0<%1> Bit:%0[%1]
 
 #define PA_INIT:%1, Bit:PA_TYPE_PA,Bit:(-1*_:%1),Bit:(-1*_:%1),
 
