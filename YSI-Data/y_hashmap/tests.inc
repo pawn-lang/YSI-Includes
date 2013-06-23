@@ -173,6 +173,36 @@ Test:y_hashmap_Remove50()
 	}
 }
 
+Test:y_hashmap_RemoveValues()
+{
+	new HashMap:m<>;
+	new data[100][E_HASH_MAP_TEST];
+	HashMap_Init(m, data);
+	// Add.
+	for (new i = 0, str[6]; i != 100; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		HashMap_Add(m, str, i);
+	}
+	// ASSERT.
+	for (new i = 0, str[6]; i != 100; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		ASSERT(HashMap_Get(m, str) == i);
+	}
+	// Remove half.
+	for (new i = 0; i != 100; ++i)
+	{
+		HashMap_RemoveValue(m, i);
+	}
+	// ASSERT.
+	for (new i = 0, str[6]; i != 100; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		ASSERT(HashMap_Get(m, str) == -1);
+	}
+}
+
 Test:y_hashmap_Get1000()
 {
 	new HashMap:m<>;

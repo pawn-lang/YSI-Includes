@@ -226,7 +226,8 @@ stock bool:HashMap_RemoveKey(HashMap:m<>, const str[])
 			{
 				// Remove this from the linked list.
 				AMX_Write(prev, AMX_Read(ptr)),
-				AMX_Write(ptr, -1);
+				AMX_Write(ptr, -1),
+				AMX_Write(ptr - m[HASH_MAP_SIZE_3], 0);
 				return true;
 			}
 		}
@@ -237,16 +238,19 @@ stock bool:HashMap_RemoveKey(HashMap:m<>, const str[])
 	return false;
 }
 
-/*
 stock bool:HashMap_RemoveValue(HashMap:m<>, value)
 {
 	if (0 <= value < m[HASH_MAP_SIZE_1])
 	{
-		return HashMap_RemoveKey(m, *value[_E_HASH_MAP_NAME]);
+		static
+			sString[128 char];
+		new
+			size = m[HASH_MAP_SIZE_3];
+		rawMemcpy(ref(sString), m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2] - size, min(size, sizeof (sString) * 4));
+		return HashMap_RemoveKey(m, sString);
 	}
 	return false;
 }
-*/
 
 stock HashMap_Set(HashMap:m<>, const str[], value)
 {
