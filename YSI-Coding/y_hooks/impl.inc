@@ -647,12 +647,14 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 		// Uugh, special cases!
 		init = (_:!strcmp(ref, !"OnGameModeInit") << 2) | (_:!strcmp(ref, !"OnFilterScriptInit") << 1) | (_:!strcmp(ref, !"OnScriptInit")),
 		same[32],
-		sameCount = 1,
+		sameCount = 3,
 		entry,
+		pure,
 		idx;
 	static
 		name[32];
-	same[0] = AMX_Read(original);
+	// Reserve space for ALS hooked callbacks first.
+	same[2] = AMX_Read(original),
 	// Wipe out the current hook.
 	Hooks_InvalidateName(original);
 	// Loop through all remaining functions to find ones that hook the same
@@ -664,20 +666,26 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 		if (name[0] == (('@' << 24) | ('y' << 16) | ('H' << 8) | ('_'))) // "@yH_"
 		{
 			// A hook, not an original.
-			Hooks_IsolateName(name);
+			Hooks_IsolateName(name),
+			pure = 0;
 		}
 		else if (init) continue; // Don't hook the originals "Init" functions.
+		else pure = 1;
 		// Not sufficiently identical.
 		if (strcmp(name, ref)) continue;
 		// Get just the useful part of the name.
 		if (!strcmp(name, ref))
 		{
-			Hooks_InvalidateName(entry),
-			same[sameCount] = AMX_Read(entry);
-			if (++sameCount == sizeof (same))
+			Hooks_InvalidateName(entry);
+			if (pure) same[1] = AMX_Read(entry);
+			else
 			{
-				P:E("sameCount == sizeof (same) in y_hooks.");
-				break;
+				same[sameCount] = AMX_Read(entry);
+				if (++sameCount == sizeof (same))
+				{
+					P:E("sameCount == sizeof (same) in y_hooks.");
+					break;
+				}
 			}
 		}
 	}
@@ -691,26 +699,36 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 			if (name[0] == (('@' << 24) | ('y' << 16) | ('H' << 8) | ('_'))) // "@yH_"
 			{
 				// A hook, not an original.
-				Hooks_IsolateName(name);
+				Hooks_IsolateName(name),
+				pure = 0;
 			}
+			else pure = 1;
 			// Not sufficiently identical.
 			if (strcmp(name, ref2)) continue;
 			// Get just the useful part of the name.
 			if (!strcmp(name, ref2))
 			{
-				Hooks_InvalidateName(entry),
-				same[sameCount] = AMX_Read(entry);
-				if (++sameCount == sizeof (same))
+				Hooks_InvalidateName(entry);
+				if (pure)
 				{
-					P:E("sameCount == sizeof (same) in y_hooks.");
-					break;
+					if (same[1]) same[0] = AMX_Read(entry);
+					else same[1] = AMX_Read(entry);
+				}
+				else
+				{
+					same[sameCount] = AMX_Read(entry);
+					if (++sameCount == sizeof (same))
+					{
+						P:E("sameCount == sizeof (same) in y_hooks.");
+						break;
+					}
 				}
 			}
 		}
 	}
 	// Now start writing our entirely new version.
 	// First, the (longest) function name as that is always the "base" name.
-	entry = strlen(ref);
+	entry = strlen(ref),
 	idx = strlen(ref2);
 	if (idx <= entry) AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref, entry);
 	else
@@ -727,7 +745,7 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 			// function name in C order not packed PAWN order.
 			#emit CONST.pri  YSI_gscOnPlayerEnterRaceCP
 			#emit STOR.S.pri idx
-			idx -= AMX_BASE_ADDRESS;
+			idx -= AMX_BASE_ADDRESS,
 			AMX_Write(original + 4, idx);
 		}
 		else if (!strcmp(ref2, YSI_gscOnPlayerLeaveRaceCP))
@@ -735,7 +753,7 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 			Hooks_ForceReverse(YSI_gscOnPlayerLeaveRaceCP);
 			#emit CONST.pri  YSI_gscOnPlayerLeaveRaceCP
 			#emit STOR.S.pri idx
-			idx -= AMX_BASE_ADDRESS;
+			idx -= AMX_BASE_ADDRESS,
 			AMX_Write(original + 4, idx);
 		}
 		else
@@ -744,12 +762,14 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 			AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref2, idx);
 		}
 	}
+	// Work out what the FIRST used slot is.
+	pure = same[0] ? 0 : (same[1] ? 1 : 2);
 	// Write our new function (HARD).
-	entry = Hooks_WriteFunction(same, sameCount, Hooks_SpecialReturns(ref));
+	entry = Hooks_WriteFunction(same[pure], sameCount - pure, Hooks_SpecialReturns(ref));
 	if (entry)
 	{
 		// Point "original"'s function pointer to the new function.
-		idx = YSI_g_sCodeSpace - AMX_HEADER_COD;
+		idx = YSI_g_sCodeSpace - AMX_HEADER_COD,
 		AMX_Write(original, idx);
 		// Save the address for hooks later.  These three can't be done normally
 		// because they have already been started by this point.  I did use
