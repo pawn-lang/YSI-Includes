@@ -96,9 +96,9 @@ Definitions:
 // So I can quickly change HashMap hash settings.
 #define HashMap_Hash(%0,%1);                                                    \
 	{                                                                           \
-		%1 = -1, I@ = strlen(%0);                                               \
-		if(%0[0] > 255) while (I@--) %1 = %1 * 33 + %0{I@};                     \
-		else while (I@--) %1 = %1 * 33 + %0[I@];                                \
+		%1 = -1, I@ = -1;                                                       \
+		if(%0[0] > 255) while ((J@ = %0{++I@})) %1 = %1 * 33 + J@;              \
+		else while ((J@ = %0[++I@])) %1 = %1 * 33 + J@;                         \
 	}
 
 /**--------------------------------------------------------------------------**\
@@ -220,6 +220,57 @@ stock HashMap_Get(HashMap:m<>, const str[])
 		hash,
 		res;
 	HashMap_Hash(str, hash);
+	res = hash & 0xFF;
+	P:3("HashMap_Get called: mask = %d", res);
+	for (new ptr = m[res]; ptr != -1; )
+	{
+		#emit LOAD.S.pri  ptr
+		#emit ADD.C       4
+		#emit LOAD.I
+		#emit STOR.pri    res
+		if (res == hash)
+		{
+			P:6("HashMap_Get: Candidate %d: %d == %d", (ptr - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2], AMX_Read(ptr + 4), hash);
+			// Maybe collisions.
+			#emit PUSH.C      0x7FFFFFFF
+			#emit PUSH.C      0
+			#emit PUSH.S      str
+			#emit LOAD.S.pri  m
+			#emit ADD.C       1036 // 256 * 4 + 3 * 4
+			#emit LOAD.I
+			#emit LOAD.S.alt  ptr
+			#emit SUB.alt
+			#emit PUSH.pri
+			#emit PUSH.C      16
+			#emit SYSREQ.C    strcmp
+			#emit STACK       20
+			#emit STOR.pri    res
+			if (res == 0) return (ptr - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2];
+		}
+		{} // Zero-cost bug fix.
+		#emit LREF.S.pri  ptr
+		#emit STOR.S.pri  ptr
+	}
+	return -1;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>HashMap_GetWithHash</summary>
+<param name="HashMap:m<>">The hash map to search.</param>
+<param name="const str[]">The key to find.</param>
+<param name="hash">The hashed key.</param>
+<returns>
+	The value associated with this key in the given hash map.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock HashMap_GetWithHash(HashMap:m<>, const str[], hash)
+{
+	static
+		res;
 	res = hash & 0xFF;
 	P:3("HashMap_Get called: mask = %d", res);
 	for (new ptr = m[res]; ptr != -1; )

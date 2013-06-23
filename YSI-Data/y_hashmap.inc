@@ -68,6 +68,7 @@ Definitions:
 #include "..\YSI-Core\y_utils"
 #include "..\YSI-Storage\y_amx"
 #include "..\YSI-Coding\y_stringhash"
+#include "..\YSI-Internal\y_shortfunc"
 
 #include "y_hashmap/impl"
 
