@@ -65,7 +65,6 @@ Functions:
 Definitions:
 	_H - Generate a string hash at compile time.
 	_I - Generate a case insensitive string hash at compile time.
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #include "..\YSI-Internal\y_version"
