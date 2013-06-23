@@ -47,6 +47,17 @@ Test:y_hashmap_Get1()
 	ASSERT(HashMap_Get(m, "Hello") == 42);
 }
 
+Test:y_hashmap_RemoveKey1()
+{
+	new HashMap:m<>;
+	new data[100][E_HASH_MAP_TEST];
+	HashMap_Init(m, data);
+	HashMap_Add(m, "Hello", 42);
+	ASSERT(HashMap_Get(m, "Hello") == 42);
+	HashMap_RemoveKey(m, "Hello");
+	ASSERT(HashMap_Get(m, "Hello") == -1);
+}
+
 Test:y_hashmap_Get100()
 {
 	new HashMap:m<>;
@@ -64,6 +75,38 @@ Test:y_hashmap_Get100()
 	}
 }
 
+Test:y_hashmap_Remove50()
+{
+	new HashMap:m<>;
+	new data[100][E_HASH_MAP_TEST];
+	HashMap_Init(m, data);
+	// Add.
+	for (new i = 0, str[6]; i != 100; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		HashMap_Add(m, str, i);
+	}
+	// ASSERT.
+	for (new i = 0, str[6]; i != 100; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		ASSERT(HashMap_Get(m, str) == i);
+	}
+	// Remove half.
+	for (new i = 1, str[6]; i != 101; i += 2)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		HashMap_RemoveKey(m, str);
+	}
+	// ASSERT.
+	for (new i = 0, str[6]; i != 100; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		if (i & 1) ASSERT(HashMap_Get(m, str) == -1);
+		else ASSERT(HashMap_Get(m, str) == i);
+	}
+}
+
 Test:y_hashmap_Get1000()
 {
 	new HashMap:m<>;
@@ -78,5 +121,37 @@ Test:y_hashmap_Get1000()
 	{
 		format(str, sizeof (str), "hi%d", i);
 		ASSERT(HashMap_Get(m, str) == i);
+	}
+}
+
+Test:y_hashmap_Remove500()
+{
+	new HashMap:m<>;
+	new data[1000][E_HASH_MAP_TEST];
+	HashMap_Init(m, data);
+	// Add.
+	for (new i = 0, str[6]; i != 1000; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		HashMap_Add(m, str, i);
+	}
+	// ASSERT.
+	for (new i = 0, str[6]; i != 1000; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		ASSERT(HashMap_Get(m, str) == i);
+	}
+	// Remove half.
+	for (new i = 1, str[6]; i != 1001; i += 2)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		HashMap_RemoveKey(m, str);
+	}
+	// ASSERT.
+	for (new i = 0, str[6]; i != 1000; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		if (i & 1) ASSERT(HashMap_Get(m, str) == -1);
+		else ASSERT(HashMap_Get(m, str) == i);
 	}
 }

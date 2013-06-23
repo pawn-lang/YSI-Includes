@@ -117,3 +117,69 @@ stock HashMap_Get(HashMap:m<>, const str[])
 	}
 	return -1;
 }
+
+stock bool:HashMap_RemoveKey(HashMap:m<>, const str[])
+{
+	static
+		hash,
+		res,
+		prev;
+	HashMap_Hash(str, hash);
+	res = hash & 0xFF,
+	prev = ref(m[res]);
+	P:3("HashMap_Get called: mask = %d", res);
+	for (new ptr = AMX_Read(prev); ptr != -1; )
+	{
+		#emit LOAD.S.pri  ptr
+		#emit ADD.C       4
+		#emit LOAD.I
+		#emit STOR.pri    res
+		if (res == hash)
+		{
+			P:6("HashMap_Get: Candidate %d: %d == %d", (ptr - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2], AMX_Read(ptr + 4), hash);
+			// Maybe collisions.
+			#emit PUSH.C      0x7FFFFFFF
+			#emit PUSH.C      0
+			#emit PUSH.S      str
+			#emit LOAD.S.pri  m
+			#emit ADD.C       1036 // 256 * 4 + 3 * 4
+			#emit LOAD.I
+			#emit LOAD.S.alt  ptr
+			#emit SUB.alt
+			#emit PUSH.pri
+			#emit PUSH.C      16
+			#emit SYSREQ.C    strcmp
+			#emit STACK       20
+			#emit STOR.pri    res
+			if (res == 0)
+			{
+				// Remove this from the linked list.
+				AMX_Write(prev, AMX_Read(ptr)),
+				AMX_Write(ptr, -1);
+				return true;
+			}
+		}
+		prev = ptr;
+		#emit LREF.S.pri  ptr
+		#emit STOR.S.pri  ptr
+	}
+	return false;
+}
+
+/*
+stock bool:HashMap_RemoveValue(HashMap:m<>, value)
+{
+	if (0 <= value < m[HASH_MAP_SIZE_1])
+	{
+		return HashMap_RemoveKey(m, *value[_E_HASH_MAP_NAME]);
+	}
+	return false;
+}
+*/
+
+stock HashMap_Set(HashMap:m<>, const str[], value)
+{
+	return
+		HashMap_RemoveKey(m, str),
+		HashMap_Add(m, str, value);
+}
