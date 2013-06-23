@@ -58,6 +58,7 @@ Functions:
 		HashMap_Add - Add a value under a given string.
 		HashMap_Get - Get a value from a string.
 		HashMap_RemoveKey - Remove a string and its value from a hash map.
+		HashMap_RemoveValue - Remove a value from a hash map.
 		HashMap_Set - Change the value associated with a key.
 Definitions:
 	HASH_MAP_DATA - What should be added to enums to be hash map referenced.
@@ -79,6 +80,19 @@ Definitions:
 #define HashMap:%0<%1>                                                          \
 	%0[HASH_MAP_SIZE + 4]
 
+/**--------------------------------------------------------------------------**\
+<summary>HashMap_Hash</summary>
+<param name="str[]">String to hash.</param>
+<param name="&hash">Desination of the hash.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Quickly hashes the string using Bernstein.  Caters for both packed and
+	unpacked strings.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 // So I can quickly change HashMap hash settings.
 #define HashMap_Hash(%0,%1);                                                    \
 	{                                                                           \
@@ -86,6 +100,21 @@ Definitions:
 		if(%0[0] > 255) while (I@--) %1 = %1 * 33 + %0{I@};                     \
 		else while (I@--) %1 = %1 * 33 + %0[I@];                                \
 	}
+
+/**--------------------------------------------------------------------------**\
+<summary>HashMap_Init</summary>
+<param name="HashMap:m<>">Hash map to initialise.</param>
+<param name="arr[][]">Array to associate this map with.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Finds the location of the hash map linked list data in the passed array data
+	and uses that to read the data through pointers subsequently.  It doesn't
+	matter WHERE in the enum the hash map data is, and if its not there you'll
+	get an error, or at least a warning.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 {
@@ -118,7 +147,31 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 
 #define HashMap_Init(%0,%1) _HashMap_Init(%0, %1[0][_E_HASH_MAP_NEXT], sizeof (%1), sizeof (%1[]) * 4, %1[0][_E_HASH_MAP_NAME])
 
+/**--------------------------------------------------------------------------**\
+<summary>HashMap_ByteLen</summary>
+<param name="str[]">String to get the size of.</param>
+<returns>
+	The number of BYTES this string takes up including the NULL.
+</returns>
+<remarks>
+	Caters for both packed and unpacked strings.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 #define HashMap_ByteLen(%0) ((strlen((%0)) + 1) << (2 * _:!ispacked((%0))))
+
+/**--------------------------------------------------------------------------**\
+<summary>HashMap_Add</summary>
+<param name="HashMap:m<>"></param>
+<param name="const str[]"></param>
+<param name="const value"></param>
+<returns>
+	-
+</returns>
+<remarks>
+	Adds a value to the given hash map under the given string key.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock bool:HashMap_Add(HashMap:m<>, const str[], const value)
 {
@@ -148,6 +201,18 @@ stock bool:HashMap_Add(HashMap:m<>, const str[], const value)
 	}
 	return false;
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>HashMap_Get</summary>
+<param name="HashMap:m<>">The hash map to search.</param>
+<param name="const str[]">The key to find.</param>
+<returns>
+	The value associated with this key in the given hash map.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock HashMap_Get(HashMap:m<>, const str[])
 {
@@ -188,6 +253,19 @@ stock HashMap_Get(HashMap:m<>, const str[])
 	}
 	return -1;
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>HashMap_RemoveKey</summary>
+<param name="HashMap:m<>">The hash map to modify.</param>
+<param name="const str[]">The key to remove from the hash map.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Removes a given key and its associated value from the given hash map (if it
+	can be found in the map in the first place).
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock bool:HashMap_RemoveKey(HashMap:m<>, const str[])
 {
@@ -238,6 +316,19 @@ stock bool:HashMap_RemoveKey(HashMap:m<>, const str[])
 	return false;
 }
 
+/**--------------------------------------------------------------------------**\
+<summary>HashMap_RemoveValue</summary>
+<param name="HashMap:m<>">Hash map to modify.</param>
+<param name="value">Value to remove.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Removes a value from the hash map.  First it gets the string key for the
+	value, then removes that (to update associated linked lists correctly).
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 stock bool:HashMap_RemoveValue(HashMap:m<>, value)
 {
 	if (0 <= value < m[HASH_MAP_SIZE_1])
@@ -252,7 +343,22 @@ stock bool:HashMap_RemoveValue(HashMap:m<>, value)
 	return false;
 }
 
-stock HashMap_Set(HashMap:m<>, const str[], value)
+/**--------------------------------------------------------------------------**\
+<summary>HashMap_Set</summary>
+<param name="HashMap:m<>">The hash map to modify.</param>
+<param name="const str[]">The key to modify.</param>
+<param name="const value">The new value for the given key.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	If this key is already in the hash map it is removed, and then the new value
+	is added in its place.  NOTE: If the VALUE is already in the hash map, the
+	old data will be removed, but the new data WILL NOT be inserted.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock HashMap_Set(HashMap:m<>, const str[], const value)
 {
 	return
 		HashMap_RemoveKey(m, str),
