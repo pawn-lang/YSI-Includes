@@ -1,16 +1,11 @@
 
-
-//#undef _inc__impl
-
-
 // The relative order of this data is VERY important.
 #define HASH_MAP_DATA<%0> \
 	_E_HASH_MAP_NAME[%0], \
 	_E_HASH_MAP_NEXT,     \
 	_E_HASH_MAP_HASH
 
-
-#define HASH_MAP_SIZE   (256) // 0x100
+#define HASH_MAP_SIZE   (256)
 #define HASH_MAP_PTR    (HASH_MAP_SIZE)
 #define HASH_MAP_SIZE_1 (HASH_MAP_SIZE + 1)
 #define HASH_MAP_SIZE_2 (HASH_MAP_SIZE + 2)
@@ -18,30 +13,9 @@
 
 #define HashMap:%0<%1>                    \
 	%0[HASH_MAP_SIZE + 4]
-	//
-	//forward HASH_%1();
-	//public HASH_%1()
-	//{printf(#HASH_%1"()");
-	//	HashMap_Associate(%0, _:%1);
-	//}
-
-
 
 // So I can quickly change HashMap hash settings.
 #define HashMap_Hash(%0,%1) (%1=YHash(%0))
-
-/*
-hook OnScriptInit()
-{
-	new
-		buffer[32],
-		idx;
-	while ((idx = AMX_GetPublicName(idx, buffer, "HASH_")))
-	{
-		CallLocalFunction(buffer, "");
-	}
-}
-*/
 
 stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 {
@@ -67,9 +41,6 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 	#emit LOAD.S.pri target
 	#emit LOAD.S.alt t2
 	#emit SUB
-	//#emit SHR.C.pri  2
-	// -4 (for "_E_HASH_MAP_NEXT").
-	//#emit ADD.C      0xFFFFFFFC //0xFFFFFFFF
 	#emit STOR.S.pri ptr
 	// Store the size of "_E_HASH_MAP_NAME" in bytes.
 	m[HASH_MAP_SIZE_3] = ptr;
@@ -107,31 +78,6 @@ stock bool:HashMap_Add(HashMap:m<>, const str[], const value)
 	return false;
 }
 
-/*
-stock bool:HashMap_Add(HashMap:m<>, const str[], const value)
-{
-	if (0 <= value < m[HASH_MAP_SIZE_1])
-	{
-		new
-			ptr  = m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2];
-		if (AMX_Read(ptr) != -1) return false;
-		new
-			hash = YHash(str),
-			mask = hash & 0xFF,
-			len2 = strlen(str) + 1;
-		if (!ispacked(str)) len2 <<= 2;
-		return
-			AMX_Write(ptr, m[mask]),
-			m[mask] = ptr,
-			mask = m[HASH_MAP_SIZE_3],
-			rawMemcpy(ptr + 4, ref(str), min(mask, len2)),
-			AMX_Write(ptr + 4 + mask, hash),
-			true;
-	}
-	return false;
-}
-*/
-
 stock HashMap_Get(HashMap:m<>, const str[])
 {
 	static
@@ -140,7 +86,7 @@ stock HashMap_Get(HashMap:m<>, const str[])
 	HashMap_Hash(str, hash);
 	res = hash & 0xFF;
 	P:3("HashMap_Get called: mask = %d", res);
-	for (new ptr = m[res]; ptr != -1; ) //ptr = AMX_Read(ptr))
+	for (new ptr = m[res]; ptr != -1; )
 	{
 		#emit LOAD.S.pri  ptr
 		#emit ADD.C       4
@@ -163,7 +109,6 @@ stock HashMap_Get(HashMap:m<>, const str[])
 			#emit SYSREQ.C    strcmp
 			#emit STACK       20
 			#emit STOR.pri    res
-			//printf("res = %d", res);
 			if (res == 0) return (ptr - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2];
 		}
 		{} // Zero-cost bug fix.
