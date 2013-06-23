@@ -282,6 +282,7 @@ static Malloc_TrySetup()
 	// already (better to be safe than sorry).
 	memset(YSI_gMallocMemory[YSI_g_sHeapStart + 1], 0, MALLOC_MEMORY - 1);
 	#if _DEBUG > 3
+		// The "#if" is actually ignored by these "#emit" codes, as always.
 		#emit CONST.alt     YSI_gMallocMemory
 		#emit STOR.S.alt    temp
 		printf("Malloc_OnScriptInit: AMX_HEADER_HEA = %d, YSI_gMallocMemory = %d, YSI_g_sHeapStart = %d", _:AMX_HEADER_HEA, temp, YSI_g_sHeapStart);
