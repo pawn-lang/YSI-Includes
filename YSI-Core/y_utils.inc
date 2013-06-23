@@ -656,6 +656,7 @@ public __rawMemcpy__(dest[], src[], bytes)
 {
 	memcpy(dest, src, 0, bytes, bytes);
 	memset("", 0, 0);
+	strcmp("", "");
 	//rawMemset(0, 0, 0);
 }
 
