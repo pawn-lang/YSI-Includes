@@ -60,7 +60,8 @@ Functions:
 		HashMap_RemoveKey - Remove a string and its value from a hash map.
 		HashMap_Set - Change the value associated with a key.
 Definitions:
-	-
+	HASH_MAP_DATA - What should be added to enums to be hash map referenced.
+	HashMap - Declare a new hash map.
 \**--------------------------------------------------------------------------**/
 
 #include "..\amx\amx_memory"

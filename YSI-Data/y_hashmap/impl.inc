@@ -60,7 +60,8 @@ Functions:
 		HashMap_RemoveKey - Remove a string and its value from a hash map.
 		HashMap_Set - Change the value associated with a key.
 Definitions:
-	-
+	HASH_MAP_DATA - What should be added to enums to be hash map referenced.
+	HashMap - Declare a new hash map.
 \**--------------------------------------------------------------------------**/
 
 // The relative order of this data is VERY important.
@@ -79,7 +80,9 @@ Definitions:
 	%0[HASH_MAP_SIZE + 4]
 
 // So I can quickly change HashMap hash settings.
-#define HashMap_Hash(%0,%1) (%1=YHash(%0))
+#define HashMap_Hash(%0,%1); \
+	{if(%0[0] > 255) { %1 = -1, I@ = strlen(%0); while (I@--) %1 = %1 * 33 + %0{I@}; } \
+	else { %1 = -1, I@ = strlen(%0); while (I@--) %1 = %1 * 33 + %0[I@]; }}
 
 stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 {
