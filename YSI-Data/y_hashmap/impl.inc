@@ -64,10 +64,10 @@ Definitions:
 	HashMap - Declare a new hash map.
 \**--------------------------------------------------------------------------**/
 
-// The relative order of this data is VERY important.
-#define HASH_MAP_DATA<%0> \
-	_E_HASH_MAP_NAME[%0], \
-	_E_HASH_MAP_NEXT,     \
+// The relative order of this data is important to _HashMap_Init.
+#define HASH_MAP_DATA<%0>                                                       \
+	_E_HASH_MAP_NAME[%0],                                                       \
+	_E_HASH_MAP_NEXT    ,                                                       \
 	_E_HASH_MAP_HASH
 
 #define HASH_MAP_SIZE   (256)
@@ -76,13 +76,16 @@ Definitions:
 #define HASH_MAP_SIZE_2 (HASH_MAP_SIZE + 2)
 #define HASH_MAP_SIZE_3 (HASH_MAP_SIZE + 3)
 
-#define HashMap:%0<%1>                    \
+#define HashMap:%0<%1>                                                          \
 	%0[HASH_MAP_SIZE + 4]
 
 // So I can quickly change HashMap hash settings.
-#define HashMap_Hash(%0,%1); \
-	{if(%0[0] > 255) { %1 = -1, I@ = strlen(%0); while (I@--) %1 = %1 * 33 + %0{I@}; } \
-	else { %1 = -1, I@ = strlen(%0); while (I@--) %1 = %1 * 33 + %0[I@]; }}
+#define HashMap_Hash(%0,%1);                                                    \
+	{                                                                           \
+		%1 = -1, I@ = strlen(%0);                                               \
+		if(%0[0] > 255) while (I@--) %1 = %1 * 33 + %0{I@};                     \
+		else while (I@--) %1 = %1 * 33 + %0[I@];                                \
+	}
 
 stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 {
@@ -113,7 +116,7 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 	m[HASH_MAP_SIZE_3] = ptr;
 }
 
-#define HashMap_Init(%0,%1) _HashMap_Init(%0,%1[0][_E_HASH_MAP_NEXT],sizeof(%1),sizeof(%1[])*4,%1[0][_E_HASH_MAP_NAME])
+#define HashMap_Init(%0,%1) _HashMap_Init(%0, %1[0][_E_HASH_MAP_NEXT], sizeof (%1), sizeof (%1[]) * 4, %1[0][_E_HASH_MAP_NAME])
 
 #define HashMap_ByteLen(%0) ((strlen((%0)) + 1) << (2 * _:!ispacked((%0))))
 
@@ -124,13 +127,14 @@ stock bool:HashMap_Add(HashMap:m<>, const str[], const value)
 	{
 		new
 			ptr  = m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2];
+		P:6("HashMap_Add: used = %d", AMX_Read(ptr));
 		if (AMX_Read(ptr) != -1) return false;
 		static
 			hash,
 			mask;
 		HashMap_Hash(str, hash);
-		mask = hash & 0xFF;
-		P:5("HashMap_Add: mask = %d", mask);
+		P:5("HashMap_Add: mask = %d", hash & 0xFF);
+		mask = hash & 0xFF,
 		// Add this hash to the hash list.
 		AMX_Write(ptr, m[mask]),
 		m[mask] = ptr,
@@ -194,7 +198,7 @@ stock bool:HashMap_RemoveKey(HashMap:m<>, const str[])
 	HashMap_Hash(str, hash);
 	res = hash & 0xFF,
 	prev = ref(m[res]);
-	P:3("HashMap_Get called: mask = %d", res);
+	P:3("HashMap_RemoveKey called: mask = %d", res);
 	for (new ptr = AMX_Read(prev); ptr != -1; )
 	{
 		#emit LOAD.S.pri  ptr
@@ -203,7 +207,7 @@ stock bool:HashMap_RemoveKey(HashMap:m<>, const str[])
 		#emit STOR.pri    res
 		if (res == hash)
 		{
-			P:6("HashMap_Get: Candidate %d: %d == %d", (ptr - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2], AMX_Read(ptr + 4), hash);
+			P:6("HashMap_RemoveKey: Candidate %d: %d == %d", (ptr - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2], AMX_Read(ptr + 4), hash);
 			// Maybe collisions.
 			#emit PUSH.C      0x7FFFFFFF
 			#emit PUSH.C      0

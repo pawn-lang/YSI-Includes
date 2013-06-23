@@ -221,3 +221,40 @@ Test:y_hashmap_Remove500()
 		else ASSERT(HashMap_Get(m, str) == i);
 	}
 }
+
+Test:y_hashmap_Set500()
+{
+	new HashMap:m<>;
+	new data[1000][E_HASH_MAP_TEST];
+	HashMap_Init(m, data);
+	// Add.
+	for (new i = 0, str[6]; i != 500; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		HashMap_Add(m, str, i);
+	}
+	// ASSERT.
+	for (new i = 0, str[6]; i != 500; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		ASSERT(HashMap_Get(m, str) == i);
+	}
+	// Remove half.
+	for (new i = 1, str[6]; i != 501; i += 2)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		HashMap_Set(m, str, i + 500);
+	}
+	// ASSERT.
+	for (new i = 0, str[6]; i != 500; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		if (i & 1) ASSERT(HashMap_Get(m, str) == i + 500);
+		else ASSERT(HashMap_Get(m, str) == i);
+	}
+	for (new i = 500, str[6]; i != 1000; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		ASSERT(HashMap_Get(m, str) == -1);
+	}
+}
