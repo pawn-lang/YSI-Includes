@@ -138,6 +138,5 @@
 #else
 	#define MASTER 23
 #endif
-//static stock const _POP_MASTER = MASTER;
 
-#undef YSIM_POP
+P:C(static stock const _POPPED_MASTER = MASTER;);

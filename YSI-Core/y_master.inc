@@ -134,15 +134,12 @@ Natives:
 #endif
 #undef _inc_y_master
 
-#if defined YSIM_POP
-	// Get whatever the master before the current one was.
-	#include "y_master\_pop_master"
-#else
-	#if !defined MASTER
-		// Set up this master if it doesn't exist.
-		#define MASTER 23
-	#endif
+#if defined MASTER
+	// Store the last master.
 	#include "y_master\_push_master"
+#else
+	// Get the previous master (or 23 by default).
+	#include "y_master\_pop_master"
 #endif
 
 #if defined _INC_y_master
