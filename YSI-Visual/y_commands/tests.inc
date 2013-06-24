@@ -16,3 +16,5 @@ Test:y_commands_Hashing()
 	ASSERT(hash0 == hash1);
 	ASSERT(len == strlen(dst1));
 }
+
+Test:y_commands_
