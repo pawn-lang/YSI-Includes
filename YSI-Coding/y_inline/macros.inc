@@ -155,7 +155,7 @@ somewhere_after_this_func:
 
 
 
-#define using%0) callback_tag:@Ik:@Il:%0)
+#define using%0\10;%1 callback_tag:@Ik:@Il:%0
 
 // Get ONLY this ONE parameter (this is a VERY important stage)!
 #define @Ik:@Il:%0, @Ip:@Iq:@Io:@Iw:|||%0|||,
