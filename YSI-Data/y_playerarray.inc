@@ -104,6 +104,9 @@ stock PA_Init(Bit:a[], bool:init = false, s = bits<MAX_PLAYERS>)
 
 #define PA_GetCount(%1) Bit_GetCount(%1[1],bits<MAX_PLAYERS>)
 
+#define PA_Slot(%0) (Bit_Slot(%0) + 1)
+#define PA_Mask(%0) (Bit_Mask(%0))
+
 //#define PA_Set(%0,%1,%2) ((%2)?Bit_Let(%0,(%1)):Bit_Vet(%0,(%1)))
 stock PA_Set(PlayerArray:d<>, slot, bool:set)
 {
