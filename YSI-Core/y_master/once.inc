@@ -110,10 +110,7 @@ Operators:
 	-
 Natives:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
-
-#define _Y_MASTER_ONCE
 
 #define Master_ID() (_@)
 
@@ -455,3 +452,82 @@ stock bool:_Master_Get(library[], bool:force = false)
 	P:C(else P:E("Too many master scripts"););
 	return true;
 }
+
+#if defined a@OnScriptInit
+	forward a@OnScriptInit();
+#endif
+#if defined b@OnScriptInit
+	forward b@OnScriptInit();
+#endif
+#if defined c@OnScriptInit
+	forward c@OnScriptInit();
+#endif
+#if defined d@OnScriptInit
+	forward d@OnScriptInit();
+#endif
+#if defined e@OnScriptInit
+	forward e@OnScriptInit();
+#endif
+#if defined f@OnScriptInit
+	forward f@OnScriptInit();
+#endif
+#if defined g@OnScriptInit
+	forward g@OnScriptInit();
+#endif
+#if defined h@OnScriptInit
+	forward h@OnScriptInit();
+#endif
+#if defined i@OnScriptInit
+	forward i@OnScriptInit();
+#endif
+#if defined j@OnScriptInit
+	forward j@OnScriptInit();
+#endif
+#if defined k@OnScriptInit
+	forward k@OnScriptInit();
+#endif
+#if defined l@OnScriptInit
+	forward l@OnScriptInit();
+#endif
+#if defined m@OnScriptInit
+	forward m@OnScriptInit();
+#endif
+#if defined n@OnScriptInit
+	forward n@OnScriptInit();
+#endif
+#if defined o@OnScriptInit
+	forward o@OnScriptInit();
+#endif
+#if defined p@OnScriptInit
+	forward p@OnScriptInit();
+#endif
+#if defined q@OnScriptInit
+	forward q@OnScriptInit();
+#endif
+#if defined r@OnScriptInit
+	forward r@OnScriptInit();
+#endif
+#if defined s@OnScriptInit
+	forward s@OnScriptInit();
+#endif
+#if defined t@OnScriptInit
+	forward t@OnScriptInit();
+#endif
+#if defined u@OnScriptInit
+	forward u@OnScriptInit();
+#endif
+#if defined v@OnScriptInit
+	forward v@OnScriptInit();
+#endif
+#if defined w@OnScriptInit
+	forward w@OnScriptInit();
+#endif
+#if defined x@OnScriptInit
+	forward x@OnScriptInit();
+#endif
+#if defined y@OnScriptInit
+	forward y@OnScriptInit();
+#endif
+#if defined z@OnScriptInit
+	forward z@OnScriptInit();
+#endif

@@ -1,7 +1,5 @@
 #undef _inc__setup_master
 
-#include "_resolve"
-
 // Now set the current script data.
 // IDIOT!  These are mostly mutually exclusive!  You don't need a horrible huge
 // bit array to store the fact that this is both a client AND a server!
@@ -13,6 +11,7 @@
 	#else
 		#define _YCM_a@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_0 0
 		#elseif _YSIM_IS_CLIENT
@@ -37,6 +36,7 @@
 	#else
 		#define _YCM_b@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_1 0
 		#elseif _YSIM_IS_CLIENT
@@ -61,6 +61,7 @@
 	#else
 		#define _YCM_c@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_2 0
 		#elseif _YSIM_IS_CLIENT
@@ -85,6 +86,7 @@
 	#else
 		#define _YCM_d@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_3 0
 		#elseif _YSIM_IS_CLIENT
@@ -109,6 +111,7 @@
 	#else
 		#define _YCM_e@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_4 0
 		#elseif _YSIM_IS_CLIENT
@@ -133,6 +136,7 @@
 	#else
 		#define _YCM_f@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_5 0
 		#elseif _YSIM_IS_CLIENT
@@ -157,6 +161,7 @@
 	#else
 		#define _YCM_g@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_6 0
 		#elseif _YSIM_IS_CLIENT
@@ -181,6 +186,7 @@
 	#else
 		#define _YCM_h@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_7 0
 		#elseif _YSIM_IS_CLIENT
@@ -205,6 +211,7 @@
 	#else
 		#define _YCM_i@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_8 0
 		#elseif _YSIM_IS_CLIENT
@@ -229,6 +236,7 @@
 	#else
 		#define _YCM_j@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_9 0
 		#elseif _YSIM_IS_CLIENT
@@ -253,6 +261,7 @@
 	#else
 		#define _YCM_k@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_10 0
 		#elseif _YSIM_IS_CLIENT
@@ -277,6 +286,7 @@
 	#else
 		#define _YCM_l@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_11 0
 		#elseif _YSIM_IS_CLIENT
@@ -301,6 +311,7 @@
 	#else
 		#define _YCM_m@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_12 0
 		#elseif _YSIM_IS_CLIENT
@@ -325,6 +336,7 @@
 	#else
 		#define _YCM_n@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_13 0
 		#elseif _YSIM_IS_CLIENT
@@ -349,6 +361,7 @@
 	#else
 		#define _YCM_o@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_14 0
 		#elseif _YSIM_IS_CLIENT
@@ -373,6 +386,7 @@
 	#else
 		#define _YCM_p@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_15 0
 		#elseif _YSIM_IS_CLIENT
@@ -397,6 +411,7 @@
 	#else
 		#define _YCM_q@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_16 0
 		#elseif _YSIM_IS_CLIENT
@@ -421,6 +436,7 @@
 	#else
 		#define _YCM_r@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_17 0
 		#elseif _YSIM_IS_CLIENT
@@ -445,6 +461,7 @@
 	#else
 		#define _YCM_s@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_18 0
 		#elseif _YSIM_IS_CLIENT
@@ -469,6 +486,7 @@
 	#else
 		#define _YCM_t@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_19 0
 		#elseif _YSIM_IS_CLIENT
@@ -493,6 +511,7 @@
 	#else
 		#define _YCM_u@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_20 0
 		#elseif _YSIM_IS_CLIENT
@@ -517,6 +536,7 @@
 	#else
 		#define _YCM_v@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_21 0
 		#elseif _YSIM_IS_CLIENT
@@ -541,6 +561,7 @@
 	#else
 		#define _YCM_w@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_22 0
 		#elseif _YSIM_IS_CLIENT
@@ -565,6 +586,7 @@
 	#else
 		#define _YCM_x@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_23 0
 		#elseif _YSIM_IS_CLIENT
@@ -589,6 +611,7 @@
 	#else
 		#define _YCM_y@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_24 0
 		#elseif _YSIM_IS_CLIENT
@@ -613,6 +636,7 @@
 	#else
 		#define _YCM_z@
 		// Save the settings.
+		#include "_resolve"
 		#if !YSIM_HAS_MASTER
 			#define YSIM_RECALL_25 0
 		#elseif _YSIM_IS_CLIENT
@@ -632,7 +656,5 @@
 #else
 	#error Invalid MASTER ID (must be 0-25)
 #endif
-
-static stock const YSIM_CURRENT_MASTER = MASTER;
 
 #undef MASTER

@@ -134,15 +134,9 @@ Natives:
 #endif
 #undef _inc_y_master
 
-#include "y_master/once"
-
 #if defined YSIM_POP
 	// Get whatever the master before the current one was.
-	#undef YSIM_POP
 	#include "y_master\_pop_master"
-//	#include "y_master\_override"
-//#elseif defined YSIM_OVERRIDE
-//	#include "y_master\_override"
 #else
 	#if !defined MASTER
 		// Set up this master if it doesn't exist.
@@ -154,13 +148,15 @@ Natives:
 #if defined _INC_y_master
 	// Run at least once - clear previous data.
 	#include "y_master\_cleanup"
+#else
+	#include "y_master/once"
 #endif
 
 // Initialise the current master if it hasn't already been done.
 #include "y_master\_setup_master"
 
 // Include all the correct macro versions for the settings we have just found.
-#include "y_master\_impl2"
+#include "y_master\_impl"
 
 #if !defined _INC_y_master
 	// Only include this lot once.
