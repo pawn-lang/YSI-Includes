@@ -134,10 +134,48 @@ enum E_COMMAND
 	E_COMMAND_POINTER
 }
 
+enum e_COMMAND_ERRORS
+{
+	COMMAND_ZERO_RET,  // The command returned 0.
+	COMMAND_OK,        // Called corectly.
+	COMMAND_NOT_FOUND, // Command doesn't exist.
+	COMMAND_DENIED,    // Can't use the command.
+	COMMAND_HIDDEN,    // Can't use the command, don't let them know it exists.
+	COMMAND_NO_PLAYER, // Used by a player who shouldn't exist.
+	COMMAND_DISABLED   // All commands are disabled for this player.
+}
+
+enum e_COMMAND_FLAGS (<<= 1)
+{
+	e_COMMAND_FLAGS_ZERO_RET = 1, // The command returned 0.
+	e_COMMAND_FLAGS_OK,        // Called corectly.
+	e_COMMAND_FLAGS_NOT_FOUND, // Command doesn't exist.
+	e_COMMAND_FLAGS_DENIED,    // Can't use the command.
+	e_COMMAND_FLAGS_HIDDEN,    // Can't use the command, don't let them know it exists.
+	e_COMMAND_FLAGS_NO_PLAYER, // Used by a player who shouldn't exist.
+	e_COMMAND_FLAGS_DISABLED,  // All commands are disabled for this player.
+	// Save counts for callbacks.
+	e_COMM_FLAG_OPCP     = 0x00FF0000,
+	e_COMM_FLAG_OPCP_ADD = 0x00010000,
+	e_COMM_FLAG_OPCR     = 0xFF000000,
+	e_COMM_FLAG_OPCR_ADD = 0x01000000
+}
+
 static stock
+	// Information for returning error messages.
+	e_COMMAND_FLAGS:YSI_g_sCommandFlags, //[E_COMMAND_ERRORS],
+	YSI_g_sErrorMessages[E_COMMAND_ERRORS][144],
+	// Who has had ALL their commands disabled?
+	PlayerArray:YSI_g_sDisabledPlayers<MAX_PLAYERS>,
 	// Quickly reference and store commands by name.
 	HashMap:YSI_g_sCommandMap<MAX_COMMANDS>,
 	YSI_g_sCommands[MAX_COMMANDS][E_COMMAND];
+
+static stock const
+	YSI_gscOPCR[] = "OnPlayerCommandReceived",
+	YSI_gscOPCP[] = "OnPlayerCommandPerformed",
+	YSI_gscISI[] = "isi";
+
 
 // Store which script(s) own which commands.
 MASTER_DATA<MAX_COMMANDS>
@@ -153,6 +191,40 @@ MASTER_DATA<MAX_COMMANDS>
 // ZCMD compatibility.
 #define CMD:%0(%1) RC:%0(%1,__help)if(__help)return 0;else
 #define COMMAND CMD
+
+// Forwards for optional command callbacks.
+forward e_COMMAND_ERRORS:OnPlayerCommandReceived(playerid, cmdtext[], e_COMMAND_ERRORS:success); 
+forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND_ERRORS:success); 
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_OnReceived</summary>
+<param name="playerid">Player who typed the command.</param>
+<param name="cmdtext">What they typed.</param>
+<param name="error">Which error to show.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Call OnPlayerCommandReceived once the system knows how the player can use
+	this command (if they can).
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#if defined COMMAND_USE_ERRORS
+	#define Command_ErrorRet(%2) (YSI_g_sCommandFlags&e_COMMAND_FLAGS:(1<<_:(%2)))
+	
+	#define Command_ErrorMsg(%2) YSI_g_sErrorMessages[%2]
+	
+	#if defined _Text_Send
+		#define Command_Error(%0,%2) (Command_ErrorMsg(%2)[0]?(Text_Send((%0),Command_ErrorMsg(%2)),Command_ErrorRet(%2)):Command_ErrorRet(%2))
+	#else
+		#define Command_Error(%0,%2) (Command_ErrorMsg(%2)[0]?(SendClientMessage((%0),0xFF0000AA,Command_ErrorMsg(%2)),Command_ErrorRet(%2)):Command_ErrorRet(%2))
+	#endif
+#else
+	#define Command_Error(%0,%2) ((%2) == _:COMMAND_OK)
+#endif
+
+#define Command_OnReceived(%0,%1,%2) (sErr=((YSI_g_sCommandFlags&e_COMM_FLAG_OPCR)?W@(YSI_gscOPCR,YSI_gscISI,(%0),(%1),(COMMAND_%2)):(COMMAND_%2)),Command_Error(%0,sErr))
 
 /**--------------------------------------------------------------------------**\
 <summary>Command_IsValid</summary>
@@ -231,6 +303,70 @@ hook OnScriptInit()
 		P:6("Command_OnScriptInit: Name %s", unpack(buffer[1]));
 		Command_Add(buffer[1], AMX_Read(entry));
 	}
+	if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();
+	if (funcidx(YSI_gscOPCP) != -1) Command_IncOPCP();
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>OnScriptExit</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	When a script ends, update the status of any new callback hooks.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+hook OnScriptExit()
+{
+	P:1("Commands_OnScriptExit called");
+	if (funcidx(YSI_gscOPCR) != -1) Command_DecOPCR();
+	if (funcidx(YSI_gscOPCP) != -1) Command_DecOPCP();
+	return 1;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_IncOPCR</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	This function, and the three other related ones, increment and decrement the
+	number of callbacks known to exist on the server.  If they are 0, there's no
+	point trying to call them on errors etc.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+foreign void:Command_IncOPCR();
+
+global void:Command_IncOPCR()
+{
+	P:2("Command_IncOPCR called");
+	YSI_g_sCommandFlags += e_COMM_FLAG_OPCR_ADD;
+}
+
+foreign void:Command_DecOPCR();
+
+global void:Command_DecOPCR()
+{
+	P:2("Command_DecOPCR called");
+	YSI_g_sCommandFlags -= e_COMM_FLAG_OPCR_ADD;
+}
+
+foreign void:Command_IncOPCP();
+
+global void:Command_IncOPCP()
+{
+	P:2("Command_IncOPCP called");
+	YSI_g_sCommandFlags += e_COMM_FLAG_OPCP_ADD;
+}
+
+foreign void:Command_DecOPCP();
+
+global void:Command_DecOPCP()
+{
+	P:2("Command_DecOPCP called");
+	YSI_g_sCommandFlags -= e_COMM_FLAG_OPCP_ADD;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -558,57 +694,7 @@ global void:Command_RemoveNamed(string:func[])
 
 mhook OnPlayerCommandText(playerid, cmdtext[])
 {
-	P:1("Commands_OnPlayerCommandText called: %d %s", playerid, cmdtext);
-	CallRemoteFunction("OnPlayerCommandReceived", "isi", playerid, cmdtext, 0);
-	static
-		sCmd[64] = "@yC_",
-		sPos,
-		sIdx,
-		sHash;
-	// Get the hashed version of the decoded string.
-	sPos = Puny_EncodeHash(sCmd[4], cmdtext[1], sHash, .delimiter = '@') + 1;
-	while (cmdtext[sPos] == ' ') ++sPos;
-	// Find the command in the array.
-	sIdx = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
-	P:5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd[4], sPos, sHash, sIdx);
-	if (sIdx == COMMAND_NOT_FOUND) return 0;
-	// Can the player use this command?
-	if (_Command_GetPlayer(sIdx, playerid))
-	{
-		#if YSIM_HAS_MASTER
-			static
-				sMasters;
-			sMasters = _:MASTER_GET<sIdx>;
-			// This is in another script, or multiple scripts.
-			if (sMasters)
-			{
-				// Call the command in another script.  If no particular script
-				// is set up as the "master", call it in the first one found...
-				if (cmdtext[sPos]) sIdx = CallRemoteFunction(sCmd, "isii", playerid, cmdtext[sPos], 0, Cell_GetLowestBit(sMasters));
-				else sIdx = CallRemoteFunction(sCmd, "isii", playerid, NULL, 0, Cell_GetLowestBit(sMasters));
-				CallRemoteFunction("OnPlayerCommandPerformed", "isi", playerid, cmdtext, sIdx);
-				return sIdx;
-			}
-		#endif
-			// In this script.
-			sIdx = YSI_g_sCommands[sIdx][E_COMMAND_POINTER];
-			#emit PUSH.C      0
-			#emit LOAD.pri    sPos
-			#emit LOAD.S.alt  cmdtext
-			#emit IDXADDR
-			#emit PUSH.pri
-			#emit PUSH.S      playerid
-			#emit PUSH.C      12
-			#emit LCTRL       6
-			#emit ADD.C       28
-			#emit PUSH.pri
-			#emit LOAD.pri    sIdx
-			#emit SCTRL       6
-			#emit STOR.pri    sIdx
-			CallRemoteFunction("OnPlayerCommandPerformed", "isii", playerid, cmdtext, sIdx, 0);
-			return sIdx;
-	}
-	return 0;
+	return Command_ReProcess(playerid, cmdtext, 0);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -629,8 +715,11 @@ foreign Command_ReProcess(p,string:c[],h);
 
 global Command_ReProcess(p,string:c[],h)
 {
+	static
+		e_COMMAND_ERRORS:sErr;
+	if (!IsPlayerConnected(playerid)) return Command_OnReceived(p, c, NO_PLAYER);
+	if (PA_Get(YSI_g_sDisabledPlayers, p)) return Command_OnReceived(p, c, DISABLED);
 	P:1("Commands_OnPlayerCommandText called: %d %s", p, c);
-	CallRemoteFunction("OnPlayerCommandReceived", "isi", p, c, h);
 	static
 		sCmd[64] = "@yC_",
 		sPos,
@@ -642,44 +731,46 @@ global Command_ReProcess(p,string:c[],h)
 	// Find the command in the array.
 	sIdx = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
 	P:5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd[4], sPos, sHash, sIdx);
-	if (sIdx == COMMAND_NOT_FOUND) return 0;
+	if (sIdx == COMMAND_NOT_FOUND) return Command_OnReceived(p, c, NOT_FOUND);
 	// Can the player use this command?
 	if (_Command_GetPlayer(sIdx, p))
 	{
+		if (!Command_OnReceived(p, c, OK)) return 0;
 		#if YSIM_HAS_MASTER
+			// This is in another script, or multiple scripts.
 			static
 				sMasters;
 			sMasters = _:MASTER_GET<sIdx>;
-			// This is in another script, or multiple scripts.
 			if (sMasters)
 			{
 				// Call the command in another script.  If no particular script
 				// is set up as the "master", call it in the first one found...
 				if (c[sPos]) sIdx = CallRemoteFunction(sCmd, "isii", p, c[sPos], h, Cell_GetLowestBit(sMasters));
 				else sIdx = CallRemoteFunction(sCmd, "isii", p, NULL, h, Cell_GetLowestBit(sMasters));
-				CallRemoteFunction("OnPlayerCommandPerformed", "isi", p, c, sIdx);
-				return sIdx;
 			}
+			else
 		#endif
-			// In this script.
-			sIdx = YSI_g_sCommands[sIdx][E_COMMAND_POINTER];
-			#emit PUSH.S      h
-			#emit LOAD.pri    sPos
-			#emit LOAD.S.alt  c
-			#emit IDXADDR
-			#emit PUSH.pri
-			#emit PUSH.S      p
-			#emit PUSH.C      12
-			#emit LCTRL       6
-			#emit ADD.C       28
-			#emit PUSH.pri
-			#emit LOAD.pri    sIdx
-			#emit SCTRL       6
-			#emit STOR.pri    sIdx
-			CallRemoteFunction("OnPlayerCommandPerformed", "isii", p, c, sIdx, h);
-			return sIdx;
+			{
+				// In this script.
+				sIdx = YSI_g_sCommands[sIdx][E_COMMAND_POINTER];
+				#emit PUSH.S      h
+				#emit LOAD.pri    sPos
+				#emit LOAD.S.alt  c
+				#emit IDXADDR
+				#emit PUSH.pri
+				#emit PUSH.S      p
+				#emit PUSH.C      12
+				#emit LCTRL       6
+				#emit ADD.C       28
+				#emit PUSH.pri
+				#emit LOAD.pri    sIdx
+				#emit SCTRL       6
+				#emit STOR.pri    sIdx
+			}
+			if (YSI_g_sCommandFlags & e_COMM_FLAG_OPCP) sIdx = CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, p, c, sIdx);
+			return Command_Error(p, e_COMMAND_ERRORS:sIdx);
 	}
-	return 0;
+	return Command_OnReceived(p, c, DENIED);
 }
 
 /**--------------------------------------------------------------------------**\
