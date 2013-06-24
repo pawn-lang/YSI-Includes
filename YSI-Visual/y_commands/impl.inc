@@ -432,37 +432,39 @@ mhook OnPlayerCommandText(playerid, cmdtext[])
 	// Can the player use this command?
 	if (_Command_GetPlayer(sIdx, playerid))
 	{
-		static
-			sMasters;
-		sMasters = _:MASTER_GET<sIdx>;
-		// This is in another script.
-		if (sMasters)
-		{
-			// Call the command in another script.  If no particular script is
-			// set up as the "master", call it in the first one found...
-			if (cmdtext[sPos]) sIdx = CallRemoteFunction(sCmd, "isii", playerid, cmdtext[sPos], 0, Cell_GetLowestBit(sMasters));
-			else sIdx = CallRemoteFunction(sCmd, "isii", playerid, NULL, 0, Cell_GetLowestBit(sMasters));
-			CallRemoteFunction("OnPlayerCommandPerformed", "isi", playerid, cmdtext, sIdx);
-		}
-		else
-		{
-			// In this script.
-			sIdx = YSI_g_sCommands[sIdx][E_COMMAND_POINTER];
-			#emit PUSH.C      0
-			#emit LOAD.pri    sPos
-			#emit LOAD.S.alt  cmdtext
-			#emit IDXADDR
-			#emit PUSH.pri
-			#emit PUSH.S      playerid
-			#emit PUSH.C      12
-			#emit LCTRL       6
-			#emit ADD.C       28
-			#emit PUSH.pri
-			#emit LOAD.pri    sIdx
-			#emit SCTRL       6
-			#emit STOR.pri    sIdx
-			CallRemoteFunction("OnPlayerCommandPerformed", "isi", playerid, cmdtext, sIdx);
-		}
+		#if YSIM_HAS_MASTER
+			static
+				sMasters;
+			sMasters = _:MASTER_GET<sIdx>;
+			// This is in another script.
+			if (sMasters)
+			{
+				// Call the command in another script.  If no particular script
+				// is set up as the "master", call it in the first one found...
+				if (cmdtext[sPos]) sIdx = CallRemoteFunction(sCmd, "isii", playerid, cmdtext[sPos], 0, Cell_GetLowestBit(sMasters));
+				else sIdx = CallRemoteFunction(sCmd, "isii", playerid, NULL, 0, Cell_GetLowestBit(sMasters));
+				CallRemoteFunction("OnPlayerCommandPerformed", "isi", playerid, cmdtext, sIdx);
+			}
+			else
+		#endif
+			{
+				// In this script.
+				sIdx = YSI_g_sCommands[sIdx][E_COMMAND_POINTER];
+				#emit PUSH.C      0
+				#emit LOAD.pri    sPos
+				#emit LOAD.S.alt  cmdtext
+				#emit IDXADDR
+				#emit PUSH.pri
+				#emit PUSH.S      playerid
+				#emit PUSH.C      12
+				#emit LCTRL       6
+				#emit ADD.C       28
+				#emit PUSH.pri
+				#emit LOAD.pri    sIdx
+				#emit SCTRL       6
+				#emit STOR.pri    sIdx
+				CallRemoteFunction("OnPlayerCommandPerformed", "isi", playerid, cmdtext, sIdx);
+			}
 	}
 	return 0;
 }
