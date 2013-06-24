@@ -161,8 +161,7 @@ Compile options:
 	MAX_COMMANDS - The maximum number of commands which can be used.
 \**--------------------------------------------------------------------------**/
 
-
-
+#include "..\YSI-Internal\y_version"
 
 #define MAX_COMMAND_LENGTH              (32)
 
@@ -172,22 +171,23 @@ Compile options:
 	#define MAX_COMMANDS                (512)
 #endif
 
+// Set commands as master 25.
 #define MASTER 25
 #include "..\YSI-Core\y_master"
 
+// Misc includes.
 #include "..\YSI-Storage\y_amx"
 #include "..\YSI-Coding\y_hooks"
-
 #include "..\YSI-Data\y_hashmap"
 #include "..\YSI-Data\y_playerarray"
 #include "..\YSI-Server\y_punycode"
 
+// Include the group functions (maybe).
 #define _GROUP_MAKE_NAME<%0...%1> %0Command%1
 #define _GROUP_MAKE_LIMIT         MAX_COMMANDS
-
 #include "..\YSI-Players\y_groups\_funcs"
 
-
+// Include the main implementation.
 #include "y_commands/impl"
 
 #if defined YSI_TESTS
@@ -195,8 +195,7 @@ Compile options:
 	#include "y_commands/tests"
 #endif
 
+// Restore previous settings.
 #undef _GROUP_MAKE_LIMIT
 #undef _GROUP_MAKE_NAME
-
-#define YSIM_POP 
 #include "..\YSI-Core\y_master"
