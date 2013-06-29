@@ -144,7 +144,7 @@ static stock const
 	-
 </returns>
 <remarks>
-	Takes a unicode string and converts it to punycode.
+	Takes a punycode string and converts it to unicode.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -216,7 +216,7 @@ stock Puny_Decode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 	-
 </returns>
 <remarks>
-	Takes a punycode string and converts it to unicode.
+	Takes a unicode string and converts it to punycode.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -295,28 +295,34 @@ stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 	-
 </returns>
 <remarks>
-	Takes a punycode string and converts it to unicode.
+	Takes a unicode string and converts it to punycode, while at the same time
+	generating a Bernstein hash of the string.  CASE INSENSITIVE.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
 stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), const delimiter = PUNY_CHAR)
 {
 	new
+		ch,
 		widx,
 		rlen;
 	--wlen,
 	hash = -1;
-	for (new ch, bool:bb = true; ; ++rlen)
+	for (new bool:bb = true; ; ++rlen)
 	{
 		if ((ch = src[rlen]) <= '~')
 		{
 			if (ch <= ' ')
 			{
-				if (bb)	return
+				if (bb)
+				{
+					return
 						dst[widx] = '\0',
 						widx;
+				}
 				break;
 			}
+			ch = tolower(ch),
 			dst[widx++] = ch,
 			hash = hash * 33 + ch;
 		}
@@ -342,10 +348,11 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 			m = cellmax;
 		for (new ridx = 0; ridx != rlen; ++ridx)
 		{
-			if (n <= src[ridx] < m)
+			ch = tolower(src[ridx]);
+			if (n <= ch < m)
 			{
 				// Find the lowest Unicode character.
-				m = src[ridx];
+				m = ch;
 			}
 		}
 		// Make sure the number isn't too big to encode.
@@ -355,11 +362,12 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 		n = m;
 		for (new ridx = 0; ridx != rlen; ++ridx)
 		{
-			if (src[ridx] < n)
+			ch = tolower(src[ridx]);
+			if (ch < n)
 			{
 				if (++delta == 0) return (dst[widx] = '\0'), -1;
 			}
-			else if (src[ridx] == n)
+			else if (ch == n)
 			{
 				widx += Puny_EncodeVarHash(bias, delta, dst[widx], wlen - widx, hash),
 				++codePointsWritten,
@@ -593,4 +601,8 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 #undef _Puny_Basic
 #undef PUNY_BASE
 #undef PUNY_CHAR
-#undef PUNY_INVL
+
+#if defined YSI_TESTS
+	#include "..\YSI-Core\y_testing"
+	#include "y_punycode/tests"
+#endif
