@@ -93,13 +93,7 @@ Definitions:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-// So I can quickly change HashMap hash settings.
-#define HashMap_Hash(%0,%1);                                                    \
-	{                                                                           \
-		%1 = -1, I@ = -1;                                                       \
-		if(%0[0] > 255) while ((J@ = %0{++I@})) %1 = %1 * 33 + J@;              \
-		else while ((J@ = %0[++I@])) %1 = %1 * 33 + J@;                         \
-	}
+#define HashMap_Hash(%0,%1) (%1=YHash(%0))
 
 /**--------------------------------------------------------------------------**\
 <summary>HashMap_Init</summary>
@@ -214,7 +208,7 @@ stock bool:HashMap_Add(HashMap:m<>, const str[], const value)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock HashMap_Get(HashMap:m<>, const str[])
+stock HashMap_Get(HashMap:m<>, const str[], bool:ignorecase = false)
 {
 	static
 		hash,
@@ -233,7 +227,7 @@ stock HashMap_Get(HashMap:m<>, const str[])
 			P:6("HashMap_Get: Candidate %d: %d == %d", (ptr - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2], AMX_Read(ptr + 4), hash);
 			// Maybe collisions.
 			#emit PUSH.C      0x7FFFFFFF
-			#emit PUSH.C      0
+			#emit PUSH.S      ignorecase
 			#emit PUSH.S      str
 			#emit LOAD.S.pri  m
 			#emit ADD.C       1036 // 256 * 4 + 3 * 4
@@ -267,7 +261,7 @@ stock HashMap_Get(HashMap:m<>, const str[])
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock HashMap_GetWithHash(HashMap:m<>, const str[], hash)
+stock HashMap_GetWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = false)
 {
 	static
 		res;
@@ -284,7 +278,7 @@ stock HashMap_GetWithHash(HashMap:m<>, const str[], hash)
 			P:6("HashMap_Get: Candidate %d: %d == %d", (ptr - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2], AMX_Read(ptr + 4), hash);
 			// Maybe collisions.
 			#emit PUSH.C      0x7FFFFFFF
-			#emit PUSH.C      0
+			#emit PUSH.S      ignorecase
 			#emit PUSH.S      str
 			#emit LOAD.S.pri  m
 			#emit ADD.C       1036 // 256 * 4 + 3 * 4

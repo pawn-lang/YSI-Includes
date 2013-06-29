@@ -141,6 +141,23 @@ Test:y_hashmap_Get100()
 	}
 }
 
+Test:y_hashmap_Get100Hash()
+{
+	new HashMap:m<>;
+	new data[100][E_HASH_MAP_TEST];
+	HashMap_Init(m, data);
+	for (new i = 0, str[6]; i != 100; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		HashMap_Add(m, str, i);
+	}
+	for (new i = 0, str[6]; i != 100; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		ASSERT(HashMap_Get(m, str) == i);
+	}
+}
+
 Test:y_hashmap_Remove50()
 {
 	new HashMap:m<>;
