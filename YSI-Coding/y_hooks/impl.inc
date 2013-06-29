@@ -566,7 +566,8 @@ static stock const
 	YSI_gscOnPlayerEnterDynRaceCP [32 char] = !"OnPlayerEnterDynamicRaceCP",
 	YSI_gscOnPlayerLeaveDynRaceCP [32 char] = !"OnPlayerLeaveDynamicRaceCP",
 	YSI_gscOnPlayerEnterDynArea   [32 char] = !"OnPlayerEnterDynamicArea",
-	YSI_gscOnPlayerLeaveDynArea   [32 char] = !"OnPlayerLeaveDynamicArea";
+	YSI_gscOnPlayerLeaveDynArea   [32 char] = !"OnPlayerLeaveDynamicArea",
+	YSI_gscOnScriptExit           [32 char] = !"ScriptInit_OnScriptExit";
 
 _Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
 {
@@ -607,7 +608,7 @@ _Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
 	else if (!strcmp(ref, !"OnFilterScriptInit")) ret = !"S@@_OnFilterScriptInit";
 	else if (!strcmp(ref, !"OnScriptInit"))       ret = !"S@@_OnScriptInit";
 	// Specially named exit point.
-	else if (!strcmp(ref, !"OnScriptExit"))       ret = !"ScriptInit_OnScriptExit";
+	else if (!strcmp(ref, !"OnScriptExit"))       ret = YSI_gscOnScriptExit;
 	return ret;
 }
 
@@ -758,6 +759,14 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 			idx -= AMX_BASE_ADDRESS,
 			AMX_Write(original + 4, idx);
 		}
+		else if (!strcmp(ref2, YSI_gscOnScriptExit))
+		{
+			Hooks_ForceReverse(YSI_gscOnScriptExit);
+			#emit CONST.pri  YSI_gscOnScriptExit
+			#emit STOR.S.pri idx
+			idx -= AMX_BASE_ADDRESS,
+			AMX_Write(original + 4, idx);
+		}
 		else
 		{
 			P:5("Hooks_GetSame: WRITE: %08x %08x: %s (%d)", AMX_Read(original + 4), AMX_Read(AMX_BASE_ADDRESS + AMX_Read(original + 4)), unpack(ref2), idx);
@@ -778,9 +787,9 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 		// "CallLocalFunction" but that caused issues with "y_malloc".
 		switch (init)
 		{
-			case 1: YSI_g_sOnScriptInit = idx;
-			case 2: YSI_g_sOnFilterScriptInit = idx;
-			case 4: YSI_g_sOnGameModeInit = idx;
+			case 0b0001: YSI_g_sOnScriptInit = idx;
+			case 0b0010: YSI_g_sOnFilterScriptInit = idx;
+			case 0b0100: YSI_g_sOnGameModeInit = idx;
 		}
 		YSI_g_sCodeSpace += entry;
 	}
@@ -789,9 +798,9 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 		idx = AMX_Read(original);
 		switch (init)
 		{
-			case 1: YSI_g_sOnScriptInit = idx;
-			case 2: YSI_g_sOnFilterScriptInit = idx;
-			case 4: YSI_g_sOnGameModeInit = idx;
+			case 0b0001: YSI_g_sOnScriptInit = idx;
+			case 0b0010: YSI_g_sOnFilterScriptInit = idx;
+			case 0b0100: YSI_g_sOnGameModeInit = idx;
 		}
 	}
 }
