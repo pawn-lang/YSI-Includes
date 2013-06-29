@@ -83,7 +83,7 @@ Definitions:
 #define _H_0(%0) HASH@bernstein(%0))
 #define _H_2(%0) HASHi@bernstein(%0))
 // New.
-#define _H_1:_H_0<%0> H_Pb:@Ba:H_Nba(%0)<-1|||
+#define _H_1:_H_0<%0> _:hb:@Ba:H_Nba(-1,%0)
 #define _H_3:_H_2<%0> @Ca:H_Nca(%0)<-1|||
 
 // Entry.
@@ -145,80 +145,88 @@ Definitions:
 //  Case sensitive 
 // ================
 
+/*
 #define hb:H_Sb(%0,%1£%2,%9,%3)[%4]{%5}<%6<%7||| hb:H_Sb(%0%1£,%2,%9,%3)[%4]{%5<%6}<%7|||
 #define H_Sb(%0,%1,%9,%3)[%4]{%5}<%6||| @B%9:H_Nb%9(%0%1£%3)%5<%4<%6|||
 #define H_Eb:H_Rb<%0<%1||| (%0_:H_Eb:H_Rb<%1|||)
 #define H_Rb<%1||| (%1))
 #define H_Db(%1,%9,%2,%8) hb:H_Sb(,%1,%9,%2)[%8+33*]{}
+*/
+
+// Do the single addition.
+#define H_Db(%2,%9,%0,%1) (_:hb:@Ba:H_Nba(%2*33+%1,%0))
+
+// Test for the end of a string.
+#define hb:@Ba:H_Nba(%1,) %1
 
 // Test for the current character.
-#define @Ba:H_Nba(%1a%0) H_Db(%1,a,%0,97)
-#define @Bb:H_Nbb(%1b%0) H_Db(%1,b,%0,98)
-#define @Bc:H_Nbc(%1c%0) H_Db(%1,c,%0,99)
-#define @Bd:H_Nbd(%1d%0) H_Db(%1,d,%0,100)
-#define @Be:H_Nbe(%1e%0) H_Db(%1,e,%0,101)
-#define @Bf:H_Nbf(%1f%0) H_Db(%1,f,%0,102)
-#define @Bg:H_Nbg(%1g%0) H_Db(%1,g,%0,103)
-#define @Bh:H_Nbh(%1h%0) H_Db(%1,h,%0,104)
-#define @Bi:H_Nbi(%1i%0) H_Db(%1,i,%0,105)
-#define @Bj:H_Nbj(%1j%0) H_Db(%1,j,%0,106)
-#define @Bk:H_Nbk(%1k%0) H_Db(%1,k,%0,107)
-#define @Bl:H_Nbl(%1l%0) H_Db(%1,l,%0,108)
-#define @Bm:H_Nbm(%1m%0) H_Db(%1,m,%0,109)
-#define @Bn:H_Nbn(%1n%0) H_Db(%1,n,%0,110)
-#define @Bo:H_Nbo(%1o%0) H_Db(%1,o,%0,111)
-#define @Bp:H_Nbp(%1p%0) H_Db(%1,p,%0,112)
-#define @Bq:H_Nbq(%1q%0) H_Db(%1,q,%0,113)
-#define @Br:H_Nbr(%1r%0) H_Db(%1,r,%0,114)
-#define @Bs:H_Nbs(%1s%0) H_Db(%1,s,%0,115)
-#define @Bt:H_Nbt(%1t%0) H_Db(%1,t,%0,116)
-#define @Bu:H_Nbu(%1u%0) H_Db(%1,u,%0,117)
-#define @Bv:H_Nbv(%1v%0) H_Db(%1,v,%0,118)
-#define @Bw:H_Nbw(%1w%0) H_Db(%1,w,%0,119)
-#define @Bx:H_Nbx(%1x%0) H_Db(%1,x,%0,120)
-#define @By:H_Nby(%1y%0) H_Db(%1,y,%0,121)
-#define @Bz:H_Nbz(%1z%0) H_Db(%1,z,%0,122)
+#define @Ba:H_Nba(%1,a%0) H_Db(%1,a,%0,97)
+#define @Bb:H_Nbb(%1,b%0) H_Db(%1,b,%0,98)
+#define @Bc:H_Nbc(%1,c%0) H_Db(%1,c,%0,99)
+#define @Bd:H_Nbd(%1,d%0) H_Db(%1,d,%0,100)
+#define @Be:H_Nbe(%1,e%0) H_Db(%1,e,%0,101)
+#define @Bf:H_Nbf(%1,f%0) H_Db(%1,f,%0,102)
+#define @Bg:H_Nbg(%1,g%0) H_Db(%1,g,%0,103)
+#define @Bh:H_Nbh(%1,h%0) H_Db(%1,h,%0,104)
+#define @Bi:H_Nbi(%1,i%0) H_Db(%1,i,%0,105)
+#define @Bj:H_Nbj(%1,j%0) H_Db(%1,j,%0,106)
+#define @Bk:H_Nbk(%1,k%0) H_Db(%1,k,%0,107)
+#define @Bl:H_Nbl(%1,l%0) H_Db(%1,l,%0,108)
+#define @Bm:H_Nbm(%1,m%0) H_Db(%1,m,%0,109)
+#define @Bn:H_Nbn(%1,n%0) H_Db(%1,n,%0,110)
+#define @Bo:H_Nbo(%1,o%0) H_Db(%1,o,%0,111)
+#define @Bp:H_Nbp(%1,p%0) H_Db(%1,p,%0,112)
+#define @Bq:H_Nbq(%1,q%0) H_Db(%1,q,%0,113)
+#define @Br:H_Nbr(%1,r%0) H_Db(%1,r,%0,114)
+#define @Bs:H_Nbs(%1,s%0) H_Db(%1,s,%0,115)
+#define @Bt:H_Nbt(%1,t%0) H_Db(%1,t,%0,116)
+#define @Bu:H_Nbu(%1,u%0) H_Db(%1,u,%0,117)
+#define @Bv:H_Nbv(%1,v%0) H_Db(%1,v,%0,118)
+#define @Bw:H_Nbw(%1,w%0) H_Db(%1,w,%0,119)
+#define @Bx:H_Nbx(%1,x%0) H_Db(%1,x,%0,120)
+#define @By:H_Nby(%1,y%0) H_Db(%1,y,%0,121)
+#define @Bz:H_Nbz(%1,z%0) H_Db(%1,z,%0,122)
 
-#define @BA:H_NbA(%1A%0) H_Db(%1,A,%0,65)
-#define @BB:H_NbB(%1B%0) H_Db(%1,B,%0,66)
-#define @BC:H_NbC(%1C%0) H_Db(%1,C,%0,67)
-#define @BD:H_NbD(%1D%0) H_Db(%1,D,%0,68)
-#define @BE:H_NbE(%1E%0) H_Db(%1,E,%0,69)
-#define @BF:H_NbF(%1F%0) H_Db(%1,F,%0,70)
-#define @BG:H_NbG(%1G%0) H_Db(%1,G,%0,71)
-#define @BH:H_NbH(%1H%0) H_Db(%1,H,%0,72)
-#define @BI:H_NbI(%1I%0) H_Db(%1,I,%0,73)
-#define @BJ:H_NbJ(%1J%0) H_Db(%1,J,%0,74)
-#define @BK:H_NbK(%1K%0) H_Db(%1,K,%0,75)
-#define @BL:H_NbL(%1L%0) H_Db(%1,L,%0,76)
-#define @BM:H_NbM(%1M%0) H_Db(%1,M,%0,77)
-#define @BN:H_NbN(%1N%0) H_Db(%1,N,%0,78)
-#define @BO:H_NbO(%1O%0) H_Db(%1,O,%0,79)
-#define @BP:H_NbP(%1P%0) H_Db(%1,P,%0,80)
-#define @BQ:H_NbQ(%1Q%0) H_Db(%1,Q,%0,81)
-#define @BR:H_NbR(%1R%0) H_Db(%1,R,%0,82)
-#define @BS:H_NbS(%1S%0) H_Db(%1,S,%0,83)
-#define @BT:H_NbT(%1T%0) H_Db(%1,T,%0,84)
-#define @BU:H_NbU(%1U%0) H_Db(%1,U,%0,85)
-#define @BV:H_NbV(%1V%0) H_Db(%1,V,%0,86)
-#define @BW:H_NbW(%1W%0) H_Db(%1,W,%0,87)
-#define @BX:H_NbX(%1X%0) H_Db(%1,X,%0,88)
-#define @BY:H_NbY(%1Y%0) H_Db(%1,Y,%0,89)
-#define @BZ:H_NbZ(%1Z%0) H_Db(%1,Z,%0,90)
+#define @BA:H_NbA(%1,A%0) H_Db(%1,A,%0,65)
+#define @BB:H_NbB(%1,B%0) H_Db(%1,B,%0,66)
+#define @BC:H_NbC(%1,C%0) H_Db(%1,C,%0,67)
+#define @BD:H_NbD(%1,D%0) H_Db(%1,D,%0,68)
+#define @BE:H_NbE(%1,E%0) H_Db(%1,E,%0,69)
+#define @BF:H_NbF(%1,F%0) H_Db(%1,F,%0,70)
+#define @BG:H_NbG(%1,G%0) H_Db(%1,G,%0,71)
+#define @BH:H_NbH(%1,H%0) H_Db(%1,H,%0,72)
+#define @BI:H_NbI(%1,I%0) H_Db(%1,I,%0,73)
+#define @BJ:H_NbJ(%1,J%0) H_Db(%1,J,%0,74)
+#define @BK:H_NbK(%1,K%0) H_Db(%1,K,%0,75)
+#define @BL:H_NbL(%1,L%0) H_Db(%1,L,%0,76)
+#define @BM:H_NbM(%1,M%0) H_Db(%1,M,%0,77)
+#define @BN:H_NbN(%1,N%0) H_Db(%1,N,%0,78)
+#define @BO:H_NbO(%1,O%0) H_Db(%1,O,%0,79)
+#define @BP:H_NbP(%1,P%0) H_Db(%1,P,%0,80)
+#define @BQ:H_NbQ(%1,Q%0) H_Db(%1,Q,%0,81)
+#define @BR:H_NbR(%1,R%0) H_Db(%1,R,%0,82)
+#define @BS:H_NbS(%1,S%0) H_Db(%1,S,%0,83)
+#define @BT:H_NbT(%1,T%0) H_Db(%1,T,%0,84)
+#define @BU:H_NbU(%1,U%0) H_Db(%1,U,%0,85)
+#define @BV:H_NbV(%1,V%0) H_Db(%1,V,%0,86)
+#define @BW:H_NbW(%1,W%0) H_Db(%1,W,%0,87)
+#define @BX:H_NbX(%1,X%0) H_Db(%1,X,%0,88)
+#define @BY:H_NbY(%1,Y%0) H_Db(%1,Y,%0,89)
+#define @BZ:H_NbZ(%1,Z%0) H_Db(%1,Z,%0,90)
 
-#define @B0:H_Nb0(%10%0) H_Db(%1,0,%0,48)
-#define @B1:H_Nb1(%11%0) H_Db(%1,1,%0,49)
-#define @B2:H_Nb2(%12%0) H_Db(%1,2,%0,50)
-#define @B3:H_Nb3(%13%0) H_Db(%1,3,%0,51)
-#define @B4:H_Nb4(%14%0) H_Db(%1,4,%0,52)
-#define @B5:H_Nb5(%15%0) H_Db(%1,5,%0,53)
-#define @B6:H_Nb6(%16%0) H_Db(%1,6,%0,54)
-#define @B7:H_Nb7(%17%0) H_Db(%1,7,%0,55)
-#define @B8:H_Nb8(%18%0) H_Db(%1,8,%0,56)
-#define @B9:H_Nb9(%19%0) H_Db(%1,9,%0,57)
+#define @B0:H_Nb0(%1,0%0) H_Db(%1,0,%0,48)
+#define @B1:H_Nb1(%1,1%0) H_Db(%1,1,%0,49)
+#define @B2:H_Nb2(%1,2%0) H_Db(%1,2,%0,50)
+#define @B3:H_Nb3(%1,3%0) H_Db(%1,3,%0,51)
+#define @B4:H_Nb4(%1,4%0) H_Db(%1,4,%0,52)
+#define @B5:H_Nb5(%1,5%0) H_Db(%1,5,%0,53)
+#define @B6:H_Nb6(%1,6%0) H_Db(%1,6,%0,54)
+#define @B7:H_Nb7(%1,7%0) H_Db(%1,7,%0,55)
+#define @B8:H_Nb8(%1,8%0) H_Db(%1,8,%0,56)
+#define @B9:H_Nb9(%1,9%0) H_Db(%1,9,%0,57)
 
-#define @B_:H_Nb_(%1_%0) H_Db(%1,_,%0,95)
-//#define hb@:H_Sb(@%0,%1) H_Db(%0)
+#define @B_:H_Nb_(_%0) H_Db(,_,%0,95)
+//#define hb@:H_Sb(@%0,) H_Db(%0)
 
 // Find the next character to test.
 #define H_Nba(%0) @Bb:H_Nbb(%0)
@@ -420,7 +428,7 @@ Definitions:
 #define H_NcW(%0) @CX:H_NcX(%0)
 #define H_NcX(%0) @CY:H_NcY(%0)
 #define H_NcY(%0) @CZ:H_NcZ(%0)
-#define H_NcZ(%0) H_EC:H_RC
+#define H_NcZ(%0) H_Ec:H_Rc
 
 #define H_Nc0(%0) @C1:H_Nc1(%0)
 #define H_Nc1(%0) @C2:H_Nc2(%0)
@@ -1624,20 +1632,22 @@ enum e_HASH_TYPE
 
 native Hash(str[]);
 
+	NOW FORWARD AGAIN.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
 stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstein, len = -1, pack = false)
 {
+	#pragma unused pack
 	P:3("YHash called: \"%s\", %i, %i, %i, %i", str, _:sensitive, _:type, len, pack);
 	
-	pack = str[0] > 255;
-
-	if (len == -1)
-	{
-		len = strlen(str);
-	}
-	if (pack)
+	//pack = str[0] > 255;
+	
+	if (len < 0) len = strlen(str);
+	else len = min(len, strlen(str));
+	new
+		i = 0;
+	if (str[0] > 255)
 	{
 		switch (type)
 		{
@@ -1647,22 +1657,16 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 					hash = -1;
 				if (sensitive)
 				{
-					while (len--)
+					while (i != len)
 					{
-						hash = hash * 33 + str{len};
+						hash = hash * 33 + str{i++};
 					}
 				}
 				else
 				{
-					while (len--)
+					while (i != len)
 					{
-						new
-							ch = str{len};
-						if ('a' <= ch <= 'z')
-						{
-							ch &= ~0x20;
-						}
-						hash = hash * 33 + ch;
+						hash = hash * 33 + toupper(str{i++});
 					}
 				}
 				return hash;
@@ -1673,22 +1677,16 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 					hash = 2166136261;
 				if (sensitive)
 				{
-					while (len--)
+					while (i != len)
 					{
-						hash = hash * 16777619 ^ str{len};
+						hash = hash * 16777619 ^ str{i++};
 					}
 				}
 				else
 				{
-					while (len--)
+					while (i != len)
 					{
-						new
-							ch = str{len};
-						if ('a' <= ch <= 'z')
-						{
-							ch &= ~0x20;
-						}
-						hash = hash * 16777619 ^ ch;
+						hash = hash * 16777619 ^ toupper(str{i++});
 					}
 				}
 				return hash;
@@ -1699,22 +1697,16 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 					hash = 2166136261;
 				if (sensitive)
 				{
-					while (len--)
+					while (i != len)
 					{
-						hash = (hash ^ str{len}) * 16777619;
+						hash = (hash ^ str{i++}) * 16777619;
 					}
 				}
 				else
 				{
-					while (len--)
+					while (i != len)
 					{
-						new
-							ch = str{len};
-						if ('a' <= ch <= 'z')
-						{
-							ch &= ~0x20;
-						}
-						hash = (hash ^ ch) * 16777619;
+						hash = (hash ^ toupper(str{i++})) * 16777619;
 					}
 				}
 				return hash;
@@ -1731,22 +1723,17 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 					hash = -1;
 				if (sensitive)
 				{
-					while (len--)
+					while (i != len)
 					{
-						hash = hash * 33 + str[len];
+						hash = hash * 33 + str[i++];
 					}
 				}
 				else
 				{
-					while (len--)
+					while (i != len)
 					{
-						new
-							ch = str[len];
-						if ('a' <= ch <= 'z')
-						{
-							ch &= ~0x20;
-						}
-						hash = hash * 33 + ch;
+						//printf("hash: %d, old: %d, add: %d", hash, str[i], toupper(str[i]));
+						hash = hash * 33 + toupper(str[i++]);
 					}
 				}
 				return hash;
@@ -1757,22 +1744,16 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 					hash = 2166136261;
 				if (sensitive)
 				{
-					while (len--)
+					while (i != len)
 					{
-						hash = hash * 16777619 ^ str[len];
+						hash = hash * 16777619 ^ str[i++];
 					}
 				}
 				else
 				{
-					while (len--)
+					while (i != len)
 					{
-						new
-							ch = str[len];
-						if ('a' <= ch <= 'z')
-						{
-							ch &= ~0x20;
-						}
-						hash = hash * 16777619 ^ ch;
+						hash = hash * 16777619 ^ toupper(str[i++]);
 					}
 				}
 				return hash;
@@ -1783,22 +1764,16 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 					hash = 2166136261;
 				if (sensitive)
 				{
-					while (len--)
+					while (i != len)
 					{
-						hash = (hash ^ str[len]) * 16777619;
+						hash = (hash ^ str[i++]) * 16777619;
 					}
 				}
 				else
 				{
-					while (len--)
+					while (i != len)
 					{
-						new
-							ch = str[len];
-						if ('a' <= ch <= 'z')
-						{
-							ch &= ~0x20;
-						}
-						hash = (hash ^ ch) * 16777619;
+						hash = (hash ^ toupper(str[i++])) * 16777619;
 					}
 				}
 				return hash;
@@ -1807,3 +1782,8 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 	}
 	return -1;
 }
+
+#if defined YSI_TESTS
+	#include "..\YSI-Core\y_testing"
+	#include "y_stringhash/tests"
+#endif
