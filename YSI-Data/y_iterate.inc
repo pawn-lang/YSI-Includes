@@ -643,10 +643,9 @@ static stock
 		//}
 		P:2("Iter_OnPlayerConnect end");
 		#if defined Itter_OnPlayerConnect
-			return Itter_OnPlayerConnect(playerid);
-		#else
-			return 1;
+			Itter_OnPlayerConnect(playerid);
 		#endif
+		return 1;
 	}
 	
 	#if defined _ALS_OnPlayerConnect
@@ -742,10 +741,9 @@ static stock
 		Player@YSII_Ag[lastPlayer] = MAX_PLAYERS;
 		//CallLocalFunction("Itter_OnFilterScriptInit", YSI_gsSpecifier@);
 		#if defined Itter_OnFilterScriptInit
-			return Itter_OnFilterScriptInit();
-		#else
-			return 1;
+			Itter_OnFilterScriptInit();
 		#endif
+		return 1;
 	}
 	
 	#if defined _ALS_OnFilterScriptInit
@@ -906,10 +904,9 @@ static stock
 	{
 		SetTimerEx("Itter_OPDCInternal", 0, false, "i", playerid);
 		#if defined Itter_OnPlayerDisconnect
-			return Itter_OnPlayerDisconnect(playerid, reason);
-		#else
-			return 1;
+			Itter_OnPlayerDisconnect(playerid, reason);
 		#endif
+		return 1;
 	}
 	
 	#if defined _ALS_OnPlayerDisconnect

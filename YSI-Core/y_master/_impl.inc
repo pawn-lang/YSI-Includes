@@ -384,6 +384,7 @@ Natives:
 		// script ends.  Just to clarify - this function is NOT called _YCM,
 		// that is a macro which is expanded every time this file is included.
 		// m is also now client/stub.
+		
 		forward _YCM();
 		public _YCM() <_YCM:y>
 		{
