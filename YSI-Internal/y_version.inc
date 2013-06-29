@@ -110,9 +110,9 @@ Natives:
 
 #define YSI_VERSION_RESPO               2
 
-#define YSI_VERSION_MAJOR               1
-#define YSI_VERSION_MINOR               06
-#define YSI_VERSION_BUILD               0002
+#define YSI_VERSION_MAJOR               4
+#define YSI_VERSION_MINOR               00
+#define YSI_VERSION_BUILD               0001
 
 #define YSI_VERSION                     #YSI_VERSION_MAJOR "." #YSI_VERSION_MINOR "." #YSI_VERSION_BUILD
 

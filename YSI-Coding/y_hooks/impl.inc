@@ -606,6 +606,8 @@ _Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
 	else if (!strcmp(ref, !"OnGameModeInit"))     ret = !"S@@_OnGameModeInit";
 	else if (!strcmp(ref, !"OnFilterScriptInit")) ret = !"S@@_OnFilterScriptInit";
 	else if (!strcmp(ref, !"OnScriptInit"))       ret = !"S@@_OnScriptInit";
+	// Specially named exit point.
+	else if (!strcmp(ref, !"OnScriptExit"))       ret = !"ScriptInit_OnScriptExit";
 	return ret;
 }
 
@@ -645,7 +647,7 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 {
 	new
 		// Uugh, special cases!
-		init = (_:!strcmp(ref, !"OnGameModeInit") << 2) | (_:!strcmp(ref, !"OnFilterScriptInit") << 1) | (_:!strcmp(ref, !"OnScriptInit")),
+		init = (_:!strcmp(ref, !"OnScriptExit") << 3) | (_:!strcmp(ref, !"OnGameModeInit") << 2) | (_:!strcmp(ref, !"OnFilterScriptInit") << 1) | (_:!strcmp(ref, !"OnScriptInit")),
 		same[32],
 		sameCount = 3,
 		entry,

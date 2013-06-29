@@ -151,13 +151,13 @@ native _YSI_RE_NATIVE<K@|||const function[], time, repeat|||SetTimer>
 
 stock X@(GLOBAL_TAG_TYPES:n)
 {
-	P:3("X@ called: %i", n);
+	P:4("X@ called: %i", n);
 	setproperty(8, YSIM_RETURN, n);
 }
 
 stock Y@()
 {
-	P:3("Y@ called");
+	P:4("Y@ called");
 	new
 	    ret = getproperty(8, YSIM_CALLER);
 	setproperty(8, YSIM_CALLER, _@);
@@ -166,14 +166,14 @@ stock Y@()
 
 stock Z@(GLOBAL_TAG_TYPES:v = -1)
 {
-	P:3("Z@ called");
+	P:4("Z@ called");
 	setproperty(8, YSIM_CALLER, v);
 	return getproperty(8, YSIM_RETURN);
 }
 
 stock T@()
 {
-	P:3("T@ called");
+	P:4("T@ called");
 	setproperty(8, YSIM_CALLER, -1);
 }
 
@@ -181,7 +181,7 @@ new Q@[YSI_MAX_STRING];
 
 stock S@(GLOBAL_TAG_TYPES:v = -1)
 {
-	P:3("S@ called");
+	P:4("S@ called");
 	getproperty(8, "", YSIM_STRING, Q@);
 	strunpack(Q@, Q@);
 	setproperty(8, YSIM_CALLER, v);
@@ -190,7 +190,7 @@ stock S@(GLOBAL_TAG_TYPES:v = -1)
 
 stock R@(buffer[])
 {
-	P:3("R@ called: \"%s\"", buffer);
+	P:4("R@ called: \"%s\"", buffer);
 	return setproperty(8, "", YSIM_STRING, buffer);
 }
 
@@ -212,7 +212,7 @@ stock G@(GLOBAL_TAG_TYPES:...)
 
 stock F@()
 {
-	P:3("F@ called");
+	P:4("F@ called");
 	getproperty(8, "", YSIM_STRING, Q@);
 	strunpack(Q@, Q@);
 	return Q@;

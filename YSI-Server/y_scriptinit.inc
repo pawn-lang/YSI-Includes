@@ -199,9 +199,7 @@ forward _ScriptInit_FixState();
 #if defined FILTERSCRIPT
 	public OnFilterScriptExit()
 	{
-		#if defined ScriptInit_OnScriptExit
-			ScriptInit_OnScriptExit();
-		#endif
+		CallLocalFunction("ScriptInit_OnScriptExit", "");
 		#if defined ScriptInit_OnFilterScriptExit
 			new
 				ret = ScriptInit_OnFilterScriptExit();
@@ -231,9 +229,7 @@ forward _ScriptInit_FixState();
 	{
 		if (YSI_FILTERSCRIPT)
 		{
-			#if defined ScriptInit_OnScriptExit
-				ScriptInit_OnScriptExit();
-			#endif
+			CallLocalFunction("ScriptInit_OnScriptExit", "");
 			#if defined ScriptInit_OnFilterScriptExit
 				new
 					ret = ScriptInit_OnFilterScriptExit();
@@ -262,9 +258,7 @@ forward _ScriptInit_FixState();
 		}
 		else
 		{
-			#if defined ScriptInit_OnScriptExit
-				ScriptInit_OnScriptExit();
-			#endif
+			CallLocalFunction("ScriptInit_OnScriptExit", "");
 			#if defined ScriptInit_OnGameModeExit
 				new
 					ret = ScriptInit_OnGameModeExit();
@@ -310,9 +304,9 @@ forward _ScriptInit_FixState();
 
 #define OnScriptExit ScriptInit_OnScriptExit
 #define _ALS_OnScriptExit
-#if defined ScriptInit_OnScriptExit
-	forward ScriptInit_OnScriptExit();
-#endif
+// This DOESN'T use the better hook method as we need it to be called via a
+// public function pointer for y_hooks to work correctly on it.
+forward ScriptInit_OnScriptExit();
 
 #define _YSI_SpecialExit __YSI_SpecialExit
 #define _ALS__YSI_SpecialExit
