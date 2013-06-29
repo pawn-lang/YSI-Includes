@@ -138,7 +138,7 @@ enum e_COMMAND_ERRORS
 {
 	COMMAND_ZERO_RET,  // The command returned 0.
 	COMMAND_OK,        // Called corectly.
-	COMMAND_NOT_FOUND, // Command doesn't exist.
+	COMMAND_UNDEFINED, // Command doesn't exist.
 	COMMAND_DENIED,    // Can't use the command.
 	COMMAND_HIDDEN,    // Can't use the command, don't let them know it exists.
 	COMMAND_NO_PLAYER, // Used by a player who shouldn't exist.
@@ -162,9 +162,10 @@ enum e_COMMAND_FLAGS (<<= 1)
 }
 
 static stock
+	YSI_g_sReturnBuffer[YSI_MAX_STRING],
 	// Information for returning error messages.
 	e_COMMAND_FLAGS:YSI_g_sCommandFlags, //[E_COMMAND_ERRORS],
-	YSI_g_sErrorMessages[E_COMMAND_ERRORS][144],
+	YSI_g_sErrorMessages[e_COMMAND_ERRORS][144],
 	// Who has had ALL their commands disabled?
 	PlayerArray:YSI_g_sDisabledPlayers<MAX_PLAYERS>,
 	// Quickly reference and store commands by name.
@@ -221,10 +222,10 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 		#define Command_Error(%0,%2) (Command_ErrorMsg(%2)[0]?(SendClientMessage((%0),0xFF0000AA,Command_ErrorMsg(%2)),Command_ErrorRet(%2)):Command_ErrorRet(%2))
 	#endif
 #else
-	#define Command_Error(%0,%2) ((%2) == _:COMMAND_OK)
+	#define Command_Error(%0,%2) ((%2) == COMMAND_OK)
 #endif
 
-#define Command_OnReceived(%0,%1,%2) (sErr=((YSI_g_sCommandFlags&e_COMM_FLAG_OPCR)?W@(YSI_gscOPCR,YSI_gscISI,(%0),(%1),(COMMAND_%2)):(COMMAND_%2)),Command_Error(%0,sErr))
+#define Command_OnReceived(%0,%1,%2) (sErr=((YSI_g_sCommandFlags&e_COMM_FLAG_OPCR)?(e_COMMAND_ERRORS:W@(YSI_gscOPCR,YSI_gscISI,(%0),(%1),(_:COMMAND_%2))):(COMMAND_%2)),Command_Error(%0,sErr))
 
 /**--------------------------------------------------------------------------**\
 <summary>Command_IsValid</summary>
@@ -264,10 +265,9 @@ foreign string:Command_GetName(f);
 
 global string:Command_GetName(f)
 {
-	static
-		sFailRet[_:_E_COMMAND_PAD_0 - _:E_COMMAND_NAME];
-	if (_Command_IsValid(f)) return Command_Name(f);
-	return sFailRet;
+	YSI_g_sReturnBuffer[0] = '\0';
+	if (_Command_IsValid(f)) strunpack(YSI_g_sReturnBuffer, Command_Name(f));
+	return YSI_g_sReturnBuffer;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -299,9 +299,13 @@ hook OnScriptInit()
 	{
 		// Add the command name and pointer, but skip the leading "@yC_".
 		P:6("Command_OnScriptInit: Adding %d", entry);
-		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), buffer);
-		P:6("Command_OnScriptInit: Name %s", unpack(buffer[1]));
+		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), buffer),
+		buffer[0] = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00);
+		new
+			id2 = funcidx(buffer);
+		if (id2 != -1) entry = AMX_HEADER_PUBLICS + id2 * 8;
 		Command_Add(buffer[1], AMX_Read(entry));
+		P:6("Command_OnScriptInit: Name %s", unpack(buffer[1]));
 	}
 	if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();
 	if (funcidx(YSI_gscOPCP) != -1) Command_IncOPCP();
@@ -637,7 +641,7 @@ foreign void:Command_SetPlayerNamed(string:f[],p,bool:s);
 
 global void:Command_SetPlayerNamed(string:f[],p,bool:s)
 {
-	Command_SetPlayer(Command_Find(func), p, s);
+	Command_SetPlayer(Command_Find(f), p, s);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -669,7 +673,7 @@ foreign void:Command_RemoveNamed(string:func[]);
 
 global void:Command_RemoveNamed(string:func[])
 {
-	Command_Remove(Command_Find(func), func);
+	Command_Remove(Command_Find(func));
 }
 
 /**--------------------------------------------------------------------------**\
@@ -717,8 +721,10 @@ global Command_ReProcess(p,string:c[],h)
 {
 	static
 		e_COMMAND_ERRORS:sErr;
-	if (!IsPlayerConnected(playerid)) return Command_OnReceived(p, c, NO_PLAYER);
-	if (PA_Get(YSI_g_sDisabledPlayers, p)) return Command_OnReceived(p, c, DISABLED);
+	#if !defined Y_COMMANDS_NO_IPC
+		if (!IsPlayerConnected(p)) return Command_OnReceived(p, c,NO_PLAYER);
+	#endif
+	if (PA_Get(YSI_g_sDisabledPlayers, p)) return Command_OnReceived(p, c,DISABLED);
 	P:1("Commands_OnPlayerCommandText called: %d %s", p, c);
 	static
 		sCmd[64] = "@yC_",
@@ -731,11 +737,11 @@ global Command_ReProcess(p,string:c[],h)
 	// Find the command in the array.
 	sIdx = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
 	P:5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd[4], sPos, sHash, sIdx);
-	if (sIdx == COMMAND_NOT_FOUND) return Command_OnReceived(p, c, NOT_FOUND);
+	if (sIdx == COMMAND_NOT_FOUND) return Command_OnReceived(p, c,UNDEFINED);
 	// Can the player use this command?
 	if (_Command_GetPlayer(sIdx, p))
 	{
-		if (!Command_OnReceived(p, c, OK)) return 0;
+		if (!Command_OnReceived(p, c,OK)) return 0;
 		#if YSIM_HAS_MASTER
 			// This is in another script, or multiple scripts.
 			static
@@ -766,11 +772,12 @@ global Command_ReProcess(p,string:c[],h)
 				#emit LOAD.pri    sIdx
 				#emit SCTRL       6
 				#emit STOR.pri    sIdx
+				P:5("Command_ReProces: Result = %d %d %d", sIdx, Command_Error(p, e_COMMAND_ERRORS:sIdx), _:COMMAND_OK);
 			}
 			if (YSI_g_sCommandFlags & e_COMM_FLAG_OPCP) sIdx = CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, p, c, sIdx);
 			return Command_Error(p, e_COMMAND_ERRORS:sIdx);
 	}
-	return Command_OnReceived(p, c, DENIED);
+	return Command_OnReceived(p, c,DENIED);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -792,31 +799,30 @@ foreign string:Command_GetDisplay(funcid, playerid);
 
 global string:Command_GetDisplay(funcid, playerid)
 {
-	new
-		buffer[YSI_MAX_STRING] = "";
+	YSI_g_sReturnBuffer[0] = '\0';
 	if (_Command_IsValid(funcid) && IsPlayerConnected(playerid))
 	{
 		new
 			slot = PA_Slot(playerid),
 			Bit:mask = PA_Mask(playerid);
 		// Check if they can use the original version.
-		if (YSI_g_sCommands[funcid][E_COMMANDS_PLAYERS][slot] & mask)
+		if (YSI_g_sCommands[funcid][E_COMMAND_USERS][slot] & mask)
 		{
-			strunpack(buffer, Command_Name(funcid));
-			return buffer;
+			strunpack(YSI_g_sReturnBuffer, Command_Name(funcid));
+			return YSI_g_sReturnBuffer;
 		}
 		funcid = YSI_g_sCommands[funcid][E_COMMAND_POINTER];
 		// Search for a command pointing to that command which the player can use.
 		for (new i = 0; i != MAX_COMMANDS; ++i)
 		{
-			if (Command_GetPointer(i) == funcid && (YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask))
+			if (YSI_g_sCommands[i][E_COMMAND_POINTER] == funcid && (YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask))
 			{
-				strunpack(buffer, Command_Name(i));
-				return buffer;
+				strunpack(YSI_g_sReturnBuffer, Command_Name(i));
+				return YSI_g_sReturnBuffer;
 			}
 		}
 	}
-	return buffer;
+	return YSI_g_sReturnBuffer;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -868,13 +874,14 @@ global Command_GetPlayerCommandCount(playerid)
 		count = 0;
 	for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
-		if (YSI_g_sCommands[i][E_COMMAND_NAME][0] && YSI_g_sCommands[i][E_COMMANDS_PLAYERS][slot] & mask)
+		if (YSI_g_sCommands[i][E_COMMAND_NAME][0] && YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask)
 		{
 			++count;
 		}
 	}
 	return count;
 }
+
 /**--------------------------------------------------------------------------**\
 <summary>Command_GetNext</summary>
 <param name="index">Index of the next command for this player.</param>
@@ -895,8 +902,7 @@ foreign string:Command_GetNext(index, playerid);
 global string:Command_GetNext(index, playerid)
 {
 	P:2("Command_GetNext called: %i, %i", index, playerid);
-	new
-		buffer[YSI_MAX_STRING] = "";
+	YSI_g_sReturnBuffer[0] = '\0';
 	if (0 <= index < MAX_COMMANDS)
 	{
 		// Don't recalculate this every loop.
@@ -905,7 +911,7 @@ global string:Command_GetNext(index, playerid)
 			Bit:mask = PA_Mask(playerid);
 		for (new i = 0; i != MAX_COMMANDS; ++i)
 		{
-			if (YSI_g_sCommands[i][E_COMMAND_NAME][0] && YSI_g_sCommands[i][E_COMMANDS_PLAYERS][slot] & mask)
+			if (YSI_g_sCommands[i][E_COMMAND_NAME][0] && YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask)
 			{
 				// Skip already displayed ones.
 				if (index)
@@ -914,11 +920,11 @@ global string:Command_GetNext(index, playerid)
 				}
 				else
 				{
-					strunpack(buffer, Command_Name(i));
-					return buffer;
+					strunpack(YSI_g_sReturnBuffer, Command_Name(i));
+					return YSI_g_sReturnBuffer;
 				}
 			}
 		}
 	}
-	return buffer;
+	return YSI_g_sReturnBuffer;
 }

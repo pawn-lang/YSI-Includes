@@ -104,28 +104,9 @@ Functions:
 		Comamnd_SetPlayerUseByID - Sets wether or not a player can use a command.
 		Command_FindByName - Finds a command in a possibly sorted list.
 	Static:
-		Command_FindFast - Finds a function by binary search of function name.
-		Command_FindAlt - Finds a function by binary search of alternate name.
-		Command_SetSorted - Marks the binary tree as sorted.
-		Command_FindSlow - Finds a function by linear search of function name.
-		Command_Find - Finds a function from entered text.
-		Command_Prefix - Checks the entered prefix.
-		Command_ReturnName - Returns the name of a function.
-		Command_GetPlayerCount - Gets the number of commands a player can use.
+		-
 	Inline:
-		Command_Command - Not used, constructor.
-		Command_IsCleared - Checks a player is cleared to use a command.
-		Command_DisconnectReturn - Gets the return value for disconnected players.
-		Command_UsingShortCuts - Checks if short cuts are being used.
-		Command_DeniedReturn - Gets the return value for prohibited commands.
-		Command_IllegalReturn - Gets the return value for invalid characters.
-		Command_DeniedMessage - Checks if a level error message should be sent.
-		Command_IsSorted - Checks if the binary tree has been initialised.
-		Command_UsingAltNames - Checks if alt names are being used.
-		Command_UsingPrefix - Checks if the prefix is being used.
-		Command_UsingSpace - Checks if the space option is being used.
-		Command_CallFunction - Calls the required function.
-		ycmd - Adds a command to the system.
+		-
 	API:
 		-
 Callbacks:
@@ -186,6 +167,12 @@ Compile options:
 #define _GROUP_MAKE_NAME<%0...%1> %0Command%1
 #define _GROUP_MAKE_LIMIT         MAX_COMMANDS
 #include "..\YSI-Players\y_groups\_funcs"
+
+#if defined YSI_TESTS
+	#if !defined Y_COMMANDS_NO_IPC
+		#define Y_COMMANDS_NO_IPC
+	#endif
+#endif
 
 // Include the main implementation.
 #include "y_commands/impl"

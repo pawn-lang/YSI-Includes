@@ -17,4 +17,46 @@ Test:y_commands_Hashing()
 	ASSERT(len == strlen(dst1));
 }
 
-Test:y_commands_
+static
+	gSomeVar;
+
+YCMD:y_commands_1(playerid, cmdtext[], help)
+{
+	return 1;
+}
+
+Test:y_commands_1()
+{
+	ASSERT(call OnPlayerCommandText(42, "/y_commands_1") == 1);
+	ASSERT(call OnPlayerCommandText(42, "/y_comMands_1") == 1);
+	ASSERT(call OnPlayerCommandText(42, "/Y_COMMANDS_1") == 1);
+	ASSERT(call OnPlayerCommandText(42, "/Y_commandS_1") == 1);
+	ASSERT(call OnPlayerCommandText(42, "/y_Commands_1") == 1);
+}
+
+Test:y_commands_2()
+{
+	ASSERT(call OnPlayerCommandText(42, "/y_commands__NONONONO") == 0);
+	ASSERT(call OnPlayerCommandText(42, "/y_commands_0") == 0);
+	ASSERT(call OnPlayerCommandText(42, "/y_comMands_2") == 0);
+	ASSERT(call OnPlayerCommandText(42, "/Y_COMMANDS_2") == 0);
+	ASSERT(call OnPlayerCommandText(42, "/Y_commandS_I") == 0);
+	ASSERT(call OnPlayerCommandText(42, "/y_Commands_l") == 0);
+}
+
+YCMD:y_commands_3(playerid, cmdtext[], help)
+{
+	gSomeVar = 52;
+	return 1;
+}
+
+Test:y_commands_3()
+{
+	gSomeVar = 42;
+	call OnPlayerCommandText(42, "/y_commands_3");
+	ASSERT(gSomeVar == 52);
+}
+
+Test:y_commands_4()
+{
+}
