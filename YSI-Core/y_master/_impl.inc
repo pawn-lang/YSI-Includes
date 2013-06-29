@@ -389,7 +389,7 @@ Natives:
 		public _YCM() <_YCM:y>
 		{
 			P:1("%d: " #_YCM "<y> called", _@);
-			if (getproperty(8, #_YCM) != _@)
+			if (getproperty(9, #_YCM) != _@)
 			{
 				// Master, but not.  A server has claimed this.
 				state _YCM:n;
@@ -401,7 +401,7 @@ Natives:
 				// Disable the current mastership.
 				state _YCM:p;
 				_YCM@ = _E_YCM@p;
-				setproperty(8, #_YCM, -1);
+				setproperty(9, #_YCM, -1);
 				// Called locally to begin the hand off process.
 				CallRemoteFunction(#_YCM, "");
 			}

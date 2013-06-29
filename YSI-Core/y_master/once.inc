@@ -283,7 +283,7 @@ Hook:
 
 public OnScriptInit()
 {
-	P:1("Master_OGM");
+	P:1("Master_OnScriptInit");
 	if (!existproperty(8, YSIM_MASTER))
 	{
 		setproperty(8, YSIM_MASTER, 0);
@@ -310,15 +310,13 @@ public OnScriptInit()
 	C:1(if (_@ == -1) P:E("MasterID not assigned"););
 	// Make sure this is called before all other YSI initialisations, at least
 	// all the ones which use the master system.
-	#if defined YSIM_OnMasterSystemInit
-		YSIM_OnMasterSystemInit();
+	CallLocalFunction("YSIM_OnMasterSystemInit", "");
 	#endif
 	// Just use one name...
 	#if defined Master_OnScriptInit
-		return Master_OnScriptInit();
-	#else
-		return 1;
+		Master_OnScriptInit();
 	#endif
+	return 1;
 }
 
 #undef OnScriptInit
@@ -328,9 +326,7 @@ public OnScriptInit()
 #endif
 
 #define OnMasterSystemInit YSIM_OnMasterSystemInit
-#if defined YSIM_OnMasterSystemInit
-	forward YSIM_OnMasterSystemInit();
-#endif
+forward YSIM_OnMasterSystemInit();
 
 /**--------------------------------------------------------------------------**\
 Hook:
@@ -373,6 +369,9 @@ public OnScriptExit()
 #if defined YSIM_OnScriptExit
 	forward YSIM_OnScriptExit();
 #endif
+
+#define OnMasterSystemClose Master_OnScriptClose
+forward Master_OnScriptClose();
 
 /**--------------------------------------------------------------------------**\
 <summary>Master_Reassert</summary>
