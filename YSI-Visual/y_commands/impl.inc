@@ -131,7 +131,9 @@ enum E_COMMAND
 	// Who can use this command?
 	PlayerArray:E_COMMAND_USERS<MAX_PLAYERS>,
 	// Function pointer.
-	E_COMMAND_POINTER
+	E_COMMAND_POINTER,
+	// Extra data.
+	E_COMMAND_FLAGS
 }
 
 enum e_COMMAND_ERRORS
@@ -198,16 +200,32 @@ forward e_COMMAND_ERRORS:OnPlayerCommandReceived(playerid, cmdtext[], e_COMMAND_
 forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND_ERRORS:success); 
 
 /**--------------------------------------------------------------------------**\
+<summary>Command_Find</summary>
+<param name="cmd[]">The command name to find.</param>
+<returns>
+	The array slot of this command, or -1.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Command_Find(%0) HashMap_Get(YSI_g_sCommandMap, (%0))
+
+/**--------------------------------------------------------------------------**\
 <summary>Command_OnReceived</summary>
+<param name="error">Which error to show.</param>
 <param name="playerid">Player who typed the command.</param>
 <param name="cmdtext">What they typed.</param>
-<param name="error">Which error to show.</param>
 <returns>
 	-
 </returns>
 <remarks>
 	Call OnPlayerCommandReceived once the system knows how the player can use
-	this command (if they can).
+	this command (if they can).  The order of the parameters is such that the
+	error comes first.  This is because it is compile-time concatenated to make
+	the error enum value, and putting that parameter first means that we don't
+	need to ommit the space after any comma.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -225,7 +243,7 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 	#define Command_Error(%0,%2) ((%2) == COMMAND_OK)
 #endif
 
-#define Command_OnReceived(%0,%1,%2) (sErr=((YSI_g_sCommandFlags&e_COMM_FLAG_OPCR)?(e_COMMAND_ERRORS:W@(YSI_gscOPCR,YSI_gscISI,(%0),(%1),(_:COMMAND_%2))):(COMMAND_%2)),Command_Error(%0,sErr))
+#define Command_OnReceived(%2,%0,%1) (sErr=((YSI_g_sCommandFlags&e_COMM_FLAG_OPCR)?(e_COMMAND_ERRORS:W@(YSI_gscOPCR,YSI_gscISI,(%0),(%1),(_:COMMAND_%2))):(COMMAND_%2)),Command_Error(%0,sErr))
 
 /**--------------------------------------------------------------------------**\
 <summary>Command_IsValid</summary>
@@ -238,7 +256,8 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define _Command_IsValid(%0) ((0 <= (%0) < MAX_COMMANDS) && YSI_g_sCommands[(%0)][E_COMMAND_NAME][0])
+#define _Command_IsActive(%0) (YSI_g_sCommands[(%0)][E_COMMAND_NAME][0])
+#define _Command_IsValid(%0) ((0 <= (%0) < MAX_COMMANDS) && _Command_IsActive(%0))
 
 foreign bool:Command_IsValid(cmd);
 
@@ -280,35 +299,85 @@ global string:Command_GetName(f)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-hook OnScriptInit()
-{
-	P:1("Command_OnScriptInit called");
-	#if YSIM_NOT_CLIENT
-		HashMap_Init(YSI_g_sCommandMap, YSI_g_sCommands);
-		for (new func = 0; func != MAX_COMMANDS; ++func)
-		{
-			YSI_g_sCommands[func][E_COMMAND_POINTER] = -1;
-		}
-	#endif
-	new
-		entry,
-		buffer[32 char],
-		idx;
-	P:5("Command_OnScriptInit: Pre-loop");
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yC_>)))
+#if (_YSIM_IS_SERVER || _YSIM_IS_CLOUD)
+	forward _Command_DoInit();
+#endif
+
+	hook OnScriptInit()
 	{
-		// Add the command name and pointer, but skip the leading "@yC_".
-		P:6("Command_OnScriptInit: Adding %d", entry);
-		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), buffer),
-		buffer[0] = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00);
-		new
-			id2 = funcidx(buffer);
-		if (id2 != -1) entry = AMX_HEADER_PUBLICS + id2 * 8;
-		Command_Add(buffer[1], AMX_Read(entry));
-		P:6("Command_OnScriptInit: Name %s", unpack(buffer[1]));
+		P:1("Command_OnScriptInit called");
+		#if YSIM_NOT_CLIENT
+			HashMap_Init(YSI_g_sCommandMap, YSI_g_sCommands);
+			for (new func = 0; func != MAX_COMMANDS; ++func)
+			{
+				YSI_g_sCommands[func][E_COMMAND_POINTER] = YSI_g_sCommands[func][E_COMMAND_FLAGS] = -1;
+			}
+		#endif
+#if (_YSIM_IS_SERVER || _YSIM_IS_CLOUD)
+		_Command_DoInit();
 	}
-	if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();
-	if (funcidx(YSI_gscOPCP) != -1) Command_IncOPCP();
+	
+	public _Command_DoInit() <_YCM:p>
+	{
+		// Do nothing, this script is ending.
+	}
+	
+	public _Command_DoInit() <>
+	{
+#endif
+		P:2("_Command_DoInit <> called");
+		new
+			entry,
+			buffer[32 char],
+			idx,
+			id2;
+		P:5("Command_OnScriptInit: Pre-loop");
+		while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yC_>)))
+		{
+			// Add the command name and pointer, but skip the leading "@yC_".
+			P:6("Command_OnScriptInit: Adding %d", entry);
+			AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), buffer),
+			buffer[0] = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00),
+			id2 = funcidx(buffer);
+			if (id2 != -1) entry = AMX_HEADER_PUBLICS + id2 * 8;
+			// Check that the function name is all lower-case.
+			for (id2 = 4; buffer{id2}; ++id2)
+			{
+				if (buffer{id2} != tolower(buffer{id2})) P:E("Commands must be in lower-case in your source code.");
+			}
+			// Add the command regardless.
+			Command_Add(buffer[1], AMX_Read(entry));
+			P:6("Command_OnScriptInit: Name %s", unpack(buffer[1]));
+		}
+		if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();
+		if (funcidx(YSI_gscOPCP) != -1) Command_IncOPCP();
+	}
+
+/**--------------------------------------------------------------------------**\
+<summary>_Command_SetPerms</summary>
+<param name="f">Function to adjust.</param>
+<param name="pa">Player permissions array.</param>
+<param name="s">Size of the array.</param>
+<param name="x">eXtra data (flags).</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Passes additional commands data to the new master.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+foreign void:_Command_SetPerms(f[],pa[],s,x);
+
+global void:_Command_SetPerms(f[],pa[],s,x)
+{
+	#pragma unused x
+	new
+		id = Command_Find(f);
+	if (id != -1)
+	{
+		memcpy(_:YSI_g_sCommands[id][E_COMMAND_USERS], pa, (bits<MAX_PLAYERS> + 1) * 4, s);
+	}
 }
 
 /**--------------------------------------------------------------------------**\
@@ -321,9 +390,33 @@ hook OnScriptInit()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-hook OnScriptExit()
+#if (_YSIM_IS_SERVER || _YSIM_IS_CLOUD)
+	hook OnScriptExit() <_YCM:p>
+	{
+		P:1("Commands_OnScriptExit <_YCM:p> called");
+		CallRemoteFunction("_Command_DoInit", "");
+		// Add all alternate commands.
+		for (new i = 0; i != MAX_COMMANDS; ++i)
+		{
+			new
+				oidx = YSI_g_sCommands[i][E_COMMAND_FLAGS];
+			if (oidx != -1)
+			{
+				// Follow the chain if there is one.
+				while (YSI_g_sCommands[oidx][E_COMMAND_FLAGS] != -1) oidx = YSI_g_sCommands[oidx][E_COMMAND_FLAGS];
+				Command_AddAlt(oidx, YSI_g_sCommands[i][E_COMMAND_NAME]);
+			}
+			_Command_SetPerms(YSI_g_sCommands[i][E_COMMAND_NAME], _:YSI_g_sCommands[i][E_COMMAND_USERS], bits<MAX_PLAYERS> + 1, YSI_g_sCommands[i][E_COMMAND_FLAGS]);
+		}
+		return 1;
+	}
+	
+	rehook OnScriptExit() <>
+#else
+	hook OnScriptExit()
+#endif
 {
-	P:1("Commands_OnScriptExit called");
+	P:1("Commands_OnScriptExit <> called");
 	if (funcidx(YSI_gscOPCR) != -1) Command_DecOPCR();
 	if (funcidx(YSI_gscOPCP) != -1) Command_DecOPCP();
 	return 1;
@@ -394,19 +487,6 @@ static stock Command_GetEmptySlot()
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>Command_Find</summary>
-<param name="cmd[]">The command name to find.</param>
-<returns>
-	The array slot of this command, or -1.
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Command_Find(%0) HashMap_Get(YSI_g_sCommandMap, (%0))
-
-/**--------------------------------------------------------------------------**\
 <summary>Command_GetID</summary>
 <param name="function[]">Function name to find.</param>
 <returns>
@@ -473,6 +553,7 @@ native Command_Add(funcname[], script);
 		// Add the calling script as having this command.
 		if (Master_Caller() == Master_ID()) MASTER_RESET<id>
 		else MASTER_SET<id>
+		YSI_g_sCommands[id][E_COMMAND_FLAGS] = -1;
 	}
 	else
 	{
@@ -525,6 +606,8 @@ global Command_AddAlt(oidx, string:cmd[])
 		// Copy the master script information.  Note that this won't be kept up
 		// to date with new scripts unfortunately.
 		MASTER_COPY<id, oidx>
+		// Save as an alternate command.
+		YSI_g_sCommands[id][E_COMMAND_FLAGS] = oidx;
 	}
 	return id;
 }
@@ -559,7 +642,6 @@ global Command_AddAltNamed(string:function[], string:altname[])
 	Can this player use this command?
 </returns>
 <remarks>
-	-
 
 native bool:Command_SetPlayer(command, playerid, bool:set);
 
@@ -606,7 +688,6 @@ global bool:Command_GetPlayerNamed(string:func[], playerid)
 	-
 </returns>
 <remarks>
-	-
 
 native bool:Command_SetPlayer(command, playerid, bool:set);
 
@@ -722,9 +803,9 @@ global Command_ReProcess(p,string:c[],h)
 	static
 		e_COMMAND_ERRORS:sErr;
 	#if !defined Y_COMMANDS_NO_IPC
-		if (!IsPlayerConnected(p)) return Command_OnReceived(p, c,NO_PLAYER);
+		if (!IsPlayerConnected(p)) return Command_OnReceived(NO_PLAYER, p, c);
 	#endif
-	if (PA_Get(YSI_g_sDisabledPlayers, p)) return Command_OnReceived(p, c,DISABLED);
+	if (PA_Get(YSI_g_sDisabledPlayers, p)) return Command_OnReceived(DISABLED, p, c);
 	P:1("Commands_OnPlayerCommandText called: %d %s", p, c);
 	static
 		sCmd[64] = "@yC_",
@@ -737,11 +818,11 @@ global Command_ReProcess(p,string:c[],h)
 	// Find the command in the array.
 	sIdx = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
 	P:5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd[4], sPos, sHash, sIdx);
-	if (sIdx == COMMAND_NOT_FOUND) return Command_OnReceived(p, c,UNDEFINED);
+	if (sIdx == COMMAND_NOT_FOUND) return Command_OnReceived(UNDEFINED, p, c);
 	// Can the player use this command?
 	if (_Command_GetPlayer(sIdx, p))
 	{
-		if (!Command_OnReceived(p, c,OK)) return 0;
+		if (!Command_OnReceived(OK, p, c)) return 0;
 		#if YSIM_HAS_MASTER
 			// This is in another script, or multiple scripts.
 			static
@@ -777,7 +858,7 @@ global Command_ReProcess(p,string:c[],h)
 			if (YSI_g_sCommandFlags & e_COMM_FLAG_OPCP) sIdx = CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, p, c, sIdx);
 			return Command_Error(p, e_COMMAND_ERRORS:sIdx);
 	}
-	return Command_OnReceived(p, c,DENIED);
+	return Command_OnReceived(DENIED, p, c);
 }
 
 /**--------------------------------------------------------------------------**\
