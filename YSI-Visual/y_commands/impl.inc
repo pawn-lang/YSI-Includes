@@ -367,9 +367,9 @@ global string:Command_GetName(f)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-foreign void:_Command_SetPerms(f[],pa[],s,x);
+foreign void:_Command_SetPerms(string:f[],pa[],s,x);
 
-global void:_Command_SetPerms(f[],pa[],s,x)
+global void:_Command_SetPerms(string:f[],pa[],s,x)
 {
 	#pragma unused x
 	new
@@ -396,7 +396,7 @@ global void:_Command_SetPerms(f[],pa[],s,x)
 		P:1("Commands_OnScriptExit <_YCM:p> called");
 		CallRemoteFunction("_Command_DoInit", "");
 		// Add all alternate commands.
-		for (new i = 0; i != MAX_COMMANDS; ++i)
+		for (new i = 0; i != MAX_COMMANDS; ++i) if (_Command_IsActive(i))
 		{
 			new
 				oidx = YSI_g_sCommands[i][E_COMMAND_FLAGS];
@@ -420,6 +420,28 @@ global void:_Command_SetPerms(f[],pa[],s,x)
 	if (funcidx(YSI_gscOPCR) != -1) Command_DecOPCR();
 	if (funcidx(YSI_gscOPCP) != -1) Command_DecOPCP();
 	return 1;
+}
+
+hook Master_OnScriptClose(id) <_YCM:y>
+{
+	if (id != Master_ID())
+	{
+		id = 1 << id;
+		for (new i = 0; i != MAX_COMMANDS; ++i) if (_Command_IsActive(i))
+		{
+			if (YSI_g_sMasterData[i] & Bit:id)
+			{
+				if (!(YSI_g_sMasterData[i] &= Bit:~id))
+				{
+					Command_Remove(i);
+				}
+			}
+		}
+	}
+}
+
+rehook Master_OnScriptClose(id) <>
+{
 }
 
 /**--------------------------------------------------------------------------**\
@@ -531,6 +553,7 @@ native Command_Add(funcname[], script);
 	P:2("Command_Add: %s, %d", unpack(cmd), ptr);
 	new
 		id = Command_Find(cmd);
+	P:5("Command_Add: found %d", id);
 	if (id == COMMAND_NOT_FOUND)
 	{
 		// Command doesn't already exist, add it.
@@ -541,19 +564,20 @@ native Command_Add(funcname[], script);
 			return COMMAND_NOT_FOUND;
 		}
 		// Save the command's pointer.
-		YSI_g_sCommands[id][E_COMMAND_POINTER] = ptr;
+		YSI_g_sCommands[id][E_COMMAND_POINTER] = ptr,
+		// Add this command to the hash map (does the name too).
+		HashMap_Add(YSI_g_sCommandMap, cmd, id),
+		// This command isn't an alternate for another one.
+		YSI_g_sCommands[id][E_COMMAND_FLAGS] = -1,
 		// Add all players, or defer to y_groups.
 		PA_FastInit(YSI_g_sCommands[id][E_COMMAND_USERS]);
 		NO_GROUPS(id)
 		{
 			PA_Init(YSI_g_sCommands[id][E_COMMAND_USERS], true);
 		}
-		// Add this command to the hash map (does the name too).
-		HashMap_Add(YSI_g_sCommandMap, cmd, id);
 		// Add the calling script as having this command.
 		if (Master_Caller() == Master_ID()) MASTER_RESET<id>
 		else MASTER_SET<id>
-		YSI_g_sCommands[id][E_COMMAND_FLAGS] = -1;
 	}
 	else
 	{
@@ -832,8 +856,9 @@ global Command_ReProcess(p,string:c[],h)
 			{
 				// Call the command in another script.  If no particular script
 				// is set up as the "master", call it in the first one found...
-				if (c[sPos]) sIdx = CallRemoteFunction(sCmd, "isii", p, c[sPos], h, Cell_GetLowestBit(sMasters));
-				else sIdx = CallRemoteFunction(sCmd, "isii", p, NULL, h, Cell_GetLowestBit(sMasters));
+				if (c[sPos]) CallRemoteFunction(sCmd, "isii", p, c[sPos], h, Cell_GetLowestBit(sMasters));
+				else CallRemoteFunction(sCmd, "isii", p, NULL, h, Cell_GetLowestBit(sMasters));
+				sIdx = getproperty(8, YSIM_RETURN);
 			}
 			else
 		#endif
