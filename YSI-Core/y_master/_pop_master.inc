@@ -140,3 +140,7 @@
 #endif
 
 P:C(static stock const _POPPED_MASTER = MASTER;);
+
+#if defined _MASTER
+	#undef _MASTER
+#endif
