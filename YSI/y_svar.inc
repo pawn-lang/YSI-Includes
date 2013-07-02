@@ -23,7 +23,7 @@ public YSI@y_svar()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Storage\y_svar>
+		#include <YSI_Storage\y_svar>
 	
 	Instead of:
 	

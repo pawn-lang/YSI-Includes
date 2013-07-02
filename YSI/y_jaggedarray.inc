@@ -23,7 +23,7 @@ public YSI@y_jaggedarray()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Structures\y_jaggedarray>
+		#include <YSI_Structures\y_jaggedarray>
 	
 	Instead of:
 	

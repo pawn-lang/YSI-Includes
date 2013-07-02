@@ -23,7 +23,7 @@ public YSI@y_scriptinit()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Server\y_scriptinit>
+		#include <YSI_Server\y_scriptinit>
 	
 	Instead of:
 	

@@ -23,7 +23,7 @@ public YSI@y_playerarray()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Structures\y_playerarray>
+		#include <YSI_Structures\y_playerarray>
 	
 	Instead of:
 	

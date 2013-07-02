@@ -23,7 +23,7 @@ public YSI@y_punycode()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Server\y_punycode>
+		#include <YSI_Server\y_punycode>
 	
 	Instead of:
 	

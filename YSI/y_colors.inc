@@ -23,7 +23,7 @@ public YSI@y_colors()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Server\y_colours>
+		#include <YSI_Server\y_colours>
 	
 	Instead of:
 	

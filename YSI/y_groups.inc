@@ -23,7 +23,7 @@ public YSI@y_groups()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Players\y_groups>
+		#include <YSI_Players\y_groups>
 	
 	Instead of:
 	

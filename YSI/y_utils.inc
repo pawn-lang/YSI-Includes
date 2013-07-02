@@ -23,7 +23,7 @@ public YSI@y_utils()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Code\y_utils>
+		#include <YSI_Code\y_utils>
 	
 	Instead of:
 	

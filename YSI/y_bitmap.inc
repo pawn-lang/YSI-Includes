@@ -23,7 +23,7 @@ public YSI@y_bitmap()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Storage\y_bitmap>
+		#include <YSI_Storage\y_bitmap>
 	
 	Instead of:
 	

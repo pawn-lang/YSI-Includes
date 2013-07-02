@@ -23,7 +23,7 @@ public YSI@y_xml()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Storage\y_xml>
+		#include <YSI_Storage\y_xml>
 	
 	Instead of:
 	

@@ -23,7 +23,7 @@ public YSI@y_master()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Code\y_master>
+		#include <YSI_Code\y_master>
 	
 	Instead of:
 	

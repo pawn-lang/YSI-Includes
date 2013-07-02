@@ -23,7 +23,7 @@ public YSI@y_text()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Players\y_text>
+		#include <YSI_Players\y_text>
 	
 	Instead of:
 	

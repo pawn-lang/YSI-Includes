@@ -23,7 +23,7 @@ public YSI@y_timers()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Coding\y_timers>
+		#include <YSI_Coding\y_timers>
 	
 	Instead of:
 	

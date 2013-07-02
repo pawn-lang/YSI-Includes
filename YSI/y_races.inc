@@ -23,7 +23,7 @@ public YSI@y_races()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Visual\y_races>
+		#include <YSI_Visual\y_races>
 	
 	Instead of:
 	

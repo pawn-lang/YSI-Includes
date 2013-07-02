@@ -23,7 +23,7 @@ public YSI@y_flooding()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Server\y_flooding>
+		#include <YSI_Server\y_flooding>
 	
 	Instead of:
 	

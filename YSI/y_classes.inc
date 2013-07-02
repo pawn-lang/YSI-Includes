@@ -23,7 +23,7 @@ public YSI@y_classes()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Visual\y_classes>
+		#include <YSI_Visual\y_classes>
 	
 	Instead of:
 	

@@ -23,7 +23,7 @@ public YSI@y_debug()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Code\y_debug>
+		#include <YSI_Code\y_debug>
 	
 	Instead of:
 	

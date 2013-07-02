@@ -23,7 +23,7 @@ public YSI@y_commands()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Visual\y_commands>
+		#include <YSI_Visual\y_commands>
 	
 	Instead of:
 	

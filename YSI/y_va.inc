@@ -23,7 +23,7 @@ public YSI@y_va()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Coding\y_va>
+		#include <YSI_Coding\y_va>
 	
 	Instead of:
 	

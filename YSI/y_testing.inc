@@ -23,7 +23,7 @@ public YSI@y_testing()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Code\y_testing>
+		#include <YSI_Code\y_testing>
 	
 	Instead of:
 	

@@ -23,7 +23,7 @@ public YSI@y_stringhash()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Coding\y_stringhash>
+		#include <YSI_Coding\y_stringhash>
 	
 	Instead of:
 	

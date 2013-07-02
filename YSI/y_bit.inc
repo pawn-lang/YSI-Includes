@@ -23,7 +23,7 @@ public YSI@y_bit()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Structures\y_bit>
+		#include <YSI_Structures\y_bit>
 	
 	Instead of:
 	

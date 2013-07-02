@@ -23,7 +23,7 @@ public YSI@y_iterate()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Structures\y_iterate>
+		#include <YSI_Structures\y_iterate>
 	
 	Instead of:
 	

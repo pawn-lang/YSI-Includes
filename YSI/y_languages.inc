@@ -23,7 +23,7 @@ public YSI@y_languages()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Players\y_languages>
+		#include <YSI_Players\y_languages>
 	
 	Instead of:
 	

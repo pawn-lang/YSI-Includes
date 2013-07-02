@@ -23,7 +23,7 @@ public YSI@y_properties()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Visual\y_properties>
+		#include <YSI_Visual\y_properties>
 	
 	Instead of:
 	

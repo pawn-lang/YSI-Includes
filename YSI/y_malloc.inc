@@ -23,7 +23,7 @@ public YSI@y_malloc()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Coding\y_malloc>
+		#include <YSI_Coding\y_malloc>
 	
 	Instead of:
 	

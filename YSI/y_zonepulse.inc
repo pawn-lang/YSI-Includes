@@ -23,7 +23,7 @@ public YSI@y_zonepulse()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Visual\y_zonepulse>
+		#include <YSI_Visual\y_zonepulse>
 	
 	Instead of:
 	

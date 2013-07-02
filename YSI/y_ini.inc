@@ -23,7 +23,7 @@ public YSI@y_ini()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Storage\y_ini>
+		#include <YSI_Storage\y_ini>
 	
 	Instead of:
 	

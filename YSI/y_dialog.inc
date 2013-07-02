@@ -23,7 +23,7 @@ public YSI@y_dialog()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Visual\y_dialog>
+		#include <YSI_Visual\y_dialog>
 	
 	Instead of:
 	

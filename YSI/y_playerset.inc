@@ -23,7 +23,7 @@ public YSI@y_playerset()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Structures\y_playerset>
+		#include <YSI_Structures\y_playerset>
 	
 	Instead of:
 	

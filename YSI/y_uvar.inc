@@ -23,7 +23,7 @@ public YSI@y_uvar()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Storage\y_uvar>
+		#include <YSI_Storage\y_uvar>
 	
 	Instead of:
 	

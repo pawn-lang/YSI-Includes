@@ -23,7 +23,7 @@ public YSI@y_td()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Server\y_td>
+		#include <YSI_Server\y_td>
 	
 	Instead of:
 	

@@ -23,7 +23,7 @@ public YSI@y_remote()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Coding\y_remote>
+		#include <YSI_Coding\y_remote>
 	
 	Instead of:
 	

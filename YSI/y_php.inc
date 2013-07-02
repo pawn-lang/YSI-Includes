@@ -23,7 +23,7 @@ public YSI@y_php()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Storage\y_php>
+		#include <YSI_Storage\y_php>
 	
 	Instead of:
 	

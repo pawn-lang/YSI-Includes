@@ -23,7 +23,7 @@ public YSI@y_lock()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Server\y_lock>
+		#include <YSI_Server\y_lock>
 	
 	Instead of:
 	

@@ -23,7 +23,7 @@ public YSI@y_bintree()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Structures\y_bintree>
+		#include <YSI_Structures\y_bintree>
 	
 	Instead of:
 	

@@ -23,7 +23,7 @@ public YSI@y_cell()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Code\y_cell>
+		#include <YSI_Code\y_cell>
 	
 	Instead of:
 	

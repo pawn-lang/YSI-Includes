@@ -23,7 +23,7 @@ public YSI@y_extra()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Extra\y_extra>
+		#include <YSI_Extra\y_extra>
 	
 	Instead of:
 	

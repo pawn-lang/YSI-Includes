@@ -23,7 +23,7 @@ public YSI@y_writemem()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Internal\y_writemem>
+		#include <YSI_Internal\y_writemem>
 	
 	Instead of:
 	

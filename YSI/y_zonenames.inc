@@ -23,7 +23,7 @@ public YSI@y_zonenames()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Visual\y_zonenames>
+		#include <YSI_Visual\y_zonenames>
 	
 	Instead of:
 	

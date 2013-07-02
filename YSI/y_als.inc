@@ -23,7 +23,7 @@ public YSI@y_als()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Code\y_als>
+		#include <YSI_Code\y_als>
 	
 	Instead of:
 	

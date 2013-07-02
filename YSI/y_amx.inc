@@ -23,7 +23,7 @@ public YSI@y_amx()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Storage\y_amx>
+		#include <YSI_Storage\y_amx>
 	
 	Instead of:
 	

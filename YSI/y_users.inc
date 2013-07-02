@@ -23,7 +23,7 @@ public YSI@y_users()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Players\y_users>
+		#include <YSI_Players\y_users>
 	
 	Instead of:
 	

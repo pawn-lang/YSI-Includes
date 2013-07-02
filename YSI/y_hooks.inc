@@ -23,7 +23,7 @@ public YSI@y_hooks()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Coding\y_hooks>
+		#include <YSI_Coding\y_hooks>
 	
 	Instead of:
 	

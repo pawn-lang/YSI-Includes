@@ -23,7 +23,7 @@ public YSI@y_inline()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Coding\y_inline>
+		#include <YSI_Coding\y_inline>
 	
 	Instead of:
 	

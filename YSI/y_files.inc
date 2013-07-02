@@ -23,7 +23,7 @@ public YSI@y_files()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Extra\y_files>
+		#include <YSI_Extra\y_files>
 	
 	Instead of:
 	

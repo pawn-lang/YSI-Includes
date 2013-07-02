@@ -23,7 +23,7 @@ public YSI@y_areas()
 	/*
 	YSI's structure has changed.  Please use:
 	
-		#include <YSI-Visual\y_areas>
+		#include <YSI_Visual\y_areas>
 	
 	Instead of:
 	
