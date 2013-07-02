@@ -1,7 +1,10 @@
 #undef _inc_y_hooks
 
-#include "..\YSI-Coding\y_hooks"
+#include "..\YSI_Coding\y_hooks"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_hooks
 	#endinput
 #endif

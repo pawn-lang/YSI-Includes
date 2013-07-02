@@ -1,7 +1,10 @@
 #undef _inc_y_remote
 
-#include "..\YSI-Coding\y_remote"
+#include "..\YSI_Coding\y_remote"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_remote
 	#endinput
 #endif

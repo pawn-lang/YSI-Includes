@@ -1,7 +1,10 @@
 #undef _inc_y_languages
 
-#include "..\YSI-Players\y_languages"
+#include "..\YSI_Players\y_languages"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_languages
 	#endinput
 #endif

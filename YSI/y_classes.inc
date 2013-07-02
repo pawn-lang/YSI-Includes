@@ -1,7 +1,10 @@
 #undef _inc_y_classes
 
-#include "..\YSI-Visual\y_classes"
+#include "..\YSI_Visual\y_classes"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_classes
 	#endinput
 #endif

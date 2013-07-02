@@ -1,7 +1,10 @@
 #undef _inc_y_users
 
-#include "..\YSI-Players\y_users"
+#include "..\YSI_Players\y_users"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_users
 	#endinput
 #endif

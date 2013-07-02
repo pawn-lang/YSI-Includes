@@ -1,7 +1,10 @@
 #undef _inc_y_malloc
 
-#include "..\YSI-Coding\y_malloc"
+#include "..\YSI_Coding\y_malloc"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_malloc
 	#endinput
 #endif

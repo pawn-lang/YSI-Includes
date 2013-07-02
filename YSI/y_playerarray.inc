@@ -1,7 +1,10 @@
 #undef _inc_y_playerarray
 
-#include "..\YSI-Data\y_playerarray"
+#include "..\YSI_Data\y_playerarray"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_playerarray
 	#endinput
 #endif

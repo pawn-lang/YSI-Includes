@@ -1,7 +1,10 @@
 #undef _inc_y_zonenames
 
-#include "..\YSI-Visual\y_zonenames"
+#include "..\YSI_Visual\y_zonenames"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_zonenames
 	#endinput
 #endif

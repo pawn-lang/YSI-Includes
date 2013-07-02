@@ -1,7 +1,10 @@
 #undef _inc_y_php
 
-#include "..\YSI-Storage\y_php"
+#include "..\YSI_Storage\y_php"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_php
 	#endinput
 #endif

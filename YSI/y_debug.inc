@@ -1,7 +1,10 @@
 #undef _inc_y_debug
 
-#include "..\YSI-Core\y_debug"
+#include "..\YSI_Core\y_debug"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_debug
 	#endinput
 #endif

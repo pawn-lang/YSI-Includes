@@ -1,7 +1,10 @@
 #undef _inc_y_areas
 
-#include "..\YSI-Visual\y_areas"
+#include "..\YSI_Visual\y_areas"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_areas
 	#endinput
 #endif

@@ -1,7 +1,10 @@
 #undef _inc_y_properties
 
-#include "..\YSI-Visual\y_properties"
+#include "..\YSI_Visual\y_properties"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_properties
 	#endinput
 #endif

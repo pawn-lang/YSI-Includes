@@ -1,7 +1,10 @@
 #undef _inc_y_master
 
-#include "..\YSI-Core\y_master"
+#include "..\YSI_Core\y_master"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_master
 	#endinput
 #endif

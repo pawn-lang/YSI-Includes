@@ -1,7 +1,10 @@
 #undef _inc_y_ini
 
-#include "..\YSI-Storage\y_ini"
+#include "..\YSI_Storage\y_ini"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_ini
 	#endinput
 #endif

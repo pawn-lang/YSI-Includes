@@ -1,7 +1,10 @@
 #undef _inc_y_lock
 
-#include "..\YSI-Server\y_lock"
+#include "..\YSI_Server\y_lock"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_lock
 	#endinput
 #endif

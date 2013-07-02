@@ -1,7 +1,10 @@
 #undef _inc_y_cell
 
-#include "..\YSI-Core\y_cell"
+#include "..\YSI_Core\y_cell"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_cell
 	#endinput
 #endif

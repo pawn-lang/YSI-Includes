@@ -1,7 +1,10 @@
 #undef _inc_y_dialog
 
-#include "..\YSI-Visual\y_dialog"
+#include "..\YSI_Visual\y_dialog"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_dialog
 	#endinput
 #endif

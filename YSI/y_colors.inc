@@ -1,7 +1,10 @@
 #undef _inc_y_colors
 
-#include "..\YSI-Server\y_colors"
+#include "..\YSI_Server\y_colors"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_colors
 	#endinput
 #endif

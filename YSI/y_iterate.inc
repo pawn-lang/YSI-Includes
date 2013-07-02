@@ -1,7 +1,10 @@
 #undef _inc_y_iterate
 
-#include "..\YSI-Data\y_iterate"
+#include "..\YSI_Data\y_iterate"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_iterate
 	#endinput
 #endif

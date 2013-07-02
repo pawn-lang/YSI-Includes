@@ -1,7 +1,10 @@
 #undef _inc_y_testing
 
-#include "..\YSI-Core\y_testing"
+#include "..\YSI_Core\y_testing"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_testing
 	#endinput
 #endif

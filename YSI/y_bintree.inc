@@ -1,7 +1,10 @@
 #undef _inc_y_bintree
 
-#include "..\YSI-Data\y_bintree"
+#include "..\YSI_Data\y_bintree"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_bintree
 	#endinput
 #endif

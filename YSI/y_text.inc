@@ -1,7 +1,10 @@
 #undef _inc_y_text
 
-#include "..\YSI-Players\y_text"
+#include "..\YSI_Players\y_text"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_text
 	#endinput
 #endif

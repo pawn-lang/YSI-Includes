@@ -1,7 +1,10 @@
 #undef _inc_y_uvar
 
-#include "..\YSI-Storage\y_uvar"
+#include "..\YSI_Storage\y_uvar"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_uvar
 	#endinput
 #endif

@@ -1,7 +1,10 @@
 #undef _inc_y_als
 
-#include "..\YSI-Core\y_als"
+#include "..\YSI_Core\y_als"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_als
 	#endinput
 #endif

@@ -1,7 +1,10 @@
 #undef _inc_y_va
 
-#include "..\YSI-Coding\y_va"
+#include "..\YSI_Coding\y_va"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_va
 	#endinput
 #endif

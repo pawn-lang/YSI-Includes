@@ -1,7 +1,10 @@
 #undef _inc_y_timers
 
-#include "..\YSI-Coding\y_timers"
+#include "..\YSI_Coding\y_timers"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_timers
 	#endinput
 #endif

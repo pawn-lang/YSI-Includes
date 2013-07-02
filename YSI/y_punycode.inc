@@ -1,7 +1,10 @@
 #undef _inc_y_punycode
 
-#include "..\YSI-Server\y_punycode"
+#include "..\YSI_Server\y_punycode"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_punycode
 	#endinput
 #endif

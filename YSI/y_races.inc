@@ -1,7 +1,10 @@
 #undef _inc_y_races
 
-#include "..\YSI-Visual\y_races"
+#include "..\YSI_Visual\y_races"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_races
 	#endinput
 #endif

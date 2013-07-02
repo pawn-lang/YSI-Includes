@@ -1,7 +1,10 @@
 #undef _inc_y_stringhash
 
-#include "..\YSI-Coding\y_stringhash"
+#include "..\YSI_Coding\y_stringhash"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_stringhash
 	#endinput
 #endif

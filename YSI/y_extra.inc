@@ -1,7 +1,10 @@
 #undef _inc_y_extra
 
-#include "..\YSI-Extra\y_extra"
+#include "..\YSI_Extra\y_extra"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_extra
 	#endinput
 #endif

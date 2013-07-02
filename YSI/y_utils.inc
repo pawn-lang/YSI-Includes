@@ -1,7 +1,10 @@
 #undef _inc_y_utils
 
-#include "..\YSI-Core\y_utils"
+#include "..\YSI_Core\y_utils"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_utils
 	#endinput
 #endif

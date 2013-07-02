@@ -1,7 +1,10 @@
 #undef _inc_y_scriptinit
 
-#include "..\YSI-Server\y_scriptinit"
+#include "..\YSI_Server\y_scriptinit"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_scriptinit
 	#endinput
 #endif

@@ -1,7 +1,10 @@
 #undef _inc_y_jaggedarray
 
-#include "..\YSI-Data\y_jaggedarray"
+#include "..\YSI_Data\y_jaggedarray"
 
+#endinput
+
+// Future deprecation...
 #if defined _YSI_3_1_INC_y_jaggedarray
 	#endinput
 #endif
