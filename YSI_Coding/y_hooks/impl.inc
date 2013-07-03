@@ -571,8 +571,9 @@ static stock const
 
 _Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
 {
-	new
+	static
 		ret[32 char];
+	ret[0] = '\0';
 	if      (!strcmp(ref, YSI_gscOnPlayerEnterRaceCP))      ret = !"OnPlayerEnterRaceCP";
 	else if (!strcmp(ref, YSI_gscOnPlayerLeaveRaceCP))      ret = !"OnPlayerLeaveRaceCP";
 	else if (!strcmp(ref, YSI_gscOnVehicleDamageStatusUpd)) ret = !"OnVehicleDamageStatusUpd";
@@ -644,7 +645,7 @@ _Y_HOOKS_STATIC Hooks_SpecialReturns(const string:ref[])
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:ref2[] = !"")
+_Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:ref2[])
 {
 	new
 		// Uugh, special cases!
@@ -656,6 +657,7 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 		idx;
 	static
 		name[32];
+	P:4("Hooks_GetSame called: \"%s\" = %d, %d, \"%s\" = %d", unpack(ref), strlen(ref), original, unpack(ref2), strlen(ref2));
 	// Reserve space for ALS hooked callbacks first.
 	same[2] = AMX_Read(original),
 	// Wipe out the current hook.
@@ -733,6 +735,17 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 	// First, the (longest) function name as that is always the "base" name.
 	entry = strlen(ref),
 	idx = strlen(ref2);
+	P:6("Hooks_GetSame: Lengths = %d (ref), %d (ref2)", entry, idx);
+	#if _DEBUG >= 5
+		AMX_Write(AMX_BASE_ADDRESS + AMX_Read(original + 4), _A<@yH_>);
+		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(original + 4), Q@);
+		AMX_Write(AMX_BASE_ADDRESS + AMX_Read(original + 4), 0);
+		printf("Hooks_GetSame: exist = %s", unpack(Q@));
+		printf("Hooks_GetSame: ref = %s", unpack(ref));
+		AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref, entry);
+		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(original + 4), Q@);
+		printf("Hooks_GetSame: new = %s", unpack(Q@));
+	#endif
 	if (idx <= entry) AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref, entry);
 	else
 	{

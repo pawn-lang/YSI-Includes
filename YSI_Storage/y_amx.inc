@@ -901,39 +901,61 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 	do
 	{
 		buffer = str[idx];
+		P:7("AMX_WriteString: Writing %04x%04x", buffer >>> 16, buffer & 0xFFFF);
 		if      (!(buffer & 0xFF000000))
 		{
 			#emit LREF.S.pri                addr
-			#emit STOR.S.pri                old
-			old &= 0xFFFFFF00;
-			#emit LOAD.S.pri                old
+			#emit CONST.alt                 0xFFFFFF00
+			#emit AND
 			#emit SREF.S.pri                addr
 			return;
 		}
 		else if (!(buffer & 0x00FF0000))
 		{
+			// This:
+			//            '\0', '1'.
+			// Becomes:
+			//  '1', '\0', ???, ???.
 			#emit LREF.S.pri                addr
 			#emit STOR.S.pri                old
-			old = (old & 0xFFFF0000) | (buffer >>> 24);
-			#emit LOAD.S.pri                old
+			buffer = (old & 0xFFFF0000) | (buffer >>> 24);
+			#emit LOAD.S.pri                buffer
 			#emit SREF.S.pri                addr
 			return;
 		}
 		else if (!(buffer & 0x0000FF00))
 		{
+			// This:
+			//       '\0', '2', '1'.
+			// Becomes:
+			//  '1', '2', '\0', ???.
 			#emit LREF.S.pri                addr
 			#emit STOR.S.pri                old
 			buffer = (old & 0xFF000000) | (buffer >>> 24) | (buffer >> 8 & 0x0000FF00);
-		}
-		// Write 4 bytes.
-		buffer = (buffer >>> 24) | (buffer >> 8 & 0x0000FF00) | (buffer << 8 & 0x00FF0000) | (buffer << 24);
-		#emit LOAD.S.pri                buffer
-		#emit SREF.S.pri                addr
-		if (!(buffer & 0xFF000000))
-		{
+			#emit LOAD.S.pri                buffer
+			#emit SREF.S.pri                addr
 			return;
 		}
-		addr += 4;
+		else if (!(buffer & 0x000000FF))
+		{
+			// This:
+			//  '\0', '3', '2', '1'.
+			// Becomes:
+			//  '1', '2', '3', '\0'.
+			// Write 3 bytes.
+			buffer = (buffer >>> 24) | (buffer >> 8 & 0x0000FF00) | (buffer << 8 & 0x00FF0000);
+			#emit LOAD.S.pri                buffer
+			#emit SREF.S.pri                addr
+			return;
+		}
+		else
+		{
+			// Write 4 bytes.
+			buffer = (buffer >>> 24) | (buffer >> 8 & 0x0000FF00) | (buffer << 8 & 0x00FF0000) | (buffer << 24);
+			#emit LOAD.S.pri                buffer
+			#emit SREF.S.pri                addr
+			addr += 4;
+		}
 	}
 	while (++idx < len);
 }
