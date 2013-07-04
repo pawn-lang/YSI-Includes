@@ -574,12 +574,15 @@ _Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
 	static
 		ret[32 char];
 	ret[0] = '\0';
-	if      (!strcmp(ref, YSI_gscOnPlayerEnterRaceCP))      ret = !"OnPlayerEnterRaceCP";
-	else if (!strcmp(ref, YSI_gscOnPlayerLeaveRaceCP))      ret = !"OnPlayerLeaveRaceCP";
-	else if (!strcmp(ref, YSI_gscOnVehicleDamageStatusUpd)) ret = !"OnVehicleDamageStatusUpd";
-	else if (!strcmp(ref, YSI_gscOnUnoccupiedVehicleUpd))   ret = !"OnUnoccupiedVehicleUpd";
-	else if (!strcmp(ref, YSI_gscOnPlayerClickPlayerTD))    ret = !"OnPlayerClickPlayerTD";
-	else if (!strcmp(ref, YSI_gscOnPlayerEditAttachedObj))  ret = !"OnPlayerEditAttachedObj";
+	// The comments after are the number of saved characters.  If this is
+	// greater than 6, then we need to specially handle the rewriting as that
+	// means there isn't enough space in the hook's name for the original.
+	if      (!strcmp(ref, YSI_gscOnPlayerEnterRaceCP))      ret = !"OnPlayerEnterRaceCP";      // 8
+	else if (!strcmp(ref, YSI_gscOnPlayerLeaveRaceCP))      ret = !"OnPlayerLeaveRaceCP";      // 8
+	else if (!strcmp(ref, YSI_gscOnVehicleDamageStatusUpd)) ret = !"OnVehicleDamageStatusUpd"; // 3
+	else if (!strcmp(ref, YSI_gscOnUnoccupiedVehicleUpd))   ret = !"OnUnoccupiedVehicleUpd";   // 3
+	else if (!strcmp(ref, YSI_gscOnPlayerClickPlayerTD))    ret = !"OnPlayerClickPlayerTD";    // 6
+	else if (!strcmp(ref, YSI_gscOnPlayerEditAttachedObj))  ret = !"OnPlayerEditAttachedObj";  // 3
 	else if (!strcmp(ref, !"OnPlayerEnterRaceCP"))      ret = YSI_gscOnPlayerEnterRaceCP;
 	else if (!strcmp(ref, !"OnPlayerLeaveRaceCP"))      ret = YSI_gscOnPlayerLeaveRaceCP;
 	else if (!strcmp(ref, !"OnVehicleDamageStatusUpd")) ret = YSI_gscOnVehicleDamageStatusUpd;
@@ -587,16 +590,16 @@ _Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
 	else if (!strcmp(ref, !"OnPlayerClickPlayerTD"))    ret = YSI_gscOnPlayerClickPlayerTD;
 	else if (!strcmp(ref, !"OnPlayerEditAttachedObj"))  ret = YSI_gscOnPlayerEditAttachedObj;
 	// YSI.
-	else if (!strcmp(ref, YSI_gscOnPlayerCmdPerformed)) ret = !"OnPlayerCmdPerformed";
+	else if (!strcmp(ref, YSI_gscOnPlayerCmdPerformed)) ret = !"OnPlayerCmdPerformed";         
 	else if (!strcmp(ref, !"OnPlayerCmdPerformed"))     ret = YSI_gscOnPlayerCmdPerformed;
-	// Streamer.
-	else if (!strcmp(ref, YSI_gscOnPlayerEditDynObject))   ret = !"OnPlayerEditDynObject";
-	else if (!strcmp(ref, YSI_gscOnPlayerSelectDynObject)) ret = !"OnPlayerSelectDynObject";
-	else if (!strcmp(ref, YSI_gscOnPlayerPickUpDynPickup)) ret = !"OnPlayerPickUpDynPickup";
-	else if (!strcmp(ref, YSI_gscOnPlayerEnterDynRaceCP))  ret = !"OnPlayerEnterDynRaceCP";
-	else if (!strcmp(ref, YSI_gscOnPlayerLeaveDynRaceCP))  ret = !"OnPlayerLeaveDynRaceCP";
-	else if (!strcmp(ref, YSI_gscOnPlayerEnterDynArea))    ret = !"OnPlayerEnterDynArea";
-	else if (!strcmp(ref, YSI_gscOnPlayerLeaveDynArea))    ret = !"OnPlayerLeaveDynArea";
+	// Streamer ("CP" is already shorter for the streamer).
+	else if (!strcmp(ref, YSI_gscOnPlayerEditDynObject))   ret = !"OnPlayerEditDynObject";     // 4
+	else if (!strcmp(ref, YSI_gscOnPlayerSelectDynObject)) ret = !"OnPlayerSelectDynObject";   // 4
+	else if (!strcmp(ref, YSI_gscOnPlayerPickUpDynPickup)) ret = !"OnPlayerPickUpDynPickup";   // 4
+	else if (!strcmp(ref, YSI_gscOnPlayerEnterDynRaceCP))  ret = !"OnPlayerEnterDynRaceCP";    // 4
+	else if (!strcmp(ref, YSI_gscOnPlayerLeaveDynRaceCP))  ret = !"OnPlayerLeaveDynRaceCP";    // 4
+	else if (!strcmp(ref, YSI_gscOnPlayerEnterDynArea))    ret = !"OnPlayerEnterDynArea";      // 4
+	else if (!strcmp(ref, YSI_gscOnPlayerLeaveDynArea))    ret = !"OnPlayerLeaveDynArea";      // 4
 	else if (!strcmp(ref, !"OnPlayerEditDynObject"))   ret = YSI_gscOnPlayerEditDynObject;
 	else if (!strcmp(ref, !"OnPlayerSelectDynObject")) ret = YSI_gscOnPlayerSelectDynObject;
 	else if (!strcmp(ref, !"OnPlayerPickUpDynPickup")) ret = YSI_gscOnPlayerPickUpDynPickup;
@@ -605,11 +608,11 @@ _Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
 	else if (!strcmp(ref, !"OnPlayerEnterDynArea"))    ret = YSI_gscOnPlayerEnterDynArea;
 	else if (!strcmp(ref, !"OnPlayerLeaveDynArea"))    ret = YSI_gscOnPlayerLeaveDynArea;
 	// Start points.
-	else if (!strcmp(ref, !"OnGameModeInit"))     ret = !"S@@_OnGameModeInit";
-	else if (!strcmp(ref, !"OnFilterScriptInit")) ret = !"S@@_OnFilterScriptInit";
-	else if (!strcmp(ref, !"OnScriptInit"))       ret = !"S@@_OnScriptInit";
+	else if (!strcmp(ref, !"OnGameModeInit"))     ret = !"S@@_OnGameModeInit";     // N/A
+	else if (!strcmp(ref, !"OnFilterScriptInit")) ret = !"S@@_OnFilterScriptInit"; // N/A
+	else if (!strcmp(ref, !"OnScriptInit"))       ret = !"S@@_OnScriptInit";       // N/A
 	// Specially named exit point.
-	else if (!strcmp(ref, !"OnScriptExit"))       ret = YSI_gscOnScriptExit;
+	else if (!strcmp(ref, !"OnScriptExit"))       ret = YSI_gscOnScriptExit;       // 11
 	return ret;
 }
 

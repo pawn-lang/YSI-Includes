@@ -71,59 +71,17 @@ Changelog:
 
 // Start of the multi-use file.
 static stock
-	BitArray:_GROUP_GROUP_NAME[_GROUP_MAKE_LIMIT]<_:_MAX_GROUPS_G>,
-	BitArray:_GROUP_DEFAULTS<_:_MAX_GROUPS_G>,
+	BitArray:YSI_g_sElementMembership[_GROUP_MAKE_LIMIT]<_:_MAX_GROUPS_G>,
+	BitArray:YSI_g_sDefaultMembership<_:_MAX_GROUPS_G>,
 	BitArray:YSI_g_sEmpty<_:_MAX_GROUPS_G>,
 	_yGI,
 	_yGU,
 	_yGA;
 
+// Define the callback chaining for the current 
 #if defined _YSI_HAS_y_groups
 	#define gforeign%1(%2); _GROUP_MAKE_NAME<foreign%1>(%2);
 	#define gglobal%1(%2) _GROUP_MAKE_NAME<global%1>(%2)
-#elseif COMPILER_1ST_PASS
-	#if YSIM_HAS_MASTER
-		#if _YSIM_IS_CLIENT
-			#define gforeign%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);
-			#define gglobal%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1_>(%2)
-		#elseif _YSIM_IS_SERVER
-			#define gforeign%0...%1(%2); _GROUP_MAKE_NAME<%0...%1>(%2);static stock _GROUP_MAKE_NAME<%0...%1@>(%2)(_GROUP_MAKE_NAME<%0...%1>(%2));
-			#define gglobal%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1>(%2)
-		#elseif _YSIM_IS_STUB
-			#define gforeign%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>;
-			#define gglobal%0...%1(%2)
-		#else
-			#define gforeign%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);static stock _GROUP_MAKE_NAME<%0...%1@>(%2)<_YCM:y>(_GROUP_MAKE_NAME<%0...%1>(%2));
-			#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1@>(%2)<>(_GROUP_MAKE_NAME<%0...%1>(%2)); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:y>
-		#endif
-	#else
-			#define gforeign%0...%1(%2);
-			#define gglobal%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1>(%2)
-	#endif
-#else
-// Define the callback chaining for the current 
-	#if YSIM_HAS_MASTER
-		#if _YSIM_IS_CLIENT
-			#define gforeign%0...%1(%2); static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);
-			#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1_>(%2)
-		#elseif _YSIM_IS_SERVER
-			#define gforeign%0...%1(%2); _GROUP_MAKE_NAME<%0...%1>(%2);static stock _GROUP_MAKE_NAME<%0...%1@>(%2)(_GROUP_MAKE_NAME<%0...%1>(%2));
-			#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
-		#elseif _YSIM_IS_STUB
-			#define gforeign%0...%1(%2); static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>;
-			#define gglobal%0...%1(%2)
-		#else
-			#define gforeign%0...%1(%2); static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);static stock _GROUP_MAKE_NAME<%0...%1@>(%2)<_YCM:y>(_GROUP_MAKE_NAME<%0...%1>(%2));
-			#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1@>(%2)<>(_GROUP_MAKE_NAME<%0...%1>(%2));static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:y>
-		#endif
-	#else
-			#define gforeign%0...%1(%2);
-			#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
-	#endif
-#endif
-
-// Define the callback chaining for the current 
-#if defined _YSI_HAS_y_groups
 	#if YSIM_HAS_MASTER
 		#if _YSIM_IS_CLIENT
 			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
@@ -134,11 +92,10 @@ static stock
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#elseif _YSIM_IS_STUB
 			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
-			// Because of the interaction between the various things that
-			// the groups and master systems this will NEVER be called in a
-			// stub script - and if it is we now get a nice compile-time
-			// error telling us so!  It may, however, prove difficult to
-			// trace!
+			// Because of the interaction between the various things that the
+			// groups and master systems this will NEVER be called in a stub
+			// script - and if it is we now get a nice compile-time error
+			// telling us so!  It may, however, prove difficult to trace!
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Stub_Set>
 		#else
 			#define _gchain%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);public _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
@@ -151,38 +108,58 @@ static stock
 #elseif COMPILER_1ST_PASS
 	#if YSIM_HAS_MASTER
 		#if _YSIM_IS_CLIENT
+			#define gforeign%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);
+			#define gglobal%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1_>(%2)
 			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Client_Set>
 		#elseif _YSIM_IS_SERVER
+			#define gforeign%0...%1(%2); _GROUP_MAKE_NAME<%0...%1>(%2);static stock _GROUP_MAKE_NAME<%0...%1@>(%2)(_GROUP_MAKE_NAME<%0...%1>(%2));
+			#define gglobal%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1>(%2)
 			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#elseif _YSIM_IS_STUB
+			#define gforeign%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>;
+			#define gglobal%0...%1(%2)
 			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Stub_Set>
 		#else
+			#define gforeign%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);static stock _GROUP_MAKE_NAME<%0...%1@>(%2)<_YCM:y>(_GROUP_MAKE_NAME<%0...%1>(%2));
+			#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1@>(%2)<>(_GROUP_MAKE_NAME<%0...%1>(%2)); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:y>
 			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);stock _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#endif
 	#else
+		#define gforeign%0...%1(%2);
+		#define gglobal%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1>(%2)
 		#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 		#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 	#endif
 #else
 	#if YSIM_HAS_MASTER
 		#if _YSIM_IS_CLIENT
+			#define gforeign%0...%1(%2); static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);
+			#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1_>(%2)
 			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Client_Set>
 		#elseif _YSIM_IS_SERVER
+			#define gforeign%0...%1(%2); _GROUP_MAKE_NAME<%0...%1>(%2);static stock _GROUP_MAKE_NAME<%0...%1@>(%2)(_GROUP_MAKE_NAME<%0...%1>(%2));
+			#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
 			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#elseif _YSIM_IS_STUB
+			#define gforeign%0...%1(%2); static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>;
+			#define gglobal%0...%1(%2)
 			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Stub_Set>
 		#else
+			#define gforeign%0...%1(%2); static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);static stock _GROUP_MAKE_NAME<%0...%1@>(%2)<_YCM:y>(_GROUP_MAKE_NAME<%0...%1>(%2));
+			#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1@>(%2)<>(_GROUP_MAKE_NAME<%0...%1>(%2));static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:y>
 			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);static stock _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#endif
 	#else
+		#define gforeign%0...%1(%2);
+		#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
 		#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 		#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 	#endif
@@ -296,15 +273,15 @@ static stock
 			{
 				//printf("PUSH %d", nu);
 				// Called to "push" the default settings.
-				sStack = _GROUP_DEFAULTS;
+				sStack = YSI_g_sDefaultMembership;
 				//printf("ONE %d", nu);
-				_GROUP_DEFAULTS = YSI_g_cEmptyGroups;
+				YSI_g_sDefaultMembership = YSI_g_cEmptyGroups;
 				//printf("TWO %d", nu);
-				Bit_Let(_GROUP_DEFAULTS, nu);
+				Bit_Let(YSI_g_sDefaultMembership, nu);
 				//printf("THREE %d", nu);
 				for (new i = 0; i != bits<_MAX_GROUPS_G>; ++i)
 				{
-					YSI_g_sEmpty[i] = ~_GROUP_DEFAULTS[i];
+					YSI_g_sEmpty[i] = ~YSI_g_sDefaultMembership[i];
 				}
 				//printf("DONE %d", nu);
 			}
@@ -312,7 +289,7 @@ static stock
 			{
 				//printf("POP");
 				// Called to "pop" the default settings.
-				_GROUP_DEFAULTS = sStack;
+				YSI_g_sDefaultMembership = sStack;
 				YSI_g_sEmpty = YSI_g_cEmptyGroups;
 			}
 		}
@@ -322,12 +299,12 @@ static stock
 			// Enable the default group.  If I'm right, this way is actually better than
 			// using variables as in most cases because "_MAX_GROUPS" is a constant so
 			// all the other maths will be constant.
-			Bit_Let(_GROUP_DEFAULTS, _MAX_GROUPS);
+			Bit_Let(YSI_g_sDefaultMembership, _MAX_GROUPS);
 			// Don't need this loop anymore, it is done for every element individually.
 			//for (new i = 0; i != _GROUP_MAKE_LIMIT; ++i)
 			//{
 			//	// Basically, enable everything in the default group.
-			//	Bit_Let(_GROUP_GROUP_NAME[i], _MAX_GROUPS);
+			//	Bit_Let(YSI_g_sElementMembership[i], _MAX_GROUPS);
 			//}
 			// Set up the function chaining.
 			ni = AMX_GetPublicPointerPrefix(ni, _yGI, _A<_yGI>);
@@ -338,6 +315,8 @@ static stock
 //#else
 //	_GCHAIN_UNUSED _yGI(&ni, &na, &nu);
 //#endif
+
+
 
 /**--------------------------------------------------------------------------**\
 <summary>_GROUP_INITIALISE</summary>
@@ -375,14 +354,14 @@ static stock
 		{
 			//static
 			//	BitArray:sEmpty<_MAX_GROUPS_G>;
-			//printf("%d %s %s", _:x, Bit_Display(_GROUP_DEFAULTS), Bit_Display(YSI_g_sEmpty));
-			_GROUP_GROUP_NAME[_:x] = _GROUP_DEFAULTS;
+			//printf("%d %s %s", _:x, Bit_Display(YSI_g_sDefaultMembership), Bit_Display(YSI_g_sEmpty));
+			YSI_g_sElementMembership[_:x] = YSI_g_sDefaultMembership;
 			foreach (new playerid : Player)
 			{
 				// Uses "YSI_g_sEmpty" instead of a truly blank variable so that we
 				// can ensure that NO other groups have this element when we use the
 				// "GROUP_ADD" macro.
-				Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, _GROUP_DEFAULTS, YSI_gGroupPlayers[playerid]);
+				Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultMembership, YSI_gGroupPlayers[playerid]);
 			}
 		}
 		return false;
@@ -419,15 +398,15 @@ gglobal Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
 	if (GROUP_MASK <= g <= GROUP_GLOBAL)
 	{
 		GROUP_FIX(g);
-		YSI_gTempGroups = _GROUP_DEFAULTS;
-		_GROUP_DEFAULTS = YSI_g_cEmptyGroups;
-		Bit_Let(_GROUP_DEFAULTS, _:g);
+		YSI_gTempGroups = YSI_g_sDefaultMembership;
+		YSI_g_sDefaultMembership = YSI_g_cEmptyGroups;
+		Bit_Let(YSI_g_sDefaultMembership, _:g);
 		for (new i = 0; i != bits<_MAX_GROUPS_G>; ++i)
 		{
-			YSI_g_sEmpty[i] = ~_GROUP_DEFAULTS[i];
+			YSI_g_sEmpty[i] = ~YSI_g_sDefaultMembership[i];
 		}
 		_GROUP_INITIALISE(el);
-		_GROUP_DEFAULTS = YSI_gTempGroups;
+		YSI_g_sDefaultMembership = YSI_gTempGroups;
 		YSI_g_sEmpty = YSI_g_cEmptyGroups;
 		return 1;
 	}
@@ -459,11 +438,11 @@ gglobal Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
 			s = Bit_Slot(group),
 			Bit:m = ~Bit_Mask(group);
 		// Set the default "contains" for this group to false.
-		_GROUP_DEFAULTS[s] &= m;
+		YSI_g_sDefaultMembership[s] &= m;
 		// Disable every element in this group.
 		for (new i = 0; i != _GROUP_MAKE_LIMIT; ++i)
 		{
-			_GROUP_GROUP_NAME[i][s] &= m;
+			YSI_g_sElementMembership[i][s] &= m;
 		}
 	}
 //#else
@@ -497,7 +476,7 @@ gglobal Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
 		// is called to do the actual internal function of updating their state.
 		for (new el = 0; el != _GROUP_MAKE_LIMIT; ++el)
 		{
-			Group_FullPlayerUpdate(pid, el, p, c, _GROUP_GROUP_NAME[el]);
+			Group_FullPlayerUpdate(pid, el, p, c, YSI_g_sElementMembership[el]);
 		}
 	}
 //#else
@@ -547,10 +526,10 @@ gglobal Group_Set...Default(Group:g,bool:s)
 			BitArray:sNext<_MAX_GROUPS_G>;
 		if (s)
 		{
-			Bit_Let(_GROUP_DEFAULTS, _:g);
+			Bit_Let(YSI_g_sDefaultMembership, _:g);
 			for (new el = 0; el != _GROUP_MAKE_LIMIT; ++el)
 			{
-				sNext = _GROUP_GROUP_NAME[el];
+				sNext = YSI_g_sElementMembership[el];
 				if (sNext[slot] & mask)
 				{
 					continue;
@@ -559,17 +538,17 @@ gglobal Group_Set...Default(Group:g,bool:s)
 				Bit_Let(sNext, _:g);
 				foreach (new playerid : GP)
 				{
-					Group_FullPlayerUpdate(playerid, el, _GROUP_GROUP_NAME[el], sNext, YSI_gGroupPlayers[playerid]);
+					Group_FullPlayerUpdate(playerid, el, YSI_g_sElementMembership[el], sNext, YSI_gGroupPlayers[playerid]);
 				}
-				_GROUP_GROUP_NAME[el] = sNext;
+				YSI_g_sElementMembership[el] = sNext;
 			}
 		}
 		else
 		{
-			Bit_Vet(_GROUP_DEFAULTS, _:g);
+			Bit_Vet(YSI_g_sDefaultMembership, _:g);
 			for (new el = 0; el != _GROUP_MAKE_LIMIT; ++el)
 			{
-				sNext = _GROUP_GROUP_NAME[el];
+				sNext = YSI_g_sElementMembership[el];
 				if (!(sNext[slot] & mask))
 				{
 					continue;
@@ -578,9 +557,9 @@ gglobal Group_Set...Default(Group:g,bool:s)
 				Bit_Vet(sNext, _:g);
 				foreach (new playerid : GP)
 				{
-					Group_FullPlayerUpdate(playerid, el, _GROUP_GROUP_NAME[el], sNext, YSI_gGroupPlayers[playerid]);
+					Group_FullPlayerUpdate(playerid, el, YSI_g_sElementMembership[el], sNext, YSI_gGroupPlayers[playerid]);
 				}
-				_GROUP_GROUP_NAME[el] = sNext;
+				YSI_g_sElementMembership[el] = sNext;
 			}
 		}
 		return 1;
@@ -630,7 +609,7 @@ gglobal Group_Set...New(Group:g,bool:s)
 	if (GROUP_MASK <= g <= GROUP_GLOBAL)
 	{
 		// There is now NO validity check for reasons of distruibution.
-		Bit_Set(_GROUP_DEFAULTS, _:GROUP_TEMP_FIX(g), s);
+		Bit_Set(YSI_g_sDefaultMembership, _:GROUP_TEMP_FIX(g), s);
 		return 1;
 	}
 	return 0;
@@ -686,7 +665,7 @@ gglobal Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
 		//	BitArray:sNext<_MAX_GROUPS_G>;
 		if (s)
 		{
-			YSI_gTempGroups = _GROUP_GROUP_NAME[_:el];
+			YSI_gTempGroups = YSI_g_sElementMembership[_:el];
 			if (YSI_gTempGroups[slot] & mask)
 			{
 				// No point adding an element to a group that it is already in.
@@ -697,7 +676,7 @@ gglobal Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
 		}
 		else
 		{
-			YSI_gTempGroups = _GROUP_GROUP_NAME[_:el];
+			YSI_gTempGroups = YSI_g_sElementMembership[_:el];
 			if (!(YSI_gTempGroups[slot] & mask))
 			{
 				return 1;
@@ -711,10 +690,10 @@ gglobal Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
 			{
 				// The player is in the group in question, so they need a full
 				// update.
-				//Group_FullPlayerUpdate(playerid, _:el, _GROUP_GROUP_NAME[_:el], YSI_gTempGroups, YSI_gGroupPlayers[playerid]);
+				//Group_FullPlayerUpdate(playerid, _:el, YSI_g_sElementMembership[_:el], YSI_gTempGroups, YSI_gGroupPlayers[playerid]);
 			}
 		}
-		_GROUP_GROUP_NAME[_:el] = YSI_gTempGroups;
+		YSI_g_sElementMembership[_:el] = YSI_gTempGroups;
 		return 1;
 	}
 	return 0;
@@ -758,7 +737,7 @@ gforeign bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el);
 gglobal bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el)
 {
 	P:2(#_GROUP_MAKE_NAME<Group_Get...> " called: %i, %i", _:g, _:el);
-	return (0 <= _:el < _GROUP_MAKE_LIMIT && GROUP_MASK <= g <= GROUP_GLOBAL && Bit_Get(_GROUP_GROUP_NAME[_:el], _:GROUP_TEMP_FIX(g)));
+	return (0 <= _:el < _GROUP_MAKE_LIMIT && GROUP_MASK <= g <= GROUP_GLOBAL && Bit_Get(YSI_g_sElementMembership[_:el], _:GROUP_TEMP_FIX(g)));
 }
 
 /**--------------------------------------------------------------------------**\

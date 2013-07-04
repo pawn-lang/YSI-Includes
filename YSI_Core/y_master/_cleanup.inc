@@ -33,6 +33,7 @@
 #undef _YSIM_IS_STUB
 
 #undef _YCM
+#undef MAKE_YCM
 #undef _YCM@
 
 #if defined YSIM_DEFINED

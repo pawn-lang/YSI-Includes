@@ -188,19 +188,33 @@ Natives:
 		stock
 			_E_YCM:_YCM@ = _E_YCM@u;
 		
-		public OnMasterSystemInit()
+		forward _YCM();
+		
+		static stock Master_GetCurrentMaster()
 		{
-			P:1(#_YCM "_OGM");
-			// THEN rename the callbacks.
 			#if _YSIM_IS_SERVER
 				// Steal the master.
-				_Master_Get(#_YCM, true);
-				_YCM@ = _E_YCM@y;
-				// Determine the next unique name.
-				CallRemoteFunction(#_YCM, "");
-			#elseif _YSIM_IS_CLOUD
+				if (_Master_Get(#_YCM, true))
+				{
+					// Nothing changed, or we took it without force.
+					state _YCM:y;
+					_YCM@ = _E_YCM@y;
+				}
+				else
+				{
+					// Something changed, tell other scripts.
+					state _YCM:u;
+					_YCM@ = _E_YCM@u;
+					// Determine the next unique name.
+					CallRemoteFunction(#_YCM, "");
+					// This is where we need to to the handoff.
+					// The handoff should pass data from anything in the
+					// "p" state to anything in either the "y" or "u" states.
+					//CallRemoteFunction(#MAKE_YCM<HANDOFF_SOURCE...>, "");
+				}
+			#else //if _YSIM_IS_CLOUD
 				// See if this script should be master.
-				if (_Master_Get(#_YCM))
+				if (_Master_Get(#_YCM, false))
 				{
 					P:2("Got master " #_YCM);
 					state _YCM:y;
@@ -212,6 +226,13 @@ Natives:
 					_YCM@ = _E_YCM@n;
 				}
 			#endif
+		}
+		
+		public OnMasterSystemInit()
+		{
+			P:1(#_YCM "_OGM");
+			Master_GetCurrentMaster();
+			// THEN rename the callbacks.
 			// FINALLY call the new next one.
 			#if _MASTER == 0
 				#if defined a@OnScriptInit
@@ -385,26 +406,26 @@ Natives:
 		// that is a macro which is expanded every time this file is included.
 		// m is also now client/stub.
 		
-		forward _YCM();
 		public _YCM() <_YCM:y>
 		{
 			P:1("%d: " #_YCM "<y> called", _@);
-			if (getproperty(9, #_YCM) != _@)
+			if (getproperty(9, #_YCM) == _@)
 			{
-				// Master, but not.  A server has claimed this.
-				state _YCM:n;
-				_YCM@ = _E_YCM@n;
-			}
-			else
-			{
-				P:2("%d: " #_YCM ":y called", _@);
 				// Disable the current mastership.
-				state _YCM:p;
-				_YCM@ = _E_YCM@p;
+				state _YCM:m;
+				_YCM@ = _E_YCM@m;
+				// Ending normally, relinquish control peacefully.
 				setproperty(9, #_YCM, -1);
 				// Called locally to begin the hand off process.
 				CallRemoteFunction(#_YCM, "");
 			}
+			// This is where we need to to the handoff.
+			state _YCM:p;
+			_YCM@ = _E_YCM@p;
+			CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...>, "");
+			// Could, in theory, return to be master if the script doesn't end.
+			state _YCM:n;
+			_YCM@ = _E_YCM@n;
 		}
 		
 		public _YCM() <_YCM:n>
@@ -412,23 +433,26 @@ Natives:
 			P:1("%d: " #_YCM "<n> called", _@);
 			// This has been called remotely from a script which owns the
 			// library masterhood (that's the only way this can ever be called).
-			if (_Master_Get(#_YCM))
-			{
-				P:2("%d: " "Got master " #_YCM, _@);
-				state _YCM:y;
-				_YCM@ = _E_YCM@y;
-			}
+			Master_GetCurrentMaster();
 		}
 		
-		public _YCM() <_YCM:m, _YCM:p, _YCM:u>
+		public _YCM() <_YCM:m, _YCM:p>
 		{
-			P:1("%d: " #_YCM "<m,p,u,x> called", _@);
+			P:1("%d: " #_YCM "<m,p> called", _@);
 			// Do nothing at all (just define states).
+		}
+		
+		public _YCM() <_YCM:u>
+		{
+			// Finish initialisation.
+			P:1("%d: " #_YCM "<u> called", _@);
+			state _YCM:y;
+			_YCM@ = _E_YCM@y;
 		}
 		
 		public _YCM() <>
 		{
-			P:1("%d: " #_YCM "<> called", _@);
+			/*P:1("%d: " #_YCM "<> called", _@);
 			if (_Master_Get(#_YCM))
 			{
 				P:2("%d: " "Got master " #_YCM, _@);
@@ -439,8 +463,9 @@ Natives:
 			{
 				state _YCM:n;
 				_YCM@ = _E_YCM@n;
-			}
+			}*/
 			// Do nothing at all (just define states).
+			P:E(#_YCM "() <> called");
 		}
 	#elseif YSIM_HAS_MASTER
 		stock

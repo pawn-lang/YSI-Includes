@@ -221,6 +221,10 @@ forward Master_OnScriptClose(script);
 	#endinput
 #endif
 
+#define HANDOFF_SOURCE() MAKE_YCM<HANDOFF_SOURCE...>() <_YCM:p>
+#define HANDOFF_TARGET(%1) MAKE_YCM<HANDOFF_TARGET...>(%1) <_YCM:y, _YCM:u>
+//#define Master_HandoffSource() MAKE_YCM<Master_Handoff...>
+
 #define MAX_MASTERS 26
 
 forward Master_Reassert();
@@ -420,21 +424,21 @@ public Master_Reassert()
 
 stock bool:_Master_Get(library[], bool:force = false)
 {
+	new
+		ret = true;
 	P:3("bool:_Master_Get called: \"%s\", %i", library, _:force);
 	P:2("_Master_Get called");
-	if (!force && existproperty(9, library))
+	if (existproperty(9, library))
 	{
 		new
 			master = getproperty(9, library);
 		P:4("_Master_Get: Prop exists: %d %d", master, _@);
 		if (master != -1)
 		{
-			if (master == _@)
-			{
-				return true;
-			}
 			P:4("_Master_Get: Prop set");
-			return false;
+			if (master == _@) return true; // Nothing has changed.
+			else if (force) ret = false; // A server is forcing itself.
+			else return false; // Not got the master.
 		}
 	}
 	P:4("_Master_Get: Get master.");
@@ -449,7 +453,7 @@ stock bool:_Master_Get(library[], bool:force = false)
 		P:4("_Master_Get: Set master string.");
 	}
 	P:C(else P:E("Too many master scripts"););
-	return true;
+	return ret;
 }
 
 #if defined a@OnScriptInit

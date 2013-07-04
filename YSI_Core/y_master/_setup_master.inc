@@ -27,6 +27,7 @@
 		#endif
 	#endif
 	#define _YCM a@
+	#define MAKE_YCM<%0...%1> %0a@%1
 	#define _YCM@ _YCM_ga@
 #elseif MASTER == 1
 	#define _MASTER 1
@@ -52,6 +53,7 @@
 		#endif
 	#endif
 	#define _YCM b@
+	#define MAKE_YCM<%0...%1> %0b@%1
 	#define _YCM@ _YCM_gb@
 #elseif MASTER == 2
 	#define _MASTER 2
@@ -77,6 +79,7 @@
 		#endif
 	#endif
 	#define _YCM c@
+	#define MAKE_YCM<%0...%1> %0c@%1
 	#define _YCM@ _YCM_gc@
 #elseif MASTER == 3
 	#define _MASTER 3
@@ -102,6 +105,7 @@
 		#endif
 	#endif
 	#define _YCM d@
+	#define MAKE_YCM<%0...%1> %0d@%1
 	#define _YCM@ _YCM_gd@
 #elseif MASTER == 4
 	#define _MASTER 4
@@ -127,6 +131,7 @@
 		#endif
 	#endif
 	#define _YCM e@
+	#define MAKE_YCM<%0...%1> %0e@%1
 	#define _YCM@ _YCM_ge@
 #elseif MASTER == 5
 	#define _MASTER 5
@@ -152,6 +157,7 @@
 		#endif
 	#endif
 	#define _YCM f@
+	#define MAKE_YCM<%0...%1> %0f@%1
 	#define _YCM@ _YCM_gf@
 #elseif MASTER == 6
 	#define _MASTER 6
@@ -177,6 +183,7 @@
 		#endif
 	#endif
 	#define _YCM g@
+	#define MAKE_YCM<%0...%1> %0g@%1
 	#define _YCM@ _YCM_gg@
 #elseif MASTER == 7
 	#define _MASTER 7
@@ -202,6 +209,7 @@
 		#endif
 	#endif
 	#define _YCM h@
+	#define MAKE_YCM<%0...%1> %0h@%1
 	#define _YCM@ _YCM_gh@
 #elseif MASTER == 8
 	#define _MASTER 8
@@ -227,6 +235,7 @@
 		#endif
 	#endif
 	#define _YCM i@
+	#define MAKE_YCM<%0...%1> %0i@%1
 	#define _YCM@ _YCM_gi@
 #elseif MASTER == 9
 	#define _MASTER 9
@@ -252,6 +261,7 @@
 		#endif
 	#endif
 	#define _YCM j@
+	#define MAKE_YCM<%0...%1> %0j@%1
 	#define _YCM@ _YCM_gj@
 #elseif MASTER == 10
 	#define _MASTER 10
@@ -277,6 +287,7 @@
 		#endif
 	#endif
 	#define _YCM k@
+	#define MAKE_YCM<%0...%1> %0k@%1
 	#define _YCM@ _YCM_gk@
 #elseif MASTER == 11
 	#define _MASTER 11
@@ -302,6 +313,7 @@
 		#endif
 	#endif
 	#define _YCM l@
+	#define MAKE_YCM<%0...%1> %0l@%1
 	#define _YCM@ _YCM_gl@
 #elseif MASTER == 12
 	#define _MASTER 12
@@ -327,6 +339,7 @@
 		#endif
 	#endif
 	#define _YCM m@
+	#define MAKE_YCM<%0...%1> %0m@%1
 	#define _YCM@ _YCM_gm@
 #elseif MASTER == 13
 	#define _MASTER 13
@@ -352,6 +365,7 @@
 		#endif
 	#endif
 	#define _YCM n@
+	#define MAKE_YCM<%0...%1> %0n@%1
 	#define _YCM@ _YCM_gn@
 #elseif MASTER == 14
 	#define _MASTER 14
@@ -377,6 +391,7 @@
 		#endif
 	#endif
 	#define _YCM o@
+	#define MAKE_YCM<%0...%1> %0o@%1
 	#define _YCM@ _YCM_go@
 #elseif MASTER == 15
 	#define _MASTER 15
@@ -402,6 +417,7 @@
 		#endif
 	#endif
 	#define _YCM p@
+	#define MAKE_YCM<%0...%1> %0p@%1
 	#define _YCM@ _YCM_gp@
 #elseif MASTER == 16
 	#define _MASTER 16
@@ -427,6 +443,7 @@
 		#endif
 	#endif
 	#define _YCM q@
+	#define MAKE_YCM<%0...%1> %0q@%1
 	#define _YCM@ _YCM_gq@
 #elseif MASTER == 17
 	#define _MASTER 17
@@ -452,6 +469,7 @@
 		#endif
 	#endif
 	#define _YCM r@
+	#define MAKE_YCM<%0...%1> %0r@%1
 	#define _YCM@ _YCM_gr@
 #elseif MASTER == 18
 	#define _MASTER 18
@@ -477,6 +495,7 @@
 		#endif
 	#endif
 	#define _YCM s@
+	#define MAKE_YCM<%0...%1> %0s@%1
 	#define _YCM@ _YCM_gs@
 #elseif MASTER == 19
 	#define _MASTER 19
@@ -502,6 +521,7 @@
 		#endif
 	#endif
 	#define _YCM t@
+	#define MAKE_YCM<%0...%1> %0t@%1
 	#define _YCM@ _YCM_gt@
 #elseif MASTER == 20
 	#define _MASTER 20
@@ -527,6 +547,7 @@
 		#endif
 	#endif
 	#define _YCM u@
+	#define MAKE_YCM<%0...%1> %0u@%1
 	#define _YCM@ _YCM_gu@
 #elseif MASTER == 21
 	#define _MASTER 21
@@ -552,6 +573,7 @@
 		#endif
 	#endif
 	#define _YCM v@
+	#define MAKE_YCM<%0...%1> %0v@%1
 	#define _YCM@ _YCM_gv@
 #elseif MASTER == 22
 	#define _MASTER 22
@@ -577,6 +599,7 @@
 		#endif
 	#endif
 	#define _YCM w@
+	#define MAKE_YCM<%0...%1> %0w@%1
 	#define _YCM@ _YCM_gw@
 #elseif MASTER == 23
 	#define _MASTER 23
@@ -602,6 +625,7 @@
 		#endif
 	#endif
 	#define _YCM x@
+	#define MAKE_YCM<%0...%1> %0x@%1
 	#define _YCM@ _YCM_gx@
 #elseif MASTER == 24
 	#define _MASTER 24
@@ -627,6 +651,7 @@
 		#endif
 	#endif
 	#define _YCM y@
+	#define MAKE_YCM<%0...%1> %0y@%1
 	#define _YCM@ _YCM_gy@
 #elseif MASTER == 25
 	#define _MASTER 25
@@ -652,6 +677,7 @@
 		#endif
 	#endif
 	#define _YCM z@
+	#define MAKE_YCM<%0...%1> %0z@%1
 	#define _YCM@ _YCM_gz@
 #else
 	#error Invalid MASTER ID (must be 0-25)
