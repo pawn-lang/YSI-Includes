@@ -79,7 +79,7 @@ Changelog:
 		printf("%s#undef UNIQUE_SYMBOL", SPACES[SI]);
 		printf("%s#undef UNIQUE_FUNCTION", SPACES[SI]);
 		printf("%s#define UNIQUE_SYMBOL (%d)", SPACES[SI], max - (num - 1));
-		printf("%s#define UNIQUE_FUNCTION<%%0...%%1> %%0%d%%1", SPACES[SI], max - (num - 1));
+		printf("%s#define UNIQUE_FUNCTION<%%0...%%1> %%0%03d%%1", SPACES[SI], max - (num - 1));
 		printf("%s#endinput", SPACES[SI]);
 		return;
 	}
@@ -103,7 +103,7 @@ Changelog:
 printf("#if !defined UNIQUE_SYMBOL");
 printf("	// Start from 1, not 0, to allow special cases.");
 printf("	#define UNIQUE_SYMBOL (1)");
-printf("	#define UNIQUE_FUNCTION<%%0...%%1> %%01%%1");
+printf("	#define UNIQUE_FUNCTION<%%0...%%1> %%0001%%1");
 printf("#else");
 Unique_Gen(7, 0, 7 * 7 * 7, 1, 7 * 7 * 7);
 printf("#endif");
@@ -112,7 +112,7 @@ printf("#endif");
 #if !defined UNIQUE_SYMBOL
 	// Start from 1, not 0, to allow special cases.
 	#define UNIQUE_SYMBOL (1)
-	#define UNIQUE_FUNCTION<%0...%1> %01%1
+	#define UNIQUE_FUNCTION<%0...%1> %0001%1
 #else
 	#if UNIQUE_SYMBOL <= 49
 		#if UNIQUE_SYMBOL <= 7
@@ -120,43 +120,43 @@ printf("#endif");
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (2)
-				#define UNIQUE_FUNCTION<%0...%1> %02%1
+				#define UNIQUE_FUNCTION<%0...%1> %0002%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 2
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (3)
-				#define UNIQUE_FUNCTION<%0...%1> %03%1
+				#define UNIQUE_FUNCTION<%0...%1> %0003%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 3
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (4)
-				#define UNIQUE_FUNCTION<%0...%1> %04%1
+				#define UNIQUE_FUNCTION<%0...%1> %0004%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 4
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (5)
-				#define UNIQUE_FUNCTION<%0...%1> %05%1
+				#define UNIQUE_FUNCTION<%0...%1> %0005%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 5
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (6)
-				#define UNIQUE_FUNCTION<%0...%1> %06%1
+				#define UNIQUE_FUNCTION<%0...%1> %0006%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 6
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (7)
-				#define UNIQUE_FUNCTION<%0...%1> %07%1
+				#define UNIQUE_FUNCTION<%0...%1> %0007%1
 				#endinput
 			#else
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (8)
-				#define UNIQUE_FUNCTION<%0...%1> %08%1
+				#define UNIQUE_FUNCTION<%0...%1> %0008%1
 				#endinput
 			#endif
 		#elseif UNIQUE_SYMBOL <= 14
@@ -164,43 +164,43 @@ printf("#endif");
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (9)
-				#define UNIQUE_FUNCTION<%0...%1> %09%1
+				#define UNIQUE_FUNCTION<%0...%1> %0009%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 9
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (10)
-				#define UNIQUE_FUNCTION<%0...%1> %010%1
+				#define UNIQUE_FUNCTION<%0...%1> %0010%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 10
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (11)
-				#define UNIQUE_FUNCTION<%0...%1> %011%1
+				#define UNIQUE_FUNCTION<%0...%1> %0011%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 11
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (12)
-				#define UNIQUE_FUNCTION<%0...%1> %012%1
+				#define UNIQUE_FUNCTION<%0...%1> %0012%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 12
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (13)
-				#define UNIQUE_FUNCTION<%0...%1> %013%1
+				#define UNIQUE_FUNCTION<%0...%1> %0013%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 13
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (14)
-				#define UNIQUE_FUNCTION<%0...%1> %014%1
+				#define UNIQUE_FUNCTION<%0...%1> %0014%1
 				#endinput
 			#else
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (15)
-				#define UNIQUE_FUNCTION<%0...%1> %015%1
+				#define UNIQUE_FUNCTION<%0...%1> %0015%1
 				#endinput
 			#endif
 		#elseif UNIQUE_SYMBOL <= 21
@@ -208,43 +208,43 @@ printf("#endif");
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (16)
-				#define UNIQUE_FUNCTION<%0...%1> %016%1
+				#define UNIQUE_FUNCTION<%0...%1> %0016%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 16
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (17)
-				#define UNIQUE_FUNCTION<%0...%1> %017%1
+				#define UNIQUE_FUNCTION<%0...%1> %0017%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 17
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (18)
-				#define UNIQUE_FUNCTION<%0...%1> %018%1
+				#define UNIQUE_FUNCTION<%0...%1> %0018%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 18
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (19)
-				#define UNIQUE_FUNCTION<%0...%1> %019%1
+				#define UNIQUE_FUNCTION<%0...%1> %0019%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 19
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (20)
-				#define UNIQUE_FUNCTION<%0...%1> %020%1
+				#define UNIQUE_FUNCTION<%0...%1> %0020%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 20
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (21)
-				#define UNIQUE_FUNCTION<%0...%1> %021%1
+				#define UNIQUE_FUNCTION<%0...%1> %0021%1
 				#endinput
 			#else
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (22)
-				#define UNIQUE_FUNCTION<%0...%1> %022%1
+				#define UNIQUE_FUNCTION<%0...%1> %0022%1
 				#endinput
 			#endif
 		#elseif UNIQUE_SYMBOL <= 28
@@ -252,43 +252,43 @@ printf("#endif");
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (23)
-				#define UNIQUE_FUNCTION<%0...%1> %023%1
+				#define UNIQUE_FUNCTION<%0...%1> %0023%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 23
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (24)
-				#define UNIQUE_FUNCTION<%0...%1> %024%1
+				#define UNIQUE_FUNCTION<%0...%1> %0024%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 24
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (25)
-				#define UNIQUE_FUNCTION<%0...%1> %025%1
+				#define UNIQUE_FUNCTION<%0...%1> %0025%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 25
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (26)
-				#define UNIQUE_FUNCTION<%0...%1> %026%1
+				#define UNIQUE_FUNCTION<%0...%1> %0026%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 26
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (27)
-				#define UNIQUE_FUNCTION<%0...%1> %027%1
+				#define UNIQUE_FUNCTION<%0...%1> %0027%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 27
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (28)
-				#define UNIQUE_FUNCTION<%0...%1> %028%1
+				#define UNIQUE_FUNCTION<%0...%1> %0028%1
 				#endinput
 			#else
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (29)
-				#define UNIQUE_FUNCTION<%0...%1> %029%1
+				#define UNIQUE_FUNCTION<%0...%1> %0029%1
 				#endinput
 			#endif
 		#elseif UNIQUE_SYMBOL <= 35
@@ -296,43 +296,43 @@ printf("#endif");
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (30)
-				#define UNIQUE_FUNCTION<%0...%1> %030%1
+				#define UNIQUE_FUNCTION<%0...%1> %0030%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 30
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (31)
-				#define UNIQUE_FUNCTION<%0...%1> %031%1
+				#define UNIQUE_FUNCTION<%0...%1> %0031%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 31
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (32)
-				#define UNIQUE_FUNCTION<%0...%1> %032%1
+				#define UNIQUE_FUNCTION<%0...%1> %0032%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 32
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (33)
-				#define UNIQUE_FUNCTION<%0...%1> %033%1
+				#define UNIQUE_FUNCTION<%0...%1> %0033%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 33
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (34)
-				#define UNIQUE_FUNCTION<%0...%1> %034%1
+				#define UNIQUE_FUNCTION<%0...%1> %0034%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 34
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (35)
-				#define UNIQUE_FUNCTION<%0...%1> %035%1
+				#define UNIQUE_FUNCTION<%0...%1> %0035%1
 				#endinput
 			#else
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (36)
-				#define UNIQUE_FUNCTION<%0...%1> %036%1
+				#define UNIQUE_FUNCTION<%0...%1> %0036%1
 				#endinput
 			#endif
 		#elseif UNIQUE_SYMBOL <= 42
@@ -340,43 +340,43 @@ printf("#endif");
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (37)
-				#define UNIQUE_FUNCTION<%0...%1> %037%1
+				#define UNIQUE_FUNCTION<%0...%1> %0037%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 37
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (38)
-				#define UNIQUE_FUNCTION<%0...%1> %038%1
+				#define UNIQUE_FUNCTION<%0...%1> %0038%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 38
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (39)
-				#define UNIQUE_FUNCTION<%0...%1> %039%1
+				#define UNIQUE_FUNCTION<%0...%1> %0039%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 39
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (40)
-				#define UNIQUE_FUNCTION<%0...%1> %040%1
+				#define UNIQUE_FUNCTION<%0...%1> %0040%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 40
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (41)
-				#define UNIQUE_FUNCTION<%0...%1> %041%1
+				#define UNIQUE_FUNCTION<%0...%1> %0041%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 41
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (42)
-				#define UNIQUE_FUNCTION<%0...%1> %042%1
+				#define UNIQUE_FUNCTION<%0...%1> %0042%1
 				#endinput
 			#else
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (43)
-				#define UNIQUE_FUNCTION<%0...%1> %043%1
+				#define UNIQUE_FUNCTION<%0...%1> %0043%1
 				#endinput
 			#endif
 		#else
@@ -384,43 +384,43 @@ printf("#endif");
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (44)
-				#define UNIQUE_FUNCTION<%0...%1> %044%1
+				#define UNIQUE_FUNCTION<%0...%1> %0044%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 44
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (45)
-				#define UNIQUE_FUNCTION<%0...%1> %045%1
+				#define UNIQUE_FUNCTION<%0...%1> %0045%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 45
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (46)
-				#define UNIQUE_FUNCTION<%0...%1> %046%1
+				#define UNIQUE_FUNCTION<%0...%1> %0046%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 46
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (47)
-				#define UNIQUE_FUNCTION<%0...%1> %047%1
+				#define UNIQUE_FUNCTION<%0...%1> %0047%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 47
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (48)
-				#define UNIQUE_FUNCTION<%0...%1> %048%1
+				#define UNIQUE_FUNCTION<%0...%1> %0048%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 48
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (49)
-				#define UNIQUE_FUNCTION<%0...%1> %049%1
+				#define UNIQUE_FUNCTION<%0...%1> %0049%1
 				#endinput
 			#else
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (50)
-				#define UNIQUE_FUNCTION<%0...%1> %050%1
+				#define UNIQUE_FUNCTION<%0...%1> %0050%1
 				#endinput
 			#endif
 		#endif
@@ -430,43 +430,43 @@ printf("#endif");
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (51)
-				#define UNIQUE_FUNCTION<%0...%1> %051%1
+				#define UNIQUE_FUNCTION<%0...%1> %0051%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 51
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (52)
-				#define UNIQUE_FUNCTION<%0...%1> %052%1
+				#define UNIQUE_FUNCTION<%0...%1> %0052%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 52
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (53)
-				#define UNIQUE_FUNCTION<%0...%1> %053%1
+				#define UNIQUE_FUNCTION<%0...%1> %0053%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 53
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (54)
-				#define UNIQUE_FUNCTION<%0...%1> %054%1
+				#define UNIQUE_FUNCTION<%0...%1> %0054%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 54
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (55)
-				#define UNIQUE_FUNCTION<%0...%1> %055%1
+				#define UNIQUE_FUNCTION<%0...%1> %0055%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 55
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (56)
-				#define UNIQUE_FUNCTION<%0...%1> %056%1
+				#define UNIQUE_FUNCTION<%0...%1> %0056%1
 				#endinput
 			#else
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (57)
-				#define UNIQUE_FUNCTION<%0...%1> %057%1
+				#define UNIQUE_FUNCTION<%0...%1> %0057%1
 				#endinput
 			#endif
 		#elseif UNIQUE_SYMBOL <= 63
@@ -474,43 +474,43 @@ printf("#endif");
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (58)
-				#define UNIQUE_FUNCTION<%0...%1> %058%1
+				#define UNIQUE_FUNCTION<%0...%1> %0058%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 58
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (59)
-				#define UNIQUE_FUNCTION<%0...%1> %059%1
+				#define UNIQUE_FUNCTION<%0...%1> %0059%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 59
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (60)
-				#define UNIQUE_FUNCTION<%0...%1> %060%1
+				#define UNIQUE_FUNCTION<%0...%1> %0060%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 60
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (61)
-				#define UNIQUE_FUNCTION<%0...%1> %061%1
+				#define UNIQUE_FUNCTION<%0...%1> %0061%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 61
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (62)
-				#define UNIQUE_FUNCTION<%0...%1> %062%1
+				#define UNIQUE_FUNCTION<%0...%1> %0062%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 62
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (63)
-				#define UNIQUE_FUNCTION<%0...%1> %063%1
+				#define UNIQUE_FUNCTION<%0...%1> %0063%1
 				#endinput
 			#else
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (64)
-				#define UNIQUE_FUNCTION<%0...%1> %064%1
+				#define UNIQUE_FUNCTION<%0...%1> %0064%1
 				#endinput
 			#endif
 		#elseif UNIQUE_SYMBOL <= 70
@@ -518,43 +518,43 @@ printf("#endif");
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (65)
-				#define UNIQUE_FUNCTION<%0...%1> %065%1
+				#define UNIQUE_FUNCTION<%0...%1> %0065%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 65
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (66)
-				#define UNIQUE_FUNCTION<%0...%1> %066%1
+				#define UNIQUE_FUNCTION<%0...%1> %0066%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 66
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (67)
-				#define UNIQUE_FUNCTION<%0...%1> %067%1
+				#define UNIQUE_FUNCTION<%0...%1> %0067%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 67
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (68)
-				#define UNIQUE_FUNCTION<%0...%1> %068%1
+				#define UNIQUE_FUNCTION<%0...%1> %0068%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 68
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (69)
-				#define UNIQUE_FUNCTION<%0...%1> %069%1
+				#define UNIQUE_FUNCTION<%0...%1> %0069%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 69
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (70)
-				#define UNIQUE_FUNCTION<%0...%1> %070%1
+				#define UNIQUE_FUNCTION<%0...%1> %0070%1
 				#endinput
 			#else
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (71)
-				#define UNIQUE_FUNCTION<%0...%1> %071%1
+				#define UNIQUE_FUNCTION<%0...%1> %0071%1
 				#endinput
 			#endif
 		#elseif UNIQUE_SYMBOL <= 77
@@ -562,43 +562,43 @@ printf("#endif");
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (72)
-				#define UNIQUE_FUNCTION<%0...%1> %072%1
+				#define UNIQUE_FUNCTION<%0...%1> %0072%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 72
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (73)
-				#define UNIQUE_FUNCTION<%0...%1> %073%1
+				#define UNIQUE_FUNCTION<%0...%1> %0073%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 73
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (74)
-				#define UNIQUE_FUNCTION<%0...%1> %074%1
+				#define UNIQUE_FUNCTION<%0...%1> %0074%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 74
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (75)
-				#define UNIQUE_FUNCTION<%0...%1> %075%1
+				#define UNIQUE_FUNCTION<%0...%1> %0075%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 75
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (76)
-				#define UNIQUE_FUNCTION<%0...%1> %076%1
+				#define UNIQUE_FUNCTION<%0...%1> %0076%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 76
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (77)
-				#define UNIQUE_FUNCTION<%0...%1> %077%1
+				#define UNIQUE_FUNCTION<%0...%1> %0077%1
 				#endinput
 			#else
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (78)
-				#define UNIQUE_FUNCTION<%0...%1> %078%1
+				#define UNIQUE_FUNCTION<%0...%1> %0078%1
 				#endinput
 			#endif
 		#elseif UNIQUE_SYMBOL <= 84
@@ -606,43 +606,43 @@ printf("#endif");
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (79)
-				#define UNIQUE_FUNCTION<%0...%1> %079%1
+				#define UNIQUE_FUNCTION<%0...%1> %0079%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 79
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (80)
-				#define UNIQUE_FUNCTION<%0...%1> %080%1
+				#define UNIQUE_FUNCTION<%0...%1> %0080%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 80
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (81)
-				#define UNIQUE_FUNCTION<%0...%1> %081%1
+				#define UNIQUE_FUNCTION<%0...%1> %0081%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 81
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (82)
-				#define UNIQUE_FUNCTION<%0...%1> %082%1
+				#define UNIQUE_FUNCTION<%0...%1> %0082%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 82
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (83)
-				#define UNIQUE_FUNCTION<%0...%1> %083%1
+				#define UNIQUE_FUNCTION<%0...%1> %0083%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 83
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (84)
-				#define UNIQUE_FUNCTION<%0...%1> %084%1
+				#define UNIQUE_FUNCTION<%0...%1> %0084%1
 				#endinput
 			#else
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (85)
-				#define UNIQUE_FUNCTION<%0...%1> %085%1
+				#define UNIQUE_FUNCTION<%0...%1> %0085%1
 				#endinput
 			#endif
 		#elseif UNIQUE_SYMBOL <= 91
@@ -650,43 +650,43 @@ printf("#endif");
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (86)
-				#define UNIQUE_FUNCTION<%0...%1> %086%1
+				#define UNIQUE_FUNCTION<%0...%1> %0086%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 86
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (87)
-				#define UNIQUE_FUNCTION<%0...%1> %087%1
+				#define UNIQUE_FUNCTION<%0...%1> %0087%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 87
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (88)
-				#define UNIQUE_FUNCTION<%0...%1> %088%1
+				#define UNIQUE_FUNCTION<%0...%1> %0088%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 88
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (89)
-				#define UNIQUE_FUNCTION<%0...%1> %089%1
+				#define UNIQUE_FUNCTION<%0...%1> %0089%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 89
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (90)
-				#define UNIQUE_FUNCTION<%0...%1> %090%1
+				#define UNIQUE_FUNCTION<%0...%1> %0090%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 90
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (91)
-				#define UNIQUE_FUNCTION<%0...%1> %091%1
+				#define UNIQUE_FUNCTION<%0...%1> %0091%1
 				#endinput
 			#else
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (92)
-				#define UNIQUE_FUNCTION<%0...%1> %092%1
+				#define UNIQUE_FUNCTION<%0...%1> %0092%1
 				#endinput
 			#endif
 		#else
@@ -694,43 +694,43 @@ printf("#endif");
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (93)
-				#define UNIQUE_FUNCTION<%0...%1> %093%1
+				#define UNIQUE_FUNCTION<%0...%1> %0093%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 93
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (94)
-				#define UNIQUE_FUNCTION<%0...%1> %094%1
+				#define UNIQUE_FUNCTION<%0...%1> %0094%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 94
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (95)
-				#define UNIQUE_FUNCTION<%0...%1> %095%1
+				#define UNIQUE_FUNCTION<%0...%1> %0095%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 95
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (96)
-				#define UNIQUE_FUNCTION<%0...%1> %096%1
+				#define UNIQUE_FUNCTION<%0...%1> %0096%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 96
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (97)
-				#define UNIQUE_FUNCTION<%0...%1> %097%1
+				#define UNIQUE_FUNCTION<%0...%1> %0097%1
 				#endinput
 			#elseif UNIQUE_SYMBOL == 97
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (98)
-				#define UNIQUE_FUNCTION<%0...%1> %098%1
+				#define UNIQUE_FUNCTION<%0...%1> %0098%1
 				#endinput
 			#else
 				#undef UNIQUE_SYMBOL
 				#undef UNIQUE_FUNCTION
 				#define UNIQUE_SYMBOL (99)
-				#define UNIQUE_FUNCTION<%0...%1> %099%1
+				#define UNIQUE_FUNCTION<%0...%1> %0099%1
 				#endinput
 			#endif
 		#endif
