@@ -242,7 +242,7 @@ Natives:
 		//  
 		// This remote script has now been updated to include changelog
 		// information and keeps a record of what IPs are connecting.
-		HTTP(0, HTTP_GET, "ysi-version.y-less.com/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, "", "YVers_Callback");
+		HTTP(0, HTTP_GET, "version.ysi.tl/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, "", "YVers_Callback");
 		#if defined YVers_OnScriptInit
 			YVers_OnScriptInit();
 		#endif
@@ -320,27 +320,7 @@ Natives:
 				print(" ========================================== ");
 				print(" ");
 			}
-			//else
-			//{
-				//print(" ====================================== ");
-				//print(" |                                    | ");
-				//print(" |  Congratulations! You are running  | ");
-				//print(" |     the latest version of YSI!     | ");
-				//print(" |                                    | ");
-				//print(" ====================================== ");
-			//}
 		}
-		//else
-		//{
-			// Didn't get the remote page.
-			//print(" ======================================== ");
-			//print(" |                                      | ");
-			//print(" |  Could not connect to update server  | ");
-			//print(" |    at this time, (your code will     | ");
-			//printf(" |   still work (response was %03d)).    | ", code);
-			//print(" |                                      | ");
-			//print(" ======================================== ");
-		//}
 	}
 	
 #endif

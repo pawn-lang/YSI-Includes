@@ -405,35 +405,6 @@ static Malloc_SolidifyHeap()
 
 public OnPlayerConnect(playerid)
 {
-	/*if (YSI_g_sHeapSetup == 2)
-	{
-		// Try remove ourselves.
-		new
-			ret;
-		// Got the call site.
-		#emit LOAD.S.pri  4
-		#emit STOR.S.pri  ret
-		if (ret == 0)
-		{
-			// First call in this stack.
-			new
-				idx,
-				entry;
-			if (AMX_GetPublicEntry(idx, entry, #OnPlayerConnect, true))
-			{
-				// Replace the last call with the new call to the next function
-				// in the chain.
-				#if defined Malloc_OnPlayerConnect
-				// THIS WON'T WORK YET - SLEEP ON IT...
-					#emit CONST.pri  Malloc_OnPlayerConnect
-					#emit SREF.S.pri entry
-			}
-		}
-		else
-		{
-		}
-	}
-	else Malloc_TrySetup();*/
 	if (YSI_g_sHeapSetup != 2) Malloc_TrySetup();
 	#if defined Malloc_OnPlayerConnect
 		return Malloc_OnPlayerConnect(playerid);

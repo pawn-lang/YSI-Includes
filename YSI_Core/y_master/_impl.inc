@@ -207,10 +207,8 @@ Natives:
 					_YCM@ = _E_YCM@u;
 					// Determine the next unique name.
 					CallRemoteFunction(#_YCM, "");
-					// This is where we need to to the handoff.
-					// The handoff should pass data from anything in the
-					// "p" state to anything in either the "y" or "u" states.
-					//CallRemoteFunction(#MAKE_YCM<HANDOFF_SOURCE...>, "");
+					// Servers always get all data, so it doesn't matter that
+					// for now this is state "u".
 				}
 			#else //if _YSIM_IS_CLOUD
 				// See if this script should be master.

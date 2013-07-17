@@ -131,9 +131,7 @@ enum E_COMMAND
 	// Who can use this command?
 	PlayerArray:E_COMMAND_USERS<MAX_PLAYERS>,
 	// Function pointer.
-	E_COMMAND_POINTER,
-	// Extra data.
-	E_COMMAND_FLAGS
+	E_COMMAND_POINTER
 }
 
 enum e_COMMAND_ERRORS
@@ -177,7 +175,8 @@ static stock
 static stock const
 	YSI_gscOPCR[] = "OnPlayerCommandReceived",
 	YSI_gscOPCP[] = "OnPlayerCommandPerformed",
-	YSI_gscISI[] = "isi";
+	YSI_gscISI[] = "isi",
+	YSI_gscISII[] = "isii";
 
 
 // Store which script(s) own which commands.
@@ -198,6 +197,41 @@ MASTER_DATA<MAX_COMMANDS>
 // Forwards for optional command callbacks.
 forward e_COMMAND_ERRORS:OnPlayerCommandReceived(playerid, cmdtext[], e_COMMAND_ERRORS:success); 
 forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND_ERRORS:success); 
+
+/**--------------------------------------------------------------------------**\
+<summary>_Command_IsAlt</summary>
+<param name="idx">Command to test.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define _Command_IsAlt(%0) (YSI_g_sCommands[(%0)][E_COMMAND_POINTER] & cellmin)
+
+/**--------------------------------------------------------------------------**\
+<summary>_Command_GetReal</summary>
+<param name="ptr">AMX function pointer.</param>
+<param name="idx">Index of the parent command data.</param>
+<param name="name">Destination for the parent function name.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Finds the original version of an alt command.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define _Command_GetReal(%0,%1,%2); \
+	%0=YSI_g_sCommands[(%1)][E_COMMAND_POINTER];				\
+	if((%0)&cellmin){											\
+		do{														\
+			%1=(%0)&~cellmin,									\
+			%0=YSI_g_sCommands[(%1)][E_COMMAND_POINTER];}		\
+		while((%0)&cellmin);									\
+		strunpack(%2,YSI_g_sCommands[(%1)][E_COMMAND_NAME]);}
 
 /**--------------------------------------------------------------------------**\
 <summary>Command_Find</summary>
@@ -299,32 +333,34 @@ global string:Command_GetName(f)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#if (_YSIM_IS_SERVER || _YSIM_IS_CLOUD)
-	forward _Command_DoInit();
-#endif
+forward _Command_DoInit();
 
-	hook OnScriptInit()
-	{
-		P:1("Command_OnScriptInit called");
-		#if YSIM_NOT_CLIENT
-			HashMap_Init(YSI_g_sCommandMap, YSI_g_sCommands);
-			for (new func = 0; func != MAX_COMMANDS; ++func)
-			{
-				YSI_g_sCommands[func][E_COMMAND_POINTER] = YSI_g_sCommands[func][E_COMMAND_FLAGS] = -1;
-			}
-		#endif
+hook OnScriptInit()
+{
+	P:1("Command_OnScriptInit called");
+	#if YSIM_NOT_CLIENT
+		HashMap_Init(YSI_g_sCommandMap, YSI_g_sCommands);
+		for (new func = 0; func != MAX_COMMANDS; ++func)
+		{
+			YSI_g_sCommands[func][E_COMMAND_POINTER] = -1;
+		}
+	#endif
+	_Command_DoInit();
+}
+
 #if (_YSIM_IS_SERVER || _YSIM_IS_CLOUD)
-		_Command_DoInit();
-	}
-	
 	public _Command_DoInit() <_YCM:p>
 	{
-		// Do nothing, this script is ending.
+		//Bescause they get removed again.
+		if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();
+		if (funcidx(YSI_gscOPCP) != -1) Command_IncOPCP();
 	}
 	
 	public _Command_DoInit() <>
-	{
+#else
+	public _Command_DoInit()
 #endif
+	{
 		P:2("_Command_DoInit <> called");
 		new
 			entry,
@@ -380,6 +416,42 @@ global void:_Command_SetPerms(string:f[],pa[],s,x)
 	}
 }
 
+#if (_YSIM_IS_SERVER || _YSIM_IS_CLOUD)
+	/**----------------------------------------------------------------------**\
+	<summary>HANDOFF</summary>
+	<returns>
+		-
+	</returns>
+	<remarks>
+		Passes additional commands data to the new master.
+	</remarks>
+	\**----------------------------------------------------------------------**/
+	
+	HANDOFF()
+	{
+		P:1("Commands_OnScriptExit <_YCM:p> called");
+		CallRemoteFunction("_Command_DoInit", "");
+		// Add all alternate commands.
+		for (new i = 0; i != MAX_COMMANDS; ++i)
+		{
+			if  (_Command_IsActive(i))
+			{
+				if (_Command_IsAlt(i))
+				{
+					new
+						pidx = 1,
+						ptr,
+						name[32];
+					_Command_GetReal(ptr, pidx, name);
+					Command_AddAltNamed(name, YSI_g_sCommands[i][E_COMMAND_NAME]);
+				}
+				_Command_SetPerms(YSI_g_sCommands[i][E_COMMAND_NAME], _:YSI_g_sCommands[i][E_COMMAND_USERS], bits<MAX_PLAYERS> + 1, YSI_g_sCommands[i][E_COMMAND_FLAGS]);
+			}
+		}
+		return 1;
+	}
+#endif
+
 /**--------------------------------------------------------------------------**\
 <summary>OnScriptExit</summary>
 <returns>
@@ -390,58 +462,12 @@ global void:_Command_SetPerms(string:f[],pa[],s,x)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#if (_YSIM_IS_SERVER || _YSIM_IS_CLOUD)
-	hook OnScriptExit() <_YCM:p>
-	{
-		P:1("Commands_OnScriptExit <_YCM:p> called");
-		CallRemoteFunction("_Command_DoInit", "");
-		// Add all alternate commands.
-		for (new i = 0; i != MAX_COMMANDS; ++i) if (_Command_IsActive(i))
-		{
-			new
-				oidx = YSI_g_sCommands[i][E_COMMAND_FLAGS];
-			if (oidx != -1)
-			{
-				// Follow the chain if there is one.
-				while (YSI_g_sCommands[oidx][E_COMMAND_FLAGS] != -1) oidx = YSI_g_sCommands[oidx][E_COMMAND_FLAGS];
-				Command_AddAlt(oidx, YSI_g_sCommands[i][E_COMMAND_NAME]);
-			}
-			_Command_SetPerms(YSI_g_sCommands[i][E_COMMAND_NAME], _:YSI_g_sCommands[i][E_COMMAND_USERS], bits<MAX_PLAYERS> + 1, YSI_g_sCommands[i][E_COMMAND_FLAGS]);
-		}
-		return 1;
-	}
-	
-	rehook OnScriptExit() <>
-#else
-	hook OnScriptExit()
-#endif
+hook OnScriptExit()
 {
 	P:1("Commands_OnScriptExit <> called");
 	if (funcidx(YSI_gscOPCR) != -1) Command_DecOPCR();
 	if (funcidx(YSI_gscOPCP) != -1) Command_DecOPCP();
 	return 1;
-}
-
-hook Master_OnScriptClose(id) <_YCM:y>
-{
-	if (id != Master_ID())
-	{
-		id = 1 << id;
-		for (new i = 0; i != MAX_COMMANDS; ++i) if (_Command_IsActive(i))
-		{
-			if (YSI_g_sMasterData[i] & Bit:id)
-			{
-				if (!(YSI_g_sMasterData[i] &= Bit:~id))
-				{
-					Command_Remove(i);
-				}
-			}
-		}
-	}
-}
-
-rehook Master_OnScriptClose(id) <>
-{
 }
 
 /**--------------------------------------------------------------------------**\
@@ -567,8 +593,6 @@ native Command_Add(funcname[], script);
 		YSI_g_sCommands[id][E_COMMAND_POINTER] = ptr,
 		// Add this command to the hash map (does the name too).
 		HashMap_Add(YSI_g_sCommandMap, cmd, id),
-		// This command isn't an alternate for another one.
-		YSI_g_sCommands[id][E_COMMAND_FLAGS] = -1,
 		// Add all players, or defer to y_groups.
 		PA_FastInit(YSI_g_sCommands[id][E_COMMAND_USERS]);
 		NO_GROUPS(id)
@@ -618,7 +642,7 @@ global Command_AddAlt(oidx, string:cmd[])
 			return COMMAND_NOT_FOUND;
 		}
 		// Save the command's pointer.
-		YSI_g_sCommands[id][E_COMMAND_POINTER] = YSI_g_sCommands[oidx][E_COMMAND_POINTER];
+		YSI_g_sCommands[id][E_COMMAND_POINTER] = cellmin | oidx;
 		// Add all players, or defer to y_groups.
 		PA_FastInit(YSI_g_sCommands[id][E_COMMAND_USERS]);
 		NO_GROUPS(id)
@@ -630,8 +654,6 @@ global Command_AddAlt(oidx, string:cmd[])
 		// Copy the master script information.  Note that this won't be kept up
 		// to date with new scripts unfortunately.
 		MASTER_COPY<id, oidx>
-		// Save as an alternate command.
-		YSI_g_sCommands[id][E_COMMAND_FLAGS] = oidx;
 	}
 	return id;
 }
@@ -847,6 +869,8 @@ global Command_ReProcess(p,string:c[],h)
 	if (_Command_GetPlayer(sIdx, p))
 	{
 		if (!Command_OnReceived(OK, p, c)) return 0;
+		// Find the true version of the command (alts etc).
+		_Command_GetReal(sHash, sIdx, sCmd[4]);
 		#if YSIM_HAS_MASTER
 			// This is in another script, or multiple scripts.
 			static
@@ -856,15 +880,15 @@ global Command_ReProcess(p,string:c[],h)
 			{
 				// Call the command in another script.  If no particular script
 				// is set up as the "master", call it in the first one found...
-				if (c[sPos]) CallRemoteFunction(sCmd, "isii", p, c[sPos], h, Cell_GetLowestBit(sMasters));
-				else CallRemoteFunction(sCmd, "isii", p, NULL, h, Cell_GetLowestBit(sMasters));
+				if (c[sPos]) CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos], h, Cell_GetLowestBit(sMasters));
+				else CallRemoteFunction(sCmd, YSI_gscISII, p, NULL, h, Cell_GetLowestBit(sMasters));
 				sIdx = getproperty(8, YSIM_RETURN);
 			}
 			else
 		#endif
 			{
 				// In this script.
-				sIdx = YSI_g_sCommands[sIdx][E_COMMAND_POINTER];
+				//sIdx = YSI_g_sCommands[sIdx][E_COMMAND_POINTER];
 				#emit PUSH.S      h
 				#emit LOAD.pri    sPos
 				#emit LOAD.S.alt  c
@@ -875,7 +899,7 @@ global Command_ReProcess(p,string:c[],h)
 				#emit LCTRL       6
 				#emit ADD.C       28
 				#emit PUSH.pri
-				#emit LOAD.pri    sIdx
+				#emit LOAD.pri    sHash
 				#emit SCTRL       6
 				#emit STOR.pri    sIdx
 				P:5("Command_ReProces: Result = %d %d %d", sIdx, Command_Error(p, e_COMMAND_ERRORS:sIdx), _:COMMAND_OK);
