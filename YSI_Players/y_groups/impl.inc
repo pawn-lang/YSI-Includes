@@ -62,6 +62,7 @@ Changelog:
 
 #include <a_samp>
 
+#include "..\YSI_Internal\y_distribute"
 #include "..\YSI_Server\y_scriptinit"
 #include "..\YSI_Data\y_playerarray"
 
@@ -161,14 +162,16 @@ static stock const
 	YSI_g_scGlobalName[] = "__GLOBAL",
 	BitArray:RG@<_MAX_GROUPS_G>;
 
+MASTER_DATA<_MAX_GROUPS_G>
+
+static stock __declspec(dist_master) YSI_gGroupData[_MAX_GROUPS_G][E_GROUP_DATA];
+static stock __declspec(dist_tagged) Bit:YSI_g_sChildGroups[_MAX_GROUPS_G][bits<_MAX_GROUPS_G>];
+
 static stock
 	// Create group hierarchys.
-	YSI_gGroupData[_MAX_GROUPS_G][E_GROUP_DATA],
-	BitArray:YSI_g_sChildGroups[_MAX_GROUPS_G]<_MAX_GROUPS_G>,
+	// BitArray:YSI_g_sChildGroups[_MAX_GROUPS_G]<_MAX_GROUPS_G>,
 	//BitArray:YSI_g_sChildDefaults<_MAX_GROUPS_G>,
 	Iterator:GroupPlayers[_MAX_GROUPS_G]<MAX_PLAYERS>;
-
-MASTER_DATA<_MAX_GROUPS_G>
 
 //#define GROUP_BITS<%0> BitArray:%0<_MAX_GROUPS_G>,
 
@@ -203,6 +206,27 @@ MASTER_DATA<_MAX_GROUPS_G>
 
 //#define Group_IsActive(%0) 
 //	(YSI_gGroupData[_:GROUP_FIX(%0)][E_GROUP_DATA_FLAGS] & e_GROUP_FLAGS_ACTIVE)
+
+foreign void:_Group_ReInitPlayers();
+
+global void:_Group_ReInitPlayers()
+{
+	Iter_Init(GroupPlayers);
+	for (new i = 0; i != _MAX_GROUPS_G; ++i) if (_Group_IsActive(i))
+	{
+		foreach (new playerid : Player)
+		{
+			if (_Group_HasPlayer(i, playerid)) Iter_Add(GroupPlayers[i], playerid);
+		}
+	}
+}
+
+HANDOFF()
+{
+	DISTRIBUTE(YSI_gGroupData);
+	DISTRIBUTE(YSI_g_sChildGroups);
+	_Group_ReInitPlayers();
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>GROUP_ADD</summary>
@@ -440,6 +464,7 @@ global void:Group_Destroy(Group:group)
 		YSI_gGroupData[_:group][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS:0;
 		YSI_gGroupData[_:group][E_GROUP_DATA_HASH] = 0;
 		Iter_Clear(GroupPlayers[_:group]);
+		MASTER_RESET<_:group>
 		//return 1;
 	}
 	//return 0;
@@ -1261,6 +1286,37 @@ global Group@YSII_Ag(Group:group, start)
 		return -1;
 	}
 	return start;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>CreatedGroup@YSII_Ag</summary>
+<param name="start">Last value.</param>
+<returns>
+	The next group.
+</returns>
+<remarks>
+	Internal implementation of the "Group()" iterator for "foreach".  Returns
+	all the players in a group one at a time.  Now just wraps the "GroupPlayers"
+	iterator that is only stored in the GROUP master script.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+// Bypass y_iterate restrictions.
+#define CreatedGroup@YSII_Ag(%0,%1) CreatedGroup@YSII_Ag(%1)
+
+foreign Group:CreatedGroup@YSII_Ag(Group:group);
+
+global Group:CreatedGroup@YSII_Ag(Group:group)
+{
+	// In most iterators the inital value is implicitly handled by the first
+	// "++", but it isn't here because we need to correct for the "Group" flag.
+	if (group != Group:-1) GROUP_FIX(group);
+	while (++group < Group:(_MAX_GROUPS_G - 1))
+	{
+		// DO NOT include the global group in this loop!
+		if (_Group_IsActive(group)) return group | GROUP_MASK;
+	}
+	return Group:-1;
 }
 
 /**--------------------------------------------------------------------------**\

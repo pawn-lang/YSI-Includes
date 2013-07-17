@@ -132,6 +132,7 @@ Natives:
 #define MASTER_ADD<%0> (YSI_g_sMasterData[_:(%0)] |= Bit:(1 << Master_Caller()));
 #define MASTER_REMOVE<%0> (YSI_g_sMasterData[_:(%0)] &= Bit:(~(1 << Master_Caller())));
 #define MASTER_EMPTY<%0> if(!YSI_g_sMasterData[_:(%0)])
+#define MASTER_EXCLUSIVE<%0> (YSI_g_sMasterData[_:(%0)] == (1 << Master_ID()))
 #define MASTER_GET<%0> (YSI_g_sMasterData[_:(%0)])
 #define MASTER_COPY<%0,%1> (YSI_g_sMasterData[_:(%0)] = YSI_g_sMasterData[_:(%1)]);
 
@@ -221,10 +222,11 @@ forward Master_OnScriptClose(script);
 	#endinput
 #endif
 
-#define HANDOFF_SOURCE(%9) forward MAKE_YCM<HANDOFF_SOURCE...>();public MAKE_YCM<HANDOFF_SOURCE...>()<>{}public MAKE_YCM<HANDOFF_SOURCE...>()<_YCM:p>
+//#define HANDOFF_SOURCE(%9) forward MAKE_YCM<HANDOFF_SOURCE...>();public MAKE_YCM<HANDOFF_SOURCE...>()<>{}public MAKE_YCM<HANDOFF_SOURCE...>()<_YCM:p>
 //#define HANDOFF_TARGET(%1) forward MAKE_YCM<HANDOFF_TARGET...>(%1);public MAKE_YCM<HANDOFF_TARGET...>(%1)<>{}public MAKE_YCM<HANDOFF_TARGET...>(%1)<_YCM:y,_YCM:u>
 //#define HANDOFF<%0>(%1) CallRemoteFunction(#MAKE_YCM<HANDOFF_TARGET...>,#%0,%1)
-#define HANDOFF HANDOFF_SOURCE
+#define HANDOFF(%9) master_func MAKE_YCM<HANDOFF_SOURCE...>()<p>
+#define GROUP_HANDOFF(%9) master_func MAKE_YCM<HANDOFF_SOURCE...Group>()<p>
 //#define Master_HandoffSource() MAKE_YCM<Master_Handoff...>
 
 #define MAX_MASTERS 26
@@ -427,7 +429,7 @@ public Master_Reassert()
 stock bool:_Master_Get(library[], bool:force = false)
 {
 	new
-		ret = true;
+		bool:ret = true;
 	P:3("bool:_Master_Get called: \"%s\", %i", library, _:force);
 	P:2("_Master_Get called");
 	if (existproperty(9, library))

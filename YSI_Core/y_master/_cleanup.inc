@@ -18,6 +18,7 @@
 #undef master_hook
 #undef master_task
 #undef master_ptask
+#undef master_func
 #undef group_hook
 #undef @foreign
 #undef foreign

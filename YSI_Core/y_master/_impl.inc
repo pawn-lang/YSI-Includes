@@ -421,6 +421,7 @@ Natives:
 			state _YCM:p;
 			_YCM@ = _E_YCM@p;
 			CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...>, "");
+			CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...Group>, "");
 			// Could, in theory, return to be master if the script doesn't end.
 			state _YCM:n;
 			_YCM@ = _E_YCM@n;
@@ -481,6 +482,7 @@ Natives:
 		#define foreign%0(%1) %0(%1);%0@(%1)
 		#define @foreign foreign
 		#define global%0(%1) public%0@(%1)(@Zz:X@(@Zk:_YM@CP:%0(%1,,)));%0(%1)
+		#define master_func%0(%1)<%9> %0(%1);public%0(%1)<>{}public%0(%1)<_YCM:%9>
 		
 		#define RH:On%2(%3) hook On%2(%3)
 		
@@ -524,6 +526,7 @@ Natives:
 			#define master_task%0(%3) stock %0(%3)
 			#define master_ptask%0(%3) stock %0(%3)
 			#define group_hook%0On%2(%3) stock _GROUP_MAKE_NAME<On%2...>(%3)
+			#define master_func%0(%1)<%9> static stock %0(%1)
 			
 			#define RT:%0[%1](%2) stock _yT@%1_%0()
 			
@@ -553,6 +556,7 @@ Natives:
 				#define master_hook
 				#define master_task
 				#define master_ptask
+				#define master_func
 				
 				#define group_hook
 				
@@ -573,6 +577,7 @@ Natives:
 				#define master_hook%0On%2(%3) hook On%2(%3)<>return ALS_R_%2;rehook On%2(%3)<_YCM:y>
 				#define master_task%0[%1](%3) task%0[%1](%3)<>return;public%0(%3)<_YCM:y>
 				#define master_ptask%0[%1](%3) ptask%0[%1](%3)<>return;public%0(%3)<_YCM:y>
+				#define master_func%0(%1)<%9> %0(%1);public%0(%1)<>{}public%0(%1)<_YCM:%9>
 				
 				#define group_hook%0On%2(%3) _GROUP_MAKE_NAME<hook On%2...>(%3)<>return ALS_R_%2;_GROUP_MAKE_NAME<rehook On%2...>(%3)<_YCM:y>
 				
@@ -611,6 +616,7 @@ Natives:
 	#define master_hook%0On%2(%3) hook On%2(%3)
 	#define master_task%0(%3) task%0(%3)
 	#define master_ptask%0(%3) ptask%0(%3)
+	#define master_func%0(%1)<%9> static stock%0(%1)
 	
 	#define group_hook%0On%2(%3) _GROUP_MAKE_NAME<hook On%2...>(%3)
 	

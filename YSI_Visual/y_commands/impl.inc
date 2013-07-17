@@ -161,13 +161,16 @@ enum e_COMMAND_FLAGS (<<= 1)
 	e_COMM_FLAG_OPCR_ADD = 0x01000000
 }
 
+// Information for returning error messages.
+static stock __declspec(dist_tagged) e_COMMAND_FLAGS:YSI_g_sCommandFlags;
+static stock __declspec(distributed) YSI_g_sErrorMessages[e_COMMAND_ERRORS][144];
+// Who has had ALL their commands disabled?
+//static stock DISTRIBUTED_TAGGED PlayerArray:YSI_g_sDisabledPlayers<MAX_PLAYERS>,
+static stock __declspec(dist_tagged) Bit:YSI_g_sDisabledPlayers[bits<MAX_PLAYERS> + 1],
+//__declspec((DISTRIBUTED_TAGGED))
+
 static stock
 	YSI_g_sReturnBuffer[YSI_MAX_STRING],
-	// Information for returning error messages.
-	e_COMMAND_FLAGS:YSI_g_sCommandFlags, //[E_COMMAND_ERRORS],
-	YSI_g_sErrorMessages[e_COMMAND_ERRORS][144],
-	// Who has had ALL their commands disabled?
-	PlayerArray:YSI_g_sDisabledPlayers<MAX_PLAYERS>,
 	// Quickly reference and store commands by name.
 	HashMap:YSI_g_sCommandMap<MAX_COMMANDS>,
 	YSI_g_sCommands[MAX_COMMANDS][E_COMMAND];
@@ -177,7 +180,6 @@ static stock const
 	YSI_gscOPCP[] = "OnPlayerCommandPerformed",
 	YSI_gscISI[] = "isi",
 	YSI_gscISII[] = "isii";
-
 
 // Store which script(s) own which commands.
 MASTER_DATA<MAX_COMMANDS>
@@ -299,6 +301,7 @@ global bool:Command_IsValid(cmd)
 {
 	return _Command_IsValid(cmd);
 }
+
 /**--------------------------------------------------------------------------**\
 <summary>Command_GetName</summary>
 <param name="f">Command to get the name of.</param>
@@ -416,41 +419,49 @@ global void:_Command_SetPerms(string:f[],pa[],s,x)
 	}
 }
 
-#if (_YSIM_IS_SERVER || _YSIM_IS_CLOUD)
-	/**----------------------------------------------------------------------**\
-	<summary>HANDOFF</summary>
-	<returns>
-		-
-	</returns>
-	<remarks>
-		Passes additional commands data to the new master.
-	</remarks>
-	\**----------------------------------------------------------------------**/
-	
-	HANDOFF()
+/**--------------------------------------------------------------------------**\
+<summary>HANDOFF</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Passes additional commands data to the new master.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+HANDOFF()
+{
+	P:1("Commands_OnScriptExit <_YCM:p> called");
+	// Copy settings (and reset counts).
+	YSI_g_sCommandFlags &= e_COMMAND_FLAGS:0xFFFF;
+	DISTRIBUTE(YSI_g_sCommandFlags);
+	DISTRIBUTE(YSI_g_sErrorMessages);
+	DISTRIBUTE(YSI_g_sDisabledPlayers);
+	// Set up real commands from scratch.
+	CallRemoteFunction("_Command_DoInit", "");
+	// Add all alternate commands.
+	for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
-		P:1("Commands_OnScriptExit <_YCM:p> called");
-		CallRemoteFunction("_Command_DoInit", "");
-		// Add all alternate commands.
-		for (new i = 0; i != MAX_COMMANDS; ++i)
+		if  (_Command_IsActive(i))
 		{
-			if  (_Command_IsActive(i))
+			if (_Command_IsAlt(i))
 			{
-				if (_Command_IsAlt(i))
-				{
-					new
-						pidx = 1,
-						ptr,
-						name[32];
-					_Command_GetReal(ptr, pidx, name);
-					Command_AddAltNamed(name, YSI_g_sCommands[i][E_COMMAND_NAME]);
-				}
-				_Command_SetPerms(YSI_g_sCommands[i][E_COMMAND_NAME], _:YSI_g_sCommands[i][E_COMMAND_USERS], bits<MAX_PLAYERS> + 1, YSI_g_sCommands[i][E_COMMAND_FLAGS]);
+				new
+					pidx = 1,
+					ptr,
+					name[32];
+				// Find what this is the alternate for, then add it.
+				_Command_GetReal(ptr, pidx, name);
+				Command_AddAltNamed(name, YSI_g_sCommands[i][E_COMMAND_NAME]);
+				// Update which scripts this ACTUALLY comes from.
 			}
+			// Commands were added first, NOW update the permissions
+			// internally, y_groups will sort itself out if required.
+			_Command_SetPerms(YSI_g_sCommands[i][E_COMMAND_NAME], _:YSI_g_sCommands[i][E_COMMAND_USERS], bits<MAX_PLAYERS> + 1, YSI_g_sCommands[i][E_COMMAND_FLAGS]);
 		}
-		return 1;
 	}
-#endif
+	return 1;
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>OnScriptExit</summary>
@@ -600,14 +611,12 @@ native Command_Add(funcname[], script);
 			PA_Init(YSI_g_sCommands[id][E_COMMAND_USERS], true);
 		}
 		// Add the calling script as having this command.
-		if (Master_Caller() == Master_ID()) MASTER_RESET<id>
-		else MASTER_SET<id>
+		MASTER_SET<id>
 	}
 	else
 	{
 		// Add this script to the list of providers.
-		if (MASTER_GET<id>) MASTER_ADD<id>
-		else YSI_g_sMasterData[_:id] = Bit:((1 << Master_Caller()) | (1 << Master_ID()));
+		MASTER_ADD<id>
 	}
 	return id;
 }
@@ -872,19 +881,7 @@ global Command_ReProcess(p,string:c[],h)
 		// Find the true version of the command (alts etc).
 		_Command_GetReal(sHash, sIdx, sCmd[4]);
 		#if YSIM_HAS_MASTER
-			// This is in another script, or multiple scripts.
-			static
-				sMasters;
-			sMasters = _:MASTER_GET<sIdx>;
-			if (sMasters)
-			{
-				// Call the command in another script.  If no particular script
-				// is set up as the "master", call it in the first one found...
-				if (c[sPos]) CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos], h, Cell_GetLowestBit(sMasters));
-				else CallRemoteFunction(sCmd, YSI_gscISII, p, NULL, h, Cell_GetLowestBit(sMasters));
-				sIdx = getproperty(8, YSIM_RETURN);
-			}
-			else
+			if (MASTER_EXCLUSIVE<sIdx>)
 		#endif
 			{
 				// In this script.
@@ -904,8 +901,19 @@ global Command_ReProcess(p,string:c[],h)
 				#emit STOR.pri    sIdx
 				P:5("Command_ReProces: Result = %d %d %d", sIdx, Command_Error(p, e_COMMAND_ERRORS:sIdx), _:COMMAND_OK);
 			}
-			if (YSI_g_sCommandFlags & e_COMM_FLAG_OPCP) sIdx = CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, p, c, sIdx);
-			return Command_Error(p, e_COMMAND_ERRORS:sIdx);
+		#if YSIM_HAS_MASTER
+			else
+			{
+				// This is in another script, or multiple scripts.
+				// Call the command in another script.  If no particular script
+				// is set up as the "master", call it in the first one found...
+				if (c[sPos]) CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos], h, Cell_GetLowestBit(_:MASTER_GET<sIdx>));
+				else CallRemoteFunction(sCmd, YSI_gscISII, p, NULL, h, Cell_GetLowestBit(_:MASTER_GET<sIdx>));
+				sIdx = getproperty(8, YSIM_RETURN);
+			}
+		#endif
+		if (YSI_g_sCommandFlags & e_COMM_FLAG_OPCP) sIdx = CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, p, c, sIdx);
+		return Command_Error(p, e_COMMAND_ERRORS:sIdx);
 	}
 	return Command_OnReceived(DENIED, p, c);
 }

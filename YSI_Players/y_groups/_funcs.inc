@@ -165,6 +165,38 @@ static stock
 	#endif
 #endif
 
+gforeign void:Group_Handoff...(i,a[],s);
+
+gglobal void:Group_Handoff...(i,a[],s)
+{
+	s = min(s, bits<_:_MAX_GROUPS_G>);
+	if (i == -1)
+	{
+		memcpy(YSI_g_sDefaultMembership, a, 0, s * 4);
+	}
+	else if (i < sizeof (YSI_g_sElementMembership))
+	{
+		// DO NOT UPDATE THE PERMISSIONS - this has already been handled
+		// (at least it should have been) by the host library given that it has
+		// code to work regardless of the presense of this code.
+		//foreach (new pid : Player)
+		//{
+		//	Group_FullPlayerUpdate(pid, i, YSI_g_sElementMembership[i], Bit:a, YSI_gGroupPlayers[playerid]);
+		//}
+		memcpy(YSI_g_sElementMembership[i], a, 0, s * 4);
+	}
+}
+
+GROUP_HANDOFF()
+{
+	// Pass data to the new group controller.
+	_GROUP_MAKE_NAME<Group_Handoff...>(-1, YSI_g_sDefaultMembership, sizeof (YSI_g_sDefaultMembership));
+	for (new i = 0; i != sizeof (YSI_g_sElementMembership); ++i)
+	{
+		_GROUP_MAKE_NAME<Group_Handoff...>(i, YSI_g_sElementMembership[i], sizeof (YSI_g_sElementMembership[]));
+	}
+}
+
 /**--------------------------------------------------------------------------**\
 <summary>Group_FullPlayerUpdate</summary>
 <param name="playerid">Player to check.</param>
@@ -759,6 +791,16 @@ gglobal Group_GetGlobal...(_GROUP_MAKE_TAG:el)
 	return _GROUP_MAKE_NAME<Group_Get...>(GROUP_GLOBAL, el);
 }
 
+/**--------------------------------------------------------------------------**\
+<summary>_GROUP_UNIQUE_FUNCTION</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Calls all functions to correctly include them in the AMX when required.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 #if !defined _GROUP_STOP_INCLUDES
 	#if YSIM_HAS_MASTER
 		//stock _GROUP_MAKE_NAME<_Group_IncludeAll...>()
@@ -790,6 +832,7 @@ gglobal Group_GetGlobal...(_GROUP_MAKE_TAG:el)
 				_GROUP_MAKE_NAME<Group_SetGlobal...@>(_GROUP_MAKE_TAG:0, false);
 				_GROUP_MAKE_NAME<Group_Get...@>(Group:0, _GROUP_MAKE_TAG:0);
 				_GROUP_MAKE_NAME<Group_GetGlobal...@>(_GROUP_MAKE_TAG:0);
+				_GROUP_MAKE_NAME<Group_Handoff...>("", 0);
 			#endif
 			_GROUP_PREVIOUS_FUNCTION();
 		}
