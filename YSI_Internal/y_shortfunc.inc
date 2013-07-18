@@ -112,7 +112,7 @@ Natives:
 
 // Public variable.
 public stock
-	_@ = -1;
+	_@ = 0;
 
 // J@ is a "nul" target - send things there if they need ignoring or if a
 // parameter needs using.  I@ is too now.
@@ -155,20 +155,30 @@ stock X@(GLOBAL_TAG_TYPES:n)
 	setproperty(8, YSIM_RETURN, n);
 }
 
+// stock Y@()
+// {
+	// P:4("Y@ called");
+	// static
+	    // ret
+	// return
+		// ret = getproperty(8, YSIM_CALLER),
+		// setproperty(8, YSIM_CALLER, _@),
+		// ret;
+// }
+
 stock Y@()
 {
 	P:4("Y@ called");
-	new
-	    ret = getproperty(8, YSIM_CALLER);
-	setproperty(8, YSIM_CALLER, _@);
-	return ret;
+	// Already returns the previous value.
+	return setproperty(8, YSIM_CALLER, _@);
 }
 
 stock Z@(GLOBAL_TAG_TYPES:v = -1)
 {
 	P:4("Z@ called");
-	setproperty(8, YSIM_CALLER, v);
-	return getproperty(8, YSIM_RETURN);
+	return
+		setproperty(8, YSIM_CALLER, v),
+		getproperty(8, YSIM_RETURN);
 }
 
 stock T@()
@@ -182,10 +192,11 @@ new Q@[YSI_MAX_STRING];
 stock S@(GLOBAL_TAG_TYPES:v = -1)
 {
 	P:4("S@ called");
-	getproperty(8, "", YSIM_STRING, Q@);
-	strunpack(Q@, Q@);
-	setproperty(8, YSIM_CALLER, v);
-	return Q@;
+	return
+		getproperty(8, "", YSIM_STRING, Q@),
+		strunpack(Q@, Q@),
+		setproperty(8, YSIM_CALLER, v);
+	//return Q@;
 }
 
 stock R@(buffer[])
@@ -213,9 +224,13 @@ stock G@(GLOBAL_TAG_TYPES:...)
 stock F@()
 {
 	P:4("F@ called");
-	getproperty(8, "", YSIM_STRING, Q@);
-	strunpack(Q@, Q@);
-	return Q@;
+	return
+		getproperty(8, "", YSIM_STRING, Q@),
+		//P:4("2"),
+		//P:4("3"),
+		strunpack(Q@, Q@);
+	
+	//return Q@;
 }
 
 // Consume trailing spaces.  Despite being a common letter, this is unlkely to

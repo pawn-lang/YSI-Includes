@@ -125,7 +125,6 @@ Operators:
 	-
 Natives:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #undef _inc__impl
@@ -196,12 +195,14 @@ Natives:
 				// Steal the master.
 				if (_Master_Get(#_YCM, true))
 				{
+					printf("same");
 					// Nothing changed, or we took it without force.
 					state _YCM:y;
 					_YCM@ = _E_YCM@y;
 				}
 				else
 				{
+					printf("CHANGED");
 					// Something changed, tell other scripts.
 					state _YCM:u;
 					_YCM@ = _E_YCM@u;
@@ -406,9 +407,10 @@ Natives:
 		
 		public _YCM() <_YCM:y>
 		{
-			P:1("%d: " #_YCM "<y> called", _@);
+			P:1("%d: " #_YCM "<y> called, master = %d", _@, getproperty(9, #_YCM));
 			if (getproperty(9, #_YCM) == _@)
 			{
+				P:2(#_YCM " natural end");
 				// Disable the current mastership.
 				state _YCM:m;
 				_YCM@ = _E_YCM@m;
@@ -416,6 +418,12 @@ Natives:
 				setproperty(9, #_YCM, -1);
 				// Called locally to begin the hand off process.
 				CallRemoteFunction(#_YCM, "");
+			}
+			else
+			{
+				P:2(#_YCM " stolen!");
+				// Brutally stolen!
+				_Master_Relinquish(#_YCM);
 			}
 			// This is where we need to to the handoff.
 			state _YCM:p;
@@ -451,18 +459,6 @@ Natives:
 		
 		public _YCM() <>
 		{
-			/*P:1("%d: " #_YCM "<> called", _@);
-			if (_Master_Get(#_YCM))
-			{
-				P:2("%d: " "Got master " #_YCM, _@);
-				state _YCM:y;
-				_YCM@ = _E_YCM@y;
-			}
-			else
-			{
-				state _YCM:n;
-				_YCM@ = _E_YCM@n;
-			}*/
 			// Do nothing at all (just define states).
 			P:E(#_YCM "() <> called");
 		}

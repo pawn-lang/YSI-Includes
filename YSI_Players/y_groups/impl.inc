@@ -223,9 +223,11 @@ global void:_Group_ReInitPlayers()
 
 HANDOFF()
 {
+	P:1("y_groups HANDOFF called");
 	DISTRIBUTE(YSI_gGroupData);
 	DISTRIBUTE(YSI_g_sChildGroups);
 	_Group_ReInitPlayers();
+	P:1("y_groups HANDOFF ended");
 }
 
 /**--------------------------------------------------------------------------**\
@@ -484,11 +486,12 @@ global void:Group_Destroy(Group:group)
 
 @global void:_Group_TryRemove()
 {
-	for (new i = 0; i != _MAX_GROUPS; ++i)
+	for (new i = 0; i != _MAX_GROUPS; ++i) if (_Group_IsActive(i))
 	{
 		MASTER_REMOVE<i>
 		MASTER_EMPTY<i>
 		{
+			//printf("removing i");
 			broadcastfunc _Group_Destroy(i, Iter_InternalArray(GroupPlayers[i]), Iter_InternalSize(GroupPlayers[i]));
 			YSI_gGroupData[i][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS:0;
 			YSI_gGroupData[i][E_GROUP_DATA_HASH] = 0;
@@ -984,14 +987,17 @@ foreign string:Group_GetName(Group:g);
 
 global string:Group_GetName(Group:g)
 {
-	P:2("Group_GetName called: %i", _:g);
-	new
+	//printf("Group_GetName called: %04x%04x", _:g >>> 16, _:g & 0xFFFF);
+	P:2("Group_GetName called: %04x%04x", _:g >>> 16, _:g & 0xFFFF);
+	static
 		ret[YSI_MAX_STRING];
 	if (_Group_IsValid(g))
 	{
+		//printf("Is Valid");
 		//return Bit_Get(YSI_gGroupPlayers[g], p);
 		//Bit_Set(YSI_gGroupPlayers[g], p, s, bits<MAX_PLAYERS>);
 		strunpack(ret, YSI_gGroupData[_:GROUP_TEMP_FIX(g)][E_GROUP_DATA_NAME], YSI_MAX_STRING);
+		//printf("Is Valid: %s", ret);
 	}
 	return ret;
 }
@@ -1197,7 +1203,7 @@ static remotefunc void:_Group_CreateChain(Group:g)
 		i = _:Group_GetID(name);
 		if (i != _:INVALID_GROUP)
 		{
-			printf("-1");
+			printf("-2 %04x%04x", i >>> 16, i & 0xFFFF);
 			MASTER_ADD<_:GROUP_TEMP_FIX(Group:i)>
 			return Group:i;
 		}

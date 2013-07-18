@@ -169,8 +169,8 @@ forward Master_OnScriptClose(script);
 // are used.
 
 #define W@(@Zu:#%0:%1#,%2);return%3(%8) W@(@Zu:#%1,%2);return%0:%3(%0:%8)
-#define Z@(%0string:i) S@(i)
-#define V@(%0string:%1) F@()
+#define Z@(%0string:i) S@(i),Q@
+#define V@(%0string:%1) F@(),Q@
 
 
 // "foreign" declaration.
@@ -289,18 +289,47 @@ Hook:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+public OnGameModeInit()
+{
+	// May be the case that they get lost in filterscripts if the main script
+	// isn't running YSI...
+	printf("Reasert..");
+	if (!getproperty(8, YSIM_MASTER))
+	{
+		// Properties get lost between script changes so we need to force a rebuild.
+		CallRemoteFunction("Master_Reassert", "");
+	}
+	#if defined Master_OnGameModeInit
+		Master_OnGameModeInit();
+	#endif
+	return 1;
+}
+
+#if defined _ALS_OnGameModeInit
+	#undef OnGameModeInit
+#else
+	#define _ALS_OnGameModeInit
+#endif
+#define OnGameModeInit Master_OnGameModeInit
+#if defined Master_OnGameModeInit
+	forward Master_OnGameModeInit();
+#endif
+
 public OnScriptInit()
 {
 	P:1("Master_OnScriptInit");
 	if (!existproperty(8, YSIM_MASTER))
 	{
-		setproperty(8, YSIM_MASTER, 0);
+		setproperty(8, YSIM_MASTER, 1);
 	}
-	// Properties get lost between script changes so we need to force a rebuild.
-	CallRemoteFunction("Master_Reassert", "");
+	else if (!getproperty(8, YSIM_MASTER))
+	{
+		// Properties get lost between script changes so we need to force a rebuild.
+		CallRemoteFunction("Master_Reassert", "");
+	}
 	new
 		masters = getproperty(8, YSIM_MASTER),
-		i = 0;
+		i = 1;
 	while (i != 32)
 	{
 		if (!(masters & (1 << i)))
@@ -315,7 +344,7 @@ public OnScriptInit()
 	{
 		setproperty(8, YSIM_MASTER, masters);
 	}
-	C:1(if (_@ == -1) P:E("MasterID not assigned"););
+	C:1(if (!_@) P:E("MasterID not assigned"););
 	// Make sure this is called before all other YSI initialisations, at least
 	// all the ones which use the master system.
 	CallLocalFunction("YSIM_OnMasterSystemInit", "");
@@ -352,6 +381,11 @@ public OnScriptExit()
 	// function for it.  EXCEPT for this script itself!
 	new
 		func[4];
+	if (!getproperty(8, YSIM_MASTER))
+	{
+		Master_Reassert();
+		if (!getproperty(8, YSIM_MASTER)) P:F("Master data failed to set");
+	}
 	for (new i = 0; i != YSI_g_sMasterCount; ++i)
 	{
 		// This is slightly slower for ending and starting scripts, but uses far
@@ -360,6 +394,7 @@ public OnScriptExit()
 		func[0] = YSI_g_sMasterData[i] & 0xFF;
 		func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF;
 		func[2] = YSI_g_sMasterData[i] >> 16;
+		printf("Give up %s", func);
 		CallLocalFunction(func, "");
 		// The properties currently clear instantly, but that may not always be
 		// the case.
@@ -395,10 +430,10 @@ public Master_Reassert()
 {
 	// Make sure that the caller parameter is always -1 by default.
 	U@(8, YSIM_CALLER, -1);
-	if (_@ != -1)
+	if (_@)
 	{
 		// Read this script's master value.
-		setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) | (1 << _@));
+		setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) | (1 << _@) | 1);
 		// Readd this script's owned scripts.
 		new
 			func[4];
@@ -410,7 +445,35 @@ public Master_Reassert()
 			func[0] = YSI_g_sMasterData[i] & 0xFF;
 			func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF;
 			func[2] = YSI_g_sMasterData[i] >> 16;
+			printf("reclaim %s", func);
 			setproperty(9, func, _@);
+		}
+	}
+}
+
+stock _Master_Relinquish(library[])
+{
+	//printf("STEAL %s %d", library, YSI_g_sMasterCount);
+	switch (YSI_g_sMasterCount)
+	{
+		case 0: return;
+		case 1: YSI_g_sMasterCount = 0;
+		default:
+		{
+			new
+				m = library[0] | (library[1] << 8) | (library[2] << 16);
+			// Last one, don't switch.
+			if (YSI_g_sMasterData[--YSI_g_sMasterCount] == m) return;
+			// Find where this master is in the list and remove it.
+			for (new i = 0; i != YSI_g_sMasterCount; ++i)
+			{
+				if (YSI_g_sMasterData[i] == m)
+				{
+					// Shuffle them to same space.
+					YSI_g_sMasterData[i] = YSI_g_sMasterData[YSI_g_sMasterCount];
+					return;
+				}
+			}
 		}
 	}
 }
@@ -452,7 +515,7 @@ stock bool:_Master_Get(library[], bool:force = false)
 	// two or three character master names now!
 	if (YSI_g_sMasterCount < MAX_MASTERS)
 	{
-		P:4("_Master_Get: Set master string.");
+		P:4("_Master_Get: Set master string %s = %d", library, library[0] | (library[1] << 8) | (library[2] << 16));
 		YSI_g_sMasterData[YSI_g_sMasterCount++] = library[0] | (library[1] << 8) | (library[2] << 16);
 		P:4("_Master_Get: Set master string.");
 	}

@@ -88,10 +88,9 @@ forward _ScriptInit_FixState();
 			}
 		#endif
 		#if defined ScriptInit_OnFilterScriptInit
-			return ScriptInit_OnFilterScriptInit();
-		#else
-			return 1;
+			ScriptInit_OnFilterScriptInit();
 		#endif
+		return 1;
 	}
 	
 	#if defined ScriptInit_OnFilterScriptInit
@@ -129,10 +128,9 @@ forward _ScriptInit_FixState();
 			}
 		#endif
 		#if defined ScriptInit_OnFilterScriptInit
-			return ScriptInit_OnFilterScriptInit();
-		#else
-			return 1;
+			ScriptInit_OnFilterScriptInit();
 		#endif
+		return 1;
 	}
 	
 	public OnGameModeInit()
@@ -141,10 +139,9 @@ forward _ScriptInit_FixState();
 		{
 			state _script_init_fix_state : true;
 			#if defined ScriptInit_OnGameModeInit
-				return ScriptInit_OnGameModeInit();
-			#else
-				return 1;
+				ScriptInit_OnGameModeInit();
 			#endif
+			return 1;
 		}
 		else
 		{
@@ -168,10 +165,9 @@ forward _ScriptInit_FixState();
 				}
 			#endif
 			#if defined ScriptInit_OnGameModeInit
-				return ScriptInit_OnGameModeInit();
-			#else
-				return 1;
+				ScriptInit_OnGameModeInit();
 			#endif
+			return 1;
 		}
 	}
 	
@@ -201,17 +197,12 @@ forward _ScriptInit_FixState();
 	{
 		CallLocalFunction("ScriptInit_OnScriptExit", "");
 		#if defined ScriptInit_OnFilterScriptExit
-			new
-				ret = ScriptInit_OnFilterScriptExit();
+			ScriptInit_OnFilterScriptExit();
 		#endif
 		#if defined __YSI_SpecialExit
 			__YSI_SpecialExit();
 		#endif
-		#if defined ScriptInit_OnFilterScriptExit
-			return ret;
-		#else
-			return 1;
-		#endif
+		return 1;
 	}
 	
 	#if defined _ALS_OnFilterScriptExit
@@ -231,17 +222,12 @@ forward _ScriptInit_FixState();
 		{
 			CallLocalFunction("ScriptInit_OnScriptExit", "");
 			#if defined ScriptInit_OnFilterScriptExit
-				new
-					ret = ScriptInit_OnFilterScriptExit();
+				ScriptInit_OnFilterScriptExit();
 			#endif
 			#if defined __YSI_SpecialExit
 				__YSI_SpecialExit();
 			#endif
-			#if defined ScriptInit_OnFilterScriptExit
-				return ret;
-			#else
-				return 1;
-			#endif
+			return 1;
 		}
 		return 1;
 	}
@@ -250,27 +236,26 @@ forward _ScriptInit_FixState();
 	{
 		if (YSI_FILTERSCRIPT)
 		{
+			printf("exit a");
 			#if defined ScriptInit_OnGameModeExit
-				return ScriptInit_OnGameModeExit();
-			#else
-				return 1;
+				ScriptInit_OnGameModeExit();
 			#endif
+			//printf("exit b");
+			return 1;
 		}
 		else
 		{
+			printf("exit 1");
 			CallLocalFunction("ScriptInit_OnScriptExit", "");
 			#if defined ScriptInit_OnGameModeExit
-				new
-					ret = ScriptInit_OnGameModeExit();
+				ScriptInit_OnGameModeExit();
 			#endif
+			//printf("exit 2");
 			#if defined __YSI_SpecialExit
 				__YSI_SpecialExit();
 			#endif
-			#if defined ScriptInit_OnGameModeExit
-				return ret;
-			#else
-				return 1;
-			#endif
+			//printf("exit 3");
+			return 1;
 		}
 	}
 	

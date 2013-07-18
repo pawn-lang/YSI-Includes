@@ -126,12 +126,12 @@ public _@_y_distribute_@_()
 #define __declspec_dist_tagged%3:%0; %3:%0;static stock DIST_STRIP:DIST_DO:< %0>;
 #define __declspec_dist_master%0[%1]%2; %0[%1]%2;static stock DIST_STRIP:DIST_MA:<%0%2>%1|;
 
-#define DIST_DO:<%0>%1; %0_Dist()Distribute_Do(#%0"@Dist",_:%0%1);master_func%0@Dist(a[],s)<y>Distribute_To(a,s,_:%0%1);
+#define DIST_DO:<%0>%1; %0_Dist()Distribute_Do(#%0"@Dist",_:%0%1);master_func%0@Dist(a[],s)<y,_YCM:u>Distribute_To(a,s,_:%0%1);
 //#define DIST_DO:<%0>%1; %0_Dist()Distribute_Do(#%0"@Dist",true,%0%1);forward%0@Dist(a[],s);public%0@Dist(a[],s)Distribute_To(a,s,%0%1);
 
 #define DIST_STRIP:%7:<%0[%1]%3>%4; DIST_STRIP:%7:<%0%3>%4,_:%1;
 
-#define DIST_MA:<%0>%8|%1; %0_Dist()for(new i=0;i!=_:%8;++i)Distribute_So(#%0"@Dist",i,MASTER_GET<i>,_:%0[i]%1);master_func%0@Dist(i,a[],s)<y>Distribute_To(a,s,_:%0[i]%1);
+#define DIST_MA:<%0>%8|%1; %0_Dist()for(new i=0;i!=_:%8;++i)Distribute_So(#%0"@Dist",i,YSI_g_sMasterData,_:%0[i]%1);master_func%0@Dist(i,m,a[],s)<y,_YCM:u>YSI_g_sMasterData[i]=Bit:m,Distribute_To(a,s,_:%0[i]%1);
 
 stock Distribute_Do(func[], GLOBAL_TAG_TYPES:...)
 {
@@ -157,29 +157,34 @@ stock Distribute_Do(func[], GLOBAL_TAG_TYPES:...)
 	#emit STACK       20
 }
 
-stock Distribute_So(func[], idx, Bit:masters, GLOBAL_TAG_TYPES:...)
+stock Distribute_So(func[], idx, Bit:masters[], GLOBAL_TAG_TYPES:...)
 {
-	// Only owned by the current script - skip it.
-	if (masters == Bit:(1 << Master_ID())) return;
-	// Get the data and the sizes.
 	new
-		size = 0,
-		args = numargs(),
-		curs = 4;
-	while (curs < args) size = (size + 1) * getarg(--args);
-	if (size == 0) size = 1;
-	// Call CallRemoteFunction
-	static const
-		scArgs[] = "iai";
-	#emit PUSH.ADR    size
-	// Get the actual data pointer.
-	#emit PUSH.S      24
-	#emit PUSH.ADR    idx
-	#emit PUSH.C      scArgs
-	#emit PUSH.S      func
-	#emit PUSH.C      20
-	#emit SYSREQ.C    CallRemoteFunction
-	#emit STACK       24
+		m = _:masters[idx] & ~(1 << Master_ID());
+	// Only owned by the current script - skip it.
+	if (m)
+	{
+		// Get the data and the sizes.
+		new
+			size = 0,
+			args = numargs(),
+			curs = 4;
+		while (curs < args) size = (size + 1) * getarg(--args);
+		if (size == 0) size = 1;
+		// Call CallRemoteFunction
+		static const
+			scArgs[] = "iiai";
+		#emit PUSH.ADR    size
+		// Get the actual data pointer.
+		#emit PUSH.S      24
+		#emit PUSH.ADR    m
+		#emit PUSH.ADR    idx
+		#emit PUSH.C      scArgs
+		#emit PUSH.S      func
+		#emit PUSH.C      24
+		#emit SYSREQ.C    CallRemoteFunction
+		#emit STACK       28
+	}
 }
 
 stock Distribute_To(from[], ss, GLOBAL_TAG_TYPES:...)
