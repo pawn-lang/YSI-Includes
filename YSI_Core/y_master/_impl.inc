@@ -195,14 +195,12 @@ Natives:
 				// Steal the master.
 				if (_Master_Get(#_YCM, true))
 				{
-					printf("same");
 					// Nothing changed, or we took it without force.
 					state _YCM:y;
 					_YCM@ = _E_YCM@y;
 				}
 				else
 				{
-					printf("CHANGED");
 					// Something changed, tell other scripts.
 					state _YCM:u;
 					_YCM@ = _E_YCM@u;

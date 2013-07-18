@@ -293,7 +293,7 @@ public OnGameModeInit()
 {
 	// May be the case that they get lost in filterscripts if the main script
 	// isn't running YSI...
-	printf("Reasert..");
+	//printf("Reasert..");
 	if (!getproperty(8, YSIM_MASTER))
 	{
 		// Properties get lost between script changes so we need to force a rebuild.
@@ -394,7 +394,6 @@ public OnScriptExit()
 		func[0] = YSI_g_sMasterData[i] & 0xFF;
 		func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF;
 		func[2] = YSI_g_sMasterData[i] >> 16;
-		printf("Give up %s", func);
 		CallLocalFunction(func, "");
 		// The properties currently clear instantly, but that may not always be
 		// the case.
@@ -445,7 +444,6 @@ public Master_Reassert()
 			func[0] = YSI_g_sMasterData[i] & 0xFF;
 			func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF;
 			func[2] = YSI_g_sMasterData[i] >> 16;
-			printf("reclaim %s", func);
 			setproperty(9, func, _@);
 		}
 	}

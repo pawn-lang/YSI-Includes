@@ -236,25 +236,20 @@ forward _ScriptInit_FixState();
 	{
 		if (YSI_FILTERSCRIPT)
 		{
-			printf("exit a");
 			#if defined ScriptInit_OnGameModeExit
 				ScriptInit_OnGameModeExit();
 			#endif
-			//printf("exit b");
 			return 1;
 		}
 		else
 		{
-			printf("exit 1");
 			CallLocalFunction("ScriptInit_OnScriptExit", "");
 			#if defined ScriptInit_OnGameModeExit
 				ScriptInit_OnGameModeExit();
 			#endif
-			//printf("exit 2");
 			#if defined __YSI_SpecialExit
 				__YSI_SpecialExit();
 			#endif
-			//printf("exit 3");
 			return 1;
 		}
 	}
