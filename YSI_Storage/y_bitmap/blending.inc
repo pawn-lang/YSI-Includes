@@ -77,9 +77,6 @@ stock Bitmap_WritePixel(Bitmap:ctx, const x, const y, const colour)
 		default:
 		{
 			new
-				// 256 - alpha.
-				//n = 256 - a,
-				// Colour components.
 				r = ((colour & 0xFF000000) >>> 8) * a,
 				g = ((colour & 0x00FF0000) >>> 8) * a,
 				b = ((colour & 0x0000FF00) >>> 8) * a,
@@ -93,5 +90,3 @@ stock Bitmap_WritePixel(Bitmap:ctx, const x, const y, const colour)
 		}
 	}
 }
-
-//stock _Bitmap_BlendAlpha

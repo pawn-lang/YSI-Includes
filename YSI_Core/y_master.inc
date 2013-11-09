@@ -134,23 +134,47 @@ Natives:
 #endif
 #undef _inc_y_master
 
+#if !defined _INC_y_master
+	#include "y_master/once"
+#endif
+
 #if defined MASTER
-	// Store the last master.
-	#include "y_master\_push_master"
+	#if defined _MASTER
+		// Store the last master.
+		#include "y_master\_push_master"
+	#endif
 #else
-	// Get the previous master (or 23 by default).
+	// Get the previous master (or 0 by default).
 	#include "y_master\_pop_master"
+	
+	// Useful debug information (isn't compiled, but shows up with "-l").
+	P:C(static stock const _POPPED_MASTER = MASTER;);
+#endif
+
+#if MASTER < 0 || MASTER >= MAX_MASTERS
+	#error Invalid MASTER ID.
 #endif
 
 #if defined _INC_y_master
 	// Run at least once - clear previous data.
 	#include "y_master\_cleanup"
-#else
-	#include "y_master/once"
 #endif
 
-// Initialise the current master if it hasn't already been done.
-#include "y_master\_setup_master"
+// Initialise the current master if it hasn't already been done.  This is split
+// in to 5 parts to reduce compilation times in the common case of not that many
+// master systems.
+#if     MASTER < 26
+	#include "y_master\_setup_master_A"
+#elseif MASTER < 52
+	#include "y_master\_setup_master_B"
+#elseif MASTER < 78
+	#include "y_master\_setup_master_C"
+#elseif MASTER < 104
+	#include "y_master\_setup_master_D"
+#else
+	#include "y_master\_setup_master_E"
+#endif
+#undef MASTER
 
 // Include all the correct macro versions for the settings we have just found.
 #include "y_master\_impl"
@@ -170,3 +194,4 @@ Natives:
 		#include "y_master"
 	#endif
 #endif
+

@@ -218,6 +218,13 @@ forward Master_OnScriptClose(script);
 
 #define @global global
 
+// Set up the master ID stack.
+#define _YSIM_PUSH_INDEX 0 // First position on the stack to push to.
+
+#if !defined MAX_MASTERS
+	#define MAX_MASTERS 26 // Default, old value.
+#endif
+
 #if defined YSI_NO_MASTER
 	#endinput
 #endif
@@ -228,8 +235,6 @@ forward Master_OnScriptClose(script);
 #define HANDOFF(%9) master_func MAKE_YCM<HANDOFF_SOURCE...>()<p>
 #define GROUP_HANDOFF(%9) master_func MAKE_YCM<HANDOFF_SOURCE...Group>()<p>
 //#define Master_HandoffSource() MAKE_YCM<Master_Handoff...>
-
-#define MAX_MASTERS 26
 
 forward Master_Reassert();
 
@@ -521,6 +526,13 @@ stock bool:_Master_Get(library[], bool:force = false)
 	return ret;
 }
 
+/*----------------------------------------------------------------------------*\
+	Forward all the 117 possible master script initialisation functions.
+	
+	The code is split up every 26 masters to slightly speed up the compilation
+	by using "#endinput" if "MAX_MASTERS" is low enough.
+\*----------------------------------------------------------------------------*/
+
 #if defined a@OnScriptInit
 	forward a@OnScriptInit();
 #endif
@@ -599,3 +611,302 @@ stock bool:_Master_Get(library[], bool:force = false)
 #if defined z@OnScriptInit
 	forward z@OnScriptInit();
 #endif
+
+#if MAX_MASTERS <= 26
+	#endinput
+#endif
+
+#if defined A@OnScriptInit
+	forward A@OnScriptInit();
+#endif
+#if defined B@OnScriptInit
+	forward B@OnScriptInit();
+#endif
+#if defined C@OnScriptInit
+	forward C@OnScriptInit();
+#endif
+#if defined D@OnScriptInit
+	forward D@OnScriptInit();
+#endif
+#if defined E@OnScriptInit
+	forward E@OnScriptInit();
+#endif
+#if defined F@OnScriptInit
+	forward F@OnScriptInit();
+#endif
+#if defined G@OnScriptInit
+	forward G@OnScriptInit();
+#endif
+#if defined H@OnScriptInit
+	forward H@OnScriptInit();
+#endif
+#if defined I@OnScriptInit
+	forward I@OnScriptInit();
+#endif
+#if defined J@OnScriptInit
+	forward J@OnScriptInit();
+#endif
+#if defined K@OnScriptInit
+	forward K@OnScriptInit();
+#endif
+#if defined L@OnScriptInit
+	forward L@OnScriptInit();
+#endif
+#if defined M@OnScriptInit
+	forward M@OnScriptInit();
+#endif
+#if defined N@OnScriptInit
+	forward N@OnScriptInit();
+#endif
+#if defined O@OnScriptInit
+	forward O@OnScriptInit();
+#endif
+#if defined P@OnScriptInit
+	forward P@OnScriptInit();
+#endif
+#if defined Q@OnScriptInit
+	forward Q@OnScriptInit();
+#endif
+#if defined R@OnScriptInit
+	forward R@OnScriptInit();
+#endif
+#if defined S@OnScriptInit
+	forward S@OnScriptInit();
+#endif
+#if defined T@OnScriptInit
+	forward T@OnScriptInit();
+#endif
+#if defined U@OnScriptInit
+	forward U@OnScriptInit();
+#endif
+#if defined V@OnScriptInit
+	forward V@OnScriptInit();
+#endif
+#if defined W@OnScriptInit
+	forward W@OnScriptInit();
+#endif
+#if defined X@OnScriptInit
+	forward X@OnScriptInit();
+#endif
+#if defined Y@OnScriptInit
+	forward Y@OnScriptInit();
+#endif
+#if defined Z@OnScriptInit
+	forward Z@OnScriptInit();
+#endif
+
+#if MAX_MASTERS <= 52
+	#endinput
+#endif
+
+#if defined @aOnScriptInit
+	forward @aOnScriptInit();
+#endif
+#if defined @bOnScriptInit
+	forward @bOnScriptInit();
+#endif
+#if defined @cOnScriptInit
+	forward @cOnScriptInit();
+#endif
+#if defined @dOnScriptInit
+	forward @dOnScriptInit();
+#endif
+#if defined @eOnScriptInit
+	forward @eOnScriptInit();
+#endif
+#if defined @fOnScriptInit
+	forward @fOnScriptInit();
+#endif
+#if defined @gOnScriptInit
+	forward @gOnScriptInit();
+#endif
+#if defined @hOnScriptInit
+	forward @hOnScriptInit();
+#endif
+#if defined @iOnScriptInit
+	forward @iOnScriptInit();
+#endif
+#if defined @jOnScriptInit
+	forward @jOnScriptInit();
+#endif
+#if defined @kOnScriptInit
+	forward @kOnScriptInit();
+#endif
+#if defined @lOnScriptInit
+	forward @lOnScriptInit();
+#endif
+#if defined @mOnScriptInit
+	forward @mOnScriptInit();
+#endif
+#if defined @nOnScriptInit
+	forward @nOnScriptInit();
+#endif
+#if defined @oOnScriptInit
+	forward @oOnScriptInit();
+#endif
+#if defined @pOnScriptInit
+	forward @pOnScriptInit();
+#endif
+#if defined @qOnScriptInit
+	forward @qOnScriptInit();
+#endif
+#if defined @rOnScriptInit
+	forward @rOnScriptInit();
+#endif
+#if defined @sOnScriptInit
+	forward @sOnScriptInit();
+#endif
+#if defined @tOnScriptInit
+	forward @tOnScriptInit();
+#endif
+#if defined @uOnScriptInit
+	forward @uOnScriptInit();
+#endif
+#if defined @vOnScriptInit
+	forward @vOnScriptInit();
+#endif
+#if defined @wOnScriptInit
+	forward @wOnScriptInit();
+#endif
+#if defined @xOnScriptInit
+	forward @xOnScriptInit();
+#endif
+#if defined @yOnScriptInit
+	forward @yOnScriptInit();
+#endif
+#if defined @zOnScriptInit
+	forward @zOnScriptInit();
+#endif
+
+#if MAX_MASTERS <= 78
+	#endinput
+#endif
+
+#if defined @AOnScriptInit
+	forward @AOnScriptInit();
+#endif
+#if defined @BOnScriptInit
+	forward @BOnScriptInit();
+#endif
+#if defined @COnScriptInit
+	forward @COnScriptInit();
+#endif
+#if defined @DOnScriptInit
+	forward @DOnScriptInit();
+#endif
+#if defined @EOnScriptInit
+	forward @EOnScriptInit();
+#endif
+#if defined @FOnScriptInit
+	forward @FOnScriptInit();
+#endif
+#if defined @GOnScriptInit
+	forward @GOnScriptInit();
+#endif
+#if defined @HOnScriptInit
+	forward @HOnScriptInit();
+#endif
+#if defined @IOnScriptInit
+	forward @IOnScriptInit();
+#endif
+#if defined @JOnScriptInit
+	forward @JOnScriptInit();
+#endif
+#if defined @KOnScriptInit
+	forward @KOnScriptInit();
+#endif
+#if defined @LOnScriptInit
+	forward @LOnScriptInit();
+#endif
+#if defined @MOnScriptInit
+	forward @MOnScriptInit();
+#endif
+#if defined @NOnScriptInit
+	forward @NOnScriptInit();
+#endif
+#if defined @OOnScriptInit
+	forward @OOnScriptInit();
+#endif
+#if defined @POnScriptInit
+	forward @POnScriptInit();
+#endif
+#if defined @QOnScriptInit
+	forward @QOnScriptInit();
+#endif
+#if defined @ROnScriptInit
+	forward @ROnScriptInit();
+#endif
+#if defined @SOnScriptInit
+	forward @SOnScriptInit();
+#endif
+#if defined @TOnScriptInit
+	forward @TOnScriptInit();
+#endif
+#if defined @UOnScriptInit
+	forward @UOnScriptInit();
+#endif
+#if defined @VOnScriptInit
+	forward @VOnScriptInit();
+#endif
+#if defined @WOnScriptInit
+	forward @WOnScriptInit();
+#endif
+#if defined @XOnScriptInit
+	forward @XOnScriptInit();
+#endif
+#if defined @YOnScriptInit
+	forward @YOnScriptInit();
+#endif
+#if defined @ZOnScriptInit
+	forward @ZOnScriptInit();
+#endif
+
+#if MAX_MASTERS <= 104
+	#endinput
+#endif
+
+// We can't permute these symbol names - a symbol can't start with a number.
+#if defined @0OnScriptInit
+	forward @0OnScriptInit();
+#endif
+#if defined @1OnScriptInit
+	forward @1OnScriptInit();
+#endif
+#if defined @2OnScriptInit
+	forward @2OnScriptInit();
+#endif
+#if defined @3OnScriptInit
+	forward @3OnScriptInit();
+#endif
+#if defined @4OnScriptInit
+	forward @4OnScriptInit();
+#endif
+#if defined @5OnScriptInit
+	forward @5OnScriptInit();
+#endif
+#if defined @6OnScriptInit
+	forward @6OnScriptInit();
+#endif
+#if defined @7OnScriptInit
+	forward @7OnScriptInit();
+#endif
+#if defined @8OnScriptInit
+	forward @8OnScriptInit();
+#endif
+#if defined @9OnScriptInit
+	forward @9OnScriptInit();
+#endif
+
+// We can't swap the order of this symbol name - the result equals the input!
+#if defined @@OnScriptInit
+	forward @@OnScriptInit();
+#endif
+
+// We CAN double this symbol name though.
+#if defined @_OnScriptInit
+	forward @_OnScriptInit();
+#endif
+#if defined _@OnScriptInit
+	forward _@OnScriptInit();
+#endif
+

@@ -41,3 +41,8 @@
 	// Everything else in this file will already be set.  This might not.
 	#undef YSIM_DEFINED
 #endif
+
+#if defined _MASTER
+	#undef _MASTER
+#endif
+

@@ -1066,3 +1066,4 @@ global string:Command_GetNext(index, playerid)
 	}
 	return YSI_g_sReturnBuffer;
 }
+

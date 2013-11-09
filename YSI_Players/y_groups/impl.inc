@@ -75,6 +75,7 @@ Changelog:
 #include "..\YSI_Data\y_iterate"
 
 //#include "..\y_master"
+#define MASTER 24
 #define YSIM_U_DISABLE
 #include "..\YSI_Core\y_master"
 
@@ -1526,3 +1527,7 @@ global Group_GetGlobalGroup(Group:el)
 
 //#define _YSIM_RESET_USER
 //#include "..\y_master"
+//#undef _GROUP_MAKE_LIMIT
+//#undef _GROUP_MAKE_NAME
+#include "..\YSI_Core\y_master"
+

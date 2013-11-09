@@ -65,20 +65,9 @@ Variables:
 		-
 \**--------------------------------------------------------------------------**/
 
-//#define Bitmap:%0<>
-
-/*enum E_BITMAP
-{
-	Alloc:E_BITMAP_MEMORY,
-	E_BITMAP_SIZE,
-	E_BITMAP_X,
-	E_BITMAP_Y
-}*/
-
 #define Bitmap_Size(%0)   (YSI_gMallocMemory[_:(%0) - 3])
 #define Bitmap_Width(%0)  (YSI_gMallocMemory[_:(%0) - 2])
 #define Bitmap_Height(%0) (YSI_gMallocMemory[_:(%0) - 1])
-//#define Bitmap_Height(%0) (YSI_gMallocMemory[_:(%0) - 1])
 
 #define Bitmap_IndexInt(%9,%0,%1,%2) (_:(%9) + (_:(%2) * _:(%1)) + _:(%0))
 #define Bitmap_IndexCtx(%9,%0,%2) (_:(%9) + (_:(%2) * _:Bitmap_Width(%9)) + _:(%0))
@@ -93,25 +82,14 @@ stock Bitmap:Bitmap_Create(xSize, ySize, bgColour = 0xFFFFFFFF)
 		s = xSize * ySize,
 		Alloc:d = malloc(s + 3);
 	P:3("Bitmap_Create called: %d %d %d %d", xSize, ySize, s + 3, _:d);
-	//printf("Alloc: %d", _:d);
-	if (!d) //(ctx[E_BITMAP_MEMORY] = d))
+	if (!d)
 	{
-		//printf("Requested: %d", s + 3);
 		P:E("Could not allocate bitmap buffer");
 		return Bitmap:0;
 	}
-	//ctx[E_BITMAP_SIZE] = s;
-	//ctx[E_BITMAP_X] = x;
-	//ctx[E_BITMAP_Y] = y;
 	// Raw malloc access.  Set the background colour.
 	memset(YSI_gMallocMemory[_:d + 3], bgColour | 0xFF, s);
-	/*for (new y = 0; y != ySize; ++y)
-	{
-		for (new x = 0; x != xSize; ++x)
-		{
-			printf("(%02d, %02d) = %08x", x, y, YSI_gMallocMemory[
-		}
-	}*/
+	// Store hidden data on the bitmap that only this include can see.
 	mset(d, 0, s);
 	mset(d, 1, xSize);
 	mset(d, 2, ySize);

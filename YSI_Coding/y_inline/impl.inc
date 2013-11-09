@@ -319,6 +319,13 @@ public Inline_OnAsmError(ctx[AsmContext], AsmError:error)
 }
 
 // "tryemit"
+// This macro detects when an opcode couldn't be written due to a lack of space
+// in the buffer, then instantly re-writes the same opcode to the same context!
+// The reason this works is that there is an error handler that is called BEFORE
+// "amx_emit_" returns the error code, and that handler deals with all the
+// complex reallocations and jumps required to move the code about (in this case
+// to fit around the existing jumps in the code around where we are writing new
+// code).
 #define _@emit%0\32;%1\10;%3 if(asm_emit_(ctx,%1 ) == ASM_ERROR_SPACE) asm_emit_(ctx,%1 );
 
 stock I@K(...)
@@ -1249,3 +1256,31 @@ stock Callback_Restore(func[E_CALLBACK_DATA])
 	SetFrameReturn(frm, ret),
 	SetFramePreviousFrame(frm, pfr);
 }
+
+
+/**--------------------------------------------------------------------------**\
+<summary>Inline_Timer</summary>
+<param name="func[]">The function to call on a delay.</param>
+<param name="delay">how long before the first call?</param>
+<param name="interval">How long between subsequent calls?</param>
+<param name="repeat">How many times to call the function.</param>
+<param name="format[]">The additional parameters' types.</param>
+<param name="...">The additional parameters.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Calls a function, which may be an inline function, after a given delay, and
+	with the given regularity after that.  The parameters are slightly different
+	to those in SetTimer - that takes only an interval and a repeat boolean.
+	This instead takes two times - the first is the delay before the first call,
+	the second is the delay between all subsequent calls (mainly to offset
+	different timers within a given period).  The "repeat" parameter is also
+	different - instead of being a boolean, it is a count.  "0" no longer means
+	"don't repeat", but "repeat forever".  "1" no longer means "repeat forever",
+	but "call once".  All other numbers (beside 0) specify an exact number of
+	times to call the function before calling it no more.  This is in line with
+	the "SetTimer_" and "SetTimerEx_" functions in the fixes2 plugin.
+</remarks>
+\**--------------------------------------------------------------------------**/
+

@@ -154,6 +154,7 @@ Compile options:
 
 // Set commands as master 25.
 #define MASTER 25
+#define YSIM_U_DISABLE
 #include "..\YSI_Core\y_master"
 
 // Misc includes.
@@ -186,3 +187,4 @@ Compile options:
 #undef _GROUP_MAKE_LIMIT
 #undef _GROUP_MAKE_NAME
 #include "..\YSI_Core\y_master"
+

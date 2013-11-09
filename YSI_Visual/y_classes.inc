@@ -155,6 +155,7 @@ Operators:
 #include "..\YSI_Data\y_iterate"
 #include "..\YSI_Internal\y_natives"
 
+#define MASTER 22
 #define YSIM_U_DISABLE
 #include "..\YSI_Core\y_master"
 
@@ -1371,5 +1372,8 @@ static stock Class_Spectate(playerid)
 #endif
 #define AddPlayerClass Class_Add
 
+// Reset.
 #undef _GROUP_MAKE_LIMIT
 #undef _GROUP_MAKE_NAME
+#include "..\YSI_Core\y_master"
+
