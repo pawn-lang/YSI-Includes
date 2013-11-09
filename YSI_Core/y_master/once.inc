@@ -527,177 +527,11 @@ stock bool:_Master_Get(library[], bool:force = false)
 }
 
 /*----------------------------------------------------------------------------*\
-	Forward all the 117 possible master script initialisation functions.
+	Forward all the 64 possible master script initialisation functions.
 	
 	The code is split up every 26 masters to slightly speed up the compilation
 	by using "#endinput" if "MAX_MASTERS" is low enough.
 \*----------------------------------------------------------------------------*/
-
-#if defined a@OnScriptInit
-	forward a@OnScriptInit();
-#endif
-#if defined b@OnScriptInit
-	forward b@OnScriptInit();
-#endif
-#if defined c@OnScriptInit
-	forward c@OnScriptInit();
-#endif
-#if defined d@OnScriptInit
-	forward d@OnScriptInit();
-#endif
-#if defined e@OnScriptInit
-	forward e@OnScriptInit();
-#endif
-#if defined f@OnScriptInit
-	forward f@OnScriptInit();
-#endif
-#if defined g@OnScriptInit
-	forward g@OnScriptInit();
-#endif
-#if defined h@OnScriptInit
-	forward h@OnScriptInit();
-#endif
-#if defined i@OnScriptInit
-	forward i@OnScriptInit();
-#endif
-#if defined j@OnScriptInit
-	forward j@OnScriptInit();
-#endif
-#if defined k@OnScriptInit
-	forward k@OnScriptInit();
-#endif
-#if defined l@OnScriptInit
-	forward l@OnScriptInit();
-#endif
-#if defined m@OnScriptInit
-	forward m@OnScriptInit();
-#endif
-#if defined n@OnScriptInit
-	forward n@OnScriptInit();
-#endif
-#if defined o@OnScriptInit
-	forward o@OnScriptInit();
-#endif
-#if defined p@OnScriptInit
-	forward p@OnScriptInit();
-#endif
-#if defined q@OnScriptInit
-	forward q@OnScriptInit();
-#endif
-#if defined r@OnScriptInit
-	forward r@OnScriptInit();
-#endif
-#if defined s@OnScriptInit
-	forward s@OnScriptInit();
-#endif
-#if defined t@OnScriptInit
-	forward t@OnScriptInit();
-#endif
-#if defined u@OnScriptInit
-	forward u@OnScriptInit();
-#endif
-#if defined v@OnScriptInit
-	forward v@OnScriptInit();
-#endif
-#if defined w@OnScriptInit
-	forward w@OnScriptInit();
-#endif
-#if defined x@OnScriptInit
-	forward x@OnScriptInit();
-#endif
-#if defined y@OnScriptInit
-	forward y@OnScriptInit();
-#endif
-#if defined z@OnScriptInit
-	forward z@OnScriptInit();
-#endif
-
-#if MAX_MASTERS <= 26
-	#endinput
-#endif
-
-#if defined A@OnScriptInit
-	forward A@OnScriptInit();
-#endif
-#if defined B@OnScriptInit
-	forward B@OnScriptInit();
-#endif
-#if defined C@OnScriptInit
-	forward C@OnScriptInit();
-#endif
-#if defined D@OnScriptInit
-	forward D@OnScriptInit();
-#endif
-#if defined E@OnScriptInit
-	forward E@OnScriptInit();
-#endif
-#if defined F@OnScriptInit
-	forward F@OnScriptInit();
-#endif
-#if defined G@OnScriptInit
-	forward G@OnScriptInit();
-#endif
-#if defined H@OnScriptInit
-	forward H@OnScriptInit();
-#endif
-#if defined I@OnScriptInit
-	forward I@OnScriptInit();
-#endif
-#if defined J@OnScriptInit
-	forward J@OnScriptInit();
-#endif
-#if defined K@OnScriptInit
-	forward K@OnScriptInit();
-#endif
-#if defined L@OnScriptInit
-	forward L@OnScriptInit();
-#endif
-#if defined M@OnScriptInit
-	forward M@OnScriptInit();
-#endif
-#if defined N@OnScriptInit
-	forward N@OnScriptInit();
-#endif
-#if defined O@OnScriptInit
-	forward O@OnScriptInit();
-#endif
-#if defined P@OnScriptInit
-	forward P@OnScriptInit();
-#endif
-#if defined Q@OnScriptInit
-	forward Q@OnScriptInit();
-#endif
-#if defined R@OnScriptInit
-	forward R@OnScriptInit();
-#endif
-#if defined S@OnScriptInit
-	forward S@OnScriptInit();
-#endif
-#if defined T@OnScriptInit
-	forward T@OnScriptInit();
-#endif
-#if defined U@OnScriptInit
-	forward U@OnScriptInit();
-#endif
-#if defined V@OnScriptInit
-	forward V@OnScriptInit();
-#endif
-#if defined W@OnScriptInit
-	forward W@OnScriptInit();
-#endif
-#if defined X@OnScriptInit
-	forward X@OnScriptInit();
-#endif
-#if defined Y@OnScriptInit
-	forward Y@OnScriptInit();
-#endif
-#if defined Z@OnScriptInit
-	forward Z@OnScriptInit();
-#endif
-
-#if MAX_MASTERS <= 52
-	#endinput
-#endif
 
 #if defined @aOnScriptInit
 	forward @aOnScriptInit();
@@ -778,7 +612,7 @@ stock bool:_Master_Get(library[], bool:force = false)
 	forward @zOnScriptInit();
 #endif
 
-#if MAX_MASTERS <= 78
+#if MAX_MASTERS <= 26
 	#endinput
 #endif
 
@@ -861,7 +695,7 @@ stock bool:_Master_Get(library[], bool:force = false)
 	forward @ZOnScriptInit();
 #endif
 
-#if MAX_MASTERS <= 104
+#if MAX_MASTERS <= 52
 	#endinput
 #endif
 
@@ -897,16 +731,11 @@ stock bool:_Master_Get(library[], bool:force = false)
 	forward @9OnScriptInit();
 #endif
 
-// We can't swap the order of this symbol name - the result equals the input!
 #if defined @@OnScriptInit
 	forward @@OnScriptInit();
 #endif
 
-// We CAN double this symbol name though.
 #if defined @_OnScriptInit
 	forward @_OnScriptInit();
-#endif
-#if defined _@OnScriptInit
-	forward _@OnScriptInit();
 #endif
 

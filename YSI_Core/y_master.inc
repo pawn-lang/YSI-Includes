@@ -163,16 +163,14 @@ Natives:
 // Initialise the current master if it hasn't already been done.  This is split
 // in to 5 parts to reduce compilation times in the common case of not that many
 // master systems.
-#if     MASTER < 26
+#if     MASTER < 16
 	#include "y_master\_setup_master_A"
-#elseif MASTER < 52
+#elseif MASTER < 32
 	#include "y_master\_setup_master_B"
-#elseif MASTER < 78
+#elseif MASTER < 48
 	#include "y_master\_setup_master_C"
-#elseif MASTER < 104
-	#include "y_master\_setup_master_D"
 #else
-	#include "y_master\_setup_master_E"
+	#include "y_master\_setup_master_D"
 #endif
 #undef MASTER
 

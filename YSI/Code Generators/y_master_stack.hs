@@ -115,23 +115,36 @@ generatePush n m = withFile "_push_master.inc" WriteMode (\ f -> do
 zipM_ :: (Monad m) => (a -> b -> m c) -> [a] -> [b] -> m ()
 zipM_ f a b = mapM_ (uncurry f) (zip a b)
 
-generateImpl name num = flip ($) stdout (\ f -> do
-		f << "\t\t\t\t#elseif _MASTER == " ++ show num
+generateImpl' = withFile "_impl" WriteMode (\ f -> zipM_ (generateImpl f) names [0 .. ])
+generateImpl f name num = flip ($) f (\ f -> do
+		if (num `mod` 16 == 0)
+			then
+				((f << "\t\t\t#elseif MASTER < " ++ show (((num `div` 16) + 1) * 16)) >>
+				(f << "\t\t\t\t#if MASTER == " ++ show num))
+			else f << "\t\t\t\t#elseif MASTER == " ++ show num
+		--f << "\t\t\t\t#elseif _MASTER == " ++ show num
 		f << "\t\t\t\t\t#if defined " ++ name ++ "OnScriptInit"
 		f << "\t\t\t\t\t\t" ++ name ++ "OnScriptInit();"
-		f << "\t\t\t\t\t\t#define OnMasterSystemInit " ++ name ++ "OnScriptInit"
 		f << "\t\t\t\t\t#endif"
+		f << "\t\t\t\t\t#define OnMasterSystemInit " ++ name ++ "OnScriptInit"
+		if ((num + 1) `mod` 16 == 0)
+			then f << "\t\t\t\t#endif"
+			else return ()
 	)
 
-names = ["a@", "b@", "c@", "d@", "e@", "f@", "g@", "h@", "i@", "j@", "k@", "l@", "m@", "n@", "o@", "p@", "q@", "r@", "s@", "t@", "u@", "v@", "w@", "x@", "y@", "z@", 
- "A@", "B@", "C@", "D@", "E@", "F@", "G@", "H@", "I@", "J@", "K@", "L@", "M@", "N@", "O@", "P@", "Q@", "R@", "S@", "T@", "U@", "V@", "W@", "X@", "Y@", "Z@", 
- "@a", "@b", "@c", "@d", "@e", "@f", "@g", "@h", "@i", "@j", "@k", "@l", "@m", "@n", "@o", "@p", "@q", "@r", "@s", "@t", "@u", "@v", "@w", "@x", "@y", "@z", 
+-- names = ["a@", "b@", "c@", "d@", "e@", "f@", "g@", "h@", "i@", "j@", "k@", "l@", "m@", "n@", "o@", "p@", "q@", "r@", "s@", "t@", "u@", "v@", "w@", "x@", "y@", "z@", 
+ -- "A@", "B@", "C@", "D@", "E@", "F@", "G@", "H@", "I@", "J@", "K@", "L@", "M@", "N@", "O@", "P@", "Q@", "R@", "S@", "T@", "U@", "V@", "W@", "X@", "Y@", "Z@", 
+ -- "@a", "@b", "@c", "@d", "@e", "@f", "@g", "@h", "@i", "@j", "@k", "@l", "@m", "@n", "@o", "@p", "@q", "@r", "@s", "@t", "@u", "@v", "@w", "@x", "@y", "@z", 
+ -- "@A", "@B", "@C", "@D", "@E", "@F", "@G", "@H", "@I", "@J", "@K", "@L", "@M", "@N", "@O", "@P", "@Q", "@R", "@S", "@T", "@U", "@V", "@W", "@X", "@Y", "@Z", 
+ -- "@0", "@1", "@2", "@3", "@4", "@5", "@6", "@7", "@8", "@9", "@@", "@_", "_@"]
+
+names = ["@a", "@b", "@c", "@d", "@e", "@f", "@g", "@h", "@i", "@j", "@k", "@l", "@m", "@n", "@o", "@p", "@q", "@r", "@s", "@t", "@u", "@v", "@w", "@x", "@y", "@z", 
  "@A", "@B", "@C", "@D", "@E", "@F", "@G", "@H", "@I", "@J", "@K", "@L", "@M", "@N", "@O", "@P", "@Q", "@R", "@S", "@T", "@U", "@V", "@W", "@X", "@Y", "@Z", 
- "@0", "@1", "@2", "@3", "@4", "@5", "@6", "@7", "@8", "@9", "@@", "@_", "_@"]
+ "@0", "@1", "@2", "@3", "@4", "@5", "@6", "@7", "@8", "@9", "@@", "@_"]
 
 generateSetup' = withFile "_setup_master" WriteMode (\ f -> zipM_ (generateSetup f) names [0 .. ])
 generateSetup f name num = flip ($) f (\ f -> do
-		if (num `mod` 26 == 0)
+		if (num `mod` 16 == 0)
 			then f << "#if MASTER == " ++ show num
 			else f << "#elseif MASTER == " ++ show num
 		f << "\t#define _MASTER " ++ show num
@@ -160,7 +173,7 @@ generateSetup f name num = flip ($) f (\ f -> do
 		f << "\t#define MAKE_YCM<%0...%1> %0" ++ name ++ "%1"
 		f << "\t#define _YCM@ _YCM_g" ++ name
 		f << "\t#endinput"
-		if ((num + 1) `mod` 26 == 0)
+		if ((num + 1) `mod` 16 == 0)
 			then f << "#endif"
 			else return ()
 	)

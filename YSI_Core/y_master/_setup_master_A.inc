@@ -3,10 +3,10 @@
 #if MASTER == 0
 	#define _MASTER 0
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_0
-	#if defined _YCM_a@
+	#if defined _YCM_@a
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_a@
+		#define _YCM_@a
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -23,17 +23,17 @@
 			#error Undefined master type on 0
 		#endif
 	#endif
-	#define _YCM a@
-	#define MAKE_YCM<%0...%1> %0a@%1
-	#define _YCM@ _YCM_ga@
+	#define _YCM @a
+	#define MAKE_YCM<%0...%1> %0@a%1
+	#define _YCM@ _YCM_g@a
 	#endinput
 #elseif MASTER == 1
 	#define _MASTER 1
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_1
-	#if defined _YCM_b@
+	#if defined _YCM_@b
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_b@
+		#define _YCM_@b
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -50,17 +50,17 @@
 			#error Undefined master type on 1
 		#endif
 	#endif
-	#define _YCM b@
-	#define MAKE_YCM<%0...%1> %0b@%1
-	#define _YCM@ _YCM_gb@
+	#define _YCM @b
+	#define MAKE_YCM<%0...%1> %0@b%1
+	#define _YCM@ _YCM_g@b
 	#endinput
 #elseif MASTER == 2
 	#define _MASTER 2
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_2
-	#if defined _YCM_c@
+	#if defined _YCM_@c
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_c@
+		#define _YCM_@c
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -77,17 +77,17 @@
 			#error Undefined master type on 2
 		#endif
 	#endif
-	#define _YCM c@
-	#define MAKE_YCM<%0...%1> %0c@%1
-	#define _YCM@ _YCM_gc@
+	#define _YCM @c
+	#define MAKE_YCM<%0...%1> %0@c%1
+	#define _YCM@ _YCM_g@c
 	#endinput
 #elseif MASTER == 3
 	#define _MASTER 3
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_3
-	#if defined _YCM_d@
+	#if defined _YCM_@d
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_d@
+		#define _YCM_@d
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -104,17 +104,17 @@
 			#error Undefined master type on 3
 		#endif
 	#endif
-	#define _YCM d@
-	#define MAKE_YCM<%0...%1> %0d@%1
-	#define _YCM@ _YCM_gd@
+	#define _YCM @d
+	#define MAKE_YCM<%0...%1> %0@d%1
+	#define _YCM@ _YCM_g@d
 	#endinput
 #elseif MASTER == 4
 	#define _MASTER 4
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_4
-	#if defined _YCM_e@
+	#if defined _YCM_@e
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_e@
+		#define _YCM_@e
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -131,17 +131,17 @@
 			#error Undefined master type on 4
 		#endif
 	#endif
-	#define _YCM e@
-	#define MAKE_YCM<%0...%1> %0e@%1
-	#define _YCM@ _YCM_ge@
+	#define _YCM @e
+	#define MAKE_YCM<%0...%1> %0@e%1
+	#define _YCM@ _YCM_g@e
 	#endinput
 #elseif MASTER == 5
 	#define _MASTER 5
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_5
-	#if defined _YCM_f@
+	#if defined _YCM_@f
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_f@
+		#define _YCM_@f
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -158,17 +158,17 @@
 			#error Undefined master type on 5
 		#endif
 	#endif
-	#define _YCM f@
-	#define MAKE_YCM<%0...%1> %0f@%1
-	#define _YCM@ _YCM_gf@
+	#define _YCM @f
+	#define MAKE_YCM<%0...%1> %0@f%1
+	#define _YCM@ _YCM_g@f
 	#endinput
 #elseif MASTER == 6
 	#define _MASTER 6
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_6
-	#if defined _YCM_g@
+	#if defined _YCM_@g
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_g@
+		#define _YCM_@g
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -185,17 +185,17 @@
 			#error Undefined master type on 6
 		#endif
 	#endif
-	#define _YCM g@
-	#define MAKE_YCM<%0...%1> %0g@%1
-	#define _YCM@ _YCM_gg@
+	#define _YCM @g
+	#define MAKE_YCM<%0...%1> %0@g%1
+	#define _YCM@ _YCM_g@g
 	#endinput
 #elseif MASTER == 7
 	#define _MASTER 7
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_7
-	#if defined _YCM_h@
+	#if defined _YCM_@h
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_h@
+		#define _YCM_@h
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -212,17 +212,17 @@
 			#error Undefined master type on 7
 		#endif
 	#endif
-	#define _YCM h@
-	#define MAKE_YCM<%0...%1> %0h@%1
-	#define _YCM@ _YCM_gh@
+	#define _YCM @h
+	#define MAKE_YCM<%0...%1> %0@h%1
+	#define _YCM@ _YCM_g@h
 	#endinput
 #elseif MASTER == 8
 	#define _MASTER 8
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_8
-	#if defined _YCM_i@
+	#if defined _YCM_@i
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_i@
+		#define _YCM_@i
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -239,17 +239,17 @@
 			#error Undefined master type on 8
 		#endif
 	#endif
-	#define _YCM i@
-	#define MAKE_YCM<%0...%1> %0i@%1
-	#define _YCM@ _YCM_gi@
+	#define _YCM @i
+	#define MAKE_YCM<%0...%1> %0@i%1
+	#define _YCM@ _YCM_g@i
 	#endinput
 #elseif MASTER == 9
 	#define _MASTER 9
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_9
-	#if defined _YCM_j@
+	#if defined _YCM_@j
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_j@
+		#define _YCM_@j
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -266,17 +266,17 @@
 			#error Undefined master type on 9
 		#endif
 	#endif
-	#define _YCM j@
-	#define MAKE_YCM<%0...%1> %0j@%1
-	#define _YCM@ _YCM_gj@
+	#define _YCM @j
+	#define MAKE_YCM<%0...%1> %0@j%1
+	#define _YCM@ _YCM_g@j
 	#endinput
 #elseif MASTER == 10
 	#define _MASTER 10
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_10
-	#if defined _YCM_k@
+	#if defined _YCM_@k
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_k@
+		#define _YCM_@k
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -293,17 +293,17 @@
 			#error Undefined master type on 10
 		#endif
 	#endif
-	#define _YCM k@
-	#define MAKE_YCM<%0...%1> %0k@%1
-	#define _YCM@ _YCM_gk@
+	#define _YCM @k
+	#define MAKE_YCM<%0...%1> %0@k%1
+	#define _YCM@ _YCM_g@k
 	#endinput
 #elseif MASTER == 11
 	#define _MASTER 11
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_11
-	#if defined _YCM_l@
+	#if defined _YCM_@l
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_l@
+		#define _YCM_@l
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -320,17 +320,17 @@
 			#error Undefined master type on 11
 		#endif
 	#endif
-	#define _YCM l@
-	#define MAKE_YCM<%0...%1> %0l@%1
-	#define _YCM@ _YCM_gl@
+	#define _YCM @l
+	#define MAKE_YCM<%0...%1> %0@l%1
+	#define _YCM@ _YCM_g@l
 	#endinput
 #elseif MASTER == 12
 	#define _MASTER 12
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_12
-	#if defined _YCM_m@
+	#if defined _YCM_@m
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_m@
+		#define _YCM_@m
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -347,17 +347,17 @@
 			#error Undefined master type on 12
 		#endif
 	#endif
-	#define _YCM m@
-	#define MAKE_YCM<%0...%1> %0m@%1
-	#define _YCM@ _YCM_gm@
+	#define _YCM @m
+	#define MAKE_YCM<%0...%1> %0@m%1
+	#define _YCM@ _YCM_g@m
 	#endinput
 #elseif MASTER == 13
 	#define _MASTER 13
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_13
-	#if defined _YCM_n@
+	#if defined _YCM_@n
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_n@
+		#define _YCM_@n
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -374,17 +374,17 @@
 			#error Undefined master type on 13
 		#endif
 	#endif
-	#define _YCM n@
-	#define MAKE_YCM<%0...%1> %0n@%1
-	#define _YCM@ _YCM_gn@
+	#define _YCM @n
+	#define MAKE_YCM<%0...%1> %0@n%1
+	#define _YCM@ _YCM_g@n
 	#endinput
 #elseif MASTER == 14
 	#define _MASTER 14
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_14
-	#if defined _YCM_o@
+	#if defined _YCM_@o
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_o@
+		#define _YCM_@o
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -401,17 +401,17 @@
 			#error Undefined master type on 14
 		#endif
 	#endif
-	#define _YCM o@
-	#define MAKE_YCM<%0...%1> %0o@%1
-	#define _YCM@ _YCM_go@
+	#define _YCM @o
+	#define MAKE_YCM<%0...%1> %0@o%1
+	#define _YCM@ _YCM_g@o
 	#endinput
 #elseif MASTER == 15
 	#define _MASTER 15
 	#define YSIM_STORED_SETTINGS YSIM_RECALL_15
-	#if defined _YCM_p@
+	#if defined _YCM_@p
 		#define YSIM_DEFINED
 	#else
-		#define _YCM_p@
+		#define _YCM_@p
 		// Save the settings.
 		#include "_resolve"
 		#if !YSIM_HAS_MASTER
@@ -428,279 +428,9 @@
 			#error Undefined master type on 15
 		#endif
 	#endif
-	#define _YCM p@
-	#define MAKE_YCM<%0...%1> %0p@%1
-	#define _YCM@ _YCM_gp@
-	#endinput
-#elseif MASTER == 16
-	#define _MASTER 16
-	#define YSIM_STORED_SETTINGS YSIM_RECALL_16
-	#if defined _YCM_q@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_q@
-		// Save the settings.
-		#include "_resolve"
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_16 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_16 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_16 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_16 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_16 4
-		#else
-			#error Undefined master type on 16
-		#endif
-	#endif
-	#define _YCM q@
-	#define MAKE_YCM<%0...%1> %0q@%1
-	#define _YCM@ _YCM_gq@
-	#endinput
-#elseif MASTER == 17
-	#define _MASTER 17
-	#define YSIM_STORED_SETTINGS YSIM_RECALL_17
-	#if defined _YCM_r@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_r@
-		// Save the settings.
-		#include "_resolve"
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_17 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_17 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_17 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_17 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_17 4
-		#else
-			#error Undefined master type on 17
-		#endif
-	#endif
-	#define _YCM r@
-	#define MAKE_YCM<%0...%1> %0r@%1
-	#define _YCM@ _YCM_gr@
-	#endinput
-#elseif MASTER == 18
-	#define _MASTER 18
-	#define YSIM_STORED_SETTINGS YSIM_RECALL_18
-	#if defined _YCM_s@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_s@
-		// Save the settings.
-		#include "_resolve"
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_18 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_18 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_18 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_18 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_18 4
-		#else
-			#error Undefined master type on 18
-		#endif
-	#endif
-	#define _YCM s@
-	#define MAKE_YCM<%0...%1> %0s@%1
-	#define _YCM@ _YCM_gs@
-	#endinput
-#elseif MASTER == 19
-	#define _MASTER 19
-	#define YSIM_STORED_SETTINGS YSIM_RECALL_19
-	#if defined _YCM_t@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_t@
-		// Save the settings.
-		#include "_resolve"
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_19 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_19 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_19 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_19 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_19 4
-		#else
-			#error Undefined master type on 19
-		#endif
-	#endif
-	#define _YCM t@
-	#define MAKE_YCM<%0...%1> %0t@%1
-	#define _YCM@ _YCM_gt@
-	#endinput
-#elseif MASTER == 20
-	#define _MASTER 20
-	#define YSIM_STORED_SETTINGS YSIM_RECALL_20
-	#if defined _YCM_u@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_u@
-		// Save the settings.
-		#include "_resolve"
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_20 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_20 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_20 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_20 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_20 4
-		#else
-			#error Undefined master type on 20
-		#endif
-	#endif
-	#define _YCM u@
-	#define MAKE_YCM<%0...%1> %0u@%1
-	#define _YCM@ _YCM_gu@
-	#endinput
-#elseif MASTER == 21
-	#define _MASTER 21
-	#define YSIM_STORED_SETTINGS YSIM_RECALL_21
-	#if defined _YCM_v@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_v@
-		// Save the settings.
-		#include "_resolve"
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_21 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_21 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_21 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_21 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_21 4
-		#else
-			#error Undefined master type on 21
-		#endif
-	#endif
-	#define _YCM v@
-	#define MAKE_YCM<%0...%1> %0v@%1
-	#define _YCM@ _YCM_gv@
-	#endinput
-#elseif MASTER == 22
-	#define _MASTER 22
-	#define YSIM_STORED_SETTINGS YSIM_RECALL_22
-	#if defined _YCM_w@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_w@
-		// Save the settings.
-		#include "_resolve"
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_22 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_22 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_22 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_22 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_22 4
-		#else
-			#error Undefined master type on 22
-		#endif
-	#endif
-	#define _YCM w@
-	#define MAKE_YCM<%0...%1> %0w@%1
-	#define _YCM@ _YCM_gw@
-	#endinput
-#elseif MASTER == 23
-	#define _MASTER 23
-	#define YSIM_STORED_SETTINGS YSIM_RECALL_23
-	#if defined _YCM_x@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_x@
-		// Save the settings.
-		#include "_resolve"
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_23 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_23 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_23 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_23 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_23 4
-		#else
-			#error Undefined master type on 23
-		#endif
-	#endif
-	#define _YCM x@
-	#define MAKE_YCM<%0...%1> %0x@%1
-	#define _YCM@ _YCM_gx@
-	#endinput
-#elseif MASTER == 24
-	#define _MASTER 24
-	#define YSIM_STORED_SETTINGS YSIM_RECALL_24
-	#if defined _YCM_y@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_y@
-		// Save the settings.
-		#include "_resolve"
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_24 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_24 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_24 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_24 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_24 4
-		#else
-			#error Undefined master type on 24
-		#endif
-	#endif
-	#define _YCM y@
-	#define MAKE_YCM<%0...%1> %0y@%1
-	#define _YCM@ _YCM_gy@
-	#endinput
-#elseif MASTER == 25
-	#define _MASTER 25
-	#define YSIM_STORED_SETTINGS YSIM_RECALL_25
-	#if defined _YCM_z@
-		#define YSIM_DEFINED
-	#else
-		#define _YCM_z@
-		// Save the settings.
-		#include "_resolve"
-		#if !YSIM_HAS_MASTER
-			#define YSIM_RECALL_25 0
-		#elseif _YSIM_IS_CLIENT
-			#define YSIM_RECALL_25 1
-		#elseif _YSIM_IS_SERVER
-			#define YSIM_RECALL_25 2
-		#elseif _YSIM_IS_CLOUD
-			#define YSIM_RECALL_25 3
-		#elseif _YSIM_IS_STUB
-			#define YSIM_RECALL_25 4
-		#else
-			#error Undefined master type on 25
-		#endif
-	#endif
-	#define _YCM z@
-	#define MAKE_YCM<%0...%1> %0z@%1
-	#define _YCM@ _YCM_gz@
+	#define _YCM @p
+	#define MAKE_YCM<%0...%1> %0@p%1
+	#define _YCM@ _YCM_g@p
 	#endinput
 #endif
 
