@@ -1,3 +1,80 @@
+Test:y_commands_Valid()
+{
+	ASSERT(Command_IsValid(YCMD:y_commands_1));
+	ASSERT(Command_IsValid(Command_GetID("y_commands_1")));
+	// ASSERT(Command_IsValid(YCMD:y_commands_1));
+}
+
+Test:y_commands_YCMD()
+{
+	ASSERT(Command_GetID("y_commands_1") == _:YCMD:y_commands_1);
+	ASSERT(Command_GetID("y_commands_1") != _:YCMD:y_commands_2);
+	ASSERT(Command_GetID("y_commands_1") != _:YCMD:y_commands_3);
+	ASSERT(Command_GetID("y_commands_DO_NOT_MAKE") == COMMAND_NOT_FOUND);
+}
+
+Test:y_commands_GetName()
+{
+	new
+		id = Command_GetID("y_commands_1");
+	ASSERT(!strcmp(Command_GetName(id), "y_commands_1"));
+	ASSERT(strlen(Command_GetName(-1)) == 0);
+}
+
+Test:y_commands_AddAlt()
+{
+	new
+		id1 = YCMD:y_commands_1,
+		id2 = Command_AddAlt(id1, "y_commands_alt1"),
+		id3 = Command_AddAltNamed("y_commands_1", "y_commands_alt1");
+	ASSERT(id1 != id2);
+	ASSERT(id2 != COMMAND_NOT_FOUND);
+	ASSERT(id2 == id3);
+}
+
+Test:y_commands_Perms()
+{
+	new
+		id = (YCMD:y_commands_1);
+	Command_SetPlayer(id, 101, false);
+	ASSERT(!Command_GetPlayer(id, 101));
+	ASSERT(!Command_GetPlayerNamed("y_commands_1", 101));
+	Command_SetPlayerNamed("y_commands_1", 101, true);
+	ASSERT(Command_GetPlayer(id, 101));
+	ASSERT(Command_GetPlayerNamed("y_commands_1", 101));
+}
+
+YCMD:y_commands_removable(playerid, params[], help)
+{
+	return 1;
+}
+
+Test:y_commands_removable()
+{
+	Command_SetPlayerNamed("y_commands_removable", 103, true);
+	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") == 1);
+	Command_SetPlayerNamed("y_commands_removable", 103, false);
+	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") == 0);
+	Command_SetPlayerNamed("y_commands_removable", 103, true);
+	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") == 1);
+	Command_RemoveNamed("y_commands_removable");
+	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") == 0);
+}
+
+YCMD:y_commands_removable2(playerid, params[], help)
+{
+	return 1;
+}
+
+Test:y_commands_removable2()
+{
+	printf("%d", YCMD:y_commands_removable2);
+	Command_SetPlayer(YCMD:y_commands_removable2, 103, true);
+	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable2") == 1);
+	Command_Remove(YCMD:y_commands_removable2);
+	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable2") == 0);
+}
+
 Test:y_commands_Hashing()
 {
 	new

@@ -148,7 +148,8 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 	The number of BYTES this string takes up including the NULL.
 </returns>
 <remarks>
-	Caters for both packed and unpacked strings.
+	Caters for both packed and unpacked strings.  The weirdness is basically
+	just: "ispacked(str) ? (* 1) : (* 4)".
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -186,9 +187,30 @@ stock bool:HashMap_Add(HashMap:m<>, const str[], const value)
 		AMX_Write(ptr, m[mask]),
 		m[mask] = ptr,
 		// Get the hashed string destination size.
-		mask = m[HASH_MAP_SIZE_3],
+		mask = m[HASH_MAP_SIZE_3];
 		// Copy the string over (limited by both length and space).
-		rawMemcpy(ptr - mask, ref(str), min(mask, HashMap_ByteLen(str))),
+		// printf("%08x", str[4]),
+		// printf("%08x", str[5]),
+		// printf("%08x", str[6]),
+		// printf("%d %d %d", mask, HashMap_ByteLen(str), strlen(str));
+		// if (ispacked(str))
+		// {
+			// if (strlen(str) >= mask * 4) str{mask * 4 - 1} = '\0';
+		// }
+		// else
+		// {
+			// if (strlen(str) >= mask) str[mask - 1] = '\0';
+		// }
+		rawMemcpy(ptr - mask, ref(str), mask), //min(mask, HashMap_ByteLen(str))),
+		// printf("%s", unpack(str)),
+		// rawMemcpy(ref(str), ptr - mask, 32),
+		// printf("%s", unpack(str)),
+		// printf("%08x", str[4]),
+		// printf("%08x", str[5]),
+		// printf("%08x", str[6]),
+		// printf("%08x", ReadAmxMemory(ptr - mask + 16)),
+		// printf("%08x", ReadAmxMemory(ptr - mask + 20)),
+		// printf("%08x", ReadAmxMemory(ptr - mask + 24)),
 		// Copy the hashed value.
 		AMX_Write(ptr + 4, hash);
 		return true;
@@ -215,7 +237,7 @@ stock HashMap_Get(HashMap:m<>, const str[], bool:ignorecase = false)
 		res;
 	HashMap_Hash(str, hash);
 	res = hash & 0xFF;
-	P:3("HashMap_Get called: mask = %d", res);
+	P:3("HashMap_Get called: \"%s\" mask = %d", str, res);
 	for (new ptr = m[res]; ptr != -1; )
 	{
 		#emit LOAD.S.pri  ptr
@@ -239,6 +261,33 @@ stock HashMap_Get(HashMap:m<>, const str[], bool:ignorecase = false)
 			#emit SYSREQ.C    strcmp
 			#emit STACK       20
 			#emit STOR.pri    res
+			/*new dest[32];
+			static const sss[] = "str = %s";
+			// printf
+			#emit LOAD.S.pri  m
+			#emit ADD.C       1036 // 256 * 4 + 3 * 4
+			#emit LOAD.I
+			#emit LOAD.S.alt  ptr
+			#emit SUB.alt
+			#emit PUSH.pri
+			#emit PUSH.C      sss
+			#emit PUSH.C      8
+			#emit SYSREQ.C    printf
+			#emit STACK       12
+			// strunpack
+			#emit PUSH.C 32
+			#emit LOAD.S.pri  m
+			#emit ADD.C       1036 // 256 * 4 + 3 * 4
+			#emit LOAD.I
+			#emit LOAD.S.alt  ptr
+			#emit SUB.alt
+			#emit PUSH.pri
+			#emit ADDR.pri    dest
+			#emit PUSH.pri
+			#emit PUSH.C      12
+			#emit SYSREQ.C    strunpack
+			#emit STACK       16
+			printf("%s = %d", dest, res);*/
 			if (res == 0) return (ptr - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2];
 		}
 		{} // Zero-cost bug fix.

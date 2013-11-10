@@ -348,8 +348,6 @@ global string:Command_GetName(f)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-forward _Command_DoInit();
-
 hook OnScriptInit()
 {
 	P:1("Command_OnScriptInit called");
@@ -360,75 +358,32 @@ hook OnScriptInit()
 			YSI_g_sCommands[func][E_COMMAND_POINTER] = -1;
 		}
 	#endif
-/*	_Command_DoInit();
-}
-
-#if (_YSIM_IS_SERVER || _YSIM_IS_CLOUD)
-	public _Command_DoInit() <_YCM:p>
-	{
-		//Bescause they get removed again.
-		if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();
-		if (funcidx(YSI_gscOPCP) != -1) Command_IncOPCP();
-	}
-	
-	public _Command_DoInit() <>
-#else
-	public _Command_DoInit()
-#endif
-	{*/
-		P:2("_Command_DoInit <> called");
-		new
-			entry,
-			buffer[32 char],
-			idx,
-			id2;
-		P:5("Command_OnScriptInit: Pre-loop");
-		while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yC_>)))
-		{
-			// Add the command name and pointer, but skip the leading "@yC_".
-			P:6("Command_OnScriptInit: Adding %d", entry);
-			AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), buffer),
-			buffer[0] = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00),
-			id2 = funcidx(buffer);
-			if (id2 != -1) entry = AMX_HEADER_PUBLICS + id2 * 8;
-			// Check that the function name is all lower-case.
-			for (id2 = 4; buffer{id2}; ++id2)
-			{
-				if (buffer{id2} != tolower(buffer{id2})) P:E("Commands must be in lower-case in your source code.");
-			}
-			// Add the command regardless.
-			Command_Add(buffer[1], AMX_Read(entry));
-			P:6("Command_OnScriptInit: Name %s", unpack(buffer[1]));
-		}
-		if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();
-		if (funcidx(YSI_gscOPCP) != -1) Command_IncOPCP();
-	}
-
-/**--------------------------------------------------------------------------**\
-<summary>_Command_SetPerms</summary>
-<param name="f">Function to adjust.</param>
-<param name="pa">Player permissions array.</param>
-<param name="s">Size of the array.</param>
-<param name="x">eXtra data (flags).</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Passes additional commands data to the new master.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-foreign void:_Command_SetPerms(string:f[],pa[],s,x);
-
-global void:_Command_SetPerms(string:f[],pa[],s,x)
-{
-	#pragma unused x
+	P:2("_Command_DoInit <> called");
 	new
-		id = Command_Find(f);
-	if (id != -1)
+		entry,
+		buffer[32 char],
+		idx,
+		id2;
+	P:5("Command_OnScriptInit: Pre-loop");
+	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yC_>)))
 	{
-		memcpy(_:YSI_g_sCommands[id][E_COMMAND_USERS], pa, (bits<MAX_PLAYERS> + 1) * 4, s);
+		// Add the command name and pointer, but skip the leading "@yC_".
+		P:6("Command_OnScriptInit: Adding %d", entry);
+		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), buffer),
+		buffer[0] = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00),
+		id2 = funcidx(buffer);
+		if (id2 != -1) entry = AMX_HEADER_PUBLICS + id2 * 8;
+		// Check that the function name is all lower-case.
+		for (id2 = 4; buffer{id2}; ++id2)
+		{
+			if (buffer{id2} != tolower(buffer{id2})) P:E("Commands must be in lower-case in your source code.");
+		}
+		// Add the command regardless.
+		Command_Add(buffer[1], AMX_Read(entry));
+		P:6("Command_OnScriptInit: Name %s", unpack(buffer[1]));
 	}
+	if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();
+	if (funcidx(YSI_gscOPCP) != -1) Command_IncOPCP();
 }
 
 /**--------------------------------------------------------------------------**\
@@ -718,6 +673,7 @@ global bool:Command_GetPlayer(cmd, pid)
 	if (_Command_IsValid(cmd) && 0 <= pid < MAX_PLAYERS) return _Command_GetPlayer(cmd, pid);
 	return false;
 }
+
 /**--------------------------------------------------------------------------**\
 <summary>Command_GetPlayerNamed</summary>
 <param name="funcname[]">Command to get for.</param>
