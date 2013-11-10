@@ -819,6 +819,26 @@ global void:Command_RemoveNamed(string:func[])
 }
 
 /**--------------------------------------------------------------------------**\
+<summary>Command_GetCurrent</summary>
+<returns>
+	The command currently being processed, or "COMMAND_NOT_FOUND".
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static stock
+	YSI_g_sCurrentID = COMMAND_NOT_FOUND;
+
+foreign Command_GetCurrent();
+
+global Command_GetCurrent()
+{
+	return YSI_g_sCurrentID;
+}
+
+/**--------------------------------------------------------------------------**\
 <summary>Command_OnPlayerCommandText</summary>
 <param name="playerid">Player who typed a command.</param>
 <param name="cmdtext[]">What they typed.</param>
@@ -871,27 +891,32 @@ global Command_ReProcess(p,string:c[],h)
 	static
 		sCmd[64] = "@yC_",
 		sPos,
-		sIdx,
+		sRet,
 		sHash;
 	// Get the hashed version of the decoded string.
 	sPos = Puny_EncodeHash(sCmd[4], c[1], sHash, .delimiter = '@') + 1;
 	while (c[sPos] == ' ') ++sPos;
 	// Find the command in the array.
-	sIdx = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
-	P:5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd[4], sPos, sHash, sIdx);
-	if (sIdx == COMMAND_NOT_FOUND) return Command_OnReceived(UNDEFINED, p, c);
+	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
+	P:5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd[4], sPos, sHash, YSI_g_sCurrentID);
+	if (YSI_g_sCurrentID == COMMAND_NOT_FOUND) return Command_OnReceived(UNDEFINED, p, c);
 	// Can the player use this command?
-	if (_Command_GetPlayer(sIdx, p))
+	if (_Command_GetPlayer(YSI_g_sCurrentID, p))
 	{
-		if (!Command_OnReceived(OK, p, c)) return 0;
+		if (!Command_OnReceived(OK, p, c))
+		{
+			return
+				YSI_g_sCurrentID = COMMAND_NOT_FOUND,
+				0;
+		}
 		// Find the true version of the command (alts etc).
-		_Command_GetReal(sHash, sIdx, sCmd[4]);
+		_Command_GetReal(sHash, YSI_g_sCurrentID, sCmd[4]);
 		#if YSIM_HAS_MASTER
-			if (MASTER_EXCLUSIVE<sIdx>)
+			if (MASTER_EXCLUSIVE<YSI_g_sCurrentID>)
 		#endif
 			{
 				// In this script.
-				//sIdx = YSI_g_sCommands[sIdx][E_COMMAND_POINTER];
+				//YSI_g_sCurrentID = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_POINTER];
 				#emit PUSH.S      h
 				#emit LOAD.pri    sPos
 				#emit LOAD.S.alt  c
@@ -904,8 +929,8 @@ global Command_ReProcess(p,string:c[],h)
 				#emit PUSH.pri
 				#emit LOAD.pri    sHash
 				#emit SCTRL       6
-				#emit STOR.pri    sIdx
-				P:5("Command_ReProces: Result = %d %d %d", sIdx, Command_Error(p, e_COMMAND_ERRORS:sIdx), _:COMMAND_OK);
+				#emit STOR.pri    sRet
+				P:5("Command_ReProces: Result = %d %d %d", sRet, Command_Error(p, e_COMMAND_ERRORS:sRet), _:COMMAND_OK);
 			}
 		#if YSIM_HAS_MASTER
 			else
@@ -913,15 +938,19 @@ global Command_ReProcess(p,string:c[],h)
 				// This is in another script, or multiple scripts.
 				// Call the command in another script.  If no particular script
 				// is set up as the "master", call it in the first one found...
-				if (c[sPos]) CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos], h, Cell_GetLowestBit(_:MASTER_GET<sIdx>));
-				else CallRemoteFunction(sCmd, YSI_gscISII, p, NULL, h, Cell_GetLowestBit(_:MASTER_GET<sIdx>));
-				sIdx = getproperty(8, YSIM_RETURN);
+				if (c[sPos]) CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos], h, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				else CallRemoteFunction(sCmd, YSI_gscISII, p, NULL, h, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				sRet = getproperty(8, YSIM_RETURN);
 			}
 		#endif
-		if (YSI_g_sCommandFlags & e_COMM_FLAG_OPCP) sIdx = CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, p, c, sIdx);
-		return Command_Error(p, e_COMMAND_ERRORS:sIdx);
+		if (YSI_g_sCommandFlags & e_COMM_FLAG_OPCP) sRet = CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, p, c, sRet);
+		YSI_g_sCurrentID = COMMAND_NOT_FOUND;
+		return Command_Error(p, e_COMMAND_ERRORS:sRet);
 	}
-	return Command_OnReceived(DENIED, p, c);
+	return
+		sRet = Command_OnReceived(DENIED, p, c),
+		YSI_g_sCurrentID = COMMAND_NOT_FOUND,
+		sRet;
 }
 
 /**--------------------------------------------------------------------------**\
