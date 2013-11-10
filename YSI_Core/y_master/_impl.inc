@@ -666,7 +666,7 @@ Natives:
 		
 		#define RA:%0_On%1(%3) public On%1(%3)
 		
-		#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==-1)?(_@):(I@))
+		#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==0)?(_@):(I@))
 	#else
 		// Define "foreign" more generically.  If you want "server" or "none"
 		// you will need to define this specifically, otherwise you just need to
@@ -761,7 +761,7 @@ Natives:
 				// while in the condition of the ternary operator causes the
 				// compiler to try allocate vast amounts of heap space for no
 				// apparent reason.
-				#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==-1)?(_@):(I@))
+				#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==0)?(_@):(I@))
 				
 				#define RA:%0_On%1(%3) public On%1(%3)<>ALS_CALL<%1> public On%1(%3)<_YCM:y>
 			#endif

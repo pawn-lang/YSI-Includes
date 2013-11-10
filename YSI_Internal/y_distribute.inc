@@ -125,11 +125,17 @@ public _@_y_distribute_@_()
 #define __declspec_distributed%0; %0;static stock DIST_STRIP:DIST_DO:<%0>;
 #define __declspec_dist_tagged%3:%0; %3:%0;static stock DIST_STRIP:DIST_DO:< %0>;
 #define __declspec_dist_master%0[%1]%2; %0[%1]%2;static stock DIST_STRIP:DIST_MA:<%0%2>%1|;
+#define __declspec_dist_special%3:%0; %3:%0;static stock DIST_ST2:DIST_SPEC:< %0>|||;
 
 #define DIST_DO:<%0>%1; %0_Dist()Distribute_Do(#%0"@Dist",_:%0%1);master_func%0@Dist(a[],s)<y,_YCM:u>Distribute_To(a,s,_:%0%1);
 //#define DIST_DO:<%0>%1; %0_Dist()Distribute_Do(#%0"@Dist",true,%0%1);forward%0@Dist(a[],s);public%0@Dist(a[],s)Distribute_To(a,s,%0%1);
 
-#define DIST_STRIP:%7:<%0[%1]%3>%4; DIST_STRIP:%7:<%0%3>%4,_:%1;
+// #define Distribute_Do(%0|||%1) Distribute_Do(%0,%1)
+// #define Distribute_To(%0|||%1) Distribute_To(%0,%1)
+
+#define DIST_STRIP:%7<%0[%1]%3>%4; DIST_STRIP:%7<%0%3>%4,_:%1;
+#define DIST_SPEC:%7<%0<%1>%3>%4|||%9; DIST_DO:%7<%0%3>%4,_:sizeof(%0%9);
+#define DIST_ST2:%7<%0[%1]%3>%4|||%9; DIST_ST2:%7<%0%3>%4,_:%1|||%9[];
 
 #define DIST_MA:<%0>%8|%1; %0_Dist()for(new i=0;i!=_:%8;++i)Distribute_So(#%0"@Dist",i,YSI_g_sMasterData,_:%0[i]%1);master_func%0@Dist(i,m,a[],s)<y,_YCM:u>YSI_g_sMasterData[i]=Bit:m,Distribute_To(a,s,_:%0[i]%1);
 
@@ -156,6 +162,23 @@ stock Distribute_Do(func[], GLOBAL_TAG_TYPES:...)
 	#emit SYSREQ.C    CallRemoteFunction
 	#emit STACK       20
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>Distribute_So</summary>
+<param name="func[]">The name of the receiving function.</param>
+<param name="idx">The index of the data being sent in its array.</param>
+<param name="Bit:masters[]">This data's masters.</param>
+<param name="...">The data and array sizes.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	This function takes the data from a given slot in an array, along with the
+	master IDs for that data.  If the data is defined in more than the current
+	script, then this script is removed and the remainder of the data is sent to
+	the new master system.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Distribute_So(func[], idx, Bit:masters[], GLOBAL_TAG_TYPES:...)
 {
@@ -186,6 +209,17 @@ stock Distribute_So(func[], idx, Bit:masters[], GLOBAL_TAG_TYPES:...)
 		#emit STACK       28
 	}
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>HashMap_ByteLen</summary>
+<param name="str[]">String to get the size of.</param>
+<returns>
+	The number of BYTES this string takes up including the NULL.
+</returns>
+<remarks>
+	Caters for both packed and unpacked strings.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 stock Distribute_To(from[], ss, GLOBAL_TAG_TYPES:...)
 {

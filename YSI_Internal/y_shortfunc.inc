@@ -181,12 +181,6 @@ stock Z@(GLOBAL_TAG_TYPES:v = -1)
 		getproperty(8, YSIM_RETURN);
 }
 
-stock T@()
-{
-	P:4("T@ called");
-	setproperty(8, YSIM_CALLER, -1);
-}
-
 new Q@[YSI_MAX_STRING];
 
 stock S@(GLOBAL_TAG_TYPES:v = -1)
