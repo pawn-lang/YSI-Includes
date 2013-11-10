@@ -187,30 +187,8 @@ stock bool:HashMap_Add(HashMap:m<>, const str[], const value)
 		AMX_Write(ptr, m[mask]),
 		m[mask] = ptr,
 		// Get the hashed string destination size.
-		mask = m[HASH_MAP_SIZE_3];
-		// Copy the string over (limited by both length and space).
-		// printf("%08x", str[4]),
-		// printf("%08x", str[5]),
-		// printf("%08x", str[6]),
-		// printf("%d %d %d", mask, HashMap_ByteLen(str), strlen(str));
-		// if (ispacked(str))
-		// {
-			// if (strlen(str) >= mask * 4) str{mask * 4 - 1} = '\0';
-		// }
-		// else
-		// {
-			// if (strlen(str) >= mask) str[mask - 1] = '\0';
-		// }
-		rawMemcpy(ptr - mask, ref(str), mask), //min(mask, HashMap_ByteLen(str))),
-		// printf("%s", unpack(str)),
-		// rawMemcpy(ref(str), ptr - mask, 32),
-		// printf("%s", unpack(str)),
-		// printf("%08x", str[4]),
-		// printf("%08x", str[5]),
-		// printf("%08x", str[6]),
-		// printf("%08x", ReadAmxMemory(ptr - mask + 16)),
-		// printf("%08x", ReadAmxMemory(ptr - mask + 20)),
-		// printf("%08x", ReadAmxMemory(ptr - mask + 24)),
+		mask = m[HASH_MAP_SIZE_3],
+		rawMemcpy(ptr - mask, ref(str), mask),
 		// Copy the hashed value.
 		AMX_Write(ptr + 4, hash);
 		return true;
