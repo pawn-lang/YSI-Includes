@@ -81,10 +81,13 @@ Changelog:
 #else
 	#define _Y_HOOKS_STATIC static
 #endif
+
 #include "y_hooks/impl"
+
 #if defined YSI_TESTS
 	#include "..\YSI_Core\y_testing"
 	#include "y_hooks/tests"
 	// Get some new IDs.
 	//#include "..\YSI_Internal\y_unique"
 #endif
+

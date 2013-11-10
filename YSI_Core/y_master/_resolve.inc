@@ -64,9 +64,29 @@ Variables:
 
 #undef _inc__resolve
 
+#if defined YSI_NO_MASTER && defined YSI_IS_SERVER
+	#error YSI_NO_MASTER and YSI_IS_SERVER are both defined...
+#endif
+#if defined YSI_NO_MASTER && defined YSI_IS_CLIENT
+	#error YSI_NO_MASTER and YSI_IS_CLIENT are both defined...
+#endif
+#if defined YSI_NO_MASTER && defined YSI_IS_STUB
+	#error YSI_NO_MASTER and YSI_IS_STUB are both defined...
+#endif
+#if defined YSI_IS_SERVER && defined YSI_IS_CLIENT
+	#error YSI_IS_SERVER and YSI_IS_CLIENT are both defined...
+#endif
+#if defined YSI_IS_SERVER && defined YSI_IS_STUB
+	#error YSI_IS_SERVER and YSI_IS_STUB are both defined...
+#endif
+#if defined YSI_IS_CLIENT && defined YSI_IS_STUB
+	#error YSI_IS_CLIENT and YSI_IS_STUB are both defined...
+#endif
+
 #if (!defined YSI_NO_MASTER || defined YSIM_T_ENABLE) && !defined YSIM_T_DISABLE
 	#define YSIM_HAS_MASTER 1
 #else
+	//#error YSIM_HAS_MASTER 0
 	#define YSIM_HAS_MASTER 0
 #endif
 
@@ -203,3 +223,4 @@ Variables:
 #else
 	#define _YSIM_IS_CLOUD 0
 #endif
+
