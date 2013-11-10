@@ -161,6 +161,9 @@ enum e_COMMAND_FLAGS (<<= 1)
 	e_COMM_FLAG_OPCR_ADD = 0x01000000
 }
 
+// Store which script(s) own which commands.
+MASTER_DATA<MAX_COMMANDS>
+
 // Information for returning error messages.
 static stock __declspec(dist_tagged) e_COMMAND_FLAGS:YSI_g_sCommandFlags;
 static stock __declspec(distributed) YSI_g_sErrorMessages[e_COMMAND_ERRORS][144];
@@ -172,17 +175,15 @@ static stock __declspec(dist_tagged) Bit:YSI_g_sDisabledPlayers[bits<MAX_PLAYERS
 static stock
 	YSI_g_sReturnBuffer[YSI_MAX_STRING],
 	// Quickly reference and store commands by name.
-	HashMap:YSI_g_sCommandMap<MAX_COMMANDS>,
-	YSI_g_sCommands[MAX_COMMANDS][E_COMMAND];
+	HashMap:YSI_g_sCommandMap<MAX_COMMANDS>;
+
+static stock __declspec(dist_master) YSI_g_sCommands[MAX_COMMANDS][E_COMMAND];
 
 static stock const
 	YSI_gscOPCR[] = "OnPlayerCommandReceived",
 	YSI_gscOPCP[] = "OnPlayerCommandPerformed",
 	YSI_gscISI[] = "isi",
 	YSI_gscISII[] = "isii";
-
-// Store which script(s) own which commands.
-MASTER_DATA<MAX_COMMANDS>
 
 // "YCMD:" macros.  The true core is "RC:", which is in "y_master".
 #define _YCMD_0:_YCMD_1:_YCMD_2:%0(%1[]%2) RC:%0(%1[]%2)
@@ -442,8 +443,10 @@ HANDOFF()
 	DISTRIBUTE(YSI_g_sCommandFlags);
 	DISTRIBUTE(YSI_g_sErrorMessages);
 	DISTRIBUTE(YSI_g_sDisabledPlayers);
+	// Copy the commands that need to be copied, including alternates.
+	// Rebuild the hash map remotely.
 	// Add all alternate commands.
-	for (new i = 0; i != MAX_COMMANDS; ++i)
+	/*for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
 		if  (_Command_IsActive(i))
 		{
@@ -462,7 +465,7 @@ HANDOFF()
 			// internally, y_groups will sort itself out if required.
 			_Command_SetPerms(YSI_g_sCommands[i][E_COMMAND_NAME], _:YSI_g_sCommands[i][E_COMMAND_USERS], bits<MAX_PLAYERS> + 1, YSI_g_sCommands[i][E_COMMAND_FLAGS]);
 		}
-	}
+	}*/
 }
 
 /**--------------------------------------------------------------------------**\
@@ -601,7 +604,7 @@ native Command_Add(funcname[], script);
 	// return _Command_Add(cmd, ptr, id);
 // }
 
-@foreign _Command_Add(string:cmd[], ptr, id);
+@foreign _Command_Add(string:cmd[], ptr, i2);
 
 @global _Command_Add(string:cmd[], ptr, i2)
 {

@@ -232,329 +232,329 @@ Natives:
 			#undef OnMasterSystemInit
 			// THEN rename the callbacks.
 			// FINALLY call the new next one.
-			#if MASTER < 16
-				#if MASTER == 0
+			#if _MASTER < 16
+				#if _MASTER == 0
 					#if defined @aOnScriptInit
 						@aOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @aOnScriptInit
-				#elseif MASTER == 1
+				#elseif _MASTER == 1
 					#if defined @bOnScriptInit
 						@bOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @bOnScriptInit
-				#elseif MASTER == 2
+				#elseif _MASTER == 2
 					#if defined @cOnScriptInit
 						@cOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @cOnScriptInit
-				#elseif MASTER == 3
+				#elseif _MASTER == 3
 					#if defined @dOnScriptInit
 						@dOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @dOnScriptInit
-				#elseif MASTER == 4
+				#elseif _MASTER == 4
 					#if defined @eOnScriptInit
 						@eOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @eOnScriptInit
-				#elseif MASTER == 5
+				#elseif _MASTER == 5
 					#if defined @fOnScriptInit
 						@fOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @fOnScriptInit
-				#elseif MASTER == 6
+				#elseif _MASTER == 6
 					#if defined @gOnScriptInit
 						@gOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @gOnScriptInit
-				#elseif MASTER == 7
+				#elseif _MASTER == 7
 					#if defined @hOnScriptInit
 						@hOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @hOnScriptInit
-				#elseif MASTER == 8
+				#elseif _MASTER == 8
 					#if defined @iOnScriptInit
 						@iOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @iOnScriptInit
-				#elseif MASTER == 9
+				#elseif _MASTER == 9
 					#if defined @jOnScriptInit
 						@jOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @jOnScriptInit
-				#elseif MASTER == 10
+				#elseif _MASTER == 10
 					#if defined @kOnScriptInit
 						@kOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @kOnScriptInit
-				#elseif MASTER == 11
+				#elseif _MASTER == 11
 					#if defined @lOnScriptInit
 						@lOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @lOnScriptInit
-				#elseif MASTER == 12
+				#elseif _MASTER == 12
 					#if defined @mOnScriptInit
 						@mOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @mOnScriptInit
-				#elseif MASTER == 13
+				#elseif _MASTER == 13
 					#if defined @nOnScriptInit
 						@nOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @nOnScriptInit
-				#elseif MASTER == 14
+				#elseif _MASTER == 14
 					#if defined @oOnScriptInit
 						@oOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @oOnScriptInit
-				#elseif MASTER == 15
+				#elseif _MASTER == 15
 					#if defined @pOnScriptInit
 						@pOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @pOnScriptInit
 				#endif
-			#elseif MASTER < 32
-				#if MASTER == 16
+			#elseif _MASTER < 32
+				#if _MASTER == 16
 					#if defined @qOnScriptInit
 						@qOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @qOnScriptInit
-				#elseif MASTER == 17
+				#elseif _MASTER == 17
 					#if defined @rOnScriptInit
 						@rOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @rOnScriptInit
-				#elseif MASTER == 18
+				#elseif _MASTER == 18
 					#if defined @sOnScriptInit
 						@sOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @sOnScriptInit
-				#elseif MASTER == 19
+				#elseif _MASTER == 19
 					#if defined @tOnScriptInit
 						@tOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @tOnScriptInit
-				#elseif MASTER == 20
+				#elseif _MASTER == 20
 					#if defined @uOnScriptInit
 						@uOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @uOnScriptInit
-				#elseif MASTER == 21
+				#elseif _MASTER == 21
 					#if defined @vOnScriptInit
 						@vOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @vOnScriptInit
-				#elseif MASTER == 22
+				#elseif _MASTER == 22
 					#if defined @wOnScriptInit
 						@wOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @wOnScriptInit
-				#elseif MASTER == 23
+				#elseif _MASTER == 23
 					#if defined @xOnScriptInit
 						@xOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @xOnScriptInit
-				#elseif MASTER == 24
+				#elseif _MASTER == 24
 					#if defined @yOnScriptInit
 						@yOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @yOnScriptInit
-				#elseif MASTER == 25
+				#elseif _MASTER == 25
 					#if defined @zOnScriptInit
 						@zOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @zOnScriptInit
-				#elseif MASTER == 26
+				#elseif _MASTER == 26
 					#if defined @AOnScriptInit
 						@AOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @AOnScriptInit
-				#elseif MASTER == 27
+				#elseif _MASTER == 27
 					#if defined @BOnScriptInit
 						@BOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @BOnScriptInit
-				#elseif MASTER == 28
+				#elseif _MASTER == 28
 					#if defined @COnScriptInit
 						@COnScriptInit();
 					#endif
 					#define OnMasterSystemInit @COnScriptInit
-				#elseif MASTER == 29
+				#elseif _MASTER == 29
 					#if defined @DOnScriptInit
 						@DOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @DOnScriptInit
-				#elseif MASTER == 30
+				#elseif _MASTER == 30
 					#if defined @EOnScriptInit
 						@EOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @EOnScriptInit
-				#elseif MASTER == 31
+				#elseif _MASTER == 31
 					#if defined @FOnScriptInit
 						@FOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @FOnScriptInit
 				#endif
-			#elseif MASTER < 48
-				#if MASTER == 32
+			#elseif _MASTER < 48
+				#if _MASTER == 32
 					#if defined @GOnScriptInit
 						@GOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @GOnScriptInit
-				#elseif MASTER == 33
+				#elseif _MASTER == 33
 					#if defined @HOnScriptInit
 						@HOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @HOnScriptInit
-				#elseif MASTER == 34
+				#elseif _MASTER == 34
 					#if defined @IOnScriptInit
 						@IOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @IOnScriptInit
-				#elseif MASTER == 35
+				#elseif _MASTER == 35
 					#if defined @JOnScriptInit
 						@JOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @JOnScriptInit
-				#elseif MASTER == 36
+				#elseif _MASTER == 36
 					#if defined @KOnScriptInit
 						@KOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @KOnScriptInit
-				#elseif MASTER == 37
+				#elseif _MASTER == 37
 					#if defined @LOnScriptInit
 						@LOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @LOnScriptInit
-				#elseif MASTER == 38
+				#elseif _MASTER == 38
 					#if defined @MOnScriptInit
 						@MOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @MOnScriptInit
-				#elseif MASTER == 39
+				#elseif _MASTER == 39
 					#if defined @NOnScriptInit
 						@NOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @NOnScriptInit
-				#elseif MASTER == 40
+				#elseif _MASTER == 40
 					#if defined @OOnScriptInit
 						@OOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @OOnScriptInit
-				#elseif MASTER == 41
+				#elseif _MASTER == 41
 					#if defined @POnScriptInit
 						@POnScriptInit();
 					#endif
 					#define OnMasterSystemInit @POnScriptInit
-				#elseif MASTER == 42
+				#elseif _MASTER == 42
 					#if defined @QOnScriptInit
 						@QOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @QOnScriptInit
-				#elseif MASTER == 43
+				#elseif _MASTER == 43
 					#if defined @ROnScriptInit
 						@ROnScriptInit();
 					#endif
 					#define OnMasterSystemInit @ROnScriptInit
-				#elseif MASTER == 44
+				#elseif _MASTER == 44
 					#if defined @SOnScriptInit
 						@SOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @SOnScriptInit
-				#elseif MASTER == 45
+				#elseif _MASTER == 45
 					#if defined @TOnScriptInit
 						@TOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @TOnScriptInit
-				#elseif MASTER == 46
+				#elseif _MASTER == 46
 					#if defined @UOnScriptInit
 						@UOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @UOnScriptInit
-				#elseif MASTER == 47
+				#elseif _MASTER == 47
 					#if defined @VOnScriptInit
 						@VOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @VOnScriptInit
 				#endif
 			#else
-				#if MASTER == 48
+				#if _MASTER == 48
 					#if defined @WOnScriptInit
 						@WOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @WOnScriptInit
-				#elseif MASTER == 49
+				#elseif _MASTER == 49
 					#if defined @XOnScriptInit
 						@XOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @XOnScriptInit
-				#elseif MASTER == 50
+				#elseif _MASTER == 50
 					#if defined @YOnScriptInit
 						@YOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @YOnScriptInit
-				#elseif MASTER == 51
+				#elseif _MASTER == 51
 					#if defined @ZOnScriptInit
 						@ZOnScriptInit();
 					#endif
 					#define OnMasterSystemInit @ZOnScriptInit
-				#elseif MASTER == 52
+				#elseif _MASTER == 52
 					#if defined @0OnScriptInit
 						@0OnScriptInit();
 					#endif
 					#define OnMasterSystemInit @0OnScriptInit
-				#elseif MASTER == 53
+				#elseif _MASTER == 53
 					#if defined @1OnScriptInit
 						@1OnScriptInit();
 					#endif
 					#define OnMasterSystemInit @1OnScriptInit
-				#elseif MASTER == 54
+				#elseif _MASTER == 54
 					#if defined @2OnScriptInit
 						@2OnScriptInit();
 					#endif
 					#define OnMasterSystemInit @2OnScriptInit
-				#elseif MASTER == 55
+				#elseif _MASTER == 55
 					#if defined @3OnScriptInit
 						@3OnScriptInit();
 					#endif
 					#define OnMasterSystemInit @3OnScriptInit
-				#elseif MASTER == 56
+				#elseif _MASTER == 56
 					#if defined @4OnScriptInit
 						@4OnScriptInit();
 					#endif
 					#define OnMasterSystemInit @4OnScriptInit
-				#elseif MASTER == 57
+				#elseif _MASTER == 57
 					#if defined @5OnScriptInit
 						@5OnScriptInit();
 					#endif
 					#define OnMasterSystemInit @5OnScriptInit
-				#elseif MASTER == 58
+				#elseif _MASTER == 58
 					#if defined @6OnScriptInit
 						@6OnScriptInit();
 					#endif
 					#define OnMasterSystemInit @6OnScriptInit
-				#elseif MASTER == 59
+				#elseif _MASTER == 59
 					#if defined @7OnScriptInit
 						@7OnScriptInit();
 					#endif
 					#define OnMasterSystemInit @7OnScriptInit
-				#elseif MASTER == 60
+				#elseif _MASTER == 60
 					#if defined @8OnScriptInit
 						@8OnScriptInit();
 					#endif
 					#define OnMasterSystemInit @8OnScriptInit
-				#elseif MASTER == 61
+				#elseif _MASTER == 61
 					#if defined @9OnScriptInit
 						@9OnScriptInit();
 					#endif
 					#define OnMasterSystemInit @9OnScriptInit
-				#elseif MASTER == 62
+				#elseif _MASTER == 62
 					#if defined @@OnScriptInit
 						@@OnScriptInit();
 					#endif
 					#define OnMasterSystemInit @@OnScriptInit
-				#elseif MASTER == 63
+				#elseif _MASTER == 63
 					#if defined @_OnScriptInit
 						@_OnScriptInit();
 					#endif

@@ -132,7 +132,7 @@ Natives:
 #define MASTER_ADD<%0> (YSI_g_sMasterData[_:(%0)] |= Bit:(1 << Master_Caller()));
 #define MASTER_REMOVE<%0> (YSI_g_sMasterData[_:(%0)] &= Bit:(~(1 << Master_Caller())));
 #define MASTER_EMPTY<%0> if(!YSI_g_sMasterData[_:(%0)])
-#define MASTER_EXCLUSIVE<%0> (YSI_g_sMasterData[_:(%0)] == (1 << Master_ID()))
+#define MASTER_EXCLUSIVE<%0> (YSI_g_sMasterData[_:(%0)] == Bit:(1 << Master_ID()))
 #define MASTER_GET<%0> (YSI_g_sMasterData[_:(%0)])
 #define MASTER_COPY<%0,%1> (YSI_g_sMasterData[_:(%0)] = YSI_g_sMasterData[_:(%1)]);
 

@@ -163,6 +163,7 @@ Compile options:
 #include "..\YSI_Data\y_hashmap"
 #include "..\YSI_Data\y_playerarray"
 #include "..\YSI_Server\y_punycode"
+#include "..\YSI_Internal\y_distribute"
 
 // Include the group functions (maybe).
 #define _GROUP_MAKE_NAME<%0...%1> %0Command%1

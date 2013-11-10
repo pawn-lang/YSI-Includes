@@ -172,7 +172,7 @@ gglobal void:Group_Handoff...(i,a[],s)
 	s = min(s, bits<_:_MAX_GROUPS_G>);
 	if (i == -1)
 	{
-		memcpy(YSI_g_sDefaultMembership, a, 0, s * 4);
+		memcpy(_:YSI_g_sDefaultMembership, a, 0, s * 4);
 	}
 	else if (i < sizeof (YSI_g_sElementMembership))
 	{
@@ -183,17 +183,17 @@ gglobal void:Group_Handoff...(i,a[],s)
 		//{
 		//	Group_FullPlayerUpdate(pid, i, YSI_g_sElementMembership[i], Bit:a, YSI_gGroupPlayers[playerid]);
 		//}
-		memcpy(YSI_g_sElementMembership[i], a, 0, s * 4);
+		memcpy(_:YSI_g_sElementMembership[i], a, 0, s * 4);
 	}
 }
 
 GROUP_HANDOFF()
 {
 	// Pass data to the new group controller.
-	_GROUP_MAKE_NAME<Group_Handoff...>(-1, YSI_g_sDefaultMembership, sizeof (YSI_g_sDefaultMembership));
+	_GROUP_MAKE_NAME<Group_Handoff...>(-1, _:YSI_g_sDefaultMembership, sizeof (YSI_g_sDefaultMembership));
 	for (new i = 0; i != sizeof (YSI_g_sElementMembership); ++i)
 	{
-		_GROUP_MAKE_NAME<Group_Handoff...>(i, YSI_g_sElementMembership[i], sizeof (YSI_g_sElementMembership[]));
+		_GROUP_MAKE_NAME<Group_Handoff...>(i, _:YSI_g_sElementMembership[i], sizeof (YSI_g_sElementMembership[]));
 	}
 }
 
