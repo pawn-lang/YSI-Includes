@@ -102,7 +102,7 @@ static stock
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#endif
 	#else
-		#define _gchain%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2);for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
+		#define _gchain%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 		#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 	#endif
 #elseif COMPILER_1ST_PASS
@@ -223,53 +223,45 @@ GROUP_HANDOFF()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-//#if defined _YSI_HAS_y_groups
-	static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
+static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
+{
+	// "_GROUPS_CHECK" is a macro that expands to a massive unrolled "if"
+	// statement checking up to 512 groups at once.  Any more than that and this
+	// code resorts to a loop instead.  I say "at once"; it does 32 AT ONCE
+	// (as in truly in parallel), starting with the most likely match (the
+	// default group that every player and every element is usually in), and
+	// loops over all the groups in 32 group chunks.  When I say "loop", this
+	// could be in the form of a huge "if" statement with every iteration put in
+	// explicitly.
+	// r = Reference (valid groups).
+	// c = Current (new groups).
+	// p = Previous (old groups).
+	_GROUPS_CHECK_ANY(p,r)
 	{
-		// "_GROUPS_CHECK" is a macro that expands to a massive unrolled "if"
-		// statement checking up to 512 groups at once.  Any more than that and this
-		// code resorts to a loop instead.  I say "at once"; it does 32 AT ONCE
-		// (as in truly in parallel), starting with the most likely match (the
-		// default group that every player and every element is usually in), and
-		// loops over all the groups in 32 group chunks.  When I say "loop", this
-		// could be in the form of a huge "if" statement with every iteration put in
-		// explicitly.
-		// r = Reference (valid groups).
-		// c = Current (new groups).
-		// p = Previous (old groups).
-		_GROUPS_CHECK_ANY(p,r)
-		{
-			// Could previously see this thing.  The thing about this design is that
-			// it can (best case) take just 2 comparisons to end - and that should
-			// be the common case!
-			_GROUPS_CHECK_ANY(c,r)
-			{
-				// Still can.
-				return;
-			}
-			// Now can't.
-			_GROUP_SET_PLAYER(_GROUP_MAKE_TAG:el, playerid, false);
-			return;
-		}
-		// Couldn't see it before.
+		// Could previously see this thing.  The thing about this design is that
+		// it can (best case) take just 2 comparisons to end - and that should
+		// be the common case!
 		_GROUPS_CHECK_ANY(c,r)
 		{
-			// They have whatever this thing is.  Note that this may be called
-			// MULTIPLE times for an element, without anything actually changing.
-			// I.e. this could be set to "true" repeatedly while never being set
-			// to "false".
-			_GROUP_SET_PLAYER(_GROUP_MAKE_TAG:el, playerid, true);
-			// We use "return" here because "_GROUPS_CHECK_ANY" MAY be a loop.
+			// Still can.
 			return;
 		}
+		// Now can't.
+		_GROUP_SET_PLAYER(_GROUP_MAKE_TAG:el, playerid, false);
+		return;
 	}
-//#else
-//	static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
-//	{
-//		//H@(playerid, el, p, c, r);
-//		#pragma unused playerid, el, p, c, r
-//	}
-//#endif
+	// Couldn't see it before.
+	_GROUPS_CHECK_ANY(c,r)
+	{
+		// They have whatever this thing is.  Note that this may be called
+		// MULTIPLE times for an element, without anything actually changing.
+		// I.e. this could be set to "true" repeatedly while never being set
+		// to "false".
+		_GROUP_SET_PLAYER(_GROUP_MAKE_TAG:el, playerid, true);
+		// We use "return" here because "_GROUPS_CHECK_ANY" MAY be a loop.
+		return;
+	}
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>_yGI</summary>
@@ -292,55 +284,51 @@ GROUP_HANDOFF()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-//#if defined _YSI_HAS_y_groups
-	_gchain _yGI(&ni, &na, &nu)
+_gchain _yGI(&ni, &na, &nu)
+{
+	P:2(#_GROUP_MAKE_NAME<_yGI...> " called: %i, %i, %i", ni, na, nu);
+	if (ni == -1)
 	{
-		P:2(#_GROUP_MAKE_NAME<_yGI...> " called: %i, %i, %i", ni, na, nu);
-		if (ni == -1)
+		P:4(#_GROUP_MAKE_NAME<_yGI...> " INIT");
+		static
+			BitArray:sStack<_MAX_GROUPS_G>;
+		if (na)
 		{
-			P:4(#_GROUP_MAKE_NAME<_yGI...> " INIT");
-			static
-				BitArray:sStack<_MAX_GROUPS_G>;
-			if (na)
+			//printf("PUSH %d", nu);
+			// Called to "push" the default settings.
+			sStack = YSI_g_sDefaultMembership;
+			//printf("ONE %d", nu);
+			YSI_g_sDefaultMembership = YSI_g_cEmptyGroups;
+			//printf("TWO %d", nu);
+			Bit_Let(YSI_g_sDefaultMembership, nu);
+			//printf("THREE %d", nu);
+			for (new i = 0; i != bits<_MAX_GROUPS_G>; ++i)
 			{
-				//printf("PUSH %d", nu);
-				// Called to "push" the default settings.
-				sStack = YSI_g_sDefaultMembership;
-				//printf("ONE %d", nu);
-				YSI_g_sDefaultMembership = YSI_g_cEmptyGroups;
-				//printf("TWO %d", nu);
-				Bit_Let(YSI_g_sDefaultMembership, nu);
-				//printf("THREE %d", nu);
-				for (new i = 0; i != bits<_MAX_GROUPS_G>; ++i)
-				{
-					YSI_g_sEmpty[i] = ~YSI_g_sDefaultMembership[i];
-				}
-				//printf("DONE %d", nu);
+				YSI_g_sEmpty[i] = ~YSI_g_sDefaultMembership[i];
 			}
-			else
-			{
-				//printf("POP");
-				// Called to "pop" the default settings.
-				YSI_g_sDefaultMembership = sStack;
-				YSI_g_sEmpty = YSI_g_cEmptyGroups;
-			}
+			//printf("DONE %d", nu);
 		}
 		else
 		{
-			P:4(#_GROUP_MAKE_NAME<_yGI...> " SETUP");
-			// Enable the default group.  If I'm right, this way is actually better than
-			// using variables as in most cases because "_MAX_GROUPS" is a constant so
-			// all the other maths will be constant.
-			Bit_Let(YSI_g_sDefaultMembership, _MAX_GROUPS);
-			// Set up the function chaining.
-			ni = AMX_GetPublicPointerPrefix(ni, _yGI, _A<_yGI>);
-			na = AMX_GetPublicPointerPrefix(na, _yGA, _A<_yGA>);
-			nu = AMX_GetPublicPointerPrefix(nu, _yGU, _A<_yGU>);
+			//printf("POP");
+			// Called to "pop" the default settings.
+			YSI_g_sDefaultMembership = sStack;
+			YSI_g_sEmpty = YSI_g_cEmptyGroups;
 		}
 	}
-//#else
-//	_GCHAIN_UNUSED _yGI(&ni, &na, &nu);
-//#endif
+	else
+	{
+		P:4(#_GROUP_MAKE_NAME<_yGI...> " SETUP");
+		// Enable the default group.  If I'm right, this way is actually better than
+		// using variables as in most cases because "_MAX_GROUPS" is a constant so
+		// all the other maths will be constant.
+		Bit_Let(YSI_g_sDefaultMembership, _MAX_GROUPS);
+		// Set up the function chaining.
+		ni = AMX_GetPublicPointerPrefix(ni, _yGI, _A<_yGI>);
+		na = AMX_GetPublicPointerPrefix(na, _yGA, _A<_yGA>);
+		nu = AMX_GetPublicPointerPrefix(nu, _yGU, _A<_yGU>);
+	}
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>_GROUP_INITIALISE</summary>
@@ -806,8 +794,6 @@ gglobal Group_GetGlobal...(_GROUP_MAKE_TAG:el)
 #undef _GROUP_MAKE_TAG
 #undef _gchain
 #undef _GROUP_SET_PLAYER
-//#undef defined _YSI_HAS_y_groups
-//#undef _GROUP_UNUSED
 #undef gforeign
 #undef gglobal
 

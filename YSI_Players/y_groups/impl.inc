@@ -249,6 +249,8 @@ static remotefunc void:__Group_AddInternal(a,g)
 {
 	GROUP_CHAIN?<YSI_g_sNextInitFunc>(-1, a, g);
 }
+// Can't use "stock remotefunc".
+#pragma unused __Group_AddInternal
 
 stock _Group_AddInternal(a, Group:g)
 {
