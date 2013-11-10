@@ -166,7 +166,7 @@ static stock __declspec(dist_tagged) e_COMMAND_FLAGS:YSI_g_sCommandFlags;
 static stock __declspec(distributed) YSI_g_sErrorMessages[e_COMMAND_ERRORS][144];
 // Who has had ALL their commands disabled?
 //static stock DISTRIBUTED_TAGGED PlayerArray:YSI_g_sDisabledPlayers<MAX_PLAYERS>,
-static stock __declspec(dist_tagged) Bit:YSI_g_sDisabledPlayers[bits<MAX_PLAYERS> + 1],
+static stock __declspec(dist_tagged) Bit:YSI_g_sDisabledPlayers[bits<MAX_PLAYERS> + 1];
 //__declspec((DISTRIBUTED_TAGGED))
 
 static stock
@@ -199,6 +199,10 @@ MASTER_DATA<MAX_COMMANDS>
 // Forwards for optional command callbacks.
 forward e_COMMAND_ERRORS:OnPlayerCommandReceived(playerid, cmdtext[], e_COMMAND_ERRORS:success); 
 forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND_ERRORS:success); 
+
+// Backwards compatible defines for "Command_Add".
+#define Command_Add(%0,%1) _Command_Add(%0,%1,-1)
+#define Command_AddAs _Command_Add
 
 /**--------------------------------------------------------------------------**\
 <summary>_Command_IsAlt</summary>
@@ -348,7 +352,7 @@ hook OnScriptInit()
 			YSI_g_sCommands[func][E_COMMAND_POINTER] = -1;
 		}
 	#endif
-	_Command_DoInit();
+/*	_Command_DoInit();
 }
 
 #if (_YSIM_IS_SERVER || _YSIM_IS_CLOUD)
@@ -363,7 +367,7 @@ hook OnScriptInit()
 #else
 	public _Command_DoInit()
 #endif
-	{
+	{*/
 		P:2("_Command_DoInit <> called");
 		new
 			entry,
@@ -433,12 +437,11 @@ HANDOFF()
 {
 	P:1("Commands_OnScriptExit <_YCM:p> called");
 	// Copy settings (and reset counts).
-	YSI_g_sCommandFlags &= e_COMMAND_FLAGS:0xFFFF;
+	//if (funcidx(YSI_gscOPCR) != -1) YSI_g_sCommandFlags -= e_COMM_FLAG_OPCR_ADD;
+	//if (funcidx(YSI_gscOPCP) != -1) YSI_g_sCommandFlags -= e_COMM_FLAG_OPCP_ADD;
 	DISTRIBUTE(YSI_g_sCommandFlags);
 	DISTRIBUTE(YSI_g_sErrorMessages);
 	DISTRIBUTE(YSI_g_sDisabledPlayers);
-	// Set up real commands from scratch.
-	CallRemoteFunction("_Command_DoInit", "");
 	// Add all alternate commands.
 	for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
@@ -460,7 +463,6 @@ HANDOFF()
 			_Command_SetPerms(YSI_g_sCommands[i][E_COMMAND_NAME], _:YSI_g_sCommands[i][E_COMMAND_USERS], bits<MAX_PLAYERS> + 1, YSI_g_sCommands[i][E_COMMAND_FLAGS]);
 		}
 	}
-	return 1;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -535,12 +537,14 @@ global void:Command_DecOPCP()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#define _Command_IsEmptySlot(%0) (!YSI_g_sCommands[(%0)][E_COMMAND_NAME])
+
 static stock Command_GetEmptySlot()
 {
 	for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
 		// No name for the command, can't exist.
-		if (!YSI_g_sCommands[i][E_COMMAND_NAME]) return i;
+		if (_Command_IsEmptySlot(i)) return i;
 	}
 	return COMMAND_NOT_FOUND;
 }
@@ -571,6 +575,7 @@ global Command_GetID(string:function[])
 <summary>Command_Add</summary>
 <param name="cmd[]">The command name to add.</param>
 <param name="ptr">The command's pointer.</param>
+<param name="id">Where to store the command (default -1 = find).</param>
 <returns>
 	The command's ID.
 </returns>
@@ -581,9 +586,24 @@ native Command_Add(funcname[], script);
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-@foreign Command_Add(string:cmd[], ptr);
+// stock Command_Add(string:cmd[], ptr)
+// {
+	// return _Command_Add(cmd, ptr, -1);
+// }
 
-@global Command_Add(string:cmd[], ptr)
+// stock Command_Add(string:cmd[], ptr)
+// {
+	// return _Command_Add(cmd, ptr, -1);
+// }
+
+// static stock Command_AddAs(string:cmd[], ptr, id)
+// {
+	// return _Command_Add(cmd, ptr, id);
+// }
+
+@foreign _Command_Add(string:cmd[], ptr, id);
+
+@global _Command_Add(string:cmd[], ptr, i2)
 {
 	// The commands all need to be stored packed.
 	strpack(cmd, cmd, cellmax);
@@ -593,12 +613,20 @@ native Command_Add(funcname[], script);
 	P:5("Command_Add: found %d", id);
 	if (id == COMMAND_NOT_FOUND)
 	{
-		// Command doesn't already exist, add it.
-		id = Command_GetEmptySlot();
-		if (id == COMMAND_NOT_FOUND)
+		if (i2 != -1 && _Command_IsEmptySlot(i2))
 		{
-			P:E("Could not add command to array.");
-			return COMMAND_NOT_FOUND;
+			// Use the exact specified slot (for copying IDs over masters).
+			id = i2;
+		}
+		else
+		{
+			// Command doesn't already exist, add it.
+			id = Command_GetEmptySlot();
+			if (id == COMMAND_NOT_FOUND)
+			{
+				P:E("Could not add command to array.");
+				return COMMAND_NOT_FOUND;
+			}
 		}
 		// Save the command's pointer.
 		YSI_g_sCommands[id][E_COMMAND_POINTER] = ptr,
@@ -1066,4 +1094,7 @@ global string:Command_GetNext(index, playerid)
 	}
 	return YSI_g_sReturnBuffer;
 }
+
+// "static" define.
+#undef Command_AddAs
 
