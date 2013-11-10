@@ -715,7 +715,7 @@ foreign bool:Command_GetPlayer(cmd, pid);
 
 global bool:Command_GetPlayer(cmd, pid)
 {
-	if (_Command_IsValid(cmd) && IsPlayerConnected(pid)) return _Command_GetPlayer(cmd, pid);
+	if (_Command_IsValid(cmd) && 0 <= pid < MAX_PLAYERS) return _Command_GetPlayer(cmd, pid);
 	return false;
 }
 /**--------------------------------------------------------------------------**\
@@ -760,7 +760,7 @@ foreign void:Command_SetPlayer(c, p, bool:s);
 global void:Command_SetPlayer(c, p, bool:s)
 {
 	P:2("Command_SetPlayer called: %i, %i, %i", c, p, s);
-	if (_Command_IsValid(c) && IsPlayerConnected(p)) PA_Set(YSI_g_sCommands[c][E_COMMAND_USERS], p, s);
+	if (_Command_IsValid(c) && 0 <= p < MAX_PLAYERS) PA_Set(YSI_g_sCommands[c][E_COMMAND_USERS], p, s);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -944,7 +944,7 @@ foreign string:Command_GetDisplay(funcid, playerid);
 global string:Command_GetDisplay(funcid, playerid)
 {
 	YSI_g_sReturnBuffer[0] = '\0';
-	if (_Command_IsValid(funcid) && IsPlayerConnected(playerid))
+	if (_Command_IsValid(funcid) && 0 <= playerid < MAX_PLAYERS)
 	{
 		new
 			slot = PA_Slot(playerid),

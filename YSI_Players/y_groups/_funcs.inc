@@ -332,12 +332,6 @@ GROUP_HANDOFF()
 			// using variables as in most cases because "_MAX_GROUPS" is a constant so
 			// all the other maths will be constant.
 			Bit_Let(YSI_g_sDefaultMembership, _MAX_GROUPS);
-			// Don't need this loop anymore, it is done for every element individually.
-			//for (new i = 0; i != _GROUP_MAKE_LIMIT; ++i)
-			//{
-			//	// Basically, enable everything in the default group.
-			//	Bit_Let(YSI_g_sElementMembership[i], _MAX_GROUPS);
-			//}
 			// Set up the function chaining.
 			ni = AMX_GetPublicPointerPrefix(ni, _yGI, _A<_yGI>);
 			na = AMX_GetPublicPointerPrefix(na, _yGA, _A<_yGA>);
@@ -347,8 +341,6 @@ GROUP_HANDOFF()
 //#else
 //	_GCHAIN_UNUSED _yGI(&ni, &na, &nu);
 //#endif
-
-
 
 /**--------------------------------------------------------------------------**\
 <summary>_GROUP_INITIALISE</summary>
@@ -370,45 +362,24 @@ GROUP_HANDOFF()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-//#if !defined _YSI_GROUPS_FIRST_HALF
-//forward bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT);
-//#endif
-
-//stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT) <YSI_has_groups:y>
-//Group_...Init
-//#if defined _YSI_HAS_y_groups
-	stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x)
+stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x)
+{
+	P:4(#_GROUP_INITIALISE " called: %i", x);
+	// A new item has been added to the system - update all players according to
+	// the default settings for a group.
+	if (x != _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
 	{
-		P:4(#_GROUP_INITIALISE " called: %i", x);
-		// A new item has been added to the system - update all players according to
-		// the default settings for a group.
-		if (x != _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
+		YSI_g_sElementMembership[_:x] = YSI_g_sDefaultMembership;
+		foreach (new playerid : Player)
 		{
-			//static
-			//	BitArray:sEmpty<_MAX_GROUPS_G>;
-			//printf("%d %s %s", _:x, Bit_Display(YSI_g_sDefaultMembership), Bit_Display(YSI_g_sEmpty));
-			YSI_g_sElementMembership[_:x] = YSI_g_sDefaultMembership;
-			foreach (new playerid : Player)
-			{
-				// Uses "YSI_g_sEmpty" instead of a truly blank variable so that we
-				// can ensure that NO other groups have this element when we use the
-				// "GROUP_ADD" macro.
-				Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultMembership, YSI_gGroupPlayers[playerid]);
-			}
+			// Uses "YSI_g_sEmpty" instead of a truly blank variable so that we
+			// can ensure that NO other groups have this element when we use the
+			// "GROUP_ADD" macro.
+			Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultMembership, YSI_gGroupPlayers[playerid]);
 		}
-		return false;
 	}
-//#elseif COMPILER_1ST_PASS
-//	stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x)
-//	{
-//		#pragma unused x
-//	}
-//#else
-//	static stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x)
-//	{
-//		#pragma unused x
-//	}
-//#endif
+	return false;
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>Group_Exclusive...</summary>
@@ -445,7 +416,6 @@ gglobal Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
 	return 0;
 }
 
-//#endinput
 /**--------------------------------------------------------------------------**\
 <summary>_yGA</summary>
 <param name="&group">The group that was just created.</param>
@@ -460,26 +430,22 @@ gglobal Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-//#if defined _YSI_HAS_y_groups
-	_gchain _yGA(&group)
+_gchain _yGA(&group)
+{
+	P:4(#_GROUP_MAKE_NAME<_yGA...> " called: %i", _:group);
+	// Adding a new group is now a lot harder than it was before, but on the
+	// other hand, adding and using elements is vastly simpler so that's OK.
+	new
+		s = Bit_Slot(group),
+		Bit:m = ~Bit_Mask(group);
+	// Set the default "contains" for this group to false.
+	YSI_g_sDefaultMembership[s] &= m;
+	// Disable every element in this group.
+	for (new i = 0; i != _GROUP_MAKE_LIMIT; ++i)
 	{
-		P:4(#_GROUP_MAKE_NAME<_yGA...> " called: %i", _:group);
-		// Adding a new group is now a lot harder than it was before, but on the
-		// other hand, adding and using elements is vastly simpler so that's OK.
-		new
-			s = Bit_Slot(group),
-			Bit:m = ~Bit_Mask(group);
-		// Set the default "contains" for this group to false.
-		YSI_g_sDefaultMembership[s] &= m;
-		// Disable every element in this group.
-		for (new i = 0; i != _GROUP_MAKE_LIMIT; ++i)
-		{
-			YSI_g_sElementMembership[i][s] &= m;
-		}
+		YSI_g_sElementMembership[i][s] &= m;
 	}
-//#else
-//	_GCHAIN_UNUSED _yGA(&group);
-//#endif
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>_yGU</summary>
@@ -497,23 +463,19 @@ gglobal Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-//#if defined _YSI_HAS_y_groups
-	_gchain _yGU(&pid, Bit:p[], Bit:c[])
+_gchain _yGU(&pid, Bit:p[], Bit:c[])
+{
+	P:4(#_GROUP_MAKE_NAME<_yGU...> " called: %i, %s, %s", pid, Bit_Display(p, bits<_MAX_GROUPS_G>), Bit_Display(c, bits<_MAX_GROUPS_G>));
+	// This code loops over every "thing" controlled by this script.  For every
+	// one it checks to see if the player can or can't see something that they
+	// previously could or couldn't see.  If their ability to see it has
+	// changed then the "_GROUP_SET_PLAYER" function in the controlling library
+	// is called to do the actual internal function of updating their state.
+	for (new el = 0; el != _GROUP_MAKE_LIMIT; ++el)
 	{
-		P:4(#_GROUP_MAKE_NAME<_yGU...> " called: %i, %s, %s", pid, Bit_Display(p, bits<_MAX_GROUPS_G>), Bit_Display(c, bits<_MAX_GROUPS_G>));
-		// This code loops over every "thing" controlled by this script.  For every
-		// one it checks to see if the player can or can't see something that they
-		// previously could or couldn't see.  If their ability to see it has
-		// changed then the "_GROUP_SET_PLAYER" function in the controlling library
-		// is called to do the actual internal function of updating their state.
-		for (new el = 0; el != _GROUP_MAKE_LIMIT; ++el)
-		{
-			Group_FullPlayerUpdate(pid, el, p, c, YSI_g_sElementMembership[el]);
-		}
+		Group_FullPlayerUpdate(pid, el, p, c, YSI_g_sElementMembership[el]);
 	}
-//#else
-//	_GCHAIN_UNUSED _yGU(&pid, Bit:p[], Bit:c[]);
-//#endif
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>Group_Set...Default</summary>
@@ -848,3 +810,4 @@ gglobal Group_GetGlobal...(_GROUP_MAKE_TAG:el)
 //#undef _GROUP_UNUSED
 #undef gforeign
 #undef gglobal
+
