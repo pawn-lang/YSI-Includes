@@ -5,15 +5,25 @@ Test:y_commands_Hashing()
 		dst1[32],
 		hash0,
 		hash1;
+	// CASE INSENSITIVE.
 	// V1.
-	Puny_Encode(dst0, "Hello\x102;you", .delimiter = '@');
+	Puny_Encode(dst0, "hello\x102;you", .delimiter = '@');
 	HashMap_Hash(dst0, hash0);
 	// V2.
 	new
 		len = Puny_EncodeHash(dst1, "Hello\x102;you there", hash1, .delimiter = '@');
 	// Same.
+	//printf("%s %s", dst0, dst1);
 	ASSERT(!strcmp(dst0, dst1));
 	ASSERT(hash0 == hash1);
+	ASSERT(len == strlen(dst1));
+	// CASE SENSITIVE.
+	Puny_Encode(dst0, "Hello\x102;you", .delimiter = '@');
+	HashMap_Hash(dst0, hash0);
+	// V2.
+	len = Puny_EncodeHash(dst1, "Hello\x102;you there", hash1, .delimiter = '@');
+	ASSERT(!!strcmp(dst0, dst1));
+	ASSERT(hash0 != hash1);
 	ASSERT(len == strlen(dst1));
 }
 

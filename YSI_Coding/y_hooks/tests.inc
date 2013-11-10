@@ -1,83 +1,138 @@
 static
 	YSI_g_sValue;
 
-forward Ony_hooksTest(cmd[]);
+forward Ony_hooksTest2(cmd[]);
 
-hook Ony_hooksTest@00(cmd[])
+hook Ony_hooksTest2@000(cmd[])
 {
 	++YSI_g_sValue;
-	return YSI_g_sValue;
+	return 1;
 }
 
-hook Ony_hooksTest@01(cmd[])
+hook Ony_hooksTest2@001(cmd[])
 {
 	// Called second due to forced orderings.
 	++YSI_g_sValue;
 	return 1;
 }
 
-public Ony_hooksTest(cmd[])
+public Ony_hooksTest2(cmd[])
 {
 	// Called second due to forced orderings.
-	if (YSI_g_sValue) return YSI_g_sValue - 7;
-	#if defined y_hooks_Ony_hooksTest
-		return y_hooks_Ony_hooksTest(cmd);
-	#else
-		return 1;
-	#endif
+	//if (YSI_g_sValue) return YSI_g_sValue - 7;
+	return 1;
 }
-#if defined _ALS_Ony_hooksTest
-	#undef Ony_hooksTest
-#else
-	#define _ALS_Ony_hooksTest
-#endif
-#define Ony_hooksTest y_hooks_Ony_hooksTest
-#if defined y_hooks_Ony_hooksTest
-	forward Ony_hooksTest(cmd[]);
-#endif
 
-Test:y_hooks_Ony_hooksTest()
+Test:y_hooks_Ony_hooksTest2()
 {
 	// Check both hooks are called.
-	YSI_g_sValue = -2;
-	CallLocalFunction("Ony_hooksTest", "s", "IGNORE_ME");
-	ASSERT(YSI_g_sValue == 0);
+	YSI_g_sValue = 0;
+	ASSERT(CallLocalFunction("Ony_hooksTest2", "s", "IGNORE_ME") != 0);
+	ASSERT(YSI_g_sValue == 2);
 	YSI_g_sValue = 0;
 }
 
-Test:y_hooks_ReturnM1()
+forward Ony_hooksTest3(cmd[]);
+
+hook Ony_hooksTest3@000(cmd[])
 {
-	// Using -1 as a return should stop all processing.
-	YSI_g_sValue = -2;
-	new
-		ret = CallLocalFunction("Ony_hooksTest", "s", "IGNORE_ME");
-	//printf("ret = %d %d", ret, YSI_g_sValue);
-	ASSERT(ret == 0);
-	ASSERT(YSI_g_sValue == -1);
+	++YSI_g_sValue;
+	//printf("a");
+	return 1;
+}
+
+hook Ony_hooksTest3@001(cmd[])
+{
+	// Called second due to forced orderings.
+	++YSI_g_sValue;
+	//printf("b");
+	return 1;
+}
+
+Test:y_hooks_Ony_hooksTest3()
+{
+	// Check both hooks are called.
+	YSI_g_sValue = 0;
+	ASSERT(CallLocalFunction("Ony_hooksTest3", "s", "IGNORE_ME") != 0);
+	ASSERT(YSI_g_sValue == 2);
 	YSI_g_sValue = 0;
 }
 
-Test:y_hooks_ReturnM2()
+forward Ony_hooksTest1(cmd[]);
+
+hook Ony_hooksTest1@000(cmd[])
 {
-	// Using -1 as a return should stop all processing.
-	YSI_g_sValue = -2;
-	new
-		ret = CallLocalFunction("Ony_hooksTest", "s", "IGNORE_ME");
-	ASSERT(ret == -1);
-	ASSERT(YSI_g_sValue == -1);
+	++YSI_g_sValue;
+	return 1;
+}
+
+hook Ony_hooksTest1@001(cmd[])
+{
+	// Called second due to forced orderings.
+	++YSI_g_sValue;
+	return 0;
+}
+
+Test:y_hooks_Ony_hooksTest1()
+{
+	// Check both hooks are called.
+	YSI_g_sValue = 0;
+	ASSERT(CallLocalFunction("Ony_hooksTest1", "s", "IGNORE_ME") == 0);
+	ASSERT(YSI_g_sValue == 2);
 	YSI_g_sValue = 0;
 }
 
-Test:y_hooks_Callback()
+forward Ony_hooksTest4(cmd[]);
+
+hook Ony_hooksTest4@000(cmd[])
 {
-	// Using -1 as a return should stop all processing.
-	YSI_g_sValue = 10;
-	new
-		ret = CallLocalFunction("Ony_hooksTest", "s", "IGNORE_ME");
-	ASSERT(ret == 5);
-	ASSERT(YSI_g_sValue == 5);
+	++YSI_g_sValue;
+	return -1;
+}
+
+hook Ony_hooksTest4@001(cmd[])
+{
+	// Called second due to forced orderings.
+	++YSI_g_sValue;
+	return 0;
+}
+
+Test:y_hooks_Ony_hooksTest4()
+{
+	// Check only one hook is called.
+	YSI_g_sValue = 0;
+	ASSERT(CallLocalFunction("Ony_hooksTest4", "s", "IGNORE_ME") == 0);
+	ASSERT(YSI_g_sValue == 1);
 	YSI_g_sValue = 0;
 }
+
+forward Ony_hooksTest5(cmd[]);
+
+hook Ony_hooksTest5@000(cmd[])
+{
+	++YSI_g_sValue;
+	return -2;
+}
+
+hook Ony_hooksTest5@001(cmd[])
+{
+	// Called second due to forced orderings.
+	++YSI_g_sValue;
+	return 0;
+}
+
+Test:y_hooks_Ony_hooksTest5()
+{
+	// Check only one hook is called.
+	YSI_g_sValue = 0;
+	ASSERT(CallLocalFunction("Ony_hooksTest5", "s", "IGNORE_ME") == 1);
+	ASSERT(YSI_g_sValue == 1);
+	YSI_g_sValue = 0;
+}
+
+
+
+
 
 static stock y_hooks_funcidx2(str[])
 {
@@ -236,3 +291,4 @@ Test:y_hooks_SpecialCases()
 	CallLocalFunction("OnPlayerEnterDynamicArea", "ii", 0, 0);
 	ASSERT(g_y_hooksVar == 110);
 }
+

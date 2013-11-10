@@ -606,3 +606,4 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 	#include "..\YSI_Core\y_testing"
 	#include "y_punycode/tests"
 #endif
+

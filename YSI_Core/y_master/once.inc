@@ -225,10 +225,6 @@ forward Master_OnScriptClose(script);
 	#define MAX_MASTERS 26 // Default, old value.
 #endif
 
-#if defined YSI_NO_MASTER
-	#endinput
-#endif
-
 //#define HANDOFF_SOURCE(%9) forward MAKE_YCM<HANDOFF_SOURCE...>();public MAKE_YCM<HANDOFF_SOURCE...>()<>{}public MAKE_YCM<HANDOFF_SOURCE...>()<_YCM:p>
 //#define HANDOFF_TARGET(%1) forward MAKE_YCM<HANDOFF_TARGET...>(%1);public MAKE_YCM<HANDOFF_TARGET...>(%1)<>{}public MAKE_YCM<HANDOFF_TARGET...>(%1)<_YCM:y,_YCM:u>
 //#define HANDOFF<%0>(%1) CallRemoteFunction(#MAKE_YCM<HANDOFF_TARGET...>,#%0,%1)
@@ -252,6 +248,10 @@ enum _E_YCM
 #define _YCM@m (_YCM@==_E_YCM@m)
 #define _YCM@p (_YCM@==_E_YCM@p)
 #define _YCM@u (_YCM@==_E_YCM@u)
+
+#if defined YSI_NO_MASTER
+	#endinput
+#endif
 
 static
 	YSI_g_sMasterCount,
