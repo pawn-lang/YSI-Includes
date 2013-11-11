@@ -28,6 +28,18 @@ Test:y_groups_Create0()
 	Group_Destroy(g);
 }
 
+Test:y_groups_Create0b()
+{
+	new
+		Group:g0 = Group_Create("hello"),
+		Group:g1 = Group_Create("there");
+	ASSERT(g0 != INVALID_GROUP);
+	ASSERT(g1 != INVALID_GROUP);
+	ASSERT(g0 != g1);
+	Group_Destroy(g0);
+	Group_Destroy(g1);
+}
+
 Test:y_groups_Create1()
 {
 	new
