@@ -405,10 +405,9 @@ global void:_Command_Rebuild()
 		if (_Command_IsActive(i))
 		{
 			HashMap_Add(YSI_g_sCommandMap, Command_Name(i), i);
-			YSI_g_sHighestID = i;
+			YSI_g_sHighestID = i + 1;
 		}
 	}
-	++YSI_g_sHighestID;
 }
 
 HANDOFF()
@@ -1040,7 +1039,7 @@ global Command_GetPlayerCommandCount(playerid)
 		count = 0;
 	for (new i = 0; i != YSI_g_sHighestID; ++i)
 	{
-		if (YSI_g_sCommands[i][E_COMMAND_NAME][0] && YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask)
+		if (_Command_IsActive(i) && YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask)
 		{
 			++count;
 		}
@@ -1077,7 +1076,7 @@ global string:Command_GetNext(index, playerid)
 			Bit:mask = PA_Mask(playerid);
 		for (new i = 0; i != YSI_g_sHighestID; ++i)
 		{
-			if (YSI_g_sCommands[i][E_COMMAND_NAME][0] && YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask)
+			if (_Command_IsActive(i) && YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask)
 			{
 				// Skip already displayed ones.
 				if (index)
