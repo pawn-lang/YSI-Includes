@@ -68,11 +68,46 @@ YCMD:y_commands_removable2(playerid, params[], help)
 
 Test:y_commands_removable2()
 {
-	printf("%d", YCMD:y_commands_removable2);
+	//printf("%d", YCMD:y_commands_removable2);
 	Command_SetPlayer(YCMD:y_commands_removable2, 103, true);
 	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable2") == 1);
 	Command_Remove(YCMD:y_commands_removable2);
 	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable2") == 0);
+}
+
+Test:y_commands_count()
+{
+	for (new i = 0; i != MAX_COMMANDS; ++i)
+	{
+		Command_SetPlayer(i, 22, false);
+	}
+	ASSERT(Command_GetPlayerCommandCount(22) == 0);
+	Command_SetPlayerNamed("y_commands_1", 22, true);
+	ASSERT(Command_GetPlayerCommandCount(22) == 1);
+}
+
+Test:y_commands_display1()
+{
+	for (new i = 0; i != MAX_COMMANDS; ++i)
+	{
+		Command_SetPlayer(i, 23, false);
+	}
+	ASSERT(strlen(Command_GetDisplayNamed("y_commands_1", 23)) == 0);
+	Command_SetPlayerNamed("y_commands_1", 23, true);
+	ASSERT(strlen(Command_GetDisplayNamed("y_commands_1", 23)) != 0);
+	ASSERT(!strcmp(Command_GetDisplayNamed("y_commands_1", 23), "y_commands_1"));
+}
+
+Test:y_commands_display2()
+{
+	for (new i = 0; i != MAX_COMMANDS; ++i)
+	{
+		Command_SetPlayer(i, 23, false);
+	}
+	ASSERT(strlen(Command_GetDisplay(YCMD:y_commands_3, 23)) == 0);
+	Command_SetPlayer(YCMD:y_commands_3, 23, true);
+	ASSERT(strlen(Command_GetDisplay(YCMD:y_commands_3, 23)) != 0);
+	ASSERT(!strcmp(Command_GetDisplay(YCMD:y_commands_3, 23), "y_commands_3"));
 }
 
 Test:y_commands_Hashing()

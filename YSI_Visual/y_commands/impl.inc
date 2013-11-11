@@ -917,16 +917,15 @@ global Command_ReProcess(p,string:c[],h)
 	The name of a command for a single player.
 </returns>
 <remarks>
-	-
+	Abstracted because there's a crash when chain returning a string from a
+	foreign function (see "Command_GetDisplayNamed").
 
 native Command_GetDisplay(funcid, playerid);
 
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-foreign string:Command_GetDisplay(funcid, playerid);
-
-global string:Command_GetDisplay(funcid, playerid)
+static stock _Command_GetDisplay(funcid, playerid)
 {
 	YSI_g_sReturnBuffer[0] = '\0';
 	if (_Command_IsValid(funcid) && 0 <= playerid < MAX_PLAYERS)
@@ -938,7 +937,7 @@ global string:Command_GetDisplay(funcid, playerid)
 		if (YSI_g_sCommands[funcid][E_COMMAND_USERS][slot] & mask)
 		{
 			strunpack(YSI_g_sReturnBuffer, Command_Name(funcid));
-			return YSI_g_sReturnBuffer;
+			return;
 		}
 		funcid = YSI_g_sCommands[funcid][E_COMMAND_POINTER];
 		// Search for a command pointing to that command which the player can use.
@@ -947,10 +946,18 @@ global string:Command_GetDisplay(funcid, playerid)
 			if (YSI_g_sCommands[i][E_COMMAND_POINTER] == funcid && (YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask))
 			{
 				strunpack(YSI_g_sReturnBuffer, Command_Name(i));
-				return YSI_g_sReturnBuffer;
+				return;
 			}
 		}
 	}
+	//return YSI_g_sReturnBuffer;
+}
+
+foreign string:Command_GetDisplay(funcid, playerid);
+
+global string:Command_GetDisplay(funcid, playerid)
+{
+	_Command_GetDisplay(funcid, playerid);
 	return YSI_g_sReturnBuffer;
 }
 
@@ -975,7 +982,9 @@ foreign string:Command_GetDisplayNamed(string:func[], playerid);
 
 global string:Command_GetDisplayNamed(string:func[], playerid)
 {
-	return Command_GetDisplay(Command_Find(func), playerid);
+	// return Command_GetDisplay(Command_Find(func), playerid);
+	_Command_GetDisplay(Command_Find(func), playerid);
+	return YSI_g_sReturnBuffer;
 }
 
 /**--------------------------------------------------------------------------**\
