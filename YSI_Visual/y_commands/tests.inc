@@ -110,6 +110,50 @@ Test:y_commands_display2()
 	ASSERT(!strcmp(Command_GetDisplay(YCMD:y_commands_3, 23), "y_commands_3"));
 }
 
+Test:y_commands_display3()
+{
+	Command_AddAlt(YCMD:y_commands_3, "y_commands_alt7");
+	Command_AddAlt(YCMD:y_commands_alt7, "y_commands_alt2");
+	Command_AddAlt(YCMD:y_commands_alt2, "y_commands_alt3");
+	for (new i = 0; i != MAX_COMMANDS; ++i)
+	{
+		Command_SetPlayer(i, 25, false);
+	}
+	ASSERT(strlen(Command_GetDisplay(YCMD:y_commands_3, 25)) == 0);
+	// Get a name from the original.
+	Command_SetPlayer(YCMD:y_commands_alt3, 25, true);
+	ASSERT(strlen(Command_GetDisplay(YCMD:y_commands_3, 25)) != 0);
+	ASSERT(!strcmp(Command_GetDisplay(YCMD:y_commands_3, 25), "y_commands_alt3"));
+	// Get an y_commands_alternate from a different y_commands_alternate.
+	Command_SetPlayer(YCMD:y_commands_alt7, 25, true);
+	ASSERT(strlen(Command_GetDisplay(YCMD:y_commands_alt2, 25)) != 0);
+	ASSERT(!strcmp(Command_GetDisplay(YCMD:y_commands_alt2, 25), "y_commands_alt7"));
+	// Get the original from an y_commands_alternate.
+	Command_SetPlayer(YCMD:y_commands_3, 25, true);
+	ASSERT(strlen(Command_GetDisplay(YCMD:y_commands_alt2, 25)) != 0);
+	ASSERT(!strcmp(Command_GetDisplay(YCMD:y_commands_alt2, 25), "y_commands_3"));
+}
+
+Test:y_commands_count3()
+{
+	Command_AddAlt(YCMD:y_commands_1, "y_commands_alt4");
+	Command_AddAlt(YCMD:y_commands_alt4, "y_commands_alt5");
+	Command_AddAlt(YCMD:y_commands_alt4, "y_commands_alt6");
+	for (new i = 0; i != MAX_COMMANDS; ++i)
+	{
+		Command_SetPlayer(i, 26, false);
+	}
+	ASSERT(Command_GetPlayerCommandCount(26) == 0);
+	Command_SetPlayer(YCMD:y_commands_1, 26, true);
+	ASSERT(Command_GetPlayerCommandCount(26) == 1);
+	Command_SetPlayer(YCMD:y_commands_alt4, 26, true);
+	ASSERT(Command_GetPlayerCommandCount(26) == 2);
+	Command_SetPlayer(YCMD:y_commands_alt5, 26, true);
+	ASSERT(Command_GetPlayerCommandCount(26) == 3);
+	Command_SetPlayer(YCMD:y_commands_alt6, 26, true);
+	ASSERT(Command_GetPlayerCommandCount(26) == 4);
+}
+
 Test:y_commands_Hashing()
 {
 	new

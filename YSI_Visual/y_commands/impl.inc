@@ -171,6 +171,7 @@ static stock __declspec(distributed) YSI_g_sErrorMessages[e_COMMAND_ERRORS][144]
 static stock __declspec(dist_special) PlayerArray:YSI_g_sDisabledPlayers<MAX_PLAYERS>;
 
 static stock
+	YSI_g_sHighestID,
 	YSI_g_sReturnBuffer[YSI_MAX_STRING],
 	// Quickly reference and store commands by name.
 	HashMap:YSI_g_sCommandMap<MAX_COMMANDS>;
@@ -234,18 +235,16 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 	-
 </returns>
 <remarks>
-	Finds the original version of an alt command.
+	Finds the original version of an alt command.  Updated to not contain long
+	chains (along with "Command_AddAlt").
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define _Command_GetReal(%0,%1,%2); \
-	%0=YSI_g_sCommands[(%1)][E_COMMAND_POINTER];				\
-	if((%0)&cellmin){											\
-		do{														\
+#define _Command_GetReal(%0,%1,%2);                             \
+	if((%0=YSI_g_sCommands[(%1)][E_COMMAND_POINTER])&cellmin)   \
 			%1=(%0)&~cellmin,									\
-			%0=YSI_g_sCommands[(%1)][E_COMMAND_POINTER];}		\
-		while((%0)&cellmin);									\
-		strunpack(%2,YSI_g_sCommands[(%1)][E_COMMAND_NAME]);}
+			%0=YSI_g_sCommands[(%1)][E_COMMAND_POINTER],		\
+			strunpack(%2,YSI_g_sCommands[(%1)][E_COMMAND_NAME]);
 
 /**--------------------------------------------------------------------------**\
 <summary>Command_Find</summary>
@@ -305,7 +304,7 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 \**--------------------------------------------------------------------------**/
 
 #define _Command_IsActive(%0) (YSI_g_sCommands[(%0)][E_COMMAND_NAME])
-#define _Command_IsValid(%0) ((0 <= (%0) < MAX_COMMANDS) && _Command_IsActive(%0))
+#define _Command_IsValid(%0) ((0 <= (%0) < YSI_g_sHighestID) && _Command_IsActive(%0))
 
 foreign bool:Command_IsValid(cmd);
 
@@ -406,8 +405,10 @@ global void:_Command_Rebuild()
 		if (_Command_IsActive(i))
 		{
 			HashMap_Add(YSI_g_sCommandMap, Command_Name(i), i);
+			YSI_g_sHighestID = i;
 		}
 	}
+	++YSI_g_sHighestID;
 }
 
 HANDOFF()
@@ -555,12 +556,12 @@ native Command_Add(funcname[], script);
 	if (id == COMMAND_NOT_FOUND)
 	{
 		// Command doesn't already exist, add it.
-		id = Command_GetEmptySlot();
-		if (id == COMMAND_NOT_FOUND)
+		if ((id = Command_GetEmptySlot()) == COMMAND_NOT_FOUND)
 		{
 			P:E("Could not add command to array.");
 			return COMMAND_NOT_FOUND;
 		}
+		YSI_g_sHighestID = max(YSI_g_sHighestID, id + 1);
 		// Save the command's pointer.
 		YSI_g_sCommands[id][E_COMMAND_POINTER] = ptr,
 		// Add this command to the hash map (does the name too).
@@ -599,18 +600,24 @@ foreign Command_AddAlt(oidx, string:cmd[]);
 global Command_AddAlt(oidx, string:cmd[])
 {
 	if (!_Command_IsValid(oidx)) return COMMAND_NOT_FOUND;
-	strpack(cmd, cmd, cellmax);
+	// Check the pointer is valid.
 	new
-		id = Command_Find(cmd);
-	if (id == COMMAND_NOT_FOUND)
+		id = YSI_g_sCommands[oidx][E_COMMAND_POINTER];
+	// The command we are pointing to is already an alternate for a third
+	// command - point this new command at the parent.
+	if (id & cellmin) oidx = id & ~cellmin;
+	// Now point this new command at the real (software) command.
+	strpack(cmd, cmd, cellmax);
+	if ((id = Command_Find(cmd)) == COMMAND_NOT_FOUND)
 	{
 		// Command doesn't already exist, add it.
-		id = Command_GetEmptySlot();
-		if (id == COMMAND_NOT_FOUND)
+		if ((id = Command_GetEmptySlot()) == COMMAND_NOT_FOUND)
 		{
 			P:E("Could not add alt command to array.");
 			return COMMAND_NOT_FOUND;
 		}
+		// Save the new highest ID for loops later.
+		YSI_g_sHighestID = max(YSI_g_sHighestID, id + 1);
 		// Save the command's pointer.
 		YSI_g_sCommands[id][E_COMMAND_POINTER] = cellmin | oidx;
 		// Add all players, or defer to y_groups.
@@ -934,22 +941,41 @@ static stock _Command_GetDisplay(funcid, playerid)
 			slot = PA_Slot(playerid),
 			Bit:mask = PA_Mask(playerid);
 		// Check if they can use the original version.
+		//printf("1");
 		if (YSI_g_sCommands[funcid][E_COMMAND_USERS][slot] & mask)
 		{
-			strunpack(YSI_g_sReturnBuffer, Command_Name(funcid));
-			return;
+			//printf("2");
+			return strunpack(YSI_g_sReturnBuffer, Command_Name(funcid));
 		}
-		funcid = YSI_g_sCommands[funcid][E_COMMAND_POINTER];
-		// Search for a command pointing to that command which the player can use.
-		for (new i = 0; i != MAX_COMMANDS; ++i)
+		//printf("3");
+		// BAD REUSE OF THE "playerid" VARIABLE.
+		if ((playerid = YSI_g_sCommands[funcid][E_COMMAND_POINTER]) & cellmin)
 		{
-			if (YSI_g_sCommands[i][E_COMMAND_POINTER] == funcid && (YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask))
+			//printf("4");
+			// The given function is an alternate version of a real function -
+			// test the parent function first.
+			// BAD REUSE OF THE "playerid" VARIABLE.
+			if (YSI_g_sCommands[(funcid = playerid & ~cellmin)][E_COMMAND_USERS][slot] & mask)
 			{
-				strunpack(YSI_g_sReturnBuffer, Command_Name(i));
-				return;
+				//printf("5");
+				return strunpack(YSI_g_sReturnBuffer, Command_Name(funcid));
+			}
+		}
+		//printf("6");
+		// Now we have a root command, check all alternates to this one.
+		funcid |= cellmin;
+		for (new i = 0; i != YSI_g_sHighestID; ++i)
+		{
+			//printf("Test %d: %s, %04x%04x, %04x%04x", i, unpack(Command_Name(i)), YSI_g_sCommands[i][E_COMMAND_POINTER] >>> 16, YSI_g_sCommands[i][E_COMMAND_POINTER] & 0xFFFF, funcid >>> 16, funcid & 0xFFFF);
+			//printf("%d %d %d", _Command_IsActive(i), YSI_g_sCommands[i][E_COMMAND_POINTER] == funcid, _:(YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask));
+			if (_Command_IsActive(i) && YSI_g_sCommands[i][E_COMMAND_POINTER] == funcid && (YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask))
+			{
+				//printf("Found: %s", YSI_g_sReturnBuffer);
+				return strunpack(YSI_g_sReturnBuffer, Command_Name(i));
 			}
 		}
 	}
+	return 0;
 	//return YSI_g_sReturnBuffer;
 }
 
@@ -957,8 +983,9 @@ foreign string:Command_GetDisplay(funcid, playerid);
 
 global string:Command_GetDisplay(funcid, playerid)
 {
-	_Command_GetDisplay(funcid, playerid);
-	return YSI_g_sReturnBuffer;
+	return
+		_Command_GetDisplay(funcid, playerid),
+		YSI_g_sReturnBuffer;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -983,8 +1010,9 @@ foreign string:Command_GetDisplayNamed(string:func[], playerid);
 global string:Command_GetDisplayNamed(string:func[], playerid)
 {
 	// return Command_GetDisplay(Command_Find(func), playerid);
-	_Command_GetDisplay(Command_Find(func), playerid);
-	return YSI_g_sReturnBuffer;
+	return
+		_Command_GetDisplay(Command_Find(func), playerid),
+		YSI_g_sReturnBuffer;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1010,7 +1038,7 @@ global Command_GetPlayerCommandCount(playerid)
 		slot = PA_Slot(playerid),
 		Bit:mask = PA_Mask(playerid),
 		count = 0;
-	for (new i = 0; i != MAX_COMMANDS; ++i)
+	for (new i = 0; i != YSI_g_sHighestID; ++i)
 	{
 		if (YSI_g_sCommands[i][E_COMMAND_NAME][0] && YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask)
 		{
@@ -1041,13 +1069,13 @@ global string:Command_GetNext(index, playerid)
 {
 	P:2("Command_GetNext called: %i, %i", index, playerid);
 	YSI_g_sReturnBuffer[0] = '\0';
-	if (0 <= index < MAX_COMMANDS)
+	if (0 <= index < YSI_g_sHighestID)
 	{
 		// Don't recalculate this every loop.
 		new
 			slot = PA_Slot(playerid),
 			Bit:mask = PA_Mask(playerid);
-		for (new i = 0; i != MAX_COMMANDS; ++i)
+		for (new i = 0; i != YSI_g_sHighestID; ++i)
 		{
 			if (YSI_g_sCommands[i][E_COMMAND_NAME][0] && YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask)
 			{
