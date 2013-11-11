@@ -113,6 +113,73 @@ Test:y_hashmap_Get1()
 	ASSERT(HashMap_Get(m, "Hello") == 42);
 }
 
+Test:y_hashmap_GetVarious()
+{
+	new HashMap:m<>;
+	new data[100][E_HASH_MAP_TEST];
+	HashMap_Init(m, data);
+	HashMap_Add(m, "01234567890", 10);
+	HashMap_Add(m, "012345678901", 11);
+	HashMap_Add(m, "0123456789012", 12);
+	HashMap_Add(m, "01234567890123", 13);
+	HashMap_Add(m, "012345678901234", 14);
+	HashMap_Add(m, "0123456789012345", 15);
+	HashMap_Add(m, "01234567890123456", 16);
+	HashMap_Add(m, "012345678901234567", 17);
+	HashMap_Add(m, "0123456789012345678", 18);
+	HashMap_Add(m, "01234567890123456789", 19);
+	HashMap_Add(m, "0", 0);
+	HashMap_Add(m, "01", 1);
+	HashMap_Add(m, "012", 2);
+	HashMap_Add(m, "0123", 3);
+	HashMap_Add(m, "01234", 4);
+	HashMap_Add(m, "012345", 5);
+	HashMap_Add(m, "0123456", 6);
+	HashMap_Add(m, "01234567", 7);
+	HashMap_Add(m, "012345678", 8);
+	HashMap_Add(m, "0123456789", 9);
+	HashMap_Add(m, "012345678901234567890", 20);
+	HashMap_Add(m, "0123456789012345678901", 21);
+	HashMap_Add(m, "01234567890123456789012", 22);
+	HashMap_Add(m, "012345678901234567890123", 23);
+	HashMap_Add(m, "0123456789012345678901234", 24);
+	HashMap_Add(m, "01234567890123456789012345", 25);
+	HashMap_Add(m, "012345678901234567890123456", 26);
+	HashMap_Add(m, "0123456789012345678901234567", 27);
+	HashMap_Add(m, "01234567890123456789012345678", 28);
+	HashMap_Add(m, "012345678901234567890123456789", 29);
+	ASSERT(HashMap_Get(m, "012345678901234567890") == 20);
+	ASSERT(HashMap_Get(m, "0123456789012345678901") == 21);
+	ASSERT(HashMap_Get(m, "01234567890123456789012") == 22);
+	ASSERT(HashMap_Get(m, "012345678901234567890123") == 23);
+	ASSERT(HashMap_Get(m, "0123456789012345678901234") == 24);
+	ASSERT(HashMap_Get(m, "01234567890123456789012345") == 25);
+	ASSERT(HashMap_Get(m, "012345678901234567890123456") == 26);
+	ASSERT(HashMap_Get(m, "0123456789012345678901234567") == 27);
+	ASSERT(HashMap_Get(m, "01234567890123456789012345678") == 28);
+	ASSERT(HashMap_Get(m, "012345678901234567890123456789") == 29);
+	ASSERT(HashMap_Get(m, "01234567890") == 10);
+	ASSERT(HashMap_Get(m, "012345678901") == 11);
+	ASSERT(HashMap_Get(m, "0123456789012") == 12);
+	ASSERT(HashMap_Get(m, "01234567890123") == 13);
+	ASSERT(HashMap_Get(m, "012345678901234") == 14);
+	ASSERT(HashMap_Get(m, "0123456789012345") == 15);
+	ASSERT(HashMap_Get(m, "01234567890123456") == 16);
+	ASSERT(HashMap_Get(m, "012345678901234567") == 17);
+	ASSERT(HashMap_Get(m, "0123456789012345678") == 18);
+	ASSERT(HashMap_Get(m, "01234567890123456789") == 19);
+	ASSERT(HashMap_Get(m, "0") == 0);
+	ASSERT(HashMap_Get(m, "01") == 1);
+	ASSERT(HashMap_Get(m, "012") == 2);
+	ASSERT(HashMap_Get(m, "0123") == 3);
+	ASSERT(HashMap_Get(m, "01234") == 4);
+	ASSERT(HashMap_Get(m, "012345") == 5);
+	ASSERT(HashMap_Get(m, "0123456") == 6);
+	ASSERT(HashMap_Get(m, "01234567") == 7);
+	ASSERT(HashMap_Get(m, "012345678") == 8);
+	ASSERT(HashMap_Get(m, "0123456789") == 9);
+}
+
 Test:y_hashmap_RemoveKey1()
 {
 	new HashMap:m<>;
