@@ -94,6 +94,8 @@ Changelog:
 	#endif
 #endif
 
+//#if defined Y_TESTING_META
+
 #if defined INCLUDE_TESTS
 	#define RUN_TESTS
 	#define Debug_PrintT va_printf
@@ -214,41 +216,28 @@ stock Testing_Ask(playerid, str[] = "", va_args<>)
 
 stock Testing_Test(bool:x, str[] = "", va_args<>)
 {
-	P:3("Testing_Test called: %i, \"%s\"", x, str);
-	++YSI_g_sTests;
-	if (!x)
-	{
-		++YSI_g_sFails;
-		if (numargs() == 2)
+		P:3("Testing_Test called: %i, \"%s\"", x, str);
+		++YSI_g_sTests;
+		if (!x)
 		{
-			P:T(TEST_FAILED " %s", va_start<1>);
-			//printf("*** Test failed: %s", str);
-		}
-		else
-		{
-			if (str[0] == '\2')
+			++YSI_g_sFails;
+			if (numargs() == 2)
 			{
-				strunpack(str, !TEST_FAILED, 6);
-				str[5] = ' ';
+				P:T(TEST_FAILED " %s", va_start<1>);
+				//printf("*** Test failed: %s", str);
 			}
-			P:T(str, va_start<2>);
+			else
+			{
+				if (str[0] == '\2')
+				{
+					strunpack(str, !TEST_FAILED, 6);
+					str[5] = ' ';
+				}
+				P:T(str, va_start<2>);
+			}
 		}
-	}
 	#if defined TEST_SHOW_PASSES
-		else /*if (numargs() == 2)
-		{
-			P:T(TEST_PASSED " %s", va_start<1>);
-		}
 		else
-		{
-			P:T(str, va_start<2>);
-			if (str[0] == '\2')
-			{
-				strunpack(str, !TEST_PASSED, 17);
-				str[16] = ' ';
-			}
-			printf(str);
-			P:T(str, va_start<2>);*/
 		{
 			P:T(TEST_PASSED, va_start<2>);
 		}
@@ -647,3 +636,57 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 	#define PTestInit:%1(%2) stock Init_@%1(%2)
 	#define PTestClose:%1(%2) stock Shut_@%1(%2)*/
 #endif
+
+// Meta tests.
+
+static stock
+	bool:YSI_g_sTestResult;
+
+stock Testing_TestRedirect(bool:x, str[] = "", va_args<>)
+{
+	ASSERT(x == YSI_g_sTestResult);
+	ASSERT(str[0] != '\0');
+	ASSERT(!strcmp(str, "\2\2\2\2\2", false, 5));
+}
+
+Test:y_testing_2()
+{
+	new
+		t = YSI_g_sTests,
+		f = YSI_g_sFails;
+	ASSERT(false == false);
+	ASSERT(true == true);
+	ASSERT(TRUE != FALSE);
+	ASSERT(t + 3 == YSI_g_sTests);
+	ASSERT(f == YSI_g_sFails);
+	ASSERT(t + 5 == YSI_g_sTests);
+	// Fail a fake test on purpose.
+	state ysi_debug : on;
+	P:I("The next test hasn't really failed...");
+	P:I(" - It is testing the test system.");
+	state ysi_debug : off;
+	ASSERT(false);
+	ASSERT(f + 1 == YSI_g_sFails); // Not a mistake.  Run this test twice to
+	ASSERT(f + 1 == YSI_g_sFails); // ensure the first one didn't fail too.
+	--YSI_g_sFails; // Reduce the failure count to not fail the whole suite.
+}
+
+Test:y_testing_1()
+{
+	ASSERT(FALSE == false);
+	ASSERT(TRUE == true);
+	ASSERT(true != false);
+	ASSERT(isnull(NULL));
+	ASSERT_TRUE(true);
+	ASSERT_TRUE(!false);
+	ASSERT_FALSE(false);
+	ASSERT_FALSE(!true);
+	// Test the messages themselves.
+	#define Testing_Test Testing_TestRedirect
+	YSI_g_sTestResult = false;
+	ASSERT(false);
+	YSI_g_sTestResult = true;
+	ASSERT(true);
+	#undef Testing_Test
+}
+
