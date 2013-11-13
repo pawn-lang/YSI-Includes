@@ -89,6 +89,11 @@ Compile options:
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_globaltags"
 
+#if defined YSI_TESTS
+	#include "..\YSI_Core\y_testing"
+	#include "y_cell/tests"
+#endif
+
 /**--------------------------------------------------------------------------**\
 <summary>
 	Cell_ReverseBits(number);
@@ -204,37 +209,43 @@ stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 	3)
 	Example: 0x01010101
 	Returns: 4
+	
+	I rewrote this in assembly just to see if I could pretty much.  I also
+	rewrote the lookup version in assembly.  In theory it should be faster, but
+	the marshalling of data was a little awkward.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
 stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 {
-	/*
-	static const
-		scCount[256] =
-			{
-				0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4,
-				1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
-				1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
-				2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-				1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
-				2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-				2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-				3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
-				1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
-				2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-				2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-				3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
-				2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
-				3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
-				3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
-				4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8
-			};
-	return scCount[data >>> 24] + scCount[(data >>> 16) & 0xFF] + scCount[(data >>> 8) & 0xFF] + scCount[data & 0xFF];
-	*/
-	data = data - ((data >>> 1) & 0x55555555);
-	data = (data & 0x33333333) + ((data >>> 2) & 0x33333333);
-	return ((data + (data >>> 4) & 0xF0F0F0F) * 0x1010101) >>> 24;
+	// This function is a perfect candidate for re-writing in pure assembly.
+	// data = data - ((data >>> 1) & 0x55555555);
+	#emit LOAD.S.pri           data // From this point on, just use registers!
+	#emit PUSH.pri
+	#emit SHR.C.pri            1
+	#emit CONST.alt            0x55555555
+	#emit AND                  // No "AND.C" annoyingly.
+	#emit POP.alt
+	#emit SUB.alt
+	// data = (data & 0x33333333) + ((data >>> 2) & 0x33333333);
+	#emit PUSH.pri
+	#emit SHR.C.pri            2
+	#emit CONST.alt            0x33333333
+	#emit AND
+	#emit SWAP.pri             // Put the second half of the code on the stack.
+	#emit AND                  // "alt" is already the correct value.
+	#emit POP.alt
+	#emit ADD
+	// return ((data + (data >>> 4) & 0xF0F0F0F) * 0x1010101) >>> 24;
+	#emit MOVE.alt
+	#emit SHR.C.pri            4
+	#emit ADD
+	#emit CONST.alt            0xF0F0F0F
+	#emit AND
+	#emit SMUL.C               0x1010101
+	#emit SHR.C.pri            24
+	#emit RETN
+	return 0;
 }
 
 /**--------------------------------------------------------------------------**\

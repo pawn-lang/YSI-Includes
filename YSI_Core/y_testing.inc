@@ -62,6 +62,7 @@ Changelog:
 
 #include <a_samp>
 #include "y_debug"
+#include "..\YSI_Storage\y_amx"
 
 #if defined YSI_TESTS
 	#if defined INCLUDE_TESTS
