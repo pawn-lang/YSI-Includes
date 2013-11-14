@@ -458,6 +458,19 @@ Test:Cell_GetLowestComponent()
 	ASSERT(Cell_GetLowestComponent(2) == 2);
 	ASSERT(Cell_GetLowestComponent(6) == 2);
 	ASSERT(Cell_GetLowestComponent(0x110) == 0x10);
+	for (new i = 0; i != 32; ++i)
+	{
+		new
+			k = 1 << i,
+			l = k;
+		ASSERT(Cell_GetLowestComponent(l) == k);
+		l |= 2 << i;
+		ASSERT(Cell_GetLowestComponent(l) == k);
+		l |= 4 << i;
+		ASSERT(Cell_GetLowestComponent(l) == k);
+		l |= 8 << i;
+		ASSERT(Cell_GetLowestComponent(l) == k);
+	}
 }
 
 Test:Cell_GetLowestBit()
@@ -478,6 +491,27 @@ Test:Cell_GetLowestBit()
 		ASSERT(Cell_GetLowestBit(k) == i);
 		k |= 8 << i;
 		ASSERT(Cell_GetLowestBit(k) == i);
+	}
+}
+
+Test:Cell_GetLowestBitEx()
+{
+	ASSERT(Cell_GetLowestBitEx(0) == 0);
+	ASSERT(Cell_GetLowestBitEx(1) == 1);
+	ASSERT(Cell_GetLowestBitEx(0x800) == 12);
+	ASSERT(Cell_GetLowestBitEx(0x111) == 1);
+	ASSERT(Cell_GetLowestBitEx(6) == 2);
+	for (new i = 0; i != 32; ++i)
+	{
+		new
+			k = 1 << i;
+		ASSERT(Cell_GetLowestBitEx(k) == i + 1);
+		k |= 2 << i;
+		ASSERT(Cell_GetLowestBitEx(k) == i + 1);
+		k |= 4 << i;
+		ASSERT(Cell_GetLowestBitEx(k) == i + 1);
+		k |= 8 << i;
+		ASSERT(Cell_GetLowestBitEx(k) == i + 1);
 	}
 }
 

@@ -385,7 +385,7 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 
 /**--------------------------------------------------------------------------**\
 <summary>
-	Cell_CountBits(number);
+	Cell_GetLowestBit(number);
 </summary>
 <param name="number">The number to get the lowest set bit of.</param>
 <returns>
@@ -417,8 +417,8 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 	static const
 		scDeBruijn[] =
 			{
-				0,  1,  28, 2,  29, 14, 24, 3,  30, 22, 20, 15, 25, 17, 4,  8, 
-				31, 27, 13, 23, 21, 19, 16, 7,  26, 12, 18, 6,  11, 5,  10, 9
+				 0,  1, 28,  2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17,  4,  8, 
+				31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18,  6, 11,  5, 10,  9
 			};
 	
 	// return scDeBruijn[((data & -data) * 0x077CB531) >>> 27];
@@ -436,6 +436,96 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 	
 	// Make the compiler happy.
 	return 0;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>
+	Cell_GetLowestBitEx(number);
+</summary>
+<param name="number">The number to get the lowest set bit of PLUS ONE.</param>
+<returns>
+	The integer position of the lowest set bit PLUS ONE.
+</returns>
+<remarks>
+	This function is identical to "Cell_GetLowestBit", but gives different
+	results for 0 and non-zero numbers.  The examples below all have a result
+	one higher than the "Cell_GetLowestBit" function.
+	
+	1)
+	Example: 0b00000000000000000000000000000001
+	Returns: 1
+	
+	2)
+	Example: 0b00000000000000000000000000001000
+	Returns: 4
+	
+	3)
+	Example: 0b00010001100011000011100010001000
+	Returns: 4
+	
+	4)
+	Example: 0
+	Returns: 0
+	
+	See: http://supertech.csail.mit.edu/papers/debruijn.pdf
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
+{
+	// Sadly these two arrays can't be shared because they have marginally
+	// different values.  We could write this code to use the other array and
+	// do "+ 1", but that adds a WHOLE EXTRA INSTRUCTION!  OH NOES!
+	static const
+		scDeBruijn[] =
+			{
+				 1,  2, 29,  3, 30, 15, 25,  4, 31, 23, 21, 16, 26, 18,  5,  9, 
+				32, 28, 14, 24, 22, 20, 17,  8, 27, 13, 19,  7, 12,  6, 11, 10
+			};
+	// We load "data" in to "pri" here, so we don't do it within the "if"
+	// statement.  This, combined with the "RETN" straight after, makes this
+	// code as optimal as I can manage!  In fact, despite the fact that using
+	// code (in this case the "if" statement) is usually less efficient.  I have
+	// tweaked the main code to account for the generated code such that I
+	// couldn't do better even if it was possible to use "JZER" in assembly (it
+	// isn't because the offsets don't compile properly).  Additionally, because
+	// if the check fails then "data" must be 0, then we also know that "pri"
+	// must be 0 too, so there's no need to re-load that value as "return 0;"
+	// would do.
+	if (data)
+	{
+		// return scDeBruijn[((data & -data) * 0x077CB531) >>> 27];
+		#emit MOVE.alt
+		#emit NEG
+		#emit AND
+		#emit SMUL.C               0x077CB531
+		#emit SHR.C.pri            27
+		
+		#emit CONST.alt            scDeBruijn
+		#emit LIDX
+	}
+	{} // Zero-cost bug fix.
+	#emit RETN
+	
+	// Make the compiler happy.
+	return 0;
+	// return scDeBruijn[((data & -data) * 0x077CB531) >>> 27];
+	// #emit LOAD.S.pri           data
+	// #emit JZER                 40 // Jump straight to "RETN" (pri must be 0).
+	
+	// #emit MOVE.alt
+	// #emit NEG
+	// #emit AND
+	// #emit SMUL.C               0x077CB531
+	// #emit SHR.C.pri            27
+	
+	// #emit CONST.alt            scDeBruijn
+	// #emit LIDX
+	
+	// #emit RETN
+	
+	// // Make the compiler happy.
+	// return 0;
 }
 
 /**--------------------------------------------------------------------------**\
