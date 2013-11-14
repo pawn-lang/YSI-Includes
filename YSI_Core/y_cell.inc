@@ -509,23 +509,6 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 	
 	// Make the compiler happy.
 	return 0;
-	// return scDeBruijn[((data & -data) * 0x077CB531) >>> 27];
-	// #emit LOAD.S.pri           data
-	// #emit JZER                 40 // Jump straight to "RETN" (pri must be 0).
-	
-	// #emit MOVE.alt
-	// #emit NEG
-	// #emit AND
-	// #emit SMUL.C               0x077CB531
-	// #emit SHR.C.pri            27
-	
-	// #emit CONST.alt            scDeBruijn
-	// #emit LIDX
-	
-	// #emit RETN
-	
-	// // Make the compiler happy.
-	// return 0;
 }
 
 /**--------------------------------------------------------------------------**\
