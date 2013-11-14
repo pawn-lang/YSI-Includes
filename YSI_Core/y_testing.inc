@@ -126,12 +126,6 @@ static stock const
 	Y_TESTING_PTEST = _A<_@yQ>,
 	Y_TESTING_PINIT = _A<_y@Q>,
 	Y_TESTING_PSHUT = _A<y_@Q>;
-	// Y_TESTING_TEST =  ('y' << 24) | ('Q' << 16) | ('@' << 8) | ('_'), // _A<yQ@_>,
-	// Y_TESTING_INIT =  ('_' << 24) | ('y' << 16) | ('Q' << 8) | ('@'), // _A<_yQ@>,
-	// Y_TESTING_SHUT =  ('y' << 24) | ('Q' << 16) | ('_' << 8) | ('@'), // _A<yQ_@>,
-	// Y_TESTING_PTEST = ('_' << 24) | ('@' << 16) | ('y' << 8) | ('Q'), // _A<_@yQ>,
-	// Y_TESTING_PINIT = ('_' << 24) | ('y' << 16) | ('@' << 8) | ('Q'), // _A<_y@Q>,
-	// Y_TESTING_PSHUT = ('y' << 24) | ('_' << 16) | ('@' << 8) | ('Q'); // _A<y_@Q>;
 
 static stock
 	YSI_g_sTestResult,

@@ -226,7 +226,74 @@ Test:y_commands_3()
 	ASSERT(gSomeVar == 52);
 }
 
-Test:y_commands_4()
+static stock
+	YSI_gsPlayerid,
+	YSI_gsParams[32],
+	YSI_gsHelp;
+
+YCMD:y_commands_reprocess(playerid, params[], help)
 {
+	YSI_gsPlayerid = playerid;
+	strcpy(YSI_gsParams, params);
+	YSI_gsHelp = help;
+	return 1;
+}
+
+Test:y_commands_ReProcess()
+{
+	call OnPlayerConnect(33);
+	// 1.
+	YSI_gsPlayerid = INVALID_PLAYER_ID;
+	YSI_gsParams[0] = '\0';
+	YSI_gsHelp = -1;
+	Command_ReProcess(33, "/y_commands_ReProcess", 0);
+	ASSERT(YSI_gsPlayerid == 33);
+	ASSERT(YSI_gsParams[0] == '\0');
+	ASSERT(YSI_gsHelp == 0);
+	// 2.
+	YSI_gsPlayerid = INVALID_PLAYER_ID;
+	YSI_gsParams[0] = '\0';
+	YSI_gsHelp = -1;
+	Command_ReProcess(33, "/y_commands_ReProcess one", 1);
+	ASSERT(YSI_gsPlayerid == 33);
+	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT(!strcmp(YSI_gsParams, "one"));
+	ASSERT(YSI_gsHelp == 1);
+	// 3.
+	YSI_gsPlayerid = INVALID_PLAYER_ID;
+	YSI_gsParams[0] = '\0';
+	YSI_gsHelp = -1;
+	Command_ReProcess(33, "/y_commands_ReProcess two and three", 0);
+	ASSERT(YSI_gsPlayerid == 33);
+	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT(!strcmp(YSI_gsParams, "two and three"));
+	ASSERT(YSI_gsHelp == 0);
+	// 4.
+	YSI_gsPlayerid = INVALID_PLAYER_ID;
+	YSI_gsParams[0] = '\0';
+	YSI_gsHelp = -1;
+	Command_ReProcess(33, "/y_commands_ReProcess 99", 1);
+	ASSERT(YSI_gsPlayerid == 33);
+	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT(!strcmp(YSI_gsParams, "99"));
+	ASSERT(YSI_gsHelp == 1);
+	// 5.
+	YSI_gsPlayerid = INVALID_PLAYER_ID;
+	YSI_gsParams[0] = '\0';
+	YSI_gsHelp = -1;
+	Command_ReProcess(33, "/y_commands_ReProcess yeah......", 0);
+	ASSERT(YSI_gsPlayerid == 33);
+	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT(!strcmp(YSI_gsParams, "yeah......"));
+	ASSERT(YSI_gsHelp == 0);
+	// 6.
+	YSI_gsPlayerid = INVALID_PLAYER_ID;
+	YSI_gsParams[0] = '\0';
+	YSI_gsHelp = -1;
+	Command_ReProcess(33, "/y_commands_ReProcess Hello World", 1);
+	ASSERT(YSI_gsPlayerid == 33);
+	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT(!strcmp(YSI_gsParams, "Hello World"));
+	ASSERT(YSI_gsHelp == 1);
 }
 
