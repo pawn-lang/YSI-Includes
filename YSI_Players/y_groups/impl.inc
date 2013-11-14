@@ -753,18 +753,11 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 			{
 				P:2("_Group_SetPlayer called: %i, %s, %s, %i", p, Bit_Display(YSI_gGroupPlayers[p]), Bit_Display(g), s);
 				// http://supertech.csail.mit.edu/papers/debruijn.pdf
-				static const
-					scDeBruijn[] =
-						{
-							0,  1,  28, 2,  29, 14, 24, 3,  30, 22, 20, 15, 25, 17, 4,  8, 
-							31, 27, 13, 23, 21, 19, 16, 7,  26, 12, 18, 6,  11, 5,  10, 9
-						};
 				new
 					Bit:cur,
 					Bit:exor,
 					Bit:bit,
 					group;
-				//sOld = YSI_gGroupPlayers[p];
 				for (new i = 0; i != sizeof (g); ++i)
 				{
 					// Get the difference between the old and new groups.
@@ -772,18 +765,15 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 					exor = g[i] ^ cur;
 					P:6("_Group_SetPlayer: Loop %d 0x%04x%04x 0x%04x%04x", i, _:cur >>> 16, _:cur & 0xFFFF, _:exor >>> 16, _:exor & 0xFFFF);
 					// Low-level bit twiddling.
-					while ((bit = exor & -exor))
+					while ((bit = Bit:Cell_GetLowestComponent(exor)))
 					{
-						group = i * cellbits + (scDeBruijn[(_:bit * 0x077CB531) >>> 27]);
+						// group = i * cellbits + (scDeBruijn[(_:bit * 0x077CB531) >>> 27]);
+						group = i * cellbits + Cell_GetLowestBit(exor);
 						P:7("_Group_SetPlayer: %d %s %d", p, _:(cur & bit) ? ("remove from") : ("add to"), group);
 						if (cur & bit)
 						{
 							// Used to have this group, now don't.
-							//printf("=============");
-							//printf("%d", Iter_Count(GroupPlayers[group]));
 							Iter_Remove(GroupPlayers[group], p);
-							//printf("%d", Iter_Count(GroupPlayers[group]));
-							//printf("=============");
 						}
 						else
 						{
@@ -796,9 +786,7 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 			}
 	#endif
 	#pragma tabsize 4
-	//printf("chain");
 	GROUP_CHAIN?<YSI_g_sNextUpdFunc>(p, YSI_gGroupPlayers[p], g);
-	//printf("done");
 	// NOW save the new version, after everything else has had a chance to
 	// update according to the changes.
 	YSI_gGroupPlayers[p] = g;

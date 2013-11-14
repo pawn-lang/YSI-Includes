@@ -69,7 +69,7 @@ Changelog:
 //#include "..\YSI_Internal\y_funcinc"
 #include "..\YSI_Core\y_debug"
 #include "..\YSI_Internal\y_natives"
-#include "..\YSI_Core\y_cell"
+// #include "..\YSI_Core\y_cell"
 
 #define AMX_FastString(%1,%2,%3,%4) \
 	(((%1) << 0) | ((%2) << 8) | ((%3) << 16) | ((%4) << 24))
