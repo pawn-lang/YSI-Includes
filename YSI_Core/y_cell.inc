@@ -120,13 +120,75 @@ Compile options:
 stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 {
 	// Swap adjacent bits.
-	data = ((data & 0b10101010101010101010101010101010) >>> 1) | ((data & 0b01010101010101010101010101010101) << 1);
+	// data = ((data & 0b10101010101010101010101010101010) >>> 1) | ((data & 0b01010101010101010101010101010101) << 1);
+	#emit LOAD.S.pri           data
+	#emit PUSH.pri
+	#emit CONST.alt            0b10101010101010101010101010101010
+	#emit AND
+	#emit SHR.C.pri            1
+	#emit SWAP.pri
+	#emit CONST.alt            0b01010101010101010101010101010101
+	#emit AND
+	#emit SHL.C.pri            1
+	#emit POP.alt
+	#emit OR
+	
 	// Swap adjacent pairs.
-	data = ((data & 0b11001100110011001100110011001100) >>> 2) | ((data & 0b00110011001100110011001100110011) << 2);
+	// data = ((data & 0b11001100110011001100110011001100) >>> 2) | ((data & 0b00110011001100110011001100110011) << 2);
+	#emit PUSH.pri
+	#emit CONST.alt            0b11001100110011001100110011001100
+	#emit AND
+	#emit SHR.C.pri            2
+	#emit SWAP.pri
+	#emit CONST.alt            0b00110011001100110011001100110011
+	#emit AND
+	#emit SHL.C.pri            2
+	#emit POP.alt
+	#emit OR
+	
 	// Swap adjacent nibbles.
-	data = ((data & 0b11110000111100001111000011110000) >>> 4) | ((data & 0b00001111000011110000111100001111) << 4);
+	// data = ((data & 0b11110000111100001111000011110000) >>> 4) | ((data & 0b00001111000011110000111100001111) << 4);
+	#emit PUSH.pri
+	#emit CONST.alt            0b11110000111100001111000011110000
+	#emit AND
+	#emit SHR.C.pri            4
+	#emit SWAP.pri
+	#emit CONST.alt            0b00001111000011110000111100001111
+	#emit AND
+	#emit SHL.C.pri            4
+	#emit POP.alt
+	#emit OR
+	
 	// Swap all bytes.
-	return (data >>> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0x0000FF00) << 8) | (data << 24);
+	// return (data >>> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0x0000FF00) << 8) | (data << 24);
+	#emit PUSH.pri
+	#emit MOVE.alt
+	
+	#emit SHR.C.pri            24
+	#emit XCHG
+	#emit SHL.C.pri            24
+	#emit OR
+	#emit SWAP.pri
+	
+	#emit PUSH.pri
+	#emit CONST.alt            0x00FF0000
+	#emit AND
+	#emit SHR.C.pri            8
+	#emit SWAP.pri
+	
+	#emit CONST.alt            0x0000FF00
+	#emit AND
+	#emit SHL.C.pri            8
+	
+	#emit POP.alt
+	#emit OR
+	#emit POP.alt
+	#emit OR
+	
+	#emit RETN
+	
+	// Make the compiler happy.
+	return 0;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -155,9 +217,49 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 {
 	// Swap adjacent nibbles.
-	data = ((data & 0b11110000111100001111000011110000) >>> 4) | ((data & 0b00001111000011110000111100001111) << 4);
+	// data = ((data & 0b11110000111100001111000011110000) >>> 4) | ((data & 0b00001111000011110000111100001111) << 4);
+	#emit LOAD.S.pri           data
+	#emit PUSH.pri
+	#emit CONST.alt            0b11110000111100001111000011110000
+	#emit AND
+	#emit SHR.C.pri            4
+	#emit SWAP.pri
+	#emit CONST.alt            0b00001111000011110000111100001111
+	#emit AND
+	#emit SHL.C.pri            4
+	#emit POP.alt
+	#emit OR
+	
 	// Swap all bytes.
-	return (data >>> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0x0000FF00) << 8) | (data << 24);
+	// return (data >>> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0x0000FF00) << 8) | (data << 24);
+	#emit PUSH.pri
+	#emit MOVE.alt
+	
+	#emit SHR.C.pri            24
+	#emit XCHG
+	#emit SHL.C.pri            24
+	#emit OR
+	#emit SWAP.pri
+	
+	#emit PUSH.pri
+	#emit CONST.alt            0x00FF0000
+	#emit AND
+	#emit SHR.C.pri            8
+	#emit SWAP.pri
+	
+	#emit CONST.alt            0x0000FF00
+	#emit AND
+	#emit SHL.C.pri            8
+	
+	#emit POP.alt
+	#emit OR
+	#emit POP.alt
+	#emit OR
+	
+	#emit RETN
+	
+	// Make the compiler happy.
+	return 0;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -186,7 +288,36 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 {
 	// Swap all bytes.
-	return (data >>> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0x0000FF00) << 8) | (data << 24);
+	// return (data >>> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0x0000FF00) << 8) | (data << 24);
+	#emit LOAD.S.pri           data
+	#emit PUSH.pri
+	#emit MOVE.alt
+	
+	#emit SHR.C.pri            24
+	#emit XCHG
+	#emit SHL.C.pri            24
+	#emit OR
+	#emit SWAP.pri
+	
+	#emit PUSH.pri
+	#emit CONST.alt            0x00FF0000
+	#emit AND
+	#emit SHR.C.pri            8
+	#emit SWAP.pri
+	
+	#emit CONST.alt            0x0000FF00
+	#emit AND
+	#emit SHL.C.pri            8
+	
+	#emit POP.alt
+	#emit OR
+	#emit POP.alt
+	#emit OR
+	
+	#emit RETN
+	
+	// Make the compiler happy.
+	return 0;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -227,6 +358,7 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	#emit AND                  // No "AND.C" annoyingly.
 	#emit POP.alt
 	#emit SUB.alt
+	
 	// data = (data & 0x33333333) + ((data >>> 2) & 0x33333333);
 	#emit PUSH.pri
 	#emit SHR.C.pri            2
@@ -236,6 +368,7 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	#emit AND                  // "alt" is already the correct value.
 	#emit POP.alt
 	#emit ADD
+	
 	// return ((data + (data >>> 4) & 0xF0F0F0F) * 0x1010101) >>> 24;
 	#emit MOVE.alt
 	#emit SHR.C.pri            4
@@ -245,6 +378,8 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	#emit SMUL.C               0x1010101
 	#emit SHR.C.pri            24
 	#emit RETN
+	
+	// Make the compiler happy.
 	return 0;
 }
 
@@ -272,6 +407,8 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	NOTE: This function returns "0" for both numbers with the "1" bit set AND
 	the number "0", which has NO bits set.  Check that the number is valid
 	before passing it to this function.
+	
+	See: http://supertech.csail.mit.edu/papers/debruijn.pdf
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -283,8 +420,22 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 				0,  1,  28, 2,  29, 14, 24, 3,  30, 22, 20, 15, 25, 17, 4,  8, 
 				31, 27, 13, 23, 21, 19, 16, 7,  26, 12, 18, 6,  11, 5,  10, 9
 			};
-	// http://supertech.csail.mit.edu/papers/debruijn.pdf
-	return scDeBruijn[((data & -data) * 0x077CB531) >>> 27];
+	
+	// return scDeBruijn[((data & -data) * 0x077CB531) >>> 27];
+	#emit LOAD.S.pri           data
+	#emit MOVE.alt
+	#emit NEG
+	#emit AND
+	#emit SMUL.C               0x077CB531
+	#emit SHR.C.pri            27
+	
+	#emit CONST.alt            scDeBruijn
+	#emit LIDX
+	
+	#emit RETN
+	
+	// Make the compiler happy.
+	return 0;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -315,5 +466,14 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 
 stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 {
-	return data & -data;
+	// return data & -data;
+	#emit LOAD.S.pri           data
+	#emit MOVE.alt
+	#emit NEG
+	#emit AND
+	#emit RETN
+	
+	// Make the compiler happy.
+	return 0;
 }
+

@@ -451,3 +451,33 @@ Test:Cell_CountBits0()
 	// }
 // }
 
+Test:Cell_GetLowestComponent()
+{
+	ASSERT(Cell_GetLowestComponent(0) == 0);
+	ASSERT(Cell_GetLowestComponent(1) == 1);
+	ASSERT(Cell_GetLowestComponent(2) == 2);
+	ASSERT(Cell_GetLowestComponent(6) == 2);
+	ASSERT(Cell_GetLowestComponent(0x110) == 0x10);
+}
+
+Test:Cell_GetLowestBit()
+{
+	ASSERT(Cell_GetLowestBit(0) == 0);
+	ASSERT(Cell_GetLowestBit(1) == 0);
+	ASSERT(Cell_GetLowestBit(0x800) == 11);
+	ASSERT(Cell_GetLowestBit(0x111) == 0);
+	ASSERT(Cell_GetLowestBit(6) == 1);
+	for (new i = 0; i != 32; ++i)
+	{
+		new
+			k = 1 << i;
+		ASSERT(Cell_GetLowestBit(k) == i);
+		k |= 2 << i;
+		ASSERT(Cell_GetLowestBit(k) == i);
+		k |= 4 << i;
+		ASSERT(Cell_GetLowestBit(k) == i);
+		k |= 8 << i;
+		ASSERT(Cell_GetLowestBit(k) == i);
+	}
+}
+
