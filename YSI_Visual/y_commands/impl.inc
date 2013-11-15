@@ -824,15 +824,10 @@ global Command_GetCurrent()
 
 mhook OnPlayerCommandText(playerid, cmdtext[])
 {
-	static
-		e_COMMAND_ERRORS:sErr;
-	if (cmdtext[0] != '/')
-	{
-		// They didn't enter a valid command string (hack maybe).
-		if (cmdtext[0]) return Command_OnReceived(INVALID_INPUT, playerid, cmdtext);
-		else return Command_OnReceived(INVALID_INPUT, playerid, NULL);
-	}
-	return Command_ReProcess(playerid, cmdtext[1], 0);
+	// An interesting side-effect of this code is that, in theory, hacks that
+	// submit commands without the "/" will still work.  Or you could hook
+	// "OnPlayerText" to call "Command_ReProcess" and still work as well.
+	return Command_ReProcess(playerid, cmdtext, 0);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -854,23 +849,32 @@ foreign Command_ReProcess(p,string:c[],h);
 global Command_ReProcess(p,string:c[],h)
 {
 	static
+		sCmd[64] = "@yC_",
+		sPos,
+		sRet,
+		sHash,
 		e_COMMAND_ERRORS:sErr;
-	if (isnull(c)) return Command_OnReceived(INVALID_INPUT, p, NULL);
+	// Check that the input is a valid command.  Note that changing the command
+	// prefix here would be VERY trivial!
+	if ((sPos = _:(c[0] == '/'))) // Relies on "true = 1" later on!
+	{
+		if (!c[1]) return Command_OnReceived(INVALID_INPUT, p, c);
+	}
+	else
+	{
+		if (isnull(c)) return Command_OnReceived(INVALID_INPUT, p, NULL);
+	}
+	// Check for a valid player.
 	#if !defined Y_COMMANDS_NO_IPC
 		if (!IsPlayerConnected(p)) return Command_OnReceived(NO_PLAYER, p, c);
 	#endif
 	if (PA_Get(YSI_g_sDisabledPlayers, p)) return Command_OnReceived(DISABLED, p, c);
 	P:1("Commands_OnPlayerCommandText called: %d %s", p, c);
-	static
-		sCmd[64] = "@yC_",
-		sPos,
-		sRet,
-		sHash;
 	new
 		prevID = YSI_g_sCurrentID;
-	// Get the hashed version of the decoded string.
-	sPos = Puny_EncodeHash(sCmd[4], c, sHash, .delimiter = '@') + 1;
-	while (c[sPos] == ' ') ++sPos;
+	// Get the hashed version of the decoded string, skipping the possible  "/".
+	sPos = Puny_EncodeHash(sCmd[4], c[sPos], sHash, .delimiter = '@') + 1;
+	while (c[sPos] == ' ') ++sPos; // Better/slower: ('\0' < c[sPos] <= ' ').
 	// Find the command in the array.
 	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
 	P:5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd[4], sPos, sHash, YSI_g_sCurrentID);
