@@ -136,24 +136,26 @@ enum E_COMMAND
 
 enum e_COMMAND_ERRORS
 {
-	COMMAND_ZERO_RET,  // The command returned 0.
-	COMMAND_OK,        // Called corectly.
-	COMMAND_UNDEFINED, // Command doesn't exist.
-	COMMAND_DENIED,    // Can't use the command.
-	COMMAND_HIDDEN,    // Can't use the command, don't let them know it exists.
-	COMMAND_NO_PLAYER, // Used by a player who shouldn't exist.
-	COMMAND_DISABLED   // All commands are disabled for this player.
+	COMMAND_ZERO_RET,     // The command returned 0.
+	COMMAND_OK,           // Called corectly.
+	COMMAND_UNDEFINED,    // Command doesn't exist.
+	COMMAND_DENIED,       // Can't use the command.
+	COMMAND_HIDDEN,       // Can't use the command, don't let them know it exists.
+	COMMAND_NO_PLAYER,    // Used by a player who shouldn't exist.
+	COMMAND_DISABLED,     // All commands are disabled for this player.
+	COMMAND_INVALID_INPUT // Didn't type "/something".
 }
 
 enum e_COMMAND_FLAGS (<<= 1)
 {
-	e_COMMAND_FLAGS_ZERO_RET = 1, // The command returned 0.
-	e_COMMAND_FLAGS_OK,        // Called corectly.
-	e_COMMAND_FLAGS_NOT_FOUND, // Command doesn't exist.
-	e_COMMAND_FLAGS_DENIED,    // Can't use the command.
-	e_COMMAND_FLAGS_HIDDEN,    // Can't use the command, don't let them know it exists.
-	e_COMMAND_FLAGS_NO_PLAYER, // Used by a player who shouldn't exist.
-	e_COMMAND_FLAGS_DISABLED,  // All commands are disabled for this player.
+	e_COMMAND_FLAGS_ZERO_RET = 1,  // The command returned 0.
+	e_COMMAND_FLAGS_OK,            // Called corectly.
+	e_COMMAND_FLAGS_NOT_FOUND,     // Command doesn't exist.
+	e_COMMAND_FLAGS_DENIED,        // Can't use the command.
+	e_COMMAND_FLAGS_HIDDEN,        // Can't use the command, don't let them know it exists.
+	e_COMMAND_FLAGS_NO_PLAYER,     // Used by a player who shouldn't exist.
+	e_COMMAND_FLAGS_DISABLED,      // All commands are disabled for this player.
+	e_COMMAND_FLAGS_INVALID_INPUT, // Didn't type "/something".
 	// Save counts for callbacks.
 	e_COMM_FLAG_OPCP     = 0x00FF0000,
 	e_COMM_FLAG_OPCP_ADD = 0x00010000,
@@ -822,7 +824,15 @@ global Command_GetCurrent()
 
 mhook OnPlayerCommandText(playerid, cmdtext[])
 {
-	return Command_ReProcess(playerid, cmdtext, 0);
+	static
+		e_COMMAND_ERRORS:sErr;
+	if (cmdtext[0] != '/')
+	{
+		// They didn't enter a valid command string (hack maybe).
+		if (cmdtext[0]) return Command_OnReceived(INVALID_INPUT, playerid, cmdtext);
+		else return Command_OnReceived(INVALID_INPUT, playerid, NULL);
+	}
+	return Command_ReProcess(playerid, cmdtext[1], 0);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -835,7 +845,7 @@ mhook OnPlayerCommandText(playerid, cmdtext[])
 	false - fail.
 </returns>
 <remarks>
-	This is a complete copy of "OnPlayerCommandText" for speed.
+	Does all the command and error handling.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -845,6 +855,7 @@ global Command_ReProcess(p,string:c[],h)
 {
 	static
 		e_COMMAND_ERRORS:sErr;
+	if (isnull(c)) return Command_OnReceived(INVALID_INPUT, p, NULL);
 	#if !defined Y_COMMANDS_NO_IPC
 		if (!IsPlayerConnected(p)) return Command_OnReceived(NO_PLAYER, p, c);
 	#endif
@@ -855,20 +866,27 @@ global Command_ReProcess(p,string:c[],h)
 		sPos,
 		sRet,
 		sHash;
+	new
+		prevID = YSI_g_sCurrentID;
 	// Get the hashed version of the decoded string.
-	sPos = Puny_EncodeHash(sCmd[4], c[1], sHash, .delimiter = '@') + 1;
+	sPos = Puny_EncodeHash(sCmd[4], c, sHash, .delimiter = '@') + 1;
 	while (c[sPos] == ' ') ++sPos;
 	// Find the command in the array.
 	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
 	P:5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd[4], sPos, sHash, YSI_g_sCurrentID);
-	if (YSI_g_sCurrentID == COMMAND_NOT_FOUND) return Command_OnReceived(UNDEFINED, p, c);
+	if (YSI_g_sCurrentID == COMMAND_NOT_FOUND)
+	{
+		return
+			YSI_g_sCurrentID = prevID,
+			Command_OnReceived(UNDEFINED, p, c);
+	}
 	// Can the player use this command?
 	if (_Command_GetPlayer(YSI_g_sCurrentID, p))
 	{
 		if (!Command_OnReceived(OK, p, c))
 		{
 			return
-				YSI_g_sCurrentID = COMMAND_NOT_FOUND,
+				YSI_g_sCurrentID = prevID,
 				0;
 		}
 		// Find the true version of the command (alts etc).
@@ -878,7 +896,6 @@ global Command_ReProcess(p,string:c[],h)
 		#endif
 			{
 				// In this script.
-				//YSI_g_sCurrentID = YSI_g_sCommands[YSI_g_sCurrentID][E_COMMAND_POINTER];
 				#emit PUSH.S      h
 				#emit LOAD.pri    sPos
 				#emit LOAD.S.alt  c
@@ -906,12 +923,13 @@ global Command_ReProcess(p,string:c[],h)
 			}
 		#endif
 		if (YSI_g_sCommandFlags & e_COMM_FLAG_OPCP) sRet = CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, p, c, sRet);
-		YSI_g_sCurrentID = COMMAND_NOT_FOUND;
-		return Command_Error(p, e_COMMAND_ERRORS:sRet);
+		return
+			YSI_g_sCurrentID = prevID,
+			Command_Error(p, e_COMMAND_ERRORS:sRet);
 	}
 	return
 		sRet = Command_OnReceived(DENIED, p, c),
-		YSI_g_sCurrentID = COMMAND_NOT_FOUND,
+		YSI_g_sCurrentID = prevID,
 		sRet;
 }
 
