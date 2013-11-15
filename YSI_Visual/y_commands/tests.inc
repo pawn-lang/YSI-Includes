@@ -246,7 +246,7 @@ Test:y_commands_ReProcess()
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
-	Command_ReProcess(33, "/y_commands_ReProcess", 0);
+	Command_ReProcess(33, "y_commands_ReProcess", 0);
 	ASSERT(YSI_gsPlayerid == 33);
 	ASSERT(YSI_gsParams[0] == '\0');
 	ASSERT(YSI_gsHelp == 0);
@@ -254,7 +254,7 @@ Test:y_commands_ReProcess()
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
-	Command_ReProcess(33, "/y_commands_ReProcess one", 1);
+	Command_ReProcess(33, "y_commands_ReProcess one", 1);
 	ASSERT(YSI_gsPlayerid == 33);
 	ASSERT(YSI_gsParams[0] != '\0');
 	ASSERT(!strcmp(YSI_gsParams, "one"));
@@ -263,7 +263,7 @@ Test:y_commands_ReProcess()
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
-	Command_ReProcess(33, "/y_commands_ReProcess two and three", 0);
+	Command_ReProcess(33, "y_commands_ReProcess two and three", 0);
 	ASSERT(YSI_gsPlayerid == 33);
 	ASSERT(YSI_gsParams[0] != '\0');
 	ASSERT(!strcmp(YSI_gsParams, "two and three"));
@@ -272,7 +272,7 @@ Test:y_commands_ReProcess()
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
-	Command_ReProcess(33, "/y_commands_ReProcess 99", 1);
+	Command_ReProcess(33, "y_commands_ReProcess 99", 1);
 	ASSERT(YSI_gsPlayerid == 33);
 	ASSERT(YSI_gsParams[0] != '\0');
 	ASSERT(!strcmp(YSI_gsParams, "99"));
@@ -281,7 +281,7 @@ Test:y_commands_ReProcess()
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
-	Command_ReProcess(33, "/y_commands_ReProcess yeah......", 0);
+	Command_ReProcess(33, "y_commands_ReProcess yeah......", 0);
 	ASSERT(YSI_gsPlayerid == 33);
 	ASSERT(YSI_gsParams[0] != '\0');
 	ASSERT(!strcmp(YSI_gsParams, "yeah......"));
@@ -290,7 +290,7 @@ Test:y_commands_ReProcess()
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
-	Command_ReProcess(33, "/y_commands_ReProcess Hello World", 1);
+	Command_ReProcess(33, "y_commands_ReProcess Hello World", 1);
 	ASSERT(YSI_gsPlayerid == 33);
 	ASSERT(YSI_gsParams[0] != '\0');
 	ASSERT(!strcmp(YSI_gsParams, "Hello World"));
