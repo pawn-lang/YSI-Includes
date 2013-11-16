@@ -292,7 +292,7 @@ stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 <param name="wlen">The length of the destination.</param>
 <param name="delimiter">What character to place between the parts.</param>
 <returns>
-	-
+	The length of string read.
 </returns>
 <remarks>
 	Takes a unicode string and converts it to punycode, while at the same time
@@ -318,7 +318,7 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 				{
 					return
 						dst[widx] = '\0',
-						widx;
+						rlen;
 				}
 				break;
 			}
@@ -329,8 +329,7 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 		else bb = false;
 	}
 	// Wrote out all the characters.
-	//if (widx == rlen) return (dst[widx] = '\0'), -1;
-	if (widx >= wlen) return (dst[widx] = '\0'), -1;
+	if (widx >= wlen) return (dst[widx] = '\0'), rlen;
 	dst[widx++] = delimiter,
 	hash = hash * 33 + delimiter;
 	// Set up punycode variables.
@@ -356,7 +355,7 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 			}
 		}
 		// Make sure the number isn't too big to encode.
-		if ((m - n) > (cellmax - delta) / (codePointsWritten + 1)) return (dst[widx] = '\0'), -1;
+		if ((m - n) > (cellmax - delta) / (codePointsWritten + 1)) return (dst[widx] = '\0'), rlen;
 		// More punycode state machine.
 		delta += (m - n) * (codePointsWritten + 1),
 		n = m;
@@ -365,7 +364,7 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 			ch = tolower(src[ridx]);
 			if (ch < n)
 			{
-				if (++delta == 0) return (dst[widx] = '\0'), -1;
+				if (++delta == 0) return (dst[widx] = '\0'), rlen;
 			}
 			else if (ch == n)
 			{
@@ -378,7 +377,7 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 		++n,
 		++delta;
 	}
-	return (dst[widx] = '\0'), widx;
+	return (dst[widx] = '\0'), rlen;
 }
 
 /**--------------------------------------------------------------------------**\
