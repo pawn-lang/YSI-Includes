@@ -172,15 +172,16 @@ Test:y_commands_Hashing()
 	//printf("%s %s", dst0, dst1);
 	ASSERT(!strcmp(dst0, dst1));
 	ASSERT(hash0 == hash1);
-	ASSERT(len == strlen(dst1));
+	//ASSERT(len == strlen(dst1));
+	ASSERT(len == 9);
 	// CASE SENSITIVE.
-	Puny_Encode(dst0, "Hello\x102;you", .delimiter = '@');
+	Puny_Encode(dst0, "Hello\x102;there", .delimiter = '@');
 	HashMap_Hash(dst0, hash0);
 	// V2.
-	len = Puny_EncodeHash(dst1, "Hello\x102;you there", hash1, .delimiter = '@');
+	len = Puny_EncodeHash(dst1, "Hello\x102;there you", hash1, .delimiter = '@');
 	ASSERT(!!strcmp(dst0, dst1));
 	ASSERT(hash0 != hash1);
-	ASSERT(len == strlen(dst1));
+	ASSERT(len == 11);
 }
 
 static
@@ -233,6 +234,7 @@ static stock
 
 YCMD:y_commands_reprocess(playerid, params[], help)
 {
+	printf("%d %x %d", playerid, params[0], help);
 	YSI_gsPlayerid = playerid;
 	strcpy(YSI_gsParams, params);
 	YSI_gsHelp = help;
@@ -295,5 +297,47 @@ Test:y_commands_ReProcess()
 	ASSERT(YSI_gsParams[0] != '\0');
 	ASSERT(!strcmp(YSI_gsParams, "Hello World"));
 	ASSERT(YSI_gsHelp == 1);
+}
+
+YCMD:y_commands_t1(playerid, params[], help)
+{
+	return 1;
+}
+
+YCMD:y_commands_t11(playerid, params[], help)
+{
+	return 1;
+}
+
+YCMD:y_commands_t111(playerid, params[], help)
+{
+	return 1;
+}
+
+YCMD:y_commands_t1111(playerid, params[], help)
+{
+	return 1;
+}
+
+YCMD:y_commands_t11111(playerid, params[], help)
+{
+	return 1;
+}
+
+YCMD:y_commands_t111111(playerid, params[], help)
+{
+	return 1;
+}
+
+Test:y_commands_lengths()
+{
+	call OnPlayerConnect(88);
+	ASSERT(call OnPlayerCommandText(88, "/y_commands_t1") == 1);
+	ASSERT(call OnPlayerCommandText(88, "/y_commands_t11") == 1);
+	ASSERT(call OnPlayerCommandText(88, "/y_commands_t111") == 1);
+	ASSERT(call OnPlayerCommandText(88, "/y_commands_t1111") == 1);
+	ASSERT(call OnPlayerCommandText(88, "/y_commands_t11111") == 1);
+	ASSERT(call OnPlayerCommandText(88, "/y_commands_t111111") == 1);
+	ASSERT(call OnPlayerCommandText(88, "/y_commands_t1111111") == 0);
 }
 

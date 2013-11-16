@@ -873,7 +873,7 @@ global Command_ReProcess(p,string:c[],h)
 	new
 		prevID = YSI_g_sCurrentID;
 	// Get the hashed version of the decoded string, skipping the possible  "/".
-	sPos = Puny_EncodeHash(sCmd[4], c[sPos], sHash, .delimiter = '@') + 1;
+	sPos = Puny_EncodeHash(sCmd[4], c[sPos], sHash, .delimiter = '@');
 	while (c[sPos] == ' ') ++sPos; // Better/slower: ('\0' < c[sPos] <= ' ').
 	// Find the command in the array.
 	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
