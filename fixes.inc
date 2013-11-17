@@ -1062,6 +1062,16 @@
 #endif
 
 /* 
+ * _FIXES_VALID_PLAYERID
+ * 
+ * The old check for valid player IDs was (0 <= p < MAX_PLAYERS).  This method
+ * replaces the two comparisons with a single comparison and a subtraction.  The
+ * second subtraction is on a constant, and thus done by the compiler.  In
+ * effect, this does an unsigned comparison of the two numbers.
+ */
+#define _FIXES_VALID_PLAYERID(%0) (((%0) - cellmin) < ((MAX_PLAYERS) - cellmin))
+
+/* 
  * E_FIXES_WORLDBOUND_DATA
  * 
  * Store data for each player on their worldbound data.
@@ -2913,7 +2923,7 @@ public OnGameModeInit()
 	#if FIXES_Single
 		stock FIXES_SetPlayerWorldBounds(playerid, Float:x_max, Float:x_min, Float:y_max, Float:y_min)
 		{
-			if (0 <= playerid < MAX_PLAYERS)
+			if (_FIXES_VALID_PLAYERID(playerid))
 			{
 				FIXES_PRINTF("Call SetPlayerWorldBounds");
 				if (x_max == x_min || y_max == y_min)
@@ -2965,7 +2975,7 @@ public OnGameModeInit()
 		
 		stock FIXES_SetPlayerWorldBounds(playerid, Float:x_max, Float:x_min, Float:y_max, Float:y_min)
 		{
-			if (0 <= playerid < MAX_PLAYERS)
+			if (_FIXES_VALID_PLAYERID(playerid))
 			{
 				FIXES_PRINTF("Call SetPlayerWorldBounds");
 				return
@@ -3073,7 +3083,7 @@ public OnGameModeInit()
 		
 		stock FIXES_TogglePlayerControllable(playerid, toggle)
 		{
-			if (0 <= playerid < MAX_PLAYERS)
+			if (_FIXES_VALID_PLAYERID(playerid))
 			{
 				return
 					CallRemoteFunction(FIXES_gscTogglePlayerControl, FIXES_gscSpec@ii, playerid, toggle),
@@ -3743,7 +3753,7 @@ public OnGameModeInit()
 			{
 				#if FIX_GetPlayerMenu
 					#if FIX_HideMenuForPlayer_2
-						if (0 <= playerid < MAX_PLAYERS && FIXES_gsCurrentMenu[playerid] == menuid)
+						if (_FIXES_VALID_PLAYERID(playerid) && FIXES_gsCurrentMenu[playerid] == menuid)
 					#else
 						if (FIXES_gsCurrentMenu[playerid] == menuid && HideMenuForPlayer(menuid, playerid))
 					#endif
@@ -3841,7 +3851,7 @@ public OnGameModeInit()
 #if FIX_GetPlayerMenu
 	stock Menu:FIXES_GetPlayerMenu(playerid)
 	{
-		if (0 <= playerid < MAX_PLAYERS)
+		if (_FIXES_VALID_PLAYERID(playerid))
 		{
 			return FIXES_gsCurrentMenu[playerid];
 		}
@@ -4601,7 +4611,7 @@ public OnGameModeInit()
 	#if FIXES_Single
 		stock FIXES_AllowPlayerTeleport(playerid, allow)
 		{
-			if (0 <= playerid < MAX_PLAYERS)
+			if (_FIXES_VALID_PLAYERID(playerid))
 			{
 				if (allow)
 				{
@@ -4617,7 +4627,7 @@ public OnGameModeInit()
 	#else
 		stock FIXES_AllowPlayerTeleport(playerid, allow)
 		{
-			if (0 <= playerid < MAX_PLAYERS)
+			if (_FIXES_VALID_PLAYERID(playerid))
 			{
 				CallRemoteFunction(FIXES_gscAllowTeleport, FIXES_gscSpec@ii, playerid, allow);
 			}
@@ -4750,7 +4760,7 @@ public OnGameModeInit()
 #if FIX_OnDialogResponse || FIX_GetPlayerDialog
 	stock FIXES_ShowPlayerDialog(playerid, dialog, style, title[], caption[], button1[], button2[])
 	{
-		if (0 <= playerid < MAX_PLAYERS)
+		if (_FIXES_VALID_PLAYERID(playerid))
 		{
 			#if FIXES_Single
 				FIXES_gsDialogID[playerid] = dialog;
@@ -4852,7 +4862,7 @@ public OnGameModeInit()
 #if FIX_GetPlayerDialog
 	stock FIXES_GetPlayerDialog(playerid)
 	{
-		if (0 <= playerid < MAX_PLAYERS)
+		if (_FIXES_VALID_PLAYERID(playerid))
 		{
 			#if FIXES_Single
 				return FIXES_gsDialogID[playerid];
@@ -5663,3 +5673,5 @@ public OnGameModeInit()
 #undef _FIXES_ATTACHMENTS
 #undef _FIXES_IS_UNSET
 #undef FIXES_PRINTF
+#undef _FIXES_VALID_PLAYERID
+
