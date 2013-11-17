@@ -2455,7 +2455,7 @@ static stock Area_IsInCube(Float:x, Float:y, Float:z, Float:bounds[])
 #pragma deprecated Use Area_GetPlayerAreas
 stock Area_GetPlayerArea(playerid)
 {
-	if (0 <= playerid < MAX_PLAYERS)
+	if (VALID_PLAYERID(playerid))
 	{
 		return YSI_g_sPlayerArea[playerid][0];
 	}
@@ -2542,7 +2542,7 @@ foreign Area_GetPlayerAreas(playerid, idx);
 
 global Area_GetPlayerAreas(playerid, idx)
 {
-	if (0 <= playerid < MAX_PLAYERS)
+	if (VALID_PLAYERID(playerid))
 	{
 		if (0 <= idx <= 999)
 		{

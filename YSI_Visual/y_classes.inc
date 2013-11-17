@@ -1291,7 +1291,7 @@ foreign Class_Get(playerid);
 
 global Class_Get(playerid)
 {
-	if (0 <= playerid < MAX_PLAYERS)
+	if (VALID_PLAYERID(playerid))
 	{
 		return _:(YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_SKIN);
 	}

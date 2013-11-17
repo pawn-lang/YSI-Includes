@@ -217,7 +217,7 @@ stock Player_Reload(playerid)
 
 stock Player_SetPreload(playerid, data[E_USER_PRELOAD])
 {
-	if (0 <= playerid < MAX_PLAYERS)
+	if (VALID_PLAYERID(playerid))
 	{
 		YSI_g_sPreloadData[playerid] = data;
 	}

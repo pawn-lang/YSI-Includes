@@ -1423,7 +1423,7 @@ Notes:
 
 global Race_GetPlayerRace(playerid)
 {
-	if (0 <= playerid < MAX_PLAYERS) return YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE];
+	if (VALID_PLAYERID(playerid)) return YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE];
 	return NO_RACE;
 }
 

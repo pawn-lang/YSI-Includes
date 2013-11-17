@@ -125,6 +125,8 @@ new stock
 	NULL[2] = {1, 0};
 #endif
 
+#define UNSIGNED(%0) ((%0) - cellmin)
+
 // Define "volatile" as nothing.
 #if !defined volatile
 	#define volatile
@@ -172,6 +174,23 @@ new stock
 #define FLOAT_SIGNALING_NOT_A_NUMBER    (Float:0x7FBFFFFF)
 
 //#pragma unused TRUE, FALSE, NULL
+
+/**--------------------------------------------------------------------------**\
+<summary>
+	UCMP(value, upper);
+</summary>
+<param name="value">The unsigned number to compare.</param>
+<param name="upper">The upper limit.</param>
+<returns>
+	An unsigned comparison between the two values.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define UCMP(%0,%1) (((%0) - cellmin) < ((%1) - cellmin))
+#define VALID_PLAYERID(%0) UCMP((%0), MAX_PLAYERS)
 
 /**--------------------------------------------------------------------------**\
 <summary>

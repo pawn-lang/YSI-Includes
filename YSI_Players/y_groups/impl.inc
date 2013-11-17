@@ -698,7 +698,7 @@ foreign void:Group_SetPlayer(Group:g,p,bool:s);
 
 global void:Group_SetPlayer(Group:g,p,bool:s)
 {
-	if (_Group_IsValid(g) && 0 <= p < MAX_PLAYERS)
+	if (_Group_IsValid(g) && VALID_PLAYERID(p))
 	{
 		GROUP_FIX(g);
 		//static
@@ -920,7 +920,7 @@ foreign bool:Group_GetPlayer(Group:g,p);
 global bool:Group_GetPlayer(Group:g,p)
 {
 	P:2("bool:Group_GetPlayer called: %i, %i", _:g, p);
-	if (_Group_IsValid(g) && 0 <= p < MAX_PLAYERS)
+	if (_Group_IsValid(g) && VALID_PLAYERID(p))
 	{
 		GROUP_FIX(g);
 		return Bit_Get(YSI_gGroupPlayers[p], _:g);

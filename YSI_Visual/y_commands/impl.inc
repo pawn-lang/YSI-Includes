@@ -130,6 +130,9 @@ enum E_COMMAND
 	
 	// Who can use this command?
 	PlayerArray:E_COMMAND_USERS<MAX_PLAYERS>,
+	#if defined Y_COMMANDS_USE_CHARS
+		E_COMMAND_PREFIX,
+	#endif
 	// Function pointer.
 	E_COMMAND_POINTER
 }
@@ -140,9 +143,10 @@ enum e_COMMAND_ERRORS
 	COMMAND_OK,           // Called corectly.
 	COMMAND_UNDEFINED,    // Command doesn't exist.
 	COMMAND_DENIED,       // Can't use the command.
-	COMMAND_HIDDEN,       // Can't use the command, don't let them know it exists.
+	COMMAND_HIDDEN, // Can't use the command, don't let them know it exists.
 	COMMAND_NO_PLAYER,    // Used by a player who shouldn't exist.
 	COMMAND_DISABLED,     // All commands are disabled for this player.
+	COMMAND_BAD_PREFIX,   // Used "/" instead of "#", or something similar.
 	COMMAND_INVALID_INPUT // Didn't type "/something".
 }
 
@@ -152,9 +156,10 @@ enum e_COMMAND_FLAGS (<<= 1)
 	e_COMMAND_FLAGS_OK,            // Called corectly.
 	e_COMMAND_FLAGS_NOT_FOUND,     // Command doesn't exist.
 	e_COMMAND_FLAGS_DENIED,        // Can't use the command.
-	e_COMMAND_FLAGS_HIDDEN,        // Can't use the command, don't let them know it exists.
+	e_COMMAND_FLAGS_HIDDEN,
 	e_COMMAND_FLAGS_NO_PLAYER,     // Used by a player who shouldn't exist.
 	e_COMMAND_FLAGS_DISABLED,      // All commands are disabled for this player.
+	e_COMMAND_FLAGS_BAD_PREFIX,
 	e_COMMAND_FLAGS_INVALID_INPUT, // Didn't type "/something".
 	// Save counts for callbacks.
 	e_COMM_FLAG_OPCP     = 0x00FF0000,
@@ -173,6 +178,7 @@ static stock __declspec(distributed) YSI_g_sErrorMessages[e_COMMAND_ERRORS][144]
 static stock __declspec(dist_special) PlayerArray:YSI_g_sDisabledPlayers<MAX_PLAYERS>;
 
 static stock
+	BitArray:YSI_g_sPrefixes<128>,
 	YSI_g_sHighestID,
 	YSI_g_sReturnBuffer[YSI_MAX_STRING],
 	// Quickly reference and store commands by name.
@@ -214,6 +220,41 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 \**--------------------------------------------------------------------------**/
 
 #define _Command_IsEmptySlot(%0) (!YSI_g_sCommands[(%0)][E_COMMAND_NAME])
+
+/**--------------------------------------------------------------------------**\
+<summary>_Command_IsPrefix</summary>
+<param name="idx">Command to test.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Checks to see if a character is a possible prefix character.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#if defined Y_COMMANDS_USE_CHARS
+	// #define UNSIGNED(%0) ((%0) - cellmin) // This would INCLUDE 0 - BAD!
+	// #define _Command_IsPrefix(%0) ((UNSIGNED(%0) < UNSIGNED(128)) && Bit_Get(YSI_g_sPrefixes, (%0)))
+	
+	// #define _Command_IsPrefix(%0) ((0 < (%0) < (128)) && Bit_Get(YSI_g_sPrefixes, (%0)))
+	// Cunning!
+	#define _Command_IsPrefix(%0) ((((%0) - cellmin - 1) < (128 - cellmin - 1)) && Bit_Get(YSI_g_sPrefixes, (%0)))
+#else
+	#define _Command_IsPrefix(%0) ((%0) == '/')
+#endif
+
+/**--------------------------------------------------------------------------**\
+<summary>_Command_GetPrefix</summary>
+<param name="idx">Command to test.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Checks to see if a character is a possible prefix character.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define _Command_GetPrefix(%0) (YSI_g_sCommands[(%0)][E_COMMAND_PREFIX])
 
 /**--------------------------------------------------------------------------**\
 <summary>_Command_IsAlt</summary>
@@ -678,7 +719,7 @@ foreign bool:Command_GetPlayer(cmd, pid);
 
 global bool:Command_GetPlayer(cmd, pid)
 {
-	if (_Command_IsValid(cmd) && 0 <= pid < MAX_PLAYERS) return _Command_GetPlayer(cmd, pid);
+	if (_Command_IsValid(cmd) && VALID_PLAYERID(pid)) return _Command_GetPlayer(cmd, pid);
 	return false;
 }
 
@@ -724,7 +765,7 @@ foreign void:Command_SetPlayer(c, p, bool:s);
 global void:Command_SetPlayer(c, p, bool:s)
 {
 	P:2("Command_SetPlayer called: %i, %i, %i", c, p, s);
-	if (_Command_IsValid(c) && 0 <= p < MAX_PLAYERS) PA_Set(YSI_g_sCommands[c][E_COMMAND_USERS], p, s);
+	if (_Command_IsValid(c) && VALID_PLAYERID(p)) PA_Set(YSI_g_sCommands[c][E_COMMAND_USERS], p, s);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -856,7 +897,7 @@ global Command_ReProcess(p,string:c[],h)
 		e_COMMAND_ERRORS:sErr;
 	// Check that the input is a valid command.  Note that changing the command
 	// prefix here would be VERY trivial!
-	if ((sPos = _:(c[0] == '/'))) // Relies on "true = 1" later on!
+	if ((sRet = _:_Command_IsPrefix(c[0]))) // Relies on "true = 1" later on!
 	{
 		if (!c[1]) return Command_OnReceived(INVALID_INPUT, p, c);
 	}
@@ -873,7 +914,7 @@ global Command_ReProcess(p,string:c[],h)
 	new
 		prevID = YSI_g_sCurrentID;
 	// Get the hashed version of the decoded string, skipping the possible  "/".
-	sPos = Puny_EncodeHash(sCmd[4], c[sPos], sHash, .delimiter = '@') + sPos;
+	sPos = Puny_EncodeHash(sCmd[4], c[sRet], sHash, .delimiter = '@') + sRet;
 	while (c[sPos] == ' ') ++sPos; // Better/slower: ('\0' < c[sPos] <= ' ').
 	// Find the command in the array.
 	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
@@ -884,6 +925,14 @@ global Command_ReProcess(p,string:c[],h)
 			YSI_g_sCurrentID = prevID,
 			Command_OnReceived(UNDEFINED, p, c);
 	}
+	#if defined Y_COMMANDS_USE_CHARS
+		if (sRet && _Command_GetPrefix(YSI_g_sCurrentID) != c[0])
+		{
+			// Have a prefix, but not the right one.  Calling this function
+			// directly always works for all possible command prefixes.
+			return Command_OnReceived(BAD_PREFIX, p, c);
+		}
+	#endif
 	// Can the player use this command?
 	if (_Command_GetPlayer(YSI_g_sCurrentID, p))
 	{
@@ -956,7 +1005,7 @@ native Command_GetDisplay(funcid, playerid);
 static stock _Command_GetDisplay(funcid, playerid)
 {
 	YSI_g_sReturnBuffer[0] = '\0';
-	if (_Command_IsValid(funcid) && 0 <= playerid < MAX_PLAYERS)
+	if (_Command_IsValid(funcid) && VALID_PLAYERID(playerid))
 	{
 		new
 			slot = PA_Slot(playerid),

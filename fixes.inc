@@ -1062,16 +1062,6 @@
 #endif
 
 /* 
- * _FIXES_VALID_PLAYERID
- * 
- * The old check for valid player IDs was (0 <= p < MAX_PLAYERS).  This method
- * replaces the two comparisons with a single comparison and a subtraction.  The
- * second subtraction is on a constant, and thus done by the compiler.  In
- * effect, this does an unsigned comparison of the two numbers.
- */
-#define _FIXES_VALID_PLAYERID(%0) (((%0) - cellmin) < ((MAX_PLAYERS) - cellmin))
-
-/* 
  * E_FIXES_WORLDBOUND_DATA
  * 
  * Store data for each player on their worldbound data.
@@ -1159,6 +1149,17 @@ enum e_FIXES_SETTINGS (<<= 1)
  * cell.
  */
 #define _FIXES_ATTACHMENTS (cellbits / MAX_PLAYER_ATTACHED_OBJECTS)
+
+/* 
+ * _FIXES_VALID_PLAYERID
+ * 
+ * The old check for valid player IDs was (0 <= p < MAX_PLAYERS).  This method
+ * replaces the two comparisons with a single comparison and a subtraction.  The
+ * second subtraction is on a constant, and thus done by the compiler.  In
+ * effect, this does an unsigned comparison of the two numbers instead of two
+ * signed ones.
+ */
+#define _FIXES_VALID_PLAYERID(%0) (((%0) - cellmin) < ((MAX_PLAYERS) - cellmin))
 
 // These varaibles are NOT pre-processor dependent as they are stock.  It's just
 // simpler than trying to figure out when or if a semi-colon is needed.
