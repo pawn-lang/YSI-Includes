@@ -234,7 +234,7 @@ static stock
 
 YCMD:y_commands_reprocess(playerid, params[], help)
 {
-	printf("%d %x %d", playerid, params[0], help);
+	//printf("%d %x %d", playerid, params[0], help);
 	YSI_gsPlayerid = playerid;
 	strcpy(YSI_gsParams, params);
 	YSI_gsHelp = help;
@@ -297,6 +297,64 @@ Test:y_commands_ReProcess()
 	ASSERT(YSI_gsParams[0] != '\0');
 	ASSERT(!strcmp(YSI_gsParams, "Hello World"));
 	ASSERT(YSI_gsHelp == 1);
+}
+
+Test:y_commands_Parameters()
+{
+	call OnPlayerConnect(34);
+	// 1.
+	YSI_gsPlayerid = INVALID_PLAYER_ID;
+	YSI_gsParams[0] = '\0';
+	YSI_gsHelp = -1;
+	call OnPlayerCommandText(34, "/y_commands_ReProcess");
+	ASSERT(YSI_gsPlayerid == 34);
+	ASSERT(YSI_gsParams[0] == '\0');
+	ASSERT(YSI_gsHelp == 0);
+	// 2.
+	YSI_gsPlayerid = INVALID_PLAYER_ID;
+	YSI_gsParams[0] = '\0';
+	YSI_gsHelp = -1;
+	call OnPlayerCommandText(34, "/y_commands_ReProcess one");
+	ASSERT(YSI_gsPlayerid == 34);
+	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT(!strcmp(YSI_gsParams, "one"));
+	ASSERT(YSI_gsHelp == 0);
+	// 3.
+	YSI_gsPlayerid = INVALID_PLAYER_ID;
+	YSI_gsParams[0] = '\0';
+	YSI_gsHelp = -1;
+	call OnPlayerCommandText(34, "/y_commands_ReProcess two and three");
+	ASSERT(YSI_gsPlayerid == 34);
+	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT(!strcmp(YSI_gsParams, "two and three"));
+	ASSERT(YSI_gsHelp == 0);
+	// 4.
+	YSI_gsPlayerid = INVALID_PLAYER_ID;
+	YSI_gsParams[0] = '\0';
+	YSI_gsHelp = -1;
+	call OnPlayerCommandText(34, "/y_commands_ReProcess 99");
+	ASSERT(YSI_gsPlayerid == 34);
+	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT(!strcmp(YSI_gsParams, "99"));
+	ASSERT(YSI_gsHelp == 0);
+	// 5.
+	YSI_gsPlayerid = INVALID_PLAYER_ID;
+	YSI_gsParams[0] = '\0';
+	YSI_gsHelp = -1;
+	call OnPlayerCommandText(34, "/y_commands_ReProcess yeah......");
+	ASSERT(YSI_gsPlayerid == 34);
+	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT(!strcmp(YSI_gsParams, "yeah......"));
+	ASSERT(YSI_gsHelp == 0);
+	// 6.
+	YSI_gsPlayerid = INVALID_PLAYER_ID;
+	YSI_gsParams[0] = '\0';
+	YSI_gsHelp = -1;
+	call OnPlayerCommandText(34, "/y_commands_ReProcess Hello World");
+	ASSERT(YSI_gsPlayerid == 34);
+	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT(!strcmp(YSI_gsParams, "Hello World"));
+	ASSERT(YSI_gsHelp == 0);
 }
 
 YCMD:y_commands_t1(playerid, params[], help)
