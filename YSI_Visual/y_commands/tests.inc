@@ -399,3 +399,21 @@ Test:y_commands_lengths()
 	ASSERT(call OnPlayerCommandText(88, "/y_commands_t1111111") == 0);
 }
 
+#if defined Y_COMMANDS_USE_CHARS
+	YCMD:y_commands_prefix1(playerid, params[], help)
+	{
+		return 1;
+	}
+	
+	Test:y_commands_prefix1()
+	{
+		call OnPlayerConnect(89);
+		ASSERT(call OnPlayerCommandText(89, "/y_commands_prefix1") == 1);
+		ASSERT(call OnPlayerText(89, "!y_commands_prefix1") == 1);
+		ASSERT(Command_SetPrefix(YCMD:y_commands_prefix1, 'q') == false);
+		ASSERT(Command_SetPrefix(YCMD:y_commands_prefix1, '!') == true);
+		ASSERT(call OnPlayerCommandText(89, "/y_commands_prefix1") == 0);
+		ASSERT(call OnPlayerText(89, "!y_commands_prefix1") == 0);
+	}
+#endif
+

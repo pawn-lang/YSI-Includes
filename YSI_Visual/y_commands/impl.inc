@@ -354,7 +354,7 @@ global bool:Command_IsValid(cmd)
 
 #if defined Y_COMMANDS_USE_CHARS
 	foreign Command_GetPrefix(c);
-
+	
 	global Command_GetPrefix(c)
 	{
 		if (_Command_IsValid(c)) return _Command_GetPrefix(c);
@@ -362,16 +362,12 @@ global bool:Command_IsValid(cmd)
 	}
 	
 	foreign Command_GetPrefixNamed(string:c[]);
-
+	
 	global Command_GetPrefixNamed(string:c[])
 	{
 		return Command_GetPrefix(Command_Find(c));
 	}
-// Don't compile at all if it is disabled.
-// #else
-	// #define Command_GetPrefix(%0) ('/')
-	
-	// #define Command_GetPrefixNamed(%0) ('/')
+	// Don't compile at all if it is disabled.
 #endif
 
 /**--------------------------------------------------------------------------**\
@@ -411,7 +407,7 @@ global bool:Command_IsValid(cmd)
 #if defined Y_COMMANDS_USE_CHARS
 	foreign bool:Command_IsPrefixUsed(prefix);
 	
-	foreign bool:Command_IsPrefixUsed(prefix)
+	global bool:Command_IsPrefixUsed(prefix)
 	{
 		return Command_IsValidPrefix(prefix) && Bit_Get(YSI_g_sPrefixes, prefix);
 	}
@@ -431,7 +427,8 @@ global bool:Command_IsValid(cmd)
 #if defined Y_COMMANDS_USE_CHARS
 	static stock Command_FlushPrefixes()
 	{
-		Bit_SetAll(YSI_g_sPrefixes, false);
+		Bit_SetAll(YSI_g_sPrefixes, false),
+		Bit_Let(YSI_g_sPrefixes, '/');
 		for (new i = 0; i != MAX_COMMANDS; ++i)
 		{
 			if (_Command_IsActive(i))
@@ -439,6 +436,7 @@ global bool:Command_IsValid(cmd)
 				Bit_Let(YSI_g_sPrefixes, _Command_GetPrefix(i));
 			}
 		}
+		return 1;
 	}
 #endif
 
@@ -463,14 +461,11 @@ global bool:Command_IsValid(cmd)
 		{
 			if (_Command_IsValid(c))
 			{
-				// Set this command's prefix, and add the prefix to the global
-				// list. Note that the list is NOT kept up to date when a
-				// command has its prefix REMOVED or CHANGED.  The old prefix
-				// will stay marked as active even if no commands remain using
-				// it.  That is, until the list is rebuilt on a mode change.
-				YSI_g_sCommands[c][E_COMMAND_PREFIX] = prefix;
-				Command_FlushPrefixes();
-				return true;
+				// Set this command's prefix, and add the prefix to the list.
+				return
+					YSI_g_sCommands[c][E_COMMAND_PREFIX] = prefix,
+					Command_FlushPrefixes(),
+					true;
 			}
 		}
 		return false;
@@ -482,11 +477,6 @@ global bool:Command_IsValid(cmd)
 	{
 		return Command_SetPrefix(Command_Find(c), prefix);
 	}
-// Don't compile at all if it is disabled.
-// #else
-	// #define Command_GetPrefix(%0) ('/')
-	
-	// #define Command_GetPrefixNamed(%0) ('/')
 #endif
 
 /**--------------------------------------------------------------------------**\
@@ -527,6 +517,10 @@ hook OnScriptInit()
 {
 	P:1("Command_OnScriptInit called");
 	#if YSIM_NOT_CLIENT
+		#if defined Y_COMMANDS_USE_CHARS
+			Bit_SetAll(YSI_g_sPrefixes, false),
+			Bit_Let(YSI_g_sPrefixes, '/'),
+		#endif
 		HashMap_Init(YSI_g_sCommandMap, YSI_g_sCommands);
 		for (new func = 0; func != MAX_COMMANDS; ++func)
 		{
@@ -584,6 +578,9 @@ global void:_Command_Rebuild()
 			YSI_g_sHighestID = i + 1;
 		}
 	}
+	#if defined Y_COMMANDS_USE_CHARS
+		Command_FlushPrefixes();
+	#endif
 }
 
 HANDOFF()
@@ -736,7 +733,10 @@ native Command_Add(funcname[], script);
 			P:E("Could not add command to array.");
 			return COMMAND_NOT_FOUND;
 		}
-		YSI_g_sHighestID = max(YSI_g_sHighestID, id + 1);
+		#if defined Y_COMMANDS_USE_CHARS
+			YSI_g_sCommands[id][E_COMMAND_PREFIX] = '/',
+		#endif
+		YSI_g_sHighestID = max(YSI_g_sHighestID, id + 1),
 		// Save the command's pointer.
 		YSI_g_sCommands[id][E_COMMAND_POINTER] = ptr,
 		// Add this command to the hash map (does the name too).
@@ -791,18 +791,21 @@ global Command_AddAlt(oidx, string:cmd[])
 			P:E("Could not add alt command to array.");
 			return COMMAND_NOT_FOUND;
 		}
+		#if defined Y_COMMANDS_USE_CHARS
+			YSI_g_sCommands[id][E_COMMAND_PREFIX] = '/',
+		#endif
 		// Save the new highest ID for loops later.
-		YSI_g_sHighestID = max(YSI_g_sHighestID, id + 1);
+		YSI_g_sHighestID = max(YSI_g_sHighestID, id + 1),
 		// Save the command's pointer.
-		YSI_g_sCommands[id][E_COMMAND_POINTER] = cellmin | oidx;
+		YSI_g_sCommands[id][E_COMMAND_POINTER] = cellmin | oidx,
+		// Add this command to the hash map (does the name too).
+		HashMap_Add(YSI_g_sCommandMap, cmd, id),
 		// Add all players, or defer to y_groups.
 		PA_FastInit(YSI_g_sCommands[id][E_COMMAND_USERS]);
 		NO_GROUPS(id)
 		{
 			PA_Init(YSI_g_sCommands[id][E_COMMAND_USERS], true);
 		}
-		// Add this command to the hash map (does the name too).
-		HashMap_Add(YSI_g_sCommandMap, cmd, id);
 		// Copy the master script information.  Note that this won't be kept up
 		// to date with new scripts unfortunately.
 		MASTER_COPY<id, oidx>
@@ -974,6 +977,31 @@ foreign Command_GetCurrent();
 global Command_GetCurrent()
 {
 	return YSI_g_sCurrentID;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_OnPlayerText</summary>
+<param name="playerid">Player who typed something.</param>
+<param name="text[]">What they typed.</param>
+<returns>
+	0 - Could not process the command.
+	1 - Called the command.
+</returns>
+<remarks>
+	Used to implement alternate command prefixes.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+mhook OnPlayerText(playerid, text[])
+{
+	// Is this prefix used anywhere?
+	if (_Command_IsPrefix(text[0]))
+	{
+		// The default return for OnPlayerText is opposite OnPlayerCommandText.
+		return !Command_ReProcess(playerid, text, 0);
+	}
+	// Default return, do nothing.
+	return 1;
 }
 
 /**--------------------------------------------------------------------------**\
