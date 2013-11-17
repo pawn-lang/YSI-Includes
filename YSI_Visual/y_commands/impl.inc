@@ -200,6 +200,8 @@ static stock const
 
 #define YCMD: _YCMD_0:_YCMD_1:_YCMD_2:
 
+
+
 // ZCMD compatibility.
 #define CMD:%0(%1) RC:%0(%1,__help)if(__help)return 0;else
 #define COMMAND CMD
@@ -415,6 +417,7 @@ global bool:Command_IsValid(cmd)
 
 /**--------------------------------------------------------------------------**\
 <summary>Command_FlushPrefixes</summary>
+<param name="prefix">Prefix to maybe remove.</param>
 <returns>
 	-
 </returns>
@@ -425,18 +428,15 @@ global bool:Command_IsValid(cmd)
 \**--------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
-	static stock Command_FlushPrefixes()
+	static stock Command_FlushPrefixes(prefix)
 	{
-		Bit_SetAll(YSI_g_sPrefixes, false),
-		Bit_Let(YSI_g_sPrefixes, '/');
-		for (new i = 0; i != MAX_COMMANDS; ++i)
+		if (prefix == '/') return 1;
+		for (new i = 0; i != YSI_g_sHighestID; ++i)
 		{
-			if (_Command_IsActive(i))
-			{
-				Bit_Let(YSI_g_sPrefixes, _Command_GetPrefix(i));
-			}
+			if (_Command_IsActive(i) && _Command_GetPrefix(i) == prefix) return 1;
 		}
-		return 1;
+		Bit_Vet(YSI_g_sPrefixes, prefix);
+		return 0;
 	}
 #endif
 
@@ -462,9 +462,12 @@ global bool:Command_IsValid(cmd)
 			if (_Command_IsValid(c))
 			{
 				// Set this command's prefix, and add the prefix to the list.
+				new
+					tmp = YSI_g_sCommands[c][E_COMMAND_PREFIX];
 				return
+					Bit_Let(YSI_g_sPrefixes, prefix),
 					YSI_g_sCommands[c][E_COMMAND_PREFIX] = prefix,
-					Command_FlushPrefixes(),
+					Command_FlushPrefixes(tmp),
 					true;
 			}
 		}
@@ -572,15 +575,19 @@ global void:_Command_Rebuild()
 	HashMap_Init(YSI_g_sCommandMap, YSI_g_sCommands);
 	for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
+		#if defined Y_COMMANDS_USE_CHARS
+			Bit_SetAll(YSI_g_sPrefixes, false),
+			Bit_Let(YSI_g_sPrefixes, '/');
+		#endif
 		if (_Command_IsActive(i))
 		{
+			#if defined Y_COMMANDS_USE_CHARS
+				Bit_Let(YSI_g_sPrefixes, _Command_GetPrefix(i)),
+			#endif
 			HashMap_Add(YSI_g_sCommandMap, Command_Name(i), i);
 			YSI_g_sHighestID = i + 1;
 		}
 	}
-	#if defined Y_COMMANDS_USE_CHARS
-		Command_FlushPrefixes();
-	#endif
 }
 
 HANDOFF()
@@ -948,6 +955,9 @@ global void:Command_Remove(func)
 	// don't have the ID for later use.
 	if (HashMap_RemoveValue(YSI_g_sCommandMap, func))
 	{
+		#if defined Y_COMMANDS_USE_CHARS
+			Command_FlushPrefixes(_Command_GetPrefix(func)),
+		#endif
 		YSI_g_sCommands[func][E_COMMAND_POINTER] = -1;
 	}
 }

@@ -414,6 +414,14 @@ Test:y_commands_lengths()
 		ASSERT(Command_SetPrefix(YCMD:y_commands_prefix1, '!') == true);
 		ASSERT(call OnPlayerCommandText(89, "/y_commands_prefix1") == 0);
 		ASSERT(call OnPlayerText(89, "!y_commands_prefix1") == 0);
+		ASSERT(Command_GetPrefixNamed("y_commands_prefix1") == '!');
+		ASSERT(Command_IsValidPrefix('!'));
+		ASSERT(!Command_IsValidPrefix('a'));
+		ASSERT(Command_IsPrefixUsed('!'));
+		ASSERT(!Command_IsPrefixUsed('_'));
+		ASSERT(!Command_IsPrefixUsed('a'));
+		ASSERT(Command_SetPrefix(YCMD:y_commands_prefix1, '~') == true);
+		ASSERT(!Command_IsPrefixUsed('!'));
 	}
 #endif
 
