@@ -222,41 +222,6 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 #define _Command_IsEmptySlot(%0) (!YSI_g_sCommands[(%0)][E_COMMAND_NAME])
 
 /**--------------------------------------------------------------------------**\
-<summary>_Command_IsPrefix</summary>
-<param name="idx">Command to test.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Checks to see if a character is a possible prefix character.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#if defined Y_COMMANDS_USE_CHARS
-	// #define UNSIGNED(%0) ((%0) - cellmin) // This would INCLUDE 0 - BAD!
-	// #define _Command_IsPrefix(%0) ((UNSIGNED(%0) < UNSIGNED(128)) && Bit_Get(YSI_g_sPrefixes, (%0)))
-	
-	// #define _Command_IsPrefix(%0) ((0 < (%0) < (128)) && Bit_Get(YSI_g_sPrefixes, (%0)))
-	// Cunning!
-	#define _Command_IsPrefix(%0) ((((%0) - cellmin - 1) < (128 - cellmin - 1)) && Bit_Get(YSI_g_sPrefixes, (%0)))
-#else
-	#define _Command_IsPrefix(%0) ((%0) == '/')
-#endif
-
-/**--------------------------------------------------------------------------**\
-<summary>_Command_GetPrefix</summary>
-<param name="idx">Command to test.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Checks to see if a character is a possible prefix character.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define _Command_GetPrefix(%0) (YSI_g_sCommands[(%0)][E_COMMAND_PREFIX])
-
-/**--------------------------------------------------------------------------**\
 <summary>_Command_IsAlt</summary>
 <param name="idx">Command to test.</param>
 <returns>
@@ -355,6 +320,174 @@ global bool:Command_IsValid(cmd)
 {
 	return _Command_IsValid(cmd);
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>_Command_IsPrefix</summary>
+<param name="idx">Command to test.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Checks to see if a character is a possible prefix character.  May use an
+	unsigned comparison.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#if defined Y_COMMANDS_USE_CHARS
+	#define _Command_IsPrefix(%0) ((((%0) - cellmin - 1) < (128 - cellmin - 1)) && Bit_Get(YSI_g_sPrefixes, (%0)))
+#else
+	#define _Command_IsPrefix(%0) ((%0) == '/')
+#endif
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_GetPrefix</summary>
+<param name="c">Command to get.</param>
+<returns>
+	The prefix for this command ('/' by default).
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define _Command_GetPrefix(%0) (YSI_g_sCommands[(%0)][E_COMMAND_PREFIX])
+
+#if defined Y_COMMANDS_USE_CHARS
+	foreign Command_GetPrefix(c);
+
+	global Command_GetPrefix(c)
+	{
+		if (_Command_IsValid(c)) return _Command_GetPrefix(c);
+		return '/';
+	}
+	
+	foreign Command_GetPrefixNamed(string:c[]);
+
+	global Command_GetPrefixNamed(string:c[])
+	{
+		return Command_GetPrefix(Command_Find(c));
+	}
+// Don't compile at all if it is disabled.
+// #else
+	// #define Command_GetPrefix(%0) ('/')
+	
+	// #define Command_GetPrefixNamed(%0) ('/')
+#endif
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_IsValidPrefix</summary>
+<param name="prefix">Possible prefix character.</param>
+<returns>
+	Is this a valid character for a prefix?
+</returns>
+<remarks>
+	This is the ONLY place the list of valid prefixes is defined!  They are
+	symbols, not an alphanumerics, and under 128.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#if defined Y_COMMANDS_USE_CHARS
+	stock bool:Command_IsValidPrefix(prefix)
+	{
+		return (
+			'!' <= prefix <= '/' ||
+			':' <= prefix <= '@' ||
+			'[' <= prefix <= '`' ||
+			'{' <= prefix <= '~');
+	}
+#endif
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_IsPrefixUsed</summary>
+<param name="prefix">Possible prefix character.</param>
+<returns>
+	Is this a prefix used for any command?
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#if defined Y_COMMANDS_USE_CHARS
+	foreign bool:Command_IsPrefixUsed(prefix);
+	
+	foreign bool:Command_IsPrefixUsed(prefix)
+	{
+		return Command_IsValidPrefix(prefix) && Bit_Get(YSI_g_sPrefixes, prefix);
+	}
+#endif
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_FlushPrefixes</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	If one command uses a prefix, then STOPS using said prefix, the global list
+	of valid prefixes will need to be updated.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#if defined Y_COMMANDS_USE_CHARS
+	static stock Command_FlushPrefixes()
+	{
+		Bit_SetAll(YSI_g_sPrefixes, false);
+		for (new i = 0; i != MAX_COMMANDS; ++i)
+		{
+			if (_Command_IsActive(i))
+			{
+				Bit_Let(YSI_g_sPrefixes, _Command_GetPrefix(i));
+			}
+		}
+	}
+#endif
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_SetPrefix</summary>
+<param name="c">Command to set.</param>
+<param name="prefix">First character of the command.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Change what command to type "/x" vs "#x" for example.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#if defined Y_COMMANDS_USE_CHARS
+	foreign bool:Command_SetPrefix(c, prefix);
+	
+	global bool:Command_SetPrefix(c, prefix)
+	{
+		if (Command_IsValidPrefix(prefix))
+		{
+			if (_Command_IsValid(c))
+			{
+				// Set this command's prefix, and add the prefix to the global
+				// list. Note that the list is NOT kept up to date when a
+				// command has its prefix REMOVED or CHANGED.  The old prefix
+				// will stay marked as active even if no commands remain using
+				// it.  That is, until the list is rebuilt on a mode change.
+				YSI_g_sCommands[c][E_COMMAND_PREFIX] = prefix;
+				Command_FlushPrefixes();
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	foreign bool:Command_SetPrefixNamed(string:c[], prefix);
+	
+	global bool:Command_SetPrefixNamed(string:c[], prefix)
+	{
+		return Command_SetPrefix(Command_Find(c), prefix);
+	}
+// Don't compile at all if it is disabled.
+// #else
+	// #define Command_GetPrefix(%0) ('/')
+	
+	// #define Command_GetPrefixNamed(%0) ('/')
+#endif
 
 /**--------------------------------------------------------------------------**\
 <summary>Command_GetName</summary>
