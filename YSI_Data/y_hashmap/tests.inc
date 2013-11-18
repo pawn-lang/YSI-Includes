@@ -66,17 +66,17 @@ Definitions:
 
 enum E_HASH_MAP_TEST
 {
-	HASH_MAP_DATA<32>,
-	E_HASH_MAP_TEST_1,
-	E_HASH_MAP_TEST_2
+	//HASH_MAP_DATA<32>,
+	E_HASH_MAP_TEST_NAME[32],
+	E_HASH_MAP_TEST_DATA[HASH_MAP_DATA]
 }
 
 Test:y_hashmap_Init()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
-	HashMap_Init(m, data);
-	ASSERT(data[88][_E_HASH_MAP_NEXT] == -1);
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
+	ASSERT(data[88][E_HASH_MAP_TEST_DATA] == -1);
 }
 
 Test:rawMemcpy()
@@ -91,18 +91,18 @@ Test:y_hashmap_Add()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
-	HashMap_Init(m, data);
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	HashMap_Add(m, "Hello", 42);
-	ASSERT(bool:data[42][_E_HASH_MAP_NAME][0]);
-	ASSERT(!strcmp(data[42][_E_HASH_MAP_NAME], "Hello"));
-	ASSERT(data[42][_E_HASH_MAP_NEXT] == -1);
+	ASSERT(bool:data[42][E_HASH_MAP_TEST_NAME][0]);
+	ASSERT(!strcmp(data[42][E_HASH_MAP_TEST_NAME], "Hello"));
+	ASSERT(data[42][E_HASH_MAP_TEST_DATA] == -1);
 }
 
 Test:y_hashmap_Get1()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
-	HashMap_Init(m, data);
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	HashMap_Add(m, "Hello", 42);
 	/*printf("%s %d %d %d %d"
 		, data[42][_E_HASH_MAP_NAME]
@@ -117,7 +117,7 @@ Test:y_hashmap_GetVarious()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
-	HashMap_Init(m, data);
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	HashMap_Add(m, "01234567890", 10);
 	HashMap_Add(m, "012345678901", 11);
 	HashMap_Add(m, "0123456789012", 12);
@@ -184,7 +184,7 @@ Test:y_hashmap_RemoveKey1()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
-	HashMap_Init(m, data);
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	HashMap_Add(m, "Hello", 42);
 	ASSERT(HashMap_Get(m, "Hello") == 42);
 	HashMap_RemoveKey(m, "Hello");
@@ -195,7 +195,7 @@ Test:y_hashmap_Get100()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
-	HashMap_Init(m, data);
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	for (new i = 0, str[6]; i != 100; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
@@ -212,7 +212,7 @@ Test:y_hashmap_Get100Hash()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
-	HashMap_Init(m, data);
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	for (new i = 0, str[6]; i != 100; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
@@ -229,7 +229,7 @@ Test:y_hashmap_Remove50()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
-	HashMap_Init(m, data);
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	// Add.
 	for (new i = 0, str[6]; i != 100; ++i)
 	{
@@ -261,7 +261,7 @@ Test:y_hashmap_RemoveValues()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
-	HashMap_Init(m, data);
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	// Add.
 	for (new i = 0, str[6]; i != 100; ++i)
 	{
@@ -291,7 +291,7 @@ Test:y_hashmap_Get1000()
 {
 	new HashMap:m<>;
 	new data[1000][E_HASH_MAP_TEST];
-	HashMap_Init(m, data);
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	for (new i = 0, str[6]; i != 1000; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
@@ -308,7 +308,7 @@ Test:y_hashmap_Remove500()
 {
 	new HashMap:m<>;
 	new data[1000][E_HASH_MAP_TEST];
-	HashMap_Init(m, data);
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	// Add.
 	for (new i = 0, str[6]; i != 1000; ++i)
 	{
@@ -340,7 +340,7 @@ Test:y_hashmap_Set500()
 {
 	new HashMap:m<>;
 	new data[1000][E_HASH_MAP_TEST];
-	HashMap_Init(m, data);
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	// Add.
 	for (new i = 0, str[6]; i != 500; ++i)
 	{

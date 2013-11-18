@@ -66,10 +66,10 @@ Definitions:
 \**--------------------------------------------------------------------------**/
 
 // The relative order of this data is important to _HashMap_Init.
-#define HASH_MAP_DATA<%0>                                                       \
-	_E_HASH_MAP_NAME[%0],                                                       \
-	_E_HASH_MAP_NEXT    ,                                                       \
-	_E_HASH_MAP_HASH
+// #define HASH_MAP_DATA<%0>                                                       
+	// _E_HASH_MAP_NAME[%0],                                                       
+	// _E_HASH_MAP_NEXT    ,                                                       
+	// _E_HASH_MAP_HASH
 
 #define HASH_MAP_SIZE   (256)
 #define HASH_MAP_PTR    (HASH_MAP_SIZE)
@@ -79,6 +79,8 @@ Definitions:
 
 #define HashMap:%0<%1>                                                          \
 	%0[HASH_MAP_SIZE + 4]
+
+#define HASH_MAP_DATA (2)
 
 /**--------------------------------------------------------------------------**\
 <summary>HashMap_Hash</summary>
@@ -98,7 +100,10 @@ Definitions:
 /**--------------------------------------------------------------------------**\
 <summary>HashMap_Init</summary>
 <param name="HashMap:m<>">Hash map to initialise.</param>
-<param name="arr[][]">Array to associate this map with.</param>
+<param name="&target">Address of the hashmap data.</param>
+<param name="size1">Number of entries.</param>
+<param name="size2">Total Size of each entry IN BYTES.</param>
+<param name="&t2">Address of the name AND data start.</param>
 <returns>
 	-
 </returns>
@@ -139,7 +144,9 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 	m[HASH_MAP_SIZE_3] = ptr;
 }
 
-#define HashMap_Init(%0,%1) _HashMap_Init(%0, %1[0][_E_HASH_MAP_NEXT], sizeof (%1), sizeof (%1[]) * 4, %1[0][_E_HASH_MAP_NAME])
+// #define HashMap_Init(%0,%1) _HashMap_Init(%0, %1[0][_E_HASH_MAP_NEXT], sizeof (%1), sizeof (%1[]) * 4, %1[0][_E_HASH_MAP_NAME])
+// Uses "%2 - %2" to make a tagged 0 without knowing the tag.
+#define HashMap_Init(%0,%1,%2) _HashMap_Init(%0, %1[0][(%2)], sizeof (%1), sizeof (%1[]) * 4, %1[0][(%2) - (%2)])
 
 /**--------------------------------------------------------------------------**\
 <summary>HashMap_ByteLen</summary>

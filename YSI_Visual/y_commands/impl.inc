@@ -120,13 +120,14 @@ Compile options:
 
 enum E_COMMAND
 {
-	HASH_MAP_DATA<MAX_COMMAND_LENGTH char>,
+	// HASH_MAP_DATA<MAX_COMMAND_LENGTH char>,
 	
 	// Share a memory location with the hashmap stored name.
 	E_COMMAND_NAME[MAX_COMMAND_LENGTH char] = 0,
 	
 	// IGNORE THESE, THEY COVER HASH MAP DATA.
-	_E_COMMAND_PAD_0, _E_COMMAND_PAD_1,
+	E_COMMAND_HASH_MAP[HASH_MAP_DATA],
+	// _E_COMMAND_PAD_0, _E_COMMAND_PAD_1,
 	
 	// Who can use this command?
 	PlayerArray:E_COMMAND_USERS<MAX_PLAYERS>,
@@ -524,7 +525,7 @@ hook OnScriptInit()
 			Bit_SetAll(YSI_g_sPrefixes, false),
 			Bit_Let(YSI_g_sPrefixes, '/'),
 		#endif
-		HashMap_Init(YSI_g_sCommandMap, YSI_g_sCommands);
+		HashMap_Init(YSI_g_sCommandMap, YSI_g_sCommands, E_COMMAND_HASH_MAP);
 		for (new func = 0; func != MAX_COMMANDS; ++func)
 		{
 			YSI_g_sCommands[func][E_COMMAND_POINTER] = -1;
@@ -572,7 +573,7 @@ foreign void:_Command_Rebuild();
 
 global void:_Command_Rebuild()
 {
-	HashMap_Init(YSI_g_sCommandMap, YSI_g_sCommands);
+	HashMap_Init(YSI_g_sCommandMap, YSI_g_sCommands, E_COMMAND_HASH_MAP);
 	for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
 		#if defined Y_COMMANDS_USE_CHARS
