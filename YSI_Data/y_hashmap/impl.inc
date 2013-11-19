@@ -432,8 +432,8 @@ stock bool:HashMap_RemoveValue(HashMap:m<>, value)
 </returns>
 <remarks>
 	If this key is already in the hash map it is removed, and then the new value
-	is added in its place.  NOTE: If the VALUE is already in the hash map, the
-	old data will be removed, but the new data WILL NOT be inserted.
+	is added in its place.  If the string already exists, its associated data is
+	removed.  If the value already exists, it is removed as well.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -441,5 +441,7 @@ stock HashMap_Set(HashMap:m<>, const str[], const value)
 {
 	return
 		HashMap_RemoveKey(m, str),
+		HashMap_RemoveValue(m, value),
 		HashMap_Add(m, str, value);
 }
+
