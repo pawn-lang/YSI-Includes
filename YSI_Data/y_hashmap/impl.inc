@@ -65,20 +65,13 @@ Definitions:
 	HashMap - Declare a new hash map.
 \**--------------------------------------------------------------------------**/
 
-// The relative order of this data is important to _HashMap_Init.
-// #define HASH_MAP_DATA<%0>                                                       
-	// _E_HASH_MAP_NAME[%0],                                                       
-	// _E_HASH_MAP_NEXT    ,                                                       
-	// _E_HASH_MAP_HASH
-
 #define HASH_MAP_SIZE   (256)
 #define HASH_MAP_PTR    (HASH_MAP_SIZE)
 #define HASH_MAP_SIZE_1 (HASH_MAP_SIZE + 1)
 #define HASH_MAP_SIZE_2 (HASH_MAP_SIZE + 2)
 #define HASH_MAP_SIZE_3 (HASH_MAP_SIZE + 3)
 
-#define HashMap:%0<%1>                                                          \
-	%0[HASH_MAP_SIZE + 4]
+#define HashMap:%0<%1> %0[HASH_MAP_SIZE + 4]
 
 #define HASH_MAP_DATA (2)
 
@@ -144,7 +137,6 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 	m[HASH_MAP_SIZE_3] = ptr;
 }
 
-// #define HashMap_Init(%0,%1) _HashMap_Init(%0, %1[0][_E_HASH_MAP_NEXT], sizeof (%1), sizeof (%1[]) * 4, %1[0][_E_HASH_MAP_NAME])
 // Uses "%2 - %2" to make a tagged 0 without knowing the tag.
 #define HashMap_Init(%0,%1,%2) _HashMap_Init(%0, %1[0][(%2)], sizeof (%1), sizeof (%1[]) * 4, %1[0][(%2) - (%2)])
 
