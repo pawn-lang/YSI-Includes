@@ -111,12 +111,10 @@ stock
 	__ps_data[e_PLAYER_SET_HACK],
 	__ps_pointer = -1;
 
-//#define @PlayerVar:%0) __ps_addr_t:__ps_addr,__ps_drop_t:%0)for(new %0=-1;(%0=PS@YSII_Ag(__ps_addr,%0))!=-1;)
 #define @PlayerVar:%0) __ps_addr_t:__ps_addr,__ps_drop_t:%0)foreach(new %0:PS(__ps_addr))
 
 // More than one parameter.  This removes the need to redefine "for", which I'm
 // very happy about, by doing all detection in one go.
-//#define __ps_addr_t:__ps_addr,__ps_drop_t:%0,%1)for(new %2,%3=-1;(%5=PS@YSII_Ag(__ps_addr,%4))!=-1;) __ps_addr_t:__ps_addr,%1)for(new %2=-1;(%2=PS@YSII_Ag(__ps_addr,%2))!=-1;)
 #define __ps_addr_t:__ps_addr,__ps_drop_t:%0,%1)foreach(%2,%3:PS(__ps_addr)) __ps_addr_t:__ps_addr,%1)foreach(%2:PS(__ps_addr))
 
 // Only one parameter (not caught by the above statement).  The one is the
@@ -544,10 +542,7 @@ stock bool:__PS_A(@PlayerSet:addr, PlayerArray:ret<MAX_PLAYERS>)
 // This redefines e_PLAYER_SET_HACK_DATA in the case of passing player arrays.
 #define e_PLAYER_SET_HACK_PA]=__ps_addr_t:@%0) e_PLAYER_SET_HACK_DATA]=__ps_addr_t:%0)
 
-// This redefines __ps_data in the case of custom arrays.
-//#define __ps_data[e_PLAYER_SET_HACK_DATA]=%0<%1> __ps_addr_t:__PS_Z(%0,%1)
-//#define __PS_Z(@%0,%1) __PS_C(%0,%1)
-
 // Don't actually need the "@".
 #define __ps_data[e_PLAYER_SET_HACK_DATA]=%0<%1> __ps_addr_t:__PS_C(%0,%1)
 #define __PS_C(@%0,%1) __PS_C(%0,%1)
+

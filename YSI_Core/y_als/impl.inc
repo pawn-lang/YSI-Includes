@@ -166,6 +166,7 @@ enum ALS
 #define ALS_R_PlayerFinishRace 1
 #define ALS_R_PlayerExitRace 1
 #define ALS_R_RaceEnd 1
+#define ALS_R_MasterSystemClose 1
 // Streamer plugins.
 #define ALS_R_DynamicObjectMoved 1
 #define ALS_R_PlayerEditDynamicObject 1

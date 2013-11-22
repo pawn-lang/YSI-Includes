@@ -1120,7 +1120,11 @@ global Command_ReProcess(p,string:c[],h)
 			if (MASTER_EXCLUSIVE<YSI_g_sCurrentID>)
 		#endif
 			{
-				// In this script.
+				// In this script.  More to the point, in ONLY this script, so
+				// we can't have another script as the master.  I tried updating
+				// this code but then realised that the update would ignore the
+				// case where a command was in both the current script and
+				// another script, but the other script was the master script.
 				#emit PUSH.S      h
 				#emit LOAD.pri    sPos
 				#emit LOAD.S.alt  c
