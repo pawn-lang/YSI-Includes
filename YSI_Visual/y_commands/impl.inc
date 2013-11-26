@@ -573,6 +573,8 @@ foreign void:_Command_Rebuild();
 
 global void:_Command_Rebuild()
 {
+	new
+		cmdname[32 char];
 	HashMap_Init(YSI_g_sCommandMap, YSI_g_sCommands, E_COMMAND_HASH_MAP);
 	for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
@@ -585,8 +587,30 @@ global void:_Command_Rebuild()
 			#if defined Y_COMMANDS_USE_CHARS
 				Bit_Let(YSI_g_sPrefixes, _Command_GetPrefix(i)),
 			#endif
-			HashMap_Add(YSI_g_sCommandMap, Command_Name(i), i);
+			strpack(cmdname[1], Command_Name(i), 32),
+			HashMap_Add(YSI_g_sCommandMap, cmdname[1], i),
 			YSI_g_sHighestID = i + 1;
+			// Now find any commands that were in both this script and another
+			// script, but are now only in this script.
+			#if YSIM_HAS_MASTER
+				// This will only be called if "YSIM_HAS_MASTER" is true, but we
+				// still need to protect it because the compiler doesn't
+				// actually know that.
+				if (MASTER_EXCLUSIVE<i>)
+				{
+					cmdname[0] = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00);
+					new
+						id2 = funcidx(cmdname);
+					if (id2 == -1)
+					{
+						P:W("Command marked EXCLUSIVE, but doesn't exist");
+						Command_Remove(i);
+						continue;
+					}
+					// Store the new pointer.
+					YSI_g_sCommands[i][E_COMMAND_POINTER] = AMX_Read(AMX_HEADER_PUBLICS + id2 * 8);
+				}
+			#endif
 		}
 	}
 }
@@ -619,7 +643,6 @@ hook OnScriptExit()
 	P:1("Commands_OnScriptExit <> called");
 	if (funcidx(YSI_gscOPCR) != -1) Command_DecOPCR();
 	if (funcidx(YSI_gscOPCP) != -1) Command_DecOPCP();
-	return 1;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1105,6 +1128,7 @@ global Command_ReProcess(p,string:c[],h)
 			return Command_OnReceived(BAD_PREFIX, p, c);
 		}
 	#endif
+	P:5("Commands_OnPlayerCommandText: Use %d", _Command_GetPlayer(YSI_g_sCurrentID, p));
 	// Can the player use this command?
 	if (_Command_GetPlayer(YSI_g_sCurrentID, p))
 	{
@@ -1116,10 +1140,13 @@ global Command_ReProcess(p,string:c[],h)
 		}
 		// Find the true version of the command (alts etc).
 		_Command_GetReal(sHash, YSI_g_sCurrentID, sCmd[4]);
+		P:5("Commands_OnPlayerCommandText: Read %d", YSI_g_sCurrentID);
+		P:5("Commands_OnPlayerCommandText: Master %d %d", Master_ID(), _:MASTER_GET<YSI_g_sCurrentID>);
 		#if YSIM_HAS_MASTER
 			if (MASTER_EXCLUSIVE<YSI_g_sCurrentID>)
 		#endif
 			{
+				P:5("Commands_OnPlayerCommandText: Local");
 				// In this script.  More to the point, in ONLY this script, so
 				// we can't have another script as the master.  I tried updating
 				// this code but then realised that the update would ignore the

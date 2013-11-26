@@ -709,12 +709,12 @@ stock INI:INI_Open(filename[])
 	{
 		return INI_NO_FILE;
 	}
-	strcpy(YSI_g_sINIWriteFile[i], filename, sizeof (YSI_g_sINIWriteFile[]));
-	YSI_g_sINIWritePos[i] = 0;
-	YSI_g_sINITagPos[i] = 0;
+	strcpy(YSI_g_sINIWriteFile[i], filename, sizeof (YSI_g_sINIWriteFile[])),
+	YSI_g_sINIWritePos[i] = 0,
+	YSI_g_sINITagPos[i] = 0,
 	// Reset tags.
-	YSI_g_sINICurrentTag[i] = 0;
-	YSI_g_sINIWriteTag[i][0][E_INI_TAGS_NAME][0] = '\0';
+	YSI_g_sINICurrentTag[i] = 0,
+	YSI_g_sINIWriteTag[i][0][E_INI_TAGS_NAME][0] = '\0',
 	YSI_g_sINIWriteTag[i][0][E_INI_TAGS_START] = -1;
 /*	if (!fexist(filename))
 	{
@@ -788,9 +788,9 @@ stock INI_SetTag(INI:file, tag[])
 		pos = 0;
 	}
 	//strcpy(YSI_g_sINIWriteTag[_:file][pos][E_INI_TAGS_NAME], tag, MAX_INI_TAG);
-	strpack(YSI_g_sINIWriteTag[_:file][pos][E_INI_TAGS_NAME], tag, MAX_INI_TAG);
-	YSI_g_sINIWriteTag[_:file][pos][E_INI_TAGS_START] = -1;
-	YSI_g_sINICurrentTag[_:file] = pos;
+	strpack(YSI_g_sINIWriteTag[_:file][pos][E_INI_TAGS_NAME], tag, MAX_INI_TAG),
+	YSI_g_sINIWriteTag[_:file][pos][E_INI_TAGS_START] = -1,
+	YSI_g_sINICurrentTag[_:file] = pos,
 	++YSI_g_sINITagPos[_:file];
 }
 
@@ -828,9 +828,9 @@ stock INI_DeleteTag(INI:file, tag[])
 		// Loop.
 		pos = 0;
 	}
-	strpack(YSI_g_sINIWriteTag[_:file][pos][E_INI_TAGS_NAME], tag, MAX_INI_TAG);
-	YSI_g_sINIWriteTag[_:file][pos][E_INI_TAGS_START] = cellmax;
-	YSI_g_sINICurrentTag[_:file] = pos;
+	strpack(YSI_g_sINIWriteTag[_:file][pos][E_INI_TAGS_NAME], tag, MAX_INI_TAG),
+	YSI_g_sINIWriteTag[_:file][pos][E_INI_TAGS_START] = cellmax,
+	YSI_g_sINICurrentTag[_:file] = pos,
 	++YSI_g_sINITagPos[_:file];
 }
 
@@ -847,55 +847,48 @@ stock INI_WriteArray(INI:file, const name[], data[], len)
 		iter;
 	// Write the length first just so the data exists.
 	//INI_WriteInt(file, name, len);
-	valstr(write, len);
-	INI_AddToBuffer(file, name, write);
+	valstr(write, len),
+	INI_AddToBuffer(file, name, write),
 	write[0] = '\0';
 	while (idx + 3 < len)
 	{
 		// Store all the data fast.
-		//write[wi++] = (((data[idx] & 0xFC000000) >>> 2) | ((data[idx] & 0x03F00000) >> 4) | ((data[idx] & 0x000FC000) >> 6) | ((data[idx] & 0x00003F00) >> 8))
-		write[wi++] = ((data[idx] & 0xFC000000) >>> 26) + '>';
-		write[wi++] = ((data[idx] & 0x03F00000) >>> 20) + '>';
-		write[wi++] = ((data[idx] & 0x000FC000) >>> 14) + '>';
-		write[wi++] = ((data[idx] & 0x00003F00) >>> 8) + '>';
-		//write[wi++] = (((data[idx - 1] & 0x000000FC) << 22) | ((data[idx - 1] & 0x00000003) << 20) | ((data[idx] & 0xF0000000) >>> 12) | ((data[idx] & 0x0FC00000) >> 14) | ((data[idx] & 0x003F0000) >> 16))
-		write[wi++] = ((data[idx] & 0x000000FC) >>> 2) + '>';
-		write[wi++] = (((data[idx] & 0x00000003) << 4) | ((data[idx + 1] & 0xF0000000) >>> 28)) + '>';
-		++idx;
-		write[wi++] = ((data[idx] & 0x0FC00000) >>> 22) + '>';
-		write[wi++] = ((data[idx] & 0x003F0000) >>> 16) + '>';
-		//write[wi++] = (((data[idx] & 0x0000FC00) << 14) | ((data[idx] & 0x000003F0) << 12) | ((data[idx] & 0x0000000F) << 10) | ((data[idx + 1] & 0xC0000000) >>> 22) | ((data[idx + 1] & 0x3F000000) >> 24))
-		write[wi++] = ((data[idx] & 0x0000FC00) >>> 10) + '>';
-		write[wi++] = ((data[idx] & 0x000003F0) >>> 4) + '>';
-		write[wi++] = (((data[idx] & 0x0000000F) << 2) | ((data[idx + 1] & 0xC0000000) >>> 30)) + '>';
-		++idx;
-		write[wi++] = ((data[idx] & 0x3F000000) >>> 24) + '>';
-		//write[wi++] = (((data[idx] & 0x00FC0000) << 6) | ((data[idx] & 0x0003F000) << 4) | ((data[idx] & 0x00000FC0) << 2) | ((data[idx] & 0x0000003F) << 0))
-		write[wi++] = ((data[idx] & 0x00FC0000) >>> 18) + '>';
-		write[wi++] = ((data[idx] & 0x0003F000) >>> 12) + '>';
-		write[wi++] = ((data[idx] & 0x00000FC0) >>> 6) + '>';
-		write[wi++] = ((data[idx] & 0x0000003F) >>> 0) + '>';
+		write[wi++] = ((data[idx] & 0xFC000000) >>> 26) + '>',
+		write[wi++] = ((data[idx] & 0x03F00000) >>> 20) + '>',
+		write[wi++] = ((data[idx] & 0x000FC000) >>> 14) + '>',
+		write[wi++] = ((data[idx] & 0x00003F00) >>> 8) + '>',
+		write[wi++] = ((data[idx] & 0x000000FC) >>> 2) + '>',
+		write[wi++] = (((data[idx] & 0x00000003) << 4) | ((data[idx + 1] & 0xF0000000) >>> 28)) + '>',
+		++idx,
+		write[wi++] = ((data[idx] & 0x0FC00000) >>> 22) + '>',
+		write[wi++] = ((data[idx] & 0x003F0000) >>> 16) + '>',
+		write[wi++] = ((data[idx] & 0x0000FC00) >>> 10) + '>',
+		write[wi++] = ((data[idx] & 0x000003F0) >>> 4) + '>',
+		write[wi++] = (((data[idx] & 0x0000000F) << 2) | ((data[idx + 1] & 0xC0000000) >>> 30)) + '>',
+		++idx,
+		write[wi++] = ((data[idx] & 0x3F000000) >>> 24) + '>',
+		write[wi++] = ((data[idx] & 0x00FC0000) >>> 18) + '>',
+		write[wi++] = ((data[idx] & 0x0003F000) >>> 12) + '>',
+		write[wi++] = ((data[idx] & 0x00000FC0) >>> 6) + '>',
+		write[wi++] = ((data[idx] & 0x0000003F) >>> 0) + '>',
 		++idx;
 		if (wi == Y_INI_WRITE_ARRAY_SIZE)
 		{
 			format(dname, sizeof (dname), "@@%s-%d", name, iter++);
-			//printf("%s = %s", dname, write);
 			P:5("Uvar_WriteArray: write %s = %s", dname, write);
-			//Player_WriteString(dname, write);
-			write[wi] = '\0';
-			INI_AddToBuffer(file, dname, write);
-			write[0] = '\0';
+			write[wi] = '\0',
+			INI_AddToBuffer(file, dname, write),
+			write[0] = '\0',
 			wi = 0;
 		}
 	}
 	// Do the straggling bytes.
 	if (idx != len)
 	{
-		write[wi++] = ((data[idx] & 0xFC000000) >>> 26) + '>';
-		write[wi++] = ((data[idx] & 0x03F00000) >>> 20) + '>';
-		write[wi++] = ((data[idx] & 0x000FC000) >>> 14) + '>';
-		write[wi++] = ((data[idx] & 0x00003F00) >>> 8) + '>';
-		//write[wi++] = (((data[idx - 1] & 0x000000FC) << 22) | ((data[idx - 1] & 0x00000003) << 20) | ((data[idx] & 0xF0000000) >>> 12) | ((data[idx] & 0x0FC00000) >> 14) | ((data[idx] & 0x003F0000) >> 16))
+		write[wi++] = ((data[idx] & 0xFC000000) >>> 26) + '>',
+		write[wi++] = ((data[idx] & 0x03F00000) >>> 20) + '>',
+		write[wi++] = ((data[idx] & 0x000FC000) >>> 14) + '>',
+		write[wi++] = ((data[idx] & 0x00003F00) >>> 8) + '>',
 		write[wi++] = ((data[idx] & 0x000000FC) >>> 2) + '>';
 		if (++idx == len)
 		{
@@ -903,11 +896,10 @@ stock INI_WriteArray(INI:file, const name[], data[], len)
 		}
 		else
 		{
-			write[wi++] = (((data[idx - 1] & 0x00000003) << 4) | ((data[idx] & 0xF0000000) >>> 28)) + '>';
-			write[wi++] = ((data[idx] & 0x0FC00000) >>> 22) + '>';
-			write[wi++] = ((data[idx] & 0x003F0000) >>> 16) + '>';
-			//write[wi++] = (((data[idx] & 0x0000FC00) << 14) | ((data[idx] & 0x000003F0) << 12) | ((data[idx] & 0x0000000F) << 10) | ((data[idx + 1] & 0xC0000000) >>> 22) | ((data[idx + 1] & 0x3F000000) >> 24))
-			write[wi++] = ((data[idx] & 0x0000FC00) >>> 10) + '>';
+			write[wi++] = (((data[idx - 1] & 0x00000003) << 4) | ((data[idx] & 0xF0000000) >>> 28)) + '>',
+			write[wi++] = ((data[idx] & 0x0FC00000) >>> 22) + '>',
+			write[wi++] = ((data[idx] & 0x003F0000) >>> 16) + '>',
+			write[wi++] = ((data[idx] & 0x0000FC00) >>> 10) + '>',
 			write[wi++] = ((data[idx] & 0x000003F0) >>> 4) + '>';
 			if (++idx == len)
 			{
@@ -915,23 +907,19 @@ stock INI_WriteArray(INI:file, const name[], data[], len)
 			}
 			else
 			{
-				write[wi++] = (((data[idx - 1] & 0x0000000F) << 2) | ((data[idx] & 0xC0000000) >>> 30)) + '>';
-				//++idx;
-				write[wi++] = ((data[idx] & 0x3F000000) >>> 24) + '>';
-				//write[wi++] = (((data[idx] & 0x00FC0000) << 6) | ((data[idx] & 0x0003F000) << 4) | ((data[idx] & 0x00000FC0) << 2) | ((data[idx] & 0x0000003F) << 0))
-				write[wi++] = ((data[idx] & 0x00FC0000) >>> 18) + '>';
-				write[wi++] = ((data[idx] & 0x0003F000) >>> 12) + '>';
-				write[wi++] = ((data[idx] & 0x00000FC0) >>> 6) + '>';
+				write[wi++] = (((data[idx - 1] & 0x0000000F) << 2) | ((data[idx] & 0xC0000000) >>> 30)) + '>',
+				write[wi++] = ((data[idx] & 0x3F000000) >>> 24) + '>',
+				write[wi++] = ((data[idx] & 0x00FC0000) >>> 18) + '>',
+				write[wi++] = ((data[idx] & 0x0003F000) >>> 12) + '>',
+				write[wi++] = ((data[idx] & 0x00000FC0) >>> 6) + '>',
 				write[wi++] = ((data[idx] & 0x0000003F) >>> 0) + '>';
 			}
 		}
 		format(dname, sizeof (dname), "@@%s-%d", name, iter++);
-		//printf("%s = %s", dname, write);
 		P:5("Uvar_WriteArray: write %s = %s", dname, write);
-		//Player_WriteString(dname, write);
-		write[wi] = '\0';
-		INI_AddToBuffer(file, dname, write);
-		write[0] = '\0';
+		write[wi] = '\0',
+		INI_AddToBuffer(file, dname, write),
+		write[0] = '\0',
 		wi = 0;
 	}
 	return 1;
@@ -964,8 +952,8 @@ static stock INI_AddToBuffer(INI:file, const name[], data[])
 	if (!YSI_g_sINITagPos[_:file])
 	{
 		// Tagless data.
-		YSI_g_sINITagPos[_:file] = 1;
-		YSI_g_sINIWriteTag[_:file][0][E_INI_TAGS_START] = -1;
+		YSI_g_sINITagPos[_:file] = 1,
+		YSI_g_sINIWriteTag[_:file][0][E_INI_TAGS_START] = -1,
 		YSI_g_sINIWriteTag[_:file][0][E_INI_TAGS_NAME][0] = 0;
 	}
 	new
@@ -982,7 +970,6 @@ static stock INI_AddToBuffer(INI:file, const name[], data[])
 		if (!strcmp(name, YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_NAME], true))
 		{
 			strcpy(YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT], data, MAX_INI_ENTRY_TEXT);
-			//strpack(YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT], data, MAX_INI_ENTRY_TEXT);
 			return 1;
 		}
 		start = YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_NEXT];
@@ -1006,13 +993,13 @@ static stock INI_AddToBuffer(INI:file, const name[], data[])
 	{
 		YSI_g_sINIWriteBuffer[_:file][YSI_g_sINIWriteTag[_:file][curtag][E_INI_TAGS_LAST]][E_INI_WRITE_NEXT] = pos;
 	}
-	strcpy(YSI_g_sINIWriteBuffer[_:file][pos][E_INI_WRITE_NAME], name, MAX_INI_ENTRY_NAME);
-	//strpack(YSI_g_sINIWriteBuffer[_:file][pos][E_INI_WRITE_NAME], name, MAX_INI_ENTRY_NAME);
-	strcpy(YSI_g_sINIWriteBuffer[_:file][pos][E_INI_WRITE_TEXT], data, MAX_INI_ENTRY_TEXT);
-	YSI_g_sINIWriteBuffer[_:file][pos][E_INI_WRITE_NEXT] = -1;
-	YSI_g_sINIWriteTag[_:file][curtag][E_INI_TAGS_LAST] = pos;
-	YSI_g_sINIWritePos[_:file]++;
-	return 1;
+	return
+		strcpy(YSI_g_sINIWriteBuffer[_:file][pos][E_INI_WRITE_NAME], name, MAX_INI_ENTRY_NAME),
+		strcpy(YSI_g_sINIWriteBuffer[_:file][pos][E_INI_WRITE_TEXT], data, MAX_INI_ENTRY_TEXT),
+		YSI_g_sINIWriteBuffer[_:file][pos][E_INI_WRITE_NEXT] = -1,
+		YSI_g_sINIWriteTag[_:file][curtag][E_INI_TAGS_LAST] = pos,
+		YSI_g_sINIWritePos[_:file]++,
+		1;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1063,17 +1050,27 @@ stock INI_WriteString(INI:file, name[], data[])
 	-
 </returns>
 <remarks>
-	Wrapper for INI_AddToBuffer for integers.
+	Wrapper for INI_AddToBuffer for integers.  Fixed for very large numbers
+	based on code by Slice from "fixes.inc" for "valstr".
 </remarks>
 \**--------------------------------------------------------------------------**/
 
 stock INI_WriteInt(INI:file, name[], data)
 {
 	P:3("INI_WriteInt called: %i, \"%s\", %i", _:file, name, data);
-	new
-		str[12];
-	valstr(str, data);
-	INI_AddToBuffer(file, name, str);
+	static const
+		sc_szCellmin[] = !"-2147483648";
+	if (data == cellmin)
+	{
+		INI_AddToBuffer(file, name, sc_szCellmin);
+	}
+	else
+	{
+		new
+			str[12];
+		format(str, 12, "%d", data),
+		INI_AddToBuffer(file, name, str);
+	}
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1103,8 +1100,8 @@ stock INI_WriteHex(INI:file, name[], data)
 		data >>>= 4;
 	}
 	while (data);
-	str[i--] = 'x';
-	str[i] = '0';
+	str[i--] = 'x',
+	str[i] = '0',
 	INI_AddToBuffer(file, name, str[i]);
 }
 
@@ -1138,9 +1135,9 @@ stock INI_WriteBin(INI:file, name[], data)
 	}
 	while (data);
 	// Convert the coalesced values to individual values.
-	strunpack(str[i], str[i], 33);
-	str[--i] = 'b';
-	str[--i] = '0';
+	strunpack(str[i], str[i], 33),
+	str[--i] = 'b',
+	str[--i] = '0',
 	INI_AddToBuffer(file, name, str[i]);
 }
 
@@ -1190,7 +1187,7 @@ stock INI_WriteFloat(INI:file, name[], Float:data, accuracy = 6)
 	P:3("INI_WriteFloat called: %i, \"%s\", %f, %i", _:file, name, data, accuracy);
 	new
 		str[32];
-	format(str, sizeof (str), "%.*f", accuracy, data);
+	format(str, sizeof (str), "%.*f", accuracy, data),
 	INI_AddToBuffer(file, name, str);
 }
 
@@ -1249,7 +1246,7 @@ static stock INI_WriteBuffer(INI:file)
 				{
 					if (start == cellmax)
 					{
-						skipTag = 1;
+						skipTag = 1,
 						start = -1;
 					}
 					else
@@ -1294,7 +1291,7 @@ static stock INI_WriteBuffer(INI:file)
 						{
 							if (YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT][0] != -1)
 							{
-								format(form, sizeof (form), "%s = %s" INI_NEW_LINE, YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_NAME], YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT]);
+								format(form, sizeof (form), "%s = %s" INI_NEW_LINE, YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_NAME], YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT]),
 								fwrite(buffer, form);
 							}
 							Bit_Set(read, start, true);
@@ -1323,8 +1320,8 @@ static stock INI_WriteBuffer(INI:file)
 							P:7("INI_WriteBuffer: Next tag: %s, %d", line[1], start);
 							if (start == cellmax)
 							{
-								skipTag = 1;
-								start = -1;
+								skipTag = 1,
+								start = -1,
 								writing = 0;
 							}
 							else
@@ -1477,3 +1474,4 @@ static stock INI_WriteBuffer(INI:file)
 	}
 	return 0;
 }
+
