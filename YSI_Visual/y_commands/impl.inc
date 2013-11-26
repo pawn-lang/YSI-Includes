@@ -574,7 +574,7 @@ foreign void:_Command_Rebuild();
 global void:_Command_Rebuild()
 {
 	new
-		cmdname[32 char];
+		cmdname[32 char] = {('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00), 0, 0, ...};
 	HashMap_Init(YSI_g_sCommandMap, YSI_g_sCommands, E_COMMAND_HASH_MAP);
 	for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
@@ -587,30 +587,9 @@ global void:_Command_Rebuild()
 			#if defined Y_COMMANDS_USE_CHARS
 				Bit_Let(YSI_g_sPrefixes, _Command_GetPrefix(i)),
 			#endif
-			strpack(cmdname[1], Command_Name(i), 32),
+			strpack(cmdname[1], Command_Name(i), 31),
 			HashMap_Add(YSI_g_sCommandMap, cmdname[1], i),
 			YSI_g_sHighestID = i + 1;
-			// Now find any commands that were in both this script and another
-			// script, but are now only in this script.
-			#if YSIM_HAS_MASTER
-				// This will only be called if "YSIM_HAS_MASTER" is true, but we
-				// still need to protect it because the compiler doesn't
-				// actually know that.
-				if (MASTER_EXCLUSIVE<i>)
-				{
-					cmdname[0] = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00);
-					new
-						id2 = funcidx(cmdname);
-					if (id2 == -1)
-					{
-						P:W("Command marked EXCLUSIVE, but doesn't exist");
-						Command_Remove(i);
-						continue;
-					}
-					// Store the new pointer.
-					YSI_g_sCommands[i][E_COMMAND_POINTER] = AMX_Read(AMX_HEADER_PUBLICS + id2 * 8);
-				}
-			#endif
 		}
 	}
 }
@@ -644,6 +623,44 @@ hook OnScriptExit()
 	if (funcidx(YSI_gscOPCR) != -1) Command_DecOPCR();
 	if (funcidx(YSI_gscOPCP) != -1) Command_DecOPCP();
 }
+
+#if YSIM_HAS_MASTER
+	mhook OnMasterSystemClose(id)
+	{
+		new
+			cmdname[32 char] = {('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00), 0, 0, ...},
+			Bit:cur = Bit:(1 << Master_ID()),
+			Bit:bit = Bit:(1 << id),
+			Bit:rem = ~bit;
+		for (new i = 0; i != MAX_COMMANDS; ++i)
+		{
+			if (_Command_IsActive(i))
+			{
+				if (YSI_g_sMasterData[i] == bit)
+				{
+					// Only existed in one (other) script.  Remove it.
+					Command_Remove(i);
+				}
+				if ((YSI_g_sMasterData[i] &= rem) == cur)
+				{
+					// Existed in multiple, now only one.
+					strpack(cmdname[1], Command_Name(i), 31);
+					new
+						id2 = funcidx(cmdname);
+					if (id2 == -1)
+					{
+						P:W("Command marked EXCLUSIVE, but doesn't exist");
+						Command_Remove(i);
+						continue;
+					}
+					// Store the new pointer.
+					YSI_g_sCommands[i][E_COMMAND_POINTER] = AMX_Read(AMX_HEADER_PUBLICS + id2 * 8);
+				}
+			}
+		}
+		return 1;
+	}
+#endif
 
 /**--------------------------------------------------------------------------**\
 <summary>Command_IncOPCR</summary>

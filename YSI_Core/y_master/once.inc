@@ -161,8 +161,8 @@ Natives:
 #define mtask master_task
 #define mptask master_ptask
 
-#define OnScriptClose Master_OnScriptClose
-forward Master_OnScriptClose(id);
+// #define OnScriptClose Master_OnScriptClose
+// forward Master_OnScriptClose(id);
 
 // These are the macros used by y_master for the recursive function definition
 // structure, but they are not used unless a cloud-based "foreign" or "global"

@@ -558,7 +558,10 @@ static stock const
 	YSI_gscOnUnoccupiedVehicleUpd  [32 char] = !"OnUnoccupiedVehicleUpdate",
 	YSI_gscOnPlayerClickPlayerTD   [32 char] = !"OnPlayerClickPlayerTextDraw",
 	YSI_gscOnPlayerEditAttachedObj [32 char] = !"OnPlayerEditAttachedObject",
+	// YSI callbacks.
 	YSI_gscOnPlayerCmdPerformed    [32 char] = !"OnPlayerCommandPerformed",
+	// YSI_gscOnPlayerCommandReceived    [32 char] = !"OnPlayerCommandReceived",
+	YSI_gscOnMasterSystemClose    [32 char] = !"Master_OnScriptClose",
 	// Streamer plugin long callbacks.
 	YSI_gscOnPlayerEditDynObject  [32 char] = !"OnPlayerEditDynamicObject",
 	YSI_gscOnPlayerSelectDynObject[32 char] = !"OnPlayerSelectDynamicObject",
@@ -592,6 +595,10 @@ _Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
 	// YSI.
 	else if (!strcmp(ref, YSI_gscOnPlayerCmdPerformed)) ret = !"OnPlayerCmdPerformed";         
 	else if (!strcmp(ref, !"OnPlayerCmdPerformed"))     ret = YSI_gscOnPlayerCmdPerformed;
+	// else if (!strcmp(ref, YSI_gscOnPlayerCommandReceived)) ret = !"OnPlayerCommandReceived";         
+	// else if (!strcmp(ref, !"OnPlayerCommandReceived"))     ret = YSI_gscOnPlayerCommandReceived;
+	else if (!strcmp(ref, YSI_gscOnMasterSystemClose)) ret = !"OnMasterSystemClose";         
+	else if (!strcmp(ref, !"OnMasterSystemClose"))     ret = YSI_gscOnMasterSystemClose;
 	// Streamer ("CP" is already shorter for the streamer).
 	else if (!strcmp(ref, YSI_gscOnPlayerEditDynObject))   ret = !"OnPlayerEditDynObject";     // 4
 	else if (!strcmp(ref, YSI_gscOnPlayerSelectDynObject)) ret = !"OnPlayerSelectDynObject";   // 4
