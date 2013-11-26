@@ -286,58 +286,13 @@ stock Master_GetNext()
 
 /**--------------------------------------------------------------------------**\
 Hook:
-	OnGameModeInit
+	OnScriptInit
 </returns>
 <remarks>
 	Constructor.  Gets the script a master ID.  Now ALWAYS gets an ID, even if
 	the master system is disabled - doing otherwise is just too complicated.
 </remarks>
 \**--------------------------------------------------------------------------**/
-
-// public OnGameModeInit()
-// {
-	// // May be the case that they get lost in filterscripts if the main script
-	// // isn't running YSI...
-	// //printf("Reasert..");
-	// if (!getproperty(8, YSIM_MASTER))
-	// {
-		// // Properties get lost between script changes so we need to force a rebuild.
-		// CallRemoteFunction("Master_Reassert", "");
-	// }
-	// #if defined Master_OnGameModeInit
-		// Master_OnGameModeInit();
-	// #endif
-	// return 1;
-// }
-
-// #if defined _ALS_OnGameModeInit
-	// #undef OnGameModeInit
-// #else
-	// #define _ALS_OnGameModeInit
-// #endif
-// #define OnGameModeInit Master_OnGameModeInit
-// #if defined Master_OnGameModeInit
-	// forward Master_OnGameModeInit();
-// #endif
-
-// public OnFilterScriptInit()
-// {
-	// if (!getproperty(8, YSIM_MASTER)) CallRemoteFunction("Master_Reassert", "");
-	// #if defined Master_OnFilterScriptInit
-		// Master_OnFilterScriptInit();
-	// #endif
-	// return 1;
-// }
-
-// #if defined _ALS_OnFilterScriptInit
-	// #undef OnFilterScriptInit
-// #else
-	// #define _ALS_OnFilterScriptInit
-// #endif
-// #define OnFilterScriptInit Master_OnFilterScriptInit
-// #if defined Master_OnFilterScriptInit
-	// forward Master_OnFilterScriptInit();
-// #endif
 
 public OnScriptInit()
 {
@@ -346,11 +301,8 @@ public OnScriptInit()
 	{
 		setproperty(8, YSIM_MASTER, 1);
 	}
-	// else if (!getproperty(8, YSIM_MASTER))
-	// {
 	// Properties get lost between script changes so we need to force a rebuild.
 	CallRemoteFunction("Master_Reassert", "");
-	// }
 	new
 		masters = getproperty(8, YSIM_MASTER),
 		i = 1;
@@ -405,11 +357,6 @@ public OnScriptExit()
 	// function for it.  EXCEPT for this script itself!
 	new
 		func[4];
-	// if (!getproperty(8, YSIM_MASTER))
-	// {
-		// Master_Reassert();
-		// if (!getproperty(8, YSIM_MASTER)) P:F("Master data failed to set");
-	// }
 	for (new i = 0; i != YSI_g_sMasterCount; ++i)
 	{
 		// This is slightly slower for ending and starting scripts, but uses far
