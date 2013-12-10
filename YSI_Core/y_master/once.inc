@@ -222,7 +222,7 @@ Natives:
 #define _YSIM_PUSH_INDEX 0 // First position on the stack to push to.
 
 #if !defined MAX_MASTERS
-	#define MAX_MASTERS 26 // Default, old value.
+	#define MAX_MASTERS 64 // Default, old value.
 #endif
 
 //#define HANDOFF_SOURCE(%9) forward MAKE_YCM<HANDOFF_SOURCE...>();public MAKE_YCM<HANDOFF_SOURCE...>()<>{}public MAKE_YCM<HANDOFF_SOURCE...>()<_YCM:p>

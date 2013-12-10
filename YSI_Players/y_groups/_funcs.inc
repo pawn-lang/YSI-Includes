@@ -782,7 +782,7 @@ gglobal Group_GetGlobal...(_GROUP_MAKE_TAG:el)
 				_GROUP_MAKE_NAME<Group_SetGlobal...@>(_GROUP_MAKE_TAG:0, false);
 				_GROUP_MAKE_NAME<Group_Get...@>(Group:0, _GROUP_MAKE_TAG:0);
 				_GROUP_MAKE_NAME<Group_GetGlobal...@>(_GROUP_MAKE_TAG:0);
-				_GROUP_MAKE_NAME<Group_Handoff...>("", 0);
+				_GROUP_MAKE_NAME<Group_Handoff...>(0, "", 0);
 			#endif
 			_GROUP_PREVIOUS_FUNCTION();
 		}

@@ -391,22 +391,53 @@ stock chrfindp(needle, haystack[], start = 0)
 	strings for the updated text system involving file based styling and this
 	is not checked for collisions as it's unimportant.  But this doesn't affect
 	the function at all, I just mentioned it here for "interest".
+	
+	Rewritten in self-generating assembly.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock bernstein(string[])
+stock bernstein(string[] /* 12 */)
 {
 	P:7("bernstein called: \"%s\"", string);
+	#pragma unused string
 	new
-		hash = -1,
-		i,
-		j;
-	while ((j = string[i++]))
-	{
-		hash = hash * 33 + j;
-		//printf("Hash stage %d: %d", i - 1, hash);
-	}
-	return hash;
+		base,
+		ctx[AsmContext];
+	// Get this function.
+	#emit CONST.pri  bernstein
+	#emit LOAD.alt   AMX_HEADER_COD
+	#emit ADD
+	#emit STOR.S.pri base
+	AsmInitPtr(ctx, base, 128), // Don't need any more than that.
+	// Setup.
+	@emit PROC
+	@emit CONST.alt   -1
+	@emit PUSH.S      12 // string
+	@emit LREF.S.pri  12 // string
+	@emit JZER.rel    12 * 4 // bernstein_end
+// bernstein_loop:
+	@emit XCHG
+	@emit SMUL.C      33
+	@emit ADD
+	@emit MOVE.alt
+	// Update the next pointer.
+	@emit POP.pri
+	@emit ADD.C       4
+	@emit PUSH.pri
+	// Load the data for the current pointer.
+	@emit LOAD.I
+	@emit JNZ.rel     -(12 * 4) // bernstein_loop
+// bernstein_end:
+	@emit MOVE.pri
+	@emit STACK       4
+	@emit RETN
+	// Now actually CALL the written function.
+	#emit LCTRL      5
+	#emit SCTRL      4
+	#emit CONST.pri  bernstein
+	#emit ADD.C      4
+	#emit SCTRL      6
+	return 0; // Make the compiler happy.
 }
 
 /**--------------------------------------------------------------------------**\
@@ -824,46 +855,6 @@ stock ReturnPlayerName(playerid)
 	return str;
 }
 
-/*
-#define ReturnPlayerName(%0) (YSI_gPlayerName[(%0)])
-
-stock
-	YSI_gPlayerName[MAX_PLAYERS][MAX_PLAYER_NAME];
-
-public OnPlayerConnect(playerid)
-{
-	GetPlayerName(playerid, YSI_gPlayerName[playerid], sizeof (YSI_gPlayerName[]));
-	#if defined y_utils_OnPlayerConnect
-		y_utils_OnPlayerConnect(playerid);
-	#endif
-	return 1;
-}
-#if defined _ALS_OnPlayerConnect
-	#undef OnPlayerConnect
-#else
-	#define _ALS_OnPlayerConnect
-#endif
-#if defined y_utils_OnPlayerConnect
-	forward y_utils_OnPlayerConnect(playerid);
-#endif
-
-stock y_utils_SetPlayerName(playerid, name[])
-{
-	if (SetPlayerName(playerid, name))
-	{
-		strcpy(YSI_gPlayerName[playerid], name);
-		return 1;
-	}
-	return 0;
-}
-#if defined _ALS_SetPlayerName
-	#undef SetPlayerName
-#else
-	#define _ALS_SetPlayerName
-#endif
-#define SetPlayerName y_utils_SetPlayerName
-*/
-
 /**--------------------------------------------------------------------------**\
 <summary>
 	ftouch(filename);
@@ -902,4 +893,55 @@ stock ftouch(const filename[])
 	}
 }
 
+/**--------------------------------------------------------------------------**\
+<summary>
+	InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0);
+</summary>
+<param name="startcolor">One of the two colours.</param>
+<param name="endcolor">The other of the two colours.</param>
+<param name="value">The interpolation value between the endpoints.</param>
+<param name="maxvalue">One of the two numbers.</param>
+<param name="minvalue">The other of the two numbers.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	This function takes two endpoint values (minvalue and maxvalue, with
+	minvalue defaulting to 0), along with a third value (value) whose distance
+	between the two endpoints is calculated (as a percentage).  This percentage
+	value is then applied to the two colours given to find a third colour at
+	some point between those two colours.
+	
+	For example, if the endpoints given are "0" and "10", and the value given is
+	"3", then that is "30%" of the way between the two endpoints.  We therefore
+	want to find a colour that is 30% of the way between the two given colours.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+// "Interpolation" is the technical name for what you are doing here.
+#define InterpolateColor InterpolateColour
+stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
+{
+    if (value >= maxvalue) return endcolor;
+    if (value <= minvalue) return startcolor;
+	static r, g, b, a;
+	new
+		time  = maxvalue - minvalue,
+		stage = value    - minvalue;
+	return
+		// Step 1:  Get the starting colour components.
+		r = startcolor >>> 24       ,
+		g = startcolor >>> 16 & 0xFF,
+		b = startcolor >>> 8  & 0xFF,
+		a = startcolor        & 0xFF,
+		// Step 2:  Interpolate between the end points, and add to the start.
+		r += ((endcolor >>> 24       ) - r) * stage / time,
+		g += ((endcolor >>> 16 & 0xFF) - g) * stage / time,
+		b += ((endcolor >>> 8  & 0xFF) - b) * stage / time,
+		a += ((endcolor        & 0xFF) - a) * stage / time,
+		// Step 3:  Combine the individual components.
+		(r << 24) | ((g & 0xFF) << 16) | ((b & 0xFF) << 8) | (a & 0xFF);
+}
+
 #include "..\YSI_Coding\y_va"
+

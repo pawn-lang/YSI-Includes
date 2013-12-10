@@ -150,10 +150,13 @@ Test:y_groups_Set3()
 	Group_Destroy(g);
 }
 
-#define GROUP_LIBRARY_NAME<%0...%1> %0Test%1
-#define GROUP_LIBRARY_SIZE 100
+#define MASTER 50
+#include "..\YSI_Core\y_master"
 
-#include "..\YSI_Players\y_groups"
+#define _GROUP_MAKE_NAME<%0...%1> %0Test%1
+#define _GROUP_MAKE_LIMIT 100
+
+#include "..\YSI_Players\y_groups\_funcs"
 
 static
 	gPl,
@@ -216,3 +219,9 @@ Test:0_y_groups_Connect0()
 	ASSERT(gS == true);
 	call OnPlayerDisconnect(45, 0);
 }
+
+#undef _GROUP_MAKE_LIMIT
+#undef _GROUP_MAKE_NAME
+
+#include "..\YSI_Core\y_master"
+

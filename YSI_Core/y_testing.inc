@@ -335,7 +335,52 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 
 #if defined RUN_TESTS
 	#if defined _AUTO_RUN_TESTS
-		#if !defined FILTERSCRIPT
+		#if defined FILTERSCRIPT
+			// Hook main in gamemodes.
+			public OnFilterScriptInit()
+			{
+				#if defined Testing_OnFilterScriptInit
+					Testing_OnFilterScriptInit();
+				#endif
+				// Disable error messages (as we're likely to generate them).
+				state ysi_debug : off;
+				// Need to do it this way because "y_malloc" screws it up.  But
+				// the new heap is still safe because it is set at this point.
+				new
+					tests,
+					fails;
+				printf(" ");
+				printf("  ||===================||  ");
+				printf("  || STARTING TESTS... ||  ");
+				printf("  ||===================||  ");
+				printf(" ");
+				Testing_Run(tests, fails, _, true);
+				if (YSI_g_sTestResult != 9) printf("*** Test system verification failed!");
+				else
+				{
+					printf("*** Tests: %d, Fails: %d", tests, fails);
+					if (!fails)
+					{
+						printf(" ");
+						printf("  ||===================||  ");
+						printf("  || ALL TESTS PASSED! ||  ");
+						printf("  ||===================||  ");
+						printf(" ");
+					}
+				}
+				state ysi_debug : on;
+			}
+			
+			#if defined _ALS_OnFilterScriptInit
+				#undef OnFilterScriptInit
+			#else
+				#define _ALS_OnFilterScriptInit
+			#endif
+			#define OnFilterScriptInit Testing_OnFilterScriptInit
+			#if defined Testing_OnFilterScriptInit
+				forward Testing_OnFilterScriptInit();
+			#endif
+		#else
 			// Hook main in gamemodes.
 			main()
 			{
@@ -377,136 +422,136 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 				#define _ALS_main
 			#endif
 			#define main forward Testing_main(); public Testing_main
-			
-			Testing_Next(playerid)
+		#endif
+		
+		Testing_Next(playerid)
+		{
+			new
+				buffer[32];
+			for ( ; ; )
 			{
 				new
-					buffer[32];
-				for ( ; ; )
+					fails = YSI_g_sFails;
+				// Get the last test (nicely fails for cellmax).
+				if ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST)))
 				{
-					new
-						fails = YSI_g_sFails;
-					// Get the last test (nicely fails for cellmax).
-					if ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST)))
+					strunpack(buffer, buffer);
+					// Call the shutdown function if there is one.
+					buffer[0] = 'y';
+					buffer[1] = '_';
+					buffer[2] = '@';
+					buffer[3] = 'Q';
+					CallLocalFunction(buffer, "i", playerid);
+				}
+				// Get the new test, but don't store the index.
+				if (AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST))
+				{
+					YSI_g_sAsked = false;
+					strunpack(buffer, buffer);
+					// Call the setup function if there is one.
+					buffer[0] = '_';
+					buffer[1] = 'y';
+					buffer[2] = '@';
+					buffer[3] = 'Q';
+					CallLocalFunction(buffer, "i", playerid);
+					// Call the test.
+					buffer[1] = '@';
+					buffer[2] = 'y';
+					P:5("Testing_Next(): Calling %s", unpack(buffer[1]));
+					CallLocalFunction(buffer, "i", playerid);
+				}
+				else
+				{
+					YSI_g_sAsked = true;
+					// No more tests.
+					printf("*** Tests: %d, Fails: %d", YSI_g_sTests, YSI_g_sFails);
+					if (!YSI_g_sFails)
 					{
-						strunpack(buffer, buffer);
-						// Call the shutdown function if there is one.
-						buffer[0] = 'y';
-						buffer[1] = '_';
-						buffer[2] = '@';
-						buffer[3] = 'Q';
-						CallLocalFunction(buffer, "i", playerid);
-					}
-					// Get the new test, but don't store the index.
-					if (AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST))
-					{
-						YSI_g_sAsked = false;
-						strunpack(buffer, buffer);
-						// Call the setup function if there is one.
-						buffer[0] = '_';
-						buffer[1] = 'y';
-						buffer[2] = '@';
-						buffer[3] = 'Q';
-						CallLocalFunction(buffer, "i", playerid);
-						// Call the test.
-						buffer[1] = '@';
-						buffer[2] = 'y';
-						P:5("Testing_Next(): Calling %s", unpack(buffer[1]));
-						CallLocalFunction(buffer, "i", playerid);
-					}
-					else
-					{
-						YSI_g_sAsked = true;
-						// No more tests.
-						printf("*** Tests: %d, Fails: %d", YSI_g_sTests, YSI_g_sFails);
-						if (!YSI_g_sFails)
-						{
-							printf(" ");
-							printf("  ||==========================||  ");
-							printf("  || ALL PLAYER TESTS PASSED! ||  ");
-							printf("  ||==========================||  ");
-							printf(" ");
-						}
-					}
-					// If the test needs a player but doesn't ask them anything
-					// then we can't wait for "OnDialogResponse" to run the next
-					// one.
-					if (YSI_g_sAsked)
-					{
-						break;
-					}
-					else if (fails == YSI_g_sFails)
-					{
-						printf(TEST_PASSED);
+						printf(" ");
+						printf("  ||==========================||  ");
+						printf("  || ALL PLAYER TESTS PASSED! ||  ");
+						printf("  ||==========================||  ");
+						printf(" ");
 					}
 				}
+				// If the test needs a player but doesn't ask them anything
+				// then we can't wait for "OnDialogResponse" to run the next
+				// one.
+				if (YSI_g_sAsked)
+				{
+					break;
+				}
+				else if (fails == YSI_g_sFails)
+				{
+					printf(TEST_PASSED);
+				}
 			}
-			
-			public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+		}
+		
+		public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+		{
+			if (dialogid == Y_TESTING_DIALOG_ID)
 			{
-				if (dialogid == Y_TESTING_DIALOG_ID)
+				++YSI_g_sTests;
+				if (response)
 				{
-					++YSI_g_sTests;
-					if (response)
-					{
-						// Pass.
-						printf(TEST_PASSED);
-					}
-					else
-					{
-						// Fail.
-						printf(TEST_FAILED " %s", YSI_g_sFailMessage);
-						++YSI_g_sFails;
-					}
-					Testing_Next(playerid);
-					return 1;
+					// Pass.
+					printf(TEST_PASSED);
 				}
-				#if defined Testing_OnDialogResponse
-					return Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
-				#else
-					return 1;
-				#endif
+				else
+				{
+					// Fail.
+					printf(TEST_FAILED " %s", YSI_g_sFailMessage);
+					++YSI_g_sFails;
+				}
+				Testing_Next(playerid);
+				return 1;
 			}
-			
-			#if defined _ALS_OnDialogResponse
-				#undef OnDialogResponse
-			#else
-				#define _ALS_OnDialogResponse
-			#endif
-			#define OnDialogResponse Testing_OnDialogResponse
 			#if defined Testing_OnDialogResponse
-				forward Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
-			#endif
-			
-			public OnPlayerSpawn(playerid)
-			{
-				if (YSI_g_sPlayer == cellmax && !IsPlayerNPC(playerid))
-				{
-					printf(" ");
-					printf("  ||==========================||  ");
-					printf("  || STARTING PLAYER TESTS... ||  ");
-					printf("  ||==========================||  ");
-					printf(" ");
-					YSI_g_sTests = 0;
-					YSI_g_sFails = 0;
-					Testing_Next(playerid);
-				}
-				#if defined Testing_OnPlayerSpawn
-					return Testing_OnPlayerSpawn(playerid);
-				#else
-					return 1;
-				#endif
-			}
-			
-			#if defined _ALS_OnPlayerSpawn
-				#undef OnPlayerSpawn
+				return Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
 			#else
-				#define _ALS_OnPlayerSpawn
+				return 1;
 			#endif
-			#define OnPlayerSpawn Testing_OnPlayerSpawn
+		}
+		
+		#if defined _ALS_OnDialogResponse
+			#undef OnDialogResponse
+		#else
+			#define _ALS_OnDialogResponse
+		#endif
+		#define OnDialogResponse Testing_OnDialogResponse
+		#if defined Testing_OnDialogResponse
+			forward Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
+		#endif
+		
+		public OnPlayerSpawn(playerid)
+		{
+			if (YSI_g_sPlayer == cellmax && !IsPlayerNPC(playerid))
+			{
+				printf(" ");
+				printf("  ||==========================||  ");
+				printf("  || STARTING PLAYER TESTS... ||  ");
+				printf("  ||==========================||  ");
+				printf(" ");
+				YSI_g_sTests = 0;
+				YSI_g_sFails = 0;
+				Testing_Next(playerid);
+			}
 			#if defined Testing_OnPlayerSpawn
-				forward Testing_OnPlayerSpawn(playerid);
+				return Testing_OnPlayerSpawn(playerid);
+			#else
+				return 1;
 			#endif
+		}
+		
+		#if defined _ALS_OnPlayerSpawn
+			#undef OnPlayerSpawn
+		#else
+			#define _ALS_OnPlayerSpawn
+		#endif
+		#define OnPlayerSpawn Testing_OnPlayerSpawn
+		#if defined Testing_OnPlayerSpawn
+			forward Testing_OnPlayerSpawn(playerid);
 		#endif
 	#else
 		Testing_RunAll()
