@@ -204,6 +204,8 @@ stock I@E(mutable const s[])
 	return 1;
 }
 
+#undef mutable
+
 /**--------------------------------------------------------------------------**\
 <summary>I@F</summary>
 <returns>
@@ -741,12 +743,12 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
 		}
 		if (!cur)
 		{
+			// Try publics...
 			if (AMX_GetPublicPointer(0, pos, name, true))
 			{
 				ret[E_CALLBACK_DATA_POINTER] = pos | 0x80000000;
 				return true;
 			}
-			// Try publics...
 			return false;
 		}
 	}

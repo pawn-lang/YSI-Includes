@@ -248,3 +248,4 @@ hook OnScriptInit()
 	YSI_g_iWriteMemAddr = addr;
 	return 1;
 }
+

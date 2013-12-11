@@ -398,6 +398,7 @@ stock chrfindp(needle, haystack[], start = 0)
 
 stock bernstein(string[] /* 12 */)
 {
+	// Only shown the very first time this function is run.
 	P:7("bernstein called: \"%s\"", string);
 	#pragma unused string
 	new

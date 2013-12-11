@@ -123,7 +123,6 @@ stock
 // N@ taken by y_uvar.
 // M@ taken by y_svar.
 // L@ taken by y_testing.
-// I@ taken by y_timers.  No more.
 
 native _YSI_RE_NATIVE<U@|||id=0, const name[]="", value=cellmin, const string[]=""|||setproperty>
 
@@ -134,7 +133,7 @@ native _YSI_RE_NATIVE<V@|||GLOBAL_TAG_TYPES:id=0, const name[]="", value=cellmin
 	#undef CallLocalFunction
 #endif
 
-// Define this command with basically every strong tag in existance to avoid
+// Define this command with basically every strong tag in existence to avoid
 // tag mismatch warnings with remote functions with strong tag parameters.
 native _YSI_RE_NATIVE<W@|||const function[], const format[], GLOBAL_TAG_TYPES:...|||CallRemoteFunction>
 

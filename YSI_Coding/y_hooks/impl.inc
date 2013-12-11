@@ -140,6 +140,7 @@ public _@_y_hooks_@_0()
 	_CODE_2;
 	_CODE_2;
 	_CODE_2;
+	// Uncomment this block if more hook function space is required.
 	/*
 	_CODE_2;
 	_CODE_2;
@@ -158,8 +159,8 @@ public _@_y_hooks_@_0()
 	_CODE_2;
 	_CODE_2;
 	*/
-	#undef _CODE_1
 	#undef _CODE_2
+	#undef _CODE_1
 }
 
 forward _@_y_hooks_@_1();
@@ -192,6 +193,8 @@ _Y_HOOKS_STATIC Hooks_ForceReverse(mutable const str[32 char])
 	#emit CONST.pri  Hooks_DoForceReverse
 	#emit SCTRL      6
 }
+
+#undef mutable
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_CountInvalidPublics</summary>
