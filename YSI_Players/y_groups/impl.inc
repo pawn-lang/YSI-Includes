@@ -146,9 +146,16 @@ enum E_GROUP_DATA
 	e_GROUP_FLAGS:E_GROUP_DATA_FLAGS,
 }
 
+stock PlayerGroups(a, b)
+{
+	return 0;
+}
+
 // Define the groups iterator in terms of the underlying bits, but without the
 // need for users to know about the "YSI_gGroupPlayers" array, just the player.
-#define PlayerGroups@YSII_Ag(%0,%1) GROUP_MANGLE(Bits@YSII_Ag(YSI_gGroupPlayers[%0],_:%1))
+#define PlayerGroups(%0,%1) GROUP_MANGLE(Bits@YSII_Ag(YSI_gGroupPlayers[%0],_:%1))
+// Detect missing parameters.
+#define PlayerGroups@YSII_Ag-1);_:(%0=%8(%5)%7)%9) YSI_NULL_ITERATOR-3);_:(%0=PlayerGroups(%5))!=-1;)
 
 //#define GROUPS_MAX_LIBRARIES            4
 
@@ -1253,9 +1260,27 @@ stock Group:Group_Create(string:name[] = "")
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-foreign Group@YSII_Ag(Group:group, start);
+// Make nicer warnings.
+#pragma deprecated use "GroupMember"
+#define Group@YSII_Ag- iterfunc@2<Group>
 
-global Group@YSII_Ag(Group:group, start)
+iterfunc stock Group(Group:group, start)
+{
+	static
+		sOnce = true;
+	if (sOnce)
+	{
+		P:I("The \"Group\" iterator is deprecated, please use \"GroupMember\" instead.");
+		sOnce = false;
+	}
+	return GroupMember@YSII_Ag(Group:group, start);
+}
+
+#define GroupMember@YSII_Ag- iterfunc@2<GroupMember>
+
+iterfunc foreign GroupMember(Group:group, start);
+
+iterfunc global GroupMember(Group:group, start)
 {
 	GROUP_FIX(group);
 	if (start == -1)
@@ -1287,11 +1312,11 @@ global Group@YSII_Ag(Group:group, start)
 \**--------------------------------------------------------------------------**/
 
 // Bypass y_iterate restrictions.
-#define CreatedGroup@YSII_Ag(%0,%1) CreatedGroup@YSII_Ag(%1)
+#define CreatedGroup@YSII_Ag- iterfunc@1<CreatedGroup>
 
-foreign Group:CreatedGroup@YSII_Ag(Group:group);
+iterfunc foreign Group:CreatedGroup(Group:group);
 
-global Group:CreatedGroup@YSII_Ag(Group:group)
+iterfunc global Group:CreatedGroup(Group:group)
 {
 	// In most iterators the inital value is implicitly handled by the first
 	// "++", but it isn't here because we need to correct for the "Group" flag.
@@ -1317,9 +1342,11 @@ global Group:CreatedGroup@YSII_Ag(Group:group)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-foreign Group:ChildGroup@YSII_Ag(Group:parent, Group:start);
+#define GroupChild@YSII_Ag- iterfunc@2<GroupChild>
 
-global Group:ChildGroup@YSII_Ag(Group:parent, Group:start)
+iterfunc foreign Group:GroupChild(Group:parent, Group:start);
+
+iterfunc global Group:GroupChild(Group:parent, Group:start)
 {
 	if (!_Group_IsValid(parent)) return INVALID_GROUP;
 	// In most iterators the inital value is implicitly handled by the first

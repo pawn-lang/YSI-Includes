@@ -107,7 +107,7 @@ Test:y_groups_Set1()
 	ASSERT(Group_GetCount(g) == 1);
 	new
 		c = 0;
-	foreach (new p : Group(g))
+	foreach (new p : GroupMember(g))
 	{
 		ASSERT(p == 42);
 		++c;
@@ -128,7 +128,7 @@ Test:y_groups_Set2()
 	ASSERT(Group_GetCount(g) == 0);
 	new
 		c = 0;
-	foreach (new p : Group(g))
+	foreach (new p : GroupMember(g))
 	{
 		++c;
 	}
@@ -404,7 +404,7 @@ Test:y_groups_ChildIterator0()
 	Group_AddChild(g0, g2);
 	new
 		total = 0;
-	foreach (new Group:g : ChildGroup(g0))
+	foreach (new Group:g : GroupChild(g0))
 	{
 		++total;
 	}
@@ -425,7 +425,7 @@ Test:y_groups_ChildIterator1()
 	ASSERT(Group_IsValid(g0));
 	ASSERT(Group_IsValid(g1));
 	ASSERT(Group_IsValid(g2));
-	foreach (new Group:g : ChildGroup(g0))
+	foreach (new Group:g : GroupChild(g0))
 	{
 		Group_Destroy(g);
 	}

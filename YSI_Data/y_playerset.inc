@@ -136,6 +136,8 @@ stock
 // not -1 then we are mid-loop and we can just use the stored determined type
 // and use "cur" (as the last player done) to figure out the next player.  This
 // code only loops through connected players.
+#define PS@YSII_Ag- iterfunc@2<PS>
+
 stock PS@YSII_Ag(__ps_addr_t:addr, cur)
 {
 	if (cur == -1)

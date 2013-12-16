@@ -387,7 +387,28 @@ YCMD:y_commands_t111111(playerid, params[], help)
 	return 1;
 }
 
-Test:y_commands_iterator()
+Test:y_commands_iterator0()
+{
+	new
+		found,
+		total = 0;
+	foreach (new c : Command)
+	{
+		++total;
+		if (FALSE) {}
+		else if (c == _:YCMD:y_commands_t1) ++found;
+		else if (c == _:YCMD:y_commands_t11) ++found;
+		else if (c == _:YCMD:y_commands_t111) ++found;
+		else if (c == _:YCMD:y_commands_t1111) ++found;
+		else if (c == _:YCMD:y_commands_t11111) ++found;
+		else if (c == _:YCMD:y_commands_t111111) ++found;
+	}
+	// Very difficult to do much more.
+	ASSERT(total != 0);
+	ASSERT(found == 6);
+}
+
+Test:y_commands_iterator1()
 {
 	new
 		found,

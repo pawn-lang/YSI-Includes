@@ -1399,11 +1399,11 @@ global string:Command_GetNext(index, playerid)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Command@YSII_Ag(%0,%1) Command@YSII_Ag(%1)
+#define Command@YSII_Ag- iterfunc@1<Command>
 
-foreign Command@YSII_Ag(start);
+iterfunc foreign Command(start);
 
-global Command@YSII_Ag(start)
+iterfunc global Command(start)
 {
 	for (new i = start + 1; i < YSI_g_sHighestID; ++i)
 	{
@@ -1428,9 +1428,11 @@ global Command@YSII_Ag(start)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-foreign PlayerCommand@YSII_Ag(pid, start);
+#define PlayerCommand@YSII_Ag- iterfunc@2<PlayerCommand>
 
-global PlayerCommand@YSII_Ag(pid, start)
+iterfunc foreign PlayerCommand(pid, start);
+
+iterfunc global PlayerCommand(pid, start)
 {
 	new
 		slot = PA_Slot(pid),

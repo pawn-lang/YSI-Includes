@@ -345,6 +345,8 @@ stock Bit_Display(BitArray:array<>, size = sizeof (array))
 
 #define bitsof(%0) (sizeof(%0)*cellbits)
 
+#define Bits@YSII_Ag- iterfunc@3<Bits>
+
 stock Bits@YSII_Ag(BitArray:data<>, start, size = sizeof (data))
 {
 	P:3("YSI_gABITSFunc called: %s, %i", Bit_Display(data, size), start);
@@ -371,6 +373,8 @@ stock Bits@YSII_Ag(BitArray:data<>, start, size = sizeof (data))
 	}
 	return -1;
 }
+
+#define Blanks@YSII_Ag- iterfunc@3<Blanks>
 
 stock Blanks@YSII_Ag(BitArray:data<>, start, size = sizeof (data))
 {

@@ -242,14 +242,29 @@ Iterators:
 	#error YSI_ITTER_NO_SORT is no longer supported by foreach.
 #endif
 
-#define _Y_ITER_ARRAY: _:_Y_ITER_C0:
-#define _Y_ITER_ARRAY_SIZE(%1) _:_Y_ITER_C1:_Y_ITER_C2:sizeof %1@YSII_Ag-1
+// This now uses "$" not ":" because it is ALWAYS stripped out (it isn't a tag
+// based macro that may not be detected), and that way we can detect the "$" in
+// "_Y_ITER_C2" even when there is a custom tag involved.
+#define _Y_ITER_ARRAY$ _:_Y_ITER_C0:
+#define _Y_ITER_ARRAY_SIZE(%1) _:_Y_ITER_C1:_Y_ITER_C2:(sizeof %1@YSII_Ag-1)
 
 #define _Y_ITER_C0:%0[%1]@YSII_%4g%3) %0@YSII_%4g[%1]%3)
-#define _Y_ITER_C1:_Y_ITER_C2:%0[%1]@YSII_Ag%3) %0@YSII_Ag[]%3)
-#define _Y_ITER_C2:sizeof%0(%1)@YSII_Ag-1;_:(%2=_Y_ITER_ARRAY:%3(%4)@YSII_Ag[%5])!=%9_Y_ITER_ARRAY_SIZE(%6);) -1;_:(%2=%3@YSII_Ag(%4,%5))!=-1;)
+#define _Y_ITER_C1:_Y_ITER_C2:(%0[%1]@YSII_Ag-1)%3) (%0@YSII_Ag[]-1)%3)
+#define _Y_ITER_C2:(sizeof%0(%1)@YSII_Ag-1);_:(%2=%9$%3(%4)@YSII_Ag[%5])!=%9_Y_ITER_ARRAY_SIZE(%6);) _Y_ITER_C4:-1;_:(%2=%3@YSII_Ag(%4,%5))!=-1;)
 
 #define _Y_ITER_C3:%0[%1]@YSII_Cg,%2[%3]@YSII_Ag[%4]={%5} _Y_ITER_C3:%0@YSII_Cg[%1],%0@YSII_Ag[%1][%4]
+
+#define _Y_ITER_C4:-1;_:(%2=%3(,%5))!=-1;) (sizeof %3-1);_:(%2=%3 __OSqB (%5) __CSqB)!=sizeof %3-1;)
+
+#define iterfunc@1<%1>1);_:(%0=%8)%9) YSI_NULL_ITERATOR-3);_:(%0=%1@YSII_Ag(%0))!=-1;) //CreatedGroup@YSII_Ag(%1)
+#define iterfunc@2<%1>1);_:(%0=%8(%5)%7)%9) YSI_NULL_ITERATOR-3);_:(%0=%1@YSII_Ag(%5))!=-1;)
+#define iterfunc@3<%1>1);_:(%0=%8(%5)%7)%9) YSI_NULL_ITERATOR-3);_:(%0=%1@YSII_Ag(%5))!=-1;)
+#define iterfunc%0(%1) %0@YSII_Ag(%1)
+
+// Macros to add square brackets while making them invisible to the
+// pre-processor
+#define __OSqB [
+#define __CSqB ]
 
 //#if !defined BOTSYNC_IS_BOT
 //	static stock
@@ -259,6 +274,10 @@ Iterators:
 #if !defined BOTSYNC_IS_BOT
 	forward Itter_OPDCInternal(playerid);
 #endif
+
+// This is a hack to build the constant number "-1" with "sizeof".
+stock const
+	YSI_NULL_ITERATOR[2]; // NULL target only used for "sizeof".
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_Create2</summary>
@@ -274,12 +293,6 @@ Iterators:
 \**--------------------------------------------------------------------------**/
 
 // If this ever changes, update the size reference in y_users.
-/*#define Iter_Create2 Itter_Create2
-#define Itter_Create2(%1,%2,%3) \
-	new \
-		%1@YSII_Sg[%2] = {-1, ...}, \
-		%1@YSII_Cg[%2] = {0}, \
-		%1@YSII_Ag[%2][%3]*/
 
 #define IteratorArray:%1[%2]<%3> %1@YSII_Cg[%2],%1@YSII_Ag[%2][%3+1]//,%1@YSII_Rg[%2][%3+1]
 
@@ -349,7 +362,7 @@ native Iter_Add(Iterator:Name<>, value);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Add Itter_Add
-#define Itter_Add(%1,%2) Itter_AddInternal(_Y_ITER_ARRAY:%1@YSII_Cg,_Y_ITER_ARRAY:%1@YSII_Ag,%2,_Y_ITER_ARRAY_SIZE(%1))
+#define Itter_Add(%1,%2) Itter_AddInternal(_Y_ITER_ARRAY$%1@YSII_Cg,_Y_ITER_ARRAY$%1@YSII_Ag,%2,_Y_ITER_ARRAY_SIZE(%1))
 
 /*#define Iter_AddSafe Itter_AddSafe
 #define Itter_AddSafe(%1,%2) \
@@ -370,7 +383,7 @@ native Iter_Free(Iterator:Name<>);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Free Itter_Free
-#define Itter_Free(%1) Itter_FreeInternal(_Y_ITER_ARRAY:%1@YSII_Ag,_Y_ITER_ARRAY_SIZE(%1))
+#define Itter_Free(%1) Itter_FreeInternal(_Y_ITER_ARRAY$%1@YSII_Ag,_Y_ITER_ARRAY_SIZE(%1))
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_Remove</summary>
@@ -388,7 +401,7 @@ native Iter_Remove(Iterator:Name<>, value);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Remove Itter_Remove
-#define Itter_Remove(%1,%2) Itter_RemoveInternal(_Y_ITER_ARRAY:%1@YSII_Cg,_Y_ITER_ARRAY:%1@YSII_Ag,%2,_Y_ITER_ARRAY_SIZE(%1))
+#define Itter_Remove(%1,%2) Itter_RemoveInternal(_Y_ITER_ARRAY$%1@YSII_Cg,_Y_ITER_ARRAY$%1@YSII_Ag,%2,_Y_ITER_ARRAY_SIZE(%1))
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_Contains</summary>
@@ -406,7 +419,7 @@ native Iter_Remove(Iterator:Name<>, value);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Contains Itter_Contains
-#define Itter_Contains(%1,%2) Itter_ContainsInternal(_Y_ITER_ARRAY:%1@YSII_Ag,%2,_Y_ITER_ARRAY_SIZE(%1))
+#define Itter_Contains(%1,%2) Itter_ContainsInternal(_Y_ITER_ARRAY$%1@YSII_Ag,%2,_Y_ITER_ARRAY_SIZE(%1))
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_SafeRemove</summary>
@@ -427,7 +440,7 @@ native Iter_SafeRemove(Iterator:Name<>, value, &next);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_SafeRemove Itter_SafeRemove
-#define Itter_SafeRemove(%1,%2,%3) Itter_SafeRemoveInternal(_Y_ITER_ARRAY:%1@YSII_Cg,_Y_ITER_ARRAY:%1@YSII_Ag,%2,%3,_Y_ITER_ARRAY_SIZE(%1))
+#define Itter_SafeRemove(%1,%2,%3) Itter_SafeRemoveInternal(_Y_ITER_ARRAY$%1@YSII_Cg,_Y_ITER_ARRAY$%1@YSII_Ag,%2,%3,_Y_ITER_ARRAY_SIZE(%1))
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_Random</summary>
@@ -444,7 +457,7 @@ native Iter_Random(Iterator:Name<>);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Random Itter_Random
-#define Itter_Random(%1) Itter_RandomInternal(_Y_ITER_ARRAY:%1@YSII_Cg,_Y_ITER_ARRAY:%1@YSII_Ag,_Y_ITER_ARRAY_SIZE(%1))
+#define Itter_Random(%1) Itter_RandomInternal(_Y_ITER_ARRAY$%1@YSII_Cg,_Y_ITER_ARRAY$%1@YSII_Ag,_Y_ITER_ARRAY_SIZE(%1))
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_Debug</summary>
@@ -458,7 +471,7 @@ native Iter_Random(Iterator:Name<>);
 \**--------------------------------------------------------------------------**/
 
 //#define Iter_Debug Itter_Debug
-//#define Itter_Debug(%1) Itter_ShowArray(_Y_ITER_ARRAY:%1@YSII_Cg,_Y_ITER_ARRAY:%1@YSII_Ag)
+//#define Itter_Debug(%1) Itter_ShowArray(_Y_ITER_ARRAY$%1@YSII_Cg,_Y_ITER_ARRAY$%1@YSII_Ag)
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_Count</summary>
@@ -475,7 +488,7 @@ native Iter_Count(Iterator:Name<>);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Count Itter_Count
-#define Itter_Count(%1) (_Y_ITER_ARRAY:%1@YSII_Cg)
+#define Itter_Count(%1) (_Y_ITER_ARRAY$%1@YSII_Cg)
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_Clear</summary>
@@ -492,7 +505,7 @@ native Iter_Clear(IteratorArray:Name[]<>);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Clear Itter_Clear
-#define Itter_Clear(%1) Itter_ClearInternal(_Y_ITER_ARRAY:%1@YSII_Cg,_Y_ITER_ARRAY:%1@YSII_Ag,_Y_ITER_ARRAY_SIZE(%1))
+#define Itter_Clear(%1) Itter_ClearInternal(_Y_ITER_ARRAY$%1@YSII_Cg,_Y_ITER_ARRAY$%1@YSII_Ag,_Y_ITER_ARRAY_SIZE(%1))
 
 /**--------------------------------------------------------------------------**\
 Create the internal itterators.
@@ -526,11 +539,6 @@ Create the internal itterators.
 static stock
 	YSI_gsOnGameModeInit[] = "Itter_OnGameModeInit",
 	YSI_gsSpecifier@[] = "";
-/*	YSI_gsOnPlayerConnect[] = "Itter_OnPlayerConnect",
-	YSI_gsOnPlayerDisconnect[] = "Itter_OnPlayerDisconnect",
-	YSI_gsOnGameModeInit[] = "Itter_OnGameModeInit",
-	YSI_gsSpecifier@i[] = "i",
-	YSI_gsSpecifier@[] = "";*/
 
 /**--------------------------------------------------------------------------**\
 <summary>foreach</summary>
@@ -563,23 +571,18 @@ static stock
 #define Y_FOREACH_FOURTH|||%0=Y_FOREACH_FIFTH|||%1|||%2||| new Y_FOREACH_SIXTH;%0|||Y_FOREACH_SEVENTH|||%2|||
 
 // This is called when there are tags on the "new" declaration.
-#define Y_FOREACH_SEVENTH|||%9Y_FOREACH_SIXTH;%0|||%1|||%2||| new %0:%1=%0:_Y_ITER_ARRAY_SIZE(%2);_:(%1=_Y_ITER_ARRAY:%2@YSII_Ag[%1])!=%0:_Y_ITER_ARRAY_SIZE(%2);
+#define Y_FOREACH_SEVENTH|||%9Y_FOREACH_SIXTH;%0|||%1|||%2||| new %0:%1=%0:_Y_ITER_ARRAY_SIZE(%2);_:(%1=%0:_Y_ITER_ARRAY$%2@YSII_Ag[%1])!=_Y_ITER_ARRAY_SIZE(%2);
 
 // This is called when there aren't.
-#define Y_FOREACH_SIXTH;%0|||Y_FOREACH_SEVENTH|||%2||| %0=_Y_ITER_ARRAY_SIZE(%2);_:(%0=_Y_ITER_ARRAY:%2@YSII_Ag[%0])!=_Y_ITER_ARRAY_SIZE(%2);
-//hta:%0=hta:%2@YSII_Sg;_:%0!=-1;%0=hta:%2@YSII_Ag[%0]
-//#define Y_FOREACH_FOURTH|||%0=Y_FOREACH_FIFTH|||%1|||%2||| new hta:%0=hta:%2@YSII_Sg;_:%0!=-1;%0=hta:%2@YSII_Ag[%0]
-
-// Move any tags from the second half to the first half.
-//#define hta:%0=hta:%1:%2;_:%3!=-1;%4=hta:%5:%6[%7] %0:%1=%2;_:%1!=-1;%1=%6[%1]
+#define Y_FOREACH_SIXTH;%0|||Y_FOREACH_SEVENTH|||%2||| %0=_Y_ITER_ARRAY_SIZE(%2);_:(%0=_Y_ITER_ARRAY$%2@YSII_Ag[%0])!=_Y_ITER_ARRAY_SIZE(%2);
 
 // This is called if "%1" didn't have "new" at the start.
-#define Y_FOREACH_FIFTH|||Y_FOREACH_FOURTH|||%1:%2||| _Y_ITER_ARRAY_SIZE(%2);_:(%1=_Y_ITER_ARRAY:%2@YSII_Ag[%1])!=_Y_ITER_ARRAY_SIZE(%2);
+#define Y_FOREACH_FIFTH|||Y_FOREACH_FOURTH|||%1:%2||| _Y_ITER_ARRAY_SIZE(%2);_:(%1=_Y_ITER_ARRAY$%2@YSII_Ag[%1])!=_Y_ITER_ARRAY_SIZE(%2);
 
 //%1=%2@YSII_Sg;_:Y_FOREACH_NONEW:%1!=-1;%1=%2@YSII_Ag[%1]
 // This is the old version, but DON'T add "new" because that already exists from
 // the failed "new" macro call above.
-#define Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%1,%2||| %2=_Y_ITER_ARRAY_SIZE(%1);_:(%2=_Y_ITER_ARRAY:%1@YSII_Ag[%2])!=_Y_ITER_ARRAY_SIZE(%1);
+#define Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%1,%2||| %2=_Y_ITER_ARRAY_SIZE(%1);_:(%2=_Y_ITER_ARRAY$%1@YSII_Ag[%2])!=_Y_ITER_ARRAY_SIZE(%1);
 //#define Y_FOREACH_NONEW:new%0!=-1;new%1=%2[new%3] %0!=-1;%1=%2[%3]
 
 //#define Y_FOREACH_EIGHTH:%0[%1]@YSII_Sg;%2;%3=%4[%5]@YSII_Ag[%6] %0@YSII_Sg[%1];%2;%3=%4@YSII_Ag[%5][%6]
@@ -597,7 +600,7 @@ static stock
 \**--------------------------------------------------------------------------**/
 
 #define foreachex(%1,%2) foreach(%2:%1)
-	//for (%2=_Y_ITER_ARRAY_SIZE(%1);(%2=_Y_ITER_ARRAY:%1@YSII_Ag[%2])!=_Y_ITER_ARRAY_SIZE(%1);)
+	//for (%2=_Y_ITER_ARRAY_SIZE(%1);(%2=_Y_ITER_ARRAY$%1@YSII_Ag[%2])!=_Y_ITER_ARRAY_SIZE(%1);)
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_OnPlayerConnect</summary>
@@ -1292,8 +1295,8 @@ stock
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iter_First(%1) (_Y_ITER_ARRAY:%1@YSII_Ag[_Y_ITER_ARRAY_SIZE(%1)])
-#define Itter_First(%1) (_Y_ITER_ARRAY:%1@YSII_Ag[_Y_ITER_ARRAY_SIZE(%1)])
+#define Iter_First(%1) (_Y_ITER_ARRAY$%1@YSII_Ag[_Y_ITER_ARRAY_SIZE(%1)])
+#define Itter_First(%1) (_Y_ITER_ARRAY$%1@YSII_Ag[_Y_ITER_ARRAY_SIZE(%1)])
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_Last</summary>
@@ -1306,8 +1309,8 @@ stock
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iter_Last(%1) Itter_PrevInternal(_Y_ITER_ARRAY:%1@YSII_Ag,_Y_ITER_ARRAY_SIZE(%1),_Y_ITER_ARRAY_SIZE(%1))
-#define Itter_Last(%1) Itter_PrevInternal(_Y_ITER_ARRAY:%1@YSII_Ag,_Y_ITER_ARRAY_SIZE(%1),_Y_ITER_ARRAY_SIZE(%1))
+#define Iter_Last(%1) Itter_PrevInternal(_Y_ITER_ARRAY$%1@YSII_Ag,_Y_ITER_ARRAY_SIZE(%1),_Y_ITER_ARRAY_SIZE(%1))
+#define Itter_Last(%1) Itter_PrevInternal(_Y_ITER_ARRAY$%1@YSII_Ag,_Y_ITER_ARRAY_SIZE(%1),_Y_ITER_ARRAY_SIZE(%1))
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_Next</summary>
@@ -1321,8 +1324,8 @@ stock
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iter_Next(%1,%2) (_Y_ITER_ARRAY:%1@YSII_Ag[(%2)])
-#define Itter_Next(%1,%2) (_Y_ITER_ARRAY:%1@YSII_Ag[(%2)])
+#define Iter_Next(%1,%2) (_Y_ITER_ARRAY$%1@YSII_Ag[(%2)])
+#define Itter_Next(%1,%2) (_Y_ITER_ARRAY$%1@YSII_Ag[(%2)])
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_Prev</summary>
@@ -1336,8 +1339,8 @@ stock
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iter_Prev(%1,%2) Itter_PrevInternal(_Y_ITER_ARRAY:%1@YSII_Ag,_Y_ITER_ARRAY_SIZE(%1),(%2))
-#define Itter_Prev(%1,%2) Itter_PrevInternal(_Y_ITER_ARRAY:%1@YSII_Ag,_Y_ITER_ARRAY_SIZE(%1),(%2))
+#define Iter_Prev(%1,%2) Itter_PrevInternal(_Y_ITER_ARRAY$%1@YSII_Ag,_Y_ITER_ARRAY_SIZE(%1),(%2))
+#define Itter_Prev(%1,%2) Itter_PrevInternal(_Y_ITER_ARRAY$%1@YSII_Ag,_Y_ITER_ARRAY_SIZE(%1),(%2))
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_InternalArray</summary>
@@ -1350,8 +1353,8 @@ stock
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iter_InternalArray(%1) (_Y_ITER_ARRAY:%1@YSII_Ag)
-#define Itter_InternalArray(%1) (_Y_ITER_ARRAY:%1@YSII_Ag)
+#define Iter_InternalArray(%1) (_Y_ITER_ARRAY$%1@YSII_Ag)
+#define Itter_InternalArray(%1) (_Y_ITER_ARRAY$%1@YSII_Ag)
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_InternalSize</summary>

@@ -161,6 +161,7 @@ Compile options:
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Coding\y_hooks"
 #include "..\YSI_Data\y_hashmap"
+#include "..\YSI_Data\y_iterate"
 #include "..\YSI_Data\y_playerarray"
 #include "..\YSI_Server\y_punycode"
 #include "..\YSI_Internal\y_distribute"
