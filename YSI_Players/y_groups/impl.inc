@@ -169,9 +169,8 @@ static stock __declspec(dist_master) YSI_gGroupData[_MAX_GROUPS_G][E_GROUP_DATA]
 static stock __declspec(dist_tagged) Bit:YSI_g_sChildGroups[_MAX_GROUPS_G][bits<_MAX_GROUPS_G>];
 
 static stock
+	BitArray:YSI_g_sDefaultGroups<_MAX_GROUPS_G>,
 	// Create group hierarchys.
-	// BitArray:YSI_g_sChildGroups[_MAX_GROUPS_G]<_MAX_GROUPS_G>,
-	//BitArray:YSI_g_sChildDefaults<_MAX_GROUPS_G>,
 	Iterator:GroupPlayers[_MAX_GROUPS_G]<MAX_PLAYERS>;
 
 //#define GROUP_BITS<%0> BitArray:%0<_MAX_GROUPS_G>,
@@ -341,7 +340,10 @@ public OnScriptInit()
 				strpack(YSI_gGroupData[_MAX_GROUPS][E_GROUP_DATA_NAME], YSI_g_scGlobalName, MAX_GROUP_NAME char);
 				YSI_gGroupData[_MAX_GROUPS][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS_ACTIVE | e_GROUP_FLAGS_GLOBAL;
 				YSI_gGroupData[_MAX_GROUPS][E_GROUP_DATA_HASH] = YHash(YSI_g_scGlobalName);
-				Bit_Let(YSI_g_sChildGroups[_MAX_GROUPS], _:_MAX_GROUPS);
+				// Store the default groups away from the actual global group.
+				// The default groups include the global group, but it itself
+				// doesn't.
+				Bit_Let(YSI_g_sDefaultGroups, _:_MAX_GROUPS);
 			}
 	#endif
 	// Call the other group init functions.
@@ -577,8 +579,7 @@ hook OnPlayerConnect@9(playerid)
 				P:6("Group_OnPlayerConnect: Master %d", playerid);
 				// Is master.  ALWAYS reset all players - if they start screwing
 				// around with loading orders then that's their own fault!
-				//_Group_InitPlayer(playerid);
-				broadcastfunc _Group_FakePlayer(playerid, YSI_g_sChildGroups[_MAX_GROUPS], bits<_MAX_GROUPS_G>);
+				broadcastfunc _Group_FakePlayer(playerid, YSI_g_sDefaultGroups, bits<_MAX_GROUPS_G>);
 			}
 		#if _YSIM_IS_CLOUD
 			else
@@ -618,13 +619,6 @@ foreign void:_Group_InitPlayer(p, master);
 global void:_Group_InitPlayer(p, master)
 {
 	targetfunc _Group_FakePlayer<master>(p, YSI_gGroupPlayers[p], bits<_MAX_GROUPS_G>);
-	//Set their groups to the global group.
-	//foreach (new i : Bits(YSI_gGroupData[_MAX_GROUPS]))
-	//{
-	//	Iter_Add(GroupPlayers[i], playerid);
-	//}
-	//YSI_gGroupPlayers[playerid] = YSI_gGroupData[_MAX_GROUPS];
-	//return 1;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1227,7 +1221,7 @@ static remotefunc void:_Group_CreateChain(Group:g)
 	MASTER_SET<i>
 	++YSI_g_sGroupCount;
 	// Set the child groups to only this group.
-	Bit_Let(YSI_g_sChildGroups[i], i);
+	//Bit_Let(YSI_g_sChildGroups[i], i);
 	// Add this group to other groups.
 	broadcastfunc _Group_CreateChain(Group:i);
 	return GROUP_MANGLE(i);
@@ -1332,12 +1326,7 @@ global Group:ChildGroup@YSII_Ag(Group:parent, Group:start)
 	// "++", but it isn't here because we need to correct for the "Group" flag.
 	if (start != INVALID_GROUP) GROUP_FIX(start);
 	// Use the existing "Bits" iterator with fixed identifiers.
-	new
-		Group:ret = GROUP_MANGLE(Bits@YSII_Ag(YSI_g_sChildGroups[_:GROUP_TEMP_FIX(parent)], _:start, bits<_MAX_GROUPS_G>));
-	// Groups are classed as children of themselves, but we don't want to return
-	// that fact in iterators.
-	if (ret == parent) return GROUP_MANGLE(Bits@YSII_Ag(YSI_g_sChildGroups[_:GROUP_TEMP_FIX(parent)], _:GROUP_TEMP_FIX(ret), bits<_MAX_GROUPS_G>));
-	return ret;
+	return GROUP_MANGLE(Bits@YSII_Ag(YSI_g_sChildGroups[_:GROUP_TEMP_FIX(parent)], _:start, bits<_MAX_GROUPS_G>));
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1455,6 +1444,7 @@ global void:Group_SetGroup(Group:g,Group:el,bool:s)
 				return;
 			}
 			Bit_Let(YSI_g_sChildGroups[_:g], _:el);
+			if (g == Group:_MAX_GROUPS) Bit_Let(YSI_g_sDefaultGroups, _:el);
 			foreach (new p : GroupPlayers[_:g])
 			{
 				if (!_Group_HasPlayer(el, p))
@@ -1469,6 +1459,7 @@ global void:Group_SetGroup(Group:g,Group:el,bool:s)
 			{
 				// Child is a part of parent (don't remove players though).
 				Bit_Vet(YSI_g_sChildGroups[_:g], _:el);
+				if (g == Group:_MAX_GROUPS) Bit_Vet(YSI_g_sDefaultGroups, _:el);
 			}
 		}
 	}

@@ -265,10 +265,10 @@ Test:y_groups_Children2()
 		Group:g1 = Group_Create(),
 		Group:g2 = Group_Create();
 	// Check groups are children of themselves.
-	ASSERT(Group_GetGroup(GROUP_GLOBAL, GROUP_GLOBAL));
-	ASSERT(Group_GetGroup(g0, g0));
-	ASSERT(Group_GetGroup(g1, g1));
-	ASSERT(Group_GetGroup(g2, g2));
+	ASSERT(!Group_GetGroup(GROUP_GLOBAL, GROUP_GLOBAL));
+	ASSERT(!Group_GetGroup(g0, g0));
+	ASSERT(!Group_GetGroup(g1, g1));
+	ASSERT(!Group_GetGroup(g2, g2));
 	// Check there are no relationships at all.
 	ASSERT(!Group_GetGroup(g0, g1));
 	ASSERT(!Group_GetGroup(g0, g2));
