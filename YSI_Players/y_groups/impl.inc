@@ -148,7 +148,7 @@ enum E_GROUP_DATA
 
 // Define the groups iterator in terms of the underlying bits, but without the
 // need for users to know about the "YSI_gGroupPlayers" array, just the player.
-#define PlayerGroups@YSII_Ag(%0,%1) Group:Bits@YSII_Ag(YSI_gGroupPlayers[%0],_:%1)|GROUP_MASK
+#define PlayerGroups@YSII_Ag(%0,%1) GROUP_MANGLE(Bits@YSII_Ag(YSI_gGroupPlayers[%0],_:%1))
 
 //#define GROUPS_MAX_LIBRARIES            4
 
@@ -421,8 +421,6 @@ static remotefunc void:_Group_Destroy(g, gp@YSII_Ag[MAX_PLAYERS + 1], s)
 	new
 		ps = Bit_Slot(g),
 		Bit:pm = ~Bit_Mask(g);
-	//static
-	//	BitArray:sOld<_MAX_GROUPS_G>;
 	if (YSI_g_sNextUpdFunc)
 	{
 		// Update all players who were in this group as they may have lost
@@ -434,7 +432,6 @@ static remotefunc void:_Group_Destroy(g, gp@YSII_Ag[MAX_PLAYERS + 1], s)
 		// Check it!  Local parameter iterator!
 		foreach (new p : gp)
 		{
-			// TODO: SOMETHING!
 			YSI_gTempGroups = YSI_gGroupPlayers[p];
 			// If these parameters were the other way round I could do this:
 			//GROUP_CHAIN<YSI_g_sNextUpdFunc>(p, (YSI_gGroupPlayers[p], YSI_gGroupPlayers[p][ps] &= pm), YSI_gGroupPlayers[p]);
@@ -458,7 +455,6 @@ foreign void:Group_Destroy(Group:group);
 
 global void:Group_Destroy(Group:group)
 {
-	// TODO: Remove this group from all players and all other groups.
 	P:2("Group_Destroy called: %i", _:group);
 	P:2("Group_Destroy called in %d", _@);
 	// You can't destroy the global group.
@@ -478,9 +474,9 @@ global void:Group_Destroy(Group:group)
 		{
 			YSI_g_sChildGroups[i][ps] &= pm;
 		}
-		//return 1;
+		// Nor can it have groups (saves some later checks).
+		YSI_g_sChildGroups[_: group] = YSI_g_cEmptyGroups;
 	}
-	//return 0;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1029,7 +1025,7 @@ global Group:Group_GetID(string:name[])
 		++i;
 	}
 	if (i == _MAX_GROUPS) return INVALID_GROUP;
-	return Group:i | GROUP_MASK;
+	return GROUP_MANGLE(i);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1230,20 +1226,11 @@ static remotefunc void:_Group_CreateChain(Group:g)
 	}
 	MASTER_SET<i>
 	++YSI_g_sGroupCount;
-	// Reset the group members iterator.
-	//Iter_Clear(GroupPlayers[i]);
-	// Set the child groups to only this group - this is in theory recursive,
-	// but actually isn't.
-	//static const
-	//	BitArray:scEmpty<_MAX_GROUPS_G>;
-	YSI_g_sChildGroups[i] = YSI_g_cEmptyGroups;
+	// Set the child groups to only this group.
 	Bit_Let(YSI_g_sChildGroups[i], i);
-	//PA_Init(YSI_gGroupPlayers[i]);
 	// Add this group to other groups.
-	// TODO: CHAIN.  Done
-	// TODO: Spread data over all other scripts.  NO.
 	broadcastfunc _Group_CreateChain(Group:i);
-	return Group:i | GROUP_MASK;
+	return GROUP_MANGLE(i);
 }
 
 stock Group:Group_Create(string:name[] = "")
@@ -1300,9 +1287,8 @@ global Group@YSII_Ag(Group:group, start)
 	The next group.
 </returns>
 <remarks>
-	Internal implementation of the "Group()" iterator for "foreach".  Returns
-	all the players in a group one at a time.  Now just wraps the "GroupPlayers"
-	iterator that is only stored in the GROUP master script.
+	Internal implementation of the "CreatedGroup()" iterator for "foreach".
+	Returns all the groups that exist.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -1315,13 +1301,43 @@ global Group:CreatedGroup@YSII_Ag(Group:group)
 {
 	// In most iterators the inital value is implicitly handled by the first
 	// "++", but it isn't here because we need to correct for the "Group" flag.
-	if (group != Group:-1) GROUP_FIX(group);
+	if (group != INVALID_GROUP) GROUP_FIX(group);
 	while (++group < Group:(_MAX_GROUPS_G - 1))
 	{
 		// DO NOT include the global group in this loop!
-		if (_Group_IsActive(group)) return group | GROUP_MASK;
+		if (_Group_IsActive(group)) return GROUP_MANGLE(group);
 	}
-	return Group:-1;
+	return INVALID_GROUP;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>ChildGroup@YSII_Ag</summary>
+<param name="parent">Group to get the children of.</param>
+<param name="start">Last value.</param>
+<returns>
+	The next group.
+</returns>
+<remarks>
+	Internal implementation of the "ChildGroup()" iterator for "foreach".
+	Returns all the groups that are a child of the provided group.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+foreign Group:ChildGroup@YSII_Ag(Group:parent, Group:start);
+
+global Group:ChildGroup@YSII_Ag(Group:parent, Group:start)
+{
+	if (!_Group_IsValid(parent)) return INVALID_GROUP;
+	// In most iterators the inital value is implicitly handled by the first
+	// "++", but it isn't here because we need to correct for the "Group" flag.
+	if (start != INVALID_GROUP) GROUP_FIX(start);
+	// Use the existing "Bits" iterator with fixed identifiers.
+	new
+		Group:ret = GROUP_MANGLE(Bits@YSII_Ag(YSI_g_sChildGroups[_:GROUP_TEMP_FIX(parent)], _:start, bits<_MAX_GROUPS_G>));
+	// Groups are classed as children of themselves, but we don't want to return
+	// that fact in iterators.
+	if (ret == parent) return GROUP_MANGLE(Bits@YSII_Ag(YSI_g_sChildGroups[_:GROUP_TEMP_FIX(parent)], _:GROUP_TEMP_FIX(ret), bits<_MAX_GROUPS_G>));
+	return ret;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1436,7 +1452,7 @@ global void:Group_SetGroup(Group:g,Group:el,bool:s)
 			if (Bit_Get(YSI_g_sChildGroups[_:g], _:el))
 			{
 				// Child is already part of parent.
-				return; //1;
+				return;
 			}
 			Bit_Let(YSI_g_sChildGroups[_:g], _:el);
 			foreach (new p : GroupPlayers[_:g])
@@ -1446,21 +1462,16 @@ global void:Group_SetGroup(Group:g,Group:el,bool:s)
 					broadcastfunc _Group_SetPlayer(p, _Group_SetSome(p, _:el), bits<_MAX_GROUPS_G>);
 				}
 			}
-			//return 1;
 		}
 		else
 		{
 			if (Bit_Get(YSI_g_sChildGroups[_:g], _:el))
 			{
-				// Child is a part of parent.
+				// Child is a part of parent (don't remove players though).
 				Bit_Vet(YSI_g_sChildGroups[_:g], _:el);
-				//return 1;
 			}
-			// DO NOT REMOVE PLAYERS.
-			//return 1;
 		}
 	}
-	//return 0;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1492,7 +1503,9 @@ global void:Group_SetGlobalGroup(Group:el,bool:s)
 	bool: Does the group have the element?
 </returns>
 <remarks>
-	-
+	This has no "active" checks on the groups as if they aren't active but are
+	in range, then "YSI_g_sChildGroups" will return false anyway.  Extra checks
+	are therefore just a waste of time.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -1588,9 +1601,5 @@ global bool:Group_IsDescendant(Group:p, Group:c)
 	return false;
 }
 
-//#define _YSIM_RESET_USER
-//#include "..\y_master"
-//#undef _GROUP_MAKE_LIMIT
-//#undef _GROUP_MAKE_NAME
 #include "..\YSI_Core\y_master"
 

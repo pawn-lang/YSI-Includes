@@ -394,6 +394,48 @@ Test:y_groups_Children7()
 	Group_Destroy(g2);
 }
 
+Test:y_groups_ChildIterator0()
+{
+	new
+		Group:g0 = Group_Create(),
+		Group:g1 = Group_Create(),
+		Group:g2 = Group_Create();
+	Group_AddChild(g0, g1);
+	Group_AddChild(g0, g2);
+	new
+		total = 0;
+	foreach (new Group:g : ChildGroup(g0))
+	{
+		++total;
+	}
+	ASSERT(total == 2);
+	Group_Destroy(g0),
+	Group_Destroy(g1),
+	Group_Destroy(g2);
+}
+
+Test:y_groups_ChildIterator1()
+{
+	new
+		Group:g0 = Group_Create(),
+		Group:g1 = Group_Create(),
+		Group:g2 = Group_Create();
+	Group_AddChild(g0, g1);
+	Group_AddChild(g0, g2);
+	ASSERT(Group_IsValid(g0));
+	ASSERT(Group_IsValid(g1));
+	ASSERT(Group_IsValid(g2));
+	foreach (new Group:g : ChildGroup(g0))
+	{
+		Group_Destroy(g);
+	}
+	ASSERT(Group_IsValid(g0));
+	ASSERT(!Group_IsValid(g1));
+	ASSERT(!Group_IsValid(g2));
+	Group_Destroy(g0),
+	ASSERT(!Group_IsValid(g0));
+}
+
 #undef _GROUP_MAKE_LIMIT
 #undef _GROUP_MAKE_NAME
 

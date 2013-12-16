@@ -68,6 +68,7 @@ Changelog:
 #define GROUP_GLOBAL                    (Group:_MAX_GROUPS | GROUP_MASK) //-1)
 #define GROUP_FIX(%0)                   ((%0)&=~GROUP_MASK)
 #define GROUP_TEMP_FIX(%0)              ((%0)&~GROUP_MASK)
+#define GROUP_MANGLE(%0)                (Group:(%0) | GROUP_MASK)
 
 #if defined _YSI_HAS_y_groups || COMPILER_1ST_PASS
 	#define NO_GROUPS(%0) if(_GROUP_INITIALISE(%0))
