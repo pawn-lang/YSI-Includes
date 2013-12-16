@@ -324,10 +324,7 @@ stock Bit_GetCount(BitArray:array<>, size = sizeof (array))
 		v;
 	for (new i = 0; i != size; ++i)
 	{
-		v = _:array[i];
-		v = v - ((v >>> 1) & 0x55555555);
-		v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
-		count += ((v + (v >>> 4) & 0xF0F0F0F) * 0x1010101) >>> 24;
+		count += Cell_CountBits(array[i]);
 	}
 	return count;
 }
@@ -351,10 +348,9 @@ stock Bit_Display(BitArray:array<>, size = sizeof (array))
 stock Bits@YSII_Ag(BitArray:data<>, start, size = sizeof (data))
 {
 	P:3("YSI_gABITSFunc called: %s, %i", Bit_Display(data, size), start);
-	++start;
 	new
 		cur,
-		i = Bit_Slot(start);
+		i = Bit_Slot(++start);
 	if (i == size)
 	{
 		return -1;
@@ -364,16 +360,14 @@ stock Bits@YSII_Ag(BitArray:data<>, start, size = sizeof (data))
 	{
 		P:7("Bits@YSII_Ag: %d %d %d %d", cur, data[i], start, _:~(Bit_Mask(start) - Bit:1));
 		// Bits left in the current cell.
-		return (i * cellbits) + Cell_GetLowestBit(cur);
+		return Cell_GetLowestBit(cur) + (i << CELLSHIFT);
 	}
-	++i;
-	while (i != size)
+	while (++i != size)
 	{
 		if ((cur = _:data[i]))
 		{
-			return (i * cellbits) + Cell_GetLowestBit(cur);
+			return Cell_GetLowestBit(cur) + (i << CELLSHIFT);
 		}
-		++i;
 	}
 	return -1;
 }
@@ -383,24 +377,22 @@ stock Blanks@YSII_Ag(BitArray:data<>, start, size = sizeof (data))
 	P:3("YSI_gABlanksFunc called: %s, %i", Bit_Display(data), start);
 	new
 		cur,
-		i = Bit_Slot(start);
+		i = Bit_Slot(++start);
 	if (i == size)
 	{
 		return -1;
 	}
-	if ((cur = ~(_:(data[i] & ~((1 << (start & (cellbits - 1))) - 1)))))
+	if ((cur = _:(~data[i] & ~(Bit_Mask(start) - Bit:1))))
 	{
 		// Bits left in the current cell.
-		return (i * cellbits) + Cell_GetLowestBit(cur);
+		return Cell_GetLowestBit(cur) + (i << CELLSHIFT);
 	}
-	++i;
-	while (i != size)
+	while (++i != size)
 	{
 		if ((cur = ~_:data[i]))
 		{
-			return (i * cellbits) + Cell_GetLowestBit(cur);
+			return Cell_GetLowestBit(cur) + (i << CELLSHIFT);
 		}
-		++i;
 	}
 	return -1;
 }
