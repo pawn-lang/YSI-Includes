@@ -294,9 +294,10 @@ native Bit_SetAll(BitArray:array<>, bool:set, size = sizeof (array));
 
 stock Bit_SetAll(BitArray:array<>, bool:set, size = sizeof (array))
 {
-	new
-		Bit:val = (set) ? (Bit:0xFFFFFFFF) : (Bit:0);
-	for (new i = 0; i != size; ++i) array[i] = val;
+	//new
+	//	Bit:val = (set) ? (Bit:0xFFFFFFFF) : (Bit:0);
+	memset(_:array, set ? 0xFFFFFFFF : 0, size);
+	//for (new i = 0; i != size; ++i) array[i] = val;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -408,3 +409,4 @@ stock Blanks@YSII_Ag(BitArray:data<>, start, size = sizeof (data))
 
 #undef BitArray
 #define BitArray:%1<%2> Bit:%1[bits<%2>]
+

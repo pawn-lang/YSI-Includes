@@ -470,6 +470,14 @@ global void:Group_Destroy(Group:group)
 		YSI_gGroupData[_:group][E_GROUP_DATA_HASH] = 0;
 		Iter_Clear(GroupPlayers[_:group]);
 		MASTER_RESET<_:group>
+		// This group no longer exists, so can't be the child of another group.
+		new
+			ps = Bit_Slot(_:group),
+			Bit:pm = ~Bit_Mask(_:group);
+		for (new i = 0; i != _MAX_GROUPS; ++i)
+		{
+			YSI_g_sChildGroups[i][ps] &= pm;
+		}
 		//return 1;
 	}
 	//return 0;
@@ -1513,6 +1521,62 @@ global Group_GetGlobalGroup(Group:el)
 {
 	P:2(#Group_GetGlobalGroup " called: %i", _:el);
 	return Group_GetGroup(GROUP_GLOBAL, el);
+}
+
+#define Group_AddChild(%0,%1) Group_SetGroup((%0), (%1), true)
+#define Group_RemoveChild(%0,%1) Group_SetGroup((%0), (%1), false)
+#define Group_IsChild(%0,%1) Group_GetGroup((%0), (%1))
+
+/**--------------------------------------------------------------------------**\
+<summary>Group_IsDescendant</summary>
+<param name="Group:p">Ancestor group to check.</param>
+<param name="Group:c">Other group to check.</param>
+<returns>
+	bool: Is the second group related to the first?
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static stock
+	BitArray:YSI_g_sGroupDone<_MAX_GROUPS_G>;
+
+static stock bool:_Group_IsDescendant(p, c)
+{
+	// Easy - direct child.
+	if (Bit_Get(YSI_g_sChildGroups[p], c)) return true;
+	// Less easy - check for ancestry.
+	foreach (new b : Bits(YSI_g_sChildGroups[p]))
+	{
+		// Loop over all children THAT HAVE NOT ALREADY BEEN CHECKED (otherwise
+		// we can get stuck in a loop forever).
+		if (!Bit_Get(YSI_g_sGroupDone, b))
+		{
+			Bit_Let(YSI_g_sGroupDone, b);
+			if (_Group_IsDescendant(b, c)) return true;
+		}
+	}
+	return false;
+}
+
+foreign bool:Group_IsDescendant(Group:p, Group:c);
+
+global bool:Group_IsDescendant(Group:p, Group:c)
+{
+	// Groups that don't exist CAN'T be related, even if they're the same group.
+	if (_Group_IsValid(p) && _Group_IsValid(c))
+	{
+		if (p == c) return true; // Any group is related to itself.
+		GROUP_FIX(p);
+		GROUP_FIX(c);
+		// Blank all checked groups.
+		Bit_SetAll(YSI_g_sGroupDone, false);
+		Bit_Let(YSI_g_sGroupDone, _:p);
+		return _Group_IsDescendant(_:p, _:c);
+		// This has to use a recursive implementation for now.
+	}
+	return false;
 }
 
 //#define _YSIM_RESET_USER

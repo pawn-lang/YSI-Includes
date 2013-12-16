@@ -220,6 +220,180 @@ Test:0_y_groups_Connect0()
 	call OnPlayerDisconnect(45, 0);
 }
 
+Test:y_groups_Children0()
+{
+	new
+		Group:g0 = Group_Create();
+	ASSERT(!Group_GetGlobalGroup(g0));
+	Group_Destroy(g0);
+}
+
+Test:y_groups_Children1()
+{
+	new
+		Group:g0 = Group_Create(),
+		Group:g1 = Group_Create(),
+		Group:g2 = Group_Create();
+	// Check groups ARE descendants of themselves.
+	ASSERT(Group_IsDescendant(GROUP_GLOBAL, GROUP_GLOBAL));
+	ASSERT(Group_IsDescendant(g0, g0));
+	ASSERT(Group_IsDescendant(g1, g1));
+	ASSERT(Group_IsDescendant(g2, g2));
+	// Check there are no relationships at all.
+	ASSERT(!Group_IsDescendant(g0, g1));
+	ASSERT(!Group_IsDescendant(g0, g2));
+	ASSERT(!Group_IsDescendant(g1, g0));
+	ASSERT(!Group_IsDescendant(g1, g2));
+	ASSERT(!Group_IsDescendant(g2, g0));
+	ASSERT(!Group_IsDescendant(g2, g1));
+	// Grlobal group.
+	ASSERT(!Group_IsDescendant(GROUP_GLOBAL, g0));
+	ASSERT(!Group_IsDescendant(GROUP_GLOBAL, g1));
+	ASSERT(!Group_IsDescendant(GROUP_GLOBAL, g2));
+	ASSERT(!Group_IsDescendant(g0, GROUP_GLOBAL));
+	ASSERT(!Group_IsDescendant(g1, GROUP_GLOBAL));
+	ASSERT(!Group_IsDescendant(g2, GROUP_GLOBAL));
+	Group_Destroy(g0),
+	Group_Destroy(g1),
+	Group_Destroy(g2);
+}
+
+Test:y_groups_Children2()
+{
+	new
+		Group:g0 = Group_Create(),
+		Group:g1 = Group_Create(),
+		Group:g2 = Group_Create();
+	// Check groups are children of themselves.
+	ASSERT(Group_GetGroup(GROUP_GLOBAL, GROUP_GLOBAL));
+	ASSERT(Group_GetGroup(g0, g0));
+	ASSERT(Group_GetGroup(g1, g1));
+	ASSERT(Group_GetGroup(g2, g2));
+	// Check there are no relationships at all.
+	ASSERT(!Group_GetGroup(g0, g1));
+	ASSERT(!Group_GetGroup(g0, g2));
+	ASSERT(!Group_GetGroup(g1, g0));
+	ASSERT(!Group_GetGroup(g1, g2));
+	ASSERT(!Group_GetGroup(g2, g0));
+	ASSERT(!Group_GetGroup(g2, g1));
+	// Grlobal group.
+	ASSERT(!Group_GetGroup(GROUP_GLOBAL, g0));
+	ASSERT(!Group_GetGroup(GROUP_GLOBAL, g1));
+	ASSERT(!Group_GetGroup(GROUP_GLOBAL, g2));
+	ASSERT(!Group_GetGroup(g0, GROUP_GLOBAL));
+	ASSERT(!Group_GetGroup(g1, GROUP_GLOBAL));
+	ASSERT(!Group_GetGroup(g2, GROUP_GLOBAL));
+	Group_Destroy(g0),
+	Group_Destroy(g1),
+	Group_Destroy(g2);
+}
+
+Test:y_groups_Children3()
+{
+	new
+		Group:g0 = Group_Create(),
+		Group:g1 = Group_Create(),
+		Group:g2 = Group_Create();
+	Group_AddChild(g0, g1);
+	ASSERT(Group_IsDescendant(g0, g1));
+	// Check there are no other relationships.
+	ASSERT(!Group_IsDescendant(g0, g2));
+	ASSERT(!Group_IsDescendant(g1, g0));
+	ASSERT(!Group_IsDescendant(g1, g2));
+	ASSERT(!Group_IsDescendant(g2, g0));
+	ASSERT(!Group_IsDescendant(g2, g1));
+	Group_Destroy(g0),
+	Group_Destroy(g1),
+	Group_Destroy(g2);
+}
+
+Test:y_groups_Children4()
+{
+	new
+		Group:g0 = Group_Create(),
+		Group:g1 = Group_Create(),
+		Group:g2 = Group_Create();
+	Group_AddChild(g0, g1);
+	Group_AddChild(g1, g2);
+	// Test chaining.
+	ASSERT(Group_IsDescendant(g0, g1));
+	ASSERT(Group_IsDescendant(g1, g2));
+	ASSERT(Group_IsDescendant(g0, g2));
+	// Check there are no reverse relationships.
+	ASSERT(!Group_IsDescendant(g1, g0));
+	ASSERT(!Group_IsDescendant(g2, g0));
+	ASSERT(!Group_IsDescendant(g2, g1));
+	Group_Destroy(g0),
+	Group_Destroy(g1),
+	Group_Destroy(g2);
+}
+
+Test:y_groups_Children5()
+{
+	new
+		Group:g0 = Group_Create(),
+		Group:g1 = Group_Create(),
+		Group:g2 = Group_Create(),
+		Group:g3 = Group_Create(),
+		Group:g4 = Group_Create();
+	Group_AddChild(g0, g1);
+	Group_AddChild(g1, g2);
+	Group_AddChild(g2, g0);
+	Group_AddChild(g4, g0);
+	// Test cycles don't hang.
+	ASSERT(!Group_IsDescendant(g4, g3));
+	ASSERT(!Group_IsDescendant(g3, g4));
+	// Test cycles work.
+	ASSERT(Group_IsDescendant(g4, g2));
+	ASSERT(!Group_IsDescendant(g2, g4));
+	ASSERT(Group_IsDescendant(g0, g2));
+	ASSERT(Group_IsDescendant(g2, g0));
+	Group_Destroy(g0),
+	Group_Destroy(g1),
+	Group_Destroy(g2);
+	Group_Destroy(g3);
+	Group_Destroy(g4);
+}
+
+Test:y_groups_Children6()
+{
+	new
+		Group:g0 = Group_Create(),
+		Group:g1 = Group_Create(),
+		Group:g2 = Group_Create();
+	Group_AddChild(g0, g1);
+	Group_AddChild(g1, g2);
+	// Test removal
+	ASSERT(Group_IsDescendant(g0, g2));
+	Group_RemoveChild(g1, g2);
+	ASSERT(!Group_IsDescendant(g0, g2));
+	Group_AddChild(g1, g2);
+	ASSERT(Group_IsDescendant(g0, g2));
+	Group_Destroy(g1);
+	ASSERT(!Group_IsDescendant(g0, g2));
+	Group_Destroy(g0),
+	Group_Destroy(g2);
+}
+
+Test:y_groups_Children7()
+{
+	new
+		Group:g0 = Group_Create(),
+		Group:g1 = Group_Create(),
+		Group:g2 = Group_Create();
+	Group_AddChild(g0, g1);
+	Group_AddChild(g1, g2);
+	// Test chaining.
+	ASSERT(Group_IsDescendant(g0, g1));
+	ASSERT(Group_IsDescendant(g1, g2));
+	ASSERT(Group_IsDescendant(g0, g2));
+	// Check there are no reverse relationships.
+	ASSERT(!Group_IsChild(g0, g2));
+	Group_Destroy(g0),
+	Group_Destroy(g1),
+	Group_Destroy(g2);
+}
+
 #undef _GROUP_MAKE_LIMIT
 #undef _GROUP_MAKE_NAME
 
