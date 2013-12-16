@@ -644,15 +644,15 @@ global void:_Group_InitPlayer(p, master)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+// If you overflow this stack there is something VERY wrong!  The manual stack
+// is intended to help us combat very long inheritance chains.  This code also
+// neatly ignores recursion by only doing any one group if the player doesn't
+// already have it.
+static
+	YSI_g_sRecursionStack[_MAX_GROUPS_G][2];
+
 static stock Bit:_Group_SetSome(playerid, group)
 {
-	// If you overflow this stack there is something VERY wrong!  The manual
-	// stack is intended to help us combat very long inheritance chains.  This
-	// code also neatly ignores recursion by only doing any one group if the
-	// player doesn't already have it.
-	static
-		sStack[128][2];//,
-		//BitArray:n<_MAX_GROUPS_G>;
 	new
 		g = -1,
 		s = 0;
@@ -666,17 +666,17 @@ static stock Bit:_Group_SetSome(playerid, group)
 			// Finished this child group, pop off the stack.
 			if (s--)
 			{
-				g = sStack[s][0];
-				group = sStack[s][1];
+				g = YSI_g_sRecursionStack[s][0];
+				group = YSI_g_sRecursionStack[s][1];
 			}
 			else break;
 		}
-		else if (!Bit_Get(YSI_gTempGroups, g)) //_Group_HasPlayer(g, playerid))
+		else if (!Bit_Get(YSI_gTempGroups, g))
 		{
 			// This player isn't in this group, add them.
 			Bit_Let(YSI_gTempGroups, g);
-			sStack[s][0] = g;
-			sStack[s][1] = group;
+			YSI_g_sRecursionStack[s][0] = g;
+			YSI_g_sRecursionStack[s][1] = group;
 			++s;
 			group = g;
 			g = -1;
@@ -1535,30 +1535,12 @@ global Group_GetGlobalGroup(Group:el)
 	bool: Is the second group related to the first?
 </returns>
 <remarks>
-	-
+	Now uses implicit, not explicit, recursion.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
 static stock
 	BitArray:YSI_g_sGroupDone<_MAX_GROUPS_G>;
-
-static stock bool:_Group_IsDescendant(p, c)
-{
-	// Easy - direct child.
-	if (Bit_Get(YSI_g_sChildGroups[p], c)) return true;
-	// Less easy - check for ancestry.
-	foreach (new b : Bits(YSI_g_sChildGroups[p]))
-	{
-		// Loop over all children THAT HAVE NOT ALREADY BEEN CHECKED (otherwise
-		// we can get stuck in a loop forever).
-		if (!Bit_Get(YSI_g_sGroupDone, b))
-		{
-			Bit_Let(YSI_g_sGroupDone, b);
-			if (_Group_IsDescendant(b, c)) return true;
-		}
-	}
-	return false;
-}
 
 foreign bool:Group_IsDescendant(Group:p, Group:c);
 
@@ -1570,11 +1552,38 @@ global bool:Group_IsDescendant(Group:p, Group:c)
 		if (p == c) return true; // Any group is related to itself.
 		GROUP_FIX(p);
 		GROUP_FIX(c);
-		// Blank all checked groups.
+		// "g" = current child.  "s" = current stack position.  "c" = target
+		// child group.  "p" = current parent.
 		Bit_SetAll(YSI_g_sGroupDone, false);
 		Bit_Let(YSI_g_sGroupDone, _:p);
-		return _Group_IsDescendant(_:p, _:c);
-		// This has to use a recursive implementation for now.
+		new
+			g = -1,
+			s = 0;
+		for ( ; ; )
+		{
+			g = Bits@YSII_Ag(YSI_g_sChildGroups[_:p], g, bits<_MAX_GROUPS_G>);
+			if (g == -1)
+			{
+				// Finished this child group, pop off the stack.
+				if (s--)
+				{
+					g = YSI_g_sRecursionStack[s][0];
+					p = Group:YSI_g_sRecursionStack[s][1];
+				}
+				else return false;
+			}
+			else if (!Bit_Get(YSI_g_sGroupDone, g))
+			{
+				if (Group:g == c) return true;
+				// We haven't tested this group yet.
+				Bit_Let(YSI_g_sGroupDone, g);
+				YSI_g_sRecursionStack[s][0] = g;
+				YSI_g_sRecursionStack[s][1] = _:p;
+				++s;
+				p = Group:g;
+				g = -1;
+			}
+		}
 	}
 	return false;
 }
