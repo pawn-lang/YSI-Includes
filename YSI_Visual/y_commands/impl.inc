@@ -1385,3 +1385,60 @@ global string:Command_GetNext(index, playerid)
 	return YSI_g_sReturnBuffer;
 }
 
+/**--------------------------------------------------------------------------**\
+<summary>Command@YSII_Ag</summary>
+<param name="start">Last value.</param>
+<returns>
+	The next command.
+</returns>
+<remarks>
+	Internal implementation of the "Command()" iterator for "foreach".  Returns
+	all the commands that exist.  Normally iterator functions take two
+	parameters, but this needs only one.  Really quite simple, but probably
+	faster this way as it has access to internal information.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Command@YSII_Ag(%0,%1) Command@YSII_Ag(%1)
+
+foreign Command@YSII_Ag(start);
+
+global Command@YSII_Ag(start)
+{
+	for (new i = start + 1; i < YSI_g_sHighestID; ++i)
+	{
+		if (_Command_IsActive(i)) return i;
+	}
+	return COMMAND_NOT_FOUND;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>PlayerCommand@YSII_Ag</summary>
+<param name="pid">Player to check for.</param>
+<param name="start">Last value.</param>
+<returns>
+	The next command.
+</returns>
+<remarks>
+	Internal implementation of the "PlayerCommand()" iterator for "foreach".
+	Returns all the commands this player can use.
+	
+	This is similar to "Command_GetNext", but returns an ID not a string - I
+	actually think this way is slightly better.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+foreign PlayerCommand@YSII_Ag(pid, start);
+
+global PlayerCommand@YSII_Ag(pid, start)
+{
+	new
+		slot = PA_Slot(pid),
+		Bit:mask = PA_Mask(pid);
+	for (new i = start + 1; i < YSI_g_sHighestID; ++i)
+	{
+		if (_Command_IsActive(i) && YSI_g_sCommands[i][E_COMMAND_USERS][slot] & mask) return i;
+	}
+	return COMMAND_NOT_FOUND;
+}
+
