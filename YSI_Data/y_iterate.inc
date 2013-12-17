@@ -260,47 +260,22 @@ Iterators:
 // match against it because we have matched against "C1" instead.
 #define _Y_ITER_C1:%8(%0[%1]%2@YSII_Ag%9-1) _Y_ITER_C1:(%0%2@YSII_Ag[]%9-1)
 
-// Deprecate the old-style functions code.
-// #define _Y_ITER_C2:(sizeof%0(%1)@YSII_Ag%9[]-1);_:(%2=%9$%3(%4)@YSII_Ag[%5])!=_Y_ITER_MAYBE_ARRAY(%6);) -1;_:%3@brackets();)
-// // Actually keep it for now, it makes sense in some places.
-// #define _Y_ITER_C2:(sizeof%0(%1)@YSII_Ag-1);_:(%2=%9$%3(%4)$YSII_Ag[%5])!=_Y_ITER_MAYBE_ARRAY(%6);) _Y_ITER_C4:-1;-1!=_:_Y_ITER_C6:_Y_ITER_C5:[%4][%5](%2=%3@YSII_Ag());)
-
-// #define _Y_ITER_C4:-1;-1!=_:%9[][%5](%2=%3());) (sizeof %3-1);-1!=_:(%2=%3(%5));)
-
+// I will deprecate these later.  The code to do so is in revision c9ca7fd.
 #define _Y_ITER_C2:(sizeof%0(%1)@YSII_Ag-1);_:(%2=%9$%3(%4)$YSII_Ag[%5])!=_Y_ITER_MAYBE_ARRAY(%6);) _Y_ITER_C4:(sizeof %3@YSII_Ag-1);(sizeof %3@YSII_Ag-1)!=_:(%2=%3@YSII_Ag[%4][%5]);)
 
 #define _Y_ITER_C4:%9;%8!=_:(%2=%3[][%5]);) %9;%9!=_:(%2=%3[%5]);)
 
-// #define iterfunc@1<%1>1);_:(%0=%8)%9) YSI_NULL_ITERATOR-3);_:(%0=%1@YSII_Ag(%0))!=-1;)
-
-// #define iterfunc@1<%1>1);%9_:(%0=%8)%9) YSI_NULL_ITERATOR-3);-1!=_:(%0=%1@YSII_Ag(%0));)
-
-
 #define _Y_ITER_C5:%9[%1]%2(%0(%5));) (%0(%5%1));)
 #define _Y_ITER_C6:_Y_ITER_C5:%9[%1]%2[%3]%4(%0(%5));) _Y_ITER_C6:_Y_ITER_C5:%2[%3]%4(%0(%1,%5));)
 
-// #define iterfunc@2<%1>1);_:(%0=%8(%5)%7)%9) YSI_NULL_ITERATOR-3);_:(%0=%1@YSII_Ag(%5))!=-1;)
 #define @iterfunc%1()%7:(%0=%8)%9) YSI_NULL_ITERATOR-3);-1!=_:_Y_ITER_C6:_Y_ITER_C5:%8(%0=%1@YSII_Ag());)
-// #define iterfunc@3<%1>1);%9_:(%0=%8(%5)%7)%9) YSI_NULL_ITERATOR-3);-1!=_:_Y_ITER_C6:(%0=%1@YSII_Ag(%5));)
 #define iterfunc%0(%1) %0@YSII_Ag(%1)
 
 // Check if this is an array or a single variable.
 #define _Y_ITER_MAYBE_ARRAY(%1) _:_Y_ITER_C1:(sizeof %1@YSII_Ag-1)
 
-// Macros to add square brackets while making them invisible to the
-// pre-processor
-#define __OSqB [
-#define __CSqB ]
-// #define __ORdB (
-// #define __CRdB )
-
 // Used in array declaration.
 #define _Y_ITER_C9:%0[%1]@YSII_Cg,%2[%3]@YSII_Ag[%4]={%5} _Y_ITER_C9:%0@YSII_Cg[%1],%0@YSII_Ag[%1][%4]
-
-//#if !defined BOTSYNC_IS_BOT
-//	static stock
-//		YSI_g_sCallbacks = 0;
-//#endif
 
 #if !defined BOTSYNC_IS_BOT
 	forward Itter_OPDCInternal(playerid);
