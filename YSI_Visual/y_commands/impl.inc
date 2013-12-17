@@ -1399,7 +1399,7 @@ global string:Command_GetNext(index, playerid)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Command@YSII_Ag- iterfunc@1<Command>
+#define Command@YSII_Ag%0- @iterfunc Command()
 
 iterfunc foreign Command(start);
 
@@ -1428,7 +1428,7 @@ iterfunc global Command(start)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define PlayerCommand@YSII_Ag- iterfunc@2<PlayerCommand>
+#define PlayerCommand@YSII_Ag%0- @iterfunc PlayerCommand()
 
 iterfunc foreign PlayerCommand(pid, start);
 

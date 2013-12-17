@@ -1260,10 +1260,16 @@ stock Group:Group_Create(string:name[] = "")
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-// Make nicer warnings.
-#pragma deprecated use "GroupMember"
-#define Group@YSII_Ag- iterfunc@2<Group>
+#pragma deprecated use "GroupMember[]"
+stock Group@brackets()
+{
+	P:E("Old style \"Group()\" iterator called.  Use \"GroupMember[]\".");
+	return 0;
+}
 
+#define Group@YSII_Ag%0- @iterfunc Group()
+
+#pragma deprecated use "GroupMember"
 iterfunc stock Group(Group:group, start)
 {
 	static
@@ -1276,7 +1282,14 @@ iterfunc stock Group(Group:group, start)
 	return GroupMember@YSII_Ag(Group:group, start);
 }
 
-#define GroupMember@YSII_Ag- iterfunc@2<GroupMember>
+#pragma deprecated use "GroupMember[]"
+stock GroupMember@brackets()
+{
+	P:E("Old style \"GroupMember()\" iterator called.  Use \"GroupMember[]\".");
+	return 0;
+}
+
+#define GroupMember@YSII_Ag%0- @iterfunc GroupMember()
 
 iterfunc foreign GroupMember(Group:group, start);
 
@@ -1311,8 +1324,15 @@ iterfunc global GroupMember(Group:group, start)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#pragma deprecated use "CreatedGroup[]"
+stock CreatedGroup@brackets()
+{
+	P:E("Old style \"CreatedGroup()\" iterator called.  Use \"CreatedGroup\".");
+	return 0;
+}
+
 // Bypass y_iterate restrictions.
-#define CreatedGroup@YSII_Ag- iterfunc@1<CreatedGroup>
+#define CreatedGroup@YSII_Ag%0- @iterfunc CreatedGroup()
 
 iterfunc foreign Group:CreatedGroup(Group:group);
 
@@ -1342,7 +1362,14 @@ iterfunc global Group:CreatedGroup(Group:group)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define GroupChild@YSII_Ag- iterfunc@2<GroupChild>
+#pragma deprecated use "GroupChild[]"
+stock GroupChild@brackets()
+{
+	P:E("Old style \"GroupChild()\" iterator called.  Use \"GroupChild[]\".");
+	return 0;
+}
+
+#define GroupChild@YSII_Ag%0- @iterfunc GroupChild()
 
 iterfunc foreign Group:GroupChild(Group:parent, Group:start);
 

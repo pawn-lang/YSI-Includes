@@ -123,7 +123,7 @@ stock PA_Set(PlayerArray:d<>, slot, bool:set)
 	}
 }
 
-#define PA@YSII_Ag- iterfunc@2<PA>
+#define PA@YSII_Ag%0- @iterfunc PA()
 
 stock PA@YSII_Ag(PlayerArray:data<>, start)
 {
