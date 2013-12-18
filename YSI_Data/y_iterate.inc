@@ -184,7 +184,7 @@ Iterators:
 \**--------------------------------------------------------------------------**/
 
 // "y_iterate" is always higher than "foreach".
-#define _Y_ITERATE_LOCAL_VERSION        20
+#define _Y_ITERATE_LOCAL_VERSION        22
 
 // Foreach is testing us.
 #if defined _FOREACH_INC_TEST
@@ -223,12 +223,8 @@ Iterators:
 	#define PS_IS_PLAYER_CONNECTED IsPlayerConnected
 #endif
 
-//#include "..\YSI_Core\y_debug"
-//#include "..\YSI_Coding\y_hooks"
-
 #include "..\YSI_Internal\y_natives"
 #include "..\YSI_Core\y_debug"
-//#include "..\YSI_Core\y_als"
 
 #if defined SendChat || defined FOREACH_NO_PLAYERS
 	#define BOTSYNC_IS_BOT     (true)
@@ -266,7 +262,7 @@ Iterators:
 #define _Y_ITER_C4:%9;%8!=_:(%2=%3[][%5]);) %9;%9!=_:(%2=%3[%5]);)
 
 #define _Y_ITER_C5:%9[%1]%2(%0(%5));) (%0(%5%1));)
-#define _Y_ITER_C6:_Y_ITER_C5:%9[%1]%2[%3]%4(%0(%5));) _Y_ITER_C6:_Y_ITER_C5:%2[%3]%4(%0(%1,%5));)
+#define _Y_ITER_C6:_Y_ITER_C5:%9[%1]%2[%3]%4(%0(%5));) _Y_ITER_C6:_Y_ITER_C5:%2[%3]%4(%0(%5%1,));)
 
 #define @iterfunc%1()%7:(%0=%8)%9) YSI_NULL_ITERATOR-3);-1!=_:_Y_ITER_C6:_Y_ITER_C5:%8(%0=%1@YSII_Ag());)
 #define iterfunc%0(%1) %0@YSII_Ag(%1)
@@ -274,8 +270,9 @@ Iterators:
 // Check if this is an array or a single variable.
 #define _Y_ITER_MAYBE_ARRAY(%1) _:_Y_ITER_C1:(sizeof %1@YSII_Ag-1)
 
-// Used in array declaration.
-#define _Y_ITER_C9:%0[%1]@YSII_Cg,%2[%3]@YSII_Ag[%4]={%5} _Y_ITER_C9:%0@YSII_Cg[%1],%0@YSII_Ag[%1][%4]
+// Used in array declaration.  Need to keep the "_Y_ITER_C9:" as a tag, not as a
+// recursive macro.  "_Y_ITER_C3:" strips the "$" from normal declarations.
+#define _Y_ITER_C9:_Y_ITER_C3:%0[%1$YSII_Cg,_Y_ITER_C3:%2[%3$YSII_Ag[%4]={%5} _Y_ITER_C9:%0@YSII_Cg[%1,%0@YSII_Ag[%1[%4]
 
 #if !defined BOTSYNC_IS_BOT
 	forward Itter_OPDCInternal(playerid);
@@ -300,7 +297,7 @@ stock const
 
 // If this ever changes, update the size reference in y_users.
 
-#define IteratorArray:%1[%2]<%3> %1@YSII_Cg[%2],%1@YSII_Ag[%2][%3+1]//,%1@YSII_Rg[%2][%3+1]
+#define IteratorArray Iterator //:%1[%2]<%3> %1@YSII_Cg[%2],%1@YSII_Ag[%2][%3+1]
 
 /**--------------------------------------------------------------------------**\
 Array:
@@ -311,8 +308,8 @@ Array:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iterator:%1<%2> _Y_ITER_C9:%1@YSII_Cg,%1@YSII_Ag[(%2)+1]={(%2)*2,(%2)*2-1,...}
-#define iterator%0<%1> Iterator:%0<%1>
+#define Iterator:%1<%2> _Y_ITER_C9:_Y_ITER_C3:%1$YSII_Cg,_Y_ITER_C3:%1$YSII_Ag[(%2)+1]={(%2)*2,(%2)*2-1,...}
+#define iterator%0<%1> new Iterator:%0<%1>
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_Init2</summary>
@@ -333,26 +330,6 @@ native Iter_Init(IteratorArray:Name[]<>);
 	Itter_InitInternal(%1@YSII_Ag,sizeof %1@YSII_Ag,sizeof %1@YSII_Ag[]-1)
 
 /**--------------------------------------------------------------------------**\
-<summary>Itter_Create</summary>
-<param name="name">Itterator identifier.</param>
-<param name="size">Number of values.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Creates a new itterator start/array pair.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-// If this ever changes, update the size reference in y_users.
-/*#define Iter_Create Itter_Create
-#define Itter_Create(%1,%2) \
-	new \
-		%1@YSII_Sg = -1, \
-		%1@YSII_Cg = 0, \
-		%1@YSII_Ag[%2] = {-1, ...}*/
-
-/**--------------------------------------------------------------------------**\
 <summary>Itter_Add</summary>
 <param name="itter">Name of the itterator to add the data to.</param>
 <param name="value">Value to add to the itterator.</param>
@@ -369,10 +346,6 @@ native Iter_Add(Iterator:Name<>, value);
 
 #define Iter_Add Itter_Add
 #define Itter_Add(%1,%2) Itter_AddInternal(_Y_ITER_ARRAY$%1$YSII_Cg,_Y_ITER_ARRAY$%1$YSII_Ag,%2,_Y_ITER_MAYBE_ARRAY(%1))
-
-/*#define Iter_AddSafe Itter_AddSafe
-#define Itter_AddSafe(%1,%2) \
-	Itter_AddSafeInternal(%1@YSII_Sg, %1@YSII_Cg, %1@YSII_Ag, %1@YSII_Rg, %2)*/
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_Free</summary>
@@ -1367,7 +1340,22 @@ stock
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define _Y_ITER_INT_SIZE:%0(%2[%1]@YSII_Ag)) %0(%2@YSII_Ag[]))
+// #define _Y_ITER_INT_SIZE:%0(%2[%1]@YSII_Ag)) %0(%2@YSII_Ag[]))
 
-#define Iter_InternalSize(%1) (_:_Y_ITER_INT_SIZE:sizeof (%1@YSII_Ag))
-#define Itter_InternalSize(%1) (_:_Y_ITER_INT_SIZE:sizeof (%1@YSII_Ag))
+#define Iter_InternalSize(%1) (_Y_ITER_MAYBE_ARRAY(%1)+1) // (_:_Y_ITER_INT_SIZE:sizeof (%1@YSII_Ag))
+#define Itter_InternalSize(%1) (_Y_ITER_MAYBE_ARRAY(%1)+1) // (_:_Y_ITER_INT_SIZE:sizeof (%1@YSII_Ag))
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_Size</summary>
+<param name="iter">Name of the iterator to get the true size of.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Accesses the internal size of an iterator.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Iter_Size(%1) (_Y_ITER_MAYBE_ARRAY(%1))
+#define Itter_Size(%1) (_Y_ITER_MAYBE_ARRAY(%1))
+
