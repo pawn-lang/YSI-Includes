@@ -184,7 +184,7 @@ Iterators:
 \**--------------------------------------------------------------------------**/
 
 // "y_iterate" is always higher than "foreach".
-#define _Y_ITERATE_LOCAL_VERSION        22
+#define _Y_ITERATE_LOCAL_VERSION        23
 
 // Foreach is testing us.
 #if defined _FOREACH_INC_TEST
@@ -327,7 +327,7 @@ native Iter_Init(IteratorArray:Name[]<>);
 
 #define Iter_Init Itter_Init
 #define Itter_Init(%1) \
-	Itter_InitInternal(%1@YSII_Ag,sizeof %1@YSII_Ag,sizeof %1@YSII_Ag[]-1)
+	Itter_InitInternal(_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1)+1,_Y_ITER_MAYBE_ARRAY(%1[]))
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_Add</summary>
