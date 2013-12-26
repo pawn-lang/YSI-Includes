@@ -68,13 +68,11 @@ Changelog:
 // Multiple includes!
 #include "..\YSI_Internal\y_unique"
 
-//#if defined _INC_y_hooks
-//	#endinput
-//#endif
-// Everything except including "y_unique" is done once only.
-//#define _INC_y_hooks
-
-//#include "..\YSI_Internal\y_dohooks"
+#if !defined _INC_y_hooks
+	// Everything except including "y_unique" is done once only.  But this is
+	// just so people can see if the file was included correctly.
+	#define _INC_y_hooks
+#endif
 
 #if defined YSI_TESTS
 	#define _Y_HOOKS_STATIC

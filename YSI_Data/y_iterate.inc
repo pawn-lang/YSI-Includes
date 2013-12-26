@@ -10,6 +10,11 @@ Description:
 	unlike standard player loops which are O(MAX_PLAYERS), regardless of the
 	actual number of connected players.  Even when n is MAX_PLAYERS this is
 	still faster.
+	
+	For extensive documentation on writing and using iterators, see this topic:
+	
+		http://forum.sa-mp.com/showthread.php?t=481877
+	
 Legal:
 	Version: MPL 1.1
 	
@@ -55,6 +60,8 @@ Legal:
 Version:
 	0.4
 Changelog:
+	26/12/13:
+		Added sections.
 	17/10/12:
 		Fixed a bug that was here but not in "foreach.inc".
 	04/10/12:
@@ -180,11 +187,25 @@ Iterators:
 	Bot - List of all bots (npcs) connected.
 	NPC - Alias of Bot.
 	Character - All players and bots.
-</remarks>
 \**--------------------------------------------------------------------------**/
 
+/*
+
+     ad88888ba                                              
+    d8"     "8b              ,d                             
+    Y8,                      88                             
+    `Y8aaaaa,    ,adPPYba, MM88MMM 88       88 8b,dPPYba,   
+      `"""""8b, a8P_____88   88    88       88 88P'    "8a  
+            `8b 8PP"""""""   88    88       88 88       d8  
+    Y8a     a8P "8b,   ,aa   88,   "8a,   ,a88 88b,   ,a8"  
+     "Y88888P"   `"Ybbd8"'   "Y888  `"YbbdP'Y8 88`YbbdP"'   
+                                               88           
+                                               88           
+    
+*/
+
 // "y_iterate" is always higher than "foreach".
-#define _Y_ITERATE_LOCAL_VERSION        23
+#define _Y_ITERATE_LOCAL_VERSION        24
 
 // Foreach is testing us.
 #if defined _FOREACH_INC_TEST
@@ -238,66 +259,24 @@ Iterators:
 	#error YSI_ITTER_NO_SORT is no longer supported by foreach.
 #endif
 
-// This now uses "$" not ":" because it is ALWAYS stripped out (it isn't a tag
-// based macro that may not be detected), and that way we can detect the "$" in
-// "C2" even when there is a custom tag involved.  The second "$" allows us to
-// pick up all array subscripts at once without recursion.  I'm not overly happy
-// about the trailing ")" on the macros, but I can't see any other way atm.
-#define _Y_ITER_ARRAY$ _:_Y_ITER_C0:_Y_ITER_C3:
-#define _Y_ITER_C0:%0[%1$YSII_%4g%5) %0$YSII_%4g[%1%5)
-#define _Y_ITER_C3:%0$ %0@
-
-// Find out if the passed iterator is multi-dimensional or an old function.
-#define _Y_ITER_FOREACH_SIZE(%1) _:_Y_ITER_C1:_Y_ITER_C2:(sizeof %1@YSII_Ag-1)
-
-// This macro detects multi-dimensional iterator arrays and moves the square
-// brackets to the correct location AFTER the iterator name (not in the middle).
-// If we get anything in "%8" don't bother putting it back as we can no longer
-// match against it because we have matched against "C1" instead.
-#define _Y_ITER_C1:%8(%0[%1]%2@YSII_Ag%9-1) _Y_ITER_C1:(%0%2@YSII_Ag[]%9-1)
-
-// I will deprecate these later.  The code to do so is in revision c9ca7fd.
-#define _Y_ITER_C2:(sizeof%0(%1)@YSII_Ag-1);_:(%2=%9$%3(%4)$YSII_Ag[%5])!=_Y_ITER_MAYBE_ARRAY(%6);) _Y_ITER_C4:(sizeof %3@YSII_Ag-1);(sizeof %3@YSII_Ag-1)!=_:(%2=%3@YSII_Ag[%4][%5]);)
-
-#define _Y_ITER_C4:%9;%8!=_:(%2=%3[][%5]);) %9;%9!=_:(%2=%3[%5]);)
-
-#define _Y_ITER_C5:%9[%1]%2(%0(%5));) (%0(%5%1));)
-#define _Y_ITER_C6:_Y_ITER_C5:%9[%1]%2[%3]%4(%0(%5));) _Y_ITER_C6:_Y_ITER_C5:%2[%3]%4(%0(%5%1,));)
-
-#define @iterfunc%1()%7:(%0=%8)%9) YSI_NULL_ITERATOR-3);-1!=_:_Y_ITER_C6:_Y_ITER_C5:%8(%0=%1@YSII_Ag());)
-#define iterfunc%0(%1) %0@YSII_Ag(%1)
-
-// Check if this is an array or a single variable.
-#define _Y_ITER_MAYBE_ARRAY(%1) _:_Y_ITER_C1:(sizeof %1@YSII_Ag-1)
-
-// Used in array declaration.  Need to keep the "_Y_ITER_C9:" as a tag, not as a
-// recursive macro.  "_Y_ITER_C3:" strips the "$" from normal declarations.
-#define _Y_ITER_C9:_Y_ITER_C3:%0[%1$YSII_Cg,_Y_ITER_C3:%2[%3$YSII_Ag[%4]={%5} _Y_ITER_C9:%0@YSII_Cg[%1,%0@YSII_Ag[%1[%4]
-
 #if !defined BOTSYNC_IS_BOT
 	forward Itter_OPDCInternal(playerid);
 #endif
 
-// This is a hack to build the constant number "-1" with "sizeof".
-stock const
-	YSI_NULL_ITERATOR[2]; // NULL target only used for "sizeof".
+/*
 
-/**--------------------------------------------------------------------------**\
-<summary>Itter_Create2</summary>
-<param name="name">Itterator identifier.</param>
-<param name="size0">Number of iterators.</param>
-<param name="size1">Number of items per iterator.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Creates a new array of itterator start/array pair.
-</remarks>
-\**--------------------------------------------------------------------------**/
+    88      a8P                                                                           88            
+    88    ,88'                                                                            88            
+    88  ,88"                                                                              88            
+    88,d88'      ,adPPYba, 8b       d8 8b      db      d8  ,adPPYba,  8b,dPPYba,  ,adPPYb,88 ,adPPYba,  
+    8888"88,    a8P_____88 `8b     d8' `8b    d88b    d8' a8"     "8a 88P'   "Y8 a8"    `Y88 I8[    ""  
+    88P   Y8b   8PP"""""""  `8b   d8'   `8b  d8'`8b  d8'  8b       d8 88         8b       88  `"Y8ba,   
+    88     "88, "8b,   ,aa   `8b,d8'     `8bd8'  `8bd8'   "8a,   ,a8" 88         "8a,   ,d88 aa    ]8I  
+    88       Y8b `"Ybbd8"'     Y88'        YP      YP      `"YbbdP"'  88          `"8bbdP"Y8 `"YbbdP"'  
+                               d8'                                                                      
+                              d8'                                                                       
 
-// If this ever changes, update the size reference in y_users.
-
-#define IteratorArray Iterator //:%1[%2]<%3> %1@YSII_Cg[%2],%1@YSII_Ag[%2][%3+1]
+*/
 
 /**--------------------------------------------------------------------------**\
 Array:
@@ -310,6 +289,36 @@ Array:
 
 #define Iterator:%1<%2> _Y_ITER_C9:_Y_ITER_C3:%1$YSII_Cg,_Y_ITER_C3:%1$YSII_Ag[(%2)+1]={(%2)*2,(%2)*2-1,...}
 #define iterator%0<%1> new Iterator:%0<%1>
+
+/**--------------------------------------------------------------------------**\
+<summary>foreach</summary>
+<param name="data">Data to itterate through.</param>
+<param name="as">Variable to set value to.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Not exactly the same as PHP foreach, just itterates through a list and
+	returns the value of the current slot but uses that slot as the next index
+	too.  Variables must be in the form @YSII_<gname>S for the start index and
+	@YSII_<gname>A for the data array where <name> is what's entered in data.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define foreach%1(%0) for(new Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%0|||)
+
+/*
+
+    88b           d88            88                       db        88888888ba  88  
+    888b         d888            ""                      d88b       88      "8b 88  
+    88`8b       d8'88                                   d8'`8b      88      ,8P 88  
+    88 `8b     d8' 88 ,adPPYYba, 88 8b,dPPYba,         d8'  `8b     88aaaaaa8P' 88  
+    88  `8b   d8'  88 ""     `Y8 88 88P'   `"8a       d8YaaaaY8b    88""""""'   88  
+    88   `8b d8'   88 ,adPPPPP88 88 88       88      d8""""""""8b   88          88  
+    88    `888'    88 88,    ,88 88 88       88     d8'        `8b  88          88  
+    88     `8'     88 `"8bbdP"Y8 88 88       88    d8'          `8b 88          88  
+
+*/
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_Init2</summary>
@@ -326,8 +335,7 @@ native Iter_Init(IteratorArray:Name[]<>);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Init Itter_Init
-#define Itter_Init(%1) \
-	Itter_InitInternal(_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1)+1,_Y_ITER_MAYBE_ARRAY(%1[]))
+#define Itter_Init(%1) Itter_InitInternal(_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1)+1,_Y_ITER_MAYBE_ARRAY(%1[]))
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_Add</summary>
@@ -348,23 +356,6 @@ native Iter_Add(Iterator:Name<>, value);
 #define Itter_Add(%1,%2) Itter_AddInternal(_Y_ITER_ARRAY$%1$YSII_Cg,_Y_ITER_ARRAY$%1$YSII_Ag,%2,_Y_ITER_MAYBE_ARRAY(%1))
 
 /**--------------------------------------------------------------------------**\
-<summary>Itter_Free</summary>
-<param name="itter">Name of the itterator to get the first free slot in.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Wrapper for Itter_FreeInternal.
-
-native Iter_Free(Iterator:Name<>);
-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Iter_Free Itter_Free
-#define Itter_Free(%1) Itter_FreeInternal(_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1))
-
-/**--------------------------------------------------------------------------**\
 <summary>Itter_Remove</summary>
 <param name="itter">Name of the itterator to remove data from.</param>
 <param name="value">Data to remove.</param>
@@ -381,6 +372,23 @@ native Iter_Remove(Iterator:Name<>, value);
 
 #define Iter_Remove Itter_Remove
 #define Itter_Remove(%1,%2) Itter_RemoveInternal(_Y_ITER_ARRAY$%1$YSII_Cg,_Y_ITER_ARRAY$%1$YSII_Ag,%2,_Y_ITER_MAYBE_ARRAY(%1))
+
+/**--------------------------------------------------------------------------**\
+<summary>Itter_Free</summary>
+<param name="itter">Name of the itterator to get the first free slot in.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Wrapper for Itter_FreeInternal.
+
+native Iter_Free(Iterator:Name<>);
+
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Iter_Free Itter_Free
+#define Itter_Free(%1) Itter_FreeInternal(_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1))
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_Contains</summary>
@@ -439,20 +447,6 @@ native Iter_Random(Iterator:Name<>);
 #define Itter_Random(%1) Itter_RandomInternal(_Y_ITER_ARRAY$%1$YSII_Cg,_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1))
 
 /**--------------------------------------------------------------------------**\
-<summary>Itter_Debug</summary>
-<param name="itter">Name of the itterator to output debug information from.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Wrapper for Itter_ShowArray.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-//#define Iter_Debug Itter_Debug
-//#define Itter_Debug(%1) Itter_ShowArray(_Y_ITER_ARRAY$%1$YSII_Cg,_Y_ITER_ARRAY$%1$YSII_Ag)
-
-/**--------------------------------------------------------------------------**\
 <summary>Itter_Count</summary>
 <param name="itter">Name of the itterator to get a random slot from4.</param>
 <returns>
@@ -486,55 +480,222 @@ native Iter_Clear(IteratorArray:Name[]<>);
 #define Iter_Clear Itter_Clear
 #define Itter_Clear(%1) Itter_ClearInternal(_Y_ITER_ARRAY$%1$YSII_Cg,_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1))
 
-/**--------------------------------------------------------------------------**\
-Create the internal itterators.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*
 
-#if !defined BOTSYNC_IS_BOT
-	new
-		Iterator:Player<MAX_PLAYERS>;
-	
-	#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-		new
-			Iterator:Bot<MAX_PLAYERS>,
-			Iterator:Character<MAX_PLAYERS>;
-		
-		//#define NPC@YSII_Sg Bot@YSII_Sg
-		#define NPC@YSII_Cg Bot@YSII_Cg
-		#define NPC@YSII_Ag Bot@YSII_Ag
-		//#define NPC@YSII_Eg Bot@YSII_Eg
-		//#define NPC@YSII_Rg Bot@YSII_Rg
-	#endif
-#endif
+    88888888888                                                     db        88888888ba  88  
+    88                        ,d                                   d88b       88      "8b 88  
+    88                        88                                  d8'`8b      88      ,8P 88  
+    88aaaaa     8b,     ,d8 MM88MMM 8b,dPPYba, ,adPPYYba,        d8'  `8b     88aaaaaa8P' 88  
+    88"""""      `Y8, ,8P'    88    88P'   "Y8 ""     `Y8       d8YaaaaY8b    88""""""'   88  
+    88             )888(      88    88         ,adPPPPP88      d8""""""""8b   88          88  
+    88           ,d8" "8b,    88,   88         88,    ,88     d8'        `8b  88          88  
+    88888888888 8P'     `Y8   "Y888 88         `"8bbdP"Y8    d8'          `8b 88          88  
+
+*/
 
 /**--------------------------------------------------------------------------**\
-	Variables to optimise memory usage by only having one copy of each string.
-	Note that only strings used more than once are put here because only they
-	have any gain to being located in only one place.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-static stock
-	YSI_gsOnGameModeInit[] = "Itter_OnGameModeInit",
-	YSI_gsSpecifier@[] = "";
-
-/**--------------------------------------------------------------------------**\
-<summary>foreach</summary>
-<param name="data">Data to itterate through.</param>
-<param name="as">Variable to set value to.</param>
+<summary>Iter_Begin</summary>
+<param name="iter">Name of the iterator to get the start of.</param>
 <returns>
 	-
 </returns>
 <remarks>
-	Not exactly the same as PHP foreach, just itterates through a list and
-	returns the value of the current slot but uses that slot as the next index
-	too.  Variables must be in the form @YSII_<gname>S for the start index and
-	@YSII_<gname>A for the data array where <name> is what's entered in data.
+	Gets a point BEFORE the start of the iterator (the theoretical beginning).
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define foreach%1(%0) for(new Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%0|||)
+#define Iter_Begin(%1) (_Y_ITER_MAYBE_ARRAY(%1))
+#define Itter_Begin(%1) (_Y_ITER_MAYBE_ARRAY(%1))
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_End</summary>
+<param name="iter">Name of the iterator to get the end of.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Gets a point AFTER the end of the iterator (think "MAX_PLAYERS").
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Iter_End(%1) (_Y_ITER_MAYBE_ARRAY(%1))
+#define Itter_End(%1) (_Y_ITER_MAYBE_ARRAY(%1))
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_First</summary>
+<param name="iter">Name of the iterator to get the first valid element in.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Gets the first element in an iterator.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Iter_First(%1) (_Y_ITER_ARRAY$%1$YSII_Ag[_Y_ITER_MAYBE_ARRAY(%1)])
+#define Itter_First(%1) (_Y_ITER_ARRAY$%1$YSII_Ag[_Y_ITER_MAYBE_ARRAY(%1)])
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_Last</summary>
+<param name="iter">Name of the iterator to</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Gets the last element in an iterator.  Works by getting the previous item
+	from the one BEFORE the first element (i.e. the one before the sentinel).
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Iter_Last(%1) Itter_PrevInternal(_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1),_Y_ITER_MAYBE_ARRAY(%1))
+#define Itter_Last(%1) Itter_PrevInternal(_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1),_Y_ITER_MAYBE_ARRAY(%1))
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_Next</summary>
+<param name="iter">Name of the iterator to get the next element in.</param>
+<param name="cur">The current element.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Gets the element in an interator after the current one.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Iter_Next(%1,%2) (_Y_ITER_ARRAY$%1$YSII_Ag[(%2)])
+#define Itter_Next(%1,%2) (_Y_ITER_ARRAY$%1$YSII_Ag[(%2)])
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_Prev</summary>
+<param name="iter">Name of the iterator to get the previous element in.</param>
+<param name="cur">The current element.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Gets the element in an iterator before the current one.  Slow.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Iter_Prev(%1,%2) Itter_PrevInternal(_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1),(%2))
+#define Itter_Prev(%1,%2) Itter_PrevInternal(_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1),(%2))
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_InternalArray</summary>
+<param name="iter">Name of the iterator to get the true name of.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Accesses the internal array of an iterator.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Iter_InternalArray(%1) (_Y_ITER_ARRAY$%1$YSII_Ag)
+#define Itter_InternalArray(%1) (_Y_ITER_ARRAY$%1$YSII_Ag)
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_InternalSize</summary>
+<param name="iter">Name of the iterator to get the true size of.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Accesses the internal size of an iterator.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+// #define _Y_ITER_INT_SIZE:%0(%2[%1]@YSII_Ag)) %0(%2@YSII_Ag[]))
+
+#define Iter_InternalSize(%1) (_Y_ITER_MAYBE_ARRAY(%1)+1) // (_:_Y_ITER_INT_SIZE:sizeof (%1@YSII_Ag))
+#define Itter_InternalSize(%1) (_Y_ITER_MAYBE_ARRAY(%1)+1) // (_:_Y_ITER_INT_SIZE:sizeof (%1@YSII_Ag))
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_Size</summary>
+<param name="iter">Name of the iterator to get the true size of.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Accesses the internal size of an iterator.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Iter_Size(%1) (_Y_ITER_MAYBE_ARRAY(%1))
+#define Itter_Size(%1) (_Y_ITER_MAYBE_ARRAY(%1))
+
+/*
+
+    88b           d88                                                         
+    888b         d888                                                         
+    88`8b       d8'88                                                         
+    88 `8b     d8' 88 ,adPPYYba,  ,adPPYba, 8b,dPPYba,  ,adPPYba,  ,adPPYba,  
+    88  `8b   d8'  88 ""     `Y8 a8"     "" 88P'   "Y8 a8"     "8a I8[    ""  
+    88   `8b d8'   88 ,adPPPPP88 8b         88         8b       d8  `"Y8ba,   
+    88    `888'    88 88,    ,88 "8a,   ,aa 88         "8a,   ,a8" aa    ]8I  
+    88     `8'     88 `"8bbdP"Y8  `"Ybbd8"' 88          `"YbbdP"'  `"YbbdP"'  
+
+*/
+
+// This now uses "$" not ":" because it is ALWAYS stripped out (it isn't a tag
+// based macro that may not be detected), and that way we can detect the "$" in
+// "C2" even when there is a custom tag involved.  The second "$" allows us to
+// pick up all array subscripts at once without recursion.  I'm not overly happy
+// about the trailing ")" on the macros, but I can't see any other way atm.
+#define _Y_ITER_ARRAY$ _:_Y_ITER_C0:_Y_ITER_C3:
+#define _Y_ITER_C0:%0[%1$YSII_%4g%5) %0$YSII_%4g[%1%5)
+#define _Y_ITER_C3:%0$ %0@
+
+// Find out if the passed iterator is multi-dimensional or an old function.
+#define _Y_ITER_FOREACH_SIZE(%1) _:_Y_ITER_C1:_Y_ITER_C2:(sizeof %1@YSII_Ag-1)
+
+// This macro detects multi-dimensional iterator arrays and moves the square
+// brackets to the correct location AFTER the iterator name (not in the middle).
+// If we get anything in "%8" don't bother putting it back as we can no longer
+// match against it because we have matched against "C1" instead.
+#define _Y_ITER_C1:%8(%0[%1]%2@YSII_Ag%9-1) _Y_ITER_C1:(%0%2@YSII_Ag[]%9-1)
+
+// I will deprecate these later.  The code to do so is in revision c9ca7fd.
+#define _Y_ITER_C2:(sizeof%0(%1)@YSII_Ag-1);_:(%2=%9$%3(%4)$YSII_Ag[%5])!=_Y_ITER_MAYBE_ARRAY(%6);) _Y_ITER_C4:(sizeof %3@YSII_Ag-1);(sizeof %3@YSII_Ag-1)!=_:(%2=%3@YSII_Ag[%4][%5]);)
+
+#define _Y_ITER_C4:%9;%8!=_:(%2=%3[][%5]);) %9;%9!=_:(%2=%3[%5]);)
+
+#define _Y_ITER_C5:%9[%1]%2(%0(%5));) (%0(%5%1));)
+#define _Y_ITER_C6:_Y_ITER_C5:%9[%1]%2[%3]%4(%0(%5));) _Y_ITER_C6:_Y_ITER_C5:%2[%3]%4(%0(%5%1,));)
+
+#define @iterfunc%1()%7:(%0=%8)%9) YSI_NULL_ITERATOR-3);-1!=_:_Y_ITER_C6:_Y_ITER_C5:%8(%0=%1@YSII_Ag());)
+#define iterfunc%0(%1) %0@YSII_Ag(%1)
+
+// Check if this is an array or a single variable.
+#define _Y_ITER_MAYBE_ARRAY(%1) _:_Y_ITER_C1:(sizeof %1@YSII_Ag-1)
+
+// Used in array declaration.  Need to keep the "_Y_ITER_C9:" as a tag, not as a
+// recursive macro.  "_Y_ITER_C3:" strips the "$" from normal declarations.
+#define _Y_ITER_C9:_Y_ITER_C3:%0[%1$YSII_Cg,_Y_ITER_C3:%2[%3$YSII_Ag[%4]={%5} _Y_ITER_C9:%0@YSII_Cg[%1,%0@YSII_Ag[%1[%4]
+
+/**--------------------------------------------------------------------------**\
+<summary>Itter_Create2</summary>
+<param name="name">Itterator identifier.</param>
+<param name="size0">Number of iterators.</param>
+<param name="size1">Number of items per iterator.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Creates a new array of itterator start/array pair.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+// If this ever changes, update the size reference in y_users.
+
+#define IteratorArray Iterator //:%1[%2]<%3> %1@YSII_Cg[%2],%1@YSII_Ag[%2][%3+1]
+
+/**--------------------------------------------------------------------------**\
+	The workings of these macros are very extensively documented at:
+	
+		http://forum.sa-mp.com/showpost.php?p=2823668
+	
+\**--------------------------------------------------------------------------**/
 
 // This allows us to use "new" multiple times - stripping off ONLY whole words.
 #define new%0|||%9|||%1:%2||| %9|||%0|||%1|||%2|||
@@ -575,65 +736,117 @@ static stock
 
 #define foreachex(%1,%2) foreach(%2:%1)
 
+/*
+
+    88                                                                                  
+    88   ,d                                      ,d                                     
+    88   88                                      88                                     
+    88 MM88MMM ,adPPYba, 8b,dPPYba, ,adPPYYba, MM88MMM ,adPPYba,  8b,dPPYba, ,adPPYba,  
+    88   88   a8P_____88 88P'   "Y8 ""     `Y8   88   a8"     "8a 88P'   "Y8 I8[    ""  
+    88   88   8PP""""""" 88         ,adPPPPP88   88   8b       d8 88          `"Y8ba,   
+    88   88,  "8b,   ,aa 88         88,    ,88   88,  "8a,   ,a8" 88         aa    ]8I  
+    88   "Y888 `"Ybbd8"' 88         `"8bbdP"Y8   "Y888 `"YbbdP"'  88         `"YbbdP"'  
+
+*/
+
 /**--------------------------------------------------------------------------**\
-<summary>Itter_OnPlayerConnect</summary>
-<param name="playerid">Player who joined.</param>
+Create the internal itterators.
+\**--------------------------------------------------------------------------**/
+
+#if !defined BOTSYNC_IS_BOT
+	new
+		Iterator:Player<MAX_PLAYERS>;
+	
+	#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
+		new
+			Iterator:Bot<MAX_PLAYERS>,
+			Iterator:Character<MAX_PLAYERS>;
+		
+		//#define NPC@YSII_Sg Bot@YSII_Sg
+		#define NPC@YSII_Cg Bot@YSII_Cg
+		#define NPC@YSII_Ag Bot@YSII_Ag
+		//#define NPC@YSII_Eg Bot@YSII_Eg
+		//#define NPC@YSII_Rg Bot@YSII_Rg
+	#endif
+#endif
+
+/*
+
+    88                                                                88  
+    88              ,d                                                88  
+    88              88                                                88  
+    88 8b,dPPYba, MM88MMM ,adPPYba, 8b,dPPYba, 8b,dPPYba,  ,adPPYYba, 88  
+    88 88P'   `"8a  88   a8P_____88 88P'   "Y8 88P'   `"8a ""     `Y8 88  
+    88 88       88  88   8PP""""""" 88         88       88 ,adPPPPP88 88  
+    88 88       88  88,  "8b,   ,aa 88         88       88 88,    ,88 88  
+    88 88       88  "Y888 `"Ybbd8"' 88         88       88 `"8bbdP"Y8 88  
+
+*/
+
+/**--------------------------------------------------------------------------**\
+	Variables to optimise memory usage by only having one copy of each string.
+	Note that only strings used more than once are put here because only they
+	have any gain to being located in only one place.
+\**--------------------------------------------------------------------------**/
+
+static stock
+	YSI_gsOnGameModeInit[] = "Itter_OnGameModeInit",
+	YSI_gsSpecifier@[] = "";
+
+// This is a hack to build the constant number "-1" with "sizeof".
+stock const
+	YSI_NULL_ITERATOR[2]; // NULL target only used for "sizeof".
+
+/**--------------------------------------------------------------------------**\
+<summary>Itter_OPDCInternal</summary>
+<param name="playerid">Player who left.</param>
 <returns>
 	-
 </returns>
 <remarks>
-	Adds a player to the loop data.  Now sorts the list too.  Note that I found
-	the most bizzare bug ever (I *think* it may be a compiler but, but it
-	requires further investigation), basically it seems that multiple variables
-	were being treated as the same variable (namely @YSII_EgotS and
-	@YSII_CgharacterS were the same and @YSII_EgotC and @YSII_CgharacterC were the
-	same).  Adding print statements which reference these variables seem to fix
-	the problem, and I've tried to make sure that the values will never actually
-	get printed.
+	Called AFTER "OnPlayerDisconnect" so that using "Kick" inside a "foreach"
+	loop doesn't crash the server due to an OOB error.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
 #if !defined BOTSYNC_IS_BOT
-	public OnPlayerConnect(playerid)
+	public Itter_OPDCInternal(playerid)
 	{
-		P:2("Iter_OnPlayerConnect: %d", playerid);
+		if (IsPlayerConnected(playerid))
+		{
+			return;
+		}
 		#if defined _FOREACH_BOT
 			if (!IsPlayerNPC(playerid))
 			{
-				Itter_Add(Player, playerid);
+				Itter_Remove(Player, playerid);
 			}
 			#if !defined FOREACH_NO_BOTS
 				else
 				{
-					Itter_Add(Bot, playerid);
+					Itter_Remove(Bot, playerid);
 				}
 				#pragma tabsize 4
-				Itter_Add(Character, playerid);
+				Itter_Remove(Character, playerid);
 			#endif
 		#else
-			Itter_Add(Player, playerid);
+			Itter_Remove(Player, playerid);
 		#endif
-		//if (YSI_g_sCallbacks & 2)
-		//{
-		//	CallLocalFunction(YSI_gsOnPlayerConnect, YSI_gsSpecifier@i, playerid);
-		//}
-		P:2("Iter_OnPlayerConnect end");
-		#if defined Itter_OnPlayerConnect
-			Itter_OnPlayerConnect(playerid);
-		#endif
-		return 1;
 	}
-	
-	#if defined _ALS_OnPlayerConnect
-		#undef OnPlayerConnect
-	#else
-		#define _ALS_OnPlayerConnect
-	#endif
-	#define OnPlayerConnect Itter_OnPlayerConnect
-	#if defined Itter_OnPlayerConnect
-		forward Itter_OnPlayerConnect(playerid);
-	#endif
 #endif
+
+/*
+
+    88        88                         88                   
+    88        88                         88                   
+    88        88                         88                   
+    88aaaaaaaa88  ,adPPYba,   ,adPPYba,  88   ,d8  ,adPPYba,  
+    88""""""""88 a8"     "8a a8"     "8a 88 ,a8"   I8[    ""  
+    88        88 8b       d8 8b       d8 8888[      `"Y8ba,   
+    88        88 "8a,   ,a8" "8a,   ,a8" 88`"Yba,  aa    ]8I  
+    88        88  `"YbbdP"'   `"YbbdP"'  88   `Y8a `"YbbdP"'  
+
+*/
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_OnFilterScriptInit</summary>
@@ -650,14 +863,6 @@ static stock
 	public OnFilterScriptInit()
 	{
 		P:1("Iter_OnFilterScriptInit start: %d", MAX_PLAYERS);
-		//if (funcidx(YSI_gsOnPlayerDisconnect) != -1)
-		//{
-		//	YSI_g_sCallbacks |= 1;
-		//}
-		//if (funcidx(YSI_gsOnPlayerConnect) != -1)
-		//{
-		//	YSI_g_sCallbacks |= 2;
-		//}
 		#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
 			Bot@YSII_Cg = _Y_ITER_C9:0;
 			Character@YSII_Cg = _Y_ITER_C9:0;
@@ -702,12 +907,9 @@ static stock
 			{
 				#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
 					Bot@YSII_Ag[i] = MAX_PLAYERS + 1;
-					//Bot@YSII_Rg[i] = -1;
 					Character@YSII_Ag[i] = MAX_PLAYERS + 1;
-					//Character@YSII_Rg[i] = -1;
 				#endif
 				Player@YSII_Ag[i] = MAX_PLAYERS + 1;
-				//Player@YSII_Rg[i] = -1;
 			}
 		}
 		#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
@@ -715,7 +917,6 @@ static stock
 			Character@YSII_Ag[lastPlayer] = MAX_PLAYERS;
 		#endif
 		Player@YSII_Ag[lastPlayer] = MAX_PLAYERS;
-		//CallLocalFunction("Itter_OnFilterScriptInit", YSI_gsSpecifier@);
 		#if defined Itter_OnFilterScriptInit
 			Itter_OnFilterScriptInit();
 		#endif
@@ -750,15 +951,6 @@ static stock
 	public OnGameModeInit()
 	{
 		P:1("Iter_OnGameModeInit start: %d", MAX_PLAYERS);
-		// Clear everything.
-		//if (funcidx(YSI_gsOnPlayerDisconnect) != -1)
-		//{
-		//	YSI_g_sCallbacks |= 1;
-		//}
-		//if (funcidx(YSI_gsOnPlayerConnect) != -1)
-		//{
-		//	YSI_g_sCallbacks |= 2;
-		//}
 		if (!Player@YSII_Cg)
 		{
 			#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
@@ -825,12 +1017,9 @@ static stock
 			{
 				#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
 					Bot@YSII_Ag[i] = MAX_PLAYERS + 1;
-					//Bot@YSII_Rg[i] = -1;
 					Character@YSII_Ag[i] = MAX_PLAYERS + 1;
-					//Character@YSII_Rg[i] = -1;
 				#endif
 				Player@YSII_Ag[i] = MAX_PLAYERS + 1;
-				//Player@YSII_Rg[i] = -1;
 			}
 		}
 		#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
@@ -859,6 +1048,77 @@ static stock
 	#define OnGameModeInit Itter_OnGameModeInit
 	#if defined Itter_OnGameModeInit
 		forward Itter_OnGameModeInit();
+	#endif
+#endif
+
+/*
+
+    88888888ba  88                                                         
+    88      "8b 88                                                         
+    88      ,8P 88                                                         
+    88aaaaaa8P' 88 ,adPPYYba, 8b       d8  ,adPPYba, 8b,dPPYba, ,adPPYba,  
+    88""""""'   88 ""     `Y8 `8b     d8' a8P_____88 88P'   "Y8 I8[    ""  
+    88          88 ,adPPPPP88  `8b   d8'  8PP""""""" 88          `"Y8ba,   
+    88          88 88,    ,88   `8b,d8'   "8b,   ,aa 88         aa    ]8I  
+    88          88 `"8bbdP"Y8     Y88'     `"Ybbd8"' 88         `"YbbdP"'  
+                                  d8'                                      
+                                 d8'                                       
+
+*/
+
+/**--------------------------------------------------------------------------**\
+<summary>Itter_OnPlayerConnect</summary>
+<param name="playerid">Player who joined.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Adds a player to the loop data.  Now sorts the list too.  Note that I found
+	the most bizzare bug ever (I *think* it may be a compiler but, but it
+	requires further investigation), basically it seems that multiple variables
+	were being treated as the same variable (namely @YSII_EgotS and
+	@YSII_CgharacterS were the same and @YSII_EgotC and @YSII_CgharacterC were the
+	same).  Adding print statements which reference these variables seem to fix
+	the problem, and I've tried to make sure that the values will never actually
+	get printed.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#if !defined BOTSYNC_IS_BOT
+	public OnPlayerConnect(playerid)
+	{
+		P:2("Iter_OnPlayerConnect: %d", playerid);
+		#if defined _FOREACH_BOT
+			if (!IsPlayerNPC(playerid))
+			{
+				Itter_Add(Player, playerid);
+			}
+			#if !defined FOREACH_NO_BOTS
+				else
+				{
+					Itter_Add(Bot, playerid);
+				}
+				#pragma tabsize 4
+				Itter_Add(Character, playerid);
+			#endif
+		#else
+			Itter_Add(Player, playerid);
+		#endif
+		P:2("Iter_OnPlayerConnect end");
+		#if defined Itter_OnPlayerConnect
+			Itter_OnPlayerConnect(playerid);
+		#endif
+		return 1;
+	}
+	
+	#if defined _ALS_OnPlayerConnect
+		#undef OnPlayerConnect
+	#else
+		#define _ALS_OnPlayerConnect
+	#endif
+	#define OnPlayerConnect Itter_OnPlayerConnect
+	#if defined Itter_OnPlayerConnect
+		forward Itter_OnPlayerConnect(playerid);
 	#endif
 #endif
 
@@ -896,80 +1156,18 @@ static stock
 	#endif
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Itter_OPDCInternal</summary>
-<param name="playerid">Player who left.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Called AFTER "OnPlayerDisconnect" so that using "Kick" inside a "foreach"
-	loop doesn't crash the server due to an OOB error.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*
 
-#if !defined BOTSYNC_IS_BOT
-	public Itter_OPDCInternal(playerid)
-	{
-		if (IsPlayerConnected(playerid))
-		{
-			return;
-		}
-		#if defined _FOREACH_BOT
-			if (!IsPlayerNPC(playerid))
-			{
-				Itter_Remove(Player, playerid);
-			}
-			#if !defined FOREACH_NO_BOTS
-				else
-				{
-					Itter_Remove(Bot, playerid);
-				}
-				#pragma tabsize 4
-				Itter_Remove(Character, playerid);
-			#endif
-		#else
-			Itter_Remove(Player, playerid);
-		#endif
-	}
-#endif
+           db        88888888ba  88      ,ad8888ba,                       88             
+          d88b       88      "8b 88     d8"'    `"8b                      88             
+         d8'`8b      88      ,8P 88    d8'                                88             
+        d8'  `8b     88aaaaaa8P' 88    88             ,adPPYba,   ,adPPYb,88  ,adPPYba,  
+       d8YaaaaY8b    88""""""'   88    88            a8"     "8a a8"    `Y88 a8P_____88  
+      d8""""""""8b   88          88    Y8,           8b       d8 8b       88 8PP"""""""  
+     d8'        `8b  88          88     Y8a.    .a8P "8a,   ,a8" "8a,   ,d88 "8b,   ,aa  
+    d8'          `8b 88          88      `"Y8888Y"'   `"YbbdP"'   `"8bbdP"Y8  `"Ybbd8"'  
 
-/**--------------------------------------------------------------------------**\
-<summary>Itter_ShowArray</summary>
-<param name="start">Itterator start point.</param>
-<param name="members[]">Itterator contents.</param>
-<param name="size">Number of itterator values</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Pure debug function.  Has regular prints not debug prints
-	as it's only called when debug is on.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-/*stock
-	Itter_ShowArray(size, members[])
-{
-	static
-		sString[61];
-	new
-		i,
-		j = 10;
-	printf("Start: %d", start);
-	printf("Size:  %d", size);
-	while (i < size)
-	{
-		sString[0] = '\0';
-		while (i < j && i < size)
-		{
-			format(sString, sizeof (sString), "%s, %d", sString, members[i]);
-			i++;
-		}
-		printf("Array (%d): %s", j, sString);
-		j += 10;
-	}
-}*/
+*/
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_RandomInternal</summary>
@@ -1228,134 +1426,4 @@ stock
 	}
 	return size;
 }
-
-/**--------------------------------------------------------------------------**\
-<summary>Iter_Begin</summary>
-<param name="iter">Name of the iterator to get the start of.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Gets a point BEFORE the start of the iterator (the theoretical beginning).
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Iter_Begin(%1) (_Y_ITER_MAYBE_ARRAY(%1))
-#define Itter_Begin(%1) (_Y_ITER_MAYBE_ARRAY(%1))
-
-/**--------------------------------------------------------------------------**\
-<summary>Iter_End</summary>
-<param name="iter">Name of the iterator to get the end of.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Gets a point AFTER the end of the iterator (think "MAX_PLAYERS").
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Iter_End(%1) (_Y_ITER_MAYBE_ARRAY(%1))
-#define Itter_End(%1) (_Y_ITER_MAYBE_ARRAY(%1))
-
-/**--------------------------------------------------------------------------**\
-<summary>Iter_First</summary>
-<param name="iter">Name of the iterator to get the first valid element in.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Gets the first element in an iterator.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Iter_First(%1) (_Y_ITER_ARRAY$%1$YSII_Ag[_Y_ITER_MAYBE_ARRAY(%1)])
-#define Itter_First(%1) (_Y_ITER_ARRAY$%1$YSII_Ag[_Y_ITER_MAYBE_ARRAY(%1)])
-
-/**--------------------------------------------------------------------------**\
-<summary>Iter_Last</summary>
-<param name="iter">Name of the iterator to</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Gets the last element in an iterator.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Iter_Last(%1) Itter_PrevInternal(_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1),_Y_ITER_MAYBE_ARRAY(%1))
-#define Itter_Last(%1) Itter_PrevInternal(_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1),_Y_ITER_MAYBE_ARRAY(%1))
-
-/**--------------------------------------------------------------------------**\
-<summary>Iter_Next</summary>
-<param name="iter">Name of the iterator to get the next element in.</param>
-<param name="cur">The current element.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Gets the element in an interator after the current one.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Iter_Next(%1,%2) (_Y_ITER_ARRAY$%1$YSII_Ag[(%2)])
-#define Itter_Next(%1,%2) (_Y_ITER_ARRAY$%1$YSII_Ag[(%2)])
-
-/**--------------------------------------------------------------------------**\
-<summary>Iter_Prev</summary>
-<param name="iter">Name of the iterator to get the previous element in.</param>
-<param name="cur">The current element.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Gets the element in an iterator before the current one.  Slow.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Iter_Prev(%1,%2) Itter_PrevInternal(_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1),(%2))
-#define Itter_Prev(%1,%2) Itter_PrevInternal(_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1),(%2))
-
-/**--------------------------------------------------------------------------**\
-<summary>Iter_InternalArray</summary>
-<param name="iter">Name of the iterator to get the true name of.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Accesses the internal array of an iterator.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Iter_InternalArray(%1) (_Y_ITER_ARRAY$%1$YSII_Ag)
-#define Itter_InternalArray(%1) (_Y_ITER_ARRAY$%1$YSII_Ag)
-
-/**--------------------------------------------------------------------------**\
-<summary>Iter_InternalSize</summary>
-<param name="iter">Name of the iterator to get the true size of.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Accesses the internal size of an iterator.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-// #define _Y_ITER_INT_SIZE:%0(%2[%1]@YSII_Ag)) %0(%2@YSII_Ag[]))
-
-#define Iter_InternalSize(%1) (_Y_ITER_MAYBE_ARRAY(%1)+1) // (_:_Y_ITER_INT_SIZE:sizeof (%1@YSII_Ag))
-#define Itter_InternalSize(%1) (_Y_ITER_MAYBE_ARRAY(%1)+1) // (_:_Y_ITER_INT_SIZE:sizeof (%1@YSII_Ag))
-
-/**--------------------------------------------------------------------------**\
-<summary>Iter_Size</summary>
-<param name="iter">Name of the iterator to get the true size of.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Accesses the internal size of an iterator.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Iter_Size(%1) (_Y_ITER_MAYBE_ARRAY(%1))
-#define Itter_Size(%1) (_Y_ITER_MAYBE_ARRAY(%1))
 

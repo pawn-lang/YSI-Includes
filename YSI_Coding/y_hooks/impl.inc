@@ -50,6 +50,8 @@ Legal:
 Version:
 	2.0
 Changelog:
+	26/12/13:
+		Added sections.
 	15/04/13:
 		Changed the assembly to be shorter by actually using the stack.
 		Now slightly handles return values.
@@ -70,6 +72,21 @@ Changelog:
 	06/08/10:
 		First version
 \**--------------------------------------------------------------------------**/
+
+/*
+
+     ad88888ba                                              
+    d8"     "8b              ,d                             
+    Y8,                      88                             
+    `Y8aaaaa,    ,adPPYba, MM88MMM 88       88 8b,dPPYba,   
+      `"""""8b, a8P_____88   88    88       88 88P'    "8a  
+            `8b 8PP"""""""   88    88       88 88       d8  
+    Y8a     a8P "8b,   ,aa   88,   "8a,   ,a88 88b,   ,a8"  
+     "Y88888P"   `"Ybbd8"'   "Y888  `"YbbdP'Y8 88`YbbdP"'   
+                                               88           
+                                               88           
+    
+*/
 
 #include "..\YSI_Internal\y_unique"
 #include "..\YSI_Core\y_cell"
@@ -97,6 +114,30 @@ _Y_HOOKS_STATIC stock
 	YSI_g_sOnGameModeInit,
 	YSI_g_sOnFilterScriptInit,
 	YSI_g_sOnScriptInit;
+
+static stock const
+	// Multiple of 4 characters with NULL.
+	YSI_gscOnPlayerEnterRaceCP     [32 char] = !"OnPlayerEnterRaceCheckpoint\0\0\0\0",
+	// Multiple of 4 characters with NULL.
+	YSI_gscOnPlayerLeaveRaceCP     [32 char] = !"OnPlayerLeaveRaceCheckpoint\0\0\0\0",
+	YSI_gscOnVehicleDamageStatusUpd[32 char] = !"OnVehicleDamageStatusUpdate",
+	YSI_gscOnUnoccupiedVehicleUpd  [32 char] = !"OnUnoccupiedVehicleUpdate",
+	YSI_gscOnPlayerClickPlayerTD   [32 char] = !"OnPlayerClickPlayerTextDraw",
+	YSI_gscOnPlayerEditAttachedObj [32 char] = !"OnPlayerEditAttachedObject",
+	// YSI callbacks.
+	YSI_gscOnPlayerCmdPerformed    [32 char] = !"OnPlayerCommandPerformed",
+	// YSI_gscOnPlayerCommandReceived    [32 char] = !"OnPlayerCommandReceived",
+	YSI_gscOnMasterSystemClose    [32 char] = !"Master_OnScriptClose",
+	// Streamer plugin long callbacks.
+	YSI_gscOnPlayerEditDynObject  [32 char] = !"OnPlayerEditDynamicObject",
+	YSI_gscOnPlayerSelectDynObject[32 char] = !"OnPlayerSelectDynamicObject",
+	YSI_gscOnPlayerPickUpDynPickup[32 char] = !"OnPlayerPickUpDynamicPickup",
+	YSI_gscOnPlayerEnterDynRaceCP [32 char] = !"OnPlayerEnterDynamicRaceCP",
+	YSI_gscOnPlayerLeaveDynRaceCP [32 char] = !"OnPlayerLeaveDynamicRaceCP",
+	YSI_gscOnPlayerEnterDynArea   [32 char] = !"OnPlayerEnterDynamicArea",
+	YSI_gscOnPlayerLeaveDynArea   [32 char] = !"OnPlayerLeaveDynamicArea",
+	// Multiple of 4 characters with NULL.
+	YSI_gscOnScriptExit           [32 char] = !"ScriptInit_OnScriptExit";
 
 /**--------------------------------------------------------------------------**\
 <summary>_@_y_hooks_@_</summary>
@@ -171,7 +212,30 @@ public _@_y_hooks_@_1()
 	// public functions table and code segment if the compiler is true to form.
 }
 
-#define mutable
+/*
+
+    88        88         88 88            
+    88        88   ,d    "" 88            
+    88        88   88       88            
+    88        88 MM88MMM 88 88 ,adPPYba,  
+    88        88   88    88 88 I8[    ""  
+    88        88   88    88 88  `"Y8ba,   
+    Y8a.    .a8P   88,   88 88 aa    ]8I  
+     `"Y8888Y"'    "Y888 88 88 `"YbbdP"'  
+
+*/
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_DoForceReverse</summary>
+<param name="str">The string to convert.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Does the actual reversing once "Hooks_ForceReverse" has stripped off the
+	"const" modifier.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 _Y_HOOKS_STATIC Hooks_DoForceReverse(str[])
 {
@@ -182,9 +246,21 @@ _Y_HOOKS_STATIC Hooks_DoForceReverse(str[])
 	return 0;
 }
 
-_Y_HOOKS_STATIC Hooks_ForceReverse(mutable const str[32 char])
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_ForceReverse</summary>
+<param name="str">The string to convert.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Converts a constant packed string to a C string.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC Hooks_ForceReverse(/* mutable */ const str[32 char])
 {
-	// Modifes constant strings - naughty but meh.
+	P:C(if (strlen(str) & 3 != 3) P:W("%s must be padded for \"Hooks_ForceReverse\"", unpack(str)););
+	// Modifies constant strings - naughty but meh.
 	#emit PUSH.S     str
 	#emit PUSH.C     4
 	#emit LCTRL      6
@@ -193,8 +269,6 @@ _Y_HOOKS_STATIC Hooks_ForceReverse(mutable const str[32 char])
 	#emit CONST.pri  Hooks_DoForceReverse
 	#emit SCTRL      6
 }
-
-#undef mutable
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_CountInvalidPublics</summary>
@@ -219,6 +293,42 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 	}
 	return count;
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_IsolateName</summary>
+<param name="name">The string to get the hooked function name from.</param>
+<returns>
+	The input string without y_hooks name decorations.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
+{
+	new
+		pos = strfind(name, "@", false, 4);
+	// Make "pos" a legal value inside the error message.
+	if (pos == -1) P:E("Invalid hook name: %s", unpack(name), ++pos);
+	name{pos} = '\0';
+	strdel(name, 0, 4);
+}
+
+/*
+
+     ad88888ba                                 88                          
+    d8"     "8b                          ,d    ""                          
+    Y8,                                  88                                
+    `Y8aaaaa,    ,adPPYba,  8b,dPPYba, MM88MMM 88 8b,dPPYba,   ,adPPYb,d8  
+      `"""""8b, a8"     "8a 88P'   "Y8   88    88 88P'   `"8a a8"    `Y88  
+            `8b 8b       d8 88           88    88 88       88 8b       88  
+    Y8a     a8P "8a,   ,a8" 88           88,   88 88       88 "8a,   ,d88  
+     "Y88888P"   `"YbbdP"'  88           "Y888 88 88       88  `"YbbdP"Y8  
+                                                               aa,    ,88  
+                                                                "Y8bbdP"   
+
+*/
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_CompareNextCell</summary>
@@ -350,26 +460,18 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 	// then inform it again to track down and replace those addresses.
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Hooks_IsolateName</summary>
-<param name="name">The string to get the hooked function name from.</param>
-<returns>
-	The input string without y_hooks name decorations.
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*
 
-_Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
-{
-	new
-		pos = strfind(name, "@", false, 4);
-	// Make "pos" a legal value inside the error message.
-	if (pos == -1) P:E("Invalid hook name: %s", unpack(name), ++pos);
-	name{pos} = '\0';
-	strdel(name, 0, 4);
-}
+           db        88b           d88 8b        d8    88               ad88             
+          d88b       888b         d888  Y8,    ,8P     88              d8"               
+         d8'`8b      88`8b       d8'88   `8b  d8'      88              88                
+        d8'  `8b     88 `8b     d8' 88     Y88P        88 8b,dPPYba, MM88MMM ,adPPYba,   
+       d8YaaaaY8b    88  `8b   d8'  88     d88b        88 88P'   `"8a  88   a8"     "8a  
+      d8""""""""8b   88   `8b d8'   88   ,8P  Y8,      88 88       88  88   8b       d8  
+     d8'        `8b  88    `888'    88  d8'    `8b     88 88       88  88   "8a,   ,a8"  
+    d8'          `8b 88     `8'     88 8P        Y8    88 88       88  88    `"YbbdP"'   
+
+*/
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_GetName</summary>
@@ -420,6 +522,21 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 {
 	AMX_Write(AMX_BASE_ADDRESS + AMX_Read(entry + 4), 0);
 }
+
+/*
+
+      ,ad8888ba,                       88                                                
+     d8"'    `"8b                      88                                                
+    d8'                                88                                                
+    88             ,adPPYba,   ,adPPYb,88  ,adPPYba,  ,adPPYb,d8  ,adPPYba, 8b,dPPYba,   
+    88            a8"     "8a a8"    `Y88 a8P_____88 a8"    `Y88 a8P_____88 88P'   `"8a  
+    Y8,           8b       d8 8b       88 8PP""""""" 8b       88 8PP""""""" 88       88  
+     Y8a.    .a8P "8a,   ,a8" "8a,   ,d88 "8b,   ,aa "8a,   ,d88 "8b,   ,aa 88       88  
+      `"Y8888Y"'   `"YbbdP"'   `"8bbdP"Y8  `"Ybbd8"'  `"YbbdP"Y8  `"Ybbd8"' 88       88  
+                                                      aa,    ,88                         
+                                                       "Y8bbdP"                          
+
+*/
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_WriteFunction</summary>
@@ -542,8 +659,21 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	return ctx[AsmContext_buffer_offset];
 }
 
+/*
+
+    88888888888                                        88                            88               ad88             
+    88                                           ,d    ""                            88              d8"               
+    88                                           88                                  88              88                
+    88aaaaa 88       88 8b,dPPYba,   ,adPPYba, MM88MMM 88  ,adPPYba,  8b,dPPYba,     88 8b,dPPYba, MM88MMM ,adPPYba,   
+    88""""" 88       88 88P'   `"8a a8"     ""   88    88 a8"     "8a 88P'   `"8a    88 88P'   `"8a  88   a8"     "8a  
+    88      88       88 88       88 8b           88    88 8b       d8 88       88    88 88       88  88   8b       d8  
+    88      "8a,   ,a88 88       88 "8a,   ,aa   88,   88 "8a,   ,a8" 88       88    88 88       88  88   "8a,   ,a8"  
+    88       `"YbbdP'Y8 88       88  `"Ybbd8"'   "Y888 88  `"YbbdP"'  88       88    88 88       88  88    `"YbbdP"'   
+
+*/
+
 /**--------------------------------------------------------------------------**\
-<summary>Hooks_GetSame</summary>
+<summary>Hooks_SpecialCases</summary>
 <param name="ref">The PACKED function that's hooking something.</param>
 <returns>
 	-
@@ -553,27 +683,6 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	cases.  These are just hard-coded in.
 </remarks>
 \**--------------------------------------------------------------------------**/
-
-static stock const
-	YSI_gscOnPlayerEnterRaceCP     [32 char] = !"OnPlayerEnterRaceCheckpoint\0\0\0\0",
-	YSI_gscOnPlayerLeaveRaceCP     [32 char] = !"OnPlayerLeaveRaceCheckpoint\0\0\0\0",
-	YSI_gscOnVehicleDamageStatusUpd[32 char] = !"OnVehicleDamageStatusUpdate",
-	YSI_gscOnUnoccupiedVehicleUpd  [32 char] = !"OnUnoccupiedVehicleUpdate",
-	YSI_gscOnPlayerClickPlayerTD   [32 char] = !"OnPlayerClickPlayerTextDraw",
-	YSI_gscOnPlayerEditAttachedObj [32 char] = !"OnPlayerEditAttachedObject",
-	// YSI callbacks.
-	YSI_gscOnPlayerCmdPerformed    [32 char] = !"OnPlayerCommandPerformed",
-	// YSI_gscOnPlayerCommandReceived    [32 char] = !"OnPlayerCommandReceived",
-	YSI_gscOnMasterSystemClose    [32 char] = !"Master_OnScriptClose",
-	// Streamer plugin long callbacks.
-	YSI_gscOnPlayerEditDynObject  [32 char] = !"OnPlayerEditDynamicObject",
-	YSI_gscOnPlayerSelectDynObject[32 char] = !"OnPlayerSelectDynamicObject",
-	YSI_gscOnPlayerPickUpDynPickup[32 char] = !"OnPlayerPickUpDynamicPickup",
-	YSI_gscOnPlayerEnterDynRaceCP [32 char] = !"OnPlayerEnterDynamicRaceCP",
-	YSI_gscOnPlayerLeaveDynRaceCP [32 char] = !"OnPlayerLeaveDynamicRaceCP",
-	YSI_gscOnPlayerEnterDynArea   [32 char] = !"OnPlayerEnterDynamicArea",
-	YSI_gscOnPlayerLeaveDynArea   [32 char] = !"OnPlayerLeaveDynamicArea",
-	YSI_gscOnScriptExit           [32 char] = !"ScriptInit_OnScriptExit";
 
 _Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
 {
@@ -644,6 +753,19 @@ _Y_HOOKS_STATIC Hooks_SpecialReturns(const string:ref[])
 	else if (!strcmp(ref, !"OnPlayerCmdPerformed")) return 0;
 	return 1;
 }
+
+/*
+
+      ,ad8888ba,              88 88                    88                          
+     d8"'    `"8b             88 88              ,d    ""                          
+    d8'                       88 88              88                                
+    88             ,adPPYba,  88 88 ,adPPYYba, MM88MMM 88  ,adPPYba,  8b,dPPYba,   
+    88            a8"     "8a 88 88 ""     `Y8   88    88 a8"     "8a 88P'   `"8a  
+    Y8,           8b       d8 88 88 ,adPPPPP88   88    88 8b       d8 88       88  
+     Y8a.    .a8P "8a,   ,a8" 88 88 88,    ,88   88,   88 "8a,   ,a8" 88       88  
+      `"Y8888Y"'   `"YbbdP"'  88 88 `"8bbdP"Y8   "Y888 88  `"YbbdP"'  88       88  
+
+*/
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_GetSame</summary>
@@ -831,6 +953,19 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 	}
 }
 
+/*
+
+    88        88                         88                   
+    88        88                         88                   
+    88        88                         88                   
+    88aaaaaaaa88  ,adPPYba,   ,adPPYba,  88   ,d8  ,adPPYba,  
+    88""""""""88 a8"     "8a a8"     "8a 88 ,a8"   I8[    ""  
+    88        88 8b       d8 8b       d8 8888[      `"Y8ba,   
+    88        88 "8a,   ,a8" "8a,   ,a8" 88`"Yba,  aa    ]8I  
+    88        88  `"YbbdP"'   `"YbbdP"'  88   `Y8a `"YbbdP"'  
+
+*/
+
 public OnScriptInit()
 {
 	P:2("Hooks_OnScriptInit called");
@@ -891,15 +1026,15 @@ public OnScriptInit()
 	P:1("Hooks_OnScriptInit end");
 	return ALS_R_ScriptInit;
 }
+
 #if defined _ALS_OnScriptInit
 	#undef OnScriptInit
 #else
 	#define _ALS_OnScriptInit
 #endif
 #define OnScriptInit S@@_OnScriptInit
-//#if defined S@@_OnScriptInit
+
 forward S@@_OnScriptInit();
-//#endif
 
 /**--------------------------------------------------------------------------**\
 <summary>OnFilterScriptInit</summary>
@@ -923,11 +1058,7 @@ public OnFilterScriptInit()
 		#emit SCTRL      6
 		#emit RETN
 	}
-	//#if defined S@@_OnFilterScriptInit
-	//	return S@@_OnFilterScriptInit();
-	//#else
 	return ALS_R_FilterScriptInit;
-	//#endif
 }
 
 #if defined _ALS_OnFilterScriptInit
@@ -936,9 +1067,7 @@ public OnFilterScriptInit()
 	#define _ALS_OnFilterScriptInit
 #endif
 #define OnFilterScriptInit S@@_OnFilterScriptInit
-//#if defined S@@_OnFilterScriptInit
 forward S@@_OnFilterScriptInit();
-//#endif
 
 /**--------------------------------------------------------------------------**\
 <summary>OnGameModeInit</summary>
@@ -962,11 +1091,7 @@ public OnGameModeInit()
 		#emit SCTRL      6
 		#emit RETN
 	}
-	//#if defined S@@_OnGameModeInit
-	//	return S@@_OnGameModeInit();
-	//#else
 	return ALS_R_GameModeInit;
-	//#endif
 }
 
 #if defined _ALS_OnGameModeInit
@@ -975,6 +1100,6 @@ public OnGameModeInit()
 	#define _ALS_OnGameModeInit
 #endif
 #define OnGameModeInit S@@_OnGameModeInit
-//#if defined S@@_OnGameModeInit
+
 forward S@@_OnGameModeInit();
-//#endif
+

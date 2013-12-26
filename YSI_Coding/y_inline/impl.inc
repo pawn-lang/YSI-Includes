@@ -65,6 +65,21 @@ Changelog:
 		First version
 \**--------------------------------------------------------------------------**/
 
+/*
+
+     ad88888ba                                              
+    d8"     "8b              ,d                             
+    Y8,                      88                             
+    `Y8aaaaa,    ,adPPYba, MM88MMM 88       88 8b,dPPYba,   
+      `"""""8b, a8P_____88   88    88       88 88P'    "8a  
+            `8b 8PP"""""""   88    88       88 88       d8  
+    Y8a     a8P "8b,   ,aa   88,   "8a,   ,a88 88b,   ,a8"  
+     "Y88888P"   `"Ybbd8"'   "Y888  `"YbbdP'Y8 88`YbbdP"'   
+                                               88           
+                                               88           
+    
+*/
+
 #include "..\amx\asm"
 #include "..\amx\disasm"
 #include "..\amx\frame_info"
@@ -103,6 +118,555 @@ static stock
 static stock const
 	YSI_g_scError[] = "\7\7\7*** YSI Error: Unrecognised compilation in y_inline";
 
+// Operators for doing "return" from inside an inline function.
+#define inline_return YSI_gInlineRet+=
+#define @return inline_return
+
+stock
+	InlineRet:YSI_gInlineRet;
+
+forward _@_y_inline_@_();
+
+public _@_y_inline_@_()
+{
+	strcmp("", "");
+	strfind("", "");
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Inline_DecodeSimple</summary>
+<param name="from[]">Array of variable types.</param>
+<param name="at">Type slot.</param>
+<returns>
+	The next variable type stored in the bit array.
+</returns>
+<remarks>
+	Returns data from a bit array when it is known that only basic types are
+	stored (i.e. no arrays with length parameters).
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Inline_DecodeSimple(%0,%1) (I@ = %0[(%1) >>> 5] & (2 << ((%1) & 0x1F)), (%1) += 2, I@)
+
+// This used to be a compile-time macro to convert its parameters to the
+// compressed format - it isn't anymore.  I tried to figure out if it was
+// possible, and it probably is, but VERY hard, even compared to other macros
+// I've written.
+#define _F<%0> (#%0)
+
+/*
+
+    88b           d88            88                       db        88888888ba  88  
+    888b         d888            ""                      d88b       88      "8b 88  
+    88`8b       d8'88                                   d8'`8b      88      ,8P 88  
+    88 `8b     d8' 88 ,adPPYYba, 88 8b,dPPYba,         d8'  `8b     88aaaaaa8P' 88  
+    88  `8b   d8'  88 ""     `Y8 88 88P'   `"8a       d8YaaaaY8b    88""""""'   88  
+    88   `8b d8'   88 ,adPPPPP88 88 88       88      d8""""""""8b   88          88  
+    88    `888'    88 88,    ,88 88 88       88     d8'        `8b  88          88  
+    88     `8'     88 `"8bbdP"Y8 88 88       88    d8'          `8b 88          88  
+
+*/
+
+/**--------------------------------------------------------------------------**\
+<summary>Callback_Get</summary>
+<param name="callback:name">Callback to find by name.</param>
+<param name="ret[E_CALLBACK_DATA]">Where to store the pointer.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Looks up the callback by name.  If the name has the correct data embedded
+	within it that's great and we use that directly.  Otherwise this function
+	loops backwards over the callbacks currently in scope (mostly) to the start
+	of the parent function.  If a match is still not found this looks for a
+	public function of the same name.  If that isn't found either it gives up.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
+{
+	P:2("Callback_Get called: %s", name);
+	static
+		fmat[2];
+	Inline_EncodeFromatString(expect, fmat),
+	ret[E_CALLBACK_DATA_FORMAT] = fmat;
+	if (name[0] == callback_tag:'\03')
+	{
+		new
+			ptr;
+		if (AMX_GetPublicPointer(0, ptr, name[1], true))
+		{
+			ret[E_CALLBACK_DATA_POINTER] = ptr | 0x80000000;
+			return true;
+		}
+		return false;
+	}
+	new
+		pos = strfind(name, "\02");
+	if (pos == -1)
+	{
+		new
+			frm = GetCurrentFramePreviousFrame(),
+			cur = YSI_g_sPrevInlineFunc,
+			parent = GetFrameFunction(GetFramePreviousFrame(frm)),
+			res;
+		pos = strlen(name),
+		frm = GetFrameReturn(frm);
+		// Find the function by name.
+		while (cur)
+		{
+			#emit PUSH.S      pos
+			#emit PUSH.C      0
+			#emit PUSH.S      name
+			#emit PUSH.S      cur
+			#emit PUSH.C      16
+			#emit SYSREQ.C    strcmp
+			#emit STACK       20
+			#emit STOR.S.pri  res
+			if (res == 0 && AMX_Read(cur + pos * 4) == '\02')
+			{
+				if (parent <= AMX_Read(cur + pos * 4 + 1 * 4) <= frm)
+				{
+					// Rewrite the value of "name" for the subsequent code.
+					#emit LOAD.S.pri cur
+					#emit STOR.S.pri name
+					break;
+				}
+			}
+			static const
+				gsSearch[] = "\02";
+			#emit PUSH.C      0
+			#emit PUSH.C      0
+			#emit PUSH.C      gsSearch
+			#emit PUSH.S      cur
+			#emit PUSH.C      16
+			#emit SYSREQ.C    strfind
+			#emit STACK       20
+			#emit LOAD.S.alt  cur
+			#emit IDXADDR
+			#emit ADD.C       16
+			#emit LOAD.I
+			#emit STOR.S.pri  cur
+		}
+		if (!cur)
+		{
+			// Try publics...
+			if (AMX_GetPublicPointer(0, pos, name, true))
+			{
+				ret[E_CALLBACK_DATA_POINTER] = pos | 0x80000000;
+				return true;
+			}
+			return false;
+		}
+	}
+	// Load this inline function's data in to our closure (and allocate memory).
+	ret[E_CALLBACK_DATA_POINTER] = name[pos + 1];
+	new
+		to = name[pos + 2],
+		local = (to & 0x00FFFFFF),
+		params = (to & 0xFF000000) >>> 24;
+	params = local + params + (local ? 3 : 2);
+	new
+		Alloc:a = malloc(params); // Allocate closure space.
+	if (a)
+	{
+		// Get the address of the data.
+		#emit CONST.alt     YSI_gMallocMemory
+		#emit LOAD.S.pri    a
+		#emit IDXADDR
+		#emit STOR.S.pri    to
+		params <<= 2,
+		ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:to,
+		ret[E_CALLBACK_DATA_OFFSET] = params;
+		// Copy the stack over.  First get the frame of the function that used
+		// an inline function, thus calling us indirectly.
+		new
+			from = GetFramePreviousFrame(GetCurrentFramePreviousFrame()) - (local << 2);
+		// Adjust to the bottom of that stack, at least the bottom of the parts
+		// we need (there may be more locals declared later that we don't need).
+		if (local)
+		{
+			// Copy "params" bytes from "from" to "to".
+			rawMemcpy(to, from, params),
+			mset(a, local + 1, name[pos + 3]);
+		}
+		else
+		{
+			// Copy "params" bytes from "from" to "to".
+			rawMemcpy(to, from + 4, params),
+			// Save the "return" address for the inline to our fake stack.
+			mset(a, 0, name[pos + 3]);
+		}
+		P:2("Callback_Get end");
+		return true;
+	}
+	return false;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Callback_Release</summary>
+<param name="input[E_CALLBACK_DATA]">Callback to release.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Releases all the data associated with a given callback (closure storage).
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Callback_Release(input[E_CALLBACK_DATA])
+{
+	static
+		ResolvedAlloc:ra,
+		Alloc:a;
+	if (!(input[E_CALLBACK_DATA_POINTER] & 0x80000000))
+	{
+		ra = input[E_CALLBACK_DATA_ALLOC];
+		if (ra)
+		{
+			#emit CONST.alt     YSI_gMallocMemory
+			#emit LOAD.pri      ra
+			#emit SUB
+			#emit SHR.C.pri     2
+			#emit STOR.pri      a
+			// Publics don't have any stored data.
+			free(a);
+		}
+		input[E_CALLBACK_DATA_POINTER] = 0,
+		input[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:0;
+	}
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Callback_Restore</summary>
+<param name="func[E_CALLBACK_DATA]">Info on the restoration function.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Makes variables referenced, instead of valued.  When used after
+	"Callback_Call" the values of any variables in the enclosing function that
+	were modified in the inline function will be propgated so that their new
+	values are seen by the original parent function (rather than that function
+	still seeing the original values prior to the inline function modifying
+	them).  Note that this does no checks at all at the minute - if you call an
+	inline function whose parent is not currently on the stack, this will
+	probably fail catastrophically!
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Callback_Restore(func[E_CALLBACK_DATA])
+{
+	// Copy the closure data back over the calling function.
+	new
+		frm = GetFramePreviousFrame(GetCurrentFramePreviousFrame()),
+		ret = GetFrameReturn(frm),
+		pfr = GetFramePreviousFrame(frm);
+	rawMemcpy(frm + 12 + GetFrameParameterSize(frm) - func[E_CALLBACK_DATA_OFFSET], _:func[E_CALLBACK_DATA_ALLOC], func[E_CALLBACK_DATA_OFFSET]),
+	SetFrameReturn(frm, ret),
+	SetFramePreviousFrame(frm, pfr);
+}
+
+/*
+
+      ,ad8888ba,             88 88 88                          
+     d8"'    `"8b            88 88 ""                          
+    d8'                      88 88                             
+    88            ,adPPYYba, 88 88 88 8b,dPPYba,   ,adPPYb,d8  
+    88            ""     `Y8 88 88 88 88P'   `"8a a8"    `Y88  
+    Y8,           ,adPPPPP88 88 88 88 88       88 8b       88  
+     Y8a.    .a8P 88,    ,88 88 88 88 88       88 "8a,   ,d88  
+      `"Y8888Y"'  `"8bbdP"Y8 88 88 88 88       88  `"YbbdP"Y8  
+                                                   aa,    ,88  
+                                                    "Y8bbdP"   
+
+*/
+
+/**--------------------------------------------------------------------------**\
+<summary>Callback_Call</summary>
+<param name="func[E_CALLBACK_DATA]">Info on the function to be called.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Takes an inline function handler and parameters, and either calls the
+	public function while passing through the parameters, or just jumps to the
+	carefully crafted inline function code.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Callback_Call(func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
+{
+	static
+		addr;
+	addr = func[E_CALLBACK_DATA_POINTER];
+	if (addr & 0x80000000)
+	{
+		static
+			ts[2];
+		addr &= ~0x80000000,
+		ts[0] = func[E_CALLBACK_DATA_FORMAT][0],
+		ts[1] = func[E_CALLBACK_DATA_FORMAT][1];
+		new
+			at = 6,
+			mm = (ts[0] & 0b00111110) + 6,
+			len,
+			end,
+			var;
+		#emit LOAD.S.alt    8 // Get the parameter count.
+		#emit LCTRL         5 // Get the current frame.
+		#emit ADD
+		#emit ADD.C         8 // Adjust for header and "func".
+		#emit STOR.S.pri    var
+		#emit LCTRL         5 // Get the end.
+		#emit ADD.C         12
+		#emit STOR.S.pri    end
+		P:5("Inline_Call: at = %d, mm = %d", at, mm);
+		if (ts[0] & 0x01)
+		{
+			// Only has variables and references, easy to decode.
+			while (at < mm)
+			{
+				if (var == end) return P:E("Insufficient parameters for Callback_Call.");
+				if (Inline_DecodeSimple(ts, at))
+				{
+					P:7("INLINE_TYPE_REF");
+					#emit LREF.S.pri  var
+					#emit PUSH.pri
+				}
+				else
+				{
+					P:7("INLINE_TYPE_VAR");
+					#emit LREF.S.pri  var
+					#emit LOAD.I
+					#emit PUSH.pri
+				}
+				var -= 4;
+			}
+		}
+		else
+		{
+			// Can have arrays, harder to decode.
+			while (at < mm)
+			{
+				if (var == end) return P:E("Insufficient parameters for Callback_Call.");
+				if (Inline_DecodeComplex(ts, at, len) == INLINE_TYPE_VAR)
+				{
+					P:7("INLINE_TYPE_VAR");
+					#emit LREF.S.pri  var
+					#emit LOAD.I
+					#emit PUSH.pri
+				}
+				else
+				{
+					P:7("INLINE_TYPE_REF/STR/ARR: %d", len);
+					#emit LREF.S.pri  var
+					#emit PUSH.pri
+				}
+				var -= 4;
+			}
+		}
+		// Push the parameter count.
+		var = (numargs() - 1) * 4;
+		#emit PUSH.S    var
+		// "Standard" function call.
+		#emit LCTRL     6
+		#emit ADD.C     28
+		#emit PUSH.pri
+		#emit LOAD.pri  addr
+		#emit SCTRL     6
+		#emit STACK     20
+		#emit RETN
+	}
+	else
+	{
+		// Jump straight in to the code.
+		#emit LOAD.pri  addr
+		#emit SCTRL     6
+	}
+	return 1;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Callback_Array</summary>
+<param name="func[E_CALLBACK_DATA]">Info on the function to be called.</param>
+<param name="params[]">Array of data pointers.</param>
+<param name="num">Size of the array.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	This is very similar to Callback_Call, but takes an array of ADDRESSES
+	instead of normal parameters.  This is designed to help support some
+	experimental OO code I was working on...
+	
+	If the target is a public function, the parameters are resolved and passed
+	normally.  If the target is an inline function we are optimised for the
+	common case, so move the data on to the stack (currently done value-by-value
+	not all at once) and call "Callback_Call".
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (params))
+{
+	static
+		addr;
+	addr = func[E_CALLBACK_DATA_POINTER];
+	if (addr & 0x80000000)
+	{
+		static
+			ts[2];
+		addr &= ~0x80000000,
+		ts[0] = func[E_CALLBACK_DATA_FORMAT][0],
+		ts[1] = func[E_CALLBACK_DATA_FORMAT][1];
+		new
+			at = 6,
+			mm = (ts[0] & 0b00111110) + 6,
+			len,
+			end,
+			var;
+		// Get "params" into a pointer.
+		#emit LOAD.S.alt    params
+		#emit STOR.S.alt    end
+		#emit LOAD.S.pri    num
+		#emit SHL.C.pri     2
+		#emit ADD
+		#emit STOR.S.pri    var
+		P:5("Inline_Call: at = %d, mm = %d", at, mm);
+		if (ts[0] & 0x01)
+		{
+			// Only has variables and references, easy to decode.
+			while (at < mm)
+			{
+				if (var == end) return P:E("Insufficient parameters for Callback_Array.");
+				var -= 4;
+				if (Inline_DecodeSimple(ts, at))
+				{
+					P:7("INLINE_TYPE_REF");
+					#emit LREF.S.pri  var
+					#emit PUSH.pri
+				}
+				else
+				{
+					P:7("INLINE_TYPE_VAR");
+					#emit LREF.S.pri  var
+					#emit LOAD.I
+					#emit PUSH.pri
+				}
+			}
+		}
+		else
+		{
+			// Can have arrays, harder to decode.
+			while (at < mm)
+			{
+				if (var == end) return P:E("Insufficient parameters for Callback_Array.");
+				var -= 4;
+				if (Inline_DecodeComplex(ts, at, len) == INLINE_TYPE_VAR)
+				{
+					P:7("INLINE_TYPE_VAR");
+					#emit LREF.S.pri  var
+					#emit LOAD.I
+					#emit PUSH.pri
+				}
+				else
+				{
+					P:7("INLINE_TYPE_REF/STR/ARR: %d", len);
+					#emit LREF.S.pri  var
+					#emit PUSH.pri
+				}
+			}
+		}
+		// Push the parameter count.
+		#emit LOAD.S.pri  num
+		#emit SHL.C.pri   2
+		#emit PUSH.pri
+		// "Standard" function call.
+		#emit LCTRL     6
+		#emit ADD.C     28
+		#emit PUSH.pri
+		#emit LOAD.pri  addr
+		#emit SCTRL     6
+		#emit STACK     20
+		#emit RETN
+	}
+	else
+	{
+		new
+			len,
+			end,
+			var;
+		// Get "params" into a pointer.
+		#emit LOAD.S.alt    params
+		#emit STOR.S.alt    end
+		#emit LOAD.S.pri    num
+		#emit SHL.C.pri     2
+		#emit ADD
+		#emit STOR.S.pri    var
+		while (var > end)
+		{
+			var -= 4;
+			#emit LREF.S.pri  var
+			#emit PUSH.pri
+		}
+		#emit PUSH.S      func
+		// Push the parameter count.
+		#emit LOAD.S.pri  num
+		#emit SHL.C.pri   2
+		#emit ADD.C       4
+		#emit PUSH.pri
+		// "Standard" function call.
+		#emit LCTRL     6
+		#emit ADD.C     28
+		#emit PUSH.pri
+		#emit CONST.pri Callback_Call
+		#emit SCTRL     6
+		#emit STACK     12
+		#emit RETN
+	}
+	// Never called, but includes the other function.
+	return Callback_Call(func);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Inline_Timer</summary>
+<param name="func[]">The function to call on a delay.</param>
+<param name="delay">how long before the first call?</param>
+<param name="interval">How long between subsequent calls?</param>
+<param name="repeat">How many times to call the function.</param>
+<param name="format[]">The additional parameters' types.</param>
+<param name="...">The additional parameters.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Calls a function, which may be an inline function, after a given delay, and
+	with the given regularity after that.  The parameters are slightly different
+	to those in SetTimer - that takes only an interval and a repeat boolean.
+	This instead takes two times - the first is the delay before the first call,
+	the second is the delay between all subsequent calls (mainly to offset
+	different timers within a given period).  The "repeat" parameter is also
+	different - instead of being a boolean, it is a count.  "0" no longer means
+	"don't repeat", but "repeat forever".  "1" no longer means "repeat forever",
+	but "call once".  All other numbers (beside 0) specify an exact number of
+	times to call the function before calling it no more.  This is in line with
+	the "SetTimer_" and "SetTimerEx_" functions in the fixes2 plugin.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+/*
+
+           db        ad88888ba  88b           d88     ad88888ba                                       
+          d88b      d8"     "8b 888b         d888    d8"     "8b ,d                            ,d     
+         d8'`8b     Y8,         88`8b       d8'88    Y8,         88                            88     
+        d8'  `8b    `Y8aaaaa,   88 `8b     d8' 88    `Y8aaaaa, MM88MMM ,adPPYYba, 8b,dPPYba, MM88MMM  
+       d8YaaaaY8b     `"""""8b, 88  `8b   d8'  88      `"""""8b, 88    ""     `Y8 88P'   "Y8   88     
+      d8""""""""8b          `8b 88   `8b d8'   88            `8b 88    ,adPPPPP88 88           88     
+     d8'        `8b Y8a     a8P 88    `888'    88    Y8a     a8P 88,   88,    ,88 88           88,    
+    d8'          `8b "Y88888P"  88     `8'     88     "Y88888P"  "Y888 `"8bbdP"Y8 88           "Y888  
+
+*/
+
 /**--------------------------------------------------------------------------**\
 <summary>I@E</summary>
 <param name="s">The array to store an inline function's data in.</param>
@@ -120,9 +684,7 @@ static stock const
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define mutable
-
-stock I@E(mutable const s[])
+stock I@E(/* mutable */ const s[])
 {
 	P:2("Inline_Entry called: %s", s);
 	new
@@ -204,7 +766,18 @@ stock I@E(mutable const s[])
 	return 1;
 }
 
-#undef mutable
+/*
+
+           db        ad88888ba  88b           d88    8b           d8                                
+          d88b      d8"     "8b 888b         d888    `8b         d8'                                
+         d8'`8b     Y8,         88`8b       d8'88     `8b       d8'                                 
+        d8'  `8b    `Y8aaaaa,   88 `8b     d8' 88      `8b     d8' ,adPPYYba, 8b,dPPYba, ,adPPYba,  
+       d8YaaaaY8b     `"""""8b, 88  `8b   d8'  88       `8b   d8'  ""     `Y8 88P'   "Y8 I8[    ""  
+      d8""""""""8b          `8b 88   `8b d8'   88        `8b d8'   ,adPPPPP88 88          `"Y8ba,   
+     d8'        `8b Y8a     a8P 88    `888'    88         `888'    88,    ,88 88         aa    ]8I  
+    d8'          `8b "Y88888P"  88     `8'     88          `8'     `"8bbdP"Y8 88         `"YbbdP"'  
+
+*/
 
 /**--------------------------------------------------------------------------**\
 <summary>I@F</summary>
@@ -248,6 +821,19 @@ stock I@F()
 	YSI_g_sCurInlineLoop = start + 8;
 	return 1;
 }
+
+/*
+
+           db        ad88888ba  88b           d88    88888888888                      88  
+          d88b      d8"     "8b 888b         d888    88                               88  
+         d8'`8b     Y8,         88`8b       d8'88    88                               88  
+        d8'  `8b    `Y8aaaaa,   88 `8b     d8' 88    88aaaaa     8b,dPPYba,   ,adPPYb,88  
+       d8YaaaaY8b     `"""""8b, 88  `8b   d8'  88    88"""""     88P'   `"8a a8"    `Y88  
+      d8""""""""8b          `8b 88   `8b d8'   88    88          88       88 8b       88  
+     d8'        `8b Y8a     a8P 88    `888'    88    88          88       88 "8a,   ,d88  
+    d8'          `8b "Y88888P"  88     `8'     88    88888888888 88       88  `"8bbdP"Y8  
+
+*/
 
 /**--------------------------------------------------------------------------**\
 <summary>I@L</summary>
@@ -334,6 +920,21 @@ stock I@K(...)
 {
 	return numargs() * 3;
 }
+
+/*
+
+      ,ad8888ba,                       88                                                
+     d8"'    `"8b                      88                                                
+    d8'                                88                                                
+    88             ,adPPYba,   ,adPPYb,88  ,adPPYba,  ,adPPYb,d8  ,adPPYba, 8b,dPPYba,   
+    88            a8"     "8a a8"    `Y88 a8P_____88 a8"    `Y88 a8P_____88 88P'   `"8a  
+    Y8,           8b       d8 8b       88 8PP""""""" 8b       88 8PP""""""" 88       88  
+     Y8a.    .a8P "8a,   ,a8" "8a,   ,d88 "8b,   ,aa "8a,   ,d88 "8b,   ,aa 88       88  
+      `"Y8888Y"'   `"YbbdP"'   `"8bbdP"Y8  `"Ybbd8"'  `"YbbdP"Y8  `"Ybbd8"' 88       88  
+                                                      aa,    ,88                         
+                                                       "Y8bbdP"                          
+
+*/
 
 stock I@L(constFunc, ...)
 {
@@ -618,524 +1219,20 @@ stock I@L(constFunc, ...)
 
 #undef _@emit
 
-/**--------------------------------------------------------------------------**\
-<summary>Callback_Release</summary>
-<param name="input[E_CALLBACK_DATA]">Callback to release.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Releases all the data associated with a given callback (closure storage).
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*
 
-stock Callback_Release(input[E_CALLBACK_DATA])
-{
-	static
-		ResolvedAlloc:ra,
-		Alloc:a;
-	if (!(input[E_CALLBACK_DATA_POINTER] & 0x80000000))
-	{
-		ra = input[E_CALLBACK_DATA_ALLOC];
-		if (ra)
-		{
-			#emit CONST.alt     YSI_gMallocMemory
-			#emit LOAD.pri      ra
-			#emit SUB
-			#emit SHR.C.pri     2
-			#emit STOR.pri      a
-			// Publics don't have any stored data.
-			free(a);
-		}
-		input[E_CALLBACK_DATA_POINTER] = 0,
-		input[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:0;
-	}
-}
+    88888888888                                             88 88                          
+    88                                                      88 ""                          
+    88                                                      88                             
+    88aaaaa     8b,dPPYba,   ,adPPYba,  ,adPPYba,   ,adPPYb,88 88 8b,dPPYba,   ,adPPYb,d8  
+    88"""""     88P'   `"8a a8"     "" a8"     "8a a8"    `Y88 88 88P'   `"8a a8"    `Y88  
+    88          88       88 8b         8b       d8 8b       88 88 88       88 8b       88  
+    88          88       88 "8a,   ,aa "8a,   ,a8" "8a,   ,d88 88 88       88 "8a,   ,d88  
+    88888888888 88       88  `"Ybbd8"'  `"YbbdP"'   `"8bbdP"Y8 88 88       88  `"YbbdP"Y8  
+                                                                               aa,    ,88  
+                                                                                "Y8bbdP"   
 
-/**--------------------------------------------------------------------------**\
-<summary>Callback_Get</summary>
-<param name="callback:name">Callback to find by name.</param>
-<param name="ret[E_CALLBACK_DATA]">Where to store the pointer.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Looks up the callback by name.  If the name has the correct data embedded
-	within it that's great and we use that directly.  Otherwise this function
-	loops backwards over the callbacks currently in scope (mostly) to the start
-	of the parent function.  If a match is still not found this looks for a
-	public function of the same name.  If that isn't found either it gives up.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-forward _@_y_inline_@_();
-
-public _@_y_inline_@_()
-{
-	strcmp("", "");
-	strfind("", "");
-}
-
-stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
-{
-	P:2("Callback_Get called: %s", name);
-	static
-		fmat[2];
-	Inline_EncodeFromatString(expect, fmat),
-	ret[E_CALLBACK_DATA_FORMAT] = fmat;
-	if (name[0] == callback_tag:'\03')
-	{
-		new
-			ptr;
-		if (AMX_GetPublicPointer(0, ptr, name[1], true))
-		{
-			ret[E_CALLBACK_DATA_POINTER] = ptr | 0x80000000;
-			return true;
-		}
-		return false;
-	}
-	new
-		pos = strfind(name, "\02");
-	if (pos == -1)
-	{
-		new
-			frm = GetCurrentFramePreviousFrame(),
-			cur = YSI_g_sPrevInlineFunc,
-			parent = GetFrameFunction(GetFramePreviousFrame(frm)),
-			res;
-		pos = strlen(name),
-		frm = GetFrameReturn(frm);
-		// Find the function by name.
-		while (cur)
-		{
-			#emit PUSH.S      pos
-			#emit PUSH.C      0
-			#emit PUSH.S      name
-			#emit PUSH.S      cur
-			#emit PUSH.C      16
-			#emit SYSREQ.C    strcmp
-			#emit STACK       20
-			#emit STOR.S.pri  res
-			if (res == 0 && AMX_Read(cur + pos * 4) == '\02')
-			{
-				if (parent <= AMX_Read(cur + pos * 4 + 1 * 4) <= frm)
-				{
-					// Rewrite the value of "name" for the subsequent code.
-					#emit LOAD.S.pri cur
-					#emit STOR.S.pri name
-					break;
-				}
-			}
-			static const
-				gsSearch[] = "\02";
-			#emit PUSH.C      0
-			#emit PUSH.C      0
-			#emit PUSH.C      gsSearch
-			#emit PUSH.S      cur
-			#emit PUSH.C      16
-			#emit SYSREQ.C    strfind
-			#emit STACK       20
-			#emit LOAD.S.alt  cur
-			#emit IDXADDR
-			#emit ADD.C       16
-			#emit LOAD.I
-			#emit STOR.S.pri  cur
-		}
-		if (!cur)
-		{
-			// Try publics...
-			if (AMX_GetPublicPointer(0, pos, name, true))
-			{
-				ret[E_CALLBACK_DATA_POINTER] = pos | 0x80000000;
-				return true;
-			}
-			return false;
-		}
-	}
-	// Load this inline function's data in to our closure (and allocate memory).
-	ret[E_CALLBACK_DATA_POINTER] = name[pos + 1];
-	new
-		to = name[pos + 2],
-		local = (to & 0x00FFFFFF),
-		params = (to & 0xFF000000) >>> 24;
-	params = local + params + (local ? 3 : 2);
-	new
-		Alloc:a = malloc(params); // Allocate closure space.
-	if (a)
-	{
-		// Get the address of the data.
-		#emit CONST.alt     YSI_gMallocMemory
-		#emit LOAD.S.pri    a
-		#emit IDXADDR
-		#emit STOR.S.pri    to
-		params <<= 2,
-		ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:to,
-		ret[E_CALLBACK_DATA_OFFSET] = params;
-		// Copy the stack over.  First get the frame of the function that used
-		// an inline function, thus calling us indirectly.
-		new
-			from = GetFramePreviousFrame(GetCurrentFramePreviousFrame()) - (local << 2);
-		// Adjust to the bottom of that stack, at least the bottom of the parts
-		// we need (there may be more locals declared later that we don't need).
-		if (local)
-		{
-			// Copy "params" bytes from "from" to "to".
-			rawMemcpy(to, from, params),
-			mset(a, local + 1, name[pos + 3]);
-		}
-		else
-		{
-			// Copy "params" bytes from "from" to "to".
-			rawMemcpy(to, from + 4, params),
-			// Save the "return" address for the inline to our fake stack.
-			mset(a, 0, name[pos + 3]);
-		}
-		P:2("Callback_Get end");
-		return true;
-	}
-	return false;
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Inline_DecodeSimple</summary>
-<param name="from[]">Array of variable types.</param>
-<param name="at">Type slot.</param>
-<returns>
-	The next variable type stored in the bit array.
-</returns>
-<remarks>
-	Returns data from a bit array when it is known that only basic types are
-	stored (i.e. no arrays with length parameters).
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Inline_DecodeSimple(%0,%1) (I@ = %0[(%1) >>> 5] & (2 << ((%1) & 0x1F)), (%1) += 2, I@)
-
-/**--------------------------------------------------------------------------**\
-<summary>Callback_Call</summary>
-<param name="func[E_CALLBACK_DATA]">Info on the function to be called.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Takes an inline function handler and parameters, and either calls the
-	public function while passing through the parameters, or just jumps to the
-	carefully crafted inline function code.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-stock Callback_Call(func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
-{
-	static
-		addr;
-	addr = func[E_CALLBACK_DATA_POINTER];
-	if (addr & 0x80000000)
-	{
-		static
-			ts[2];
-		addr &= ~0x80000000,
-		ts[0] = func[E_CALLBACK_DATA_FORMAT][0],
-		ts[1] = func[E_CALLBACK_DATA_FORMAT][1];
-		new
-			at = 6,
-			mm = (ts[0] & 0b00111110) + 6,
-			len,
-			end,
-			var;
-		#emit LOAD.S.alt    8 // Get the parameter count.
-		#emit LCTRL         5 // Get the current frame.
-		#emit ADD
-		#emit ADD.C         8 // Adjust for header and "func".
-		#emit STOR.S.pri    var
-		#emit LCTRL         5 // Get the end.
-		#emit ADD.C         12
-		#emit STOR.S.pri    end
-		P:5("Inline_Call: at = %d, mm = %d", at, mm);
-		if (ts[0] & 0x01)
-		{
-			// Only has variables and references, easy to decode.
-			while (at < mm)
-			{
-				if (var == end) return P:E("Insufficient parameters for Callback_Call.");
-				if (Inline_DecodeSimple(ts, at))
-				{
-					P:7("INLINE_TYPE_REF");
-					#emit LREF.S.pri  var
-					#emit PUSH.pri
-				}
-				else
-				{
-					P:7("INLINE_TYPE_VAR");
-					#emit LREF.S.pri  var
-					#emit LOAD.I
-					#emit PUSH.pri
-				}
-				var -= 4;
-			}
-		}
-		else
-		{
-			// Can have arrays, harder to decode.
-			while (at < mm)
-			{
-				if (var == end) return P:E("Insufficient parameters for Callback_Call.");
-				if (Inline_DecodeComplex(ts, at, len) == INLINE_TYPE_VAR)
-				{
-					P:7("INLINE_TYPE_VAR");
-					#emit LREF.S.pri  var
-					#emit LOAD.I
-					#emit PUSH.pri
-				}
-				else
-				{
-					P:7("INLINE_TYPE_REF/STR/ARR: %d", len);
-					#emit LREF.S.pri  var
-					#emit PUSH.pri
-				}
-				var -= 4;
-			}
-		}
-		// Push the parameter count.
-		var = (numargs() - 1) * 4;
-		#emit PUSH.S    var
-		// "Standard" function call.
-		#emit LCTRL     6
-		#emit ADD.C     28
-		#emit PUSH.pri
-		#emit LOAD.pri  addr
-		#emit SCTRL     6
-		#emit STACK     20
-		#emit RETN
-	}
-	else
-	{
-		// Jump straight in to the code.
-		#emit LOAD.pri  addr
-		#emit SCTRL     6
-	}
-	return 1;
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Callback_Array</summary>
-<param name="func[E_CALLBACK_DATA]">Info on the function to be called.</param>
-<param name="params[]">Array of data pointers.</param>
-<param name="num">Size of the array.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	This is very similar to Callback_Call, but takes an array of ADDRESSES
-	instead of normal parameters.  This is designed to help support some
-	experimental OO code I was working on...
-	
-	If the target is a public function, the parameters are resolved and passed
-	normally.  If the target is an inline function we are optimised for the
-	common case, so move the data on to the stack (currently done value-by-value
-	not all at once) and call "Callback_Call".
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (params))
-{
-	static
-		addr;
-	addr = func[E_CALLBACK_DATA_POINTER];
-	if (addr & 0x80000000)
-	{
-		static
-			ts[2];
-		addr &= ~0x80000000,
-		ts[0] = func[E_CALLBACK_DATA_FORMAT][0],
-		ts[1] = func[E_CALLBACK_DATA_FORMAT][1];
-		new
-			at = 6,
-			mm = (ts[0] & 0b00111110) + 6,
-			len,
-			end,
-			var;
-		// Get "params" into a pointer.
-		#emit LOAD.S.alt    params
-		#emit STOR.S.alt    end
-		#emit LOAD.S.pri    num
-		#emit SHL.C.pri     2
-		#emit ADD
-		#emit STOR.S.pri    var
-		P:5("Inline_Call: at = %d, mm = %d", at, mm);
-		if (ts[0] & 0x01)
-		{
-			// Only has variables and references, easy to decode.
-			while (at < mm)
-			{
-				if (var == end) return P:E("Insufficient parameters for Callback_Array.");
-				var -= 4;
-				if (Inline_DecodeSimple(ts, at))
-				{
-					P:7("INLINE_TYPE_REF");
-					#emit LREF.S.pri  var
-					#emit PUSH.pri
-				}
-				else
-				{
-					P:7("INLINE_TYPE_VAR");
-					#emit LREF.S.pri  var
-					#emit LOAD.I
-					#emit PUSH.pri
-				}
-			}
-		}
-		else
-		{
-			// Can have arrays, harder to decode.
-			while (at < mm)
-			{
-				if (var == end) return P:E("Insufficient parameters for Callback_Array.");
-				var -= 4;
-				if (Inline_DecodeComplex(ts, at, len) == INLINE_TYPE_VAR)
-				{
-					P:7("INLINE_TYPE_VAR");
-					#emit LREF.S.pri  var
-					#emit LOAD.I
-					#emit PUSH.pri
-				}
-				else
-				{
-					P:7("INLINE_TYPE_REF/STR/ARR: %d", len);
-					#emit LREF.S.pri  var
-					#emit PUSH.pri
-				}
-			}
-		}
-		// Push the parameter count.
-		#emit LOAD.S.pri  num
-		#emit SHL.C.pri   2
-		#emit PUSH.pri
-		// "Standard" function call.
-		#emit LCTRL     6
-		#emit ADD.C     28
-		#emit PUSH.pri
-		#emit LOAD.pri  addr
-		#emit SCTRL     6
-		#emit STACK     20
-		#emit RETN
-	}
-	else
-	{
-		new
-			len,
-			end,
-			var;
-		// Get "params" into a pointer.
-		#emit LOAD.S.alt    params
-		#emit STOR.S.alt    end
-		#emit LOAD.S.pri    num
-		#emit SHL.C.pri     2
-		#emit ADD
-		#emit STOR.S.pri    var
-		while (var > end)
-		{
-			var -= 4;
-			#emit LREF.S.pri  var
-			#emit PUSH.pri
-		}
-		#emit PUSH.S      func
-		// Push the parameter count.
-		#emit LOAD.S.pri  num
-		#emit SHL.C.pri   2
-		#emit ADD.C       4
-		#emit PUSH.pri
-		// "Standard" function call.
-		#emit LCTRL     6
-		#emit ADD.C     28
-		#emit PUSH.pri
-		#emit CONST.pri Callback_Call
-		#emit SCTRL     6
-		#emit STACK     12
-		#emit RETN
-	}
-	// Never called, but includes the other function.
-	return Callback_Call(func);
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>operator+</summary>
-<param name="InlineRet:a">Dummy variable.</param>
-<param name="b">Return value.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	This is a prefix function that takes some value and returns it to the
-	caller's caller.  This makes "@return" in inline functions work.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-// Operators for doing "return" from inside an inline function.
-#define inline_return YSI_gInlineRet+=
-#define @return inline_return
-
-stock
-	InlineRet:YSI_gInlineRet;
-
-stock InlineRet:operator+(InlineRet:a, _:b)
-{
-	#pragma unused a
-	// Modify the return address.
-	#emit LOAD.S.pri 0
-	#emit ADD.C      4
-	#emit LOAD.I
-	#emit STOR.S.pri 4
-	// Get the last function's parameters.
-	#emit LOAD.S.pri 0
-	#emit ADD.C      8
-	#emit LOAD.I
-	#emit LOAD.S.alt 0
-	#emit ADD
-	#emit ADDR.alt   0
-	#emit SUB
-	#emit STOR.S.pri 8
-	// Load the return value.
-	#emit LOAD.S.pri b
-	// Copy the previous frame.
-	#emit LREF.S.alt 0
-	#emit STOR.S.alt 0
-	// Do the return
-	#emit RETN
-	return InlineRet:0;
-}
-
-stock InlineRet:operator+(InlineRet:a, Float:b)
-{
-	#pragma unused a
-	// Modify the return address.
-	#emit LOAD.S.pri 0
-	#emit ADD.C      4
-	#emit LOAD.I
-	#emit STOR.S.pri 4
-	// Get the last function's parameters.
-	#emit LOAD.S.pri 0
-	#emit ADD.C      8
-	#emit LOAD.I
-	#emit LOAD.S.alt 0
-	#emit ADD
-	#emit ADDR.alt   0
-	#emit SUB
-	#emit STOR.S.pri 8
-	// Load the return value.
-	#emit LOAD.S.pri b
-	// Copy the previous frame.
-	#emit LREF.S.alt 0
-	#emit STOR.S.alt 0
-	// Do the return
-	#emit RETN
-	return InlineRet:0;
-}
-
-// This used to be a compile-time macro to convert its parameters to the
-// compressed format - it isn't anymore.  I tried to figure out if it was
-// possible, and it probably is, but VERY hard, even compared to other macros
-// I've written.
-#define _F<%0> (#%0)
+*/
 
 /**--------------------------------------------------------------------------**\
 <summary>Inline_DecodeComplex</summary>
@@ -1247,42 +1344,83 @@ static stock Inline_EncodeFromatString(const str[], ret[2])
 	ret[0] = (b0 << 6) | ((size & 0b00011111) << 1) | (complex ^ 1);
 }
 
-stock Callback_Restore(func[E_CALLBACK_DATA])
-{
-	// Copy the closure data back over the calling function.
-	new
-		frm = GetFramePreviousFrame(GetCurrentFramePreviousFrame()),
-		ret = GetFrameReturn(frm),
-		pfr = GetFramePreviousFrame(frm);
-	rawMemcpy(frm + 12 + GetFrameParameterSize(frm) - func[E_CALLBACK_DATA_OFFSET], _:func[E_CALLBACK_DATA_ALLOC], func[E_CALLBACK_DATA_OFFSET]),
-	SetFrameReturn(frm, ret),
-	SetFramePreviousFrame(frm, pfr);
-}
+/*
 
+    88                                                                88  
+    88              ,d                                                88  
+    88              88                                                88  
+    88 8b,dPPYba, MM88MMM ,adPPYba, 8b,dPPYba, 8b,dPPYba,  ,adPPYYba, 88  
+    88 88P'   `"8a  88   a8P_____88 88P'   "Y8 88P'   `"8a ""     `Y8 88  
+    88 88       88  88   8PP""""""" 88         88       88 ,adPPPPP88 88  
+    88 88       88  88,  "8b,   ,aa 88         88       88 88,    ,88 88  
+    88 88       88  "Y888 `"Ybbd8"' 88         88       88 `"8bbdP"Y8 88  
+
+*/
 
 /**--------------------------------------------------------------------------**\
-<summary>Inline_Timer</summary>
-<param name="func[]">The function to call on a delay.</param>
-<param name="delay">how long before the first call?</param>
-<param name="interval">How long between subsequent calls?</param>
-<param name="repeat">How many times to call the function.</param>
-<param name="format[]">The additional parameters' types.</param>
-<param name="...">The additional parameters.</param>
+<summary>operator+</summary>
+<param name="InlineRet:a">Dummy variable.</param>
+<param name="b">Return value.</param>
 <returns>
 	-
 </returns>
 <remarks>
-	Calls a function, which may be an inline function, after a given delay, and
-	with the given regularity after that.  The parameters are slightly different
-	to those in SetTimer - that takes only an interval and a repeat boolean.
-	This instead takes two times - the first is the delay before the first call,
-	the second is the delay between all subsequent calls (mainly to offset
-	different timers within a given period).  The "repeat" parameter is also
-	different - instead of being a boolean, it is a count.  "0" no longer means
-	"don't repeat", but "repeat forever".  "1" no longer means "repeat forever",
-	but "call once".  All other numbers (beside 0) specify an exact number of
-	times to call the function before calling it no more.  This is in line with
-	the "SetTimer_" and "SetTimerEx_" functions in the fixes2 plugin.
+	This is a prefix function that takes some value and returns it to the
+	caller's caller.  This makes "@return" in inline functions work.
 </remarks>
 \**--------------------------------------------------------------------------**/
+
+stock InlineRet:operator+(InlineRet:a, _:b)
+{
+	#pragma unused a
+	// Modify the return address.
+	#emit LOAD.S.pri 0
+	#emit ADD.C      4
+	#emit LOAD.I
+	#emit STOR.S.pri 4
+	// Get the last function's parameters.
+	#emit LOAD.S.pri 0
+	#emit ADD.C      8
+	#emit LOAD.I
+	#emit LOAD.S.alt 0
+	#emit ADD
+	#emit ADDR.alt   0
+	#emit SUB
+	#emit STOR.S.pri 8
+	// Load the return value.
+	#emit LOAD.S.pri b
+	// Copy the previous frame.
+	#emit LREF.S.alt 0
+	#emit STOR.S.alt 0
+	// Do the return
+	#emit RETN
+	return InlineRet:0;
+}
+
+stock InlineRet:operator+(InlineRet:a, Float:b)
+{
+	#pragma unused a
+	// Modify the return address.
+	#emit LOAD.S.pri 0
+	#emit ADD.C      4
+	#emit LOAD.I
+	#emit STOR.S.pri 4
+	// Get the last function's parameters.
+	#emit LOAD.S.pri 0
+	#emit ADD.C      8
+	#emit LOAD.I
+	#emit LOAD.S.alt 0
+	#emit ADD
+	#emit ADDR.alt   0
+	#emit SUB
+	#emit STOR.S.pri 8
+	// Load the return value.
+	#emit LOAD.S.pri b
+	// Copy the previous frame.
+	#emit LREF.S.alt 0
+	#emit STOR.S.alt 0
+	// Do the return
+	#emit RETN
+	return InlineRet:0;
+}
 

@@ -67,17 +67,22 @@ Definitions:
 	_I - Generate a case insensitive string hash at compile time.
 \**--------------------------------------------------------------------------**/
 
-// ============
-//  FNV1a hash 
-// ============
+/*
 
-// =============
-//  New version 
-// =============
+    888b      88                                    ,ad8888ba,                                            88 
+    8888b     88                                   d8"'    `"8b                                           88 
+    88 `8b    88                                  d8'                                                     88 
+    88  `8b   88  ,adPPYba, 8b      db      d8    88            ,adPPYYba, ,adPPYba,  ,adPPYba,   ,adPPYb,88 
+    88   `8b  88 a8P_____88 `8b    d88b    d8'    88            ""     `Y8 I8[    "" a8P_____88  a8"    `Y88 
+    88    `8b 88 8PP"""""""  `8b  d8'`8b  d8'     Y8,           ,adPPPPP88  `"Y8ba,  8PP"""""""  8b       88 
+    88     `8888 "8b,   ,aa   `8bd8'  `8bd8'       Y8a.    .a8P 88,    ,88 aa    ]8I "8b,   ,aa  "8a,   ,d88 
+    88      `888  `"Ybbd8"'     YP      YP          `"Y8888Y"'  `"8bbdP"Y8 `"YbbdP"'  `"Ybbd8"'   `"8bbdP"Y8 
 
-// ================
-//  Case sensitive 
-// ================
+*/
+
+// =============================
+//  New syntax (case sensitive) 
+// =============================
 
 #define ha:%9()
 #define H_Da(%0,%5,%1,%6) ha:H_Na%5(%0)H_Sa:%6]ha:@A%5:H_Na%5(%1)
@@ -221,9 +226,24 @@ Definitions:
 
 #define H_Na_(%0) @AA:H_NaA(%0)
 
-// ==================
-//  Case insensitive 
-// ==================
+/*
+
+    888b      88                                  88                                                            
+    8888b     88                                  88                                                            
+    88 `8b    88                                  88                                                            
+    88  `8b   88  ,adPPYba, 8b      db      d8    88  ,adPPYb,d8 8b,dPPYba,   ,adPPYba,  8b,dPPYba,  ,adPPYba,  
+    88   `8b  88 a8P_____88 `8b    d88b    d8'    88 a8"    `Y88 88P'   `"8a a8"     "8a 88P'   "Y8 a8P_____88  
+    88    `8b 88 8PP"""""""  `8b  d8'`8b  d8'     88 8b       88 88       88 8b       d8 88         8PP"""""""  
+    88     `8888 "8b,   ,aa   `8bd8'  `8bd8'      88 "8a,   ,d88 88       88 "8a,   ,a8" 88         "8b,   ,aa  
+    88      `888  `"Ybbd8"'     YP      YP        88  `"YbbdP"Y8 88       88  `"YbbdP"'  88          `"Ybbd8"'  
+                                                      aa,    ,88                                                
+                                                       "Y8bbdP"                                                 
+
+*/
+
+// ===============================
+//  New syntax (case insensitive) 
+// ===============================
 
 #define hd:%9()
 #define H_Dd(%0,%5,%1,%6) hd:H_Nd%5(%0)H_Sd:%6]hd:@D%5:H_Nd%5(%1)
@@ -367,13 +387,22 @@ Definitions:
 
 #define H_Nd_(%0) @DA:H_NdA(%0)
 
-// =============
-//  Old version 
-// =============
+/*
 
-// ================
-//  Case sensitive 
-// ================
+      ,ad8888ba,   88          88      ,ad8888ba,                                            88 
+     d8"'    `"8b  88          88     d8"'    `"8b                                           88 
+    d8'        `8b 88          88    d8'                                                     88 
+    88          88 88  ,adPPYb,88    88            ,adPPYYba, ,adPPYba,  ,adPPYba,   ,adPPYb,88 
+    88          88 88 a8"    `Y88    88            ""     `Y8 I8[    "" a8P_____88  a8"    `Y88 
+    Y8,        ,8P 88 8b       88    Y8,           ,adPPPPP88  `"Y8ba,  8PP"""""""  8b       88 
+     Y8a.    .a8P  88 "8a,   ,d88     Y8a.    .a8P 88,    ,88 aa    ]8I "8b,   ,aa  "8a,   ,d88 
+      `"Y8888Y"'   88  `"8bbdP"Y8      `"Y8888Y"'  `"8bbdP"Y8 `"YbbdP"'  `"Ybbd8"'   `"8bbdP"Y8 
+
+*/
+
+// =============================
+//  Old syntax (case sensitive) 
+// =============================
 
 // Signify the end with two "@" symbols.
 #define HASH@fnv1a(%0) _REHASH@a(%0,@,@)
@@ -461,9 +490,24 @@ Definitions:
 // String end.
 #define _HASH@a_@(%0)(%8) %8
 
-// ==================
-//  Case insensitive 
-// ==================
+/*
+
+      ,ad8888ba,   88          88    88                                                            
+     d8"'    `"8b  88          88    88                                                            
+    d8'        `8b 88          88    88                                                            
+    88          88 88  ,adPPYb,88    88  ,adPPYb,d8 8b,dPPYba,   ,adPPYba,  8b,dPPYba,  ,adPPYba,  
+    88          88 88 a8"    `Y88    88 a8"    `Y88 88P'   `"8a a8"     "8a 88P'   "Y8 a8P_____88  
+    Y8,        ,8P 88 8b       88    88 8b       88 88       88 8b       d8 88         8PP"""""""  
+     Y8a.    .a8P  88 "8a,   ,d88    88 "8a,   ,d88 88       88 "8a,   ,a8" 88         "8b,   ,aa  
+      `"Y8888Y"'   88  `"8bbdP"Y8    88  `"YbbdP"Y8 88       88  `"YbbdP"'  88          `"Ybbd8"'  
+                                         aa,    ,88                                                
+                                          "Y8bbdP"                                                 
+
+*/
+
+// ===============================
+//  Old syntax (case insensitive) 
+// ===============================
 
 // Signify the end with two "@" symbols.
 #define HASHi@fnv1a(%0) _REHASH@ia(%0,@,@)
