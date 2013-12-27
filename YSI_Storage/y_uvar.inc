@@ -367,7 +367,7 @@ hook OnScriptInit()
 #endif
 #define OnPlayerSaved(%0) Uvar_OnPlayerSaved(%0)*/
 
-stock Uvar_ForceSave(playerid)
+stock Uvar_Save(playerid)
 {
 	return _Player_ForceSave(playerid);
 }
