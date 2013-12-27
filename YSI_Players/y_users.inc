@@ -103,6 +103,8 @@ forward OnPlayerLogin(playerid, uid);
 
 forward OnPlayerLogout(playerid, uid);
 
+forward OnPlayerSaved(playerid, uid);
+
 //#if !defined HAS_USER_CALLBACKS
 //	#define HAS_USER_CALLBACKS
 //#endif
@@ -218,3 +220,4 @@ foreign Player_ChangeLanguage(playerid, string:code[]);
 	#include "..\YSI_Core\y_testing"
 	#include "y_users/tests"
 #endif
+

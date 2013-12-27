@@ -331,14 +331,50 @@ hook OnScriptInit()
 	}
 }
 
-public OnPlayerLogout(playerid, uid)
+/*public OnPlayerLogout(playerid, uid)
 {
-	// Loop through all the player data items and write them to a file.
-	//static const
-	//	sc_cellsPerWrite = 
 	#if defined Uvar_OnPlayerLogout
 		Uvar_OnPlayerLogout(playerid, uid);
 	#endif
+	Uvar_DoSavePlayer(playerid);
+}
+
+#if defined _ALS_OnPlayerLogout
+	#undef OnPlayerLogout
+#else
+	#define _ALS_OnPlayerLogout
+#endif
+#if defined Uvar_OnPlayerLogout
+	forward Uvar_OnPlayerLogout(playerid, uid);
+#endif
+#define OnPlayerLogout(%0) Uvar_OnPlayerLogout(%0)*/
+
+/*public OnPlayerSaved(playerid, uid)
+{
+	#if defined Uvar_OnPlayerSaved
+		Uvar_OnPlayerSaved(playerid, uid);
+	#endif
+	Uvar_DoSavePlayer(playerid);
+}
+
+#if defined _ALS_OnPlayerSaved
+	#undef OnPlayerSaved
+#else
+	#define _ALS_OnPlayerSaved
+#endif
+#if defined Uvar_OnPlayerSaved
+	forward Uvar_OnPlayerSaved(playerid, uid);
+#endif
+#define OnPlayerSaved(%0) Uvar_OnPlayerSaved(%0)*/
+
+stock Uvar_ForceSave(playerid)
+{
+	return _Player_ForceSave(playerid);
+}
+
+stock _Uvar_DoSavePlayer(playerid)
+{
+	// Loop through all the player data items and write them to a file.
 	Player_SetTag("y_uvar");
 	new
 		p = YSI_g_sFirstUVarData,
@@ -394,15 +430,6 @@ public OnPlayerLogout(playerid, uid)
 		}
 	}
 }
-#if defined _ALS_OnPlayerLogout
-	#undef OnPlayerLogout
-#else
-	#define _ALS_OnPlayerLogout
-#endif
-#if defined Uvar_OnPlayerLogout
-	forward Uvar_OnPlayerLogout(playerid, uid);
-#endif
-#define OnPlayerLogout(%0) Uvar_OnPlayerLogout(%0)
 
 hook OnPlayerConnect(playerid)
 {
