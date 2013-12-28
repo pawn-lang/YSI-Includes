@@ -29,7 +29,6 @@ enum E_INI_FILE
 enum e_INI_LINE_TYPE
 {
 	e_INI_LINE_TYPE_INVALID,
-	e_INI_LINE_TYPE_COMMENT,
 	e_INI_LINE_TYPE_BLANK,
 	e_INI_LINE_TYPE_ENTRY,
 	e_INI_LINE_TYPE_TAG
@@ -170,7 +169,6 @@ _Y_INI_STATIC stock INI_ParseFileSaved(File:file, INI:ini) //, Alloc:data)
 
 */
 
-
 /**--------------------------------------------------------------------------**\
 <summary>INI_IsEscapeSequence</summary>
 <param name="string:str[]">String with the character in.</param>
@@ -193,31 +191,49 @@ _Y_INI_STATIC stock bool:INI_IsEscapeSequence(const string:str[], pos)
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>INI_GetCommentPos</summary>
-<param name="string:str[]">The string you want to de-comment.</param>
+<summary>INI_ReverseWhitespace</summary>
+<param name="string:str[]">String with the whitespace in.</param>
+<param name="pos">End of the whitespace.</param>
 <returns>
-	position when found, "cellmax" on fail.
+	Start of the whitespace.
 </returns>
 <remarks>
-	Find where a comment starts on this line, if anywhere.  Uses "cellmax" not
-	"-1" as a failure return as it is easier to utilise in later code (it is
-	only used as an upper-bound on line positions).
+	-
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_INI_STATIC stock INI_GetCommentPos(const string:str[])
+_Y_INI_STATIC stock bool:INI_ReverseWhitespace(const string:str[], pos)
 {
-	// Determine if there is a comment in this string (can be escaped).
-	new
-		comment = -1;
+	while (pos-- && '\0' < str[pos] <= ' ') {}
+	return pos + 1;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>INI_FindString</summary>
+<param name="string:str[]">The string you want to search in.</param>
+<param name="string:sub[]">The string you want to search for.</param>
+<param name="pos">The start offset.</param>
+<returns>
+	Position when found, "cellmax" on fail.
+</returns>
+<remarks>
+	Uses "cellmax" not "-1" as a failure return as it is easier to utilise in
+	later code (it is only used as an upper-bound on line positions).  This is
+	similar to "strfind", but accounts for escape sequences.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_INI_STATIC stock INI_FindString(const string:str[], const string:sub[], pos = -1)
+{
+	// Determine if there is a substring in this string (can be escaped).
 	do
 	{
 		// Find the next possible candidate for starting a comment.
-		comment = strfind(str, ";", false, comment + 1);
-		if (comment == -1) return cellmax;
+		pos = strfind(str, sub, false, pos + 1);
+		if (pos == -1) return cellmax;
 	}
-	while (INI_IsEscapeSequence(str, comment));
-	return comment;
+	while (INI_IsEscapeSequence(str, pos));
+	return pos;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -227,6 +243,8 @@ _Y_INI_STATIC stock INI_GetCommentPos(const string:str[])
 <param name="p0e">End of part 0.</param>
 <param name="p1s">Start of part 1.</param>
 <param name="p1e">End of part 1.</param>
+<param name="p2s">Start of part 2.</param>
+<param name="p2e">End of part 2.</param>
 <returns>
 	e_INI_LINE_TYPE
 </returns>
@@ -237,46 +255,54 @@ _Y_INI_STATIC stock INI_GetCommentPos(const string:str[])
 \**--------------------------------------------------------------------------**/
 
 _Y_INI_STATIC stock e_INI_LINE_TYPE:
-	INI_IdentifyLineType(const string:str[], &p0s, &p0e, &p1s, &p1e)
+	INI_IdentifyLineType(const string:str[], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e)
 {
-	// Determine if there is a comment in this string (can be escaped).
 	new
-		pos = 0;
-	// Skip over any whitespace.
-	while ('\0' < str[pos] <= ' ') ++pos;
-	new
-		comment = INI_GetCommentPos(str[pos]);
-	switch (comment)
-	{
-		case 0: return e_INI_LINE_TYPE_COMMENT;
-		case cellmax: {};
-		default: comment += pos;
-	}
+		// Determine if there is a comment in this string (can be escaped).
+		comment = min(INI_FindString(str, ";"), (p2e = strlen(str))),
+		// Skip over any whitespace.
+		pos = SkipWhitespace(str, 0);
+	// Store the start of the comment.  There are thus two tests for checking if
+	// there is a comment: "str[p2s] == ';'", or "p2s != p2e".
+	p1s = p1e = p2s = comment;
 	// Determine what the first character is.
 	switch (str[pos])
 	{
-		case '\0': return e_INI_LINE_TYPE_BLANK;
-		case ';':
+		// Nothing useful on this line.
+		case '\0', ';': return e_INI_LINE_TYPE_BLANK;
 		case '[':
 		{
 			// Found a tag.
-			p1s = strfind(str, "]", false, (p0s = pos + 1));
-			if (0 < p1s < comment)
+			//p0s = pos + 1;
+			//p0e = strfind(str, "]", false, p0s);
+			//if (0 < p0e < comment)
+			if (0 < (p0e = INI_FindString(str, "]", (p0s = pos + 1))) < comment)
 			{
 				// Completed correctly.
-				
+				pos = strfind(str, ":", false, p0e);
 				// Are there any extensions?
+				if (0 < pos < comment) p1s = pos + 1;
+				return e_INI_LINE_TYPE_TAG;
 			}
 			else return e_INI_LINE_TYPE_INVALID;
 		}
 		default:
+		{
+			// Normal entry.
+			if (0 < (p0e = INI_FindString(str, "=", (p0s = pos + 1))) < comment)
+			{
+				// Completed correctly.
+				return
+					// Get the value.
+					p1s = SkipWhitespace(str, p0e + 1),
+					// Find the end of the key.
+					p0e = INI_ReverseWhitespace(str, p0e),
+					e_INI_LINE_TYPE_ENTRY;
+			}
+			else return e_INI_LINE_TYPE_INVALID;
+		}
 	}
 }
-
-
-
-
-
 
 INI_LoopThroughFile(File:f, INI:ini, end)
 {
