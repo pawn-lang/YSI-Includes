@@ -60,6 +60,21 @@ Changelog:
 		First version
 \**--------------------------------------------------------------------------**/
 
+/*
+
+     ad88888ba                                              
+    d8"     "8b              ,d                             
+    Y8,                      88                             
+    `Y8aaaaa,    ,adPPYba, MM88MMM 88       88 8b,dPPYba,   
+      `"""""8b, a8P_____88   88    88       88 88P'    "8a  
+            `8b 8PP"""""""   88    88       88 88       d8  
+    Y8a     a8P "8b,   ,aa   88,   "8a,   ,a88 88b,   ,a8"  
+     "Y88888P"   `"Ybbd8"'   "Y888  `"YbbdP'Y8 88`YbbdP"'   
+                                               88           
+                                               88           
+
+*/
+
 #undef _inc__funcs
 #include "..\y_groups/setup"
 #include "..\..\YSI_Internal\y_shortfunc"
@@ -165,6 +180,378 @@ static stock
 	#endif
 #endif
 
+/*
+
+     ad88888ba  88                         88             
+    d8"     "8b ""                         88             
+    Y8,                                    88             
+    `Y8aaaaa,   88 8b,dPPYba,   ,adPPYb,d8 88  ,adPPYba,  
+      `"""""8b, 88 88P'   `"8a a8"    `Y88 88 a8P_____88  
+            `8b 88 88       88 8b       88 88 8PP"""""""  
+    Y8a     a8P 88 88       88 "8a,   ,d88 88 "8b,   ,aa  
+     "Y88888P"  88 88       88  `"YbbdP"Y8 88  `"Ybbd8"'  
+                                aa,    ,88                
+                                 "Y8bbdP"                 
+
+*/
+
+/**--------------------------------------------------------------------------**\
+<summary>Group_Set...</summary>
+<param name="Group:g">Group to set for.</param>
+<param name="el">Element to set.</param>
+<param name="bool:s">Set or unset?</param>
+<returns>
+	-
+</returns>
+<remarks>
+	If "s" is true, then one element is added to the current group.  False it is
+	removed.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+gforeign Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s);
+
+gglobal Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
+{
+	P:2(#_GROUP_MAKE_NAME<Group_Set...> " called: %i, %i, %i", _:g, _:el, s);
+	// Set wether a group can use this item.
+	if (0 <= _:el < _GROUP_MAKE_LIMIT && GROUP_MASK <= g <= GROUP_GLOBAL)
+	{
+		// There is now NO validity check for reasons of distruibution.
+		GROUP_FIX(g);
+		new
+			slot = Bit_Slot(g),
+			Bit:mask = Bit_Mask(g);
+		//static
+		//	BitArray:sNext<_MAX_GROUPS_G>;
+		if (s)
+		{
+			YSI_gTempGroups = YSI_g_sElementMembership[_:el];
+			if (YSI_gTempGroups[slot] & mask)
+			{
+				// No point adding an element to a group that it is already in.
+				return 1;
+			}
+			// Is this element NOT in the current group?
+			Bit_Let(YSI_gTempGroups, _:g);
+		}
+		else
+		{
+			YSI_gTempGroups = YSI_g_sElementMembership[_:el];
+			if (!(YSI_gTempGroups[slot] & mask))
+			{
+				return 1;
+			}
+			// Is this element in the current group?
+			Bit_Vet(YSI_gTempGroups, _:g);
+		}
+		foreach (new playerid : Player)
+		{
+			if (YSI_gGroupPlayers[playerid][slot] & mask)
+			{
+				// The player is in the group in question, so they need a full
+				// update.
+				//Group_FullPlayerUpdate(playerid, _:el, YSI_g_sElementMembership[_:el], YSI_gTempGroups, YSI_gGroupPlayers[playerid]);
+			}
+		}
+		YSI_g_sElementMembership[_:el] = YSI_gTempGroups;
+		return 1;
+	}
+	return 0;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Group_Get...</summary>
+<param name="Group:g">Group to get from.</param>
+<param name="el">Element to get.</param>
+<returns>
+	bool: Does the group have the element?
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+gforeign bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el);
+
+gglobal bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el)
+{
+	P:2(#_GROUP_MAKE_NAME<Group_Get...> " called: %i, %i", _:g, _:el);
+	return (0 <= _:el < _GROUP_MAKE_LIMIT && GROUP_MASK <= g <= GROUP_GLOBAL && Bit_Get(YSI_g_sElementMembership[_:el], _:GROUP_TEMP_FIX(g)));
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Group_Set...Default</summary>
+<param name="Group:g">Group to set for.</param>
+<param name="bool:s">Set or unset?</param>
+<returns>
+	-
+</returns>
+<remarks>
+	If "s" is true, then all elements are added to this group (i.e. the default
+	is set to true and all previous settings are wiped out).  If it is false
+	then all elements are removed and a full update is done.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+gforeign Group_Set...Default(Group:g,bool:s);
+
+gglobal Group_Set...Default(Group:g,bool:s)
+{
+	P:2(#_GROUP_MAKE_NAME<Group_Set...Default> " called: %i, %i", _:g, s);
+	if (GROUP_MASK <= g <= GROUP_GLOBAL)
+	{
+		// There is now NO validity check for reasons of distruibution.
+		GROUP_FIX(g);
+		new
+			slot = Bit_Slot(g),
+			Bit:mask = Bit_Mask(g),
+			Iterator:GP<MAX_PLAYERS>;
+		foreach (new playerid : Player)
+		{
+			// Do this check here so it is only done once per player.  This is a
+			// good argument for moving iterators to be duplicated in every
+			// script; however, the default "Group()" iterator implementation is
+			// a function, not a standard iterator - actually it now isn't...
+			if (YSI_gGroupPlayers[playerid][slot] & mask)
+			{
+				// Make a fast local iterator of all the players.
+				Iter_Add(GP, playerid);
+			}
+		}
+		static
+			BitArray:sNext<_MAX_GROUPS_G>;
+		if (s)
+		{
+			Bit_Let(YSI_g_sDefaultMembership, _:g);
+			for (new el = 0; el != _GROUP_MAKE_LIMIT; ++el)
+			{
+				sNext = YSI_g_sElementMembership[el];
+				if (sNext[slot] & mask)
+				{
+					continue;
+				}
+				// Is this element NOT in the current group?
+				Bit_Let(sNext, _:g);
+				foreach (new playerid : GP)
+				{
+					Group_FullPlayerUpdate(playerid, el, YSI_g_sElementMembership[el], sNext, YSI_gGroupPlayers[playerid]);
+				}
+				YSI_g_sElementMembership[el] = sNext;
+			}
+		}
+		else
+		{
+			Bit_Vet(YSI_g_sDefaultMembership, _:g);
+			for (new el = 0; el != _GROUP_MAKE_LIMIT; ++el)
+			{
+				sNext = YSI_g_sElementMembership[el];
+				if (!(sNext[slot] & mask))
+				{
+					continue;
+				}
+				// Is this element in the current group?
+				Bit_Vet(sNext, _:g);
+				foreach (new playerid : GP)
+				{
+					Group_FullPlayerUpdate(playerid, el, YSI_g_sElementMembership[el], sNext, YSI_gGroupPlayers[playerid]);
+				}
+				YSI_g_sElementMembership[el] = sNext;
+			}
+		}
+		return 1;
+	}
+	return 0;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Group_Set...New</summary>
+<param name="Group:g">Group to set for.</param>
+<param name="bool:s">Set or unset?</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Similar to "Group_Set...Default", but doesn't reset all existing elements,
+	just sets the permissions for any future items.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+gforeign Group_Set...New(Group:g,bool:s);
+
+gglobal Group_Set...New(Group:g,bool:s)
+{
+	P:2(#_GROUP_MAKE_NAME<Group_Set...New> " called: %i, %i", _:g, s);
+	if (GROUP_MASK <= g <= GROUP_GLOBAL)
+	{
+		// There is now NO validity check for reasons of distruibution.
+		Bit_Set(YSI_g_sDefaultMembership, _:GROUP_TEMP_FIX(g), s);
+		return 1;
+	}
+	return 0;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Group_Exclusive...</summary>
+<param name="Group:g">Group to add this to.</param>
+<param name="_GROUP_MAKE_TAG:el">Element to add.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Add this element to ONLY this group and remove it from any others it might
+	already be in.  This is basically a simplified version of "GROUP_ADD".
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+gforeign Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el);
+
+gglobal Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
+{
+	if (GROUP_MASK <= g <= GROUP_GLOBAL)
+	{
+		GROUP_FIX(g);
+		YSI_gTempGroups = YSI_g_sDefaultMembership;
+		YSI_g_sDefaultMembership = YSI_g_cEmptyGroups;
+		Bit_Let(YSI_g_sDefaultMembership, _:g);
+		for (new i = 0; i != bits<_MAX_GROUPS_G>; ++i)
+		{
+			YSI_g_sEmpty[i] = ~YSI_g_sDefaultMembership[i];
+		}
+		_GROUP_INITIALISE(el);
+		YSI_g_sDefaultMembership = YSI_gTempGroups;
+		YSI_g_sEmpty = YSI_g_cEmptyGroups;
+		return 1;
+	}
+	return 0;
+}
+
+/*
+
+      ,ad8888ba,  88             88                     88  
+     d8"'    `"8b 88             88                     88  
+    d8'           88             88                     88  
+    88            88  ,adPPYba,  88,dPPYba,  ,adPPYYba, 88  
+    88      88888 88 a8"     "8a 88P'    "8a ""     `Y8 88  
+    Y8,        88 88 8b       d8 88       d8 ,adPPPPP88 88  
+     Y8a.    .a88 88 "8a,   ,a8" 88b,   ,a8" 88,    ,88 88  
+      `"Y88888P"  88  `"YbbdP"'  8Y"Ybbd8"'  `"8bbdP"Y8 88  
+
+*/
+
+/**--------------------------------------------------------------------------**\
+<summary>Group_SetGlobal...</summary>
+<param name="el">Element to set.</param>
+<param name="bool:s">Set or unset?</param>
+<returns>
+	-
+</returns>
+<remarks>
+	If "s" is true, then one element is added to the global group.  False it is
+	removed.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+gforeign Group_SetGlobal...(_GROUP_MAKE_TAG:el,bool:s);
+
+gglobal Group_SetGlobal...(_GROUP_MAKE_TAG:el,bool:s)
+{
+	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...> " called: %i, %i", _:el, s);
+	return _GROUP_MAKE_NAME<Group_Set...>(GROUP_GLOBAL, el, s);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Group_GetGlobal...</summary>
+<param name="el">Element to get.</param>
+<returns>
+	bool: Does the global group have the element?
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+gforeign Group_GetGlobal...(_GROUP_MAKE_TAG:el);
+
+gglobal Group_GetGlobal...(_GROUP_MAKE_TAG:el)
+{
+	P:2(#_GROUP_MAKE_NAME<Group_GetGlobal...> " called: %i", _:el);
+	return _GROUP_MAKE_NAME<Group_Get...>(GROUP_GLOBAL, el);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Group_SetGlobal...Default</summary>
+<param name="bool:s">Set or unset?</param>
+<returns>
+	-
+</returns>
+<remarks>
+	If "s" is true, then all elements are added to the global group (i.e. the
+	default is set to true and all previous settings are wiped out).  If it is
+	false then all elements are removed and a full update is done.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+gforeign Group_SetGlobal...Default(bool:s);
+
+gglobal Group_SetGlobal...Default(bool:s)
+{
+	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...Default> " called: %i", s);
+	return _GROUP_MAKE_NAME<Group_Set...Default>(GROUP_GLOBAL, s);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Group_SetGlobal...New</summary>
+<param name="bool:s">Set or unset?</param>
+<returns>
+	-
+</returns>
+<remarks>
+	All elements created FROM THIS POINT ON will have this default setting.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+gforeign Group_SetGlobal...New(bool:s);
+
+gglobal Group_SetGlobal...New(bool:s)
+{
+	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...New> " called: %i", s);
+	return _GROUP_MAKE_NAME<Group_Set...New>(GROUP_GLOBAL, s);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Group_GlobalExclusive...</summary>
+<param name="_GROUP_MAKE_TAG:el">Element to add.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Add this element to ONLY the global group and remove it from any others it
+	might already be in.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+gforeign Group_GlobalExclusive...(_GROUP_MAKE_TAG:el);
+
+gglobal Group_GlobalExclusive...(_GROUP_MAKE_TAG:el)
+{
+	P:2(#_GROUP_MAKE_NAME<Group_GlobalExclusive...Default> " called: %i", s);
+	return _GROUP_MAKE_NAME<Group_GlobalExclusive...Default>(GROUP_GLOBAL, s);
+}
+
+/*
+
+    88                                                                88  
+    88              ,d                                                88  
+    88              88                                                88  
+    88 8b,dPPYba, MM88MMM ,adPPYba, 8b,dPPYba, 8b,dPPYba,  ,adPPYYba, 88  
+    88 88P'   `"8a  88   a8P_____88 88P'   "Y8 88P'   `"8a ""     `Y8 88  
+    88 88       88  88   8PP""""""" 88         88       88 ,adPPPPP88 88  
+    88 88       88  88,  "8b,   ,aa 88         88       88 88,    ,88 88  
+    88 88       88  "Y888 `"Ybbd8"' 88         88       88 `"8bbdP"Y8 88  
+
+*/
+
 gforeign void:Group_Handoff...(i,a[],s);
 
 gglobal void:Group_Handoff...(i,a[],s)
@@ -264,6 +651,58 @@ static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
 }
 
 /**--------------------------------------------------------------------------**\
+<summary>_GROUP_INITIALISE</summary>
+<param name="x">The element that was added (maybe).</param>
+<param name="s">Was the element added or removed?</param>
+<returns>
+	-
+</returns>
+<remarks>
+	The name is a macro, so this function isn't actually called this.  This is
+	called when a new element is created, and as such it is NOT chained to other
+	parts of the groups system because each part handles one type of element.
+	Loop through all players and set up the element for them if they are in a
+	group that this is also in by default.
+	
+	If x is "_GROUP_MAKE_LIMIT" then this is the test used in OnPlayerConnect in
+	various libraries to see if the groups system exists, and if not locally
+	initialise the player instead of leaving it up to this system.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x)
+{
+	P:4(#_GROUP_INITIALISE " called: %i", x);
+	// A new item has been added to the system - update all players according to
+	// the default settings for a group.
+	if (x != _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
+	{
+		YSI_g_sElementMembership[_:x] = YSI_g_sDefaultMembership;
+		foreach (new playerid : Player)
+		{
+			// Uses "YSI_g_sEmpty" instead of a truly blank variable so that we
+			// can ensure that NO other groups have this element when we use the
+			// "GROUP_ADD" macro.
+			Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultMembership, YSI_gGroupPlayers[playerid]);
+		}
+	}
+	return false;
+}
+
+/*
+
+      ,ad8888ba,  88                     88                        
+     d8"'    `"8b 88                     ""                        
+    d8'           88                                               
+    88            88,dPPYba,  ,adPPYYba, 88 8b,dPPYba,  ,adPPYba,  
+    88            88P'    "8a ""     `Y8 88 88P'   `"8a I8[    ""  
+    Y8,           88       88 ,adPPPPP88 88 88       88  `"Y8ba,   
+     Y8a.    .a8P 88       88 88,    ,88 88 88       88 aa    ]8I  
+      `"Y8888Y"'  88       88 `"8bbdP"Y8 88 88       88 `"YbbdP"'  
+
+*/
+
+/**--------------------------------------------------------------------------**\
 <summary>_yGI</summary>
 <param name="&ni">Next init function variable as returned by y_amx.</param>
 <param name="&na">Next add function variable as returned by y_amx.</param>
@@ -331,80 +770,6 @@ _gchain _yGI(&ni, &na, &nu)
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>_GROUP_INITIALISE</summary>
-<param name="x">The element that was added (maybe).</param>
-<param name="s">Was the element added or removed?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	The name is a macro, so this function isn't actually called this.  This is
-	called when a new element is created, and as such it is NOT chained to other
-	parts of the groups system because each part handles one type of element.
-	Loop through all players and set up the element for them if they are in a
-	group that this is also in by default.
-	
-	If x is "_GROUP_MAKE_LIMIT" then this is the test used in OnPlayerConnect in
-	various libraries to see if the groups system exists, and if not locally
-	initialise the player instead of leaving it up to this system.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x)
-{
-	P:4(#_GROUP_INITIALISE " called: %i", x);
-	// A new item has been added to the system - update all players according to
-	// the default settings for a group.
-	if (x != _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
-	{
-		YSI_g_sElementMembership[_:x] = YSI_g_sDefaultMembership;
-		foreach (new playerid : Player)
-		{
-			// Uses "YSI_g_sEmpty" instead of a truly blank variable so that we
-			// can ensure that NO other groups have this element when we use the
-			// "GROUP_ADD" macro.
-			Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultMembership, YSI_gGroupPlayers[playerid]);
-		}
-	}
-	return false;
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Group_Exclusive...</summary>
-<param name="Group:g">Group to add this to.</param>
-<param name="_GROUP_MAKE_TAG:el">Element to add.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Add this element to ONLY this group and remove it from any others it might
-	already be in.  This is basically a simplified version of "GROUP_ADD".
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-gforeign Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el);
-
-gglobal Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
-{
-	if (GROUP_MASK <= g <= GROUP_GLOBAL)
-	{
-		GROUP_FIX(g);
-		YSI_gTempGroups = YSI_g_sDefaultMembership;
-		YSI_g_sDefaultMembership = YSI_g_cEmptyGroups;
-		Bit_Let(YSI_g_sDefaultMembership, _:g);
-		for (new i = 0; i != bits<_MAX_GROUPS_G>; ++i)
-		{
-			YSI_g_sEmpty[i] = ~YSI_g_sDefaultMembership[i];
-		}
-		_GROUP_INITIALISE(el);
-		YSI_g_sDefaultMembership = YSI_gTempGroups;
-		YSI_g_sEmpty = YSI_g_cEmptyGroups;
-		return 1;
-	}
-	return 0;
-}
-
-/**--------------------------------------------------------------------------**\
 <summary>_yGA</summary>
 <param name="&group">The group that was just created.</param>
 <returns>
@@ -465,281 +830,20 @@ _gchain _yGU(&pid, Bit:p[], Bit:c[])
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Group_Set...Default</summary>
-<param name="Group:g">Group to set for.</param>
-<param name="bool:s">Set or unset?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	If "s" is true, then all elements are added to this group (i.e. the default
-	is set to true and all previous settings are wiped out).  If it is false
-	then all elements are removed and a full update is done.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*
 
-gforeign Group_Set...Default(Group:g,bool:s);
+      ,ad8888ba,  88                                                            
+     d8"'    `"8b 88                                                            
+    d8'           88                                                            
+    88            88  ,adPPYba, ,adPPYYba, 8b,dPPYba,  88       88 8b,dPPYba,   
+    88            88 a8P_____88 ""     `Y8 88P'   `"8a 88       88 88P'    "8a  
+    Y8,           88 8PP""""""" ,adPPPPP88 88       88 88       88 88       d8  
+     Y8a.    .a8P 88 "8b,   ,aa 88,    ,88 88       88 "8a,   ,a88 88b,   ,a8"  
+      `"Y8888Y"'  88  `"Ybbd8"' `"8bbdP"Y8 88       88  `"YbbdP'Y8 88`YbbdP"'   
+                                                                   88           
+                                                                   88           
 
-gglobal Group_Set...Default(Group:g,bool:s)
-{
-	P:2(#_GROUP_MAKE_NAME<Group_Set...Default> " called: %i, %i", _:g, s);
-	if (GROUP_MASK <= g <= GROUP_GLOBAL)
-	{
-		// There is now NO validity check for reasons of distruibution.
-		GROUP_FIX(g);
-		new
-			slot = Bit_Slot(g),
-			Bit:mask = Bit_Mask(g),
-			Iterator:GP<MAX_PLAYERS>;
-		foreach (new playerid : Player)
-		{
-			// Do this check here so it is only done once per player.  This is a
-			// good argument for moving iterators to be duplicated in every
-			// script; however, the default "Group()" iterator implementation is
-			// a function, not a standard iterator - actually it now isn't...
-			if (YSI_gGroupPlayers[playerid][slot] & mask)
-			{
-				// Make a fast local iterator of all the players.
-				Iter_Add(GP, playerid);
-			}
-		}
-		static
-			BitArray:sNext<_MAX_GROUPS_G>;
-		if (s)
-		{
-			Bit_Let(YSI_g_sDefaultMembership, _:g);
-			for (new el = 0; el != _GROUP_MAKE_LIMIT; ++el)
-			{
-				sNext = YSI_g_sElementMembership[el];
-				if (sNext[slot] & mask)
-				{
-					continue;
-				}
-				// Is this element NOT in the current group?
-				Bit_Let(sNext, _:g);
-				foreach (new playerid : GP)
-				{
-					Group_FullPlayerUpdate(playerid, el, YSI_g_sElementMembership[el], sNext, YSI_gGroupPlayers[playerid]);
-				}
-				YSI_g_sElementMembership[el] = sNext;
-			}
-		}
-		else
-		{
-			Bit_Vet(YSI_g_sDefaultMembership, _:g);
-			for (new el = 0; el != _GROUP_MAKE_LIMIT; ++el)
-			{
-				sNext = YSI_g_sElementMembership[el];
-				if (!(sNext[slot] & mask))
-				{
-					continue;
-				}
-				// Is this element in the current group?
-				Bit_Vet(sNext, _:g);
-				foreach (new playerid : GP)
-				{
-					Group_FullPlayerUpdate(playerid, el, YSI_g_sElementMembership[el], sNext, YSI_gGroupPlayers[playerid]);
-				}
-				YSI_g_sElementMembership[el] = sNext;
-			}
-		}
-		return 1;
-	}
-	return 0;
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Group_SetGlobal...Default</summary>
-<param name="bool:s">Set or unset?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	If "s" is true, then all elements are added to the global group (i.e. the
-	default is set to true and all previous settings are wiped out).  If it is
-	false then all elements are removed and a full update is done.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-gforeign Group_SetGlobal...Default(bool:s);
-
-gglobal Group_SetGlobal...Default(bool:s)
-{
-	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...Default> " called: %i", s);
-	return _GROUP_MAKE_NAME<Group_Set...Default>(GROUP_GLOBAL, s);
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Group_Set...New</summary>
-<param name="Group:g">Group to set for.</param>
-<param name="bool:s">Set or unset?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Similar to "Group_Set...Default", but doesn't reset all existing elements,
-	just sets the permissions for any future items.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-gforeign Group_Set...New(Group:g,bool:s);
-
-gglobal Group_Set...New(Group:g,bool:s)
-{
-	P:2(#_GROUP_MAKE_NAME<Group_Set...New> " called: %i, %i", _:g, s);
-	if (GROUP_MASK <= g <= GROUP_GLOBAL)
-	{
-		// There is now NO validity check for reasons of distruibution.
-		Bit_Set(YSI_g_sDefaultMembership, _:GROUP_TEMP_FIX(g), s);
-		return 1;
-	}
-	return 0;
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Group_SetGlobal...New</summary>
-<param name="bool:s">Set or unset?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	All elements created FROM THIS POINT ON will have this default setting.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-gforeign Group_SetGlobal...New(bool:s);
-
-gglobal Group_SetGlobal...New(bool:s)
-{
-	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...New> " called: %i", s);
-	return _GROUP_MAKE_NAME<Group_Set...New>(GROUP_GLOBAL, s);
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Group_Set...</summary>
-<param name="Group:g">Group to set for.</param>
-<param name="el">Element to set.</param>
-<param name="bool:s">Set or unset?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	If "s" is true, then one element is added to the current group.  False it is
-	removed.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-gforeign Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s);
-
-gglobal Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
-{
-	P:2(#_GROUP_MAKE_NAME<Group_Set...> " called: %i, %i, %i", _:g, _:el, s);
-	// Set wether a group can use this item.
-	if (0 <= _:el < _GROUP_MAKE_LIMIT && GROUP_MASK <= g <= GROUP_GLOBAL)
-	{
-		// There is now NO validity check for reasons of distruibution.
-		GROUP_FIX(g);
-		new
-			slot = Bit_Slot(g),
-			Bit:mask = Bit_Mask(g);
-		//static
-		//	BitArray:sNext<_MAX_GROUPS_G>;
-		if (s)
-		{
-			YSI_gTempGroups = YSI_g_sElementMembership[_:el];
-			if (YSI_gTempGroups[slot] & mask)
-			{
-				// No point adding an element to a group that it is already in.
-				return 1;
-			}
-			// Is this element NOT in the current group?
-			Bit_Let(YSI_gTempGroups, _:g);
-		}
-		else
-		{
-			YSI_gTempGroups = YSI_g_sElementMembership[_:el];
-			if (!(YSI_gTempGroups[slot] & mask))
-			{
-				return 1;
-			}
-			// Is this element in the current group?
-			Bit_Vet(YSI_gTempGroups, _:g);
-		}
-		foreach (new playerid : Player)
-		{
-			if (YSI_gGroupPlayers[playerid][slot] & mask)
-			{
-				// The player is in the group in question, so they need a full
-				// update.
-				//Group_FullPlayerUpdate(playerid, _:el, YSI_g_sElementMembership[_:el], YSI_gTempGroups, YSI_gGroupPlayers[playerid]);
-			}
-		}
-		YSI_g_sElementMembership[_:el] = YSI_gTempGroups;
-		return 1;
-	}
-	return 0;
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Group_SetGlobal...</summary>
-<param name="el">Element to set.</param>
-<param name="bool:s">Set or unset?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	If "s" is true, then one element is added to the global group.  False it is
-	removed.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-gforeign Group_SetGlobal...(_GROUP_MAKE_TAG:el,bool:s);
-
-gglobal Group_SetGlobal...(_GROUP_MAKE_TAG:el,bool:s)
-{
-	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...> " called: %i, %i", _:el, s);
-	return _GROUP_MAKE_NAME<Group_Set...>(GROUP_GLOBAL, el, s);
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Group_Get...</summary>
-<param name="Group:g">Group to get from.</param>
-<param name="el">Element to get.</param>
-<returns>
-	bool: Does the group have the element?
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-gforeign bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el);
-
-gglobal bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el)
-{
-	P:2(#_GROUP_MAKE_NAME<Group_Get...> " called: %i, %i", _:g, _:el);
-	return (0 <= _:el < _GROUP_MAKE_LIMIT && GROUP_MASK <= g <= GROUP_GLOBAL && Bit_Get(YSI_g_sElementMembership[_:el], _:GROUP_TEMP_FIX(g)));
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Group_GetGlobal...</summary>
-<param name="el">Element to get.</param>
-<returns>
-	bool: Does the global group have the element?
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-gforeign Group_GetGlobal...(_GROUP_MAKE_TAG:el);
-
-gglobal Group_GetGlobal...(_GROUP_MAKE_TAG:el)
-{
-	P:2(#_GROUP_MAKE_NAME<Group_GetGlobal...> " called: %i", _:el);
-	return _GROUP_MAKE_NAME<Group_Get...>(GROUP_GLOBAL, el);
-}
+*/
 
 /**--------------------------------------------------------------------------**\
 <summary>_GROUP_UNIQUE_FUNCTION</summary>

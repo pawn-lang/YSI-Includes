@@ -106,7 +106,7 @@ Operators:
      "Y88888P"   `"Ybbd8"'   "Y888  `"YbbdP'Y8 88`YbbdP"'   
                                                88           
                                                88           
-    
+
 */
 
 loadtext core[ysi_players];

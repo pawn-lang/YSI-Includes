@@ -157,8 +157,6 @@ stock PlayerGroups(a, b)
 // Detect missing parameters.
 #define PlayerGroups@YSII_Ag-1);_:(%0=%8(%5)%7)%9) YSI_NULL_ITERATOR-3);_:(%0=PlayerGroups(%5))!=-1;)
 
-//#define GROUPS_MAX_LIBRARIES            4
-
 static
 	// Function pointers for chaining.
 	YSI_g_sNextInitFunc,
