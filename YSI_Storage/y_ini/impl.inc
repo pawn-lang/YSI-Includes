@@ -196,10 +196,12 @@ _Y_INI_STATIC stock bool:INI_IsEscapeSequence(const string:str[], pos)
 <summary>INI_GetCommentPos</summary>
 <param name="string:str[]">The string you want to de-comment.</param>
 <returns>
-	-
+	position when found, "cellmax" on fail.
 </returns>
 <remarks>
-	Find where a comment starts on this line, if anywhere.
+	Find where a comment starts on this line, if anywhere.  Uses "cellmax" not
+	"-1" as a failure return as it is easier to utilise in later code (it is
+	only used as an upper-bound on line positions).
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -210,8 +212,9 @@ _Y_INI_STATIC stock INI_GetCommentPos(const string:str[])
 		comment = -1;
 	do
 	{
+		// Find the next possible candidate for starting a comment.
 		comment = strfind(str, ";", false, comment + 1);
-		if (comment == -1) return -1;
+		if (comment == -1) return cellmax;
 	}
 	while (INI_IsEscapeSequence(str, comment));
 	return comment;
@@ -238,23 +241,33 @@ _Y_INI_STATIC stock e_INI_LINE_TYPE:
 {
 	// Determine if there is a comment in this string (can be escaped).
 	new
-		comment = INI_GetCommentPos(str);
-	new
 		pos = 0;
-	// Loop over any whitespace.
+	// Skip over any whitespace.
 	while ('\0' < str[pos] <= ' ') ++pos;
+	new
+		comment = INI_GetCommentPos(str[pos]);
+	switch (comment)
+	{
+		case 0: return e_INI_LINE_TYPE_COMMENT;
+		case cellmax: {};
+		default: comment += pos;
+	}
 	// Determine what the first character is.
 	switch (str[pos])
 	{
 		case '\0': return e_INI_LINE_TYPE_BLANK;
-		case ';': return e_INI_LINE_TYPE_COMMENT;
+		case ';':
 		case '[':
 		{
 			// Found a tag.
 			p1s = strfind(str, "]", false, (p0s = pos + 1));
-			// Not completed correctly.
-			if (p1s == -1) return e_INI_LINE_TYPE_INVALID;
-			// Are there any extensions?
+			if (0 < p1s < comment)
+			{
+				// Completed correctly.
+				
+				// Are there any extensions?
+			}
+			else return e_INI_LINE_TYPE_INVALID;
 		}
 		default:
 	}
