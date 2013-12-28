@@ -156,6 +156,26 @@ Operators:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#include "..\YSI_Internal\y_version"
+
+#include "..\YSI_Core\y_utils"
+#include "..\YSI_Coding\y_malloc"
+
+#if defined YSI_TESTS
+	#define _Y_INI_STATIC
+#else
+	#define _Y_INI_STATIC static
+#endif
+
+#include "y_ini/impl"
+
+#if defined YSI_TESTS
+	#include "..\YSI_Core\y_testing"
+	#include "y_ini/tests"
+#endif
+
+#endinput
+
 // Ini file reading is not distributed.  User file reading may be, though I
 // doubt it.
 

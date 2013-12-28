@@ -1,13 +1,3 @@
-// This is a comment
-// uncomment the line below if you want to write a filterscript
-//#define FILTERSCRIPT
-
-// #include <a_samp>
-
-// #include <YSI_Coding\y_malloc>
-
-#define _Y_INI_STATIC
-
 stock const
 	INI:INI_NO_FILE = INI:-1;
 
@@ -40,7 +30,7 @@ _Y_INI_STATIC stock
 
 // Is the current index the start of a line?
 
-_Y_INI_STATIC stock INI_AtStartOfLine(const string:str[], index)
+_Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 {
 	for (new ch; index--; )
 	{
@@ -50,60 +40,60 @@ _Y_INI_STATIC stock INI_AtStartOfLine(const string:str[], index)
 	return true;
 }
 
-//INI_FindEntry(const string:data[], const string:tag[]
+//INI_FindEntry(const data[], const tag[]
 
-stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:bExtra = false, extra = 0, bool:bLocal = true, bool:bPassTag = false, bool:bFilter = true, filter[] = "")
-{
-	new
-		INI:ini = INI:0;
-	if (ini == INI_NO_FILE) return false;
-	INI_SetupParse(fname, YSI_g_sINIFiles[ini], false);
-}
+// stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:bExtra = false, extra = 0, bool:bLocal = true, bool:bPassTag = false, bool:bFilter = true, filter[] = "")
+// {
+	// new
+		// INI:ini = INI:0;
+	// if (ini == INI_NO_FILE) return false;
+	// INI_SetupParse(fname, YSI_g_sINIFiles[ini], false);
+// }
 
-_Y_INI_STATIC stock bool:INI_SetupParse(fname[], ini, bool:allocate)
-{
-	// Get an empty info slot.
-	// Open the file.
-	new
-		File:f = fopen(fname);
-	if (!f) return false;
-	// Save the filename.
-	strpack(ini[E_INI_FILE_NAME], fname, INI_FILE_NAME_LENGTH);
-	new
-		// Get the filesize.
-		len = flength(f),
-	ini[E_INI_FILE_LENGTH] = len;
-	ini[E_INI_FILE_ALLOCATED] = len * 2 + INI_HEADER_SIZE;
-	if (allocate)
-	{
-		new
-			// Allocate the memory.
-			Alloc:a = malloc(len * 2 + INI_HEADER_SIZE);
-		ini[E_INI_FILE_DATA] = a;
-		if (a == NO_ALLOC)
-		{
-			Alloc:a = malloc(len + INI_HEADER_SIZE);
-			ini[E_INI_FILE_ALLOCATED] = len + INI_HEADER_SIZE;
-			ini[E_INI_FILE_DATA] = a;
-			if (a == NO_ALLOC)
-			{
-				P:W("Could not allocate memory for INI file - using (slow) fallback.");
-				INI_OldLoad(f);
-				fclose(file);
-				return true;
-			}
-			P:W("Could not allocate extra memory for INI file - writes may be slow.");
-		}
-	}
-	else
-	{
-		ini[E_INI_FILE_ALLOCATED] = 0;
-		ini[E_INI_FILE_DATA] = NO_ALLOC;
-	}
-	INI_NewLoad(f, ini);
-	fclose(file);
-	return true;
-}
+// _Y_INI_STATIC stock bool:INI_SetupParse(fname[], ini, bool:allocate)
+// {
+	// // Get an empty info slot.
+	// // Open the file.
+	// new
+		// File:f = fopen(fname);
+	// if (!f) return false;
+	// // Save the filename.
+	// strpack(ini[E_INI_FILE_NAME], fname, INI_FILE_NAME_LENGTH);
+	// new
+		// // Get the filesize.
+		// len = flength(f),
+	// ini[E_INI_FILE_LENGTH] = len;
+	// ini[E_INI_FILE_ALLOCATED] = len * 2 + INI_HEADER_SIZE;
+	// if (allocate)
+	// {
+		// new
+			// // Allocate the memory.
+			// Alloc:a = malloc(len * 2 + INI_HEADER_SIZE);
+		// ini[E_INI_FILE_DATA] = a;
+		// if (a == NO_ALLOC)
+		// {
+			// Alloc:a = malloc(len + INI_HEADER_SIZE);
+			// ini[E_INI_FILE_ALLOCATED] = len + INI_HEADER_SIZE;
+			// ini[E_INI_FILE_DATA] = a;
+			// if (a == NO_ALLOC)
+			// {
+				// P:W("Could not allocate memory for INI file - using (slow) fallback.");
+				// INI_OldLoad(f);
+				// fclose(file);
+				// return true;
+			// }
+			// P:W("Could not allocate extra memory for INI file - writes may be slow.");
+		// }
+	// }
+	// else
+	// {
+		// ini[E_INI_FILE_ALLOCATED] = 0;
+		// ini[E_INI_FILE_DATA] = NO_ALLOC;
+	// }
+	// INI_NewLoad(f, ini);
+	// fclose(file);
+	// return true;
+// }
 
 /*
 
@@ -118,41 +108,41 @@ _Y_INI_STATIC stock bool:INI_SetupParse(fname[], ini, bool:allocate)
 
 */
 
-_Y_INI_STATIC stock INI_NewLoad(File:file, INI:ini) // Alloc:data)
-{
-	new
-		Alloc:data = ini[E_INI_FILE_DATA];
-	// Don't make assumptions here.  It may be that it doesn't WANT saving.
-	if (data == NO_ALLOC) INI_ParseFileCalled(file);
-	// We have now loaded the file in to memory.
-	else INI_ParseFileSaved(file, data);
-}
+// _Y_INI_STATIC stock INI_NewLoad(File:file, INI:ini) // Alloc:data)
+// {
+	// new
+		// Alloc:data = ini[E_INI_FILE_DATA];
+	// // Don't make assumptions here.  It may be that it doesn't WANT saving.
+	// if (data == NO_ALLOC) INI_ParseFileCalled(file);
+	// // We have now loaded the file in to memory.
+	// else INI_ParseFileSaved(file, data);
+// }
 
-_Y_INI_STATIC stock INI_ParseFileCalled(File:file, INI:ini)
-{
-	// Load the data into a line buffer.
-	while (fread(file, YSI_g_sOneLine))
-	{
-		// Parse the line for callbacks.
-		//INI_ParseLine(YSI_g_sOneLine, some, callback, data);
-	}
-}
+// _Y_INI_STATIC stock INI_ParseFileCalled(File:file, INI:ini)
+// {
+	// // Load the data into a line buffer.
+	// while (fread(file, YSI_g_sOneLine))
+	// {
+		// // Parse the line for callbacks.
+		// //INI_ParseLine(YSI_g_sOneLine, some, callback, data);
+	// }
+// }
 
-_Y_INI_STATIC stock INI_ParseFileSaved(File:file, INI:ini) //, Alloc:data)
-{
-	// Load the data into the allocated slot.
-	// Read the whole file, accounting for unicode characters.
-	new
-		pos = INI_HEADER_SIZE,
-		read;
-	// We don't check the length because it must be enough.
-	while ((read = fread(file, mget(data, pos), cellmax)))
-	{
-		// Parse the line for callbacks.
-		//INI_ParseLine(mget(data, pos), some, callback, data);
-		pos += read;
-	}
-}
+// _Y_INI_STATIC stock INI_ParseFileSaved(File:file, INI:ini) //, Alloc:data)
+// {
+	// // Load the data into the allocated slot.
+	// // Read the whole file, accounting for unicode characters.
+	// new
+		// pos = INI_HEADER_SIZE,
+		// read;
+	// // We don't check the length because it must be enough.
+	// while ((read = fread(file, mget(data, pos), cellmax)))
+	// {
+		// // Parse the line for callbacks.
+		// //INI_ParseLine(mget(data, pos), some, callback, data);
+		// pos += read;
+	// }
+// }
 
 
 
@@ -171,7 +161,7 @@ _Y_INI_STATIC stock INI_ParseFileSaved(File:file, INI:ini) //, Alloc:data)
 
 /**--------------------------------------------------------------------------**\
 <summary>INI_IsEscapeSequence</summary>
-<param name="string:str[]">String with the character in.</param>
+<param name="str[]">String with the character in.</param>
 <param name="pos">Location of the character.</param>
 <returns>
 	Is the current character escaped?
@@ -181,7 +171,7 @@ _Y_INI_STATIC stock INI_ParseFileSaved(File:file, INI:ini) //, Alloc:data)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_INI_STATIC stock bool:INI_IsEscapeSequence(const string:str[], pos)
+_Y_INI_STATIC stock bool:INI_IsEscapeSequence(const str[], pos)
 {
 	new
 		bool:escape = false;
@@ -192,7 +182,7 @@ _Y_INI_STATIC stock bool:INI_IsEscapeSequence(const string:str[], pos)
 
 /**--------------------------------------------------------------------------**\
 <summary>INI_ReverseWhitespace</summary>
-<param name="string:str[]">String with the whitespace in.</param>
+<param name="str[]">String with the whitespace in.</param>
 <param name="pos">End of the whitespace.</param>
 <returns>
 	Start of the whitespace.
@@ -202,7 +192,7 @@ _Y_INI_STATIC stock bool:INI_IsEscapeSequence(const string:str[], pos)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_INI_STATIC stock bool:INI_ReverseWhitespace(const string:str[], pos)
+_Y_INI_STATIC stock INI_ReverseWhitespace(const str[], pos)
 {
 	while (pos-- && '\0' < str[pos] <= ' ') {}
 	return pos + 1;
@@ -210,11 +200,11 @@ _Y_INI_STATIC stock bool:INI_ReverseWhitespace(const string:str[], pos)
 
 /**--------------------------------------------------------------------------**\
 <summary>INI_FindString</summary>
-<param name="string:str[]">The string you want to search in.</param>
-<param name="string:sub[]">The string you want to search for.</param>
+<param name="str[]">The string you want to search in.</param>
+<param name="sub[]">The string you want to search for.</param>
 <param name="pos">The start offset.</param>
 <returns>
-	Position when found, "cellmax" on fail.
+	Position when found, "cellmax - 1" on fail.
 </returns>
 <remarks>
 	Uses "cellmax" not "-1" as a failure return as it is easier to utilise in
@@ -223,7 +213,7 @@ _Y_INI_STATIC stock bool:INI_ReverseWhitespace(const string:str[], pos)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_INI_STATIC stock INI_FindString(const string:str[], const string:sub[], pos = -1)
+_Y_INI_STATIC stock INI_FindString(const str[], const sub[], pos = -1)
 {
 	// Determine if there is a substring in this string (can be escaped).
 	do
@@ -238,7 +228,7 @@ _Y_INI_STATIC stock INI_FindString(const string:str[], const string:sub[], pos =
 
 /**--------------------------------------------------------------------------**\
 <summary>INI_GetEntryText</summary>
-<param name="string:str[]">The string you want to type analyse.</param>
+<param name="str[]">The string you want to type analyse.</param>
 <param name="p0s">Start of part 0.</param>
 <param name="p0e">End of part 0.</param>
 <param name="p1s">Start of part 1.</param>
@@ -255,63 +245,74 @@ _Y_INI_STATIC stock INI_FindString(const string:str[], const string:sub[], pos =
 \**--------------------------------------------------------------------------**/
 
 _Y_INI_STATIC stock e_INI_LINE_TYPE:
-	INI_IdentifyLineType(const string:str[], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e)
+	INI_IdentifyLineType(const str[], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e)
 {
-	new
-		// Determine if there is a comment in this string (can be escaped).
-		comment = min(INI_FindString(str, ";"), (p2e = strlen(str))),
-		// Skip over any whitespace.
-		pos = SkipWhitespace(str, 0);
-	// Store the start of the comment.  There are thus two tests for checking if
-	// there is a comment: "str[p2s] == ';'", or "p2s != p2e".
-	p1s = p1e = p2s = comment;
-	// Determine what the first character is.
-	switch (str[pos])
+	// Determine if there is a comment in this string (can be escaped).
+	if (!(p2s = min(INI_FindString(str, ";"), (p2e = INI_ReverseWhitespace(str, strlen(str)))))) return e_INI_LINE_TYPE_BLANK;
+	// Here "p2s" is the end of any valid string contents.  "INI_FindString"
+	// will return "cellmax" on failure for a direct comparison.
+	if ((p0e = INI_FindString(str, "=")) > p2s)
 	{
-		// Nothing useful on this line.
-		case '\0', ';': return e_INI_LINE_TYPE_BLANK;
-		case '[':
+		// Equals sign is commented out or not present (cellmax return).  If we
+		// are in here, it can't be a "key = value" entry.
+		if ((p0s = INI_FindString(str, "[")) > p2s)
 		{
-			// Found a tag.
-			//p0s = pos + 1;
-			//p0e = strfind(str, "]", false, p0s);
-			//if (0 < p0e < comment)
-			if (0 < (p0e = INI_FindString(str, "]", (p0s = pos + 1))) < comment)
+			// Not a tag.
+			if (SkipWhitespace(str, 0) == p2s) return e_INI_LINE_TYPE_BLANK;
+		}
+		else
+		{
+			// Found "[", look for "]".
+			if ((p0e = INI_FindString(str, "]", p0s++)) < p2s)
 			{
-				// Completed correctly.
-				pos = strfind(str, ":", false, p0e);
-				// Are there any extensions?
-				if (0 < pos < comment) p1s = pos + 1;
+				// Skip excess whitespace off the tag name.
+				Trim(str, p0s, p0e);
+				// Empty tag name.
+				if (p0s == p0e) return e_INI_LINE_TYPE_INVALID;
+				p1s = INI_FindString(str, ":");
+				if (p1s == cellmax)
+				{
+					// No extension.
+					p1e = cellmax;
+				}
+				else
+				{
+					// Extension.
+					++p1s,
+					p1e = p2s,
+					Trim(str, p1s, p1e);
+				}
 				return e_INI_LINE_TYPE_TAG;
 			}
-			else return e_INI_LINE_TYPE_INVALID;
-		}
-		default:
-		{
-			// Normal entry.
-			if (0 < (p0e = INI_FindString(str, "=", (p0s = pos + 1))) < comment)
-			{
-				// Completed correctly.
-				return
-					// Get the value.
-					p1s = SkipWhitespace(str, p0e + 1),
-					// Find the end of the key.
-					p0e = INI_ReverseWhitespace(str, p0e),
-					e_INI_LINE_TYPE_ENTRY;
-			}
-			else return e_INI_LINE_TYPE_INVALID;
+			// No "]" found.
 		}
 	}
+	else
+	{
+		// Set key and value limits.
+		p0s = 0, p1s = p0e + 1, p1e = p2s;
+		// Remove excess whitespace from the key and the value.
+		Trim(str, p0s, p0e),
+		// Skip the "=" sign, then trim.
+		Trim(str, p1s, p1e);
+		// Check for escaped trailing spaces.
+		if (INI_IsEscapeSequence(str, p1e)) ++p1e;
+		// On lines like:
+		//  
+		//  [tag-like] = value-like
+		//  
+		// What should that be?  Probably invalid, but I'll allow it!
+		if (p0s != p0e && p1s != p1e) return e_INI_LINE_TYPE_ENTRY;
+	}
+	// There are several ways to get here.
+	return e_INI_LINE_TYPE_INVALID;
 }
 
-INI_LoopThroughFile(File:f, INI:ini, end)
-{
-	// Go to the start of the file.
-	fseek(f, 0);
-	
-	
-	
-}
+// INI_LoopThroughFile(File:f, INI:ini, end)
+// {
+	// // Go to the start of the file.
+	// fseek(f, 0);
+// }
 
 
 

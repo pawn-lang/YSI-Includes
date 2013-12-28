@@ -946,7 +946,7 @@ stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
 
 /**--------------------------------------------------------------------------**\
 <summary>SkipWhitespace</summary>
-<param name="string:str[]">The string to skip over part of.</param>
+<param name="str[]">The string to skip over part of.</param>
 <param name="pos">The start of the whitespace.</param>
 <returns>
 	The end of the whitespace.
@@ -956,7 +956,7 @@ stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock SkipWhitespace(const string:str[], pos)
+stock SkipWhitespace(const str[], pos)
 {
 	while ('\0' < str[pos] <= ' ') ++pos;
 	return pos;
@@ -964,7 +964,7 @@ stock SkipWhitespace(const string:str[], pos)
 
 /**--------------------------------------------------------------------------**\
 <summary>Trim</summary>
-<param name="string:str[]">The string to trim.</param>
+<param name="str[]">The string to trim.</param>
 <param name="start">Start of the substring.</param>
 <param name="end">End of the substring.</param>
 <returns>
@@ -975,12 +975,13 @@ stock SkipWhitespace(const string:str[], pos)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock Trim(const string:str[], &start, &end)
+stock Trim(const str[], &start, &end)
 {
 	while ('\0' < str[start] <= ' ') ++start;
 	if (str[start])
 	{
-		while (end > start && str[end - 1] <= ' ') --end;
+		while (end-- > start && str[end] <= ' ') {}
+		++end;
 	}
 	else
 	{

@@ -4,7 +4,7 @@ Test:INI_AtStartOfLine1()
 	ASSERT(INI_AtStartOfLine("  hi", 0));
 	ASSERT(INI_AtStartOfLine("	hi", 0));
 	ASSERT(INI_AtStartOfLine("  hi", 2));
-	ASSERT(INI_AtStartOfLine("	hi", 3));
+	ASSERT(INI_AtStartOfLine("\thi", 1));
 	ASSERT(INI_AtStartOfLine("\nhi", 1));
 	ASSERT(!INI_AtStartOfLine("x\nhi", 1));
 	ASSERT(INI_AtStartOfLine("\rhi", 1));
@@ -15,17 +15,30 @@ Test:INI_AtStartOfLine1()
 
 Test:INI_IsEscapeSequence1()
 {
-	ASSERT(INI_IsEscapeSequence("\\;", 1));
-	ASSERT(INI_IsEscapeSequence("\\\\", 1));
-	ASSERT(INI_IsEscapeSequence("\\\\\\;", 3));
-	ASSERT(INI_IsEscapeSequence("\\\\\\\\", 3));
-	ASSERT(INI_IsEscapeSequence("\\\\\\n", 3));
-	ASSERT(INI_IsEscapeSequence("v\\\\\\\\", 4));
-	ASSERT(INI_IsEscapeSequence("hi\\n", 3));
-	ASSERT(!INI_IsEscapeSequence(";", 0));
-	ASSERT(!INI_IsEscapeSequence("\\", 0));
-	ASSERT(!INI_IsEscapeSequence("hi\\\\n", 4));
-	ASSERT(!INI_IsEscapeSequence("\\\\", 0));
+	new
+		str[16];
+	str = "\\;";
+	ASSERT(INI_IsEscapeSequence(str, 1));
+	str = "\\\\";
+	ASSERT(INI_IsEscapeSequence(str, 1));
+	str = "\\\\\\;";
+	ASSERT(INI_IsEscapeSequence(str, 3));
+	str = "\\\\\\\\";
+	ASSERT(INI_IsEscapeSequence(str, 3));
+	str = "\\\\\\n";
+	ASSERT(INI_IsEscapeSequence(str, 3));
+	str = "v\\\\\\\\";
+	ASSERT(INI_IsEscapeSequence(str, 4));
+	str = "hi\\n";
+	ASSERT(INI_IsEscapeSequence(str, 3));
+	str = ";";
+	ASSERT(!INI_IsEscapeSequence(str, 0));
+	str = "\\";
+	ASSERT(!INI_IsEscapeSequence(str, 0));
+	str = "hi\\\\n";
+	ASSERT(!INI_IsEscapeSequence(str, 4));
+	str = "\\\\";
+	ASSERT(!INI_IsEscapeSequence(str, 0));
 	// TODO: What should happen in this case?
 	//ASSERT(INI_IsEscapeSequence("\\\\\\", 1));
 	
@@ -79,16 +92,33 @@ Test:INI_IdentifyLineType1()
 	ASSERT(INI_IdentifyLineType("	\r\n", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_BLANK);
 	ASSERT(INI_IdentifyLineType("\r\n", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_BLANK);
 	// Invalid lines.
-	ASSERT(INI_IdentifyLineType("[badtag", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_INVALID);
-	ASSERT(INI_IdentifyLineType("   [tag", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_INVALID);
-	ASSERT(INI_IdentifyLineType("[tag;end]", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_INVALID);
-	ASSERT(INI_IdentifyLineType("[tag\\;end]", p0s, p0e, p1s, p1e, p2s, p2e) != e_INI_LINE_TYPE_INVALID);
-	ASSERT(INI_IdentifyLineType(" [tag\\]", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_INVALID);
-	ASSERT(INI_IdentifyLineType(" [tag\\\\]", p0s, p0e, p1s, p1e, p2s, p2e) != e_INI_LINE_TYPE_INVALID);
-	ASSERT(INI_IdentifyLineType("key", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_INVALID);
-	ASSERT(INI_IdentifyLineType("key\\=", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_INVALID);
-	ASSERT(INI_IdentifyLineType("key\\\\\\=value", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_INVALID);
-	ASSERT(INI_IdentifyLineType("\\;\r\n", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_INVALID);
+	new
+		e_INI_LINE_TYPE:result;
+	result = INI_IdentifyLineType("[badtag", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(result == e_INI_LINE_TYPE_INVALID);
+	result = INI_IdentifyLineType("   [tag", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(result == e_INI_LINE_TYPE_INVALID);
+	result = INI_IdentifyLineType("   [   ]", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(result == e_INI_LINE_TYPE_INVALID);
+	result = INI_IdentifyLineType("[tag;end]", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(result == e_INI_LINE_TYPE_INVALID);
+	result = INI_IdentifyLineType("[tag\\;end]", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(result != e_INI_LINE_TYPE_INVALID);
+	result = INI_IdentifyLineType(" [tag\\]", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(result == e_INI_LINE_TYPE_INVALID);
+	result = INI_IdentifyLineType(" [tag\\\\]", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(result != e_INI_LINE_TYPE_INVALID);
+	result = INI_IdentifyLineType("key", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(result == e_INI_LINE_TYPE_INVALID);
+	result = INI_IdentifyLineType("key\\=", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(result == e_INI_LINE_TYPE_INVALID);
+	result = INI_IdentifyLineType("key\\\\\\=value", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(result == e_INI_LINE_TYPE_INVALID);
+	result = INI_IdentifyLineType("\\;\r\n", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(result == e_INI_LINE_TYPE_INVALID);
+	result = INI_IdentifyLineType("key =  ", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(result == e_INI_LINE_TYPE_INVALID);
+	result = INI_IdentifyLineType(" = value", p0s, p0e, p1s, p1e, p2s, p2e);
 	// // Entry lines.
 	// ASSERT(INI_IdentifyLineType("", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
 	// ASSERT(INI_IdentifyLineType("", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
@@ -117,7 +147,7 @@ Test:Trim1()
 	start = 0, end = 13;
 	Trim("hello there ", start, end);
 	ASSERT(start == 0);
-	ASSERT(end == 12);
+	ASSERT(end == 11);
 }
 
 
