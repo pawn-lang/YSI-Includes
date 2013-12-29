@@ -388,29 +388,6 @@ _Y_INI_STATIC stock e_INI_LINE_TYPE:
 	// fseek(f, 0);
 // }
 
-/*_Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], &pos, const remoteFormat[], const filename[], const bool:bFileFirst)
-{
-	// Copy the basic format over.
-	strcpy(fmat, remoteFormat);
-	// Find the first "%s" (if there is one).
-	new
-		ses = strfind(remoteFormat, "%s", false, 0);
-	// No "%s"s at all.
-	if (ses == -1) return;
-	// Delete the "%s" here.
-	strdel(fmat, ses, ses + 2);
-	// Save this position for the tag.
-	if (bFileFirst) strins(fmat, filename, ses);
-	else pos = ses;
-	// Find the second "%s".
-	ses = strfind(remoteFormat, "%s", false, ses);
-	if (bFileFirst) pos = ses;
-	// Nowhere to actually save the tag.
-	if (ses == -1) return;
-	// Delete the "%s" here.
-	strdel(fmat, ses, ses + 2);
-}*/
-
 _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], &pos, const remoteFormat[], const filename[], const bool:bFileFirst)
 {
 	if ((pos = strfind(remoteFormat, "%s")) == -1)
@@ -431,12 +408,46 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], &pos, const remoteFormat[], 
 	}
 }
 
-_Y_INI_STATIC stock INI_MakeCallbackName(function[32], const pos, const tag[])
+_Y_INI_STATIC stock INI_MakeCallbackName(function[32], const pos, const len, const tag[])
 {
-	if (pos != -1) strins(funcion, tag, pos);
+	if (pos != -1)
+	{
+		strdel(function, pos, pos + len),
+		strins(function, tag, pos);
+	}
 }
 
+INI_GetCallback(const format[], tag[], str[], tagstart, tagend)
+{
+	static
+		func[32];
+	// Make a valid string end.
+	new
+		ch = str[tagstart];
+	str[tagstart] = '\0',
+	// Copy the new tag name.
+	strcpy(tag, ln[p0s]),
+	format(func, sizeof (func), format, tag);
+	str[tagstart] = ch;
+}
 
+INI_DoSomeParseBits(ln[], tag[32], const tagpos, &taglen)
+{
+	new
+		ch;
+	switch (INI_IdentifyLineType(ln, p0s, p0e, p1s, p1e, p2s, p2e, cont))
+	{
+		case e_INI_LINE_TYPE_TAG:
+		{
+			ln[p0e] = '\0',
+			// Add the tag in to the current function name.
+			INI_MakeCallbackName(function, tagpos, taglen, ln[p0s]),
+			taglen = p0e - p0s,
+			strcpy(tag, ln[p0s]),
+			ln[p0e] = ch;
+		}
+	}
+}
 
 
 

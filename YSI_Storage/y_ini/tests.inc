@@ -264,7 +264,7 @@ Test:Trim1()
 	ASSERT(end == 11);
 }
 
-Test:INI_SetupCallbackName()
+/*Test:INI_SetupCallbackName()
 {
 	new
 		dest[32],
@@ -299,7 +299,7 @@ Test:INI_SetupCallbackName()
 	ASSERT(!strcmp(dest, "fname") && pos == 5);
 	INI_SetupCallbackName(dest, pos, "%s%s", "fname", false);
 	ASSERT(!strcmp(dest, "fname") && pos == 0);
-}
+}*/
 
 
 
