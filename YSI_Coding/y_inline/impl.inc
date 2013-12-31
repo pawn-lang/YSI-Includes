@@ -505,10 +505,14 @@ stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (
 	// Start re-writing the function.  First copy "params" on to the stack.
 	@emit PROC
 	@emit LOAD.S.pri 20
-	@emit SHL.C.pri  2
+	@emit JZER.rel   (26 * 4) // "num" is zero, do the simpler version.
+	// @emit SHL.C.pri  2
+	@emit SMUL.C     (-4)
 	@emit STOR.pri   (ctx[AsmContext_buffer] + 17 * 4)
 	@emit NEG
-	@emit STOR.pri   (ctx[AsmContext_buffer] + 11 * 4)
+	@emit STOR.pri   (ctx[AsmContext_buffer] + 23 * 4)
+	@emit ADD.C      4
+	@emit STOR.pri   (ctx[AsmContext_buffer] + 27 * 4)
 	
 	// Adjust the stack by "-num * 4" bytes.
 	@emit STACK      0 // Value dynamically rewritten above.
@@ -519,21 +523,28 @@ stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (
 	@emit MOVS       0 // Value dynamically rewritten above.
 	
 	// Call the next function.
-	@emit LOAD.S.pri 20
-	@emit SHL.C.pri  2
-	@emit ADD.C      4
+	// @emit LOAD.S.pri 20
+	// @emit SHL.C.pri  2
+	// @emit ADD.C      4
 	@emit PUSH.S     12
-	@emit PUSH.pri
+	@emit PUSH.C     0
+	// @emit PUSH.pri
 	#emit CONST.pri  Callback_Call
 	#emit STOR.S.pri base
 	@emit CALL       (base + AMX_REAL_DATA + AMX_HEADER_COD)
 	
 	// End.
-	@emit MOVE.alt
-	@emit LCTRL      5
-	@emit SCTRL      4
-	@emit MOVE.pri
+	//@emit STACK      0
 	@emit RETN
+	
+	// No parameters.  Call the inline function directly.
+	@emit LOAD.S.pri 12
+	@emit ADD.C      4
+	@emit LOAD.I
+	@emit SCTRL      6
+	
+	// Only here to appease the decompiler (sometimes).
+	@emit NOP
 	
 	// Covertly call the newly re-written version of this function.
 	#emit LCTRL      5

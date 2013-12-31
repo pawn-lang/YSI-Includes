@@ -405,6 +405,10 @@ Test:Callback_Array0()
 
 Test:Callback_Array1()
 {
+	#emit LCTRL 6
+	#emit LCTRL 6
+	#emit LCTRL 6
+	#emit LCTRL 6
 	new
 		cc[E_CALLBACK_DATA];
 	inline const func(&a, string:b[], c)
