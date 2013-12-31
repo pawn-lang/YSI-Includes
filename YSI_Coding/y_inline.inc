@@ -65,6 +65,10 @@ Changelog:
 		First version
 \**--------------------------------------------------------------------------**/
 
+#if !defined YSI_MAX_INLINE_STRING
+	#define YSI_MAX_INLINE_STRING YSI_MAX_STRING
+#endif
+
 #include "y_inline/macros"
 #include "y_inline/impl"
 

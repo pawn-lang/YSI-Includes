@@ -142,6 +142,7 @@ forward _@_y_inline_@_();
 
 public _@_y_inline_@_()
 {
+	strcat("", "");
 	strcmp("", "");
 	strfind("", "");
 }
@@ -457,46 +458,13 @@ stock Callback_Restore(func[E_CALLBACK_DATA])
 
 stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 {
-	printf("Callback_Call called: %d", numargs());
-	if (numargs() == 4) printf("%x %d %c%c%c %d", getarg(0, 1), getarg(1), getarg(2, 0), getarg(2, 1), getarg(2, 2), getarg(3));
-	{}
-	// new
-		// i;
-	// #emit STACK      0xFFFFFFFC
+	// printf("Callback_Call called: %d", numargs());
+	// if (numargs() == 4) printf("%x %d %c%c%c %d", getarg(0, 1), getarg(1), getarg(2, 0), getarg(2, 1), getarg(2, 2), getarg(3));
+	{} // Zero-cost bug fix.
 	#emit LOAD.S.pri func
 	#emit ADD.C      4
 	#emit LOAD.I
-	// #emit STOR.S.pri 0xFFFFFFFC
-	// #emit PUSH.pri
-	// printf("Calling %x", i);
-	// #emit LOAD.S.pri func
-	// #emit ADD.C      4
-	// #emit LOAD.I
-	// #emit POP.pri
 	#emit SCTRL      6
-	/*
-	; Doesn't work:
-	000387dc load.s.pri 0000000c
-	000387e4 add.c 00000004
-	000387ec load.i 
-	000387f0 push.pri 
-	000387f4 pop.pri 
-	000387f8 sctrl 00000006
-	
-	; DOES work:
-	000387e0 stack fffffffc
-	000387e8 zero.pri 
-	000387ec stor.s.pri fffffffc
-	000387f4 load.s.pri 0000000c
-	000387fc add.c 00000004
-	00038804 load.i 
-	00038808 stor.s.pri fffffffc
-	00038810 pop.pri 
-	00038814 sctrl 00000006
-	
-	; Would anyone care to explain this to me?  OK, the compiler was including
-	; the assembly inside the "if" statement, as is a known bug.
-	*/
 	return 0;
 }
 
@@ -927,12 +895,20 @@ stock I@L(constFunc, ...)
 	new
 		args = numargs() - 1,
 		varCount = 0;
+	#define arrCount (args - varCount - strCount)
+	#define strCount ret
+	strCount = 0;
 	for (new i = 1; i <= args; ++i)
 	{
-		if (getarg(i) <= 0) ++varCount;
+		switch (getarg(i))
+		{
+			case 0, -1:   ++varCount;
+			case cellmax: ++strCount;
+		}
 	}
 	P:5("Inline_Main: varCount = %d", varCount);
-	P:5("Inline_Main: arrCount = %d", args - varCount);
+	P:5("Inline_Main: arrCount = %d", arrCount);
+	P:5("Inline_Main: strCount = %d", strCount);
 	// So-far, so-good.  The code above in preliminary tests seems to correctly
 	// identify all the relevant and important points in the user code.
 	new
@@ -1033,7 +1009,7 @@ stock I@L(constFunc, ...)
 		// =====================================================================
 		if (YSI_g_sCurInlineLocals)
 		{
-			YSI_g_sRequiredSpace = 4 * 4 * varCount + 4 * 6 * (args - varCount) + 4 * 13;
+			YSI_g_sRequiredSpace = 4 * 4 * varCount + 4 * 6 * arrCount + 4 * 14 * strCount + 4 * 13;
 			_@emit STACK      (-offset)
 			_@emit STACK      (YSI_g_sCurInlineLocals - argSize)
 			_@emit LREF.S.pri 12
@@ -1044,19 +1020,35 @@ stock I@L(constFunc, ...)
 				i = 0;
 			while (i < args)
 			{
-				varCount = getarg(++i) * 4;
-				if (varCount <= 0)
+				if ((varCount = getarg(++i)) == cellmax)
 				{
-					stor -= 4;
-					_@emit LREF.S.pri load
-					_@emit STOR.S.pri stor
+					// String.
+					stor -= YSI_MAX_INLINE_STRING * 4;
+					_@emit PUSH.C     YSI_MAX_INLINE_STRING
+					_@emit PUSH.S     load // src = *cur
+					_@emit ZERO.S     stor // dest[0] = '\0';
+					_@emit PUSH.adr   stor // dst = &dest
+					_@emit PUSH.C     12
+					_@emit SYSREQ     "strcat"
+					_@emit STACK      16
 				}
 				else
 				{
-					stor -= varCount;
-					_@emit LOAD.S.pri load
-					_@emit ADDR.alt   stor
-					_@emit MOVS       varCount
+					if ((varCount *= 4) <= 0)
+					{
+						// Normal variable.
+						stor -= 4;
+						_@emit LREF.S.pri load
+						_@emit STOR.S.pri stor
+					}
+					else 
+					{
+						// Array.
+						stor -= varCount;
+						_@emit LOAD.S.pri load
+						_@emit ADDR.alt   stor
+						_@emit MOVS       varCount
+					}
 				}
 				load += 4;
 			}
@@ -1067,7 +1059,7 @@ stock I@L(constFunc, ...)
 		else
 		{
 			offset -= 4,
-			YSI_g_sRequiredSpace = 4 * 4 * varCount + 4 * 6 * (args - varCount) + 4 * 11;
+			YSI_g_sRequiredSpace = 4 * 4 * varCount + 4 * 6 * arrCount + 4 * 14 * strCount + 4 * 11;
 			_@emit STACK      (-offset)
 			_@emit ADDR.alt   (-offset)
 			_@emit LREF.S.pri 12
@@ -1080,19 +1072,35 @@ stock I@L(constFunc, ...)
 				i = 0;
 			while (i < args)
 			{
-				varCount = getarg(++i) * 4;
-				if (varCount <= 0)
+				if ((varCount = getarg(++i)) == cellmax)
 				{
-					stor -= 4;
-					_@emit LREF.S.pri load
-					_@emit STOR.S.pri stor
+					// String.
+					stor -= YSI_MAX_INLINE_STRING * 4;
+					_@emit PUSH.C     YSI_MAX_INLINE_STRING
+					_@emit PUSH.S     load // src = *cur
+					_@emit ZERO.S     stor // dest[0] = '\0';
+					_@emit PUSH.adr   stor // dst = &dest
+					_@emit PUSH.C     12
+					_@emit SYSREQ     "strcat"
+					_@emit STACK      16
 				}
 				else
 				{
-					stor -= varCount;
-					_@emit LOAD.S.pri load
-					_@emit ADDR.alt   stor
-					_@emit MOVS       varCount
+					if ((varCount *= 4) <= 0)
+					{
+						// Normal variable.
+						stor -= 4;
+						_@emit LREF.S.pri load
+						_@emit STOR.S.pri stor
+					}
+					else 
+					{
+						// Array.
+						stor -= varCount;
+						_@emit LOAD.S.pri load
+						_@emit ADDR.alt   stor
+						_@emit MOVS       varCount
+					}
 				}
 				load += 4;
 			}
@@ -1121,17 +1129,18 @@ stock I@L(constFunc, ...)
 		i = 0;
 	while (i < args)
 	{
-		varCount = getarg(++i) * 4;
+		varCount = getarg(++i);
 		switch (varCount)
 		{
-			case -4:
+			case -1:
 			{
 				load -= 4;
 				@emit LOAD.S.alt load
 				@emit SREF.S.alt stor
 			}
 			case 0: load -= 4;
-			default: load -= varCount;
+			case cellmax: load -= YSI_MAX_INLINE_STRING * 4;
+			default: load -= varCount * 4;
 		}
 		stor += 4;
 	}
@@ -1164,7 +1173,11 @@ stock I@L(constFunc, ...)
 	#emit LOAD.S.alt heapClean
 	#emit ADD
 	#emit SCTRL      2
+	
+	// Cleanup.
 	return 0;
+	#undef strCount
+	#undef arrCount
 }
 
 #undef _@emit

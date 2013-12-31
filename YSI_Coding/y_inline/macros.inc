@@ -132,9 +132,14 @@ somewhere_after_this_func:
 // Detect 0 parameters.
 #define @Ia:@Ib:@Ic:@Id:@Iz:%8))for(new||||||,; %8))for(;
 
-// Detect arrays.  Get the size, defaulting to YSI_MAX_STRING.
-#define @Ib:@Ic:@Id:@Iz:%8))for(new%0|||%2[%3]|||%4,%5;I@F();)while(I@L(%7)) @Ib:@Ic:@Id:@Iz:%8))for(new%0,%2[_:@Iy:%3]|||%4|||%5;I@F();)while(I@L(%7,sizeof %2))
-#define @Iy:] YSI_MAX_STRING]
+// Detect arrays.  Get the size, defaulting to YSI_MAX_STRING (passing cellmax).
+#define @Ib:@Ic:@Id:@Iz:%8))for(new%0|||%2[%3]|||%4,%5;I@F();)while(I@L(%7)) @Ib:@Ic:@Id:@Iz:%8))for(new%0,%2[_:@Iy:%3]|||%4|||%5;I@F();)while(I@L(%7,@Ix&&&sizeof %2&&&))
+#define @Iy:]%0)while(I@L(%1&&&%2&&&%3)) YSI_MAX_INLINE_STRING]%0)while(I@L(%1%3))
+#define @Ix&&&%0&&& %0 // Remove this variable when the size is used correctly.
+
+// Default for passing strings, not arrays.
+stock const
+	@Ix = cellmax;
 
 // Detect references.
 #define @Ic:@Id:@Iz:%8))for(new%0|||%1&%2|||%4,%5;I@F();)while(I@L(%7)) @Ib:@Ic:@Id:@Iz:%8))for(new%0,%2|||%4|||%5;I@F();)while(I@L(%7,-1))

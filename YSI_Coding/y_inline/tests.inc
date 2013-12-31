@@ -313,19 +313,77 @@ Test:Callback_AA()
 		cc[E_CALLBACK_DATA];
 	inline func(&a)
 	{
-		printf("a2 = %d", a);
+		// printf("a2 = %d", a);
 		a = 7;
-		printf("a3 = %d", a);
+		// printf("a3 = %d", a);
 		//#pragma unused a
 	}
 	y_inline_Get(using inline func, cc);
 	new
 		a = 0;
-	printf("%x", cc[E_CALLBACK_DATA_POINTER]);
-	printf("a1 = %d", a);
+	// printf("%x", cc[E_CALLBACK_DATA_POINTER]);
+	// printf("a1 = %d", a);
 	Callback_Call(cc, a);
-	printf("a4 = %d", a);
+	// printf("a4 = %d", a);
 	ASSERT(a == 7);
+}
+
+Test:Callback_Arr1()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	inline const func(&a)
+	{
+		// printf("a2 = %d", a);
+		ASSERT(a == 0);
+		a = 7;
+		ASSERT(a == 7);
+		// printf("a3 = %d", a);
+		//#pragma unused a
+	}
+	y_inline_Get(using inline func, cc);
+	new
+		a = 0;
+	// printf("%x", cc[E_CALLBACK_DATA_POINTER]);
+	// printf("a1 = %d", a);
+	ASSERT(a == 0);
+	Callback_Call(cc, a);
+	// printf("a4 = %d", a);
+	ASSERT(a == 7);
+}
+
+Test:Callback_Arr2()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	inline const func(string:str[])
+	{
+		ASSERT(!strcmp(str, "hello"));
+	}
+	y_inline_Get(using inline func, cc);
+	new
+		str[YSI_MAX_STRING] = "hello";
+	Callback_Call(cc, str);
+	ASSERT(!strcmp(str, "hello"));
+	Callback_Call(cc, "hello");
+}
+
+Test:Callback_Arr3()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	inline const func(a)
+	{
+		ASSERT(a == 0);
+		a = 7;
+		ASSERT(a == 7);
+	}
+	y_inline_Get(using inline func, cc);
+	new
+		a = 0;
+	ASSERT(a == 0);
+	Callback_Call(cc, a);
+	ASSERT(a == 0);
 }
 
 Test:Callback_Array0()
@@ -339,7 +397,6 @@ Test:Callback_Array0()
 		++g;
 	}
 	y_inline_Get(using inline func, cc);
-	DisasmDump("inline6.asm");
 	// Test zero parameter calls.
 	Callback_Array(cc, "", 0);
 	Callback_Array(cc, "", 0);
@@ -352,11 +409,13 @@ Test:Callback_Array1()
 		cc[E_CALLBACK_DATA];
 	inline const func(&a, string:b[], c)
 	{
+		//printf("%d %s", c, b);
 		ASSERT(c == 6);
 		ASSERT(!strcmp(b, "hey"));
 		a = 7;
 		#pragma unused a
 	}
+	DisasmDump("inline6.asm");
 	y_inline_Get(using inline func, cc);
 	new
 		a = 0,
@@ -370,13 +429,13 @@ Test:Callback_Array1()
 	pars[2] = ref(c);
 	// Test more parameters.
 	a = 2;
-	//Callback_Array(cc, pars, 3);
+	Callback_Array(cc, pars, 3);
 	ASSERT(a == 7);
-	/*a = 11;
+	a = 11;
 	Callback_Array(cc, pars, 3);
 	ASSERT(a == 7);
 	a = 32;
 	Callback_Array(cc, pars, 3);
-	ASSERT(a == 7);*/
+	ASSERT(a == 7);
 }
 
