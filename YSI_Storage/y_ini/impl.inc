@@ -388,47 +388,87 @@ _Y_INI_STATIC stock e_INI_LINE_TYPE:
 	// fseek(f, 0);
 // }
 
-_Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], &pos, const remoteFormat[], const filename[], const bool:bFileFirst)
+/**--------------------------------------------------------------------------**\
+<summary>INI_SetupCallbackName</summary>
+<param name="fmat[]">The format destination.</param>
+<param name="const remoteFormat[]">The source format.</param>
+<param name="const filename[]">The file we are currently parsing.</param>
+<param name="const bool:bFileFirst">The format parameter ordering.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Generates a partial function name for processing callbacks.  Includes the
+	filename and a placeholder for the tag name.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], const filename[], const bool:bFileFirst)
 {
-	if ((pos = strfind(remoteFormat, "%s")) == -1)
-	{
-		// There is no "%s", just copy the result.
-		strcpy(fmat, remoteFormat);
-	}
-	else if (bFileFirst)
-	{
-		// Account for the filename length in the position finding.
-		pos = strfind(remoteFormat, "%s", false, pos + 2);
-		if (pos != -1) pos += strlen(filename) - 2;
-		format(fmat, sizeof (fmat), remoteFormat, filename, "");
-	}
-	else
-	{
-		format(fmat, sizeof (fmat), remoteFormat, "", filename);
-	}
+	if (bFileFirst) format(fmat, sizeof (fmat), remoteFormat, filename, "%s");
+	else format(fmat, sizeof (fmat), remoteFormat, "%s", filename);
 }
 
-_Y_INI_STATIC stock INI_MakeCallbackName(function[32], const pos, const len, const tag[])
-{
-	if (pos != -1)
-	{
-		strdel(function, pos, pos + len),
-		strins(function, tag, pos);
-	}
-}
+#endinput
 
-INI_GetCallback(const format[], tag[], str[], tagstart, tagend)
+/**--------------------------------------------------------------------------**\
+<summary>INI_GetCallback</summary>
+<param name="callback[E_CALLBACK_DATA]">The callback destination.</param>
+<param name="const format[]">The function name format.</param>
+<param name="tag[]">The tag destination.</param>
+<param name="const input[]">The tag source.</param>
+<param name="const len">The tag length.</param>
+<param name="tag[]">The tag destination.</param>
+<param name="callbackFormat[]">The callback parameter specifiers.</param>
+<param name="const bool:bLocal">Don't use "CallRemoteFunction".</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Gets a callback given a partial function name and a tag name.  Also saves
+	the tag elsewhere.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_INI_STATIC stock bool:INI_GetCallback(callback[E_CALLBACK_DATA], const format[], tag[], const input[], const len, callbackFormat[], const bool:bLocal)
 {
 	static
 		func[32];
-	// Make a valid string end.
-	new
-		ch = str[tagstart];
-	str[tagstart] = '\0',
-	// Copy the new tag name.
-	strcpy(tag, ln[p0s]),
-	format(func, sizeof (func), format, tag);
-	str[tagstart] = ch;
+	if (bLocal)
+	{
+		return
+			// Copy the new tag name.
+			tag[0] = '\0',
+			strcat(tag, input, len + 1),
+			// Make the function name.
+			format(func, sizeof (func), format, tag),
+			// Find the function.
+			Callback_Get(callback_tag:func, callback, callbackFormat);
+	}
+	else
+	{
+	}
+}
+
+INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTag, callbackFormat[5])
+{
+	/*new
+		pos = 0;
+	if (bExtra)   callbackFormat[pos++] = 'i';
+	if (bPassTag) callbackFormat[pos++] = 's';
+	callbackFormat[pos++] = 's',
+	callbackFormat[pos++] = 's',
+	callbackFormat[pos] = '\0';*/
+	if (bExtra)
+	{
+		if (bPassTag) callbackFormat = _F<isss>;
+		else          callbackFormat = _F<iss>;
+	}
+	else
+	{
+		if (bPassTag) callbackFormat = _F<sss>;
+		else          callbackFormat = _F<ss>;
+	}
 }
 
 INI_DoSomeParseBits(ln[], tag[32], const tagpos, &taglen)

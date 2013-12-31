@@ -264,42 +264,41 @@ Test:Trim1()
 	ASSERT(end == 11);
 }
 
-/*Test:INI_SetupCallbackName()
+Test:INI_SetupCallbackName()
 {
 	new
-		dest[32],
-		pos;
-	INI_SetupCallbackName(dest, pos, "%s", "", false);
-	ASSERT(dest[0] == '\0' && pos == 0);
-	INI_SetupCallbackName(dest, pos, "%s", "", true);
-	ASSERT(dest[0] == '\0' && pos < 0);
-	INI_SetupCallbackName(dest, pos, "%s", "fname", true);
-	ASSERT(!strcmp(dest, "fname") && pos < 0);
-	INI_SetupCallbackName(dest, pos, "hello%sthere", "", false);
-	ASSERT(!strcmp(dest, "hellothere") && pos == 5);
-	INI_SetupCallbackName(dest, pos, "hello%sthere", "", true);
-	ASSERT(!strcmp(dest, "hellothere") && pos < 0);
-	INI_SetupCallbackName(dest, pos, "how%sare%syou", "", false);
-	ASSERT(!strcmp(dest, "howareyou") && pos == 3);
-	INI_SetupCallbackName(dest, pos, "how%sare%syou", "", true);
-	ASSERT(!strcmp(dest, "howareyou") && pos == 6);
-	INI_SetupCallbackName(dest, pos, "hello%sthere", "fname", false);
-	ASSERT(!strcmp(dest, "hellothere") && pos == 5);
-	INI_SetupCallbackName(dest, pos, "hello%sthere", "fname", true);
-	ASSERT(!strcmp(dest, "hellofnamethere") && pos < 0);
-	INI_SetupCallbackName(dest, pos, "how%sare%syou", "fname", false);
-	ASSERT(!strcmp(dest, "howarefnameyou") && pos == 3);
-	INI_SetupCallbackName(dest, pos, "how%sare%syou", "fname", true);
-	ASSERT(!strcmp(dest, "howfnameareyou") && pos == 11);
-	INI_SetupCallbackName(dest, pos, "foobar", "fname", true);
-	ASSERT(!strcmp(dest, "foobar") && pos < 0);
-	INI_SetupCallbackName(dest, pos, "foobar", "fname", false);
-	ASSERT(!strcmp(dest, "foobar") && pos < 0);
-	INI_SetupCallbackName(dest, pos, "%s%s", "fname", true);
-	ASSERT(!strcmp(dest, "fname") && pos == 5);
-	INI_SetupCallbackName(dest, pos, "%s%s", "fname", false);
-	ASSERT(!strcmp(dest, "fname") && pos == 0);
-}*/
+		dest[32];
+	INI_SetupCallbackName(dest, "%s", "", false);
+	ASSERT(!strcmp(dest, "%s"));
+	INI_SetupCallbackName(dest, "%s", "", true);
+	ASSERT(dest[0] == '\0');
+	INI_SetupCallbackName(dest, "%s", "fname", true);
+	ASSERT(!strcmp(dest, "fname"));
+	INI_SetupCallbackName(dest, "hello%sthere", "", false);
+	ASSERT(!strcmp(dest, "hello%sthere"));
+	INI_SetupCallbackName(dest, "hello%sthere", "", true);
+	ASSERT(!strcmp(dest, "hellothere"));
+	INI_SetupCallbackName(dest, "how%sare%syou", "", false);
+	ASSERT(!strcmp(dest, "how%sareyou"));
+	INI_SetupCallbackName(dest, "how%sare%syou", "", true);
+	ASSERT(!strcmp(dest, "howare%syou"));
+	INI_SetupCallbackName(dest, "hello%sthere", "fname", false);
+	ASSERT(!strcmp(dest, "hello%sthere"));
+	INI_SetupCallbackName(dest, "hello%sthere", "fname", true);
+	ASSERT(!strcmp(dest, "hellofnamethere"));
+	INI_SetupCallbackName(dest, "how%sare%syou", "fname", false);
+	ASSERT(!strcmp(dest, "how%sarefnameyou"));
+	INI_SetupCallbackName(dest, "how%sare%syou", "fname", true);
+	ASSERT(!strcmp(dest, "howfnameare%syou"));
+	INI_SetupCallbackName(dest, "foobar", "fname", true);
+	ASSERT(!strcmp(dest, "foobar"));
+	INI_SetupCallbackName(dest, "foobar", "fname", false);
+	ASSERT(!strcmp(dest, "foobar"));
+	INI_SetupCallbackName(dest, "%s%s", "fname", true);
+	ASSERT(!strcmp(dest, "fname%s"));
+	INI_SetupCallbackName(dest, "%s%s", "fname", false);
+	ASSERT(!strcmp(dest, "%sfname"));
+}
 
 
 

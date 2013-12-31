@@ -94,6 +94,8 @@ Changelog:
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Core\y_als"
 
+#include "..\YSI_Internal\y_cgen"
+
 #include "..\amx\asm"
 //asm"
 
@@ -109,8 +111,6 @@ Changelog:
 //#define @yH_OnScriptInit @yH_ScriptInit
 
 _Y_HOOKS_STATIC stock
-	YSI_g_sCodeSpace,
-	YSI_g_sCodeEnd,
 	YSI_g_sOnGameModeInit,
 	YSI_g_sOnFilterScriptInit,
 	YSI_g_sOnScriptInit;
@@ -560,7 +560,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		ctx[AsmContext];
 	// Make sure the underlying system doesn't change without us.  Now supported
 	// natively.
-	AsmInitPtr(ctx, YSI_g_sCodeSpace, YSI_g_sCodeEnd - YSI_g_sCodeSpace);
+	CGen_UseCodeSpace(ctx);
 	
 	// Start of the function.
 	@emit PROC              // 1
@@ -580,7 +580,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	// generate self-modifying code (just to be UBER meta)!  This code is
 	// generated AFTER the file is loaded so we bypass the data segment checks
 	// and can freely write wherever we want.
-	@emit STOR.pri      (YSI_g_sCodeSpace + (18 * 4) - (multiple ? 0 : 8)) // 13
+	@emit STOR.pri      (CGen_GetCodeSpace() + (18 * 4) - (multiple ? 0 : 8)) // 13
 	
 	// Do the copying.  "alt" is already "STK", load the "FRM" offset.
 	@emit LCTRL         5   // 15
@@ -928,7 +928,7 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 	if (entry)
 	{
 		// Point "original"'s function pointer to the new function.
-		idx = YSI_g_sCodeSpace - AMX_HEADER_COD,
+		idx = CGen_GetCodeSpace() - AMX_HEADER_COD,
 		AMX_Write(original, idx);
 		// Save the address for hooks later.  These three can't be done normally
 		// because they have already been started by this point.  I did use
@@ -939,7 +939,7 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 			case 0b0010: YSI_g_sOnFilterScriptInit = idx;
 			case 0b0100: YSI_g_sOnGameModeInit = idx;
 		}
-		YSI_g_sCodeSpace += entry;
+		CGen_AddCodeSpace(entry);
 	}
 	else
 	{
@@ -974,15 +974,6 @@ public OnScriptInit()
 		entry,
 		idx;
 	P:C(for (idx = 0; ((idx = AMX_GetPublicEntry(idx, entry))); ) { Hooks_GetName(entry, func); printf("Hooks_OnScriptInit: %03d) %s (%08x) = %08x", idx - 1, unpack(func), Hooks_GetAddr(entry + 4), Hooks_GetAddr(entry)); });
-	// Get our code space relative to "DAT".
-	entry = AMX_HEADER_PUBLICS + funcidx("_@_y_hooks_@_0") * 8;
-	YSI_g_sCodeSpace = AMX_HEADER_COD + AMX_Read(entry);
-	Hooks_InvalidateName(entry);
-	// Determine EXACTLY how much space we have to play with.
-	entry = AMX_HEADER_PUBLICS + funcidx("_@_y_hooks_@_1") * 8;
-	// Scrounge an extra 8 bytes from the following function too.
-	YSI_g_sCodeEnd = AMX_HEADER_COD + AMX_Read(entry) + 8;
-	Hooks_InvalidateName(entry);
 	// Find all hook functions in order (at least find the first one in a set).
 	P:C(idx=0;);
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))

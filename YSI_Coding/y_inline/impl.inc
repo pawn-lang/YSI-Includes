@@ -90,6 +90,8 @@ Changelog:
 #include "..\YSI_Data\y_bit"
 #include "y_malloc"
 
+#include "..\YSI_Internal\y_cgen"
+
 #define INLINE_TYPE_VAR (0b00)
 #define INLINE_TYPE_REF (0b10)
 #define INLINE_TYPE_STR (0b01)
@@ -97,10 +99,11 @@ Changelog:
 
 enum E_CALLBACK_DATA
 {
-	// ===== ALWAYS FIRST =====
-	ResolvedAlloc:E_CALLBACK_DATA_ALLOC, // Fully resolved address.
-	// ===== ALWAYS AFTER =====
-	E_CALLBACK_DATA_POINTER,
+	// ===== ALWAYS FIRST  =====
+	ResolvedAlloc:E_CALLBACK_DATA_ALLOC = 0, // Fully resolved address.
+	// ===== ALWAYS SECOND =====
+	E_CALLBACK_DATA_POINTER = 1,             // Inline entry point.
+	// ===== ALWAYS AFTER  =====
 	E_CALLBACK_DATA_OFFSET,
 	E_CALLBACK_DATA_FORMAT[2]
 }
@@ -124,6 +127,16 @@ static stock const
 
 stock
 	InlineRet:YSI_gInlineRet;
+
+/**--------------------------------------------------------------------------**\
+<summary>_@_y_inline_@_</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Calls functions we call via "SYSREQ.C".
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 forward _@_y_inline_@_();
 
@@ -168,6 +181,54 @@ public _@_y_inline_@_()
 */
 
 /**--------------------------------------------------------------------------**\
+<summary>GetStoredFunction</summary>
+<param name="func[]">Public function to get.</param>
+<param name="fmat[]">The structure of the function's parameters.</param>
+<returns>
+	A pointer to the function.
+</returns>
+<remarks>
+	Accepts the following parameter specifiers:
+	
+		i - Integer (also x/c/d/h)
+		f - Float (also g)
+		s - String
+		ai - Array (followed by length)
+		v - Reference (&var, any tag)
+	
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Function:GetStoredFunction(const func[], const fmat[])
+{
+	// Get the function pointer.
+	new
+		fptr = funcidx(func);
+	// Find the first match.
+	if (fptr == -1) return Function:-1;
+	return Function:StoredF_WritePublicCode(fptr, fmat);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>GetStoredFunction</summary>
+<param name="func">Function pointer to call.</param>
+<param name="...">The function's parameters.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Call the function in the given pointer with the given parameters.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
+{
+	#emit LOAD.S.pri    func
+	#emit SCTRL         6
+	return 0;
+}
+
+/**--------------------------------------------------------------------------**\
 <summary>Callback_Get</summary>
 <param name="callback:name">Callback to find by name.</param>
 <param name="ret[E_CALLBACK_DATA]">Where to store the pointer.</param>
@@ -186,18 +247,16 @@ public _@_y_inline_@_()
 stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
 {
 	P:2("Callback_Get called: %s", name);
-	static
-		fmat[2];
-	Inline_EncodeFromatString(expect, fmat),
-	ret[E_CALLBACK_DATA_FORMAT] = fmat;
+	ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:0;
 	if (name[0] == callback_tag:'\03')
 	{
 		new
-			ptr;
-		if (AMX_GetPublicPointer(0, ptr, name[1], true))
+			ptr = _:GetStoredFunction(name[1], expect);
+		if (ptr != -1)
 		{
-			ret[E_CALLBACK_DATA_POINTER] = ptr | 0x80000000;
-			return true;
+			return
+				ret[E_CALLBACK_DATA_POINTER] = ptr,
+				true;
 		}
 		return false;
 	}
@@ -251,14 +310,19 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
 		if (!cur)
 		{
 			// Try publics...
-			if (AMX_GetPublicPointer(0, pos, name, true))
+			if ((pos = _:GetStoredFunction(name[1], expect)) != -1)
 			{
-				ret[E_CALLBACK_DATA_POINTER] = pos | 0x80000000;
-				return true;
+				return
+					ret[E_CALLBACK_DATA_POINTER] = pos,
+					true;
 			}
 			return false;
 		}
 	}
+	static
+		fmat[2];
+	Inline_EncodeFormatString(expect, fmat),
+	ret[E_CALLBACK_DATA_FORMAT] = fmat,
 	// Load this inline function's data in to our closure (and allocate memory).
 	ret[E_CALLBACK_DATA_POINTER] = name[pos + 1];
 	new
@@ -319,22 +383,18 @@ stock Callback_Release(input[E_CALLBACK_DATA])
 	static
 		ResolvedAlloc:ra,
 		Alloc:a;
-	if (!(input[E_CALLBACK_DATA_POINTER] & 0x80000000))
+	if ((ra = input[E_CALLBACK_DATA_ALLOC]))
 	{
-		ra = input[E_CALLBACK_DATA_ALLOC];
-		if (ra)
-		{
-			#emit CONST.alt     YSI_gMallocMemory
-			#emit LOAD.pri      ra
-			#emit SUB
-			#emit SHR.C.pri     2
-			#emit STOR.pri      a
-			// Publics don't have any stored data.
-			free(a);
-		}
-		input[E_CALLBACK_DATA_POINTER] = 0,
+		#emit CONST.alt     YSI_gMallocMemory
+		#emit LOAD.pri      ra
+		#emit SUB
+		#emit SHR.C.pri     2
+		#emit STOR.pri      a
+		// Publics don't have any stored data.
+		free(a),
 		input[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:0;
 	}
+	input[E_CALLBACK_DATA_POINTER] = 0;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -395,96 +455,49 @@ stock Callback_Restore(func[E_CALLBACK_DATA])
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock Callback_Call(func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
+stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 {
-	static
-		addr;
-	addr = func[E_CALLBACK_DATA_POINTER];
-	if (addr & 0x80000000)
-	{
-		static
-			ts[2];
-		addr &= ~0x80000000,
-		ts[0] = func[E_CALLBACK_DATA_FORMAT][0],
-		ts[1] = func[E_CALLBACK_DATA_FORMAT][1];
-		new
-			at = 6,
-			mm = (ts[0] & 0b00111110) + 6,
-			len,
-			end,
-			var;
-		#emit LOAD.S.alt    8 // Get the parameter count.
-		#emit LCTRL         5 // Get the current frame.
-		#emit ADD
-		#emit ADD.C         8 // Adjust for header and "func".
-		#emit STOR.S.pri    var
-		#emit LCTRL         5 // Get the end.
-		#emit ADD.C         12
-		#emit STOR.S.pri    end
-		P:5("Inline_Call: at = %d, mm = %d", at, mm);
-		if (ts[0] & 0x01)
-		{
-			// Only has variables and references, easy to decode.
-			while (at < mm)
-			{
-				if (var == end) return P:E("Insufficient parameters for Callback_Call.");
-				if (Inline_DecodeSimple(ts, at))
-				{
-					P:7("INLINE_TYPE_REF");
-					#emit LREF.S.pri  var
-					#emit PUSH.pri
-				}
-				else
-				{
-					P:7("INLINE_TYPE_VAR");
-					#emit LREF.S.pri  var
-					#emit LOAD.I
-					#emit PUSH.pri
-				}
-				var -= 4;
-			}
-		}
-		else
-		{
-			// Can have arrays, harder to decode.
-			while (at < mm)
-			{
-				if (var == end) return P:E("Insufficient parameters for Callback_Call.");
-				if (Inline_DecodeComplex(ts, at, len) == INLINE_TYPE_VAR)
-				{
-					P:7("INLINE_TYPE_VAR");
-					#emit LREF.S.pri  var
-					#emit LOAD.I
-					#emit PUSH.pri
-				}
-				else
-				{
-					P:7("INLINE_TYPE_REF/STR/ARR: %d", len);
-					#emit LREF.S.pri  var
-					#emit PUSH.pri
-				}
-				var -= 4;
-			}
-		}
-		// Push the parameter count.
-		var = (numargs() - 1) * 4;
-		#emit PUSH.S    var
-		// "Standard" function call.
-		#emit LCTRL     6
-		#emit ADD.C     28
-		#emit PUSH.pri
-		#emit LOAD.pri  addr
-		#emit SCTRL     6
-		#emit STACK     20
-		#emit RETN
-	}
-	else
-	{
-		// Jump straight in to the code.
-		#emit LOAD.pri  addr
-		#emit SCTRL     6
-	}
-	return 1;
+	printf("Callback_Call called: %d", numargs());
+	if (numargs() == 4) printf("%x %d %c%c%c %d", getarg(0, 1), getarg(1), getarg(2, 0), getarg(2, 1), getarg(2, 2), getarg(3));
+	{}
+	// new
+		// i;
+	// #emit STACK      0xFFFFFFFC
+	#emit LOAD.S.pri func
+	#emit ADD.C      4
+	#emit LOAD.I
+	// #emit STOR.S.pri 0xFFFFFFFC
+	// #emit PUSH.pri
+	// printf("Calling %x", i);
+	// #emit LOAD.S.pri func
+	// #emit ADD.C      4
+	// #emit LOAD.I
+	// #emit POP.pri
+	#emit SCTRL      6
+	/*
+	; Doesn't work:
+	000387dc load.s.pri 0000000c
+	000387e4 add.c 00000004
+	000387ec load.i 
+	000387f0 push.pri 
+	000387f4 pop.pri 
+	000387f8 sctrl 00000006
+	
+	; DOES work:
+	000387e0 stack fffffffc
+	000387e8 zero.pri 
+	000387ec stor.s.pri fffffffc
+	000387f4 load.s.pri 0000000c
+	000387fc add.c 00000004
+	00038804 load.i 
+	00038808 stor.s.pri fffffffc
+	00038810 pop.pri 
+	00038814 sctrl 00000006
+	
+	; Would anyone care to explain this to me?  OK, the compiler was including
+	; the assembly inside the "if" statement, as is a known bug.
+	*/
+	return 0;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -504,128 +517,65 @@ stock Callback_Call(func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 	normally.  If the target is an inline function we are optimised for the
 	common case, so move the data on to the stack (currently done value-by-value
 	not all at once) and call "Callback_Call".
+	
+	The new assembly is based on "rawMemset" in "y_utils".
 </remarks>
 \**--------------------------------------------------------------------------**/
 
 stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (params))
 {
-	static
-		addr;
-	addr = func[E_CALLBACK_DATA_POINTER];
-	if (addr & 0x80000000)
-	{
-		static
-			ts[2];
-		addr &= ~0x80000000,
-		ts[0] = func[E_CALLBACK_DATA_FORMAT][0],
-		ts[1] = func[E_CALLBACK_DATA_FORMAT][1];
-		new
-			at = 6,
-			mm = (ts[0] & 0b00111110) + 6,
-			len,
-			end,
-			var;
-		// Get "params" into a pointer.
-		#emit LOAD.S.alt    params
-		#emit STOR.S.alt    end
-		#emit LOAD.S.pri    num
-		#emit SHL.C.pri     2
-		#emit ADD
-		#emit STOR.S.pri    var
-		P:5("Inline_Call: at = %d, mm = %d", at, mm);
-		if (ts[0] & 0x01)
-		{
-			// Only has variables and references, easy to decode.
-			while (at < mm)
-			{
-				if (var == end) return P:E("Insufficient parameters for Callback_Array.");
-				var -= 4;
-				if (Inline_DecodeSimple(ts, at))
-				{
-					P:7("INLINE_TYPE_REF");
-					#emit LREF.S.pri  var
-					#emit PUSH.pri
-				}
-				else
-				{
-					P:7("INLINE_TYPE_VAR");
-					#emit LREF.S.pri  var
-					#emit LOAD.I
-					#emit PUSH.pri
-				}
-			}
-		}
-		else
-		{
-			// Can have arrays, harder to decode.
-			while (at < mm)
-			{
-				if (var == end) return P:E("Insufficient parameters for Callback_Array.");
-				var -= 4;
-				if (Inline_DecodeComplex(ts, at, len) == INLINE_TYPE_VAR)
-				{
-					P:7("INLINE_TYPE_VAR");
-					#emit LREF.S.pri  var
-					#emit LOAD.I
-					#emit PUSH.pri
-				}
-				else
-				{
-					P:7("INLINE_TYPE_REF/STR/ARR: %d", len);
-					#emit LREF.S.pri  var
-					#emit PUSH.pri
-				}
-			}
-		}
-		// Push the parameter count.
-		#emit LOAD.S.pri  num
-		#emit SHL.C.pri   2
-		#emit PUSH.pri
-		// "Standard" function call.
-		#emit LCTRL     6
-		#emit ADD.C     28
-		#emit PUSH.pri
-		#emit LOAD.pri  addr
-		#emit SCTRL     6
-		#emit STACK     20
-		#emit RETN
-	}
-	else
-	{
-		new
-			len,
-			end,
-			var;
-		// Get "params" into a pointer.
-		#emit LOAD.S.alt    params
-		#emit STOR.S.alt    end
-		#emit LOAD.S.pri    num
-		#emit SHL.C.pri     2
-		#emit ADD
-		#emit STOR.S.pri    var
-		while (var > end)
-		{
-			var -= 4;
-			#emit LREF.S.pri  var
-			#emit PUSH.pri
-		}
-		#emit PUSH.S      func
-		// Push the parameter count.
-		#emit LOAD.S.pri  num
-		#emit SHL.C.pri   2
-		#emit ADD.C       4
-		#emit PUSH.pri
-		// "Standard" function call.
-		#emit LCTRL     6
-		#emit ADD.C     28
-		#emit PUSH.pri
-		#emit CONST.pri Callback_Call
-		#emit SCTRL     6
-		#emit STACK     12
-		#emit RETN
-	}
+	new
+		base,
+		ctx[AsmContext];
+	// Get this function.
+	#emit CONST.pri  Callback_Array
+	#emit LOAD.alt   AMX_HEADER_COD
+	#emit ADD
+	#emit STOR.S.pri base
+	AsmInitPtr(ctx, base, 200); // Don't need any more than that.
+	
+	// Start re-writing the function.  First copy "params" on to the stack.
+	@emit PROC
+	@emit LOAD.S.pri 20
+	@emit SHL.C.pri  2
+	@emit STOR.pri   (ctx[AsmContext_buffer] + 17 * 4)
+	@emit NEG
+	@emit STOR.pri   (ctx[AsmContext_buffer] + 11 * 4)
+	
+	// Adjust the stack by "-num * 4" bytes.
+	@emit STACK      0 // Value dynamically rewritten above.
+	// Store the new pointer in "alt".
+	@emit STACK      0 // Equivalent to: LCTRL 4; MOVE.alt (not rewritten).
+	// Copy "num * 4" bytes from *pri to *alt (i.e. on to the stack).
+	@emit LOAD.S.pri 16
+	@emit MOVS       0 // Value dynamically rewritten above.
+	
+	// Call the next function.
+	@emit LOAD.S.pri 20
+	@emit SHL.C.pri  2
+	@emit ADD.C      4
+	@emit PUSH.S     12
+	@emit PUSH.pri
+	#emit CONST.pri  Callback_Call
+	#emit STOR.S.pri base
+	@emit CALL       (base + AMX_REAL_DATA + AMX_HEADER_COD)
+	
+	// End.
+	@emit MOVE.alt
+	@emit LCTRL      5
+	@emit SCTRL      4
+	@emit MOVE.pri
+	@emit RETN
+	
+	// Covertly call the newly re-written version of this function.
+	#emit LCTRL      5
+	#emit SCTRL      4
+	#emit CONST.pri  Callback_Array
+	#emit ADD.C      4
+	#emit SCTRL      6
+	
 	// Never called, but includes the other function.
-	return Callback_Call(func);
+	return Callback_Call(func, params, num);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1221,6 +1171,127 @@ stock I@L(constFunc, ...)
 
 /*
 
+    88888888ba              88          88 88                       
+    88      "8b             88          88 ""                       
+    88      ,8P             88          88                          
+    88aaaaaa8P' 88       88 88,dPPYba,  88 88  ,adPPYba, ,adPPYba,  
+    88""""""'   88       88 88P'    "8a 88 88 a8"     "" I8[    ""  
+    88          88       88 88       d8 88 88 8b          `"Y8ba,   
+    88          "8a,   ,a88 88b,   ,a8" 88 88 "8a,   ,aa aa    ]8I  
+    88           `"YbbdP'Y8 8Y"Ybbd8"'  88 88  `"Ybbd8"' `"YbbdP"'  
+
+*/
+
+/**--------------------------------------------------------------------------**\
+<summary>StoredF_IsHooked</summary>
+<param name="addr">Function start address.</param>
+<returns>
+	Is the function at this address already hooked by us?
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static stock StoredF_IsHooked(addr)
+{
+	// Find out if the given address points to a public function that we have
+	// already hooked in to for faster calling.
+	return AMX_Read(addr + AMX_HEADER_COD) == _:RelocateOpcode(OP_JUMP);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>StoredF_OnPubGenError</summary>
+<param name="ctx[AsmContext]">Current code generation context.</param>
+<param name="AsmError:error">The error given.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	This is a fatal error as there isn't really anything we can do about it.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+forward StoredF_OnPubGenError(ctx[AsmContext], AsmError:error);
+
+public StoredF_OnPubGenError(ctx[AsmContext], AsmError:error)
+{
+	// This is very bad, in fact I'd say this is a fatal error.
+	P:F("Inline_OnPubGenError called - Try increase\"YSI_Internal\\y_cgen.inc: _@_y_cgen_@_0\"'s code size");
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>StoredF_WritePublicCode</summary>
+<param name="fptr">Function start address.</param>
+<param name="fmat[]">Function parameter types.</param>
+<returns>
+	the new function pointer.
+</returns>
+<remarks>
+	Writes a stub for calling a public function with an alternate method.
+	Because "CallStoredFunction" (the call entry point) takes all its parameters
+	by reference and some of the actual function's parameters won't be, we have
+	to generate the code to convert those that aren't to values only.  Also,
+	because "CallStoredFunction" takes an extra parameter that's the address of
+	the function to call, we have to wipe that from the stack and update the
+	resulting frame header.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static stock StoredF_WritePublicCode(fptr, const fmat[])
+{
+	new
+		entry = AMX_HEADER_PUBLICS + fptr * 8;
+	fptr = AMX_Read(entry);
+	if (StoredF_IsHooked(fptr)) return fptr + 8;
+	new
+		ctx[AsmContext];
+	CGen_UseCodeSpace(ctx),
+	AsmSetErrorHandler(ctx, GetPublicAddressFromName("StoredF_OnPubGenError"));
+	// Rewrite the function pointer.
+	new
+		nptr = CGen_GetCodeSpace() - AMX_HEADER_COD;
+	AMX_Write(entry, nptr);
+	// Get the absolute address of "fptr".
+	fptr += AMX_HEADER_COD + AMX_REAL_DATA;
+	// Jump to the original function when called in other ways.
+	@emit JUMP          fptr
+	// Inline calls use the address AFTER that jump to do extra work.
+	// First, adjust the stack.
+	@emit POP.alt       // Pop the previous frame.
+	@emit POP.pri       // Pop the return address.
+	@emit SWAP.pri      // Swap the return address and parameter count.
+	@emit ADD.C         (-4) // Remove one parameter.
+	@emit STOR.S.pri    12   // Save the new parameter count.
+	// Update the frame pointer.
+	@emit PROC          // Write a new frame pointer to update the stack.
+	@emit SWAP.alt      // Swap the new "previous" frame with the real one.
+	// Reify reference variables that shouldn't be so.
+	new
+		var = strlen(fmat);
+	entry = var * 4 + 8;
+	while (var--)
+	{
+		switch (fmat[var])
+		{
+			case 'a', 's', 'v': {} // No modification required.
+			default:
+			{
+				// Resolve the reference's value.
+				@emit LREF.S.alt entry
+				@emit STOR.S.alt entry
+			}
+		}
+		entry -= 4;
+	}
+	// Now we jump to the original function.
+	@emit JUMP          (fptr + 4)
+	CGen_AddCodeSpace(AsmGetCodeSize(ctx));
+	return nptr + 8;
+}
+
+/*
+
     88888888888                                             88 88                          
     88                                                      88 ""                          
     88                                                      88                             
@@ -1285,7 +1356,7 @@ static stock Inline_DecodeComplex(from[], &at, &len)
 	return type;
 }
 
-static stock Inline_EncodeFromatString(const str[], ret[2])
+static stock Inline_EncodeFormatString(const str[], ret[2])
 {
 	new
 		size = 0,

@@ -83,7 +83,7 @@ Test:y_inline1()
 	{
 		@return 42;
 	}
-	printf("%d %d %d %d %d", func[0], func[1], func[2], func[3], func[4]);
+	//printf("%d %d %d %d %d", func[0], func[1], func[2], func[3], func[4]);
 	y_inline_Get(using inline func, cc);
 	ASSERT(Callback_Call(cc) == 42);
 	Callback_Release(cc);
@@ -306,3 +306,77 @@ Test:y_inline13()
 	ASSERT(g == 5);
 	Callback_Release(cc);
 }
+
+Test:Callback_AA()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	inline func(&a)
+	{
+		printf("a2 = %d", a);
+		a = 7;
+		printf("a3 = %d", a);
+		//#pragma unused a
+	}
+	y_inline_Get(using inline func, cc);
+	new
+		a = 0;
+	printf("%x", cc[E_CALLBACK_DATA_POINTER]);
+	printf("a1 = %d", a);
+	Callback_Call(cc, a);
+	printf("a4 = %d", a);
+	ASSERT(a == 7);
+}
+
+Test:Callback_Array0()
+{
+	new
+		g = 5,
+		cc[E_CALLBACK_DATA];
+	inline const func()
+	{
+		ASSERT(g == 5);
+		++g;
+	}
+	y_inline_Get(using inline func, cc);
+	DisasmDump("inline6.asm");
+	// Test zero parameter calls.
+	Callback_Array(cc, "", 0);
+	Callback_Array(cc, "", 0);
+	Callback_Array(cc, "", 0);
+}
+
+Test:Callback_Array1()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	inline const func(&a, string:b[], c)
+	{
+		ASSERT(c == 6);
+		ASSERT(!strcmp(b, "hey"));
+		a = 7;
+		#pragma unused a
+	}
+	y_inline_Get(using inline func, cc);
+	new
+		a = 0,
+		str[4] = "hey",
+		c = 6,
+		pars[3];
+	Callback_Call(cc, a, str, c);
+	ASSERT(a == 7);
+	pars[0] = ref(a);
+	pars[1] = ref(str);
+	pars[2] = ref(c);
+	// Test more parameters.
+	a = 2;
+	//Callback_Array(cc, pars, 3);
+	ASSERT(a == 7);
+	/*a = 11;
+	Callback_Array(cc, pars, 3);
+	ASSERT(a == 7);
+	a = 32;
+	Callback_Array(cc, pars, 3);
+	ASSERT(a == 7);*/
+}
+

@@ -65,11 +65,13 @@ Changelog:
 		First version
 \**--------------------------------------------------------------------------**/
 
-// Allocate space on the heap permanently.
 #include "y_inline/macros"
-// Functions to access the data on the heap.
 #include "y_inline/impl"
+
 #if defined YSI_TESTS
+	#include "..\amx\amx_memory.inc"
+	
 	#include "..\YSI_Core\y_testing"
 	#include "y_inline/tests"
 #endif
+
