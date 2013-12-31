@@ -523,18 +523,13 @@ stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (
 	@emit MOVS       0 // Value dynamically rewritten above.
 	
 	// Call the next function.
-	// @emit LOAD.S.pri 20
-	// @emit SHL.C.pri  2
-	// @emit ADD.C      4
 	@emit PUSH.S     12
 	@emit PUSH.C     0
-	// @emit PUSH.pri
 	#emit CONST.pri  Callback_Call
 	#emit STOR.S.pri base
 	@emit CALL       (base + AMX_REAL_DATA + AMX_HEADER_COD)
 	
 	// End.
-	//@emit STACK      0
 	@emit RETN
 	
 	// No parameters.  Call the inline function directly.
