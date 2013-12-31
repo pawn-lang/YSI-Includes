@@ -419,7 +419,7 @@ Test:Callback_Array1()
 		a = 7;
 		#pragma unused a
 	}
-	DisasmDump("inline6.asm");
+	//DisasmDump("inline6.asm");
 	y_inline_Get(using inline func, cc);
 	new
 		a = 0,
