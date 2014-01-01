@@ -109,6 +109,8 @@ enum E_CALLBACK_DATA
 }
 
 static stock
+	YSI_g_sRemoteFunctions = -1, // Pointer to the remote function stubs list.
+	YSI_g_sRemoteHandlers = -1, // Pointer to the remote function handlers.
 	YSI_g_sPrevInlineFunc = 0,
 	YSI_g_sPrevJumpOver = 0,
 	YSI_g_sCurInlineLocals,  // Number of locals in current parent.
@@ -145,6 +147,7 @@ public _@_y_inline_@_()
 	strcat("", "");
 	strcmp("", "");
 	strfind("", "");
+	CallRemoteFunction("", "");
 }
 
 /**--------------------------------------------------------------------------**\
@@ -182,7 +185,7 @@ public _@_y_inline_@_()
 */
 
 /**--------------------------------------------------------------------------**\
-<summary>GetStoredFunction</summary>
+<summary>GetLocalFunction</summary>
 <param name="func[]">Public function to get.</param>
 <param name="fmat[]">The structure of the function's parameters.</param>
 <returns>
@@ -200,7 +203,7 @@ public _@_y_inline_@_()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock Function:GetStoredFunction(const func[], const fmat[])
+stock Function:GetLocalFunction(const func[], const fmat[])
 {
 	// Get the function pointer.
 	new
@@ -211,7 +214,7 @@ stock Function:GetStoredFunction(const func[], const fmat[])
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>GetStoredFunction</summary>
+<summary>CallStoredFunction</summary>
 <param name="func">Function pointer to call.</param>
 <param name="...">The function's parameters.</param>
 <returns>
@@ -252,7 +255,7 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
 	if (name[0] == callback_tag:'\03')
 	{
 		new
-			ptr = _:GetStoredFunction(name[1], expect);
+			ptr = _:GetLocalFunction(name[1], expect);
 		if (ptr != -1)
 		{
 			return
@@ -311,7 +314,7 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
 		if (!cur)
 		{
 			// Try publics...
-			if ((pos = _:GetStoredFunction(name[1], expect)) != -1)
+			if ((pos = _:GetLocalFunction(name[1], expect)) != -1)
 			{
 				return
 					ret[E_CALLBACK_DATA_POINTER] = pos,
@@ -1307,6 +1310,203 @@ static stock StoredF_WritePublicCode(fptr, const fmat[])
 	@emit JUMP          (fptr + 4)
 	CGen_AddCodeSpace(AsmGetCodeSize(ctx));
 	return nptr + 8;
+}
+
+#if 0
+	enum E_REMOTE_FUNC_STUB
+	{
+		E_REMOTE_FUNC_STUB_NEXT,
+		E_REMOTE_FUNC_STUB_NAME[32 char],
+		CONST.alt /* STRADDR */
+		JUMP      /* STUB    */
+	}
+#endif
+
+/**--------------------------------------------------------------------------**\
+<summary>Remote_DoSearch</summary>
+<param name="str[]">String to find.</param>
+<param name="ptr">Start of the linked list.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Finds a given string in a given list.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static stock Remote_DoSearch(const str[], ptr)
+{
+	// Given a start pointer and a string, find the pointer before this string.
+	static
+		result;
+	while (ptr != -1)
+	{
+		// Pass the function name and the current pointer to "strcmp".
+		#emit PUSH.C     256
+		#emit PUSH.C     0
+		#emit PUSH.S     str
+		#emit LOAD.S.pri ptr
+		#emit ADD.C      4
+		#emit PUSH.pri
+		#emit PUSH.C     16
+		#emit SYSREQ.C   strcmp
+		#emit STACK      20
+		#emit STOR.pri   result
+		// Result found.  Return.
+		if (!result) return ptr;
+		{}
+		// Didn't find it yet, try the next one.
+		#emit LREF.S.pri ptr
+		#emit STOR.S.pri ptr
+	}
+	return -1;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Remote_FindFunction</summary>
+<param name="func[]">Public function to find.</param>
+<param name="fmat[]">Signature to find.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Checks if there is already a handler installed for this remote function.
+	This is not as simple as for local functions because there is no global list
+	we can just look up.  Instead, it walks a linked list of function names that
+	we have installed hooks for.  Note that this compares both the function name
+	and the function signature - if either doesn't match the code moves on
+	because the returned stub will not work.  This is to cater for scripts
+	being unloaded and new scripts with a function of the same name but a
+	different signature being loaded.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static stock Remote_FindFunction(const func[], const fmat[])
+{
+	// First we need to find a handler for the exact given format specifier.  If
+	// we can't find one then there can't possibly be an existing handler for
+	// this function because we know we haven't written one.
+	new
+		fmatPtr = Remote_DoSearch(fmat, YSI_g_sRemoteHandlers);
+	if (fmatPtr == -1) return -1;
+	// See if this remote function name already has a stub written.
+	new
+		funcPtr = Remote_DoSearch(func, YSI_g_sRemoteFunctions);
+	while (funcPtr != -1)
+	{
+		// Check if this instance of the function matches the specifier.
+		if (AMX_Read(funcPtr + (1 + (32 char) + 3)) == fmatPtr) return funcPtr + (1 + (32 char));
+		else funcPtr = Remote_DoSearch(func, AMX_Read(funcPtr));
+	}
+	return -1;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>GetRemoteFunction</summary>
+<param name="func[]">Public function to get.</param>
+<returns>
+	A pointer to the function.
+</returns>
+<remarks>
+	Accepts the following parameter specifiers:
+	
+		i - Integer (also x/c/d/h)
+		f - Float (also g)
+		s - String
+		ai - Array (followed by length)
+		v - Reference (&var, any tag)
+	
+	The ABI for this function is "pri = function, alt = specifiers".
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static stock Remote_CallFunction(const Function:func, GLOBAL_TAG_TYPES:...)
+{
+	// Jump to the location stored in "func", which will set "pri" and "alt".
+	@emit LOAD.S.pri func
+	@emit SCTRL      6
+	
+	// That tiny stub will then jump back to here.  Note that "PROC" has never
+	// been called, so only "PARAMS" and "RET" are on the stack.
+	
+	@emit SWAP.pri
+	// We now have the return address in "pri" and the function in the correct
+	// point on the stack.  Write the return address back out.
+	@emit STOR.pri   () // [JUMP ADDRESS]
+	
+	// Get the parameter count and modify it.
+	@emit PICK       4
+	@emit ADD.C      8
+	@emit PUSH.pri
+	@emit ADD.C      4
+	@emit STOR.pri   () // [STACK ADDRESS]
+	
+	
+	// End this function and return to the caller.
+	@emit STACK      0 // [STACK ADDRESS]
+	@emit JUMP       0 // [JUMP ADDRESS]
+	
+	
+	@emit STOR.pri   sFuncPtr
+	@emit STOR.alt   sFmatPtr
+	
+	@emit STACK      0  // Increase the stack (rewritten).
+	@emit STACK      0  // Store the pointer in "alt" (not rewritten).
+	
+	// Copy the stack.
+	@emit ADDR.pri   16 // Get a pointer to the variable parameters.
+	@emit MOVS       0  // Copy "N" bytes.
+	
+	// Push the specifier.
+	@emit PUSH       sFmatPtr
+	
+	// Push the function name.
+	@emit PUSH       sFuncPtr
+	
+	// Push the parameter count.
+	@emit LOAD.S.pri 8
+	@emit ADD.C      8
+	@emit PUSH.pri
+	@emit ADD.C      4
+	@emit STOR.pri   (0 in "STACK" below)
+	
+	// Call "CallRemoteFunction".
+	@emit SYSREQ     "CallRemoteFunction"
+	
+	// Pop the parameter count.
+	@emit STACK      0
+	
+	// Return.
+	@emit RETN
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>GetRemoteFunction</summary>
+<param name="func[]">Public function to get.</param>
+<param name="fmat[]">The structure of the function's parameters.</param>
+<returns>
+	A pointer to the function.
+</returns>
+<remarks>
+	Accepts the following parameter specifiers:
+	
+		i - Integer (also x/c/d/h)
+		f - Float (also g)
+		s - String
+		ai - Array (followed by length)
+		v - Reference (&var, any tag)
+	
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Function:GetRemoteFunction(const func[], const fmat[])
+{
+	// Get the function pointer.
+	new
+		fptr = funcidx(func);
+	// Find the first match.
+	if (fptr == -1) return Function:-1;
+	return Function:StoredF_WritePublicCode(fptr, fmat);
 }
 
 /*
