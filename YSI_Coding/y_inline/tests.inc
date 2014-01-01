@@ -443,3 +443,31 @@ Test:Callback_Array1()
 	ASSERT(a == 7);
 }
 
+Test:y_inline_Remote0()
+{
+	ASSERT(GetRemoteFunction("MyTesterFunc", "m") == GetRemoteFunction("MyTesterFunc", "m"));
+	ASSERT(GetRemoteFunction("MyTesterFunc", "m") != GetRemoteFunction("MyTesterFunc", "n"));
+}
+
+static stock
+	YSI_g_sRemoteTestVar;
+
+forward y_inline_Remote1(v);
+
+public y_inline_Remote1(v)
+{
+	YSI_g_sRemoteTestVar = v;
+	return 88;
+}
+
+Test:y_inline_Remote1()
+{
+	new
+		Function:f = GetRemoteFunction("y_inline_Remote1", "i");
+	YSI_g_sRemoteTestVar = 5;
+	ASSERT(CallStoredFunction(f, 99) == 88);
+	ASSERT(YSI_g_sRemoteTestVar == 99);
+}
+
+
+
