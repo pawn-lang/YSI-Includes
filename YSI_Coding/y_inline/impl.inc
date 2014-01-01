@@ -1317,7 +1317,8 @@ static stock StoredF_WritePublicCode(fptr, const fmat[])
 	{
 		E_REMOTE_FUNC_STUB_NEXT,
 		E_REMOTE_FUNC_STUB_NAME[32 char],
-		CONST.alt /* STRADDR */
+		PUSH.C    /* SPEC ADDR */
+		PUSH.C    /* FUNC ADDR */
 		JUMP      /* STUB    */
 	}
 #endif
@@ -1395,7 +1396,7 @@ static stock Remote_FindFunction(const func[], const fmat[])
 	while (funcPtr != -1)
 	{
 		// Check if this instance of the function matches the specifier.
-		if (AMX_Read(funcPtr + (1 + (32 char) + 3)) == fmatPtr) return funcPtr + (1 + (32 char));
+		if (AMX_Read(funcPtr + (1 + (32 char) + 1) * 4) == fmatPtr) return funcPtr + (1 + (32 char)) * 4;
 		else funcPtr = Remote_DoSearch(func, AMX_Read(funcPtr));
 	}
 	return -1;
@@ -1416,68 +1417,84 @@ static stock Remote_FindFunction(const func[], const fmat[])
 		ai - Array (followed by length)
 		v - Reference (&var, any tag)
 	
-	The ABI for this function is "pri = function, alt = specifiers".
 </remarks>
 \**--------------------------------------------------------------------------**/
 
 static stock Remote_CallFunction(const Function:func, GLOBAL_TAG_TYPES:...)
 {
-	// Jump to the location stored in "func", which will set "pri" and "alt".
-	@emit LOAD.S.pri func
+	// Remove excess frame items.  Note that "PROC" has never been called, so
+	// only "RET", "PARAMS", and "func" are on the stack.
+	@emit POP.pri       // Pop the return address.
+	@emit STOR.pri   (20 * 4 + ) // [JUMP ADDRESS]
+	@emit POP.alt       // Pop the parameter count and hold it in "alt".
+	
+	// Get the function pointer and jump to it.
+	@emit POP.pri
 	@emit SCTRL      6
 	
-	// That tiny stub will then jump back to here.  Note that "PROC" has never
-	// been called, so only "PARAMS" and "RET" are on the stack.
+	#if 0
+		// This tiny stub will be called then jump back to the main function.
+		@emit PUSH.C     specPtr
+		@emit PUSH.C     funcPtr
+		@emit JUMP       () // [NEXT PTR]
+	#endif
 	
-	@emit SWAP.pri
-	// We now have the return address in "pri" and the function in the correct
-	// point on the stack.  Write the return address back out.
-	@emit STOR.pri   () // [JUMP ADDRESS]
+	// [NEXT PTR]
 	
-	// Get the parameter count and modify it.
-	@emit PICK       4
-	@emit ADD.C      8
+	// Update the parameter count.
+	@emit CONST.pri  8
+	@emit ADD           // Add 8 to the parameter count.
+	@emit STOR.pri   (18 * 4 + ) // [STACK ADDRESS]
+	@emit ADD.C      (-4)
 	@emit PUSH.pri
-	@emit ADD.C      4
-	@emit STOR.pri   () // [STACK ADDRESS]
-	
-	
-	// End this function and return to the caller.
-	@emit STACK      0 // [STACK ADDRESS]
-	@emit JUMP       0 // [JUMP ADDRESS]
-	
-	
-	@emit STOR.pri   sFuncPtr
-	@emit STOR.alt   sFmatPtr
-	
-	@emit STACK      0  // Increase the stack (rewritten).
-	@emit STACK      0  // Store the pointer in "alt" (not rewritten).
-	
-	// Copy the stack.
-	@emit ADDR.pri   16 // Get a pointer to the variable parameters.
-	@emit MOVS       0  // Copy "N" bytes.
-	
-	// Push the specifier.
-	@emit PUSH       sFmatPtr
-	
-	// Push the function name.
-	@emit PUSH       sFuncPtr
-	
-	// Push the parameter count.
-	@emit LOAD.S.pri 8
-	@emit ADD.C      8
-	@emit PUSH.pri
-	@emit ADD.C      4
-	@emit STOR.pri   (0 in "STACK" below)
 	
 	// Call "CallRemoteFunction".
 	@emit SYSREQ     "CallRemoteFunction"
 	
-	// Pop the parameter count.
-	@emit STACK      0
+	// End this function and return to the caller.
+	@emit STACK      0  // [STACK ADDRESS]
+	@emit JUMP       0  // [JUMP ADDRESS]
 	
-	// Return.
-	@emit RETN
+/*
+	// Jump to the location stored in "func", which will set "pri" and "alt".
+	@emit PICK       8
+	@emit SCTRL      6
+	
+	#if 0
+		// This tiny stub will be called then jump back to the main function.
+		@emit CONST.alt  specPtr
+		@emit CONST.pri  funcPtr
+		@emit JUMP       () // [NEXT PTR]
+	#endif
+	
+	// [NEXT PTR]
+	
+	// Write the return address.
+	@emit SWAP.pri
+	@emit STOR.pri   () // [JUMP ADDRESS]
+	
+	// Update the parameter count.
+	@emit PICK       4
+	@emit ADD.C      8
+	@emit STOR.pri   () // [STACK ADDRESS]
+	@emit ADD.C      (-4)
+	@emit SWAP          // Write it the correct stack location and get funcPtr.
+	
+	// Write "pri" and "alt" in to the stack.  Sadly there is no writing
+	// equivalent to "PICK", so we need to set the frame pointer quickly.
+	@emit PROC
+	@emit STOR.S.pri 8
+	@emit STOR.S.alt 12
+	@emit POP.pri
+	@emit SCTRL      5
+	
+	// Call "CallRemoteFunction".
+	@emit SYSREQ     "CallRemoteFunction"
+	
+	// End this function and return to the caller.
+	@emit STACK      0  // [STACK ADDRESS]
+	@emit JUMP       0  // [JUMP ADDRESS]
+*/
 }
 
 /**--------------------------------------------------------------------------**\
