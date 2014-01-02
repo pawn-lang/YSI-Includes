@@ -316,7 +316,7 @@ Test:Callback_AA()
 		// printf("a2 = %d", a);
 		a = 7;
 		// printf("a3 = %d", a);
-		//#pragma unused a
+		#pragma unused a
 	}
 	y_inline_Get(using inline func, cc);
 	new
@@ -445,7 +445,12 @@ Test:Callback_Array1()
 
 Test:y_inline_Remote0()
 {
-	ASSERT(GetRemoteFunction("MyTesterFunc", "m") == GetRemoteFunction("MyTesterFunc", "m"));
+	//printf("%08x %08x", 42, 43);
+	new
+		Function:f0 = GetRemoteFunction("MyTesterFunc", "m"),
+		Function:f1 = GetRemoteFunction("MyTesterFunc", "m");
+	ASSERT(f0 == f1);
+	//printf("%08x %08x", f0, f1);
 	ASSERT(GetRemoteFunction("MyTesterFunc", "m") != GetRemoteFunction("MyTesterFunc", "n"));
 }
 
@@ -457,16 +462,68 @@ forward y_inline_Remote1(v);
 public y_inline_Remote1(v)
 {
 	YSI_g_sRemoteTestVar = v;
-	return 88;
+	return v - 10;
 }
 
 Test:y_inline_Remote1()
 {
 	new
-		Function:f = GetRemoteFunction("y_inline_Remote1", "i");
+		ret;
+	
+	ret = strcmp("hello", "hello");
+	ASSERT(!ret);
+	ret = strcmp("hello", !"hello");
+	ASSERT(!ret);
+	ret = strcmp(!"hello", "hello");
+	ASSERT(!ret);
+	ret = strcmp(!"hello", !"hello");
+	ASSERT(!ret);
+	ret = strcmp("m", "n");
+	ASSERT(!!ret);
+	ret = strcmp("m", !"n");
+	ASSERT(!!ret);
+	ret = strcmp(!"m", "n");
+	ASSERT(!!ret);
+	ret = strcmp(!"m", !"n");
+	ASSERT(!!ret);
+	
+	// Clearly "CallRemoteFunction" works with packed strings.  Good.
 	YSI_g_sRemoteTestVar = 5;
-	ASSERT(CallStoredFunction(f, 99) == 88);
+	
+	ret = CallRemoteFunction(!"y_inline_Remote1", !"i", 74);
+	ASSERT(ret == 64);
+	ASSERT(YSI_g_sRemoteTestVar == 74);
+	
+	ret = CallRemoteFunction(!"y_inline_Remote1", "i", 75);
+	ASSERT(ret == 65);
+	ASSERT(YSI_g_sRemoteTestVar == 75);
+	
+	ret = CallRemoteFunction("y_inline_Remote1", !"i", 76);
+	ASSERT(ret == 66);
+	ASSERT(YSI_g_sRemoteTestVar == 76);
+	
+	ret = CallRemoteFunction("y_inline_Remote1", "i", 77);
+	ASSERT(ret == 67);
+	ASSERT(YSI_g_sRemoteTestVar == 77);
+}
+
+Test:y_inline_Remote2()
+{
+	YSI_g_sRemoteTestVar = 5;
+	new
+		Function:f = GetRemoteFunction("y_inline_Remote1", "i");
+	
+	YSI_g_sRemoteTestVar = 5;
+	ASSERT(CallStoredFunction(f, 99) == 89);
 	ASSERT(YSI_g_sRemoteTestVar == 99);
+	ASSERT(CallStoredFunction(f, 111) == 101);
+	ASSERT(YSI_g_sRemoteTestVar == 111);
+	ASSERT(CallStoredFunction(f, 9739) == 9729);
+	ASSERT(YSI_g_sRemoteTestVar == 9739);
+	ASSERT(CallStoredFunction(f, 11) == 1);
+	ASSERT(YSI_g_sRemoteTestVar == 11);
+	ASSERT(CallStoredFunction(f, 9) == -1);
+	ASSERT(YSI_g_sRemoteTestVar == 9);
 }
 
 

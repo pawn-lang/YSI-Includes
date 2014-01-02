@@ -112,6 +112,8 @@ static stock
 	YSI_g_sRemoteFunctions  = -1, // Pointer to the remote function stubs list.
 	YSI_g_sRemoteSpecifiers = -1, // Pointer to the remote function handlers.
 	YSI_g_sRemoteStub       = -1, // The absolute address of the remote call stub.
+	YSI_g_sRemoteStringsStart = -1,
+	YSI_g_sRemoteStringsEnd   = -1,
 	YSI_g_sPrevInlineFunc = 0,
 	YSI_g_sPrevJumpOver = 0,
 	YSI_g_sCurInlineLocals,  // Number of locals in current parent.
@@ -1330,8 +1332,8 @@ static stock StoredF_WritePublicCode(fptr, const spec[])
 #if 0
 	enum E_REMOTE_FUNC_STUB
 	{
-		E_REMOTE_FUNC_STUB_NEXT,
-		E_REMOTE_FUNC_STUB_NAME[32 char],
+		*E_REMOTE_FUNC_STUB_NEXT,
+		*E_REMOTE_FUNC_STUB_NAME,
 		CONST.pri /* SPEC ADDR */
 		CONST.alt /* FUNC ADDR */
 		JUMP      /* STUB ADDR */
@@ -1353,66 +1355,43 @@ static stock StoredF_WritePublicCode(fptr, const spec[])
 static stock Remote_DoSearch(const str[], ptr)
 {
 	// Given a start pointer and a string, find the pointer before this string.
-	static
+	new
 		result;
 	while (ptr != -1)
 	{
-		// Pass the function name and the current pointer to "strcmp".
-		#emit PUSH.C     256
+		#emit PUSH.C     0x7FFFFFFF
 		#emit PUSH.C     0
 		#emit PUSH.S     str
 		#emit LOAD.S.pri ptr
 		#emit ADD.C      4
 		#emit PUSH.pri
+		#emit LREF.S.pri 0xFFFFFFEC
+		#emit SWAP.pri
+		// Compare the strings.
 		#emit PUSH.C     16
 		#emit SYSREQ.C   strcmp
 		#emit STACK      20
-		#emit STOR.pri   result
+		#emit STOR.S.pri result
+		
+		/*#emit PUSH.ADR   result
+		#emit PUSH.S     str
+		#emit LOAD.S.pri ptr
+		#emit ADD.C      4
+		#emit PUSH.pri
+		#emit LREF.S.pri 0xFFFFFFF0
+		#emit SWAP.pri
+		static const scStr[] = "Compare: %08x %s %d";
+		#emit PUSH.C    scStr
+		#emit PUSH.C    16
+		#emit SYSREQ.C  printf
+		#emit STACK     20*/
+		
 		// Result found.  Return.
 		if (!result) return ptr;
 		{}
 		// Didn't find it yet, try the next one.
 		#emit LREF.S.pri ptr
 		#emit STOR.S.pri ptr
-	}
-	return -1;
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Remote_FindFunction</summary>
-<param name="func[]">Public function to find.</param>
-<param name="spec[]">Signature to find.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Checks if there is already a handler installed for this remote function.
-	This is not as simple as for local functions because there is no global list
-	we can just look up.  Instead, it walks a linked list of function names that
-	we have installed hooks for.  Note that this compares both the function name
-	and the function signature - if either doesn't match the code moves on
-	because the returned stub will not work.  This is to cater for scripts
-	being unloaded and new scripts with a function of the same name but a
-	different signature being loaded.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-static stock Remote_FindFunction(const func[], const spec[])
-{
-	// First we need to find a handler for the exact given format specifier.  If
-	// we can't find one then there can't possibly be an existing handler for
-	// this function because we know we haven't written one.
-	new
-		fmatPtr = Remote_DoSearch(spec, YSI_g_sRemoteSpecifiers);
-	if (fmatPtr == -1) return -1;
-	// See if this remote function name already has a stub written.
-	new
-		funcPtr = Remote_DoSearch(func, YSI_g_sRemoteFunctions);
-	while (funcPtr != -1)
-	{
-		// Check if this instance of the function matches the specifier.
-		if (AMX_Read(funcPtr + (1 + (32 char) + 1) * 4) == fmatPtr) return funcPtr + (1 + (32 char)) * 4;
-		else funcPtr = Remote_DoSearch(func, AMX_Read(funcPtr));
 	}
 	return -1;
 }
@@ -1431,6 +1410,14 @@ static stock Remote_FindFunction(const func[], const spec[])
 
 static stock Remote_WriteStubCode()
 {
+	/*static
+		rett,
+		prii,
+		altt;
+	#emit STOR.pri prii
+	#emit STOR.alt altt
+	#emit LOAD.S.pri 4
+	#emit STOR.pri rett*/
 	new
 		base,
 		ctx[AsmContext];
@@ -1453,7 +1440,8 @@ static stock Remote_WriteStubCode()
 	// Get the return address, and put the frame at the top of the stack.
 	@emit POP.pri
 	@emit SWAP.pri
-	@emit STOR.pri   (base + 24 * 4) // [JUMP ADDRESS]
+	@emit ADD.C      (AMX_REAL_DATA + AMX_HEADER_COD) // Make absolute.
+	@emit STOR.pri   (base + 26 * 4) // [JUMP ADDRESS]
 	
 	// We have popped from the stack, but the frame pointer is still wrong.  Get
 	// the parameter count and replace that location with the function pointer.
@@ -1462,7 +1450,7 @@ static stock Remote_WriteStubCode()
 	
 	// Update the parameter count.
 	@emit ADD.C      8
-	@emit STOR.pri   (base + 22 * 4) // [STACK ADDRESS]
+	@emit STOR.pri   (base + 24 * 4) // [STACK ADDRESS]
 	@emit ADD.C      (-4)
 	@emit SWAP.pri
 	
@@ -1476,6 +1464,8 @@ static stock Remote_WriteStubCode()
 	@emit STACK      0  // [STACK ADDRESS]
 	@emit JUMP       0  // [JUMP ADDRESS]
 	
+	//printf("HELLO THERE!! %d %d %08x = %08x", prii, altt, rett, rett + AMX_REAL_DATA + AMX_HEADER_COD);
+	
 	// Unlike most other self-modifying functions, this one does NOT call itself
 	// because it is called before it is required.  Instead we just return to
 	// the caller that was preparing this setup in advance and pass it the
@@ -1483,27 +1473,52 @@ static stock Remote_WriteStubCode()
 	return base + AMX_REAL_DATA;
 }
 
-static stock Remote_RawStrpack(const dest, const src[])
+static stock Remote_RawStrpack(dest, const src[])
 {
-	/*#emit PUSH.S   len
-	#emit PUSH.S   src
-	#emit PUSH.S   dest
-	#emit PUSH.C   12
-	#emit SYSREQ.C strpack
-	#emit STACK    16
-	#emit RETN*/
-	// We can't use the regular "strpack" here because that checks that the
-	// destination address is valid (but "strcmp" doesn't - which is good).
+	static
+		sRemoteStringsStart = -1,
+		sRemoteStringsEnd   = -1;
 	new
-		tmp[32];
-	// Instead, pack to a temporary location then copy that.
-	strpack(tmp, src);
-	// Sadly, even that is not as simple as it should be because "MOVS" checks
-	// that the range is valid too.
-	for (new len = (strlen(src) + 1) char, i = 0, j = 0; i != len; ++i, j += 4)
+		len = (strlen(src) + 1) char * 4;
+	if (sRemoteStringsStart + len > sRemoteStringsEnd)
 	{
-		AMX_Write(dest + j, tmp[i]);
+		//printf("Realloc");
+		static
+			sPtr = -1;
+		if (sPtr == -1)
+		{
+			// Get the malloc base pointer.
+			#emit CONST.pri  YSI_gMallocMemory
+			#emit STOR.pri   sPtr
+		}
+		// No space to copy this string.  Reallocate some memory.
+		sRemoteStringsStart = _:malloc(1024) * 4 + sPtr,
+		sRemoteStringsEnd   = sRemoteStringsStart + 1024 * 4;
 	}
+	{}
+	//printf("String: %d", sRemoteStringsStart);
+	//printf("len = %d %d %s", len, sRemoteStringsStart, src);
+	#emit PUSH.C     1024
+	#emit PUSH.S     src
+	#emit LOAD.pri   sRemoteStringsStart
+	#emit PUSH.pri
+	#emit SREF.S.pri dest
+	#emit PUSH.C     12
+	#emit SYSREQ.C   strpack
+	#emit STACK      16
+	
+	
+	// #emit PUSH       sRemoteStringsStart
+	/*#emit LREF.S.pri dest
+	#emit PUSH.pri
+	static const scStr[] = "%08x";
+	#emit PUSH.C     scStr
+	#emit PUSH.C     8
+	#emit SYSREQ.C   printf
+	#emit STACK      12*/
+	
+	
+	sRemoteStringsStart += len;
 	return 0;
 }
 
@@ -1535,37 +1550,58 @@ static stock Remote_WriteJustSpec(/* & */ sptr, const spec[])
 	AMX_Write(ptr, AMX_Read(sptr)),
 	AMX_Write(sptr, ptr),
 	// Store the specifier.
-	Remote_RawStrpack(ptr + 4, spec),
-	CGen_AddCodeSpace(1 * 4 + (strlen(spec) + 1) char * 4);
+	Remote_RawStrpack(ptr + 4, spec);
+	/*#emit PUSH.adr   ptr
+	#emit LOAD.S.pri ptr
+	#emit ADD.C      4
+	#emit STOR.S.pri ptr
+	#emit LREF.S.pri ptr
+	#emit PUSH.pri
+	#emit PUSH.S     spec
+	static const scStr[] = "Wrote: %s %08x (%d)";
+	#emit PUSH.C     scStr
+	#emit PUSH.C     16
+	#emit SYSREQ.C   printf
+	#emit STACK      20*/
+	CGen_AddCodeSpace(2 * 4);
 }
 
 static stock Remote_WriteSpecAndFunc(/* & */ fptr, sptr, const func[])
 {
 	new
 		ptr = CGen_GetCodeSpace();
+	//printf("%d", CGen_GetCodeSpace());
 	// Add to the front of the list
 	AMX_Write(ptr, AMX_Read(fptr)),
 	AMX_Write(fptr, ptr),
 	// Store the function name.
-	Remote_RawStrpack(ptr + 4, func),
+	Remote_RawStrpack(ptr + 4, func);
+	/*#emit PUSH.S     strDest
+	static const scStr[] = "Wrote: %08x";
+	#emit PUSH.C     scStr
+	#emit PUSH.C     8
+	#emit SYSREQ.C   printf
+	#emit STACK      12*/
 	// Write the code.
-	CGen_AddCodeSpace((1 + 32 char) * 4); // Pointer and "func" len.
+	CGen_AddCodeSpace(2 * 4); // Pointers.
 	new
 		ctx[AsmContext];
 	CGen_UseCodeSpace(ctx);
-	@emit CONST.pri  (sptr + 4)
-	@emit CONST.alt  (ptr  + 4)
+	@emit CONST.pri  AMX_Read(sptr + 4)
+	@emit CONST.alt  AMX_Read(ptr + 4)
 	@emit JUMP       YSI_g_sRemoteStub // Jump to the standard stub code.
 	// Skip over the newly written code and the stored specifier.
 	CGen_AddCodeSpace(6 * 4);
+	//printf("%d", CGen_GetCodeSpace());
 	// Return a direct SCTRL pointer to the code.
-	return ptr + (1 + 32 char) * 4 - AMX_HEADER_COD;
+	return ptr + 2 * 4 - AMX_HEADER_COD;
 }
 
 stock Function:GetRemoteFunction(const func[], const spec[])
 {
 	if (YSI_g_sRemoteStub == -1)
 	{
+		//printf("No stub");
 		// In this case everything is very simple because we know there can't be
 		// any remote functions found so we can just make them instead of
 		// wasting time searching.
@@ -1575,8 +1611,10 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 		Remote_WriteJustSpec(ref(YSI_g_sRemoteSpecifiers), spec);
 		return Function:Remote_WriteSpecAndFunc(ref(YSI_g_sRemoteFunctions), YSI_g_sRemoteSpecifiers, func);
 	}
+	//printf("Stub: %08x %08x", YSI_g_sRemoteSpecifiers, YSI_g_sRemoteFunctions);
 	new
 		fmatPtr = Remote_DoSearch(spec, YSI_g_sRemoteSpecifiers);
+	//printf("Specifier: %s %08x", spec, fmatPtr);
 	if (fmatPtr == -1)
 	{
 		Remote_WriteJustSpec(ref(YSI_g_sRemoteSpecifiers), spec),
@@ -1587,11 +1625,13 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 		// Found the specifier already defined, is this function already defined
 		// for this specifier?
 		new
+			tmpPtr = AMX_Read(fmatPtr + 4),
 			funcPtr = Remote_DoSearch(func, YSI_g_sRemoteFunctions);
 		while (funcPtr != -1)
 		{
+			//printf("Function: %s %08x %08x", func, funcPtr, tmpPtr);
 			// Check if this instance of the function matches the specifier.
-			if (AMX_Read(funcPtr + (1 + 32 char + 1) * 4) == fmatPtr) return Function:(funcPtr + (1 + 32 char) * 4 - AMX_HEADER_COD);
+			if (AMX_Read(funcPtr + 3 * 4) == tmpPtr) return Function:(funcPtr + 2 * 4 - AMX_HEADER_COD);
 			else funcPtr = Remote_DoSearch(func, AMX_Read(funcPtr));
 		}
 	}
