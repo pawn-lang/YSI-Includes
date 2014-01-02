@@ -400,7 +400,23 @@ _Y_INI_STATIC stock e_INI_LINE_TYPE:
 </returns>
 <remarks>
 	Generates a partial function name for processing callbacks.  Includes the
-	filename and a placeholder for the tag name.
+	filename and a placeholder for the tag name.  This now takes extra
+	characters in to account and strips or converts bits:
+	
+		some/dir/file name.ext
+	
+	Becomes:
+	
+		file_name
+	
+	Before being formatted in to the specified remote format.  The filename
+	also takes in to account "/" directory separators and "\\" ones on Windows.
+	
+	Because the	majority of this function is concerned with formatting just part
+	of the function name correctly, it short-circuits if it detects that there
+	is no place for the function name to go.
+	
+	This is quite a complex function, but is only called once per file parse.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -454,17 +470,71 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filena
 	return 1;
 }
 
-#endinput
+/**--------------------------------------------------------------------------**\
+<summary>INI_GetCallback</summary>
+<param name="callback[E_CALLBACK_DATA]">The callback destination.</param>
+<param name="const format[]">The function name format.</param>
+<param name="tag[]">The tag destination.</param>
+<param name="const input[]">The tag source.</param>
+<param name="const len">The tag length.</param>
+<param name="tag[]">The tag destination.</param>
+<param name="callbackFormat[]">The callback parameter specifiers.</param>
+<param name="const bool:remote">Use "CallRemoteFunction".</param>
+<returns>
+	Was the function found?
+</returns>
+<remarks>
+	Gets a callback given a partial function name and a tag name.  Also saves
+	the tag elsewhere.  This might not work as a separate function - it will
+	need to be in the function called by the function with the inlines in.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
+// _Y_INI_STATIC stock bool:INI_GetCallback(callback[E_CALLBACK_DATA], const fmat[], tag[32], const input[], callbackFormat[], const bool:remote)
+// {
+	// static
+		// line[32];
+	// return
+		// // Copy the new tag name.
+		// strcpy(tag, input),
+		// // Make the function name.
+		// Inline_Reset(callback),
+		// format(line, sizeof (line), fmat, tag),
+		// // Find the function.
+		// Callback_Get(callback_tag:line, callback, callbackFormat, remote);
+// }
+
+// This function doesn't work as a real function.  Make it a macro instead.
+// This is because "Callback_Get" manipulates the stack so can't be too far
+// removed from the original call site that may contain the inline functions.
+
+#define INI_GetCallback(%0,%1,%2,%3,%4,%5) \
+	( \
+		strcpy((%2), (%3)), \
+		Inline_Reset((%0)), \
+		format(line, sizeof (line), (%1), (%2)), \
+		Callback_Get(callback_tag:line, (%0), (%4), (%5)) \
+	)
+
+stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:bExtra = false, extra = 0, bool:bLocal = true, bool:bPassTag = false, bool:bFilter = true, filter[] = "")
+{
+	P:3("bool:INI_ParseFile called: \"%s\", \"%s\", %i, %i, %i, %i, %i, %i, \"%s\"", fname, remoteFormat, bFileFirst, bExtra, extra, bLocal, bPassTag, bFilter, filter);
 	static
-		key[32],    // Previous key.
+		callback[E_CALLBACK_DATA],
+		line[YSI_MAX_INLINE_STRING],
 		tag[32],    // The current tag being parsed.
 		cbSpec[5],  // The callback specifier.
 		cbName[32]; // The callback name format.
+	new
+		p0s, p0e, p1s, p1e, p2s, p2e, bool:cont,
+		File:f = fopen(fname);
+	if (!f) return false;
+	P:5("INI_ParseFile: Opened.");
+	bLocal = !bLocal, // Invert for "remote".
 	INI_MakeCallbackFormat(bExtra, bPassTag, cbSpec),
 	INI_SetupCallbackName(cbName, remoteFormat, fname, bFileFirst);
 	new
-		bool:handle = INI_GetCallback(callback, cbName, tag, "", 0, cbSpec, bLocal);
+		bool:handle = INI_GetCallback(callback, cbName, tag, "", cbSpec, bLocal);
 	while (fread(f, line))
 	{
 		switch (INI_IdentifyLineType(line, p0s, p0e, p1s, p1e, p2s, p2e, cont))
@@ -483,22 +553,29 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filena
 				// A new tag.
 				// First, check if it is a tag we might care about.
 				line[p0e] = '\0';
-				if (line[p0s] == '@' && line[p0s + 1] == '@' && (_:handle = strfind(line, "-") + 1))
+				if (line[p0s] == '@' && line[p0s + 1] == '@' && (_:handle = strfind(line, "-")) != -1)
 				{
 					// Check if the current tag is one of the ones we want to
 					// filer for.  The "@@" prefix is the "filterable" prefix.
 					// If there is no filter then everything will be loaded.
-					if (strcmp(line[(p0s = _:handle)], filter))
+					line[handle] = '\0';
+					if (bFilter && strcmp(line[p0s + 2], filter))
 					{
+						// Only skip this if filtering is enabled.  We can't put
+						// the "bFilter" check higher or the "-" won't be found
+						// to resolve the tag name accurately.
 						handle = false;
 						continue;
 					}
+					p0s = _:handle + 1;
 				}
 				// This is a tag we can use, is there a handler for it?
-				handle = INI_GetCallback(callback, cbName, tag, line[p0s], p0e - p0s, cbSpec, bLocal);
+				handle = INI_GetCallback(callback, cbName, tag, line[p0s], cbSpec, bLocal);
 			}
 			default: // e_INI_LINE_TYPE_ENTRY and e_INI_LINE_TYPE_CONT.
 			{
+				static
+					key[32]; // Previous key.
 				if (!handle) continue;
 				// Standard key-value pair.
 				line[p0e] = line[p1e] = '\0';
@@ -507,52 +584,22 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filena
 				{
 					if (bExtra)
 					{
-						if (bPassTag) Callback_Call(callback, extra, tagName, key, line[p1s]);
-						else          Callback_Call(callback, extra, key, line[p1s]);
+						if (bPassTag) Callback_Call(callback, extra, tag, key, line[p1s]);
+						else          Callback_Call(callback, extra,      key, line[p1s]);
 					}
 					else
 					{
-						if (bPassTag) Callback_Call(callback, tagName, key, line[p1s]);
-						else          Callback_Call(callback, key, line[p1s]);
+						if (bPassTag) Callback_Call(callback,        tag, key, line[p1s]);
+						else          Callback_Call(callback,             key, line[p1s]);
 					}
 				}
 			}
 		}
 		// Don't put any code down here (at the end of the loop).
-	}
-
-/**--------------------------------------------------------------------------**\
-<summary>INI_GetCallback</summary>
-<param name="callback[E_CALLBACK_DATA]">The callback destination.</param>
-<param name="const format[]">The function name format.</param>
-<param name="tag[]">The tag destination.</param>
-<param name="const input[]">The tag source.</param>
-<param name="const len">The tag length.</param>
-<param name="tag[]">The tag destination.</param>
-<param name="callbackFormat[]">The callback parameter specifiers.</param>
-<param name="const bool:bLocal">Don't use "CallRemoteFunction".</param>
-<returns>
-	Was the function found?
-</returns>
-<remarks>
-	Gets a callback given a partial function name and a tag name.  Also saves
-	the tag elsewhere.  This might not work as a separate function - it will
-	need to be in the function called by the function with the inlines in.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-_Y_INI_STATIC stock bool:INI_GetCallback(callback[E_CALLBACK_DATA], const format[], tag[32], const input[], callbackFormat[], const bool:bLocal)
-{
-	static
-		func[32];
+	} // while (fread(f, line))
 	return
-		// Copy the new tag name.
-		strcpy(tag, input),
-		// Make the function name.
-		Inline_Reset(callback),
-		format(func, sizeof (func), format, tag),
-		// Find the function.
-		Callback_Get(callback_tag:func, callback, callbackFormat, remote);
+		fclose(f),
+		true;
 }
 
 INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTag, callbackFormat[5])
@@ -569,6 +616,7 @@ INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTag, callbackFormat[5]
 	}
 }
 
+/*
 INI_DoSomeParseBits(ln[], tag[32], const tagpos, &taglen)
 {
 	new
@@ -586,11 +634,5 @@ INI_DoSomeParseBits(ln[], tag[32], const tagpos, &taglen)
 		}
 	}
 }
-
-
-
-
-
-
-
+*/
 

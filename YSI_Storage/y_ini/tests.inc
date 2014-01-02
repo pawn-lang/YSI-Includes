@@ -340,7 +340,211 @@ Test:INI_SetupCallbackName3()
 {
 	new
 		dest[32];
-	INI_SetupCallbackName(dest, "%s%s", "one/two/three/hello_there you", false);
+	INI_SetupCallbackName(dest, "%s%s", "one/two/three/hello_there you.some.ini", false);
 	ASSERT(!strcmp(dest, "%shello_there_you"));
+	INI_SetupCallbackName(dest, "%s%s", "one\\two\\three\\four.five.six", false);
+	// My first conditional assertation.
+	if (IsWindows()) ASSERT(!strcmp(dest, "%sfour"));
+	else ASSERT(!strcmp(dest, "%sone"));
 }
+
+static stock
+	YSI_g_sINI_Parse0;
+
+forward TestINI_Parse0_test1(key[], value[]);
+
+public TestINI_Parse0_test1(key[], value[])
+{
+	//printf("called");
+	++YSI_g_sINI_Parse0;
+}
+
+Test:INI_Parse0()
+{
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse0_%s", .bFileFirst = true);
+	ASSERT(YSI_g_sINI_Parse0 == 10 && 1);
+	if (IsWindows())
+	{
+		YSI_g_sINI_Parse0 = 0;
+		INI_ParseFile("YSI\\test_ini\\test1.ini", "TestINI_Parse0_%s", .bFileFirst = true);
+		ASSERT(YSI_g_sINI_Parse0 == 10 && 2);
+	}
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse0_%s", .bFileFirst = true, .bFilter = true, .filter = "unf");
+	ASSERT(YSI_g_sINI_Parse0 == 8 && 3);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse0_%s", .bFileFirst = true, .bFilter = true, .filter = "filter");
+	ASSERT(YSI_g_sINI_Parse0 == 10 && 4);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse0_%s%s", .bFileFirst = true, .bFilter = true, .filter = "filter");
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 5);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse0_%s%s", .bFileFirst = false, .bFilter = true, .filter = "filter");
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 6);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse0_%s", .bFileFirst = true, .bFilter = false, .filter = "unf");
+	ASSERT(YSI_g_sINI_Parse0 == 10 && 7);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse0_%s", .bFileFirst = true, .bFilter = false, .filter = "filter");
+	ASSERT(YSI_g_sINI_Parse0 == 10 && 8);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse0_%s%s", .bFileFirst = true, .bFilter = false, .filter = "filter");
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 9);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse0_%s%s", .bFileFirst = false, .bFilter = false, .filter = "filter");
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 10);
+}
+
+forward TestINI_Parse1_test1_(key[], value[]);
+
+public TestINI_Parse1_test1_(key[], value[])
+{
+	++YSI_g_sINI_Parse0;
+}
+
+Test:INI_Parse1()
+{
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse1_%s_%s", .bFileFirst = true);
+	ASSERT(YSI_g_sINI_Parse0 == 5);
+}
+
+forward TestINI_Parse2_test1_(key[], value[]);
+
+public TestINI_Parse2_test1_(key[], value[])
+{
+	++YSI_g_sINI_Parse0;
+}
+
+forward TestINI_Parse2_test1_tag2(key[], value[]);
+
+public TestINI_Parse2_test1_tag2(key[], value[])
+{
+	++YSI_g_sINI_Parse0;
+}
+
+Test:INI_Parse2()
+{
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse2_%s_%s", .bFileFirst = true);
+	ASSERT(YSI_g_sINI_Parse0 == 7);
+}
+
+forward TestINI_Parse3__test1(key[], value[]);
+
+public TestINI_Parse3__test1(key[], value[])
+{
+	++YSI_g_sINI_Parse0;
+}
+
+forward TestINI_Parse3_atag_test1(key[], value[]);
+
+public TestINI_Parse3_atag_test1(key[], value[])
+{
+	++YSI_g_sINI_Parse0;
+}
+
+forward TestINI_Parse3_tag2_test1(key[], value[]);
+
+public TestINI_Parse3_tag2_test1(key[], value[])
+{
+	++YSI_g_sINI_Parse0;
+}
+
+Test:INI_Parse3()
+{
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse3_%s_%s", .bFileFirst = false);
+	ASSERT(YSI_g_sINI_Parse0 == 10 && 1);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse3_%s_%s", .bFileFirst = false, .bFilter = true, .filter = "filter");
+	ASSERT(YSI_g_sINI_Parse0 == 10 && 2);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse3_%s_%s", .bFileFirst = false, .bFilter = true, .filter = "other");
+	ASSERT(YSI_g_sINI_Parse0 == 8 && 3);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse3_%s_%s", .bFileFirst = false, .bFilter = false, .filter = "filter");
+	ASSERT(YSI_g_sINI_Parse0 == 10 && 4);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse3_%s_%s", .bFileFirst = false, .bFilter = false, .filter = "other");
+	ASSERT(YSI_g_sINI_Parse0 == 10 && 5);
+}
+
+Test:INI_Parse4()
+{
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse3_%s_%s", .bFileFirst = false, .bLocal = false);
+	ASSERT(YSI_g_sINI_Parse0 == 10 && 1);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse3_%s_%s", .bFileFirst = false, .bFilter = true, .filter = "filter", .bLocal = false);
+	ASSERT(YSI_g_sINI_Parse0 == 10 && 2);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse3_%s_%s", .bFileFirst = false, .bFilter = true, .filter = "other", .bLocal = false);
+	ASSERT(YSI_g_sINI_Parse0 == 8 && 3);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse3_%s_%s", .bFileFirst = false, .bFilter = false, .filter = "filter", .bLocal = false);
+	ASSERT(YSI_g_sINI_Parse0 == 10 && 4);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse3_%s_%s", .bFileFirst = false, .bFilter = false, .filter = "other", .bLocal = false);
+	ASSERT(YSI_g_sINI_Parse0 == 10 && 5);
+}
+
+// Test passing the tag.
+
+forward TestINI_Parse5_test1(tag[], key[], value[]);
+
+public TestINI_Parse5_test1(tag[], key[], value[])
+{
+	if (isnull(tag)) ++YSI_g_sINI_Parse0;
+}
+
+Test:INI_Parse5()
+{
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse5_%s", .bFileFirst = true, .bPassTag = true);
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 1);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse5_%s", .bFileFirst = true, .bPassTag = true, .bFilter = true, .filter = "filter");
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 2);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse5_%s", .bFileFirst = true, .bPassTag = true, .bFilter = true, .filter = "other");
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 3);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse5_%s", .bFileFirst = true, .bPassTag = true, .bFilter = false);
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 4);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse5_%s", .bFileFirst = true, .bPassTag = true, .bFilter = false);
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 5);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse5_%s%s", .bFileFirst = true, .bPassTag = true, .bFilter = false);
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 5);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_%sParse5_%s", .bFileFirst = false, .bPassTag = true, .bFilter = false);
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 5);
+}
+
+Test:INI_Parse6()
+{
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse5_%s", .bFileFirst = true, .bPassTag = true, .bLocal = false);
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 1);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse5_%s", .bFileFirst = true, .bPassTag = true, .bFilter = true, .filter = "filter", .bLocal = false);
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 2);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse5_%s", .bFileFirst = true, .bPassTag = true, .bFilter = true, .filter = "other", .bLocal = false);
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 3);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse5_%s", .bFileFirst = true, .bPassTag = true, .bFilter = false, .bLocal = false);
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 4);
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse5_%s", .bFileFirst = true, .bPassTag = true, .bFilter = false, .bLocal = false);
+	ASSERT(YSI_g_sINI_Parse0 == 5 && 5);
+}
+
+
+
+
+
 

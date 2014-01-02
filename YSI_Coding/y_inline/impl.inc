@@ -150,7 +150,7 @@ public _@_y_inline_@_()
 	strpack("", "");
 	strcat("", "");
 	strcmp("", "");
-	strfind("", "");
+	strfind("", NULL);
 	CallRemoteFunction("", "");
 }
 
@@ -229,7 +229,7 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 		// There are no handlers, so there is no stub written.
 		YSI_g_sRemoteStub = Remote_WriteStubCode(),
 		Remote_WriteJustSpec(ref(YSI_g_sRemoteSpecifiers), spec);
-		return Function:Remote_WriteSpecAndFunc(ref(YSI_g_sRemoteFunctions), YSI_g_sRemoteSpecifiers, func);
+		return Function:Remote_WriteSpecAndFunc(ref(YSI_g_sRemoteFunctions), func, YSI_g_sRemoteSpecifiers, spec);
 	}
 	new
 		fmatPtr = Remote_DoSearch(spec, YSI_g_sRemoteSpecifiers);
@@ -248,11 +248,11 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 		while (funcPtr != -1)
 		{
 			// Check if this instance of the function matches the specifier.
-			if (AMX_Read(funcPtr + 3 * 4) == tmpPtr) return Function:(funcPtr + 2 * 4 - AMX_HEADER_COD);
+			if (AMX_Read(funcPtr + 2 * 4) == tmpPtr) return Function:(funcPtr + 3 * 4 - AMX_HEADER_COD);
 			else funcPtr = Remote_DoSearch(func, AMX_Read(funcPtr));
 		}
 	}
-	return Function:Remote_WriteSpecAndFunc(ref(YSI_g_sRemoteFunctions), fmatPtr, func);
+	return Function:Remote_WriteSpecAndFunc(ref(YSI_g_sRemoteFunctions), func, fmatPtr, spec);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -410,13 +410,7 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool
 		if (!cur)
 		{
 			// Try publics...
-			if ((pos = _:GetLocalFunction(name[1], expect)))
-			{
-				return
-					ret[E_CALLBACK_DATA_POINTER] = Function:pos,
-					true;
-			}
-			return false;
+			return bool:(ret[E_CALLBACK_DATA_POINTER] = GetLocalFunction(name, expect));
 		}
 	}
 	static
@@ -1609,7 +1603,23 @@ static stock Remote_WriteJustSpec(/* & */ sptr, const spec[])
 	CGen_AddCodeSpace(2 * 4);
 }
 
-static stock Remote_WriteSpecAndFunc(/* & */ fptr, sptr, const func[])
+/**--------------------------------------------------------------------------**\
+<summary>Remote_WriteSpecAndFunc</summary>
+<param name="&fptr">Pointer in which to store the function.</param>
+<param name="const func[]">Name of the function.</param>
+<param name="sptr">Pointer to the stored specifier string.</param>
+<param name="const spec[]">Usable specifier string.</param>
+<returns>
+	A pointer to the start of the newly generated code.
+</returns>
+<remarks>
+	Generates a tiny function-specific stub that sets the values for the
+	function and specifier strings to pass to "CallRemoteFunction", and checks
+	for any empty strings - converting them to "NULL" instead.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static stock Remote_WriteSpecAndFunc(/* & */ fptr, const func[], sptr, const spec[])
 {
 	new
 		ptr = CGen_GetCodeSpace();
@@ -1617,19 +1627,35 @@ static stock Remote_WriteSpecAndFunc(/* & */ fptr, sptr, const func[])
 	AMX_Write(ptr, AMX_Read(fptr)),
 	AMX_Write(fptr, ptr),
 	// Store the function name.
-	Remote_RawStrpack(ptr + 4, func);
+	Remote_RawStrpack(ptr + 4, func),
+	sptr = AMX_Read(sptr + 4),
+	AMX_Write(ptr + 8, sptr),
 	// Write the code.
-	CGen_AddCodeSpace(2 * 4); // Pointers.
+	CGen_AddCodeSpace(3 * 4); // Pointers.
 	new
 		ctx[AsmContext];
 	CGen_UseCodeSpace(ctx);
-	@emit CONST.pri  AMX_Read(sptr + 4)
+	// Convert empty strings to "NULL" ("\0" -> "\1\0").
+	new
+		ss = 0;
+	for (new i = 0, j = strlen(spec); i != j; ++i)
+	{
+		if (spec[i] == 's')
+		{
+			if (!ss++) @emit CONST.alt ref(NULL) // Get the string pointer.
+			// A string, test and convert it.
+			@emit LREF.S.pri (i * 4 + 16) // Load the first character.
+			@emit JNZ.rel    8            // Not '\0', skip replacement.
+			@emit STOR.S.alt (i * 4 + 16) // Write the new pointer to "NULL".
+		}
+	}
+	@emit CONST.pri  sptr
 	@emit CONST.alt  AMX_Read(ptr + 4)
 	@emit JUMP       YSI_g_sRemoteStub // Jump to the standard stub code.
 	// Skip over the newly written code and the stored specifier.
-	CGen_AddCodeSpace(6 * 4);
+	CGen_AddCodeSpace(6 * 4 + (ss ? (ss * 6 * 4 + 2 * 4) : 0));
 	// Return a direct SCTRL pointer to the code.
-	return ptr + 2 * 4 - AMX_HEADER_COD;
+	return ptr + 3 * 4 - AMX_HEADER_COD;
 }
 
 /*

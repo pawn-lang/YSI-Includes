@@ -183,9 +183,13 @@ Test:y_inline7b()
 	{
 	}
 	ASSERT(y_inline_Get(using func7a, cc) == false);
-	ASSERT(y_inline_Get(using func7b, cc) == true);
+	ASSERT(y_inline_Get(using func7b, cc));
 	Callback_Release(cc);
-	ASSERT(y_inline_Get(using public y_inline7a, cc) == true);
+	ASSERT(y_inline_Get(using public y_inline7a, cc));
+	Callback_Release(cc);
+	ASSERT(y_inline_Get(callback_tag:"func7b", cc));
+	Callback_Release(cc);
+	ASSERT(y_inline_Get(callback_tag:"y_inline7a", cc));
 	Callback_Release(cc);
 }
 
@@ -204,7 +208,7 @@ Test:y_inline8()
 		if (!i)
 		{
 			ASSERT(y_inline_Get(using func8a, cc) == false);
-			ASSERT(y_inline_Get(using func8b, cc) == true);
+			ASSERT(y_inline_Get(using func8b, cc));
 			Callback_Release(cc);
 			ASSERT(y_inline_Get(using public y_inline8, cc) == false);
 			Callback_Release(cc);
