@@ -75,13 +75,14 @@ _Y_INI_STATIC stock
 #define INI_String(%1,%2) \
 	if (!strcmp((%1), name, true)) return _:INI_CHECK_LEN:strcpy(%2, value)
 
+// The old version of "INI_String" didn't like not having a length.  Correct
+// this.  It gave a very odd error message too.
 #define INI_CHECK_LEN:strcpy(%0,%1,%2) strcpy(%0,%2,%1)
-
 
 // Basic checks to see if extension parts exist for INI tags, and if comments
 // exist for any lines.
-#define INI_HAS_INHERITANCE_PART (p1s != p1e)
-#define INI_HAS_COMMENT_PART     (p2s != p2e)
+// #define INI_HAS_INHERITANCE_PART (p1s != p1e)
+// #define INI_HAS_COMMENT_PART     (p2s != p2e)
 
 /*
 
@@ -641,24 +642,4 @@ INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTag, callbackFormat[5]
 		else          callbackFormat = _F<ss>;
 	}
 }
-
-/*
-INI_DoSomeParseBits(ln[], tag[32], const tagpos, &taglen)
-{
-	new
-		ch;
-	switch (INI_IdentifyLineType(ln, p0s, p0e, p1s, p1e, p2s, p2e, cont))
-	{
-		case e_INI_LINE_TYPE_TAG:
-		{
-			ln[p0e] = '\0',
-			// Add the tag in to the current function name.
-			INI_MakeCallbackName(function, tagpos, taglen, ln[p0s]),
-			taglen = p0e - p0s,
-			strcpy(tag, ln[p0s]),
-			ln[p0e] = ch;
-		}
-	}
-}
-*/
 
