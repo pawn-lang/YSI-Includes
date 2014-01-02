@@ -230,17 +230,17 @@ Test:INI_IdentifyLineType6()
 	ASSERT(cont);
 	cont = true;
 	ASSERT(INI_IdentifyLineType("hello there ", p0s, p0e, p1s, p1e, p2s, p2e, cont) == e_INI_LINE_TYPE_CONT);
-	ASSERT(p0s == 0 && p0e == 11);
+	ASSERT(p0s == p0e && p1s == 0 && p1e == 11);
 	ASSERT(!cont);
 	cont = true;
 	ASSERT(INI_IdentifyLineType("hello there \\  ", p0s, p0e, p1s, p1e, p2s, p2e, cont) == e_INI_LINE_TYPE_CONT);
-	ASSERT(p0s == 0 && p0e == 11);
+	ASSERT(p0s == p0e && p1s == 0 && p1e == 11);
 	ASSERT(cont);
 	cont = true;
 	result = INI_IdentifyLineType("   \\", p0s, p0e, p1s, p1e, p2s, p2e, cont);
 	ASSERT(result == e_INI_LINE_TYPE_CONT);
 	ASSERT(cont);
-	ASSERT(p0s == p0e);
+	ASSERT(p0s == p0e && p1s == p1e);
 }
 
 Test:Trim1()
@@ -264,7 +264,7 @@ Test:Trim1()
 	ASSERT(end == 11);
 }
 
-Test:INI_SetupCallbackName()
+Test:INI_SetupCallbackName0()
 {
 	new
 		dest[32];
@@ -300,5 +300,47 @@ Test:INI_SetupCallbackName()
 	ASSERT(!strcmp(dest, "%sfname"));
 }
 
+Test:INI_SetupCallbackName1()
+{
+	new
+		dest[32];
+	INI_SetupCallbackName(dest, "%s", "hi/there", false);
+	ASSERT(!strcmp(dest, "%s"));
+	INI_SetupCallbackName(dest, "%s", "hi/there", true);
+	ASSERT(!strcmp(dest, "there"));
+	INI_SetupCallbackName(dest, "%s%s", "hi/there", false);
+	ASSERT(!strcmp(dest, "%sthere"));
+	INI_SetupCallbackName(dest, "%s%s", "hi/there.txt", false);
+	ASSERT(!strcmp(dest, "%sthere"));
+	INI_SetupCallbackName(dest, "%s%s", "hi/there", true);
+	ASSERT(!strcmp(dest, "there%s"));
+	INI_SetupCallbackName(dest, "%s%s", "hi/there.txt", true);
+	ASSERT(!strcmp(dest, "there%s"));
+}
 
+Test:INI_SetupCallbackName2()
+{
+	new
+		dest[32];
+	INI_SetupCallbackName(dest, "%s", "hi/there you", false);
+	ASSERT(!strcmp(dest, "%s"));
+	INI_SetupCallbackName(dest, "%s", "hi/there you", true);
+	ASSERT(!strcmp(dest, "there_you"));
+	INI_SetupCallbackName(dest, "%s%s", "hi/there you", false);
+	ASSERT(!strcmp(dest, "%sthere_you"));
+	INI_SetupCallbackName(dest, "%s%s", "hi/there you.txt", false);
+	ASSERT(!strcmp(dest, "%sthere_you"));
+	INI_SetupCallbackName(dest, "%s%s", "hi/there you", true);
+	ASSERT(!strcmp(dest, "there_you%s"));
+	INI_SetupCallbackName(dest, "%s%s", "hi/there you.txt", true);
+	ASSERT(!strcmp(dest, "there_you%s"));
+}
+
+Test:INI_SetupCallbackName3()
+{
+	new
+		dest[32];
+	INI_SetupCallbackName(dest, "%s%s", "one/two/three/hello_there you", false);
+	ASSERT(!strcmp(dest, "%shello_there_you"));
+}
 

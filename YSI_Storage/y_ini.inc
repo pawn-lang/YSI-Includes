@@ -158,6 +158,7 @@ Operators:
 
 #if defined _YSI_NEW_INI
 	
+	#include "..\amx\os"
 	#include "..\YSI_Internal\y_version"
 	
 	#include "..\YSI_Core\y_utils"

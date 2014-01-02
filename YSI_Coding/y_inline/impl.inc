@@ -102,7 +102,7 @@ enum E_CALLBACK_DATA
 	// ===== ALWAYS FIRST  =====
 	ResolvedAlloc:E_CALLBACK_DATA_ALLOC = 0, // Fully resolved address.
 	// ===== ALWAYS SECOND =====
-	E_CALLBACK_DATA_POINTER = 1,             // Inline entry point.
+	Function:E_CALLBACK_DATA_POINTER = 1,             // Inline entry point.
 	// ===== ALWAYS AFTER  =====
 	E_CALLBACK_DATA_OFFSET,
 	E_CALLBACK_DATA_FORMAT[2]
@@ -187,6 +187,17 @@ public _@_y_inline_@_()
     88     `8'     88 `"8bbdP"Y8 88 88       88    d8'          `8b 88          88  
 
 */
+
+stock Inline_Reset(callback[E_CALLBACK_DATA])
+{
+	return
+		callback[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:0,
+		callback[E_CALLBACK_DATA_POINTER] = Function:0,
+		callback[E_CALLBACK_DATA_OFFSET] = 0,
+		callback[E_CALLBACK_DATA_FORMAT] = 0,
+		callback[E_CALLBACK_DATA_FORMAT + E_CALLBACK_DATA:1] = 0,
+		0;
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>GetRemoteFunction</summary>
@@ -297,7 +308,6 @@ stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
 	#emit ADD
 	#emit STOR.S.pri base
 	AsmInitPtr(ctx, base, 200);
-	//printf("%d", AMX_HEADER_COD);
 	
 	// Write safer code (to no longer crash).
 	@emit PROC
@@ -319,6 +329,8 @@ stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
 <summary>Callback_Get</summary>
 <param name="callback:name">Callback to find by name.</param>
 <param name="ret[E_CALLBACK_DATA]">Where to store the pointer.</param>
+<param name="expect[]">What parameters the function takes.</param>
+<param name="remote">Is this function called on one or all scripts?</param>
 <returns>
 	-
 </returns>
@@ -328,25 +340,25 @@ stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
 	loops backwards over the callbacks currently in scope (mostly) to the start
 	of the parent function.  If a match is still not found this looks for a
 	public function of the same name.  If that isn't found either it gives up.
+	
+	The new "remote" parameter returns instantly with a remote public function
+	stub, and no stored data.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
+stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool:remote = false)
 {
 	P:2("Callback_Get called: %s", name);
-	ret[E_CALLBACK_DATA_POINTER] = 0,
-	ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:0;
+	Inline_Reset(ret);
 	if (name[0] == callback_tag:'\03')
 	{
-		new
-			ptr = _:GetLocalFunction(name[1], expect);
-		if (ptr)
-		{
-			return
-				ret[E_CALLBACK_DATA_POINTER] = ptr,
-				true;
-		}
-		return false;
+		// This prefix is ALWAYS for publics not inlines.
+		return bool:(ret[E_CALLBACK_DATA_POINTER] = (remote ? GetRemoteFunction(name[1], expect) : GetLocalFunction(name[1], expect)));
+	}
+	else if (remote)
+	{
+		// "remote" functions must always be done this way.
+		return bool:(ret[E_CALLBACK_DATA_POINTER] = GetRemoteFunction(name, expect));
 	}
 	new
 		pos = strfind(name, "\02");
@@ -401,7 +413,7 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
 			if ((pos = _:GetLocalFunction(name[1], expect)))
 			{
 				return
-					ret[E_CALLBACK_DATA_POINTER] = pos,
+					ret[E_CALLBACK_DATA_POINTER] = Function:pos,
 					true;
 			}
 			return false;
@@ -412,7 +424,7 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
 	Inline_EncodeFormatString(expect, spec),
 	ret[E_CALLBACK_DATA_FORMAT] = spec,
 	// Load this inline function's data in to our closure (and allocate memory).
-	ret[E_CALLBACK_DATA_POINTER] = name[pos + 1];
+	ret[E_CALLBACK_DATA_POINTER] = Function:name[pos + 1];
 	new
 		to = name[pos + 2],
 		local = (to & 0x00FFFFFF),
@@ -482,7 +494,7 @@ stock Callback_Release(input[E_CALLBACK_DATA])
 		free(a),
 		input[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:0;
 	}
-	input[E_CALLBACK_DATA_POINTER] = 0;
+	input[E_CALLBACK_DATA_POINTER] = Function:0;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -555,7 +567,6 @@ stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 	#emit ADD
 	#emit STOR.S.pri base
 	AsmInitPtr(ctx, base, 200);
-	//printf("%d", AMX_HEADER_COD);
 	
 	// Write safer code (to no longer crash).
 	@emit PROC

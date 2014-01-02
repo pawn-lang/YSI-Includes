@@ -314,11 +314,12 @@ _Y_INI_STATIC stock e_INI_LINE_TYPE:
 	if (cont)
 	{
 		// This is a line continuation.
-		p0s = 0,
-		p0e = INI_ReverseWhitespace(str, p2s);
-		if (INI_IsEscapeSequence(str, p0e)) --p0e;
+		p0s = p0e = 0,
+		p1s = 0,
+		p1e = INI_ReverseWhitespace(str, p2s);
+		if (INI_IsEscapeSequence(str, p1e)) --p1e;
 		else cont = false;
-		Trim(str, p0s, p0e);
+		Trim(str, p1s, p1e);
 		return e_INI_LINE_TYPE_CONT;
 	}
 	// Here "p2s" is the end of any valid string contents.  "INI_FindString"
@@ -392,7 +393,7 @@ _Y_INI_STATIC stock e_INI_LINE_TYPE:
 <summary>INI_SetupCallbackName</summary>
 <param name="fmat[]">The format destination.</param>
 <param name="const remoteFormat[]">The source format.</param>
-<param name="const filename[]">The file we are currently parsing.</param>
+<param name="filename[]">The file we are currently parsing.</param>
 <param name="const bool:bFileFirst">The format parameter ordering.</param>
 <returns>
 	-
@@ -403,13 +404,122 @@ _Y_INI_STATIC stock e_INI_LINE_TYPE:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], const filename[], const bool:bFileFirst)
+_Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filename[], const bool:bFileFirst)
 {
-	if (bFileFirst) format(fmat, sizeof (fmat), remoteFormat, filename, "%s");
-	else format(fmat, sizeof (fmat), remoteFormat, "%s", filename);
+	// Copy the basic format over.
+	strcpy(fmat, remoteFormat);
+	// Before any complex filename parsing, check if we actually need it.
+	new
+		fpos = strfind(remoteFormat, "%s");
+	if (!bFileFirst) fpos = strfind(remoteFormat, "%s", false, fpos + 1);
+	// Is there a position in "remoteFormat" for "filename"?
+	if (fpos == -1) return 0;
+	new
+		pos,
+		prev = 0;
+	// Isolate just the VALID name of the file, not the path or extension.
+	while ((pos = strfind(filename, "/" , false, pos) + 1)) prev = pos;
+	pos = prev;
+	if (IsWindows())
+	{
+		while ((pos = strfind(filename, "\\", false, pos) + 1)) prev = pos;
+		pos = prev;
+	}
+	// Got the start of the name, now find the end.
+	for (new ch; ; )
+	{
+		// Get the extent of the valid function characters.
+		for ( ; ; )
+		{
+			ch = filename[pos];
+			if ('a' <= ch <= 'z' || 'A' <= ch <= 'Z' || '0' <= ch <= '9' || ch == '_' || ch == '@') ++pos;
+			else break;
+		}
+		// Make the secondary format.
+		filename[pos] = '\0';
+		if (bFileFirst) format(fmat, sizeof (fmat), fmat, filename[prev], "%s");
+		else format(fmat, sizeof (fmat), fmat, "%s", filename[prev]);
+		filename[pos] = ch;
+		// Add spaces as "_".
+		P:7("INI_SetupCallbackName: '%02x' \"%s\" -> \"%s\" %d %d %d", ch, filename[prev], fmat, fpos, prev, pos);
+		if (ch == ' ')
+		{
+			fpos += pos - prev,
+			strins(fmat, "_%s", fpos++),
+			prev = ++pos;
+			P:7("INI_SetupCallbackName: \"%s\" -> \"%s\" %d %d %d", filename[prev], fmat, fpos, prev, pos);
+		}
+		else break;
+	}
+	return 1;
 }
 
 #endinput
+
+	static
+		key[32],    // Previous key.
+		tag[32],    // The current tag being parsed.
+		cbSpec[5],  // The callback specifier.
+		cbName[32]; // The callback name format.
+	INI_MakeCallbackFormat(bExtra, bPassTag, cbSpec),
+	INI_SetupCallbackName(cbName, remoteFormat, fname, bFileFirst);
+	new
+		bool:handle = INI_GetCallback(callback, cbName, tag, "", 0, cbSpec, bLocal);
+	while (fread(f, line))
+	{
+		switch (INI_IdentifyLineType(line, p0s, p0e, p1s, p1e, p2s, p2e, cont))
+		{
+			case e_INI_LINE_TYPE_INVALID:
+			{
+				// "P:I" not "P:W" because this is not a script issue.
+				P:I("Invalid line in INI file \"%s\": %s", fname, line);
+			}
+			case e_INI_LINE_TYPE_BLANK:
+			{
+				// Do nothing.
+			}
+			case e_INI_LINE_TYPE_TAG:
+			{
+				// A new tag.
+				// First, check if it is a tag we might care about.
+				line[p0e] = '\0';
+				if (line[p0s] == '@' && line[p0s + 1] == '@' && (_:handle = strfind(line, "-") + 1))
+				{
+					// Check if the current tag is one of the ones we want to
+					// filer for.  The "@@" prefix is the "filterable" prefix.
+					// If there is no filter then everything will be loaded.
+					if (strcmp(line[(p0s = _:handle)], filter))
+					{
+						handle = false;
+						continue;
+					}
+				}
+				// This is a tag we can use, is there a handler for it?
+				handle = INI_GetCallback(callback, cbName, tag, line[p0s], p0e - p0s, cbSpec, bLocal);
+			}
+			default: // e_INI_LINE_TYPE_ENTRY and e_INI_LINE_TYPE_CONT.
+			{
+				if (!handle) continue;
+				// Standard key-value pair.
+				line[p0e] = line[p1e] = '\0';
+				if (p0s != p0e) strcpy(key, line[p0s]); // Use the new key.
+				if (p1s != p1e) // Passed some data for the user.
+				{
+					if (bExtra)
+					{
+						if (bPassTag) Callback_Call(callback, extra, tagName, key, line[p1s]);
+						else          Callback_Call(callback, extra, key, line[p1s]);
+					}
+					else
+					{
+						if (bPassTag) Callback_Call(callback, tagName, key, line[p1s]);
+						else          Callback_Call(callback, key, line[p1s]);
+					}
+				}
+			}
+		}
+		// Don't put any code down here (at the end of the loop).
+	}
 
 /**--------------------------------------------------------------------------**\
 <summary>INI_GetCallback</summary>
@@ -422,43 +532,31 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], const 
 <param name="callbackFormat[]">The callback parameter specifiers.</param>
 <param name="const bool:bLocal">Don't use "CallRemoteFunction".</param>
 <returns>
-	-
+	Was the function found?
 </returns>
 <remarks>
 	Gets a callback given a partial function name and a tag name.  Also saves
-	the tag elsewhere.
+	the tag elsewhere.  This might not work as a separate function - it will
+	need to be in the function called by the function with the inlines in.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_INI_STATIC stock bool:INI_GetCallback(callback[E_CALLBACK_DATA], const format[], tag[], const input[], const len, callbackFormat[], const bool:bLocal)
+_Y_INI_STATIC stock bool:INI_GetCallback(callback[E_CALLBACK_DATA], const format[], tag[32], const input[], callbackFormat[], const bool:bLocal)
 {
 	static
 		func[32];
-	if (bLocal)
-	{
-		return
-			// Copy the new tag name.
-			tag[0] = '\0',
-			strcat(tag, input, len + 1),
-			// Make the function name.
-			format(func, sizeof (func), format, tag),
-			// Find the function.
-			Callback_Get(callback_tag:func, callback, callbackFormat);
-	}
-	else
-	{
-	}
+	return
+		// Copy the new tag name.
+		strcpy(tag, input),
+		// Make the function name.
+		Inline_Reset(callback),
+		format(func, sizeof (func), format, tag),
+		// Find the function.
+		Callback_Get(callback_tag:func, callback, callbackFormat, remote);
 }
 
 INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTag, callbackFormat[5])
 {
-	/*new
-		pos = 0;
-	if (bExtra)   callbackFormat[pos++] = 'i';
-	if (bPassTag) callbackFormat[pos++] = 's';
-	callbackFormat[pos++] = 's',
-	callbackFormat[pos++] = 's',
-	callbackFormat[pos] = '\0';*/
 	if (bExtra)
 	{
 		if (bPassTag) callbackFormat = _F<isss>;
