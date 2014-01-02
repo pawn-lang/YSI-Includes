@@ -488,7 +488,7 @@ stock Callback_Release(input[E_CALLBACK_DATA])
 		free(a),
 		input[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:0;
 	}
-	input[E_CALLBACK_DATA_POINTER] = Function:0;
+	return _:(input[E_CALLBACK_DATA_POINTER] = Function:0);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -511,14 +511,18 @@ stock Callback_Release(input[E_CALLBACK_DATA])
 
 stock Callback_Restore(func[E_CALLBACK_DATA])
 {
-	// Copy the closure data back over the calling function.
-	new
-		frm = GetFramePreviousFrame(GetCurrentFramePreviousFrame()),
-		ret = GetFrameReturn(frm),
-		pfr = GetFramePreviousFrame(frm);
-	rawMemcpy(frm + 12 + GetFrameParameterSize(frm) - func[E_CALLBACK_DATA_OFFSET], _:func[E_CALLBACK_DATA_ALLOC], func[E_CALLBACK_DATA_OFFSET]),
-	SetFrameReturn(frm, ret),
-	SetFramePreviousFrame(frm, pfr);
+	if (func[E_CALLBACK_DATA_ALLOC])
+	{
+		// Copy the closure data back over the calling function.
+		new
+			frm = GetFramePreviousFrame(GetCurrentFramePreviousFrame()),
+			ret = GetFrameReturn(frm),
+			pfr = GetFramePreviousFrame(frm);
+		rawMemcpy(frm + 12 + GetFrameParameterSize(frm) - func[E_CALLBACK_DATA_OFFSET], _:func[E_CALLBACK_DATA_ALLOC], func[E_CALLBACK_DATA_OFFSET]),
+		SetFrameReturn(frm, ret),
+		SetFramePreviousFrame(frm, pfr);
+	}
+	return 0;
 }
 
 /*

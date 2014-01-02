@@ -57,6 +57,27 @@ _Y_INI_STATIC stock
 
 */
 
+#define INI_Int(%1,%2) \
+	if (!strcmp((%1), name, true)) return %2 = strval(value)
+
+#define INI_Float(%1,%2) \
+	if (!strcmp((%1), name, true)) return _:(%2 = floatstr(value))
+
+#define INI_Hex(%1,%2) \
+	if (!strcmp((%1), name, true)) return %2 = hexstr(value)
+
+#define INI_Bin(%1,%2) \
+	if (!strcmp((%1), name, true)) return %2 = binstr(value)
+
+#define INI_Bool(%1,%2) \
+	if (!strcmp((%1), name, true)) return %2 = boolstr(value)
+
+#define INI_String(%1,%2) \
+	if (!strcmp((%1), name, true)) return _:INI_CHECK_LEN:strcpy(%2, value)
+
+#define INI_CHECK_LEN:strcpy(%0,%1,%2) strcpy(%0,%2,%1)
+
+
 // Basic checks to see if extension parts exist for INI tags, and if comments
 // exist for any lines.
 #define INI_HAS_INHERITANCE_PART (p1s != p1e)
@@ -551,6 +572,8 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 			case e_INI_LINE_TYPE_TAG:
 			{
 				// A new tag.
+				Callback_Restore(callback),
+				Callback_Release(callback),
 				// First, check if it is a tag we might care about.
 				line[p0e] = '\0';
 				if (line[p0s] == '@' && line[p0s + 1] == '@' && (_:handle = strfind(line, "-")) != -1)
@@ -569,6 +592,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 					}
 					p0s = _:handle + 1;
 				}
+				
 				// This is a tag we can use, is there a handler for it?
 				handle = INI_GetCallback(callback, cbName, tag, line[p0s], cbSpec, bLocal);
 			}
@@ -598,6 +622,8 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 		// Don't put any code down here (at the end of the loop).
 	} // while (fread(f, line))
 	return
+		Callback_Restore(callback),
+		Callback_Release(callback),
 		fclose(f),
 		true;
 }

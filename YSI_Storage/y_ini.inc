@@ -164,6 +164,7 @@ Operators:
 	#include "..\YSI_Core\y_utils"
 	#include "..\YSI_Coding\y_malloc"
 	#include "..\YSI_Coding\y_inline"
+	#include "..\YSI_Coding\y_stringhash"
 	
 	#if defined YSI_TESTS
 		#define _Y_INI_STATIC

@@ -543,8 +543,292 @@ Test:INI_Parse6()
 	ASSERT(YSI_g_sINI_Parse0 == 5 && 5);
 }
 
+Test:INI_Parse7()
+{
+	inline const F_test1(string:key[], string:value[])
+	{
+		#pragma unused key, value
+		YSI_g_sINI_Parse0 += 1;
+	}
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "F_%s", .bFileFirst = true);
+	ASSERT(YSI_g_sINI_Parse0 == 10 && 1);
+}
 
+Test:INI_Parse8()
+{
+	inline F_test1(string:key[], string:value[])
+	{
+		#pragma unused key, value
+		YSI_g_sINI_Parse0 += 2;
+	}
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "F_%s", .bFileFirst = true);
+	ASSERT(YSI_g_sINI_Parse0 == 20 && 1);
+}
 
+Test:INI_Parse9()
+{
+	inline const F_atag_test1(string:key[], string:value[])
+	{
+		#pragma unused key, value
+		YSI_g_sINI_Parse0 += 3;
+	}
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "F_%s_%s");
+	ASSERT(YSI_g_sINI_Parse0 == 9 && 1);
+}
+
+Test:INI_Parse10()
+{
+	inline const F_tag2_test1(string:key[], string:value[])
+	{
+		#pragma unused key, value
+		YSI_g_sINI_Parse0 += 4;
+	}
+	YSI_g_sINI_Parse0 = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "F_%s_%s");
+	ASSERT(YSI_g_sINI_Parse0 == 8 && 1);
+}
+
+Test:INI_Parse11()
+{
+	new
+		a;
+	inline const F_tag2_test1(string:key[], string:value[])
+	{
+		#pragma unused key, value
+		a += 4;
+	}
+	a = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "F_%s_%s");
+	ASSERT(a == 0 && 1);
+}
+
+Test:INI_Parse12()
+{
+	static
+		a;
+	inline const F_tag2_test1(string:key[], string:value[])
+	{
+		#pragma unused key, value
+		a += 4;
+	}
+	a = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "F_%s_%s");
+	ASSERT(a == 8 && 1);
+}
+
+Test:INI_Parse13()
+{
+	new
+		a;
+	inline F_tag2_test1(string:key[], string:value[])
+	{
+		#pragma unused key, value
+		a += 4;
+	}
+	a = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "F_%s_%s");
+	ASSERT(a == 8 && 1);
+}
+
+Test:INI_ParseInline()
+{
+	new
+		num,
+		ret;
+	inline Inline1(string:key[], string:value[])
+	{
+		#pragma unused key, value
+		++num;
+	}
+	num = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "Inline1", .bFilter = true, .filter = "other");
+	ASSERT(num == 8);
+	inline Inline2(string:tag[], string:key[], string:value[])
+	{
+		#pragma unused key, value
+		if (isnull(tag)) ++num;
+	}
+	num = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "Inline2", .bFilter = true, .filter = "other", .bPassTag = true);
+	ASSERT(num == 5);
+	inline Inline3(extra, string:key[], string:value[])
+	{
+		#pragma unused key, value
+		num += extra;
+	}
+	num = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "Inline3%s", .bExtra = true, .extra = 11);
+	ASSERT(num == 55);
+	inline Inline4(extra, string:tag[], string:key[], string:value[])
+	{
+		#pragma unused key, value
+		ret = extra;
+		if (!isnull(tag) && !strcmp(tag, "tag2")) ++num;
+	}
+	ret = 0;
+	num = 0;
+	INI_ParseFile("YSI/test_ini/test1.ini", "Inline4", .bPassTag = true, .bExtra = true, .extra = 42);
+	ASSERT(num == 2);
+	ASSERT(ret == 42);
+}
+
+Test:INI_Int0()
+{
+	DoINI_Int0();
+}
+
+static stock DoINI_Int0()
+{
+	new
+		k0,
+		k1,
+		k2,
+		k3,
+		k4;
+	inline Inl_(string:name[], string:value[])
+	{
+		INI_Int("key0", k0);
+		INI_Int("key1", k1);
+		INI_Int("key2", k2);
+		INI_Int("key3", k3);
+		INI_Int("key4", k4);
+	}
+	INI_ParseFile("YSI/test_ini/test1.ini", "Inl_%s");
+	ASSERT(k0 == 42);
+	ASSERT(k1 == 43);
+	ASSERT(k2 == 45);
+	ASSERT(k3 == 47);
+	ASSERT(k4 == 46);
+	return 0;
+}
+
+Test:INI_Int2()
+{
+	DoINI_Int2();
+}
+
+static stock DoINI_Int2()
+{
+	new
+		k0,
+		k1,
+		k2,
+		k3,
+		k4;
+	inline const Inl_(string:name[], string:value[])
+	{
+		INI_Int("key0", k0);
+		INI_Int("key1", k1);
+		INI_Int("key2", k2);
+		INI_Int("key3", k3);
+		INI_Int("key4", k4);
+	}
+	INI_ParseFile("YSI/test_ini/test1.ini", "Inl_%s");
+	ASSERT(k0 == 0);
+	ASSERT(k1 == 0);
+	ASSERT(k2 == 0);
+	ASSERT(k3 == 0);
+	ASSERT(k4 == 0);
+	return 0;
+}
+
+Test:INI_Int3()
+{
+	DoINI_Int3();
+}
+
+static stock DoINI_Int3()
+{
+	new
+		k0,
+		k1,
+		k2,
+		k3,
+		k4;
+	new
+		sk0[8],
+		Float:sk1,
+		bool:sk2 = true;
+	new
+		tk0[8],
+		tk1[8];
+	inline Inl_(string:tag[], string:name[], string:value[])
+	{
+		// printf("%s (%d): %d %d %d", tag, YHash(tag, false),
+			// _I<>,
+			// _I<atag>,
+			// _I<tag2>);
+		switch (YHash(tag, false))
+		{
+			case _I<>:
+			{
+				INI_Int("key0", k0);
+				INI_Int("key1", k1);
+				INI_Int("key2", k2);
+				INI_Int("key3", k3);
+				INI_Int("key4", k4);
+			}
+			case _I<atag>:
+			{
+				INI_String("key0", sk0);
+				INI_Float("otherKey", sk1);
+				INI_Bool("myKey", sk2);
+			}
+			case _I<tag2>:
+			{
+				INI_String("filtered1", tk0);
+				INI_String("filtered2", tk1);
+			}
+		}
+	}
+	INI_ParseFile("YSI/test_ini/test1.ini", "Inl_", .bPassTag = true);
+	// First.
+	ASSERT(k0 == 42);
+	ASSERT(k1 == 43);
+	ASSERT(k2 == 45);
+	ASSERT(k3 == 47);
+	ASSERT(k4 == 46);
+	// Second.
+	ASSERT(!isnull(sk0) && !strcmp(sk0, "hello"));
+	ASSERT(sk1 == 5.5);
+	ASSERT(!sk2);
+	// Third.
+	ASSERT(!isnull(tk0) && !strcmp(tk0, "yes"));
+	ASSERT(!isnull(tk1) && !strcmp(tk1, "no"));
+	return 0;
+}
+
+static stock
+	gs_K0,
+	gs_K1,
+	gs_K2,
+	gs_K3,
+	gs_K4;
+
+forward INI_PUB_Inl_(string:name[], string:value[]);
+
+public INI_PUB_Inl_(string:name[], string:value[])
+{
+	INI_Int("key0", gs_K0);
+	INI_Int("key1", gs_K1);
+	INI_Int("key2", gs_K2);
+	INI_Int("key3", gs_K3);
+	INI_Int("key4", gs_K4);
+	return 0;
+}
+
+Test:INI_Int1()
+{
+	INI_ParseFile("YSI/test_ini/test1.ini", "INI_PUB_Inl_%s");
+	ASSERT(gs_K0 == 42);
+	ASSERT(gs_K1 == 43);
+	ASSERT(gs_K2 == 45);
+	ASSERT(gs_K3 == 47);
+	ASSERT(gs_K4 == 46);
+}
 
 
 
