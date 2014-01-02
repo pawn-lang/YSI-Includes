@@ -526,5 +526,8 @@ Test:y_inline_Remote2()
 	ASSERT(YSI_g_sRemoteTestVar == 9);
 }
 
-
+Test:CallStoredFunction0()
+{
+	ASSERT(CallStoredFunction(Function:0) == 0);
+}
 

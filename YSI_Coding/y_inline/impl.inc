@@ -269,7 +269,7 @@ stock Function:GetLocalFunction(const func[], const spec[])
 	new
 		fptr = funcidx(func);
 	// Find the first match.
-	if (fptr == -1) return Function:-1;
+	if (fptr == -1) return Function:0;
 	return Function:StoredF_WritePublicCode(fptr, spec);
 }
 
@@ -287,7 +287,30 @@ stock Function:GetLocalFunction(const func[], const spec[])
 
 stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
 {
-	#emit LOAD.S.pri    func
+	#pragma unused func
+	new
+		base,
+		ctx[AsmContext];
+	// Get this function.
+	#emit CONST.pri  CallStoredFunction
+	#emit LOAD.alt   AMX_HEADER_COD
+	#emit ADD
+	#emit STOR.S.pri base
+	AsmInitPtr(ctx, base, 200);
+	//printf("%d", AMX_HEADER_COD);
+	
+	// Write safer code (to no longer crash).
+	@emit PROC
+	@emit LOAD.S.pri    12
+	@emit JZER.rel      8
+	@emit SCTRL         6
+	@emit RETN
+	
+	// Recurse.
+	#emit LCTRL         5
+	#emit SCTRL         4
+	#emit CONST.pri     CallStoredFunction
+	#emit ADD.C         4
 	#emit SCTRL         6
 	return 0;
 }
@@ -311,12 +334,13 @@ stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
 stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
 {
 	P:2("Callback_Get called: %s", name);
+	ret[E_CALLBACK_DATA_POINTER] = 0,
 	ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:0;
 	if (name[0] == callback_tag:'\03')
 	{
 		new
 			ptr = _:GetLocalFunction(name[1], expect);
-		if (ptr != -1)
+		if (ptr)
 		{
 			return
 				ret[E_CALLBACK_DATA_POINTER] = ptr,
@@ -374,7 +398,7 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "")
 		if (!cur)
 		{
 			// Try publics...
-			if ((pos = _:GetLocalFunction(name[1], expect)) != -1)
+			if ((pos = _:GetLocalFunction(name[1], expect)))
 			{
 				return
 					ret[E_CALLBACK_DATA_POINTER] = pos,
@@ -521,13 +545,33 @@ stock Callback_Restore(func[E_CALLBACK_DATA])
 
 stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 {
-	// printf("Callback_Call called: %d", numargs());
-	// if (numargs() == 4) printf("%x %d %c%c%c %d", getarg(0, 1), getarg(1), getarg(2, 0), getarg(2, 1), getarg(2, 2), getarg(3));
-	{} // Zero-cost bug fix.
-	#emit LOAD.S.pri func
-	#emit ADD.C      4
-	#emit LOAD.I
-	#emit SCTRL      6
+	#pragma unused func
+	new
+		base,
+		ctx[AsmContext];
+	// Get this function.
+	#emit CONST.pri  Callback_Call
+	#emit LOAD.alt   AMX_HEADER_COD
+	#emit ADD
+	#emit STOR.S.pri base
+	AsmInitPtr(ctx, base, 200);
+	//printf("%d", AMX_HEADER_COD);
+	
+	// Write safer code (to no longer crash).
+	@emit PROC
+	@emit LOAD.S.pri    12
+	@emit ADD.C         4
+	@emit LOAD.I
+	@emit JZER.rel      8
+	@emit SCTRL         6
+	@emit RETN
+	
+	// Recurse.
+	#emit LCTRL         5
+	#emit SCTRL         4
+	#emit CONST.pri     Callback_Call
+	#emit ADD.C         4
+	#emit SCTRL         6
 	return 0;
 }
 
