@@ -175,6 +175,19 @@ new stock
 
 //#pragma unused TRUE, FALSE, NULL
 
+#define TIMING_DEFAULT(%0) (1000000)
+#define TIMING_SPECIFIED:TIMING_DEFAULT(%0,%1) (%1)
+
+#if !defined TIMING_ITERATIONS
+	#define TIMING_ITERATIONS (10)
+#endif
+
+#define RUN_TIMING(%0) \
+	for(new __TA[TIMING_ITERATIONS],__TC=sizeof __TA,__TS=printf("Timing \"%s\"...",%0);__TC; \
+	printf("\t  Mean = %dms\n\t  Mode = %dms\n\tMedian = %dms\n\t Range = %dms",Mean(__TA),Mode(__TA),Median(__TA),Range(__TA))) \
+	for(;(__TS=GetTickCount(),__TC);__TA[--__TC]=GetTickCount()-__TS) \
+	for(new __TI;__TI!=_:TIMING_SPECIFIED:TIMING_DEFAULT(%0);++__TI)
+
 /**--------------------------------------------------------------------------**\
 <summary>
 	UCMP(value, upper);
@@ -996,11 +1009,80 @@ stock Trim(const str[], &start, &end)
 	The current position in the file.
 </returns>
 <remarks>
-	-
+	Doesn't seem to work despite documentation claiming it will.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define ftell(%0) fseek((%0), 0, seek_current)
+//#define ftell(%0) fseek((%0), 0, seek_current)
+
+static stock Utils_PreSort(arr[], num = sizeof (arr))
+{
+	// Very simple bubble sort (fast for pre-sorted arrays).
+	new
+		bool:sort;
+	do
+	{
+		sort = false;
+		for (new j = 1, temp; j != num; ++j)
+		{
+			if ((temp = arr[j]) < arr[j - 1])
+			{
+				arr[j] = arr[j - 1],
+				arr[j - 1] = temp,
+				sort = true;
+			}
+		}
+	}
+	while (sort);
+}
+
+stock Mean(const arr[], num = sizeof (arr))
+{
+	new
+		tot;
+	for (new i = 0; i != num; ++i)
+	{
+		//printf("arr[%d] = %d", i, arr[i]);
+		tot += arr[i];
+	}
+	return tot / num;
+}
+
+stock Mode(arr[], num = sizeof (arr))
+{
+	Utils_PreSort(arr, num);
+	new
+		ret,
+		count = 0,
+		cn,
+		cc;
+	for (new i = 0; i != num; ++i)
+	{
+		if (arr[i] == cn) ++cc;
+		else
+		{
+			if (cc > count) count = cc, ret = cn;
+			cc = 1, cn = arr[i];
+		}
+	}
+	if (cc > count) return cn;
+	else return ret;
+}
+
+stock Median(arr[], num = sizeof (arr))
+{
+	Utils_PreSort(arr, num);
+	new
+		idx = num >>> 1;
+	if (num & 1) return arr[idx];
+	else return (arr[idx] + arr[idx - 1]) >> 1;
+}
+
+stock Range(arr[], num = sizeof (arr))
+{
+	Utils_PreSort(arr, num);
+	return arr[num - 1] - arr[0];
+}
 
 #include "..\YSI_Coding\y_va"
 #include "..\YSI_Internal\y_shortfunc"
