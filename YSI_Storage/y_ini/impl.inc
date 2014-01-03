@@ -461,92 +461,6 @@ state_in_comment:
 	return ret;
 }
 
-/*_Y_INI_STATIC stock e_INI_LINE_TYPE:
-	INI_IdentifyLineType(const str[], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e, &bool:cont)
-{
-	// Determine if there is a comment in this string (can be escaped).  Return
-	// if the string is right at the start.
-	if (!(p2s = min(INI_FindString(str, ";"), (p2e = INI_ReverseWhitespace(str, strlen(str)))))) return e_INI_LINE_TYPE_BLANK;
-	if (cont)
-	{
-		// This is a line continuation.
-		p0s = p0e = 0,
-		p1s = 0,
-		p1e = INI_ReverseWhitespace(str, p2s);
-		if (INI_IsEscapeSequence(str, p1e)) --p1e;
-		else cont = false;
-		Trim(str, p1s, p1e);
-		return e_INI_LINE_TYPE_CONT;
-	}
-	// Here "p2s" is the end of any valid string contents.  "INI_FindString"
-	// will return "cellmax" on failure for a direct comparison.
-	if ((p0e = INI_FindString(str, "=")) > p2s)
-	{
-		// Equals sign is commented out or not present (cellmax return).  If we
-		// are in here, it can't be a "key = value" entry.
-		if ((p0s = INI_FindString(str, "[")) > p2s)
-		{
-			// Not a tag.
-			if (SkipWhitespace(str, 0) == p2s) return e_INI_LINE_TYPE_BLANK;
-		}
-		else
-		{
-			// Found "[", look for "]".
-			if ((p0e = INI_FindString(str, "]", p0s++)) < p2s)
-			{
-				// Skip excess whitespace off the tag name.
-				Trim(str, p0s, p0e);
-				// Empty tag name.
-				if (p0s == p0e) return e_INI_LINE_TYPE_INVALID;
-				p1s = INI_FindString(str, ":");
-				if (p1s > p2s)
-				{
-					// No extension (or commented out extension).
-					p1e = p1s = cellmax;
-				}
-				else
-				{
-					//printf("str: %s %d %d", str, p1s, p1e);
-					// Extension.
-					++p1s,
-					p1e = p2s,
-					Trim(str, p1s, p1e);
-					//printf("str: %s %d %d", str, p1s, p1e);
-				}
-				return e_INI_LINE_TYPE_TAG;
-			}
-			// No "]" found.
-		}
-	}
-	else
-	{
-		// Set key and value limits (skip the "=").
-		p0s = 0, p1s = p0e + 1,
-		// Remove excess whitespace from the key and the value.
-		Trim(str, p0s, p0e),
-		// Check for escaped trailing spaces.
-		p1e = INI_ReverseWhitespace(str, p2s);
-		if (INI_IsEscapeSequence(str, p1e)) --p1e, cont = true;
-		else cont = false;
-		// Trim the line space.
-		Trim(str, p1s, p1e);
-		// On lines like:
-		//  
-		//  [tag-like] = value-like
-		//  
-		// What should that be?  Probably invalid, but I'll allow it!
-		if (p0s != p0e && (cont || p1s != p1e)) return e_INI_LINE_TYPE_ENTRY;
-	}
-	// There are several ways to get here.
-	return e_INI_LINE_TYPE_INVALID;
-}*/
-
-// INI_LoopThroughFile(File:f, INI:ini, end)
-// {
-	// // Go to the start of the file.
-	// fseek(f, 0);
-// }
-
 /**--------------------------------------------------------------------------**\
 <summary>INI_SetupCallbackName</summary>
 <param name="fmat[]">The format destination.</param>
@@ -648,24 +562,6 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filena
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-// _Y_INI_STATIC stock bool:INI_GetCallback(callback[E_CALLBACK_DATA], const fmat[], tag[32], const input[], callbackFormat[], const bool:remote)
-// {
-	// static
-		// line[32];
-	// return
-		// // Copy the new tag name.
-		// strcpy(tag, input),
-		// // Make the function name.
-		// Inline_Reset(callback),
-		// format(line, sizeof (line), fmat, tag),
-		// // Find the function.
-		// Callback_Get(callback_tag:line, callback, callbackFormat, remote);
-// }
-
-// This function doesn't work as a real function.  Make it a macro instead.
-// This is because "Callback_Get" manipulates the stack so can't be too far
-// removed from the original call site that may contain the inline functions.
-
 #define INI_GetCallback(%0,%1,%2,%3,%4,%5) \
 	( \
 		strcpy((%2), (%3)), \
@@ -727,7 +623,6 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 	while ((rlen = fread(f, YSI_g_sCurLine)))
 	{
 		ppos += rlen;
-		//printf("0 %d %d %d", ppos, p1s, p1e);
 		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e, p2s, p2e))
 		{
 			case e_INI_LINE_TYPE_INVALID:
@@ -783,24 +678,18 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 			}
 			default: // e_INI_LINE_TYPE_ENTRY and e_INI_LINE_TYPE_CONT.
 			{
-				//static
-				//	key[32]; // Previous key.
 				if (!handle) continue;
 				// Standard key-value pair.
 				YSI_g_sCurLine[p0e] = YSI_g_sCurLine[p1e] = '\0';
-				//if (p0s != p0e) strcpy(key, YSI_g_sCurLine[p0s]); // Use the new key.
-				//if (p1s != p1e) // Passed some data for the user.
+				if (bExtra)
 				{
-					if (bExtra)
-					{
-						if (bPassTag) Callback_Call(callback, extra, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback, extra,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-					}
-					else
-					{
-						if (bPassTag) Callback_Call(callback,        tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback,             YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-					}
+					if (bPassTag) Callback_Call(callback, extra, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					else          Callback_Call(callback, extra,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+				}
+				else
+				{
+					if (bPassTag) Callback_Call(callback,        tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					else          Callback_Call(callback,             YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
 				}
 			}
 		}
@@ -859,14 +748,12 @@ static stock INI_DoParentTag(const epos, const search[], File:f, callback[E_CALL
 	// The bulk of this function is basically the same as INI_ParseFile (which
 	// is a shame as it is a symptom of poor, unmaintainable code).
 	fseek(f, 0, seek_start); // Jump back to the start.
-	//printf("bool:INI_DoParentTag called: \"%s\", %i, %i, %i, %i, \"%s\"", search, bExtra, extra, bPassTag, bFilter, filter);
 	P:4("bool:INI_DoParentTag called: \"%s\", %i, %i, %i, %i, \"%s\"", search, bExtra, extra, bPassTag, bFilter, filter);
 	new
 		ppos, bool:handle = false,
 		p0s, p0e, p1s, p1e, p2s, p2e;
 	while ((ppos += fread(f, YSI_g_sCurLine)) < epos)
 	{
-		//printf("Read: %s", YSI_g_sCurLine);
 		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e, p2s, p2e))
 		{
 			case e_INI_LINE_TYPE_INVALID, e_INI_LINE_TYPE_BLANK: {}
@@ -891,11 +778,9 @@ static stock INI_DoParentTag(const epos, const search[], File:f, callback[E_CALL
 					}
 					p0s = p0e + 1;
 				}
-				//printf("SEARCH: %s \"%s\" %d", YSI_g_sCurLine[p0s], search, !strcmp(YSI_g_sCurLine[p0s], search));
 				if (!strcmp(YSI_g_sCurLine[p0s], search))
 				{
 					handle = true;
-					//printf("%d %d %d", inTag, p1s, p1e);
 					if (p1s != p1e)
 					{
 						new
@@ -914,24 +799,18 @@ static stock INI_DoParentTag(const epos, const search[], File:f, callback[E_CALL
 			}
 			default: // e_INI_LINE_TYPE_ENTRY and e_INI_LINE_TYPE_CONT.
 			{
-				//static
-				//	key[32]; // Previous key.
 				if (!handle) continue;
 				// Standard key-value pair.
 				YSI_g_sCurLine[p0e] = YSI_g_sCurLine[p1e] = '\0';
-				//if (p0s != p0e) strcpy(key, YSI_g_sCurLine[p0s]); // Use the new key.
-				//if (p1s != p1e) // Passed some data for the user.
+				if (bExtra)
 				{
-					if (bExtra)
-					{
-						if (bPassTag) Callback_Call(callback, extra, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback, extra,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-					}
-					else
-					{
-						if (bPassTag) Callback_Call(callback,        tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback,             YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-					}
+					if (bPassTag) Callback_Call(callback, extra, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					else          Callback_Call(callback, extra,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+				}
+				else
+				{
+					if (bPassTag) Callback_Call(callback,        tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					else          Callback_Call(callback,             YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
 				}
 			}
 		}
