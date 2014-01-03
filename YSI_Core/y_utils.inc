@@ -989,5 +989,19 @@ stock Trim(const str[], &start, &end)
 	}
 }
 
+/**--------------------------------------------------------------------------**\
+<summary>ftell</summary>
+<param name="File:f">The file to get our position in.</param>
+<returns>
+	The current position in the file.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define ftell(%0) fseek((%0), 0, seek_current)
+
 #include "..\YSI_Coding\y_va"
+#include "..\YSI_Internal\y_shortfunc"
 

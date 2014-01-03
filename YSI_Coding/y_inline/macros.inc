@@ -121,8 +121,6 @@ somewhere_after_this_func:
 
 #endif
 
-#define string:
-
 #define inline%0(%1) static %0[_:I@E:32]=#%0":....";if(I@E(_:_YI@CP:%0))for(new%1,,;I@F();)while(I@L(I@K(1)))
 
 #define I@E:32]=#%9const%7\32;%8":....";if(I@E(_:_YI@CP:%9const%7\32;%8))for(%1)while(I@L(I@K(1))) 32]=#%8":....";if(I@E(_:_YI@CP:%8))for(%1)while(I@L(I@K()))

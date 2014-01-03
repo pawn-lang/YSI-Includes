@@ -806,7 +806,8 @@ static stock
 	gs_K1,
 	gs_K2,
 	gs_K3,
-	gs_K4;
+	gs_K4,
+	gs_K5;
 
 forward INI_PUB_Inl_(string:name[], string:value[]);
 
@@ -828,6 +829,99 @@ Test:INI_Int1()
 	ASSERT(gs_K2 == 45);
 	ASSERT(gs_K3 == 47);
 	ASSERT(gs_K4 == 46);
+}
+
+forward INI_Inher0_tag0(string:tag[], string:name[], string:value[]);
+
+public INI_Inher0_tag0(string:tag[], string:name[], string:value[])
+{
+	ASSERT(!isnull(tag) && !strcmp(tag, "tag0"));
+	INI_Int("key0", gs_K0);
+	INI_Int("key1", gs_K1);
+	INI_Int("key2", gs_K2);
+	INI_Int("key3", gs_K3);
+	INI_Int("key4", gs_K4);
+	INI_Int("key5", gs_K5);
+	return 0;
+}
+
+Test:INI_Inherit0()
+{
+	gs_K0 = 0;
+	gs_K1 = 0;
+	gs_K2 = 0;
+	gs_K3 = 0;
+	gs_K4 = 0;
+	gs_K5 = 0;
+	INI_ParseFile("YSI/test_ini/test2.ini", "INI_Inher0_%s", .bPassTag = true);
+	ASSERT(gs_K0 == 101);
+	ASSERT(gs_K1 == 102);
+	ASSERT(gs_K2 ==   0);
+	ASSERT(gs_K3 ==   0);
+	ASSERT(gs_K4 ==   0);
+	ASSERT(gs_K5 ==   0);
+}
+
+forward INI_Inher1_tag1(string:tag[], string:name[], string:value[]);
+
+public INI_Inher1_tag1(string:tag[], string:name[], string:value[])
+{
+	ASSERT(!isnull(tag) && !strcmp(tag, "tag1"));
+	INI_Int("key0", gs_K0);
+	INI_Int("key1", gs_K1);
+	INI_Int("key2", gs_K2);
+	INI_Int("key3", gs_K3);
+	INI_Int("key4", gs_K4);
+	INI_Int("key5", gs_K5);
+	return 0;
+}
+
+Test:INI_Inherit1()
+{
+	gs_K0 = 0;
+	gs_K1 = 0;
+	gs_K2 = 0;
+	gs_K3 = 0;
+	gs_K4 = 0;
+	gs_K5 = 0;
+	INI_ParseFile("YSI/test_ini/test2.ini", "INI_Inher1_%s", .bPassTag = true);
+	ASSERT(gs_K0 == 101);
+	ASSERT(gs_K1 == 102);
+	ASSERT(gs_K2 == 103);
+	ASSERT(gs_K3 == 104);
+	ASSERT(gs_K4 ==   0);
+	ASSERT(gs_K5 ==   0);
+}
+
+forward INI_Inher2_tag2(string:tag[], string:name[], string:value[]);
+
+public INI_Inher2_tag2(string:tag[], string:name[], string:value[])
+{
+	ASSERT(!isnull(tag) && !strcmp(tag, "tag2"));
+	INI_Int("key0", gs_K0);
+	INI_Int("key1", gs_K1);
+	INI_Int("key2", gs_K2);
+	INI_Int("key3", gs_K3);
+	INI_Int("key4", gs_K4);
+	INI_Int("key5", gs_K5);
+	return 0;
+}
+
+Test:INI_Inherit2()
+{
+	gs_K0 = 0;
+	gs_K1 = 0;
+	gs_K2 = 0;
+	gs_K3 = 0;
+	gs_K4 = 0;
+	gs_K5 = 0;
+	INI_ParseFile("YSI/test_ini/test2.ini", "INI_Inher2_%s", .bPassTag = true);
+	ASSERT(gs_K0 == 107);
+	ASSERT(gs_K1 == 102);
+	ASSERT(gs_K2 == 103);
+	ASSERT(gs_K3 == 104);
+	ASSERT(gs_K4 == 105);
+	ASSERT(gs_K5 == 106);
 }
 
 

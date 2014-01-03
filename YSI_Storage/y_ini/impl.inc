@@ -372,10 +372,12 @@ _Y_INI_STATIC stock e_INI_LINE_TYPE:
 				}
 				else
 				{
+					//printf("str: %s %d %d", str, p1s, p1e);
 					// Extension.
 					++p1s,
 					p1e = p2s,
 					Trim(str, p1s, p1e);
+					//printf("str: %s %d %d", str, p1s, p1e);
 				}
 				return e_INI_LINE_TYPE_TAG;
 			}
@@ -534,20 +536,50 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filena
 	( \
 		strcpy((%2), (%3)), \
 		Inline_Reset((%0)), \
-		format(line, sizeof (line), (%1), (%2)), \
-		Callback_Get(callback_tag:line, (%0), (%4), (%5)) \
+		format(YSI_g_sCurLine, sizeof (YSI_g_sCurLine), (%1), (%2)), \
+		Callback_Get(callback_tag:YSI_g_sCurLine, (%0), (%4), (%5)) \
 	)
+
+/**--------------------------------------------------------------------------**\
+<summary>INI_ParseFile</summary>
+<param name="filename[]">The file to load.</param>
+<param name="remoteFormat[]">The format string to generate the remote function
+t pass the data to once loaded.</param>
+<param name="bool:bFileFirst">The order of the remoteFormat parameters.</param>
+<param name="bool:bExtra">Send additional data.</param>
+<param name="extra">Additional data to send.</param>
+<param name="bLocal">Call local functions instead of global ones.</param>
+<param name="bPassTag">Pass the tag as an extra parameter not the function
+name.</param>
+<param name="bFilter">Apply the tag name filter to all tags or just prefixed
+ones?</param>
+<param name="filter">Text to use to search for which tags to load.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	bFileFirst sets the order and inclusion of the possible remoteFormat
+	parameters.  If true the format will add the filename first then the 
+	current tag, if false the order will be reversed.  This can also be used
+	to exclude one or the other from the function name by setting the required
+	parameter to be entered first and then only having one %s in the format
+	sting.  The default order is tag first for languages compatibility.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static stock
+	YSI_g_sCurLine[YSI_MAX_INLINE_STRING];
 
 stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:bExtra = false, extra = 0, bool:bLocal = true, bool:bPassTag = false, bool:bFilter = true, filter[] = "")
 {
 	P:3("bool:INI_ParseFile called: \"%s\", \"%s\", %i, %i, %i, %i, %i, %i, \"%s\"", fname, remoteFormat, bFileFirst, bExtra, extra, bLocal, bPassTag, bFilter, filter);
 	static
 		callback[E_CALLBACK_DATA],
-		line[YSI_MAX_INLINE_STRING],
 		tag[32],    // The current tag being parsed.
 		cbSpec[5],  // The callback specifier.
 		cbName[32]; // The callback name format.
 	new
+		rlen, ppos,
 		p0s, p0e, p1s, p1e, p2s, p2e, bool:cont,
 		File:f = fopen(fname);
 	if (!f) return false;
@@ -557,14 +589,16 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 	INI_SetupCallbackName(cbName, remoteFormat, fname, bFileFirst);
 	new
 		bool:handle = INI_GetCallback(callback, cbName, tag, "", cbSpec, bLocal);
-	while (fread(f, line))
+	while ((rlen = fread(f, YSI_g_sCurLine)))
 	{
-		switch (INI_IdentifyLineType(line, p0s, p0e, p1s, p1e, p2s, p2e, cont))
+		ppos += rlen;
+		//printf("0 %d %d %d", ppos, p1s, p1e);
+		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e, p2s, p2e, cont))
 		{
 			case e_INI_LINE_TYPE_INVALID:
 			{
 				// "P:I" not "P:W" because this is not a script issue.
-				P:I("Invalid line in INI file \"%s\": %s", fname, line);
+				P:I("Invalid line in INI file \"%s\": %s", fname, YSI_g_sCurLine);
 			}
 			case e_INI_LINE_TYPE_BLANK:
 			{
@@ -576,14 +610,14 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 				Callback_Restore(callback),
 				Callback_Release(callback),
 				// First, check if it is a tag we might care about.
-				line[p0e] = '\0';
-				if (line[p0s] == '@' && line[p0s + 1] == '@' && (_:handle = strfind(line, "-")) != -1)
+				YSI_g_sCurLine[p0e] = '\0';
+				if (YSI_g_sCurLine[p0s] == '@' && YSI_g_sCurLine[p0s + 1] == '@' && (_:handle = strfind(YSI_g_sCurLine, "-")) != -1)
 				{
 					// Check if the current tag is one of the ones we want to
 					// filer for.  The "@@" prefix is the "filterable" prefix.
 					// If there is no filter then everything will be loaded.
-					line[handle] = '\0';
-					if (bFilter && strcmp(line[p0s + 2], filter))
+					YSI_g_sCurLine[handle] = '\0';
+					if (bFilter && strcmp(YSI_g_sCurLine[p0s + 2], filter))
 					{
 						// Only skip this if filtering is enabled.  We can't put
 						// the "bFilter" check higher or the "-" won't be found
@@ -593,9 +627,23 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 					}
 					p0s = _:handle + 1;
 				}
-				
+				new
+					parent[32];
+				if (p1s != p1e) YSI_g_sCurLine[p1e] = '\0', strcat(parent, YSI_g_sCurLine[p1s]);
 				// This is a tag we can use, is there a handler for it?
-				handle = INI_GetCallback(callback, cbName, tag, line[p0s], cbSpec, bLocal);
+				handle = INI_GetCallback(callback, cbName, tag, YSI_g_sCurLine[p0s], cbSpec, bLocal),
+				cont = false;
+				// Is this based on another tag?  If so recurse and do that one
+				// first.
+				if (handle && parent[0])
+				{
+					// No point recursing if there's no handler is there?
+					if (!INI_DoParentTag(ppos, parent, f, callback, bExtra, extra, bPassTag, tag, bFilter, filter))
+					{
+						P:I("Invalid hierarchy in INI file: \"%s\" for tag \"%s\"", fname, tag);
+						fseek(f, ppos, seek_start);
+					}
+				}
 			}
 			default: // e_INI_LINE_TYPE_ENTRY and e_INI_LINE_TYPE_CONT.
 			{
@@ -603,19 +651,19 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 					key[32]; // Previous key.
 				if (!handle) continue;
 				// Standard key-value pair.
-				line[p0e] = line[p1e] = '\0';
-				if (p0s != p0e) strcpy(key, line[p0s]); // Use the new key.
+				YSI_g_sCurLine[p0e] = YSI_g_sCurLine[p1e] = '\0';
+				if (p0s != p0e) strcpy(key, YSI_g_sCurLine[p0s]); // Use the new key.
 				if (p1s != p1e) // Passed some data for the user.
 				{
 					if (bExtra)
 					{
-						if (bPassTag) Callback_Call(callback, extra, tag, key, line[p1s]);
-						else          Callback_Call(callback, extra,      key, line[p1s]);
+						if (bPassTag) Callback_Call(callback, extra, tag, key, YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback, extra,      key, YSI_g_sCurLine[p1s]);
 					}
 					else
 					{
-						if (bPassTag) Callback_Call(callback,        tag, key, line[p1s]);
-						else          Callback_Call(callback,             key, line[p1s]);
+						if (bPassTag) Callback_Call(callback,        tag, key, YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback,             key, YSI_g_sCurLine[p1s]);
 					}
 				}
 			}
@@ -642,4 +690,119 @@ INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTag, callbackFormat[5]
 		else          callbackFormat = _F<ss>;
 	}
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>INI_DoParentTag</summary>
+<param name="filename[]">The file to load.</param>
+<param name="remoteFormat[]">The format string to generate the remote function
+t pass the data to once loaded.</param>
+<param name="bool:bFileFirst">The order of the remoteFormat parameters.</param>
+<param name="bool:bExtra">Send additional data.</param>
+<param name="extra">Additional data to send.</param>
+<param name="bLocal">Call local functions instead of global ones.</param>
+<param name="bPassTag">Pass the tag as an extra parameter not the function
+name.</param>
+<param name="bFilter">Apply the tag name filter to all tags or just prefixed
+ones?</param>
+<param name="filter">Text to use to search for which tags to load.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	bFileFirst sets the order and inclusion of the possible remoteFormat
+	parameters.  If true the format will add the filename first then the 
+	current tag, if false the order will be reversed.  This can also be used
+	to exclude one or the other from the function name by setting the required
+	parameter to be entered first and then only having one %s in the format
+	sting.  The default order is tag first for languages compatibility.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static stock INI_DoParentTag(const epos, const search[], File:f, callback[E_CALLBACK_DATA], bool:bExtra, extra, bool:bPassTag, tag[], bool:bFilter, filter[])
+{
+	// The bulk of this function is basically the same as INI_ParseFile (which
+	// is a shame as it is a symptom of poor, unmaintainable code).
+	fseek(f, 0, seek_start); // Jump back to the start.
+	P:4("bool:INI_DoParentTag called: \"%s\", \"%s\", %i, %i, %i, %i, %i, %i, \"%s\"", fname, remoteFormat, bFileFirst, bExtra, extra, bLocal, bPassTag, bFilter, filter);
+	new
+		rpos,
+		ppos,
+		bool:inTag = false,
+		p0s, p0e, p1s, p1e, p2s, p2e, bool:cont;
+	while ((rpos = fread(f, YSI_g_sCurLine)) && (ppos += rpos) <= epos)
+	{
+		//printf("Read: %s", YSI_g_sCurLine);
+		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e, p2s, p2e, cont))
+		{
+			case e_INI_LINE_TYPE_INVALID, e_INI_LINE_TYPE_BLANK: {}
+			case e_INI_LINE_TYPE_TAG:
+			{
+				// A new tag.
+				// First, check if it is a tag we might care about.
+				YSI_g_sCurLine[p0e] = '\0';
+				if (YSI_g_sCurLine[p0s] == '@' && YSI_g_sCurLine[p0s + 1] == '@' && (_:cont = strfind(YSI_g_sCurLine, "-")) != -1)
+				{
+					// Check if the current tag is one of the ones we want to
+					// filer for.  The "@@" prefix is the "filterable" prefix.
+					// If there is no filter then everything will be loaded.
+					YSI_g_sCurLine[_:cont] = '\0';
+					if (bFilter && strcmp(YSI_g_sCurLine[p0s + 2], filter))
+					{
+						// Only skip this if filtering is enabled.  We can't put
+						// the "bFilter" check higher or the "-" won't be found
+						// to resolve the tag name accurately.
+						continue;
+					}
+					p0s = _:cont + 1;
+				}
+				cont = false;
+				//printf("SEARCH: %s \"%s\" %d", YSI_g_sCurLine[p0s], search, !strcmp(YSI_g_sCurLine[p0s], search));
+				if (YSI_g_sCurLine[p0s] && !strcmp(YSI_g_sCurLine[p0s], search))
+				{
+					inTag = true;
+					//printf("%d %d %d", inTag, p1s, p1e);
+					if (p1s != p1e)
+					{
+						new
+							parent[32];
+						YSI_g_sCurLine[p1e] = '\0',
+						strcat(parent, YSI_g_sCurLine[p1s]);
+						if (!INI_DoParentTag(ppos, parent, f, callback, bExtra, extra, bPassTag, tag, bFilter, filter)) return false;
+						fseek(f, ppos, seek_start);
+					}
+				}
+				else if (inTag)
+				{
+					// Parent tag over.
+					return true;
+				}
+			}
+			default: // e_INI_LINE_TYPE_ENTRY and e_INI_LINE_TYPE_CONT.
+			{
+				static
+					key[32]; // Previous key.
+				if (!inTag) continue;
+				// Standard key-value pair.
+				YSI_g_sCurLine[p0e] = YSI_g_sCurLine[p1e] = '\0';
+				if (p0s != p0e) strcpy(key, YSI_g_sCurLine[p0s]); // Use the new key.
+				if (p1s != p1e) // Passed some data for the user.
+				{
+					if (bExtra)
+					{
+						if (bPassTag) Callback_Call(callback, extra, tag, key, YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback, extra,      key, YSI_g_sCurLine[p1s]);
+					}
+					else
+					{
+						if (bPassTag) Callback_Call(callback,        tag, key, YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback,             key, YSI_g_sCurLine[p1s]);
+					}
+				}
+			}
+		}
+	}
+	// Return to where we were before.
+	return false;
+}
+
 

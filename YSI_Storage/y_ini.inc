@@ -453,7 +453,7 @@ t pass the data to once loaded.</param>
 <param name="bool:bFileFirst">The order of the remoteFormat parameters.</param>
 <param name="bool:bExtra">Send additional data.</param>
 <param name="extra">Additional data to send.</param>
-<param name="bLocal">Call local functions instead of gloabal ones.</param>
+<param name="bLocal">Call local functions instead of global ones.</param>
 <param name="bPassTag">Pass the tag as an extra parameter not the function
 name.</param>
 <param name="bFilter">Apply the tag name filter to all tags or just prefixed
@@ -467,8 +467,8 @@ ones?</param>
 	parameters.  If true the format will add the filename first then the 
 	current tag, if false the order will be reversed.  This can also be used
 	to exclude one or the other from the function name by setting the required
-	parameter to be entered first and then only haing one %s in the format
-	sting.  The default order is tag first for languages compatability.
+	parameter to be entered first and then only having one %s in the format
+	sting.  The default order is tag first for languages compatibility.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
