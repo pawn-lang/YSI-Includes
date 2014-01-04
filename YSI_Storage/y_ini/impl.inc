@@ -609,7 +609,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 		cbSpec[5],  // The callback specifier.
 		cbName[32]; // The callback name format.
 	new
-		File:f = fopen(fname);
+		File:f = fopen(fname, io_read);
 	if (!f) return false;
 	new
 		rlen, ppos,
@@ -818,5 +818,4 @@ static stock INI_DoParentTag(const epos, const search[], File:f, callback[E_CALL
 	// Return to where we were before.
 	return handle;
 }
-
 
