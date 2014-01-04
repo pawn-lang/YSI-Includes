@@ -172,14 +172,14 @@ Operators:
 		#define _Y_INI_STATIC static
 	#endif
 	
-	#if defined YSI_TESTS
-		#include "..\YSI_Core\y_testing"
+	#if defined YSI_TESTS && defined YSI_MOCK_READER
 		#include "..\YSI_Internal\y_mock"
 	#endif
 	
 	#include "y_ini/impl"
 	
 	#if defined YSI_TESTS
+		#include "..\YSI_Core\y_testing"
 		#include "y_ini/tests"
 	#endif
 	

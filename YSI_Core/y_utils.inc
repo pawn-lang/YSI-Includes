@@ -175,18 +175,43 @@ new stock
 
 //#pragma unused TRUE, FALSE, NULL
 
-#define TIMING_DEFAULT(%0) (1000000)
-#define TIMING_SPECIFIED:TIMING_DEFAULT(%0,%1) (%1)
+#define __TY|||%0||| (1000000)
+#define __TX:__TY|||%0,%1||| (%1)
 
 #if !defined TIMING_ITERATIONS
 	#define TIMING_ITERATIONS (10)
 #endif
 
+stock __TU(t, iters)
+{
+	// Number of times run.  Accounts for the string and optional count.
+	new
+		ret[20];
+	if      (iters >  1000000000)
+		format(ret, sizeof (ret), "%.2fps", float(t) / (float(iters) / 1000000000.0));
+	else if (iters == 1000000000)
+		format(ret, sizeof (ret), "%d.00ps", t);
+	else if (iters >  1000000)
+		format(ret, sizeof (ret), "%.2fns", float(t) / (float(iters) / 1000000.0));
+	else if (iters == 1000000)
+		format(ret, sizeof (ret), "%d.00ns", t);
+	else if (iters >  1000)
+		format(ret, sizeof (ret), "%.2fus", float(t) / (float(iters) / 1000.0));
+	else if (iters == 1000)
+		format(ret, sizeof (ret), "%d.00us", t);
+	else if (iters >  1)
+		format(ret, sizeof (ret), "%.2fms", float(t) / float(iters));
+	else
+		format(ret, sizeof (ret), "%d.00ms", t);
+	return ret;
+}
+
 #define RUN_TIMING(%0) \
-	for(new __TA[TIMING_ITERATIONS],__TC=sizeof __TA,__TS=printf("Timing \"%s\"...",%0);__TC; \
-	printf("\t  Mean = %dms\n\t  Mode = %dms\n\tMedian = %dms\n\t Range = %dms",Mean(__TA),Mode(__TA),Median(__TA),Range(__TA))) \
+	for(new __TA[TIMING_ITERATIONS],__TC=sizeof __TA,__TE=_:__TX:__TY|||%0|||,__TS=printf("Timing \"%s\"...",%0);__TC; \
+	printf("\t  Mean = %s\n\t  Mode = %s\n\tMedian = %s\n\t Range = %s", \
+		__TU(Mean(__TA),__TE),__TU(Mode(__TA),__TE),__TU(Median(__TA),__TE),__TU(Range(__TA),__TE))) \
 	for(;(__TS=GetTickCount(),__TC);__TA[--__TC]=GetTickCount()-__TS) \
-	for(new __TI;__TI!=_:TIMING_SPECIFIED:TIMING_DEFAULT(%0);++__TI)
+	for(new __TI;__TI!=__TE;++__TI)
 
 /**--------------------------------------------------------------------------**\
 <summary>
