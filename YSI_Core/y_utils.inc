@@ -213,6 +213,61 @@ stock __TU(t, iters)
 	for(;(__TS=GetTickCount(),__TC);__TA[--__TC]=GetTickCount()-__TS) \
 	for(new __TI;__TI!=__TE;++__TI)
 
+stock
+	YSI_gPlayerIP[MAX_PLAYERS + 1] = {-1, ...};
+
+public OnPlayerConnect(playerid)
+{
+	new
+		ip[16];
+	GetPlayerIp(playerid, ip, sizeof (ip));
+	new
+		ipv = strval(ip) << 24,
+		pos = 0;
+	while (pos < 15 && ip[pos++] != '.') {}
+	ipv += strval(ip[pos]) << 16;
+	while (pos < 15 && ip[pos++] != '.') {}
+	ipv += strval(ip[pos]) << 8;
+	while (pos < 15 && ip[pos++] != '.') {}
+	ipv += strval(ip[pos]);
+	YSI_gPlayerIP[playerid] = ipv;
+	#if defined _y_utils_OnPlayerConnect
+		_y_utils_OnPlayerConnect(playerid);
+	#endif
+	return 1;
+}
+
+#if defined _ALS_OnPlayerConnect
+	#undef OnPlayerConnect
+#else
+	#define _ALS_OnPlayerConnect
+#endif
+#define OnPlayerConnect _y_utils_OnPlayerConnect
+
+#if defined _y_utils_OnPlayerConnect
+	forward _y_utils_OnPlayerConnect(playerid);
+#endif
+
+public OnPlayerDisconnect(playerid, reason)
+{
+	YSI_gPlayerIP[playerid] = -1;
+	#if defined _y_utils_OnPlayerDisconnect
+		_y_utils_OnPlayerDisconnect(playerid, reason);
+	#endif
+	return 1;
+}
+
+#if defined _ALS_OnPlayerDisconnect
+	#undef OnPlayerDisconnect
+#else
+	#define _ALS_OnPlayerDisconnect
+#endif
+#define OnPlayerDisconnect _y_utils_OnPlayerDisconnect
+
+#if defined _y_utils_OnPlayerDisconnect
+	forward _y_utils_OnPlayerDisconnect(playerid, reason);
+#endif
+
 /**--------------------------------------------------------------------------**\
 <summary>
 	UCMP(value, upper);
@@ -322,7 +377,6 @@ stock __TU(t, iters)
 
 #define strcpy(%0,%1) \
 	strcat((%0[0] = '\0', %0), %1)
-//	memcpy(%0,%1,0,strlen(%1)*4+4,%2)
 
 /**--------------------------------------------------------------------------**\
 <summary>StripNL</summary>
@@ -387,8 +441,6 @@ stock chrfind(needle, haystack[], start = 0)
 	while (haystack[start]) if (haystack[start++] == needle) return start - 1;
 	return -1;
 }
-
-//#define chrfind(%0'%1'%2,%3) str
 
 stock chrfindp(needle, haystack[], start = 0)
 {
@@ -483,7 +535,7 @@ stock bernstein(string[] /* 12 */)
 <summary>ishex</summary>
 <param name="str[]">String to check.</param>
 <returns>
-	-
+	true/false.
 </returns>
 <remarks>
 	-
@@ -496,14 +548,13 @@ stock ishex(str[])
 	new
 		i,
 		cur;
-	if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) i = 2;
-	while (str[i])
+	if (str[0] == '0' && (str[1] | 0x20) == 'x') i = 2;
+	do
 	{
 		cur = str[i++];
-		if (!(('0' <= cur <= '9') || ('A' <= cur <= 'F') || ('a' <= cur <= 'f'))) return 0;
-		//if ((cur < '0') || ('9' < cur < 'A') || ('F' < cur < 'a') || (cur > 'f')) return 0;
 	}
-	return 1;
+	while (('0' <= cur <= '9') || ('a' <= (cur | 0x20) <= 'f'));
+	return !cur; // Valid if this is the end of the string.
 }
 
 /**--------------------------------------------------------------------------**\
@@ -540,80 +591,8 @@ stock unpack(const str[])
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock
-	YSI_gPlayerIP[MAX_PLAYERS + 1] = {-1, ...};
-
 // Cunning macro only uses "%0" once, yet is still safe.
 #define GetIP(%0) (YSI_gPlayerIP[min((%0) + cellmin, MAX_PLAYERS + cellmin) - cellmin])
-
-// stock GetIP(playerid)
-// {
-	// new
-		// ip[16];
-	// GetPlayerIp(playerid, ip, sizeof (ip));
-	// new
-		// ipv = strval(ip) << 24,
-		// pos = 0;
-	// while (pos < 15 && ip[pos++] != '.') {}
-	// ipv += strval(ip[pos]) << 16;
-	// while (pos < 15 && ip[pos++] != '.') {}
-	// ipv += strval(ip[pos]) << 8;
-	// while (pos < 15 && ip[pos++] != '.') {}
-	// ipv += strval(ip[pos]);
-	// return ipv;
-// }
-
-public OnPlayerConnect(playerid)
-{
-	new
-		ip[16];
-	GetPlayerIp(playerid, ip, sizeof (ip));
-	new
-		ipv = strval(ip) << 24,
-		pos = 0;
-	while (pos < 15 && ip[pos++] != '.') {}
-	ipv += strval(ip[pos]) << 16;
-	while (pos < 15 && ip[pos++] != '.') {}
-	ipv += strval(ip[pos]) << 8;
-	while (pos < 15 && ip[pos++] != '.') {}
-	ipv += strval(ip[pos]);
-	YSI_gPlayerIP[playerid] = ipv;
-	#if defined _y_utils_OnPlayerConnect
-		_y_utils_OnPlayerConnect(playerid);
-	#endif
-	return 1;
-}
-
-#if defined _ALS_OnPlayerConnect
-	#undef OnPlayerConnect
-#else
-	#define _ALS_OnPlayerConnect
-#endif
-#define OnPlayerConnect _y_utils_OnPlayerConnect
-
-#if defined _y_utils_OnPlayerConnect
-	forward _y_utils_OnPlayerConnect(playerid);
-#endif
-
-public OnPlayerDisconnect(playerid, reason)
-{
-	YSI_gPlayerIP[playerid] = -1;
-	#if defined _y_utils_OnPlayerDisconnect
-		_y_utils_OnPlayerDisconnect(playerid, reason);
-	#endif
-	return 1;
-}
-
-#if defined _ALS_OnPlayerDisconnect
-	#undef OnPlayerDisconnect
-#else
-	#define _ALS_OnPlayerDisconnect
-#endif
-#define OnPlayerDisconnect _y_utils_OnPlayerDisconnect
-
-#if defined _y_utils_OnPlayerDisconnect
-	forward _y_utils_OnPlayerDisconnect(playerid, reason);
-#endif
 
 /**--------------------------------------------------------------------------**\
 <summary>getstring</summary>
@@ -804,7 +783,6 @@ public __rawMemcpy__(dest[], src[], bytes)
 	memcpy(dest, src, 0, bytes, bytes);
 	memset("", 0, 0);
 	strcmp("", "");
-	//rawMemset(0, 0, 0);
 }
 
 stock rawMemcpy(dest, src, bytes)
