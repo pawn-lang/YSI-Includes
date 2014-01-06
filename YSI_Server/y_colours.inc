@@ -98,15 +98,24 @@ Changelog:
 #define MK_S_RGBA(%0,%1,%2,%3)          #%0#%1#%2
 #define MK_S_DEF(%0)                    ((%0) >>> 8)
 
+#if _YSI_USE_X11
+	#include "y_colours/x11def"
+#endif
+
 #include "y_colours/gtdef"
+
+// Special macro for adding game text colours.
+#define GT(%0) GT_%0
+
+#define GT_~%0~ "{"#AeC01e"}{"#_GT_%0"}"
+
+// This does redefine a possible colour, but with a very obscure pattern.  Also
+// with awkward mixed case to not match "AEC01E" or "aec01e".
+#define AeC01e"}{"#%0"}"~h~ AeC01e"}{"#%0h"}"
 
 // Main code start.  Apparently there is a copy of the hash code in y_td.
 #define COLOUR_NAME_HASH(%0)            YHash((%0), false, hash_bernstein, (YSI_g_sCheckSpaces) ? (-1) : (strfind((%0), " ")))
 #define COLOR_NAME_HASH                 COLOUR_NAME_HASH
-
-#if _YSI_USE_X11
-	#include "y_colours/x11def"
-#endif
 
 #if !defined X11_ALLOW_SPACES
 	#define X11_ALLOW_SPACES (false)
@@ -285,9 +294,11 @@ stock GetColourHash(hash, alpha = 0xAA)
 	P:3("GetColourHash called: %i, %i", hash, alpha);
 	alpha &= 0xFF;
 	// Do the REVERSE hash from YHash
+	#pragma tabsize 4
 	#if _YSI_USE_X11
 		#include "y_colours/x11switch"
 	#endif
+	#pragma tabsize 4
 	// Do the default code here.
 	for (new i = 0; i != MAX_TEXT_COLOURS; ++i)
 	{
@@ -317,3 +328,4 @@ stock GetColourHash(hash, alpha = 0xAA)
 		return -1;
 	}
 #endif
+
