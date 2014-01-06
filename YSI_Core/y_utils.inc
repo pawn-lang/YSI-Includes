@@ -1061,16 +1061,17 @@ static stock Utils_PreSort(arr[], num = sizeof (arr))
 	while (sort);
 }
 
-stock Mean(const arr[], num = sizeof (arr))
+stock Sum(const arr[], num = sizeof (arr))
 {
 	new
 		tot;
-	for (new i = 0; i != num; ++i)
-	{
-		//printf("arr[%d] = %d", i, arr[i]);
-		tot += arr[i];
-	}
-	return tot / num;
+	while (num) tot += arr[--num];
+	return tot;
+}
+
+stock Mean(const arr[], num = sizeof (arr))
+{
+	return Sum(arr, num) / num;
 }
 
 stock Mode(arr[], num = sizeof (arr))
