@@ -53,6 +53,11 @@ Legal:
 Version:
 	1.0
 Changelog:
+	06/01/14:
+		Added embeddable versions of all colours.
+		Cached all macros for faster compilation.
+		Added "GT" macro for "~r~" use in SA:MP text.
+		Split gametext colours in to a separate file.
 	20/02/12:
 		Added broadcastfunc of colours.	
 	29/11/10:
@@ -60,7 +65,6 @@ Changelog:
 		Added colourspace resolution for converting {FF0000} to ~r~.
 	25/11/10:
 		First version.
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #include "..\YSI_Internal\y_version"
@@ -94,90 +98,11 @@ Changelog:
 #define MK_S_RGBA(%0,%1,%2,%3)          #%0#%1#%2
 #define MK_S_DEF(%0)                    ((%0) >>> 8)
 
-// These are the RGB values for the gametext colours (got manually using GIMP).
-// These need to be added in to the main system so you can type and use them.
-#define SAMP_GAME_TEXT                  MK_RGB(144,  98,  16)
-#define SAMP_GAME_TEXT_                 MK_RGB(144,  98,  16)
-#define SAMP_GAME_TEXT_H                MK_RGB(216, 147,  24)
-#define SAMP_GAME_TEXT_HH               MK_RGB(255, 255,  54)
-#define SAMP_GAME_TEXT_X                MK_RGB(144,  98,  16)
-#define SAMP_GAME_TEXT_XH               MK_RGB(216, 147,  24)
-#define SAMP_GAME_TEXT_XHH              MK_RGB(255, 255,  54)
-
-#define SAMP_GAME_TEXT_R                MK_RGB(180,  25,  29)
-#define SAMP_GAME_TEXT_RH               MK_RGB(255,  37,  43)
-#define SAMP_GAME_TEXT_RHH              MK_RGB(255,  55,  64)
-#define SAMP_GAME_TEXT_RHHH             MK_RGB(255,  82,  96)
-#define SAMP_GAME_TEXT_RHHHH            MK_RGB(255, 123, 144)
-#define SAMP_GAME_TEXT_RHHHHH           MK_RGB(255, 184, 216)
-
-#define SAMP_GAME_TEXT_G                MK_RGB( 54, 104,  44)
-#define SAMP_GAME_TEXT_GH               MK_RGB( 81, 156,  66)
-#define SAMP_GAME_TEXT_GHH              MK_RGB(121, 234,  99)
-#define SAMP_GAME_TEXT_GHHH             MK_RGB(181, 255, 148)
-#define SAMP_GAME_TEXT_GHHHH            MK_RGB(255, 255, 222)
-
-#define SAMP_GAME_TEXT_B                MK_RGB( 50,  60, 127)
-#define SAMP_GAME_TEXT_BH               MK_RGB( 75,  90, 190)
-#define SAMP_GAME_TEXT_BHH              MK_RGB(112, 135, 255)
-#define SAMP_GAME_TEXT_BHHH             MK_RGB(168, 202, 255)
-
-#define SAMP_GAME_TEXT_Y                MK_RGB(226, 192,  99)
-#define SAMP_GAME_TEXT_YH               MK_RGB(255, 255, 148)
-#define SAMP_GAME_TEXT_YHH              MK_RGB(255, 255, 222) // Also in green
-
-#define SAMP_GAME_TEXT_P                MK_RGB(168, 110, 252)
-#define SAMP_GAME_TEXT_PH               MK_RGB(252, 165, 255)
-#define SAMP_GAME_TEXT_PHH              MK_RGB(255, 247, 255)
-
-#define SAMP_GAME_TEXT_W                MK_RGB(255, 255, 255)
-
-#define SAMP_GAME_TEXT_L                MK_RGB(  0,   0,   0)
-
-// Second spellings.
-#define SAMP_GAMETEXT                  MK_RGB(144,  98,  16)
-#define SAMP_GAMETEXT_                 MK_RGB(144,  98,  16)
-#define SAMP_GAMETEXT_H                MK_RGB(216, 147,  24)
-#define SAMP_GAMETEXT_HH               MK_RGB(255, 255,  54)
-#define SAMP_GAMETEXT_X                MK_RGB(144,  98,  16)
-#define SAMP_GAMETEXT_XH               MK_RGB(216, 147,  24)
-#define SAMP_GAMETEXT_XHH              MK_RGB(255, 255,  54)
-
-#define SAMP_GAMETEXT_R                MK_RGB(180,  25,  29)
-#define SAMP_GAMETEXT_RH               MK_RGB(255,  37,  43)
-#define SAMP_GAMETEXT_RHH              MK_RGB(255,  55,  64)
-#define SAMP_GAMETEXT_RHHH             MK_RGB(255,  82,  96)
-#define SAMP_GAMETEXT_RHHHH            MK_RGB(255, 123, 144)
-#define SAMP_GAMETEXT_RHHHHH           MK_RGB(255, 184, 216)
-
-#define SAMP_GAMETEXT_G                MK_RGB( 54, 104,  44)
-#define SAMP_GAMETEXT_GH               MK_RGB( 81, 156,  66)
-#define SAMP_GAMETEXT_GHH              MK_RGB(121, 234,  99)
-#define SAMP_GAMETEXT_GHHH             MK_RGB(181, 255, 148)
-#define SAMP_GAMETEXT_GHHHH            MK_RGB(255, 255, 222)
-
-#define SAMP_GAMETEXT_B                MK_RGB( 50,  60, 127)
-#define SAMP_GAMETEXT_BH               MK_RGB( 75,  90, 190)
-#define SAMP_GAMETEXT_BHH              MK_RGB(112, 135, 255)
-#define SAMP_GAMETEXT_BHHH             MK_RGB(168, 202, 255)
-
-#define SAMP_GAMETEXT_Y                MK_RGB(226, 192,  99)
-#define SAMP_GAMETEXT_YH               MK_RGB(255, 255, 148)
-#define SAMP_GAMETEXT_YHH              MK_RGB(255, 255, 222) // Also in green
-
-#define SAMP_GAMETEXT_P                MK_RGB(168, 110, 252)
-#define SAMP_GAMETEXT_PH               MK_RGB(252, 165, 255)
-#define SAMP_GAMETEXT_PHH              MK_RGB(255, 247, 255)
-
-#define SAMP_GAMETEXT_W                MK_RGB(255, 255, 255)
-
-#define SAMP_GAMETEXT_L                MK_RGB(  0,   0,   0)
+#include "y_colours/gtdef"
 
 // Main code start.  Apparently there is a copy of the hash code in y_td.
 #define COLOUR_NAME_HASH(%0)            YHash((%0), false, hash_bernstein, (YSI_g_sCheckSpaces) ? (-1) : (strfind((%0), " ")))
 #define COLOR_NAME_HASH                 COLOUR_NAME_HASH
-
-//#include "..\YSI_Internal\y_colourparse"
 
 #if _YSI_USE_X11
 	#include "y_colours/x11def"

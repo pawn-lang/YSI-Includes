@@ -540,7 +540,30 @@ stock unpack(const str[])
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock GetIP(playerid)
+stock
+	YSI_gPlayerIP[MAX_PLAYERS + 1] = {-1, ...};
+
+// Cunning macro only uses "%0" once, yet is still safe.
+#define GetIP(%0) (YSI_gPlayerIP[min((%0) + cellmin, MAX_PLAYERS + cellmin) - cellmin])
+
+// stock GetIP(playerid)
+// {
+	// new
+		// ip[16];
+	// GetPlayerIp(playerid, ip, sizeof (ip));
+	// new
+		// ipv = strval(ip) << 24,
+		// pos = 0;
+	// while (pos < 15 && ip[pos++] != '.') {}
+	// ipv += strval(ip[pos]) << 16;
+	// while (pos < 15 && ip[pos++] != '.') {}
+	// ipv += strval(ip[pos]) << 8;
+	// while (pos < 15 && ip[pos++] != '.') {}
+	// ipv += strval(ip[pos]);
+	// return ipv;
+// }
+
+public OnPlayerConnect(playerid)
 {
 	new
 		ip[16];
@@ -554,8 +577,43 @@ stock GetIP(playerid)
 	ipv += strval(ip[pos]) << 8;
 	while (pos < 15 && ip[pos++] != '.') {}
 	ipv += strval(ip[pos]);
-	return ipv;
+	YSI_gPlayerIP[playerid] = ipv;
+	#if defined _y_utils_OnPlayerConnect
+		_y_utils_OnPlayerConnect(playerid);
+	#endif
+	return 1;
 }
+
+#if defined _ALS_OnPlayerConnect
+	#undef OnPlayerConnect
+#else
+	#define _ALS_OnPlayerConnect
+#endif
+#define OnPlayerConnect _y_utils_OnPlayerConnect
+
+#if defined _y_utils_OnPlayerConnect
+	forward _y_utils_OnPlayerConnect(playerid);
+#endif
+
+public OnPlayerDisconnect(playerid, reason)
+{
+	YSI_gPlayerIP[playerid] = -1;
+	#if defined _y_utils_OnPlayerDisconnect
+		_y_utils_OnPlayerDisconnect(playerid, reason);
+	#endif
+	return 1;
+}
+
+#if defined _ALS_OnPlayerDisconnect
+	#undef OnPlayerDisconnect
+#else
+	#define _ALS_OnPlayerDisconnect
+#endif
+#define OnPlayerDisconnect _y_utils_OnPlayerDisconnect
+
+#if defined _y_utils_OnPlayerDisconnect
+	forward _y_utils_OnPlayerDisconnect(playerid, reason);
+#endif
 
 /**--------------------------------------------------------------------------**\
 <summary>getstring</summary>

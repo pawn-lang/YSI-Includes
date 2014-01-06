@@ -64,6 +64,12 @@ Changelog:
 		First version.
 \**--------------------------------------------------------------------------**/
 
+		// These magic "&" numbers were generated automagically by scanning the
+		// whole set of colours repeatedly with different 5-bit masks
+		// (determined to be closest to the square root of the number of
+		// colours) to find the ones that gave the best distribution of colours
+		// per case.  The "& 0x01" splits the list almost perfectly in half.
+		// Go to line 1156 for the other half's start.
 		if (hash & 0x01)
 		{
 			switch (hash & 0x02480120)
