@@ -361,13 +361,14 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool
 		return bool:(ret[E_CALLBACK_DATA_POINTER] = GetRemoteFunction(name, expect));
 	}
 	new
-		pos = strfind(name, "\02");
+		pos = strfind(name, "\02"),
+		frm = GetCurrentFramePreviousFrame(),
+		prf = GetFramePreviousFrame(frm);
 	if (pos == -1)
 	{
 		new
-			frm = GetCurrentFramePreviousFrame(),
 			cur = YSI_g_sPrevInlineFunc,
-			parent = GetFrameFunction(GetFramePreviousFrame(frm)),
+			parent = GetFrameFunction(prf),
 			res;
 		pos = strlen(name),
 		frm = GetFrameReturn(frm);
@@ -422,8 +423,8 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool
 	new
 		to = name[pos + 2],
 		local = (to & 0x00FFFFFF),
-		params = (to & 0xFF000000) >>> 24;
-	params = local + params + (local ? 3 : 2);
+		params = ((to & 0xFF000000) >>> 24) + (local ? (local + 3) : 2);
+	//params = local + params + (local ? 3 : 2);
 	new
 		Alloc:a = malloc(params); // Allocate closure space.
 	if (a)
@@ -435,23 +436,22 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool
 		#emit STOR.S.pri    to
 		params <<= 2,
 		ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:to,
-		ret[E_CALLBACK_DATA_OFFSET] = params;
+		ret[E_CALLBACK_DATA_OFFSET] = params,
 		// Copy the stack over.  First get the frame of the function that used
 		// an inline function, thus calling us indirectly.
-		new
-			from = GetFramePreviousFrame(GetCurrentFramePreviousFrame()) - (local << 2);
+		prf -= (local << 2);
 		// Adjust to the bottom of that stack, at least the bottom of the parts
 		// we need (there may be more locals declared later that we don't need).
 		if (local)
 		{
-			// Copy "params" bytes from "from" to "to".
-			rawMemcpy(to, from, params),
+			// Copy "params" bytes from "prf" to "to".
+			rawMemcpy(to, prf, params),
 			mset(a, local + 1, name[pos + 3]);
 		}
 		else
 		{
-			// Copy "params" bytes from "from" to "to".
-			rawMemcpy(to, from + 4, params),
+			// Copy "params" bytes from "prf" to "to".
+			rawMemcpy(to, prf + 4, params),
 			// Save the "return" address for the inline to our fake stack.
 			mset(a, 0, name[pos + 3]);
 		}
@@ -524,6 +524,32 @@ stock Callback_Restore(func[E_CALLBACK_DATA])
 	}
 	return 0;
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>Callback_GetCaller</summary>
+<param name="caller[E_CALLER_DATA]">Info on the function that called us.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	This gets information on the function that called the function that called
+	this function, not the function that called this function.  It stores a copy
+	of its frame, start pointer, and a pointer to the last point executed.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+// stock Callback_GetCaller(caller[E_CALLER_DATA])
+// {
+	// new
+		// pos = strfind(name, "\02"),
+		// frm = GetCurrentFramePreviousFrame(),
+		// prf = GetFramePreviousFrame(frm);
+	// // Get the scope end address.
+	// end = GetFrameReturn(frm)
+	// // Get the scope start address.
+	// start = GetFrameFunction(prf)
+	// // Get the parameter size.
+// }
 
 /*
 
