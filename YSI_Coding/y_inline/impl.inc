@@ -525,32 +525,6 @@ stock Callback_Restore(func[E_CALLBACK_DATA])
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Callback_GetCaller</summary>
-<param name="caller[E_CALLER_DATA]">Info on the function that called us.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	This gets information on the function that called the function that called
-	this function, not the function that called this function.  It stores a copy
-	of its frame, start pointer, and a pointer to the last point executed.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-// stock Callback_GetCaller(caller[E_CALLER_DATA])
-// {
-	// new
-		// pos = strfind(name, "\02"),
-		// frm = GetCurrentFramePreviousFrame(),
-		// prf = GetFramePreviousFrame(frm);
-	// // Get the scope end address.
-	// end = GetFrameReturn(frm)
-	// // Get the scope start address.
-	// start = GetFrameFunction(prf)
-	// // Get the parameter size.
-// }
-
 /*
 
       ,ad8888ba,             88 88 88                          
