@@ -122,7 +122,7 @@ new stock
 #endif
 #if !defined NULL
 new stock
-	NULL[2] = {1, 0};
+	NULL[2] = "\1";
 #endif
 
 #define UNSIGNED(%0) ((%0) - cellmin)

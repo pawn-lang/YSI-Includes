@@ -1,78 +1,3 @@
-Test:INI_AtStartOfLine1()
-{
-	ASSERT(INI_AtStartOfLine("hi", 0));
-	ASSERT(INI_AtStartOfLine("  hi", 0));
-	ASSERT(INI_AtStartOfLine("	hi", 0));
-	ASSERT(INI_AtStartOfLine("  hi", 2));
-	ASSERT(INI_AtStartOfLine("\thi", 1));
-	ASSERT(INI_AtStartOfLine("\nhi", 1));
-	ASSERT(!INI_AtStartOfLine("x\nhi", 1));
-	ASSERT(INI_AtStartOfLine("\rhi", 1));
-	ASSERT(!INI_AtStartOfLine("x\rhi", 1));
-	ASSERT(!INI_AtStartOfLine("hhi", 1));
-	ASSERT(!INI_AtStartOfLine("c hi", 2));
-}
-
-Test:INI_IsEscapeSequence1()
-{
-	new
-		str[16];
-	str = "\\;";
-	ASSERT(INI_IsEscapeSequence(str, 1));
-	str = "\\\\";
-	ASSERT(INI_IsEscapeSequence(str, 1));
-	str = "\\\\\\;";
-	ASSERT(INI_IsEscapeSequence(str, 3));
-	str = "\\\\\\\\";
-	ASSERT(INI_IsEscapeSequence(str, 3));
-	str = "\\\\\\n";
-	ASSERT(INI_IsEscapeSequence(str, 3));
-	str = "v\\\\\\\\";
-	ASSERT(INI_IsEscapeSequence(str, 4));
-	str = "hi\\n";
-	ASSERT(INI_IsEscapeSequence(str, 3));
-	str = ";";
-	ASSERT(!INI_IsEscapeSequence(str, 0));
-	str = "\\";
-	ASSERT(!INI_IsEscapeSequence(str, 0));
-	str = "hi\\\\n";
-	ASSERT(!INI_IsEscapeSequence(str, 4));
-	str = "\\\\";
-	ASSERT(!INI_IsEscapeSequence(str, 0));
-	// TODO: What should happen in this case?
-	//ASSERT(INI_IsEscapeSequence("\\\\\\", 1));
-	
-}
-
-Test:INI_GetCommentPos1()
-{
-	new
-		val = cellmax;
-	ASSERT(val >= cellmax);
-	ASSERT(cellmax >= val);
-	ASSERT(0 < val);
-	ASSERT(cellmin < val);
-	ASSERT(!(100000 >= val));
-}
-
-Test:INI_GetCommentPos2()
-{
-	ASSERT(INI_FindString("; ", ";") == 0);
-	ASSERT(INI_FindString("hello ; hi", ";") == 6);
-	ASSERT(INI_FindString("woop", ";") == cellmax);
-	ASSERT(INI_FindString("there \\; you", ";") == cellmax);
-	ASSERT(INI_FindString("maybe works? \\\\; nope", ";") == 15);
-	ASSERT(INI_FindString("[bad;tag]", ";") == 4);
-}
-
-Test:INI_ReverseWhitespace1()
-{
-	ASSERT(INI_ReverseWhitespace("a b", 2) == 1);
-	ASSERT(INI_ReverseWhitespace("abb", 2) == 2);
-	ASSERT(INI_ReverseWhitespace("  b", 2) == 0);
-	ASSERT(INI_ReverseWhitespace("b", 0) == 0);
-}
-
 Test:INI_IdentifyLineType1()
 {
 	// Comment lines and blank lines may as well be treated as the same thing,
@@ -964,9 +889,178 @@ Test:INI_Inherit2()
 	ASSERT(gs_K5 == 106);
 }
 
+// Writing tests.
 
+Test:INI_AddToBuffer0()
+{
+	new
+		INI:i = INI_Open("YSI/test_ini/test3.ini");
+	ASSERT(i != INI_NO_FILE);
+	ASSERT(INI_AddToBuffer(i, "", "hi") == -1);
+	ASSERT(INI_AddToBuffer(INI_NO_FILE, "foo", "bar") == -1);
+	ASSERT(INI_AddToBuffer(i, "key", "value") != -1);
+	new
+		s = INI_AddToBuffer(i, "first", "second");
+	ASSERT(s != -1);
+	ASSERT(INI_AddToBuffer(i, "first", "third") == s);
+	ASSERT(INI_AddToBuffer(i, "first", "fourth") == s);
+	ASSERT(INI_AddToBuffer(i, "first", "fifth") == s);
+	INI_Close(i);
+}
 
+Test:INI_AddToBuffer1()
+{
+	new
+		INI:i = INI_Open("YSI/test_ini/test4.ini");
+	new
+		s = INI_AddToBuffer(i, "key2", "value2");
+	ASSERT(s != -1);
+	INI_SetTag(i, "tag0");
+	ASSERT(INI_AddToBuffer(i, "key2", "value3") != s);
+	ASSERT(INI_AddToBuffer(i, "key2", "value4") != -1);
+	INI_DeleteTag(i, "tag0");
+	ASSERT(INI_AddToBuffer(i, "key2", "value5") == -1);
+	INI_Close(i);
+}
 
+Test:INI_VariousWriting0()
+{
+	new
+		INI:i = INI_Open("YSI/test_ini/test5.ini");
+	new
+		s = INI_AddToBuffer(i, "writing", "written");
+	ASSERT(s != -1);
+	ASSERT(!strcmp("writing", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("written", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	new
+		t = YSI_g_sINICurrentTag[i];
+	ASSERT(!strcmp("\1\0", YSI_g_sINITagBuffer[t][E_INI_TAGS_NAME], true));
+	ASSERT(YSI_g_sINITagBuffer[t][E_INI_TAGS_START] == s);
+	ASSERT(YSI_g_sINITagBuffer[t][E_INI_TAGS_NEXT] == -1);
+	new
+		x = INI_SetTag(i, "hello");
+	ASSERT(x != -1);
+	ASSERT(YSI_g_sINITagBuffer[t][E_INI_TAGS_NEXT] == -1);
+	ASSERT(YSI_g_sINITagBuffer[x][E_INI_TAGS_NEXT] == t);
+	ASSERT(YSI_g_sINITagBuffer[x][E_INI_TAGS_START] == -1);
+	INI_Close(i);
+}
 
+Test:INI_VariousWriting1()
+{
+	new
+		INI:f = INI_Open("YSI/test_ini/test5.ini"),
+		s;
+	// String.
+	s = INI_WriteString(f, "vvv", "yyy");
+	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("yyy", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	// Dec.
+	s = INI_WriteInt(f, "vvv", 57);
+	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("57", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	s = INI_WriteInt(f, "vvv", cellmin);
+	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("-2147483648", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	s = INI_WriteInt(f, "vvv", -99);
+	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("-99", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	// Hex.
+	s = INI_WriteHex(f, "vvv", 0x112233);
+	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("0x00112233", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	s = INI_WriteHex(f, "vvv", cellmin);
+	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("0x80000000", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	s = INI_WriteHex(f, "vvv", cellmax);
+	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("0x7FFFFFFF", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	// Bin.
+	s = INI_WriteBin(f, "vvv", 0);
+	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("0b0", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	s = INI_WriteBin(f, "vvv", 1);
+	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("0b1", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	s = INI_WriteBin(f, "vvv", -1);
+	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("0b11111111111111111111111111111111", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	// Bool.
+	s = INI_WriteBool(f, "vvv", false);
+	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("false", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	s = INI_WriteBool(f, "vvv", true);
+	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("true", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	// Float.
+	s = INI_WriteFloat(f, "vvv", 0.0);
+	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("0.000000", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	s = INI_WriteFloat(f, "vvv", 0.2);
+	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("0.200000", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	//printf("%s %f", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], 0.2);
+	s = INI_WriteFloat(f, "vvv", 0.2, 2);
+	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
+	ASSERT(!strcmp("0.20", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	INI_Close(f);
+}
 
+Test:INI_Write0()
+{
+	new
+		INI:f = INI_Open("YSI/test_ini/test6.ini"),
+		str[32];
+	for (new i = 0; i != 12; ++i)
+	{
+		format(str, sizeof (str), "key%d", i);
+		INI_WriteInt(f, str, i);
+	}
+	INI_SetTag(f, "hello");
+	for (new i = 0; i != 64; ++i)
+	{
+		format(str, sizeof (str), "key%d", i);
+		INI_WriteInt(f, str, i);
+	}
+	INI_SetTag(f, "woo");
+	for (new i = 0; i != 64; ++i)
+	{
+		format(str, sizeof (str), "key%d", i);
+		INI_WriteInt(f, str, i);
+	}
+	INI_Close(f);
+}
+
+Test:INI_Write1()
+{
+	new
+		INI:f = INI_Open("YSI/test_ini/test6.ini"),
+		str[32];
+	for (new i = 0; i != 16; ++i)
+	{
+		format(str, sizeof (str), "key%d", i);
+		INI_WriteInt(f, str, i + 42);
+	}
+	INI_SetTag(f, "hello");
+	for (new i = 0; i != 32; ++i)
+	{
+		format(str, sizeof (str), "key%d", i);
+		INI_WriteInt(f, str, i + 42);
+	}
+	INI_SetTag(f, "woo");
+	for (new i = 0; i != 20; ++i)
+	{
+		format(str, sizeof (str), "key%d", i);
+		INI_WriteInt(f, str, i + 42);
+	}
+	INI_Close(f);
+}
+
+Test:INI_Write2()
+{
+	new
+		INI:f = INI_Open("YSI/test_ini/test6.ini");
+	INI_DeleteTag(f, "woo");
+	INI_Close(f);
+}
 
