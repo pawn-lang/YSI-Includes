@@ -100,11 +100,12 @@ Changelog:
 enum E_CALLBACK_DATA
 {
 	// ===== ALWAYS FIRST  =====
-	ResolvedAlloc:E_CALLBACK_DATA_ALLOC = 0, // Fully resolved address.
+	ResolvedAlloc:E_CALLBACK_DATA_ALLOC = 0, // Fully resolved memory address.
 	// ===== ALWAYS SECOND =====
-	Function:E_CALLBACK_DATA_POINTER = 1,             // Inline entry point.
+	Function:E_CALLBACK_DATA_POINTER = 1,    // Inline entry point.
 	// ===== ALWAYS AFTER  =====
-	E_CALLBACK_DATA_OFFSET,
+	E_CALLBACK_DATA_PARENT,                  // Frame that called us.
+	E_CALLBACK_DATA_OFFSET,                  // Local variables size.
 	E_CALLBACK_DATA_FORMAT[2]
 }
 
@@ -124,7 +125,7 @@ static stock
 	YSI_g_sCurInlineCode;    // Pointer to the start of user code.
 
 static stock const
-	YSI_g_scError[] = "\7\7\7*** YSI Error: Unrecognised compilation in y_inline";
+	YSI_g_scError[] = "\7\7\7*** YSI Error: Unrecognised compilation in y_inline.";
 
 // Operators for doing "return" from inside an inline function.
 #define inline_return YSI_gInlineRet+=
@@ -194,6 +195,7 @@ stock Inline_Reset(callback[E_CALLBACK_DATA])
 		callback[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:0,
 		callback[E_CALLBACK_DATA_POINTER] = Function:0,
 		callback[E_CALLBACK_DATA_OFFSET] = 0,
+		callback[E_CALLBACK_DATA_PARENT] = 0,
 		callback[E_CALLBACK_DATA_FORMAT] = 0,
 		callback[E_CALLBACK_DATA_FORMAT + E_CALLBACK_DATA:1] = 0,
 		0;
@@ -350,7 +352,13 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool
 {
 	P:2("Callback_Get called: %s", name);
 	Inline_Reset(ret);
-	if (name[0] == callback_tag:'\03')
+	if (!(callback_tag:0 < name[0] < callback_tag:128))
+	{
+		P:3("Callback_Get: Found resolved callback.");
+		// Resolved inline.
+		return bool:memcpy(_:ret[E_CALLBACK_DATA:0], name[0], 0, _:E_CALLBACK_DATA * 4, _:E_CALLBACK_DATA);
+	}
+	else if (name[0] == callback_tag:'\03')
 	{
 		// This prefix is ALWAYS for publics not inlines.
 		return bool:(ret[E_CALLBACK_DATA_POINTER] = (remote ? GetRemoteFunction(name[1], expect) : GetLocalFunction(name[1], expect)));
@@ -417,15 +425,14 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool
 	static
 		spec[2];
 	Inline_EncodeFormatString(expect, spec),
+	ret[E_CALLBACK_DATA_PARENT] = prf,
 	ret[E_CALLBACK_DATA_FORMAT] = spec,
 	// Load this inline function's data in to our closure (and allocate memory).
 	ret[E_CALLBACK_DATA_POINTER] = Function:name[pos + 1];
 	new
 		to = name[pos + 2],
 		local = (to & 0x00FFFFFF),
-		params = ((to & 0xFF000000) >>> 24) + (local ? (local + 3) : 2);
-	//params = local + params + (local ? 3 : 2);
-	new
+		params = ((to & 0xFF000000) >>> 24) + (local ? (local + 3) : 2),
 		Alloc:a = malloc(params); // Allocate closure space.
 	if (a)
 	{
@@ -474,6 +481,8 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool
 
 stock Callback_Release(input[E_CALLBACK_DATA])
 {
+	// Check we were called by the correct frame.
+	if (GetFramePreviousFrame(GetCurrentFramePreviousFrame()) != input[E_CALLBACK_DATA_PARENT]) return 1;
 	static
 		ResolvedAlloc:ra,
 		Alloc:a;
@@ -515,7 +524,7 @@ stock Callback_Restore(func[E_CALLBACK_DATA])
 	{
 		// Copy the closure data back over the calling function.
 		new
-			frm = GetFramePreviousFrame(GetCurrentFramePreviousFrame()),
+			frm = func[E_CALLBACK_DATA_PARENT],
 			ret = GetFrameReturn(frm),
 			pfr = GetFramePreviousFrame(frm);
 		rawMemcpy(frm + 12 + GetFrameParameterSize(frm) - func[E_CALLBACK_DATA_OFFSET], _:func[E_CALLBACK_DATA_ALLOC], func[E_CALLBACK_DATA_OFFSET]),

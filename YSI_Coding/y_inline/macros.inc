@@ -178,12 +178,13 @@ stock const
 #define using%0\10;%1 callback_tag:@Ik:@Il:%0
 
 // Get ONLY this ONE parameter (this is a VERY important stage)!
-#define @Ik:@Il:%0, @Ip:@Iq:@Io:@Iw:|||%0|||,
-#define @Il:%0) @Ip:@Iq:@Io:@Iw:|||%0|||)
+#define @Ik:@Il:%0, @Ip:@Iq:@Io:@Iu:@Iw:|||%0|||,
+#define @Il:%0) @Ip:@Iq:@Io:@Iu:@Iw:|||%0|||)
 
-#define @Ip:@Iq:@Io:@Iw:|||%0callback%1||| @Ir:@Is:"\03;"#%1||||
-#define @Iq:@Io:@Iw:|||%0public%1||| @Ir:@Is:"\03;"#%1||||
-#define @Io:@Iw:|||%0inline%1||| @In:@It:%0%1||||
+#define @Ip:%9|||%0callback%1||| @Ir:@Is:"\03;"#%1||||
+#define @Iq:%9|||%0public%1||| @Ir:@Is:"\03;"#%1||||
+#define @Io:%9|||%0inline%1||| @In:@It:%0%1||||
+#define @Iu:%9|||%0resolved%1||| @In:@It:%1[E_CALLBACK_DATA:0]||||
 #define @Iw:|||%1||| @In:@It:#%1||||
 
 // Callbacks with "On" in the name (often overidden by y_hooks and ALS).
@@ -191,7 +192,7 @@ stock const
 #define @Is:%0|||| @In:@It:#%0|||| //Using_unknown_callback
 
 // Callbacks with additional parameters (MUST have matching parameters (y_ini)).
-#define @In:@It:%0(%1)||||%2) %0%2,.bExtra=true,.extra=%1)
+#define @In:@It:%0(%1)%3||||%2) %0%3%2,.bExtra=true,.extra=%1)
 #define @It:%0|||| %0
 
 // Defer adding the close bracket till after other macros have run.
