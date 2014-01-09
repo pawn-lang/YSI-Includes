@@ -180,6 +180,45 @@ static stock
 	#endif
 #endif
 
+/**--------------------------------------------------------------------------**\
+<summary>_GROUP_INITIALISE</summary>
+<param name="x">The element that was added (maybe).</param>
+<param name="s">Was the element added or removed?</param>
+<returns>
+	-
+</returns>
+<remarks>
+	The name is a macro, so this function isn't actually called this.  This is
+	called when a new element is created, and as such it is NOT chained to other
+	parts of the groups system because each part handles one type of element.
+	Loop through all players and set up the element for them if they are in a
+	group that this is also in by default.
+	
+	If x is "_GROUP_MAKE_LIMIT" then this is the test used in OnPlayerConnect in
+	various libraries to see if the groups system exists, and if not locally
+	initialise the player instead of leaving it up to this system.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x)
+{
+	P:4(#_GROUP_INITIALISE " called: %i", x);
+	// A new item has been added to the system - update all players according to
+	// the default settings for a group.
+	if (x != _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
+	{
+		YSI_g_sElementMembership[_:x] = YSI_g_sDefaultMembership;
+		foreach (new playerid : Player)
+		{
+			// Uses "YSI_g_sEmpty" instead of a truly blank variable so that we
+			// can ensure that NO other groups have this element when we use the
+			// "GROUP_ADD" macro.
+			Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultMembership, YSI_gGroupPlayers[playerid]);
+		}
+	}
+	return false;
+}
+
 /*
 
      ad88888ba  88                         88             
@@ -471,9 +510,9 @@ gglobal Group_SetGlobal...(_GROUP_MAKE_TAG:el,bool:s)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-gforeign Group_GetGlobal...(_GROUP_MAKE_TAG:el);
+gforeign bool:Group_GetGlobal...(_GROUP_MAKE_TAG:el);
 
-gglobal Group_GetGlobal...(_GROUP_MAKE_TAG:el)
+gglobal bool:Group_GetGlobal...(_GROUP_MAKE_TAG:el)
 {
 	P:2(#_GROUP_MAKE_NAME<Group_GetGlobal...> " called: %i", _:el);
 	return _GROUP_MAKE_NAME<Group_Get...>(GROUP_GLOBAL, el);
@@ -535,8 +574,8 @@ gforeign Group_GlobalExclusive...(_GROUP_MAKE_TAG:el);
 
 gglobal Group_GlobalExclusive...(_GROUP_MAKE_TAG:el)
 {
-	P:2(#_GROUP_MAKE_NAME<Group_GlobalExclusive...Default> " called: %i", s);
-	return _GROUP_MAKE_NAME<Group_GlobalExclusive...Default>(GROUP_GLOBAL, s);
+	P:2(#_GROUP_MAKE_NAME<Group_GlobalExclusive...> " called: %i", el);
+	return _GROUP_MAKE_NAME<Group_Exclusive...>(GROUP_GLOBAL, el);
 }
 
 /*
@@ -648,45 +687,6 @@ static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
 		// We use "return" here because "_GROUPS_CHECK_ANY" MAY be a loop.
 		return;
 	}
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>_GROUP_INITIALISE</summary>
-<param name="x">The element that was added (maybe).</param>
-<param name="s">Was the element added or removed?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	The name is a macro, so this function isn't actually called this.  This is
-	called when a new element is created, and as such it is NOT chained to other
-	parts of the groups system because each part handles one type of element.
-	Loop through all players and set up the element for them if they are in a
-	group that this is also in by default.
-	
-	If x is "_GROUP_MAKE_LIMIT" then this is the test used in OnPlayerConnect in
-	various libraries to see if the groups system exists, and if not locally
-	initialise the player instead of leaving it up to this system.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x)
-{
-	P:4(#_GROUP_INITIALISE " called: %i", x);
-	// A new item has been added to the system - update all players according to
-	// the default settings for a group.
-	if (x != _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
-	{
-		YSI_g_sElementMembership[_:x] = YSI_g_sDefaultMembership;
-		foreach (new playerid : Player)
-		{
-			// Uses "YSI_g_sEmpty" instead of a truly blank variable so that we
-			// can ensure that NO other groups have this element when we use the
-			// "GROUP_ADD" macro.
-			Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultMembership, YSI_gGroupPlayers[playerid]);
-		}
-	}
-	return false;
 }
 
 /*
@@ -876,6 +876,7 @@ _gchain _yGU(&pid, Bit:p[], Bit:c[])
 			#if !(_YSIM_IS_CLIENT || _YSIM_IS_STUB)
 				_GROUP_MAKE_NAME<_yGI...>(a, b, c);
 				_GROUP_MAKE_NAME<Group_Exclusive...@>(Group:0, _GROUP_MAKE_TAG:0);
+				_GROUP_MAKE_NAME<Group_GlobalExclusive...@>(_GROUP_MAKE_TAG:0);
 				_GROUP_MAKE_NAME<_yGA...>(a);
 				_GROUP_MAKE_NAME<_yGU...>(a, Bit:"", Bit:"");
 				_GROUP_MAKE_NAME<Group_Set...Default@>(Group:0, false);
@@ -886,7 +887,7 @@ _gchain _yGU(&pid, Bit:p[], Bit:c[])
 				_GROUP_MAKE_NAME<Group_SetGlobal...@>(_GROUP_MAKE_TAG:0, false);
 				_GROUP_MAKE_NAME<Group_Get...@>(Group:0, _GROUP_MAKE_TAG:0);
 				_GROUP_MAKE_NAME<Group_GetGlobal...@>(_GROUP_MAKE_TAG:0);
-				_GROUP_MAKE_NAME<Group_Handoff...>(0, "", 0);
+				_GROUP_MAKE_NAME<Group_Handoff...@>(0, "", 0);
 			#endif
 			_GROUP_PREVIOUS_FUNCTION();
 		}

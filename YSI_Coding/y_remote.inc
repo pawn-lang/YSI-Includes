@@ -107,8 +107,7 @@ Natives:
 // bother with complex remote calls.  However, it isn't fully bound by the
 // whole system because it's rules are different (and will work regardless).
 #if defined YSI_NO_MASTER
-	// This DOESN'T use "stock" as it can't be called from another script.
-	#define remotefunc
+	#define remotefunc stock
 	#define localfunc%0(%1) (%0(%1))
 	#define broadcastfunc%0(%1) (%0(%1))
 	#define targetfunc%3<%2>%0(%1) (%3%0(%1))
@@ -121,9 +120,6 @@ Natives:
 	// This uses "stock" as it may be called from another script.
 	//#define remotefunc%0(%1) stock%0_(%1)return J@?(W@(_:@Rz:#%0@##,_YM@CR:%1,,)):%0(%1);//%0@(__m);public %0@(__m)if(__m==-1||__m==_@)%0();%0(%1)
 	#define remotefunc%0(%1) stock%0_(%1)if(@RN:@RO:%0:J@)return(W@(_:@Rz:#%0@##,_YM@CR:%1,,));else return(%0(%1));
-	//return J@?(W@(_:@Rz:#%0@##,_YM@CR:%1,,)):%0(%1);//%0@(__m);public %0@(__m)if(__m==-1||__m==_@)%0();%0(%1)
-	
-	//if(@RN:@RO:%0:J@)return();else return();
 	
 	#define @RN:@RO:%9void:%0:J@)return(%2);else%8(%3); J@)(%2);else(%3);
 	#define @RO:%0:J@) J@)
@@ -141,7 +137,6 @@ Natives:
 	
 	#define @Rb:@Rc:#%0#%1|||%3|||%5,%6) @Ra:@Rb:@Rc:#%0i#%1,%3|||%5|||%6)
 	
-	//#define @Rc:#%0#,%1||||||)):%2();%3(__m);%5(__m)if(%7)%8();%4(%6) #%0i,%1,I@),V@(8,YSIM_RETURN)):%2(%1);%3(%6,__m);%5(%6,__m)if(%7)X@(%8(%1));%4(%6)
 	#define @Rc:#%0#,%1||||||));%7(%2(%3)); @RH:@RI:@RJ:#%0#,%1));%7(%2(%3));
 	
 	// Detect "void:"
@@ -150,7 +145,6 @@ Natives:
 	#define @RI:@RJ:#%0#,%1));%7(%9string:%2(%3)); #%0i,%1,I@),F@());%7(%2(%1));%2@(%3,__m);public %2@(%3,__m)if(__m==-1||__m==_@)R@(%2(%1));%2(%3)
 	// Detect other
 	#define @RJ:#%0#,%1));%7(%2(%3)); #%0i,%1,I@),V@(8,YSIM_RETURN));%7(%2(%1));%2@(%3,__m);public %2@(%3,__m)if(__m==-1||__m==_@)X@(%2(%1));%2(%3)
-	//%3(__m);%5(__m)if(%7)%8();%4(%6) #%0i,%1,_:@RH:@RI:@RJ:I@),V@(8,YSIM_RETURN)):%2(%1);%3(%6,__m);%5(%6,__m)if(%7)X@(%8(%1));%4(%6)
 	
 	// Zero parameters.
 	#define @Rz:#%0##,_YM@CR:,,));%7(%2()); #%0,@RK:@RL:@RM:#i,I@));%7(%2());
@@ -163,10 +157,7 @@ Natives:
 	
 	#define localfunc%0(%1) (J@=0,I@=-1,%0_(%1))
 	#define broadcastfunc%0(%1) (J@=1,I@=-1,%0_(%1))
-	// This supports "target<master> func()" and "target func<master>()".
+	// This supports "targetfunc<master> func()" and "targetfunc func<master>()".
 	#define targetfunc%3<%2>%0(%1) (J@=1,I@=(%2),%3%0_(%1))
-	
-	//target Moo(5, 6)<7>;
-	//target Moo<7>(5, 6);
-	//target<7> Moo(5, 6);
 #endif
+

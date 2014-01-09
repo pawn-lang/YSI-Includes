@@ -463,9 +463,9 @@ stock _Timer_H(slot)
 #define @yT_%0\32;%1(%2) @yT_%0%1(%2)
 //#define @_yT%0;\32%1(%2) @_yT%0%1(%2)
 
-#define pause%0; {J@=_:@Ym:%0@yT_(0,-1);}
-#define resume%0; {J@=_:@Ym:%0@yT_(1,-1);}
-#define @Ym:%0[%1]@yT_(%2,-1) %0@yT_(%2,%1)
+#define pause%0; {J@=_:@Ym:@yT_%0(0,-1);}
+#define resume%0; {J@=_:@Ym:@yT_%0(1,-1);}
+#define @Ym:%0[%1](%2,-1) %0(%2,%1)
 
 #define timerfunc YSI_timer
 

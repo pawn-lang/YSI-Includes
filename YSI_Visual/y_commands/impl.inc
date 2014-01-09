@@ -240,6 +240,8 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 
 */
 
+#define _Command_GetPlayer(%0,%1) (PA_Get(YSI_g_sCommands[(%0)][E_COMMAND_USERS], (%1)))
+
 /**--------------------------------------------------------------------------**\
 <summary>_Command_IsEmptySlot</summary>
 <param name="idx">Command to test.</param>
@@ -641,8 +643,6 @@ native bool:Command_SetPlayer(command, playerid, bool:set);
 
 </remarks>
 \**--------------------------------------------------------------------------**/
-
-#define _Command_GetPlayer(%0,%1) (PA_Get(YSI_g_sCommands[(%0)][E_COMMAND_USERS], (%1)))
 
 foreign bool:Command_GetPlayer(cmd, pid);
 
