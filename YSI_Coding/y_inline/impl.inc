@@ -104,7 +104,6 @@ enum E_CALLBACK_DATA
 	// ===== ALWAYS SECOND =====
 	Function:E_CALLBACK_DATA_POINTER = 1,    // Inline entry point.
 	// ===== ALWAYS AFTER  =====
-	E_CALLBACK_DATA_PARENT,                  // Frame that called us.
 	E_CALLBACK_DATA_OFFSET,                  // Local variables size.
 	E_CALLBACK_DATA_FORMAT[2]
 }
@@ -195,7 +194,6 @@ stock Inline_Reset(callback[E_CALLBACK_DATA])
 		callback[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:0,
 		callback[E_CALLBACK_DATA_POINTER] = Function:0,
 		callback[E_CALLBACK_DATA_OFFSET] = 0,
-		callback[E_CALLBACK_DATA_PARENT] = 0,
 		callback[E_CALLBACK_DATA_FORMAT] = 0,
 		callback[E_CALLBACK_DATA_FORMAT + E_CALLBACK_DATA:1] = 0,
 		0;
@@ -425,7 +423,6 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool
 	static
 		spec[2];
 	Inline_EncodeFormatString(expect, spec),
-	ret[E_CALLBACK_DATA_PARENT] = prf,
 	ret[E_CALLBACK_DATA_FORMAT] = spec,
 	// Load this inline function's data in to our closure (and allocate memory).
 	ret[E_CALLBACK_DATA_POINTER] = Function:name[pos + 1];
@@ -482,7 +479,6 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool
 stock Callback_Release(input[E_CALLBACK_DATA])
 {
 	// Check we were called by the correct frame.
-	if (GetFramePreviousFrame(GetCurrentFramePreviousFrame()) != input[E_CALLBACK_DATA_PARENT]) return 1;
 	static
 		ResolvedAlloc:ra,
 		Alloc:a;
@@ -524,7 +520,7 @@ stock Callback_Restore(func[E_CALLBACK_DATA])
 	{
 		// Copy the closure data back over the calling function.
 		new
-			frm = func[E_CALLBACK_DATA_PARENT],
+			frm = GetFramePreviousFrame(GetCurrentFramePreviousFrame()),
 			ret = GetFrameReturn(frm),
 			pfr = GetFramePreviousFrame(frm);
 		rawMemcpy(frm + 12 + GetFrameParameterSize(frm) - func[E_CALLBACK_DATA_OFFSET], _:func[E_CALLBACK_DATA_ALLOC], func[E_CALLBACK_DATA_OFFSET]),
