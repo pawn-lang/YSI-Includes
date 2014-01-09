@@ -74,7 +74,7 @@ inline func(a, &b, c[100])
 }
 
 // Becomes:
-static const func[]="func:.....";if(I@E(func2))for(new a, b, c[100];I@F();)while(I@L(0,-1,100))
+static const func[]="func:.....";if(I@E(func))for(new a, b, c[100];I@F();)while(I@L(0,-1,100))
 {
 	// Inline function code.
 }
@@ -83,7 +83,7 @@ static const func[]="func:.....";if(I@E(func2))for(new a, b, c[100];I@F();)while
 static const
 	func[] = "func:.....";
 
-if (I@E(func2))
+if (I@E(func))
 {
 	for (new a, b, c[100]; I@F(); )
 	{
@@ -120,6 +120,21 @@ func(parent, parameteters, a, b, c[100])
 somewhere_after_this_func:
 
 #endif
+
+#define LAMBDA_i<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)%8;
+#define LAMBDA_ii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1|||,0,0|||<%9>{%0}(%1)%8;
+#define LAMBDA_iii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2|||,0,0,0|||<%9>{%0}(%1)%8;
+#define LAMBDA_iiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3|||,0,0,0,0|||<%9>{%0}(%1)%8;
+#define LAMBDA_iiiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3,_4|||,0,0,0,0,0|||<%9>{%0}(%1)%8;
+//#define LAMBDA_v<%9>{%0}(%1) _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)
+//#define LAMBDA_s<%9>{%0}(%1) _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)
+// #define LAMBDA_a<%9>{%0}(%1) _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)
+
+#define _DO_LAMBDA|||%6|||%5|||<%9>{%0}(%1)%8; {static const YSII[]="@:....";if(I@E(YSII))for(%6;I@F();)while(I@L(I@K()%5))YSI_gInlineRet+=(%0);%9(callback_tag:YSII%1)%8;}
+
+// Make sure there's a space after the "return".
+#define YSI_gInlineRet+=(%0);%9(%1)%2=>%3; YSI_gInlineRet+=(%0);%3= %9(%1);
+#define return= return
 
 #define inline%0(%1) static %0[_:I@E:32]=#%0":....";if(I@E(_:_YI@CP:%0))for(new%1,,;I@F();)while(I@L(I@K(1)))
 

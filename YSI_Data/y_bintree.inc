@@ -137,7 +137,7 @@ enum E_BINTREE_INPUT
 //#define leafs<%1> %1][E_BINTREE_TREE
 //#define Bintree:%1[%2] Bintree:%1[%2][E_BINTREE_TREE]
 #define BinaryTree:%1<%2> Bintree:%1[%2][E_BINTREE_TREE]
-#define BinaryInput:%1<%2> Bintree:%1[%2][E_BINTREE_INPUT]
+#define BinaryInput:%1<%2> %1[%2][E_BINTREE_INPUT]
 
 #if defined YSI_TESTS
 	#include "..\YSI_Core\y_testing"
@@ -192,7 +192,7 @@ enum E_BINTREE_INPUT
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock Bintree_Generate(BinaryTree:output<>, input[][E_BINTREE_INPUT], size)
+stock Bintree_Generate(BinaryTree:output<>, input[][E_BINTREE_INPUT], size = sizeof (input))
 {
 	P:3("Bintree_Generate called: %s, %s, %i", Bintree_DisplayOutput(output), Bintree_DisplayInput(input), size);
 	if (!size)
