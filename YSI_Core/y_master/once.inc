@@ -161,9 +161,6 @@ Natives:
 #define mtask master_task
 #define mptask master_ptask
 
-// #define OnScriptClose Master_OnScriptClose
-// forward Master_OnScriptClose(id);
-
 // These are the macros used by y_master for the recursive function definition
 // structure, but they are not used unless a cloud-based "foreign" or "global"
 // are used.
@@ -207,7 +204,6 @@ Natives:
 
 #define _YM@CP:%0(%1,%2) @Zt:@Zb:@Zh:@Zi:%0(|||%1|||%2)
 
-//#define X@(%0string:%1) R@(%1)
 #define X@(@Zk:_YM@CP:%0string:%1(%2)) R@(@Zk:_YM@CP:%1(%2))
 
 // This is nearly all I needed to add to "global" for "void:".  I doubt that
@@ -226,7 +222,6 @@ Natives:
 #endif
 
 #define HANDOFF(%9) master_func MAKE_YCM<HANDOFF_SOURCE...>()<p>
-#define GROUP_HANDOFF(%9) MAKE_YCM<HANDOFF_SOURCE...Group>()<p>
 
 forward Master_Reassert();
 

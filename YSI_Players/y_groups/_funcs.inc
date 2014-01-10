@@ -736,7 +736,6 @@ static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
 
 _gchain _yGI(&ni, &na, &nu)
 {
-	// printf(#_GROUP_MAKE_NAME<_yGI...> " called: %i, %i, %i", ni, na, nu);
 	P:2(#_GROUP_MAKE_NAME<_yGI...> " called: %i, %i, %i", ni, na, nu);
 	if (ni == -1)
 	{
@@ -745,23 +744,17 @@ _gchain _yGI(&ni, &na, &nu)
 			BitArray:sStack<_MAX_GROUPS_G>;
 		if (na)
 		{
-			// printf("PUSH %d", nu);
 			// Called to "push" the default settings.
 			sStack = YSI_g_sDefaultMembership;
-			// printf("ONE %d", nu);
 			YSI_g_sDefaultMembership = YSI_g_cEmptyGroups;
-			// printf("TWO %d", nu);
 			Bit_Let(YSI_g_sDefaultMembership, nu);
-			// printf("THREE %d", nu);
 			for (new i = 0; i != bits<_MAX_GROUPS_G>; ++i)
 			{
 				YSI_g_sEmpty[i] = ~YSI_g_sDefaultMembership[i];
 			}
-			// printf("DONE %d", nu);
 		}
 		else
 		{
-			// printf("POP");
 			// Called to "pop" the default settings.
 			YSI_g_sDefaultMembership = sStack;
 			YSI_g_sEmpty = YSI_g_cEmptyGroups;
@@ -783,7 +776,6 @@ _gchain _yGI(&ni, &na, &nu)
 		_yGA = x;
 		nu = AMX_GetPublicPointerPrefix(nu, x, _A<_yGU>);
 		_yGU = x;
-		// printf(#_GROUP_MAKE_NAME<_yGI...> " ended: %i, %i, %i, %i, %i, %i", ni, na, nu, _yGI, _yGA, _yGU);
 	}
 }
 
