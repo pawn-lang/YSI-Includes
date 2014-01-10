@@ -973,7 +973,7 @@ public OnScriptInit()
 		func[32],
 		entry,
 		idx;
-	P:C(for (idx = 0; ((idx = AMX_GetPublicEntry(idx, entry))); ) { Hooks_GetName(entry, func); printf("Hooks_OnScriptInit: %03d) %s (%08x) = %08x", idx - 1, unpack(func), Hooks_GetAddr(entry + 4), Hooks_GetAddr(entry)); });
+	P:C(for (idx = 0; ((idx = AMX_GetPublicEntry(idx, entry))); ) { Hooks_GetName(entry, func); P:5("Hooks_OnScriptInit: %03d) %s (%08x) = %08x", idx - 1, unpack(func), Hooks_GetAddr(entry + 4), Hooks_GetAddr(entry)); });
 	// Find all hook functions in order (at least find the first one in a set).
 	P:C(idx=0;);
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
@@ -986,7 +986,7 @@ public OnScriptInit()
 	}
 	// Finally, put all our new mashed up publics back in order!
 	Hooks_SortPublics();
-	P:C(for (idx = 0; ((idx = AMX_GetPublicEntry(idx, entry))); ) { Hooks_GetName(entry, func); printf("Hooks_OnScriptInit: %03d) %s (%08x) = %08x", idx - 1, unpack(func), Hooks_GetAddr(entry + 4), Hooks_GetAddr(entry)); });
+	P:C(for (idx = 0; ((idx = AMX_GetPublicEntry(idx, entry))); ) { Hooks_GetName(entry, func); P:5("Hooks_OnScriptInit: %03d) %s (%08x) = %08x", idx - 1, unpack(func), Hooks_GetAddr(entry + 4), Hooks_GetAddr(entry)); });
 	// Detect when there are no hooks for the init functions.
 	if (!YSI_g_sOnFilterScriptInit) AMX_GetPublicPointer(0, YSI_g_sOnFilterScriptInit, "S@@_OnFilterScriptInit", true);
 	if (!YSI_g_sOnGameModeInit) AMX_GetPublicPointer(0, YSI_g_sOnGameModeInit, "S@@_OnGameModeInit", true);

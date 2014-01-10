@@ -72,7 +72,9 @@ Definitions:
 
 #include "y_hashmap/impl"
 
-#if defined YSI_TESTS
+// The hashmap tests are vast.  Only include them when explicitly requested.
+#if defined YSI_TESTS && defined YSI_HASHMAP_TESTS
 	#include "..\YSI_Core\y_testing"
 	#include "y_hashmap/tests"
 #endif
+

@@ -360,7 +360,7 @@ stock Bits@YSII_Ag(BitArray:data<>, start, size = sizeof (data))
 	// Blank out the lowest bits to get the lowest bit not yet used.
 	if ((cur = _:(data[i] & ~(Bit_Mask(start) - Bit:1))))
 	{
-		P:7("Bits@YSII_Ag: %d %d %d %d", cur, data[i], start, _:~(Bit_Mask(start) - Bit:1));
+		P:7("Bits@YSII_Ag: %d %d %d %d", cur, _:data[i], start, _:~(Bit_Mask(start) - Bit:1));
 		// Bits left in the current cell.
 		return Cell_GetLowestBit(cur) + (i << CELLSHIFT);
 	}

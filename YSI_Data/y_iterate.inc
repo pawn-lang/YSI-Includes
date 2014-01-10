@@ -1087,7 +1087,7 @@ stock const
 #if !defined BOTSYNC_IS_BOT
 	public OnPlayerConnect(playerid)
 	{
-		P:2("Iter_OnPlayerConnect: %d", playerid);
+		P:1("Iter_OnPlayerConnect called: %d, %d", playerid, IsPlayerNPC(playerid));
 		#if defined _FOREACH_BOT
 			if (!IsPlayerNPC(playerid))
 			{

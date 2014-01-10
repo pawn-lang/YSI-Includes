@@ -154,7 +154,7 @@ Test:y_groups_Set3()
 #include "..\YSI_Core\y_master"
 
 #define _GROUP_MAKE_NAME<%0...%1> %0Test%1
-#define _GROUP_MAKE_LIMIT 100
+#define _GROUP_MAKE_LIMIT 123
 
 #include "..\YSI_Players\y_groups\_funcs"
 
@@ -170,6 +170,25 @@ Test_SetPlayer(el, playerid, bool:s)
 	gEl = el;
 	gS = s;
 	return 1;
+}
+
+Test:0_y_groups_Connect0()
+{
+	gPl = INVALID_PLAYER_ID;
+	gEl = 100;
+	gS = false;
+	//new
+	//	Group:g = Group_Create();
+	call OnPlayerConnect(45);
+	ASSERT(gPl == INVALID_PLAYER_ID);
+	ASSERT(gEl == 100);
+	ASSERT(gS == false);
+	//printf("%d %d %d", gPl, gEl, gS);
+	Test_InitialiseFromGroups(7);
+	ASSERT(gPl == 45);
+	ASSERT(gEl == 7);
+	ASSERT(gS == true);
+	call OnPlayerDisconnect(45, 0);
 }
 
 Test:0_y_groups_Connect1()
@@ -199,25 +218,6 @@ Test:Chains()
 	Group_SetGlobalGroup(g, true);
 	ASSERT_TRUE(Group_GetPlayer(g, 44));
 	call OnPlayerDisconnect(44, 0);
-}
-
-Test:0_y_groups_Connect0()
-{
-	gPl = INVALID_PLAYER_ID;
-	gEl = 100;
-	gS = false;
-	//new
-	//	Group:g = Group_Create();
-	call OnPlayerConnect(45);
-	ASSERT(gPl == INVALID_PLAYER_ID);
-	ASSERT(gEl == 100);
-	ASSERT(gS == false);
-	//printf("%d %d %d", gPl, gEl, gS);
-	Test_InitialiseFromGroups(7);
-	ASSERT(gPl == 45);
-	ASSERT(gEl == 7);
-	ASSERT(gS == true);
-	call OnPlayerDisconnect(45, 0);
 }
 
 Test:y_groups_Children0()

@@ -58,7 +58,7 @@ Changelog:
 		First version
 \**--------------------------------------------------------------------------**/
 
-#define _GROUP_STOP_INCLUDES
+//#define _GROUP_STOP_INCLUDES
 
 #include <a_samp>
 
@@ -576,15 +576,18 @@ hook OnPlayerDisconnect(playerid, reason)
 
 hook OnPlayerConnect@9(playerid)
 {
+	P:1("Groups_OnPlayerConnect called: %d, %d", playerid, !(YSIM_HAS_MASTER && (_YSIM_IS_STUB || _YSIM_IS_CLIENT)));
 	#if !(YSIM_HAS_MASTER && (_YSIM_IS_STUB || _YSIM_IS_CLIENT))
 		#if _YSIM_IS_CLOUD
 			if (_YCM@y)
 		#endif
 			{
+				//printf("0");
 				P:6("Group_OnPlayerConnect: Master %d", playerid);
 				// Is master.  ALWAYS reset all players - if they start screwing
 				// around with loading orders then that's their own fault!
 				broadcastfunc _Group_FakePlayer(playerid, YSI_g_sDefaultGroups, bits<_MAX_GROUPS_G>);
+				//printf("1");
 			}
 		#if _YSIM_IS_CLOUD
 			else

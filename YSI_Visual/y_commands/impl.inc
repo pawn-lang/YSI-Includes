@@ -639,7 +639,7 @@ global Command_ReProcess(p,string:c[],h)
 </returns>
 <remarks>
 
-native bool:Command_SetPlayer(command, playerid, bool:set);
+native bool:Command_GetPlayer(command, playerid);
 
 </remarks>
 \**--------------------------------------------------------------------------**/
