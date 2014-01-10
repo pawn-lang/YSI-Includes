@@ -150,7 +150,7 @@ Test:y_groups_Set3()
 	Group_Destroy(g);
 }
 
-#define MASTER 50
+#define MASTER 60
 #include "..\YSI_Core\y_master"
 
 #define _GROUP_MAKE_NAME<%0...%1> %0Test%1

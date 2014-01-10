@@ -200,20 +200,23 @@ static stock
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x)
+stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
 {
-	P:4(#_GROUP_INITIALISE " called: %i", x);
-	// A new item has been added to the system - update all players according to
-	// the default settings for a group.
-	if (x != _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
-	{
-		YSI_g_sElementMembership[_:x] = YSI_g_sDefaultMembership,
-		YSI_g_sMaxEncountered = max(YSI_g_sMaxEncountered, _:x);
-		foreach (new playerid : Player)
+	#if defined _YSI_HAS_y_groups
+		P:4(#_GROUP_INITIALISE " called: %i", x);
+		// A new item has been added to the system - update all players according to
+		// the default settings for a group.
+		if (x != _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
 		{
-			Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultMembership, YSI_gGroupPlayers[playerid]);
+			YSI_g_sElementMembership[_:x] = YSI_g_sDefaultMembership,
+			YSI_g_sMaxEncountered = max(YSI_g_sMaxEncountered, _:x);
+			foreach (new playerid : Player)
+			{
+				Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultMembership, YSI_gGroupPlayers[playerid]);
+			}
 		}
-	}
+	#endif
+	#pragma unused x
 	return false;
 }
 

@@ -48,7 +48,7 @@ chars instead of "sNAMEMAX+1" as all other similar instances are.
 #include "..\YSI_Core\y_debug"
 #include "..\YSI_Data\y_iterate"
 
-#define MASTER 7
+#define MASTER 57
 #include "..\YSI_Core\y_master"
 
 /**

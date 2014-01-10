@@ -160,6 +160,8 @@ Operators:
 	#error This version does not support more than 262142 areas.
 #endif
 
+// Set commands as master 25.
+#define MASTER 62
 #define YSIM_U_DISABLE
 #include "..\YSI_Core\y_master"
 
@@ -2832,3 +2834,6 @@ forward OnPlayerLeaveArea(playerid, areaid);
 
 #undef _GROUP_MAKE_LIMIT
 #undef _GROUP_MAKE_NAME
+
+#include "..\YSI_Core\y_master"
+

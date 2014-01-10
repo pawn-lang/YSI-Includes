@@ -184,7 +184,7 @@ Natives:
 	#if defined YSI_TESTS
 		#include "..\YSI_Core\y_testing"
 		// Get the new master.
-		#define MASTER 8
+		#define MASTER 58
 		#include "y_master"
 		// Include the tests.
 		#include "y_master/tests"

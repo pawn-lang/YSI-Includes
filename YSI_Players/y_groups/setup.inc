@@ -60,9 +60,6 @@ Changelog:
 #define _GROUP_LOCAL_NAME               _GROUP_MAKE_TAG:e
 
 // Dummy values.
-//#define _GROUP_MAKE_NAME<%0...%1>       %0_%1
-//#define _GROUP_MAKE_LIMIT               0
-
 #define INVALID_GROUP (Group:-1)
 #define GROUP_MASK                      (Group:0x80000000)
 #define GROUP_GLOBAL                    (Group:_MAX_GROUPS | GROUP_MASK) //-1)
@@ -70,6 +67,8 @@ Changelog:
 #define GROUP_TEMP_FIX(%0)              ((%0)&~GROUP_MASK)
 #define GROUP_MANGLE(%0)                (Group:(%0) | GROUP_MASK)
 
+// This is currently "leaking" code to the final script - code that we don't
+// want!  No longer.
 #if defined _YSI_HAS_y_groups || COMPILER_1ST_PASS
 	#define NO_GROUPS(%0) if(_GROUP_INITIALISE(%0))
 #else
@@ -77,16 +76,7 @@ Changelog:
 #endif
 #define _GROUP_INITIALISE               _GROUP_MAKE_NAME<..._InitialiseFromGroups>
 
-// Define local variable names.  This will go in the single call file.
-#define _GROUP_GROUP_NAME               _GROUP_MAKE_NAME<YSI_gs_Group...Data>
-#define _GROUP_GLOBAL_NAME              //_GROUP_MAKE_NAME<YSI_gs_GroupGlobal...>
-
-#define _GROUP_CREATE                   _GROUP_MAKE_NAME<@yG_Init...>
-#define _GROUP_UPDATE_PLAYER            _GROUP_MAKE_NAME<@yG_Upd...>
-
-// #define gforeign%1(%2); _GROUP_MAKE_NAME<foreign%1>(%2);
-// #define gglobal%1(%2) _GROUP_MAKE_NAME<global%1>(%2)
-
+// Chain init functions.
 #define GROUP_CHAIN%9<%0>(%1) (J@=_:(_Y_G@C_YES:_Y_G@C_NO:%0%9|||(_:_Y_G@C3:_Y_G@C2:_Y_G@C0:_Y_G@C1:%0(%1))))
 
 #define _Y_G@C3:_Y_G@C2:_Y_G@C0:_Y_G@C1:%0(%1,%2,%3) _Y_G@C_3(%0,_:_Y_G@P:_Y_G@Q:_Y_G@R:%1,_:%2,_:%3|||)
@@ -100,10 +90,9 @@ Changelog:
 #define _Y_G@Q:%0&%1||| _Y_G@Q:%0%1|||
 #define _Y_G@R:%0||| %0
 
+// Set up the uniques to make removing them simpler.
 #define _GROUP_UNIQUE_SYMBOL 0
 #define _GROUP_UNIQUE_FUNCTION
-
-//#define master_hook%0On%2(%3) hook On%2(%3)<>return 1;rehook On%2(%3)<_YCM:y>
 
 #if !defined MAX_GROUP_NAME
 	#define MAX_GROUP_NAME              (24)
@@ -157,9 +146,10 @@ Changelog:
 #elseif _MAX_GROUPS < 534
 	#define _GROUPS_CHECK_ANY(%0,%1) if(%0[16]&%1[16]||%0[0]&%1[0]||%0[1]&%1[1]||%0[2]&%1[2]||%0[3]&%1[3]||%0[4]&%1[4]||%0[5]&%1[5]||%0[6]&%1[6]||%0[7]&%1[7]||%0[8]&%1[8]||%0[9]&%1[9]||%0[10]&%1[10]||%0[11]&%1[11]||%0[12]&%1[12]||%0[13]&%1[13]||%0[14]&%1[14]||%0[15]&%1[15])
 #else
+	// The variable is now based on both input variables to avoid shadow
+	// warnings when used within another check (as in "Group_FullPlayerUpdate").
 	#define _GROUPS_CHECK_ANY(%0,%1) \
-		for (new __g = bits<_:_MAX_GROUPS + 1>; __g-- != 0; ) if (_:%0[__g] & _:%1[__g])
-		//for (new __g = 0; __g != bits<_:_MAX_GROUPS + 1>; ++__g) if (_:%0[__g] & _:%1[__g])
+		for (new %1__g%0 = bits<_MAX_GROUPS_G>; %1__g%0--; ) if (%0[%1__g%0] & %1[%1__g%0])
 #endif
 
 stock

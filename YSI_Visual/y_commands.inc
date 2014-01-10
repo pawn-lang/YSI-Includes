@@ -153,7 +153,7 @@ Compile options:
 #endif
 
 // Set commands as master 25.
-#define MASTER 25
+#define MASTER 63
 #define YSIM_U_DISABLE
 #include "..\YSI_Core\y_master"
 
@@ -188,5 +188,6 @@ Compile options:
 // Restore previous settings.
 #undef _GROUP_MAKE_LIMIT
 #undef _GROUP_MAKE_NAME
+
 #include "..\YSI_Core\y_master"
 
