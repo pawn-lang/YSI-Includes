@@ -98,6 +98,7 @@ static stock
 #if defined _YSI_HAS_y_groups
 	#define gforeign%1(%2); _GROUP_MAKE_NAME<foreign%1>(%2);
 	#define gglobal%1(%2) _GROUP_MAKE_NAME<global%1>(%2)
+	#define gpublic master_func
 	#if YSIM_HAS_MASTER
 		#if _YSIM_IS_CLIENT
 			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
@@ -126,27 +127,33 @@ static stock
 		#if _YSIM_IS_CLIENT
 			#define gforeign%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);
 			#define gglobal%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1_>(%2)
+			#define gpublic static stock
 			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Client_Set>
 		#elseif _YSIM_IS_SERVER
 			#define gforeign%0...%1(%2); _GROUP_MAKE_NAME<%0...%1>(%2);static stock _GROUP_MAKE_NAME<%0...%1@>(%2)(_GROUP_MAKE_NAME<%0...%1>(%2));
 			#define gglobal%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1>(%2)
+			#define gpublic stock
 			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#elseif _YSIM_IS_STUB
 			#define gforeign%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>;
 			#define gglobal%0...%1(%2)
+			#define gpublic static stock
 			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Stub_Set>
 		#else
 			#define gforeign%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);static stock _GROUP_MAKE_NAME<%0...%1@>(%2)<_YCM:y>(_GROUP_MAKE_NAME<%0...%1>(%2));
 			#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1@>(%2)<>(_GROUP_MAKE_NAME<%0...%1>(%2)); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:y>
+			#define gpublic%0(%1)<%9> stock%0(%1)<>{}stock%0(%1)<_YCM:%9>
 			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);stock _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#endif
 	#else
 		#define gforeign%0...%1(%2);
 		#define gglobal%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1>(%2)
+		#define gglobal%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1>(%2)
+		#define gpublic stock
 		#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 		#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 	#endif
@@ -155,27 +162,32 @@ static stock
 		#if _YSIM_IS_CLIENT
 			#define gforeign%0...%1(%2); static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);
 			#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1_>(%2)
+			#define gpublic static stock
 			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Client_Set>
 		#elseif _YSIM_IS_SERVER
 			#define gforeign%0...%1(%2); _GROUP_MAKE_NAME<%0...%1>(%2);static stock _GROUP_MAKE_NAME<%0...%1@>(%2)(_GROUP_MAKE_NAME<%0...%1>(%2));
 			#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
+			#define gpublic static stock
 			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#elseif _YSIM_IS_STUB
 			#define gforeign%0...%1(%2); static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>;
 			#define gglobal%0...%1(%2)
+			#define gpublic static stock
 			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Stub_Set>
 		#else
 			#define gforeign%0...%1(%2); static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);static stock _GROUP_MAKE_NAME<%0...%1@>(%2)<_YCM:y>(_GROUP_MAKE_NAME<%0...%1>(%2));
 			#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1@>(%2)<>(_GROUP_MAKE_NAME<%0...%1>(%2));static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:y>
 			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);static stock _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
+			#define gpublic%0(%1)<%9> static stock%0(%1)<>{}static stock%0(%1)<_YCM:%9>
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#endif
 	#else
 		#define gforeign%0...%1(%2);
 		#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
+		#define gpublic static stock
 		#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 		#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 	#endif
@@ -590,9 +602,7 @@ gglobal Group_GlobalExclusive...(_GROUP_MAKE_TAG:el)
 
 */
 
-gforeign void:Group_Handoff...(i,a[],s);
-
-gglobal void:Group_Handoff...(i,a[],s)
+static stock void:Group_Handoff(i,a[],s)
 {
 	s = min(s, bits<_:_MAX_GROUPS_G>);
 	if (i == -1)
@@ -601,24 +611,17 @@ gglobal void:Group_Handoff...(i,a[],s)
 	}
 	else if (i < sizeof (YSI_g_sElementMembership))
 	{
-		// DO NOT UPDATE THE PERMISSIONS - this has already been handled
-		// (at least it should have been) by the host library given that it has
-		// code to work regardless of the presense of this code.
-		//foreach (new pid : Player)
-		//{
-		//	Group_FullPlayerUpdate(pid, i, YSI_g_sElementMembership[i], Bit:a, YSI_gGroupPlayers[playerid]);
-		//}
 		memcpy(_:YSI_g_sElementMembership[i], a, 0, s * 4);
 	}
 }
 
-GROUP_HANDOFF()
+gpublic MAKE_YCM<HANDOFF_SOURCE...Group>()<p>
 {
 	// Pass data to the new group controller.
-	_GROUP_MAKE_NAME<Group_Handoff...>(-1, _:YSI_g_sDefaultMembership, sizeof (YSI_g_sDefaultMembership));
+	Group_Handoff(-1, _:YSI_g_sDefaultMembership, sizeof (YSI_g_sDefaultMembership));
 	for (new i = 0; i != sizeof (YSI_g_sElementMembership); ++i)
 	{
-		_GROUP_MAKE_NAME<Group_Handoff...>(i, _:YSI_g_sElementMembership[i], sizeof (YSI_g_sElementMembership[]));
+		Group_Handoff(i, _:YSI_g_sElementMembership[i], sizeof (YSI_g_sElementMembership[]));
 	}
 }
 
@@ -902,7 +905,6 @@ _gchain _yGU(&pid, Bit:p[], Bit:c[])
 				_GROUP_MAKE_NAME<Group_SetGlobal...@>(_GROUP_MAKE_TAG:0, false);
 				_GROUP_MAKE_NAME<Group_Get...@>(Group:0, _GROUP_MAKE_TAG:0);
 				_GROUP_MAKE_NAME<Group_GetGlobal...@>(_GROUP_MAKE_TAG:0);
-				_GROUP_MAKE_NAME<Group_Handoff...@>(0, "", 0);
 				for (new i = 0; i != _GROUP_MAKE_LIMIT; ++i)
 				{
 					YSI_g_sElementMembership[i] = Bit:"";
@@ -916,6 +918,7 @@ _gchain _yGU(&pid, Bit:p[], Bit:c[])
 				printf("", _:YSI_g_sEmpty);
 				printf("", _yGA);
 				_GROUP_SET_PLAYER(_GROUP_MAKE_TAG:0, 0, false);
+				MAKE_YCM<HANDOFF_SOURCE...Group>();
 			#endif
 		#else
 			new
@@ -942,4 +945,5 @@ _gchain _yGU(&pid, Bit:p[], Bit:c[])
 #undef _GROUP_SET_PLAYER
 #undef gforeign
 #undef gglobal
+#undef gpublic
 

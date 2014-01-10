@@ -225,12 +225,8 @@ Natives:
 	#define MAX_MASTERS 64 // Default, old value.
 #endif
 
-//#define HANDOFF_SOURCE(%9) forward MAKE_YCM<HANDOFF_SOURCE...>();public MAKE_YCM<HANDOFF_SOURCE...>()<>{}public MAKE_YCM<HANDOFF_SOURCE...>()<_YCM:p>
-//#define HANDOFF_TARGET(%1) forward MAKE_YCM<HANDOFF_TARGET...>(%1);public MAKE_YCM<HANDOFF_TARGET...>(%1)<>{}public MAKE_YCM<HANDOFF_TARGET...>(%1)<_YCM:y,_YCM:u>
-//#define HANDOFF<%0>(%1) CallRemoteFunction(#MAKE_YCM<HANDOFF_TARGET...>,#%0,%1)
 #define HANDOFF(%9) master_func MAKE_YCM<HANDOFF_SOURCE...>()<p>
-#define GROUP_HANDOFF(%9) master_func MAKE_YCM<HANDOFF_SOURCE...Group>()<p>
-//#define Master_HandoffSource() MAKE_YCM<Master_Handoff...>
+#define GROUP_HANDOFF(%9) MAKE_YCM<HANDOFF_SOURCE...Group>()<p>
 
 forward Master_Reassert();
 
