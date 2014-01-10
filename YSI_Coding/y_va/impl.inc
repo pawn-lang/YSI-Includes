@@ -97,62 +97,70 @@ Operators:
 #include "..\YSI_Internal\y_funcinc"
 #include "..\YSI_Core\y_utils"
 
+static stock
+	YSI_g_sStack,
+	YSI_g_sArgCount,
+	YSI_g_sArgs[4];
+
+forward _y_va_funcinc_();
+
+public _y_va_funcinc_()
+{
+	printf("", YSI_g_sStack);
+	format(YSI_g_sArgs, YSI_g_sArgCount, "");
+}
+
 stock va_printf(const fmat[], va_:STATIC_ARGS)
 {
-	new
-		num_args,
-		arg_start,
-		arg_end;
-	// Get the pointer to the number of arguments to the last function.
+	// Get the number of parameters.
+	#emit LOAD.S.alt   STATIC_ARGS
+	#emit INC.alt
+	#emit SHL.C.alt    2
+	// "alt" now contains the number of static arguments in bytes + 4.
+	
+	// Get the previous parameter count.
 	#emit LOAD.S.pri   0
 	#emit ADD.C        8
-	#emit MOVE.alt
-	// Get the number of arguments.
 	#emit LOAD.I
-	#emit STOR.S.pri   num_args
-	// Get the variable arguments (end).
+	#emit SUB
+	#emit ADD.C        8
+	#emit STOR.pri     YSI_g_sArgCount // "printf"s parameter count.
+	
+	// Get the address of the arguments we are replacing.
+	#emit LOAD.S.pri   0
 	#emit ADD
-	#emit STOR.S.pri   arg_end
-	// Get the variable arguments (start).
-	#emit LOAD.S.pri   STATIC_ARGS
-	#emit SMUL.C       4
-	#emit ADD
-	#emit STOR.S.pri   arg_start
-	// Using an assembly loop here screwed the code up as the labels added some
-	// odd stack/frame manipulation code...
-	while (arg_end != arg_start)
-	{
-		#emit MOVE.pri
-		#emit LOAD.I
-		#emit PUSH.pri
-		#emit CONST.pri    4
-		#emit SUB.alt
-		#emit STOR.S.pri   arg_end
-	}
-	// Push the additional parameters.
-	#emit PUSH.S       fmat
-	// Push the argument count.
-	#emit LOAD.S.pri   num_args
-	#emit ADD.C        4
-	#emit LOAD.S.alt   STATIC_ARGS
-	#emit XCHG
-	#emit SMUL.C       4
-	#emit SUB.alt
-	#emit PUSH.pri
-	#emit MOVE.alt
-	// This gets confused if you have a local variable of the same name as it
-	// seems to factor in them first, so you get the offset of the local
-	// variable instead of the index of the native.
-	#emit SYSREQ.C     printf
-	// Clear the stack.
-	#emit CONST.pri    4
-	#emit ADD
-	#emit MOVE.alt
-	// The three lines above get the total stack data size, now remove it.
-	#emit LCTRL        4
-	#emit ADD
+	
+	// Copy them to our temporary buffer.
+	#emit CONST.alt    YSI_g_sArgs
+	#emit MOVS         8
+	
+	// Go to the new "top" of the stack.
+	#emit STACK        0
+	#emit STOR.alt     YSI_g_sStack    // Store it.
+	#emit ADD.C        8
 	#emit SCTRL        4
-	// Now do the real return.
+	
+	// "frm" is still valid.
+	#emit LOAD.S.pri   fmat            // Get the final parameter.
+	#emit PUSH.pri                     // Place the final stack parameter.
+	#emit PUSH         YSI_g_sArgCount // Push the parameter count.
+	
+	// Call the function.
+	#emit SYSREQ.C     printf
+	
+	// Copy the data back.
+	#emit STACK        0
+	#emit CONST.pri    YSI_g_sArgs
+	#emit MOVS         8
+	#emit LOAD.pri     YSI_g_sStack
+	#emit SCTRL        4
+	
+	#emit RETN
+	
+	// This new version of the code worked first time!  I'm very happy with that
+	// result, but I also feel it was justified given how long I spent staring
+	// at it!
+	return 0;
 }
 
 stock va_CallRemoteFunction(const function[], const fmat[], va_:STATIC_ARGS)
@@ -579,3 +587,4 @@ stock va_print(const fmat[], va_args<>)
 {
 	return print(va_return(fmat, va_start<1>));
 }
+

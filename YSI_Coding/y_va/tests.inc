@@ -68,3 +68,4 @@ Test:y_va_return()
 	y_va_return(str, sizeof (str), "Hi %.3f %8.8s %8.8s", 5.5, "this is a very long string", "short");
 	ASSERT(!strcmp(str, "Hi 5.500 this is  short   "));
 }
+
