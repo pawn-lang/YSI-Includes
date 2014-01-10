@@ -114,7 +114,7 @@ stock va_printf(const fmat[], va_:STATIC_ARGS)
 {
 	// Get the number of parameters.
 	#emit LOAD.S.alt   STATIC_ARGS
-	#emit INC.alt
+	#emit INC.alt      // 2 - n
 	#emit SHL.C.alt    2
 	// "alt" now contains the number of static arguments in bytes + 4.
 	
@@ -132,17 +132,16 @@ stock va_printf(const fmat[], va_:STATIC_ARGS)
 	
 	// Copy them to our temporary buffer.
 	#emit CONST.alt    YSI_g_sArgs
-	#emit MOVS         8
+	#emit MOVS         8 // (n + 1) * 4
 	
 	// Go to the new "top" of the stack.
 	#emit STACK        0
 	#emit STOR.alt     YSI_g_sStack    // Store it.
-	#emit ADD.C        8
+	#emit ADD.C        8 // (n + 1) * 4
 	#emit SCTRL        4
 	
 	// "frm" is still valid.
-	#emit LOAD.S.pri   fmat            // Get the final parameter.
-	#emit PUSH.pri                     // Place the final stack parameter.
+	#emit PUSH.S       fmat            // Get the final parameter.
 	#emit PUSH         YSI_g_sArgCount // Push the parameter count.
 	
 	// Call the function.
@@ -165,245 +164,202 @@ stock va_printf(const fmat[], va_:STATIC_ARGS)
 
 stock va_CallRemoteFunction(const function[], const fmat[], va_:STATIC_ARGS)
 {
-	new
-		num_args,
-		arg_start,
-		arg_end;
-	// Get the pointer to the number of arguments to the last function.
+	// Get the number of parameters.
+	#emit LOAD.S.alt   STATIC_ARGS
+	#emit SHL.C.alt    2
+	// "alt" now contains the number of static arguments in bytes + 4.
+	
+	// Get the previous parameter count.
 	#emit LOAD.S.pri   0
 	#emit ADD.C        8
-	#emit MOVE.alt
-	// Get the number of arguments.
 	#emit LOAD.I
-	#emit STOR.S.pri   num_args
-	// Get the variable arguments (end).
+	#emit SUB
+	#emit ADD.C        8
+	#emit STOR.pri     YSI_g_sArgCount // "format"s parameter count.
+	
+	// Get the address of the arguments we are replacing.
+	#emit LOAD.S.pri   0
 	#emit ADD
-	#emit STOR.S.pri   arg_end
-	// Get the variable arguments (start).
-	#emit LOAD.S.pri   STATIC_ARGS
-	#emit SMUL.C       4
-	#emit ADD
-	#emit STOR.S.pri   arg_start
-	// Using an assembly loop here screwed the code up as the labels added some
-	// odd stack/frame manipulation code...
-	while (arg_end != arg_start)
-	{
-		#emit MOVE.pri
-		#emit LOAD.I
-		#emit PUSH.pri
-		#emit CONST.pri    4
-		#emit SUB.alt
-		#emit STOR.S.pri   arg_end
-	}
-	// Push the additional parameters.
+	
+	// Copy them to our temporary buffer.
+	#emit CONST.alt    YSI_g_sArgs
+	#emit MOVS         12 // (n + 1) * 4
+	
+	// Go to the new "top" of the stack.
+	#emit STACK        0
+	#emit STOR.alt     YSI_g_sStack    // Store it.
+	#emit ADD.C        12 // (n + 1) * 4
+	#emit SCTRL        4
+	
+	// "frm" is still valid.
 	#emit PUSH.S       fmat
 	#emit PUSH.S       function
-	// Push the argument count.
-	#emit LOAD.S.pri   num_args
-	#emit ADD.C        8
-	#emit LOAD.S.alt   STATIC_ARGS
-	#emit XCHG
-	#emit SMUL.C       4
-	#emit SUB.alt
-	#emit PUSH.pri
-	#emit MOVE.alt
-	// This gets confused if you have a local variable of the same name as it
-	// seems to factor in them first, so you get the offset of the local
-	// variable instead of the index of the native.
+	#emit PUSH         YSI_g_sArgCount // Push the parameter count.
+	
+	// Call the function.
 	#emit SYSREQ.C     CallRemoteFunction
-	// Clear the stack.
-	#emit CONST.pri    4
-	#emit ADD
-	#emit MOVE.alt
-	// The three lines above get the total stack data size, now remove it.
-	#emit LCTRL        4
-	#emit ADD
+	
+	// Copy the data back.
+	#emit STACK        0
+	#emit CONST.pri    YSI_g_sArgs
+	#emit MOVS         8
+	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
-	// Now do the real return.
+	
+	return 0;
 }
 
 stock va_CallLocalFunction(const function[], const fmat[], va_:STATIC_ARGS)
 {
-	new
-		num_args,
-		arg_start,
-		arg_end;
-	// Get the pointer to the number of arguments to the last function.
+	// Get the number of parameters.
+	#emit LOAD.S.alt   STATIC_ARGS
+	#emit SHL.C.alt    2
+	// "alt" now contains the number of static arguments in bytes + 4.
+	
+	// Get the previous parameter count.
 	#emit LOAD.S.pri   0
 	#emit ADD.C        8
-	#emit MOVE.alt
-	// Get the number of arguments.
 	#emit LOAD.I
-	#emit STOR.S.pri   num_args
-	// Get the variable arguments (end).
+	#emit SUB
+	#emit ADD.C        8
+	#emit STOR.pri     YSI_g_sArgCount // "format"s parameter count.
+	
+	// Get the address of the arguments we are replacing.
+	#emit LOAD.S.pri   0
 	#emit ADD
-	#emit STOR.S.pri   arg_end
-	// Get the variable arguments (start).
-	#emit LOAD.S.pri   STATIC_ARGS
-	#emit SMUL.C       4
-	#emit ADD
-	#emit STOR.S.pri   arg_start
-	// Using an assembly loop here screwed the code up as the labels added some
-	// odd stack/frame manipulation code...
-	while (arg_end != arg_start)
-	{
-		#emit MOVE.pri
-		#emit LOAD.I
-		#emit PUSH.pri
-		#emit CONST.pri    4
-		#emit SUB.alt
-		#emit STOR.S.pri   arg_end
-	}
-	// Push the additional parameters.
+	
+	// Copy them to our temporary buffer.
+	#emit CONST.alt    YSI_g_sArgs
+	#emit MOVS         12 // (n + 1) * 4
+	
+	// Go to the new "top" of the stack.
+	#emit STACK        0
+	#emit STOR.alt     YSI_g_sStack    // Store it.
+	#emit ADD.C        12 // (n + 1) * 4
+	#emit SCTRL        4
+	
+	// "frm" is still valid.
 	#emit PUSH.S       fmat
 	#emit PUSH.S       function
-	// Push the argument count.
-	#emit LOAD.S.pri   num_args
-	#emit ADD.C        8
-	#emit LOAD.S.alt   STATIC_ARGS
-	#emit XCHG
-	#emit SMUL.C       4
-	#emit SUB.alt
-	#emit PUSH.pri
-	#emit MOVE.alt
-	// This gets confused if you have a local variable of the same name as it
-	// seems to factor in them first, so you get the offset of the local
-	// variable instead of the index of the native.
+	#emit PUSH         YSI_g_sArgCount // Push the parameter count.
+	
+	// Call the function.
 	#emit SYSREQ.C     CallLocalFunction
-	// Clear the stack.
-	#emit CONST.pri    4
-	#emit ADD
-	#emit MOVE.alt
-	// The three lines above get the total stack data size, now remove it.
-	#emit LCTRL        4
-	#emit ADD
+	
+	// Copy the data back.
+	#emit STACK        0
+	#emit CONST.pri    YSI_g_sArgs
+	#emit MOVS         8
+	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
-	// Now do the real return.
+	
+	return 0;
 }
 
 stock va_SetTimerEx(const function[], interval, bool:repeating, const fmat[], va_:STATIC_ARGS)
 {
-	static
-		sRet;
-	new
-		num_args,
-		arg_start,
-		arg_end;
-	// Get the pointer to the number of arguments to the last function.
+	// Get the number of parameters.
+	#emit LOAD.S.alt   STATIC_ARGS
+	#emit DEC.alt      // 2 - n
+	#emit DEC.alt
+	#emit SHL.C.alt    2
+	// "alt" now contains the number of static arguments in bytes + 4.
+	
+	// Get the previous parameter count.
 	#emit LOAD.S.pri   0
 	#emit ADD.C        8
-	#emit MOVE.alt
-	// Get the number of arguments.
 	#emit LOAD.I
-	#emit STOR.S.pri   num_args
-	// Get the variable arguments (end).
+	#emit SUB
+	#emit ADD.C        8
+	#emit STOR.pri     YSI_g_sArgCount // "format"s parameter count.
+	
+	// Get the address of the arguments we are replacing.
+	#emit LOAD.S.pri   0
 	#emit ADD
-	#emit STOR.S.pri   arg_end
-	// Get the variable arguments (start).
-	#emit LOAD.S.pri   STATIC_ARGS
-	#emit SMUL.C       4
-	#emit ADD
-	#emit STOR.S.pri   arg_start
-	// Using an assembly loop here screwed the code up as the labels added some
-	// odd stack/frame manipulation code...
-	while (arg_end != arg_start)
-	{
-		#emit MOVE.pri
-		#emit LOAD.I
-		#emit PUSH.pri
-		#emit CONST.pri    4
-		#emit SUB.alt
-		#emit STOR.S.pri   arg_end
-	}
-	// Push the additional parameters.
+	
+	// Copy them to our temporary buffer.
+	#emit CONST.alt    YSI_g_sArgs
+	#emit MOVS         20 // (n + 1) * 4
+	
+	// Go to the new "top" of the stack.
+	#emit STACK        0
+	#emit STOR.alt     YSI_g_sStack    // Store it.
+	#emit ADD.C        20 // (n + 1) * 4
+	#emit SCTRL        4
+	
+	// "frm" is still valid.
 	#emit PUSH.S       fmat
 	#emit PUSH.S       repeating
 	#emit PUSH.S       interval
 	#emit PUSH.S       function
-	// Push the argument count.
-	#emit LOAD.S.pri   num_args
-	#emit ADD.C        16
-	#emit LOAD.S.alt   STATIC_ARGS
-	#emit XCHG
-	#emit SMUL.C       4
-	#emit SUB.alt
-	#emit PUSH.pri
-	#emit MOVE.alt
-	// This gets confused if you have a local variable of the same name as it
-	// seems to factor in them first, so you get the offset of the local
-	// variable instead of the index of the native.
+	#emit PUSH         YSI_g_sArgCount // Push the parameter count.
+	
+	// Call the function.
 	#emit SYSREQ.C     SetTimerEx
-	#emit STOR.pri     sRet
-	// Clear the stack.
-	#emit CONST.pri    4
-	#emit ADD
-	#emit MOVE.alt
-	// The three lines above get the total stack data size, now remove it.
-	#emit LCTRL        4
-	#emit ADD
+	#emit STOR.pri     YSI_g_sArgCount
+	
+	// Copy the data back.
+	#emit STACK        0
+	#emit CONST.pri    YSI_g_sArgs
+	#emit MOVS         8
+	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
-	// Now do the real return.
-	return sRet;
+	
+	#emit LOAD.pri     YSI_g_sArgCount
+	#emit RETN
+	
+	return 0;
 }
 
 stock va_format(out[], size, const fmat[], va_:STATIC_ARGS)
 {
-	new
-		num_args,
-		arg_start,
-		arg_end;
-	// Get the pointer to the number of arguments to the last function.
+	// Get the number of parameters.
+	#emit LOAD.S.alt   STATIC_ARGS
+	#emit DEC.alt      // 2 - n
+	#emit SHL.C.alt    2
+	// "alt" now contains the number of static arguments in bytes + 4.
+	
+	// Get the previous parameter count.
 	#emit LOAD.S.pri   0
 	#emit ADD.C        8
-	#emit MOVE.alt
-	// Get the number of arguments.
 	#emit LOAD.I
-	#emit STOR.S.pri   num_args
-	// Get the variable arguments (end).
+	#emit SUB
+	#emit ADD.C        8
+	#emit STOR.pri     YSI_g_sArgCount // "format"s parameter count.
+	
+	// Get the address of the arguments we are replacing.
+	#emit LOAD.S.pri   0
 	#emit ADD
-	#emit STOR.S.pri   arg_end
-	// Get the variable arguments (start).
-	#emit LOAD.S.pri   STATIC_ARGS
-	#emit SMUL.C       4
-	#emit ADD
-	#emit STOR.S.pri   arg_start
-	// Using an assembly loop here screwed the code up as the labels added some
-	// odd stack/frame manipulation code...
-	while (arg_end != arg_start)
-	{
-		#emit MOVE.pri
-		#emit LOAD.I
-		#emit PUSH.pri
-		#emit CONST.pri    4
-		#emit SUB.alt
-		#emit STOR.S.pri   arg_end
-	}
-	// Push the additional parameters.
+	
+	// Copy them to our temporary buffer.
+	#emit CONST.alt    YSI_g_sArgs
+	#emit MOVS         16 // (n + 1) * 4
+	
+	// Go to the new "top" of the stack.
+	#emit STACK        0
+	#emit STOR.alt     YSI_g_sStack    // Store it.
+	#emit ADD.C        16 // (n + 1) * 4
+	#emit SCTRL        4
+	
+	// "frm" is still valid.
 	#emit PUSH.S       fmat
 	#emit PUSH.S       size
 	#emit PUSH.S       out
-	// Push the argument count.
-	#emit LOAD.S.pri   num_args
-	#emit ADD.C        12
-	#emit LOAD.S.alt   STATIC_ARGS
-	#emit XCHG
-	#emit SMUL.C       4
-	#emit SUB.alt
-	#emit PUSH.pri
-	#emit MOVE.alt
-	// This gets confused if you have a local variable of the same name as it
-	// seems to factor in them first, so you get the offset of the local
-	// variable instead of the index of the native.
+	#emit PUSH         YSI_g_sArgCount // Push the parameter count.
+	
+	// Call the function.
 	#emit SYSREQ.C     format
-	// Clear the stack.
-	#emit CONST.pri    4
-	#emit ADD
-	#emit MOVE.alt
-	// The three lines above get the total stack data size, now remove it.
-	#emit LCTRL        4
-	#emit ADD
+	
+	// Copy the data back.
+	#emit STACK        0
+	#emit CONST.pri    YSI_g_sArgs
+	#emit MOVS         8
+	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
-	// Now do the real return.
+	
+	#emit RETN
+	
+	return 0;
 }
 
 stock va_return(const fmat[], va_:STATIC_ARGS)
@@ -411,61 +367,51 @@ stock va_return(const fmat[], va_:STATIC_ARGS)
 	static
 		out[YSI_MAX_STRING * 8],
 		size = YSI_MAX_STRING;
-	new
-		num_args,
-		arg_start,
-		arg_end;
-	// Get the pointer to the number of arguments to the last function.
+	
+	// Get the number of parameters.
+	#emit LOAD.S.alt   STATIC_ARGS
+	#emit DEC.alt      // 2 - n
+	#emit SHL.C.alt    2
+	// "alt" now contains the number of static arguments in bytes + 4.
+	
+	// Get the previous parameter count.
 	#emit LOAD.S.pri   0
 	#emit ADD.C        8
-	#emit MOVE.alt
-	// Get the number of arguments.
 	#emit LOAD.I
-	#emit STOR.S.pri   num_args
-	// Get the variable arguments (end).
+	#emit SUB
+	#emit ADD.C        8
+	#emit STOR.pri     YSI_g_sArgCount // "format"s parameter count.
+	
+	// Get the address of the arguments we are replacing.
+	#emit LOAD.S.pri   0
 	#emit ADD
-	#emit STOR.S.pri   arg_end
-	// Get the variable arguments (start).
-	#emit LOAD.S.pri   STATIC_ARGS
-	#emit SMUL.C       4
-	#emit ADD
-	#emit STOR.S.pri   arg_start
-	// Using an assembly loop here screwed the code up as the labels added some
-	// odd stack/frame manipulation code...
-	while (arg_end != arg_start)
-	{
-		#emit MOVE.pri
-		#emit LOAD.I
-		#emit PUSH.pri
-		#emit CONST.pri    4
-		#emit SUB.alt
-		#emit STOR.S.pri   arg_end
-	}
-	// Push the additional parameters.
+	
+	// Copy them to our temporary buffer.
+	#emit CONST.alt    YSI_g_sArgs
+	#emit MOVS         16 // (n + 1) * 4
+	
+	// Go to the new "top" of the stack.
+	#emit STACK        0
+	#emit STOR.alt     YSI_g_sStack    // Store it.
+	#emit ADD.C        16 // (n + 1) * 4
+	#emit SCTRL        4
+	
+	// "frm" is still valid.
 	#emit PUSH.S       fmat
 	#emit PUSH         size
 	#emit PUSH.C       out
-	// Push the argument count.
-	#emit LOAD.S.pri   num_args
-	#emit ADD.C        12
-	#emit LOAD.S.alt   STATIC_ARGS
-	#emit XCHG
-	#emit SMUL.C       4
-	#emit SUB.alt
-	#emit PUSH.pri
-	#emit MOVE.alt
-	// This gets confused if you have a local variable of the same name as it
-	// seems to factor in them first, so you get the offset of the local
-	// variable instead of the index of the native.
+	#emit PUSH         YSI_g_sArgCount // Push the parameter count.
+	
+	// Call the function.
 	#emit SYSREQ.C     format
-	// Clear the stack.
-	#emit CONST.pri    4
-	#emit ADD
-	#emit MOVE.alt
-	// The three lines above get the total stack data size, now remove it.
-	#emit LCTRL        4
-	#emit ADD
+	
+	// Copy the data back.
+	#emit STACK        0
+	#emit CONST.pri    YSI_g_sArgs
+	#emit MOVS         8
+	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
+	
 	// Now do the real return.
 	return out;
 }
