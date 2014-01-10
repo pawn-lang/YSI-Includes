@@ -58,7 +58,7 @@ Changelog:
 		First version
 \**--------------------------------------------------------------------------**/
 
-//#define _GROUP_STOP_INCLUDES
+#define _GROUP_STOP_INCLUDES
 
 #include <a_samp>
 
@@ -361,19 +361,19 @@ public OnScriptInit()
 	P:4("Group_OnScriptInit: %d, %d, %d", AMX_HEADER_COD - AMX_BASE_ADDRESS, YSI_g_sNextInitFunc, AMX_HEADER_DAT - AMX_BASE_ADDRESS);
 	GROUP_CHAIN?<YSI_g_sNextInitFunc>(ni, na, nu);
 	//CallLocalFunction("_Group_SpecialInit", "");
-	heapspace();
+	heapspace(); // I'm sure there's a reason this is here.  But I forgot it!
 	#if defined _GROUP_INCLUDE_ALL_PREVIOUS
 		if (FALSE)
 		{
+			// Include, but never call, this function.
 			_GROUP_UNIQUE_FUNCTION();
 		}
 	#endif
 	P:1("Group_OnScriptInit end");
 	#if defined _Group_SpecialInit
-		return _Group_SpecialInit();
-	#else
-		return 1;
+		_Group_SpecialInit();
 	#endif
+	return 1;
 }
 
 #undef OnScriptInit
