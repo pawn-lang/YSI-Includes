@@ -865,6 +865,7 @@ _gchain _yGU(&pid, Bit:p[], Bit:c[])
 </returns>
 <remarks>
 	Calls all functions to correctly include them in the AMX when required.
+	Also all variables as it turns out they were a problem too.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
