@@ -85,23 +85,14 @@ Changelog:
 #endif
 
 // Start of the multi-use file.
-// static stock _y_groupsNotUsed0[32];
-static stock BitArray:YSI_g_sElementMembership[_GROUP_MAKE_LIMIT]<_:_MAX_GROUPS_G>;
-// Strange bug in the compiler.  Under certain circumstances, it seems to think
-// that "_yGI", "_yGU", and "_yGA" are the same variable.  As with all obscure
-// compiler bugs, the fix is equally unpredictable - I just shuffled their
-// declaration order here.
-// static stock _y_groupsNotUsed1[32];
-static stock _yGI;
-// static stock _y_groupsNotUsed2[32];
-static stock BitArray:YSI_g_sDefaultMembership<_:_MAX_GROUPS_G>;
-// static stock _y_groupsNotUsed3[32];
-static stock _yGU;
-// static stock _y_groupsNotUsed4[32];
-static stock BitArray:YSI_g_sEmpty<_:_MAX_GROUPS_G>;
-// static stock _y_groupsNotUsed5[32];
-static stock _yGA;
-// static stock _y_groupsNotUsed6[32];
+static stock
+	YSI_g_sMaxEncountered = -1,
+	BitArray:YSI_g_sElementMembership[_GROUP_MAKE_LIMIT]<_:_MAX_GROUPS_G>,
+	BitArray:YSI_g_sDefaultMembership<_:_MAX_GROUPS_G>,
+	BitArray:YSI_g_sEmpty<_:_MAX_GROUPS_G>,
+	_yGI,
+	_yGU,
+	_yGA;
 
 // Define the callback chaining for the current 
 #if defined _YSI_HAS_y_groups
@@ -123,12 +114,10 @@ static stock _yGA;
 			// telling us so!  It may, however, prove difficult to trace!
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Stub_Set>
 		#else
-			// #define _gchain%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);public _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;(printf("v2, %d", J@),J@);GROUP_CHAIN?<%0>(%2))
 			#define _gchain%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);public _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#endif
 	#else
-		// #define _gchain%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;(printf("v1, %d", J@),J@);GROUP_CHAIN?<%0>(%2))
 		#define _gchain%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 		#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 	#endif
@@ -195,7 +184,6 @@ static stock _yGA;
 /**--------------------------------------------------------------------------**\
 <summary>_GROUP_INITIALISE</summary>
 <param name="x">The element that was added (maybe).</param>
-<param name="s">Was the element added or removed?</param>
 <returns>
 	-
 </returns>
@@ -219,26 +207,10 @@ stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x)
 	// the default settings for a group.
 	if (x != _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
 	{
-		YSI_g_sElementMembership[_:x] = YSI_g_sDefaultMembership;
-		// printf("Loop");
+		YSI_g_sElementMembership[_:x] = YSI_g_sDefaultMembership,
+		YSI_g_sMaxEncountered = max(YSI_g_sMaxEncountered, _:x);
 		foreach (new playerid : Player)
 		{
-			// printf("Hello " #_GROUP_INITIALISE ": %d", playerid);
-			// // Uses "YSI_g_sEmpty" instead of a truly blank variable so that we
-			// // can ensure that NO other groups have this element when we use the
-			// // "GROUP_ADD" macro.
-			// for (new i = 0; i != sizeof (YSI_g_sEmpty); ++i)
-			// {
-				// printf("YSI_g_sEmpty[%d] = 0x%04x%04x", i, _:YSI_g_sEmpty[i] >>> 16, _:YSI_g_sEmpty[i] & 0xFFFF);
-			// }
-			// for (new i = 0; i != sizeof (YSI_g_sDefaultMembership); ++i)
-			// {
-				// printf("YSI_g_sDefaultMembership[%d] = 0x%04x%04x", i, _:YSI_g_sDefaultMembership[i] >>> 16, _:YSI_g_sDefaultMembership[i] & 0xFFFF);
-			// }
-			// for (new i = 0; i != sizeof (YSI_gGroupPlayers[]); ++i)
-			// {
-				// printf("YSI_gGroupPlayers[%d][%d] = 0x%04x%04x", playerid, i, _:YSI_gGroupPlayers[playerid][i] >>> 16, _:YSI_gGroupPlayers[playerid][i] & 0xFFFF);
-			// }
 			Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultMembership, YSI_gGroupPlayers[playerid]);
 		}
 	}
@@ -287,8 +259,6 @@ gglobal Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
 		new
 			slot = Bit_Slot(g),
 			Bit:mask = Bit_Mask(g);
-		//static
-		//	BitArray:sNext<_MAX_GROUPS_G>;
 		if (s)
 		{
 			YSI_gTempGroups = YSI_g_sElementMembership[_:el];
@@ -389,7 +359,7 @@ gglobal Group_Set...Default(Group:g,bool:s)
 		if (s)
 		{
 			Bit_Let(YSI_g_sDefaultMembership, _:g);
-			for (new el = 0; el != _GROUP_MAKE_LIMIT; ++el)
+			for (new el = 0; el <= YSI_g_sMaxEncountered; ++el)
 			{
 				sNext = YSI_g_sElementMembership[el];
 				if (sNext[slot] & mask)
@@ -408,7 +378,7 @@ gglobal Group_Set...Default(Group:g,bool:s)
 		else
 		{
 			Bit_Vet(YSI_g_sDefaultMembership, _:g);
-			for (new el = 0; el != _GROUP_MAKE_LIMIT; ++el)
+			for (new el = 0; el <= YSI_g_sMaxEncountered; ++el)
 			{
 				sNext = YSI_g_sElementMembership[el];
 				if (!(sNext[slot] & mask))
@@ -677,9 +647,6 @@ GROUP_HANDOFF()
 
 static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
 {
-	//#if _GROUP_MAKE_LIMIT == 123
-	//	printf("Check 123");
-	//#endif
 	// "_GROUPS_CHECK" is a macro that expands to a massive unrolled "if"
 	// statement checking up to 512 groups at once.  Any more than that and this
 	// code resorts to a loop instead.  I say "at once"; it does 32 AT ONCE
@@ -692,47 +659,31 @@ static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
 	// c = Current (new groups).
 	// p = Previous (old groups).
 	#if _DEBUG >= 7
-		// #pragma tabsize 4
 		new debugA[] = "false", debugB[] = "false";
 		_GROUPS_CHECK_ANY(p,r)
 			debugA = "true";
 		_GROUPS_CHECK_ANY(c,r)
 			debugB = "true";
-		// #define if ,
 		printf("Group_FullPlayerUpdate ("#_GROUP_MAKE_NAME<...>") called:\r\n\t%d, %d,\r\n\t%s,\r\n\t%s,\r\n\t%s,\r\n\t%s, %s",
 			playerid, el, Bit_Display(p, bits<_MAX_GROUPS_G>), Bit_Display(c, bits<_MAX_GROUPS_G>), Bit_Display(r, bits<_MAX_GROUPS_G>), debugA, debugB);
-		// #undef if
 	#endif
-	// #pragma tabsize 4
-	// P:7("%08x %08x %08x", _yGI, _yGA, _yGU);
-	// //printf("%08x %08x %08x", _yGI, _yGA, _yGU);
-	// P:7("%s", Bit_Display(YSI_g_sElementMembership[el], bits<_MAX_GROUPS_G>));
-	// //printf("%s", Bit_Display(YSI_g_sElementMembership[el], bits<_MAX_GROUPS_G>));
-	// P:7("%s", Bit_Display(YSI_g_sDefaultMembership, bits<_MAX_GROUPS_G>));
-	// //printf("%s", Bit_Display(YSI_g_sDefaultMembership, bits<_MAX_GROUPS_G>));
-	// P:7("%s", Bit_Display(YSI_g_sEmpty, bits<_MAX_GROUPS_G>));
-	// //printf("%s", Bit_Display(YSI_g_sEmpty, bits<_MAX_GROUPS_G>));
 	_GROUPS_CHECK_ANY(p,r)
 	{
-		//printf("Could");
 		// Could previously see this thing.  The thing about this design is that
 		// it can (best case) take just 2 comparisons to end - and that should
 		// be the common case!
 		_GROUPS_CHECK_ANY(c,r)
 		{
-			//printf("Can");
 			// Still can.
 			return;
 		}
 		// Now can't.
-		//printf("Can't: " #_GROUP_SET_PLAYER "(%d, %d, %d)", _:el, playerid, true);
 		_GROUP_SET_PLAYER(_GROUP_MAKE_TAG:el, playerid, false);
 		return;
 	}
 	// Couldn't see it before.
 	_GROUPS_CHECK_ANY(c,r)
 	{
-		//printf("Can: " #_GROUP_SET_PLAYER "(%d, %d, %d)", _:el, playerid, true);
 		// They have whatever this thing is.  Note that this may be called
 		// MULTIPLE times for an element, without anything actually changing.
 		// I.e. this could be set to "true" repeatedly while never being set
@@ -741,7 +692,6 @@ static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
 		// We use "return" here because "_GROUPS_CHECK_ANY" MAY be a loop.
 		return;
 	}
-	//printf("Can't");
 }
 
 /*
@@ -855,7 +805,8 @@ _gchain _yGA(&group)
 		Bit:m = ~Bit_Mask(group);
 	// Set the default "contains" for this group to false.
 	YSI_g_sDefaultMembership[s] &= m;
-	// Disable every element in this group.
+	// Disable every element in this group.  DOESN'T use "YSI_g_sMaxEncountered"
+	// because we need to set up for the future too.
 	for (new i = 0; i != _GROUP_MAKE_LIMIT; ++i)
 	{
 		YSI_g_sElementMembership[i][s] &= m;
@@ -886,7 +837,7 @@ _gchain _yGU(&pid, Bit:p[], Bit:c[])
 	// previously could or couldn't see.  If their ability to see it has
 	// changed then the "_GROUP_SET_PLAYER" function in the controlling library
 	// is called to do the actual internal function of updating their state.
-	for (new el = 0; el != _GROUP_MAKE_LIMIT; ++el)
+	for (new el = 0; el <= YSI_g_sMaxEncountered; ++el)
 	{
 		Group_FullPlayerUpdate(pid, el, p, c, YSI_g_sElementMembership[el]);
 	}
@@ -936,11 +887,11 @@ stock _GROUP_UNIQUE_FUNCTION()
 		#if !(_YSIM_IS_CLIENT || _YSIM_IS_STUB)
 			new
 				a = _yGI, b = _yGA, c = _yGU;
-			_GROUP_MAKE_NAME<_yGI...>(a, b, c);
+			_GROUP_MAKE_NAME<_yGI...>(a, YSI_g_sMaxEncountered, c);
 			_GROUP_MAKE_NAME<Group_Exclusive...@>(Group:0, _GROUP_MAKE_TAG:0);
 			_GROUP_MAKE_NAME<Group_GlobalExclusive...@>(_GROUP_MAKE_TAG:0);
-			_GROUP_MAKE_NAME<_yGA...>(a);
-			_GROUP_MAKE_NAME<_yGU...>(a, Bit:"", Bit:"");
+			_GROUP_MAKE_NAME<_yGA...>(b);
+			_GROUP_MAKE_NAME<_yGU...>(c, Bit:"", Bit:"");
 			_GROUP_MAKE_NAME<Group_Set...Default@>(Group:0, false);
 			_GROUP_MAKE_NAME<Group_SetGlobal...Default@>(false);
 			_GROUP_MAKE_NAME<Group_Set...New@>(Group:0, false);
@@ -967,15 +918,16 @@ stock _GROUP_UNIQUE_FUNCTION()
 	#else
 		new
 			a = _yGI, b = _yGA, c = _yGU;
-		_GROUP_MAKE_NAME<_yGI...>(a, b, c);
+		_GROUP_MAKE_NAME<_yGI...>(a, YSI_g_sMaxEncountered, c);
 		_GROUP_MAKE_NAME<_yGA...>(b);
 		_GROUP_MAKE_NAME<_yGU...>(c, Bit:"", Bit:"");
+		printf("", YSI_g_sMaxEncountered);
 		printf("", _:YSI_g_sElementMembership);
-		printf("", _yGI);
 		printf("", _:YSI_g_sDefaultMembership);
-		printf("", _yGU);
 		printf("", _:YSI_g_sEmpty);
+		printf("", _yGI);
 		printf("", _yGA);
+		printf("", _yGU);
 	#endif
 	_GROUP_PREVIOUS_FUNCTION();
 }
