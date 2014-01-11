@@ -343,7 +343,7 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 					Testing_OnFilterScriptInit();
 				#endif
 				// Disable error messages (as we're likely to generate them).
-				state ysi_debug : off;
+				//state ysi_debug : off;
 				// Need to do it this way because "y_malloc" screws it up.  But
 				// the new heap is still safe because it is set at this point.
 				new
@@ -368,7 +368,7 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 						printf(" ");
 					}
 				}
-				state ysi_debug : on;
+				//state ysi_debug : on;
 			}
 			
 			#if defined _ALS_OnFilterScriptInit
@@ -388,7 +388,7 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 					Testing_main();
 				#endif
 				// Disable error messages (as we're likely to generate them).
-				state ysi_debug : off;
+				//state ysi_debug : off;
 				// Need to do it this way because "y_malloc" screws it up.  But
 				// the new heap is still safe because it is set at this point.
 				new
@@ -413,7 +413,7 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 						printf(" ");
 					}
 				}
-				state ysi_debug : on;
+				//state ysi_debug : on;
 			}
 			
 			#if defined _ALS_main
@@ -557,7 +557,7 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 		Testing_RunAll()
 		{
 			// Disable error messages (as we're likely to generate them).
-			state ysi_debug : off;
+			//state ysi_debug : off;
 			new
 				tests,
 				fails;
@@ -576,7 +576,7 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 				printf("  ||===================||  ");
 				printf(" ");
 			}
-			state ysi_debug : on;
+			//state ysi_debug : on;
 		}
 	#endif
 #endif
@@ -602,10 +602,10 @@ Test:y_testing_2()
 	ASSERT(f == YSI_g_sFails);
 	ASSERT(t + 5 == YSI_g_sTests);
 	// Fail a fake test on purpose.
-	state ysi_debug : on;
+	//state ysi_debug : on;
 	P:I("The next test hasn't really failed...");
 	P:I(" - It is testing the test system.");
-	state ysi_debug : off;
+	//state ysi_debug : off;
 	ASSERT(false);
 	ASSERT(f + 1 == YSI_g_sFails); // Not a mistake.  Run this test twice to
 	ASSERT(f + 1 == YSI_g_sFails); // ensure the first one didn't fail too.

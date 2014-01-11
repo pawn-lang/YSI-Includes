@@ -281,12 +281,6 @@ stock Debug_Print0(const str[], {Float,_}:...) <ysi_debug : on>
 	return 0;
 }
 
-stock Debug_Print0(const str[], {Float,_}:...) <ysi_debug : off>
-{
-	#pragma unused str
-	return 0;
-}
-
 stock Debug_Print0(const str[], {Float,_}:...) <>
 {
 	#pragma unused str

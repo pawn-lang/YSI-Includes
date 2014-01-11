@@ -112,7 +112,7 @@ global Dialog_ObtainID()
 			new
 				Bit:b = YSI_g_sIDs[i],
 				data = Cell_GetLowestBit(b);
-			YSI_g_sIDs[i] ^= Cell_GetLowestComponent(b);
+			YSI_g_sIDs[i] ^= Bit:Cell_GetLowestComponent(b);
 			data += (i * 32);
 			YSI_g_sDialogPlayers[data] = 0;
 			YSI_g_sDialogMasters[data] = -1;
