@@ -304,3 +304,4 @@ public _ScriptInit_FixState() <_script_init_fix_state : true>
 public _ScriptInit_FixState() <_script_init_fix_state : false>
 {
 }
+

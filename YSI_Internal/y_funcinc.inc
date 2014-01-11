@@ -58,6 +58,7 @@ Changelog:
 \**--------------------------------------------------------------------------**/
 
 forward _@_y_funcinc_@_();
+
 public _@_y_funcinc_@_()
 {
 	// This function calls any functions used in assembly code in YSI to ensure
@@ -76,4 +77,3 @@ public _@_y_funcinc_@_()
 	heapspace();
 }
 
-//#include "..\y_utils"

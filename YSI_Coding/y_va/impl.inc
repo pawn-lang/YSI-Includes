@@ -102,14 +102,6 @@ static stock
 	YSI_g_sArgCount,
 	YSI_g_sArgs[4];
 
-forward _y_va_funcinc_();
-
-public _y_va_funcinc_()
-{
-	printf("", YSI_g_sStack);
-	format(YSI_g_sArgs, YSI_g_sArgCount, "");
-}
-
 stock va_printf(const fmat[], va_:STATIC_ARGS)
 {
 	// Get the number of parameters.

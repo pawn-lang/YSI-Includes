@@ -115,9 +115,6 @@ Operators:
 
 #include "..\YSI_Server\y_scriptinit"
 
-#include "..\YSI_Internal\y_natives"
-#include "y_utils"
-
 #if !defined _DEBUG
 	#define _DEBUG 0
 #endif
@@ -277,9 +274,11 @@ Operators:
 
 stock Debug_Print0(const str[], {Float,_}:...) <ysi_debug : on>
 {
-	// No longer based on Zeex's code.  It served me well for years, but now
-	// y_va has evolved and surpassed that method.
-	return va_printf(str, va_:1);
+	#emit STACK        8
+	#emit SYSREQ.C     printf
+	#emit STACK        0xFFFFFFF8
+	#pragma unused str
+	return 0;
 }
 
 stock Debug_Print0(const str[], {Float,_}:...) <ysi_debug : off>

@@ -111,3 +111,4 @@ native CallLocalFunction(const function[], const format[], GLOBAL_TAG_TYPES:...)
 	new
 		YSI_gLockData[21];
 #endif
+
