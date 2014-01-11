@@ -43,6 +43,16 @@ Test:y_va_CallLocalFunction()
 	ASSERT(YSI_g_sVariable == 45);
 }
 
+static stock y_va_SetTimerEx(va_args<>)
+{
+	return va_SetTimerEx("y_va_SetTimerExPublic", 1000, false, "iii", va_start<0>);
+}
+
+Test:va_SetTimerEx()
+{
+	ASSERT(y_va_SetTimerEx(5, 6, 7) != 0);
+}
+
 static stock y_va_format(dest[], size, fmat[], va_args<>)
 {
 	va_format(dest, size, fmat, va_start<3>);
