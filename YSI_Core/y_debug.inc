@@ -116,6 +116,7 @@ Operators:
 #include "..\YSI_Server\y_scriptinit"
 
 #include "..\YSI_Internal\y_natives"
+#include "y_utils"
 
 #if !defined _DEBUG
 	#define _DEBUG 0
@@ -276,65 +277,9 @@ Operators:
 
 stock Debug_Print0(const str[], {Float,_}:...) <ysi_debug : on>
 {
-	// This uses the variable parameter passing method based on code by Zeex.
-	// See page 15 of the code optimisations topic.
-	new
-		n = (numargs() - 1) * 4;
-	if (n)
-	{
-		new
-			arg_start,
-			arg_end;
-		
-		//#emit BREAK
-		
-		// Load the real address of the last static parameter.  Do this by
-		// loading the address of the parameter and then adding the value of
-		// [FRM] (frame pointer).
-		#emit CONST.alt                 str
-		#emit LCTRL                     5
-		#emit ADD
-		#emit STOR.S.pri                arg_start
-		
-		// Load the address of the last variable parameter.  Do this by adding
-		// the number of variables on the value just loaded.
-		#emit LOAD.S.alt                n
-		#emit ADD
-		#emit STOR.S.pri                arg_end
-		
-		// Push the variable arguments.  This is done by loading the value of
-		// each one in reverse order and pushing them.  I'd love to be able to
-		// rewrite this to use the values of pri and alt for comparison, instead
-		// of having or constantly reload two variables.
-		do
-		{
-			#emit LOAD.I
-			#emit PUSH.pri
-			arg_end -= 4;
-			#emit LOAD.S.pri            arg_end
-		}
-		while (arg_end > arg_start);
-		
-		// Push the static parameter.
-		#emit PUSH.S                    str
-		
-		// Now push the number of parameters sent and call the function.
-		n += 4;
-		#emit PUSH.S                    n
-		#emit SYSREQ.C                  printf
-		
-		// Clear the stack, including the return.
-		n += 4;
-		#emit LCTRL                     4
-		#emit LOAD.S.alt                n
-		#emit ADD
-		#emit SCTRL                     4
-	}
-	else
-	{
-		print(str);
-	}
-	return 0;
+	// No longer based on Zeex's code.  It served me well for years, but now
+	// y_va has evolved and surpassed that method.
+	return va_printf(str, va_:1);
 }
 
 stock Debug_Print0(const str[], {Float,_}:...) <ysi_debug : off>
@@ -416,3 +361,4 @@ static stock Debug_SetState() <>
 #if defined Debug_OnScriptInit
 	forward Debug_OnScriptInit();
 #endif
+
