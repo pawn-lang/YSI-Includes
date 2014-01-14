@@ -120,7 +120,9 @@ forward OnPlayerSaved(playerid, uid);
 #include "..\YSI_Coding\y_timers"
 
 #define YSIM_U_DISABLE
+#define MASTER 55
 #include "..\YSI_Core\y_master"
+
 #define MAX_INDEX_LENGTH                8
 
 #include "..\YSI_Internal\y_plugins"
@@ -220,4 +222,6 @@ foreign Player_ChangeLanguage(playerid, string:code[]);
 	#include "..\YSI_Core\y_testing"
 	#include "y_users/tests"
 #endif
+
+#include "..\YSI_Core\y_master"
 

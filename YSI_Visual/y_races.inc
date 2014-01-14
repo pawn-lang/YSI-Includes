@@ -86,6 +86,7 @@ Changelog:
 #endif
 
 #define YSIM_U_DISABLE
+#define MASTER 53
 #include "..\YSI_Core\y_master"
 
 #define _GROUP_MAKE_NAME<%0...%1> %0Race%1
@@ -134,3 +135,6 @@ foreign Race_SetPlayer(race, playerid, bool:set);
 
 #undef _GROUP_MAKE_LIMIT
 #undef _GROUP_MAKE_NAME
+
+#include "..\YSI_Core\y_master"
+

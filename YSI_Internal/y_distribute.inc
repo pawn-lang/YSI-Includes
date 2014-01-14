@@ -87,7 +87,6 @@ Compile options:
 \**--------------------------------------------------------------------------**/
 
 #include "y_globaltags"
-#include "..\YSI_Core\y_master"
 
 /*
 

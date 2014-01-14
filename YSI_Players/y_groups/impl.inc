@@ -74,13 +74,11 @@ Changelog:
 
 #include "..\YSI_Data\y_iterate"
 
-//#include "..\y_master"
-#define MASTER 59
 #define YSIM_U_DISABLE
+#define MASTER 59
 #include "..\YSI_Core\y_master"
 
 #include "..\YSI_Coding\y_hooks"
-//#include "y_groups/setup"
 
 /**--------------------------------------------------------------------------**\
 <summary>GROUP_CHAIN</summary>

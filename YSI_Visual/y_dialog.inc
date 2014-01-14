@@ -78,6 +78,7 @@ Variables:
 #include "..\YSI_Storage\y_amx"
 
 #define YSIM_U_DISABLE
+#define MASTER 54
 #include "..\YSI_Core\y_master"
 
 #if !defined MAX_DIALOGS
@@ -352,3 +353,6 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 {
 	ShowPlayerDialog(playerid, -1, 0, NULL, NULL, NULL, NULL);
 }*/
+
+#include "..\YSI_Core\y_master"
+

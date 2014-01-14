@@ -66,10 +66,12 @@ Changelog:
 #include "..\YSI_Internal\y_version"
 
 #include "..\YSI_Server\y_scriptinit"
-//#include "..\YSI_Internal\y_funcinc"
 #include "..\YSI_Core\y_debug"
 #include "..\YSI_Internal\y_natives"
-// #include "..\YSI_Core\y_cell"
+
+#include "..\amx\asm"
+#include "..\amx\disasm"
+#include "..\amx\frame_info"
 
 #define AMX_FastString(%1,%2,%3,%4) \
 	(((%1) << 0) | ((%2) << 8) | ((%3) << 16) | ((%4) << 24))
@@ -978,15 +980,57 @@ stock AMX_GetReturnAddress()
 
 stock AMX_Read(addr)
 {
-	P:7("AMX_Read called: %i", addr);
-	#emit LREF.S.pri                    addr
-	#emit RETN
-	return 0;
+	// This is now, AFAIK, the first ever self-inlining function!
+	static
+		sFrame;
+	// Get the current stack pointer.
+	#emit LCTRL      4
+	#emit ADD.C      12
+	// Get the previous frame pointer.
+	#emit LOAD.S.alt 0
+	#emit SUB
+	#emit STOR.pri   sFrame
+	P:7("AMX_Read called: %i %d", addr, sFrame);
+	new
+		start = GetCurrentFrameReturn() - 16,
+		ctx2[DisasmContext];
+	DisasmInit(ctx2, start, start + 16);
+	if (!DisasmDecodeInsn(ctx2) || DisasmGetOpcode(ctx2) != OP_PUSH_C || DisasmGetOperand(ctx2) != 4)
+	{
+		P:W("Couldn't rewrite \"AMX_Read\" call");
+		return AMX_RawRead(addr);
+	}
+	new
+		ctx[AsmContext];
+	AsmInitPtr(ctx, start + AMX_HEADER_COD, 16);
+	// This is the actual code.  The standard function call puts the variable to
+	// read from on to the stack, so use that as a frame offset and call "LREF"
+	// on that stack value.  Then remove it from the stack and skip the next
+	// cell - since we are replacing 4 cells with just 3.
+	@emit LREF.S.pri   sFrame
+	@emit POP.alt
+	@emit NOP
+	return AMX_RawRead(addr);
 }
 
 stock AMX_Write(addr, value)
 {
 	P:7("AMX_Write called: %i, %i", addr, value);
+	#emit LOAD.S.pri                    value
+	#emit SREF.S.pri                    addr
+}
+
+stock AMX_RawRead(addr)
+{
+	P:7("AMX_RawRead called: %i", addr);
+	#emit LREF.S.pri                    addr
+	#emit RETN
+	return 0;
+}
+
+stock AMX_RawWrite(addr, value)
+{
+	P:7("AMX_RawWrite called: %i, %i", addr, value);
 	#emit LOAD.S.pri                    value
 	#emit SREF.S.pri                    addr
 }

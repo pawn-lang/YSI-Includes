@@ -320,3 +320,4 @@ stock printfex(const format[], GLOBAL_TAG_TYPES:...)
 	}
 	print(sFormat);
 }
+

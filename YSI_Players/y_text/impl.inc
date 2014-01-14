@@ -102,7 +102,7 @@ Operators:
 
 #include "..\YSI_Coding\y_inline"
 
-#include "y_natives"
+#include "..\YSI_Internal\y_natives"
 
 enum e_TEXT_DISPLAY_TYPE
 {
@@ -210,7 +210,7 @@ enum e_TEXT_ENTRY
 	#define MAX_SINGLE_TEXT_ITEM (1024)
 #endif
 
-#include "y_styles"
+//#include "y_text/styles"
 #include "..\YSI_Coding\y_hooks"
 
 static stock

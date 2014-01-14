@@ -700,8 +700,8 @@ stock isnumeric(str[])
 	
 	stock bool:boolstr(string[])
 	{
-		if (!string[0] || string[0] == '0' || !strcmp(string, "false", true)) return false;
-		return true;
+		// Hooray for De Morgan's rules!
+		return string[0] && string[0] != '0' && strcmp(string, "false", true);
 	}
 	
 	/**----------------------------------------------------------------------**\

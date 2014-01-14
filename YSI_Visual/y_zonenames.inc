@@ -9,6 +9,9 @@
 
 #include "..\YSI_Players\y_text"
 #include "..\YSI_Visual\y_areas"
+
+#define YSIM_U_DISABLE
+#define MASTER 52
 #include "..\YSI_Core\y_master"
 #include "..\YSI_Coding\y_hooks"
 
@@ -944,3 +947,6 @@ mhook OnScriptInit()
 	assert(idx == sizeof (YSI_g_scZoneNames));
 	return 1;
 }
+
+#include "..\YSI_Core\y_master"
+

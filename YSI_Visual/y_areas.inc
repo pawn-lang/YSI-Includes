@@ -161,8 +161,8 @@ Operators:
 #endif
 
 // Set commands as master 25.
-#define MASTER 62
 #define YSIM_U_DISABLE
+#define MASTER 62
 #include "..\YSI_Core\y_master"
 
 #define _GROUP_MAKE_NAME<%0...%1> %0Area%1

@@ -746,8 +746,7 @@ stock I@E(/* mutable */ const s[])
 		// Compiled with extra debug information.
 		start -= 4,
 		ctx[DisasmContext_nip] = ctx[DisasmContext_start_ip] -= 4,
-		// Consume the leading "break".
-		// This mode uses "CONST.pri x; PUSH.pri" instead of "PUSH.C".
+		// This mode uses "CONST.pri x; PUSH.pri" instead of "PUSH.C x".
 		DisasmDecodeInsn(ctx);
 		if (DisasmGetOpcode(ctx) != OP_CONST_PRI || DisasmGetOperand(ctx) != GetCurrentFrameParameter(0)) return Debug_Print0(YSI_g_scError);
 		DisasmDecodeInsn(ctx);

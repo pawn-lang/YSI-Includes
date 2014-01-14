@@ -90,7 +90,9 @@ Operators:
 \**--------------------------------------------------------------------------**/
 
 #include "..\YSI_Internal\y_version"
+
 #define YSIM_U_DISABLE
+#define MASTER 56
 #include "..\YSI_Core\y_master"
 
 #include "..\YSI_Coding\y_hooks"
@@ -519,4 +521,6 @@ mhook OnPlayerConnect(playerid)
 	P:E("No languages set");
 	return 0;
 }
+
+#include "..\YSI_Core\y_master"
 

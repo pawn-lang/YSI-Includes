@@ -67,7 +67,6 @@ Variables:
 #include "..\YSI_Internal\y_funcinc"
 #include "..\YSI_Core\y_debug"
 #include "..\YSI_Coding\y_timers"
-#include "..\YSI_Core\y_master"
 #include "..\YSI_Coding\y_hooks"
 
 #if !defined PHP_RECEIVE || !defined PHP_SEND
@@ -96,8 +95,6 @@ enum
 	e_PHP_SEND_TYPE_BOOL,
 	e_PHP_SEND_TYPE_INT
 }
-
-//foreign _PHP_Send(string:name[], string:value[], bool:priority, type);
 
 forward _PHP_Result(index, response, data[]);
 forward _PHP_Ignore(index, response, data[]);
@@ -522,4 +519,6 @@ public _PHP_Result(index, response, data[])
 #define phpfunc%0(%1) %0_yP@(%1);public%0_yP@(%1)
 
 #define PHP:%0(%1) %0_yP@(%1);public %0_yP@(%1)
+
+//#include "..\YSI_Core\y_master"
 
