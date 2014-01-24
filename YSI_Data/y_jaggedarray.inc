@@ -52,7 +52,6 @@ Changelog:
 	06/10/12:
 		First version
 		Fixed a bug calling "rawMemset".
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #include "..\YSI_Internal\y_version"
@@ -312,3 +311,4 @@ stock _Jagged_PrintHeader(array[][], size1, size2)
 		printf("Array header: %d = %d", slot, ptr);
 	}
 }
+
