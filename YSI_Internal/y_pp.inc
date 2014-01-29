@@ -1,3 +1,8 @@
+#if defined _INC_y_pp
+	#endinput
+#endif
+#define _INC_y_pp
+
 /**--------------------------------------------------------------------------**\
 <summary>PP_LOOP</summary>
 <param name="%9">Number of times to repeat.</param>

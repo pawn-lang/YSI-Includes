@@ -63,6 +63,11 @@ Variables:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_dialog
+	#endinput
+#endif
+#define _INC_y_dialog
+
 // y_dialog - does stuff with dialogs.
 
 #include "..\YSI_Internal\y_version"

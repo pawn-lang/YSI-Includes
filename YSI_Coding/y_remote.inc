@@ -97,6 +97,11 @@ Natives:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_remote
+	#endinput
+#endif
+#define _INC_y_remote
+
 #include "..\YSI_Internal\y_version"
 
 #include "..\YSI_Internal\y_shortfunc"

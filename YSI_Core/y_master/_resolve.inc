@@ -62,7 +62,9 @@ Variables:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#undef _inc__resolve
+#if AUTO_INCLUDE_GUARD
+	#undef _inc__resolve
+#endif
 
 #if defined YSI_NO_MASTER && defined YSI_IS_SERVER
 	#error YSI_NO_MASTER and YSI_IS_SERVER are both defined...

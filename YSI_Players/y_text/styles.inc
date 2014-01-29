@@ -66,16 +66,6 @@ Variables:
 // over to XML as there are just too many options now to make INI files worth
 // the effort.
 
-#include "..\YSI_Internal\y_version"
-
-#include "..\YSI_Storage\y_xml"
-#include "..\YSI_Server\y_td"
-#include "..\YSI_Server\y_colours"
-
-//#include "..\y_hooks"
-
-#include "..\YSI_Internal\y_natives"
-
 enum e_STYLE_TYPE (+= 0x10000000)   // ALWAYS ADD!
 {
 	e_STYLE_TYPE_GT_0 = 0x10000000, // ALWAYS FIRST!

@@ -93,11 +93,21 @@ Operators:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_va
+	#endinput
+#endif
+#define _INC_y_va
+
 //#define va_args<%0> %0
 #define va_args<%0> GLOBAL_TAG_TYPES:...
 #define va_start<%0> (va_:(%0))
 
+#include "..\YSI_Internal\y_version"
+#include "..\YSI_Internal\y_funcinc"
+#include "..\YSI_Core\y_utils"
+
 #include "y_va/impl"
+
 #if defined YSI_TESTS
 	#include "..\YSI_Core\y_testing"
 	#include "y_va/tests"

@@ -137,6 +137,11 @@ Operators:
 	-
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_areas
+	#endinput
+#endif
+#define _INC_y_areas
+
 #include "..\YSI_Internal\y_version"
 
 #include "..\YSI_Data\y_bit"

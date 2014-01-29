@@ -91,6 +91,11 @@ Operators:
 	-
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_writemem
+	#endinput
+#endif
+#define _INC_y_writemem
+
 #include <a_samp>
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Coding\y_hooks"

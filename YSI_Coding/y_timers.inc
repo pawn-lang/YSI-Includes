@@ -69,6 +69,11 @@ Changelog:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_timers
+	#endinput
+#endif
+#define _INC_y_timers
+
 // y_uvars
 
 #if defined USE_Y_TIMERS_V1
@@ -78,6 +83,15 @@ Changelog:
 #endif
 
 #include "..\YSI_Internal\y_plugins"
+
+#include "..\YSI_Internal\y_version"
+
+#include "..\YSI_Storage\y_amx"
+#include "..\YSI_Internal\y_shortfunc"
+#include "..\YSI_Coding\y_malloc"
+#include "..\YSI_Data\y_iterate"
+#include "..\YSI_Coding\y_hooks"
+#include "..\YSI_Core\y_debug"
 
 #include "y_timers/impl"
 #if defined _YSI_PLUGINS_FIXES_2

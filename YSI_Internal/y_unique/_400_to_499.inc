@@ -1,6 +1,8 @@
 static stock const Y_UNIQUE_400_to_499_CALLED;
 
-#undef _inc__400_to_499
+#if AUTO_INCLUDE_GUARD
+	#undef _inc__400_to_499
+#endif
 
 #if UNIQUE_SYMBOL < 410
 	#if UNIQUE_SYMBOL == 400

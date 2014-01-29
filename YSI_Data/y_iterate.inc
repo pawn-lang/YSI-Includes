@@ -205,7 +205,7 @@ Iterators:
 */
 
 // "y_iterate" is always higher than "foreach".
-#define _Y_ITERATE_LOCAL_VERSION        24
+#define _Y_ITERATE_LOCAL_VERSION        25
 
 // Foreach is testing us.
 #if defined _FOREACH_INC_TEST
@@ -217,22 +217,26 @@ Iterators:
 	#tryinclude <foreach>
 	#undef _FOREACH_INC_TEST
 	// <foreach> exists - test which is newer.
-	#if defined _inc_foreach
-		#if !defined _FOREACH_CUR_VERSION
-			// Foreach exists, but it's an old version - don't try use this
-			// system or the variables will conflict.
-			#error "Old foreach.inc files are no longer compatible with YSI."
-			#endinput
-		#endif
-		#if _FOREACH_CUR_VERSION > _Y_ITERATE_LOCAL_VERSION
+	#if defined _FOREACH_LOCAL_VERSION
+		#if _FOREACH_LOCAL_VERSION > _Y_ITERATE_LOCAL_VERSION
 			// Foreach is newer.
-			#undef _inc_foreach
+			#if defined _inc_foreach
+				#undef _inc_foreach
+			#endif
 			#define _FOREACH_NO_TEST
 			#include <foreach>
 			#endinput
 		#endif
+	#elseif defined foreach
+		#if __Pawn == 0x030A
+			#include "y_iterate/warning" // Backwards-compatible directive.
+			#endinput
+		#else
+			#error Old foreach.inc files are no longer compatible with YSI.
+		#endif
 	#endif
 #endif
+#define _FOREACH_INC_TEST
 
 #if !defined _samp_included
 	#error "Please include a_samp or a_npc before foreach"

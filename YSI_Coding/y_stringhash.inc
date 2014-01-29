@@ -67,6 +67,11 @@ Definitions:
 	_I - Generate a case insensitive string hash at compile time.
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_stringhash
+	#endinput
+#endif
+#define _INC_y_stringhash
+
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Core\y_debug"
 

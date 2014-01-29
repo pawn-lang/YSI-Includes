@@ -59,8 +59,12 @@ Functions:
 Variables:
 	Global:
 		-
-</remarks>
 \**--------------------------------------------------------------------------**/
+
+#if defined _INC_y_svar
+	#endinput
+#endif
+#define _INC_y_svar
 
 // y_uvars
 
@@ -81,6 +85,14 @@ Variables:
 #elseif defined SVAR_USE_SQLITE
 	#include "y_svar/sqlite"
 #else
+	#include "..\YSI_Internal\y_version"
+	#include "..\YSI_Storage\y_amx"
+	#include "..\YSI_Core\y_debug"
+	#include "..\YSI_Core\y_utils"
+	#include "..\YSI_Storage\y_ini"
+	#include "..\YSI_Coding\y_hooks"
+	#include "..\YSI_Internal\y_stripnumbers"
+	
 	#include "y_svar/ini"
 #endif
 #if defined YSI_TESTS

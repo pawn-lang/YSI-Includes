@@ -1,3 +1,8 @@
+#if defined _INC_y_cgen
+	#endinput
+#endif
+#define _INC_y_cgen
+
 #include "..\YSI_Storage\y_amx"
 #include "..\amx\asm"
 

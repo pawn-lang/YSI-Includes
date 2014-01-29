@@ -99,6 +99,11 @@ Iterators:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_zonepulse
+	#endinput
+#endif
+#define _INC_y_zonepulse
+
 /*
 native GangZonePulse(@PlayerSet:ps, zone, from, to, time, delay = ZONE_PULSE_STAGE_TIME);
 native GangZonePulseForPlayer(playerid, zone, from, to, time, delay = ZONE_PULSE_STAGE_TIME);

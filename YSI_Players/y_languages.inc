@@ -89,6 +89,11 @@ Operators:
 	-
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_languages
+	#endinput
+#endif
+#define _INC_y_languages
+
 #include "..\YSI_Internal\y_version"
 
 #define YSIM_U_DISABLE

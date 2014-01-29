@@ -60,6 +60,11 @@ Changelog:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_testing
+	#endinput
+#endif
+#define _INC_y_testing
+
 #include <a_samp>
 #include "y_debug"
 #include "..\YSI_Storage\y_amx"

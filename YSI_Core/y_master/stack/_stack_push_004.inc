@@ -1,4 +1,6 @@
-#undef _inc__stack_push_004
+#if AUTO_INCLUDE_GUARD
+	#undef _inc__stack_push_004
+#endif
 
 #undef _YSIM_PUSH_INDEX
 #define _YSIM_PUSH_INDEX 5

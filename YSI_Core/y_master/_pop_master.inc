@@ -1,4 +1,6 @@
-#undef _inc__pop_master
+#if AUTO_INCLUDE_GUARD
+	#undef _inc__pop_master
+#endif
 
 #if _YSIM_PUSH_INDEX < 1
 	#define MASTER 0

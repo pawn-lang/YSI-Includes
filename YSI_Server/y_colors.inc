@@ -58,4 +58,9 @@ Changelog:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_colors
+	#endinput
+#endif
+#define _INC_y_colors
+
 #include "..\YSI_Server\y_colours"

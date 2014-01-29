@@ -62,6 +62,11 @@ Variables:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_natives
+	#endinput
+#endif
+#define _INC_y_natives
+
 #include "y_globaltags"
 
 /*#if defined _YSI_MINI_MODE

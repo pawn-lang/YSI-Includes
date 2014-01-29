@@ -1,4 +1,6 @@
-#undef _inc__cleanup
+#if AUTO_INCLUDE_GUARD
+	#undef _inc__cleanup
+#endif
 
 // Remote hook
 #undef RH

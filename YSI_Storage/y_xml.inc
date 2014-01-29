@@ -59,8 +59,12 @@ Version:
 Changelog:
 	06/08/10:
 		First version
-</remarks>
 \**--------------------------------------------------------------------------**/
+
+#if defined _INC_y_xml
+	#endinput
+#endif
+#define _INC_y_xml
 
 #include "..\YSI_Internal\y_version"
 

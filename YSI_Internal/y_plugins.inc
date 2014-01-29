@@ -60,6 +60,11 @@ Changelog:
 		First version
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_plugins
+	#endinput
+#endif
+#define _INC_y_plugins
+
 // All the code in here relies on detecting FEATURES, not FILENAMES.
 #if defined Streamer_IncludeFileVersion
 	#define _YSI_PLUGINS_STREAMER

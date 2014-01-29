@@ -135,6 +135,11 @@ Operators:
 	-
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_classes
+	#endinput
+#endif
+#define _INC_y_classes
+
 #include "..\YSI_Internal\y_version"
 
 #if !defined MAX_CLASSES

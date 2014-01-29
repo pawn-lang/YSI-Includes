@@ -67,6 +67,11 @@ Changelog:
 		First version.
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_colours
+	#endinput
+#endif
+#define _INC_y_colours
+
 #include "..\YSI_Internal\y_version"
 
 #include "..\YSI_Coding\y_stringhash"

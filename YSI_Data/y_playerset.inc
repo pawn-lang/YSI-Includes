@@ -57,6 +57,11 @@ Changelog:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_playerset
+	#endinput
+#endif
+#define _INC_y_playerset
+
 #include <a_samp>
 #include "..\YSI_Data\y_iterate"
 #include "..\YSI_Data\y_playerarray"

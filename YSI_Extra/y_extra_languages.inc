@@ -1,3 +1,8 @@
+#if defined _INC_y_extra_languages
+	#endinput
+#endif
+#define _INC_y_extra_languages
+
 // Include pretty much 90% of YSI in one fell swoop!
 
 loadtext core[ysi_langs];

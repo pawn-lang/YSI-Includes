@@ -62,6 +62,11 @@ Variables:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_globaltags
+	#endinput
+#endif
+#define _INC_y_globaltags
+
 // "File,Float," must remain last always.
 #if defined CUSTOM_TAG_TYPES
 	#define File,Float, Float,File,Text3D,CUSTOM_TAG_TYPES

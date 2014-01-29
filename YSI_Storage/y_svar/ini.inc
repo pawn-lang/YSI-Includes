@@ -62,18 +62,6 @@ Variables:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#include "..\YSI_Internal\y_version"
-
-#include "..\YSI_Storage\y_amx"
-#include "..\YSI_Core\y_debug"
-#include "..\YSI_Core\y_utils"
-
-#include "..\YSI_Storage\y_ini"
-
-#include "..\YSI_Coding\y_hooks"
-
-#include "..\YSI_Internal\y_stripnumbers"
-
 // Third "uvar" version.
 #define _YS@LE@E%0>
 #define _YS@LT@E%0> ;

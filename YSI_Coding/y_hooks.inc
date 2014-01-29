@@ -60,26 +60,38 @@ Changelog:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#if !defined _inc_y_hooks
-	#error Did you do <YSI/y_hooks> instead of the required <YSI\y_hooks>?
+#include "..\YSI_Internal\y_compilerpass"
+#if AUTO_INCLUDE_GUARD
+	#if !defined _inc_y_hooks
+		#error Did you do <YSI/y_hooks> instead of the required <YSI\y_hooks>?
+	#endif
+	#undef _inc_y_hooks
 #endif
-#undef _inc_y_hooks
 
 // Multiple includes!
 #include "..\YSI_Internal\y_unique"
 
-
-#if !defined _INC_y_hooks
-	// Everything except including "y_unique" is done once only.  But this is
-	// just so people can see if the file was included correctly.
-	#define _INC_y_hooks
+#if defined _INC_y_hooks
+	#endinput
 #endif
+#define _INC_y_hooks
 
 #if defined YSI_TESTS
 	#define _Y_HOOKS_STATIC
 #else
 	#define _Y_HOOKS_STATIC static
 #endif
+
+#include "..\YSI_Internal\y_unique"
+#include "..\YSI_Core\y_cell"
+#include "..\YSI_Core\y_utils"
+#include "..\YSI_Storage\y_amx"
+#include "..\YSI_Core\y_als"
+
+#include "..\YSI_Internal\y_cgen"
+
+#include "..\amx\asm"
+//asm"
 
 #include "y_hooks/impl"
 

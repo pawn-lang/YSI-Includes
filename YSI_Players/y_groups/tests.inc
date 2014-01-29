@@ -151,12 +151,14 @@ Test:y_groups_Set3()
 }
 
 #define MASTER 60
-#include "..\YSI_Core\y_master"
+#tryinclude "..\YSI_Core\y_master"
+#tryinclude "..\..\YSI_Core\y_master"
 
 #define _GROUP_MAKE_NAME<%0...%1> %0Test%1
 #define _GROUP_MAKE_LIMIT 123
 
-#include "..\YSI_Players\y_groups\_funcs"
+#tryinclude "y_groups\_funcs"
+#tryinclude "_funcs"
 
 static
 	gPl,
@@ -489,5 +491,6 @@ Test:y_groups_Iterator0()
 #undef _GROUP_MAKE_LIMIT
 #undef _GROUP_MAKE_NAME
 
-#include "..\YSI_Core\y_master"
+#tryinclude "..\YSI_Core\y_master"
+#tryinclude "..\..\YSI_Core\y_master"
 

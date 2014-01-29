@@ -57,7 +57,10 @@ Changelog:
 		First version.
 \**--------------------------------------------------------------------------**/
 
-#undef _inc_y_unique
+#include "y_compilerpass"
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_unique
+#endif
 
 #if defined UNIQUE_SYMBOL
 	#if UNIQUE_SYMBOL < 100

@@ -1,4 +1,6 @@
-#undef _inc__push_master
+#if AUTO_INCLUDE_GUARD
+	#undef _inc__push_master
+#endif
 
 #if _YSIM_PUSH_INDEX < 1
 	#include "stack\_stack_push_000"

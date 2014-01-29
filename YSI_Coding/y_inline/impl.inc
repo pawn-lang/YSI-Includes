@@ -80,18 +80,6 @@ Changelog:
     
 */
 
-#include "..\amx\asm"
-#include "..\amx\disasm"
-#include "..\amx\frame_info"
-#include "..\YSI_Storage\y_amx"
-#include "..\YSI_Internal\y_shortfunc"
-#include "..\YSI_Core\y_debug"
-#include "..\YSI_Core\y_utils"
-#include "..\YSI_Data\y_bit"
-#include "y_malloc"
-
-#include "..\YSI_Internal\y_cgen"
-
 #define INLINE_TYPE_VAR (0b00)
 #define INLINE_TYPE_REF (0b10)
 #define INLINE_TYPE_STR (0b01)

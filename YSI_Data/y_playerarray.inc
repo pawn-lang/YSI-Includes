@@ -57,6 +57,11 @@ Changelog:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_playerarray
+	#endinput
+#endif
+#define _INC_y_playerarray
+
 #include "..\YSI_Internal\y_version"
 
 #include <a_samp>

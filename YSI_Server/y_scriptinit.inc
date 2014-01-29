@@ -59,6 +59,11 @@ Changelog:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_scriptinit
+	#endinput
+#endif
+#define _INC_y_scriptinit
+
 #include <a_samp>
 
 #include "..\YSI_Internal\y_natives"

@@ -65,11 +65,30 @@ Changelog:
 		First version
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_inline
+	#endinput
+#endif
+#define _INC_y_inline
+
 #if !defined YSI_MAX_INLINE_STRING
 	#define YSI_MAX_INLINE_STRING YSI_MAX_STRING
 #endif
 
+
+#include "..\amx\asm"
+#include "..\amx\disasm"
+#include "..\amx\frame_info"
+#include "..\YSI_Storage\y_amx"
+#include "..\YSI_Internal\y_shortfunc"
+#include "..\YSI_Core\y_debug"
+#include "..\YSI_Core\y_utils"
+#include "..\YSI_Data\y_bit"
+#include "y_malloc"
+
+
 #include "y_inline/macros"
+#include "..\YSI_Internal\y_cgen"
+
 #include "y_inline/impl"
 
 #if defined YSI_TESTS

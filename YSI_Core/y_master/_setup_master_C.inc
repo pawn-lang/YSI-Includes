@@ -1,4 +1,6 @@
-#undef _inc__setup_master_C
+#if AUTO_INCLUDE_GUARD
+	#undef _inc__setup_master_C
+#endif
 
 #if MASTER == 32
 	#define _MASTER 32

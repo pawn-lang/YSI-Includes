@@ -57,6 +57,11 @@ Changelog:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_td
+	#endinput
+#endif
+#define _INC_y_td
+
 #include "..\YSI_Internal\y_version"
 
 #include "..\YSI_Core\y_debug"

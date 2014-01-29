@@ -60,26 +60,6 @@ Changelog:
 
 #define _GROUP_STOP_INCLUDES
 
-#include <a_samp>
-
-#include "..\YSI_Internal\y_distribute"
-#include "..\YSI_Server\y_scriptinit"
-#include "..\YSI_Data\y_playerarray"
-
-#include "..\YSI_Coding\y_stringhash"
-#include "..\YSI_Core\y_debug"
-#include "..\YSI_Coding\y_remote"
-
-#include "..\YSI_Storage\y_amx"
-
-#include "..\YSI_Data\y_iterate"
-
-#define YSIM_U_DISABLE
-#define MASTER 59
-#include "..\YSI_Core\y_master"
-
-#include "..\YSI_Coding\y_hooks"
-
 /**--------------------------------------------------------------------------**\
 <summary>GROUP_CHAIN</summary>
 <param name="%9">Check if the function exists?</param>
@@ -1644,6 +1624,4 @@ global bool:Group_IsDescendant(Group:p, Group:c)
 	}
 	return false;
 }
-
-#include "..\YSI_Core\y_master"
 

@@ -88,22 +88,6 @@ Operators:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#include "..\YSI_Storage\y_amx"
-#include "..\YSI_Core\y_utils"
-#include "..\YSI_Storage\y_ini"
-#include "..\YSI_Core\y_debug"
-#include "..\YSI_Data\y_iterate"
-
-#include "..\YSI_Server\y_scriptinit"
-
-#include "..\YSI_Players\y_languages"
-
-#include "..\YSI_Visual\y_dialog"
-
-#include "..\YSI_Coding\y_inline"
-
-#include "..\YSI_Internal\y_natives"
-
 enum e_TEXT_DISPLAY_TYPE
 {
 	text_type_print    = cellmin,
@@ -209,9 +193,6 @@ enum e_TEXT_ENTRY
 #if !defined MAX_SINGLE_TEXT_ITEM
 	#define MAX_SINGLE_TEXT_ITEM (1024)
 #endif
-
-//#include "y_text/styles"
-#include "..\YSI_Coding\y_hooks"
 
 static stock
 	YSI_g_sTextSets[Y_TEXT_MAX_SETS][e_TEXT_SETS],

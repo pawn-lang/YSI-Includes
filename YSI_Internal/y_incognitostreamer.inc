@@ -94,6 +94,11 @@ Operators:
 	-
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_incognitostreamer
+	#endinput
+#endif
+#define _INC_y_incognitostreamer
+
 #include "y_plugins"
 
 static stock const

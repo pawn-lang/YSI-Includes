@@ -57,19 +57,33 @@ Changelog:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-// Yes - FORWARD slash here!
-#include "y_als/impl"
-#if defined YSI_TESTS
-	#include "y_testing"
-	#include "y_als/tests"
+#if !defined _INC_y_als
+	
+	#include "..\YSI_Internal\y_version"
+	#include "y_utils"
+	#include "..\YSI_Server\y_scriptinit"
+	#include "..\YSI_Data\y_bit"
+	#include "..\YSI_Internal\y_shortfunc"
+	
+	#include "y_als/impl"
+	
+	#if defined YSI_TESTS
+		#include "..\YSI_Coding\y_va"
+		
+		#include "y_testing"
+		#include "y_als/tests"
+	#endif
+	#define _INC_y_als
 #endif
 
 // Allow multiple inclusions.
-#if !defined _inc_y_als
-	#error Did you do <YSI/y_als> instead of the required <YSI\y_als>?
+#include "..\YSI_Internal\y_compilerpass"
+#if AUTO_INCLUDE_GUARD
+	#if !defined _inc_y_als
+		#error Did you do <YSI/y_als> instead of the required <YSI\y_als>?
+	#endif
+	#undef _inc_y_als
 #endif
-
-#undef _inc_y_als
 
 #if !defined ALS_MAKE
 	#if defined ALS_PREFIX

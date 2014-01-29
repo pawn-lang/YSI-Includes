@@ -120,6 +120,11 @@ Operators:
 	-
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_malloc
+	#endinput
+#endif
+#define _INC_y_malloc
+
 #if defined YSI_MALLOC_SECURE
 	#error YSI_MALLOC_SECURE has been removed.
 #endif

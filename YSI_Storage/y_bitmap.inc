@@ -63,6 +63,11 @@ Variables:
 		-
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_bitmap
+	#endinput
+#endif
+#define _INC_y_bitmap
+
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Data\y_bit"
 #include "..\YSI_Core\y_utils"

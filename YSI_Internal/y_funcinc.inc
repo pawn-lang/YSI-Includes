@@ -57,6 +57,11 @@ Changelog:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_funcinc
+	#endinput
+#endif
+#define _INC_y_funcinc
+
 forward _@_y_funcinc_@_();
 
 public _@_y_funcinc_@_()

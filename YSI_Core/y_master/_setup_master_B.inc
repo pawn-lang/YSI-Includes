@@ -1,4 +1,6 @@
-#undef _inc__setup_master_B
+#if AUTO_INCLUDE_GUARD
+	#undef _inc__setup_master_B
+#endif
 
 #if MASTER == 16
 	#define _MASTER 16

@@ -43,6 +43,12 @@ characters, which, when added to "_inc_" makes our 30 exactly.
 chars instead of "sNAMEMAX+1" as all other similar instances are.
 */
 
+#if defined _INC_y_ac
+	#endinput
+#endif
+#define _INC_y_ac
+
+#include "..\YSI_Internal\y_compilerpass"
 #include "..\YSI_Internal\y_version"
 
 #include "..\YSI_Core\y_debug"
@@ -96,93 +102,167 @@ forward AC_OnCheatDetected(playerid, cheatid, extraid, info[]);
 
 // Include the constants.
 #include   "y_ac@do_compiler_long_fix/constants/cheats.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/constants/game.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/constants/player.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 
 // Include the variables.
 #include   "y_ac@do_compiler_long_fix/variables.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 
 // Include the utilities.
 #include "..\YSI_Core\y_utils"
 
 #include   "y_ac@do_compiler_long_fix/utils/CheatDetected.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/utils/GetSpeed.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/utils/IsPlayerAFK.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/utils/IsPlayerAtVendingMachine.pwn" // Rewrite to use y_areas.
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/utils/IsPlayerSpawned.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
-//#include "y_ac@do_compiler_long_fix/utils/memset"
-//#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
+// #include "y_ac@do_compiler_long_fix/utils/memset"
+// #if AUTO_INCLUDE_GUARD
+	// #undef _inc_y_ac@do_compiler_long_fix
+// #endif
 #define AC_memset memset // Already defined by YSI.
 #include   "y_ac@do_compiler_long_fix/utils/sync/IsPlayerSynced.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/utils/sync/SetPlayerSync.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 
 // Include the callback hooks.
 #include "..\YSI_Coding\y_hooks"
 
 #include   "y_ac@do_compiler_long_fix/hooks/callbacks/OnPlayerCommandText.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/hooks/callbacks/OnPlayerConnect.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/hooks/callbacks/OnPlayerDeath.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/hooks/callbacks/OnPlayerSpawn.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/hooks/callbacks/OnPlayerText.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/hooks/callbacks/OnPlayerUpdate.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/hooks/callbacks/OnScriptExit.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/hooks/callbacks/OnScriptInit.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 
 // Include the watchguard timer.
 #include "..\YSI_Coding\y_timers"
 
 #include   "y_ac@do_compiler_long_fix/watchguard/impl/Watchguard_Armour.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/watchguard/impl/Watchguard_Freeze.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/watchguard/impl/Watchguard_Health.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/watchguard/impl/Watchguard_Jetpack.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/watchguard/impl/Watchguard_Joypad.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/watchguard/impl/Watchguard_Money.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/watchguard/impl/Watchguard_Ping.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/watchguard/Watchguard.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 
 // Include the function hooks.
 #include   "y_ac@do_compiler_long_fix/hooks/natives/GetPlayerMoney.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/hooks/natives/GetPlayerSpecialAction.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/hooks/natives/GivePlayerMoney.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/hooks/natives/ResetPlayerMoney.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/hooks/natives/SetPlayerArmour.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/hooks/natives/SetPlayerHealth.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/hooks/natives/SetPlayerSpecialAction.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/hooks/natives/TogglePlayerControllable.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif
 #include   "y_ac@do_compiler_long_fix/hooks/natives/TogglePlayerSpectating.pwn"
-#undef _inc_y_ac@do_compiler_long_fix
+#if AUTO_INCLUDE_GUARD
+	#undef _inc_y_ac@do_compiler_long_fix
+#endif

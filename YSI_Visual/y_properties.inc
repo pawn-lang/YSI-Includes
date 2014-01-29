@@ -155,6 +155,11 @@ Operators:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_properties
+	#endinput
+#endif
+#define _INC_y_properties
+
 #if defined MAX_PROP_NAME
 	#if MAX_PROP_NAME < (39 - PLAYER_BIT_ARRAY)
 		#undef MAX_PROP_NAME

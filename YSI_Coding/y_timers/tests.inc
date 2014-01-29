@@ -1,4 +1,5 @@
-#include <YSI\y_hooks>
+#tryinclude "y_hooks"
+#tryinclude "..\y_hooks"
 
 static stock
 	sgPlayerCounter[MAX_PLAYERS];
@@ -79,5 +80,6 @@ PTest:Timer3(playerid)
 	ASK("Is the green BIG MESSAGE stopping appearing after 4 seconds?");
 }
 
-#include <YSI\y_hooks>
+#tryinclude "y_hooks"
+#tryinclude "..\y_hooks"
 

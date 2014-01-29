@@ -54,6 +54,11 @@ Changelog:
 		Fixed a bug calling "rawMemset".
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_jaggedarray
+	#endinput
+#endif
+#define _INC_y_jaggedarray
+
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Core\y_utils"
 #include "..\YSI_Core\y_debug"

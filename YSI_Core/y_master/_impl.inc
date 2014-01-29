@@ -127,7 +127,9 @@ Natives:
 	-
 \**--------------------------------------------------------------------------**/
 
-#undef _inc__impl
+#if AUTO_INCLUDE_GUARD
+	#undef _inc__impl
+#endif
 
 // Get the settings, regardless of where they came from.
 #if     YSIM_STORED_SETTINGS == 0

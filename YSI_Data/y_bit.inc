@@ -110,6 +110,11 @@ Compile options:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_bit
+	#endinput
+#endif
+#define _INC_y_bit
+
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Core\y_debug"
 #include "..\YSI_Core\y_utils"

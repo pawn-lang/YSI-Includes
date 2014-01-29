@@ -88,17 +88,6 @@ Changelog:
     
 */
 
-#include "..\YSI_Internal\y_unique"
-#include "..\YSI_Core\y_cell"
-#include "..\YSI_Core\y_utils"
-#include "..\YSI_Storage\y_amx"
-#include "..\YSI_Core\y_als"
-
-#include "..\YSI_Internal\y_cgen"
-
-#include "..\amx\asm"
-//asm"
-
 #define hook%1(%2) UNIQUE_FUNCTION<@yH_%1@...>(%2);UNIQUE_FUNCTION<@yH_%1@...>(%2)
 #define rehook%1(%2) UNIQUE_FUNCTION<@yH_%1@...>(%2)
 #define Hook:%0_%1(%2) @yH_%1@%0(%2);@yH_%1@%0(%2)

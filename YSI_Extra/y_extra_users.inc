@@ -1,3 +1,8 @@
+#if defined _INC_y_extra_users
+	#endinput
+#endif
+#define _INC_y_extra_users
+
 // Include pretty much 90% of YSI in one fell swoop!
 
 //#include "..\y_users"

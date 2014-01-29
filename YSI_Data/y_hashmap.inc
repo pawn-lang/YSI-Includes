@@ -64,6 +64,11 @@ Definitions:
 	HashMap - Declare a new hash map.
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_hashmap
+	#endinput
+#endif
+#define _INC_y_hashmap
+
 #include "..\amx\amx_memory"
 #include "..\YSI_Core\y_utils"
 #include "..\YSI_Storage\y_amx"

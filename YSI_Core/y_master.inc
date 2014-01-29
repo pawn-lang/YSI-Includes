@@ -129,12 +129,22 @@ Natives:
 
 // ALWAYS!  The compiler defines this automatically, don't use it as this is
 // included multiple times to handle multiple master systems.
-#if !defined _inc_y_master
-	#error Did you do <YSI-Core/y_master> instead of the required <YSI-Core\y_master>?
+#include "..\YSI_Internal\y_compilerpass"
+#if AUTO_INCLUDE_GUARD
+	#if !defined _inc_y_master
+		#error Did you do <YSI-Core/y_master> instead of the required <YSI-Core\y_master>?
+	#endif
+	#undef _inc_y_master
 #endif
-#undef _inc_y_master
 
 #if !defined _INC_y_master
+	#include "..\YSI_Internal\y_version"
+	#include "y_debug"
+	#include "..\YSI_Coding\y_hooks"
+	#include "..\YSI_Internal\y_shortfunc"
+	
+	#include "..\YSI_Internal\y_natives"
+	
 	#include "y_master/once"
 #endif
 

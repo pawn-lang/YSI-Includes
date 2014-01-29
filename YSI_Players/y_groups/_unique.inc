@@ -1,4 +1,6 @@
-#undef _inc__unique
+#if AUTO_INCLUDE_GUARD
+	#undef _inc__unique
+#endif
 
 #if _GROUP_UNIQUE_SYMBOL == 0
 	#undef _GROUP_UNIQUE_SYMBOL

@@ -117,13 +117,6 @@ Natives:
 // These parts should only be defined once ever.  This code is not dependent on
 // the current MASTER value, it's all generic.
 
-#include "..\YSI_Internal\y_version"
-#include "y_debug"
-#include "..\YSI_Coding\y_hooks"
-#include "..\YSI_Internal\y_shortfunc"
-
-#include "..\YSI_Internal\y_natives"
-
 #define _YSIM_COMPARE -1
 
 #define MASTER_DATA<%0> static stock Bit:YSI_g_sMasterData[_:(%0)];

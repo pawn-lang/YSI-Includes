@@ -59,9 +59,10 @@ Changelog:
 		First version
 \**--------------------------------------------------------------------------**/
 
-#if !defined _inc_y_races
-	#error Did you do <YSI/y_races> instead of the required <YSI\y_races>?
+#if defined _INC_y_races
+	#endinput
 #endif
+#define _INC_y_races
 
 #if !defined YSI_NO_RACE_POSITION && !defined RACE_POSITION
 	#define RACE_POSITION

@@ -1,4 +1,6 @@
-#undef _inc__setup_master_D
+#if AUTO_INCLUDE_GUARD
+	#undef _inc__setup_master_D
+#endif
 
 #if MASTER == 48
 	#define _MASTER 48

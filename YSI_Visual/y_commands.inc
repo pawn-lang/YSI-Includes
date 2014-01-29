@@ -142,6 +142,11 @@ Compile options:
 	MAX_COMMANDS - The maximum number of commands which can be used.
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_commands
+	#endinput
+#endif
+#define _INC_y_commands
+
 #include "..\YSI_Internal\y_version"
 
 #define MAX_COMMAND_LENGTH              (32)

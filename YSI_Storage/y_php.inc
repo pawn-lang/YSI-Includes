@@ -61,7 +61,14 @@ Variables:
 		-
 \**--------------------------------------------------------------------------**/
 
-#include <a_http>
+#if defined _INC_y_php
+	#endinput
+#endif
+#define _INC_y_php
+
+#if !defined HTTP
+	#include <a_http>
+#endif
 
 #include "..\YSI_Core\y_utils"
 #include "..\YSI_Internal\y_funcinc"

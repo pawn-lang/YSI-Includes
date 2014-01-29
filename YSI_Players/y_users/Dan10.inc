@@ -93,11 +93,6 @@ Operators:
 	-
 \**--------------------------------------------------------------------------**/
 
-// I know it is a bit odd that this should need y_ini for database access, but
-// there is a very good reason (loading passwords).
-#include "..\YSI_Storage\y_ini"
-#include "..\YSI_Data\y_iterate"
-
 #if !defined Y_USERS_SQL_HOST
 	#define Y_USERS_SQL_HOST GetUsersSQLHost()
 #endif

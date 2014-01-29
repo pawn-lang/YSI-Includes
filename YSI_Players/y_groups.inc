@@ -56,15 +56,51 @@ Changelog:
 
 #include "..\YSI_Internal\y_version"
 
-#if !defined _inc_y_groups
-	#error Did you do <YSI/y_groups> instead of the required <YSI\y_groups>?
+#include "..\YSI_Internal\y_compilerpass"
+#if AUTO_INCLUDE_GUARD
+	#if !defined _inc_y_groups
+		#error Did you do <YSI/y_groups> instead of the required <YSI\y_groups>?
+	#endif
+	#undef _inc_y_groups
 #endif
-#undef _inc_y_groups
 
-// Get basic defines.
-#include "..\YSI_Internal\y_plugins"
-#include "y_groups/setup"
-#include "y_groups/impl"
+#if !defined _INC_y_groups
+	#include <a_samp>
+	
+	// Get basic defines.
+	#include "..\YSI_Internal\y_plugins"
+	
+	#include "..\YSI_Internal\y_compilerpass"
+	#include "..\YSI_Data\y_bit"
+	
+	#if !defined _INC_y_groups__funcs
+		#define _INC_y_groups__funcs
+		#include "y_groups/setup"
+		#include "..\YSI_Internal\y_shortfunc"
+		#include "..\YSI_Data\y_iterate"
+	#endif
+	
+	#include "..\YSI_Server\y_scriptinit"
+	#include "..\YSI_Data\y_playerarray"
+	
+	#include "..\YSI_Coding\y_stringhash"
+	#include "..\YSI_Core\y_debug"
+	#include "..\YSI_Coding\y_remote"
+	
+	#include "..\YSI_Storage\y_amx"
+	
+	
+	#define YSIM_U_DISABLE
+	#define MASTER 59
+	#include "..\YSI_Core\y_master"
+	#include "..\YSI_Internal\y_distribute"
+	
+	#include "..\YSI_Coding\y_hooks"
+	
+	#include "y_groups/impl"
+	
+	#include "..\YSI_Core\y_master"
+#endif
 
 #if defined GROUP_LIBRARY_NAME
 	#if defined GROUP_LIBRARY_SIZE
@@ -77,7 +113,7 @@ Changelog:
 		#else
 			#define _GROUP_MAKE_TAG _
 		#endif
-		#include "..\YSI_Players\y_groups\_funcs"
+		#include "y_groups\_funcs"
 		// Now remove the defines.
 		#if defined GROUP_LIBRARY_TAGS
 			#undef GROUP_LIBRARY_TAGS

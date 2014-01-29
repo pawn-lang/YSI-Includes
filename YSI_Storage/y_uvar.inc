@@ -67,6 +67,11 @@ Variables:
 		-
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_uvar
+	#endinput
+#endif
+#define _INC_y_uvar
+
 // y_uvars
 
 #include "..\YSI_Internal\y_version"

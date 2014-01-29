@@ -1,6 +1,12 @@
-#tryinclude <sscanf2>
+#if defined _INC_y_extra
+	#endinput
+#endif
+#define _INC_y_extra
 
-#if !defined _inc_sscanf2 || !defined WP_Hash
+#tryinclude <sscanf2>
+#tryinclude <sscanf3>
+
+#if !defined sscanf || !defined WP_Hash
 	#error y_extra requires plugins - please install sscanf and whirlpool.
 #endif
 

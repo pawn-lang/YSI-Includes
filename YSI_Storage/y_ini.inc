@@ -159,6 +159,11 @@ Operators:
 	-
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_ini
+	#endinput
+#endif
+#define _INC_y_ini
+
 #define MAX_INI_LINE                    (MAX_INI_ENTRY_NAME + MAX_INI_ENTRY_TEXT + 32)
 
 #if !defined INI_NEW_LINE

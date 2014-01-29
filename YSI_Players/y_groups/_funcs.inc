@@ -75,10 +75,16 @@ Changelog:
 
 */
 
-#undef _inc__funcs
-#include "..\y_groups/setup"
-#include "..\..\YSI_Internal\y_shortfunc"
-#include "..\..\YSI_Data\y_iterate"
+#include "..\..\YSI_Internal\y_compilerpass"
+#if AUTO_INCLUDE_GUARD
+	#undef _inc__funcs
+#endif
+#if !defined _INC_y_groups__funcs
+	#define _INC_y_groups__funcs
+	#include "setup"
+	#include "..\..\YSI_Internal\y_shortfunc"
+	#include "..\..\YSI_Data\y_iterate"
+#endif
 
 #if !defined _GROUP_MAKE_TAG
 	#define _GROUP_MAKE_TAG _

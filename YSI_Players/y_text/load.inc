@@ -61,11 +61,6 @@ Changelog:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#include <a_samp>
-#include "..\YSI_Core\y_debug"
-
-#include "..\YSI_Server\y_colours"
-
 // Custom specifier data.
 #define F@k<%0>(%1) F@k%0(%1)
 

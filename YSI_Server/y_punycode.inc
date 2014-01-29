@@ -98,11 +98,18 @@ Operators:
 	-
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_punycode
+	#endinput
+#endif
+#define _INC_y_punycode
+
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_pp"
 #include "..\YSI_Core\y_debug"
 
-#include <a_http>
+#if !defined HTTP
+	#include <a_http>
+#endif
 
 #define string:
 

@@ -93,10 +93,6 @@ Operators:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Internal\y_funcinc"
-#include "..\YSI_Core\y_utils"
-
 static stock
 	YSI_g_sStack,
 	YSI_g_sArgCount,

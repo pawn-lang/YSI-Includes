@@ -148,15 +148,14 @@ Operators:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#include "..\YSI_Internal\y_version"
-
 // Include "y_unique" multiple times.
 #include "..\YSI_Internal\y_unique"
-
-#if !defined _inc_y_text
-	#error Did you do <YSI-Players/y_text> instead of the required <YSI-Players\y_text>?
+#if AUTO_INCLUDE_GUARD
+	#if !defined _inc_y_text
+		#error Did you do <YSI-Players/y_text> instead of the required <YSI-Players\y_text>?
+	#endif
+	#undef _inc_y_text
 #endif
-#undef _inc_y_text
 
 // Need an include guard here.
 #if defined _INC_y_text
@@ -165,6 +164,8 @@ Operators:
 #define _INC_y_text
 
 #include <a_samp>
+
+#include "..\YSI_Internal\y_version"
 
 // Make sure this is included early.
 #include "..\YSI_Data\y_playerset"
@@ -184,13 +185,45 @@ Operators:
 	#define MAX_TEXT_ENTRIES (Y_TEXT_PER_SET * Y_TEXT_MAX_SETS)
 #endif
 
+#include "..\YSI_Internal\y_version"
+
+#include "..\YSI_Storage\y_xml"
+#include "..\YSI_Server\y_td"
+#include "..\YSI_Server\y_colours"
+
+//#include "..\y_hooks"
+
+#include "..\YSI_Internal\y_natives"
+
 #include "y_text/styles"
 
 // This is a horribly eclectic collection of libraries from all over the place
 // and written at different times with different aims - frankly I'll be AMAZED
 // if it all comes together and works.
+
+
+#include <a_samp>
+#include "..\YSI_Core\y_debug"
+#include "..\YSI_Server\y_colours"
+
 #include "y_text/load"
+
+#include "..\YSI_Core\y_utils"
+#include "..\YSI_Internal\y_shortfunc"
+#include "..\YSI_Internal\y_natives"
+#include "..\YSI_Coding\y_va"
+
 #include "y_text/render"
+
+#include "..\YSI_Storage\y_amx"
+#include "..\YSI_Storage\y_ini"
+#include "..\YSI_Data\y_iterate"
+#include "..\YSI_Server\y_scriptinit"
+#include "..\YSI_Players\y_languages"
+#include "..\YSI_Visual\y_dialog"
+#include "..\YSI_Coding\y_inline"
+#include "..\YSI_Coding\y_hooks"
+
 #include "y_text/impl"
 
 #define UNDO_MOVE|||

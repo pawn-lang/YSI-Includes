@@ -92,6 +92,11 @@ Natives:
 	-
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_compilerpass
+	#endinput
+#endif
+#define _INC_y_compilerpass
+
 #if defined __COMPILER_SECOND_PASS
 	#define __COMPILER_PASS (1)
 #else
@@ -102,4 +107,14 @@ Natives:
 #define COMPILER_FIRST_PASS  COMPILER_1ST_PASS
 #define COMPILER_SECOND_PASS COMPILER_2ND_PASS
 static stock __COMPILER_SECOND_PASS() {}
+
+#if __Pawn >= 0x0400
+	#error YSI does not yet support PAWN 4.0
+#elseif __Pawn == 0x030A
+	#define AUTO_INCLUDE_GUARD 0
+#elseif __Pawn >= 0x0300
+	#define AUTO_INCLUDE_GUARD 1
+#else
+	#error YSI does not yet support PAWN 2.0/1.0
+#endif
 

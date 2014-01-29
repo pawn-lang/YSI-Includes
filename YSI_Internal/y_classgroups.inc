@@ -55,6 +55,11 @@ Changelog:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_classgroups
+	#endinput
+#endif
+#define _INC_y_classgroups
+
 stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <YSI_has_groups:y>
 {
 	P:2("Class_ResolveGroups<y>: call Resolve %d %d %d", class, _:forgroup, cp);

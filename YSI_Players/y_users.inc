@@ -93,6 +93,11 @@ Operators:
 	-
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_users
+	#endinput
+#endif
+#define _INC_y_users
+
 #if !defined MODE_NAME
 	#error Please define "MODE_NAME" before including y_users.
 #endif
@@ -212,6 +217,12 @@ foreign Player_ChangeLanguage(playerid, string:code[]);
 		#error No MySQL plugin found.
 	#endif
 	*/
+	
+	// I know it is a bit odd that this should need y_ini for database access, but
+	// there is a very good reason (loading passwords).
+	#include "..\YSI_Storage\y_ini"
+	#include "..\YSI_Data\y_iterate"
+	
 	#include "y_users/dan10"
 #elseif defined USERS_USE_SQLITE
 	#include "y_users/sqlite"

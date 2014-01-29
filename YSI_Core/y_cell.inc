@@ -86,13 +86,13 @@ Compile options:
 	-
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_cell
+	#endinput
+#endif
+#define _INC_y_cell
+
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_globaltags"
-
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_cell/tests"
-#endif
 
 /**--------------------------------------------------------------------------**\
 <summary>
@@ -549,4 +549,9 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 	// Make the compiler happy.
 	return 0;
 }
+
+#if defined YSI_TESTS
+	#include "..\YSI_Core\y_testing"
+	#include "y_cell/tests"
+#endif
 

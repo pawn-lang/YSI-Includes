@@ -90,6 +90,11 @@ Operators:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_flooding
+	#endinput
+#endif
+#define _INC_y_flooding
+
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Data\y_iterate"
 #include "..\YSI_Core\y_debug"

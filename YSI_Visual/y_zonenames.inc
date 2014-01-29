@@ -7,6 +7,11 @@
  *
  */
 
+#if defined _INC_y_zonenames
+	#endinput
+#endif
+#define _INC_y_zonenames
+
 #include "..\YSI_Players\y_text"
 #include "..\YSI_Visual\y_areas"
 

@@ -94,8 +94,15 @@ Natives:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+#if defined _INC_y_version
+	#endinput
+#endif
+#define _INC_y_version
+
 #include <a_samp>
-#tryinclude <a_http>
+#if !defined HTTP
+	#tryinclude <a_http>
+#endif
 #include "y_natives"
 
 #if MAX_PLAYER_NAME != (24)
@@ -151,7 +158,7 @@ Natives:
 </remarks>
 \**----------------------------------------------------------------------**/
 	
-	#if !defined _inc_a_http
+	#if !defined HTTP
 	
 		public OnScriptInit()
 		{
