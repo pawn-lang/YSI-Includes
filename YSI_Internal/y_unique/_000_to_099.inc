@@ -1,3 +1,7 @@
+static stock const Y_UNIQUE_000_to_099_CALLED;
+
+#undef _inc__000_to_099
+
 #if UNIQUE_SYMBOL < 10
 	#if UNIQUE_SYMBOL == 0
 		#undef UNIQUE_SYMBOL

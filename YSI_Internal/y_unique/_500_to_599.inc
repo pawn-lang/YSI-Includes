@@ -1,3 +1,7 @@
+static stock const Y_UNIQUE_500_to_599_CALLED;
+
+#undef _inc__500_to_599
+
 #if UNIQUE_SYMBOL < 510
 	#if UNIQUE_SYMBOL == 500
 		#undef UNIQUE_SYMBOL

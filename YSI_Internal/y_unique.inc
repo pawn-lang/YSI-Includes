@@ -59,33 +59,45 @@ Changelog:
 
 #undef _inc_y_unique
 
-#if !defined UNIQUE_SYMBOL
+#if defined UNIQUE_SYMBOL
+	#if UNIQUE_SYMBOL < 100
+		static stock const UNIQUE_SYMBOL_LESS_THAN_100 = UNIQUE_SYMBOL;
+		#include "y_unique\_000_to_099"
+	#elseif UNIQUE_SYMBOL < 200
+		static stock const UNIQUE_SYMBOL_LESS_THAN_200 = UNIQUE_SYMBOL;
+		#include "y_unique\_100_to_199"
+	#elseif UNIQUE_SYMBOL < 300
+		static stock const UNIQUE_SYMBOL_LESS_THAN_300 = UNIQUE_SYMBOL;
+		#include "y_unique\_200_to_299"
+	#elseif UNIQUE_SYMBOL < 400
+		static stock const UNIQUE_SYMBOL_LESS_THAN_400 = UNIQUE_SYMBOL;
+		#include "y_unique\_300_to_399"
+	#elseif UNIQUE_SYMBOL < 500
+		static stock const UNIQUE_SYMBOL_LESS_THAN_500 = UNIQUE_SYMBOL;
+		#include "y_unique\_400_to_499"
+	#elseif UNIQUE_SYMBOL < 600
+		static stock const UNIQUE_SYMBOL_LESS_THAN_600 = UNIQUE_SYMBOL;
+		#include "y_unique\_500_to_599"
+	#elseif UNIQUE_SYMBOL < 700
+		static stock const UNIQUE_SYMBOL_LESS_THAN_700 = UNIQUE_SYMBOL;
+		#include "y_unique\_600_to_699"
+	#elseif UNIQUE_SYMBOL < 800
+		static stock const UNIQUE_SYMBOL_LESS_THAN_800 = UNIQUE_SYMBOL;
+		#include "y_unique\_700_to_799"
+	#elseif UNIQUE_SYMBOL < 900
+		static stock const UNIQUE_SYMBOL_LESS_THAN_900 = UNIQUE_SYMBOL;
+		#include "y_unique\_800_to_899"
+	#else
+		static stock const UNIQUE_SYMBOL_OTHER_VALUE;
+		#include "y_unique\_900_to_999"
+	#endif
+#else
+	static stock const UNIQUE_SYMBOL_DOESNT_EXIST;
 	#define UNIQUE_SYMBOL (0)
 	#define UNIQUE_FUNCTION<%0...%1> %0000%1
-#else
-	#if UNIQUE_SYMBOL < 100
-		#include "y_unique/000_to_099"
-	#elseif UNIQUE_SYMBOL < 200
-		#include "y_unique/100_to_199"
-	#elseif UNIQUE_SYMBOL < 300
-		#include "y_unique/200_to_299"
-	#elseif UNIQUE_SYMBOL < 400
-		#include "y_unique/300_to_399"
-	#elseif UNIQUE_SYMBOL < 500
-		#include "y_unique/400_to_499"
-	#elseif UNIQUE_SYMBOL < 600
-		#include "y_unique/500_to_599"
-	#elseif UNIQUE_SYMBOL < 700
-		#include "y_unique/600_to_699"
-	#elseif UNIQUE_SYMBOL < 800
-		#include "y_unique/700_to_799"
-	#elseif UNIQUE_SYMBOL < 900
-		#include "y_unique/800_to_899"
-	#else
-		#include "y_unique/900_to_999"
-	#endif
 #endif
 #if UNIQUE_SYMBOL < 0 || UNIQUE_SYMBOL >= 1000
+	static stock const UNIQUE_SYMBOL_TOO_LARGE = UNIQUE_SYMBOL;
 	#error UNIQUE_SYMBOL out of range.
 #endif
 

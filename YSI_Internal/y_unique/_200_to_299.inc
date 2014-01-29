@@ -1,3 +1,7 @@
+static stock const Y_UNIQUE_200_to_299_CALLED;
+
+#undef _inc__200_to_299
+
 #if UNIQUE_SYMBOL < 210
 	#if UNIQUE_SYMBOL == 200
 		#undef UNIQUE_SYMBOL
