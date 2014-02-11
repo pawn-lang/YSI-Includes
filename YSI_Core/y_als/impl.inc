@@ -1,6 +1,3 @@
-// This is an include guard with a purpose - we need more control than the
-// standard include guards give.
-
 enum ALS
 {
 	Bit:ALS_OnScriptInit,
@@ -235,7 +232,7 @@ enum ALS
 #define ALS_DO_PlayerClickPlayer<%0> %0<PlayerClickPlayer,iii>(more:playerid,more:clickedplayerid,end:source)
 #define ALS_DO_PlayerLogin<%0> %0<PlayerLogin,ii>(more:playerid,end:uid)
 #define ALS_DO_PlayerLogout<%0> %0<PlayerLogout,ii>(more:playerid,end:uid)
-#if defined GetPlayerLastShotVectors // 0.3z
+#if defined GetPlayerLastShotVectors // 0.3z RC4
 	#define ALS_DO_PlayerGiveDamage<%0> %0<PlayerGiveDamage,iifii>(more:playerid,more:damagedid,Float:amount,more:weaponid,end:bodypart)
 	#define ALS_DO_PlayerTakeDamage<%0> %0<PlayerTakeDamage,iifii>(more:playerid,more:issuerid,Float:amount,more:weaponid,end:bodypart)
 #else
@@ -245,7 +242,11 @@ enum ALS
 #define ALS_DO_PlayerClickMap<%0> %0<PlayerClickMap,ifff>(more:playerid,Float:fX,Float:fY,end_Float:fZ)
 #define ALS_DO_PlayerCommandReceived<%0> %0<PlayerCommandReceived,is>(more:playerid,end_string:cmdtext[])
 #define ALS_DO_PlayerCommandPerformed<%0> %0<PlayerCommandPerformed,isi>(more:playerid,string:cmdtext[],end:success)
-#define ALS_DO_UnoccupiedVehicleUpdate<%0> %0<UnoccupiedVehicleUpdate,iii>(more:vehicleid,more:playerid,end:passenger_seat)
+#if defined GetServerTickRate // 0.3z RC5
+	#define ALS_DO_UnoccupiedVehicleUpdate<%0> %0<UnoccupiedVehicleUpdate,iiifff>(more:vehicleid,more:playerid,more:passenger_seat,Float:new_x,Float:new_y,end_Float:new_z)
+#else
+	#define ALS_DO_UnoccupiedVehicleUpdate<%0> %0<UnoccupiedVehicleUpdate,iii>(more:vehicleid,more:playerid,end:passenger_seat)
+#endif
 // 0.3e
 #define ALS_DO_PlayerClickTextDraw<%0> %0<PlayerClickTextDraw,ii>(more:playerid,end_tag:Text:clickedid)
 #define ALS_DO_PlayerClickPlayerTextDraw<%0> %0<PlayerClickPlayerTextDraw,iii>(more:playerid,end_tag:PlayerText:playertextid)
