@@ -1295,7 +1295,7 @@ global void:Area_SetAllWorlds(area, bool:set)
 		slot = Area_GetFreeSlot();
 	if (slot == NO_AREA) return NO_AREA;
 	_AREA_MIN(x0, x1);
-	_AREA_MIN(z0, y1);
+	_AREA_MIN(y0, y1);
 	_AREA_MIN(z0, z1);
 	YSI_g_sAreas[slot][E_AREA_FLAGS] = e_AREA_FLAGS_CUBE | e_AREA_FLAGS_ACTIVE;
 	YSI_g_sAreas[slot][E_AREA_POS][0] = x0;
