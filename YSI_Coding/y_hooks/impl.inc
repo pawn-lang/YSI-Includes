@@ -215,6 +215,46 @@ public _@_y_hooks_@_1()
 */
 
 /**--------------------------------------------------------------------------**\
+<summary>Hooks_FindFixesHook</summary>
+<param name="stub">The start address of the function states stub.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Finds out if there is a callback chained after the fixes.inc include.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static stock Hooks_FindFixesHook(const stub)
+{
+	new
+		dctx[DisasmContext];
+	DisasmInit(dctx, stub);
+	// Side-effect function.
+	if (DisasmNextInsn(dctx) == OP_LOAD_PRI && DisasmNextInsn(dctx) == OP_SWITCH && DisasmNextInsn(dctx) == OP_CASETBL)
+	{
+		// Get the number of items in the casetable.
+		if (DisasmGetNumOperands(dctx) == 3) // 2 means no used hook.
+		{
+			// Got a hook to return.  Find it.
+			new
+				h0 = DisasmGetOperand(dctx, 3),
+				h1 = DisasmGetOperand(dctx, 5),
+				h2 = DisasmGetOperand(dctx, 7);
+			//printf("%x %x %x", h0, h1, h2);
+			if (h1 == h2)      return h0; // Most likely.
+			else if (h0 == h2) return h1;
+			else if (h0 == h1) return h2;
+			// new
+				// wctx[AsmContext];
+			// AsmInitPtr(wctx, stub, 8);
+			// AsmEmitJump(wctx, h0);
+		}
+	}
+	return 0;
+}
+
+/**--------------------------------------------------------------------------**\
 <summary>Hooks_DoForceReverse</summary>
 <param name="str">The string to convert.</param>
 <returns>
@@ -530,7 +570,7 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_WriteFunction</summary>
 <param name="pointers">The hooks to link together.</param>
-<param name="size">The number of hooks.</param>
+<param name="size">The number of functions in the array.</param>
 <param name="ret">The default return.</param>
 <param name="skipable">Can future hooks be ignored on -1?</param>
 <returns>
@@ -606,6 +646,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 			@emit LOAD.S.alt    -4   // 7
 			if (ret) @emit AND       // 8
 			else @emit OR            // 8
+			// Loop and do the very first items last.
 			if (++i == size) break;
 			else @emit STOR.S.pri -4 // 10
 		}
@@ -774,16 +815,17 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 	new
 		// Uugh, special cases!
 		init = (_:!strcmp(ref, !"OnScriptExit") << 3) | (_:!strcmp(ref, !"OnGameModeInit") << 2) | (_:!strcmp(ref, !"OnFilterScriptInit") << 1) | (_:!strcmp(ref, !"OnScriptInit")),
+		baseFunc[2],
 		same[32],
-		sameCount = 3,
+		sameCount = 1,
 		entry,
 		pure,
 		idx;
 	static
 		name[32];
 	P:4("Hooks_GetSame called: \"%s\" = %d, %d, \"%s\" = %d", unpack(ref), strlen(ref), original, unpack(ref2), strlen(ref2));
-	// Reserve space for ALS hooked callbacks first.
-	same[2] = AMX_Read(original),
+	// Write this hook at the start.  ALS is now after hooks (TODO: fixes.inc).
+	same[0] = AMX_Read(original),
 	// Wipe out the current hook.
 	Hooks_InvalidateName(original);
 	// Loop through all remaining functions to find ones that hook the same
@@ -805,10 +847,10 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 		// Get just the useful part of the name.
 		if (!strcmp(name, ref))
 		{
-			Hooks_InvalidateName(entry);
-			if (pure) same[1] = AMX_Read(entry);
+			if (pure) baseFunc[0] = entry;
 			else
 			{
+				Hooks_InvalidateName(entry),
 				same[sameCount] = AMX_Read(entry);
 				if (++sameCount == sizeof (same))
 				{
@@ -837,14 +879,10 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 			// Get just the useful part of the name.
 			if (!strcmp(name, ref2))
 			{
-				Hooks_InvalidateName(entry);
-				if (pure)
-				{
-					if (same[1]) same[0] = AMX_Read(entry);
-					else same[1] = AMX_Read(entry);
-				}
+				if (pure) baseFunc[1] = entry;
 				else
 				{
+					Hooks_InvalidateName(entry),
 					same[sameCount] = AMX_Read(entry);
 					if (++sameCount == sizeof (same))
 					{
@@ -870,33 +908,61 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(original + 4), Q@);
 		printf("Hooks_GetSame: new = %s", unpack(Q@));
 	#endif
-	if (idx <= entry) AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref, entry);
+	new
+		fixes;
+	// Account for fixes.inc.
+	if (baseFunc[0])
+	{
+		if (entry <= 25)
+		{
+			name[0] = '\0', strcat(name, "FIXES_"), strcat(name, ref),
+			fixes = funcidx(name);
+			if (fixes != -1)
+			{
+				fixes = AMX_GetEntryFromPublicIndex(fixes),
+				Hooks_InvalidateName(fixes),
+				fixes = AMX_GetEntryPointer(fixes),
+				same[sameCount++] = Hooks_FindFixesHook(fixes) - (AMX_REAL_DATA + AMX_HEADER_COD);
+				goto Hooks_GetSame_after_1;
+			}
+		}
+		same[sameCount++] = AMX_Read(baseFunc[0]),
+		Hooks_InvalidateName(baseFunc[0]);
+	}
+Hooks_GetSame_after_1:
+	if (baseFunc[1])
+	{
+		if (!fixes && idx <= 25)
+		{
+			name[0] = '\0', strcat(name, "FIXES_"), strcat(name, ref2),
+			fixes = funcidx(name);
+			if (fixes != -1)
+			{
+				fixes = AMX_GetEntryFromPublicIndex(fixes),
+				Hooks_InvalidateName(fixes),
+				fixes = AMX_GetEntryPointer(fixes),
+				same[sameCount++] = Hooks_FindFixesHook(fixes) - (AMX_REAL_DATA + AMX_HEADER_COD);
+				goto Hooks_GetSame_after_2;
+			}
+		}
+		same[sameCount++] = AMX_Read(baseFunc[1]),
+		Hooks_InvalidateName(baseFunc[1]);
+	}
+Hooks_GetSame_after_2:
+	if (fixes)
+	{
+		// Invalidate the original.
+		Hooks_InvalidateName(original);
+		//printf("hooking fixed callback %s", ref);
+	}
+	else if (idx <= entry)
+	{
+		AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref, entry);
+	}
 	else
 	{
 		// There's a chance this won't be long enough at all!
-		if (!strcmp(ref2, YSI_gscOnPlayerEnterRaceCP))
-		{
-			Hooks_ForceReverse(YSI_gscOnPlayerEnterRaceCP);
-			P:5("Hooks_GetSame: REVERSED: %s", unpack(YSI_gscOnPlayerEnterRaceCP));
-			// VERY special case.  The space used to hold the hook name is not
-			// long enough to hold the original callback's full name!  In this
-			// case we point the function header at somewhere deep inside the
-			// DAT segment, not in the nametable, after first generating our new
-			// function name in C order not packed PAWN order.
-			#emit CONST.pri  YSI_gscOnPlayerEnterRaceCP
-			#emit STOR.S.pri idx
-			idx -= AMX_BASE_ADDRESS,
-			AMX_Write(original + 4, idx);
-		}
-		else if (!strcmp(ref2, YSI_gscOnPlayerLeaveRaceCP))
-		{
-			Hooks_ForceReverse(YSI_gscOnPlayerLeaveRaceCP);
-			#emit CONST.pri  YSI_gscOnPlayerLeaveRaceCP
-			#emit STOR.S.pri idx
-			idx -= AMX_BASE_ADDRESS,
-			AMX_Write(original + 4, idx);
-		}
-		else if (!strcmp(ref2, YSI_gscOnScriptExit))
+		if (!strcmp(ref2, YSI_gscOnScriptExit))
 		{
 			Hooks_ForceReverse(YSI_gscOnScriptExit);
 			#emit CONST.pri  YSI_gscOnScriptExit
@@ -910,15 +976,12 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 			AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref2, idx);
 		}
 	}
-	// Work out what the FIRST used slot is.
-	pure = same[0] ? 0 : (same[1] ? 1 : 2);
-	// Write our new function (HARD).
-	entry = Hooks_WriteFunction(same[pure], sameCount - pure, Hooks_SpecialReturns(ref));
+	// Work out what the FIRST used slot is.  Write our new function (HARD).
+	entry = Hooks_WriteFunction(same, sameCount, Hooks_SpecialReturns(ref));
 	if (entry)
 	{
 		// Point "original"'s function pointer to the new function.
-		idx = CGen_GetCodeSpace() - AMX_HEADER_COD,
-		AMX_Write(original, idx);
+		idx = CGen_GetCodeSpace() - AMX_HEADER_COD;
 		// Save the address for hooks later.  These three can't be done normally
 		// because they have already been started by this point.  I did use
 		// "CallLocalFunction" but that caused issues with "y_malloc".
@@ -929,6 +992,14 @@ _Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:r
 			case 0b0100: YSI_g_sOnGameModeInit = idx;
 		}
 		CGen_AddCodeSpace(entry);
+		//printf("%x %x", idx, fixes);
+		if (fixes)
+		{
+			// Change our state machine to just jump straight to the new code.
+			AMX_Write(fixes + AMX_HEADER_COD, _:RelocateOpcode(OP_JUMP)),
+			AMX_Write(fixes + AMX_HEADER_COD + 4, idx + (AMX_REAL_DATA + AMX_HEADER_COD));
+		}
+		else AMX_Write(original, idx);
 	}
 	else
 	{

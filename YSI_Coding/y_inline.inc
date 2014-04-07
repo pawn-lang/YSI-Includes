@@ -95,6 +95,7 @@ Changelog:
 	#include "..\amx\amx_memory.inc"
 	
 	#include "..\YSI_Core\y_testing"
+	#include "y_hooks"
 	#include "y_inline/tests"
 #endif
 

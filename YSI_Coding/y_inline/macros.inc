@@ -169,9 +169,9 @@ stock const
 #define anonymous%0(%1) anonymous_no_longer_supported;for(new %1;FALSE;)
 
 // Parameter type for passing callbacks about.
-#define callback:%0) const callback_tag:callback_check:%0£££
-#define callback_tag:callback_check:%0,%1£££ callback_tag:%0[],%1)
-#define callback_check:%0£££ %0[])
+#define callback:%0) const callback_tag:callback_check:%0$$$
+#define callback_tag:callback_check:%0,%1$$$ callback_tag:%0[],%1)
+#define callback_check:%0$$$ %0[])
 
 
 

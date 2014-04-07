@@ -535,3 +535,143 @@ Test:CallStoredFunction0()
 	ASSERT(CallStoredFunction(Function:0) == 0);
 }
 
+// Test inline functions inside hooks, in which the parameter counts are mangled
+// so can't be used to allocate memory.
+static
+	YSI_g_sInlineTestVar0;
+
+hook y_inline_InHook0@0()
+{
+	new
+		cc[E_CALLBACK_DATA],
+		r = 100;
+	inline func(&r2)
+	{
+		#pragma unused r2
+		YSI_g_sInlineTestVar0 += 1;
+		r2 = 94;
+	}
+	y_inline_Get(using inline func, cc);
+	Callback_Call(cc, r);
+	ASSERT(r == 94);
+	Callback_Release(cc);
+}
+
+hook y_inline_InHook1@0(a)
+{
+	new
+		cc[E_CALLBACK_DATA],
+		r = 100;
+	inline func(&r2)
+	{
+		#pragma unused r2
+		YSI_g_sInlineTestVar0 += a;
+		r2 = 95;
+	}
+	y_inline_Get(using inline func, cc);
+	Callback_Call(cc, r);
+	ASSERT(r == 95);
+	Callback_Release(cc);
+}
+
+hook y_inline_InHook2@0(a, b)
+{
+	new
+		cc[E_CALLBACK_DATA],
+		r = 100;
+	inline func(&r2)
+	{
+		#pragma unused r2
+		YSI_g_sInlineTestVar0 += a * b;
+		r2 = 96;
+	}
+	y_inline_Get(using inline func, cc);
+	Callback_Call(cc, r);
+	ASSERT(r == 96);
+	Callback_Release(cc);
+}
+
+hook y_inline_InHook0@1()
+{
+	new
+		cc[E_CALLBACK_DATA],
+		r = 100;
+	inline func(&r2)
+	{
+		#pragma unused r2
+		YSI_g_sInlineTestVar0 += 1 * 2;
+		r2 = 98;
+	}
+	y_inline_Get(using inline func, cc);
+	Callback_Call(cc, r);
+	ASSERT(r == 98);
+	Callback_Release(cc);
+}
+
+hook y_inline_InHook1@1(a)
+{
+	new
+		cc[E_CALLBACK_DATA],
+		r = 100;
+	inline func(&r2)
+	{
+		#pragma unused r2
+		YSI_g_sInlineTestVar0 += a * 2;
+		r2 = 97;
+	}
+	y_inline_Get(using inline func, cc);
+	Callback_Call(cc, r);
+	ASSERT(r == 97);
+	Callback_Release(cc);
+}
+
+hook y_inline_InHook2@1(a, b)
+{
+	new
+		cc[E_CALLBACK_DATA],
+		r = 100;
+	inline func(&r2)
+	{
+		#pragma unused r2
+		YSI_g_sInlineTestVar0 += a * b * 2;
+		r2 = 90;
+	}
+	y_inline_Get(using inline func, cc);
+	Callback_Call(cc, r);
+	ASSERT(r == 90);
+	Callback_Release(cc);
+}
+
+Test:y_inline_InHook0()
+{
+	YSI_g_sInlineTestVar0 = 0;
+	CallLocalFunction("y_inline_Hook0", "");
+	ASSERT(YSI_g_sInlineTestVar0 == 3);
+}
+
+Test:y_inline_InHook1()
+{
+	YSI_g_sInlineTestVar0 = 0;
+	CallLocalFunction("y_inline_Hook1", "i", 4);
+	ASSERT(YSI_g_sInlineTestVar0 == 12);
+	YSI_g_sInlineTestVar0 = 0;
+	CallLocalFunction("y_inline_Hook1", "i", 5);
+	ASSERT(YSI_g_sInlineTestVar0 == 15);
+	YSI_g_sInlineTestVar0 = 0;
+	CallLocalFunction("y_inline_Hook1", "i", 100);
+	ASSERT(YSI_g_sInlineTestVar0 == 300);
+}
+
+Test:y_inline_InHook2()
+{
+	YSI_g_sInlineTestVar0 = 0;
+	CallLocalFunction("y_inline_Hook2", "ii", 4, 5);
+	ASSERT(YSI_g_sInlineTestVar0 == 12 * 5);
+	YSI_g_sInlineTestVar0 = 0;
+	CallLocalFunction("y_inline_Hook2", "ii", 5, 6);
+	ASSERT(YSI_g_sInlineTestVar0 == 15 * 6);
+	YSI_g_sInlineTestVar0 = 0;
+	CallLocalFunction("y_inline_Hook2", "ii", 100, 100);
+	ASSERT(YSI_g_sInlineTestVar0 == 300 * 100);
+}
+

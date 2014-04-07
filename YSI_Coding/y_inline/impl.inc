@@ -784,7 +784,15 @@ stock I@E(/* mutable */ const s[])
 	// Get the number of local variables already in the parent function.
 	frm = GetCurrentFramePreviousFrame(),
 	YSI_g_sCurInlineLocals = GetFrameLocalSize(frm),
-	YSI_g_sCurInlineParams = GetFrameParameterSize(frm),
+	YSI_g_sCurInlineParams = GetFrameParameterSize(frm);
+	if (YSI_g_sCurInlineParams == -4)
+	{
+		// y_hooks mangles the parameter count.  In this case, the correct
+		// parameter count is stored in the previous frame, which is the entry
+		// point for the generated hook function stub.
+		YSI_g_sCurInlineParams = GetFrameParameterSize(GetFramePreviousFrame(frm));
+	}
+	P:C(if (YSI_g_sCurInlineParams < 0) P:E("Inline_Entry: Invalid parameter size."););
 	// Save parameter counts, shifted for separate components.
 	AMX_Write(addr2 + 8, (YSI_g_sCurInlineLocals >>> 2) | (YSI_g_sCurInlineParams << 22)),
 	// =========================================================================
