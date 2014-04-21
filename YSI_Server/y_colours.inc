@@ -334,3 +334,103 @@ stock GetColourHash(hash, alpha = 0xAA)
 	}
 #endif
 
+
+
+#define _COLOUR_GT_SPACE_DEF_0(%0)      SAMP_GAME_TEXT_%0
+#define _COLOUR_GT_SPACE_DEF_1(%0)      SAMP_GAME_TEXT_%0H
+#define _COLOUR_GT_SPACE_DEF_2(%0)      SAMP_GAME_TEXT_%0HH
+#define _COLOUR_GT_SPACE_DEF_3(%0)      SAMP_GAME_TEXT_%0HHH
+#define _COLOUR_GT_SPACE_DEF_4(%0)      SAMP_GAME_TEXT_%0HHHH
+#define _COLOUR_GT_SPACE_DEF_5(%0)      SAMP_GAME_TEXT_%0HHHHH
+
+#define _COLOUR_GT_SPACE(%0,%1)         {('%0'|0x20)|(%1<<8),_COLOUR_GT_SPACE_DEF_%1(%0)>>>24,(_COLOUR_GT_SPACE_DEF_%1(%0)>>16)&0xFF,(_COLOUR_GT_SPACE_DEF_%1(%0)>>8)&0xFF}
+
+#define Colors_SAMPToGT Colours_SAMPToGT
+stock Colours_SAMPToGT(colour, start)
+{
+	P:4("Colours_SAMPToGT called: %i", colour);
+	// Find the closest matching game text colour to the given SA:MP colour.
+	static const
+		sc_aColours[][4] =
+		{
+			// These can't be used as you can't set text to them.  You can
+			// however use them at the start by not changing.
+			_COLOUR_GT_SPACE(X,0), _COLOUR_GT_SPACE(X,1),
+			_COLOUR_GT_SPACE(X,2),
+			
+			_COLOUR_GT_SPACE(R,0), _COLOUR_GT_SPACE(R,1),
+			_COLOUR_GT_SPACE(R,2), _COLOUR_GT_SPACE(R,3),
+			_COLOUR_GT_SPACE(R,4), _COLOUR_GT_SPACE(R,5),
+			
+			_COLOUR_GT_SPACE(G,0), _COLOUR_GT_SPACE(G,1),
+			_COLOUR_GT_SPACE(G,2), _COLOUR_GT_SPACE(G,3),
+			//_COLOUR_GT_SPACE(G,4), // Don't want this twice (see Y2).
+			
+			_COLOUR_GT_SPACE(B,0), _COLOUR_GT_SPACE(B,1),
+			_COLOUR_GT_SPACE(B,2), _COLOUR_GT_SPACE(B,3),
+			
+			_COLOUR_GT_SPACE(Y,0), _COLOUR_GT_SPACE(Y,1),
+			_COLOUR_GT_SPACE(Y,2),
+			
+			_COLOUR_GT_SPACE(P,0), _COLOUR_GT_SPACE(P,1),
+			_COLOUR_GT_SPACE(P,2),
+			
+			_COLOUR_GT_SPACE(W,0),
+			
+			_COLOUR_GT_SPACE(L,0)
+		};
+	new
+		dist = cellmax,
+		found = '\0',
+		r = colour >> 16,
+		g = (colour >> 8) & 0xFF,
+		b = colour & 0xFF,
+		tr, tg, tb, cur;
+	for ( ; start != sizeof (sc_aColours); ++start)
+	{
+		tr = r - sc_aColours[start][1],
+		tg = g - sc_aColours[start][2],
+		tb = b - sc_aColours[start][3],
+		cur = (tr * tr) + (tg * tg) + (tb * tb);
+		P:6("Colours_SAMPToGT: Test %x %d", sc_aColours[start][0], cur);
+		if (cur < dist)
+		{
+			P:6("Colours_SAMPToGT: Change %x %d", found, dist);
+			// This may sometimes give odd results in fades for draw results.
+			// Though I've not seen it happen yet.
+			dist = cur,
+			found = sc_aColours[start][0];
+		}
+	}
+	return found;
+}
+
+stock Colours_EncodeGameText(str[])
+{
+	new
+		ret;
+	if (str[0] == '~')
+	{
+		switch (str[1] | 0x20)
+		{
+			case 'r', 'g', 'b', 'y', 'p', 'w', 'l', 'x':
+			{
+				ret = str[1] | 0x20;
+			}
+			case 'h':
+			{
+				ret = 0x100 | 'x';
+			}
+			default: return 0;
+		}
+		if (str[2] != '~') return 0;
+		new
+			pos = 3;
+		while (str[pos++] == '~' && str[pos++] | 0x20 == 'h' && str[pos++] == '~')
+		{
+			ret += 0x100;
+		}
+	}
+	return ret;
+}
+

@@ -95,12 +95,6 @@ Variables:
 #include "..\amx\asm"
 //asm"
 
-/*// "File,Float," must remain last always.
-#if defined CUSTOM_TAG_TYPES
-	#define File,Float, Float,File,CUSTOM_TAG_TYPES
-#else
-	#define File,Float, Float,File
-#endif*/
 // Add new tags to the START of this list.
 #include "..\YSI_Internal\y_globaltags"
 
@@ -289,6 +283,23 @@ public OnPlayerDisconnect(playerid, reason)
 
 #define UCMP(%0,%1) (((%0) - cellmin) < ((%1) - cellmin))
 #define VALID_PLAYERID(%0) UCMP((%0), MAX_PLAYERS)
+
+/**--------------------------------------------------------------------------**\
+<summary>
+	IS_IN_RANGE(value, lower, upper);
+</summary>
+<param name="value">The number to compare.</param>
+<param name="lower">The lower limit.</param>
+<param name="upper">The upper limit.</param>
+<returns>
+	Is the value in the given range.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define IS_IN_RANGE(%0,%1,%2) (((%0) - ((%1) + cellmin)) < ((%2) - ((%1) + cellmin)))
 
 /**--------------------------------------------------------------------------**\
 <summary>
