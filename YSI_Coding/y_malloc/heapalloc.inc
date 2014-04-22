@@ -145,7 +145,7 @@ main()
 	-
 </returns>
 <remarks>
-	Loop back up through the stackand find the start of the current stack.  If
+	Loop back up through the stack and find the start of the current stack.  If
 	it doesn't equal the top of the true stack then we've been called via
 	"CallLocalFunction" at some point and thus MAY get some memory corruption.
 	
@@ -189,6 +189,7 @@ static Malloc_FindStackTop()
 
 public OnScriptInit()
 {
+	P:1("Malloc_OnScriptInit called");
 	// First ever LEGITIMATE call to "heapspace"!
 	if (heapspace() < MALLOC_MEMORY + 4 * 1024)
 	{
@@ -238,6 +239,7 @@ public OnScriptInit()
 
 static Malloc_TrySetup()
 {
+	P:1("Malloc_TrySetup called");
 	new
 		temp;
 	#emit LCTRL       3
@@ -403,22 +405,11 @@ static Malloc_SolidifyHeap()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-public OnPlayerConnect(playerid)
+forward Malloc_DoPlayerConnect(playerid);
+
+public Malloc_DoPlayerConnect(playerid)
 {
 	if (YSI_g_sHeapSetup != 2) Malloc_TrySetup();
-	#if defined Malloc_OnPlayerConnect
-		return Malloc_OnPlayerConnect(playerid);
-	#else
-		return 1;
-	#endif
+	// Ensure we only call the originsl.
+	return call OnPlayerConnect(playerid);
 }
-
-#if defined _ALS_OnPlayerConnect
-	#undef OnPlayerConnect
-#else
-	#define _ALS_OnPlayerConnect
-#endif
-#define OnPlayerConnect Malloc_OnPlayerConnect
-#if defined Malloc_OnPlayerConnect
-	forward Malloc_OnPlayerConnect(playerid);
-#endif
