@@ -181,42 +181,9 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 		pos = strfind(name, "@", false, 4);
 	// Make "pos" a legal value inside the error message.
 	if (pos == -1) P:E("Invalid hook name: %s", unpack(name), ++pos);
-	name{pos} = '\0';
+	name[pos] = '\0',
 	strdel(name, 0, 4);
 }
-
-// Get rid of the "@yH_" prefix and "@" suffix and change "CP" into "Checkpoint"
-// etc.
-/*#define Hooks_MakeBaseName(%0) ( \
-	Hooks_IsolateName(name)    , \
-	Hooks_MakeLongName(name)   )
-
-Test:Hooks_BaseName0()
-{
-	new
-		name[64];
-	name = "@yH_OnPlayerEnterRaceCP";
-	Hooks_MakeBaseName(name);
-	ASSERT(!strcmp(name, "OnPlayerEnterRaceCheckpoint"));
-}
-
-Test:Hooks_BaseName1()
-{
-	new
-		name[64];
-	name = "@yH_OnPlayerUpdALongNamedCheckpoint";
-	Hooks_MakeBaseName(name);
-	ASSERT(!strcmp(name, "OnPlayerUpdateALongNamedCP"));
-}
-
-Test:Hooks_BaseName2()
-{
-	new
-		name[64];
-	name = "@yH_OnPlayerEnterRaceCheckpoint";
-	Hooks_MakeBaseName(name);
-	ASSERT(!strcmp(name, "OnPlayerEnterRaceCheckpoint"));
-}*/
 
 _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precount, size = sizeof (preloads))
 {
@@ -249,19 +216,14 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precoun
 _Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_PRE_HOOK], precount, name[64], hooks[], &count)
 {
 	new
-		func,
 		idx,
 		lfunc[64];
 	// Collect all the functions with something like this name.
 	do
 	{
 		strcat(lfunc, name),
-		Hooks_MakeShortName(lfunc),
-		func = funcidx(lfunc);
-		if (func != -1)
-		{
-			hooks[count++] = AMX_GetEntryFromPublicIndex(func);
-		}
+		Hooks_MakeShortName(lfunc);
+		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
 		strcpy(lfunc, preloads[idx][E_PRE_HOOK_NAME]),
 		strcat(lfunc, "_");
 	}
@@ -489,6 +451,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 	// Where "XXX" is some unique number (the exact value is irrelevant, it just
 	// means that multiple hooks of the same function have different names).
 	static
+		sName[64],
 		sHooks[128];
 	// Isolate the common prefix part:
 	//   
@@ -500,7 +463,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 	//   
 	// The numbers at the end are irrelevant, now we can just search for hooks
 	// of this exact callback.
-	name[strfind(name, "@", false, 4) + 1] = '\0',
+	name{strfind(name, "@", false, 4) + 1} = '\0',
 	// The above now becomes:
 	//   
 	//   OnPlayerConnect
@@ -518,7 +481,9 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 	//   OnPlayerEnterRaceCheckpoint
 	//   
 	// Thus expanding common name length reductions.
-	Hooks_MakeBaseName(sBase);
+	strunpack(sName, name),
+	Hooks_IsolateName(sName),
+	Hooks_MakeLongName(sName);
 	new
 		// Get all the hooks of this type.  They are stored alphabetically.
 		hookCount = Hooks_GetAllHooks(name, sHooks, idx, namelen),
@@ -526,10 +491,29 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 		nextPtr,
 		ph[4], pc;
 	// Get the preloads.
-	Hooks_GetPreHooks(preloads, precount, name, ph, pc),
-	Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, name, namelen);
-	if ((sHooks[hookCount] = nextPtr)) ++hookCount;
-	printf("%s hook Count: %d", name, hookCount);
+	Hooks_GetPreHooks(preloads, precount, sName, ph, pc),
+	Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, sName, namelen);
+	// Handle special cases.  These are functions that might already be running
+	// right now because clearly we are in a function...
+	if ((sHooks[hookCount] = nextPtr))
+	{
+		// Strip off init functions.
+		if (strcmp(sName, "OnGameModeInit") &&
+		    strcmp(sName, "OnFilterScriptInit"))
+		{
+			++hookCount;
+		}
+		else
+		{
+			// Change the write location.
+			strins(sName, "S@@_", 0);
+			Hooks_GetFunctionWritePoint(sName, writePtr);
+		}
+	}
+	else if (!strcmp(sName, "OnScriptInit"))
+	{
+		Hooks_GetFunctionWritePoint("S@@_OnScriptInit", writePtr);
+	}
 	// We now have:
 	//  
 	//  1) All the hooks of this function.
@@ -540,8 +524,8 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 	// much!  I don't know if this code is faster (I suspect it is), but it is
 	// absolutely simpler!
 	// Get the AMX header entry from the public function index.
-	// new
-		// stub = Hooks_GenerateStub(fixes ? Hooks_GetFixesChain(fixes) : (original ? AMX_GetEntryPointer(original) : 0), sHooks, hookCount);
+	//new
+	//	stub = Hooks_GenerateStub(fixes ? Hooks_GetFixesChain(fixes) : (original ? AMX_GetEntryPointer(original) : 0), sHooks, hookCount);
 	// return Hooks_MakePublicPointer(original, fixes, sHooks[0], stub, namelen, sBase);
 }
 
@@ -560,5 +544,71 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 {
 	AMX_Write(AMX_BASE_ADDRESS + AMX_Read(entry + 4), 0);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_GetFunctionWritePoint</summary>
+<param name="name">The function to get the address pointer of.</param>
+<param name="write">Destination variable.</param>
+<returns>
+	The address at which this function's pointer is stored in the AMX header, if
+	the function exists of course.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC stock Hooks_GetFunctionWritePoint(name[], &write)
+{
+	AMX_GetPublicEntry(0, write, name, true);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_GetDefaultReturn</summary>
+<param name="name">The function to get the default return of.</param>
+<returns>
+	The default return for a callback, normally 1.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(name[64])
+{
+	if (!strcmp(name, "OnPlayerCommandText")) return 0;
+	strins(name, "@RET", 0);
+	Hooks_MakeShortName(name);
+	new
+		ptr;
+	if (AMX_GetPublicEntry(0, ptr, name, true))
+	{
+		// A "RET_OnWhatever" function exists - rationalise the return.
+		return CallFunction(AMX_Read(ptr)) ? 1 : 0;
+	}
+	return 1;
+}
+
+#define HOOK_RET:%0(%1) forward @RET%0(); public @RET%0()
+
+HOOK_RET:OnHookRet1()
+{
+	return 42;
+}
+
+HOOK_RET:OnHookRet2()
+{
+	return 0;
+}
+
+#endinput
+
+Test:Hooks_GetDefaultReturn()
+{
+	ASSERT(Hooks_GetDefaultReturn("OnHookRet1") == 1);
+	ASSERT(Hooks_GetDefaultReturn("OnPlayerCommandText") == 0);
+	ASSERT(Hooks_GetDefaultReturn("OnHookRet2") == 0);
+	ASSERT(Hooks_GetDefaultReturn("OnPlayerConnect") == 1);
 }
 

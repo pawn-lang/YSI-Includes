@@ -204,10 +204,9 @@ public OnScriptInit()
 		GetServerVarAsString(YSI_gLockData, YSI_gLockData[5], sizeof (YSI_gLockData) - 5);
 	#endif
 	#if defined AMX_OnScriptInit
-		return AMX_OnScriptInit();
-	#else
-		return 1;
+		AMX_OnScriptInit();
 	#endif
+	return 1;
 }
 
 #undef OnScriptInit
@@ -419,7 +418,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 				#emit STOR.S.pri addr
 				AMX_ReadString(AMX_BASE_ADDRESS + addr, str);
 				++idx;
-				if (exact ? (!strcmp(str, pattern)) : (strfind(str, pattern) != -1))
+				if (exact ? (str{0} && !strcmp(str, pattern)) : (strfind(str, pattern) != -1))
 				{
 					buffer = pos - 4;
 					return idx;
