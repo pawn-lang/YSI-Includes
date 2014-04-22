@@ -6,6 +6,17 @@ enum E_HOOK_NAME_REPLACEMENT_DATA
 	E_HOOK_NAME_REPLACEMENT_LEN
 }
 
+#if !defined CHAIN_ORDER
+	#define CHAIN_ORDER() 0
+#endif
+#define PRE_HOOK(%0) forward @CO_%0(); public @CO_%0() { return CHAIN_ORDER() + 1; }
+
+enum E_PRE_HOOK
+{
+	E_PRE_HOOK_NAME[32],
+	E_PRE_HOOK_VALUE
+}
+
 static stock
 	YSI_g_sReplacements[][E_HOOK_NAME_REPLACEMENT_DATA] =
 		{
@@ -153,11 +164,6 @@ Test:Hooks_MakeShortName2()
 	ASSERT(!strcmp(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCmdCCCC"));
 }
 
-
-
-
-
-
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_IsolateName</summary>
 <param name="name">The string to get the hooked function name from.</param>
@@ -179,10 +185,9 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 	strdel(name, 0, 4);
 }
 
-
 // Get rid of the "@yH_" prefix and "@" suffix and change "CP" into "Checkpoint"
 // etc.
-#define Hooks_MakeBaseName(%0) ( \
+/*#define Hooks_MakeBaseName(%0) ( \
 	Hooks_IsolateName(name)    , \
 	Hooks_MakeLongName(name)   )
 
@@ -190,97 +195,145 @@ Test:Hooks_BaseName0()
 {
 	new
 		name[64];
-	name = "@yH_
+	name = "@yH_OnPlayerEnterRaceCP";
+	Hooks_MakeBaseName(name);
+	ASSERT(!strcmp(name, "OnPlayerEnterRaceCheckpoint"));
 }
 
 Test:Hooks_BaseName1()
 {
+	new
+		name[64];
+	name = "@yH_OnPlayerUpdALongNamedCheckpoint";
+	Hooks_MakeBaseName(name);
+	ASSERT(!strcmp(name, "OnPlayerUpdateALongNamedCP"));
 }
 
 Test:Hooks_BaseName2()
 {
+	new
+		name[64];
+	name = "@yH_OnPlayerEnterRaceCheckpoint";
+	Hooks_MakeBaseName(name);
+	ASSERT(!strcmp(name, "OnPlayerEnterRaceCheckpoint"));
+}*/
+
+_Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precount, size = sizeof (preloads))
+{
+	new
+		first = 0,
+		idx = 0,
+		last = -8;
+	--size,
+	precount = 0,
+	AMX_GetPublicEntryPrefix(0, first, _A<@CO_>);
+	while ((idx = AMX_GetPublicEntryPrefix(idx, last, _A<@CO_>))) {}
+	for (new i = first; i <= last; i += 8)
+	{
+		if (precount == size)
+		{
+			P:E("y_hooks prehook array filled");
+			break;
+		}
+		new
+			name[32],
+			addr = AMX_Read(i);
+		AMX_ReadString(AMX_Read(i + 4) + AMX_BASE_ADDRESS + 4, name),
+		strunpack(preloads[precount][E_PRE_HOOK_NAME], name, 32),
+		preloads[precount][E_PRE_HOOK_VALUE] = CallFunction(addr),
+		++precount;
+	}
+	SortDeepArray(preloads, E_PRE_HOOK_VALUE, .size = precount);
 }
 
-static stock Hooks_Collate(name[64], &idx)
+_Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_PRE_HOOK], precount, name[64], hooks[], &count)
 {
-	// This records the amount of space available in the nametable, currently
-	// taken up by the names of hooks that we are about to destroy.
 	new
-		namelen = strlen(name);
-	// For this function, note that:
-	//   
-	//   hook OnPlayerConnect(playerid)
-	//   
-	// Compiles as:
-	//   
-	//   public @yH_OnPlayerConnect@XXX(playerid)
-	//   
-	// Where "XXX" is some unique number (the exact value is irrelevant, it just
-	// means that multiple hooks of the same function have different names).
-	static
-		sBase[64],
-		sHooks[128];
-	// Isolate the common prefix part:
-	//   
-	//   @yH_OnPlayerConnect@042
-	//   
-	// Becomes:
-	//   
-	//   @yH_OnPlayerConnect@
-	//   
-	// The numbers at the end are irrelevant, now we can just search for hooks
-	// of this exact callback.
-	name[strfind(name, "@", false, 4) + 1] = '\0',
-	// The above now becomes:
-	//   
-	//   OnPlayerConnect
-	//   
-	// This also handles cases such as:
-	//   
-	//   @yH_OnPlayerEnterRaceCheckpoint@162
-	//   
-	// Being invalid (too long), so instead converts the shortened:
-	//   
-	//   @yH_OnPlayerEnterRaceCP@162
-	//   
-	// To:
-	//   
-	//   OnPlayerEnterRaceCheckpoint
-	//   
-	// Thus expanding common name length reductions.
-	sBase = name,
-	Hooks_MakeBaseName(sBase);
-	new
-		// See if the original function exists.
-		original = funcidx(sBase),
-		// See if a fixes.inc hook exists.
-		fixes = Hooks_GetFixesFunc(sBase),
-		// Get all the hooks of this type.  They are stored alphabetically.
-		hookCount = Hooks_GetAllHooks(name, sHooks, idx, namelen);
-	// We now have:
-	//  
-	//  1) All the hooks of this function.
-	//  2) The original function if it exists.
-	//  3) The FIXES_ ALS chained function if fixes.inc exists.
-	//  
-	// This took huge chunks of complex code in the old version.  Now not so
-	// much!  I don't know if this code is faster (I suspect it is), but it is
-	// absolutely simpler!
-	// Get the AMX header entry from the public function index.
-	original = (original == -1) ? (0) : (AMX_GetEntryFromPublicIndex(original)),
-	// Get the AMX header entry from the public function index.
-	fixes    = (fixes    == -1) ? (0) : (AMX_GetEntryFromPublicIndex(fixes   ));
-	new
-		stub = Hooks_GenerateStub(fixes ? Hooks_GetFixesChain(fixes) : (original ? AMX_GetEntryPointer(original) : 0), sHooks, hookCount);
-	return Hooks_MakePublicPointer(original, fixes, sHooks[0], stub, namelen, sBase);
+		func,
+		idx,
+		lfunc[64];
+	// Collect all the functions with something like this name.
+	do
+	{
+		strcat(lfunc, name),
+		Hooks_MakeShortName(lfunc),
+		func = funcidx(lfunc);
+		if (func != -1)
+		{
+			hooks[count++] = AMX_GetEntryFromPublicIndex(func);
+		}
+		strcpy(lfunc, preloads[idx][E_PRE_HOOK_NAME]),
+		strcat(lfunc, "_");
+	}
+	while (++idx <= precount);
 }
 
-static stock Hooks_GetFixesChain(stub)
+_Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(hooks[], num, &ptr, &next, name[], nlen)
 {
-	// Get the address of the next function from the FIXES_ ALS state stub.
+	switch (num)
+	{
+		case 0:
+		{
+			next = 0;
+			new
+				len = strlen(name);
+			if (nlen >= len)
+			{
+				// We don't have an existing callback with this name, only hooks.
+				// We need to add the name of the callback to the AMX header,
+				// and we have enough space in which to do so.
+				AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(ptr + 4), name, len);
+			}
+			else
+			{
+				P:F("Could not write function name in \"Hooks_MakePublicPointer\".");
+				// TODO: Fix this.  Use an alternate memory location (the actual
+				// code segment in which we are writing seems like a good
+				// choice).
+			}
+		}
+		case 1:
+		{
+			// No "fixes.inc", but this callback already exists.  In that case,
+			// just replace the pointer address.
+			ptr = hooks[0],
+			next = AMX_Read(ptr) + (AMX_REAL_DATA + AMX_HEADER_COD);
+		}
+		default:
+		{
+			// Special hooks.  Optimise them.
+			for (new cur = 1; cur != num; ++cur)
+			{
+				ptr = AMX_Read(hooks[cur]),
+				next = Hooks_GetStubEntry(ptr),
+				ptr += AMX_HEADER_COD,
+				Hooks_RedirectStub(ptr, next),
+				ptr += 4;
+			}
+		}
+	}
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_GetStubEntry</summary>
+<param name="stub">Starting address of the function.</param>
+<returns>
+	The address at which the actual code in this function starts.
+</returns>
+<remarks>
+	This handles three cases.  Regular functions end instantly as found.
+	Functions that start with a switch (even before "PROC") are assumed to be
+	state-based functions, and we find the most likely state to be used (i.e. we
+	remove all future state changes).
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
+{
+	// Get the address of the next function from the ALS state stub.
 	new
 		ctx[DisasmContext];
-	DisasmInit(ctx, stub);
+	DisasmInit(ctx, stub, stub + 64);
 	switch (DisasmNextInsn(ctx))
 	{
 		case OP_LOAD_PRI:
@@ -298,6 +351,7 @@ static stock Hooks_GetFixesChain(stub)
 					if (h1 == h2)      return h0; // Most likely.
 					else if (h0 == h2) return h1;
 					else if (h0 == h1) return h2;
+					else P:E("y_hooks could not extract state stub jump");
 				}
 			}
 		}
@@ -307,90 +361,26 @@ static stock Hooks_GetFixesChain(stub)
 			// hooks use two different short versions of a callback).
 			return DisasmGetOperand(ctx, 0);
 		}
+		case OP_PROC:
+		{
+			//return stub;
+			P:E("y_hooks attempting to redirect a PROC hook");
+		}
 	}
 	return 0;
 }
 
-/**
-**/
-
-/**--------------------------------------------------------------------------**\
-<summary>Hooks_MakePublicPointer</summary>
-<param name="original">The AMX header for the original callback.</param>
-<param name="fixes">The AMX header for the fixes.inc ALS state chain.</param>
-<param name="first">The AMX header for the first found hook.</param>
-<param name="func">The address of our new code.</param>
-<param name="nlen">The length of the name of the first found hook.</param>
-<param name="name">The name of the callback.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Takes a variety of function pointers and rewrites one to point to our new
-	code.  The one chosen depends on what functions already exist and need to be
-	called when, but the logic isn't complex.  If "fixes.inc" exists, call that
-	first then our code.  If an existing callback exists, redirect that.
-	Otherwise create a whole new entry in the public functions header (or at
-	least re-write an existing one).
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-static stock Hooks_MakePublicPointer(original, fixes, first, func, nlen, const name[])
-{
-	// We need to create an AMX header entry for "name", e.g. point
-	// "OnPlayerConnect" at the correct function.
-	if (fixes)
-	{
-		// Here, "fixes" points to the second item in the ALS chain.  "original"
-		// points to the actual callback in "fixes.inc", which if it exists
-		// means that we don't need to rewrite anything in the header, just
-		// rewrite the states stub.
-		// 
-		// There is a remote chance that the stub has already been rewritten
-		// once, in which case just replace that old jump with the new one.
-		// Other code will need to account for that case to correct call the
-		// remainder of the chain.
-		Hooks_RedirectFixes(fixes, func);
-	}
-	else if (original)
-	{
-		// No "fixes.inc", but this callback already exists.  In that case, just
-		// replace the pointer address.
-		Hooks_RedirectPublic(original, func);
-	}
-	else
-	{
-		new
-			len = strlen(name);
-		if (nlen >= len)
-		{
-			// We don't have an existing callback with this name, only hooks.
-			// We need to add the name of the callback to the AMX header, and we
-			// have enough space in which to do so.
-			AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(first + 4), name, len),
-			// Point what used to be a hook at the new function.
-			Hooks_RedirectPublic(first, func);
-		}
-		else
-		{
-			P:F("Could not write function name in \"Hooks_MakePublicPointer\".");
-			// TODO: Fix this.  Use an alternate memory location (the actual
-			// code segment in which we are writing seems like a good choice).
-		}
-	}
-}
-
-static stock Hooks_RedirectPublic(stub, to)
+_Y_HOOKS_STATIC stock Hooks_RedirectPublic(stub, to)
 {
 	#emit LOAD.S.pri to
 	#emit SREF.S.pri stub
 }
 
-static stock Hooks_RedirectFixes(stub, to)
+_Y_HOOKS_STATIC stock Hooks_RedirectStub(stub, to)
 {
-	stub += AMX_HEADER_COD + AMX_Read(stub),
 	AMX_Write(stub, _:RelocateOpcode(OP_JUMP)),
-	AMX_Write(stub + 4, to + (AMX_REAL_DATA + AMX_HEADER_COD));
+	//AMX_Write(stub + 4, to + (AMX_REAL_DATA + AMX_HEADER_COD));
+	AMX_Write(stub + 4, to);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -440,7 +430,7 @@ static stock Hooks_RedirectFixes(stub, to)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-static stock Hooks_GetAllHooks(const name[], hooks[128], &idx, &namelen)
+_Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[128], &idx, &namelen)
 {
 	// Start from the very start - repeats the first item.
 	new
@@ -463,28 +453,112 @@ static stock Hooks_GetAllHooks(const name[], hooks[128], &idx, &namelen)
 	return count;
 }
 
-static stock Hooks_GetFixesFunc(const name[64])
+_Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 {
-	static
-		fn[64];
-	return
-		fn = "FIXES_",
-		strcat(fn, name),
-		Hooks_MakeShortName(fn),
-		funcidx(fn);
+	// Get the preloaders.
+	new
+		precount = 0,
+		preloads[8][E_PRE_HOOK];
+	Hooks_GetPreloadLibraries(preloads, precount);
+	// Main loop
+	new
+		name[32],
+		idx;
+	// Get the next hook type.
+	while ((idx = AMX_GetPublicNamePrefix(idx, name, _A<@yH_>)))
+	{
+		// Collect all the hooks of this function, and rewrite the call code.
+		Hooks_Collate(preloads, precount, name, idx);
+	}
 }
 
-#endinput
-
-// Main loop
-static
-	name[64];
-new
-	idx;
-// Get the next hook type.
-while ((idx = AMX_GetPublicNamePrefix(idx, name, _A<@yH_>)))
+_Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], &idx)
 {
-	// Collect all the hooks of this function, and rewrite the call code.
-	Hooks_Collate(name, idx);
+	// This records the amount of space available in the nametable, currently
+	// taken up by the names of hooks that we are about to destroy.
+	new
+		namelen = strlen(name);
+	// For this function, note that:
+	//   
+	//   hook OnPlayerConnect(playerid)
+	//   
+	// Compiles as:
+	//   
+	//   public @yH_OnPlayerConnect@XXX(playerid)
+	//   
+	// Where "XXX" is some unique number (the exact value is irrelevant, it just
+	// means that multiple hooks of the same function have different names).
+	static
+		sHooks[128];
+	// Isolate the common prefix part:
+	//   
+	//   @yH_OnPlayerConnect@042
+	//   
+	// Becomes:
+	//   
+	//   @yH_OnPlayerConnect@
+	//   
+	// The numbers at the end are irrelevant, now we can just search for hooks
+	// of this exact callback.
+	name[strfind(name, "@", false, 4) + 1] = '\0',
+	// The above now becomes:
+	//   
+	//   OnPlayerConnect
+	//   
+	// This also handles cases such as:
+	//   
+	//   @yH_OnPlayerEnterRaceCheckpoint@162
+	//   
+	// Being invalid (too long), so instead converts the shortened:
+	//   
+	//   @yH_OnPlayerEnterRaceCP@162
+	//   
+	// To:
+	//   
+	//   OnPlayerEnterRaceCheckpoint
+	//   
+	// Thus expanding common name length reductions.
+	Hooks_MakeBaseName(sBase);
+	new
+		// Get all the hooks of this type.  They are stored alphabetically.
+		hookCount = Hooks_GetAllHooks(name, sHooks, idx, namelen),
+		writePtr = sHooks[0], // Header for the first found hook.
+		nextPtr,
+		ph[4], pc;
+	// Get the preloads.
+	Hooks_GetPreHooks(preloads, precount, name, ph, pc),
+	Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, name, namelen);
+	if ((sHooks[hookCount] = nextPtr)) ++hookCount;
+	printf("%s hook Count: %d", name, hookCount);
+	// We now have:
+	//  
+	//  1) All the hooks of this function.
+	//  2) The original function if it exists.
+	//  3) The FIXES_ ALS chained function if fixes.inc exists.
+	//  
+	// This took huge chunks of complex code in the old version.  Now not so
+	// much!  I don't know if this code is faster (I suspect it is), but it is
+	// absolutely simpler!
+	// Get the AMX header entry from the public function index.
+	// new
+		// stub = Hooks_GenerateStub(fixes ? Hooks_GetFixesChain(fixes) : (original ? AMX_GetEntryPointer(original) : 0), sHooks, hookCount);
+	// return Hooks_MakePublicPointer(original, fixes, sHooks[0], stub, namelen, sBase);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_InvalidateName</summary>
+<param name="entry">The public function slot to destroy.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Basically, once we know a function has been included, wipe it from the AMX
+	header.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC Hooks_InvalidateName(entry)
+{
+	AMX_Write(AMX_BASE_ADDRESS + AMX_Read(entry + 4), 0);
 }
 
