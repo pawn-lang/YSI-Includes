@@ -133,6 +133,7 @@ Operators:
 #include "..\YSI_Internal\y_funcinc"
 #include "..\YSI_Core\y_debug"
 #include "..\YSI_Storage\y_amx"
+#include "..\YSI_Core\y_als"
 #include "..\YSI_Core\y_utils"
 
 #include "..\amx\opcode"
