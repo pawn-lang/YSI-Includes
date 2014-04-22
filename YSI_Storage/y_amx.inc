@@ -957,7 +957,7 @@ stock AMX_GetEntryPointer(entry)
 		ret[E_AMX_HEADER_INDEX] = -1,
 		ret[E_AMX_HEADER_PTR] = 0,
 		ret[E_AMX_HEADER_VALUE] = cellmin;
-}
+}*/
 
 stock AMX_GetEntryFromNativeIndex(index)
 {
@@ -980,7 +980,7 @@ stock AMX_GetPublicIndexFromEntry(entry)
 	return (entry - AMX_HEADER_PUBLICS) / 8;
 }
 
-stock AMX_GetEntryType(entry)
+/*stock AMX_GetEntryType(entry)
 {
 	if (AMX_HEADER_PUBLICS <= entry < AMX_HEADER_NATIVES) return e_AMX_HEADER_TYPE_PUBLIC;
 	else if (AMX_HEADER_NATIVES <= entry < AMX_HEADER_LIBRARIES) return e_AMX_HEADER_TYPE_NATIVE;
