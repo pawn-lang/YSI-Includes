@@ -28,6 +28,18 @@ static stock
 			{"Cmd", "Command",    3, 7}
 		};
 
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_MakeLongName</summary>
+<param name="name">Function name to modify.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Expands all name parts like "CP" and "Obj" to their full versions (in this
+	example "Checkpoint" and "Object").
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 stock Hooks_MakeLongName(name[64])
 {
 	new
@@ -108,6 +120,18 @@ Test:Hooks_MakeLongName2()
 	ASSERT(!strcmp(name, "OnUpdateTextDrawCPObjectCommand"));
 }
 
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_MakeShortName</summary>
+<param name="name">Function name to modify.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Compresses function names when required to fit within 32 characters
+	according to well defined rules (see "YSI_g_sReplacements").
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 stock Hooks_MakeShortName(name[64])
 {
 	// Easy one.
@@ -185,6 +209,26 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 	strdel(name, 0, 4);
 }
 
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_GetPreloadLibraries</summary>
+<param name="preloads">Desination in which to store all the preloads.</param>
+<param name="precount">Number of found preload libraries.</param>
+<param name="size">Maximum number of libraries to store.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Some includes, like "fixes.inc" and anti-cheats MUST come before all other
+	includes in order for everything to function correctly (at least fixes.inc
+	must).  This function looks for these definitions:
+	
+	    PRE_HOOK(FIXES)
+	
+	Which tell y_hooks that any "FIXES_" prefixed callbacks are part of one of
+	these chains.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precount, size = sizeof (preloads))
 {
 	new
@@ -213,6 +257,22 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precoun
 	SortDeepArray(preloads, E_PRE_HOOK_VALUE, .size = precount);
 }
 
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_GetPreHooks</summary>
+<param name="preloads">Names of libraries that come before y_hooks.</param>
+<param name="precount">Number of pre libraries.</param>
+<param name="name">Name of the callback.</param>
+<param name="hooks">Destination in which to store the headers.</param>
+<param name="count">Number of headers found.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Finds all the AMX file headers for functions with a similar name to the
+	given callback that should be called before (or near) the given callback.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 _Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_PRE_HOOK], precount, name[64], hooks[], &count)
 {
 	new
@@ -229,6 +289,22 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_PRE_HOOK], precount, name[6
 	}
 	while (++idx <= precount);
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_GetPointerRewrite</summary>
+<param name="hooks">All the prehooks for this callback.</param>
+<param name="num">The number of prehooks.</param>
+<param name="ptr">A pointer to write the new stub address to.</param>
+<param name="next">The pointer for the function called after y_hooks.</param>
+<param name="name">The name of the callback being processed.</param>
+<param name="nlen">Space available in the header to write text in.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(hooks[], num, &ptr, &next, name[], nlen)
 {
@@ -332,11 +408,33 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 	return 0;
 }
 
+/**--------------------------------------------------------------------------**\
+<summary></summary>
+<param name=""></param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 _Y_HOOKS_STATIC stock Hooks_RedirectPublic(stub, to)
 {
 	#emit LOAD.S.pri to
 	#emit SREF.S.pri stub
 }
+
+/**--------------------------------------------------------------------------**\
+<summary></summary>
+<param name=""></param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 _Y_HOOKS_STATIC stock Hooks_RedirectStub(stub, to)
 {
@@ -415,6 +513,17 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[128], &idx, &namelen
 	return count;
 }
 
+/**--------------------------------------------------------------------------**\
+<summary></summary>
+<param name=""></param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 {
 	// Get the preloaders.
@@ -433,6 +542,17 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 		Hooks_Collate(preloads, precount, name, idx);
 	}
 }
+
+/**--------------------------------------------------------------------------**\
+<summary></summary>
+<param name=""></param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], &idx)
 {
@@ -577,7 +697,6 @@ _Y_HOOKS_STATIC stock Hooks_GetFunctionWritePoint(name[], &write)
 
 _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(name[64])
 {
-	if (!strcmp(name, "OnPlayerCommandText")) return 0;
 	strins(name, "@RET", 0);
 	Hooks_MakeShortName(name);
 	new
@@ -592,12 +711,12 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(name[64])
 
 #define HOOK_RET:%0(%1) forward @RET%0(); public @RET%0()
 
-HOOK_RET:OnHookRet1()
+HOOK_RET:OnPlayerCommandText()
 {
-	return 42;
+	return 0;
 }
 
-HOOK_RET:OnHookRet2()
+HOOK_RET:OnRconCommand()
 {
 	return 0;
 }
