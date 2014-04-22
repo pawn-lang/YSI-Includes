@@ -409,30 +409,14 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 }
 
 /**--------------------------------------------------------------------------**\
-<summary></summary>
-<param name=""></param>
+<summary>Hooks_RedirectStub</summary>
+<param name="stub">Function start to redirect.</param>
+<param name="to">Where to redirect it to.</param>
 <returns>
 	-
 </returns>
 <remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC stock Hooks_RedirectPublic(stub, to)
-{
-	#emit LOAD.S.pri to
-	#emit SREF.S.pri stub
-}
-
-/**--------------------------------------------------------------------------**\
-<summary></summary>
-<param name=""></param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
+	Emits a JUMP, but I couldn't be bothered to set up "@emit" here.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
@@ -609,44 +593,73 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 		hookCount = Hooks_GetAllHooks(name, sHooks, idx, namelen),
 		writePtr = sHooks[0], // Header for the first found hook.
 		nextPtr,
-		ph[4], pc;
+		pc, ph[4];
 	// Get the preloads.
 	Hooks_GetPreHooks(preloads, precount, sName, ph, pc),
-	Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, sName, namelen);
+	// Get where in the chain we are being inserted.
+	Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, sName, namelen),
+	// Move that point for init functions (that are running right now).
+	Hooks_HandleInitFunctions(sHooks, hookCount, sName, writePtr, nextPtr);
+	// We now have:
+	//  
+	//  1) All the hooks of this function.
+	//  2) The original function if it exists.
+	//  3) Special ALS chained functions if they exists.
+	//  
+	// This took huge chunks of complex code in the old version.  Now not so
+	// much!  I don't know if this code is faster (I suspect it is), but it is
+	// absolutely simpler!
+	pc = Hooks_WriteFunction(sHooks, hookCount, Hooks_GetDefaultReturn(sName));
+	if (pc)
+	{
+		AMX_Write(writePtr, CGen_GetCodeSpace() + AMX_REAL_DATA),
+		CGen_AddCodeSpace(pc);
+	}
+	else
+	{
+		AMX_Write(writePtr, AMX_Read(hooks[0]));
+	}
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_HandleInitFunctions</summary>
+<param name=""></param>
+<returns>
+	-
+</returns>
+<remarks>
+	To detect and replace all hooks, we need to run the code in this include.
+	That happens when the server starts, in an initialisation function.  But the
+	user can hook the init function - we need to detect that case and handle it
+	by running hooks at a slightly different moment (after the y_hooks code
+	generation is finished).
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC stock Hooks_HandleInitFunctions(hooks[], &hookCount, name[64], &writePtr, nextPtr)
+{
 	// Handle special cases.  These are functions that might already be running
 	// right now because clearly we are in a function...
-	if ((sHooks[hookCount] = nextPtr))
+	if ((hooks[hookCount] = nextPtr))
 	{
 		// Strip off init functions.
-		if (strcmp(sName, "OnGameModeInit") &&
-		    strcmp(sName, "OnFilterScriptInit"))
+		if (strcmp(name, "OnGameModeInit") &&
+		    strcmp(name, "OnFilterScriptInit"))
 		{
 			++hookCount;
 		}
 		else
 		{
 			// Change the write location.
-			strins(sName, "S@@_", 0);
-			Hooks_GetFunctionWritePoint(sName, writePtr);
+			strins(name, "S@@_", 0),
+			Hooks_GetFunctionWritePoint(name, writePtr),
+			strdel(name, 0, 4);
 		}
 	}
-	else if (!strcmp(sName, "OnScriptInit"))
+	else if (!strcmp(name, "OnScriptInit"))
 	{
 		Hooks_GetFunctionWritePoint("S@@_OnScriptInit", writePtr);
 	}
-	// We now have:
-	//  
-	//  1) All the hooks of this function.
-	//  2) The original function if it exists.
-	//  3) The FIXES_ ALS chained function if fixes.inc exists.
-	//  
-	// This took huge chunks of complex code in the old version.  Now not so
-	// much!  I don't know if this code is faster (I suspect it is), but it is
-	// absolutely simpler!
-	// Get the AMX header entry from the public function index.
-	//new
-	//	stub = Hooks_GenerateStub(fixes ? Hooks_GetFixesChain(fixes) : (original ? AMX_GetEntryPointer(original) : 0), sHooks, hookCount);
-	// return Hooks_MakePublicPointer(original, fixes, sHooks[0], stub, namelen, sBase);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -665,6 +678,19 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 {
 	AMX_Write(AMX_BASE_ADDRESS + AMX_Read(entry + 4), 0);
 }
+
+/*
+
+    88888888888                                        88                            88               ad88             
+    88                                           ,d    ""                            88              d8"               
+    88                                           88                                  88              88                
+    88aaaaa 88       88 8b,dPPYba,   ,adPPYba, MM88MMM 88  ,adPPYba,  8b,dPPYba,     88 8b,dPPYba, MM88MMM ,adPPYba,   
+    88""""" 88       88 88P'   `"8a a8"     ""   88    88 a8"     "8a 88P'   `"8a    88 88P'   `"8a  88   a8"     "8a  
+    88      88       88 88       88 8b           88    88 8b       d8 88       88    88 88       88  88   8b       d8  
+    88      "8a,   ,a88 88       88 "8a,   ,aa   88,   88 "8a,   ,a8" 88       88    88 88       88  88   "8a,   ,a8"  
+    88       `"YbbdP'Y8 88       88  `"Ybbd8"'   "Y888 88  `"YbbdP"'  88       88    88 88       88  88    `"YbbdP"'   
+
+*/
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_GetFunctionWritePoint</summary>
@@ -719,6 +745,143 @@ HOOK_RET:OnPlayerCommandText()
 HOOK_RET:OnRconCommand()
 {
 	return 0;
+}
+
+/*
+
+      ,ad8888ba,                       88                                                
+     d8"'    `"8b                      88                                                
+    d8'                                88                                                
+    88             ,adPPYba,   ,adPPYb,88  ,adPPYba,  ,adPPYb,d8  ,adPPYba, 8b,dPPYba,   
+    88            a8"     "8a a8"    `Y88 a8P_____88 a8"    `Y88 a8P_____88 88P'   `"8a  
+    Y8,           8b       d8 8b       88 8PP""""""" 8b       88 8PP""""""" 88       88  
+     Y8a.    .a8P "8a,   ,a8" "8a,   ,d88 "8b,   ,aa "8a,   ,d88 "8b,   ,aa 88       88  
+      `"Y8888Y"'   `"YbbdP"'   `"8bbdP"Y8  `"Ybbd8"'  `"YbbdP"Y8  `"Ybbd8"' 88       88  
+                                                      aa,    ,88                         
+                                                       "Y8bbdP"                          
+
+*/
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_WriteFunction</summary>
+<param name="pointers">The hooks to link together.</param>
+<param name="size">The number of functions in the array.</param>
+<param name="ret">The default return.</param>
+<param name="skipable">Can future hooks be ignored on -1?</param>
+<returns>
+	The number of bytes written to memory.
+</returns>
+<remarks>
+	Generate some new code, very nicely :D.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1, const skipable = true)
+{
+	new
+		bool:multiple = size != 1,
+		base = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS,
+		ctx[AsmContext];
+	// Make sure the underlying system doesn't change without us.  Now supported
+	// natively.
+	CGen_UseCodeSpace(ctx);
+	
+	// Start of the function.
+	@emit PROC              // 1
+	
+	// Allocate space for our "ret" variable at "frm - 4".
+	if (multiple) @emit PUSH.C        ret // 3
+	
+	// Copy the stack to itself (MOVS).
+	// Allocate space.
+	@emit LOAD.S.alt    8   // 5
+	@emit LCTRL         4   // 7
+	@emit SUB               // 8
+	@emit SCTRL         4   // 10
+	@emit XCHG              // 11
+	
+	// The "MOVS" OpCode only takes a constant, not a variable, so we need to
+	// generate self-modifying code (just to be UBER meta)!  This code is
+	// generated AFTER the file is loaded so we bypass the data segment checks
+	// and can freely write wherever we want.
+	@emit STOR.pri      (CGen_GetCodeSpace() + (18 * 4) - (multiple ? 0 : 8)) // 13
+	
+	// Do the copying.  "alt" is already "STK", load the "FRM" offset.
+	@emit LCTRL         5   // 15
+	@emit ADD.C         12  // 17
+	// This is the instruction we want to modify...
+	@emit MOVS          0   // 19 (- 1)
+	
+	// Push the (fake) number of parameters.
+	@emit PUSH.C        -4
+	// Now loop over all our functions and insert "CALL" opcodes for them.
+	if (multiple)
+	{
+		for (new i = 0; ; )
+		{
+			// Get the absolute offset from here.
+			// #emit CALL pointers[i]
+			@emit CALL          (AMX_Read(pointers[i]) + base) // 2
+			if (skipable)
+			{
+				// =====================================
+				//  THIS SECTION IS CURRENTLY 10 CELLS. 
+				// =====================================
+				// Note: Including the original call...
+				//  
+				//  if (func() < 0) break;
+				//  else ret = ret & func();
+				//  
+				@emit ZERO.alt      // 3
+				@emit JSLESS.rel    ((size - i) * (10 * 4) - (5 * 4)) // 5
+				// =========================
+				//  JUMP OVER THIS SECTION. 
+				// =========================
+			}
+			@emit LOAD.S.alt    -4   // 7
+			if (ret) @emit AND       // 8
+			else @emit OR            // 8
+			// Loop and do the very first items last.
+			if (++i == size) break;
+			else @emit STOR.S.pri -4 // 10
+		}
+		if (skipable)
+		{
+			@emit JUMP.rel      4    // 10
+			// This is the point the large "JSLESS" above goes to.
+			// -1 = 0, -2 = 1
+			@emit INVERT
+		}
+	}
+	else if (skipable)
+	{
+		// Still need this code as they may hook a function that doesn't exist,
+		// but we still need to correctly process -1 or -2.
+		@emit CALL          (AMX_Read(pointers[0]) + base)
+		@emit ZERO.alt
+		@emit JSGEQ.rel     4
+		@emit INVERT
+	}
+	else
+	{
+		// Just replace the original (turns out, this takes no code).  Basically
+		// just discard everything we've written so far (reclaims the memory).
+		return 0;
+	}
+	
+	// This is the point the small "JUMP" above goes to.
+	@emit MOVE.alt
+	// Remove the whole stack then get the return value.
+	@emit LCTRL         5
+	@emit SCTRL         4
+	//@emit LOAD.S.pri    -4
+	@emit MOVE.pri
+	
+	// Return.
+	@emit RETN
+	
+	// Return the number of bytes written.
+	return ctx[AsmContext_buffer_offset];
 }
 
 #endinput
