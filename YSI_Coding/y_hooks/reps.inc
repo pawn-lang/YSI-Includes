@@ -308,7 +308,6 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_PRE_HOOK], precount, name[6
 
 _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(hooks[], num, &ptr, &next, name[], nlen)
 {
-	printf("%s = %d %x %d", name, num, ptr, nlen);
 	switch (num)
 	{
 		case 0:
@@ -351,12 +350,16 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(hooks[], num, &ptr, &next, name[],
 					nt = Hooks_GetStubEntry(tmp);
 				tmp += AMX_HEADER_COD,
 				AMX_Write(tmp, _:RelocateOpcode(OP_JUMP));
-				if (nt)
+				switch (nt)
 				{
-					next = ptr = tmp + 4,
-					AMX_Write(ptr, AMX_Read(ptr + nt) - (AMX_REAL_DATA + AMX_HEADER_COD));
+					case -1: ptr = tmp + 4, next = 0;
+					case 0: next = 0;
+					default:
+					{
+						next = ptr = tmp + 4,
+						AMX_Write(ptr, AMX_Read(tmp + nt) - (AMX_REAL_DATA + AMX_HEADER_COD));
+					}
 				}
-				else next = 0;
 			}
 		}
 	}
@@ -396,11 +399,12 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 						h0 = DisasmGetOperand(ctx, 3),
 						h1 = DisasmGetOperand(ctx, 5),
 						h2 = DisasmGetOperand(ctx, 7);
-					if (h1 == h2)      return  7 * 4; // Most likely.
-					else if (h0 == h2) return  9 * 4;
-					else if (h0 == h1) return 11 * 4;
+					if (h1 == h2)      return  8 * 4; // Most likely.
+					else if (h0 == h2) return 10 * 4;
+					else if (h0 == h1) return 12 * 4;
 					else P:E("y_hooks could not extract state stub jump");
 				}
+				else return -1;
 			}
 		}
 		case OP_JUMP:
@@ -613,7 +617,13 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 	// Get where in the chain we are being inserted.
 	Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, sName, namelen);
 	// Move that point for init functions (that are running right now).
-	Hooks_HandleInitFunctions(sHooks, hookCount, sName, writePtr, nextPtr);
+	Hooks_HandleInitFunctions(sHooks, hookCount, sName, writePtr, nextPtr),
+	// Write the code.
+	Hooks_GenerateCode(sName, sHooks, hookCount, writePtr, pc > 1);
+}
+
+_Y_HOOKS_STATIC Hooks_GenerateCode(name[64], hooks[], count, write, bool:hasprehooks)
+{
 	// We now have:
 	//  
 	//  1) All the hooks of this function.
@@ -623,15 +633,19 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 	// This took huge chunks of complex code in the old version.  Now not so
 	// much!  I don't know if this code is faster (I suspect it is), but it is
 	// absolutely simpler!
-	pc = Hooks_WriteFunction(sHooks, hookCount, Hooks_GetDefaultReturn(sName));
-	if (pc)
+	new
+		size = Hooks_WriteFunction(hooks, count, Hooks_GetDefaultReturn(name));
+	if (size)
 	{
-		AMX_Write(writePtr, CGen_GetCodeSpace() - AMX_HEADER_COD),
-		CGen_AddCodeSpace(pc);
+		AMX_Write(write, 40);
+		if (hasprehooks) AMX_Write(write, CGen_GetCodeSpace() + AMX_REAL_DATA);
+		else AMX_Write(write, CGen_GetCodeSpace() - AMX_HEADER_COD);
+		CGen_AddCodeSpace(size);
 	}
 	else
 	{
-		AMX_Write(writePtr, AMX_Read(sHooks[0]));
+		if (hasprehooks) AMX_Write(write, AMX_Read(hooks[0]) + (AMX_REAL_DATA + AMX_HEADER_COD));
+		else AMX_Write(write, AMX_Read(hooks[0]));
 	}
 }
 
@@ -792,7 +806,6 @@ HOOK_RET:OnRconCommand()
 
 _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1, const skipable = true)
 {
-	printf("0");
 	new
 		bool:multiple = size != 1,
 		base = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS,
@@ -832,13 +845,9 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	// Now loop over all our functions and insert "CALL" opcodes for them.
 	if (multiple)
 	{
-		printf("1");
 		for (new i = 0; ; )
 		{
 			// Get the absolute offset from here.
-			// #emit CALL pointers[i]
-			printf("%d %d", pointers[i], base);
-			printf("%x", AMX_Read(pointers[i]));
 			@emit CALL          (AMX_Read(pointers[i]) + base) // 2
 			if (skipable)
 			{
@@ -863,7 +872,6 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 			if (++i == size) break;
 			else @emit STOR.S.pri -4 // 10
 		}
-		printf("2");
 		if (skipable)
 		{
 			@emit JUMP.rel      4    // 10
@@ -888,7 +896,6 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		return 0;
 	}
 	
-	printf("3");
 	// This is the point the small "JUMP" above goes to.
 	@emit MOVE.alt
 	// Remove the whole stack then get the return value.
@@ -899,7 +906,6 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	
 	// Return.
 	@emit RETN
-	printf("4");
 	
 	// Return the number of bytes written.
 	return ctx[AsmContext_buffer_offset];
@@ -1071,7 +1077,6 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 	{
 		++count;
 	}
-	printf("Hooks_CountInvalidPublics: Invalid = %d", count);
 	P:4("Hooks_CountInvalidPublics: Invalid = %d", count);
 	return count;
 }
