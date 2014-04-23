@@ -1,3 +1,101 @@
+/**--------------------------------------------------------------------------**\
+					==============================
+					 y_hooks - Hook any callback!
+					==============================
+Description:
+	Automatically hooks any callbacks with a very simple syntax.
+Legal:
+	Version: MPL 1.1
+	
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 (the "License"); you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
+	http://www.mozilla.org/MPL/
+	
+	Software distributed under the License is distributed on an "AS IS" basis,
+	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	for the specific language governing rights and limitations under the
+	License.
+	
+	The Original Code is the SA:MP callback hooks include.
+	
+	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright (C) 2008
+	the Initial Developer. All Rights Reserved.
+	
+	Contributors:
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
+	
+	Thanks:
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+		Peter, Cam - Support.
+		ZeeX, g_aSlice/Slice, Popz, others - Very productive conversations.
+		koolk - IsPlayerinAreaEx code.
+		TheAlpha - Danish translation.
+		breadfish - German translation.
+		Fireburn - Dutch translation.
+		yom - French translation.
+		50p - Polish translation.
+		Zamaroht - Spanish translation.
+		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
+			for me to strive to better.
+		Pixels^ - Running XScripters where the idea was born.
+		Matite - Pestering me to release it and using it.
+	
+	Very special thanks to:
+		Thiadmer - PAWN, whose limits continue to amaze me!
+		Kye/Kalcor - SA:MP.
+		SA:MP Team past, present and future - SA:MP.
+	
+Version:
+	3.0
+Changelog:
+	23/03/14:
+		Rewrote for better ordering.
+	26/12/13:
+		Added sections.
+	15/04/13:
+		Changed the assembly to be shorter by actually using the stack.
+		Now slightly handles return values.
+	14/04/13:
+		Entirely new version - simpler, faster, and more generic.
+	02/01/13:
+		Rewrote the system to do away with ALS.
+		Removed overflow checks in every callback.
+		Streamlined code.
+	14/04/12:
+		Added crash fix from Slice, now returning correct values.
+		Fixed ALS detection of mode callbacks.
+	25/02/12:
+		Extracted most of the code to a separate file.
+	17/03/11:
+		Second complete re-write using another new technique.  Now VERY fast!
+		Updated OnPlayerUpdate code using Google63's SCTRL jump code.
+	06/08/10:
+		First version
+\**--------------------------------------------------------------------------**/
+
+/*
+
+     ad88888ba                                              
+    d8"     "8b              ,d                             
+    Y8,                      88                             
+    `Y8aaaaa,    ,adPPYba, MM88MMM 88       88 8b,dPPYba,   
+      `"""""8b, a8P_____88   88    88       88 88P'    "8a  
+            `8b 8PP"""""""   88    88       88 88       d8  
+    Y8a     a8P "8b,   ,aa   88,   "8a,   ,a88 88b,   ,a8"  
+     "Y88888P"   `"Ybbd8"'   "Y888  `"YbbdP'Y8 88`YbbdP"'   
+                                               88           
+                                               88           
+
+*/
+
+#define hook%1(%2) UNIQUE_FUNCTION<@yH_%1@...>(%2);UNIQUE_FUNCTION<@yH_%1@...>(%2)
+#define rehook%1(%2) UNIQUE_FUNCTION<@yH_%1@...>(%2)
+#define Hook:%0_%1(%2) @yH_%1@%0(%2);@yH_%1@%0(%2)
+// Strip out extra spaces (nicely recursive)
+#define @yH_%0\32;%1(%2) @yH_%1(%2)
+
 enum E_HOOK_NAME_REPLACEMENT_DATA
 {
 	E_HOOK_NAME_REPLACEMENT_SHORT[4],
@@ -9,12 +107,36 @@ enum E_HOOK_NAME_REPLACEMENT_DATA
 #if !defined CHAIN_ORDER
 	#define CHAIN_ORDER() 0
 #endif
-#define PRE_HOOK(%0) forward @CO_%0(); public @CO_%0() { return CHAIN_ORDER() + 1; }
+#define PRE_HOOK(%0) forward @CO_%0();public @CO_%0(){return CHAIN_ORDER()+1;}\
+	static stock _%0_IncludeStates()<_%0_ALS:_%0_ALS_x0,_%0_ALS:_%0_ALS_x1,_%0_ALS:_%0_ALS_x2,_%0_ALS:_%0_ALS_x3>{}\
+	static stock _%0_IncludeStates()<_%0_ALS:_%0_ALS_go>{}
 
 enum E_PRE_HOOK
 {
-	E_PRE_HOOK_NAME[32],
+	E_PRE_HOOK_NAME[16],
 	E_PRE_HOOK_VALUE
+}
+
+PRE_HOOK(HookChain)
+
+#undef CHAIN_ORDER
+#define CHAIN_ORDER @CO_HookChain
+
+#define HOOK_FORWARD:%0_%2(%1); \
+	forward %0_%2(%1); \
+	public %0_%2(%1) <_%0_ALS : _%0_ALS_x0, _%0_ALS : _%0_ALS_x1> { return 1; } \
+	public %0_%2(%1) <> { return 1; }
+
+#define HOOK_RET:%0(%1) forward @RET%0(); public @RET%0()
+
+HOOK_RET:OnPlayerCommandText()
+{
+	return 0;
+}
+
+HOOK_RET:OnRconCommand()
+{
+	return 0;
 }
 
 static stock
@@ -66,60 +188,6 @@ stock Hooks_MakeLongName(name[64])
 	return Hooks_MakeShortName(name);
 }
 
-Test:Hooks_MakeLongName0()
-{
-	new
-		name[64];
-	name = "OnUpd";
-	ASSERT(Hooks_MakeLongName(name) == 8);
-	ASSERT(!strcmp(name, "OnUpdate"));
-	name = "OnUpdD";
-	ASSERT(Hooks_MakeLongName(name) == 9);
-	ASSERT(!strcmp(name, "OnUpdateD"));
-	name = "OnUpda";
-	ASSERT(Hooks_MakeLongName(name) == 6);
-	ASSERT(!strcmp(name, "OnUpda"));
-}
-
-Test:Hooks_MakeLongName1()
-{
-	new
-		name[64];
-	name = "CP";
-	ASSERT(Hooks_MakeLongName(name) == 10);
-	ASSERT(!strcmp(name, "Checkpoint"));
-	name = "TD";
-	ASSERT(Hooks_MakeLongName(name) == 8);
-	ASSERT(!strcmp(name, "TextDraw"));
-	name = "Upd";
-	ASSERT(Hooks_MakeLongName(name) == 6);
-	ASSERT(!strcmp(name, "Update"));
-	name = "Dyn";
-	ASSERT(Hooks_MakeLongName(name) == 7);
-	ASSERT(!strcmp(name, "Dynamic"));
-	name = "Obj";
-	ASSERT(Hooks_MakeLongName(name) == 6);
-	ASSERT(!strcmp(name, "Object"));
-	name = "Cmd";
-	ASSERT(Hooks_MakeLongName(name) == 7);
-	ASSERT(!strcmp(name, "Command"));
-}
-
-Test:Hooks_MakeLongName2()
-{
-	new
-		name[64];
-	name = "OnUpdTDCP";
-	ASSERT(Hooks_MakeLongName(name) == 26);
-	ASSERT(!strcmp(name, "OnUpdateTextDrawCheckpoint"));
-	name = "OnUpdTDObjCmd";
-	ASSERT(Hooks_MakeLongName(name) == 29);
-	ASSERT(!strcmp(name, "OnUpdateTextDrawObjectCommand"));
-	name = "OnUpdTDCPObjCmd";
-	ASSERT(Hooks_MakeLongName(name) == 31);
-	ASSERT(!strcmp(name, "OnUpdateTextDrawCPObjectCommand"));
-}
-
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_MakeShortName</summary>
 <param name="name">Function name to modify.</param>
@@ -153,39 +221,6 @@ stock Hooks_MakeShortName(name[64])
 		while ((len = strlen(name)) >= 32 && ++i != sizeof (YSI_g_sReplacements));
 	}
 	return len;
-}
-
-Test:Hooks_MakeShortName1()
-{
-	new
-		name[64];
-	name = "OnPlayerEnterRaceCP";
-	ASSERT(Hooks_MakeShortName(name) == 19);
-	ASSERT(!strcmp(name, "OnPlayerEnterRaceCP"));
-	name = "OnPlayerEnterRaceCheckpoint";
-	ASSERT(Hooks_MakeShortName(name) == 27);
-	ASSERT(!strcmp(name, "OnPlayerEnterRaceCheckpoint"));
-	name = "OnPlayerEnterDynamicRaceCheckpoint";
-	ASSERT(Hooks_MakeShortName(name) == 26);
-	ASSERT(!strcmp(name, "OnPlayerEnterDynamicRaceCP"));
-	name = "AAAAAAAAAAAAAAAAAAAUpdateTextDraw";
-	Hooks_MakeShortName(name);
-	ASSERT(!strcmp(name, "AAAAAAAAAAAAAAAAAAAUpdateTD"));
-	name = "BBBBBAAAAAAAAAAAAAAAAAAAUpdateTextDraw";
-	Hooks_MakeShortName(name);
-	ASSERT(!strcmp(name, "BBBBBAAAAAAAAAAAAAAAAAAAUpdTD"));
-}
-
-Test:Hooks_MakeShortName2()
-{
-	new
-		name[64];
-	name = "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC";
-	ASSERT(Hooks_MakeShortName(name) == 43);
-	ASSERT(!strcmp(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC"));
-	name = "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCommandCCCC";
-	ASSERT(Hooks_MakeShortName(name) == 45);
-	ASSERT(!strcmp(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCmdCCCC"));
 }
 
 /**--------------------------------------------------------------------------**\
@@ -423,28 +458,6 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>Hooks_InvalidateStub</summary>
-<param name="stub">Function start to redirect.</param>
-<param name="to">Offset of new address.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Emits a JUMP, but I couldn't be bothered to set up "@emit" here.  The JUMP
-	target is invalid at this point - it is like addresses in the the AMX
-	header, not those in other JUMPs.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-// _Y_HOOKS_STATIC stock Hooks_InvalidateStub(stub, to)
-// {
-	// AMX_Write(stub, _:RelocateOpcode(OP_JUMP));
-	// //AMX_Write(stub + 4, to + (AMX_REAL_DATA + AMX_HEADER_COD));
-	// //AMX_Write(stub + 4, to);
-	// if (to) AMX_Write(stub + 4, AMX_Read(stub + to) - (AMX_REAL_DATA + AMX_HEADER_COD));
-// }
-
-/**--------------------------------------------------------------------------**\
 <summary>Hooks_GetAllHooks</summary>
 <param name="name">The name of the callback (with y_hooks prefix).</param>
 <param name="hooks">Array in which to store the function headers.</param>
@@ -616,11 +629,26 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 	Hooks_GetPreHooks(preloads, precount, sName, ph, pc),
 	// Get where in the chain we are being inserted.
 	Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, sName, namelen);
-	// Move that point for init functions (that are running right now).
-	Hooks_HandleInitFunctions(sHooks, hookCount, sName, writePtr, nextPtr),
+	// Add ALS hooks to the end of the list.
+	if ((sHooks[hookCount] = nextPtr)) ++hookCount;
 	// Write the code.
 	Hooks_GenerateCode(sName, sHooks, hookCount, writePtr, pc > 1);
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_GenerateCode</summary>
+<param name="name">Name of the function to generate.</param>
+<param name="hooks">All the functions to call.</param>
+<param name="count">Number of functions to call.</param>
+<param name="write">Where to write the new function's pointer.</param>
+<param name="hasprehooks">Needs to call other stuff first.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 _Y_HOOKS_STATIC Hooks_GenerateCode(name[64], hooks[], count, write, bool:hasprehooks)
 {
@@ -646,47 +674,6 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(name[64], hooks[], count, write, bool:haspreh
 	{
 		if (hasprehooks) AMX_Write(write, AMX_Read(hooks[0]) + (AMX_REAL_DATA + AMX_HEADER_COD));
 		else AMX_Write(write, AMX_Read(hooks[0]));
-	}
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Hooks_HandleInitFunctions</summary>
-<param name=""></param>
-<returns>
-	-
-</returns>
-<remarks>
-	To detect and replace all hooks, we need to run the code in this include.
-	That happens when the server starts, in an initialisation function.  But the
-	user can hook the init function - we need to detect that case and handle it
-	by running hooks at a slightly different moment (after the y_hooks code
-	generation is finished).
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC stock Hooks_HandleInitFunctions(hooks[], &hookCount, name[64], &writePtr, nextPtr)
-{
-	// Handle special cases.  These are functions that might already be running
-	// right now because clearly we are in a function...
-	if ((hooks[hookCount] = nextPtr))
-	{
-		// Strip off init functions.
-		if (strcmp(name, "OnGameModeInit") &&
-		    strcmp(name, "OnFilterScriptInit"))
-		{
-			++hookCount;
-		}
-		else
-		{
-			// Change the write location.
-			strins(name, "S@@_", 0),
-			Hooks_GetFunctionWritePoint(name, writePtr),
-			strdel(name, 0, 4);
-		}
-	}
-	else if (!strcmp(name, "OnScriptInit"))
-	{
-		Hooks_GetFunctionWritePoint("S@@_OnScriptInit", writePtr);
 	}
 }
 
@@ -761,18 +748,6 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(name[64])
 		return CallFunction(AMX_Read(ptr)) ? 1 : 0;
 	}
 	return 1;
-}
-
-#define HOOK_RET:%0(%1) forward @RET%0(); public @RET%0()
-
-HOOK_RET:OnPlayerCommandText()
-{
-	return 0;
-}
-
-HOOK_RET:OnRconCommand()
-{
-	return 0;
 }
 
 /*
@@ -1081,13 +1056,29 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 	return count;
 }
 
-#endinput
+/**--------------------------------------------------------------------------**\
+<summary>OnScriptInit</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Call the main hook run code, then advance the ALS chain.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
-Test:Hooks_GetDefaultReturn()
+public OnScriptInit()
 {
-	ASSERT(Hooks_GetDefaultReturn("OnHookRet1") == 1);
-	ASSERT(Hooks_GetDefaultReturn("OnPlayerCommandText") == 0);
-	ASSERT(Hooks_GetDefaultReturn("OnHookRet2") == 0);
-	ASSERT(Hooks_GetDefaultReturn("OnPlayerConnect") == 1);
+	state _HookChain_ALS : _HookChain_ALS_go;
+	Hooks_DoAllHooks();
+	HookChain_OnScriptInit();
+	return 1;
 }
+
+HOOK_FORWARD:HookChain_OnScriptInit();
+#if defined _ALS_OnScriptInit
+	#undef OnScriptInit
+#else
+	#define _ALS_OnScriptInit
+#endif
+#define OnScriptInit(%0) HookChain_OnScriptInit(%0) <_HookChain_ALS : _HookChain_ALS_go>
 

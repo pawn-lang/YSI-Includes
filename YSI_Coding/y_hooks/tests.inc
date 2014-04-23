@@ -193,16 +193,16 @@ Test:y_hooks_IsolateName1()
 {
 	new
 		name[32];
-	name = !"@yH_Hello@Other";
+	name = "@yH_Hello@Other";
 	Hooks_IsolateName(name);
 	ASSERT_FALSE(strcmp(name, "Hello"));
-	name = !"@yH_Hi@@Other";
+	name = "@yH_Hi@@Other";
 	Hooks_IsolateName(name);
 	ASSERT_FALSE(strcmp(name, "Hi"));
-	name = !"@yH_No@Other@More";
+	name = "@yH_No@Other@More";
 	Hooks_IsolateName(name);
 	ASSERT_FALSE(strcmp(name, "No"));
-	name = !"@yH_Yes_Other@N";
+	name = "@yH_Yes_Other@N";
 	Hooks_IsolateName(name);
 	ASSERT_FALSE(strcmp(name, "Yes_Other"));
 }
@@ -211,7 +211,7 @@ Test:y_hooks_IsolateName2()
 {
 	new
 		func[32];
-	#define FUNC:%0; func = !"_yH@"#%0"@";Hooks_IsolateName(func);ASSERT(!strcmp(#%0, func));
+	#define FUNC:%0; func = "_yH@"#%0"@";Hooks_IsolateName(func);ASSERT(!strcmp(#%0, func));
 	FUNC:A;
 	FUNC:AAA;
 	FUNC:AAB;
@@ -296,4 +296,102 @@ Test:y_hooks_SpecialCases()
 	CallLocalFunction("OnPlayerEnterDynamicArea", "ii", 0, 0);
 	ASSERT(g_y_hooksVar == 110);
 }
+
+
+Test:Hooks_MakeLongName0()
+{
+	new
+		name[64];
+	name = "OnUpd";
+	ASSERT(Hooks_MakeLongName(name) == 8);
+	ASSERT(!strcmp(name, "OnUpdate"));
+	name = "OnUpdD";
+	ASSERT(Hooks_MakeLongName(name) == 9);
+	ASSERT(!strcmp(name, "OnUpdateD"));
+	name = "OnUpda";
+	ASSERT(Hooks_MakeLongName(name) == 6);
+	ASSERT(!strcmp(name, "OnUpda"));
+}
+
+Test:Hooks_MakeLongName1()
+{
+	new
+		name[64];
+	name = "CP";
+	ASSERT(Hooks_MakeLongName(name) == 10);
+	ASSERT(!strcmp(name, "Checkpoint"));
+	name = "TD";
+	ASSERT(Hooks_MakeLongName(name) == 8);
+	ASSERT(!strcmp(name, "TextDraw"));
+	name = "Upd";
+	ASSERT(Hooks_MakeLongName(name) == 6);
+	ASSERT(!strcmp(name, "Update"));
+	name = "Dyn";
+	ASSERT(Hooks_MakeLongName(name) == 7);
+	ASSERT(!strcmp(name, "Dynamic"));
+	name = "Obj";
+	ASSERT(Hooks_MakeLongName(name) == 6);
+	ASSERT(!strcmp(name, "Object"));
+	name = "Cmd";
+	ASSERT(Hooks_MakeLongName(name) == 7);
+	ASSERT(!strcmp(name, "Command"));
+}
+
+Test:Hooks_MakeLongName2()
+{
+	new
+		name[64];
+	name = "OnUpdTDCP";
+	ASSERT(Hooks_MakeLongName(name) == 26);
+	ASSERT(!strcmp(name, "OnUpdateTextDrawCheckpoint"));
+	name = "OnUpdTDObjCmd";
+	ASSERT(Hooks_MakeLongName(name) == 29);
+	ASSERT(!strcmp(name, "OnUpdateTextDrawObjectCommand"));
+	name = "OnUpdTDCPObjCmd";
+	ASSERT(Hooks_MakeLongName(name) == 31);
+	ASSERT(!strcmp(name, "OnUpdateTextDrawCPObjectCommand"));
+}
+
+Test:Hooks_MakeShortName1()
+{
+	new
+		name[64];
+	name = "OnPlayerEnterRaceCP";
+	ASSERT(Hooks_MakeShortName(name) == 19);
+	ASSERT(!strcmp(name, "OnPlayerEnterRaceCP"));
+	name = "OnPlayerEnterRaceCheckpoint";
+	ASSERT(Hooks_MakeShortName(name) == 27);
+	ASSERT(!strcmp(name, "OnPlayerEnterRaceCheckpoint"));
+	name = "OnPlayerEnterDynamicRaceCheckpoint";
+	ASSERT(Hooks_MakeShortName(name) == 26);
+	ASSERT(!strcmp(name, "OnPlayerEnterDynamicRaceCP"));
+	name = "AAAAAAAAAAAAAAAAAAAUpdateTextDraw";
+	Hooks_MakeShortName(name);
+	ASSERT(!strcmp(name, "AAAAAAAAAAAAAAAAAAAUpdateTD"));
+	name = "BBBBBAAAAAAAAAAAAAAAAAAAUpdateTextDraw";
+	Hooks_MakeShortName(name);
+	ASSERT(!strcmp(name, "BBBBBAAAAAAAAAAAAAAAAAAAUpdTD"));
+}
+
+Test:Hooks_MakeShortName2()
+{
+	new
+		name[64];
+	name = "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC";
+	ASSERT(Hooks_MakeShortName(name) == 43);
+	ASSERT(!strcmp(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC"));
+	name = "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCommandCCCC";
+	ASSERT(Hooks_MakeShortName(name) == 45);
+	ASSERT(!strcmp(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCmdCCCC"));
+}
+
+Test:Hooks_GetDefaultReturn()
+{
+	ASSERT(Hooks_GetDefaultReturn("OnHookRet\0\0\0\0\0\0\0\0") == 1);
+	ASSERT(Hooks_GetDefaultReturn("OnPlayerCommandText\0\0\0\0\0\0\0\0") == 0);
+	ASSERT(Hooks_GetDefaultReturn("OnHookRet2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0") == 0);
+	ASSERT(Hooks_GetDefaultReturn("OnPlayerConnect\0\0\0\0\0\0\0\0") == 1);
+}
+
+HOOK_RET:OnHookRet2() return 0;
 

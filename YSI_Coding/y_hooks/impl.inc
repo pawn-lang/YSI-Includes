@@ -48,8 +48,10 @@ Legal:
 		SA:MP Team past, present and future - SA:MP.
 	
 Version:
-	2.0
+	3.0
 Changelog:
+	23/03/14:
+		Rewrote for better ordering.
 	26/12/13:
 		Added sections.
 	15/04/13:
@@ -85,7 +87,7 @@ Changelog:
      "Y88888P"   `"Ybbd8"'   "Y888  `"YbbdP'Y8 88`YbbdP"'   
                                                88           
                                                88           
-    
+
 */
 
 #define hook%1(%2) UNIQUE_FUNCTION<@yH_%1@...>(%2);UNIQUE_FUNCTION<@yH_%1@...>(%2)
@@ -94,233 +96,131 @@ Changelog:
 // Strip out extra spaces (nicely recursive)
 #define @yH_%0\32;%1(%2) @yH_%1(%2)
 
-// DO NOT hook the Init functions or we will get stuck in an infinite loop!
-//#define @yH_OnGameModeInit @yH_GameModeInit
-//#define @yH_OnFilterScriptInit @yH_FilterScriptInit
-//#define @yH_OnScriptInit @yH_ScriptInit
-
-_Y_HOOKS_STATIC stock
-	YSI_g_sOnGameModeInit,
-	YSI_g_sOnFilterScriptInit,
-	YSI_g_sOnScriptInit;
-
-static stock const
-	// Multiple of 4 characters with NULL.
-	YSI_gscOnPlayerEnterRaceCP     [32 char] = !"OnPlayerEnterRaceCheckpoint\0\0\0\0",
-	// Multiple of 4 characters with NULL.
-	YSI_gscOnPlayerLeaveRaceCP     [32 char] = !"OnPlayerLeaveRaceCheckpoint\0\0\0\0",
-	YSI_gscOnVehicleDamageStatusUpd[32 char] = !"OnVehicleDamageStatusUpdate",
-	YSI_gscOnUnoccupiedVehicleUpd  [32 char] = !"OnUnoccupiedVehicleUpdate",
-	YSI_gscOnPlayerClickPlayerTD   [32 char] = !"OnPlayerClickPlayerTextDraw",
-	YSI_gscOnPlayerEditAttachedObj [32 char] = !"OnPlayerEditAttachedObject",
-	// YSI callbacks.
-	YSI_gscOnPlayerCmdPerformed    [32 char] = !"OnPlayerCommandPerformed",
-	// YSI_gscOnPlayerCommandReceived    [32 char] = !"OnPlayerCommandReceived",
-	YSI_gscOnMasterSystemClose    [32 char] = !"Master_OnScriptClose",
-	// Streamer plugin long callbacks.
-	YSI_gscOnPlayerEditDynObject  [32 char] = !"OnPlayerEditDynamicObject",
-	YSI_gscOnPlayerSelectDynObject[32 char] = !"OnPlayerSelectDynamicObject",
-	YSI_gscOnPlayerPickUpDynPickup[32 char] = !"OnPlayerPickUpDynamicPickup",
-	YSI_gscOnPlayerEnterDynRaceCP [32 char] = !"OnPlayerEnterDynamicRaceCP",
-	YSI_gscOnPlayerLeaveDynRaceCP [32 char] = !"OnPlayerLeaveDynamicRaceCP",
-	YSI_gscOnPlayerEnterDynArea   [32 char] = !"OnPlayerEnterDynamicArea",
-	YSI_gscOnPlayerLeaveDynArea   [32 char] = !"OnPlayerLeaveDynamicArea",
-	// Multiple of 4 characters with NULL.
-	YSI_gscOnScriptExit           [32 char] = !"ScriptInit_OnScriptExit";
-
-/**--------------------------------------------------------------------------**\
-<summary>_@_y_hooks_@_</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Just makes space in the main code assembly area (so "RETN" will work without
-	thinking that it is leaving valid code space).  This short function stores
-	about 5k of memory.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-forward _@_y_hooks_@_0();
-
-public _@_y_hooks_@_0()
+enum E_HOOK_NAME_REPLACEMENT_DATA
 {
-	P:F("Someone called \"_@_y_hooks_@_0\" and somehow it didn't crash yet!");
-	assert(FALSE); // Always fails.
-	Hooks_DoForceReverse("");
-	//memcpy("", "", 0, 0, 0);
-	// Reserve a huge area of "COD" for our own use!
-	static
-		STE[] = "";
-	#define _CODE_1 SetTimerEx(STE,0,0,STE,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
-	#define _CODE_2 _CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1
-	// This reserves about 5kb of space in "COD"
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	// Uncomment this block if more hook function space is required.
-	/*
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	*/
-	#undef _CODE_2
-	#undef _CODE_1
+	E_HOOK_NAME_REPLACEMENT_SHORT[4],
+	E_HOOK_NAME_REPLACEMENT_LONG[11],
+	E_HOOK_NAME_REPLACEMENT_MIN,
+	E_HOOK_NAME_REPLACEMENT_LEN
 }
 
-forward _@_y_hooks_@_1();
+#if !defined CHAIN_ORDER
+	#define CHAIN_ORDER() 0
+#endif
+#define PRE_HOOK(%0) forward @CO_%0();public @CO_%0(){return CHAIN_ORDER()+1;}\
+	static stock _%0_IncludeStates()<_%0_ALS:_%0_ALS_x0,_%0_ALS:_%0_ALS_x1,_%0_ALS:_%0_ALS_x2,_%0_ALS:_%0_ALS_x3>{}\
+	static stock _%0_IncludeStates()<_%0_ALS:_%0_ALS_go>{}
 
-public _@_y_hooks_@_1()
+enum E_PRE_HOOK
 {
-	// This function SHOULD come straight after "_@_y_hooks_@_0" in both the
-	// public functions table and code segment if the compiler is true to form.
+	E_PRE_HOOK_NAME[16],
+	E_PRE_HOOK_VALUE
 }
 
-/*
+PRE_HOOK(HookChain)
 
-    88        88         88 88            
-    88        88   ,d    "" 88            
-    88        88   88       88            
-    88        88 MM88MMM 88 88 ,adPPYba,  
-    88        88   88    88 88 I8[    ""  
-    88        88   88    88 88  `"Y8ba,   
-    Y8a.    .a8P   88,   88 88 aa    ]8I  
-     `"Y8888Y"'    "Y888 88 88 `"YbbdP"'  
+#undef CHAIN_ORDER
+#define CHAIN_ORDER @CO_HookChain
 
-*/
+#define HOOK_FORWARD:%0_%2(%1); \
+	forward %0_%2(%1); \
+	public %0_%2(%1) <_%0_ALS : _%0_ALS_x0, _%0_ALS : _%0_ALS_x1> { return 1; } \
+	public %0_%2(%1) <> { return 1; }
 
-/**--------------------------------------------------------------------------**\
-<summary>Hooks_FindFixesHook</summary>
-<param name="stub">The start address of the function states stub.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Finds out if there is a callback chained after the fixes.inc include.
-</remarks>
-\**--------------------------------------------------------------------------**/
+#define HOOK_RET:%0(%1) forward @RET%0(); public @RET%0()
 
-static stock Hooks_FindFixesHook(const stub)
+HOOK_RET:OnPlayerCommandText()
 {
-	new
-		dctx[DisasmContext];
-	DisasmInit(dctx, stub);
-	// Side-effect function.
-	if (DisasmNextInsn(dctx) == OP_LOAD_PRI && DisasmNextInsn(dctx) == OP_SWITCH && DisasmNextInsn(dctx) == OP_CASETBL)
-	{
-		// Get the number of items in the casetable.
-		if (DisasmGetNumOperands(dctx) == 3) // 2 means no used hook.
+	return 0;
+}
+
+HOOK_RET:OnRconCommand()
+{
+	return 0;
+}
+
+static stock
+	YSI_g_sReplacements[][E_HOOK_NAME_REPLACEMENT_DATA] =
 		{
-			// Got a hook to return.  Find it.
-			new
-				h0 = DisasmGetOperand(dctx, 3),
-				h1 = DisasmGetOperand(dctx, 5),
-				h2 = DisasmGetOperand(dctx, 7);
-			//printf("%x %x %x", h0, h1, h2);
-			if (h1 == h2)      return h0; // Most likely.
-			else if (h0 == h2) return h1;
-			else if (h0 == h1) return h2;
-			// new
-				// wctx[AsmContext];
-			// AsmInitPtr(wctx, stub, 8);
-			// AsmEmitJump(wctx, h0);
-		}
-	}
-	return 0;
-}
+			{"CP",  "Checkpoint", 2, 10},
+			{"Dyn", "Dynamic",    3, 7},
+			{"TD",  "TextDraw",   2, 8},
+			{"Upd", "Update",     3, 6},
+			{"Obj", "Object",     3, 6},
+			{"Cmd", "Command",    3, 7}
+		};
 
 /**--------------------------------------------------------------------------**\
-<summary>Hooks_DoForceReverse</summary>
-<param name="str">The string to convert.</param>
+<summary>Hooks_MakeLongName</summary>
+<param name="name">Function name to modify.</param>
 <returns>
 	-
 </returns>
 <remarks>
-	Does the actual reversing once "Hooks_ForceReverse" has stripped off the
-	"const" modifier.
+	Expands all name parts like "CP" and "Obj" to their full versions (in this
+	example "Checkpoint" and "Object").
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_DoForceReverse(str[])
-{
-	for (new i = 0; i != 32 char; ++i)
-	{
-		str[i] = Cell_ReverseBytes(str[i]);
-	}
-	return 0;
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Hooks_ForceReverse</summary>
-<param name="str">The string to convert.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Converts a constant packed string to a C string.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC Hooks_ForceReverse(/* mutable */ const str[32 char])
-{
-	P:C(if (strlen(str) & 3 != 3) P:W("%s must be padded for \"Hooks_ForceReverse\"", unpack(str)););
-	// Modifies constant strings - naughty but meh.
-	#emit PUSH.S     str
-	#emit PUSH.C     4
-	#emit LCTRL      6
-	#emit ADD.C      28
-	#emit PUSH.pri
-	#emit CONST.pri  Hooks_DoForceReverse
-	#emit SCTRL      6
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Hooks_CountInvalidPublics</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Counts the number of public functions that have had their names erased.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC Hooks_CountInvalidPublics()
+stock Hooks_MakeLongName(name[64])
 {
 	new
-		idx,
-		buf,
-		count;
-	// Search for functions whose names start with nothing.
-	while ((idx = AMX_GetPublicEntryPrefix(idx, buf, 0)))
+		len,
+		i = 0,
+		pos = -1;
+	while (i != sizeof (YSI_g_sReplacements))
 	{
-		++count;
+		if ((pos = strfind(name, YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_SHORT], false, pos + 1)) != -1)
+		{
+			// Try this same string again.  We may have found a different word.
+			if ('a' <= name[(len = pos + YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MIN])] <= 'z') continue;
+			else
+			{
+				// Found a complete word according to CamelCase rules.
+				strdel(name, pos, len),
+				strins(name, YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG], pos),
+				pos = -1;
+			}
+		}
+		++i;
 	}
-	return count;
+	// It is possible for the expansions to become TOO big.
+	return Hooks_MakeShortName(name);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_MakeShortName</summary>
+<param name="name">Function name to modify.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Compresses function names when required to fit within 32 characters
+	according to well defined rules (see "YSI_g_sReplacements").
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Hooks_MakeShortName(name[64])
+{
+	// Easy one.
+	new
+		len = strlen(name);
+	if (len >= 32)
+	{
+		new
+			pos,
+			i = 0;
+		do
+		{
+			if ((pos = strfind(name, YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG])) != -1)
+			{
+				strdel(name, pos, pos + YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LEN]),
+				strins(name, YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_SHORT], pos);
+			}
+		}
+		while ((len = strlen(name)) >= 32 && ++i != sizeof (YSI_g_sReplacements));
+	}
+	return len;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -340,8 +240,665 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 		pos = strfind(name, "@", false, 4);
 	// Make "pos" a legal value inside the error message.
 	if (pos == -1) P:E("Invalid hook name: %s", unpack(name), ++pos);
-	name{pos} = '\0';
+	name[pos] = '\0',
 	strdel(name, 0, 4);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_GetPreloadLibraries</summary>
+<param name="preloads">Desination in which to store all the preloads.</param>
+<param name="precount">Number of found preload libraries.</param>
+<param name="size">Maximum number of libraries to store.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Some includes, like "fixes.inc" and anti-cheats MUST come before all other
+	includes in order for everything to function correctly (at least fixes.inc
+	must).  This function looks for these definitions:
+	
+	    PRE_HOOK(FIXES)
+	
+	Which tell y_hooks that any "FIXES_" prefixed callbacks are part of one of
+	these chains.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precount, size = sizeof (preloads))
+{
+	new
+		first = 0,
+		idx = 0,
+		last = -8;
+	--size,
+	precount = 0,
+	AMX_GetPublicEntryPrefix(0, first, _A<@CO_>);
+	while ((idx = AMX_GetPublicEntryPrefix(idx, last, _A<@CO_>))) {}
+	for (new i = first; i <= last; i += 8)
+	{
+		if (precount == size)
+		{
+			P:E("y_hooks prehook array filled");
+			break;
+		}
+		new
+			name[32],
+			addr = AMX_Read(i);
+		AMX_ReadString(AMX_Read(i + 4) + AMX_BASE_ADDRESS + 4, name),
+		strunpack(preloads[precount][E_PRE_HOOK_NAME], name, 32),
+		preloads[precount][E_PRE_HOOK_VALUE] = CallFunction(addr),
+		++precount;
+	}
+	// Sort the preload libraries.
+	for (new i = 0, tmp[E_PRE_HOOK]; i != precount; ++i)
+	{
+		for (new j = i + 1; j != precount; ++j)
+		{
+			// This neatly moves all the functions with blanked names to the
+			// start of the public functions table (which will soon be moved).
+			Hooks_ComparePublics(i, j);
+			if (preloads[i][E_PRE_HOOK_VALUE] > preloads[j][E_PRE_HOOK_VALUE])
+			{
+				tmp = preloads[i],
+				preloads[i] = preloads[j],
+				preloads[j] = tmp;
+			}
+		}
+	}
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_GetPreHooks</summary>
+<param name="preloads">Names of libraries that come before y_hooks.</param>
+<param name="precount">Number of pre libraries.</param>
+<param name="name">Name of the callback.</param>
+<param name="hooks">Destination in which to store the headers.</param>
+<param name="count">Number of headers found.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Finds all the AMX file headers for functions with a similar name to the
+	given callback that should be called before (or near) the given callback.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_PRE_HOOK], precount, name[64], hooks[], &count)
+{
+	new
+		idx,
+		lfunc[64];
+	// Collect all the functions with something like this name.
+	do
+	{
+		strcat(lfunc, name),
+		Hooks_MakeShortName(lfunc);
+		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
+		strcpy(lfunc, preloads[idx][E_PRE_HOOK_NAME]),
+		strcat(lfunc, "_");
+	}
+	while (++idx <= precount);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_GetPointerRewrite</summary>
+<param name="hooks">All the prehooks for this callback.</param>
+<param name="num">The number of prehooks.</param>
+<param name="ptr">A pointer to write the new stub address to.</param>
+<param name="next">The pointer for the function called after y_hooks.</param>
+<param name="name">The name of the callback being processed.</param>
+<param name="nlen">Space available in the header to write text in.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(hooks[], num, &ptr, &next, name[], nlen)
+{
+	switch (num)
+	{
+		case 0:
+		{
+			next = 0;
+			new
+				len = strlen(name);
+			if (nlen >= len)
+			{
+				// We don't have an existing callback with this name, only hooks.
+				// We need to add the name of the callback to the AMX header,
+				// and we have enough space in which to do so.
+				new
+					str[32];
+				strpack(str, name),
+				AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(ptr + 4), str, len);
+			}
+			else
+			{
+				P:F("Could not write function name in \"Hooks_MakePublicPointer\".");
+				// TODO: Fix this.  Use an alternate memory location (the actual
+				// code segment in which we are writing seems like a good
+				// choice).
+			}
+		}
+		case 1:
+		{
+			// No "fixes.inc", but this callback already exists.  In that case,
+			// just replace the pointer address.
+			next = ptr = hooks[0];
+		}
+		default:
+		{
+			// Special hooks.  Optimise them.
+			for (new cur = 1; cur != num; ++cur)
+			{
+				ptr = hooks[cur];
+				new
+					tmp = AMX_Read(ptr),
+					nt = Hooks_GetStubEntry(tmp);
+				tmp += AMX_HEADER_COD,
+				AMX_Write(tmp, _:RelocateOpcode(OP_JUMP));
+				switch (nt)
+				{
+					case -1: ptr = tmp + 4, next = 0;
+					case 0: next = 0;
+					default:
+					{
+						next = ptr = tmp + 4,
+						AMX_Write(ptr, AMX_Read(tmp + nt) - (AMX_REAL_DATA + AMX_HEADER_COD));
+					}
+				}
+			}
+		}
+	}
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_GetStubEntry</summary>
+<param name="stub">Starting address of the function.</param>
+<returns>
+	The address at which the actual code in this function starts.
+</returns>
+<remarks>
+	This handles three cases.  Regular functions end instantly as found.
+	Functions that start with a switch (even before "PROC") are assumed to be
+	state-based functions, and we find the most likely state to be used (i.e. we
+	remove all future state changes).
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
+{
+	// Get the address of the next function from the ALS state stub.
+	new
+		ctx[DisasmContext];
+	DisasmInit(ctx, stub, stub + 64);
+	switch (DisasmNextInsn(ctx))
+	{
+		case OP_LOAD_PRI:
+		{
+			if (DisasmNextInsn(ctx) == OP_SWITCH && DisasmNextInsn(ctx) == OP_CASETBL)
+			{
+				// Get the number of items in the casetable.
+				if (DisasmGetNumOperands(ctx) == 3) // 2 means no used hook.
+				{
+					// Got a hook to return.  Find it.
+					new
+						h0 = DisasmGetOperand(ctx, 3),
+						h1 = DisasmGetOperand(ctx, 5),
+						h2 = DisasmGetOperand(ctx, 7);
+					if (h1 == h2)      return  8 * 4; // Most likely.
+					else if (h0 == h2) return 10 * 4;
+					else if (h0 == h1) return 12 * 4;
+					else P:E("y_hooks could not extract state stub jump");
+				}
+				else return -1;
+			}
+		}
+		case OP_JUMP:
+		{
+			// Already replaced once (shouldn't happen, but may if two different
+			// hooks use two different short versions of a callback).
+			return 4; // DisasmGetOperand(ctx, 0);
+		}
+		case OP_PROC:
+		{
+			//return stub;
+			P:E("y_hooks attempting to redirect a PROC hook");
+		}
+	}
+	return 0;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_GetAllHooks</summary>
+<param name="name">The name of the callback (with y_hooks prefix).</param>
+<param name="hooks">Array in which to store the function headers.</param>
+<param name="idx">Current position in the AMX header.</param>
+<param name="namelen">Min bound of space used by all these names.</param>
+<returns>
+	The number of hooks found.
+</returns>
+<remarks>
+	The name of the function currently being processed is derived from the first
+	found hook.  This means we already know of one hook, but to simplify the
+	code we get that one again here.  Above we only know the name not the
+	address.  Hence the "- 1" in "i = idx - 1" (to go back one function name).
+	
+	Our "namelen" variable already contains the full length of the first found
+	hook - this is the length of "name", plus N extra characters.  The following
+	are all valid, and may occur when orders are played with:
+		
+		@yH_OnX@
+		@yH_OnX@1
+		@yH_OnX@01
+		@yH_OnX@024
+		@yH_OnX@ZZZ
+		@yH_OnX@999@024
+		
+	If we want to get the EXACT space taken up by all these hook names we would
+	need to get the string of the name in this function then measure it.  There
+	is really no point in doing this - if we have a second we will always have
+	enough space for our new names.  Instead, we assume that they are all just
+		
+		@yH_OnX@
+		
+	And add on that minimum length accordingly (plus 1 for the NULL character).
+	
+	This length is used if the original callback doesn't exist but hooks do.  In
+	that case we need to add the callback to the AMX header, and there is a tiny
+	chance that the original name will be longer than one hook's name.  In that
+	case, having two or more hooks will (AFAIK) always ensure that we have
+	enough space to write the longer name.
+	
+	If there is only one hook, no original function, and the name of the hook is
+	shorter than the name of the original function then we have an issue and
+	will have to do something else instead.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[128], &idx, &namelen)
+{
+	// Start from the very start - repeats the first item.
+	new
+		len = strlen(name) + 1,
+		count,
+		i = idx - 1;
+	while ((i = AMX_GetPublicEntry(i, hooks[count], name)))
+	{
+		Hooks_InvalidateName(hooks[count]),
+		idx = i;
+		// Record how much consecutive space we have to play with in the AMX.
+		if (count) namelen += len; // The first hook was already counted.
+		// Increment and count how many hooks of this type we have.
+		if (++count == sizeof (hooks))
+		{
+			P:W("Hooks_GetAllHooks: Potential overflow.");
+			break;
+		}
+	}
+	return count;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary></summary>
+<param name=""></param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC stock Hooks_DoAllHooks()
+{
+	// Get the preloaders.
+	new
+		precount = 0,
+		preloads[8][E_PRE_HOOK];
+	Hooks_GetPreloadLibraries(preloads, precount);
+	// Main loop
+	new
+		name[32],
+		idx;
+	// Get the next hook type.
+	while ((idx = AMX_GetPublicNamePrefix(idx, name, _A<@yH_>)))
+	{
+		// Collect all the hooks of this function, and rewrite the call code.
+		Hooks_Collate(preloads, precount, name, idx);
+	}
+	Hooks_SortPublics();
+}
+
+/**--------------------------------------------------------------------------**\
+<summary></summary>
+<param name=""></param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], &idx)
+{
+	// This records the amount of space available in the nametable, currently
+	// taken up by the names of hooks that we are about to destroy.
+	new
+		namelen = strlen(name);
+	// For this function, note that:
+	//   
+	//   hook OnPlayerConnect(playerid)
+	//   
+	// Compiles as:
+	//   
+	//   public @yH_OnPlayerConnect@XXX(playerid)
+	//   
+	// Where "XXX" is some unique number (the exact value is irrelevant, it just
+	// means that multiple hooks of the same function have different names).
+	static
+		sName[64],
+		sHooks[128];
+	// Isolate the common prefix part:
+	//   
+	//   @yH_OnPlayerConnect@042
+	//   
+	// Becomes:
+	//   
+	//   @yH_OnPlayerConnect@
+	//   
+	// The numbers at the end are irrelevant, now we can just search for hooks
+	// of this exact callback.
+	name{strfind(name, "@", false, 4) + 1} = '\0',
+	// The above now becomes:
+	//   
+	//   OnPlayerConnect
+	//   
+	// This also handles cases such as:
+	//   
+	//   @yH_OnPlayerEnterRaceCheckpoint@162
+	//   
+	// Being invalid (too long), so instead converts the shortened:
+	//   
+	//   @yH_OnPlayerEnterRaceCP@162
+	//   
+	// To:
+	//   
+	//   OnPlayerEnterRaceCheckpoint
+	//   
+	// Thus expanding common name length reductions.
+	strunpack(sName, name),
+	Hooks_IsolateName(sName),
+	Hooks_MakeLongName(sName);
+	new
+		// Get all the hooks of this type.  They are stored alphabetically.
+		hookCount = Hooks_GetAllHooks(name, sHooks, idx, namelen),
+		writePtr = sHooks[0], // Header for the first found hook.
+		nextPtr,
+		pc, ph[4];
+	// Get the preloads.
+	Hooks_GetPreHooks(preloads, precount, sName, ph, pc),
+	// Get where in the chain we are being inserted.
+	Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, sName, namelen);
+	// Add ALS hooks to the end of the list.
+	if ((sHooks[hookCount] = nextPtr)) ++hookCount;
+	// Write the code.
+	Hooks_GenerateCode(sName, sHooks, hookCount, writePtr, pc > 1);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_GenerateCode</summary>
+<param name="name">Name of the function to generate.</param>
+<param name="hooks">All the functions to call.</param>
+<param name="count">Number of functions to call.</param>
+<param name="write">Where to write the new function's pointer.</param>
+<param name="hasprehooks">Needs to call other stuff first.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC Hooks_GenerateCode(name[64], hooks[], count, write, bool:hasprehooks)
+{
+	// We now have:
+	//  
+	//  1) All the hooks of this function.
+	//  2) The original function if it exists.
+	//  3) Special ALS chained functions if they exists.
+	//  
+	// This took huge chunks of complex code in the old version.  Now not so
+	// much!  I don't know if this code is faster (I suspect it is), but it is
+	// absolutely simpler!
+	new
+		size = Hooks_WriteFunction(hooks, count, Hooks_GetDefaultReturn(name));
+	if (size)
+	{
+		AMX_Write(write, 40);
+		if (hasprehooks) AMX_Write(write, CGen_GetCodeSpace() + AMX_REAL_DATA);
+		else AMX_Write(write, CGen_GetCodeSpace() - AMX_HEADER_COD);
+		CGen_AddCodeSpace(size);
+	}
+	else
+	{
+		if (hasprehooks) AMX_Write(write, AMX_Read(hooks[0]) + (AMX_REAL_DATA + AMX_HEADER_COD));
+		else AMX_Write(write, AMX_Read(hooks[0]));
+	}
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_InvalidateName</summary>
+<param name="entry">The public function slot to destroy.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Basically, once we know a function has been included, wipe it from the AMX
+	header.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC Hooks_InvalidateName(entry)
+{
+	AMX_Write(AMX_BASE_ADDRESS + AMX_Read(entry + 4), 0);
+}
+
+/*
+
+    88888888888                                        88                            88               ad88             
+    88                                           ,d    ""                            88              d8"               
+    88                                           88                                  88              88                
+    88aaaaa 88       88 8b,dPPYba,   ,adPPYba, MM88MMM 88  ,adPPYba,  8b,dPPYba,     88 8b,dPPYba, MM88MMM ,adPPYba,   
+    88""""" 88       88 88P'   `"8a a8"     ""   88    88 a8"     "8a 88P'   `"8a    88 88P'   `"8a  88   a8"     "8a  
+    88      88       88 88       88 8b           88    88 8b       d8 88       88    88 88       88  88   8b       d8  
+    88      "8a,   ,a88 88       88 "8a,   ,aa   88,   88 "8a,   ,a8" 88       88    88 88       88  88   "8a,   ,a8"  
+    88       `"YbbdP'Y8 88       88  `"Ybbd8"'   "Y888 88  `"YbbdP"'  88       88    88 88       88  88    `"YbbdP"'   
+
+*/
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_GetFunctionWritePoint</summary>
+<param name="name">The function to get the address pointer of.</param>
+<param name="write">Destination variable.</param>
+<returns>
+	The address at which this function's pointer is stored in the AMX header, if
+	the function exists of course.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC stock Hooks_GetFunctionWritePoint(name[], &write)
+{
+	AMX_GetPublicEntry(0, write, name, true);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_GetDefaultReturn</summary>
+<param name="name">The function to get the default return of.</param>
+<returns>
+	The default return for a callback, normally 1.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(name[64])
+{
+	strins(name, "@RET", 0);
+	Hooks_MakeShortName(name);
+	new
+		ptr;
+	if (AMX_GetPublicEntry(0, ptr, name, true))
+	{
+		// A "RET_OnWhatever" function exists - rationalise the return.
+		return CallFunction(AMX_Read(ptr)) ? 1 : 0;
+	}
+	return 1;
+}
+
+/*
+
+      ,ad8888ba,                       88                                                
+     d8"'    `"8b                      88                                                
+    d8'                                88                                                
+    88             ,adPPYba,   ,adPPYb,88  ,adPPYba,  ,adPPYb,d8  ,adPPYba, 8b,dPPYba,   
+    88            a8"     "8a a8"    `Y88 a8P_____88 a8"    `Y88 a8P_____88 88P'   `"8a  
+    Y8,           8b       d8 8b       88 8PP""""""" 8b       88 8PP""""""" 88       88  
+     Y8a.    .a8P "8a,   ,a8" "8a,   ,d88 "8b,   ,aa "8a,   ,d88 "8b,   ,aa 88       88  
+      `"Y8888Y"'   `"YbbdP"'   `"8bbdP"Y8  `"Ybbd8"'  `"YbbdP"Y8  `"Ybbd8"' 88       88  
+                                                      aa,    ,88                         
+                                                       "Y8bbdP"                          
+
+*/
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_WriteFunction</summary>
+<param name="pointers">The hooks to link together.</param>
+<param name="size">The number of functions in the array.</param>
+<param name="ret">The default return.</param>
+<param name="skipable">Can future hooks be ignored on -1?</param>
+<returns>
+	The number of bytes written to memory.
+</returns>
+<remarks>
+	Generate some new code, very nicely :D.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1, const skipable = true)
+{
+	new
+		bool:multiple = size != 1,
+		base = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS,
+		ctx[AsmContext];
+	// Make sure the underlying system doesn't change without us.  Now supported
+	// natively.
+	CGen_UseCodeSpace(ctx);
+	
+	// Start of the function.
+	@emit PROC              // 1
+	
+	// Allocate space for our "ret" variable at "frm - 4".
+	if (multiple) @emit PUSH.C        ret // 3
+	
+	// Copy the stack to itself (MOVS).
+	// Allocate space.
+	@emit LOAD.S.alt    8   // 5
+	@emit LCTRL         4   // 7
+	@emit SUB               // 8
+	@emit SCTRL         4   // 10
+	@emit XCHG              // 11
+	
+	// The "MOVS" OpCode only takes a constant, not a variable, so we need to
+	// generate self-modifying code (just to be UBER meta)!  This code is
+	// generated AFTER the file is loaded so we bypass the data segment checks
+	// and can freely write wherever we want.
+	@emit STOR.pri      (CGen_GetCodeSpace() + (18 * 4) - (multiple ? 0 : 8)) // 13
+	
+	// Do the copying.  "alt" is already "STK", load the "FRM" offset.
+	@emit LCTRL         5   // 15
+	@emit ADD.C         12  // 17
+	// This is the instruction we want to modify...
+	@emit MOVS          0   // 19 (- 1)
+	
+	// Push the (fake) number of parameters.
+	@emit PUSH.C        -4
+	// Now loop over all our functions and insert "CALL" opcodes for them.
+	if (multiple)
+	{
+		for (new i = 0; ; )
+		{
+			// Get the absolute offset from here.
+			@emit CALL          (AMX_Read(pointers[i]) + base) // 2
+			if (skipable)
+			{
+				// =====================================
+				//  THIS SECTION IS CURRENTLY 10 CELLS. 
+				// =====================================
+				// Note: Including the original call...
+				//  
+				//  if (func() < 0) break;
+				//  else ret = ret & func();
+				//  
+				@emit ZERO.alt      // 3
+				@emit JSLESS.rel    ((size - i) * (10 * 4) - (5 * 4)) // 5
+				// =========================
+				//  JUMP OVER THIS SECTION. 
+				// =========================
+			}
+			@emit LOAD.S.alt    -4   // 7
+			if (ret) @emit AND       // 8
+			else @emit OR            // 8
+			// Loop and do the very first items last.
+			if (++i == size) break;
+			else @emit STOR.S.pri -4 // 10
+		}
+		if (skipable)
+		{
+			@emit JUMP.rel      4    // 10
+			// This is the point the large "JSLESS" above goes to.
+			// -1 = 0, -2 = 1
+			@emit INVERT
+		}
+	}
+	else if (skipable)
+	{
+		// Still need this code as they may hook a function that doesn't exist,
+		// but we still need to correctly process -1 or -2.
+		@emit CALL          (AMX_Read(pointers[0]) + base)
+		@emit ZERO.alt
+		@emit JSGEQ.rel     4
+		@emit INVERT
+	}
+	else
+	{
+		// Just replace the original (turns out, this takes no code).  Basically
+		// just discard everything we've written so far (reclaims the memory).
+		return 0;
+	}
+	
+	// This is the point the small "JUMP" above goes to.
+	@emit MOVE.alt
+	// Remove the whole stack then get the return value.
+	@emit LCTRL         5
+	@emit SCTRL         4
+	//@emit LOAD.S.pri    -4
+	@emit MOVE.pri
+	
+	// Return.
+	@emit RETN
+	
+	// Return the number of bytes written.
+	return ctx[AsmContext_buffer_offset];
 }
 
 /*
@@ -489,668 +1046,54 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 	// then inform it again to track down and replace those addresses.
 }
 
-/*
-
-           db        88b           d88 8b        d8    88               ad88             
-          d88b       888b         d888  Y8,    ,8P     88              d8"               
-         d8'`8b      88`8b       d8'88   `8b  d8'      88              88                
-        d8'  `8b     88 `8b     d8' 88     Y88P        88 8b,dPPYba, MM88MMM ,adPPYba,   
-       d8YaaaaY8b    88  `8b   d8'  88     d88b        88 88P'   `"8a  88   a8"     "8a  
-      d8""""""""8b   88   `8b d8'   88   ,8P  Y8,      88 88       88  88   8b       d8  
-     d8'        `8b  88    `888'    88  d8'    `8b     88 88       88  88   "8a,   ,a8"  
-    d8'          `8b 88     `8'     88 8P        Y8    88 88       88  88    `"YbbdP"'   
-
-*/
-
 /**--------------------------------------------------------------------------**\
-<summary>Hooks_GetName</summary>
-<param name="entry">The public entry to get the name of.</param>
+<summary>Hooks_CountInvalidPublics</summary>
 <returns>
 	-
 </returns>
 <remarks>
-	-
+	Counts the number of public functions that have had their names erased.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_GetName(entry, name[32])
-{
-	AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), name);
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Hooks_GetAddr</summary>
-<param name="idx">The public function index to get the address of.</param>
-<param name="base">The start of the public functions header.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC stock Hooks_GetAddr(entry)
-{
-	return AMX_Read(entry);
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Hooks_InvalidateName</summary>
-<param name="entry">The public function slot to destroy.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Basically, once we know a function has been included, wipe it from the AMX
-	header.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC Hooks_InvalidateName(entry)
-{
-	AMX_Write(AMX_BASE_ADDRESS + AMX_Read(entry + 4), 0);
-}
-
-/*
-
-      ,ad8888ba,                       88                                                
-     d8"'    `"8b                      88                                                
-    d8'                                88                                                
-    88             ,adPPYba,   ,adPPYb,88  ,adPPYba,  ,adPPYb,d8  ,adPPYba, 8b,dPPYba,   
-    88            a8"     "8a a8"    `Y88 a8P_____88 a8"    `Y88 a8P_____88 88P'   `"8a  
-    Y8,           8b       d8 8b       88 8PP""""""" 8b       88 8PP""""""" 88       88  
-     Y8a.    .a8P "8a,   ,a8" "8a,   ,d88 "8b,   ,aa "8a,   ,d88 "8b,   ,aa 88       88  
-      `"Y8888Y"'   `"YbbdP"'   `"8bbdP"Y8  `"Ybbd8"'  `"YbbdP"Y8  `"Ybbd8"' 88       88  
-                                                      aa,    ,88                         
-                                                       "Y8bbdP"                          
-
-*/
-
-/**--------------------------------------------------------------------------**\
-<summary>Hooks_WriteFunction</summary>
-<param name="pointers">The hooks to link together.</param>
-<param name="size">The number of functions in the array.</param>
-<param name="ret">The default return.</param>
-<param name="skipable">Can future hooks be ignored on -1?</param>
-<returns>
-	The number of bytes written to memory.
-</returns>
-<remarks>
-	Generate some new code, very nicely :D.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1, const skipable = true)
+_Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 {
 	new
-		bool:multiple = size != 1,
-		base = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS,
-		ctx[AsmContext];
-	// Make sure the underlying system doesn't change without us.  Now supported
-	// natively.
-	CGen_UseCodeSpace(ctx);
-	
-	// Start of the function.
-	@emit PROC              // 1
-	
-	// Allocate space for our "ret" variable at "frm - 4".
-	if (multiple) @emit PUSH.C        ret // 3
-	
-	// Copy the stack to itself (MOVS).
-	// Allocate space.
-	@emit LOAD.S.alt    8   // 5
-	@emit LCTRL         4   // 7
-	@emit SUB               // 8
-	@emit SCTRL         4   // 10
-	@emit XCHG              // 11
-	
-	// The "MOVS" OpCode only takes a constant, not a variable, so we need to
-	// generate self-modifying code (just to be UBER meta)!  This code is
-	// generated AFTER the file is loaded so we bypass the data segment checks
-	// and can freely write wherever we want.
-	@emit STOR.pri      (CGen_GetCodeSpace() + (18 * 4) - (multiple ? 0 : 8)) // 13
-	
-	// Do the copying.  "alt" is already "STK", load the "FRM" offset.
-	@emit LCTRL         5   // 15
-	@emit ADD.C         12  // 17
-	// This is the instruction we want to modify...
-	@emit MOVS          0   // 19 (- 1)
-	
-	// Push the (fake) number of parameters.
-	@emit PUSH.C        -4
-	// Now loop over all our functions and insert "CALL" opcodes for them.
-	if (multiple)
+		idx,
+		buf,
+		count;
+	// Search for functions whose names start with nothing.
+	while ((idx = AMX_GetPublicEntryPrefix(idx, buf, 0)))
 	{
-		for (new i = 0; ; )
-		{
-			// Get the absolute offset from here.
-			// #emit CALL pointers[i]
-			@emit CALL          (pointers[i] + base) // 2
-			if (skipable)
-			{
-				// =====================================
-				//  THIS SECTION IS CURRENTLY 10 CELLS. 
-				// =====================================
-				// Note: Including the original call...
-				//  
-				//  if (func() < 0) break;
-				//  else ret = ret & func();
-				//  
-				@emit ZERO.alt      // 3
-				@emit JSLESS.rel    ((size - i) * (10 * 4) - (5 * 4)) // 5
-				// =========================
-				//  JUMP OVER THIS SECTION. 
-				// =========================
-			}
-			@emit LOAD.S.alt    -4   // 7
-			if (ret) @emit AND       // 8
-			else @emit OR            // 8
-			// Loop and do the very first items last.
-			if (++i == size) break;
-			else @emit STOR.S.pri -4 // 10
-		}
-		if (skipable)
-		{
-			@emit JUMP.rel      4    // 10
-			// This is the point the large "JSLESS" above goes to.
-			// -1 = 0, -2 = 1
-			@emit INVERT
-		}
+		++count;
 	}
-	else if (skipable)
-	{
-		// Still need this code as they may hook a function that doesn't exist,
-		// but we still need to correctly process -1 or -2.
-		@emit CALL          (pointers[0] + base)
-		@emit ZERO.alt
-		@emit JSGEQ.rel     4
-		@emit INVERT
-	}
-	else
-	{
-		// Just replace the original (turns out, this takes no code).  Basically
-		// just discard everything we've written so far (reclaims the memory).
-		return 0;
-	}
-	
-	// This is the point the small "JUMP" above goes to.
-	@emit MOVE.alt
-	// Remove the whole stack then get the return value.
-	@emit LCTRL         5
-	@emit SCTRL         4
-	//@emit LOAD.S.pri    -4
-	@emit MOVE.pri
-	
-	// Return.
-	@emit RETN
-	
-	// Return the number of bytes written.
-	return ctx[AsmContext_buffer_offset];
+	P:4("Hooks_CountInvalidPublics: Invalid = %d", count);
+	return count;
 }
 
-/*
-
-    88888888888                                        88                            88               ad88             
-    88                                           ,d    ""                            88              d8"               
-    88                                           88                                  88              88                
-    88aaaaa 88       88 8b,dPPYba,   ,adPPYba, MM88MMM 88  ,adPPYba,  8b,dPPYba,     88 8b,dPPYba, MM88MMM ,adPPYba,   
-    88""""" 88       88 88P'   `"8a a8"     ""   88    88 a8"     "8a 88P'   `"8a    88 88P'   `"8a  88   a8"     "8a  
-    88      88       88 88       88 8b           88    88 8b       d8 88       88    88 88       88  88   8b       d8  
-    88      "8a,   ,a88 88       88 "8a,   ,aa   88,   88 "8a,   ,a8" 88       88    88 88       88  88   "8a,   ,a8"  
-    88       `"YbbdP'Y8 88       88  `"Ybbd8"'   "Y888 88  `"YbbdP"'  88       88    88 88       88  88    `"YbbdP"'   
-
-*/
-
 /**--------------------------------------------------------------------------**\
-<summary>Hooks_SpecialCases</summary>
-<param name="ref">The PACKED function that's hooking something.</param>
+<summary>OnScriptInit</summary>
 <returns>
 	-
 </returns>
 <remarks>
-	Some functions are normally too long, here we detect special shortened
-	cases.  These are just hard-coded in.
+	Call the main hook run code, then advance the ALS chain.
 </remarks>
 \**--------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC Hooks_SpecialCases(const string:ref[])
-{
-	static
-		ret[32 char];
-	ret[0] = '\0';
-	// The comments after are the number of saved characters.  If this is
-	// greater than 6, then we need to specially handle the rewriting as that
-	// means there isn't enough space in the hook's name for the original.
-	if      (!strcmp(ref, YSI_gscOnPlayerEnterRaceCP))      ret = !"OnPlayerEnterRaceCP";      // 8
-	else if (!strcmp(ref, YSI_gscOnPlayerLeaveRaceCP))      ret = !"OnPlayerLeaveRaceCP";      // 8
-	else if (!strcmp(ref, YSI_gscOnVehicleDamageStatusUpd)) ret = !"OnVehicleDamageStatusUpd"; // 3
-	else if (!strcmp(ref, YSI_gscOnUnoccupiedVehicleUpd))   ret = !"OnUnoccupiedVehicleUpd";   // 3
-	else if (!strcmp(ref, YSI_gscOnPlayerClickPlayerTD))    ret = !"OnPlayerClickPlayerTD";    // 6
-	else if (!strcmp(ref, YSI_gscOnPlayerEditAttachedObj))  ret = !"OnPlayerEditAttachedObj";  // 3
-	else if (!strcmp(ref, !"OnPlayerEnterRaceCP"))      ret = YSI_gscOnPlayerEnterRaceCP;
-	else if (!strcmp(ref, !"OnPlayerLeaveRaceCP"))      ret = YSI_gscOnPlayerLeaveRaceCP;
-	else if (!strcmp(ref, !"OnVehicleDamageStatusUpd")) ret = YSI_gscOnVehicleDamageStatusUpd;
-	else if (!strcmp(ref, !"OnUnoccupiedVehicleUpd"))   ret = YSI_gscOnUnoccupiedVehicleUpd;
-	else if (!strcmp(ref, !"OnPlayerClickPlayerTD"))    ret = YSI_gscOnPlayerClickPlayerTD;
-	else if (!strcmp(ref, !"OnPlayerEditAttachedObj"))  ret = YSI_gscOnPlayerEditAttachedObj;
-	// YSI.
-	else if (!strcmp(ref, YSI_gscOnPlayerCmdPerformed)) ret = !"OnPlayerCmdPerformed";         
-	else if (!strcmp(ref, !"OnPlayerCmdPerformed"))     ret = YSI_gscOnPlayerCmdPerformed;
-	// else if (!strcmp(ref, YSI_gscOnPlayerCommandReceived)) ret = !"OnPlayerCommandReceived";         
-	// else if (!strcmp(ref, !"OnPlayerCommandReceived"))     ret = YSI_gscOnPlayerCommandReceived;
-	else if (!strcmp(ref, YSI_gscOnMasterSystemClose)) ret = !"OnMasterSystemClose";         
-	else if (!strcmp(ref, !"OnMasterSystemClose"))     ret = YSI_gscOnMasterSystemClose;
-	// Streamer ("CP" is already shorter for the streamer).
-	else if (!strcmp(ref, YSI_gscOnPlayerEditDynObject))   ret = !"OnPlayerEditDynObject";     // 4
-	else if (!strcmp(ref, YSI_gscOnPlayerSelectDynObject)) ret = !"OnPlayerSelectDynObject";   // 4
-	else if (!strcmp(ref, YSI_gscOnPlayerPickUpDynPickup)) ret = !"OnPlayerPickUpDynPickup";   // 4
-	else if (!strcmp(ref, YSI_gscOnPlayerEnterDynRaceCP))  ret = !"OnPlayerEnterDynRaceCP";    // 4
-	else if (!strcmp(ref, YSI_gscOnPlayerLeaveDynRaceCP))  ret = !"OnPlayerLeaveDynRaceCP";    // 4
-	else if (!strcmp(ref, YSI_gscOnPlayerEnterDynArea))    ret = !"OnPlayerEnterDynArea";      // 4
-	else if (!strcmp(ref, YSI_gscOnPlayerLeaveDynArea))    ret = !"OnPlayerLeaveDynArea";      // 4
-	else if (!strcmp(ref, !"OnPlayerEditDynObject"))   ret = YSI_gscOnPlayerEditDynObject;
-	else if (!strcmp(ref, !"OnPlayerSelectDynObject")) ret = YSI_gscOnPlayerSelectDynObject;
-	else if (!strcmp(ref, !"OnPlayerPickUpDynPickup")) ret = YSI_gscOnPlayerPickUpDynPickup;
-	else if (!strcmp(ref, !"OnPlayerEnterDynRaceCP"))  ret = YSI_gscOnPlayerEnterDynRaceCP;
-	else if (!strcmp(ref, !"OnPlayerLeaveDynRaceCP"))  ret = YSI_gscOnPlayerLeaveDynRaceCP;
-	else if (!strcmp(ref, !"OnPlayerEnterDynArea"))    ret = YSI_gscOnPlayerEnterDynArea;
-	else if (!strcmp(ref, !"OnPlayerLeaveDynArea"))    ret = YSI_gscOnPlayerLeaveDynArea;
-	// Start points.
-	else if (!strcmp(ref, !"OnGameModeInit"))     ret = !"S@@_OnGameModeInit";     // N/A
-	else if (!strcmp(ref, !"OnFilterScriptInit")) ret = !"S@@_OnFilterScriptInit"; // N/A
-	else if (!strcmp(ref, !"OnScriptInit"))       ret = !"S@@_OnScriptInit";       // N/A
-	// Specially named exit point.
-	else if (!strcmp(ref, !"OnScriptExit"))       ret = YSI_gscOnScriptExit;       // 11
-	return ret;
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Hooks_SpecialReturns</summary>
-<param name="ref">The PACKED function that's hooking something.</param>
-<returns>
-	The default return value for this function.
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC Hooks_SpecialReturns(const string:ref[])
-{
-	if (!strcmp(ref, !"OnPlayerCommandText")) return 0;
-	else if (!strcmp(ref, !"OnPlayerCommandPerformed")) return 0;
-	else if (!strcmp(ref, !"OnPlayerCmdPerformed")) return 0;
-	return 1;
-}
-
-/*
-
-      ,ad8888ba,              88 88                    88                          
-     d8"'    `"8b             88 88              ,d    ""                          
-    d8'                       88 88              88                                
-    88             ,adPPYba,  88 88 ,adPPYYba, MM88MMM 88  ,adPPYba,  8b,dPPYba,   
-    88            a8"     "8a 88 88 ""     `Y8   88    88 a8"     "8a 88P'   `"8a  
-    Y8,           8b       d8 88 88 ,adPPPPP88   88    88 8b       d8 88       88  
-     Y8a.    .a8P "8a,   ,a8" 88 88 88,    ,88   88,   88 "8a,   ,a8" 88       88  
-      `"Y8888Y"'   `"YbbdP"'  88 88 `"8bbdP"Y8   "Y888 88  `"YbbdP"'  88       88  
-
-*/
-
-/**--------------------------------------------------------------------------**\
-<summary>Hooks_GetSame</summary>
-<param name="ref">The PACKED function that's hooking something.</param>
-<param name="original">The hook function's address.</param>
-<param name="ref2">In some cases there are standard short versions.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Find all functions with the same name fragment as the one given.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC Hooks_GetSame(const string:ref[], const original, const string:ref2[])
-{
-	new
-		// Uugh, special cases!
-		init = (_:!strcmp(ref, !"OnScriptExit") << 3) | (_:!strcmp(ref, !"OnGameModeInit") << 2) | (_:!strcmp(ref, !"OnFilterScriptInit") << 1) | (_:!strcmp(ref, !"OnScriptInit")),
-		baseFunc[2],
-		same[32],
-		sameCount = 1,
-		entry,
-		pure,
-		idx;
-	static
-		name[32];
-	P:4("Hooks_GetSame called: \"%s\" = %d, %d, \"%s\" = %d", unpack(ref), strlen(ref), original, unpack(ref2), strlen(ref2));
-	// Write this hook at the start.  ALS is now after hooks (TODO: fixes.inc).
-	same[0] = AMX_Read(original),
-	// Wipe out the current hook.
-	Hooks_InvalidateName(original);
-	// Loop through all remaining functions to find ones that hook the same
-	// data.
-	while ((idx = AMX_GetPublicEntry(idx, entry, ref)))
-	{
-		// Get the function name and compare it to the current one.
-		Hooks_GetName(entry, name);
-		if (name[0] == (('@' << 24) | ('y' << 16) | ('H' << 8) | ('_'))) // "@yH_"
-		{
-			// A hook, not an original.
-			Hooks_IsolateName(name),
-			pure = 0;
-		}
-		else if (init) continue; // Don't hook the originals "Init" functions.
-		else pure = 1;
-		// Not sufficiently identical.
-		if (strcmp(name, ref)) continue;
-		// Get just the useful part of the name.
-		if (!strcmp(name, ref))
-		{
-			if (pure) baseFunc[0] = entry;
-			else
-			{
-				Hooks_InvalidateName(entry),
-				same[sameCount] = AMX_Read(entry);
-				if (++sameCount == sizeof (same))
-				{
-					P:E("sameCount == sizeof (same) in y_hooks.");
-					break;
-				}
-			}
-		}
-	}
-	if (ref2[0])
-	{
-		idx = 0;
-		while ((idx = AMX_GetPublicEntry(idx, entry, ref2)))
-		{
-			// Get the function name and compare it to the current one.
-			Hooks_GetName(entry, name);
-			if (name[0] == (('@' << 24) | ('y' << 16) | ('H' << 8) | ('_'))) // "@yH_"
-			{
-				// A hook, not an original.
-				Hooks_IsolateName(name),
-				pure = 0;
-			}
-			else pure = 1;
-			// Not sufficiently identical.
-			if (strcmp(name, ref2)) continue;
-			// Get just the useful part of the name.
-			if (!strcmp(name, ref2))
-			{
-				if (pure) baseFunc[1] = entry;
-				else
-				{
-					Hooks_InvalidateName(entry),
-					same[sameCount] = AMX_Read(entry);
-					if (++sameCount == sizeof (same))
-					{
-						P:E("sameCount == sizeof (same) in y_hooks.");
-						break;
-					}
-				}
-			}
-		}
-	}
-	// Now start writing our entirely new version.
-	// First, the (longest) function name as that is always the "base" name.
-	entry = strlen(ref),
-	idx = strlen(ref2);
-	P:6("Hooks_GetSame: Lengths = %d (ref), %d (ref2)", entry, idx);
-	#if _DEBUG >= 5
-		AMX_Write(AMX_BASE_ADDRESS + AMX_Read(original + 4), _A<@yH_>);
-		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(original + 4), Q@);
-		AMX_Write(AMX_BASE_ADDRESS + AMX_Read(original + 4), 0);
-		printf("Hooks_GetSame: exist = %s", unpack(Q@));
-		printf("Hooks_GetSame: ref = %s", unpack(ref));
-		AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref, entry);
-		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(original + 4), Q@);
-		printf("Hooks_GetSame: new = %s", unpack(Q@));
-	#endif
-	new
-		fixes;
-	// Account for fixes.inc.
-	if (baseFunc[0])
-	{
-		if (entry <= 25)
-		{
-			name[0] = '\0', strcat(name, "FIXES_"), strcat(name, ref),
-			fixes = funcidx(name);
-			if (fixes != -1)
-			{
-				fixes = AMX_GetEntryFromPublicIndex(fixes),
-				Hooks_InvalidateName(fixes),
-				fixes = AMX_GetEntryPointer(fixes),
-				same[sameCount++] = Hooks_FindFixesHook(fixes) - (AMX_REAL_DATA + AMX_HEADER_COD);
-				goto Hooks_GetSame_after_1;
-			}
-		}
-		same[sameCount++] = AMX_Read(baseFunc[0]),
-		Hooks_InvalidateName(baseFunc[0]);
-	}
-Hooks_GetSame_after_1:
-	if (baseFunc[1])
-	{
-		if (!fixes && idx <= 25)
-		{
-			name[0] = '\0', strcat(name, "FIXES_"), strcat(name, ref2),
-			fixes = funcidx(name);
-			if (fixes != -1)
-			{
-				fixes = AMX_GetEntryFromPublicIndex(fixes),
-				Hooks_InvalidateName(fixes),
-				fixes = AMX_GetEntryPointer(fixes),
-				same[sameCount++] = Hooks_FindFixesHook(fixes) - (AMX_REAL_DATA + AMX_HEADER_COD);
-				goto Hooks_GetSame_after_2;
-			}
-		}
-		same[sameCount++] = AMX_Read(baseFunc[1]),
-		Hooks_InvalidateName(baseFunc[1]);
-	}
-Hooks_GetSame_after_2:
-	if (fixes)
-	{
-		// Invalidate the original.
-		Hooks_InvalidateName(original);
-		//printf("hooking fixed callback %s", ref);
-	}
-	else if (idx <= entry)
-	{
-		AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref, entry);
-	}
-	else
-	{
-		// There's a chance this won't be long enough at all!
-		if (!strcmp(ref2, YSI_gscOnScriptExit))
-		{
-			Hooks_ForceReverse(YSI_gscOnScriptExit);
-			#emit CONST.pri  YSI_gscOnScriptExit
-			#emit STOR.S.pri idx
-			idx -= AMX_BASE_ADDRESS,
-			AMX_Write(original + 4, idx);
-		}
-		else
-		{
-			P:5("Hooks_GetSame: WRITE: %08x %08x: %s (%d)", AMX_Read(original + 4), AMX_Read(AMX_BASE_ADDRESS + AMX_Read(original + 4)), unpack(ref2), idx);
-			AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(original + 4), ref2, idx);
-		}
-	}
-	// Work out what the FIRST used slot is.  Write our new function (HARD).
-	entry = Hooks_WriteFunction(same, sameCount, Hooks_SpecialReturns(ref));
-	if (entry)
-	{
-		// Point "original"'s function pointer to the new function.
-		idx = CGen_GetCodeSpace() - AMX_HEADER_COD;
-		// Save the address for hooks later.  These three can't be done normally
-		// because they have already been started by this point.  I did use
-		// "CallLocalFunction" but that caused issues with "y_malloc".
-		switch (init)
-		{
-			case 0b0001: YSI_g_sOnScriptInit = idx;
-			case 0b0010: YSI_g_sOnFilterScriptInit = idx;
-			case 0b0100: YSI_g_sOnGameModeInit = idx;
-		}
-		CGen_AddCodeSpace(entry);
-		//printf("%x %x", idx, fixes);
-		if (fixes)
-		{
-			// Change our state machine to just jump straight to the new code.
-			AMX_Write(fixes + AMX_HEADER_COD, _:RelocateOpcode(OP_JUMP)),
-			AMX_Write(fixes + AMX_HEADER_COD + 4, idx + (AMX_REAL_DATA + AMX_HEADER_COD));
-		}
-		else AMX_Write(original, idx);
-	}
-	else
-	{
-		idx = AMX_Read(original);
-		switch (init)
-		{
-			case 0b0001: YSI_g_sOnScriptInit = idx;
-			case 0b0010: YSI_g_sOnFilterScriptInit = idx;
-			case 0b0100: YSI_g_sOnGameModeInit = idx;
-		}
-	}
-}
-
-/*
-
-    88        88                         88                   
-    88        88                         88                   
-    88        88                         88                   
-    88aaaaaaaa88  ,adPPYba,   ,adPPYba,  88   ,d8  ,adPPYba,  
-    88""""""""88 a8"     "8a a8"     "8a 88 ,a8"   I8[    ""  
-    88        88 8b       d8 8b       d8 8888[      `"Y8ba,   
-    88        88 "8a,   ,a8" "8a,   ,a8" 88`"Yba,  aa    ]8I  
-    88        88  `"YbbdP"'   `"YbbdP"'  88   `Y8a `"YbbdP"'  
-
-*/
 
 public OnScriptInit()
 {
-	P:2("Hooks_OnScriptInit called");
-	new
-		func[32],
-		entry,
-		idx;
-	P:C(for (idx = 0; ((idx = AMX_GetPublicEntry(idx, entry))); ) { Hooks_GetName(entry, func); P:5("Hooks_OnScriptInit: %03d) %s (%08x) = %08x", idx - 1, unpack(func), Hooks_GetAddr(entry + 4), Hooks_GetAddr(entry)); });
-	// Find all hook functions in order (at least find the first one in a set).
-	P:C(idx=0;);
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yH_>)))
-	{
-		Hooks_GetName(entry, func);
-		P:2("Hooks_OnScriptInit: %s", unpack(func));
-		Hooks_IsolateName(func);
-		// Get all ones the same (and the original).
-		Hooks_GetSame(func, entry, Hooks_SpecialCases(func));
-	}
-	// Finally, put all our new mashed up publics back in order!
-	Hooks_SortPublics();
-	P:C(for (idx = 0; ((idx = AMX_GetPublicEntry(idx, entry))); ) { Hooks_GetName(entry, func); P:5("Hooks_OnScriptInit: %03d) %s (%08x) = %08x", idx - 1, unpack(func), Hooks_GetAddr(entry + 4), Hooks_GetAddr(entry)); });
-	// Detect when there are no hooks for the init functions.
-	if (!YSI_g_sOnFilterScriptInit) AMX_GetPublicPointer(0, YSI_g_sOnFilterScriptInit, "S@@_OnFilterScriptInit", true);
-	if (!YSI_g_sOnGameModeInit) AMX_GetPublicPointer(0, YSI_g_sOnGameModeInit, "S@@_OnGameModeInit", true);
-	if (!YSI_g_sOnScriptInit) AMX_GetPublicPointer(0, YSI_g_sOnScriptInit, "S@@_OnScriptInit", true);
-	// Old method so we can hook it!
-	if (YSI_g_sOnScriptInit)
-	{
-		#emit PUSH.C     0
-		#emit LCTRL      6
-		#emit ADD.C      28
-		#emit PUSH.pri
-		#emit LOAD.pri   YSI_g_sOnScriptInit
-		#emit SCTRL      6
-	}
-	// Do the main code here.
-	#if defined YSI_LOCK_MODE
-		YSI_gLockData[1] = floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil);
-		YSI_gLockData[0] = 5 + YSI_gLockData[1];
-		YSI_gLockData[2] = YSI_gLockData[0] - 5;
-		if (~strval(YSI_gLockData[5]) != ~_LOCK_IP_0)
-		{
-			y_lock 2;
-		}
-		YSI_gLockData[2] -= YSI_gLockData[1];
-		YSI_gLockData[YSI_gLockData[2] + 1] -= YSI_gLockData[0];
-		YSI_gLockData[1] += '.' + 5;
-	#endif
-	P:1("Hooks_OnScriptInit end");
-	return ALS_R_ScriptInit;
+	state _HookChain_ALS : _HookChain_ALS_go;
+	Hooks_DoAllHooks();
+	HookChain_OnScriptInit();
+	return 1;
 }
 
+HOOK_FORWARD:HookChain_OnScriptInit();
 #if defined _ALS_OnScriptInit
 	#undef OnScriptInit
 #else
 	#define _ALS_OnScriptInit
 #endif
-#define OnScriptInit S@@_OnScriptInit
-
-forward S@@_OnScriptInit();
-
-/**--------------------------------------------------------------------------**\
-<summary>OnFilterScriptInit</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	This is here PURELY to be hooked.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-public OnFilterScriptInit()
-{
-	if (YSI_g_sOnFilterScriptInit)
-	{
-		#emit PUSH.C     0
-		#emit LCTRL      6
-		#emit ADD.C      28
-		#emit PUSH.pri
-		#emit LOAD.pri   YSI_g_sOnFilterScriptInit
-		#emit SCTRL      6
-		#emit RETN
-	}
-	return ALS_R_FilterScriptInit;
-}
-
-#if defined _ALS_OnFilterScriptInit
-	#undef OnFilterScriptInit
-#else
-	#define _ALS_OnFilterScriptInit
-#endif
-#define OnFilterScriptInit S@@_OnFilterScriptInit
-forward S@@_OnFilterScriptInit();
-
-/**--------------------------------------------------------------------------**\
-<summary>OnGameModeInit</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	This is here PURELY to be hooked.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-public OnGameModeInit()
-{
-	if (YSI_g_sOnGameModeInit)
-	{
-		#emit PUSH.C     0
-		#emit LCTRL      6
-		#emit ADD.C      28
-		#emit PUSH.pri
-		#emit LOAD.pri   YSI_g_sOnGameModeInit
-		#emit SCTRL      6
-		#emit RETN
-	}
-	return ALS_R_GameModeInit;
-}
-
-#if defined _ALS_OnGameModeInit
-	#undef OnGameModeInit
-#else
-	#define _ALS_OnGameModeInit
-#endif
-#define OnGameModeInit S@@_OnGameModeInit
-
-forward S@@_OnGameModeInit();
+#define OnScriptInit(%0) HookChain_OnScriptInit(%0) <_HookChain_ALS : _HookChain_ALS_go>
 
