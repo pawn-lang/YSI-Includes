@@ -190,7 +190,7 @@ stock va_CallRemoteFunction(const function[], const fmat[], va_:STATIC_ARGS)
 	// Copy the data back.
 	#emit STACK        0
 	#emit CONST.pri    YSI_g_sArgs
-	#emit MOVS         8
+	#emit MOVS         12
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
 	
@@ -237,7 +237,7 @@ stock va_CallLocalFunction(const function[], const fmat[], va_:STATIC_ARGS)
 	// Copy the data back.
 	#emit STACK        0
 	#emit CONST.pri    YSI_g_sArgs
-	#emit MOVS         8
+	#emit MOVS         12
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
 	
@@ -289,7 +289,7 @@ stock va_SetTimerEx(const function[], interval, bool:repeating, const fmat[], va
 	// Copy the data back.
 	#emit STACK        0
 	#emit CONST.pri    YSI_g_sArgs
-	#emit MOVS         8
+	#emit MOVS         20
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
 	
@@ -341,7 +341,7 @@ stock va_format(out[], size, const fmat[], va_:STATIC_ARGS)
 	// Copy the data back.
 	#emit STACK        0
 	#emit CONST.pri    YSI_g_sArgs
-	#emit MOVS         8
+	#emit MOVS         16
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
 	
@@ -354,7 +354,7 @@ stock va_return(const fmat[], va_:STATIC_ARGS)
 {
 	static
 		out[YSI_MAX_STRING * 8],
-		size = YSI_MAX_STRING;
+		size = sizeof (out);
 	
 	// Get the number of parameters.
 	#emit LOAD.S.alt   STATIC_ARGS
@@ -396,7 +396,7 @@ stock va_return(const fmat[], va_:STATIC_ARGS)
 	// Copy the data back.
 	#emit STACK        0
 	#emit CONST.pri    YSI_g_sArgs
-	#emit MOVS         8
+	#emit MOVS         16
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
 	

@@ -79,3 +79,28 @@ Test:y_va_return()
 	ASSERT(!strcmp(str, "Hi 5.500 this is  short   "));
 }
 
+static stock y_va_DoubleIndirection(dest[1040], fmat[], var0, var1, var2, va_args<>) //var3, var4, size = sizeof (dest))
+{
+	#pragma unused var0, var1, var2
+	// va_format(dest, 32, fmat, va_start<5>);
+	dest = va_return(fmat, va_start<5>);
+}
+
+Test:y_va_DoubleIndirection()
+{
+	new
+		dest[1040],
+		var0 = 44,
+		var1 = 55,
+		var2 = 66,
+		var3 = 77,
+		var4 = 88;
+	y_va_DoubleIndirection(dest, "%d %d", var0, var1, var2, var3, var4);
+	ASSERT(var0 == 44);
+	ASSERT(var1 == 55);
+	ASSERT(var2 == 66);
+	ASSERT(var3 == 77);
+	ASSERT(var4 == 88);
+	ASSERT(!strcmp(dest, "77 88"));
+}
+
