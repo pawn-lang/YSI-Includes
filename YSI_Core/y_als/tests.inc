@@ -8,8 +8,13 @@ static stock y_als_Print(result[], fmat[], va_args<>)
 	// This function formats the incoming data and compares it to the reference.
 	static
 		msg[256];
-	format(msg, sizeof (msg), "\"%s\" != \"%s\" (%d)", result, va_return(fmat, va_start<2>), strcmp(result, va_return(fmat, va_start<2>)));
-	Testing_Test(!strcmp(result, va_return(fmat, va_start<2>)), msg);
+	//printf("%s %s", result, fmat);
+	va_format(msg, sizeof (msg), fmat, va_start<2>);
+	new
+		bool:cmp = !strcmp(result, msg);
+	//printf("%s %s", result, fmat);
+	format(msg, sizeof (msg), "\"%s\" != \"%s\" (%d)", result, msg, cmp);
+	Testing_Test(cmp, msg);
 }
 
 // Defines for our "__PRINT" macro, see:
