@@ -372,19 +372,17 @@ public OnScriptInit()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-public _YSI_SpecialExit()
+public OnScriptExit()
 {
-	_Group_TryRemove();
-	//CallLocalFunction("_Group_SpecialExit", "");
 	#if defined _Group_SpecialExit
 		_Group_SpecialExit();
-	#else
-		return 1;
 	#endif
+	_Group_TryRemove();
+	return 1;
 }
 
-#undef _YSI_SpecialExit
-#define _YSI_SpecialExit _Group_SpecialExit
+#undef OnScriptExit
+#define OnScriptExit _Group_SpecialExit
 #if defined _Group_SpecialExit
 	forward _Group_SpecialExit();
 #endif
