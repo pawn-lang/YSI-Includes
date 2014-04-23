@@ -308,6 +308,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_PRE_HOOK], precount, name[6
 
 _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(hooks[], num, &ptr, &next, name[], nlen)
 {
+	printf("%s = %d %x %d", name, num, ptr, nlen);
 	switch (num)
 	{
 		case 0:
@@ -320,7 +321,10 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(hooks[], num, &ptr, &next, name[],
 				// We don't have an existing callback with this name, only hooks.
 				// We need to add the name of the callback to the AMX header,
 				// and we have enough space in which to do so.
-				AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(ptr + 4), name, len);
+				new
+					str[32];
+				strpack(str, name),
+				AMX_WriteString(AMX_BASE_ADDRESS + AMX_Read(ptr + 4), str, len);
 			}
 			else
 			{
@@ -334,19 +338,25 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(hooks[], num, &ptr, &next, name[],
 		{
 			// No "fixes.inc", but this callback already exists.  In that case,
 			// just replace the pointer address.
-			ptr = hooks[0],
-			next = AMX_Read(ptr) + (AMX_REAL_DATA + AMX_HEADER_COD);
+			next = ptr = hooks[0];
 		}
 		default:
 		{
 			// Special hooks.  Optimise them.
 			for (new cur = 1; cur != num; ++cur)
 			{
-				ptr = AMX_Read(hooks[cur]),
-				next = Hooks_GetStubEntry(ptr),
-				ptr += AMX_HEADER_COD,
-				Hooks_RedirectStub(ptr, next),
-				ptr += 4;
+				ptr = hooks[cur];
+				new
+					tmp = AMX_Read(ptr),
+					nt = Hooks_GetStubEntry(tmp);
+				tmp += AMX_HEADER_COD,
+				AMX_Write(tmp, _:RelocateOpcode(OP_JUMP));
+				if (nt)
+				{
+					next = ptr = tmp + 4,
+					AMX_Write(ptr, AMX_Read(ptr + nt) - (AMX_REAL_DATA + AMX_HEADER_COD));
+				}
+				else next = 0;
 			}
 		}
 	}
@@ -386,9 +396,9 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 						h0 = DisasmGetOperand(ctx, 3),
 						h1 = DisasmGetOperand(ctx, 5),
 						h2 = DisasmGetOperand(ctx, 7);
-					if (h1 == h2)      return h0; // Most likely.
-					else if (h0 == h2) return h1;
-					else if (h0 == h1) return h2;
+					if (h1 == h2)      return  7 * 4; // Most likely.
+					else if (h0 == h2) return  9 * 4;
+					else if (h0 == h1) return 11 * 4;
 					else P:E("y_hooks could not extract state stub jump");
 				}
 			}
@@ -397,7 +407,7 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 		{
 			// Already replaced once (shouldn't happen, but may if two different
 			// hooks use two different short versions of a callback).
-			return DisasmGetOperand(ctx, 0);
+			return 4; // DisasmGetOperand(ctx, 0);
 		}
 		case OP_PROC:
 		{
@@ -409,23 +419,26 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>Hooks_RedirectStub</summary>
+<summary>Hooks_InvalidateStub</summary>
 <param name="stub">Function start to redirect.</param>
-<param name="to">Where to redirect it to.</param>
+<param name="to">Offset of new address.</param>
 <returns>
 	-
 </returns>
 <remarks>
-	Emits a JUMP, but I couldn't be bothered to set up "@emit" here.
+	Emits a JUMP, but I couldn't be bothered to set up "@emit" here.  The JUMP
+	target is invalid at this point - it is like addresses in the the AMX
+	header, not those in other JUMPs.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_RedirectStub(stub, to)
-{
-	AMX_Write(stub, _:RelocateOpcode(OP_JUMP)),
-	//AMX_Write(stub + 4, to + (AMX_REAL_DATA + AMX_HEADER_COD));
-	AMX_Write(stub + 4, to);
-}
+// _Y_HOOKS_STATIC stock Hooks_InvalidateStub(stub, to)
+// {
+	// AMX_Write(stub, _:RelocateOpcode(OP_JUMP));
+	// //AMX_Write(stub + 4, to + (AMX_REAL_DATA + AMX_HEADER_COD));
+	// //AMX_Write(stub + 4, to);
+	// if (to) AMX_Write(stub + 4, AMX_Read(stub + to) - (AMX_REAL_DATA + AMX_HEADER_COD));
+// }
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_GetAllHooks</summary>
@@ -525,6 +538,7 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 		// Collect all the hooks of this function, and rewrite the call code.
 		Hooks_Collate(preloads, precount, name, idx);
 	}
+	Hooks_SortPublics();
 }
 
 /**--------------------------------------------------------------------------**\
@@ -597,7 +611,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 	// Get the preloads.
 	Hooks_GetPreHooks(preloads, precount, sName, ph, pc),
 	// Get where in the chain we are being inserted.
-	Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, sName, namelen),
+	Hooks_GetPointerRewrite(ph, pc, writePtr, nextPtr, sName, namelen);
 	// Move that point for init functions (that are running right now).
 	Hooks_HandleInitFunctions(sHooks, hookCount, sName, writePtr, nextPtr);
 	// We now have:
@@ -612,12 +626,12 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 	pc = Hooks_WriteFunction(sHooks, hookCount, Hooks_GetDefaultReturn(sName));
 	if (pc)
 	{
-		AMX_Write(writePtr, CGen_GetCodeSpace() + AMX_REAL_DATA),
+		AMX_Write(writePtr, CGen_GetCodeSpace() - AMX_HEADER_COD),
 		CGen_AddCodeSpace(pc);
 	}
 	else
 	{
-		AMX_Write(writePtr, AMX_Read(hooks[0]));
+		AMX_Write(writePtr, AMX_Read(sHooks[0]));
 	}
 }
 
@@ -778,6 +792,7 @@ HOOK_RET:OnRconCommand()
 
 _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1, const skipable = true)
 {
+	printf("0");
 	new
 		bool:multiple = size != 1,
 		base = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS,
@@ -817,10 +832,13 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	// Now loop over all our functions and insert "CALL" opcodes for them.
 	if (multiple)
 	{
+		printf("1");
 		for (new i = 0; ; )
 		{
 			// Get the absolute offset from here.
 			// #emit CALL pointers[i]
+			printf("%d %d", pointers[i], base);
+			printf("%x", AMX_Read(pointers[i]));
 			@emit CALL          (AMX_Read(pointers[i]) + base) // 2
 			if (skipable)
 			{
@@ -845,6 +863,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 			if (++i == size) break;
 			else @emit STOR.S.pri -4 // 10
 		}
+		printf("2");
 		if (skipable)
 		{
 			@emit JUMP.rel      4    // 10
@@ -869,6 +888,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		return 0;
 	}
 	
+	printf("3");
 	// This is the point the small "JUMP" above goes to.
 	@emit MOVE.alt
 	// Remove the whole stack then get the return value.
@@ -879,9 +899,181 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	
 	// Return.
 	@emit RETN
+	printf("4");
 	
 	// Return the number of bytes written.
 	return ctx[AsmContext_buffer_offset];
+}
+
+/*
+
+     ad88888ba                                 88                          
+    d8"     "8b                          ,d    ""                          
+    Y8,                                  88                                
+    `Y8aaaaa,    ,adPPYba,  8b,dPPYba, MM88MMM 88 8b,dPPYba,   ,adPPYb,d8  
+      `"""""8b, a8"     "8a 88P'   "Y8   88    88 88P'   `"8a a8"    `Y88  
+            `8b 8b       d8 88           88    88 88       88 8b       88  
+    Y8a     a8P "8a,   ,a8" 88           88,   88 88       88 "8a,   ,d88  
+     "Y88888P"   `"YbbdP"'  88           "Y888 88 88       88  `"YbbdP"Y8  
+                                                               aa,    ,88  
+                                                                "Y8bbdP"   
+
+*/
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_CompareNextCell</summary>
+<param name="addr0">The 1st address to read.</param>
+<param name="addr1">The 2nd address to read.</param>
+<returns>
+	-1 - The first address is bigger.
+	0  - The addresses are the same
+	1  - The second address is bigger.
+</returns>
+<remarks>
+	Reads two addresses, converts them to big endian, and compares them as four
+	characters of a string at once.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC Hooks_CompareNextCell(addr0, addr1)
+{
+	new
+		s0 = Cell_ReverseBytes(AMX_Read(addr0)),
+		s1 = Cell_ReverseBytes(AMX_Read(addr1));
+	// Propogate NULLs.
+	if (!(s0 & 0xFF000000)) s0 = 0;
+	else if (!(s0 & 0x00FF0000)) s0 &= 0xFF000000;
+	else if (!(s0 & 0x0000FF00)) s0 &= 0xFFFF0000;
+	else if (!(s0 & 0x000000FF)) s0 &= 0xFFFFFF00;
+	if (!(s1 & 0xFF000000)) s1 = 0;
+	else if (!(s1 & 0x00FF0000)) s1 &= 0xFF000000;
+	else if (!(s1 & 0x0000FF00)) s1 &= 0xFFFF0000;
+	else if (!(s1 & 0x000000FF)) s1 &= 0xFFFFFF00;
+	// We need the numbers to be compared as big-endian.  Now any trailing NULLs
+	// don't matter at all.
+	if (s1 > s0) return 1;
+	else if (s1 < s0) return -1;
+	else return 0;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_ComparePublics</summary>
+<param name="idx0">The index of the 1st public.</param>
+<param name="idx1">The index of the 2nd public.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Compares two public function entries, and if need-be, swaps them over.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
+{
+	idx0 = idx0 * 8 + AMX_HEADER_PUBLICS;
+	idx1 = idx1 * 8 + AMX_HEADER_PUBLICS;
+	new
+		addr0 = AMX_BASE_ADDRESS + AMX_Read(idx0 + 4),
+		addr1 = AMX_BASE_ADDRESS + AMX_Read(idx1 + 4);
+	for ( ; ; )
+	{
+		switch (Hooks_CompareNextCell(addr0, addr1))
+		{
+			case -1:
+			{
+				// Swap them over.
+				new
+					tmpFunc = AMX_Read(idx0),
+					tmpName = AMX_Read(idx0 + 4);
+				AMX_Write(idx0, AMX_Read(idx1));
+				AMX_Write(idx0 + 4, AMX_Read(idx1 + 4));
+				AMX_Write(idx1, tmpFunc);
+				AMX_Write(idx1 + 4, tmpName);
+				return;
+			}
+			case 1:
+			{
+				// Already in order - good.
+				return;
+			}
+			// case 0: // Loop.
+		}
+		addr0 += 4;
+		addr1 += 4;
+	}
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_SortPublics</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Goes through the whole of the public functions table and sorts them all in
+	to alphabetical order.  This is done as we move and rename some so we need
+	to fix the virtual machine's binary search.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC Hooks_SortPublics()
+{
+	// Count the number of still active functions.
+	new
+		diff = Hooks_CountInvalidPublics() * 8,
+		oldCount = (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / 8;
+	// Now I need to SORT the functions, and I have honestly no idea how to do
+	// that.  Fortunately I don't actually need to move the strings themselves
+	// around as they just sit nicely in the nametable; I only need to sort the
+	// pointers.
+	for (new i = 0; i != oldCount; ++i)
+	{
+		for (new j = i + 1; j != oldCount; ++j)
+		{
+			// This neatly moves all the functions with blanked names to the
+			// start of the public functions table (which will soon be moved).
+			Hooks_ComparePublics(i, j);
+		}
+	}
+	// Move the start address UP to reduce the VM's search space.
+	if (diff)
+	{
+		// Update stored values in y_amx so they reflect the new structure.
+		AMX_Write(AMX_BASE_ADDRESS + 32, AMX_Read(AMX_BASE_ADDRESS + 32) + diff);
+		AMX_HEADER_PUBLICS += diff;
+		// I'd love to be able to update ZeeX's code as well, but I can't.
+		// Issue pull request for this.
+		ResetStaticAmxHeader();
+	}
+	// TODO: Inform the fixes2 plugin of the change.  That stores indexes, not
+	// addresses so it needs to update itself (somehow - I don't actually know
+	// HOW it will do this...)  Probably inform it first, store the addresses,
+	// then inform it again to track down and replace those addresses.
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_CountInvalidPublics</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Counts the number of public functions that have had their names erased.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+_Y_HOOKS_STATIC Hooks_CountInvalidPublics()
+{
+	new
+		idx,
+		buf,
+		count;
+	// Search for functions whose names start with nothing.
+	while ((idx = AMX_GetPublicEntryPrefix(idx, buf, 0)))
+	{
+		++count;
+	}
+	printf("Hooks_CountInvalidPublics: Invalid = %d", count);
+	P:4("Hooks_CountInvalidPublics: Invalid = %d", count);
+	return count;
 }
 
 #endinput
