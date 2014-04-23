@@ -124,6 +124,8 @@ Operators:
 	#define _DEBUG 0
 #endif
 
+stock YSI_gDebugLevel = 0;
+
 #define P:%1(%2); Debug_Print%1(%2);
 #define C:%1(%2); Debug_Code%1(%2);
 
@@ -144,52 +146,56 @@ Operators:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define DBGC1 Debug_Code1
-#define DBGC2 Debug_Code2
-#define DBGC3 Debug_Code3
-#define DBGC4 Debug_Code4
-#define DBGC5 Debug_Code5
-
-#if _DEBUG >= 1
-	#define Debug_Code1(%1); \
-		%1
+#if _DEBUG == -1
+	#define Debug_Code1(%1); { if (YSI_gDebugLevel >= 1) { %1 }}
+	#define Debug_Code2(%1); { if (YSI_gDebugLevel >= 2) { %1 }}
+	#define Debug_Code3(%1); { if (YSI_gDebugLevel >= 3) { %1 }}
+	#define Debug_Code4(%1); { if (YSI_gDebugLevel >= 4) { %1 }}
+	#define Debug_Code5(%1); { if (YSI_gDebugLevel >= 5) { %1 }}
+	#define Debug_Code6(%1); { if (YSI_gDebugLevel >= 6) { %1 }}
+	#define Debug_Code7(%1); { if (YSI_gDebugLevel >= 7) { %1 }}
 #else
-	#define Debug_Code1(%1);
-#endif
-
-#if _DEBUG >= 2
-	#define Debug_Code2(%1); \
-		%1
-#else
-	#define Debug_Code2(%1);
-#endif
-
-#if _DEBUG >= 3
-	#define Debug_Code3(%1); \
-		%1
-#else
-	#define Debug_Code3(%1);
-#endif
-
-#if _DEBUG >= 4
-	#define Debug_Code4(%1); \
-		%1
-#else
-	#define Debug_Code4(%1);
-#endif
-
-#if _DEBUG >= 5
-	#define Debug_Code5(%1); \
-		%1
-#else
-	#define Debug_Code5(%1);
-#endif
-
-#if _DEBUG >= 6
-	#define Debug_Code6(%1); \
-		%1
-#else
-	#define Debug_Code6(%1);
+	#if _DEBUG >= 1
+		#define Debug_Code1(%1); %1
+	#else
+		#define Debug_Code1(%1);
+	#endif
+	
+	#if _DEBUG >= 2
+		#define Debug_Code2(%1); %1
+	#else
+		#define Debug_Code2(%1);
+	#endif
+	
+	#if _DEBUG >= 3
+		#define Debug_Code3(%1); %1
+	#else
+		#define Debug_Code3(%1);
+	#endif
+	
+	#if _DEBUG >= 4
+		#define Debug_Code4(%1); %1
+	#else
+		#define Debug_Code4(%1);
+	#endif
+	
+	#if _DEBUG >= 5
+		#define Debug_Code5(%1); %1
+	#else
+		#define Debug_Code5(%1);
+	#endif
+	
+	#if _DEBUG >= 6
+		#define Debug_Code6(%1); %1
+	#else
+		#define Debug_Code6(%1);
+	#endif
+	
+	#if _DEBUG >= 7
+		#define Debug_Code7(%1); %1
+	#else
+		#define Debug_Code7(%1);
+	#endif
 #endif
 
 /**--------------------------------------------------------------------------**\
@@ -207,59 +213,56 @@ Operators:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define DBGP1 Debug_Print1
-#define DBGP2 Debug_Print2
-#define DBGP3 Debug_Print3
-#define DBGP4 Debug_Print4
-#define DBGP5 Debug_Print5
-
-#if _DEBUG >= 1
-	#define Debug_Print1(%1); \
-		printf(%1);
+#if _DEBUG == -1
+	#define Debug_Print1(%1); { if (YSI_gDebugLevel >= 1) printf(%1); }
+	#define Debug_Print2(%1); { if (YSI_gDebugLevel >= 2) printf(%1); }
+	#define Debug_Print3(%1); { if (YSI_gDebugLevel >= 3) printf(%1); }
+	#define Debug_Print4(%1); { if (YSI_gDebugLevel >= 4) printf(%1); }
+	#define Debug_Print5(%1); { if (YSI_gDebugLevel >= 5) printf(%1); }
+	#define Debug_Print6(%1); { if (YSI_gDebugLevel >= 6) printf(%1); }
+	#define Debug_Print7(%1); { if (YSI_gDebugLevel >= 7) printf(%1); }
 #else
-	#define Debug_Print1(%1);
-#endif
-
-#if _DEBUG >= 2
-	#define Debug_Print2(%1); \
-		printf(%1);
-#else
-	#define Debug_Print2(%1);
-#endif
-
-#if _DEBUG >= 3
-	#define Debug_Print3(%1); \
-		printf(%1);
-#else
-	#define Debug_Print3(%1);
-#endif
-
-#if _DEBUG >= 4
-	#define Debug_Print4(%1); \
-		printf(%1);
-#else
-	#define Debug_Print4(%1);
-#endif
-
-#if _DEBUG >= 5
-	#define Debug_Print5(%1); \
-		printf(%1);
-#else
-	#define Debug_Print5(%1);
-#endif
-
-#if _DEBUG >= 6
-	#define Debug_Print6(%1); \
-		printf(%1);
-#else
-	#define Debug_Print6(%1);
-#endif
-
-#if _DEBUG >= 7
-	#define Debug_Print7(%1); \
-		printf(%1);
-#else
-	#define Debug_Print7(%1);
+	#if _DEBUG >= 1
+		#define Debug_Print1(%1); printf(%1);
+	#else
+		#define Debug_Print1(%1);
+	#endif
+	
+	#if _DEBUG >= 2
+		#define Debug_Print2(%1); printf(%1);
+	#else
+		#define Debug_Print2(%1);
+	#endif
+	
+	#if _DEBUG >= 3
+		#define Debug_Print3(%1); printf(%1);
+	#else
+		#define Debug_Print3(%1);
+	#endif
+	
+	#if _DEBUG >= 4
+		#define Debug_Print4(%1); printf(%1);
+	#else
+		#define Debug_Print4(%1);
+	#endif
+	
+	#if _DEBUG >= 5
+		#define Debug_Print5(%1); printf(%1);
+	#else
+		#define Debug_Print5(%1);
+	#endif
+	
+	#if _DEBUG >= 6
+		#define Debug_Print6(%1); printf(%1);
+	#else
+		#define Debug_Print6(%1);
+	#endif
+	
+	#if _DEBUG >= 7
+		#define Debug_Print7(%1); printf(%1);
+	#else
+		#define Debug_Print7(%1);
+	#endif
 #endif
 
 #define Debug_PrintE(%1); \
@@ -316,11 +319,6 @@ stock Debug_PrintArray(arr[], size)
 	return str;
 }
 
-/*#if _DEBUG > 0
-	#define Debug_Print0(%1); \
-		printf(%1);
-#endif*/
-
 public OnScriptInit()
 {
 	Debug_SetState();
@@ -359,4 +357,13 @@ static stock Debug_SetState() <>
 #if defined Debug_OnScriptInit
 	forward Debug_OnScriptInit();
 #endif
+
+stock Debug_SetLevel(level = 0)
+{
+	if (0 <= level <= 7)
+	{
+		YSI_gDebugLevel = level;
+	}
+	return YSI_gDebugLevel;
+}
 
