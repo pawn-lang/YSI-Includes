@@ -7,7 +7,8 @@ Test:Player_Existing()
 	ASSERT(Langs_GetLanguage("EN") == ret[E_USER_PRELOAD_LANG]);
 	ASSERT(0x12345678 == ret[E_USER_PRELOAD_BITS]);
 	ASSERT(0xAABBCCDD >= ret[E_USER_PRELOAD_DATE]);
-	printf("Note that if these tests fail, you will need to first connect to the server as \"TestPlayer\".");
+	P:I("Note that if these tests fail, you will need to");
+	P:I("    first connect to the server as \"TestPlayer\".");
 }
 
 new
