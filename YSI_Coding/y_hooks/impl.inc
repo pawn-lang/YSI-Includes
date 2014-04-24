@@ -107,6 +107,7 @@ enum E_HOOK_NAME_REPLACEMENT_DATA
 #if !defined CHAIN_ORDER
 	#define CHAIN_ORDER() 0
 #endif
+
 #define PRE_HOOK(%0) forward @CO_%0();public @CO_%0(){return CHAIN_ORDER()+1;}\
 	static stock _%0_IncludeStates()<_%0_ALS:_%0_ALS_x0,_%0_ALS:_%0_ALS_x1,_%0_ALS:_%0_ALS_x2,_%0_ALS:_%0_ALS_x3>{}\
 	static stock _%0_IncludeStates()<_%0_ALS:_%0_ALS_go>{}
@@ -406,8 +407,13 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(hooks[], num, &ptr, &next, name[],
 					case 0: next = 0;
 					default:
 					{
-						next = ptr = tmp + 4,
-						AMX_Write(ptr, AMX_Read(tmp + nt) - (AMX_REAL_DATA + AMX_HEADER_COD));
+						ptr  = tmp + 4,
+						next = tmp + nt,
+						nt = AMX_Read(next),
+						// Chain those not hooked.
+						AMX_Write(ptr, nt),
+						// Store the possible next address.
+						AMX_Write(next, nt - (AMX_REAL_DATA + AMX_HEADER_COD));
 					}
 				}
 			}
@@ -678,9 +684,10 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(name[64], hooks[], count, write, bool:haspreh
 	// absolutely simpler!
 	new
 		size = Hooks_WriteFunction(hooks, count, Hooks_GetDefaultReturn(name));
+	P:4("Hooks_GenerateCode %32s called: %6d %6d %08x %d", name[4], hasprehooks, size, hasprehooks ? (write - AMX_HEADER_COD) : (write - AMX_BASE_ADDRESS), CGen_GetCodeSpace());
 	if (size)
 	{
-		AMX_Write(write, 40);
+		//AMX_Write(write, 40);
 		if (hasprehooks) AMX_Write(write, CGen_GetCodeSpace() + AMX_REAL_DATA);
 		else AMX_Write(write, CGen_GetCodeSpace() - AMX_HEADER_COD);
 		CGen_AddCodeSpace(size);
@@ -1083,9 +1090,13 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 
 public OnScriptInit()
 {
+	P:1("Hooks_OnScriptInit called");
 	state _HookChain_ALS : _HookChain_ALS_go;
 	Hooks_DoAllHooks();
+	P:1("Hooks_OnScriptInit chain");
+	//DisasmDump("YSI_TEST.asm");
 	HookChain_OnScriptInit();
+	P:1("Hooks_OnScriptInit end");
 	return 1;
 }
 
