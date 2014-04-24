@@ -416,37 +416,33 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool
 	ret[E_CALLBACK_DATA_POINTER] = Function:name[pos + 1];
 	new
 		to = name[pos + 2],
-		local = (to & 0x00FFFFFF),
-		params = ((to & 0xFF000000) >>> 24) + (local ? (local + 3) : 2),
-		Alloc:a = malloc(params); // Allocate closure space.
+		local = to >> 8, // Sign-extending!
+		params = to & 0xFF,
+		stack = params + local + 3,
+		Alloc:a = malloc(stack); // Allocate closure space.
+	//printf("local: %d, params: %d, stack: %d", local, params, stack);
 	if (a)
 	{
 		// Get the address of the data.
 		#emit CONST.alt     YSI_gMallocMemory
 		#emit LOAD.S.pri    a
 		#emit IDXADDR
-		#emit STOR.S.pri    to
-		params <<= 2,
-		ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:to,
-		ret[E_CALLBACK_DATA_OFFSET] = params,
+		#emit STOR.S.pri    frm
+		// Get the stack size in bytes.
+		stack <<= 2,
+		ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:frm,
+		ret[E_CALLBACK_DATA_OFFSET] = stack,
 		// Copy the stack over.  First get the frame of the function that used
 		// an inline function, thus calling us indirectly.
-		prf -= (local << 2);
+		prf -= local << 2,
 		// Adjust to the bottom of that stack, at least the bottom of the parts
 		// we need (there may be more locals declared later that we don't need).
-		if (local)
-		{
-			// Copy "params" bytes from "prf" to "to".
-			rawMemcpy(to, prf, params),
-			mset(a, local + 1, name[pos + 3]);
-		}
-		else
-		{
-			// Copy "params" bytes from "prf" to "to".
-			rawMemcpy(to, prf + 4, params),
-			// Save the "return" address for the inline to our fake stack.
-			mset(a, 0, name[pos + 3]);
-		}
+		// Copy "stack" bytes from "prf" to "frm".
+		rawMemcpy(frm, prf, stack),
+		// Save the "return" address for the inline to our fake stack.
+		mset(a, local + 1, name[pos + 3]),
+		// Save the parameter count (may be mangled by y_hooks).
+		mset(a, local + 2, params << 2);
 		P:2("Callback_Get end");
 		return true;
 	}
@@ -784,17 +780,14 @@ stock I@E(/* mutable */ const s[])
 	// Get the number of local variables already in the parent function.
 	frm = GetCurrentFramePreviousFrame(),
 	YSI_g_sCurInlineLocals = GetFrameLocalSize(frm),
-	YSI_g_sCurInlineParams = GetFrameParameterSize(frm);
-	if (YSI_g_sCurInlineParams == -4)
-	{
-		// y_hooks mangles the parameter count.  In this case, the correct
-		// parameter count is stored in the previous frame, which is the entry
-		// point for the generated hook function stub.
-		YSI_g_sCurInlineParams = GetFrameParameterSize(GetFramePreviousFrame(frm));
-	}
+	YSI_g_sCurInlineParams = GetFrameParameterSize(frm),
+	// y_hooks mangles the parameter count.  In this case, the correct parameter
+	// count is stored in the previous frame, which is the entry point for the
+	// generated hook function stub.
+	YSI_g_sCurInlineParams = (YSI_g_sCurInlineParams == -4) ? GetFrameParameterSize(GetFramePreviousFrame(frm)) : YSI_g_sCurInlineParams;
 	P:C(if (YSI_g_sCurInlineParams < 0) P:E("Inline_Entry: Invalid parameter size."););
 	// Save parameter counts, shifted for separate components.
-	AMX_Write(addr2 + 8, (YSI_g_sCurInlineLocals >>> 2) | (YSI_g_sCurInlineParams << 22)),
+	AMX_Write(addr2 + 8, (YSI_g_sCurInlineLocals ? (YSI_g_sCurInlineLocals << 6) : (-4 << 6)) | (YSI_g_sCurInlineParams >> 2)),
 	// =========================================================================
 	// Build a linked list of inlines that are in scope.
 	AMX_Write(addr2 + 16, YSI_g_sPrevInlineFunc),

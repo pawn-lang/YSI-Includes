@@ -547,12 +547,47 @@ hook y_inline_InHook0@0()
 		r = 100;
 	inline func(&r2)
 	{
+		//printf("2");
 		#pragma unused r2
 		YSI_g_sInlineTestVar0 += 1;
 		r2 = 94;
+		/*new
+			x;
+		#emit LOAD.S.pri 0xFFFFFFE8
+		#emit STOR.S.pri x
+		printf("-24 = %d", x);
+		#emit LOAD.S.pri 0xFFFFFFEC
+		#emit STOR.S.pri x
+		printf("-20 = %d", x);
+		#emit LOAD.S.pri 0xFFFFFFF0
+		#emit STOR.S.pri x
+		printf("-16 = %d", x);
+		#emit LOAD.S.pri 0xFFFFFFF4
+		#emit STOR.S.pri x
+		printf("-12 = %d", x);
+		#emit LOAD.S.pri 0xFFFFFFF8
+		#emit STOR.S.pri x
+		printf("-8 = %d", x);
+		#emit LOAD.S.pri 0xFFFFFFFC
+		#emit STOR.S.pri x
+		printf("-4 = %d", x);
+		#emit LOAD.S.pri 0
+		#emit STOR.S.pri x
+		printf("0 = %d", x);
+		#emit LOAD.S.pri 4
+		#emit STOR.S.pri x
+		printf("4 = %d", x);
+		#emit LOAD.S.pri 8
+		#emit STOR.S.pri x
+		printf("8 = %d", x);
+		printf("3 %d %d %x", GetCurrentFrameParameterCount(), GetCurrentFrameLocalCount(), GetCurrentFrameReturn());*/
 	}
+	//printf("0");
 	y_inline_Get(using inline func, cc);
+	//printf("1");
+	//DisasmDump("YSI_TEST_inline.asm");
 	Callback_Call(cc, r);
+	//printf("4");
 	ASSERT(r == 94);
 	Callback_Release(cc);
 }
@@ -644,34 +679,36 @@ hook y_inline_InHook2@1(a, b)
 
 Test:y_inline_InHook0()
 {
+	DebugLevel(7);
 	YSI_g_sInlineTestVar0 = 0;
-	CallLocalFunction("y_inline_Hook0", "");
+	CallLocalFunction("y_inline_InHook0", "");
 	ASSERT(YSI_g_sInlineTestVar0 == 3);
+	DebugLevel(0);
 }
 
 Test:y_inline_InHook1()
 {
 	YSI_g_sInlineTestVar0 = 0;
-	CallLocalFunction("y_inline_Hook1", "i", 4);
+	CallLocalFunction("y_inline_InHook1", "i", 4);
 	ASSERT(YSI_g_sInlineTestVar0 == 12);
 	YSI_g_sInlineTestVar0 = 0;
-	CallLocalFunction("y_inline_Hook1", "i", 5);
+	CallLocalFunction("y_inline_InHook1", "i", 5);
 	ASSERT(YSI_g_sInlineTestVar0 == 15);
 	YSI_g_sInlineTestVar0 = 0;
-	CallLocalFunction("y_inline_Hook1", "i", 100);
+	CallLocalFunction("y_inline_InHook1", "i", 100);
 	ASSERT(YSI_g_sInlineTestVar0 == 300);
 }
 
 Test:y_inline_InHook2()
 {
 	YSI_g_sInlineTestVar0 = 0;
-	CallLocalFunction("y_inline_Hook2", "ii", 4, 5);
+	CallLocalFunction("y_inline_InHook2", "ii", 4, 5);
 	ASSERT(YSI_g_sInlineTestVar0 == 12 * 5);
 	YSI_g_sInlineTestVar0 = 0;
-	CallLocalFunction("y_inline_Hook2", "ii", 5, 6);
+	CallLocalFunction("y_inline_InHook2", "ii", 5, 6);
 	ASSERT(YSI_g_sInlineTestVar0 == 15 * 6);
 	YSI_g_sInlineTestVar0 = 0;
-	CallLocalFunction("y_inline_Hook2", "ii", 100, 100);
+	CallLocalFunction("y_inline_InHook2", "ii", 100, 100);
 	ASSERT(YSI_g_sInlineTestVar0 == 300 * 100);
 }
 
