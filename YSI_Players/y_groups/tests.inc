@@ -211,7 +211,7 @@ Test:0_y_groups_Connect1()
 	call OnPlayerDisconnect(43, 0);
 }
 
-Test:Chains()
+Test:y_groups_Chains()
 {
 	new
 		Group:g = Group_Create();

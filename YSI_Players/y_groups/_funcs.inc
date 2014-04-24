@@ -687,15 +687,18 @@ static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
 		_GROUPS_CHECK_ANY(c,r)
 		{
 			// Still can.
+			P:7("Group_FullPlayerUpdate: %d %d could, still can", playerid, el);
 			return;
 		}
 		// Now can't.
+		P:7("Group_FullPlayerUpdate: %d %d could, now can't", playerid, el);
 		_GROUP_SET_PLAYER(_GROUP_MAKE_TAG:el, playerid, false);
 		return;
 	}
 	// Couldn't see it before.
 	_GROUPS_CHECK_ANY(c,r)
 	{
+		P:7("Group_FullPlayerUpdate: %d %d now can", playerid, el);
 		// They have whatever this thing is.  Note that this may be called
 		// MULTIPLE times for an element, without anything actually changing.
 		// I.e. this could be set to "true" repeatedly while never being set
@@ -704,6 +707,7 @@ static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
 		// We use "return" here because "_GROUPS_CHECK_ANY" MAY be a loop.
 		return;
 	}
+	P:7("Group_FullPlayerUpdate: %d %d can't", playerid, el);
 }
 
 /*
@@ -734,7 +738,7 @@ static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
 	irrelevant; however, it does make the code LOOK much nicer and like
 	assigning to the variables does have some wider meaning.
 	
-	If this is called with "ni = -1", it is special code to temporarilly set or
+	If this is called with "ni = -1", it is special code to temporarily set or
 	restore the defaults for use with the "GROUP_ADD" macro.  So basically, it
 	is poor design giving two distinct uses to a single function.
 </remarks>
@@ -845,6 +849,7 @@ _gchain _yGU(&pid, Bit:p[], Bit:c[])
 	{
 		Group_FullPlayerUpdate(pid, el, p, c, YSI_g_sElementMembership[el]);
 	}
+	//printf("Player membership: %s", Bit_Display(c));
 }
 
 /*

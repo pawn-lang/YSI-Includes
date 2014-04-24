@@ -308,7 +308,7 @@ global bool:Group_IsValid(Group:g)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-public OnScriptInit()
+hook OnScriptInit()
 {
 	P:1("Group_OnScriptInit called");
 	//state YSI_has_groups:y;
@@ -348,17 +348,8 @@ public OnScriptInit()
 		}
 	#endif
 	P:1("Group_OnScriptInit end");
-	#if defined _Group_SpecialInit
-		_Group_SpecialInit();
-	#endif
 	return 1;
 }
-
-#undef OnScriptInit
-#define OnScriptInit _Group_SpecialInit
-#if defined _Group_SpecialInit
-	forward _Group_SpecialInit();
-#endif
 
 /**--------------------------------------------------------------------------**\
 <summary>OnScriptExit</summary>
@@ -1176,7 +1167,6 @@ static remotefunc void:_Group_CreateChain(Group:g)
 		i = _:Group_GetID(name);
 		if (i != _:INVALID_GROUP)
 		{
-			printf("-2 %04x%04x", i >>> 16, i & 0xFFFF);
 			MASTER_ADD<_:GROUP_TEMP_FIX(Group:i)>
 			return Group:i;
 		}
