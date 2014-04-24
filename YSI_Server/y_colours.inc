@@ -343,7 +343,7 @@ stock GetColourHash(hash, alpha = 0xAA)
 #define _COLOUR_GT_SPACE_DEF_4(%0)      SAMP_GAME_TEXT_%0HHHH
 #define _COLOUR_GT_SPACE_DEF_5(%0)      SAMP_GAME_TEXT_%0HHHHH
 
-#define _COLOUR_GT_SPACE(%0,%1)         {('%0'|0x20)|(%1<<8),_COLOUR_GT_SPACE_DEF_%1(%0)>>>24,(_COLOUR_GT_SPACE_DEF_%1(%0)>>16)&0xFF,(_COLOUR_GT_SPACE_DEF_%1(%0)>>8)&0xFF}
+#define _COLOUR_GT_SPACE(%0,%1)         {('%0'|0x20)|(%1<<8),_COLOUR_GT_SPACE_DEF_%1(%0)>>>24,_COLOUR_GT_SPACE_DEF_%1(%0)>>16&0xFF,_COLOUR_GT_SPACE_DEF_%1(%0)>>8&0xFF}
 
 #define Colors_SAMPToGT Colours_SAMPToGT
 stock Colours_SAMPToGT(colour, start)
