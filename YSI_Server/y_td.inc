@@ -1566,7 +1566,7 @@ stock TD_Destroy(Text:textDraw)
 				YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_NEXT] = YSI_g_sUnused;
 				YSI_g_sUnused = textDraw;
 			}
-			C:1(else P:W("Orphaned text draw found."););
+			P:C(else P:W("Orphaned text draw found."););
 		}
 		TDL_END(textDraw)
 	}
