@@ -241,6 +241,11 @@ static
 	YSI_g_sMasterCount,
 	YSI_g_sMasterData[MAX_MASTERS];
 
+PRE_HOOK(Master)
+
+#undef CHAIN_ORDER
+#define CHAIN_ORDER @CO_MasterChain
+
 /**--------------------------------------------------------------------------**\
 <summary>Master_GetNext</summary>
 <returns>
@@ -281,6 +286,7 @@ Hook:
 public OnScriptInit()
 {
 	P:1("Master_OnScriptInit");
+	state _Master_ALS : _Master_ALS_go;
 	if (!existproperty(8, YSIM_MASTER))
 	{
 		setproperty(8, YSIM_MASTER, 1);
@@ -308,19 +314,17 @@ public OnScriptInit()
 	// Make sure this is called before all other YSI initialisations, at least
 	// all the ones which use the master system.
 	CallLocalFunction("YSIM_OnMasterSystemInit", "");
-	#endif
-	// Just use one name...
-	#if defined Master_OnScriptInit
-		Master_OnScriptInit();
-	#endif
+	Master_OnScriptInit();
 	return 1;
 }
 
-#undef OnScriptInit
-#define OnScriptInit Master_OnScriptInit
-#if defined Master_OnScriptInit
-	forward Master_OnScriptInit();
+HOOK_FORWARD:Master_OnScriptInit();
+#if defined _ALS_OnScriptInit
+	#undef OnScriptInit
+#else
+	#define _ALS_OnScriptInit
 #endif
+#define OnScriptInit(%0) Master_OnScriptInit(%0) <_Master_ALS : _Master_ALS_go>
 
 #define OnMasterSystemInit YSIM_OnMasterSystemInit
 forward YSIM_OnMasterSystemInit();
@@ -354,12 +358,18 @@ public OnScriptExit()
 		// the case.
 	}
 	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~(1 << _@));
-	#if defined YSIM_OnScriptExit
-		YSIM_OnScriptExit();
-	#endif
+	Master_OnScriptExit();
 	CallRemoteFunction("Master_OnScriptClose", "i", _@);
 	return 1;
 }
+
+HOOK_FORWARD:Master_OnScriptExit();
+#if defined _ALS_OnScriptExit
+	#undef OnScriptExit
+#else
+	#define _ALS_OnScriptExit
+#endif
+#define OnScriptExit(%0) Master_OnScriptExit(%0) <_Master_ALS : _Master_ALS_go>
 
 #undef OnScriptExit
 #define OnScriptExit YSIM_OnScriptExit
