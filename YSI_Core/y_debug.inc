@@ -198,6 +198,12 @@ stock YSI_gDebugLevel = 0;
 	#endif
 #endif
 
+#if _DEBUG != 0
+	#define Debug_CodeX(%1); %1
+#else
+	#define Debug_CodeX(%1);
+#endif
+
 /**--------------------------------------------------------------------------**\
 <summary>Debug_Print</summary>
 <param name="level">Debug level to print at.</param>
@@ -278,7 +284,7 @@ stock YSI_gDebugLevel = 0;
 	Debug_Print0("\7\7\7\7\7*** YSI Fatal Error: " #%1);
 
 #define Debug_PrintC(%1); \
-	Debug_Code1(%1);
+	Debug_CodeX(%1);
 
 stock Debug_Print0(const str[], {Float,_}:...) <ysi_debug : on>
 {
@@ -358,7 +364,7 @@ static stock Debug_SetState() <>
 	forward Debug_OnScriptInit();
 #endif
 
-stock Debug_SetLevel(level = 0)
+stock DebugLevel(level = -1)
 {
 	if (0 <= level <= 7)
 	{
