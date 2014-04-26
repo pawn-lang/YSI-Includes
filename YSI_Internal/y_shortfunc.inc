@@ -138,14 +138,41 @@ native _YSI_RE_NATIVE<V@|||GLOBAL_TAG_TYPES:id=0, const name[]="", value=cellmin
 	#undef CallLocalFunction
 #endif
 
+#if defined _ALS_CallRemoteFunction
+	#if defined BAD_CallRemoteFunction
+		#undef CallRemoteFunction
+	#else
+		#error Unknown redefinition of CallRemoteFunction.
+	#endif
+#endif
+
 // Define this command with basically every strong tag in existence to avoid
 // tag mismatch warnings with remote functions with strong tag parameters.
 native _YSI_RE_NATIVE<W@|||const function[], const format[], GLOBAL_TAG_TYPES:...|||CallRemoteFunction>
 
 native _YSI_RE_NATIVE<P@|||const function[], const format[], GLOBAL_TAG_TYPES:...|||CallLocalFunction>
 
+#if defined _ALS_CallRemoteFunction
+	#if defined BAD_CallRemoteFunction
+		#define CallRemoteFunction FIXES_CallRemoteFunction
+	#endif
+#endif
+
 #if defined _YSI_MINI_MODE
+	#if defined _ALS_CallRemoteFunction
+		#undef CallRemoteFunction
+	#else
+		#define _ALS_CallRemoteFunction
+	#endif
+	
 	#define CallRemoteFunction _MMD(CallRemoteFunction)
+	
+	#if defined _ALS_CallLocalFunction
+		#undef CallLocalFunction
+	#else
+		#define _ALS_CallLocalFunction
+	#endif
+	
 	#define CallLocalFunction  _MMD(CallLocalFunction)
 #endif
 
