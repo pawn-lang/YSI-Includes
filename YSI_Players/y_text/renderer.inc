@@ -28,7 +28,7 @@ enum e_TEXT_RENDER_COLOUR
 // list of relative jumps, and the output is a progressively updated list of
 // absolute locations.  The input and output also includes additional data, but
 // this data is not in a 2D array but all concatenated.
-Y_TEXT_STATIC stock TextR_UpdateRelToAbs(rel[], abs[], &idx, addition, insertPos)
+_Y_TEXT_STATIC stock TextR_UpdateRelToAbs(rel[], abs[], &idx, addition, insertPos)
 {
 	// rel = 5  5  7  8  0
 	// old = 0  5 10 17 25
@@ -58,7 +58,7 @@ Y_TEXT_STATIC stock TextR_UpdateRelToAbs(rel[], abs[], &idx, addition, insertPos
 	abs[idx] += addition;
 }
 
-Y_TEXT_STATIC stock TextR_CompleteRelToAbs(rel[], abs[], &idx)
+_Y_TEXT_STATIC stock TextR_CompleteRelToAbs(rel[], abs[], &idx)
 {
 	// Afterwards (to complete any stragglers).  The function above only updates
 	// the list and converts relative jumps to absolute ones as long as there is
@@ -77,7 +77,7 @@ Y_TEXT_STATIC stock TextR_CompleteRelToAbs(rel[], abs[], &idx)
 }
 
 
-Y_TEXT_STATIC stock TextR_Render(string:str[], colourList[])
+_Y_TEXT_STATIC stock TextR_Render(string:str[], colourList[])
 {
 	static
 		colourLocations[Y_TEXT_MAX_COLOUR_EMBEDS];
@@ -140,7 +140,7 @@ Y_TEXT_STATIC stock TextR_Render(string:str[], colourList[])
 /**
 	Get all information about the extent of this fade.
 **/
-Y_TEXT_STATIC stock TextR_GetFadeData(colourLocations[], start, &endColour, &endPos, &newLines)
+_Y_TEXT_STATIC stock TextR_GetFadeData(colourLocations[], start, &endColour, &endPos, &newLines)
 {
 	newLines = 0;
 	for ( ; ; )
@@ -160,7 +160,7 @@ Y_TEXT_STATIC stock TextR_GetFadeData(colourLocations[], start, &endColour, &end
 	}
 }
 
-Y_TEXT_STATIC stock TextR_DoSpecifier(string:str[])
+_Y_TEXT_STATIC stock TextR_DoSpecifier(string:str[])
 {
 	// Resolve what the specifier is, including all its parameters (which may be
 	// very complex, indeed, variable length).
@@ -185,7 +185,7 @@ Y_TEXT_STATIC stock TextR_DoSpecifier(string:str[])
 // for the display of the colour, and we can instead get 4 bit flags embedded
 // within the colour.
 
-Y_TEXT_STATIC stock TextR_InsertColour(str[], len, pos, &oldColour, newColour, &bool:pending) <y_text_colour : y_text_colour_gt>
+_Y_TEXT_STATIC stock TextR_InsertColour(str[], len, pos, &oldColour, newColour, &bool:pending) <y_text_colour : y_text_colour_gt>
 {
 	new
 		oldType = oldColour & 0xFF,
@@ -234,7 +234,7 @@ Y_TEXT_STATIC stock TextR_InsertColour(str[], len, pos, &oldColour, newColour, &
 </remarks>
 **/
 
-Y_TEXT_STATIC stock TextR_InsertColour(str[], len, pos, &oldColour, newColour, &bool:pending) <y_text_colour : y_text_colour_scm>
+_Y_TEXT_STATIC stock TextR_InsertColour(str[], len, pos, &oldColour, newColour, &bool:pending) <y_text_colour : y_text_colour_scm>
 {
 	// Insert a colour of the form "{RRGGBB}".
 	newColour &= (_:e_TEXT_RENDER_COLOUR_MASK & 0xFFFFFF00); // SCM ignores alpha.
@@ -282,7 +282,7 @@ Y_TEXT_STATIC stock TextR_InsertColour(str[], len, pos, &oldColour, newColour, &
 		0;
 }
 
-Y_TEXT_STATIC stock TextR_DoStraightFade(str[], len, &oldColour, startPos, startColour, fadeLen, endColour, &bool:pending)
+_Y_TEXT_STATIC stock TextR_DoStraightFade(str[], len, &oldColour, startPos, startColour, fadeLen, endColour, &bool:pending)
 {
 	// This function does fades between two points when there are no newlines
 	// between the fade points.
@@ -324,7 +324,7 @@ Y_TEXT_STATIC stock TextR_DoStraightFade(str[], len, &oldColour, startPos, start
 	#undef taglen
 }
 
-Y_TEXT_STATIC stock TextR_DoNLFade(str[], len, &oldColour, startPos, startColour, fadeLen, endColour, colourLocations[], &idx, &bool:pending, offset)
+_Y_TEXT_STATIC stock TextR_DoNLFade(str[], len, &oldColour, startPos, startColour, fadeLen, endColour, colourLocations[], &idx, &bool:pending, offset)
 {
 	// This function does fades between two points when there may be newlines
 	// between the fade points.  First, see if the first item is ALSO a new
@@ -392,7 +392,7 @@ Y_TEXT_STATIC stock TextR_DoNLFade(str[], len, &oldColour, startPos, startColour
 	#undef taglen
 }
 
-Y_TEXT_STATIC stock TextR_ResolvePending(str[], len, pos, colourLocations[], idx, colour, endPos, &curColour)
+_Y_TEXT_STATIC stock TextR_ResolvePending(str[], len, pos, colourLocations[], idx, colour, endPos, &curColour)
 {
 	endPos += colourLocations[idx];
 	//printf("%d %d %c", pos, endPos, str[pos]);
@@ -419,7 +419,7 @@ Y_TEXT_STATIC stock TextR_ResolvePending(str[], len, pos, colourLocations[], idx
 	return 0;
 }
 
-Y_TEXT_STATIC stock TextR_GetSlotColour(slot, originalColour, currentColour)
+_Y_TEXT_STATIC stock TextR_GetSlotColour(slot, originalColour, currentColour)
 {
 	if (slot & _:e_TEXT_RENDER_COLOUR_END) return originalColour;
 	else if (slot & _:e_TEXT_RENDER_COLOUR_STAR) return 0xFEFEFE00; // TODO:.
@@ -428,7 +428,7 @@ Y_TEXT_STATIC stock TextR_GetSlotColour(slot, originalColour, currentColour)
 	return currentColour;
 }
 
-Y_TEXT_STATIC stock TextR_DoOneColour(str[], len, offset, colourLocations[], &idx, &curColour, initialColour)
+_Y_TEXT_STATIC stock TextR_DoOneColour(str[], len, offset, colourLocations[], &idx, &curColour, initialColour)
 {
 	new
 		pos = offset + colourLocations[idx],
@@ -476,7 +476,7 @@ Y_TEXT_STATIC stock TextR_DoOneColour(str[], len, offset, colourLocations[], &id
 	}
 }
 
-TextR_NLBacktrack(&lineEnd, &lineStart, lineColour&)
+/*TextR_NLBacktrack(&lineEnd, &lineStart, &lineColour)
 {
 	// There are 2 stages to this:  1) If we are in a colour, extract it and
 	// keep going backwards.  2) Skip whitespaces.
@@ -497,19 +497,19 @@ TextR_NLBacktrack(&lineEnd, &lineStart, lineColour&)
 	}
 }
 
-Y_TEXT_STATIC stock TextR_FindEnd(str[], lastNL, nextNL, nlColour, &nextColour)
+_Y_TEXT_STATIC stock TextR_FindEnd(str[], lastNL, nextNL, nlColour, &nextColour)
 {
 	// All fits in fine, not a problem!
 	if (nextNL - lastNL <= 144) return nextColour = nlColour, nextNL;
 	// Too much between the "\n" characters.
 	new
 		maybe = TextR_NLBacktrack(str, nextNL, nextColour);
-}
+}*/
 
 
 
 
-Y_TEXT_STATIC stock TextR_RunPhase2(str[], len, colourLocations[], intialColour)
+_Y_TEXT_STATIC stock TextR_RunPhase2(str[], len, colourLocations[], intialColour)
 {
 	// Loop over all the stored colours and add them in to the string.
 	new
@@ -523,7 +523,7 @@ Y_TEXT_STATIC stock TextR_RunPhase2(str[], len, colourLocations[], intialColour)
 	}
 }
 
-Y_TEXT_STATIC stock TextR_RunPhase3(str[], len, colourLocations[], initialColour)
+/*_Y_TEXT_STATIC stock TextR_RunPhase3(str[], len, colourLocations[], initialColour)
 {
 	new
 		offset = 0,
@@ -541,7 +541,7 @@ Y_TEXT_STATIC stock TextR_RunPhase3(str[], len, colourLocations[], initialColour
 	//TextR_DoLastNL(str, len, lastNL, curColour, initialColour);
 }
 
-Y_TEXT_STATIC stock TextR_DoOneNL(str, len, &lastNL, colourLocations, idx, &curColour, offset) <y_text_display : y_text_display_print>
+_Y_TEXT_STATIC stock TextR_DoOneNL(str, len, &lastNL, colourLocations, idx, &curColour, offset) <y_text_display : y_text_display_print>
 {
 	new
 		pos = colourLocations[idx] + offset,
@@ -555,13 +555,13 @@ Y_TEXT_STATIC stock TextR_DoOneNL(str, len, &lastNL, colourLocations, idx, &curC
 		0;
 }
 
-Y_TEXT_STATIC stock TextR_RTrim(str[], start, end)
+_Y_TEXT_STATIC stock TextR_RTrim(str[], start, end)
 {
 	while (--end >= start && str[end] <= ' ') {}
 	return end + 1;
 }
 
-Y_TEXT_STATIC stock TextR_FindLast(str[], end, ch[])
+_Y_TEXT_STATIC stock TextR_FindLast(str[], end, ch[])
 {
 	new
 		last = -1,
@@ -573,7 +573,7 @@ Y_TEXT_STATIC stock TextR_FindLast(str[], end, ch[])
 	return last;
 }
 
-Y_TEXT_STATIC stock TextR_GetSplitPoint(str[], start, end, &colour)
+_Y_TEXT_STATIC stock TextR_GetSplitPoint(str[], start, end, &colour)
 {
 	// Find a good place to split the string at between "start" and "end", then
 	// figure out what colour the string is at that point.
@@ -581,7 +581,7 @@ Y_TEXT_STATIC stock TextR_GetSplitPoint(str[], start, end, &colour)
 
 
 
-Y_TEXT_STATIC stock TextR_DoOneNL(str, len, &lastNL, colourLocations, idx, &curColour, offset) <y_text_display : y_text_display_scm>
+_Y_TEXT_STATIC stock TextR_DoOneNL(str, len, &lastNL, colourLocations, idx, &curColour, offset) <y_text_display : y_text_display_scm>
 {
 	new
 		pos = colourLocations[idx] + offset;
@@ -607,14 +607,187 @@ Y_TEXT_STATIC stock TextR_DoOneNL(str, len, &lastNL, colourLocations, idx, &curC
 		}
 	}
 	return 0;
+}*/
+
+_Y_TEXT_STATIC stock TextR_GetSplitPoint(str[], pos, len, &end, &start)
+{
+	// Escape any colour we may be in.
+	pos = TextR_GetColourStart(str, pos);
+	// Are we at a space already?
+	start = TextR_LTrim(str, pos),
+	end = TextR_RTrim(str, pos);
+	if (start == end)
+	{
+		// "pos" is now either right before a colour, or not near one.
+		new
+			cf = TextR_CountCharsFore(str, pos),
+			cb = TextR_CountCharsBack(str, pos); // MODIFIES "pos".
+		if (cb < 4 || cb + cf < 6) // Word can't be split.
+		{
+			start = end = pos;
+		}
+		else
+		{
+			// Get the point to insert the "-" at.
+			pos = TextR_SkipChars(str, pos, min(cb - 1, (cb + cf) / 2)),
+			start = end = pos + 1,
+			strins(str, "-", pos, len);
+		}
+	}
 }
+
+_Y_TEXT_STATIC stock TextR_LTrim(str[], pos)
+{
+	while ('\0' < str[pos] <= ' ') ++pos;
+	return pos;
+}
+
+_Y_TEXT_STATIC stock TextR_RTrim(str[], pos)
+{
+	while (pos--)
+	{
+		if (str[pos] > ' ') break;
+	}
+	return pos + 1;
+}
+
+_Y_TEXT_STATIC stock bool:TextR_IsColour(const str[])
+{
+	static const
+		scIsHex['F' + 1] = 
+		{
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
+			0, 1, 1, 1, 1, 1, 1
+		};
+	new
+		ch;
+	return
+		(str[0] == '{') &&
+		IS_IN_RANGE((ch = str[1]), '0', 'F' + 1) && (scIsHex[ch]) &&
+		IS_IN_RANGE((ch = str[2]), '0', 'F' + 1) && (scIsHex[ch]) &&
+		IS_IN_RANGE((ch = str[3]), '0', 'F' + 1) && (scIsHex[ch]) &&
+		IS_IN_RANGE((ch = str[4]), '0', 'F' + 1) && (scIsHex[ch]) &&
+		IS_IN_RANGE((ch = str[5]), '0', 'F' + 1) && (scIsHex[ch]) &&
+		IS_IN_RANGE((ch = str[6]), '0', 'F' + 1) && (scIsHex[ch]) &&
+		(str[7] == '}');
+}
+
+/**
+<summary>TextR_SkipChars</summary>
+<param name="str">The string we are moving through.</param>
+<param name="pos">The position in the string we want to start at.</param>
+<param name="num">The number of characters to skip over.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Skips over a given number of VISIBLE colours, ignores colours.
+</remarks>
+**/
+
+_Y_TEXT_STATIC stock TextR_SkipChars(str[], pos, num)
+{
+	while (num)
+	{
+		if (TextR_IsColour(str[pos])) pos += 8;
+		else --num, ++pos;
+	}
+	return pos;
+}
+
+_Y_TEXT_STATIC stock TextR_CountCharsBack(str[], &pos)
+{
+	new
+		count;
+	// This is never called directly after a colour.
+	while (count < 10)
+	{
+		--pos;
+		if (str[pos] <= ' ') return ++pos, count;
+		else ++count;
+		if (TextR_IsColour(str[pos - 8]))
+		{
+			pos -= 8;
+		}
+	}
+	return 10;
+}
+
+_Y_TEXT_STATIC stock TextR_CountCharsFore(str[], pos)
+{
+	new
+		count;
+	while (count < 6) // Don't care about any more than 6 characters.
+	{
+		if (TextR_IsColour(str[pos])) pos += 8;
+		else if (str[pos] <= ' ') return count;
+		else ++pos, ++count;
+	}
+	// We only care about up to 3 characters to cover this case:
+	//  
+	//  hel-
+	//  lo
+	//  
+	// That is an invalid split, there must be at least 3 characters of the word
+	// remaining on the next line, AND on the previous line, so we can't split
+	// the word "hello", but can split:
+	//  
+	//  saluta-
+	//  tions
+	//  
+	// We could improve it slightly, since this may end up with a split like:
+	//  
+	//  salutati-
+	//  ons
+	//  
+	// Instead of an even split in the middle of the word.  We upped the search
+	// to 6 characters to make the halves possibly more even.
+	return 6;
+}
+
+_Y_TEXT_STATIC stock TextR_GetColourStart(str[], pos)
+{
+	new
+		tpos = pos - 8;
+	while (tpos < pos && !TextR_IsColour(str[tpos])) ++tpos;
+	return tpos;
+}
+
+/*_Y_TEXT_STATIC stock bool:TextR_GetColour(const str[], &c = 0)
+{
+	new
+		ch;
+	if (str[0] != '{') return false;
+	if (IS_IN_RANGE((ch = str[1]), '0', '9' + 1)) c = 0;
+	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c = (ch - ('A' - 10))  << 20;
+	else return false;
+	if (IS_IN_RANGE((ch = str[2]), '0', '9' + 1)) c |= (ch - '0')        << 16;
+	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 16;
+	else return false;
+	if (IS_IN_RANGE((ch = str[3]), '0', '9' + 1)) c |= (ch - '0')        << 12;
+	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 12;
+	else return false;
+	if (IS_IN_RANGE((ch = str[4]), '0', '9' + 1)) c |= (ch - '0')        << 8;
+	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 8;
+	else return false;
+	if (IS_IN_RANGE((ch = str[5]), '0', '9' + 1)) c |= (ch - '0')        << 4;
+	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 4;
+	else return false;
+	if (IS_IN_RANGE((ch = str[6]), '0', '9' + 1)) c |= (ch - '0');
+	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10));
+	else return false;
+	return (str[7] == '}');
+}*/
 
 #endinput
 
 // Basic printing, less than "n" characters between two new lines, meaning no
 // complex location searching.
 
-Y_TEXT_STATIC stock TextR_AddNewLines()
+_Y_TEXT_STATIC stock TextR_AddNewLines()
 {
 	
 }
@@ -629,7 +802,7 @@ Y_TEXT_STATIC stock TextR_AddNewLines()
 
 #endinput
 
-Y_TEXT_STATIC stock TextR_WillOverflow(str[], pos, colourLocations[], idx) <y_text_display : y_text_display_print>
+_Y_TEXT_STATIC stock TextR_WillOverflow(str[], pos, colourLocations[], idx) <y_text_display : y_text_display_print>
 {
 	return cellmin;
 }
@@ -663,7 +836,7 @@ Y_TEXT_STATIC stock TextR_WillOverflow(str[], pos, colourLocations[], idx) <y_te
 	// }                                                            \
 	// if ((%2) == 65536) (%2) = (%3)
 
-Y_TEXT_STATIC stock TextR_AdditionalNewLines(str[], colourLocations[]) <y_text_display : y_text_display_scm>
+_Y_TEXT_STATIC stock TextR_AdditionalNewLines(str[], colourLocations[]) <y_text_display : y_text_display_scm>
 {
 	new
 		prevNL = 0,
@@ -705,7 +878,7 @@ TextR_SkipMultiLine(nextNL, colourLocations, &idx, &fade)
 	}
 }
 
-Y_TEXT_STATIC stock TextR_GetSCMLineData(str[], pos, len, colourLocations[], &idx, &inserts, &nextNL, &bool:fade)
+_Y_TEXT_STATIC stock TextR_GetSCMLineData(str[], pos, len, colourLocations[], &idx, &inserts, &nextNL, &bool:fade)
 {
 	new
 		cp,
@@ -745,31 +918,33 @@ Y_TEXT_STATIC stock TextR_GetSCMLineData(str[], pos, len, colourLocations[], &id
 	nextNL = len;
 }
 
-Y_TEXT_STATIC stock bool:TextR_IsColour(const str[])
+_Y_TEXT_STATIC stock bool:TextR_IsColour(const str[], &c = 0)
 {
-	static const
-		scIsHex['F' + 1] = 
-		{
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-			0, 1, 1, 1, 1, 1, 1
-		};
 	new
 		ch;
-	return
-		(str[0] == '{') &&
-		IS_IN_RANGE((ch = str[1]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		IS_IN_RANGE((ch = str[2]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		IS_IN_RANGE((ch = str[3]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		IS_IN_RANGE((ch = str[4]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		IS_IN_RANGE((ch = str[5]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		IS_IN_RANGE((ch = str[6]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		(str[7] == '}');
+	if (str[0] != '{') return false;
+	if (IS_IN_RANGE((ch = str[1]), '0', '9' + 1)) c = 0;
+	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c = (ch - ('A' - 10))  << 20;
+	else return false;
+	if (IS_IN_RANGE((ch = str[2]), '0', '9' + 1)) c |= (ch - '0')        << 16;
+	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 16;
+	else return false;
+	if (IS_IN_RANGE((ch = str[3]), '0', '9' + 1)) c |= (ch - '0')        << 12;
+	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 12;
+	else return false;
+	if (IS_IN_RANGE((ch = str[4]), '0', '9' + 1)) c |= (ch - '0')        << 8;
+	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 8;
+	else return false;
+	if (IS_IN_RANGE((ch = str[5]), '0', '9' + 1)) c |= (ch - '0')        << 4;
+	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 4;
+	else return false;
+	if (IS_IN_RANGE((ch = str[6]), '0', '9' + 1)) c |= (ch - '0');
+	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10));
+	else return false;
+	return (str[7] == '}');
 }
 
-// Y_TEXT_STATIC stock bool:TextR_IsColour(str[])
+// _Y_TEXT_STATIC stock bool:TextR_IsColour(str[])
 // {
 	// new
 		// ch;
@@ -783,7 +958,7 @@ Y_TEXT_STATIC stock bool:TextR_IsColour(const str[])
 		// (('0' <= (ch = str[6]) <= '9') || ('A' <= ch <= 'F'));
 // }
 
-// Y_TEXT_STATIC stock bool:TextR_IsColour2(str[])
+// _Y_TEXT_STATIC stock bool:TextR_IsColour2(str[])
 // {
 	// static const
 		// scIsHex['F' + 1] = 
@@ -806,7 +981,7 @@ Y_TEXT_STATIC stock bool:TextR_IsColour(const str[])
 		// ('0' <= (ch = str[6]) <= 'F') && (scIsHex[ch]);
 // }
 
-// Y_TEXT_STATIC stock bool:TextR_IsColour3(str[])
+// _Y_TEXT_STATIC stock bool:TextR_IsColour3(str[])
 // {
 	// static const
 		// scIsHex['F' + 1] = 
