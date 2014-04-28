@@ -1858,3 +1858,30 @@ stock InlineRet:operator+(InlineRet:a, Float:b)
 	return InlineRet:0;
 }
 
+stock InlineRet:operator+(InlineRet:a, bool:b)
+{
+	#pragma unused a
+	// Modify the return address.
+	#emit LOAD.S.pri 0
+	#emit ADD.C      4
+	#emit LOAD.I
+	#emit STOR.S.pri 4
+	// Get the last function's parameters.
+	#emit LOAD.S.pri 0
+	#emit ADD.C      8
+	#emit LOAD.I
+	#emit LOAD.S.alt 0
+	#emit ADD
+	#emit ADDR.alt   0
+	#emit SUB
+	#emit STOR.S.pri 8
+	// Load the return value.
+	#emit LOAD.S.pri b
+	// Copy the previous frame.
+	#emit LREF.S.alt 0
+	#emit STOR.S.alt 0
+	// Do the return
+	#emit RETN
+	return InlineRet:0;
+}
+
