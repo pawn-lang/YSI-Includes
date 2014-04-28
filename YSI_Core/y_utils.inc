@@ -281,7 +281,7 @@ public OnPlayerDisconnect(playerid, reason)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define UCMP(%0,%1) (((%0) - cellmin) < ((%1) - cellmin))
+#define UCMP(%0,%1) IS_IN_RANGE(%0,0,(%1)) //(((%0) - cellmin) < ((%1) - cellmin))
 #define VALID_PLAYERID(%0) UCMP((%0), MAX_PLAYERS)
 
 /**--------------------------------------------------------------------------**\
@@ -299,7 +299,8 @@ public OnPlayerDisconnect(playerid, reason)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define IS_IN_RANGE(%0,%1,%2) (((%0) - ((%1) + cellmin)) < ((%2) - ((%1) + cellmin)))
+#define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
+#define NOT_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
 
 /**--------------------------------------------------------------------------**\
 <summary>
@@ -428,7 +429,8 @@ stock StripNL(str[])
 stock endofline(line[], pos)
 {
 	P:7("endofline called: \"%s\", %i", line, pos);
-	if (pos < 0 || pos > strlen(line)) return 0;
+	if (NOT_IN_RANGE(pos, 0, strlen(line))) return 0;
+	//if (pos < 0 || pos > strlen(line)) return 0;
 	while (line[pos]) if (line[pos++] > ' ') return 0;
 	return 1;
 }
@@ -569,7 +571,8 @@ stock ishex(str[])
 	{
 		cur = str[i++];
 	}
-	while (('0' <= cur <= '9') || ('a' <= (cur | 0x20) <= 'f'));
+	while (IS_IN_RANGE(cur, '0', '9' + 1) || IS_IN_RANGE(cur | 0x20, 'a', 'f' + 1));
+	//while (('0' <= cur <= '9') || ('a' <= (cur | 0x20) <= 'f'));
 	return !cur; // Valid if this is the end of the string.
 }
 
@@ -653,10 +656,10 @@ stock isnumeric(str[])
 {
 	P:7("isnumeric called: \"%s\"", str);
 	new
-		ch,
 		i;
-	while ((ch = str[i++])) if (!('0' <= ch <= '9')) return 0;
-	return 1;
+	while (IS_IN_RANGE(str[i], '0', '9' + 1)) ++i;
+	//while ((ch = str[i++])) if (!('0' <= ch <= '9')) return 0;
+	return !str[i];
 }
 
 #if !defined _inc_sscanf || 1
@@ -1048,7 +1051,8 @@ stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
 
 stock SkipWhitespace(const str[], pos)
 {
-	while ('\0' < str[pos] <= ' ') ++pos;
+	while (IS_IN_RANGE(str[pos], '\0' + 1, ' ' + 1)) ++pos;
+	//while ('\0' < str[pos] <= ' ') ++pos;
 	return pos;
 }
 
@@ -1067,7 +1071,8 @@ stock SkipWhitespace(const str[], pos)
 
 stock Trim(const str[], &start, &end)
 {
-	while ('\0' < str[start] <= ' ') ++start;
+	while (IS_IN_RANGE(str[start], '\0' + 1, ' ' + 1)) ++start;
+	//while ('\0' < str[start] <= ' ') ++start;
 	if (str[start])
 	{
 		while (end-- > start && str[end] <= ' ') {}

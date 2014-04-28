@@ -130,11 +130,13 @@ somewhere_after_this_func:
 //#define LAMBDA_s<%9>{%0}(%1) _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)
 // #define LAMBDA_a<%9>{%0}(%1) _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)
 
-#define _DO_LAMBDA|||%6|||%5|||<%9>{%0}(%1)%8; {static const YSII[]="@:....";if(I@E(YSII))for(%6;I@F();)while(I@L(I@K()%5))YSI_gInlineRet+=(%0);%9(callback_tag:YSII%1)%8;}
+#define _DO_LAMBDA|||%6|||%5|||<%9>{%0}(%1)%8; LAM@0()%8;{LAM@1();static const YSII[]="@:....";if(I@E(YSII))for(%6;I@F();)while(I@L(I@K()%5))YSI_gInlineRet+=(%0);LAM@2(%9(callback_tag:YSII%1));}
 
 // Make sure there's a space after the "return".
-#define YSI_gInlineRet+=(%0);%9(%1)%2=>%3; YSI_gInlineRet+=(%0);%3= %9(%1);
-#define return= return
+//#define YSI_gInlineRet+=(%0);%9(%1);}=> YSI_gInlineRet+=(%0);%3= %9(%1);
+//#define return= return
+//#define return%0({%1}%2)%3; %0({%1}%2)%3=>
+#define return%0({%1}%2)%3; I@=%0({%1}%2)%3;return I@;
 
 #define inline%0(%1) static %0[_:I@E:32]=#%0":....";if(I@E(_:_YI@CP:%0))for(new%1,,;I@F();)while(I@L(I@K(1)))
 

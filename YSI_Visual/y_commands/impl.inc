@@ -358,7 +358,8 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define _Command_IsValid(%0) ((0 <= (%0) < YSI_g_sHighestID) && _Command_IsActive(%0))
+//#define _Command_IsValid(%0) ((0 <= (%0) < YSI_g_sHighestID) && _Command_IsActive(%0))
+#define _Command_IsValid(%0) (IS_IN_RANGE((%0), 0, MAX_COMMANDS) && _Command_IsActive(%0))
 
 /**--------------------------------------------------------------------------**\
 <summary>_Command_IsPrefix</summary>
@@ -373,7 +374,7 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 \**--------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
-	#define _Command_IsPrefix(%0) ((((%0) - cellmin - 1) < (128 - cellmin - 1)) && Bit_Get(YSI_g_sPrefixes, (%0)))
+	#define _Command_IsPrefix(%0) (IS_IN_RANGE((%0), 0, 128 + 1) && Bit_Get(YSI_g_sPrefixes, (%0)))
 #else
 	#define _Command_IsPrefix(%0) ((%0) == '/')
 #endif

@@ -6,9 +6,9 @@
 stock Map(callback:cb, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
 {
 	CB_GET("i");
-	for (new len = min(al, dl); len--; )
+	for (new len = min(al, dl), i; i != len; ++i)
 	{
-		dest[len] = CB_CALL(arr[len]);
+		dest[i] = CB_CALL(arr[i]);
 	}
 	return CB_REL();
 }
@@ -17,9 +17,9 @@ stock Map(callback:cb, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest
 stock Map_(callback:cb, const arr[], len = sizeof (arr))
 {
 	CB_GET("i");
-	while (len--)
+	for (new i; i != len; ++i)
 	{
-		CB_CALL(arr[len]);
+		CB_CALL(arr[i]);
 	}
 	return CB_REL();
 }
@@ -28,9 +28,9 @@ stock Map_(callback:cb, const arr[], len = sizeof (arr))
 stock IdxMap(callback:cb, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
 {
 	CB_GET("ii");
-	for (new len = min(al, dl); len--; )
+	for (new len = min(al, dl), i; i != len; ++i)
 	{
-		dest[len] = CB_CALL(len, arr[len]);
+		dest[i] = CB_CALL(i, arr[i]);
 	}
 	return CB_REL();
 }
@@ -39,9 +39,9 @@ stock IdxMap(callback:cb, const arr[], dest[], al = sizeof (arr), dl = sizeof (d
 stock IdxMap_(callback:cb, const arr[], len = sizeof (arr))
 {
 	CB_GET("ii");
-	while (len--)
+	for (new i; i != len; ++i)
 	{
-		CB_CALL(len, arr[len]);
+		CB_CALL(i, arr[i]);
 	}
 	return CB_REL();
 }
@@ -52,9 +52,9 @@ stock IdxMap_(callback:cb, const arr[], len = sizeof (arr))
 stock ZipWith(callback:cb, const l[], const r[], dest[], ls = sizeof (l), rs = sizeof (r), ds = sizeof (dest))
 {
 	CB_GET("ii");
-	for (new len = min(ds, min(ls, rs)); len--; )
+	for (new len = min(ds, min(ls, rs)), i; i != len; ++i)
 	{
-		dest[len] = CB_CALL(l[len], r[len]);
+		dest[i] = CB_CALL(l[i], r[i]);
 	}
 	return CB_REL();
 }
@@ -63,9 +63,9 @@ stock ZipWith(callback:cb, const l[], const r[], dest[], ls = sizeof (l), rs = s
 stock ZipWith_(callback:cb, const l[], const r[], ls = sizeof (l), rs = sizeof (r))
 {
 	CB_GET("ii");
-	for (new len = min(ls, rs); len--; )
+	for (new len = min(ls, rs), i; i != len; ++i)
 	{
-		CB_CALL(l[len], r[len]);
+		CB_CALL(l[i], r[i]);
 	}
 	return CB_REL();
 }
@@ -74,9 +74,9 @@ stock ZipWith_(callback:cb, const l[], const r[], ls = sizeof (l), rs = sizeof (
 stock ZipWith3(callback:cb, const l[], const m[], const r[], dest[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r), ds = sizeof (dest))
 {
 	CB_GET("iii");
-	for (new len = min(min(ms, ds), min(ls, rs)); len--; )
+	for (new len = min(min(ms, ds), min(ls, rs)), i; i != len; ++i)
 	{
-		dest[len] = CB_CALL(l[len], m[len], r[len]);
+		dest[i] = CB_CALL(l[i], m[i], r[i]);
 	}
 	return CB_REL();
 }
@@ -85,9 +85,9 @@ stock ZipWith3(callback:cb, const l[], const m[], const r[], dest[], ls = sizeof
 stock ZipWith3_(callback:cb, const l[], const m[], const r[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r))
 {
 	CB_GET("iii");
-	for (new len = min(ms, min(ls, rs)); len--; )
+	for (new len = min(ms, min(ls, rs)), i; i != len; ++i)
 	{
-		CB_CALL(l[len], m[len], r[len]);
+		CB_CALL(l[i], m[i], r[i]);
 	}
 	return CB_REL();
 }
@@ -214,9 +214,9 @@ stock bool:Or(bool:arr[], len = sizeof (arr))
 stock bool:All(callback:cb, const arr[], len = sizeof (arr))
 {
 	CB_GET("i");
-	while (len--)
+	for (new i; i != len; ++i)
 	{
-		if (!CB_CALL(arr[len])) return CB_REL(), false;
+		if (!CB_CALL(arr[i])) return CB_REL(), false;
 	}
 	return
 		CB_REL(),
@@ -227,9 +227,9 @@ stock bool:All(callback:cb, const arr[], len = sizeof (arr))
 stock bool:Any(callback:cb, const arr[], len = sizeof (arr))
 {
 	CB_GET("i");
-	while (len--)
+	for (new i; i != len; ++i)
 	{
-		if (CB_CALL(arr[len])) return CB_REL(), true;
+		if (CB_CALL(arr[i])) return CB_REL(), true;
 	}
 	return
 		CB_REL(),
