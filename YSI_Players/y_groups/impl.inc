@@ -840,7 +840,7 @@ stock Group:Group_SetBalanced(playerid, {Group, _}:...)
 	{
 		case 1, 2:
 		{
-			P:W("Group_AddBalanced requires at least 2 groups or an array.");
+			P:W("Group_SetBalanced requires at least 2 groups or an array.");
 		}
 		case 3:
 		{
