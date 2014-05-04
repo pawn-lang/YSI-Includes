@@ -469,7 +469,7 @@ native Iter_Count(Iterator:Name<>);
 
 /**--------------------------------------------------------------------------**\
 <summary>Itter_Clear</summary>
-<param name="itter">Name of the itterator empty.</param>
+<param name="iter">Name of the iterator to empty.</param>
 <returns>
 	-
 </returns>
@@ -483,6 +483,23 @@ native Iter_Clear(IteratorArray:Name[]<>);
 
 #define Iter_Clear Itter_Clear
 #define Itter_Clear(%1) Itter_ClearInternal(_Y_ITER_ARRAY$%1$YSII_Cg,_Y_ITER_ARRAY$%1$YSII_Ag,_Y_ITER_MAYBE_ARRAY(%1))
+
+/**--------------------------------------------------------------------------**\
+<summary>Itter_FastClear</summary>
+<param name="iter">Name of the iterator to empty.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Uses a static array copy to blank the iterator instead of a loop.
+
+native Iter_FastClear(IteratorArray:Name[]<>);
+
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Iter_FastClear Itter_FastClear
+#define Itter_FastClear(%1); {static __CLEAR[_:_Y_ITER_C1:(sizeof %1@YSII_Ag+1-1)]={(_:_Y_ITER_C1:(sizeof %1@YSII_Ag-1))*2,(_:_Y_ITER_C1:(sizeof %1@YSII_Ag-1))*2-1,...};(_Y_ITER_ARRAY$%1$YSII_Cg=0),(_Y_ITER_ARRAY$%1$YSII_Ag=__CLEAR);}
 
 /*
 
@@ -609,14 +626,12 @@ native Iter_Clear(IteratorArray:Name[]<>);
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-// #define _Y_ITER_INT_SIZE:%0(%2[%1]@YSII_Ag)) %0(%2@YSII_Ag[]))
-
-#define Iter_InternalSize(%1) (_Y_ITER_MAYBE_ARRAY(%1)+1) // (_:_Y_ITER_INT_SIZE:sizeof (%1@YSII_Ag))
-#define Itter_InternalSize(%1) (_Y_ITER_MAYBE_ARRAY(%1)+1) // (_:_Y_ITER_INT_SIZE:sizeof (%1@YSII_Ag))
+#define Iter_InternalSize(%1) (_Y_ITER_MAYBE_ARRAY(%1)+1)
+#define Itter_InternalSize(%1) (_Y_ITER_MAYBE_ARRAY(%1)+1)
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_Size</summary>
-<param name="iter">Name of the iterator to get the true size of.</param>
+<param name="iter">Name of the iterator to get the size of.</param>
 <returns>
 	-
 </returns>
@@ -1367,9 +1382,9 @@ stock
 stock
 	Itter_ClearInternal(&count, array[], size)
 {
-	for (new i = 0, t = size + 1; i < size; ++i)
+	for (new i = 0, t = size * 2; i < size; )
 	{
-		array[i] = t;
+		array[i++] = t--;
 	}
 	array[size] = size;
 	count = 0;
