@@ -511,7 +511,7 @@ TextR_ShowSCM(colour, str[], start, end)
 	new
 		ch = str[end];
 	str[end] = '\0',
-	printf("%06x: \"%s\"", colour, str[start]),
+	//printf("%06x: \"%s\"", colour, str[start]),
 	//print(str[start]),
 	str[end] = ch;
 }
@@ -524,31 +524,29 @@ _Y_TEXT_STATIC stock bool:TextR_GetColour(const str[], &colour)
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0,
-			0, 10, 11, 12, 13, 14, 15
+			0x80000000 | 0, 0x80000000 | 1, 0x80000000 | 2,
+			0x80000000 | 3, 0x80000000 | 4, 0x80000000 | 5,
+			0x80000000 | 6, 0x80000000 | 7, 0x80000000 | 8,
+			0x80000000 | 9, 0, 0, 0, 0, 0, 0, 0,
+			0x80000000 | 10, 0x80000000 | 11, 0x80000000 | 12,
+			0x80000000 | 13, 0x80000000 | 14, 0x80000000 | 15
 		};
 	new
 		c,
 		ch;
 	if (str[0] == '{')
 	{
-		if ((ch = str[1]) == '0') {}
-		else if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c = ch;
+		if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c = ch & 0x0F;
 		else return false;
-		if ((ch = str[2]) == '0') {}
-		else if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 4;
+		if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 4;
 		else return false;
-		if ((ch = str[3]) == '0') {}
-		else if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 8;
+		if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 8;
 		else return false;
-		if ((ch = str[4]) == '0') {}
-		else if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 12;
+		if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 12;
 		else return false;
-		if ((ch = str[5]) == '0') {}
-		else if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 16;
+		if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 16;
 		else return false;
-		if ((ch = str[6]) == '0') {}
-		else if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 20;
+		if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 20;
 		else return false;
 		colour = c;
 		return (str[7] == '}');
@@ -600,7 +598,7 @@ _Y_TEXT_STATIC stock TextR_RunPhase3(str[], len, colourLocations[]) //, intialCo
 		else idx += 2;
 		colourPrev = colourCur;
 	}
-	printf("%06x: \"%s\"", colourLine, str[lastNL]);
+	//printf("%06x: \"%s\"", colourLine, str[lastNL]);
 }
 
 
