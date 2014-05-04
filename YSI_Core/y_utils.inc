@@ -176,6 +176,7 @@ new stock
 
 #define __TY|||%0||| (1000000)
 #define __TX:__TY|||%0,%1||| (%1)
+#define __TF=fopen(%0,%2"%3",%4) __TF=fopen(%0".csv",%4)
 
 #if !defined TIMING_ITERATIONS
 	#define TIMING_ITERATIONS (10)
@@ -207,9 +208,15 @@ stock __TU(t, iters)
 
 #define RUN_TIMING(%0) \
 	for(new __TA[TIMING_ITERATIONS],__TC=sizeof __TA,__TE=_:__TX:__TY|||%0|||,__TS=printf("Timing \"%s\"...",%0);__TC; \
-	printf("\t  Mean = %s\n\t  Mode = %s\n\tMedian = %s\n\t Range = %s", \
-		__TU(Mean(__TA),__TE),__TU(Mode(__TA),__TE),__TU(Median(__TA),__TE),__TU(Range(__TA),__TE))) \
+		printf("\t  Mean = %s\n\t  Mode = %s\n\tMedian = %s\n\t Range = %s", \
+			__TU(Mean(__TA),__TE),__TU(Mode(__TA),__TE),__TU(Median(__TA),__TE),__TU(Range(__TA),__TE))) \
 	for(;(__TS=GetTickCount(),__TC);__TA[--__TC]=GetTickCount()-__TS) \
+	for(new __TI;__TI!=__TE;++__TI)
+
+#define CSV_TIMING(%0) \
+	for(new __TA[TIMING_ITERATIONS],__TC=sizeof __TA,__TE=_:__TX:__TY|||%0|||,__TS=printf("Timing \"%s\"...",%0),File:__TF=fopen(%0".csv",io_append);__TF&&__TC;\
+		va_fprintf(__TF,"%d,%d,%s,%s,%s,%s\n",gettime(),__TE,__TU(Mean(__TA),__TE),__TU(Mode(__TA),__TE),__TU(Median(__TA),__TE),__TU(Range(__TA),__TE)),fclose(__TF))\
+	for(;(__TS=GetTickCount(),__TC);__TA[--__TC]=GetTickCount()-__TS)\
 	for(new __TI;__TI!=__TE;++__TI)
 
 stock
