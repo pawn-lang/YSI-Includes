@@ -405,6 +405,7 @@ Test:Colours_EncodeGameText1()
 
 Test:TextR_GetFadeData0()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		colourLocations[] = {0,
 			0xAAAAAAAA | _:e_TEXT_RENDER_COLOUR_FADE, 10,
@@ -420,6 +421,7 @@ Test:TextR_GetFadeData0()
 
 Test:TextR_GetFadeData1()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		colourLocations[] = {0,
 			0xAAAAAAAA | _:e_TEXT_RENDER_COLOUR_FADE | _:e_TEXT_RENDER_COLOUR_LINE, 10,
@@ -435,6 +437,7 @@ Test:TextR_GetFadeData1()
 
 Test:TextR_GetFadeData2()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		colourLocations[] = {0,
 			0xAAAAAAAA | _:e_TEXT_RENDER_COLOUR_FADE, 10,
@@ -450,6 +453,7 @@ Test:TextR_GetFadeData2()
 
 Test:TextR_GetFadeData3()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		colourLocations[] = {0,
 			0xAAAAAAAA | _:e_TEXT_RENDER_COLOUR_FADE | _:e_TEXT_RENDER_COLOUR_LINE, 10,
@@ -465,6 +469,7 @@ Test:TextR_GetFadeData3()
 
 Test:TextR_GetFadeData4()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		colourLocations[] = {0,
 			0xAAAAAAAA | _:e_TEXT_RENDER_COLOUR_FADE, 10,
@@ -481,6 +486,7 @@ Test:TextR_GetFadeData4()
 
 Test:TextR_GetFadeData5()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		colourLocations[] = {0,
 			0xAAAAAAAA | _:e_TEXT_RENDER_COLOUR_FADE | _:e_TEXT_RENDER_COLOUR_LINE, 10,
@@ -497,6 +503,7 @@ Test:TextR_GetFadeData5()
 
 Test:TextR_GetFadeData6()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		colourLocations[] = {0,
 			0xAAAAAAAA | _:e_TEXT_RENDER_COLOUR_FADE, 10,
@@ -513,6 +520,7 @@ Test:TextR_GetFadeData6()
 
 Test:TextR_GetFadeData7()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		colourLocations[] = {0,
 			0xAAAAAAAA | _:e_TEXT_RENDER_COLOUR_FADE | _:e_TEXT_RENDER_COLOUR_LINE, 10,
@@ -529,6 +537,7 @@ Test:TextR_GetFadeData7()
 
 Test:TextR_GetFadeData8()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		colourLocations[] = {0,
 			0xAAAAAAAA | _:e_TEXT_RENDER_COLOUR_FADE | _:e_TEXT_RENDER_COLOUR_LINE, 10,
@@ -718,6 +727,7 @@ Test:TextR_NoFadeSCM()
 
 Test:TextR_GetSlotColour()
 {
+	state y_text_colour : y_text_colour_scm;
 	// {/}
 	ASSERT(TextR_GetSlotColour(_:e_TEXT_RENDER_COLOUR_END, 0xFF00BBAA, 0xCCDDEEBB) == 0xFF00BBAA);
 	ASSERT(TextR_GetSlotColour(0x12345678 | _:e_TEXT_RENDER_COLOUR_END, 0xFF00BBAA, 0xCCDDEEBB) == 0xFF00BBAA);
@@ -1063,6 +1073,7 @@ Test:TextR_RTrim()
 
 Test:TextR_SkipChars()
 {
+	state y_text_colour : y_text_colour_scm;
 	ASSERT(TextR_SkipChars("", 0, 0) == 0);
 	ASSERT(TextR_SkipChars("Hello World", 0, 1) == 1);
 	ASSERT(TextR_SkipChars("Hello World", 5, 1) == 6);
@@ -1074,6 +1085,7 @@ Test:TextR_SkipChars()
 
 Test:TextR_CountCharsFore()
 {
+	state y_text_colour : y_text_colour_scm;
 	ASSERT(TextR_CountCharsFore("", 0) == 0);
 	ASSERT(TextR_CountCharsFore("{112233}", 0) == 0);
 	ASSERT(TextR_CountCharsFore("Hello", 0) == 5);
@@ -1090,6 +1102,7 @@ Test:TextR_CountCharsFore()
 
 Test:TextR_CountCharsBack()
 {
+	state y_text_colour : y_text_colour_scm;
 	new str[100], pos;
 	str = "                ", pos = strlen(str);
 	ASSERT(TextR_CountCharsBack(str, pos) == 0);
@@ -1170,6 +1183,7 @@ Test:TextR_RTrim()
 
 Test:TextR_GetSplitPoint0()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		str[64],
 		start,
@@ -1209,6 +1223,7 @@ Test:TextR_GetSplitPoint0()
 
 Test:TextR_GetSplitPoint1()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		str[64],
 		start,
@@ -1272,6 +1287,7 @@ Test:TextR_GetSplitPoint1()
 
 Test:TextR_GetSplitPoint2()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		str[64],
 		start,
@@ -1311,6 +1327,7 @@ Test:TextR_GetSplitPoint2()
 
 Test:TextR_GetSplitPoint3()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		str[64],
 		start,
@@ -1350,6 +1367,7 @@ Test:TextR_GetSplitPoint3()
 
 Test:TextR_GetSplitPoint4()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		str[64],
 		start,
@@ -1401,6 +1419,7 @@ Test:TextR_GetSplitPoint4()
 
 Test:TextR_GetSplitPoint5()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		str[64],
 		start,
@@ -1422,6 +1441,7 @@ Test:TextR_GetSplitPoint5()
 
 Test:TextR_IsColour()
 {
+	state y_text_colour : y_text_colour_scm;
 	new str[16];
 	ASSERT(TextR_IsColour("{123456}"));
 	ASSERT(TextR_IsColour("{AABBCC}"));
@@ -1446,6 +1466,7 @@ Test:TextR_IsColour()
 
 Test:zzz_TextR_RunPhase2_0()
 {
+	state y_text_colour : y_text_colour_scm;
 	new
 		colourLocations[] = {0xFEFEFE00,
 			0xAAAAAAAA | _:e_TEXT_RENDER_COLOUR_FADE, 10,
@@ -1460,8 +1481,25 @@ Test:zzz_TextR_RunPhase2_0()
 	ASSERT(!strcmp(str, "Hello ther{AAAAAA}e{9C9C9C}, {808080}h{727272}o{666666}w {4A4A4A}a{3C3C3C}r{2E2E2E}e {222222}you?  This is quite long"));
 }
 
+static stock
+	YSI_g_sTextTest,
+	YSI_g_sTextColourTest[10],
+	YSI_g_sTextOutputTest[10][256];
+
+_Y_TEXT_STATIC stock TextR_DoOutput(colour, str[], start, end) <y_text_output : y_text_output_test>
+{
+	//printf("%d\n%06x", YSI_g_sTextTest, YSI_g_sTextColourTest[YSI_g_sTextTest]);
+	//printf("%06x:\n\"%.*s\"", colour >>> 8, end - start, str[start]);
+	//printf("\"%s\"", YSI_g_sTextOutputTest[YSI_g_sTextTest]);
+	ASSERT(!strcmp(YSI_g_sTextOutputTest[YSI_g_sTextTest], str[start], false, end - start));
+	ASSERT(colour >>> 8 == YSI_g_sTextColourTest[YSI_g_sTextTest]);
+	++YSI_g_sTextTest;
+}
+
 Test:zzz_TextR_RunPhase2_1()
 {
+	state y_text_colour : y_text_colour_scm;
+	state y_text_output : y_text_output_test;
 	new
 		colourLocations[] = {0xFEFEFE00,
 			0xAAAAAAAA | _:e_TEXT_RENDER_COLOUR_FADE, 10,
@@ -1474,7 +1512,71 @@ Test:zzz_TextR_RunPhase2_1()
 	ASSERT(colourLocations[2] == 10);
 	ASSERT(colourLocations[4] == 84);
 	ASSERT(!strcmp(str, "Hello ther{AAAAAA}e{9C9C9C}, {808080}h{727272}o{666666}w {4A4A4A}a{3C3C3C}r{2E2E2E}e you?  This is quite long"));
+	// Do phase 3.
+	YSI_g_sTextTest = 0;
+	YSI_g_sTextColourTest[0] = 0xFEFEFE;
+	YSI_g_sTextOutputTest[0] = "Hello ther{AAAAAA}e{9C9C9C}, {808080}h{727272}o{666666}w {4A4A4A}a{3C3C3C}r{2E2E2E}e";
+	YSI_g_sTextColourTest[1] = 0x222222;
+	YSI_g_sTextOutputTest[1] = " you?  This is quite long";
+	
+	
 	TextR_RunPhase3(str, sizeof (str), colourLocations);
+	ASSERT(YSI_g_sTextTest == 2);
+}
+
+Test:zzz_TextR_RunPhase3_0()
+{
+	state y_text_colour : y_text_colour_scm;
+	state y_text_output : y_text_output_test;
+	new
+		colourLocations[] = {0x02040608,
+			0x000000FE | _:e_TEXT_RENDER_COLOUR_FADE, 40,
+			0xFEFEFE00 | _:e_TEXT_RENDER_COLOUR_LINE, 200,
+			0x14284256 | _:e_TEXT_RENDER_COLOUR_FADE, 210,
+			0x9898ACEA | _:e_TEXT_RENDER_COLOUR_LINE, 220,
+			0, 65536};
+	static
+		str[YSI_MAX_STRING * 80] = "Hello there, how are you?  This is quite long, but this one is even longer, I don't really know what I'm saying - I'm just trying to make a very long string...  Even to this point, it wasn't QUITE long enough, but now it is.";
+	//DebugLevel(3);
+	//printf("1");
+	TextR_RunPhase2(str, sizeof (str), colourLocations);
+	//printf("2");
+	//print(str);
+	//printf("%d %d", colourLocations[2], colourLocations[4]);
+	//printf("%d %d", colourLocations[6], colourLocations[8]);
+	ASSERT(colourLocations[2] == 40);
+	ASSERT(colourLocations[4] == 1064);
+	ASSERT(colourLocations[6] == 1074);
+	ASSERT(colourLocations[8] == 1148);
+	// Do phase 3.
+	YSI_g_sTextTest = 0;
+	//DebugLevel(0);
+	YSI_g_sTextOutputTest[0] = "Hello there, how are you?  This is quite {000000}l{020202}o{040404}n{060606}g, {0A0A0A}b{0C0C0C}u{0E0E0E}t {101010}t{121212}h{141414}i{161616}s";
+	YSI_g_sTextOutputTest[1] = "o{1A1A1A}n{1C1C1C}e {1E1E1E}i{202020}s {242424}e{262626}ve{282828}n {2C2C2C}l{2E2E2E}on{303030}g{323232}e{343434}r, {383838}I "                  ;
+	YSI_g_sTextOutputTest[2] = "do{3E3E3E}n{404040}'{424242}t {444444}r{464646}e{484848}a{4A4A4A}l{4C4C4C}ly {505050}k{525252}n{545454}ow {585858}w{5A5A5A}h{5C5C5C}at "         ;
+	YSI_g_sTextOutputTest[3] = "I{626262}'{646464}m {666666}s{686868}a{6A6A6A}yi{6C6C6C}n{6E6E6E}g {727272}- {747474}I{767676}'{787878}m {7A7A7A}j{7C7C7C}u{7E7E7E}s{808080}t"  ;
+	YSI_g_sTextOutputTest[4] = "t{848484}r{868686}y{888888}i{8A8A8A}ng {8E8E8E}t{909090}o {929292}m{949494}a{969696}k{989898}e {9A9A9A}a {9E9E9E}v{A0A0A0}er{A2A2A2}y "          ;
+	YSI_g_sTextOutputTest[5] = "l{A8A8A8}on{AAAAAA}g {AEAEAE}s{B0B0B0}tr{B2B2B2}i{B4B4B4}n{B6B6B6}g{B8B8B8}..{BABABA}.  {C0C0C0}Ev{C2C2C2}e{C4C4C4}n {C8C8C8}to "                ;
+	YSI_g_sTextOutputTest[6] = "t{CECECE}hi{D0D0D0}s {D4D4D4}p{D6D6D6}oi{D8D8D8}n{DADADA}t{DCDCDC}, {DEDEDE}i{E0E0E0}t {E4E4E4}w{E6E6E6}as{E8E8E8}n{EAEAEA}'{ECECEC}t "          ;
+	YSI_g_sTextOutputTest[7] = "Q{F0F0F0}U{F2F2F2}I{F4F4F4}T{F6F6F6}E {F8F8F8}l{FAFAFA}o{FCFCFC}n"                                                                              ;
+	YSI_g_sTextOutputTest[8] = "g enough, {142842}b{20324C}u{2E3E56}t {48546C}n{566076}o{626A80}w {7C8096}i{8A8CA0}t"                                                           ;
+	YSI_g_sTextOutputTest[9] = " is."                                                                                                                                            ;
+	
+	YSI_g_sTextColourTest[0] = 0x020406;
+	YSI_g_sTextColourTest[1] = 0x181818;
+	YSI_g_sTextColourTest[2] = 0x3C3C3C;
+	YSI_g_sTextColourTest[3] = 0x606060;
+	YSI_g_sTextColourTest[4] = 0x828282;
+	YSI_g_sTextColourTest[5] = 0xA6A6A6;
+	YSI_g_sTextColourTest[6] = 0xCCCCCC;
+	YSI_g_sTextColourTest[7] = 0xEEEEEE;
+	YSI_g_sTextColourTest[8] = 0xFEFEFE;
+	YSI_g_sTextColourTest[9] = 0x9898AC;
+	
+	TextR_RunPhase3(str, sizeof (str), colourLocations);
+	//printf("3");
+	ASSERT(YSI_g_sTextTest == 10);
+	//ASSERT(!strcmp(str, cmp));
 }
 
 

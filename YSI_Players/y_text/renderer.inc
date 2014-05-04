@@ -431,19 +431,25 @@ _Y_TEXT_STATIC stock TextR_GetSlotColour(slot, originalColour, currentColour)
 _Y_TEXT_STATIC stock TextR_DoOneColour(str[], len, offset, colourLocations[], &idx, &curColour, initialColour)
 {
 	new
-		pos = offset + colourLocations[idx],
+		pos = colourLocations[idx],
 		flags = colourLocations[idx - 1],
 		colour = TextR_GetSlotColour(flags, initialColour, curColour);
-	//printf("pos: %d = %d", colourLocations[idx], pos);
-	//printf("colour: %04x%04x", colour >>> 16, colour & 0xFFFF);
+	/*printf("str: %s", str);
+	printf("len: %d", len);
+	printf("pos: %d = %d", pos, pos + offset);
+	printf("colour: %04x%04x", colour >>> 16, colour & 0xFFFF);*/
 	if (flags & _:e_TEXT_RENDER_COLOUR_FADE)
 	{
+		//printf("1");
 		new
 			endColour,
 			fadeLen,
 			newLines;
 		TextR_GetFadeData(colourLocations, idx, endColour, fadeLen, newLines),
-		fadeLen -= pos;
+		//printf("2: %06x, %d, %d", endColour >>> 8, fadeLen, newLines);
+		fadeLen -= pos,
+		pos += offset;
+		//printf("2: %06x, %d, %d", endColour >>> 8, fadeLen, newLines);
 		// Don't need to check and return "pending" statuses here.  The next
 		// character will be another colour always (the fade end).
 		if (newLines)
@@ -462,13 +468,13 @@ _Y_TEXT_STATIC stock TextR_DoOneColour(str[], len, offset, colourLocations[], &i
 		// Don't do any output here.
 		return
 			curColour = colour, // TODO: Better Game Text aware copying.
-			//colourLocations[idx] = pos, // Save the final location.
 			colourLocations[idx - 1] = colour | _:e_TEXT_RENDER_COLOUR_LINE,
 			0;
 	}
 	else
 	{
 		return
+			pos += offset,
 			initialColour = TextR_InsertColour(str, len, pos, curColour, colour, bool:flags /* pending */),
 			flags ?
 				TextR_ResolvePending(str, len, pos + 1, colourLocations, idx + 2, colour, offset, curColour) :
@@ -506,7 +512,7 @@ _Y_TEXT_STATIC stock TextR_FindEnd(str[], lastNL, nextNL, nlColour, &nextColour)
 		maybe = TextR_NLBacktrack(str, nextNL, nextColour);
 }*/
 
-TextR_ShowSCM(colour, str[], start, end)
+_Y_TEXT_STATIC stock TextR_DoOutput(colour, str[], start, end) <y_text_output : y_text_output_scm>
 {
 	new
 		ch = str[end];
@@ -536,20 +542,22 @@ _Y_TEXT_STATIC stock bool:TextR_GetColour(const str[], &colour)
 		ch;
 	if (str[0] == '{')
 	{
-		if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c = ch & 0x0F;
+		if (IS_IN_RANGE((ch = str[1]), '0', 'F' + 1) && (ch = scIsHex[ch])) c = ch << 20;
 		else return false;
-		if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 4;
+		if (IS_IN_RANGE((ch = str[2]), '0', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 16;
 		else return false;
-		if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 8;
+		if (IS_IN_RANGE((ch = str[3]), '0', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 12;
 		else return false;
-		if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 12;
+		if (IS_IN_RANGE((ch = str[4]), '0', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 8;
 		else return false;
-		if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 16;
+		if (IS_IN_RANGE((ch = str[5]), '0', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 4;
 		else return false;
-		if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 20;
-		else return false;
-		colour = c;
-		return (str[7] == '}');
+		if (IS_IN_RANGE((ch = str[6]), '0', 'F' + 1) && (ch = scIsHex[ch]))
+		{
+			return
+				colour = c | (ch & 0x0F),
+				(str[7] == '}');
+		}
 	}
 	return false;
 }
@@ -560,6 +568,7 @@ _Y_TEXT_STATIC stock TextR_GetLastColour(str[], pos, colour)
 	{
 		pos -= 8;
 		while (!TextR_GetColour(str[pos], colour) && pos) --pos;
+		colour <<= 8;
 	}
 	return colour;
 }
@@ -582,22 +591,26 @@ _Y_TEXT_STATIC stock TextR_RunPhase3(str[], len, colourLocations[]) //, intialCo
 				new
 					start,
 					end;
-				TextR_GetSplitPoint(str, lastNL + 144, len, end, start);
-				TextR_ShowSCM(colourLine, str, lastNL, end);
-				lastNL = start;
+				TextR_GetSplitPoint(str, lastNL + 144, len, end, start),
+				TextR_DoOutput(colourLine, str, lastNL, end),
+				lastNL = start,
 				colourLine = TextR_GetLastColour(str, start, colourPrev);
 			}
 			else
 			{
-				TextR_ShowSCM(colourLine, str, lastNL, pos);
-				lastNL = pos;
-				idx += 2;
-				colourLine = colourCur;
+				TextR_DoOutput(colourLine, str, lastNL, pos),
+				lastNL = pos,
+				idx += 2,
+				colourPrev = colourLine = colourCur;
 			}
 		}
-		else idx += 2;
-		colourPrev = colourCur;
+		else
+		{
+			idx += 2,
+			colourPrev = colourCur;
+		}
 	}
+	TextR_DoOutput(colourLine, str, lastNL, len);
 	//printf("%06x: \"%s\"", colourLine, str[lastNL]);
 }
 
