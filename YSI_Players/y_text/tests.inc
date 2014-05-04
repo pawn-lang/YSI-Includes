@@ -785,7 +785,7 @@ Test:TextR_DoOneColour1SCM()
 		offset += TextR_DoOneColour(str, len, offset, colourLocations, idx, curColour, initialColour);
 		idx += 2;
 	}
-	printf(str);
+	//printf(str);
 	ASSERT(!strcmp(str, "This {FEF000}is a {AA8822}string {123456}to test :D."));
 	ASSERT(offset == 24);
 	ASSERT(idx == 8);
@@ -838,7 +838,7 @@ Test:TextR_DoOneColour3SCM()
 		offset += TextR_DoOneColour(str, len, offset, colourLocations, idx, curColour, initialColour);
 		idx += 2;
 	}
-	printf(str);
+	//printf(str);
 	ASSERT(!strcmp(str, "This {000000}i{020202}s {060606}a {0A0A0A}strin{123456}g to test :D."));
 	ASSERT(offset == 40);
 	ASSERT(idx == 8);
@@ -865,7 +865,7 @@ Test:TextR_DoOneColour4SCM()
 		offset += TextR_DoOneColour(str, len, offset, colourLocations, idx, curColour, initialColour);
 		idx += 2;
 	}
-	printf(str);
+	//printf(str);
 	ASSERT(!strcmp(str, "This {000000}i{020202}s {060606}a strin{123456}g to test :D."));
 	ASSERT(offset == 32);
 	ASSERT(idx == 8);
@@ -892,7 +892,7 @@ Test:TextR_DoOneColour3bSCM()
 		offset += TextR_DoOneColour(str, len, offset, colourLocations, idx, curColour, initialColour);
 		idx += 2;
 	}
-	printf(str);
+	//printf(str);
 	ASSERT(!strcmp(str, "This i{020202}s {060606}a {0A0A0A}strin{123456}g to test :D."));
 	ASSERT(offset == 32);
 	ASSERT(idx == 8);
@@ -919,7 +919,7 @@ Test:TextR_DoOneColour4bSCM()
 		offset += TextR_DoOneColour(str, len, offset, colourLocations, idx, curColour, initialColour);
 		idx += 2;
 	}
-	printf(str);
+	//printf(str);
 	ASSERT(!strcmp(str, "This i{020202}s {060606}a strin{123456}g to test :D."));
 	ASSERT(offset == 24);
 	ASSERT(idx == 8);
@@ -1006,18 +1006,18 @@ Test:TextR_DoOneColour7SCM()
 		offset += TextR_DoOneColour(str, len, offset, colourLocations, idx, curColour, initialColour);
 		idx += 2;
 	}
-	printf(str);
+	//printf(str);
 	ASSERT(!strcmp(str, "This {FEFEFE}is {F8F8F8}a string to test :D."));
 	ASSERT(offset == 16);
 	ASSERT(idx == 10);
 	ASSERT(curColour == 0xF4F4F400);
-	ASSERT(colourLocations[4] == 14);
-	ASSERT(colourLocations[6] == 26);
+	ASSERT(colourLocations[4] == 6);
+	ASSERT(colourLocations[6] == 10);
 	ASSERT(colourLocations[3] == 0xFCFCFC00 | _:e_TEXT_RENDER_COLOUR_LINE);
 	ASSERT(colourLocations[5] == 0xF4F4F400 | _:e_TEXT_RENDER_COLOUR_LINE);
 }
 
-Test:TextR_FindLast()
+/*Test:TextR_FindLast()
 {
 	ASSERT(TextR_FindLast("Hello", 1, " ") == -1);
 	ASSERT(TextR_FindLast("Hello", 5, " ") == -1);
@@ -1056,6 +1056,425 @@ Test:TextR_RTrim()
 	ASSERT(TextR_RTrim("      ", 1, 6) == 1);
 	ASSERT(TextR_RTrim("1     ", 1, 6) == 1);
 	ASSERT(TextR_RTrim("11    ", 1, 6) == 2);
+}*/
+
+
+
+
+Test:TextR_SkipChars()
+{
+	ASSERT(TextR_SkipChars("", 0, 0) == 0);
+	ASSERT(TextR_SkipChars("Hello World", 0, 1) == 1);
+	ASSERT(TextR_SkipChars("Hello World", 5, 1) == 6);
+	ASSERT(TextR_SkipChars("{112233}Hello World", 0, 3) == 11);
+	ASSERT(TextR_SkipChars("{112233}H{112233}e{112233}llo World", 0, 3) == 27);
+	ASSERT(TextR_SkipChars("{112233}H{112233}e{112233}llo World", 8, 3) == 27);
+	ASSERT(TextR_SkipChars("{112233}H{112233}e{112233}llo World", 9, 3) == 28);
+}
+
+Test:TextR_CountCharsFore()
+{
+	ASSERT(TextR_CountCharsFore("", 0) == 0);
+	ASSERT(TextR_CountCharsFore("{112233}", 0) == 0);
+	ASSERT(TextR_CountCharsFore("Hello", 0) == 5);
+	ASSERT(TextR_CountCharsFore("Hello There", 0) == 5);
+	ASSERT(TextR_CountCharsFore("{112233}Hello There", 0) == 5);
+	ASSERT(TextR_CountCharsFore("{xxyyzz}Hello There", 0) == 6);
+	ASSERT(TextR_CountCharsFore("Hello_There", 0) == 6);
+	ASSERT(TextR_CountCharsFore("{112233}Hello_There", 0) == 6);
+	ASSERT(TextR_CountCharsFore("He{112233}llo_There", 0) == 6);
+	ASSERT(TextR_CountCharsFore("He{112233}ll{112233}o_There", 0) == 6);
+	ASSERT(TextR_CountCharsFore("He{112233}ll{112233}o_{112233}There", 0) == 6);
+	ASSERT(TextR_CountCharsFore("{112233}H{112233}e{112233}l{112233}l{112233}o There", 0) == 5);
+}
+
+Test:TextR_CountCharsBack()
+{
+	new str[100], pos;
+	str = "                ", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 0);
+	ASSERT(pos == 16);
+	str = "                {112233}x", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 1);
+	ASSERT(pos == 16);
+	str = "                Hello", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 5);
+	ASSERT(pos == 16);
+	str = "                Hello There", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 5);
+	ASSERT(pos == 22);
+	str = "                {112233}Hello There", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 5);
+	ASSERT(pos == 30);
+	str = "                {xxyyzz}Hello There", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 5);
+	ASSERT(pos == 30);
+	str = "                Hello_There", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 10);
+	ASSERT(pos == 17);
+	str = "                {112233}Hello_There", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 10);
+	ASSERT(pos == 25);
+	str = "                He{112233}llo_There", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 10);
+	ASSERT(pos == 17);
+	str = "                He{112233}ll{112233}o_There", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 10);
+	ASSERT(pos == 17);
+	str = "                He{112233}ll{112233}o_{112233}There", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 10);
+	ASSERT(pos == 17);
+	str = "                {112233}H{112233}e{112233}l{112233}l{112233}o There", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 5);
+	ASSERT(pos == 62);
+	str = "                {112233}H{112233}e{112233}l{112233}l{112233}o_There", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 10);
+	ASSERT(pos == 25);
+	str = "                Hello {xxyyzz}There", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 10);
+	ASSERT(pos == 25);
+	str = "                Hello {112233}There", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 5);
+	ASSERT(pos == 22);
+	str = "                Hello {112233}The{112233}re", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 5);
+	ASSERT(pos == 22);
+	str = "                Hello Th{112233}er{112233}e", pos = strlen(str);
+	ASSERT(TextR_CountCharsBack(str, pos) == 5);
+	ASSERT(pos == 22);
+}
+
+Test:TextR_LTrim()
+{
+	ASSERT(TextR_LTrim("", 0) == 0);
+	ASSERT(TextR_LTrim("Hello", 0) == 0);
+	ASSERT(TextR_LTrim(" Hello", 0) == 1);
+	ASSERT(TextR_LTrim(" Hello", 1) == 1);
+	ASSERT(TextR_LTrim("    Hello", 0) == 4);
+	ASSERT(TextR_LTrim("    Hello", 2) == 4);
+	ASSERT(TextR_LTrim("    Hello", 4) == 4);
+	ASSERT(TextR_LTrim("     ", 0) == 5);
+	ASSERT(TextR_LTrim("     ", 5) == 5);
+}
+
+Test:TextR_RTrim()
+{
+	ASSERT(TextR_RTrim("", 0) == 0);
+	ASSERT(TextR_RTrim("hi  ", 4) == 2);
+	ASSERT(TextR_RTrim("    ", 4) == 0);
+	ASSERT(TextR_RTrim("    ", 2) == 0);
+	ASSERT(TextR_RTrim("  ", 2) == 0);
+	ASSERT(TextR_RTrim("  hi", 2) == 0);
+	ASSERT(TextR_RTrim("  hi", 4) == 4);
+}
+
+Test:TextR_GetSplitPoint0()
+{
+	new
+		str[64],
+		start,
+		end;
+	// Split falls in a space.
+	str = "Hello There";
+	TextR_GetSplitPoint(str, 5, 64, end, start);
+	ASSERT(!strcmp(str, "Hello There"));
+	ASSERT(end == 5);
+	ASSERT(start == 6);
+	// 
+	str = "Hello    There";
+	TextR_GetSplitPoint(str, 5, 64, end, start);
+	ASSERT(!strcmp(str, "Hello    There"));
+	ASSERT(end == 5);
+	ASSERT(start == 9);
+	// 
+	str = "Hello    There";
+	TextR_GetSplitPoint(str, 6, 64, end, start);
+	ASSERT(!strcmp(str, "Hello    There"));
+	ASSERT(end == 5);
+	ASSERT(start == 9);
+	// 
+	str = "Hello    There";
+	TextR_GetSplitPoint(str, 7, 64, end, start);
+	ASSERT(!strcmp(str, "Hello    There"));
+	ASSERT(end == 5);
+	ASSERT(start == 9);
+	// 
+	str = "Hello    There";
+	TextR_GetSplitPoint(str, 9, 64, end, start);
+	ASSERT(!strcmp(str, "Hello    There"));
+	ASSERT(end == 5);
+	ASSERT(start == 9);
+	// 
+}
+
+Test:TextR_GetSplitPoint1()
+{
+	new
+		str[64],
+		start,
+		end;
+	// Split falls in a colour.
+	str = "Hello {098765}There";
+	TextR_GetSplitPoint(str, 10, 64, end, start);
+	ASSERT(!strcmp(str, "Hello {098765}There"));
+	ASSERT(end == 5);
+	ASSERT(start == 14);
+	// 
+	str = "Hello   {098765}There";
+	TextR_GetSplitPoint(str, 10, 64, end, start);
+	ASSERT(!strcmp(str, "Hello   {098765}There"));
+	ASSERT(end == 5);
+	ASSERT(start == 16);
+	// 
+	str = "Hello   {098765}There";
+	TextR_GetSplitPoint(str, 8, 64, end, start);
+	ASSERT(!strcmp(str, "Hello   {098765}There"));
+	ASSERT(end == 5);
+	ASSERT(start == 16);
+	// 
+	str = "Hello   {098765}There";
+	TextR_GetSplitPoint(str, 16, 64, end, start);
+	ASSERT(!strcmp(str, "Hello   {098765}There"));
+	ASSERT(end == 5);
+	ASSERT(start == 16);
+	// 
+	str = "Hello   {098765}There";
+	TextR_GetSplitPoint(str, 9, 64, end, start);
+	ASSERT(!strcmp(str, "Hello   {098765}There"));
+	ASSERT(end == 5);
+	ASSERT(start == 16);
+	// 
+	str = "Hello   {098765}There";
+	TextR_GetSplitPoint(str, 15, 64, end, start);
+	ASSERT(!strcmp(str, "Hello   {098765}There"));
+	ASSERT(end == 5);
+	ASSERT(start == 16);
+	//
+	str = "Hello   {098765}There";
+	TextR_GetSplitPoint(str, 6, 64, end, start);
+	ASSERT(!strcmp(str, "Hello   {098765}There"));
+	ASSERT(end == 5);
+	ASSERT(start == 16);
+	//
+	str = "Hello   {098765}There";
+	TextR_GetSplitPoint(str, 7, 64, end, start);
+	ASSERT(!strcmp(str, "Hello   {098765}There"));
+	ASSERT(end == 5);
+	ASSERT(start == 16);
+	//
+	str = "Hello   {098765}There";
+	TextR_GetSplitPoint(str, 8, 64, end, start);
+	ASSERT(!strcmp(str, "Hello   {098765}There"));
+	ASSERT(end == 5);
+	ASSERT(start == 16);
+	//
+}
+
+Test:TextR_GetSplitPoint2()
+{
+	new
+		str[64],
+		start,
+		end;
+	// Split falls near the start of a word.
+	str = "Other Hello_There";
+	TextR_GetSplitPoint(str, 8, 64, end, start);
+	ASSERT(!strcmp(str, "Other Hello_There"));
+	ASSERT(end == 6);
+	ASSERT(start == 6);
+	// 
+	str = "Other Hello_There";
+	TextR_GetSplitPoint(str, 9, 64, end, start);
+	ASSERT(!strcmp(str, "Other Hello_There"));
+	ASSERT(end == 6);
+	ASSERT(start == 6);
+	// 
+	str = "Other Hello_There";
+	TextR_GetSplitPoint(str, 9, 64, end, start);
+	ASSERT(!strcmp(str, "Other Hello_There"));
+	ASSERT(end == 6);
+	ASSERT(start == 6);
+	// 
+	str = "Other Hello";
+	TextR_GetSplitPoint(str, 10, 64, end, start);
+	ASSERT(!strcmp(str, "Other Hello"));
+	ASSERT(end == 6);
+	ASSERT(start == 6);
+	// 
+	str = "Other Hello There";
+	TextR_GetSplitPoint(str, 10, 64, end, start);
+	ASSERT(!strcmp(str, "Other Hello There"));
+	ASSERT(end == 6);
+	ASSERT(start == 6);
+	// 
+}
+
+Test:TextR_GetSplitPoint3()
+{
+	new
+		str[64],
+		start,
+		end;
+	// Split falls near the middle of a word.
+	str = "Other Hello_There";
+	TextR_GetSplitPoint(str, 10, 64, end, start);
+	ASSERT(!strcmp(str, "Other Hel-lo_There"));
+	ASSERT(end == 10);
+	ASSERT(start == 10);
+	// 
+	str = "Other Hello_There_Very_Long";
+	TextR_GetSplitPoint(str, 10, 64, end, start);
+	ASSERT(!strcmp(str, "Other Hel-lo_There_Very_Long"));
+	ASSERT(end == 10);
+	ASSERT(start == 10);
+	// 
+	str = "Other Hello_There_Very_Long";
+	TextR_GetSplitPoint(str, 12, 64, end, start);
+	ASSERT(!strcmp(str, "Other Hello-_There_Very_Long"));
+	ASSERT(end == 12);
+	ASSERT(start == 12);
+	// 
+	str = "Other Hello_There_Very_Long";
+	TextR_GetSplitPoint(str, 13, 64, end, start);
+	ASSERT(!strcmp(str, "Other Hello_-There_Very_Long"));
+	ASSERT(end == 13);
+	ASSERT(start == 13);
+	// 
+	str = "Other Hello_There_Very_Long";
+	TextR_GetSplitPoint(str, 24, 64, end, start);
+	ASSERT(!strcmp(str, "Other Hello_There_Ve-ry_Long"));
+	ASSERT(end == 21);
+	ASSERT(start == 21);
+	// 
+}
+
+Test:TextR_GetSplitPoint4()
+{
+	new
+		str[64],
+		start,
+		end;
+	// Split has colours.
+	str = "Other He{654321}llo";
+	TextR_GetSplitPoint(str, 8, 64, end, start);
+	ASSERT(!strcmp(str, "Other He{654321}llo"));
+	ASSERT(end == 6);
+	ASSERT(start == 6);
+	// 
+	str = "Other He{654321}llo";
+	TextR_GetSplitPoint(str, 16, 64, end, start);
+	ASSERT(!strcmp(str, "Other He{654321}llo"));
+	ASSERT(end == 6);
+	ASSERT(start == 6);
+	// 
+	str = "Other He{654321}llo";
+	TextR_GetSplitPoint(str, 17, 64, end, start);
+	ASSERT(!strcmp(str, "Other He{654321}llo"));
+	ASSERT(end == 6);
+	ASSERT(start == 6);
+	// 
+	str = "Other He{654321}lloo";
+	TextR_GetSplitPoint(str, 17, 64, end, start);
+	ASSERT(!strcmp(str, "Other He{654321}lloo"));
+	ASSERT(end == 6);
+	ASSERT(start == 6);
+	// 
+	str = "Other He{654321}lloo0";
+	TextR_GetSplitPoint(str, 17, 64, end, start);
+	ASSERT(!strcmp(str, "Other He{654321}lloo0"));
+	ASSERT(end == 6);
+	ASSERT(start == 6);
+	// 
+	str = "Other He{654321}lloo0";
+	TextR_GetSplitPoint(str, 18, 64, end, start);
+	ASSERT(!strcmp(str, "Other He{654321}l-loo0"));
+	ASSERT(end == 18);
+	ASSERT(start == 18);
+	// 
+	str = "Other He{654321}lloo_L{567890}ong";
+	TextR_GetSplitPoint(str, 21, 64, end, start);
+	ASSERT(!strcmp(str, "Other He{654321}llo-o_L{567890}ong"));
+	ASSERT(end == 20);
+	ASSERT(start == 20);
+	// 
+}
+
+Test:TextR_GetSplitPoint5()
+{
+	new
+		str[64],
+		start,
+		end;
+	// Split has many colours.
+	str = "Other {654321}H{654321}e{654321}l{654321}l{654321}o";
+	TextR_GetSplitPoint(str, 38, 64, end, start);
+	ASSERT(!strcmp(str, "Other {654321}H{654321}e{654321}l{654321}l{654321}o"));
+	ASSERT(end == 6);
+	ASSERT(start == 14);
+	// 
+	str = "Other {654321}H{654321}e{654321}l{654321}l{654321}o{654321}2";
+	TextR_GetSplitPoint(str, 42, 64, end, start);
+	ASSERT(!strcmp(str, "Other {654321}H{654321}e{654321}l-{654321}l{654321}o{654321}2"));
+	ASSERT(end == 34);
+	ASSERT(start == 42);
+	// 
+}
+
+Test:TextR_IsColour()
+{
+	new str[16];
+	ASSERT(TextR_IsColour("{123456}"));
+	ASSERT(TextR_IsColour("{AABBCC}"));
+	ASSERT(TextR_IsColour("{0A0B04}"));
+	ASSERT(!TextR_IsColour("{12345}"));
+	ASSERT(!TextR_IsColour("{00000G}"));
+	ASSERT(!TextR_IsColour("{00000#}"));
+	ASSERT(!TextR_IsColour("{@12345}"));
+	str = "{{12345}"; // Doesn't work in "ASSERT".
+	ASSERT(!TextR_IsColour(str));
+	ASSERT(!TextR_IsColour("{2212345}"));
+	ASSERT(!TextR_IsColour("{0KBEEF}"));
+	ASSERT(TextR_IsColour("{BDBEEF}"));
+	str = "BDBEEF}";
+	ASSERT(!TextR_IsColour(str));
+	str = "{BDBEEF";
+	ASSERT(!TextR_IsColour(str));
+	ASSERT(!TextR_IsColour("BDBEEF"));
+	ASSERT(!TextR_IsColour(""));
+}
+
+
+Test:zzz_TextR_RunPhase2_0()
+{
+	new
+		colourLocations[] = {0xFEFEFE00,
+			0xAAAAAAAA | _:e_TEXT_RENDER_COLOUR_FADE, 10,
+			0x22222222, 20,
+			0, 65536},
+		str[128] = "Hello there, how are you?  This is quite long";
+	TextR_RunPhase2(str, sizeof (str), colourLocations);
+	//print(str);
+	//printf("%d %d", colourLocations[2], colourLocations[4]);
+	ASSERT(colourLocations[2] == 10);
+	ASSERT(colourLocations[4] == 84);
+	ASSERT(!strcmp(str, "Hello ther{AAAAAA}e{9C9C9C}, {808080}h{727272}o{666666}w {4A4A4A}a{3C3C3C}r{2E2E2E}e {222222}you?  This is quite long"));
+}
+
+Test:zzz_TextR_RunPhase2_1()
+{
+	new
+		colourLocations[] = {0xFEFEFE00,
+			0xAAAAAAAA | _:e_TEXT_RENDER_COLOUR_FADE, 10,
+			0x22222222 | _:e_TEXT_RENDER_COLOUR_LINE, 20,
+			0, 65536},
+		str[128] = "Hello there, how are you?  This is quite long";
+	TextR_RunPhase2(str, sizeof (str), colourLocations);
+	//print(str);
+	//printf("%d %d", colourLocations[2], colourLocations[4]);
+	ASSERT(colourLocations[2] == 10);
+	ASSERT(colourLocations[4] == 84);
+	ASSERT(!strcmp(str, "Hello ther{AAAAAA}e{9C9C9C}, {808080}h{727272}o{666666}w {4A4A4A}a{3C3C3C}r{2E2E2E}e you?  This is quite long"));
+	TextR_RunPhase3(str, sizeof (str), colourLocations);
 }
 
 

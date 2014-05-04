@@ -365,7 +365,7 @@ _Y_TEXT_STATIC stock TextR_DoNLFade(str[], len, &oldColour, startPos, startColou
 			// would be triggered by the start point as well, but we make
 			// explicit checks for that before the loop because that is the only
 			// one that needs the checks so we can save time there.
-			colourLocations[idx] += inserted,
+			//colourLocations[idx] += inserted,
 			oldColour = colour & (_:e_TEXT_RENDER_COLOUR_MASK & 0xFFFFFF00),
 			// We have found a new line - save what colour should appear at this
 			// point, but don't write it out to the string.
@@ -462,7 +462,7 @@ _Y_TEXT_STATIC stock TextR_DoOneColour(str[], len, offset, colourLocations[], &i
 		// Don't do any output here.
 		return
 			curColour = colour, // TODO: Better Game Text aware copying.
-			colourLocations[idx] = pos, // Save the final location.
+			//colourLocations[idx] = pos, // Save the final location.
 			colourLocations[idx - 1] = colour | _:e_TEXT_RENDER_COLOUR_LINE,
 			0;
 	}
@@ -506,19 +506,126 @@ _Y_TEXT_STATIC stock TextR_FindEnd(str[], lastNL, nextNL, nlColour, &nextColour)
 		maybe = TextR_NLBacktrack(str, nextNL, nextColour);
 }*/
 
+TextR_ShowSCM(colour, str[], start, end)
+{
+	new
+		ch = str[end];
+	str[end] = '\0',
+	printf("%06x: \"%s\"", colour, str[start]),
+	//print(str[start]),
+	str[end] = ch;
+}
+
+_Y_TEXT_STATIC stock bool:TextR_GetColour(const str[], &colour)
+{
+	static const
+		scIsHex['F' + 1] = 
+		{
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0, 0, 0, 0,
+			0, 10, 11, 12, 13, 14, 15
+		};
+	new
+		c,
+		ch;
+	if (str[0] == '{')
+	{
+		if ((ch = str[1]) == '0') {}
+		else if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c = ch;
+		else return false;
+		if ((ch = str[2]) == '0') {}
+		else if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 4;
+		else return false;
+		if ((ch = str[3]) == '0') {}
+		else if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 8;
+		else return false;
+		if ((ch = str[4]) == '0') {}
+		else if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 12;
+		else return false;
+		if ((ch = str[5]) == '0') {}
+		else if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 16;
+		else return false;
+		if ((ch = str[6]) == '0') {}
+		else if (IS_IN_RANGE(ch, '1', 'F' + 1) && (ch = scIsHex[ch])) c |= ch << 20;
+		else return false;
+		colour = c;
+		return (str[7] == '}');
+	}
+	return false;
+}
+
+_Y_TEXT_STATIC stock TextR_GetLastColour(str[], pos, colour)
+{
+	if (colour & _:e_TEXT_RENDER_COLOUR_FADE)
+	{
+		pos -= 8;
+		while (!TextR_GetColour(str[pos], colour) && pos) --pos;
+	}
+	return colour;
+}
+
+_Y_TEXT_STATIC stock TextR_RunPhase3(str[], len, colourLocations[]) //, intialColour)
+{
+	new
+		colourLine = colourLocations[0],
+		colourCur,
+		lastNL = 0,
+		pos,
+		colourPrev = colourLine,
+		idx = 2;
+	while ((pos = colourLocations[idx]) != 65536)
+	{
+		if ((colourCur = colourLocations[idx - 1]) & _:e_TEXT_RENDER_COLOUR_LINE)
+		{
+			if (pos - lastNL > 144)
+			{
+				new
+					start,
+					end;
+				TextR_GetSplitPoint(str, lastNL + 144, len, end, start);
+				TextR_ShowSCM(colourLine, str, lastNL, end);
+				lastNL = start;
+				colourLine = TextR_GetLastColour(str, start, colourPrev);
+			}
+			else
+			{
+				TextR_ShowSCM(colourLine, str, lastNL, pos);
+				lastNL = pos;
+				idx += 2;
+				colourLine = colourCur;
+			}
+		}
+		else idx += 2;
+		colourPrev = colourCur;
+	}
+	printf("%06x: \"%s\"", colourLine, str[lastNL]);
+}
 
 
 
-_Y_TEXT_STATIC stock TextR_RunPhase2(str[], len, colourLocations[], intialColour)
+
+
+
+
+
+
+
+_Y_TEXT_STATIC stock TextR_RunPhase2(str[], len, colourLocations[]) //, intialColour)
 {
 	// Loop over all the stored colours and add them in to the string.
 	new
+		initialColour = colourLocations[0],
 		offset = 0,
 		idx = 2,
+		addition,
 		curColour = initialColour;
 	while (colourLocations[idx] != 65536)
 	{
-		offset += TextR_DoOneColour(str, len, offset, colourLocations, idx, curColour, initialColour),
+		addition = TextR_DoOneColour(str, len, offset, colourLocations, idx, curColour, initialColour),
+		colourLocations[idx] += offset,
+		offset += addition,
 		idx += 2;
 	}
 }
@@ -609,6 +716,30 @@ _Y_TEXT_STATIC stock TextR_DoOneNL(str, len, &lastNL, colourLocations, idx, &cur
 	return 0;
 }*/
 
+_Y_TEXT_STATIC stock bool:TextR_IsColour(const str[])
+{
+	static const
+		scIsHex['F' + 1] = 
+		{
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
+			0, 1, 1, 1, 1, 1, 1
+		};
+	new
+		ch;
+	return
+		(str[0] == '{') &&
+		IS_IN_RANGE((ch = str[1]), '0', 'F' + 1) && (scIsHex[ch]) &&
+		IS_IN_RANGE((ch = str[2]), '0', 'F' + 1) && (scIsHex[ch]) &&
+		IS_IN_RANGE((ch = str[3]), '0', 'F' + 1) && (scIsHex[ch]) &&
+		IS_IN_RANGE((ch = str[4]), '0', 'F' + 1) && (scIsHex[ch]) &&
+		IS_IN_RANGE((ch = str[5]), '0', 'F' + 1) && (scIsHex[ch]) &&
+		IS_IN_RANGE((ch = str[6]), '0', 'F' + 1) && (scIsHex[ch]) &&
+		(str[7] == '}');
+}
+
 _Y_TEXT_STATIC stock TextR_GetSplitPoint(str[], pos, len, &end, &start)
 {
 	// Escape any colour we may be in.
@@ -634,6 +765,10 @@ _Y_TEXT_STATIC stock TextR_GetSplitPoint(str[], pos, len, &end, &start)
 			strins(str, "-", pos, len);
 		}
 	}
+	// Remove any leading colour, since that will not be required and saves us
+	// an extra 8 characters from the next line.  This may also mean less lines
+	// need to be output at all.
+	if (TextR_IsColour(str[start])) start += 8;
 }
 
 _Y_TEXT_STATIC stock TextR_LTrim(str[], pos)
@@ -649,30 +784,6 @@ _Y_TEXT_STATIC stock TextR_RTrim(str[], pos)
 		if (str[pos] > ' ') break;
 	}
 	return pos + 1;
-}
-
-_Y_TEXT_STATIC stock bool:TextR_IsColour(const str[])
-{
-	static const
-		scIsHex['F' + 1] = 
-		{
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-			0, 1, 1, 1, 1, 1, 1
-		};
-	new
-		ch;
-	return
-		(str[0] == '{') &&
-		IS_IN_RANGE((ch = str[1]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		IS_IN_RANGE((ch = str[2]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		IS_IN_RANGE((ch = str[3]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		IS_IN_RANGE((ch = str[4]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		IS_IN_RANGE((ch = str[5]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		IS_IN_RANGE((ch = str[6]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		(str[7] == '}');
 }
 
 /**
@@ -755,255 +866,5 @@ _Y_TEXT_STATIC stock TextR_GetColourStart(str[], pos)
 	while (tpos < pos && !TextR_IsColour(str[tpos])) ++tpos;
 	return tpos;
 }
-
-/*_Y_TEXT_STATIC stock bool:TextR_GetColour(const str[], &c = 0)
-{
-	new
-		ch;
-	if (str[0] != '{') return false;
-	if (IS_IN_RANGE((ch = str[1]), '0', '9' + 1)) c = 0;
-	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c = (ch - ('A' - 10))  << 20;
-	else return false;
-	if (IS_IN_RANGE((ch = str[2]), '0', '9' + 1)) c |= (ch - '0')        << 16;
-	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 16;
-	else return false;
-	if (IS_IN_RANGE((ch = str[3]), '0', '9' + 1)) c |= (ch - '0')        << 12;
-	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 12;
-	else return false;
-	if (IS_IN_RANGE((ch = str[4]), '0', '9' + 1)) c |= (ch - '0')        << 8;
-	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 8;
-	else return false;
-	if (IS_IN_RANGE((ch = str[5]), '0', '9' + 1)) c |= (ch - '0')        << 4;
-	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 4;
-	else return false;
-	if (IS_IN_RANGE((ch = str[6]), '0', '9' + 1)) c |= (ch - '0');
-	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10));
-	else return false;
-	return (str[7] == '}');
-}*/
-
-#endinput
-
-// Basic printing, less than "n" characters between two new lines, meaning no
-// complex location searching.
-
-_Y_TEXT_STATIC stock TextR_AddNewLines()
-{
-	
-}
-
-
-
-
-
-
-
-
-
-#endinput
-
-_Y_TEXT_STATIC stock TextR_WillOverflow(str[], pos, colourLocations[], idx) <y_text_display : y_text_display_print>
-{
-	return cellmin;
-}
-
-/**
-
-<returns>
-	The position at which to insert an additional new line.  
-</returns>
-<remarks>
-	This function determines if there will be a line overflow within the next
-	few colours.
-	
-	May not be 100% accurate in some cases, it over-estimates slightly when it
-	thinks there should be colours inserted at a point, but those colours are
-	elided by the fact that they are too similar to the previous colour.  This
-	function will operate assuming that they exist, and so add new lines earlier
-	than they need to be.
-	
-	This function also aims for line lengths of 128 visible characters, with the
-	additional 16 characters used purely for colours.
-</remarks>
-**/
-
-// // Find the next new line.
-// #define TextR_GetNextNL(%0,%1,%3%2)                              \
-	// while (((%2) = (%0)[(%1)]) != 65536)                         \
-	// {                                                            \
-		// if ((%0)[(%1) - 1] & _:e_TEXT_RENDER_COLOUR_LINE) break; \
-		// (%1) += 2;                                               \
-	// }                                                            \
-	// if ((%2) == 65536) (%2) = (%3)
-
-_Y_TEXT_STATIC stock TextR_AdditionalNewLines(str[], colourLocations[]) <y_text_display : y_text_display_scm>
-{
-	new
-		prevNL = 0,
-		nextNL = -1,
-		idx = 2,
-		bool:fade, // Tracks colour fades over new lines.
-		len = TextR_RTrim(str, 0, strlen(str));
-	do
-	{
-		new
-			inserts;
-		TextR_GetSCMLineData(str, prevNL, len, colourLocations, idx, inserts, nextNL, fade);
-		new
-			diff = nextNL - prevNL;
-		while (diff > 128 || diff + inserts > 144)
-		{
-			// We need to insert an extra new line somewhere.
-		}
-	}
-	while ((prevNL = nextNL) != len);
-}
-
-// TODO: Make this smarter - account for spaces and equal colours.
-#define TextR_GetSCMFadeInserts(%0,%1,%2) (((%2) - (%1)) * 8)
-
-TextR_SkipMultiLine(nextNL, colourLocations, &idx, &fade)
-{
-	// Multiple colour entries may be at the same location, just skip them all
-	// as quite pointless for these purposes.
-	new
-		e_TEXT_RENDER_COLOUR:col;
-	// Always run at least once on the found new line.
-	while (colourLocations[idx] == nextNL)
-	{
-		col = e_TEXT_RENDER_COLOUR:colorLocations[idx - 1];
-		if (col & e_TEXT_RENDER_COLOUR_FADE) fade = true;
-		else if (col & ~e_TEXT_RENDER_COLOUR_LINE) fade = false;
-		idx += 2;
-	}
-}
-
-_Y_TEXT_STATIC stock TextR_GetSCMLineData(str[], pos, len, colourLocations[], &idx, &inserts, &nextNL, &bool:fade)
-{
-	new
-		cp,
-		e_TEXT_RENDER_COLOUR:col;
-	while ((cp = colorLocations[idx]) != 65536)
-	{
-		col = e_TEXT_RENDER_COLOUR:colorLocations[idx - 1];
-		if (col & e_TEXT_RENDER_COLOUR_LINE)
-		{
-			if (fade) inserts += TextR_GetSCMFadeInserts(str, pos, cp);
-			// Another new line may start a fade.
-			TextR_SkipMultiLine(cp, colourLocations, idx, fade),
-			nextNL = cp;
-			return;
-		}
-		else
-		{
-			// This is not a new line so it MUST be a colour.
-			if (fade) inserts += TextR_GetSCMFadeInserts(str, pos, cp);
-			if (col & e_TEXT_RENDER_COLOUR_FADE) fade = true;
-			else
-			{
-				inserts += 8, // Add the characters to show this colour.
-				fade = false;
-				// TODO: Using this code, we must ensure that "pending" colours,
-				// if required, are put where they were first specified, and NOT
-				// where they are first used.
-				// EDIT: Actually, that is NOT the case!  The colours can move
-				// about no problem while they are on the same line, and if they
-				// drop to the next line then the SCM call will deal with the
-				// excess characters anyway.  Thus, the "inserts" value is an
-				// UPPER bound on the number of characters on a line.
-			}
-		}
-		idx += 2;
-	}
-	nextNL = len;
-}
-
-_Y_TEXT_STATIC stock bool:TextR_IsColour(const str[], &c = 0)
-{
-	new
-		ch;
-	if (str[0] != '{') return false;
-	if (IS_IN_RANGE((ch = str[1]), '0', '9' + 1)) c = 0;
-	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c = (ch - ('A' - 10))  << 20;
-	else return false;
-	if (IS_IN_RANGE((ch = str[2]), '0', '9' + 1)) c |= (ch - '0')        << 16;
-	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 16;
-	else return false;
-	if (IS_IN_RANGE((ch = str[3]), '0', '9' + 1)) c |= (ch - '0')        << 12;
-	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 12;
-	else return false;
-	if (IS_IN_RANGE((ch = str[4]), '0', '9' + 1)) c |= (ch - '0')        << 8;
-	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 8;
-	else return false;
-	if (IS_IN_RANGE((ch = str[5]), '0', '9' + 1)) c |= (ch - '0')        << 4;
-	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10)) << 4;
-	else return false;
-	if (IS_IN_RANGE((ch = str[6]), '0', '9' + 1)) c |= (ch - '0');
-	else if (IS_IN_RANGE(ch, 'A', 'F' + 1))       c |= (ch - ('A' - 10));
-	else return false;
-	return (str[7] == '}');
-}
-
-// _Y_TEXT_STATIC stock bool:TextR_IsColour(str[])
-// {
-	// new
-		// ch;
-	// return
-		// (str[0] == '{') && (str[7] == '}') &&
-		// (('0' <= (ch = str[1]) <= '9') || ('A' <= ch <= 'F')) &&
-		// (('0' <= (ch = str[2]) <= '9') || ('A' <= ch <= 'F')) &&
-		// (('0' <= (ch = str[3]) <= '9') || ('A' <= ch <= 'F')) &&
-		// (('0' <= (ch = str[4]) <= '9') || ('A' <= ch <= 'F')) &&
-		// (('0' <= (ch = str[5]) <= '9') || ('A' <= ch <= 'F')) &&
-		// (('0' <= (ch = str[6]) <= '9') || ('A' <= ch <= 'F'));
-// }
-
-// _Y_TEXT_STATIC stock bool:TextR_IsColour2(str[])
-// {
-	// static const
-		// scIsHex['F' + 1] = 
-		// {
-			// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			// 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-			// 0, 1, 1, 1, 1, 1, 1
-		// };
-	// new
-		// ch;
-	// return
-		// (str[0] == '{') && (str[7] == '}') &&
-		// ('0' <= (ch = str[1]) <= 'F') && (scIsHex[ch]) &&
-		// ('0' <= (ch = str[2]) <= 'F') && (scIsHex[ch]) &&
-		// ('0' <= (ch = str[3]) <= 'F') && (scIsHex[ch]) &&
-		// ('0' <= (ch = str[4]) <= 'F') && (scIsHex[ch]) &&
-		// ('0' <= (ch = str[5]) <= 'F') && (scIsHex[ch]) &&
-		// ('0' <= (ch = str[6]) <= 'F') && (scIsHex[ch]);
-// }
-
-// _Y_TEXT_STATIC stock bool:TextR_IsColour3(str[])
-// {
-	// static const
-		// scIsHex['F' + 1] = 
-		// {
-			// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			// 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-			// 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-			// 0, 1, 1, 1, 1, 1, 1
-		// };
-	// new
-		// ch;
-	// return
-		// (str[0] == '{') &&
-		// IS_IN_RANGE((ch = str[1]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		// IS_IN_RANGE((ch = str[2]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		// IS_IN_RANGE((ch = str[3]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		// IS_IN_RANGE((ch = str[4]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		// IS_IN_RANGE((ch = str[5]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		// IS_IN_RANGE((ch = str[6]), '0', 'F' + 1) && (scIsHex[ch]) &&
-		// (str[7] == '}');
-// }
-
 
 
