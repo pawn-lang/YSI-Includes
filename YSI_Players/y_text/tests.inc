@@ -1466,7 +1466,7 @@ Test:TextR_IsColour()
 	ASSERT(!TextR_IsColour(""));
 }
 
-
+/*
 Test:zzz_TextR_RunPhase2_0()
 {
 	state y_text_colour : y_text_colour_scm;
@@ -1483,7 +1483,7 @@ Test:zzz_TextR_RunPhase2_0()
 	ASSERT(colourLocations[4] == 84);
 	ASSERT(!strcmp(str, "Hello ther{AAAAAA}e{9C9C9C}, {808080}h{727272}o{666666}w {4A4A4A}a{3C3C3C}r{2E2E2E}e {222222}you?  This is quite long"));
 }
-
+*/
 static stock
 	YSI_g_sTextTest,
 	YSI_g_sTextColourTest[10],
@@ -1496,7 +1496,7 @@ _Y_TEXT_STATIC stock TextR_DoOutput(colour, str[], start, end) <y_text_output : 
 	// printf("\"%s\"", YSI_g_sTextOutputTest[YSI_g_sTextTest]);
 	ASSERT(!strcmp(YSI_g_sTextOutputTest[YSI_g_sTextTest], str[start], false, end - start));
 	ASSERT(colour >>> 8 == YSI_g_sTextColourTest[YSI_g_sTextTest]);
-	++YSI_g_sTextTest;
+	return ++YSI_g_sTextTest;
 }
 
 Test:zzz_TextR_RunPhase2_1()
@@ -1509,12 +1509,12 @@ Test:zzz_TextR_RunPhase2_1()
 			0x22222222 | _:e_TEXT_RENDER_COLOUR_LINE, 20,
 			0, 65536},
 		str[128] = "Hello there, how are you?  This is quite long";
-	TextR_RunPhase2(str, sizeof (str), colourLocations);
+	/*TextR_RunPhase2(str, sizeof (str), colourLocations);
 	//print(str);
 	//printf("%d %d", colourLocations[2], colourLocations[4]);
 	ASSERT(colourLocations[2] == 10);
 	ASSERT(colourLocations[4] == 84);
-	ASSERT(!strcmp(str, "Hello ther{AAAAAA}e{9C9C9C}, {808080}h{727272}o{666666}w {4A4A4A}a{3C3C3C}r{2E2E2E}e you?  This is quite long"));
+	ASSERT(!strcmp(str, "Hello ther{AAAAAA}e{9C9C9C}, {808080}h{727272}o{666666}w {4A4A4A}a{3C3C3C}r{2E2E2E}e you?  This is quite long"));*/
 	// Do phase 3.
 	YSI_g_sTextTest = 0;
 	YSI_g_sTextColourTest[0] = 0xFEFEFE;
@@ -1524,6 +1524,9 @@ Test:zzz_TextR_RunPhase2_1()
 	
 	
 	TextR_RunPhase3(str, sizeof (str), colourLocations);
+	ASSERT(colourLocations[2] == 10);
+	ASSERT(colourLocations[4] == 84);
+	ASSERT(!strcmp(str, "Hello ther{AAAAAA}e{9C9C9C}, {808080}h{727272}o{666666}w {4A4A4A}a{3C3C3C}r{2E2E2E}e you?  This is quite long"));
 	ASSERT(YSI_g_sTextTest == 2);
 }
 
@@ -1542,7 +1545,7 @@ Test:zzz_TextR_RunPhase3_0()
 		str[YSI_MAX_STRING * 80] = "Hello there, how are you?  This is quite long, but this one is even longer, I don't really know what I'm saying - I'm just trying to make a very long string...  Even to this point, it wasn't QUITE long enough, but now it is.";
 	//DebugLevel(3);
 	//printf("1");
-	TextR_RunPhase2(str, sizeof (str), colourLocations);
+	/*TextR_RunPhase2(str, sizeof (str), colourLocations);
 	//printf("2");
 	//print(str);
 	//printf("%d %d", colourLocations[2], colourLocations[4]);
@@ -1550,7 +1553,7 @@ Test:zzz_TextR_RunPhase3_0()
 	ASSERT(colourLocations[2] == 40);
 	ASSERT(colourLocations[4] == 1064);
 	ASSERT(colourLocations[6] == 1074);
-	ASSERT(colourLocations[8] == 1148);
+	ASSERT(colourLocations[8] == 1148);*/
 	// Do phase 3.
 	YSI_g_sTextTest = 0;
 	//DebugLevel(0);
@@ -1579,6 +1582,10 @@ Test:zzz_TextR_RunPhase3_0()
 	TextR_RunPhase3(str, sizeof (str), colourLocations);
 	//printf("3");
 	ASSERT(YSI_g_sTextTest == 10);
+	ASSERT(colourLocations[2] == 40);
+	ASSERT(colourLocations[4] == 1064);
+	ASSERT(colourLocations[6] == 1074);
+	ASSERT(colourLocations[8] == 1148);
 	//ASSERT(!strcmp(str, cmp));
 }
 
@@ -1599,7 +1606,7 @@ Test:zzz_TextR_RunPhase3_1()
 		str[YSI_MAX_STRING * 80] = "Hello there, how are you?  This is quite long, but thisoneis   even longer, I don't really know what I'm saying - I'm just trying to make a very long string...  Even to this point, it wasn't QUITE long enough, but now it is.";
 	//DebugLevel(3);
 	//printf("1");
-	TextR_RunPhase2(str, sizeof (str), colourLocations);
+	/*TextR_RunPhase2(str, sizeof (str), colourLocations);
 	//printf("2");
 	//print(str);
 	// printf("%d %d", colourLocations[2], colourLocations[4]);
@@ -1607,7 +1614,7 @@ Test:zzz_TextR_RunPhase3_1()
 	ASSERT(colourLocations[2] == 40);
 	ASSERT(colourLocations[4] == 1056);
 	ASSERT(colourLocations[6] == 1066);
-	ASSERT(colourLocations[8] == 1140);
+	ASSERT(colourLocations[8] == 1140);*/
 	// Do phase 3.
 	YSI_g_sTextTest = 0;
 	//DebugLevel(0);
@@ -1636,6 +1643,10 @@ Test:zzz_TextR_RunPhase3_1()
 	TextR_RunPhase3(str, sizeof (str), colourLocations);
 	//printf("3");
 	ASSERT(YSI_g_sTextTest == 10);
+	ASSERT(colourLocations[2] == 40);
+	ASSERT(colourLocations[4] == 1056);
+	ASSERT(colourLocations[6] == 1066);
+	ASSERT(colourLocations[8] == 1140);
 	//ASSERT(!strcmp(str, cmp));
 }
 

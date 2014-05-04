@@ -434,22 +434,15 @@ _Y_TEXT_STATIC stock TextR_DoOneColour(str[], len, offset, colourLocations[], &i
 		pos = colourLocations[idx],
 		flags = colourLocations[idx - 1],
 		colour = TextR_GetSlotColour(flags, initialColour, curColour);
-	/*printf("str: %s", str);
-	printf("len: %d", len);
-	printf("pos: %d = %d", pos, pos + offset);
-	printf("colour: %04x%04x", colour >>> 16, colour & 0xFFFF);*/
 	if (flags & _:e_TEXT_RENDER_COLOUR_FADE)
 	{
-		//printf("1");
 		new
 			endColour,
 			fadeLen,
 			newLines;
 		TextR_GetFadeData(colourLocations, idx, endColour, fadeLen, newLines),
-		//printf("2: %06x, %d, %d", endColour >>> 8, fadeLen, newLines);
 		fadeLen -= pos,
 		pos += offset;
-		//printf("2: %06x, %d, %d", endColour >>> 8, fadeLen, newLines);
 		// Don't need to check and return "pending" statuses here.  The next
 		// character will be another colour always (the fade end).
 		if (newLines)
@@ -482,44 +475,15 @@ _Y_TEXT_STATIC stock TextR_DoOneColour(str[], len, offset, colourLocations[], &i
 	}
 }
 
-/*TextR_NLBacktrack(&lineEnd, &lineStart, &lineColour)
-{
-	// There are 2 stages to this:  1) If we are in a colour, extract it and
-	// keep going backwards.  2) Skip whitespaces.
-	new
-		colourPos,
-		colourValue;
-	for (new i = 0; i != 9; ++i)
-	{
-		if (TextR_IsColour(str[pos - i]))
-		{
-			// This records no alpha, which is determined by the "Text_Send"
-			// line or somewhere else similar.
-			colourPos = pos - i,
-			colourValue = hexstr(str[pos - i + 1]) << 8,
-			memset(str[pos
-			break;
-		}
-	}
-}
-
-_Y_TEXT_STATIC stock TextR_FindEnd(str[], lastNL, nextNL, nlColour, &nextColour)
-{
-	// All fits in fine, not a problem!
-	if (nextNL - lastNL <= 144) return nextColour = nlColour, nextNL;
-	// Too much between the "\n" characters.
-	new
-		maybe = TextR_NLBacktrack(str, nextNL, nextColour);
-}*/
-
 _Y_TEXT_STATIC stock TextR_DoOutput(colour, str[], start, end) <y_text_output : y_text_output_scm>
 {
 	new
 		ch = str[end];
-	str[end] = '\0',
-	//printf("%06x: \"%s\"", colour, str[start]),
-	//print(str[start]),
-	str[end] = ch;
+	return
+		str[end] = '\0',
+		//printf("%06x: \"%s\"", colour, str[start]),
+		//print(str[start]),
+		str[end] = ch;
 }
 
 _Y_TEXT_STATIC stock bool:TextR_GetColour(const str[], &colour)
@@ -562,7 +526,7 @@ _Y_TEXT_STATIC stock bool:TextR_GetColour(const str[], &colour)
 	return false;
 }
 
-_Y_TEXT_STATIC stock TextR_GetLastColour(str[], pos, colour)
+/*_Y_TEXT_STATIC stock TextR_GetLastColour(str[], pos, colour)
 {
 	if (colour & _:e_TEXT_RENDER_COLOUR_FADE)
 	{
@@ -571,60 +535,9 @@ _Y_TEXT_STATIC stock TextR_GetLastColour(str[], pos, colour)
 		colour <<= 8;
 	}
 	return colour;
-}
+}*/
 
-_Y_TEXT_STATIC stock TextR_RunPhase3(str[], len, colourLocations[]) //, intialColour)
-{
-	new
-		colourLine = colourLocations[0],
-		colourCur,
-		lastNL = 0,
-		pos,
-		colourPrev = colourLine,
-		idx = 2;
-	while ((pos = colourLocations[idx]) != 65536)
-	{
-		if ((colourCur = colourLocations[idx - 1]) & _:e_TEXT_RENDER_COLOUR_LINE)
-		{
-			if (pos - lastNL > 144)
-			{
-				new
-					start,
-					end,
-					ch = TextR_GetSplitPoint(str, lastNL + 144, end, start);
-				TextR_DoOutput(colourLine, str, lastNL, end),
-				lastNL = start,
-				colourLine = TextR_GetLastColour(str, start, colourPrev);
-				if (ch) str[end - 1] = ch;
-			}
-			else
-			{
-				TextR_DoOutput(colourLine, str, lastNL, pos),
-				lastNL = pos,
-				idx += 2,
-				colourPrev = colourLine = colourCur;
-			}
-		}
-		else
-		{
-			idx += 2,
-			colourPrev = colourCur;
-		}
-	}
-	TextR_DoOutput(colourLine, str, lastNL, len);
-	//printf("%06x: \"%s\"", colourLine, str[lastNL]);
-}
-
-
-
-
-
-
-
-
-
-
-_Y_TEXT_STATIC stock TextR_RunPhase2(str[], len, colourLocations[]) //, intialColour)
+/*_Y_TEXT_STATIC stock TextR_RunPhase2(str[], len, colourLocations[]) //, intialColour)
 {
 	// Loop over all the stored colours and add them in to the string.
 	new
@@ -640,92 +553,120 @@ _Y_TEXT_STATIC stock TextR_RunPhase2(str[], len, colourLocations[]) //, intialCo
 		offset += addition,
 		idx += 2;
 	}
+}*/
+
+_Y_TEXT_STATIC stock TextR_GetLastColour(str[], pos, colourLocations[], idx, prevColour)
+{
+	while (colourLocations[idx] < pos)
+	{
+		//printf("pos: %d %d", colourLocations[idx], pos);
+		prevColour = colourLocations[idx - 1],
+		idx += 2;
+	}
+	//printf("pos: %d %d", colourLocations[idx], pos);
+	//printf("%04x%04x", prevColour >>> 16, prevColour & 0xFFFF);
+	if (colourLocations[idx] == pos) return colourLocations[idx - 1];
+	else if (prevColour & _:e_TEXT_RENDER_COLOUR_FADE)
+	{
+		//printf("FADE: %.8s", str[pos - 8]);
+		pos -= 8;
+		while (!TextR_GetColour(str[pos], prevColour) && pos) --pos;
+		return prevColour << 8;
+	}
+	else return prevColour;
 }
 
-/*_Y_TEXT_STATIC stock TextR_RunPhase3(str[], len, colourLocations[], initialColour)
+_Y_TEXT_STATIC stock TextR_OutputLine(str[], lastNL, nextNL, colourLocations[], idx, lineColour)
+{
+	for (new start, end, ch; nextNL - lastNL > 144; )
+	{
+		ch = TextR_GetSplitPoint(str, lastNL + 144, end, start),
+		TextR_DoOutput(lineColour, str, lastNL, end),
+		lastNL = start,
+		lineColour = TextR_GetLastColour(str, start, colourLocations, idx, lineColour);
+		if (ch) str[end - 1] = ch;
+	}
+	return
+		TextR_DoOutput(lineColour, str, lastNL, nextNL),
+		nextNL;
+}
+
+_Y_TEXT_STATIC stock TextR_RunPhase3(str[], len, colourLocations[]) //, intialColour)
 {
 	new
-		offset = 0,
+		colourLine = colourLocations[0],
+		colourOrig = colourLine,
+		colourCur = colourLine,
+		tmp,
+		offset,
+		//colourPrev = colourLine,
+		//addition,
 		lastNL = 0,
-		idx = 2,
-		curColour = initialColour;
+		//pos,
+		li = 2,
+		idx = 2;
 	while (colourLocations[idx] != 65536)
 	{
-		if (colourLocations[idx - 1] & _:e_TEXT_RENDER_COLOUR_LINE)
+		// Do colour rendering.
+		tmp = TextR_DoOneColour(str, len, offset, colourLocations, idx, colourCur, colourOrig),
+		colourLocations[idx] += offset,
+		offset += tmp;
+		// Do newlines.
+		if ((tmp = colourLocations[idx - 1]) & _:e_TEXT_RENDER_COLOUR_LINE)
 		{
-			offset += TextR_DoOneNL(str, len, lastNL, colourLocations, idx, curColour, offset);
+			lastNL = TextR_OutputLine(str, lastNL, colourLocations[idx], colourLocations, li, colourLine);
+			colourLine = tmp,
+			li = idx;
 		}
 		idx += 2;
 	}
-	//TextR_DoLastNL(str, len, lastNL, curColour, initialColour);
+	TextR_OutputLine(str, lastNL, strlen(str), colourLocations, li, colourLine);
+	//TextR_OutputLine(str, colourLine, colourPrev, lastNL, strlen(str));
 }
 
-_Y_TEXT_STATIC stock TextR_DoOneNL(str, len, &lastNL, colourLocations, idx, &curColour, offset) <y_text_display : y_text_display_print>
+/*_Y_TEXT_STATIC stock TextR_RunPhase23(str[], len, colourLocations[]) //, intialColour)
 {
+	// Loop over all the stored colours and add them in to the string.
 	new
-		pos = colourLocations[idx] + offset,
-		ch = str[pos];
-	return
-		str[pos] = '\0',
-		printf("TEXT:\n\tpos = %d\n\tcol = 0x%04x%04x\n\tstr = \"%s\"", lastNL, curColour >>> 16, curColour & 0xFFFF, str[lastNL]),
-		str[pos] = ch,
-		curColour = colourLocations[idx - 1],
-		lastNL = pos,
-		0;
-}
-
-_Y_TEXT_STATIC stock TextR_RTrim(str[], start, end)
-{
-	while (--end >= start && str[end] <= ' ') {}
-	return end + 1;
-}
-
-_Y_TEXT_STATIC stock TextR_FindLast(str[], end, ch[])
-{
-	new
-		last = -1,
-		pos = -1;
-	while (-1 < (pos = strfind(str, ch, false, pos + 1)) < end)
+		initialColour = colourLocations[0],
+		offset = 0,
+		idx = 2,
+		addition,
+		colourCur = initialColour;
+	while (colourLocations[idx] != 65536)
 	{
-		last = pos;
-	}
-	return last;
-}
-
-_Y_TEXT_STATIC stock TextR_GetSplitPoint(str[], start, end, &colour)
-{
-	// Find a good place to split the string at between "start" and "end", then
-	// figure out what colour the string is at that point.
-}
-
-
-
-_Y_TEXT_STATIC stock TextR_DoOneNL(str, len, &lastNL, colourLocations, idx, &curColour, offset) <y_text_display : y_text_display_scm>
-{
-	new
-		pos = colourLocations[idx] + offset;
-	for ( ; ; )
-	{
-		//TextR_RTrim(str, lastNL, pos);
-		if (pos - lastNL > 144) // Can only show 144 characters in one SCM line.
+		if (colourCur & _:e_TEXT_RENDER_COLOUR_LINE)
 		{
-			// TODO: More complex state!  Need to add in new lines at other
-			// points.  This might not be easy to do, especially if we are in a
-			// fade.
+			if (pos - lastNL > 144)
+			{
+				new
+					start,
+					end,
+					ch = TextR_GetSplitPoint(str, lastNL + 144, end, start);
+				TextR_DoOutput(colourLine, str, lastNL, end),
+				lastNL = start,
+				colourLine = TextR_GetLastColour(str, start, colourPrev);
+				if (ch) str[end - 1] = ch;
+				continue;
+			}
+			else
+			{
+				TextR_DoOutput(colourLine, str, lastNL, pos),
+				lastNL = pos,
+				//idx += 2,
+				colourPrev = colourLine = colourCur;
+			}
 		}
 		else
 		{
-			new
-				ch = str[pos];
-			str[pos] = '\0',
-			SendClientMessageToAll(curColour, str[lastNL]),
-			str[pos] = ch,
-			curColour = colourLocations[idx - 1],
-			lastNL = pos;
-			break;
+			//idx += 2,
+			colourPrev = colourCur;
 		}
+		addition = TextR_DoOneColour(str, len, offset, colourLocations, idx, colourCur, initialColour),
+		colourLocations[idx] += offset,
+		offset += addition,
+		idx += 2;
 	}
-	return 0;
 }*/
 
 _Y_TEXT_STATIC stock bool:TextR_IsColour(const str[])
