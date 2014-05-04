@@ -590,11 +590,12 @@ _Y_TEXT_STATIC stock TextR_RunPhase3(str[], len, colourLocations[]) //, intialCo
 			{
 				new
 					start,
-					end;
-				TextR_GetSplitPoint(str, lastNL + 144, len, end, start),
+					end,
+					ch = TextR_GetSplitPoint(str, lastNL + 144, end, start);
 				TextR_DoOutput(colourLine, str, lastNL, end),
 				lastNL = start,
 				colourLine = TextR_GetLastColour(str, start, colourPrev);
+				if (ch) str[end - 1] = ch;
 			}
 			else
 			{
@@ -751,7 +752,7 @@ _Y_TEXT_STATIC stock bool:TextR_IsColour(const str[])
 		(str[7] == '}');
 }
 
-_Y_TEXT_STATIC stock TextR_GetSplitPoint(str[], pos, len, &end, &start)
+_Y_TEXT_STATIC stock TextR_GetSplitPoint(str[], pos, &end, &start)
 {
 	// Escape any colour we may be in.
 	pos = TextR_GetColourStart(str, pos);
@@ -771,15 +772,22 @@ _Y_TEXT_STATIC stock TextR_GetSplitPoint(str[], pos, len, &end, &start)
 		else
 		{
 			// Get the point to insert the "-" at.
-			pos = TextR_SkipChars(str, pos, min(cb - 1, (cb + cf) / 2)),
-			start = end = pos + 1,
-			strins(str, "-", pos, len);
+			pos = TextR_SkipChars(str, pos, min(cb - 1, (cb + cf) / 2));
+			new
+				ret = str[pos];
+			return
+				end = pos + 1,
+				start = TextR_IsColour(str[pos]) ? (pos + 8) : pos,
+				str[pos] = '-',
+				ret;
+			//strins(str, "-", pos, len);
 		}
 	}
 	// Remove any leading colour, since that will not be required and saves us
 	// an extra 8 characters from the next line.  This may also mean less lines
 	// need to be output at all.
 	if (TextR_IsColour(str[start])) start += 8;
+	return 0;
 }
 
 _Y_TEXT_STATIC stock TextR_LTrim(str[], pos)

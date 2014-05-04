@@ -1190,31 +1190,31 @@ Test:TextR_GetSplitPoint0()
 		end;
 	// Split falls in a space.
 	str = "Hello There";
-	TextR_GetSplitPoint(str, 5, 64, end, start);
+	TextR_GetSplitPoint(str, 5, end, start);
 	ASSERT(!strcmp(str, "Hello There"));
 	ASSERT(end == 5);
 	ASSERT(start == 6);
 	// 
 	str = "Hello    There";
-	TextR_GetSplitPoint(str, 5, 64, end, start);
+	TextR_GetSplitPoint(str, 5, end, start);
 	ASSERT(!strcmp(str, "Hello    There"));
 	ASSERT(end == 5);
 	ASSERT(start == 9);
 	// 
 	str = "Hello    There";
-	TextR_GetSplitPoint(str, 6, 64, end, start);
+	TextR_GetSplitPoint(str, 6, end, start);
 	ASSERT(!strcmp(str, "Hello    There"));
 	ASSERT(end == 5);
 	ASSERT(start == 9);
 	// 
 	str = "Hello    There";
-	TextR_GetSplitPoint(str, 7, 64, end, start);
+	TextR_GetSplitPoint(str, 7, end, start);
 	ASSERT(!strcmp(str, "Hello    There"));
 	ASSERT(end == 5);
 	ASSERT(start == 9);
 	// 
 	str = "Hello    There";
-	TextR_GetSplitPoint(str, 9, 64, end, start);
+	TextR_GetSplitPoint(str, 9, end, start);
 	ASSERT(!strcmp(str, "Hello    There"));
 	ASSERT(end == 5);
 	ASSERT(start == 9);
@@ -1230,55 +1230,55 @@ Test:TextR_GetSplitPoint1()
 		end;
 	// Split falls in a colour.
 	str = "Hello {098765}There";
-	TextR_GetSplitPoint(str, 10, 64, end, start);
+	TextR_GetSplitPoint(str, 10, end, start);
 	ASSERT(!strcmp(str, "Hello {098765}There"));
 	ASSERT(end == 5);
 	ASSERT(start == 14);
 	// 
 	str = "Hello   {098765}There";
-	TextR_GetSplitPoint(str, 10, 64, end, start);
+	TextR_GetSplitPoint(str, 10, end, start);
 	ASSERT(!strcmp(str, "Hello   {098765}There"));
 	ASSERT(end == 5);
 	ASSERT(start == 16);
 	// 
 	str = "Hello   {098765}There";
-	TextR_GetSplitPoint(str, 8, 64, end, start);
+	TextR_GetSplitPoint(str, 8, end, start);
 	ASSERT(!strcmp(str, "Hello   {098765}There"));
 	ASSERT(end == 5);
 	ASSERT(start == 16);
 	// 
 	str = "Hello   {098765}There";
-	TextR_GetSplitPoint(str, 16, 64, end, start);
+	TextR_GetSplitPoint(str, 16, end, start);
 	ASSERT(!strcmp(str, "Hello   {098765}There"));
 	ASSERT(end == 5);
 	ASSERT(start == 16);
 	// 
 	str = "Hello   {098765}There";
-	TextR_GetSplitPoint(str, 9, 64, end, start);
+	TextR_GetSplitPoint(str, 9, end, start);
 	ASSERT(!strcmp(str, "Hello   {098765}There"));
 	ASSERT(end == 5);
 	ASSERT(start == 16);
 	// 
 	str = "Hello   {098765}There";
-	TextR_GetSplitPoint(str, 15, 64, end, start);
+	TextR_GetSplitPoint(str, 15, end, start);
 	ASSERT(!strcmp(str, "Hello   {098765}There"));
 	ASSERT(end == 5);
 	ASSERT(start == 16);
 	//
 	str = "Hello   {098765}There";
-	TextR_GetSplitPoint(str, 6, 64, end, start);
+	TextR_GetSplitPoint(str, 6, end, start);
 	ASSERT(!strcmp(str, "Hello   {098765}There"));
 	ASSERT(end == 5);
 	ASSERT(start == 16);
 	//
 	str = "Hello   {098765}There";
-	TextR_GetSplitPoint(str, 7, 64, end, start);
+	TextR_GetSplitPoint(str, 7, end, start);
 	ASSERT(!strcmp(str, "Hello   {098765}There"));
 	ASSERT(end == 5);
 	ASSERT(start == 16);
 	//
 	str = "Hello   {098765}There";
-	TextR_GetSplitPoint(str, 8, 64, end, start);
+	TextR_GetSplitPoint(str, 8, end, start);
 	ASSERT(!strcmp(str, "Hello   {098765}There"));
 	ASSERT(end == 5);
 	ASSERT(start == 16);
@@ -1294,31 +1294,31 @@ Test:TextR_GetSplitPoint2()
 		end;
 	// Split falls near the start of a word.
 	str = "Other Hello_There";
-	TextR_GetSplitPoint(str, 8, 64, end, start);
+	TextR_GetSplitPoint(str, 8, end, start);
 	ASSERT(!strcmp(str, "Other Hello_There"));
 	ASSERT(end == 6);
 	ASSERT(start == 6);
 	// 
 	str = "Other Hello_There";
-	TextR_GetSplitPoint(str, 9, 64, end, start);
+	TextR_GetSplitPoint(str, 9, end, start);
 	ASSERT(!strcmp(str, "Other Hello_There"));
 	ASSERT(end == 6);
 	ASSERT(start == 6);
 	// 
 	str = "Other Hello_There";
-	TextR_GetSplitPoint(str, 9, 64, end, start);
+	TextR_GetSplitPoint(str, 9, end, start);
 	ASSERT(!strcmp(str, "Other Hello_There"));
 	ASSERT(end == 6);
 	ASSERT(start == 6);
 	// 
 	str = "Other Hello";
-	TextR_GetSplitPoint(str, 10, 64, end, start);
+	TextR_GetSplitPoint(str, 10, end, start);
 	ASSERT(!strcmp(str, "Other Hello"));
 	ASSERT(end == 6);
 	ASSERT(start == 6);
 	// 
 	str = "Other Hello There";
-	TextR_GetSplitPoint(str, 10, 64, end, start);
+	TextR_GetSplitPoint(str, 10, end, start);
 	ASSERT(!strcmp(str, "Other Hello There"));
 	ASSERT(end == 6);
 	ASSERT(start == 6);
@@ -1334,34 +1334,34 @@ Test:TextR_GetSplitPoint3()
 		end;
 	// Split falls near the middle of a word.
 	str = "Other Hello_There";
-	TextR_GetSplitPoint(str, 10, 64, end, start);
-	ASSERT(!strcmp(str, "Other Hel-lo_There"));
+	ASSERT(TextR_GetSplitPoint(str, 10, end, start) == 'l');
+	ASSERT(!strcmp(str, "Other Hel-o_There"));
 	ASSERT(end == 10);
-	ASSERT(start == 10);
+	ASSERT(start == 9);
 	// 
 	str = "Other Hello_There_Very_Long";
-	TextR_GetSplitPoint(str, 10, 64, end, start);
-	ASSERT(!strcmp(str, "Other Hel-lo_There_Very_Long"));
+	ASSERT(TextR_GetSplitPoint(str, 10, end, start) == 'l');
+	ASSERT(!strcmp(str, "Other Hel-o_There_Very_Long"));
 	ASSERT(end == 10);
-	ASSERT(start == 10);
+	ASSERT(start == 9);
 	// 
 	str = "Other Hello_There_Very_Long";
-	TextR_GetSplitPoint(str, 12, 64, end, start);
-	ASSERT(!strcmp(str, "Other Hello-_There_Very_Long"));
+	ASSERT(TextR_GetSplitPoint(str, 12, end, start) == '_');
+	ASSERT(!strcmp(str, "Other Hello-There_Very_Long"));
 	ASSERT(end == 12);
+	ASSERT(start == 11);
+	// 
+	str = "Other Hello_There_Very_Long";
+	ASSERT(TextR_GetSplitPoint(str, 13, end, start) == 'T');
+	ASSERT(!strcmp(str, "Other Hello_-here_Very_Long"));
+	ASSERT(end == 13);
 	ASSERT(start == 12);
 	// 
 	str = "Other Hello_There_Very_Long";
-	TextR_GetSplitPoint(str, 13, 64, end, start);
-	ASSERT(!strcmp(str, "Other Hello_-There_Very_Long"));
-	ASSERT(end == 13);
-	ASSERT(start == 13);
-	// 
-	str = "Other Hello_There_Very_Long";
-	TextR_GetSplitPoint(str, 24, 64, end, start);
-	ASSERT(!strcmp(str, "Other Hello_There_Ve-ry_Long"));
+	ASSERT(TextR_GetSplitPoint(str, 24, end, start) == 'r');
+	ASSERT(!strcmp(str, "Other Hello_There_Ve-y_Long"));
 	ASSERT(end == 21);
-	ASSERT(start == 21);
+	ASSERT(start == 20);
 	// 
 }
 
@@ -1374,46 +1374,48 @@ Test:TextR_GetSplitPoint4()
 		end;
 	// Split has colours.
 	str = "Other He{654321}llo";
-	TextR_GetSplitPoint(str, 8, 64, end, start);
+	TextR_GetSplitPoint(str, 8, end, start);
 	ASSERT(!strcmp(str, "Other He{654321}llo"));
 	ASSERT(end == 6);
 	ASSERT(start == 6);
 	// 
 	str = "Other He{654321}llo";
-	TextR_GetSplitPoint(str, 16, 64, end, start);
+	TextR_GetSplitPoint(str, 16, end, start);
 	ASSERT(!strcmp(str, "Other He{654321}llo"));
 	ASSERT(end == 6);
 	ASSERT(start == 6);
 	// 
 	str = "Other He{654321}llo";
-	TextR_GetSplitPoint(str, 17, 64, end, start);
+	TextR_GetSplitPoint(str, 17, end, start);
 	ASSERT(!strcmp(str, "Other He{654321}llo"));
 	ASSERT(end == 6);
 	ASSERT(start == 6);
 	// 
 	str = "Other He{654321}lloo";
-	TextR_GetSplitPoint(str, 17, 64, end, start);
+	TextR_GetSplitPoint(str, 17, end, start);
 	ASSERT(!strcmp(str, "Other He{654321}lloo"));
 	ASSERT(end == 6);
 	ASSERT(start == 6);
 	// 
 	str = "Other He{654321}lloo0";
-	TextR_GetSplitPoint(str, 17, 64, end, start);
+	TextR_GetSplitPoint(str, 17, end, start);
 	ASSERT(!strcmp(str, "Other He{654321}lloo0"));
 	ASSERT(end == 6);
 	ASSERT(start == 6);
 	// 
 	str = "Other He{654321}lloo0";
-	TextR_GetSplitPoint(str, 18, 64, end, start);
-	ASSERT(!strcmp(str, "Other He{654321}l-loo0"));
+	//TextR_GetSplitPoint(str, 18, end, start);
+	ASSERT(TextR_GetSplitPoint(str, 18, end, start) == 'l');
+	ASSERT(!strcmp(str, "Other He{654321}l-oo0"));
 	ASSERT(end == 18);
-	ASSERT(start == 18);
+	ASSERT(start == 17);
 	// 
 	str = "Other He{654321}lloo_L{567890}ong";
-	TextR_GetSplitPoint(str, 21, 64, end, start);
-	ASSERT(!strcmp(str, "Other He{654321}llo-o_L{567890}ong"));
+	//TextR_GetSplitPoint(str, 21, end, start);
+	ASSERT(TextR_GetSplitPoint(str, 21, end, start) == 'o');
+	ASSERT(!strcmp(str, "Other He{654321}llo-_L{567890}ong"));
 	ASSERT(end == 20);
-	ASSERT(start == 20);
+	ASSERT(start == 19);
 	// 
 }
 
@@ -1426,16 +1428,17 @@ Test:TextR_GetSplitPoint5()
 		end;
 	// Split has many colours.
 	str = "Other {654321}H{654321}e{654321}l{654321}l{654321}o";
-	TextR_GetSplitPoint(str, 38, 64, end, start);
+	TextR_GetSplitPoint(str, 38, end, start);
 	ASSERT(!strcmp(str, "Other {654321}H{654321}e{654321}l{654321}l{654321}o"));
 	ASSERT(end == 6);
 	ASSERT(start == 14);
 	// 
 	str = "Other {654321}H{654321}e{654321}l{654321}l{654321}o{654321}2";
-	TextR_GetSplitPoint(str, 42, 64, end, start);
-	ASSERT(!strcmp(str, "Other {654321}H{654321}e{654321}l-{654321}l{654321}o{654321}2"));
+	//TextR_GetSplitPoint(str, 42, end, start);
+	ASSERT(TextR_GetSplitPoint(str, 42, end, start) == '{');
+	ASSERT(!strcmp(str, "Other {654321}H{654321}e{654321}l-654321}l{654321}o{654321}2"));
 	ASSERT(end == 34);
-	ASSERT(start == 42);
+	ASSERT(start == 41);
 	// 
 }
 
@@ -1488,9 +1491,9 @@ static stock
 
 _Y_TEXT_STATIC stock TextR_DoOutput(colour, str[], start, end) <y_text_output : y_text_output_test>
 {
-	//printf("%d\n%06x", YSI_g_sTextTest, YSI_g_sTextColourTest[YSI_g_sTextTest]);
-	//printf("%06x:\n\"%.*s\"", colour >>> 8, end - start, str[start]);
-	//printf("\"%s\"", YSI_g_sTextOutputTest[YSI_g_sTextTest]);
+	// printf("%d\n%06x", YSI_g_sTextTest, YSI_g_sTextColourTest[YSI_g_sTextTest]);
+	// printf("%06x:\n\"%.*s\"", colour >>> 8, end - start, str[start]);
+	// printf("\"%s\"", YSI_g_sTextOutputTest[YSI_g_sTextTest]);
 	ASSERT(!strcmp(YSI_g_sTextOutputTest[YSI_g_sTextTest], str[start], false, end - start));
 	ASSERT(colour >>> 8 == YSI_g_sTextColourTest[YSI_g_sTextTest]);
 	++YSI_g_sTextTest;
@@ -1551,15 +1554,15 @@ Test:zzz_TextR_RunPhase3_0()
 	// Do phase 3.
 	YSI_g_sTextTest = 0;
 	//DebugLevel(0);
-	YSI_g_sTextOutputTest[0] = "Hello there, how are you?  This is quite {000000}l{020202}o{040404}n{060606}g, {0A0A0A}b{0C0C0C}u{0E0E0E}t {101010}t{121212}h{141414}i{161616}s";
+	YSI_g_sTextOutputTest[0] = "Hello there, how are you?  This is quite {000000}l{020202}o{040404}n{060606}g, {0A0A0A}b{0C0C0C}u{0E0E0E}t {101010}t{121212}h{141414}i{161616}s" ;
 	YSI_g_sTextOutputTest[1] = "o{1A1A1A}n{1C1C1C}e {1E1E1E}i{202020}s {242424}e{262626}ve{282828}n {2C2C2C}l{2E2E2E}on{303030}g{323232}e{343434}r, {383838}I "                  ;
 	YSI_g_sTextOutputTest[2] = "do{3E3E3E}n{404040}'{424242}t {444444}r{464646}e{484848}a{4A4A4A}l{4C4C4C}ly {505050}k{525252}n{545454}ow {585858}w{5A5A5A}h{5C5C5C}at "         ;
-	YSI_g_sTextOutputTest[3] = "I{626262}'{646464}m {666666}s{686868}a{6A6A6A}yi{6C6C6C}n{6E6E6E}g {727272}- {747474}I{767676}'{787878}m {7A7A7A}j{7C7C7C}u{7E7E7E}s{808080}t"  ;
+	YSI_g_sTextOutputTest[3] = "I{626262}'{646464}m {666666}s{686868}a{6A6A6A}yi{6C6C6C}n{6E6E6E}g {727272}- {747474}I{767676}'{787878}m {7A7A7A}j{7C7C7C}u{7E7E7E}s{808080}t"   ;
 	YSI_g_sTextOutputTest[4] = "t{848484}r{868686}y{888888}i{8A8A8A}ng {8E8E8E}t{909090}o {929292}m{949494}a{969696}k{989898}e {9A9A9A}a {9E9E9E}v{A0A0A0}er{A2A2A2}y "          ;
 	YSI_g_sTextOutputTest[5] = "l{A8A8A8}on{AAAAAA}g {AEAEAE}s{B0B0B0}tr{B2B2B2}i{B4B4B4}n{B6B6B6}g{B8B8B8}..{BABABA}.  {C0C0C0}Ev{C2C2C2}e{C4C4C4}n {C8C8C8}to "                ;
 	YSI_g_sTextOutputTest[6] = "t{CECECE}hi{D0D0D0}s {D4D4D4}p{D6D6D6}oi{D8D8D8}n{DADADA}t{DCDCDC}, {DEDEDE}i{E0E0E0}t {E4E4E4}w{E6E6E6}as{E8E8E8}n{EAEAEA}'{ECECEC}t "          ;
-	YSI_g_sTextOutputTest[7] = "Q{F0F0F0}U{F2F2F2}I{F4F4F4}T{F6F6F6}E {F8F8F8}l{FAFAFA}o{FCFCFC}n"                                                                              ;
-	YSI_g_sTextOutputTest[8] = "g enough, {142842}b{20324C}u{2E3E56}t {48546C}n{566076}o{626A80}w {7C8096}i{8A8CA0}t"                                                           ;
+	YSI_g_sTextOutputTest[7] = "Q{F0F0F0}U{F2F2F2}I{F4F4F4}T{F6F6F6}E {F8F8F8}l{FAFAFA}o{FCFCFC}n"                                                                               ;
+	YSI_g_sTextOutputTest[8] = "g enough, {142842}b{20324C}u{2E3E56}t {48546C}n{566076}o{626A80}w {7C8096}i{8A8CA0}t"                                                            ;
 	YSI_g_sTextOutputTest[9] = " is."                                                                                                                                            ;
 	
 	YSI_g_sTextColourTest[0] = 0x020406;
@@ -1579,4 +1582,60 @@ Test:zzz_TextR_RunPhase3_0()
 	//ASSERT(!strcmp(str, cmp));
 }
 
+
+
+Test:zzz_TextR_RunPhase3_1()
+{
+	state y_text_colour : y_text_colour_scm;
+	state y_text_output : y_text_output_test;
+	new
+		colourLocations[] = {0x02040608,
+			0x000000FE | _:e_TEXT_RENDER_COLOUR_FADE, 40,
+			0xFEFEFE00 | _:e_TEXT_RENDER_COLOUR_LINE, 200,
+			0x14284256 | _:e_TEXT_RENDER_COLOUR_FADE, 210,
+			0x9898ACEA | _:e_TEXT_RENDER_COLOUR_LINE, 220,
+			0, 65536};
+	static
+		str[YSI_MAX_STRING * 80] = "Hello there, how are you?  This is quite long, but thisoneis   even longer, I don't really know what I'm saying - I'm just trying to make a very long string...  Even to this point, it wasn't QUITE long enough, but now it is.";
+	//DebugLevel(3);
+	//printf("1");
+	TextR_RunPhase2(str, sizeof (str), colourLocations);
+	//printf("2");
+	//print(str);
+	// printf("%d %d", colourLocations[2], colourLocations[4]);
+	// printf("%d %d", colourLocations[6], colourLocations[8]);
+	ASSERT(colourLocations[2] == 40);
+	ASSERT(colourLocations[4] == 1056);
+	ASSERT(colourLocations[6] == 1066);
+	ASSERT(colourLocations[8] == 1140);
+	// Do phase 3.
+	YSI_g_sTextTest = 0;
+	//DebugLevel(0);
+	YSI_g_sTextOutputTest[0] = "Hello there, how are you?  This is quite {000000}l{020202}o{040404}n{060606}g, {0A0A0A}b{0C0C0C}u{0E0E0E}t {101010}t{121212}h{141414}i{161616}s-" ;
+	YSI_g_sTextOutputTest[1] = "o{181818}n{1A1A1A}e{1C1C1C}i{1E1E1E}s   {242424}e{262626}ve{282828}n {2C2C2C}l{2E2E2E}on{303030}g{323232}e{343434}r, {383838}I "                  ;
+	YSI_g_sTextOutputTest[2] = "do{3E3E3E}n{404040}'{424242}t {444444}r{464646}e{484848}a{4A4A4A}l{4C4C4C}ly {505050}k{525252}n{545454}ow {585858}w{5A5A5A}h{5C5C5C}at "         ;
+	YSI_g_sTextOutputTest[3] = "I{626262}'{646464}m {666666}s{686868}a{6A6A6A}yi{6C6C6C}n{6E6E6E}g {727272}- {747474}I{767676}'{787878}m {7A7A7A}j{7C7C7C}u{7E7E7E}s{808080}t"   ;
+	YSI_g_sTextOutputTest[4] = "t{848484}r{868686}y{888888}i{8A8A8A}ng {8E8E8E}t{909090}o {929292}m{949494}a{969696}k{989898}e {9A9A9A}a {9E9E9E}v{A0A0A0}er{A2A2A2}y "          ;
+	YSI_g_sTextOutputTest[5] = "l{A8A8A8}on{AAAAAA}g {AEAEAE}s{B0B0B0}tr{B2B2B2}i{B4B4B4}n{B6B6B6}g{B8B8B8}..{BABABA}.  {C0C0C0}Ev{C2C2C2}e{C4C4C4}n {C8C8C8}to "                ;
+	YSI_g_sTextOutputTest[6] = "t{CECECE}hi{D0D0D0}s {D4D4D4}p{D6D6D6}oi{D8D8D8}n{DADADA}t{DCDCDC}, {DEDEDE}i{E0E0E0}t {E4E4E4}w{E6E6E6}as{E8E8E8}n{EAEAEA}'{ECECEC}t "          ;
+	YSI_g_sTextOutputTest[7] = "Q{F0F0F0}U{F2F2F2}I{F4F4F4}T{F6F6F6}E {F8F8F8}l{FAFAFA}o{FCFCFC}n"                                                                               ;
+	YSI_g_sTextOutputTest[8] = "g enough, {142842}b{20324C}u{2E3E56}t {48546C}n{566076}o{626A80}w {7C8096}i{8A8CA0}t"                                                            ;
+	YSI_g_sTextOutputTest[9] = " is."                                                                                                                                            ;
+	
+	YSI_g_sTextColourTest[0] = 0x020406;
+	YSI_g_sTextColourTest[1] = 0x161616;
+	YSI_g_sTextColourTest[2] = 0x3C3C3C;
+	YSI_g_sTextColourTest[3] = 0x606060;
+	YSI_g_sTextColourTest[4] = 0x828282;
+	YSI_g_sTextColourTest[5] = 0xA6A6A6;
+	YSI_g_sTextColourTest[6] = 0xCCCCCC;
+	YSI_g_sTextColourTest[7] = 0xEEEEEE;
+	YSI_g_sTextColourTest[8] = 0xFEFEFE;
+	YSI_g_sTextColourTest[9] = 0x9898AC;
+	
+	TextR_RunPhase3(str, sizeof (str), colourLocations);
+	//printf("3");
+	ASSERT(YSI_g_sTextTest == 10);
+	//ASSERT(!strcmp(str, cmp));
+}
 
