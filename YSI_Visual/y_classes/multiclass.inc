@@ -93,9 +93,9 @@ Functions:
 	Static:
 		Class_AddClass - Adds a class, wrapped by API and remote functions.
 	Inline:
-		Class_IsActive - Checks a class is active.
-		Class_Enabled - Checks a class is enabled.
-		Class_IsValid - Checks a class is valid.
+		_Class_IsActive - Checks a class is active.
+		_Class_Enabled - Checks a class is enabled.
+		_Class_IsValid - Checks a class is valid.
 		Class_X - Gets a classes x position.
 		Class_Y - Gets a classes y position.
 		Class_Z - Gets a classes z position.
@@ -135,64 +135,9 @@ Operators:
 	-
 \**--------------------------------------------------------------------------**/
 
-#if defined _INC_y_classes
-	#endinput
-#endif
-#define _INC_y_classes
-
-#include "..\YSI_Internal\y_version"
-
-#if !defined MAX_CLASSES
-	#define MAX_CLASSES                 (256)
-#endif
-
-#if !defined MAX_CLASS_SPAWN_WEAPONS
-	#define MAX_CLASS_SPAWN_WEAPONS     (13)
-#endif
-
-#if !defined WEAPON_ARMOUR
-	#define WEAPON_ARMOUR               (100)
-#endif
-#include "..\YSI_Data\y_bit"
-#include "..\YSI_Core\y_debug"
-#include "..\YSI_Data\y_iterate"
-#include "..\YSI_Data\y_playerarray"
-#include "..\YSI_Data\y_iterate"
-#include "..\YSI_Internal\y_natives"
-
-#define MASTER 61
-#define YSIM_U_DISABLE
-#include "..\YSI_Core\y_master"
-
-#define _GROUP_MAKE_NAME<%0...%1> %0Class%1
-#define _GROUP_MAKE_LIMIT         MAX_CLASSES
-#include "..\YSI_Players\y_groups\_funcs"
-#include "..\YSI_Players\y_groups\y_classes"
-
-#include "..\YSI_Coding\y_hooks"
-
-//#define OnPlayerRequestClassEx(%0) OnPlayerRequestClassEx_(%0)if(!YSI_gOPRCE)return 0;else
-//#define OnPlayerRequestSpawnEx(%0) OnPlayerRequestSpawnEx_(%0)if(!YSI_gOPRCE)return 0;else
-
-//forward OnPlayerRequestClassEx_(playerid, classid);
-//forward OnPlayerRequestSpawnEx_(playerid, classid);
-forward _Class_OnPlayerRequestClass(playerid, classid);
-forward _Class_OnPlayerRequestSpawn(playerid);
-forward _Class_OtherRequestClass(playerid, classid);
-forward _Class_OtherRequestSpawn(playerid);
-
-#define INFINATE_ARMOUR                 (0x00800000)
-
-#define _CLASS_WEAPON_CODE if((n-w)&0x01)while(w!=n&&s<MAX_CLASS_SPAWN_WEAPONS){cw=getarg(w++);if(cw==WEAPON_ARMOUR)weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(100<<8);else if(w==n)P:E(": Insufficient class weapon data.");else weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);}else while(w!=n&&s<MAX_CLASS_SPAWN_WEAPONS){cw=getarg(w++);if(cw==WEAPON_ARMOUR)weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(getarg(w++)<<8);else weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);}
+PRE_HOOK(Class)
 
 forward Class_ResolveGroups(class, Group:forgroup, bool:cp);
-
-stock _YSI_HAS_y_classes(_do_not_call_me_ever_, _like_never_)
-{
-	P:E("You called _YSI_HAS_y_classes!  Bad, don't do that!", _do_not_call_me_ever_, _like_never_);
-	assert(false);
-	return 0;
-}
 
 enum e_CLASS_FLAGS (<<= 1)
 {
@@ -220,22 +165,7 @@ enum e_PLAYER_CLASS (<<= 1)
 	e_PLAYER_CLASS_PRESS = 0x00700000,
 	e_PLAYER_CLASS_RIGHT = 0x00100000,
 	e_PLAYER_CLASS_MIDDLE,
-	e_PLAYER_CLASS_LEFT,
-	// Control flags.
-	e_PLAYER_CLASS_RETURNED,   // Back in class selection.
-	e_PLAYER_CLASS_SPAWNSINCE, // Spawned after class selection.
-	e_PLAYER_CLASS_DISABLED,   // Class selection disabled.
-	e_PLAYER_CLASS_HADFIRST,   // Spawned ever.
-	e_PLAYER_CLASS_INSTANT,    // Sent straight to class selection.
-	e_PLAYER_CLASS_INSELECT,   // In class selection.
-	e_PLAYER_CLASS_IGNORE_ONCE
-}
-
-enum e_CLASS_SETTINGS (<<= 1)
-{
-	e_CLASS_SETTING_NORE = 1,
-	e_CLASS_SETTING_OPRCE,
-	e_CLASS_SETTING_OPRSE
+	e_PLAYER_CLASS_LEFT
 }
 
 #define CLASS_MOVE_LEFT                 (-1)
@@ -245,26 +175,17 @@ enum e_CLASS_SETTINGS (<<= 1)
 static stock
 	YSI_g_sClasses[MAX_CLASSES][E_CLASS],
 	e_PLAYER_CLASS:YSI_g_sPlayerClass[MAX_PLAYERS],
-	YSI_g_sTimer[MAX_PLAYERS],
 	YSI_g_sLeft,
 	YSI_g_sMiddle,
 	YSI_g_sRight,
-	e_CLASS_SETTINGS:YSI_g_sSettings,
 	YSI_g_sClassCount,
-	YSI_g_sHookC,
-	YSI_g_sHookS,
 	YSI_g_sLastRefuse[MAX_PLAYERS];
-
-stock
-	bool:YSI_gOPRCE = true;
 
 stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <YSI_has_groups : n>
 {
 	#pragma unused forgroup
 	P:2("Class_ResolveGroups<n>: call Resolve %d %d %d", class, _:forgroup, cp);
 	if (!cp) PA_Init(YSI_g_sClasses[class][E_CLASS_PLAYERS], true);
-	//else if (forgroup) {}
-	//Bit_SetAll(YSI_g_sClasses[class][E_CLASS_PLAYERS], true, bits<MAX_PLAYERS>);
 }
 
 stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <>
@@ -272,25 +193,10 @@ stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <>
 	#pragma unused forgroup
 	P:2("Class_ResolveGroups<>: call Resolve %d %d %d", class, _:forgroup, cp);
 	if (!cp) PA_Init(YSI_g_sClasses[class][E_CLASS_PLAYERS], true);
-	//else if (forgroup) {}
-	//Bit_SetAll(YSI_g_sClasses[class][E_CLASS_PLAYERS], true, bits<MAX_PLAYERS>);
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>Class_IsValid</summary>
-<param name="classid">Class to check if valid.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Class_IsValid(%1) (0<=(%1)<MAX_CLASSES&&Class_IsActive(%1))
-
-/**--------------------------------------------------------------------------**\
-<summary>Class_IsValid</summary>
+<summary>_Class_IsActive</summary>
 <param name="classid">Class to check if active.</param>
 <returns>
 	-
@@ -300,10 +206,23 @@ stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <>
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Class_IsActive(%1) (YSI_g_sClasses[(%1)][E_CLASS_FLAGS]&e_CLASS_FLAGS_ACTIVE)
+#define _Class_IsActive(%1) (YSI_g_sClasses[(%1)][E_CLASS_FLAGS] & e_CLASS_FLAGS_ACTIVE)
 
 /**--------------------------------------------------------------------------**\
-<summary>Class_Enabled</summary>
+<summary>_Class_IsValid</summary>
+<param name="classid">Class to check if valid.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define _Class_IsValid(%1) (IS_IN_RANGE((%1), 0, MAX_CLASSES) && _Class_IsActive(%1))
+
+/**--------------------------------------------------------------------------**\
+<summary>_Class_Enabled</summary>
 <param name="classid">Class to check.</param>
 <returns>
 	-
@@ -313,7 +232,7 @@ stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <>
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Class_Enabled(%1) (YSI_g_sClasses[(%1)][E_CLASS_FLAGS]&e_CLASS_FLAGS_ENABLED)
+#define _Class_Enabled(%1) (YSI_g_sClasses[(%1)][E_CLASS_FLAGS] & e_CLASS_FLAGS_ENABLED)
 
 /**--------------------------------------------------------------------------**\
 <summary>Class_X</summary>
@@ -378,7 +297,7 @@ stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <>
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Class_Skin(%1) (YSI_g_sClasses[(%1)][E_CLASS_FLAGS]&e_CLASS_FLAGS_SKIN)
+#define Class_Skin(%1) (YSI_g_sClasses[(%1)][E_CLASS_FLAGS] & e_CLASS_FLAGS_SKIN)
 
 /**--------------------------------------------------------------------------**\
 <summary>Class_Class</summary>
@@ -401,9 +320,8 @@ hook OnScriptInit()
 			YSI_g_sMiddle = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0);
 			YSI_g_sRight = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0);
 			//printf("==========================");
-			//printf("%d %d %d", YSI_g_sLeft, YSI_g_sMiddle, YSI_g_sRight);
+			P:4("Class_OnScriptInit: classes = %d %d %d", YSI_g_sLeft, YSI_g_sMiddle, YSI_g_sRight);
 			//printf("==========================");
-			YSI_g_sSettings = ((funcidx("OnPlayerRequestClassEx_") == -1) ? (e_CLASS_SETTINGS:0) : (e_CLASS_SETTING_OPRCE)) | ((funcidx("OnPlayerRequestSpawnEx_") == -1) ? (e_CLASS_SETTINGS:0) : (e_CLASS_SETTING_OPRSE));
 			#if !defined YSI_NO_MASTER
 				// Steal the master system.
 				_Master_Get(#_YCM, true);
@@ -423,11 +341,25 @@ hook OnScriptInit()
 			#endif
 		}
 	#endif
-	//Hooks_RedirectPublic("OnPlayerRequestClass", "_Class_OnPlayerRequestClass");
-	//Hooks_RedirectPublic("OnPlayerRequestSpawn", "_Class_OnPlayerRequestSpawn");
-	YSI_g_sHookC = Hooks_RedirectPublic("OnPlayerRequestClass", "_Class_OnPlayerRequestClass");
-	YSI_g_sHookS = Hooks_RedirectPublic("OnPlayerRequestSpawn", "_Class_OnPlayerRequestSpawn");
 	return 1;
+}
+
+static stock Class_FindNew(playerid, playerclass, dir)
+{
+	P:4("Class_FindNew called: %i, %i, %i", playerid, playerclass, dir);
+	// Handles the special case where "dir" = 0 very nicely with no extra code
+	// slowing down the common case (as it should be)!  This is simply because
+	// "playerclass != old" will fail on the first loop with "+ 0";
+	new
+		old = playerclass % YSI_g_sClassCount;
+	do
+	{
+		playerclass = (playerclass + dir) % YSI_g_sClassCount;
+		P:4("Class_FindNew: %d %d", playerclass, playerid);
+	}
+	while (playerclass != old && (!_Class_Enabled(playerclass) || !PA_Get(YSI_g_sClasses[playerclass][E_CLASS_PLAYERS], playerid)));
+	// (!(playerclass == old || (_Class_Enabled(playerclass) && PA_Get(YSI_g_sClasses[playerclass][E_CLASS_PLAYERS], playerid))))
+	return playerclass;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -447,71 +379,28 @@ hook OnScriptInit()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-static stock Class_FindNew(playerid, playerclass, dir)
-{
-	P:4("Class_FindNew called: %i, %i, %i", playerid, playerclass, dir);
-	// Handles the special case where "dir" = 0 very nicely with no extra code
-	// slowing down the common case (as it should be)!  This is simply because
-	// "playerclass != old" will fail on the first loop with "+ 0";
-	new
-		old = playerclass % YSI_g_sClassCount;
-	do
-	{
-		playerclass = (playerclass + dir) % YSI_g_sClassCount;
-		P:4("Class_FindNew: %d %d", playerclass, playerid);
-	}
-	while (playerclass != old && (!Class_Enabled(playerclass) || !PA_Get(YSI_g_sClasses[playerclass][E_CLASS_PLAYERS], playerid)));
-	return playerclass;
-}
-
-public _Class_OtherRequestClass(playerid, classid)
-{
-	if (YSI_g_sHookC)
-	{
-		#emit PUSH.S     classid
-		#emit PUSH.S     playerid
-		#emit PUSH.C     8
-		#emit LCTRL      6
-		#emit ADD.C      28
-		#emit PUSH.pri
-		#emit LOAD.pri   YSI_g_sHookC
-		#emit SCTRL      6
-		#emit RETN
-	}
-}
-
+// Pre-empt y_hooks.
 #if !defined YSI_NO_MASTER && _YSIM_IS_CLIENT
-	public _Class_OnPlayerRequestClass(playerid, classid)
+	public OnPlayerRequestClass(playerid, classid)
 	{
 		return 1;
 	}
 #else
 	#if !defined YSI_NO_MASTER && _YSIM_IS_CLOUD
-		//mhook OnPlayerRequestClass(playerid, classid)
-		public _Class_OnPlayerRequestClass(playerid, classid) <>
+		public OnPlayerRequestClass(playerid, classid) <>
 		{
 			return 1;
 		}
 		
-		//mhook OnPlayerRequestClass(playerid, classid)
-		public _Class_OnPlayerRequestClass(playerid, classid) <_YCM:y>
-		{
+		public OnPlayerRequestClass(playerid, classid) <_YCM:y>
 	#else
-		//mhook OnPlayerRequestClass(playerid, classid)
-		public _Class_OnPlayerRequestClass(playerid, classid)
-		{
+		public OnPlayerRequestClass(playerid, classid)
 	#endif
-			if (YSI_g_sPlayerClass[playerid] & (e_PLAYER_CLASS_IGNORE_ONCE))
-			{
-				SetTimerEx("_Class_SpawnPlayer3", 10, 0, "i", playerid);
-				return 1;
-			}
+		{
 			P:1("_Class_OnPlayerRequestClass called: %d %d", playerid, classid);
-			Class_TK(playerid);
 			new
 				dir = CLASS_MOVE_RIGHT;
 			// Spawned from returning to class selection but not meant to.
-			//P:5("Class_OnPlayerRequestClass(): Spawn check %d %d", playerclass, playerclass); //(playerclass & e_PLAYER_CLASS_SPAWN_CHECK), e_PLAYER_CLASS_SPAWN_CHECK);
 			// Find which direction they pressed.
 			switch (YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_PRESS)
 			{
@@ -553,20 +442,19 @@ public _Class_OtherRequestClass(playerid, classid)
 				}
 			}
 			// Store which class they are now on.
-			//printf("%d %d %d %d", classid, YSI_g_sMiddle, YSI_g_sLeft, YSI_g_sRight);
 			if (classid == YSI_g_sMiddle)
 			{
-				YSI_g_sPlayerClass[playerid] = (YSI_g_sPlayerClass[playerid] & ~e_PLAYER_CLASS_PRESS) | e_PLAYER_CLASS_MIDDLE | e_PLAYER_CLASS_INSELECT;
+				YSI_g_sPlayerClass[playerid] = (YSI_g_sPlayerClass[playerid] & ~e_PLAYER_CLASS_PRESS) | e_PLAYER_CLASS_MIDDLE;
 			}
 			else if (classid == YSI_g_sLeft)
 			{
-				YSI_g_sPlayerClass[playerid] = (YSI_g_sPlayerClass[playerid] & ~e_PLAYER_CLASS_PRESS) | e_PLAYER_CLASS_LEFT | e_PLAYER_CLASS_INSELECT;
+				YSI_g_sPlayerClass[playerid] = (YSI_g_sPlayerClass[playerid] & ~e_PLAYER_CLASS_PRESS) | e_PLAYER_CLASS_LEFT;
 			}
 			else if (classid == YSI_g_sRight)
 			{
-				YSI_g_sPlayerClass[playerid] = (YSI_g_sPlayerClass[playerid] & ~e_PLAYER_CLASS_PRESS) | e_PLAYER_CLASS_RIGHT | e_PLAYER_CLASS_INSELECT;
+				YSI_g_sPlayerClass[playerid] = (YSI_g_sPlayerClass[playerid] & ~e_PLAYER_CLASS_PRESS) | e_PLAYER_CLASS_RIGHT;
 			}
-			P:C(else {P:E("y_classes unidentified classid.");YSI_g_sPlayerClass[playerid] |= e_PLAYER_CLASS_INSELECT;});
+			P:C(else {P:E("y_classes unidentified classid.");YSI_g_sPlayerClass[playerid] = e_PLAYER_CLASS_NONE;});
 			classid = (YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_SKIN);
 			if (YSI_g_sClassCount)
 			{
@@ -586,76 +474,36 @@ public _Class_OtherRequestClass(playerid, classid)
 				classid = -1;
 			}
 			// Now sort out if they actually should be spawned.
-			/*if (YSI_g_sPlayerClass[playerid] & (e_PLAYER_CLASS_IGNORE_ONCE))
-			{
-				YSI_g_sPlayerClass[playerid] &= ~(e_PLAYER_CLASS_IGNORE_ONCE);
-				return 1;
-			}
-			else*/
 			if (YSI_g_sPlayerClass[playerid] & (e_PLAYER_CLASS_RETURNED | e_PLAYER_CLASS_SPAWNSINCE) == (e_PLAYER_CLASS_RETURNED | e_PLAYER_CLASS_SPAWNSINCE))
 			{
 				YSI_g_sPlayerClass[playerid] &= ~(e_PLAYER_CLASS_RETURNED | e_PLAYER_CLASS_SPAWNSINCE);
 				Class_Spectate(playerid);
-				//SpawnPlayer(playerid);
-				//printf("0");
 				SetTimerEx("_Class_SpawnPlayer2", 10, 0, "i", playerid);
-				YSI_g_sTimer[playerid] = SetTimerEx("_Class_SpawnPlayer4", 50, 0, "i", playerid);
-				/*if (YSI_g_sHookC)
-				{
-					#emit PUSH.C     0xFFFFFFFF
-					#emit PUSH.S     playerid
-					#emit PUSH.C     8
-					#emit LCTRL      6
-					#emit ADD.C      28
-					#emit PUSH.pri
-					#emit LOAD.pri   YSI_g_sHookC
-					#emit SCTRL      6
-					//#emit RETN
-				}*/
 				CallRemoteFunction("_Class_OtherRequestClass", "ii", playerid, -1);
 			}
 			else if (YSI_g_sPlayerClass[playerid] & (e_PLAYER_CLASS_RETURNED | e_PLAYER_CLASS_DISABLED | e_PLAYER_CLASS_HADFIRST) == (e_PLAYER_CLASS_DISABLED | e_PLAYER_CLASS_HADFIRST))
 			{
 				// If class selection is disabled for this player, they have already selected
 				// a class and we haven't manually sent them back to the menu.
-				//YSI_g_sPlayerClass[playerid] &= ~(e_PLAYER_CLASS_RETURNED | e_PLAYER_CLASS_SPAWNSINCE);
 				Class_Spectate(playerid);
-				//SpawnPlayer(playerid);
-				//printf("1");
 				SetTimerEx("_Class_SpawnPlayer1", 10, 0, "i", playerid);
-				/*if (YSI_g_sHookC)
-				{
-					#emit PUSH.C     0xFFFFFFFF
-					#emit PUSH.S     playerid
-					#emit PUSH.C     8
-					#emit LCTRL      6
-					#emit ADD.C      28
-					#emit PUSH.pri
-					#emit LOAD.pri   YSI_g_sHookC
-					#emit SCTRL      6
-					//#emit RETN
-				}*/
 				CallRemoteFunction("_Class_OtherRequestClass", "ii", playerid, -1);
 			}
 			else
 			{
-				/*if (YSI_g_sHookC)
-				{
-					#emit PUSH.S     classid
-					#emit PUSH.S     playerid
-					#emit PUSH.C     8
-					#emit LCTRL      6
-					#emit ADD.C      28
-					#emit PUSH.pri
-					#emit LOAD.pri   YSI_g_sHookC
-					#emit SCTRL      6
-					//#emit RETN
-				}*/
 				CallRemoteFunction("_Class_OtherRequestClass", "ii", playerid, classid);
 			}
 			return 1;
 		}
 #endif
+
+HOOK_FORWARD:Class_OnPlayerRequestClass(playerid, classid);
+#if defined _ALS_OnPlayerRequestClass
+	#undef OnPlayerRequestClass
+#else
+	#define _ALS_OnPlayerRequestClass
+#endif
+#define OnPlayerRequestClass(%0) Class_OnPlayerRequestClass(%0) <_ALS : _ALS_go>
 
 foreign void:Class_Goto(playerid, playerclass);
 
@@ -668,7 +516,6 @@ global void:Class_Goto(playerid, playerclass)
 	YSI_g_sPlayerClass[playerid] = (YSI_g_sPlayerClass[playerid] & ~(e_PLAYER_CLASS_SKIN)) | (e_PLAYER_CLASS:playerclass);
 	// Save the last viewed class so that we know which direction the person
 	// went next time OnPlayerRequestClass is called.
-	P:2("Class_Goto() end %08h %08h %d", YSI_g_sSettings, _:e_CLASS_SETTING_OPRCE, playerclass);
 	//return 1;
 }
 
@@ -685,21 +532,6 @@ global void:Class_Goto(playerid, playerclass)
 	OnPlayerRequestSpawnEx with an additional class parameter.
 </remarks>
 \**--------------------------------------------------------------------------**/
-
-public _Class_OtherRequestSpawn(playerid)
-{
-	if (YSI_g_sHookS)
-	{
-		#emit PUSH.S     playerid
-		#emit PUSH.C     4
-		#emit LCTRL      6
-		#emit ADD.C      28
-		#emit PUSH.pri
-		#emit LOAD.pri   YSI_g_sHookS
-		#emit SCTRL      6
-		#emit RETN
-	}
-}
 
 //mhook OnPlayerRequestSpawn(playerid)
 
@@ -798,15 +630,12 @@ public _Class_OtherRequestSpawn(playerid)
 mhook OnPlayerSpawn(playerid)
 {
 	P:2("Class_OnPlayerSpawn called: %d", playerid);
-	Class_TK(playerid);
 	new
 		playerclass = _:(YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_SKIN),
 		weapon;
-	//YSI_g_sPlayerClass[playerid] = (YSI_g_sPlayerClass[playerid] & ~(e_PLAYER_CLASS_NOT_FIRST | e_PLAYER_CLASS_ALLOW_ONE)) | e_PLAYER_CLASS_HAS_EVER_SPAWNED | e_PLAYER_CLASS_IS_SPAWNED;
 	for (new i = 0; i != MAX_CLASS_SPAWN_WEAPONS; ++i)
 	{
 		weapon = YSI_g_sClasses[playerclass][E_CLASS_WEAPONS][i];
-		//if (weapon == WEAPON_ARMOUR) SetPlayerArmour(playerid, 100.0);
 		if (weapon)
 		{
 			GivePlayerWeapon(playerid, weapon & 0xFF, weapon >>> 8);
@@ -831,128 +660,28 @@ mhook OnPlayerSpawn(playerid)
 			SetPlayerArmour(playerid, weapon);
 		}
 	}
-	// Now update reselection variables.
-	YSI_g_sPlayerClass[playerid] = (YSI_g_sPlayerClass[playerid] & ~(e_PLAYER_CLASS_INSELECT | e_PLAYER_CLASS_IGNORE_ONCE)) | (e_PLAYER_CLASS_HADFIRST);
-	if (YSI_g_sPlayerClass[playerid] & (e_PLAYER_CLASS_RETURNED))
-	{
-		if (YSI_g_sPlayerClass[playerid] & (e_PLAYER_CLASS_INSTANT))
-		{
-			YSI_g_sPlayerClass[playerid] |= (e_PLAYER_CLASS_SPAWNSINCE);
-		}
-		else
-		{
-			YSI_g_sPlayerClass[playerid] &= ~(e_PLAYER_CLASS_RETURNED);
-		}
-	}
-	//if (YSI_g_sPlayerClass[playerid] & (e_PLAYER_CLASS_DISABLED))
-	//{
-		// I know it may seem odd to force class selection when it is explicitly
-		// disabled, but this will disable the "F4" message too.
-		//ForceClassSelection(playerid);
-	//}
 	return 1;
 }
 
-forward _Class_SpawnPlayer1(playerid);
-
-public _Class_SpawnPlayer1(playerid)
-{
-	P:1("_Class_SpawnPlayer1 called: %d", playerid);
-	//SpawnPlayer(playerid);
-	YSI_g_sPlayerClass[playerid] |= (e_PLAYER_CLASS_IGNORE_ONCE);
-	TogglePlayerSpectating(playerid, false);
-	//SpawnPlayer(playerid);
-	//YSI_g_sTimer[playerid] = SetTimerEx("_Class_SpawnPlayer3", 20, 0, "i", playerid);
-	//Class_TK(playerid);
-}
-
-forward _Class_SpawnPlayer2(playerid);
-
-public _Class_SpawnPlayer2(playerid)
-{
-	P:1("_Class_SpawnPlayer2 called: %d", playerid);
-	//SpawnPlayer(playerid);
-	//YSI_g_sPlayerClass[playerid] |= (e_PLAYER_CLASS_IGNORE_ONCE);
-	TogglePlayerSpectating(playerid, false);
-	//Class_TK(playerid);
-}
-
-forward _Class_SpawnPlayer3(playerid);
-
-public _Class_SpawnPlayer3(playerid)
-{
-	P:1("_Class_SpawnPlayer3 called: %d", playerid);
-	SpawnPlayer(playerid);
-	//Class_TK(playerid);
-	//YSI_g_sPlayerClass[playerid] |= (e_PLAYER_CLASS_IGNORE_ONCE);
-	//TogglePlayerSpectating(playerid, false);
-	//Class_TK(playerid);
-}
-
-forward _Class_SpawnPlayer4(playerid);
-
-public _Class_SpawnPlayer4(playerid)
-{
-	P:1("_Class_SpawnPlayer4 called: %d", playerid);
-	//SpawnPlayer(playerid);
-	Class_Spectate(playerid);
-	if (YSI_g_sPlayerClass[playerid] & (e_PLAYER_CLASS_DISABLED))
-	{
-		YSI_g_sTimer[playerid] = SetTimerEx("_Class_SpawnPlayer1", 10, 0, "i", playerid);
-	}
-	else
-	{
-		YSI_g_sTimer[playerid] = SetTimerEx("_Class_SpawnPlayer2", 10, 0, "i", playerid);
-	}
-	//Class_TK(playerid);
-	//YSI_g_sPlayerClass[playerid] |= (e_PLAYER_CLASS_IGNORE_ONCE);
-	//TogglePlayerSpectating(playerid, false);
-	//Class_TK(playerid);
-}
-
-forward _Class_Return(playerid);
-
-public _Class_Return(playerid)
-{
-	P:1("_Class_Return called: %d", playerid);
-	Class_ReturnToSelection(playerid);
-	//Class_TK(playerid);
-	//YSI_g_sTimer[playerid] = SetTimerEx("_Class_NotSpawned", 500, 0, "i", playerid);
-}
-
-forward _Class_NotSpawned(playerid);
-
-public _Class_NotSpawned(playerid)
-{
-	P:1("_Class_NotSpawned called: %d", playerid);
-	// Called if they don't connect properly.
-	Class_DisableSelection(playerid);
-	//SetPlayerCameraPos(playerid, 1958.3783, 1343.1572, 15.3746);
-	//SetPlayerCameraLookAt(playerid, 1958.3783, 1343.1572, 15.3746);
-	SetTimerEx("_Class_Return", 10, 0, "i", playerid);
-	YSI_g_sPlayerClass[playerid] |= (e_PLAYER_CLASS_RETURNED | e_PLAYER_CLASS_INSTANT);
-}
-
-static stock Class_TK(playerid)
-{
-	// "Timer Kill".
-	if (YSI_g_sTimer[playerid])
-	{
-		KillTimer(YSI_g_sTimer[playerid]);
-		YSI_g_sTimer[playerid] = 0;
-	}
-}
+/**--------------------------------------------------------------------------**\
+<summary>Class_OnPlayerConnect</summary>
+<param name="playerid">Player who joined the server.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Reset all the data on this player's current classes.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 mhook OnPlayerConnect(playerid)
 {
-	//printf("OnPlayerConnect %d", playerid);
-	YSI_g_sPlayerClass[playerid] = (e_PLAYER_CLASS_NONE);
-	YSI_g_sTimer[playerid] = SetTimerEx("_Class_NotSpawned", 500, 0, "i", playerid);
+	YSI_g_sPlayerClass[playerid] = e_PLAYER_CLASS_NONE;
 	NO_GROUPS()
 	{
 		new
-			slot = Bit_Slot(playerid) + 1,
-			Bit:mask = Bit_Mask(playerid); //Bit:(1 << (playerid & (cellbits - 1)));
+			slot = PA_Slot(playerid),
+			Bit:mask = PA_Mask(playerid);
 		for (new i = 0; i != MAX_CLASSES; ++i)
 		{
 			YSI_g_sClasses[i][E_CLASS_PLAYERS][slot] |= mask;
@@ -961,17 +690,33 @@ mhook OnPlayerConnect(playerid)
 	return 1;
 }
 
-/*mhook OnPlayerDeath(playerid, killerid, reason)
-{
-}
+/**--------------------------------------------------------------------------**\
+<summary>_CLASS_WEAPON_CODE</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Converts the variable arguments to an array.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
-mhook OnPlayerRequestSpawn(playerid)
-{
-}
+// #define _CLASS_WEAPON_CODE if((n-w)&0x01)while(w!=n&&s<MAX_CLASS_SPAWN_WEAPONS){cw=getarg(w++);if(cw==WEAPON_ARMOUR)weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(100<<8);else if(w==n)P:E(": Insufficient class weapon data.");else weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);}else while(w!=n&&s<MAX_CLASS_SPAWN_WEAPONS){cw=getarg(w++);if(cw==WEAPON_ARMOUR)weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(getarg(w++)<<8);else weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);}
 
-mhook OnPlayerDisconnect(playerid, reason)
-{
-}*/
+#define _CLASS_WEAPON_CODE \
+	{if((n-w+1)/2>MAX_CLASS_SPAWN_WEAPONS) P:E("Excessive class weapon data."); \
+	if((n-w)&0x01){while(w!=n)if((cw=getarg(w++))==WEAPON_ARMOUR)weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(100<<8);else if(w==n)P:E(": Insufficient class weapon data.");else weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);} \
+	else{while(w!=n)weapons[((cw=getarg(w++))==WEAPON_ARMOUR)?MAX_CLASS_SPAWN_WEAPONS:(s++)]=(cw&0xFF)|(getarg(w++)<<8);}}
+
+// cw=getarg(w++);if(cw==WEAPON_ARMOUR)weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(getarg(w++)<<8);else weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);
+
+// cw=getarg(w++);
+
+// if((getarg(w++))==WEAPON_ARMOUR)
+	// weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(100<<8);
+// else if(w==n)
+	// P:E(": Insufficient class weapon data.");
+// else
+	// weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);
 
 /**--------------------------------------------------------------------------**\
 <summary>Class_Add</summary>
@@ -995,7 +740,6 @@ mhook OnPlayerDisconnect(playerid, reason)
 
 stock Class_Add(skin, Float:x, Float:y, Float:z, Float:a, ...)
 {
-	//printf("Class_Add called: %i, %f, %f, %f, %f, (+%i)", skin, x, y, z, a, numargs() - 5);
 	P:3("Class_Add called: %i, %f, %f, %f, %f, (+%i)", skin, x, y, z, a, numargs() - 5);
 	new
 		n = numargs(),
@@ -1124,38 +868,25 @@ foreign Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,w[],c,Group:f,Group:g);
 
 global Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,w[],c,Group:f,Group:g)
 {
-	//printf("Class_AddClass called: %i, %f, %f, %f, %f, %s, %i, %i, %i", s, x, y, z, a, Debug_PrintArray(w, c), c, _:f, _:g);
 	P:2("Class_AddClass called: %i, %f, %f, %f, %f, %s, %i, %i, %i", s, x, y, z, a, Debug_PrintArray(w, c), c, _:f, _:g);
 	new
 		i;
-	while (i < MAX_CLASSES)
-	{
-		if (!Class_IsActive(i)) break;
-		i++;
-	}
+	while (i != MAX_CLASSES && _Class_IsActive(i)) ++i;
 	if (i == MAX_CLASSES) return -1;
-	YSI_g_sClasses[i][E_CLASS_FLAGS] = e_CLASS_FLAGS_ACTIVE | e_CLASS_FLAGS_ENABLED | e_CLASS_FLAGS:s;
-	YSI_g_sClasses[i][E_CLASS_X] = x;
-	YSI_g_sClasses[i][E_CLASS_Y] = y;
-	YSI_g_sClasses[i][E_CLASS_Z] = z;
-	YSI_g_sClasses[i][E_CLASS_A] = a;
-	new
-		j;
-	// This may be better with a memcpy.
-	while (j < c)
-	{
-		P:5("Class_AddClass: weapon %d %d %d", j, c, w[j]);
-		YSI_g_sClasses[i][E_CLASS_WEAPONS][j] = w[j];
-		++j;
-	}
-	//printf("Class_AddClass: weapon %d %d %d", j, c, i);
+	YSI_g_sClasses[i][E_CLASS_FLAGS] = e_CLASS_FLAGS_ACTIVE | e_CLASS_FLAGS_ENABLED | e_CLASS_FLAGS:s,
+	YSI_g_sClasses[i][E_CLASS_X] = x,
+	YSI_g_sClasses[i][E_CLASS_Y] = y,
+	YSI_g_sClasses[i][E_CLASS_Z] = z,
+	YSI_g_sClasses[i][E_CLASS_A] = a,
+	memcpy(YSI_g_sClasses[i][E_CLASS_WEAPONS], w, 0, (MAX_CLASS_SPAWN_WEAPONS + 1) * 4, MAX_CLASS_SPAWN_WEAPONS + 1);
+	// P:7("Class_AddClass: weapon %d %d %d", j, c, i);
 	PA_FastInit(YSI_g_sClasses[i][E_CLASS_PLAYERS]);
-	//printf("Class_AddClass: weapon %d %d %d", j, c, f);
+	// P:7("Class_AddClass: weapon %d %d %d", j, c, f);
 	Class_ResolveGroups(i, f, false);
-	//printf("Class_AddClass: weapon %d %d %d", j, c, g);
+	// P:7("Class_AddClass: weapon %d %d %d", j, c, g);
 	YSI_g_sClasses[i][E_CLASS_GROUP] = g;
 	YSI_g_sClassCount++;
-	//printf("Class_AddClass: weapon %d %d %d", j, c, YSI_g_sClassCount);
+	// P:7("Class_AddClass: weapon %d %d %d", j, c, YSI_g_sClassCount);
 	return i;
 }
 
@@ -1192,7 +923,7 @@ foreign Class_Enable(classid, bool:toggle);
 
 global Class_Enable(classid, bool:toggle)
 {
-	if (Class_IsValid(classid))
+	if (_Class_IsValid(classid))
 	{
 		if (toggle)
 		{
@@ -1238,7 +969,6 @@ global void:Class_Delete(classid)
 	{
 		YSI_g_sClasses[classid][E_CLASS_FLAGS] = e_CLASS_FLAGS:0;
 	}
-	//return 1;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1258,7 +988,6 @@ foreign void:Class_SetPlayer(cl, pid, bool:s);
 
 global void:Class_SetPlayer(cl, pid, bool:s)
 {
-	//printf("CLASS SET PLAYER: %d %d %d", cl, pid, s);
 	PA_Set(YSI_g_sClasses[cl][E_CLASS_PLAYERS], pid, s);
 }
 
@@ -1301,73 +1030,6 @@ global Class_Get(playerid)
 		return _:(YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_SKIN);
 	}
 	return -1;
-}
-
-foreign void:Class_DisableSelection(playerid);
-
-global void:Class_DisableSelection(playerid)
-{
-	if (YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_INSELECT)
-	{
-		Class_Spectate(playerid);
-		Class_TK(playerid);
-	}
-	//return 1;
-}
-
-foreign void:Class_DisableReselection(playerid);
-
-global void:Class_DisableReselection(playerid)
-{
-	YSI_g_sPlayerClass[playerid] |= (e_PLAYER_CLASS_DISABLED);
-	// Disable "F4".
-	//ForceClassSelection(playerid);
-	//return 1;
-}
-
-foreign void:Class_EnableReselection(playerid);
-
-global void:Class_EnableReselection(playerid)
-{
-	YSI_g_sPlayerClass[playerid] &= ~(e_PLAYER_CLASS_DISABLED);
-	//return 1;
-}
-
-foreign void:Class_ForceReselection(playerid);
-
-global void:Class_ForceReselection(playerid)
-{
-	YSI_g_sPlayerClass[playerid] = (YSI_g_sPlayerClass[playerid] | e_PLAYER_CLASS_RETURNED) & ~(e_PLAYER_CLASS_SPAWNSINCE);
-	ForceClassSelection(playerid);
-	//return 1;
-}
-
-foreign void:Class_ReturnToSelection(playerid);
-
-global void:Class_ReturnToSelection(playerid)
-{
-	YSI_g_sPlayerClass[playerid] |= (e_PLAYER_CLASS_INSTANT);
-	Class_ForceReselection(playerid);
-	TogglePlayerSpectating(playerid, false);
-	//return 1;
-}
-
-static stock Class_Spectate(playerid)
-{
-	new
-		Float:x1,
-		Float:y1,
-		Float:z1;
-	GetPlayerCameraPos(playerid, x1, y1, z1);
-	new
-		Float:x2,
-		Float:y2,
-		Float:z2;
-	GetPlayerCameraFrontVector(playerid, x2, y2, z2);
-	TogglePlayerSpectating(playerid, true);
-	SetPlayerCameraPos(playerid, x1, y1, z1);
-	SetPlayerCameraLookAt(playerid, x2, y2, z2);
-	PlayerSpectatePlayer(playerid, playerid, SPECTATE_MODE_FIXED);
 }
 
 #if defined _ALS_AddPlayerClass
