@@ -160,28 +160,17 @@ enum E_CLASS
 	PlayerArray:E_CLASS_PLAYERS<MAX_PLAYERS>
 }
 
-enum e_PLAYER_CLASS (<<= 1)
-{
-	e_PLAYER_CLASS_NONE  = 0,
-	e_PLAYER_CLASS_SKIN  = 0x000FFFFF,
-	// e_PLAYER_CLASS_PRESS = 0x00700000,
-	// e_PLAYER_CLASS_RIGHT = 0x00100000,
-	// e_PLAYER_CLASS_MIDDLE,
-	// e_PLAYER_CLASS_LEFT,
-	e_PLAYER_CLASS_IN_SELECTION
-}
-
-#define CLASS_MOVE_LEFT                 (-1)
-#define CLASS_MOVE_RIGHT                (1)
-#define CLASS_MOVE_NONE                 (0)
+// enum e_PLAYER_CLASS (<<= 1)
+// {
+	// e_PLAYER_CLASS_NONE  = 0,
+	// e_PLAYER_CLASS_SKIN  = 0x000FFFFF,
+	// e_PLAYER_CLASS_IN_SELECTION
+// }
 
 static stock
 	YSI_g_sClasses[MAX_CLASSES][E_CLASS],
-	e_PLAYER_CLASS:YSI_g_sPlayerClass[MAX_PLAYERS],
+	YSI_g_sPlayerClass[MAX_PLAYERS],
 	YSI_g_sInternalClass[MAX_PLAYERS],
-	// YSI_g_sLeft,
-	// YSI_g_sMiddle,
-	// YSI_g_sRight,
 	YSI_g_sClassCount,
 	YSI_g_sLastRefuse[MAX_PLAYERS];
 
@@ -320,15 +309,16 @@ hook OnScriptInit()
 		if (!YSI_FILTERSCRIPT)
 		{
 			// This code placement is not generic.
-			YSI_g_sLeft = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0);
-			YSI_g_sMiddle = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0);
-			YSI_g_sRight = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0);
-			if (YSI_g_sLeft != 0 || YSI_g_sMiddle != 1 || YSI_g_sRight != 2)
+			new
+				classLeft = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0),
+				classMiddle = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0),
+				classRight = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0);
+			if (classLeft != 0 || classMiddle != 1 || classRight != 2)
 			{
 				P:E("y_classes assumptions failed.  Do you have \"AddPlayerClass\" in your modes?");
 			}
 			//printf("==========================");
-			P:4("Class_OnScriptInit: classes = %d %d %d", YSI_g_sLeft, YSI_g_sMiddle, YSI_g_sRight);
+			P:4("Class_OnScriptInit: classes = %d %d %d", classLeft, classMiddle, classRight);
 			//printf("==========================");
 			#if !defined YSI_NO_MASTER
 				if (_Master_Get(#_YCM, true))
@@ -400,7 +390,7 @@ global void:Class_Goto(playerid, playerclass)
 	// This now sets the REAL spawn information, including spawn location.
 	SetSpawnInfo(playerid, NO_TEAM, Class_Skin(e_PLAYER_CLASS:playerclass), Class_X(e_PLAYER_CLASS:playerclass), Class_Y(e_PLAYER_CLASS:playerclass), Class_Z(e_PLAYER_CLASS:playerclass), Class_A(e_PLAYER_CLASS:playerclass), 0, 0, 0, 0, 0, 0);
 	SetPlayerSkin(playerid, Class_Skin(e_PLAYER_CLASS:playerclass));
-	YSI_g_sPlayerClass[playerid] = (YSI_g_sPlayerClass[playerid] & ~e_PLAYER_CLASS_SKIN) | (e_PLAYER_CLASS:playerclass);
+	YSI_g_sPlayerClass[playerid] = playerclass; //(YSI_g_sPlayerClass[playerid] & ~e_PLAYER_CLASS_SKIN) | (e_PLAYER_CLASS:playerclass);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -445,17 +435,17 @@ global void:Class_Goto(playerid, playerclass)
 				if (ret)
 				{
 					new
-						Group:newgroup = YSI_g_sClasses[(YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_SKIN)][E_CLASS_GROUP];
+						Group:newgroup = YSI_g_sClasses[YSI_g_sPlayerClass[playerid]][E_CLASS_GROUP];
 					P:4("Class_OnPlayerRequestSpawn() newgroup: %d", _:newgroup);
 					if (newgroup != Group:-1) Class_ResolveGroups(playerid, newgroup, true);
 					if (ret == -1)
 					{
 						// Send the player back to class selection.
-						OnPlayerRequestClass(playerid, YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_PRESS);
+						OnPlayerRequestClass(playerid, YSI_g_sInternalClass[playerid]);
 					}
 					else
 					{
-						YSI_g_sPlayerClass[playerid] &= ~e_PLAYER_CLASS_IN_SELECTION;
+						// YSI_g_sPlayerClass[playerid] &= ~e_PLAYER_CLASS_IN_SELECTION;
 						return 1;
 					}
 				}
@@ -490,7 +480,7 @@ mhook OnPlayerSpawn(playerid)
 {
 	P:2("Class_OnPlayerSpawn called: %d", playerid);
 	new
-		playerclass = _:(YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_SKIN),
+		playerclass = YSI_g_sPlayerClass[playerid],
 		weapon;
 	for (new i = 0; i != MAX_CLASS_SPAWN_WEAPONS; ++i)
 	{
@@ -535,7 +525,8 @@ mhook OnPlayerSpawn(playerid)
 
 mhook OnPlayerConnect(playerid)
 {
-	YSI_g_sPlayerClass[playerid] = e_PLAYER_CLASS_NONE;
+	YSI_g_sPlayerClass[playerid] = -1,
+	YSI_g_sInternalClass[playerid] = -1;
 	NO_GROUPS()
 	{
 		new
@@ -793,14 +784,14 @@ global Class_Enable(classid, bool:toggle)
 		{
 			YSI_g_sClasses[classid][E_CLASS_FLAGS] &= ~e_CLASS_FLAGS_ENABLED;
 			// Hide the class for anyone currently viewing it.
-			foreach (new playerid : Player)
-			{
-				P:5("Class_Enable: %d %d %d", playerid, _:YSI_g_sPlayerClass[playerid], _:e_PLAYER_CLASS_IN_SELECTION);
-				if (YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_IN_SELECTION)
-				{
-					OnPlayerRequestClass(playerid, YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_PRESS);
-				}
-			}
+			// foreach (new playerid : Player)
+			// {
+				// P:5("Class_Enable: %d %d %d", playerid, _:YSI_g_sPlayerClass[playerid], _:e_PLAYER_CLASS_IN_SELECTION);
+				// if (YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_IN_SELECTION)
+				// {
+					// OnPlayerRequestClass(playerid, YSI_g_sInternalClass[playerid]);
+				// }
+			// }
 		}
 		return 1;
 	}
@@ -885,7 +876,7 @@ global Class_Get(playerid)
 {
 	if (VALID_PLAYERID(playerid))
 	{
-		return _:(YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_SKIN);
+		return YSI_g_sPlayerClass[playerid];
 	}
 	return -1;
 }
@@ -918,60 +909,6 @@ global Class_Get(playerid)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-
-static stock Class_GetSelectedDirection(playerid, classid, dir)
-{
-	// switch ((YSI_g_sInternalClass[playerid] - classid) % 3)
-	// {
-		// case 0: dir = CLASS_MOVE_NONE;
-		// case 1: dir = CLASS_MOVE_LEFT;
-		// case 2: dir = CLASS_MOVE_RIGHT;
-	// }
-	
-	// switch (YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_PRESS)
-	// {
-		// case e_PLAYER_CLASS_RIGHT:
-		// {
-			// // Went from the right to the middle - that's a move left.
-			// if (classid == YSI_g_sMiddle) dir = CLASS_MOVE_LEFT;
-			// else if (classid != YSI_g_sLeft) dir = CLASS_MOVE_NONE;
-		// }
-		// case e_PLAYER_CLASS_MIDDLE:
-		// {
-			// // Went from the middle to the left - that's a move left.
-			// if (classid == YSI_g_sLeft) dir = CLASS_MOVE_LEFT;
-			// else if (classid != YSI_g_sRight) dir = CLASS_MOVE_NONE;
-		// }
-		// default:
-		// {
-			// // Went from the left to the right - that's a wrap move left.
-			// if (classid == YSI_g_sRight) dir = CLASS_MOVE_LEFT;
-			// else if (classid != YSI_g_sMiddle) dir = CLASS_MOVE_NONE;
-		// }
-	// }
-	// Store which class they are now on.
-	// YSI_g_sPlayerClass[playerid] = (YSI_g_sPlayerClass[playerid] & ~e_PLAYER_CLASS_PRESS) |
-		// ((classid == YSI_g_sMiddle) ? (e_PLAYER_CLASS_MIDDLE) :
-		// ((classid == YSI_g_sLeft)   ? (e_PLAYER_CLASS_LEFT  ) :
-		// ((classid == YSI_g_sRight)  ? (e_PLAYER_CLASS_RIGHT ) :
-		// (e_PLAYER_CLASS_NONE))));
-	YSI_g_sInternalClass[playerid] = classid;
-	// P:C(if (!(YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_PRESS)) P:E("y_classes unidentified classid."););
-	/*
-		o n
-		0 1 = 1
-		1 2 = 1
-		2 0 = 1
-		
-		((n - o) + 1) % 3 - 1
-		
-		1 0 = -1
-		2 1 = -1
-		0 2 = -1
-	*/
-	return ((classid = YSI_g_sInternalClass[playerid]) + 1) % 3 - 1;
-}
-
 // Pre-empt y_hooks.
 #if !defined YSI_NO_MASTER && _YSIM_IS_CLIENT
 		public OnPlayerRequestClass(playerid, classid)
@@ -990,10 +927,8 @@ static stock Class_GetSelectedDirection(playerid, classid, dir)
 		public OnPlayerRequestClass(playerid, classid)
 	#endif
 		{
-			YSI_g_sPlayerClass[playerid] |= e_PLAYER_CLASS_IN_SELECTION;
 			P:1("Class_OnPlayerRequestClass called: %d %d", playerid, classid);
-			new
-				dir = Class_GetSelectedDirection(playerid, classid, CLASS_MOVE_RIGHT);
+			//YSI_g_sPlayerClass[playerid] |= e_PLAYER_CLASS_IN_SELECTION;
 			// Find which direction they pressed.
 			if (YSI_g_sClassCount)
 			{
@@ -1001,7 +936,10 @@ static stock Class_GetSelectedDirection(playerid, classid, dir)
 				// sure how this handles the case where you can't use any skin.
 				// I'll have to look in to that - don't want to get stuck
 				// constantly adding "0".
-				classid = Class_FindNew(playerid, YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_SKIN, dir),
+				new
+					cid = classid;
+				classid = Class_FindNew(playerid, YSI_g_sPlayerClass[playerid], ((classid - YSI_g_sInternalClass[playerid]) + 1) % 3 - 1),
+				YSI_g_sInternalClass[playerid] = cid,
 				Class_Goto(playerid, classid);
 				P:5("Class_OnPlayerRequestClass() selected: %d", classid);
 			}
@@ -1026,10 +964,10 @@ HOOK_FORWARD:Class_OnPlayerRequestClass(playerid, classid);
 #define OnPlayerRequestClass(%0) Class_OnPlayerRequestClass(%0) <_ALS : _ALS_go>
 
 
-foreign bool:Class_InSelection(playerid);
+// foreign bool:Class_InSelection(playerid);
 
-global bool:Class_InSelection(playerid)
-{
-	return bool:(YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_IN_SELECTION);
-}
+// global bool:Class_InSelection(playerid)
+// {
+	// return bool:(YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_IN_SELECTION);
+// }
 
