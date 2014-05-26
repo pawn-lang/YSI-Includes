@@ -302,7 +302,10 @@ public OnPlayerDisconnect(playerid, reason)
 	Is the value in the given range.
 </returns>
 <remarks>
-	-
+	Equivalent to:
+	
+		(%1) <= (%0) < (%2)
+	
 </remarks>
 \**--------------------------------------------------------------------------**/
 

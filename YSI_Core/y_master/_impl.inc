@@ -193,6 +193,7 @@ Natives:
 		
 		static stock Master_GetCurrentMaster()
 		{
+			// THIS CODE IS COPIED IN y_classes (mostly).
 			#if _YSIM_IS_SERVER
 				// Steal the master.
 				if (_Master_Get(#_YCM, true))

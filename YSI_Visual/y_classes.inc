@@ -140,6 +140,13 @@ Operators:
 #endif
 #define _INC_y_classes
 
+stock _YSI_HAS_y_classes(_do_not_call_me_ever_, _like_never_)
+{
+	P:E("You called _YSI_HAS_y_classes!  Bad, don't do that!", _do_not_call_me_ever_, _like_never_);
+	assert(false);
+	return 0;
+}
+
 #include "..\YSI_Internal\y_version"
 
 #if !defined MAX_CLASSES
@@ -156,6 +163,10 @@ Operators:
 
 #define INFINATE_ARMOUR                 (0x00800000)
 
+#define MASTER 61
+#define YSIM_U_DISABLE
+#include "..\YSI_Core\y_master"
+
 #include "..\YSI_Data\y_bit"
 #include "..\YSI_Core\y_debug"
 #include "..\YSI_Data\y_iterate"
@@ -163,19 +174,15 @@ Operators:
 #include "..\YSI_Data\y_iterate"
 #include "..\YSI_Internal\y_natives"
 
-#define MASTER 61
-#define YSIM_U_DISABLE
-#include "..\YSI_Core\y_master"
+#include "..\YSI_Coding\y_hooks"
 
 #define _GROUP_MAKE_NAME<%0...%1> %0Class%1
 #define _GROUP_MAKE_LIMIT         MAX_CLASSES
 #include "..\YSI_Players\y_groups\_funcs"
-#include "..\YSI_Players\y_groups\y_classes"
-
-#include "..\YSI_Coding\y_hooks"
+//#include "..\YSI_Players\y_groups\y_classes"
 
 #include "y_classes/multiclass"
-#include "y_classes/classcontrol"
+//#include "y_classes/classcontrol"
 
 #if defined YSI_TESTS
 	#include "..\YSI_Core\y_testing"

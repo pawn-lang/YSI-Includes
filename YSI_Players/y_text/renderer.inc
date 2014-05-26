@@ -395,10 +395,8 @@ _Y_TEXT_STATIC stock TextR_DoNLFade(str[], len, &oldColour, startPos, startColou
 _Y_TEXT_STATIC stock TextR_ResolvePending(str[], len, pos, colourLocations[], idx, colour, endPos, &curColour)
 {
 	endPos += colourLocations[idx];
-	//printf("%d %d %c", pos, endPos, str[pos]);
 	while (pos < endPos && str[pos])
 	{
-		//printf("%d %d %c", pos, endPos, str[pos]);
 		if (str[pos] <= ' ') ++pos;
 		else
 		{
@@ -481,8 +479,6 @@ _Y_TEXT_STATIC stock TextR_DoOutput(colour, str[], start, end) <y_text_output : 
 		ch = str[end];
 	return
 		str[end] = '\0',
-		//printf("%06x: \"%s\"", colour, str[start]),
-		//print(str[start]),
 		str[end] = ch;
 }
 
@@ -526,49 +522,16 @@ _Y_TEXT_STATIC stock bool:TextR_GetColour(const str[], &colour)
 	return false;
 }
 
-/*_Y_TEXT_STATIC stock TextR_GetLastColour(str[], pos, colour)
-{
-	if (colour & _:e_TEXT_RENDER_COLOUR_FADE)
-	{
-		pos -= 8;
-		while (!TextR_GetColour(str[pos], colour) && pos) --pos;
-		colour <<= 8;
-	}
-	return colour;
-}*/
-
-/*_Y_TEXT_STATIC stock TextR_RunPhase2(str[], len, colourLocations[]) //, intialColour)
-{
-	// Loop over all the stored colours and add them in to the string.
-	new
-		initialColour = colourLocations[0],
-		offset = 0,
-		idx = 2,
-		addition,
-		curColour = initialColour;
-	while (colourLocations[idx] != 65536)
-	{
-		addition = TextR_DoOneColour(str, len, offset, colourLocations, idx, curColour, initialColour),
-		colourLocations[idx] += offset,
-		offset += addition,
-		idx += 2;
-	}
-}*/
-
 _Y_TEXT_STATIC stock TextR_GetLastColour(str[], pos, colourLocations[], idx, prevColour)
 {
 	while (colourLocations[idx] < pos)
 	{
-		//printf("pos: %d %d", colourLocations[idx], pos);
 		prevColour = colourLocations[idx - 1],
 		idx += 2;
 	}
-	//printf("pos: %d %d", colourLocations[idx], pos);
-	//printf("%04x%04x", prevColour >>> 16, prevColour & 0xFFFF);
 	if (colourLocations[idx] == pos) return colourLocations[idx - 1];
 	else if (prevColour & _:e_TEXT_RENDER_COLOUR_FADE)
 	{
-		//printf("FADE: %.8s", str[pos - 8]);
 		pos -= 8;
 		while (!TextR_GetColour(str[pos], prevColour) && pos) --pos;
 		return prevColour << 8;
@@ -599,10 +562,7 @@ _Y_TEXT_STATIC stock TextR_RunPhase3(str[], len, colourLocations[]) //, intialCo
 		colourCur = colourLine,
 		tmp,
 		offset,
-		//colourPrev = colourLine,
-		//addition,
 		lastNL = 0,
-		//pos,
 		li = 2,
 		idx = 2;
 	while (colourLocations[idx] != 65536)
@@ -621,53 +581,7 @@ _Y_TEXT_STATIC stock TextR_RunPhase3(str[], len, colourLocations[]) //, intialCo
 		idx += 2;
 	}
 	TextR_OutputLine(str, lastNL, strlen(str), colourLocations, li, colourLine);
-	//TextR_OutputLine(str, colourLine, colourPrev, lastNL, strlen(str));
 }
-
-/*_Y_TEXT_STATIC stock TextR_RunPhase23(str[], len, colourLocations[]) //, intialColour)
-{
-	// Loop over all the stored colours and add them in to the string.
-	new
-		initialColour = colourLocations[0],
-		offset = 0,
-		idx = 2,
-		addition,
-		colourCur = initialColour;
-	while (colourLocations[idx] != 65536)
-	{
-		if (colourCur & _:e_TEXT_RENDER_COLOUR_LINE)
-		{
-			if (pos - lastNL > 144)
-			{
-				new
-					start,
-					end,
-					ch = TextR_GetSplitPoint(str, lastNL + 144, end, start);
-				TextR_DoOutput(colourLine, str, lastNL, end),
-				lastNL = start,
-				colourLine = TextR_GetLastColour(str, start, colourPrev);
-				if (ch) str[end - 1] = ch;
-				continue;
-			}
-			else
-			{
-				TextR_DoOutput(colourLine, str, lastNL, pos),
-				lastNL = pos,
-				//idx += 2,
-				colourPrev = colourLine = colourCur;
-			}
-		}
-		else
-		{
-			//idx += 2,
-			colourPrev = colourCur;
-		}
-		addition = TextR_DoOneColour(str, len, offset, colourLocations, idx, colourCur, initialColour),
-		colourLocations[idx] += offset,
-		offset += addition,
-		idx += 2;
-	}
-}*/
 
 _Y_TEXT_STATIC stock bool:TextR_IsColour(const str[])
 {
@@ -721,7 +635,6 @@ _Y_TEXT_STATIC stock TextR_GetSplitPoint(str[], pos, &end, &start)
 				start = TextR_IsColour(str[pos]) ? (pos + 8) : pos,
 				str[pos] = '-',
 				ret;
-			//strins(str, "-", pos, len);
 		}
 	}
 	// Remove any leading colour, since that will not be required and saves us

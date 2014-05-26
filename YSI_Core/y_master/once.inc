@@ -242,9 +242,8 @@ static
 	YSI_g_sMasterData[MAX_MASTERS];
 
 PRE_HOOK(Master)
-
 #undef CHAIN_ORDER
-#define CHAIN_ORDER @CO_MasterChain
+#define CHAIN_ORDER @CO_Master
 
 /**--------------------------------------------------------------------------**\
 <summary>Master_GetNext</summary>
@@ -286,7 +285,7 @@ Hook:
 public OnScriptInit()
 {
 	P:1("Master_OnScriptInit");
-	state _Master_ALS : _Master_ALS_go;
+	state _ALS : _ALS_go;
 	if (!existproperty(8, YSIM_MASTER))
 	{
 		setproperty(8, YSIM_MASTER, 1);
@@ -324,7 +323,7 @@ HOOK_FORWARD:Master_OnScriptInit();
 #else
 	#define _ALS_OnScriptInit
 #endif
-#define OnScriptInit(%0) Master_OnScriptInit(%0) <_Master_ALS : _Master_ALS_go>
+#define OnScriptInit(%0) Master_OnScriptInit(%0) <_ALS : _ALS_go>
 
 #define OnMasterSystemInit YSIM_OnMasterSystemInit
 forward YSIM_OnMasterSystemInit();
@@ -369,7 +368,7 @@ HOOK_FORWARD:Master_OnScriptExit();
 #else
 	#define _ALS_OnScriptExit
 #endif
-#define OnScriptExit(%0) Master_OnScriptExit(%0) <_Master_ALS : _Master_ALS_go>
+#define OnScriptExit(%0) Master_OnScriptExit(%0) <_ALS : _ALS_go>
 
 #undef OnScriptExit
 #define OnScriptExit YSIM_OnScriptExit

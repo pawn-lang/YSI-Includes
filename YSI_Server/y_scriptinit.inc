@@ -103,7 +103,7 @@ public @CO_ScriptInit()
 
 #define SCRIPT_INIT_FORWARD:%0(%1); \
 	forward ScriptInit_%0(%1); \
-	public ScriptInit_%0(%1) <_ScriptInit_ALS : _ScriptInit_ALS_x0, _ScriptInit_ALS : _ScriptInit_ALS_x1> { return 1; } \
+	public ScriptInit_%0(%1) <_ALS : _ALS_x0, _ALS : _ALS_x1> { return 1; } \
 	public ScriptInit_%0(%1) <> { return 1; }
 
 stock
@@ -126,7 +126,7 @@ public OnFilterScriptInit()
 {
 	YSI_FILTERSCRIPT = true;
 	state _script_init_fix_state : true;
-	state _ScriptInit_ALS : _ScriptInit_ALS_go;
+	state _ALS : _ALS_go;
 	#if defined ScriptInit_OnScriptInit
 		ScriptInit_OnScriptInit();
 	#endif
@@ -157,7 +157,7 @@ public OnFilterScriptInit()
 
 public OnGameModeInit()
 {
-	state _ScriptInit_ALS : _ScriptInit_ALS_go;
+	state _ALS : _ALS_go;
 	if (!YSI_FILTERSCRIPT)
 	{
 		state _script_init_fix_state : false;
@@ -246,7 +246,7 @@ SCRIPT_INIT_FORWARD:OnFilterScriptInit();
 #else
 	#define _ALS_OnFilterScriptInit
 #endif
-#define OnFilterScriptInit(%0) ScriptInit_OnFilterScriptInit(%0) <_ScriptInit_ALS : _ScriptInit_ALS_go>
+#define OnFilterScriptInit(%0) ScriptInit_OnFilterScriptInit(%0) <_ALS : _ALS_go>
 
 SCRIPT_INIT_FORWARD:OnGameModeInit();
 #if defined _ALS_OnGameModeInit
@@ -254,7 +254,7 @@ SCRIPT_INIT_FORWARD:OnGameModeInit();
 #else
 	#define _ALS_OnGameModeInit
 #endif
-#define OnGameModeInit(%0) ScriptInit_OnGameModeInit(%0) <_ScriptInit_ALS : _ScriptInit_ALS_go>
+#define OnGameModeInit(%0) ScriptInit_OnGameModeInit(%0) <_ALS : _ALS_go>
 
 SCRIPT_INIT_FORWARD:OnFilterScriptExit();
 #if defined _ALS_OnFilterScriptExit
@@ -262,7 +262,7 @@ SCRIPT_INIT_FORWARD:OnFilterScriptExit();
 #else
 	#define _ALS_OnFilterScriptExit
 #endif
-#define OnFilterScriptExit(%0) ScriptInit_OnFilterScriptExit(%0) <_ScriptInit_ALS : _ScriptInit_ALS_go>
+#define OnFilterScriptExit(%0) ScriptInit_OnFilterScriptExit(%0) <_ALS : _ALS_go>
 
 SCRIPT_INIT_FORWARD:OnGameModeExit();
 #if defined _ALS_OnGameModeExit
@@ -270,7 +270,7 @@ SCRIPT_INIT_FORWARD:OnGameModeExit();
 #else
 	#define _ALS_OnGameModeExit
 #endif
-#define OnGameModeExit(%0) ScriptInit_OnGameModeExit(%0) <_ScriptInit_ALS : _ScriptInit_ALS_go>
+#define OnGameModeExit(%0) ScriptInit_OnGameModeExit(%0) <_ALS : _ALS_go>
 
 SCRIPT_INIT_FORWARD:OnScriptExit();
 #if defined _ALS_OnScriptExit
@@ -278,7 +278,7 @@ SCRIPT_INIT_FORWARD:OnScriptExit();
 #else
 	#define _ALS_OnScriptExit
 #endif
-#define OnScriptExit(%0) ScriptInit_OnScriptExit(%0) <_ScriptInit_ALS : _ScriptInit_ALS_go>
+#define OnScriptExit(%0) ScriptInit_OnScriptExit(%0) <_ALS : _ALS_go>
 
 /*
 
@@ -304,16 +304,11 @@ public _ScriptInit_FixState() <_script_init_fix_state : false>
 {
 }
 
-static stock _ScriptInit_IncludeStates() <
-	_ScriptInit_ALS : _ScriptInit_ALS_x0,
-	_ScriptInit_ALS : _ScriptInit_ALS_x1,
-	_ScriptInit_ALS : _ScriptInit_ALS_x2,
-	_ScriptInit_ALS : _ScriptInit_ALS_x3>
+static stock _ScriptInit_IncludeStates() <_ALS : _ALS_x0, _ALS : _ALS_x1, _ALS : _ALS_x2, _ALS : _ALS_x3>
 {
 }
 
-static stock _ScriptInit_IncludeStates() <
-	_ScriptInit_ALS : _ScriptInit_ALS_go>
+static stock _ScriptInit_IncludeStates() <_ALS : _ALS_go>
 {
 }
 

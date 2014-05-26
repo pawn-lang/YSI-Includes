@@ -108,9 +108,7 @@ enum E_HOOK_NAME_REPLACEMENT_DATA
 	#define CHAIN_ORDER() 0
 #endif
 
-#define PRE_HOOK(%0) forward @CO_%0();public @CO_%0(){return CHAIN_ORDER()+1;}\
-	static stock _%0_IncludeStates()<_%0_ALS:_%0_ALS_x0,_%0_ALS:_%0_ALS_x1,_%0_ALS:_%0_ALS_x2,_%0_ALS:_%0_ALS_x3>{}\
-	static stock _%0_IncludeStates()<_%0_ALS:_%0_ALS_go>{}
+#define PRE_HOOK(%0) forward @CO_%0();public @CO_%0(){return CHAIN_ORDER()+1;}
 
 enum E_PRE_HOOK
 {
@@ -119,13 +117,20 @@ enum E_PRE_HOOK
 }
 
 PRE_HOOK(HookChain)
-
 #undef CHAIN_ORDER
 #define CHAIN_ORDER @CO_HookChain
 
+static stock _HookChain_IncludeStates() <_ALS : _ALS_x0, _ALS : _ALS_x1, _ALS : _ALS_x2, _ALS : _ALS_x3>
+{
+}
+
+static stock _HookChain_IncludeStates() <_ALS : _ALS_go>
+{
+}
+
 #define HOOK_FORWARD:%0_%2(%1); \
 	forward %0_%2(%1); \
-	public %0_%2(%1) <_%0_ALS : _%0_ALS_x0, _%0_ALS : _%0_ALS_x1> { return 1; } \
+	public %0_%2(%1) <_ALS : _ALS_x0, _ALS : _ALS_x1> { return 1; } \
 	public %0_%2(%1) <> { return 1; }
 
 #define HOOK_RET:%0(%1) forward @RET%0(); public @RET%0()
@@ -1091,7 +1096,7 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 public OnScriptInit()
 {
 	P:1("Hooks_OnScriptInit called");
-	state _HookChain_ALS : _HookChain_ALS_go;
+	state _ALS : _ALS_go;
 	Hooks_DoAllHooks();
 	P:1("Hooks_OnScriptInit chain");
 	//DisasmDump("YSI_TEST.asm");
@@ -1106,5 +1111,5 @@ HOOK_FORWARD:HookChain_OnScriptInit();
 #else
 	#define _ALS_OnScriptInit
 #endif
-#define OnScriptInit(%0) HookChain_OnScriptInit(%0) <_HookChain_ALS : _HookChain_ALS_go>
+#define OnScriptInit(%0) HookChain_OnScriptInit(%0) <_ALS : _ALS_go>
 
