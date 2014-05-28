@@ -90,7 +90,6 @@ Compile options:
 	-
 Operators:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 static stock
@@ -105,7 +104,7 @@ stock va_printf(const fmat[], va_:STATIC_ARGS)
 	#emit LOAD.S.alt   STATIC_ARGS
 	#emit INC.alt      // 2 - n
 	#emit SHL.C.alt    2
-	// "alt" now contains the number of static arguments in bytes + 4.
+	// "alt" now contains the number of static arguments in bytes - 4.
 	
 	// Get the previous parameter count.
 	#emit LOAD.S.pri   0
@@ -156,7 +155,7 @@ stock va_CallRemoteFunction(const function[], const fmat[], va_:STATIC_ARGS)
 	// Get the number of parameters.
 	#emit LOAD.S.alt   STATIC_ARGS
 	#emit SHL.C.alt    2
-	// "alt" now contains the number of static arguments in bytes + 4.
+	// "alt" now contains the number of static arguments in bytes.
 	
 	// Get the previous parameter count.
 	#emit LOAD.S.pri   0
@@ -203,7 +202,7 @@ stock va_CallLocalFunction(const function[], const fmat[], va_:STATIC_ARGS)
 	// Get the number of parameters.
 	#emit LOAD.S.alt   STATIC_ARGS
 	#emit SHL.C.alt    2
-	// "alt" now contains the number of static arguments in bytes + 4.
+	// "alt" now contains the number of static arguments in bytes.
 	
 	// Get the previous parameter count.
 	#emit LOAD.S.pri   0
@@ -252,7 +251,7 @@ stock va_SetTimerEx(const function[], interval, bool:repeating, const fmat[], va
 	#emit DEC.alt      // 2 - n
 	#emit DEC.alt
 	#emit SHL.C.alt    2
-	// "alt" now contains the number of static arguments in bytes + 4.
+	// "alt" now contains the number of static arguments in bytes - 8.
 	
 	// Get the previous parameter count.
 	#emit LOAD.S.pri   0
@@ -306,7 +305,7 @@ stock va_format(out[], size, const fmat[], va_:STATIC_ARGS)
 	#emit LOAD.S.alt   STATIC_ARGS
 	#emit DEC.alt      // 2 - n
 	#emit SHL.C.alt    2
-	// "alt" now contains the number of static arguments in bytes + 4.
+	// "alt" now contains the number of static arguments in bytes - 4.
 	
 	// Get the previous parameter count.
 	#emit LOAD.S.pri   0
@@ -330,6 +329,11 @@ stock va_format(out[], size, const fmat[], va_:STATIC_ARGS)
 	#emit ADD.C        16 // (n + 1) * 4
 	#emit SCTRL        4
 	
+	// Modify the heap to hold "locals".
+	#emit HEAP         0
+	#emit STOR.alt     YSI_g_sHeap
+	#emit SCTRL        2
+	
 	// "frm" is still valid.
 	#emit PUSH.S       fmat
 	#emit PUSH.S       size
@@ -343,6 +347,8 @@ stock va_format(out[], size, const fmat[], va_:STATIC_ARGS)
 	#emit STACK        0
 	#emit CONST.pri    YSI_g_sArgs
 	#emit MOVS         16
+	#emit LOAD.pri     YSI_g_sHeap
+	#emit SCTRL        2
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
 	
@@ -361,7 +367,7 @@ stock va_return(const fmat[], va_:STATIC_ARGS)
 	#emit LOAD.S.alt   STATIC_ARGS
 	#emit DEC.alt      // 2 - n
 	#emit SHL.C.alt    2
-	// "alt" now contains the number of static arguments in bytes + 4.
+	// "alt" now contains the number of static arguments in bytes - 4.
 	
 	// Get the previous parameter count.
 	#emit LOAD.S.pri   0
@@ -385,6 +391,11 @@ stock va_return(const fmat[], va_:STATIC_ARGS)
 	#emit ADD.C        16 // (n + 1) * 4
 	#emit SCTRL        4
 	
+	// Modify the heap to hold "locals".
+	#emit HEAP         0
+	#emit STOR.alt     YSI_g_sHeap
+	#emit SCTRL        2
+	
 	// "frm" is still valid.
 	#emit PUSH.S       fmat
 	#emit PUSH         size
@@ -398,6 +409,8 @@ stock va_return(const fmat[], va_:STATIC_ARGS)
 	#emit STACK        0
 	#emit CONST.pri    YSI_g_sArgs
 	#emit MOVS         16
+	#emit LOAD.pri     YSI_g_sHeap
+	#emit SCTRL        2
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
 	
