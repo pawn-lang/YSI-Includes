@@ -149,6 +149,9 @@ static stock
 	YSI_g_sReplacements[][E_HOOK_NAME_REPLACEMENT_DATA] =
 		{
 			{"CP",  "Checkpoint", 2, 10},
+			// For "SIF".
+			{"Cnt", "Container",  3, 9},
+			{"Inv", "Inventory",  3, 9},
 			{"Dyn", "Dynamic",    3, 7},
 			{"TD",  "TextDraw",   2, 8},
 			{"Upd", "Update",     3, 6},
