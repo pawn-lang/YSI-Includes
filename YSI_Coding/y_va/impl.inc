@@ -94,9 +94,10 @@ Operators:
 \**--------------------------------------------------------------------------**/
 
 static stock
+	YSI_g_sHeap,
 	YSI_g_sStack,
 	YSI_g_sArgCount,
-	YSI_g_sArgs[4];
+	YSI_g_sArgs[5];
 
 stock va_printf(const fmat[], va_:STATIC_ARGS)
 {
