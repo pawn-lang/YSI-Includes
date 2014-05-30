@@ -301,6 +301,7 @@ stock va_SetTimerEx(const function[], interval, bool:repeating, const fmat[], va
 
 stock va_format(out[], size, const fmat[], va_:STATIC_ARGS)
 {
+	P:C(if (_:STATIC_ARGS < 1) P:W("No static args found, please add a dummy local"););
 	// Get the number of parameters.
 	#emit LOAD.S.alt   STATIC_ARGS
 	#emit DEC.alt      // 2 - n
@@ -329,26 +330,27 @@ stock va_format(out[], size, const fmat[], va_:STATIC_ARGS)
 	#emit ADD.C        16 // (n + 1) * 4
 	#emit SCTRL        4
 	
-	// Modify the heap to hold "locals".
-	#emit HEAP         0
-	#emit STOR.alt     YSI_g_sHeap
-	#emit SCTRL        2
-	
 	// "frm" is still valid.
 	#emit PUSH.S       fmat
 	#emit PUSH.S       size
 	#emit PUSH.S       out
 	#emit PUSH         YSI_g_sArgCount // Push the parameter count.
 	
+	// Modify the heap to hold "locals".
+	#emit HEAP         0
+	#emit STOR.alt     YSI_g_sHeap
+	#emit LCTRL        4
+	#emit SCTRL        2
+	
 	// Call the function.
 	#emit SYSREQ.C     format
 	
 	// Copy the data back.
+	#emit LOAD.pri     YSI_g_sHeap
+	#emit SCTRL        2
 	#emit STACK        0
 	#emit CONST.pri    YSI_g_sArgs
 	#emit MOVS         16
-	#emit LOAD.pri     YSI_g_sHeap
-	#emit SCTRL        2
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
 	
@@ -391,26 +393,27 @@ stock va_return(const fmat[], va_:STATIC_ARGS)
 	#emit ADD.C        16 // (n + 1) * 4
 	#emit SCTRL        4
 	
-	// Modify the heap to hold "locals".
-	#emit HEAP         0
-	#emit STOR.alt     YSI_g_sHeap
-	#emit SCTRL        2
-	
 	// "frm" is still valid.
 	#emit PUSH.S       fmat
 	#emit PUSH         size
 	#emit PUSH.C       out
 	#emit PUSH         YSI_g_sArgCount // Push the parameter count.
 	
+	// Modify the heap to hold "locals".
+	#emit HEAP         0
+	#emit STOR.alt     YSI_g_sHeap
+	#emit LCTRL        4
+	#emit SCTRL        2
+	
 	// Call the function.
 	#emit SYSREQ.C     format
 	
 	// Copy the data back.
+	#emit LOAD.pri     YSI_g_sHeap
+	#emit SCTRL        2
 	#emit STACK        0
 	#emit CONST.pri    YSI_g_sArgs
 	#emit MOVS         16
-	#emit LOAD.pri     YSI_g_sHeap
-	#emit SCTRL        2
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
 	

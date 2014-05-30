@@ -104,3 +104,20 @@ Test:y_va_DoubleIndirection()
 	ASSERT(!strcmp(dest, "77 88"));
 }
 
+static stock bool:y_va_Locals(real[], fmat[], va_args<>)
+{
+	new
+		dest[128];
+	va_format(dest, sizeof (dest), fmat, va_start<2>);
+	return !strcmp(dest, real);
+}
+
+Test:y_va_Locals()
+{
+	ASSERT(y_va_Locals("42", "%d", 42));
+	ASSERT(y_va_Locals("42 43 44", "%d %d %d", 42, 43, 44));
+	ASSERT(y_va_Locals("hi", "%s", "hi"));
+	ASSERT(y_va_Locals("he -1", "%.2s %d", "hello", -1));
+}
+
+
