@@ -1514,7 +1514,7 @@ stock Area_AddCircle(Float:x, Float:y, Float:r, Float:height = FLOAT_INFINITY)
 
 stock Area_AddSphere(Float:x, Float:y, Float:z, Float:r)
 {
-	return Area_AddOvoid(x, y, z, r, r, r)
+	return Area_AddOvoid(x, y, z, r, r, r);
 }
 
 /**--------------------------------------------------------------------------**\
