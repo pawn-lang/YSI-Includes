@@ -94,6 +94,12 @@ Changelog:
 	#endif
 #endif
 
+#if defined LIGHT_TEST_REPORT
+	#define TEST_REPORT(%0) H@(%0)
+#else
+	#define TEST_REPORT(%0) printf(%0)
+#endif
+
 #define Y_TESTING_DIALOG_ID (0x7974) // "yt"
 
 #define TEST_TRUE(%0)  Testing_Test(!!%0)
@@ -141,13 +147,13 @@ static stock
 	YSI_g_sFails;
 
 #if defined RUN_TESTS
-	#define Test:%1() forward bool:yQ@_%1(); public bool:yQ@_%1() for(new string:__name[]=#%1,bool:__once=(printf("*** Test %s start", __name) || TRUE);__once;__once=(printf(" ") && FALSE))
-	#define TestInit:%1() forward _yQ@%1(); public _yQ@%1() for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(printf(" ", __name) && FALSE))
-	#define TestClose:%1() forward yQ_@%1(); public yQ_@%1() for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(printf(" ", __name) && FALSE))
+	#define Test:%1() forward bool:yQ@_%1(); public bool:yQ@_%1() for(new string:__name[]=#%1,bool:__once=(TEST_REPORT("*** Test %s start", __name) || TRUE);__once;__once=(TEST_REPORT(" ") && FALSE))
+	#define TestInit:%1() forward _yQ@%1(); public _yQ@%1() for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(TEST_REPORT(" ", __name) && FALSE))
+	#define TestClose:%1() forward yQ_@%1(); public yQ_@%1() for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(TEST_REPORT(" ", __name) && FALSE))
 	
-	#define PTest:%1(%2) forward bool:_@yQ%1(%2); public bool:_@yQ%1(%2) for(new string:__name[]=#%1,bool:__once=(printf("*** Player Test %s start", __name) || TRUE);__once;__once=(printf(" ") && FALSE))
-	#define PTestInit:%1(%2) forward _y@Q%1(%2); public _y@Q%1(%2) for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(printf(" ", __name) && FALSE))
-	#define PTestClose:%1(%2) forward y_@Q%1(%2); public y_@Q%1(%2) for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(printf(" ", __name) && FALSE))
+	#define PTest:%1(%2) forward bool:_@yQ%1(%2); public bool:_@yQ%1(%2) for(new string:__name[]=#%1,bool:__once=(TEST_REPORT("*** Player Test %s start", __name) || TRUE);__once;__once=(TEST_REPORT(" ") && FALSE))
+	#define PTestInit:%1(%2) forward _y@Q%1(%2); public _y@Q%1(%2) for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(TEST_REPORT(" ", __name) && FALSE))
+	#define PTestClose:%1(%2) forward y_@Q%1(%2); public y_@Q%1(%2) for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(TEST_REPORT(" ", __name) && FALSE))
 #else
 	#define Test:%1() stock bool:yQ@_%1()
 	#define TestInit:%1() stock _yQ@%1()
@@ -263,8 +269,8 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 			#if !defined TEST_SHOW_PASSES
 				if (YSI_g_sFails == fails)
 				{
-					printf(TEST_PASSED);
-					printf(" ");
+					TEST_REPORT(TEST_PASSED);
+					TEST_REPORT(" ");
 				}
 			#endif
 			buffer[2] = '_';
@@ -324,8 +330,8 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 			#if !defined TEST_SHOW_PASSES
 				if (YSI_g_sFails == fails)
 				{
-					printf(TEST_PASSED);
-					printf(" ");
+					TEST_REPORT(TEST_PASSED);
+					TEST_REPORT(" ");
 				}
 			#endif
 		}
@@ -338,6 +344,8 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 	#endif
 }
 
+forward OnTestsComplete(tests, fails);
+
 #if defined RUN_TESTS
 	#if defined _AUTO_RUN_TESTS
 		#if defined FILTERSCRIPT
@@ -347,33 +355,7 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 				#if defined Testing_OnFilterScriptInit
 					Testing_OnFilterScriptInit();
 				#endif
-				// Disable error messages (as we're likely to generate them).
-				//state ysi_debug : off;
-				// Need to do it this way because "y_malloc" screws it up.  But
-				// the new heap is still safe because it is set at this point.
-				new
-					tests,
-					fails;
-				printf(" ");
-				printf("  ||===================||  ");
-				printf("  || STARTING TESTS... ||  ");
-				printf("  ||===================||  ");
-				printf(" ");
-				Testing_Run(tests, fails, _, true);
-				if (YSI_g_sTestResult != 9) printf("*** Test system verification failed!");
-				else
-				{
-					printf("*** Tests: %d, Fails: %d", tests, fails);
-					if (!fails)
-					{
-						printf(" ");
-						printf("  ||===================||  ");
-						printf("  || ALL TESTS PASSED! ||  ");
-						printf("  ||===================||  ");
-						printf(" ");
-					}
-				}
-				//state ysi_debug : on;
+				Testing_RunAll();
 			}
 			
 			#if defined _ALS_OnFilterScriptInit
@@ -392,33 +374,7 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 				#if defined Testing_main
 					Testing_main();
 				#endif
-				// Disable error messages (as we're likely to generate them).
-				//state ysi_debug : off;
-				// Need to do it this way because "y_malloc" screws it up.  But
-				// the new heap is still safe because it is set at this point.
-				new
-					tests,
-					fails;
-				printf(" ");
-				printf("  ||===================||  ");
-				printf("  || STARTING TESTS... ||  ");
-				printf("  ||===================||  ");
-				printf(" ");
-				Testing_Run(tests, fails, _, true);
-				if (YSI_g_sTestResult != 9) printf("*** Test system verification failed!");
-				else
-				{
-					printf("*** Tests: %d, Fails: %d", tests, fails);
-					if (!fails)
-					{
-						printf(" ");
-						printf("  ||===================||  ");
-						printf("  || ALL TESTS PASSED! ||  ");
-						printf("  ||===================||  ");
-						printf(" ");
-					}
-				}
-				//state ysi_debug : on;
+				Testing_RunAll();
 			}
 			
 			#if defined _ALS_main
@@ -472,11 +428,11 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 					printf("*** Tests: %d, Fails: %d", YSI_g_sTests, YSI_g_sFails);
 					if (!YSI_g_sFails)
 					{
-						printf(" ");
-						printf("  ||==========================||  ");
-						printf("  || ALL PLAYER TESTS PASSED! ||  ");
-						printf("  ||==========================||  ");
-						printf(" ");
+						TEST_REPORT(" ");
+						TEST_REPORT("  ||==========================||  ");
+						TEST_REPORT("  || ALL PLAYER TESTS PASSED! ||  ");
+						TEST_REPORT("  ||==========================||  ");
+						TEST_REPORT(" ");
 					}
 				}
 				// If the test needs a player but doesn't ask them anything
@@ -488,7 +444,7 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 				}
 				else if (fails == YSI_g_sFails)
 				{
-					printf(TEST_PASSED);
+					TEST_REPORT(TEST_PASSED);
 				}
 			}
 		}
@@ -501,12 +457,12 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 				if (response)
 				{
 					// Pass.
-					printf(TEST_PASSED);
+					TEST_REPORT(TEST_PASSED);
 				}
 				else
 				{
 					// Fail.
-					printf(TEST_FAILED " %s", YSI_g_sFailMessage);
+					TEST_REPORT(TEST_FAILED " %s", YSI_g_sFailMessage);
 					++YSI_g_sFails;
 				}
 				Testing_Next(playerid);
@@ -533,11 +489,11 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 		{
 			if (YSI_g_sPlayer == cellmax && !IsPlayerNPC(playerid))
 			{
-				printf(" ");
-				printf("  ||==========================||  ");
-				printf("  || STARTING PLAYER TESTS... ||  ");
-				printf("  ||==========================||  ");
-				printf(" ");
+				TEST_REPORT(" ");
+				TEST_REPORT("  ||==========================||  ");
+				TEST_REPORT("  || STARTING PLAYER TESTS... ||  ");
+				TEST_REPORT("  ||==========================||  ");
+				TEST_REPORT(" ");
 				YSI_g_sTests = 0;
 				YSI_g_sFails = 0;
 				Testing_Next(playerid);
@@ -558,33 +514,42 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 		#if defined Testing_OnPlayerSpawn
 			forward Testing_OnPlayerSpawn(playerid);
 		#endif
-	#else
-		Testing_RunAll()
-		{
-			// Disable error messages (as we're likely to generate them).
-			//state ysi_debug : off;
-			new
-				tests,
-				fails;
-			printf(" ");
-			printf("  ||===================||  ");
-			printf("  || STARTING TESTS... ||  ");
-			printf("  ||===================||  ");
-			printf(" ");
-			Testing_Run(tests, fails, _, true);
-			printf("*** Tests: %d, Fails: %d", tests, fails);
-			if (!fails)
-			{
-				printf(" ");
-				printf("  ||===================||  ");
-				printf("  || ALL TESTS PASSED! ||  ");
-				printf("  ||===================||  ");
-				printf(" ");
-			}
-			//state ysi_debug : on;
-		}
 	#endif
 #endif
+
+stock Testing_RunAll()
+{
+	// Disable error messages (as we're likely to generate them).
+	//state ysi_debug : off;
+	new
+		tests,
+		fails;
+	TEST_REPORT(" ");
+	TEST_REPORT("  ||===================||  ");
+	TEST_REPORT("  || STARTING TESTS... ||  ");
+	TEST_REPORT("  ||===================||  ");
+	TEST_REPORT(" ");
+	Testing_Run(tests, fails, _, true);
+	if (YSI_g_sTestResult != 9) printf("*** Test system verification failed!");
+	else
+	{
+		printf("*** Tests: %d, Fails: %d", tests, fails);
+		TEST_REPORT(" ");
+		if (!fails)
+		{
+			TEST_REPORT("  ||===================||  ");
+			TEST_REPORT("  || ALL TESTS PASSED! ||  ");
+			TEST_REPORT("  ||===================||  ");
+			TEST_REPORT(" ");
+		}
+	}
+	//state ysi_debug : on;
+	CallLocalFunction("OnTestsComplete", "ii", tests, fails);
+	#if defined TEST_AUTO_EXIT
+		SendRconCommand("exit");
+	#endif
+	//state ysi_debug : on;
+}
 
 // Meta tests.
 
@@ -648,4 +613,6 @@ TestClose:y_testing_1()
 {
 	++YSI_g_sTestResult;
 }
+
+#include "..\YSI_Internal\y_shortfunc"
 

@@ -160,13 +160,6 @@ enum E_CLASS
 	PlayerArray:E_CLASS_PLAYERS<MAX_PLAYERS>
 }
 
-// enum e_PLAYER_CLASS (<<= 1)
-// {
-	// e_PLAYER_CLASS_NONE  = 0,
-	// e_PLAYER_CLASS_SKIN  = 0x000FFFFF,
-	// e_PLAYER_CLASS_IN_SELECTION
-// }
-
 static stock
 	YSI_g_sClasses[MAX_CLASSES][E_CLASS],
 	YSI_g_sPlayerClass[MAX_PLAYERS],
@@ -441,11 +434,10 @@ global void:Class_Goto(playerid, playerclass)
 					if (ret == -1)
 					{
 						// Send the player back to class selection.
-						OnPlayerRequestClass(playerid, YSI_g_sInternalClass[playerid]);
+						_Class_OnPlayerRequestClass(playerid, YSI_g_sInternalClass[playerid]);
 					}
 					else
 					{
-						// YSI_g_sPlayerClass[playerid] &= ~e_PLAYER_CLASS_IN_SELECTION;
 						return 1;
 					}
 				}
@@ -550,23 +542,10 @@ mhook OnPlayerConnect(playerid)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-// #define _CLASS_WEAPON_CODE if((n-w)&0x01)while(w!=n&&s<MAX_CLASS_SPAWN_WEAPONS){cw=getarg(w++);if(cw==WEAPON_ARMOUR)weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(100<<8);else if(w==n)P:E(": Insufficient class weapon data.");else weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);}else while(w!=n&&s<MAX_CLASS_SPAWN_WEAPONS){cw=getarg(w++);if(cw==WEAPON_ARMOUR)weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(getarg(w++)<<8);else weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);}
-
 #define _CLASS_WEAPON_CODE \
 	{if((n-w+1)/2>MAX_CLASS_SPAWN_WEAPONS) P:E("Excessive class weapon data."); \
 	if((n-w)&0x01){while(w!=n)if((cw=getarg(w++))==WEAPON_ARMOUR)weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(100<<8);else if(w==n)P:E(": Insufficient class weapon data.");else weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);} \
 	else{while(w!=n)weapons[((cw=getarg(w++))==WEAPON_ARMOUR)?MAX_CLASS_SPAWN_WEAPONS:(s++)]=(cw&0xFF)|(getarg(w++)<<8);}}
-
-// cw=getarg(w++);if(cw==WEAPON_ARMOUR)weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(getarg(w++)<<8);else weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);
-
-// cw=getarg(w++);
-
-// if((getarg(w++))==WEAPON_ARMOUR)
-	// weapons[MAX_CLASS_SPAWN_WEAPONS]=WEAPON_ARMOUR|(100<<8);
-// else if(w==n)
-	// P:E(": Insufficient class weapon data.");
-// else
-	// weapons[s++]=(cw&0xFF)|(getarg(w++)<<8);
 
 /**--------------------------------------------------------------------------**\
 <summary>Class_Add</summary>
@@ -784,14 +763,14 @@ global Class_Enable(classid, bool:toggle)
 		{
 			YSI_g_sClasses[classid][E_CLASS_FLAGS] &= ~e_CLASS_FLAGS_ENABLED;
 			// Hide the class for anyone currently viewing it.
-			// foreach (new playerid : Player)
-			// {
-				// P:5("Class_Enable: %d %d %d", playerid, _:YSI_g_sPlayerClass[playerid], _:e_PLAYER_CLASS_IN_SELECTION);
-				// if (YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_IN_SELECTION)
-				// {
-					// OnPlayerRequestClass(playerid, YSI_g_sInternalClass[playerid]);
-				// }
-			// }
+			foreach (new playerid : Player)
+			{
+				P:5("Class_Enable: %d %d %d", playerid, _:YSI_g_sPlayerClass[playerid], _:e_PLAYER_CLASS_IN_SELECTION);
+				if (Player_InSelection(playerid))
+				{
+					_Class_OnPlayerRequestClass(playerid, YSI_g_sInternalClass[playerid]);
+				}
+			}
 		}
 		return 1;
 	}
@@ -905,30 +884,36 @@ global Class_Get(playerid)
 	
 	Last thing in the file to be simpler to call directly.  If we ever have a
 	more complex ALS hook on this callback the main body of this code will have
-	to be moved in to its own function.
+	to be moved in to its own function.  As indeed it now does!
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+public OnPlayerRequestClass(playerid, classid)
+{
+	return _Class_OnPlayerRequestClass(playerid, classid);
+}
+
 // Pre-empt y_hooks.
 #if !defined YSI_NO_MASTER && _YSIM_IS_CLIENT
-		public OnPlayerRequestClass(playerid, classid)
+		static stock _Class_OnPlayerRequestClass(playerid, classid)
 		{
+			#pragma unused playerid, classid
 			return 1;
 		}
 #else
 	#if !defined YSI_NO_MASTER && _YSIM_IS_CLOUD
-		public OnPlayerRequestClass(playerid, classid) <>
+		static stock _Class_OnPlayerRequestClass(playerid, classid) <>
 		{
+			#pragma unused playerid, classid
 			return 1;
 		}
 		
-		public OnPlayerRequestClass(playerid, classid) <_YCM:y>
+		static stock _Class_OnPlayerRequestClass(playerid, classid) <_YCM:y>
 	#else
-		public OnPlayerRequestClass(playerid, classid)
+		static stock _Class_OnPlayerRequestClass(playerid, classid)
 	#endif
 		{
 			P:1("Class_OnPlayerRequestClass called: %d %d", playerid, classid);
-			//YSI_g_sPlayerClass[playerid] |= e_PLAYER_CLASS_IN_SELECTION;
 			// Find which direction they pressed.
 			if (YSI_g_sClassCount)
 			{
@@ -962,12 +947,4 @@ HOOK_FORWARD:Class_OnPlayerRequestClass(playerid, classid);
 	#define _ALS_OnPlayerRequestClass
 #endif
 #define OnPlayerRequestClass(%0) Class_OnPlayerRequestClass(%0) <_ALS : _ALS_go>
-
-
-// foreign bool:Class_InSelection(playerid);
-
-// global bool:Class_InSelection(playerid)
-// {
-	// return bool:(YSI_g_sPlayerClass[playerid] & e_PLAYER_CLASS_IN_SELECTION);
-// }
 

@@ -205,7 +205,7 @@ Iterators:
 */
 
 // "y_iterate" is always higher than "foreach".
-#define _Y_ITERATE_LOCAL_VERSION        25
+#define _Y_ITERATE_LOCAL_VERSION        31
 
 // Foreach is testing us.
 #if defined _FOREACH_INC_TEST
