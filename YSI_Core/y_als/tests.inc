@@ -8,13 +8,25 @@ static stock y_als_Print(result[], fmat[], va_args<>)
 	// This function formats the incoming data and compares it to the reference.
 	static
 		msg[256];
-	//printf("%s %s", result, fmat);
+	//printf("ONE: %d", numargs());
+	// printf("\"%s\" \"%s\"", result, fmat);
+	//printf("%s", result);
+	//printf("%s", fmat);
+	//printf("%s", msg);
+	// msg[0] = '\0';
+	// format(msg, sizeof (msg), fmat, 0);
 	va_format(msg, sizeof (msg), fmat, va_start<2>);
+	//printf("TWO");
+	//printf("%s", msg);
 	new
 		bool:cmp = !strcmp(result, msg);
+	//va_format(msg, sizeof (msg), fmat, va_start<2>);
+	//printf("%s", msg);
 	//printf("%s %s", result, fmat);
 	format(msg, sizeof (msg), "\"%s\" != \"%s\" (%d)", result, msg, cmp);
 	Testing_Test(cmp, msg);
+	//printf("THREE");
+	//printf("%s", msg);
 }
 
 // Defines for our "__PRINT" macro, see:

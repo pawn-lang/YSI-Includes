@@ -8,26 +8,26 @@ Description:
 	and testing.
 Legal:
 	Version: MPL 1.1
-	
-	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
-	the License. You may obtain a copy of the License at 
+
+	The contents of this file are subject to the Mozilla Public License Version
+	1.1 (the "License"); you may not use this file except in compliance with
+	the License. You may obtain a copy of the License at
 	http://www.mozilla.org/MPL/
-	
+
 	Software distributed under the License is distributed on an "AS IS" basis,
 	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 	for the specific language governing rights and limitations under the
 	License.
-	
+
 	The Original Code is the YSI AMX include.
-	
+
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright (C) 2011
 	the Initial Developer. All Rights Reserved.
-	
+
 	Contributors:
 		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
+
 	Thanks:
 		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
 		ZeeX - Very productive conversations.
@@ -42,12 +42,12 @@ Legal:
 			for me to strive to better.
 		Pixels^ - Running XScripters where the idea was born.
 		Matite - Pestering me to release it and using it.
-	
+
 	Very special thanks to:
 		Thiadmer - PAWN, whose limits continue to amaze me!
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
-	
+
 Version:
 	1.0
 Changelog:
@@ -251,28 +251,35 @@ stock AMX_GetRelativeAddress(...)
 	return 0;
 }
 
+static AMX_DoNothing()
+{
+	return 0;
+}
+
 static AMX_GetGlobal()
 {
 	new
-		addr = -1;
-	// Get the return address.
-	#emit LOAD.S.pri 4
-	#emit ADD.C      0xFFFFFFFC
-	#emit LOAD.alt   AMX_HEADER_COD
+	addr = -1;
+	// Call dummy function and read its (absolute) address from code.
+	AMX_DoNothing();
+	#emit LCTRL 6
+	#emit CONST.alt 12
+	#emit SUB
+	#emit LOAD.alt AMX_HEADER_COD
 	#emit ADD
 	#emit STOR.S.pri addr
-	// Get the data 4 bytes before the return address.
-	#emit LREF.S.alt addr
-	#emit CONST.pri  AMX_GetGlobal
-	#emit SUB.alt
-	#emit LOAD.alt   AMX_HEADER_COD
+	#emit LREF.S.pri addr
+	// Get difference between absolute and relative addresses.
 	#emit SUB
-	#emit LOAD.alt   AMX_BASE_ADDRESS
-	#emit ADD
+	#emit CONST.alt AMX_DoNothing
+	#emit SUB
+	#emit MOVE.alt
+	#emit LCTRL 1
+	#emit XCHG
+	#emit SUB
 	// Return
 	#emit STACK 4
 	#emit RETN
-	// Find base address, not cod address (both operands relative to DAT.
 	return 0;
 }
 
@@ -877,7 +884,7 @@ enum E_AMX_HEADER
 	E_AMX_HEADER_ENTRY,
 	E_AMX_HEADER_PTR,
 	// For variables, this is their value.  For publics and natives, this is
-	// their table index (used by "funcidx" and "SYSREQ.C" respectively). 
+	// their table index (used by "funcidx" and "SYSREQ.C" respectively).
 	E_AMX_HEADER_VALUE,
 	E_AMX_HEADER_NAME[32 char]
 }
@@ -886,7 +893,7 @@ stock AMX_GetEntryData(entry, ret[E_AMX_HEADER])
 {
 	if ((ret[e_AMX_HEADER_TYPE] = AMX_GetEntryType(entry)))
 	{
-		
+
 	}
 }*/
 

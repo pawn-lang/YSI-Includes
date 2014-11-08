@@ -63,7 +63,7 @@ Test:FUNC_Map_2()
 	FUNC_CHECK_ARR(a0, a1);
 }
 
-Test:FUNC_IdxMap()
+Test:FUNC_MapIdx()
 {
 	new
 		a0[10] = {1, ...},
@@ -72,11 +72,11 @@ Test:FUNC_IdxMap()
 	{
 		@return (x + idx) * 2;
 	}
-	IdxMap(using inline AddAndMul, a0, a0);
+	MapIdx(using inline AddAndMul, a0, a0);
 	FUNC_CHECK_ARR(a0, a1);
 }
 
-Test:FUNC_IdxMap_()
+Test:FUNC_MapIdx_()
 {
 	new
 		a0[10] = {0, 1, 2, ...},
@@ -86,7 +86,7 @@ Test:FUNC_IdxMap_()
 		#pragma unused idx, x
 		@return 42;
 	}
-	IdxMap_(using inline Thing, a0);
+	MapIdx_(using inline Thing, a0);
 	FUNC_CHECK_ARR(a0, a1);
 }
 
@@ -120,7 +120,7 @@ Test:FUNC_FoldR1()
 	new
 		a0[10] = { 0,  1,  2, ...},
 		ret;
-	FoldR({_0 * _1}, a0, 10) => ret;
+	ret = FoldR({_0 * _1}, a0, 10);
 	ASSERT(ret == 0);
 }
 
@@ -129,7 +129,7 @@ Test:FUNC_FoldR2()
 	new
 		a0[10] = { 1,  2,  3, ...},
 		ret;
-	FoldR({_0 * _1}, a0, 10) => ret;
+	ret = FoldR({_0 * _1}, a0, 10);
 	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 10);
 }
 
@@ -138,7 +138,7 @@ Test:FUNC_FoldL1()
 	new
 		a0[10] = { 1,  2,  3, ...},
 		ret;
-	FoldL({_0 * _1}, 11, a0) => ret;
+	ret = FoldL({_0 * _1}, 11, a0);
 	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11);
 }
 
@@ -147,7 +147,7 @@ Test:FUNC_FoldR3()
 	new
 		a0[10] = { 1,  2,  3, ...},
 		ret;
-	FoldR({_0 * _1}, a0, 15, 0) => ret;
+	ret = FoldR({_0 * _1}, a0, 15, 0);
 	ASSERT(ret == 15);
 }
 
@@ -156,7 +156,7 @@ Test:FUNC_FoldL2()
 	new
 		a0[10] = { 1,  2,  3, ...},
 		ret;
-	FoldL({_0 * _1}, 99, a0, 0) => ret;
+	ret = FoldL({_0 * _1}, 99, a0, 0);
 	ASSERT(ret == 99);
 }
 

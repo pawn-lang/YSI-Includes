@@ -44,21 +44,33 @@ Test:y_commands_Perms()
 	ASSERT(Command_GetPlayerNamed("y_commands_1", 101));
 }
 
+static stock
+	YSI_g_sRemovableRan = 0;
+
 YCMD:y_commands_removable(playerid, params[], help)
 {
+	YSI_g_sRemovableRan = 1;
 	return 1;
 }
 
 Test:y_commands_removable()
 {
+	YSI_g_sRemovableRan = 0;
 	Command_SetPlayerNamed("y_commands_removable", 103, true);
 	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") == 1);
+	ASSERT(YSI_g_sRemovableRan == 1);
+	YSI_g_sRemovableRan = 0;
 	Command_SetPlayerNamed("y_commands_removable", 103, false);
-	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") == 0);
+	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") == 1);
+	ASSERT(YSI_g_sRemovableRan == 0);
+	YSI_g_sRemovableRan = 0;
 	Command_SetPlayerNamed("y_commands_removable", 103, true);
 	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") == 1);
+	ASSERT(YSI_g_sRemovableRan == 1);
+	YSI_g_sRemovableRan = 0;
 	Command_RemoveNamed("y_commands_removable");
 	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") == 0);
+	ASSERT(YSI_g_sRemovableRan == 0);
 }
 
 YCMD:y_commands_removable2(playerid, params[], help)

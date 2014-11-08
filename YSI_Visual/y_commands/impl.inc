@@ -157,15 +157,16 @@ enum E_COMMAND
 
 enum e_COMMAND_ERRORS
 {
-	COMMAND_ZERO_RET,     // The command returned 0.
-	COMMAND_OK,           // Called corectly.
-	COMMAND_UNDEFINED,    // Command doesn't exist.
-	COMMAND_DENIED,       // Can't use the command.
-	COMMAND_HIDDEN, // Can't use the command, don't let them know it exists.
-	COMMAND_NO_PLAYER,    // Used by a player who shouldn't exist.
-	COMMAND_DISABLED,     // All commands are disabled for this player.
-	COMMAND_BAD_PREFIX,   // Used "/" instead of "#", or something similar.
-	COMMAND_INVALID_INPUT // Didn't type "/something".
+	// The majority of these are even - odd numbers return "1" not "0".
+	COMMAND_ZERO_RET      = 0 , // The command returned 0.
+	COMMAND_OK            = 1 , // Called corectly.
+	COMMAND_UNDEFINED     = 2 , // Command doesn't exist.
+	COMMAND_DENIED        = 3 , // Can't use the command.
+	COMMAND_HIDDEN        = 4 , // Can't use the command don't let them know it exists.
+	COMMAND_NO_PLAYER     = 6 , // Used by a player who shouldn't exist.
+	COMMAND_DISABLED      = 7 , // All commands are disabled for this player.
+	COMMAND_BAD_PREFIX    = 8 , // Used "/" instead of "#", or something similar.
+	COMMAND_INVALID_INPUT = 10, // Didn't type "/something".
 }
 
 enum e_COMMAND_FLAGS (<<= 1)
@@ -329,7 +330,7 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 		#define Command_Error(%0,%2) (Command_ErrorMsg(%2)[0]?(SendClientMessage((%0),0xFF0000AA,Command_ErrorMsg(%2)),Command_ErrorRet(%2)):Command_ErrorRet(%2))
 	#endif
 #else
-	#define Command_Error(%0,%2) ((%2) == COMMAND_OK)
+	#define Command_Error(%0,%2) ((%2) & e_COMMAND_ERRORS:1)
 #endif
 
 #define Command_OnReceived(%2,%0,%1) ((sErr=(YSI_g_sCommandFlags&e_COMM_FLAG_OPCR)?(e_COMMAND_ERRORS:W@(YSI_gscOPCR,YSI_gscISI,(%0),(%1),(_:COMMAND_%2))):(COMMAND_%2)),Command_Error(%0,sErr))
@@ -561,11 +562,13 @@ global Command_ReProcess(p,string:c[],h)
 	// Can the player use this command?
 	if (_Command_GetPlayer(YSI_g_sCurrentID, p))
 	{
-		if (!Command_OnReceived(OK, p, c))
+		// This macro sets "sErr".
+		sRet = Command_OnReceived(OK, p, c);
+		if (sErr != COMMAND_OK)
 		{
 			return
 				YSI_g_sCurrentID = prevID,
-				0;
+				sRet;
 		}
 		// Find the true version of the command (alts etc).
 		_Command_GetReal(sHash, YSI_g_sCurrentID, sCmd[4]);

@@ -301,7 +301,7 @@ stock va_SetTimerEx(const function[], interval, bool:repeating, const fmat[], va
 
 stock va_format(out[], size, const fmat[], va_:STATIC_ARGS)
 {
-	P:C(if (_:STATIC_ARGS < 1) P:W("No static args found, please add a dummy local"););
+	//P:C(if (_:STATIC_ARGS < 1) P:W("No static args found, please add a dummy local"););
 	// Get the number of parameters.
 	#emit LOAD.S.alt   STATIC_ARGS
 	#emit DEC.alt      // 2 - n

@@ -174,15 +174,16 @@ stock _YSI_HAS_y_classes(_do_not_call_me_ever_, _like_never_)
 #include "..\YSI_Data\y_iterate"
 #include "..\YSI_Internal\y_natives"
 
-#include "..\YSI_Coding\y_hooks"
 
 #define _GROUP_MAKE_NAME<%0...%1> %0Class%1
 #define _GROUP_MAKE_LIMIT         MAX_CLASSES
 #include "..\YSI_Players\y_groups\_funcs"
 //#include "..\YSI_Players\y_groups\y_classes"
 
-#include "y_classes/multiclass"
+#include "..\YSI_Coding\y_hooks"
 //#include "y_classes/classcontrol"
+#include "..\YSI_Coding\y_hooks"
+#include "y_classes/multiclass"
 
 #if defined YSI_TESTS
 	#include "..\YSI_Core\y_testing"

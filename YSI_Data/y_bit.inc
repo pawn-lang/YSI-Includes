@@ -78,7 +78,7 @@ Functions:
 		Bit_Set - Sets a slot to the given value.
 		Bit_Get - Gets a slot state.
 		Bit_SetAll - Sets all the slots in an array to the same thing.
-		Bit_GetAll - Gets the number of 1s in a bit array.
+		Bit_GetCount - Gets the number of 1s in a bit array.
 	Static:
 		-
 	Inline:
