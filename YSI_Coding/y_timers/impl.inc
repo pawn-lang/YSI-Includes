@@ -157,6 +157,7 @@ hook OnScriptInit()
 		}
 	}
 	P:1("hook Timers_OnScriptInit ended");
+	return 1;
 }
 
 hook OnPlayerConnect(playerid)
@@ -192,6 +193,7 @@ hook OnPlayerConnect(playerid)
 		#emit STOR.S.pri  cur
 	}
 	P:1("hook Timers_OnPlayerConnect ended");
+	return 1;
 }
 
 hook OnPlayerDisconnect(playerid, reason)
@@ -227,6 +229,7 @@ hook OnPlayerDisconnect(playerid, reason)
 		#emit STOR.S.pri  cur
 	}
 	P:1("hook Timers_OnPlayerDisconnect ended");
+	return 1;
 }
 
 stock _Timer_I(func[], interval, action, &result)
