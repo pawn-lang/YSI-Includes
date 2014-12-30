@@ -712,3 +712,267 @@ Test:y_inline_InHook2()
 	ASSERT(YSI_g_sInlineTestVar0 == 300 * 100);
 }
 
+static stock
+	YSI_g_sInlineTestVar2,
+	YSI_g_sInlineTestVar3,
+	YSI_g_sInlineTestCB[E_CALLBACK_DATA];
+
+static stock y_inline_Getter(callback:cb)
+{
+	Callback_Get(cb, YSI_g_sInlineTestCB);
+}
+
+static stock y_inline_TestFunc_0()
+{
+	inline TestCallback1()
+	{
+		++YSI_g_sInlineTestVar3;
+	}
+	y_inline_Getter(using inline TestCallback1);
+}
+
+static stock y_inline_TestFunc_1()
+{
+	inline TestCallback1()
+	{
+		++YSI_g_sInlineTestVar3;
+		return;
+	}
+	y_inline_Getter(using inline TestCallback1);
+}
+
+static stock y_inline_TestFunc_2()
+{
+	inline TestCallback1()
+	{
+		++YSI_g_sInlineTestVar3;
+		return 1;
+	}
+	y_inline_Getter(using inline TestCallback1);
+	return 0;
+}
+
+static stock y_inline_TestFunc_3()
+{
+	inline TestCallback1()
+	{
+		++YSI_g_sInlineTestVar3;
+		return 3;
+	}
+	y_inline_Getter(using inline TestCallback1);
+	return 2;
+}
+
+static stock y_inline_TestFunc_4(lvar)
+{
+	inline TestCallback1()
+	{
+		YSI_g_sInlineTestVar2 = lvar;
+		++YSI_g_sInlineTestVar3;
+		return 4;
+	}
+	y_inline_Getter(using inline TestCallback1);
+	return 9;
+}
+
+static stock y_inline_TestFunc_5()
+{
+	inline TestCallback1(ivar)
+	{
+		YSI_g_sInlineTestVar2 = ivar;
+		++YSI_g_sInlineTestVar3;
+		return 5;
+	}
+	y_inline_Getter(using inline TestCallback1);
+	return 8;
+}
+
+static stock y_inline_TestFunc_6(lvar)
+{
+	inline TestCallback1(ivar)
+	{
+		YSI_g_sInlineTestVar2 = ivar + lvar;
+		++YSI_g_sInlineTestVar3;
+		return 6;
+	}
+	y_inline_Getter(using inline TestCallback1);
+	return 7;
+}
+
+Test:y_inline_ParameterTypes_0()
+{
+	YSI_g_sInlineTestVar2 = 0;
+	YSI_g_sInlineTestVar3 = 0;
+	y_inline_TestFunc_0();
+	ASSERT(Callback_Call(YSI_g_sInlineTestCB) == 0);
+	ASSERT(YSI_g_sInlineTestVar2 == 0);
+	ASSERT(YSI_g_sInlineTestVar3 == 1);
+	Callback_Release(YSI_g_sInlineTestCB);
+}
+
+Test:y_inline_ParameterTypes_1()
+{
+	YSI_g_sInlineTestVar2 = 0;
+	YSI_g_sInlineTestVar3 = 0;
+	y_inline_TestFunc_1();
+	ASSERT(Callback_Call(YSI_g_sInlineTestCB) == 0);
+	ASSERT(YSI_g_sInlineTestVar2 == 0);
+	ASSERT(YSI_g_sInlineTestVar3 == 1);
+	Callback_Release(YSI_g_sInlineTestCB);
+}
+
+Test:y_inline_ParameterTypes_2()
+{
+	YSI_g_sInlineTestVar2 = 0;
+	YSI_g_sInlineTestVar3 = 0;
+	ASSERT(y_inline_TestFunc_2() == 0);
+	ASSERT(Callback_Call(YSI_g_sInlineTestCB) == 1);
+	ASSERT(YSI_g_sInlineTestVar2 == 0);
+	ASSERT(YSI_g_sInlineTestVar3 == 1);
+	Callback_Release(YSI_g_sInlineTestCB);
+}
+
+Test:y_inline_ParameterTypes_3()
+{
+	YSI_g_sInlineTestVar2 = 0;
+	YSI_g_sInlineTestVar3 = 0;
+	ASSERT(y_inline_TestFunc_3() == 2);
+	ASSERT(Callback_Call(YSI_g_sInlineTestCB) == 3);
+	ASSERT(YSI_g_sInlineTestVar2 == 0);
+	ASSERT(YSI_g_sInlineTestVar3 == 1);
+	Callback_Release(YSI_g_sInlineTestCB);
+}
+
+Test:y_inline_ParameterTypes_4()
+{
+	YSI_g_sInlineTestVar2 = 0;
+	YSI_g_sInlineTestVar3 = 0;
+	ASSERT(y_inline_TestFunc_4(11) == 9);
+	ASSERT(Callback_Call(YSI_g_sInlineTestCB) == 4);
+	ASSERT(YSI_g_sInlineTestVar2 == 11);
+	ASSERT(YSI_g_sInlineTestVar3 == 1);
+	Callback_Release(YSI_g_sInlineTestCB);
+}
+
+Test:y_inline_ParameterTypes_5()
+{
+	YSI_g_sInlineTestVar2 = 0;
+	YSI_g_sInlineTestVar3 = 0;
+	ASSERT(y_inline_TestFunc_5() == 8);
+	ASSERT(Callback_Call(YSI_g_sInlineTestCB, 22) == 5);
+	ASSERT(YSI_g_sInlineTestVar2 == 22);
+	ASSERT(YSI_g_sInlineTestVar3 == 1);
+	Callback_Release(YSI_g_sInlineTestCB);
+}
+
+Test:y_inline_ParameterTypes_6()
+{
+	YSI_g_sInlineTestVar2 = 0;
+	YSI_g_sInlineTestVar3 = 0;
+	ASSERT(y_inline_TestFunc_6(33) == 7);
+	ASSERT(Callback_Call(YSI_g_sInlineTestCB, 44) == 6);
+	ASSERT(YSI_g_sInlineTestVar2 == 33 + 44);
+	ASSERT(YSI_g_sInlineTestVar3 == 1);
+	Callback_Release(YSI_g_sInlineTestCB);
+}
+
+static stock y_inline_TestFunc_7(lvar)
+{
+	new
+		cvar = 101;
+	inline TestCallback1(ivar)
+	{
+		YSI_g_sInlineTestVar2 = cvar + ivar + lvar;
+		++YSI_g_sInlineTestVar3;
+		return ivar;
+	}
+	y_inline_Getter(using inline TestCallback1);
+	return lvar;
+}
+
+static stock y_inline_TestFunc_8(string:svar0[])
+{
+	new
+		svar0b[20];
+	strcpy(svar0b, svar0);
+	inline TestCallback1()
+	{
+		YSI_g_sInlineTestVar2 = strval(svar0b);
+		++YSI_g_sInlineTestVar3;
+		return strval(svar0b[12]);
+	}
+	y_inline_Getter(using inline TestCallback1);
+	return strval(svar0b[6]);
+}
+
+static stock y_inline_TestFunc_9()
+{
+	inline TestCallback1(string:svar1[])
+	{
+		YSI_g_sInlineTestVar2 = strval(svar1);
+		++YSI_g_sInlineTestVar3;
+		return strval(svar1[6]);
+	}
+	y_inline_Getter(using inline TestCallback1);
+	return 99;
+}
+
+static stock y_inline_TestFunc_10(string:svar0[])
+{
+	new
+		svar0b[20];
+	strcpy(svar0b, svar0);
+	inline TestCallback1(string:svar1[])
+	{
+		YSI_g_sInlineTestVar2 = strval(svar0b) * strval(svar1);
+		++YSI_g_sInlineTestVar3;
+		return strval(svar1[6]);
+	}
+	y_inline_Getter(using inline TestCallback1);
+	return strval(svar0b[6]);
+}
+
+Test:y_inline_ParameterTypes_7()
+{
+	YSI_g_sInlineTestVar2 = 0;
+	YSI_g_sInlineTestVar3 = 0;
+	ASSERT(y_inline_TestFunc_7(202) == 202);
+	ASSERT(Callback_Call(YSI_g_sInlineTestCB, 303) == 303);
+	ASSERT(YSI_g_sInlineTestVar2 == 101 + 202 + 303);
+	ASSERT(YSI_g_sInlineTestVar3 == 1);
+	Callback_Release(YSI_g_sInlineTestCB);
+}
+
+Test:y_inline_ParameterTypes_8()
+{
+	YSI_g_sInlineTestVar2 = 0;
+	YSI_g_sInlineTestVar3 = 0;
+	ASSERT(y_inline_TestFunc_8("123   456   999") == 456);
+	ASSERT(Callback_Call(YSI_g_sInlineTestCB) == 999);
+	ASSERT(YSI_g_sInlineTestVar2 == 123);
+	ASSERT(YSI_g_sInlineTestVar3 == 1);
+	Callback_Release(YSI_g_sInlineTestCB);
+}
+
+Test:y_inline_ParameterTypes_9()
+{
+	YSI_g_sInlineTestVar2 = 0;
+	YSI_g_sInlineTestVar3 = 0;
+	ASSERT(y_inline_TestFunc_9() == 99);
+	ASSERT(Callback_Call(YSI_g_sInlineTestCB, "4242  2424") == 2424);
+	ASSERT(YSI_g_sInlineTestVar2 == 4242);
+	ASSERT(YSI_g_sInlineTestVar3 == 1);
+	Callback_Release(YSI_g_sInlineTestCB);
+}
+
+Test:y_inline_ParameterTypes_10()
+{
+	YSI_g_sInlineTestVar2 = 0;
+	YSI_g_sInlineTestVar3 = 0;
+	ASSERT(y_inline_TestFunc_10("9999  1111") == 1111);
+	ASSERT(Callback_Call(YSI_g_sInlineTestCB, "6543  2109") == 2109);
+	ASSERT(YSI_g_sInlineTestVar2 == 9999 * 6543);
+	ASSERT(YSI_g_sInlineTestVar3 == 1);
+	Callback_Release(YSI_g_sInlineTestCB);
+}
+
