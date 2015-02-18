@@ -161,8 +161,7 @@ hook OnPlayerConnect(playerid)
 	{
 		new
 			ip[16]
-			count = 0,
-			IP;
+			count = 0;
 		GetPlayerIp(playerid, ip, sizeof (ip));
 		new
 			IP = strval(ip) << 24,
