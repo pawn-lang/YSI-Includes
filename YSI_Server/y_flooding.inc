@@ -160,8 +160,20 @@ hook OnPlayerConnect(playerid)
 	if ((YSI_g_sMaxConnections & e_FLOOD_ACTION_COUNT) != e_FLOOD_ACTION_COUNT)
 	{
 		new
+			ip[16]
 			count = 0,
-			IP = GetIP(playerid);
+			IP;
+		GetPlayerIp(playerid, ip, sizeof (ip));
+		new
+			IP = strval(ip) << 24,
+			pos = 0;
+		while (pos < 15 && ip[pos++] != '.') {}
+		IP += strval(ip[pos]) << 16;
+		while (pos < 15 && ip[pos++] != '.') {}
+		IP += strval(ip[pos]) << 8;
+		while (pos < 15 && ip[pos++] != '.') {}
+		IP += strval(ip[pos]);
+		
 		YSI_g_sPlayerIPs[playerid] = IP;
 		foreach (new i : Player)
 		{
