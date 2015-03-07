@@ -249,7 +249,7 @@ Natives:
 		//  
 		// This remote script has now been updated to include changelog
 		// information and keeps a record of what IPs are connecting.
-		HTTP(0, HTTP_GET, "version.ysi.tl/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, "", "YVers_Callback");
+		//HTTP(0, HTTP_GET, "version.ysi.tl/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, "", "YVers_Callback");
 		#if defined YVers_OnScriptInit
 			YVers_OnScriptInit();
 		#endif
