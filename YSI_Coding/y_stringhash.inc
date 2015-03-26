@@ -123,6 +123,9 @@ Definitions:
 #define _H_4:_H_5:%0<%1> HASh@%0(%1))
 #define _H_6:_H_7:%0<%1> HAShi@%0(%1))
 
+// Empty strings.
+#define HASH_:%0(,@,@) 2166136261
+
 #define _Y_HASH_H(%0,%1)(%9) @B%0:@A0:@A1:@A2:@A3:@A4:@A5:@A6:@A7:@A8:@A9:@Aa:@Ab:@Ac:@Ad:@Ae:@Af:@Ag:@Ah:@Ai:@Aj:@Ak:@Al:@Am:@An:@Ao:@Ap:@Aq:@Ar:@As:@At:@Au:@Av:@Aw:@Ax:@Ay:@Az:@AA:@AB:@AC:@AD:@AE:@AF:@AG:@AH:@AI:@AJ:@AK:@AL:@AM:@AN:@AO:@AP:@AQ:@AR:@AS:@AT:@AU:@AV:@AW:@AX:@AY:@AZ:@A_:@A@:@B_:@B%1$(%9)$
 #define _Y_HASH_I(%0,%1)(%9) @B%0:@A0:@A1:@A2:@A3:@A4:@A5:@A6:@A7:@A8:@A9:@Ba:@Bb:@Bc:@Bd:@Be:@Bf:@Bg:@Bh:@Bi:@Bj:@Bk:@Bl:@Bm:@Bn:@Bo:@Bp:@Bq:@Br:@Bs:@Bt:@Bu:@Bv:@Bw:@Bx:@By:@Bz:@AA:@AB:@AC:@AD:@AE:@AF:@AG:@AH:@AI:@AJ:@AK:@AL:@AM:@AN:@AO:@AP:@AQ:@AR:@AS:@AT:@AU:@AV:@AW:@AX:@AY:@AZ:@A_:@A@:@B_:@B%1$(%9)$
 
@@ -136,7 +139,7 @@ Definitions:
 #define @B4:%9$()$ 2166136261
 #define @B5$(<%0>%1) @B6:%0@B7:<>%1
 #define @B6:%9<%0>%1) %9(@B6:%0)*16777619^%1)
-#define @B7:(%0)*%1$ 2166136261*%1
+#define @B7:(%0)*%9^%1$ 84696351^%1
 
 // FNV1a
 #define @B8:%9$()$ 2166136261

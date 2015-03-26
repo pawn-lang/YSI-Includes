@@ -85,7 +85,7 @@ Definitions:
 // =============================
 
 // Signify the end with two "@" symbols.
-#define HASH@fnv1a(%0) _REHASH@a(%0,@,@)
+#define HASH@fnv1a(%0) HASH_:_REHASH@a(%0,@,@)
 
 // Internal call.
 #define _REHASH@a(%0,%1) _HASH@a_%0(%1,)(2166136261)
