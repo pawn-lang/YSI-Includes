@@ -134,6 +134,7 @@ stock va_printf(const fmat[], va_:STATIC_ARGS)
 	
 	// Call the function.
 	#emit SYSREQ.C     printf
+	#emit STOR.pri     YSI_g_sArgCount
 	
 	// Copy the data back.
 	#emit STACK        0
@@ -142,6 +143,7 @@ stock va_printf(const fmat[], va_:STATIC_ARGS)
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
 	
+	#emit LOAD.pri     YSI_g_sArgCount
 	#emit RETN
 	
 	// This new version of the code worked first time!  I'm very happy with that
@@ -186,6 +188,7 @@ stock va_CallRemoteFunction(const function[], const fmat[], va_:STATIC_ARGS)
 	
 	// Call the function.
 	#emit SYSREQ.C     CallRemoteFunction
+	#emit STOR.pri     YSI_g_sArgCount
 	
 	// Copy the data back.
 	#emit STACK        0
@@ -193,6 +196,9 @@ stock va_CallRemoteFunction(const function[], const fmat[], va_:STATIC_ARGS)
 	#emit MOVS         12
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
+	
+	#emit LOAD.pri     YSI_g_sArgCount
+	#emit RETN
 	
 	return 0;
 }
@@ -233,6 +239,7 @@ stock va_CallLocalFunction(const function[], const fmat[], va_:STATIC_ARGS)
 	
 	// Call the function.
 	#emit SYSREQ.C     CallLocalFunction
+	#emit STOR.pri     YSI_g_sArgCount
 	
 	// Copy the data back.
 	#emit STACK        0
@@ -240,6 +247,9 @@ stock va_CallLocalFunction(const function[], const fmat[], va_:STATIC_ARGS)
 	#emit MOVS         12
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
+	
+	#emit LOAD.pri     YSI_g_sArgCount
+	#emit RETN
 	
 	return 0;
 }
@@ -344,6 +354,7 @@ stock va_format(out[], size, const fmat[], va_:STATIC_ARGS)
 	
 	// Call the function.
 	#emit SYSREQ.C     format
+	#emit STOR.pri     YSI_g_sArgCount
 	
 	// Copy the data back.
 	#emit LOAD.pri     YSI_g_sHeap
@@ -354,6 +365,7 @@ stock va_format(out[], size, const fmat[], va_:STATIC_ARGS)
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
 	
+	#emit LOAD.pri     YSI_g_sArgCount
 	#emit RETN
 	
 	return 0;
