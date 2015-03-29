@@ -271,6 +271,7 @@ Iterators:
 #include "..\YSI_Core\y_debug"
 
 #include "y_foreach/impl"
+#include "y_foreach/iterators"
 
 #if defined YSI_TESTS
 	#include "..\YSI_Core\y_testing"
