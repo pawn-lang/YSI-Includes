@@ -679,11 +679,11 @@ hook y_inline_InHook2@1(a, b)
 
 Test:y_inline_InHook0()
 {
-	DebugLevel(7);
+	// DebugLevel(7);
 	YSI_g_sInlineTestVar0 = 0;
 	CallLocalFunction("y_inline_InHook0", "");
 	ASSERT(YSI_g_sInlineTestVar0 == 3);
-	DebugLevel(0);
+	// DebugLevel(0);
 }
 
 Test:y_inline_InHook1()
