@@ -132,6 +132,7 @@ stock PlayerGroups(a, b)
 // Define the groups iterator in terms of the underlying bits, but without the
 // need for users to know about the "YSI_gGroupPlayers" array, just the player.
 #define Iter_Func@PlayerGroups(%1,%0) GROUP_MANGLE(Iter_Func@Bits(_:%1,YSI_gGroupPlayers[%0]))
+#define Iterator@PlayerGroups @iterfunc
 #define iterstart@PlayerGroups iterstart@Bits
 
 static
@@ -1228,6 +1229,7 @@ stock Group:Group_Create(string:name[] = "")
 
 #define iterstart@Group -1
 
+#define Iterator@Group @iterfunc
 #pragma deprecated use "GroupMember"
 stock Iter_Func@Group(start, Group:group)
 {
@@ -1242,6 +1244,7 @@ stock Iter_Func@Group(start, Group:group)
 }
 
 #define iterstart@GroupMember -1
+#define Iterator@GroupMember @iterfunc
 
 foreign Iter_Func@GroupMember(start, Group:group);
 
@@ -1276,14 +1279,8 @@ global Iter_Func@GroupMember(start, Group:group)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#pragma deprecated use "CreatedGroup[]"
-stock CreatedGroup@brackets()
-{
-	P:E("Old style \"CreatedGroup()\" iterator called.  Use \"CreatedGroup\".");
-	return 0;
-}
-
 #define iterstart@CreatedGroup -1
+#define Iterator@CreatedGroup @iterfunc
 
 // Bypass y_iterate restrictions.
 foreign Group:Iter_Func@CreatedGroup(group);
@@ -1314,14 +1311,8 @@ global Group:Iter_Func@CreatedGroup(group)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#pragma deprecated use "GroupChild[]"
-stock GroupChild@brackets()
-{
-	P:E("Old style \"GroupChild()\" iterator called.  Use \"GroupChild[]\".");
-	return 0;
-}
-
 #define iterstart@GroupChild iterstart@Bits
+#define Iterator@GroupChild @iterfunc
 
 foreign Group:Iter_Func@GroupChild(start, Group:parent);
 

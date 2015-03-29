@@ -1036,6 +1036,7 @@ global string:Command_GetNext(index, playerid)
 \**--------------------------------------------------------------------------**/
 
 #define iterstart@Command -1
+#define Iterator@Command @iterfunc
 
 foreign Iter_Func@Command(start);
 
@@ -1065,6 +1066,7 @@ global Iter_Func@Command(start)
 \**--------------------------------------------------------------------------**/
 
 #define iterstart@PlayerCommand -1
+#define Iterator@PlayerCommand @iterfunc
 
 foreign Iter_Func@PlayerCommand(start, pid);
 

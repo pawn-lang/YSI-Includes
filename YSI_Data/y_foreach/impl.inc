@@ -274,6 +274,18 @@ Array:
 #define iterfunc%0(%1) Iter_Func@%0(%1)F@a$
 
 /**--------------------------------------------------------------------------**\
+<summary>@iterfunc</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Converts an array-like iterator to a special iterator.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define @iterfunc%9|||%9))-1);_:(%1=%9)!=(F@s(Iterator@%0)-1); F@o)-2)+_:F@l:$%1,%0()$
+
+/**--------------------------------------------------------------------------**\
 <summary>iterstart</summary>
 <returns>
 	-
@@ -754,16 +766,19 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 #define F@j:%7$%5(%0)       %5A(F@g(Iter_Single@%0,),F@h:Iterator@%0)
 #define F@i:%7$%5(%0<%2>%1) %5B(F@h:Iter_Multi@%0,%2,F@h:Iterator@%0%1)
 
-#define _Y_ITER_DO_FOREACH(%1,%0) _:F@n:F@l:F@m:F@a$%1,%0$
+#define _Y_ITER_DO_FOREACH(%1,%0) (_:F@n:F@l:F@m:F@a$%1,%0$
 
 // Multi-iterator.
-#define F@n:%9$%1,%0<%2>$ (F@s(Iterator@%0)-1-(%2));_:(%1=F@h:Iterator@%0[%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
+#define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=F@h:Iterator@%0[%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
-#define F@l:%9$%1,%0(%2)%8$ F@r(iterstart@%0);_:(%1=F@h:Iter_Func@%0(_:%1,%2))!=F@r(iterstart@%0);
+#define F@l:%9$%1,%0(%2)%8$ F@r(iterstart@%0));_:(%1=F@h:Iter_Func@%0(_:%1,%2))!=F@r(iterstart@%0);
 
 // Normal iterator.
-#define F@m:%9$%1,%0$ (F@s(Iterator@%0) - 1); _:(%1=F@h:Iterator@%0[%1])!=(F@s(Iterator@%0)-1);
+#define F@m:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=F@h:Iterator@%0[%1])!=(F@s(Iterator@%0)-1);
+
+// Convert from a normal iterator to a special iterator with parameters.
+#define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
 
 /**--------------------------------------------------------------------------**\
 	The workings of these macros are very extensively documented at:
@@ -797,39 +812,9 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 // the failed "new" macro call above.
 #define Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%2,%1||| using_deprecated_foreach_syntax,%1=_Y_ITER_DO_FOREACH(%1,%2)++using_deprecated_foreach_syntax
 
-/*
-
-    88                                                                                  
-    88   ,d                                      ,d                                     
-    88   88                                      88                                     
-    88 MM88MMM ,adPPYba, 8b,dPPYba, ,adPPYYba, MM88MMM ,adPPYba,  8b,dPPYba, ,adPPYba,  
-    88   88   a8P_____88 88P'   "Y8 ""     `Y8   88   a8"     "8a 88P'   "Y8 I8[    ""  
-    88   88   8PP""""""" 88         ,adPPPPP88   88   8b       d8 88          `"Y8ba,   
-    88   88,  "8b,   ,aa 88         88,    ,88   88,  "8a,   ,a8" 88         aa    ]8I  
-    88   "Y888 `"Ybbd8"' 88         `"8bbdP"Y8   "Y888 `"YbbdP"'  88         `"YbbdP"'  
-
-*/
-
-/**--------------------------------------------------------------------------**\
-Create the internal iterators.
-\**--------------------------------------------------------------------------**/
-
-#if !defined BOTSYNC_IS_BOT
-	new
-		Iterator:Player<MAX_PLAYERS>;
-	
-	#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-		new
-			Iterator:Bot<MAX_PLAYERS>,
-			Iterator:Character<MAX_PLAYERS>;
-		
-		#define Iter_Single@NPC Iter_Single@Bot
-		#define Iterator@NPC Iterator@Bot
-	#endif
-#endif
-
 stock const
-	bool:using_deprecated_foreach_syntax = false;
+	bool:using_deprecated_foreach_syntax = false,
+	F@o[2];
 
 /*
 

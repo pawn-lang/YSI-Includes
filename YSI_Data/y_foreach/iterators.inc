@@ -202,6 +202,37 @@ Iterators:
 	Character - All players and bots.
 \**--------------------------------------------------------------------------**/
 
+/*
+
+    88                                                                                  
+    88   ,d                                      ,d                                     
+    88   88                                      88                                     
+    88 MM88MMM ,adPPYba, 8b,dPPYba, ,adPPYYba, MM88MMM ,adPPYba,  8b,dPPYba, ,adPPYba,  
+    88   88   a8P_____88 88P'   "Y8 ""     `Y8   88   a8"     "8a 88P'   "Y8 I8[    ""  
+    88   88   8PP""""""" 88         ,adPPPPP88   88   8b       d8 88          `"Y8ba,   
+    88   88,  "8b,   ,aa 88         88,    ,88   88,  "8a,   ,a8" 88         aa    ]8I  
+    88   "Y888 `"Ybbd8"' 88         `"8bbdP"Y8   "Y888 `"YbbdP"'  88         `"YbbdP"'  
+
+*/
+
+/**--------------------------------------------------------------------------**\
+Create the internal iterators.
+\**--------------------------------------------------------------------------**/
+
+#if !defined BOTSYNC_IS_BOT
+	new
+		Iterator:Player<MAX_PLAYERS>;
+	
+	#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
+		new
+			Iterator:Bot<MAX_PLAYERS>,
+			Iterator:Character<MAX_PLAYERS>;
+		
+		#define Iter_Single@NPC Iter_Single@Bot
+		#define Iterator@NPC Iterator@Bot
+	#endif
+#endif
+
 #define iterstart@Range cellmin
 
 iterfunc Range(cur, min, max, step = 1)

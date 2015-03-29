@@ -107,7 +107,7 @@ Test:y_groups_Set1()
 	ASSERT(Group_GetCount(g) == 1);
 	new
 		c = 0;
-	foreach (new p : GroupMember(g))
+	foreach (new p : GroupMember[g])
 	{
 		ASSERT(p == 42);
 		++c;
@@ -451,7 +451,7 @@ Test:y_groups_ChildIterator2()
 	ASSERT(Group_IsValid(g2));
 	new
 		total = 0;
-	foreach (new Group:g : GroupChild(g0))
+	foreach (new Group:g : GroupChild[g0])
 	{
 		Group_Destroy(g);
 		++total;
@@ -472,12 +472,12 @@ Test:y_groups_Iterator0()
 		Group:g2 = Group_Create();
 	new
 		total = 0;
-	// foreach (new Group:g : CreatedGroup)
-	// {
-		// ++total;
-	// }
-	// ASSERT(total >= 3);
-	// total = 0;
+	foreach (new Group:g : CreatedGroup)
+	{
+		++total;
+	}
+	ASSERT(total >= 3);
+	total = 0;
 	foreach (new Group:g : CreatedGroup())
 	{
 		++total;

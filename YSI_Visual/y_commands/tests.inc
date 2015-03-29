@@ -425,7 +425,7 @@ Test:y_commands_iterator1()
 	new
 		found,
 		total = 0;
-	foreach (new c : Command())
+	foreach (new c : Command)
 	{
 		++total;
 		if (FALSE) {}
