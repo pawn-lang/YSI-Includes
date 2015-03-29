@@ -1022,7 +1022,7 @@ global string:Command_GetNext(index, playerid)
 */
 
 /**--------------------------------------------------------------------------**\
-<summary>Command@YSII_Ag</summary>
+<summary>Command</summary>
 <param name="start">Last value.</param>
 <returns>
 	The next command.
@@ -1035,11 +1035,11 @@ global string:Command_GetNext(index, playerid)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Command@YSII_Ag%0- @iterfunc Command()
+#define iterstart@Command -1
 
-iterfunc foreign Command(start);
+foreign Iter_Func@Command(start);
 
-iterfunc global Command(start)
+global Iter_Func@Command(start)
 {
 	for (new i = start + 1; i < YSI_g_sHighestID; ++i)
 	{
@@ -1049,7 +1049,7 @@ iterfunc global Command(start)
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>PlayerCommand@YSII_Ag</summary>
+<summary>PlayerCommand</summary>
 <param name="pid">Player to check for.</param>
 <param name="start">Last value.</param>
 <returns>
@@ -1064,11 +1064,11 @@ iterfunc global Command(start)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define PlayerCommand@YSII_Ag%0- @iterfunc PlayerCommand()
+#define iterstart@PlayerCommand -1
 
-iterfunc foreign PlayerCommand(pid, start);
+foreign Iter_Func@PlayerCommand(start, pid);
 
-iterfunc global PlayerCommand(pid, start)
+global Iter_Func@PlayerCommand(start, pid)
 {
 	new
 		slot = PA_Slot(pid),

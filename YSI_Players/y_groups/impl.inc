@@ -131,9 +131,8 @@ stock PlayerGroups(a, b)
 
 // Define the groups iterator in terms of the underlying bits, but without the
 // need for users to know about the "YSI_gGroupPlayers" array, just the player.
-#define PlayerGroups(%0,%1) GROUP_MANGLE(Bits@YSII_Ag(YSI_gGroupPlayers[%0],_:%1))
-// Detect missing parameters.
-#define PlayerGroups@YSII_Ag-1);_:(%0=%8(%5)%7)%9) YSI_NULL_ITERATOR-3);_:(%0=PlayerGroups(%5))!=-1;)
+#define Iter_Func@PlayerGroups(%1,%0) GROUP_MANGLE(Iter_Func@Bits(_:%1,YSI_gGroupPlayers[%0]))
+#define iterstart@PlayerGroups iterstart@Bits
 
 static
 	// Function pointers for chaining.
@@ -389,7 +388,7 @@ public OnScriptExit()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-static remotefunc void:_Group_Destroy(g, gp@YSII_Ag[MAX_PLAYERS + 1], s)
+static remotefunc void:_Group_Destroy(g, Iterator@gp[MAX_PLAYERS + 1], s)
 {
 	#pragma unused s
 	new
@@ -435,7 +434,7 @@ global void:Group_Destroy(Group:group)
 	if (_Group_IsValid(group) && group != GROUP_GLOBAL)
 	{
 		GROUP_FIX(group);
-		broadcastfunc _Group_Destroy(_:group, Iter_InternalArray(GroupPlayers[_:group]), Iter_InternalSize(GroupPlayers[_:group]));
+		broadcastfunc _Group_Destroy(_:group, Iter_TrueArray(GroupPlayers[_:group]), sizeof (Iter_TrueArray(GroupPlayers[])));
 		YSI_gGroupData[_:group][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS:0;
 		YSI_gGroupData[_:group][E_GROUP_DATA_HASH] = 0;
 		Iter_Clear(GroupPlayers[_:group]);
@@ -473,7 +472,7 @@ global void:Group_Destroy(Group:group)
 		MASTER_EMPTY<i>
 		{
 			//printf("removing i");
-			broadcastfunc _Group_Destroy(i, Iter_InternalArray(GroupPlayers[i]), Iter_InternalSize(GroupPlayers[i]));
+			broadcastfunc _Group_Destroy(i, Iter_TrueArray(GroupPlayers[i]), sizeof (Iter_TrueArray(GroupPlayers[])));
 			YSI_gGroupData[i][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS:0;
 			YSI_gGroupData[i][E_GROUP_DATA_HASH] = 0;
 			Iter_Clear(GroupPlayers[i]);
@@ -625,7 +624,7 @@ static stock Bit:_Group_SetSome(playerid, group)
 	Bit_Let(YSI_gTempGroups, group);
 	for ( ; ; )
 	{
-		g = Bits@YSII_Ag(YSI_g_sChildGroups[group], g, bits<_MAX_GROUPS_G>);
+		g = Iter_Func@Bits(g, YSI_g_sChildGroups[group], bits<_MAX_GROUPS_G>);
 		if (g == -1)
 		{
 			// Finished this child group, pop off the stack.
@@ -1214,7 +1213,7 @@ stock Group:Group_Create(string:name[] = "")
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>Group@YSII_Ag</summary>
+<summary>Group</summary>
 <param name="Group:group">Group to loop over.</param>
 <param name="start">Last value.</param>
 <returns>
@@ -1227,17 +1226,10 @@ stock Group:Group_Create(string:name[] = "")
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#pragma deprecated use "GroupMember[]"
-stock Group@brackets()
-{
-	P:E("Old style \"Group()\" iterator called.  Use \"GroupMember[]\".");
-	return 0;
-}
-
-#define Group@YSII_Ag%0- @iterfunc Group()
+#define iterstart@Group -1
 
 #pragma deprecated use "GroupMember"
-iterfunc stock Group(Group:group, start)
+stock Iter_Func@Group(start, Group:group)
 {
 	static
 		sOnce = true;
@@ -1246,21 +1238,14 @@ iterfunc stock Group(Group:group, start)
 		P:I("The \"Group\" iterator is deprecated, please use \"GroupMember\" instead.");
 		sOnce = false;
 	}
-	return GroupMember@YSII_Ag(Group:group, start);
+	return Iter_Func@GroupMember(start, Group:group);
 }
 
-#pragma deprecated use "GroupMember[]"
-stock GroupMember@brackets()
-{
-	P:E("Old style \"GroupMember()\" iterator called.  Use \"GroupMember[]\".");
-	return 0;
-}
+#define iterstart@GroupMember -1
 
-#define GroupMember@YSII_Ag%0- @iterfunc GroupMember()
+foreign Iter_Func@GroupMember(start, Group:group);
 
-iterfunc foreign GroupMember(Group:group, start);
-
-iterfunc global GroupMember(Group:group, start)
+global Iter_Func@GroupMember(start, Group:group)
 {
 	GROUP_FIX(group);
 	if (start == -1)
@@ -1280,7 +1265,7 @@ iterfunc global GroupMember(Group:group, start)
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>CreatedGroup@YSII_Ag</summary>
+<summary>CreatedGroup</summary>
 <param name="start">Last value.</param>
 <returns>
 	The next group.
@@ -1298,26 +1283,26 @@ stock CreatedGroup@brackets()
 	return 0;
 }
 
+#define iterstart@CreatedGroup -1
+
 // Bypass y_iterate restrictions.
-#define CreatedGroup@YSII_Ag%0- @iterfunc CreatedGroup()
+foreign Group:Iter_Func@CreatedGroup(group);
 
-iterfunc foreign Group:CreatedGroup(Group:group);
-
-iterfunc global Group:CreatedGroup(Group:group)
+global Group:Iter_Func@CreatedGroup(group)
 {
 	// In most iterators the inital value is implicitly handled by the first
 	// "++", but it isn't here because we need to correct for the "Group" flag.
-	if (group != INVALID_GROUP) GROUP_FIX(group);
-	while (++group < Group:(_MAX_GROUPS_G - 1))
+	if (Group:group != INVALID_GROUP) GROUP_FIX(Group:group);
+	while (++group < (_MAX_GROUPS_G - 1))
 	{
 		// DO NOT include the global group in this loop!
-		if (_Group_IsActive(group)) return GROUP_MANGLE(group);
+		if (_Group_IsActive(Group:group)) return GROUP_MANGLE(Group:group);
 	}
 	return INVALID_GROUP;
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>ChildGroup@YSII_Ag</summary>
+<summary>ChildGroup</summary>
 <param name="parent">Group to get the children of.</param>
 <param name="start">Last value.</param>
 <returns>
@@ -1336,18 +1321,18 @@ stock GroupChild@brackets()
 	return 0;
 }
 
-#define GroupChild@YSII_Ag%0- @iterfunc GroupChild()
+#define iterstart@GroupChild iterstart@Bits
 
-iterfunc foreign Group:GroupChild(Group:parent, Group:start);
+foreign Group:Iter_Func@GroupChild(start, Group:parent);
 
-iterfunc global Group:GroupChild(Group:parent, Group:start)
+global Group:Iter_Func@GroupChild(start, Group:parent)
 {
 	if (!_Group_IsValid(parent)) return INVALID_GROUP;
 	// In most iterators the inital value is implicitly handled by the first
 	// "++", but it isn't here because we need to correct for the "Group" flag.
-	if (start != INVALID_GROUP) GROUP_FIX(start);
+	if (Group:start != INVALID_GROUP) GROUP_FIX(Group:start);
 	// Use the existing "Bits" iterator with fixed identifiers.
-	return GROUP_MANGLE(Bits@YSII_Ag(YSI_g_sChildGroups[_:GROUP_TEMP_FIX(parent)], _:start, bits<_MAX_GROUPS_G>));
+	return GROUP_MANGLE(Iter_Func@Bits(start, YSI_g_sChildGroups[_:GROUP_TEMP_FIX(parent)], bits<_MAX_GROUPS_G>));
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1586,7 +1571,7 @@ global bool:Group_IsDescendant(Group:p, Group:c)
 			s = 0;
 		for ( ; ; )
 		{
-			g = Bits@YSII_Ag(YSI_g_sChildGroups[_:p], g, bits<_MAX_GROUPS_G>);
+			g = Iter_Func@Bits(g, YSI_g_sChildGroups[_:p], bits<_MAX_GROUPS_G>);
 			if (g == -1)
 			{
 				// Finished this child group, pop off the stack.

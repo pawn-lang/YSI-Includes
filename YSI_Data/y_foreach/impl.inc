@@ -39,7 +39,7 @@ Array:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iterator:%1<%2> YSII_Ag@%1[_:F@c:F@d:((%2)+1)]={(-(%2))*((%2)-1),(-(%2))*((%2)-2),...}F@a$,Iter_Single@%1 F@a$F@a$
+#define Iterator:%1<%2> Iterator@%1[_:F@c:F@d:((%2)+1)]={(-(%2))*((%2)-1),(-(%2))*((%2)-2),...}F@a$,Iter_Single@%1 F@a$F@a$
 
 /**--------------------------------------------------------------------------**\
 <summary>foreach</summary>
@@ -68,7 +68,18 @@ Array:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define iterfunc%0(%1) YSII_Fg@%0(%1)F@a$
+#define iterfunc%0(%1) Iter_Func@%0(%1)F@a$
+
+/**--------------------------------------------------------------------------**\
+<summary>iterstart</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Used to declare the default special iterator value.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
 
 /*
 
@@ -97,7 +108,7 @@ native Iter_Init(IteratorArray:Name[]<>);
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iter_Init(%0) Iter_Init_Internal(F@r(YSII_Ag@%0),F@r(YSII_Ag@%0)[0],F@s(YSII_Ag@%0),F@s(YSII_Ag@%0[]),F@r(Iter_Init@%0))
+#define Iter_Init(%0) Iter_Init_Internal(F@r(Iterator@%0),F@r(Iterator@%0)[0],F@s(Iterator@%0),F@s(Iterator@%0[]),F@r(Iter_Init@%0))
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_Add</summary>
@@ -412,7 +423,7 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iter_TrueArray(%1) F@r(YSII_Ag@%1)
+#define Iter_TrueArray(%1) F@r(Iterator@%1)
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_TrueCount</summary>
@@ -501,8 +512,9 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 // Remove trailing spaces.  This looks really unsafe because of the "%0\32;"
 // allowing anything to come before the space, but it would have to be
 // "anything" not text immediately following a "YSII_X@" prefix.
-#define YSII_Ag@%0\32;%1$ YSII_Ag@%0%1$
-#define YSII_Fg@%0\32;%1$ YSII_Fg@%0%1$
+#define Iterator@%0\32;%1$ Iterator@%0%1$
+#define Iter_Func@%0\32;%1$ Iter_Func@%0%1$
+#define iterstart@%0\32;%1$ iterstart@%0%1$
 #define Iter_Single@%0\32;%1$ Iter_Single@%0%1$
 #define Iter_Multi@%0\32;%1$ Iter_Multi@%0%1$
 #define Iter_Init@%0\32;%1$ Iter_Init@%0%1$
@@ -518,7 +530,7 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 
 // Special "sizeof" that strips subscripts.  "|||" prevents "sizeof" recursion.
 #define F@e:%0|||(%1[%2]%3|||%4)) F@e:%0|||(%1%3|||%4[]))
-#define F@f:%0$(F@g(%1,%5)%3$) %0$(%1 %3$)
+#define F@f:%0|||(F@g(%1,%5)%3|||) %0|||(%1 %3|||)
 #define F@s(%0) (_:F@f:F@e:sizeof F@b|||(%0 F@a$F@b|||))
 
 // Reify macros.
@@ -536,19 +548,19 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 //   %2 - Array.
 //  ... - All other parameters.
 //  
-#define F@j:%7$%5(%0)       %5A(F@g(Iter_Single@%0,),F@h:YSII_Ag@%0)
-#define F@i:%7$%5(%0<%2>%1) %5B(F@h:Iter_Multi@%0,%2,F@h:YSII_Ag@%0%1)
+#define F@j:%7$%5(%0)       %5A(F@g(Iter_Single@%0,),F@h:Iterator@%0)
+#define F@i:%7$%5(%0<%2>%1) %5B(F@h:Iter_Multi@%0,%2,F@h:Iterator@%0%1)
 
-#define _Y_ITER_DO_FOREACH(%1,%0) _:F@k:F@l:F@m:F@a$%1,%0$
+#define _Y_ITER_DO_FOREACH(%1,%0) _:F@n:F@l:F@m:F@a$%1,%0$
 
 // Multi-iterator.
-#define F@k:%9$%1,%0<%2>$ (F@s(YSII_Ag@%0)-1-(%2));_:(%1=F@h:YSII_Ag@%0[%1])<(F@s(YSII_Ag@%0)-F@s(Iter_Multi@%0));
+#define F@n:%9$%1,%0<%2>$ (F@s(Iterator@%0)-1-(%2));_:(%1=F@h:Iterator@%0[%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
-#define F@l:%9$%1,%0(%2)%8$ cellmin;_:(%1=F@h:YSII_Fg@%0(_:%1,%2))!=cellmin;
+#define F@l:%9$%1,%0(%2)%8$ F@r(iterstart@%0);_:(%1=F@h:Iter_Func@%0(_:%1,%2))!=F@r(iterstart@%0);
 
 // Normal iterator.
-#define F@m:%9$%1,%0$ (F@s(YSII_Ag@%0) - 1); _:(%1=F@h:YSII_Ag@%0[%1])!=(F@s(YSII_Ag@%0)-1);
+#define F@m:%9$%1,%0$ (F@s(Iterator@%0) - 1); _:(%1=F@h:Iterator@%0[%1])!=(F@s(Iterator@%0)-1);
 
 /**--------------------------------------------------------------------------**\
 	The workings of these macros are very extensively documented at:
@@ -609,7 +621,7 @@ Create the internal iterators.
 			Iterator:Character<MAX_PLAYERS>;
 		
 		#define Iter_Single@NPC Iter_Single@Bot
-		#define YSII_Ag@NPC YSII_Ag@Bot
+		#define Iterator@NPC Iterator@Bot
 	#endif
 #endif
 
@@ -723,24 +735,24 @@ stock const
 					// Had to do "if ! else" due to compile options.
 					if (!IsPlayerNPC(i))
 					{
-						YSII_Ag@Player[lastPlayer] = i;
+						Iterator@Player[lastPlayer] = i;
 						++Iter_Single@Player;
 						lastPlayer = i;
 					}
 					#if !defined FOREACH_NO_BOTS
 						else
 						{
-							YSII_Ag@Bot[lastBot] = i;
+							Iterator@Bot[lastBot] = i;
 							++Iter_Single@Bot;
 							lastBot = i;
 						}
 						#pragma tabsize 4
-						YSII_Ag@Character[lastCharacter] = i;
+						Iterator@Character[lastCharacter] = i;
 						++Iter_Single@Character;
 						lastCharacter = i;
 					#endif
 				#else
-					YSII_Ag@Player[lastPlayer] = i;
+					Iterator@Player[lastPlayer] = i;
 					++Iter_Single@Player;
 					lastPlayer = i;
 				#endif
@@ -748,17 +760,17 @@ stock const
 			else
 			{
 				#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-					YSII_Ag@Bot[i] = MAX_PLAYERS + 1;
-					YSII_Ag@Character[i] = MAX_PLAYERS + 1;
+					Iterator@Bot[i] = MAX_PLAYERS + 1;
+					Iterator@Character[i] = MAX_PLAYERS + 1;
 				#endif
-				YSII_Ag@Player[i] = MAX_PLAYERS + 1;
+				Iterator@Player[i] = MAX_PLAYERS + 1;
 			}
 		}
 		#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-			YSII_Ag@Bot[lastPlayer] = MAX_PLAYERS;
-			YSII_Ag@Character[lastPlayer] = MAX_PLAYERS;
+			Iterator@Bot[lastPlayer] = MAX_PLAYERS;
+			Iterator@Character[lastPlayer] = MAX_PLAYERS;
 		#endif
-		YSII_Ag@Player[lastPlayer] = MAX_PLAYERS;
+		Iterator@Player[lastPlayer] = MAX_PLAYERS;
 		#if defined Iter_OnFilterScriptInit
 			Iter_OnFilterScriptInit();
 		#endif
@@ -803,9 +815,9 @@ stock const
 			#if defined _YSI_SPECIAL_DEBUG
 				for (new i = 0; i != MAX_PLAYERS; ++i)
 				{
-					YSII_Ag@Player[i] = i + 1;
+					Iterator@Player[i] = i + 1;
 				}
-				YSII_Ag@Player[MAX_PLAYERS] = 0;
+				Iterator@Player[MAX_PLAYERS] = 0;
 				Iter_Single@Player = _Y_ITER_C9:MAX_PLAYERS;
 			#endif
 			P:1("Iter_OnGameModeInit: first");
@@ -814,15 +826,15 @@ stock const
 		// Do the forward iterator list.
 		#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
 			Iter_Single@Bot = _Y_ITER_C9:0;
-			YSII_Ag@Bot[MAX_PLAYERS] = MAX_PLAYERS;
-			YSII_Ag@Character[MAX_PLAYERS] = MAX_PLAYERS;
+			Iterator@Bot[MAX_PLAYERS] = MAX_PLAYERS;
+			Iterator@Character[MAX_PLAYERS] = MAX_PLAYERS;
 			Iter_Single@Character = _Y_ITER_C9:0;
 			new
 				lastBot = MAX_PLAYERS,
 				lastCharacter = MAX_PLAYERS;
 		#endif
 		Iter_Single@Player = _Y_ITER_C9:0;
-		YSII_Ag@Player[MAX_PLAYERS] = MAX_PLAYERS;
+		Iterator@Player[MAX_PLAYERS] = MAX_PLAYERS;
 		new
 			lastPlayer = MAX_PLAYERS;
 		for (new i = 0; i != MAX_PLAYERS; ++i)
@@ -833,24 +845,24 @@ stock const
 					// Had to do "if ! else" due to compile options.
 					if (!IsPlayerNPC(i))
 					{
-						YSII_Ag@Player[lastPlayer] = i;
+						Iterator@Player[lastPlayer] = i;
 						++Iter_Single@Player;
 						lastPlayer = i;
 					}
 					#if !defined FOREACH_NO_BOTS
 						else
 						{
-							YSII_Ag@Bot[lastBot] = i;
+							Iterator@Bot[lastBot] = i;
 							++Iter_Single@Bot;
 							lastBot = i;
 						}
 						#pragma tabsize 4
-						YSII_Ag@Character[lastCharacter] = i;
+						Iterator@Character[lastCharacter] = i;
 						++Iter_Single@Character;
 						lastCharacter = i;
 					#endif
 				#else
-					YSII_Ag@Player[lastPlayer] = i;
+					Iterator@Player[lastPlayer] = i;
 					++Iter_Single@Player;
 					lastPlayer = i;
 				#endif
@@ -858,25 +870,25 @@ stock const
 			else
 			{
 				#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-					YSII_Ag@Bot[i] = MAX_PLAYERS + 1;
-					YSII_Ag@Character[i] = MAX_PLAYERS + 1;
+					Iterator@Bot[i] = MAX_PLAYERS + 1;
+					Iterator@Character[i] = MAX_PLAYERS + 1;
 				#endif
-				YSII_Ag@Player[i] = MAX_PLAYERS + 1;
+				Iterator@Player[i] = MAX_PLAYERS + 1;
 			}
 		}
 		#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-			YSII_Ag@Bot[lastPlayer] = MAX_PLAYERS;
-			YSII_Ag@Character[lastPlayer] = MAX_PLAYERS;
+			Iterator@Bot[lastPlayer] = MAX_PLAYERS;
+			Iterator@Character[lastPlayer] = MAX_PLAYERS;
 		#endif
-		YSII_Ag@Player[lastPlayer] = MAX_PLAYERS;
+		Iterator@Player[lastPlayer] = MAX_PLAYERS;
 		P:1("Iter_OnGameModeInit: lastplayer = %d", lastPlayer);
 		CallLocalFunction(YSI_gsOnGameModeInit, YSI_gsSpecifier@);
 		#if defined _YSI_SPECIAL_DEBUG
 			for (new i = 0; i != MAX_PLAYERS; ++i)
 			{
-				YSII_Ag@Player[i] = i + 1;
+				Iterator@Player[i] = i + 1;
 			}
-			YSII_Ag@Player[MAX_PLAYERS] = 0;
+			Iterator@Player[MAX_PLAYERS] = 0;
 			Iter_Single@Player = _Y_ITER_C9:MAX_PLAYERS;
 		#endif
 		return 1;

@@ -128,9 +128,9 @@ stock PA_Set(PlayerArray:d<>, slot, bool:set)
 	}
 }
 
-#define PA@YSII_Ag%0- @iterfunc PA()
+#define iterstart@PA -1
 
-stock PA@YSII_Ag(PlayerArray:data<>, start)
+stock iterfunc PA(start, PlayerArray:data<>)
 {
 	P:3("YSI_gAPAFunc called: %s, %i", Bit_Display(Bit:data[1]), start);
 	++start;
@@ -176,15 +176,10 @@ stock PA@YSII_Ag(PlayerArray:data<>, start)
 		}
 		++i;
 	}
-	return -1;
+	return cellmin;
 }
-
-//#define YSI_gAPA(%0)[%1] YSI_gAPAFunc(%0,%1)
-//#define YSI_gSPS YSI_gSPA
-//#define YSI_gAPS YSI_gAPA
-
-//#define PA(%0)_YSII_Sg;_:%1!=-1;%2=_Y_ITER_ARRAY:%8PA(%3)_YSII_Ag[%4] YSI_gSPAFunc(%0);_:%1!=-1;%2=YSI_gAPAFunc(%3,%4)
 
 #undef PlayerArray
 
 #define PlayerArray:%0<%1> Bit:%0[bits<%1>+1]//={Bit:-1}
+

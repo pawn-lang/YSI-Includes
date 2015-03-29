@@ -350,11 +350,11 @@ stock Bit_Display(BitArray:array<>, size = sizeof (array))
 
 #define bitsof(%0) (sizeof(%0)*cellbits)
 
-#define Bits@YSII_Ag%0- @iterfunc Bits()
+#define iterstart@Bits -1
 
-stock Bits@YSII_Ag(BitArray:data<>, start, size = sizeof (data))
+stock Iter_Func@Bits(start, BitArray:data<>, size = sizeof (data))
 {
-	P:3("YSI_gABITSFunc called: %s, %i", Bit_Display(data, size), start);
+	P:3("Iter_Func@Bits called: %s, %i", Bit_Display(data, size), start);
 	new
 		cur,
 		i = Bit_Slot(++start);
@@ -365,7 +365,7 @@ stock Bits@YSII_Ag(BitArray:data<>, start, size = sizeof (data))
 	// Blank out the lowest bits to get the lowest bit not yet used.
 	if ((cur = _:(data[i] & ~(Bit_Mask(start) - Bit:1))))
 	{
-		P:7("Bits@YSII_Ag: %d %d %d %d", cur, _:data[i], start, _:~(Bit_Mask(start) - Bit:1));
+		P:7("Iter_Func@Bits: %d %d %d %d", cur, _:data[i], start, _:~(Bit_Mask(start) - Bit:1));
 		// Bits left in the current cell.
 		return Cell_GetLowestBit(cur) + (i << CELLSHIFT);
 	}
@@ -379,11 +379,11 @@ stock Bits@YSII_Ag(BitArray:data<>, start, size = sizeof (data))
 	return -1;
 }
 
-#define Blanks@YSII_Ag%0- @iterfunc Blanks()
+#define iterstart@Blanks -1
 
-stock Blanks@YSII_Ag(BitArray:data<>, start, size = sizeof (data))
+stock Iter_Func@Blanks(start, BitArray:data<>, size = sizeof (data))
 {
-	P:3("YSI_gABlanksFunc called: %s, %i", Bit_Display(data), start);
+	P:3("Iter_Func@Blanks called: %s, %i", Bit_Display(data), start);
 	new
 		cur,
 		i = Bit_Slot(++start);

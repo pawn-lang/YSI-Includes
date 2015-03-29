@@ -350,6 +350,16 @@ Test:y_iter_Remove2()
 	ASSERT(Iter_Count(iter<2>) == 2);
 }
 
+Test:y_iter_Tags()
+{
+	new
+		Iterator:iter[5]<4>,
+		GG:gg = GG:4;
+	Iter_Init(iter);
+	Iter_Add(iter[_:gg], 2);
+	Iter_Clear(iter[_:gg]);
+}
+
 Test:y_iter_Iter_Init1()
 {
 	new

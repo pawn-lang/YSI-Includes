@@ -60,6 +60,19 @@ Legal:
 Version:
 	0.4
 Changelog:
+	29/03/15:
+		More testing.
+		Repaired special iterators.
+	28/03/15:
+		Breaking change: "Iter_Add" returns value added, not true/false.
+		Breaking change: Special iterators take "cellmin", not "-1".
+		Wrote many tests.
+		Split in to multiple files.
+		Added multi-iterators.
+		Officially deprecated "foreach (Player, i)".
+	26/03/15:
+		Re-added reverse iterators.
+		Added support for extra spaces in "foreach".
 	26/12/13:
 		Added sections.
 	17/10/12:
