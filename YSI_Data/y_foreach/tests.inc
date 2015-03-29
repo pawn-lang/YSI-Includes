@@ -582,6 +582,51 @@ Test:y_iter_Remove1()
 	ASSERT(count == 18);
 }
 
+Test:y_iter_Reverse1()
+{
+	new
+		count,
+		Iterator:iter<10>;
+	Iter_Add(iter, 2);
+	Iter_Add(iter, 4);
+	Iter_Add(iter, 6);
+	Iter_Add(iter, 3);
+	Iter_Add(iter, 6);
+	Iter_Add(iter, 9);
+	count = 0;
+	foreach (new i : Reverse(iter))
+	{
+		++count;
+	}
+	ASSERT(count == 5);
+}
+
+Test:y_iter_Reverse2()
+{
+	new
+		count,
+		Iterator:iter<5, 10>;
+	Iter_Add(iter<1>, 2);
+	Iter_Add(iter<1>, 4);
+	Iter_Add(iter<1>, 6);
+	Iter_Add(iter<2>, 0);
+	Iter_Add(iter<2>, 3);
+	Iter_Add(iter<2>, 6);
+	Iter_Add(iter<2>, 9);
+	count = 0;
+	foreach (new i : Reverse(iter<1>))
+	{
+		++count;
+	}
+	ASSERT(count == 3);
+	count = 0;
+	foreach (new i : Reverse(iter<2>))
+	{
+		++count;
+	}
+	ASSERT(count == 3);
+}
+
 Test:y_iter_Remove2()
 {
 	new

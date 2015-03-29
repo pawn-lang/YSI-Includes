@@ -295,6 +295,17 @@ Array:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+/**--------------------------------------------------------------------------**\
+<summary>Reverse</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Run an iterator backwards.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define iterstart@Reverse%9$);_:(%1=%9(_:%9,%0))%9; F@p:F@q:$%1,%0$
 
 /*
 
@@ -625,7 +636,7 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 
 #define Iter_Prev _ITER<Prev>
 #define Iter_Prev_InternalA(%0,%1,%9)    (((%1[((%9)-1)%F@s(%1)])-1)%F@s(%1))
-#define Iter_Prev_InternalB(%0,%2,%1,%9) Iter_Prev_Internal(%1,F@s(%1)-F@s(%0), %9)
+#define Iter_Prev_InternalB(%0,%2,%1,%9) Iter_Prev_Internal(%1,F@s(%1)-F@s(%0),F@s(%1),%9)
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_TrueArray</summary>
@@ -779,6 +790,12 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 
 // Convert from a normal iterator to a special iterator with parameters.
 #define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
+
+// Reverse multi-iterator.
+#define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=Iter_Prev_InternalB(Iter_Multi@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
+
+// Reverse normal iterator.
+#define F@q:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
 
 /**--------------------------------------------------------------------------**\
 	The workings of these macros are very extensively documented at:
@@ -1145,6 +1162,7 @@ stock
 /**--------------------------------------------------------------------------**\
 <summary>Iter_PrevInternal</summary>
 <param name="array[]">iterator data.</param>
+<param name="elems">Number of elements in the iterator.</param>
 <param name="size">Size of the iterator.</param>
 <param name="slot">The current slot.</param>
 <returns>
@@ -1156,9 +1174,11 @@ stock
 \**--------------------------------------------------------------------------**/
 
 stock
-	Iter_Prev_Internal(array[], size, slot)
+	Iter_Prev_Internal(array[], elems, size, slot)
 {
-	if (0 <= slot < size && array[slot] > slot)
+	if ((slot < elems) ?
+		(0 <= slot < array[slot]) :
+		(slot < size))
 	{
 		for (new last = slot; last--; )
 		{
@@ -1168,6 +1188,6 @@ stock
 			}
 		}
 	}
-	return size;
+	return elems;
 }
 
