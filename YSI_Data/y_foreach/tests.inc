@@ -665,8 +665,9 @@ Test:y_iter_Remove2()
 	ASSERT(Iter_Next(iter<1>, 2) == 4);
 	ASSERT(Iter_Next(iter<2>, 3) == 9);
 	ASSERT(Iter_Prev(iter<1>, 4) == 2);
-	ASSERT(Iter_Prev(iter<2>, 3) == 10);
+	ASSERT(Iter_Prev(iter<2>, 3) >= 10);
 	ASSERT(Iter_Prev(iter<2>, 9) == 3);
+	ASSERT(Iter_Prev(iter<3>, Iter_Begin(iter<3>)) >= 10);
 	ASSERT(Iter_Count(iter<1>) == 3);
 	ASSERT(Iter_Count(iter<2>) == 2);
 }

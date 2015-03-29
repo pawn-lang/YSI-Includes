@@ -1178,7 +1178,7 @@ stock
 {
 	if ((slot < elems) ?
 		(0 <= slot < array[slot]) :
-		(slot < size))
+		(slot < size && array[slot] < elems))
 	{
 		for (new last = slot; last--; )
 		{
