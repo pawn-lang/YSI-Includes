@@ -384,136 +384,158 @@ forward OnTestsComplete(tests, fails);
 			#endif
 			#define main forward Testing_main(); public Testing_main
 		#endif
-		
-		Testing_Next(playerid)
+	#endif
+	
+	Testing_Next(playerid)
+	{
+		new
+			buffer[32];
+		for ( ; ; )
 		{
 			new
-				buffer[32];
-			for ( ; ; )
+				fails = YSI_g_sFails;
+			// Get the last test (nicely fails for cellmax).
+			if ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST)))
 			{
-				new
-					fails = YSI_g_sFails;
-				// Get the last test (nicely fails for cellmax).
-				if ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST)))
+				strunpack(buffer, buffer);
+				// Call the shutdown function if there is one.
+				buffer[0] = 'y';
+				buffer[1] = '_';
+				buffer[2] = '@';
+				buffer[3] = 'Q';
+				CallLocalFunction(buffer, "i", playerid);
+			}
+			// Get the new test, but don't store the index.
+			if (AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST))
+			{
+				YSI_g_sAsked = false;
+				strunpack(buffer, buffer);
+				// Call the setup function if there is one.
+				buffer[0] = '_';
+				buffer[1] = 'y';
+				buffer[2] = '@';
+				buffer[3] = 'Q';
+				CallLocalFunction(buffer, "i", playerid);
+				// Call the test.
+				buffer[1] = '@';
+				buffer[2] = 'y';
+				P:5("Testing_Next(): Calling %s", unpack(buffer[1]));
+				CallLocalFunction(buffer, "i", playerid);
+			}
+			else
+			{
+				YSI_g_sAsked = true;
+				// No more tests.
+				printf("*** Tests: %d, Fails: %d", YSI_g_sTests, YSI_g_sFails);
+				if (!YSI_g_sFails)
 				{
-					strunpack(buffer, buffer);
-					// Call the shutdown function if there is one.
-					buffer[0] = 'y';
-					buffer[1] = '_';
-					buffer[2] = '@';
-					buffer[3] = 'Q';
-					CallLocalFunction(buffer, "i", playerid);
-				}
-				// Get the new test, but don't store the index.
-				if (AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST))
-				{
-					YSI_g_sAsked = false;
-					strunpack(buffer, buffer);
-					// Call the setup function if there is one.
-					buffer[0] = '_';
-					buffer[1] = 'y';
-					buffer[2] = '@';
-					buffer[3] = 'Q';
-					CallLocalFunction(buffer, "i", playerid);
-					// Call the test.
-					buffer[1] = '@';
-					buffer[2] = 'y';
-					P:5("Testing_Next(): Calling %s", unpack(buffer[1]));
-					CallLocalFunction(buffer, "i", playerid);
-				}
-				else
-				{
-					YSI_g_sAsked = true;
-					// No more tests.
-					printf("*** Tests: %d, Fails: %d", YSI_g_sTests, YSI_g_sFails);
-					if (!YSI_g_sFails)
-					{
-						TEST_REPORT(" ");
-						TEST_REPORT("  ||==========================||  ");
-						TEST_REPORT("  || ALL PLAYER TESTS PASSED! ||  ");
-						TEST_REPORT("  ||==========================||  ");
-						TEST_REPORT(" ");
-					}
-				}
-				// If the test needs a player but doesn't ask them anything
-				// then we can't wait for "OnDialogResponse" to run the next
-				// one.
-				if (YSI_g_sAsked)
-				{
-					break;
-				}
-				else if (fails == YSI_g_sFails)
-				{
-					TEST_REPORT(TEST_PASSED);
+					TEST_REPORT(" ");
+					TEST_REPORT("  ||==========================||  ");
+					TEST_REPORT("  || ALL PLAYER TESTS PASSED! ||  ");
+					TEST_REPORT("  ||==========================||  ");
+					TEST_REPORT(" ");
 				}
 			}
+			// If the test needs a player but doesn't ask them anything
+			// then we can't wait for "OnDialogResponse" to run the next
+			// one.
+			if (YSI_g_sAsked)
+			{
+				break;
+			}
+			else if (fails == YSI_g_sFails)
+			{
+				TEST_REPORT(TEST_PASSED);
+			}
 		}
-		
-		public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+	}
+	
+	public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+	{
+		if (dialogid == Y_TESTING_DIALOG_ID)
 		{
-			if (dialogid == Y_TESTING_DIALOG_ID)
+			++YSI_g_sTests;
+			if (response)
 			{
-				++YSI_g_sTests;
-				if (response)
-				{
-					// Pass.
-					TEST_REPORT(TEST_PASSED);
-				}
-				else
-				{
-					// Fail.
-					TEST_REPORT(TEST_FAILED " %s", YSI_g_sFailMessage);
-					++YSI_g_sFails;
-				}
-				Testing_Next(playerid);
-				return 1;
+				// Pass.
+				TEST_REPORT(TEST_PASSED);
 			}
-			#if defined Testing_OnDialogResponse
-				return Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
-			#else
-				return 1;
-			#endif
+			else
+			{
+				// Fail.
+				TEST_REPORT(TEST_FAILED " %s", YSI_g_sFailMessage);
+				++YSI_g_sFails;
+			}
+			Testing_Next(playerid);
+			return 1;
 		}
-		
-		#if defined _ALS_OnDialogResponse
-			#undef OnDialogResponse
-		#else
-			#define _ALS_OnDialogResponse
-		#endif
-		#define OnDialogResponse Testing_OnDialogResponse
 		#if defined Testing_OnDialogResponse
-			forward Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
-		#endif
-		
-		public OnPlayerSpawn(playerid)
-		{
-			if (YSI_g_sPlayer == cellmax && !IsPlayerNPC(playerid))
-			{
-				TEST_REPORT(" ");
-				TEST_REPORT("  ||==========================||  ");
-				TEST_REPORT("  || STARTING PLAYER TESTS... ||  ");
-				TEST_REPORT("  ||==========================||  ");
-				TEST_REPORT(" ");
-				YSI_g_sTests = 0;
-				YSI_g_sFails = 0;
-				Testing_Next(playerid);
-			}
-			#if defined Testing_OnPlayerSpawn
-				return Testing_OnPlayerSpawn(playerid);
-			#else
-				return 1;
-			#endif
-		}
-		
-		#if defined _ALS_OnPlayerSpawn
-			#undef OnPlayerSpawn
+			return Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
 		#else
-			#define _ALS_OnPlayerSpawn
+			return 1;
 		#endif
-		#define OnPlayerSpawn Testing_OnPlayerSpawn
+	}
+	
+	#if defined _ALS_OnDialogResponse
+		#undef OnDialogResponse
+	#else
+		#define _ALS_OnDialogResponse
+	#endif
+	#define OnDialogResponse Testing_OnDialogResponse
+	#if defined Testing_OnDialogResponse
+		forward Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
+	#endif
+	
+	forward OnRuntimeError(code, &bool:suppress);
+	
+	public OnRuntimeError(code, &bool:suppress)
+	{
+		++YSI_g_sFails;
+		#if defined Testing_OnRuntimeError
+			return Testing_OnRuntimeError(code, suppress);
+		#else
+			return 1;
+		#endif
+	}
+	
+	#if defined _ALS_OnRuntimeError
+		#undef OnRuntimeError
+	#else
+		#define _ALS_OnRuntimeError
+	#endif
+	#define OnRuntimeError Testing_OnRuntimeError
+	#if defined Testing_OnRuntimeError
+		forward Testing_OnRuntimeError(code, &bool:suppress);
+	#endif
+	
+	public OnPlayerSpawn(playerid)
+	{
+		if (YSI_g_sPlayer == cellmax && !IsPlayerNPC(playerid))
+		{
+			TEST_REPORT(" ");
+			TEST_REPORT("  ||==========================||  ");
+			TEST_REPORT("  || STARTING PLAYER TESTS... ||  ");
+			TEST_REPORT("  ||==========================||  ");
+			TEST_REPORT(" ");
+			YSI_g_sTests = 0;
+			YSI_g_sFails = 0;
+			Testing_Next(playerid);
+		}
 		#if defined Testing_OnPlayerSpawn
-			forward Testing_OnPlayerSpawn(playerid);
+			return Testing_OnPlayerSpawn(playerid);
+		#else
+			return 1;
 		#endif
+	}
+	
+	#if defined _ALS_OnPlayerSpawn
+		#undef OnPlayerSpawn
+	#else
+		#define _ALS_OnPlayerSpawn
+	#endif
+	#define OnPlayerSpawn Testing_OnPlayerSpawn
+	#if defined Testing_OnPlayerSpawn
+		forward Testing_OnPlayerSpawn(playerid);
 	#endif
 #endif
 
