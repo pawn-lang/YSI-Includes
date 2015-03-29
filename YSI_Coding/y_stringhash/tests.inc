@@ -787,3 +787,4 @@ Test:y_stringhash__I8b()
 		h1 = HASHi(fnv1a,H,E,L,L,O);
 	ASSERT(h0 == h1);
 }
+
