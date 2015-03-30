@@ -157,8 +157,6 @@ stock va_printf(const fmat[], va_:STATIC_ARGS)
 
 stock va_CallRemoteFunction(const function[], const fmat[], va_:STATIC_ARGS)
 {
-	static
-		sRet;
 	new
 		num_args,
 		arg_start,
@@ -205,7 +203,6 @@ stock va_CallRemoteFunction(const function[], const fmat[], va_:STATIC_ARGS)
 	// seems to factor in them first, so you get the offset of the local
 	// variable instead of the index of the native.
 	#emit SYSREQ.C     CallRemoteFunction
-	#emit STOR.pri     sRet
 	// Clear the stack.
 	#emit CONST.pri    4
 	#emit ADD
@@ -215,13 +212,10 @@ stock va_CallRemoteFunction(const function[], const fmat[], va_:STATIC_ARGS)
 	#emit ADD
 	#emit SCTRL        4
 	// Now do the real return.
-	return sRet;
 }
 
 stock va_CallLocalFunction(const function[], const fmat[], va_:STATIC_ARGS)
 {
-	static
-		sRet;
 	new
 		num_args,
 		arg_start,
@@ -268,7 +262,6 @@ stock va_CallLocalFunction(const function[], const fmat[], va_:STATIC_ARGS)
 	// seems to factor in them first, so you get the offset of the local
 	// variable instead of the index of the native.
 	#emit SYSREQ.C     CallLocalFunction
-	#emit STOR.pri     sRet
 	// Clear the stack.
 	#emit CONST.pri    4
 	#emit ADD
@@ -278,7 +271,6 @@ stock va_CallLocalFunction(const function[], const fmat[], va_:STATIC_ARGS)
 	#emit ADD
 	#emit SCTRL        4
 	// Now do the real return.
-	return sRet;
 }
 
 stock va_SetTimerEx(const function[], interval, bool:repeating, const fmat[], va_:STATIC_ARGS)
