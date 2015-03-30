@@ -420,7 +420,7 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool
 		params = to & 0xFF,
 		stack = params + local + 3,
 		Alloc:a = malloc(stack); // Allocate closure space.
-	//printf("local: %d, params: %d, stack: %d", local, params, stack);
+	// printf("local: %d, params: %d, stack: %d", local, params, stack);
 	if (a)
 	{
 		// Get the address of the data.
@@ -1065,6 +1065,7 @@ stock I@L(constFunc, ...)
 		// =====================================================================
 		if (YSI_g_sCurInlineLocals)
 		{
+			P:5("Inline_Main: TYPE 0");
 			YSI_g_sRequiredSpace = 4 * 3 * args + 4 * 13;
 			_@emit STACK      (-offset)
 			_@emit ADDR.alt   (-offset) // Like "LCTRL 4; XCHG", but shorter.
@@ -1093,6 +1094,7 @@ stock I@L(constFunc, ...)
 		}
 		else
 		{
+			P:5("Inline_Main: TYPE 1 (%d, %d, %d, %d, %d)", offset, offset - 4, args, 4 * 3 * args + 4 * 9, 12 + YSI_g_sCurInlineParams + 0 + 12 + 4);
 			// This is the simplest of the four versions of the code.  Here
 			// there are no arrays to copy over, nor are there any local
 			// variables from the closure.
@@ -1122,6 +1124,7 @@ stock I@L(constFunc, ...)
 		// =====================================================================
 		if (YSI_g_sCurInlineLocals)
 		{
+			P:5("Inline_Main: TYPE 2");
 			YSI_g_sRequiredSpace = 4 * 4 * varCount + 4 * 6 * arrCount + 4 * 14 * strCount + 4 * 13;
 			_@emit STACK      (-offset)
 			_@emit STACK      (YSI_g_sCurInlineLocals - argSize)
@@ -1171,6 +1174,7 @@ stock I@L(constFunc, ...)
 		}
 		else
 		{
+			P:5("Inline_Main: TYPE 3");
 			offset -= 4,
 			YSI_g_sRequiredSpace = 4 * 4 * varCount + 4 * 6 * arrCount + 4 * 14 * strCount + 4 * 11;
 			_@emit STACK      (-offset)
@@ -1225,16 +1229,25 @@ stock I@L(constFunc, ...)
 	// =========================================================================
 	if (YSI_g_sJumpAddress == 0)
 	{
-		// Fake an error.
+		// Fake an error.  This indirectly calls the "Inline_OnAsmError"
+		// function above to fill the intervening space with NOPs.
 		ctx[AsmContext_buffer_size] = 0;
 		@emit NOP
 	}
 	// The maths should now be correct.
 	AsmInitPtr(ctx, YSI_g_sCurInlineLoop + AMX_HEADER_COD, cellmax);
-	if (argSize) @emit STACK     argSize
+	if (argSize)
+	{
+		@emit STACK     argSize
+		YSI_g_sJumpAddress = YSI_g_sCurInlineLoop + 16;
+	}
+	else
+	{
+		YSI_g_sJumpAddress = YSI_g_sCurInlineLoop + 8;
+	}
+	@emit ZERO.pri // Default return value.
 	@emit RETN
 	// Save this return address, so the instruction above goes to the one below.
-	YSI_g_sJumpAddress = YSI_g_sCurInlineLoop + 12;
 	// Save references.
 	new
 		load = -offset,

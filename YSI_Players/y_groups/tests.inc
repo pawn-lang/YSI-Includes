@@ -107,7 +107,7 @@ Test:y_groups_Set1()
 	ASSERT(Group_GetCount(g) == 1);
 	new
 		c = 0;
-	foreach (new p : GroupMember(g))
+	foreach (new p : GroupMember[g])
 	{
 		ASSERT(p == 42);
 		++c;

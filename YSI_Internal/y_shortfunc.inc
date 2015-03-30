@@ -267,8 +267,8 @@ stock F@()
 //#define x,) )
 #define q:##),ALS_RS_none:) #))
 
-// This is for getting excess parameters on non-strings.
-#define _:%0,) %0)
+// This is for getting excess parameters on non-strings.  Now safely recursive.
+#define _:%0,) _:%0)
 
 #if defined YSI_LOCK_MODE
 	#include "..\YSI_Coding\y_hooks"

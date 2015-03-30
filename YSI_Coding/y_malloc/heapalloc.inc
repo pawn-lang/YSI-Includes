@@ -324,9 +324,9 @@ static const
 		"    ============================================================================\n" \
 		" \n";
 
-forward OnRuntimeError(code);
+forward OnRuntimeError(code, &bool:suppress);
 
-public OnRuntimeError(code)
+public OnRuntimeError(code, &bool:suppress)
 {
 	// This is called if the "crashdetect" plugin is installed.
 	if (code == 12)
@@ -352,7 +352,7 @@ public OnRuntimeError(code)
 #endif
 #define OnRuntimeError Malloc_OnRuntimeError
 #if defined Malloc_OnRuntimeError
-	forward Malloc_OnRuntimeError(code);
+	forward Malloc_OnRuntimeError(code, &bool:suppress);
 #endif
 
 forward Malloc_SolidifyTimer();

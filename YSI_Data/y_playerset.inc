@@ -141,9 +141,9 @@ stock
 // not -1 then we are mid-loop and we can just use the stored determined type
 // and use "cur" (as the last player done) to figure out the next player.  This
 // code only loops through connected players.
-#define PS@YSII_Ag%0- @iterfunc PS()
+#define iterstart@PS -1
 
-stock PS@YSII_Ag(__ps_addr_t:addr, cur)
+stock iterfunc PS(cur, __ps_addr_t:addr)
 {
 	if (cur == -1)
 	{
@@ -169,7 +169,7 @@ stock PS@YSII_Ag(__ps_addr_t:addr, cur)
 				{
 					// Use the pre-made iterator functionality.
 					__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_GROUP;
-					cur = Group@YSII_Ag(Group:addr, -1);
+					cur = Iter_Func@Group(-1, Group:addr);
 					if (cur == -1)
 					{
 						--__ps_pointer;
@@ -185,8 +185,8 @@ stock PS@YSII_Ag(__ps_addr_t:addr, cur)
 				{
 					// Uses the new "foreach" format of the infinate loop.
 					__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_PLAYERS;
-					cur = Player@YSII_Ag[sizeof (Player@YSII_Ag) - 1];
-					if (cur == sizeof (Player@YSII_Ag) - 1)
+					cur = Iter_Begin(Player);
+					if (cur == Iter_End(Player))
 					{
 						--__ps_pointer;
 						cur = -1;
@@ -197,8 +197,8 @@ stock PS@YSII_Ag(__ps_addr_t:addr, cur)
 					case ALL_BOTS:
 					{
 						__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_BOTS;
-						cur = Bot@YSII_Ag[sizeof (Bot@YSII_Ag) - 1];
-						if (cur == sizeof (Bot@YSII_Ag) - 1)
+						cur = Iter_Begin(Bot);
+						if (cur == Iter_End(Bot))
 						{
 							--__ps_pointer;
 							cur = -1;
@@ -208,8 +208,8 @@ stock PS@YSII_Ag(__ps_addr_t:addr, cur)
 					case ALL_CHARACTERS:
 					{
 						__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_CHARACTERS;
-						cur = Character@YSII_Ag[sizeof (Character@YSII_Ag) - 1];
-						if (cur == sizeof (Character@YSII_Ag) - 1)
+						cur = Iter_Begin(Character);
+						if (cur == Iter_End(Character))
 						{
 							--__ps_pointer;
 							cur = -1;
@@ -243,7 +243,7 @@ stock PS@YSII_Ag(__ps_addr_t:addr, cur)
 				// Easy to handle - the systems were designed for each other.
 				// This one needs work...  Err - what work?
 				__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_PA;
-				cur = PA@YSII_Ag(Bit:__ps_stack[__ps_pointer], -1);
+				cur = Iter_Func@PA(-1, Bit:__ps_stack[__ps_pointer]);
 				if (cur == -1)
 				{
 					--__ps_pointer;
@@ -340,7 +340,7 @@ stock PS@YSII_Ag(__ps_addr_t:addr, cur)
 		#if defined _YSI_HAS_GROUP_SYSTEM
 			case e_PLAYER_SET_TYPE_GROUP:
 			{
-				cur = Group@YSII_Ag(Group:_:addr, cur);
+				cur = Iter_Func@Group(cur, Group:_:addr);
 				if (cur == -1)
 				{
 					--__ps_pointer;
@@ -350,8 +350,8 @@ stock PS@YSII_Ag(__ps_addr_t:addr, cur)
 		#endif
 		case e_PLAYER_SET_TYPE_PLAYERS:
 		{
-			cur = Player@YSII_Ag[cur];
-			if (cur == sizeof (Player@YSII_Ag) - 1)
+			cur = Iter_Next(Player, cur);
+			if (cur == Iter_End(Player))
 			{
 				--__ps_pointer;
 				cur = -1;
@@ -361,8 +361,8 @@ stock PS@YSII_Ag(__ps_addr_t:addr, cur)
 		#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
 			case e_PLAYER_SET_TYPE_BOTS:
 			{
-				cur = Bot@YSII_Ag[cur];
-				if (cur == sizeof (Bot@YSII_Ag) - 1)
+				cur = Iter_Next(Bot, cur);
+				if (cur == Iter_End(Bot))
 				{
 					--__ps_pointer;
 					cur = -1;
@@ -371,8 +371,8 @@ stock PS@YSII_Ag(__ps_addr_t:addr, cur)
 			}
 			case e_PLAYER_SET_TYPE_CHARACTERS:
 			{
-				cur = Character@YSII_Ag[cur];
-				if (cur == sizeof (Character@YSII_Ag) - 1)
+				cur = Iter_Next(Character, cur);
+				if (cur == Iter_End(Character))
 				{
 					--__ps_pointer;
 					cur = -1;
@@ -382,7 +382,7 @@ stock PS@YSII_Ag(__ps_addr_t:addr, cur)
 		#endif
 		case e_PLAYER_SET_TYPE_PA:
 		{
-			cur = PA@YSII_Ag(Bit:__ps_stack[__ps_pointer], cur);
+			cur = Iter_Func@PA(cur, Bit:__ps_stack[__ps_pointer]);
 			if (cur == -1)
 			{
 				--__ps_pointer;
@@ -393,8 +393,8 @@ stock PS@YSII_Ag(__ps_addr_t:addr, cur)
 		{
 			for ( ; ; )
 			{
-				cur = Player@YSII_Ag[cur];
-				if (cur == sizeof (Player@YSII_Ag) - 1)
+				cur = Iter_Next(Player, cur);
+				if (cur == Iter_End(Player))
 				{
 					--__ps_pointer;
 					return -1;

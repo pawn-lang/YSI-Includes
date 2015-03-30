@@ -234,11 +234,22 @@ Test:y_als_Generation()
 	new
 		damagedid = 45,
 		Float:amount = 1.2,
-		weaponid = 50;
-	__PRINT<PlayerGiveDamage, "OnPlayerGiveDamage(42, 45, 1.200000, 50)">
+		weaponid = 50,
+		bodypart = 2;
+	#if defined GetPlayerLastShotVectors
+		__PRINT<PlayerGiveDamage, "OnPlayerGiveDamage(42, 45, 1.200000, 50, 2)">
+	#else
+		__PRINT<PlayerGiveDamage, "OnPlayerGiveDamage(42, 45, 1.200000, 50)">
+		#pragma unused bodypart
+	#endif
 	new
 		issuerid = 46;
-	__PRINT<PlayerTakeDamage, "OnPlayerTakeDamage(42, 46, 1.200000, 50)">
+	#if defined GetPlayerLastShotVectors
+		__PRINT<PlayerTakeDamage, "OnPlayerTakeDamage(42, 46, 1.200000, 50, 2)">
+	#else
+		__PRINT<PlayerTakeDamage, "OnPlayerTakeDamage(42, 46, 1.200000, 50)">
+		#pragma unused bodypart
+	#endif
 	new
 		Float:fX = 10.24,
 		Float:fY = 11.34,
@@ -247,8 +258,16 @@ Test:y_als_Generation()
 	__PRINT<PlayerCommandReceived, "OnPlayerCommandReceived(42, /help)">
 	__PRINT<PlayerCommandPerformed, "OnPlayerCommandPerformed(42, /help, -11)">
 	new
-		passenger_seat = 70;
-	__PRINT<UnoccupiedVehicleUpdate, "OnUnoccupiedVehicleUpdate(606, 42, 70)">
+		passenger_seat = 70,
+		Float:new_x = 3.3,
+		Float:new_y = 4.4,
+		Float:new_z = 5.5;
+	#if defined GetServerTickRate
+		__PRINT<UnoccupiedVehicleUpdate, "OnUnoccupiedVehicleUpdate(606, 42, 70, 3.299999, 4.400000, 5.500000)">
+	#else
+		__PRINT<UnoccupiedVehicleUpdate, "OnUnoccupiedVehicleUpdate(606, 42, 70)">
+		#pragma unused new_x, new_y, new_z
+	#endif
 	new
 		clickedid = 90;
 	// Actually revealed an issue in y_als with ALL tags being interpreted as
