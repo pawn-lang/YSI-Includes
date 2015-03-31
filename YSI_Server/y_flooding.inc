@@ -160,7 +160,7 @@ hook OnPlayerConnect(playerid)
 	if ((YSI_g_sMaxConnections & e_FLOOD_ACTION_COUNT) != e_FLOOD_ACTION_COUNT)
 	{
 		new
-			ip[16]
+			ip[16],
 			count = 0;
 		GetPlayerIp(playerid, ip, sizeof (ip));
 		new
