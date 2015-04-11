@@ -128,9 +128,7 @@ stock PA_Set(PlayerArray:d<>, slot, bool:set)
 	}
 }
 
-#define iterstart@PA -1
-
-stock iterfunc PA(start, PlayerArray:data<>)
+stock Iter_Func@PA(start, PlayerArray:data<>)
 {
 	P:3("YSI_gAPAFunc called: %s, %i", Bit_Display(Bit:data[1]), start);
 	++start;
@@ -178,6 +176,8 @@ stock iterfunc PA(start, PlayerArray:data<>)
 	}
 	return cellmin;
 }
+
+#define iterstart@PA -1
 
 #undef PlayerArray
 

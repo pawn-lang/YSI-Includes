@@ -141,9 +141,7 @@ stock
 // not -1 then we are mid-loop and we can just use the stored determined type
 // and use "cur" (as the last player done) to figure out the next player.  This
 // code only loops through connected players.
-#define iterstart@PS -1
-
-stock iterfunc PS(cur, __ps_addr_t:addr)
+stock Iter_Func@PS(cur, __ps_addr_t:addr)
 {
 	if (cur == -1)
 	{
@@ -498,6 +496,8 @@ stock iterfunc PS(cur, __ps_addr_t:addr)
 	--__ps_pointer;
 	return -1;
 }
+
+#define iterstart@PS -1
 
 // This function gets the required data from custom format (enum) arrays.
 stock __PS_C(source[MAX_PLAYERS][], idx)

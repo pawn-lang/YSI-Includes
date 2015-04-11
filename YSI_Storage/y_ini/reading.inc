@@ -483,7 +483,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 			}
 		}
 		// Don't put any code down here (at the end of the loop).
-	} // while (fread(f, line))
+	}
 	return
 		Callback_Restore(callback),
 		Callback_Release(callback),

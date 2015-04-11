@@ -1227,9 +1227,6 @@ stock Group:Group_Create(string:name[] = "")
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define iterstart@Group -1
-
-#define Iterator@Group @iterfunc
 #pragma deprecated use "GroupMember"
 stock Iter_Func@Group(start, Group:group)
 {
@@ -1243,7 +1240,10 @@ stock Iter_Func@Group(start, Group:group)
 	return Iter_Func@GroupMember(start, Group:group);
 }
 
-#define iterstart@GroupMember -1
+#define Iterator@Group @iterfunc
+
+#define iterstart@Group -1
+
 #define Iterator@GroupMember @iterfunc
 
 foreign Iter_Func@GroupMember(start, Group:group);
@@ -1267,6 +1267,8 @@ global Iter_Func@GroupMember(start, Group:group)
 	return start;
 }
 
+#define iterstart@GroupMember -1
+
 /**--------------------------------------------------------------------------**\
 <summary>CreatedGroup</summary>
 <param name="start">Last value.</param>
@@ -1279,7 +1281,6 @@ global Iter_Func@GroupMember(start, Group:group)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define iterstart@CreatedGroup -1
 #define Iterator@CreatedGroup @iterfunc
 
 // Bypass y_iterate restrictions.
@@ -1298,6 +1299,8 @@ global Group:Iter_Func@CreatedGroup(group)
 	return INVALID_GROUP;
 }
 
+#define iterstart@CreatedGroup -1
+
 /**--------------------------------------------------------------------------**\
 <summary>ChildGroup</summary>
 <param name="parent">Group to get the children of.</param>
@@ -1311,7 +1314,6 @@ global Group:Iter_Func@CreatedGroup(group)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define iterstart@GroupChild iterstart@Bits
 #define Iterator@GroupChild @iterfunc
 
 foreign Group:Iter_Func@GroupChild(start, Group:parent);
@@ -1325,6 +1327,8 @@ global Group:Iter_Func@GroupChild(start, Group:parent)
 	// Use the existing "Bits" iterator with fixed identifiers.
 	return GROUP_MANGLE(Iter_Func@Bits(start, YSI_g_sChildGroups[_:GROUP_TEMP_FIX(parent)], bits<_MAX_GROUPS_G>));
 }
+
+#define iterstart@GroupChild iterstart@Bits
 
 /**--------------------------------------------------------------------------**\
 <summary>

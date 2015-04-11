@@ -722,10 +722,17 @@ static stock DoINI_Int3()
 		tk1[8];
 	inline Inl_(string:tag[], string:name[], string:value[])
 	{
+		// #emit NOP
+		// #emit NOP
+		// #emit NOP
+		// #emit NOP
 		// printf("%s (%d): %d %d %d", tag, YHash(tag, false),
 			// _I<>,
 			// _I<atag>,
 			// _I<tag2>);
+		// TODO:  I think there's a bug in here somewhere, with "GTYPE=0 MTYPE=1
+		// -O1 -d0", which crashes on ENTRY to this inlineю  I think that the
+		// problem may be too much, or incorrect, code being output.
 		switch (YHash(tag, false))
 		{
 			case _I<>:

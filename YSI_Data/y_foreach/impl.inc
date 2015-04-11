@@ -271,7 +271,7 @@ Array:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define iterfunc%0(%1) Iter_Func@%0(%1)F@a$
+#define iterfunc%0(%1) F@y:%0(%1)
 
 /**--------------------------------------------------------------------------**\
 <summary>@iterfunc</summary>
@@ -745,6 +745,21 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 #define Iter_Multi@%0\32;%1$ Iter_Multi@%0%1$
 #define Iter_Init@%0\32;%1$ Iter_Init@%0%1$
 
+// Allow "iterfunc stock", "stock iterfunc", and other varieties.
+#define Iter_Func@stock%0(%2)%1$ stock F@y:%0(%2)
+#define Iter_Func@static%0(%2)%1$ static F@y:%0(%2)
+#define Iter_Func@foreign%0(%2)%1$ foreign F@y:%0(%2)
+#define Iter_Func@global%0(%2)%1$ global F@y:%0(%2)
+#define Iter_Func@public%0(%2)%1$ public F@y:%0(%2)
+#define Iter_Func@forward%0(%2)%1$ forward F@y:%0(%2)
+
+// #define iterstart@stock%0=%1(%2) stock F@y:%0(%2)
+// #define iterstart@static%0=%1(%2) static F@y:%0(%2)
+// #define iterstart@foreign%0=%1(%2) foreign F@y:%0(%2)
+// #define iterstart@global%0=%1(%2) global F@y:%0(%2)
+// #define iterstart@public%0=%1(%2) public F@y:%0(%2)
+// #define iterstart@forward%0=%1(%2) forward F@y:%0(%2)
+
 // A nice "match" symbol that we can scan for, then remove after it is used.
 #define F@a$
 #define F@b|||
@@ -796,6 +811,16 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 
 // Reverse normal iterator.
 #define F@q:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
+
+// Declare a 
+//#define F@y:%0(%1) Iter_Func@%0(%1);const iterstart@%0=_:F@t:-1;Iter_Func@%0(%1)F@a$
+
+// Detect __declspec(stock)
+//#define F@t:-1;%0$__declspec(%1) F@t:-1;%1 %0$
+//#define __declspec_stock
+//#define stock%0\n%1 %0=
+
+#define F@y:%0(%1) Iter_Func@%0(%1)F@a$
 
 /**--------------------------------------------------------------------------**\
 	The workings of these macros are very extensively documented at:

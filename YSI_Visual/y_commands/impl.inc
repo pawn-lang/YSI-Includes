@@ -1035,7 +1035,6 @@ global string:Command_GetNext(index, playerid)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define iterstart@Command -1
 #define Iterator@Command @iterfunc
 
 foreign Iter_Func@Command(start);
@@ -1048,6 +1047,8 @@ global Iter_Func@Command(start)
 	}
 	return COMMAND_NOT_FOUND;
 }
+
+#define iterstart@Command -1
 
 /**--------------------------------------------------------------------------**\
 <summary>PlayerCommand</summary>
@@ -1065,7 +1066,6 @@ global Iter_Func@Command(start)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define iterstart@PlayerCommand -1
 #define Iterator@PlayerCommand @iterfunc
 
 foreign Iter_Func@PlayerCommand(start, pid);
@@ -1081,6 +1081,8 @@ global Iter_Func@PlayerCommand(start, pid)
 	}
 	return COMMAND_NOT_FOUND;
 }
+
+#define iterstart@PlayerCommand -1
 
 /*
   

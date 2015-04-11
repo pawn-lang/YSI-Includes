@@ -202,7 +202,6 @@ Iterators:
 	Character - All players and bots.
 \**--------------------------------------------------------------------------**/
 
-#define iterstart@Test2a_y_iter -1
 iterfunc Test2a_y_iter(start)
 {
 	switch (start)
@@ -218,8 +217,9 @@ iterfunc Test2a_y_iter(start)
 	return -1;
 }
 
-#define iterstart@Test2b_y_iter -1
-iterfunc Test2b_y_iter(start )
+#define iterstart@Test2a_y_iter -1
+
+iterfunc static stock Test2b_y_iter(start )
 {
 	switch (start)
 	{
@@ -234,8 +234,9 @@ iterfunc Test2b_y_iter(start )
 	return -1;
 }
 
-#define iterstart@Test2c_y_iter -1
-iterfunc Test2c_y_iter (start)
+#define iterstart@Test2b_y_iter -1
+
+iterfunc static Test2c_y_iter (start)//__declspec(stock)
 {
 	switch (start)
 	{
@@ -250,8 +251,9 @@ iterfunc Test2c_y_iter (start)
 	return -1;
 }
 
-#define iterstart@Test2d_y_iter -1
-iterfunc Test2d_y_iter (start )
+#define iterstart@Test2c_y_iter -1
+
+iterfunc stock Test2d_y_iter (start )
 {
 	switch (start)
 	{
@@ -265,6 +267,8 @@ iterfunc Test2d_y_iter (start )
 	}
 	return -1;
 }
+
+#define iterstart@Test2d_y_iter -1
 
 Test:y_iter_Range()
 {

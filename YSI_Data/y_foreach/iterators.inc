@@ -233,14 +233,14 @@ Create the internal iterators.
 	#endif
 #endif
 
-#define iterstart@Range cellmin
-
-iterfunc Range(cur, min, max, step = 1)
+stock iterfunc Range(cur, min, max, step = 1)
 {
 	if (cur == cellmin) cur = min;
 	else cur += step;
 	return (min <= cur < max || max <= cur < min) ? cur : cellmin;
 }
+
+#define iterstart@Range cellmin
 
 /*
 

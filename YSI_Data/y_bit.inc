@@ -350,8 +350,6 @@ stock Bit_Display(BitArray:array<>, size = sizeof (array))
 
 #define bitsof(%0) (sizeof(%0)*cellbits)
 
-#define iterstart@Bits -1
-
 stock Iter_Func@Bits(start, BitArray:data<>, size = sizeof (data))
 {
 	P:3("Iter_Func@Bits called: %s, %i", Bit_Display(data, size), start);
@@ -379,7 +377,7 @@ stock Iter_Func@Bits(start, BitArray:data<>, size = sizeof (data))
 	return -1;
 }
 
-#define iterstart@Blanks -1
+#define iterstart@Bits -1
 
 stock Iter_Func@Blanks(start, BitArray:data<>, size = sizeof (data))
 {
@@ -405,6 +403,8 @@ stock Iter_Func@Blanks(start, BitArray:data<>, size = sizeof (data))
 	}
 	return -1;
 }
+
+#define iterstart@Blanks -1
 
 #define bits<%1> Bit_Bits(%1) 
 
