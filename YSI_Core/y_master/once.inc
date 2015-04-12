@@ -344,14 +344,13 @@ public OnScriptExit()
 	// function for it.  EXCEPT for this script itself!
 	new
 		func[4];
-	for (new i = 0; i != YSI_g_sMasterCount; ++i)
-	{
+	while(YSI_g_sMasterCount) {
 		// This is slightly slower for ending and starting scripts, but uses far
 		// less heap space, and these values are rarely used, so may as well
 		// pack them (which is what has happened here).
-		func[0] = YSI_g_sMasterData[i] & 0xFF;
-		func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF;
-		func[2] = YSI_g_sMasterData[i] >> 16;
+		func[0] = YSI_g_sMasterData[0] & 0xFF;
+		func[1] = (YSI_g_sMasterData[0] >> 8) & 0xFF;
+		func[2] = YSI_g_sMasterData[0] >> 16;
 		CallLocalFunction(func, "");
 		// The properties currently clear instantly, but that may not always be
 		// the case.
