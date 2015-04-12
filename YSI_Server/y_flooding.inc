@@ -118,7 +118,7 @@ static
 	YSI_g_sPlayerIPs[MAX_PLAYERS],
 	e_FLOOD_ACTION:YSI_g_sMaxConnections = e_FLOOD_ACTION_COUNT | e_FLOOD_ACTION_BLOCK;
 
-forward OnFloodLimitExcceded(ip[16], count);
+forward OnFloodLimitExceeded(ip[16], count);
 
 stock
 	Iterator:FloodingPlayer<MAX_PLAYERS>;
@@ -251,19 +251,17 @@ hook OnPlayerConnect(playerid)
 				}
 				case e_FLOOD_ACTION_OTHER:
 				{
-					ret = CallLocalFunction("OnFloodLimitExcceded", "si", ip, Iter_Count(FloodingPlayer));
-				}
-				default:
-				{
-					// Do nothing.
-					//ret = 1;
+					ret = CallLocalFunction("OnFloodLimitExceeded", "si", ip, Iter_Count(FloodingPlayer));
 				}
 			}
 		}
-		foreach (new i : FloodingPlayer)
+		// Ultra fast iterator clear.
+		for (new i = Iter_Begin(FloodingPlayer); (ip32 = Iter_Next(FloodingPlayer, i)) != i; )
 		{
-			Iter_SafeRemove(FloodingPlayer, i, i);
-		}
+			Iter_TrueArray(FloodingPlayer)[i] = i;
+			i = ip32;
+		}	
+		Iter_TrueCount(FloodingPlayer) = 0;
 	}
 	return ret;
 }
