@@ -603,6 +603,7 @@ static stock
 stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:bExtra = false, extra = 0, bool:bLocal = true, bool:bPassTag = false, bool:bFilter = true, filter[] = "")
 {
 	P:3("bool:INI_ParseFile called: \"%s\", \"%s\", %i, %i, %i, %i, %i, %i, \"%s\"", fname, remoteFormat, bFileFirst, bExtra, extra, bLocal, bPassTag, bFilter, filter);
+	printf("0");
 	static
 		callback[E_CALLBACK_DATA],
 		tag[32],    // The current tag being parsed.
@@ -616,26 +617,35 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 		p0s, p0e, p1s, p1e, p2s, p2e;
 	P:5("INI_ParseFile: Opened.");
 	bLocal = !bLocal, // Invert for "remote".
+	printf("0a");
 	INI_MakeCallbackFormat(bExtra, bPassTag, cbSpec),
+	printf("0b");
 	INI_SetupCallbackName(cbName, remoteFormat, fname, bFileFirst);
+	printf("0c");
 	new
 		bool:handle = INI_GetCallback(callback, cbName, tag, "", cbSpec, bLocal);
+	printf("1");
 	while ((rlen = fread(f, YSI_g_sCurLine)))
 	{
+		printf("2a");
 		ppos += rlen;
+		printf("2b");
 		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e, p2s, p2e))
 		{
 			case e_INI_LINE_TYPE_INVALID:
 			{
+				printf("3a");
 				// "P:I" not "P:W" because this is not a script issue.
 				P:I("Invalid line in INI file \"%s\": %s", fname, YSI_g_sCurLine);
 			}
 			case e_INI_LINE_TYPE_BLANK:
 			{
+				printf("3b");
 				// Do nothing.
 			}
 			case e_INI_LINE_TYPE_TAG:
 			{
+				printf("3c");
 				// A new tag.
 				Callback_Restore(callback),
 				Callback_Release(callback),
@@ -678,6 +688,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 			}
 			default: // e_INI_LINE_TYPE_ENTRY and e_INI_LINE_TYPE_CONT.
 			{
+				printf("3d");
 				if (!handle) continue;
 				// Standard key-value pair.
 				YSI_g_sCurLine[p0e] = YSI_g_sCurLine[p1e] = '\0';
@@ -693,8 +704,10 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 				}
 			}
 		}
+		printf("4");
 		// Don't put any code down here (at the end of the loop).
 	} // while (fread(f, line))
+	printf("5");
 	return
 		Callback_Restore(callback),
 		Callback_Release(callback),

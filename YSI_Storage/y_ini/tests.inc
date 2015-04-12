@@ -611,6 +611,8 @@ Test:INI_ParseInline()
 	num = 0;
 	INI_ParseFile("YSI/test_ini/test1.ini", "Inline1", .bFilter = true, .filter = "other");
 	ASSERT(num == 8);
+	// This line also seems to have the -O1 -d0 bug.  It must be caused by the
+	// extra "tag" parameter somehow...
 	inline Inline2(string:tag[], string:key[], string:value[])
 	{
 		#pragma unused key, value

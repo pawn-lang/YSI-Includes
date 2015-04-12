@@ -593,8 +593,14 @@ stock e_INI_LINE_TYPE:
 	INI_SkipWhitespace(str, pos);
 	switch (str[pos])
 	{
-		case '\0', ';': return e_INI_LINE_TYPE_INVALID;
-		case '\\':
+			case '\0': return p1s = p1e = pos, e_INI_LINE_TYPE_ENTRY;
+			case  ';':
+			{
+				p1s = p1e = pos,
+				ret  = e_INI_LINE_TYPE_ENTRY;
+				goto state_in_comment;
+			}
+			case '\\':
 			if (str[pos + 1]) p1s = pos++, end = ++pos;
 			else return e_INI_LINE_TYPE_INVALID;
 		default: p1s = pos++, end = pos;
