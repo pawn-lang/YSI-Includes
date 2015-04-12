@@ -226,17 +226,8 @@ public OnPlayerConnect(playerid)
 {
 	new
 		ip[16];
-	GetPlayerIp(playerid, ip, sizeof (ip));
-	new
-		ipv = strval(ip) << 24,
-		pos = 0;
-	while (pos < 15 && ip[pos++] != '.') {}
-	ipv += strval(ip[pos]) << 16;
-	while (pos < 15 && ip[pos++] != '.') {}
-	ipv += strval(ip[pos]) << 8;
-	while (pos < 15 && ip[pos++] != '.') {}
-	ipv += strval(ip[pos]);
-	YSI_gPlayerIP[playerid] = ipv;
+	GetPlayerIp(playerid, ip, sizeof (ip)),
+	YSI_gPlayerIP[playerid] = IPToInt(ip);
 	#if defined _y_utils_OnPlayerConnect
 		_y_utils_OnPlayerConnect(playerid);
 	#endif
@@ -479,6 +470,30 @@ stock chrfindp(needle, haystack[], start = 0)
 	}
 	while (haystack{start}) if (haystack{start++} == needle) return start - 1;
 	return -1;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>IPToInt</summary>
+<param name="ip[]">Dot notation IP to convert to an integer.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock IPToInt(ip[])
+{
+	new
+		ipv = strval(ip) << 24,
+		pos = 0;
+	while (pos < 15 && ip[pos++] != '.') {}
+	ipv += strval(ip[pos]) << 16;
+	while (pos < 15 && ip[pos++] != '.') {}
+	ipv += strval(ip[pos]) << 8;
+	while (pos < 15 && ip[pos++] != '.') {}
+	return ipv + strval(ip[pos]);
 }
 
 /**--------------------------------------------------------------------------**\
