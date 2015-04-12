@@ -76,7 +76,9 @@ Test:y_hashmap_Init()
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
-	ASSERT(data[88][E_HASH_MAP_TEST_DATA] == -1);
+	ASSERT(data[88][E_HASH_MAP_TEST_DATA][0] == 0);
+	ASSERT(data[88][E_HASH_MAP_TEST_DATA][1] == 0);
+	ASSERT(data[88][E_HASH_MAP_TEST_DATA][2] == 0);
 }
 
 Test:rawMemcpy()
@@ -95,7 +97,9 @@ Test:y_hashmap_Add()
 	HashMap_Add(m, "Hello", 42);
 	ASSERT(bool:data[42][E_HASH_MAP_TEST_NAME][0]);
 	ASSERT(!strcmp(data[42][E_HASH_MAP_TEST_NAME], "Hello"));
-	ASSERT(data[42][E_HASH_MAP_TEST_DATA] == -1);
+	ASSERT(data[42][E_HASH_MAP_TEST_DATA][0] == bernstein("Hello"));
+	ASSERT(data[42][E_HASH_MAP_TEST_DATA][1] == 0);
+	ASSERT(data[42][E_HASH_MAP_TEST_DATA][2] == 0);
 }
 
 Test:y_hashmap_Get1()

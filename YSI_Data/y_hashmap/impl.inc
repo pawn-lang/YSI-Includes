@@ -73,7 +73,17 @@ Definitions:
 
 #define HashMap:%0<%1> %0[HASH_MAP_SIZE + 4]
 
-#define HASH_MAP_DATA (2)
+#define HASH_MAP_DIR_LEFT  (4)
+#define HASH_MAP_DIR_RIGHT (8)
+
+// There are three pieces of hash map data associated with each stored string.
+// In byte offsets, these are:
+//  
+//  0 - The hash of the stored string.
+//  4 - The left pointer for the binary tree.
+//  8 - The right pointer for the binary tree.
+//  
+#define HASH_MAP_DATA (3)
 
 /**--------------------------------------------------------------------------**\
 <summary>HashMap_Hash</summary>
@@ -111,7 +121,7 @@ Definitions:
 stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 {
 	static
-		HashMap:sInit<> = {-1, ...};
+		HashMap:sInit<> = {0, ...};
 	m = sInit;
 	new
 		ptr;
@@ -123,17 +133,11 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 	m[HASH_MAP_SIZE_1] = size1,
 	// Store the size of each element.
 	m[HASH_MAP_SIZE_2] = size2;
-	// Set up the main array.
-	while (size1--)
-	{
-		AMX_Write(ptr, -1),
-		ptr += size2;
-	}
+	// Store the size of "_E_HASH_MAP_NAME" in bytes.
 	#emit LOAD.S.pri target
 	#emit LOAD.S.alt t2
 	#emit SUB
 	#emit STOR.S.pri ptr
-	// Store the size of "_E_HASH_MAP_NAME" in bytes.
 	m[HASH_MAP_SIZE_3] = ptr;
 }
 
@@ -158,38 +162,89 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 <summary>HashMap_Add</summary>
 <param name="HashMap:m<>"></param>
 <param name="const str[]"></param>
-<param name="const value"></param>
+<param name="const value">More like the target slot.</param>
 <returns>
 	-
 </returns>
 <remarks>
 	Adds a value to the given hash map under the given string key.
+	
+	Actually more like adding an index, not a value...
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock bool:HashMap_Add(HashMap:m<>, const str[], const value)
+stock bool:HashMap_Add(HashMap:m<>, const str[], value, bool:ignorecase = false)
 {
 	P:3("HashMap_Add called: %d <= %d < %d", 0, value, m[HASH_MAP_SIZE_1]);
 	if (0 <= value < m[HASH_MAP_SIZE_1])
 	{
-		new
-			ptr  = m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2];
-		P:6("HashMap_Add: used = %d", AMX_Read(ptr));
-		if (AMX_Read(ptr) != -1) return false;
+		// Check if the index is already in a hash map.  Doesn't work if the
+		// entry is a leaf, since it will be a member, but also have both
+		// pointers as 0...  I don't think there is a nice way to do this.
+		// if (AMX_Read(ptr + 4) || AMX_Read(ptr + 8)) return false;
 		static
+			ptr,
 			hash,
-			mask;
-		HashMap_Hash(str, hash);
+			res;
+		hash = YHash(str, .sensitive = !ignorecase);
+		// Add this entry to the correct binary tree.
 		P:5("HashMap_Add: mask = %d", hash & 0xFF);
-		mask = hash & 0xFF,
-		// Add this hash to the hash list.
-		AMX_Write(ptr, m[mask]),
-		m[mask] = ptr,
-		// Get the hashed string destination size.
-		mask = m[HASH_MAP_SIZE_3],
-		rawMemcpy(ptr - mask, ref(str), mask),
+		new
+			prev = ref(m[hash & 0xFF]),
+			next;
+		for ( ; ; )
+		{
+			#emit LREF.S.pri  prev
+			#emit STOR.S.pri  next
+			if (!next)
+				break;
+			{}
+			#emit LREF.S.pri  next
+			#emit STOR.pri    res
+			if (hash == res)
+			{
+				// It doesn't matter which way we go on matching hashes, as long
+				// as the direction is consistent.
+				#emit PUSH.C      0x7FFFFFFF
+				#emit PUSH.S      ignorecase
+				#emit PUSH.S      str
+				#emit LOAD.S.pri  m
+				#emit ADD.C       1036 // 256 * 4 + 3 * 4
+				#emit LOAD.I
+				#emit LOAD.S.alt  next
+				#emit SUB.alt
+				#emit PUSH.pri
+				#emit PUSH.C      16
+				#emit SYSREQ.C    strcmp
+				#emit STACK       20
+				#emit STOR.pri    ptr
+				if (ptr == 0)
+				{
+					P:E("Trying to add two copies of a string to a hashmap: \"%s\", %d", str, value);
+					return false;
+				}
+				else if (ptr < 0) // Lower, move left.
+					prev = next + HASH_MAP_DIR_LEFT;
+				else // Higher, move right.
+					prev = next + HASH_MAP_DIR_RIGHT;
+			}
+			else if (hash < res) // Lower, move left.
+				prev = next + HASH_MAP_DIR_LEFT;
+			else // Higher, move right.
+				prev = next + HASH_MAP_DIR_RIGHT;
+		}
+		P:6("HashMap_Add: used = %d", AMX_Read(m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2]));
+		// Get the address of this structure.
+		ptr = m[HASH_MAP_PTR] + value * m[HASH_MAP_SIZE_2],
 		// Copy the hashed value.
-		AMX_Write(ptr + 4, hash);
+		AMX_Write(ptr, hash),
+		AMX_Write(ptr + HASH_MAP_DIR_LEFT, 0),
+		AMX_Write(ptr + HASH_MAP_DIR_RIGHT, 0),
+		// Add this hash to the hash list.
+		AMX_Write(prev, ptr),
+		// Get the hashed string destination size, and copy the string.
+		next = m[HASH_MAP_SIZE_3],
+		rawMemcpy(ptr - next, ref(str), next);
 		return true;
 	}
 	return false;
@@ -209,69 +264,7 @@ stock bool:HashMap_Add(HashMap:m<>, const str[], const value)
 
 stock HashMap_Get(HashMap:m<>, const str[], bool:ignorecase = false)
 {
-	static
-		hash,
-		res;
-	HashMap_Hash(str, hash);
-	res = hash & 0xFF;
-	P:3("HashMap_Get called: \"%s\" mask = %d", str, res);
-	for (new ptr = m[res]; ptr != -1; )
-	{
-		#emit LOAD.S.pri  ptr
-		#emit ADD.C       4
-		#emit LOAD.I
-		#emit STOR.pri    res
-		if (res == hash)
-		{
-			P:6("HashMap_Get: Candidate %d: %d == %d", (ptr - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2], AMX_Read(ptr + 4), hash);
-			// Maybe collisions.
-			#emit PUSH.C      0x7FFFFFFF
-			#emit PUSH.S      ignorecase
-			#emit PUSH.S      str
-			#emit LOAD.S.pri  m
-			#emit ADD.C       1036 // 256 * 4 + 3 * 4
-			#emit LOAD.I
-			#emit LOAD.S.alt  ptr
-			#emit SUB.alt
-			#emit PUSH.pri
-			#emit PUSH.C      16
-			#emit SYSREQ.C    strcmp
-			#emit STACK       20
-			#emit STOR.pri    res
-			/*new dest[32];
-			static const sss[] = "str = %s";
-			// printf
-			#emit LOAD.S.pri  m
-			#emit ADD.C       1036 // 256 * 4 + 3 * 4
-			#emit LOAD.I
-			#emit LOAD.S.alt  ptr
-			#emit SUB.alt
-			#emit PUSH.pri
-			#emit PUSH.C      sss
-			#emit PUSH.C      8
-			#emit SYSREQ.C    printf
-			#emit STACK       12
-			// strunpack
-			#emit PUSH.C 32
-			#emit LOAD.S.pri  m
-			#emit ADD.C       1036 // 256 * 4 + 3 * 4
-			#emit LOAD.I
-			#emit LOAD.S.alt  ptr
-			#emit SUB.alt
-			#emit PUSH.pri
-			#emit ADDR.pri    dest
-			#emit PUSH.pri
-			#emit PUSH.C      12
-			#emit SYSREQ.C    strunpack
-			#emit STACK       16
-			printf("%s = %d", dest, res);*/
-			if (res == 0) return (ptr - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2];
-		}
-		{} // Zero-cost bug fix.
-		#emit LREF.S.pri  ptr
-		#emit STOR.S.pri  ptr
-	}
-	return -1;
+	return HashMap_GetWithHash(m, str, YHash(str, .sensitive = !ignorecase), ignorecase);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -289,38 +282,51 @@ stock HashMap_Get(HashMap:m<>, const str[], bool:ignorecase = false)
 
 stock HashMap_GetWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = false)
 {
+	P:3("HashMap_Get called: mask = %d (%d)", hash, hash & 0xFF);
+	new
+		prev = ref(m[hash & 0xFF]),
+		next;
 	static
 		res;
-	res = hash & 0xFF;
-	P:3("HashMap_Get called: mask = %d", res);
-	for (new ptr = m[res]; ptr != -1; )
+	for ( ; ; )
 	{
-		#emit LOAD.S.pri  ptr
-		#emit ADD.C       4
-		#emit LOAD.I
+		#emit LREF.S.pri  prev
+		#emit STOR.S.pri  next
+		if (!next)
+			break;
+		{}
+		#emit LREF.S.pri  next
 		#emit STOR.pri    res
-		if (res == hash)
+		if (hash == res)
 		{
-			P:6("HashMap_Get: Candidate %d: %d == %d", (ptr - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2], AMX_Read(ptr + 4), hash);
-			// Maybe collisions.
+			// It doesn't matter which way we go on matching hashes, as long
+			// as the direction is consistent.
 			#emit PUSH.C      0x7FFFFFFF
 			#emit PUSH.S      ignorecase
 			#emit PUSH.S      str
 			#emit LOAD.S.pri  m
 			#emit ADD.C       1036 // 256 * 4 + 3 * 4
 			#emit LOAD.I
-			#emit LOAD.S.alt  ptr
+			#emit LOAD.S.alt  next
 			#emit SUB.alt
 			#emit PUSH.pri
 			#emit PUSH.C      16
 			#emit SYSREQ.C    strcmp
 			#emit STACK       20
 			#emit STOR.pri    res
-			if (res == 0) return (ptr - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2];
+			if (res == 0)
+			{
+				return (next - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2];
+			}
+			else if (res < 0) // Lower, move left.
+				prev = next + HASH_MAP_DIR_LEFT;
+			else // Higher, move right.
+				prev = next + HASH_MAP_DIR_RIGHT;
 		}
-		{} // Zero-cost bug fix.
-		#emit LREF.S.pri  ptr
-		#emit STOR.S.pri  ptr
+		else if (hash < res) // Lower, move left.
+			prev = next + HASH_MAP_DIR_LEFT;
+		else // Higher, move right.
+			prev = next + HASH_MAP_DIR_RIGHT;
 	}
 	return -1;
 }
@@ -338,33 +344,35 @@ stock HashMap_GetWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = fals
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock bool:HashMap_RemoveKey(HashMap:m<>, const str[])
+stock bool:HashMap_RemoveKeyWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = false)
 {
+	// First, find the key and it's parent.
+	new
+		prev = ref(m[hash & 0xFF]),
+		next;
 	static
-		hash,
-		res,
-		prev;
-	HashMap_Hash(str, hash);
-	res = hash & 0xFF,
-	prev = ref(m[res]);
-	P:3("HashMap_RemoveKey called: mask = %d", res);
-	for (new ptr = AMX_Read(prev); ptr != -1; )
+		res;
+	// First, find this key in the hashmap.
+	for ( ; ; )
 	{
-		#emit LOAD.S.pri  ptr
-		#emit ADD.C       4
-		#emit LOAD.I
+		#emit LREF.S.pri  prev
+		#emit STOR.S.pri  next
+		if (!next)
+			return false;
+		{}
+		#emit LREF.S.pri  next
 		#emit STOR.pri    res
-		if (res == hash)
+		if (hash == res)
 		{
-			P:6("HashMap_RemoveKey: Candidate %d: %d == %d", (ptr - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2], AMX_Read(ptr + 4), hash);
-			// Maybe collisions.
+			// It doesn't matter which way we go on matching hashes, as long
+			// as the direction is consistent.
 			#emit PUSH.C      0x7FFFFFFF
-			#emit PUSH.C      0
+			#emit PUSH.S      ignorecase
 			#emit PUSH.S      str
 			#emit LOAD.S.pri  m
 			#emit ADD.C       1036 // 256 * 4 + 3 * 4
 			#emit LOAD.I
-			#emit LOAD.S.alt  ptr
+			#emit LOAD.S.alt  next
 			#emit SUB.alt
 			#emit PUSH.pri
 			#emit PUSH.C      16
@@ -373,18 +381,96 @@ stock bool:HashMap_RemoveKey(HashMap:m<>, const str[])
 			#emit STOR.pri    res
 			if (res == 0)
 			{
-				// Remove this from the linked list.
-				AMX_Write(prev, AMX_Read(ptr)),
-				AMX_Write(ptr, -1),
-				AMX_Write(ptr - m[HASH_MAP_SIZE_3], 0);
-				return true;
+				break;
+			}
+			else if (res < 0) // Lower, move left.
+				prev = next + HASH_MAP_DIR_LEFT;
+			else // Higher, move right.
+				prev = next + HASH_MAP_DIR_RIGHT;
+		}
+		else if (hash < res) // Lower, move left.
+			prev = next + HASH_MAP_DIR_LEFT;
+		else // Higher, move right.
+			prev = next + HASH_MAP_DIR_RIGHT;
+	}
+	// The LEFT/RIGHT apparent swap below is correct.  We want the right-most
+	// value on the left branch, and vice-versa.
+	new
+		left = AMX_Read(next + HASH_MAP_DIR_LEFT),
+		right = AMX_Read(next + HASH_MAP_DIR_RIGHT);
+	// Find an empty branch, or the smallest branch.
+	if (!left)
+	{
+		if (!right)
+			AMX_Write(prev, 0);
+		else
+			AMX_Write(prev, right);
+	}
+	else if (!right)
+	{
+		AMX_Write(prev, left);
+	}
+	else
+	{
+		new
+			lHeight = 1,
+			rHeight = 1,
+			lParent = 0,
+			rParent = 0,
+			lVal = HashMap_GetBranchEnd(left, lHeight, lParent, HASH_MAP_DIR_RIGHT),
+			rVal = HashMap_GetBranchEnd(right, rHeight, rParent, HASH_MAP_DIR_LEFT);
+		if (lHeight < rHeight)
+		{
+			// Reduce the right (larger) branch.  If this branch is bigger, and
+			// no branch is empty, then this branch MUST be at least two nodes
+			// high, and so MUST have a parent.
+			AMX_Write(prev, rVal),
+			AMX_Write(rParent + HASH_MAP_DIR_LEFT, AMX_Read(rVal + HASH_MAP_DIR_RIGHT)),
+			AMX_Write(rVal + HASH_MAP_DIR_RIGHT, right),
+			AMX_Write(rVal + HASH_MAP_DIR_LEFT, left);
+		}
+		else
+		{
+			// Reduce the left (larger) branch.  This branch MAY NOT have a
+			// parent, if both branches are equal at one node high.
+			AMX_Write(prev, lVal);
+			if (lParent)
+			{
+				AMX_Write(lParent + HASH_MAP_DIR_RIGHT, AMX_Read(lVal + HASH_MAP_DIR_LEFT)),
+				AMX_Write(lVal + HASH_MAP_DIR_RIGHT, right),
+				AMX_Write(lVal + HASH_MAP_DIR_LEFT, left);
+			}
+			else
+			{
+				AMX_Write(lVal + HASH_MAP_DIR_RIGHT, right),
+				AMX_Write(lVal + HASH_MAP_DIR_LEFT, 0);
 			}
 		}
-		prev = ptr;
-		#emit LREF.S.pri  ptr
-		#emit STOR.S.pri  ptr
 	}
-	return false;
+	// Clear the removed node's pointers and string.
+	AMX_Write(next + HASH_MAP_DIR_LEFT, 0),
+	AMX_Write(next + HASH_MAP_DIR_RIGHT, 0),
+	AMX_Write(next - m[HASH_MAP_SIZE_3], 0);
+	return true;
+}
+
+stock bool:HashMap_RemoveKey(HashMap:m<>, const str[], bool:ignorecase = false)
+{
+	return HashMap_RemoveKeyWithHash(m, str, YHash(str, .sensitive = !ignorecase), ignorecase);
+}
+
+static stock HashMap_GetBranchEnd(cur, &height, &parent, dir)
+{
+	// Find the node as close in (hash) value to the current node as possible.
+	static
+		next;
+	while ((next = AMX_Read(cur + dir)))
+	{
+		++height,
+		parent = cur,
+		cur = next;
+	}
+	return cur;
 }
 
 /**--------------------------------------------------------------------------**\

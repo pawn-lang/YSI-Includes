@@ -535,6 +535,8 @@ native Iter_Alloc(Iterator:Name<>);
 </returns>
 <remarks>
 	Uses a static array copy to blank the iterator instead of a loop.
+	
+	BROKEN!
 
 native Iter_FastClear(IteratorArray:Name[]<>);
 

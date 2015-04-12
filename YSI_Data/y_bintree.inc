@@ -107,7 +107,6 @@ Compile options:
 	-
 Operators:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_bintree
@@ -197,7 +196,7 @@ enum E_BINTREE_INPUT
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock Bintree_Generate(BinaryTree:output<>, input[][E_BINTREE_INPUT], size = sizeof (input))
+stock Bintree_Generate(BinaryTree:output<>, BinaryInput:input<>, size = sizeof (input))
 {
 	P:3("Bintree_Generate called: %s, %s, %i", Bintree_DisplayOutput(output), Bintree_DisplayInput(input), size);
 	if (!size)
@@ -600,3 +599,4 @@ stock Bintree_UpdatePointers(BinaryTree:data<>, offset, size, mod = -1)
 		if (data[i][E_BINTREE_TREE_POINTER] > offset) data[i][E_BINTREE_TREE_POINTER] += mod;
 	}
 }
+

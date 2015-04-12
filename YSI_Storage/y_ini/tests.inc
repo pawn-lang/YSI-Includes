@@ -47,7 +47,7 @@ Test:INI_IdentifyLineType2()
 	result = INI_IdentifyLineType("\\;\r\n", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT(result == e_INI_LINE_TYPE_INVALID);
 	result = INI_IdentifyLineType("key =  ", p0s, p0e, p1s, p1e, p2s, p2e);
-	ASSERT(result == e_INI_LINE_TYPE_INVALID);
+	ASSERT(result == e_INI_LINE_TYPE_ENTRY); // Now allowed again!
 	result = INI_IdentifyLineType(" = value", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT(result == e_INI_LINE_TYPE_INVALID);
 	result = INI_IdentifyLineType("thing", p0s, p0e, p1s, p1e, p2s, p2e);
