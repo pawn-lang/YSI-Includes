@@ -120,6 +120,9 @@ static
 
 forward OnFloodLimitExcceded(ip[16], count);
 
+stock
+	Iterator:FloodingPlayer<MAX_PLAYERS>;
+
 /**--------------------------------------------------------------------------**\
 <summary>SetMaxConnections</summary>
 <param name="max">Maximum number of connections allowed from the same IP.</param>
@@ -186,11 +189,12 @@ public Flooding_UnbanIP(ip32)
 
 hook OnPlayerConnect(playerid)
 {
+	new
+		ret = 1;
 	if ((YSI_g_sMaxConnections & e_FLOOD_ACTION_COUNT) != e_FLOOD_ACTION_COUNT)
 	{
 		new
-			ip[16],
-			count = 0;
+			ip[16];
 		GetPlayerIp(playerid, ip, sizeof (ip));
 		new
 			ip32 = IPToInt(ip);
@@ -199,12 +203,13 @@ hook OnPlayerConnect(playerid)
 		{
 			if (YSI_g_sPlayerIPs[i] == ip32)
 			{
-				++count;
+				Iter_Add(FloodingPlayer, i);
 			}
 		}
-		if (count > _:(YSI_g_sMaxConnections & e_FLOOD_ACTION_COUNT))
+		if (Iter_Count(FloodingPlayer) > _:(YSI_g_sMaxConnections & e_FLOOD_ACTION_COUNT))
 		{
 			P:I("Max Connections exceeded");
+			ret = 0;
 			switch (YSI_g_sMaxConnections & e_FLOOD_ACTION_ACTION)
 			{
 				case e_FLOOD_ACTION_BLOCK:
@@ -215,12 +220,9 @@ hook OnPlayerConnect(playerid)
 				case e_FLOOD_ACTION_KICK:
 				{
 					// Kick all the players.
-					foreach (new i : Player)
+					foreach (new i : FloodingPlayer)
 					{
-						if (YSI_g_sPlayerIPs[i] == ip32)
-						{
-							Kick(i);
-						}
+						Kick(i);
 					}
 				}
 				case e_FLOOD_ACTION_BAN:
@@ -233,12 +235,9 @@ hook OnPlayerConnect(playerid)
 					// Ban the IP.
 					BanEx(playerid, "YSI max connections auto-ban");
 					// Kick all the players.
-					foreach (new i : Player)
+					foreach (new i : FloodingPlayer)
 					{
-						if (YSI_g_sPlayerIPs[i] == ip32)
-						{
-							Kick(i);
-						}
+						Kick(i);
 					}
 				}
 				case e_FLOOD_ACTION_GHOST:
@@ -252,17 +251,20 @@ hook OnPlayerConnect(playerid)
 				}
 				case e_FLOOD_ACTION_OTHER:
 				{
-					return CallLocalFunction("OnFloodLimitExcceded", "si", ip, count);
+					ret = CallLocalFunction("OnFloodLimitExcceded", "si", ip, Iter_Count(FloodingPlayer));
 				}
 				default:
 				{
 					// Do nothing.
-					return 1;
+					//ret = 1;
 				}
 			}
-			return 0;
+		}
+		foreach (new i : FloodingPlayer)
+		{
+			Iter_SafeRemove(FloodingPlayer, i, i);
 		}
 	}
-	return 1;
+	return ret;
 }
 
