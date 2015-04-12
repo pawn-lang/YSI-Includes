@@ -344,19 +344,21 @@ public OnScriptExit()
 	// function for it.  EXCEPT for this script itself!
 	new
 		func[4];
-	while(YSI_g_sMasterCount) {
+	for (new i = 0, j = YSI_g_sMasterCount; i != j; ++i)
+	{
 		// This is slightly slower for ending and starting scripts, but uses far
 		// less heap space, and these values are rarely used, so may as well
 		// pack them (which is what has happened here).
-		func[0] = YSI_g_sMasterData[0] & 0xFF;
-		func[1] = (YSI_g_sMasterData[0] >> 8) & 0xFF;
-		func[2] = YSI_g_sMasterData[0] >> 16;
+		func[0] = YSI_g_sMasterData[i] & 0xFF,
+		func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF,
+		func[2] = YSI_g_sMasterData[i] >> 16,
 		CallLocalFunction(func, "");
+		P:5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
 		// The properties currently clear instantly, but that may not always be
 		// the case.
 	}
-	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~(1 << _@));
-	Master_OnScriptExit();
+	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~(1 << _@)),
+	Master_OnScriptExit(),
 	CallRemoteFunction("Master_OnScriptClose", "i", _@);
 	return 1;
 }
