@@ -115,6 +115,8 @@ static
 	YSI_g_sPlayerIPs[MAX_PLAYERS],
 	e_FLOOD_ACTION:YSI_g_sMaxConnections = e_FLOOD_ACTION_COUNT | e_FLOOD_ACTION_BLOCK;
 
+forward OnFloodingExceeded(ip[], count);
+
 /**--------------------------------------------------------------------------**\
 <summary>SetMaxConnections</summary>
 <param name="max">Maximum number of connections allowed from the same IP.</param>
@@ -225,7 +227,8 @@ hook OnPlayerConnect(playerid)
 				}
 				default:
 				{
-					// Do nothing.
+					// Call the function and let the scripter decide.
+					CallLocalFunction("OnFloodingExceeded", "si", ip, count);
 					return 1;
 				}
 			}
