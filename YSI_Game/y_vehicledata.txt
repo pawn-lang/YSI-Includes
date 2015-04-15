@@ -1,0 +1,178 @@
+[size=5][color=red][b][u][color=green]Introduction[/color][/u][/b][/color][/size]
+
+I have time and again seen code defining properties of vehicles that uses loops or vast chunks of memory, when far far less is needed.  Many of those times I've even explained HOW to do it smaller, but no-one has, so I did.
+
+Thus, I present [B]y_vehicledata[/B] (formally [B]YSI_Game\y_vehicledata[/B], but not yet in any YSI repository).
+
+The include has three prefixes - that is, three groups of functions - "Vehicle_", "Model_", and "VIM_".  All three groups have the same functions, but take different inputs.
+
+[list][*][size=2][color=red][b][u][color=green]Vehicle_[/color][/u][/b][/color][/size][/list]
+
+These functions take a [b]vehicleid[/b], i.e. a value returned by [b]CreateVehicle[/b] or [b]GetPlayerSurfingVehicleID[/b] etc.
+
+[list][*][size=2][color=red][b][u][color=green]Model_[/color][/u][/b][/color][/size][/list]
+
+These functions take a [b]modelid[/b], i.e. an object as passed to [b]AddStaticVehicle[/b] or returned by [b]GetVehicleModel[/b] etc.
+
+[list][*][size=2][color=red][b][u][color=green]VIM_[/color][/u][/b][/color][/size][/list]
+
+These functions take a special [b]VIM[/b] variable, that is, one with a tag of [b]VIM:[/b].  [b]VIM[/b] stands for Vehicle Internal Model, and is specific to this include (but others are free to use it if they want).  This is different to normal models in three ways:
+
+1) They are always valid.
+2) They can be used as indexes.
+3) They have a strong tag to differentiate them.
+
+This second point is very important.  Standard model IDs start at 400 and go up to 611, so if you want to use them to index an array you either need 400 empty slots in the array, or to subtract 400 from the model ID (which is exactly what [b]VIM[/b]s are).
+
+[size=5][color=red][b][u][color=green]Functions[/color][/u][/b][/color][/size]
+
+[list]
+[*][b]Vehicle_GetCategory(vehicleid)[/b] - Return the category of the vehicle, as defined on [url=http://wiki.sa-mp.com/]http://wiki.sa-mp.com/[/url].  The return values are;
+
+[pawn]
+CATEGORY_UNKNOWN
+CATEGORY_AIRPLANE
+CATEGORY_HELICOPTER
+CATEGORY_BIKE
+CATEGORY_CONVERTIBLE
+CATEGORY_INDUSTRIAL
+CATEGORY_LOWRIDER
+CATEGORY_OFFROAD   // Two
+CATEGORY_OFF_ROAD  // versions
+CATEGORY_PUBLIC
+CATEGORY_SALOON
+CATEGORY_SPORT
+CATEGORY_STATIONWAGON  // Two
+CATEGORY_STATION_WAGON // versions
+CATEGORY_BOAT
+CATEGORY_TRAILER
+CATEGORY_UNIQUE
+CATEGORY_RC
+[/pawn]
+
+Some vehicles may seem to fit in to multiple categories, more information on those can be got with the functions below.  These ONLY return data from the wiki.
+
+
+[*][b]Vehicle_IsValid(vehicleid)[/b] - Checks if this vehicle is valid, by checking that the model is valid.
+
+
+[*][b]Vehicle_IsCar(vehicleid)[/b] - This function, and those below, return various pieces of data on vehicles.  Several vehicles may have seemingly conflicting data, such as being listed as both a Boat AND a Plane (or Boat and Car for the Vortex).  Check the include for what vehicles have what flags.
+
+
+[*][b]Vehicle_IsTruck(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsVan(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsFire(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsPolice(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsFBI(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsSWAT(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsMilitary(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsWeaponised(vehicleid)[/b] - Any vehicle that can "fire" something (including water).
+
+
+[*][b]Vehicle_IsHelicopter(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsBoat(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsPlane(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsBike(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsManual(vehicleid)[/b] - This refers to pedal power, not stick-shift.
+
+
+[*][b]Vehicle_IsAmbulance(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsTaxi(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsOnWater(vehicleid)[/b] - Vehicles not in [b]CATEGORY_BOAT[/b] that can go on water.
+
+
+[*][b]Vehicle_IsCoastguard(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsTrain(vehicleid)[/b] - Trailers and engines.
+
+
+[*][b]Vehicle_IsLS(vehicleid)[/b] - For city-specific police vehicles.
+
+
+[*][b]Vehicle_IsSF(vehicleid)[/b] - For city-specific police vehicles.
+
+
+[*][b]Vehicle_IsLV(vehicleid)[/b] - For city-specific police vehicles.
+
+
+[*][b]Vehicle_IsTank(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsFlowerpot(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_IsTransport(vehicleid)[/b] - 
+
+
+[*][b]Vehicle_GetName(vehicleid)[/b] - Returns a 32 character packed string of the vehicle's name.
+
+
+[/list]
+
+Equivalents exist for [b]Model_[/b], taking a modelid instead of a vehicleid - replace the [b]Vehicle_[/b] prefix with [b]Model_[/b].
+
+[size=5][color=red][b][u][color=green]VIM Conversion[/color][/u][/b][/color][/size]
+
+Equivalents to all the above functions also exist for [b]VIM:[/b] tagged variables - replace the [b]Vehicle_[/b] prefix with [b]VIM_[/b].
+
+There are two ways to get a [b]VIM:[/b] variable - from a vehicleid or from a modelid:
+
+[pawn]
+new
+	VIM:vimFromVehicleID = Vehicle_GetVIM(vehicleid),
+	VIM:vimFromModelID = Model_ToVIM(vehicleid),
+[/pawn]
+
+Note the difference in "Get" and "To" - this is by design, as models are closer to VIMs than vehicleids are.
+
+So why use these instead?  They just save a level of conversion:
+
+[pawn]#define Vehicle_IsPoliceCar(%0) (Vehicle_IsCar(%0) && Vehicle_IsPolice(%0))[/pawn]
+
+That is all fine, but internally calls several functions twice (including [b]GetVehicleModel[/b]).  This is slightly better:
+
+[pawn]#define Model_IsPoliceCar(%0) (Model_IsCar(%0) && Model_IsPolice(%0))[/pawn]
+
+But that still has to do the "- 400" subtraction discussed earlier (and check that the result is valid).
+
+Using VIM functions you can do the conversion and bounds checks once, then use the result far more efficiently:
+
+[pawn]
+#define VIM_IsPoliceCar(%0) (VIM_IsCar(%0) && VIM_IsPolice(%0))
+
+new
+	VIM:vim = Vehicle_GetVIM(vehicleid);
+if (VIM_IsPoliceCar(vim) || VIM_IsSWAT(vim))
+{
+	// Whatever.
+}
+[/pawn]
+
+

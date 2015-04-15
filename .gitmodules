@@ -1,6 +1,0 @@
-[submodule "AC"]
-	path = YSI_AC
-	url = git@github.com:Y-Less/samp-anticheat.git
-[submodule "amx"]
-	path = amx
-	url = https://github.com/Zeex/amx_assembly

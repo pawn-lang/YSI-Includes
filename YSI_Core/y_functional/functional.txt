@@ -1,0 +1,115 @@
+***Map
+
+Map applies a function to every element in an array, and stores the result in
+another array.
+
+This common code:
+
+[pawn]
+new
+	input[100] = {0, 1, ...},
+	output[100];
+for (new i = 0; i != 100; ++i)
+{
+	output[i] = input[i] * 42;
+}
+[/pawn]
+
+Can be written as:
+
+[pawn]
+new
+	input[100] = {0, 1, ...},
+	output[100];
+inline const Times42(x) @return x * 42;
+Map(using inline Times42, input, output);
+[/pawn]
+
+Note: "return" can be using inside inline functions, but will sometimes give
+warnings.  "@return" can always be used instead.
+
+This can be shrunk even further with the use of the new "lambda" functions:
+
+[pawn]
+new
+	input[100] = {0, 1, ...},
+	output[100];
+Map({_0 * 42}, input, output);
+[/pawn]
+
+***Lambda Functions
+
+Lambda functions are very simple inline functions that can appear inside a
+function call, instead of being declared separately.  These are a little awkward
+to use.  For one thing, this works:
+
+[pawn]
+new
+	input[100] = {0, 1, ...},
+	output[100],
+	ret = Map(using inline Whatever, input, output);
+[/pawn]
+
+This doesn't:
+
+[pawn]
+new
+	input[100] = {0, 1, ...},
+	output[100],
+	ret = Map({_0 - 8}, input, output);
+[/pawn]
+
+You have to write:
+
+[pawn]
+new
+	input[100] = {0, 1, ...},
+	output[100],
+	ret;
+Map({_0 - 8}, input, output) => ret;
+[/pawn]
+
+I know this is awkward, but I borrowed syntax already established by Slice in
+his [url=http://forum.sa-mp.com/showthread.php?t=343172][u]multidimensional sort include[/u][/url].
+
+The parameters have names "_0", "_1", "_2" etc.  "Map" takes a function that
+requires one parameter, so you can only use "_0" in its lambda.  "ZipWith3" on
+the other hand takes an inline function with 3 parameters, so you can use "_1"
+and "_2" as well.
+
+An example of a "Sum" function would be:
+
+[pawn]
+Sum(arr[], len = sizeof (arr))
+{
+	FoldR({_0 + _1}, arr, 0, len) => return;
+}
+[/pawn]
+
+Using "return" instead of a variable is acceptable, not much else is though.
+
+Functions (look them up somewhere):
+
+Map - See above.
+Map_ - Doesn't save the results, useful for just printing all the values.
+IdxMap - Like map, but with an extra "index" parameter first in the inline.
+IdxMap_ - To IdxMap what Map_ is to Map.
+ZipWith - Combine two arrays using a function.
+ZipWith_ - Don't store the results (Map_ with 2 function parameters).
+ZipWith3 - ZipWith could be called "ZipWith2".
+ZipWith3_ - 3 parameter Map_.
+FoldL - Left fold.
+FoldL1 - Left fold with no default value.
+FoldR - Right fold.
+Foldr1 - Right fold with no default value.
+ScanL - Left fold, saving interim results.
+ScanR - Right fold, saving interim results.
+And - Returns true if every array item is true.
+Or - Returns true if any array item is true.
+All - Returns true if every array item passes a single parameter test.
+Any - Returns true if any array item passes a single parameter test.
+Reverse - Reverse the items in an array.
+Elem - Returns true if "n" is in an array.
+NotElem - ...
+
+

@@ -1,0 +1,426 @@
+/*----------------------------------------------------------------------------*-
+					==============================
+					Y Server Includes - MTA Loader
+					==============================
+Description:
+	Loads MTA XML format map files for use with the object and race systems.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Changelog:
+	12/10/07:
+		Added Loader_AddHandler.
+		Added Loader_GetRace.
+	24/08/07:
+		First version.
+Functions:
+	Public:
+		Loader_Spawn - Processes a loaded spawn point.
+		Loader_Check - Processes a loaded checkpoint.
+		Loader_Obj - Processes a loaded object.
+	Core:
+		Loader_Loader - Initialises data.
+	Stock:
+		Loader_Parse - Loads a file.
+		Loader_AddHandler - Adds a custom handle for the race file.
+		Loader_GetRace - Returns the current race handle.
+	Static:
+		-
+	Inline:
+		-
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	-
+Enums:
+	-
+Macros:
+	-
+Tags:-e_RACE_FLAGS - Race data flag.
+Variables:
+	Global:
+		-
+	Static:
+		YSI_g_sXMLRules - Handle to the XML parse rule set.
+		YSI_g_sCurRace - Handle to the current race being built.
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+static stock
+	XML:YSI_g_sXMLRules = NO_XML_FILE,
+	#if defined _YSI_VISUAL_OBJECTS
+		YSI_g_sRaceObjects[ceildiv(MAX_DYN_OBJECTS, 4)] = {-1, ...},
+	#endif
+	YSI_g_sCurRace,
+	YSI_g_sCurWorld;
+
+forward Loader_Spawn();
+forward Loader_Check();
+forward Loader_Obj();
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Loader_Loader
+Params:
+	-
+Return:
+	-
+Notes:
+	Defines the parsing rules for reading MTA XML maps.
+-*----------------------------------------------------------------------------*/
+
+Loader_Loader()
+{
+	if (YSI_g_sXMLRules == NO_XML_FILE)
+	{
+		YSI_g_sXMLRules = XML_New();
+		if (YSI_g_sXMLRules != NO_XML_FILE)
+		{
+			XML_AddHandler(YSI_g_sXMLRules, "object", "Loader_Obj");
+			XML_AddHandler(YSI_g_sXMLRules, "checkpoint", "Loader_Check");
+			XML_AddHandler(YSI_g_sXMLRules, "spawnpoint", "Loader_Spawn");
+		}
+	}
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Loader_Parse
+Params:
+	filename[] - File to parse as an XML race file.
+	laps - Number of laps to race for.
+	entry - Cost of entry.
+	countdown - Time to count down from for start.
+	bool:arial - Use arial checkpoints instead.
+	bool:fixedPrize - Set prize amounts manually.
+	exitTime - Time allowed out a vehicle before fail.
+	interior - The interior of the race.
+	world - The world of the race.
+	bool:restart - Don't destroy the race on completion.
+Return:
+	Created race.
+Notes:
+	Tries to create a new race to save to then parses the file.
+-*----------------------------------------------------------------------------*/
+
+stock Loader_Parse(filename[], laps = 0, entry = 0, countdown = 3, bool:arial = false, bool:fixedPrize = true, exitTime = 0, interior = 0, world = 0, bool:restart = false)
+{
+	if (!fexist(filename)) return NO_RACE;
+	new
+		race = Race_Create(laps, entry, countdown, arial, fixedPrize, exitTime, interior, world, restart);
+	if (race != NO_RACE)
+	{
+		YSI_g_sCurRace = race;
+		YSI_g_sCurWorld = world;
+		XML_Parse(YSI_g_sXMLRules, filename);
+	}
+	YSI_g_sCurWorld = 0;
+	YSI_g_sCurRace = NO_RACE;
+	return race;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Loader_ParseObjects
+Params:
+	filename[] - File to parse.
+	world - World for the objects to appear in or -1 for all.
+Return:
+	-
+Notes:
+	Parses a map file, loading only the objects.
+-*----------------------------------------------------------------------------*/
+
+stock Loader_ParseObjects(filename[], world = -1)
+{
+	YSI_g_sCurWorld = world;
+	return XML_Parse(YSI_g_sXMLRules, filename);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Loader_Unload
+Params:
+	race - Race to remove objects for.
+Return:
+	-
+Notes:
+	Destroys all the objects created for a race loaded with the loader.
+-*----------------------------------------------------------------------------*/
+
+stock Loader_Unload(race)
+{
+	#if defined _YSI_VISUAL_OBJECTS
+		new
+			race1 = race << 8,
+			race2 = race << 16,
+			race3 = race << 24;
+		for (new i = 0; i < sizeof (YSI_g_sRaceObjects); i++)
+		{
+			if (YSI_g_sRaceObjects[i] & 0xFF000000 == race3)
+			{
+				YSI_g_sRaceObjects[i] |= 0xFF000000;
+				DestroyDynamicObject((i * 4) + 3);
+			}
+			if (YSI_g_sRaceObjects[i] & 0x00FF0000 == race2)
+			{
+				YSI_g_sRaceObjects[i] |= 0x00FF0000;
+				DestroyDynamicObject((i * 4) + 2);
+			}
+			if (YSI_g_sRaceObjects[i] & 0x0000FF00 == race1)
+			{
+				YSI_g_sRaceObjects[i] |= 0x0000FF00;
+				DestroyDynamicObject((i * 4) + 1);
+			}
+			if (YSI_g_sRaceObjects[i] & 0x000000FF == race)
+			{
+				YSI_g_sRaceObjects[i] |= 0x000000FF;
+				DestroyDynamicObject((i * 4));
+			}
+		}
+	#else
+		#pragma unused race
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Loader_Convert
+Params:
+	Float:radians - Radian angle to convert to degrees.
+Return:
+	Float
+Notes:
+	Based on mtarad2deg made by Trix and fixed by Mike.  Converts radians to
+	degrees and rationalises.
+-*----------------------------------------------------------------------------*/
+
+stock Float:Loader_Convert(Float:radians)
+{
+	if (radians == 0.0)
+	{
+		return 0.0;
+	}
+	new Float:retval = (360.0 + (radians / 0.0174532925));
+	while (retval >= 360.0) retval -= 360.0;
+	while (retval < 0.0) retval += 360.0;
+	return retval;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Loader_Obj
+Params:
+	-
+Return:
+	CreateDynamicObject
+Notes:
+	Called when an end object tag is reached to create an object.
+-*----------------------------------------------------------------------------*/
+
+public Loader_Obj()
+{
+	#if defined _YSI_VISUAL_OBJECTS
+		static
+			name[MAX_XML_ENTRY_NAME],
+			val[MAX_XML_ENTRY_TEXT];
+		new
+			Float:x,
+			Float:y,
+			Float:z,
+			Float:rx,
+			Float:ry,
+			Float:rz,
+			model;
+		while (XML_GetKeyValue(name, val))
+		{
+			if (!strcmp(name, "position", true))
+			{
+				new
+					pos;
+				x = floatstr(val);
+				pos = chrfind(' ', val, pos);
+				y = floatstr(val[++pos]);
+				pos = chrfind(' ', val, pos);
+				z = floatstr(val[++pos]);
+			}
+			else if (!strcmp(name, "rotation", true))
+			{
+				new
+					pos;
+				rz = floatstr(val);
+				pos = chrfind(' ', val, pos);
+				ry = floatstr(val[++pos]);
+				pos = chrfind(' ', val, pos);
+				rx = floatstr(val[++pos]);
+			}
+			else if (!strcmp(name, "model", true))
+			{
+				model = strval(val);
+			}
+		}
+		new
+			obj = CreateDynamicObject(model, x, y, z, Loader_Convert(rx), Loader_Convert(ry), Loader_Convert(rz));
+		if (YSI_g_sCurWorld != -1)
+		{
+			Object_RemoveFromAllWorlds(obj);
+			Object_AddToWorld(obj, YSI_g_sCurWorld);
+		}
+		#if defined _YSI_VISUAL_RACE
+			new
+				shift = (8 * (obj & 3)),
+				mul = obj >>> 2;
+			if (YSI_g_sCurRace != NO_RACE)
+			{
+				YSI_g_sRaceObjects[mul] = (YSI_g_sRaceObjects[mul] & ~(0xFF << shift)) | YSI_g_sCurRace << shift;
+			}
+		#endif
+		return obj;
+	#else
+		return -1;
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Loader_Check
+Params:
+	-
+Return:
+	Race_AddCheckpoint
+Notes:
+	Called when an end checkpoint tag is reached to add a checkpoint to a race.
+-*----------------------------------------------------------------------------*/
+
+public Loader_Check()
+{
+	#if defined _YSI_VISUAL_RACE
+		if (YSI_g_sCurRace == NO_RACE) return -1;
+		static
+			name[MAX_XML_ENTRY_NAME],
+			val[MAX_XML_ENTRY_TEXT];
+		new
+			Float:x,
+			Float:y,
+			Float:z;
+		while (XML_GetKeyValue(name, val))
+		{
+			if (!strcmp(name, "position", true))
+			{
+				new
+					pos;
+				x = floatstr(val);
+				pos = chrfind(' ', val, pos);
+				y = floatstr(val[++pos]);
+				pos = chrfind(' ', val, pos);
+				z = floatstr(val[++pos]);
+			}
+		}
+		return Race_AddCheckpoint(YSI_g_sCurRace, x, y, z);
+	#else
+		return -1;
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Loader_Spawn
+Params:
+	-
+Return:
+	Race_AddStart
+Notes:
+	Called when an end spawnpoint tag is reached to add a startpoint to a race.
+-*----------------------------------------------------------------------------*/
+
+public Loader_Spawn()
+{
+	#if defined _YSI_VISUAL_RACE
+		if (YSI_g_sCurRace == NO_RACE) return -1;
+		static
+			name[MAX_XML_ENTRY_NAME],
+			val[MAX_XML_ENTRY_TEXT];
+		new
+			Float:x,
+			Float:y,
+			Float:z,
+			Float:rz;
+		while (XML_GetKeyValue(name, val))
+		{
+			if (!strcmp(name, "position", true))
+			{
+				new
+					pos;
+				x = floatstr(val);
+				pos = chrfind(' ', val, pos);
+				y = floatstr(val[++pos]);
+				pos = chrfind(' ', val, pos);
+				z = floatstr(val[++pos]);
+			}
+			else if (!strcmp(name, "rotation", true))
+			{
+				rz = floatstr(val);
+			}
+		}
+		return Race_AddStart(YSI_g_sCurRace, x, y, z, rz);
+	#else
+		return 1;
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Loader_AddHandler
+Params:
+	trigger[] - Tag to trigger the callback.
+	function[] - Function to call for the tag.
+Return:
+	-
+Notes:
+	Used to add custom handlers to non-default tags in the race file format.
+-*----------------------------------------------------------------------------*/
+
+stock Loader_AddHandler(trigger[], function[])
+{
+	if (YSI_g_sXMLRules != NO_XML_FILE) return XML_AddHandler(YSI_g_sXMLRules, trigger, function);
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Loader_GetRace
+Params:
+	-
+Return:
+	Current race handle.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Loader_GetRace()
+{
+	return YSI_g_sCurRace;
+}
+
