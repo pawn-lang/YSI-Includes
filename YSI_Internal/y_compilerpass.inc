@@ -119,3 +119,7 @@ static stock __COMPILER_SECOND_PASS() {}
 #else
 	#define AUTO_INCLUDE_GUARD 1
 #endif
+
+#if __Pawn == 0x030A
+	#define NESTED_ELLIPSIS
+#endif
