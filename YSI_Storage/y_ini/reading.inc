@@ -596,7 +596,7 @@ stock e_INI_LINE_TYPE:
 			case '\0': return p1s = p1e = pos, e_INI_LINE_TYPE_ENTRY;
 			case  ';':
 			{
-				p1s = p1e = pos,
+				p1s = p1e = pos++,
 				ret  = e_INI_LINE_TYPE_ENTRY;
 				goto state_in_comment;
 			}
