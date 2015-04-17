@@ -217,7 +217,7 @@ forward bool:INI_Flush();
 #define INI_IsValid(%0) (0 <= _:(%0) < INI_MAX_WRITES && YSI_g_sINIWriteFile[(%0)][0])
 
 #define INI_WriteComments()        \
-		fwrite(buffer, " ; "),     \
+		fwrite(buffer, ";"),     \
 		fwrite(buffer, sLine[p2s])
 
 #define INI_IsDeleted(%0) ((%0) != -1 && YSI_g_sINITagBuffer[(%0)][E_INI_TAGS_START] == cellmax)
