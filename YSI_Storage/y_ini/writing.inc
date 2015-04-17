@@ -879,7 +879,7 @@ static stock bool:INI_WriteBuffer(INI:file)
 		{
 			case e_INI_LINE_TYPE_INVALID:
 				P:I("Invalid line in INI file \"%s\": %s", YSI_g_sINIWriteFile[file], sLine);
-			case e_INI_LINE_TYPE_BLANK:
+			case e_INI_LINE_TYPE_DATALESS:
 				if (!deleted) fwrite(buffer, sLine);
 			case e_INI_LINE_TYPE_TAG:
 			{

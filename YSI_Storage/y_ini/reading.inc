@@ -177,7 +177,7 @@ Operators:
 enum e_INI_LINE_TYPE
 {
 	e_INI_LINE_TYPE_INVALID,
-	e_INI_LINE_TYPE_BLANK,
+	e_INI_LINE_TYPE_DATALESS,
 	e_INI_LINE_TYPE_ENTRY,
 	e_INI_LINE_TYPE_CONT,
 	e_INI_LINE_TYPE_TAG
@@ -419,7 +419,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 				// "P:I" not "P:W" because this is not a script issue.
 				P:I("Invalid line in INI file \"%s\": %s", fname, YSI_g_sCurLine);
 			}
-			case e_INI_LINE_TYPE_BLANK:
+			case e_INI_LINE_TYPE_DATALESS:
 			{
 				// Do nothing.
 			}
@@ -554,12 +554,12 @@ stock e_INI_LINE_TYPE:
 	// Do this purely with a single main loop, and a state machine.
 	new
 		end,
-		e_INI_LINE_TYPE:ret = e_INI_LINE_TYPE_BLANK,
+		e_INI_LINE_TYPE:ret = e_INI_LINE_TYPE_DATALESS,
 		pos;
 	INI_SkipWhitespace(str, pos);
 	switch (str[pos++])
 	{
-		case '\0': return e_INI_LINE_TYPE_BLANK;
+		case '\0': return e_INI_LINE_TYPE_DATALESS;
 		case  ';': goto state_in_comment;
 		case  '[': goto state_in_tag;
 		case '\\':
@@ -832,7 +832,7 @@ static stock INI_DoParentTag(const epos, const search[], File:f, callback[E_CALL
 	{
 		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e, p2s, p2e))
 		{
-			case e_INI_LINE_TYPE_INVALID, e_INI_LINE_TYPE_BLANK: {}
+			case e_INI_LINE_TYPE_INVALID, e_INI_LINE_TYPE_DATALESS: {}
 			case e_INI_LINE_TYPE_TAG:
 			{
 				// A new tag.

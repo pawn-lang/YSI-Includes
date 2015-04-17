@@ -4,18 +4,18 @@ Test:INI_IdentifyLineType1()
 	// except when rewriting the file.
 	new p0s, p0e, p1s, p1e, p2s, p2e;
 	// Comment lines.
-	ASSERT(INI_IdentifyLineType("; Hello", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_BLANK);
-	ASSERT(INI_IdentifyLineType("   ; There", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_BLANK);
-	ASSERT(INI_IdentifyLineType("	; Hi", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_BLANK);
-	ASSERT(INI_IdentifyLineType(";", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_BLANK);
-	ASSERT(INI_IdentifyLineType(";\r\n", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_BLANK);
-	ASSERT(INI_IdentifyLineType("\\;\r\n", p0s, p0e, p1s, p1e, p2s, p2e) != e_INI_LINE_TYPE_BLANK);
-	ASSERT(INI_IdentifyLineType("hi ; there", p0s, p0e, p1s, p1e, p2s, p2e) != e_INI_LINE_TYPE_BLANK);
+	ASSERT(INI_IdentifyLineType("; Hello", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_DATALESS);
+	ASSERT(INI_IdentifyLineType("   ; There", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_DATALESS);
+	ASSERT(INI_IdentifyLineType("	; Hi", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_DATALESS);
+	ASSERT(INI_IdentifyLineType(";", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_DATALESS);
+	ASSERT(INI_IdentifyLineType(";\r\n", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_DATALESS);
+	ASSERT(INI_IdentifyLineType("\\;\r\n", p0s, p0e, p1s, p1e, p2s, p2e) != e_INI_LINE_TYPE_DATALESS);
+	ASSERT(INI_IdentifyLineType("hi ; there", p0s, p0e, p1s, p1e, p2s, p2e) != e_INI_LINE_TYPE_DATALESS);
 	// Blank lines.
-	ASSERT(INI_IdentifyLineType("", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_BLANK);
-	ASSERT(INI_IdentifyLineType("    ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_BLANK);
-	ASSERT(INI_IdentifyLineType("	\r\n", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_BLANK);
-	ASSERT(INI_IdentifyLineType("\r\n", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_BLANK);
+	ASSERT(INI_IdentifyLineType("", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_DATALESS);
+	ASSERT(INI_IdentifyLineType("    ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_DATALESS);
+	ASSERT(INI_IdentifyLineType("	\r\n", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_DATALESS);
+	ASSERT(INI_IdentifyLineType("\r\n", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_DATALESS);
 }
 
 Test:INI_IdentifyLineType2()
