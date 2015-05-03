@@ -219,18 +219,34 @@ Iterators:
 Create the internal iterators.
 \**--------------------------------------------------------------------------**/
 
-#if !defined BOTSYNC_IS_BOT
+#if _FOREACH_PLAYERS
 	new
 		Iterator:Player<MAX_PLAYERS>;
+#endif
+
+#if _FOREACH_BOTS
+	new
+		Iterator:Bot<MAX_PLAYERS>,
+		Iterator:Character<MAX_PLAYERS>;
 	
-	#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-		new
-			Iterator:Bot<MAX_PLAYERS>,
-			Iterator:Character<MAX_PLAYERS>;
-		
-		#define Iter_Single@NPC Iter_Single@Bot
-		#define Iterator@NPC Iterator@Bot
-	#endif
+	#define Iter_Single@NPC Iter_Single@Bot
+	#define Iterator@NPC Iterator@Bot
+#endif
+
+#if _FOREACH_ACTORS
+	new
+		#if _FOREACH_LOCALS
+			Iterator:LocalActor<MAX_ACTORS>,
+		#endif
+		Iterator:Actor<MAX_ACTORS>;
+#endif
+
+#if _FOREACH_VEHICLES
+	new
+		#if _FOREACH_LOCALS
+			Iterator:LocalVehicle<MAX_VEHICLES + 1>,
+		#endif
+		Iterator:Vehicle<MAX_VEHICLES + 1>;
 #endif
 
 stock iterfunc Range(cur, min, max, step = 1)
@@ -242,66 +258,128 @@ stock iterfunc Range(cur, min, max, step = 1)
 
 #define iterstart@Range cellmin
 
-/*
-
-    88                                                                88  
-    88              ,d                                                88  
-    88              88                                                88  
-    88 8b,dPPYba, MM88MMM ,adPPYba, 8b,dPPYba, 8b,dPPYba,  ,adPPYYba, 88  
-    88 88P'   `"8a  88   a8P_____88 88P'   "Y8 88P'   `"8a ""     `Y8 88  
-    88 88       88  88   8PP""""""" 88         88       88 ,adPPPPP88 88  
-    88 88       88  88,  "8b,   ,aa 88         88       88 88,    ,88 88  
-    88 88       88  "Y888 `"Ybbd8"' 88         88       88 `"8bbdP"Y8 88  
-
-*/
-
-/**--------------------------------------------------------------------------**\
-	Variables to optimise memory usage by only having one copy of each string.
-	Note that only strings used more than once are put here because only they
-	have any gain to being located in only one place.
-\**--------------------------------------------------------------------------**/
-
-static stock
-	YSI_gsOnGameModeInit[] = "Iter_OnGameModeInit",
-	YSI_gsSpecifier@[] = "";
-
-/**--------------------------------------------------------------------------**\
-<summary>Iter_OPDCInternal</summary>
-<param name="playerid">Player who left.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Called AFTER "OnPlayerDisconnect" so that using "Kick" inside a "foreach"
-	loop doesn't crash the server due to an OOB error.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#if !defined BOTSYNC_IS_BOT
-	public Iter_OPDCInternal(playerid)
+stock iterfunc Powers(cur, base)
+{
+	static
+		next = 0;
+	if (cur)
 	{
-		if (IsPlayerConnected(playerid))
-		{
-			return;
-		}
-		#if defined _FOREACH_BOT
-			if (!IsPlayerNPC(playerid))
-			{
-				Iter_Remove(Player, playerid);
-			}
-			#if !defined FOREACH_NO_BOTS
-				else
-				{
-					Iter_Remove(Bot, playerid);
-				}
-				#pragma tabsize 4
-				Iter_Remove(Character, playerid);
-			#endif
-		#else
-			Iter_Remove(Player, playerid);
-		#endif
+		return
+			next = base * cur,
+			_:(next > cur) * next;
 	}
-#endif
+	return 1;
+}
+
+#define iterstart@Powers 0
+
+stock iterfunc Fib(cur)
+{
+	static
+		prev = -1,
+		next = 0;
+	if (cur == -1)
+	{
+		return
+			prev = -1,
+			0;
+	}
+	else if (prev == -1)
+	{
+		return
+			prev = 0,
+			1;
+	}
+	else if (cur == 1836311903)
+	{
+		return -1;
+	}
+	return
+		next = prev + cur,
+		prev = cur,
+		next;
+}
+
+#define iterstart@Fib (-1)
+
+stock iterfunc Random(cur, count, ...)
+{
+	static
+		num = 0;
+	if (cur == cellmin)
+	{
+		num = 0;
+	}
+	if (++num > count)
+	{
+		return cellmin;
+	}
+	switch (numargs())
+	{
+		case 2:
+		{
+			return random(cellmax);
+		}
+		case 3:
+		{
+			return random(getarg(2));
+		}
+	}
+	return
+		count = getarg(2),
+		random(getarg(3) - count) + count;
+}
+
+#define iterstart@Random cellmin
+
+stock iterfunc Null(cur, arr[], size = sizeof (arr))
+{
+	while (++cur < size)
+	{
+		if (!arr[cur])
+		{
+			return cur;
+		}
+	}
+	return -1;
+}
+
+#define iterstart@Null (-1)
+
+stock iterfunc NonNull(cur, arr[], size = sizeof (arr))
+{
+	while (++cur < size)
+	{
+		if (arr[cur])
+		{
+			return cur;
+		}
+	}
+	return -1;
+}
+
+#define iterstart@NonNull (-1)
+
+stock iterfunc Until(cur, val, arr[], size = sizeof (arr))
+{
+	return (++cur >= size || arr[cur] == val) ? -1 : cur;
+}
+
+#define iterstart@Until (-1)
+
+stock iterfunc Filter(cur, val, arr[], size = sizeof (arr))
+{
+	while (++cur < size)
+	{
+		if (arr[cur] == val)
+		{
+			return cur;
+		}
+	}
+	return -1;
+}
+
+#define iterstart@Filter (-1)
 
 /*
 
@@ -317,207 +395,68 @@ static stock
 */
 
 /**--------------------------------------------------------------------------**\
-<summary>Iter_OnFilterScriptInit</summary>
+<summary>Iter_OnScriptInit</summary>
 <returns>
 	-
 </returns>
 <remarks>
-	Fixes a bug where callbacks are not detected when "loadfs" is used after the
-	GM has already started.  If this is a GM this is just never used called.
+	Sets up all existing iterators.  Does nothing for "XXLocal" ones, since they
+	are by definition empty when a script starts.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#if !defined BOTSYNC_IS_BOT
-	public OnFilterScriptInit()
-	{
-		P:1("Iter_OnFilterScriptInit start: %d", MAX_PLAYERS);
-		#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-			Iter_Single@Bot = _Y_ITER_C9:0;
-			Iter_Single@Character = _Y_ITER_C9:0;
-			new
-				lastBot = MAX_PLAYERS,
-				lastCharacter = MAX_PLAYERS;
+hook OnScriptInit()
+{
+	#if _FOREACH_VEHICLES
+		Iter_Clear(Vehicle);
+		for (new i = 1; i <= MAX_VEHICLES; ++i)
+		{
+			if (GetVehicleModel(i))
+			{
+				Iter_Add(Vehicle, i);
+			}
+		}
+	#endif
+	#if _FOREACH_ACTORS
+		Iter_Clear(Actor);
+		for (new i = 0; i != MAX_ACTORS; ++i)
+		{
+			if (Iter_IsValidActor(i))
+			{
+				Iter_Add(Actor, i);
+			}
+		}
+	#endif
+	#if _FOREACH_CHARACTERS
+		#if _FOREACH_BOTS
+			Iter_Clear(Bot);
+			Iter_Clear(Character);
 		#endif
-		Iter_Single@Player = _Y_ITER_C9:0;
-		new
-			lastPlayer = MAX_PLAYERS;
+		#if _FOREACH_PLAYERS
+			Iter_Clear(Player);
+		#endif
 		for (new i = 0; i != MAX_PLAYERS; ++i)
 		{
 			if (IsPlayerConnected(i))
 			{
-				#if defined _FOREACH_BOT
-					// Had to do "if ! else" due to compile options.
-					if (!IsPlayerNPC(i))
+				#if _FOREACH_BOTS
+					Iter_Add(Character, i);
+					if (IsPlayerNPC(i))
 					{
-						Iterator@Player[lastPlayer] = i;
-						++Iter_Single@Player;
-						lastPlayer = i;
+						Iter_Add(Bot, i);
 					}
-					#if !defined FOREACH_NO_BOTS
-						else
-						{
-							Iterator@Bot[lastBot] = i;
-							++Iter_Single@Bot;
-							lastBot = i;
-						}
-						#pragma tabsize 4
-						Iterator@Character[lastCharacter] = i;
-						++Iter_Single@Character;
-						lastCharacter = i;
-					#endif
-				#else
-					Iterator@Player[lastPlayer] = i;
-					++Iter_Single@Player;
-					lastPlayer = i;
+					else
 				#endif
-			}
-			else
-			{
-				#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-					Iterator@Bot[i] = MAX_PLAYERS + 1;
-					Iterator@Character[i] = MAX_PLAYERS + 1;
-				#endif
-				Iterator@Player[i] = MAX_PLAYERS + 1;
-			}
-		}
-		#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-			Iterator@Bot[lastPlayer] = MAX_PLAYERS;
-			Iterator@Character[lastPlayer] = MAX_PLAYERS;
-		#endif
-		Iterator@Player[lastPlayer] = MAX_PLAYERS;
-		#if defined Iter_OnFilterScriptInit
-			Iter_OnFilterScriptInit();
-		#endif
-		return 1;
-	}
-	
-	#if defined _ALS_OnFilterScriptInit
-		#undef OnFilterScriptInit
-	#else
-		#define _ALS_OnFilterScriptInit
-	#endif
-	#define OnFilterScriptInit Iter_OnFilterScriptInit
-	#if defined Iter_OnFilterScriptInit
-		forward Iter_OnFilterScriptInit();
-	#endif
-#endif
-
-/**--------------------------------------------------------------------------**\
-<summary>Iter_OnGameModeInit</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	There are WIERD bugs in this script, seemingly caused by the compiler, so
-	this hopefully fixes them.  The OnFilterScriptInit code is written to be
-	very fast by utilising the internal array structure instead of the regular
-	Add functions.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#if !defined BOTSYNC_IS_BOT
-	public OnGameModeInit()
-	{
-		P:1("Iter_OnGameModeInit start: %d", MAX_PLAYERS);
-		if (!Iter_Single@Player)
-		{
-			#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-				CallLocalFunction(YSI_gsOnGameModeInit, YSI_gsSpecifier@, Iter_Single@Bot, Iter_Single@Character, Iter_Single@Player);
-			#else
-				CallLocalFunction(YSI_gsOnGameModeInit, YSI_gsSpecifier@, Iter_Single@Player);
-			#endif
-			#if defined _YSI_SPECIAL_DEBUG
-				for (new i = 0; i != MAX_PLAYERS; ++i)
-				{
-					Iterator@Player[i] = i + 1;
-				}
-				Iterator@Player[MAX_PLAYERS] = 0;
-				Iter_Single@Player = _Y_ITER_C9:MAX_PLAYERS;
-			#endif
-			P:1("Iter_OnGameModeInit: first");
-			return 1;
-		}
-		// Do the forward iterator list.
-		#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-			Iter_Single@Bot = _Y_ITER_C9:0;
-			Iterator@Bot[MAX_PLAYERS] = MAX_PLAYERS;
-			Iterator@Character[MAX_PLAYERS] = MAX_PLAYERS;
-			Iter_Single@Character = _Y_ITER_C9:0;
-			new
-				lastBot = MAX_PLAYERS,
-				lastCharacter = MAX_PLAYERS;
-		#endif
-		Iter_Single@Player = _Y_ITER_C9:0;
-		Iterator@Player[MAX_PLAYERS] = MAX_PLAYERS;
-		new
-			lastPlayer = MAX_PLAYERS;
-		for (new i = 0; i != MAX_PLAYERS; ++i)
-		{
-			if (IsPlayerConnected(i))
-			{
-				#if defined _FOREACH_BOT
-					// Had to do "if ! else" due to compile options.
-					if (!IsPlayerNPC(i))
+				#if _FOREACH_PLAYERS
 					{
-						Iterator@Player[lastPlayer] = i;
-						++Iter_Single@Player;
-						lastPlayer = i;
+						Iter_Add(Player, i);
 					}
-					#if !defined FOREACH_NO_BOTS
-						else
-						{
-							Iterator@Bot[lastBot] = i;
-							++Iter_Single@Bot;
-							lastBot = i;
-						}
-						#pragma tabsize 4
-						Iterator@Character[lastCharacter] = i;
-						++Iter_Single@Character;
-						lastCharacter = i;
-					#endif
-				#else
-					Iterator@Player[lastPlayer] = i;
-					++Iter_Single@Player;
-					lastPlayer = i;
 				#endif
-			}
-			else
-			{
-				#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-					Iterator@Bot[i] = MAX_PLAYERS + 1;
-					Iterator@Character[i] = MAX_PLAYERS + 1;
-				#endif
-				Iterator@Player[i] = MAX_PLAYERS + 1;
 			}
 		}
-		#if defined _FOREACH_BOT && !defined FOREACH_NO_BOTS
-			Iterator@Bot[lastPlayer] = MAX_PLAYERS;
-			Iterator@Character[lastPlayer] = MAX_PLAYERS;
-		#endif
-		Iterator@Player[lastPlayer] = MAX_PLAYERS;
-		P:1("Iter_OnGameModeInit: lastplayer = %d", lastPlayer);
-		CallLocalFunction(YSI_gsOnGameModeInit, YSI_gsSpecifier@);
-		#if defined _YSI_SPECIAL_DEBUG
-			for (new i = 0; i != MAX_PLAYERS; ++i)
-			{
-				Iterator@Player[i] = i + 1;
-			}
-			Iterator@Player[MAX_PLAYERS] = 0;
-			Iter_Single@Player = _Y_ITER_C9:MAX_PLAYERS;
-		#endif
-		return 1;
-	}
-	
-	#if defined _ALS_OnGameModeInit
-		#undef OnGameModeInit
-	#else
-		#define _ALS_OnGameModeInit
 	#endif
-	#define OnGameModeInit Iter_OnGameModeInit
-	#if defined Iter_OnGameModeInit
-		forward Iter_OnGameModeInit();
-	#endif
-#endif
+	return 1;
+}
 
 /*
 
@@ -552,75 +491,242 @@ static stock
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#if !defined BOTSYNC_IS_BOT
-	public OnPlayerConnect(playerid)
+#if _FOREACH_CHARACTERS
+	hook OnPlayerConnect(playerid)
 	{
 		P:1("Iter_OnPlayerConnect called: %d, %d", playerid, IsPlayerNPC(playerid));
-		#if defined _FOREACH_BOT
-			if (!IsPlayerNPC(playerid))
+		#if _FOREACH_BOTS
+			Iter_Add(Character, playerid);
+			if (IsPlayerNPC(playerid))
+			{
+				Iter_Add(Bot, playerid);
+			}
+			else
+		#endif
+		#if _FOREACH_PLAYERS
 			{
 				Iter_Add(Player, playerid);
 			}
-			#if !defined FOREACH_NO_BOTS
-				else
-				{
-					Iter_Add(Bot, playerid);
-				}
-				#pragma tabsize 4
-				Iter_Add(Character, playerid);
-			#endif
-		#else
-			Iter_Add(Player, playerid);
 		#endif
 		P:2("Iter_OnPlayerConnect end");
-		#if defined Iter_OnPlayerConnect
-			Iter_OnPlayerConnect(playerid);
-		#endif
 		return 1;
 	}
 	
-	#if defined _ALS_OnPlayerConnect
-		#undef OnPlayerConnect
-	#else
-		#define _ALS_OnPlayerConnect
-	#endif
-	#define OnPlayerConnect Iter_OnPlayerConnect
-	#if defined Iter_OnPlayerConnect
-		forward Iter_OnPlayerConnect(playerid);
-	#endif
-#endif
-
-/**--------------------------------------------------------------------------**\
-<summary>Iter_OnPlayerDisconnect</summary>
-<param name="playerid">Player who left.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Removes a player from the loop data.  No longer uses "hook" to ENSURE that
-	this is always last.  Previously I think that the order of evaluation in
-	y_hooks meant that this got called before the user "OnPlayerDisconnect".
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#if !defined BOTSYNC_IS_BOT
-	public OnPlayerDisconnect(playerid, reason)
+	/**----------------------------------------------------------------------**\
+	<summary>Iter_OnPlayerDisconnect</summary>
+	<param name="playerid">Player who left.</param>
+	<returns>
+		-
+	</returns>
+	<remarks>
+		Removes a player from the loop data.  No longer uses "hook" to ENSURE
+		that this is always last.  Previously I think that the order of
+		evaluation in y_hooks meant that this got called before the user
+		"OnPlayerDisconnect".
+	</remarks>
+	\**----------------------------------------------------------------------**/
+	
+	hook OnPlayerDisconnect(playerid, reason)
 	{
 		SetTimerEx("Iter_OPDCInternal", 0, false, "i", playerid);
-		#if defined Iter_OnPlayerDisconnect
-			Iter_OnPlayerDisconnect(playerid, reason);
-		#endif
 		return 1;
 	}
 	
-	#if defined _ALS_OnPlayerDisconnect
-		#undef OnPlayerDisconnect
+	/**----------------------------------------------------------------------**\
+	<summary>Iter_OPDCInternal</summary>
+	<param name="playerid">Player who left.</param>
+	<returns>
+		-
+	</returns>
+	<remarks>
+		Called AFTER "OnPlayerDisconnect" so that using "Kick" inside a
+		"foreach" loop doesn't crash the server due to an OOB error.
+	</remarks>
+	\**----------------------------------------------------------------------**/
+	
+	public Iter_OPDCInternal(playerid)
+	{
+		if (IsPlayerConnected(playerid))
+		{
+			return;
+		}
+		#if _FOREACH_BOTS
+			Iter_Remove(Character, playerid);
+			if (IsPlayerNPC(playerid))
+			{
+				Iter_Remove(Bot, playerid);
+			}
+			else
+		#endif
+		#if _FOREACH_PLAYERS
+			{
+				Iter_Remove(Player, playerid);
+			}
+		#endif
+	}
+#endif
+
+/*
+
+           db                                                           
+          d88b                   ,d                                     
+         d8'`8b                  88                                     
+        d8'  `8b     ,adPPYba, MM88MMM ,adPPYba,  8b,dPPYba, ,adPPYba,  
+       d8YaaaaY8b   a8"     ""   88   a8"     "8a 88P'   "Y8 I8[    ""  
+      d8""""""""8b  8b           88   8b       d8 88          `"Y8ba,   
+     d8'        `8b "8a,   ,aa   88,  "8a,   ,a8" 88         aa    ]8I  
+    d8'          `8b `"Ybbd8"'   "Y888 `"YbbdP"'  88         `"YbbdP"'  
+
+*/
+
+#if _FOREACH_ACTORS
+	remotefunc void:Iter_ActorDo(bool:add, actorid)
+	{
+		// Because there may be multiple scripts running, we need to tell all of
+		// them when an actor is created or destroyed.
+		if (add)
+			Iter_Add(Actor, actorid);
+		else
+			Iter_Remove(Actor, actorid);
+	}
+	
+	stock Iter_CreateActor(modelid, Float:X, Float:Y, Float:Z, Float:Rotation)
+	{
+		new
+			ret = CreateActor(modelid, X, Y, Z, Rotation);
+		broadcastfunc Iter_ActorDo(true, ret);
+		#if _FOREACH_LOCALS
+			Iter_Add(LocalActor, ret);
+		#endif
+		return ret;
+	}
+	
+	#if defined _ALS_CreateActor
+		#undef CreateActor
 	#else
-		#define _ALS_OnPlayerDisconnect
+		#define _ALS_CreateActor
 	#endif
-	#define OnPlayerDisconnect Iter_OnPlayerDisconnect
-	#if defined Iter_OnPlayerDisconnect
-		forward Iter_OnPlayerDisconnect(playerid, reason);
+	#define CreateActor Iter_CreateActor
+	
+	stock Iter_DestroyActor(actorid)
+	{
+		broadcastfunc Iter_ActorDo(false, actorid);
+		#if _FOREACH_LOCALS
+			Iter_Remove(LocalActor, actorid);
+		#endif
+		return DestroyActor(actorid);
+	}
+	
+	#if defined _ALS_DestroyActor
+		#undef DestroyActor
+	#else
+		#define _ALS_DestroyActor
 	#endif
+	#define DestroyActor Iter_DestroyActor
+#endif
+
+/*
+
+    8b           d8         88          88            88                       
+    `8b         d8'         88          ""            88                       
+     `8b       d8'          88                        88                       
+      `8b     d8' ,adPPYba, 88,dPPYba,  88  ,adPPYba, 88  ,adPPYba, ,adPPYba,  
+       `8b   d8' a8P_____88 88P'    "8a 88 a8"     "" 88 a8P_____88 I8[    ""  
+        `8b d8'  8PP""""""" 88       88 88 8b         88 8PP"""""""  `"Y8ba,   
+         `888'   "8b,   ,aa 88       88 88 "8a,   ,aa 88 "8b,   ,aa aa    ]8I  
+          `8'     `"Ybbd8"' 88       88 88  `"Ybbd8"' 88  `"Ybbd8"' `"YbbdP"'  
+
+*/
+
+#if _FOREACH_VEHICLES
+	remotefunc void:Iter_VehicleDo(bool:add, vehicleid)
+	{
+		// Because there may be multiple scripts running, we need to tell all of
+		// them when a vehicle is created or destroyed.
+		if (add)
+			Iter_Add(Vehicle, vehicleid);
+		else
+			Iter_Remove(Vehicle, vehicleid);
+	}
+	
+	stock Iter_CreateVehicle(modelid, Float:x, Float:y, Float:z, Float:angle, color1, color2, respawn_delay, addsiren = 0)
+	{
+		#if _FOREACH_ACTORS
+			new
+				ret = CreateVehicle(modelid, x, y, z, angle, color1, color2, respawn_delay, addsiren);
+		#else
+			new
+				ret = CreateVehicle(modelid, x, y, z, angle, color1, color2, respawn_delay);
+		#endif
+		broadcastfunc Iter_VehicleDo(true, ret);
+		#if _FOREACH_LOCALS
+			Iter_Add(LocalVehicle, ret);
+		#endif
+		return ret;
+	}
+	
+	#if defined _ALS_CreateVehicle
+		#undef CreateVehicle
+	#else
+		#define _ALS_CreateVehicle
+	#endif
+	#define CreateVehicle Iter_CreateVehicle
+	
+	stock Iter_AddStaticVehicle(modelid, Float:spawn_x, Float:spawn_y, Float:spawn_z, Float:angle, color1, color2)
+	{
+		new
+			ret = AddStaticVehicle(modelid, spawn_x, spawn_y, spawn_z, angle, color1, color2);
+		broadcastfunc Iter_VehicleDo(true, ret);
+		#if _FOREACH_LOCALS
+			Iter_Add(LocalVehicle, ret);
+		#endif
+		return ret;
+	}
+	
+	#if defined _ALS_AddStaticVehicle
+		#undef AddStaticVehicle
+	#else
+		#define _ALS_AddStaticVehicle
+	#endif
+	#define AddStaticVehicle Iter_AddStaticVehicle
+	
+	stock Iter_AddStaticVehicleEx(modelid, Float:spawn_x, Float:spawn_y, Float:spawn_z, Float:angle, color1, color2, respawn_delay, addsiren = 0)
+	{
+		#if _FOREACH_ACTORS
+			new
+				ret = AddStaticVehicleEx(modelid, spawn_x, spawn_y, spawn_z, angle, color1, color2, respawn_delay, addsiren);
+		#else
+			new
+				ret = AddStaticVehicleEx(modelid, spawn_x, spawn_y, spawn_z, angle, color1, color2, respawn_delay);
+		#endif
+		broadcastfunc Iter_VehicleDo(true, ret);
+		#if _FOREACH_LOCALS
+			Iter_Add(LocalVehicle, ret);
+		#endif
+		return ret;
+	}
+	
+	#if defined _ALS_AddStaticVehicleEx
+		#undef AddStaticVehicleEx
+	#else
+		#define _ALS_AddStaticVehicleEx
+	#endif
+	#define AddStaticVehicleEx Iter_AddStaticVehicleEx
+	
+	stock Iter_DestroyVehicle(vehicleid)
+	{
+		broadcastfunc Iter_VehicleDo(false, vehicleid);
+		#if _FOREACH_LOCALS
+			Iter_Remove(LocalVehicle, vehicleid);
+		#endif
+		return DestroyVehicle(vehicleid);
+	}
+	
+	#if defined _ALS_DestroyVehicle
+		#undef DestroyVehicle
+	#else
+		#define _ALS_DestroyVehicle
+	#endif
+	#define DestroyVehicle Iter_DestroyVehicle
 #endif
 

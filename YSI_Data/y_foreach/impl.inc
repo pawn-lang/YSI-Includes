@@ -202,22 +202,6 @@ Iterators:
 	Character - All players and bots.
 \**--------------------------------------------------------------------------**/
 
-#if defined SendChat || defined FOREACH_NO_PLAYERS
-	#define BOTSYNC_IS_BOT     (true)
-#endif
-
-#if defined IsPlayerNPC
-	#define _FOREACH_BOT
-#endif
-
-#if defined YSI_ITTER_NO_SORT
-	#error YSI_ITTER_NO_SORT is no longer supported by foreach.
-#endif
-
-#if !defined BOTSYNC_IS_BOT
-	forward Iter_OPDCInternal(playerid);
-#endif
-
 /*
 
     88      a8P                                                                           88            
@@ -327,14 +311,22 @@ Array:
 	-
 </returns>
 <remarks>
-	Wrapper for Iter_Init_Internal.
+	Wrapper for Iter_Init_Internal.  When "NESTED_ELLIPSIS" is set, this isn't
+	needed because multi-dimensional iterators can be initialised with the new
+	"{{0, 1, ...), ...}" feature.  In that case "I@ = 0" is called as a "void"
+	function that does nothing but ends in a semi-colon ("I@" is used a lot in
+	YSI as a "do nothing" enabler).
 
 native Iter_Init(IteratorArray:Name[]<>);
 
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iter_Init(%0) Iter_Init_Internal(F@r(Iterator@%0),F@r(Iterator@%0)[0],F@s(Iterator@%0),F@s(Iterator@%0[]),F@r(Iter_Init@%0))
+#if defined NESTED_ELLIPSIS
+	#define Iter_Init(%0) (I@=0)
+#else
+	#define Iter_Init(%0) Iter_Init_Internal(F@r(Iterator@%0),F@r(Iterator@%0)[0],F@s(Iterator@%0),F@s(Iterator@%0[]),F@r(Iter_Init@%0))
+#endif
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_Add</summary>
@@ -769,7 +761,11 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 // Detect array declarations: "Iterator:X[20]<4>", "Iterator:X<10, 4>", and the
 // frankly silly "Iterator:X[20]<10, 4>".
 #define F@c:F@d:((%0,%1)+1)]%2$,Iter_Single@%9$%7$ F@d:((%0)+(%1))]={0,1,...}F@a$,Iter_Multi@%9$[%0]%7$
-#define F@d:%0]%2$,Iter_%8@%9[%3$%7$ %0],Iter_%8@%9[%3$%7$,F@g(Iter_Init@%9,)=F@s(Iter_%8@%9[%3$)
+#if defined NESTED_ELLIPSIS
+	#define F@d:%0]%2$,Iter_%8@%9[%3$%7$ %0]={{0,1,...},...},Iter_%8@%9[%3$%7$
+#else
+	#define F@d:%0]%2$,Iter_%8@%9[%3$%7$ %0],Iter_%8@%9[%3$%7$,F@g(Iter_Init@%9,)=F@s(Iter_%8@%9[%3$)
+#endif
 
 // Special "sizeof" that strips subscripts.  "|||" prevents "sizeof" recursion.
 #define F@e:%0|||(%1[%2]%3|||%4)) F@e:%0|||(%1%3|||%4[]))

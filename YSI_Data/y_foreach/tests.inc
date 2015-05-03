@@ -693,11 +693,11 @@ Test:y_iter_Iter_Init1()
 	#pragma unused Iter_Single@iter
 	Iter_Init(iter);
 	ASSERT(Iter_TrueArray(iter)[0][20] == 20);
-	ASSERT(Iter_TrueArray(iter)[0][19] == 0);
+	ASSERT(Iter_TrueArray(iter)[0][19] <= 19);
 	ASSERT(Iter_TrueArray(iter)[1][20] == 20);
-	ASSERT(Iter_TrueArray(iter)[1][19] == 0);
+	ASSERT(Iter_TrueArray(iter)[1][19] <= 19);
 	ASSERT(Iter_TrueArray(iter)[9][20] == 20);
-	ASSERT(Iter_TrueArray(iter)[9][19] == 0);
+	ASSERT(Iter_TrueArray(iter)[9][19] <= 19);
 }
 
 Test:y_iter_Iter_Init2()
@@ -2357,5 +2357,112 @@ Test:y_iter_Deprecate()
 	foreach (Player, i)
 	{
 	}
+}
+
+Test:y_iter_Random()
+{
+	new
+		c = 0;
+	foreach (new i : Random(10))
+	{
+		++c;
+	}
+	ASSERT(c == 10);
+	foreach (new i : Random(1000, -5, 10))
+	{
+		++c;
+		ASSERT(-5 <= i < 10);
+	}
+	ASSERT(c == 1010);
+}
+
+Test:y_iter_Powers()
+{
+	new
+		c = 1;
+	foreach (new i : Powers(2))
+	{
+		ASSERT(i == c);
+		c *= 2;
+	}
+	ASSERT(c == 0x40000000 * 2);
+}
+
+Test:y_iter_Fib()
+{
+	new
+		a = 0,
+		b = 1;
+	foreach (new i : Fib())
+	{
+		ASSERT(i == a);
+		b = a + b;
+		a = b - a;
+	}
+}
+
+Test:y_iter_Null()
+{
+	new
+		c = 0,
+		arr[10] = {1, 2, 0, 3, 4, 0, 5, 0, 0, 7};
+	foreach (new i : Null(arr))
+	{
+		++c;
+		ASSERT(i == 2 || i == 5 || i == 7 || i == 8);
+	}
+	ASSERT(c == 4);
+}
+
+Test:y_iter_Filter1()
+{
+	new
+		c = 0,
+		arr[10] = {1, 2, 0, 3, 4, 0, 5, 0, 0, 7};
+	foreach (new i : Filter(0, arr))
+	{
+		++c;
+		ASSERT(i == 2 || i == 5 || i == 7 || i == 8);
+	}
+	ASSERT(c == 4);
+}
+
+Test:y_iter_Filter2()
+{
+	new
+		c = 0,
+		arr[10] = {1, 2, 0, 3, 2, 0, 5, 0, 2, 7};
+	foreach (new i : Filter(2, arr))
+	{
+		++c;
+		ASSERT(i == 1 || i == 4 || i == 8);
+	}
+	ASSERT(c == 3);
+}
+
+Test:y_iter_NonNull()
+{
+	new
+		c = 0,
+		arr[10] = {1, 2, 0, 3, 4, 0, 5, 0, 0, 7};
+	foreach (new i : NonNull(arr))
+	{
+		++c;
+		ASSERT(i != 2 && i != 5 && i != 7 && i != 8);
+	}
+	ASSERT(c == 6);
+}
+
+Test:y_iter_Until()
+{
+	new
+		c = 0,
+		arr[10] = {1, 2, 0, 3, 4, 0, 5, 0, 0, 7};
+	foreach (new i : Until(5, arr))
+	{
+		++c;
+		ASSERT(0 <= i < 6);
+	}
+	ASSERT(c == 6);
 }
 
