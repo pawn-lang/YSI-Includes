@@ -164,6 +164,7 @@ Compile options:
 
 // Misc includes.
 #include "..\YSI_Storage\y_amx"
+#include "..\YSI_Data\y_iterate"
 #include "..\YSI_Coding\y_hooks"
 #include "..\YSI_Data\y_hashmap"
 #include "..\YSI_Data\y_iterate"
