@@ -1032,8 +1032,9 @@ stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
 		return
 			--count,
 			last = (array[(value - 1) % size] - 1) % size,
-			array[((array[last] = array[value]) - 1) % size] = (last + 1) % size,
-			array[value] = value;
+			array[last] = array[value],
+			array[value] = value,
+			array[(array[last] - 1) % size] = (last + 1) % size;
 	}
 	return cellmin;
 }
