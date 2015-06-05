@@ -822,6 +822,23 @@ Test:y_iter_Normal()
 	}
 }
 
+Test:y_iter_InfiniteLoop()
+{
+    new
+        count = 0,
+        Iterator:iter<20>;
+    Iter_Add(iter, 1);
+    Iter_Add(iter, 2);
+    Iter_Remove(iter, 1);
+    Iter_Remove(iter, 2);
+    foreach (new i : iter)
+    {
+        ASSERT(count == 0);
+        if (count++)
+            return;
+    }
+}
+
 Test:y_iter_Syntax1()
 {
 	new
