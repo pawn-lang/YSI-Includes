@@ -395,3 +395,16 @@ Test:Hooks_GetDefaultReturn()
 
 HOOK_RET:OnHookRet2() return 0;
 
+DEFINE_HOOK_REPLACEMENT(Replacement, Rpl);
+
+forward OnPlayerCustomReplacement();
+public OnPlayerCustomReplacement() { g_y_hooksVar += 500; }
+
+hook OnPlayerCustomRpl() { g_y_hooksVar += 55; }
+
+Test:y_hooks_CustomReplacement()
+{
+	g_y_hooksVar = 0;
+	CallLocalFunction("OnPlayerCustomReplacement", "");
+	ASSERT(g_y_hooksVar == 555);
+}
