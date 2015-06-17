@@ -329,15 +329,6 @@ Iterators:
 	#if !defined FOREACH_NO_ACTORS
 		#undef _FOREACH_ACTORS
 		#define _FOREACH_ACTORS 1
-		
-		stock Iter_IsValidActor(actorid)
-		{
-			static
-				Float:x,
-				Float:y,
-				Float:z;
-			return GetActorPos(actorid, x, y, z);
-		}
 	#endif
 #endif
 

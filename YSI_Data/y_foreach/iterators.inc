@@ -421,7 +421,7 @@ hook OnScriptInit()
 		Iter_Clear(Actor);
 		for (new i = 0; i != MAX_ACTORS; ++i)
 		{
-			if (Iter_IsValidActor(i))
+			if (IsValidActor(i))
 			{
 				Iter_Add(Actor, i);
 			}
