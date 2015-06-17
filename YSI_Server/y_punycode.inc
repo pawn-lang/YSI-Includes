@@ -312,12 +312,21 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 	new
 		ch,
 		widx,
-		rlen;
+		rlen,
+		sSrc[YSI_MAX_STRING],
+		bPacked = ispacked(src);
 	--wlen,
 	hash = -1;
+
+	if (bPacked) {
+		strunpack(sSrc, src);
+	} else {
+		strcpy(sSrc, src);
+	}
+
 	for (new bool:bb = true; ; ++rlen)
 	{
-		if ((ch = src[rlen]) <= '~')
+		if ((ch = sSrc[rlen]) <= '~')
 		{
 			if (ch <= ' ')
 			{
@@ -336,7 +345,7 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 		else bb = false;
 	}
 	// Wrote out all the characters.
-	if (widx >= wlen) return (dst[widx] = '\0'), rlen;
+	if (widx >= wlen) return (bPacked ? strpack(dst, dst, wlen) : 0), (dst[widx] = '\0'), rlen;
 	dst[widx++] = delimiter,
 	hash = hash * 33 + delimiter;
 	// Set up punycode variables.
@@ -354,7 +363,7 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 			m = cellmax;
 		for (new ridx = 0; ridx != rlen; ++ridx)
 		{
-			ch = tolower(src[ridx]);
+			ch = tolower(sSrc[ridx]);
 			if (n <= ch < m)
 			{
 				// Find the lowest Unicode character.
@@ -362,16 +371,16 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 			}
 		}
 		// Make sure the number isn't too big to encode.
-		if ((m - n) > (cellmax - delta) / (codePointsWritten + 1)) return (dst[widx] = '\0'), rlen;
+		if ((m - n) > (cellmax - delta) / (codePointsWritten + 1)) return (bPacked ? strpack(dst, dst, wlen) : 0), (dst[widx] = '\0'), rlen;
 		// More punycode state machine.
 		delta += (m - n) * (codePointsWritten + 1),
 		n = m;
 		for (new ridx = 0; ridx != rlen; ++ridx)
 		{
-			ch = tolower(src[ridx]);
+			ch = tolower(sSrc[ridx]);
 			if (ch < n)
 			{
-				if (++delta == 0) return (dst[widx] = '\0'), rlen;
+				if (++delta == 0) return (bPacked ? strpack(dst, dst, wlen) : 0), (dst[widx] = '\0'), rlen;
 			}
 			else if (ch == n)
 			{
@@ -384,7 +393,7 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 		++n,
 		++delta;
 	}
-	return (dst[widx] = '\0'), rlen;
+	return (bPacked ? strpack(dst, dst, wlen) : 0), (dst[widx] = '\0'), rlen;
 }
 
 /**--------------------------------------------------------------------------**\

@@ -290,19 +290,6 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 			strunpack(%2,YSI_g_sCommands[(%1)][E_COMMAND_NAME]);
 
 /**--------------------------------------------------------------------------**\
-<summary>Command_Find</summary>
-<param name="cmd[]">The command name to find.</param>
-<returns>
-	The array slot of this command, or -1.
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Command_Find(%0) HashMap_Get(YSI_g_sCommandMap, (%0))
-
-/**--------------------------------------------------------------------------**\
 <summary>Command_OnReceived</summary>
 <param name="error">Which error to show.</param>
 <param name="playerid">Player who typed the command.</param>
@@ -457,6 +444,10 @@ foreign Command_AddAlt(oidx, string:cmd[]);
 
 global Command_AddAlt(oidx, string:cmd[])
 {
+	static
+		sCmd[64],
+		sHash;
+
 	if (!_Command_IsValid(oidx)) return COMMAND_NOT_FOUND;
 	// Check the pointer is valid.
 	new
@@ -464,9 +455,12 @@ global Command_AddAlt(oidx, string:cmd[])
 	// The command we are pointing to is already an alternate for a third
 	// command - point this new command at the parent.
 	if (id & cellmin) oidx = id & ~cellmin;
+
+	Puny_EncodeHash(sCmd, cmd, sHash, .delimiter = '@');
+
 	// Now point this new command at the real (software) command.
-	strpack(cmd, cmd, cellmax);
-	if ((id = Command_Find(cmd)) == COMMAND_NOT_FOUND)
+	strpack(sCmd, sCmd, cellmax);
+	if ((id = Command_Find(sCmd)) == COMMAND_NOT_FOUND)
 	{
 		// Command doesn't already exist, add it.
 		if ((id = Command_GetEmptySlot()) == COMMAND_NOT_FOUND)
@@ -482,7 +476,7 @@ global Command_AddAlt(oidx, string:cmd[])
 		// Save the command's pointer.
 		YSI_g_sCommands[id][E_COMMAND_POINTER] = cellmin | oidx,
 		// Add this command to the hash map (does the name too).
-		HashMap_Add(YSI_g_sCommandMap, cmd, id),
+		HashMap_Add(YSI_g_sCommandMap, sCmd, id),
 		// Add all players, or defer to y_groups.
 		PA_FastInit(YSI_g_sCommands[id][E_COMMAND_USERS]);
 		NO_GROUPS(id)
@@ -722,6 +716,31 @@ foreign void:Command_SetPlayerNamed(string:f[],p,bool:s);
 global void:Command_SetPlayerNamed(string:f[],p,bool:s)
 {
 	Command_SetPlayer(Command_Find(f), p, s);
+}
+
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_Find</summary>
+<param name="cmd[]">The command name to find.</param>
+<returns>
+	The array slot of this command, or -1.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+foreign Command_Find(string:cmd[]);
+
+global Command_Find(string:cmd[])
+{
+	static
+		sCmd[64] = "",
+		sHash;
+
+	Puny_EncodeHash(sCmd, cmd, sHash, .delimiter = '@');
+
+	return HashMap_Get(YSI_g_sCommandMap, sCmd);
 }
 
 /*

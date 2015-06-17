@@ -32,6 +32,17 @@ Test:y_commands_AddAlt()
 	ASSERT(id2 == id3);
 }
 
+Test:y_commands_AddAlt2()
+{
+	new
+		id1 = YCMD:y_commands_1,
+		id2 = Command_AddAlt(id1, "y_cómmańds_ąlt"),
+		id3 = Command_AddAltNamed("y_commands_1", "y_cómmańds_ąlt");
+	ASSERT(id1 != id2);
+	ASSERT(id2 != COMMAND_NOT_FOUND);
+	ASSERT(id2 == id3);
+}
+
 Test:y_commands_Perms()
 {
 	new
@@ -42,6 +53,18 @@ Test:y_commands_Perms()
 	Command_SetPlayerNamed("y_commands_1", 101, true);
 	ASSERT(Command_GetPlayer(id, 101));
 	ASSERT(Command_GetPlayerNamed("y_commands_1", 101));
+}
+
+Test:y_commands_Perms2()
+{
+	new
+		id = Command_Find("y_cómmańds_ąlt");
+	Command_SetPlayer(id, 101, false);
+	ASSERT(!Command_GetPlayer(id, 101));
+	ASSERT(!Command_GetPlayerNamed("y_cómmańds_ąlt", 101));
+	Command_SetPlayerNamed("y_cómmańds_ąlt", 101, true);
+	ASSERT(Command_GetPlayer(id, 101));
+	ASSERT(Command_GetPlayerNamed("y_cómmańds_ąlt", 101));
 }
 
 static stock
@@ -478,4 +501,3 @@ Test:y_commands_lengths()
 		ASSERT(!Command_IsPrefixUsed('!'));
 	}
 #endif
-
