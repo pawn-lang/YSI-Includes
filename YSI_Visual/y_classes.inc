@@ -181,7 +181,7 @@ stock _YSI_HAS_y_classes(_do_not_call_me_ever_, _like_never_)
 //#include "..\YSI_Players\y_groups\y_classes"
 
 #include "..\YSI_Coding\y_hooks"
-//#include "y_classes/classcontrol"
+#include "y_classes/classcontrol"
 #include "..\YSI_Coding\y_hooks"
 #include "y_classes/multiclass"
 
