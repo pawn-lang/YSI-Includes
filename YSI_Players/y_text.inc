@@ -227,7 +227,7 @@ Operators:
 #include "y_text/impl"
 
 #define UNDO_MOVE|||
-#define DO_MOVE|||%0$$$ %0DO_MOVE|||
+#define DO_MOVE|||%0``` %0DO_MOVE|||
 
 #define Text_Send(%0,%1) PSF:_Text_Send(%0,DO_TEXT_SET:%1 UNDO_MOVE|||)
 #define Text_Render(%0,%1) _Text_Render(%0,DO_TEXT_SET:%1 UNDO_MOVE|||)
@@ -241,11 +241,11 @@ Operators:
 // at a time without detecting later matches too early.  The design of "DO_MOVE"
 // and "UNDO_MOVE" means that the compiler will correctly detect the end of the
 // code, regardless of the length, and end.
-#define Text_MessageBox(%0,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,DIALOG_STYLE_MSGBOX,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 $$$,DO_TEXT_SET:%4 $$$,DO_TEXT_SET:%5 UN$$$)
-#define Text_InputBox(%0,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,DIALOG_STYLE_INPUT,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 $$$,DO_TEXT_SET:%4 $$$,DO_TEXT_SET:%5 UN$$$)
-#define Text_ListBox(%0,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,DIALOG_STYLE_LIST,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 $$$,DO_TEXT_SET:%4 $$$,DO_TEXT_SET:%5 UN$$$)
-#define Text_PasswordBox(%0,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,DIALOG_STYLE_PASSWORD,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 $$$,DO_TEXT_SET:%4 $$$,DO_TEXT_SET:%5 UN$$$)
-#define Text_DialogBox(%0,%9,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,%9,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 $$$,DO_TEXT_SET:%4 $$$,DO_TEXT_SET:%5 UN$$$)
+#define Text_MessageBox(%0,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,DIALOG_STYLE_MSGBOX,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 ```,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
+#define Text_InputBox(%0,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,DIALOG_STYLE_INPUT,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 ```,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
+#define Text_ListBox(%0,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,DIALOG_STYLE_LIST,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 ```,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
+#define Text_PasswordBox(%0,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,DIALOG_STYLE_PASSWORD,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 ```,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
+#define Text_DialogBox(%0,%9,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,%9,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 ```,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
 //#define Text_MessageBox(%0,%1,%2,%3) PSF:_Text_MessageBox(%0,%1,DEFAULT_TEXT_SET,#%2 DO_MOVE|||,DEFAULT_TEXT_SET,#%3 $$$,DEFAULT_TEXT_SET,#%4 $$$,DEFAULT_TEXT_SET,#%5 UN$$$)
 
 //#define _Text_MessageBox(%0YCMD:%1) _Text_MessageBox(%0_:YCMD_REP_0:YCMD_REP_1:%1)
