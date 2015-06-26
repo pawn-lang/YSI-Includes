@@ -149,6 +149,20 @@ Test:y_malloc_2000()
 	free(a);
 }
 
+Test:y_malloc_clear()
+{
+	new Alloc:mem[3];
+	mem[0] = malloc(2);
+	mem[1] = malloc(1);
+	free(mem[0]);
+	mem[2] = malloc(1);
+	free(mem[1]);
+	free(mem[2]);
+	mem[0] = malloc(30);
+	ASSERT(bool:mem[0]);
+	free(mem[0]);
+}
+
 Test:y_malloc_Loads()
 {
 	// Allocate slightly more memory than we have room for.
