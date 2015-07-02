@@ -1,4 +1,4 @@
-Test:Cell_ReverseBits0()
+Test:y_cell_ReverseBits0()
 {
 	ASSERT(Cell_ReverseBits(0) == 0x00000000);
 	ASSERT(Cell_ReverseBits(1) == 0x80000000);
@@ -9,7 +9,66 @@ Test:Cell_ReverseBits0()
 	ASSERT(Cell_ReverseBits(0b1111000001111000011) == 0b11000011110000011110000000000000);
 }
 
-// Test:Cell_ReverseBits1()
+Test:y_cell_ExpandCompress()
+{
+	new o, x, m, n;
+	//printf("1");
+	o = 0b11110000101001011100001100001111;
+	m = 0b01010000000000000000000000000000;
+	//PRINT(x);
+	x = Cell_CompressRight(o, m);
+	n = Cell_ExpandLeft(x, m);
+	ASSERT(o & m == n);
+	ASSERT(x == 0b00000000000000000000000000000011);
+	//PRINT(n);
+	//printf("2");
+	o = 0b11110000101001011100001100001111;
+	m = 0b01010101010100000000000000000000;
+	//PRINT(x);
+	x = Cell_CompressRight(o, m);
+	n = Cell_ExpandLeft(x, m);
+	ASSERT(o & m == n);
+	ASSERT(x == 0b00000000000000000000000000110000);
+	//PRINT(n);
+	//printf("3");
+	o = 0b11110000101001011100001100001111;
+	m = 0b00111100000000000000000000000000;
+	//PRINT(x);
+	x = Cell_CompressRight(o, m);
+	n = Cell_ExpandLeft(x, m);
+	ASSERT(o & m == n);
+	ASSERT(x == 0b00000000000000000000000000001100);
+	//PRINT(n);
+	//printf("4");
+	o = 0b11110000101001011100001100001111;
+	m = 0b00000000000000000000111111111111;
+	//PRINT(x);
+	x = Cell_CompressRight(o, m);
+	n = Cell_ExpandLeft(x, m);
+	ASSERT(o & m == n);
+	ASSERT(x == 0b00000000000000000000001100001111);
+	//PRINT(n);
+	//printf("5");
+	o = 0b11110000101001011100001100001111;
+	m = 0b00000000000000000000111111000000;
+	//PRINT(x);
+	x = Cell_CompressRight(o, m);
+	n = Cell_ExpandLeft(x, m);
+	ASSERT(o & m == n);
+	ASSERT(x == 0b00000000000000000000000000001100);
+	//PRINT(n);
+	//printf("6");
+	o = 0b11110000101001011100001100001111;
+	m = 0b00000110000000100001100001100000;
+	//PRINT(x);
+	x = Cell_CompressRight(o, m);
+	n = Cell_ExpandLeft(x, m);
+	ASSERT(o & m == n);
+	ASSERT(x == 0b00000000000000000000000000000000);
+	//PRINT(n);
+}
+
+// Test:y_cell_ReverseBits1()
 // {
 	// for (new i = 0; i != 1000000; ++i)
 	// {
@@ -27,7 +86,7 @@ Test:Cell_ReverseBits0()
 	// }
 // }
 
-// Test:Cell_ReverseBits2()
+// Test:y_cell_ReverseBits2()
 // {
 	// for (new i = 1000000000; i != 1000123000; ++i)
 	// {
@@ -45,7 +104,7 @@ Test:Cell_ReverseBits0()
 	// }
 // }
 
-// Test:Cell_ReverseBits3()
+// Test:y_cell_ReverseBits3()
 // {
 	// for (new i = -999888; i != 0; ++i)
 	// {
@@ -63,7 +122,7 @@ Test:Cell_ReverseBits0()
 	// }
 // }
 
-Test:Cell_ReverseNibbles0()
+Test:y_cell_ReverseNibbles0()
 {
 	ASSERT(Cell_ReverseNibbles(0) == 0);
 	ASSERT(Cell_ReverseNibbles(1) == 0x10000000);
@@ -74,7 +133,7 @@ Test:Cell_ReverseNibbles0()
 	ASSERT(Cell_ReverseNibbles(0b1111000001111000011) == 0b00111100001110000111000000000000);
 }
 
-// Test:Cell_ReverseNibbles1()
+// Test:y_cell_ReverseNibbles1()
 // {
 	// for (new i = 0; i != 1000000; ++i)
 	// {
@@ -95,7 +154,7 @@ Test:Cell_ReverseNibbles0()
 	// }
 // }
 
-// Test:Cell_ReverseNibbles2()
+// Test:y_cell_ReverseNibbles2()
 // {
 	// for (new i = 1000000000; i != 1000123000; ++i)
 	// {
@@ -116,7 +175,7 @@ Test:Cell_ReverseNibbles0()
 	// }
 // }
 
-// Test:Cell_ReverseNibbles3()
+// Test:y_cell_ReverseNibbles3()
 // {
 	// for (new i = -999888; i != 0; ++i)
 	// {
@@ -137,7 +196,7 @@ Test:Cell_ReverseNibbles0()
 	// }
 // }
 
-Test:Cell_ReverseBytes0()
+Test:y_cell_ReverseBytes0()
 {
 	ASSERT(Cell_ReverseBytes(0) == 0);
 	ASSERT(Cell_ReverseBytes(1) == 0x01000000);
@@ -148,7 +207,7 @@ Test:Cell_ReverseBytes0()
 	ASSERT(Cell_ReverseBytes(0b1111000001111000011) == 0b11000011100000110000011100000000);
 }
 
-// Test:Cell_ReverseBytes1()
+// Test:y_cell_ReverseBytes1()
 // {
 	// for (new i = 0; i != 1000000; ++i)
 	// {
@@ -169,7 +228,7 @@ Test:Cell_ReverseBytes0()
 	// }
 // }
 
-// Test:Cell_ReverseBytes2()
+// Test:y_cell_ReverseBytes2()
 // {
 	// for (new i = 1000000000; i != 1000123000; ++i)
 	// {
@@ -190,7 +249,7 @@ Test:Cell_ReverseBytes0()
 	// }
 // }
 
-// Test:Cell_ReverseBytes3()
+// Test:y_cell_ReverseBytes3()
 // {
 	// for (new i = -999888; i != 0; ++i)
 	// {
@@ -211,7 +270,7 @@ Test:Cell_ReverseBytes0()
 	// }
 // }
 
-static stock Cell_CountBits_v1(GLOBAL_TAG_TYPES:data)
+static stock y_cell_CountBits_v1(GLOBAL_TAG_TYPES:data)
 {
 	static const
 		scCount[256] =
@@ -236,14 +295,14 @@ static stock Cell_CountBits_v1(GLOBAL_TAG_TYPES:data)
 	return scCount[data >>> 24] + scCount[(data >>> 16) & 0xFF] + scCount[(data >>> 8) & 0xFF] + scCount[data & 0xFF];
 }
 
-static stock Cell_CountBits_v2(GLOBAL_TAG_TYPES:data)
+static stock y_cell_CountBits_v2(GLOBAL_TAG_TYPES:data)
 {
 	data = data - ((data >>> 1) & 0x55555555);
 	data = (data & 0x33333333) + ((data >>> 2) & 0x33333333);
 	return ((data + (data >>> 4) & 0xF0F0F0F) * 0x1010101) >>> 24;
 }
 
-static stock Cell_CountBits_v3(GLOBAL_TAG_TYPES:data)
+static stock y_cell_CountBits_v3(GLOBAL_TAG_TYPES:data)
 {
 	// This function is a perfect candidate for re-writing in pure assembly.
 	// data = data - ((data >>> 1) & 0x55555555);
@@ -275,7 +334,7 @@ static stock Cell_CountBits_v3(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-static stock Cell_CountBits_v4(GLOBAL_TAG_TYPES:data)
+static stock y_cell_CountBits_v4(GLOBAL_TAG_TYPES:data)
 {
 	static const
 		scCount[256] =
@@ -342,15 +401,15 @@ static stock Cell_CountBits_v4(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-Test:Cell_CountBits0()
+Test:y_cell_CountBits0()
 {
-	ASSERT(Cell_CountBits_v4(0) == 0);
-	ASSERT(Cell_CountBits_v4(1) == 1);
-	ASSERT(Cell_CountBits_v4(2) == 1);
-	ASSERT(Cell_CountBits_v4(3) == 2);
-	ASSERT(Cell_CountBits_v4(4) == 1);
-	ASSERT(Cell_CountBits_v4(0b1010101010) == 5);
-	ASSERT(Cell_CountBits_v4(0b1111000001111000011) == 10);
+	ASSERT(y_cell_CountBits_v4(0) == 0);
+	ASSERT(y_cell_CountBits_v4(1) == 1);
+	ASSERT(y_cell_CountBits_v4(2) == 1);
+	ASSERT(y_cell_CountBits_v4(3) == 2);
+	ASSERT(y_cell_CountBits_v4(4) == 1);
+	ASSERT(y_cell_CountBits_v4(0b1010101010) == 5);
+	ASSERT(y_cell_CountBits_v4(0b1111000001111000011) == 10);
 #if 0
 	new
 		t0, t1, t2, t3, t4;
@@ -359,7 +418,7 @@ Test:Cell_CountBits0()
 	{
 		for (new j = 1; j < 100000000; j *= 3)
 		{
-			Cell_CountBits_v1(j);
+			y_cell_CountBits_v1(j);
 		}
 	}
 	t1 = GetTickCount();
@@ -369,7 +428,7 @@ Test:Cell_CountBits0()
 	{
 		for (new j = 1; j < 100000000; j *= 3)
 		{
-			Cell_CountBits_v2(j);
+			y_cell_CountBits_v2(j);
 		}
 	}
 	t2 = GetTickCount();
@@ -379,7 +438,7 @@ Test:Cell_CountBits0()
 	{
 		for (new j = 1; j < 100000000; j *= 3)
 		{
-			Cell_CountBits_v3(j);
+			y_cell_CountBits_v3(j);
 		}
 	}
 	t3 = GetTickCount();
@@ -389,7 +448,7 @@ Test:Cell_CountBits0()
 	{
 		for (new j = 1; j < 100000000; j *= 3)
 		{
-			Cell_CountBits_v4(j);
+			y_cell_CountBits_v4(j);
 		}
 	}
 	t4 = GetTickCount();
@@ -397,7 +456,7 @@ Test:Cell_CountBits0()
 #endif
 }
 
-// Test:Cell_CountBits1()
+// Test:y_cell_CountBits1()
 // {
 	// for (new i = 0; i != 1000000; ++i)
 	// {
@@ -407,15 +466,15 @@ Test:Cell_CountBits0()
 		// {
 			// if (i & j) ++count;
 		// }
-		// if (Cell_CountBits_v4(i) != count)
+		// if (y_cell_CountBits_v4(i) != count)
 		// {
-			// ASSERT(Cell_CountBits_v4(i) == count);
+			// ASSERT(y_cell_CountBits_v4(i) == count);
 			// break;
 		// }
 	// }
 // }
 
-// Test:Cell_CountBits2()
+// Test:y_cell_CountBits2()
 // {
 	// for (new i = 1000000000; i != 1000123000; ++i)
 	// {
@@ -425,15 +484,15 @@ Test:Cell_CountBits0()
 		// {
 			// if (i & j) ++count;
 		// }
-		// if (Cell_CountBits_v4(i) != count)
+		// if (y_cell_CountBits_v4(i) != count)
 		// {
-			// ASSERT(Cell_CountBits_v4(i) == count);
+			// ASSERT(y_cell_CountBits_v4(i) == count);
 			// break;
 		// }
 	// }
 // }
 
-// Test:Cell_CountBits3()
+// Test:y_cell_CountBits3()
 // {
 	// for (new i = -999888; i != 0; ++i)
 	// {
@@ -443,15 +502,15 @@ Test:Cell_CountBits0()
 		// {
 			// if (i & j) ++count;
 		// }
-		// if (Cell_CountBits_v4(i) != count)
+		// if (y_cell_CountBits_v4(i) != count)
 		// {
-			// ASSERT(Cell_CountBits_v4(i) == count);
+			// ASSERT(y_cell_CountBits_v4(i) == count);
 			// break;
 		// }
 	// }
 // }
 
-Test:Cell_GetLowestComponent()
+Test:y_cell_GetLowestComponent()
 {
 	ASSERT(Cell_GetLowestComponent(0) == 0);
 	ASSERT(Cell_GetLowestComponent(1) == 1);
@@ -473,7 +532,7 @@ Test:Cell_GetLowestComponent()
 	}
 }
 
-Test:Cell_GetLowestBit()
+Test:y_cell_GetLowestBit()
 {
 	ASSERT(Cell_GetLowestBit(0) == 0);
 	ASSERT(Cell_GetLowestBit(1) == 0);
@@ -494,7 +553,7 @@ Test:Cell_GetLowestBit()
 	}
 }
 
-Test:Cell_GetLowestBitEx()
+Test:y_cell_GetLowestBitEx()
 {
 	ASSERT(Cell_GetLowestBitEx(0) == 0);
 	ASSERT(Cell_GetLowestBitEx(1) == 1);
