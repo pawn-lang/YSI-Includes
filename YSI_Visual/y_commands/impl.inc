@@ -503,6 +503,7 @@ global Command_AddAlt(oidx, string:cmd[])
 	Does all the command and error handling.
 </remarks>
 \**--------------------------------------------------------------------------**/
+#define Command_ReProcess(%0,%1,%2,%3) Command_ReProcess(%0,%1, _:(%2)|(_:(%3)<<1))
 
 foreign Command_ReProcess(p,string:c[],h);
 
@@ -578,6 +579,7 @@ global Command_ReProcess(p,string:c[],h)
 				// this code but then realised that the update would ignore the
 				// case where a command was in both the current script and
 				// another script, but the other script was the master script.
+				h=h&1;
 				#emit PUSH.S      h
 				#emit LOAD.pri    sPos
 				#emit LOAD.S.alt  c
@@ -599,8 +601,8 @@ global Command_ReProcess(p,string:c[],h)
 				// This is in another script, or multiple scripts.
 				// Call the command in another script.  If no particular script
 				// is set up as the "master", call it in the first one found...
-				if (c[sPos]) CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos], h, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
-				else CallRemoteFunction(sCmd, YSI_gscISII, p, NULL, h, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				if (c[sPos]) CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos], h&1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				else CallRemoteFunction(sCmd, YSI_gscISII, p, NULL, h&1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 				sRet = getproperty(8, YSIM_RETURN);
 			}
 		#endif
