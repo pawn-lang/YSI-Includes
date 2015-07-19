@@ -555,7 +555,7 @@ global Command_ReProcess(p,string:c[],h)
 	#endif
 	P:5("Commands_OnPlayerCommandText: Use %d", _Command_GetPlayer(YSI_g_sCurrentID, p));
 	// Can the player use this command?
-	if (_Command_GetPlayer(YSI_g_sCurrentID, p))
+	if ((h&2) || _Command_GetPlayer(YSI_g_sCurrentID, p))
 	{
 		// This macro sets "sErr".
 		sRet = Command_OnReceived(OK, p, c);
