@@ -289,6 +289,13 @@ stock Dialog_SetCallbackData(dialogid, callback[E_CALLBACK_DATA])
 	YSI_g_sDialogInfo[dialogid] = callback;
 }
 
+// xhunterx editing all day
+
+hook OnPlayerConnect(playerid) {
+    YSI_g_sPlayerDialog[playerid] = -1;
+    return 1;
+}
+
 // Need to somehow integrate this new dialogs library with the text library.
 
 hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
@@ -296,6 +303,8 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	P:1("Dialog_OnDialogResponse called: %d %d %d %d %s", playerid, dialogid, response, listitem, inputtext);
 	// Apparently there's a hack to alter this.
 	dialogid = Dialog_Get(playerid);
+    YSI_g_sPlayerDialog[playerid] = -1;
+    
 	P:5("Dialog_OnDialogResponse: dialog = %d", dialogid);
 	if (dialogid == -1)
 	{
