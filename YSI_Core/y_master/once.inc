@@ -359,7 +359,7 @@ public OnScriptExit()
 	}
 	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~(1 << _@)),
 	Master_OnScriptExit(),
-	CallRemoteFunction("Master_OnScriptClose", "i", _@);
+	CallRemoteFunction("OnMasterSystemClose", "i", _@);
 	return 1;
 }
 
@@ -377,8 +377,8 @@ HOOK_FORWARD:Master_OnScriptExit();
 	forward YSIM_OnScriptExit();
 #endif
 
-#define OnMasterSystemClose Master_OnScriptClose
-forward Master_OnScriptClose(id);
+//#define OnMasterSystemClose Master_OnScriptClose
+//forward Master_OnScriptClose(id);
 
 /**--------------------------------------------------------------------------**\
 <summary>Master_Reassert</summary>

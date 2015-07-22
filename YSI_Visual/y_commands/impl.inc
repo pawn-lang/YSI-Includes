@@ -1448,6 +1448,7 @@ hook OnScriptExit()
 				}
 				if ((YSI_g_sMasterData[i] &= rem) == cur)
 				{
+                    if(YSI_g_sCommands[i][E_COMMAND_POINTER]&cellmin) continue;
 					// Existed in multiple, now only one.
 					strpack(cmdname[1], Command_Name(i), 31);
 					new
