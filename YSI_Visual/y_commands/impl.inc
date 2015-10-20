@@ -290,19 +290,6 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 			strunpack(%2,YSI_g_sCommands[(%1)][E_COMMAND_NAME]);
 
 /**--------------------------------------------------------------------------**\
-<summary>Command_Find</summary>
-<param name="cmd[]">The command name to find.</param>
-<returns>
-	The array slot of this command, or -1.
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Command_Find(%0) HashMap_Get(YSI_g_sCommandMap, (%0))
-
-/**--------------------------------------------------------------------------**\
 <summary>Command_OnReceived</summary>
 <param name="error">Which error to show.</param>
 <param name="playerid">Player who typed the command.</param>
@@ -457,6 +444,10 @@ foreign Command_AddAlt(oidx, string:cmd[]);
 
 global Command_AddAlt(oidx, string:cmd[])
 {
+	static
+		sCmd[64],
+		sHash;
+
 	if (!_Command_IsValid(oidx)) return COMMAND_NOT_FOUND;
 	// Check the pointer is valid.
 	new
@@ -464,9 +455,12 @@ global Command_AddAlt(oidx, string:cmd[])
 	// The command we are pointing to is already an alternate for a third
 	// command - point this new command at the parent.
 	if (id & cellmin) oidx = id & ~cellmin;
+
+	Puny_EncodeHash(sCmd, cmd, sHash, .delimiter = '@');
+
 	// Now point this new command at the real (software) command.
-	strpack(cmd, cmd, cellmax);
-	if ((id = Command_Find(cmd)) == COMMAND_NOT_FOUND)
+	strpack(sCmd, sCmd, cellmax);
+	if ((id = Command_Find(sCmd)) == COMMAND_NOT_FOUND)
 	{
 		// Command doesn't already exist, add it.
 		if ((id = Command_GetEmptySlot()) == COMMAND_NOT_FOUND)
@@ -482,7 +476,7 @@ global Command_AddAlt(oidx, string:cmd[])
 		// Save the command's pointer.
 		YSI_g_sCommands[id][E_COMMAND_POINTER] = cellmin | oidx,
 		// Add this command to the hash map (does the name too).
-		HashMap_Add(YSI_g_sCommandMap, cmd, id),
+		HashMap_Add(YSI_g_sCommandMap, sCmd, id),
 		// Add all players, or defer to y_groups.
 		PA_FastInit(YSI_g_sCommands[id][E_COMMAND_USERS]);
 		NO_GROUPS(id)
@@ -509,6 +503,7 @@ global Command_AddAlt(oidx, string:cmd[])
 	Does all the command and error handling.
 </remarks>
 \**--------------------------------------------------------------------------**/
+#define Command_ReProcess(%0,%1,%2,%3) Command_ReProcess(%0,%1, _:(%2)|(_:(%3)<<1))
 
 foreign Command_ReProcess(p,string:c[],h);
 
@@ -560,7 +555,7 @@ global Command_ReProcess(p,string:c[],h)
 	#endif
 	P:5("Commands_OnPlayerCommandText: Use %d", _Command_GetPlayer(YSI_g_sCurrentID, p));
 	// Can the player use this command?
-	if (_Command_GetPlayer(YSI_g_sCurrentID, p))
+	if ((h&2) || _Command_GetPlayer(YSI_g_sCurrentID, p))
 	{
 		// This macro sets "sErr".
 		sRet = Command_OnReceived(OK, p, c);
@@ -584,6 +579,7 @@ global Command_ReProcess(p,string:c[],h)
 				// this code but then realised that the update would ignore the
 				// case where a command was in both the current script and
 				// another script, but the other script was the master script.
+				h=h&1;
 				#emit PUSH.S      h
 				#emit LOAD.pri    sPos
 				#emit LOAD.S.alt  c
@@ -605,8 +601,8 @@ global Command_ReProcess(p,string:c[],h)
 				// This is in another script, or multiple scripts.
 				// Call the command in another script.  If no particular script
 				// is set up as the "master", call it in the first one found...
-				if (c[sPos]) CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos], h, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
-				else CallRemoteFunction(sCmd, YSI_gscISII, p, NULL, h, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				if (c[sPos]) CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos], h&1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+				else CallRemoteFunction(sCmd, YSI_gscISII, p, NULL, h&1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 				sRet = getproperty(8, YSIM_RETURN);
 			}
 		#endif
@@ -722,6 +718,31 @@ foreign void:Command_SetPlayerNamed(string:f[],p,bool:s);
 global void:Command_SetPlayerNamed(string:f[],p,bool:s)
 {
 	Command_SetPlayer(Command_Find(f), p, s);
+}
+
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_Find</summary>
+<param name="cmd[]">The command name to find.</param>
+<returns>
+	The array slot of this command, or -1.
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+foreign Command_Find(string:cmd[]);
+
+global Command_Find(string:cmd[])
+{
+	static
+		sCmd[64] = "",
+		sHash;
+
+	Puny_EncodeHash(sCmd, cmd, sHash, .delimiter = '@');
+
+	return HashMap_Get(YSI_g_sCommandMap, sCmd);
 }
 
 /*
@@ -1427,6 +1448,7 @@ hook OnScriptExit()
 				}
 				if ((YSI_g_sMasterData[i] &= rem) == cur)
 				{
+                    if(YSI_g_sCommands[i][E_COMMAND_POINTER]&cellmin) continue;
 					// Existed in multiple, now only one.
 					strpack(cmdname[1], Command_Name(i), 31);
 					new

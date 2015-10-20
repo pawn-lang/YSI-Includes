@@ -202,22 +202,6 @@ Iterators:
 	Character - All players and bots.
 \**--------------------------------------------------------------------------**/
 
-#if defined SendChat || defined FOREACH_NO_PLAYERS
-	#define BOTSYNC_IS_BOT     (true)
-#endif
-
-#if defined IsPlayerNPC
-	#define _FOREACH_BOT
-#endif
-
-#if defined YSI_ITTER_NO_SORT
-	#error YSI_ITTER_NO_SORT is no longer supported by foreach.
-#endif
-
-#if !defined BOTSYNC_IS_BOT
-	forward Iter_OPDCInternal(playerid);
-#endif
-
 /*
 
     88      a8P                                                                           88            
@@ -327,14 +311,22 @@ Array:
 	-
 </returns>
 <remarks>
-	Wrapper for Iter_Init_Internal.
+	Wrapper for Iter_Init_Internal.  When "NESTED_ELLIPSIS" is set, this isn't
+	needed because multi-dimensional iterators can be initialised with the new
+	"{{0, 1, ...), ...}" feature.  In that case "I@ = 0" is called as a "void"
+	function that does nothing but ends in a semi-colon ("I@" is used a lot in
+	YSI as a "do nothing" enabler).
 
 native Iter_Init(IteratorArray:Name[]<>);
 
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iter_Init(%0) Iter_Init_Internal(F@r(Iterator@%0),F@r(Iterator@%0)[0],F@s(Iterator@%0),F@s(Iterator@%0[]),F@r(Iter_Init@%0))
+#if defined NESTED_ELLIPSIS
+	#define Iter_Init(%0) (I@=0)
+#else
+	#define Iter_Init(%0) Iter_Init_Internal(F@r(Iterator@%0),F@r(Iterator@%0)[0],F@s(Iterator@%0),F@s(Iterator@%0[]),F@r(Iter_Init@%0))
+#endif
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_Add</summary>
@@ -394,6 +386,25 @@ native Iter_Free(Iterator:Name<>);
 #define Iter_Free_InternalB(%0,%2,%1) Iter_Free_Internal(%1,F@s(%1)-F@s(%0))
 
 /**--------------------------------------------------------------------------**\
+<summary>Iter_FreeMulti</summary>
+<param name="iter">Name of the multi-iterator to get the first free slot in.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Wrapper for Iter_FreeMulti_Internal.  Returns a slot NOT in the current
+	multi-iterator.
+
+native Iter_FreeMulti(Iterator:Name<>);
+
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Iter_FreeMulti _ITER<FreeMulti>
+#define Iter_FreeMulti_InternalA(%0,%1)    Iter_FreeMulti_Internal(%1,F@s(%1),F@s(%1)-F@s(%0))
+#define Iter_FreeMulti_InternalB(%0,%2,%1) Iter_FreeMulti_Internal(%1,F@s(%1),F@s(%1)-F@s(%0))
+
+/**--------------------------------------------------------------------------**\
 <summary>Iter_Contains</summary>
 <param name="iter">Name of the iterator to check membership of.</param>
 <param name="value">Value to check.</param>
@@ -403,7 +414,7 @@ native Iter_Free(Iterator:Name<>);
 <remarks>
 	Checks if the given value is in the given iterator.
 
-native Iter_Remove(Iterator:Name<>, value);
+native Iter_Contains(Iterator:Name<>, value);
 
 </remarks>
 \**--------------------------------------------------------------------------**/
@@ -412,6 +423,25 @@ native Iter_Remove(Iterator:Name<>, value);
 #define Iter_Contains_InternalA(%0,%1,%9)     Iter_Contains_InternalC(%1,F@s(%1)-F@s(%0),%9)
 #define Iter_Contains_InternalB(%0,%2,%1,%9)  Iter_Contains_InternalD(%0[%2],%1,F@s(%1)-F@s(%0),%9,-%2+F@s(%1)-1)
 #define Iter_Contains_InternalD(%0,%1,%2,%3,-+%8) Iter_Contains_InternalC(%1,%2,%3)
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_GetMulti</summary>
+<param name="iter">Name of the iterator to check membership of.</param>
+<param name="value">Value to check.</param>
+<returns>
+	Index in which the value is contained in the multi-iterator.
+</returns>
+<remarks>
+	Checks if the given value is in the given iterator, and if it is return which index it is contained.
+
+native Iter_GetMulti(Iterator:Name<>, value);
+
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Iter_GetMulti _ITER<GetMulti>
+#define Iter_GetMulti_InternalA(%0,%1,%9)    Iter_GetMulti_Internal(%1,F@s(%1),F@s(%1)-F@s(%0),%9)
+#define Iter_GetMulti_InternalB(%0,%2,%1,%9) Iter_GetMulti_Internal(%1,F@s(%1),F@s(%1)-F@s(%0),%9)
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_SafeRemove</summary>
@@ -769,7 +799,11 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 // Detect array declarations: "Iterator:X[20]<4>", "Iterator:X<10, 4>", and the
 // frankly silly "Iterator:X[20]<10, 4>".
 #define F@c:F@d:((%0,%1)+1)]%2$,Iter_Single@%9$%7$ F@d:((%0)+(%1))]={0,1,...}F@a$,Iter_Multi@%9$[%0]%7$
-#define F@d:%0]%2$,Iter_%8@%9[%3$%7$ %0],Iter_%8@%9[%3$%7$,F@g(Iter_Init@%9,)=F@s(Iter_%8@%9[%3$)
+#if defined NESTED_ELLIPSIS
+	#define F@d:%0]%2$,Iter_%8@%9[%3$%7$ %0]={{0,1,...},...},Iter_%8@%9[%3$%7$
+#else
+	#define F@d:%0]%2$,Iter_%8@%9[%3$%7$ %0],Iter_%8@%9[%3$%7$,F@g(Iter_Init@%9,)=F@s(Iter_%8@%9[%3$)
+#endif
 
 // Special "sizeof" that strips subscripts.  "|||" prevents "sizeof" recursion.
 #define F@e:%0|||(%1[%2]%3|||%4)) F@e:%0|||(%1%3|||%4[]))
@@ -926,6 +960,29 @@ stock Iter_Free_Internal(array[], size)
 }
 
 /**--------------------------------------------------------------------------**\
+<summary>Iter_FreeMulti_Internal</summary>
+<param name="array[]">multi-iterator data.</param>
+<param name="trueSize">Size of the multi-iterator.</param>
+<param name="start">End [?, since start points are backwards] of the multi-iterator.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Finds the first free multi index in the multi-iterator.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Iter_FreeMulti_Internal(array[], trueSize, start)
+{
+    for (new i = 0; trueSize-- > start; ++i)
+    {
+        if (array[trueSize] >= start)
+            return i;
+    }
+    return -1;
+}
+
+/**--------------------------------------------------------------------------**\
 <summary>Iter_AddInternal</summary>
 <param name="&start">Array start index.</param>
 <param name="&count">Number of items in the iterator.</param>
@@ -1036,8 +1093,9 @@ stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
 		return
 			--count,
 			last = (array[(value - 1) % size] - 1) % size,
-			array[((array[last] = array[value]) - 1) % size] = (last + 1) % size,
-			array[value] = value;
+			array[last] = array[value],
+			array[value] = value,
+			array[(array[last] - 1) % size] = (last + 1) % size;
 	}
 	return cellmin;
 }
@@ -1101,6 +1159,33 @@ stock Iter_Contains_InternalD(count, array[], size, value, start)
 		}
 	}
 	return 0;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_GetMulti_Internal</summary>
+<param name="array[]">multi-iterator data.</param>
+<param name="trueSize">Size of the multi-iterator per index.</param>
+<param name="size">Size of the multi-iterator.</param>
+<param name="value">Item to check.</param>
+<returns>
+	-1 on failure.
+	Index of the multi-iterator the value is contained.
+</returns>
+<remarks>
+	Checks if this item is in the multi-iterator at all, and if it is returns which index it is in.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Iter_GetMulti_Internal(array[], trueSize, size, value)
+{
+    if (0 <= value < size && array[value] > value)
+    {
+        // Find the end of this list.
+        while ((value = array[value]) < size) {}
+        // Start points are actually backwards.
+        return trueSize - value - 1;
+    }
+    return -1;
 }
 
 /**--------------------------------------------------------------------------**\

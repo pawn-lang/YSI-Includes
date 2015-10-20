@@ -240,7 +240,7 @@ mhook OnPlayerConnect(playerid)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-Class_Spawn(playerid)
+stock Class_Spawn(playerid)
 {
 	TogglePlayerSpectating(playerid, true);
 	PlayerSpectatePlayer(playerid, playerid, SPECTATE_MODE_NORMAL);
@@ -249,7 +249,7 @@ Class_Spawn(playerid)
 	SetCameraBehindPlayer(playerid);
 }
 
-Class_ShowHold(playerid)
+stock Class_ShowHold(playerid)
 {
 	SpawnPlayer(playerid);
 	YSI_g_sPlayerFlags[playerid] |= e_SPAWN_FLAGS_HELD;
@@ -258,7 +258,7 @@ Class_ShowHold(playerid)
 	//ForceClassSelection(playerid);
 }
 
-Class_HideHold(playerid)
+stock Class_HideHold(playerid)
 {
 	YSI_g_sPlayerFlags[playerid] &= ~e_SPAWN_FLAGS_HELD;
 	TogglePlayerSpectating(playerid, false);

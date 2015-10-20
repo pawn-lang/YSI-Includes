@@ -217,7 +217,7 @@ forward bool:INI_Flush();
 #define INI_IsValid(%0) (0 <= _:(%0) < INI_MAX_WRITES && YSI_g_sINIWriteFile[(%0)][0])
 
 #define INI_WriteComments()        \
-		fwrite(buffer, " ; "),     \
+		fwrite(buffer, ";"),     \
 		fwrite(buffer, sLine[p2s])
 
 #define INI_IsDeleted(%0) ((%0) != -1 && YSI_g_sINITagBuffer[(%0)][E_INI_TAGS_START] == cellmax)
@@ -879,8 +879,8 @@ static stock bool:INI_WriteBuffer(INI:file)
 		{
 			case e_INI_LINE_TYPE_INVALID:
 				P:I("Invalid line in INI file \"%s\": %s", YSI_g_sINIWriteFile[file], sLine);
-			case e_INI_LINE_TYPE_BLANK:
-				if (!deleted && p2s != p2e) fwrite(buffer, sLine);
+			case e_INI_LINE_TYPE_DATALESS:
+				if (!deleted) fwrite(buffer, sLine);
 			case e_INI_LINE_TYPE_TAG:
 			{
 				// Clean up the previous tag.
@@ -915,10 +915,11 @@ static stock bool:INI_WriteBuffer(INI:file)
 					{
 						if (!strcmp(sLine[p0s], YSI_g_sINIWriteBuffer[curSlot][E_INI_KV_ENTRY_NAME], true, p0e))
 						{
-							sLine[p1s] = '\0',
-							fwrite(buffer, sLine),
+							fwrite(buffer, YSI_g_sINIWriteBuffer[curSlot][E_INI_KV_ENTRY_NAME]),
+							fwrite(buffer, " = "),
 							fwrite(buffer, YSI_g_sINIWriteBuffer[curSlot][E_INI_KV_ENTRY_TEXT]);
 							// Write the end bits.
+
 							if (p2s != p2e) INI_WriteComments();
 							else fwrite(buffer, INI_NEW_LINE);
 							break;

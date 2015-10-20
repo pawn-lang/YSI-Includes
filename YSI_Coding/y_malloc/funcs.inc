@@ -768,7 +768,8 @@ stock Alloc:calloc(size)
 			new
 				slot = YSI_g_sUnusedStart,
 				p = YSI_g_sHeapStart, // Was "0", now an offset to the heap.
-				cs;
+				cs,
+				nextSlot = 0;
 			#if _DEBUG > 3
 				#emit LCTRL         2
 				#emit STOR.S.alt    cs
@@ -790,6 +791,8 @@ stock Alloc:calloc(size)
 			}
 			if (slot)
 			{
+				nextSlot = Malloc_NextSlot(slot);
+
 				if (cs == size + 1)
 				{
 					size++;
@@ -802,11 +805,11 @@ stock Alloc:calloc(size)
 				{
 					if (p == YSI_g_sHeapStart)
 					{
-						YSI_g_sUnusedStart = Malloc_NextSlot(slot);
+						YSI_g_sUnusedStart = nextSlot;
 					}
 					else
 					{
-						Malloc_SetData(Alloc:p, 0, Malloc_NextSlot(slot));
+						Malloc_SetData(Alloc:p, 0, nextSlot);
 					}
 				}
 				else
@@ -823,7 +826,7 @@ stock Alloc:calloc(size)
 					{
 						Malloc_SetData(Alloc:p, 0, size);
 					}
-					Malloc_SetData(Alloc:size, 0, Malloc_NextSlot(slot));
+					Malloc_SetData(Alloc:size, 0, nextSlot);
 					Malloc_SetSlotSize(size, cs);
 				}
 				return Alloc:slot;

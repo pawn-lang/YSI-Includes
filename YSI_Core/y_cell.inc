@@ -550,6 +550,170 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
+/**--------------------------------------------------------------------------**\
+<summary>
+	Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5]);
+</summary>
+<param name="x">The number to compress.</param>
+<param name="m">The mask for which bits to compress.</param>
+<param name="masks">Precomputed constants for the compression.</param>
+<returns>
+	Selected bits from "x", shifted to be LSBs.
+</returns>
+<remarks>
+	Very briefly, do "x & m", to select certain bits, then shift those bits by
+	various amounts so that they are consecutive:
+	
+		x = 0b110011
+		m = 0b011010
+		
+		x & m = 0b010010
+		
+	From here, because the mask was three bits we know we want just those three
+	bits in the LSBs, so the answer becomes:
+	
+		0b000101
+	
+	Just read this question, it has a diagram:
+	
+	http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb
+	
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
+{
+	new t;
+	return
+		x = x & m,
+		t = x & masks[0], x = x ^ t | (t >>>  1),
+		t = x & masks[1], x = x ^ t | (t >>>  2),
+		t = x & masks[2], x = x ^ t | (t >>>  4),
+		t = x & masks[3], x = x ^ t | (t >>>  8),
+		t = x & masks[4],     x ^ t | (t >>> 16);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>
+	Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
+</summary>
+<param name="x">The number to expand.</param>
+<param name="m">The mask for which bits to expand to.</param>
+<param name="masks">Precomputed constants for the expansion.</param>
+<returns>
+	LSBs from "x", shifted to selected bit positions.
+</returns>
+<remarks>
+	The reverse of "Cell_CompressRightPrecomputed".  Doesn't return exactly the
+	original number before a compression, just the original number ANDed with
+	the mask "m".
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
+{
+	new t;
+	return
+		t = x << 16, x = (((x ^ t) & masks[4]) ^ x),
+		t = x <<  8, x = (((x ^ t) & masks[3]) ^ x),
+		t = x <<  4, x = (((x ^ t) & masks[2]) ^ x),
+		t = x <<  2, x = (((x ^ t) & masks[1]) ^ x),
+		t = x <<  1, m & (((x ^ t) & masks[0]) ^ x);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>
+	Cell_PrecomputeMaskPermutation(m)
+</summary>
+<param name="m">The mask.</param>
+<returns>
+	Five precomputed constants to help expand or contract this mask.
+</returns>
+<remarks>
+	The full maths for generalised expansion and contraction is quite complex;
+	however, much of the inner loop relies only on the mask and not on the value
+	being manipulated.  Given this we can do a lot of work in advance, say
+	outside a loop, to avoid repeated calculations.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Cell_PrecomputeMaskPermutation(m)
+{
+	// See also: http://www.hackersdelight.org/hdcodetxt/compress.c.txt
+	new
+		mk = ~m << 1,
+		mp,
+		mv,
+		masks[5];
+	// We will count 0's to right.
+	for (new i = 0; i != 5; ++i)
+	{
+		// Parallel prefix.
+		mp = mk ^ (mk <<  1),
+		mp = mp ^ (mp <<  2),
+		mp = mp ^ (mp <<  4),
+		mp = mp ^ (mp <<  8),
+		mp = mp ^ (mp << 16),
+		// Bits to move.
+		masks[i] = mv = mp & m,
+		// Compress m.
+		m = m ^ mv | (mv >>> (1 << i)),
+		mk = mk & ~mp;
+	}
+	return masks;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>
+	Cell_CompressRight(GLOBAL_TAG_TYPES:x, m);
+</summary>
+<param name="x">The number to compress.</param>
+<param name="m">The mask for which bits to compress.</param>
+<returns>
+	Selected bits from "x", shifted to be LSBs.
+</returns>
+<remarks>
+	Doesn't require precomputation.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Cell_CompressRight(GLOBAL_TAG_TYPES:x, m)
+{
+	// Compress the result so that all the masked bits are next to each other,
+	// regardless of their value.
+	// 
+	// http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb
+	// Also Hackers Delight, section 7-4.
+	// 
+	return Cell_CompressRightPrecomputed(x, m, Cell_PrecomputeMaskPermutation(m));
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>
+	Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
+</summary>
+<param name="x">The number to expand.</param>
+<param name="m">The mask for which bits to expand to.</param>
+<returns>
+	LSBs from "x", shifted to selected bit positions.
+</returns>
+<remarks>
+	Doesn't require precomputation.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
+{
+	// Compress the result so that all the masked bits are next to each other,
+	// regardless of their value.
+	// 
+	// http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb
+	// Also Hackers Delight, section 7-5 (2nd edition only, which it turns out I
+	// don't have...)
+	// 
+	return Cell_ExpandLeftPrecomputed(x, m, Cell_PrecomputeMaskPermutation(m));
+}
+
 #if defined YSI_TESTS
 	#include "..\YSI_Core\y_testing"
 	#include "y_cell/tests"

@@ -99,7 +99,7 @@ Changelog:
 enum E_HOOK_NAME_REPLACEMENT_DATA
 {
 	E_HOOK_NAME_REPLACEMENT_SHORT[4],
-	E_HOOK_NAME_REPLACEMENT_LONG[11],
+	E_HOOK_NAME_REPLACEMENT_LONG[16],
 	E_HOOK_NAME_REPLACEMENT_MIN,
 	E_HOOK_NAME_REPLACEMENT_LEN
 }
@@ -145,19 +145,30 @@ HOOK_RET:OnRconCommand()
 	return 0;
 }
 
+#if !defined MAX_HOOK_REPLACEMENTS
+    #define MAX_HOOK_REPLACEMENTS (16)
+#endif
+
+// Generate a function name using only ONE of the parts, so two replacements for
+// the same long name will collide at compile-time
+#define DEFINE_HOOK_REPLACEMENT(%0,%1); forward @_yH%0(); public @_yH%0() { _Hooks_AddReplacement(#%0, #%1); }
+
+// Strip spaces from the generated function name.
+#define @_yH%0\32;%1(%2) @_yH%0%1(%2)
+
+// Create the default replacements.
+DEFINE_HOOK_REPLACEMENT(Checkpoint, CP );
+DEFINE_HOOK_REPLACEMENT(Container , Cnt);
+DEFINE_HOOK_REPLACEMENT(Inventory , Inv);
+DEFINE_HOOK_REPLACEMENT(Dynamic   , Dyn);
+DEFINE_HOOK_REPLACEMENT(TextDraw  , TD );
+DEFINE_HOOK_REPLACEMENT(Update    , Upd);
+DEFINE_HOOK_REPLACEMENT(Object    , Obj);
+DEFINE_HOOK_REPLACEMENT(Command   , Cmd);
+
 static stock
-	YSI_g_sReplacements[][E_HOOK_NAME_REPLACEMENT_DATA] =
-		{
-			{"CP",  "Checkpoint", 2, 10},
-			// For "SIF".
-			{"Cnt", "Container",  3, 9},
-			{"Inv", "Inventory",  3, 9},
-			{"Dyn", "Dynamic",    3, 7},
-			{"TD",  "TextDraw",   2, 8},
-			{"Upd", "Update",     3, 6},
-			{"Obj", "Object",     3, 6},
-			{"Cmd", "Command",    3, 7}
-		};
+    YSI_g_sReplacements[MAX_HOOK_REPLACEMENTS][E_HOOK_NAME_REPLACEMENT_DATA],
+    YSI_g_sReplacePtr;
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_MakeLongName</summary>
@@ -177,7 +188,7 @@ stock Hooks_MakeLongName(name[64])
 		len,
 		i = 0,
 		pos = -1;
-	while (i != sizeof (YSI_g_sReplacements))
+	while (i != YSI_g_sReplacePtr)
 	{
 		if ((pos = strfind(name, YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_SHORT], false, pos + 1)) != -1)
 		{
@@ -227,7 +238,7 @@ stock Hooks_MakeShortName(name[64])
 				strins(name, YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_SHORT], pos);
 			}
 		}
-		while ((len = strlen(name)) >= 32 && ++i != sizeof (YSI_g_sReplacements));
+		while ((len = strlen(name)) >= 32 && ++i != YSI_g_sReplacePtr);
 	}
 	return len;
 }
@@ -1096,12 +1107,42 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
+// New stuff.
+stock _Hooks_AddReplacement(const longName[], const shortName[])
+{
+    // MAY need to strip spaces off the input strings, but I don't think so.
+    if (YSI_g_sReplacePtr == MAX_HOOK_REPLACEMENTS)
+    {
+        P:E("Insufficient space in the replacements table.");
+        return;
+    }
+    strcpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_SHORT], shortName, 4),
+    strcpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_LONG] , longName , 16),
+    YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_MIN] = strlen(shortName),
+    YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_LEN] = strlen(longName),
+    ++YSI_g_sReplacePtr;
+}
+
 public OnScriptInit()
 {
 	P:1("Hooks_OnScriptInit called");
 	state _ALS : _ALS_go;
+	// Get the replacements.
+	new
+		idx,
+		ptr;
+	// Loop over the redefinition functions and call them to have them call the
+	// "_Hooks_AddReplacement" function above.  If we were being REALLY clever,
+	// these functions could be removed from the public functions table
+	// afterwards (there is already code in y_hooks for this) to reduce is size.
+	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@_yH>)))
+	{
+		// From "amx\dynamic_call.inc" - check it is included in "y_hooks.inc".
+		CallFunction(ptr);
+	}
 	Hooks_DoAllHooks();
 	P:1("Hooks_OnScriptInit chain");
+	// Dump the generated callbacks for debugging.
 	//DisasmDump("YSI_TEST.asm");
 	HookChain_OnScriptInit();
 	P:1("Hooks_OnScriptInit end");

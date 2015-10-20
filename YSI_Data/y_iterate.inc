@@ -218,7 +218,7 @@ Iterators:
 */
 
 // "y_iterate" is always higher than "foreach".
-#define _Y_ITERATE_LOCAL_VERSION        40
+#define _Y_ITERATE_LOCAL_VERSION        41
 
 #if __Pawn != 0x030A
 	#define NO_CUSTOM_WARNINGS
@@ -266,11 +266,110 @@ Iterators:
 	#define PS_IS_PLAYER_CONNECTED IsPlayerConnected
 #endif
 
+// 
+// _FOREACH_BOTS
+// 
+// Should the "NPC", "Bot", and "Character" iterators be included by default?
+// Disabled by declaring "FOREACH_NO_BOTS".
+// 
+
+#define _FOREACH_BOTS 0
+
+#if defined IsPlayerNPC
+	#define _FOREACH_BOT
+	#if !defined FOREACH_NO_BOTS
+		#undef _FOREACH_BOTS
+		#define _FOREACH_BOTS 1
+	#endif
+#endif
+
+// 
+// _FOREACH_LOCALS
+// 
+// Should the "LocalActor" and "LocalVehicle" iterators be included?  These only
+// loop through ones created by the current script, instead of through ones
+// created in any script.
+// 
+
+#define _FOREACH_LOCALS 1
+
+#if defined SendChat || defined FOREACH_NO_LOCALS
+	#undef _FOREACH_LOCALS
+	#define _FOREACH_LOCALS 0
+#endif
+
+// 
+// _FOREACH_VEHICLES
+// 
+// Should the "Vehicle" iterator be included?  "Vehicle" loops over all vehicles
+// created on the server, "LocalVehicle" iterates over vehicles created only in
+// the current script.  They are the same when "YSI_NO_MASTER" is declared.
+// Disabled by declaring "FOREACH_NO_VEHICLES".
+// 
+
+#define _FOREACH_VEHICLES 1
+
+#if defined SendChat || defined FOREACH_NO_VEHICLES
+	#undef _FOREACH_VEHICLES
+	#define _FOREACH_VEHICLES 0
+#endif
+
+// 
+// _FOREACH_ACTORS
+// 
+// Should the "Actor" iterator be included?  "Actor" loops over all actors
+// created on the server, "LocalActor" iterates over actors created only in the
+// current script.  They are the same when "YSI_NO_MASTER" is declared.
+// Disabled by declaring "FOREACH_NO_ACTORS".
+// 
+
+#define _FOREACH_ACTORS 0
+
+#if defined GetActorPos
+	#if !defined FOREACH_NO_ACTORS
+		#undef _FOREACH_ACTORS
+		#define _FOREACH_ACTORS 1
+	#endif
+#endif
+
+// 
+// _FOREACH_PLAYERS
+// 
+// Should the "Player" iterator be included?  If "_FOREACH_BOTS" is set, the
+// "Player" iterator only loops over human players, "NPC" and "Bot" loop over
+// computer players, and "Character" loops over them all.  If "_FOREACH_BOTS" is
+// not set, then the "Player" iterator loops over every player in the server,
+// the same as "Character" would do otherwise, since it has no way to know if a
+// player is human or not.  Disabled by declaring "FOREACH_NO_PLAYERS".
+// 
+
+#define _FOREACH_PLAYERS 1
+
+#if defined SendChat || defined FOREACH_NO_PLAYERS
+	#undef _FOREACH_PLAYERS
+	#define _FOREACH_PLAYERS 0
+#endif
+
+// 
+// _FOREACH_CHARACTERS
+// 
+// Bot or Player iterators included.
+// 
+
+#define _FOREACH_CHARACTERS (_FOREACH_BOTS || _FOREACH_PLAYERS)
+
+#if !defined BOTSYNC_IS_BOT
+	forward Iter_OPDCInternal(playerid);
+#endif
+
 #include "..\YSI_Internal\y_natives"
 #include "..\YSI_Internal\y_shortfunc"
+#include "..\YSI_Internal\y_compilerpass"
 #include "..\YSI_Core\y_debug"
 
 #include "y_foreach/impl"
+#include "..\YSI_Coding\y_hooks"
+#include "..\YSI_Coding\y_remote"
 #include "y_foreach/iterators"
 
 #if defined YSI_TESTS
