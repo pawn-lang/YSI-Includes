@@ -312,7 +312,7 @@ stock printfex(const format[], GLOBAL_TAG_TYPES:...)
 	strcpy(sFormat, format);
 	Format_Standardise(sFormat, sTemp);
 	new
-		n = (numargs() - 3) * 4;
+		n = (numargs() - 1) * 4;
 	if (n)
 	{
 		// Push all passed parameters.
