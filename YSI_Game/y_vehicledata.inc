@@ -185,7 +185,7 @@ Iterators:
 #define Vehicle_IsTank(%0)       (_Vehicle_Is(Tank      , %0))
 #define Vehicle_IsFlowerpot(%0)  (_Vehicle_Is(Flowerpot , %0))
 #define Vehicle_IsTransport(%0)  (_Vehicle_Is(Transport , %0))
-#define Vehicle_IsShot(%0) 		 (_Vehicle_Is(Shot      , %0))
+#define Vehicle_IsArmed(%0) 		 (_Vehicle_Is(Armed      , %0))
 
 #define Model_GetCategory(%0)  VIM_GetCategory(Model_ToVIM((%0)))
 #define Model_IsValid(%0)      VIM_IsValid(Model_ToVIM((%0)))
@@ -215,7 +215,7 @@ Iterators:
 #define Model_IsTank(%0)       (_Model_Is(Tank      , %0))
 #define Model_IsFlowerpot(%0)  (_Model_Is(Flowerpot , %0))
 #define Model_IsTransport(%0)  (_Model_Is(Transport , %0))
-#define Model_IsShot(%0)       (_Model_Is(Shot      , %0))
+#define Model_IsArmed(%0)       (_Model_Is(Armed      , %0))
 
 #define VIM_GetCategory(%0)  (YSI_gVehicleFlags[(%0)] & e_VEHICLE_FLAGS_CATEGORY)
 #define VIM_IsValid(%0)      (YSI_gVehicleFlags[(%0)] != e_VEHICLE_FLAGS_NONE)
@@ -245,7 +245,7 @@ Iterators:
 #define VIM_IsTank(%0)       (_VIM_Is(Tank      , %0))
 #define VIM_IsFlowerpot(%0)  (_VIM_Is(Flowerpot , %0))
 #define VIM_IsTransport(%0)  (_VIM_Is(Transport , %0))
-#define VIM_IsShot(%0)       (_VIM_Is(Shot      , %0))
+#define VIM_IsArmed(%0)       (_VIM_Is(Armed      , %0))
 
 #define Vehicle_GetVIM(%0) (Model_ToVIM(GetVehicleModel((%0))))
 #define Model_ToVIM(%0) (VIM:(_Model_Validate(%0)))
@@ -317,7 +317,7 @@ enum e_VEHICLE_FLAGS (<<= 1)
 	e_VEHICLE_FLAGS_Tank,
 	e_VEHICLE_FLAGS_Flowerpot,
 	e_VEHICLE_FLAGS_Transport,
-	e_VEHICLE_FLAGS_Shot
+	e_VEHICLE_FLAGS_Armed
 }
 
 #define _VEHICLE_FLAGS<%0> e_VEHICLE_FLAGS_NONE| CAT_%0| END|
@@ -422,14 +422,14 @@ stock
 			_VEHICLE_FLAGS<Industrial  | Car       >,
 			_VEHICLE_FLAGS<Unique      | Van       >,
 			_VEHICLE_FLAGS<OffRoad     | Car       >,
-			_VEHICLE_FLAGS<Helicopter  | Helicopter | Weaponised | Military | Shot>,
+			_VEHICLE_FLAGS<Helicopter  | Helicopter | Weaponised | Military | Armed>,
 			_VEHICLE_FLAGS<Saloon      | Car       >,
 			_VEHICLE_FLAGS<Public      | Truck      | Police>,
 			_VEHICLE_FLAGS<Unique      | Truck     >,
 			_VEHICLE_FLAGS<Sport       | Car       >,
-			_VEHICLE_FLAGS<Boat        | Boat       | Weaponised | Police | Shot>,
+			_VEHICLE_FLAGS<Boat        | Boat       | Weaponised | Police | Armed>,
 			_VEHICLE_FLAGS<Public      | Transport >,
-			_VEHICLE_FLAGS<Public      | Weaponised | Military | Tank | Shot>,
+			_VEHICLE_FLAGS<Public      | Weaponised | Military | Tank | Armed>,
 			_VEHICLE_FLAGS<Public      | Truck      | Military>,
 			_VEHICLE_FLAGS<Unique      | Car       >,
 			_VEHICLE_FLAGS<Trailer     | Truck     >,
@@ -444,7 +444,7 @@ stock
 			_VEHICLE_FLAGS<OffRoad     | Car       >,
 			_VEHICLE_FLAGS<Saloon      | Car       >,
 			_VEHICLE_FLAGS<Boat        | Boat      >,
-			_VEHICLE_FLAGS<Helicopter  | Boat       | Helicopter | OnWater  | Shot>,
+			_VEHICLE_FLAGS<Helicopter  | Boat       | Helicopter | OnWater  | Armed>,
 			_VEHICLE_FLAGS<Bike        | Bike      >,
 			_VEHICLE_FLAGS<Unique      | Train     >,
 			_VEHICLE_FLAGS<Trailer     | Truck     >,
@@ -461,7 +461,7 @@ stock
 			_VEHICLE_FLAGS<Bike        | Bike      >,
 			_VEHICLE_FLAGS<Bike        | Bike      >,
 			_VEHICLE_FLAGS<Bike        | Bike      >,
-			_VEHICLE_FLAGS<RC          | Plane     | Shot>,
+			_VEHICLE_FLAGS<RC          | Plane     | Armed>,
 			_VEHICLE_FLAGS<RC          | Helicopter>,
 			_VEHICLE_FLAGS<Saloon      | Car       >,
 			_VEHICLE_FLAGS<Saloon      | Car       >,
@@ -473,7 +473,7 @@ stock
 			_VEHICLE_FLAGS<Boat        | Boat      >,
 			_VEHICLE_FLAGS<Saloon      | Car       >,
 			_VEHICLE_FLAGS<Sport       | Car       >,
-			_VEHICLE_FLAGS<Airplane    | Plane     | Shot>,
+			_VEHICLE_FLAGS<Airplane    | Plane     | Armed>,
 			_VEHICLE_FLAGS<Sport       | Car       >,
 			_VEHICLE_FLAGS<Industrial  | Car       >,
 			_VEHICLE_FLAGS<Station     | Car       >,
@@ -517,7 +517,7 @@ stock
 			_VEHICLE_FLAGS<Saloon      | Car       >,
 			_VEHICLE_FLAGS<Saloon      | Car       >,
 			_VEHICLE_FLAGS<Airplane    | Plane     >,
-			_VEHICLE_FLAGS<Airplane    | Plane      | Weaponised | Military | Shot>,
+			_VEHICLE_FLAGS<Airplane    | Plane      | Weaponised | Military | Armed>,
 			_VEHICLE_FLAGS<Bike        | Bike      >,
 			_VEHICLE_FLAGS<Bike        | Bike      >,
 			_VEHICLE_FLAGS<Public      | Bike       | Police>,
