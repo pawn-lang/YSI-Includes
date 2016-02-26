@@ -745,6 +745,60 @@ global Command_Find(string:cmd[])
 	return HashMap_Get(YSI_g_sCommandMap, sCmd);
 }
 
+
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_TouchNamed</summary>
+<param name="string:command[]">Command to "touch".</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Used within "GROUP_ADD" to quickly assign a load of commands to just one
+	group.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+foreign void:Command_TouchNamed(string:command[]);
+
+global void:Command_TouchNamed(string:command[])
+{
+	new
+		id = Command_Find(command);
+	if (id != COMMAND_NOT_FOUND)
+	{
+		NO_GROUPS(id)
+		{
+			return;
+		}
+	}
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Command_Touch</summary>
+<param name="string:command[]">Command to "touch".</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Used within "GROUP_ADD" to quickly assign a load of commands to just one
+	group.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+foreign void:Command_Touch(command);
+
+global void:Command_Touch(command)
+{
+	if (_Command_IsValid(command))
+	{
+		NO_GROUPS(command)
+		{
+			return;
+		}
+	}
+}
+
 /*
 
     88888888888                                                     db        88888888ba  88  
