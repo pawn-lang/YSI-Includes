@@ -289,6 +289,13 @@ stock Dialog_SetCallbackData(dialogid, callback[E_CALLBACK_DATA])
 	YSI_g_sDialogInfo[dialogid] = callback;
 }
 
+// xhunterx editing all day
+
+hook OnPlayerConnect(playerid) {
+    YSI_g_sPlayerDialog[playerid] = -1;
+    return 1;
+}
+
 // Need to somehow integrate this new dialogs library with the text library.
 
 hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
@@ -296,12 +303,21 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	P:1("Dialog_OnDialogResponse called: %d %d %d %d %s", playerid, dialogid, response, listitem, inputtext);
 	// Apparently there's a hack to alter this.
 	dialogid = Dialog_Get(playerid);
+    
 	P:5("Dialog_OnDialogResponse: dialog = %d", dialogid);
 	if (dialogid == -1)
 	{
 		return 0;
 	}
+	
 	P:5("Dialog_OnDialogResponse: master = %d, %d", YSI_g_sDialogMasters[dialogid], _@);
+	if(YSI_g_sDialogMasters[dialogid] == -1) {
+	    if(Master_Caller() == _@) {
+	    	SetTimerEx("DialogSetToNone", 0, false, "i", playerid);
+		}
+	    return 0;
+	}
+	
 	if (YSI_g_sDialogMasters[dialogid] != _@)
 	{
 		return 0;
@@ -335,6 +351,12 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	}
 	//Dialog_Set(playerid, -1);
 	return 0;
+}
+
+forward DialogSetToNone(playerid);
+public DialogSetToNone(playerid) {
+	Dialog_Set(playerid, -1);
+	return 1;
 }
 
 /*stock _ShowPlayerDialog(playerid, dialog, style, string:title[], string:caption[], string:button1[], string:button2[])
