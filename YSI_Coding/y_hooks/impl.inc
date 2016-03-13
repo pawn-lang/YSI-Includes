@@ -98,10 +98,10 @@ Changelog:
 
 enum E_HOOK_NAME_REPLACEMENT_DATA
 {
-	E_HOOK_NAME_REPLACEMENT_SHORT[4],
+	E_HOOK_NAME_REPLACEMENT_SHORT[16],
 	E_HOOK_NAME_REPLACEMENT_LONG[16],
 	E_HOOK_NAME_REPLACEMENT_MIN,
-	E_HOOK_NAME_REPLACEMENT_LEN
+	E_HOOK_NAME_REPLACEMENT_MAX
 }
 
 #if !defined CHAIN_ORDER
@@ -165,9 +165,12 @@ DEFINE_HOOK_REPLACEMENT(TextDraw  , TD );
 DEFINE_HOOK_REPLACEMENT(Update    , Upd);
 DEFINE_HOOK_REPLACEMENT(Object    , Obj);
 DEFINE_HOOK_REPLACEMENT(Command   , Cmd);
+DEFINE_HOOK_REPLACEMENT(DynamicCP , DynamicCP);
 
 static stock
     YSI_g_sReplacements[MAX_HOOK_REPLACEMENTS][E_HOOK_NAME_REPLACEMENT_DATA],
+	YSI_g_sReplacementsLongOrder[MAX_HOOK_REPLACEMENTS],
+	YSI_g_sReplacementsShortOrder[MAX_HOOK_REPLACEMENTS],
     YSI_g_sReplacePtr;
 
 /**--------------------------------------------------------------------------**\
@@ -185,24 +188,61 @@ static stock
 stock Hooks_MakeLongName(name[64])
 {
 	new
-		len,
+		end = 0,
 		i = 0,
-		pos = -1;
+		pos = -1,
+		idx = YSI_g_sReplacementsShortOrder[0];
 	while (i != YSI_g_sReplacePtr)
 	{
-		if ((pos = strfind(name, YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_SHORT], false, pos + 1)) != -1)
+		// Allow for multiple replacements of the same string.
+		if ((pos = strfind(name, YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_SHORT], false, pos + 1)) == -1)
 		{
-			// Try this same string again.  We may have found a different word.
-			if ('a' <= name[(len = pos + YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MIN])] <= 'z') continue;
-			else
+			++i,
+			idx = YSI_g_sReplacementsShortOrder[i];
+		}
+		// This assumes CamelCase.  If the letter immediately following the end
+		// of the string is lower-case, then the short word found is not a
+		// complete word and should not be replaced.
+		else if ('a' <= name[(end = pos + YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_MIN])] <= 'z')
+			continue;
+		else
+		{
+			P:5("Found hook name replacement: %d, %s", pos, YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_SHORT]);
+			// Found a complete word according to CamelCase rules.
+			strdel(name, pos + 1, end),
+			name[pos] = 0x80000000 | idx;
+		}
+	}
+	// All the replacements have been found and marked.  Now actually insert.
+	// If "end" is "0", it means that it was never assigned to within the loop
+	// above, which means that no replacements were found.
+	if (end)
+	{
+		// "pos" must be "-1" at the start of this loop.
+		while (name[++pos])
+		{
+			if (name[pos] < '\0')
 			{
-				// Found a complete word according to CamelCase rules.
-				strdel(name, pos, len),
-				strins(name, YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG], pos),
-				pos = -1;
+				// Negative number instead of a character.  Used to indicate
+				// where a replacement should be inserted.  They are not done
+				// inline in the loop above because some replacements may be
+				// contained within others - we don't want those to be both done
+				// within each other.
+				P:5("Inserting hook name replacement: %d, %s", pos, YSI_g_sReplacements[name[pos] & ~0x80000000][E_HOOK_NAME_REPLACEMENT_LONG]);
+				P:7("Current character: 0x%04x%04x", name[pos] >>> 16, name[pos] & 0xFFFF);
+				// It took me ages to find a bug in this code.  For some reason,
+				// "strins" was packing the result.  This was because the value
+				// in "name[pos]" was not a real character, so was seen as an
+				// indication that the string was packed.  I fixed it by moving
+				// the assignment to "name[pos]" above "strins".  So while the
+				// two lines look independent, they aren't!
+				i = name[pos] & ~0x80000000,
+				name[pos] = YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG],
+				strins(name, YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG + E_HOOK_NAME_REPLACEMENT_DATA:1], pos + 1),
+				pos += YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MAX] - 1;
+				P:7("New string: %s", name);
 			}
 		}
-		++i;
 	}
 	// It is possible for the expansions to become TOO big.
 	return Hooks_MakeShortName(name);
@@ -224,21 +264,21 @@ stock Hooks_MakeShortName(name[64])
 {
 	// Easy one.
 	new
-		len = strlen(name);
-	if (len >= 32)
+		len,
+		pos = -1,
+		idx = YSI_g_sReplacementsLongOrder[0];
+	for (new i = 0; (len = strlen(name)) >= 32 && i != YSI_g_sReplacePtr; )
 	{
-		new
-			pos,
-			i = 0;
-		do
+		if ((pos = strfind(name, YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_LONG], false, pos + 1)) == -1)
 		{
-			if ((pos = strfind(name, YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG])) != -1)
-			{
-				strdel(name, pos, pos + YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LEN]),
-				strins(name, YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_SHORT], pos);
-			}
+			++i,
+			idx = YSI_g_sReplacementsLongOrder[i];
 		}
-		while ((len = strlen(name)) >= 32 && ++i != YSI_g_sReplacePtr);
+		else
+		{
+			strdel(name, pos, pos + YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_MAX]),
+			strins(name, YSI_g_sReplacements[idx][E_HOOK_NAME_REPLACEMENT_SHORT], pos);
+		}
 	}
 	return len;
 }
@@ -286,42 +326,46 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 
 _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precount, size = sizeof (preloads))
 {
-	new
-		first = 0,
-		idx = 0,
-		last = -8;
 	--size,
-	precount = 0,
-	AMX_GetPublicEntryPrefix(0, first, _A<@CO_>);
-	while ((idx = AMX_GetPublicEntryPrefix(idx, last, _A<@CO_>))) {}
-	for (new i = first; i <= last; i += 8)
+	precount = 0;
+	new
+		entry,
+		idx;
 	{
-		if (precount == size)
-		{
-			P:E("y_hooks prehook array filled");
-			break;
-		}
 		new
-			name[32],
-			addr = AMX_Read(i);
-		AMX_ReadString(AMX_Read(i + 4) + AMX_BASE_ADDRESS + 4, name),
-		strunpack(preloads[precount][E_PRE_HOOK_NAME], name, 32),
-		preloads[precount][E_PRE_HOOK_VALUE] = CallFunction(addr),
-		++precount;
+			name[32 char],
+			addr;
+		while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@CO_>)))
+		{
+			if (precount == size)
+			{
+				P:E("y_hooks prehook array filled");
+				break;
+			}
+			addr = AMX_Read(entry);
+			AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS + 4, name),
+			strunpack(preloads[precount][E_PRE_HOOK_NAME], name, 16),
+			preloads[precount][E_PRE_HOOK_VALUE] = CallFunction(addr),
+			++precount;
+			// Remove this public from the publics table.  Means that future public
+			// function calls will be faster by having a smaller search space.
+			Hooks_InvalidateName(entry);
+		}
 	}
 	// Sort the preload libraries.
-	for (new i = 0, tmp[E_PRE_HOOK]; i != precount; ++i)
 	{
-		for (new j = i + 1; j != precount; ++j)
+		new
+			tmp[E_PRE_HOOK];
+		for (entry = precount - 1; entry > 0; --entry)
 		{
-			// This neatly moves all the functions with blanked names to the
-			// start of the public functions table (which will soon be moved).
-			Hooks_ComparePublics(i, j);
-			if (preloads[i][E_PRE_HOOK_VALUE] > preloads[j][E_PRE_HOOK_VALUE])
+			for (idx = 0; idx != entry; ++idx)
 			{
-				tmp = preloads[i],
-				preloads[i] = preloads[j],
-				preloads[j] = tmp;
+				if (preloads[idx][E_PRE_HOOK_VALUE] > preloads[idx + 1][E_PRE_HOOK_VALUE])
+				{
+					tmp = preloads[idx],
+					preloads[idx] = preloads[idx + 1],
+					preloads[idx + 1] = tmp;
+				}
 			}
 		}
 	}
@@ -1047,13 +1091,13 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 	// that.  Fortunately I don't actually need to move the strings themselves
 	// around as they just sit nicely in the nametable; I only need to sort the
 	// pointers.
-	for (new i = 0; i != oldCount; ++i)
+	for (new i = oldCount - 1; i > 0; --i)
 	{
-		for (new j = i + 1; j != oldCount; ++j)
+		for (new j = 0; j != i; ++j)
 		{
 			// This neatly moves all the functions with blanked names to the
 			// start of the public functions table (which will soon be moved).
-			Hooks_ComparePublics(i, j);
+			Hooks_ComparePublics(j, j + 1);
 		}
 	}
 	// Move the start address UP to reduce the VM's search space.
@@ -1090,9 +1134,7 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 		count;
 	// Search for functions whose names start with nothing.
 	while ((idx = AMX_GetPublicEntryPrefix(idx, buf, 0)))
-	{
 		++count;
-	}
 	P:4("Hooks_CountInvalidPublics: Invalid = %d", count);
 	return count;
 }
@@ -1116,12 +1158,69 @@ stock _Hooks_AddReplacement(const longName[], const shortName[])
         P:E("Insufficient space in the replacements table.");
         return;
     }
-    strcpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_SHORT], shortName, 4),
+    strcpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_SHORT], shortName, 16),
     strcpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_LONG] , longName , 16),
     YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_MIN] = strlen(shortName),
-    YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_LEN] = strlen(longName),
+    YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_MAX] = strlen(longName),
+	YSI_g_sReplacementsLongOrder[YSI_g_sReplacePtr] = YSI_g_sReplacePtr,
+	YSI_g_sReplacementsShortOrder[YSI_g_sReplacePtr] = YSI_g_sReplacePtr,
     ++YSI_g_sReplacePtr;
 }
+
+/**--------------------------------------------------------------------------**\
+<summary>Hooks_SortReplacements</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Once all the replacement strings have been found, sort them by the length of
+	the short versions of the strings.  This is so that the longest (and special
+	case, e.g. "DynamicCP"-> "DynamicCP") replacements are always done first.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+static stock Hooks_SortReplacements()
+{
+	new
+		idx0,
+		idx1,
+		temp;
+	for (new i = YSI_g_sReplacePtr - 1; i > 0; --i)
+	{
+		for (new j = 0; j != i; ++j)
+		{
+			// Sort the strings in order of their short replacement.
+			idx0 = YSI_g_sReplacementsShortOrder[j],
+			idx1 = YSI_g_sReplacementsShortOrder[j + 1];
+			if (YSI_g_sReplacements[idx0][E_HOOK_NAME_REPLACEMENT_MIN] < YSI_g_sReplacements[idx1][E_HOOK_NAME_REPLACEMENT_MIN])
+			{
+				temp = YSI_g_sReplacementsShortOrder[j],
+				YSI_g_sReplacementsShortOrder[j] = YSI_g_sReplacementsShortOrder[j + 1],
+				YSI_g_sReplacementsShortOrder[j + 1] = temp;
+			}
+			// Sort the strings in order of their long replacement.
+			idx0 = YSI_g_sReplacementsLongOrder[j],
+			idx1 = YSI_g_sReplacementsLongOrder[j + 1];
+			if (YSI_g_sReplacements[idx0][E_HOOK_NAME_REPLACEMENT_MAX] < YSI_g_sReplacements[idx1][E_HOOK_NAME_REPLACEMENT_MAX])
+			{
+				temp = YSI_g_sReplacementsLongOrder[j],
+				YSI_g_sReplacementsLongOrder[j] = YSI_g_sReplacementsLongOrder[j + 1],
+				YSI_g_sReplacementsLongOrder[j + 1] = temp;
+			}
+		}
+	}
+	P:C(for (new i = 0 ; i != YSI_g_sReplacePtr; ++i) P:0("Hook Replacement: %d, %d, %s, %s", YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MIN], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MAX], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_SHORT], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG]););
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>OnScriptInit</summary>
+<returns>
+	-
+</returns>
+<remarks>
+	Call the main hook run code, then advance the ALS chain.
+</remarks>
+\**--------------------------------------------------------------------------**/
 
 public OnScriptInit()
 {
@@ -1130,16 +1229,18 @@ public OnScriptInit()
 	// Get the replacements.
 	new
 		idx,
-		ptr;
+		entry;
 	// Loop over the redefinition functions and call them to have them call the
 	// "_Hooks_AddReplacement" function above.  If we were being REALLY clever,
 	// these functions could be removed from the public functions table
 	// afterwards (there is already code in y_hooks for this) to reduce is size.
-	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@_yH>)))
+	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@_yH>)))
 	{
 		// From "amx\dynamic_call.inc" - check it is included in "y_hooks.inc".
-		CallFunction(ptr);
+		CallFunction(AMX_Read(entry));
+		Hooks_InvalidateName(entry);
 	}
+	Hooks_SortReplacements();
 	Hooks_DoAllHooks();
 	P:1("Hooks_OnScriptInit chain");
 	// Dump the generated callbacks for debugging.
