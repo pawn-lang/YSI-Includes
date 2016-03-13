@@ -130,10 +130,6 @@ Test:y_hooks_Ony_hooksTest5()
 	YSI_g_sValue = 0;
 }
 
-
-
-
-
 static stock y_hooks_funcidx2(str[])
 {
 	new
@@ -297,7 +293,6 @@ Test:y_hooks_SpecialCases()
 	ASSERT(g_y_hooksVar == 110);
 }
 
-
 Test:Hooks_MakeLongName0()
 {
 	new
@@ -335,6 +330,9 @@ Test:Hooks_MakeLongName1()
 	name = "Cmd";
 	ASSERT(Hooks_MakeLongName(name) == 7);
 	ASSERT(!strcmp(name, "Command"));
+	name = "DynamicCP";
+	ASSERT(Hooks_MakeLongName(name) == 9);
+	ASSERT(!strcmp(name, "DynamicCP"));
 }
 
 Test:Hooks_MakeLongName2()
@@ -362,6 +360,9 @@ Test:Hooks_MakeShortName1()
 	name = "OnPlayerEnterRaceCheckpoint";
 	ASSERT(Hooks_MakeShortName(name) == 27);
 	ASSERT(!strcmp(name, "OnPlayerEnterRaceCheckpoint"));
+	name = "OnPlayerEnterDynamicCP";
+	ASSERT(Hooks_MakeShortName(name) == 22);
+	ASSERT(!strcmp(name, "OnPlayerEnterDynamicCP"));
 	name = "OnPlayerEnterDynamicRaceCheckpoint";
 	ASSERT(Hooks_MakeShortName(name) == 26);
 	ASSERT(!strcmp(name, "OnPlayerEnterDynamicRaceCP"));
@@ -408,3 +409,4 @@ Test:y_hooks_CustomReplacement()
 	CallLocalFunction("OnPlayerCustomReplacement", "");
 	ASSERT(g_y_hooksVar == 555);
 }
+
