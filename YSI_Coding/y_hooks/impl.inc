@@ -146,7 +146,7 @@ HOOK_RET:OnRconCommand()
 }
 
 #if !defined MAX_HOOK_REPLACEMENTS
-    #define MAX_HOOK_REPLACEMENTS (16)
+	#define MAX_HOOK_REPLACEMENTS (16)
 #endif
 
 // Generate a function name using only ONE of the parts, so two replacements for
@@ -168,10 +168,10 @@ DEFINE_HOOK_REPLACEMENT(Command   , Cmd);
 DEFINE_HOOK_REPLACEMENT(DynamicCP , DynamicCP);
 
 static stock
-    YSI_g_sReplacements[MAX_HOOK_REPLACEMENTS][E_HOOK_NAME_REPLACEMENT_DATA],
+	YSI_g_sReplacements[MAX_HOOK_REPLACEMENTS][E_HOOK_NAME_REPLACEMENT_DATA],
 	YSI_g_sReplacementsLongOrder[MAX_HOOK_REPLACEMENTS],
 	YSI_g_sReplacementsShortOrder[MAX_HOOK_REPLACEMENTS],
-    YSI_g_sReplacePtr;
+	YSI_g_sReplacePtr;
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_MakeLongName</summary>
@@ -1152,19 +1152,19 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 // New stuff.
 stock _Hooks_AddReplacement(const longName[], const shortName[])
 {
-    // MAY need to strip spaces off the input strings, but I don't think so.
-    if (YSI_g_sReplacePtr == MAX_HOOK_REPLACEMENTS)
-    {
-        P:E("Insufficient space in the replacements table.");
-        return;
-    }
-    strcpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_SHORT], shortName, 16),
-    strcpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_LONG] , longName , 16),
-    YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_MIN] = strlen(shortName),
-    YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_MAX] = strlen(longName),
+	// MAY need to strip spaces off the input strings, but I don't think so.
+	if (YSI_g_sReplacePtr == MAX_HOOK_REPLACEMENTS)
+	{
+		P:E("Insufficient space in the replacements table.");
+		return;
+	}
+	strcpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_SHORT], shortName, 16),
+	strcpy(YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_LONG] , longName , 16),
+	YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_MIN] = strlen(shortName),
+	YSI_g_sReplacements[YSI_g_sReplacePtr][E_HOOK_NAME_REPLACEMENT_MAX] = strlen(longName),
 	YSI_g_sReplacementsLongOrder[YSI_g_sReplacePtr] = YSI_g_sReplacePtr,
 	YSI_g_sReplacementsShortOrder[YSI_g_sReplacePtr] = YSI_g_sReplacePtr,
-    ++YSI_g_sReplacePtr;
+	++YSI_g_sReplacePtr;
 }
 
 /**--------------------------------------------------------------------------**\
