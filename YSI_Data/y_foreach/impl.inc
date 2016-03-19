@@ -466,6 +466,64 @@ native Iter_SafeRemove(Iterator:Name<>, value, &next);
 #define Iter_SafeRemove_InternalB(%0,%2,%1,%9) Iter_SafeRemove_InternalD(%0[%2],%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),%9)
 
 /**--------------------------------------------------------------------------**\
+<summary>Iter_RandomAdd</summary>
+<param name="iter">Name of the iterator to add a random slot to.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Wrapper for Iter_RandomAddInternal.
+
+native Iter_RandomAdd(Iterator:Name<>);
+
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+//#define Iter_RandomAdd _ITER<RandomAdd>
+//#define Iter_RandomAdd_InternalA(%0,%1)    Iter_RandomAdd_InternalC(%0,%1,F@s(%1)-1)
+//#define Iter_RandomAdd_InternalB(%0,%2,%1) Iter_RandomAdd_InternalD(%0,%1,F@s(%1)-F@s(%0),F@s(%0),F@s(%1)-1-(%2),%2)
+
+#define Iter_RandomAdd(%0) Iter_Add(%0,Iter_RandomFree(%0))
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_RandomRemove</summary>
+<param name="iter">Name of the iterator to remove a random slot from.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Wrapper for Iter_RandomRemoveInternal.
+
+native Iter_RandomRemove(Iterator:Name<>);
+
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+//#define Iter_RandomRemove _ITER<RandomRemove>
+//#define Iter_RandomRemove_InternalA(%0,%1)    Iter_RandomRemove_InternalC(%0,%1,F@s(%1)-1)
+//#define Iter_RandomRemove_InternalB(%0,%2,%1) Iter_RandomRemove_InternalD(%0,%1,F@s(%1)-F@s(%0),F@s(%0),F@s(%1)-1-(%2),%2)
+
+#define Iter_RandomRemove(%0) Iter_Remove(%0,Iter_Random(%0))
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_RandomFree</summary>
+<param name="iter">Name of the iterator to get a random unused slot for.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Wrapper for Iter_RandomFree_Internal.
+
+native Iter_RandomFree(Iterator:Name<>);
+
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+#define Iter_RandomFree _ITER<RandomFree>
+#define Iter_RandomFree_InternalA(%0,%1)    Iter_RandomFree_InternalC(%0,%1,F@s(%1)-1)
+#define Iter_RandomFree_InternalB(%0,%2,%1) Iter_RandomFree_InternalD(%0,%1,F@s(%1)-F@s(%0),F@s(%0))
+
+/**--------------------------------------------------------------------------**\
 <summary>Iter_Random</summary>
 <param name="iter">Name of the iterator to get a random slot from.</param>
 <returns>
@@ -933,6 +991,100 @@ stock Iter_Random_Internal(count, array[], start)
 		return start;
 	}
 	return cellmin;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_RandomAdd_InternalC</summary>
+<param name="count">Number of items in the iterator.</param>
+<param name="array[]">iterator data.</param>
+<param name="start">Size of the iterator.</param>
+<param name="slots">Number of multi-iterator values.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Returns a random unused value from an iterator.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+//stock Iter_RandomAdd_InternalC(&count, array[], start)
+//{
+//	return Iter_Add_InternalC(count, array, start, Iter_RandomFree_InternalC(count, array, start));
+//}
+//
+//stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot)
+//{
+//	// This is subtly different to the "C" version - it operates on multi
+//	// iterators, which have many counts, and thus we need to sum those first.
+//	return Iter_Add_InternalD(counts[slot], array, start, size, Iter_RandomFree_InternalD(counts, array, size, slots));
+//}
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_RandomRemove_InternalC</summary>
+<param name="count">Number of items in the iterator.</param>
+<param name="array[]">iterator data.</param>
+<param name="start">Size of the iterator.</param>
+<param name="slots">Number of multi-iterator values.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Returns a random unused value from an iterator.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+//stock Iter_RandomRemove_InternalC(&count, array[], start)
+//{
+//	return Iter_Remove_InternalC(count, array, start, Iter_RandomFree_InternalC(count, array, start));
+//}
+//
+//stock Iter_RandomRemove_InternalD(counts[], array[], size, slots, start, slot)
+//{
+//	// This is subtly different to the "C" version - it operates on multi
+//	// iterators, which have many counts, and thus we need to sum those first.
+//	return Iter_Remove_InternalD(counts[slot], array, start, size, Iter_RandomFree_InternalD(counts, array, size, slots));
+//}
+
+/**--------------------------------------------------------------------------**\
+<summary>Iter_RandomFree_InternalC</summary>
+<param name="count">Number of items in the iterator.</param>
+<param name="array[]">iterator data.</param>
+<param name="start">Size of the iterator.</param>
+<param name="slots">Number of multi-iterator values.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Returns a random unused value from an iterator.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Iter_RandomFree_InternalC(count, array[], start)
+{
+	count = start - count;
+	if (count)
+	{
+		count = random(count);
+		while (start--)
+		{
+			// Check if this value is not included in any iterator.  If it isn't
+			// then decrement the count until we have run out of values to test.
+			if (array[start] <= start && !count--)
+				return start;
+		}
+	}
+	return cellmin;
+}
+
+stock Iter_RandomFree_InternalD(counts[], array[], start, slots)
+{
+	// This is subtly different to the "C" version - it operates on multi
+	// iterators, which have many counts, and thus we need to sum those first.
+	new
+		count = 0;
+	while (slots--)
+		count += counts[slots];
+	return Iter_RandomFree_InternalC(count, array, start);
 }
 
 /**--------------------------------------------------------------------------**\
