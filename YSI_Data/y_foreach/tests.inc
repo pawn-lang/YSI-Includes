@@ -605,6 +605,263 @@ Test:y_iter_Reverse1()
 	ASSERT(count == 5);
 }
 
+Test:y_iter_RandomRemove1()
+{
+	new
+		Iterator:iter<10>;
+	Iter_Add(iter, 2);
+	ASSERT(Iter_RandomRemove(iter) != cellmin);
+	ASSERT(Iter_RandomRemove(iter) == cellmin);
+	ASSERT(Iter_RandomRemove(iter) == cellmin);
+	ASSERT(Iter_RandomRemove(iter) == cellmin);
+	ASSERT(Iter_Count(iter) == 0);
+}
+
+Test:y_iter_RandomRemove2()
+{
+	new
+		Iterator:iter[3]<10>;
+	Iter_Init(iter);
+	Iter_Add(iter[0], 2);
+	Iter_Add(iter[0], 3);
+	Iter_Add(iter[0], 4);
+	Iter_Add(iter[0], 5);
+	Iter_Add(iter[0], 6);
+	Iter_Add(iter[0], 9);
+	ASSERT(Iter_RandomRemove(iter[0]) != cellmin);
+	ASSERT(Iter_RandomRemove(iter[0]) != cellmin);
+	ASSERT(Iter_RandomRemove(iter[0]) != cellmin);
+	ASSERT(Iter_RandomRemove(iter[0]) != cellmin);
+	ASSERT(Iter_RandomRemove(iter[0]) != cellmin);
+	ASSERT(Iter_RandomRemove(iter[0]) != cellmin);
+	ASSERT(Iter_RandomRemove(iter[0]) == cellmin);
+	ASSERT(Iter_RandomRemove(iter[0]) == cellmin);
+	ASSERT(Iter_RandomRemove(iter[0]) == cellmin);
+	ASSERT(Iter_RandomRemove(iter[0]) == cellmin);
+	ASSERT(Iter_Count(iter[0]) == 0);
+	ASSERT(Iter_Count(iter[1]) == 0);
+}
+
+Test:y_iter_RandomRemove3()
+{
+	new
+		Iterator:iter<2, 10>;
+	Iter_Add(iter<0>, 2);
+	ASSERT(Iter_RandomRemove(iter<0>) != cellmin);
+	ASSERT(Iter_RandomRemove(iter<1>) == cellmin);
+	ASSERT(Iter_RandomRemove(iter<0>) == cellmin);
+	ASSERT(Iter_Count(iter<0>) == 0);
+	ASSERT(Iter_Count(iter<1>) == 0);
+}
+
+Test:y_iter_RandomAdd1()
+{
+	new
+		Iterator:iter<10>;
+	Iter_Add(iter, 2);
+	ASSERT(Iter_RandomAdd(iter) != cellmin);
+	ASSERT(Iter_RandomAdd(iter) != cellmin);
+	ASSERT(Iter_RandomAdd(iter) != cellmin);
+	ASSERT(Iter_RandomAdd(iter) != cellmin);
+	ASSERT(Iter_RandomAdd(iter) != cellmin);
+	ASSERT(Iter_RandomAdd(iter) != cellmin);
+	ASSERT(Iter_RandomAdd(iter) != cellmin);
+	ASSERT(Iter_RandomAdd(iter) != cellmin);
+	ASSERT(Iter_RandomAdd(iter) != cellmin);
+	ASSERT(Iter_RandomAdd(iter) == cellmin);
+	ASSERT(Iter_RandomAdd(iter) == cellmin);
+	ASSERT(Iter_RandomAdd(iter) == cellmin);
+	ASSERT(Iter_Count(iter) == 10);
+}
+
+Test:y_iter_RandomAdd2()
+{
+	new
+		Iterator:iter[3]<10>;
+	Iter_Init(iter);
+	Iter_Add(iter[0], 2);
+	ASSERT(Iter_RandomAdd(iter[0]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[0]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[0]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[0]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[0]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[0]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[0]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[0]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[0]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[0]) == cellmin);
+	ASSERT(Iter_RandomAdd(iter[0]) == cellmin);
+	ASSERT(Iter_RandomAdd(iter[0]) == cellmin);
+	ASSERT(Iter_RandomAdd(iter[1]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[1]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[1]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[1]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[1]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[1]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[1]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[1]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[1]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[1]) != cellmin);
+	ASSERT(Iter_RandomAdd(iter[0]) == cellmin);
+	ASSERT(Iter_RandomAdd(iter[0]) == cellmin);
+	ASSERT(Iter_RandomAdd(iter[0]) == cellmin);
+	ASSERT(Iter_Count(iter[0]) == 10);
+	ASSERT(Iter_Count(iter[1]) == 10);
+}
+
+Test:y_iter_RandomAdd3()
+{
+	new
+		Iterator:iter<2, 10>;
+	Iter_Add(iter<0>, 2);
+	ASSERT(Iter_RandomAdd(iter<0>) != cellmin);
+	ASSERT(Iter_RandomAdd(iter<0>) != cellmin);
+	ASSERT(Iter_RandomAdd(iter<0>) != cellmin);
+	ASSERT(Iter_RandomAdd(iter<1>) != cellmin);
+	ASSERT(Iter_RandomAdd(iter<1>) != cellmin);
+	ASSERT(Iter_RandomAdd(iter<1>) != cellmin);
+	ASSERT(Iter_RandomAdd(iter<1>) != cellmin);
+	ASSERT(Iter_RandomAdd(iter<1>) != cellmin);
+	ASSERT(Iter_RandomAdd(iter<1>) != cellmin);
+	ASSERT(Iter_RandomAdd(iter<0>) == cellmin);
+	ASSERT(Iter_RandomAdd(iter<1>) == cellmin);
+	ASSERT(Iter_RandomAdd(iter<0>) == cellmin);
+	ASSERT(Iter_Count(iter<0>) == 4);
+	ASSERT(Iter_Count(iter<1>) == 6);
+}
+
+Test:y_iter_RandomFree1()
+{
+	new
+		Iterator:iter<10>,
+		vals[10];
+	Iter_Add(iter, 2);
+	Iter_Add(iter, 4);
+	Iter_Add(iter, 6);
+	Iter_Add(iter, 3);
+	Iter_Add(iter, 6);
+	Iter_Add(iter, 9);
+	for (new i = 0; i != 10000; ++i)
+	{
+		new v = Iter_RandomFree(iter);
+		ASSERT(v != 2);
+		ASSERT(v != 4);
+		ASSERT(v != 6);
+		ASSERT(v != 3);
+		ASSERT(v != 9);
+		++vals[v];
+	}
+	ASSERT(vals[0] != 0);
+	ASSERT(vals[1] != 0);
+	ASSERT(vals[5] != 0);
+	ASSERT(vals[7] != 0);
+	ASSERT(vals[8] != 0);
+	Iter_Add(iter, 0);
+	Iter_Add(iter, 1);
+	Iter_Add(iter, 5);
+	Iter_Add(iter, 7);
+	Iter_Add(iter, 8);
+	ASSERT(Iter_RandomFree(iter) == cellmin);
+}
+
+Test:y_iter_RandomFree2()
+{
+	new
+		Iterator:iter<2, 10>,
+		vals[10];
+	Iter_Add(iter<0>, 2);
+	Iter_Add(iter<0>, 4);
+	Iter_Add(iter<0>, 6);
+	Iter_Add(iter<1>, 3);
+	Iter_Add(iter<1>, 6);
+	Iter_Add(iter<1>, 9);
+	for (new i = 0; i != 10000; ++i)
+	{
+		new v = Iter_RandomFree(iter<>);
+		ASSERT(v != 2);
+		ASSERT(v != 4);
+		ASSERT(v != 6);
+		ASSERT(v != 3);
+		ASSERT(v != 9);
+		++vals[v];
+	}
+	ASSERT(vals[0] != 0);
+	ASSERT(vals[1] != 0);
+	ASSERT(vals[5] != 0);
+	ASSERT(vals[7] != 0);
+	ASSERT(vals[8] != 0);
+	Iter_Add(iter<0>, 0);
+	Iter_Add(iter<0>, 1);
+	Iter_Add(iter<0>, 5);
+	Iter_Add(iter<0>, 7);
+	Iter_Add(iter<0>, 8);
+	ASSERT(Iter_RandomFree(iter<0>) == cellmin);
+	ASSERT(Iter_RandomFree(iter<1>) == cellmin);
+}
+
+Test:y_iter_RandomFree3()
+{
+	new
+		Iterator:iter[2]<10>,
+		vals[2][10];
+	Iter_Init(iter);
+	Iter_Add(iter[0], 2);
+	Iter_Add(iter[0], 4);
+	Iter_Add(iter[0], 6);
+	Iter_Add(iter[1], 3);
+	Iter_Add(iter[1], 6);
+	Iter_Add(iter[1], 9);
+	for (new v, i = 0; i != 10000; ++i)
+	{
+		v = Iter_RandomFree(iter[0]);
+		ASSERT(v != 2);
+		ASSERT(v != 4);
+		ASSERT(v != 6);
+		++vals[0][v];
+		v = Iter_RandomFree(iter[1]);
+		ASSERT(v != 6);
+		ASSERT(v != 3);
+		ASSERT(v != 9);
+		++vals[1][v];
+	}
+	ASSERT(vals[0][0] != 0);
+	ASSERT(vals[0][1] != 0);
+	ASSERT(vals[0][3] != 0);
+	ASSERT(vals[0][5] != 0);
+	ASSERT(vals[0][7] != 0);
+	ASSERT(vals[0][8] != 0);
+	ASSERT(vals[0][9] != 0);
+	ASSERT(vals[1][0] != 0);
+	ASSERT(vals[1][1] != 0);
+	ASSERT(vals[1][2] != 0);
+	ASSERT(vals[1][4] != 0);
+	ASSERT(vals[1][5] != 0);
+	ASSERT(vals[1][7] != 0);
+	ASSERT(vals[1][8] != 0);
+	Iter_Add(iter[0], 0);
+	Iter_Add(iter[0], 1);
+	Iter_Add(iter[0], 3);
+	Iter_Add(iter[0], 5);
+	Iter_Add(iter[0], 7);
+	Iter_Add(iter[0], 8);
+	Iter_Add(iter[0], 9);
+	ASSERT(Iter_RandomFree(iter[0]) == cellmin);
+	ASSERT(Iter_RandomFree(iter[1]) != cellmin);
+	Iter_Remove(iter[0], 0);
+	Iter_Remove(iter[0], 1);
+	Iter_Remove(iter[0], 2);
+	Iter_Remove(iter[0], 3);
+	Iter_Add(iter[1], 0);
+	Iter_Add(iter[1], 1);
+	Iter_Add(iter[1], 2);
+	Iter_Add(iter[1], 4);
+	Iter_Add(iter[1], 5);
+	Iter_Add(iter[1], 7);
+	Iter_Add(iter[1], 8);
+	ASSERT(Iter_RandomFree(iter[0]) != cellmin);
+	ASSERT(Iter_RandomFree(iter[1]) == cellmin);
+}
+
 Test:y_iter_Reverse2()
 {
 	new
