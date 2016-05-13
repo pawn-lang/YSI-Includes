@@ -96,6 +96,11 @@ Changelog:
 // Strip out extra spaces (nicely recursive)
 #define @yH_%0\32;%1(%2) @yH_%1(%2)
 
+#define Y_HOOKS_CONTINUE_RETURN_1	(1)		// Continue the hook chain, return 1
+#define Y_HOOKS_CONTINUE_RETURN_0	(0)		// Continue the hook chain, return 0
+#define Y_HOOKS_BREAK_RETURN_0		(-1)	// Break the hook chain, return 0
+#define Y_HOOKS_BREAK_RETURN_1		(-2)	// Break the hook chain, return 1
+
 enum E_HOOK_NAME_REPLACEMENT_DATA
 {
 	E_HOOK_NAME_REPLACEMENT_SHORT[16],
