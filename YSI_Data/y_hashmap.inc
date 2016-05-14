@@ -69,7 +69,7 @@ Definitions:
 #endif
 #define _INC_y_hashmap
 
-#include "..\amx\amx_memory"
+#include "..\YSI_Internal\amx_assembly"
 #include "..\YSI_Core\y_utils"
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Coding\y_stringhash"

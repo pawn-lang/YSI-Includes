@@ -92,9 +92,7 @@ Variables:
 #include "..\YSI_Storage\y_amx"
 //#tryinclude <sscanf>
 
-#include "..\amx\asm"
-//asm"
-
+#include "..\YSI_Internal\amx_assembly"
 // Add new tags to the START of this list.
 #include "..\YSI_Internal\y_globaltags"
 

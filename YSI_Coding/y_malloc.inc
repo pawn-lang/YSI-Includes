@@ -136,8 +136,7 @@ Operators:
 #include "..\YSI_Core\y_als"
 #include "..\YSI_Core\y_utils"
 
-#include "..\amx\opcode"
-#include "..\amx\stack_trace"
+#include "..\YSI_Internal\amx_assembly"
 
 #define MALLOC_KB_TO_CELL ((1024 * 8) / cellbits)
 
