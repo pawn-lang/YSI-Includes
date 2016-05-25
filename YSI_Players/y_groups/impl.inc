@@ -797,7 +797,7 @@ global Group:Group_SetBalancedInternal(p,Group:gs[],c)
 			//GROUP_FIX(gi);
 			new
 				cc = Iter_Count(GroupPlayers[_:GROUP_TEMP_FIX(Group:gi)]);
-			if (_Group_HasPlayer(Group:gi,p))
+			if (_Group_HasPlayer(GROUP_TEMP_FIX(Group:gi),p))
 			{
 				// The player is already in this group - prefer it to others.
 				--cc;
@@ -828,20 +828,46 @@ global Group:Group_SetBalancedInternal(p,Group:gs[],c)
 
 stock Group:Group_SetBalanced(playerid, {Group, _}:...)
 {
-	if (!(MAX_PLAYERS > playerid >= 0)) return INVALID_GROUP;
-	new Group:possible[_MAX_GROUPS_G],
+	if (!(0 <= playerid < MAX_PLAYERS)) return INVALID_GROUP;
+	new
+		Group:possible[_MAX_GROUPS_G],
 		count = numargs();
-	if(count < 3)
+	switch (count)
 	{
-		P:W("Group_SetBalanced requires at least 2 groups");
-	}
-	else
-	{
-		for(new i = 1; i != count; ++i)
+		case 1, 2:
 		{
-			possible[i - 1] = Group:getarg(i);
+			P:W("Group_SetBalanced requires at least 2 groups or an array.");
 		}
-		return Group_SetBalancedInternal(playerid, possible, count - 1);
+		case 3:
+		{
+			new
+				third = getarg(2);
+			if (third & _:GROUP_MASK)
+			{
+				// Two groups.
+				possible[0] = Group:getarg(1);
+				possible[1] = Group:third;
+				return Group_SetBalancedInternal(playerid, possible, 2);
+			}
+			else
+			{
+				third = min(third, _MAX_GROUPS_G);
+				// Array of groups.
+				for (new i = 0; i != third; ++i)
+				{
+					possible[i] = Group:getarg(1, i);
+				}
+				return Group_SetBalancedInternal(playerid, possible, third);
+			}
+		}
+		default:
+		{
+			for (new i = 1; i != count; ++i)
+			{
+				possible[i - 1] = Group:getarg(i);
+			}
+			return Group_SetBalancedInternal(playerid, possible, count - 1);
+		}
 	}
 	return INVALID_GROUP;
 }
