@@ -203,6 +203,58 @@ Test:y_groups_SetBalanced2()
 	Group_Destroy(g3);
 }
 
+Test:y_groups_SetBalanced3()
+{
+	new Group:g[3];
+	g[0] = Group_Create("Group 1");
+	g[1] = Group_Create("Group 2");
+	g[2] = Group_Create("Group 3");
+
+	call OnPlayerConnect(0);
+	call OnPlayerConnect(1);
+	call OnPlayerConnect(2);
+	call OnPlayerConnect(3);
+	call OnPlayerConnect(4);
+	call OnPlayerConnect(5);
+	call OnPlayerConnect(6);
+
+	Group_SetBalanced(0,g,sizeof(g));
+	Group_SetBalanced(1,g,sizeof(g));
+	Group_SetBalanced(2,g,sizeof(g));
+	Group_SetBalanced(3,g,sizeof(g));
+	Group_SetBalanced(4,g,sizeof(g));
+	Group_SetBalanced(5,g,sizeof(g));
+	Group_SetBalanced(6,g,sizeof(g));
+
+	ASSERT(Group_GetCount(g[0]) == 3);
+	ASSERT(Group_GetCount(g[1]) == 2);
+	ASSERT(Group_GetCount(g[2]) == 2);
+
+	call OnPlayerDisconnect(0, 0);
+	call OnPlayerDisconnect(1, 0);
+	call OnPlayerDisconnect(2, 0);
+	call OnPlayerDisconnect(3, 0);
+	call OnPlayerDisconnect(4, 0);
+	call OnPlayerDisconnect(5, 0);
+	call OnPlayerDisconnect(6, 0);
+
+	Group_Destroy(g[0]);
+	Group_Destroy(g[1]);
+	Group_Destroy(g[2]);
+}
+
+Test:y_groups_SetBalancedInvalid()
+{
+	new Group:g1 = Group_Create("Group 1"),Group:result;
+	call OnPlayerConnect(0, 0);
+
+	result = Group_SetBalanced(0,g1);
+	ASSERT(result == INVALID_GROUP);
+
+	call OnPlayerDisconnect(0, 0);
+	Group_Destroy(g1);
+}
+
 #define MASTER 60
 #tryinclude "..\YSI_Core\y_master"
 #tryinclude "..\..\YSI_Core\y_master"
