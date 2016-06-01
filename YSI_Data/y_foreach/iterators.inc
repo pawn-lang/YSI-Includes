@@ -655,6 +655,7 @@ hook OnScriptInit()
 			new
 				ret = CreateVehicle(modelid, x, y, z, angle, color1, color2, respawn_delay, addsiren);
 		#else
+			#pragma unused addsiren
 			new
 				ret = CreateVehicle(modelid, x, y, z, angle, color1, color2, respawn_delay);
 		#endif
@@ -696,6 +697,7 @@ hook OnScriptInit()
 			new
 				ret = AddStaticVehicleEx(modelid, spawn_x, spawn_y, spawn_z, angle, color1, color2, respawn_delay, addsiren);
 		#else
+			#pragma unused addsiren
 			new
 				ret = AddStaticVehicleEx(modelid, spawn_x, spawn_y, spawn_z, angle, color1, color2, respawn_delay);
 		#endif
