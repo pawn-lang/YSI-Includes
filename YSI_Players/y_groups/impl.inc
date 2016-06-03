@@ -794,11 +794,10 @@ global Group:Group_SetBalancedInternal(p,Group:gs[],c)
 			gi = _:gs[i];
 		if (_Group_IsValid(Group:gi))
 		{
-			gi = _:GROUP_TEMP_FIX(Group:gi);
 			//GROUP_FIX(gi);
 			new
-				cc = Iter_Count(GroupPlayers[gi]);
-			if (Bit_Get(YSI_gGroupPlayers[p], gi))
+				cc = Iter_Count(GroupPlayers[_:GROUP_TEMP_FIX(Group:gi)]);
+			if (_Group_HasPlayer(GROUP_TEMP_FIX(Group:gi),p))
 			{
 				// The player is already in this group - prefer it to others.
 				--cc;
@@ -829,10 +828,7 @@ global Group:Group_SetBalancedInternal(p,Group:gs[],c)
 
 stock Group:Group_SetBalanced(playerid, {Group, _}:...)
 {
-	if (!(0 < p <= MAX_PLAYERS))
-	{
-		return INVALID_GROUP;
-	}
+	if (!(0 <= playerid < MAX_PLAYERS)) return INVALID_GROUP;
 	new
 		Group:possible[_MAX_GROUPS_G],
 		count = numargs();
@@ -859,7 +855,7 @@ stock Group:Group_SetBalanced(playerid, {Group, _}:...)
 				// Array of groups.
 				for (new i = 0; i != third; ++i)
 				{
-					possible[i] = getarg(1, i);
+					possible[i] = Group:getarg(1, i);
 				}
 				return Group_SetBalancedInternal(playerid, possible, third);
 			}
@@ -868,7 +864,7 @@ stock Group:Group_SetBalanced(playerid, {Group, _}:...)
 		{
 			for (new i = 1; i != count; ++i)
 			{
-				possible[i - 1] = getarg(i);
+				possible[i - 1] = Group:getarg(i);
 			}
 			return Group_SetBalancedInternal(playerid, possible, count - 1);
 		}
