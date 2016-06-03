@@ -56,7 +56,7 @@
 #tryinclude "..\amx_assembly\codescan"
 #tryinclude "..\..\amx_assembly\codescan"
 #if !defined CODESCAN_INC
-	#error Please update "https://github.com/Zeex/amx_assembly" to get "codescan.inc"
+	#error Please update "https://github.com/Zeex/amx_assembly/tree/CodeScanner" to get "codescan.inc"
 #endif
 
 #tryinclude "..\amx\disasm"
