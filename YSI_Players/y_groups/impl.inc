@@ -764,7 +764,7 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>Group_SetBalancedArray</summary>
+<summary>_Group_SetBalancedInternal</summary>
 <param name="p">Player to add to the smallest group.</param>
 <param name="Group:gs[]">An array of possible groups.</param>
 <param name="c">The number of USED items in the array.</param>
@@ -772,21 +772,14 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 	The group they have been added to.
 </returns>
 <remarks>
-	Puts a player in whichever of the given groups currently has the least
-	players.
-	
-	Now ONLY takes a list - arrays should use "Group_SetBalancedArray".  As a
-	result, has more error-checking.
-	
 	Chains the call with "Group_SetPlayer" to use its hierarchy code.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-foreign Group:Group_SetBalancedArray(p,Group:gs[],c);
+foreign Group:_Group_SetBalancedInternal(p,Group:gs[],c);
 
-global Group:Group_SetBalancedArray(p,Group:gs[],c)
+global Group:_Group_SetBalancedInternal(p,Group:gs[],c)
 {
-	if (!(0 <= p < MAX_PLAYERS)) return INVALID_GROUP;
 	// Find which of the listed groups has the least players in.
 	new
 		count = cellmax,
@@ -804,7 +797,7 @@ global Group:Group_SetBalancedArray(p,Group:gs[],c)
 			if (_Group_HasPlayer(g2, p))
 			{
 				// The player is already in this group - just return.
-				return gi;
+				return Group:gi;
 			}
 			else if (cc < count)
 			{
@@ -822,6 +815,29 @@ global Group:Group_SetBalancedArray(p,Group:gs[],c)
 		Group_SetPlayer(id, p, true);
 	}
 	return id;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Group_SetBalancedArray</summary>
+<param name="p">Player to add to the smallest group.</param>
+<param name="Group:gs[]">An array of possible groups.</param>
+<param name="c">The number of USED items in the array.</param>
+<returns>
+	The group they have been added to.
+</returns>
+<remarks>
+	Puts a player in whichever of the given groups currently has the least
+	players.
+	
+	Now ONLY takes a list - arrays should use "Group_SetBalancedArray".  As a
+	result, has more error-checking.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Group:Group_SetBalancedArray(p, Group:gs[], c = sizeof (gs))
+{
+	if (!(0 <= p < MAX_PLAYERS)) return INVALID_GROUP;
+	return _Group_SetBalancedInternal(p, gs, c);
 }
 
 /**--------------------------------------------------------------------------**\

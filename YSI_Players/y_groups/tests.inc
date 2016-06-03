@@ -329,8 +329,8 @@ Test:y_groups_SetBalancedIn2()
 
 	Group_SetBalancedArray(0, g, sizeof(g));
 
-	ASSERT(Group_GetCount(g[0]) == 2);
-	ASSERT(Group_GetCount(g[1]) == 1);
+	ASSERT(Group_GetCount(g[0]) == 3);
+	ASSERT(Group_GetCount(g[1]) == 0);
 	ASSERT(Group_GetCount(g[2]) == 3);
 
 	call OnPlayerDisconnect(0, 0);
@@ -372,8 +372,8 @@ Test:y_groups_SetBalancedIn3()
 	Group_SetBalancedArray(4, g, sizeof(g));
 
 	ASSERT(Group_GetCount(g[0]) == 3);
-	ASSERT(Group_GetCount(g[1]) == 1);
-	ASSERT(Group_GetCount(g[2]) == 2);
+	ASSERT(Group_GetCount(g[1]) == 0);
+	ASSERT(Group_GetCount(g[2]) == 3);
 
 	call OnPlayerDisconnect(0, 0);
 	call OnPlayerDisconnect(1, 0);
@@ -547,8 +547,8 @@ Test:y_groups_SetBalancedIn4()
 	Group_SetBalancedArray(2, g, sizeof(g));
 
 	ASSERT(Group_GetCount(g[0]) == 2);
-	ASSERT(Group_GetCount(g[1]) == 2);
-	ASSERT(Group_GetCount(g[2]) == 2);
+	ASSERT(Group_GetCount(g[1]) == 3);
+	ASSERT(Group_GetCount(g[2]) == 1);
 
 	call OnPlayerDisconnect(0, 0);
 	call OnPlayerDisconnect(1, 0);
@@ -570,7 +570,7 @@ Test:y_groups_SetBalancedSingle()
 		Group:result;
 	call OnPlayerConnect(0);
 	
-	result = Group_SetBalanced(0, g1);
+	result = Group_SetBalanced(0, g1, Group:11);
 	ASSERT(result == g1);
 	
 	call OnPlayerDisconnect(0, 0);
@@ -583,7 +583,7 @@ Test:y_groups_SetBalancedInvalid()
 		Group:result;
 	call OnPlayerConnect(0);
 	
-	result = Group_SetBalanced(0, Group:99);
+	result = Group_SetBalanced(0, Group:99, Group:88);
 	ASSERT(result == INVALID_GROUP);
 	
 	call OnPlayerDisconnect(0, 0);
