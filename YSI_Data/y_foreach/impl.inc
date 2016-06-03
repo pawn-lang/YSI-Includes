@@ -479,10 +479,6 @@ native Iter_RandomAdd(Iterator:Name<>);
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-//#define Iter_RandomAdd _ITER<RandomAdd>
-//#define Iter_RandomAdd_InternalA(%0,%1)    Iter_RandomAdd_InternalC(%0,%1,F@s(%1)-1)
-//#define Iter_RandomAdd_InternalB(%0,%2,%1) Iter_RandomAdd_InternalD(%0,%1,F@s(%1)-F@s(%0),F@s(%0),F@s(%1)-1-(%2),%2)
-
 #define Iter_RandomAdd(%0) Iter_Add(%0,Iter_RandomFree(%0))
 
 /**--------------------------------------------------------------------------**\
@@ -498,10 +494,6 @@ native Iter_RandomRemove(Iterator:Name<>);
 
 </remarks>
 \**--------------------------------------------------------------------------**/
-
-//#define Iter_RandomRemove _ITER<RandomRemove>
-//#define Iter_RandomRemove_InternalA(%0,%1)    Iter_RandomRemove_InternalC(%0,%1,F@s(%1)-1)
-//#define Iter_RandomRemove_InternalB(%0,%2,%1) Iter_RandomRemove_InternalD(%0,%1,F@s(%1)-F@s(%0),F@s(%0),F@s(%1)-1-(%2),%2)
 
 #define Iter_RandomRemove(%0) Iter_Remove(%0,Iter_Random(%0))
 

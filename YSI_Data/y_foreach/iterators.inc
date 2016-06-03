@@ -381,6 +381,47 @@ stock iterfunc Filter(cur, val, arr[], size = sizeof (arr))
 
 #define iterstart@Filter (-1)
 
+#define Iter_Func@None(%0,%1) _ITER<None>(%1,%0)
+#define iterstart@None (-1)
+#define Iter_None_InternalA(%0,%1,%9) Iter_None_Internal(%1,F@s(%1)-1,%9)
+#define Iter_None_InternalB(%0,%2,%1,%9) Iter_None_Internal(%1,F@s(%1)-F@s(%0),%9)
+
+stock Iter_None_Internal(array[], size, value)
+{
+	// Loop over all values NOT in any iterator.  Similar to repeatedly calling
+	// "Iter_Free", though that will return the same value twice if called twice
+	// in a row.  Instead, this function will loop through the missing ones.
+	while (++value < size)
+	{
+		if (array[value] <= value)
+		{
+			return value;
+		}
+	}
+	return -1;
+}
+
+#define Iter_Func@All(%0,%1) _ITER<All>(%1,%0)
+#define iterstart@All (-1)
+#define Iter_All_InternalA(%0,%1,%9) Iter_All_Internal(%1,F@s(%1)-1,%9)
+#define Iter_All_InternalB(%0,%2,%1,%9) Iter_All_Internal(%1,F@s(%1)-F@s(%0),%9)
+
+stock Iter_All_Internal(array[], size, value)
+{
+	// Loop over all values in any iterator.  This is different to looping over
+	// the iterator normally for multi-dimensional iterators, since it will
+	// return all values in ANY iterator in their numerical order.  For single-
+	// dimensional iterators it is exactly the same, just a little slower.
+	while (++value < size)
+	{
+		if (array[value] > value)
+		{
+			return value;
+		}
+	}
+	return -1;
+}
+
 /*
 
     88        88                         88                   
