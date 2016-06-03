@@ -803,12 +803,8 @@ global Group:Group_SetBalancedArray(p,Group:gs[],c)
 				cc = Iter_Count(GroupPlayers[g2]);
 			if (_Group_HasPlayer(g2, p))
 			{
-				// The player is already in this group - prefer it to others.
-				if (cc - 1 <= count)
-				{
-					count = cc - 1,
-					id = Group:gi;
-				}
+				// The player is already in this group - just return.
+				return gi;
 			}
 			else if (cc < count)
 			{
