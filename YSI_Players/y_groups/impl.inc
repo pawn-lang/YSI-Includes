@@ -674,8 +674,6 @@ global void:Group_SetPlayer(Group:g,p,bool:s)
 	if (_Group_IsValid(g) && VALID_PLAYERID(p))
 	{
 		GROUP_FIX(g);
-		//static
-		//	BitArray:n<_MAX_GROUPS_G>;
 		if (s)
 		{
 			if (!_Group_HasPlayer(g, p))
@@ -766,7 +764,7 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>Group_SetBalancedInternal</summary>
+<summary>Group_SetBalancedArray</summary>
 <param name="p">Player to add to the smallest group.</param>
 <param name="Group:gs[]">An array of possible groups.</param>
 <param name="c">The number of USED items in the array.</param>
@@ -774,16 +772,22 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 	The group they have been added to.
 </returns>
 <remarks>
+	Puts a player in whichever of the given groups currently has the least
+	players.
+	
+	Now ONLY takes a list - arrays should use "Group_SetBalancedArray".  As a
+	result, has more error-checking.
+	
 	Chains the call with "Group_SetPlayer" to use its hierarchy code.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-foreign Group:Group_SetBalancedInternal(p,Group:gs[],c);
+foreign Group:Group_SetBalancedArray(p,Group:gs[],c);
 
-global Group:Group_SetBalancedInternal(p,Group:gs[],c)
+global Group:Group_SetBalancedArray(p,Group:gs[],c)
 {
+	if (!(0 <= p < MAX_PLAYERS)) return INVALID_GROUP;
 	// Find which of the listed groups has the least players in.
-	//#pragma unused s
 	new
 		count = cellmax,
 		Group:id = INVALID_GROUP;
@@ -794,82 +798,66 @@ global Group:Group_SetBalancedInternal(p,Group:gs[],c)
 			gi = _:gs[i];
 		if (_Group_IsValid(Group:gi))
 		{
-			//GROUP_FIX(gi);
 			new
-				cc = Iter_Count(GroupPlayers[_:GROUP_TEMP_FIX(Group:gi)]);
-			if (_Group_HasPlayer(GROUP_TEMP_FIX(Group:gi),p))
+				g2 = _:GROUP_TEMP_FIX(Group:gi),
+				cc = Iter_Count(GroupPlayers[g2]);
+			if (_Group_HasPlayer(g2, p))
 			{
 				// The player is already in this group - prefer it to others.
-				--cc;
+				if (cc - 1 <= count)
+				{
+					count = cc - 1,
+					id = Group:gi;
+				}
 			}
-			if (cc < count)
+			else if (cc < count)
 			{
-				count = cc;
+				count = cc,
 				id = Group:gi;
 			}
 		}
 	}
-	Group_SetPlayer(id, p, true);
+	if (id == INVALID_GROUP)
+	{
+		P:W("Group_SetBalanced(Array) requires at least 1 valid group.");
+	}
+	else
+	{
+		Group_SetPlayer(id, p, true);
+	}
 	return id;
 }
 
 /**--------------------------------------------------------------------------**\
 <summary>Group_SetBalanced</summary>
 <param name="playerid">Player to put in one of a number of groups</param>
-<param name="{Group, _}:...">Either an array size then array, or a list of groups.</param>
+<param name="Group:...">A list of groups.</param>
 <returns>
 	-
 </returns>
 <remarks>
 	Puts a player in whichever of the given groups currently has the least
 	players.
+	
+	Now ONLY takes a list - arrays should use "Group_SetBalancedArray".  As a
+	result, has more error-checking.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock Group:Group_SetBalanced(playerid, {Group, _}:...)
+stock Group:Group_SetBalanced(playerid, Group:g0, Group:g1, Group:...)
 {
-	if (!(0 <= playerid < MAX_PLAYERS)) return INVALID_GROUP;
 	new
 		Group:possible[_MAX_GROUPS_G],
-		count = numargs();
-	switch (count)
+		count = min(_MAX_GROUPS_G + 1, numargs()),
+		i = 2,
+		j = 3;
+	possible[0] = g0,
+	possible[1] = g1;
+	while (j != count)
 	{
-		case 1, 2:
-		{
-			P:W("Group_SetBalanced requires at least 2 groups or an array.");
-		}
-		case 3:
-		{
-			new
-				third = getarg(2);
-			if (third & _:GROUP_MASK)
-			{
-				// Two groups.
-				possible[0] = Group:getarg(1);
-				possible[1] = Group:third;
-				return Group_SetBalancedInternal(playerid, possible, 2);
-			}
-			else
-			{
-				third = min(third, _MAX_GROUPS_G);
-				// Array of groups.
-				for (new i = 0; i != third; ++i)
-				{
-					possible[i] = Group:getarg(1, i);
-				}
-				return Group_SetBalancedInternal(playerid, possible, third);
-			}
-		}
-		default:
-		{
-			for (new i = 1; i != count; ++i)
-			{
-				possible[i - 1] = Group:getarg(i);
-			}
-			return Group_SetBalancedInternal(playerid, possible, count - 1);
-		}
+		possible[i++] = Group:getarg(j++);
 	}
-	return INVALID_GROUP;
+	return Group_SetBalancedArray(playerid, possible, i);
 }
 
 /**--------------------------------------------------------------------------**\
