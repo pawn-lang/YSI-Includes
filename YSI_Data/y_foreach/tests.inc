@@ -2648,6 +2648,22 @@ Test:y_iter_Random()
 	ASSERT(c == 1010);
 }
 
+Test:y_iter_RandomNested()
+{
+	new
+		c = 0;
+	foreach (new i : Random(10, 20))
+	{
+		ASSERT(0 <= i < 20);
+		foreach (new j : Random(10, -20, 20))
+		{
+			ASSERT(-20 <= j < 20);
+			++c;
+		}
+	}
+	ASSERT(c == 100);
+}
+
 Test:y_iter_Powers()
 {
 	new
@@ -2762,7 +2778,7 @@ Test:y_iter_None1()
 	Iter_Add(a, 7);
 	Iter_Add(a, 9);
 	new count = 0;
-	foreach (new i : All(a))
+	foreach (new i : None(a))
 	{
 		ASSERT(i != 3 && i != 4 && i != 7 && i != 9);
 		++count;
@@ -2794,7 +2810,7 @@ Test:y_iter_None2()
 	Iter_Add(a<0>, 7);
 	Iter_Add(a<0>, 9);
 	new count = 0;
-	foreach (new i : All(a<>))
+	foreach (new i : None(a<>))
 	{
 		ASSERT(i != 3 && i != 4 && i != 7 && i != 9);
 		++count;

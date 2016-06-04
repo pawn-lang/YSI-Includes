@@ -260,6 +260,15 @@ stock iterfunc Range(cur, min, max, step = 1)
 
 stock iterfunc Powers(cur, base)
 {
+	// Returns all the powers of the given number that can be stored in a PAWN
+	// cell.
+	//   
+	//   foreach (new i : Powers(3))
+	//   {
+	//       // 3^0, 3^1, 3^2, 3^3, etc...
+	//   }
+	//   
+	// Like "Random", this has internal state so cannot currently be nested.
 	static
 		next = 0;
 	if (cur)
@@ -275,6 +284,14 @@ stock iterfunc Powers(cur, base)
 
 stock iterfunc Fib(cur)
 {
+	// Returns every number in the Fibaonacci sequence that can be stored in a
+	// PAWN cell.
+	//   
+	//   foreach (new i : Fib())
+	//   {
+	//   }
+	//   
+	// Like "Random", this has internal state so cannot currently be nested.
 	static
 		prev = -1,
 		next = 0;
@@ -292,6 +309,9 @@ stock iterfunc Fib(cur)
 	}
 	else if (cur == 1836311903)
 	{
+		// End point (statically calculated largest Fibaonacci number that can
+		// be stored in a signed 32-bit integer.  Does make this not totally
+		// portable, because it can't be used in the 64-bit version quickly.
 		return -1;
 	}
 	return
@@ -302,38 +322,65 @@ stock iterfunc Fib(cur)
 
 #define iterstart@Fib (-1)
 
-stock iterfunc Random(cur, count, ...)
+stock iterfunc Random(info[1], cur, count, min = cellmax, max = 0)
 {
-	static
-		num = 0;
+	// Return a given count of random numbers:
+	//   
+	//   foreach (new i : Random(5))
+	//   {
+	//       // 5 random numbers.
+	//   }
+	//   
+	//   foreach (new i : Random(12, 10))
+	//   {
+	//       // 12 random numbers between 0 and 10 (0 to 9 inclusive).
+	//   }
+	//   
+	//   foreach (new i : Random(100, -10, 10))
+	//   {
+	//       // 100 random numbers between -10 and 10 (-10 to 9 inclusive).
+	//   }
+	//   
+	// Note that this function has internal state, so you cannot call this in a
+	// nested manner.  This will probably fail:
+	//   
+	//   foreach (new i : Random(10, 70))
+	//   {
+	//       foreach (new j : Random(10, 80))
+	//       {
+	//           // Will NOT get 100 randoms 0 to 80, plus 10 randoms 0 to 70.
+	//       }
+	//   }
+	//   
 	if (cur == cellmin)
 	{
-		num = 0;
+		info[0] = 0;
 	}
-	if (++num > count)
+	if (++info[0] > count)
 	{
 		return cellmin;
 	}
-	switch (numargs())
+	if (min >= max)
 	{
-		case 2:
-		{
-			return random(cellmax);
-		}
-		case 3:
-		{
-			return random(getarg(2));
-		}
+		return random(min);
 	}
-	return
-		count = getarg(2),
-		random(getarg(3) - count) + count;
+	else
+	{
+		return random(max - min) + min;
+	}
 }
 
-#define iterstart@Random cellmin
+#define iterstart@Random iterstate(cellmin, 0)
 
 stock iterfunc Null(cur, arr[], size = sizeof (arr))
 {
+	// Loop over all the indexes of this array that are zero.
+	//   
+	//   new array[] = { ... };
+	//   foreach (new i : Null(array))
+	//   {
+	//   }
+	//   
 	while (++cur < size)
 	{
 		if (!arr[cur])
@@ -348,6 +395,13 @@ stock iterfunc Null(cur, arr[], size = sizeof (arr))
 
 stock iterfunc NonNull(cur, arr[], size = sizeof (arr))
 {
+	// Loop over all the indexes of this array that are not zero.
+	//   
+	//   new array[] = { ... };
+	//   foreach (new i : NonNull(array))
+	//   {
+	//   }
+	//   
 	while (++cur < size)
 	{
 		if (arr[cur])
@@ -362,6 +416,13 @@ stock iterfunc NonNull(cur, arr[], size = sizeof (arr))
 
 stock iterfunc Until(cur, val, arr[], size = sizeof (arr))
 {
+	// Loop over all the indexes of this array until one equals the given value:
+	//   
+	//   new array[] = { ... };
+	//   foreach (new i : Until(5, array))
+	//   {
+	//   }
+	//   
 	return (++cur >= size || arr[cur] == val) ? -1 : cur;
 }
 
