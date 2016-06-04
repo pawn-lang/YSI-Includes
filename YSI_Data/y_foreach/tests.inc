@@ -2738,3 +2738,67 @@ Test:y_iter_Until()
 	ASSERT(c == 6);
 }
 
+Test:y_iter_All1()
+{
+	new Iterator:a<10>;
+	Iter_Add(a, 3);
+	Iter_Add(a, 4);
+	Iter_Add(a, 7);
+	Iter_Add(a, 9);
+	new count = 0;
+	foreach (new i : All(a))
+	{
+		ASSERT(i == 3 || i == 4 || i == 7 || i == 9);
+		++count;
+	}
+	ASSERT(count == 4);
+}
+
+Test:y_iter_None1()
+{
+	new Iterator:a<10>;
+	Iter_Add(a, 3);
+	Iter_Add(a, 4);
+	Iter_Add(a, 7);
+	Iter_Add(a, 9);
+	new count = 0;
+	foreach (new i : None(a))
+	{
+		ASSERT(i != 3 && i != 4 && i != 7 && i != 9);
+		++count;
+	}
+	ASSERT(count == 6);
+}
+
+Test:y_iter_All2()
+{
+	new Iterator:a<3, 10>;
+	Iter_Add(a<0>, 3);
+	Iter_Add(a<2>, 4);
+	Iter_Add(a<2>, 7);
+	Iter_Add(a<1>, 9);
+	new count = 0;
+	foreach (new i : All(a<>))
+	{
+		ASSERT(i == 3 || i == 4 || i == 7 || i == 9);
+		++count;
+	}
+	ASSERT(count == 4);
+}
+
+Test:y_iter_None2()
+{
+	new Iterator:a<3, 10>;
+	Iter_Add(a<2>, 3);
+	Iter_Add(a<0>, 4);
+	Iter_Add(a<0>, 7);
+	Iter_Add(a<0>, 9);
+	new count = 0;
+	foreach (new i : None(a<>))
+	{
+		ASSERT(i != 3 && i != 4 && i != 7 && i != 9);
+		++count;
+	}
+	ASSERT(count == 6);
+}
+
