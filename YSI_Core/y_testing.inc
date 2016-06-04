@@ -199,7 +199,7 @@ stock _Testing_Start(name[])
 	// list of failures.
 	name[0] = name[1] = 0,
 	YSI_g_sCurTest = ref(name);
-	printf("_Testing_Start %d %d %s = %d", name[0], name[1], name[2], YSI_g_sCurTest);
+	P:3("_Testing_Start %d %d %s = %d", name[0], name[1], name[2], YSI_g_sCurTest);
 	YSI_gCurTestName[0] = '\0',
 	strcpy(YSI_gCurTestName, name[2]);
 }
