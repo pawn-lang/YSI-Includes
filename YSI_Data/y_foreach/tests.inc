@@ -2762,7 +2762,7 @@ Test:y_iter_None1()
 	Iter_Add(a, 7);
 	Iter_Add(a, 9);
 	new count = 0;
-	foreach (new i : None(a))
+	foreach (new i : All(a))
 	{
 		ASSERT(i != 3 && i != 4 && i != 7 && i != 9);
 		++count;
@@ -2794,11 +2794,12 @@ Test:y_iter_None2()
 	Iter_Add(a<0>, 7);
 	Iter_Add(a<0>, 9);
 	new count = 0;
-	foreach (new i : None(a<>))
+	foreach (new i : All(a<>))
 	{
 		ASSERT(i != 3 && i != 4 && i != 7 && i != 9);
 		++count;
 	}
 	ASSERT(count == 6);
 }
+
 

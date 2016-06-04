@@ -34,6 +34,9 @@
 #if !defined AMX_MEMORY_INC
 	#define AMX_INCLUDING_FAILED
 #endif
+#if !defined deref
+	#error Please update "https://github.com/Zeex/amx_assembly/tree/CodeScanner" to get "deref()"
+#endif
 
 #tryinclude "..\amx\asm"
 #tryinclude <amx_assembly\asm>
