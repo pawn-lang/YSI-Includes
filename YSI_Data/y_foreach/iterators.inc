@@ -258,7 +258,7 @@ stock iterfunc Range(cur, min, max, step = 1)
 
 #define iterstart@Range cellmin
 
-stock iterfunc Powers(cur, base)
+stock iterfunc Powers(&iterstate, cur, base)
 {
 	// Returns all the powers of the given number that can be stored in a PAWN
 	// cell.
@@ -268,21 +268,18 @@ stock iterfunc Powers(cur, base)
 	//       // 3^0, 3^1, 3^2, 3^3, etc...
 	//   }
 	//   
-	// Like "Random", this has internal state so cannot currently be nested.
-	static
-		next = 0;
 	if (cur)
 	{
 		return
-			next = base * cur,
-			_:(next > cur) * next;
+			iterstate = base * cur,
+			_:(iterstate > cur) * iterstate;
 	}
 	return 1;
 }
 
-#define iterstart@Powers 0
+#define iterstart@Powers iterstate(0, 0)
 
-stock iterfunc Fib(cur)
+stock iterfunc Fib(&iterstate, cur)
 {
 	// Returns every number in the Fibaonacci sequence that can be stored in a
 	// PAWN cell.
@@ -291,38 +288,23 @@ stock iterfunc Fib(cur)
 	//   {
 	//   }
 	//   
-	// Like "Random", this has internal state so cannot currently be nested.
-	static
-		prev = -1,
-		next = 0;
-	if (cur == -1)
+	switch (cur)
 	{
-		return
-			prev = -1,
-			0;
-	}
-	else if (prev == -1)
-	{
-		return
-			prev = 0,
-			1;
-	}
-	else if (cur == 1836311903)
-	{
+	case -1:
+		return 0;
+	case 1836311903:
 		// End point (statically calculated largest Fibaonacci number that can
 		// be stored in a signed 32-bit integer.  Does make this not totally
 		// portable, because it can't be used in the 64-bit version quickly.
 		return -1;
 	}
-	return
-		next = prev + cur,
-		prev = cur,
-		next;
+	// Based on the "+--" swap method (like "^^^"), but without the last one.
+	return (iterstate = iterstate + cur) - cur;
 }
 
-#define iterstart@Fib (-1)
+#define iterstart@Fib iterstate(-1, 1)
 
-stock iterfunc Random(info[1], cur, count, min = cellmax, max = 0)
+stock iterfunc Random(&iterstate, cur, count, min = cellmax, max = 0)
 {
 	// Return a given count of random numbers:
 	//   
@@ -354,9 +336,9 @@ stock iterfunc Random(info[1], cur, count, min = cellmax, max = 0)
 	//   
 	if (cur == cellmin)
 	{
-		info[0] = 0;
+		iterstate = 0;
 	}
-	if (++info[0] > count)
+	if (++iterstate > count)
 	{
 		return cellmin;
 	}

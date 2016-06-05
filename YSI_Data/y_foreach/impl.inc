@@ -895,7 +895,10 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 #define F@y:%0(%1) Iter_Func@%0(%1)F@a$
 
 // Local state for iterator functions that need more than one variable.
-#define iterstate(%5,%6)%9);%9!=_:(%1=%2( %5),Iter_State@%1[]={%6};_:(%5)!=_:(%1=%2(Iter_State@%1,
+#define iterstate(%5,%6)%9);%9!=_:(%1=%2( %5),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:(%1=%2(_:Iter_State@%1,
+
+// Make the internal state an array if there is more than one value.
+#define itrst:%1=itrst:(%6,%7) %1[]={%6,%7}
 
 // Consume spaces in the iterator state variables.
 #define Iter_State@%0\32;%1) Iter_State@%0%1)
