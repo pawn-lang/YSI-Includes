@@ -174,8 +174,9 @@ Operators:
     #define DYNAMIC_MEMORY (65536)
 #endif
 #pragma dynamic MALLOC_MEMORY + DYNAMIC_MEMORY
+
 // Disable future "#pragma dynamic XXX" by breaking them (will error).
-#define dynamic dynamic_
+#define dynamic __dynamic
 
 // Sort of "module local" variables.
 stock
