@@ -138,23 +138,33 @@ Operators:
 
 #include "..\YSI_Internal\amx_assembly"
 
-#define MALLOC_KB_TO_CELL ((1024 * 8) / cellbits)
+#define GB_TO_MB(%0) ((%0) * 1024)
+
+#define MB_TO_KB(%0) ((%0) * 1024)
+#define GB_TO_KB(%0) ((%0) * 1024 * 1024)
+
+#define KB_TO_BYTE(%0) ((%0) * 1024)
+#define MB_TO_BYTE(%0) ((%0) * 1024 * 1024)
+#define GB_TO_BYTE(%0) ((%0) * 1024 * 1024 * 1024)
+
+#define BYTE_TO_CELL(%0) ((%0) * 8 / cellbits)
+#define KB_TO_CELL(%0)   BYTE_TO_CELL(KB_TO_BYTE(%0))
+#define MB_TO_CELL(%0)   BYTE_TO_CELL(MB_TO_BYTE(%0))
+#define GB_TO_CELL(%0)   BYTE_TO_CELL(GB_TO_BYTE(%0))
 
 #define NO_ALLOC (Alloc:0)
 
 #if !defined MALLOC_MEMORY
-	#if defined MALLOC_MEMORY_KB
-		#define MALLOC_MEMORY ((MALLOC_MEMORY_KB) * MALLOC_KB_TO_CELL)
+	#if defined MALLOC_MEMORY_GB
+		#define MALLOC_MEMORY GB_TO_CELL(MALLOC_MEMORY_GB)
+	#elseif defined MALLOC_MEMORY_MB
+		#define MALLOC_MEMORY MB_TO_CELL(MALLOC_MEMORY_MB)
+	#elseif defined MALLOC_MEMORY_KB
+		#define MALLOC_MEMORY KB_TO_CELL(MALLOC_MEMORY_KB)
+	#elseif defined MALLOC_MEMORY_B
+		#define MALLOC_MEMORY BYTE_TO_CELL(MALLOC_MEMORY_B)
 	#else
-		#if defined MALLOC_MEMORY_MB
-			#define MALLOC_MEMORY ((MALLOC_MEMORY_MB) * 1024 * MALLOC_KB_TO_CELL)
-		#else
-			#if defined MALLOC_MEMORY_B
-				#define MALLOC_MEMORY (((MALLOC_MEMORY_B) * 8) / cellbits)
-			#else
-				#define MALLOC_MEMORY (16 * 1024 * MALLOC_KB_TO_CELL)
-			#endif
-		#endif
+		#define MALLOC_MEMORY MB_TO_CELL(16)
 	#endif
 #endif
 
