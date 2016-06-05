@@ -175,8 +175,38 @@ Operators:
 #endif
 #pragma dynamic MALLOC_MEMORY + DYNAMIC_MEMORY
 
-// Disable future "#pragma dynamic XXX" by breaking them (will error).
-#define dynamic __dynamic
+// ========================================================================== //
+//                                                                            //
+//                                 IMPORTANT!                                 //
+//                                                                            //
+// ========================================================================== //
+#define dynamic dynamic_is_now_DYNAMIC_MEMORY_                                //
+// ========================================================================== //
+//                                                                            //
+// dynamic_is_now_DYNAMIC_MEMORY_                                             //
+//                                                                            //
+// If you get a warning or error about "dynamic_is_now_DYNAMIC_MEMORY_",      //
+// hopefully (though doubtfully) you searched for something related to it and //
+// found this.  If you are slightly confused, just remember that any          //
+// reference to that variable is actually a reference to a variable called    //
+// "dynamic", and so the error/warning refers to that.                        //
+//                                                                            //
+// _is_now_DYNAMIC_MEMORY_                                                    //
+//                                                                            //
+// If you get an error or warning about "_is_now_DYNAMIC_MEMORY_", it is      //
+// because you have tried to use "#pragma dynamic <number>" after including   //
+// "y_malloc" (or another library that eventually includes "y_malloc").       //
+// Because that library allocates memory from the heap, it needs control over //
+// how much memory is in the heap to begin with.  You do this with            //
+// "#pragma dynamic <number>", which that library does.  Because using that a //
+// second time somewhere in your mode will break "y_malloc", it disables the  //
+// pragma, and instead outputs that error.  If you need to increase your      //
+// stack or heap size (due to a stack/heap collision), add this to the very   //
+// top of your mode:                                                          //
+//                                                                            //
+//   #define DYNAMIC_MEMORY <number>                                          //
+//                                                                            //
+// ========================================================================== //
 
 // Sort of "module local" variables.
 stock
