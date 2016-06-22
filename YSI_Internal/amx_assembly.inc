@@ -35,7 +35,7 @@
 	#define AMX_INCLUDING_FAILED
 #endif
 #if !defined deref
-	#error Please update "https://github.com/Zeex/amx_assembly/tree/CodeScanner" to get "deref()"
+	#error Please update "https://github.com/Zeex/amx_assembly" to get "deref()"
 #endif
 
 #tryinclude "..\amx\asm"
@@ -59,7 +59,7 @@
 #tryinclude "..\amx_assembly\codescan"
 #tryinclude "..\..\amx_assembly\codescan"
 #if !defined CODESCAN_INC
-	#error Please update "https://github.com/Zeex/amx_assembly/tree/CodeScanner" to get "codescan.inc"
+	#error Please update "https://github.com/Zeex/amx_assembly" to get "codescan.inc"
 #endif
 
 #tryinclude "..\amx\disasm"
