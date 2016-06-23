@@ -236,6 +236,9 @@ forward Alloc:calloc(size);
 		YSI_gMallocMemory[0] = MALLOC_MEMORY - 1;
 		YSI_g_sUnusedStart = 1;
 		memset(YSI_gMallocMemory[1], 0, MALLOC_MEMORY - 1);
+		#if defined Malloc_OnScriptInit
+			Malloc_OnScriptInit();
+		#endif
 		return 1;
 	}
 	
