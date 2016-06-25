@@ -289,7 +289,7 @@ Array:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define iterstart@Reverse%9$);_:(%1=%9(_:%9,%0))%9; F@p:F@q:$%1,%0$
+#define iterstart@Reverse%9$);%9!=_:(%1=%9(_:%9,%0)); F@p:F@q:$%1,%0$
 
 /*
 
@@ -479,10 +479,6 @@ native Iter_RandomAdd(Iterator:Name<>);
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-//#define Iter_RandomAdd _ITER<RandomAdd>
-//#define Iter_RandomAdd_InternalA(%0,%1)    Iter_RandomAdd_InternalC(%0,%1,F@s(%1)-1)
-//#define Iter_RandomAdd_InternalB(%0,%2,%1) Iter_RandomAdd_InternalD(%0,%1,F@s(%1)-F@s(%0),F@s(%0),F@s(%1)-1-(%2),%2)
-
 #define Iter_RandomAdd(%0) Iter_Add(%0,Iter_RandomFree(%0))
 
 /**--------------------------------------------------------------------------**\
@@ -498,10 +494,6 @@ native Iter_RandomRemove(Iterator:Name<>);
 
 </remarks>
 \**--------------------------------------------------------------------------**/
-
-//#define Iter_RandomRemove _ITER<RandomRemove>
-//#define Iter_RandomRemove_InternalA(%0,%1)    Iter_RandomRemove_InternalC(%0,%1,F@s(%1)-1)
-//#define Iter_RandomRemove_InternalB(%0,%2,%1) Iter_RandomRemove_InternalD(%0,%1,F@s(%1)-F@s(%0),F@s(%0),F@s(%1)-1-(%2),%2)
 
 #define Iter_RandomRemove(%0) Iter_Remove(%0,Iter_Random(%0))
 
@@ -843,13 +835,6 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 #define Iter_Func@public%0(%2)%1$ public F@y:%0(%2)
 #define Iter_Func@forward%0(%2)%1$ forward F@y:%0(%2)
 
-// #define iterstart@stock%0=%1(%2) stock F@y:%0(%2)
-// #define iterstart@static%0=%1(%2) static F@y:%0(%2)
-// #define iterstart@foreign%0=%1(%2) foreign F@y:%0(%2)
-// #define iterstart@global%0=%1(%2) global F@y:%0(%2)
-// #define iterstart@public%0=%1(%2) public F@y:%0(%2)
-// #define iterstart@forward%0=%1(%2) forward F@y:%0(%2)
-
 // A nice "match" symbol that we can scan for, then remove after it is used.
 #define F@a$
 #define F@b|||
@@ -892,7 +877,7 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 #define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=F@h:Iterator@%0[%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
-#define F@l:%9$%1,%0(%2)%8$ F@r(iterstart@%0));_:(%1=F@h:Iter_Func@%0(_:%1,%2))!=F@r(iterstart@%0);
+#define F@l:%9$%1,%0(%2)%8$ F@r(iterstart@%0));_:(F@r(iterstart@%0))!=_:(%1=F@h:Iter_Func@%0(_:%1,%2));
 
 // Normal iterator.
 #define F@m:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=F@h:Iterator@%0[%1])!=(F@s(Iterator@%0)-1);
@@ -906,15 +891,17 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 // Reverse normal iterator.
 #define F@q:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
 
-// Declare a 
-//#define F@y:%0(%1) Iter_Func@%0(%1);const iterstart@%0=_:F@t:-1;Iter_Func@%0(%1)F@a$
-
-// Detect __declspec(stock)
-//#define F@t:-1;%0$__declspec(%1) F@t:-1;%1 %0$
-//#define __declspec_stock
-//#define stock%0\n%1 %0=
-
+// Special iterator function declaration.
 #define F@y:%0(%1) Iter_Func@%0(%1)F@a$
+
+// Local state for iterator functions that need more than one variable.
+#define iterstate(%5,%6)%9);%9!=_:(%1=%2( %5),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:(%1=%2(_:Iter_State@%1,
+
+// Make the internal state an array if there is more than one value.
+#define itrst:%1=itrst:(%6,%7) %1[]={%6,%7}
+
+// Consume spaces in the iterator state variables.
+#define Iter_State@%0\32;%1) Iter_State@%0%1)
 
 /**--------------------------------------------------------------------------**\
 	The workings of these macros are very extensively documented at:
@@ -949,6 +936,13 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 #define Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%2,%1||| using_deprecated_foreach_syntax,%1=_Y_ITER_DO_FOREACH(%1,%2)++using_deprecated_foreach_syntax
 
 stock const
+	// This variable is re-declared when you do "foreach (Player, i)" or similar
+	// so that a warning is generated.  The warning will read:
+	//   
+	//   local variable "using_deprecated_foreach_syntax" shadows a variable at a preceding level
+	//   
+	// This is the best I could do to warn about the old syntax.  That code
+	// should now be "foreach (new i : Player)".  It may become an error later.
 	bool:using_deprecated_foreach_syntax = false,
 	F@o[2];
 

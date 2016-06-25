@@ -68,6 +68,7 @@ Changelog:
 #include <a_samp>
 #include "y_debug"
 #include "..\YSI_Storage\y_amx"
+#include "..\YSI_Internal\amx_assembly"
 
 #if defined YSI_TESTS
 	#if defined INCLUDE_TESTS
@@ -139,6 +140,9 @@ static stock const
 	Y_TESTING_PSHUT = _A<y_@Q>;
 
 static stock
+	YSI_g_sCurTest = 0,
+	YSI_g_sFailTests = 0,
+	YSI_g_sInTest = false,
 	YSI_g_sTestResult,
 	YSI_g_sFailMessage[512],
 	YSI_g_sPlayer = cellmax,
@@ -146,14 +150,17 @@ static stock
 	YSI_g_sTests,
 	YSI_g_sFails;
 
+stock
+	YSI_gCurTestName[32];
+
 #if defined RUN_TESTS
-	#define Test:%1() forward bool:yQ@_%1(); public bool:yQ@_%1() for(new string:__name[]=#%1,bool:__once=(TEST_REPORT("*** Test %s start", __name) || TRUE);__once;__once=(TEST_REPORT(" ") && FALSE))
-	#define TestInit:%1() forward _yQ@%1(); public _yQ@%1() for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(TEST_REPORT(" ", __name) && FALSE))
-	#define TestClose:%1() forward yQ_@%1(); public yQ_@%1() for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(TEST_REPORT(" ", __name) && FALSE))
+	#define Test:%1() forward bool:yQ@_%1(); public bool:yQ@_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = (TEST_REPORT(" ") && false))
+	#define TestInit:%1() forward _yQ@%1(); public _yQ@%1() for (new bool:__once = true; __once; __once = false)
+	#define TestClose:%1() forward yQ_@%1(); public yQ_@%1() for (new bool:__once = true; __once; __once = false)
 	
-	#define PTest:%1(%2) forward bool:_@yQ%1(%2); public bool:_@yQ%1(%2) for(new string:__name[]=#%1,bool:__once=(TEST_REPORT("*** Player Test %s start", __name) || TRUE);__once;__once=(TEST_REPORT(" ") && FALSE))
-	#define PTestInit:%1(%2) forward _y@Q%1(%2); public _y@Q%1(%2) for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(TEST_REPORT(" ", __name) && FALSE))
-	#define PTestClose:%1(%2) forward y_@Q%1(%2); public y_@Q%1(%2) for(new string:__name[]=#%1,bool:__once=TRUE;__once;__once=(TEST_REPORT(" ", __name) && FALSE))
+	#define PTest:%1(%2) forward bool:_@yQ%1(%2); public bool:_@yQ%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = (TEST_REPORT(" ") && false))
+	#define PTestInit:%1(%2) forward _y@Q%1(%2); public _y@Q%1(%2) for (new bool:__once = true; __once; __once = false)
+	#define PTestClose:%1(%2) forward y_@Q%1(%2); public y_@Q%1(%2) for (new bool:__once = true; __once; __once = false)
 #else
 	#define Test:%1() stock bool:yQ@_%1()
 	#define TestInit:%1() stock _yQ@%1()
@@ -174,6 +181,28 @@ static stock
 #include "..\YSI_Internal\y_natives"
 
 #include "..\YSI_Coding\y_va"
+
+/**--------------------------------------------------------------------------**\
+<summary>Testing_Start</summary>
+<param name="name">Name of the current function.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Gets a reference to the 
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock _Testing_Start(name[])
+{
+	// Gets a reference to the name string, which is also an intrusive linked
+	// list of failures.
+	name[0] = name[1] = 0,
+	YSI_g_sCurTest = ref(name);
+	P:3("_Testing_Start %d %d %s = %d", name[0], name[1], name[2], YSI_g_sCurTest);
+	YSI_gCurTestName[0] = '\0',
+	strcpy(YSI_gCurTestName, name[2]);
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>Testing_Ask</summary>
@@ -244,46 +273,55 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 {
 	P:3("bool:Testing_Run called: %i, %i, \"%s\", %i", tests, fails, lastfail, p);
 	#pragma unused p, lastfail
-	#if defined RUN_TESTS
-		P:2("Testing_Run() called");
-		new
-			idx,
-			buffer[32];
-		while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_TESTING_TEST)))
-		{
-			strunpack(buffer, buffer);
-			// Call the setup function if there is one.
-			buffer[0] = '_';
-			buffer[1] = 'y';
-			buffer[2] = 'Q';
-			buffer[3] = '@';
-			CallLocalFunction(buffer, "");
-			// Call the test.
-			buffer[0] = 'y';
-			buffer[1] = 'Q';
-			buffer[2] = '@';
-			buffer[3] = '_';
-			fails = YSI_g_sFails;
-			P:5("Testing_Run(): Calling %s", unpack(buffer[1]));
-			CallLocalFunction(buffer, "");
-			#if !defined TEST_SHOW_PASSES
-				if (YSI_g_sFails == fails)
-				{
-					TEST_REPORT(TEST_PASSED);
-					TEST_REPORT(" ");
-				}
-			#endif
-			buffer[2] = '_';
-			buffer[3] = '@';
-			CallLocalFunction(buffer, "");
-		}
-		tests = YSI_g_sTests;
+#if defined RUN_TESTS
+	P:2("Testing_Run() called");
+	new
+		idx,
+		buffer[32];
+	YSI_g_sCurTest = YSI_g_sFailTests = 0;
+	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_TESTING_TEST)))
+	{
+		strunpack(buffer, buffer);
+		// Call the setup function if there is one.
+		buffer[0] = '_',
+		buffer[1] = 'y',
+		buffer[2] = 'Q',
+		buffer[3] = '@',
+		CallLocalFunction(buffer, "");
+		// Call the test.
+		buffer[0] = 'y',
+		buffer[1] = 'Q',
+		buffer[2] = '@',
+		buffer[3] = '_',
 		fails = YSI_g_sFails;
-		return fails == 0;
-	#else
-		#pragma unused tests, fails, lastfail
-		return true;
-	#endif
+		P:5("Testing_Run(): Calling %s", unpack(buffer[1]));
+		YSI_g_sInTest = true;
+		CallLocalFunction(buffer, "");
+		YSI_g_sInTest = false;
+		if (YSI_g_sFails != fails)
+		{
+			WriteAmxMemory(YSI_g_sCurTest, YSI_g_sFailTests),
+			WriteAmxMemory(YSI_g_sCurTest + 4, YSI_g_sFails - fails),
+			YSI_g_sFailTests = YSI_g_sCurTest;
+		}
+#if !defined TEST_SHOW_PASSES
+		else
+		{
+			TEST_REPORT(TEST_PASSED);
+			TEST_REPORT(" ");
+		}
+#endif
+		buffer[2] = '_',
+		buffer[3] = '@',
+		CallLocalFunction(buffer, "");
+	}
+	tests = YSI_g_sTests;
+	fails = YSI_g_sFails;
+	return fails == 0;
+#else
+	#pragma unused tests, fails, lastfail
+	return true;
+#endif
 }
 
 /**--------------------------------------------------------------------------**\
@@ -326,14 +364,15 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 			buffer[2] = 'y';
 			fails = YSI_g_sFails;
 			P:5("Testing_Player(): Calling %s", buffer[6]);
+			YSI_g_sInTest = true;
 			CallLocalFunction(buffer, "");
-			#if !defined TEST_SHOW_PASSES
-				if (YSI_g_sFails == fails)
-				{
-					TEST_REPORT(TEST_PASSED);
-					TEST_REPORT(" ");
-				}
-			#endif
+#if !defined TEST_SHOW_PASSES
+		if (YSI_g_sFails == fails)
+		{
+			TEST_REPORT(TEST_PASSED);
+			TEST_REPORT(" ");
+		}
+#endif
 		}
 		tests = YSI_g_sTests;
 		fails = YSI_g_sFails;
@@ -388,6 +427,7 @@ forward OnTestsComplete(tests, fails);
 	
 	Testing_Next(playerid)
 	{
+		YSI_g_sInTest = false;
 		new
 			buffer[32];
 		for ( ; ; )
@@ -420,6 +460,7 @@ forward OnTestsComplete(tests, fails);
 				buffer[1] = '@';
 				buffer[2] = 'y';
 				P:5("Testing_Next(): Calling %s", unpack(buffer[1]));
+				YSI_g_sInTest = true;
 				CallLocalFunction(buffer, "i", playerid);
 			}
 			else
@@ -490,7 +531,12 @@ forward OnTestsComplete(tests, fails);
 	
 	public OnRuntimeError(code, &bool:suppress)
 	{
-		++YSI_g_sFails;
+		if (YSI_g_sInTest)
+		{
+			// Fail the current test if we see any runtime errors.  Requires the
+			// crashdetect plugin to function, but not to compile and run.
+			Testing_Test(false, "Runtime error detected");
+		}
 		#if defined Testing_OnRuntimeError
 			return Testing_OnRuntimeError(code, suppress);
 		#else
@@ -556,14 +602,24 @@ stock Testing_RunAll()
 	else
 	{
 		printf("*** Tests: %d, Fails: %d", tests, fails);
-		TEST_REPORT(" ");
-		if (!fails)
+		if (fails)
 		{
+			// List all the failing tests, along with the number of "ASSERT"s
+			// that didn't pass.
+			while (YSI_g_sFailTests != 0)
+			{
+				printf("    - Test:%s (%d)", deref(YSI_g_sFailTests + 8), ReadAmxMemory(YSI_g_sFailTests + 4)),
+				YSI_g_sFailTests = ReadAmxMemory(YSI_g_sFailTests);
+			}
+		}
+		else
+		{
+			TEST_REPORT(" ");
 			TEST_REPORT("  ||===================||  ");
 			TEST_REPORT("  || ALL TESTS PASSED! ||  ");
 			TEST_REPORT("  ||===================||  ");
-			TEST_REPORT(" ");
 		}
+		TEST_REPORT(" ");
 	}
 	//state ysi_debug : on;
 	CallLocalFunction("OnTestsComplete", "ii", tests, fails);

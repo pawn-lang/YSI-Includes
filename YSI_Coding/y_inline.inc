@@ -75,9 +75,7 @@ Changelog:
 #endif
 
 
-#include "..\amx\asm"
-#include "..\amx\disasm"
-#include "..\amx\frame_info"
+#include "..\YSI_Internal\amx_assembly"
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Internal\y_shortfunc"
 #include "..\YSI_Core\y_debug"
@@ -92,8 +90,6 @@ Changelog:
 #include "y_inline/impl"
 
 #if defined YSI_TESTS
-	#include "..\amx\amx_memory.inc"
-	
 	#include "..\YSI_Core\y_testing"
 	#include "y_hooks"
 	#include "y_inline/tests"

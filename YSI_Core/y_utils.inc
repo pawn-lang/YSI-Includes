@@ -92,9 +92,7 @@ Variables:
 #include "..\YSI_Storage\y_amx"
 //#tryinclude <sscanf>
 
-#include "..\amx\asm"
-//asm"
-
+#include "..\YSI_Internal\amx_assembly"
 // Add new tags to the START of this list.
 #include "..\YSI_Internal\y_globaltags"
 
@@ -122,6 +120,10 @@ new stock
 #if !defined NULL
 new stock
 	NULL[2] = "\1";
+#endif
+
+#if !defined cellbytes
+	#define cellbytes (cellbits / 8)
 #endif
 
 #define UNSIGNED(%0) ((%0) - cellmin)

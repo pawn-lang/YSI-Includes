@@ -127,3 +127,4 @@ static stock __COMPILER_SECOND_PASS() {}
 #if __Pawn == 0x030A
 	#define NESTED_ELLIPSIS
 #endif
+

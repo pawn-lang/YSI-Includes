@@ -10,10 +10,7 @@
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Coding\y_inline"
 
-#include "..\amx\disasm"
-#include "..\amx\asm"
-#include "..\amx\frame_info"
-
+#include "..\YSI_Internal\amx_assembly"
 #include "y_functional/impl"
 #include "y_functional/rewrite"
 

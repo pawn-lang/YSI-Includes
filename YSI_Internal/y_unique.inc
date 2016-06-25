@@ -62,7 +62,18 @@ Changelog:
 	#undef _inc_y_unique
 #endif
 
+#if defined UNIQUE_FUNCTION
+	#undef UNIQUE_FUNCTION
+#endif
+
+// The "static stock const" values are used for debugging, since they will show
+// up in preprocessed dumps ("-l") with the value of "UNIQUE_SYMBOL" at that
+// moment, instead of its final value.
 #if defined UNIQUE_SYMBOL
+	#if UNIQUE_SYMBOL < 0 || UNIQUE_SYMBOL >= 1000
+		static stock const UNIQUE_SYMBOL_TOO_LARGE = UNIQUE_SYMBOL;
+		#error UNIQUE_SYMBOL out of range.
+	#endif
 	#if UNIQUE_SYMBOL < 100
 		static stock const UNIQUE_SYMBOL_LESS_THAN_100 = UNIQUE_SYMBOL;
 		#include "y_unique\_000_to_099"
@@ -98,9 +109,5 @@ Changelog:
 	static stock const UNIQUE_SYMBOL_DOESNT_EXIST;
 	#define UNIQUE_SYMBOL (0)
 	#define UNIQUE_FUNCTION<%0...%1> %0000%1
-#endif
-#if UNIQUE_SYMBOL < 0 || UNIQUE_SYMBOL >= 1000
-	static stock const UNIQUE_SYMBOL_TOO_LARGE = UNIQUE_SYMBOL;
-	#error UNIQUE_SYMBOL out of range.
 #endif
 

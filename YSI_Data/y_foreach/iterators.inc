@@ -258,82 +258,111 @@ stock iterfunc Range(cur, min, max, step = 1)
 
 #define iterstart@Range cellmin
 
-stock iterfunc Powers(cur, base)
+stock iterfunc Powers(&iterstate, cur, base)
 {
-	static
-		next = 0;
+	// Returns all the powers of the given number that can be stored in a PAWN
+	// cell.
+	//   
+	//   foreach (new i : Powers(3))
+	//   {
+	//       // 3^0, 3^1, 3^2, 3^3, etc...
+	//   }
+	//   
 	if (cur)
 	{
 		return
-			next = base * cur,
-			_:(next > cur) * next;
+			iterstate = base * cur,
+			_:(iterstate > cur) * iterstate;
 	}
 	return 1;
 }
 
-#define iterstart@Powers 0
+#define iterstart@Powers iterstate(0, 0)
 
-stock iterfunc Fib(cur)
+stock iterfunc Fib(&iterstate, cur)
 {
-	static
-		prev = -1,
-		next = 0;
-	if (cur == -1)
+	// Returns every number in the Fibaonacci sequence that can be stored in a
+	// PAWN cell.
+	//   
+	//   foreach (new i : Fib())
+	//   {
+	//   }
+	//   
+	switch (cur)
 	{
-		return
-			prev = -1,
-			0;
-	}
-	else if (prev == -1)
-	{
-		return
-			prev = 0,
-			1;
-	}
-	else if (cur == 1836311903)
-	{
+	case -1:
+		return 0;
+	case 1836311903:
+		// End point (statically calculated largest Fibaonacci number that can
+		// be stored in a signed 32-bit integer.  Does make this not totally
+		// portable, because it can't be used in the 64-bit version quickly.
 		return -1;
 	}
-	return
-		next = prev + cur,
-		prev = cur,
-		next;
+	// Based on the "+--" swap method (like "^^^"), but without the last one.
+	return (iterstate = iterstate + cur) - cur;
 }
 
-#define iterstart@Fib (-1)
+#define iterstart@Fib iterstate(-1, 1)
 
-stock iterfunc Random(cur, count, ...)
+stock iterfunc Random(&iterstate, cur, count, min = cellmax, max = 0)
 {
-	static
-		num = 0;
+	// Return a given count of random numbers:
+	//   
+	//   foreach (new i : Random(5))
+	//   {
+	//       // 5 random numbers.
+	//   }
+	//   
+	//   foreach (new i : Random(12, 10))
+	//   {
+	//       // 12 random numbers between 0 and 10 (0 to 9 inclusive).
+	//   }
+	//   
+	//   foreach (new i : Random(100, -10, 10))
+	//   {
+	//       // 100 random numbers between -10 and 10 (-10 to 9 inclusive).
+	//   }
+	//   
+	// Note that this function has internal state, so you cannot call this in a
+	// nested manner.  This will probably fail:
+	//   
+	//   foreach (new i : Random(10, 70))
+	//   {
+	//       foreach (new j : Random(10, 80))
+	//       {
+	//           // Will NOT get 100 randoms 0 to 80, plus 10 randoms 0 to 70.
+	//       }
+	//   }
+	//   
 	if (cur == cellmin)
 	{
-		num = 0;
+		iterstate = 0;
 	}
-	if (++num > count)
+	if (++iterstate > count)
 	{
 		return cellmin;
 	}
-	switch (numargs())
+	if (min >= max)
 	{
-		case 2:
-		{
-			return random(cellmax);
-		}
-		case 3:
-		{
-			return random(getarg(2));
-		}
+		return random(min);
 	}
-	return
-		count = getarg(2),
-		random(getarg(3) - count) + count;
+	else
+	{
+		return random(max - min) + min;
+	}
 }
 
-#define iterstart@Random cellmin
+#define iterstart@Random iterstate(cellmin, 0)
 
 stock iterfunc Null(cur, arr[], size = sizeof (arr))
 {
+	// Loop over all the indexes of this array that are zero.
+	//   
+	//   new array[] = { ... };
+	//   foreach (new i : Null(array))
+	//   {
+	//   }
+	//   
 	while (++cur < size)
 	{
 		if (!arr[cur])
@@ -348,6 +377,13 @@ stock iterfunc Null(cur, arr[], size = sizeof (arr))
 
 stock iterfunc NonNull(cur, arr[], size = sizeof (arr))
 {
+	// Loop over all the indexes of this array that are not zero.
+	//   
+	//   new array[] = { ... };
+	//   foreach (new i : NonNull(array))
+	//   {
+	//   }
+	//   
 	while (++cur < size)
 	{
 		if (arr[cur])
@@ -362,6 +398,13 @@ stock iterfunc NonNull(cur, arr[], size = sizeof (arr))
 
 stock iterfunc Until(cur, val, arr[], size = sizeof (arr))
 {
+	// Loop over all the indexes of this array until one equals the given value:
+	//   
+	//   new array[] = { ... };
+	//   foreach (new i : Until(5, array))
+	//   {
+	//   }
+	//   
 	return (++cur >= size || arr[cur] == val) ? -1 : cur;
 }
 
@@ -380,6 +423,47 @@ stock iterfunc Filter(cur, val, arr[], size = sizeof (arr))
 }
 
 #define iterstart@Filter (-1)
+
+#define Iter_Func@None(%0,%1) _ITER<None>(%1,%0)
+#define iterstart@None (-1)
+#define Iter_None_InternalA(%0,%1,%9) Iter_None_Internal(%1,F@s(%1)-1,%9)
+#define Iter_None_InternalB(%0,%2,%1,%9) Iter_None_Internal(%1,F@s(%1)-F@s(%0),%9)
+
+stock Iter_None_Internal(array[], size, value)
+{
+	// Loop over all values NOT in any iterator.  Similar to repeatedly calling
+	// "Iter_Free", though that will return the same value twice if called twice
+	// in a row.  Instead, this function will loop through the missing ones.
+	while (++value < size)
+	{
+		if (array[value] <= value)
+		{
+			return value;
+		}
+	}
+	return -1;
+}
+
+#define Iter_Func@All(%0,%1) _ITER<All>(%1,%0)
+#define iterstart@All (-1)
+#define Iter_All_InternalA(%0,%1,%9) Iter_All_Internal(%1,F@s(%1)-1,%9)
+#define Iter_All_InternalB(%0,%2,%1,%9) Iter_All_Internal(%1,F@s(%1)-F@s(%0),%9)
+
+stock Iter_All_Internal(array[], size, value)
+{
+	// Loop over all values in any iterator.  This is different to looping over
+	// the iterator normally for multi-dimensional iterators, since it will
+	// return all values in ANY iterator in their numerical order.  For single-
+	// dimensional iterators it is exactly the same, just a little slower.
+	while (++value < size)
+	{
+		if (array[value] > value)
+		{
+			return value;
+		}
+	}
+	return -1;
+}
 
 /*
 
@@ -655,6 +739,7 @@ hook OnScriptInit()
 			new
 				ret = CreateVehicle(modelid, x, y, z, angle, color1, color2, respawn_delay, addsiren);
 		#else
+			#pragma unused addsiren
 			new
 				ret = CreateVehicle(modelid, x, y, z, angle, color1, color2, respawn_delay);
 		#endif
@@ -696,6 +781,7 @@ hook OnScriptInit()
 			new
 				ret = AddStaticVehicleEx(modelid, spawn_x, spawn_y, spawn_z, angle, color1, color2, respawn_delay, addsiren);
 		#else
+			#pragma unused addsiren
 			new
 				ret = AddStaticVehicleEx(modelid, spawn_x, spawn_y, spawn_z, angle, color1, color2, respawn_delay);
 		#endif

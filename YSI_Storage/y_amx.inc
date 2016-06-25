@@ -74,9 +74,7 @@ Changelog:
 #include "..\YSI_Core\y_debug"
 #include "..\YSI_Internal\y_natives"
 
-#include "..\amx\asm"
-#include "..\amx\disasm"
-#include "..\amx\frame_info"
+#include "..\YSI_Internal\amx_assembly"
 
 #define AMX_FastString(%1,%2,%3,%4) \
 	(((%1) << 0) | ((%2) << 8) | ((%3) << 16) | ((%4) << 24))

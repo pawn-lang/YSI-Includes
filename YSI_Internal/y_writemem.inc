@@ -101,7 +101,10 @@ Operators:
 #include "..\YSI_Coding\y_hooks"
 #include "..\YSI_Core\y_utils"
 
-#include "..\amx\windows\import_table"
+#tryinclude "..\amx\windows\import_table"
+#tryinclude <amx_assembly\windows\import_table>
+#tryinclude "..\amx_assembly\windows\import_table"
+#tryinclude "..\..\amx_assembly\windows\import_table"
 
 forward WriteMem(addr, value);
 

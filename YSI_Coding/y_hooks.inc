@@ -90,7 +90,7 @@ Changelog:
 
 #include "..\YSI_Internal\y_cgen"
 
-#include "..\amx\asm"
+#include "..\YSI_Internal\amx_assembly"
 //asm"
 
 #include "y_hooks/impl"
