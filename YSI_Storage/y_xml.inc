@@ -225,22 +225,29 @@ stock XML_Parse(XML:rule, filename[])
 			inOpen,
 			inComment,
 			lineOffset,
+			lineLen,
 			value[MAX_XML_ENTRY_TEXT],
 			name[MAX_XML_ENTRY_NAME],
 			inPar;
-		while (fread(xFile, line[lineOffset], sizeof (line) - lineOffset))
+		while ((lineLen = fread(xFile, line[lineOffset], sizeof (line) - lineOffset)))
 		{
-			lineOffset = 0;
 			P:5("XML_Parse() line: %s", line);
 			new
 				pos,
 				ch;
+			lineOffset = 0;
 			if (inComment)
 			{
 				pos = strfind(line, "-->", false, 0);
 				if (pos == -1)
 				{
 					// Skip this whole line.
+					if (lineLen == YSI_MAX_STRING - 1)
+					{
+						// Check that "-->" doesn't span two read-in blocks.
+						memcpy(line, line[sizeof (line) - 3], 0, 3 * cellbytes);
+						lineOffset = 2;
+					}
 					continue;
 				}
 				else
@@ -257,7 +264,7 @@ stock XML_Parse(XML:rule, filename[])
 				}
 				case '\1' .. ' ':
 				{
-					if (pos > (YSI_MAX_STRING * 2 / 3))
+					if (lineLen == YSI_MAX_STRING - 1 && pos > (YSI_MAX_STRING * 2 / 3))
 					{
 						// 2/3 of the way through the line and found a space -
 						// use this as a handy break point for long lines.
@@ -292,11 +299,20 @@ stock XML_Parse(XML:rule, filename[])
 					}
 					else if (line[pos] == '!' && line[pos + 1] == '-' && line[pos + 2] == '-')
 					{
-						// XML comments.
+						// XML comments.  XML doesn't support nested comments.
+						// I am a firm believer that they are the future, but
+						// this code isn't clever enough to parse them (being
+						// very old), and since they aren't supported there is
+						// no need to add them.
 						pos = strfind(line, "-->", false, pos + 3);
 						if (pos == -1)
 						{
 							inComment = 1;
+							if (lineLen == YSI_MAX_STRING - 1)
+							{
+								memcpy(line, line[sizeof (line) - 3], 0, 3 * cellbytes);
+								lineOffset = 2;
+							}
 							break;
 						}
 						else
