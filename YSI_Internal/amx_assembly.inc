@@ -4,6 +4,8 @@
 // inclusions.  I don't know why I ever made YSI use its own internal version...
 
 #tryinclude "..\amx\amx"
+#tryinclude "..\..\amx\amx"
+#tryinclude <amx\amx>
 #tryinclude <amx_assembly\amx>
 #tryinclude "..\amx_assembly\amx"
 #tryinclude "..\..\amx_assembly\amx"
@@ -12,6 +14,8 @@
 #endif
 
 #tryinclude "..\amx\amx_base"
+#tryinclude "..\..\amx\amx_base"
+#tryinclude <amx\amx_base>
 #tryinclude <amx_assembly\amx_base>
 #tryinclude "..\amx_assembly\amx_base"
 #tryinclude "..\..\amx_assembly\amx_base"
@@ -20,6 +24,8 @@
 #endif
 
 #tryinclude "..\amx\amx_header"
+#tryinclude "..\..\amx\amx_header"
+#tryinclude <amx\amx_header>
 #tryinclude <amx_assembly\amx_header>
 #tryinclude "..\amx_assembly\amx_header"
 #tryinclude "..\..\amx_assembly\amx_header"
@@ -28,6 +34,8 @@
 #endif
 
 #tryinclude "..\amx\amx_memory"
+#tryinclude "..\..\amx\amx_memory"
+#tryinclude <amx\amx_memory>
 #tryinclude <amx_assembly\amx_memory>
 #tryinclude "..\amx_assembly\amx_memory"
 #tryinclude "..\..\amx_assembly\amx_memory"
@@ -39,6 +47,8 @@
 #endif
 
 #tryinclude "..\amx\asm"
+#tryinclude "..\..\amx\asm"
+#tryinclude <amx\asm>
 #tryinclude <amx_assembly\asm>
 #tryinclude "..\amx_assembly\asm"
 #tryinclude "..\..\amx_assembly\asm"
@@ -47,6 +57,8 @@
 #endif
 
 #tryinclude "..\amx\asm_macros"
+#tryinclude "..\..\amx\asm_macros"
+#tryinclude <amx\asm_macros>
 #tryinclude <amx_assembly\asm_macros>
 #tryinclude "..\amx_assembly\asm_macros"
 #tryinclude "..\..\amx_assembly\asm_macros"
@@ -55,6 +67,8 @@
 #endif
 
 #tryinclude "..\amx\codescan"
+#tryinclude "..\..\amx\codescan"
+#tryinclude <amx\codescan>
 #tryinclude <amx_assembly\codescan>
 #tryinclude "..\amx_assembly\codescan"
 #tryinclude "..\..\amx_assembly\codescan"
@@ -63,6 +77,8 @@
 #endif
 
 #tryinclude "..\amx\disasm"
+#tryinclude "..\..\amx\disasm"
+#tryinclude <amx\disasm>
 #tryinclude <amx_assembly\disasm>
 #tryinclude "..\amx_assembly\disasm"
 #tryinclude "..\..\amx_assembly\disasm"
@@ -71,6 +87,8 @@
 #endif
 
 #tryinclude "..\amx\dynamic_call"
+#tryinclude "..\..\amx\dynamic_call"
+#tryinclude <amx\dynamic_call>
 #tryinclude <amx_assembly\dynamic_call>
 #tryinclude "..\amx_assembly\dynamic_call"
 #tryinclude "..\..\amx_assembly\dynamic_call"
@@ -79,6 +97,8 @@
 #endif
 
 #tryinclude "..\amx\frame_info"
+#tryinclude "..\..\amx\frame_info"
+#tryinclude <amx\frame_info>
 #tryinclude <amx_assembly\frame_info>
 #tryinclude "..\amx_assembly\frame_info"
 #tryinclude "..\..\amx_assembly\frame_info"
@@ -87,6 +107,8 @@
 #endif
 
 #tryinclude "..\amx\heap_alloc"
+#tryinclude "..\..\amx\heap_alloc"
+#tryinclude <amx\heap_alloc>
 #tryinclude <amx_assembly\heap_alloc>
 #tryinclude "..\amx_assembly\heap_alloc"
 #tryinclude "..\..\amx_assembly\heap_alloc"
@@ -95,6 +117,8 @@
 #endif
 
 #tryinclude "..\amx\opcode"
+#tryinclude "..\..\amx\opcode"
+#tryinclude <amx\opcode>
 #tryinclude <amx_assembly\opcode>
 #tryinclude "..\amx_assembly\opcode"
 #tryinclude "..\..\amx_assembly\opcode"
@@ -103,6 +127,8 @@
 #endif
 
 #tryinclude "..\amx\os"
+#tryinclude "..\..\amx\os"
+#tryinclude <amx\os>
 #tryinclude <amx_assembly\os>
 #tryinclude "..\amx_assembly\os"
 #tryinclude "..\..\amx_assembly\os"
@@ -111,6 +137,8 @@
 #endif
 
 #tryinclude "..\amx\phys_memory"
+#tryinclude "..\..\amx\phys_memory"
+#tryinclude <amx\phys_memory>
 #tryinclude <amx_assembly\phys_memory>
 #tryinclude "..\amx_assembly\phys_memory"
 #tryinclude "..\..\amx_assembly\phys_memory"
@@ -119,6 +147,8 @@
 #endif
 
 #tryinclude "..\amx\profiler"
+#tryinclude "..\..\amx\profiler"
+#tryinclude <amx\profiler>
 #tryinclude <amx_assembly\profiler>
 #tryinclude "..\amx_assembly\profiler"
 #tryinclude "..\..\amx_assembly\profiler"
@@ -127,6 +157,8 @@
 #endif
 
 //#tryinclude "..\amx\shellcode"
+//#tryinclude "..\..\amx\shellcode"
+//#tryinclude <amx\shellcode>
 //#tryinclude <amx_assembly\shellcode>
 //#tryinclude "..\amx_assembly\shellcode"
 //#tryinclude "..\..\amx_assembly\shellcode"
@@ -135,6 +167,8 @@
 //#endif
 
 #tryinclude "..\amx\stack_dump"
+#tryinclude "..\..\amx\stack_dump"
+#tryinclude <amx\stack_dump>
 #tryinclude <amx_assembly\stack_dump>
 #tryinclude "..\amx_assembly\stack_dump"
 #tryinclude "..\..\amx_assembly\stack_dump"
@@ -143,6 +177,8 @@
 #endif
 
 #tryinclude "..\amx\stack_trace"
+#tryinclude "..\..\amx\stack_trace"
+#tryinclude <amx\stack_trace>
 #tryinclude <amx_assembly\stack_trace>
 #tryinclude "..\amx_assembly\stack_trace"
 #tryinclude "..\..\amx_assembly\stack_trace"
