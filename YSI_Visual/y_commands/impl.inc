@@ -220,6 +220,11 @@ static stock const
 
 #define YCMD: _YCMD_0:_YCMD_1:_YCMD_2:
 
+//Detected another command system
+#if defined CMD
+	#error Detected another command system
+#endif
+
 // ZCMD compatibility.
 #define CMD:%0(%1) RC:%0(%1,__help)if(__help)return 0;else
 #define COMMAND CMD
