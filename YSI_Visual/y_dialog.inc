@@ -285,7 +285,7 @@ stock Dialog_SetCallback(dialogid, callback:callback)
 
 stock Dialog_SetCallbackData(dialogid, callback[E_CALLBACK_DATA])
 {
-	broadcastfunc Dialog_SetMaster(dialogid, _@);
+	broadcastfunc Dialog_SetMaster(dialogid, Y@);
 	YSI_g_sDialogInfo[dialogid] = callback;
 }
 
@@ -310,15 +310,15 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		return 0;
 	}
 	
-	P:5("Dialog_OnDialogResponse: master = %d, %d", YSI_g_sDialogMasters[dialogid], _@);
+	P:5("Dialog_OnDialogResponse: master = %d, %d", YSI_g_sDialogMasters[dialogid], Y@);
 	if(YSI_g_sDialogMasters[dialogid] == -1) {
-	    if(Master_Caller() == _@) {
+	    if(Master_Caller() == Y@) {
 	    	SetTimerEx("DialogSetToNone", 0, false, "i", playerid);
 		}
 	    return 0;
 	}
 	
-	if (YSI_g_sDialogMasters[dialogid] != _@)
+	if (YSI_g_sDialogMasters[dialogid] != Y@)
 	{
 		return 0;
 	}

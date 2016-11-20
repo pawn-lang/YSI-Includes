@@ -117,7 +117,7 @@ Natives:
 
 // Public variable.
 public stock
-	_@ = 0;
+	Y@ = 0;
 
 // J@ is a "nul" target - send things there if they need ignoring or if a
 // parameter needs using.  I@ is too now.
@@ -186,22 +186,11 @@ stock X@(GLOBAL_TAG_TYPES:n)
 	setproperty(8, YSIM_RETURN, n);
 }
 
-// stock Y@()
-// {
-	// P:4("Y@ called");
-	// static
-	    // ret
-	// return
-		// ret = getproperty(8, YSIM_CALLER),
-		// setproperty(8, YSIM_CALLER, _@),
-		// ret;
-// }
-
-stock Y@()
+stock E@()
 {
-	P:4("Y@ called");
+	P:4("E@ called");
 	// Already returns the previous value.
-	return setproperty(8, YSIM_CALLER, _@);
+	return setproperty(8, YSIM_CALLER, Y@);
 }
 
 stock Z@(GLOBAL_TAG_TYPES:v = -1)

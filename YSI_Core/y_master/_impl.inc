@@ -112,7 +112,7 @@ Tags:
 	-
 Variables:
 	Global:
-		_@ - ID of this script.
+		Y@ - ID of this script.
 	Static:
 		-
 Commands:
@@ -552,16 +552,16 @@ Natives:
 						@9OnScriptInit();
 					#endif
 					#define OnMasterSystemInit @9OnScriptInit
-				#elseif _MASTER == 62
-					#if defined @@OnScriptInit
-						@@OnScriptInit();
-					#endif
-					#define OnMasterSystemInit @@OnScriptInit
-				#elseif _MASTER == 63
-					#if defined @_OnScriptInit
-						@_OnScriptInit();
-					#endif
-					#define OnMasterSystemInit @_OnScriptInit
+				// #elseif _MASTER == 62
+					// #if defined @@OnScriptInit
+						// @@OnScriptInit();
+					// #endif
+					// #define OnMasterSystemInit @@OnScriptInit
+				// #elseif _MASTER == 63
+					// #if defined @_OnScriptInit
+						// @_OnScriptInit();
+					// #endif
+					// #define OnMasterSystemInit @_OnScriptInit
 				#endif
 			#endif
 			return 1;
@@ -578,8 +578,8 @@ Natives:
 		
 		public _YCM() <_YCM:y>
 		{
-			P:1("%d: " #_YCM "<y> called, master = %d", _@, getproperty(9, #_YCM));
-			if (getproperty(9, #_YCM) == _@)
+			P:1("%d: " #_YCM "<y> called, master = %d", Y@, getproperty(9, #_YCM));
+			if (getproperty(9, #_YCM) == Y@)
 			{
 				P:2(#_YCM " natural end");
 				// Disable the current mastership.
@@ -608,7 +608,7 @@ Natives:
 		
 		public _YCM() <_YCM:n>
 		{
-			P:1("%d: " #_YCM "<n> called", _@);
+			P:1("%d: " #_YCM "<n> called", Y@);
 			// This has been called remotely from a script which owns the
 			// library masterhood (that's the only way this can ever be called).
 			Master_GetCurrentMaster();
@@ -616,14 +616,14 @@ Natives:
 		
 		public _YCM() <_YCM:m, _YCM:p>
 		{
-			P:1("%d: " #_YCM "<m,p> called", _@);
+			P:1("%d: " #_YCM "<m,p> called", Y@);
 			// Do nothing at all (just define states).
 		}
 		
 		public _YCM() <_YCM:u>
 		{
 			// Finish initialisation.
-			P:1("%d: " #_YCM "<u> called", _@);
+			P:1("%d: " #_YCM "<u> called", Y@);
 			state _YCM:y;
 			_YCM@ = _E_YCM@y;
 		}
@@ -662,14 +662,14 @@ Natives:
 		
 		#if _MASTER == 0
 			// Less strict (implicit user master).
-			#define RC:%0(%1) @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==_@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
+			#define RC:%0(%1) @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==Y@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 		#else
 			#define RC:%0(%1) @yC_%0(a,b[],c);@yC_%0(a,b[],c)U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 		#endif
 		
 		#define RA:%0_On%1(%3) public On%1(%3)
 		
-		#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==0)?(_@):(I@))
+		#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==0)?(Y@):(I@))
 	#else
 		// Define "foreign" more generically.  If you want "server" or "none"
 		// you will need to define this specifically, otherwise you just need to
@@ -680,7 +680,7 @@ Natives:
 		// definition of the "_YCM:m" function to not give warnings.
 		// The "@" versions of the functions are used when the caller's master
 		// ID is needed, the normal version is used when it isn't.
-		#define @foreign%0(%1) stock%0(%1)<>{new i=Y@();W@(@Zu:#%0@#,_YM@Cj:%1,,);return Z@(i);}%0(%1)<_YCM:m>;%0@(%1)
+		#define @foreign%0(%1) stock%0(%1)<>{new i=E@();W@(@Zu:#%0@#,_YM@Cj:%1,,);return Z@(i);}%0(%1)<_YCM:m>;%0@(%1)
 		
 		#define foreign%0(%1) stock%0(%1)<>{W@(@Zu:#%0@#,_YM@Cl:%1,,);return V@(8,YSIM_RETURN);}%0(%1)<_YCM:m>;%0@(%1)
 		
@@ -699,7 +699,7 @@ Natives:
 			
 			#if _MASTER == 0
 				// Less strict (implicit user master).
-				#define RC:%0(%1) @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==_@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
+				#define RC:%0(%1) @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==Y@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 			#else
 				#define RC:%0(%1) static stock _@yC%0()
 			#endif
@@ -753,7 +753,7 @@ Natives:
 				
 				#if _MASTER == 0
 					// Less strict (implicit user master).
-					#define RC:%0(%1) @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==_@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
+					#define RC:%0(%1) @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==Y@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 				#else
 					// Strict libraries.
 					#define RC:%0(%1) @yC_%0(a,b[],c);@yC_%0(a,b[],c)<>{}@yC_%0(a,b[],c)<_YCM:y>U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
@@ -764,7 +764,7 @@ Natives:
 				// while in the condition of the ternary operator causes the
 				// compiler to try allocate vast amounts of heap space for no
 				// apparent reason.
-				#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==0)?(_@):(I@))
+				#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==0)?(Y@):(I@))
 				
 				#define RA:%0_On%1(%3) public On%1(%3)<>ALS_CALL<%1> public On%1(%3)<_YCM:y>
 			#endif
@@ -789,7 +789,7 @@ Natives:
 	
 	#define RC:%0(%1) @yC_%0(%1);@yC_%0(%1)
 	
-	#define Master_Caller() (_@)
+	#define Master_Caller() (Y@)
 	
 	// Shortcut for y_als hooks.
 	#define RA:%0_On%1(%3) public On%1(%3)

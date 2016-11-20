@@ -112,7 +112,7 @@ Tags:
 	-
 Variables:
 	Global:
-		_@ - ID of this script.
+		Y@ - ID of this script.
 	Static:
 		-
 Commands:
