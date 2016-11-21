@@ -126,56 +126,37 @@ somewhere_after_this_func:
 #define LAMBDA_iii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2|||,0,0,0|||<%9>{%0}(%1)%8;
 #define LAMBDA_iiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3|||,0,0,0,0|||<%9>{%0}(%1)%8;
 #define LAMBDA_iiiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3,_4|||,0,0,0,0,0|||<%9>{%0}(%1)%8;
-//#define LAMBDA_v<%9>{%0}(%1) _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)
-//#define LAMBDA_s<%9>{%0}(%1) _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)
-// #define LAMBDA_a<%9>{%0}(%1) _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)
 
 #define _DO_LAMBDA|||%6|||%5|||<%9>{%0}(%1)%8; LAM@0()%8;{LAM@1();static const YSII[]="@:....";if(I@E(YSII))for(%6;I@F();)while(I@L(I@K()%5))YSI_gInlineRet+=(%0);LAM@2(%9(callback_tag:YSII%1));}
 
 // Make sure there's a space after the "return".
-//#define YSI_gInlineRet+=(%0);%9(%1);}=> YSI_gInlineRet+=(%0);%3= %9(%1);
-//#define return= return
-//#define return%0({%1}%2)%3; %0({%1}%2)%3=>
 #define return%0({%1}%2)%3; I@=%0({%1}%2)%3;return I@;
 
-#define inline%0(%1) static %0[_:I@E:32]=#%0":....";if(I@E(_:_YI@CP:%0))for(new%1,,;I@F();)while(I@L(I@K(1)))
+// The "INLINE" in the types here will override "PARSER@" to "PARSE@INLINE",
+// because there is no colon (well not "because", but it helps).
+#define inline%0(%1) FUNC_PARSER(INLINE,ARR:REF:STR:NUM:QAL:INLINE)(%0(%1))()1()
 
-#define I@E:32]=#%9const%7\32;%8":....";if(I@E(_:_YI@CP:%9const%7\32;%8))for(%1)while(I@L(I@K(1))) 32]=#%8":....";if(I@E(_:_YI@CP:%8))for(%1)while(I@L(I@K()))
+// Follows the "code-parse.inc" internal structure.  Ugly but required, since we
+// are parsing functions, but not at a top level.
+#define PARSE@INLINE(%9,%0,%1,%2,%3,%4)(%5)%6(%7) static %6[_:z@:m@:n@[%9]%0%1%2%3%4(%5)%6(|||%7) I@O$
 
-//#define i@Im:%9&%0[]=#%9&%0":....";if(I@E(_:_YI@CP:%9&%0)) %0[]=#%0":....";if(I@E(_:_YI@CP:%0,3))
+#define INLINE_STR(%9,%9,%2,%9)%8$(%0)%1(%3) %8$(%0,%2[YSI_MAX_INLINE_STRING])%1(%3,cellmax)
+#define INLINE_ARR(%9,%9,%2,%9)%8$(%0)%1(%3) %8$(%0,%2[%9])%1(%3,%9)
+#define INLINE_NUM(%9,%9,%2)%8$(%0)%1(%3) %8$(%0,%2)%1(%3,0)
+#define INLINE_REF(%9,%9,%2)%8$(%0)%1(%3) %8$(%0,%2)%1(%3,-1)
 
-#define _YI@CP:%8))for(new%0,%1; @Ia:@Ib:@Ic:@Id:@Iz:%8))for(new|||%0|||%1;
+#define INLINE_END(%9)%8$(,%0)%1(%3) %8$#%9":....";if (I@E(%9))for(new %0;I@F();)while(I@L(I@K(%1)%3))
 
-// Detect 0 parameters.
-#define @Ia:@Ib:@Ic:@Id:@Iz:%8))for(new||||||,; %8))for(;
+#define INLINE_NUL(%9)%8$()%1() %8$#%9":....";if (I@E(%9))for(;I@F();)while(I@L(I@K(%1)))
 
-// Detect arrays.  Get the size, defaulting to YSI_MAX_STRING (passing cellmax).
-#define @Ib:@Ic:@Id:@Iz:%8))for(new%0|||%2[%3]|||%4,%5;I@F();)while(I@L(%7)) @Ib:@Ic:@Id:@Iz:%8))for(new%0,%2[_:@Iy:%3]|||%4|||%5;I@F();)while(I@L(%7,@Ix&&&sizeof %2&&&))
-#define @Iy:]%0)while(I@L(%1&&&%2&&&%3)) YSI_MAX_INLINE_STRING]%0)while(I@L(%1%3))
-#define @Ix&&&%0&&& %0 // Remove this variable when the size is used correctly.
+#define I@O$ 32]=
 
-// Default for passing strings, not arrays.
-stock const
-	@Ix = cellmax;
-
-// Detect references.
-#define @Ic:@Id:@Iz:%8))for(new%0|||%1&%2|||%4,%5;I@F();)while(I@L(%7)) @Ib:@Ic:@Id:@Iz:%8))for(new%0,%2|||%4|||%5;I@F();)while(I@L(%7,-1))
-
-// Detect normal variables.
-#define @Id:@Iz:%8))for(new%0|||%2|||%4,%5;I@F();)while(I@L(%7)) @Ib:@Ic:@Id:@Iz:%8))for(new%0,%2|||%4|||%5;I@F();)while(I@L(%7,0))
-
-// Detect end of line.
-#define @Iz:%8))for(new%1,%0||||||; %8))for(new %0;
-
-// Drop support for anonymous functions.
-#define anonymous%0(%1) anonymous_no_longer_supported;for(new %1;FALSE;)
+#define INLINE_const(%9)%8$(%0)%1(%2) %8$(%0)(%2)
 
 // Parameter type for passing callbacks about.
 #define callback:%0) const callback_tag:callback_check:%0$$$
 #define callback_tag:callback_check:%0,%1$$$ callback_tag:%0[],%1)
 #define callback_check:%0$$$ %0[])
-
-
 
 #define using%0\10;%1 callback_tag:@Ik:@Il:%0
 
