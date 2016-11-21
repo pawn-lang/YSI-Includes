@@ -134,11 +134,11 @@ somewhere_after_this_func:
 
 // The "INLINE" in the types here will override "PARSER@" to "PARSE@INLINE",
 // because there is no colon (well not "because", but it helps).
-#define inline%0(%1) FUNC_PARSER(INLINE,ARR:REF:STR:NUM:QAL:INLINE)(%0(%1))()1()
+#define inline%0(%1) MAKE_PARSER(INLINE,ARR:REF:STR:NUM:QAL::INLINE)(%0(%1))()1()
 
 // Follows the "code-parse.inc" internal structure.  Ugly but required, since we
 // are parsing functions, but not at a top level.
-#define PARSE@INLINE(%9,%0,%1,%2,%3,%4)(%5)%6(%7) static %6[_:z@:m@:n@[%9]%0%1%2%3%4(%5)%6(|||%7) I@O$
+#define PARSER@INLINE:%0(%5)%6(%7)$ static %6[_:%0(%5)%6(%7) I@O$
 
 #define INLINE_STR(%9,%9,%2,%9)%8$(%0)%1(%3) %8$(%0,%2[YSI_MAX_INLINE_STRING])%1(%3,cellmax)
 #define INLINE_ARR(%9,%9,%2,%9)%8$(%0)%1(%3) %8$(%0,%2[%9])%1(%3,%9)
@@ -177,7 +177,4 @@ somewhere_after_this_func:
 // Callbacks with additional parameters (MUST have matching parameters (y_ini)).
 #define @In:@It:%0(%1)%3||||%2) %0%3%2,.bExtra=true,.extra=%1)
 #define @It:%0|||| %0
-
-// Defer adding the close bracket till after other macros have run.
-#define _Y_INLINE_END )
 
