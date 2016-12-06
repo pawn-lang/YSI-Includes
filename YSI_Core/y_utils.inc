@@ -122,6 +122,10 @@ new stock
 	NULL[2] = "\1";
 #endif
 
+#if !defined cellbytes
+	#define cellbytes (cellbits / 8)
+#endif
+
 #define UNSIGNED(%0) ((%0) - cellmin)
 
 // Define "volatile" as nothing.

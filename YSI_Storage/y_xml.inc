@@ -224,21 +224,30 @@ stock XML_Parse(XML:rule, filename[])
 			inClose,
 			inOpen,
 			inComment,
+			lineOffset,
+			lineLen,
 			value[MAX_XML_ENTRY_TEXT],
 			name[MAX_XML_ENTRY_NAME],
 			inPar;
-		while (fread(xFile, line))
+		while ((lineLen = fread(xFile, line[lineOffset], sizeof (line) - lineOffset)))
 		{
 			P:5("XML_Parse() line: %s", line);
 			new
 				pos,
 				ch;
+			lineOffset = 0;
 			if (inComment)
 			{
 				pos = strfind(line, "-->", false, 0);
 				if (pos == -1)
 				{
 					// Skip this whole line.
+					if (lineLen == YSI_MAX_STRING - 1)
+					{
+						// Check that "-->" doesn't span two read-in blocks.
+						memcpy(line, line[sizeof (line) - 3], 0, 3 * cellbytes);
+						lineOffset = 2;
+					}
 					continue;
 				}
 				else
@@ -247,16 +256,31 @@ stock XML_Parse(XML:rule, filename[])
 					inComment = 0;
 				}
 			}
-			while ((ch = line[pos]) && ch <= ' ') pos++;
-			while (ch)
+			for ( ; ; ) switch ((ch = line[pos]))
 			{
-				if (ch <= ' ') pos++;
-				else if (ch == '<')
+				case '\0':
 				{
-					pos++;
+					break;
+				}
+				case '\1' .. ' ':
+				{
+					if (lineLen == YSI_MAX_STRING - 1 && pos > (YSI_MAX_STRING * 2 / 3))
+					{
+						// 2/3 of the way through the line and found a space -
+						// use this as a handy break point for long lines.
+						++pos;
+						lineOffset = sizeof (line) - 1 - pos;
+						memcpy(line, line[pos], 0, lineOffset * cellbytes);
+						break;
+					}
+					++pos;
+				}
+				case '<':
+				{
+					++pos;
 					if (line[pos] == '/')
 					{
-						pos++;
+						++pos;
 						tagCount--;
 						if (gotLastValue)
 						{
@@ -275,11 +299,20 @@ stock XML_Parse(XML:rule, filename[])
 					}
 					else if (line[pos] == '!' && line[pos + 1] == '-' && line[pos + 2] == '-')
 					{
-						// XML comments.
+						// XML comments.  XML doesn't support nested comments.
+						// I am a firm believer that they are the future, but
+						// this code isn't clever enough to parse them (being
+						// very old), and since they aren't supported there is
+						// no need to add them.
 						pos = strfind(line, "-->", false, pos + 3);
 						if (pos == -1)
 						{
 							inComment = 1;
+							if (lineLen == YSI_MAX_STRING - 1)
+							{
+								memcpy(line, line[sizeof (line) - 3], 0, 3 * cellbytes);
+								lineOffset = 2;
+							}
 							break;
 						}
 						else
@@ -291,23 +324,23 @@ stock XML_Parse(XML:rule, filename[])
 					{
 						inOpen = 1;
 						tagCount++;
-						while ((ch = line[pos]) && XML_IsChar(ch)) pos++;
+						while ((ch = line[pos]) && XML_IsChar(ch)) ++pos;
 						//name = XML_GetName(line, pos);
 					}
 					gotLastValue = 0;
 					inPar = 0;
 				}
-				else if (ch == '>')
+				case '>':
 				{
 					inPar = inClose ? 0 : 1;
 					inOpen = 0;
 					inClose = 0;
-					pos++;
+					++pos;
 				}
-				else if (ch == '/')
+				case '/':
 				{
 					// Self-closing tags (FINALLY)!
-					pos++;
+					++pos;
 					if (inOpen)
 					{
 						tagCount--;
@@ -325,22 +358,24 @@ stock XML_Parse(XML:rule, filename[])
 						inClose = 1; // Well, we sort of are...
 					}
 				}
-				else if (inPar)
+				default:
 				{
-					value = XML_GetValue(line, pos);
-					gotLastValue = 1;
+					if (inPar)
+					{
+						value = XML_GetValue(line, pos);
+						gotLastValue = 1;
+					}
+					else if (inOpen)
+					{
+						name = XML_GetName(line, pos);
+						value = XML_GetParameter(line, pos);
+						XML_Push(name, value, tagCount);
+					}
+					else
+					{
+						++pos;
+					}
 				}
-				else if (inOpen)
-				{
-					name = XML_GetName(line, pos);
-					value = XML_GetParameter(line, pos);
-					XML_Push(name, value, tagCount);
-				}
-				else
-				{
-					pos++;
-				}
-				ch = line[pos];
 			}
 		}
 		fclose(xFile);
@@ -482,7 +517,7 @@ stock XML_GetValue(line[], &pos)
 	pos--;
 	if (i == (sizeof (ret) - 1))
 	{
-		while (((ch = line[pos]) >= ' ' || ch == '\t') && (ch != '<')) pos++;
+		while (((ch = line[pos]) >= ' ' || ch == '\t') && (ch != '<')) ++pos;
 	}
 	ret[i] = '\0';
 	return ret;
@@ -511,7 +546,7 @@ stock XML_GetName(line[], &pos)
 	pos--;
 	if (i == (sizeof (ret) - 1))
 	{
-		while ((ch = line[pos]) >= ' ' && XML_IsChar(ch)) pos++;
+		while ((ch = line[pos]) >= ' ' && XML_IsChar(ch)) ++pos;
 	}
 	ret[i] = '\0';
 	return ret;
@@ -1045,15 +1080,15 @@ stock XML_ReplaceItem(file[], tag[], name[], replacement)
 				new
 					pos,
 					ch;
-				while ((ch = line[pos]) && ch <= ' ') pos++;
+				while ((ch = line[pos]) && ch <= ' ') ++pos;
 				while (ch)
 				{
-					if (ch <= ' ') pos++;
+					if (ch <= ' ') ++pos;
 					else if (ch == '<')
 					{
 						if (line[++pos] == '/')
 						{
-							pos++;
+							++pos;
 							tagCount--;
 							if (inTag && tagCount <= atStart) inTag = 3;
 						}
@@ -1064,13 +1099,13 @@ stock XML_ReplaceItem(file[], tag[], name[], replacement)
 							{
 								if (!strcmp(XML_GetName(line, pos), tag)) inTag = 1;
 							}
-							else while ((ch = line[pos]) && XML_IsChar(ch)) pos++;
+							else while ((ch = line[pos]) && XML_IsChar(ch)) ++pos;
 						}
 					}
 					else if (ch == '>')
 					{
 						if (inTag == 1) inTag = 0;
-						pos++;
+						++pos;
 					}
 					else if (inTag == 1)
 					{
@@ -1089,7 +1124,8 @@ stock XML_ReplaceItem(file[], tag[], name[], replacement)
 						}
 						else XML_GetParameter(line, pos);
 					}
-					else pos++;
+					else
+						++pos;
 					ch = line[pos];
 				}
 				if (!inTag) fwrite(__ftemp, line);
