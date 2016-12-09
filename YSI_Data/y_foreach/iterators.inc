@@ -244,9 +244,9 @@ Create the internal iterators.
 #if _FOREACH_VEHICLES
 	new
 		#if _FOREACH_LOCALS
-			Iterator:LocalVehicle<MAX_VEHICLES + 1>,
+			Iterator:LocalVehicle<MAX_VEHICLES>,
 		#endif
-		Iterator:Vehicle<MAX_VEHICLES + 1>;
+		Iterator:Vehicle<MAX_VEHICLES>;
 #endif
 
 stock iterfunc Range(cur, min, max, step = 1)

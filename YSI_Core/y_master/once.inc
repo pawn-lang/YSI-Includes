@@ -371,12 +371,6 @@ HOOK_FORWARD:Master_OnScriptExit();
 #endif
 #define OnScriptExit(%0) Master_OnScriptExit(%0) <_ALS : _ALS_go>
 
-#undef OnScriptExit
-#define OnScriptExit YSIM_OnScriptExit
-#if defined YSIM_OnScriptExit
-	forward YSIM_OnScriptExit();
-#endif
-
 //#define OnMasterSystemClose Master_OnScriptClose
 //forward Master_OnScriptClose(id);
 
