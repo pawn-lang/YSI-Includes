@@ -128,7 +128,7 @@ stock Dialog_Show(playerid, style, string:title[], string:caption[], string:butt
 	#pragma unused dialog
 	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID);
 	YSI_g_sPlayerMaster[playerid] = true;
-	return ShowPlayerDialog(playerid, dialog, style, title, caption, button1, button2);
+	return ShowPlayerDialog(playerid, YSI_DIALOG_ID, style, title, caption, button1, button2);
 }
 
 stock Dialog_Hide(playerid)
