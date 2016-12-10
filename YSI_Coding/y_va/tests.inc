@@ -1,6 +1,26 @@
 static
 	YSI_g_sVariable;
 
+static stock y_va_CallRemoteFunction(va_args<>)
+{
+	va_CallRemoteFunction("y_va_PublicTestFunction", "ii", va_start<0>);
+}
+
+static stock y_va_CallLocalFunction(va_args<>)
+{
+	va_CallLocalFunction("y_va_PublicTestFunction", "ii", va_start<0>);
+}
+
+static stock y_va_CallLocalFunction_X(func[], va_args<>)
+{
+	va_CallLocalFunction(func, "si", va_start<1>);
+}
+
+static stock y_va_CallRemoteFunction_X(func[], va_args<>)
+{
+	va_CallRemoteFunction(func, "si", va_start<1>);
+}
+
 forward y_va_PublicTestFunction(vara, varb);
 
 public y_va_PublicTestFunction(vara, varb)
@@ -15,9 +35,18 @@ public y_va_PublicTestFunction(vara, varb)
 	}
 }
 
-static stock y_va_CallRemoteFunction(va_args<>)
+forward y_va_PublicRecurseFunction(func[], vara);
+
+public y_va_PublicRecurseFunction(func[], vara)
 {
-	va_CallRemoteFunction("y_va_PublicTestFunction", "ii", va_start<0>);
+	y_va_CallLocalFunction_X(func, "", vara);
+}
+
+forward y_va_PublicCallFunction(func[], vara);
+
+public y_va_PublicCallFunction(func[], vara)
+{
+	y_va_PublicTestFunction(vara, 123456);
 }
 
 Test:y_va_CallRemoteFunction()
@@ -29,9 +58,53 @@ Test:y_va_CallRemoteFunction()
 	ASSERT(YSI_g_sVariable == 11);
 }
 
-static stock y_va_CallLocalFunction(va_args<>)
+static stock y_va_printf_0(va_args<>)
 {
-	va_CallLocalFunction("y_va_PublicTestFunction", "ii", va_start<0>);
+	va_printf("", va_start<0>);
+}
+
+static stock y_va_printf_1(num, va_args<>)
+{
+	#pragma unused num
+	va_printf("", va_start<1>);
+}
+
+static stock y_va_printf_2(num, other, va_args<>)
+{
+	#pragma unused num, other
+	va_printf("", va_start<2>);
+}
+
+static stock y_va_printf_3(num, other, str[], va_args<>)
+{
+	#pragma unused num, other, str
+	va_printf("", va_start<3>);
+}
+
+Test:y_va_printf()
+{
+	y_va_printf_0(42, 1, "hi", I@);
+	y_va_printf_1(42, 1, "hi", I@);
+	y_va_printf_2(42, 1, "hi", I@);
+	y_va_printf_3(42, 1, "hi", I@);
+}
+
+Test:y_va_recurse_local()
+{
+	YSI_g_sVariable = 0;
+	y_va_CallLocalFunction_X("y_va_PublicRecurseFunction", "y_va_PublicCallFunction", true);
+	ASSERT(YSI_g_sVariable == 123456);
+	y_va_CallLocalFunction_X("y_va_PublicRecurseFunction", "y_va_PublicCallFunction", false);
+	ASSERT(YSI_g_sVariable == 123457);
+}
+
+Test:y_va_recurse_remote()
+{
+	YSI_g_sVariable = 0;
+	y_va_CallRemoteFunction_X("y_va_PublicRecurseFunction", "y_va_PublicCallFunction", true);
+	ASSERT(YSI_g_sVariable == 123456);
+	y_va_CallRemoteFunction_X("y_va_PublicRecurseFunction", "y_va_PublicCallFunction", false);
+	ASSERT(YSI_g_sVariable == 123457);
 }
 
 Test:y_va_CallLocalFunction()
