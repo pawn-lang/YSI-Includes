@@ -185,10 +185,10 @@ native _YSI_RE_NATIVE<K@|||const function[], time, repeat|||SetTimer>
 new
 	Q@[YSI_MAX_STRING];
 
-static stock
-	YSI_g_sPropCaller_l[] = YSIM_CALLER,
-	YSI_g_sPropReturn_l[] = YSIM_RETURN,
-	YSI_g_sPropEmpty_l[] = "",
+static stock const
+	YSI_g_sPropCaller[] = YSIM_CALLER,
+	YSI_g_sPropReturn[] = YSIM_RETURN,
+	YSI_g_sPropEmpty[] = "",
 	YSI_g_sYSIM_STRING = YSIM_STRING,
 	YSI_g_sYSI_MAX_STRING = YSI_MAX_STRING;
 
@@ -217,7 +217,7 @@ stock S@2(const function[], const fmat[], va_args<>)
 	// restore later.
 	#emit PUSH.C       Q@
 	#emit PUSH         Y@
-	#emit PUSH.C       YSI_g_sPropCaller_l
+	#emit PUSH.C       YSI_g_sPropCaller
 	#emit PUSH.C       8
 	#emit PUSH.C       16
 	#emit SYSREQ.C     setproperty
@@ -248,7 +248,7 @@ stock S@2(const function[], const fmat[], va_args<>)
 	
 	// Get the return value.  Already have most of the parameters pushed, just
 	// modify one of them (the name).
-	#emit CONST.pri    YSI_g_sPropEmpty_l
+	#emit CONST.pri    YSI_g_sPropEmpty
 	#emit STOR.S.pri   0xFFFFFFF4 // -12
 	#emit LOAD.pri     YSI_g_sYSIM_STRING
 	#emit STOR.S.pri   0xFFFFFFF8 // -8
@@ -301,9 +301,9 @@ stock W@2(const function[], const fmat[], va_args<>)
 	// Push the current master ID on to the master stack.  Returns the old
 	// master ID stored in the property, which we can shove on to the heap to
 	// restore later.
-	#emit PUSH.C       YSI_g_sPropEmpty_l
+	#emit PUSH.C       YSI_g_sPropEmpty
 	#emit PUSH         Y@
-	#emit PUSH.C       YSI_g_sPropCaller_l
+	#emit PUSH.C       YSI_g_sPropCaller
 	#emit PUSH.C       8
 	#emit PUSH.C       16
 	#emit SYSREQ.C     setproperty
@@ -334,7 +334,7 @@ stock W@2(const function[], const fmat[], va_args<>)
 	
 	// Get the return value.  Already have most of the parameters pushed, just
 	// modify one of them (the name).
-	#emit CONST.pri    YSI_g_sPropReturn_l
+	#emit CONST.pri    YSI_g_sPropReturn
 	#emit STOR.S.pri   0xFFFFFFF4 // -12
 	#emit SYSREQ.C     getproperty
 	#emit MOVE.alt
@@ -344,6 +344,108 @@ stock W@2(const function[], const fmat[], va_args<>)
 	#emit SCTRL        5
 	#emit SCTRL        4
 	#emit MOVE.pri
+	#emit RETN
+	
+	return 0;
+}
+
+stock P@2(const function[], const fmat[], va_args<>)
+{
+	#pragma unused function, fmat
+	// New implementation of "CallLocalFunction".  Wraps the old function
+	// efficiently (using assembly stack manipulation tricks, better even than
+	// the ones in "y_va" since we have more control over exactly how this is
+	// called and what other locals there are).  Doesn't set/restore the caller
+	// ID since this is all within one script (the current script).  Maybe that
+	// means I SHOULD set it - to the current script ID, because the callee may
+	// not know that it was a local call, and so still want the callerid.
+	
+	// Back up the frame header information and the return value.  "MOVS" copies
+	// from "pri" to "alt".
+	#emit HEAP         8
+	#emit LCTRL        4
+	#emit MOVS         8
+	
+	// Call "CallLocalFunction".
+	#emit STACK        8
+	#emit SYSREQ.C     CallLocalFunction
+	
+	// Restore the stack, while saving the return value.
+	#emit STACK        0xFFFFFFF8 // -8
+	#emit STACK        0          // Load new stack pointer in to "alt".
+	#emit PUSH.pri
+	#emit LCTRL        2
+	#emit ADD.C        0xFFFFFFF8
+	#emit MOVS         8
+	#emit HEAP         0xFFFFFFF8
+	
+	// Return from two functions at once, while unpopping all our data.  Could
+	// also use "LOAD.S.alt   0xFFFFFFFC" here - I don't know which is better,
+	// since the stack reset makes them entirely equivalent.
+	#emit POP.alt
+	#emit LOAD.S.pri   0
+	#emit SCTRL        5
+	#emit SCTRL        4
+	#emit MOVE.pri
+	#emit RETN
+	
+	return 0;
+}
+
+stock Z@2(const function[], const fmat[], va_args<>)
+{
+	#pragma unused function, fmat
+	// New implementation of "CallLocalFunction".  Wraps the old function
+	// efficiently (using assembly stack manipulation tricks, better even than
+	// the ones in "y_va" since we have more control over exactly how this is
+	// called and what other locals there are).
+	
+	// Back up the frame header information and the return value.  "MOVS" copies
+	// from "pri" to "alt".
+	#emit HEAP         8
+	#emit LCTRL        4
+	#emit MOVS         8
+	
+	// Call "CallLocalFunction".
+	#emit STACK        8
+	#emit SYSREQ.C     CallLocalFunction
+	
+	// Restore the stack.
+	#emit STACK        0xFFFFFFF8 // -8
+	#emit STACK        0          // Load new stack pointer in to "alt".
+	#emit LCTRL        2
+	#emit ADD.C        0xFFFFFFF8
+	#emit MOVS         8
+	#emit HEAP         0xFFFFFFF8
+	
+	// Get the return value.
+	#emit PUSH.C       Q@
+	#emit PUSH         YSI_g_sYSIM_STRING
+	#emit PUSH.C       YSI_g_sPropEmpty
+	#emit PUSH.C       8
+	#emit PUSH.C       16
+	#emit SYSREQ.C     getproperty
+	
+	// Unpack the return to the previous function's return string.
+	#emit PUSH         YSI_g_sYSI_MAX_STRING
+	#emit PUSH.C       Q@
+	#emit LOAD.S.pri   0
+	#emit MOVE.alt
+	#emit ADD.C        8
+	#emit LOAD.I
+	#emit ADD.C        12
+	#emit ADD
+	#emit LOAD.I
+	#emit PUSH.pri
+	#emit PUSH.C       12
+	#emit SYSREQ.C     strunpack
+	
+	// Return from two functions at once, while unpopping all our data.  By
+	// doing this we know out string return fix/optimisation will apply.
+	#emit MOVE.pri
+	#emit SCTRL        5
+	#emit SCTRL        4
+	#emit HEAP         0xFFFFFDF8 // -520
 	#emit RETN
 	
 	return 0;
@@ -385,6 +487,9 @@ stock H@(GLOBAL_TAG_TYPES:...)
 #define _UNUSED(%0) H@(_:_H@0:_H@1:%0)
 #define _H@0:_H@1:%0&%1) _H@0:_H@1:%0%1)
 #define _H@1:%0[%9]%1) _H@1:%0%1)
+
+// Correctly stringise "On" callbacks without ALS interferring.
+#define B@:#On%0) "On"#%0)
 
 stock G@(GLOBAL_TAG_TYPES:...)
 {
