@@ -300,7 +300,6 @@ Natives:
 				print(" |            available from:             | ");
 				print(" |                                        | ");
 				print(" |     www.y-less.com/YSI/YSI_1.0.zip     | ");
-				//printf("data[0]: %c", data[0]);
 				if (data[0] == '2')
 				{
 					print(" |                                        | ");
@@ -311,7 +310,6 @@ Natives:
 					for ( ; ; )
 					{
 						pos = strfind(data[last], "\n", false);
-						//printf("%d %d %s", last, pos, data[last]);
 						if (pos == -1)
 						{
 							// To break out in the middle of a loop.
