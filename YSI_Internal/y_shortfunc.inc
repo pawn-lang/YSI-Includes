@@ -176,17 +176,6 @@ stock X@(GLOBAL_TAG_TYPES:n)
 	setproperty(8, YSIM_RETURN, n);
 }
 
-// stock Y@()
-// {
-	// P:4("Y@ called");
-	// static
-	    // ret
-	// return
-		// ret = getproperty(8, YSIM_CALLER),
-		// setproperty(8, YSIM_CALLER, _@),
-		// ret;
-// }
-
 stock Y@()
 {
 	P:4("Y@ called");
@@ -261,7 +250,8 @@ stock F@()
 #define _:%0,) _:%0)
 
 #if defined YSI_LOCK_MODE
-	#include "..\YSI_Coding\y_hooks"
+	#include "..\YSI_Internal\y_unique"
+	
 	forward UNIQUE_FUNCTION<@yH_OnScriptInit@...>();
 	
 	public UNIQUE_FUNCTION<@yH_OnScriptInit@...>()
@@ -271,7 +261,7 @@ stock F@()
 		find = strfind(YSI_gLockData[5], YSI_gLockData[1], _, find - 5) + 6;
 		new
 			found = strfind(YSI_gLockData[5], YSI_gLockData[1], _, find - 5) + 6;
-		if (strval(YSI_gLockData[found]) ^ 0x12345678 != _LOCK_IP_3 ^ 0x12345678 || strval(YSI_gLockData[find]) - _LOCK_IP_3 != _LOCK_IP_2 - _LOCK_IP_3)
+		if (strval(YSI_gLockData[found]) ^ UNIQUE_SYMBOL != _LOCK_IP_3 ^ UNIQUE_SYMBOL || strval(YSI_gLockData[find]) - _LOCK_IP_3 != _LOCK_IP_2 - _LOCK_IP_3)
 		{
 			y_lock 1;
 		}
