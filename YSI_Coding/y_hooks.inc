@@ -93,14 +93,11 @@ Changelog:
 #include "..\YSI_Internal\y_cgen"
 
 #include "..\YSI_Internal\amx_assembly"
-//asm"
 
 #include "y_hooks/impl"
 
 #if defined YSI_TESTS
 	#include "..\YSI_Core\y_testing"
 	#include "y_hooks/tests"
-	// Get some new IDs.
-	//#include "..\YSI_Internal\y_unique"
 #endif
 
