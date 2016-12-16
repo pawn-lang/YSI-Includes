@@ -288,9 +288,14 @@ stock YSI_gDebugLevel = 0;
 
 stock Debug_Print0(const str[], {Float,_}:...) <ysi_debug : on>
 {
-	#emit STACK        8
+	static tmp1, tmp2;
+	#emit POP.pri
+	#emit STOR.pri     tmp1
+	#emit POP.alt
+	#emit STOR.alt     tmp2
 	#emit SYSREQ.C     printf
-	#emit STACK        0xFFFFFFF8
+	#emit PUSH         tmp2
+	#emit PUSH         tmp1
 	#pragma unused str
 	return 0;
 }
