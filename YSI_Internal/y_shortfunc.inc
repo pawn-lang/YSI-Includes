@@ -464,7 +464,7 @@ stock Y@()
 {
 	P:4("Y@ called");
 	// Already returns the previous value.
-	return setproperty(8, YSIM_CALLER, _@);
+	return setproperty(8, YSIM_CALLER, Y@);
 }
 
 stock Z@(GLOBAL_TAG_TYPES:v = -1)
