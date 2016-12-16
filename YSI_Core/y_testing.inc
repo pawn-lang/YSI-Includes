@@ -70,6 +70,8 @@ Changelog:
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Internal\amx_assembly"
 
+#include "..\YSI_Internal\y_shortvar"
+
 #if defined YSI_TESTS
 	#if defined INCLUDE_TESTS
 		#error Incompatible testing options (YSI_TESTS + INCLUDE_TESTS)
