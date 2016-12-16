@@ -92,7 +92,6 @@ Natives:
 	V@ - Renaming of getproperty for size reasons.
 	S@ - Renaming of setproperty for size reasons.
 	P@ - Renaming of __CallLocalFunction for size reasons.
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_shortfunc
@@ -111,19 +110,10 @@ Natives:
 
 #include "..\YSI_Core\y_utils"
 #include "y_globaltags"
+#include "y_shortvar"
 #include "..\YSI_Core\y_debug"
 
 #include "y_renative"
-
-// Public variable.
-public stock
-	_@ = 0;
-
-// J@ is a "nul" target - send things there if they need ignoring or if a
-// parameter needs using.  I@ is too now.
-stock
-	I@,
-	J@;
 
 // N@ taken by y_uvar.
 // M@ taken by y_svar.
