@@ -74,8 +74,6 @@ Changelog:
 #include "..\YSI_Core\y_debug"
 #include "..\YSI_Internal\y_natives"
 
-#include "..\YSI_Internal\amx_assembly"
-
 #define AMX_FastString(%1,%2,%3,%4) \
 	(((%1) << 0) | ((%2) << 8) | ((%3) << 16) | ((%4) << 24))
 
@@ -1066,37 +1064,9 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 
 stock AMX_Read(addr)
 {
-	// This is now, AFAIK, the first ever self-inlining function!
-	static
-		sFrame;
-	// Get the current stack pointer.
-	#emit LCTRL      4
-	#emit ADD.C      12
-	// Get the previous frame pointer.
-	#emit LOAD.S.alt 0
-	#emit SUB
-	#emit STOR.pri   sFrame
-	P:7("AMX_Read called: %i %d", addr, sFrame);
-	new
-		start = GetCurrentFrameReturn() - 16,
-		ctx2[DisasmContext];
-	DisasmInit(ctx2, start, start + 16);
-	if (!DisasmDecodeInsn(ctx2) || DisasmGetOpcode(ctx2) != OP_PUSH_C || DisasmGetOperand(ctx2) != 4)
-	{
-		P:W("Couldn't rewrite \"AMX_Read\" call");
-		return AMX_RawRead(addr);
-	}
-	new
-		ctx[AsmContext];
-	AsmInitPtr(ctx, start + AMX_HEADER_COD, 16);
-	// This is the actual code.  The standard function call puts the variable to
-	// read from on to the stack, so use that as a frame offset and call "LREF"
-	// on that stack value.  Then remove it from the stack and skip the next
-	// cell - since we are replacing 4 cells with just 3.
-	@emit LREF.S.pri   sFrame
-	@emit POP.alt
-	@emit NOP
-	return AMX_RawRead(addr);
+	#emit LREF.S.pri                    addr
+	#emit RETN
+	return 0;
 }
 
 stock AMX_Write(addr, value)
