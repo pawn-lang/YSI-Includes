@@ -1,0 +1,258 @@
+/**--------------------------------------------------------------------------**\
+					====================================
+					 y_profiling - Run profilings easilly 
+					====================================
+Description:
+	Runs any functions named as profilings when the Profiling_Run function is called.
+Legal:
+	Version: MPL 1.1
+	
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 (the "License"); you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
+	http://www.mozilla.org/MPL/
+	
+	Software distributed under the License is distributed on an "AS IS" basis,
+	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	for the specific language governing rights and limitations under the
+	License.
+	
+	The Original Code is the YSI profiling include.
+	
+	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright (C) 2011
+	the Initial Developer. All Rights Reserved.
+	
+	Contributors:
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
+	
+	Thanks:
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+		ZeeX - Very productive conversations.
+		koolk - IsPlayerinAreaEx code.
+		TheAlpha - Danish translation.
+		breadfish - German translation.
+		Fireburn - Dutch translation.
+		yom - French translation.
+		50p - Polish translation.
+		Zamaroht - Spanish translation.
+		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
+			for me to strive to better.
+		Pixels^ - Running XScripters where the idea was born.
+		Matite - Pestering me to release it and using it.
+	
+	Very special thanks to:
+		Thiadmer - PAWN, whose limits continue to amaze me!
+		Kye/Kalcor - SA:MP.
+		SA:MP Team past, present and future - SA:MP.
+	
+Version:
+	1.0
+Changelog:
+	17/12/16:
+		First Version
+\**--------------------------------------------------------------------------**/
+
+#if defined _INC_y_profiling
+	#endinput
+#endif
+#define _INC_y_profiling
+
+#include "y_debug"
+
+#if defined YSI_PROFILINGS
+	#if defined INCLUDE_PROFILINGS
+		#error Incompatible profiling options (YSI_PROFILINGS + INCLUDE_PROFILINGS)
+	#endif
+	#if !defined RUN_PROFILINGS
+		#define RUN_PROFILINGS
+	#endif
+#endif
+
+#if defined INCLUDE_PROFILINGS
+	#define RUN_PROFILINGS
+	#define Debug_PrintP printf
+#elseif defined RUN_PROFILINGS
+	#define _AUTO_RUN_PROFILINGS
+	#define Debug_PrintP printf
+#else
+	#if _DEBUG > 0 || defined _YSI_SPECIAL_DEBUG
+		#define RUN_PROFILINGS
+		#define _AUTO_RUN_PROFILINGS
+		#define Debug_PrintP printf
+	#else
+		#define Debug_PrintP(%0);
+	#endif
+#endif
+
+#if defined LIGHT_PROFILE_REPORT
+	#define PROFILE_REPORT(%0) H@(%0)
+#else
+	#define PROFILE_REPORT(%0) printf(%0)
+#endif
+
+#if defined RUN_PROFILINGS
+	#define Profile:%0(%1) @y_P%0(%1);@y_P%0(%1)RUN_TIMING(#%0)y_@P%0();static y_@P%0()
+	#define y_@P%0\32; y_@P
+	#define @y_P%0\32; @y_P
+#else
+	#define Profile:%1() static stock _@yP%1()
+	#define _@yP%0\32; _@yP
+#endif
+
+// These all need to come AFTER the types are defined in case the have profilings.
+#include "..\YSI_Internal\y_version"
+
+#include "..\YSI_Storage\y_amx"
+#include "..\YSI_Internal\y_shortfunc"
+#include "y_debug"
+#include "y_utils"
+
+#include "..\YSI_Internal\y_natives"
+
+#include "..\YSI_Coding\y_va"
+
+static stock const
+	Y_PROFILING_PROFILE = _A<@y_P>;
+
+static stock
+	bool:YSI_g_sInProfile = false;
+
+/**--------------------------------------------------------------------------**\
+<summary>Profiling_Run</summary>
+<param name="&profilings">Number of profilings run.</param>
+<returns>
+	Wether all profilings were sucessful or not.
+</returns>
+<remarks>
+	-
+
+native Profiling_Run(&profilings, &fails, buffer[33] = "");
+
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock bool:Profiling_Run(&profilings)
+{
+	P:3("bool:Profiling_Run called: %i", profilings);
+#if defined RUN_PROFILINGS
+	P:2("Profiling_Run() called");
+	new
+		idx,
+		buffer[32];
+	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_PROFILING_PROFILE)))
+	{
+		YSI_g_sInProfile = true;
+		CallLocalFunction(buffer, "");
+		YSI_g_sInProfile = false;
+		++profilings;
+		PROFILE_REPORT(" ");
+	}
+#else
+	#pragma unused profilings
+#endif
+}
+
+forward OnProfilingsComplete(profilings, fails);
+
+#if defined RUN_PROFILINGS
+	#if defined _AUTO_RUN_PROFILINGS
+		#if defined FILTERSCRIPT
+			// Hook main in gamemodes.
+			public OnFilterScriptInit()
+			{
+				#if defined Profiling_OnFilterScriptInit
+					Profiling_OnFilterScriptInit();
+				#endif
+				Profiling_RunAll();
+			}
+			
+			#if defined _ALS_OnFilterScriptInit
+				#undef OnFilterScriptInit
+			#else
+				#define _ALS_OnFilterScriptInit
+			#endif
+			#define OnFilterScriptInit Profiling_OnFilterScriptInit
+			#if defined Profiling_OnFilterScriptInit
+				forward Profiling_OnFilterScriptInit();
+			#endif
+		#else
+			// Hook main in gamemodes.
+			main()
+			{
+				#if defined Profiling_main
+					Profiling_main();
+				#endif
+				Profiling_RunAll();
+			}
+			
+			#if defined _ALS_main
+				#undef main
+			#else
+				#define _ALS_main
+			#endif
+			#define main forward Profiling_main(); public Profiling_main
+		#endif
+	#endif
+	
+	forward OnRuntimeError(code, &bool:suppress);
+	
+	public OnRuntimeError(code, &bool:suppress)
+	{
+		if (YSI_g_sInProfile)
+		{
+			// Fail the current profile if we see any runtime errors.  Requires the
+			// crashdetect plugin to function, but not to compile and run.
+			P:P("Error: Runtime error detected");
+		}
+		#if defined Profiling_OnRuntimeError
+			return Profiling_OnRuntimeError(code, suppress);
+		#else
+			return 1;
+		#endif
+	}
+	
+	#if defined _ALS_OnRuntimeError
+		#undef OnRuntimeError
+	#else
+		#define _ALS_OnRuntimeError
+	#endif
+	#define OnRuntimeError Profiling_OnRuntimeError
+	#if defined Profiling_OnRuntimeError
+		forward Profiling_OnRuntimeError(code, &bool:suppress);
+	#endif
+#endif
+
+stock Profiling_RunAll()
+{
+	// Disable error messages (as we're likely to generate them).
+	new
+		startTime,
+		endTime,
+		profilings;
+	// The timing will be inaccurate since it will include many prints, but it
+	// isn't that important to be accurate.
+	startTime = GetTickCount();
+	PROFILE_REPORT(" ");
+	PROFILE_REPORT("  ||========================||  ");
+	PROFILE_REPORT("  || STARTING PROFILINGS... ||  ");
+	PROFILE_REPORT("  ||========================||  ");
+	PROFILE_REPORT(" ");
+	Profiling_Run(profilings);
+	printf("*** Profilings: %d", profilings);
+	PROFILE_REPORT(" ");
+	PROFILE_REPORT("  ||======================||  ");
+	PROFILE_REPORT("  || PROFILINGS COMPLETE! ||  ");
+	PROFILE_REPORT("  ||======================||  ");
+	PROFILE_REPORT(" ");
+	endTime = GetTickCount();
+	printf("*** Time: %dms", endTime - startTime);
+	PROFILE_REPORT(" ");
+	CallLocalFunction("OnProfilingsComplete", "i", profilings);
+	#if defined PROFILE_AUTO_EXIT
+		SendRconCommand("exit");
+	#endif
+}
+
+#include "..\YSI_Internal\y_shortfunc"
+
