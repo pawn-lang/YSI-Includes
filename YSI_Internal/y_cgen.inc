@@ -6,7 +6,7 @@
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Internal\amx_assembly"
 
-// We use "STE" not a string literal as we are trying to use up code space, not
+// We use "s" not a string literal as we are trying to use up code space, not
 // data space!
 #define _CODE_1 SetTimerEx(s,0,0,s,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
 #define _CODE_2 _CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1
@@ -19,9 +19,6 @@ forward _@_y_cgen_@_0();
 
 public _@_y_cgen_@_0()
 {
-	#emit RETN // Invisible return.
-	//P:F("Someone called \"_@_y_cgen_@_0\" and somehow it didn't crash yet!");
-	//assert(FALSE); // Always fails.
 	// Reserve a huge area of "COD" for our own use!
 	static
 		s[] = "";
@@ -86,7 +83,6 @@ static stock CGen_GetAddr(const func[])
 static stock CGen_SetupCodeSpace()
 {
 	if (YSI_g_sCodeSpace != -1) return;
-	// Both these functions can now be safely called - but why would you?
 	YSI_g_sCodeSpace = CGen_GetAddr("_@_y_cgen_@_0"),
 	YSI_g_sCodeEnd   = CGen_GetAddr("_@_y_cgen_@_1"),
 	// Rewrite "_@_y_cgen_@_0" to just "return 0;".
@@ -94,6 +90,13 @@ static stock CGen_SetupCodeSpace()
 	AMX_Write(YSI_g_sCodeSpace + 4, _:RelocateOpcode(OP_ZERO_PRI)),
 	AMX_Write(YSI_g_sCodeSpace + 8, _:RelocateOpcode(OP_RETN)),
 	YSI_g_sCodeSpace += 12;
+	// NOP out the rest of the space.
+	new
+		Opcode:nop = RelocateOpcode(OP_NOP);
+	// Can't use "memset" or another fast function because this is in the code
+	// area, not the data area.
+	for (new i = YSI_g_sCodeSpace; i != YSI_g_sCodeEnd; i += 4)
+		AMX_Write(i, nop);
 }
 
 stock CGen_UseCodeSpace(ctx[AsmContext])

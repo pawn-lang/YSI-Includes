@@ -91,15 +91,25 @@ Test:rawMemcpy()
 
 Test:y_hashmap_Add()
 {
+	printf("1");
 	new HashMap:m<>;
+	printf("2");
 	new data[100][E_HASH_MAP_TEST];
+	printf("3");
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
+	printf("4");
 	HashMap_Add(m, "Hello", 42);
+	printf("5");
 	ASSERT(bool:data[42][E_HASH_MAP_TEST_NAME][0]);
+	printf("6");
 	ASSERT(!strcmp(data[42][E_HASH_MAP_TEST_NAME], "Hello"));
+	printf("7");
 	ASSERT(data[42][E_HASH_MAP_TEST_DATA][0] == bernstein("Hello"));
+	printf("8");
 	ASSERT(data[42][E_HASH_MAP_TEST_DATA][1] == 0);
+	printf("9");
 	ASSERT(data[42][E_HASH_MAP_TEST_DATA][2] == 0);
+	printf("0");
 }
 
 Test:y_hashmap_Get1()
