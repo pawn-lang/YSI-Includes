@@ -134,12 +134,12 @@ Changelog:
 #define ASK(%0) Testing_Ask(playerid,%0)
 
 static stock const
-	Y_TESTING_TEST = _A<yQ@_>,
-	Y_TESTING_INIT = _A<_yQ@>,
-	Y_TESTING_SHUT = _A<yQ_@>,
-	Y_TESTING_PTEST = _A<_@yQ>,
-	Y_TESTING_PINIT = _A<_y@Q>,
-	Y_TESTING_PSHUT = _A<y_@Q>;
+	Y_TESTING_TEST = _A<@yQ_>,
+	Y_TESTING_INIT = _A<@y_Q>,
+	Y_TESTING_SHUT = _A<@_yQ>,
+	Y_TESTING_PTEST = _A<@_Qy>,
+	Y_TESTING_PINIT = _A<@Qy_>,
+	Y_TESTING_PSHUT = _A<@Q_y>;
 
 static stock
 	YSI_g_sCurTest = 0,
@@ -156,21 +156,21 @@ stock
 	YSI_gCurTestName[32];
 
 #if defined RUN_TESTS
-	#define Test:%1() forward bool:yQ@_%1(); public bool:yQ@_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = (TEST_REPORT(" ") && false))
-	#define TestInit:%1() forward _yQ@%1(); public _yQ@%1() for (new bool:__once = true; __once; __once = false)
-	#define TestClose:%1() forward yQ_@%1(); public yQ_@%1() for (new bool:__once = true; __once; __once = false)
+	#define Test:%1() bool:@yQ_%1();bool:@yQ_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = (TEST_REPORT(" ") && false))yQ@_%1();static yQ@_%1()
+	#define TestInit:%1() @y_Q%1(); @y_Q%1() for (new bool:__once = true; __once; __once = false)_yQ@%1();static _yQ@%1()
+	#define TestClose:%1() @_yQ%1(); @_yQ%1() for (new bool:__once = true; __once; __once = false)yQ_@%1();static yQ_@%1()
 	
-	#define PTest:%1(%2) forward bool:_@yQ%1(%2); public bool:_@yQ%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = (TEST_REPORT(" ") && false))
-	#define PTestInit:%1(%2) forward _y@Q%1(%2); public _y@Q%1(%2) for (new bool:__once = true; __once; __once = false)
-	#define PTestClose:%1(%2) forward y_@Q%1(%2); public y_@Q%1(%2) for (new bool:__once = true; __once; __once = false)
+	#define PTest:%1(%2) bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = (TEST_REPORT(" ") && false))_@yQ%1();static _@yQ%1()
+	#define PTestInit:%1(%2) @Qy_%1(%2); @Qy_%1(%2) for (new bool:__once = true; __once; __once = false)_y@Q%1();static _y@Q%1()
+	#define PTestClose:%1(%2) @Q_y%1(%2); @Q_y%1(%2) for (new bool:__once = true; __once; __once = false)y_@Q%1();static y_@Q%1()
 #else
-	#define Test:%1() stock bool:yQ@_%1()
-	#define TestInit:%1() stock _yQ@%1()
-	#define TestClose:%1() stock yQ_@%1()
+	#define Test:%1() static stock bool:yQ@_%1()
+	#define TestInit:%1() static stock _yQ@%1()
+	#define TestClose:%1() static stock yQ_@%1()
 	
-	#define PTest:%1(%2) stock bool:_@yQ%1(%2)
-	#define PTestInit:%1(%2) stock _y@Q%1(%2)
-	#define PTestClose:%1(%2) stock y_@Q%1(%2)
+	#define PTest:%1(%2) static stock bool:_@yQ%1(%2)
+	#define PTestInit:%1(%2) static stock _y@Q%1(%2)
+	#define PTestClose:%1(%2) static stock y_@Q%1(%2)
 #endif
 
 // These all need to come AFTER the types are defined in case the have tests.
@@ -285,15 +285,13 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 	{
 		strunpack(buffer, buffer);
 		// Call the setup function if there is one.
-		buffer[0] = '_',
+		buffer[0] = '@',
 		buffer[1] = 'y',
-		buffer[2] = 'Q',
-		buffer[3] = '@',
+		buffer[2] = '_',
+		buffer[3] = 'Q',
 		CallLocalFunction(buffer, "");
 		// Call the test.
-		buffer[0] = 'y',
-		buffer[1] = 'Q',
-		buffer[2] = '@',
+		buffer[2] = 'Q',
 		buffer[3] = '_',
 		fails = YSI_g_sFails;
 		P:5("Testing_Run(): Calling %s", unpack(buffer[1]));
@@ -313,8 +311,9 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 			TEST_REPORT(" ");
 		}
 #endif
-		buffer[2] = '_',
-		buffer[3] = '@',
+		buffer[1] = '_',
+		buffer[2] = 'y',
+		buffer[3] = 'Q',
 		CallLocalFunction(buffer, "");
 	}
 	tests = YSI_g_sTests;
@@ -356,14 +355,15 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 		{
 			strunpack(buffer, buffer);
 			// Call the setup function if there is one.
-			buffer[0] = '_';
-			buffer[1] = 'y';
-			buffer[2] = '@';
-			buffer[3] = 'Q';
+			buffer[0] = '@';
+			buffer[1] = 'Q';
+			buffer[2] = 'y';
+			buffer[3] = '_';
 			CallLocalFunction(buffer, "");
 			// Call the test.
-			buffer[1] = '@';
-			buffer[2] = 'y';
+			buffer[1] = '_';
+			buffer[2] = 'Q';
+			buffer[3] = 'y';
 			fails = YSI_g_sFails;
 			P:5("Testing_Player(): Calling %s", buffer[6]);
 			YSI_g_sInTest = true;
@@ -441,10 +441,10 @@ forward OnTestsComplete(tests, fails);
 			{
 				strunpack(buffer, buffer);
 				// Call the shutdown function if there is one.
-				buffer[0] = 'y';
-				buffer[1] = '_';
-				buffer[2] = '@';
-				buffer[3] = 'Q';
+				buffer[0] = '@';
+				buffer[1] = 'Q';
+				buffer[2] = '_';
+				buffer[3] = 'y';
 				CallLocalFunction(buffer, "i", playerid);
 			}
 			// Get the new test, but don't store the index.
@@ -453,14 +453,15 @@ forward OnTestsComplete(tests, fails);
 				YSI_g_sAsked = false;
 				strunpack(buffer, buffer);
 				// Call the setup function if there is one.
-				buffer[0] = '_';
-				buffer[1] = 'y';
-				buffer[2] = '@';
-				buffer[3] = 'Q';
+				buffer[0] = '@';
+				buffer[1] = 'Q';
+				buffer[2] = 'y';
+				buffer[3] = '_';
 				CallLocalFunction(buffer, "i", playerid);
 				// Call the test.
-				buffer[1] = '@';
-				buffer[2] = 'y';
+				buffer[1] = '_';
+				buffer[2] = 'Q';
+				buffer[3] = 'y';
 				P:5("Testing_Next(): Calling %s", unpack(buffer[1]));
 				YSI_g_sInTest = true;
 				CallLocalFunction(buffer, "i", playerid);
@@ -592,8 +593,13 @@ stock Testing_RunAll()
 	// Disable error messages (as we're likely to generate them).
 	//state ysi_debug : off;
 	new
+		startTime,
+		endTime,
 		tests,
 		fails;
+	// The timing will be inaccurate since it will include many prints, but it
+	// isn't that important to be accurate.
+	startTime = GetTickCount();
 	TEST_REPORT(" ");
 	TEST_REPORT("  ||===================||  ");
 	TEST_REPORT("  || STARTING TESTS... ||  ");
@@ -621,6 +627,9 @@ stock Testing_RunAll()
 			TEST_REPORT("  || ALL TESTS PASSED! ||  ");
 			TEST_REPORT("  ||===================||  ");
 		}
+		TEST_REPORT(" ");
+		endTime = GetTickCount();
+		printf("*** Time: %dms", endTime - startTime);
 		TEST_REPORT(" ");
 	}
 	//state ysi_debug : on;
