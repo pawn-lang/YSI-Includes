@@ -893,17 +893,34 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	@emit SCTRL         4   // 10
 	@emit XCHG              // 11
 	
-	// The "MOVS" OpCode only takes a constant, not a variable, so we need to
-	// generate self-modifying code (just to be UBER meta)!  This code is
-	// generated AFTER the file is loaded so we bypass the data segment checks
-	// and can freely write wherever we want.
-	@emit STOR.pri      (CGen_GetCodeSpace() + (18 * 4) - (multiple ? 0 : 8)) // 13
-	
-	// Do the copying.  "alt" is already "STK", load the "FRM" offset.
-	@emit LCTRL         5   // 15
-	@emit ADD.C         12  // 17
-	// This is the instruction we want to modify...
-	@emit MOVS          0   // 19 (- 1)
+	if (JIT_Exists())
+	{
+		// Need to use memcpy to move about in the stack.
+		@emit PUSH.C        4096
+		@emit PUSH.pri
+		@emit PUSH.C        0
+		@emit LCTRL         5
+		@emit ADD.C         12
+		@emit PUSH.pri
+		@emit PUSH.alt
+		@emit PUSH.C        20
+		@emit SYSREQ        "memcpy"
+		@emit STACK         24
+	}
+	else
+	{
+		// The "MOVS" OpCode only takes a constant, not a variable, so we need
+		// to generate self-modifying code (just to be UBER meta)!  This code is
+		// generated AFTER the file is loaded so we bypass the data segment
+		// checks and can freely write wherever we want.
+		@emit STOR.pri      (CGen_GetCodeSpace() + (18 * 4) - (multiple ? 0 : 8)) // 13
+		
+		// Do the copying.  "alt" is already "STK", load the "FRM" offset.
+		@emit LCTRL         5   // 15
+		@emit ADD.C         12  // 17
+		// This is the instruction we want to modify...
+		@emit MOVS          0   // 19 (- 1)
+	}
 	
 	// Push the (fake) number of parameters.
 	@emit PUSH.C        -4
@@ -1227,9 +1244,9 @@ static stock Hooks_SortReplacements()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-public OnScriptInit()
+public OnCodeInit()
 {
-	P:1("Hooks_OnScriptInit called");
+	P:1("Hooks_OnCodeInit called");
 	state _ALS : _ALS_go;
 	// Get the replacements.
 	new
@@ -1247,19 +1264,19 @@ public OnScriptInit()
 	}
 	Hooks_SortReplacements();
 	Hooks_DoAllHooks();
-	P:1("Hooks_OnScriptInit chain");
+	P:1("Hooks_OnCodeInit chain");
 	// Dump the generated callbacks for debugging.
 	//DisasmDump("YSI_TEST.asm");
-	HookChain_OnScriptInit();
-	P:1("Hooks_OnScriptInit end");
+	HookChain_OnCodeInit();
+	P:1("Hooks_OnCodeInit end");
 	return 1;
 }
 
-HOOK_FORWARD:HookChain_OnScriptInit();
-#if defined _ALS_OnScriptInit
-	#undef OnScriptInit
+HOOK_FORWARD:HookChain_OnCodeInit();
+#if defined _ALS_OnCodeInit
+	#undef OnCodeInit
 #else
-	#define _ALS_OnScriptInit
+	#define _ALS_OnCodeInit
 #endif
-#define OnScriptInit(%0) HookChain_OnScriptInit(%0) <_ALS : _ALS_go>
+#define OnCodeInit(%0) HookChain_OnCodeInit(%0) <_ALS : _ALS_go>
 

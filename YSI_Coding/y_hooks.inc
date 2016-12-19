@@ -82,15 +82,14 @@ Changelog:
 	#define _Y_HOOKS_STATIC static
 #endif
 
-#include "..\YSI_Internal\y_unique"
 #include "..\YSI_Core\y_cell"
 #include "..\YSI_Core\y_utils"
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Core\y_als"
 
-#include "..\YSI_Internal\y_cgen"
-
 #include "..\YSI_Internal\amx_assembly"
+
+#include "..\YSI_Internal\y_cgen"
 
 #include "y_hooks/impl"
 

@@ -72,12 +72,7 @@ public _@_y_cgen_@_1()
 
 static stock CGen_GetAddr(const func[])
 {
-	new
-		entry = AMX_HEADER_PUBLICS + funcidx(func) * 8,
-		ret = AMX_HEADER_COD + AMX_Read(entry);
-	// Reset the pointer to this function, so calling it fails.
-	//AMX_Write(entry, 0);
-	return ret;
+	return AMX_Read(funcidx(func) * 8 + AMX_HEADER_PUBLICS) + AMX_HEADER_COD;
 }
 
 static stock CGen_SetupCodeSpace()
@@ -90,24 +85,49 @@ static stock CGen_SetupCodeSpace()
 	AMX_Write(YSI_g_sCodeSpace + 4, _:RelocateOpcode(OP_ZERO_PRI)),
 	AMX_Write(YSI_g_sCodeSpace + 8, _:RelocateOpcode(OP_RETN)),
 	YSI_g_sCodeSpace += 12;
-	// NOP out the rest of the space.
+}
+
+forward OnCodeInit();
+
+public OnCodeInit()
+{
+	CGen_SetupCodeSpace();
+	#if defined CGen_OnCodeInit
+		CGen_OnCodeInit();
+	#endif
+	// Can't use "memset" or another fast function because this is in the code
+	// area, not the data area.  Clear out all the remainder AFTER other code
+	// generations are complete to reduce the amount of wasted time but still
+	// fill up the space with NOPs to avoid crashes.  An even better option
+	// would be to start a decompilation, run it through a few OpCodes, and if
+	// it passes do nothing, otherwise write one NOP and try again - the ASM
+	// will at most be one cell out from code overwriting other code, so we will
+	// only need to write a maximum of one cell to bring it back in line such
+	// that the JIT doesn't see an unknown OpCode.
 	new
 		Opcode:nop = RelocateOpcode(OP_NOP);
-	// Can't use "memset" or another fast function because this is in the code
-	// area, not the data area.
 	for (new i = YSI_g_sCodeSpace; i != YSI_g_sCodeEnd; i += 4)
 		AMX_Write(i, _:nop);
+	return 0; // Make the compiler happy.
 }
+
+#if defined CGen_OnCodeInit
+	forward CGen_OnCodeInit();
+#endif
+#if defined _ALS_OnCodeInit
+	#undef OnCodeInit
+#else
+	#define _ALS_OnCodeInit
+#endif
+#define OnCodeInit CGen_OnCodeInit
 
 stock CGen_UseCodeSpace(ctx[AsmContext])
 {
-	CGen_SetupCodeSpace();
 	AsmInitPtr(ctx, YSI_g_sCodeSpace, YSI_g_sCodeEnd - YSI_g_sCodeSpace);
 }
 
 stock CGen_GetCodeSpace()
 {
-	CGen_SetupCodeSpace();
 	return YSI_g_sCodeSpace;
 }
 
