@@ -118,8 +118,7 @@ enum E_AMX_TABLE
 
 // This is based on the AMX version used in SA:MP - it DOES NOT match the code
 // found in the PAWN documentation as that's for a later version.
-
-public OnScriptInit()
+public OnCodeInit()
 {
 	new
 		addr,
@@ -199,16 +198,16 @@ public OnScriptInit()
 	#if defined YSI_LOCK_MODE
 		GetServerVarAsString(YSI_gLockData, YSI_gLockData[5], sizeof (YSI_gLockData) - 5);
 	#endif
-	#if defined AMX_OnScriptInit
-		AMX_OnScriptInit();
+	#if defined AMX_OnCodeInit
+		AMX_OnCodeInit();
 	#endif
 	return 1;
 }
 
-#undef OnScriptInit
-#define OnScriptInit AMX_OnScriptInit
-#if defined AMX_OnScriptInit
-	forward AMX_OnScriptInit();
+#undef OnCodeInit
+#define OnCodeInit AMX_OnCodeInit
+#if defined AMX_OnCodeInit
+	forward AMX_OnCodeInit();
 #endif
 
 stock AMX_GetGlobalAddress(...)

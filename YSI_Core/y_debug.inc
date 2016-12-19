@@ -306,6 +306,21 @@ stock Debug_Print0(const str[], {Float,_}:...) <>
 	return 0;
 }
 
+forward Debug_ErrorHandler(asmError);
+
+public Debug_ErrorHandler(asmError)
+{
+	switch (asmError)
+	{
+	case 1:
+		P:W("ASM: Unknown opcode");
+	case 2:
+		P:W("ASM: Operand invalid");
+	case 3:
+		P:W("ASM: Insufficient space");
+	}
+}
+
 stock Debug_PrintArray(arr[], size)
 {
 	new
