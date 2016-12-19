@@ -561,33 +561,25 @@ stock bernstein(string[] /* 12 */)
 	#emit NOP
 	#emit NOP
 	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	// Only shown the very first time this function is run.
-	P:7("bernstein called: \"%s\"", string);
+	return 0;
 	#pragma unused string
+}
+
+forward OnCodeInit();
+
+public OnCodeInit()
+{
 	new
 		base,
 		ctx[AsmContext];
-	// Get this function.
+	// Get the function.
 	#emit CONST.pri  bernstein
 	#emit LOAD.alt   AMX_HEADER_COD
 	#emit ADD
 	#emit STOR.S.pri base
-	AsmInitPtr(ctx, base, 128), // Don't need any more than that.
+	P:7("bernstein: base = %d, %d", AMX_HEADER_COD, base);
+	AsmInitPtr(ctx, base, 25 * 4), // Don't need any more than that.
+	AsmSetErrorHandlerName(ctx, "Debug_ErrorHandler");
 	// Setup.
 	@emit PROC
 	@emit CONST.alt   -1
@@ -610,16 +602,23 @@ stock bernstein(string[] /* 12 */)
 	@emit MOVE.pri
 	@emit STACK       4
 	@emit RETN
-	// Now actually CALL the written function.
-	// bernstein(string);
-	#emit LCTRL      5
-	#emit SCTRL      4
-	#emit CONST.pri  bernstein
-	#emit ADD.C      4
-	#emit RETN
-/*	#emit SCTRL      6*/
+	if (FALSE)
+		bernstein("");
+	#if defined Utils_OnCodeInit
+		Utils_OnCodeInit();
+	#endif
 	return 0; // Make the compiler happy.
 }
+
+#if defined Utils_OnCodeInit
+	forward Utils_OnCodeInit();
+#endif
+#if defined _ALS_OnCodeInit
+	#undef OnCodeInit
+#else
+	#define _ALS_OnCodeInit
+#endif
+#define OnCodeInit Utils_OnCodeInit
 
 /**--------------------------------------------------------------------------**\
 <summary>ishex</summary>
@@ -932,83 +931,106 @@ stock rawMemset(iAddress, iValue, iSize)
 {
 	if (iSize < 4)
 		return 0;
-	while (iSize >= 4096)
+	if (iAddress < 0)
 	{
-		#emit LOAD.S.pri iValue
-		#emit LOAD.S.alt iAddress
-		#emit FILL       4096
-		iAddress += 4096;
-		iSize -= 4096;
+		// Somewhere in COD, not DAT.  Can't use FILL because it checks the
+		// address.  Unless we are running in the JIT, which doesn't have
+		// checks, but we shouldn't be writing to COD after the JIT has started
+		// anyway.
+		do
+		{
+			#emit LOAD.S.pri iValue
+			#emit SREF.S.pri iAddress
+			iAddress += 4;
+		}
+		while ((iSize -= 4) > 0);
+		return 1;
 	}
-	if (iSize & 2048)
+	else //if (JIT_Complete())
 	{
-		#emit LOAD.S.pri iValue
-		#emit LOAD.S.alt iAddress
-		#emit FILL       2048
-		iAddress += 2048;
+		while (iSize >= 4096)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       4096
+			iAddress += 4096;
+			iSize -= 4096;
+		}
+		if (iSize & 2048)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       2048
+			iAddress += 2048;
+		}
+		if (iSize & 1024)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       1024
+			iAddress += 1024;
+		}
+		if (iSize & 512)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       512
+			iAddress += 512;
+		}
+		if (iSize & 256)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       256
+			iAddress += 256;
+		}
+		if (iSize & 128)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       128
+			iAddress += 128;
+		}
+		if (iSize & 64)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       64
+			iAddress += 64;
+		}
+		if (iSize & 32)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       32
+			iAddress += 32;
+		}
+		if (iSize & 16)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       16
+			iAddress += 16;
+		}
+		if (iSize & 8)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       8
+			iAddress += 8;
+		}
+		if (iSize & 4)
+		{
+			#emit LOAD.S.pri iValue
+			#emit SREF.S.pri iAddress
+		}
+		return 1;
 	}
-	if (iSize & 1024)
-	{
-		#emit LOAD.S.pri iValue
-		#emit LOAD.S.alt iAddress
-		#emit FILL       1024
-		iAddress += 1024;
-	}
-	if (iSize & 512)
-	{
-		#emit LOAD.S.pri iValue
-		#emit LOAD.S.alt iAddress
-		#emit FILL       512
-		iAddress += 512;
-	}
-	if (iSize & 256)
-	{
-		#emit LOAD.S.pri iValue
-		#emit LOAD.S.alt iAddress
-		#emit FILL       256
-		iAddress += 256;
-	}
-	if (iSize & 128)
-	{
-		#emit LOAD.S.pri iValue
-		#emit LOAD.S.alt iAddress
-		#emit FILL       128
-		iAddress += 128;
-	}
-	if (iSize & 64)
-	{
-		#emit LOAD.S.pri iValue
-		#emit LOAD.S.alt iAddress
-		#emit FILL       64
-		iAddress += 64;
-	}
-	if (iSize & 32)
-	{
-		#emit LOAD.S.pri iValue
-		#emit LOAD.S.alt iAddress
-		#emit FILL       32
-		iAddress += 32;
-	}
-	if (iSize & 16)
-	{
-		#emit LOAD.S.pri iValue
-		#emit LOAD.S.alt iAddress
-		#emit FILL       16
-		iAddress += 16;
-	}
-	if (iSize & 8)
-	{
-		#emit LOAD.S.pri iValue
-		#emit LOAD.S.alt iAddress
-		#emit FILL       8
-		iAddress += 8;
-	}
-	if (iSize & 4)
-	{
-		#emit LOAD.S.pri iValue
-		#emit SREF.S.pri iAddress
-	}
-	return 1;
+//	else
+//	{
+//		// JIT not started/non-existant.  We can use code rewriting.
+//		return 1;
+//	}
 }
 
 /**--------------------------------------------------------------------------**\

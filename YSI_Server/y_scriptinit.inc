@@ -9,6 +9,10 @@ Description:
 	"YSI_FILTERSCRIPT" as a (partial) replacement for "FILTERSCRIPT" which
 	detects what the mode is at runtime for a more reliable system (but it is a
 	run-time variable, not a compile-time constant).
+	
+	Now also provides OnCodeInit, which comes before OnScriptInit and should
+	mostly be used for @emit code generation and other assembly related stuff
+	(since it is called by the JIT if that exists).
 Legal:
 	Version: MPL 1.1
 	
@@ -109,6 +113,45 @@ public @CO_ScriptInit()
 stock
 	bool:YSI_FILTERSCRIPT = false;
 
+static
+	bool:YSI_g_sCodeJITed = false,
+	bool:YSI_g_sCodeJITing = false;
+
+stock bool:JIT_Exists()
+{
+	return YSI_g_sCodeJITing;
+}
+
+stock bool:JIT_Complete()
+{
+	return YSI_g_sCodeJITed;
+}
+
+forward OnJITCompile();
+
+public OnJITCompile()
+{
+	state _ALS : _ALS_go;
+	state _script_init_fix_state : false;
+	// Got it being called twice for some reason.  I think it was a file glitch,
+	// but just make sure.
+	if (YSI_g_sCodeJITing)
+		return 0;
+	YSI_g_sCodeJITing = true;
+	#if defined ScriptInit_OnCodeInit
+		ScriptInit_OnCodeInit();
+	#endif
+	#if defined ScriptInit_OnJITCompile
+		new ret = ScriptInit_OnJITCompile();
+		if (ret)
+			YSI_g_sCodeJITed = true;
+		return ret;
+	#else
+		YSI_g_sCodeJITed = true;
+		return 1;
+	#endif
+}
+
 /*
 
     88             88          
@@ -127,6 +170,10 @@ public OnFilterScriptInit()
 	YSI_FILTERSCRIPT = true;
 	state _script_init_fix_state : true;
 	state _ALS : _ALS_go;
+	#if defined ScriptInit_OnCodeInit
+		if (!YSI_g_sCodeJITing)
+			ScriptInit_OnCodeInit();
+	#endif
 	#if defined ScriptInit_OnScriptInit
 		ScriptInit_OnScriptInit();
 	#endif
@@ -161,6 +208,10 @@ public OnGameModeInit()
 	if (!YSI_FILTERSCRIPT)
 	{
 		state _script_init_fix_state : false;
+		#if defined ScriptInit_OnCodeInit
+			if (!YSI_g_sCodeJITing)
+				ScriptInit_OnCodeInit();
+		#endif
 		#if defined ScriptInit_OnScriptInit
 			ScriptInit_OnScriptInit();
 		#endif
@@ -230,15 +281,31 @@ public OnGameModeExit()
 
 */
 
+#if defined ScriptInit_OnCodeInit
+	forward ScriptInit_OnCodeInit();
+#endif
+#if defined _ALS_OnCodeInit || defined OnCodeInit
+	#error OnCodeInit defined
+#endif
+#define _ALS_OnCodeInit
+#define OnCodeInit ScriptInit_OnCodeInit
+
 #if defined ScriptInit_OnScriptInit
 	forward ScriptInit_OnScriptInit();
 #endif
-#if defined _ALS_OnScriptInit
-	#undef OnScriptInit
-#else
-	#define _ALS_OnScriptInit
+#if defined _ALS_OnScriptInit || defined OnScriptInit
+	#error defined OnScriptInit
 #endif
+#define _ALS_OnScriptInit
 #define OnScriptInit ScriptInit_OnScriptInit
+
+SCRIPT_INIT_FORWARD:OnJITCompile();
+#if defined _ALS_OnJITCompile
+	#undef OnJITCompile
+#else
+	#define _ALS_OnJITCompile
+#endif
+#define OnJITCompile(%0) ScriptInit_OnJITCompile(%0) <_ALS : _ALS_go>
 
 SCRIPT_INIT_FORWARD:OnFilterScriptInit();
 #if defined _ALS_OnFilterScriptInit
