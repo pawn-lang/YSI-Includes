@@ -2624,12 +2624,14 @@ Test:y_iter_ArrayMulti()
 	ASSERT(count == 0);
 }
 
-Test:y_iter_Deprecate()
-{
-	foreach (Player, i)
+#if _FOREACH_PLAYERS
+	Test:y_iter_Deprecate()
 	{
+		foreach (Player, i)
+		{
+		}
 	}
-}
+#endif
 
 Test:y_iter_Random()
 {
