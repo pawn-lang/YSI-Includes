@@ -96,7 +96,7 @@ static stock CGen_SetupCodeSpace()
 	// Can't use "memset" or another fast function because this is in the code
 	// area, not the data area.
 	for (new i = YSI_g_sCodeSpace; i != YSI_g_sCodeEnd; i += 4)
-		AMX_Write(i, nop);
+		AMX_Write(i, _:nop);
 }
 
 stock CGen_UseCodeSpace(ctx[AsmContext])
