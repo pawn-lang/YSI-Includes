@@ -82,6 +82,9 @@ Changelog:
 	#define _Y_HOOKS_STATIC static
 #endif
 
+// Actually now an important include - ensures that "OnScriptInit" is hooked
+// correctly despite not being called correctly.
+#include "..\YSI_Core\y_debug"
 #include "..\YSI_Core\y_cell"
 #include "..\YSI_Core\y_utils"
 #include "..\YSI_Storage\y_amx"

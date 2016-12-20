@@ -165,7 +165,8 @@ public OnFilterScriptInit()
 	state _ALS : _ALS_go;
 	if (!YSI_g_sCodeJITing)
 		ScriptInit_OnCodeInit();
-	CallLocalFunction("ScriptInit_OnScriptInit", "");
+	ScriptInit_OnScriptInit();
+	// CallLocalFunction("ScriptInit_OnScriptInit", "");
 	#if defined YSI_LOCK_MODE
 		#if defined FILTERSCRIPT
 			if (strlen(YSI_gLockData[5]) !=
@@ -199,7 +200,8 @@ public OnGameModeInit()
 		state _script_init_fix_state : false;
 		if (!YSI_g_sCodeJITing)
 			ScriptInit_OnCodeInit();
-		CallLocalFunction("ScriptInit_OnScriptInit", "");
+		ScriptInit_OnScriptInit();
+		// CallLocalFunction("ScriptInit_OnScriptInit", "");
 		#if defined YSI_LOCK_MODE
 			if (YSI_gLockData[
 				floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
@@ -237,7 +239,8 @@ public OnFilterScriptExit()
 {
 	ScriptInit_OnFilterScriptExit();
 	if (YSI_FILTERSCRIPT)
-		CallLocalFunction("ScriptInit_OnScriptExit", "");
+		ScriptInit_OnScriptExit();
+		// CallLocalFunction("ScriptInit_OnScriptExit", "");
 	return 1;
 }
 
@@ -245,7 +248,8 @@ public OnGameModeExit()
 {
 	ScriptInit_OnGameModeExit();
 	if (!YSI_FILTERSCRIPT)
-		CallLocalFunction("ScriptInit_OnScriptExit", "");
+		ScriptInit_OnScriptExit();
+		// CallLocalFunction("ScriptInit_OnScriptExit", "");
 	return 1;
 }
 

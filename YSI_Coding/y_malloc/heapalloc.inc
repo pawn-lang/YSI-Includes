@@ -128,7 +128,6 @@ main()
 		Malloc_main();
 	#endif
 	return 1;
-	//return MALLOC_SOLIDIFYHEAP(3);
 }
 
 #if defined _ALS_main
@@ -292,7 +291,6 @@ static Malloc_TrySetup()
 }
 
 static
-	//YSI_g_sSolidifyHeap,
 	YSI_g_sHeapSetup = 0;
 
 static const
@@ -409,3 +407,4 @@ public Malloc_DoPlayerConnect(playerid)
 	// Ensure we only call the originsl.
 	return call OnPlayerConnect(playerid);
 }
+
