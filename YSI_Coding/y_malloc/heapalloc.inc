@@ -211,19 +211,15 @@ public OnScriptInit()
 		}
 	}
 	Malloc_TrySetup();
-	#if defined Malloc_OnScriptInit
-		Malloc_OnScriptInit();
-	#endif
+	Malloc_OnScriptInit();
 	SetTimer("Malloc_SolidifyTimer", 0, 0);
 	SetTimer("Malloc_SolidifyTimer", 0, 0);
 	return 1;
 }
 
+MALLOC_FORWARD:OnScriptInit();
 #undef OnScriptInit
-#define OnScriptInit Malloc_OnScriptInit
-#if defined Malloc_OnScriptInit
-	forward Malloc_OnScriptInit();
-#endif
+#define OnScriptInit(%0) Malloc_OnScriptInit(%0) <_ALS : _ALS_go>
 
 /**--------------------------------------------------------------------------**\
 <summary>Malloc_TrySetup</summary>

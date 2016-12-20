@@ -138,18 +138,11 @@ public OnJITCompile()
 	if (YSI_g_sCodeJITing)
 		return 0;
 	YSI_g_sCodeJITing = true;
-	#if defined ScriptInit_OnCodeInit
-		ScriptInit_OnCodeInit();
-	#endif
-	#if defined ScriptInit_OnJITCompile
-		new ret = ScriptInit_OnJITCompile();
-		if (ret)
-			YSI_g_sCodeJITed = true;
-		return ret;
-	#else
+	ScriptInit_OnCodeInit();
+	new ret = ScriptInit_OnJITCompile();
+	if (ret)
 		YSI_g_sCodeJITed = true;
-		return 1;
-	#endif
+	return ret;
 }
 
 /*
@@ -270,9 +263,7 @@ public OnFilterScriptExit()
 {
 	ScriptInit_OnFilterScriptExit();
 	if (YSI_FILTERSCRIPT)
-	{
-		ScriptInit_OnScriptExit();
-	}
+		CallLocalFunction("ScriptInit_OnScriptExit", "");
 	return 1;
 }
 
@@ -280,9 +271,7 @@ public OnGameModeExit()
 {
 	ScriptInit_OnGameModeExit();
 	if (!YSI_FILTERSCRIPT)
-	{
-		ScriptInit_OnScriptExit();
-	}
+		CallLocalFunction("ScriptInit_OnScriptExit", "");
 	return 1;
 }
 
@@ -299,23 +288,19 @@ public OnGameModeExit()
 
 */
 
-#if defined ScriptInit_OnCodeInit
-	forward ScriptInit_OnCodeInit();
-#endif
+SCRIPT_INIT_FORWARD:OnCodeInit();
 #if defined _ALS_OnCodeInit || defined OnCodeInit
 	#error OnCodeInit defined
 #endif
 #define _ALS_OnCodeInit
-#define OnCodeInit ScriptInit_OnCodeInit
+#define OnCodeInit(%0) ScriptInit_OnCodeInit(%0) <_ALS : _ALS_go>
 
-#if defined ScriptInit_OnScriptInit
-	forward ScriptInit_OnScriptInit();
-#endif
+SCRIPT_INIT_FORWARD:OnScriptInit();
 #if defined _ALS_OnScriptInit || defined OnScriptInit
 	#error defined OnScriptInit
 #endif
 #define _ALS_OnScriptInit
-#define OnScriptInit ScriptInit_OnScriptInit
+#define OnScriptInit(%0) ScriptInit_OnScriptInit(%0) <_ALS : _ALS_go>
 
 SCRIPT_INIT_FORWARD:OnJITCompile();
 #if defined _ALS_OnJITCompile

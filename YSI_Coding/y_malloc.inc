@@ -168,6 +168,25 @@ Operators:
 	#endif
 #endif
 
+#if !defined CHAIN_ORDER
+	#define CHAIN_ORDER() 0
+#endif
+
+forward @CO_Malloc();
+
+public @CO_Malloc()
+{
+	return CHAIN_ORDER() + 1;
+}
+
+#undef CHAIN_ORDER
+#define CHAIN_ORDER @CO_Malloc
+
+#define MALLOC_FORWARD:%0(%1); \
+	forward Malloc_%0(%1); \
+	public Malloc_%0(%1) <_ALS : _ALS_x0, _ALS : _ALS_x1> { return 1; } \
+	public Malloc_%0(%1) <> { return 1; }
+
 #if defined YSI_NO_HEAP_MALLOC
 	#if defined DYNAMIC_MEMORY
 		#pragma dynamic DYNAMIC_MEMORY
@@ -236,17 +255,13 @@ forward Alloc:calloc(size);
 		YSI_gMallocMemory[0] = MALLOC_MEMORY - 1;
 		YSI_g_sUnusedStart = 1;
 		memset(YSI_gMallocMemory[1], 0, MALLOC_MEMORY - 1);
-		#if defined Malloc_OnScriptInit
-			Malloc_OnScriptInit();
-		#endif
+		Malloc_OnScriptInit();
 		return 1;
 	}
 	
+	MALLOC_FORWARD:OnScriptInit();
 	#undef OnScriptInit
-	#define OnScriptInit Malloc_OnScriptInit
-	#if defined Malloc_OnScriptInit
-		forward Malloc_OnScriptInit();
-	#endif
+	#define OnScriptInit(%0) Malloc_OnScriptInit(%0) <_ALS : _ALS_go>
 #else
 	new
 		YSI_gMallocMemory[1];

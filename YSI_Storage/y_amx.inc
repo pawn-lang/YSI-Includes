@@ -965,8 +965,7 @@ stock AMX_ReadString(addr, str[], len = sizeof (str))
 		#emit LREF.S.pri                addr
 		#emit STOR.S.pri                buffer
 		// Write PACKED strings.
-		buffer = (buffer >>> 24) | (buffer >> 8 & 0x0000FF00) | (buffer << 8 & 0x00FF0000) | (buffer << 24);
-		str[idx] = buffer;
+		str[idx] = swapchars(buffer);
 		if (!(buffer & 0x000000FF && buffer & 0x0000FF00 && buffer & 0x00FF0000 && buffer & 0xFF000000))
 		{
 			return;
@@ -1134,6 +1133,20 @@ stock AMX_WriteArray(addr, const src[], len = sizeof (src))
 
 #define AMX_CodToDat(%0) ((%0) + AMX_HEADER_COD)
 #define AMX_DatToCod(%0) ((%0) - AMX_HEADER_COD)
+
+stock AMX_DumpHeader()
+{
+	new
+		idx,
+		buffer[32];
+	printf("================================");
+	while ((idx = AMX_GetPublicName(idx, buffer)))
+	{
+		strunpack(buffer, buffer);
+		printf(buffer);
+	}
+	printf("================================");
+}
 
 #define _A<%0> (_:H_Re(%0,0))
 

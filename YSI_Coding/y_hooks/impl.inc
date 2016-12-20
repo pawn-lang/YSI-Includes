@@ -1260,7 +1260,6 @@ public OnCodeInit()
 	// "CallLocalFunction".  Actually, those hooks use state-based hooking,
 	// which y_hooks already handles quite nicely, so we don't even need to use
 	// "CallLocalFunction" and can instead just hook the correct public.
-	AMX_DumpHeader();
 	P:1("Hooks_OnCodeInit called");
 	state _ALS : _ALS_go;
 	// Get the replacements.
@@ -1274,12 +1273,6 @@ public OnCodeInit()
 		// hooking to ensure that the correct functions are always called.
 		YSI_g_sInitFSIdx = funcidx("OnFilterScriptInit");
 		YSI_g_sInitGMIdx = funcidx("OnGameModeInit");
-		if (YSI_g_sInitFSIdx != -1)
-			YSI_g_sInitFSPtr = AMX_Read(AMX_HEADER_PUBLICS + YSI_g_sInitFSIdx * 8);
-		if (YSI_g_sInitGMIdx != -1)
-			YSI_g_sInitGMPtr = AMX_Read(AMX_HEADER_PUBLICS + YSI_g_sInitGMIdx * 8);
-		printf("FS: %d %08x", YSI_g_sInitFSIdx, YSI_g_sInitFSPtr);
-		printf("GM: %d %08x", YSI_g_sInitGMIdx, YSI_g_sInitGMPtr);
 	}
 	// Loop over the redefinition functions and call them to have them call the
 	// "_Hooks_AddReplacement" function above.  If we were being REALLY clever,
@@ -1294,8 +1287,6 @@ public OnCodeInit()
 	// Remove a few other superfluous publics.
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<_@_y>)))
 		Hooks_InvalidateName(entry);
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@CO_>)))
-		Hooks_InvalidateName(entry);
 	Hooks_SortReplacements();
 	Hooks_DoAllHooks();
 	P:1("Hooks_OnCodeInit chain");
@@ -1303,7 +1294,6 @@ public OnCodeInit()
 	//DisasmDump("YSI_TEST.asm");
 	HookChain_OnCodeInit();
 	P:1("Hooks_OnCodeInit end");
-	AMX_DumpHeader();
 	if (JIT_Exists())
 		Hooks_RepairJITInit();
 	return 1;
@@ -1335,11 +1325,8 @@ HOOK_FORWARD:HookChain_OnCodeInit();
 
 _Y_HOOKS_STATIC _Hooks_RepairStub()
 {
-	printf("repairing");
-	if (YSI_g_sInitFSIdx != -1)
-		AMX_Write(AMX_HEADER_PUBLICS + YSI_g_sInitFSIdx * 8, YSI_g_sInitFSRep);
-	if (YSI_g_sInitGMIdx != -1)
-		AMX_Write(AMX_HEADER_PUBLICS + YSI_g_sInitGMIdx * 8, YSI_g_sInitGMRep);
+	AMX_Write(AMX_HEADER_PUBLICS + YSI_g_sInitFSIdx * 8, YSI_g_sInitFSRep);
+	AMX_Write(AMX_HEADER_PUBLICS + YSI_g_sInitGMIdx * 8, YSI_g_sInitGMRep);
 	// Move the header up for searching.
 	if (YSI_g_sInitPublicDiff)
 	{
@@ -1384,26 +1371,21 @@ _Y_HOOKS_STATIC Hooks_RepairJITInit()
 	}
 	// The pointer at this index needs to remain constant.  Replace it with a
 	// pointer to a stub that resets the pointer then calls the real init hook.
-	if (YSI_g_sInitFSIdx != -1)
-	{
-		new
-			base = AMX_HEADER_PUBLICS + YSI_g_sInitFSIdx * 8,
-			stub;
-		#emit CONST.pri           _Hooks_RepairStubFS
-		#emit STOR.S.pri          stub
-		YSI_g_sInitFSRep = AMX_Read(base),
-		AMX_Write(base, stub);
-	}
-	if (YSI_g_sInitGMIdx != -1)
-	{
-		new
-			base = AMX_HEADER_PUBLICS + YSI_g_sInitGMIdx * 8,
-			stub;
-		#emit CONST.pri           _Hooks_RepairStubGM
-		#emit STOR.S.pri          stub
-		YSI_g_sInitGMRep = AMX_Read(base),
-		AMX_Write(base, stub);
-	}
+	YSI_g_sInitFSPtr = GetPublicAddressFromName("OnFilterScriptInit");
+	YSI_g_sInitGMPtr = GetPublicAddressFromName("OnGameModeInit");
+	new
+		base,
+		stub;
+	base = AMX_HEADER_PUBLICS + YSI_g_sInitFSIdx * 8;
+	#emit CONST.pri           _Hooks_RepairStubFS
+	#emit STOR.S.pri          stub
+	YSI_g_sInitFSRep = AMX_Read(base),
+	AMX_Write(base, stub);
+	base = AMX_HEADER_PUBLICS + YSI_g_sInitGMIdx * 8;
+	#emit CONST.pri           _Hooks_RepairStubGM
+	#emit STOR.S.pri          stub
+	YSI_g_sInitGMRep = AMX_Read(base),
+	AMX_Write(base, stub);
 }
 
 #if !defined _ALS_numargs
