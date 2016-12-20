@@ -138,18 +138,11 @@ public OnJITCompile()
 	if (YSI_g_sCodeJITing)
 		return 0;
 	YSI_g_sCodeJITing = true;
-	#if defined ScriptInit_OnCodeInit
-		ScriptInit_OnCodeInit();
-	#endif
-	#if defined ScriptInit_OnJITCompile
-		new ret = ScriptInit_OnJITCompile();
-		if (ret)
-			YSI_g_sCodeJITed = true;
-		return ret;
-	#else
+	ScriptInit_OnCodeInit();
+	new ret = ScriptInit_OnJITCompile();
+	if (ret)
 		YSI_g_sCodeJITed = true;
-		return 1;
-	#endif
+	return ret;
 }
 
 /*
@@ -170,13 +163,9 @@ public OnFilterScriptInit()
 	YSI_FILTERSCRIPT = true;
 	state _script_init_fix_state : true;
 	state _ALS : _ALS_go;
-	#if defined ScriptInit_OnCodeInit
-		if (!YSI_g_sCodeJITing)
-			ScriptInit_OnCodeInit();
-	#endif
-	#if defined ScriptInit_OnScriptInit
-		ScriptInit_OnScriptInit();
-	#endif
+	if (!YSI_g_sCodeJITing)
+		ScriptInit_OnCodeInit();
+	CallLocalFunction("ScriptInit_OnScriptInit", "");
 	#if defined YSI_LOCK_MODE
 		#if defined FILTERSCRIPT
 			if (strlen(YSI_gLockData[5]) !=
@@ -208,13 +197,9 @@ public OnGameModeInit()
 	if (!YSI_FILTERSCRIPT)
 	{
 		state _script_init_fix_state : false;
-		#if defined ScriptInit_OnCodeInit
-			if (!YSI_g_sCodeJITing)
-				ScriptInit_OnCodeInit();
-		#endif
-		#if defined ScriptInit_OnScriptInit
-			ScriptInit_OnScriptInit();
-		#endif
+		if (!YSI_g_sCodeJITing)
+			ScriptInit_OnCodeInit();
+		CallLocalFunction("ScriptInit_OnScriptInit", "");
 		#if defined YSI_LOCK_MODE
 			if (YSI_gLockData[
 				floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
@@ -252,9 +237,7 @@ public OnFilterScriptExit()
 {
 	ScriptInit_OnFilterScriptExit();
 	if (YSI_FILTERSCRIPT)
-	{
-		ScriptInit_OnScriptExit();
-	}
+		CallLocalFunction("ScriptInit_OnScriptExit", "");
 	return 1;
 }
 
@@ -262,9 +245,7 @@ public OnGameModeExit()
 {
 	ScriptInit_OnGameModeExit();
 	if (!YSI_FILTERSCRIPT)
-	{
-		ScriptInit_OnScriptExit();
-	}
+		CallLocalFunction("ScriptInit_OnScriptExit", "");
 	return 1;
 }
 
@@ -281,23 +262,19 @@ public OnGameModeExit()
 
 */
 
-#if defined ScriptInit_OnCodeInit
-	forward ScriptInit_OnCodeInit();
-#endif
+SCRIPT_INIT_FORWARD:OnCodeInit();
 #if defined _ALS_OnCodeInit || defined OnCodeInit
 	#error OnCodeInit defined
 #endif
 #define _ALS_OnCodeInit
-#define OnCodeInit ScriptInit_OnCodeInit
+#define OnCodeInit(%0) ScriptInit_OnCodeInit(%0) <_ALS : _ALS_go>
 
-#if defined ScriptInit_OnScriptInit
-	forward ScriptInit_OnScriptInit();
-#endif
+SCRIPT_INIT_FORWARD:OnScriptInit();
 #if defined _ALS_OnScriptInit || defined OnScriptInit
 	#error defined OnScriptInit
 #endif
 #define _ALS_OnScriptInit
-#define OnScriptInit ScriptInit_OnScriptInit
+#define OnScriptInit(%0) ScriptInit_OnScriptInit(%0) <_ALS : _ALS_go>
 
 SCRIPT_INIT_FORWARD:OnJITCompile();
 #if defined _ALS_OnJITCompile

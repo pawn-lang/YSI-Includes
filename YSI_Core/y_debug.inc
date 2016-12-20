@@ -356,11 +356,7 @@ public OnScriptInit()
 	if (s)
 	{
 		//goto Debug_OnScriptInit_no_fault();
-		#if defined Debug_OnScriptInit
-			return Debug_OnScriptInit();
-		#else
-			return 1;
-		#endif
+		return Debug_OnScriptInit();
 	}
 	P:F("YSI_FILTERSCRIPT == 0");
 	while (s != 10000000) ++s;
@@ -378,11 +374,22 @@ static stock Debug_SetState() <>
 	state ysi_debug : on;
 }
 
+forward @CO_Debug();
+
+public @CO_Debug()
+{
+	return CHAIN_ORDER() + 1;
+}
+
+#undef CHAIN_ORDER
+#define CHAIN_ORDER @CO_Debug
+
+forward Debug_OnScriptInit();
+public Debug_OnScriptInit() <_ALS : _ALS_x0, _ALS : _ALS_x1> { return 1; }
+public Debug_OnScriptInit() <> { return 1; }
+
 #undef OnScriptInit
-#define OnScriptInit Debug_OnScriptInit
-#if defined Debug_OnScriptInit
-	forward Debug_OnScriptInit();
-#endif
+#define OnScriptInit(%0) Debug_OnScriptInit(%0) <_ALS : _ALS_go>
 
 stock DebugLevel(level = -1)
 {
