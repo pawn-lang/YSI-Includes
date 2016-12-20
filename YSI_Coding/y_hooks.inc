@@ -84,7 +84,9 @@ Changelog:
 
 #include "y_hooks/macros"
 
-#include "..\YSI_Internal\y_unique"
+// Actually now an important include - ensures that "OnScriptInit" is hooked
+// correctly despite not being called correctly.
+#include "..\YSI_Core\y_debug"
 #include "..\YSI_Core\y_cell"
 #include "..\YSI_Core\y_utils"
 #include "..\YSI_Storage\y_amx"
