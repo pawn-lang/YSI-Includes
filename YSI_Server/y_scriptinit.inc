@@ -263,8 +263,7 @@ public OnFilterScriptExit()
 {
 	ScriptInit_OnFilterScriptExit();
 	if (YSI_FILTERSCRIPT)
-		ScriptInit_OnScriptExit();
-		// CallLocalFunction("ScriptInit_OnScriptExit", "");
+		CallLocalFunction("ScriptInit_OnScriptExit", "");
 	return 1;
 }
 
@@ -272,8 +271,7 @@ public OnGameModeExit()
 {
 	ScriptInit_OnGameModeExit();
 	if (!YSI_FILTERSCRIPT)
-		ScriptInit_OnScriptExit();
-		// CallLocalFunction("ScriptInit_OnScriptExit", "");
+		CallLocalFunction("ScriptInit_OnScriptExit", "");
 	return 1;
 }
 
