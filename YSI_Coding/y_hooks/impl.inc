@@ -888,32 +888,37 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	CGen_UseCodeSpace(ctx);
 	
 	// Start of the function.
-	@emit PROC              // 1
+	@emit PROC                          // 1
 	
 	// Allocate space for our "ret" variable at "frm - 4".
-	if (multiple) @emit PUSH.C        ret // 3
+	if (multiple) @emit PUSH.C  ret     // 3
 	
 	// Copy the stack to itself (MOVS).
 	// Allocate space.
-	@emit LOAD.S.alt    8   // 5
-	@emit LCTRL         4   // 7
-	@emit SUB               // 8
-	@emit SCTRL         4   // 10
-	@emit XCHG              // 11
+	@emit LOAD.S.pri    8               // 5
+	if (JIT_Exists())
+		@emit JZER.rel  ((31 - 7) * 4)  // 7
+	else
+		@emit JZER.rel  ((22 - 7) * 4)  // 7
+	@emit MOVE.alt                      // 8
+	@emit LCTRL         4               // 10
+	@emit SUB                           // 11
+	@emit SCTRL         4               // 13
+	@emit XCHG                          // 14
 	
 	if (JIT_Exists())
 	{
 		// Need to use memcpy to move about in the stack.
-		@emit PUSH.C        4096
-		@emit PUSH.pri
-		@emit PUSH.C        0
-		@emit LCTRL         5
-		@emit ADD.C         12
-		@emit PUSH.pri
-		@emit PUSH.alt
-		@emit PUSH.C        20
-		@emit SYSREQ        "memcpy"
-		@emit STACK         24
+		@emit PUSH.C        4096        // 16
+		@emit PUSH.pri                  // 17
+		@emit PUSH.C        0           // 19
+		@emit LCTRL         5           // 21
+		@emit ADD.C         12          // 23
+		@emit PUSH.pri                  // 24
+		@emit PUSH.alt                  // 25
+		@emit PUSH.C        20          // 27
+		@emit SYSREQ        "memcpy"    // 29
+		@emit STACK         24          // 31
 	}
 	else
 	{
@@ -921,13 +926,13 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		// to generate self-modifying code (just to be UBER meta)!  This code is
 		// generated AFTER the file is loaded so we bypass the data segment
 		// checks and can freely write wherever we want.
-		@emit STOR.pri      (CGen_GetCodeSpace() + (18 * 4) - (multiple ? 0 : 8)) // 13
+		@emit STOR.pri      (CGen_GetCodeSpace() + (21 * 4) - (multiple ? 0 : 8)) // 16
 		
 		// Do the copying.  "alt" is already "STK", load the "FRM" offset.
-		@emit LCTRL         5   // 15
-		@emit ADD.C         12  // 17
+		@emit LCTRL         5           // 18
+		@emit ADD.C         12          // 20
 		// This is the instruction we want to modify...
-		@emit MOVS          0   // 19 (- 1)
+		@emit MOVS          0           // 22 (- 1)
 	}
 	
 	// Push the (fake) number of parameters.
@@ -1290,6 +1295,8 @@ public OnCodeInit()
 	}
 	// Remove a few other superfluous publics.
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<_@_y>)))
+		Hooks_InvalidateName(entry);
+	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@CO_>)))
 		Hooks_InvalidateName(entry);
 	Hooks_SortReplacements();
 	Hooks_DoAllHooks();
