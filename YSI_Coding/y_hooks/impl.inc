@@ -112,7 +112,6 @@ enum E_HOOK_NAME_REPLACEMENT_DATA
 #define HOOK_RET:%0(%1) forward @RET%0(); public @RET%0()
 
 CHAIN_HOOK(HookChain)
-
 #undef CHAIN_ORDER
 #define CHAIN_ORDER CHAIN_NEXT(HookChain)
 

@@ -5,15 +5,9 @@ static
 	#define CHAIN_ORDER() 0
 #endif
 
-forward @CO_TestPrehook();
-
-public @CO_TestPrehook()
-{
-	return CHAIN_ORDER() + 1;
-}
-
+CHAIN_HOOK(TestPrehook)
 #undef CHAIN_ORDER
-#define CHAIN_ORDER @CO_TestPrehook
+#define CHAIN_ORDER CHAIN_NEXT(TestPrehook)
 
 forward OnTestPrehook();
 
@@ -23,12 +17,9 @@ public OnTestPrehook()
 	TestPrehook_OnTestPrehook();
 }
 
-forward TestPrehook_OnTestPrehook();
-public TestPrehook_OnTestPrehook() <_ALS : _ALS_x0, _ALS : _ALS_x1> { printf("wrong state"); return 1; }
-public TestPrehook_OnTestPrehook() <> { printf("generic state"); return 1; }
+CHAIN_FORWARD:TestPrehook_OnTestPrehook() = 1;
 
-//#undef OnTestPrehook
-#define OnTestPrehook(%0) TestPrehook_OnTestPrehook(%0) <_ALS : _ALS_go>
+#define OnTestPrehook(%0) CHAIN_PUBLIC:TestPrehook_OnTestPrehook(%0)
 
 hook OnTestPrehook()
 {
@@ -51,12 +42,9 @@ public OnTestCallback()
 	// TestPrehook_OnTestCallback();
 }
 
-// forward TestPrehook_OnTestCallback();
-// public TestPrehook_OnTestCallback() <_ALS : _ALS_x0, _ALS : _ALS_x1> { return 1; }
-// public TestPrehook_OnTestCallback() <> { return 1; }
+CHAIN_FORWARD:TestPrehook_OnTestCallback() = 1;
 
-//#undef OnTestCallback
-#define OnTestCallback(%0) TestPrehook_OnTestCallback(%0) <_ALS : _ALS_go>
+#define OnTestCallback(%0) CHAIN_PUBLIC:TestPrehook_OnTestCallback(%0)
 
 hook OnTestCallback()
 {
@@ -81,6 +69,19 @@ hook OnScriptInit()
 Test:OnScriptInit()
 {
 	ASSERT(y_hooks_OnScriptInit_called);
+}
+
+static
+	bool:y_hooks_OnCodeInit_called = false;
+
+hook OnCodeInit()
+{
+	y_hooks_OnCodeInit_called = true;
+}
+
+Test:OnCodeInit()
+{
+	ASSERT(y_hooks_OnCodeInit_called);
 }
 
 forward Ony_hooksTest2(cmd[]);
