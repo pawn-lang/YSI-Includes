@@ -148,7 +148,8 @@ static stock
 	YSI_g_sInitGMPtr,
 	YSI_g_sInitGMIdx = -1,
 	YSI_g_sInitGMRep,
-	YSI_g_sInitPublicDiff;
+	YSI_g_sInitPublicDiff,
+	bool:YSI_g_sSortedOnce = false;
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_MakeLongName</summary>
@@ -1130,11 +1131,12 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 	if (YSI_g_sInitPublicDiff)
 	{
 		// Update stored values in y_amx so they reflect the new structure.
-		if (!JIT_Exists())
+		if (!JIT_Exists() || YSI_g_sSortedOnce)
 		{
 			AMX_Write(AMX_BASE_ADDRESS + 32, AMX_Read(AMX_BASE_ADDRESS + 32) + YSI_g_sInitPublicDiff);
 			AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff;
 			ResetStaticAmxHeader();
+			YSI_g_sSortedOnce = true;
 		}
 	}
 	// TODO: Inform the fixes2 plugin of the change.  That stores indexes, not
@@ -1333,6 +1335,7 @@ _Y_HOOKS_STATIC _Hooks_RepairStub()
 		AMX_Write(AMX_BASE_ADDRESS + 32, AMX_Read(AMX_BASE_ADDRESS + 32) + YSI_g_sInitPublicDiff);
 		AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff;
 		ResetStaticAmxHeader();
+		YSI_g_sSortedOnce = true;
 	}
 }
 
