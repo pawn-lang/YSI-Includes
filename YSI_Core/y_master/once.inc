@@ -241,10 +241,6 @@ static
 	YSI_g_sMasterCount,
 	YSI_g_sMasterData[MAX_MASTERS];
 
-PRE_HOOK(Master)
-#undef CHAIN_ORDER
-#define CHAIN_ORDER @CO_Master
-
 /**--------------------------------------------------------------------------**\
 <summary>Master_GetNext</summary>
 <returns>
@@ -317,13 +313,13 @@ public OnScriptInit()
 	return 1;
 }
 
-HOOK_FORWARD:Master_OnScriptInit();
+CHAIN_FORWARD:Master_OnScriptInit() = 1;
 #if defined _ALS_OnScriptInit
 	#undef OnScriptInit
 #else
 	#define _ALS_OnScriptInit
 #endif
-#define OnScriptInit(%0) Master_OnScriptInit(%0) <_ALS : _ALS_go>
+#define OnScriptInit(%0) CHAIN_PUBLIC:Master_OnScriptInit(%0)
 
 #define OnMasterSystemInit YSIM_OnMasterSystemInit
 forward YSIM_OnMasterSystemInit();
@@ -363,13 +359,13 @@ public OnScriptExit()
 	return 1;
 }
 
-HOOK_FORWARD:Master_OnScriptExit();
+CHAIN_FORWARD:Master_OnScriptExit() = 1;
 #if defined _ALS_OnScriptExit
 	#undef OnScriptExit
 #else
 	#define _ALS_OnScriptExit
 #endif
-#define OnScriptExit(%0) Master_OnScriptExit(%0) <_ALS : _ALS_go>
+#define OnScriptExit(%0) CHAIN_PUBLIC:Master_OnScriptExit(%0)
 
 //#define OnMasterSystemClose Master_OnScriptClose
 //forward Master_OnScriptClose(id);

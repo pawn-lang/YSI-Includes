@@ -115,14 +115,17 @@ Operators:
 #define _INC_y_debug
 
 #include "..\YSI_Internal\y_version"
-
 #include "..\YSI_Internal\y_funcinc"
-
 #include "..\YSI_Server\y_scriptinit"
+#include "..\YSI_Internal\y_prehook"
 
 #if !defined _DEBUG
 	#define _DEBUG 0
 #endif
+
+CHAIN_HOOK(Debug)
+#undef CHAIN_ORDER
+#define CHAIN_ORDER CHAIN_NEXT(Debug)
 
 stock YSI_gDebugLevel = 0;
 
@@ -345,7 +348,7 @@ stock Debug_PrintArray(arr[], size)
 	return str;
 }
 
-public OnScriptInit()
+public OnCodeInit()
 {
 	Debug_SetState();
 	new
@@ -355,8 +358,8 @@ public OnScriptInit()
 	#emit STOR.S.pri s
 	if (s)
 	{
-		//goto Debug_OnScriptInit_no_fault();
-		return Debug_OnScriptInit();
+		//goto Debug_OnCodeInit_no_fault();
+		return Debug_OnCodeInit();
 	}
 	P:F("YSI_FILTERSCRIPT == 0");
 	while (s != 10000000) ++s;
@@ -374,22 +377,9 @@ static stock Debug_SetState() <>
 	state ysi_debug : on;
 }
 
-forward @CO_Debug();
-
-public @CO_Debug()
-{
-	return CHAIN_ORDER() + 1;
-}
-
-#undef CHAIN_ORDER
-#define CHAIN_ORDER @CO_Debug
-
-forward Debug_OnScriptInit();
-public Debug_OnScriptInit() <_ALS : _ALS_x0, _ALS : _ALS_x1> { return 1; }
-public Debug_OnScriptInit() <> { return 1; }
-
-#undef OnScriptInit
-#define OnScriptInit(%0) Debug_OnScriptInit(%0) <_ALS : _ALS_go>
+CHAIN_FORWARD:Debug_OnCodeInit() = 1;
+#undef OnCodeInit
+#define OnCodeInit(%0) CHAIN_PUBLIC:Debug_OnCodeInit(%0)
 
 stock DebugLevel(level = -1)
 {

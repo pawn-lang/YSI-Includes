@@ -91,7 +91,6 @@ Operators:
 	-
 Natives:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_version
@@ -114,6 +113,21 @@ Natives:
 #endif
 
 #include "..\YSI_Server\y_scriptinit"
+#include "y_prehook"
+
+#if !defined CHAIN_ORDER
+	#define CHAIN_ORDER() 0
+#endif
+
+CHAIN_HOOK(YVers)
+
+#undef CHAIN_ORDER
+#define CHAIN_ORDER CHAIN_NEXT(YVers)
+
+// Amazingly, this fixes hooking OnScriptInit...
+forward YVers_OnScriptInit();
+public YVers_OnScriptInit() <_ALS : _ALS_x0, _ALS : _ALS_x1> { return 1; }
+public YVers_OnScriptInit() <> { return 1; }
 
 #define YSI_VERSION_RESPO               2
 
@@ -134,17 +148,12 @@ Natives:
 			YSI_gLockData[YSI_gLockData[2]++] = (YSI_gLockData[3] | 0x09) & ~0x04;
 			YSI_gLockData[2] *= (6 * x) - 5;
 		#endif
-		#if defined YVers_OnScriptInit
-			YVers_OnScriptInit();
-		#endif
+		YVers_OnScriptInit();
 		return 1;
 	}
 	
 	#undef OnScriptInit
 	#define OnScriptInit YVers_OnScriptInit
-	#if defined YVers_OnScriptInit
-		forward YVers_OnScriptInit();
-	#endif
 	
 #else
 /**----------------------------------------------------------------------**\
@@ -183,17 +192,12 @@ Natives:
 			print(" |                                     | ");
 			print(" ======================================= ");
 			print(" ");
-			#if defined YVers_OnScriptInit
-				YVers_OnScriptInit();
-			#endif
+			YVers_OnScriptInit();
 			return 1;
 		}
 		
 		#undef OnScriptInit
 		#define OnScriptInit YVers_OnScriptInit
-		#if defined YVers_OnScriptInit
-			forward YVers_OnScriptInit();
-		#endif
 		
 		#endinput
 	#endif
@@ -250,17 +254,12 @@ Natives:
 		// This remote script has now been updated to include changelog
 		// information and keeps a record of what IPs are connecting.
 		//HTTP(0, HTTP_GET, "version.ysi.tl/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, "", "YVers_Callback");
-		#if defined YVers_OnScriptInit
-			YVers_OnScriptInit();
-		#endif
+		YVers_OnScriptInit();
 		return 1;
 	}
 	
 	#undef OnScriptInit
 	#define OnScriptInit YVers_OnScriptInit
-	#if defined YVers_OnScriptInit
-		forward YVers_OnScriptInit();
-	#endif
 	
 	/**----------------------------------------------------------------------**\
 	<summary>YVers_Callback</summary>

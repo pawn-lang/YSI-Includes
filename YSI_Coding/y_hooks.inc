@@ -93,6 +93,7 @@ Changelog:
 #include "..\YSI_Internal\amx_assembly"
 
 #include "..\YSI_Internal\y_cgen"
+#include "..\YSI_Internal\y_prehook"
 
 #include "y_hooks/impl"
 

@@ -1,6 +1,88 @@
 static
 	YSI_g_sValue;
 
+#if !defined CHAIN_ORDER
+	#define CHAIN_ORDER() 0
+#endif
+
+forward @CO_TestPrehook();
+
+public @CO_TestPrehook()
+{
+	return CHAIN_ORDER() + 1;
+}
+
+#undef CHAIN_ORDER
+#define CHAIN_ORDER @CO_TestPrehook
+
+forward OnTestPrehook();
+
+public OnTestPrehook()
+{
+	YSI_g_sValue = 89;
+	TestPrehook_OnTestPrehook();
+}
+
+forward TestPrehook_OnTestPrehook();
+public TestPrehook_OnTestPrehook() <_ALS : _ALS_x0, _ALS : _ALS_x1> { printf("wrong state"); return 1; }
+public TestPrehook_OnTestPrehook() <> { printf("generic state"); return 1; }
+
+//#undef OnTestPrehook
+#define OnTestPrehook(%0) TestPrehook_OnTestPrehook(%0) <_ALS : _ALS_go>
+
+hook OnTestPrehook()
+{
+	++YSI_g_sValue;
+}
+
+Test:y_hooksPrehook()
+{
+	YSI_g_sValue = 91;
+	CallLocalFunction("OnTestPrehook", "");
+	printf("%d", YSI_g_sValue);
+	ASSERT(YSI_g_sValue == 90);
+}
+
+forward OnTestCallback();
+
+public OnTestCallback()
+{
+	YSI_g_sValue = 89;
+	// TestPrehook_OnTestCallback();
+}
+
+// forward TestPrehook_OnTestCallback();
+// public TestPrehook_OnTestCallback() <_ALS : _ALS_x0, _ALS : _ALS_x1> { return 1; }
+// public TestPrehook_OnTestCallback() <> { return 1; }
+
+//#undef OnTestCallback
+#define OnTestCallback(%0) TestPrehook_OnTestCallback(%0) <_ALS : _ALS_go>
+
+hook OnTestCallback()
+{
+	++YSI_g_sValue;
+}
+
+Test:y_hooksOrdering()
+{
+	YSI_g_sValue = 91;
+	CallLocalFunction("OnTestCallback", "");
+	ASSERT(YSI_g_sValue == 89);
+}
+
+static
+	bool:y_hooks_OnScriptInit_called = false;
+
+hook OnScriptInit()
+{
+	y_hooks_OnScriptInit_called = true;
+}
+
+Test:OnScriptInit()
+{
+	ASSERT(y_hooks_OnScriptInit_called);
+}
+
 forward Ony_hooksTest2(cmd[]);
 
 hook Ony_hooksTest2@000(cmd[])

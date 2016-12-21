@@ -216,9 +216,9 @@ public OnScriptInit()
 	return 1;
 }
 
-MALLOC_FORWARD:OnScriptInit();
+CHAIN_FORWARD:Malloc_OnScriptInit() = 1;
 #undef OnScriptInit
-#define OnScriptInit(%0) Malloc_OnScriptInit(%0) <_ALS : _ALS_go>
+#define OnScriptInit(%0) CHAIN_PUBLIC:Malloc_OnScriptInit(%0)
 
 /**--------------------------------------------------------------------------**\
 <summary>Malloc_TrySetup</summary>
