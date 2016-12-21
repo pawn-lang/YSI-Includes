@@ -137,6 +137,7 @@ Operators:
 #include "..\YSI_Core\y_utils"
 
 #include "..\YSI_Internal\amx_assembly"
+#include "..\YSI_Internal\y_prehook"
 
 #define GB_TO_MB(%0) ((%0) * 1024)
 
@@ -168,19 +169,9 @@ Operators:
 	#endif
 #endif
 
-#if !defined CHAIN_ORDER
-	#define CHAIN_ORDER() 0
-#endif
-
-forward @CO_Malloc();
-
-public @CO_Malloc()
-{
-	return CHAIN_ORDER() + 1;
-}
-
+CHAIN_HOOK(Malloc)
 #undef CHAIN_ORDER
-#define CHAIN_ORDER @CO_Malloc
+#define CHAIN_ORDER CHAIN_NEXT(Malloc)
 
 #define MALLOC_FORWARD:%0(%1); \
 	forward Malloc_%0(%1); \
@@ -259,9 +250,9 @@ forward Alloc:calloc(size);
 		return 1;
 	}
 	
-	MALLOC_FORWARD:OnScriptInit();
+	CHAIN_FORWARD:Malloc_OnScriptInit() = 1;
 	#undef OnScriptInit
-	#define OnScriptInit(%0) Malloc_OnScriptInit(%0) <_ALS : _ALS_go>
+	#define OnScriptInit(%0) CHAIN_PUBLIC:Malloc_OnScriptInit(%0)
 #else
 	new
 		YSI_gMallocMemory[1];

@@ -92,10 +92,12 @@ Changelog:
 
 PRE_HOOK(HookChain)
 #undef CHAIN_ORDER
-#define CHAIN_ORDER @CO_HookChain
+#define CHAIN_ORDER CHAIN_NEXT(HookChain)
 
-static stock _HookChain_IncludeStates() <_ALS : _ALS_x0, _ALS : _ALS_x1, _ALS : _ALS_x2, _ALS : _ALS_x3>
+enum E_CHAIN_HOOK
 {
+	E_CHAIN_HOOK_NAME[16],
+	E_CHAIN_HOOK_VALUE
 }
 
 static stock _HookChain_IncludeStates() <_ALS : _ALS_go>
@@ -306,14 +308,14 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 	includes in order for everything to function correctly (at least fixes.inc
 	must).  This function looks for these definitions:
 	
-	    PRE_HOOK(FIXES)
+	    CHAIN_HOOK(FIXES)
 	
 	Which tell y_hooks that any "FIXES_" prefixed callbacks are part of one of
 	these chains.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precount, size = sizeof (preloads))
+_Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &precount, size = sizeof (preloads))
 {
 	P:4("Hooks_GetPreloadLibraries called");
 	--size,
@@ -334,9 +336,16 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precoun
 			}
 			addr = AMX_Read(entry);
 			AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS + 4, name),
-			strunpack(preloads[precount][E_PRE_HOOK_NAME], name, 16),
-			preloads[precount][E_PRE_HOOK_VALUE] = CallFunction(addr),
+			strunpack(preloads[precount][E_CHAIN_HOOK_NAME], name, 16),
+			preloads[precount][E_CHAIN_HOOK_VALUE] = CallFunction(addr),
 			++precount;
+			if (strlen(name) > 15)
+				P:E("Overflow in prehook name \"%s\"", unpack(name));
+			// {
+				// new buffer[32];
+				// strunpack(buffer, name);
+				// printf("preload: %s", buffer);
+			// }
 			// Remove this public from the publics table.  Means that future public
 			// function calls will be faster by having a smaller search space.
 			Hooks_InvalidateName(entry);
@@ -345,12 +354,12 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precoun
 	// Sort the preload libraries.
 	{
 		new
-			tmp[E_PRE_HOOK];
+			tmp[E_CHAIN_HOOK];
 		for (entry = precount - 1; entry > 0; --entry)
 		{
 			for (idx = 0; idx != entry; ++idx)
 			{
-				if (preloads[idx][E_PRE_HOOK_VALUE] > preloads[idx + 1][E_PRE_HOOK_VALUE])
+				if (preloads[idx][E_CHAIN_HOOK_VALUE] > preloads[idx + 1][E_CHAIN_HOOK_VALUE])
 				{
 					tmp = preloads[idx],
 					preloads[idx] = preloads[idx + 1],
@@ -377,19 +386,23 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precoun
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_PRE_HOOK], precount, name[64], hooks[], &count)
+_Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_CHAIN_HOOK], precount, name[64], hooks[], &count)
 {
 	P:4("Hooks_GetPreHooks called");
 	new
 		idx,
 		lfunc[64];
 	// Collect all the functions with something like this name.
+	P:2("Hooks_GetPreHooks start: %s", unpack(name));
 	do
 	{
 		strcat(lfunc, name),
 		Hooks_MakeShortName(lfunc);
+		P:5("Hooks_GetPreHooks: search = %s", unpack(lfunc));
+		P:C( new oc = count; );
 		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
-		strcpy(lfunc, preloads[idx][E_PRE_HOOK_NAME]),
+		P:C( if (oc != count) { new buffer[32]; AMX_ReadString(AMX_Read(hooks[count] + 4) + AMX_BASE_ADDRESS, buffer); P:5("Hooks_GetPreHooks: found = %s", unpack(buffer)); } );
+		strcpy(lfunc, preloads[idx][E_CHAIN_HOOK_NAME]),
 		strcat(lfunc, "_");
 	}
 	while (++idx <= precount);
@@ -634,7 +647,7 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 	// Get the preloaders.
 	new
 		precount = 0,
-		preloads[8][E_PRE_HOOK];
+		preloads[8][E_CHAIN_HOOK];
 	Hooks_GetPreloadLibraries(preloads, precount);
 	// Main loop
 	new
@@ -646,7 +659,6 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 		// Collect all the hooks of this function, and rewrite the call code.
 		Hooks_Collate(preloads, precount, name, idx - 1);
 	}
-	Hooks_SortPublics();
 }
 
 /**--------------------------------------------------------------------------**\
@@ -705,7 +717,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 		hookCount = Hooks_GetAllHooks(sName, sHooks, idx, namelen),
 		writePtr = sHooks[0], // Header for the first found hook.
 		nextPtr,
-		pc, ph[4];
+		pc, ph[16];
 	// Get the preloads.
 	Hooks_GetPreHooks(preloads, precount, sName, ph, pc),
 	// Get where in the chain we are being inserted.
@@ -1259,14 +1271,6 @@ static stock Hooks_SortReplacements()
 
 public OnCodeInit()
 {
-	// TODO: Figure out if OnGameModeInit or OnFilterScriptInit hooks need
-	// explicitly calling, only if this is not on the JIT and we are in the
-	// corresponding script type - in which case we are already inside that
-	// function and the normal hooks won't work as we are already past them.
-	// The simple way is to replace "ScriptInit_OnXInit" and call that via
-	// "CallLocalFunction".  Actually, those hooks use state-based hooking,
-	// which y_hooks already handles quite nicely, so we don't even need to use
-	// "CallLocalFunction" and can instead just hook the correct public.
 	P:1("Hooks_OnCodeInit called");
 	state _ALS : _ALS_go;
 	// Get the replacements.
@@ -1291,13 +1295,14 @@ public OnCodeInit()
 		CallFunction(AMX_Read(entry));
 		Hooks_InvalidateName(entry);
 	}
+	Hooks_SortReplacements();
+	Hooks_DoAllHooks();
 	// Remove a few other superfluous publics.
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<_@_y>)))
 		Hooks_InvalidateName(entry);
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@CO_>)))
 		Hooks_InvalidateName(entry);
-	Hooks_SortReplacements();
-	Hooks_DoAllHooks();
+	Hooks_SortPublics();
 	P:1("Hooks_OnCodeInit chain");
 	// Dump the generated callbacks for debugging.
 	//DisasmDump("YSI_TEST.asm");
@@ -1308,13 +1313,13 @@ public OnCodeInit()
 	return 1;
 }
 
-HOOK_FORWARD:HookChain_OnCodeInit();
+CHAIN_FORWARD:HookChain_OnCodeInit() = 1;
 #if defined _ALS_OnCodeInit
 	#undef OnCodeInit
 #else
 	#define _ALS_OnCodeInit
 #endif
-#define OnCodeInit(%0) HookChain_OnCodeInit(%0) <_ALS : _ALS_go>
+#define OnCodeInit(%0) CHAIN_PUBLIC:HookChain_OnCodeInit(%0)
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_RepairJITInit</summary>
