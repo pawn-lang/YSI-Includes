@@ -30,7 +30,6 @@ Test:y_hooksPrehook()
 {
 	YSI_g_sValue = 91;
 	CallLocalFunction("OnTestPrehook", "");
-	printf("%d", YSI_g_sValue);
 	ASSERT(YSI_g_sValue == 90);
 }
 
