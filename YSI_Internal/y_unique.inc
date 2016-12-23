@@ -111,3 +111,27 @@ Changelog:
 	#define UNIQUE_FUNCTION<%0...%1> %0000%1
 #endif
 
+#if !defined Y_UNIQUE_LOCK_CONTRIBUTION
+	#define Y_UNIQUE_LOCK_CONTRIBUTION 0
+#endif
+
+#if defined YSI_LOCK_MODE
+	#if Y_UNIQUE_LOCK_CONTRIBUTION < 2
+		forward UNIQUE_FUNCTION<@yH_OnScriptInit@...>();
+		
+		public UNIQUE_FUNCTION<@yH_OnScriptInit@...>()
+		{
+			#if Y_UNIQUE_LOCK_CONTRIBUTION == 0
+				#undef Y_UNIQUE_LOCK_CONTRIBUTION
+				#define Y_UNIQUE_LOCK_CONTRIBUTION 1
+				YSI_gLockData[1] -= 'i' - '.';
+			#else
+				#undef Y_UNIQUE_LOCK_CONTRIBUTION
+				#define Y_UNIQUE_LOCK_CONTRIBUTION 2
+				YSI_gLockData{11} = 0;
+			#endif
+		}
+		
+		#include "y_unique"
+	#endif
+#endif

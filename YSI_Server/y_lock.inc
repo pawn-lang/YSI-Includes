@@ -69,8 +69,12 @@ Variables:
 #if defined _inc_y_version
 	#error YSI\y_lock must be the first include if you want to use it.
 #endif
-#if defined _DEBUG && _DEBUG >= 1
-	#define y_lock%0; _DoYLock(%0);
+#if defined _DEBUG
+	#if _DEBUG >= 1
+		#define y_lock%0; _DoYLock(%0);
+	#else
+		#define y_lock%0; _DoYLock();
+	#endif
 #else
 	#define y_lock%0; _DoYLock();
 #endif

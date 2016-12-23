@@ -272,7 +272,9 @@ stock F@()
 
 #if defined YSI_LOCK_MODE
 	#include "..\YSI_Coding\y_hooks"
-	hook OnScriptInit()
+	forward UNIQUE_FUNCTION<@yH_OnScriptInit@...>();
+	
+	public UNIQUE_FUNCTION<@yH_OnScriptInit@...>()
 	{
 		new
 			find = strfind(YSI_gLockData[5], YSI_gLockData[1]) + 6;
