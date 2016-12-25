@@ -1451,4 +1451,3 @@ stock AMX_DumpHeader()
 #define H_Nc7(%0,%3) @C8:H_Sc(%0,8,%3)
 #define H_Nc8(%0,%3) @C9:H_Sc(%0,9,%3)
 #define H_Nc9(%0,%3) ()
-
