@@ -402,6 +402,71 @@ public OnPlayerDisconnect(playerid, reason)
 	strcat((%0[0] = '\0', %0), %1)
 
 /**--------------------------------------------------------------------------**\
+<summary>Random</summary>
+<param name="minmax">Lower bound, or upper bound when only parameter.</param>
+<param name="max">Upper bound.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Generate a random float between the given numbers (min <= n < max).  Default
+	minimum is 0.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Random(min, max = cellmin)
+{
+	if (max == cellmin)
+	{
+		if (min < 0)
+			return -random(-min);
+		return random(min);
+	}
+	if (max < min)
+		return random(min - max) + max;
+	return random(max - min) + min;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>RandomFloat</summary>
+<param name="minmax">Lower bound, or upper bound when only parameter.</param>
+<param name="max">Upper bound.</param>
+<param name="dp">How small to make the differences</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Generate a random float between the given numbers (min <= n < max).  Default
+	minimum is 0.0.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
+{
+	new
+		Float:mul = floatpower(10.0, float(dp));
+	switch (dp)
+	{
+	case 0: mul = 1.0;
+	case 1: mul = 10.0;
+	case 2: mul = 100.0;
+	case 3: mul = 1000.0;
+	default: mul = floatpower(10.0, float(dp));
+	}
+	if (max != max)
+	{
+		if (min < 0.0)
+			return -(float(random(floatround(-min * mul))) / mul);
+		return float(random(floatround(min * mul))) / mul;
+	}
+	// Parameters are the wrong way around - do it anyway.
+	if (max < min)
+		return float(random(floatround(min * mul - max * mul))) / mul + max;
+	// NOT a silly check - "IsNaN".
+	return float(random(floatround(max * mul - min * mul))) / mul + min;
+}
+
+/**--------------------------------------------------------------------------**\
 <summary>StripNL</summary>
 <param name="str[]">The string to remove the newline characters from</param>
 <returns>
