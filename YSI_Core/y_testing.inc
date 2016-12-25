@@ -133,13 +133,14 @@ Changelog:
 
 #define ASK(%0) Testing_Ask(playerid,%0)
 
-static stock const
-	Y_TESTING_TEST = _A<@yQ_>,
-	Y_TESTING_INIT = _A<@y_Q>,
-	Y_TESTING_SHUT = _A<@_yQ>,
-	Y_TESTING_PTEST = _A<@_Qy>,
-	Y_TESTING_PINIT = _A<@Qy_>,
-	Y_TESTING_PSHUT = _A<@Q_y>;
+#define Y_TESTING_TEST_SEARCH _A<@yQ_>
+#define Y_TESTING_PTEST_SEARCH _A<@_Qy>
+#define Y_TESTING_INIT  _C<@y_Q>
+#define Y_TESTING_TEST  _C<@yQ_>
+#define Y_TESTING_SHUT  _C<@Qy_>
+#define Y_TESTING_PINIT _C<@Q_y>
+#define Y_TESTING_PTEST _C<@_Qy>
+#define Y_TESTING_PSHUT _C<@_yQ>
 
 static stock
 	YSI_g_sCurTest = 0,
@@ -155,23 +156,55 @@ static stock
 stock
 	YSI_gCurTestName[32];
 
+// Each function type has a dedicated three letter prefix associated with it:
+//   
+//   y_Q Init
+//   yQ_ Test
+//   Qy_ Close
+//   
+//   Q_y PInit
+//   _Qy PTest
+//   _yQ PClose
+//   
+// An "@" symbol is added to complete the four letter prefix, with its location
+// determined by the function type - publics lead (obviously), static
+// implementations trail, static stock placeholders for ommitted tests are in
+// position 1 (these could be tailing again).  So the public function called
+// "@y_Q<test>" would call the static function "y_Q@<test>".  The letter
+// combinations are a sort of hamming code to reduce the number of changes
+// required between each function call to two.
+
 #if defined RUN_TESTS
-	#define Test:%1() bool:@yQ_%1();bool:@yQ_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = (TEST_REPORT(" ") && false))yQ@_%1();static yQ@_%1()
-	#define TestInit:%1() @y_Q%1(); @y_Q%1() for (new bool:__once = true; __once; __once = false)_yQ@%1();static _yQ@%1()
-	#define TestClose:%1() @_yQ%1(); @_yQ%1() for (new bool:__once = true; __once; __once = false)yQ_@%1();static yQ_@%1()
+	#define TestInit:%1() @y_Q%1();@y_Q%1()
+	#define Test:%1() bool:@yQ_%1();bool:@yQ_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = (TEST_REPORT(" ") && false))yQ_@%1();static yQ_@%1()
+	#define TestClose:%1() @Qy_%1();@Qy_%1()
 	
-	#define PTest:%1(%2) bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = (TEST_REPORT(" ") && false))_@yQ%1();static _@yQ%1()
-	#define PTestInit:%1(%2) @Qy_%1(%2); @Qy_%1(%2) for (new bool:__once = true; __once; __once = false)_y@Q%1();static _y@Q%1()
-	#define PTestClose:%1(%2) @Q_y%1(%2); @Q_y%1(%2) for (new bool:__once = true; __once; __once = false)y_@Q%1();static y_@Q%1()
+	#define PTestInit:%1(%2) @Q_y%1(%2);@Q_y%1(%2)
+	#define PTest:%1(%2) bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = (TEST_REPORT(" ") && false))_Qy@%1();static _Qy@%1()
+	#define PTestClose:%1(%2) @_yQ%1(%2);@_yQ%1(%2)
 #else
-	#define Test:%1() static stock bool:yQ@_%1()
-	#define TestInit:%1() static stock _yQ@%1()
-	#define TestClose:%1() static stock yQ_@%1()
+	#define TestInit:%1() static stock y_Q@%1()
+	#define Test:%1() static stock bool:yQ_@%1()
+	#define TestClose:%1() static stock Qy_@%1()
 	
-	#define PTest:%1(%2) static stock bool:_@yQ%1(%2)
-	#define PTestInit:%1(%2) static stock _y@Q%1(%2)
-	#define PTestClose:%1(%2) static stock y_@Q%1(%2)
+	#define PTestInit:%1(%2) static stock Q_y@%1(%2)
+	#define PTest:%1(%2) static stock bool:_Qy@%1(%2)
+	#define PTestClose:%1(%2) static stock _yQ@%1(%2)
 #endif
+
+#define @y_Q%0\32; @y_Q
+#define @yQ_%0\32; @yQ_
+#define @Qy_%0\32; @Qy_
+#define y_Q@%0\32; y_Q@
+#define yQ_@%0\32; yQ_@
+#define Qy_@%0\32; Qy_@
+
+#define @Q_y%0\32; @Q_y
+#define @_Qy%0\32; @_Qy
+#define @_yQ%0\32; @_yQ
+#define Q_y@%0\32; Q_y@
+#define _Qy@%0\32; _Qy@
+#define _yQ@%0\32; _yQ@
 
 // These all need to come AFTER the types are defined in case the have tests.
 #include "..\YSI_Internal\y_version"
@@ -281,22 +314,17 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 		idx,
 		buffer[32];
 	YSI_g_sCurTest = YSI_g_sFailTests = 0;
-	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_TESTING_TEST)))
+	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_TESTING_TEST_SEARCH)))
 	{
-		strunpack(buffer, buffer);
 		// Call the setup function if there is one.
-		buffer[0] = '@',
-		buffer[1] = 'y',
-		buffer[2] = '_',
-		buffer[3] = 'Q',
-		CallLocalFunction(buffer, "");
+		buffer[0] = Y_TESTING_INIT,
+		CallLocalFunction(buffer, ""),
 		// Call the test.
-		buffer[2] = 'Q',
-		buffer[3] = '_',
+		buffer[0] = Y_TESTING_TEST,
 		fails = YSI_g_sFails;
 		P:5("Testing_Run(): Calling %s", unpack(buffer[1]));
-		YSI_g_sInTest = true;
-		CallLocalFunction(buffer, "");
+		YSI_g_sInTest = true,
+		CallLocalFunction(buffer, ""),
 		YSI_g_sInTest = false;
 		if (YSI_g_sFails != fails)
 		{
@@ -311,9 +339,7 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 			TEST_REPORT(" ");
 		}
 #endif
-		buffer[1] = '_',
-		buffer[2] = 'y',
-		buffer[3] = 'Q',
+		buffer[0] = Y_TESTING_SHUT,
 		CallLocalFunction(buffer, "");
 	}
 	tests = YSI_g_sTests;
@@ -351,21 +377,15 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 		P:2("Testing_Player() called");
 		new
 			buffer[32];
-		if ((idx = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST)))
+		if ((idx = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH)))
 		{
-			strunpack(buffer, buffer);
 			// Call the setup function if there is one.
-			buffer[0] = '@';
-			buffer[1] = 'Q';
-			buffer[2] = 'y';
-			buffer[3] = '_';
-			CallLocalFunction(buffer, "");
+			buffer[0] = Y_TESTING_PINIT,
+			CallLocalFunction(buffer, ""),
 			// Call the test.
-			buffer[1] = '_';
-			buffer[2] = 'Q';
-			buffer[3] = 'y';
+			buffer[0] = Y_TESTING_PTEST,
 			fails = YSI_g_sFails;
-			P:5("Testing_Player(): Calling %s", buffer[6]);
+			P:5("Testing_Player(): Calling %s", unpack(buffer[1]));
 			YSI_g_sInTest = true;
 			CallLocalFunction(buffer, "");
 #if !defined TEST_SHOW_PASSES
@@ -437,31 +457,21 @@ forward OnTestsComplete(tests, fails);
 			new
 				fails = YSI_g_sFails;
 			// Get the last test (nicely fails for cellmax).
-			if ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST)))
+			if ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH)))
 			{
-				strunpack(buffer, buffer);
 				// Call the shutdown function if there is one.
-				buffer[0] = '@';
-				buffer[1] = 'Q';
-				buffer[2] = '_';
-				buffer[3] = 'y';
+				buffer[0] = Y_TESTING_PSHUT,
 				CallLocalFunction(buffer, "i", playerid);
 			}
 			// Get the new test, but don't store the index.
-			if (AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST))
+			if (AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH))
 			{
 				YSI_g_sAsked = false;
-				strunpack(buffer, buffer);
 				// Call the setup function if there is one.
-				buffer[0] = '@';
-				buffer[1] = 'Q';
-				buffer[2] = 'y';
-				buffer[3] = '_';
-				CallLocalFunction(buffer, "i", playerid);
+				buffer[0] = Y_TESTING_PINIT,
+				CallLocalFunction(buffer, ""),
 				// Call the test.
-				buffer[1] = '_';
-				buffer[2] = 'Q';
-				buffer[3] = 'y';
+				buffer[0] = Y_TESTING_PTEST;
 				P:5("Testing_Next(): Calling %s", unpack(buffer[1]));
 				YSI_g_sInTest = true;
 				CallLocalFunction(buffer, "i", playerid);
@@ -628,10 +638,10 @@ stock Testing_RunAll()
 			TEST_REPORT("  ||===================||  ");
 		}
 		TEST_REPORT(" ");
-		endTime = GetTickCount();
-		printf("*** Time: %dms", endTime - startTime);
-		TEST_REPORT(" ");
 	}
+	endTime = GetTickCount();
+	printf("*** Time: %dms", endTime - startTime);
+	TEST_REPORT(" ");
 	//state ysi_debug : on;
 	CallLocalFunction("OnTestsComplete", "ii", tests, fails);
 	#if defined TEST_AUTO_EXIT
@@ -696,6 +706,7 @@ Test:y_testing_1()
 	ASSERT(true);
 	#undef Testing_Test
 	YSI_g_sTestResult = x + 3;
+	ASSERT(YSI_g_sTestResult == 8);
 }
 
 TestClose:y_testing_1()

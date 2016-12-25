@@ -92,15 +92,23 @@ Changelog:
 #endif
 
 #if defined RUN_PROFILINGS
-	#define Profile:%0(%1) __TZ:@y_P%0(%1);__TZ:@y_P%0(%1)RUN_TIMING(#%0)y_@P%0();static y_@P%0()
-	#define y_@P%0\32; y_@P
-	#define @y_P%0\32; @y_P
-	#define __TZ:%0[%2](%1);%0[%2](%1)RUN_TIMING(%3)%4[%5](%6);%9[%5](%6) %0(%1);%0(%1)RUN_TIMING(%3,%2)%4(%6);static %4(%6)
+	#define ProfileInit:%0(%1) @yP_();@yP_()
+	#define Profile:%0(%1) __TZ:@y_P%0(%1);__TZ:@y_P%0(%1)RUN_TIMING(#%0)y_P@%0();static y_P@%0()
+	#define ProfileClose:%0(%1) @P_y();@P_y()
+	#define __TZ:%0[%2](%1);%0[%2](%1)RUN_TIMING(%3)%4[%5](%6);%9[%5](%6) %0_%2(%1);%0_%2(%1)RUN_TIMING(%3,%2)%4_%2(%6);static %4_%2(%6)
 #else
-	#define Profile:%1() static stock __TZ:_@yP%1()
-	#define _@yP%0\32; _@yP
-	#define __TZ:%0[%2](%1) __TZ:%0(%1)
+	#define ProfileInit:%0(%1) yP_@();yP_@()
+	#define Profile:%1() static stock __TZ:y_P@%1()
+	#define ProfileClose:%0(%1) P_y@();P_y@()
+	#define __TZ:%0[%2](%1) __TZ:%0_%2(%1)
 #endif
+
+#define @yP_%0\32; @yP_
+#define @y_P%0\32; @y_P
+#define @P_y%0\32; @P_y
+#define yP_@%0\32; yP_@
+#define y_P@%0\32; y_P@
+#define P_y@%0\32; P_y@
 
 // These all need to come AFTER the types are defined in case the have profilings.
 #include "..\YSI_Internal\y_version"
