@@ -20,6 +20,5 @@ Test:y_bintree_1()
 	{
 		ASSERT(Bintree_FindValue(tree, i) == BINTREE_NOT_FOUND);
 	}
-	
 }
 
