@@ -96,11 +96,13 @@ Changelog:
 	#define Profile:%0(%1) __TZ:@y_P%0(%1);__TZ:@y_P%0(%1)RUN_TIMING(#%0)y_P@%0();static y_P@%0()
 	#define ProfileClose:%0(%1) @P_y();@P_y()
 	#define __TZ:%0[%2](%1);%0[%2](%1)RUN_TIMING(%3)%4[%5](%6);%9[%5](%6) %0_%2(%1);%0_%2(%1)RUN_TIMING(%3,%2)%4_%2(%6);static %4_%2(%6)
+	#define __TZ:%0[%2](%1);%0[%2](%1)RUN_TIMING(%3)%4[%5](%6);%9[%5](%6) %0(%1);%0(%1)RUN_TIMING(%3,%2)%4(%6);static %4(%6)
 #else
 	#define ProfileInit:%0(%1) static stock yP_@()
 	#define Profile:%1() static stock __TZ:y_P@%1()
 	#define ProfileClose:%0(%1) static stock P_y@()
 	#define __TZ:%0[%2](%1) __TZ:%0_%2(%1)
+	#define __TZ:%0[%2](%1) __TZ:%0(%1)
 #endif
 
 #define @yP_%0\32; @yP_
