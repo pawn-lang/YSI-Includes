@@ -705,3 +705,7 @@ TestClose:y_testing_1()
 
 #include "..\YSI_Internal\y_shortfunc"
 
+#if defined RUN_TESTS
+	#include "y_testing/md_sort.inc"
+#endif
+
