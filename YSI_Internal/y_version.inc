@@ -125,9 +125,7 @@ CHAIN_HOOK(YVers)
 #define CHAIN_ORDER CHAIN_NEXT(YVers)
 
 // Amazingly, this fixes hooking OnScriptInit...
-forward YVers_OnScriptInit();
-public YVers_OnScriptInit() <_ALS : _ALS_x0, _ALS : _ALS_x1> { return 1; }
-public YVers_OnScriptInit() <> { return 1; }
+CHAIN_FORWARD:YVers_OnScriptInit() = 1;
 
 #define YSI_VERSION_RESPO               2
 
@@ -153,7 +151,7 @@ public YVers_OnScriptInit() <> { return 1; }
 	}
 	
 	#undef OnScriptInit
-	#define OnScriptInit YVers_OnScriptInit
+	#define OnScriptInit(%0) CHAIN_PUBLIC:YVers_OnScriptInit(%0)
 	
 #else
 /**----------------------------------------------------------------------**\
@@ -197,7 +195,7 @@ public YVers_OnScriptInit() <> { return 1; }
 		}
 		
 		#undef OnScriptInit
-		#define OnScriptInit YVers_OnScriptInit
+		#define OnScriptInit(%0) CHAIN_PUBLIC:YVers_OnScriptInit(%0)
 		
 		#endinput
 	#endif
@@ -259,7 +257,7 @@ public YVers_OnScriptInit() <> { return 1; }
 	}
 	
 	#undef OnScriptInit
-	#define OnScriptInit YVers_OnScriptInit
+	#define OnScriptInit(%0) CHAIN_PUBLIC:YVers_OnScriptInit(%0)
 	
 	/**----------------------------------------------------------------------**\
 	<summary>YVers_Callback</summary>
