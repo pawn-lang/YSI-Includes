@@ -92,15 +92,23 @@ Changelog:
 #endif
 
 #if defined RUN_PROFILINGS
-	#define Profile:%0(%1) __TZ:@y_P%0(%1);__TZ:@y_P%0(%1)RUN_TIMING(#%0)y_@P%0();static y_@P%0()
-	#define y_@P%0\32; y_@P
-	#define @y_P%0\32; @y_P
-	#define __TZ:%0[%2](%1);%0[%2](%1)RUN_TIMING(%3)%4[%5](%6);%9[%5](%6) %0(%1);%0(%1)RUN_TIMING(%3,%2)%4(%6);static %4(%6)
+	#define ProfileInit:%0(%1) @yP_();@yP_()
+	#define Profile:%0(%1) __TZ:@y_P%0(%1);__TZ:@y_P%0(%1)RUN_TIMING(#%0)y_P@%0();static y_P@%0()
+	#define ProfileClose:%0(%1) @P_y();@P_y()
+	#define __TZ:%0[%2](%1);%0[%2](%1)RUN_TIMING(%3)%4[%5](%6);%9[%5](%6) %0_%2(%1);%0_%2(%1)RUN_TIMING(%3,%2)%4_%2(%6);static %4_%2(%6)
 #else
-	#define Profile:%1() static stock __TZ:_@yP%1()
-	#define _@yP%0\32; _@yP
-	#define __TZ:%0[%2](%1) __TZ:%0(%1)
+	#define ProfileInit:%0(%1) static stock yP_@()
+	#define Profile:%1() static stock __TZ:y_P@%1()
+	#define ProfileClose:%0(%1) static stock P_y@()
+	#define __TZ:%0[%2](%1) __TZ:%0_%2(%1)
 #endif
+
+#define @yP_%0\32; @yP_
+#define @y_P%0\32; @y_P
+#define @P_y%0\32; @P_y
+#define yP_@%0\32; yP_@
+#define y_P@%0\32; y_P@
+#define P_y@%0\32; P_y@
 
 // These all need to come AFTER the types are defined in case the have profilings.
 #include "..\YSI_Internal\y_version"
@@ -114,8 +122,10 @@ Changelog:
 
 #include "..\YSI_Coding\y_va"
 
-static stock const
-	Y_PROFILING_PROFILE = _A<@y_P>;
+#define Y_PROFILING_PROFILE_SEARCH _A<@y_P>
+#define Y_PROFILING_INIT _C<@yP_>
+#define Y_PROFILING_PROFILE _C<@y_P>
+#define Y_PROFILING_CLOSE _C<@P_y>
 
 static stock
 	bool:YSI_g_sInProfile = false;
@@ -142,11 +152,18 @@ stock bool:Profiling_Run(&profilings)
 	new
 		idx,
 		buffer[32];
-	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_PROFILING_PROFILE)))
+	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_PROFILING_PROFILE_SEARCH)))
 	{
-		YSI_g_sInProfile = true;
-		CallLocalFunction(buffer, "");
-		YSI_g_sInProfile = false;
+		buffer[0] = Y_PROFILING_INIT,
+		CallLocalFunction(buffer, ""),
+		// Call the test.
+		buffer[0] = Y_PROFILING_PROFILE;
+		P:5("Profiling_Run(): Calling %s", unpack(buffer[1]));
+		YSI_g_sInProfile = true,
+		CallLocalFunction(buffer, ""),
+		YSI_g_sInProfile = false,
+		buffer[0] = Y_PROFILING_CLOSE,
+		CallLocalFunction(buffer, ""),
 		++profilings;
 		PROFILE_REPORT(" ");
 	}
