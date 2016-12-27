@@ -107,6 +107,12 @@ Natives:
 #include "..\YSI_Internal\y_shortfunc"
 
 #include "..\YSI_Core\y_utils"
+#include "y_remote/macros"
+
+#if defined YSI_TESTS
+	#include "..\YSI_Core\y_testing"
+	#include "y_remote/tests"
+#endif
 
 // This VERY LOOSELY uses the master system to figure out if it should even
 // bother with complex remote calls.  However, it isn't fully bound by the

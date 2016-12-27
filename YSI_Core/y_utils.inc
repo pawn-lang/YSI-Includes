@@ -137,32 +137,17 @@ new stock
 #endif
 
 #define YSIM_MASTER #M
-
 #define YSIM_RETURN #R
-
 #define YSIM_CALLER #C
-
 #define YSIM_TEXT_D #T
-#define YSIM_TEXT_L #L
-#define YSIM_TEXT_S #Y
-#define YSIM_TEXT_P #Z
-
-#define YSIM_ORDERS #O
-
-#define YSIM_HFIRST #H
-
-#define YSIM_OPDRET #D
-
 #define YSIM_TXTFND #X
-
 #define YSIM_TXTIND #I
-
 #define YSIM_TXTLEN #E
-
 #define YSIM_LOG_IN #U
+#define YSIM_VARARG #V
 
 #if !defined YSIM_STRING
-	#define YSIM_STRING (42)
+	#define YSIM_STRING (1000)
 #endif
 
 #define FLOAT_INFINITY                  (Float:0x7F800000)
