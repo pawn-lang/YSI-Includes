@@ -148,7 +148,7 @@ new stock
 #define YSIM_VARARG #V
 
 #if !defined YSIM_STRING
-	#define YSIM_STRING (42)
+	#define YSIM_STRING (1000)
 #endif
 
 #define FLOAT_INFINITY                  (Float:0x7F800000)
