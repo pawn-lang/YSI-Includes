@@ -1,7 +1,7 @@
 
 remote stock yrt_1(hi);
 
-remote yrt_2(const hi, string:you[], there[], &other, &len = 7);
+static stock remote yrt_2(const hi, string:you[], there[], &other, &len = 7);
 
 remote stock yrt_3(hi, string:you[], there[], len)
 {
@@ -13,14 +13,16 @@ remote Float:yrt_335(hi, string:you[], there[], len)
 {
 	#pragma unused hi, you, there, len
 	// Impl...
+	ASSERT(!strcmp(you, "the string passed"));
+	return float(hi);
 }
 
-remote stock void:yrt_4(hi)
+remote stock static void:yrt_4(hi)
 {
 	#pragma unused hi
 }
 
-remote stock string:yrt_5(hi, const string:you[], there[], tt, &other, const len = 7)
+static remote stock string:yrt_5(hi, const string:you[], there[], tt, &other, const len = 7)
 {
 	#pragma unused hi, you, there, tt, len
 	new str[130];
@@ -38,7 +40,7 @@ remote Float:yrt_55(hi, const string:you[], there[], tt, &other, const len = 7)
 
 remote stock Float:yrt_6(hi, string:you[], there[], len);
 
-remote stock void:yrt_7(&a, &b, c, &d)
+remote static void:yrt_7(&a, &b, c, &d)
 {
 	a = 8;
 	b = a;
@@ -72,6 +74,8 @@ Test:y_remote_3()
 Test:y_remote_335()
 {
 	// Impl...
+	new arr[3];
+	ASSERT(yrt_335(89, "the string passed", arr, sizeof (arr)) == 89.0);
 }
 
 Test:y_remote_4()
@@ -114,6 +118,7 @@ Test:y_remote_8()
 
 Test:y_remote_9()
 {
+	ASSERT(yrt_9() == 0.0);
 }
 
 
