@@ -7,6 +7,7 @@ remote stock yrt_3(hi, string:you[], there[], len)
 {
 	#pragma unused hi, you, there, len
 	// Impl...
+	return 99;
 }
 
 remote Float:yrt_335(hi, string:you[], there[], len)
@@ -50,9 +51,7 @@ remote static void:yrt_7(&a, &b, c, &d)
 
 remote stock string:yrt_8();
 
-remote Float:yrt_9()
-{
-}
+remote Float:yrt_9();
 
 Test:y_remote_1()
 {
