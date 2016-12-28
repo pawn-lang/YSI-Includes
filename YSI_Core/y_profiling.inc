@@ -86,7 +86,7 @@ Changelog:
 #endif
 
 #if defined LIGHT_PROFILE_REPORT
-	#define PROFILE_REPORT(%0) H@(%0)
+	#define PROFILE_REPORT(%0);
 #else
 	#define PROFILE_REPORT(%0) printf(%0)
 #endif

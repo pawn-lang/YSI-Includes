@@ -118,7 +118,7 @@ Test:y_remote_8()
 
 Test:y_remote_9()
 {
+	X@(_:(55.8));
 	ASSERT(yrt_9() == 0.0);
 }
-
 
