@@ -100,7 +100,7 @@ forward bool:_Testing_End();
 #endif
 
 #if defined LIGHT_TEST_REPORT
-	#define TEST_REPORT(%0) H@(%0)
+	#define TEST_REPORT(%0);
 #else
 	#define TEST_REPORT(%0) printf(%0)
 #endif

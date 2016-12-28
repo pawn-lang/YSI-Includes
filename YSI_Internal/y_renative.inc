@@ -53,7 +53,6 @@ Changelog:
 		Integrated in to YSI.
 	06/08/10:
 		First version
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_renative
@@ -65,3 +64,4 @@ Changelog:
 #define _YSI_RE_NATIVE @Rg
 
 #define _YSI_REM
+
