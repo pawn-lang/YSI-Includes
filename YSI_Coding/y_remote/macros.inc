@@ -16,22 +16,17 @@
 #define Y_REMOTE_stock()%8$ %8$stock PP_NULL<>
 #define Y_REMOTE_static()%8$ %8$static PP_NULL<>
 
-#define C@(%9:%0);%1; C@(%0); // Get word.
-#define D@(%9:%0);%1; D@(%0); // Get string.
-#define YREMOTE_END:%0);@RG%1(%2)(%3)(%6)(%4) %0);@RG%1(%2);@RG%1(%2)return L@(RG@%1(%3)%4);RG@%1(%6)
-#define YREMOTE_STR:%0);@RG%1(%2)(%3)(%6)(%4) %0);@RG%1(%2);@RG%1(%2)return T@(RG@%1(%3)%4);RG@%1(%6)
-#define YREMOTE_VOD:%0);@RG%1(%2)(%3)(%6)(%4) %0);@RG%1(%2);@RG%1(%2){RG@%1(%3);return L@(0%4);}RG@%1(%6)
-#define YREMOTE_TAG:%0);@RG%1(%2)(%3)(%6)(%4)%5: %0);@RG%1(%2);%5:RG@%1(%6);@RG%1(%2)return L@(RG@%1(%3)%4);%5:RG@%1(%6)
-
-#define Y_REMOTE_END(%9)%8$%4(%1)%3(,%7)(,%2)(,%6)(%0) %8$%4%9(%1)return D@(YREMOTE_END:#@RG%9,#%3,%7);@RG%9(%2)(%7)(%6)(%0)
-#define Y_REMOTE_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(,%6)(%0) %8$%4%9(%1)return C@(YREMOTE_STR:#@RG%9,#%3,%7);@RG%9(%2)(%7)(%6)(%0)
-#define Y_REMOTE_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(,%6)(%0) %8$%4%9(%1)D@(YREMOTE_VOD:#@RG%9,#%3,%7);@RG%9(%2)(%7)(%6)(%0)
-#define Y_REMOTE_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(,%6)(%0) %8$%4%5%9(%1)return %5D@(YREMOTE_TAG:#@RG%9,#%3,%7);@RG%9(%2)(%7)(%6)(%0)%5
-#define Y_REMOTE_NUL(%9)%8$%4(%1)%3(%7)(%2)(%6)(%0) %8$%4%9(%1)return D@(YREMOTE_END:#@RG%9,"");@RG%9()()()()
+#define Y_REMOTE_END(%9)%8$%4(%1)%3(,%7)(,%2)(,%6)(%0) %8$%4%9(%1)return D@(YREMOTE_END:#@RG%9,%3,%7);@RG%9(%2)(%7)(%6)(%0)
+#define Y_REMOTE_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(,%6)(%0) %8$%4%9(%1)return C@(YREMOTE_STR:#@RG%9,%3,%7);@RG%9(%2)(%7)(%6)(%0)
+#define Y_REMOTE_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(,%6)(%0) %8$%4%9(%1)D@(YREMOTE_VOD:#@RG%9,%3,%7);@RG%9(%2)(%7)(%6)(%0)
+#define Y_REMOTE_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(,%6)(%0) %8$%4%5%9(%1)return %5D@(YREMOTE_TAG:#@RG%9,%3,%7);@RG%9(%2)(%7)(%6)(%0)%5
+#define Y_REMOTE_NUL(%9)%8$%4(%1)%3(%7)(%2)(%6)(%0) %8$%4%9()return D@(YREMOTE_END:#@RG%9,"");@RG%9()()()()
 #define Y_REMOTE_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%6)(%0) %8$%4%9()return C@(YREMOTE_STR:#@RG%9,"");@RG%9()()()()
 #define Y_REMOTE_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%6)(%0) %8$%4%9()D@(YREMOTE_VOD:#@RG%9,"");@RG%9()()()()
 #define Y_REMOTE_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%6)(%0) %8$%4%5%9()return %5D@(YREMOTE_TAG:#@RG%9,"");@RG%9()()()()%5
 
-#define @RG%0\32; @RG
-#define RG@%0\32; RG@
+#define YREMOTE_END:%0);@RG%1(%2)(%3)(%6)(%4) %0);@RG%1(%2);@RG%1(%2)return L@(RG@%1(%3)%4);RG@%1(%6)
+#define YREMOTE_STR:%0);@RG%1(%2)(%3)(%6)(%4) %0);@RG%1(%2);@RG%1(%2)return T@(RG@%1(%3)%4);RG@%1(%6)
+#define YREMOTE_VOD:%0);@RG%1(%2)(%3)(%6)(%4) %0);@RG%1(%2);@RG%1(%2){RG@%1(%3);return L@(0%4);}RG@%1(%6)
+#define YREMOTE_TAG:%0);@RG%1(%2)(%3)(%6)(%4)%5: %0);@RG%1(%2);%5:RG@%1(%6);@RG%1(%2)return L@(RG@%1(%3)%4);%5:RG@%1(%6)
 
