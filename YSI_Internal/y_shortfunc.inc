@@ -344,6 +344,12 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	return 0;
 }
 
+#define C@(%9:%0);%1; C@(%0); // Get word.
+#define D@(%9:%0);%1; D@(%0); // Get string.
+
+#define @RG%0\32; @RG
+#define RG@%0\32; RG@
+
 //stock T@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 //{
 //	static lRet;
@@ -670,4 +676,32 @@ stock F@()
 		getproperty(8, "", YSIM_STRING, Q@),
 		strunpack(Q@, Q@);
 }
+
+// Consume trailing spaces.  Despite being a common letter, this is unlkely to
+// ever be matched due to the unusual series of operators after it.  If anyone
+// else tries to define "x" however they may have a slight problem (they can't).
+#define x:##),) #))
+#define q:##),ALS_RS_none:) #))
+
+// This is for getting excess parameters on non-strings.  Now safely recursive.
+#define _:%0,) _:%0)
+
+#if defined YSI_LOCK_MODE
+	#include "..\YSI_Internal\y_unique"
+	
+	forward UNIQUE_FUNCTION<@yH_OnScriptInit@...>();
+	
+	public UNIQUE_FUNCTION<@yH_OnScriptInit@...>()
+	{
+		new
+			find = strfind(YSI_gLockData[5], YSI_gLockData[1]) + 6;
+		find = strfind(YSI_gLockData[5], YSI_gLockData[1], _, find - 5) + 6;
+		new
+			found = strfind(YSI_gLockData[5], YSI_gLockData[1], _, find - 5) + 6;
+		if (strval(YSI_gLockData[found]) ^ UNIQUE_SYMBOL != _LOCK_IP_3 ^ UNIQUE_SYMBOL || strval(YSI_gLockData[find]) - _LOCK_IP_3 != _LOCK_IP_2 - _LOCK_IP_3)
+		{
+			y_lock 1;
+		}
+	}
+#endif
 

@@ -154,6 +154,187 @@ Natives:
 #define mtask master_task
 #define mptask master_ptask
 
+// Because "Cloud" and "Client" start with the same letter, "YSIMC" would be
+// confusing.  "Cloud" and "Slave" would be just as confusing since "S" could be
+// that or "Server" and "C" still wouldn't be disambiguated.  Also "Stub"
+// complicates things further - why are they all the same letter?
+// 
+// Instead to avoid any confusion, we will use:
+//   
+//   D - Distributed (Cloud).
+//   T - Thunk (Stub).
+//   M - Master (Server, but was never ambiguous).
+//   U - User (Client).
+//   
+// I want to make it clear that this internal rename is NOT for any sense of PC-
+// ness around the term "slave" - it is a perfectly descriptive term for a node
+// ordered to do work by a central controller (though inaccurate in this case as
+// that is not what happens here - a central server is given work by many other
+// clients).
+#define YSIM_PARSER(%2)%0(%1) FUNC_PARSER(%2,NUM_CST_DEF:STR_CST_DEF:REF_DEF:ARR_CST:QAL:RET_VOD_STR_TAG:LEN:)(%0(%1))(%1)#()()()
+
+#define YSIM_SERVER_FOREIGN YSIM_PARSER(YSIM_MF)
+// The global is just the function implementation - doesn't need extra code.
+#define YSIM_SERVER_GLOBAL
+
+// If there is no master system, these are just forwards/declarations.
+#define YSIM_NONE_FOREIGN
+#define YSIM_NONE_GLOBAL
+
+#define YSIM_CLIENT_FOREIGN YSIM_PARSER(YSIM_UF)
+// Hide the local implementation.
+#define YSIM_CLIENT_GLOBAL  YSIM_PARSER(YSIM_UG)
+
+#define YSIM_CLOUD_FOREIGN  YSIM_PARSER(YSIM_DF)
+#define YSIM_CLOUD_GLOBAL   YSIM_PARSER(YSIM_DG)
+
+// A stub foreign is the same as a client foreign - define it as existing, but
+// not here.
+#define YSIM_STUB_FOREIGN   YSIM_PARSER(YSIM_UF)
+// There is no stub global - that makes no sense (give an error).  Still needs
+// parsing though to give the RIGHT error...
+#define YSIM_STUB_GLOBAL    YSIM_PARSER(YSIM_TG)
+#define stub_global_%0\32; stub_global_
+
+#define YSIM_NUM(%0,%1,%2)%8$%4#%5(%7)(%9)            %8$%4#%5i(%7,%2)(%9,%1%2)
+#define YSIM_STR(%0,%1,%2,%3)%8$%4#%5(%7)(%9)         %8$%4#%5s(%7,%2)(%9,%1%2[%3])
+#define YSIM_ARR(%0,%1,%2,%3)%8$%4#%5(%7)(%9)         %8$%4#%5a(%7,%2)(%9,%1%2[%3])
+#define YSIM_REF(%0,%1,%2)%8$%4#%5(%7)(%9)(%3)        %8$%4#%5d(%7,%2)(%9,%1%2)
+#define YSIM_NUM_DEF(%0,%1,%2,%9)%8$%4#%5(%7)(%9)     %8$%4#%5i(%7,%2)(%9,%1%2)
+#define YSIM_STR_DEF(%0,%1,%2,%3,%9)%8$%4#%5(%7)(%9)  %8$%4#%5s(%7,%2)(%9,%1%2[%3])
+#define YSIM_REF_DEF(%0,%1,%2,%9)%8$%4#%5(%7)(%9)(%3) %8$%4#%5d(%7,%2)(%9,%1%2)(%3,%2)
+#define YSIM_stock()%8$  %8$stock PP_NULL<>
+#define YSIM_static()%8$ %8$static PP_NULL<>
+
+// All the compile types need the same information.  Collect it all in one
+// common way, but use it in many different ways.
+#define YSIM_MF_NUM     YSIM_NUM 
+#define YSIM_MF_STR     YSIM_STR 
+#define YSIM_MF_ARR     YSIM_ARR 
+#define YSIM_MF_REF     YSIM_REF 
+#define YSIM_MF_NUM_DEF YSIM_NUM_DEF
+#define YSIM_MF_STR_DEF YSIM_STR_DEF
+#define YSIM_MF_REF_DEF YSIM_REF_DEF
+#define YSIM_MF_stock   YSIM_stock
+#define YSIM_MF_static  YSIM_static
+
+#define YSIM_TG_NUM     YSIM_NUM 
+#define YSIM_TG_STR     YSIM_STR 
+#define YSIM_TG_ARR     YSIM_ARR 
+#define YSIM_TG_REF     YSIM_REF 
+#define YSIM_TG_NUM_DEF YSIM_NUM_DEF
+#define YSIM_TG_STR_DEF YSIM_STR_DEF
+#define YSIM_TG_REF_DEF YSIM_REF_DEF
+#define YSIM_TG_stock   YSIM_stock
+#define YSIM_TG_static  YSIM_static
+
+#define YSIM_UF_NUM     YSIM_NUM 
+#define YSIM_UF_STR     YSIM_STR 
+#define YSIM_UF_ARR     YSIM_ARR 
+#define YSIM_UF_REF     YSIM_REF 
+#define YSIM_UF_NUM_DEF YSIM_NUM_DEF
+#define YSIM_UF_STR_DEF YSIM_STR_DEF
+#define YSIM_UF_REF_DEF YSIM_REF_DEF
+#define YSIM_UF_stock   YSIM_stock
+#define YSIM_UF_static  YSIM_static
+#define YSIM_UG_NUM     YSIM_NUM 
+#define YSIM_UG_STR     YSIM_STR 
+#define YSIM_UG_ARR     YSIM_ARR 
+#define YSIM_UG_REF     YSIM_REF 
+#define YSIM_UG_NUM_DEF YSIM_NUM_DEF
+#define YSIM_UG_STR_DEF YSIM_STR_DEF
+#define YSIM_UG_REF_DEF YSIM_REF_DEF
+#define YSIM_UG_stock   YSIM_stock
+#define YSIM_UG_static  YSIM_static
+
+#define YSIM_DF_NUM     YSIM_NUM 
+#define YSIM_DF_STR     YSIM_STR 
+#define YSIM_DF_ARR     YSIM_ARR 
+#define YSIM_DF_REF     YSIM_REF 
+#define YSIM_DF_NUM_DEF YSIM_NUM_DEF
+#define YSIM_DF_STR_DEF YSIM_STR_DEF
+#define YSIM_DF_REF_DEF YSIM_REF_DEF
+#define YSIM_DF_stock   YSIM_stock
+#define YSIM_DF_static  YSIM_static
+#define YSIM_DG_NUM     YSIM_NUM 
+#define YSIM_DG_STR     YSIM_STR 
+#define YSIM_DG_ARR     YSIM_ARR 
+#define YSIM_DG_REF     YSIM_REF 
+#define YSIM_DG_NUM_DEF YSIM_NUM_DEF
+#define YSIM_DG_STR_DEF YSIM_STR_DEF
+#define YSIM_DG_REF_DEF YSIM_REF_DEF
+#define YSIM_DG_stock   YSIM_stock
+#define YSIM_DG_static  YSIM_static
+
+// This code uses "i" for normal variables and "d" for references.  These are
+// both seen by "CallRemoteFunction" as the same thing, but we can
+// differentiate them.
+//   
+//   %0 - Reference parameter names.
+//   %1 - The original parameters.
+//   %2 - The parameters without "const" or defaults.
+//   %3 - Format specifier.
+//   %4 - Function qualifiers (stock etc).
+//   %5 - Tag.
+//   %6 - The parameters without defaults.
+//   %7 - The parameters as arguments (just the names).
+//   %8 - code-parse required (internal details, "$" delimited).
+//   %9 - Function name.
+//   
+#define YSIM_MF_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4%9(%1);@RG%9(%2)return L@(%9(%7)%0);forward @RG%9(%2)
+#define YSIM_MF_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@RG%9(%2)return T@(%9(%7)%0);forward @RG%9(%2)
+#define YSIM_MF_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@RG%9(%2){%9(%7);return L@(0%0);}forward @RG%9(%2)
+#define YSIM_MF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5%9(%1);@RG%9(%2)return L@(%9(%7)%0);forward @RG%9(%2)
+#define YSIM_MF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9();@RG%9()return L@(%9());forward @RG%9()
+#define YSIM_MF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@RG%9()return T@(%9());forward @RG%9()
+#define YSIM_MF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@RG%9(){%9();return L@(0);}forward @RG%9()
+#define YSIM_MF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9();@RG%9()return L@(%9());forward @RG%9()
+
+#define YSIM_UF_END(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9(%1)return D@(#@RG%9,%3%7)
+#define YSIM_UF_END_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9(%1)return C@(#@RG%9,%3%7)
+#define YSIM_UF_END_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9(%1)D@(#@RG%9,%3%7)
+#define YSIM_UF_END_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9(%1)return %5D@(#@RG%9,%3%7)
+#define YSIM_UF_NUL     YSIM_UF_END
+#define YSIM_UF_NUL_STR YSIM_UF_END_STR
+#define YSIM_UF_NUL_VOD YSIM_UF_END_VOD
+#define YSIM_UF_NUL_TAG YSIM_UF_END_TAG
+
+#define YSIM_UG_END(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4RG@%9(%1);static stock RG@%9(%1)
+#define YSIM_UG_END_STR YSIM_UG_END
+#define YSIM_UG_END_VOD YSIM_UG_END
+#define YSIM_UG_END_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5RG@%9(%1);static stock %5RG@%9(%1)
+#define YSIM_UG_NUL     YSIM_UG_END
+#define YSIM_UG_NUL_STR YSIM_UG_END
+#define YSIM_UG_NUL_VOD YSIM_UG_END
+#define YSIM_UG_NUL_TAG YSIM_UG_END_TAG
+
+#define YSIM_DF_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4%9(%1);@RG%9(%2);@RG%9(%2)<>return 1
+#define YSIM_DF_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@RG%9(%2);@RG%9(%2)<>return 1
+#define YSIM_DF_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@RG%9(%2);@RG%9(%2)<>return 1
+#define YSIM_DF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5%9(%1);@RG%9(%2);@RG%9(%2)<>return 1
+#define YSIM_DF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9();@RG%9();@RG%9()<>return 1
+#define YSIM_DF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@RG%9();@RG%9()<>return 1
+#define YSIM_DF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@RG%9();@RG%9()<>return 1
+#define YSIM_DF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9();@RG%9();@RG%9()<>return 1
+
+#define YSIM_DG_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4%9(%1)<>return D@(#@RG%9,%3,%7);@RG%9(%2)<_YCM:y>return L@(%9(%7)%0);%9(%1)<_YCM:y>
+#define YSIM_DG_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1)<>return C@(#@RG%9,%3,%7);@RG%9(%2)<_YCM:y>return T@(%9(%7)%0);%9(%1)<_YCM:y>
+#define YSIM_DG_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1)<>D@(#@RG%9,%3,%7);@RG%9(%2)<_YCM:y>{%9(%7);return L@(0%0);}%9(%1)<_YCM:y>
+#define YSIM_DG_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5%9(%1)<>return %5D@(#@RG%9,%3,%7);@RG%9(%2)<_YCM:y>return L@(%9(%7)%0);%5%9(%1)<_YCM:y>
+#define YSIM_DG_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9()<>return D@(#@RG%9,%3);@RG%9()<_YCM:y>return L@(%9()%0);%9()<_YCM:y>
+#define YSIM_DG_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9()<>return C@(#@RG%9,%3);@RG%9()<_YCM:y>return T@(%9()%0);%9()<_YCM:y>
+#define YSIM_DG_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9()<>D@(#@RG%9,%3);@RG%9()<_YCM:y>{%9();return L@(0%0);}%9()<_YCM:y>
+#define YSIM_DG_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9()<>return %5D@(#@RG%9,%3);@RG%9()<_YCM:y>return L@(%9()%0);%5%9()<_YCM:y>
+
+#define YSIM_TG_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4RG@%9(%1);@RG%9();@RG%9()stub_global_%9();static stock RG@%9(%1)
+#define YSIM_TG_END_STR YSIM_TG_NUL
+#define YSIM_TG_END_VOD YSIM_TG_NUL
+#define YSIM_TG_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5RG@%9(%1);@RG%9();@RG%9()stub_global_%9();static stock %5RG@%9(%1)
+#define YSIM_TG_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4RG@%9();@RG%9();@RG%9()stub_global_%9();static stock RG@%9()
+#define YSIM_TG_NUL_STR YSIM_TG_NUL
+#define YSIM_TG_NUL_VOD YSIM_TG_NUL
+#define YSIM_TG_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5RG@%9();@RG%9();@RG%9()stub_global_%9();static stock %5RG@%9()
+
 // These are the macros used by y_master for the recursive function definition
 // structure, but they are not used unless a cloud-based "foreign" or "global"
 // are used.
@@ -162,10 +343,8 @@ Natives:
 #define Z@(%0string:i) S@(i),Q@
 #define V@(%0string:%1) F@(),Q@
 
-
 // "foreign" declaration.
 #define @Zu:#%0,_YM@C%8:,,);return%1(%2);} @Z%8:#%0,#);return%1(%2);}
-
 
 // Second "foreign" declaration.
 // This has been updated to check for arrays, then check if the array is a
@@ -476,13 +655,6 @@ stock bool:_Master_Get(library[], bool:force = false)
 	return ret;
 }
 
-/*----------------------------------------------------------------------------*\
-	Forward all the 64 possible master script initialisation functions.
-	
-	The code is split up every 26 masters to slightly speed up the compilation
-	by using "#endinput" if "MAX_MASTERS" is low enough.
-\*----------------------------------------------------------------------------*/
-
 #if defined @aOnScriptInit
 	forward @aOnScriptInit();
 #endif
@@ -561,11 +733,6 @@ stock bool:_Master_Get(library[], bool:force = false)
 #if defined @zOnScriptInit
 	forward @zOnScriptInit();
 #endif
-
-#if MAX_MASTERS <= 26
-	#endinput
-#endif
-
 #if defined @AOnScriptInit
 	forward @AOnScriptInit();
 #endif
@@ -644,12 +811,6 @@ stock bool:_Master_Get(library[], bool:force = false)
 #if defined @ZOnScriptInit
 	forward @ZOnScriptInit();
 #endif
-
-#if MAX_MASTERS <= 52
-	#endinput
-#endif
-
-// We can't permute these symbol names - a symbol can't start with a number.
 #if defined @0OnScriptInit
 	forward @0OnScriptInit();
 #endif
@@ -680,12 +841,4 @@ stock bool:_Master_Get(library[], bool:force = false)
 #if defined @9OnScriptInit
 	forward @9OnScriptInit();
 #endif
-
-// #if defined @@OnScriptInit
-	// forward @@OnScriptInit();
-// #endif
-
-// #if defined @_OnScriptInit
-	// forward @_OnScriptInit();
-// #endif
 
