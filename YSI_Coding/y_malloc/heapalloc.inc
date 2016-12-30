@@ -158,18 +158,26 @@ static Malloc_FindStackTop()
 		frm_addr;
 	#emit LCTRL       5
 	#emit STOR.S.pri  frm_addr
-	// Loop until we hit a return address of 0.
+	// Loop until we hit a return address of 0.  Limited to being within the
+	// stack.
 	while (GetFrameReturn(frm_addr))
 	{
 		#emit LREF.S.pri  frm_addr
 		#emit STOR.S.pri  frm_addr
+		if (!frm_addr)
+		{
+			// Return the top of the stack on the JIT.
+			#emit LCTRL       3
+			#emit STACK       4
+			#emit RETN
+		}
 	}
 	// We can't accurately get the number or parameters because of y_hooks :(.
 	return frm_addr + 12;
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>OnScriptInit</summary>
+<summary>OnCodeInit</summary>
 <returns>
 	-
 </returns>
@@ -186,9 +194,9 @@ static Malloc_FindStackTop()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-public OnScriptInit()
+public OnCodeInit()
 {
-	P:1("Malloc_OnScriptInit called");
+	P:1("Malloc_OnCodeInit called");
 	// First ever LEGITIMATE call to "heapspace"!
 	if (heapspace() < MALLOC_MEMORY + 4 * 1024)
 	{
@@ -210,15 +218,15 @@ public OnScriptInit()
 		}
 	}
 	Malloc_TrySetup();
-	Malloc_OnScriptInit();
+	Malloc_OnCodeInit();
 	SetTimer("Malloc_SolidifyTimer", 0, 0);
 	SetTimer("Malloc_SolidifyTimer", 0, 0);
 	return 1;
 }
 
-CHAIN_FORWARD:Malloc_OnScriptInit() = 1;
-#undef OnScriptInit
-#define OnScriptInit(%0) CHAIN_PUBLIC:Malloc_OnScriptInit(%0)
+CHAIN_FORWARD:Malloc_OnCodeInit() = 1;
+#undef OnCodeInit
+#define OnCodeInit(%0) CHAIN_PUBLIC:Malloc_OnCodeInit(%0)
 
 /**--------------------------------------------------------------------------**\
 <summary>Malloc_TrySetup</summary>
@@ -267,7 +275,7 @@ static Malloc_TrySetup()
 		if (YSI_g_sHeapStart) return;
 	}
 	YSI_g_sHeapStart = temp - MALLOC_MEMORY * 4;
-	P:2("Malloc_OnScriptInit: %d %d %d", YSI_g_sHeapStart, MALLOC_MEMORY * 4, AMX_HEADER_HEA);
+	P:2("Malloc_OnCodeInit: %d %d %d", YSI_g_sHeapStart, MALLOC_MEMORY * 4, AMX_HEADER_HEA);
 	#emit CONST.alt     YSI_gMallocMemory
 	#emit LOAD.pri      __YSI_g_sHeapStart
 	#emit SUB
@@ -282,8 +290,8 @@ static Malloc_TrySetup()
 		// The "#if" is actually ignored by these "#emit" codes, as always.
 		#emit CONST.alt     YSI_gMallocMemory
 		#emit STOR.S.alt    temp
-		printf("Malloc_OnScriptInit: AMX_HEADER_HEA = %d, YSI_gMallocMemory = %d, YSI_g_sHeapStart = %d", _:AMX_HEADER_HEA, temp, YSI_g_sHeapStart);
-		printf("Malloc_OnScriptInit: YSI_gMallocMemory + 4 * YSI_g_sHeapStart = %d", temp + 4 * YSI_g_sHeapStart);
+		printf("Malloc_OnCodeInit: AMX_HEADER_HEA = %d, YSI_gMallocMemory = %d, YSI_g_sHeapStart = %d", _:AMX_HEADER_HEA, temp, YSI_g_sHeapStart);
+		printf("Malloc_OnCodeInit: YSI_gMallocMemory + 4 * YSI_g_sHeapStart = %d", temp + 4 * YSI_g_sHeapStart);
 	#endif
 	// This is never read, but we now have a spare cell because we HAD to
 	// allocate an array of some size.
