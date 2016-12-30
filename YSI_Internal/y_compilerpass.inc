@@ -129,3 +129,5 @@ static stock __COMPILER_SECOND_PASS() {}
 	#define NESTED_ELLIPSIS
 #endif
 
+//#define state%0_YCM:%1\10; { _YCM@ = _E_YCM@%1 state _YCM:%1 }
+
