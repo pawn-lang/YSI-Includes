@@ -257,6 +257,26 @@ forward Alloc:calloc(size);
 	new
 		YSI_gMallocMemory[1];
 	
+	#if !defined _ALS_OnJITCompile
+		forward OnJITCompile();
+	#endif
+	
+	public OnJITCompile()
+	{
+		P:E("y_malloc with JIT requires \"#define YSI_NO_HEAP_MALLOC\"");
+		// Disable the JIT.
+		Malloc_OnJITCompile();
+		return 0;
+	}
+	
+	CHAIN_FORWARD:Malloc_OnJITCompile() = 1;
+	#if defined _ALS_OnJITCompile
+		#undef OnJITCompile
+	#else
+		#define _ALS_OnJITCompile
+	#endif
+	#define OnJITCompile(%0) CHAIN_PUBLIC:Malloc_OnJITCompile(%0)
+	
 	// Allocate space on the heap permanently.
 	#include "y_malloc/heapalloc"
 #endif
