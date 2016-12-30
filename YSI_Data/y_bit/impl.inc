@@ -366,7 +366,7 @@ stock Iter_Func@Bits(start, BitArray:data<>, size = sizeof (data))
 
 stock Iter_Func@Blanks(start, BitArray:data<>, size = sizeof (data))
 {
-	P:3("Iter_Func@Blanks called: %s, %i", Bit_Display(data), start);
+	P:3("Iter_Func@Blanks called: %s, %i", Bit_Display(data, size), start);
 	new
 		cur,
 		i = Bit_Slot(++start);

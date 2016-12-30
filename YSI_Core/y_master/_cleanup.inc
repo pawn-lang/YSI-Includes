@@ -12,6 +12,7 @@
 #undef group_hook
 #undef foreign
 #undef global
+#undef YSIM_COMMAND
 
 // Clear any previous settings.
 #undef YSIM_HAS_MASTER
