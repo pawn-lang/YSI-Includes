@@ -213,15 +213,16 @@ static stock const
 	YSI_gscISII[] = "isii";
 
 // "YCMD:" macros.  The true core is "RC:", which is in "y_master".
-#define _YCMD_0:_YCMD_1:_YCMD_2:%0(%1[]%2) RC:%0(%1[]%2)
-#define _YCMD_1:_YCMD_2:%0, Command_GetID(#%0),
-#define _YCMD_2:%0)  Command_GetID(#%0))
+#define _YCMD_0:(_:_YCMD_1:_YCMD_2:_YCMD_3:%0(%1[]%2) YSIM_COMMAND %0(%1[]%2)
+#define _YCMD_1:_YCMD_2:_YCMD_3:%0, Command_GetID(#%0)),
+#define _YCMD_2:_YCMD_3:%0)  Command_GetID(#%0)))
+#define _YCMD_3:%0;  Command_GetID(#%0));
 #define @YCMD:%0;  Command_TouchNamed(#%0);
 
-#define YCMD: _YCMD_0:_YCMD_1:_YCMD_2:
+#define YCMD: _YCMD_0:(_:_YCMD_1:_YCMD_2:_YCMD_3:
 
 // ZCMD compatibility.
-#define CMD:%0(%1) RC:%0(%1,__help)if(__help)return 0;else
+#define CMD:%0(%1) YSIM_COMMAND %0(%1,__help)if(__help)return 0;else
 #define COMMAND CMD
 
 // Forwards for optional command callbacks.
@@ -573,7 +574,7 @@ global Command_ReProcess(p,string:c[],h)
 			if (MASTER_EXCLUSIVE<YSI_g_sCurrentID>)
 		#endif
 			{
-				P:5("Commands_OnPlayerCommandText: Local");
+				P:5("Commands_OnPlayerCommandText: Local %d", sHash);
 				// In this script.  More to the point, in ONLY this script, so
 				// we can't have another script as the master.  I tried updating
 				// this code but then realised that the update would ignore the
@@ -588,7 +589,8 @@ global Command_ReProcess(p,string:c[],h)
 				#emit PUSH.S      p
 				#emit PUSH.C      12
 				#emit LCTRL       6
-				#emit ADD.C       28
+				#emit ADD.C       36
+				#emit LCTRL       8
 				#emit PUSH.pri
 				#emit LOAD.pri    sHash
 				#emit SCTRL       6
@@ -1423,7 +1425,8 @@ hook OnScriptInit()
 		// Add the command name and pointer, but skip the leading "@yC_".
 		P:6("Command_OnScriptInit: Adding %d", entry);
 		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), buffer),
-		buffer[0] = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00),
+		// buffer[0] = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00),
+		buffer[0] = _C<@_yC>,
 		id2 = funcidx(buffer);
 		if (id2 != -1) entry = AMX_HEADER_PUBLICS + id2 * 8;
 		// Check that the function name is all lower-case.
@@ -1483,7 +1486,7 @@ hook OnScriptExit()
 	mhook OnMasterSystemClose(id)
 	{
 		new
-			cmdname[32 char] = {('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00), 0, 0, ...},
+			cmdname[32 char] = {_C<@_yC>, 0, 0, ...},
 			Bit:cur = Bit:(1 << Master_ID()),
 			Bit:bit = Bit:(1 << id),
 			Bit:rem = ~bit;
@@ -1498,7 +1501,7 @@ hook OnScriptExit()
 				}
 				if ((YSI_g_sMasterData[i] &= rem) == cur)
 				{
-                    if(YSI_g_sCommands[i][E_COMMAND_POINTER]&cellmin) continue;
+                    if(YSI_g_sCommands[i][E_COMMAND_POINTER] & cellmin) continue;
 					// Existed in multiple, now only one.
 					strpack(cmdname[1], Command_Name(i), 31);
 					new

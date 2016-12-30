@@ -399,9 +399,9 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_CHAIN_HOOK], precount, name
 		strcat(lfunc, name),
 		Hooks_MakeShortName(lfunc);
 		P:5("Hooks_GetPreHooks: search = %s", unpack(lfunc));
-		P:C( new oc = count; );
+		P:C(new oc = count;);
 		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
-		P:C( if (oc != count) { new buffer[32]; AMX_ReadString(AMX_Read(hooks[count] + 4) + AMX_BASE_ADDRESS, buffer); P:5("Hooks_GetPreHooks: found = %s", unpack(buffer)); } );
+		P:C(if (oc != count) { new buffer[32]; AMX_ReadString(AMX_Read(hooks[count] + 4) + AMX_BASE_ADDRESS, buffer); P:5("Hooks_GetPreHooks: found = %s", unpack(buffer)); });
 		strcpy(lfunc, preloads[idx][E_CHAIN_HOOK_NAME]),
 		strcat(lfunc, "_");
 	}

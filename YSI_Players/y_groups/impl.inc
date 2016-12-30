@@ -143,7 +143,7 @@ static
 
 static stock const
 	YSI_g_scGlobalName[] = "__GLOBAL",
-	BitArray:RG@<_MAX_GROUPS_G>;
+	BitArray:_@<_MAX_GROUPS_G>;
 
 MASTER_DATA<_MAX_GROUPS_G>
 
@@ -264,7 +264,7 @@ stock _Group_AddInternal(a, Group:g)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-static remotefunc void:_Group_FakePlayer(p,Bit:g[sizeof RG@],s)
+static remotefunc void:_Group_FakePlayer(p,Bit:g[sizeof _@],s)
 {
 	for (new i = 0; i != sizeof (g); ++i)
 	{
@@ -713,7 +713,7 @@ global void:Group_SetPlayer(Group:g,p,bool:s)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
+remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof _@], s)
 {
 	#pragma unused s
 	#if !(YSIM_HAS_MASTER && (_YSIM_IS_STUB || _YSIM_IS_CLIENT))
