@@ -95,20 +95,23 @@ public OnCodeInit()
 	#if defined CGen_OnCodeInit
 		CGen_OnCodeInit();
 	#endif
-	// Can't use "memset" or another fast function because this is in the code
-	// area, not the data area.  Clear out all the remainder AFTER other code
-	// generations are complete to reduce the amount of wasted time but still
-	// fill up the space with NOPs to avoid crashes.  An even better option
-	// would be to start a decompilation, run it through a few OpCodes, and if
-	// it passes do nothing, otherwise write one NOP and try again - the ASM
-	// will at most be one cell out from code overwriting other code, so we will
-	// only need to write a maximum of one cell to bring it back in line such
-	// that the JIT doesn't see an unknown OpCode.
+	// Check that the code at this point is valid.  An OpCode is at most two
+	// bytes (except "OP_SWITCH", but there are none of them in this area of
+	// code because there are no "switch"es).  If the code here fails to
+	// decompile, it is probably out of alignment - add a single "NOP" to bring
+	// it back in to alignment.
 	new
-		Opcode:nop = RelocateOpcode(OP_NOP);
-	for (new i = YSI_g_sCodeSpace; i != YSI_g_sCodeEnd; i += 4)
-		AMX_Write(i, _:nop);
-	return 0; // Make the compiler happy.
+		ctx[DisasmContext];
+	DisasmInit(ctx, YSI_g_sCodeSpace - AMX_HEADER_COD);
+	for (new i = 0; i != 10; ++i)
+	{
+		if (DisasmNextInsn(ctx) == OP_NONE)
+		{
+			AMX_Write(YSI_g_sCodeSpace, _:RelocateOpcode(OP_NOP));
+			return 1;
+		}
+	}
+	return 1;
 }
 
 #if defined CGen_OnCodeInit
