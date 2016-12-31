@@ -240,19 +240,18 @@ forward Alloc:calloc(size);
 	new
 		YSI_gMallocMemory[MALLOC_MEMORY];
 	
-	public OnScriptInit()
+	public OnCodeInit()
 	{
 		YSI_g_sHeapStart = 0;
 		YSI_gMallocMemory[0] = MALLOC_MEMORY - 1;
 		YSI_g_sUnusedStart = 1;
-		memset(YSI_gMallocMemory[1], 0, MALLOC_MEMORY - 1);
-		Malloc_OnScriptInit();
+		Malloc_OnCodeInit();
 		return 1;
 	}
 	
-	CHAIN_FORWARD:Malloc_OnScriptInit() = 1;
-	#undef OnScriptInit
-	#define OnScriptInit(%0) CHAIN_PUBLIC:Malloc_OnScriptInit(%0)
+	CHAIN_FORWARD:Malloc_OnCodeInit() = 1;
+	#undef OnCodeInit
+	#define OnCodeInit(%0) CHAIN_PUBLIC:Malloc_OnCodeInit(%0)
 #else
 	new
 		YSI_gMallocMemory[1];
