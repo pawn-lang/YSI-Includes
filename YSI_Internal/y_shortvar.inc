@@ -1,14 +1,9 @@
 /**--------------------------------------------------------------------------**\
-					==============================
-					 y_va - Enhanced vararg code!
-					==============================
+                              ====================
+                               YSI - Master Funcs
+                              ====================
 Description:
-	This library currently provides two functions - va_printf and va_format
-	which perform printf and format using variable arguments passed to another
-	function.
-	
-	This is bsed on the variable parameter passing method based on code by Zeex.
-	See page 15 of the code optimisations topic.
+	Defines new names for native functions.
 Legal:
 	Version: MPL 1.1
 	
@@ -22,7 +17,7 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI vararg include.
+	The Original Code is the YSI master include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright (C) 2011
@@ -52,10 +47,10 @@ Legal:
 		SA:MP Team past, present and future - SA:MP.
 	
 Version:
-	1.0
+	0.2
 Changelog:
-	02/05/11:
-		First version.
+	21/10/10:
+		Split in to y_shortfunc.
 Functions:
 	Public:
 		-
@@ -68,6 +63,8 @@ Functions:
 	Inline:
 		-
 	API:
+		-
+	Hooks:
 		-
 Callbacks:
 	-
@@ -90,25 +87,22 @@ Compile options:
 	-
 Operators:
 	-
-</remarks>
+Natives:
+	-
 \**--------------------------------------------------------------------------**/
 
-#if defined _INC_y_va
+#if defined _INC_y_shortvar
 	#endinput
 #endif
-#define _INC_y_va
+#define _INC_y_shortvar
 
-#define va_args<%0> GLOBAL_TAG_TYPES:...
-#define va_start<%0> (va_:(%0))
+// Public variable.
+public
+	Y@ = 0;
 
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Internal\y_funcinc"
-#include "..\YSI_Core\y_utils"
-
-#include "y_va/impl"
-
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_va/tests"
-#endif
+// J@ is a "nul" target - send things there if they need ignoring or if a
+// parameter needs using.  I@ is too now.
+stock
+	I@,
+	J@;
 

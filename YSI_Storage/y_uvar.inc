@@ -329,7 +329,8 @@ hook OnScriptInit()
 	{
 		#emit PUSH.C     0
 		#emit LCTRL      6
-		#emit ADD.C      28
+		#emit ADD.C      36
+		#emit LCTRL      8
 		#emit PUSH.pri
 		#emit LOAD.S.pri buffer
 		#emit SCTRL      6
@@ -426,7 +427,8 @@ stock _Uvar_DoSavePlayer(playerid)
 			#emit PUSH.C     12
 			// Now get the return address and push it.
 			#emit LCTRL      6
-			#emit ADD.C      28
+			#emit ADD.C      36
+			#emit LCTRL      8
 			#emit PUSH.pri
 			// Call "Player_WriteArray" directly.
 			#emit CONST.pri  Player_WriteArray
@@ -484,7 +486,8 @@ hook OnPlayerConnect(playerid)
 			#emit PUSH.C     12
 			// Now get the return address and push it.
 			#emit LCTRL      6
-			#emit ADD.C      28
+			#emit ADD.C      36
+			#emit LCTRL      8
 			#emit PUSH.pri
 			// Call "memset" directly.
 			#emit CONST.pri  memset

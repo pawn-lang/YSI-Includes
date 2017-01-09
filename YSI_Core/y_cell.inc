@@ -93,6 +93,7 @@ Compile options:
 
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_globaltags"
+#include "..\YSI_Internal\y_funcinc"
 
 /**--------------------------------------------------------------------------**\
 <summary>
@@ -160,31 +161,10 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 	#emit OR
 	
 	// Swap all bytes.
-	// return (data >>> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0x0000FF00) << 8) | (data << 24);
 	#emit PUSH.pri
-	#emit MOVE.alt
-	
-	#emit SHR.C.pri            24
-	#emit XCHG
-	#emit SHL.C.pri            24
-	#emit OR
-	#emit SWAP.pri
-	
-	#emit PUSH.pri
-	#emit CONST.alt            0x00FF0000
-	#emit AND
-	#emit SHR.C.pri            8
-	#emit SWAP.pri
-	
-	#emit CONST.alt            0x0000FF00
-	#emit AND
-	#emit SHL.C.pri            8
-	
-	#emit POP.alt
-	#emit OR
-	#emit POP.alt
-	#emit OR
-	
+	#emit PUSH.C               4
+	#emit SYSREQ.C             swapchars
+	#emit STACK                8
 	#emit RETN
 	
 	// Make the compiler happy.
@@ -231,31 +211,10 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 	#emit OR
 	
 	// Swap all bytes.
-	// return (data >>> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0x0000FF00) << 8) | (data << 24);
 	#emit PUSH.pri
-	#emit MOVE.alt
-	
-	#emit SHR.C.pri            24
-	#emit XCHG
-	#emit SHL.C.pri            24
-	#emit OR
-	#emit SWAP.pri
-	
-	#emit PUSH.pri
-	#emit CONST.alt            0x00FF0000
-	#emit AND
-	#emit SHR.C.pri            8
-	#emit SWAP.pri
-	
-	#emit CONST.alt            0x0000FF00
-	#emit AND
-	#emit SHL.C.pri            8
-	
-	#emit POP.alt
-	#emit OR
-	#emit POP.alt
-	#emit OR
-	
+	#emit PUSH.C               4
+	#emit SYSREQ.C             swapchars
+	#emit STACK                8
 	#emit RETN
 	
 	// Make the compiler happy.
@@ -287,37 +246,7 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 
 stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 {
-	// Swap all bytes.
-	// return (data >>> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0x0000FF00) << 8) | (data << 24);
-	#emit LOAD.S.pri           data
-	#emit PUSH.pri
-	#emit MOVE.alt
-	
-	#emit SHR.C.pri            24
-	#emit XCHG
-	#emit SHL.C.pri            24
-	#emit OR
-	#emit SWAP.pri
-	
-	#emit PUSH.pri
-	#emit CONST.alt            0x00FF0000
-	#emit AND
-	#emit SHR.C.pri            8
-	#emit SWAP.pri
-	
-	#emit CONST.alt            0x0000FF00
-	#emit AND
-	#emit SHL.C.pri            8
-	
-	#emit POP.alt
-	#emit OR
-	#emit POP.alt
-	#emit OR
-	
-	#emit RETN
-	
-	// Make the compiler happy.
-	return 0;
+	return swapchars(_:data);
 }
 
 /**--------------------------------------------------------------------------**\

@@ -91,7 +91,6 @@ Operators:
 	-
 Natives:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_version
@@ -114,6 +113,19 @@ Natives:
 #endif
 
 #include "..\YSI_Server\y_scriptinit"
+#include "y_prehook"
+
+#if !defined CHAIN_ORDER
+	#define CHAIN_ORDER() 0
+#endif
+
+CHAIN_HOOK(YVers)
+
+#undef CHAIN_ORDER
+#define CHAIN_ORDER CHAIN_NEXT(YVers)
+
+// Amazingly, this fixes hooking OnScriptInit...
+CHAIN_FORWARD:YVers_OnScriptInit() = 1;
 
 #define YSI_VERSION_RESPO               2
 
@@ -134,17 +146,12 @@ Natives:
 			YSI_gLockData[YSI_gLockData[2]++] = (YSI_gLockData[3] | 0x09) & ~0x04;
 			YSI_gLockData[2] *= (6 * x) - 5;
 		#endif
-		#if defined YVers_OnScriptInit
-			YVers_OnScriptInit();
-		#endif
+		YVers_OnScriptInit();
 		return 1;
 	}
 	
 	#undef OnScriptInit
-	#define OnScriptInit YVers_OnScriptInit
-	#if defined YVers_OnScriptInit
-		forward YVers_OnScriptInit();
-	#endif
+	#define OnScriptInit(%0) CHAIN_PUBLIC:YVers_OnScriptInit(%0)
 	
 #else
 /**----------------------------------------------------------------------**\
@@ -183,17 +190,12 @@ Natives:
 			print(" |                                     | ");
 			print(" ======================================= ");
 			print(" ");
-			#if defined YVers_OnScriptInit
-				YVers_OnScriptInit();
-			#endif
+			YVers_OnScriptInit();
 			return 1;
 		}
 		
 		#undef OnScriptInit
-		#define OnScriptInit YVers_OnScriptInit
-		#if defined YVers_OnScriptInit
-			forward YVers_OnScriptInit();
-		#endif
+		#define OnScriptInit(%0) CHAIN_PUBLIC:YVers_OnScriptInit(%0)
 		
 		#endinput
 	#endif
@@ -250,17 +252,12 @@ Natives:
 		// This remote script has now been updated to include changelog
 		// information and keeps a record of what IPs are connecting.
 		//HTTP(0, HTTP_GET, "version.ysi.tl/index.php?c=" #YSI_VERSION_RESPO "&v=" YSI_VERSION, "", "YVers_Callback");
-		#if defined YVers_OnScriptInit
-			YVers_OnScriptInit();
-		#endif
+		YVers_OnScriptInit();
 		return 1;
 	}
 	
 	#undef OnScriptInit
-	#define OnScriptInit YVers_OnScriptInit
-	#if defined YVers_OnScriptInit
-		forward YVers_OnScriptInit();
-	#endif
+	#define OnScriptInit(%0) CHAIN_PUBLIC:YVers_OnScriptInit(%0)
 	
 	/**----------------------------------------------------------------------**\
 	<summary>YVers_Callback</summary>
@@ -300,7 +297,6 @@ Natives:
 				print(" |            available from:             | ");
 				print(" |                                        | ");
 				print(" |     www.y-less.com/YSI/YSI_1.0.zip     | ");
-				//printf("data[0]: %c", data[0]);
 				if (data[0] == '2')
 				{
 					print(" |                                        | ");
@@ -311,7 +307,6 @@ Natives:
 					for ( ; ; )
 					{
 						pos = strfind(data[last], "\n", false);
-						//printf("%d %d %s", last, pos, data[last]);
 						if (pos == -1)
 						{
 							// To break out in the middle of a loop.
