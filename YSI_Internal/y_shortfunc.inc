@@ -687,6 +687,7 @@ stock F@()
 #define _:%0,) _:%0)
 
 #if defined YSI_LOCK_MODE
+
 	#include "..\YSI_Internal\y_unique"
 	
 	forward UNIQUE_FUNCTION<@yH_OnScriptInit@...>();
