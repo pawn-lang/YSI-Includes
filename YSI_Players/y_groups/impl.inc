@@ -144,7 +144,7 @@ static
 
 static stock const
 	YSI_g_scGlobalName[] = "__GLOBAL",
-	BitArray:RG@<_MAX_GROUPS_G>;
+	BitArray:_@<_MAX_GROUPS_G>;
 
 MASTER_DATA<_MAX_GROUPS_G>
 
@@ -265,7 +265,7 @@ stock _Group_AddInternal(a, Group:g)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-static remotefunc void:_Group_FakePlayer(p,Bit:g[sizeof RG@],s)
+static remotefunc void:_Group_FakePlayer(p,Bit:g[sizeof _@],s)
 {
 	for (new i = 0; i != sizeof (g); ++i)
 	{
@@ -430,7 +430,7 @@ foreign void:Group_Destroy(Group:group);
 global void:Group_Destroy(Group:group)
 {
 	P:2("Group_Destroy called: %i", _:group);
-	P:2("Group_Destroy called in %d", _@);
+	P:2("Group_Destroy called in %d", Y@);
 	// You can't destroy the global group.
 	if (_Group_IsValid(group) && group != GROUP_GLOBAL)
 	{
@@ -571,7 +571,7 @@ hook OnPlayerConnect@9(playerid)
 					return 1;
 				}
 				//_Group_
-				_Group_InitPlayer(playerid, _@);
+				_Group_InitPlayer(playerid, Y@);
 			}
 	#endif
 	return 1;
@@ -714,7 +714,7 @@ global void:Group_SetPlayer(Group:g,p,bool:s)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
+remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof _@], s)
 {
 	#pragma unused s
 	#if !(YSIM_HAS_MASTER && (_YSIM_IS_STUB || _YSIM_IS_CLIENT))
@@ -1154,7 +1154,7 @@ static remotefunc void:_Group_CreateChain(Group:g)
 @global Group:_Group_Create(string:name[])
 {
 	P:2("Group:Group_Create called: \"%s\"", name);
-	P:2("Group_Create called in %d", _@);
+	P:2("Group_Create called in %d", Y@);
 	new
 		i;
 	if (!isnull(name))

@@ -99,7 +99,7 @@ Tags:
 	-
 Variables:
 	Global:
-		_@ - ID of this script.
+		Y@ - ID of this script.
 	Static:
 		-
 Commands:
@@ -112,7 +112,7 @@ Natives:
 	-
 \**--------------------------------------------------------------------------**/
 
-#define Master_ID() (_@)
+#define Master_ID() (Y@)
 
 // These parts should only be defined once ever.  This code is not dependent on
 // the current MASTER value, it's all generic.
@@ -128,6 +128,8 @@ Natives:
 #define MASTER_EXCLUSIVE<%0> (YSI_g_sMasterData[_:(%0)] == Bit:(1 << Master_ID()))
 #define MASTER_GET<%0> (YSI_g_sMasterData[_:(%0)])
 #define MASTER_COPY<%0,%1> (YSI_g_sMasterData[_:(%0)] = YSI_g_sMasterData[_:(%1)]);
+
+//#define Master_State(%0); {  }
 
 #if defined YSI_IS_CLIENT
 	#if NO_VALUE(YSI_IS_CLIENT)
@@ -154,64 +156,236 @@ Natives:
 #define mtask master_task
 #define mptask master_ptask
 
-// These are the macros used by y_master for the recursive function definition
-// structure, but they are not used unless a cloud-based "foreign" or "global"
-// are used.
+// Because "Cloud" and "Client" start with the same letter, "YSIMC" would be
+// confusing.  "Cloud" and "Slave" would be just as confusing since "S" could be
+// that or "Server" and "C" still wouldn't be disambiguated.  Also "Stub"
+// complicates things further - why are they all the same letter?
+// 
+// Instead to avoid any confusion, we will use:
+//   
+//   D - Distributed (Cloud).
+//   T - Thunk (Stub).
+//   M - Master (Server, but was never ambiguous).
+//   U - User (Client).
+//   
+// I want to make it clear that this internal rename is NOT for any sense of PC-
+// ness around the term "slave" - it is a perfectly descriptive term for a node
+// ordered to do work by a central controller (though inaccurate in this case as
+// that is not what happens here - a central server is given work by many other
+// clients).
+#define YSIM_PARSER(%2)%0(%1) FUNC_PARSER(%2,NUM_CST_DEF:STR_CST_DEF:REF_DEF:ARR_CST:QAL:RET_VOD_STR_TAG:LEN:)(%0(%1))(%1)#()()()
 
-#define W@(@Zu:#%0:%1#,%2);return%3(%8) W@(@Zu:#%1,%2);return%0:%3(%0:%8)
-#define Z@(%0string:i) S@(i),Q@
-#define V@(%0string:%1) F@(),Q@
+#define YSIM_SERVER_FOREIGN        YSIM_PARSER(YSIM_MF)
+// The global is just the function implementation - doesn't need extra code.
+#define YSIM_SERVER_GLOBAL
+#define YSIM_SERVER_HOOK%0(%1)     hook%0(%1)
+#define YSIM_SERVER_TASK%0[%3](%1) task%0[%3](%1)
+#define YSIM_SERVER_PTSK%0[%3](%1) ptask%0[%3](%1)
+#define YSIM_SERVER_FUNC%0(%1)<%9> forward%0(%1);public%0(%1)
+#define YSIM_SERVER_GRUP%0(%1)     _GROUP_MAKE_NAME<hook%0...>(%1)
+#define YSIM_SERVER_YCMD%0(%1)     @yC_%0(a,b[],c);@yC_%0(a,b[],c)U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
+#define YSIM_SERVER_ZERO%0(%1)     @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==Y@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 
+#define YSIM_CLIENT_FOREIGN        YSIM_PARSER(YSIM_UF)
+// Hide the local implementations.
+#define YSIM_CLIENT_GLOBAL%0(%1)   YSIM_PARSER(YSIM_UG)%0(%1)
+#define YSIM_CLIENT_HOOK%0(%1)     YSIM_PARSER(YSIM_UG)%0(%1)
+#define YSIM_CLIENT_TASK%0[%3](%1) YSIM_PARSER(YSIM_UG)%0(%1)
+#define YSIM_CLIENT_PTSK%0[%3](%1) YSIM_PARSER(YSIM_UG)%0(%1)
+#define YSIM_CLIENT_FUNC%0(%1)<%9> YSIM_PARSER(YSIM_UG)%0(%1)
+#define YSIM_CLIENT_GRUP%0(%1)     YSIM_PARSER(YSIM_UG)%0(%1)
+#define YSIM_CLIENT_YCMD%0(%1)     static stock _@yC%0()	
+#define YSIM_CLIENT_ZERO%0(%1)     YSIM_SERVER_ZERO%0(%1)
 
-// "foreign" declaration.
-#define @Zu:#%0,_YM@C%8:,,);return%1(%2);} @Z%8:#%0,#);return%1(%2);}
+#define YSIM_CLOUD_FOREIGN         YSIM_PARSER(YSIM_DF)
+#define YSIM_CLOUD_GLOBAL          YSIM_PARSER(YSIM_DG)
+#define YSIM_CLOUD_HOOK%0(%1)      hook%0(%1)<>return 0;rehook%0(%1)<_YCM:y>
+#define YSIM_CLOUD_TASK%0[%3](%1)  task%0[%3](%1)<>{}public%0(%1)<_YCM:y>
+#define YSIM_CLOUD_PTSK%0[%3](%1)  ptask%0[%3](%1)<>{}public%0(%1)<_YCM:y>
+#define YSIM_CLOUD_FUNC%0(%1)<%9>  %0(%1);public%0(%1)<>{}public%0(%1)<_YCM:%9>
+#define YSIM_CLOUD_GRUP%0(%1)      _GROUP_MAKE_NAME<hook%0...>(%1)<>{}_GROUP_MAKE_NAME<rehook%0...>(%1)<_YCM:y>
+#define YSIM_CLOUD_YCMD%0(%1)      @yC_%0(a,b[],c);@yC_%0(a,b[],c)<>{}@yC_%0(a,b[],c)<_YCM:y>U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
+#define YSIM_CLOUD_ZERO%0(%1)      @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==Y@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 
+// A stub foreign is the same as a client foreign - define it as existing, but
+// not here.
+#define YSIM_STUB_FOREIGN          YSIM_PARSER(YSIM_UF)
+// There is no stub global - that makes no sense (give an error).  Still needs
+// parsing though to give the RIGHT error...
+#define YSIM_STUB_GLOBAL%0(%1)     YSIM_PARSER(YSIM_TG)%0(%1)
+#define YSIM_STUB_HOOK%0(%1)       YSIM_PARSER(YSIM_TG)%0(%1)
+#define YSIM_STUB_TASK%0[%3](%1)   YSIM_PARSER(YSIM_TG)%0(%1)
+#define YSIM_STUB_PTSK%0[%3](%1)   YSIM_PARSER(YSIM_TG)%0(%1)
+#define YSIM_STUB_FUNC%0(%1)<%9>   YSIM_PARSER(YSIM_TG)%0(%1)
+#define YSIM_STUB_GRUP%0(%1)       YSIM_PARSER(YSIM_TG)%0(%1)
+#define YSIM_STUB_YCMD%0(%1)       YSIM_PARSER(YSIM_TG)%0(%1)
+#define YSIM_STUB_ZERO%0(%1)       YSIM_PARSER(YSIM_TG)%0(%1)
+#define stub_body_%0\32; stub_body_
 
-// Second "foreign" declaration.
-// This has been updated to check for arrays, then check if the array is a
-// string, instead of the old method which checked for those separately.
-#define @Zn:@Zo:%2:#%0#%1|||%3[%4]|||%5,%6);%7} @Zm:@Zr:%2:#%0#%1|||%3|||%5,%6);%7}
+// If there is no master system, these are just forwards/declarations.
+#define YSIM_NONE_FOREIGN
+#define YSIM_NONE_GLOBAL
+#define YSIM_NONE_HOOK%0(%1)       hook%0(%1)
+#define YSIM_NONE_TASK%0[%3](%1)   task%0[%3](%1)
+#define YSIM_NONE_PTSK%0[%3](%1)   ptask%0[%3](%1)
+#define YSIM_NONE_FUNC%0(%1)<%9>   forward%0(%1);public%0(%1)
+#define YSIM_NONE_GRUP%0(%1)       _GROUP_MAKE_NAME<hook%0...>(%1)
+#define YSIM_NONE_YCMD%0(%1)       @yC_%0(%1);@yC_%0(%1)
+#define YSIM_NONE_ZERO%0(%1)       @yC_%0(%1);@yC_%0(%1)
 
-#define @Zm:@Zr:%2:#%0#%1|||%4string:%3|||%5,%6);%7} @Zn:@Zo:%2:#%0s#%1,%3|||%5|||%6);%7}
-#define @Zr:%2:#%0#%1|||%3|||%5,%6);%7} @Zn:@Zo:%2:#%0a#%1,%3|||%5|||%6);%7}
+// Now the compilation parts.
+#define YSIM_NUM(%0,%1,%2)%8$%4#%5(%7)(%9)            %8$%4#%5i(%7,%2)(%9,%1%2)
+#define YSIM_STR(%0,%1,%2,%3)%8$%4#%5(%7)(%9)         %8$%4#%5s(%7,%2)(%9,%1%2[%3])
+#define YSIM_ARR(%0,%1,%2,%3)%8$%4#%5(%7)(%9)         %8$%4#%5a(%7,%2)(%9,%1%2[%3])
+#define YSIM_REF(%0,%1,%2)%8$%4#%5(%7)(%9)(%3)        %8$%4#%5d(%7,%2)(%9,%1%2)(%3,%2)
+#define YSIM_NUM_DEF(%0,%1,%2,%9)%8$%4#%5(%7)(%9)     %8$%4#%5i(%7,%2)(%9,%1%2)
+#define YSIM_STR_DEF(%0,%1,%2,%3,%9)%8$%4#%5(%7)(%9)  %8$%4#%5s(%7,%2)(%9,%1%2[%3])
+#define YSIM_REF_DEF(%0,%1,%2,%9)%8$%4#%5(%7)(%9)(%3) %8$%4#%5d(%7,%2)(%9,%1%2)(%3,%2)
+#define YSIM_stock()%8$  %8$stock PP_NULL<>
+#define YSIM_static()%8$ %8$static PP_NULL<>
 
-#define @Zo:%2:#%0#%1|||%3|||%5,%6);%7} @Zn:@Zo:%2:#%0i#%1,%3|||%5|||%6);%7}
+// All the compile types need the same information.  Collect it all in one
+// common way, but use it in many different ways.
+#define YSIM_MF_NUM     YSIM_NUM 
+#define YSIM_MF_STR     YSIM_STR 
+#define YSIM_MF_ARR     YSIM_ARR 
+#define YSIM_MF_REF     YSIM_REF 
+#define YSIM_MF_NUM_DEF YSIM_NUM_DEF
+#define YSIM_MF_STR_DEF YSIM_STR_DEF
+#define YSIM_MF_REF_DEF YSIM_REF_DEF
+#define YSIM_MF_stock   YSIM_stock
+#define YSIM_MF_static  YSIM_static
 
-#define @Zp:%0||||||);%1} @Zl:%0);%1}
-#define @Zy:%0||||||);%1} @Zj:%0);%1}
+#define YSIM_TG_NUM     YSIM_NUM 
+#define YSIM_TG_STR     YSIM_STR 
+#define YSIM_TG_ARR     YSIM_ARR 
+#define YSIM_TG_REF     YSIM_REF 
+#define YSIM_TG_NUM_DEF YSIM_NUM_DEF
+#define YSIM_TG_STR_DEF YSIM_STR_DEF
+#define YSIM_TG_REF_DEF YSIM_REF_DEF
+#define YSIM_TG_stock   YSIM_stock
+#define YSIM_TG_static  YSIM_static
 
-#define _YM@Cl:%0,%1);%2} @Zn:@Zo:@Zp:##|||%0|||%1);%2}
-#define _YM@Cj:%0,%1);%2} @Zn:@Zo:@Zy:##|||%0|||%1);%2}
+#define YSIM_UF_NUM     YSIM_NUM 
+#define YSIM_UF_STR     YSIM_STR 
+#define YSIM_UF_ARR     YSIM_ARR 
+#define YSIM_UF_REF     YSIM_REF 
+#define YSIM_UF_NUM_DEF YSIM_NUM_DEF
+#define YSIM_UF_STR_DEF YSIM_STR_DEF
+#define YSIM_UF_REF_DEF YSIM_REF_DEF
+#define YSIM_UF_stock   YSIM_stock
+#define YSIM_UF_static  YSIM_static
+#define YSIM_UG_NUM     YSIM_NUM 
+#define YSIM_UG_STR     YSIM_STR 
+#define YSIM_UG_ARR     YSIM_ARR 
+#define YSIM_UG_REF     YSIM_REF 
+#define YSIM_UG_NUM_DEF YSIM_NUM_DEF
+#define YSIM_UG_STR_DEF YSIM_STR_DEF
+#define YSIM_UG_REF_DEF YSIM_REF_DEF
+#define YSIM_UG_stock   YSIM_stock
+#define YSIM_UG_static  YSIM_static
 
-#define @Zl:%0);%8void:%3(%1);} %0);}
-#define @Zj:%0);%8void:%3(%1);} %0);%3(%1);}
+#define YSIM_DF_NUM     YSIM_NUM 
+#define YSIM_DF_STR     YSIM_STR 
+#define YSIM_DF_ARR     YSIM_ARR 
+#define YSIM_DF_REF     YSIM_REF 
+#define YSIM_DF_NUM_DEF YSIM_NUM_DEF
+#define YSIM_DF_STR_DEF YSIM_STR_DEF
+#define YSIM_DF_REF_DEF YSIM_REF_DEF
+#define YSIM_DF_stock   YSIM_stock
+#define YSIM_DF_static  YSIM_static
+#define YSIM_DG_NUM     YSIM_NUM 
+#define YSIM_DG_STR     YSIM_STR 
+#define YSIM_DG_ARR     YSIM_ARR 
+#define YSIM_DG_REF     YSIM_REF 
+#define YSIM_DG_NUM_DEF YSIM_NUM_DEF
+#define YSIM_DG_STR_DEF YSIM_STR_DEF
+#define YSIM_DG_REF_DEF YSIM_REF_DEF
+#define YSIM_DG_stock   YSIM_stock
+#define YSIM_DG_static  YSIM_static
 
-// "global" declaration.
-#define @Zt:@Zb:@Zh:@Zi:%0(%1|||%2:%3|||%5,%6) @Zb:@Zh:@Zi:%0(%1|||%3|||%5,%6)
-#define @Zb:@Zh:@Zi:%0(%1|||%3[%4]|||%5,%6) @Zt:@Zb:@Zh:@Zi:%0(%1,%3|||%5|||%6)
-#define @Zh:@Zi:%0(%1|||%3|||%5,%6) @Zt:@Zb:@Zh:@Zi:%0(%1,%3|||%5|||%6)
+// This code uses "i" for normal variables and "d" for references.  These are
+// both seen by "CallRemoteFunction" as the same thing, but we can
+// differentiate them.
+//   
+//   %0 - Reference parameter names.
+//   %1 - The original parameters.
+//   %2 - The parameters without "const" or defaults.
+//   %3 - Format specifier.
+//   %4 - Function qualifiers (stock etc).
+//   %5 - Tag.
+//   %6 - The parameters without defaults.
+//   %7 - The parameters as arguments (just the names).
+//   %8 - code-parse required (internal details, "$" delimited).
+//   %9 - Function name.
+//   
+#define YSIM_MF_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4%9(%1);@_%9(%2)return L@(%9(%7)%0);forward @_%9(%2)
+#define YSIM_MF_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@_%9(%2)return T@(%9(%7)%0);forward @_%9(%2)
+#define YSIM_MF_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@_%9(%2){%9(%7);return L@(0%0);}forward @_%9(%2)
+#define YSIM_MF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5%9(%1);@_%9(%2)return L@(%9(%7)%0);forward @_%9(%2)
+#define YSIM_MF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9();@_%9()return L@(%9());forward @_%9()
+#define YSIM_MF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@_%9()return T@(%9());forward @_%9()
+#define YSIM_MF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@_%9(){%9();return L@(0);}forward @_%9()
+#define YSIM_MF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9();@_%9()return L@(%9());forward @_%9()
 
-#define @Zi:%0(,%1||||||) %0(%1)
+#define YSIM_UF_END(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9(%1)return D@(#@_%9,%3%7);forward _@%9(%1)
+#define YSIM_UF_END_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9(%1)return C@(#@_%9,%3%7);forward _@%9(%1)
+#define YSIM_UF_END_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9(%1)D@(#@_%9,%3%7);forward _@%9(%1)
+#define YSIM_UF_END_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9(%1)return %5D@(#@_%9,%3%7);forward %5_@%9(%1)
+#define YSIM_UF_NUL     YSIM_UF_END
+#define YSIM_UF_NUL_STR YSIM_UF_END_STR
+#define YSIM_UF_NUL_VOD YSIM_UF_END_VOD
+#define YSIM_UF_NUL_TAG YSIM_UF_END_TAG
 
-#define @Zk:_YM@CP:%0(,,) %0()
+#define YSIM_UG_END(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4_@%9(%1);static stock _@%9(%1)
+#define YSIM_UG_END_STR YSIM_UG_END
+#define YSIM_UG_END_VOD YSIM_UG_END
+#define YSIM_UG_END_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5_@%9(%1);static stock %5_@%9(%1)
+#define YSIM_UG_NUL     YSIM_UG_END
+#define YSIM_UG_NUL_STR YSIM_UG_END
+#define YSIM_UG_NUL_VOD YSIM_UG_END
+#define YSIM_UG_NUL_TAG YSIM_UG_END_TAG
 
-#define _YM@CP:%0(%1,%2) @Zt:@Zb:@Zh:@Zi:%0(|||%1|||%2)
+#define YSIM_DF_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4%9(%1);@_%9(%2);@_%9(%2)<>return 1
+#define YSIM_DF_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@_%9(%2);@_%9(%2)<>return 1
+#define YSIM_DF_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@_%9(%2);@_%9(%2)<>return 1
+#define YSIM_DF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5%9(%1);@_%9(%2);@_%9(%2)<>return 1
+#define YSIM_DF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9();@_%9();@_%9()<>return 1
+#define YSIM_DF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@_%9();@_%9()<>return 1
+#define YSIM_DF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@_%9();@_%9()<>return 1
+#define YSIM_DF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9();@_%9();@_%9()<>return 1
 
-#define X@(@Zk:_YM@CP:%0string:%1(%2)) R@(@Zk:_YM@CP:%1(%2))
+#define YSIM_DG_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4%9(%1)<>return D@(#@_%9,%3,%7);@_%9(%2)<_YCM:y>return L@(%9(%7)%0);%9(%1)<_YCM:y>
+#define YSIM_DG_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1)<>return C@(#@_%9,%3,%7);@_%9(%2)<_YCM:y>return T@(%9(%7)%0);%9(%1)<_YCM:y>
+#define YSIM_DG_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1)<>D@(#@_%9,%3,%7);@_%9(%2)<_YCM:y>{%9(%7);return L@(0%0);}%9(%1)<_YCM:y>
+#define YSIM_DG_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5%9(%1)<>return %5D@(#@_%9,%3,%7);@_%9(%2)<_YCM:y>return L@(%9(%7)%0);%5%9(%1)<_YCM:y>
+#define YSIM_DG_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9()<>return D@(#@_%9,%3);@_%9()<_YCM:y>return L@(%9()%0);%9()<_YCM:y>
+#define YSIM_DG_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9()<>return C@(#@_%9,%3);@_%9()<_YCM:y>return T@(%9()%0);%9()<_YCM:y>
+#define YSIM_DG_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9()<>D@(#@_%9,%3);@_%9()<_YCM:y>{%9();return L@(0%0);}%9()<_YCM:y>
+#define YSIM_DG_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9()<>return %5D@(#@_%9,%3);@_%9()<_YCM:y>return L@(%9()%0);%5%9()<_YCM:y>
 
-// This is nearly all I needed to add to "global" for "void:".  I doubt that
-// "foreign" will be as simple!
-#define @Zz:X@(@Zk:_YM@CP:%0void:%1(%2)) @Zk:_YM@CP:%1(%2)
+#define YSIM_TG_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4_@%9(%1);@_%9();@_%9()stub_body_%9();static stock _@%9(%1)
+#define YSIM_TG_END_STR YSIM_TG_NUL
+#define YSIM_TG_END_VOD YSIM_TG_NUL
+#define YSIM_TG_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5_@%9(%1);@_%9();@_%9()stub_body_%9();static stock %5_@%9(%1)
+#define YSIM_TG_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4_@%9();@_%9();@_%9()stub_body_%9();static stock _@%9()
+#define YSIM_TG_NUL_STR YSIM_TG_NUL
+#define YSIM_TG_NUL_VOD YSIM_TG_NUL
+#define YSIM_TG_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5_@%9();@_%9();@_%9()stub_body_%9();static stock %5_@%9()
+
+#define @_yC%0\32; @_yC
+#define @yC_%0\32; @yC_
 
 #define YSIM_NOT_CLIENT (!YSIM_HAS_MASTER || !_YSIM_IS_CLIENT)
 
 #define @global global
+#define @foreign foreign
 
 // Set up the master ID stack.
 #define _YSIM_PUSH_INDEX 0 // First position on the stack to push to.
 
 #if !defined MAX_MASTERS
-	#define MAX_MASTERS 64 // Default, old value.
+	#define MAX_MASTERS 62 // Default, old value.
 #endif
 
 #define HANDOFF(%9) master_func MAKE_YCM<HANDOFF_SOURCE...>()<p>
@@ -240,10 +414,6 @@ enum _E_YCM
 static
 	YSI_g_sMasterCount,
 	YSI_g_sMasterData[MAX_MASTERS];
-
-PRE_HOOK(Master)
-#undef CHAIN_ORDER
-#define CHAIN_ORDER @CO_Master
 
 /**--------------------------------------------------------------------------**\
 <summary>Master_GetNext</summary>
@@ -299,7 +469,7 @@ public OnScriptInit()
 	{
 		if (!(masters & (1 << i)))
 		{
-			_@ = i;
+			Y@ = i;
 			masters |= 1 << i;
 			break;
 		}
@@ -309,24 +479,23 @@ public OnScriptInit()
 	{
 		setproperty(8, YSIM_MASTER, masters);
 	}
-	C:1(if (!_@) P:E("MasterID not assigned"););
+	C:1(if (!Y@) P:E("MasterID not assigned"););
 	// Make sure this is called before all other YSI initialisations, at least
 	// all the ones which use the master system.
-	CallLocalFunction("YSIM_OnMasterSystemInit", "");
+	CallLocalFunction("OnMasterSystemInit", "i", Y@);
 	Master_OnScriptInit();
 	return 1;
 }
 
-HOOK_FORWARD:Master_OnScriptInit();
+CHAIN_FORWARD:Master_OnScriptInit() = 1;
 #if defined _ALS_OnScriptInit
 	#undef OnScriptInit
 #else
 	#define _ALS_OnScriptInit
 #endif
-#define OnScriptInit(%0) Master_OnScriptInit(%0) <_ALS : _ALS_go>
+#define OnScriptInit(%0) CHAIN_PUBLIC:Master_OnScriptInit(%0)
 
-#define OnMasterSystemInit YSIM_OnMasterSystemInit
-forward YSIM_OnMasterSystemInit();
+forward OnMasterSystemInit(id);
 
 /**--------------------------------------------------------------------------**\
 Hook:
@@ -357,22 +526,20 @@ public OnScriptExit()
 		// The properties currently clear instantly, but that may not always be
 		// the case.
 	}
-	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~(1 << _@)),
+	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~(1 << Y@)),
 	Master_OnScriptExit(),
-	CallRemoteFunction("OnMasterSystemClose", "i", _@);
+	CallRemoteFunction("OnMasterSystemClose", "i", Y@);
 	return 1;
 }
 
-HOOK_FORWARD:Master_OnScriptExit();
+CHAIN_FORWARD:Master_OnScriptExit() = 1;
 #if defined _ALS_OnScriptExit
 	#undef OnScriptExit
 #else
 	#define _ALS_OnScriptExit
 #endif
-#define OnScriptExit(%0) Master_OnScriptExit(%0) <_ALS : _ALS_go>
-
-//#define OnMasterSystemClose Master_OnScriptClose
-//forward Master_OnScriptClose(id);
+#define OnScriptExit(%0) CHAIN_PUBLIC:Master_OnScriptExit(%0)
+forward OnMasterSystemClose(id);
 
 /**--------------------------------------------------------------------------**\
 <summary>Master_Reassert</summary>
@@ -388,10 +555,10 @@ public Master_Reassert()
 {
 	// Make sure that the caller parameter is always 0 by default.
 	U@(8, YSIM_CALLER, 0);
-	if (_@)
+	if (Y@)
 	{
 		// Read this script's master value.
-		setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) | (1 << _@) | 1);
+		setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) | (1 << Y@) | 1);
 		// Readd this script's owned scripts.
 		new
 			func[4];
@@ -403,7 +570,7 @@ public Master_Reassert()
 			func[0] = YSI_g_sMasterData[i] & 0xFF;
 			func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF;
 			func[2] = YSI_g_sMasterData[i] >> 16;
-			setproperty(9, func, _@);
+			setproperty(9, func, Y@);
 		}
 	}
 }
@@ -456,17 +623,17 @@ stock bool:_Master_Get(library[], bool:force = false)
 	{
 		new
 			master = getproperty(9, library);
-		P:4("_Master_Get: Prop exists: %d %d", master, _@);
+		P:4("_Master_Get: Prop exists: %d %d", master, Y@);
 		if (master != -1)
 		{
 			P:4("_Master_Get: Prop set");
-			if (master == _@) return true; // Nothing has changed.
+			if (master == Y@) return true; // Nothing has changed.
 			else if (force) ret = false; // A server is forcing itself.
 			else return false; // Not got the master.
 		}
 	}
 	P:4("_Master_Get: Get master.");
-	setproperty(9, library, _@);
+	setproperty(9, library, Y@);
 	P:4("_Master_Get: Set master.");
 	// Add this library to the list.  The list is designed to only deal with
 	// two or three character master names now!
@@ -480,216 +647,190 @@ stock bool:_Master_Get(library[], bool:force = false)
 	return ret;
 }
 
-/*----------------------------------------------------------------------------*\
-	Forward all the 64 possible master script initialisation functions.
-	
-	The code is split up every 26 masters to slightly speed up the compilation
-	by using "#endinput" if "MAX_MASTERS" is low enough.
-\*----------------------------------------------------------------------------*/
-
 #if defined @aOnScriptInit
-	forward @aOnScriptInit();
+	forward @aOnScriptInit(id);
 #endif
 #if defined @bOnScriptInit
-	forward @bOnScriptInit();
+	forward @bOnScriptInit(id);
 #endif
 #if defined @cOnScriptInit
-	forward @cOnScriptInit();
+	forward @cOnScriptInit(id);
 #endif
 #if defined @dOnScriptInit
-	forward @dOnScriptInit();
+	forward @dOnScriptInit(id);
 #endif
 #if defined @eOnScriptInit
-	forward @eOnScriptInit();
+	forward @eOnScriptInit(id);
 #endif
 #if defined @fOnScriptInit
-	forward @fOnScriptInit();
+	forward @fOnScriptInit(id);
 #endif
 #if defined @gOnScriptInit
-	forward @gOnScriptInit();
+	forward @gOnScriptInit(id);
 #endif
 #if defined @hOnScriptInit
-	forward @hOnScriptInit();
+	forward @hOnScriptInit(id);
 #endif
 #if defined @iOnScriptInit
-	forward @iOnScriptInit();
+	forward @iOnScriptInit(id);
 #endif
 #if defined @jOnScriptInit
-	forward @jOnScriptInit();
+	forward @jOnScriptInit(id);
 #endif
 #if defined @kOnScriptInit
-	forward @kOnScriptInit();
+	forward @kOnScriptInit(id);
 #endif
 #if defined @lOnScriptInit
-	forward @lOnScriptInit();
+	forward @lOnScriptInit(id);
 #endif
 #if defined @mOnScriptInit
-	forward @mOnScriptInit();
+	forward @mOnScriptInit(id);
 #endif
 #if defined @nOnScriptInit
-	forward @nOnScriptInit();
+	forward @nOnScriptInit(id);
 #endif
 #if defined @oOnScriptInit
-	forward @oOnScriptInit();
+	forward @oOnScriptInit(id);
 #endif
 #if defined @pOnScriptInit
-	forward @pOnScriptInit();
+	forward @pOnScriptInit(id);
 #endif
 #if defined @qOnScriptInit
-	forward @qOnScriptInit();
+	forward @qOnScriptInit(id);
 #endif
 #if defined @rOnScriptInit
-	forward @rOnScriptInit();
+	forward @rOnScriptInit(id);
 #endif
 #if defined @sOnScriptInit
-	forward @sOnScriptInit();
+	forward @sOnScriptInit(id);
 #endif
 #if defined @tOnScriptInit
-	forward @tOnScriptInit();
+	forward @tOnScriptInit(id);
 #endif
 #if defined @uOnScriptInit
-	forward @uOnScriptInit();
+	forward @uOnScriptInit(id);
 #endif
 #if defined @vOnScriptInit
-	forward @vOnScriptInit();
+	forward @vOnScriptInit(id);
 #endif
 #if defined @wOnScriptInit
-	forward @wOnScriptInit();
+	forward @wOnScriptInit(id);
 #endif
 #if defined @xOnScriptInit
-	forward @xOnScriptInit();
+	forward @xOnScriptInit(id);
 #endif
 #if defined @yOnScriptInit
-	forward @yOnScriptInit();
+	forward @yOnScriptInit(id);
 #endif
 #if defined @zOnScriptInit
-	forward @zOnScriptInit();
+	forward @zOnScriptInit(id);
 #endif
-
-#if MAX_MASTERS <= 26
-	#endinput
-#endif
-
 #if defined @AOnScriptInit
-	forward @AOnScriptInit();
+	forward @AOnScriptInit(id);
 #endif
 #if defined @BOnScriptInit
-	forward @BOnScriptInit();
+	forward @BOnScriptInit(id);
 #endif
 #if defined @COnScriptInit
-	forward @COnScriptInit();
+	forward @COnScriptInit(id);
 #endif
 #if defined @DOnScriptInit
-	forward @DOnScriptInit();
+	forward @DOnScriptInit(id);
 #endif
 #if defined @EOnScriptInit
-	forward @EOnScriptInit();
+	forward @EOnScriptInit(id);
 #endif
 #if defined @FOnScriptInit
-	forward @FOnScriptInit();
+	forward @FOnScriptInit(id);
 #endif
 #if defined @GOnScriptInit
-	forward @GOnScriptInit();
+	forward @GOnScriptInit(id);
 #endif
 #if defined @HOnScriptInit
-	forward @HOnScriptInit();
+	forward @HOnScriptInit(id);
 #endif
 #if defined @IOnScriptInit
-	forward @IOnScriptInit();
+	forward @IOnScriptInit(id);
 #endif
 #if defined @JOnScriptInit
-	forward @JOnScriptInit();
+	forward @JOnScriptInit(id);
 #endif
 #if defined @KOnScriptInit
-	forward @KOnScriptInit();
+	forward @KOnScriptInit(id);
 #endif
 #if defined @LOnScriptInit
-	forward @LOnScriptInit();
+	forward @LOnScriptInit(id);
 #endif
 #if defined @MOnScriptInit
-	forward @MOnScriptInit();
+	forward @MOnScriptInit(id);
 #endif
 #if defined @NOnScriptInit
-	forward @NOnScriptInit();
+	forward @NOnScriptInit(id);
 #endif
 #if defined @OOnScriptInit
-	forward @OOnScriptInit();
+	forward @OOnScriptInit(id);
 #endif
 #if defined @POnScriptInit
-	forward @POnScriptInit();
+	forward @POnScriptInit(id);
 #endif
 #if defined @QOnScriptInit
-	forward @QOnScriptInit();
+	forward @QOnScriptInit(id);
 #endif
 #if defined @ROnScriptInit
-	forward @ROnScriptInit();
+	forward @ROnScriptInit(id);
 #endif
 #if defined @SOnScriptInit
-	forward @SOnScriptInit();
+	forward @SOnScriptInit(id);
 #endif
 #if defined @TOnScriptInit
-	forward @TOnScriptInit();
+	forward @TOnScriptInit(id);
 #endif
 #if defined @UOnScriptInit
-	forward @UOnScriptInit();
+	forward @UOnScriptInit(id);
 #endif
 #if defined @VOnScriptInit
-	forward @VOnScriptInit();
+	forward @VOnScriptInit(id);
 #endif
 #if defined @WOnScriptInit
-	forward @WOnScriptInit();
+	forward @WOnScriptInit(id);
 #endif
 #if defined @XOnScriptInit
-	forward @XOnScriptInit();
+	forward @XOnScriptInit(id);
 #endif
 #if defined @YOnScriptInit
-	forward @YOnScriptInit();
+	forward @YOnScriptInit(id);
 #endif
 #if defined @ZOnScriptInit
-	forward @ZOnScriptInit();
+	forward @ZOnScriptInit(id);
 #endif
-
-#if MAX_MASTERS <= 52
-	#endinput
-#endif
-
-// We can't permute these symbol names - a symbol can't start with a number.
 #if defined @0OnScriptInit
-	forward @0OnScriptInit();
+	forward @0OnScriptInit(id);
 #endif
 #if defined @1OnScriptInit
-	forward @1OnScriptInit();
+	forward @1OnScriptInit(id);
 #endif
 #if defined @2OnScriptInit
-	forward @2OnScriptInit();
+	forward @2OnScriptInit(id);
 #endif
 #if defined @3OnScriptInit
-	forward @3OnScriptInit();
+	forward @3OnScriptInit(id);
 #endif
 #if defined @4OnScriptInit
-	forward @4OnScriptInit();
+	forward @4OnScriptInit(id);
 #endif
 #if defined @5OnScriptInit
-	forward @5OnScriptInit();
+	forward @5OnScriptInit(id);
 #endif
 #if defined @6OnScriptInit
-	forward @6OnScriptInit();
+	forward @6OnScriptInit(id);
 #endif
 #if defined @7OnScriptInit
-	forward @7OnScriptInit();
+	forward @7OnScriptInit(id);
 #endif
 #if defined @8OnScriptInit
-	forward @8OnScriptInit();
+	forward @8OnScriptInit(id);
 #endif
 #if defined @9OnScriptInit
-	forward @9OnScriptInit();
-#endif
-
-#if defined @@OnScriptInit
-	forward @@OnScriptInit();
-#endif
-
-#if defined @_OnScriptInit
-	forward @_OnScriptInit();
+	forward @9OnScriptInit(id);
 #endif
 

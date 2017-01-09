@@ -97,8 +97,11 @@ Variables:
 #include "..\YSI_Internal\y_globaltags"
 
 // VERY VERY VERY IMPORTANT!!! y_inline uses "130" instead of "YSI_MAX_STRING"
-// for two lines (one is "520" for "130 * 4").
+// for two lines (one is "520" for "130 * 4").  SO DOES y_shortfunc.
 #define YSI_MAX_STRING                  (130)
+#if YSI_MAX_STRING != 130
+	#error Please update all explicit YSI_MAX_STRING uses.
+#endif
 
 #define FUNCTION_LENGTH                 (32)
 
@@ -134,32 +137,17 @@ new stock
 #endif
 
 #define YSIM_MASTER #M
-
 #define YSIM_RETURN #R
-
 #define YSIM_CALLER #C
-
 #define YSIM_TEXT_D #T
-#define YSIM_TEXT_L #L
-#define YSIM_TEXT_S #Y
-#define YSIM_TEXT_P #Z
-
-#define YSIM_ORDERS #O
-
-#define YSIM_HFIRST #H
-
-#define YSIM_OPDRET #D
-
 #define YSIM_TXTFND #X
-
 #define YSIM_TXTIND #I
-
 #define YSIM_TXTLEN #E
-
 #define YSIM_LOG_IN #U
+#define YSIM_VARARG #V
 
 #if !defined YSIM_STRING
-	#define YSIM_STRING (42)
+	#define YSIM_STRING (1000)
 #endif
 
 #define FLOAT_INFINITY                  (Float:0x7F800000)
@@ -399,6 +387,71 @@ public OnPlayerDisconnect(playerid, reason)
 	strcat((%0[0] = '\0', %0), %1)
 
 /**--------------------------------------------------------------------------**\
+<summary>Random</summary>
+<param name="minmax">Lower bound, or upper bound when only parameter.</param>
+<param name="max">Upper bound.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Generate a random float between the given numbers (min <= n < max).  Default
+	minimum is 0.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Random(min, max = cellmin)
+{
+	if (max == cellmin)
+	{
+		if (min < 0)
+			return -random(-min);
+		return random(min);
+	}
+	if (max < min)
+		return random(min - max) + max;
+	return random(max - min) + min;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>RandomFloat</summary>
+<param name="minmax">Lower bound, or upper bound when only parameter.</param>
+<param name="max">Upper bound.</param>
+<param name="dp">How small to make the differences</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Generate a random float between the given numbers (min <= n < max).  Default
+	minimum is 0.0.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
+{
+	new
+		Float:mul = floatpower(10.0, float(dp));
+	switch (dp)
+	{
+	case 0: mul = 1.0;
+	case 1: mul = 10.0;
+	case 2: mul = 100.0;
+	case 3: mul = 1000.0;
+	default: mul = floatpower(10.0, float(dp));
+	}
+	if (max != max)
+	{
+		if (min < 0.0)
+			return -(float(random(floatround(-min * mul))) / mul);
+		return float(random(floatround(min * mul))) / mul;
+	}
+	// Parameters are the wrong way around - do it anyway.
+	if (max < min)
+		return float(random(floatround(min * mul - max * mul))) / mul + max;
+	// NOT a silly check - "IsNaN".
+	return float(random(floatround(max * mul - min * mul))) / mul + min;
+}
+
+/**--------------------------------------------------------------------------**\
 <summary>StripNL</summary>
 <param name="str[]">The string to remove the newline characters from</param>
 <returns>
@@ -414,7 +467,70 @@ stock StripNL(str[])
 	P:7("StripNL called: \"%s\"", str);
 	new
 		i = strlen(str);
+	while (i-- && (str[i] == '\r' || str[i] == '\n') str[i] = '\0';
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>StripR</summary>
+<param name="str[]">The string to remove whitespace from the end of</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock StripR(str[])
+{
+	P:7("StripR called: \"%s\"", str);
+	new
+		i = strlen(str);
 	while (i-- && str[i] <= ' ') str[i] = '\0';
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>StripL</summary>
+<param name="str[]">The string to remove whitespace from the start of</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock StripL(str[])
+{
+	P:7("StripL called: \"%s\"", str);
+	new
+		len = strlen(str),
+		i = 0;
+	while ('\0' < str[i] <= ' ') ++i;
+	if (i) memcpy(str[0], str[i], (len - i) * 4, len);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Strip</summary>
+<param name="str[]">The string to remove whitespace from the start and end of</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Strip(str[])
+{
+	P:7("Strip called: \"%s\"", str);
+	new
+		len = strlen(str),
+		i = len;
+	while (i-- && str[i] <= ' ') str[i] = '\0';
+	i = 0;
+	while ('\0' < str[i] <= ' ') ++i;
+	if (i) memcpy(str[0], str[i], (len - i) * 4, len);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -533,18 +649,50 @@ stock IPToInt(ip[])
 
 stock bernstein(string[] /* 12 */)
 {
-	// Only shown the very first time this function is run.
-	P:7("bernstein called: \"%s\"", string);
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	#emit NOP
+	return 0;
 	#pragma unused string
+}
+
+forward OnCodeInit();
+
+public OnCodeInit()
+{
 	new
 		base,
 		ctx[AsmContext];
-	// Get this function.
+	// Get the function.
 	#emit CONST.pri  bernstein
 	#emit LOAD.alt   AMX_HEADER_COD
 	#emit ADD
 	#emit STOR.S.pri base
-	AsmInitPtr(ctx, base, 128), // Don't need any more than that.
+	P:7("bernstein: base = %d, %d", AMX_HEADER_COD, base);
+	AsmInitPtr(ctx, base, 25 * 4), // Don't need any more than that.
+	AsmSetErrorHandlerName(ctx, "Debug_ErrorHandler");
 	// Setup.
 	@emit PROC
 	@emit CONST.alt   -1
@@ -567,14 +715,23 @@ stock bernstein(string[] /* 12 */)
 	@emit MOVE.pri
 	@emit STACK       4
 	@emit RETN
-	// Now actually CALL the written function.
-	#emit LCTRL      5
-	#emit SCTRL      4
-	#emit CONST.pri  bernstein
-	#emit ADD.C      4
-	#emit SCTRL      6
+	if (FALSE)
+		bernstein("");
+	#if defined Utils_OnCodeInit
+		Utils_OnCodeInit();
+	#endif
 	return 0; // Make the compiler happy.
 }
+
+#if defined Utils_OnCodeInit
+	forward Utils_OnCodeInit();
+#endif
+#if defined _ALS_OnCodeInit
+	#undef OnCodeInit
+#else
+	#define _ALS_OnCodeInit
+#endif
+#define OnCodeInit Utils_OnCodeInit
 
 /**--------------------------------------------------------------------------**\
 <summary>ishex</summary>
@@ -883,75 +1040,110 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 	return rawMemset(addr, val, size * 4);
 }
 
-stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
+stock rawMemset(iAddress, iValue, iSize)
 {
-	// They are really, trust me!
-	#pragma unused iAddress, iSize, iValue
-	// The first time this is called it rewrites itself.  Any other times it is
-	// called it just uses the new code.  This is like doing:
-	//  
-	//  static
-	//      bInitialised = false;
-	//  if (!bInitialised)
-	//  {
-	//      // Do something
-	//      bInitialised = true;
-	//  }
-	//  // Do rest.
-	//  
-	// But better (though FAR more complex).
-	// There is NO checking here that we don't write the function bigger than
-	// the space available, or even that we don't overwrite "CIP", which would
-	// be bad.  The only way to make sure that doesn't happen is write a little
-	// with a lot of code!
-	new
-		base,
-		ctx[AsmContext];
-	// Get this function.
-	#emit CONST.pri  rawMemset
-	#emit LOAD.alt   AMX_HEADER_COD
-	#emit ADD
-	#emit STOR.S.pri base
-	AsmInitPtr(ctx, base, 80), // Don't need any more than that.
-	// Frankly by this point we have probably already written more code than
-	// will be generated!
-	@emit PROC
-	@emit LOAD.S.pri 20
-	@emit CONST.alt  0xFFFFFFC
-	@emit AND
-	@emit STOR.pri   (ctx[AsmContext_buffer] + 13 * 4)
-	// The documentation says "PRI" should be a pointer, but that's not true!
-	@emit LOAD.S.alt 12
-	@emit LOAD.S.pri 16
-	@emit FILL       0
-	// Return the bytes filled.
-	@emit LOAD.pri   (ctx[AsmContext_buffer] + 13 * 4)
-	@emit RETN
-	// Do the second version.
-	#emit CONST.pri  memset
-	#emit LOAD.alt   AMX_HEADER_COD
-	#emit ADD
-	#emit STOR.S.pri base
-	AsmInitPtr(ctx, base, 80),
-	@emit PROC
-	@emit LOAD.S.pri 20
-	@emit SHL.C.pri  2
-	@emit STOR.pri   (ctx[AsmContext_buffer] + 12 * 4)
-	@emit LOAD.S.alt 12
-	@emit LOAD.S.pri 16
-	@emit FILL       0
-	// Return the bytes filled.
-	@emit LOAD.pri   (ctx[AsmContext_buffer] + 12 * 4)
-	@emit RETN
-	// Call this function again (the new version), but don't let the compiler
-	// know...  First clear the stack.
-	#emit LCTRL      5
-	#emit SCTRL      4
-	#emit CONST.pri  rawMemset
-	#emit ADD.C      4
-	#emit SCTRL      6
-	// Never hit because of going to an earlier "RETN".
-	return 0; //memset("", 0, 0);
+	if (iSize < 4)
+		return 0;
+	if (iAddress < 0)
+	{
+		// Somewhere in COD, not DAT.  Can't use FILL because it checks the
+		// address.  Unless we are running in the JIT, which doesn't have
+		// checks, but we shouldn't be writing to COD after the JIT has started
+		// anyway.
+		do
+		{
+			#emit LOAD.S.pri iValue
+			#emit SREF.S.pri iAddress
+			iAddress += 4;
+		}
+		while ((iSize -= 4) > 0);
+		return 1;
+	}
+	else //if (JIT_Complete())
+	{
+		while (iSize >= 4096)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       4096
+			iAddress += 4096;
+			iSize -= 4096;
+		}
+		if (iSize & 2048)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       2048
+			iAddress += 2048;
+		}
+		if (iSize & 1024)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       1024
+			iAddress += 1024;
+		}
+		if (iSize & 512)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       512
+			iAddress += 512;
+		}
+		if (iSize & 256)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       256
+			iAddress += 256;
+		}
+		if (iSize & 128)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       128
+			iAddress += 128;
+		}
+		if (iSize & 64)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       64
+			iAddress += 64;
+		}
+		if (iSize & 32)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       32
+			iAddress += 32;
+		}
+		if (iSize & 16)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       16
+			iAddress += 16;
+		}
+		if (iSize & 8)
+		{
+			#emit LOAD.S.pri iValue
+			#emit LOAD.S.alt iAddress
+			#emit FILL       8
+			iAddress += 8;
+		}
+		if (iSize & 4)
+		{
+			#emit LOAD.S.pri iValue
+			#emit SREF.S.pri iAddress
+		}
+		return 1;
+	}
+//	else
+//	{
+//		// JIT not started/non-existant.  We can use code rewriting.
+//		return 1;
+//	}
 }
 
 /**--------------------------------------------------------------------------**\
