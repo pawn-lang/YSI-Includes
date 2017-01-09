@@ -12,7 +12,7 @@
 #if !defined AMX_INC
 	#error Count not include <amx\amx> - please ensure you have "https://github.com/zeex/amx_assembly"
 #endif
-#error Could not include "https://github.com/Zeex/amx_assembly" - ensure it is in <amx> or <amx_assembly>
+
 #tryinclude "..\amx\amx_base"
 #tryinclude "..\..\amx\amx_base"
 #tryinclude <amx\amx_base>

@@ -943,6 +943,52 @@ _gchain _yGU(&pid, Bit:p[], Bit:c[])
 	#define _GROUP_INCLUDE_ALL_PREVIOUS
 #endif
 
+// Tried doing "gglobal iterfunc Group_...s()", but it turned out to not work
+// quite as well as I had hoped, especially once tags were introduced.  Instead
+// we are just hard-coding the iterator prefix (which means that this in no way
+// relies on "y_iterate".
+gforeign _GROUP_MAKE_TAG:Iter_Func@Group_...s(idx, Group:g);
+gglobal _GROUP_MAKE_TAG:Iter_Func@Group_...s(idx, Group:g)
+{
+	// "idx" doesn't have the "Group:" tag on it because of the way "y_iterate"
+	// strips out certain tags.
+	if (Group_IsValid(g))
+	{
+		GROUP_FIX(g);
+		while (idx < _GROUP_MAKE_LIMIT)
+		{
+			if (Bit_Get(YSI_g_sElementMembership[idx], _:g))
+				return _GROUP_MAKE_TAG:idx;
+			++idx;
+		}
+	}
+	return _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT;
+}
+
+stock const
+	_GROUP_MAKE_TAG:_GROUP_MAKE_TAG<iterstart@Group_...s> = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT;
+
+gforeign Group:Iter_Func@..._Groups(idx, _GROUP_MAKE_TAG:el);
+gglobal Group:Iter_Func@..._Groups(idx, _GROUP_MAKE_TAG:el)
+{
+	// "idx" doesn't have the "Group:" tag on it because of the way "y_iterate"
+	// strips out certain tags.
+	if (idx == -1)
+		idx = Group:0;
+	else
+		idx = GROUP_TEMP_FIX(Group:idx) + 1;
+	while (idx < _MAX_GROUPS_G)
+	{
+		if (Bit_Get(YSI_g_sElementMembership[el], idx) && Group_IsValid(GROUP_MANGLE(idx)))
+			return GROUP_MANGLE(idx);
+		++idx;
+	}
+	return INVALID_GROUP;
+}
+
+stock const
+	Group:_GROUP_MAKE_NAME<iterstart@..._Groups> = INVALID_GROUP;
+
 #undef _GROUP_MAKE_TAG
 #undef _gchain
 #undef _GROUP_SET_PLAYER

@@ -414,7 +414,70 @@ stock StripNL(str[])
 	P:7("StripNL called: \"%s\"", str);
 	new
 		i = strlen(str);
+	while (i-- && (str[i] == '\r' || str[i] == '\n') str[i] = '\0';
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>StripR</summary>
+<param name="str[]">The string to remove whitespace from the end of</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock StripR(str[])
+{
+	P:7("StripR called: \"%s\"", str);
+	new
+		i = strlen(str);
 	while (i-- && str[i] <= ' ') str[i] = '\0';
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>StripL</summary>
+<param name="str[]">The string to remove whitespace from the start of</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock StripL(str[])
+{
+	P:7("StripL called: \"%s\"", str);
+	new
+		len = strlen(str),
+		i = 0;
+	while ('\0' < str[i] <= ' ') ++i;
+	if (i) memcpy(str[0], str[i], (len - i) * 4, len);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Strip</summary>
+<param name="str[]">The string to remove whitespace from the start and end of</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Strip(str[])
+{
+	P:7("Strip called: \"%s\"", str);
+	new
+		len = strlen(str),
+		i = len;
+	while (i-- && str[i] <= ' ') str[i] = '\0';
+	i = 0;
+	while ('\0' < str[i] <= ' ') ++i;
+	if (i) memcpy(str[0], str[i], (len - i) * 4, len);
 }
 
 /**--------------------------------------------------------------------------**\

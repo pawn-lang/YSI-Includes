@@ -513,6 +513,84 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 
 /**--------------------------------------------------------------------------**\
 <summary>
+	Cell_GetLowestBlank(number);
+</summary>
+<param name="number">The number to get the lowest unset bit of.</param>
+<returns>
+	The integer position of the lowest unset bit.
+</returns>
+<remarks>
+	Like Cell_GetLowestBit, but finds zeros not ones.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Cell_GetLowestBlank(GLOBAL_TAG_TYPES:data)
+{
+	static const
+		scDeBruijn[] =
+			{
+				 0,  1, 28,  2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17,  4,  8, 
+				31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18,  6, 11,  5, 10,  9
+			};
+	
+	#emit LOAD.S.pri           data
+	#emit INVERT
+	#emit MOVE.alt
+	#emit NEG
+	#emit AND
+	#emit SMUL.C               0x077CB531
+	#emit SHR.C.pri            27
+	
+	#emit CONST.alt            scDeBruijn
+	#emit LIDX
+	
+	#emit RETN
+	
+	// Make the compiler happy.
+	return 0;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>
+	Cell_GetLowestBlankEx(number);
+</summary>
+<param name="number">The number to get the lowest unset bit of PLUS ONE.</param>
+<returns>
+	The integer position of the lowest unset bit PLUS ONE.
+</returns>
+<remarks>
+	Like Cell_GetLowestBitEx, but finds zeros not ones.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Cell_GetLowestBlankEx(GLOBAL_TAG_TYPES:data)
+{
+	static const
+		scDeBruijn[] =
+			{
+				 1,  2, 29,  3, 30, 15, 25,  4, 31, 23, 21, 16, 26, 18,  5,  9, 
+				32, 28, 14, 24, 22, 20, 17,  8, 27, 13, 19,  7, 12,  6, 11, 10
+			};
+	if (~data)
+	{
+		#emit MOVE.alt
+		#emit NEG
+		#emit AND
+		#emit SMUL.C               0x077CB531
+		#emit SHR.C.pri            27
+		
+		#emit CONST.alt            scDeBruijn
+		#emit LIDX
+	}
+	{} // Zero-cost bug fix.
+	#emit RETN
+	
+	// Make the compiler happy.
+	return 0;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>
 	Cell_GetLowestComponent(number);
 </summary>
 <param name="number">The number to get the number of 1s in.</param>
