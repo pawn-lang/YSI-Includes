@@ -387,6 +387,28 @@ public OnPlayerDisconnect(playerid, reason)
 	strcat((%0[0] = '\0', %0), %1)
 
 /**--------------------------------------------------------------------------**\
+<summary>StrToUpper</summary>
+<param name="dest">Destination string.</param>
+<param name="src">Source string.</param>
+<param name="len">(Implicit) maximum length of the destination.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock StrToUpper(str[])
+{
+	new
+		i = -1,
+		ch;
+	while ((ch = str[++i]))
+		str[i] = toupper(ch);
+}
+
+/**--------------------------------------------------------------------------**\
 <summary>Random</summary>
 <param name="minmax">Lower bound, or upper bound when only parameter.</param>
 <param name="max">Upper bound.</param>
@@ -507,7 +529,7 @@ stock StripL(str[])
 		len = strlen(str),
 		i = 0;
 	while ('\0' < str[i] <= ' ') ++i;
-	if (i) memcpy(str[0], str[i], (len - i) * 4, len);
+	if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
 }
 
 /**--------------------------------------------------------------------------**\
@@ -530,7 +552,7 @@ stock Strip(str[])
 	while (i-- && str[i] <= ' ') str[i] = '\0';
 	i = 0;
 	while ('\0' < str[i] <= ' ') ++i;
-	if (i) memcpy(str[0], str[i], (len - i) * 4, len);
+	if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
 }
 
 /**--------------------------------------------------------------------------**\
