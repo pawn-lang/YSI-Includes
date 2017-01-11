@@ -387,10 +387,9 @@ public OnPlayerDisconnect(playerid, reason)
 	strcat((%0[0] = '\0', %0), %1)
 
 /**--------------------------------------------------------------------------**\
-<summary>StrToUpper</summary>
-<param name="dest">Destination string.</param>
-<param name="src">Source string.</param>
-<param name="len">(Implicit) maximum length of the destination.</param>
+<summary>StrToLower</summary>
+<param name="str">String to convert.</param>
+<param name="len">How much of the string to convert.</param>
 <returns>
 	-
 </returns>
@@ -399,12 +398,33 @@ public OnPlayerDisconnect(playerid, reason)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock StrToUpper(str[])
+stock StrToLower(str[], len = sizeof (str))
 {
 	new
 		i = -1,
 		ch;
-	while ((ch = str[++i]))
+	while ((ch = str[++i]) && len--)
+		str[i] = tolower(ch);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>StrToUpper</summary>
+<param name="str">String to convert.</param>
+<param name="len">How much of the string to convert.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock StrToUpper(str[], len = sizeof (str))
+{
+	new
+		i = -1,
+		ch;
+	while ((ch = str[++i]) && len--)
 		str[i] = toupper(ch);
 }
 
