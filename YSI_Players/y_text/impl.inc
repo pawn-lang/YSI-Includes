@@ -1016,12 +1016,12 @@ public Text_GetStandard(search[], nh, Language:l)
 			{
 				new
 					pointer = YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][l];
-				P:5("Text_GetStandard: %d, %d, %d, %d", slot, pointer, getproperty(8, YSIM_TXTIND), Y@);
+				P:5("Text_GetStandard: %d, %d, %d, %d", slot, pointer, getproperty(8, YSIM_TXTIND), _@);
 				if (pointer != -1)
 				{
 					//P:5("Text_GetStandard: %08x%08x%08x%08x%08x", YSI_g_sTextStrings[pointer][0], YSI_g_sTextStrings[pointer][1], YSI_g_sTextStrings[pointer][2], YSI_g_sTextStrings[pointer][3], YSI_g_sTextStrings[pointer][4]);
 					//setproperty(9, "", YSIM_STRING, YSI_g_sTextStrings[pointer]);
-					setproperty(8, YSIM_TXTFND, Y@);
+					setproperty(8, YSIM_TXTFND, _@);
 					// I reckon this is the only time these functions have ever
 					// been used together directly...
 					P:5("Text_GetStandard: %s", YSI_g_sTextStrings[pointer]);

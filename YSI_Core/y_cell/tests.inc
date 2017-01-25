@@ -68,59 +68,59 @@ Test:y_cell_ExpandCompress()
 	//PRINT(n);
 }
 
-Test:y_cell_ReverseBits1()
-{
-	for (new i = 0; i != 1000000; ++i)
-	{
-		new
-			count = 0;
-		for (new j = 0x80000000, k = 1; j; j >>>= 1, k <<= 1)
-		{
-			if (i & j) count |= k;
-		}
-		if (Cell_ReverseBits(i) != count)
-		{
-			ASSERT(Cell_ReverseBits(i) == count);
-			break;
-		}
-	}
-}
+// Test:y_cell_ReverseBits1()
+// {
+	// for (new i = 0; i != 1000000; ++i)
+	// {
+		// new
+			// count = 0;
+		// for (new j = 0x80000000, k = 1; j; j >>>= 1, k <<= 1)
+		// {
+			// if (i & j) count |= k;
+		// }
+		// if (Cell_ReverseBits(i) != count)
+		// {
+			// ASSERT(Cell_ReverseBits(i) == count);
+			// break;
+		// }
+	// }
+// }
 
-Test:y_cell_ReverseBits2()
-{
-	for (new i = 1000000000; i != 1000123000; ++i)
-	{
-		new
-			count = 0;
-		for (new j = 0x80000000, k = 1; j; j >>>= 1, k <<= 1)
-		{
-			if (i & j) count |= k;
-		}
-		if (Cell_ReverseBits(i) != count)
-		{
-			ASSERT(Cell_ReverseBits(i) == count);
-			break;
-		}
-	}
-}
+// Test:y_cell_ReverseBits2()
+// {
+	// for (new i = 1000000000; i != 1000123000; ++i)
+	// {
+		// new
+			// count = 0;
+		// for (new j = 0x80000000, k = 1; j; j >>>= 1, k <<= 1)
+		// {
+			// if (i & j) count |= k;
+		// }
+		// if (Cell_ReverseBits(i) != count)
+		// {
+			// ASSERT(Cell_ReverseBits(i) == count);
+			// break;
+		// }
+	// }
+// }
 
-Test:y_cell_ReverseBits3()
-{
-	for (new i = -999888; i != 0; ++i)
-	{
-		new
-			count = 0;
-		for (new j = 0x80000000, k = 1; j; j >>>= 1, k <<= 1)
-		{
-			if (i & j) count |= k;
-		}
-		if (Cell_ReverseBits(i) != count)
-		{
-			ASSERT(Cell_ReverseBits(i) == count);
-			break;
-		}
-	}
-}
+// Test:y_cell_ReverseBits3()
+// {
+	// for (new i = -999888; i != 0; ++i)
+	// {
+		// new
+			// count = 0;
+		// for (new j = 0x80000000, k = 1; j; j >>>= 1, k <<= 1)
+		// {
+			// if (i & j) count |= k;
+		// }
+		// if (Cell_ReverseBits(i) != count)
+		// {
+			// ASSERT(Cell_ReverseBits(i) == count);
+			// break;
+		// }
+	// }
+// }
 
 Test:y_cell_ReverseNibbles0()
 {
@@ -133,68 +133,68 @@ Test:y_cell_ReverseNibbles0()
 	ASSERT(Cell_ReverseNibbles(0b1111000001111000011) == 0b00111100001110000111000000000000);
 }
 
-Test:y_cell_ReverseNibbles1()
-{
-	for (new i = 0; i != 1000000; ++i)
-	{
-		new
-			count = 0,
-			k = i;
-		for (new j = 0; j != 8; ++j)
-		{
-			count <<= 4;
-			count |= k & 0x0F;
-			k >>>= 4;
-		}
-		if (Cell_ReverseNibbles(i) != count)
-		{
-			ASSERT(Cell_ReverseNibbles(i) == count);
-			break;
-		}
-	}
-}
+// Test:y_cell_ReverseNibbles1()
+// {
+	// for (new i = 0; i != 1000000; ++i)
+	// {
+		// new
+			// count = 0,
+			// k = i;
+		// for (new j = 0; j != 8; ++j)
+		// {
+			// count <<= 4;
+			// count |= k & 0x0F;
+			// k >>>= 4;
+		// }
+		// if (Cell_ReverseNibbles(i) != count)
+		// {
+			// ASSERT(Cell_ReverseNibbles(i) == count);
+			// break;
+		// }
+	// }
+// }
 
-Test:y_cell_ReverseNibbles2()
-{
-	for (new i = 1000000000; i != 1000123000; ++i)
-	{
-		new
-			count = 0,
-			k = i;
-		for (new j = 0; j != 8; ++j)
-		{
-			count <<= 4;
-			count |= k & 0x0F;
-			k >>>= 4;
-		}
-		if (Cell_ReverseNibbles(i) != count)
-		{
-			ASSERT(Cell_ReverseNibbles(i) == count);
-			break;
-		}
-	}
-}
+// Test:y_cell_ReverseNibbles2()
+// {
+	// for (new i = 1000000000; i != 1000123000; ++i)
+	// {
+		// new
+			// count = 0,
+			// k = i;
+		// for (new j = 0; j != 8; ++j)
+		// {
+			// count <<= 4;
+			// count |= k & 0x0F;
+			// k >>>= 4;
+		// }
+		// if (Cell_ReverseNibbles(i) != count)
+		// {
+			// ASSERT(Cell_ReverseNibbles(i) == count);
+			// break;
+		// }
+	// }
+// }
 
-Test:y_cell_ReverseNibbles3()
-{
-	for (new i = -999888; i != 0; ++i)
-	{
-		new
-			count = 0,
-			k = i;
-		for (new j = 0; j != 8; ++j)
-		{
-			count <<= 4;
-			count |= k & 0x0F;
-			k >>>= 4;
-		}
-		if (Cell_ReverseNibbles(i) != count)
-		{
-			ASSERT(Cell_ReverseNibbles(i) == count);
-			break;
-		}
-	}
-}
+// Test:y_cell_ReverseNibbles3()
+// {
+	// for (new i = -999888; i != 0; ++i)
+	// {
+		// new
+			// count = 0,
+			// k = i;
+		// for (new j = 0; j != 8; ++j)
+		// {
+			// count <<= 4;
+			// count |= k & 0x0F;
+			// k >>>= 4;
+		// }
+		// if (Cell_ReverseNibbles(i) != count)
+		// {
+			// ASSERT(Cell_ReverseNibbles(i) == count);
+			// break;
+		// }
+	// }
+// }
 
 Test:y_cell_ReverseBytes0()
 {
@@ -207,68 +207,68 @@ Test:y_cell_ReverseBytes0()
 	ASSERT(Cell_ReverseBytes(0b1111000001111000011) == 0b11000011100000110000011100000000);
 }
 
-Test:y_cell_ReverseBytes1()
-{
-	for (new i = 0; i != 1000000; ++i)
-	{
-		new
-			count = 0,
-			k = i;
-		for (new j = 0; j != 4; ++j)
-		{
-			count <<= 8;
-			count |= k & 0xFF;
-			k >>>= 8;
-		}
-		if (Cell_ReverseBytes(i) != count)
-		{
-			ASSERT(Cell_ReverseBytes(i) == count);
-			break;
-		}
-	}
-}
+// Test:y_cell_ReverseBytes1()
+// {
+	// for (new i = 0; i != 1000000; ++i)
+	// {
+		// new
+			// count = 0,
+			// k = i;
+		// for (new j = 0; j != 4; ++j)
+		// {
+			// count <<= 8;
+			// count |= k & 0xFF;
+			// k >>>= 8;
+		// }
+		// if (Cell_ReverseBytes(i) != count)
+		// {
+			// ASSERT(Cell_ReverseBytes(i) == count);
+			// break;
+		// }
+	// }
+// }
 
-Test:y_cell_ReverseBytes2()
-{
-	for (new i = 1000000000; i != 1000123000; ++i)
-	{
-		new
-			count = 0,
-			k = i;
-		for (new j = 0; j != 4; ++j)
-		{
-			count <<= 8;
-			count |= k & 0xFF;
-			k >>>= 8;
-		}
-		if (Cell_ReverseBytes(i) != count)
-		{
-			ASSERT(Cell_ReverseBytes(i) == count);
-			break;
-		}
-	}
-}
+// Test:y_cell_ReverseBytes2()
+// {
+	// for (new i = 1000000000; i != 1000123000; ++i)
+	// {
+		// new
+			// count = 0,
+			// k = i;
+		// for (new j = 0; j != 4; ++j)
+		// {
+			// count <<= 8;
+			// count |= k & 0xFF;
+			// k >>>= 8;
+		// }
+		// if (Cell_ReverseBytes(i) != count)
+		// {
+			// ASSERT(Cell_ReverseBytes(i) == count);
+			// break;
+		// }
+	// }
+// }
 
-Test:y_cell_ReverseBytes3()
-{
-	for (new i = -999888; i != 0; ++i)
-	{
-		new
-			count = 0,
-			k = i;
-		for (new j = 0; j != 4; ++j)
-		{
-			count <<= 8;
-			count |= k & 0xFF;
-			k >>>= 8;
-		}
-		if (Cell_ReverseBytes(i) != count)
-		{
-			ASSERT(Cell_ReverseBytes(i) == count);
-			break;
-		}
-	}
-}
+// Test:y_cell_ReverseBytes3()
+// {
+	// for (new i = -999888; i != 0; ++i)
+	// {
+		// new
+			// count = 0,
+			// k = i;
+		// for (new j = 0; j != 4; ++j)
+		// {
+			// count <<= 8;
+			// count |= k & 0xFF;
+			// k >>>= 8;
+		// }
+		// if (Cell_ReverseBytes(i) != count)
+		// {
+			// ASSERT(Cell_ReverseBytes(i) == count);
+			// break;
+		// }
+	// }
+// }
 
 static stock y_cell_CountBits_v1(GLOBAL_TAG_TYPES:data)
 {
@@ -456,59 +456,59 @@ Test:y_cell_CountBits0()
 #endif
 }
 
-Test:y_cell_CountBits1()
-{
-	for (new i = 0; i != 1000000; ++i)
-	{
-		new
-			count = 0;
-		for (new j = 0x80000000; j; j >>>= 1)
-		{
-			if (i & j) ++count;
-		}
-		if (y_cell_CountBits_v4(i) != count)
-		{
-			ASSERT(y_cell_CountBits_v4(i) == count);
-			break;
-		}
-	}
-}
+// Test:y_cell_CountBits1()
+// {
+	// for (new i = 0; i != 1000000; ++i)
+	// {
+		// new
+			// count = 0;
+		// for (new j = 0x80000000; j; j >>>= 1)
+		// {
+			// if (i & j) ++count;
+		// }
+		// if (y_cell_CountBits_v4(i) != count)
+		// {
+			// ASSERT(y_cell_CountBits_v4(i) == count);
+			// break;
+		// }
+	// }
+// }
 
-Test:y_cell_CountBits2()
-{
-	for (new i = 1000000000; i != 1000123000; ++i)
-	{
-		new
-			count = 0;
-		for (new j = 0x80000000; j; j >>>= 1)
-		{
-			if (i & j) ++count;
-		}
-		if (y_cell_CountBits_v4(i) != count)
-		{
-			ASSERT(y_cell_CountBits_v4(i) == count);
-			break;
-		}
-	}
-}
+// Test:y_cell_CountBits2()
+// {
+	// for (new i = 1000000000; i != 1000123000; ++i)
+	// {
+		// new
+			// count = 0;
+		// for (new j = 0x80000000; j; j >>>= 1)
+		// {
+			// if (i & j) ++count;
+		// }
+		// if (y_cell_CountBits_v4(i) != count)
+		// {
+			// ASSERT(y_cell_CountBits_v4(i) == count);
+			// break;
+		// }
+	// }
+// }
 
-Test:y_cell_CountBits3()
-{
-	for (new i = -999888; i != 0; ++i)
-	{
-		new
-			count = 0;
-		for (new j = 0x80000000; j; j >>>= 1)
-		{
-			if (i & j) ++count;
-		}
-		if (y_cell_CountBits_v4(i) != count)
-		{
-			ASSERT(y_cell_CountBits_v4(i) == count);
-			break;
-		}
-	}
-}
+// Test:y_cell_CountBits3()
+// {
+	// for (new i = -999888; i != 0; ++i)
+	// {
+		// new
+			// count = 0;
+		// for (new j = 0x80000000; j; j >>>= 1)
+		// {
+			// if (i & j) ++count;
+		// }
+		// if (y_cell_CountBits_v4(i) != count)
+		// {
+			// ASSERT(y_cell_CountBits_v4(i) == count);
+			// break;
+		// }
+	// }
+// }
 
 Test:y_cell_GetLowestComponent()
 {

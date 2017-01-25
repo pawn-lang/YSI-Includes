@@ -9,10 +9,6 @@ Description:
 	"YSI_FILTERSCRIPT" as a (partial) replacement for "FILTERSCRIPT" which
 	detects what the mode is at runtime for a more reliable system (but it is a
 	run-time variable, not a compile-time constant).
-	
-	Now also provides OnCodeInit, which comes before OnScriptInit and should
-	mostly be used for @emit code generation and other assembly related stuff
-	(since it is called by the JIT if that exists).
 Legal:
 	Version: MPL 1.1
 	
@@ -88,48 +84,30 @@ Changelog:
 #include <a_samp>
 
 #include "..\YSI_Internal\y_natives"
-#include "..\YSI_Internal\y_prehook"
 
 forward _ScriptInit_FixState();
 
-CHAIN_HOOK(ScriptInit)
+#if !defined CHAIN_ORDER
+	#define CHAIN_ORDER() 0
+#endif
+
+forward @CO_ScriptInit();
+
+public @CO_ScriptInit()
+{
+	return CHAIN_ORDER() + 1;
+}
+
 #undef CHAIN_ORDER
-#define CHAIN_ORDER CHAIN_NEXT(ScriptInit)
+#define CHAIN_ORDER @CO_ScriptInit
+
+#define SCRIPT_INIT_FORWARD:%0(%1); \
+	forward ScriptInit_%0(%1); \
+	public ScriptInit_%0(%1) <_ALS : _ALS_x0, _ALS : _ALS_x1> { return 1; } \
+	public ScriptInit_%0(%1) <> { return 1; }
 
 stock
 	bool:YSI_FILTERSCRIPT = false;
-
-static
-	bool:YSI_g_sCodeJITed = false,
-	bool:YSI_g_sCodeJITing = false;
-
-stock bool:JIT_Exists()
-{
-	return YSI_g_sCodeJITing;
-}
-
-stock bool:JIT_Complete()
-{
-	return YSI_g_sCodeJITed;
-}
-
-forward OnJITCompile();
-
-public OnJITCompile()
-{
-	state _ALS : _ALS_go;
-	state _script_init_fix_state : false;
-	// Got it being called twice for some reason.  I think it was a file glitch,
-	// but just make sure.
-	if (YSI_g_sCodeJITing)
-		return 0;
-	YSI_g_sCodeJITing = true;
-	ScriptInit_OnCodeInit();
-	new ret = ScriptInit_OnJITCompile();
-	if (ret)
-		YSI_g_sCodeJITed = true;
-	return ret;
-}
 
 /*
 
@@ -149,9 +127,9 @@ public OnFilterScriptInit()
 	YSI_FILTERSCRIPT = true;
 	state _script_init_fix_state : true;
 	state _ALS : _ALS_go;
-	if (!YSI_g_sCodeJITing)
-		ScriptInit_OnCodeInit();
-	ScriptInit_OnScriptInit();
+	#if defined ScriptInit_OnScriptInit
+		ScriptInit_OnScriptInit();
+	#endif
 	#if defined YSI_LOCK_MODE
 		#if defined FILTERSCRIPT
 			if (strlen(YSI_gLockData[5]) !=
@@ -183,9 +161,9 @@ public OnGameModeInit()
 	if (!YSI_FILTERSCRIPT)
 	{
 		state _script_init_fix_state : false;
-		if (!YSI_g_sCodeJITing)
-			ScriptInit_OnCodeInit();
-		ScriptInit_OnScriptInit();
+		#if defined ScriptInit_OnScriptInit
+			ScriptInit_OnScriptInit();
+		#endif
 		#if defined YSI_LOCK_MODE
 			if (YSI_gLockData[
 				floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
@@ -223,7 +201,9 @@ public OnFilterScriptExit()
 {
 	ScriptInit_OnFilterScriptExit();
 	if (YSI_FILTERSCRIPT)
-		CallLocalFunction("ScriptInit_OnScriptExit", "");
+	{
+		ScriptInit_OnScriptExit();
+	}
 	return 1;
 }
 
@@ -231,7 +211,9 @@ public OnGameModeExit()
 {
 	ScriptInit_OnGameModeExit();
 	if (!YSI_FILTERSCRIPT)
-		CallLocalFunction("ScriptInit_OnScriptExit", "");
+	{
+		ScriptInit_OnScriptExit();
+	}
 	return 1;
 }
 
@@ -248,67 +230,55 @@ public OnGameModeExit()
 
 */
 
-CHAIN_FORWARD:ScriptInit_OnCodeInit() = 1;
-#if defined _ALS_OnCodeInit || defined OnCodeInit
-	#error OnCodeInit defined
+#if defined ScriptInit_OnScriptInit
+	forward ScriptInit_OnScriptInit();
 #endif
-#define _ALS_OnCodeInit
-#define OnCodeInit(%0) CHAIN_PUBLIC:ScriptInit_OnCodeInit(%0)
-
-CHAIN_FORWARD:ScriptInit_OnScriptInit() = 1;
-#if defined _ALS_OnScriptInit || defined OnScriptInit
-	#error defined OnScriptInit
-#endif
-#define _ALS_OnScriptInit
-#define OnScriptInit(%0) CHAIN_PUBLIC:ScriptInit_OnScriptInit(%0)
-
-CHAIN_FORWARD:ScriptInit_OnJITCompile() = 1;
-#if defined _ALS_OnJITCompile
-	#undef OnJITCompile
+#if defined _ALS_OnScriptInit
+	#undef OnScriptInit
 #else
-	#define _ALS_OnJITCompile
+	#define _ALS_OnScriptInit
 #endif
-#define OnJITCompile(%0) CHAIN_PUBLIC:ScriptInit_OnJITCompile(%0)
+#define OnScriptInit ScriptInit_OnScriptInit
 
-CHAIN_FORWARD:ScriptInit_OnFilterScriptInit() = 1;
+SCRIPT_INIT_FORWARD:OnFilterScriptInit();
 #if defined _ALS_OnFilterScriptInit
 	#undef OnFilterScriptInit
 #else
 	#define _ALS_OnFilterScriptInit
 #endif
-#define OnFilterScriptInit(%0) CHAIN_PUBLIC:ScriptInit_OnFilterScriptInit(%0)
+#define OnFilterScriptInit(%0) ScriptInit_OnFilterScriptInit(%0) <_ALS : _ALS_go>
 
-CHAIN_FORWARD:ScriptInit_OnGameModeInit() = 1;
+SCRIPT_INIT_FORWARD:OnGameModeInit();
 #if defined _ALS_OnGameModeInit
 	#undef OnGameModeInit
 #else
 	#define _ALS_OnGameModeInit
 #endif
-#define OnGameModeInit(%0) CHAIN_PUBLIC:ScriptInit_OnGameModeInit(%0)
+#define OnGameModeInit(%0) ScriptInit_OnGameModeInit(%0) <_ALS : _ALS_go>
 
-CHAIN_FORWARD:ScriptInit_OnFilterScriptExit() = 1;
+SCRIPT_INIT_FORWARD:OnFilterScriptExit();
 #if defined _ALS_OnFilterScriptExit
 	#undef OnFilterScriptExit
 #else
 	#define _ALS_OnFilterScriptExit
 #endif
-#define OnFilterScriptExit(%0) CHAIN_PUBLIC:ScriptInit_OnFilterScriptExit(%0)
+#define OnFilterScriptExit(%0) ScriptInit_OnFilterScriptExit(%0) <_ALS : _ALS_go>
 
-CHAIN_FORWARD:ScriptInit_OnGameModeExit() = 1;
+SCRIPT_INIT_FORWARD:OnGameModeExit();
 #if defined _ALS_OnGameModeExit
 	#undef OnGameModeExit
 #else
 	#define _ALS_OnGameModeExit
 #endif
-#define OnGameModeExit(%0) CHAIN_PUBLIC:ScriptInit_OnGameModeExit(%0)
+#define OnGameModeExit(%0) ScriptInit_OnGameModeExit(%0) <_ALS : _ALS_go>
 
-CHAIN_FORWARD:ScriptInit_OnScriptExit() = 1;
+SCRIPT_INIT_FORWARD:OnScriptExit();
 #if defined _ALS_OnScriptExit
 	#undef OnScriptExit
 #else
 	#define _ALS_OnScriptExit
 #endif
-#define OnScriptExit(%0) CHAIN_PUBLIC:ScriptInit_OnScriptExit(%0)
+#define OnScriptExit(%0) ScriptInit_OnScriptExit(%0) <_ALS : _ALS_go>
 
 /*
 
@@ -331,6 +301,14 @@ public _ScriptInit_FixState() <_script_init_fix_state : true>
 }
 
 public _ScriptInit_FixState() <_script_init_fix_state : false>
+{
+}
+
+static stock _ScriptInit_IncludeStates() <_ALS : _ALS_x0, _ALS : _ALS_x1, _ALS : _ALS_x2, _ALS : _ALS_x3>
+{
+}
+
+static stock _ScriptInit_IncludeStates() <_ALS : _ALS_go>
 {
 }
 

@@ -1,88 +1,6 @@
 static
 	YSI_g_sValue;
 
-#if !defined CHAIN_ORDER
-	#define CHAIN_ORDER() 0
-#endif
-
-CHAIN_HOOK(TestPrehook)
-#undef CHAIN_ORDER
-#define CHAIN_ORDER CHAIN_NEXT(TestPrehook)
-
-forward OnTestPrehook();
-
-public OnTestPrehook()
-{
-	YSI_g_sValue = 89;
-	TestPrehook_OnTestPrehook();
-}
-
-CHAIN_FORWARD:TestPrehook_OnTestPrehook() = 1;
-
-#define OnTestPrehook(%0) CHAIN_PUBLIC:TestPrehook_OnTestPrehook(%0)
-
-hook OnTestPrehook()
-{
-	++YSI_g_sValue;
-}
-
-Test:y_hooksPrehook()
-{
-	YSI_g_sValue = 91;
-	CallLocalFunction("OnTestPrehook", "");
-	ASSERT(YSI_g_sValue == 90);
-}
-
-forward OnTestCallback();
-
-public OnTestCallback()
-{
-	YSI_g_sValue = 89;
-	// TestPrehook_OnTestCallback();
-}
-
-CHAIN_FORWARD:TestPrehook_OnTestCallback() = 1;
-
-#define OnTestCallback(%0) CHAIN_PUBLIC:TestPrehook_OnTestCallback(%0)
-
-hook OnTestCallback()
-{
-	++YSI_g_sValue;
-}
-
-Test:y_hooksOrdering()
-{
-	YSI_g_sValue = 91;
-	CallLocalFunction("OnTestCallback", "");
-	ASSERT(YSI_g_sValue == 89);
-}
-
-static
-	bool:y_hooks_OnScriptInit_called = false;
-
-hook OnScriptInit()
-{
-	y_hooks_OnScriptInit_called = true;
-}
-
-Test:OnScriptInit()
-{
-	ASSERT(y_hooks_OnScriptInit_called);
-}
-
-static
-	bool:y_hooks_OnCodeInit_called = false;
-
-hook OnCodeInit()
-{
-	y_hooks_OnCodeInit_called = true;
-}
-
-Test:OnCodeInit()
-{
-	ASSERT(y_hooks_OnCodeInit_called);
-}
-
 forward Ony_hooksTest2(cmd[]);
 
 hook Ony_hooksTest2@000(cmd[])
@@ -102,7 +20,6 @@ public Ony_hooksTest2(cmd[])
 {
 	// Called second due to forced orderings.
 	//if (YSI_g_sValue) return YSI_g_sValue - 7;
-	ASSERT(!strcmp(cmd, "IGNORE_ME"));
 	return 1;
 }
 
@@ -113,132 +30,6 @@ Test:y_hooks_Ony_hooksTest2()
 	ASSERT(CallLocalFunction("Ony_hooksTest2", "s", "IGNORE_ME") != 0);
 	ASSERT(YSI_g_sValue == 2);
 	YSI_g_sValue = 0;
-}
-
-forward y_hooks_PassParams(i1, a0[], i2);
-
-public y_hooks_PassParams(i1, a0[], i2)
-{
-	ASSERT(i1 == 42);
-	ASSERT(!strcmp(a0, "Hello world"));
-	ASSERT(i2 == 101);
-}
-
-hook y_hooks_PassParams@3(i1, a0[], i2)
-{
-	ASSERT(i1 == 42);
-	ASSERT(!strcmp(a0, "Hello world"));
-	ASSERT(i2 == 101);
-}
-
-hook y_hooks_PassParams@2(i1, a0[], i2)
-{
-	ASSERT(i1 == 42);
-	ASSERT(!strcmp(a0, "Hello world"));
-	ASSERT(i2 == 101);
-}
-
-hook y_hooks_PassParams@1(i1, a0[], i2)
-{
-	ASSERT(i1 == 42);
-	ASSERT(!strcmp(a0, "Hello world"));
-	ASSERT(i2 == 101);
-}
-
-hook y_hooks_PassParams(i1, a0[], i2)
-{
-	ASSERT(i1 == 42);
-	ASSERT(!strcmp(a0, "Hello world"));
-	ASSERT(i2 == 101);
-}
-
-Test:y_hooks_PassParams()
-{
-	CallLocalFunction("y_hooks_PassParams", "isi", 42, "Hello world", 101);
-}
-
-forward y_hooks_ReturnM2();
-
-public y_hooks_ReturnM2()
-{
-	YSI_g_sValue = 8;
-	return -2;
-}
-
-hook y_hooks_ReturnM2()
-{
-	YSI_g_sValue = 4;
-	return -2;
-}
-
-Test:y_hooks_ReturnM2()
-{
-	YSI_g_sValue = 0;
-	ASSERT(CallLocalFunction("y_hooks_ReturnM2", "") == 1);
-	ASSERT(YSI_g_sValue == 4);
-}
-
-forward y_hooks_ReturnM1();
-
-public y_hooks_ReturnM1()
-{
-	YSI_g_sValue = 8;
-	return -1;
-}
-
-hook y_hooks_ReturnM1()
-{
-	YSI_g_sValue = 4;
-	return -1;
-}
-
-Test:y_hooks_ReturnM1()
-{
-	YSI_g_sValue = 0;
-	ASSERT(CallLocalFunction("y_hooks_ReturnM1", "") == 0);
-	ASSERT(YSI_g_sValue == 4);
-}
-
-forward y_hooks_Return0();
-
-public y_hooks_Return0()
-{
-	YSI_g_sValue = 8;
-	return 0;
-}
-
-hook y_hooks_Return0()
-{
-	YSI_g_sValue = 4;
-	return 0;
-}
-
-Test:y_hooks_Return0()
-{
-	YSI_g_sValue = 0;
-	ASSERT(CallLocalFunction("y_hooks_Return0", "") == 0);
-	ASSERT(YSI_g_sValue == 8);
-}
-
-forward y_hooks_Return1();
-
-public y_hooks_Return1()
-{
-	YSI_g_sValue = 8;
-	return 1;
-}
-
-hook y_hooks_Return1()
-{
-	YSI_g_sValue = 4;
-	return 1;
-}
-
-Test:y_hooks_Return1()
-{
-	YSI_g_sValue = 0;
-	ASSERT(CallLocalFunction("y_hooks_Return1", "") == 1);
-	ASSERT(YSI_g_sValue == 8);
 }
 
 forward Ony_hooksTest3(cmd[]);
@@ -441,7 +232,7 @@ forward MyFunc1(a, b);
 
 public MyFunc1(a, b)
 {
-	// printf("Part 1 %d %d", a, b);
+	//printf("Part 1 %d %d", a, b);
 	g_y_hooksVar += a + b;
 }
 
@@ -450,7 +241,7 @@ public MyFunc1(a, b)
 
 hook MyFunc1(a, b)
 {
-	// printf("Part 2 %d", a);
+	//printf("Part 2 %d", a);
 	g_y_hooksVar += a + b;
 }
 
@@ -459,7 +250,7 @@ hook MyFunc1(a, b)
 
 hook MyFunc1(a, b)
 {
-	// printf("Part 3 %d", b);
+	//printf("Part 3 %d", b);
 	g_y_hooksVar += a + b;
 }
 
@@ -468,7 +259,7 @@ hook MyFunc1(a, b)
 
 hook MyFunc1(a, b)
 {
-	// printf("Part 3 %d", b);
+	//printf("Part 3 %d", b);
 	g_y_hooksVar += a + b;
 }
 
@@ -477,7 +268,7 @@ hook MyFunc1(a, b)
 
 hook MyFunc1(a, b)
 {
-	// printf("Part 3 %d", b);
+	//printf("Part 3 %d", b);
 	g_y_hooksVar += a + b;
 }
 
@@ -486,12 +277,11 @@ hook MyFunc1(a, b)
 
 hook MyFunc1(a, b)
 {
-	// printf("Part 3 %d", b);
+	//printf("Part 3 %d", b);
 	g_y_hooksVar += a + b;
 }
 
 forward OnPlayerEnterDynamicArea(p, a);
-
 public OnPlayerEnterDynamicArea(p, a) { g_y_hooksVar += 100; }
 
 hook OnPlayerEnterDynArea(p, a) { g_y_hooksVar += 10; }

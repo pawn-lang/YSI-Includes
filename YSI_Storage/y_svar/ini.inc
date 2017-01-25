@@ -326,8 +326,7 @@ Svar_Save()
 		#emit PUSH.C     16
 		// Now get the return address and push it.
 		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit ADD.C      28
 		#emit PUSH.pri
 		// Call "Player_WriteArray" directly.
 		#emit CONST.pri  INI_WriteArray
@@ -350,8 +349,7 @@ hook OnScriptInit()
 	{
 		#emit PUSH.C     0
 		#emit LCTRL      6
-		#emit ADD.C      36
-		#emit LCTRL      8
+		#emit ADD.C      28
 		#emit PUSH.pri
 		#emit LOAD.S.pri buffer
 		#emit SCTRL      6

@@ -166,52 +166,6 @@ Test:y_inline6()
 	Callback_Release(cc);
 }
 
-Test:y_inline_many_params()
-{
-	new
-		cc[E_CALLBACK_DATA];
-	inline InlineFunc_1(a, b[32], string:c[])
-	{
-		#if !(sizeof (c) == YSI_MAX_STRING))
-			#error sizeof (c) != YSI_MAX_STRING
-		#endif
-		ASSERT(a == 99);
-		ASSERT(!strcmp(c, "world"));
-		ASSERT(b[30] == 107);
-		ASSERT(b[31] == 108);
-	}
-	inline InlineFunc_2(a, b, c[32], string:e[], d[100], f)
-	{
-		#if !(sizeof (e) == YSI_MAX_STRING))
-			#error sizeof (e) != YSI_MAX_STRING
-		#endif
-		ASSERT(a == 99);
-		ASSERT(b == 999);
-		ASSERT(f == 9999);
-		ASSERT(!strcmp(e, "hello"));
-		ASSERT(c[0] == 11);
-		ASSERT(c[1] == 12);
-		ASSERT(c[2] == 13);
-		ASSERT(d[0] == 51);
-		ASSERT(d[1] == 52);
-		ASSERT(d[2] == 53);
-	}
-	new
-		arr1[32] = {
-			11, 12, 13, 14, 15, 16, 17, 18,
-			41, 42, 43, 44, 45, 46, 47, 48,
-			111, 112, 113, 114, 115, 116, 117, 118,
-			101, 102, 103, 104, 105, 106, 107, 108
-		},
-		arr2[100] = { 51, 52, 53 };
-	y_inline_Get(using inline InlineFunc_1, cc);
-	Callback_Call(cc, 99, arr1, "world");
-	Callback_Release(cc);
-	y_inline_Get(using inline InlineFunc_2, cc);
-	Callback_Call(cc, 99, 999, arr1, "hello", arr2, 9999);
-	Callback_Release(cc);
-}
-
 forward y_inline7a();
 
 public y_inline7a()

@@ -1,14 +1,3 @@
-Test:y_commands_Syntax()
-{
-	new
-		id1 = YCMD:y_commands_1,
-		id2 = (YCMD:y_commands_2),
-		id3 = YCMD:y_commands_3;
-	ASSERT(id1 != -1);
-	ASSERT(id2 == -1);
-	ASSERT(id3 != -1);
-}
-
 Test:y_commands_Valid()
 {
 	ASSERT(Command_IsValid(YCMD:y_commands_1));
@@ -495,10 +484,6 @@ Test:y_commands_lengths()
 	
 	Test:y_commands_prefix1()
 	{
-		new
-			a = _C<@_yC>,
-			b = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00);
-		ASSERT(a == b);
 		call OnPlayerConnect(89);
 		ASSERT(call OnPlayerCommandText(89, "/y_commands_prefix1") == 1);
 		ASSERT(call OnPlayerText(89, "!y_commands_prefix1") == 1);
@@ -516,4 +501,3 @@ Test:y_commands_lengths()
 		ASSERT(!Command_IsPrefixUsed('!'));
 	}
 #endif
-

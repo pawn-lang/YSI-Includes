@@ -325,16 +325,27 @@ public _PHP_Result(index, response, data[])
 				{
 					//P:I("PHP: Got response.");
 					// Now parse the data.
+					//printf(data);
 					static
 						sFunc[32],
 						bool:sTrue = true,
 						bool:sFalse = false;
 					for (new i = 1, len = strlen(data); i < len; )
 					{
+						//new
+						//	flen = PHP_GetNum8(data[i]) + i + 1;
+						//data[flen] = '\0';
+						//format(sFunc, sizeof (sFunc), "%s@yP_", data[i + 1]);
+						//i = flen;
+						//printf("%d %d", i, data[i]);
 						new
 							flen = PHP_GetNum8(data[i++]);
-						format(sFunc, sizeof (sFunc), "@_yP%.*s", flen, data[i]);
+						//printf("%d", flen);
+						//data[flen] = '\0';
+						format(sFunc, sizeof (sFunc), "%.*s@yP_", flen, data[i]);
+						//printf("%s", sFunc);
 						i += flen;
+						//printf("%d", data[i]);
 						if (data[i] & 0x80)
 						{
 							flen = PHP_GetNum32(data[i]);
@@ -366,8 +377,8 @@ public _PHP_Result(index, response, data[])
 						}
 						else if (data[i] & 0x40)
 						{
-							sFunc[2] = 'P';
-							sFunc[3] = 'y';
+							sFunc[flen] = '_';
+							sFunc[flen + 3] = '@';
 							// Function call.
 							new
 								params = PHP_GetNum6(data[i]),
@@ -511,13 +522,10 @@ public _PHP_Result(index, response, data[])
 	}
 }
 
-#define phpdata%0(%1) @_yP%0(%1);@_yP%0(%1)
-#define phpfunc%0(%1) @_Py%0(%1);@_Py%0(%1)
+#define phpdata%0(%1) %0@yP_(%1);public%0@yP_(%1)
+#define phpfunc%0(%1) %0_yP@(%1);public%0_yP@(%1)
 
-#define PHP:%0(%1) @_Py%0(%1);@_Py%0(%1)
-
-#define @_yP%0\32; @_yP
-#define @_Py%0\32; @_Py
+#define PHP:%0(%1) %0_yP@(%1);public %0_yP@(%1)
 
 //#include "..\YSI_Core\y_master"
 

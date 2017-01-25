@@ -109,17 +109,36 @@ enum E_HOOK_NAME_REPLACEMENT_DATA
 	E_HOOK_NAME_REPLACEMENT_MAX
 }
 
-#define HOOK_RET:%0(%1) forward @RET%0(); public @RET%0()
+#if !defined CHAIN_ORDER
+	#define CHAIN_ORDER() 0
+#endif
 
-CHAIN_HOOK(HookChain)
-#undef CHAIN_ORDER
-#define CHAIN_ORDER CHAIN_NEXT(HookChain)
+#define PRE_HOOK(%0) forward @CO_%0();public @CO_%0(){return CHAIN_ORDER()+1;}
 
-enum E_CHAIN_HOOK
+enum E_PRE_HOOK
 {
-	E_CHAIN_HOOK_NAME[16],
-	E_CHAIN_HOOK_VALUE
+	E_PRE_HOOK_NAME[16],
+	E_PRE_HOOK_VALUE
 }
+
+PRE_HOOK(HookChain)
+#undef CHAIN_ORDER
+#define CHAIN_ORDER @CO_HookChain
+
+static stock _HookChain_IncludeStates() <_ALS : _ALS_x0, _ALS : _ALS_x1, _ALS : _ALS_x2, _ALS : _ALS_x3>
+{
+}
+
+static stock _HookChain_IncludeStates() <_ALS : _ALS_go>
+{
+}
+
+#define HOOK_FORWARD:%0_%2(%1); \
+	forward %0_%2(%1); \
+	public %0_%2(%1) <_ALS : _ALS_x0, _ALS : _ALS_x1> { return 1; } \
+	public %0_%2(%1) <> { return 1; }
+
+#define HOOK_RET:%0(%1) forward @RET%0(); public @RET%0()
 
 HOOK_RET:OnPlayerCommandText()
 {
@@ -157,15 +176,7 @@ static stock
 	YSI_g_sReplacements[MAX_HOOK_REPLACEMENTS][E_HOOK_NAME_REPLACEMENT_DATA],
 	YSI_g_sReplacementsLongOrder[MAX_HOOK_REPLACEMENTS],
 	YSI_g_sReplacementsShortOrder[MAX_HOOK_REPLACEMENTS],
-	YSI_g_sReplacePtr,
-	YSI_g_sInitFSPtr,
-	YSI_g_sInitFSIdx = -1,
-	YSI_g_sInitFSRep,
-	YSI_g_sInitGMPtr,
-	YSI_g_sInitGMIdx = -1,
-	YSI_g_sInitGMRep,
-	YSI_g_sInitPublicDiff,
-	bool:YSI_g_sSortedOnce = false;
+	YSI_g_sReplacePtr;
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_MakeLongName</summary>
@@ -311,14 +322,14 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 	includes in order for everything to function correctly (at least fixes.inc
 	must).  This function looks for these definitions:
 	
-	    CHAIN_HOOK(FIXES)
+	    PRE_HOOK(FIXES)
 	
 	Which tell y_hooks that any "FIXES_" prefixed callbacks are part of one of
 	these chains.
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &precount, size = sizeof (preloads))
+_Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precount, size = sizeof (preloads))
 {
 	--size,
 	precount = 0;
@@ -338,16 +349,9 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 			}
 			addr = AMX_Read(entry);
 			AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS + 4, name),
-			strunpack(preloads[precount][E_CHAIN_HOOK_NAME], name, 16),
-			preloads[precount][E_CHAIN_HOOK_VALUE] = CallFunction(addr),
+			strunpack(preloads[precount][E_PRE_HOOK_NAME], name, 16),
+			preloads[precount][E_PRE_HOOK_VALUE] = CallFunction(addr),
 			++precount;
-			if (strlen(name) > 15)
-				P:E("Overflow in prehook name \"%s\"", unpack(name));
-			// {
-				// new buffer[32];
-				// strunpack(buffer, name);
-				// printf("preload: %s", buffer);
-			// }
 			// Remove this public from the publics table.  Means that future public
 			// function calls will be faster by having a smaller search space.
 			Hooks_InvalidateName(entry);
@@ -356,12 +360,12 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 	// Sort the preload libraries.
 	{
 		new
-			tmp[E_CHAIN_HOOK];
+			tmp[E_PRE_HOOK];
 		for (entry = precount - 1; entry > 0; --entry)
 		{
 			for (idx = 0; idx != entry; ++idx)
 			{
-				if (preloads[idx][E_CHAIN_HOOK_VALUE] > preloads[idx + 1][E_CHAIN_HOOK_VALUE])
+				if (preloads[idx][E_PRE_HOOK_VALUE] > preloads[idx + 1][E_PRE_HOOK_VALUE])
 				{
 					tmp = preloads[idx],
 					preloads[idx] = preloads[idx + 1],
@@ -388,22 +392,18 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_CHAIN_HOOK], precount, name[64], hooks[], &count)
+_Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_PRE_HOOK], precount, name[64], hooks[], &count)
 {
 	new
 		idx,
 		lfunc[64];
 	// Collect all the functions with something like this name.
-	P:2("Hooks_GetPreHooks start: %s", unpack(name));
 	do
 	{
 		strcat(lfunc, name),
 		Hooks_MakeShortName(lfunc);
-		P:5("Hooks_GetPreHooks: search = %s", unpack(lfunc));
-		P:C(new oc = count;);
 		if (AMX_GetPublicEntry(0, hooks[count], lfunc, true)) ++count;
-		P:C(if (oc != count) { new buffer[32]; AMX_ReadString(AMX_Read(hooks[count] + 4) + AMX_BASE_ADDRESS, buffer); P:5("Hooks_GetPreHooks: found = %s", unpack(buffer)); });
-		strcpy(lfunc, preloads[idx][E_CHAIN_HOOK_NAME]),
+		strcpy(lfunc, preloads[idx][E_PRE_HOOK_NAME]),
 		strcat(lfunc, "_");
 	}
 	while (++idx <= precount);
@@ -632,7 +632,7 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 	// Get the preloaders.
 	new
 		precount = 0,
-		preloads[8][E_CHAIN_HOOK];
+		preloads[8][E_PRE_HOOK];
 	Hooks_GetPreloadLibraries(preloads, precount);
 	// Main loop
 	new
@@ -644,6 +644,7 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 		// Collect all the hooks of this function, and rewrite the call code.
 		Hooks_Collate(preloads, precount, name, idx);
 	}
+	Hooks_SortPublics();
 }
 
 /**--------------------------------------------------------------------------**\
@@ -657,7 +658,7 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_CHAIN_HOOK], precount, name[32], &idx)
+_Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], &idx)
 {
 	// This records the amount of space available in the nametable, currently
 	// taken up by the names of hooks that we are about to destroy.
@@ -712,7 +713,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_CHAIN_HOOK], precount, name[32]
 		hookCount = Hooks_GetAllHooks(name, sHooks, idx, namelen),
 		writePtr = sHooks[0], // Header for the first found hook.
 		nextPtr,
-		pc, ph[16];
+		pc, ph[4];
 	// Get the preloads.
 	Hooks_GetPreHooks(preloads, precount, sName, ph, pc),
 	// Get where in the chain we are being inserted.
@@ -879,52 +880,30 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	CGen_UseCodeSpace(ctx);
 	
 	// Start of the function.
-	@emit PROC                          // 1
+	@emit PROC              // 1
 	
 	// Allocate space for our "ret" variable at "frm - 4".
-	if (multiple) @emit PUSH.C  ret     // 3
+	if (multiple) @emit PUSH.C        ret // 3
 	
 	// Copy the stack to itself (MOVS).
 	// Allocate space.
-	@emit LOAD.S.pri    8               // 5
-	if (JIT_Exists())
-		@emit JZER.rel  ((31 - 7) * 4)  // 7
-	else
-		@emit JZER.rel  ((22 - 7) * 4)  // 7
-	@emit MOVE.alt                      // 8
-	@emit LCTRL         4               // 10
-	@emit SUB                           // 11
-	@emit SCTRL         4               // 13
-	@emit XCHG                          // 14
+	@emit LOAD.S.alt    8   // 5
+	@emit LCTRL         4   // 7
+	@emit SUB               // 8
+	@emit SCTRL         4   // 10
+	@emit XCHG              // 11
 	
-	if (JIT_Exists())
-	{
-		// Need to use memcpy to move about in the stack.
-		@emit PUSH.C        4096        // 16
-		@emit PUSH.pri                  // 17
-		@emit PUSH.C        0           // 19
-		@emit LCTRL         5           // 21
-		@emit ADD.C         12          // 23
-		@emit PUSH.pri                  // 24
-		@emit PUSH.alt                  // 25
-		@emit PUSH.C        20          // 27
-		@emit SYSREQ        "memcpy"    // 29
-		@emit STACK         24          // 31
-	}
-	else
-	{
-		// The "MOVS" OpCode only takes a constant, not a variable, so we need
-		// to generate self-modifying code (just to be UBER meta)!  This code is
-		// generated AFTER the file is loaded so we bypass the data segment
-		// checks and can freely write wherever we want.
-		@emit STOR.pri      (CGen_GetCodeSpace() + (21 * 4) - (multiple ? 0 : 8)) // 16
-		
-		// Do the copying.  "alt" is already "STK", load the "FRM" offset.
-		@emit LCTRL         5           // 18
-		@emit ADD.C         12          // 20
-		// This is the instruction we want to modify...
-		@emit MOVS          0           // 22 (- 1)
-	}
+	// The "MOVS" OpCode only takes a constant, not a variable, so we need to
+	// generate self-modifying code (just to be UBER meta)!  This code is
+	// generated AFTER the file is loaded so we bypass the data segment checks
+	// and can freely write wherever we want.
+	@emit STOR.pri      (CGen_GetCodeSpace() + (18 * 4) - (multiple ? 0 : 8)) // 13
+	
+	// Do the copying.  "alt" is already "STK", load the "FRM" offset.
+	@emit LCTRL         5   // 15
+	@emit ADD.C         12  // 17
+	// This is the instruction we want to modify...
+	@emit MOVS          0   // 19 (- 1)
 	
 	// Push the (fake) number of parameters.
 	@emit PUSH.C        -4
@@ -1110,8 +1089,8 @@ _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 _Y_HOOKS_STATIC Hooks_SortPublics()
 {
 	// Count the number of still active functions.
-	YSI_g_sInitPublicDiff = Hooks_CountInvalidPublics() * 8;
 	new
+		diff = Hooks_CountInvalidPublics() * 8,
 		oldCount = (AMX_HEADER_NATIVES - AMX_HEADER_PUBLICS) / 8;
 	// Now I need to SORT the functions, and I have honestly no idea how to do
 	// that.  Fortunately I don't actually need to move the strings themselves
@@ -1127,16 +1106,14 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 		}
 	}
 	// Move the start address UP to reduce the VM's search space.
-	if (YSI_g_sInitPublicDiff)
+	if (diff)
 	{
 		// Update stored values in y_amx so they reflect the new structure.
-		if (!JIT_Exists() || YSI_g_sSortedOnce)
-		{
-			AMX_Write(AMX_BASE_ADDRESS + 32, AMX_Read(AMX_BASE_ADDRESS + 32) + YSI_g_sInitPublicDiff);
-			AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff;
-			ResetStaticAmxHeader();
-			YSI_g_sSortedOnce = true;
-		}
+		AMX_Write(AMX_BASE_ADDRESS + 32, AMX_Read(AMX_BASE_ADDRESS + 32) + diff);
+		AMX_HEADER_PUBLICS += diff;
+		// I'd love to be able to update ZeeX's code as well, but I can't.
+		// Issue pull request for this.
+		ResetStaticAmxHeader();
 	}
 	// TODO: Inform the fixes2 plugin of the change.  That stores indexes, not
 	// addresses so it needs to update itself (somehow - I don't actually know
@@ -1250,22 +1227,14 @@ static stock Hooks_SortReplacements()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-public OnCodeInit()
+public OnScriptInit()
 {
-	P:1("Hooks_OnCodeInit called");
+	P:1("Hooks_OnScriptInit called");
 	state _ALS : _ALS_go;
 	// Get the replacements.
 	new
 		idx,
 		entry;
-	if (JIT_Exists())
-	{
-		// Get the indexes of the startup functions that get recorded before the
-		// JIT plugin compiles, but called after it.  We thus need to fiddle the
-		// hooking to ensure that the correct functions are always called.
-		YSI_g_sInitFSIdx = funcidx("OnFilterScriptInit");
-		YSI_g_sInitGMIdx = funcidx("OnGameModeInit");
-	}
 	// Loop over the redefinition functions and call them to have them call the
 	// "_Hooks_AddReplacement" function above.  If we were being REALLY clever,
 	// these functions could be removed from the public functions table
@@ -1278,109 +1247,19 @@ public OnCodeInit()
 	}
 	Hooks_SortReplacements();
 	Hooks_DoAllHooks();
-	// Remove a few other superfluous publics.
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<_@_y>)))
-		Hooks_InvalidateName(entry);
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@CO_>)))
-		Hooks_InvalidateName(entry);
-	Hooks_SortPublics();
-	P:1("Hooks_OnCodeInit chain");
+	P:1("Hooks_OnScriptInit chain");
 	// Dump the generated callbacks for debugging.
 	//DisasmDump("YSI_TEST.asm");
-	HookChain_OnCodeInit();
-	P:1("Hooks_OnCodeInit end");
-	if (JIT_Exists())
-		Hooks_RepairJITInit();
+	HookChain_OnScriptInit();
+	P:1("Hooks_OnScriptInit end");
 	return 1;
 }
 
-CHAIN_FORWARD:HookChain_OnCodeInit() = 1;
-#if defined _ALS_OnCodeInit
-	#undef OnCodeInit
+HOOK_FORWARD:HookChain_OnScriptInit();
+#if defined _ALS_OnScriptInit
+	#undef OnScriptInit
 #else
-	#define _ALS_OnCodeInit
+	#define _ALS_OnScriptInit
 #endif
-#define OnCodeInit(%0) CHAIN_PUBLIC:HookChain_OnCodeInit(%0)
-
-/**--------------------------------------------------------------------------**\
-<summary>Hooks_RepairJITInit</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	When using the JIT, the initialisation functions may have already had their
-	indexes looked up prior to calling the plugin.  It that case we need to keep
-	the index constant, even if a different public is now in that slot.
-	
-	The stub is the function put in to that index, which redirects the first
-	call to one of those publics to the correct place and restores whatever
-	public was previously in that slot.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC _Hooks_RepairStub()
-{
-	AMX_Write(AMX_HEADER_PUBLICS + YSI_g_sInitFSIdx * 8, YSI_g_sInitFSRep);
-	AMX_Write(AMX_HEADER_PUBLICS + YSI_g_sInitGMIdx * 8, YSI_g_sInitGMRep);
-	// Move the header up for searching.
-	if (YSI_g_sInitPublicDiff)
-	{
-		AMX_Write(AMX_BASE_ADDRESS + 32, AMX_Read(AMX_BASE_ADDRESS + 32) + YSI_g_sInitPublicDiff);
-		AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff;
-		ResetStaticAmxHeader();
-		YSI_g_sSortedOnce = true;
-	}
-}
-
-_Y_HOOKS_STATIC _Hooks_RepairStubFS()
-{
-	_Hooks_RepairStub();
-	#emit PUSH.C              0
-	#emit LCTRL               6
-	#emit ADD.C               36
-	#emit LCTRL               8
-	#emit PUSH.pri
-	#emit LOAD.pri            YSI_g_sInitFSPtr
-	#emit SCTRL               6
-	return 1;
-}
-
-_Y_HOOKS_STATIC _Hooks_RepairStubGM()
-{
-	_Hooks_RepairStub();
-	#emit PUSH.C              0
-	#emit LCTRL               6
-	#emit ADD.C               36
-	#emit LCTRL               8
-	#emit PUSH.pri
-	#emit LOAD.pri            YSI_g_sInitGMPtr
-	#emit SCTRL               6
-	return 1;
-}
-
-_Y_HOOKS_STATIC Hooks_RepairJITInit()
-{
-	if (FALSE)
-	{
-		_Hooks_RepairStubFS();
-		_Hooks_RepairStubGM();
-	}
-	// The pointer at this index needs to remain constant.  Replace it with a
-	// pointer to a stub that resets the pointer then calls the real init hook.
-	YSI_g_sInitFSPtr = GetPublicAddressFromName("OnFilterScriptInit");
-	YSI_g_sInitGMPtr = GetPublicAddressFromName("OnGameModeInit");
-	new
-		base,
-		stub;
-	base = AMX_HEADER_PUBLICS + YSI_g_sInitFSIdx * 8;
-	#emit CONST.pri           _Hooks_RepairStubFS
-	#emit STOR.S.pri          stub
-	YSI_g_sInitFSRep = AMX_Read(base),
-	AMX_Write(base, stub);
-	base = AMX_HEADER_PUBLICS + YSI_g_sInitGMIdx * 8;
-	#emit CONST.pri           _Hooks_RepairStubGM
-	#emit STOR.S.pri          stub
-	YSI_g_sInitGMRep = AMX_Read(base),
-	AMX_Write(base, stub);
-}
+#define OnScriptInit(%0) HookChain_OnScriptInit(%0) <_ALS : _ALS_go>
 

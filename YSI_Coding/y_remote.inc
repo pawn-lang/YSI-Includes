@@ -107,12 +107,6 @@ Natives:
 #include "..\YSI_Internal\y_shortfunc"
 
 #include "..\YSI_Core\y_utils"
-#include "y_remote/macros"
-
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_remote/tests"
-#endif
 
 // This VERY LOOSELY uses the master system to figure out if it should even
 // bother with complex remote calls.  However, it isn't fully bound by the
@@ -129,7 +123,7 @@ Natives:
 	// This now also uses @RH
 	
 	// This uses "stock" as it may be called from another script.
-	//#define remotefunc%0(%1) stock%0_(%1)return J@?(W@(_:@Rz:#%0@##,_YM@CR:%1,,)):%0(%1);//%0@(__m);public %0@(__m)if(__m==-1||__m==Y@)%0();%0(%1)
+	//#define remotefunc%0(%1) stock%0_(%1)return J@?(W@(_:@Rz:#%0@##,_YM@CR:%1,,)):%0(%1);//%0@(__m);public %0@(__m)if(__m==-1||__m==_@)%0();%0(%1)
 	#define remotefunc%0(%1) stock%0_(%1)if(@RN:@RO:%0:J@)return(W@(_:@Rz:#%0@##,_YM@CR:%1,,));else return(%0(%1));
 	
 	#define @RN:@RO:%9void:%0:J@)return(%2);else%8(%3); J@)(%2);else(%3);
@@ -151,20 +145,20 @@ Natives:
 	#define @Rc:#%0#,%1||||||));%7(%2(%3)); @RH:@RI:@RJ:#%0#,%1));%7(%2(%3));
 	
 	// Detect "void:"
-	#define @RH:@RI:@RJ:#%0#,%1));%7(%9void:%2(%3)); #%0i,%1,I@));%7(%2(%1));%2@(%3,__m);public %2@(%3,__m)if(__m==-1||__m==Y@)%2(%1);%2(%3)
+	#define @RH:@RI:@RJ:#%0#,%1));%7(%9void:%2(%3)); #%0i,%1,I@));%7(%2(%1));%2@(%3,__m);public %2@(%3,__m)if(__m==-1||__m==_@)%2(%1);%2(%3)
 	// Detect "string:"
-	#define @RI:@RJ:#%0#,%1));%7(%9string:%2(%3)); #%0i,%1,I@),F@());%7(%2(%1));%2@(%3,__m);public %2@(%3,__m)if(__m==-1||__m==Y@)R@(%2(%1));%2(%3)
+	#define @RI:@RJ:#%0#,%1));%7(%9string:%2(%3)); #%0i,%1,I@),F@());%7(%2(%1));%2@(%3,__m);public %2@(%3,__m)if(__m==-1||__m==_@)R@(%2(%1));%2(%3)
 	// Detect other
-	#define @RJ:#%0#,%1));%7(%2(%3)); #%0i,%1,I@),V@(8,YSIM_RETURN));%7(%2(%1));%2@(%3,__m);public %2@(%3,__m)if(__m==-1||__m==Y@)X@(%2(%1));%2(%3)
+	#define @RJ:#%0#,%1));%7(%2(%3)); #%0i,%1,I@),V@(8,YSIM_RETURN));%7(%2(%1));%2@(%3,__m);public %2@(%3,__m)if(__m==-1||__m==_@)X@(%2(%1));%2(%3)
 	
 	// Zero parameters.
 	#define @Rz:#%0##,_YM@CR:,,));%7(%2()); #%0,@RK:@RL:@RM:#i,I@));%7(%2());
 	// Detect "void:"
-	#define @RK:@RL:@RM:#i,I@));%7(%9void:%2()); #i,I@));%7(%2());%2@(__m);public %2@(__m)if(__m==-1||__m==Y@)%2();%2()
+	#define @RK:@RL:@RM:#i,I@));%7(%9void:%2()); #i,I@));%7(%2());%2@(__m);public %2@(__m)if(__m==-1||__m==_@)%2();%2()
 	// Detect "string:"
-	#define @RL:@RM:#i,I@));%7(%9string:%2()); #i,I@),F@());%7(%2());%2@(__m);public %2@(__m)if(__m==-1||__m==Y@)R@(%2());%2()
+	#define @RL:@RM:#i,I@));%7(%9string:%2()); #i,I@),F@());%7(%2());%2@(__m);public %2@(__m)if(__m==-1||__m==_@)R@(%2());%2()
 	// Detect other
-	#define @RM:#i,I@));%7(%2()); #i,I@),V@(8,YSIM_RETURN));%7(%2());%2@(__m);public %2@(__m)if(__m==-1||__m==Y@)X@(%2());%2()
+	#define @RM:#i,I@));%7(%2()); #i,I@),V@(8,YSIM_RETURN));%7(%2());%2@(__m);public %2@(__m)if(__m==-1||__m==_@)X@(%2());%2()
 	
 	#define localfunc%0(%1) (J@=0,I@=-1,%0_(%1))
 	#define broadcastfunc%0(%1) (J@=1,I@=-1,%0_(%1))

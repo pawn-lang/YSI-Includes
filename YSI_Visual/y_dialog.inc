@@ -60,6 +60,7 @@ Functions:
 Variables:
 	Global:
 		-
+</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_dialog
@@ -67,130 +68,303 @@ Variables:
 #endif
 #define _INC_y_dialog
 
+// y_dialog - does stuff with dialogs.
+
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Data\y_bit"
 
 #include "..\YSI_Coding\y_remote"
+
 #include "..\YSI_Coding\y_inline"
+#include "..\YSI_Data\y_iterate"
+
 #include "..\YSI_Coding\y_hooks"
+
 #include "..\YSI_Storage\y_amx"
 
-// #define YSIM_U_DISABLE
-// #define MASTER 54
-// #include "..\YSI_Core\y_master"
+#define YSIM_U_DISABLE
+#define MASTER 54
+#include "..\YSI_Core\y_master"
 
-#define YSI_DIALOG_ID _A<_yD@>
+#if !defined MAX_DIALOGS
+	#define MAX_DIALOGS (2000)
+#endif
 
+// This is actually QUITE A LOT of data, I should maybe sort that out.
 static stock
+	BitArray:YSI_g_sIDs<MAX_DIALOGS> = {Bit:-1, ...},
+	BitArray:YSI_g_sFree<MAX_DIALOGS>,
 	YSI_g_sPlayerDialog[MAX_PLAYERS] = {-1, ...},
-	bool:YSI_g_sPlayerMaster[MAX_PLAYERS] = {false, ...},
-	YSI_g_sPlayerCallback[MAX_PLAYERS][E_CALLBACK_DATA];
+	YSI_g_sDialogPlayers[MAX_DIALOGS],
+	YSI_g_sDialogMasters[MAX_DIALOGS] = {-1, ...},
+	YSI_g_sDialogInfo[MAX_DIALOGS][E_CALLBACK_DATA];
 
-stock Dialog_Get(playerid)
+/*stock Dialog_ObtainID()
+{
+	new
+		data = Dialog_DoObtainID();
+	YSI_g_sDialogInfo[data][E_CALLBACK_DATA_POINTER] = 0;
+	return data;
+}*/
+
+foreign Dialog_ObtainID();
+
+global Dialog_ObtainID()
+{
+	for (new i = 0; i != sizeof (YSI_g_sIDs); ++i)
+	{
+		if (YSI_g_sIDs[i])
+		{
+			new
+				Bit:b = YSI_g_sIDs[i],
+				data = Cell_GetLowestBit(b);
+			YSI_g_sIDs[i] ^= Bit:Cell_GetLowestComponent(b);
+			data += (i * 32);
+			YSI_g_sDialogPlayers[data] = 0;
+			YSI_g_sDialogMasters[data] = -1;
+			//YSI_g_sDialogInfo[data][E_CALLBACK_DATA_POINTER] = 0;
+			return data;
+		}
+	}
+	return -1;
+	// http://supertech.csail.mit.edu/papers/debruijn.pdf
+}
+
+foreign Dialog_TryObtainID(id);
+
+global Dialog_TryObtainID(id)
+{
+	if (Bit_Get(YSI_g_sIDs, id))
+	{
+		Bit_Vet(YSI_g_sIDs, id);
+		YSI_g_sDialogPlayers[id] = 0;
+		YSI_g_sDialogMasters[id] = -1;
+		//YSI_g_sDialogInfo[data][E_CALLBACK_DATA_POINTER] = 0;
+		return id;
+	}
+	P:C(else P:E("Dialog ID %d already in use", id););
+	return -1;
+}
+
+foreign Dialog_Get(playerid);
+
+global Dialog_Get(playerid)
 {
 	return YSI_g_sPlayerDialog[playerid];
 }
 
-remotefunc void:Dialog_Set(playerid, dialogid)
+foreign void:Dialog_Garbage(dialogid);
+
+global void:Dialog_Garbage(dialogid)
 {
-	// If they could already see a dialog shown by this script, get rid of the
-	// data from that one.
-	YSI_g_sPlayerDialog[playerid] = dialogid;
-	if (YSI_g_sPlayerMaster[playerid])
+	Bit_Let(YSI_g_sFree, dialogid);
+	//return 1;
+}
+
+foreign void:Dialog_Free(dialogid);
+
+global void:Dialog_Free(dialogid)
+{
+	Bit_Vet(YSI_g_sFree, dialogid);
+	Bit_Let(YSI_g_sIDs, dialogid);
+	if (YSI_g_sDialogPlayers[dialogid])
 	{
-		Callback_Release(YSI_g_sPlayerCallback[playerid]),
-		YSI_g_sPlayerMaster[playerid] = false;
+		YSI_g_sDialogPlayers[dialogid] = 0;
+		foreach (new i : Player)
+		{
+			if (YSI_g_sPlayerDialog[i] == dialogid)
+			{
+				ShowPlayerDialog(i, -1, 0, NULL, NULL, NULL, NULL);
+				YSI_g_sPlayerDialog[i] = -1;
+			}
+		}
 	}
+	//return 1;
+}
+
+foreign Dialog_Set(playerid, dialogid);
+
+global Dialog_Set(playerid, dialogid)
+{
+	new
+		old = YSI_g_sPlayerDialog[playerid];
+	if (dialogid != old)
+	{
+		if (dialogid != -1)
+		{
+			++YSI_g_sDialogPlayers[dialogid];
+		}
+		YSI_g_sPlayerDialog[playerid] = dialogid;
+		if (old != -1)
+		{
+			if (--YSI_g_sDialogPlayers[old] == 0)
+			{
+				if (Bit_Get(YSI_g_sFree, old))
+				{
+					YSI_g_sDialogMasters[old] = -1;
+					Bit_Vet(YSI_g_sFree, old);
+					Bit_Let(YSI_g_sIDs, old);
+					// "old" destroyed.
+					return 0;
+				}
+			}
+		}
+	}
+	// "old" still exists.
+	return 1;
 }
 
 stock Dialog_ShowCallback(playerid, callback:callback, style, string:title[], string:caption[], string:button1[], string:button2[] = "", dialog = -1)
 {
-	#pragma unused dialog
 	new
-		ret = Dialog_Show(playerid, style, title, caption, button1, button2),
+		ret = Dialog_Show(playerid, style, title, caption, button1, button2, dialog),
 		data[E_CALLBACK_DATA];
 	if (Callback_Get(callback, data, _F<iiiis>))
-		YSI_g_sPlayerCallback[playerid] = data;
+	{
+		Dialog_SetCallbackData(ret, data);
+	}
 	return ret;
 }
 
 stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, string:title[], string:caption[], string:button1[], string:button2[] = "", dialog = -1)
 {
-	#pragma unused dialog
 	new
-		ret = Dialog_Show(playerid, style, title, caption, button1, button2);
-	YSI_g_sPlayerCallback[playerid] = callback;
+		ret = Dialog_Show(playerid, style, title, caption, button1, button2, dialog);
+	Dialog_SetCallbackData(ret, callback);
 	return ret;
 }
 
 stock Dialog_Show(playerid, style, string:title[], string:caption[], string:button1[], string:button2[] = "", dialog = -1)
 {
-	#pragma unused dialog
-	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID);
-	YSI_g_sPlayerMaster[playerid] = true;
-	return ShowPlayerDialog(playerid, YSI_DIALOG_ID, style, title, caption, button1, button2);
+	if (dialog == -1)
+	{
+		dialog = Dialog_ObtainID();
+		Dialog_Garbage(dialog);
+	}
+	ShowPlayerDialog(playerid, dialog, style, title, caption, button1, button2);
+	Dialog_Set(playerid, dialog);
+	return dialog;
 }
 
 stock Dialog_Hide(playerid)
 {
 	// This almost looks like a Windows API function call!
-	broadcastfunc Dialog_Set(playerid, -1);
-	return ShowPlayerDialog(playerid, -1, 0, NULL, NULL, NULL, NULL);
+	ShowPlayerDialog(playerid, -1, 0, NULL, NULL, NULL, NULL);
+	return Dialog_Set(playerid, -1);
 }
 
 hook OnPlayerDisconnect(playerid, reason)
 {
 	#pragma unused reason
-	// If this is a filterscript that has the currently displayed dialog in it,
-	// then we need all scripts to know that this is no longer the case.  If
-	// this script is not in charge of the current dialog then do not broadcast
-	// the reset, just do it locally.
-	if (YSI_g_sPlayerMaster[playerid])
-		Dialog_Hide(playerid);
-	else
-		YSI_g_sPlayerDialog[playerid] = -1;
+	Dialog_Hide(playerid);
 	return 1;
 }
 
-hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+remotefunc void:Dialog_SetMaster(dialogid, master)
 {
-	// Apparently there's a hack to alter this.
-	dialogid = YSI_g_sPlayerDialog[playerid];
-	P:1("Dialog_OnDialogResponse called: %d %d %d %d %s", playerid, dialogid, response, listitem, inputtext);
-	if (dialogid == YSI_DIALOG_ID)
-	{
-		if (YSI_g_sPlayerMaster[playerid])
-		{
-			static
-				reset[E_CALLBACK_DATA];
-			new
-				callback[E_CALLBACK_DATA];
-			callback = YSI_g_sPlayerCallback[playerid];
-			// Totally blank the stored dialog information, after making a local
-			// copy of it for the sake of calling the callback.  This is so that
-			// we don't free the memory for the callback prematurely.
-			YSI_g_sPlayerCallback[playerid] = reset;
-			broadcastfunc Dialog_Set(playerid, -1);
-			// Call the callback.
-			Callback_Call(callback, playerid, YSI_DIALOG_ID, response, listitem, inputtext);
-			// Free the data.
-			Callback_Release(callback);
-			return Y_HOOKS_BREAK_RETURN_1;
-		}
-		return Y_HOOKS_BREAK_RETURN_0;
-	}
-	else
-		return Y_HOOKS_CONTINUE_RETURN_0;
+	//printf("SETTING %d MASTER: %d", dialogid, master);
+	YSI_g_sDialogMasters[dialogid] = master;
+	//YSI_g_sDialogInfo[dialogid][E_CALLBACK_DATA_POINTER] = 0;
 }
 
-stock _ShowPlayerDialog(playerid, dialog, style, string:title[], string:caption[], string:button1[], string:button2[])
+stock Dialog_GetMaster(dialogid)
 {
-	// Fail.
-	if (dialog == YSI_DIALOG_ID)
+	return YSI_g_sDialogMasters[dialogid];
+}
+
+stock Dialog_SetCallback(dialogid, callback:callback)
+{
+	new
+		data[E_CALLBACK_DATA];
+	if (Callback_Get(callback, data, _F<iiiis>))
+	{
+		Dialog_SetCallbackData(dialogid, data);
+	}
+	P:C(else P:E("Could not find dialog callback %s", _:callback););
+}
+
+stock Dialog_SetCallbackData(dialogid, callback[E_CALLBACK_DATA])
+{
+	broadcastfunc Dialog_SetMaster(dialogid, _@);
+	YSI_g_sDialogInfo[dialogid] = callback;
+}
+
+// xhunterx editing all day
+
+hook OnPlayerConnect(playerid) {
+    YSI_g_sPlayerDialog[playerid] = -1;
+    return 1;
+}
+
+// Need to somehow integrate this new dialogs library with the text library.
+
+hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+{
+	P:1("Dialog_OnDialogResponse called: %d %d %d %d %s", playerid, dialogid, response, listitem, inputtext);
+	// Apparently there's a hack to alter this.
+	dialogid = Dialog_Get(playerid);
+    
+	P:5("Dialog_OnDialogResponse: dialog = %d", dialogid);
+	if (dialogid == -1)
+	{
 		return 0;
-	broadcastfunc Dialog_Set(playerid, dialog);
-	YSI_g_sPlayerMaster[playerid] = true;
-	return ShowPlayerDialog(playerid, dialog, style, title, caption, button1, button2);
+	}
+	
+	P:5("Dialog_OnDialogResponse: master = %d, %d", YSI_g_sDialogMasters[dialogid], _@);
+	if(YSI_g_sDialogMasters[dialogid] == -1) {
+	    if(Master_Caller() == _@) {
+	    	SetTimerEx("DialogSetToNone", 0, false, "i", playerid);
+		}
+	    return 0;
+	}
+	
+	if (YSI_g_sDialogMasters[dialogid] != _@)
+	{
+		return 0;
+	}
+	// Dialogs close automaticaly.
+	if (Dialog_Set(playerid, -1))
+	{
+		P:5("OnDialogResponse: Not free");
+		if (YSI_g_sDialogInfo[dialogid][E_CALLBACK_DATA_POINTER])
+		{
+			//printf("Calling function at 0x%08x", YSI_g_sDialogInfo[dialogid][E_CALLBACK_DATA_POINTER]);
+			Callback_Call(YSI_g_sDialogInfo[dialogid], playerid, dialogid, response, listitem, inputtext);
+			return 1;
+		}
+	}
+	else
+	{
+		// Or it will screw up when you show a new dialog from a dialog.
+		P:5("OnDialogResponse: Already freed");
+		new
+			dat[E_CALLBACK_DATA];
+		dat = YSI_g_sDialogInfo[dialogid];
+		// Callback no longer needed.
+		if (dat[E_CALLBACK_DATA_POINTER])
+		{
+			//printf("Calling function at 0x%08x", dat[E_CALLBACK_DATA_POINTER]);
+			Callback_Call(dat, playerid, dialogid, response, listitem, inputtext);
+			Callback_Release(dat);
+			return 1;
+		}
+	}
+	//Dialog_Set(playerid, -1);
+	return 0;
+}
+
+forward DialogSetToNone(playerid);
+public DialogSetToNone(playerid) {
+	Dialog_Set(playerid, -1);
+	return 1;
+}
+
+/*stock _ShowPlayerDialog(playerid, dialog, style, string:title[], string:caption[], string:button1[], string:button2[])
+{
+	Dialog_TryObtainID(dialog);
+	YSI_g_sDialogInfo[dialog][E_CALLBACK_DATA_POINTER] = 0;
+	ShowPlayerDialog(playerid, dialog, style, title, caption, button1, button2);
+	return 0;
 }
 
 #if defined _ALS_ShowPlayerDialog
@@ -200,8 +374,12 @@ stock _ShowPlayerDialog(playerid, dialog, style, string:title[], string:caption[
 #endif
 #define ShowPlayerDialog _ShowPlayerDialog
 
-#define _ALS_HidePlayerDialog
-#define HidePlayerDialog Dialog_Hide
+#define HidePlayerDialog Dialog_Hide*/
+
+/*stock HidePlayerDialog(playerid)
+{
+	ShowPlayerDialog(playerid, -1, 0, NULL, NULL, NULL, NULL);
+}*/
 
 #include "..\YSI_Core\y_master"
 

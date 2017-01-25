@@ -80,8 +80,5 @@ public _@_y_funcinc_@_()
 	CallLocalFunction("", "");
 	SetTimerEx("", 0, 0, "");
 	heapspace();
-	setproperty(0, "", 0, "");
-	getproperty(0, "", 0, _funcinc_a);
-	swapchars(0);
 }
 

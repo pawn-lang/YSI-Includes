@@ -108,6 +108,12 @@ Test:y_hashmap_Get1()
 	new data[100][E_HASH_MAP_TEST];
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	HashMap_Add(m, "Hello", 42);
+	/*printf("%s %d %d %d %d"
+		, data[42][_E_HASH_MAP_NAME]
+		, data[42][_E_HASH_MAP_NEXT]
+		, data[42][_E_HASH_MAP_HASH]
+		, data[42][E_HASH_MAP_TEST_1]
+		, data[42][E_HASH_MAP_TEST_2]);*/
 	ASSERT(HashMap_Get(m, "Hello") == 42);
 }
 

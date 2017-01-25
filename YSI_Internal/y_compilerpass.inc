@@ -102,7 +102,6 @@ Natives:
 #else
 	#define __COMPILER_PASS (0)
 #endif
-
 #define COMPILER_1ST_PASS (__COMPILER_PASS == (0))
 #define COMPILER_2ND_PASS (__COMPILER_PASS == (1))
 #define COMPILER_FIRST_PASS  COMPILER_1ST_PASS
@@ -128,6 +127,4 @@ static stock __COMPILER_SECOND_PASS() {}
 #if __Pawn == 0x030A
 	#define NESTED_ELLIPSIS
 #endif
-
-//#define state%0_YCM:%1\10; { _YCM@ = _E_YCM@%1 state _YCM:%1 }
 
