@@ -126,7 +126,7 @@ static stock __COMPILER_SECOND_PASS() {}
 
 #if __Pawn == 0x030A
 	#define NESTED_ELLIPSIS
-	// Disable the recursion warning in the russian compiler.
+	// Disable the recursion warning in the Russian compiler.
 	#pragma warning push
 	#pragma warning disable 207
 	#pragma disablerecursion
