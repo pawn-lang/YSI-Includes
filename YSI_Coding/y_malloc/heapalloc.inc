@@ -336,7 +336,7 @@ public OnRuntimeError(code, &bool:suppress)
 		P:0(YSI_g_scErrorMessage3);
 	}
 	#if defined Malloc_OnRuntimeError
-		Malloc_OnRuntimeError(code);
+		Malloc_OnRuntimeError(code, suppress);
 	#endif
 	if (code == 12)
 	{
