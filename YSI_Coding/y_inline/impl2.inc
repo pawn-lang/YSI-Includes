@@ -17,7 +17,13 @@ forward Inline_FoundRef(scanner[CodeScanner]);
 forward Inline_FoundEnd(scanner[CodeScanner]);
 forward Inline_FoundConst(scanner[CodeScanner]);
 
+#if !defined MAX_INLINE_PARAMETERS
+	#define MAX_INLINE_PARAMETERS (32)
+#endif
+
 static stock
+	YSI_g_sCurInlineParameterCount,
+	YSI_g_sCurInlineParameters[MAX_INLINE_PARAMETERS],
 	YSI_g_sCurInlineState = 0, // Which part of the header scanning we are on.
 	YSI_g_sCurInlineLocals,    // Container function locals.
 	YSI_g_sCurInlinePassed,    // Inline function parameters.
@@ -38,6 +44,7 @@ public Inline_FoundStart(scanner[CodeScanner])
 	YSI_g_sCurInlineStart = CodeScanGetMatchAddress(scanner);
 	YSI_g_sCurInlineEnd = CodeScanGetMatchHole(scanner, 1);
 	YSI_g_sCurInlineState = 1;
+	YSI_g_sCurInlineParameterCount = 0;
 	return 0;
 }
 
@@ -53,29 +60,30 @@ public Inline_FoundMid(scanner[CodeScanner])
 	return 0;
 }
 
-static stock Inline_FoundDescriptor(scanner[CodeScanner], size)
+static stock Inline_FoundDescriptor(size)
 {
-	switch (size)
+	if (YSI_g_sCurInlineParameterCount == MAX_INLINE_PARAMETERS)
+		P:F("y_inline: Max inline parameter count exceeded (%d).", MAX_INLINE_PARAMETERS);
+	else switch (size)
 	{
 		case 0:
 		{
-			// Variable.
-			printf("Var");
+			YSI_g_sCurInlineParameters[YSI_g_sCurInlineParameterCount++] = 0;
 		}
 		case -1:
 		{
-			// Reference.
-			printf("Reference");
+			YSI_g_sCurInlineParameters[YSI_g_sCurInlineParameterCount++] = -1;
+			YSI_g_sCurInlineState |= 16;
 		}
-		case cellmin:
+		case cellmax:
 		{
-			// String.
-			printf("String");
+			YSI_g_sCurInlineParameters[YSI_g_sCurInlineParameterCount++] = cellmax;
+			YSI_g_sCurInlineState |= 8;
 		}
 		default:
 		{
-			// Array in cells.
-			printf("Array[%d]", size);
+			YSI_g_sCurInlineParameters[YSI_g_sCurInlineParameterCount++] = size * 4;
+			YSI_g_sCurInlineState |= 8;
 		}
 	}
 }
@@ -92,7 +100,7 @@ public Inline_FoundVar(scanner[CodeScanner])
 {
 	if (YSI_g_sCurInlineState < 3)
 		return 0;
-	Inline_FoundDescriptor(scanner, 0);
+	Inline_FoundDescriptor(0);
 	return 0;
 }
 
@@ -100,7 +108,7 @@ public Inline_FoundRef(scanner[CodeScanner])
 {
 	if (YSI_g_sCurInlineState < 3)
 		return 0;
-	Inline_FoundDescriptor(scanner, CodeScanGetMatchHole(scanner, 0));
+	Inline_FoundDescriptor(CodeScanGetMatchHole(scanner, 0));
 	return 0;
 }
 
@@ -112,6 +120,13 @@ public Inline_FoundEnd(scanner[CodeScanner])
 	printf("End: %08x", YSI_g_sCurInlineUser);
 	// Do the actual codegen here.
 	Inline_DoCodeGen();
+	// Remove the return for the outer loop, since it may now point to an
+	// invalid address (in the middle of an OpCode we just wrote out).
+	new
+		Opcode:nop = RelocateOpcode(OP_NOP),
+		addr = CodeScanGetMatchHole(scanner, 1) + AMX_HEADER_COD;
+	AMX_Write(addr + 0, _:nop);
+	AMX_Write(addr + 4, _:nop);
 	// Restart scanning for the next inline.
 	YSI_g_sCurInlineState = 0;
 	return 0;
@@ -250,13 +265,26 @@ public OnCodeInit()
 	return 1;
 }
 
-#define LAMBDA_i<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)%8;
-#define LAMBDA_ii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1|||,0,0|||<%9>{%0}(%1)%8;
-#define LAMBDA_iii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2|||,0,0,0|||<%9>{%0}(%1)%8;
-#define LAMBDA_iiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3|||,0,0,0,0|||<%9>{%0}(%1)%8;
-#define LAMBDA_iiiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3,_4|||,0,0,0,0,0|||<%9>{%0}(%1)%8;
 
-#define _DO_LAMBDA|||%6|||%5|||<%9>{%0}(%1)%8; LAM@0()%8;{LAM@1();static const YSII[]="@:....";if(I@E(YSII))for(%6;I@F();)while(I@L(I@K()%5))YSI_gInlineRet+=(%0);LAM@2(%9(callback_tag:YSII%1));}
+
+
+
+
+
+
+
+
+
+
+
+
+#define LAMBDA_i<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0|||0,|||<%9>{%0}(%1)%8;
+#define LAMBDA_ii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1|||0,0,|||<%9>{%0}(%1)%8;
+#define LAMBDA_iii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2|||0,0,0,|||<%9>{%0}(%1)%8;
+#define LAMBDA_iiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3|||0,0,0,0,|||<%9>{%0}(%1)%8;
+#define LAMBDA_iiiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3,_4|||0,0,0,0,0,|||<%9>{%0}(%1)%8;
+
+#define _DO_LAMBDA|||%6|||%5|||<%9>{%0}(%1)%8; LAM@0()%8;{LAM@1();static const YSII[]="@:....";if(I@E(YSII))for(%6;I@F();)while(I@L(%5I@K()))YSI_gInlineRet+=(%0);LAM@2(%9(callback_tag:YSII%1));}
 
 // Make sure there's a space after the "return".
 #define return%0({%1}%2)%3; I@=%0({%1}%2)%3;return I@;
@@ -269,7 +297,7 @@ public OnCodeInit()
 // are parsing functions, but not at a top level.
 #define PARSER@INLINE:%0(%5)%6(%7)$ static %6[_:%0(%5)%6(%7) I@O$
 
-#define INLINE_STR(%9,%9,%2,%9)%8$(%0)%1(%3) %8$(%0,%2[YSI_MAX_INLINE_STRING])%1(cellmin,%3)
+#define INLINE_STR(%9,%9,%2,%9)%8$(%0)%1(%3) %8$(%0,%2[YSI_MAX_INLINE_STRING])%1(cellmax,%3)
 #define INLINE_ARR(%9,%9,%2,%9)%8$(%0)%1(%3) %8$(%0,%2[%9])%1(%9,%3)
 #define INLINE_NUM(%9,%9,%2)%8$(%0)%1(%3) %8$(%0,%2)%1(0,%3)
 #define INLINE_REF(%9,%9,%2)%8$(%0)%1(%3) %8$(%0,%2)%1(-1,%3)
@@ -344,7 +372,7 @@ Func()
 Func()
 {
 	static const Inner = 0;
-	while (Inline_Start(Inner)) for (new a, string:b[], c[64], d; Inline_Def(0, cellmin, 64, -1); Inline_End())
+	while (Inline_Start(Inner)) for (new a, string:b[], c[64], d; Inline_Def(0, cellmax, 64, -1); Inline_End())
 	{
 		// Code.
 	}
