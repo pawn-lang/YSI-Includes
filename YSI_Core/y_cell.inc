@@ -93,7 +93,6 @@ Compile options:
 
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_globaltags"
-#include "..\YSI_Internal\y_funcinc"
 
 /**--------------------------------------------------------------------------**\
 <summary>
@@ -161,10 +160,31 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 	#emit OR
 	
 	// Swap all bytes.
+	// return (data >>> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0x0000FF00) << 8) | (data << 24);
 	#emit PUSH.pri
-	#emit PUSH.C               4
-	#emit SYSREQ.C             swapchars
-	#emit STACK                8
+	#emit MOVE.alt
+	
+	#emit SHR.C.pri            24
+	#emit XCHG
+	#emit SHL.C.pri            24
+	#emit OR
+	#emit SWAP.pri
+	
+	#emit PUSH.pri
+	#emit CONST.alt            0x00FF0000
+	#emit AND
+	#emit SHR.C.pri            8
+	#emit SWAP.pri
+	
+	#emit CONST.alt            0x0000FF00
+	#emit AND
+	#emit SHL.C.pri            8
+	
+	#emit POP.alt
+	#emit OR
+	#emit POP.alt
+	#emit OR
+	
 	#emit RETN
 	
 	// Make the compiler happy.
@@ -211,10 +231,31 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 	#emit OR
 	
 	// Swap all bytes.
+	// return (data >>> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0x0000FF00) << 8) | (data << 24);
 	#emit PUSH.pri
-	#emit PUSH.C               4
-	#emit SYSREQ.C             swapchars
-	#emit STACK                8
+	#emit MOVE.alt
+	
+	#emit SHR.C.pri            24
+	#emit XCHG
+	#emit SHL.C.pri            24
+	#emit OR
+	#emit SWAP.pri
+	
+	#emit PUSH.pri
+	#emit CONST.alt            0x00FF0000
+	#emit AND
+	#emit SHR.C.pri            8
+	#emit SWAP.pri
+	
+	#emit CONST.alt            0x0000FF00
+	#emit AND
+	#emit SHL.C.pri            8
+	
+	#emit POP.alt
+	#emit OR
+	#emit POP.alt
+	#emit OR
+	
 	#emit RETN
 	
 	// Make the compiler happy.
@@ -246,7 +287,37 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 
 stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 {
-	return swapchars(_:data);
+	// Swap all bytes.
+	// return (data >>> 24) | ((data & 0x00FF0000) >> 8) | ((data & 0x0000FF00) << 8) | (data << 24);
+	#emit LOAD.S.pri           data
+	#emit PUSH.pri
+	#emit MOVE.alt
+	
+	#emit SHR.C.pri            24
+	#emit XCHG
+	#emit SHL.C.pri            24
+	#emit OR
+	#emit SWAP.pri
+	
+	#emit PUSH.pri
+	#emit CONST.alt            0x00FF0000
+	#emit AND
+	#emit SHR.C.pri            8
+	#emit SWAP.pri
+	
+	#emit CONST.alt            0x0000FF00
+	#emit AND
+	#emit SHL.C.pri            8
+	
+	#emit POP.alt
+	#emit OR
+	#emit POP.alt
+	#emit OR
+	
+	#emit RETN
+	
+	// Make the compiler happy.
+	return 0;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -424,84 +495,6 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 	if (data)
 	{
 		// return scDeBruijn[((data & -data) * 0x077CB531) >>> 27];
-		#emit MOVE.alt
-		#emit NEG
-		#emit AND
-		#emit SMUL.C               0x077CB531
-		#emit SHR.C.pri            27
-		
-		#emit CONST.alt            scDeBruijn
-		#emit LIDX
-	}
-	{} // Zero-cost bug fix.
-	#emit RETN
-	
-	// Make the compiler happy.
-	return 0;
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>
-	Cell_GetLowestBlank(number);
-</summary>
-<param name="number">The number to get the lowest unset bit of.</param>
-<returns>
-	The integer position of the lowest unset bit.
-</returns>
-<remarks>
-	Like Cell_GetLowestBit, but finds zeros not ones.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-stock Cell_GetLowestBlank(GLOBAL_TAG_TYPES:data)
-{
-	static const
-		scDeBruijn[] =
-			{
-				 0,  1, 28,  2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17,  4,  8, 
-				31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18,  6, 11,  5, 10,  9
-			};
-	
-	#emit LOAD.S.pri           data
-	#emit INVERT
-	#emit MOVE.alt
-	#emit NEG
-	#emit AND
-	#emit SMUL.C               0x077CB531
-	#emit SHR.C.pri            27
-	
-	#emit CONST.alt            scDeBruijn
-	#emit LIDX
-	
-	#emit RETN
-	
-	// Make the compiler happy.
-	return 0;
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>
-	Cell_GetLowestBlankEx(number);
-</summary>
-<param name="number">The number to get the lowest unset bit of PLUS ONE.</param>
-<returns>
-	The integer position of the lowest unset bit PLUS ONE.
-</returns>
-<remarks>
-	Like Cell_GetLowestBitEx, but finds zeros not ones.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-stock Cell_GetLowestBlankEx(GLOBAL_TAG_TYPES:data)
-{
-	static const
-		scDeBruijn[] =
-			{
-				 1,  2, 29,  3, 30, 15, 25,  4, 31, 23, 21, 16, 26, 18,  5,  9, 
-				32, 28, 14, 24, 22, 20, 17,  8, 27, 13, 19,  7, 12,  6, 11, 10
-			};
-	if (~data)
-	{
 		#emit MOVE.alt
 		#emit NEG
 		#emit AND

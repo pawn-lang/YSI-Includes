@@ -98,6 +98,7 @@ Operators:
 #endif
 #define _INC_y_va
 
+//#define va_args<%0> %0
 #define va_args<%0> GLOBAL_TAG_TYPES:...
 #define va_start<%0> (va_:(%0))
 

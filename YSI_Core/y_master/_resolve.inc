@@ -88,6 +88,7 @@ Variables:
 #if (!defined YSI_NO_MASTER || defined YSIM_T_ENABLE) && !defined YSIM_T_DISABLE
 	#define YSIM_HAS_MASTER 1
 #else
+	//#error YSIM_HAS_MASTER 0
 	#define YSIM_HAS_MASTER 0
 #endif
 

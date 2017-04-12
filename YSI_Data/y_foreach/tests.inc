@@ -2624,14 +2624,12 @@ Test:y_iter_ArrayMulti()
 	ASSERT(count == 0);
 }
 
-#if _FOREACH_PLAYERS
-	Test:y_iter_Deprecate()
+Test:y_iter_Deprecate()
+{
+	foreach (Player, i)
 	{
-		foreach (Player, i)
-		{
-		}
 	}
-#endif
+}
 
 Test:y_iter_Random()
 {
@@ -2818,93 +2816,5 @@ Test:y_iter_None2()
 		++count;
 	}
 	ASSERT(count == 6);
-}
-
-Test:y_iter_Index1()
-{
-	new Iterator:a<20>;
-	Iter_Add(a, 6);
-	Iter_Add(a, 8);
-	Iter_Add(a, 9);
-	Iter_Add(a, 14);
-	Iter_Add(a, 17);
-	Iter_Add(a, 19);
-	ASSERT(Iter_Index(a, -100) == cellmin);
-	ASSERT(Iter_Index(a, -100, true) == cellmin);
-	ASSERT(Iter_Index(a, -1) == cellmin);
-	ASSERT(Iter_Index(a, -1, true) == cellmin);
-	ASSERT(Iter_Index(a, 0) == 6);
-	ASSERT(Iter_Index(a, 0, true) == 6);
-	ASSERT(Iter_Index(a, 1) == 8);
-	ASSERT(Iter_Index(a, 1, true) == 8);
-	ASSERT(Iter_Index(a, 2) == 9);
-	ASSERT(Iter_Index(a, 2, true) == 9);
-	ASSERT(Iter_Index(a, 3) == 14);
-	ASSERT(Iter_Index(a, 3, true) == 14);
-	ASSERT(Iter_Index(a, 4) == 17);
-	ASSERT(Iter_Index(a, 4, true) == 17);
-	ASSERT(Iter_Index(a, 5) == 19);
-	ASSERT(Iter_Index(a, 5, true) == 19);
-	ASSERT(Iter_Index(a, 6) == cellmin);
-	ASSERT(Iter_Index(a, 6, true) == 6);
-	ASSERT(Iter_Index(a, 7) == cellmin);
-	ASSERT(Iter_Index(a, 7, true) == 8);
-	ASSERT(Iter_Index(a, 8) == cellmin);
-	ASSERT(Iter_Index(a, 8, true) == 9);
-	ASSERT(Iter_Index(a, 9) == cellmin);
-	ASSERT(Iter_Index(a, 9, true) == 14);
-	ASSERT(Iter_Index(a, 10) == cellmin);
-	ASSERT(Iter_Index(a, 10, true) == 17);
-	ASSERT(Iter_Index(a, 11) == cellmin);
-	ASSERT(Iter_Index(a, 11, true) == 19);
-	ASSERT(Iter_Index(a, 12) == cellmin);
-	ASSERT(Iter_Index(a, 12, true) == 6);
-	ASSERT(Iter_Index(a, 13) == cellmin);
-	ASSERT(Iter_Index(a, 13, true) == 8);
-	ASSERT(Iter_Index(a, 130) == cellmin);
-	ASSERT(Iter_Index(a, 130, true) == 17);
-}
-
-Test:y_iter_Index2()
-{
-	new Iterator:a<5, 20>;
-	Iter_Add(a<3>, 0);
-	Iter_Add(a<3>, 1);
-	Iter_Add(a<3>, 2);
-	Iter_Add(a<3>, 14);
-	Iter_Add(a<4>, 10);
-	Iter_Add(a<4>, 11);
-	Iter_Add(a<4>, 15);
-	Iter_Add(a<4>, 18);
-	ASSERT(Iter_Index(a<0>, -1) == cellmin);
-	ASSERT(Iter_Index(a<0>, -1, true) == cellmin);
-	ASSERT(Iter_Index(a<0>, 0) == cellmin);
-	ASSERT(Iter_Index(a<0>, 10) == cellmin);
-	ASSERT(Iter_Index(a<0>, 0, true) == cellmin);
-	ASSERT(Iter_Index(a<0>, 10, true) == cellmin);
-	ASSERT(Iter_Index(a<1>, 0) == cellmin);
-	ASSERT(Iter_Index(a<1>, 10) == cellmin);
-	ASSERT(Iter_Index(a<1>, 0, true) == cellmin);
-	ASSERT(Iter_Index(a<1>, 10, true) == cellmin);
-	ASSERT(Iter_Index(a<2>, 0) == cellmin);
-	ASSERT(Iter_Index(a<2>, 10) == cellmin);
-	ASSERT(Iter_Index(a<2>, 0, true) == cellmin);
-	ASSERT(Iter_Index(a<2>, 10, true) == cellmin);
-	ASSERT(Iter_Index(a<3>, 0) == 0);
-	ASSERT(Iter_Index(a<3>, 1) == 1);
-	ASSERT(Iter_Index(a<3>, 2) == 2);
-	ASSERT(Iter_Index(a<3>, 3) == 14);
-	ASSERT(Iter_Index(a<3>, 4) == cellmin);
-	ASSERT(Iter_Index(a<3>, 4, true) == 0);
-	ASSERT(Iter_Index(a<3>, 5) == cellmin);
-	ASSERT(Iter_Index(a<3>, 5, true) == 1);
-	ASSERT(Iter_Index(a<3>, 403) == cellmin);
-	ASSERT(Iter_Index(a<3>, 403, true) == 14);
-	ASSERT(Iter_Index(a<4>, -1) == cellmin);
-	ASSERT(Iter_Index(a<4>, -1, true) == cellmin);
-	ASSERT(Iter_Index(a<4>, 0) == 10);
-	ASSERT(Iter_Index(a<4>, 0, true) == 10);
-	ASSERT(Iter_Index(a<4>, 10) == cellmin);
-	ASSERT(Iter_Index(a<4>, 10, true) == 15);
 }
 

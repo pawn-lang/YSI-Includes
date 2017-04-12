@@ -804,28 +804,6 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 #define Iter_Size_InternalA(%0,%1)    (F@s(%1)-F@s(%0))
 #define Iter_Size_InternalB(%0,%2,%1) (F@s(%1)-F@s(%0))
 
-/**--------------------------------------------------------------------------**\
-<summary>Iter_Index</summary>
-<param name="iter">Name of the iterator to get a slot in by index.</param>
-<param name="index">Index.</param>
-<param name="wrap">Keep going around until a value is found?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Wrapper for Iter_Free_Internal.  Returns the Nth value in the iterator
-	(requires looping due to the way iterators are stored and optimised for
-	loops not direct access).
-
-native Iter_Index(Iterator:Name<>);
-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Iter_Index _ITER<Index>
-#define Iter_Index_InternalA(%0,%1,%9)    Iter_Index_Internal(%0,%1,F@s(%1)-1,F@s(%1)-1,%9)
-#define Iter_Index_InternalB(%0,%2,%1,%9) Iter_Index_Internal(%0[%2],%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),%9)
-
 /*
 
     88b           d88                                                         
@@ -856,25 +834,6 @@ native Iter_Index(Iterator:Name<>);
 #define Iter_Func@global%0(%2)%1$ global F@y:%0(%2)
 #define Iter_Func@public%0(%2)%1$ public F@y:%0(%2)
 #define Iter_Func@forward%0(%2)%1$ forward F@y:%0(%2)
-
-// Many tag types that may come up as iterator function return types.
-#define Iter_Func@_:%0(%2) _:Iter_Func@%0(%2)
-#define Iter_Func@bool:%0(%2) bool:Iter_Func@%0(%2)
-#define Iter_Func@PlayerText3D:%0(%2) PlayerText3D:Iter_Func@%0(%2)
-#define Iter_Func@Text3D:%0(%2) Text3D:Iter_Func@%0(%2)
-#define Iter_Func@DB:%0(%2) DB:Iter_Func@%0(%2)
-#define Iter_Func@DBResult:%0(%2) DBResult:Iter_Func@%0(%2)
-#define Iter_Func@Language:%0(%2) Language:Iter_Func@%0(%2)
-#define Iter_Func@Bit:%0(%2) Bit:Iter_Func@%0(%2)
-#define Iter_Func@Text:%0(%2) Text:Iter_Func@%0(%2)
-#define Iter_Func@Menu:%0(%2) Menu:Iter_Func@%0(%2)
-#define Iter_Func@Style:%0(%2) Style:Iter_Func@%0(%2)
-#define Iter_Func@XML:%0(%2) XML:Iter_Func@%0(%2)
-#define Iter_Func@Bintree:%0(%2) Bintree:Iter_Func@%0(%2)
-#define Iter_Func@Group:%0(%2) Group:Iter_Func@%0(%2)
-#define Iter_Func@Timer:%0(%2) Timer:Iter_Func@%0(%2)
-#define Iter_Func@File:%0(%2) File:Iter_Func@%0(%2)
-#define Iter_Func@Float:%0(%2) Float:Iter_Func@%0(%2)
 
 // A nice "match" symbol that we can scan for, then remove after it is used.
 #define F@a$
@@ -1226,42 +1185,6 @@ stock Iter_Add_InternalD(&count, array[], start, size, value)
 			array[last] = value;
 	}
 	return cellmin;
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Iter_IndexInternal</summary>
-<param name="count">Number of items in the iterator.</param>
-<param name="array[]">iterator data.</param>
-<param name="start">Array start index.</param>
-<param name="size">Array size.</param>
-<param name="index">Index to find Nth value.</param>
-<param name="wrap">Keep going around until a value is found?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Allows you to find the Nth value in the iterator.  DO NOT call this in a
-	loop to get all values - that totally defeats the purpose of "foreach", just
-	use a normal "foreach" loop with an index counter for that case.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-stock Iter_Index_Internal(count, array[], start, size, index, bool:wrap = false)
-{
-	// If there are no elements in the iterator, we can't ever return the Nth
-	// item.  Also if the parameters are invalid.
-	if (index < 0 || start < size || array[start] >= size)
-		return cellmin;
-	// We could wrap around in the loop (it would work), but it is better to set
-	// the limit first.
-	if (wrap)
-		index %= count;
-	else if (index >= count)
-		return cellmin;
-	start = array[start];
-	while (index--)
-		start = array[start];
-	return start;
 }
 
 /**--------------------------------------------------------------------------**\

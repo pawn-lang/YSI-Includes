@@ -489,60 +489,58 @@ stock Iter_All_Internal(array[], size, value)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#if _FOREACH_CHARACTERS || _FOREACH_VEHICLES || _FOREACH_ACTORS
-	hook OnScriptInit()
-	{
-		#if _FOREACH_VEHICLES
-			Iter_Clear(Vehicle);
-			for (new i = 1; i <= MAX_VEHICLES; ++i)
+hook OnScriptInit()
+{
+	#if _FOREACH_VEHICLES
+		Iter_Clear(Vehicle);
+		for (new i = 1; i <= MAX_VEHICLES; ++i)
+		{
+			if (GetVehicleModel(i))
 			{
-				if (GetVehicleModel(i))
-				{
-					Iter_Add(Vehicle, i);
-				}
+				Iter_Add(Vehicle, i);
 			}
-		#endif
-		#if _FOREACH_ACTORS
-			Iter_Clear(Actor);
-			for (new i = 0; i != MAX_ACTORS; ++i)
+		}
+	#endif
+	#if _FOREACH_ACTORS
+		Iter_Clear(Actor);
+		for (new i = 0; i != MAX_ACTORS; ++i)
+		{
+			if (IsValidActor(i))
 			{
-				if (IsValidActor(i))
-				{
-					Iter_Add(Actor, i);
-				}
+				Iter_Add(Actor, i);
 			}
+		}
+	#endif
+	#if _FOREACH_CHARACTERS
+		#if _FOREACH_BOTS
+			Iter_Clear(Bot);
+			Iter_Clear(Character);
 		#endif
-		#if _FOREACH_CHARACTERS
-			#if _FOREACH_BOTS
-				Iter_Clear(Bot);
-				Iter_Clear(Character);
-			#endif
-			#if _FOREACH_PLAYERS
-				Iter_Clear(Player);
-			#endif
-			for (new i = 0; i != MAX_PLAYERS; ++i)
+		#if _FOREACH_PLAYERS
+			Iter_Clear(Player);
+		#endif
+		for (new i = 0; i != MAX_PLAYERS; ++i)
+		{
+			if (IsPlayerConnected(i))
 			{
-				if (IsPlayerConnected(i))
-				{
-					#if _FOREACH_BOTS
-						Iter_Add(Character, i);
-						if (IsPlayerNPC(i))
-						{
-							Iter_Add(Bot, i);
-						}
-						else
-					#endif
-					#if _FOREACH_PLAYERS
-						{
-							Iter_Add(Player, i);
-						}
-					#endif
-				}
+				#if _FOREACH_BOTS
+					Iter_Add(Character, i);
+					if (IsPlayerNPC(i))
+					{
+						Iter_Add(Bot, i);
+					}
+					else
+				#endif
+				#if _FOREACH_PLAYERS
+					{
+						Iter_Add(Player, i);
+					}
+				#endif
 			}
-		#endif
-		return 1;
-	}
-#endif
+		}
+	#endif
+	return 1;
+}
 
 /*
 

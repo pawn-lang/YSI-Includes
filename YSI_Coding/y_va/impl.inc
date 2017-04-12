@@ -96,13 +96,11 @@ static stock
 	YSI_g_sHeap,
 	YSI_g_sStack,
 	YSI_g_sArgCount,
-	YSI_g_sArgs[6];
+	YSI_g_sArgs[5];
 
 stock va_printf(const fmat[], va_:STATIC_ARGS)
 {
-	// Get the number of parameters.  Plus an extra one because the JIT pushes
-	// its own value on to the stack (won't make any difference when the JIT
-	// isn't in use).
+	// Get the number of parameters.
 	#emit LOAD.S.alt   STATIC_ARGS
 	#emit INC.alt      // 2 - n
 	#emit SHL.C.alt    2
@@ -119,16 +117,15 @@ stock va_printf(const fmat[], va_:STATIC_ARGS)
 	// Get the address of the arguments we are replacing.
 	#emit LOAD.S.pri   0
 	#emit ADD
-	#emit ADD.C        0xFFFFFFFC // -4 adjustment for JIT.
 	
 	// Copy them to our temporary buffer.
 	#emit CONST.alt    YSI_g_sArgs
-	#emit MOVS         12 // (n + 3) * 4
+	#emit MOVS         8 // (n + 1) * 4
 	
 	// Go to the new "top" of the stack.
 	#emit STACK        0
 	#emit STOR.alt     YSI_g_sStack    // Store it.
-	#emit ADD.C        12 // (n + 3) * 4
+	#emit ADD.C        8 // (n + 1) * 4
 	#emit SCTRL        4
 	
 	// "frm" is still valid.
@@ -140,12 +137,11 @@ stock va_printf(const fmat[], va_:STATIC_ARGS)
 	#emit STOR.pri     YSI_g_sArgCount
 	
 	// Copy the data back.
-	#emit STACK        0xFFFFFFFC // -4 adjustment for JIT.
 	#emit STACK        0
+	#emit CONST.pri    YSI_g_sArgs
+	#emit MOVS         8
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
-	#emit CONST.pri    YSI_g_sArgs
-	#emit MOVS         12
 	
 	#emit LOAD.pri     YSI_g_sArgCount
 	#emit RETN
@@ -158,74 +154,49 @@ stock va_printf(const fmat[], va_:STATIC_ARGS)
 
 stock va_CallRemoteFunction(const function[], const fmat[], va_:STATIC_ARGS)
 {
-	// This function can't use the same stack manipulation tricks as most of the
-	// other native function calls, since the native calls back in to user code
-	// and so will use more of the stack.  The other native calls are fast
-	// because they unwind part of the stack, use the parameters from an earlier
-	// function call to call the native, then restore the stack to where it was
-	// before.  If this does that, local variables and frame headers will be
-	// overwritten by the called functions.  This problem also affects
-	// "CallLocalFunction", but does NOT affect "SetTimerEx", because that gets
-	// a totally fresh stack for the called function when it eventually is
-	// called.  Ideally, this would use "MOVS" rewriting to do the data copying,
-	// but that method is not JIT compatible, so instead we must use "memcpy".
-	
 	// Get the number of parameters.
 	#emit LOAD.S.alt   STATIC_ARGS
 	#emit SHL.C.alt    2
-	#emit STOR.alt     YSI_g_sArgCount
 	// "alt" now contains the number of static arguments in bytes.
 	
 	// Get the previous parameter count.
 	#emit LOAD.S.pri   0
 	#emit ADD.C        8
 	#emit LOAD.I
-	// "pri" now contains the number of total arguments in bytes.
-	
-	// Subtract the number of static bytes, and allocate the memory for the
-	// variable arguments.
 	#emit SUB
-	// "pri" now contains the number of dynamic arguments in bytes.	
-	#emit STOR.pri     YSI_g_sStack
+	#emit ADD.C        8
+	#emit STOR.pri     YSI_g_sArgCount // "format"s parameter count.
+	
+	// Get the address of the arguments we are replacing.
+	#emit LOAD.S.pri   0
+	#emit ADD
+	
+	// Copy them to our temporary buffer.
+	#emit CONST.alt    YSI_g_sArgs
+	#emit MOVS         12 // (n + 1) * 4
+	
+	// Go to the new "top" of the stack.
 	#emit STACK        0
-	#emit SUB.alt
+	#emit STOR.alt     YSI_g_sStack    // Store it.
+	#emit ADD.C        12 // (n + 1) * 4
 	#emit SCTRL        4
 	
-	// Copy the data.
-	#emit LOAD.alt     YSI_g_sArgCount
-	#emit LOAD.S.pri   0
-	#emit ADD.C        12
-	#emit ADD
-	// "pri" now contains a pointer to the dynamic arguments.
-	
-	// Call "memcpy".  The final argument (the first push) is stupid big, way
-	// bigger than it needs to be, but we know the destination is large enough
-	// so there's no need to check and pass an accurate value, instead we can
-	// just pass a "large enough" constant.
-	#emit STACK        0
-	#emit PUSH.C       1000000
-	#emit PUSH         YSI_g_sStack
-	#emit PUSH.C       0
-	#emit PUSH.pri
-	#emit PUSH.alt
-	#emit PUSH.C       20
-	#emit SYSREQ.C     memcpy
-	#emit STACK        24
-	
-	// Call "CallRemoteFunction"
+	// "frm" is still valid.
 	#emit PUSH.S       fmat
 	#emit PUSH.S       function
-	#emit LOAD.pri     YSI_g_sStack
-	#emit ADD.C        8
-	#emit PUSH.pri
-	#emit SYSREQ.C     CallRemoteFunction
+	#emit PUSH         YSI_g_sArgCount // Push the parameter count.
 	
-	// Pop the stack.
+	// Call the function.
+	#emit SYSREQ.C     CallRemoteFunction
 	#emit STOR.pri     YSI_g_sArgCount
-	#emit POP.pri
+	
+	// Copy the data back.
 	#emit STACK        0
-	#emit ADD
+	#emit CONST.pri    YSI_g_sArgs
+	#emit MOVS         12
+	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
+	
 	#emit LOAD.pri     YSI_g_sArgCount
 	#emit RETN
 	
@@ -234,73 +205,50 @@ stock va_CallRemoteFunction(const function[], const fmat[], va_:STATIC_ARGS)
 
 stock va_CallLocalFunction(const function[], const fmat[], va_:STATIC_ARGS)
 {
-	// This function can't use the same stack manipulation tricks as most of the
-	// other native function calls, since the native calls back in to user code
-	// and so will use more of the stack.  The other native calls are fast
-	// because they unwind part of the stack, use the parameters from an earlier
-	// function call to call the native, then restore the stack to where it was
-	// before.  If this does that, local variables and frame headers will be
-	// overwritten by the called functions.  This problem also affects
-	// "CallRemoteFunction", but does NOT affect "SetTimerEx", because that gets
-	// a totally fresh stack for the called function when it eventually is
-	// called.  Ideally, this would use "MOVS" rewriting to do the data copying,
-	// but that method is not JIT compatible, so instead we must use "memcpy".
-	
 	// Get the number of parameters.
 	#emit LOAD.S.alt   STATIC_ARGS
 	#emit SHL.C.alt    2
-	#emit STOR.alt     YSI_g_sArgCount
 	// "alt" now contains the number of static arguments in bytes.
 	
 	// Get the previous parameter count.
 	#emit LOAD.S.pri   0
 	#emit ADD.C        8
 	#emit LOAD.I
-	// "pri" now contains the number of total arguments in bytes.
-	
-	// Subtract the number of static bytes, and allocate the memory for the
-	// variable arguments.
 	#emit SUB
-	// "pri" now contains the number of dynamic arguments in bytes.	
-	#emit STOR.pri     YSI_g_sStack
+	#emit ADD.C        8
+	#emit STOR.pri     YSI_g_sArgCount // "format"s parameter count.
+	
+	// Get the address of the arguments we are replacing.
+	#emit LOAD.S.pri   0
+	#emit ADD
+	
+	// Copy them to our temporary buffer.
+	#emit CONST.alt    YSI_g_sArgs
+	#emit MOVS         12 // (n + 1) * 4
+	
+	// Go to the new "top" of the stack.
 	#emit STACK        0
-	#emit SUB.alt
+	#emit STOR.alt     YSI_g_sStack    // Store it.
+	#emit ADD.C        12 // (n + 1) * 4
 	#emit SCTRL        4
 	
-	// Copy the data.
-	#emit LOAD.alt     YSI_g_sArgCount
-	#emit LOAD.S.pri   0
-	#emit ADD.C        12
-	#emit ADD
-	// "pri" now contains a pointer to the dynamic arguments.
-	
-	// Call "memcpy".  The final argument (the first push) is stupid big, way
-	// bigger than it needs to be, but we know the destination is large enough
-	// so there's no need to check and pass an accurate value, instead we can
-	// just pass a "large enough" constant.
-	#emit STACK        0
-	#emit PUSH.C       1000000
-	#emit PUSH         YSI_g_sStack
-	#emit PUSH.C       0
-	#emit PUSH.pri
-	#emit PUSH.alt
-	#emit PUSH.C       20
-	#emit SYSREQ.C     memcpy
-	#emit STACK        24
-	
-	// Call "CallLocalFunction"
+	// "frm" is still valid.
 	#emit PUSH.S       fmat
 	#emit PUSH.S       function
-	#emit LOAD.pri     YSI_g_sStack
-	#emit ADD.C        8
-	#emit PUSH.pri
-	#emit SYSREQ.C     CallLocalFunction
+	#emit PUSH         YSI_g_sArgCount // Push the parameter count.
 	
-	// Pop the stack.
-	#emit MOVE.alt
-	#emit LCTRL        5
+	// Call the function.
+	#emit SYSREQ.C     CallLocalFunction
+	#emit STOR.pri     YSI_g_sArgCount
+	
+	// Copy the data back.
+	#emit STACK        0
+	#emit CONST.pri    YSI_g_sArgs
+	#emit MOVS         12
+	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
-	#emit MOVE.pri
+	
+	#emit LOAD.pri     YSI_g_sArgCount
 	#emit RETN
 	
 	return 0;
@@ -326,16 +274,15 @@ stock va_SetTimerEx(const function[], interval, bool:repeating, const fmat[], va
 	// Get the address of the arguments we are replacing.
 	#emit LOAD.S.pri   0
 	#emit ADD
-	#emit ADD.C        0xFFFFFFFC // -4 adjustment for JIT.
 	
 	// Copy them to our temporary buffer.
 	#emit CONST.alt    YSI_g_sArgs
-	#emit MOVS         24 // (n + 1) * 4
+	#emit MOVS         20 // (n + 1) * 4
 	
 	// Go to the new "top" of the stack.
 	#emit STACK        0
 	#emit STOR.alt     YSI_g_sStack    // Store it.
-	#emit ADD.C        24 // (n + 1) * 4
+	#emit ADD.C        20 // (n + 1) * 4
 	#emit SCTRL        4
 	
 	// "frm" is still valid.
@@ -350,12 +297,11 @@ stock va_SetTimerEx(const function[], interval, bool:repeating, const fmat[], va
 	#emit STOR.pri     YSI_g_sArgCount
 	
 	// Copy the data back.
-	#emit STACK        0xFFFFFFFC // -4 adjustment for JIT.
 	#emit STACK        0
+	#emit CONST.pri    YSI_g_sArgs
+	#emit MOVS         20
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
-	#emit CONST.pri    YSI_g_sArgs
-	#emit MOVS         24
 	
 	#emit LOAD.pri     YSI_g_sArgCount
 	#emit RETN
@@ -383,16 +329,15 @@ stock va_format(out[], size, const fmat[], va_:STATIC_ARGS)
 	// Get the address of the arguments we are replacing.
 	#emit LOAD.S.pri   0
 	#emit ADD
-	#emit ADD.C        0xFFFFFFFC // -4 adjustment for JIT.
 	
 	// Copy them to our temporary buffer.
 	#emit CONST.alt    YSI_g_sArgs
-	#emit MOVS         20 // (n + 1) * 4
+	#emit MOVS         16 // (n + 1) * 4
 	
 	// Go to the new "top" of the stack.
 	#emit STACK        0
 	#emit STOR.alt     YSI_g_sStack    // Store it.
-	#emit ADD.C        20 // (n + 1) * 4
+	#emit ADD.C        16 // (n + 1) * 4
 	#emit SCTRL        4
 	
 	// "frm" is still valid.
@@ -401,8 +346,7 @@ stock va_format(out[], size, const fmat[], va_:STATIC_ARGS)
 	#emit PUSH.S       out
 	#emit PUSH         YSI_g_sArgCount // Push the parameter count.
 	
-	// Modify the heap to hold "locals".  This is for when the destination is a
-	// local within the function that called us.
+	// Modify the heap to hold "locals".
 	#emit HEAP         0
 	#emit STOR.alt     YSI_g_sHeap
 	#emit LCTRL        4
@@ -415,12 +359,11 @@ stock va_format(out[], size, const fmat[], va_:STATIC_ARGS)
 	// Copy the data back.
 	#emit LOAD.pri     YSI_g_sHeap
 	#emit SCTRL        2
-	#emit STACK        0xFFFFFFFC // -4 adjustment for JIT.
 	#emit STACK        0
+	#emit CONST.pri    YSI_g_sArgs
+	#emit MOVS         16
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
-	#emit CONST.pri    YSI_g_sArgs
-	#emit MOVS         20
 	
 	#emit LOAD.pri     YSI_g_sArgCount
 	#emit RETN
@@ -434,7 +377,7 @@ stock va_return(const fmat[], va_:STATIC_ARGS)
 		out[YSI_MAX_STRING * 8],
 		size = sizeof (out);
 	
-	// Get the number of parameters - don't forget the hidden string return one.
+	// Get the number of parameters.
 	#emit LOAD.S.alt   STATIC_ARGS
 	#emit DEC.alt      // 2 - n
 	#emit SHL.C.alt    2
@@ -451,26 +394,24 @@ stock va_return(const fmat[], va_:STATIC_ARGS)
 	// Get the address of the arguments we are replacing.
 	#emit LOAD.S.pri   0
 	#emit ADD
-	#emit ADD.C        0xFFFFFFFC // -4 adjustment for JIT.
 	
 	// Copy them to our temporary buffer.
 	#emit CONST.alt    YSI_g_sArgs
-	#emit MOVS         20 // (n + 1) * 4
+	#emit MOVS         16 // (n + 1) * 4
 	
 	// Go to the new "top" of the stack.
 	#emit STACK        0
 	#emit STOR.alt     YSI_g_sStack    // Store it.
-	#emit ADD.C        20 // (n + 1) * 4
+	#emit ADD.C        16 // (n + 1) * 4
 	#emit SCTRL        4
 	
 	// "frm" is still valid.
 	#emit PUSH.S       fmat
 	#emit PUSH         size
-	#emit PUSH.S       20 // Secret return parameter.
+	#emit PUSH.C       out
 	#emit PUSH         YSI_g_sArgCount // Push the parameter count.
 	
-	// Modify the heap to hold "locals".  This is for when the destination is a
-	// local within the function that called us.
+	// Modify the heap to hold "locals".
 	#emit HEAP         0
 	#emit STOR.alt     YSI_g_sHeap
 	#emit LCTRL        4
@@ -482,15 +423,13 @@ stock va_return(const fmat[], va_:STATIC_ARGS)
 	// Copy the data back.
 	#emit LOAD.pri     YSI_g_sHeap
 	#emit SCTRL        2
-	#emit STACK        0xFFFFFFFC // -4 adjustment for JIT.
 	#emit STACK        0
+	#emit CONST.pri    YSI_g_sArgs
+	#emit MOVS         16
 	#emit LOAD.pri     YSI_g_sStack
 	#emit SCTRL        4
-	#emit CONST.pri    YSI_g_sArgs
-	#emit MOVS         20
 	
-	// Now do the real return, but without the costly string copying.
-	#emit RETN
+	// Now do the real return.
 	return out;
 }
 

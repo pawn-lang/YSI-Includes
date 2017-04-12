@@ -134,9 +134,55 @@ stock IntTree_FindValue(IntTree:tree<>, value, upper = sizeof (tree))
 		}
 		else
 		{
-			return idx;
+				return ApplyAnimation(playerid, animlib, animname, fDelta, loop, lockx, locky, freeze, time, forcesync);
 		}
 	}
 	return BINTREE_NOT_FOUND;
 }
+
+
+
+	new
+		upper = FIXES_gscAnimIndexes[idx - ('A' - 1)],
+		lower = FIXES_gscAnimIndexes[idx - 'A'];
+	while (upper != lower)
+	{
+		idx = (upper - lower) / 2 + lower;
+		if ((diff = strcmp(FIXES_gscAnimLib[idx], animlib, true)))
+		{
+			if (diff > 0) upper = idx;
+			else lower = idx + 1;
+		}
+		else
+		{
+			// If we hit the "else" branch, we have found the correct
+			// animation library from the n-ary search.
+			#if FIX_ApplyAnimation_2
+				if (FIXES_gsAnimTimer[playerid])
+				{
+					KillTimer(FIXES_gsAnimTimer[playerid]),
+					FIXES_gsAnimTimer[playerid] = 0;
+				}
+				if (FIXES_gsPlayerAnimLibs[playerid][idx >>> 5] & (1 << (idx & 0x1F)))
+				{
+					FIXES_gsPlayerAnimLibs[playerid][idx >>> 5] &= ~(1 << (idx & 0x1F)),
+					FIXES_gsClassAnimName[playerid][0] = '\0',
+					strcat(FIXES_gsClassAnimName[playerid], animname),
+					FIXES_gsAnimTimer[playerid] = SetTimerEx("_FIXES_ApplyAnimation", 350, false, "ddfdddddd", playerid, idx, fDelta, loop, lockx, locky, freeze, time, forcesync);
+				}
+			#endif
+				return ApplyAnimation(playerid, animlib, animname, fDelta, loop, lockx, locky, freeze, time, forcesync);
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
 

@@ -1,45 +1,10 @@
 static
 	YSI_g_sVariable;
 
-static stock y_va_CallRemoteFunction(va_args<>)
-{
-	va_CallRemoteFunction("y_va_PublicTestFunction", "ii", va_start<0>);
-}
-
-static stock y_va_CallLocalFunction(va_args<>)
-{
-	new
-		local1 = 123,
-		local2 = 1,
-		local3 = 7,
-		local4 = 7;
-	va_CallLocalFunction("y_va_PublicTestFunction", "ii", va_start<0>);
-	return local1 * local2 + local3 - local4;
-}
-
-static stock y_va_CallLocalFunction_X(func[], va_args<>)
-{
-	new
-		local1 = 61,
-		local2 = 2,
-		local3 = 8,
-		local4 = 7;
-	va_CallLocalFunction(func, "si", va_start<1>);
-	return local1 * local2 + local3 - local4;
-}
-
-static stock y_va_CallRemoteFunction_X(func[], va_args<>)
-{
-	va_CallRemoteFunction(func, "si", va_start<1>);
-}
-
 forward y_va_PublicTestFunction(vara, varb);
 
 public y_va_PublicTestFunction(vara, varb)
 {
-	new
-		varc = 55,
-		vard = 101;
 	if (vara)
 	{
 		YSI_g_sVariable = varb;
@@ -48,23 +13,11 @@ public y_va_PublicTestFunction(vara, varb)
 	{
 		++YSI_g_sVariable;
 	}
-	// Just use them so they can't be optimised out.
-	vara = clamp(varb, varc, vard);
 }
 
-forward y_va_PublicRecurseFunction(func[], vara);
-
-public y_va_PublicRecurseFunction(func[], vara)
+static stock y_va_CallRemoteFunction(va_args<>)
 {
-	// "" Passed to "CallLocalFunction" crashes it.
-	ASSERT(123 == y_va_CallLocalFunction_X(func, "\1", vara));
-}
-
-forward y_va_PublicCallFunction(func[], vara);
-
-public y_va_PublicCallFunction(func[], vara)
-{
-	y_va_PublicTestFunction(vara, 123456);
+	va_CallRemoteFunction("y_va_PublicTestFunction", "ii", va_start<0>);
 }
 
 Test:y_va_CallRemoteFunction()
@@ -76,53 +29,9 @@ Test:y_va_CallRemoteFunction()
 	ASSERT(YSI_g_sVariable == 11);
 }
 
-static stock y_va_printf_0(va_args<>)
+static stock y_va_CallLocalFunction(va_args<>)
 {
-	va_printf("", va_start<0>);
-}
-
-static stock y_va_printf_1(num, va_args<>)
-{
-	#pragma unused num
-	va_printf("", va_start<1>);
-}
-
-static stock y_va_printf_2(num, other, va_args<>)
-{
-	#pragma unused num, other
-	va_printf("", va_start<2>);
-}
-
-static stock y_va_printf_3(num, other, str[], va_args<>)
-{
-	#pragma unused num, other, str
-	va_printf("", va_start<3>);
-}
-
-Test:y_va_printf()
-{
-	y_va_printf_0(42, 1, "hi", I@);
-	y_va_printf_1(42, 1, "hi", I@);
-	y_va_printf_2(42, 1, "hi", I@);
-	y_va_printf_3(42, 1, "hi", I@);
-}
-
-Test:y_va_recurse_local()
-{
-	YSI_g_sVariable = 0;
-	y_va_CallLocalFunction_X("y_va_PublicRecurseFunction", "y_va_PublicCallFunction", true);
-	ASSERT(YSI_g_sVariable == 123456);
-	y_va_CallLocalFunction_X("y_va_PublicRecurseFunction", "y_va_PublicCallFunction", false);
-	ASSERT(YSI_g_sVariable == 123457);
-}
-
-Test:y_va_recurse_remote()
-{
-	YSI_g_sVariable = 0;
-	y_va_CallRemoteFunction_X("y_va_PublicRecurseFunction", "y_va_PublicCallFunction", true);
-	ASSERT(YSI_g_sVariable == 123456);
-	y_va_CallRemoteFunction_X("y_va_PublicRecurseFunction", "y_va_PublicCallFunction", false);
-	ASSERT(YSI_g_sVariable == 123457);
+	va_CallLocalFunction("y_va_PublicTestFunction", "ii", va_start<0>);
 }
 
 Test:y_va_CallLocalFunction()
@@ -130,7 +39,7 @@ Test:y_va_CallLocalFunction()
 	YSI_g_sVariable = 8;
 	y_va_CallLocalFunction(0, 45);
 	ASSERT(YSI_g_sVariable == 9);
-	ASSERT(123 == y_va_CallLocalFunction(1, 45));
+	y_va_CallLocalFunction(1, 45);
 	ASSERT(YSI_g_sVariable == 45);
 }
 
@@ -210,4 +119,5 @@ Test:y_va_Locals()
 	ASSERT(y_va_Locals("hi", "%s", "hi"));
 	ASSERT(y_va_Locals("he -1", "%.2s %d", "hello", -1));
 }
+
 

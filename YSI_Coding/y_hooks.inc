@@ -82,23 +82,23 @@ Changelog:
 	#define _Y_HOOKS_STATIC static
 #endif
 
-// Actually now an important include - ensures that "OnScriptInit" is hooked
-// correctly despite not being called correctly.
-#include "..\YSI_Core\y_debug"
+#include "..\YSI_Internal\y_unique"
 #include "..\YSI_Core\y_cell"
 #include "..\YSI_Core\y_utils"
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Core\y_als"
 
-#include "..\YSI_Internal\amx_assembly"
-
 #include "..\YSI_Internal\y_cgen"
-#include "..\YSI_Internal\y_prehook"
+
+#include "..\YSI_Internal\amx_assembly"
+//asm"
 
 #include "y_hooks/impl"
 
 #if defined YSI_TESTS
 	#include "..\YSI_Core\y_testing"
 	#include "y_hooks/tests"
+	// Get some new IDs.
+	//#include "..\YSI_Internal\y_unique"
 #endif
 

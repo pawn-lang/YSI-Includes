@@ -368,12 +368,8 @@ Iterators:
 #include "..\YSI_Core\y_debug"
 
 #include "y_foreach/impl"
-#if _FOREACH_CHARACTERS || _FOREACH_VEHICLES || _FOREACH_ACTORS
-	#include "..\YSI_Coding\y_hooks"
-#endif
-#if _FOREACH_VEHICLES || _FOREACH_ACTORS
-	#include "..\YSI_Coding\y_remote"
-#endif
+#include "..\YSI_Coding\y_hooks"
+#include "..\YSI_Coding\y_remote"
 #include "y_foreach/iterators"
 
 #if defined YSI_TESTS

@@ -6,7 +6,7 @@
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Internal\amx_assembly"
 
-// We use "s" not a string literal as we are trying to use up code space, not
+// We use "STE" not a string literal as we are trying to use up code space, not
 // data space!
 #define _CODE_1 SetTimerEx(s,0,0,s,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
 #define _CODE_2 _CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1
@@ -19,6 +19,9 @@ forward _@_y_cgen_@_0();
 
 public _@_y_cgen_@_0()
 {
+	#emit RETN // Invisible return.
+	//P:F("Someone called \"_@_y_cgen_@_0\" and somehow it didn't crash yet!");
+	//assert(FALSE); // Always fails.
 	// Reserve a huge area of "COD" for our own use!
 	static
 		s[] = "";
@@ -72,12 +75,18 @@ public _@_y_cgen_@_1()
 
 static stock CGen_GetAddr(const func[])
 {
-	return AMX_Read(funcidx(func) * 8 + AMX_HEADER_PUBLICS) + AMX_HEADER_COD;
+	new
+		entry = AMX_HEADER_PUBLICS + funcidx(func) * 8,
+		ret = AMX_HEADER_COD + AMX_Read(entry);
+	// Reset the pointer to this function, so calling it fails.
+	//AMX_Write(entry, 0);
+	return ret;
 }
 
 static stock CGen_SetupCodeSpace()
 {
 	if (YSI_g_sCodeSpace != -1) return;
+	// Both these functions can now be safely called - but why would you?
 	YSI_g_sCodeSpace = CGen_GetAddr("_@_y_cgen_@_0"),
 	YSI_g_sCodeEnd   = CGen_GetAddr("_@_y_cgen_@_1"),
 	// Rewrite "_@_y_cgen_@_0" to just "return 0;".
@@ -87,50 +96,15 @@ static stock CGen_SetupCodeSpace()
 	YSI_g_sCodeSpace += 12;
 }
 
-forward OnCodeInit();
-
-public OnCodeInit()
-{
-	CGen_SetupCodeSpace();
-	#if defined CGen_OnCodeInit
-		CGen_OnCodeInit();
-	#endif
-	// Check that the code at this point is valid.  An OpCode is at most two
-	// bytes (except "OP_SWITCH", but there are none of them in this area of
-	// code because there are no "switch"es).  If the code here fails to
-	// decompile, it is probably out of alignment - add a single "NOP" to bring
-	// it back in to alignment.
-	new
-		ctx[DisasmContext];
-	DisasmInit(ctx, YSI_g_sCodeSpace - AMX_HEADER_COD);
-	for (new i = 0; i != 10; ++i)
-	{
-		if (DisasmNextInsn(ctx) == OP_NONE)
-		{
-			AMX_Write(YSI_g_sCodeSpace, _:RelocateOpcode(OP_NOP));
-			return 1;
-		}
-	}
-	return 1;
-}
-
-#if defined CGen_OnCodeInit
-	forward CGen_OnCodeInit();
-#endif
-#if defined _ALS_OnCodeInit
-	#undef OnCodeInit
-#else
-	#define _ALS_OnCodeInit
-#endif
-#define OnCodeInit CGen_OnCodeInit
-
 stock CGen_UseCodeSpace(ctx[AsmContext])
 {
+	CGen_SetupCodeSpace();
 	AsmInitPtr(ctx, YSI_g_sCodeSpace, YSI_g_sCodeEnd - YSI_g_sCodeSpace);
 }
 
 stock CGen_GetCodeSpace()
 {
+	CGen_SetupCodeSpace();
 	return YSI_g_sCodeSpace;
 }
 

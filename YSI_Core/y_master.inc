@@ -112,7 +112,7 @@ Tags:
 	-
 Variables:
 	Global:
-		Y@ - ID of this script.
+		_@ - ID of this script.
 	Static:
 		-
 Commands:
@@ -144,11 +144,6 @@ Natives:
 	#include "..\YSI_Internal\y_shortfunc"
 	
 	#include "..\YSI_Internal\y_natives"
-	#include "..\YSI_Internal\y_prehook"
-	
-	CHAIN_HOOK(Master)
-	#undef CHAIN_ORDER
-	#define CHAIN_ORDER CHAIN_NEXT(Master)
 	
 	#include "y_master/once"
 #endif
