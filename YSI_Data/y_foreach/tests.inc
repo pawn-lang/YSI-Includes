@@ -282,6 +282,20 @@ Test:y_iter_Range()
 	}
 	ASSERT(count == 10);
 	count = 0;
+	foreach (new i : Range(0, 10, 2))
+	{
+		ASSERT(0 <= i < 10);
+		++count;
+	}
+	ASSERT(count == 5);
+	count = 0;
+	foreach (new i : Range(0, 9, 2))
+	{
+		ASSERT(0 <= i < 10);
+		++count;
+	}
+	ASSERT(count == 5);
+	count = 0;
 	foreach (new i : Range(-10, 10))
 	{
 		ASSERT(-10 <= i < 10);
@@ -294,6 +308,18 @@ Test:y_iter_Range()
 		++count;
 	}
 	ASSERT(count == 0);
+	count = 0;
+	foreach (new i : Range(10, 5, -1))
+	{
+		++count;
+	}
+	ASSERT(count == 5);
+	count = 0;
+	foreach (new i : Range(10, 5, -5))
+	{
+		++count;
+	}
+	ASSERT(count == 1);
 }
 
 Test:y_iter_Add1()
