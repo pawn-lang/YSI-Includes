@@ -532,11 +532,11 @@ stock Iter_All_Internal(array[], size, value)
 						}
 						else
 					#endif
-					#if _FOREACH_PLAYERS
 						{
+					#if _FOREACH_PLAYERS
 							Iter_Add(Player, i);
-						}
 					#endif
+						}
 				}
 			}
 		#endif
@@ -589,11 +589,11 @@ stock Iter_All_Internal(array[], size, value)
 			}
 			else
 		#endif
-		#if _FOREACH_PLAYERS
 			{
+		#if _FOREACH_PLAYERS
 				Iter_Add(Player, playerid);
-			}
 		#endif
+			}
 		P:2("Iter_OnPlayerConnect end");
 		return 1;
 	}
@@ -644,11 +644,11 @@ stock Iter_All_Internal(array[], size, value)
 			}
 			else
 		#endif
-		#if _FOREACH_PLAYERS
 			{
+		#if _FOREACH_PLAYERS
 				Iter_Remove(Player, playerid);
-			}
 		#endif
+			}
 	}
 #endif
 
