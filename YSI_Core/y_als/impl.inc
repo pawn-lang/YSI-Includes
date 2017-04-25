@@ -275,31 +275,37 @@ enum ALS
 #define ALS_KS_string:%0[],     %0[],ALS_KS_
 #define ALS_KS_Float:%0,        Float:%0,ALS_KS_
 #define ALS_KS_tag:%3:%0,       %3:%0,ALS_KS_
+#define ALS_KS_array:%0[%1],    %0[%1],ALS_KS_
 #define ALS_KS_end:%0)          %0)
 #define ALS_KS_none:)           )
 #define ALS_KS_end_string:%0[]) %0[])
 #define ALS_KS_end_Float:%0)    Float:%0)
 #define ALS_KS_end_tag:%3:%0)   %3:%0)
+#define ALS_KS_end_array:%0[%1]) %0[%1])
 
 #define ALS_TS_more:%0,         %0,ALS_TS_
 #define ALS_TS_string:%0[],     (%0),ALS_TS_
 #define ALS_TS_Float%0,         Float:%0,ALS_TS_
 #define ALS_TS_tag:%3:%0,       %3:%0,ALS_TS_
+#define ALS_TS_array:%0[%1],    (%0),ALS_TS_
 #define ALS_TS_end:%0)          %0)
 #define ALS_TS_none:)           )
 #define ALS_TS_end_string:%0[]) (%0))
 #define ALS_TS_end_Float:%0)    Float:%0)
 #define ALS_TS_end_tag:%3:%0)   %3:%0)
+#define ALS_TS_end_array:%0[%1]) (%0))
 
 #define ALS_RS_more:%0,         %0,ALS_RS_
 #define ALS_RS_string:%0[],     ((%0[0])?(%0):NULL),ALS_RS_
 #define ALS_RS_Float:%0,        (_:%0),ALS_RS_
 #define ALS_RS_tag:%3:%0,       (_:%0),ALS_RS_
+#define ALS_RS_array:%0[%1],    (_:%0),ALS_RS_
 #define ALS_RS_end:%0)          %0)
 #define ALS_RS_none:)           )
 #define ALS_RS_end_string:%0[]) ((%0[0])?(%0):NULL))
 #define ALS_RS_end_Float:%0)    (_:%0))
 #define ALS_RS_end_tag:%3:%0)   (_:%0))
+#define ALS_RS_end_array:%0[%1]) (_:%0))
 
 #define ALS_DO:%9<%0> ALS_DO_%0<%9>
 
