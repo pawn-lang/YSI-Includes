@@ -285,10 +285,14 @@ Iterators:
 		// I made this a warning on compilers that supported them, but that's a
 		// silly idea!
 		#error The old <foreach> include is no longer compatible with YSI.
+		#endif
 	#endif
-#endif
 
 // Set `FOREACH_VERSION` as this file's version.
+#if defined FOREACH_VERSION
+	#undef FOREACH_VERSION
+#endif
+
 #if defined FOREACH_VERSION
 	#undef FOREACH_VERSION
 #endif
@@ -415,8 +419,12 @@ Iterators:
 #include "..\YSI_Core\y_debug"
 
 #include "y_foreach/impl"
-#include "..\YSI_Coding\y_hooks"
-#include "..\YSI_Coding\y_remote"
+#if _FOREACH_CHARACTERS || _FOREACH_VEHICLES || _FOREACH_ACTORS
+	#include "..\YSI_Coding\y_hooks"
+#endif
+#if _FOREACH_VEHICLES || _FOREACH_ACTORS
+	#include "..\YSI_Coding\y_remote"
+#endif
 #include "y_foreach/iterators"
 
 #if defined YSI_TESTS
