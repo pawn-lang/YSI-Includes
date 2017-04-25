@@ -1,7 +1,7 @@
 
 remote stock yrt_1(hi);
 
-// static stock remote yrt_2(const hi, string:you[], there[], &other, &len = 7);
+static stock remote yrt_2(const hi, string:you[], there[], &other, &len = 7);
 
 remote stock yrt_3(hi, string:you[], there[], len)
 {
