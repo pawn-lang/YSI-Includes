@@ -224,11 +224,31 @@ Iterators:
 	#define NO_CUSTOM_WARNINGS
 #endif
 
-// Foreach is testing us.
-#if defined _FOREACH_INC_TEST
-	#define _FOREACH_CUR_VERSION _Y_ITERATE_LOCAL_VERSION
+#if !defined _inc_y_iterate
+	// The stand-alone version looks for this symbol, even on the new compiler.
+	#define _inc_y_iterate
+#endif
+
+#if defined NEVER_Y_ITERATE
+	// Extra macro so that those paranoid about accidentally including YSI can
+	// ensure it never happens.
+	#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
+	#undef _inc_y_iterate
+	#undef _Y_ITERATE_LOCAL_VERSION
 	#endinput
 #endif
+
+// Foreach is testing us.
+#if defined _FOREACH_INC_TEST
+	#if !defined _Y_ITERATE_FOUND
+		// Set up so that you can use `FOREACH_VERSION` even if the older
+		// stand-alone version doesn't support it.
+		#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
+		#define _FOREACH_CUR_VERSION _Y_ITERATE_LOCAL_VERSION
+	#endif
+	#endinput
+#endif
+
 #if !defined _FOREACH_NO_TEST
 	#define _FOREACH_INC_TEST
 	// Ignore the broken stand-alone version.
@@ -244,6 +264,9 @@ Iterators:
 			#endif
 			#define _FOREACH_NO_TEST
 			#include <foreach>
+			#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
+			#define _FOREACH_INC_TEST
+			#define _Y_ITERATE_FOUND
 			#endinput
 		#endif
 	#elseif defined foreach
@@ -256,7 +279,18 @@ Iterators:
 		#endif
 	#endif
 #endif
+
+#if defined FOREACH_VERSION
+	#undef FOREACH_VERSION
+#endif
+
+#define FOREACH_VERSION _Y_ITERATE_LOCAL_VERSION
 #define _FOREACH_INC_TEST
+#define _Y_ITERATE_FOUND
+
+#if defined _FOREACH_CUR_VERSION
+	#undef _FOREACH_CUR_VERSION
+#endif
 
 #if !defined _samp_included
 	#error "Please include a_samp or a_npc before foreach"
