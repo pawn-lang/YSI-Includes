@@ -218,7 +218,7 @@ Iterators:
 */
 
 // "y_iterate" is always higher than "foreach".
-#define _Y_ITERATE_LOCAL_VERSION        41
+#define _Y_ITERATE_LOCAL_VERSION        42
 
 #if __Pawn != 0x030A
 	#define NO_CUSTOM_WARNINGS
@@ -231,6 +231,8 @@ Iterators:
 #endif
 #if !defined _FOREACH_NO_TEST
 	#define _FOREACH_INC_TEST
+	// Ignore the broken stand-alone version.
+	#define _foreach_included
 	#tryinclude <foreach>
 	#undef _FOREACH_INC_TEST
 	// <foreach> exists - test which is newer.
