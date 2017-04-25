@@ -113,34 +113,34 @@ Natives:
 #include "y_shortvar"
 #include "..\YSI_Core\y_debug"
 
-// Y@ - Script ID
-// N@ - y_uvar callback
-// M@ - y_svar callback
-// Q@ - Temp string
-// I@ - Temp var
-// J@ - Temp var
-// F@ - Also get string return without caller
-// W@ - CallRemoteFunction
-// V@ - getproperty
-// S@ - Get string return
-// Z@ - Detect string
-// X@ - Set return
-// R@ - Set string return
-// U@ - setproperty
-// E@ - Set caller
-// O@ - SetTimerEx
-// H@ - Ignore parameters
+// 
+// A@ - PARSER_DROP()
 // B@ - Fix "On"
-// 
-// G@ - Ignore parameters with string return
-// K@ - SetTimer
-// P@ - CallLocalFunction
-// 
-// A@
 // C@ - CallRemoteFunction string return wrapper
 // D@ - CallRemoteFunction wrapper
-// L@ - Return storage
+// E@ - Set caller / LENGTH_REQUIRED{}
+// F@ - Also get string return without caller / PARSER_NO:
+// G@ - Ignore parameters with string return / PARSER_GRP:
+// H@ - Ignore parameters / PARSER_ID:
+// I@ - Temp var
+// J@ - Temp var
+// K@ - SetTimer
+// L@ - Return storage / PARSER_WANT:
+// M@ - y_svar callback
+// N@ - y_uvar callback
+// O@ - SetTimerEx
+// P@ - CallLocalFunction
+// Q@ - Temp string
+// S@ - Get string return
+// R@ - Set string return
 // T@ - String return storage
+// U@ - setproperty
+// V@ - getproperty
+// W@ - CallRemoteFunction
+// X@ - Set return
+// Y@ - Script ID
+// Z@ - Detect string
+// 
 
 new
 	Q@[YSI_MAX_STRING];
@@ -349,195 +349,6 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 
 #define @_%0\32; @_
 #define _@%0\32; _@
-
-//stock T@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
-//{
-//	static lRet;
-//	#pragma unused function, fmat
-//	// New implementation of "CallLocalFunction".  Wraps the old function
-//	// efficiently (using assembly stack manipulation tricks, better even than
-//	// the ones in "y_va" since we have more control over exactly how this is
-//	// called and what other locals there are).  Also pushes and pops the
-//	// current master, and uses properties for return values instead of normal
-//	// ones which don't work well for "CallLocalFunction" (they depend on script
-//	// call order).
-//	
-//	// Push the current master ID on to the master stack.  Returns the old
-//	// master ID stored in the property, which we can shove on to the heap to
-//	// restore later.
-//	#emit PUSH.C       Q@
-//	#emit PUSH         Y@
-//	#emit PUSH.C       YSI_g_sPropCaller
-//	#emit PUSH.C       8
-//	#emit PUSH.C       16
-//	#emit SYSREQ.C     setproperty
-//	
-//	// Back up the frame header information and the return value.  "MOVS" copies
-//	// from "pri" to "alt".
-//	#emit STOR.S.pri   0xFFFFFFF8 // -8
-//	#emit HEAP         28
-//	#emit LCTRL        4
-//	#emit MOVS         28
-//	
-//	// Call "CallLocalFunction".
-//	#emit STACK        28
-//	#emit SYSREQ.C     CallLocalFunction
-//	#emit STOR.pri     lRet
-//	
-//	// Restore the stack.
-//	#emit STACK        0xFFFFFFE4 // -28
-//	#emit STACK        0          // Load new stack pointer in to "alt".
-//	#emit LCTRL        2
-//	#emit ADD.C        0xFFFFFFE4
-//	#emit MOVS         28
-//	#emit HEAP         0xFFFFFFE4
-//	
-//	// Restore the master caller.  Already pushed the parameters earlier, before
-//	// backing them up on the heap (saved extra work now sorting out which saved
-//	// parameter went where).
-//	#emit SYSREQ.C     setproperty
-//	if (lRet)
-//	{
-//		// Get the return value.  Already have most of the parameters pushed,
-//		// just modify one of them (the name).
-//		#emit CONST.pri    YSI_g_sPropEmpty
-//		#emit STOR.S.pri   0xFFFFFFF4 // -12
-//		#emit LOAD.pri     YSI_g_sYSIM_STRING
-//		#emit STOR.S.pri   0xFFFFFFF8 // -8
-//		#emit SYSREQ.C     getproperty
-//		
-//		// Unpack the return to the previous function's return string.
-//		#emit PUSH         YSI_g_sYSI_MAX_STRING
-//		#emit PUSH.C       Q@
-//		#emit LOAD.S.pri   0
-//		#emit MOVE.alt
-//		#emit ADD.C        8
-//		#emit LOAD.I
-//		#emit ADD.C        12
-//		#emit ADD
-//		#emit LOAD.I
-//		#emit PUSH.pri
-//		#emit PUSH.C       12
-//		#emit SYSREQ.C     strunpack
-//		
-//		// Get all the varargs (without using our corrupted stack).
-//		static i, j, ch;
-//		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
-//		{
-//			YSI_g_sPropVarArg[1] = '@' + ++j,
-//			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
-//		}
-//	}
-//	else
-//	{
-//		// NULL the return.
-//		#emit LOAD.S.pri   0
-//		#emit MOVE.alt
-//		#emit ADD.C        8
-//		#emit LOAD.I
-//		#emit ADD.C        12
-//		#emit ADD
-//		#emit LOAD.I
-//		#emit MOVE.alt
-//		#emit ZERO.pri
-//		#emit STOR.I
-//	}
-//	{}
-//	
-//	// Return from two functions at once, while unpopping all our data.  By
-//	// doing this we know out string return fix/optimisation will apply.
-//	#emit LOAD.S.pri   0
-//	#emit SCTRL        5
-//	#emit SCTRL        4
-//	#emit HEAP         0xFFFFFDF8 // -520
-//	#emit RETN
-//	
-//	// Let the compiler do size checks.  There is a bug in the old compiler
-//	// where returning a string from a varargs function won't work, we work
-//	// around that bug by using raw assembly.  We also make the return more
-//	// efficient by unpacking straight in to the destination, instead of
-//	// unpacking to a local array then copying that to the return, as even the
-//	// new compiler would do with separate statements.  Fortunately, the old
-//	// compiler at least gets the size checks right, we so have that going for
-//	// us - meaning that we know that code that compiles will return correctly.
-//	return Q@;
-//}
-//
-//stock U@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
-//{
-//	static lRet;
-//	#pragma unused function, fmat
-//	// New implementation of "CallLocalFunction".  Wraps the old function
-//	// efficiently (using assembly stack manipulation tricks, better even than
-//	// the ones in "y_va" since we have more control over exactly how this is
-//	// called and what other locals there are).  Also pushes and pops the
-//	// current master, and uses properties for return values instead of normal
-//	// ones which don't work well for "CallLocalFunction" (they depend on script
-//	// call order).
-//	
-//	// Push the current master ID on to the master stack.  Returns the old
-//	// master ID stored in the property, which we can shove on to the heap to
-//	// restore later.
-//	#emit PUSH.C       YSI_g_sPropEmpty
-//	#emit PUSH         Y@
-//	#emit PUSH.C       YSI_g_sPropCaller
-//	#emit PUSH.C       8
-//	#emit PUSH.C       16
-//	#emit SYSREQ.C     setproperty
-//	
-//	// Back up the frame header information and the return value.  "MOVS" copies
-//	// from "pri" to "alt".
-//	#emit STOR.S.pri   0xFFFFFFF8 // -8
-//	#emit HEAP         28
-//	#emit LCTRL        4
-//	#emit MOVS         28
-//	
-//	// Call "CallLocalFunction".
-//	#emit STACK        28
-//	#emit SYSREQ.C     CallLocalFunction
-//	#emit STOR.pri     lRet
-//	
-//	// Restore the stack.
-//	#emit STACK        0xFFFFFFE4 // -28
-//	#emit STACK        0          // Load new stack pointer in to "alt".
-//	#emit LCTRL        2
-//	#emit ADD.C        0xFFFFFFE4
-//	#emit MOVS         28
-//	#emit HEAP         0xFFFFFFE4
-//	
-//	// Restore the master caller.  Already pushed the parameters earlier, before
-//	// backing them up on the heap (saved extra work now sorting out which saved
-//	// parameter went where).
-//	#emit SYSREQ.C     setproperty
-//	
-//	if (lRet)
-//	{
-//		// Get the return value.  Already have most of the parameters pushed,
-//		// just modify one of them (the name).
-//		#emit CONST.pri    YSI_g_sPropReturn
-//		#emit STOR.S.pri   0xFFFFFFF4 // -12
-//		#emit SYSREQ.C     getproperty
-//		#emit STOR.pri     lRet
-//		
-//		// Get all the varargs (without using our corrupted stack).
-//		static i, j, ch;
-//		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
-//		{
-//			YSI_g_sPropVarArg[1] = '@' + ++j,
-//			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
-//		}
-//	}
-//	{}
-//	
-//	// Return from two functions at once, while unpopping all our data.
-//	#emit LOAD.S.pri   0
-//	#emit SCTRL        5
-//	#emit SCTRL        4
-//	#emit LOAD.pri     lRet
-//	#emit RETN
-//	
-//	return 0;
-//}
 
 stock L@(GLOBAL_TAG_TYPES:...)
 {
