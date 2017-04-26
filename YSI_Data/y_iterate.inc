@@ -284,8 +284,8 @@ Iterators:
 	#elseif defined foreach
 		// I made this a warning on compilers that supported them, but that's a
 		// silly idea!
-	#endif
 		#error The old <foreach> include is no longer compatible with YSI.
+	#endif
 #endif
 
 // Set `FOREACH_VERSION` as this file's version.
