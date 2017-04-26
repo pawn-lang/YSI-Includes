@@ -253,7 +253,7 @@ stock iterfunc Range(cur, min, max, step = 1)
 {
 	if (cur == cellmin) cur = min;
 	else cur += step;
-	return (min <= cur < max || max <= cur < min) ? cur : cellmin;
+	return (min <= cur < max || max < cur <= min) ? cur : cellmin;
 }
 
 #define iterstart@Range cellmin
