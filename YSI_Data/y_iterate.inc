@@ -226,6 +226,7 @@ Iterators:
 
 // Foreach is testing us.
 #if defined _FOREACH_INC_TEST
+	#undef _FOREACH_CUR_VERSION
 	#define _FOREACH_CUR_VERSION _Y_ITERATE_LOCAL_VERSION
 	#endinput
 #endif
