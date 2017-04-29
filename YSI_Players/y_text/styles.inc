@@ -227,8 +227,8 @@ public Styles_EntryTag()
 			{
 				// Better "strval" for short numbers.
 				new
-					tmp = val[0] - '0';
-				if (0 <= tmp <= 6)
+					tmp = (val[0] - '0') + 1;
+				if (1 <= tmp <= 7)
 				{
 					type = e_STYLE_TYPE_GT_0 * e_STYLE_TYPE:tmp;
 				}

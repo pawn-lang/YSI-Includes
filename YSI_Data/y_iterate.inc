@@ -218,19 +218,51 @@ Iterators:
 */
 
 // "y_iterate" is always higher than "foreach".
-#define _Y_ITERATE_LOCAL_VERSION        41
+#define _Y_ITERATE_LOCAL_VERSION        42
 
 #if __Pawn != 0x030A
 	#define NO_CUSTOM_WARNINGS
 #endif
 
-// Foreach is testing us.
-#if defined _FOREACH_INC_TEST
-	#define _FOREACH_CUR_VERSION _Y_ITERATE_LOCAL_VERSION
+#if !defined _inc_y_iterate
+	// The stand-alone version looks for this symbol, even on the new compiler.
+	#define _inc_y_iterate
+#endif
+
+// Extra macro so that those paranoid about accidentally including YSI can
+// ensure it never happens.
+#if defined NEVER_Y_ITERATE
+	// Set `FOREACH_VERSION` as equal to whatever the version of the stand-alone
+	// include is.
+	#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
+	#undef _inc_y_iterate
+	#undef _Y_ITERATE_LOCAL_VERSION
+	#if defined _FOREACH_INC_TEST
+		// This is `foreach` testing our version - nothing more need doing.
+		#endinput
+	#endif
+	// Otherwise, include `foreach`.  Don't use `#tryinclude`, since they want
+	// a version of `foreach` and it would be an error to not give them one.
+	#define _FOREACH_NO_TEST
+	#include <foreach>
 	#endinput
 #endif
+
+// Foreach is testing us.
+#if defined _FOREACH_INC_TEST
+	#if !defined _Y_ITERATE_FOUND
+		// Set up so that you can use `FOREACH_VERSION` even if the older
+		// stand-alone version doesn't support it.
+		#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
+		#define _FOREACH_CUR_VERSION _Y_ITERATE_LOCAL_VERSION
+	#endif
+	#endinput
+#endif
+
 #if !defined _FOREACH_NO_TEST
 	#define _FOREACH_INC_TEST
+	// Ignore the broken stand-alone version.
+	#define _foreach_included
 	#tryinclude <foreach>
 	#undef _FOREACH_INC_TEST
 	// <foreach> exists - test which is newer.
@@ -241,20 +273,35 @@ Iterators:
 				#undef _inc_foreach
 			#endif
 			#define _FOREACH_NO_TEST
+			// Actually include the code.
 			#include <foreach>
+			// Mark the include as found and exit.
+			#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
+			#define _FOREACH_INC_TEST
+			#define _Y_ITERATE_FOUND
 			#endinput
 		#endif
 	#elseif defined foreach
-		#if __Pawn == 0x030A
-			#define WARNING 1
-			#include "y_iterate/warning" // Backwards-compatible directive.
-			#endinput
-		#else
-			#error Old foreach.inc files are no longer compatible with YSI.
-		#endif
+		// I made this a warning on compilers that supported them, but that's a
+		// silly idea!
+		#error The old <foreach> include is no longer compatible with YSI.
 	#endif
 #endif
+
+// Set `FOREACH_VERSION` as this file's version.
+#if defined FOREACH_VERSION
+	#undef FOREACH_VERSION
+#endif
+
+#define FOREACH_VERSION _Y_ITERATE_LOCAL_VERSION
 #define _FOREACH_INC_TEST
+#define _Y_ITERATE_FOUND
+
+// Remove `_FOREACH_CUR_VERSION` incase someone includes an older version of
+// `foreach` later on that doesn't check if this symbol is already defined.
+#if defined _FOREACH_CUR_VERSION
+	#undef _FOREACH_CUR_VERSION
+#endif
 
 #if !defined _samp_included
 	#error "Please include a_samp or a_npc before foreach"
