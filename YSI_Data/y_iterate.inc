@@ -235,6 +235,13 @@ Iterators:
 	#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
 	#undef _inc_y_iterate
 	#undef _Y_ITERATE_LOCAL_VERSION
+	// This is `foreach` testing us - all is good.
+	#if defined _FOREACH_INC_TEST
+		#endinput
+	#endif
+	// Otherwise, include `foreach`.
+	#define _FOREACH_NO_TEST
+	#include <foreach>
 	#endinput
 #endif
 
