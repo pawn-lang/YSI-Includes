@@ -229,8 +229,8 @@ Iterators:
 	#define _inc_y_iterate
 #endif
 
-// Extra macro so that those paranoid about accidentally including YSI can
-// ensure it never happens.
+	// Extra macro so that those paranoid about accidentally including YSI can
+	// ensure it never happens.
 #if defined NEVER_Y_ITERATE
 	// Set `FOREACH_VERSION` as equal to whatever the version of the stand-alone
 	// include is.
@@ -285,12 +285,7 @@ Iterators:
 		// I made this a warning on compilers that supported them, but that's a
 		// silly idea!
 		#error The old <foreach> include is no longer compatible with YSI.
-		#endif
 	#endif
-
-// Set `FOREACH_VERSION` as this file's version.
-#if defined FOREACH_VERSION
-	#undef FOREACH_VERSION
 #endif
 
 #if defined FOREACH_VERSION
