@@ -134,29 +134,14 @@ new stock
 #endif
 
 #define YSIM_MASTER #M
-
 #define YSIM_RETURN #R
-
 #define YSIM_CALLER #C
-
 #define YSIM_TEXT_D #T
-#define YSIM_TEXT_L #L
-#define YSIM_TEXT_S #Y
-#define YSIM_TEXT_P #Z
-
-#define YSIM_ORDERS #O
-
-#define YSIM_HFIRST #H
-
-#define YSIM_OPDRET #D
-
 #define YSIM_TXTFND #X
-
 #define YSIM_TXTIND #I
-
 #define YSIM_TXTLEN #E
-
 #define YSIM_LOG_IN #U
+#define YSIM_VARARG #V
 
 #if !defined YSIM_STRING
 	#define YSIM_STRING (42)
@@ -399,6 +384,113 @@ public OnPlayerDisconnect(playerid, reason)
 	strcat((%0[0] = '\0', %0), %1)
 
 /**--------------------------------------------------------------------------**\
+<summary>StrToLower</summary>
+<param name="str">String to convert.</param>
+<param name="len">How much of the string to convert.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock StrToLower(str[], len = sizeof (str))
+{
+	new
+		i = -1,
+		ch;
+	while ((ch = str[++i]) && len--)
+		str[i] = tolower(ch);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>StrToUpper</summary>
+<param name="str">String to convert.</param>
+<param name="len">How much of the string to convert.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock StrToUpper(str[], len = sizeof (str))
+{
+	new
+		i = -1,
+		ch;
+	while ((ch = str[++i]) && len--)
+		str[i] = toupper(ch);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Random</summary>
+<param name="minmax">Lower bound, or upper bound when only parameter.</param>
+<param name="max">Upper bound.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Generate a random float between the given numbers (min <= n < max).  Default
+	minimum is 0.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Random(min, max = cellmin)
+{
+	if (max == cellmin)
+	{
+		if (min < 0)
+			return -random(-min);
+		return random(min);
+	}
+	if (max < min)
+		return random(min - max) + max;
+	return random(max - min) + min;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>RandomFloat</summary>
+<param name="minmax">Lower bound, or upper bound when only parameter.</param>
+<param name="max">Upper bound.</param>
+<param name="dp">How small to make the differences</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Generate a random float between the given numbers (min <= n < max).  Default
+	minimum is 0.0.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
+{
+	new
+		Float:mul = floatpower(10.0, float(dp));
+	switch (dp)
+	{
+	case 0: mul = 1.0;
+	case 1: mul = 10.0;
+	case 2: mul = 100.0;
+	case 3: mul = 1000.0;
+	default: mul = floatpower(10.0, float(dp));
+	}
+	if (max != max)
+	{
+		if (min < 0.0)
+			return -(float(random(floatround(-min * mul))) / mul);
+		return float(random(floatround(min * mul))) / mul;
+	}
+	// Parameters are the wrong way around - do it anyway.
+	if (max < min)
+		return float(random(floatround(min * mul - max * mul))) / mul + max;
+	// NOT a silly check - "IsNaN".
+	return float(random(floatround(max * mul - min * mul))) / mul + min;
+}
+
+/**--------------------------------------------------------------------------**\
 <summary>StripNL</summary>
 <param name="str[]">The string to remove the newline characters from</param>
 <returns>
@@ -415,6 +507,50 @@ stock StripNL(str[])
 	new
 		i = strlen(str);
 	while (i-- && str[i] <= ' ') str[i] = '\0';
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>StripL</summary>
+<param name="str[]">The string to remove whitespace from the start of</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock StripL(str[])
+{
+	P:7("StripL called: \"%s\"", str);
+	new
+		len = strlen(str),
+		i = 0;
+	while ('\0' < str[i] <= ' ') ++i;
+	if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>Strip</summary>
+<param name="str[]">The string to remove whitespace from the start and end of</param>
+<returns>
+	-
+</returns>
+<remarks>
+	-
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Strip(str[])
+{
+	P:7("Strip called: \"%s\"", str);
+	new
+		len = strlen(str),
+		i = len;
+	while (i-- && str[i] <= ' ') str[i] = '\0';
+	i = 0;
+	while ('\0' < str[i] <= ' ') ++i;
+	if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
 }
 
 /**--------------------------------------------------------------------------**\

@@ -92,7 +92,6 @@ Natives:
 	V@ - Renaming of getproperty for size reasons.
 	S@ - Renaming of setproperty for size reasons.
 	P@ - Renaming of __CallLocalFunction for size reasons.
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_shortfunc
@@ -111,19 +110,10 @@ Natives:
 
 #include "..\YSI_Core\y_utils"
 #include "y_globaltags"
+#include "y_shortvar"
 #include "..\YSI_Core\y_debug"
 
 #include "y_renative"
-
-// Public variable.
-public stock
-	_@ = 0;
-
-// J@ is a "nul" target - send things there if they need ignoring or if a
-// parameter needs using.  I@ is too now.
-stock
-	I@,
-	J@;
 
 // N@ taken by y_uvar.
 // M@ taken by y_svar.
@@ -185,17 +175,6 @@ stock X@(GLOBAL_TAG_TYPES:n)
 	P:4("X@ called: %i", n);
 	setproperty(8, YSIM_RETURN, n);
 }
-
-// stock Y@()
-// {
-	// P:4("Y@ called");
-	// static
-	    // ret
-	// return
-		// ret = getproperty(8, YSIM_CALLER),
-		// setproperty(8, YSIM_CALLER, _@),
-		// ret;
-// }
 
 stock Y@()
 {
@@ -271,7 +250,8 @@ stock F@()
 #define _:%0,) _:%0)
 
 #if defined YSI_LOCK_MODE
-	#include "..\YSI_Coding\y_hooks"
+	#include "..\YSI_Internal\y_unique"
+	
 	forward UNIQUE_FUNCTION<@yH_OnScriptInit@...>();
 	
 	public UNIQUE_FUNCTION<@yH_OnScriptInit@...>()
@@ -281,7 +261,7 @@ stock F@()
 		find = strfind(YSI_gLockData[5], YSI_gLockData[1], _, find - 5) + 6;
 		new
 			found = strfind(YSI_gLockData[5], YSI_gLockData[1], _, find - 5) + 6;
-		if (strval(YSI_gLockData[found]) ^ 0x12345678 != _LOCK_IP_3 ^ 0x12345678 || strval(YSI_gLockData[find]) - _LOCK_IP_3 != _LOCK_IP_2 - _LOCK_IP_3)
+		if (strval(YSI_gLockData[found]) ^ UNIQUE_SYMBOL != _LOCK_IP_3 ^ UNIQUE_SYMBOL || strval(YSI_gLockData[find]) - _LOCK_IP_3 != _LOCK_IP_2 - _LOCK_IP_3)
 		{
 			y_lock 1;
 		}

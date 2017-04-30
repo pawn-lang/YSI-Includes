@@ -1,9 +1,9 @@
 /**--------------------------------------------------------------------------**\
-						================================
-						 y_jaggedarray - Uneven arrays. 
-						================================
+                              ====================
+                               YSI - Master Funcs
+                              ====================
 Description:
-	Provides code to easilly manipulate the sizes of 2d array slots.
+	Defines new names for native functions.
 Legal:
 	Version: MPL 1.1
 	
@@ -17,7 +17,7 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI group include.
+	The Original Code is the YSI master include.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright (C) 2011
@@ -47,26 +47,62 @@ Legal:
 		SA:MP Team past, present and future - SA:MP.
 	
 Version:
-	1.0
+	0.2
 Changelog:
-	06/10/12:
-		First version
-		Fixed a bug calling "rawMemset".
+	21/10/10:
+		Split in to y_shortfunc.
+Functions:
+	Public:
+		-
+	Core:
+		-
+	Stock:
+		-
+	Static:
+		-
+	Inline:
+		-
+	API:
+		-
+	Hooks:
+		-
+Callbacks:
+	-
+Definitions:
+	-
+Enums:
+	-
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		-
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+Natives:
+	-
 \**--------------------------------------------------------------------------**/
 
-#if defined _INC_y_jaggedarray
+#if defined _INC_y_shortvar
 	#endinput
 #endif
-#define _INC_y_jaggedarray
+#define _INC_y_shortvar
 
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Core\y_utils"
-#include "..\YSI_Core\y_debug"
+// Public variable.
+public
+	_@ = 0;
 
-#include "y_jaggedarray/impl"
-
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_jaggedarray/tests"
-#endif
+// J@ is a "nul" target - send things there if they need ignoring or if a
+// parameter needs using.  I@ is too now.
+stock
+	I@,
+	J@;
 

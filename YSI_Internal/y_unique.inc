@@ -58,6 +58,7 @@ Changelog:
 \**--------------------------------------------------------------------------**/
 
 #include "y_compilerpass"
+
 #if AUTO_INCLUDE_GUARD
 	#undef _inc_y_unique
 #endif
@@ -135,3 +136,4 @@ Changelog:
 		#include "y_unique"
 	#endif
 #endif
+
