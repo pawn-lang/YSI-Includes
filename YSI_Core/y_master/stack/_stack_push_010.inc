@@ -1,4 +1,4 @@
-#if COMPILER_HAS_AUTO_INCLUDE_GUARD
+#if defined _inc__stack_push_010
 	#undef _inc__stack_push_010
 #endif
 

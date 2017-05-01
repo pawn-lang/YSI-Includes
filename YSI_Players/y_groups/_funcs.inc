@@ -75,8 +75,7 @@ Changelog:
 
 */
 
-#include "..\..\YSI_Internal\y_compilerdata"
-#if COMPILER_HAS_AUTO_INCLUDE_GUARD
+#if defined _inc__funcs
 	#undef _inc__funcs
 #endif
 #if !defined _INC_y_groups__funcs

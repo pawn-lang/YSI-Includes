@@ -1,6 +1,6 @@
 static stock const Y_UNIQUE_600_to_699_CALLED;
 
-#if COMPILER_HAS_AUTO_INCLUDE_GUARD
+#if defined _inc__600_to_699
 	#undef _inc__600_to_699
 #endif
 

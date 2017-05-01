@@ -1,4 +1,4 @@
-#if COMPILER_HAS_AUTO_INCLUDE_GUARD
+#if defined _inc__push_master
 	#undef _inc__push_master
 #endif
 

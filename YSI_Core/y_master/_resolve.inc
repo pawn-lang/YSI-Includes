@@ -62,7 +62,7 @@ Variables:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#if COMPILER_HAS_AUTO_INCLUDE_GUARD
+#if defined _inc__resolve
 	#undef _inc__resolve
 #endif
 

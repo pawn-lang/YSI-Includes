@@ -1,4 +1,4 @@
-#if COMPILER_HAS_AUTO_INCLUDE_GUARD
+#if defined _inc__unique
 	#undef _inc__unique
 #endif
 
