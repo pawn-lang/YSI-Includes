@@ -120,16 +120,27 @@ static stock __COMPILER_SECOND_PASS() {}
 
 #if __Pawn == 0x030A && !__compat
 	#define AUTO_INCLUDE_GUARD 0
+	#define COMPILER_HAS_AUTO_INCLUDE_GUARD 0
 #else
 	#define AUTO_INCLUDE_GUARD 1
+	#define COMPILER_HAS_AUTO_INCLUDE_GUARD 1
 #endif
 
 #if __Pawn == 0x030A
 	#define NESTED_ELLIPSIS
+	#define COMPILER_HAS_NESTED_ELLIPSIS (1)
+	#define COMPILER_HAS_USER_WARNINGS   (1)
+	
 	// Disable the recursion warning in the Russian compiler.
 	#pragma warning push
 	#pragma warning disable 207
 	#pragma disablerecursion
 	#pragma warning pop
+	
+	// Disable the recursion warning in the fast compiler.
+	#pragma warning disable 238
+#else
+	#define COMPILER_HAS_NESTED_ELLIPSIS (0)
+	#define COMPILER_HAS_USER_WARNINGS   (0)
 #endif
 

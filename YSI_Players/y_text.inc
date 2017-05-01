@@ -150,7 +150,7 @@ Operators:
 
 // Include "y_unique" multiple times.
 #include "..\YSI_Internal\y_unique"
-#if AUTO_INCLUDE_GUARD
+#if COMPILER_HAS_AUTO_INCLUDE_GUARD
 	#if !defined _inc_y_text
 		#error Did you do <YSI-Players/y_text> instead of the required <YSI-Players\y_text>?
 	#endif

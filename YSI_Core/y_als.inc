@@ -77,8 +77,8 @@ Changelog:
 #endif
 
 // Allow multiple inclusions.
-#include "..\YSI_Internal\y_compilerpass"
-#if AUTO_INCLUDE_GUARD
+#include "..\YSI_Internal\y_compilerdata"
+#if COMPILER_HAS_AUTO_INCLUDE_GUARD
 	#if !defined _inc_y_als
 		#error Did you do <YSI/y_als> instead of the required <YSI\y_als>?
 	#endif

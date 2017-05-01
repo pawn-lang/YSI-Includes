@@ -56,8 +56,8 @@ Changelog:
 
 #include "..\YSI_Internal\y_version"
 
-#include "..\YSI_Internal\y_compilerpass"
-#if AUTO_INCLUDE_GUARD
+#include "..\YSI_Internal\y_compilerdata"
+#if COMPILER_HAS_AUTO_INCLUDE_GUARD
 	#if !defined _inc_y_groups
 		#error Did you do <YSI/y_groups> instead of the required <YSI\y_groups>?
 	#endif
@@ -70,7 +70,7 @@ Changelog:
 	// Get basic defines.
 	#include "..\YSI_Internal\y_plugins"
 	
-	#include "..\YSI_Internal\y_compilerpass"
+	#include "..\YSI_Internal\y_compilerdata"
 	#include "..\YSI_Data\y_bit"
 	
 	#if !defined _INC_y_groups__funcs

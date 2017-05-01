@@ -864,7 +864,7 @@ native Iter_Index(Iterator:Name<>);
 // Detect array declarations: "Iterator:X[20]<4>", "Iterator:X<10, 4>", and the
 // frankly silly "Iterator:X[20]<10, 4>".
 #define F@c:F@d:((%0,%1)+1)]%2$,Iter_Single@%9$%7$ F@d:((%0)+(%1))]={0,1,...}F@a$,Iter_Multi@%9$[%0]%7$
-#if defined NESTED_ELLIPSIS
+#if COMPILER_HAS_NESTED_ELLIPSIS
 	#define F@d:%0]%2$,Iter_%8@%9[%3$%7$ %0]={{0,1,...},...},Iter_%8@%9[%3$%7$
 #else
 	#define F@d:%0]%2$,Iter_%8@%9[%3$%7$ %0],Iter_%8@%9[%3$%7$,F@g(Iter_Init@%9,)=F@s(Iter_%8@%9[%3$)

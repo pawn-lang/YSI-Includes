@@ -411,7 +411,7 @@ Iterators:
 
 #include "..\YSI_Internal\y_natives"
 #include "..\YSI_Internal\y_shortfunc"
-#include "..\YSI_Internal\y_compilerpass"
+#include "..\YSI_Internal\y_compilerdata"
 #include "..\YSI_Core\y_debug"
 
 #include "y_foreach/impl"
