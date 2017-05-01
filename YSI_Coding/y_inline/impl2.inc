@@ -21,87 +21,90 @@ forward Inline_FoundConst(scanner[CodeScanner]);
 	#define MAX_INLINE_PARAMETERS (32)
 #endif
 
+enum E_INLINE_DATA
+{
+	// The fake "parameters" for the inline function.
+	E_INLINE_DATA_PARAMETERS[MAX_INLINE_PARAMETERS],
+	E_INLINE_DATA_PARAMETER_COUNT,
+	E_INLINE_DATA_STATE,   // Which part of the header scanning we are on.
+	E_INLINE_DATA_LOCALS,  // Container function locals.
+	E_INLINE_DATA_PASSED,  // Inline function parameters.
+	E_INLINE_DATA_PARAMS,  // Container function parameters (undetermined).
+	E_INLINE_DATA_POINTER, // The struct to store the inline data in.
+	E_INLINE_DATA_START,   // The start of the code space.
+	E_INLINE_DATA_END,     // The end of the code space.
+	E_INLINE_DATA_LOOP,    // The loopback pos if user code ends naturally.
+	E_INLINE_DATA_USER     // The location of the user code.
+}
+
 static stock
-	// In retrospect, I should have used an enum here, but it would take the
-	// same amount of space and add more indirection.  I may switch at some
-	// point anyway...  Like now - bad code annoys me!
-	YSI_g_sCurInlineParameterCount,
-	YSI_g_sCurInlineParameters[MAX_INLINE_PARAMETERS],
-	YSI_g_sCurInlineState = 0, // Which part of the header scanning we are on.
-	YSI_g_sCurInlineLocals,    // Container function locals.
-	YSI_g_sCurInlinePassed,    // Inline function parameters.
-	YSI_g_sCurInlineParams,    // Container function parameters (undetermined).
-	YSI_g_sCurInlinePointer,   // The struct to store the inline data in.
-	YSI_g_sCurInlineStart,     // The start of the code space.
-	YSI_g_sCurInlineEnd,       // The end of the code space.
-	YSI_g_sCurInlineLoop,      // The loopback pos if user code ends naturally.
-	YSI_g_sCurInlineUser;      // The location of the user code.
+	YSI_g_sCurInline[E_INLINE_DATA];
 
 public Inline_FoundStart(scanner[CodeScanner])
 {
-	if (YSI_g_sCurInlineState != 0)
+	if (YSI_g_sCurInline[E_INLINE_DATA_STATE] != 0)
 		return 0;
-	YSI_g_sCurInlineLocals = CodeScanGetMatchStack(scanner);
-	YSI_g_sCurInlineParams = -1; // No way to know!
-	YSI_g_sCurInlinePointer = CodeScanGetMatchHole(scanner, 0);
-	YSI_g_sCurInlineStart = CodeScanGetMatchAddress(scanner);
-	YSI_g_sCurInlineEnd = CodeScanGetMatchHole(scanner, 1);
-	YSI_g_sCurInlineState = 1;
-	YSI_g_sCurInlineParameterCount = 0;
+	YSI_g_sCurInline[E_INLINE_DATA_LOCALS] = CodeScanGetMatchStack(scanner);
+	YSI_g_sCurInline[E_INLINE_DATA_PARAMS] = -1; // No way to know!
+	YSI_g_sCurInline[E_INLINE_DATA_POINTER] = CodeScanGetMatchHole(scanner, 0);
+	YSI_g_sCurInline[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
+	YSI_g_sCurInline[E_INLINE_DATA_END] = CodeScanGetMatchHole(scanner, 1);
+	YSI_g_sCurInline[E_INLINE_DATA_STATE] = 1;
+	YSI_g_sCurInline[E_INLINE_DATA_PARAMETER_COUNT] = 0;
 	return 0;
 }
 
 public Inline_FoundMid(scanner[CodeScanner])
 {
-	if (YSI_g_sCurInlineState != 1)
+	if (YSI_g_sCurInline[E_INLINE_DATA_STATE] != 1)
 		return 0;
-	YSI_g_sCurInlineLoop = CodeScanGetMatchAddress(scanner) + 6 * cellbytes;
-	if (AMX_Read(YSI_g_sCurInlineLoop + AMX_HEADER_COD) == _:RelocateOpcode(OP_BREAK))
-		YSI_g_sCurInlineLoop += cellbytes;
-	YSI_g_sCurInlinePassed = CodeScanGetMatchStack(scanner) - YSI_g_sCurInlineLocals;
-	YSI_g_sCurInlineState = 2;
+	YSI_g_sCurInline[E_INLINE_DATA_LOOP] = CodeScanGetMatchAddress(scanner) + 6 * cellbytes;
+	if (AMX_Read(YSI_g_sCurInline[E_INLINE_DATA_LOOP] + AMX_HEADER_COD) == _:RelocateOpcode(OP_BREAK))
+		YSI_g_sCurInline[E_INLINE_DATA_LOOP] += cellbytes;
+	YSI_g_sCurInline[E_INLINE_DATA_PASSED] = CodeScanGetMatchStack(scanner) - YSI_g_sCurInline[E_INLINE_DATA_LOCALS];
+	YSI_g_sCurInline[E_INLINE_DATA_STATE] = 2;
 	return 0;
 }
 
 static stock Inline_FoundDescriptor(size)
 {
-	if (YSI_g_sCurInlineParameterCount == MAX_INLINE_PARAMETERS)
+	if (YSI_g_sCurInline[E_INLINE_DATA_PARAMETER_COUNT] == MAX_INLINE_PARAMETERS)
 		P:F("y_inline: Max inline parameter count exceeded (%d).", MAX_INLINE_PARAMETERS);
 	else switch (size)
 	{
 		case 0:
 		{
-			YSI_g_sCurInlineParameters[YSI_g_sCurInlineParameterCount++] = 0;
+			YSI_g_sCurInline[E_INLINE_DATA_PARAMETERS][YSI_g_sCurInline[E_INLINE_DATA_PARAMETER_COUNT]++] = 0;
 		}
 		case -1:
 		{
-			YSI_g_sCurInlineParameters[YSI_g_sCurInlineParameterCount++] = -1;
-			YSI_g_sCurInlineState |= 16;
+			YSI_g_sCurInline[E_INLINE_DATA_PARAMETERS][YSI_g_sCurInline[E_INLINE_DATA_PARAMETER_COUNT]++] = -1;
+			YSI_g_sCurInline[E_INLINE_DATA_STATE] |= 16;
 		}
 		case cellmax:
 		{
-			YSI_g_sCurInlineParameters[YSI_g_sCurInlineParameterCount++] = cellmax;
-			YSI_g_sCurInlineState |= 8;
+			YSI_g_sCurInline[E_INLINE_DATA_PARAMETERS][YSI_g_sCurInline[E_INLINE_DATA_PARAMETER_COUNT]++] = cellmax;
+			YSI_g_sCurInline[E_INLINE_DATA_STATE] |= 8;
 		}
 		default:
 		{
-			YSI_g_sCurInlineParameters[YSI_g_sCurInlineParameterCount++] = size * 4;
-			YSI_g_sCurInlineState |= 8;
+			YSI_g_sCurInline[E_INLINE_DATA_PARAMETERS][YSI_g_sCurInline[E_INLINE_DATA_PARAMETER_COUNT]++] = size * 4;
+			YSI_g_sCurInline[E_INLINE_DATA_STATE] |= 8;
 		}
 	}
 }
 
 public Inline_FoundConst(scanner[CodeScanner])
 {
-	if (YSI_g_sCurInlineState != 2)
+	if (YSI_g_sCurInline[E_INLINE_DATA_STATE] != 2)
 		return 0;
-	YSI_g_sCurInlineState = 3 + CodeScanGetMatchHole(scanner, 0);
+	YSI_g_sCurInline[E_INLINE_DATA_STATE] = 3 + CodeScanGetMatchHole(scanner, 0);
 	return 0;
 }
 
 public Inline_FoundVar(scanner[CodeScanner])
 {
-	if (YSI_g_sCurInlineState < 3)
+	if (YSI_g_sCurInline[E_INLINE_DATA_STATE] < 3)
 		return 0;
 	Inline_FoundDescriptor(0);
 	return 0;
@@ -109,7 +112,7 @@ public Inline_FoundVar(scanner[CodeScanner])
 
 public Inline_FoundRef(scanner[CodeScanner])
 {
-	if (YSI_g_sCurInlineState < 3)
+	if (YSI_g_sCurInline[E_INLINE_DATA_STATE] < 3)
 		return 0;
 	Inline_FoundDescriptor(CodeScanGetMatchHole(scanner, 0));
 	return 0;
@@ -117,10 +120,10 @@ public Inline_FoundRef(scanner[CodeScanner])
 
 public Inline_FoundEnd(scanner[CodeScanner])
 {
-	if (YSI_g_sCurInlineState < 3)
+	if (YSI_g_sCurInline[E_INLINE_DATA_STATE] < 3)
 		return 0;
-	YSI_g_sCurInlineUser = CodeScanGetMatchAddress(scanner) + CodeScanGetMatchLength(scanner);
-	printf("End: %08x", YSI_g_sCurInlineUser);
+	YSI_g_sCurInline[E_INLINE_DATA_USER] = CodeScanGetMatchAddress(scanner) + CodeScanGetMatchLength(scanner);
+	printf("End: %08x", YSI_g_sCurInline[E_INLINE_DATA_USER]);
 	// Do the actual codegen here.
 	Inline_DoCodeGen();
 	// Remove the return for the outer loop, since it may now point to an
@@ -131,7 +134,7 @@ public Inline_FoundEnd(scanner[CodeScanner])
 	AMX_Write(addr + 0, _:nop);
 	AMX_Write(addr + 4, _:nop);
 	// Restart scanning for the next inline.
-	YSI_g_sCurInlineState = 0;
+	YSI_g_sCurInline[E_INLINE_DATA_STATE] = 0;
 	return 0;
 }
 
@@ -264,10 +267,12 @@ public OnCodeInit()
 	CodeScanAddMatcher(scanner, csm7);
 	
 	// Run all the scanners in parallel.
+	// TODO: Try and determine rough types for parent function parameters, using
+	// Opcodes like LREF, SREF, and IDXADDR (IDXARRAY?  Can't remember off the
+	// top of my head).
 	CodeScanRun(scanner);
 	return 1;
 }
-
 
 
 
