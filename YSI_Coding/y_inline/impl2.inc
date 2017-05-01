@@ -22,6 +22,9 @@ forward Inline_FoundConst(scanner[CodeScanner]);
 #endif
 
 static stock
+	// In retrospect, I should have used an enum here, but it would take the
+	// same amount of space and add more indirection.  I may switch at some
+	// point anyway...  Like now - bad code annoys me!
 	YSI_g_sCurInlineParameterCount,
 	YSI_g_sCurInlineParameters[MAX_INLINE_PARAMETERS],
 	YSI_g_sCurInlineState = 0, // Which part of the header scanning we are on.
