@@ -10,13 +10,6 @@ const INLINE_PATTERN_4 = _C<Cole>;
 #define CALL@I@L I@L()
 #define CALL@I@K I@K(0)
 
-forward Inline_FoundStart(scanner[CodeScanner]);
-forward Inline_FoundMid(scanner[CodeScanner]);
-forward Inline_FoundVar(scanner[CodeScanner]);
-forward Inline_FoundRef(scanner[CodeScanner]);
-forward Inline_FoundEnd(scanner[CodeScanner]);
-forward Inline_FoundConst(scanner[CodeScanner]);
-
 #if !defined MAX_INLINE_PARAMETERS
 	#define MAX_INLINE_PARAMETERS (32)
 #endif
@@ -37,93 +30,90 @@ enum E_INLINE_DATA
 	E_INLINE_DATA_USER     // The location of the user code.
 }
 
-static stock
-	YSI_g_sCurInline[E_INLINE_DATA];
-
-public Inline_FoundStart(scanner[CodeScanner])
+static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	if (YSI_g_sCurInline[E_INLINE_DATA_STATE] != 0)
+	if (data[E_INLINE_DATA_STATE] != 0)
 		return 0;
-	YSI_g_sCurInline[E_INLINE_DATA_LOCALS] = CodeScanGetMatchStack(scanner);
-	YSI_g_sCurInline[E_INLINE_DATA_PARAMS] = -1; // No way to know!
-	YSI_g_sCurInline[E_INLINE_DATA_POINTER] = CodeScanGetMatchHole(scanner, 0);
-	YSI_g_sCurInline[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
-	YSI_g_sCurInline[E_INLINE_DATA_END] = CodeScanGetMatchHole(scanner, 1);
-	YSI_g_sCurInline[E_INLINE_DATA_STATE] = 1;
-	YSI_g_sCurInline[E_INLINE_DATA_PARAMETER_COUNT] = 0;
+	data[E_INLINE_DATA_LOCALS] = CodeScanGetMatchStack(scanner);
+	data[E_INLINE_DATA_PARAMS] = -1; // No way to know!
+	data[E_INLINE_DATA_POINTER] = CodeScanGetMatchHole(scanner, 0);
+	data[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
+	data[E_INLINE_DATA_END] = CodeScanGetMatchHole(scanner, 1);
+	data[E_INLINE_DATA_STATE] = 1;
+	data[E_INLINE_DATA_PARAMETER_COUNT] = 0;
 	return 0;
 }
 
-public Inline_FoundMid(scanner[CodeScanner])
+static stock Inline_FoundMid(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	if (YSI_g_sCurInline[E_INLINE_DATA_STATE] != 1)
+	if (data[E_INLINE_DATA_STATE] != 1)
 		return 0;
-	YSI_g_sCurInline[E_INLINE_DATA_LOOP] = CodeScanGetMatchAddress(scanner) + 6 * cellbytes;
-	if (AMX_Read(YSI_g_sCurInline[E_INLINE_DATA_LOOP] + AMX_HEADER_COD) == _:RelocateOpcode(OP_BREAK))
-		YSI_g_sCurInline[E_INLINE_DATA_LOOP] += cellbytes;
-	YSI_g_sCurInline[E_INLINE_DATA_PASSED] = CodeScanGetMatchStack(scanner) - YSI_g_sCurInline[E_INLINE_DATA_LOCALS];
-	YSI_g_sCurInline[E_INLINE_DATA_STATE] = 2;
+	data[E_INLINE_DATA_LOOP] = CodeScanGetMatchAddress(scanner) + 6 * cellbytes;
+	if (AMX_Read(data[E_INLINE_DATA_LOOP] + AMX_HEADER_COD) == _:RelocateOpcode(OP_BREAK))
+		data[E_INLINE_DATA_LOOP] += cellbytes;
+	data[E_INLINE_DATA_PASSED] = CodeScanGetMatchStack(scanner) - data[E_INLINE_DATA_LOCALS];
+	data[E_INLINE_DATA_STATE] = 2;
 	return 0;
 }
 
-static stock Inline_FoundDescriptor(size)
+static stock Inline_FoundDescriptor(size, data[E_INLINE_DATA])
 {
-	if (YSI_g_sCurInline[E_INLINE_DATA_PARAMETER_COUNT] == MAX_INLINE_PARAMETERS)
+	if (data[E_INLINE_DATA_PARAMETER_COUNT] == MAX_INLINE_PARAMETERS)
 		P:F("y_inline: Max inline parameter count exceeded (%d).", MAX_INLINE_PARAMETERS);
 	else switch (size)
 	{
 		case 0:
 		{
-			YSI_g_sCurInline[E_INLINE_DATA_PARAMETERS][YSI_g_sCurInline[E_INLINE_DATA_PARAMETER_COUNT]++] = 0;
+			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = 0;
 		}
 		case -1:
 		{
-			YSI_g_sCurInline[E_INLINE_DATA_PARAMETERS][YSI_g_sCurInline[E_INLINE_DATA_PARAMETER_COUNT]++] = -1;
-			YSI_g_sCurInline[E_INLINE_DATA_STATE] |= 16;
+			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = -1;
+			data[E_INLINE_DATA_STATE] |= 16;
 		}
 		case cellmax:
 		{
-			YSI_g_sCurInline[E_INLINE_DATA_PARAMETERS][YSI_g_sCurInline[E_INLINE_DATA_PARAMETER_COUNT]++] = cellmax;
-			YSI_g_sCurInline[E_INLINE_DATA_STATE] |= 8;
+			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = cellmax;
+			data[E_INLINE_DATA_STATE] |= 8;
 		}
 		default:
 		{
-			YSI_g_sCurInline[E_INLINE_DATA_PARAMETERS][YSI_g_sCurInline[E_INLINE_DATA_PARAMETER_COUNT]++] = size * 4;
-			YSI_g_sCurInline[E_INLINE_DATA_STATE] |= 8;
+			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = size * 4;
+			data[E_INLINE_DATA_STATE] |= 8;
 		}
 	}
 }
 
-public Inline_FoundConst(scanner[CodeScanner])
+static stock Inline_FoundConst(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	if (YSI_g_sCurInline[E_INLINE_DATA_STATE] != 2)
+	if (data[E_INLINE_DATA_STATE] != 2)
 		return 0;
-	YSI_g_sCurInline[E_INLINE_DATA_STATE] = 3 + CodeScanGetMatchHole(scanner, 0);
+	data[E_INLINE_DATA_STATE] = 3 + CodeScanGetMatchHole(scanner, 0);
 	return 0;
 }
 
-public Inline_FoundVar(scanner[CodeScanner])
+static stock Inline_FoundVar(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	if (YSI_g_sCurInline[E_INLINE_DATA_STATE] < 3)
+	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
-	Inline_FoundDescriptor(0);
+	Inline_FoundDescriptor(0, data);
 	return 0;
 }
 
-public Inline_FoundRef(scanner[CodeScanner])
+static stock Inline_FoundRef(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	if (YSI_g_sCurInline[E_INLINE_DATA_STATE] < 3)
+	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
-	Inline_FoundDescriptor(CodeScanGetMatchHole(scanner, 0));
+	Inline_FoundDescriptor(CodeScanGetMatchHole(scanner, 0), data);
 	return 0;
 }
 
-public Inline_FoundEnd(scanner[CodeScanner])
+static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	if (YSI_g_sCurInline[E_INLINE_DATA_STATE] < 3)
+	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
-	YSI_g_sCurInline[E_INLINE_DATA_USER] = CodeScanGetMatchAddress(scanner) + CodeScanGetMatchLength(scanner);
-	printf("End: %08x", YSI_g_sCurInline[E_INLINE_DATA_USER]);
+	data[E_INLINE_DATA_USER] = CodeScanGetMatchAddress(scanner) + CodeScanGetMatchLength(scanner);
+	printf("End: %08x", data[E_INLINE_DATA_USER]);
 	// Do the actual codegen here.
 	Inline_DoCodeGen();
 	// Remove the return for the outer loop, since it may now point to an
@@ -134,7 +124,7 @@ public Inline_FoundEnd(scanner[CodeScanner])
 	AMX_Write(addr + 0, _:nop);
 	AMX_Write(addr + 4, _:nop);
 	// Restart scanning for the next inline.
-	YSI_g_sCurInline[E_INLINE_DATA_STATE] = 0;
+	data[E_INLINE_DATA_STATE] = 0;
 	return 0;
 }
 
@@ -143,9 +133,13 @@ public OnCodeInit()
 	new scanner[CodeScanner];
 	CodeScanInit(scanner);
 	
+	// Allocate the inline scanning data on the stack, instead of globally.
+	new data[E_INLINE_DATA];
+	
 	// Optimised.
 	new csm0[CodeScanMatcher];
 	CodeScanMatcherInit(csm0, &Inline_FoundStart);
+	CodeScanMatcherData(csm0, ref(data));
 	CodeScanMatcherPattern(csm0,
 		OP(PUSH_C, INLINE_PATTERN_4)
 		OP(PUSH_C, INLINE_PATTERN_3)
@@ -161,6 +155,7 @@ public OnCodeInit()
 	// Unoptimised.
 	new csm1[CodeScanMatcher];
 	CodeScanMatcherInit(csm1, &Inline_FoundStart);
+	CodeScanMatcherData(csm1, ref(data));
 	CodeScanMatcherPattern(csm1,
 		OP(CONST_PRI, INLINE_PATTERN_4)
 		OP(PUSH_PRI)
@@ -181,6 +176,7 @@ public OnCodeInit()
 	// Mid point.
 	new csm2[CodeScanMatcher];
 	CodeScanMatcherInit(csm2, &Inline_FoundMid);
+	CodeScanMatcherData(csm2, ref(data));
 	CodeScanMatcherPattern(csm2,
 		OP(PUSH_C, 0)
 		OP(CALL, &I@F)
@@ -197,6 +193,7 @@ public OnCodeInit()
 	//   
 	new csm3[CodeScanMatcher];
 	CodeScanMatcherInit(csm3, &Inline_FoundVar);
+	CodeScanMatcherData(csm3, ref(data));
 	CodeScanMatcherPattern(csm3,
 		OP(ZERO_PRI)
 		OP(HEAP, 4)
@@ -228,6 +225,7 @@ public OnCodeInit()
 	//   
 	new csm4[CodeScanMatcher];
 	CodeScanMatcherInit(csm4, &Inline_FoundRef);
+	CodeScanMatcherData(csm4, ref(data));
 	CodeScanMatcherPattern(csm4,
 		OP(CONST_PRI, ???)
 		OP(HEAP, 4)
@@ -239,6 +237,7 @@ public OnCodeInit()
 	// End
 	new csm5[CodeScanMatcher];
 	CodeScanMatcherInit(csm5, &Inline_FoundEnd);
+	CodeScanMatcherData(csm5, ref(data));
 	CodeScanMatcherPattern(csm5,
 		OP(CALL, &I@L)
 		OP(HEAP, ???)
@@ -249,6 +248,7 @@ public OnCodeInit()
 	// Constness
 	new csm6[CodeScanMatcher];
 	CodeScanMatcherInit(csm6, &Inline_FoundConst);
+	CodeScanMatcherData(csm6, ref(data));
 	CodeScanMatcherPattern(csm6,
 		OP(PUSH_C, ???)
 		OP(PUSH_C, 4)
@@ -258,6 +258,7 @@ public OnCodeInit()
 	
 	new csm7[CodeScanMatcher];
 	CodeScanMatcherInit(csm7, &Inline_FoundConst);
+	CodeScanMatcherData(csm7, ref(data));
 	CodeScanMatcherPattern(csm7,
 		OP(CONST_PRI, ???)
 		OP(PUSH_PRI)
