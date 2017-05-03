@@ -24,8 +24,8 @@ enum E_INLINE_DATA
 	E_INLINE_DATA_PASSED,  // Inline function parameters.
 	E_INLINE_DATA_PARAMS,  // Container function parameters (undetermined).
 	E_INLINE_DATA_POINTER, // The struct to store the inline data in.
-	E_INLINE_DATA_START,   // The start of the code space.
-	E_INLINE_DATA_END,     // The end of the code space.
+	E_INLINE_DATA_START,   // The start of the writable code space.
+	E_INLINE_DATA_BEYOND,  // The end of the user code.
 	E_INLINE_DATA_LOOP,    // The loopback pos if user code ends naturally.
 	E_INLINE_DATA_USER     // The location of the user code.
 }
@@ -38,7 +38,7 @@ static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	data[E_INLINE_DATA_PARAMS] = -1; // No way to know!
 	data[E_INLINE_DATA_POINTER] = CodeScanGetMatchHole(scanner, 0);
 	data[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
-	data[E_INLINE_DATA_END] = CodeScanGetMatchHole(scanner, 1);
+	data[E_INLINE_DATA_BEYOND] = CodeScanGetMatchHole(scanner, 1);
 	data[E_INLINE_DATA_STATE] = 1;
 	data[E_INLINE_DATA_PARAMETER_COUNT] = 0;
 	return 0;
@@ -116,7 +116,7 @@ static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	printf("End: %08x", data[E_INLINE_DATA_USER]);
 	// Do the actual codegen here.
 	Inline_DoCodeGen();
-	// Remove the return for the outer loop, since it may now point to an
+	// Remove the return for the inner loop, since it may now point to an
 	// invalid address (in the middle of an OpCode we just wrote out).
 	new
 		Opcode:nop = RelocateOpcode(OP_NOP),
@@ -418,7 +418,288 @@ Inline_Start(const &name, a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE
 
 #endif
 
-static stock Inline_DoCodeGen()
+static stock Inline_DoCodeGen(data[E_INLINE_DATA])
 {
+	// The code will be written between "E_INLINE_DATA_START" and
+	// "E_INLINE_DATA_USER", except for a few bytes at "E_INLINE_DATA_LOOP",
+	// which is the point that user code will return to when it ends, and so
+	// should handle that case (mostly just a `STACK` and `RETN`).
+	// 
+	// In order to simplify the code generation, I use the `_@emit` macro, which
+	// is the same as the `@emit` macro, but transparently handles the void for
+	// "_LOOP" by running out of space, erroring, putting in the end code, and
+	// reinitialising the assembly context after that gap.
+	// 
+	// =========================================================================
+	//     NOW WE CAN DO THE MAIN FUNCTION CODE.
+	// =========================================================================
+	new
+		argSize = data[E_INLINE_DATA_LOCALS];
+	new
+		ctx[AsmContext];
+	// =========================================================================
+	//     CODE SPACE AVAILABLE
+	// =========================================================================
+	//  
+	//  Inline_Entry: 6
+	//  Vars: 2 v+r
+	//  Arrays: 7 a
+	//  JUMP: 2
+	//  Inline_Allocator: 6
+	//  
+	//  Arrays: 6 a
+	//  Vars: 5 v
+	//  Refs: 6 r
+	//  
+	//  Inline_Main: 19
+	//  
+	//  Simple Total: 14 + 7v + 8r + 19
+	//  Complex Total: 14 + 7v + 8r + 17a + 19
+	//  
+	//  Simple Required: 15 + 3v + 7r + 16
+	//  Complex Required: 15 + 4v + 8r + 6a + 16
+	//  
+	// =========================================================================
+	//     SEGMENT 1 - RESOLVE AND PUSH CLOSURE DATA AND PARAMETERS
+	// =========================================================================
+	//YSI_g_sJumpAddress = 0,
+	AsmInitPtr(ctx, data[E_INLINE_DATA_START] + AMX_HEADER_COD, data[E_INLINE_DATA_LOOP] - data[E_INLINE_DATA_START]);
+//	AsmInitPtr(ctx, YSI_g_sCurInlineEntry + AMX_HEADER_COD, YSI_g_sCurInlineLoop - YSI_g_sCurInlineEntry - 8),
+	AsmSetErrorHandler(ctx, GetPublicAddressFromName("Inline_OnAsmError"));
+	// Space for params + count.
+	new
+		// Size of stored closure data.
+		offset = (YSI_g_sCurInlineParams + YSI_g_sCurInlineLocals + 12);
+	if (varCount == args) // Only variables.
+	{
+		// =====================================================================
+		//     SIMPLE CODE - NO ARRAYS OR STRINGS
+		// =====================================================================
+		if (YSI_g_sCurInlineLocals)
+		{
+			P:5("Inline_Main: TYPE 0");
+			YSI_g_sRequiredSpace = 4 * 3 * args + 4 * 13;
+			_@emit STACK      (-offset)
+			_@emit ADDR.alt   (-offset) // Like "LCTRL 4; XCHG", but shorter.
+			_@emit LREF.S.pri 12   // Load "func" variable.
+			// Sadly "MOVS" checks that the destination is valid and in the stack, which
+			// is what we didn't want.
+			_@emit MOVS       offset
+			// Reduce the stack again.  This is the shortest way I know (5 cells).
+			_@emit STACK      (4 + YSI_g_sCurInlineLocals)
+			_@emit PROC       // Set up the new frame.
+			_@emit STACK      (-YSI_g_sCurInlineLocals) // Skip other locals again.
+			new
+				// Get the offset to the calling function's passed parameters.
+				// 12 for this function's header, plus this function's parameters, plus
+				// the last function's locals (currently none, MUST BE KEPT UP TO DATE),
+				// plus the last function's header, plus the "func" variable.
+				load = 12 + YSI_g_sCurInlineParams + 0 + 12 + 4,
+				i = 0;
+			while (i++ < args)
+			{
+				// Loop over the arguments and push them.
+				_@emit LREF.S.pri load
+				_@emit PUSH.pri
+				load += 4;
+			}
+		}
+		else
+		{
+			P:5("Inline_Main: TYPE 1 (%d, %d, %d, %d, %d)", offset, offset - 4, args, 4 * 3 * args + 4 * 9, 12 + YSI_g_sCurInlineParams + 0 + 12 + 4);
+			// This is the simplest of the four versions of the code.  Here
+			// there are no arrays to copy over, nor are there any local
+			// variables from the closure.
+			offset -= 4,
+			YSI_g_sRequiredSpace = 4 * 3 * args + 4 * 9;
+			_@emit STACK      (-offset)
+			_@emit ADDR.alt   (-offset)
+			_@emit LREF.S.pri 12
+			_@emit MOVS       offset
+			_@emit PROC
+			new
+				load = 12 + YSI_g_sCurInlineParams + 0 + 12 + 4,
+				i = 0;
+			while (i++ < args)
+			{
+				_@emit LREF.S.pri load
+				_@emit PUSH.pri
+				load += 4;
+			}
+			offset += 4;
+		}
+	}
+	else
+	{
+		// =====================================================================
+		//     COMPLEX CODE - ARRAYS OR STRINGS
+		// =====================================================================
+		if (YSI_g_sCurInlineLocals)
+		{
+			P:5("Inline_Main: TYPE 2");
+			YSI_g_sRequiredSpace = 4 * 4 * varCount + 4 * 6 * arrCount + 4 * 14 * strCount + 4 * 13;
+			_@emit STACK      (-offset)
+			_@emit STACK      (YSI_g_sCurInlineLocals - argSize)
+			_@emit LREF.S.pri 12
+			_@emit MOVS       offset
+			new
+				load = 12 + 4,
+				stor = -offset,
+				i = 0;
+			while (i < args)
+			{
+				if ((varCount = getarg(++i)) == cellmax)
+				{
+					// String.
+					stor -= YSI_MAX_INLINE_STRING * 4;
+					_@emit PUSH.C     YSI_MAX_INLINE_STRING
+					_@emit PUSH.S     load // src = *cur
+					_@emit ZERO.S     stor // dest[0] = '\0';
+					_@emit PUSH.adr   stor // dst = &dest
+					_@emit PUSH.C     12
+					_@emit SYSREQ     "strcat"
+					_@emit STACK      16
+				}
+				else
+				{
+					if ((varCount *= 4) <= 0)
+					{
+						// Normal variable.
+						stor -= 4;
+						_@emit LREF.S.pri load
+						_@emit STOR.S.pri stor
+					}
+					else 
+					{
+						// Array.
+						stor -= varCount;
+						_@emit LOAD.S.pri load
+						_@emit ADDR.alt   stor
+						_@emit MOVS       varCount
+					}
+				}
+				load += 4;
+			}
+			_@emit STACK      (4 + argSize)
+			_@emit PROC
+			_@emit STACK      (-argSize)
+		}
+		else
+		{
+			P:5("Inline_Main: TYPE 3");
+			offset -= 4,
+			YSI_g_sRequiredSpace = 4 * 4 * varCount + 4 * 6 * arrCount + 4 * 14 * strCount + 4 * 11;
+			_@emit STACK      (-offset)
+			_@emit ADDR.alt   (-offset)
+			_@emit LREF.S.pri 12
+			_@emit MOVS       offset
+			_@emit PROC
+			_@emit STACK      (-argSize)
+			new
+				load = 12 + YSI_g_sCurInlineParams + 0 + 12 + 4,
+				stor = 0,
+				i = 0;
+			while (i < args)
+			{
+				if ((varCount = getarg(++i)) == cellmax)
+				{
+					// String.
+					stor -= YSI_MAX_INLINE_STRING * 4;
+					_@emit PUSH.C     YSI_MAX_INLINE_STRING
+					_@emit PUSH.S     load // src = *cur
+					_@emit ZERO.S     stor // dest[0] = '\0';
+					_@emit PUSH.adr   stor // dst = &dest
+					_@emit PUSH.C     12
+					_@emit SYSREQ     "strcat"
+					_@emit STACK      16
+				}
+				else
+				{
+					if ((varCount *= 4) <= 0)
+					{
+						// Normal variable.
+						stor -= 4;
+						_@emit LREF.S.pri load
+						_@emit STOR.S.pri stor
+					}
+					else 
+					{
+						// Array.
+						stor -= varCount;
+						_@emit LOAD.S.pri load
+						_@emit ADDR.alt   stor
+						_@emit MOVS       varCount
+					}
+				}
+				load += 4;
+			}
+			offset += 4;
+		}
+	}
+	// =========================================================================
+	//     SEGMENT 2 - SAVE REFERENCES BACK
+	// =========================================================================
+	if (YSI_g_sJumpAddress == 0)
+	{
+		// Fake an error.  This indirectly calls the "Inline_OnAsmError"
+		// function above to fill the intervening space with NOPs.
+		ctx[AsmContext_buffer_size] = 0;
+		@emit NOP
+	}
+	// The maths should now be correct.
+	AsmInitPtr(ctx, YSI_g_sCurInlineLoop + AMX_HEADER_COD, cellmax);
+	if (argSize)
+	{
+		@emit STACK     argSize
+		YSI_g_sJumpAddress = YSI_g_sCurInlineLoop + 16;
+	}
+	else
+	{
+		YSI_g_sJumpAddress = YSI_g_sCurInlineLoop + 8;
+	}
+	@emit ZERO.pri // Default return value.
+	@emit RETN
+	// Save this return address, so the instruction above goes to the one below.
+	// Save references.
+	new
+		load = -offset,
+		stor = 12 + 4,
+		i = 0;
+	while (i < args)
+	{
+		varCount = getarg(++i);
+		switch (varCount)
+		{
+			case -1:
+			{
+				load -= 4;
+				@emit LOAD.S.alt load
+				@emit SREF.S.alt stor
+			}
+			case 0: load -= 4;
+			case cellmax: load -= YSI_MAX_INLINE_STRING * 4;
+			default: load -= varCount * 4;
+		}
+		stor += 4;
+	}
+	// Copy the closure back (if there is anything that needs copying).
+	if (constFunc && (YSI_g_sCurInlineParams || YSI_g_sCurInlineLocals))
+	{
+		if (!YSI_g_sCurInlineLocals) offset -= 4;
+		@emit STACK      (-offset)
+		@emit PUSH.pri
+		@emit ADDR.pri   (-offset)
+		@emit LREF.S.alt 12
+		@emit MOVS       offset
+		@emit POP.pri
+		@emit STACK      offset
+	}
+	// Finish.
+	@emit RETN
+	// =========================================================================
+	//     STORE THE RETURN ADDRESS
+	// =========================================================================
+	AMX_Write(YSI_g_sCurInlinePointer, YSI_g_sJumpAddress),
+	AMX_Write(YSI_g_sCurInlinePointer - 12, '\02;');
 }
 
