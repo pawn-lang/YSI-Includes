@@ -38,7 +38,7 @@ static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	data[E_INLINE_DATA_PARAMS] = -1; // No way to know!
 	data[E_INLINE_DATA_POINTER] = CodeScanGetMatchHole(scanner, 0);
 	data[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
-	data[E_INLINE_DATA_BEYOND] = CodeScanGetMatchHole(scanner, 1);
+	data[E_INLINE_DATA_BEYOND] = CodeScanGetMatchHole(scanner, 2);
 	data[E_INLINE_DATA_STATE] = 1;
 	data[E_INLINE_DATA_PARAMETER_COUNT] = 0;
 	return 0;
@@ -115,7 +115,7 @@ static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	data[E_INLINE_DATA_USER] = CodeScanGetMatchAddress(scanner) + CodeScanGetMatchLength(scanner);
 	printf("End: %08x", data[E_INLINE_DATA_USER]);
 	// Do the actual codegen here.
-	Inline_DoCodeGen();
+//	Inline_DoCodeGen();
 	// Remove the return for the inner loop, since it may now point to an
 	// invalid address (in the middle of an OpCode we just wrote out).
 	new
@@ -149,6 +149,7 @@ public OnCodeInit()
 		OP(PUSH_C, 20)
 		OP(CALL, &I@E)
 		OP(JZER, ???)
+		OP(JUMP, ???)
 	);
 	CodeScanAddMatcher(scanner, csm0);
 	
@@ -170,6 +171,7 @@ public OnCodeInit()
 		OP(PUSH_C, 20)
 		OP(CALL, &I@E)
 		OP(JZER, ???)
+		OP(JUMP, ???)
 	);
 	CodeScanAddMatcher(scanner, csm1);
 	
@@ -311,9 +313,9 @@ public OnCodeInit()
 #define INLINE_NUM(%9,%9,%2)%8$(%0)%1(%3) %8$(%0,%2)%1(0,%3)
 #define INLINE_REF(%9,%9,%2)%8$(%0)%1(%3) %8$(%0,%2)%1(-1,%3)
 
-#define INLINE_END(%9)%8$(,%0)%1(%3) %8$#%9":....";if (I@E(%9))for(new %0;I@F();)while(I@L(%3I@K(%1)))
+#define INLINE_END(%9)%8$(,%0)%1(%3) %8$#%9":....";if (I@E(%9)){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
 
-#define INLINE_NUL(%9)%8$()%1() %8$#%9":....";if (I@E(%9))for(;I@F();)while(I@L(I@K(%1)))
+#define INLINE_NUL(%9)%8$()%1() %8$#%9":....";if (I@E(%9)){}else for(;I@F();)while(I@L(I@K(%1)))
 
 #define I@O$ 32]=
 
@@ -410,13 +412,9 @@ Inline_Start(const &name, a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE
 	return 0;
 }
 
-
-
-
-
-
-
 #endif
+
+#endinput
 
 static stock Inline_DoCodeGen(data[E_INLINE_DATA])
 {
@@ -462,9 +460,7 @@ static stock Inline_DoCodeGen(data[E_INLINE_DATA])
 	// =========================================================================
 	//     SEGMENT 1 - RESOLVE AND PUSH CLOSURE DATA AND PARAMETERS
 	// =========================================================================
-	//YSI_g_sJumpAddress = 0,
 	AsmInitPtr(ctx, data[E_INLINE_DATA_START] + AMX_HEADER_COD, data[E_INLINE_DATA_LOOP] - data[E_INLINE_DATA_START]);
-//	AsmInitPtr(ctx, YSI_g_sCurInlineEntry + AMX_HEADER_COD, YSI_g_sCurInlineLoop - YSI_g_sCurInlineEntry - 8),
 	AsmSetErrorHandler(ctx, GetPublicAddressFromName("Inline_OnAsmError"));
 	// Space for params + count.
 	new
