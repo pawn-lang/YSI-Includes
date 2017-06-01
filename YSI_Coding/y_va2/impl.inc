@@ -90,27 +90,40 @@ Operators:
 	-
 \**--------------------------------------------------------------------------**/
 
-#if 0
-
-	// Example:
-	stock MyPrintf(const format[], {Float, File, _}:...)
-	{
-		// The triple underscore is used to mirror the triple dots in the
-		// function definition.  You can't easily tell it is three from a
-		// glance, but it is.
-		printf(format, ___1); // Or `___(1)`.
-		print("Printed many things");
-		return 42;
-	}
-
+#if !defined MAX_NESTED_PASSTHROUGHS
+	#define MAX_NESTED_PASSTHROUGHS (4) // Should be MORE than enough!
 #endif
 
-stock __VA__PUSH__(const staticParameters, const skippedParameters = 0)
+enum E_VARARG_PASSTHROUGH
 {
+	E_VARARG_PASSTHROUGH_OTYPE, // 0 = -O0, 1 = -O1.
+	E_VARARG_PASSTHROUGH_STACK,
+	E_VARARG_PASSTHROUGH_ASM[AsmContext]
+}
+
+static stock
+	YSI_g_sPassthroughNestings = 0,
+	YSI_g_sStaticParameters;
+
+// Enable `&__VA__PUSH__` WITHOUT matching it within the scanner itself.
+#define CALL@__VA__PUSH__ __VA__PUSH__(-1, -1, -1)
+stock __VA__PUSH__(const staticParameters = 0, const skippedParameters = 0, const pushRequirements = 4)
+{
+	// Used in reality, but copied to statics first.
+	#pragma unused staticParameters, skippedParameters, pushRequirements
+	static
+		sFramePointer,
+		sParameterCount,
+		sReturnAddress,
+		sSkippedParameters,
+		sPushRequirements;
 	// Although "staticParameters" is "const", we actually rewrite the value at
 	// the call site when the mode starts.  By default it is ALWAYS 0, because
 	// we have no way to determine the true value at compile time.  We must
 	// read it from the number of parameters given to the target function.
+	// "pushRequirements" is not currently used.  It will be the number of bytes
+	// that each nested function will need to add to the stack for parameter
+	// count references.
 	// 
 	// During the execution of this function, we have to actually modify our own
 	// stack to make room UNDER it for all the parameters being pushed.  Then
@@ -121,49 +134,54 @@ stock __VA__PUSH__(const staticParameters, const skippedParameters = 0)
 	// 
 	// Or entry to this function, the stack looks like:
 	// 
+	//   20 - pushRequirements.
 	//   16 - skippedParameters.
 	//   12 - staticParameters.
 	//   08 - Parameter count in bytes (8).
 	//   04 - Return address.
-	//   00 - Pervious frame.
+	//   00 - Previous frame.
 	//   
-	// This means there is 20 bytes of information we need to move to globals,
+	// This means there is 24 bytes of information we need to move to globals,
 	// since we are about to totally destroy our own stack.
 	#emit POP.pri
-	#emit STOR.pri YSI_g_sPreviousFrame
+	#emit STOR.pri             sFramePointer
+	#emit SCTRL                5 // Go back to the previous frame.
 	#emit POP.pri
-	#emit STOR.pri YSI_g_sReturnAddress
+	#emit STOR.pri             sReturnAddress
+	#emit POP.pri              // Don't care about parameter count (don't save).
 	#emit POP.pri
-	#emit STOR.pri YSI_g_sParameterCount
+	#emit STOR.pri             YSI_g_sStaticParameters // (Adjusted).
 	#emit POP.pri
-	#emit STOR.pri YSI_g_sStaticParameters // (Will have been adjusted).
+	#emit STOR.pri             sSkippedParameters
 	#emit POP.pri
-	#emit STOR.pri YSI_g_sSkippedParameters
+	#emit STOR.pri             sPushRequirements
 	// The stack is now back to where it was before this function was called.
 	// We must copy parameters from the previous stack to the current stack.
-	// 
+	// The frame is also the same, so technically now everything is in the same
+	// stack.
+	#emit LOAD.S.pri           8 // Parameter count.
+	#emit STOR.pri             sParameterCount
 	// There are two methods for this - increase the stack and 'memcpy' in, or
 	// loop over all the parameters and re-push them.  I suspect the memcpy
 	// version MAY be faster, but there is some trickyness with the stack to
 	// call a function while inserting in to the stack.  The best non-JIT method
 	// would be `MOVS`, but that requires more run-time code modification, which
 	// we can't do (I don't think, never ACTUALLY tried...).
-	// 
-	// So for now, just loop through them - I can improve the code later.
-	static i;
-	i = 0;
-	#emit 
-	#emit LREF.pri i
-	#emit LOAD.pri i
-	#emit ADD.C    0xFFFFFFFC // -4
-	#emit STOR.pri i
-	#emit 
-	#emit 
-	#emit 
-	#emit 
-	#emit 
-	#emit 
-	{}
+	YSI_g_sStaticParameters = sParameterCount - sSkippedParameters + YSI_g_sStaticParameters;
+	sSkippedParameters = sFramePointer + 12 + sSkippedParameters;
+	sFramePointer = sFramePointer + 12 + sParameterCount;
+	// For now, just loop through them - I can improve the code later.
+	for ( ; ; )
+	{
+		sFramePointer -= 4;
+		if (sFramePointer == sSkippedParameters)
+		{
+			break;
+		}
+		{}
+		#emit LREF.pri sFramePointer
+		#emit PUSH.pri
+	}
 	// We need to tell the real call how many parameters are being pushed, via
 	// the hidden 'numargs' parameter.  The first obvious solution would be
 	// code rewriting to change the 'PUSH.C', but that doesn't work with JIT or
@@ -181,13 +199,39 @@ stock __VA__PUSH__(const staticParameters, const skippedParameters = 0)
 	// This also means that the first version will use a global variable and
 	// ignore recursion and code shifting.
 	// 
-	// Return from this function.  Don't bother putting the paramters back on
-	// the stack to be removed again.
-	#emit PUSH.C 0
-	#emit PUSH YSI_g_sReturnAddress
-	#emit PUSH YSI_g_sPreviousFrame
-	#emit RETN
+	// Return from this function.  We are already in the parent frame and have
+	// no parameters on the stack, so function postamble is not required.
+	#emit LOAD.pri             sReturnAddress
+	#emit SCTRL                6
 	return 0;
+}
+
+stock YVA_FoundPush(m[CodeScanner], param[][E_VARARG_PASSTHROUGH] = {{}})
+{
+	// Do something with the found address (of the START of the match), and the
+	// stack size (of the END of the match) - different for reasons...
+	printf("found call: %d %d %d", CodeScanGetMatchLength(m), CodeScanGetMatchStack(m), CodeScanGetMatchAddress(m));
+	new asm[AsmContext];
+	CodeScanGetMatchAsm(m, asm);
+	switch (CodeScanGetMatchLength(m))
+	{
+	case 64:
+	{
+		// -O0
+		// Get rid of `STOR.I` and `PUSH.pri`.  Leave all the heap modification
+		// code, since the cleanup will rely on it still existing.
+		printf("-O0");
+	}
+	case 56:
+	{
+		// -O1
+		// Get rid of `STOR.I` and `PUSH.alt`.  Leave all the heap modification
+		// code, since the cleanup will rely on it still existing.  In the
+		// future, this will give us two cells to play with for our own stack
+		// cleanup code.
+		printf("-O1");
+	}
+	}
 }
 
 // Add a scanner to find the `___` function call.
@@ -201,4 +245,125 @@ stock __VA__PUSH__(const staticParameters, const skippedParameters = 0)
 // 
 // `Func1`'s `___` will be first in the code, but before finding the call to
 // `Func1` itself, we would see the inner `___` AND the inner function call.
+
+hook OnScriptInit()
+{
+	new param[MAX_NESTED_PASSTHROUGHS][E_VARARG_PASSTHROUGH];
+	new scanner[CodeScanner];
+	CodeScanInit(scanner);
+	/*
+		// O0:
+		const.pri 4
+		push.pri
+		zero.pri
+		push.pri
+		zero.pri
+		push.pri
+		push.c c
+		call __VA__PUSH__
+		heap 4
+		stor.i
+		move.pri
+		push.pri
+	*/
+	new csmO0[CodeScanMatcher];
+	CodeScanMatcherInit(csmO0, &YVA_FoundPush);
+	CodeScanMatcherData(csmO0, ref(param));
+	CodeScanMatcherPattern(csmO0,
+		OP(CONST_PRI,  4)
+		OP(PUSH_PRI)
+		OP(ZERO_PRI)
+		OP(PUSH_PRI)
+		OP(ZERO_PRI)
+		OP(PUSH_PRI)
+		OP(PUSH_C,     12)
+		OP(CALL,       &__VA__PUSH__)
+		OP(HEAP,       4)
+		OP(STOR_I)
+		OP(MOVE_PRI)
+		OP(PUSH_PRI)
+	);
+	CodeScanAddMatcher(scanner, csmO0);
+	/*
+		// O1:
+		push.c 4
+		push.c 0
+		push.c 0
+		push.c c
+		call __VA__PUSH__
+		heap 4
+		stor.i
+		push.alt
+	*/
+	new csmO1[CodeScanMatcher];
+	CodeScanMatcherInit(csmO1, &YVA_FoundPush);
+	CodeScanMatcherData(csmO1, ref(param));
+	CodeScanMatcherPattern(csmO1,
+		OP(PUSH_C,     4)
+		OP(PUSH_C,     0)
+		OP(PUSH_C,     0)
+		OP(PUSH_C,     12)
+		OP(CALL,       &__VA__PUSH__)
+		OP(HEAP,       4)
+		OP(STOR_I)
+		OP(PUSH_ALT)
+	);
+	CodeScanAddMatcher(scanner, csmO1);
+	// Replace calls with the correct parameter counts etc.
+	CodeScanRun(scanner);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
