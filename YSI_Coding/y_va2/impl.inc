@@ -102,6 +102,7 @@ enum E_VARARG_PASSTHROUGH
 }
 
 static stock
+	YSI_g_sPassthroughs[MAX_NESTED_PASSTHROUGHS][E_VARARG_PASSTHROUGH],
 	YSI_g_sPassthroughNestings = 0,
 	YSI_g_sStaticParameters;
 
@@ -206,12 +207,38 @@ stock __VA__PUSH__(const staticParameters = 0, const skippedParameters = 0, cons
 	return 0;
 }
 
-stock YVA_FoundPush(m[CodeScanner], param[][E_VARARG_PASSTHROUGH] = {{}})
+stock YVA_FoundCall(m[CodeScanner])
 {
+	if (YSI_g_sPassthroughNestings)
+	{
+		new
+			pos = YSI_g_sPassthroughNestings - 1;
+		if (CodeScanGetMatchStack(m) < YSI_g_sPassthroughs[pos][E_VARARG_PASSTHROUGH_STACK])
+		{
+			new
+				isSysreq = CodeScanGetMatchLength(m) == 24;
+			printf("found %s", (isSysreq) ? ("sysreq") : ("call"));
+			// We found the end of the call.
+			printf("Found the end at: %x", CodeScanGetMatchAddress(m));
+			--YSI_g_sPassthroughNestings;
+			return 0;
+		}
+	}
+	return -1;
+}
+
+stock YVA_FoundPush(m[CodeScanner])
+{
+	if (YSI_g_sPassthroughNestings >= MAX_NESTED_PASSTHROUGHS)
+	{
+		P:F("y_va2 found too deeply nested `___` calls - increase `MAX_NESTED_PASSTHROUGHS`.");
+		return;
+	}
 	// Do something with the found address (of the START of the match), and the
 	// stack size (of the END of the match) - different for reasons...
-	printf("found call: %d %d %d", CodeScanGetMatchLength(m), CodeScanGetMatchStack(m), CodeScanGetMatchAddress(m));
-	new asm[AsmContext];
+	printf("found push: %d %d %x", CodeScanGetMatchLength(m), CodeScanGetMatchStack(m), CodeScanGetMatchAddress(m));
+	new
+		asm[AsmContext];
 	CodeScanGetMatchAsm(m, asm);
 	switch (CodeScanGetMatchLength(m))
 	{
@@ -232,6 +259,8 @@ stock YVA_FoundPush(m[CodeScanner], param[][E_VARARG_PASSTHROUGH] = {{}})
 		printf("-O1");
 	}
 	}
+	YSI_g_sPassthroughs[YSI_g_sPassthroughNestings][E_VARARG_PASSTHROUGH_STACK] = CodeScanGetMatchStack(m);
+	++YSI_g_sPassthroughNestings;
 }
 
 // Add a scanner to find the `___` function call.
@@ -248,8 +277,12 @@ stock YVA_FoundPush(m[CodeScanner], param[][E_VARARG_PASSTHROUGH] = {{}})
 
 hook OnScriptInit()
 {
-	new param[MAX_NESTED_PASSTHROUGHS][E_VARARG_PASSTHROUGH];
-	new scanner[CodeScanner];
+	new
+		scanner[CodeScanner],
+		csmO0[CodeScanMatcher],
+		csmO1[CodeScanMatcher],
+		csm2[CodeScanMatcher],
+		csm3[CodeScanMatcher];
 	CodeScanInit(scanner);
 	/*
 		// O0:
@@ -266,9 +299,7 @@ hook OnScriptInit()
 		move.pri
 		push.pri
 	*/
-	new csmO0[CodeScanMatcher];
 	CodeScanMatcherInit(csmO0, &YVA_FoundPush);
-	CodeScanMatcherData(csmO0, ref(param));
 	CodeScanMatcherPattern(csmO0,
 		OP(CONST_PRI,  4)
 		OP(PUSH_PRI)
@@ -295,9 +326,7 @@ hook OnScriptInit()
 		stor.i
 		push.alt
 	*/
-	new csmO1[CodeScanMatcher];
 	CodeScanMatcherInit(csmO1, &YVA_FoundPush);
-	CodeScanMatcherData(csmO1, ref(param));
 	CodeScanMatcherPattern(csmO1,
 		OP(PUSH_C,     4)
 		OP(PUSH_C,     0)
@@ -309,6 +338,29 @@ hook OnScriptInit()
 		OP(PUSH_ALT)
 	);
 	CodeScanAddMatcher(scanner, csmO1);
+	/*
+		push.c ???
+		call   ???
+		stack  ???
+	*/
+	CodeScanMatcherInit(csm2, &YVA_FoundCall);
+	CodeScanMatcherPattern(csm2,
+		OP(PUSH_C,     ???)
+		OP(CALL,       ???)
+	);
+	CodeScanAddMatcher(scanner, csm2);
+	/*
+		push.c   ???
+		sysreq.c ???
+		stack    ???
+	*/
+	CodeScanMatcherInit(csm3, &YVA_FoundCall);
+	CodeScanMatcherPattern(csm3,
+		OP(PUSH_C,     ???)
+		OP(SYSREQ_C,   ???)
+		OP(STACK,      ???)
+	);
+	CodeScanAddMatcher(scanner, csm3);
 	// Replace calls with the correct parameter counts etc.
 	CodeScanRun(scanner);
 }
