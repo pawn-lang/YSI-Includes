@@ -321,15 +321,15 @@ static stock YVA2_FoundCall(m[CodeScanner])
 			pos = YSI_g_sPassthroughNestings - 1;
 		if (CodeScanGetMatchStack(m) < YSI_g_sStacks[pos])
 		{
-			new
-				asm[AsmContext];
-			CodeScanGetMatchAsm(m, asm);
 			// First, rewrite the `___` call-site to call `YVA2_DoPush` instead.
 			YVA2_CodeGenPushSite(YSI_g_sContexts[pos], CodeScanGetMatchHole(m, 0), YSI_g_sSkips[pos]); //, YSI_g_sLength[pos]);
 			YVA2_CodeGenShiftCode(
 				YSI_g_sContexts[pos][AsmContext_buffer] + YSI_g_sContexts[pos][AsmContext_buffer_offset],
-				CodeScanGetMatchAddressData(m),
+				YSI_g_sContexts[pos][AsmContext_buffer] + YSI_g_sLength[pos],
 				CodeScanGetMatchAddressData(m) + CodeScanGetMatchLength(m));
+			new
+				asm[AsmContext];
+			CodeScanGetMatchAsm(m, asm);
 			return
 				YSI_g_sPassthroughNestings = pos,
 				1;
@@ -399,19 +399,19 @@ hook OnScriptInit()
 	*/
 	CodeScanMatcherInit(csmO0A, &YVA2_FoundPush);
 	CodeScanMatcherPattern(csmO0A,
-		OP(PUSH_PRI)                    // 4
-		OP(ZERO_PRI)                    // 8
-		OP(PUSH_PRI)                    // 12
-		OP(ZERO_PRI)                    // 16
-		OP(PUSH_PRI)                    // 20
-		OP(ZERO_PRI)                    // 24
+		OP(ZERO_PRI)                    // 4
+		OP(PUSH_PRI)                    // 8
+		OP(ZERO_PRI)                    // 12
+		OP(PUSH_PRI)                    // 16
+		OP(ZERO_PRI)                    // 20
+		OP(PUSH_PRI)                    // 24
 		OP(CONST_PRI,  4)               // 32
 		OP(PUSH_PRI)                    // 36
 		OP(ZERO_PRI)                    // 40
 		OP(PUSH_PRI)                    // 44
 		OP(ZERO_PRI)                    // 48
 		OP(PUSH_PRI)                    // 52
-		OP(PUSH_C,     28)              // 60
+		OP(PUSH_C,     24)              // 60
 		OP(CALL,       &YVA2_DummyPush) // 68
 		OP(HEAP,       4)               // 76
 		OP(STOR_I)                      // 80
@@ -421,19 +421,19 @@ hook OnScriptInit()
 	CodeScanAddMatcher(scanner, csmO0A);
 	CodeScanMatcherInit(csmO0B, &YVA2_FoundPush);
 	CodeScanMatcherPattern(csmO0B,
-		OP(PUSH_PRI)                    // 4
 		OP(ZERO_PRI)                    // 8
 		OP(PUSH_PRI)                    // 12
 		OP(ZERO_PRI)                    // 16
 		OP(PUSH_PRI)                    // 20
 		OP(ZERO_PRI)                    // 24
+		OP(PUSH_PRI)                    // 4
 		OP(CONST_PRI,  4)               // 32
 		OP(PUSH_PRI)                    // 36
 		OP(CONST_PRI,  ???)             // 44
 		OP(PUSH_PRI)                    // 48
 		OP(ZERO_PRI)                    // 56
 		OP(PUSH_PRI)                    // 60
-		OP(PUSH_C,     28)              // 68
+		OP(PUSH_C,     24)              // 68
 		OP(CALL,       &YVA2_DummyPush) // 72
 		OP(HEAP,       4)               // 80
 		OP(STOR_I)                      // 84
@@ -460,7 +460,7 @@ hook OnScriptInit()
 		OP(PUSH_C,     4)               // 32
 		OP(PUSH_C,     ???)             // 40
 		OP(PUSH_C,     0)               // 48
-		OP(PUSH_C,     28)              // 56
+		OP(PUSH_C,     24)              // 56
 		OP(CALL,       &YVA2_DummyPush) // 64
 		OP(HEAP,       4)               // 72
 		OP(STOR_I)                      // 76
@@ -497,7 +497,7 @@ hook OnScriptInit()
 	// Replace calls with the correct parameter counts etc.
 	CodeScanRun(scanner);
 	
-	DisasmDump("yva2.lst");
+	DisasmDump("yva2.asm");
 }
 
 
