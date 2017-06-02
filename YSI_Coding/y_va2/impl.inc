@@ -106,9 +106,7 @@ static stock
 	YSI_g_sPassthroughNestings = 0,
 	YSI_g_sStaticParameters;
 
-// Enable `&__VA__PUSH__` WITHOUT matching it within the scanner itself.
-#define CALL@__VA__PUSH__ __VA__PUSH__(-1, -1, -1)
-stock __VA__PUSH__(const staticParameters = 0, const skippedParameters = 0, const pushRequirements = 4)
+static stock YVA2_DoPush(const staticParameters, const skippedParameters, const pushRequirements)
 {
 	// Used in reality, but copied to statics first.
 	#pragma unused staticParameters, skippedParameters, pushRequirements
@@ -204,10 +202,37 @@ stock __VA__PUSH__(const staticParameters = 0, const skippedParameters = 0, cons
 	// no parameters on the stack, so function postamble is not required.
 	#emit LOAD.pri             sReturnAddress
 	#emit SCTRL                6
+}
+
+// Enable `&YVA2_DummyPush` WITHOUT matching it within the scanner itself.
+#define CALL@YVA2_DummyPush YVA2_DummyPush(-1, -1, -1, -1, -1, -1, -1)
+stock YVA2_DummyPush(const staticParameters = 0, const skippedParameters = 0, const pushRequirements = 4, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0, const dummy3 = 0)
+{
+	#pragma unused dummy0, dummy1, dummy2, dummy3
+	// This function serves four purposes:
+	//   
+	//   1) It is the function called if `___` is used incorrectly, so the code
+	//       will give an error instead of just crashing.
+	//   
+	//   2) It uses more code space to call than `YVA2_DoPush` does, so adds
+	//       extra space we can inject code in to.
+	//   
+	//   3) It protects `YVA2_DoPush` from being directly called by users.
+	//   
+	//   4) It ensures that `YVA2_DoPush` is included in the binary only when
+	//       this function is called.  This doesn't save LOADS of space, since
+	//       we always have all the matcher functions - but if they are
+	//       including this library they probably want to use this library!
+	//   
+	if (FALSE)
+	{
+		YVA2_DoPush(staticParameters, skippedParameters, pushRequirements);
+	}
+	P:W("Bare `___` usage found - make sure it is a function parameter.");
 	return 0;
 }
 
-stock YVA_FoundCall(m[CodeScanner])
+static stock YVA2_FoundCall(m[CodeScanner])
 {
 	if (YSI_g_sPassthroughNestings)
 	{
@@ -227,38 +252,44 @@ stock YVA_FoundCall(m[CodeScanner])
 	return -1;
 }
 
-stock YVA_FoundPush(m[CodeScanner])
+static stock YVA2_FoundPush(m[CodeScanner])
 {
 	if (YSI_g_sPassthroughNestings >= MAX_NESTED_PASSTHROUGHS)
 	{
-		P:F("y_va2 found too deeply nested `___` calls - increase `MAX_NESTED_PASSTHROUGHS`.");
+		P:F("`___` nested too deeply - increase `MAX_NESTED_PASSTHROUGHS`.");
 		return;
 	}
 	// Do something with the found address (of the START of the match), and the
 	// stack size (of the END of the match) - different for reasons...
 	printf("found push: %d %d %x", CodeScanGetMatchLength(m), CodeScanGetMatchStack(m), CodeScanGetMatchAddress(m));
-	new
-		asm[AsmContext];
-	CodeScanGetMatchAsm(m, asm);
 	switch (CodeScanGetMatchLength(m))
 	{
-	case 64:
+	case 72:
 	{
 		// -O0
 		// Get rid of `STOR.I` and `PUSH.pri`.  Leave all the heap modification
 		// code, since the cleanup will rely on it still existing.
-		printf("-O0");
+		YSI_g_sPassthroughs[YSI_g_sPassthroughNestings][E_VARARG_PASSTHROUGH_OTYPE] = 0;
 	}
-	case 56:
+	case 64:
 	{
 		// -O1
 		// Get rid of `STOR.I` and `PUSH.alt`.  Leave all the heap modification
 		// code, since the cleanup will rely on it still existing.  In the
 		// future, this will give us two cells to play with for our own stack
 		// cleanup code.
-		printf("-O1");
+		YSI_g_sPassthroughs[YSI_g_sPassthroughNestings][E_VARARG_PASSTHROUGH_OTYPE] = 1;
 	}
 	}
+	// Can't do this in one line sadly, this gives an error:
+	//   
+	//   	CodeScanGetMatchAsm(m, YSI_g_sPassthroughs[YSI_g_sPassthroughNestings][E_VARARG_PASSTHROUGH_ASM]);
+	//   
+	// I think it should work, but it doesn't.
+	new
+		asm[AsmContext];
+	CodeScanGetMatchAsm(m, asm);
+	YSI_g_sPassthroughs[YSI_g_sPassthroughNestings][E_VARARG_PASSTHROUGH_ASM] = asm;
 	YSI_g_sPassthroughs[YSI_g_sPassthroughNestings][E_VARARG_PASSTHROUGH_STACK] = CodeScanGetMatchStack(m);
 	++YSI_g_sPassthroughNestings;
 }
@@ -293,22 +324,30 @@ hook OnScriptInit()
 		zero.pri
 		push.pri
 		push.c c
-		call __VA__PUSH__
+		call YVA2_DoPush
 		heap 4
 		stor.i
 		move.pri
 		push.pri
 	*/
-	CodeScanMatcherInit(csmO0, &YVA_FoundPush);
+	CodeScanMatcherInit(csmO0, &YVA2_FoundPush);
 	CodeScanMatcherPattern(csmO0,
+		OP(PUSH_PRI)
+		OP(ZERO_PRI)
+		OP(PUSH_PRI)
+		OP(ZERO_PRI)
+		OP(PUSH_PRI)
+		OP(ZERO_PRI)
+		OP(PUSH_PRI)
+		OP(ZERO_PRI)
 		OP(CONST_PRI,  4)
 		OP(PUSH_PRI)
 		OP(ZERO_PRI)
 		OP(PUSH_PRI)
 		OP(ZERO_PRI)
 		OP(PUSH_PRI)
-		OP(PUSH_C,     12)
-		OP(CALL,       &__VA__PUSH__)
+		OP(PUSH_C,     28)
+		OP(CALL,       &YVA2_DummyPush)
 		OP(HEAP,       4)
 		OP(STOR_I)
 		OP(MOVE_PRI)
@@ -321,29 +360,37 @@ hook OnScriptInit()
 		push.c 0
 		push.c 0
 		push.c c
-		call __VA__PUSH__
+		call YVA2_DoPush
 		heap 4
 		stor.i
 		push.alt
 	*/
-	CodeScanMatcherInit(csmO1, &YVA_FoundPush);
+	CodeScanMatcherInit(csmO1, &YVA2_FoundPush);
 	CodeScanMatcherPattern(csmO1,
+		OP(PUSH_C,     0)
+		OP(PUSH_C,     0)
+		OP(PUSH_C,     0)
+		OP(PUSH_C,     0)
 		OP(PUSH_C,     4)
 		OP(PUSH_C,     0)
 		OP(PUSH_C,     0)
-		OP(PUSH_C,     12)
-		OP(CALL,       &__VA__PUSH__)
+		OP(PUSH_C,     28)
+		OP(CALL,       &YVA2_DummyPush)
 		OP(HEAP,       4)
 		OP(STOR_I)
 		OP(PUSH_ALT)
 	);
 	CodeScanAddMatcher(scanner, csmO1);
+	// Match ANY function calls anywhere.  Will even match calls to `___`, but
+	// we can ignore them (and many others).  I need some way to determine that
+	// "amx_assembly" is up-to-date with the very latest "codescan" changes to
+	// add scanner ignoring.
 	/*
 		push.c ???
 		call   ???
 		stack  ???
 	*/
-	CodeScanMatcherInit(csm2, &YVA_FoundCall);
+	CodeScanMatcherInit(csm2, &YVA2_FoundCall);
 	CodeScanMatcherPattern(csm2,
 		OP(PUSH_C,     ???)
 		OP(CALL,       ???)
@@ -354,7 +401,7 @@ hook OnScriptInit()
 		sysreq.c ???
 		stack    ???
 	*/
-	CodeScanMatcherInit(csm3, &YVA_FoundCall);
+	CodeScanMatcherInit(csm3, &YVA2_FoundCall);
 	CodeScanMatcherPattern(csm3,
 		OP(PUSH_C,     ???)
 		OP(SYSREQ_C,   ???)

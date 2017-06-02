@@ -95,10 +95,25 @@ Operators:
 #endif
 #define _INC_y_va2
 
+#if 0
+
+	// Example:
+	stock MyPrintf(const format[], {Float, File, _}:...)
+	{
+		// The triple underscore is used to mirror the triple dots in the
+		// function definition.  You can't easily tell it is three from a
+		// glance, but it is.
+		printf(format, ___1); // Or `___(1)`.
+		print("Printed many things");
+		return 42;
+	}
+
+#endif
+
 //#define va_args<%0> %0
-#define ___ __VA__PUSH__(0)
+#define ___ YVA2_DummyPush()
 // For optional parameter skips.
-#define __VA__PUSH__(%0)(%1) __VA__PUSH__(%0,%1)
+#define YVA2_DummyPush(%0)(%1) YVA2_DummyPush((%0),(%1) * 4)
 
 // Shortcuts.
 #define ___0 ___(0)
@@ -115,6 +130,7 @@ Operators:
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_funcinc"
 #include "..\YSI_Core\y_utils"
+#include "..\YSI_Coding\y_hooks"
 
 #include "y_va2/impl"
 
