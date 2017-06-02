@@ -70,8 +70,8 @@
 #if !defined CODESCAN_INC
 	#error Please update "https://github.com/Zeex/amx_assembly" to get "codescan.inc"
 #endif
-#if !defined CodeScanGetMatchFuncData
-	#error Please update "https://github.com/Zeex/amx_assembly" to get "CodeScanGetMatchFuncData()"
+#if !defined AsmEmitCallAbs
+	#error Please update "https://github.com/Zeex/amx_assembly" to get "AsmEmitCallAbs()"
 #endif
 
 #tryinclude "..\amx\disasm"
