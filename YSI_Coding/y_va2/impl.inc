@@ -94,18 +94,16 @@ Operators:
 	#define MAX_NESTED_PASSTHROUGHS (4) // Should be MORE than enough!
 #endif
 
-enum E_VARARG_PASSTHROUGH
-{
-	E_VARARG_PASSTHROUGH_OTYPE, // 0 = -O0, 1 = -O1.
-	E_VARARG_PASSTHROUGH_STACK,
-	E_VARARG_PASSTHROUGH_ASM[AsmContext]
-}
-
 static stock
-	YSI_g_sPassthroughs[MAX_NESTED_PASSTHROUGHS][E_VARARG_PASSTHROUGH],
+	YSI_g_sLength[MAX_NESTED_PASSTHROUGHS], // false = O0, true = O1.
+	YSI_g_sSkips[MAX_NESTED_PASSTHROUGHS],
+	YSI_g_sStacks[MAX_NESTED_PASSTHROUGHS],
+	YSI_g_sContexts[MAX_NESTED_PASSTHROUGHS][AsmContext],
+	bool:YSI_g_sIsNested = false,
 	YSI_g_sPassthroughNestings = 0,
 	YSI_g_sStaticParameters;
 
+#define CALL@YVA2_DoPush YVA2_DoPush(-1, -1, -1)
 static stock YVA2_DoPush(const staticParameters, const skippedParameters, const pushRequirements)
 {
 	// Used in reality, but copied to statics first.
@@ -143,23 +141,23 @@ static stock YVA2_DoPush(const staticParameters, const skippedParameters, const 
 	// This means there is 24 bytes of information we need to move to globals,
 	// since we are about to totally destroy our own stack.
 	#emit POP.pri
-	#emit STOR.pri             sFramePointer
-	#emit SCTRL                5 // Go back to the previous frame.
+	#emit STOR.pri     sFramePointer
+	#emit SCTRL        5 // Go back to the previous frame.
 	#emit POP.pri
-	#emit STOR.pri             sReturnAddress
-	#emit POP.pri              // Don't care about parameter count (don't save).
+	#emit STOR.pri     sReturnAddress
+	#emit POP.pri      // Don't care about parameter count (don't save).
 	#emit POP.pri
-	#emit STOR.pri             YSI_g_sStaticParameters // (Adjusted).
+	#emit STOR.pri     YSI_g_sStaticParameters // (Adjusted).
 	#emit POP.pri
-	#emit STOR.pri             sSkippedParameters
+	#emit STOR.pri     sSkippedParameters
 	#emit POP.pri
-	#emit STOR.pri             sPushRequirements
+	#emit STOR.pri     sPushRequirements
 	// The stack is now back to where it was before this function was called.
 	// We must copy parameters from the previous stack to the current stack.
 	// The frame is also the same, so technically now everything is in the same
 	// stack.
-	#emit LOAD.S.pri           8 // Parameter count.
-	#emit STOR.pri             sParameterCount
+	#emit LOAD.S.pri   8 // Parameter count.
+	#emit STOR.pri     sParameterCount
 	// There are two methods for this - increase the stack and 'memcpy' in, or
 	// loop over all the parameters and re-push them.  I suspect the memcpy
 	// version MAY be faster, but there is some trickyness with the stack to
@@ -178,7 +176,7 @@ static stock YVA2_DoPush(const staticParameters, const skippedParameters, const 
 			break;
 		}
 		{}
-		#emit LREF.pri sFramePointer
+		#emit LREF.pri     sFramePointer
 		#emit PUSH.pri
 	}
 	// We need to tell the real call how many parameters are being pushed, via
@@ -200,15 +198,15 @@ static stock YVA2_DoPush(const staticParameters, const skippedParameters, const 
 	// 
 	// Return from this function.  We are already in the parent frame and have
 	// no parameters on the stack, so function postamble is not required.
-	#emit LOAD.pri             sReturnAddress
-	#emit SCTRL                6
+	#emit LOAD.pri     sReturnAddress
+	#emit SCTRL        6
 }
 
 // Enable `&YVA2_DummyPush` WITHOUT matching it within the scanner itself.
-#define CALL@YVA2_DummyPush YVA2_DummyPush(-1, -1, -1, -1, -1, -1, -1)
-stock YVA2_DummyPush(const staticParameters = 0, const skippedParameters = 0, const pushRequirements = 4, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0, const dummy3 = 0)
+#define CALL@YVA2_DummyPush YVA2_DummyPush(-1, -1, -1, -1, -1, -1)
+stock YVA2_DummyPush(const staticParameters = 0, const skippedParameters = 0, const pushRequirements = 4, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0)
 {
-	#pragma unused dummy0, dummy1, dummy2, dummy3
+	#pragma unused dummy0, dummy1, dummy2
 	// This function serves four purposes:
 	//   
 	//   1) It is the function called if `___` is used incorrectly, so the code
@@ -232,21 +230,109 @@ stock YVA2_DummyPush(const staticParameters = 0, const skippedParameters = 0, co
 	return 0;
 }
 
+static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skippedBytes) //, length)
+{
+	// `pushedBytes` is the number of bytes originally pushed to the target
+	// function (which includes four for the `___` return value).
+	// Use `ctx` so we can use `@emit`.
+	@emit PUSH.C       4                       // 8
+	@emit PUSH.C       skippedBytes            // 16
+	@emit PUSH.C       pushedBytes - 4         // 24
+	@emit PUSH.C       12                      // 32
+	@emit CALL         addressof (YVA2_DoPush) // 40
+	@emit HEAP         4                       // 48
+	// We keep the `HEAP` here since we know that the original code wants to
+	// clean up an extra four bytes from the heap, so it still needs to exist.
+//	for (length -= 48; length > 0; length -= 4)
+//	{
+//		// For now, just NOP everything else out (including the result `PUSH`).
+//		@emit NOP
+//	}
+	// We have at least 40 bytes left to play with after `CALL`:
+	//   
+	//   // If this is the last call of many:
+	//   STACK      N // Remove all temp variables.
+	//   // If this is the only call:
+	//   POP.alt      // Remove the parameter count storage.
+	//   
+	// Or after `SYSREQ.C`:
+	//   
+	//   POP.alt      // Load the parameter count.
+	//   PUSH.pri     // Store the function return value.
+	//   LCTRL      4 // Load the stack value.
+	//   ADD          // Add them together.
+	//   POP.alt      // Move the parameter count.
+	//   SCTRL      4 // Store the stack pointer back.
+	//   MOVE.pri     // Move the parameter count.
+	//   // If this is the last call.
+	//   STACK      N // Remove all temp variables.
+	//   // If this is the only call:
+	//   POP.alt      // Remove the parameter count storage.
+	//   
+	// Longer alternative (not good to be longer...)
+	//   
+	//   LOAD.S.alt p // Load the parameter count.
+	//   STOR.S.pri p // Store the function return value.
+	//   LCTRL      4 // Load the stack value.
+	//   ADD          // Add them together.
+	//   SCTRL      4 // Store the stack pointer back.
+	//   POP.alt      // Remove the pushed parameter count.
+	//   LOAD.S.pri p // Load the parameter count.
+	//   // If this is the last call.
+	//   STACK      N // Remove all temp variables.
+	//   // If this is the only call:
+	//   POP.alt      // Remove the parameter count storage.
+	//   
+	// Need to account for the worst-case, which is 11 bytes (44 cells).  Need
+	// extra pushes to account for this (only in `-O1`, all other modes are fine
+	// but will unfortunately get worse as a result - just use `-O1`)!
+	// 
+	// Actually, the worst case is not too bad - if there are two (or more)
+	// nested calls then one will use 9 cells and the other 11.  This averages
+	// out to 10, which we have!  If there is only one, there is only 10 bytes.
+}
+
+static stock YVA2_CodeGenShiftCode(dest, src, end)
+{
+	// Shift some the code up.  We can't use `memcpy` as the destination most
+	// probably overlaps the source.
+	while (src != end)
+	{
+		#emit LREF.S.pri   src
+		#emit SREF.S.pri   dest
+		src += 4;
+		dest += 4;
+	}
+	// NOP out the remaining code.
+	src = _:RelocateOpcode(OP_NOP);
+	while (dest != end)
+	{
+		#emit LOAD.S.pri   src
+		#emit SREF.S.pri   dest
+		dest += 4;
+	}
+}
+
 static stock YVA2_FoundCall(m[CodeScanner])
 {
 	if (YSI_g_sPassthroughNestings)
 	{
 		new
 			pos = YSI_g_sPassthroughNestings - 1;
-		if (CodeScanGetMatchStack(m) < YSI_g_sPassthroughs[pos][E_VARARG_PASSTHROUGH_STACK])
+		if (CodeScanGetMatchStack(m) < YSI_g_sStacks[pos])
 		{
 			new
-				isSysreq = CodeScanGetMatchLength(m) == 24;
-			printf("found %s", (isSysreq) ? ("sysreq") : ("call"));
-			// We found the end of the call.
-			printf("Found the end at: %x", CodeScanGetMatchAddress(m));
-			--YSI_g_sPassthroughNestings;
-			return 0;
+				asm[AsmContext];
+			CodeScanGetMatchAsm(m, asm);
+			// First, rewrite the `___` call-site to call `YVA2_DoPush` instead.
+			YVA2_CodeGenPushSite(YSI_g_sContexts[pos], CodeScanGetMatchHole(m, 0), YSI_g_sSkips[pos]); //, YSI_g_sLength[pos]);
+			YVA2_CodeGenShiftCode(
+				YSI_g_sContexts[pos][AsmContext_buffer] + YSI_g_sContexts[pos][AsmContext_buffer_offset],
+				CodeScanGetMatchAddressData(m),
+				CodeScanGetMatchAddressData(m) + CodeScanGetMatchLength(m));
+			return
+				YSI_g_sPassthroughNestings = pos,
+				1;
 		}
 	}
 	return -1;
@@ -259,38 +345,18 @@ static stock YVA2_FoundPush(m[CodeScanner])
 		P:F("`___` nested too deeply - increase `MAX_NESTED_PASSTHROUGHS`.");
 		return;
 	}
+	if (YSI_g_sPassthroughNestings)
+	{
+		YSI_g_sIsNested = true;
+	}
 	// Do something with the found address (of the START of the match), and the
 	// stack size (of the END of the match) - different for reasons...
-	printf("found push: %d %d %x", CodeScanGetMatchLength(m), CodeScanGetMatchStack(m), CodeScanGetMatchAddress(m));
-	switch (CodeScanGetMatchLength(m))
-	{
-	case 72:
-	{
-		// -O0
-		// Get rid of `STOR.I` and `PUSH.pri`.  Leave all the heap modification
-		// code, since the cleanup will rely on it still existing.
-		YSI_g_sPassthroughs[YSI_g_sPassthroughNestings][E_VARARG_PASSTHROUGH_OTYPE] = 0;
-	}
-	case 64:
-	{
-		// -O1
-		// Get rid of `STOR.I` and `PUSH.alt`.  Leave all the heap modification
-		// code, since the cleanup will rely on it still existing.  In the
-		// future, this will give us two cells to play with for our own stack
-		// cleanup code.
-		YSI_g_sPassthroughs[YSI_g_sPassthroughNestings][E_VARARG_PASSTHROUGH_OTYPE] = 1;
-	}
-	}
-	// Can't do this in one line sadly, this gives an error:
-	//   
-	//   	CodeScanGetMatchAsm(m, YSI_g_sPassthroughs[YSI_g_sPassthroughNestings][E_VARARG_PASSTHROUGH_ASM]);
-	//   
-	// I think it should work, but it doesn't.
-	new
-		asm[AsmContext];
-	CodeScanGetMatchAsm(m, asm);
-	YSI_g_sPassthroughs[YSI_g_sPassthroughNestings][E_VARARG_PASSTHROUGH_ASM] = asm;
-	YSI_g_sPassthroughs[YSI_g_sPassthroughNestings][E_VARARG_PASSTHROUGH_STACK] = CodeScanGetMatchStack(m);
+	// printf("found push: %d %d %x", CodeScanGetMatchLength(m), CodeScanGetMatchStack(m), CodeScanGetMatchAddress(m));
+	YSI_g_sLength[YSI_g_sPassthroughNestings] = CodeScanGetMatchLength(m),
+	CodeScanGetMatchAsm(m, YSI_g_sContexts[YSI_g_sPassthroughNestings]),
+	YSI_g_sStacks[YSI_g_sPassthroughNestings] = CodeScanGetMatchStack(m),
+	// If the code is 96 bytes long, `ZERO_PRI` was used not a constant number.
+	YSI_g_sSkips[YSI_g_sPassthroughNestings] = (YSI_g_sLength[YSI_g_sPassthroughNestings] == 96) ? 0 : CodeScanGetMatchHole(m, 0),
 	++YSI_g_sPassthroughNestings;
 }
 
@@ -310,7 +376,8 @@ hook OnScriptInit()
 {
 	new
 		scanner[CodeScanner],
-		csmO0[CodeScanMatcher],
+		csmO0A[CodeScanMatcher],
+		csmO0B[CodeScanMatcher],
 		csmO1[CodeScanMatcher],
 		csm2[CodeScanMatcher],
 		csm3[CodeScanMatcher];
@@ -330,30 +397,50 @@ hook OnScriptInit()
 		move.pri
 		push.pri
 	*/
-	CodeScanMatcherInit(csmO0, &YVA2_FoundPush);
-	CodeScanMatcherPattern(csmO0,
-		OP(PUSH_PRI)
-		OP(ZERO_PRI)
-		OP(PUSH_PRI)
-		OP(ZERO_PRI)
-		OP(PUSH_PRI)
-		OP(ZERO_PRI)
-		OP(PUSH_PRI)
-		OP(ZERO_PRI)
-		OP(CONST_PRI,  4)
-		OP(PUSH_PRI)
-		OP(ZERO_PRI)
-		OP(PUSH_PRI)
-		OP(ZERO_PRI)
-		OP(PUSH_PRI)
-		OP(PUSH_C,     28)
-		OP(CALL,       &YVA2_DummyPush)
-		OP(HEAP,       4)
-		OP(STOR_I)
-		OP(MOVE_PRI)
-		OP(PUSH_PRI)
+	CodeScanMatcherInit(csmO0A, &YVA2_FoundPush);
+	CodeScanMatcherPattern(csmO0A,
+		OP(PUSH_PRI)                    // 4
+		OP(ZERO_PRI)                    // 8
+		OP(PUSH_PRI)                    // 12
+		OP(ZERO_PRI)                    // 16
+		OP(PUSH_PRI)                    // 20
+		OP(ZERO_PRI)                    // 24
+		OP(CONST_PRI,  4)               // 32
+		OP(PUSH_PRI)                    // 36
+		OP(ZERO_PRI)                    // 40
+		OP(PUSH_PRI)                    // 44
+		OP(ZERO_PRI)                    // 48
+		OP(PUSH_PRI)                    // 52
+		OP(PUSH_C,     28)              // 60
+		OP(CALL,       &YVA2_DummyPush) // 68
+		OP(HEAP,       4)               // 76
+		OP(STOR_I)                      // 80
+		OP(MOVE_PRI)                    // 84
+		OP(PUSH_PRI)                    // 88
 	);
-	CodeScanAddMatcher(scanner, csmO0);
+	CodeScanAddMatcher(scanner, csmO0A);
+	CodeScanMatcherInit(csmO0B, &YVA2_FoundPush);
+	CodeScanMatcherPattern(csmO0B,
+		OP(PUSH_PRI)                    // 4
+		OP(ZERO_PRI)                    // 8
+		OP(PUSH_PRI)                    // 12
+		OP(ZERO_PRI)                    // 16
+		OP(PUSH_PRI)                    // 20
+		OP(ZERO_PRI)                    // 24
+		OP(CONST_PRI,  4)               // 32
+		OP(PUSH_PRI)                    // 36
+		OP(CONST_PRI,  ???)             // 44
+		OP(PUSH_PRI)                    // 48
+		OP(ZERO_PRI)                    // 56
+		OP(PUSH_PRI)                    // 60
+		OP(PUSH_C,     28)              // 68
+		OP(CALL,       &YVA2_DummyPush) // 72
+		OP(HEAP,       4)               // 80
+		OP(STOR_I)                      // 84
+		OP(MOVE_PRI)                    // 88
+		OP(PUSH_PRI)                    // 92
+	);
+	CodeScanAddMatcher(scanner, csmO0B);
 	/*
 		// O1:
 		push.c 4
@@ -367,18 +454,17 @@ hook OnScriptInit()
 	*/
 	CodeScanMatcherInit(csmO1, &YVA2_FoundPush);
 	CodeScanMatcherPattern(csmO1,
-		OP(PUSH_C,     0)
-		OP(PUSH_C,     0)
-		OP(PUSH_C,     0)
-		OP(PUSH_C,     0)
-		OP(PUSH_C,     4)
-		OP(PUSH_C,     0)
-		OP(PUSH_C,     0)
-		OP(PUSH_C,     28)
-		OP(CALL,       &YVA2_DummyPush)
-		OP(HEAP,       4)
-		OP(STOR_I)
-		OP(PUSH_ALT)
+		OP(PUSH_C,     0)               // 8
+		OP(PUSH_C,     0)               // 16
+		OP(PUSH_C,     0)               // 24
+		OP(PUSH_C,     4)               // 32
+		OP(PUSH_C,     ???)             // 40
+		OP(PUSH_C,     0)               // 48
+		OP(PUSH_C,     28)              // 56
+		OP(CALL,       &YVA2_DummyPush) // 64
+		OP(HEAP,       4)               // 72
+		OP(STOR_I)                      // 76
+		OP(PUSH_ALT)                    // 80
 	);
 	CodeScanAddMatcher(scanner, csmO1);
 	// Match ANY function calls anywhere.  Will even match calls to `___`, but
@@ -410,6 +496,8 @@ hook OnScriptInit()
 	CodeScanAddMatcher(scanner, csm3);
 	// Replace calls with the correct parameter counts etc.
 	CodeScanRun(scanner);
+	
+	DisasmDump("yva2.lst");
 }
 
 
