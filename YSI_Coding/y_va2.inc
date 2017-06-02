@@ -127,6 +127,10 @@ Operators:
 #define ___8 ___(8)
 #define ___9 ___(9)
 
+#if defined YSI_TESTS
+	#include "..\YSI_Data\y_foreach"
+#endif
+
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_funcinc"
 #include "..\YSI_Core\y_utils"

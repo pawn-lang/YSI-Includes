@@ -224,13 +224,13 @@ static g_y_hooksVar;
 Test:y_hooks_Customs()
 {
 	g_y_hooksVar = 0;
-	CallLocalFunction("MyFunc1", "ii", 4, 5);
+	CallLocalFunction("y_hooks_MyFunc1", "ii", 4, 5);
 	ASSERT(g_y_hooksVar == (4 + 5) * 6);
 }
 
-forward MyFunc1(a, b);
+forward y_hooks_MyFunc1(a, b);
 
-public MyFunc1(a, b)
+public y_hooks_MyFunc1(a, b)
 {
 	//printf("Part 1 %d %d", a, b);
 	g_y_hooksVar += a + b;
@@ -239,7 +239,7 @@ public MyFunc1(a, b)
 #tryinclude "..\YSI_Internal\y_unique"
 #tryinclude "..\..\YSI_Internal\y_unique"
 
-hook MyFunc1(a, b)
+hook y_hooks_MyFunc1(a, b)
 {
 	//printf("Part 2 %d", a);
 	g_y_hooksVar += a + b;
@@ -248,7 +248,7 @@ hook MyFunc1(a, b)
 #tryinclude "..\YSI_Internal\y_unique"
 #tryinclude "..\..\YSI_Internal\y_unique"
 
-hook MyFunc1(a, b)
+hook y_hooks_MyFunc1(a, b)
 {
 	//printf("Part 3 %d", b);
 	g_y_hooksVar += a + b;
@@ -257,7 +257,7 @@ hook MyFunc1(a, b)
 #tryinclude "..\YSI_Internal\y_unique"
 #tryinclude "..\..\YSI_Internal\y_unique"
 
-hook MyFunc1(a, b)
+hook y_hooks_MyFunc1(a, b)
 {
 	//printf("Part 3 %d", b);
 	g_y_hooksVar += a + b;
@@ -266,7 +266,7 @@ hook MyFunc1(a, b)
 #tryinclude "..\YSI_Internal\y_unique"
 #tryinclude "..\..\YSI_Internal\y_unique"
 
-hook MyFunc1(a, b)
+hook y_hooks_MyFunc1(a, b)
 {
 	//printf("Part 3 %d", b);
 	g_y_hooksVar += a + b;
@@ -275,7 +275,7 @@ hook MyFunc1(a, b)
 #tryinclude "..\YSI_Internal\y_unique"
 #tryinclude "..\..\YSI_Internal\y_unique"
 
-hook MyFunc1(a, b)
+hook y_hooks_MyFunc1(a, b)
 {
 	//printf("Part 3 %d", b);
 	g_y_hooksVar += a + b;
