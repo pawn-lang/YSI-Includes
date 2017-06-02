@@ -422,7 +422,7 @@ static stock YVA2_FoundPush(m[CodeScanner])
 	// If the code is 96 bytes long, `ZERO_PRI` was used not a constant number.
 	YSI_g_sSkips[YSI_g_sPassthroughNestings] = (YSI_g_sLength[YSI_g_sPassthroughNestings] == 96) ? 0 : CodeScanGetMatchHole(m, 0),
 	++YSI_g_sPassthroughNestings;
-	printf("%d", CodeScanGetMatchStack(m));
+	P:3("YVA2_FoundPush: %d", CodeScanGetMatchStack(m));
 }
 
 // Add a scanner to find the `___` function call.
