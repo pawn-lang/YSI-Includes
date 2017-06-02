@@ -3,6 +3,15 @@
 // internal include guards (or the compiler's one) will prevent their multiple
 // inclusions.  I don't know why I ever made YSI use its own internal version...
 
+#if defined CODE_SCAN_MAX_PATTERN
+	#if CODE_SCAN_MAX_PATTERN < (24)
+		#undef CODE_SCAN_MAX_PATTERN
+		#define CODE_SCAN_MAX_PATTERN (24)
+	#endif
+#else
+	#define CODE_SCAN_MAX_PATTERN (24)
+#endif
+
 #tryinclude "..\amx\amx"
 #tryinclude <amx_assembly\amx>
 #tryinclude "..\amx_assembly\amx"
@@ -60,6 +69,9 @@
 #tryinclude "..\..\amx_assembly\codescan"
 #if !defined CODESCAN_INC
 	#error Please update "https://github.com/Zeex/amx_assembly" to get "codescan.inc"
+#endif
+#if !defined CodeScanGetMatchFuncData
+	#error Please update "https://github.com/Zeex/amx_assembly" to get "CodeScanGetMatchFuncData()"
 #endif
 
 #tryinclude "..\amx\disasm"
