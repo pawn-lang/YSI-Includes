@@ -99,13 +99,15 @@ static stock
 	YSI_g_sSkips[MAX_NESTED_PASSTHROUGHS],
 	YSI_g_sStacks[MAX_NESTED_PASSTHROUGHS],
 	YSI_g_sContexts[MAX_NESTED_PASSTHROUGHS][AsmContext],
-	bool:YSI_g_sIsNested = false,
+	YSI_g_sMaxNesting = 0,
 	YSI_g_sPassthroughNestings = 0,
 	YSI_g_sStaticParameters;
 
 #define CALL@YVA2_DoPush YVA2_DoPush(-1, -1, -1)
 static stock YVA2_DoPush(const staticParameters, const skippedParameters, const pushRequirements)
 {
+	printf("hi");
+	return 0;
 	// Used in reality, but copied to statics first.
 	#pragma unused staticParameters, skippedParameters, pushRequirements
 	static
@@ -230,7 +232,7 @@ stock YVA2_DummyPush(const staticParameters = 0, const skippedParameters = 0, co
 	return 0;
 }
 
-static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skippedBytes) //, length)
+static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skippedBytes)
 {
 	// `pushedBytes` is the number of bytes originally pushed to the target
 	// function (which includes four for the `___` return value).
@@ -239,7 +241,7 @@ static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skip
 	@emit PUSH.C       skippedBytes            // 16
 	@emit PUSH.C       pushedBytes - 4         // 24
 	@emit PUSH.C       12                      // 32
-	@emit CALL         addressof (YVA2_DoPush) // 40
+	@emit CALL.abs     addressof (YVA2_DoPush) // 40
 	@emit HEAP         4                       // 48
 	// We keep the `HEAP` here since we know that the original code wants to
 	// clean up an extra four bytes from the heap, so it still needs to exist.
@@ -313,6 +315,21 @@ static stock YVA2_CodeGenShiftCode(dest, src, end)
 	}
 }
 
+static stock YVA2_CodeGenMainCleanup(ctx[AsmContext])
+{
+	@emit CONST.pri    42
+}
+
+static stock YVA2_CodeGenDeepCleanup(ctx[AsmContext], depth)
+{
+	@emit STACK        (depth + 1) * cellbytes
+}
+
+static stock YVA2_CodeGenSimpleCleanup(ctx[AsmContext])
+{
+	@emit POP.alt
+}
+
 static stock YVA2_FoundCall(m[CodeScanner])
 {
 	if (YSI_g_sPassthroughNestings)
@@ -321,18 +338,41 @@ static stock YVA2_FoundCall(m[CodeScanner])
 			pos = YSI_g_sPassthroughNestings - 1;
 		if (CodeScanGetMatchStack(m) < YSI_g_sStacks[pos])
 		{
+			YSI_g_sPassthroughNestings = pos,
 			// First, rewrite the `___` call-site to call `YVA2_DoPush` instead.
-			YVA2_CodeGenPushSite(YSI_g_sContexts[pos], CodeScanGetMatchHole(m, 0), YSI_g_sSkips[pos]); //, YSI_g_sLength[pos]);
-			YVA2_CodeGenShiftCode(
-				YSI_g_sContexts[pos][AsmContext_buffer] + YSI_g_sContexts[pos][AsmContext_buffer_offset],
-				YSI_g_sContexts[pos][AsmContext_buffer] + YSI_g_sLength[pos],
-				CodeScanGetMatchAddressData(m) + CodeScanGetMatchLength(m));
+			YVA2_CodeGenPushSite(
+				YSI_g_sContexts[pos],
+				CodeScanGetMatchHole(m, 0),
+				YSI_g_sSkips[pos]);
+			// Shift the code up.
 			new
-				asm[AsmContext];
-			CodeScanGetMatchAsm(m, asm);
-			return
-				YSI_g_sPassthroughNestings = pos,
-				1;
+				dest = YSI_g_sContexts[pos][AsmContext_buffer],
+				end = CodeScanGetMatchAddressData(m) + CodeScanGetMatchLength(m);
+			YVA2_CodeGenShiftCode(
+				dest + YSI_g_sContexts[pos][AsmContext_buffer_offset],
+				dest + YSI_g_sLength[pos],
+				end);
+			// Adjust the assembly context.  48 is the length of the code from
+			// `YVA2_CodeGenPushSite`.
+			YSI_g_sContexts[pos][AsmContext_buffer_offset] = (end - dest) - (YSI_g_sLength[pos] - 48);
+			YVA2_CodeGenMainCleanup(YSI_g_sContexts[pos]);
+			if (YSI_g_sPassthroughNestings)
+			{
+				// Is a nesting.  Do nothing.
+			}
+			else if (YSI_g_sMaxNesting)
+			{
+				// Was nested - needs multiple call's cleanups.
+				YVA2_CodeGenDeepCleanup(YSI_g_sContexts[pos], YSI_g_sMaxNesting);
+				YSI_g_sMaxNesting = 0;
+			}
+			else
+			{
+				// Never nested - simple cleanup (just a pop).
+				YVA2_CodeGenSimpleCleanup(YSI_g_sContexts[pos]);
+			}
+			// Just keep going - this code is designed to recurse (maybe...).
+			return 0;
 		}
 	}
 	return -1;
@@ -345,10 +385,7 @@ static stock YVA2_FoundPush(m[CodeScanner])
 		P:F("`___` nested too deeply - increase `MAX_NESTED_PASSTHROUGHS`.");
 		return;
 	}
-	if (YSI_g_sPassthroughNestings)
-	{
-		YSI_g_sIsNested = true;
-	}
+	YSI_g_sMaxNesting = max(YSI_g_sMaxNesting, YSI_g_sPassthroughNestings),
 	// Do something with the found address (of the START of the match), and the
 	// stack size (of the END of the match) - different for reasons...
 	// printf("found push: %d %d %x", CodeScanGetMatchLength(m), CodeScanGetMatchStack(m), CodeScanGetMatchAddress(m));
