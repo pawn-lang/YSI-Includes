@@ -143,6 +143,7 @@ static stock const
 
 static stock
 	YSI_g_sCurTest = 0,
+	YSI_g_sCurHeap = 0,
 	YSI_g_sFailTests = 0,
 	YSI_g_sInTest = false,
 	YSI_g_sTestResult,
@@ -156,11 +157,11 @@ stock
 	YSI_gCurTestName[32];
 
 #if defined RUN_TESTS
-	#define Test:%1() forward bool:yQ@_%1(); public bool:yQ@_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = (TEST_REPORT(" ") && false))
+	#define Test:%1() forward bool:yQ@_%1(); public bool:yQ@_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())
 	#define TestInit:%1() forward _yQ@%1(); public _yQ@%1() for (new bool:__once = true; __once; __once = false)
 	#define TestClose:%1() forward yQ_@%1(); public yQ_@%1() for (new bool:__once = true; __once; __once = false)
 	
-	#define PTest:%1(%2) forward bool:_@yQ%1(%2); public bool:_@yQ%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = (TEST_REPORT(" ") && false))
+	#define PTest:%1(%2) forward bool:_@yQ%1(%2); public bool:_@yQ%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())
 	#define PTestInit:%1(%2) forward _y@Q%1(%2); public _y@Q%1(%2) for (new bool:__once = true; __once; __once = false)
 	#define PTestClose:%1(%2) forward y_@Q%1(%2); public y_@Q%1(%2) for (new bool:__once = true; __once; __once = false)
 #else
@@ -185,7 +186,7 @@ stock
 #include "..\YSI_Coding\y_va"
 
 /**--------------------------------------------------------------------------**\
-<summary>Testing_Start</summary>
+<summary>_Testing_Start</summary>
 <param name="name">Name of the current function.</param>
 <returns>
 	-
@@ -201,6 +202,10 @@ stock _Testing_Start(name[])
 	// list of failures.
 	name[0] = name[1] = 0,
 	YSI_g_sCurTest = ref(name);
+	// My very first legitimate usage of `heapspace()` for something other than
+	// as a dummy no-op function call!  I'm actually quite happy I found a use
+	// for it!
+	YSI_g_sCurHeap = heapspace();
 	P:3("_Testing_Start %d %d %s = %d", name[0], name[1], name[2], YSI_g_sCurTest);
 	YSI_gCurTestName[0] = '\0',
 	strcpy(YSI_gCurTestName, name[2]);
@@ -235,7 +240,7 @@ stock Testing_Test(bool:x, str[] = "", va_args<>)
 			++YSI_g_sFails;
 			if (numargs() == 2)
 			{
-				P:T(TEST_FAILED " %s", va_start<1>);
+				P:T(TEST_FAILED " %s", str);
 			}
 			else
 			{
@@ -253,6 +258,26 @@ stock Testing_Test(bool:x, str[] = "", va_args<>)
 			P:T(TEST_PASSED, va_start<2>);
 		}
 	#endif
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>_Testing_End</summary>
+<param name="name">Name of the current function.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Gets a reference to the 
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock bool:_Testing_End()
+{
+	new
+		space = heapspace();
+	Testing_Test(YSI_g_sCurHeap == space, TEST_FAILED " Heap allocation leak - was: %d, now: %d", YSI_g_sCurHeap, space);
+	TEST_REPORT(" ");
+	return false;
 }
 
 /**--------------------------------------------------------------------------**\
