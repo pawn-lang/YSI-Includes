@@ -261,21 +261,21 @@ stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRe
 	return 0;
 }
 
-static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skippedBytes, const depth, const offset)
+static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skippedBytes/*, const depth*/, const offset)
 {
 	// `pushedBytes` is the number of bytes originally pushed to the target
 	// function (which includes four for the `___` return value).
 	// Use `ctx` so we can use `@emit`.
-	if (depth)
-	{
-		@emit PUSH.C       depth * -cellbytes  // 8
-		@emit NOP                              // 12
-	}
-	else
-	{
-		@emit ADDR.pri     offset              // 8
-		@emit PUSH.pri                         // 12
-	}
+//	if (depth)
+//	{
+//		@emit PUSH.C       depth * -cellbytes  // 8
+//		@emit NOP                              // 12
+//	}
+//	else
+//	{
+	@emit ADDR.pri     offset              // 8
+	@emit PUSH.pri                         // 12
+//	}
 	@emit PUSH.C       pushedBytes - 4         // 28
 	@emit PUSH.C       skippedBytes            // 20
 	@emit PUSH.C       12                      // 36
@@ -390,13 +390,14 @@ static stock YVA2_FoundCall(m[CodeScanner])
 	{
 		new
 			pos = YSI_g_sPassthroughNestings - 1;
-		if (CodeScanGetMatchStack(m) < YSI_g_sStacks[pos])
+		if ((CodeScanGetMatchStack(m) < YSI_g_sStacks[pos]) || (!pos && YSI_g_sSkips[0] & cellmin && CodeScanGetMatchStack(m) < YSI_g_sStacks[pos] + cellbytes))
 		{
 			new
-				dest = YSI_g_sContexts[pos][AsmContext_buffer],
 				len = CodeScanGetMatchLength(m),
 				end = CodeScanGetMatchAddressData(m) + len,
-				bool:returningString = false;
+				hole = CodeScanGetMatchHole(m, 0),
+				bool:returningString = false,
+				codeLength = 52;
 			YSI_g_sPassthroughNestings = pos;
 			if (!pos && YSI_g_sSkips[0] & cellmin)
 			{
@@ -409,6 +410,7 @@ static stock YVA2_FoundCall(m[CodeScanner])
 				// and so don't interrupt their own return values.
 				new
 					dctx[DisasmContext];
+				printf("%d", len);
 				CodeScanGetMatchDisasm(m, dctx, len);
 				switch (DisasmNextInsn(dctx))
 				{
@@ -416,31 +418,41 @@ static stock YVA2_FoundCall(m[CodeScanner])
 					case OP_HEAP:
 						returningString = DisasmNextInsn(dctx) == OP_POP_PRI;
 					case OP_POP_PRI:
-						returningString = false;
+						returningString = true;
 					default:
 						returningString = false;
 				}
-				//returningString =
-				//	returningString
-				//	&& DisasmNextInsn(dctx) == OP_POP_ALT
-				//	&& DisasmNextInsn(dctx) == OP_MOVS;
-//				printf("Found? %d", returningString);
+				if (!returningString)
+					P:F("Found string return preamble without postamble - Y_Less needs to fix this!");
 			}
+			if (returningString)
+			{
+				// Shift the three cells before this code down to make room for
+				// the local storage stack adjustment code.
+				YSI_g_sContexts[0][AsmContext_buffer] -= 3 * cellbytes,
+				returningString = bool:ReadAmxMemory(YSI_g_sContexts[0][AsmContext_buffer] + cellbytes),
+				AsmEmitStack(YSI_g_sContexts[0], (YSI_g_sMaxNesting + 1) * -cellbytes),
+				AsmEmitHeap(YSI_g_sContexts[0], _:returningString),
+				AsmEmitPushAlt(YSI_g_sContexts[0]),
+				codeLength += 5 * cellbytes;
+			}
+			else if (!pos)
+			{
+				AsmEmitStack(YSI_g_sContexts[0], (YSI_g_sMaxNesting + 1) * -cellbytes),
+				codeLength += 2 * cellbytes;
+			}
+			new
+				dest = YSI_g_sContexts[pos][AsmContext_buffer];
 			// First, rewrite the `___` call-site to call `YVA2_DoPush` instead.
-			YVA2_CodeGenPushSite(
-				YSI_g_sContexts[pos],
-				CodeScanGetMatchHole(m, 0),
-				YSI_g_sSkips[pos],
-				pos ? 0 : (YSI_g_sMaxNesting + 1),
-				-YSI_g_sStacks[0] - pos * cellbytes); // YSI_g_sStacks[0]!!!
+			YVA2_CodeGenPushSite(YSI_g_sContexts[pos], hole, YSI_g_sSkips[pos], -YSI_g_sStacks[0] - pos * cellbytes); // YSI_g_sStacks[0]!!!
 			// Shift the code up.
 			YVA2_CodeGenShiftCode(
 				dest + YSI_g_sContexts[pos][AsmContext_buffer_offset],
 				dest + YSI_g_sLength[pos],
 				end);
-			// Adjust the assembly context.  52 is the length of the code from
-			// `YVA2_CodeGenPushSite`.
-			YSI_g_sContexts[pos][AsmContext_buffer_offset] = (end - dest) - (YSI_g_sLength[pos] - 52) - 16;
+			// Adjust the assembly context.  `codeLength` is the length of the
+			// code from `YVA2_CodeGenPushSite`.
+			YSI_g_sContexts[pos][AsmContext_buffer_offset] = (end - dest) - (YSI_g_sLength[pos] - codeLength) - 16;
 			if (len == 24)
 			{
 				YSI_g_sContexts[pos][AsmContext_buffer_offset] -= 8;
@@ -502,7 +514,8 @@ static stock YVA2_FoundPush(m[CodeScanner])
 		if (DisasmNextInsn(dctx) == OP_HEAP && DisasmNextInsn(dctx) == OP_PUSH_ALT)
 		{
 			// Correct preamble.  Mark this to check the postamble.
-			YSI_g_sSkips[YSI_g_sPassthroughNestings] |= cellmin;
+			YSI_g_sSkips[YSI_g_sPassthroughNestings] |= cellmin,
+			YSI_g_sStacks[0] -= cellbytes;
 		}
 	}
 	++YSI_g_sPassthroughNestings;
@@ -650,6 +663,7 @@ public OnScriptInit()
 	CodeScanAddMatcher(scanner, csm3);
 	// Replace calls with the correct parameter counts etc.
 	CodeScanRun(scanner);
+	DisasmDump("yva2.asm");
 	#if defined _y_va_OnScriptInit
 		_y_va_OnScriptInit();
 	#endif
