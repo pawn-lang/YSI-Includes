@@ -98,20 +98,50 @@ Operators:
 #endif
 #define _INC_y_va
 
-//#define va_args<%0> GLOBAL_TAG_TYPES:...
-//#define va_start<%0> (___(%0))
-//
-//#define va_printf printf
-//#define va_format format
-//#define va_CallRemoteFunction CallRemoteFunction
-//#define va_CallLocalFunction CallLocalFunction
-//#define va_SetTimerEx SetTimerEx
-//#define va_return sprintf
-//
-//#include "y_va2"
+#if 0
+
+	// Example:
+	stock MyPrintf(const format[], {Float, File, _}:...)
+	{
+		// The triple underscore is used to mirror the triple dots in the
+		// function definition.  You can't easily tell it is three from a
+		// glance, but it is.
+		printf(format, ___1); // Or `___(1)`.
+		print("Printed many things");
+		return 42;
+	}
+
+#endif
+
+#define ___ YVA2_DummyPush()
+// For optional parameter skips.
+#define YVA2_DummyPush()(%1) YVA2_DummyPush((%1) * 4)
+
+// Shortcuts.
+#define ___0 ___(0)
+#define ___1 ___(1)
+#define ___2 ___(2)
+#define ___3 ___(3)
+#define ___4 ___(4)
+#define ___5 ___(5)
+#define ___6 ___(6)
+#define ___7 ___(7)
+#define ___8 ___(8)
+#define ___9 ___(9)
 
 #define va_args<%0> GLOBAL_TAG_TYPES:...
-#define va_start<%0> (va_:(%0))
+#define va_start<%0> ___(%0)
+
+#define va_printf             printf
+#define va_CallRemoteFunction CallRemoteFunction
+#define va_CallLocalFunction  CallLocalFunction
+#define va_SetTimerEx         SetTimerEx
+#define va_format             format
+#define va_return             sprintf
+
+#if defined YSI_TESTS
+	#include "..\YSI_Data\y_foreach"
+#endif
 
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_funcinc"

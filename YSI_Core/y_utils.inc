@@ -789,49 +789,11 @@ stock unpack(const str[])
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define getstring returnstringarg
-#define GetString getstring
-#define GetStringArg getstringarg
-#define ReturnStringArg returnstringarg
-
-stock getstringarg(dest[], idx, len = sizeof (dest))
-{
-	// Get the address of the previous function's stack.  First get the index of
-	// the argument required.
-	#emit LOAD.S.pri idx
-	// Then convert that number to bytes from cells.
-	#emit SMUL.C     4
-	// Get the previous function's frame.  Stored in variable 0 (in the current
-	// frame).  Parameters are FRM+n+12, locals are FRM-n, previous frame is
-	// FRM+0, return address is FRM+4, parameter count is FRM+8.  We could add
-	// checks that "idx * 4 < *(*(FRM + 0) + 8)", for the previous frame
-	// parameter count (in C pointer speak).
-	#emit LOAD.S.alt 0
-	// Add the frame pointer to the argument offset in bytes.
-	#emit ADD
-	// Add 12 to skip over the function header.
-	#emit ADD.C      12
-	// Load the address stored in the specified address.
-	#emit LOAD.I
-	// Push the length for "strcat".
-	#emit PUSH.S     len
-	// Push the address we just determined was the source.
-	#emit PUSH.pri
-	// Load the address of the destination.
-	#emit LOAD.S.alt dest
-	// Blank the first cell so "strcat" behaves like "strcpy".
-	#emit CONST.pri  0
-	// Store the loaded number 0 to the loaded address.
-	#emit STOR.I
-	// Push the loaded address.
-	#emit PUSH.alt
-	// Push the number of parameters passed (in bytes) to the function.
-	#emit PUSH.C     12
-	// Call the function.
-	#emit SYSREQ.C   strcat
-	// Restore the stack to its level before we called this native.
-	#emit STACK      16
-}
+#define getstring        returnstringarg
+#define GetString        getstring
+#define getstringarg     va_getstring
+#define GetStringArg     va_getstring
+#define ReturnStringArg  returnstringarg
 
 stock returnstringarg(idx)
 {
@@ -897,6 +859,8 @@ stock returnstringarg(idx)
 
 stock sprintf(const fmat[], GLOBAL_TAG_TYPES:...)
 {
+	printf("TMP: %s %d", fmat, numargs());
+	printf("TMP: %d %d", getarg(1), getarg(2));
 	#pragma unused fmat
 	
 	static
@@ -914,6 +878,7 @@ stock sprintf(const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit POP.pri
 	#emit ADD.C        8
 	#emit STOR.pri     sCnt
+	//printf("TMP: %d", sCnt);
 	
 	// Put the secret return parameter on the stack again to format in to.
 	#emit PUSH         scSize
@@ -921,9 +886,25 @@ stock sprintf(const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit LOAD.I
 	#emit PUSH.pri
 	
+//	#emit STOR.pri sCnt
+//	printf("%d", sCnt);
+//	#emit PUSH.C 4
+//	#emit SYSREQ.C print
+	
 	// Call the native.
 	#emit PUSH         sCnt
 	#emit SYSREQ.C     format
+
+	#emit POP.alt
+	#emit POP.pri
+//	#emit STOR.pri sCnt
+	#emit PUSH.pri
+	#emit PUSH.alt
+	#emit PUSH.pri
+	#emit PUSH.C 4
+	#emit SYSREQ.C print
+	#emit STACK 8
+//	printf("%d", sCnt);
 	
 	// Return directly.  This will clean up our entire stack, even the extra
 	// parameters we put on it.  The parameter count is already there!
