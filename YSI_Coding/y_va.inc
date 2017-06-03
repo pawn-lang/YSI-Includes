@@ -98,7 +98,18 @@ Operators:
 #endif
 #define _INC_y_va
 
-//#define va_args<%0> %0
+//#define va_args<%0> GLOBAL_TAG_TYPES:...
+//#define va_start<%0> (___(%0))
+//
+//#define va_printf printf
+//#define va_format format
+//#define va_CallRemoteFunction CallRemoteFunction
+//#define va_CallLocalFunction CallLocalFunction
+//#define va_SetTimerEx SetTimerEx
+//#define va_return sprintf
+//
+//#include "y_va2"
+
 #define va_args<%0> GLOBAL_TAG_TYPES:...
 #define va_start<%0> (va_:(%0))
 
