@@ -895,16 +895,16 @@ stock sprintf(const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit PUSH         sCnt
 	#emit SYSREQ.C     format
 
-	#emit POP.alt
-	#emit POP.pri
-//	#emit STOR.pri sCnt
-	#emit PUSH.pri
-	#emit PUSH.alt
-	#emit PUSH.pri
-	#emit PUSH.C 4
-	#emit SYSREQ.C print
-	#emit STACK 8
-//	printf("%d", sCnt);
+//	#emit POP.alt
+//	#emit POP.pri
+////	#emit STOR.pri sCnt
+//	#emit PUSH.pri
+//	#emit PUSH.alt
+//	#emit PUSH.pri
+//	#emit PUSH.C 4
+//	#emit SYSREQ.C print
+//	#emit STACK 8
+////	printf("%d", sCnt);
 	
 	// Return directly.  This will clean up our entire stack, even the extra
 	// parameters we put on it.  The parameter count is already there!
