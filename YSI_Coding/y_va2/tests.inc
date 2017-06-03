@@ -183,7 +183,7 @@ Test:y_va2_PassThree()
 
 static stock y_va2_MyFunc3(...)
 {
-	FIX_STRING_RETURN("woo");
+	YSI_STRING_RETURN("woo");
 }
 
 static stock y_va2_MyFunc1(...)
