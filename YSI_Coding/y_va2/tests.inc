@@ -115,6 +115,11 @@ static stock y_va2_Extract(num, ...)
 	return ret;
 }
 
+static stock y_va2_Three(...)
+{
+	return 3;
+}
+
 static stock y_va2_Nest2(fmat[YSI_MAX_STRING], ...)
 {
 	new
@@ -125,7 +130,7 @@ static stock y_va2_Nest2(fmat[YSI_MAX_STRING], ...)
 
 static stock y_va2_Nest1(...)
 {
-	y_va2_Nest2(y_va2_Extract(1, ___), y_va2_Extract(3, ___), y_va2_Extract(2, ___(1)), ___);
+	y_va2_Nest2(y_va2_Extract(1, ___), y_va2_Extract(y_va2_Three(___), ___), y_va2_Extract(2, ___(1)), ___);
 }
 
 Test:y_va2_Nesting()
