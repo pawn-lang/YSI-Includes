@@ -859,8 +859,6 @@ stock returnstringarg(idx)
 
 stock sprintf(const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	printf("TMP: %s %d", fmat, numargs());
-	printf("TMP: %d %d", getarg(1), getarg(2));
 	#pragma unused fmat
 	
 	static
@@ -878,7 +876,6 @@ stock sprintf(const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit POP.pri
 	#emit ADD.C        8
 	#emit STOR.pri     sCnt
-	//printf("TMP: %d", sCnt);
 	
 	// Put the secret return parameter on the stack again to format in to.
 	#emit PUSH         scSize
@@ -886,25 +883,9 @@ stock sprintf(const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit LOAD.I
 	#emit PUSH.pri
 	
-//	#emit STOR.pri sCnt
-//	printf("%d", sCnt);
-//	#emit PUSH.C 4
-//	#emit SYSREQ.C print
-	
 	// Call the native.
 	#emit PUSH         sCnt
 	#emit SYSREQ.C     format
-
-//	#emit POP.alt
-//	#emit POP.pri
-////	#emit STOR.pri sCnt
-//	#emit PUSH.pri
-//	#emit PUSH.alt
-//	#emit PUSH.pri
-//	#emit PUSH.C 4
-//	#emit SYSREQ.C print
-//	#emit STACK 8
-////	printf("%d", sCnt);
 	
 	// Return directly.  This will clean up our entire stack, even the extra
 	// parameters we put on it.  The parameter count is already there!
