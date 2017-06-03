@@ -100,8 +100,7 @@ static stock
 	YSI_g_sStacks[MAX_NESTED_PASSTHROUGHS],
 	YSI_g_sContexts[MAX_NESTED_PASSTHROUGHS][AsmContext],
 	YSI_g_sMaxNesting = 0,
-	YSI_g_sPassthroughNestings = 0,
-	YSI_g_sStaticParameters;
+	YSI_g_sPassthroughNestings = 0;
 
 #define CALL@YVA2_DoPush YVA2_DoPush(-1, -1, -1)
 static stock YVA2_DoPush(const staticParameters, const skippedParameters, const pushRequirements)
@@ -115,7 +114,8 @@ static stock YVA2_DoPush(const staticParameters, const skippedParameters, const 
 		sParameterCount,
 		sReturnAddress,
 		sSkippedParameters,
-		sPushRequirements;
+		sPushRequirements,
+		sStaticParameters;
 	// Although "staticParameters" is "const", we actually rewrite the value at
 	// the call site when the mode starts.  By default it is ALWAYS 0, because
 	// we have no way to determine the true value at compile time.  We must
@@ -149,7 +149,7 @@ static stock YVA2_DoPush(const staticParameters, const skippedParameters, const 
 	#emit STOR.pri     sReturnAddress
 	#emit POP.pri      // Don't care about parameter count (don't save).
 	#emit POP.pri
-	#emit STOR.pri     YSI_g_sStaticParameters // (Adjusted).
+	#emit STOR.pri     sStaticParameters // (Adjusted).
 	#emit POP.pri
 	#emit STOR.pri     sSkippedParameters
 	#emit POP.pri
@@ -166,11 +166,21 @@ static stock YVA2_DoPush(const staticParameters, const skippedParameters, const 
 	// call a function while inserting in to the stack.  The best non-JIT method
 	// would be `MOVS`, but that requires more run-time code modification, which
 	// we can't do (I don't think, never ACTUALLY tried...).
-	YSI_g_sStaticParameters = sParameterCount - sSkippedParameters + YSI_g_sStaticParameters;
+	sStaticParameters = sParameterCount - sSkippedParameters + sStaticParameters;
 	sSkippedParameters = sFramePointer + 12 + sSkippedParameters;
 	sFramePointer = sFramePointer + 12 + sParameterCount;
 	// For now, just loop through them - I can improve the code later.
-	#emit PUSH         YSI_g_sStaticParameters
+	if (sPushRequirements > 0)
+	{
+		// Already got the offset - use it.
+		#emit LOAD.pri     sStaticParameters
+		#emit SREF.pri     sPushRequirements
+	}
+	else while (sPushRequirements)
+	{
+		sPushRequirements += 4;
+		#emit PUSH         sStaticParameters
+	}
 	while (sFramePointer != sSkippedParameters)
 	{
 		sFramePointer -= 4;
@@ -228,17 +238,26 @@ stock YVA2_DummyPush(const staticParameters = 0, const skippedParameters = 0, co
 	return 0;
 }
 
-static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skippedBytes)
+static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skippedBytes, const depth, const offset)
 {
 	// `pushedBytes` is the number of bytes originally pushed to the target
 	// function (which includes four for the `___` return value).
 	// Use `ctx` so we can use `@emit`.
-	@emit PUSH.C       4                       // 8
-	@emit PUSH.C       skippedBytes            // 16
-	@emit PUSH.C       pushedBytes - 4         // 24
-	@emit PUSH.C       12                      // 32
-	@emit CALL.abs     addressof (YVA2_DoPush) // 40
-	@emit HEAP         4                       // 48
+	if (depth)
+	{
+		@emit PUSH.C       depth * -cellbytes  // 8
+		@emit NOP                              // 12
+	}
+	else
+	{
+		@emit ADDR.pri     offset              // 8
+		@emit PUSH.pri                         // 12
+	}
+	@emit PUSH.C       skippedBytes            // 20
+	@emit PUSH.C       pushedBytes - 4         // 28
+	@emit PUSH.C       12                      // 36
+	@emit CALL.abs     addressof (YVA2_DoPush) // 44
+	@emit HEAP         4                       // 52
 	// We keep the `HEAP` here since we know that the original code wants to
 	// clean up an extra four bytes from the heap, so it still needs to exist.
 //	for (length -= 48; length > 0; length -= 4)
@@ -332,7 +351,7 @@ static stock YVA2_CodeGenMainCleanup(ctx[AsmContext])
 static stock YVA2_CodeGenDeepCleanup(ctx[AsmContext], depth)
 {
 	// Remove all the temporary storage locations.
-	@emit STACK        (depth + 1) * cellbytes
+	@emit STACK        depth * cellbytes
 }
 
 static stock YVA2_CodeGenSimpleCleanup(ctx[AsmContext])
@@ -344,7 +363,7 @@ static stock YVA2_CodeGenSimpleCleanup(ctx[AsmContext])
 static stock YVA2_CodeGenPushVariable(ctx[AsmContext], stack)
 {
 	// Remove a single temporary storage location.
-	@emit PUSH.S       -stack
+	@emit PUSH.S       stack
 }
 
 static stock YVA2_FoundCall(m[CodeScanner])
@@ -360,7 +379,9 @@ static stock YVA2_FoundCall(m[CodeScanner])
 			YVA2_CodeGenPushSite(
 				YSI_g_sContexts[pos],
 				CodeScanGetMatchHole(m, 0),
-				YSI_g_sSkips[pos]);
+				YSI_g_sSkips[pos],
+				pos ? 0 : (YSI_g_sMaxNesting + 1),
+				-YSI_g_sStacks[0] - pos * cellbytes); // YSI_g_sStacks[0]!!!
 			// Shift the code up.
 			new
 				dest = YSI_g_sContexts[pos][AsmContext_buffer],
@@ -370,14 +391,14 @@ static stock YVA2_FoundCall(m[CodeScanner])
 				dest + YSI_g_sContexts[pos][AsmContext_buffer_offset],
 				dest + YSI_g_sLength[pos],
 				end);
-			// Adjust the assembly context.  48 is the length of the code from
+			// Adjust the assembly context.  52 is the length of the code from
 			// `YVA2_CodeGenPushSite`.
-			YSI_g_sContexts[pos][AsmContext_buffer_offset] = (end - dest) - (YSI_g_sLength[pos] - 48) - 16;
+			YSI_g_sContexts[pos][AsmContext_buffer_offset] = (end - dest) - (YSI_g_sLength[pos] - 52) - 16;
 			if (len == 24)
 			{
 				YSI_g_sContexts[pos][AsmContext_buffer_offset] -= 8;
 			}
-			YVA2_CodeGenPushVariable(YSI_g_sContexts[pos], YSI_g_sStacks[pos]);
+			YVA2_CodeGenPushVariable(YSI_g_sContexts[pos], -YSI_g_sStacks[0] - pos * cellbytes);
 			YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
 			if (len == 24)
 			{
@@ -390,7 +411,7 @@ static stock YVA2_FoundCall(m[CodeScanner])
 			else if (YSI_g_sMaxNesting)
 			{
 				// Was nested - needs multiple call's cleanups.
-				YVA2_CodeGenDeepCleanup(YSI_g_sContexts[pos], YSI_g_sMaxNesting * 4);
+				YVA2_CodeGenDeepCleanup(YSI_g_sContexts[pos], (YSI_g_sMaxNesting + 1));
 				YSI_g_sMaxNesting = 0;
 			}
 			else
