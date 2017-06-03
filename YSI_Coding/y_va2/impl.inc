@@ -105,7 +105,6 @@ static stock
 #define CALL@YVA2_DoPush YVA2_DoPush(-1, -1, -1)
 static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
 {
-	printf("%d %d %d", pushedBytes, skippedBytes, pushRequirements);
 	// We need to tell the real call how many parameters are being pushed, via
 	// the hidden 'numargs' parameter.  The first obvious solution would be
 	// code rewriting to change the 'PUSH.C', but that doesn't work with JIT or
@@ -186,7 +185,6 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 	// would be `MOVS`, but that requires more run-time code modification, which
 	// we can't do (I don't think, never ACTUALLY tried...).  For now, just loop
 	// through them - I can improve the code later.
-	printf("%d %d", sTotalParameters, sPushRequirements);
 	if (sPushRequirements < 0)
 	{
 		// Push the number of parameters for the outer call.
@@ -194,23 +192,18 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 		#emit PUSH         sTotalParameters
 		#emit LOAD.pri     sPushRequirements
 		#emit ADD
-		// Move the stack down enough for the new parameters.
-//		#emit LOAD.alt     sPushedParameters
-//		#emit SUB0
 		#emit SCTRL        4 // Move the stack down a load at once.
+		// That code actually gets the stack position, THEN pushes, THEN adjusts
+		// it (and the result may not move).  This is because we know one value
+		// that needs to go on the stack and how many temp values need to go on,
+		// but if we pushed one then adjusted how much we needed to alter the
+		// stack by, that would actually take MORE code.
 	}
-	else
+	else if (sPushRequirements > 0)
 	{
-		if (sPushRequirements > 0)
-		{
-			// Already got the offset - use it.
-			#emit LOAD.pri     sTotalParameters
-			#emit SREF.pri     sPushRequirements
-		}
-		{}
-//		#emit LOAD.alt     sPushedParameters
-//		#emit SUB
-//		#emit SCTRL        4 // Move the stack down a load at once.
+		// Already got the offset - use it.
+		#emit LOAD.pri     sTotalParameters
+		#emit SREF.pri     sPushRequirements
 	}
 	{}
 	// Move the stack down enough for the new parameters.  `[stk]` is in `pri`.
@@ -218,22 +211,12 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 	#emit LOAD.alt     sPushedParameters
 	#emit SUB
 	#emit SCTRL        4 // Move the stack down a load at once.
-	#emit STACK        0
 	// The stack pointer should be in `alt`.  This code is just:
 	//   
 	//	 memcpy(&stack, sParametersBase, 0, sPushedParameters, cellmax);
 	//   
 	// We know we MUST have enough space on the stack since we allocated it!
-//	sParametersBase += sPushedParameters;
-//	printf("%d", sPushedParameters);
-//	while (sPushedParameters)
-//	{
-//		sPushedParameters -= 4;
-//		sParametersBase -= 4;
-//		printf("%d", sParametersBase);
-//		#emit LREF.pri     sParametersBase
-//		#emit PUSH.pri
-//	}
+	#emit STACK        0
 	#emit PUSH.C       0x10000000
 	#emit PUSH         sPushedParameters
 	#emit PUSH.C       0
@@ -619,6 +602,5 @@ hook OnScriptInit()
 	CodeScanAddMatcher(scanner, csm3);
 	// Replace calls with the correct parameter counts etc.
 	CodeScanRun(scanner);
-	DisasmDump("yva2.asm");
 }
 

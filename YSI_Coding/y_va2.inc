@@ -111,9 +111,9 @@ Operators:
 #endif
 
 //#define va_args<%0> %0
-#define ___ YVA2_DummyPush(0)
+#define ___ YVA2_DummyPush()
 // For optional parameter skips.
-#define YVA2_DummyPush(%0)(%1) YVA2_DummyPush((%0),(%1) * 4)
+#define YVA2_DummyPush()(%1) YVA2_DummyPush((%1) * 4)
 
 // Shortcuts.
 #define ___0 ___(0)
