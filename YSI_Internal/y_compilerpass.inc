@@ -154,33 +154,6 @@ static stock __COMPILER_SECOND_PASS() {}
 	
 	stock FixStringReturn(const str[], size = sizeof (str))
 	{
-//		static
-//			sStr,
-//			sSize;
-//		// String to return from the parent function.
-//		#emit LOAD.S.alt   12     // Get the return pointer.
-//		#emit STOR.alt     sStr   // Save it.
-//		#emit LOAD.S.alt   16     // Get the return size.
-//		#emit STOR.alt     sSize  // Save it.
-//		#emit POP.pri             // Get the parent frame.
-//		#emit SCTRL        4      // Wipe out the stack.
-//		#emit SCTRL        5      // Wipe out the frame.
-//		#emit LOAD.pri     8      // Get the parameter count.
-//		#emit ADD.C        12     // Offset by the function header.
-//		#emit STACK        0      // Get the frame.
-//		#emit ADD                 // Get a pointer to the final parameter.
-//		#emit LOAD.I              // Load the pointer in that parameter.
-//		#emit MOVE.alt            // Make a copy of the pointer.
-//		#emit ZERO.pri            // `pri = 0`.
-//		#emit STOR.I              // Set the first cell of the target to NULL.
-//		#emit PUSH         sSize  // Push the parameters for `strcpy`.
-//		#emit PUSH         sStr   // Push the parameters for `strcpy`.
-//		#emit PUSH.alt            // Push the parameters for `strcpy`.
-//		#emit PUSH.C       12     // Push the parameters for `strcpy`.
-//		#emit SYSREQ.C     strcat // Call `strcat`.
-//		#emit STACK        16     // Remove parameters.
-//		#emit RETN                // Return (from within the parent context).
-		// 29
 		#emit PUSH.S       size   // Push the first parameter.
 		#emit PUSH.S       str    // Push the second parameter.
 		#emit LOAD.S.alt   0      // Load the previous frame pointer.
