@@ -1,81 +1,3 @@
-static
-	YSI_g_sVariable;
-
-//static stock y_va2_CallRemoteFunction(GLOBAL_TAG_TYPES:...)
-//{
-//	CallRemoteFunction("y_va2_PublicTestFunction", "ii", ___);
-//}
-//
-//static stock y_va2_CallLocalFunction(GLOBAL_TAG_TYPES:...)
-//{
-//	new
-//		local1 = 123,
-//		local2 = 1,
-//		local3 = 7,
-//		local4 = 7;
-//	va_CallLocalFunction("y_va2_PublicTestFunction", "ii", ___);
-//	return local1 * local2 + local3 - local4;
-//}
-//
-//static stock y_va2_CallLocalFunction_X(func[], GLOBAL_TAG_TYPES:...)
-//{
-//	new
-//		local1 = 61,
-//		local2 = 2,
-//		local3 = 8,
-//		local4 = 7;
-//	CallLocalFunction(func, "si", ___(1));
-//	return local1 * local2 + local3 - local4;
-//}
-//
-//static stock y_va2_CallRemoteFunction_X(func[], GLOBAL_TAG_TYPES:...)
-//{
-//	CallRemoteFunction(func, "si", ___(1));
-//}
-//
-//forward y_va2_PublicTestFunction(vara, varb);
-//
-//public y_va2_PublicTestFunction(vara, varb)
-//{
-//	new
-//		varc = 55,
-//		vard = 101;
-//	if (vara)
-//	{
-//		YSI_g_sVariable = varb;
-//	}
-//	else
-//	{
-//		++YSI_g_sVariable;
-//	}
-//	// Just use them so they can't be optimised out.
-//	vara = clamp(varb, varc, vard);
-//}
-//
-//forward y_va2_PublicRecurseFunction(func[], vara);
-//
-//public y_va2_PublicRecurseFunction(func[], vara)
-//{
-//	// "" Passed to "CallLocalFunction" crashes it.
-//	ASSERT(123 == y_va2_CallLocalFunction_X(func, "\1", vara));
-//}
-//
-//forward y_va2_PublicCallFunction(func[], vara);
-//
-//public y_va2_PublicCallFunction(func[], vara)
-//{
-//	y_va2_PublicTestFunction(vara, 123456);
-//}
-//
-//Test:y_va2_CallRemoteFunction()
-//{
-//	YSI_g_sVariable = 5;
-//	y_va2_CallRemoteFunction(0, 11);
-//	ASSERT(YSI_g_sVariable == 6);
-//	y_va2_CallRemoteFunction(1, 11);
-//	ASSERT(YSI_g_sVariable == 11);
-//}
-
 static stock y_va2_printf_0(GLOBAL_TAG_TYPES:...)
 {
 	printf("", ___);
@@ -138,43 +60,6 @@ Test:y_va2_Nesting()
 	y_va2_Nest1("final param", "%s %s %s", "third param", "second param");
 }
 
-//Test:y_va2_recurse_local()
-//{
-//	YSI_g_sVariable = 0;
-//	y_va2_CallLocalFunction_X("y_va2_PublicRecurseFunction", "y_va2_PublicCallFunction", true);
-//	ASSERT(YSI_g_sVariable == 123456);
-//	y_va2_CallLocalFunction_X("y_va2_PublicRecurseFunction", "y_va2_PublicCallFunction", false);
-//	ASSERT(YSI_g_sVariable == 123457);
-//}
-//
-//Test:y_va2_recurse_remote()
-//{
-//	YSI_g_sVariable = 0;
-//	y_va2_CallRemoteFunction_X("y_va2_PublicRecurseFunction", "y_va2_PublicCallFunction", true);
-//	ASSERT(YSI_g_sVariable == 123456);
-//	y_va2_CallRemoteFunction_X("y_va2_PublicRecurseFunction", "y_va2_PublicCallFunction", false);
-//	ASSERT(YSI_g_sVariable == 123457);
-//}
-//
-//Test:y_va2_CallLocalFunction()
-//{
-//	YSI_g_sVariable = 8;
-//	y_va2_CallLocalFunction(0, 45);
-//	ASSERT(YSI_g_sVariable == 9);
-//	ASSERT(123 == y_va2_CallLocalFunction(1, 45));
-//	ASSERT(YSI_g_sVariable == 45);
-//}
-//
-//static stock y_va2_SetTimerEx(GLOBAL_TAG_TYPES:...)
-//{
-//	return va_SetTimerEx("y_va2_SetTimerExPublic", 1000, false, "iii", ___);
-//}
-//
-//Test:va_SetTimerEx()
-//{
-//	ASSERT(y_va2_SetTimerEx(5, 6, 7) != 0);
-//}
-
 static stock y_va2_format(dest[], size, fmat[], GLOBAL_TAG_TYPES:...)
 {
 	format(dest, size, fmat, ___(3));
@@ -191,7 +76,6 @@ Test:y_va2_format()
 static stock y_va2_return(dest[], size, fmat[], GLOBAL_TAG_TYPES:...)
 {
 	format(dest, size, fmat, ___(3));
-	//strcpy(dest, va_return(fmat, ___(3)), size);
 }
 
 Test:y_va2_return()
