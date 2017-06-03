@@ -105,8 +105,6 @@ static stock
 #define CALL@YVA2_DoPush YVA2_DoPush(-1, -1, -1)
 static stock YVA2_DoPush(const staticParameters, const skippedParameters, const pushRequirements)
 {
-//	printf("hi");
-//	return 0;
 	// Used in reality, but copied to statics first.
 	#pragma unused staticParameters, skippedParameters, pushRequirements
 	static
@@ -436,7 +434,6 @@ static stock YVA2_FoundPush(m[CodeScanner])
 	YSI_g_sMaxNesting = max(YSI_g_sMaxNesting, YSI_g_sPassthroughNestings),
 	// Do something with the found address (of the START of the match), and the
 	// stack size (of the END of the match) - different for reasons...
-	// printf("found push: %d %d %x", CodeScanGetMatchLength(m), CodeScanGetMatchStack(m), CodeScanGetMatchAddress(m));
 	YSI_g_sLength[YSI_g_sPassthroughNestings] = CodeScanGetMatchLength(m),
 	CodeScanGetMatchAsm(m, YSI_g_sContexts[YSI_g_sPassthroughNestings]),
 	YSI_g_sStacks[YSI_g_sPassthroughNestings] = CodeScanGetMatchStack(m),
@@ -587,60 +584,5 @@ hook OnScriptInit()
 	CodeScanAddMatcher(scanner, csm3);
 	// Replace calls with the correct parameter counts etc.
 	CodeScanRun(scanner);
-	
-	DisasmDump("yva2.asm");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

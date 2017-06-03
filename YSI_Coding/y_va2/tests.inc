@@ -107,6 +107,32 @@ Test:y_va2_printf()
 	y_va2_printf_3(42, 1, "hi", I@);
 }
 
+static stock y_va2_Extract(num, ...)
+{
+	new
+		ret[YSI_MAX_STRING];
+	va_getstring(ret, num + 1);
+	return ret;
+}
+
+static stock y_va2_Nest2(fmat[YSI_MAX_STRING], ...)
+{
+	new
+		dest[YSI_MAX_STRING];
+	format(dest, sizeof (dest), fmat, ___1);
+	ASSERT(!strcmp(dest, "second param second param final param"));
+}
+
+static stock y_va2_Nest1(...)
+{
+	y_va2_Nest2(y_va2_Extract(1, ___), y_va2_Extract(3, ___), y_va2_Extract(2, ___(1)), ___);
+}
+
+Test:y_va2_Nesting()
+{
+	y_va2_Nest1("final param", "%s %s %s", "third param", "second param");
+}
+
 //Test:y_va2_recurse_local()
 //{
 //	YSI_g_sVariable = 0;
@@ -228,7 +254,6 @@ Test:y_va2_TripleIndirection()
 	ASSERT(var2 == 66);
 	ASSERT(var3 == 101);
 	ASSERT(var4 == 88);
-	printf(dest);
 	ASSERT(!strcmp(dest, "77 88"));
 }
 
