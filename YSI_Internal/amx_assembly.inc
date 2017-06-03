@@ -4,12 +4,12 @@
 // inclusions.  I don't know why I ever made YSI use its own internal version...
 
 #if defined CODE_SCAN_MAX_PATTERN
-	#if CODE_SCAN_MAX_PATTERN < (24)
+	#if CODE_SCAN_MAX_PATTERN < (32)
 		#undef CODE_SCAN_MAX_PATTERN
-		#define CODE_SCAN_MAX_PATTERN (24)
+		#define CODE_SCAN_MAX_PATTERN (32)
 	#endif
 #else
-	#define CODE_SCAN_MAX_PATTERN (24)
+	#define CODE_SCAN_MAX_PATTERN (32)
 #endif
 
 #tryinclude "..\amx\amx"

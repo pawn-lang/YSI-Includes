@@ -175,8 +175,8 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 	#emit POP.alt                        // pushedBytes
 	#emit ADD                            // parameterCount - skippedBytes + pushedBytes
 	#emit STOR.pri     sTotalParameters  // (Adjusted).
-	#emit POP.pri
-	#emit STOR.pri     sPushRequirements
+	#emit POP.alt
+//	#emit STOR.pri     sPushRequirements
 	// The stack is now back to where it was before this function was called.
 	// So is the frame, so technically now everything is in the same stack.
 	// We must copy parameters from the previous stack to the current stack.
@@ -187,27 +187,28 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 	// would be `MOVS`, but that requires more run-time code modification, which
 	// we can't do (I don't think, never ACTUALLY tried...).  For now, just loop
 	// through them - I can improve the code later.
-	if (sPushRequirements < 0)
-	{
-		// Push the number of parameters for the outer call.
-		#emit STACK        0 // Load `[stk]` in to `alt`.
-		#emit PUSH         sTotalParameters
-		#emit LOAD.pri     sPushRequirements
-		#emit ADD
-		#emit SCTRL        4 // Move the stack down a load at once.
-		// That code actually gets the stack position, THEN pushes, THEN adjusts
-		// it (and the result may not move).  This is because we know one value
-		// that needs to go on the stack and how many temp values need to go on,
-		// but if we pushed one then adjusted how much we needed to alter the
-		// stack by, that would actually take MORE code.
-	}
-	else if (sPushRequirements > 0)
-	{
+//	if (sPushRequirements < 0)
+//	{
+//		// Push the number of parameters for the outer call.
+//		#emit STACK        0 // Load `[stk]` in to `alt`.
+//		#emit PUSH         sTotalParameters
+//		#emit LOAD.pri     sPushRequirements
+//		#emit ADD
+//		#emit SCTRL        4 // Move the stack down a load at once.
+//		// That code actually gets the stack position, THEN pushes, THEN adjusts
+//		// it (and the result may not move).  This is because we know one value
+//		// that needs to go on the stack and how many temp values need to go on,
+//		// but if we pushed one then adjusted how much we needed to alter the
+//		// stack by, that would actually take MORE code.
+//	}
+//	else if (sPushRequirements > 0)
+//	{
 		// Already got the offset - use it.
 		#emit LOAD.pri     sTotalParameters
-		#emit SREF.pri     sPushRequirements
-	}
-	{}
+//		#emit SREF.pri     sPushRequirements
+		#emit STOR.I
+//	}
+//	{}
 	// Move the stack down enough for the new parameters.  `[stk]` is in `pri`.
 	#emit LCTRL        4
 	#emit LOAD.alt     sPushedParameters
@@ -234,10 +235,12 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 }
 
 // Enable `&YVA2_DummyPush` WITHOUT matching it within the scanner itself.
-#define CALL@YVA2_DummyPush YVA2_DummyPush(-1, -1, -1, -1, -1, -1, -1)
-stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRequirements = 4, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0, const dummy3 = 0)
+#define CALL@YVA2_DummyPush YVA2_DummyPush(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1)
+// IF YOU EVER CHANGE THE NUMBER OF DUMMY PARAMETERS, DON'T FORGET TO CHANGE THE
+// PARAMETER BYTE COUNT IN THE SCANNER!  ONLY DONE IT EVERY TIME SO FAR...
+stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRequirements = 4, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0, const dummy3 = 0, const dummy4 = 0, const dummy5 = 0, const dummy6 = 0)
 {
-	#pragma unused dummy0, dummy1, dummy2, dummy3
+	#pragma unused dummy0, dummy1, dummy2, dummy3, dummy4, dummy5, dummy6
 	// This function serves four purposes:
 	//   
 	//   1) It is the function called if `___` is used incorrectly, so the code
@@ -366,17 +369,19 @@ static stock YVA2_CodeGenMainCleanup(ctx[AsmContext])
 	@emit LOAD.pri     ref(sTemp) // 40
 }
 
-static stock YVA2_CodeGenDeepCleanup(ctx[AsmContext], depth)
+static stock YVA2_CodeGenDeepCleanup(ctx[AsmContext], depth, returningString)
 {
+	if (returningString)
+		@emit POP.pri
 	// Remove all the temporary storage locations.
 	@emit STACK        depth * cellbytes
 }
 
-static stock YVA2_CodeGenSimpleCleanup(ctx[AsmContext])
-{
-	// Remove a single temporary storage location.
-	@emit POP.alt
-}
+//static stock YVA2_CodeGenSimpleCleanup(ctx[AsmContext])
+//{
+//	// Remove a single temporary storage location.
+//	@emit POP.alt
+//}
 
 static stock YVA2_CodeGenPushVariable(ctx[AsmContext], stack)
 {
@@ -396,7 +401,7 @@ static stock YVA2_FoundCall(m[CodeScanner])
 				len = CodeScanGetMatchLength(m),
 				end = CodeScanGetMatchAddressData(m) + len,
 				hole = CodeScanGetMatchHole(m, 0),
-				bool:returningString = false,
+				returningString = 0,
 				codeLength = 52;
 			YSI_g_sPassthroughNestings = pos;
 			if (!pos && YSI_g_sSkips[0] & cellmin)
@@ -416,11 +421,11 @@ static stock YVA2_FoundCall(m[CodeScanner])
 				{
 					// Check the next instruction instead.
 					case OP_HEAP:
-						returningString = DisasmNextInsn(dctx) == OP_POP_PRI;
+						returningString = (DisasmNextInsn(dctx) == OP_POP_PRI) ? 3 * cellbytes : 0;
 					case OP_POP_PRI:
-						returningString = true;
+						returningString = 1 * cellbytes;
 					default:
-						returningString = false;
+						returningString = 0;
 				}
 				if (!returningString)
 					P:F("Found string return preamble without postamble - Y_Less needs to fix this!");
@@ -430,11 +435,11 @@ static stock YVA2_FoundCall(m[CodeScanner])
 				// Shift the three cells before this code down to make room for
 				// the local storage stack adjustment code.
 				YSI_g_sContexts[0][AsmContext_buffer] -= 3 * cellbytes,
-				returningString = bool:ReadAmxMemory(YSI_g_sContexts[0][AsmContext_buffer] + cellbytes),
+				codeLength = ReadAmxMemory(YSI_g_sContexts[0][AsmContext_buffer] + cellbytes),
 				AsmEmitStack(YSI_g_sContexts[0], (YSI_g_sMaxNesting + 1) * -cellbytes),
-				AsmEmitHeap(YSI_g_sContexts[0], _:returningString),
+				AsmEmitHeap(YSI_g_sContexts[0], codeLength),
 				AsmEmitPushAlt(YSI_g_sContexts[0]),
-				codeLength += 5 * cellbytes;
+				codeLength = 52 + 5 * cellbytes;
 			}
 			else if (!pos)
 			{
@@ -448,36 +453,41 @@ static stock YVA2_FoundCall(m[CodeScanner])
 			// Shift the code up.
 			YVA2_CodeGenShiftCode(
 				dest + YSI_g_sContexts[pos][AsmContext_buffer_offset],
-				dest + YSI_g_sLength[pos],
-				end);
+				dest + YSI_g_sLength[pos] + (returningString ? 12 : 0),
+				end + returningString);
 			// Adjust the assembly context.  `codeLength` is the length of the
 			// code from `YVA2_CodeGenPushSite`.
-			YSI_g_sContexts[pos][AsmContext_buffer_offset] = (end - dest) - (YSI_g_sLength[pos] - codeLength) - 16;
+			YSI_g_sContexts[pos][AsmContext_buffer_offset] = (end - dest) - (YSI_g_sLength[pos] - codeLength + returningString) - 16;
 			if (len == 24)
 			{
 				YSI_g_sContexts[pos][AsmContext_buffer_offset] -= 8;
 			}
 			YVA2_CodeGenPushVariable(YSI_g_sContexts[pos], -YSI_g_sStacks[0] - pos * cellbytes);
 			YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
+//			YVA2_CodeGenShiftCode(
+//				dest + YSI_g_sContexts[pos][AsmContext_buffer_offset],
+//				dest + YSI_g_sContexts[pos][AsmContext_buffer_offset] + returningString,
+//				returningString);
 			if (len == 24)
 			{
 				YVA2_CodeGenMainCleanup(YSI_g_sContexts[pos]);
 			}
+//			YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
 			if (YSI_g_sPassthroughNestings)
 			{
 				// Is a nesting.  Do nothing.
 			}
-			else if (YSI_g_sMaxNesting)
+			else //if (YSI_g_sMaxNesting)
 			{
 				// Was nested - needs multiple call's cleanups.
-				YVA2_CodeGenDeepCleanup(YSI_g_sContexts[pos], (YSI_g_sMaxNesting + 1));
+				YVA2_CodeGenDeepCleanup(YSI_g_sContexts[pos], (YSI_g_sMaxNesting + 1), returningString);
 				YSI_g_sMaxNesting = 0;
 			}
-			else
-			{
-				// Never nested - simple cleanup (just a pop).
-				YVA2_CodeGenSimpleCleanup(YSI_g_sContexts[pos]);
-			}
+//			else
+//			{
+//				// Never nested - simple cleanup (just a pop).
+//				YVA2_CodeGenSimpleCleanup(YSI_g_sContexts[pos]);
+//			}
 			// Just keep going - this code is designed to recurse (maybe...).
 			return 0;
 		}
@@ -499,7 +509,7 @@ static stock YVA2_FoundPush(m[CodeScanner])
 	CodeScanGetMatchAsm(m, YSI_g_sContexts[YSI_g_sPassthroughNestings]),
 	YSI_g_sStacks[YSI_g_sPassthroughNestings] = CodeScanGetMatchStack(m),
 	// If the code is 96 bytes long, `ZERO_PRI` was used not a constant number.
-	YSI_g_sSkips[YSI_g_sPassthroughNestings] = (YSI_g_sLength[YSI_g_sPassthroughNestings] == 96) ? 0 : CodeScanGetMatchHole(m, 0);
+	YSI_g_sSkips[YSI_g_sPassthroughNestings] = (YSI_g_sLength[YSI_g_sPassthroughNestings] == 120) ? 0 : CodeScanGetMatchHole(m, 0);
 	if (!YSI_g_sPassthroughNestings)
 	{
 		// Check if this function is returning a string.  It has an extra hidden
@@ -567,6 +577,12 @@ public OnScriptInit()
 		OP(PUSH_PRI)                    // 16
 		OP(ZERO_PRI)                    // 20
 		OP(PUSH_PRI)                    // 24
+		OP(ZERO_PRI)                    // 4
+		OP(PUSH_PRI)                    // 8
+		OP(ZERO_PRI)                    // 12
+		OP(PUSH_PRI)                    // 16
+		OP(ZERO_PRI)                    // 20
+		OP(PUSH_PRI)                    // 24
 		OP(ZERO_PRI)                    // 28
 		OP(PUSH_PRI)                    // 32
 		OP(CONST_PRI,  4)               // 40
@@ -575,7 +591,7 @@ public OnScriptInit()
 		OP(PUSH_PRI)                    // 52
 		OP(ZERO_PRI)                    // 56
 		OP(PUSH_PRI)                    // 60
-		OP(PUSH_C,     28)              // 68
+		OP(PUSH_C,     40)              // 68
 		OP(CALL,       &YVA2_DummyPush) // 76
 		OP(HEAP,       4)               // 84
 		OP(STOR_I)                      // 88
@@ -591,6 +607,12 @@ public OnScriptInit()
 		OP(PUSH_PRI)                    // 16
 		OP(ZERO_PRI)                    // 20
 		OP(PUSH_PRI)                    // 24
+		OP(ZERO_PRI)                    // 4
+		OP(PUSH_PRI)                    // 8
+		OP(ZERO_PRI)                    // 12
+		OP(PUSH_PRI)                    // 16
+		OP(ZERO_PRI)                    // 20
+		OP(PUSH_PRI)                    // 24
 		OP(ZERO_PRI)                    // 28
 		OP(PUSH_PRI)                    // 32
 		OP(CONST_PRI,  4)               // 40
@@ -599,7 +621,7 @@ public OnScriptInit()
 		OP(PUSH_PRI)                    // 56
 		OP(CONST_PRI,  ???)             // 60
 		OP(PUSH_PRI)                    // 64
-		OP(PUSH_C,     28)              // 72
+		OP(PUSH_C,     40)              // 72
 		OP(CALL,       &YVA2_DummyPush) // 80
 		OP(HEAP,       4)               // 88
 		OP(STOR_I)                      // 92
@@ -623,11 +645,14 @@ public OnScriptInit()
 		OP(PUSH_C,     0)               // 8
 		OP(PUSH_C,     0)               // 16
 		OP(PUSH_C,     0)               // 24
+		OP(PUSH_C,     0)               // 8
+		OP(PUSH_C,     0)               // 16
+		OP(PUSH_C,     0)               // 24
 		OP(PUSH_C,     0)               // 32
 		OP(PUSH_C,     4)               // 40
 		OP(PUSH_C,     0)               // 48
 		OP(PUSH_C,     ???)             // 56
-		OP(PUSH_C,     28)              // 64
+		OP(PUSH_C,     40)              // 64
 		OP(CALL,       &YVA2_DummyPush) // 72
 		OP(HEAP,       4)               // 80
 		OP(STOR_I)                      // 84
