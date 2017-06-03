@@ -392,7 +392,40 @@ static stock YVA2_FoundCall(m[CodeScanner])
 			pos = YSI_g_sPassthroughNestings - 1;
 		if (CodeScanGetMatchStack(m) < YSI_g_sStacks[pos])
 		{
-			YSI_g_sPassthroughNestings = pos,
+			new
+				dest = YSI_g_sContexts[pos][AsmContext_buffer],
+				len = CodeScanGetMatchLength(m),
+				end = CodeScanGetMatchAddressData(m) + len,
+				bool:returningString = false;
+			YSI_g_sPassthroughNestings = pos;
+			if (!pos && YSI_g_sSkips[0] & cellmin)
+			{
+				YSI_g_sSkips[0] &= cellmax;
+				// Check if this function is returning a string.  It has an extra hidden
+				// parameter that we need to account for and that is always pushed
+				// before our various ones.  This is only a problem for an outer call
+				// since our local parameter count variables will be pushed after that
+				// return address and hide it.  Inner calls don't push their own locals
+				// and so don't interrupt their own return values.
+				new
+					dctx[DisasmContext];
+				CodeScanGetMatchDisasm(m, dctx, len);
+				switch (DisasmNextInsn(dctx))
+				{
+					// Check the next instruction instead.
+					case OP_HEAP:
+						returningString = DisasmNextInsn(dctx) == OP_POP_PRI;
+					case OP_POP_PRI:
+						returningString = false;
+					default:
+						returningString = false;
+				}
+				//returningString =
+				//	returningString
+				//	&& DisasmNextInsn(dctx) == OP_POP_ALT
+				//	&& DisasmNextInsn(dctx) == OP_MOVS;
+//				printf("Found? %d", returningString);
+			}
 			// First, rewrite the `___` call-site to call `YVA2_DoPush` instead.
 			YVA2_CodeGenPushSite(
 				YSI_g_sContexts[pos],
@@ -401,10 +434,6 @@ static stock YVA2_FoundCall(m[CodeScanner])
 				pos ? 0 : (YSI_g_sMaxNesting + 1),
 				-YSI_g_sStacks[0] - pos * cellbytes); // YSI_g_sStacks[0]!!!
 			// Shift the code up.
-			new
-				dest = YSI_g_sContexts[pos][AsmContext_buffer],
-				len = CodeScanGetMatchLength(m),
-				end = CodeScanGetMatchAddressData(m) + len;
 			YVA2_CodeGenShiftCode(
 				dest + YSI_g_sContexts[pos][AsmContext_buffer_offset],
 				dest + YSI_g_sLength[pos],
@@ -458,7 +487,24 @@ static stock YVA2_FoundPush(m[CodeScanner])
 	CodeScanGetMatchAsm(m, YSI_g_sContexts[YSI_g_sPassthroughNestings]),
 	YSI_g_sStacks[YSI_g_sPassthroughNestings] = CodeScanGetMatchStack(m),
 	// If the code is 96 bytes long, `ZERO_PRI` was used not a constant number.
-	YSI_g_sSkips[YSI_g_sPassthroughNestings] = (YSI_g_sLength[YSI_g_sPassthroughNestings] == 96) ? 0 : CodeScanGetMatchHole(m, 0),
+	YSI_g_sSkips[YSI_g_sPassthroughNestings] = (YSI_g_sLength[YSI_g_sPassthroughNestings] == 96) ? 0 : CodeScanGetMatchHole(m, 0);
+	if (!YSI_g_sPassthroughNestings)
+	{
+		// Check if this function is returning a string.  It has an extra hidden
+		// parameter that we need to account for and that is always pushed
+		// before our various ones.  This is only a problem for an outer call
+		// since our local parameter count variables will be pushed after that
+		// return address and hide it.  Inner calls don't push their own locals
+		// and so don't interrupt their own return values.
+		new
+			dctx[DisasmContext];
+		CodeScanGetMatchDisasm(m, dctx, -12);
+		if (DisasmNextInsn(dctx) == OP_HEAP && DisasmNextInsn(dctx) == OP_PUSH_ALT)
+		{
+			// Correct preamble.  Mark this to check the postamble.
+			YSI_g_sSkips[YSI_g_sPassthroughNestings] |= cellmin;
+		}
+	}
 	++YSI_g_sPassthroughNestings;
 	P:3("YVA2_FoundPush: %d", CodeScanGetMatchStack(m));
 }
