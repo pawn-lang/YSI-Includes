@@ -103,8 +103,9 @@ static stock
 	YSI_g_sPassthroughNestings = 0;
 
 #define CALL@YVA2_DoPush YVA2_DoPush(-1, -1, -1)
-static stock YVA2_DoPush(const staticParameters, const skippedParameters, const pushRequirements)
+static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
 {
+	printf("%d %d %d", pushedBytes, skippedBytes, pushRequirements);
 	// We need to tell the real call how many parameters are being pushed, via
 	// the hidden 'numargs' parameter.  The first obvious solution would be
 	// code rewriting to change the 'PUSH.C', but that doesn't work with JIT or
@@ -123,15 +124,14 @@ static stock YVA2_DoPush(const staticParameters, const skippedParameters, const 
 	// ignore recursion and code shifting.
 	// 
 	// Used in reality, but copied to statics first.
-	#pragma unused staticParameters, skippedParameters, pushRequirements
+	#pragma unused pushedBytes, skippedBytes, pushRequirements
 	static
-		sFramePointer,
-		sParameterCount,
 		sReturnAddress,
-		sSkippedParameters,
+		sPushedParameters,
+		sParametersBase,
 		sPushRequirements,
-		sStaticParameters;
-	// Although "staticParameters" is "const", we actually rewrite the value at
+		sTotalParameters;
+	// Although "pushedBytes" is "const", we actually rewrite the value at
 	// the call site when the mode starts.  By default it is ALWAYS 0, because
 	// we have no way to determine the true value at compile time.  We must
 	// read it from the number of parameters given to the target function.
@@ -149,8 +149,8 @@ static stock YVA2_DoPush(const staticParameters, const skippedParameters, const 
 	// Or entry to this function, the stack looks like:
 	// 
 	//   20 - pushRequirements.
-	//   16 - skippedParameters.
-	//   12 - staticParameters.
+	//   16 - pushedBytes.
+	//   12 - skippedBytes.
 	//   08 - Parameter count in bytes (8).
 	//   04 - Return address.
 	//   00 - Previous frame.
@@ -160,24 +160,20 @@ static stock YVA2_DoPush(const staticParameters, const skippedParameters, const 
 	#emit POP.pri
 	#emit SCTRL        5 // Go back to the previous frame.
 	// The frame is now the same.
-	#emit LOAD.S.alt   8 // Parameter count.
-	#emit STOR.alt     sParameterCount
 	#emit POP.pri
 	#emit STOR.pri     sReturnAddress
-	#emit POP.pri      // Don't care about parameter count (don't save).
-	#emit POP.pri                        // sStaticParameters
-	#emit ADD                            // sStaticParameters + sParameterCount
-	#emit POP.alt                        // sSkippedParameters
-	#emit SUB                            // sStaticParameters + sParameterCount - sSkippedParameters
-	#emit STOR.pri     sStaticParameters // (Adjusted).
-	#emit LCTRL        5                 // sFramePointer
-	#emit ADD.C        12                // sFramePointer + 12
-	#emit XCHG
-	#emit ADD                            // sSkippedParameters + sFramePointer + 12
-	#emit STOR.pri     sSkippedParameters
-	#emit LOAD.pri     sParameterCount
-	#emit ADD                            // sFramePointer + 12 + sParameterCount
-	#emit STOR.pri     sFramePointer
+	#emit POP.pri        // Don't care about this parameter count (don't save).
+	#emit POP.alt                        // skippedBytes
+	#emit LCTRL        5                 // frame
+	#emit ADD.C        12                // frame + 12
+	#emit ADD                            // frame + 12 + skippedBytes
+	#emit STOR.pri     sParametersBase
+	#emit LOAD.S.pri   8                 // parameterCount
+	#emit SUB                            // parameterCount - skippedBytes
+	#emit STOR.pri     sPushedParameters
+	#emit POP.alt                        // pushedBytes
+	#emit ADD                            // parameterCount - skippedBytes + pushedBytes
+	#emit STOR.pri     sTotalParameters  // (Adjusted).
 	#emit POP.pri
 	#emit STOR.pri     sPushRequirements
 	// The stack is now back to where it was before this function was called.
@@ -190,19 +186,17 @@ static stock YVA2_DoPush(const staticParameters, const skippedParameters, const 
 	// would be `MOVS`, but that requires more run-time code modification, which
 	// we can't do (I don't think, never ACTUALLY tried...).  For now, just loop
 	// through them - I can improve the code later.
+	printf("%d %d", sTotalParameters, sPushRequirements);
 	if (sPushRequirements < 0)
 	{
 		// Push the number of parameters for the outer call.
-		#emit PUSH         sStaticParameters
-		#emit LOAD.pri     sPushRequirements
-		#emit ADD.C        4
 		#emit STACK        0 // Load `[stk]` in to `alt`.
+		#emit PUSH         sTotalParameters
+		#emit LOAD.pri     sPushRequirements
 		#emit ADD
 		// Move the stack down enough for the new parameters.
-		#emit LOAD.alt     sFramePointer
-		#emit SUB
-		#emit LOAD.alt     sSkippedParameters
-		#emit ADD
+//		#emit LOAD.alt     sPushedParameters
+//		#emit SUB0
 		#emit SCTRL        4 // Move the stack down a load at once.
 	}
 	else
@@ -210,34 +204,41 @@ static stock YVA2_DoPush(const staticParameters, const skippedParameters, const 
 		if (sPushRequirements > 0)
 		{
 			// Already got the offset - use it.
-			#emit LOAD.pri     sStaticParameters
+			#emit LOAD.pri     sTotalParameters
 			#emit SREF.pri     sPushRequirements
 		}
 		{}
-		// Move the stack down enough for the new parameters.
-		#emit LCTRL        4
-		#emit LOAD.alt     sFramePointer
-		#emit SUB
-		#emit LOAD.alt     sSkippedParameters
-		#emit ADD
-		#emit SCTRL        4 // Move the stack down a load at once.
+//		#emit LOAD.alt     sPushedParameters
+//		#emit SUB
+//		#emit SCTRL        4 // Move the stack down a load at once.
 	}
 	{}
+	// Move the stack down enough for the new parameters.  `[stk]` is in `pri`.
+	#emit LCTRL        4
+	#emit LOAD.alt     sPushedParameters
+	#emit SUB
+	#emit SCTRL        4 // Move the stack down a load at once.
+	#emit STACK        0
 	// The stack pointer should be in `alt`.  This code is just:
 	//   
-	//	 memcpy(&stack, sSkippedParameters, 0, sFramePointer - sSkippedParameters, cellmax);
+	//	 memcpy(&stack, sParametersBase, 0, sPushedParameters, cellmax);
 	//   
 	// We know we MUST have enough space on the stack since we allocated it!
+//	sParametersBase += sPushedParameters;
+//	printf("%d", sPushedParameters);
+//	while (sPushedParameters)
+//	{
+//		sPushedParameters -= 4;
+//		sParametersBase -= 4;
+//		printf("%d", sParametersBase);
+//		#emit LREF.pri     sParametersBase
+//		#emit PUSH.pri
+//	}
 	#emit PUSH.C       0x10000000
-	#emit LOAD.pri     sFramePointer
-	#emit LOAD.alt     sSkippedParameters
-	#emit SUB
-	#emit PUSH.pri
+	#emit PUSH         sPushedParameters
 	#emit PUSH.C       0
+	#emit PUSH         sParametersBase
 	#emit PUSH.alt
-	#emit LCTRL        4
-	#emit ADD.C        16
-	#emit PUSH.pri
 	#emit PUSH.C       20
 	#emit SYSREQ.C     memcpy
 	#emit STACK        24
@@ -249,7 +250,7 @@ static stock YVA2_DoPush(const staticParameters, const skippedParameters, const 
 
 // Enable `&YVA2_DummyPush` WITHOUT matching it within the scanner itself.
 #define CALL@YVA2_DummyPush YVA2_DummyPush(-1, -1, -1, -1, -1, -1, -1)
-stock YVA2_DummyPush(const staticParameters = 0, const skippedParameters = 0, const pushRequirements = 4, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0, const dummy3 = 0)
+stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRequirements = 4, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0, const dummy3 = 0)
 {
 	#pragma unused dummy0, dummy1, dummy2, dummy3
 	// This function serves four purposes:
@@ -269,7 +270,7 @@ stock YVA2_DummyPush(const staticParameters = 0, const skippedParameters = 0, co
 	//   
 	if (FALSE)
 	{
-		YVA2_DoPush(staticParameters, skippedParameters, pushRequirements);
+		YVA2_DoPush(pushedBytes, skippedBytes, pushRequirements);
 	}
 	P:W("Bare `___` usage found - make sure it is a function parameter.");
 	return 0;
@@ -290,18 +291,13 @@ static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skip
 		@emit ADDR.pri     offset              // 8
 		@emit PUSH.pri                         // 12
 	}
-	@emit PUSH.C       skippedBytes            // 20
 	@emit PUSH.C       pushedBytes - 4         // 28
+	@emit PUSH.C       skippedBytes            // 20
 	@emit PUSH.C       12                      // 36
 	@emit CALL.abs     addressof (YVA2_DoPush) // 44
-	@emit HEAP         4                       // 52
 	// We keep the `HEAP` here since we know that the original code wants to
 	// clean up an extra four bytes from the heap, so it still needs to exist.
-//	for (length -= 48; length > 0; length -= 4)
-//	{
-//		// For now, just NOP everything else out (including the result `PUSH`).
-//		@emit NOP
-//	}
+	@emit HEAP         4                       // 52
 	// We have at least 40 bytes left to play with after `CALL`:
 	//   
 	//   // If this is the last call of many:
@@ -555,9 +551,9 @@ hook OnScriptInit()
 		OP(PUSH_PRI)                    // 32
 		OP(CONST_PRI,  4)               // 40
 		OP(PUSH_PRI)                    // 44
-		OP(CONST_PRI,  ???)             // 52
+		OP(ZERO_PRI)                    // 52
 		OP(PUSH_PRI)                    // 56
-		OP(ZERO_PRI)                    // 60
+		OP(CONST_PRI,  ???)             // 60
 		OP(PUSH_PRI)                    // 64
 		OP(PUSH_C,     28)              // 72
 		OP(CALL,       &YVA2_DummyPush) // 80
@@ -585,8 +581,8 @@ hook OnScriptInit()
 		OP(PUSH_C,     0)               // 24
 		OP(PUSH_C,     0)               // 32
 		OP(PUSH_C,     4)               // 40
-		OP(PUSH_C,     ???)             // 48
-		OP(PUSH_C,     0)               // 56
+		OP(PUSH_C,     0)               // 48
+		OP(PUSH_C,     ???)             // 56
 		OP(PUSH_C,     28)              // 64
 		OP(CALL,       &YVA2_DummyPush) // 72
 		OP(HEAP,       4)               // 80
@@ -623,5 +619,6 @@ hook OnScriptInit()
 	CodeScanAddMatcher(scanner, csm3);
 	// Replace calls with the correct parameter counts etc.
 	CodeScanRun(scanner);
+	DisasmDump("yva2.asm");
 }
 
