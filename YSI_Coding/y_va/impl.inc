@@ -381,6 +381,8 @@ static stock YVA2_FoundCall(m[CodeScanner])
 			}
 			YVA2_CodeGenPushVariable(YSI_g_sContexts[pos], -YSI_g_sStacks[0] - pos * cellbytes);
 			YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
+			if (returningString == 12)
+				YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
 			if (len == 24)
 			{
 				YVA2_CodeGenMainCleanup(YSI_g_sContexts[pos]);
@@ -590,7 +592,6 @@ public OnScriptInit()
 	CodeScanAddMatcher(scanner, csm3);
 	// Replace calls with the correct parameter counts etc.
 	CodeScanRun(scanner);
-	DisasmDump("yva2.asm");
 	#if defined _y_va_OnScriptInit
 		_y_va_OnScriptInit();
 	#endif

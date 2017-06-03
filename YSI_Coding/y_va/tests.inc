@@ -174,9 +174,9 @@ static stock y_va_DoubleIndirection(dest[YSI_MAX_STRING], fmat[], var0, var1, va
 {
 	#pragma unused var0, var1, var2
 	// va_format(dest, 32, fmat, va_start<5>);
-	dest = "hello 03/06/17";
+	//dest = "hello 03/06/17";
 	dest = va_return(fmat, va_start<5>);
-	print(dest);
+	//print(dest);
 }
 
 Test:y_va_DoubleIndirection()
@@ -398,7 +398,9 @@ Test:y_va2_PassThree()
 
 static stock y_va2_MyFunc3(...)
 {
-	YSI_STRING_RETURN("woo", 32);
+	new woo[32] = "woo";
+	YSI_STRING_RETURN(woo);
+	//YSI_STRING_RETURN("woo", 32);
 }
 
 static stock y_va2_MyFunc1(...)
