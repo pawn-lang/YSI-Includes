@@ -134,9 +134,8 @@ static stock __COMPILER_SECOND_PASS() {}
 	#pragma disablerecursion
 	#pragma warning pop
 #else
-	#define FIX_STRING_RETURN(%0) FixStringReturn(%0);new __FixStringReturn[sizeof(%0)];return __FixStringReturn
-	#define FixStringReturn(%0,%1);%9[%8(%0,%1)] FixStringReturn((%0),(%1));%9[(%1)]
-	#define __FixStringReturn[sizeof("%0")] __FixStringReturn[YSI_MAX_STRING]
+	#define FIX_STRING_RETURN(%0) FixStringReturn(%0);return (only_one_parameter:(%0))
+	#define FixStringReturn("%0"%1);return%8(%9) FixStringReturn("%0"%1);new __FixStringReturn[YSI_MAX_STRING];return __FixStringReturn
 	
 	/**----------------------------------------------------------------------**\
 	<summary>FixStringReturn</summary>
