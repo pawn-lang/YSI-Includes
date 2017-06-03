@@ -105,6 +105,23 @@ static stock
 #define CALL@YVA2_DoPush YVA2_DoPush(-1, -1, -1)
 static stock YVA2_DoPush(const staticParameters, const skippedParameters, const pushRequirements)
 {
+	// We need to tell the real call how many parameters are being pushed, via
+	// the hidden 'numargs' parameter.  The first obvious solution would be
+	// code rewriting to change the 'PUSH.C', but that doesn't work with JIT or
+	// recursion.  The next obvious solution is a global with 'PUSH', but that
+	// again doesn't work with recursion and is tricky with nested calls.  The
+	// only other solution is to create a local variable and use that.  This
+	// means pushing extra data and shifting and modifying code to remove the
+	// extra data from the stack after the 'PUSH.S' and 'CALL'.  This is by far
+	// the trickiest method, but also the most robust.
+	// 
+	// Nested calls are still a problem - the outer call must allocate all the
+	// stack data for all of the parameter counts at once so that they have a
+	// constant offset from the current frame pointer.  This is TODO:  I want it
+	// working for just one outer call first before I start complicating it.
+	// This also means that the first version will use a global variable and
+	// ignore recursion and code shifting.
+	// 
 	// Used in reality, but copied to statics first.
 	#pragma unused staticParameters, skippedParameters, pushRequirements
 	static
@@ -141,67 +158,89 @@ static stock YVA2_DoPush(const staticParameters, const skippedParameters, const 
 	// This means there is 24 bytes of information we need to move to globals,
 	// since we are about to totally destroy our own stack.
 	#emit POP.pri
-	#emit STOR.pri     sFramePointer
 	#emit SCTRL        5 // Go back to the previous frame.
+	// The frame is now the same.
+	#emit LOAD.S.alt   8 // Parameter count.
+	#emit STOR.alt     sParameterCount
 	#emit POP.pri
 	#emit STOR.pri     sReturnAddress
 	#emit POP.pri      // Don't care about parameter count (don't save).
-	#emit POP.pri
+	#emit POP.pri                        // sStaticParameters
+	#emit ADD                            // sStaticParameters + sParameterCount
+	#emit POP.alt                        // sSkippedParameters
+	#emit SUB                            // sStaticParameters + sParameterCount - sSkippedParameters
 	#emit STOR.pri     sStaticParameters // (Adjusted).
-	#emit POP.pri
+	#emit LCTRL        5                 // sFramePointer
+	#emit ADD.C        12                // sFramePointer + 12
+	#emit XCHG
+	#emit ADD                            // sSkippedParameters + sFramePointer + 12
 	#emit STOR.pri     sSkippedParameters
+	#emit LOAD.pri     sParameterCount
+	#emit ADD                            // sFramePointer + 12 + sParameterCount
+	#emit STOR.pri     sFramePointer
 	#emit POP.pri
 	#emit STOR.pri     sPushRequirements
 	// The stack is now back to where it was before this function was called.
+	// So is the frame, so technically now everything is in the same stack.
 	// We must copy parameters from the previous stack to the current stack.
-	// The frame is also the same, so technically now everything is in the same
-	// stack.
-	#emit LOAD.S.pri   8 // Parameter count.
-	#emit STOR.pri     sParameterCount
 	// There are two methods for this - increase the stack and 'memcpy' in, or
 	// loop over all the parameters and re-push them.  I suspect the memcpy
 	// version MAY be faster, but there is some trickyness with the stack to
 	// call a function while inserting in to the stack.  The best non-JIT method
 	// would be `MOVS`, but that requires more run-time code modification, which
-	// we can't do (I don't think, never ACTUALLY tried...).
-	sStaticParameters = sParameterCount - sSkippedParameters + sStaticParameters;
-	sSkippedParameters = sFramePointer + 12 + sSkippedParameters;
-	sFramePointer = sFramePointer + 12 + sParameterCount;
-	// For now, just loop through them - I can improve the code later.
-	if (sPushRequirements > 0)
+	// we can't do (I don't think, never ACTUALLY tried...).  For now, just loop
+	// through them - I can improve the code later.
+	if (sPushRequirements < 0)
 	{
-		// Already got the offset - use it.
-		#emit LOAD.pri     sStaticParameters
-		#emit SREF.pri     sPushRequirements
-	}
-	else while (sPushRequirements)
-	{
-		sPushRequirements += 4;
+		// Push the number of parameters for the outer call.
 		#emit PUSH         sStaticParameters
+		#emit LOAD.pri     sPushRequirements
+		#emit ADD.C        4
+		#emit STACK        0 // Load `[stk]` in to `alt`.
+		#emit ADD
+		// Move the stack down enough for the new parameters.
+		#emit LOAD.alt     sFramePointer
+		#emit SUB
+		#emit LOAD.alt     sSkippedParameters
+		#emit ADD
+		#emit SCTRL        4 // Move the stack down a load at once.
 	}
-	while (sFramePointer != sSkippedParameters)
+	else
 	{
-		sFramePointer -= 4;
-		#emit LREF.pri     sFramePointer
-		#emit PUSH.pri
+		if (sPushRequirements > 0)
+		{
+			// Already got the offset - use it.
+			#emit LOAD.pri     sStaticParameters
+			#emit SREF.pri     sPushRequirements
+		}
+		{}
+		// Move the stack down enough for the new parameters.
+		#emit LCTRL        4
+		#emit LOAD.alt     sFramePointer
+		#emit SUB
+		#emit LOAD.alt     sSkippedParameters
+		#emit ADD
+		#emit SCTRL        4 // Move the stack down a load at once.
 	}
-	// We need to tell the real call how many parameters are being pushed, via
-	// the hidden 'numargs' parameter.  The first obvious solution would be
-	// code rewriting to change the 'PUSH.C', but that doesn't work with JIT or
-	// recursion.  The next obvious solution is a global with 'PUSH', but that
-	// again doesn't work with recursion and is tricky with nested calls.  The
-	// only other solution is to create a local variable and use that.  This
-	// means pushing extra data and shifting and modifying code to remove the
-	// extra data from the stack after the 'PUSH.S' and 'CALL'.  This is by far
-	// the trickiest method, but also the most robust.
-	// 
-	// Nested calls are still a problem - the outer call must allocate all the
-	// stack data for all of the parameter counts at once so that they have a
-	// constant offset from the current frame pointer.  This is TODO:  I want it
-	// working for just one outer call first before I start complicating it.
-	// This also means that the first version will use a global variable and
-	// ignore recursion and code shifting.
-	// 
+	{}
+	// The stack pointer should be in `alt`.  This code is just:
+	//   
+	//	 memcpy(&stack, sSkippedParameters, 0, sFramePointer - sSkippedParameters, cellmax);
+	//   
+	// We know we MUST have enough space on the stack since we allocated it!
+	#emit PUSH.C       0x10000000
+	#emit LOAD.pri     sFramePointer
+	#emit LOAD.alt     sSkippedParameters
+	#emit SUB
+	#emit PUSH.pri
+	#emit PUSH.C       0
+	#emit PUSH.alt
+	#emit LCTRL        4
+	#emit ADD.C        16
+	#emit PUSH.pri
+	#emit PUSH.C       20
+	#emit SYSREQ.C     memcpy
+	#emit STACK        24
 	// Return from this function.  We are already in the parent frame and have
 	// no parameters on the stack, so function postamble is not required.
 	#emit LOAD.pri     sReturnAddress
