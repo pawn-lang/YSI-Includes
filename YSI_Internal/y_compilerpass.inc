@@ -135,11 +135,14 @@ static stock __COMPILER_SECOND_PASS() {}
 	#pragma warning pop
 #else
 	#define YSI_STRING_RETURN(%0) __FixStringReturn(%0);return (__only_one_fix_string_parameter:(%0))
-	#define __FixStringReturn("%0"%1);return%8(%9) __FixStringReturn("%0"%1);new __FixStringDummy[YSI_MAX_STRING];return __FixStringDummy
+	#define __FixStringReturn("%0"%1);return%8(%8:(%3)) __FixStringReturn(%3,YSI_MAX_STRING);new __FixStringDummy[YSI_MAX_STRING%1];return __FixStringDummy
+	#define __FixStringDummy[YSI_MAX_STRING,%1] __FixStringDummy[%1]
 	
 	/**----------------------------------------------------------------------**\
 	<summary>FixStringReturn</summary>
 	<param name="str">String to return.</param>
+	<param name="size">Size of the string.</param>
+	<param name="dummy">Ignored parameter for raw string given sizes.</param>
 	<returns>
 		string
 	</returns>
@@ -153,8 +156,9 @@ static stock __COMPILER_SECOND_PASS() {}
 	
 	#include "y_funcinc"
 	
-	stock __FixStringReturn(const str[], size = sizeof (str))
+	stock __FixStringReturn(const str[], size = sizeof (str), dummy = 0)
 	{
+		#pragma unused dummy
 		#emit PUSH.S       size   // Push the first parameter.
 		#emit PUSH.S       str    // Push the second parameter.
 		#emit LOAD.S.alt   0      // Load the previous frame pointer.
