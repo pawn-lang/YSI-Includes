@@ -130,7 +130,6 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 		sReturnAddress,
 		sPushedParameters,
 		sParametersBase,
-		sPushRequirements,
 		sTotalParameters;
 	// Although "pushedBytes" is "const", we actually rewrite the value at
 	// the call site when the mode starts.  By default it is ALWAYS 0, because
@@ -176,39 +175,14 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 	#emit ADD                            // parameterCount - skippedBytes + pushedBytes
 	#emit STOR.pri     sTotalParameters  // (Adjusted).
 	#emit POP.alt
-//	#emit STOR.pri     sPushRequirements
 	// The stack is now back to where it was before this function was called.
 	// So is the frame, so technically now everything is in the same stack.
 	// We must copy parameters from the previous stack to the current stack.
 	// There are two methods for this - increase the stack and 'memcpy' in, or
-	// loop over all the parameters and re-push them.  I suspect the memcpy
-	// version MAY be faster, but there is some trickyness with the stack to
-	// call a function while inserting in to the stack.  The best non-JIT method
-	// would be `MOVS`, but that requires more run-time code modification, which
-	// we can't do (I don't think, never ACTUALLY tried...).  For now, just loop
-	// through them - I can improve the code later.
-//	if (sPushRequirements < 0)
-//	{
-//		// Push the number of parameters for the outer call.
-//		#emit STACK        0 // Load `[stk]` in to `alt`.
-//		#emit PUSH         sTotalParameters
-//		#emit LOAD.pri     sPushRequirements
-//		#emit ADD
-//		#emit SCTRL        4 // Move the stack down a load at once.
-//		// That code actually gets the stack position, THEN pushes, THEN adjusts
-//		// it (and the result may not move).  This is because we know one value
-//		// that needs to go on the stack and how many temp values need to go on,
-//		// but if we pushed one then adjusted how much we needed to alter the
-//		// stack by, that would actually take MORE code.
-//	}
-//	else if (sPushRequirements > 0)
-//	{
-		// Already got the offset - use it.
-		#emit LOAD.pri     sTotalParameters
-//		#emit SREF.pri     sPushRequirements
-		#emit STOR.I
-//	}
-//	{}
+	// loop over all the parameters and re-push them.
+	// Already got the offset - use it.
+	#emit LOAD.pri     sTotalParameters
+	#emit STOR.I
 	// Move the stack down enough for the new parameters.  `[stk]` is in `pri`.
 	#emit LCTRL        4
 	#emit LOAD.alt     sPushedParameters
@@ -269,16 +243,8 @@ static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skip
 	// `pushedBytes` is the number of bytes originally pushed to the target
 	// function (which includes four for the `___` return value).
 	// Use `ctx` so we can use `@emit`.
-//	if (depth)
-//	{
-//		@emit PUSH.C       depth * -cellbytes  // 8
-//		@emit NOP                              // 12
-//	}
-//	else
-//	{
-	@emit ADDR.pri     offset              // 8
-	@emit PUSH.pri                         // 12
-//	}
+	@emit ADDR.pri     offset                  // 8
+	@emit PUSH.pri                             // 12
 	@emit PUSH.C       pushedBytes - 4         // 28
 	@emit PUSH.C       skippedBytes            // 20
 	@emit PUSH.C       12                      // 36
@@ -286,48 +252,6 @@ static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skip
 	// We keep the `HEAP` here since we know that the original code wants to
 	// clean up an extra four bytes from the heap, so it still needs to exist.
 	@emit HEAP         4                       // 52
-	// We have at least 40 bytes left to play with after `CALL`:
-	//   
-	//   // If this is the last call of many:
-	//   STACK      N // Remove all temp variables.
-	//   // If this is the only call:
-	//   POP.alt      // Remove the parameter count storage.
-	//   
-	// Or after `SYSREQ.C`:
-	//   
-	//   POP.alt      // Load the parameter count.
-	//   PUSH.pri     // Store the function return value.
-	//   LCTRL      4 // Load the stack value.
-	//   ADD          // Add them together.
-	//   POP.alt      // Move the parameter count.
-	//   SCTRL      4 // Store the stack pointer back.
-	//   MOVE.pri     // Move the parameter count.
-	//   // If this is the last call.
-	//   STACK      N // Remove all temp variables.
-	//   // If this is the only call:
-	//   POP.alt      // Remove the parameter count storage.
-	//   
-	// Longer alternative (not good to be longer...)
-	//   
-	//   LOAD.S.alt p // Load the parameter count.
-	//   STOR.S.pri p // Store the function return value.
-	//   LCTRL      4 // Load the stack value.
-	//   ADD          // Add them together.
-	//   SCTRL      4 // Store the stack pointer back.
-	//   POP.alt      // Remove the pushed parameter count.
-	//   LOAD.S.pri p // Load the parameter count.
-	//   // If this is the last call.
-	//   STACK      N // Remove all temp variables.
-	//   // If this is the only call:
-	//   POP.alt      // Remove the parameter count storage.
-	//   
-	// Need to account for the worst-case, which is 11 bytes (44 cells).  Need
-	// extra pushes to account for this (only in `-O1`, all other modes are fine
-	// but will unfortunately get worse as a result - just use `-O1`)!
-	// 
-	// Actually, the worst case is not too bad - if there are two (or more)
-	// nested calls then one will use 9 cells and the other 11.  This averages
-	// out to 10, which we have!  If there is only one, there is only 10 bytes.
 }
 
 static stock YVA2_CodeGenShiftCode(dest, src, end)
@@ -377,12 +301,6 @@ static stock YVA2_CodeGenDeepCleanup(ctx[AsmContext], depth, returningString)
 	@emit STACK        depth * cellbytes
 }
 
-//static stock YVA2_CodeGenSimpleCleanup(ctx[AsmContext])
-//{
-//	// Remove a single temporary storage location.
-//	@emit POP.alt
-//}
-
 static stock YVA2_CodeGenPushVariable(ctx[AsmContext], stack)
 {
 	// Remove a single temporary storage location.
@@ -415,7 +333,6 @@ static stock YVA2_FoundCall(m[CodeScanner])
 				// and so don't interrupt their own return values.
 				new
 					dctx[DisasmContext];
-				printf("%d", len);
 				CodeScanGetMatchDisasm(m, dctx, len);
 				switch (DisasmNextInsn(dctx))
 				{
@@ -464,15 +381,10 @@ static stock YVA2_FoundCall(m[CodeScanner])
 			}
 			YVA2_CodeGenPushVariable(YSI_g_sContexts[pos], -YSI_g_sStacks[0] - pos * cellbytes);
 			YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
-//			YVA2_CodeGenShiftCode(
-//				dest + YSI_g_sContexts[pos][AsmContext_buffer_offset],
-//				dest + YSI_g_sContexts[pos][AsmContext_buffer_offset] + returningString,
-//				returningString);
 			if (len == 24)
 			{
 				YVA2_CodeGenMainCleanup(YSI_g_sContexts[pos]);
 			}
-//			YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
 			if (YSI_g_sPassthroughNestings)
 			{
 				// Is a nesting.  Do nothing.
@@ -483,11 +395,6 @@ static stock YVA2_FoundCall(m[CodeScanner])
 				YVA2_CodeGenDeepCleanup(YSI_g_sContexts[pos], (YSI_g_sMaxNesting + 1), returningString);
 				YSI_g_sMaxNesting = 0;
 			}
-//			else
-//			{
-//				// Never nested - simple cleanup (just a pop).
-//				YVA2_CodeGenSimpleCleanup(YSI_g_sContexts[pos]);
-//			}
 			// Just keep going - this code is designed to recurse (maybe...).
 			return 0;
 		}
