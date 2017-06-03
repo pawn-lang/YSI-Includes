@@ -789,19 +789,95 @@ stock unpack(const str[])
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock getstring(idx)
+#define getstring returnstringarg
+#define GetString getstring
+#define GetStringArg getstringarg
+#define ReturnStringArg returnstringarg
+
+stock getstringarg(dest[], idx, len = sizeof (dest))
 {
-	new
-		ret[YSI_MAX_STRING];
-	va_getstring(ret, idx);
-	return ret;
+	// Get the address of the previous function's stack.  First get the index of
+	// the argument required.
+	#emit LOAD.S.pri idx
+	// Then convert that number to bytes from cells.
+	#emit SMUL.C     4
+	// Get the previous function's frame.  Stored in variable 0 (in the current
+	// frame).  Parameters are FRM+n+12, locals are FRM-n, previous frame is
+	// FRM+0, return address is FRM+4, parameter count is FRM+8.  We could add
+	// checks that "idx * 4 < *(*(FRM + 0) + 8)", for the previous frame
+	// parameter count (in C pointer speak).
+	#emit LOAD.S.alt 0
+	// Add the frame pointer to the argument offset in bytes.
+	#emit ADD
+	// Add 12 to skip over the function header.
+	#emit ADD.C      12
+	// Load the address stored in the specified address.
+	#emit LOAD.I
+	// Push the length for "strcat".
+	#emit PUSH.S     len
+	// Push the address we just determined was the source.
+	#emit PUSH.pri
+	// Load the address of the destination.
+	#emit LOAD.S.alt dest
+	// Blank the first cell so "strcat" behaves like "strcpy".
+	#emit CONST.pri  0
+	// Store the loaded number 0 to the loaded address.
+	#emit STOR.I
+	// Push the loaded address.
+	#emit PUSH.alt
+	// Push the number of parameters passed (in bytes) to the function.
+	#emit PUSH.C     12
+	// Call the function.
+	#emit SYSREQ.C   strcat
+	// Restore the stack to its level before we called this native.
+	#emit STACK      16
 }
 
-stock getstringarg(idx)
+stock returnstringarg(idx)
 {
+	static
+		scSize = YSI_MAX_STRING;
+	// Get the address of the previous function's stack.  First get the index of
+	// the argument required.
+	#emit LOAD.S.pri idx
+	// Then convert that number to bytes from cells.
+	#emit SMUL.C     4
+	// Get the previous function's frame.  Stored in variable 0 (in the current
+	// frame).  Parameters are FRM+n+12, locals are FRM-n, previous frame is
+	// FRM+0, return address is FRM+4, parameter count is FRM+8.  We could add
+	// checks that "idx * 4 < *(*(FRM + 0) + 8)", for the previous frame
+	// parameter count (in C pointer speak).
+	#emit LOAD.S.alt 0
+	// Add the frame pointer to the argument offset in bytes.
+	#emit ADD
+	// Add 12 to skip over the function header.
+	#emit ADD.C      12
+	// Load the address stored in the specified address.
+	#emit LOAD.I
+	// Push the length for "strcat".
+	#emit PUSH       scSize
+	// Push the address we just determined was the source.
+	#emit PUSH.pri
+	// Load the address of the secret destination.
+	#emit LOAD.S.alt 16
+	// Blank the first cell so "strcat" behaves like "strcpy".
+	#emit CONST.pri  0
+	// Store the loaded number 0 to the loaded address.
+	#emit STOR.I
+	// Push the loaded address.
+	#emit PUSH.alt
+	// Push the number of parameters passed (in bytes) to the function.
+	#emit PUSH.C     12
+	// Call the function.
+	#emit SYSREQ.C   strcat
+	// Restore the stack to its level before we called this native.
+	#emit STACK      16
+	// Return without more string copying.
+	#emit RETN
+	
+	// Fake return to define the API.
 	new
 		ret[YSI_MAX_STRING];
-	va_getstring(ret, idx);
 	return ret;
 }
 
@@ -827,7 +903,6 @@ stock sprintf(const fmat[], GLOBAL_TAG_TYPES:...)
 		sFrm,
 		sRet,
 		sCnt,
-		sTmp,
 		scSize = YSI_MAX_STRING;
 	
 	// Store the function preamble.
@@ -843,8 +918,7 @@ stock sprintf(const fmat[], GLOBAL_TAG_TYPES:...)
 	// Put the secret return parameter on the stack again to format in to.
 	#emit PUSH         scSize
 	#emit ADD
-	#emit STOR.pri     sTmp
-	#emit LREF.pri     sTmp
+	#emit LOAD.I
 	#emit PUSH.pri
 	
 	// Call the native.
