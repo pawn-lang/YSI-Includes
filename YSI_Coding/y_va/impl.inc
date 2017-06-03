@@ -366,27 +366,23 @@ static stock YVA2_FoundCall(m[CodeScanner])
 			new
 				dest = YSI_g_sContexts[pos][AsmContext_buffer];
 			// First, rewrite the `___` call-site to call `YVA2_DoPush` instead.
-			YVA2_CodeGenPushSite(YSI_g_sContexts[pos], hole, YSI_g_sSkips[pos], -YSI_g_sStacks[0] - pos * cellbytes); // YSI_g_sStacks[0]!!!
+			YVA2_CodeGenPushSite(YSI_g_sContexts[pos], hole, YSI_g_sSkips[pos], -YSI_g_sStacks[0] - pos * cellbytes), // YSI_g_sStacks[0]!!!
 			// Shift the code up.
 			YVA2_CodeGenShiftCode(
 				dest + YSI_g_sContexts[pos][AsmContext_buffer_offset],
 				dest + YSI_g_sLength[pos] + (returningString ? 12 : 0),
-				end + returningString);
+				end + returningString),
 			// Adjust the assembly context.  `codeLength` is the length of the
 			// code from `YVA2_CodeGenPushSite`.
 			YSI_g_sContexts[pos][AsmContext_buffer_offset] = (end - dest) - (YSI_g_sLength[pos] - codeLength + returningString) - 16;
 			if (len == 24)
-			{
 				YSI_g_sContexts[pos][AsmContext_buffer_offset] -= 8;
-			}
 			YVA2_CodeGenPushVariable(YSI_g_sContexts[pos], -YSI_g_sStacks[0] - pos * cellbytes);
 			YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
 			if (returningString == 12)
 				YSI_g_sContexts[pos][AsmContext_buffer_offset] += 8;
 			if (len == 24)
-			{
 				YVA2_CodeGenMainCleanup(YSI_g_sContexts[pos]);
-			}
 			if (YSI_g_sPassthroughNestings)
 			{
 				// Is a nesting.  Do nothing.
@@ -394,7 +390,7 @@ static stock YVA2_FoundCall(m[CodeScanner])
 			else //if (YSI_g_sMaxNesting)
 			{
 				// Was nested - needs multiple call's cleanups.
-				YVA2_CodeGenDeepCleanup(YSI_g_sContexts[pos], (YSI_g_sMaxNesting + 1), returningString);
+				YVA2_CodeGenDeepCleanup(YSI_g_sContexts[pos], (YSI_g_sMaxNesting + 1), returningString),
 				YSI_g_sMaxNesting = 0;
 			}
 			// Just keep going - this code is designed to recurse (maybe...).
@@ -592,6 +588,7 @@ public OnScriptInit()
 	CodeScanAddMatcher(scanner, csm3);
 	// Replace calls with the correct parameter counts etc.
 	CodeScanRun(scanner);
+	//DisasmDump("yva2.asm");
 	#if defined _y_va_OnScriptInit
 		_y_va_OnScriptInit();
 	#endif
