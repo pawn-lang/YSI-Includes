@@ -162,3 +162,38 @@ Test:y_va2_Locals()
 	ASSERT(y_va2_Locals("he -1", "%.2s %d", "hello", -1));
 }
 
+static stock
+	YSI_g_sDestString[YSI_MAX_STRING];
+
+Test:y_va2_PassThree()
+{
+	y_va2_MyFunc1("Hello", "there", "world");
+	ASSERT(!strcmp(YSI_g_sDestString, "woo there world"));
+	y_va2_MyFunc1("In", "the", "world");
+	ASSERT(!strcmp(YSI_g_sDestString, "woo the world"));
+	y_va2_MyFunc1("Hello", "one", "world");
+	ASSERT(!strcmp(YSI_g_sDestString, "woo one world"));
+	y_va2_MyFunc1("Hello", "there", "yeah");
+	ASSERT(!strcmp(YSI_g_sDestString, "woo there yeah"));
+	y_va2_MyFunc1("Hello", "there", "5");
+	ASSERT(!strcmp(YSI_g_sDestString, "woo there 5"));
+	y_va2_MyFunc1("Hello", "there", "C");
+	ASSERT(!strcmp(YSI_g_sDestString, "woo there C"));
+}
+
+static stock y_va2_MyFunc3(...)
+{
+	new woo[32] = "woo";
+	FIX_STRING_RETURN(woo);
+}
+
+static stock y_va2_MyFunc1(...)
+{
+	y_va2_MyFunc2(y_va2_MyFunc3(___), ___(1));
+}
+
+static stock y_va2_MyFunc2(...)
+{
+	format(YSI_g_sDestString, sizeof (YSI_g_sDestString), "%s %s %s", ___);
+}
+
