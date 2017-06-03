@@ -93,6 +93,7 @@ Variables:
 //#tryinclude <sscanf>
 
 #include "..\YSI_Internal\amx_assembly"
+#include "..\YSI_Internal\y_funcinc"
 // Add new tags to the START of this list.
 #include "..\YSI_Internal\y_globaltags"
 
@@ -778,7 +779,7 @@ stock unpack(const str[])
 
 /**--------------------------------------------------------------------------**\
 <summary>getstring</summary>
-<param name="addr">Address of the string on the heap.</param>
+<param name="idx">Index of the string in the parameters.</param>
 <returns>
 	string
 </returns>
@@ -788,19 +789,77 @@ stock unpack(const str[])
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-stock getstring(addr)
+stock getstring(idx)
 {
 	new
 		ret[YSI_MAX_STRING];
-	va_getstring(ret, addr);
+	va_getstring(ret, idx);
 	return ret;
 }
 
-stock getstringarg(addr)
+stock getstringarg(idx)
 {
 	new
 		ret[YSI_MAX_STRING];
-	va_getstring(ret, addr);
+	va_getstring(ret, idx);
+	return ret;
+}
+
+/**--------------------------------------------------------------------------**\
+<summary>sprintf</summary>
+<param name="fmat[]">String format.</param>
+<param name="...">Parameters.</param>
+<returns>
+	Formatted string.
+</returns>
+<remarks>
+	Just wraps `format` and returns a string instead.
+	
+	Has extra code to ensure that it works correct only the old compiler.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock sprintf(const fmat[], GLOBAL_TAG_TYPES:...)
+{
+	#pragma unused fmat
+	
+	static
+		sFrm,
+		sRet,
+		sCnt,
+		sTmp,
+		scSize = YSI_MAX_STRING;
+	
+	// Store the function preamble.
+	#emit POP.pri
+	#emit STOR.pri     sFrm
+	#emit STACK        0 // Load the stack pointer for later.
+	#emit POP.pri
+	#emit STOR.pri     sRet
+	#emit POP.pri
+	#emit ADD.C        8
+	#emit STOR.pri     sCnt
+	
+	// Put the secret return parameter on the stack again to format in to.
+	#emit PUSH         scSize
+	#emit ADD
+	#emit STOR.pri     sTmp
+	#emit LREF.pri     sTmp
+	#emit PUSH.pri
+	
+	// Call the native.
+	#emit PUSH         sCnt
+	#emit SYSREQ.C     format
+	
+	// Return directly.  This will clean up our entire stack, even the extra
+	// parameters we put on it.  The parameter count is already there!
+	#emit PUSH         sRet
+	#emit PUSH         sFrm
+	#emit RETN
+	
+	// Fake return to define the API.
+	new
+		ret[YSI_MAX_STRING];
 	return ret;
 }
 
@@ -957,15 +1016,6 @@ stock isnumeric(str[])
 	Like memcpy, but takes addresses instead of arrays.  Also far less secure.
 </remarks>
 \**--------------------------------------------------------------------------**/
-
-forward __rawMemcpy__(dest[], src[], bytes);
-
-public __rawMemcpy__(dest[], src[], bytes)
-{
-	memcpy(dest, src, 0, bytes, bytes);
-	memset("", 0, 0);
-	strcmp("", "");
-}
 
 stock rawMemcpy(dest, src, bytes)
 {
