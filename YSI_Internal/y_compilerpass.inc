@@ -124,19 +124,24 @@ static stock __COMPILER_SECOND_PASS() {}
 	#define AUTO_INCLUDE_GUARD 1
 #endif
 
-#define __only_one_fix_string_parameter:(%0,%1) (%0)
 #if __Pawn == 0x030A
 	#define NESTED_ELLIPSIS
-	#define FIX_STRING_RETURN(%0) return __only_one_fix_string_parameter:(%0)
+	//#define __only_one_fix_string_parameter:%8(%0,%1)%8(%9) (%0)%8(%0)
+	//#define __mayb_raw_fix_string_parameter:("%0"%1)%8(%9)
+	//#define __neither_fix_string_parameter:(%0)
+	//#define YSI_STRING_RETURN(%0) return __only_one_fix_string_parameter:__mayb_raw_fix_string_parameter:(%0)__neither_fix_string_parameter:(%0)
+	#define __only_one_fix_string_parameter:%8(%0,%1) (%0)
+	#define YSI_STRING_RETURN(%0) return __only_one_fix_string_parameter:(%0)
 	// Disable the recursion warning in the Russian compiler.
 	#pragma warning push
 	#pragma warning disable 207
 	#pragma disablerecursion
 	#pragma warning pop
 #else
+	#define __only_one_fix_string_parameter:%8(%0,%1) (%0)
 	#define YSI_STRING_RETURN(%0) __FixStringReturn(%0);return (__only_one_fix_string_parameter:(%0))
-	#define __FixStringReturn("%0"%1);return%8(%8:(%3)) __FixStringReturn(%3,YSI_MAX_STRING);new __FixStringDummy[YSI_MAX_STRING%1];return __FixStringDummy
-	#define __FixStringDummy[YSI_MAX_STRING,%1] __FixStringDummy[%1]
+	#define __FixStringReturn("%0"%1);return%8(%8:(%3)) return $
+	//#define __FixStringDummy[YSI_MAX_STRING,%1] __FixStringDummy[%1]
 	
 	/**----------------------------------------------------------------------**\
 	<summary>FixStringReturn</summary>
