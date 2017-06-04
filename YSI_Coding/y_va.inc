@@ -129,15 +129,18 @@ Operators:
 #define ___8 ___(8)
 #define ___9 ___(9)
 
+#include "..\YSI_Internal\y_globaltags"
+
 #define va_args<%0> GLOBAL_TAG_TYPES:...
 #define va_start<%0> ___(%0)
 
-#define va_printf             printf
-#define va_CallRemoteFunction CallRemoteFunction
-#define va_CallLocalFunction  CallLocalFunction
-#define va_SetTimerEx         SetTimerEx
-#define va_format             format
-#define va_return             sprintf
+// Backwards compatability.
+native va_printf            (const format[], GLOBAL_TAG_TYPES:...)                                        = printf;
+native va_CallRemoteFunction(const function[], const format[], GLOBAL_TAG_TYPES:...)                      = CallRemoteFunction;
+native va_CallLocalFunction (const function[], const format[], GLOBAL_TAG_TYPES:...)                      = CallLocalFunction;
+native va_SetTimerEx        (const function[], interval, repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
+native va_format            (output[], len, const format[], GLOBAL_TAG_TYPES:...)                         = format;
+#define va_return           sprintf
 
 #if defined YSI_TESTS
 	#include "..\YSI_Data\y_foreach"
