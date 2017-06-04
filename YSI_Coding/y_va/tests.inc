@@ -377,6 +377,19 @@ Test:y_va2_Locals()
 	ASSERT(y_va2_Locals("he -1", "%.2s %d", "hello", -1));
 }
 
+Test:y_va2_Types()
+{
+	ASSERT(y_va2_Locals("4.67", "%.2f", 4.672));
+	ASSERT(y_va2_Locals("Hello World", "%s", "Hello World"));
+}
+
+Test:y_va2_NoParameters()
+{
+	ASSERT(y_va2_Locals("hello", "hello"));
+	ASSERT(y_va2_Locals("Hello World", "Hello World"));
+	ASSERT(y_va2_Locals("42 43 44 45 46 47", "42 43 44 45 46 47"));
+}
+
 static stock
 	YSI_g_sDestString[YSI_MAX_STRING];
 
