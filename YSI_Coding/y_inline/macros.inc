@@ -126,23 +126,12 @@ somewhere_after_this_func:
 #define LAMBDA_iii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2|||,0,0,0|||<%9>{%0}(%1)%8;
 #define LAMBDA_iiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3|||,0,0,0,0|||<%9>{%0}(%1)%8;
 #define LAMBDA_iiiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3,_4|||,0,0,0,0,0|||<%9>{%0}(%1)%8;
-//#define LAMBDA_v<%9>{%0}(%1) _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)
-//#define LAMBDA_s<%9>{%0}(%1) _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)
-// #define LAMBDA_a<%9>{%0}(%1) _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)
 
 #define _DO_LAMBDA|||%6|||%5|||<%9>{%0}(%1)%8; LAM@0()%8;{LAM@1();static const YSII[]="@:....";if(I@E(YSII))for(%6;I@F();)while(I@L(I@K()%5))YSI_gInlineRet+=(%0);LAM@2(%9(callback_tag:YSII%1));}
-
-// Make sure there's a space after the "return".
-//#define YSI_gInlineRet+=(%0);%9(%1);}=> YSI_gInlineRet+=(%0);%3= %9(%1);
-//#define return= return
-//#define return%0({%1}%2)%3; %0({%1}%2)%3=>
-#define return%0({%1}%2)%3; I@=%0({%1}%2)%3;return I@;
 
 #define inline%0(%1) static %0[_:I@E:32]=#%0":....";if(I@E(_:_YI@CP:%0))for(new%1,,;I@F();)while(I@L(I@K(1)))
 
 #define I@E:32]=#%9const%7\32;%8":....";if(I@E(_:_YI@CP:%9const%7\32;%8))for(%1)while(I@L(I@K(1))) 32]=#%8":....";if(I@E(_:_YI@CP:%8))for(%1)while(I@L(I@K()))
-
-//#define i@Im:%9&%0[]=#%9&%0":....";if(I@E(_:_YI@CP:%9&%0)) %0[]=#%0":....";if(I@E(_:_YI@CP:%0,3))
 
 #define _YI@CP:%8))for(new%0,%1; @Ia:@Ib:@Ic:@Id:@Iz:%8))for(new|||%0|||%1;
 
@@ -174,8 +163,6 @@ stock const
 #define callback:%0) const callback_tag:callback_check:%0$$$
 #define callback_tag:callback_check:%0,%1$$$ callback_tag:%0[],%1)
 #define callback_check:%0$$$ %0[])
-
-
 
 #define using%0\10;%1 callback_tag:@Ik:@Il:%0
 
