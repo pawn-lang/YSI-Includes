@@ -122,14 +122,28 @@ stock
 
 */
 
+#if defined _DEBUG
+	#if _DEBUG > 0
+		// Dump the final assembly of this script so we can inspect it.
+		#define DEBUG_MAYBE_DUMP(%0) DisasmDump(%0)
+	#endif
+#endif
+#if !defined DEBUG_MAYBE_DUMP
+	#define DEBUG_MAYBE_DUMP(%0);
+#endif
+
 public OnFilterScriptInit()
 {
 	YSI_FILTERSCRIPT = true;
 	state _script_init_fix_state : true;
 	state _ALS : _ALS_go;
+	// Dump the final assembly of this script so we can inspect it.
+	DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 	#if defined ScriptInit_OnScriptInit
 		ScriptInit_OnScriptInit();
 	#endif
+	// Dump the final assembly of this script so we can inspect it.
+	DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
 	#if defined YSI_LOCK_MODE
 		#if defined FILTERSCRIPT
 			if (strlen(YSI_gLockData[5]) !=
@@ -161,9 +175,13 @@ public OnGameModeInit()
 	if (!YSI_FILTERSCRIPT)
 	{
 		state _script_init_fix_state : false;
+		// Dump the final assembly of this script so we can inspect it.
+		DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 		#if defined ScriptInit_OnScriptInit
 			ScriptInit_OnScriptInit();
 		#endif
+		// Dump the final assembly of this script so we can inspect it.
+		DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
 		#if defined YSI_LOCK_MODE
 			if (YSI_gLockData[
 				floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +
