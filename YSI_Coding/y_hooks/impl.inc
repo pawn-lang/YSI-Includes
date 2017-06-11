@@ -226,6 +226,7 @@ stock Hooks_MakeLongName(name[64])
 		// "pos" must be "-1" at the start of this loop.
 		while (name[++pos])
 		{
+			P:7("Hooks_MakeLongName main loop: [%d] = 0x%04x%04x \"%s\"", pos, name[pos] >>> 16, name[pos] & 0xFFFF, name);
 			if (name[pos] < '\0')
 			{
 				// Negative number instead of a character.  Used to indicate
@@ -234,7 +235,7 @@ stock Hooks_MakeLongName(name[64])
 				// contained within others - we don't want those to be both done
 				// within each other.
 				P:5("Inserting hook name replacement: %d, %s", pos, YSI_g_sReplacements[name[pos] & ~0x80000000][E_HOOK_NAME_REPLACEMENT_LONG]);
-				P:7("Current character: 0x%04x%04x", name[pos] >>> 16, name[pos] & 0xFFFF);
+				P:6("Current character: 0x%04x%04x", name[pos] >>> 16, name[pos] & 0xFFFF);
 				// It took me ages to find a bug in this code.  For some reason,
 				// "strins" was packing the result.  This was because the value
 				// in "name[pos]" was not a real character, so was seen as an
@@ -242,10 +243,19 @@ stock Hooks_MakeLongName(name[64])
 				// the assignment to "name[pos]" above "strins".  So while the
 				// two lines look independent, they aren't!
 				i = name[pos] & ~0x80000000,
-				name[pos] = YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG],
-				strins(name, YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG + E_HOOK_NAME_REPLACEMENT_DATA:1], pos + 1),
+				name[pos] = YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG];
+				// Use the original "strins" - we know this string is not
+				// packed, but it might sometimes look like it is.  The "fixed"
+				// version is designed for working with packed strings, but thus
+				// breaks on not packed strings that just look packed.
+				#if defined BAD_strins
+					BAD_strins
+				#else
+					strins
+				#endif
+						(name, YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG + E_HOOK_NAME_REPLACEMENT_DATA:1], pos + 1);
 				pos += YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MAX] - 1;
-				P:7("New string: %s", name);
+				P:6("New string: %s", name);
 			}
 		}
 	}

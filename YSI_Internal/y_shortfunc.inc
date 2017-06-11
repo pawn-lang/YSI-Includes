@@ -144,7 +144,7 @@ native _YSI_RE_NATIVE<P@|||const function[], const format[], GLOBAL_TAG_TYPES:..
 
 #if defined _ALS_CallRemoteFunction
 	#if defined BAD_CallRemoteFunction
-		#define CallRemoteFunction FIXES_CallRemoteFunction
+		#define CallRemoteFunction( FIXES_CallRemoteFunction(
 	#endif
 #endif
 
@@ -166,7 +166,21 @@ native _YSI_RE_NATIVE<P@|||const function[], const format[], GLOBAL_TAG_TYPES:..
 	#define CallLocalFunction  _MMD(CallLocalFunction)
 #endif
 
+#if defined _ALS_SetTimerEx
+	#if defined CST_SetTimerEx
+		#undef SetTimerEx
+	#else
+		#error Unknown redefinition of SetTimerEx.
+	#endif
+#endif
+
 native _YSI_RE_NATIVE<O@|||const function[], time, repeat, const format[], GLOBAL_TAG_TYPES:...|||SetTimerEx>
+
+#if defined _ALS_SetTimerEx
+	#if defined BAD_SetTimerEx
+		#define SetTimerEx( CST_SetTimerEx(
+	#endif
+#endif
 
 native _YSI_RE_NATIVE<K@|||const function[], time, repeat|||SetTimer>
 

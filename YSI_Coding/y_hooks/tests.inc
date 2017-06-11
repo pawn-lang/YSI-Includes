@@ -1,6 +1,61 @@
 static
 	YSI_g_sValue;
 
+hook Ony_hooksShortUpdate()
+{
+	++YSI_g_sValue;
+}
+
+hook Ony_hooksShortUpd()
+{
+	++YSI_g_sValue;
+}
+
+Test:Ony_hooksShortUpdate()
+{
+	YSI_g_sValue = 0;
+	CallLocalFunction("Ony_hooksShortUpdate", "");
+	ASSERT(YSI_g_sValue == 2);
+}
+
+DEFINE_HOOK_REPLACEMENT(TTTTT_YYYYY, YHook);
+
+forward Ony_hooksTTTTT_YYYYY_WtExtras();
+
+hook Ony_hooksYHook()
+{
+	++YSI_g_sValue;
+}
+
+hook Ony_hooksTTTTT_YYYYY()
+{
+	++YSI_g_sValue;
+}
+
+Test:y_hooksReplacement2()
+{
+	YSI_g_sValue = 0;
+	CallLocalFunction("Ony_hooksTTTTT_YYYYY", "");
+	ASSERT(YSI_g_sValue == 2);
+}
+
+public Ony_hooksTTTTT_YYYYY_WtExtras()
+{
+	++YSI_g_sValue;
+}
+
+hook Ony_hooksYHook_WtExtras()
+{
+	++YSI_g_sValue;
+}
+
+Test:y_hooksReplacement3()
+{
+	YSI_g_sValue = 0;
+	CallLocalFunction("Ony_hooksTTTTT_YYYYY_WtExtras", "");
+	ASSERT(YSI_g_sValue == 2);
+}
+
 forward Ony_hooksTest2(cmd[]);
 
 hook Ony_hooksTest2@000(cmd[])
