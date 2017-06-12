@@ -467,7 +467,6 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 			addr += AMX_BASE_ADDRESS;
 			#emit LREF.S.pri                addr
 			#emit STOR.S.pri                addr
-			printf("check %d %d", addr, pattern);
 			if (addr == pattern)
 			{
 				buffer = pos - 4;

@@ -616,21 +616,12 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[128], idx, &namelen)
 		len = strlen(name) + 1,
 		count,
 		tmpName[64];
-	//while ((idx = AMX_GetPublicEntryPrefix(idx, hooks[count], _A<@yH_>)))
-	//while ((i = AMX_GetPublicEntry(i, hooks[count], name)))
-	while ((idx = AMX_GetPublicEntry(idx, hooks[count])))
+	while ((idx = AMX_GetPublicEntryPrefix(idx, hooks[count], _A<@yH_>)))
 	{
-		AMX_GetStringFromEntry(hooks[count], tmpName);
-		len = strlen(tmpName);
-		if (tmpName[0] == _C<@yH_>)
-		{
-			strunpack(tmpName, tmpName);
-			Hooks_IsolateName(tmpName);
-		}
-		else
-		{
-			strunpack(tmpName, tmpName);
-		}
+		AMX_GetStringFromEntry(hooks[count], tmpName),
+		len = strlen(tmpName),
+		strunpack(tmpName, tmpName),
+		Hooks_IsolateName(tmpName),
 		Hooks_MakeLongName(tmpName);
 		// Check if the fully expanded name is the name.
 		P:6("Hooks_GetAllHooks found: %s ?= %s %d", name, tmpName, idx);
@@ -951,7 +942,6 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		for (new i = 0; ; )
 		{
 			// Get the absolute offset from here.
-			printf("size = %d, i = %d", size, i);
 			@emit CALL          (AMX_Read(pointers[i]) + base) // 2
 			if (skipable)
 			{
