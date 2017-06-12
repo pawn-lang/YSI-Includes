@@ -311,6 +311,7 @@ stock Hooks_MakeShortName(name[64])
 
 _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 {
+	P:4("Hooks_IsolateName called");
 	new
 		pos = strfind(name, "@", false, 4);
 	// Make "pos" a legal value inside the error message.
@@ -341,6 +342,7 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 
 _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precount, size = sizeof (preloads))
 {
+	P:4("Hooks_GetPreloadLibraries called");
 	--size,
 	precount = 0;
 	new
@@ -404,6 +406,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precoun
 
 _Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_PRE_HOOK], precount, name[64], hooks[], &count)
 {
+	P:4("Hooks_GetPreHooks called");
 	new
 		idx,
 		lfunc[64];
@@ -437,6 +440,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_PRE_HOOK], precount, name[6
 
 _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(hooks[], num, &ptr, &next, name[], nlen)
 {
+	P:4("Hooks_GetPointerRewrite called");
 	switch (num)
 	{
 		case 0:
@@ -515,6 +519,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(hooks[], num, &ptr, &next, name[],
 
 _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 {
+	P:4("Hooks_GetStubEntry called");
 	// Get the address of the next function from the ALS state stub.
 	new
 		ctx[DisasmContext];
@@ -603,24 +608,46 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[128], &idx, &namelen)
+_Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[128], idx, &namelen)
 {
+	P:4("Hooks_GetAllHooks called: %s %d", name, idx);
 	// Start from the very start - repeats the first item.
 	new
 		len = strlen(name) + 1,
 		count,
-		i = idx - 1;
-	while ((i = AMX_GetPublicEntry(i, hooks[count], name)))
+		tmpName[64];
+	//while ((idx = AMX_GetPublicEntryPrefix(idx, hooks[count], _A<@yH_>)))
+	//while ((i = AMX_GetPublicEntry(i, hooks[count], name)))
+	while ((idx = AMX_GetPublicEntry(idx, hooks[count])))
 	{
-		Hooks_InvalidateName(hooks[count]),
-		idx = i;
-		// Record how much consecutive space we have to play with in the AMX.
-		if (count) namelen += len; // The first hook was already counted.
-		// Increment and count how many hooks of this type we have.
-		if (++count == sizeof (hooks))
+		AMX_GetStringFromEntry(hooks[count], tmpName);
+		len = strlen(tmpName);
+		if (tmpName[0] == _C<@yH_>)
 		{
-			P:W("Hooks_GetAllHooks: Potential overflow.");
-			break;
+			strunpack(tmpName, tmpName);
+			Hooks_IsolateName(tmpName);
+		}
+		else
+		{
+			strunpack(tmpName, tmpName);
+		}
+		Hooks_MakeLongName(tmpName);
+		// Check if the fully expanded name is the name.
+		P:6("Hooks_GetAllHooks found: %s ?= %s %d", name, tmpName, idx);
+		if (!strcmp(tmpName, name))
+		{
+			Hooks_InvalidateName(hooks[count]);
+			// Record how much consecutive space we have to play with in the
+			// AMX.  I'm slightly concerned that this code assumes that the
+			// hooks are all consecutive, when they might not be thanks to
+			// replacements.
+			if (count) namelen += len; // The first hook was already counted.
+			// Increment and count how many hooks of this type we have.
+			if (++count == sizeof (hooks))
+			{
+				P:W("Hooks_GetAllHooks: Potential overflow.");
+				break;
+			}
 		}
 	}
 	return count;
@@ -639,6 +666,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[128], &idx, &namelen
 
 _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 {
+	P:4("Hooks_DoAllHooks called");
 	// Get the preloaders.
 	new
 		precount = 0,
@@ -652,7 +680,7 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 	while ((idx = AMX_GetPublicNamePrefix(idx, name, _A<@yH_>)))
 	{
 		// Collect all the hooks of this function, and rewrite the call code.
-		Hooks_Collate(preloads, precount, name, idx);
+		Hooks_Collate(preloads, precount, name, idx - 1);
 	}
 	Hooks_SortPublics();
 }
@@ -668,8 +696,9 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], &idx)
+_Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], idx)
 {
+	P:4("Hooks_Collate called: %s %d", unpack(name), idx);
 	// This records the amount of space available in the nametable, currently
 	// taken up by the names of hooks that we are about to destroy.
 	new
@@ -687,17 +716,6 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 	static
 		sName[64],
 		sHooks[128];
-	// Isolate the common prefix part:
-	//   
-	//   @yH_OnPlayerConnect@042
-	//   
-	// Becomes:
-	//   
-	//   @yH_OnPlayerConnect@
-	//   
-	// The numbers at the end are irrelevant, now we can just search for hooks
-	// of this exact callback.
-	name{strfind(name, "@", false, 4) + 1} = '\0',
 	// The above now becomes:
 	//   
 	//   OnPlayerConnect
@@ -720,7 +738,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 	Hooks_MakeLongName(sName);
 	new
 		// Get all the hooks of this type.  They are stored alphabetically.
-		hookCount = Hooks_GetAllHooks(name, sHooks, idx, namelen),
+		hookCount = Hooks_GetAllHooks(sName, sHooks, idx, namelen),
 		writePtr = sHooks[0], // Header for the first found hook.
 		nextPtr,
 		pc, ph[4];
@@ -751,6 +769,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 
 _Y_HOOKS_STATIC Hooks_GenerateCode(name[64], hooks[], count, write, bool:hasprehooks)
 {
+	P:4("Hooks_GenerateCode called");
 	// We now have:
 	//  
 	//  1) All the hooks of this function.
@@ -791,6 +810,7 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(name[64], hooks[], count, write, bool:haspreh
 
 _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 {
+	P:4("Hooks_InvalidateName called");
 	AMX_Write(AMX_BASE_ADDRESS + AMX_Read(entry + 4), 0);
 }
 
@@ -822,6 +842,7 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 
 _Y_HOOKS_STATIC stock Hooks_GetFunctionWritePoint(name[], &write)
 {
+	P:4("Hooks_GetFunctionWritePoint called");
 	AMX_GetPublicEntry(0, write, name, true);
 }
 
@@ -838,6 +859,7 @@ _Y_HOOKS_STATIC stock Hooks_GetFunctionWritePoint(name[], &write)
 
 _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(name[64])
 {
+	P:4("Hooks_GetDefaultReturn called");
 	strins(name, "@RET", 0);
 	Hooks_MakeShortName(name);
 	new
@@ -881,6 +903,12 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(name[64])
 
 _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1, const skipable = true)
 {
+	P:4("Hooks_WriteFunction called");
+	if (size == 0)
+	{
+		P:E("Hooks_WriteFunction: size is 0");
+		return 0;
+	}
 	new
 		bool:multiple = size != 1,
 		base = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS,
@@ -923,6 +951,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		for (new i = 0; ; )
 		{
 			// Get the absolute offset from here.
+			printf("size = %d, i = %d", size, i);
 			@emit CALL          (AMX_Read(pointers[i]) + base) // 2
 			if (skipable)
 			{
@@ -1018,6 +1047,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 
 _Y_HOOKS_STATIC Hooks_CompareNextCell(addr0, addr1)
 {
+//	P:4("Hooks_CompareNextCell called");
 	new
 		s0 = Cell_ReverseBytes(AMX_Read(addr0)),
 		s1 = Cell_ReverseBytes(AMX_Read(addr1));
@@ -1051,6 +1081,7 @@ _Y_HOOKS_STATIC Hooks_CompareNextCell(addr0, addr1)
 
 _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 {
+//	P:4("Hooks_ComparePublics called");
 	idx0 = idx0 * 8 + AMX_HEADER_PUBLICS;
 	idx1 = idx1 * 8 + AMX_HEADER_PUBLICS;
 	new
@@ -1098,6 +1129,7 @@ _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 
 _Y_HOOKS_STATIC Hooks_SortPublics()
 {
+	P:4("Hooks_SortPublics called");
 	// Count the number of still active functions.
 	new
 		diff = Hooks_CountInvalidPublics() * 8,
@@ -1143,6 +1175,7 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 
 _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 {
+	P:4("Hooks_CountInvalidPublics called");
 	new
 		idx,
 		buf,
