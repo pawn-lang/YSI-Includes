@@ -450,31 +450,31 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	P:7("AMX_GetEntryPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		base,
-		count;
+		count,
+		addr;
 	AMX_GetBaseCount(table, base, count);
-	if (idx < count)
+	new
+		pos = idx * 8 + base + 4;
+	while (idx < count)
 	{
-		new
-			addr,
-			pos = idx * 8 + base + 4;
-		do
+		++idx;
+		// Get the address of the string.
+		#emit LREF.S.pri                pos
+		#emit STOR.S.pri                addr
+		if (addr)
 		{
-			// Get the address of the string.
-			#emit LREF.S.pri                pos
-			#emit STOR.S.pri                addr
 			// Get the 4 bytes 5 bytes before this position.
 			addr += AMX_BASE_ADDRESS;
 			#emit LREF.S.pri                addr
 			#emit STOR.S.pri                addr
-			++idx;
+			printf("check %d %d", addr, pattern);
 			if (addr == pattern)
 			{
 				buffer = pos - 4;
 				return idx;
 			}
-			pos += 8;
 		}
-		while (idx < count);
+		pos += 8;
 	}
 	return 0;
 }
@@ -492,9 +492,10 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 		base,
 		count,
 		addr,
-		ch,
-		pos = idx * 8 + base + 4;
+		ch;
 	AMX_GetBaseCount(table, base, count);
+	new
+		pos = idx * 8 + base + 4;
 	while (idx < count)
 	{
 		++idx;
@@ -554,9 +555,10 @@ stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[32], const pattern[] = "", cons
 	new
 		base,
 		count,
-		addr,
-		pos = idx * 8 + base + 4;
+		addr;
 	AMX_GetBaseCount(table, base, count);
+	new
+		pos = idx * 8 + base + 4;
 	while (idx < count)
 	{
 		++idx;
@@ -587,9 +589,10 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[32], pattern)
 	new
 		base,
 		count,
-		addr,
-		pos = idx * 8 + base + 4;
+		addr;
 	AMX_GetBaseCount(table, base, count);
+	new
+		pos = idx * 8 + base + 4;
 	while (idx < count)
 	{
 		++idx;
@@ -628,9 +631,10 @@ stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[32], pattern)
 		base,
 		count,
 		addr,
-		ch,
-		pos = idx * 8 + base + 4;
+		ch;
 	AMX_GetBaseCount(table, base, count);
+	new
+		pos = idx * 8 + base + 4;
 	while (idx < count)
 	{
 		++idx;
