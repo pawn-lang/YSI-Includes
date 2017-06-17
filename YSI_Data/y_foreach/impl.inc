@@ -1136,16 +1136,14 @@ stock Iter_RandomFree_InternalD(counts[], array[], start, slots)
 
 stock Iter_Free_Internal(array[], size)
 {
-	new
-		next = 0,
-		i = size;
-	while ((i = array[i]) != size)
+	for (new i = 0; i != size; ++i)
 	{
-		if (i != next)
-			return next;
-		next = i + 1;
+		if (array[i] <= i)
+		{
+			return i;
+		}
 	}
-	return (next == size) ? INVALID_ITERATOR_SLOT : next;
+	return cellmin;
 }
 
 /**--------------------------------------------------------------------------**\
