@@ -857,6 +857,25 @@ native Iter_Index(Iterator:Name<>);
 #define Iter_Func@public%0(%2)%1$ public F@y:%0(%2)
 #define Iter_Func@forward%0(%2)%1$ forward F@y:%0(%2)
 
+// Many tag types that may come up as iterator function return types.
+#define Iter_Func@_:%0(%2) _:Iter_Func@%0(%2)
+#define Iter_Func@bool:%0(%2) bool:Iter_Func@%0(%2)
+#define Iter_Func@PlayerText3D:%0(%2) PlayerText3D:Iter_Func@%0(%2)
+#define Iter_Func@Text3D:%0(%2) Text3D:Iter_Func@%0(%2)
+#define Iter_Func@DB:%0(%2) DB:Iter_Func@%0(%2)
+#define Iter_Func@DBResult:%0(%2) DBResult:Iter_Func@%0(%2)
+#define Iter_Func@Language:%0(%2) Language:Iter_Func@%0(%2)
+#define Iter_Func@Bit:%0(%2) Bit:Iter_Func@%0(%2)
+#define Iter_Func@Text:%0(%2) Text:Iter_Func@%0(%2)
+#define Iter_Func@Menu:%0(%2) Menu:Iter_Func@%0(%2)
+#define Iter_Func@Style:%0(%2) Style:Iter_Func@%0(%2)
+#define Iter_Func@XML:%0(%2) XML:Iter_Func@%0(%2)
+#define Iter_Func@Bintree:%0(%2) Bintree:Iter_Func@%0(%2)
+#define Iter_Func@Group:%0(%2) Group:Iter_Func@%0(%2)
+#define Iter_Func@Timer:%0(%2) Timer:Iter_Func@%0(%2)
+#define Iter_Func@File:%0(%2) File:Iter_Func@%0(%2)
+#define Iter_Func@Float:%0(%2) Float:Iter_Func@%0(%2)
+
 // A nice "match" symbol that we can scan for, then remove after it is used.
 #define F@a$
 #define F@b|||
