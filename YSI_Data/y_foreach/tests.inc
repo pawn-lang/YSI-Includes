@@ -1068,6 +1068,31 @@ Test:y_iter_Iter_Free()
 	ASSERT(Iter_Free(iter2<3>) != 0);
 }
 
+Test:y_iter_Iter_Alloc()
+{
+	new
+		Iterator:iter1<60>;
+	ASSERT(Iter_Alloc(iter1) == 0);
+	ASSERT(Iter_Alloc(iter1) == 1);
+	ASSERT(Iter_Alloc(iter1) == 2);
+	ASSERT(Iter_Alloc(iter1) == 3);
+	ASSERT(Iter_Alloc(iter1) == 4);
+	ASSERT(Iter_Alloc(iter1) == 5);
+	Iter_Remove(iter1, 5);
+	ASSERT(Iter_Alloc(iter1) == 5);
+	ASSERT(Iter_Alloc(iter1) == 6);
+	ASSERT(Iter_Alloc(iter1) == 7);
+	ASSERT(Iter_Alloc(iter1) == 8);
+	ASSERT(Iter_Alloc(iter1) == 9);
+	Iter_Remove(iter1, 5);
+	Iter_Remove(iter1, 6);
+	Iter_Remove(iter1, 7);
+	ASSERT(Iter_Alloc(iter1) == 5);
+	ASSERT(Iter_Alloc(iter1) == 6);
+	ASSERT(Iter_Alloc(iter1) == 7);
+	ASSERT(Iter_Alloc(iter1) == 10);
+}
+
 Test:y_iter_Normal()
 {
 	new
