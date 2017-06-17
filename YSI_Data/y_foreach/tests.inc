@@ -1068,6 +1068,21 @@ Test:y_iter_Iter_Free()
 	ASSERT(Iter_Free(iter2<3>) != 0);
 }
 
+Test:y_iter_Tag()
+{
+	new
+		Iterator:Group:iter1<60>;
+	Iter_Add(iter1, Group:33);
+	Iter_Add(iter1, 44);
+	Iter_Add(iter1, Group:55);
+	Iter_Add(iter1, Group:22);
+	Iter_Add(iter1, Group:11);
+	foreach (new Group:i : iter1)
+	{
+		ASSERT(i / Group:11 * Group:11 == i);
+	}
+}
+
 Test:y_iter_Iter_Alloc()
 {
 	new

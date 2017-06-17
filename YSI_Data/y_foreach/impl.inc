@@ -226,7 +226,7 @@ Array:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iterator:%1<%2> Iterator@%1[_:F@c:F@d:((%2)+1)]={(-(%2))*((%2)-1),(-(%2))*((%2)-2),...}F@a$,Iter_Single@%1 F@a$F@a$
+#define Iterator:%1<%2> Iterator@%1[_:F@c:F@d:((%2)+1)]={(-(%2)*((%2)-1)),(-(%2)*((%2)-2)),...}F@a$,Iter_Single@%1 F@a$F@a$
 
 /**--------------------------------------------------------------------------**\
 <summary>foreach</summary>
@@ -344,8 +344,8 @@ native Iter_Add(Iterator:Name<>, value);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Add _ITER<Add>
-#define Iter_Add_InternalA(%0,%1,%9)    Iter_Add_InternalC(%0,%1,F@s(%1)-1,%9)
-#define Iter_Add_InternalB(%0,%2,%1,%9) Iter_Add_InternalD(%0[%2],%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),%9)
+#define Iter_Add_InternalA(%0,%1,%9)    Iter_Add_InternalC(%0,_:%1,F@s(%1)-1,_:((%1[0]-%1[0])+%9))
+#define Iter_Add_InternalB(%0,%2,%1,%9) Iter_Add_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:((%1[0]-%1[0])+%9))
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_Remove</summary>
@@ -857,24 +857,47 @@ native Iter_Index(Iterator:Name<>);
 #define Iter_Func@public%0(%2)%1$ public F@y:%0(%2)
 #define Iter_Func@forward%0(%2)%1$ forward F@y:%0(%2)
 
+#define ITER_TAG_FUNC(%0)%1(%2) %0:Iter_Func@%1(%2)
+
 // Many tag types that may come up as iterator function return types.
-#define Iter_Func@_:%0(%2) _:Iter_Func@%0(%2)
-#define Iter_Func@bool:%0(%2) bool:Iter_Func@%0(%2)
-#define Iter_Func@PlayerText3D:%0(%2) PlayerText3D:Iter_Func@%0(%2)
-#define Iter_Func@Text3D:%0(%2) Text3D:Iter_Func@%0(%2)
-#define Iter_Func@DB:%0(%2) DB:Iter_Func@%0(%2)
-#define Iter_Func@DBResult:%0(%2) DBResult:Iter_Func@%0(%2)
-#define Iter_Func@Language:%0(%2) Language:Iter_Func@%0(%2)
-#define Iter_Func@Bit:%0(%2) Bit:Iter_Func@%0(%2)
-#define Iter_Func@Text:%0(%2) Text:Iter_Func@%0(%2)
-#define Iter_Func@Menu:%0(%2) Menu:Iter_Func@%0(%2)
-#define Iter_Func@Style:%0(%2) Style:Iter_Func@%0(%2)
-#define Iter_Func@XML:%0(%2) XML:Iter_Func@%0(%2)
-#define Iter_Func@Bintree:%0(%2) Bintree:Iter_Func@%0(%2)
-#define Iter_Func@Group:%0(%2) Group:Iter_Func@%0(%2)
-#define Iter_Func@Timer:%0(%2) Timer:Iter_Func@%0(%2)
-#define Iter_Func@File:%0(%2) File:Iter_Func@%0(%2)
-#define Iter_Func@Float:%0(%2) Float:Iter_Func@%0(%2)
+#define Iter_Func@_:            ITER_TAG_FUNC(_)
+#define Iter_Func@bool:         ITER_TAG_FUNC(bool)
+#define Iter_Func@PlayerText3D: ITER_TAG_FUNC(PlayerText3D)
+#define Iter_Func@Text3D:       ITER_TAG_FUNC(Text3D)
+#define Iter_Func@DB:           ITER_TAG_FUNC(DB)
+#define Iter_Func@DBResult:     ITER_TAG_FUNC(DBResult)
+#define Iter_Func@Language:     ITER_TAG_FUNC(Language)
+#define Iter_Func@Bit:          ITER_TAG_FUNC(Bit)
+#define Iter_Func@Text:         ITER_TAG_FUNC(Text)
+#define Iter_Func@Menu:         ITER_TAG_FUNC(Menu)
+#define Iter_Func@Style:        ITER_TAG_FUNC(Style)
+#define Iter_Func@XML:          ITER_TAG_FUNC(XML)
+#define Iter_Func@Bintree:      ITER_TAG_FUNC(Bintree)
+#define Iter_Func@Group:        ITER_TAG_FUNC(Group)
+#define Iter_Func@Timer:        ITER_TAG_FUNC(Timer)
+#define Iter_Func@File:         ITER_TAG_FUNC(File)
+#define Iter_Func@Float:        ITER_TAG_FUNC(Float)
+
+#define ITER_TAG(%0)%1={%2,%3,...}%4: %0:Iterator@%1={%0:%2,%0:%3,...}F@a$,Iter_Single@
+
+// Many tag types for declared iterators.
+#define Iterator@_:            ITER_TAG(_)
+#define Iterator@bool:         ITER_TAG(bool)
+#define Iterator@PlayerText3D: ITER_TAG(PlayerText3D)
+#define Iterator@Text3D:       ITER_TAG(Text3D)
+#define Iterator@DB:           ITER_TAG(DB)
+#define Iterator@DBResult:     ITER_TAG(DBResult)
+#define Iterator@Language:     ITER_TAG(Language)
+#define Iterator@Bit:          ITER_TAG(Bit)
+#define Iterator@Text:         ITER_TAG(Text)
+#define Iterator@Menu:         ITER_TAG(Menu)
+#define Iterator@Style:        ITER_TAG(Style)
+#define Iterator@XML:          ITER_TAG(XML)
+#define Iterator@Bintree:      ITER_TAG(Bintree)
+#define Iterator@Group:        ITER_TAG(Group)
+#define Iterator@Timer:        ITER_TAG(Timer)
+#define Iterator@File:         ITER_TAG(File)
+#define Iterator@Float:        ITER_TAG(Float)
 
 // A nice "match" symbol that we can scan for, then remove after it is used.
 #define F@a$
@@ -915,13 +938,13 @@ native Iter_Index(Iterator:Name<>);
 #define _Y_ITER_DO_FOREACH(%1,%0) (_:F@n:F@l:F@m:F@a$%1,%0$
 
 // Multi-iterator.
-#define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=F@h:Iterator@%0[%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
+#define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=F@h:Iterator@%0[_:%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
 #define F@l:%9$%1,%0(%2)%8$ F@r(iterstart@%0));_:(F@r(iterstart@%0))!=_:(%1=F@h:Iter_Func@%0(_:%1,%2));
 
 // Normal iterator.
-#define F@m:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=F@h:Iterator@%0[%1])!=(F@s(Iterator@%0)-1);
+#define F@m:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=F@h:Iterator@%0[_:%1])!=(F@s(Iterator@%0)-1);
 
 // Convert from a normal iterator to a special iterator with parameters.
 #define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
