@@ -1025,7 +1025,7 @@ stock Iter_Random_Internal(count, array[], start)
 		while (count--);
 		return start;
 	}
-	return cellmin;
+	return INVALID_ITERATOR_SLOT;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1108,7 +1108,7 @@ stock Iter_RandomFree_InternalC(count, array[], start)
 				return start;
 		}
 	}
-	return cellmin;
+	return INVALID_ITERATOR_SLOT;
 }
 
 stock Iter_RandomFree_InternalD(counts[], array[], start, slots)
@@ -1137,16 +1137,15 @@ stock Iter_RandomFree_InternalD(counts[], array[], start, slots)
 stock Iter_Free_Internal(array[], size)
 {
 	new
-		next = 0;
-	for (new next = 0, i = array[size]; (i = array[i]) != size; )
+		next = 0,
+		i = size;
+	while ((i = array[i]) != size)
 	{
 		if (i != next)
-		{
 			return next;
-		}
 		next = i + 1;
 	}
-	return cellmin;
+	return (next == size) ? INVALID_ITERATOR_SLOT : next;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1169,7 +1168,7 @@ stock Iter_FreeMulti_Internal(array[], trueSize, start)
         if (array[trueSize] >= start)
             return i;
     }
-    return -1;
+    return INVALID_ITERATOR_SLOT;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1208,7 +1207,7 @@ stock Iter_Add_InternalC(&count, array[], size, value)
 			array[value] = next,
 			array[last] = value;
 	}
-	return cellmin;
+	return INVALID_ITERATOR_SLOT;
 }
 
 stock Iter_Add_InternalD(&count, array[], start, size, value)
@@ -1228,7 +1227,7 @@ stock Iter_Add_InternalD(&count, array[], start, size, value)
 			array[value] = next,
 			array[last] = value;
 	}
-	return cellmin;
+	return INVALID_ITERATOR_SLOT;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1254,13 +1253,13 @@ stock Iter_Index_Internal(count, array[], start, size, index, bool:wrap = false)
 	// If there are no elements in the iterator, we can't ever return the Nth
 	// item.  Also if the parameters are invalid.
 	if (index < 0 || start < size || array[start] >= size)
-		return cellmin;
+		return INVALID_ITERATOR_SLOT;
 	// We could wrap around in the loop (it would work), but it is better to set
 	// the limit first.
 	if (wrap)
 		index %= count;
 	else if (index >= count)
-		return cellmin;
+		return INVALID_ITERATOR_SLOT;
 	start = array[start];
 	while (index--)
 		start = array[start];
@@ -1323,7 +1322,7 @@ stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
 			array[value] = value,
 			array[(array[last] - 1) % size] = (last + 1) % size;
 	}
-	return cellmin;
+	return INVALID_ITERATOR_SLOT;
 }
 
 stock Iter_SafeRemove_InternalD(&count, array[], start, size, value, &last)
@@ -1345,7 +1344,7 @@ stock Iter_SafeRemove_InternalD(&count, array[], start, size, value, &last)
 			last = start;
 		}
 	}
-	return cellmin;
+	return INVALID_ITERATOR_SLOT;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1394,7 +1393,7 @@ stock Iter_Contains_InternalD(count, array[], size, value, start)
 <param name="size">Size of the multi-iterator.</param>
 <param name="value">Item to check.</param>
 <returns>
-	-1 on failure.
+	INVALID_ITERATOR_SLOT on failure.
 	Index of the multi-iterator the value is contained.
 </returns>
 <remarks>
@@ -1411,7 +1410,7 @@ stock Iter_GetMulti_Internal(array[], trueSize, size, value)
         // Start points are actually backwards.
         return trueSize - value - 1;
     }
-    return -1;
+    return INVALID_ITERATOR_SLOT;
 }
 
 /**--------------------------------------------------------------------------**\
