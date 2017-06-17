@@ -218,7 +218,7 @@ Iterators:
 */
 
 // "y_iterate" is always higher than "foreach".
-#define _Y_ITERATE_LOCAL_VERSION        42
+#define _Y_ITERATE_LOCAL_VERSION        43
 
 #if __Pawn != 0x030A
 	#define NO_CUSTOM_WARNINGS
@@ -312,6 +312,9 @@ Iterators:
 #else
 	#define PS_IS_PLAYER_CONNECTED IsPlayerConnected
 #endif
+
+#define INVALID_ITERATOR_SLOT (cellmin)
+#define ITER_NONE             (cellmin)
 
 // 
 // _FOREACH_BOTS
