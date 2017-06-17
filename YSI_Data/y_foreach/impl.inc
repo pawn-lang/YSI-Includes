@@ -896,13 +896,13 @@ native Iter_Index(Iterator:Name<>);
 #define _Y_ITER_DO_FOREACH(%1,%0) (_:F@n:F@l:F@m:F@a$%1,%0$
 
 // Multi-iterator.
-#define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=F@h:Iterator@%0[%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
+#define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(_:%1=F@h:Iterator@%0[_:%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
 #define F@l:%9$%1,%0(%2)%8$ F@r(iterstart@%0));_:(F@r(iterstart@%0))!=_:(%1=F@h:Iter_Func@%0(_:%1,%2));
 
 // Normal iterator.
-#define F@m:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=F@h:Iterator@%0[%1])!=(F@s(Iterator@%0)-1);
+#define F@m:%9$%1,%0$ F@s(Iterator@%0)-1);_:(_:%1=F@h:Iterator@%0[_:%1])!=(F@s(Iterator@%0)-1);
 
 // Convert from a normal iterator to a special iterator with parameters.
 #define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
