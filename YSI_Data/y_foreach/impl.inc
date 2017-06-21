@@ -344,8 +344,8 @@ native Iter_Add(Iterator:Name<>, value);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Add _ITER<Add>
-#define Iter_Add_InternalA(%0,%1,%9)    Iter_Add_InternalC(%0,_:%1,F@s(%1)-1,_:((%1[0]-%1[0])+%9))
-#define Iter_Add_InternalB(%0,%2,%1,%9) Iter_Add_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:((%1[0]-%1[0])+%9))
+#define Iter_Add_InternalA(%0,%1,%9)    Iter_Add_InternalC(%0,_:%1,F@s(%1)-1,_:F@t:((%1[0]-%1[0])+%9))
+#define Iter_Add_InternalB(%0,%2,%1,%9) Iter_Add_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:F@t:((%1[0]-%1[0])+%9))
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_Remove</summary>
@@ -363,8 +363,8 @@ native Iter_Remove(Iterator:Name<>, value);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Remove _ITER<Remove>
-#define Iter_Remove_InternalA(%0,%1,%9)    Iter_Remove_InternalC(%0,%1,F@s(%1)-1,%9)
-#define Iter_Remove_InternalB(%0,%2,%1,%9) Iter_Remove_InternalD(%0[%2],%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),%9)
+#define Iter_Remove_InternalA(%0,%1,%9)    Iter_Remove_InternalC(%0,_:%1,F@s(%1)-1,_:F@t:((%1[0]-%1[0])+%9))
+#define Iter_Remove_InternalB(%0,%2,%1,%9) Iter_Remove_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:F@t:((%1[0]-%1[0])+%9))
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_Free</summary>
@@ -382,8 +382,8 @@ native Iter_Free(Iterator:Name<>);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Free _ITER<Free>
-#define Iter_Free_InternalA(%0,%1)    Iter_Free_Internal(%1,F@s(%1)-F@s(%0))
-#define Iter_Free_InternalB(%0,%2,%1) Iter_Free_Internal(%1,F@s(%1)-F@s(%0))
+#define Iter_Free_InternalA(%0,%1)    Iter_Free_Internal(_:%1,F@s(%1)-F@s(%0))
+#define Iter_Free_InternalB(%0,%2,%1) Iter_Free_Internal(_:%1,F@s(%1)-F@s(%0))
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_FreeMulti</summary>
@@ -401,8 +401,8 @@ native Iter_FreeMulti(Iterator:Name<>);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_FreeMulti _ITER<FreeMulti>
-#define Iter_FreeMulti_InternalA(%0,%1)    Iter_FreeMulti_Internal(%1,F@s(%1),F@s(%1)-F@s(%0))
-#define Iter_FreeMulti_InternalB(%0,%2,%1) Iter_FreeMulti_Internal(%1,F@s(%1),F@s(%1)-F@s(%0))
+#define Iter_FreeMulti_InternalA(%0,%1)    Iter_FreeMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0))
+#define Iter_FreeMulti_InternalB(%0,%2,%1) Iter_FreeMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0))
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_Contains</summary>
@@ -420,9 +420,9 @@ native Iter_Contains(Iterator:Name<>, value);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Contains(%0) (bool:_ITER<Contains>(%0))
-#define Iter_Contains_InternalA(%0,%1,%9)     Iter_Contains_InternalC(%1,F@s(%1)-F@s(%0),%9)
-#define Iter_Contains_InternalB(%0,%2,%1,%9)  Iter_Contains_InternalD(%0[%2],%1,F@s(%1)-F@s(%0),%9,-%2+F@s(%1)-1)
-#define Iter_Contains_InternalD(%0,%1,%2,%3,-+%8) Iter_Contains_InternalC(%1,%2,%3)
+#define Iter_Contains_InternalA(%0,%1,%9)     Iter_Contains_InternalC(_:%1,F@s(%1)-F@s(%0),_:F@t:((%1[0]-%1[0])+%9))
+#define Iter_Contains_InternalB(%0,%2,%1,%9)  Iter_Contains_InternalD(%0[%2],_:%1,F@s(%1)-F@s(%0),-%2+F@s(%1)-1,_:F@t:((%1[0]-%1[0])+%9))
+#define Iter_Contains_InternalD(%0,%1,%2,-+%8,%3) Iter_Contains_InternalC(%1,%2,%3)
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_GetMulti</summary>
@@ -440,8 +440,8 @@ native Iter_GetMulti(Iterator:Name<>, value);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_GetMulti _ITER<GetMulti>
-#define Iter_GetMulti_InternalA(%0,%1,%9)    Iter_GetMulti_Internal(%1,F@s(%1),F@s(%1)-F@s(%0),%9)
-#define Iter_GetMulti_InternalB(%0,%2,%1,%9) Iter_GetMulti_Internal(%1,F@s(%1),F@s(%1)-F@s(%0),%9)
+#define Iter_GetMulti_InternalA(%0,%1,%9)    Iter_GetMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0),_:F@t:((%1[0]-%1[0])+%9))
+#define Iter_GetMulti_InternalB(%0,%2,%1,%9) Iter_GetMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0),_:F@t:((%1[0]-%1[0])+%9))
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_SafeRemove</summary>
@@ -462,8 +462,8 @@ native Iter_SafeRemove(Iterator:Name<>, value, &next);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_SafeRemove _ITER<SafeRemove>
-#define Iter_SafeRemove_InternalA(%0,%1,%9)    Iter_SafeRemove_InternalC(%0,%1,F@s(%1)-1,%9)
-#define Iter_SafeRemove_InternalB(%0,%2,%1,%9) Iter_SafeRemove_InternalD(%0[%2],%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),%9)
+#define Iter_SafeRemove_InternalA(%0,%1,%9)    Iter_SafeRemove_InternalC(%0,_:%1,F@s(%1)-1,_:F@t:((%1[0]-%1[0])+%9))
+#define Iter_SafeRemove_InternalB(%0,%2,%1,%9) Iter_SafeRemove_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:F@t:((%1[0]-%1[0])+%9))
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_RandomAdd</summary>
@@ -512,8 +512,8 @@ native Iter_RandomFree(Iterator:Name<>);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_RandomFree _ITER<RandomFree>
-#define Iter_RandomFree_InternalA(%0,%1)    Iter_RandomFree_InternalC(%0,%1,F@s(%1)-1)
-#define Iter_RandomFree_InternalB(%0,%2,%1) Iter_RandomFree_InternalD(%0,%1,F@s(%1)-F@s(%0),F@s(%0))
+#define Iter_RandomFree_InternalA(%0,%1)    Iter_RandomFree_InternalC(%0,_:%1,F@s(%1)-1)
+#define Iter_RandomFree_InternalB(%0,%2,%1) Iter_RandomFree_InternalD(%0,_:%1,F@s(%1)-F@s(%0),F@s(%0))
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_Random</summary>
@@ -530,8 +530,8 @@ native Iter_Random(Iterator:Name<>);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Random _ITER<Random>
-#define Iter_Random_InternalA(%0,%1)    Iter_Random_Internal(%0,%1,F@s(%1)-1)
-#define Iter_Random_InternalB(%0,%2,%1) Iter_Random_Internal(%0[%2],%1,F@s(%1)-1-(%2))
+#define Iter_Random_InternalA(%0,%1)    Iter_Random_Internal(%0,_:%1,F@s(%1)-1)
+#define Iter_Random_InternalB(%0,%2,%1) Iter_Random_Internal(%0[%2],_:%1,F@s(%1)-1-(%2))
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_Count</summary>
@@ -573,8 +573,8 @@ native Iter_Clear(IteratorArray:Name[]<>);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Clear _ITER<Clear>
-#define Iter_Clear_InternalA(%0,%1)           Iter_Clear_InternalC(%1,F@s(%1),F@s(%0),F@s(%1)-2,%0)
-#define Iter_Clear_InternalB(%0,%2,%1)        Iter_Clear_InternalD(%1,F@s(%1),F@s(%0),F@s(%1)-F@s(%0),%0,%2)
+#define Iter_Clear_InternalA(%0,%1)           Iter_Clear_InternalC(_:%1,F@s(%1),F@s(%0),F@s(%1)-2,%0)
+#define Iter_Clear_InternalB(%0,%2,%1)        Iter_Clear_InternalD(_:%1,F@s(%1),F@s(%0),F@s(%1)-F@s(%0),%0,%2)
 #define Iter_Clear_InternalD(%0,%1,%2,%3,%4,) Iter_Clear_InternalC(%0,%1,%2,%3-1,%4)
 
 /**--------------------------------------------------------------------------**\
@@ -592,7 +592,9 @@ native Iter_Alloc(Iterator:Name<>);
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iter_Alloc(%0) Iter_Add(%0,Iter_Free(%0))
+#define Iter_Alloc _ITER<Free>
+#define Iter_Alloc_InternalA(%0,%1)    Iter_Alloc_InternalC(%0,_:%1,F@s(%1)-1)
+#define Iter_Alloc_InternalB(%0,%2,%1) Iter_Alloc_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0))
 
 /*
 
@@ -701,8 +703,8 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Next _ITER<Next>
-#define Iter_Next_InternalA(%0,%1,%9)    (%1[(%9)])
-#define Iter_Next_InternalB(%0,%2,%1,%9) (%1[(%9)])
+#define Iter_Next_InternalA(%0,%1,%9)    (%1[_:F@t:((%1[0]-%1[0])+%9)])
+#define Iter_Next_InternalB(%0,%2,%1,%9) (%1[_:F@t:((%1[0]-%1[0])+%9)])
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_Prev</summary>
@@ -717,8 +719,8 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Prev _ITER<Prev>
-#define Iter_Prev_InternalA(%0,%1,%9)    (((%1[((%9)-1)%F@s(%1)])-1)%F@s(%1))
-#define Iter_Prev_InternalB(%0,%2,%1,%9) Iter_Prev_Internal(%1,F@s(%1)-F@s(%0),F@s(%1),%9)
+#define Iter_Prev_InternalA(%0,%1,%9)    (((%1[(_:((%1[0]-%1[0])+%9)-1)%F@s(%1)])-1)%F@s(%1))
+#define Iter_Prev_InternalB(%0,%2,%1,%9) Iter_Prev_Internal(%1,F@s(%1)-F@s(%0),F@s(%1),_:F@t:((%1[0]-%1[0])+%9))
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_TrueArray</summary>
@@ -813,7 +815,7 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 	-
 </returns>
 <remarks>
-	Wrapper for Iter_Free_Internal.  Returns the Nth value in the iterator
+	Wrapper for Iter_Index_Internal.  Returns the Nth value in the iterator
 	(requires looping due to the way iterators are stored and optimised for
 	loops not direct access).
 
@@ -823,8 +825,8 @@ native Iter_Index(Iterator:Name<>);
 \**--------------------------------------------------------------------------**/
 
 #define Iter_Index _ITER<Index>
-#define Iter_Index_InternalA(%0,%1,%9)    Iter_Index_Internal(%0,%1,F@s(%1)-1,F@s(%1)-1,%9)
-#define Iter_Index_InternalB(%0,%2,%1,%9) Iter_Index_Internal(%0[%2],%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),%9)
+#define Iter_Index_InternalA(%0,%1,%9)    Iter_Index_Internal(%0,%1,F@s(%1)-1,F@s(%1)-1,_:F@t:((%1[0]-%1[0])+%9))
+#define Iter_Index_InternalB(%0,%2,%1,%9) Iter_Index_Internal(%0[%2],%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:F@t:((%1[0]-%1[0])+%9))
 
 /*
 
@@ -921,6 +923,9 @@ native Iter_Index(Iterator:Name<>);
 #define F@r(%0) %0 F@a$
 #define F@g(%0,%8) %0 F@a$
 #define F@h:%0) %0 F@a$)
+
+// Sort out tagged parameters plus extra parameters.
+#define F@t:(%0,%1) (%0),%1
 
 // y_iterate parser.  Takes an array input, and splits up all the components.
 #define _ITER<%5>(%1) (_:F@i:F@j:$Iter_%5_Internal(%1))
@@ -1146,6 +1151,70 @@ stock Iter_RandomFree_InternalD(counts[], array[], start, slots)
 }
 
 /**--------------------------------------------------------------------------**\
+<summary>Iter_Alloc_Internal</summary>
+<param name="&count">Number of items in the iterator.</param>
+<param name="array[]">iterator data.</param>
+<param name="size">Array start index.</param>
+<returns>
+	-
+</returns>
+<remarks>
+	Finds the first free slot in the iterator and add it.
+</remarks>
+\**--------------------------------------------------------------------------**/
+
+stock Iter_Alloc_InternalC(&count, array[], size)
+{
+	for (new value = 0; value != size; ++value)
+	{
+		if (array[value] <= value)
+		{
+			new
+				last = size++,
+				next = array[last];
+			while (next < value)
+			{
+				last = next,
+				next = array[last];
+			}
+			return
+				++count,
+				array[(value - 1) % size] = (last + 1) % size,
+				array[next - 1] = value + 1,
+				array[value] = next,
+				array[last] = value;
+		}
+	}
+	return INVALID_ITERATOR_SLOT;
+}
+
+stock Iter_Alloc_InternalD(&count, array[], start, size)
+{
+	if (start >= size)
+	{
+		for (new value = 0; value != size; ++value)
+		{
+			if (array[value] <= value)
+			{
+				new
+					last = start,
+					next = array[last];
+				while (next < value)
+				{
+					last = next,
+					next = array[last];
+				}
+				return
+					++count,
+					array[value] = next,
+					array[last] = value;
+			}
+		}
+	}
+	return INVALID_ITERATOR_SLOT;
+}
+
+/**--------------------------------------------------------------------------**\
 <summary>Iter_Free_Internal</summary>
 <param name="array[]">iterator data.</param>
 <param name="size">Size of the iterator.</param>
@@ -1159,6 +1228,19 @@ stock Iter_RandomFree_InternalD(counts[], array[], start, slots)
 
 stock Iter_Free_Internal(array[], size)
 {
+	// I tried to rewrite this to use the internal structure of a linked list to
+	// find a free slot.  The logic being that if the next used slot in the list
+	// is not the same as the next theoretical slot, the theoretical slot must
+	// be available.  Bascially something like:
+	//   
+	//   if (array[i] != i + 1)
+	//       return i + 1;
+	//   
+	// However, that doesn't work with multi-iterators, since the next slot
+	// consecutively may not be in the same iterator, but will still be in use.
+	// I wrote all the code and had to back it out again.  This comment is in
+	// case I ever have the same "clever" idea again - DON'T DO IT.  Fortunately
+	// the existing tests caught the problem and saved me everything but time.
 	for (new i = 0; i != size; ++i)
 	{
 		if (array[i] <= i)
@@ -1166,7 +1248,7 @@ stock Iter_Free_Internal(array[], size)
 			return i;
 		}
 	}
-	return cellmin;
+	return INVALID_ITERATOR_SLOT;
 }
 
 /**--------------------------------------------------------------------------**\
@@ -1194,9 +1276,9 @@ stock Iter_FreeMulti_Internal(array[], trueSize, start)
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_AddInternal</summary>
-<param name="&start">Array start index.</param>
 <param name="&count">Number of items in the iterator.</param>
 <param name="array[]">iterator data.</param>
+<param name="size">Array start index.</param>
 <param name="value">Item to add.</param>
 <returns>
 	-
@@ -1388,7 +1470,7 @@ stock Iter_Contains_InternalC(array[], size, value)
 	return 0 <= value < size && array[value] > value;
 }
 
-stock Iter_Contains_InternalD(count, array[], size, value, start)
+stock Iter_Contains_InternalD(count, array[], size, start, value)
 {
 	// Check the count first, and that this element is in ANY list.  There is no
 	// point searching an empty list for this element, hence the count check.
