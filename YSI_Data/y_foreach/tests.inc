@@ -1073,10 +1073,28 @@ Test:y_iter_Tag()
 	new
 		Iterator:Group:iter1<60>;
 	Iter_Add(iter1, Group:33);
-	Iter_Add(iter1, 44);
+	#pragma tabsize 4
+	/* ====================================================================== */
+	/* | THERE IS MEANT TO BE A WARNING ON THIS LINE                        | */
+	/* |                                                                    | */
+	/* | */ Iter_Add(iter1, 44);                                         /* | */
+	/* |                                                                    | */
+	/* | It tests that iterators use tags correctly and warn otherwise.     | */
+	/* ====================================================================== */
+	#pragma tabsize 4
 	Iter_Add(iter1, Group:55);
 	Iter_Add(iter1, Group:22);
 	Iter_Add(iter1, Group:11);
+	#pragma tabsize 4
+	/* ====================================================================== */
+	/* | THERE IS MEANT TO BE A WARNING ON THIS LINE                        | */
+	/* |                                                                    | */
+	/* | */ Iter_Remove(iter1, 11);                                      /* | */
+	/* |                                                                    | */
+	/* | It tests that iterators use tags correctly and warn otherwise.     | */
+	/* ====================================================================== */
+	#pragma tabsize 4
+	Iter_Alloc(iter1);
 	foreach (new Group:i : iter1)
 	{
 		ASSERT(i / Group:11 * Group:11 == i);
@@ -2693,7 +2711,15 @@ Test:y_iter_ArrayMulti()
 #if _FOREACH_PLAYERS
 	Test:y_iter_Deprecate()
 	{
-		foreach (Player, i)
+		#pragma tabsize 4
+		/* ================================================================== */
+		/* | THERE IS MEANT TO BE A WARNING ON THIS LINE                    | */
+		/* |                                                                | */
+		/* | */ foreach (Player, i)                                      /* | */
+		/* |                                                                | */
+		/* | It tests that the old syntax is nicely deprecated.             | */
+		/* ================================================================== */
+		#pragma tabsize 4
 		{
 		}
 	}
