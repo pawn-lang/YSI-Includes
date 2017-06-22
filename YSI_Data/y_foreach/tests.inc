@@ -966,6 +966,7 @@ Test:y_iter_Tags()
 		GG:gg = GG:4;
 	Iter_Init(iter);
 	Iter_Add(iter[_:gg], 2);
+	Iter_Add(iter[_:gg], 1);
 	Iter_Clear(iter[_:gg]);
 }
 

@@ -479,7 +479,9 @@ native Iter_RandomAdd(Iterator:Name<>);
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iter_RandomAdd(%0) Iter_Add(%0,Iter_RandomFree(%0))
+#define Iter_RandomAdd _ITER<RandomAdd>
+#define Iter_RandomAdd_InternalA(%0,%1)    Iter_RandomAdd_InternalC(%0,_:%1,F@s(%1)-1)
+#define Iter_RandomAdd_InternalB(%0,%2,%1) Iter_RandomAdd_InternalD(%0,_:%1,F@s(%1)-F@s(%0),F@s(%0),F@s(%1)-1-(%2),%2)
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_RandomRemove</summary>
@@ -495,7 +497,9 @@ native Iter_RandomRemove(Iterator:Name<>);
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iter_RandomRemove(%0) Iter_Remove(%0,Iter_Random(%0))
+#define Iter_RandomRemove _ITER<RandomRemove>
+#define Iter_RandomRemove_InternalA(%0,%1)    Iter_RandomRemove_InternalC(%0,_:%1,F@s(%1)-1)
+#define Iter_RandomRemove_InternalB(%0,%2,%1) Iter_RandomRemove_InternalD(%0[%2],_:%1,F@s(%1)-F@s(%0),F@s(%1)-1-(%2))
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_RandomFree</summary>
@@ -1070,17 +1074,17 @@ stock Iter_Random_Internal(count, array[], start)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-//stock Iter_RandomAdd_InternalC(&count, array[], start)
-//{
-//	return Iter_Add_InternalC(count, array, start, Iter_RandomFree_InternalC(count, array, start));
-//}
-//
-//stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot)
-//{
-//	// This is subtly different to the "C" version - it operates on multi
-//	// iterators, which have many counts, and thus we need to sum those first.
-//	return Iter_Add_InternalD(counts[slot], array, start, size, Iter_RandomFree_InternalD(counts, array, size, slots));
-//}
+stock Iter_RandomAdd_InternalC(&count, array[], start)
+{
+	return Iter_Add_InternalC(count, array, start, Iter_RandomFree_InternalC(count, array, start));
+}
+
+stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot)
+{
+	// This is subtly different to the "C" version - it operates on multi
+	// iterators, which have many counts, and thus we need to sum those first.
+	return Iter_Add_InternalD(counts[slot], array, start, size, Iter_RandomFree_InternalD(counts, array, size, slots));
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_RandomRemove_InternalC</summary>
@@ -1096,17 +1100,17 @@ stock Iter_Random_Internal(count, array[], start)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-//stock Iter_RandomRemove_InternalC(&count, array[], start)
-//{
-//	return Iter_Remove_InternalC(count, array, start, Iter_RandomFree_InternalC(count, array, start));
-//}
-//
-//stock Iter_RandomRemove_InternalD(counts[], array[], size, slots, start, slot)
-//{
-//	// This is subtly different to the "C" version - it operates on multi
-//	// iterators, which have many counts, and thus we need to sum those first.
-//	return Iter_Remove_InternalD(counts[slot], array, start, size, Iter_RandomFree_InternalD(counts, array, size, slots));
-//}
+stock Iter_RandomRemove_InternalC(&count, array[], start)
+{
+	return Iter_Remove_InternalC(count, array, start, Iter_Random_Internal(count, array, start));
+}
+
+stock Iter_RandomRemove_InternalD(&count, array[], size, start)
+{
+	// This is subtly different to the "C" version - it operates on multi
+	// iterators, which have many counts, and thus we need to sum those first.
+	return Iter_Remove_InternalD(count, array, start, size, Iter_Random_Internal(count, array, start));
+}
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_RandomFree_InternalC</summary>
