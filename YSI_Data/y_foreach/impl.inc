@@ -596,7 +596,7 @@ native Iter_Alloc(Iterator:Name<>);
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iter_Alloc _ITER<Free>
+#define Iter_Alloc _ITER<Alloc>
 #define Iter_Alloc_InternalA(%0,%1)    Iter_Alloc_InternalC(%0,_:%1,F@s(%1)-1)
 #define Iter_Alloc_InternalB(%0,%2,%1) Iter_Alloc_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0))
 
