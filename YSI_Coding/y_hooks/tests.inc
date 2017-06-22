@@ -1,6 +1,57 @@
 static
 	YSI_g_sValue;
 
+DEFINE_HOOK_REPLACEMENT(VeryLongTarget_, YyYy);
+
+hook y_hooks_YyYy0()
+{
+	// The length after replacement here will be longer than the hook name, even
+	// with prefix/suffixes.  This means you can't generate the original name
+	// because there is no original.
+	ASSERT(true);
+	YSI_g_sValue = 101;
+}
+
+hook y_hooks_YyYy1()
+{
+	// The length after replacement here will be longer than the hook name, even
+	// with prefix/suffixes.  This means you can't generate the original name
+	// because there is no original.
+	ASSERT(true);
+	YSI_g_sValue = 202;
+}
+
+hook y_hooks_YyYz1()
+{
+	// Will come very next in the header.
+	ASSERT(true);
+	YSI_g_sValue = 303;
+}
+
+forward y_hooks_VeryLongTarget_0();
+
+public y_hooks_VeryLongTarget_0()
+{
+	// This one should work, because we have the original function to use for a
+	// pointer, not a newly generated version.
+	ASSERT(YSI_g_sValue == 101);
+	YSI_g_sValue += 404;
+}
+
+Test:y_hooks_TooLongReplacements()
+{
+	YSI_g_sValue = 0;
+	CallLocalFunction("y_hooks_VeryLongTarget_0", "");
+	ASSERT(YSI_g_sValue == 505);
+	YSI_g_sValue = 0;
+	CallLocalFunction("y_hooks_YyYz1", "");
+	ASSERT(YSI_g_sValue == 303);
+	YSI_g_sValue = 0;
+	// Currently fails.
+	CallLocalFunction("y_hooks_VeryLongTarget_1", "");
+	ASSERT(YSI_g_sValue == 202);
+}
+
 hook Ony_hooksShortUpdate()
 {
 	++YSI_g_sValue;
