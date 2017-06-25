@@ -243,7 +243,7 @@ Array:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define foreach(%0) for(new Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%0|||)
+//#define foreach(%0) for(new Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%0|||)
 
 /**--------------------------------------------------------------------------**\
 <summary>iterfunc</summary>
@@ -289,7 +289,7 @@ Array:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define iterstart@Reverse%9$);%9!=_:(%1=%9(_:%9,%0)); F@p:F@q:$%1,%0$
+#define iterstart@Reverse%9$)%8;%9!=_:(%1=%9(_:%9,%0)); F@p:F@q:$%1,%0$%8;
 
 /*
 
@@ -909,6 +909,8 @@ native Iter_Index(Iterator:Name<>);
 #define F@a$
 #define F@b|||
 
+const F@u:F@u = F@u:1;
+
 // Detect array declarations: "Iterator:X[20]<4>", "Iterator:X<10, 4>", and the
 // frankly silly "Iterator:X[20]<10, 4>".
 #define F@c:F@d:((%0,%1)+1)]%2$,Iter_Single@%9$%7$ F@d:((%0)+(%1))]={0,1,...}F@a$,Iter_Multi@%9$[%0]%7$
@@ -921,7 +923,7 @@ native Iter_Index(Iterator:Name<>);
 // Special "sizeof" that strips subscripts.  "|||" prevents "sizeof" recursion.
 #define F@e:%0|||(%1[%2]%3|||%4)) F@e:%0|||(%1%3|||%4[]))
 #define F@f:%0|||(F@g(%1,%5)%3|||) %0|||(%1 %3|||)
-#define F@s(%0) (_:F@f:F@e:sizeof F@b|||(%0 F@a$F@b|||))
+#define F@s(%0) _:F@f:F@e:sizeof F@b|||(%0 F@a$F@b|||)
 
 // Reify macros.
 #define F@r(%0) %0 F@a$
@@ -944,31 +946,33 @@ native Iter_Index(Iterator:Name<>);
 #define F@j:%7$%5(%0)       %5A(F@g(Iter_Single@%0,),F@h:Iterator@%0)
 #define F@i:%7$%5(%0<%2>%1) %5B(F@h:Iter_Multi@%0,%2,F@h:Iterator@%0%1)
 
-#define _Y_ITER_DO_FOREACH(%1,%0) (_:F@n:F@l:F@m:F@a$%1,%0$
+#define _Y_ITER_DO_FOREACH(%1,%0) F@n:F@l:F@m:F@a$%1,%0$
+
+#define _Y_ITER_DO_TAGGED_FOREACH(%0,%1,%2) _Y_ITER_DO_FOREACH(%1,%2)
 
 // Multi-iterator.
-#define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=F@h:Iterator@%0[_:%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
+#define F@n:%9$%1,%0<%2>$%9; Iterator@%0[F@u:F@s(Iterator@%0)-1-(%2)]F@a$%9;(F@v%1=F@u:F@h:Iterator@%0[F@u:%1=F@v%1])<F@u:(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
-#define F@l:%9$%1,%0(%2)%8$ F@r(iterstart@%0));_:(F@r(iterstart@%0))!=_:(%1=F@h:Iter_Func@%0(_:%1,%2));
+#define F@l:%9$%1,%0(%2)%8$%9; F@r(iterstart@%0)%9;(F@v%1=F@u:(F@r(iterstart@%0)))!=_:(%1=F@h:Iter_Func@%0(_:%1,%2));
 
 // Normal iterator.
-#define F@m:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=F@h:Iterator@%0[_:%1])!=(F@s(Iterator@%0)-1);
+#define F@m:%9$%1,%0$%9; Iterator@%0[F@u:F@s(Iterator@%0)-1]F@a$%9;(F@v%1=F@u:F@h:Iterator@%0[F@u:%1=F@v%1])!=F@u:(F@s(Iterator@%0)-1);
 
 // Convert from a normal iterator to a special iterator with parameters.
 #define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
 
 // Reverse multi-iterator.
-#define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=Iter_Prev_InternalB(Iter_Multi@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
+#define F@p:%9$%1,%0<%2>$%9; (F@s(Iterator@%0)-1-(%2))%9;(F@v%1=F@u:(%1=Iter_Prev_InternalB(Iter_Multi@%0,,Iterator@%0,%1))_<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Reverse normal iterator.
-#define F@q:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
+#define F@q:%9$%1,%0$%9; (F@s(Iterator@%0)-1)%9;(F@v%1=F@u:(%1=Iter_Prev_InternalA(,Iterator@%0,%1)))!=F@u:(F@s(Iterator@%0)-1);
 
 // Special iterator function declaration.
 #define F@y:%0(%1) Iter_Func@%0(%1)F@a$
 
 // Local state for iterator functions that need more than one variable.
-#define iterstate(%5,%6)%9);%9!=_:(%1=%2( %5),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:(%1=%2(_:Iter_State@%1,
+#define iterstate(%5,%6)%9)%8;%9!=_:(%1=%2( %5),itrst:Iter_State@%1=itrst:(%6)%8;_:(%5)!=_:(%1=%2(_:Iter_State@%1,
 
 // Make the internal state an array if there is more than one value.
 #define itrst:%1=itrst:(%6,%7) %1[]={%6,%7}
@@ -983,30 +987,61 @@ native Iter_Index(Iterator:Name<>);
 	
 \**--------------------------------------------------------------------------**/
 
-// This allows us to use "new" multiple times - stripping off ONLY whole words.
-#define new%0|||%3|||%1:%2||| %3|||%0|||%1|||%2|||
+#define foreach(%0:%1) for (new F@u:F@v%0=F@u:(%0=_:_Y_ITER_DO_FOREACH(%0,%1));)_FOREACH:
 
-// This one is called if the new syntax is required, but the state of "new" is
-// as-yet unknown.  This attempts to call "%1" as a macro, if it starts with
-// "new" as a whole word then it will (and will also helpfully strip off the
-// "new" keyword for us).
-#define Y_FOREACH_THIRD|||%9|||%1|||%2||| %1=Y_FOREACH_FIFTH|||Y_FOREACH_FOURTH|||%1:%2|||
+#define new%0=%9:%3(new%4));)_FOREACH: %3(%4)),%0;)_FOREACH:
 
-// This is called if the "new" macro is called for a second time.
-#define Y_FOREACH_FOURTH|||%1=Y_FOREACH_FIFTH|||%9|||%2||| new Y_FOREACH_SIXTH;%1|||Y_FOREACH_SEVENTH|||%2|||
+//#define foreach(%0:%1) for _FOREACH(new F@u:F@v%0 F@w|||%0|||;A(%0,%1);)//_Y_ITER_DO_FOREACH(%0,%1);)
+#define _FOREACH:
+//
+//#define for%0_FOREACH()
 
-// This is called when there are tags on the "new" declaration (%9 = "new ").
-#define Y_FOREACH_SEVENTH|||%9Y_FOREACH_SIXTH;%0|||%1|||%2||| new %0:%1=%0:_Y_ITER_DO_FOREACH(%1,%2)
+//#define new%0F@z|||%1\32;new%7\32;%2||| HI
+//
+//new F@z||| new yo |||
 
-// This is called when there aren't.
-#define Y_FOREACH_SIXTH;%1|||Y_FOREACH_SEVENTH|||%2||| %1=_Y_ITER_DO_FOREACH(%1,%2)
+// Find tagged variables.  %0 = tag, %1 = variable, %2 = iterator.
+#define F@u:%9=F@u:(%9=%4(%0,%1:%2)); F@u:F@v%1=F@u:(%0:%1=%0:_Y_ITER_DO_TAGGED_FOREACH(%0,%1,%2));
 
-// This is called if "%1" didn't have "new" at the start.
-#define Y_FOREACH_FIFTH|||Y_FOREACH_FOURTH|||%1:%2||| _Y_ITER_DO_FOREACH(%1,%2)
+// Consume spaces in the variable name.
+#define F@v%0\32;%1) F@v%0%1)
 
-// This is the old version, but DON'T add "new" because that already exists from
-// the failed "new" macro call above.
-#define Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%2,%1||| using_deprecated_foreach_syntax,%1=_Y_ITER_DO_FOREACH(%1,%2)++using_deprecated_foreach_syntax
+// If we find a second "new" keyword then the user typed one, so we need to keep
+// the variable in the start of the "for" statement, with our "new".
+#define F@vnew%0) F@v%0)
+
+
+
+//=F@u:(new%1=%4);%9(new%2,%3)  F@v%1=(%4) F@w||||||,%1;%9(%2,%3)
+
+// Remove anything between the "|||"s.
+#define F@w|||%0|||
+
+
+//// This allows us to use "new" multiple times - stripping off ONLY whole words.
+//#define new%0|||%3|||%1:%2||| %3|||%0|||%1|||%2|||
+//
+//// This one is called if the new syntax is required, but the state of "new" is
+//// as-yet unknown.  This attempts to call "%1" as a macro, if it starts with
+//// "new" as a whole word then it will (and will also helpfully strip off the
+//// "new" keyword for us).
+//#define Y_FOREACH_THIRD|||%9|||%1|||%2||| %1=Y_FOREACH_FIFTH|||Y_FOREACH_FOURTH|||%1:%2|||
+//
+//// This is called if the "new" macro is called for a second time.
+//#define Y_FOREACH_FOURTH|||%1=Y_FOREACH_FIFTH|||%9|||%2||| new Y_FOREACH_SIXTH;%1|||Y_FOREACH_SEVENTH|||%2|||
+//
+//// This is called when there are tags on the "new" declaration (%9 = "new ").
+//#define Y_FOREACH_SEVENTH|||%9Y_FOREACH_SIXTH;%0|||%1|||%2||| new %0:%1=%0:_Y_ITER_DO_FOREACH(%1,%2)
+//
+//// This is called when there aren't.
+//#define Y_FOREACH_SIXTH;%1|||Y_FOREACH_SEVENTH|||%2||| %1=_Y_ITER_DO_FOREACH(%1,%2)
+//
+//// This is called if "%1" didn't have "new" at the start.
+//#define Y_FOREACH_FIFTH|||Y_FOREACH_FOURTH|||%1:%2||| _Y_ITER_DO_FOREACH(%1,%2)
+//
+//// This is the old version, but DON'T add "new" because that already exists from
+//// the failed "new" macro call above.
+//#define Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%2,%1||| using_deprecated_foreach_syntax,%1=_Y_ITER_DO_FOREACH(%1,%2)++using_deprecated_foreach_syntax
 
 stock const
 	// This variable is re-declared when you do "foreach (Player, i)" or similar
