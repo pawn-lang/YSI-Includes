@@ -951,13 +951,13 @@ const F@u:F@u = F@u:1;
 #define _Y_ITER_DO_TAGGED_FOREACH(%0,%1,%2) _Y_ITER_DO_FOREACH(%1,%2)
 
 // Multi-iterator.
-#define F@n:%9$%1,%0<%2>$%9; Iterator@%0[F@u:F@s(Iterator@%0)-1-(%2)]F@a$%9;(F@v%1=F@u:F@h:Iterator@%0[F@u:%1=F@v%1])<F@u:(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
+#define F@n:%9$%1,%0<%2>$%9; (F@s(Iterator@%0)-1-(%2))%9;(F@v%1=F@u:(%1=F@h:Iterator@%0[F@v%1]))<F@u:(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
 #define F@l:%9$%1,%0(%2)%8$%9; F@r(iterstart@%0)%9;(F@v%1=F@u:(F@r(iterstart@%0)))!=_:(%1=F@h:Iter_Func@%0(_:%1,%2));
 
 // Normal iterator.
-#define F@m:%9$%1,%0$%9; Iterator@%0[F@u:F@s(Iterator@%0)-1]F@a$%9;(F@v%1=F@u:F@h:Iterator@%0[F@u:%1=F@v%1])!=F@u:(F@s(Iterator@%0)-1);
+#define F@m:%9$%1,%0$%9; (F@s(Iterator@%0)-1)%9;(F@v%1=F@u:(%1=F@h:Iterator@%0[F@v%1]))!=F@u:(F@s(Iterator@%0)-1);
 
 // Convert from a normal iterator to a special iterator with parameters.
 #define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
