@@ -121,6 +121,7 @@ Compile options:
 #include "y_bit/impl"
 
 #if defined YSI_TESTS
+	#include "..\YSI_Data\y_iterate"
 	#include "..\YSI_Core\y_testing"
 	#include "y_bit/tests"
 #endif

@@ -90,37 +90,6 @@ Changelog:
 
 */
 
-#define hook%1(%2) UNIQUE_FUNCTION<@yH_%1@...>(%2);UNIQUE_FUNCTION<@yH_%1@...>(%2)
-#define rehook%1(%2) UNIQUE_FUNCTION<@yH_%1@...>(%2)
-#define Hook:%0_%1(%2) @yH_%1@%0(%2);@yH_%1@%0(%2)
-// Strip out extra spaces (nicely recursive)
-#define @yH_%0\32;%1(%2) @yH_%1(%2)
-
-#define Y_HOOKS_CONTINUE_RETURN_1	(1)		// Continue the hook chain, return 1
-#define Y_HOOKS_CONTINUE_RETURN_0	(0)		// Continue the hook chain, return 0
-#define Y_HOOKS_BREAK_RETURN_0		(-1)	// Break the hook chain, return 0
-#define Y_HOOKS_BREAK_RETURN_1		(-2)	// Break the hook chain, return 1
-
-enum E_HOOK_NAME_REPLACEMENT_DATA
-{
-	E_HOOK_NAME_REPLACEMENT_SHORT[16],
-	E_HOOK_NAME_REPLACEMENT_LONG[16],
-	E_HOOK_NAME_REPLACEMENT_MIN,
-	E_HOOK_NAME_REPLACEMENT_MAX
-}
-
-#if !defined CHAIN_ORDER
-	#define CHAIN_ORDER() 0
-#endif
-
-#define PRE_HOOK(%0) forward @CO_%0();public @CO_%0(){return CHAIN_ORDER()+1;}
-
-enum E_PRE_HOOK
-{
-	E_PRE_HOOK_NAME[16],
-	E_PRE_HOOK_VALUE
-}
-
 PRE_HOOK(HookChain)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER @CO_HookChain
@@ -133,13 +102,6 @@ static stock _HookChain_IncludeStates() <_ALS : _ALS_go>
 {
 }
 
-#define HOOK_FORWARD:%0_%2(%1); \
-	forward %0_%2(%1); \
-	public %0_%2(%1) <_ALS : _ALS_x0, _ALS : _ALS_x1> { return 1; } \
-	public %0_%2(%1) <> { return 1; }
-
-#define HOOK_RET:%0(%1) forward @RET%0(); public @RET%0()
-
 HOOK_RET:OnPlayerCommandText()
 {
 	return 0;
@@ -150,16 +112,11 @@ HOOK_RET:OnRconCommand()
 	return 0;
 }
 
-#if !defined MAX_HOOK_REPLACEMENTS
-	#define MAX_HOOK_REPLACEMENTS (16)
-#endif
-
-// Generate a function name using only ONE of the parts, so two replacements for
-// the same long name will collide at compile-time
-#define DEFINE_HOOK_REPLACEMENT(%0,%1); forward @_yH%0(); public @_yH%0() { _Hooks_AddReplacement(#%0, #%1); }
-
-// Strip spaces from the generated function name.
-#define @_yH%0\32;%1(%2) @_yH%0%1(%2)
+enum E_PRE_HOOK
+{
+	E_PRE_HOOK_NAME[16],
+	E_PRE_HOOK_VALUE
+}
 
 // Create the default replacements.
 DEFINE_HOOK_REPLACEMENT(Checkpoint, CP );
@@ -171,6 +128,14 @@ DEFINE_HOOK_REPLACEMENT(Update    , Upd);
 DEFINE_HOOK_REPLACEMENT(Object    , Obj);
 DEFINE_HOOK_REPLACEMENT(Command   , Cmd);
 DEFINE_HOOK_REPLACEMENT(DynamicCP , DynamicCP);
+
+enum E_HOOK_NAME_REPLACEMENT_DATA
+{
+	E_HOOK_NAME_REPLACEMENT_SHORT[16],
+	E_HOOK_NAME_REPLACEMENT_LONG[16],
+	E_HOOK_NAME_REPLACEMENT_MIN,
+	E_HOOK_NAME_REPLACEMENT_MAX
+}
 
 static stock
 	YSI_g_sReplacements[MAX_HOOK_REPLACEMENTS][E_HOOK_NAME_REPLACEMENT_DATA],

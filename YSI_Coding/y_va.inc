@@ -142,10 +142,6 @@ native va_SetTimerEx        (const function[], interval, repeating, const format
 native va_format            (output[], len, const format[], GLOBAL_TAG_TYPES:...)                         = format;
 #define va_return           sprintf
 
-#if defined YSI_TESTS
-	#include "..\YSI_Data\y_foreach"
-#endif
-
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_funcinc"
 #include "..\YSI_Core\y_utils"

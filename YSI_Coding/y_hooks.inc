@@ -82,6 +82,8 @@ Changelog:
 	#define _Y_HOOKS_STATIC static
 #endif
 
+#include "y_hooks/macros"
+
 #include "..\YSI_Internal\y_unique"
 #include "..\YSI_Core\y_cell"
 #include "..\YSI_Core\y_utils"

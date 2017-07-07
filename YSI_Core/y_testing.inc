@@ -65,6 +65,8 @@ Changelog:
 #endif
 #define _INC_y_testing
 
+forward bool:_Testing_End();
+
 #include <a_samp>
 #include "y_debug"
 #include "..\YSI_Storage\y_amx"
