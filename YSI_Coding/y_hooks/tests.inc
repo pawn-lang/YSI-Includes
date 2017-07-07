@@ -574,10 +574,22 @@ public OnTestNumArgs2(a, b, c, f)
 	ASSERT(numargs() == 4);
 }
 
+static OnTestNumArgs4(total, ...)
+{
+	ASSERT(numargs() == total + 1);
+}
+
 Test:y_hooks_numargs()
 {
 	CallLocalFunction("OnTestNumArgs0", "iiiiii", 0, 0, 0, 0, 0, 0);
 	CallLocalFunction("OnTestNumArgs1", "iiiii", 0, 0, 0, 0, 0);
 	CallLocalFunction("OnTestNumArgs2", "iiii", 0, 0, 0, 0);
+	OnTestNumArgs4(0);
+	OnTestNumArgs4(1, 1);
+	OnTestNumArgs4(2, 1, 2);
+	OnTestNumArgs4(3, 1, 2, 3);
+	OnTestNumArgs4(4, 1, 2, 3, 4);
+	OnTestNumArgs4(5, 1, 2, 3, 4, 5);
+	OnTestNumArgs4(6, 1, 2, 3, 4, 5, 6);
 }
 
