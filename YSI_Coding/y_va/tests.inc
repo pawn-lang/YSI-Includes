@@ -249,7 +249,7 @@ static stock y_va2_Extract(num, ...)
 	new
 		ret[YSI_MAX_STRING];
 	va_getstring(ret, num + 1);
-	return ret;
+	YSI_STRING_RETURN(ret);
 }
 
 static stock y_va2_Three(...)
