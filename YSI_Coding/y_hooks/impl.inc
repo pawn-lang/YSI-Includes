@@ -1261,3 +1261,49 @@ HOOK_FORWARD:HookChain_OnScriptInit();
 #endif
 #define OnScriptInit(%0) HookChain_OnScriptInit(%0) <_ALS : _ALS_go>
 
+#if !defined _ALS_numargs
+	native BAD_numargs() = numargs;
+#endif
+
+stock Hooks_NumArgs()
+{
+	// Awkward code that allows us to jump backwards.  It might appear that this
+	// code pushes something on the stack before the JZER that is never removed,
+	// but labels reset the stack always so it gets conditionally wiped out.
+	#emit LOAD.S.alt          0
+Hooks_NumArgs_load:
+	#emit CONST.pri           8
+	#emit ADD
+	#emit LOAD.I
+	#emit ZERO.alt
+	#emit PUSH.pri
+	#emit SGEQ
+	#emit LREF.S.alt          0
+	#emit JZER                Hooks_NumArgs_load
+	#emit POP.pri
+	#emit SHR.C.pri           2
+	#emit RETN
+	// Ideal code, that can't be used due to having a forward jump.
+/*	#emit LOAD.S.pri          0
+	#emit ADD.C               8
+	#emit LOAD.I
+	#emit ZERO.alt
+	#emit JSLESS              Hooks_NumArgs_negative
+	#emit SHR.C.pri           2
+	#emit RETN
+Hooks_NumArgs_negative:
+	#emit LREF.S.pri          0
+	#emit ADD.C               8
+	#emit LOAD.I
+	#emit SHR.C.pri           2
+	#emit RETN*/
+	return 0;
+}
+
+#if defined _ALS_numargs
+	#undef numargs
+#else
+	#define _ALS_numargs
+#endif
+#define numargs Hooks_NumArgs
+
