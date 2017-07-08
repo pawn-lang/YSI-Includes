@@ -1110,8 +1110,6 @@ global string:Command_GetNext(index, playerid)
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iterator@Command @iterfunc
-
 foreign Iter_Func@Command(start);
 
 global Iter_Func@Command(start)
@@ -1140,8 +1138,6 @@ global Iter_Func@Command(start)
 	actually think this way is slightly better.
 </remarks>
 \**--------------------------------------------------------------------------**/
-
-#define Iterator@PlayerCommand @iterfunc
 
 foreign Iter_Func@PlayerCommand(start, pid);
 

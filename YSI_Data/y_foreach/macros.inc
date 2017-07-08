@@ -258,18 +258,6 @@ Array:
 #define iterfunc%0(%1) F@y:%0(%1)
 
 /**--------------------------------------------------------------------------**\
-<summary>@iterfunc</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Converts an array-like iterator to a special iterator.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define @iterfunc%9|||%9))-1);_:(%1=%9)!=(F@s(Iterator@%0)-1); F@o)-2)+_:F@l:$%1,%0()$
-
-/**--------------------------------------------------------------------------**\
 <summary>iterstart</summary>
 <returns>
 	-
