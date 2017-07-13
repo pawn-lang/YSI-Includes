@@ -137,8 +137,9 @@ Natives:
 // V@ - getproperty
 // W@ - CallRemoteFunction
 // X@ - Set return
-// Y@ - Script ID
+// Y@ - 
 // Z@ - Detect string
+// _@ - Script ID
 // 
 
 new
@@ -170,7 +171,7 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// master ID stored in the property, which we can shove on to the heap to
 	// restore later.
 	#emit PUSH.C       Q@
-	#emit PUSH         Y@
+	#emit PUSH         _@
 	#emit PUSH.C       YSI_g_sPropCaller
 	#emit PUSH.C       8
 	#emit PUSH.C       16
@@ -283,7 +284,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// master ID stored in the property, which we can shove on to the heap to
 	// restore later.
 	#emit PUSH.C       YSI_g_sPropEmpty
-	#emit PUSH         Y@
+	#emit PUSH         _@
 	#emit PUSH.C       YSI_g_sPropCaller
 	#emit PUSH.C       8
 	#emit PUSH.C       16
@@ -458,7 +459,7 @@ stock Y@()
 {
 	P:4("Y@ called");
 	// Already returns the previous value.
-	return setproperty(8, YSIM_CALLER, Y@);
+	return setproperty(8, YSIM_CALLER, _@);
 }
 
 stock Z@(GLOBAL_TAG_TYPES:v = -1)

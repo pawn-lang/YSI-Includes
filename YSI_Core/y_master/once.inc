@@ -184,7 +184,7 @@ Natives:
 #define YSIM_SERVER_FUNC%0(%1)<%9> forward%0(%1);public%0(%1)
 #define YSIM_SERVER_GRUP%0(%1)     _GROUP_MAKE_NAME<hook%0...>(%1)
 #define YSIM_SERVER_YCMD%0(%1)     @yC_%0(a,b[],c);@yC_%0(a,b[],c)U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
-#define YSIM_SERVER_ZERO%0(%1)     @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==Y@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
+#define YSIM_SERVER_ZERO%0(%1)     @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==_@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 
 #define YSIM_CLIENT_FOREIGN        YSIM_PARSER(YSIM_UF)
 // Hide the local implementations.
@@ -205,7 +205,7 @@ Natives:
 #define YSIM_CLOUD_FUNC%0(%1)<%9>  %0(%1);public%0(%1)<>{}public%0(%1)<_YCM:%9>
 #define YSIM_CLOUD_GRUP%0(%1)      _GROUP_MAKE_NAME<hook%0...>(%1)<>{}_GROUP_MAKE_NAME<rehook%0...>(%1)<_YCM:y>
 #define YSIM_CLOUD_YCMD%0(%1)      @yC_%0(a,b[],c);@yC_%0(a,b[],c)<>{}@yC_%0(a,b[],c)<_YCM:y>U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
-#define YSIM_CLOUD_ZERO%0(%1)      @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==Y@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
+#define YSIM_CLOUD_ZERO%0(%1)      @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==_@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 
 // A stub foreign is the same as a client foreign - define it as existing, but
 // not here.
@@ -482,7 +482,7 @@ public OnScriptInit()
 	C:1(if (!_@) P:E("MasterID not assigned"););
 	// Make sure this is called before all other YSI initialisations, at least
 	// all the ones which use the master system.
-	CallLocalFunction("OnMasterSystemInit", "i", Y@);
+	CallLocalFunction("OnMasterSystemInit", "i", _@);
 	Master_OnScriptInit();
 	return 1;
 }
