@@ -449,6 +449,7 @@ stock S@(GLOBAL_TAG_TYPES:v = -1)
 
 stock X@(GLOBAL_TAG_TYPES:n)
 {
+	// THIS MUST REMAIN FOREVER!  Detected by fixes.inc.
 	P:4("X@ called: %i", n);
 	setproperty(8, YSIM_RETURN, n);
 }
