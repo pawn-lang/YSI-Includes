@@ -113,7 +113,9 @@ stock bool:JIT_Complete()
 	return YSI_g_sCodeJITed;
 }
 
-forward OnJITCompile();
+#if !defined _ALS_OnJITCompile
+	forward OnJITCompile();
+#endif
 
 public OnJITCompile()
 {

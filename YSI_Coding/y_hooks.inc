@@ -100,6 +100,8 @@ Changelog:
 #include "y_hooks/impl"
 
 #if defined YSI_TESTS
+	// Get a new unique ID for the test hooks.
+	#include "..\YSI_Internal\y_unique"
 	#include "..\YSI_Core\y_testing"
 	#include "y_hooks/tests"
 #endif

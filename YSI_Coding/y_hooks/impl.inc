@@ -114,12 +114,6 @@ HOOK_RET:OnRconCommand()
 	return 0;
 }
 
-enum E_PRE_HOOK
-{
-	E_PRE_HOOK_NAME[16],
-	E_PRE_HOOK_VALUE
-}
-
 // Create the default replacements.
 DEFINE_HOOK_REPLACEMENT(Checkpoint, CP );
 DEFINE_HOOK_REPLACEMENT(Container , Cnt);
@@ -672,7 +666,7 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], idx)
+_Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_CHAIN_HOOK], precount, name[32], idx)
 {
 	P:4("Hooks_Collate called: %s %d", unpack(name), idx);
 	// This records the amount of space available in the nametable, currently
