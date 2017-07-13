@@ -14,6 +14,19 @@ const INLINE_PATTERN_4 = _C<Cole>;
 	#define MAX_INLINE_PARAMETERS (32)
 #endif
 
+#define INLINE_DESCRIPTOR_VAR (0)
+#define INLINE_DESCRIPTOR_REF (-1)
+#define INLINE_DESCRIPTOR_STR (cellmax)
+
+
+enum e_CALLBACK_DATA
+{
+	e_CALLBACK_DATA_FUNCTION,
+	e_CALLBACK_DATA_PARAMETERS,
+	e_CALLBACK_DATA_CLOSURE,
+	e_CALLBACK_DATA_PARAMETER_COUNT,
+}
+
 enum E_INLINE_DATA
 {
 	// The fake "parameters" for the inline function.
@@ -62,16 +75,16 @@ static stock Inline_FoundDescriptor(size, data[E_INLINE_DATA])
 		P:F("y_inline: Max inline parameter count exceeded (%d).", MAX_INLINE_PARAMETERS);
 	else switch (size)
 	{
-		case 0:
+		case INLINE_DESCRIPTOR_VAR:
 		{
 			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = 0;
 		}
-		case -1:
+		case INLINE_DESCRIPTOR_REF:
 		{
 			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = -1;
 			data[E_INLINE_DATA_STATE] |= 16;
 		}
-		case cellmax:
+		case INLINE_DESCRIPTOR_STR:
 		{
 			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = cellmax;
 			data[E_INLINE_DATA_STATE] |= 8;
@@ -94,6 +107,7 @@ static stock Inline_FoundConst(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 
 static stock Inline_FoundVar(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
+	#pragma unused scanner
 	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
 	Inline_FoundDescriptor(0, data);
@@ -115,7 +129,7 @@ static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	data[E_INLINE_DATA_USER] = CodeScanGetMatchAddress(scanner) + CodeScanGetMatchLength(scanner);
 	printf("End: %08x", data[E_INLINE_DATA_USER]);
 	// Do the actual codegen here.
-//	Inline_DoCodeGen();
+	Inline_DoCodeGen();
 	// Remove the return for the inner loop, since it may now point to an
 	// invalid address (in the middle of an OpCode we just wrote out).
 	new
@@ -416,6 +430,75 @@ Inline_Start(const &name, a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE
 
 #endinput
 
+static stock
+	YSI_g_sLoadTemp;
+
+static stock Inline_GenerateParametersCopy()
+{
+	// We can't play about with the stack as much as we used to any more, nor
+	// can we use run-time code rewriting to use `MOV` to copy the data.
+	// Instead we need to allocate space on the stack then `memcpy` it in.
+	_@emit STACK                    -(cells * cellbytes)
+	_@emit PUSH.C                   cells
+	_@emit PUSH.C                   (cells * cellbytes)
+	_@emit PUSH.C                   0
+	// `pri` should always be a pointer to the function data.
+	_@emit MOVE.alt
+	_@emit CONST.pri                e_CALLBACK_DATA_CLOSURE
+	_@emit LIDX
+	_@emit PUSH.pri
+	_@emit LCTRL                    4 // Load the stack address.
+	_@emit ADD.C                    (4 * cellbytes)
+	_@emit PUSH.pri
+	_@emit PUSH.C                   (5 * cellbytes) // Number of parameters.
+	_@emit SYSREQ                   "memcpy"
+	// Don't need the return value, so restore `pri` before clobbering `alt`
+	// with the stack adjustment.
+	_@emit MOVE.pri
+	_@emit STACK                    (6 * cellbytes)
+}
+
+static stock Inline_GenerateClosureCopyIn(cells)
+{
+	new
+		tmp = ref(YSI_g_sLoadTemp);
+	// Copy from `pri` to the stack.
+	// First allocate space on the stack.
+	_@emit STACK                    -(cells * cellbytes)
+	// `MOVS` copies from `pri` to `alt`, `pri` currently holds the pointer to
+	// the passed in callback information, which includes the source address as
+	// a field, but we need to make a copy.  We also can't use `LREF.S` here
+	// because we don't actually know the frame pointer offset.  Instead we use
+	// `LREF` with a single global.
+	_@emit ADD.C                    e_CALLBACK_DATA_CLOSURE
+	_@emit STOR.pri                 tmp
+	_@emit LREF                     tmp
+	
+}
+
+static stock Inline_GenerateClosureCopyOut()
+{
+	// TODO:
+	// We CAN use `MOVS` for this actually, just not for function parameters...
+	_@emit PUSH.C                   cells
+	_@emit PUSH.C                   (cells * cellbytes)
+	_@emit PUSH.C                   0
+	// `pri` should always be a pointer to the function data.
+	_@emit MOVE.alt
+	_@emit LCTRL                    4 // Load the stack address.
+	_@emit ADD.C                    (3 * cellbytes)
+	_@emit PUSH.pri
+	_@emit CONST.pri                e_CALLBACK_DATA_CLOSURE
+	_@emit LIDX
+	_@emit PUSH.pri
+	_@emit PUSH.C                   (5 * cellbytes) // Number of parameters.
+	_@emit SYSREQ                   "memcpy"
+	// Don't need the return value, so restore `pri` before clobbering `alt`
+	// with the stack adjustment.
+	_@emit MOVE.pri
+	_@emit STACK                    (6 * cellbytes + cells * cellbytes)
+}
+
 static stock Inline_DoCodeGen(data[E_INLINE_DATA])
 {
 	// The code will be written between "E_INLINE_DATA_START" and
@@ -462,6 +545,38 @@ static stock Inline_DoCodeGen(data[E_INLINE_DATA])
 	// =========================================================================
 	AsmInitPtr(ctx, data[E_INLINE_DATA_START] + AMX_HEADER_COD, data[E_INLINE_DATA_LOOP] - data[E_INLINE_DATA_START]);
 	AsmSetErrorHandler(ctx, GetPublicAddressFromName("Inline_OnAsmError"));
+	
+	
+	if (data[E_INLINE_DATA_STATE] & 24)
+	{
+		// Has arrays or references (things that need copying back).
+		if (data[E_INLINE_DATA_LOCALS])
+		{
+			// Has a closure.
+		}
+		else
+		{
+			// No closure data to copy over (but may have parent function passed
+			// in parameters - we can't know that now).
+		}
+	}
+	else
+	{
+		// Only simple variables.
+		if (data[E_INLINE_DATA_LOCALS])
+		{
+			// Has a closure.
+		}
+		else
+		{
+			// The simplest method - no closure data to copy over (but may have
+			// parent function passed in parameters - we can't know that now).
+		}
+	}
+	
+	
+	
+	
 	// Space for params + count.
 	new
 		// Size of stored closure data.
