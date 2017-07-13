@@ -1269,7 +1269,7 @@ stock Hooks_NumArgs()
 {
 	// Awkward code that allows us to jump backwards.  It might appear that this
 	// code pushes something on the stack before the JZER that is never removed,
-	// but labels reset the stack always so it gets conditionally wiped out.
+	// but labels reset the stack always so it gets unconditionally wiped out.
 	#emit LOAD.S.alt          0
 Hooks_NumArgs_load:
 	#emit CONST.pri           8
