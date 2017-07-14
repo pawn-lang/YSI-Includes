@@ -99,7 +99,7 @@ Tags:
 	-
 Variables:
 	Global:
-		_@ - ID of this script.
+		Y@ - ID of this script.
 	Static:
 		-
 Commands:
@@ -112,7 +112,7 @@ Natives:
 	-
 \**--------------------------------------------------------------------------**/
 
-#define Master_ID() (_@)
+#define Master_ID() (Y@)
 
 // These parts should only be defined once ever.  This code is not dependent on
 // the current MASTER value, it's all generic.
@@ -184,7 +184,7 @@ Natives:
 #define YSIM_SERVER_FUNC%0(%1)<%9> forward%0(%1);public%0(%1)
 #define YSIM_SERVER_GRUP%0(%1)     _GROUP_MAKE_NAME<hook%0...>(%1)
 #define YSIM_SERVER_YCMD%0(%1)     @yC_%0(a,b[],c);@yC_%0(a,b[],c)U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
-#define YSIM_SERVER_ZERO%0(%1)     @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==_@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
+#define YSIM_SERVER_ZERO%0(%1)     @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==Y@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 
 #define YSIM_CLIENT_FOREIGN        YSIM_PARSER(YSIM_UF)
 // Hide the local implementations.
@@ -205,7 +205,7 @@ Natives:
 #define YSIM_CLOUD_FUNC%0(%1)<%9>  %0(%1);public%0(%1)<>{}public%0(%1)<_YCM:%9>
 #define YSIM_CLOUD_GRUP%0(%1)      _GROUP_MAKE_NAME<hook%0...>(%1)<>{}_GROUP_MAKE_NAME<rehook%0...>(%1)<_YCM:y>
 #define YSIM_CLOUD_YCMD%0(%1)      @yC_%0(a,b[],c);@yC_%0(a,b[],c)<>{}@yC_%0(a,b[],c)<_YCM:y>U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
-#define YSIM_CLOUD_ZERO%0(%1)      @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==_@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
+#define YSIM_CLOUD_ZERO%0(%1)      @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==Y@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 
 // A stub foreign is the same as a client foreign - define it as existing, but
 // not here.
@@ -469,7 +469,7 @@ public OnScriptInit()
 	{
 		if (!(masters & (1 << i)))
 		{
-			_@ = i;
+			Y@ = i;
 			masters |= 1 << i;
 			break;
 		}
@@ -479,10 +479,10 @@ public OnScriptInit()
 	{
 		setproperty(8, YSIM_MASTER, masters);
 	}
-	C:1(if (!_@) P:E("MasterID not assigned"););
+	C:1(if (!Y@) P:E("MasterID not assigned"););
 	// Make sure this is called before all other YSI initialisations, at least
 	// all the ones which use the master system.
-	CallLocalFunction("OnMasterSystemInit", "i", _@);
+	CallLocalFunction("OnMasterSystemInit", "i", Y@);
 	Master_OnScriptInit();
 	return 1;
 }
@@ -526,9 +526,9 @@ public OnScriptExit()
 		// The properties currently clear instantly, but that may not always be
 		// the case.
 	}
-	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~(1 << _@)),
+	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~(1 << Y@)),
 	Master_OnScriptExit(),
-	CallRemoteFunction("OnMasterSystemClose", "i", _@);
+	CallRemoteFunction("OnMasterSystemClose", "i", Y@);
 	return 1;
 }
 
@@ -555,10 +555,10 @@ public Master_Reassert()
 {
 	// Make sure that the caller parameter is always 0 by default.
 	U@(8, YSIM_CALLER, 0);
-	if (_@)
+	if (Y@)
 	{
 		// Read this script's master value.
-		setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) | (1 << _@) | 1);
+		setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) | (1 << Y@) | 1);
 		// Readd this script's owned scripts.
 		new
 			func[4];
@@ -570,7 +570,7 @@ public Master_Reassert()
 			func[0] = YSI_g_sMasterData[i] & 0xFF;
 			func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF;
 			func[2] = YSI_g_sMasterData[i] >> 16;
-			setproperty(9, func, _@);
+			setproperty(9, func, Y@);
 		}
 	}
 }
@@ -623,17 +623,17 @@ stock bool:_Master_Get(library[], bool:force = false)
 	{
 		new
 			master = getproperty(9, library);
-		P:4("_Master_Get: Prop exists: %d %d", master, _@);
+		P:4("_Master_Get: Prop exists: %d %d", master, Y@);
 		if (master != -1)
 		{
 			P:4("_Master_Get: Prop set");
-			if (master == _@) return true; // Nothing has changed.
+			if (master == Y@) return true; // Nothing has changed.
 			else if (force) ret = false; // A server is forcing itself.
 			else return false; // Not got the master.
 		}
 	}
 	P:4("_Master_Get: Get master.");
-	setproperty(9, library, _@);
+	setproperty(9, library, Y@);
 	P:4("_Master_Get: Set master.");
 	// Add this library to the list.  The list is designed to only deal with
 	// two or three character master names now!

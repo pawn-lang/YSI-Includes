@@ -34,6 +34,8 @@ static remote stock string:yrt_5(hi, const string:you[], there[], tt, &other, co
 
 remote Float:yrt_55(hi, const string:you[], there[], tt, &other, const len = 7)
 {
+	// TODO: Figure out why this fails with the "len" parameter (allocates too
+	// much heap data and doesn't fully clear it).
 	#pragma unused you, there, tt, len
 	other = hi + 5;
 	return 5.5;
