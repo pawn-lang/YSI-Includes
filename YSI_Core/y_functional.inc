@@ -10,7 +10,7 @@
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Coding\y_inline"
 
-#include "..\YSI_Internal\amx_assembly"
+#include "..\YSI_Internal\y_thirdpartyinclude"
 #include "y_functional/impl"
 #include "y_functional/rewrite"
 

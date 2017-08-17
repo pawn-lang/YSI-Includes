@@ -75,7 +75,7 @@ Changelog:
 #endif
 
 
-#include "..\YSI_Internal\amx_assembly"
+#include "..\YSI_Internal\y_thirdpartyinclude"
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Internal\y_shortfunc"
 #include "..\YSI_Core\y_debug"

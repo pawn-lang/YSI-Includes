@@ -136,7 +136,7 @@ Operators:
 #include "..\YSI_Core\y_als"
 #include "..\YSI_Core\y_utils"
 
-#include "..\YSI_Internal\amx_assembly"
+#include "..\YSI_Internal\y_thirdpartyinclude"
 
 #define GB_TO_MB(%0) ((%0) * 1024)
 

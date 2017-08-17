@@ -70,7 +70,7 @@ forward bool:_Testing_End();
 #include <a_samp>
 #include "y_debug"
 #include "..\YSI_Storage\y_amx"
-#include "..\YSI_Internal\amx_assembly"
+#include "..\YSI_Internal\y_thirdpartyinclude"
 
 #include "..\YSI_Internal\y_shortvar"
 

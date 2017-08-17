@@ -203,7 +203,7 @@ stock const
 
 #define INI_NO_FILE (INI:-1)
 
-#include "..\YSI_Internal\amx_assembly"
+#include "..\YSI_Internal\y_thirdpartyinclude"
 #include "..\YSI_Internal\y_version"
 
 #include "..\YSI_Core\y_utils"

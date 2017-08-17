@@ -4,7 +4,7 @@
 #define _INC_y_cgen
 
 #include "..\YSI_Storage\y_amx"
-#include "..\YSI_Internal\amx_assembly"
+#include "..\YSI_Internal\y_thirdpartyinclude"
 
 // We use "STE" not a string literal as we are trying to use up code space, not
 // data space!
