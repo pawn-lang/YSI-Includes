@@ -844,62 +844,6 @@ stock returnstringarg(idx)
 }
 
 /**--------------------------------------------------------------------------**\
-<summary>sprintf</summary>
-<param name="fmat[]">String format.</param>
-<param name="...">Parameters.</param>
-<returns>
-	Formatted string.
-</returns>
-<remarks>
-	Just wraps `format` and returns a string instead.
-	
-	Has extra code to ensure that it works correct only the old compiler.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-stock sprintf(const fmat[], GLOBAL_TAG_TYPES:...)
-{
-	#pragma unused fmat
-	
-	static
-		sFrm,
-		sRet,
-		sCnt,
-		scSize = YSI_MAX_STRING;
-	
-	// Store the function preamble.
-	#emit POP.pri
-	#emit STOR.pri     sFrm
-	#emit STACK        0 // Load the stack pointer for later.
-	#emit POP.pri
-	#emit STOR.pri     sRet
-	#emit POP.pri
-	#emit ADD.C        8
-	#emit STOR.pri     sCnt
-	
-	// Put the secret return parameter on the stack again to format in to.
-	#emit PUSH         scSize
-	#emit ADD
-	#emit LOAD.I
-	#emit PUSH.pri
-	
-	// Call the native.
-	#emit PUSH         sCnt
-	#emit SYSREQ.C     format
-	
-	// Return directly.  This will clean up our entire stack, even the extra
-	// parameters we put on it.  The parameter count is already there!
-	#emit PUSH         sRet
-	#emit PUSH         sFrm
-	#emit RETN
-	
-	// Fake return to define the API.
-	new
-		ret[YSI_MAX_STRING];
-	return ret;
-}
-
-/**--------------------------------------------------------------------------**\
 <summary>isnumeric</summary>
 <param name="str[]">String to check</param>
 <returns>
