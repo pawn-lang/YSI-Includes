@@ -134,6 +134,9 @@ Operators:
 #define va_args<%0> GLOBAL_TAG_TYPES:...
 #define va_start<%0> ___(%0)
 
+// Detect Slice's va_formatex function, which now doesn't need to exist.
+#define va_:STATIC_ARGS STATIC_ARGS, please_upgrade_va_formatex
+
 // Backwards compatability.
 native va_printf            (const format[], GLOBAL_TAG_TYPES:...)                                        = printf;
 native va_CallRemoteFunction(const function[], const format[], GLOBAL_TAG_TYPES:...)                      = CallRemoteFunction;
