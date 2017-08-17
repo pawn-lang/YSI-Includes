@@ -143,7 +143,6 @@ native va_CallRemoteFunction(const function[], const format[], GLOBAL_TAG_TYPES:
 native va_CallLocalFunction (const function[], const format[], GLOBAL_TAG_TYPES:...)                      = CallLocalFunction;
 native va_SetTimerEx        (const function[], interval, repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
 native va_format            (output[], len, const format[], GLOBAL_TAG_TYPES:...)                         = format;
-#define va_return           sprintf
 
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_funcinc"
