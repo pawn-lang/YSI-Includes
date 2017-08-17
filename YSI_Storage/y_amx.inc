@@ -674,7 +674,6 @@ stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[32], pattern)
 			}
 			#emit LREF.S.pri                addr
 			#emit STOR.S.pri                ch
-			++idx;
 			if (ch == pattern)
 			{
 				#emit LREF.S.pri            pos
