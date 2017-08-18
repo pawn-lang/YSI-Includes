@@ -756,9 +756,9 @@ static stock Text_LoadLocals()
 			langs = Langs_GetLanguageCodes();
 			while ((pos = chrfind('|', langs, pos)) != -1)
 			{
-				++YSI_g_sLangIndex;
 				format(YSI_g_sCurLoadTextFile, sizeof (YSI_g_sCurLoadTextFile), "YSI/text/%.*s.%.2s", offset, YSI_g_sTextSets[i][e_TEXT_SETS_NAME], langs[pos - 2]);
 				INI_ParseFile(YSI_g_sCurLoadTextFile, "Text_INILoad", _, true, offset + 1, _, true);
+				++YSI_g_sLangIndex;
 				++pos;
 				// We can add code here to load the data from y_styles.
 			}
