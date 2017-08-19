@@ -175,6 +175,8 @@ stock
 	#define Test:%1() stock bool:yQ@_%1()
 	#define TestInit:%1() stock _yQ@%1()
 	#define TestClose:%1() stock yQ_@%1()
+	#define TestBeforeEach:%1() stock yB_@%1()
+	#define TestAfterEach:%1() stock yA_@%1()
 	
 	#define PTest:%1(%2) stock bool:_@yQ%1(%2)
 	#define PTestInit:%1(%2) stock _y@Q%1(%2)
