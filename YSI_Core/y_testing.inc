@@ -141,7 +141,10 @@ static stock const
 	Y_TESTING_SHUT = _A<yQ_@>,
 	Y_TESTING_PTEST = _A<_@yQ>,
 	Y_TESTING_PINIT = _A<_y@Q>,
-	Y_TESTING_PSHUT = _A<y_@Q>;
+	Y_TESTING_PSHUT = _A<y_@Q>,
+	Y_TESTING_BEFORE = _A<yB_@>,
+	Y_TESTING_AFTER = _A<yA_@>
+;
 
 static stock
 	YSI_g_sCurTest = 0,
@@ -162,7 +165,9 @@ stock
 	#define Test:%1() forward bool:yQ@_%1(); public bool:yQ@_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())
 	#define TestInit:%1() forward _yQ@%1(); public _yQ@%1() for (new bool:__once = true; __once; __once = false)
 	#define TestClose:%1() forward yQ_@%1(); public yQ_@%1() for (new bool:__once = true; __once; __once = false)
-	
+	#define TestBeforeEach:%1() forward yB_@%1(); public yB_@%1()
+	#define TestAfterEach:%1() forward yA_@%1(); public yA_@%1()
+
 	#define PTest:%1(%2) forward bool:_@yQ%1(%2); public bool:_@yQ%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())
 	#define PTestInit:%1(%2) forward _y@Q%1(%2); public _y@Q%1(%2) for (new bool:__once = true; __once; __once = false)
 	#define PTestClose:%1(%2) forward y_@Q%1(%2); public y_@Q%1(%2) for (new bool:__once = true; __once; __once = false)
@@ -306,11 +311,33 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 	P:2("Testing_Run() called");
 	new
 		idx,
+		bidx,
+		buffer2[32],
 		buffer[32];
 	YSI_g_sCurTest = YSI_g_sFailTests = 0;
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_TESTING_TEST)))
 	{
 		strunpack(buffer, buffer);
+
+		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_BEFORE))) {
+			strunpack(buffer2, buffer2);
+			new
+				i = 4,
+				bool:match = true
+			;
+			while (buffer[i] != EOS && buffer2[i] != EOS) {
+				if (buffer[i] != buffer2[i]) {
+					match = false;
+					break;
+				}
+
+				i++;
+			}
+			if (match) {
+				CallLocalFunction(buffer2, "");
+			}
+		}
+
 		// Call the setup function if there is one.
 		buffer[0] = '_',
 		buffer[1] = 'y',
@@ -343,6 +370,25 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 		buffer[2] = '_',
 		buffer[3] = '@',
 		CallLocalFunction(buffer, "");
+
+		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_AFTER))) {
+			strunpack(buffer2, buffer2);
+			new
+				i = 4,
+				bool:match = true
+			;
+			while (buffer[i] != EOS && buffer2[i] != EOS) {
+				if (buffer[i] != buffer2[i]) {
+					match = false;
+					break;
+				}
+
+				i++;
+			}
+			if (match) {
+				CallLocalFunction(buffer2, "");
+			}
+		}
 	}
 	tests = YSI_g_sTests;
 	fails = YSI_g_sFails;
