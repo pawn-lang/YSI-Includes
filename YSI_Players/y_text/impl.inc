@@ -758,8 +758,8 @@ static stock Text_LoadLocals()
 			{
 				format(YSI_g_sCurLoadTextFile, sizeof (YSI_g_sCurLoadTextFile), "YSI/text/%.*s.%.2s", offset, YSI_g_sTextSets[i][e_TEXT_SETS_NAME], langs[pos - 2]);
 				INI_ParseFile(YSI_g_sCurLoadTextFile, "Text_INILoad", _, true, offset + 1, _, true);
-				++pos;
 				++YSI_g_sLangIndex;
+				++pos;
 				// We can add code here to load the data from y_styles.
 			}
 			//format(YSI_g_sCurLoadTextFile, sizeof (YSI_g_sCurLoadTextFile), "%.*s", offset, YSI_g_sTextSets[i][e_TEXT_SETS_NAME]);
@@ -2367,4 +2367,59 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 	Dialog_Garbage(dialog);
 	Format_SetListSeparator(", ");
 	return dialog;
+}
+
+stock _Text_Format(dest[], size, Language:lang, e_STYLE_TYPE:style, search[], ident[], ...)
+{
+	P:4("Text_Format: %s %d %d %d %s %s", dest, size, _:lang, style, search, ident);
+
+	Text_GetText(search, ident, lang);
+	
+	new
+		styleData[E_STYLE_DATA],
+		label[E_3D_DATA],
+		argCount = numargs() - 6,
+		bool:foundStyle = false
+	;
+
+	if (style != e_STYLE_TYPE_DIALOG)
+	{
+		new hash = bernstein(ident);
+		for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
+		{
+			new
+				ret = Text_FindEntry(YSI_g_sTextSets[i][e_TEXT_SETS_INDEX], hash)
+			;
+			P:7("Text_Format: Textset %d entry %d", i, ret);
+			if (ret != -1)
+			{
+				Styles_GetData(ret, styleData, label);
+				if ((styleData[E_STYLE_DATA_TYPE] & e_STYLE_TYPE_MASK) != style)
+				{
+					P:7("Text_Format: No matching style data. Types differ 0x%08x == 0x%08x", (styleData[E_STYLE_DATA_TYPE] & e_STYLE_TYPE_MASK), style);
+					break;
+				}
+
+				foundStyle = true;
+				break;
+			}
+		}
+
+		if (!foundStyle)
+		{
+			P:7("Text_Format: Style not found");
+			return -1;
+		}
+
+		_Format_SetStyleData(TEXT_MASTER, 0, styleData, label);
+	}
+	else
+	{
+		P:7("Text_Format: Toggling dialog mode");
+		_Text_SetDialogMode();
+	}
+
+	Format_Render(INVALID_PLAYER_ID, lang, dest, size, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, argCount, ___(6));
+
+	return 1;
 }

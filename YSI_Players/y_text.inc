@@ -231,6 +231,21 @@ Operators:
 
 #define Text_Send(%0,%1) PSF:_Text_Send(%0,DO_TEXT_SET:%1 UNDO_MOVE|||)
 #define Text_Render(%0,%1) _Text_Render(%0,DO_TEXT_SET:%1 UNDO_MOVE|||)
+#define Text_Format(%0,%1,%2,%3,%4) _Text_Format(%0,%1,%2,%3,DO_TEXT_SET:%4 UNDO_MOVE|||)
+
+#define Text_Format_GT_0(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_GT_0,%3)
+#define Text_Format_GT_1(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_GT_1,%3)
+#define Text_Format_GT_2(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_GT_2,%3)
+#define Text_Format_GT_3(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_GT_3,%3)
+#define Text_Format_GT_4(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_GT_4,%3)
+#define Text_Format_GT_5(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_GT_5,%3)
+#define Text_Format_GT_6(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_GT_6,%3)
+#define Text_Format_TD(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_TD,%3)
+#define Text_Format_3D(%0,%1,%2,%3 Text_Format(%0,%1,%2, e_STYLE_TYPE_3D,%3)
+#define Text_Format_Client(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_CLIENT,%3)
+#define Text_Format_Player(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_PLAYER,%3)
+#define Text_Format_Other(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_OTHER,%3)
+#define Text_Format_Dialog(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_DIALOG,%3)
 
 //#define _Text_Send(%0YCMD:%1) _Text_Send(%0_:YCMD_REP_0:YCMD_REP_1:%1)
 
