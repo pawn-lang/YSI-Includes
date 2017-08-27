@@ -162,12 +162,12 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 			// Should really add error-checking code for overflows.
 			__ps_stack[__ps_pointer][0] = _:addr;
 			// Single value - either a playerid or a groupid.
-			#if defined _YSI_HAS_GROUP_SYSTEM
+			#if defined _YSI_HAS_y_groups
 				if (Group:addr & GROUP_MASK)
 				{
 					// Use the pre-made iterator functionality.
 					__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_GROUP;
-					cur = Iter_Func@Group(-1, Group:addr);
+					cur = Iter_Func@GroupMember(-1, Group:addr);
 					if (cur == -1)
 					{
 						--__ps_pointer;
@@ -335,10 +335,10 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 	// Each mode has a different end condition.
 	switch (__ps_type{__ps_pointer})
 	{
-		#if defined _YSI_HAS_GROUP_SYSTEM
+		#if defined _YSI_HAS_y_groups
 			case e_PLAYER_SET_TYPE_GROUP:
 			{
-				cur = Iter_Func@Group(cur, Group:_:addr);
+				cur = Iter_Func@GroupMember(cur, Group:_:addr);
 				if (cur == -1)
 				{
 					--__ps_pointer;
