@@ -660,7 +660,7 @@ stock
 			!"Packer",
 			!"Monster",
 			!"Admiral",
-			!"Squallo",
+			!"Squalo",
 			!"Seasparrow",
 			!"Pizzaboy",
 			!"Tram",
