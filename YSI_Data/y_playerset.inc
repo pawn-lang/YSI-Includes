@@ -183,7 +183,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 				{
 					// Uses the new "foreach" format of the infinate loop.
 					__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_PLAYERS;
-					cur = Iter_Begin(Player);
+					cur = Iter_First(Player);
 					if (cur == Iter_End(Player))
 					{
 						--__ps_pointer;
@@ -195,7 +195,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 					case ALL_BOTS:
 					{
 						__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_BOTS;
-						cur = Iter_Begin(Bot);
+						cur = Iter_First(Bot);
 						if (cur == Iter_End(Bot))
 						{
 							--__ps_pointer;
@@ -206,7 +206,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 					case ALL_CHARACTERS:
 					{
 						__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_CHARACTERS;
-						cur = Iter_Begin(Character);
+						cur = Iter_First(Character);
 						if (cur == Iter_End(Character))
 						{
 							--__ps_pointer;
