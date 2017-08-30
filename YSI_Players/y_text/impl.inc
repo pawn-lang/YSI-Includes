@@ -2407,8 +2407,7 @@ stock _Text_Format(dest[], size, Language:lang, e_STYLE_TYPE:style, search[], id
 
 		if (!foundStyle)
 		{
-			P:7("Text_Format: Style not found");
-			return -1;
+			P:7("Text_Format: Style not found, using default");
 		}
 
 		_Format_SetStyleData(TEXT_MASTER, 0, styleData, label);

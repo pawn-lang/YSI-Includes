@@ -303,7 +303,7 @@ static stock Format_AddColour(str[], pos, &rem, &curCol, newCol) <y_render_show 
 	}
 	if (YSI_g_sTempStyle[E_STYLE_DATA_TYPE] != e_STYLE_TYPE_DIALOG && pos == 0)
 	{
-		gInitialColour = curCol;
+		gInitialColour = newCol;
 		// Don't add the colour - this is handled in the text display function.
 		curCol = rgb;
 		return 0;

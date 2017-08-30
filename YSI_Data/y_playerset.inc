@@ -162,12 +162,12 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 			// Should really add error-checking code for overflows.
 			__ps_stack[__ps_pointer][0] = _:addr;
 			// Single value - either a playerid or a groupid.
-			#if defined _YSI_HAS_GROUP_SYSTEM
+			#if defined _YSI_HAS_y_groups
 				if (Group:addr & GROUP_MASK)
 				{
 					// Use the pre-made iterator functionality.
 					__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_GROUP;
-					cur = Iter_Func@Group(-1, Group:addr);
+					cur = Iter_Func@GroupMember(-1, Group:addr);
 					if (cur == -1)
 					{
 						--__ps_pointer;
@@ -183,7 +183,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 				{
 					// Uses the new "foreach" format of the infinate loop.
 					__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_PLAYERS;
-					cur = Iter_Begin(Player);
+					cur = Iter_First(Player);
 					if (cur == Iter_End(Player))
 					{
 						--__ps_pointer;
@@ -195,7 +195,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 					case ALL_BOTS:
 					{
 						__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_BOTS;
-						cur = Iter_Begin(Bot);
+						cur = Iter_First(Bot);
 						if (cur == Iter_End(Bot))
 						{
 							--__ps_pointer;
@@ -206,7 +206,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 					case ALL_CHARACTERS:
 					{
 						__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_CHARACTERS;
-						cur = Iter_Begin(Character);
+						cur = Iter_First(Character);
 						if (cur == Iter_End(Character))
 						{
 							--__ps_pointer;
@@ -335,10 +335,10 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 	// Each mode has a different end condition.
 	switch (__ps_type{__ps_pointer})
 	{
-		#if defined _YSI_HAS_GROUP_SYSTEM
+		#if defined _YSI_HAS_y_groups
 			case e_PLAYER_SET_TYPE_GROUP:
 			{
-				cur = Iter_Func@Group(cur, Group:_:addr);
+				cur = Iter_Func@GroupMember(cur, Group:_:addr);
 				if (cur == -1)
 				{
 					--__ps_pointer;
