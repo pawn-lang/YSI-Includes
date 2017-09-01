@@ -309,7 +309,10 @@ Test:TestState2_y_iter()
 		count = 0;
 	foreach (new i : TestState2_y_iter())
 	{
-		ASSERT(i == 500 || i == 600);
+		if (count)
+			ASSERT(i == 600);
+		else
+			ASSERT(i == 500);
 		++count;
 	}
 	ASSERT(count == 2);
