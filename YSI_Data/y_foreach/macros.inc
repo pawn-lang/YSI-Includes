@@ -958,6 +958,9 @@ native Iter_Index(Iterator:Name<>);
 // Local state for iterator functions that need more than one variable.
 #define iterstate(%5,%6)%9);%9!=_:(%1=%2( %5),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:(%1=%2(_:Iter_State@%1,
 
+// Initial values for special iterators.
+#define iterstart(%0) (%0)
+
 // Make the internal state an array if there is more than one value.
 #define itrst:%1=itrst:(%6,%7) %1[]={%6,%7}
 

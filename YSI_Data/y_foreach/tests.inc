@@ -217,7 +217,7 @@ iterfunc Test2a_y_iter(start)
 	return -1;
 }
 
-#define iterstart@Test2a_y_iter -1
+#define iterstart@Test2a_y_iter iterstart(-1)
 
 iterfunc static stock Test2b_y_iter(start )
 {
@@ -234,7 +234,7 @@ iterfunc static stock Test2b_y_iter(start )
 	return -1;
 }
 
-#define iterstart@Test2b_y_iter -1
+#define iterstart@Test2b_y_iter iterstart(-1)
 
 iterfunc static Test2c_y_iter (start)//__declspec(stock)
 {
@@ -251,7 +251,7 @@ iterfunc static Test2c_y_iter (start)//__declspec(stock)
 	return -1;
 }
 
-#define iterstart@Test2c_y_iter -1
+#define iterstart@Test2c_y_iter iterstart(-1)
 
 iterfunc stock Test2d_y_iter (start )
 {
@@ -268,7 +268,52 @@ iterfunc stock Test2d_y_iter (start )
 	return -1;
 }
 
-#define iterstart@Test2d_y_iter -1
+#define iterstart@Test2d_y_iter iterstart(-1)
+
+iterfunc stock TestState1_y_iter(&iterstate, cur)
+{
+	new
+		ret = iterstate;
+	iterstate = cur;
+	return ret;
+}
+
+#define iterstart@TestState1_y_iter iterstate(-1, 800)
+
+Test:TestState1_y_iter()
+{
+	new
+		count = 0;
+	foreach (new i : TestState1_y_iter())
+	{
+		ASSERT(i == 800);
+		++count;
+	}
+	ASSERT(count == 1);
+}
+
+iterfunc stock TestState2_y_iter(iterstate[2], cur)
+{
+	new
+		ret = iterstate[0];
+	iterstate[0] = iterstate[1];
+	iterstate[1] = cur;
+	return ret;
+}
+
+#define iterstart@TestState2_y_iter iterstate(-1, 500, 600)
+
+Test:TestState2_y_iter()
+{
+	new
+		count = 0;
+	foreach (new i : TestState2_y_iter())
+	{
+		ASSERT(i == 500 || i == 600);
+		++count;
+	}
+	ASSERT(count == 2);
+}
 
 Test:y_iter_Range()
 {
