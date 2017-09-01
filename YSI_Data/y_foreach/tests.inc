@@ -974,7 +974,7 @@ Test:y_iter_Iter_Init1()
 {
 	new
 		Iterator:iter[10]<20>;
-	#pragma unused Iter_Single@iter
+	#pragma unused iterstart@iter
 	Iter_Init(iter);
 	ASSERT(Iter_TrueArray(iter)[0][20] == 20);
 	ASSERT(Iter_TrueArray(iter)[0][19] <= 19);
@@ -988,7 +988,7 @@ Test:y_iter_Iter_Init2()
 {
 	new
 		Iterator:iter[10]<5, 20>;
-	#pragma unused Iter_Multi@iter
+	#pragma unused itermulti@iter
 	Iter_Init(iter);
 	ASSERT(Iter_TrueArray(iter)[0][21] >= 20);
 	ASSERT(Iter_TrueArray(iter)[0][20] == 20);
@@ -2326,6 +2326,79 @@ Test:y_iter_Syntax2a()
 	ASSERT(count == 7 * 2 * 32);
 }
 
+// Test:y_iter_Syntax2aLike()
+// {
+	// new
+		// count = 0;
+	// foreach(new i:Test2a_y_iter) { ++count; }
+	// foreach(new i:Test2a_y_iter ) { ++count; }
+	// foreach(new i: Test2a_y_iter) { ++count; }
+	// foreach(new i: Test2a_y_iter ) { ++count; }
+	// foreach(new i :Test2a_y_iter) { ++count; }
+	// foreach(new i :Test2a_y_iter ) { ++count; }
+	// foreach(new i : Test2a_y_iter) { ++count; }
+	// foreach(new i : Test2a_y_iter ) { ++count; }
+	// foreach( new i:Test2a_y_iter) { ++count; }
+	// foreach( new i:Test2a_y_iter ) { ++count; }
+	// foreach( new i: Test2a_y_iter) { ++count; }
+	// foreach( new i: Test2a_y_iter ) { ++count; }
+	// foreach( new i :Test2a_y_iter) { ++count; }
+	// foreach( new i :Test2a_y_iter ) { ++count; }
+	// foreach( new i : Test2a_y_iter) { ++count; }
+	// foreach( new i : Test2a_y_iter ) { ++count; }
+	// foreach (new i:Test2a_y_iter) { ++count; }
+	// foreach (new i:Test2a_y_iter ) { ++count; }
+	// foreach (new i: Test2a_y_iter) { ++count; }
+	// foreach (new i: Test2a_y_iter ) { ++count; }
+	// foreach (new i :Test2a_y_iter) { ++count; }
+	// foreach (new i :Test2a_y_iter ) { ++count; }
+	// foreach (new i : Test2a_y_iter) { ++count; }
+	// foreach (new i : Test2a_y_iter ) { ++count; }
+	// foreach ( new i:Test2a_y_iter) { ++count; }
+	// foreach ( new i:Test2a_y_iter ) { ++count; }
+	// foreach ( new i: Test2a_y_iter) { ++count; }
+	// foreach ( new i: Test2a_y_iter ) { ++count; }
+	// foreach ( new i :Test2a_y_iter) { ++count; }
+	// foreach ( new i :Test2a_y_iter ) { ++count; }
+	// foreach ( new i : Test2a_y_iter) { ++count; }
+	// foreach ( new i : Test2a_y_iter ) { ++count; }
+	// new
+		// j;
+	// foreach(j:Test2a_y_iter) { ++count; }
+	// foreach(j:Test2a_y_iter ) { ++count; }
+	// foreach(j: Test2a_y_iter) { ++count; }
+	// foreach(j: Test2a_y_iter ) { ++count; }
+	// foreach(j :Test2a_y_iter) { ++count; }
+	// foreach(j :Test2a_y_iter ) { ++count; }
+	// foreach(j : Test2a_y_iter) { ++count; }
+	// foreach(j : Test2a_y_iter ) { ++count; }
+	// foreach( j:Test2a_y_iter) { ++count; }
+	// foreach( j:Test2a_y_iter ) { ++count; }
+	// foreach( j: Test2a_y_iter) { ++count; }
+	// foreach( j: Test2a_y_iter ) { ++count; }
+	// foreach( j :Test2a_y_iter) { ++count; }
+	// foreach( j :Test2a_y_iter ) { ++count; }
+	// foreach( j : Test2a_y_iter) { ++count; }
+	// foreach( j : Test2a_y_iter ) { ++count; }
+	// foreach (j:Test2a_y_iter) { ++count; }
+	// foreach (j:Test2a_y_iter ) { ++count; }
+	// foreach (j: Test2a_y_iter) { ++count; }
+	// foreach (j: Test2a_y_iter ) { ++count; }
+	// foreach (j :Test2a_y_iter) { ++count; }
+	// foreach (j :Test2a_y_iter ) { ++count; }
+	// foreach (j : Test2a_y_iter) { ++count; }
+	// foreach (j : Test2a_y_iter ) { ++count; }
+	// foreach ( j:Test2a_y_iter) { ++count; }
+	// foreach ( j:Test2a_y_iter ) { ++count; }
+	// foreach ( j: Test2a_y_iter) { ++count; }
+	// foreach ( j: Test2a_y_iter ) { ++count; }
+	// foreach ( j :Test2a_y_iter) { ++count; }
+	// foreach ( j :Test2a_y_iter ) { ++count; }
+	// foreach ( j : Test2a_y_iter) { ++count; }
+	// foreach ( j : Test2a_y_iter ) { ++count; }
+	// ASSERT(count == 7 * 2 * 32);
+// }
+
 Test:y_iter_Syntax2b()
 {
 	new
@@ -2550,7 +2623,7 @@ Test:y_iter_Array()
 	new
 		Iterator:Test3[5]<20>;
 	Iter_Init(Test3);
-	#pragma unused Iter_Single@Test3
+	#pragma unused iterstart@Test3
 	new
 		count = 0;
 	foreach (new i : Test3[1])
@@ -2564,7 +2637,7 @@ Test:y_iter_Multi()
 {
 	new
 		Iterator: Test4<7, 11>;
-	#pragma unused Iter_Multi@Test4
+	#pragma unused itermulti@Test4
 	new
 		count = 0;
 	foreach (new i : Test4<2>)

@@ -226,7 +226,7 @@ Array:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iterator:%1<%2> Iterator@%1[_:F@c:F@d:((%2)+1)]={(-(%2)*((%2)-1)),(-(%2)*((%2)-2)),...}F@a$,Iter_Single@%1 F@a$F@a$
+#define Iterator:%1<%2> Iterator@%1[_:F@c:F@d:((%2)+1)]={(-(%2)*((%2)-1)),(-(%2)*((%2)-2)),...}F@a$,iterstart@%1 F@a$F@a$
 #define IteratorArray Iterator
 
 /**--------------------------------------------------------------------------**\
@@ -739,7 +739,7 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iter_TrueCount(%1) F@r(Iter_Single@%1)
+#define Iter_TrueCount(%1) F@r(iterstart@%1)
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_TrueMulti</summary>
@@ -752,7 +752,7 @@ native Iter_FastClear(IteratorArray:Name[]<>);
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iter_TrueMulti(%1) F@r(Iter_Multi@%1)
+#define Iter_TrueMulti(%1) F@r(itermulti@%1)
 
 /**--------------------------------------------------------------------------**\
 <summary>Iter_TrueSize</summary>
@@ -840,8 +840,7 @@ native Iter_Index(Iterator:Name<>);
 #define Iterator@%0\32;%1$ Iterator@%0%1$
 #define Iter_Func@%0\32;%1$ Iter_Func@%0%1$
 #define iterstart@%0\32;%1$ iterstart@%0%1$
-#define Iter_Single@%0\32;%1$ Iter_Single@%0%1$
-#define Iter_Multi@%0\32;%1$ Iter_Multi@%0%1$
+#define itermulti@%0\32;%1$ itermulti@%0%1$
 #define Iter_Init@%0\32;%1$ Iter_Init@%0%1$
 
 // Allow "iterfunc stock", "stock iterfunc", and other varieties.
@@ -873,7 +872,7 @@ native Iter_Index(Iterator:Name<>);
 #define Iter_Func@File:         ITER_TAG_FUNC(File)
 #define Iter_Func@Float:        ITER_TAG_FUNC(Float)
 
-#define ITER_TAG(%0)%1={%2,%3,...}%4: %0:Iterator@%1={%0:%2,%0:%3,...}F@a$,Iter_Single@
+#define ITER_TAG(%0)%1={%2,%3,...}%4: %0:Iterator@%1={%0:%2,%0:%3,...}F@a$,iterstart@
 
 // Many tag types for declared iterators.
 #define Iterator@_:            ITER_TAG(_)
@@ -900,11 +899,11 @@ native Iter_Index(Iterator:Name<>);
 
 // Detect array declarations: "Iterator:X[20]<4>", "Iterator:X<10, 4>", and the
 // frankly silly "Iterator:X[20]<10, 4>".
-#define F@c:F@d:((%0,%1)+1)]%2$,Iter_Single@%9$%7$ F@d:((%0)+(%1))]={0,1,...}F@a$,Iter_Multi@%9$[%0]%7$
+#define F@c:F@d:((%0,%1)+1)]%2$,iterstart@%9$%7$ F@d:((%0)+(%1))]={0,1,...}F@a$,itermulti@%9$[%0]%7$
 #if defined NESTED_ELLIPSIS
-	#define F@d:%0]%2$,Iter_%8@%9[%3$%7$ %0]={{0,1,...},...},Iter_%8@%9[%3$%7$
+	#define F@d:%0]%2$,iter%8@%9[%3$%7$ %0]={{0,1,...},...},iter%8@%9[%3$%7$
 #else
-	#define F@d:%0]%2$,Iter_%8@%9[%3$%7$ %0],Iter_%8@%9[%3$%7$,F@g(Iter_Init@%9,)=F@s(Iter_%8@%9[%3$)
+	#define F@d:%0]%2$,iter%8@%9[%3$%7$ %0],iter%8@%9[%3$%7$,F@g(Iter_Init@%9,)=F@s(iter%8@%9[%3$)
 #endif
 
 // Special "sizeof" that strips subscripts.  "|||" prevents "sizeof" recursion.
@@ -930,13 +929,13 @@ native Iter_Index(Iterator:Name<>);
 //   %2 - Array.
 //  ... - All other parameters.
 //  
-#define F@j:%7$%5(%0)       %5A(F@g(Iter_Single@%0,),F@h:Iterator@%0)
-#define F@i:%7$%5(%0<%2>%1) %5B(F@h:Iter_Multi@%0,%2,F@h:Iterator@%0%1)
+#define F@j:%7$%5(%0)       %5A(F@g(iterstart@%0,),F@h:Iterator@%0)
+#define F@i:%7$%5(%0<%2>%1) %5B(F@h:itermulti@%0,%2,F@h:Iterator@%0%1)
 
 #define _Y_ITER_DO_FOREACH(%1,%0) (_:F@n:F@l:F@m:F@a$%1,%0$
 
 // Multi-iterator.
-#define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=F@h:Iterator@%0[_:%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
+#define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=F@h:Iterator@%0[_:%1])<(F@s(Iterator@%0)-F@s(itermulti@%0));
 
 // Special iterator.
 #define F@l:%9$%1,%0(%2)%8$ F@r(iterstart@%0));_:(F@r(iterstart@%0))!=_:(%1=F@h:Iter_Func@%0(_:%1,%2));
@@ -948,7 +947,7 @@ native Iter_Index(Iterator:Name<>);
 #define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
 
 // Reverse multi-iterator.
-#define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=Iter_Prev_InternalB(Iter_Multi@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
+#define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=Iter_Prev_InternalB(itermulti@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(itermulti@%0));
 
 // Reverse normal iterator.
 #define F@q:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
