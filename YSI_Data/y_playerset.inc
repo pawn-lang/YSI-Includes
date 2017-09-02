@@ -497,7 +497,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 	return -1;
 }
 
-#define iterstart@PS -1
+#define Iterator@PS iterstart(-1)
 
 // This function gets the required data from custom format (enum) arrays.
 stock __PS_C(source[MAX_PLAYERS][], idx)

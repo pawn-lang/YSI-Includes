@@ -278,7 +278,7 @@ Array:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define iterstart@Reverse%9$);%9!=_:(%1=%9(_:%9,%0)); F@p:F@q:$%1,%0$
+#define Iterator@Reverse%9$%9))-1);_:(%1=%9(%0)%9)%9; J@))+_:F@p:F@q:$%1,%0$
 
 /*
 
@@ -932,34 +932,37 @@ native Iter_Index(Iterator:Name<>);
 #define F@j:%7$%5(%0)       %5A(F@g(iterstart@%0,),F@h:Iterator@%0)
 #define F@i:%7$%5(%0<%2>%1) %5B(F@h:itermulti@%0,%2,F@h:Iterator@%0%1)
 
-#define _Y_ITER_DO_FOREACH(%1,%0) (_:F@n:F@l:F@m:F@a$%1,%0$
+#define _Y_ITER_DO_FOREACH(%1,%0) (_:F@n:F@m:F@a$%1,%0$
 
 // Multi-iterator.
 #define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=F@h:Iterator@%0[_:%1])<(F@s(Iterator@%0)-F@s(itermulti@%0));
 
 // Special iterator.
-#define F@l:%9$%1,%0(%2)%8$ F@r(iterstart@%0));_:(F@r(iterstart@%0))!=_:(%1=F@h:Iter_Func@%0(_:%1,%2));
+#define iterstart(%1)%9$%9))-1);_:(%9:Iterator@%0[_:%2]%9; J@))-1)+(%1);_:(%1)!=_:F@k:(%2=Iter_Func@%0 F@a$(_:%2));
+#define iterstate iterstart
+
+#define J@))-1)+(%5,%6);_:(%9)!=_:%9(%1=%2$(_:%1)); J@))-1)+(%5),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@k:(%1=%2$(_:Iter_State@%1,_:%1));
+
+//#define F@l:%9$%1,%0(%2)%8$ F@r(Iterator@%0));_:(F@r(Iterator@%0))!=_:(%1=F@h:Iter_Func@%0(_:%1,%2));
+#define F@k:(%0(%2)%8$(%1)%9); (%0(%1,%2)%8$%9);
 
 // Normal iterator.
 #define F@m:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=F@h:Iterator@%0[_:%1])!=(F@s(Iterator@%0)-1);
 
 // Convert from a normal iterator to a special iterator with parameters.
-#define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
+//#define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
 
 // Reverse multi-iterator.
-#define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=Iter_Prev_InternalB(itermulti@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(itermulti@%0));
+#define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-2-(%2));_:(%1=Iter_Prev_InternalB(itermulti@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(itermulti@%0));
 
 // Reverse normal iterator.
-#define F@q:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
+#define F@q:%9$%1,%0$ F@s(Iterator@%0)-2);_:(%1=Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
 
 // Special iterator function declaration.
 #define F@y:%0(%1) Iter_Func@%0(%1)F@a$
 
-// Local state for iterator functions that need more than one variable.
-#define iterstate(%5,%6)%9);%9!=_:(%1=%2( %5),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:(%1=%2(_:Iter_State@%1,
-
 // Initial values for special iterators.
-#define iterstart(%0) (%0)
+//#define iterstart(%0) (%0)
 
 // Make the internal state an array if there is more than one value.
 #define itrst:%1=itrst:(%6,%7) %1[]={%6,%7}

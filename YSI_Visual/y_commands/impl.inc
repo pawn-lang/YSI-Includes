@@ -1121,7 +1121,7 @@ global Iter_Func@Command(start)
 	return COMMAND_NOT_FOUND;
 }
 
-#define iterstart@Command -1
+#define Iterator@Command iterstart(-1)
 
 /**--------------------------------------------------------------------------**\
 <summary>PlayerCommand</summary>
@@ -1153,7 +1153,7 @@ global Iter_Func@PlayerCommand(start, pid)
 	return COMMAND_NOT_FOUND;
 }
 
-#define iterstart@PlayerCommand -1
+#define Iterator@PlayerCommand iterstart(-1)
 
 /*
   

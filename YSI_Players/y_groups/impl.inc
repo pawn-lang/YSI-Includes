@@ -132,7 +132,7 @@ stock PlayerGroups(a, b)
 // Define the groups iterator in terms of the underlying bits, but without the
 // need for users to know about the "YSI_gGroupPlayers" array, just the player.
 #define Iter_Func@PlayerGroups(%1,%0) GROUP_MANGLE(Iter_Func@Bits(_:%1,YSI_gGroupPlayers[%0]))
-#define iterstart@PlayerGroups iterstart@Bits
+#define Iterator@PlayerGroups Iterator@Bits
 
 static
 	// Function pointers for chaining.
@@ -1235,7 +1235,7 @@ stock Iter_Func@Group(start, Group:group)
 	return Iter_Func@GroupMember(start, Group:group);
 }
 
-#define iterstart@Group -1
+#define Iterator@Group iterstart(-1)
 
 foreign Iter_Func@GroupMember(start, Group:group);
 
@@ -1258,7 +1258,7 @@ global Iter_Func@GroupMember(start, Group:group)
 	return start;
 }
 
-#define iterstart@GroupMember -1
+#define Iterator@GroupMember iterstart(-1)
 
 /**--------------------------------------------------------------------------**\
 <summary>CreatedGroup</summary>
@@ -1288,7 +1288,7 @@ global Group:Iter_Func@CreatedGroup(group)
 	return INVALID_GROUP;
 }
 
-#define iterstart@CreatedGroup -1
+#define Iterator@CreatedGroup iterstart(-1)
 
 /**--------------------------------------------------------------------------**\
 <summary>ChildGroup</summary>
@@ -1315,7 +1315,7 @@ global Group:Iter_Func@GroupChild(start, Group:parent)
 	return GROUP_MANGLE(Iter_Func@Bits(start, YSI_g_sChildGroups[_:GROUP_TEMP_FIX(parent)], bits<_MAX_GROUPS_G>));
 }
 
-#define iterstart@GroupChild iterstart@Bits
+#define Iterator@GroupChild Iterator@Bits
 
 /**--------------------------------------------------------------------------**\
 <summary>

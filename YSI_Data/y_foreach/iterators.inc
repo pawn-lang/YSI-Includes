@@ -256,7 +256,7 @@ stock iterfunc Range(cur, min, max, step = 1)
 	return (min <= cur < max || max < cur <= min) ? cur : cellmin;
 }
 
-#define iterstart@Range iterstart(cellmin)
+#define Iterator@Range iterstart(cellmin)
 
 stock iterfunc Powers(&iterstate, cur, base)
 {
@@ -277,7 +277,7 @@ stock iterfunc Powers(&iterstate, cur, base)
 	return 1;
 }
 
-#define iterstart@Powers iterstate(0, 0)
+#define Iterator@Powers iterstate(0, 0)
 
 stock iterfunc Fib(&iterstate, cur)
 {
@@ -302,7 +302,7 @@ stock iterfunc Fib(&iterstate, cur)
 	return (iterstate = iterstate + cur) - cur;
 }
 
-#define iterstart@Fib iterstate(-1, 1)
+#define Iterator@Fib iterstate(-1, 1)
 
 stock iterfunc Random(&iterstate, cur, count, min = cellmax, max = 0)
 {
@@ -352,7 +352,7 @@ stock iterfunc Random(&iterstate, cur, count, min = cellmax, max = 0)
 	}
 }
 
-#define iterstart@Random iterstate(cellmin, 0)
+#define Iterator@Random iterstate(cellmin, 0)
 
 stock iterfunc Null(cur, arr[], size = sizeof (arr))
 {
@@ -373,7 +373,7 @@ stock iterfunc Null(cur, arr[], size = sizeof (arr))
 	return -1;
 }
 
-#define iterstart@Null iterstart(-1)
+#define Iterator@Null iterstart(-1)
 
 stock iterfunc NonNull(cur, arr[], size = sizeof (arr))
 {
@@ -394,7 +394,7 @@ stock iterfunc NonNull(cur, arr[], size = sizeof (arr))
 	return -1;
 }
 
-#define iterstart@NonNull iterstart(-1)
+#define Iterator@NonNull iterstart(-1)
 
 stock iterfunc Until(cur, val, arr[], size = sizeof (arr))
 {
@@ -408,7 +408,7 @@ stock iterfunc Until(cur, val, arr[], size = sizeof (arr))
 	return (++cur >= size || arr[cur] == val) ? -1 : cur;
 }
 
-#define iterstart@Until iterstart(-1)
+#define Iterator@Until iterstart(-1)
 
 stock iterfunc Filter(cur, val, arr[], size = sizeof (arr))
 {
@@ -422,10 +422,10 @@ stock iterfunc Filter(cur, val, arr[], size = sizeof (arr))
 	return -1;
 }
 
-#define iterstart@Filter iterstart(-1)
+#define Iterator@Filter iterstart(-1)
 
 #define Iter_Func@None(%0,%1) _ITER<None>(%1,%0)
-#define iterstart@None iterstart(-1)
+#define Iterator@None iterstart(-1)
 #define Iter_None_InternalA(%0,%1,%9) Iter_None_Internal(%1,F@s(%1)-1,%9)
 #define Iter_None_InternalB(%0,%2,%1,%9) Iter_None_Internal(%1,F@s(%1)-F@s(%0),%9)
 
@@ -445,7 +445,7 @@ stock Iter_None_Internal(array[], size, value)
 }
 
 #define Iter_Func@All(%0,%1) _ITER<All>(%1,%0)
-#define iterstart@All iterstart(-1)
+#define Iterator@All iterstart(-1)
 #define Iter_All_InternalA(%0,%1,%9) Iter_All_Internal(%1,F@s(%1)-1,%9)
 #define Iter_All_InternalB(%0,%2,%1,%9) Iter_All_Internal(%1,F@s(%1)-F@s(%0),%9)
 

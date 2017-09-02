@@ -177,7 +177,7 @@ stock Iter_Func@PA(start, PlayerArray:data<>)
 	return cellmin;
 }
 
-#define iterstart@PA -1
+#define Iterator@PA iterstart(-1)
 
 #undef PlayerArray
 

@@ -362,7 +362,7 @@ stock Iter_Func@Bits(start, BitArray:data<>, size = sizeof (data))
 	return -1;
 }
 
-#define iterstart@Bits -1
+#define Iterator@Bits iterstart(-1)
 
 stock Iter_Func@Blanks(start, BitArray:data<>, size = sizeof (data))
 {
@@ -389,7 +389,7 @@ stock Iter_Func@Blanks(start, BitArray:data<>, size = sizeof (data))
 	return -1;
 }
 
-#define iterstart@Blanks -1
+#define Iterator@Blanks iterstart(-1)
 
 #define bits<%1> Bit_Bits(%1) 
 
