@@ -593,3 +593,33 @@ Test:y_hooks_numargs()
 	OnTestNumArgs4(6, 1, 2, 3, 4, 5, 6);
 }
 
+hook y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_1>
+{
+	g_y_hooksVar = strval(c[0]);
+}
+
+hook y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_2>
+{
+	g_y_hooksVar = strval(c[5]);
+}
+
+rehook y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_3>
+{
+	g_y_hooksVar += strval(c[5]);
+}
+
+Test:y_hooks_State1()
+{
+	state y_hooks_state : y_hooks_state_1;
+	CallLocalFunction("y_hooks_State1", "s", "1000 2000");
+	ASSERT(g_y_hooksVar == 1000);
+	state y_hooks_state : y_hooks_state_2;
+	CallLocalFunction("y_hooks_State1", "s", "1000 2000");
+	ASSERT(g_y_hooksVar == 2000);
+	state y_hooks_state : y_hooks_state_1;
+	CallLocalFunction("y_hooks_State1", "s", "1000 2000");
+	state y_hooks_state : y_hooks_state_3;
+	CallLocalFunction("y_hooks_State1", "s", "1000 2000");
+	ASSERT(g_y_hooksVar == 3000);
+}
+
