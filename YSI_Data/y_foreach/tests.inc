@@ -2301,6 +2301,257 @@ Test:y_iter_Syntax3d()
 	ASSERT(count == 7 * 2 * 32);
 }
 
+stock iterfunc y_iter_Syntax6(&iterstate, cur, inc)
+{
+	cur += (inc * iterstate);
+	return cur;
+}
+
+#define Iterator@y_iter_Syntax6 iterstate(0, 1024)
+
+Test:y_iter_Syntax6a()
+{
+	new
+		count = 0;
+	foreach (new i : y_iter_Syntax6(1024))
+	{
+		ASSERT(i % 1048576 == 0);
+		++count;
+	}
+	ASSERT(count == 4096);
+}
+
+Test:y_iter_Syntax6b()
+{
+	new
+		count = 0;
+	foreach(new i:y_iter_Syntax6(1024)) { ++count; }
+	foreach(new i:y_iter_Syntax6(1024) ) { ++count; }
+	foreach(new i: y_iter_Syntax6(1024)) { ++count; }
+	foreach(new i: y_iter_Syntax6(1024) ) { ++count; }
+	foreach(new i :y_iter_Syntax6(1024)) { ++count; }
+	foreach(new i :y_iter_Syntax6(1024) ) { ++count; }
+	foreach(new i : y_iter_Syntax6(1024)) { ++count; }
+	foreach(new i : y_iter_Syntax6(1024) ) { ++count; }
+	foreach( new i:y_iter_Syntax6(1024)) { ++count; }
+	foreach( new i:y_iter_Syntax6(1024) ) { ++count; }
+	foreach( new i: y_iter_Syntax6(1024)) { ++count; }
+	foreach( new i: y_iter_Syntax6(1024) ) { ++count; }
+	foreach( new i :y_iter_Syntax6(1024)) { ++count; }
+	foreach( new i :y_iter_Syntax6(1024) ) { ++count; }
+	foreach( new i : y_iter_Syntax6(1024)) { ++count; }
+	foreach( new i : y_iter_Syntax6(1024) ) { ++count; }
+	foreach (new i:y_iter_Syntax6(1024)) { ++count; }
+	foreach (new i:y_iter_Syntax6(1024) ) { ++count; }
+	foreach (new i: y_iter_Syntax6(1024)) { ++count; }
+	foreach (new i: y_iter_Syntax6(1024) ) { ++count; }
+	foreach (new i :y_iter_Syntax6(1024)) { ++count; }
+	foreach (new i :y_iter_Syntax6(1024) ) { ++count; }
+	foreach (new i : y_iter_Syntax6(1024)) { ++count; }
+	foreach (new i : y_iter_Syntax6(1024) ) { ++count; }
+	foreach ( new i:y_iter_Syntax6(1024)) { ++count; }
+	foreach ( new i:y_iter_Syntax6(1024) ) { ++count; }
+	foreach ( new i: y_iter_Syntax6(1024)) { ++count; }
+	foreach ( new i: y_iter_Syntax6(1024) ) { ++count; }
+	foreach ( new i :y_iter_Syntax6(1024)) { ++count; }
+	foreach ( new i :y_iter_Syntax6(1024) ) { ++count; }
+	foreach ( new i : y_iter_Syntax6(1024)) { ++count; }
+	foreach ( new i : y_iter_Syntax6(1024) ) { ++count; }
+	ASSERT(count == 4096 * 1 * 32);
+#if _DEBUG
+	new TODO@issue_217;
+#endif
+//	new
+//		j;
+//	foreach(j:y_iter_Syntax6(1024)) { ++count; }
+//	foreach(j:y_iter_Syntax6(1024) ) { ++count; }
+//	foreach(j: y_iter_Syntax6(1024)) { ++count; }
+//	foreach(j: y_iter_Syntax6(1024) ) { ++count; }
+//	foreach(j :y_iter_Syntax6(1024)) { ++count; }
+//	foreach(j :y_iter_Syntax6(1024) ) { ++count; }
+//	foreach(j : y_iter_Syntax6(1024)) { ++count; }
+//	foreach(j : y_iter_Syntax6(1024) ) { ++count; }
+//	foreach( j:y_iter_Syntax6(1024)) { ++count; }
+//	foreach( j:y_iter_Syntax6(1024) ) { ++count; }
+//	foreach( j: y_iter_Syntax6(1024)) { ++count; }
+//	foreach( j: y_iter_Syntax6(1024) ) { ++count; }
+//	foreach( j :y_iter_Syntax6(1024)) { ++count; }
+//	foreach( j :y_iter_Syntax6(1024) ) { ++count; }
+//	foreach( j : y_iter_Syntax6(1024)) { ++count; }
+//	foreach( j : y_iter_Syntax6(1024) ) { ++count; }
+//	foreach (j:y_iter_Syntax6(1024)) { ++count; }
+//	foreach (j:y_iter_Syntax6(1024) ) { ++count; }
+//	foreach (j: y_iter_Syntax6(1024)) { ++count; }
+//	foreach (j: y_iter_Syntax6(1024) ) { ++count; }
+//	foreach (j :y_iter_Syntax6(1024)) { ++count; }
+//	foreach (j :y_iter_Syntax6(1024) ) { ++count; }
+//	foreach (j : y_iter_Syntax6(1024)) { ++count; }
+//	foreach (j : y_iter_Syntax6(1024) ) { ++count; }
+//	foreach ( j:y_iter_Syntax6(1024)) { ++count; }
+//	foreach ( j:y_iter_Syntax6(1024) ) { ++count; }
+//	foreach ( j: y_iter_Syntax6(1024)) { ++count; }
+//	foreach ( j: y_iter_Syntax6(1024) ) { ++count; }
+//	foreach ( j :y_iter_Syntax6(1024)) { ++count; }
+//	foreach ( j :y_iter_Syntax6(1024) ) { ++count; }
+//	foreach ( j : y_iter_Syntax6(1024)) { ++count; }
+//	foreach ( j : y_iter_Syntax6(1024) ) { ++count; }
+//	ASSERT(count == 4096 * 2 * 32);
+}
+
+Test:y_iter_Syntax6c()
+{
+	new
+		count = 0;
+	foreach(new i:y_iter_Syntax6[1024]) { ++count; }
+	foreach(new i:y_iter_Syntax6[1024] ) { ++count; }
+	foreach(new i: y_iter_Syntax6[1024]) { ++count; }
+	foreach(new i: y_iter_Syntax6[1024] ) { ++count; }
+	foreach(new i :y_iter_Syntax6[1024]) { ++count; }
+	foreach(new i :y_iter_Syntax6[1024] ) { ++count; }
+	foreach(new i : y_iter_Syntax6[1024]) { ++count; }
+	foreach(new i : y_iter_Syntax6[1024] ) { ++count; }
+	foreach( new i:y_iter_Syntax6[1024]) { ++count; }
+	foreach( new i:y_iter_Syntax6[1024] ) { ++count; }
+	foreach( new i: y_iter_Syntax6[1024]) { ++count; }
+	foreach( new i: y_iter_Syntax6[1024] ) { ++count; }
+	foreach( new i :y_iter_Syntax6[1024]) { ++count; }
+	foreach( new i :y_iter_Syntax6[1024] ) { ++count; }
+	foreach( new i : y_iter_Syntax6[1024]) { ++count; }
+	foreach( new i : y_iter_Syntax6[1024] ) { ++count; }
+	foreach (new i:y_iter_Syntax6[1024]) { ++count; }
+	foreach (new i:y_iter_Syntax6[1024] ) { ++count; }
+	foreach (new i: y_iter_Syntax6[1024]) { ++count; }
+	foreach (new i: y_iter_Syntax6[1024] ) { ++count; }
+	foreach (new i :y_iter_Syntax6[1024]) { ++count; }
+	foreach (new i :y_iter_Syntax6[1024] ) { ++count; }
+	foreach (new i : y_iter_Syntax6[1024]) { ++count; }
+	foreach (new i : y_iter_Syntax6[1024] ) { ++count; }
+	foreach ( new i:y_iter_Syntax6[1024]) { ++count; }
+	foreach ( new i:y_iter_Syntax6[1024] ) { ++count; }
+	foreach ( new i: y_iter_Syntax6[1024]) { ++count; }
+	foreach ( new i: y_iter_Syntax6[1024] ) { ++count; }
+	foreach ( new i :y_iter_Syntax6[1024]) { ++count; }
+	foreach ( new i :y_iter_Syntax6[1024] ) { ++count; }
+	foreach ( new i : y_iter_Syntax6[1024]) { ++count; }
+	foreach ( new i : y_iter_Syntax6[1024] ) { ++count; }
+	ASSERT(count == 4096 * 1 * 32);
+#if _DEBUG
+	new TODO@issue_217;
+#endif
+//	new
+//		j;
+//	foreach(j:y_iter_Syntax6[1024]) { ++count; }
+//	foreach(j:y_iter_Syntax6[1024] ) { ++count; }
+//	foreach(j: y_iter_Syntax6[1024]) { ++count; }
+//	foreach(j: y_iter_Syntax6[1024] ) { ++count; }
+//	foreach(j :y_iter_Syntax6[1024]) { ++count; }
+//	foreach(j :y_iter_Syntax6[1024] ) { ++count; }
+//	foreach(j : y_iter_Syntax6[1024]) { ++count; }
+//	foreach(j : y_iter_Syntax6[1024] ) { ++count; }
+//	foreach( j:y_iter_Syntax6[1024]) { ++count; }
+//	foreach( j:y_iter_Syntax6[1024] ) { ++count; }
+//	foreach( j: y_iter_Syntax6[1024]) { ++count; }
+//	foreach( j: y_iter_Syntax6[1024] ) { ++count; }
+//	foreach( j :y_iter_Syntax6[1024]) { ++count; }
+//	foreach( j :y_iter_Syntax6[1024] ) { ++count; }
+//	foreach( j : y_iter_Syntax6[1024]) { ++count; }
+//	foreach( j : y_iter_Syntax6[1024] ) { ++count; }
+//	foreach (j:y_iter_Syntax6[1024]) { ++count; }
+//	foreach (j:y_iter_Syntax6[1024] ) { ++count; }
+//	foreach (j: y_iter_Syntax6[1024]) { ++count; }
+//	foreach (j: y_iter_Syntax6[1024] ) { ++count; }
+//	foreach (j :y_iter_Syntax6[1024]) { ++count; }
+//	foreach (j :y_iter_Syntax6[1024] ) { ++count; }
+//	foreach (j : y_iter_Syntax6[1024]) { ++count; }
+//	foreach (j : y_iter_Syntax6[1024] ) { ++count; }
+//	foreach ( j:y_iter_Syntax6[1024]) { ++count; }
+//	foreach ( j:y_iter_Syntax6[1024] ) { ++count; }
+//	foreach ( j: y_iter_Syntax6[1024]) { ++count; }
+//	foreach ( j: y_iter_Syntax6[1024] ) { ++count; }
+//	foreach ( j :y_iter_Syntax6[1024]) { ++count; }
+//	foreach ( j :y_iter_Syntax6[1024] ) { ++count; }
+//	foreach ( j : y_iter_Syntax6[1024]) { ++count; }
+//	foreach ( j : y_iter_Syntax6[1024] ) { ++count; }
+//	ASSERT(count == 4096 * 2 * 32);
+}
+
+Test:y_iter_Syntax6d()
+{
+	new
+		count = 0;
+	foreach(new i:y_iter_Syntax6(1024)) { ++count; }
+	foreach(new i:y_iter_Syntax6(1024) ) { ++count; }
+	foreach(new i: y_iter_Syntax6(1024)) { ++count; }
+	foreach(new i: y_iter_Syntax6(1024) ) { ++count; }
+	foreach(new i :y_iter_Syntax6(1024)) { ++count; }
+	foreach(new i :y_iter_Syntax6(1024) ) { ++count; }
+	foreach(new i : y_iter_Syntax6(1024)) { ++count; }
+	foreach(new i : y_iter_Syntax6(1024) ) { ++count; }
+	foreach( new i:y_iter_Syntax6(1024)) { ++count; }
+	foreach( new i:y_iter_Syntax6(1024) ) { ++count; }
+	foreach( new i: y_iter_Syntax6(1024)) { ++count; }
+	foreach( new i: y_iter_Syntax6(1024) ) { ++count; }
+	foreach( new i :y_iter_Syntax6(1024)) { ++count; }
+	foreach( new i :y_iter_Syntax6(1024) ) { ++count; }
+	foreach( new i : y_iter_Syntax6(1024)) { ++count; }
+	foreach( new i : y_iter_Syntax6(1024) ) { ++count; }
+	foreach (new i:y_iter_Syntax6(1024)) { ++count; }
+	foreach (new i:y_iter_Syntax6(1024) ) { ++count; }
+	foreach (new i: y_iter_Syntax6(1024)) { ++count; }
+	foreach (new i: y_iter_Syntax6(1024) ) { ++count; }
+	foreach (new i :y_iter_Syntax6(1024)) { ++count; }
+	foreach (new i :y_iter_Syntax6(1024) ) { ++count; }
+	foreach (new i : y_iter_Syntax6(1024)) { ++count; }
+	foreach (new i : y_iter_Syntax6(1024) ) { ++count; }
+	foreach ( new i:y_iter_Syntax6(1024)) { ++count; }
+	foreach ( new i:y_iter_Syntax6(1024) ) { ++count; }
+	foreach ( new i: y_iter_Syntax6(1024)) { ++count; }
+	foreach ( new i: y_iter_Syntax6(1024) ) { ++count; }
+	foreach ( new i :y_iter_Syntax6(1024)) { ++count; }
+	foreach ( new i :y_iter_Syntax6(1024) ) { ++count; }
+	foreach ( new i : y_iter_Syntax6(1024)) { ++count; }
+	foreach ( new i : y_iter_Syntax6(1024) ) { ++count; }
+	ASSERT(count == 4096 * 1 * 32);
+#if _DEBUG
+	new TODO@issue_217;
+#endif
+//	new
+//		j;
+//	foreach(j:y_iter_Syntax6(1024)) { ++count; }
+//	foreach(j:y_iter_Syntax6(1024) ) { ++count; }
+//	foreach(j: y_iter_Syntax6(1024)) { ++count; }
+//	foreach(j: y_iter_Syntax6(1024) ) { ++count; }
+//	foreach(j :y_iter_Syntax6(1024)) { ++count; }
+//	foreach(j :y_iter_Syntax6(1024) ) { ++count; }
+//	foreach(j : y_iter_Syntax6(1024)) { ++count; }
+//	foreach(j : y_iter_Syntax6(1024) ) { ++count; }
+//	foreach( j:y_iter_Syntax6(1024)) { ++count; }
+//	foreach( j:y_iter_Syntax6(1024) ) { ++count; }
+//	foreach( j: y_iter_Syntax6(1024)) { ++count; }
+//	foreach( j: y_iter_Syntax6(1024) ) { ++count; }
+//	foreach( j :y_iter_Syntax6(1024)) { ++count; }
+//	foreach( j :y_iter_Syntax6(1024) ) { ++count; }
+//	foreach( j : y_iter_Syntax6(1024)) { ++count; }
+//	foreach( j : y_iter_Syntax6(1024) ) { ++count; }
+//	foreach (j:y_iter_Syntax6(1024)) { ++count; }
+//	foreach (j:y_iter_Syntax6(1024) ) { ++count; }
+//	foreach (j: y_iter_Syntax6(1024)) { ++count; }
+//	foreach (j: y_iter_Syntax6(1024) ) { ++count; }
+//	foreach (j :y_iter_Syntax6(1024)) { ++count; }
+//	foreach (j :y_iter_Syntax6(1024) ) { ++count; }
+//	foreach (j : y_iter_Syntax6(1024)) { ++count; }
+//	foreach (j : y_iter_Syntax6(1024) ) { ++count; }
+//	foreach ( j:y_iter_Syntax6(1024)) { ++count; }
+//	foreach ( j:y_iter_Syntax6(1024) ) { ++count; }
+//	foreach ( j: y_iter_Syntax6(1024)) { ++count; }
+//	foreach ( j: y_iter_Syntax6(1024) ) { ++count; }
+//	foreach ( j :y_iter_Syntax6(1024)) { ++count; }
+//	foreach ( j :y_iter_Syntax6(1024) ) { ++count; }
+//	foreach ( j : y_iter_Syntax6(1024)) { ++count; }
+//	foreach ( j : y_iter_Syntax6(1024) ) { ++count; }
+//	ASSERT(count == 7 * 2 * 32);
+}
+
 Test:y_iter_Syntax2a()
 {
 	new
@@ -2374,7 +2625,7 @@ Test:y_iter_Syntax2a()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax2aLike()
+Test:y_iter_Syntax2e()
 {
 	new
 		count = 0;

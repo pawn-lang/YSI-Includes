@@ -935,19 +935,20 @@ native Iter_Index(Iterator:Name<>);
 #define _Y_ITER_DO_FOREACH(%1,%0) (_:F@n:F@m:F@a$%1,%0$
 
 // Multi-iterator.
-#define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=F@h:Iterator@%0[_:%1])<(F@s(Iterator@%0)-F@s(itermulti@%0));
+#define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1])<(F@s(Iterator@%0)-F@s(itermulti@%0));
 
 // Special iterator.
-#define iterstart(%1)%9$%9))-1);_:(%9:Iterator@%0[_:%2]%9; J@))-1)+(%1);_:(%1)!=_:F@k:(%2=Iter_Func@%0 F@a$(_:%2));
+#define iterstart(%1)%9$%9))-1);_:(%9=Iterator@%0$[_:%2]%9; J@))-1)+(%1);_:(%1)!=_:F@k:F@l:(%2=Iter_Func@%0$(_:%2));
 #define iterstate iterstart
 
-#define J@))-1)+(%5,%6);_:(%9)!=_:%9(%1=%2$(_:%1)); J@))-1)+(%5),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@k:(%1=%2$(_:Iter_State@%1,_:%1));
+#define J@))-1)+(%5,%6);_:(%9)!=_:%9(%1=%2$(_:%1)); J@))-1)+(%5),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@k:F@l:(%1=%2$(_:Iter_State@%1,_:%1));
 
 //#define F@l:%9$%1,%0(%2)%8$ F@r(Iterator@%0));_:(F@r(Iterator@%0))!=_:(%1=F@h:Iter_Func@%0(_:%1,%2));
-#define F@k:(%0(%2)%8$(%1)%9); (%0(%1,%2)%8$%9);
+#define F@k:F@l:(%0(%2)%8$(%1)%9); (%0(%1,%2)%8$%9);
+#define F@l:(%0[%2]%8$(%1)%9); (%0(%1,%2)%8$%9);
 
 // Normal iterator.
-#define F@m:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=F@h:Iterator@%0[_:%1])!=(F@s(Iterator@%0)-1);
+#define F@m:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=Iterator@%0 F@a$[_:%1])!=(F@s(Iterator@%0)-1);
 
 // Convert from a normal iterator to a special iterator with parameters.
 //#define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
