@@ -1715,17 +1715,27 @@ static stock Inline_DecodeComplex(from[], &at, &len)
 			// Start of the (next) cell.  For these two, doing "at += 2;"
 			// spilled the pointer over in to the next cell.
 			case 0: len = (from[slot + 1] & 0x0FFF) + 1;
-			#define I@(%0) case %0:len=((from[slot]>>>%0)&0x0FFF)+1;
+			#define Inline_DecodeOne(%0) case %0:len=((from[slot]>>>%0)&0x0FFF)+1
 			// Whole length in one (current) cell.
-			I@(02)I@(04)I@(06)I@(08)I@(10)I@(12)I@(14)I@(16)I@(18)
-			#undef I@
+			Inline_DecodeOne(02);
+			Inline_DecodeOne(04);
+			Inline_DecodeOne(06);
+			Inline_DecodeOne(08);
+			Inline_DecodeOne(10);
+			Inline_DecodeOne(12);
+			Inline_DecodeOne(14);
+			Inline_DecodeOne(16);
+			Inline_DecodeOne(18);
 			// End of the cell.
 			case 20: len = (from[slot] >>> 20) + 1;
 			// Two cells (let the compiler do the maths for us).
-			#define I@(%0) case %0:len=((from[slot]>>>%0)|((from[slot+1]&(0xFFF>>>(32-%0)))<<(32-%0)))+1;
-			I@(22)I@(24)I@(26)I@(28)I@(30)
+			#define Inline_DecodeTwo(%0) case %0:len=((from[slot]>>>%0)|((from[slot+1]&(0xFFF>>>(32-%0)))<<(32-%0)))+1
+			Inline_DecodeTwo(22);
+			Inline_DecodeTwo(24);
+			Inline_DecodeTwo(26);
+			Inline_DecodeTwo(28);
+			Inline_DecodeTwo(30);
 			P:C(default: P:E("Odd offset in y_inline."););
-			#undef I@
 		}
 		at += 12;
 	}

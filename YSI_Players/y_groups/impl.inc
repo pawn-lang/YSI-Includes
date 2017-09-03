@@ -1235,7 +1235,12 @@ stock Iter_Func@Group(start, Group:group)
 	return Iter_Func@GroupMember(start, Group:group);
 }
 
-#define Iterator@Group iterstart(-1)
+// Else.  VERY similar to the `iterstart` macro, but without the first `J@`,
+// which is used both for `sizeof` (we already gave it `I@`) and for detecting
+// state functions, which this is not one of (so doesn't need the detection -
+// and even if it was a state function, we would know that here and could
+// adapt).
+#define Iterator@GroupElse_(%1)%9$%9))-1);_:(%9=Iterator@%0$[_:%2]%9; ))-1+(%1));_:(%1)!=_:F@k:F@l:(%2=Iter_Func@%0$(_:%2));
 
 foreign Iter_Func@GroupMember(start, Group:group);
 

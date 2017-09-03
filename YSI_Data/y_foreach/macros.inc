@@ -278,7 +278,7 @@ Array:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iterator@Reverse%9$%9))-1);_:(%1=%9(%0)%9)%9; J@))+_:F@p:F@q:$%1,%0$
+#define Iterator@Reverse%9$%9))-1);_:(%1=%9(%0)%9)%9; J@)+_:F@p:F@q:$%1,%0$
 
 /*
 
@@ -888,10 +888,20 @@ native Iter_Index(Iterator:Name<>);
 #define Iterator@Style:        ITER_TAG(Style)
 #define Iterator@XML:          ITER_TAG(XML)
 #define Iterator@Bintree:      ITER_TAG(Bintree)
-#define Iterator@Group:        ITER_TAG(Group)
 #define Iterator@Timer:        ITER_TAG(Timer)
 #define Iterator@File:         ITER_TAG(File)
 #define Iterator@Float:        ITER_TAG(Float)
+
+// This iterator is both a special function AND a tag.  This is not natively
+// supported, so we need to invent some special macros to do so.  Fortunately,
+// it is not a state function, so some of the existing macros are not needed.
+#define Iterator@Group I@ Iterator@GroupElse_(-1)
+
+// Tag.
+#define I@%0(%1): ITER_TAG(Group)
+
+// The `Iterator@GroupElse_` macro is in "y_groups", so you only get it if you
+// include both libraries.
 
 // A nice "match" symbol that we can scan for, then remove after it is used.
 #define F@a$
@@ -938,10 +948,10 @@ native Iter_Index(Iterator:Name<>);
 #define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1])<(F@s(Iterator@%0)-F@s(itermulti@%0));
 
 // Special iterator.
-#define iterstart(%1)%9$%9))-1);_:(%9=Iterator@%0$[_:%2]%9; J@))-1)+(%1);_:(%1)!=_:F@k:F@l:(%2=Iter_Func@%0$(_:%2));
+#define iterstart(%1)%9$%9))-1);_:(%9=Iterator@%0$[_:%2]%9; J@))-1+(%1));_:(%1)!=_:F@k:F@l:(%2=Iter_Func@%0$(_:%2));
 #define iterstate iterstart
 
-#define J@))-1)+(%5,%6);_:(%9)!=_:%9(%1=%2$(_:%1)); J@))-1)+(%5),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@k:F@l:(%1=%2$(_:Iter_State@%1,_:%1));
+#define J@))-1+(%5,%6));_:(%9)!=_:%9(%1=%2$(_:%1)); J@))-1+(%5)),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@k:F@l:(%1=%2$(_:Iter_State@%1,_:%1));
 
 //#define F@l:%9$%1,%0(%2)%8$ F@r(Iterator@%0));_:(F@r(Iterator@%0))!=_:(%1=F@h:Iter_Func@%0(_:%1,%2));
 #define F@k:F@l:(%0(%2)%8$(%1)%9); (%0(%1,%2)%8$%9);
@@ -954,10 +964,10 @@ native Iter_Index(Iterator:Name<>);
 //#define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
 
 // Reverse multi-iterator.
-#define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-2-(%2));_:(%1=Iter_Prev_InternalB(itermulti@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(itermulti@%0));
+#define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-2-(%2)));_:(%1=Iter_Prev_InternalB(itermulti@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(itermulti@%0));
 
 // Reverse normal iterator.
-#define F@q:%9$%1,%0$ F@s(Iterator@%0)-2);_:(%1=Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
+#define F@q:%9$%1,%0$ F@s(Iterator@%0)-2));_:(%1=Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
 
 // Special iterator function declaration.
 #define F@y:%0(%1) Iter_Func@%0(%1)F@a$
