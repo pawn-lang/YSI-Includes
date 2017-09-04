@@ -898,7 +898,7 @@ native Iter_Index(Iterator:Name<>);
 #define Iterator@Group I@ Iterator@GroupElse_(-1)
 
 // Tag.
-#define I@%0(%1): ITER_TAG(Group)
+#define I@%0Iterator@GroupElse_(%1): ITER_TAG(Group)
 
 // The `Iterator@GroupElse_` macro is in "y_groups", so you only get it if you
 // include both libraries.
@@ -948,13 +948,13 @@ native Iter_Index(Iterator:Name<>);
 #define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
-#define iterstart(%1)%9$%9))-1);_:(%9=Iterator@%0$[_:%2]%9; J@))-1+(%1));_:(%1)!=_:F@k:F@l:(%2=Iter_Func@%0$(_:%2));
+#define iterstart(%1)%9$%9))-1);_:(%9=Iterator@%0$[_:%2]%9; J@))-1+(%1));_:(%1)!=_:F@u:F@l:(%2=Iter_Func@%0$(_:%2));
 #define iterstate iterstart
 
-#define J@))-1+(%5,%6));_:(%9)!=_:%9(%1=%2$(_:%1)); J@))-1+(%5)),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@k:F@l:(%1=%2$(_:Iter_State@%1,_:%1));
+#define J@))-1+(%5,%6));_:(%9)!=_:%9(%1=%2$(_:%1)); J@))-1+(%5)),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@u:F@l:(%1=%2$(_:Iter_State@%1,_:%1));
 
 //#define F@l:%9$%1,%0(%2)%8$ F@r(Iterator@%0));_:(F@r(Iterator@%0))!=_:(%1=F@h:Iter_Func@%0(_:%1,%2));
-#define F@k:F@l:(%0(%2)%8$(%1)%9); (%0(%1,%2)%8$%9);
+#define F@u:F@l:(%0(%2)%8$(%1)%9); (%0(%1,%2)%8$%9);
 #define F@l:(%0[%2]%8$(%1)%9); (%0(%1,%2)%8$%9);
 
 // Normal iterator.

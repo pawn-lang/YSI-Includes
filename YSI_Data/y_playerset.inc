@@ -163,7 +163,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 			__ps_stack[__ps_pointer][0] = _:addr;
 			// Single value - either a playerid or a groupid.
 			#if defined _YSI_HAS_y_groups
-				if (Group:addr & GROUP_MASK)
+				if (Group:addr & (Group:0x80000000))//GROUP_MASK)
 				{
 					// Use the pre-made iterator functionality.
 					__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_GROUP;

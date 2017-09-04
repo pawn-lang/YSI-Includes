@@ -58,7 +58,13 @@ Changelog:
 
 // Dummy values.
 #define INVALID_GROUP (Group:-1)
+
+// IF THIS VALUE EVER CHANGES, CHANGE y_playerset AS WELL - IT MAY BE INCLUDED
+// BEFORE y_groups BUT NEEDS THE MACRO.
+//
+// TODO: Fix that fact with better y_groups segmenting.
 #define GROUP_MASK                      (Group:0x80000000)
+
 #define GROUP_GLOBAL                    (Group:_MAX_GROUPS | GROUP_MASK) //-1)
 #define GROUP_FIX(%0)                   ((%0)&=~GROUP_MASK)
 #define GROUP_TEMP_FIX(%0)              ((%0)&~GROUP_MASK)
