@@ -2318,7 +2318,7 @@ Test:y_iter_Syntax6a()
 		ASSERT(i % 1048576 == 0);
 		++count;
 	}
-	ASSERT(count == 4096);
+	ASSERT(count == 4095);
 }
 
 Test:y_iter_Syntax6b()
@@ -2357,7 +2357,7 @@ Test:y_iter_Syntax6b()
 	foreach ( new i :y_iter_Syntax6(1024) ) { ++count; }
 	foreach ( new i : y_iter_Syntax6(1024)) { ++count; }
 	foreach ( new i : y_iter_Syntax6(1024) ) { ++count; }
-	ASSERT(count == 4096 * 1 * 32);
+	ASSERT(count == 4095 * 1 * 32);
 #if _DEBUG
 	new TODO@issue_217;
 #endif
@@ -2395,7 +2395,7 @@ Test:y_iter_Syntax6b()
 //	foreach ( j :y_iter_Syntax6(1024) ) { ++count; }
 //	foreach ( j : y_iter_Syntax6(1024)) { ++count; }
 //	foreach ( j : y_iter_Syntax6(1024) ) { ++count; }
-//	ASSERT(count == 4096 * 2 * 32);
+//	ASSERT(count == 4095 * 2 * 32);
 }
 
 Test:y_iter_Syntax6c()
@@ -2434,7 +2434,7 @@ Test:y_iter_Syntax6c()
 	foreach ( new i :y_iter_Syntax6[1024] ) { ++count; }
 	foreach ( new i : y_iter_Syntax6[1024]) { ++count; }
 	foreach ( new i : y_iter_Syntax6[1024] ) { ++count; }
-	ASSERT(count == 4096 * 1 * 32);
+	ASSERT(count == 4095 * 1 * 32);
 #if _DEBUG
 	new TODO@issue_217;
 #endif
@@ -2472,84 +2472,7 @@ Test:y_iter_Syntax6c()
 //	foreach ( j :y_iter_Syntax6[1024] ) { ++count; }
 //	foreach ( j : y_iter_Syntax6[1024]) { ++count; }
 //	foreach ( j : y_iter_Syntax6[1024] ) { ++count; }
-//	ASSERT(count == 4096 * 2 * 32);
-}
-
-Test:y_iter_Syntax6d()
-{
-	new
-		count = 0;
-	foreach(new i:y_iter_Syntax6(1024)) { ++count; }
-	foreach(new i:y_iter_Syntax6(1024) ) { ++count; }
-	foreach(new i: y_iter_Syntax6(1024)) { ++count; }
-	foreach(new i: y_iter_Syntax6(1024) ) { ++count; }
-	foreach(new i :y_iter_Syntax6(1024)) { ++count; }
-	foreach(new i :y_iter_Syntax6(1024) ) { ++count; }
-	foreach(new i : y_iter_Syntax6(1024)) { ++count; }
-	foreach(new i : y_iter_Syntax6(1024) ) { ++count; }
-	foreach( new i:y_iter_Syntax6(1024)) { ++count; }
-	foreach( new i:y_iter_Syntax6(1024) ) { ++count; }
-	foreach( new i: y_iter_Syntax6(1024)) { ++count; }
-	foreach( new i: y_iter_Syntax6(1024) ) { ++count; }
-	foreach( new i :y_iter_Syntax6(1024)) { ++count; }
-	foreach( new i :y_iter_Syntax6(1024) ) { ++count; }
-	foreach( new i : y_iter_Syntax6(1024)) { ++count; }
-	foreach( new i : y_iter_Syntax6(1024) ) { ++count; }
-	foreach (new i:y_iter_Syntax6(1024)) { ++count; }
-	foreach (new i:y_iter_Syntax6(1024) ) { ++count; }
-	foreach (new i: y_iter_Syntax6(1024)) { ++count; }
-	foreach (new i: y_iter_Syntax6(1024) ) { ++count; }
-	foreach (new i :y_iter_Syntax6(1024)) { ++count; }
-	foreach (new i :y_iter_Syntax6(1024) ) { ++count; }
-	foreach (new i : y_iter_Syntax6(1024)) { ++count; }
-	foreach (new i : y_iter_Syntax6(1024) ) { ++count; }
-	foreach ( new i:y_iter_Syntax6(1024)) { ++count; }
-	foreach ( new i:y_iter_Syntax6(1024) ) { ++count; }
-	foreach ( new i: y_iter_Syntax6(1024)) { ++count; }
-	foreach ( new i: y_iter_Syntax6(1024) ) { ++count; }
-	foreach ( new i :y_iter_Syntax6(1024)) { ++count; }
-	foreach ( new i :y_iter_Syntax6(1024) ) { ++count; }
-	foreach ( new i : y_iter_Syntax6(1024)) { ++count; }
-	foreach ( new i : y_iter_Syntax6(1024) ) { ++count; }
-	ASSERT(count == 4096 * 1 * 32);
-#if _DEBUG
-	new TODO@issue_217;
-#endif
-//	new
-//		j;
-//	foreach(j:y_iter_Syntax6(1024)) { ++count; }
-//	foreach(j:y_iter_Syntax6(1024) ) { ++count; }
-//	foreach(j: y_iter_Syntax6(1024)) { ++count; }
-//	foreach(j: y_iter_Syntax6(1024) ) { ++count; }
-//	foreach(j :y_iter_Syntax6(1024)) { ++count; }
-//	foreach(j :y_iter_Syntax6(1024) ) { ++count; }
-//	foreach(j : y_iter_Syntax6(1024)) { ++count; }
-//	foreach(j : y_iter_Syntax6(1024) ) { ++count; }
-//	foreach( j:y_iter_Syntax6(1024)) { ++count; }
-//	foreach( j:y_iter_Syntax6(1024) ) { ++count; }
-//	foreach( j: y_iter_Syntax6(1024)) { ++count; }
-//	foreach( j: y_iter_Syntax6(1024) ) { ++count; }
-//	foreach( j :y_iter_Syntax6(1024)) { ++count; }
-//	foreach( j :y_iter_Syntax6(1024) ) { ++count; }
-//	foreach( j : y_iter_Syntax6(1024)) { ++count; }
-//	foreach( j : y_iter_Syntax6(1024) ) { ++count; }
-//	foreach (j:y_iter_Syntax6(1024)) { ++count; }
-//	foreach (j:y_iter_Syntax6(1024) ) { ++count; }
-//	foreach (j: y_iter_Syntax6(1024)) { ++count; }
-//	foreach (j: y_iter_Syntax6(1024) ) { ++count; }
-//	foreach (j :y_iter_Syntax6(1024)) { ++count; }
-//	foreach (j :y_iter_Syntax6(1024) ) { ++count; }
-//	foreach (j : y_iter_Syntax6(1024)) { ++count; }
-//	foreach (j : y_iter_Syntax6(1024) ) { ++count; }
-//	foreach ( j:y_iter_Syntax6(1024)) { ++count; }
-//	foreach ( j:y_iter_Syntax6(1024) ) { ++count; }
-//	foreach ( j: y_iter_Syntax6(1024)) { ++count; }
-//	foreach ( j: y_iter_Syntax6(1024) ) { ++count; }
-//	foreach ( j :y_iter_Syntax6(1024)) { ++count; }
-//	foreach ( j :y_iter_Syntax6(1024) ) { ++count; }
-//	foreach ( j : y_iter_Syntax6(1024)) { ++count; }
-//	foreach ( j : y_iter_Syntax6(1024) ) { ++count; }
-//	ASSERT(count == 7 * 2 * 32);
+//	ASSERT(count == 4095 * 2 * 32);
 }
 
 Test:y_iter_Syntax2a()
