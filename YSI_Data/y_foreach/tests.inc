@@ -1022,7 +1022,7 @@ Test:y_iter_Iter_Init1()
 {
 	new
 		Iterator:iter[10]<20>;
-	#pragma unused iterstart@iter
+	#pragma unused Iter_Single@iter
 	Iter_Init(iter);
 	ASSERT(Iter_TrueArray(iter)[0][20] == 20);
 	ASSERT(Iter_TrueArray(iter)[0][19] <= 19);
@@ -1036,7 +1036,7 @@ Test:y_iter_Iter_Init2()
 {
 	new
 		Iterator:iter[10]<5, 20>;
-	#pragma unused itermulti@iter
+	#pragma unused Iter_Multi@iter
 	Iter_Init(iter);
 	ASSERT(Iter_TrueArray(iter)[0][21] >= 20);
 	ASSERT(Iter_TrueArray(iter)[0][20] == 20);
@@ -2922,7 +2922,7 @@ Test:y_iter_Array()
 	new
 		Iterator:Test3[5]<20>;
 	Iter_Init(Test3);
-	#pragma unused iterstart@Test3
+	#pragma unused Iter_Single@Test3
 	new
 		count = 0;
 	foreach (new i : Test3[1])
@@ -2936,7 +2936,7 @@ Test:y_iter_Multi()
 {
 	new
 		Iterator: Test4<7, 11>;
-	#pragma unused itermulti@Test4
+	#pragma unused Iter_Multi@Test4
 	new
 		count = 0;
 	foreach (new i : Test4<2>)
