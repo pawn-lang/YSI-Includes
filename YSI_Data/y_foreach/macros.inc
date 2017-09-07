@@ -278,7 +278,7 @@ Array:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iterator@Reverse%9$%9))-1);_:(%1=%9(%0)%9)%9; J@)+_:F@p:F@q:$%1,%0$
+#define Iterator@Reverse%9$%9))-%9);_:(%1=%9(%0)%9)%9; J@)+_:F@p:F@q:$%1,%0$
 
 /*
 
@@ -963,8 +963,8 @@ native Iter_Index(Iterator:Name<>);
 #define iterstate iterstart
 
 // Special iterators without extra defines.  Default to -1 start value.
-#define F@k:%9$%1,%0(%2)%8$ F@s(Iterator@%0)-_:F@x:2);_:(%1=Iter_Func@%0(%2)F@a$[_:%1])!=(F@s(Iterator@%0)-2);
-#define F@x:2);_:(%1=%0(%2)%9[%4])!=%3; 2);_:(%1=%0(%4,%2)%9)!=%3;
+#define F@k:%9$%1,%0(%2)%8$ F@s(Iterator@%0)-_:F@x:2);_:(%1=Iterator@%0(%2)F@a$[_:%1])!=(F@s(Iterator@%0)-2);
+#define F@x:2);_:(%1=%9@%0(%2)%9[%4])!=%3; 2);_:(%1=Iter_Func@%0(%4,%2)%9)!=%3;
 
 #define J@))-1+(%5,%6));_:(%9)!=_:%9(%1=%2$(_:%1)); J@))-1+(%5)),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@u:F@l:(%1=%2$(_:Iter_State@%1,_:%1));
 

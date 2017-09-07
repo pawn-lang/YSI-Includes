@@ -3296,12 +3296,12 @@ Test:y_iter_Index2()
 	ASSERT(Iter_Index(a<4>, 10, true) == 15);
 }
 
-iterfunc              y_iterDecl1(cur) { return 0; }
-stock iterfunc        y_iterDecl2(cur) { return 0; }
-static stock iterfunc y_iterDecl3(cur) { return 0; }
-static iterfunc stock y_iterDecl4(cur) { return 0; }
-iterfunc static       y_iterDecl5(cur) { return 0; }
-iterfunc stock static y_iterDecl6(cur) { return 0; }
+iterfunc              y_iterDecl1(cur) { return cur; }
+stock iterfunc        y_iterDecl2(cur) { return cur; }
+static stock iterfunc y_iterDecl3(cur) { return cur; }
+static iterfunc stock y_iterDecl4(cur) { return cur; }
+iterfunc static       y_iterDecl5(cur) { return cur; }
+iterfunc stock static y_iterDecl6(cur) { return cur; }
 
 Test:y_iter_MacroLess()
 {
