@@ -983,7 +983,8 @@ global Race_Start(race)
 	new
 		bool:exited = true,
 		j;
-	foreach (new i : YSI_g_sRacePeople[race])
+	for (new i = Iter_First(YSI_g_sRacePeople[race]), j; j = Iter_Next(YSI_g_sRacePeople[race], i), i != Iter_End(YSI_g_sRacePeople[race]); i = j)
+	//foreach (new i : YSI_g_sRacePeople[race])
 	{
 		new
 			vehicleid;
@@ -1061,6 +1062,7 @@ public Race_Countdown(race, time)
 			startTime = GetTickCount(),
 			vehicleid,
 			pos;
+		//for (new i = Iter_First(YSI_g_sRacePeople[race]), j; j = Iter_Next(YSI_g_sRacePeople[race], i), i != Iter_End(YSI_g_sRacePeople[race]); i = j)
 		foreach (new i : YSI_g_sRacePeople[race])
 		{
 			if ((vehicleid = GetPlayerVehicleID(i)))
