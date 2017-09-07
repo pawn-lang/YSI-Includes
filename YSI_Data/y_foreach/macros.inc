@@ -963,8 +963,8 @@ native Iter_Index(Iterator:Name<>);
 #define iterstate iterstart
 
 // Special iterators without extra defines.  Default to -1 start value.
-#define F@k:%9$%1,%0(%2)%8$ F@s(Iterator@%0)-_:F@x:2);_:(%1=Iterator@%0(%2)F@a$[_:%1])!=(F@s(Iterator@%0)-2);
-#define F@x:2);_:(%1=%9@%0(%2)%9[%4])!=%3; 2);_:(%1=Iter_Func@%0(%4,%2)%9)!=%3;
+#define F@k:%9$%1,%0(%2)%8$ F@s(Iterator@%0)-_:F@x:1+_:F@h:Iterator@%0);_:(%1=Iterator@%0(%2)F@a$[_:%1])!=(F@s(Iterator@%0)-_:F@x:1+_:F@h:Iterator@%0);
+#define F@x:%6);_:(%1=%9@%0(%2)%9[%4])!=%3; %6);_:(%1=Iter_Func@%0(%4,%2)%9)!=%3;
 
 #define J@))-1+(%5,%6));_:(%9)!=_:%9(%1=%2$(_:%1)); J@))-1+(%5)),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@u:F@l:(%1=%2$(_:Iter_State@%1,_:%1));
 
@@ -983,15 +983,18 @@ native Iter_Index(Iterator:Name<>);
 #define F@q:%9$%1,%0$ F@s(Iterator@%0)-2));_:(%1=Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
 
 // Special iterator function declaration.
-#define F@y:%0(%1) Iter_Func@%0(%1);Y_FOREACH_STOCK stock Iter_Stock:Iterator@%0;Iter_Func@%0(%1)F@a$
+#define F@y:%0(%1) Y_FOREACH_SQ:Iter_Func@%0[]$(%1);Y_FOREACH_STOCK stock Y_FOREACH_STRIP:Iterator@%0=Y_FOREACH_STRIP:-1;Iter_Func@%0(%1)F@a$
 
-#define Iter_Stock:%8;%0(%1)%2\03;<%3> %8;%3 %0(%1)%2<>
-#define stock%0(%2)%3\10;%1 stock%0(%2)%3 U@<stock>
+#define Y_FOREACH_STRIP:%6=Y_FOREACH_STRIP:%7;%0(%1)%2\03;<%3> %6=%7;%3 %0(%1)%2<>
+
+#define Y_FOREACH_STOCK __:F@v:F@w:$
+#define F@v:%8$%0\10;%1 %8$%0
+
+// Get rid of ALL square brackets after the first function name.
+#define Y_FOREACH_SQ:%0[%1$ %0
+#define F@w:%8$%0[%3]=%1;%2[%3](%4) %8$%0=Y_FOREACH_STRIP:%3;%2(%4)
 
 // Currently unused:
-#define Y_FOREACH_STOCK __:F@v:$
-#define F@v:%8$%0\10;%1 %8$%0
-//#define F@w:%8$          %8$
 //#define F@z
 // Convert from a normal iterator to a special iterator with parameters.
 //#define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
@@ -1006,6 +1009,7 @@ native Iter_Index(Iterator:Name<>);
 #define u@$ 0]);
 #define __:%0$ u@(u[_:%0 u@$
 #define U@%0\03;%0<%0>
+#define stock%0(%2)%3\10;%1 stock%0(%2)%3 U@<stock>
 
 // Consume spaces in the iterator state variables.
 #define Iter_State@%0\32;%1) Iter_State@%0%1)

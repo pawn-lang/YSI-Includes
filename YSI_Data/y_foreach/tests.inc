@@ -3296,21 +3296,27 @@ Test:y_iter_Index2()
 	ASSERT(Iter_Index(a<4>, 10, true) == 15);
 }
 
-iterfunc              y_iterDecl1(cur) { return cur; }
-stock iterfunc        y_iterDecl2(cur) { return cur; }
-static stock iterfunc y_iterDecl3(cur) { return cur; }
-static iterfunc stock y_iterDecl4(cur) { return cur; }
-iterfunc static       y_iterDecl5(cur) { return cur; }
-iterfunc stock static y_iterDecl6(cur) { return cur; }
+iterfunc              y_iterDecl1[cellmin](cur) { return cur == cellmin ? 5 : cellmin; }
+stock iterfunc        y_iterDecl2[cellmin](cur) { return cur == cellmin ? 5 : cellmin; }
+static stock iterfunc y_iterDecl3(cur) { return cur == -1 ? 5 : -1; }
+static iterfunc stock y_iterDecl4(cur) { return cur == -1 ? 5 : -1; }
+iterfunc static       y_iterDecl5[0](cur) { return cur == 0 ? 5 : 0; }
+iterfunc stock static y_iterDecl6[-1](cur) { return cur == -1 ? 5 : -1; }
 
 Test:y_iter_MacroLess()
 {
-	foreach (new i : y_iterDecl1()) { ASSERT(false); }
-	foreach (new i : y_iterDecl2()) { ASSERT(false); }
-	foreach (new i : y_iterDecl3()) { ASSERT(false); }
-	foreach (new i : y_iterDecl4()) { ASSERT(false); }
-	foreach (new i : y_iterDecl5()) { ASSERT(false); }
-	foreach (new i : y_iterDecl6()) { ASSERT(false); }
-	ASSERT(true);
+	new i;
+	foreach (i : y_iterDecl1()) { ASSERT(i == 5); }
+	ASSERT(i == cellmin);
+	foreach (i : y_iterDecl3()) { ASSERT(i == 5); }
+	ASSERT(i == -1);
+	foreach (i : y_iterDecl2()) { ASSERT(i == 5); }
+	ASSERT(i == cellmin);
+	foreach (i : y_iterDecl4()) { ASSERT(i == 5); }
+	ASSERT(i == -1);
+	foreach (i : y_iterDecl5()) { ASSERT(i == 5); }
+	ASSERT(i == 0);
+	foreach (i : y_iterDecl6()) { ASSERT(i == 5); }
+	ASSERT(i == -1);
 }
 
