@@ -278,7 +278,7 @@ Array:
 </remarks>
 \**--------------------------------------------------------------------------**/
 
-#define Iterator@Reverse%9$%9))-%9);_:(%1=%9(%0)%9)%9; J@)+_:F@p:F@q:$%1,%0$
+#define Iterator@Reverse%9;_:(%1=%9(%0)%9)%9; F@o)+_:F@p:F@q:$%1,%0$
 
 /*
 
@@ -837,6 +837,7 @@ native Iter_Index(Iterator:Name<>);
 // Remove trailing spaces.  This looks really unsafe because of the "%0\32;"
 // allowing anything to come before the space, but it would have to be
 // "anything" not text immediately following a "YSII_X@" prefix.
+#define iterstart@%0\32;%1$ iterstart@%0%1$
 #define Iterator@%0\32;%1$ Iterator@%0%1$
 #define Iter_Func@%0\32;%1$ Iter_Func@%0%1$
 #define Iter_Single@%0\32;%1$ Iter_Single@%0%1$
@@ -861,6 +862,11 @@ native Iter_Index(Iterator:Name<>);
 #define Iterator@static Iterator@
 #define Iterator@public Iterator@
 #define Iterator@forward Iterator@
+
+#define iterstart@stock iterstart@
+#define iterstart@static iterstart@
+#define iterstart@public iterstart@
+#define iterstart@forward iterstart@
 
 #define ITER_TAG_FUNC(%0)%1(%2) %0:Iter_Func@%1(%2)
 
@@ -959,14 +965,15 @@ native Iter_Index(Iterator:Name<>);
 #define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
-#define iterstart(%1)%9$%9))-%9);_:(%9=Iterator@%0$[_:%2]%9; J@))-1+(%1));_:(%1)!=_:F@u:F@l:(%2=Iter_Func@%0$(_:%2));
+#define iterstart(%1)%9;_:(%9=Iter%9@%0$[_:%2]%9; F@o))-1+(%1));_:(%1)!=_:F@u:F@l:(%2=Iter_Func@%0$(_:%2));
 #define iterstate iterstart
 
-// Special iterators without extra defines.  Default to -1 start value.
-#define F@k:%9$%1,%0(%2)%8$ F@s(Iterator@%0)-_:F@x:1+_:F@h:Iterator@%0);_:(%1=Iterator@%0(%2)F@a$[_:%1])!=(F@s(Iterator@%0)-_:F@x:1+_:F@h:Iterator@%0);
+// Special iterators without extra defines.  Default to -1 start value.  The
+// many extra brackets are needed to ensure that other macros match.
+#define F@k:%9$%1,%0(%2)%8$ F@s(Iterator@%0)+_:((F@h:iterstart@%0))-_:F@x:1+_:F@h:Iterator@%0);_:(%1=Iter_Func@%0(%2)F@a$[_:%1])!=(F@s(Iterator@%0)-1+_:F@h:Iterator@%0+iterstart@%0);
 #define F@x:%6);_:(%1=%9@%0(%2)%9[%4])!=%3; %6);_:(%1=Iter_Func@%0(%4,%2)%9)!=%3;
 
-#define J@))-1+(%5,%6));_:(%9)!=_:%9(%1=%2$(_:%1)); J@))-1+(%5)),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@u:F@l:(%1=%2$(_:Iter_State@%1,_:%1));
+#define F@o))-1+(%5,%6));_:(%9)!=_:%9(%1=%2$(_:%1)); J@))-1+(%5)),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@u:F@l:(%1=%2$(_:Iter_State@%1,_:%1));
 
 //#define F@l:%9$%1,%0(%2)%8$ F@r(Iterator@%0));_:(F@r(Iterator@%0))!=_:(%1=F@h:Iter_Func@%0(_:%1,%2));
 #define F@u:F@l:(%0(%2)%8$(%1)%9); (%0(%1,%2)%8$%9);
@@ -983,19 +990,19 @@ native Iter_Index(Iterator:Name<>);
 #define F@q:%9$%1,%0$ F@s(Iterator@%0)-2));_:(%1=Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
 
 // Special iterator function declaration.
-#define F@y:%0(%1) Y_FOREACH_SQ:Iter_Func@%0[]$(%1);Y_FOREACH_STOCK stock Y_FOREACH_STRIP:Iterator@%0=Y_FOREACH_STRIP:-1;Iter_Func@%0(%1)F@a$
+#define F@y:%0(%1) Y_FOREACH_SQ:Iter_Func@%0[]$(%1);Y_FOREACH_STOCK stock const F@z:Iterator@%0=F@z:0,iterstart@%0=-1;Iter_Func@%0(%1)F@a$
 
-#define Y_FOREACH_STRIP:%6=Y_FOREACH_STRIP:%7;%0(%1)%2\03;<%3> %6=%7;%3 %0(%1)%2<>
+// Remove extra `stock`s.
+#define F@z:%6=F@z:%7;%0(%1)%2\03;<%3> %6=%7;%3 %0(%1)%2<>
 
 #define Y_FOREACH_STOCK __:F@v:F@w:$
 #define F@v:%8$%0\10;%1 %8$%0
 
 // Get rid of ALL square brackets after the first function name.
 #define Y_FOREACH_SQ:%0[%1$ %0
-#define F@w:%8$%0[%3]=%1;%2[%3](%4) %8$%0=Y_FOREACH_STRIP:%3;%2(%4)
+#define F@w:%8$%0[%3]=%1,%5[%3]=%6;%2[%3](%4) %8$%0=%1,%5=%3;%2(%4)
 
 // Currently unused:
-//#define F@z
 // Convert from a normal iterator to a special iterator with parameters.
 //#define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
 
@@ -1055,5 +1062,5 @@ stock const
 	// This is the best I could do to warn about the old syntax.  That code
 	// should now be "foreach (new i : Player)".  It may become an error later.
 	bool:using_deprecated_foreach_syntax = false,
-	F@o[2];
+	F@o = 1;
 
