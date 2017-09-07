@@ -970,10 +970,10 @@ native Iter_Index(Iterator:Name<>);
 
 // Special iterators without extra defines.  Default to -1 start value.  The
 // many extra brackets are needed to ensure that other macros match.
-#define F@k:%9$%1,%0(%2)%8$ F@s(Iterator@%0)+_:((F@h:iterstart@%0))-_:F@x:1+_:F@h:Iterator@%0);_:(%1=Iter_Func@%0(%2)F@a$[_:%1])!=(F@s(Iterator@%0)-1+_:F@h:Iterator@%0+iterstart@%0);
+#define F@k:%9$%1,%0(%2)%8$ F@s(Iterator@%0)-1+_:((F@h:iterstart@%0))+_:F@x:F@h:Iterator@%0);_:(%1=Iter_Func@%0(%2)F@a$[_:%1])!=(F@s(Iterator@%0)-1+_:F@h:Iterator@%0+iterstart@%0);
 #define F@x:%6);_:(%1=%9@%0(%2)%9[%4])!=%3; %6);_:(%1=Iter_Func@%0(%4,%2)%9)!=%3;
 
-#define F@o))-1+(%5,%6));_:(%9)!=_:%9(%1=%2$(_:%1)); J@))-1+(%5)),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@u:F@l:(%1=%2$(_:Iter_State@%1,_:%1));
+#define F@o))-1+(%5,%6));_:(%9)!=_:%9(%1=%2$(_:%1)); F@o))-1+(%5)),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@u:F@l:(%1=%2$(_:Iter_State@%1,_:%1));
 
 //#define F@l:%9$%1,%0(%2)%8$ F@r(Iterator@%0));_:(F@r(Iterator@%0))!=_:(%1=F@h:Iter_Func@%0(_:%1,%2));
 #define F@u:F@l:(%0(%2)%8$(%1)%9); (%0(%1,%2)%8$%9);
@@ -981,7 +981,6 @@ native Iter_Index(Iterator:Name<>);
 
 // Normal iterator.
 #define F@m:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=Iterator@%0 F@a$[_:%1])!=(F@s(Iterator@%0)-1);
-
 
 // Reverse multi-iterator.
 #define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-2-(%2)));_:(%1=Iter_Prev_InternalB(Iter_Multi@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));

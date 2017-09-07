@@ -249,14 +249,12 @@ Create the internal iterators.
 		Iterator:Vehicle<MAX_VEHICLES>;
 #endif
 
-stock iterfunc Range(cur, min, max, step = 1)
+stock iterfunc Range[cellmin](cur, min, max, step = 1)
 {
 	if (cur == cellmin) cur = min;
 	else cur += step;
 	return (min <= cur < max || max < cur <= min) ? cur : cellmin;
 }
-
-#define Iterator@Range iterstart(cellmin)
 
 iterfunc stock Powers(&iterstate, cur, base)
 {
@@ -277,7 +275,7 @@ iterfunc stock Powers(&iterstate, cur, base)
 	return 1;
 }
 
-#define Iterator@Powers iterstate(0, 0)
+#define iterstart@Powers iterstate(0, 0)
 
 stock iterfunc Fib(&iterstate, cur)
 {
@@ -302,7 +300,7 @@ stock iterfunc Fib(&iterstate, cur)
 	return (iterstate = iterstate + cur) - cur;
 }
 
-#define Iterator@Fib iterstate(-1, 1)
+#define iterstart@Fib iterstate(-1, 1)
 
 stock iterfunc Random(&iterstate, cur, count, min = cellmax, max = 0)
 {
@@ -352,7 +350,7 @@ stock iterfunc Random(&iterstate, cur, count, min = cellmax, max = 0)
 	}
 }
 
-#define Iterator@Random iterstate(cellmin, 0)
+#define iterstart@Random iterstate(cellmin, 0)
 
 stock iterfunc Null(cur, arr[], size = sizeof (arr))
 {
@@ -373,8 +371,6 @@ stock iterfunc Null(cur, arr[], size = sizeof (arr))
 	return -1;
 }
 
-#define Iterator@Null iterstart(-1)
-
 stock iterfunc NonNull(cur, arr[], size = sizeof (arr))
 {
 	// Loop over all the indexes of this array that are not zero.
@@ -394,8 +390,6 @@ stock iterfunc NonNull(cur, arr[], size = sizeof (arr))
 	return -1;
 }
 
-#define Iterator@NonNull iterstart(-1)
-
 stock iterfunc Until(cur, val, arr[], size = sizeof (arr))
 {
 	// Loop over all the indexes of this array until one equals the given value:
@@ -408,8 +402,6 @@ stock iterfunc Until(cur, val, arr[], size = sizeof (arr))
 	return (++cur >= size || arr[cur] == val) ? -1 : cur;
 }
 
-#define Iterator@Until iterstart(-1)
-
 stock iterfunc Filter(cur, val, arr[], size = sizeof (arr))
 {
 	while (++cur < size)
@@ -421,8 +413,6 @@ stock iterfunc Filter(cur, val, arr[], size = sizeof (arr))
 	}
 	return -1;
 }
-
-#define Iterator@Filter iterstart(-1)
 
 #define Iter_Func@None(%0,%1) _ITER<None>(%1,%0)
 #define Iterator@None iterstart(-1)
