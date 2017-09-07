@@ -959,7 +959,7 @@ native Iter_Index(Iterator:Name<>);
 #define F@j:%7$%5(%0)       %5A(F@g(Iter_Single@%0,),F@h:Iterator@%0)
 #define F@i:%7$%5(%0<%2>%1) %5B(F@h:Iter_Multi@%0,%2,F@h:Iterator@%0%1)
 
-#define _Y_ITER_DO_FOREACH(%1,%0) (_:F@n:F@k:F@m:F@a$%1,%0$
+#define _Y_ITER_DO_FOREACH(%1,%0) (_:F@n:F@A:F@m:F@a$%1,%0$
 
 // Multi-iterator.
 #define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
@@ -970,7 +970,7 @@ native Iter_Index(Iterator:Name<>);
 
 // Special iterators without extra defines.  Default to -1 start value.  The
 // many extra brackets are needed to ensure that other macros match.
-#define F@k:%9$%1,%0(%2)%8$ F@s(Iterator@%0)-1+_:((F@h:iterstart@%0))+_:F@x:F@h:Iterator@%0);_:(%1=Iter_Func@%0(%2)F@a$[_:%1])!=(F@s(Iterator@%0)-1+_:F@h:Iterator@%0+iterstart@%0);
+#define F@A:%9$%1,%0(%2)%8$ F@s(Iterator@%0)-1+_:((F@h:iterstart@%0))+_:F@x:F@h:Iterator@%0);_:(%1=Iter_Func@%0(%2)F@a$[_:%1])!=(F@s(Iterator@%0)-1+_:F@h:Iterator@%0+iterstart@%0);
 #define F@x:%6);_:(%1=%9@%0(%2)%9[%4])!=%3; %6);_:(%1=Iter_Func@%0(%4,%2)%9)!=%3;
 
 #define F@o))-1+(%5,%6));_:(%9)!=_:%9(%1=%2$(_:%1)); F@o))-1+(%5)),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@u:F@l:(%1=%2$(_:Iter_State@%1,_:%1));
@@ -1002,8 +1002,8 @@ native Iter_Index(Iterator:Name<>);
 #define F@w:%8$%0[%3]=%1,%5[%3]=%6;%2[%3](%4) %8$%0=%1,%5=%3;%2(%4)
 
 // Currently unused:
-// Convert from a normal iterator to a special iterator with parameters.
-//#define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
+// Part of y_text for some reason.
+//#define F@k
 
 // Initial values for special iterators.
 //#define iterstart(%0) (%0)
