@@ -752,12 +752,12 @@ Notes:
 	Called when a player leaves a race prematurly.
 -*----------------------------------------------------------------------------*/
 
-_Y_RACES_STATIC Race_Exit(playerid, &next = 0)
+_Y_RACES_STATIC Race_Exit(playerid)
 {
 	DisablePlayerRaceCheckpoint(playerid);
 	new
 		slot = YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE];
-	Race_PlayerDone(playerid, next);
+	Race_PlayerDone(playerid);
 	CallRemoteFunction("OnPlayerExitRace", "ii", playerid, slot);
 	Race_CheckEnd(slot);
 }
@@ -815,7 +815,7 @@ Notes:
 	variables.
 -*----------------------------------------------------------------------------*/
 
-_Y_RACES_STATIC Race_PlayerDone(playerid, &next = 0)
+_Y_RACES_STATIC Race_PlayerDone(playerid)
 {
 	new
 		race = YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE];
@@ -827,7 +827,6 @@ _Y_RACES_STATIC Race_PlayerDone(playerid, &next = 0)
 	if (Race_IsValid(race))
 	{
 		PA_Set(YSI_g_sRacers[race], playerid, false);
-		Iter_SafeRemove(YSI_g_sRacePeople[race], playerid, next);
 		Iter_Remove(YSI_g_sRacePeople[race], playerid);
 		if (IsPlayerConnected(playerid))
 		{
@@ -1008,7 +1007,7 @@ global Race_Start(race)
 		else
 		{
 			exited = false;
-			Race_Exit(i, i);
+			Race_Exit(i);
 		}
 	}
 	if (j)
@@ -1075,7 +1074,7 @@ public Race_Countdown(race, time)
 				YSI_g_sPlayerRace[i][E_RACE_PLAYER_TIME] = startTime;
 				pos++;
 			}
-			else Race_Exit(i, i);
+			else Race_Exit(i);
 		}
 	}
 }
