@@ -983,7 +983,7 @@ global Race_Start(race)
 	new
 		bool:exited = true,
 		j;
-	for (new i = Iter_First(YSI_g_sRacePeople[race]), j; j = Iter_Next(YSI_g_sRacePeople[race], i), i != Iter_End(YSI_g_sRacePeople[race]); i = j)
+	for (new i = Iter_First(YSI_g_sRacePeople[race]), k; (k = Iter_Next(YSI_g_sRacePeople[race], i)), i != Iter_End(YSI_g_sRacePeople[race]); i = k)
 	//foreach (new i : YSI_g_sRacePeople[race])
 	{
 		new
