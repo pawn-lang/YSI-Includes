@@ -258,7 +258,7 @@ stock iterfunc Range(cur, min, max, step = 1)
 
 #define Iterator@Range iterstart(cellmin)
 
-stock iterfunc Powers(&iterstate, cur, base)
+iterfunc stock Powers(&iterstate, cur, base)
 {
 	// Returns all the powers of the given number that can be stored in a PAWN
 	// cell.

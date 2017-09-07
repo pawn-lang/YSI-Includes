@@ -3296,3 +3296,21 @@ Test:y_iter_Index2()
 	ASSERT(Iter_Index(a<4>, 10, true) == 15);
 }
 
+iterfunc              y_iterDecl1(cur) { return 0; }
+stock iterfunc        y_iterDecl2(cur) { return 0; }
+static stock iterfunc y_iterDecl3(cur) { return 0; }
+static iterfunc stock y_iterDecl4(cur) { return 0; }
+iterfunc static       y_iterDecl5(cur) { return 0; }
+iterfunc stock static y_iterDecl6(cur) { return 0; }
+
+Test:y_iter_MacroLess()
+{
+	foreach (new i : y_iterDecl1()) { ASSERT(false); }
+	foreach (new i : y_iterDecl2()) { ASSERT(false); }
+	foreach (new i : y_iterDecl3()) { ASSERT(false); }
+	foreach (new i : y_iterDecl4()) { ASSERT(false); }
+	foreach (new i : y_iterDecl5()) { ASSERT(false); }
+	foreach (new i : y_iterDecl6()) { ASSERT(false); }
+	ASSERT(true);
+}
+

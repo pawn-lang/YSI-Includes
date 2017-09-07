@@ -844,12 +844,23 @@ native Iter_Index(Iterator:Name<>);
 #define Iter_Init@%0\32;%1$ Iter_Init@%0%1$
 
 // Allow "iterfunc stock", "stock iterfunc", and other varieties.
-#define Iter_Func@stock%0(%2)%1$ stock F@y:%0(%2)
-#define Iter_Func@static%0(%2)%1$ static F@y:%0(%2)
-#define Iter_Func@foreign%0(%2)%1$ foreign F@y:%0(%2)
-#define Iter_Func@global%0(%2)%1$ global F@y:%0(%2)
-#define Iter_Func@public%0(%2)%1$ public F@y:%0(%2)
-#define Iter_Func@forward%0(%2)%1$ forward F@y:%0(%2)
+// "stock iterfunc" is the hardest, because we have to detect it BEFORE our own
+// macro, but still use it on the function itself.  It does nothing on the
+// forward.
+#define Iter_Func@stock%1$ stock Iter_Func@%1$U@<>
+#define Iter_Func@static static Iter_Func@
+// Must do this manually I think.
+//#define Iter_Func@foreign%0(%2) foreign Iter_Func@%0(%2)
+//#define Iter_Func@global%0(%2) global Iter_Func@%0(%2)
+#define Iter_Func@public public Iter_Func@
+#define Iter_Func@forward forward Iter_Func@
+
+// Drop modifiers - the only place these can appear is under `iterfunc` with the
+// dummy variable, which we don't want to modify more than we already have.
+#define Iterator@stock Iterator@
+#define Iterator@static Iterator@
+#define Iterator@public Iterator@
+#define Iterator@forward Iterator@
 
 #define ITER_TAG_FUNC(%0)%1(%2) %0:Iter_Func@%1(%2)
 
@@ -942,14 +953,18 @@ native Iter_Index(Iterator:Name<>);
 #define F@j:%7$%5(%0)       %5A(F@g(Iter_Single@%0,),F@h:Iterator@%0)
 #define F@i:%7$%5(%0<%2>%1) %5B(F@h:Iter_Multi@%0,%2,F@h:Iterator@%0%1)
 
-#define _Y_ITER_DO_FOREACH(%1,%0) (_:F@n:F@m:F@a$%1,%0$
+#define _Y_ITER_DO_FOREACH(%1,%0) (_:F@n:F@k:F@m:F@a$%1,%0$
 
 // Multi-iterator.
 #define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
-#define iterstart(%1)%9$%9))-1);_:(%9=Iterator@%0$[_:%2]%9; J@))-1+(%1));_:(%1)!=_:F@u:F@l:(%2=Iter_Func@%0$(_:%2));
+#define iterstart(%1)%9$%9))-%9);_:(%9=Iterator@%0$[_:%2]%9; J@))-1+(%1));_:(%1)!=_:F@u:F@l:(%2=Iter_Func@%0$(_:%2));
 #define iterstate iterstart
+
+// Special iterators without extra defines.  Default to -1 start value.
+#define F@k:%9$%1,%0(%2)%8$ F@s(Iterator@%0)-_:F@x:2);_:(%1=Iter_Func@%0(%2)F@a$[_:%1])!=(F@s(Iterator@%0)-2);
+#define F@x:2);_:(%1=%0(%2)%9[%4])!=%3; 2);_:(%1=%0(%4,%2)%9)!=%3;
 
 #define J@))-1+(%5,%6));_:(%9)!=_:%9(%1=%2$(_:%1)); J@))-1+(%5)),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@u:F@l:(%1=%2$(_:Iter_State@%1,_:%1));
 
@@ -960,8 +975,6 @@ native Iter_Index(Iterator:Name<>);
 // Normal iterator.
 #define F@m:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=Iterator@%0 F@a$[_:%1])!=(F@s(Iterator@%0)-1);
 
-// Convert from a normal iterator to a special iterator with parameters.
-//#define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
 
 // Reverse multi-iterator.
 #define F@p:%9$%1,%0<%2>$ F@s(Iterator@%0)-2-(%2)));_:(%1=Iter_Prev_InternalB(Iter_Multi@%0,,Iterator@%0,%1))<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
@@ -970,13 +983,29 @@ native Iter_Index(Iterator:Name<>);
 #define F@q:%9$%1,%0$ F@s(Iterator@%0)-2));_:(%1=Iter_Prev_InternalA(,Iterator@%0,%1))!=(F@s(Iterator@%0)-1);
 
 // Special iterator function declaration.
-#define F@y:%0(%1) Iter_Func@%0(%1)F@a$
+#define F@y:%0(%1) Iter_Func@%0(%1);Y_FOREACH_STOCK stock Iter_Stock:Iterator@%0;Iter_Func@%0(%1)F@a$
+
+#define Iter_Stock:%8;%0(%1)%2\03;<%3> %8;%3 %0(%1)%2<>
+#define stock%0(%2)%3\10;%1 stock%0(%2)%3 U@<stock>
+
+// Currently unused:
+#define Y_FOREACH_STOCK __:F@v:$
+#define F@v:%8$%0\10;%1 %8$%0
+//#define F@w:%8$          %8$
+//#define F@z
+// Convert from a normal iterator to a special iterator with parameters.
+//#define F@o)-2)+%8$%1,%0[%2]()$ F@o)-2)+%8$%1,%0(%2)$
 
 // Initial values for special iterators.
 //#define iterstart(%0) (%0)
 
 // Make the internal state an array if there is more than one value.
 #define itrst:%1=itrst:(%6,%7) %1[]={%6,%7}
+
+// Ultimate macro: http://forum.sa-mp.com/showpost.php?p=3801730
+#define u@$ 0]);
+#define __:%0$ u@(u[_:%0 u@$
+#define U@%0\03;%0<%0>
 
 // Consume spaces in the iterator state variables.
 #define Iter_State@%0\32;%1) Iter_State@%0%1)
