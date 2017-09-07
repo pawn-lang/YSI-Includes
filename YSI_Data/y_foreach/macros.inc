@@ -943,8 +943,13 @@ native Iter_Index(Iterator:Name<>);
 #define F@g(%0,%8) %0 F@a$
 #define F@h:%0) %0 F@a$)
 
-// Sort out tagged parameters plus extra parameters.
-#define F@t:(%0,%1) (%0),%1
+// Sort out tagged parameters plus extra parameters.  Expanded so it will fail
+// to match parameters outside the required area.
+//#define F@t:(%0,%1) (%0),%1
+#define F@t:(%0) MACRO_PARSE<F@B:>((%0))
+#define MACRO_PARSE<%0>(%1) %0_MACRO_PARSE:`%1`
+#define _MACRO_PARSE:`%0` %0
+#define F@B:%9`(%0,%1)` %9`(%0),%1`
 
 // y_iterate parser.  Takes an array input, and splits up all the components.
 #define _ITER<%5>(%1) (_:F@i:F@j:$Iter_%5_Internal(%1))
