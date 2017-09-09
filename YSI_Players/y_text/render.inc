@@ -82,7 +82,6 @@ Functions:
 Variables:
 	Global:
 		-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if !defined FORMAT_FADE_STEP

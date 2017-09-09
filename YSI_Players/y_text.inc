@@ -167,7 +167,6 @@ Compile options:
 	-
 Operators:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 // Include "y_unique" multiple times.

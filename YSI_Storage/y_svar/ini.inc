@@ -81,7 +81,6 @@ Functions:
 Variables:
 	Global:
 		-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 // Third "uvar" version.

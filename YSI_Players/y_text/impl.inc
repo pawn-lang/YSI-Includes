@@ -107,7 +107,6 @@ Compile options:
 	-
 Operators:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 enum e_TEXT_DISPLAY_TYPE

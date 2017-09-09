@@ -152,7 +152,6 @@ Compile options:
 	-
 Operators:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_properties

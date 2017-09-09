@@ -80,7 +80,6 @@ Changelog:
 		Added colourspace resolution for converting {FF0000} to ~r~.
 	25/11/10:
 		First version.
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 // Custom specifier data.

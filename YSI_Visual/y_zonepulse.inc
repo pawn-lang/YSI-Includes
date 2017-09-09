@@ -118,7 +118,6 @@ Operators:
 	-
 Iterators:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_zonepulse

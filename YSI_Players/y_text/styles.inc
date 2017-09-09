@@ -81,7 +81,6 @@ Functions:
 Variables:
 	Global:
 		-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 // Load the styles for the current item.  I have decided to completely switch

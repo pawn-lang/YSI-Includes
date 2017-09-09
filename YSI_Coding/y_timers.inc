@@ -88,7 +88,6 @@ Changelog:
 		Added pickups.
 	03/08/07:
 		First version.
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_timers

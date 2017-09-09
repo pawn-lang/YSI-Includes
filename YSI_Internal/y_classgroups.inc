@@ -74,7 +74,6 @@ Version:
 Changelog:
 	29/11/10:
 		First version
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_classgroups

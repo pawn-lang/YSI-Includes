@@ -79,7 +79,6 @@ Changelog:
 		Integrated in to YSI.
 	06/08/10:
 		First version
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_testing

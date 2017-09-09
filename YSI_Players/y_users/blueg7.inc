@@ -113,7 +113,6 @@ Compile options:
 	-
 Operators:
 	-
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 loadtext core[ysi_players];

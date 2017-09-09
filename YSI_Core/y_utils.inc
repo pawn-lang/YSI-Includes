@@ -100,7 +100,6 @@ Variables:
 		TRUE - True hack for infinate loops.
 		FALSE - False hack for one-time loops.
 		NULL - 1 long string for passing via Call(Remote|Local)Function.
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_utils

@@ -76,7 +76,6 @@ Version:
 Changelog:
 	30/04/11:
 		First version
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_playerset
