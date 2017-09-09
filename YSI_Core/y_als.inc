@@ -25,7 +25,29 @@ Legal:
 	the Initial Developer. All Rights Reserved.
 	
 	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
+		Y_Less
+		koolk
+		JoeBullet/Google63
+		g_aSlice/Slice
+		Misiur
+		samphunter
+		tianmeta
+		maddinat0r
+		spacemud
+		Crayder
+		Dayvison
+		Ahmad45123
+		Zeex
+		irinel1996
+		Yiin-
+		Chaprnks
+		Konstantinos
+		Masterchen09
+		Southclaws
+		PatchwerkQWER
+		m0k1
+		paulommu
+		udan111
 	
 	Thanks:
 		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
@@ -54,7 +76,6 @@ Changelog:
 		Added "call" macro to make testing easier.
 	21/10/10:
 		First version
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if !defined _INC_y_als

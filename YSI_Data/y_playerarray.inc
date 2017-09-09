@@ -26,7 +26,29 @@ Legal:
 	the Initial Developer. All Rights Reserved.
 	
 	Contributors:
-		ZeeX, koolk
+		Y_Less
+		koolk
+		JoeBullet/Google63
+		g_aSlice/Slice
+		Misiur
+		samphunter
+		tianmeta
+		maddinat0r
+		spacemud
+		Crayder
+		Dayvison
+		Ahmad45123
+		Zeex
+		irinel1996
+		Yiin-
+		Chaprnks
+		Konstantinos
+		Masterchen09
+		Southclaws
+		PatchwerkQWER
+		m0k1
+		paulommu
+		udan111
 	
 	Thanks:
 		Peter, Cam - Support.
@@ -54,7 +76,6 @@ Changelog:
 		Scrapped pointless "playing" code I was unhappy with.
 	29/11/10:
 		First version
-</remarks>
 \**--------------------------------------------------------------------------**/
 
 #if defined _INC_y_playerarray
