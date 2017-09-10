@@ -10,7 +10,7 @@
 
 loadtext core[ysi_players], core[ysi_extras], core[ysi_dialog];
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 <summary>
 	Extra_DoLogin
 	Commands: /login
@@ -22,7 +22,7 @@ loadtext core[ysi_players], core[ysi_extras], core[ysi_dialog];
 	prompts the user for a password with a dialog.  If it isn't empty then it
 	takes that as the password.
 </remarks>
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 stock Extra_DoLogin(playerid, string:pw[])
 {
@@ -68,7 +68,7 @@ YCMD:login(playerid, params[], help)
 	return 1;
 }
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 <summary>
 	Extra_DoRegister
 	Command: /register
@@ -83,7 +83,7 @@ YCMD:login(playerid, params[], help)
 	Currently this only checks the length of the password for strength, it
 	doesn't check other properties such as number/case/symbol mixes.
 </remarks>
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 stock Extra_DoRegister(playerid, string:pw[])
 {

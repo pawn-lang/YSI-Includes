@@ -307,7 +307,7 @@ enum e_HASH_TYPE
 	hash_fnv1a
 }
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 <param name="str">The string to hash.</param>
 <param name="sensitive">Wether the hash is case sensitive or not.</param>
 <returns>
@@ -322,7 +322,7 @@ native Hash(str[]);
 
 	NOW FORWARD AGAIN.
 </remarks>
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstein, len = -1, pack = false)
 {

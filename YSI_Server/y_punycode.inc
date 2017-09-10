@@ -1,4 +1,4 @@
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
   				===================================
 					 y_punycode - Character encodings.
 					===================================
@@ -163,7 +163,7 @@ static stock const
 			PP_LOOP<5>(PUNY_INVL)(,)
 		};
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 <param name="dst">Where to store the converted string.</param>
 <param name="src">The string to convert.</param>
 <param name="wlen">The length of the destination.</param>
@@ -171,7 +171,7 @@ static stock const
 <remarks>
 	Takes a punycode string and converts it to unicode.
 </remarks>
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 stock Puny_Decode(string:dst[], string:src[], wlen = sizeof (dst), const delimiter = PUNY_CHAR)
 {
@@ -231,7 +231,7 @@ stock Puny_Decode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 	return 1;
 }
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 <param name="dst">Where to store the converted string.</param>
 <param name="src">The string to convert.</param>
 <param name="wlen">The length of the destination.</param>
@@ -239,7 +239,7 @@ stock Puny_Decode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 <remarks>
 	Takes a unicode string and converts it to punycode.
 </remarks>
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimiter = PUNY_CHAR)
 {
@@ -305,7 +305,7 @@ stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 	return (dst[widx] = '\0'), 1;
 }
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 <param name="dst">Where to store the converted string.</param>
 <param name="src">The string to convert.</param>
 <param name="hash">Store the hash value.</param>
@@ -318,7 +318,7 @@ stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 	Takes a unicode string and converts it to punycode, while at the same time
 	generating a Bernstein hash of the string.  CASE INSENSITIVE.
 </remarks>
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), const delimiter = PUNY_CHAR)
 {
@@ -409,16 +409,16 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 	return (bPacked ? strpack(dst, dst, wlen) : 0), (dst[widx] = '\0'), rlen;
 }
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 <param name="num">The single number to encode.</param>
 <remarks>
 	Convert a single digit to base 36.
 </remarks>
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 #define _Puny_Basic(%0) (((%0) > 25) ? ((%0) + ('0' - 25)) : ((%0) + 'a'))
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 <param name="bias">Part of the state machine.</param>
 <param name="delta">Part of the state machine.</param>
 <param name="dst">Array to write to.</param>
@@ -428,7 +428,7 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 	This is part of how the punycode algorithm encodes numbers as very clever
 	strings, but honestly I don't fully understand it!
 </remarks>
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 static stock Puny_EncodeVarHash(bias, delta, dst[], wlen, &hash)
 {
@@ -458,7 +458,7 @@ static stock Puny_EncodeVarHash(bias, delta, dst[], wlen, &hash)
 	return i;
 }
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 <param name="bias">Part of the state machine.</param>
 <param name="delta">Part of the state machine.</param>
 <param name="dst">Array to write to.</param>
@@ -467,7 +467,7 @@ static stock Puny_EncodeVarHash(bias, delta, dst[], wlen, &hash)
 	This is part of how the punycode algorithm encodes numbers as very clever
 	strings, but honestly I don't fully understand it!
 </remarks>
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 static stock Puny_EncodeVar(bias, delta, dst[], wlen)
 {
@@ -492,7 +492,7 @@ static stock Puny_EncodeVar(bias, delta, dst[], wlen)
 	return i;
 }
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 <param name="delta">Part of the state machine.</param>
 <param name="length">Written string size.</param>
 <param name="firstTime">Have special characters already been written?</param>
@@ -500,7 +500,7 @@ static stock Puny_EncodeVar(bias, delta, dst[], wlen)
 	This is part of how the punycode algorithm encodes numbers as very clever
 	strings, but honestly I don't fully understand it!
 </remarks>
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 static stock Puny_Adapt(delta, length, bool:firstTime)
 {
@@ -518,7 +518,7 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 }
 
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 <param name="index">The HTTP reference index.</param>
 <param name="type">How the request should be sent.</param>
 <param name="url">The (internationalised) URL address.</param>
@@ -527,7 +527,7 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 <remarks>
 	Hooks the "HTTP" function.
 </remarks>
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 #if defined PUNY_HTTP_HOOK
 	stock Puny_HTTP(index, type, url[], data[], callback[])

@@ -237,9 +237,9 @@ Iterators:
 
 */
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 Create the internal iterators.
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 #if _FOREACH_PLAYERS
 	new
@@ -490,12 +490,12 @@ stock Iter_All_Internal(array[], size, value)
 
 */
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 <remarks>
 	Sets up all existing iterators.  Does nothing for "XXLocal" ones, since they
 	are by definition empty when a script starts.
 </remarks>
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 #if _FOREACH_CHARACTERS || _FOREACH_VEHICLES || _FOREACH_ACTORS
 	hook OnScriptInit()
@@ -567,7 +567,7 @@ stock Iter_All_Internal(array[], size, value)
 
 */
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 <param name="playerid">Player who joined.</param>
 <remarks>
 	Adds a player to the loop data.  Now sorts the list too.  Note that I found
@@ -579,7 +579,7 @@ stock Iter_All_Internal(array[], size, value)
 	the problem, and I've tried to make sure that the values will never actually
 	get printed.
 </remarks>
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 #if _FOREACH_CHARACTERS
 	hook OnPlayerConnect(playerid)
@@ -602,7 +602,7 @@ stock Iter_All_Internal(array[], size, value)
 		return 1;
 	}
 	
-	/*** ====================================================================== ***\
+	/**----------------------------------------------------------------------**\
 	
 	<param name="playerid">Player who left.</param>
 	<remarks>
@@ -619,7 +619,7 @@ stock Iter_All_Internal(array[], size, value)
 		return 1;
 	}
 	
-	/*** ====================================================================== ***\
+	/**----------------------------------------------------------------------**\
 	
 	<param name="playerid">Player who left.</param>
 	<remarks>

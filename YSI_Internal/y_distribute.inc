@@ -192,7 +192,7 @@ stock Distribute_Do(func[], GLOBAL_TAG_TYPES:...)
 	#emit STACK       20
 }
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 <param name="func">The name of the receiving function.</param>
 <param name="idx">The index of the data being sent in its array.</param>
 <param name="masters">This data's masters.</param>
@@ -203,7 +203,7 @@ stock Distribute_Do(func[], GLOBAL_TAG_TYPES:...)
 	script, then this script is removed and the remainder of the data is sent to
 	the new master system.
 </remarks>
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 stock Distribute_So(func[], idx, Bit:masters[], GLOBAL_TAG_TYPES:...)
 {
@@ -235,7 +235,7 @@ stock Distribute_So(func[], idx, Bit:masters[], GLOBAL_TAG_TYPES:...)
 	}
 }
 
-/*** ====================================================================== ***\
+/**--------------------------------------------------------------------------**\
 <param name="str">String to get the size of.</param>
 <returns>
 	The number of BYTES this string takes up including the NULL.
@@ -243,7 +243,7 @@ stock Distribute_So(func[], idx, Bit:masters[], GLOBAL_TAG_TYPES:...)
 <remarks>
 	Caters for both packed and unpacked strings.
 </remarks>
-\*** ====================================================================== ***/
+\**--------------------------------------------------------------------------**/
 
 stock Distribute_To(from[], ss, GLOBAL_TAG_TYPES:...)
 {
