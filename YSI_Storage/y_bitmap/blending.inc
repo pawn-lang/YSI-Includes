@@ -86,7 +86,7 @@ Functions:
 Variables:
 	Global:
 		-
-**/
+*/
 
 stock Bitmap_WritePixel(Bitmap:ctx, const x, const y, const colour)
 {

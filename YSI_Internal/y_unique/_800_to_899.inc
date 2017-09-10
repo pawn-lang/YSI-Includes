@@ -77,7 +77,7 @@ Changelog:
 		Reversed check order so smallest numbers come first.
 	01/05/11:
 		First version.
-**/
+*/
 
 static stock const Y_UNIQUE_800_to_899_CALLED;
 

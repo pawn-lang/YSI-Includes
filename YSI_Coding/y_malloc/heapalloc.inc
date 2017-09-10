@@ -140,7 +140,7 @@ Compile options:
 	YSI_MALLOC_NO_SHORT - Avoid conflicts with mget/mset.
 Operators:
 	-
-**/
+*/
 
 main()
 {

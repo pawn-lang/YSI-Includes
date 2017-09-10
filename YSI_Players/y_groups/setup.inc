@@ -74,7 +74,7 @@ Version:
 Changelog:
 	29/11/10:
 		First version
-**/
+*/
 
 #define _GROUP_LOCAL_NAME               _GROUP_MAKE_TAG:e
 

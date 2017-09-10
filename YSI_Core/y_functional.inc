@@ -73,7 +73,7 @@ Version:
 Changelog:
 	09/09/17:
 		First documentation.
-**/
+*/
 
 // Pretty much all we need.
 

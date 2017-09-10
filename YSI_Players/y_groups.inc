@@ -74,7 +74,7 @@ Version:
 Changelog:
 	29/11/10:
 		First version
-**/
+*/
 
 #include "..\YSI_Internal\y_version"
 

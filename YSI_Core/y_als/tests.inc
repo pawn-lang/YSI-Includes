@@ -76,7 +76,7 @@ Changelog:
 		Added "call" macro to make testing easier.
 	21/10/10:
 		First version
-**/
+*/
 
 #if !defined ALS_MAKE
 	#define ALS_MAKE<%0...%1> %0__T_%1

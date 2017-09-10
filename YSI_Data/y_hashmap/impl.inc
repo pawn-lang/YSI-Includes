@@ -85,7 +85,7 @@ Functions:
 Definitions:
 	HASH_MAP_DATA - What should be added to enums to be hash map referenced.
 	HashMap - Declare a new hash map.
-**/
+*/
 
 #define HASH_MAP_SIZE   (256)
 #define HASH_MAP_PTR    (HASH_MAP_SIZE)

@@ -129,7 +129,7 @@ Commands:
 	-
 Compile options:
 	-
-**/
+*/
 
 // This is redefined below, don't worry.  It's like this so the function
 // prototypes can use a familiar syntax.

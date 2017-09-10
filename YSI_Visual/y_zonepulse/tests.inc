@@ -118,7 +118,7 @@ Operators:
 	-
 Iterators:
 	-
-**/
+*/
 
 static
 	gZone;

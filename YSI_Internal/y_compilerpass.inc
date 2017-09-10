@@ -112,7 +112,7 @@ Operators:
 	-
 Natives:
 	-
-**/
+*/
 
 #if defined _INC_y_compilerpass
 	#endinput

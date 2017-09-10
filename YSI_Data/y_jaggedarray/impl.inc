@@ -74,7 +74,7 @@ Changelog:
 	06/10/12:
 		First version
 		Fixed a bug calling "rawMemset".
-**/
+*/
 
 // Helper macro so people don't need to enter all the sizes all the time.
 #define _Jagged(%0) (%0),sizeof(%0),sizeof(%0[])

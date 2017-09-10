@@ -106,7 +106,7 @@ Commands:
 	-
 Compile options:
 	-
-**/
+*/
 
 Test:y_cell_ReverseBits0()
 {

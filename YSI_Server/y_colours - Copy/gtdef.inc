@@ -90,7 +90,7 @@ Changelog:
 		Added colourspace resolution for converting {FF0000} to ~r~.
 	25/11/10:
 		First version.
-**/
+*/
 
 // These are the RGB values for the gametext colours (got manually using GIMP).
 // These need to be added in to the main system so you can type and use them.

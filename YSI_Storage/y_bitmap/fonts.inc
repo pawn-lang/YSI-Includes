@@ -86,7 +86,7 @@ Functions:
 Variables:
 	Global:
 		-
-**/
+*/
 
 static stock const
 	/*YSI_g_scAlphabet[10][26 + 1 + 10 + 1 char] =

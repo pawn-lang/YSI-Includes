@@ -113,7 +113,7 @@ Operators:
 	-
 Natives:
 	-
-**/
+*/
 
 #if defined _INC_y_version
 	#endinput

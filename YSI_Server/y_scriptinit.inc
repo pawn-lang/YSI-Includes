@@ -81,7 +81,7 @@ Changelog:
 		Supports y_hooks better, without relying on it.
 	30/04/11:
 		First version
-**/
+*/
 
 /*
 

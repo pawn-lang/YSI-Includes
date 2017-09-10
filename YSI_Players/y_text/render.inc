@@ -82,7 +82,7 @@ Functions:
 Variables:
 	Global:
 		-
-**/
+*/
 
 #if !defined FORMAT_FADE_STEP
 	#define FORMAT_FADE_STEP 2

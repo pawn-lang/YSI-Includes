@@ -77,7 +77,7 @@ Changelog:
 		Reversed check order so smallest numbers come first.
 	01/05/11:
 		First version.
-**/
+*/
 
 #include "y_compilerpass"
 

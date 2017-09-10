@@ -88,7 +88,7 @@ Changelog:
 		Added pickups.
 	03/08/07:
 		First version.
-**/
+*/
 
 // Disable this version!
 

@@ -179,7 +179,7 @@ Compile options:
 	-
 Operators:
 	-
-**/
+*/
 
 Test:INI_IdentifyLineType1()
 {

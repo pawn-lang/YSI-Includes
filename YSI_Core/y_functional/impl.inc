@@ -73,7 +73,7 @@ Version:
 Changelog:
 	09/09/17:
 		First documentation.
-**/
+*/
 
 
 #define CB_GET(%0)  new _cb[E_CALLBACK_DATA]; Callback_Get(cb, _cb, (%0))

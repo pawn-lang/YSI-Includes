@@ -73,7 +73,7 @@ Version:
 Changelog:
 	28/03/13:
 		First version
-**/
+*/
 
 stock Races_SetupGroups() <YSI_has_groups:y>
 {

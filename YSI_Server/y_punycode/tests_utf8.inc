@@ -118,7 +118,7 @@ Compile options:
 	-
 Operators:
 	-
-**/
+*/
 
 Test:y_punycode_1()
 {

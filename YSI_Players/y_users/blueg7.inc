@@ -113,7 +113,7 @@ Compile options:
 	-
 Operators:
 	-
-**/
+*/
 
 loadtext core[ysi_players];
 

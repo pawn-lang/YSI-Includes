@@ -85,7 +85,7 @@ Functions:
 Variables:
 	Global:
 		-
-**/
+*/
 
 Test:y_bitmap_Fade1()
 {

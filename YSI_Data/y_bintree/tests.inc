@@ -129,7 +129,7 @@ Compile options:
 	-
 Operators:
 	-
-**/
+*/
 
 Test:y_bintree_1()
 {

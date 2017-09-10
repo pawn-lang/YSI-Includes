@@ -85,7 +85,7 @@ Functions:
 Variables:
 	Global:
 		-
-**/
+*/
 
 static stock
 	YSI_g_sFileHeader[] =

@@ -87,7 +87,7 @@ Functions:
 Definitions:
 	_H - Generate a string hash at compile time.
 	_I - Generate a case insensitive string hash at compile time.
-**/
+*/
 
 #if defined _INC_y_stringhash
 	#endinput

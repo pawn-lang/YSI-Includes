@@ -112,7 +112,7 @@ Compile options:
 	-
 Operators:
 	-
-**/
+*/
 
 #if !defined MAX_NESTED_PASSTHROUGHS
 	#define MAX_NESTED_PASSTHROUGHS (4) // Should be MORE than enough!

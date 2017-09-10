@@ -82,7 +82,7 @@ Functions:
 Variables:
 	Global:
 		-
-**/
+*/
 
 #if defined _INC_y_dialog
 	#endinput

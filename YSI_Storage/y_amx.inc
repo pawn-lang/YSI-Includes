@@ -77,7 +77,7 @@ Changelog:
 		Simplified the main macros to work across multiple lines.
 	06/08/10:
 		First version
-**/
+*/
 
 #if defined _INC_y_amx
 	#endinput

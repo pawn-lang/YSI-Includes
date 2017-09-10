@@ -86,7 +86,7 @@ Functions:
 Variables:
 	Global:
 		-
-**/
+*/
 
 stock Bitmap_StraightLine(sX, sY, eX, eY, width, pattern[] = "SOLID")
 {

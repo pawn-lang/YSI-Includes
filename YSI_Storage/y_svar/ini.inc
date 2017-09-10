@@ -81,7 +81,7 @@ Functions:
 Variables:
 	Global:
 		-
-**/
+*/
 
 // Third "uvar" version.
 #define _YS@LE@E%0>

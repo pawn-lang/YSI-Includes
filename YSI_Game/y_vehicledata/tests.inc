@@ -118,7 +118,7 @@ Operators:
 	-
 Iterators:
 	-
-**/
+*/
 
 static stock bool:VIM_LocalEmpty(str[])
 {

@@ -79,7 +79,7 @@ Changelog:
 		Updated OnPlayerUpdate code using Google63's SCTRL jump code.
 	06/08/10:
 		First version
-**/
+*/
 
 #if defined _INC_y_races
 	#endinput

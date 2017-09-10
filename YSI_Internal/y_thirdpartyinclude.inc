@@ -73,7 +73,7 @@ Version:
 Changelog:
 	09/09/17:
 		First documentaiton.
-**/
+*/
 
 // If the files only exist in one place, they will only be included once because
 // of using "#tryinclude".  If they happen to exist in two places, their own

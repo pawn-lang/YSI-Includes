@@ -147,7 +147,7 @@ Operators:
 	-
 Natives:
 	-
-**/
+*/
 
 #if AUTO_INCLUDE_GUARD
 	#undef _inc__stack_push_009

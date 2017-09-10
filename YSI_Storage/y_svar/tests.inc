@@ -81,7 +81,7 @@ Functions:
 Variables:
 	Global:
 		-
-**/
+*/
 
 enum y_svar_E_TEST
 {

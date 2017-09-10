@@ -112,7 +112,7 @@ Compile options:
 	-
 Operators:
 	-
-**/
+*/
 
 #if defined _INC_y_va
 	#endinput

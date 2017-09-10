@@ -73,7 +73,7 @@ Version:
 Changelog:
 	09/09/17:
 		First documentation.
-**/
+*/
 
 #define FUNC_CHECK_ARR(%0,%1) for (new __i, __j = min(sizeof (%0), sizeof (%1)); __i != __j; ++__i) ASSERT(%0[__i] == %1[__i])
 

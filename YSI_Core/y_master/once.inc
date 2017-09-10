@@ -132,7 +132,7 @@ Operators:
 	-
 Natives:
 	-
-**/
+*/
 
 #define Master_ID() (_@)
 

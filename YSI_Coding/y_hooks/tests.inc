@@ -95,7 +95,7 @@ Changelog:
 		Updated OnPlayerUpdate code using Google63's SCTRL jump code.
 	06/08/10:
 		First version
-**/
+*/
 
 static
 	YSI_g_sValue;

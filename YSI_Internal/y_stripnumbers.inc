@@ -116,7 +116,7 @@ Operators:
 	-
 Natives:
 	-
-**/
+*/
 
 #if defined _INC_y_stripnumbers
 	#endinput

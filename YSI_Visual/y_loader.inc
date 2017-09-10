@@ -65,7 +65,7 @@ Compile options:
 	-
 Operators:
 	-
-**/
+*/
 
 static stock
 	XML:YSI_g_sXMLRules = NO_XML_FILE,

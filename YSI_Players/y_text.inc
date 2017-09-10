@@ -167,7 +167,7 @@ Compile options:
 	-
 Operators:
 	-
-**/
+*/
 
 // Include "y_unique" multiple times.
 #include "..\YSI_Internal\y_unique"

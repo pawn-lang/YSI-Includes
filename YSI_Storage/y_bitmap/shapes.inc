@@ -85,7 +85,7 @@ Functions:
 Variables:
 	Global:
 		-
-**/
+*/
 
 /*** ====================================================================== ***\
 <param name="ctx">The bitmap to modify.</param>

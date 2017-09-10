@@ -140,7 +140,7 @@ Commands:
 	-
 Compile options:
 	-
-**/
+*/
 
 Test:y_commands_Valid()
 {

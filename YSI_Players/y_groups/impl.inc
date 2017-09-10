@@ -78,7 +78,7 @@ Changelog:
 		Added group hierarchys.
 	29/11/10:
 		First version
-**/
+*/
 
 #define _GROUP_STOP_INCLUDES
 

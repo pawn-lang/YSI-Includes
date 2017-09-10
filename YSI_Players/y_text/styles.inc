@@ -81,7 +81,7 @@ Functions:
 Variables:
 	Global:
 		-
-**/
+*/
 
 // Load the styles for the current item.  I have decided to completely switch
 // over to XML as there are just too many options now to make INI files worth

@@ -76,7 +76,7 @@ Version:
 Changelog:
 	30/04/11:
 		First version
-**/
+*/
 
 #if defined _INC_y_playerset
 	#endinput

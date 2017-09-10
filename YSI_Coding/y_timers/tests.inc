@@ -88,7 +88,7 @@ Changelog:
 		Added pickups.
 	03/08/07:
 		First version.
-**/
+*/
 
 #tryinclude "y_hooks"
 #tryinclude "..\y_hooks"

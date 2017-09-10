@@ -76,7 +76,7 @@ Version:
 Changelog:
 	06/08/10:
 		First version
-**/
+*/
 
 #if defined _INC_y_td
 	#endinput

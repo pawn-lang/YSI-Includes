@@ -74,7 +74,7 @@ Version:
 Changelog:
 	29/11/10:
 		First version
-**/
+*/
 
 #if defined _INC_y_classgroups
 	#endinput

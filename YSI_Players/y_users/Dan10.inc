@@ -113,7 +113,7 @@ Compile options:
 	-
 Operators:
 	-
-**/
+*/
 
 #if !defined Y_USERS_SQL_HOST
 	#define Y_USERS_SQL_HOST GetUsersSQLHost()

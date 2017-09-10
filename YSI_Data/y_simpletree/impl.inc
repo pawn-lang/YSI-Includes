@@ -119,7 +119,7 @@ Compile options:
 	-
 Operators:
 	-
-**/
+*/
 
 #define E_INT_TREE E_BINTREE_INPUT
 #define E_INT_TREE_VALUE E_BINTREE_INPUT_VALUE,

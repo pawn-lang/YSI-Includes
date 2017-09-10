@@ -162,7 +162,7 @@ Compile options:
 	COMMAND_SENSITIVE - Make commands case sensitive.
 	COMMAND_ACCURATE - Can use '@' in command names.
 	MAX_COMMANDS - The maximum number of commands which can be used.
-**/
+*/
 
 #if defined _INC_y_commands
 	#endinput

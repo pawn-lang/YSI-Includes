@@ -85,7 +85,7 @@ Functions:
 Variables:
 	Global:
 		-
-**/
+*/
 
 /*#define _PATTERN_FLAGS     (0x01010000)
 #define _PATTERN_FADE_EDGE (0x01000000)

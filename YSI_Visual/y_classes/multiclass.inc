@@ -155,7 +155,7 @@ Compile options:
 	-
 Operators:
 	-
-**/
+*/
 
 PRE_HOOK(Class)
 #undef CHAIN_ORDER

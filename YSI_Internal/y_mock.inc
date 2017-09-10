@@ -73,7 +73,7 @@ Version:
 Changelog:
 	09/09/17:
 		First documentaiton.
-**/
+*/
 
 #if defined _INC_y_mock
 	#endinput

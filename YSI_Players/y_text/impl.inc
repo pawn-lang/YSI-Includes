@@ -107,7 +107,7 @@ Compile options:
 	-
 Operators:
 	-
-**/
+*/
 
 enum e_TEXT_DISPLAY_TYPE
 {

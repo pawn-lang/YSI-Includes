@@ -90,7 +90,7 @@ Changelog:
 		Added YSI_ prefix to all globals.
 	01/05/07:
 		First version.
-**/
+*/
 
 new
 	g_sRaceID;

@@ -118,7 +118,7 @@ Operators:
 	-
 Iterators:
 	-
-**/
+*/
 
 #if defined _INC_y_vehicledata
 	#endinput

@@ -73,7 +73,7 @@ Version:
 Changelog:
 	17/12/16:
 		First Version
-**/
+*/
 
 #if defined _INC_y_profiling
 	#endinput

@@ -155,7 +155,7 @@ Compile options:
 	-
 Operators:
 	-
-**/
+*/
 
 enum e_SPAWN_FLAGS (<<= 1)
 {

@@ -76,7 +76,7 @@ Changelog:
 		Added "call" macro to make testing easier.
 	21/10/10:
 		First version
-**/
+*/
 
 #if !defined _INC_y_als
 	

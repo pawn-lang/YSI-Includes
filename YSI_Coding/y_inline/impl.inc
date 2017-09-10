@@ -85,7 +85,7 @@ Changelog:
 		Changed the precedence of "using" types.
 	19/09/11:
 		First version
-**/
+*/
 
 /*
 

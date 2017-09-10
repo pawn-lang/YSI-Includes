@@ -88,7 +88,7 @@ Changelog:
 		Added pickups.
 	03/08/07:
 		First version.
-**/
+*/
 
 #if defined _INC_y_timers
 	#endinput

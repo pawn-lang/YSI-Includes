@@ -131,7 +131,7 @@ Compile options:
 	-
 Operators:
 	-
-**/
+*/
 
 #if defined _INC_y_simpletree
 	#endinput

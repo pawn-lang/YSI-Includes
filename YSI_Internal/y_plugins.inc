@@ -80,7 +80,7 @@ Version:
 Changelog:
 	21/10/12:
 		First version
-**/
+*/
 
 #if defined _INC_y_plugins
 	#endinput

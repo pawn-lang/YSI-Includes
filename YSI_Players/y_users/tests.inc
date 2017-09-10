@@ -113,7 +113,7 @@ Compile options:
 	-
 Operators:
 	-
-**/
+*/
 
 Test:Player_Existing()
 {

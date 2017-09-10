@@ -84,7 +84,7 @@ Changelog:
 		Added colourspace resolution for converting {FF0000} to ~r~.
 	25/11/10:
 		First version.
-**/
+*/
 
 // These magic "&" numbers were generated automagically by scanning the
 // whole set of colours repeatedly with different 5-bit masks

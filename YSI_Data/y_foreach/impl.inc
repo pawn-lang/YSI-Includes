@@ -222,7 +222,7 @@ Iterators:
 	Bot - List of all bots (npcs) connected.
 	NPC - Alias of Bot.
 	Character - All players and bots.
-**/
+*/
 
 /*
 
