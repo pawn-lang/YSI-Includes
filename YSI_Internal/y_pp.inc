@@ -82,14 +82,12 @@ Changelog:
 #endif
 #define _INC_y_pp
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="%9">Number of times to repeat.</param>
 <param name="%0">What to repeat.</param>
 <param name="%1">What to insert between repetitions.</param>
-<remarks>
 	Does something in the pre-processor multiple times.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define PP_LOOP<%9>(%0)(%1) PP_LOOP@%9(%0)(%1)
 #define PP_LOOP@0(%0)(%1)

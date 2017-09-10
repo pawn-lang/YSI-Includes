@@ -255,12 +255,11 @@ public _Config_Load_y_svar(name[], value[])
 	}
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="vardata">Handle to the memory location in which to store info.</param>
 <param name="dataSize">The size of the array (first dimension).</param>
 <param name="pointer">The start of the data.</param>
 <param name="ds2">The second dimension of the data.</param>
-<remarks>
 	This function modifies "vardata" well beyond its original limits to contain
 	information on the structure of the enum used to define "val".  This code
 	uses the name and size information passed in the additional parameters as
@@ -269,8 +268,7 @@ public _Config_Load_y_svar(name[], value[])
 	but in SA:MP isn't.  This takes a human readable(ish) description of the
 	array elements and converts it in to a much simpler to read format for the
 	computer to use later when loading and storing data.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock M@(volatile const vardata[], dataSize, &pointer, ds2 = 1)
 {

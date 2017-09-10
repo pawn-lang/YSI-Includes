@@ -289,11 +289,10 @@ public OnUserData[y_uvar](playerid, name[], value[])
 	}
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="val">Handle to the PAWN data array.</param>
 <param name="vardata">Handle to the memory location in which to store info.</param>
 <param name="...">Array slot size information.</param>
-<remarks>
 	This function modifies "vardata" well beyond its original limits to contain
 	information on the structure of the enum used to define "val".  This code
 	uses the name and size information passed in the additional parameters as
@@ -307,8 +306,7 @@ public OnUserData[y_uvar](playerid, name[], value[])
 	size of the data, the number of players in the array, the address of the
 	data, a pointer to another data set and the name of this data.  This is by
 	far much simpler than the old version.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock N@(volatile const vardata[], playerCount, dataSize, &pointer)
 {

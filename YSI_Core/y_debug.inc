@@ -128,8 +128,7 @@ Compile options:
 	_DEBUG - Debugging level to use.
 Operators:
 	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #if defined _INC_y_debug
 	#endinput
@@ -151,18 +150,16 @@ stock YSI_gDebugLevel = 0;
 #define P:%1(%2); Debug_Print%1(%2);
 #define C:%1(%2); Debug_Code%1(%2);
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="level">Debug level to run the code at.</param>
 <param name="code">Code to run.</param>
-<remarks>
 	Code is not a variable, it's a code chunk and may be written as so:
 	
 	Debug_Code1(if (bla == 2) { bla++; printf("%d", bla); });
 	
 	The code must all be on one line to avoid errors.
 	This isn't really a function as the first parameter is part of the name.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #if _DEBUG == -1
 	#define Debug_Code1(%1); { if (YSI_gDebugLevel >= 1) { %1 }}
@@ -222,16 +219,14 @@ stock YSI_gDebugLevel = 0;
 	#define Debug_CodeX(%1);
 #endif
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="level">Debug level to print at.</param>
 <param name="format">Format.</param>
 <param name="..."></param>
-<remarks>
 	This isn't really a function as the first parameter is part of the name:
 	
 	Debug_Print4("variables: %d, %d", i, j);
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #if _DEBUG == -1
 	#define Debug_Print1(%1); { if (YSI_gDebugLevel >= 1) printf(%1); }
@@ -368,9 +363,9 @@ public OnScriptInit()
 	return 1;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 	<transition target="on"/>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 static stock Debug_SetState() <ysi_debug : off>
 {

@@ -79,7 +79,7 @@ forward Loader_Spawn();
 forward Loader_Check();
 forward Loader_Obj();
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 Function:
 	Loader_Loader
 Params:
@@ -88,7 +88,7 @@ Return:
 	-
 Notes:
 	Defines the parsing rules for reading MTA XML maps.
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 Loader_Loader()
 {
@@ -105,7 +105,7 @@ Loader_Loader()
 	return 1;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 Function:
 	Loader_Parse
 Params:
@@ -123,7 +123,7 @@ Return:
 	Created race.
 Notes:
 	Tries to create a new race to save to then parses the file.
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock Loader_Parse(filename[], laps = 0, entry = 0, countdown = 3, bool:arial = false, bool:fixedPrize = true, exitTime = 0, interior = 0, world = 0, bool:restart = false)
 {
@@ -141,7 +141,7 @@ stock Loader_Parse(filename[], laps = 0, entry = 0, countdown = 3, bool:arial = 
 	return race;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 Function:
 	Loader_ParseObjects
 Params:
@@ -151,7 +151,7 @@ Return:
 	-
 Notes:
 	Parses a map file, loading only the objects.
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock Loader_ParseObjects(filename[], world = -1)
 {
@@ -159,7 +159,7 @@ stock Loader_ParseObjects(filename[], world = -1)
 	return XML_Parse(YSI_g_sXMLRules, filename);
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 Function:
 	Loader_Unload
 Params:
@@ -168,7 +168,7 @@ Return:
 	-
 Notes:
 	Destroys all the objects created for a race loaded with the loader.
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock Loader_Unload(race)
 {
@@ -205,7 +205,7 @@ stock Loader_Unload(race)
 	#endif
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 Function:
 	Loader_Convert
 Params:
@@ -215,7 +215,7 @@ Return:
 Notes:
 	Based on mtarad2deg made by Trix and fixed by Mike.  Converts radians to
 	degrees and rationalises.
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock Float:Loader_Convert(Float:radians)
 {
@@ -229,7 +229,7 @@ stock Float:Loader_Convert(Float:radians)
 	return retval;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 Function:
 	Loader_Obj
 Params:
@@ -238,7 +238,7 @@ Return:
 	CreateDynamicObject
 Notes:
 	Called when an end object tag is reached to create an object.
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 public Loader_Obj()
 {
@@ -303,7 +303,7 @@ public Loader_Obj()
 	#endif
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 Function:
 	Loader_Check
 Params:
@@ -312,7 +312,7 @@ Return:
 	Race_AddCheckpoint
 Notes:
 	Called when an end checkpoint tag is reached to add a checkpoint to a race.
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 public Loader_Check()
 {
@@ -344,7 +344,7 @@ public Loader_Check()
 	#endif
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 Function:
 	Loader_Spawn
 Params:
@@ -353,7 +353,7 @@ Return:
 	Race_AddStart
 Notes:
 	Called when an end spawnpoint tag is reached to add a startpoint to a race.
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 public Loader_Spawn()
 {
@@ -390,7 +390,7 @@ public Loader_Spawn()
 	#endif
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 Function:
 	Loader_AddHandler
 Params:
@@ -400,7 +400,7 @@ Return:
 	-
 Notes:
 	Used to add custom handlers to non-default tags in the race file format.
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock Loader_AddHandler(trigger[], function[])
 {
@@ -408,7 +408,7 @@ stock Loader_AddHandler(trigger[], function[])
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 Function:
 	Loader_GetRace
 Params:
@@ -417,7 +417,7 @@ Return:
 	Current race handle.
 Notes:
 	-
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock Loader_GetRace()
 {

@@ -135,16 +135,14 @@ static stock const
 	#include "y_groupsingle"
 	#include "y_groupsecond"
 	
-	/**----------------------------------------------------------------------**\
+	/**----------------------------------------------------------------------**-
 	
 	<param name="	o">Object to set.</param>
 	<param name="	p">Player to set.</param>
 	<param name="	bool:s">Add or remove this object from this player.</param>
-	<remarks>
-		Translate the YSI permissions system to the streamer plugin permissions
+			Translate the YSI permissions system to the streamer plugin permissions
 		system.
-	</remarks>
-	**/
+		**/
 	
 	foreign void:SObject_SetPlayer(o,p,bool:s);
 	
@@ -155,14 +153,12 @@ static stock const
 		//return s;
 	}
 	
-	/**----------------------------------------------------------------------**\
+	/**----------------------------------------------------------------------**-
 	
-	<remarks>
-		Hook the streamer creation function so that we can initialise the groups
+			Hook the streamer creation function so that we can initialise the groups
 		system for this thing.  The remainder of this file is just these two
 		functions in various forms repeatedly.
-	</remarks>
-	**/
+		**/
 	
 	stock IPS_CreateDynamicObject(modelid, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz, worldid = -1, interiorid = -1, playerid = -1, Float:streamdistance = 100.0)
 	{

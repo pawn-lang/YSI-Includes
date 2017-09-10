@@ -229,58 +229,56 @@ static stock
 	forward @INI_%0_%1(%2); \
 	@INI_%0_%1(%2)
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="name">Name of the INI key.</param>
 <param name="variable">Variable to fill with integer value.</param>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define INI_Int(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = strval(value)
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="name">Name of the INI key.</param>
 <param name="variable">Variable to fill with float value.</param>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define INI_Float(%1,%2) \
 	if (!strcmp((%1), name, true)) return _:(%2 = floatstr(value))
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="name">Name of the INI key.</param>
 <param name="variable">Variable to fill with hex value.</param>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define INI_Hex(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = hexstr(value)
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="name">Name of the INI key.</param>
 <param name="variable">Variable to fill with binary value.</param>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define INI_Bin(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = binstr(value)
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="name">Name of the INI key.</param>
 <param name="variable">Variable to fill with string value.</param>
 <param name="len">Optional string length.</param>
-<remarks>
 	The old version of "INI_String" didn't like not having a length.  It gave a
 	very odd error message too.  This has now been corrected by making the
 	length parameter optional.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define INI_String(%1,%2) \
 	if (!strcmp((%1), name, true)) return _:INI_CHECK_LEN:strcpy(%2, value)
 
 #define INI_CHECK_LEN:strcpy(%0,%1,%2) strcpy(%0,%2,%1)
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="name">Name of the INI key.</param>
 <param name="variable">Variable to fill with string value.</param>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define INI_Bool(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = boolstr(value)
@@ -300,7 +298,7 @@ static stock
 
 #define INI_SkipWhitespace(%0,%1) while ('\0' < %0[%1] <= ' ') ++%1
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="callback">The callback destination.</param>
 <param name="format">The function name format.</param>
 <param name="tag">The tag destination.</param>
@@ -312,12 +310,10 @@ static stock
 <returns>
 	Was the function found?
 </returns>
-<remarks>
 	Gets a callback given a partial function name and a tag name.  Also saves
 	the tag elsewhere.  This might not work as a separate function - it will
 	need to be in the function called by the function with the inlines in.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define INI_GetCallback(%0,%1,%2,%3,%4,%5) \
 	( \
@@ -340,7 +336,7 @@ static stock
 
 */
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="filename">The file to load.</param>
 <param name="remoteFormat">The format string to generate the remote function to
 pass the data to once loaded.</param>
@@ -353,7 +349,6 @@ name.</param>
 <param name="bFilter">Apply the tag name filter to all tags or just prefixed
 ones?</param>
 <param name="filter">Text to use to search for which tags to load.</param>
-<remarks>
 	bFileFirst sets the order and inclusion of the possible remoteFormat
 	parameters.  If true the format will add the filename first then the 
 	current tag, if false the order will be reversed.  This can also be used
@@ -365,8 +360,7 @@ ones?</param>
 	
 		http://forum.sa-mp.com/showthread.php?t=485611
 	
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:bExtra = false, extra = 0, bool:bLocal = true, bool:bPassTag = false, bool:bFilter = true, filter[] = "")
 {
@@ -470,7 +464,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 		true;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="filename">The file to load.</param>
 <param name="bExtra">Send additional data.</param>
 <param name="extra">Additional data to send.</param>
@@ -478,11 +472,9 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 <returns>
 	INI_ParseFile
 </returns>
-<remarks>
 	Wrapper for INI_ParseFile to use standard API features so people can
 	worry even less.  Designed for use with INI_Parse.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock bool:INI_Load(filename[], bool:bExtra = false, extra = 0, bool:bLocal = true)
 {
@@ -505,7 +497,7 @@ stock bool:INI_Load(filename[], bool:bExtra = false, extra = 0, bool:bLocal = tr
 
 */
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="str">The string you want to type analyse.</param>
 <param name="p0s">Start of part 0.</param>
 <param name="p0e">End of part 0.</param>
@@ -517,11 +509,9 @@ stock bool:INI_Load(filename[], bool:bExtra = false, extra = 0, bool:bLocal = tr
 <returns>
 	e_INI_LINE_TYPE
 </returns>
-<remarks>
 	This function's signature is so long that I put it on a separate line.  This
 	takes a line and determines what it is and where the parts are.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock e_INI_LINE_TYPE:
 	INI_IdentifyLineType(const str[], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e)
@@ -674,12 +664,11 @@ state_in_comment:
 
 */
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="fmat">The format destination.</param>
 <param name="remoteFormat">The source format.</param>
 <param name="filename">The file we are currently parsing.</param>
 <param name="bFileFirst">The format parameter ordering.</param>
-<remarks>
 	Generates a partial function name for processing callbacks.  Includes the
 	filename and a placeholder for the tag name.  This now takes extra
 	characters in to account and strips or converts bits:
@@ -698,8 +687,7 @@ state_in_comment:
 	is no place for the function name to go.
 	
 	This is quite a complex function, but is only called once per file parse.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filename[], const bool:bFileFirst)
 {
@@ -765,7 +753,7 @@ _Y_INI_STATIC stock INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTa
 	}
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="filename">The file to load.</param>
 <param name="remoteFormat">The format string to generate the remote function
 t pass the data to once loaded.</param>
@@ -778,15 +766,13 @@ name.</param>
 <param name="bFilter">Apply the tag name filter to all tags or just prefixed
 ones?</param>
 <param name="filter">Text to use to search for which tags to load.</param>
-<remarks>
 	bFileFirst sets the order and inclusion of the possible remoteFormat
 	parameters.  If true the format will add the filename first then the 
 	current tag, if false the order will be reversed.  This can also be used
 	to exclude one or the other from the function name by setting the required
 	parameter to be entered first and then only having one %s in the format
 	sting.  The default order is tag first for languages compatibility.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 static stock INI_DoParentTag(const epos, const search[], File:f, callback[E_CALLBACK_DATA], bool:bExtra, extra, bool:bPassTag, tag[], bool:bFilter, filter[])
 {

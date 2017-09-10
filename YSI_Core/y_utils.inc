@@ -274,7 +274,7 @@ public OnPlayerDisconnect(playerid, reason)
 	forward _y_utils_OnPlayerDisconnect(playerid, reason);
 #endif
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <summary>
 	UCMP(value, upper);
 </summary>
@@ -283,12 +283,12 @@ public OnPlayerDisconnect(playerid, reason)
 <returns>
 	An unsigned comparison between the two values.
 </returns>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define UCMP(%0,%1) IS_IN_RANGE(%0,0,(%1)) //(((%0) - cellmin) < ((%1) - cellmin))
 #define VALID_PLAYERID(%0) UCMP((%0), MAX_PLAYERS)
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <summary>
 	IS_IN_RANGE(value, lower, upper);
 </summary>
@@ -298,18 +298,16 @@ public OnPlayerDisconnect(playerid, reason)
 <returns>
 	Is the value in the given range.
 </returns>
-<remarks>
 	Equivalent to:
 	
 		(%1) &lt;= (%0) &lt; (%2)
 	
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
 #define NOT_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <summary>
 	ceildiv(numerator, denominator);
 </summary>
@@ -318,14 +316,12 @@ public OnPlayerDisconnect(playerid, reason)
 <returns>
 	(numerator / denominator) rounded up.
 </returns>
-<remarks>
 	Normal integer division ALWAYS rounds down - this always rounds up.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define ceildiv(%0,%1) (((%0)-1)/(%1)+1)
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <summary>
 	floordiv(numerator, denominator);
 </summary>
@@ -334,50 +330,48 @@ public OnPlayerDisconnect(playerid, reason)
 <returns>
 	(numerator / denominator) rounded down.
 </returns>
-<remarks>
 	Normal integer division ALWAYS rounds down - this also always rounds down,
 	making it a little pointless, but also more explicit in function.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define floordiv(%0,%1) ((%0)/(%1))
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="str">String to check if is null.</param>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #if !defined isnull
 	#define isnull(%1) \
 		((%1[0] == 0) || (%1[0] == 1 && %1[1] == 0))
 #endif
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="value">Value to check if is odd.</param>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define isodd(%1) \
 	((%1) & 1)
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="value">Value to check if is even.</param>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define iseven(%1) \
 	(!isodd(%1))
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="dest">Destination string.</param>
 <param name="src">Source string.</param>
 <param name="len">(Implicit) maximum length of the destination.</param>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define strcpy(%0,%1) \
 	strcat((%0[0] = '\0', %0), %1)
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="str">String to convert.</param>
 <param name="len">How much of the string to convert.</param>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock StrToLower(str[], len = sizeof (str))
 {
@@ -388,10 +382,10 @@ stock StrToLower(str[], len = sizeof (str))
 		str[i] = tolower(ch);
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="str">String to convert.</param>
 <param name="len">How much of the string to convert.</param>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock StrToUpper(str[], len = sizeof (str))
 {
@@ -402,14 +396,12 @@ stock StrToUpper(str[], len = sizeof (str))
 		str[i] = toupper(ch);
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="minmax">Lower bound, or upper bound when only parameter.</param>
 <param name="max">Upper bound.</param>
-<remarks>
 	Generate a random float between the given numbers (min &lt;= n &lt; max).
 	Default minimum is 0.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock Random(min, max = cellmin)
 {
@@ -424,15 +416,13 @@ stock Random(min, max = cellmin)
 	return random(max - min) + min;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="minmax">Lower bound, or upper bound when only parameter.</param>
 <param name="max">Upper bound.</param>
 <param name="dp">How small to make the differences</param>
-<remarks>
 	Generate a random float between the given numbers (min &lt;= n &lt; max).  Default
 	minimum is 0.0.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
 {
@@ -459,12 +449,10 @@ stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
 	return float(random(floatround(max * mul - min * mul))) / mul + min;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="str">The string to remove the newline characters from</param>
-<remarks>
 	Updated from old versions, should be more efficient
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock StripNL(str[])
 {
@@ -474,9 +462,9 @@ stock StripNL(str[])
 	while (i-- && str[i] <= ' ') str[i] = '\0';
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="str">The string to remove whitespace from the start of</param>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock StripL(str[])
 {
@@ -488,9 +476,9 @@ stock StripL(str[])
 	if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="str">The string to remove whitespace from the start and end of</param>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock Strip(str[])
 {
@@ -504,13 +492,11 @@ stock Strip(str[])
 	if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="line">String to check.</param>
 <param name="pos">Postion to start from.</param>
-<remarks>
 	Checks if the current point in a line is the end of non-whitespace data.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock endofline(line[], pos)
 {
@@ -521,14 +507,14 @@ stock endofline(line[], pos)
 	return 1;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="needle">The character to find.</param>
 <param name="haystack">The string to find it in.</param>
 <param name="start">The offset to start from.</param>
 <returns>
 	Fail - -1, Success - pos
 </returns>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock chrfind(needle, haystack[], start = 0)
 {
@@ -553,9 +539,9 @@ stock chrfindp(needle, haystack[], start = 0)
 	return -1;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="ip">Dot notation IP to convert to an integer.</param>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock IPToInt(ip[])
 {
@@ -570,12 +556,11 @@ stock IPToInt(ip[])
 	return ipv + strval(ip[pos]);
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="string">the string to hash.</param>
 <returns>
 	the bernstein hash of the input string
 </returns>
-<remarks>
 	This is a 32bit hash system so is not very secure, however we're only
 	using this as a string enumerator to uniquely identify strings easilly
 	and allow for a binary search of strings based on the hash of their name.
@@ -599,8 +584,7 @@ stock IPToInt(ip[])
 	the function at all, I just mentioned it here for "interest".
 	
 	Rewritten in self-generating assembly.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock bernstein(string[] /* 12 */)
 {
@@ -647,12 +631,12 @@ stock bernstein(string[] /* 12 */)
 	return 0; // Make the compiler happy.
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="str">String to check.</param>
 <returns>
 	true/false.
 </returns>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock ishex(str[])
 {
@@ -670,15 +654,13 @@ stock ishex(str[])
 	return !cur; // Valid if this is the end of the string.
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="str">String to unpack</param>
 <returns>
 	unpacked string
 </returns>
-<remarks>
 	Mainly used for debugging.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock unpack(const str[])
 {
@@ -692,26 +674,24 @@ stock unpack(const str[])
 	return ret;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="playerid">Player to get IP of.</param>
 <returns>
 	IP as a 32bit int.
 </returns>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 // Cunning macro only uses "%0" once, yet is still safe.
 #define GetIP(%0) (YSI_gPlayerIP[min((%0) + cellmin, MAX_PLAYERS + cellmin) - cellmin])
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="idx">Index of the string in the parameters.</param>
 <returns>
 	string
 </returns>
-<remarks>
 	Is passed the result of getarg, which will be the address of a string (in
 	theory) and uses that for DMA to get the string.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define getstring        returnstringarg
 #define GetString        getstring
@@ -767,18 +747,16 @@ stock returnstringarg(idx)
 	return ret;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="fmat">String format.</param>
 <param name="...">Parameters.</param>
 <returns>
 	Formatted string.
 </returns>
-<remarks>
 	Just wraps `format` and returns a string instead.
 	
 	Has extra code to ensure that it works correct only the old compiler.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
 {
@@ -822,12 +800,10 @@ stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
 	return ret;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="str">String to check</param>
-<remarks>
 	Checks if a given string is numeric.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock isnumeric(str[])
 {
@@ -840,16 +816,14 @@ stock isnumeric(str[])
 }
 
 #if !defined _inc_sscanf || 1
-	/**----------------------------------------------------------------------**\
+	/**----------------------------------------------------------------------**-
 	
 	<param name="	string[]">String to convert to a number.</param>
 	<returns>
 		value of the passed hex string.
 	</returns>
-	<remarks>
-		Now stops on invalid characters.
-	</remarks>
-	**/
+			Now stops on invalid characters.
+		**/
 	
 	stock hexstr(string[])
 	{
@@ -881,18 +855,16 @@ stock isnumeric(str[])
 		return ret;
 	}
 	
-	/**----------------------------------------------------------------------**\
+	/**----------------------------------------------------------------------**-
 	
 	<param name="	string[]">String to try convert to a boolean.</param>
 	<returns>
 		bool: passed boolean.
 	</returns>
-	<remarks>
-		This can take a number of ways of representing booleans - 0, false and
+			This can take a number of ways of representing booleans - 0, false and
 		nothing there.  Anything not one of those things (false is not case
 		sensitive) is assumed true.
-	</remarks>
-	**/
+		**/
 	
 	stock bool:boolstr(string[])
 	{
@@ -900,17 +872,15 @@ stock isnumeric(str[])
 		return string[0] && string[0] != '0' && strcmp(string, "false", true);
 	}
 	
-	/**----------------------------------------------------------------------**\
+	/**----------------------------------------------------------------------**-
 	
 	<param name="	string[]">String to try convert to a boolean.</param>
 	<returns>
 		bool: passed boolean.
 	</returns>
-	<remarks>
-		This takes a value in 0110101 (boolean) format and returns it as a
+			This takes a value in 0110101 (boolean) format and returns it as a
 		regular value.
-	</remarks>
-	**/
+		**/
 	
 	stock binstr(string[])
 	{
@@ -957,17 +927,15 @@ stock isnumeric(str[])
 	}
 #endif
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <summary>
 	rawMemcpy
 </summary>
 <param name="dest">Destination address.</param>
 <param name="src">Source data.</param>
 <param name="bytes">Number of bytes to copy.</param>
-<remarks>
 	Like memcpy, but takes addresses instead of arrays.  Also far less secure.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock rawMemcpy(dest, src, bytes)
 {
@@ -984,11 +952,10 @@ stock rawMemcpy(dest, src, bytes)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="arr">Array or address to set to a value.</param>
 <param name="iValue">What to set the cells to.</param>
 <param name="iSize">Number of cells to fill.</param>
-<remarks>
 	Based on code by Slice:
 	
 	http://forum.sa-mp.com/showthread.php?p=1606781#post1606781
@@ -1001,8 +968,7 @@ stock rawMemcpy(dest, src, bytes)
 	"rawmemset" is similar, but takes an AMX data segment address instead and
 	the size is in bytes, not cells.  However, the size must still be a multiple
 	of 4.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock memset(arr[], val = 0, size = sizeof (arr))
 {
@@ -1014,11 +980,10 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 	return rawMemset(addr, val, size * 4);
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="iAddress">Array or address to set to a value.</param>
 <param name="iValue">What to set the cells to.</param>
 <param name="iSize">Number of cells to fill.</param>
-<remarks>
 	Based on code by Slice:
 	
 	http://forum.sa-mp.com/showthread.php?p=1606781#post1606781
@@ -1031,8 +996,7 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 	"rawmemset" is similar, but takes an AMX data segment address instead and
 	the size is in bytes, not cells.  However, the size must still be a multiple
 	of 4.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 {
@@ -1105,16 +1069,14 @@ stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 	return 0; //memset("", 0, 0);
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <summary>
 	ReturnPlayerName
 </summary>
 <param name="playerid">Player whose name you want to get.</param>
-<remarks>
 	Now uses a global array to avoid repeated function calls.  Actually doesn't
 	because that causes issues with multiple scripts.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock ReturnPlayerName(playerid)
 {
@@ -1124,7 +1086,7 @@ stock ReturnPlayerName(playerid)
 	return str;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <summary>
 	ftouch(filename);
 </summary>
@@ -1134,11 +1096,9 @@ stock ReturnPlayerName(playerid)
 	1 - File was created.
 	-1 - File was not created.
 </returns>
-<remarks>
 	This "touches" a file in the Unix sense of creating it but not opening or
 	editing it in any way.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock ftouch(const filename[])
 {
@@ -1162,7 +1122,7 @@ stock ftouch(const filename[])
 	}
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <summary>
 	InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0);
 </summary>
@@ -1171,7 +1131,6 @@ stock ftouch(const filename[])
 <param name="value">The interpolation value between the endpoints.</param>
 <param name="maxvalue">One of the two numbers.</param>
 <param name="minvalue">The other of the two numbers.</param>
-<remarks>
 	This function takes two endpoint values (minvalue and maxvalue, with
 	minvalue defaulting to 0), along with a third value (value) whose distance
 	between the two endpoints is calculated (as a percentage).  This percentage
@@ -1181,8 +1140,7 @@ stock ftouch(const filename[])
 	For example, if the endpoints given are "0" and "10", and the value given is
 	"3", then that is "30%" of the way between the two endpoints.  We therefore
 	want to find a colour that is 30% of the way between the two given colours.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 // "Interpolation" is the technical name for what you are doing here.
 #define InterpolateColor InterpolateColour
@@ -1209,16 +1167,14 @@ stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
 		(r << 24) | ((g & 0xFF) << 16) | ((b & 0xFF) << 8) | (a & 0xFF);
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="str">The string to skip over part of.</param>
 <param name="pos">The start of the whitespace.</param>
 <returns>
 	The end of the whitespace.
 </returns>
-<remarks>
 	Doesn't skip over NULL terminators.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock SkipWhitespace(const str[], pos)
 {
@@ -1227,14 +1183,12 @@ stock SkipWhitespace(const str[], pos)
 	return pos;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="str">The string to trim.</param>
 <param name="start">Start of the substring.</param>
 <param name="end">End of the substring.</param>
-<remarks>
 	Modifies "start" and "end" to be tight on text in "str".
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock Trim(const str[], &start, &end)
 {
@@ -1251,15 +1205,13 @@ stock Trim(const str[], &start, &end)
 	}
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="f">The file to get our position in.</param>
 <returns>
 	The current position in the file.
 </returns>
-<remarks>
 	Doesn't seem to work despite documentation claiming it will.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 //#define ftell(%0) fseek((%0), 0, seek_current)
 

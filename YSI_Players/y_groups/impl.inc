@@ -82,16 +82,14 @@ Changelog:
 
 #define _GROUP_STOP_INCLUDES
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="%9">Check if the function exists?</param>
 <param name="%0">Variable holding the function.</param>
 <param name="%1">Parameters.</param>
-<remarks>
 	Calls the correct function to chain a function with the given number of
 	parameters, calls the function stored in a variable and passes parameters
 	BY REFERENCE - ALL of them!
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 /*
 New groups check:
@@ -230,13 +228,11 @@ HANDOFF()
 	P:1("y_groups HANDOFF ended");
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="g">Group to add the following items to.</param>
-<remarks>
 	This sets up a temporary environment, during which all items are ONLY added
 	to the specified group and no others, with no complex extra code required.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #define GROUP_ADD<%0> for(J@=_Group_AddInternal(1,(%0));J@;J@=_Group_AddInternal(0,(%0)))
 
@@ -261,18 +257,16 @@ stock _Group_AddInternal(a, Group:g)
 	}
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="p">Player who connected.</param>
 <param name="g">The player's new groups.</param>
 <param name="s">Size of "g".</param>
-<remarks>
 	Pretend the player is in all the groups they won't be in shortly so that
 	they have a complete blank slate when they connect - the system KNOWS they
 	are not in some groups and are in others.
 	
 	Uses an unusual size in "g" to reduce the string length.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 static remotefunc void:_Group_FakePlayer(p,Bit:g[sizeof RG@],s)
 {
@@ -284,12 +278,12 @@ static remotefunc void:_Group_FakePlayer(p,Bit:g[sizeof RG@],s)
 	_Group_SetPlayer(p, g, s);
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="g">Group to check.</param>
 <returns>
 	bool: - Is the group active and valid?
 </returns>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign bool:Group_IsValid(Group:g);
 
@@ -299,15 +293,13 @@ global bool:Group_IsValid(Group:g)
 	return _Group_IsValid(g);
 }
 
-/**--------------------------------------------------------------------------**\
-<remarks>
+/**--------------------------------------------------------------------------**-
 	Finds three functions by prefix:
 	
 	_yGI - An init function to set up a script using groups.
 	_yGA - An add function called when a new group is created.
 	_yGU - An update function called when a player's groups change.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 hook OnScriptInit()
 {
@@ -352,13 +344,11 @@ hook OnScriptInit()
 	return 1;
 }
 
-/**--------------------------------------------------------------------------**\
-<remarks>
+/**--------------------------------------------------------------------------**-
 	Destroy all this script's groups.  This is an instance of "_YSI_SpecialExit"
 	which can't be y_hooked and is called after (almost) every other callback,
 	at least after every one controlled via y_scriptinit.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 public OnScriptExit()
 {
@@ -375,9 +365,9 @@ public OnScriptExit()
 	forward _Group_SpecialExit();
 #endif
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="group">Group to destroy from the system.</param>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 static remotefunc void:_Group_Destroy(g, Iterator@gp[MAX_PLAYERS + 1], s)
 {
@@ -443,11 +433,9 @@ global void:Group_Destroy(Group:group)
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<remarks>
+/**--------------------------------------------------------------------------**-
 	Removes all groups purely owned by the calling script.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 @foreign void:_Group_TryRemove();
 
@@ -468,18 +456,16 @@ global void:Group_Destroy(Group:group)
 	//return 1;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="playerid">The player that left.</param>
 <param name="reason">Why they left (unused).</param>
-<remarks>
 	Removes this player from all groups.  Unfortunately there's no way to
 	combine multiple iterator removals to improve their efficiency - currently
 	they have to loop through all previous ones to find the one to modify to
 	skip over that player.  I did debate updating foreach to doubly-linked
 	lists for this reason - that would make reverse traversal and removal faster
 	by doubling memory consumption but only very slightly affecting adds.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 hook OnPlayerDisconnect(playerid, reason)
 {
@@ -507,17 +493,15 @@ hook OnPlayerDisconnect(playerid, reason)
 	return 1;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="playerid">The player that joined.</param>
-<remarks>
 	The player may not have ACTUALLY joined the server, they may have just been
 	added to this newly loaded script.  In that case we need to initialise the
 	locally stored group data to the new data.  Of course, if this script is the
 	group master, then we need to do significantly more!  This is more complex
 	than other scripts with master as they don't have some things to do in non-
 	master scripts as well, whereas this one does.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 hook OnPlayerConnect@9(playerid)
 {
@@ -555,13 +539,11 @@ hook OnPlayerConnect@9(playerid)
 	return 1;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="p">The player that joined.</param>
 <param name="master">The script that just started.</param>
-<remarks>
 	Request all a player's groups from the master system.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign void:_Group_InitPlayer(p, master);
 
@@ -570,17 +552,15 @@ global void:_Group_InitPlayer(p, master)
 	targetfunc _Group_FakePlayer<master>(p, YSI_gGroupPlayers[p], bits<_MAX_GROUPS_G>);
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="playerid">Player to add to multiple groups.</param>
 <param name="group">Parent group to add to.</param>
 <returns>
 	A new array of groups.
 </returns>
-<remarks>
 	Takes a group and adds a player to that group and every child group of
 	which they are not already a member.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 // If you overflow this stack there is something VERY wrong!  The manual stack
 // is intended to help us combat very long inheritance chains.  This code also
@@ -623,18 +603,16 @@ static stock Bit:_Group_SetSome(playerid, group)
 	return YSI_gTempGroups;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="g">Group to modify.</param>
 <param name="p">Player to modify the group for.</param>
 <param name="s">Add the player (true) or remove them (false).</param>
-<remarks>
 	Will in some cases update all settings, unless they are being added through
 	a recursive call due to being added to child groups.
 	
 	There is an internal version that ONLY adds them to the group and DOES NOT
 	update any of their other settings.  As a result it has less checks in it.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign void:Group_SetPlayer(Group:g,p,bool:s);
 
@@ -668,16 +646,14 @@ global void:Group_SetPlayer(Group:g,p,bool:s)
 	//return 0;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="p">Player to set.</param>
 <param name="g">The player's new groups.</param>
 <param name="s">Size of "g".</param>
-<remarks>
 	Pass a list of groups that the player is now in or not in.  This is a
 	complete replacement for their existing list of groups, and so multiple
 	updates can be done at once.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 {
@@ -728,17 +704,15 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 	YSI_gGroupPlayers[p] = g;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="p">Player to add to the smallest group.</param>
 <param name="gs">An array of possible groups.</param>
 <param name="c">The number of USED items in the array.</param>
 <returns>
 	The group they have been added to.
 </returns>
-<remarks>
 	Chains the call with "Group_SetPlayer" to use its hierarchy code.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign Group:_Group_SetBalancedInternal(p,Group:gs[],c);
 
@@ -781,21 +755,19 @@ global Group:_Group_SetBalancedInternal(p,Group:gs[],c)
 	return id;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="p">Player to add to the smallest group.</param>
 <param name="gs">An array of possible groups.</param>
 <param name="c">The number of USED items in the array.</param>
 <returns>
 	The group they have been added to.
 </returns>
-<remarks>
 	Puts a player in whichever of the given groups currently has the least
 	players.
 	
 	Now ONLY takes a list - arrays should use "Group_SetBalancedArray".  As a
 	result, has more error-checking.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock Group:Group_SetBalancedArray(p, Group:gs[], c = sizeof (gs))
 {
@@ -803,17 +775,15 @@ stock Group:Group_SetBalancedArray(p, Group:gs[], c = sizeof (gs))
 	return _Group_SetBalancedInternal(p, gs, c);
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="playerid">Player to put in one of a number of groups</param>
 <param name="...">A list of groups.</param>
-<remarks>
 	Puts a player in whichever of the given groups currently has the least
 	players.
 	
 	Now ONLY takes a list - arrays should use "Group_SetBalancedArray".  As a
 	result, has more error-checking.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock Group:Group_SetBalanced(playerid, Group:g0, Group:g1, Group:...)
 {
@@ -831,13 +801,13 @@ stock Group:Group_SetBalanced(playerid, Group:g0, Group:g1, Group:...)
 	return Group_SetBalancedArray(playerid, possible, i);
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="g">Group to check.</param>
 <param name="p">Player to check.</param>
 <returns>
 	Is this player in this group?
 </returns>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign bool:Group_GetPlayer(Group:g,p);
 
@@ -853,14 +823,12 @@ global bool:Group_GetPlayer(Group:g,p)
 	return false;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <summary></summary>
 <param name="g">Group to set the name of.</param>
 <param name="n">The new name of the group.</param>
-<remarks>
 	Sets the name of a group.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign void:Group_SetName(Group:g,string:n[]);
 
@@ -884,15 +852,13 @@ global void:Group_SetName(Group:g,string:n[])
 	//return 1;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="g">Group to get the name of.</param>
 <returns>
 	string:
 </returns>
-<remarks>
 	Gets the name of a group.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign string:Group_GetName(Group:g);
 
@@ -913,12 +879,12 @@ global string:Group_GetName(Group:g)
 	return ret;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="name">Name of a group to get.</param>
 <returns>
 	Group: - The ID of the group with this name.
 </returns>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign Group:Group_GetID(string:name[]);
 
@@ -940,14 +906,12 @@ global Group:Group_GetID(string:name[])
 	return GROUP_MANGLE(i);
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="g">Group to set for.</param>
 <param name="n">Set or not?</param>
-<remarks>
 	I actually can't remember what the "Gang" setting on a group does - I don't
 	think it actually does anything in the latest code version!
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign void:Group_SetGang(Group:g,bool:n);
 
@@ -968,15 +932,13 @@ global void:Group_SetGang(Group:g,bool:n)
 	//return 1;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="g">Group to get the gang status of.</param>
 <returns>
 	bool:
 </returns>
-<remarks>
 	I still don't remember what this once did!
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign bool:Group_GetGang(Group:g);
 
@@ -990,17 +952,15 @@ global bool:Group_GetGang(Group:g)
 	return false;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <summary>
 	Group_SetColor
 	Group_SetColour
 </summary>
 <param name="g">The group to set the colour of.</param>
 <param name="c">An RGBA colour.</param>
-<remarks>
 	This colour is not actually currently used anywhere.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign void:Group_SetColour(Group:g,c);
 
@@ -1015,7 +975,7 @@ global void:Group_SetColour(Group:g,c)
 	//return 1;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <summary>
 	Group_GetColor
 	Group_GetColour
@@ -1024,10 +984,8 @@ global void:Group_SetColour(Group:g,c)
 <returns>
 	An RGBA colour.
 </returns>
-<remarks>
 	This colour is not actually currently used anywhere.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign Group_GetColour(Group:g);
 
@@ -1045,12 +1003,12 @@ global Group_GetColour(Group:g)
 #define Group_SetColor Group_SetColour
 #define Group_GetColor Group_GetColour
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="g">The group to get the membership for.</param>
 <returns>
 	The number of players in the group.
 </returns>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign Group_GetCount(Group:g);
 
@@ -1065,18 +1023,16 @@ global Group_GetCount(Group:g)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="name">The optional name of the new group.</param>
 <returns>
 	The group ID with a tag of "Group:", or "INVALID_GROUP".
 </returns>
-<remarks>
 	Group_Create - Local function to detect and "NULL"ify empty strings.
 	_Group_Create - Global function that does most of the work.
 	_Group_CreateChain - Remote function that updates all master scripts with
 		the new group's existence.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 static remotefunc void:_Group_CreateChain(Group:g)
 {
@@ -1143,18 +1099,16 @@ stock Group:Group_Create(string:name[] = "")
 	}
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="group">Group to loop over.</param>
 <param name="start">Last value.</param>
 <returns>
 	The next player.
 </returns>
-<remarks>
 	Internal implementation of the "Group()" iterator for "foreach".  Returns
 	all the players in a group one at a time.  Now just wraps the "GroupPlayers"
 	iterator that is only stored in the GROUP master script.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 #pragma deprecated use "GroupMember"
 stock Iter_Func@Group(start, Group:group)
@@ -1199,16 +1153,14 @@ global Iter_Func@GroupMember(start, Group:group)
 
 #define Iterator@GroupMember iterstart(-1)
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="start">Last value.</param>
 <returns>
 	The next group.
 </returns>
-<remarks>
 	Internal implementation of the "CreatedGroup()" iterator for "foreach".
 	Returns all the groups that exist.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 // Bypass y_iterate restrictions.
 foreign Group:Iter_Func@CreatedGroup(group);
@@ -1228,17 +1180,15 @@ global Group:Iter_Func@CreatedGroup(group)
 
 #define Iterator@CreatedGroup iterstart(-1)
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="parent">Group to get the children of.</param>
 <param name="start">Last value.</param>
 <returns>
 	The next group.
 </returns>
-<remarks>
 	Internal implementation of the "ChildGroup()" iterator for "foreach".
 	Returns all the groups that are a child of the provided group.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign Group:Iter_Func@GroupChild(start, Group:parent);
 
@@ -1254,7 +1204,7 @@ global Group:Iter_Func@GroupChild(start, Group:parent)
 
 #define Iterator@GroupChild Iterator@Bits
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <summary>
 	_Y_G@C_0
 	_Y_G@C_1
@@ -1266,7 +1216,6 @@ global Group:Iter_Func@GroupChild(start, Group:parent)
 <returns>
 	0 - ALWAYS zero to make "_gchain" work properly.
 </returns>
-<remarks>
 	Basically function indirection, call a function through a pointer and use
 	the compiler to figure out the assembly to generate instead of having a
 	run-time loop inside a single instance of this function.  Using just one
@@ -1279,8 +1228,7 @@ global Group:Iter_Func@GroupChild(start, Group:parent)
 	#emit PUSH.S     16
 	#emit PUSH.C     <n * 4>
 	
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 stock _Y_G@C_0(func)
 {
@@ -1336,16 +1284,14 @@ stock _Y_G@C_3(func, GLOBAL_TAG_TYPES:...)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="g">Group to set for.</param>
 <param name="el">Element to set.</param>
 <param name="s">Set or unset?</param>
-<remarks>
 	IMPORTANT NOTE: Groups are SLIGHTLY different to other systems - if you
 	REMOVE a group from another group then players WILL NOT be removed from
 	that second group, or any child groups.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign void:Group_SetGroup(Group:g,Group:el,bool:s);
 
@@ -1386,14 +1332,12 @@ global void:Group_SetGroup(Group:g,Group:el,bool:s)
 	}
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="el">Element to set.</param>
 <param name="s">Set or unset?</param>
-<remarks>
 	If "s" is true, then one element is added to the global group.  False it is
 	removed.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign void:Group_SetGlobalGroup(Group:el,bool:s);
 
@@ -1403,19 +1347,17 @@ global void:Group_SetGlobalGroup(Group:el,bool:s)
 	Group_SetGroup(GROUP_GLOBAL, el, s);
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <summary>Group_Get...</summary>
 <param name="g">Group to get from.</param>
 <param name="el">Element to get.</param>
 <returns>
 	bool: Does the group have the element?
 </returns>
-<remarks>
 	This has no "active" checks on the groups as if they aren't active but are
 	in range, then "YSI_g_sChildGroups" will return false anyway.  Extra checks
 	are therefore just a waste of time.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign bool:Group_GetGroup(Group:g,Group:el);
 
@@ -1425,13 +1367,13 @@ global bool:Group_GetGroup(Group:g,Group:el)
 	return (GROUP_MASK <= el <= GROUP_GLOBAL && GROUP_MASK <= g <= GROUP_GLOBAL && Bit_Get(YSI_g_sChildGroups[_:GROUP_TEMP_FIX(g)], _:GROUP_TEMP_FIX(el)));
 }
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <summary>Group_GetGlobal...</summary>
 <param name="el">Element to get.</param>
 <returns>
 	bool: Does the global group have the element?
 </returns>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 foreign Group_GetGlobalGroup(Group:el);
 
@@ -1445,16 +1387,14 @@ global Group_GetGlobalGroup(Group:el)
 #define Group_RemoveChild(%0,%1) Group_SetGroup((%0), (%1), false)
 #define Group_IsChild(%0,%1) Group_GetGroup((%0), (%1))
 
-/**--------------------------------------------------------------------------**\
+/**--------------------------------------------------------------------------**-
 <param name="p">Ancestor group to check.</param>
 <param name="c">Other group to check.</param>
 <returns>
 	bool: Is the second group related to the first?
 </returns>
-<remarks>
 	Now uses implicit, not explicit, recursion.
-</remarks>
-\**--------------------------------------------------------------------------**/
+*//*-------------------------------------------------------------------------**/
 
 static stock
 	BitArray:YSI_g_sGroupDone<_MAX_GROUPS_G>;
