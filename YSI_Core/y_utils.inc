@@ -274,7 +274,7 @@ public OnPlayerDisconnect(playerid, reason)
 	forward _y_utils_OnPlayerDisconnect(playerid, reason);
 #endif
 
-/**
+/*** ====================================================================== ***\
 <summary>
 	UCMP(value, upper);
 </summary>
@@ -283,12 +283,12 @@ public OnPlayerDisconnect(playerid, reason)
 <returns>
 	An unsigned comparison between the two values.
 </returns>
-**/
+\*** ====================================================================== ***/
 
 #define UCMP(%0,%1) IS_IN_RANGE(%0,0,(%1)) //(((%0) - cellmin) < ((%1) - cellmin))
 #define VALID_PLAYERID(%0) UCMP((%0), MAX_PLAYERS)
 
-/**
+/*** ====================================================================== ***\
 <summary>
 	IS_IN_RANGE(value, lower, upper);
 </summary>
@@ -304,12 +304,12 @@ public OnPlayerDisconnect(playerid, reason)
 		(%1) &lt;= (%0) &lt; (%2)
 	
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 #define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
 #define NOT_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
 
-/**
+/*** ====================================================================== ***\
 <summary>
 	ceildiv(numerator, denominator);
 </summary>
@@ -321,11 +321,11 @@ public OnPlayerDisconnect(playerid, reason)
 <remarks>
 	Normal integer division ALWAYS rounds down - this always rounds up.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 #define ceildiv(%0,%1) (((%0)-1)/(%1)+1)
 
-/**
+/*** ====================================================================== ***\
 <summary>
 	floordiv(numerator, denominator);
 </summary>
@@ -338,46 +338,46 @@ public OnPlayerDisconnect(playerid, reason)
 	Normal integer division ALWAYS rounds down - this also always rounds down,
 	making it a little pointless, but also more explicit in function.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 #define floordiv(%0,%1) ((%0)/(%1))
 
-/**
+/*** ====================================================================== ***\
 <param name="str">String to check if is null.</param>
-**/
+\*** ====================================================================== ***/
 
 #if !defined isnull
 	#define isnull(%1) \
 		((%1[0] == 0) || (%1[0] == 1 && %1[1] == 0))
 #endif
 
-/**
+/*** ====================================================================== ***\
 <param name="value">Value to check if is odd.</param>
-**/
+\*** ====================================================================== ***/
 
 #define isodd(%1) \
 	((%1) & 1)
 
-/**
+/*** ====================================================================== ***\
 <param name="value">Value to check if is even.</param>
-**/
+\*** ====================================================================== ***/
 
 #define iseven(%1) \
 	(!isodd(%1))
 
-/**
+/*** ====================================================================== ***\
 <param name="dest">Destination string.</param>
 <param name="src">Source string.</param>
 <param name="len">(Implicit) maximum length of the destination.</param>
-**/
+\*** ====================================================================== ***/
 
 #define strcpy(%0,%1) \
 	strcat((%0[0] = '\0', %0), %1)
 
-/**
+/*** ====================================================================== ***\
 <param name="str">String to convert.</param>
 <param name="len">How much of the string to convert.</param>
-**/
+\*** ====================================================================== ***/
 
 stock StrToLower(str[], len = sizeof (str))
 {
@@ -388,10 +388,10 @@ stock StrToLower(str[], len = sizeof (str))
 		str[i] = tolower(ch);
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="str">String to convert.</param>
 <param name="len">How much of the string to convert.</param>
-**/
+\*** ====================================================================== ***/
 
 stock StrToUpper(str[], len = sizeof (str))
 {
@@ -402,14 +402,14 @@ stock StrToUpper(str[], len = sizeof (str))
 		str[i] = toupper(ch);
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="minmax">Lower bound, or upper bound when only parameter.</param>
 <param name="max">Upper bound.</param>
 <remarks>
 	Generate a random float between the given numbers (min &lt;= n &lt; max).
 	Default minimum is 0.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock Random(min, max = cellmin)
 {
@@ -424,7 +424,7 @@ stock Random(min, max = cellmin)
 	return random(max - min) + min;
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="minmax">Lower bound, or upper bound when only parameter.</param>
 <param name="max">Upper bound.</param>
 <param name="dp">How small to make the differences</param>
@@ -432,7 +432,7 @@ stock Random(min, max = cellmin)
 	Generate a random float between the given numbers (min &lt;= n &lt; max).  Default
 	minimum is 0.0.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
 {
@@ -459,12 +459,12 @@ stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
 	return float(random(floatround(max * mul - min * mul))) / mul + min;
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="str">The string to remove the newline characters from</param>
 <remarks>
 	Updated from old versions, should be more efficient
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock StripNL(str[])
 {
@@ -474,9 +474,9 @@ stock StripNL(str[])
 	while (i-- && str[i] <= ' ') str[i] = '\0';
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="str">The string to remove whitespace from the start of</param>
-**/
+\*** ====================================================================== ***/
 
 stock StripL(str[])
 {
@@ -488,9 +488,9 @@ stock StripL(str[])
 	if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="str">The string to remove whitespace from the start and end of</param>
-**/
+\*** ====================================================================== ***/
 
 stock Strip(str[])
 {
@@ -504,13 +504,13 @@ stock Strip(str[])
 	if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="line">String to check.</param>
 <param name="pos">Postion to start from.</param>
 <remarks>
 	Checks if the current point in a line is the end of non-whitespace data.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock endofline(line[], pos)
 {
@@ -521,14 +521,14 @@ stock endofline(line[], pos)
 	return 1;
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="needle">The character to find.</param>
 <param name="haystack">The string to find it in.</param>
 <param name="start">The offset to start from.</param>
 <returns>
 	Fail - -1, Success - pos
 </returns>
-**/
+\*** ====================================================================== ***/
 
 stock chrfind(needle, haystack[], start = 0)
 {
@@ -553,9 +553,9 @@ stock chrfindp(needle, haystack[], start = 0)
 	return -1;
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="ip">Dot notation IP to convert to an integer.</param>
-**/
+\*** ====================================================================== ***/
 
 stock IPToInt(ip[])
 {
@@ -570,7 +570,7 @@ stock IPToInt(ip[])
 	return ipv + strval(ip[pos]);
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="string">the string to hash.</param>
 <returns>
 	the bernstein hash of the input string
@@ -600,7 +600,7 @@ stock IPToInt(ip[])
 	
 	Rewritten in self-generating assembly.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock bernstein(string[] /* 12 */)
 {
@@ -647,12 +647,12 @@ stock bernstein(string[] /* 12 */)
 	return 0; // Make the compiler happy.
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="str">String to check.</param>
 <returns>
 	true/false.
 </returns>
-**/
+\*** ====================================================================== ***/
 
 stock ishex(str[])
 {
@@ -670,7 +670,7 @@ stock ishex(str[])
 	return !cur; // Valid if this is the end of the string.
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="str">String to unpack</param>
 <returns>
 	unpacked string
@@ -678,7 +678,7 @@ stock ishex(str[])
 <remarks>
 	Mainly used for debugging.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock unpack(const str[])
 {
@@ -692,17 +692,17 @@ stock unpack(const str[])
 	return ret;
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="playerid">Player to get IP of.</param>
 <returns>
 	IP as a 32bit int.
 </returns>
-**/
+\*** ====================================================================== ***/
 
 // Cunning macro only uses "%0" once, yet is still safe.
 #define GetIP(%0) (YSI_gPlayerIP[min((%0) + cellmin, MAX_PLAYERS + cellmin) - cellmin])
 
-/**
+/*** ====================================================================== ***\
 <param name="idx">Index of the string in the parameters.</param>
 <returns>
 	string
@@ -711,7 +711,7 @@ stock unpack(const str[])
 	Is passed the result of getarg, which will be the address of a string (in
 	theory) and uses that for DMA to get the string.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 #define getstring        returnstringarg
 #define GetString        getstring
@@ -767,7 +767,7 @@ stock returnstringarg(idx)
 	return ret;
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="fmat">String format.</param>
 <param name="...">Parameters.</param>
 <returns>
@@ -778,7 +778,7 @@ stock returnstringarg(idx)
 	
 	Has extra code to ensure that it works correct only the old compiler.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
 {
@@ -822,12 +822,12 @@ stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
 	return ret;
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="str">String to check</param>
 <remarks>
 	Checks if a given string is numeric.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock isnumeric(str[])
 {
@@ -840,7 +840,7 @@ stock isnumeric(str[])
 }
 
 #if !defined _inc_sscanf || 1
-	/**
+	/*** ====================================================================== ***\
 	
 	<param name="	string[]">String to convert to a number.</param>
 	<returns>
@@ -881,7 +881,7 @@ stock isnumeric(str[])
 		return ret;
 	}
 	
-	/**
+	/*** ====================================================================== ***\
 	
 	<param name="	string[]">String to try convert to a boolean.</param>
 	<returns>
@@ -900,7 +900,7 @@ stock isnumeric(str[])
 		return string[0] && string[0] != '0' && strcmp(string, "false", true);
 	}
 	
-	/**
+	/*** ====================================================================== ***\
 	
 	<param name="	string[]">String to try convert to a boolean.</param>
 	<returns>
@@ -957,7 +957,7 @@ stock isnumeric(str[])
 	}
 #endif
 
-/**
+/*** ====================================================================== ***\
 <summary>
 	rawMemcpy
 </summary>
@@ -967,7 +967,7 @@ stock isnumeric(str[])
 <remarks>
 	Like memcpy, but takes addresses instead of arrays.  Also far less secure.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock rawMemcpy(dest, src, bytes)
 {
@@ -984,7 +984,7 @@ stock rawMemcpy(dest, src, bytes)
 	return 0;
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="arr">Array or address to set to a value.</param>
 <param name="iValue">What to set the cells to.</param>
 <param name="iSize">Number of cells to fill.</param>
@@ -1002,7 +1002,7 @@ stock rawMemcpy(dest, src, bytes)
 	the size is in bytes, not cells.  However, the size must still be a multiple
 	of 4.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock memset(arr[], val = 0, size = sizeof (arr))
 {
@@ -1014,7 +1014,7 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 	return rawMemset(addr, val, size * 4);
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="iAddress">Array or address to set to a value.</param>
 <param name="iValue">What to set the cells to.</param>
 <param name="iSize">Number of cells to fill.</param>
@@ -1032,7 +1032,7 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 	the size is in bytes, not cells.  However, the size must still be a multiple
 	of 4.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 {
@@ -1105,7 +1105,7 @@ stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 	return 0; //memset("", 0, 0);
 }
 
-/**
+/*** ====================================================================== ***\
 <summary>
 	ReturnPlayerName
 </summary>
@@ -1114,7 +1114,7 @@ stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 	Now uses a global array to avoid repeated function calls.  Actually doesn't
 	because that causes issues with multiple scripts.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock ReturnPlayerName(playerid)
 {
@@ -1124,7 +1124,7 @@ stock ReturnPlayerName(playerid)
 	return str;
 }
 
-/**
+/*** ====================================================================== ***\
 <summary>
 	ftouch(filename);
 </summary>
@@ -1138,7 +1138,7 @@ stock ReturnPlayerName(playerid)
 	This "touches" a file in the Unix sense of creating it but not opening or
 	editing it in any way.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock ftouch(const filename[])
 {
@@ -1162,7 +1162,7 @@ stock ftouch(const filename[])
 	}
 }
 
-/**
+/*** ====================================================================== ***\
 <summary>
 	InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0);
 </summary>
@@ -1182,7 +1182,7 @@ stock ftouch(const filename[])
 	"3", then that is "30%" of the way between the two endpoints.  We therefore
 	want to find a colour that is 30% of the way between the two given colours.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 // "Interpolation" is the technical name for what you are doing here.
 #define InterpolateColor InterpolateColour
@@ -1209,7 +1209,7 @@ stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
 		(r << 24) | ((g & 0xFF) << 16) | ((b & 0xFF) << 8) | (a & 0xFF);
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="str">The string to skip over part of.</param>
 <param name="pos">The start of the whitespace.</param>
 <returns>
@@ -1218,7 +1218,7 @@ stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
 <remarks>
 	Doesn't skip over NULL terminators.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock SkipWhitespace(const str[], pos)
 {
@@ -1227,14 +1227,14 @@ stock SkipWhitespace(const str[], pos)
 	return pos;
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="str">The string to trim.</param>
 <param name="start">Start of the substring.</param>
 <param name="end">End of the substring.</param>
 <remarks>
 	Modifies "start" and "end" to be tight on text in "str".
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock Trim(const str[], &start, &end)
 {
@@ -1251,7 +1251,7 @@ stock Trim(const str[], &start, &end)
 	}
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="f">The file to get our position in.</param>
 <returns>
 	The current position in the file.
@@ -1259,7 +1259,7 @@ stock Trim(const str[], &start, &end)
 <remarks>
 	Doesn't seem to work despite documentation claiming it will.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 //#define ftell(%0) fseek((%0), 0, seek_current)
 

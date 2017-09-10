@@ -129,7 +129,7 @@ Compile options:
 Operators:
 	-
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 #if defined _INC_y_debug
 	#endinput
@@ -151,7 +151,7 @@ stock YSI_gDebugLevel = 0;
 #define P:%1(%2); Debug_Print%1(%2);
 #define C:%1(%2); Debug_Code%1(%2);
 
-/**
+/*** ====================================================================== ***\
 <param name="level">Debug level to run the code at.</param>
 <param name="code">Code to run.</param>
 <remarks>
@@ -162,7 +162,7 @@ stock YSI_gDebugLevel = 0;
 	The code must all be on one line to avoid errors.
 	This isn't really a function as the first parameter is part of the name.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 #if _DEBUG == -1
 	#define Debug_Code1(%1); { if (YSI_gDebugLevel >= 1) { %1 }}
@@ -222,7 +222,7 @@ stock YSI_gDebugLevel = 0;
 	#define Debug_CodeX(%1);
 #endif
 
-/**
+/*** ====================================================================== ***\
 <param name="level">Debug level to print at.</param>
 <param name="format">Format.</param>
 <param name="..."></param>
@@ -231,7 +231,7 @@ stock YSI_gDebugLevel = 0;
 	
 	Debug_Print4("variables: %d, %d", i, j);
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 #if _DEBUG == -1
 	#define Debug_Print1(%1); { if (YSI_gDebugLevel >= 1) printf(%1); }
@@ -368,25 +368,16 @@ public OnScriptInit()
 	return 1;
 }
 
-/**
+/*** ====================================================================== ***\
 	<transition target="on"/>
-**/
+\*** ====================================================================== ***/
 
 static stock Debug_SetState() <ysi_debug : off>
 {
 }
 
-//stock const STATE_FALSE = 0;
-////#define state%0\10;%1 for (new bool:__state_once = true; __state_once; __state_once = false) {} state%0
-//#define FIX_STATE_
-//
-//#define state%0:%1;%2\10;%3 { const __state_target_fix = 0; state%0:%1; }%2
-
 static stock Debug_SetState() <>
 {
-//	printf("hi");
-//	state ysi_debug : on;
-//	state ysi_debug : on;
 	state ysi_debug : on;
 }
 

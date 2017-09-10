@@ -215,12 +215,12 @@ stock
 
 #include "..\YSI_Coding\y_va"
 
-/**
+/*** ====================================================================== ***\
 <param name="name">Name of the current function.</param>
 <remarks>
 	Gets a reference to the 
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock _Testing_Start(name[])
 {
@@ -237,14 +237,14 @@ stock _Testing_Start(name[])
 	strcpy(YSI_gCurTestName, name[2]);
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="playerid">Player to ask a question to.</param>
 <param name="str">What to ask.</param>
 <param name="va_args">Additional data.</param>
 <remarks>
 	Calls a dialog to ask the player if the given test actually passed.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock Testing_Ask(playerid, str[] = "", va_args<>)
 {
@@ -282,12 +282,12 @@ stock Testing_Test(bool:x, str[] = "", va_args<>)
 	#endif
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="name">Name of the current function.</param>
 <remarks>
 	Gets a reference to the 
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock bool:_Testing_End()
 {
@@ -298,7 +298,7 @@ stock bool:_Testing_End()
 	return false;
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="tests">Number of tests run.</param>
 <param name="fails">Number of tests which failed.</param>
 <param name="buffer">The name of the first test which failed.</param>
@@ -311,7 +311,7 @@ stock bool:_Testing_End()
 native Testing_Run(&tests, &fails, buffer[33] = "");
 
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 {
@@ -409,7 +409,7 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 #endif
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="playerid">Player to test on.</param>
 <param name="idx">Next test to run.</param>
 <param name="tests">Number of tests run.</param>
@@ -424,7 +424,7 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 native Testing_Run(&tests, &fails, buffer[33] = "");
 
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", bool:p = false)
 {

@@ -87,7 +87,7 @@ Variables:
 		-
 **/
 
-/**
+/*** ====================================================================== ***\
 <param name="ctx">The bitmap to modify.</param>
 <param name="minX">The left of the array.</param>
 <param name="minY">The top of the array.</param>
@@ -103,7 +103,7 @@ Variables:
 	rectangle.  If you want the border within the area specified you need to use
 	a smaller area.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 // End the input above because all this code is being written with no testing
 // or compiling until I am home again.  So in the interests of leaving the code
@@ -203,7 +203,7 @@ static stock _Bitmap_RectangleRecopy(n, BitArray:pattern<PATTERN_MASK_X>)
 	}
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="ctx">The bitmap to modify.</param>
 <param name="x">The x co-ordinate of the circle centre.</param>
 <param name="y">The y co-ordinate of the circle centre.</param>
@@ -219,7 +219,7 @@ static stock _Bitmap_RectangleRecopy(n, BitArray:pattern<PATTERN_MASK_X>)
 	If you want the border within the area specified you need to use a smaller
 	area.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock Bitmap_DrawCircle(Bitmap:ctx, const x, const y, const Float:radius, fillColour, lineColour = 0, linePattern[] = "SOLID", fillPattern[] = "SOLID")
 {
@@ -227,7 +227,7 @@ stock Bitmap_DrawCircle(Bitmap:ctx, const x, const y, const Float:radius, fillCo
 	Bitmap_DrawRing(ctx, x, y, 0.0, radius, fillColour, fillPattern);
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="ctx">The bitmap to modify.</param>
 <param name="x">The x co-ordinate of the ring centre.</param>
 <param name="y">The y co-ordinate of the ring centre.</param>
@@ -241,7 +241,7 @@ stock Bitmap_DrawCircle(Bitmap:ctx, const x, const y, const Float:radius, fillCo
 	draw a border as it is used for borders, and a border on a ring is ambiguous
 	- do you have it on the inside or not?  Better to let the user decide.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 stock Bitmap_DrawRing(Bitmap:ctx, x, y, Float:inner, Float:outer, colour, pattern[] = "SOLID")
 {

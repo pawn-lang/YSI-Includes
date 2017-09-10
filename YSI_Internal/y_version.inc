@@ -168,7 +168,7 @@ Natives:
 	#endif
 	
 #else
-/**
+/*** ====================================================================== ***\
 <returns>
 	OnScriptInit
 </returns>
@@ -177,7 +177,7 @@ Natives:
 		code can not use ANY of the rest of YSI as it needs to be included by
 		everything first.
 </remarks>
-**/
+\*** ====================================================================== ***/
 	
 	#if !defined HTTP
 	
@@ -283,7 +283,7 @@ Natives:
 		forward YVers_OnScriptInit();
 	#endif
 	
-	/**
+	/*** ====================================================================== ***\
 	
 	<param name="	index">Not used.</param>
 	<param name="	code">Response code from the server.</param>

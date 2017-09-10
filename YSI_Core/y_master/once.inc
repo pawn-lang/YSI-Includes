@@ -267,11 +267,11 @@ PRE_HOOK(Master)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER @CO_Master
 
-/**
+/*** ====================================================================== ***\
 <returns>
 	Next master ID to be assigned.
 </returns>
-**/
+\*** ====================================================================== ***/
 
 stock Master_GetNext()
 {
@@ -290,7 +290,7 @@ stock Master_GetNext()
 	return -1;
 }
 
-/**
+/*** ====================================================================== ***\
 <returns>
 	OnScriptInit
 </returns>
@@ -298,7 +298,7 @@ stock Master_GetNext()
 	Constructor.  Gets the script a master ID.  Now ALWAYS gets an ID, even if
 	the master system is disabled - doing otherwise is just too complicated.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 public OnScriptInit()
 {
@@ -346,14 +346,14 @@ HOOK_FORWARD:Master_OnScriptInit();
 #define OnMasterSystemInit YSIM_OnMasterSystemInit
 forward YSIM_OnMasterSystemInit();
 
-/**
+/*** ====================================================================== ***\
 <returns>
 	OnGameModeExit
 </returns>
 <remarks>
 	Destructor.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 public OnScriptExit()
 {
@@ -392,11 +392,11 @@ HOOK_FORWARD:Master_OnScriptExit();
 //#define OnMasterSystemClose Master_OnScriptClose
 //forward Master_OnScriptClose(id);
 
-/**
+/*** ====================================================================== ***\
 <remarks>
 	Rebuilds the collection of master data whenever a script is restarted.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 public Master_Reassert()
 {
@@ -449,9 +449,9 @@ stock _Master_Relinquish(library[])
 	}
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="library">The name of the library to try become master for.</param>
-**/
+\*** ====================================================================== ***/
 
 stock bool:_Master_Get(library[], bool:force = false)
 {

@@ -292,13 +292,13 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 	return true;
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="str">String with the character in.</param>
 <param name="pos">Location of the character.</param>
 <returns>
 	Is the current character escaped?
 </returns>
-**/
+\*** ====================================================================== ***/
 
 /*_Y_INI_STATIC*/ stock bool:INI_IsEscapeSequence(const str[], pos)
 {
@@ -309,13 +309,13 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 	return escape;
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="str">String with the whitespace in.</param>
 <param name="pos">End of the whitespace.</param>
 <returns>
 	Start of the whitespace.
 </returns>
-**/
+\*** ====================================================================== ***/
 
 /*_Y_INI_STATIC*/ stock INI_ReverseWhitespace(const str[], pos)
 {
@@ -323,7 +323,7 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 	return pos + 1;
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="str">The string you want to search in.</param>
 <param name="sub">The string you want to search for.</param>
 <param name="pos">The start offset.</param>
@@ -335,7 +335,7 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 	later code (it is only used as an upper-bound on line positions).  This is
 	similar to "strfind", but accounts for escape sequences.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 /*_Y_INI_STATIC*/ stock INI_FindString(const str[], const sub[], pos = -1)
 {
@@ -482,7 +482,7 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 
 */
 
-/**
+/*** ====================================================================== ***\
 <param name="str">The string you want to type analyse.</param>
 <param name="p0s">Start of part 0.</param>
 <param name="p0e">End of part 0.</param>
@@ -498,7 +498,7 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 	This function's signature is so long that I put it on a separate line.  This
 	takes a line and determines what it is and where the parts are.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 #define INI_SkipWhitespace(%0,%1) while ('\0' < %0[%1] <= ' ') ++%1
 
@@ -634,7 +634,7 @@ state_in_comment:
 	return ret;
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="fmat">The format destination.</param>
 <param name="remoteFormat">The source format.</param>
 <param name="filename">The file we are currently parsing.</param>
@@ -659,7 +659,7 @@ state_in_comment:
 	
 	This is quite a complex function, but is only called once per file parse.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filename[], const bool:bFileFirst)
 {
@@ -711,7 +711,7 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filena
 	return 1;
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="callback">The callback destination.</param>
 <param name="format">The function name format.</param>
 <param name="tag">The tag destination.</param>
@@ -728,7 +728,7 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filena
 	the tag elsewhere.  This might not work as a separate function - it will
 	need to be in the function called by the function with the inlines in.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 #define INI_GetCallback(%0,%1,%2,%3,%4,%5) \
 	( \
@@ -738,7 +738,7 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filena
 		Callback_Get(callback_tag:YSI_g_sCurLine, (%0), (%4), (%5)) \
 	)
 
-/**
+/*** ====================================================================== ***\
 <param name="filename">The file to load.</param>
 <param name="remoteFormat">The format string to generate the remote function
 t pass the data to once loaded.</param>
@@ -759,7 +759,7 @@ ones?</param>
 	parameter to be entered first and then only having one %s in the format
 	sting.  The default order is tag first for languages compatibility.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 static stock
 	YSI_g_sCurLine[YSI_MAX_INLINE_STRING];
@@ -893,7 +893,7 @@ _Y_INI_STATIC stock INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTa
 	}
 }
 
-/**
+/*** ====================================================================== ***\
 <param name="filename">The file to load.</param>
 <param name="remoteFormat">The format string to generate the remote function
 t pass the data to once loaded.</param>
@@ -914,7 +914,7 @@ ones?</param>
 	parameter to be entered first and then only having one %s in the format
 	sting.  The default order is tag first for languages compatibility.
 </remarks>
-**/
+\*** ====================================================================== ***/
 
 static stock INI_DoParentTag(const epos, const search[], File:f, callback[E_CALLBACK_DATA], bool:bExtra, extra, bool:bPassTag, tag[], bool:bFilter, filter[])
 {
