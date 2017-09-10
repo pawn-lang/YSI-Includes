@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					============================
 					Y Sever Includes - Cell Core
 					============================
@@ -106,7 +106,7 @@ Commands:
 	-
 Compile options:
 	-
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined _INC_y_cell
 	#endinput
@@ -116,7 +116,7 @@ Compile options:
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_globaltags"
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>
 	Cell_ReverseBits(number);
 </summary>
@@ -137,7 +137,7 @@ Compile options:
 	Example: 0b01010101010101010101010101010101
 	Becomes: 0b10101010101010101010101010101010
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 {
@@ -213,7 +213,7 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>
 	Cell_ReverseNibbles(number);
 </summary>
@@ -234,7 +234,7 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 	Example: 0xF0F0F0F0
 	Becomes: 0x0F0F0F0F
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 {
@@ -284,7 +284,7 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>
 	Cell_ReverseBytes(number);
 </summary>
@@ -305,7 +305,7 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 	Example: 0xFF00FF00
 	Becomes: 0x00FF00FF
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 {
@@ -342,7 +342,7 @@ stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>
 	Cell_CountBits(number);
 </summary>
@@ -367,7 +367,7 @@ stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 	rewrote the lookup version in assembly.  In theory it should be faster, but
 	the marshalling of data was a little awkward.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 {
@@ -405,7 +405,7 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>
 	Cell_GetLowestBit(number);
 </summary>
@@ -432,7 +432,7 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	
 	See: http://supertech.csail.mit.edu/papers/debruijn.pdf
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 {
@@ -460,7 +460,7 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>
 	Cell_GetLowestBitEx(number);
 </summary>
@@ -491,7 +491,7 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 	
 	See: http://supertech.csail.mit.edu/papers/debruijn.pdf
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 {
@@ -533,7 +533,7 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>
 	Cell_GetLowestComponent(number);
 </summary>
@@ -557,7 +557,7 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 	Example: 0b00010001100011000011100010001000
 	Returns: 0b00000000000000000000000000001000
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 {
@@ -572,7 +572,7 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>
 	Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5]);
 </summary>
@@ -583,13 +583,13 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 	Selected bits from "x", shifted to be LSBs.
 </returns>
 <remarks>
-	Very briefly, do "x & m", to select certain bits, then shift those bits by
+	Very briefly, do "x &amp; m", to select certain bits, then shift those bits by
 	various amounts so that they are consecutive:
 	
 		x = 0b110011
 		m = 0b011010
 		
-		x & m = 0b010010
+		x &amp; m = 0b010010
 		
 	From here, because the mask was three bits we know we want just those three
 	bits in the LSBs, so the answer becomes:
@@ -601,7 +601,7 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 	http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb
 	
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 {
@@ -615,7 +615,7 @@ stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 		t = x & masks[4],     x ^ t | (t >>> 16);
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>
 	Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 </summary>
@@ -630,7 +630,7 @@ stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 	original number before a compression, just the original number ANDed with
 	the mask "m".
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 {
@@ -643,7 +643,7 @@ stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 		t = x <<  1, m & (((x ^ t) & masks[0]) ^ x);
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>
 	Cell_PrecomputeMaskPermutation(m)
 </summary>
@@ -657,7 +657,7 @@ stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 	being manipulated.  Given this we can do a lot of work in advance, say
 	outside a loop, to avoid repeated calculations.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Cell_PrecomputeMaskPermutation(m)
 {
@@ -685,7 +685,7 @@ stock Cell_PrecomputeMaskPermutation(m)
 	return masks;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>
 	Cell_CompressRight(GLOBAL_TAG_TYPES:x, m);
 </summary>
@@ -697,7 +697,7 @@ stock Cell_PrecomputeMaskPermutation(m)
 <remarks>
 	Doesn't require precomputation.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Cell_CompressRight(GLOBAL_TAG_TYPES:x, m)
 {
@@ -710,7 +710,7 @@ stock Cell_CompressRight(GLOBAL_TAG_TYPES:x, m)
 	return Cell_CompressRightPrecomputed(x, m, Cell_PrecomputeMaskPermutation(m));
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>
 	Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 </summary>
@@ -722,7 +722,7 @@ stock Cell_CompressRight(GLOBAL_TAG_TYPES:x, m)
 <remarks>
 	Doesn't require precomputation.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 {

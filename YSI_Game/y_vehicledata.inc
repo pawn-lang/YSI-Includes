@@ -1,7 +1,7 @@
-/**--------------------------------------------------------------------------**\
-                             ====================
-                              GTA vehicles data.
-                             ====================
+/*
+							 ====================
+							  GTA vehicles data.
+							 ====================
 Description:
 	Basic functions for gathering data on various vehicle models.  Things like
 	what sort of vehicle they are and what organisation they belong to.
@@ -118,7 +118,7 @@ Operators:
 	-
 Iterators:
 	-
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined _INC_y_vehicledata
 	#endinput
@@ -1067,8 +1067,7 @@ stock
 			0,
             0
 		};
-/**--------------------------------------------------------------------------**\
-<summary>Vehicle_Speed</summary>
+/**
 <param name="vehicleid">The vehicleid to get speed.</param>
 <returns>
 	Current vehicle speed.
@@ -1076,7 +1075,7 @@ stock
 <remarks>
 	This function have returns in KM/H.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Vehicle_Speed(vehicleid)
 {

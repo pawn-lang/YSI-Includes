@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					==============================
 					 y_hooks - Hook any callback!
 					==============================
@@ -90,7 +90,7 @@ Changelog:
 		Added YSI_ prefix to all globals.
 	01/05/07:
 		First version.
-\**--------------------------------------------------------------------------**/
+**/
 
 #define MAX_RACE_WINNERS 3
 
@@ -176,7 +176,7 @@ forward Race_Timeout(playerid);
 
 loadtext core[ysi_race];
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	RaceArray_IndexShift
 Params:
@@ -187,7 +187,7 @@ Return:
 Notes:
 	Find all races whose checkpoint blocks start above the current index and
 	increment them.
--*----------------------------------------------------------------------------*/
+**/
 
 _Y_RACES_STATIC stock RaceArray_IndexShift(from, add)
 {
@@ -197,7 +197,7 @@ _Y_RACES_STATIC stock RaceArray_IndexShift(from, add)
 	}
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	RaceArray_Shift
 Params:
@@ -208,7 +208,7 @@ Return:
 	-
 Notes:
 	Shifts checkpoints up in the main array to make room for new ones.
--*----------------------------------------------------------------------------*/
+**/
 
 _Y_RACES_STATIC stock RaceArray_Shift(from, &end, to)
 {
@@ -224,7 +224,7 @@ _Y_RACES_STATIC stock RaceArray_Shift(from, &end, to)
 	return true;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	RaceArray_Add
 Params:
@@ -236,7 +236,7 @@ Return:
 	-
 Notes:
 	Adds a new checkpoint to the checkpoints array.
--*----------------------------------------------------------------------------*/
+**/
 
 _Y_RACES_STATIC stock RaceArray_Add(slot, Float:x, Float:y, Float:z)
 {
@@ -251,7 +251,7 @@ _Y_RACES_STATIC stock RaceArray_Add(slot, Float:x, Float:y, Float:z)
 	return true;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race__IsActive
 Params:
@@ -260,12 +260,12 @@ Return:
 	-
 Notes:
 	Checks a race is active.
--*----------------------------------------------------------------------------*/
+**/
 
 #define Race__IsActive(%1) \
 	(YSI_g_sRaceData[(%1)][E_RACE_FLAGS] & e_RACE_FLAGS_ACTIVE)
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_IsValid
 Params:
@@ -274,12 +274,12 @@ Return:
 	-
 Notes:
 	Checks an id is valid and active.
--*----------------------------------------------------------------------------*/
+**/
 
 #define Race_IsValid(%1) \
 	(0 <= (%1) < MAX_RACES && Race__IsActive((%1)))
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Races_SetupGroups
 Params:
@@ -288,7 +288,7 @@ Return:
 	-
 Notes:
 	Disables default group settings when groups are used.
--*----------------------------------------------------------------------------*/
+**/
 
 stock Races_SetupGroups() <YSI_has_groups:n>
 {
@@ -298,7 +298,7 @@ stock Races_SetupGroups() <>
 {
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_Create
 Params:
@@ -316,7 +316,7 @@ Return:
 Notes:
 	Finds an empty slot and sets the race up for use.  All
 	parameters are optional and can be set separately aswell.
--*----------------------------------------------------------------------------*/
+**/
 
 foreign _Race_Create(l,e,c,a,f,x,i,w,r);
 
@@ -375,7 +375,7 @@ global _Race_Create(l,e,c,a,f,x,i,w,r)
 	return raceid;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_Destroy
 Params:
@@ -386,7 +386,7 @@ Return:
 Notes:
 	Called whenever a player leaves the race, checks the
 	number of remaining racers and if none ends the race.
--*----------------------------------------------------------------------------*/
+**/
 
 foreign void:_Race_Destroy(slot, refund);
 
@@ -430,7 +430,7 @@ global void:_Race_Destroy(slot, refund)
 	}
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_AddCheckpoint
 Params:
@@ -442,7 +442,7 @@ Return:
 	position or -1.
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+**/
 
 global Race_AddCheckpoint(raceid, Float:x, Float:y, Float:z)
 {
@@ -454,7 +454,7 @@ global Race_AddCheckpoint(raceid, Float:x, Float:y, Float:z)
 	return count;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_AddStart
 Params:
@@ -468,7 +468,7 @@ Return:
 Notes:
 	Adds a starting point to a race and increases the max
 	number of racers for the race.
--*----------------------------------------------------------------------------*/
+**/
 
 global Race_AddStart(raceid, Float:x, Float:y, Float:z, Float:a)
 {
@@ -484,7 +484,7 @@ global Race_AddStart(raceid, Float:x, Float:y, Float:z, Float:a)
 	return count;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_SetFixedWin
 Params:
@@ -496,7 +496,7 @@ Notes:
 	Sets wether or not a race has fixed prizes for the
 	winners.  If not the prizes are calculated at race start
 	based on the number of entrants and the entry fee.
--*----------------------------------------------------------------------------*/
+**/
 
 global void:Race_SetFixedWin(raceid, set)
 {
@@ -505,7 +505,7 @@ global void:Race_SetFixedWin(raceid, set)
 	else YSI_g_sRaceData[raceid][E_RACE_FLAGS] |= e_RACE_FLAGS_REL_WIN;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_SetRestart
 Params:
@@ -515,7 +515,7 @@ Return:
 	-
 Notes:
 	Sets wether or not a race is destroyed after completion.
--*----------------------------------------------------------------------------*/
+**/
 
 global void:Race_SetRestart(raceid, set)
 {
@@ -524,7 +524,7 @@ global void:Race_SetRestart(raceid, set)
 	else YSI_g_sRaceData[raceid][E_RACE_FLAGS] &= ~e_RACE_FLAGS_RESTART;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_SetArial
 Params:
@@ -534,7 +534,7 @@ Return:
 	-
 Notes:
 	Toggles the use of arial checkpoints.
--*----------------------------------------------------------------------------*/
+**/
 
 global void:Race_SetArial(raceid, set)
 {
@@ -543,7 +543,7 @@ global void:Race_SetArial(raceid, set)
 	else YSI_g_sRaceData[raceid][E_RACE_FLAGS] &= ~e_RACE_FLAGS_ARIAL;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_SetActive
 Params:
@@ -553,7 +553,7 @@ Return:
 	-
 Notes:
 	Activates the race for entry and use.
--*----------------------------------------------------------------------------*/
+**/
 
 _Y_RACES_STATIC stock Race_SetActive(raceid, set)
 {
@@ -562,7 +562,7 @@ _Y_RACES_STATIC stock Race_SetActive(raceid, set)
 	else YSI_g_sRaceData[raceid][E_RACE_FLAGS] &= ~e_RACE_FLAGS_ACTIVE;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_SetCountdown
 Params:
@@ -572,7 +572,7 @@ Return:
 	-
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+**/
 
 global void:Race_SetCountdown(raceid, countdown)
 {
@@ -580,7 +580,7 @@ global void:Race_SetCountdown(raceid, countdown)
 	YSI_g_sRaceData[raceid][E_RACE_COUNTDOWN] = countdown;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_SetInterior
 Params:
@@ -591,7 +591,7 @@ Return:
 Notes:
 	AFAIK you can't drive between interiors so all the
 	checkpoints must be located in the same interior.
--*----------------------------------------------------------------------------*/
+**/
 
 global void:Race_SetInterior(raceid, interior)
 {
@@ -599,7 +599,7 @@ global void:Race_SetInterior(raceid, interior)
 	YSI_g_sRaceData[raceid][E_RACE_INT] = interior;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_SetWorld
 Params:
@@ -609,7 +609,7 @@ Return:
 	-
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+**/
 
 global void:Race_SetWorld(raceid, world)
 {
@@ -617,7 +617,7 @@ global void:Race_SetWorld(raceid, world)
 	YSI_g_sRaceData[raceid][E_RACE_VW] = world;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_SetPrize
 Params:
@@ -629,7 +629,7 @@ Return:
 Notes:
 	If this is used after the race has started it will over-
 	write prizes set by relative winnings.
--*----------------------------------------------------------------------------*/
+**/
 
 global void:Race_SetPrize(raceid, position, amount)
 {
@@ -637,7 +637,7 @@ global void:Race_SetPrize(raceid, position, amount)
 	YSI_g_sRaceData[raceid][E_RACE_PRIZES][position - 1] = amount;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_Set_ExitTime
 Params:
@@ -650,7 +650,7 @@ Notes:
 	fail the race.  0 means a vehicle exit is an instant fail.
 	
 	Useful for long races where cars may well be destroyed.
--*----------------------------------------------------------------------------*/
+**/
 
 global void:Race_SetExitTime(raceid, time)
 {
@@ -658,7 +658,7 @@ global void:Race_SetExitTime(raceid, time)
 	YSI_g_sRaceData[raceid][E_RACE_FLAGS] = (YSI_g_sRaceData[raceid][E_RACE_FLAGS] & (~e_RACE_FLAGS_EXIT_TIME)) | (e_RACE_FLAGS:time & e_RACE_FLAGS_EXIT_TIME);
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_IsActive
 Params:
@@ -667,14 +667,14 @@ Return:
 	-
 Notes:
 	Wrapper for Race_IsValid.
--*----------------------------------------------------------------------------*/
+**/
 
 global Race_IsActive(raceid)
 {
 	return Race_IsValid(raceid);
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_SetLaps
 Params:
@@ -684,7 +684,7 @@ Return:
 	-
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+**/
 
 global void:Race_SetLaps(raceid, laps)
 {
@@ -692,7 +692,7 @@ global void:Race_SetLaps(raceid, laps)
 	YSI_g_sRaceData[raceid][E_RACE_LAPS] = laps;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_SetEntry
 Params:
@@ -702,7 +702,7 @@ Return:
 	-
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+**/
 
 global void:Race_SetEntry(raceid, cost)
 {
@@ -710,7 +710,7 @@ global void:Race_SetEntry(raceid, cost)
 	YSI_g_sRaceData[raceid][E_RACE_ENTRY] = cost;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_Dropout
 Params:
@@ -719,7 +719,7 @@ Return:
 	-
 Notes:
 	Called when a player exits their vehicle.
--*----------------------------------------------------------------------------*/
+**/
 
 _Y_RACES_STATIC Race_Dropout(playerid)
 {
@@ -728,7 +728,7 @@ _Y_RACES_STATIC Race_Dropout(playerid)
 	YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_TOUT] = GetTickCount();
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_Rejoin
 Params:
@@ -738,14 +738,14 @@ Return:
 Notes:
 	Called when a player gets in a new vehicle if not timmed
 	out..
--*----------------------------------------------------------------------------*/
+**/
 
 _Y_RACES_STATIC Race_Rejoin(playerid)
 {
 	YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE] &= ~RACE_PLAYER_OUT;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_Timeout
 Params:
@@ -756,14 +756,14 @@ Notes:
 	Called from Race_Dropout after the race's exit time.  If
 	the player still isn't in a vehicle (set by Race_Rejoin) the
 	player fails the race.
--*----------------------------------------------------------------------------*/
+**/
 
 public Race_Timeout(playerid)
 {
 	if (YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE] & RACE_PLAYER_OUT) Race_Exit(playerid);
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_Exit
 Params:
@@ -772,7 +772,7 @@ Return:
 	-
 Notes:
 	Called when a player leaves a race prematurly.
--*----------------------------------------------------------------------------*/
+**/
 
 _Y_RACES_STATIC Race_Exit(playerid)
 {
@@ -784,7 +784,7 @@ _Y_RACES_STATIC Race_Exit(playerid)
 	Race_CheckEnd(slot);
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_CheckEnd
 Params:
@@ -794,7 +794,7 @@ Return:
 Notes:
 	Called whenever a player leaves the race, checks the
 	number of remaining racers and if none ends the race.
--*----------------------------------------------------------------------------*/
+**/
 
 _Y_RACES_STATIC Race_CheckEnd(slot)
 {
@@ -824,7 +824,7 @@ _Y_RACES_STATIC Race_CheckEnd(slot)
 	}
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_PlayerDone
 Params:
@@ -835,7 +835,7 @@ Notes:
 	Generic cleanup for anyone who has left a race.  Sets
 	the player back to their old position and sets a few other
 	variables.
--*----------------------------------------------------------------------------*/
+**/
 
 _Y_RACES_STATIC Race_PlayerDone(playerid)
 {
@@ -874,7 +874,7 @@ _Y_RACES_STATIC Race_PlayerDone(playerid)
 	}
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_GetPlayerExitedTime
 Params:
@@ -883,14 +883,14 @@ Return:
 	The time a player has been out a vehicle.
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+**/
 
 global Race_GetPlayerExitedTime(playerid)
 {
 	return GetTickCount() - YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_TOUT];
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_PlayerJoin
 Params:
@@ -901,7 +901,7 @@ Return:
 Notes:
 	Checks if a player is valid to join a race and if the race
 	is valid to be joined to and if so adds them to it.
--*----------------------------------------------------------------------------*/
+**/
 
 global Race_PlayerJoin(playerid, race)
 {
@@ -925,7 +925,7 @@ global Race_PlayerJoin(playerid, race)
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_PlayerLeave
 Params:
@@ -936,7 +936,7 @@ Return:
 Notes:
 	Called if a player leaves a race before the race has
 	started.
--*----------------------------------------------------------------------------*/
+**/
 
 foreign _Race_PlayerLeave(playerid, refund);
 
@@ -958,7 +958,7 @@ global _Race_PlayerLeave(playerid, refund)
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_Finish
 Params:
@@ -967,7 +967,7 @@ Return:
 	-
 Notes:
 	Called when a player completes a race.
--*----------------------------------------------------------------------------*/
+**/
 
 _Y_RACES_STATIC Race_Finish(playerid)
 {
@@ -984,7 +984,7 @@ _Y_RACES_STATIC Race_Finish(playerid)
 	Race_CheckEnd(slot);
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_Start
 Params:
@@ -997,7 +997,7 @@ Notes:
 	is set as relative the prizes are calculated here based on
 	number of entrants, number of possible winners and entry
 	fee.
--*----------------------------------------------------------------------------*/
+**/
 
 global Race_Start(race)
 {
@@ -1057,7 +1057,7 @@ global Race_Start(race)
 	return 0;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_Countdown
 Params:
@@ -1067,7 +1067,7 @@ Return:
 	-
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+**/
 
 public Race_Countdown(race, time)
 {
@@ -1101,7 +1101,7 @@ public Race_Countdown(race, time)
 	}
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_Race
 Params:
@@ -1110,7 +1110,7 @@ Return:
 	-
 Notes:
 	Sets up important variables
--*----------------------------------------------------------------------------*/
+**/
 
 mhook OnScriptInit()
 {
@@ -1123,7 +1123,7 @@ mhook OnScriptInit()
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_OnPlayerEnterRaceCheckpoint
 Params:
@@ -1133,7 +1133,7 @@ Return:
 Notes:
 	Checks a players position in the race and displays the
 	corresponding next checkpoint or calls Race_Finish.
--*----------------------------------------------------------------------------*/
+**/
 
 mhook OnPlayerEnterRaceCP(playerid)
 {
@@ -1216,7 +1216,7 @@ _Y_RACES_STATIC Race_DoEnterRaceCP(playerid)
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_OnPlayerStateChange
 Params:
@@ -1228,7 +1228,7 @@ Return:
 Notes:
 	Processes a players vehicle exit or entry mid race and
 	calls the relevant functions.
--*----------------------------------------------------------------------------*/
+**/
 
 mhook OnPlayerStateChange(playerid, newstate, oldstate)
 {
@@ -1245,7 +1245,7 @@ mhook OnPlayerStateChange(playerid, newstate, oldstate)
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_OnPlayerDisconnect
 Params:
@@ -1257,7 +1257,7 @@ Notes:
 	Similar to the Race_OnPlayerStateChange function but
 	instantly exits them from the race as they're not there
 	anymore.
--*----------------------------------------------------------------------------*/
+**/
 
 mhook OnPlayerDisconnect(playerid, reason)
 {
@@ -1276,7 +1276,7 @@ mhook OnPlayerDisconnect(playerid, reason)
 	#pragma unused reason
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_OnPlayerConnect
 Params:
@@ -1285,7 +1285,7 @@ Return:
 	-
 Notes:
 	Just a fix for IsPlayerInRaceCheckpoint.
--*----------------------------------------------------------------------------*/
+**/
 
 mhook OnPlayerConnect(playerid)
 {
@@ -1295,7 +1295,7 @@ mhook OnPlayerConnect(playerid)
 
 #if defined RACE_POSITION
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_Loop
 Params:
@@ -1311,7 +1311,7 @@ Notes:
 	Note: If a race doubles back between two checkpoints
 	you may be closer than another player thus show as a
 	higher position when you are infact behind them.
--*----------------------------------------------------------------------------*/
+**/
 
 #if YSIM_HAS_MASTER && (_YSIM_IS_CLIENT || _YSIM_IS_STUB)
 	stock Race_Loop()
@@ -1400,7 +1400,7 @@ Notes:
 		}
 	}
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_GetPlayerPosition
 Params:
@@ -1409,7 +1409,7 @@ Return:
 	Dynamic position in race.
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+**/
 
 global Race_GetPlayerPosition(playerid)
 {
@@ -1418,7 +1418,7 @@ global Race_GetPlayerPosition(playerid)
 
 #endif
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_GetPlayerRaceTime
 Params:
@@ -1427,14 +1427,14 @@ Return:
 	Time in race so far.
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+**/
 
 global Race_GetPlayerRaceTime(playerid)
 {
 	return GetTickCount() - YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_TIME];
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_GetPlayerRace
 Params:
@@ -1443,7 +1443,7 @@ Return:
 	Player's race.
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+**/
 
 global Race_GetPlayerRace(playerid)
 {
@@ -1451,7 +1451,7 @@ global Race_GetPlayerRace(playerid)
 	return NO_RACE;
 }
 
-/*----------------------------------------------------------------------------*-
+/**
 Function:
 	Race_SetPlayer
 Params:
@@ -1462,7 +1462,7 @@ Return:
 	-
 Notes:
 	-
--*----------------------------------------------------------------------------*/
+**/
 
 global Race_SetPlayer(race, playerid, bool:set)
 {

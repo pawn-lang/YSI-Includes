@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					===================================
 					 y_inline - PAWN inline functions.
 					===================================
@@ -85,7 +85,7 @@ Changelog:
 		Changed the precedence of "using" types.
 	19/09/11:
 		First version
-\**--------------------------------------------------------------------------**/
+**/
 
 static stock bool:y_inline_Get(callback:c, ret[E_CALLBACK_DATA], f[] = "")
 {

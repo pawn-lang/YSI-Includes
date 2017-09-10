@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					===================================
 					Y Sever Includes - Malloc Functions
 					===================================
@@ -140,7 +140,7 @@ Compile options:
 	YSI_MALLOC_NO_SHORT - Avoid conflicts with mget/mset.
 Operators:
 	-
-\**--------------------------------------------------------------------------**/
+**/
 
 main()
 {
@@ -161,11 +161,7 @@ main()
 #define main() forward Malloc_main();public Malloc_main()
 
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_FindStackTop</summary>
-<returns>
-	-
-</returns>
+/**
 <remarks>
 	Loop back up through the stack and find the start of the current stack.  If
 	it doesn't equal the top of the true stack then we've been called via
@@ -173,7 +169,7 @@ main()
 	
 	Based on ZeeX's GetStackTrace, but gets frames instead of returns.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 static Malloc_FindStackTop()
 {
@@ -191,11 +187,7 @@ static Malloc_FindStackTop()
 	return frm_addr + 12;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>OnScriptInit</summary>
-<returns>
-	-
-</returns>
+/**
 <remarks>
 	Finds all "BOUNDS 0" OpCodes in the AMX and rewrites them to "NOP NOP".  The
 	byte pattern for this code is "OP_BOUNDS 0", which (AFAIK) can not appear
@@ -207,7 +199,7 @@ static Malloc_FindStackTop()
 	"CallLocalFunction" as not the first callback in the script but there may
 	still be a few problems - we won't see till people start testing I guess...
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 public OnScriptInit()
 {
@@ -247,17 +239,13 @@ public OnScriptInit()
 	forward Malloc_OnScriptInit();
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_TrySetup</summary>
-<returns>
-	-
-</returns>
+/**
 <remarks>
 	Move the heap pointer up a load.  This is called multiple times at the start
 	of the mode because we need to beat protections added in by the virtual
 	machine to steal away its heap area.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 static Malloc_TrySetup()
 {
@@ -415,17 +403,13 @@ static Malloc_SolidifyHeap()
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_OnPlayerConnect</summary>
+/**
 <param name="playerid">Player that just connected.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	This is the only callback that can be called before our timers when the mode
 	starts.  Make sure the heap is set up correctly.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 forward Malloc_DoPlayerConnect(playerid);
 

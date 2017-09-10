@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 						============================
 						 y_pp - Preprocessor macros
 						============================
@@ -75,25 +75,21 @@ Changelog:
 		Integrated in to YSI.
 	06/08/10:
 		First version
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined _INC_y_pp
 	#endinput
 #endif
 #define _INC_y_pp
 
-/**--------------------------------------------------------------------------**\
-<summary>PP_LOOP</summary>
+/**
 <param name="%9">Number of times to repeat.</param>
 <param name="%0">What to repeat.</param>
 <param name="%1">What to insert between repetitions.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Does something in the pre-processor multiple times.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define PP_LOOP<%9>(%0)(%1) PP_LOOP@%9(%0)(%1)
 #define PP_LOOP@0(%0)(%1)

@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					  ====================================
 					   y_timers - Run timers efficiently. 
 					  ====================================
@@ -88,7 +88,7 @@ Changelog:
 		Added pickups.
 	03/08/07:
 		First version.
-\**--------------------------------------------------------------------------**/
+**/
 
 // These are the tag-type definitions for the various possible parameter types.
 // Array-like definitions.

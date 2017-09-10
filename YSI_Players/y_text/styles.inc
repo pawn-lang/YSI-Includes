@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					=================================
 					 y_styles - Text style handling.
 					=================================
@@ -81,7 +81,7 @@ Functions:
 Variables:
 	Global:
 		-
-\**--------------------------------------------------------------------------**/
+**/
 
 // Load the styles for the current item.  I have decided to completely switch
 // over to XML as there are just too many options now to make INI files worth
@@ -177,15 +177,11 @@ stock Styles_GetData(index, style[E_STYLE_DATA], label[E_3D_DATA])
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Styles_EntryTag</summary>
-<returns>
-	-
-</returns>
+/**
 <remarks>
 	Called to load "<entry>" tags from XML style files.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 forward Styles_EntryTag();
 
@@ -414,11 +410,7 @@ public Styles_3DTag()
 	return YSI_g_sCur3D++;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Styles_OnScriptInit</summary>
-<returns>
-	-
-</returns>
+/**
 <remarks>
 	Loads all the style files relevant to this script.  Filters by text group in
 	the XML callback.  Loops through all publics, then loops through them all
@@ -426,7 +418,7 @@ public Styles_3DTag()
 	the filtering, it is done this way to ensure that all relevant text draw
 	styles are loaded for when we are displaying text.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 //hook OnScriptInit()
 public _Styles_SpecialInit()
@@ -494,15 +486,11 @@ public _Styles_SpecialInit()
 	XML_Parse(YSI_g_sXMLRules, fname);
 }*/
 
-/**--------------------------------------------------------------------------**\
-<summary>Styles_Reload</summary>
-<returns>
-	-
-</returns>
+/**
 <remarks>
 	Reloads all the string styles in all scripts.  Use sparingly!
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Styles_Reload()
 {

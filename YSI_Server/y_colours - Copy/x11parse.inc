@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					==========================
 					 y_colours - X11 colours!
 					==========================
@@ -80,7 +80,7 @@ Changelog:
 		Added colourspace resolution for converting {FF0000} to ~r~.
 	25/11/10:
 		First version.
-\**--------------------------------------------------------------------------**/
+**/
 
 #define _X11_SPACE_CHECK(%0) (checkSpace && str[(%0)] == ' ')
 #define _X11_SPACE_SWITCH:  ' ':if(checkSpace)

@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					=================================
 					 y_textrender - Show text.
 					=================================
@@ -82,7 +82,7 @@ Functions:
 Variables:
 	Global:
 		-
-\**--------------------------------------------------------------------------**/
+**/
 
 #if !defined FORMAT_FADE_STEP
 	#define FORMAT_FADE_STEP 2
@@ -555,14 +555,13 @@ static stock Format_DoEndFade(output[], &start, end, &rem, colour, &initial) //<
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Format_DoAddString</summary>
-<param name="out[]">The destination string.</param>
-<param name="in[]">The data to add.</param>
-<param name="&oidx">The index in "out" at which to add data.</param>
+/**
+<param name="out">The destination string.</param>
+<param name="in">The data to add.</param>
+<param name="oidx">The index in "out" at which to add data.</param>
 <param name="len">The length of "in".</param>
-<param name="&orem">Space remaining in "out".</param>
-<param name="&fakePos">Like "oidx", but cumulative over line breaks.</param>
+<param name="orem">Space remaining in "out".</param>
+<param name="fakePos">Like "oidx", but cumulative over line breaks.</param>
 <returns>
 	The amount of data from "in" not added to "out".
 </returns>
@@ -577,7 +576,7 @@ static stock Format_DoEndFade(output[], &start, end, &rem, colour, &initial) //<
 	to the point just after the initial input string was added to continue on to
 	show the next string including newly determined fade data.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 static stock Format_DoAddString(out[], const in[], &oidx, const len, &orem, &fakepos) <y_render_fade : y_render_fade_fake>
 {
@@ -730,17 +729,10 @@ static stock Format_DoDisplay(playerid, colour, out[]) <y_render_show : y_render
 	//out[0] = '\0';
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Format_JustShow</summary>
+/**
 <param name="playerid">Player to show the text to.</param>
-<param name="out[]">What the text to show is.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+<param name="out">What the text to show is.</param>
+**/
 
 stock Format_JustShow(playerid, out[]) <y_render_show : y_render_show_scm>
 {
@@ -762,18 +754,14 @@ stock Format_JustShow(playerid, out[]) <y_render_show : y_render_show_td>
 	TD_ShowForPlayer(playerid, Text:out[0]);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Text_GetLastID</summary>
+/**
 <returns>
 	The basic ID linking all displayed elements together where appropriate (for
 	example SendClientMessage has no meaningful ID.  3D texts would, but that's
 	not implemented.  So do game texts, but that's not implemented either, so
 	really it's just text draws.
 </returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Text_GetLastID() <y_render_show : y_render_show_td>
 {
@@ -785,15 +773,9 @@ stock Text_GetLastID() <>
 	return -1;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 // Generic function to handle rendering for all types of outputs.  Other
 // functions such as Format_AddColour are specialised for different text styles.

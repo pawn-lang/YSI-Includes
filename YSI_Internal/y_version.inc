@@ -1,7 +1,7 @@
-/**--------------------------------------------------------------------------**\
-                              =====================
-                               YSI - Version Check
-                              =====================
+/*
+						  =====================
+						   YSI - Version Check
+						  =====================
 Description:
 	Checks online to see if there is a newer version of YSI available.
 Legal:
@@ -113,7 +113,7 @@ Operators:
 	-
 Natives:
 	-
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined _INC_y_version
 	#endinput
@@ -168,7 +168,7 @@ Natives:
 	#endif
 	
 #else
-/**----------------------------------------------------------------------**\
+/**
 	Hook:
 		OnScriptInit
 	</returns>
@@ -177,7 +177,7 @@ Natives:
 		code can not use ANY of the rest of YSI as it needs to be included by
 		everything first.
 </remarks>
-\**----------------------------------------------------------------------**/
+**/
 	
 	#if !defined HTTP
 	
@@ -283,14 +283,11 @@ Natives:
 		forward YVers_OnScriptInit();
 	#endif
 	
-	/**----------------------------------------------------------------------**\
-	<summary>YVers_Callback</summary>
+	/**
+	
 	<param name="	index">Not used.</param>
 	<param name="	code">Response code from the server.</param>
 	<param name="	data[]">HTTP data sent from the server.</param>
-	<returns>
-		-
-	</returns>
 	<remarks>
 		This is called when my server responds to the HTTP request sent above
 		(or when it doesn't).  This prints information on the current and any
@@ -299,7 +296,7 @@ Natives:
 		onlyolder or equal (unless they play with the version numbers, but then
 		that's their own fault).
 	</remarks>
-	\**----------------------------------------------------------------------**/
+	**/
 	
 	public YVers_Callback(index, code, data[])
 	{

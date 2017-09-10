@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					===========================
 					 foreach efficient looping
 					===========================
@@ -222,7 +222,7 @@ Iterators:
 	Bot - List of all bots (npcs) connected.
 	NPC - Alias of Bot.
 	Character - All players and bots.
-\**--------------------------------------------------------------------------**/
+**/
 
 /*
 
@@ -237,9 +237,9 @@ Iterators:
 
 */
 
-/**--------------------------------------------------------------------------**\
+/**
 Create the internal iterators.
-\**--------------------------------------------------------------------------**/
+**/
 
 #if _FOREACH_PLAYERS
 	new
@@ -490,16 +490,12 @@ stock Iter_All_Internal(array[], size, value)
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>Iter_OnScriptInit</summary>
-<returns>
-	-
-</returns>
+/**
 <remarks>
 	Sets up all existing iterators.  Does nothing for "XXLocal" ones, since they
 	are by definition empty when a script starts.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if _FOREACH_CHARACTERS || _FOREACH_VEHICLES || _FOREACH_ACTORS
 	hook OnScriptInit()
@@ -571,12 +567,8 @@ stock Iter_All_Internal(array[], size, value)
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>Iter_OnPlayerConnect</summary>
+/**
 <param name="playerid">Player who joined.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Adds a player to the loop data.  Now sorts the list too.  Note that I found
 	the most bizzare bug ever (I *think* it may be a compiler but, but it
@@ -587,7 +579,7 @@ stock Iter_All_Internal(array[], size, value)
 	the problem, and I've tried to make sure that the values will never actually
 	get printed.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if _FOREACH_CHARACTERS
 	hook OnPlayerConnect(playerid)
@@ -610,19 +602,16 @@ stock Iter_All_Internal(array[], size, value)
 		return 1;
 	}
 	
-	/**----------------------------------------------------------------------**\
-	<summary>Iter_OnPlayerDisconnect</summary>
+	/**
+	
 	<param name="playerid">Player who left.</param>
-	<returns>
-		-
-	</returns>
 	<remarks>
 		Removes a player from the loop data.  No longer uses "hook" to ENSURE
 		that this is always last.  Previously I think that the order of
 		evaluation in y_hooks meant that this got called before the user
 		"OnPlayerDisconnect".
 	</remarks>
-	\**----------------------------------------------------------------------**/
+	**/
 	
 	hook OnPlayerDisconnect(playerid, reason)
 	{
@@ -630,17 +619,14 @@ stock Iter_All_Internal(array[], size, value)
 		return 1;
 	}
 	
-	/**----------------------------------------------------------------------**\
-	<summary>Iter_OPDCInternal</summary>
+	/**
+	
 	<param name="playerid">Player who left.</param>
-	<returns>
-		-
-	</returns>
 	<remarks>
 		Called AFTER "OnPlayerDisconnect" so that using "Kick" inside a
 		"foreach" loop doesn't crash the server due to an OOB error.
 	</remarks>
-	\**----------------------------------------------------------------------**/
+	**/
 	
 	public Iter_OPDCInternal(playerid)
 	{

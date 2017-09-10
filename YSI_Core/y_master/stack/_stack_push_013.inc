@@ -1,7 +1,7 @@
-/**--------------------------------------------------------------------------**\
-                             ======================
-                              YSI - Master Include
-                             ======================
+/*
+				             ======================
+				              YSI - Master Include
+				             ======================
 Description:
 	Handles distribution of control of code segments across all running scripts
 	with YSI to avoid conflicts of checkpoint streamers etc and allow features
@@ -147,7 +147,7 @@ Operators:
 	-
 Natives:
 	-
-\**--------------------------------------------------------------------------**/
+**/
 
 #if AUTO_INCLUDE_GUARD
 	#undef _inc__stack_push_013

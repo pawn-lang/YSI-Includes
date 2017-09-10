@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					===================================
 					Y Sever Includes - Malloc Functions
 					===================================
@@ -140,32 +140,24 @@ Compile options:
 	YSI_MALLOC_NO_SHORT - Avoid conflicts with mget/mset.
 Operators:
 	-
-\**--------------------------------------------------------------------------**/
+**/
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_GetSlotSize</summary>
+/**
 <param name="slot">Allocation unit to get the size of.</param>
 <returns>
 	The size.
 </returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Malloc_GetSlotSize(%1) \
 	(YSI_gMallocMemory[_:(%1) - 1])
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_SlotSize</summary>
+/**
 <param name="slot">Allocation unit to get the size of.</param>
 <returns>
 	The size.
 </returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined YSI_MALLOC_SECURE
 
@@ -181,9 +173,8 @@ Operators:
 
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_NewS</summary>
-<param name="string[]">The string to store.</param>
+/**
+<param name="string">The string to store.</param>
 <param name="pack">Whether or not the string will be packed.</param>
 <returns>
 	0 on fail or a data handle on sucess.
@@ -191,7 +182,7 @@ Operators:
 <remarks>
 	Allocates a new piece of memory with enough space to store the given string.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 	new
@@ -207,23 +198,15 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 	return alloc;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_SetSlotSize</summary>
+/**
 <param name="slot">The allocation unit to set the size of.</param>
 <param name="size">The size to set it to.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Malloc_SetSlotSize(%1,%2) \
 	YSI_gMallocMemory[_:(%1) - 1] = (%2)
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_GetData</summary>
+/**
 <param name="slot">The allocation unit to get data from.</param>
 <param name="index">The location in the unit to get.</param>
 <returns>
@@ -232,29 +215,21 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 <remarks>
 	Basically like Malloc_Get but used internally.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Malloc_GetData(%1,%2) \
 	(YSI_gMallocMemory[_:((%1)+Alloc:(%2))])
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_SetData</summary>
+/**
 <param name="slot">The allocation unit to set in.</param>
 <param name="index">Where in the unit to set.</param>
 <param name="value">The value to save.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Malloc_SetData(%1,%2,%3) \
 	YSI_gMallocMemory[_:((%1)+Alloc:(%2))]=(%3)
 
-/**--------------------------------------------------------------------------**\
-<summary>mget</summary>
+/**
 <param name="slot">The allocation unit to get data from.</param>
 <param name="index">The location in the unit to get.</param>
 <returns>
@@ -263,34 +238,29 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 <remarks>
 	Shorthand for Malloc_Get.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mget(%1) \
 		Malloc_Get(%1)
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>mset</summary>
+/**
 <param name="slot">The allocation unit to set in.</param>
 <param name="index">Where in the unit to set.</param>
 <param name="value">The value to save.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Shorthand for Malloc_Set.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mset(%1) \
 		Malloc_Set(%1)
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>mgets</summary>
-<param name="target[]">Target for the string.</param>
+/**
+<param name="target">Target for the string.</param>
 <param name="len">Length of the target.</param>
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
@@ -300,7 +270,7 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 <remarks>
 	Shorthand for Malloc_GetS.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mgets(%1) \
@@ -310,18 +280,14 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 		Malloc_GetA(%1)
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>msets</summary>
+/**
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
-<param name="str[]">String to insert</param>
-<returns>
-	-
-</returns>
+<param name="str">String to insert</param>
 <remarks>
 	Shorthand for Malloc_SetS.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if !defined YSI_MALLOC_NO_SHORT
 	#define msets(%1) \
@@ -331,22 +297,17 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 		Malloc_SetA(%1)
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_NextSlot</summary>
+/**
 <param name="slot">The unit to get the one after of.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Gets the next free block of memory after the current one.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Malloc_NextSlot(%1) \
 	(YSI_gMallocMemory[(%1)])
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_Get</summary>
+/**
 <param name="array">Data unit to get information from.</param>
 <param name="index">Index in the unit.</param>
 <returns>
@@ -355,7 +316,7 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 <remarks>
 	Displays errors in secure mode.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined YSI_MALLOC_SECURE
 
@@ -376,18 +337,14 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_Set</summary>
+/**
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
 <param name="value">Value to insert</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Displays errors in secure mode.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined YSI_MALLOC_SECURE
 
@@ -408,20 +365,16 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_GetS</summary>
-<param name="target[]">Target for the string.</param>
+/**
+<param name="target">Target for the string.</param>
 <param name="len">Length of the target.</param>
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
 <param name="pack">Return the string packed?</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Displays errors in secure mode.  Gets a string.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Malloc_GetS(target[], length, Alloc:array, const index, const bool:pack = false)
 {
@@ -440,19 +393,15 @@ stock Malloc_GetS(target[], length, Alloc:array, const index, const bool:pack = 
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_SetS</summary>
+/**
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
-<param name="str[]">String to insert</param>
+<param name="str">String to insert</param>
 <param name="pack">Should the string be packed in?</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Displays errors in secure mode.  Inserts a string.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Malloc_SetS(Alloc:array, const index, const str[], const bool:pack = false)
 {
@@ -482,18 +431,14 @@ stock Malloc_SetS(Alloc:array, const index, const str[], const bool:pack = false
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_SetVAS</summary>
+/**
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
 <param name="arg">Offset in the stack of the string to store.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Inserts a string by stack offset for use in vararg functions.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Malloc_SetVAS(Alloc:array, index, arg)
 {
@@ -546,19 +491,15 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
 	#endif
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_GetA</summary>
-<param name="target[]">Target for the array.</param>
+/**
+<param name="target">Target for the array.</param>
 <param name="len">Length of the target.</param>
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Displays errors in secure mode.  Gets an array.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Malloc_GetA(target[], length, Alloc:array, index)
 {
@@ -577,19 +518,15 @@ stock Malloc_GetA(target[], length, Alloc:array, index)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_SetA</summary>
+/**
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
-<param name="str[]">Array to insert.</param>
+<param name="str">Array to insert.</param>
 <param name="len">Length of the array.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Displays errors in secure mode.  Inserts an array.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Malloc_SetA(Alloc:array, index, const str[], len)
 {
@@ -606,18 +543,14 @@ stock Malloc_SetA(Alloc:array, index, const str[], len)
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_SetVAA</summary>
+/**
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
 <param name="arg">Offset in the stack of the array to store.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Inserts an array by stack offset for use in vararg functions.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Malloc_SetVAA(Alloc:array, index, arg)
 {
@@ -671,8 +604,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 	#endif
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>malloc</summary>
+/**
 <param name="size">Size of memory to allocate.</param>
 <returns>
 	0 on fail or a data handle on sucess.
@@ -680,7 +612,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 <remarks>
 	Displays errors in secure mode.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined YSI_MALLOC_SECURE
 
@@ -699,8 +631,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>calloc</summary>
+/**
 <param name="size">Size of memory to allocate.</param>
 <returns>
 	0 on fail or a data handle on sucess.
@@ -708,7 +639,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 <remarks>
 	Displays errors in secure mode.  Blanks allocated mmeory.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 
 stock Alloc:calloc(size)
@@ -730,16 +661,12 @@ stock Alloc:calloc(size)
 	return slot;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>free</summary>
+/**
 <param name="slot">Slot of memory to free up.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Displays errors in secure mode.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined YSI_MALLOC_SECURE
 
@@ -760,8 +687,7 @@ stock Alloc:calloc(size)
 
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_Allocate</summary>
+/**
 <param name="size">Ammount of memory to allocate IN CELLS.</param>
 <param name="cleat">Blank the memory?</param>
 <returns>
@@ -778,7 +704,7 @@ stock Alloc:calloc(size)
 	This code will find an area in memory with sufficient
 	space to store the given data and 
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined YSI_MALLOC_SECURE
 	static
@@ -856,16 +782,12 @@ stock Alloc:calloc(size)
 			return NO_ALLOC;
 		}
 
-/**--------------------------------------------------------------------------**\
-<summary>Malloc_Free</summary>
+/**
 <param name="slot">Memory allocation unit to release</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Implementation code for free().
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined YSI_MALLOC_SECURE
 	static

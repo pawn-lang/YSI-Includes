@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/**
                              ======================
                               YSI - Master Include
                              ======================
@@ -147,7 +147,7 @@ Operators:
 	-
 Natives:
 	-
-\**--------------------------------------------------------------------------**/
+**/
 
 // ALWAYS!  The compiler defines this automatically, don't use it as this is
 // included multiple times to handle multiple master systems.

@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					===========================
 					Y Sever Includes - Bit Core
 					===========================
@@ -129,7 +129,7 @@ Commands:
 	-
 Compile options:
 	-
-\**--------------------------------------------------------------------------**/
+**/
 
 // This is redefined below, don't worry.  It's like this so the function
 // prototypes can use a familiar syntax.
@@ -149,49 +149,36 @@ Compile options:
 	#endif
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Bit_Bits</summary>
+/**
 <param name="size">Number of bits required.</param>
 <returns>
 	Number of cells required for the bit array.
 </returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 // If this ever changes, update the size reference in y_users.
 #define Bit_Bits(%1) (((%1)+cellbits-1)/cellbits)
 
-/**--------------------------------------------------------------------------**\
-<summary>Bit_Slot</summary>
+/**
 <param name="value">Value to get the slot for.</param>
 <returns>
 	The true array slot for this value.
 </returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Bit_Slot(%1) ((_:%1)>>>CELLSHIFT)
 
-/**--------------------------------------------------------------------------**\
-<summary>Bit_Mask</summary>
+/**
 <param name="value">Value to get the mask for</param>
 <returns>
 	The bit in the array slot to use.
 </returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Bit_Mask(%1) (Bit:(1<<((_:%1)&cellbits-1)))
 
-/**--------------------------------------------------------------------------**\
-<summary>Bit_GetBit</summary>
-<param name="Bit:array[]">Array of bits.</param>
+/**
+<param name="array">Array of bits.</param>
 <param name="slot">Bit slot.</param>
 <returns>
 	State of the provided slot, 0 on fail.
@@ -199,13 +186,12 @@ Compile options:
 <remarks>
 	Unsafe but faster for when you're sure you're within range.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Bit_GetBit(%1,%2) (%1[(%2)>>>CELLSHIFT]&Bit:(1<<((%2)&cellbits-1)))
 
-/**--------------------------------------------------------------------------**\
-<summary>Bit_Get</summary>
-<param name="Bit:array[]">Array of bits.</param>
+/**
+<param name="array">Array of bits.</param>
 <param name="slot">Bit slot.</param>
 <param name="size">Size of array.</param>
 <returns>
@@ -214,57 +200,39 @@ Compile options:
 <remarks>
 	-
 
-native Bit_Get(BitArray:array<>, slot);
+native Bit_Get(BitArray:array&lt;&gt;, slot);
 
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Bit_Get(%1,%2) bool:Bit_GetBit(Bit:%1,_:%2)
 
-/**--------------------------------------------------------------------------**\
-<summary>Bit_Let</summary>
-<param name="Bit:array[]">Array of bits.</param>
+/**
+<param name="array">Array of bits.</param>
 <param name="slot">Bit slot.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Sets the slot to 1.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Bit_Let(%1,%2) %1[(%2)>>>CELLSHIFT]|=Bit:(1<<((%2)&cellbits-1))
 
-/**--------------------------------------------------------------------------**\
-<summary>Bit_Vet</summary>
-<param name="Bit:array[]">Array of bits.</param>
+/**
+<param name="array">Array of bits.</param>
 <param name="slot">Bit slot.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Sets the slot to 0.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Bit_Vet(%1,%2) %1[(%2)>>>CELLSHIFT]&=Bit:~(1<<((%2)&cellbits-1))
 
-/**--------------------------------------------------------------------------**\
-<summary>Bit_Set</summary>
-<param name="Bit:array[]">Array of bits.</param>
+/**
+<param name="array">Array of bits.</param>
 <param name="slot">Bit slot.</param>
-<param name="bool:set">State to set the slot to.</param>
+<param name="set">State to set the slot to.</param>
 <param name="size">Size of array.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-
-native Bit_Set(BitArray:array<>, slot, bool:set, size = sizeof (array));
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Bit_Set(BitArray:array<>, slot, bool:set)//, size = sizeof (array))
 {
@@ -273,49 +241,34 @@ stock Bit_Set(BitArray:array<>, slot, bool:set)//, size = sizeof (array))
 	else Bit_Vet(array, slot);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bit_FastSet</summary>
-<param name="Bit:array[]">Array of bits.</param>
+/**
+<param name="array">Array of bits.</param>
 <param name="slot">Bit slot.</param>
-<param name="bool:set">State to set the slot to.</param>
+<param name="set">State to set the slot to.</param>
 <param name="size">Size of array.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Exactly the same as "Bit_Set", but as a macro not a function.
 
-native Bit_FastSet(BitArray:array<>, slot, bool:set, size = sizeof (array));
+native Bit_FastSet(BitArray:array&lt;&gt;, slot, bool:set, size = sizeof (array));
 
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Bit_FastSet(%0,%1,%2) ((%2)?(Bit_Let(%0,(%1))):(Bit_Vet(%0,(%1))))
 
-/**--------------------------------------------------------------------------**\
-<summary>Bit_SetAll</summary>
-<param name="Bit:array[]">Array to set all values of.</param>
-<param name="bool:set">Wether to set them all 0 or 1.</param>
+/**
+<param name="array">Array to set all values of.</param>
+<param name="set">Wether to set them all 0 or 1.</param>
 <param name="size">Size of array.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-
-native Bit_SetAll(BitArray:array<>, bool:set, size = sizeof (array));
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Bit_SetAll(BitArray:array<>, bool:set, size = sizeof (array))
 {
 	memset(_:array, set ? 0xFFFFFFFF : 0, size);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bit_GetCount</summary>
-<param name="Bit:array[]">Array to count.</param>
+/**
+<param name="array">Array to count.</param>
 <param name="size">Size of array.</param>
 <returns>
 	Number of 1s in the array.
@@ -324,10 +277,10 @@ stock Bit_SetAll(BitArray:array<>, bool:set, size = sizeof (array))
 	Code from:
 	http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
 
-native Bit_Count(BitArray:array<>, size = sizeof (array));
+native Bit_Count(BitArray:array&lt;&gt;, size = sizeof (array));
 
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Bit_Count Bit_GetCount
 stock Bit_GetCount(BitArray:array<>, size = sizeof (array))

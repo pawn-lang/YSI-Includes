@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					====================================
 					 y_profiling - Run profilings easilly 
 					====================================
@@ -73,7 +73,7 @@ Version:
 Changelog:
 	17/12/16:
 		First Version
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined _INC_y_profiling
 	#endinput
@@ -152,9 +152,8 @@ Changelog:
 static stock
 	bool:YSI_g_sInProfile = false;
 
-/**--------------------------------------------------------------------------**\
-<summary>Profiling_Run</summary>
-<param name="&profilings">Number of profilings run.</param>
+/**
+<param name="profilings">Number of profilings run.</param>
 <returns>
 	Wether all profilings were sucessful or not.
 </returns>
@@ -164,7 +163,7 @@ static stock
 native Profiling_Run(&profilings, &fails, buffer[33] = "");
 
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock bool:Profiling_Run(&profilings)
 {

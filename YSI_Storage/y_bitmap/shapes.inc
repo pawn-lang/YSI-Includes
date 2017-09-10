@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					=================================
 					   y_bitmap - Generate bitmaps.
 					=================================
@@ -85,29 +85,25 @@ Functions:
 Variables:
 	Global:
 		-
-\**--------------------------------------------------------------------------**/
+**/
 
-/**--------------------------------------------------------------------------**\
-<summary>Bitmap_DrawRectangle</summary>
-<param name="Bitmap:ctx">The bitmap to modify.</param>
-<param name="const minX">The left of the array.</param>
-<param name="const minY">The top of the array.</param>
-<param name="const maxX">The right of the array.</param>
-<param name="const maxY">The bottom of the array.</param>
+/**
+<param name="ctx">The bitmap to modify.</param>
+<param name="minX">The left of the array.</param>
+<param name="minY">The top of the array.</param>
+<param name="maxX">The right of the array.</param>
+<param name="maxY">The bottom of the array.</param>
 <param name="fillColour">The colour of the inside of the rectangle.</param>
-<param name="lineColour = 0">The colour of the rectangle border.</param>
+<param name="lineColour">The colour of the rectangle border.</param>
 <param name="linePattern[] = \"SOLID\"">How to draw the inside.</param>
 <param name="fillPattern[] = \"SOLID\"">How to draw the border.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	This function draws a rectangle between two given co-ordinates.  It can also
 	draw a border around the rectangle OUTSIDE the specified area of the
 	rectangle.  If you want the border within the area specified you need to use
 	a smaller area.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 // End the input above because all this code is being written with no testing
 // or compiling until I am home again.  So in the interests of leaving the code
@@ -207,19 +203,15 @@ static stock _Bitmap_RectangleRecopy(n, BitArray:pattern<PATTERN_MASK_X>)
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bitmap_DrawRectangle</summary>
-<param name="Bitmap:ctx">The bitmap to modify.</param>
-<param name="const x">The x co-ordinate of the circle centre.</param>
-<param name="const y">The y co-ordinate of the circle centre.</param>
-<param name="const Float:radius">The size of the circle.</param>
+/**
+<param name="ctx">The bitmap to modify.</param>
+<param name="x">The x co-ordinate of the circle centre.</param>
+<param name="y">The y co-ordinate of the circle centre.</param>
+<param name="radius">The size of the circle.</param>
 <param name="fillColour">The colour of the inside of the circle.</param>
-<param name="lineColour = 0">The colour of the circle border.</param>
+<param name="lineColour">The colour of the circle border.</param>
 <param name="linePattern[] = \"SOLID\"">How to draw the inside.</param>
 <param name="fillPattern[] = \"SOLID\"">How to draw the border.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	This function draws a circle centered on the given co-ordinates with the
 	given FLOAT radius, not an integer size because of diagonals. It can also
@@ -227,7 +219,7 @@ static stock _Bitmap_RectangleRecopy(n, BitArray:pattern<PATTERN_MASK_X>)
 	If you want the border within the area specified you need to use a smaller
 	area.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Bitmap_DrawCircle(Bitmap:ctx, const x, const y, const Float:radius, fillColour, lineColour = 0, linePattern[] = "SOLID", fillPattern[] = "SOLID")
 {
@@ -235,25 +227,21 @@ stock Bitmap_DrawCircle(Bitmap:ctx, const x, const y, const Float:radius, fillCo
 	Bitmap_DrawRing(ctx, x, y, 0.0, radius, fillColour, fillPattern);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bitmap_DrawRectangle</summary>
-<param name="Bitmap:ctx">The bitmap to modify.</param>
+/**
+<param name="ctx">The bitmap to modify.</param>
 <param name="x">The x co-ordinate of the ring centre.</param>
 <param name="y">The y co-ordinate of the ring centre.</param>
-<param name="const Float:inner">The inner size of the ring.</param>
-<param name="const Float:outer">The outer size of the ring.</param>
+<param name="inner">The inner size of the ring.</param>
+<param name="outer">The outer size of the ring.</param>
 <param name="colour">The colour of the ring.</param>
 <param name="pattern[] = \"SOLID\"">How to draw the inside.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	This function draws a ring centered on the given co-ordinates with the
 	given FLOAT radius, not an integer size because of diagonals.  This does not
 	draw a border as it is used for borders, and a border on a ring is ambiguous
 	- do you have it on the inside or not?  Better to let the user decide.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Bitmap_DrawRing(Bitmap:ctx, x, y, Float:inner, Float:outer, colour, pattern[] = "SOLID")
 {

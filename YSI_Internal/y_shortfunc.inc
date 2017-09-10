@@ -1,7 +1,7 @@
-/**--------------------------------------------------------------------------**\
-                              ====================
-                               YSI - Master Funcs
-                              ====================
+/*
+							  ====================
+							   YSI - Master Funcs
+							  ====================
 Description:
 	Defines new names for native functions.
 Legal:
@@ -114,7 +114,7 @@ Natives:
 	V@ - Renaming of getproperty for size reasons.
 	S@ - Renaming of setproperty for size reasons.
 	P@ - Renaming of __CallLocalFunction for size reasons.
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined _INC_y_shortfunc
 	#endinput

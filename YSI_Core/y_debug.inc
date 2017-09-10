@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					==============================
 					Y Sever Includes - Debug Setup
 					==============================
@@ -129,7 +129,7 @@ Compile options:
 Operators:
 	-
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined _INC_y_debug
 	#endinput
@@ -151,13 +151,9 @@ stock YSI_gDebugLevel = 0;
 #define P:%1(%2); Debug_Print%1(%2);
 #define C:%1(%2); Debug_Code%1(%2);
 
-/**--------------------------------------------------------------------------**\
-<summary>Debug_Code</summary>
+/**
 <param name="level">Debug level to run the code at.</param>
 <param name="code">Code to run.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Code is not a variable, it's a code chunk and may be written as so:
 	
@@ -166,7 +162,7 @@ stock YSI_gDebugLevel = 0;
 	The code must all be on one line to avoid errors.
 	This isn't really a function as the first parameter is part of the name.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if _DEBUG == -1
 	#define Debug_Code1(%1); { if (YSI_gDebugLevel >= 1) { %1 }}
@@ -226,20 +222,16 @@ stock YSI_gDebugLevel = 0;
 	#define Debug_CodeX(%1);
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Debug_Print</summary>
+/**
 <param name="level">Debug level to print at.</param>
-<param name="format[]">Format.</param>
+<param name="format">Format.</param>
 <param name="..."></param>
-<returns>
-	-
-</returns>
 <remarks>
 	This isn't really a function as the first parameter is part of the name:
 	
 	Debug_Print4("variables: %d, %d", i, j);
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if _DEBUG == -1
 	#define Debug_Print1(%1); { if (YSI_gDebugLevel >= 1) printf(%1); }
@@ -375,6 +367,18 @@ public OnScriptInit()
 	#emit SCTRL     6
 	return 1;
 }
+
+/**
+<param name="x">The number to expand.</param>
+<param name="m">The mask for which bits to expand to.</param>
+<returns>
+	LSBs from "x", shifted to selected bit positions.
+</returns>
+<remarks>
+	Doesn't require precomputation.
+</remarks>
+<transition target="on" source="ysi_debug"/>
+**/
 
 static stock Debug_SetState() <ysi_debug : off>
 {

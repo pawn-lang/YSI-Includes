@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					==================================
 					 Y Sever Includes - Language Code 
 					==================================
@@ -109,7 +109,7 @@ Compile options:
 	-
 Operators:
 	-
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined _INC_y_languages
 	#endinput
@@ -147,15 +147,9 @@ static stock
 	YSI_g_sLanguages[YSI_MAX_LANGUAGES][MAX_LANGUAGE_NAME],
 	Language:YSI_g_sLanguageCount;
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Langs_Add Langs_AddLanguage
 #define Languages_Add Langs_AddLanguage
@@ -246,15 +240,9 @@ global Language:_Langs_AddLanguage(string:code[], string:name[])
 	return NO_LANGUAGE;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #if _YSIM_IS_CLIENT
 	// Don't give a warning if this is a client script.  Note that stubs are
@@ -268,15 +256,9 @@ global Language:_Langs_AddLanguage(string:code[], string:name[])
 		}
 #pragma tabsize 4
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 foreign Language:Langs_GetLanguageAt(id);
 
@@ -295,15 +277,9 @@ global Language:Langs_GetLanguageAt(id)
 	return NO_LANGUAGE;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 foreign void:Langs_RemoveLanguage(Language:l);
 
@@ -321,15 +297,9 @@ global void:Langs_RemoveLanguage(Language:l)
 	//return 0;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 foreign Language:Langs_GetLanguage(string:identifier[]);
 
@@ -359,15 +329,9 @@ global Language:Langs_GetLanguage(string:identifier[])
 	return NO_LANGUAGE;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 foreign Language:Langs_GetLanguageCount();
 
@@ -376,15 +340,9 @@ global Language:Langs_GetLanguageCount()
 	return YSI_g_sLanguageCount;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 foreign string:Langs_GetLanguageCodes();
 
@@ -394,15 +352,9 @@ global string:Langs_GetLanguageCodes()
 	return YSI_g_sLanguageCodes;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 foreign string:Langs_GetName(Language:l);
 
@@ -418,15 +370,9 @@ global string:Langs_GetName(Language:l)
 	return ret;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 foreign string:Langs_GetCode(Language:l);
 
@@ -441,15 +387,9 @@ global string:Langs_GetCode(Language:l)
 	return ret;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 foreign bool:Langs_IsValid(Language:l);
 
@@ -458,15 +398,9 @@ global bool:Langs_IsValid(Language:l)
 	return Language_IsValid(l);
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 foreign Language:Langs_GetPlayerLanguage(playerid);
 
@@ -480,15 +414,9 @@ global Language:Langs_GetPlayerLanguage(playerid)
 	#endif
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 foreign Language:Langs_SetPlayerLanguage(playerid, Language:l);
 
@@ -501,15 +429,9 @@ global Language:Langs_SetPlayerLanguage(playerid, Language:l)
 	return NO_LANGUAGE;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 foreign Language:Langs_SetPlayerCode(playerid, string:code[]);
 
@@ -518,15 +440,9 @@ global Language:Langs_SetPlayerCode(playerid, string:code[])
 	return Langs_SetPlayerLanguage(playerid, Langs_GetLanguage(code));
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 mhook OnPlayerConnect(playerid)
 {

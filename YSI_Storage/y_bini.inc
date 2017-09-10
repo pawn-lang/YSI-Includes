@@ -89,13 +89,9 @@ BIN_WriteChunk(const BIN:f, const pos, const arr[], const len = sizeof (arr), bu
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>INI_TryGetValue</summary>
+/**
 <param name="start">Start position of the possibly current key.</param>
 <param name="end">End position of the found key.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	The INI system uses basic string functions to find candidate keys.  They
 	always start searching from the known start of the current tag, and check
@@ -110,7 +106,7 @@ BIN_WriteChunk(const BIN:f, const pos, const arr[], const len = sizeof (arr), bu
 	corresponding to the start of the value (or cellmax if there is no value).
 	If this isn't a valid key, we return -1.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 static stock bool:INI_TryGetValue(start, end)
 {

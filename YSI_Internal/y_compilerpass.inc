@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					================================
 					Y Sever Includes - Compiler Pass
 					================================
@@ -112,18 +112,26 @@ Operators:
 	-
 Natives:
 	-
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined _INC_y_compilerpass
 	#endinput
 #endif
 #define _INC_y_compilerpass
 
+#define P:%1(%2); Debug_Print%1(%2);
+#define C:%1(%2); Debug_Code%1(%2);
+
 #if defined __COMPILER_SECOND_PASS
 	#define __COMPILER_PASS (1)
+	#define __DOCUMENTATION (0)
+	#define Debug_PrintD(%1);
 #else
 	#define __COMPILER_PASS (0)
+	#define __DOCUMENTATION (1)
+	#define Debug_PrintD(%1); %1
 #endif
+
 #define COMPILER_1ST_PASS (__COMPILER_PASS == (0))
 #define COMPILER_2ND_PASS (__COMPILER_PASS == (1))
 #define COMPILER_FIRST_PASS  COMPILER_1ST_PASS
@@ -165,8 +173,8 @@ static stock __COMPILER_SECOND_PASS() {}
 	#define __FixStringReturn("%0"%1);return%8(%8:(%3)) return $
 	//#define __FixStringDummy[YSI_MAX_STRING,%1] __FixStringDummy[%1]
 	
-	/**----------------------------------------------------------------------**\
-	<summary>FixStringReturn</summary>
+	/**
+	
 	<param name="str">String to return.</param>
 	<param name="size">Size of the string.</param>
 	<param name="dummy">Ignored parameter for raw string given sizes.</param>
@@ -179,7 +187,7 @@ static stock __COMPILER_SECOND_PASS() {}
 		is because string returns are done with a secret extra parameter but it
 		is not correctly selected when the count is unknown or variable.
 	</remarks>
-	\**----------------------------------------------------------------------**/
+	**/
 	
 	#include "y_funcinc"
 	

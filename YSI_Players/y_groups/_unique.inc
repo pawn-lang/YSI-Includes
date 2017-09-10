@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					=======================================
 					 y_groups - Player group abstractions! 
 					=======================================
@@ -80,7 +80,7 @@ Changelog:
 		Pretty much a ground-up API-compatible rewrite.  Shorter and reliabler.
 	29/11/10:
 		First version
-\**--------------------------------------------------------------------------**/
+**/
 
 #if AUTO_INCLUDE_GUARD
 	#undef _inc__unique

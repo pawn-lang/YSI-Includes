@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					  ====================================
 					   y_hashmap - Link strings to values
 					  ====================================
@@ -84,7 +84,7 @@ Functions:
 Definitions:
 	HASH_MAP_DATA - What should be added to enums to be hash map referenced.
 	HashMap - Declare a new hash map.
-\**--------------------------------------------------------------------------**/
+**/
 
 enum E_HASH_MAP_TEST
 {

@@ -1,7 +1,7 @@
-/**--------------------------------------------------------------------------**\
-                             =====================
-                              YSI - Strip Numbers
-                             =====================
+/*
+							 =====================
+							  YSI - Strip Numbers
+							 =====================
 Description:
 	Removes tag overrides which are actually numbers.  This allows for:
 		
@@ -116,7 +116,7 @@ Operators:
 	-
 Natives:
 	-
-\**--------------------------------------------------------------------------**/
+**/
 
 #if defined _INC_y_stripnumbers
 	#endinput

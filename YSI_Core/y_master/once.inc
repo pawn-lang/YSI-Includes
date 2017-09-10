@@ -1,7 +1,7 @@
-/**--------------------------------------------------------------------------**\
-                              ===================
-                               YSI - Master Core
-                              ===================
+/*
+				              ===================
+				               YSI - Master Core
+				              ===================
 Description:
 	There seems to be a bug with a compiler when using #emit in files included
 	more than once, so this code has been moved to a file only included once.
@@ -132,7 +132,7 @@ Operators:
 	-
 Natives:
 	-
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Master_ID() (_@)
 
@@ -267,15 +267,11 @@ PRE_HOOK(Master)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER @CO_Master
 
-/**--------------------------------------------------------------------------**\
-<summary>Master_GetNext</summary>
+/**
 <returns>
 	Next master ID to be assigned.
 </returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Master_GetNext()
 {
@@ -294,7 +290,7 @@ stock Master_GetNext()
 	return -1;
 }
 
-/**--------------------------------------------------------------------------**\
+/**
 Hook:
 	OnScriptInit
 </returns>
@@ -302,7 +298,7 @@ Hook:
 	Constructor.  Gets the script a master ID.  Now ALWAYS gets an ID, even if
 	the master system is disabled - doing otherwise is just too complicated.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 public OnScriptInit()
 {
@@ -350,14 +346,14 @@ HOOK_FORWARD:Master_OnScriptInit();
 #define OnMasterSystemInit YSIM_OnMasterSystemInit
 forward YSIM_OnMasterSystemInit();
 
-/**--------------------------------------------------------------------------**\
+/**
 Hook:
 	OnGameModeExit
 </returns>
 <remarks>
 	Destructor.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 public OnScriptExit()
 {
@@ -396,15 +392,11 @@ HOOK_FORWARD:Master_OnScriptExit();
 //#define OnMasterSystemClose Master_OnScriptClose
 //forward Master_OnScriptClose(id);
 
-/**--------------------------------------------------------------------------**\
-<summary>Master_Reassert</summary>
-<returns>
-	-
-</returns>
+/**
 <remarks>
 	Rebuilds the collection of master data whenever a script is restarted.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 public Master_Reassert()
 {
@@ -457,16 +449,9 @@ stock _Master_Relinquish(library[])
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>_Master_Get</summary>
-<param name="library[]">The name of the library to try become master for.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/**
+<param name="library">The name of the library to try become master for.</param>
+**/
 
 stock bool:_Master_Get(library[], bool:force = false)
 {

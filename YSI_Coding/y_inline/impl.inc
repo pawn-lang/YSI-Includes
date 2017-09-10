@@ -1,4 +1,4 @@
-/**--------------------------------------------------------------------------**\
+/*
 					===================================
 					 y_inline - PAWN inline functions.
 					===================================
@@ -85,7 +85,7 @@ Changelog:
 		Changed the precedence of "using" types.
 	19/09/11:
 		First version
-\**--------------------------------------------------------------------------**/
+**/
 
 /*
 
@@ -143,15 +143,11 @@ static stock const
 stock
 	InlineRet:YSI_gInlineRet;
 
-/**--------------------------------------------------------------------------**\
-<summary>_@_y_inline_@_</summary>
-<returns>
-	-
-</returns>
+/**
 <remarks>
 	Calls functions we call via "SYSREQ.C".
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 forward _@_y_inline_@_();
 
@@ -164,9 +160,8 @@ public _@_y_inline_@_()
 	CallRemoteFunction("", "");
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Inline_DecodeSimple</summary>
-<param name="from[]">Array of variable types.</param>
+/**
+<param name="from">Array of variable types.</param>
 <param name="at">Type slot.</param>
 <returns>
 	The next variable type stored in the bit array.
@@ -175,7 +170,7 @@ public _@_y_inline_@_()
 	Returns data from a bit array when it is known that only basic types are
 	stored (i.e. no arrays with length parameters).
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 #define Inline_DecodeSimple(%0,%1) (I@ = %0[(%1) >>> 5] & (2 << ((%1) & 0x1F)), (%1) += 2, I@)
 
@@ -209,10 +204,9 @@ stock Inline_Reset(callback[E_CALLBACK_DATA])
 		0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>GetRemoteFunction</summary>
-<param name="func[]">Public function to get.</param>
-<param name="spec[]">The structure of the function's parameters.</param>
+/**
+<param name="func">Public function to get.</param>
+<param name="spec">The structure of the function's parameters.</param>
 <returns>
 	A pointer to the function.
 </returns>
@@ -226,7 +220,7 @@ stock Inline_Reset(callback[E_CALLBACK_DATA])
 		v - Reference (&var, any tag)
 	
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Function:GetRemoteFunction(const func[], const spec[])
 {
@@ -265,10 +259,9 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 	return Function:Remote_WriteSpecAndFunc(ref(YSI_g_sRemoteFunctions), func, fmatPtr, spec);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>GetLocalFunction</summary>
-<param name="func[]">Public function to get.</param>
-<param name="spec[]">The structure of the function's parameters.</param>
+/**
+<param name="func">Public function to get.</param>
+<param name="spec">The structure of the function's parameters.</param>
 <returns>
 	A pointer to the function.
 </returns>
@@ -282,7 +275,7 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 		v - Reference (&var, any tag)
 	
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Function:GetLocalFunction(const func[], const spec[])
 {
@@ -294,17 +287,13 @@ stock Function:GetLocalFunction(const func[], const spec[])
 	return Function:StoredF_WritePublicCode(fptr, spec);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>CallStoredFunction</summary>
+/**
 <param name="func">Function pointer to call.</param>
 <param name="...">The function's parameters.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Call the function in the given pointer with the given parameters.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
 {
@@ -335,15 +324,11 @@ stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Callback_Get</summary>
-<param name="callback:name">Callback to find by name.</param>
-<param name="ret[E_CALLBACK_DATA]">Where to store the pointer.</param>
-<param name="expect[]">What parameters the function takes.</param>
+/**
+<param name="name">Callback to find by name.</param>
+<param name="ret">Where to store the pointer.</param>
+<param name="expect">What parameters the function takes.</param>
 <param name="remote">Is this function called on one or all scripts?</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Looks up the callback by name.  If the name has the correct data embedded
 	within it that's great and we use that directly.  Otherwise this function
@@ -354,7 +339,7 @@ stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
 	The new "remote" parameter returns instantly with a remote public function
 	stub, and no stored data.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool:remote = false)
 {
@@ -471,16 +456,12 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool
 	return false;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Callback_Release</summary>
-<param name="input[E_CALLBACK_DATA]">Callback to release.</param>
-<returns>
-	-
-</returns>
+/**
+<param name="input">Callback to release.</param>
 <remarks>
 	Releases all the data associated with a given callback (closure storage).
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Callback_Release(input[E_CALLBACK_DATA])
 {
@@ -502,12 +483,8 @@ stock Callback_Release(input[E_CALLBACK_DATA])
 	return _:(input[E_CALLBACK_DATA_POINTER] = Function:0);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Callback_Restore</summary>
-<param name="func[E_CALLBACK_DATA]">Info on the restoration function.</param>
-<returns>
-	-
-</returns>
+/**
+<param name="func">Info on the restoration function.</param>
 <remarks>
 	Makes variables referenced, instead of valued.  When used after
 	"Callback_Call" the values of any variables in the enclosing function that
@@ -518,7 +495,7 @@ stock Callback_Release(input[E_CALLBACK_DATA])
 	inline function whose parent is not currently on the stack, this will
 	probably fail catastrophically!
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Callback_Restore(func[E_CALLBACK_DATA])
 {
@@ -551,18 +528,14 @@ stock Callback_Restore(func[E_CALLBACK_DATA])
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>Callback_Call</summary>
-<param name="func[E_CALLBACK_DATA]">Info on the function to be called.</param>
-<returns>
-	-
-</returns>
+/**
+<param name="func">Info on the function to be called.</param>
 <remarks>
 	Takes an inline function handler and parameters, and either calls the
 	public function while passing through the parameters, or just jumps to the
 	carefully crafted inline function code.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 {
@@ -595,14 +568,10 @@ stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Callback_Array</summary>
-<param name="func[E_CALLBACK_DATA]">Info on the function to be called.</param>
-<param name="params[]">Array of data pointers.</param>
+/**
+<param name="func">Info on the function to be called.</param>
+<param name="params">Array of data pointers.</param>
 <param name="num">Size of the array.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	This is very similar to Callback_Call, but takes an array of ADDRESSES
 	instead of normal parameters.  This is designed to help support some
@@ -615,7 +584,7 @@ stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 	
 	The new assembly is based on "rawMemset" in "y_utils".
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (params))
 {
@@ -679,17 +648,13 @@ stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (
 	return Callback_Call(func, params, num);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Inline_Timer</summary>
-<param name="func[]">The function to call on a delay.</param>
+/**
+<param name="func">The function to call on a delay.</param>
 <param name="delay">how long before the first call?</param>
 <param name="interval">How long between subsequent calls?</param>
 <param name="repeat">How many times to call the function.</param>
-<param name="format[]">The additional parameters' types.</param>
+<param name="format">The additional parameters' types.</param>
 <param name="...">The additional parameters.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Calls a function, which may be an inline function, after a given delay, and
 	with the given regularity after that.  The parameters are slightly different
@@ -703,7 +668,7 @@ stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (
 	times to call the function before calling it no more.  This is in line with
 	the "SetTimer_" and "SetTimerEx_" functions in the fixes2 plugin.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 /*
 
@@ -718,13 +683,9 @@ stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>I@E</summary>
+/**
 <param name="s">The array to store an inline function's data in.</param>
 <param name="constFunc">Should this function copy the stack back?</param>
-<returns>
-	-
-</returns>
 <remarks>
 	AKA. Inline_Entry
 	
@@ -733,7 +694,7 @@ stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (
 	
 	If "constFunc" is 3, copy the stack back, if it isn't don't.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock I@E(/* mutable */ const s[])
 {
@@ -832,11 +793,7 @@ stock I@E(/* mutable */ const s[])
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>I@F</summary>
-<returns>
-	-
-</returns>
+/**
 <remarks>
 	AKA. Inline_Allocator.
 	
@@ -844,7 +801,7 @@ stock I@E(/* mutable */ const s[])
 	function container loop.  That is, the label that things like "continue"
 	jump to so that we know how much space we have to play with and where it is.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock I@F()
 {
@@ -888,8 +845,7 @@ stock I@F()
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>I@L</summary>
+/**
 <returns>
 	0
 </returns>
@@ -917,7 +873,7 @@ stock I@F()
 	"Inline_Allocator" currently marks the end of the first segment, and
 	"Inline_Main" marks the end of the second segment.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 static stock
 	YSI_g_sJumpAddress,
@@ -1343,16 +1299,12 @@ stock I@L(constFunc, ...)
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>StoredF_IsHooked</summary>
+/**
 <param name="addr">Function start address.</param>
 <returns>
 	Is the function at this address already hooked by us?
 </returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 static stock StoredF_IsHooked(addr)
 {
@@ -1361,17 +1313,13 @@ static stock StoredF_IsHooked(addr)
 	return AMX_Read(addr + AMX_HEADER_COD) == _:RelocateOpcode(OP_JUMP);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>StoredF_OnPubGenError</summary>
-<param name="ctx[AsmContext]">Current code generation context.</param>
-<param name="AsmError:error">The error given.</param>
-<returns>
-	-
-</returns>
+/**
+<param name="ctx">Current code generation context.</param>
+<param name="error">The error given.</param>
 <remarks>
 	This is a fatal error as there isn't really anything we can do about it.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 forward StoredF_OnPubGenError(ctx[AsmContext], AsmError:error);
 
@@ -1381,10 +1329,9 @@ public StoredF_OnPubGenError(ctx[AsmContext], AsmError:error)
 	P:F("Inline_OnPubGenError called - Try increase\"YSI_Internal\\y_cgen.inc: _@_y_cgen_@_0\"'s code size");
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>StoredF_WritePublicCode</summary>
+/**
 <param name="fptr">Function start address.</param>
-<param name="spec[]">Function parameter types.</param>
+<param name="spec">Function parameter types.</param>
 <returns>
 	the new function pointer.
 </returns>
@@ -1397,7 +1344,7 @@ public StoredF_OnPubGenError(ctx[AsmContext], AsmError:error)
 	the function to call, we have to wipe that from the stack and update the
 	resulting frame header.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 static stock StoredF_WritePublicCode(fptr, const spec[])
 {
@@ -1475,17 +1422,13 @@ static stock StoredF_WritePublicCode(fptr, const spec[])
 	}
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Remote_DoSearch</summary>
-<param name="str[]">String to find.</param>
+/**
+<param name="str">String to find.</param>
 <param name="ptr">Start of the linked list.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	Finds a given string in a given list.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 static stock Remote_DoSearch(const str[], ptr)
 {
@@ -1517,17 +1460,13 @@ static stock Remote_DoSearch(const str[], ptr)
 	return -1;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Remote_WriteStubCode</summary>
-<returns>
-	-
-</returns>
+/**
 <remarks>
 	This rewrites itself to be the bulk of the call to "CallRemoteFunction".  It
 	modifies the stack so that the parameters already pushed are the parameters
 	passed to the native function.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 static stock Remote_WriteStubCode()
 {
@@ -1633,12 +1572,11 @@ static stock Remote_WriteJustSpec(/* & */ sptr, const spec[])
 	CGen_AddCodeSpace(2 * 4);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Remote_WriteSpecAndFunc</summary>
-<param name="&fptr">Pointer in which to store the function.</param>
-<param name="const func[]">Name of the function.</param>
+/**
+<param name="fptr">Pointer in which to store the function.</param>
+<param name="func">Name of the function.</param>
 <param name="sptr">Pointer to the stored specifier string.</param>
-<param name="const spec[]">Usable specifier string.</param>
+<param name="spec">Usable specifier string.</param>
 <returns>
 	A pointer to the start of the newly generated code.
 </returns>
@@ -1647,7 +1585,7 @@ static stock Remote_WriteJustSpec(/* & */ sptr, const spec[])
 	function and specifier strings to pass to "CallRemoteFunction", and checks
 	for any empty strings - converting them to "NULL" instead.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 static stock Remote_WriteSpecAndFunc(/* & */ fptr, const func[], sptr, const spec[])
 {
@@ -1703,9 +1641,8 @@ static stock Remote_WriteSpecAndFunc(/* & */ fptr, const func[], sptr, const spe
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>Inline_DecodeComplex</summary>
-<param name="from[]">Array of variable types.</param>
+/**
+<param name="from">Array of variable types.</param>
 <param name="at">Type slot.</param>
 <param name="len">Return for array sizes.</param>
 <returns>
@@ -1717,7 +1654,7 @@ static stock Remote_WriteSpecAndFunc(/* & */ fptr, const func[], sptr, const spe
 	more complex code to decode as the lengths may span multiple cells, types
 	can't because they are always 2 bits and always start on an even bit.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 static stock Inline_DecodeComplex(from[], &at, &len)
 {
@@ -1836,18 +1773,15 @@ static stock Inline_EncodeFormatString(const str[], ret[2])
 
 */
 
-/**--------------------------------------------------------------------------**\
+/**
 <summary>operator+</summary>
-<param name="InlineRet:a">Dummy variable.</param>
+<param name="a">Dummy variable.</param>
 <param name="b">Return value.</param>
-<returns>
-	-
-</returns>
 <remarks>
 	This is a prefix function that takes some value and returns it to the
 	caller's caller.  This makes "@return" in inline functions work.
 </remarks>
-\**--------------------------------------------------------------------------**/
+**/
 
 stock InlineRet:operator+(InlineRet:a, _:b)
 {
