@@ -291,7 +291,7 @@ stock Master_GetNext()
 }
 
 /**
-Hook:
+<returns>
 	OnScriptInit
 </returns>
 <remarks>
@@ -347,7 +347,7 @@ HOOK_FORWARD:Master_OnScriptInit();
 forward YSIM_OnMasterSystemInit();
 
 /**
-Hook:
+<returns>
 	OnGameModeExit
 </returns>
 <remarks>

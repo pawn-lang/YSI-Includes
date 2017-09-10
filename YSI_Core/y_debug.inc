@@ -369,23 +369,24 @@ public OnScriptInit()
 }
 
 /**
-<param name="x">The number to expand.</param>
-<param name="m">The mask for which bits to expand to.</param>
-<returns>
-	LSBs from "x", shifted to selected bit positions.
-</returns>
-<remarks>
-	Doesn't require precomputation.
-</remarks>
-<transition target="on" source="ysi_debug"/>
+	<transition target="on"/>
 **/
 
 static stock Debug_SetState() <ysi_debug : off>
 {
 }
 
+//stock const STATE_FALSE = 0;
+////#define state%0\10;%1 for (new bool:__state_once = true; __state_once; __state_once = false) {} state%0
+//#define FIX_STATE_
+//
+//#define state%0:%1;%2\10;%3 { const __state_target_fix = 0; state%0:%1; }%2
+
 static stock Debug_SetState() <>
 {
+//	printf("hi");
+//	state ysi_debug : on;
+//	state ysi_debug : on;
 	state ysi_debug : on;
 }
 

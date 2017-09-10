@@ -406,8 +406,8 @@ stock StrToUpper(str[], len = sizeof (str))
 <param name="minmax">Lower bound, or upper bound when only parameter.</param>
 <param name="max">Upper bound.</param>
 <remarks>
-	Generate a random float between the given numbers (min <= n < max).  Default
-	minimum is 0.
+	Generate a random float between the given numbers (min &lt;= n &lt; max).
+	Default minimum is 0.
 </remarks>
 **/
 
@@ -429,7 +429,7 @@ stock Random(min, max = cellmin)
 <param name="max">Upper bound.</param>
 <param name="dp">How small to make the differences</param>
 <remarks>
-	Generate a random float between the given numbers (min <= n < max).  Default
+	Generate a random float between the given numbers (min &lt;= n &lt; max).  Default
 	minimum is 0.0.
 </remarks>
 **/

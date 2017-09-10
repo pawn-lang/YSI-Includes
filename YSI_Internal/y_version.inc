@@ -169,9 +169,9 @@ Natives:
 	
 #else
 /**
-	Hook:
-		OnScriptInit
-	</returns>
+<returns>
+	OnScriptInit
+</returns>
 <remarks>
 		Constructor.  Checks to see if there is a new version available.  This
 		code can not use ANY of the rest of YSI as it needs to be included by
