@@ -147,6 +147,10 @@ static stock
 	//YSI_g_sExtraText[MAX_INI_ENTRY_TEXT],
 	gInitialColour;
 
+/**--------------------------------------------------------------------------**-
+<transition keep="true" target="y_render_show : y_render_show_scm" />
+*//*-------------------------------------------------------------------------**/
+
 stock _Text_SetDialogMode()
 {
 	YSI_g_sTempStyle[E_STYLE_DATA_TYPE] = e_STYLE_TYPE_DIALOG;
@@ -158,6 +162,13 @@ stock Format_SetListSeparator(string:lst[])
 {
 	strcpy(YSI_g_sListSep, lst);
 }
+
+/**--------------------------------------------------------------------------**-
+<transition keep="true" target="y_render_show : y_render_show_gt" />
+<transition keep="true" target="y_render_show : y_render_show_scm" />
+<transition keep="true" target="y_render_show : y_render_show_td" />
+<transition keep="true" target="y_render_show : y_render_show_print" />
+*//*-------------------------------------------------------------------------**/
 
 stock _Format_SetStyleData(master, index, style[E_STYLE_DATA], label[E_3D_DATA])
 {
@@ -500,6 +511,10 @@ static stock Format_AddFade(str[], &pos, &len, endColour, &initialColour, step, 
 	return 0;
 }
 
+/**--------------------------------------------------------------------------**-
+<transition keep="true" target="y_render_fade : y_render_fade_fake" />
+*//*-------------------------------------------------------------------------**/
+
 static stock Format_DoEndFade(output[], &start, end, &rem, colour, &initial) //<>
 {
 	// If "colour" is 0 this is the end of a string before the close colour is
@@ -574,6 +589,7 @@ static stock Format_DoEndFade(output[], &start, end, &rem, colour, &initial) //<
 	the right colour.  This will also require a method of winding back the state
 	to the point just after the initial input string was added to continue on to
 	show the next string including newly determined fade data.
+<transition keep="true" target="y_render_fade : y_render_fade_real" source="y_render_fade : y_render_fade_redo" />
 *//*-------------------------------------------------------------------------**/
 
 static stock Format_DoAddString(out[], const in[], &oidx, const len, &orem, &fakepos) <y_render_fade : y_render_fade_fake>
@@ -642,6 +658,10 @@ static stock Format_DoAddString(out[], const in[], &oidx, const len, &orem, &fak
 		return len - orem;
 	}
 }
+
+/**--------------------------------------------------------------------------**-
+<transition keep="true" target="y_render_fade : y_render_fade_real" source="y_render_fade : y_render_fade_redo" />
+*//*-------------------------------------------------------------------------**/
 
 static stock bool:Format_DoAddChar(out[], const in, &oidx, &orem, &fakepos) <y_render_fade : y_render_fade_fake>
 {
@@ -772,25 +792,24 @@ stock Text_GetLastID() <>
 }
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
+Generic function to handle rendering for all types of outputs.  Other functions
+such as Format_AddColour are specialised for different text styles.  The faster
+way to do this would be to store the characters removed from a string when
+adding in fade data, but this is hard to code.  The simpler method is to fake
+re-render the string, having previously determined the length of the string
+which will be faded across.  Note that this may mean that some parts of the
+string can get rendered many times, but we can just issue a performance warning
+when the player uses fades which go over a line boundary.  That is the only time
+in which it is a problem, more specifically it is only a problem when text in a
+fade goes over a line boundardy before the end fade marker has been reached.
+<transition keep="true" target="y_render_fade : y_render_fade_redo" />
+<transition keep="true" target="y_render_fade : y_render_fade_real" />
+<transition keep="true" target="y_render_fade : y_render_fade_fake" />
 *//*-------------------------------------------------------------------------**/
-
-// Generic function to handle rendering for all types of outputs.  Other
-// functions such as Format_AddColour are specialised for different text styles.
-// The faster way to do this would be to store the characters removed from a
-// string when adding in fade data, but this is hard to code.  The simpler
-// method is to fake re-render the string, having previously determined the
-// length of the string which will be faded across.  Note that this may mean
-// that some parts of the string can get rendered many times, but we can just
-// issue a performance warning when the player uses fades which go over a line
-// boundary.  That is the only time in which it is a problem, more specifically
-// it is only a problem when text in a fade goes over a line boundardy before
-// the end fade marker has been reached.
 //stock Format_Render(pid, Language:l, output[], maxlen, idx, target, string[], {Float,_}:...)
 stock Format_Render(pid, Language:l, output[], maxlen, idx, target, string[], argCount, GLOBAL_TAG_TYPES:...)
 {
 	P:3("Format_Render called: %i, %i, %s, %i, %i, %i, %s (+%i)", pid, _:l, output, maxlen, idx, target, argCount, numargs() - 8);
-	//state y_text_colour_fade:full_render;
 	gInitialColour = (YSI_g_sTempStyle[E_STYLE_DATA_COLOUR] >>> 4) & 0x00FFFFFF;
 	new
 		colour = gInitialColour;

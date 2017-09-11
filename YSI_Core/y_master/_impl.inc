@@ -212,6 +212,13 @@ Natives:
 			_E_YCM:_YCM@ = _E_YCM@u;
 		
 		forward _YCM();
+				
+		/**------------------------------------------------------------------**-
+		<transition keep="true" target="_YCM : y" />
+		<transition keep="true" target="_YCM : u" />
+		<transition keep="true" target="_YCM : y" />
+		<transition keep="true" target="_YCM : n" />
+		*//*-----------------------------------------------------------------**/
 		
 		static stock Master_GetCurrentMaster()
 		{
@@ -597,6 +604,13 @@ Natives:
 		// script ends.  Just to clarify - this function is NOT called _YCM,
 		// that is a macro which is expanded every time this file is included.
 		// m is also now client/stub.
+		
+		/**------------------------------------------------------------------**-
+		<transition keep="true" target="_YCM : m" source="_YCM : y" />
+		<transition keep="true" target="_YCM : p" source="_YCM : y" />
+		<transition keep="true" target="_YCM : n" source="_YCM : y" />
+		<transition keep="true" target="_YCM : y" source="_YCM : u" />
+		*//*-----------------------------------------------------------------**/
 		
 		public _YCM() <_YCM:y>
 		{

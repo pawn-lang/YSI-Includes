@@ -296,6 +296,7 @@ stock Master_GetNext()
 </returns>
 	Constructor.  Gets the script a master ID.  Now ALWAYS gets an ID, even if
 	the master system is disabled - doing otherwise is just too complicated.
+<transition keep="true" target="_ALS : _ALS_go" />
 *//*-------------------------------------------------------------------------**/
 
 public OnScriptInit()

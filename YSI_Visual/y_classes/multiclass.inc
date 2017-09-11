@@ -254,6 +254,8 @@ stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <>
 /**--------------------------------------------------------------------------**-
 	Creates three real player classes so you can scroll correctly with the
 	direction being detected.
+<transition keep="true" target="_YCM : u"/>
+<transition keep="true" target="_YCM : y"/>
 *//*-------------------------------------------------------------------------**/
 
 hook OnScriptInit()

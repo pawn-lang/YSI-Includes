@@ -154,6 +154,11 @@ stock
 	#define DEBUG_MAYBE_DUMP(%0);
 #endif
 
+/**--------------------------------------------------------------------------**-
+<transition keep="true" target="_script_init_fix_state : true"/>
+<transition keep="true" target="_ALS : _ALS_go"/>
+*//*-------------------------------------------------------------------------**/
+
 public OnFilterScriptInit()
 {
 	YSI_FILTERSCRIPT = true;
@@ -190,6 +195,11 @@ public OnFilterScriptInit()
 	ScriptInit_OnFilterScriptInit();
 	return 1;
 }
+
+/**--------------------------------------------------------------------------**-
+<transition keep="true" target="_script_init_fix_state : false"/>
+<transition keep="true" target="_ALS : _ALS_go"/>
+*//*-------------------------------------------------------------------------**/
 
 public OnGameModeInit()
 {

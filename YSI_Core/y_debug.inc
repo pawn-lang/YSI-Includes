@@ -364,7 +364,7 @@ public OnScriptInit()
 }
 
 /**--------------------------------------------------------------------------**-
-	<transition target="on"/>
+<transition keep="true" target="ysi_debug : on" source="ysi_debug : "/>
 *//*-------------------------------------------------------------------------**/
 
 static stock Debug_SetState() <ysi_debug : off>

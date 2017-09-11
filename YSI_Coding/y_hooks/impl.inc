@@ -1119,6 +1119,7 @@ static stock Hooks_SortReplacements()
 
 /**--------------------------------------------------------------------------**-
 	Call the main hook run code, then advance the ALS chain.
+<transition keep="true" target="_ALS : _ALS_go"/>
 *//*-------------------------------------------------------------------------**/
 
 public OnScriptInit()

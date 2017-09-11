@@ -310,7 +310,9 @@ public OnFilterScriptInit()
 //}
 
 /**--------------------------------------------------------------------------**-
-<summary></summary>
+<transition keep="true" target="y_text_ending : n" />
+<transition keep="true" target="y_text_get_text : n" />
+<transition keep="true" target="y_render_show : y_render_show_print" />
 *//*-------------------------------------------------------------------------**/
 
 //static stock Text_GetDistributionID()
@@ -380,7 +382,7 @@ hook OnScriptInit()
 }
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
+<transition keep="true" target="y_text_ending : y" />
 *//*-------------------------------------------------------------------------**/
 
 hook OnScriptExit()
@@ -892,6 +894,11 @@ public _Text_RemoteSingle(master, id)
 	}
 }
 
+/**--------------------------------------------------------------------------**-
+<transition keep="true" target="y_text_get_text : y" />
+<transition keep="true" target="y_text_get_text : n" />
+*//*-------------------------------------------------------------------------**/
+
 stock _Text_GetPointer(master, id)
 {
 	if (master == TEXT_MASTER)
@@ -997,6 +1004,9 @@ public Text_GetStandard(search[], nh, Language:l)
 	remote scripts which will need to return a standardised string as an array
 	to preserve all the non-standard characters (passing data as a string using
 	__CallRemoteFunction packs the string, which we don't want).
+<transition keep="true" target="y_text_get_text : y" />
+<transition keep="true" target="y_text_get_text : n" />
+<transition keep="true" target="y_text_get_text : n" />
 *//*-------------------------------------------------------------------------**/
 
 // Get the loaded standardised version of this string.
