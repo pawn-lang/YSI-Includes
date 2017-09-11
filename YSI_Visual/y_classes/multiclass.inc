@@ -1,15 +1,9 @@
-/** *//**
-					======================================
-					 y_classes - Advanced class selection 
-					======================================
-Description:
-	Allows greater control over classes so not everyone has every class.  Uses
-	a form of compression for locations.
+/*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -18,143 +12,62 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI classes include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		Y_Less
-		koolk
-		JoeBullet/Google63
-		g_aSlice/Slice
-		Misiur
-		samphunter
-		tianmeta
-		maddinat0r
-		spacemud
-		Crayder
-		Dayvison
-		Ahmad45123
-		Zeex
-		irinel1996
-		Yiin-
-		Chaprnks
-		Konstantinos
-		Masterchen09
-		Southclaws
-		PatchwerkQWER
-		m0k1
-		paulommu
-		udan111
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	0.1
-Changelog:
-	14/04/12:
-		Readded OnRequestSpawn logic.
-		Fixed Class_AddWithGroupSet.
-		Improved GM/FS interaction.
-	02/01/08:
-		First '08 edit - Fixed minus numbers in spawn points.
-	18/11/07:
-		Improved location compression to allow larger areas.
-		Moved position code to Class_OnPlayerSpawn to reduce overhead.
-	10/10/07:
-		Fixed spawn data problem.
-	31/08/07:
-		Added cheap master system - YSI_SLAVE_CLASSs can't be master.
-	05/08/07:
-		Fixed a few bugs with repeated selection.
-	04/08/07:
-		First version.
-Functions:
-	Public:
-		Class_AddRemote - Adds a class to the remote master.
-		Class_Remote - Updates settings remotely.
-	Core:
-		Class_Class - Sets up the system.
-		Class_OnPlayerRequestSpawn - Called when a player requests a spawn.
-		Class_OnPlayerRequestClass - Called when a player requests a class.
-		Class_OnPlayerConnect - Called when a player connects.
-	Stock:
-		Class_Delete - Removes a class.
-		Class_SetPlayer - Sets whether or not a player can use a class.
-		Class_Disable - Disables a class.
-		Class_Enable - Enables a disabled class.
-		Class_AddForGroup - Adds a class to the system for only one group.
-		Class_Add - Adds a class to the system.
-		Class_AddEx - Adds a class to the system with group selection and setting.
-		Class_AddWithGroupSet - Adds a class and sets their group on selection.
-		Class_AllowReselection - Allows or disallows people to return to reselect a class.
-		Class_RequireSpawnLogin - Require people to login before spawning.
-		Class_RequireSelectionLogin - Require people to login before selecting.
-		Class_RequireSelectionReg - Require people to register before selecting.
-		Class_RequireSpawnReg - Require people to register before spawning.
-	Static:
-		Class_AddClass - Adds a class, wrapped by API and remote functions.
-	Inline:
-		_Class_IsActive - Checks a class is active.
-		_Class_Enabled - Checks a class is enabled.
-		_Class_IsValid - Checks a class is valid.
-		Class_X - Gets a classes x position.
-		Class_Y - Gets a classes y position.
-		Class_Z - Gets a classes z position.
-		Class_A - Gets a classes angle.
-		Class_Skin - Gets a classes skin.
-	API:
-		-
-Callbacks:
-	-
-Definitions:
-	MAX_CLASSES - Maximum number of classes storeable by the system.
-	CLASS_LEFT - Flag for last internal class viewed.
-	CLASS_MIDDLE - Flag for last internal class viewed.
-	CLASS_RIGHT - Flag for last internal class viewed.
-Enums:
-	e_CLASS_FLAGS - Small data for individual classes.
-	E_CLASS - Class data structure.
-Macros:
-	-
-Tags:
-	-
-Variables:
-	Global:
-		-
-	Static:
-		YSI_g_sClasses - Data for classes.
-		YSI_g_sPlayerClass - Player's current classes.
-		YSI_g_sLeft - Handle for the first internal class.
-		YSI_g_sMiddle - Handle for the second internal class.
-		YSI_g_sRight - Handle for the third internal class.
-		YSI_g_sClassCount - Number of classes stored.
-Commands:
-	-
-Compile options:
-	-
-Operators:
-	-
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
 */
 
 PRE_HOOK(Class)

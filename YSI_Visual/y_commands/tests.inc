@@ -1,15 +1,9 @@
-/** *//**
-					================================
-					Y Sever Includes - Commands Core
-					================================
-Description:
-	Runs commands registered with the system and calls the required functions.
-	Also handles alternate names and prefixes.  Based very loosely on dcmd.
+/*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -18,128 +12,62 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI commands include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		Y_Less
-		koolk
-		JoeBullet/Google63
-		g_aSlice/Slice
-		Misiur
-		samphunter
-		tianmeta
-		maddinat0r
-		spacemud
-		Crayder
-		Dayvison
-		Ahmad45123
-		Zeex
-		irinel1996
-		Yiin-
-		Chaprnks
-		Konstantinos
-		Masterchen09
-		Southclaws
-		PatchwerkQWER
-		m0k1
-		paulommu
-		udan111
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	2.0
-Changelog:
-	26/12/13:
-		Added sections.
-	23/06/13:
-		Rewritten from scratch for MORE speed.
-		Punycode support.
-		More failure messages.
-		Cleaner code.
-	20/10/10:
-		Fixed a bug with insensitive commands - my fault for not testing.
-	06/01/08:
-		Improved master and /help support.
-	04/01/08:
-		Fixed bad element in Command_SetDeniedReturn.
-	12/08/07:
-		Added master support.
-	24/06/07:
-		Modifed a few functions to use Bit_GetBit for speed.
-	04/05/07:
-		Completed command use support.
-		Added invalid character protection.
-	02/05/07:
-		Added YSI_ prefix to all globals.
-	14/04/07:
-		Updated header documentation with more than changelog/functions.
-		Added function name requesting.
-	13/04/07:
-		Added function documentation.
-		Added wrapped functions for e_COMM_FLAG values missing them.
-		Added header function list.
-	12/04/07:
-		Added command removal.
-	11/04/07:
-		Changed system slightly to handle names and alt names separately.  Still
-		need a better way of ignoring names when alt names are used.
-	10/04/07:
-		First version.
-Functions:
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-Callbacks:
-	-
-Definitions:
-	-
-Enums:
-	-
-Macros:
-	-
-Tags:
-	-
-Variables:
-	Global:
-		-
-	Static:
-		-
-Commands:
-	-
-Compile options:
-	-
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
 */
 
 Test:y_commands_Valid()
