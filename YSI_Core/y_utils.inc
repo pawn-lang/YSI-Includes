@@ -1,4 +1,4 @@
-/**
+/** *//**
 <section>=================================</section>
 <section>Y Sever Includes - Misc Functions</section>
 <section>=================================</section>
@@ -30,22 +30,69 @@ Misc functions used throughout.
 <subsection>Functions</subsection>
 	<em>Stock</em>
 <ul>
-<li>		StripNL - Strips the newline characters from the end of a string.</li>
+<li><em>StrToLower</em> - Convert a whole string to lower-case.</li>
+<li><em>StrToUpper</em> - Convert a whole string to upper-case.</li>
+<li><em>Random</em> - Generate a random number, optionally takes lower and upper bounds.</li>
+<li><em>RandomFloat</em> - Same as <c>Random</c>, but for floats.</li>
+<li><em>StripNL</em> - Strips the newline characters from the end of a string.</li>
+<li><em>StripR</em> - Synonym for <c>StripNL</c>.</li>
+<li><em>StripL</em> - Remove whitespace from the start of a string.</li>
+<li><em>Strip</em> - Remove whitespace from both ends of a string.</li>
+<li><em>endofline</em> - Check if the given position is the end of a string (ignoring whitespace).</li>
+<li><em>chrfind</em> - Return the first position (after <em>start</em>) of the given character.</li>
+<li><em>chrfindp</em> - Like <c>chrfind</c>, but without the upper-bounds check.</li>
+<li><em>bernstein</em> - Generate the Bernstein hash of the given string.</li>
+<li><em>ishex</em> - Is the given string hexadecimal?</li>
+<li><em>unpack</em> - Version of <c>strunpack</c> that returns the result.</li>
+<li><em>returnstringarg</em> - Get the string passed as a variable argument from the given index.</li>
+<li><em>va_return</em> - Like <c>sprintf</c>, formats a string and returns the result.</li>
+<li><em>isnumeric</em> - Is the given string a number?</li>
+<li><em>hexstr</em> - Return the value of the given hexadecimal string.</li>
+<li><em>boolstr</em> - Return the value of the given boolean string.</li>
+<li><em>binstr</em> - Return the value of the given binary string.</li>
+<li><em>rawMemcpy</em> - Copy memory between two address, instead of two arrays.</li>
+<li><em>memset</em> - Set all of an array to a value.</li>
+<li><em>rawMemset</em> - Set all of a given memory region to a value.</li>
+<li><em>ReturnPlayerName</em> - Return a player's name.</li>
+<li><em>ftouch</em> - Ensures that a file exists, but nothing more.</li>
+<li><em>InterpolateColour</em> - Get the colour (in 3D RGB space) between two other colours.</li>
+<li><em>SkipWhitespace</em> - Return the first position in a string of a non-whitespace character.</li>
+<li><em>Trim</em> - Get the first and last positions of non-whitespace characters in the string.  Like <em>Strip</em>, but doesn't modify the string.</li>
+<li><em>Sum</em> - Get the total (sum) of an array.</li>
+<li><em>Mean</em> - Get the mathematical mean of an array.</li>
+<li><em>Mode</em> - Get the mathematical mode of an array.</li>
+<li><em>Median</em> - Get the mathematical median of an array.</li>
+<li><em>Range</em> - Get the mathematical range of an array.</li>
 </ul>
 	<em>Inline</em>
 <ul>
-<li>		iseven - Checks if a number is even.</li>
-<li>		isodd - Checks if a number is odd.</li>
-<li>		isnull - Checks if a string is NULL ("\1\0").</li>
-<li>		strcpy - Copy one string to another.</li>
+<li><em>UCMP</em> - Unsigned compare.</li>
+<li><em>VALID_PLAYERID</em> - Check if a player ID is valid (in range).</li>
+<li><em>IS_IN_RANGE</em> - Check if a number is in range.</li>
+<li><em>NOT_IN_RANGE</em> - Check if a number is outside a range.</li>
+<li><em>ceildiv</em> - Divide two numbers and round up.</li>
+<li><em>floordiv</em> - Divide two numbers and round down.</li>
+<li><em>isnull</em> - Checks if a string is NULL (<c>\1\0</c> or <c>\0</c>).</li>
+<li><em>isodd</em> - Checks if a number is odd.</li>
+<li><em>iseven</em> - Checks if a number is even.</li>
+<li><em>strcpy</em> - Copy one string to another.</li>
+<li><em>GetIP</em> - Return the encoded (32-bit) version of a player's IP.</li>
+<li><em>getstring</em> - Synonym for <c>returnstringarg</c> (there are a lot).</li>
+<li><em>GetString</em> - Synonym for <c>returnstringarg</c> (there are a lot).</li>
+<li><em>getstringarg</em> - Synonym for <c>returnstringarg</c> (there are a lot).</li>
+<li><em>GetStringArg</em> - Synonym for <c>returnstringarg</c> (there are a lot).</li>
+<li><em>ReturnStringArg</em> - Synonym for <c>returnstringarg</c> (there are a lot).</li>
+<li><em>InterpolateColor</em> - Synonym for <c>InterpolateColour</c></li>
 </ul>
 <subsection>Variables</subsection>
 	<em>Global</em>
 <ul>
-<li>		TRUE - True hack for infinate loops.</li>
-<li>		FALSE - False hack for one-time loops.</li>
-<li>		NULL - 1 long string for passing via Call(Remote|Local)Function.</li>
+<li><em>TRUE</em> - True hack for infinate loops.</li>
+<li><em>FALSE</em> - False hack for one-time loops.</li>
+<li><em>NULL</em> - 1 long string for passing via Call(Remote|Local)Function.</li>
 </ul>
+<subsection>Examples</subsection>
+	N/A - This is a collection of independent functions.
 *//** *//*
 Legal:
 	Version: MPL 1.1
@@ -60,62 +107,62 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI utils include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright (C) 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		Y_Less
-		koolk
-		JoeBullet/Google63
-		g_aSlice/Slice
-		Misiur
-		samphunter
-		tianmeta
-		maddinat0r
-		spacemud
-		Crayder
-		Dayvison
-		Ahmad45123
-		Zeex
-		irinel1996
-		Yiin-
-		Chaprnks
-		Konstantinos
-		Masterchen09
-		Southclaws
-		PatchwerkQWER
-		m0k1
-		paulommu
-		udan111
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Los - Portuguese translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-	Optional plugins:
-		Gamer_Z - GPS.
-		Incognito - Streamer.
-		Me - sscanf2, fixes2, Whirlpool.
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
 */
 
 #if defined _INC_y_utils
@@ -456,7 +503,7 @@ stock StrToUpper(str[], len = sizeof (str))
 <param name="max">Upper bound.</param>
 <remarks>
 	Generate a random float between the given numbers (min &lt;= n &lt; max).
-	Default minimum is 0.
+	Default minimum is 0 (changes the parameter order).
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -479,7 +526,7 @@ stock Random(min, max = cellmin)
 <param name="dp">How small to make the differences</param>
 <remarks>
 	Generate a random float between the given numbers (min &lt;= n &lt; max).  Default
-	minimum is 0.0.
+	minimum is 0.0 (changes the parameter order).
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -509,7 +556,7 @@ stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="str">The string to remove the newline characters from</param>
+<param name="str">The string to remove whitespace from the end of.</param>
 <remarks>
 	Updated from old versions, should be more efficient
 </remarks>
@@ -523,8 +570,10 @@ stock StripNL(str[])
 	while (i-- && str[i] <= ' ') str[i] = '\0';
 }
 
+#define StripR StripNL
+
 /*-------------------------------------------------------------------------*//**
-<param name="str">The string to remove whitespace from the start of</param>
+<param name="str">The string to remove whitespace from the start of.</param>
 *//*-------------------------------------------------------------------------**/
 
 stock StripL(str[])
@@ -538,7 +587,7 @@ stock StripL(str[])
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="str">The string to remove whitespace from the start and end of</param>
+<param name="str">The string to remove whitespace from the start and end of.</param>
 *//*-------------------------------------------------------------------------**/
 
 stock Strip(str[])
