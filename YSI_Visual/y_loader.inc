@@ -79,15 +79,10 @@ forward Loader_Spawn();
 forward Loader_Check();
 forward Loader_Obj();
 
-/**--------------------------------------------------------------------------**-
-Function:
-	Loader_Loader
-Params:
-	-
-Return:
-	-
-Notes:
-	Defines the parsing rules for reading MTA XML maps.
+/*-------------------------------------------------------------------------*//**
+<remarks>
+Defines the parsing rules for reading MTA XML maps.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 Loader_Loader()
@@ -105,24 +100,21 @@ Loader_Loader()
 	return 1;
 }
 
-/**--------------------------------------------------------------------------**-
-Function:
-	Loader_Parse
-Params:
-	filename[] - File to parse as an XML race file.
-	laps - Number of laps to race for.
-	entry - Cost of entry.
-	countdown - Time to count down from for start.
-	bool:arial - Use arial checkpoints instead.
-	bool:fixedPrize - Set prize amounts manually.
-	exitTime - Time allowed out a vehicle before fail.
-	interior - The interior of the race.
-	world - The world of the race.
-	bool:restart - Don't destroy the race on completion.
-Return:
-	Created race.
-Notes:
-	Tries to create a new race to save to then parses the file.
+/*-------------------------------------------------------------------------*//**
+<param name="filename">File to parse as an XML race file.</param>
+<param name="laps">Number of laps to race for.</param>
+<param name="entry">Cost of entry.</param>
+<param name="countdown">Time to count down from for start.</param>
+<param name="arial">Use arial checkpoints instead.</param>
+<param name="fixedPrize">Set prize amounts manually.</param>
+<param name="exitTime">Time allowed out a vehicle before fail.</param>
+<param name="interior">The interior of the race.</param>
+<param name="world">The world of the race.</param>
+<param name="restart">Don't destroy the race on completion.</param>
+<returns>Created race.</returns>
+<remarks>
+Tries to create a new race to save to then parses the file.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Loader_Parse(filename[], laps = 0, entry = 0, countdown = 3, bool:arial = false, bool:fixedPrize = true, exitTime = 0, interior = 0, world = 0, bool:restart = false)
@@ -141,16 +133,12 @@ stock Loader_Parse(filename[], laps = 0, entry = 0, countdown = 3, bool:arial = 
 	return race;
 }
 
-/**--------------------------------------------------------------------------**-
-Function:
-	Loader_ParseObjects
-Params:
-	filename[] - File to parse.
-	world - World for the objects to appear in or -1 for all.
-Return:
-	-
-Notes:
-	Parses a map file, loading only the objects.
+/*-------------------------------------------------------------------------*//**
+<param name="filename">File to parse.</param>
+<param name="world">World for the objects to appear in or -1 for all.</param>
+<remarks>
+Parses a map file, loading only the objects.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Loader_ParseObjects(filename[], world = -1)
@@ -159,15 +147,11 @@ stock Loader_ParseObjects(filename[], world = -1)
 	return XML_Parse(YSI_g_sXMLRules, filename);
 }
 
-/**--------------------------------------------------------------------------**-
-Function:
-	Loader_Unload
-Params:
-	race - Race to remove objects for.
-Return:
-	-
-Notes:
-	Destroys all the objects created for a race loaded with the loader.
+/*-------------------------------------------------------------------------*//**
+<param name="race">Race to remove objects for.</param>
+<remarks>
+Destroys all the objects created for a race loaded with the loader.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Loader_Unload(race)
@@ -205,16 +189,13 @@ stock Loader_Unload(race)
 	#endif
 }
 
-/**--------------------------------------------------------------------------**-
-Function:
-	Loader_Convert
-Params:
-	Float:radians - Radian angle to convert to degrees.
-Return:
-	Float
-Notes:
-	Based on mtarad2deg made by Trix and fixed by Mike.  Converts radians to
-	degrees and rationalises.
+/*-------------------------------------------------------------------------*//**
+<param name="radians">Radian angle to convert to degrees.</param>
+<returns>Float</returns>
+<remarks>
+Based on mtarad2deg made by Trix and fixed by Mike.  Converts radians to degrees
+and rationalises.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Float:Loader_Convert(Float:radians)
@@ -229,15 +210,11 @@ stock Float:Loader_Convert(Float:radians)
 	return retval;
 }
 
-/**--------------------------------------------------------------------------**-
-Function:
-	Loader_Obj
-Params:
-	-
-Return:
-	CreateDynamicObject
-Notes:
-	Called when an end object tag is reached to create an object.
+/*-------------------------------------------------------------------------*//**
+<returns>CreateDynamicObject</returns>
+<remarks>
+Called when an end object tag is reached to create an object.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 public Loader_Obj()
@@ -303,15 +280,11 @@ public Loader_Obj()
 	#endif
 }
 
-/**--------------------------------------------------------------------------**-
-Function:
-	Loader_Check
-Params:
-	-
-Return:
-	Race_AddCheckpoint
-Notes:
-	Called when an end checkpoint tag is reached to add a checkpoint to a race.
+/*-------------------------------------------------------------------------*//**
+<returns>Race_AddCheckpoint</returns>
+<remarks>
+Called when an end checkpoint tag is reached to add a checkpoint to a race.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 public Loader_Check()
@@ -344,15 +317,11 @@ public Loader_Check()
 	#endif
 }
 
-/**--------------------------------------------------------------------------**-
-Function:
-	Loader_Spawn
-Params:
-	-
-Return:
-	Race_AddStart
-Notes:
-	Called when an end spawnpoint tag is reached to add a startpoint to a race.
+/*-------------------------------------------------------------------------*//**
+<returns>Race_AddStart</returns>
+<remarks>
+Called when an end spawnpoint tag is reached to add a startpoint to a race.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 public Loader_Spawn()
@@ -390,16 +359,12 @@ public Loader_Spawn()
 	#endif
 }
 
-/**--------------------------------------------------------------------------**-
-Function:
-	Loader_AddHandler
-Params:
-	trigger[] - Tag to trigger the callback.
-	function[] - Function to call for the tag.
-Return:
-	-
-Notes:
-	Used to add custom handlers to non-default tags in the race file format.
+/*-------------------------------------------------------------------------*//**
+<param name="trigger">Tag to trigger the callback.</param>
+<param name="function">Function to call for the tag.</param>
+<remarks>
+Used to add custom handlers to non-default tags in the race file format.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Loader_AddHandler(trigger[], function[])
@@ -408,15 +373,8 @@ stock Loader_AddHandler(trigger[], function[])
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**-
-Function:
-	Loader_GetRace
-Params:
-	-
-Return:
-	Current race handle.
-Notes:
-	-
+/*-------------------------------------------------------------------------*//**
+<returns>Current race handle.</returns>
 *//*-------------------------------------------------------------------------**/
 
 stock Loader_GetRace()
