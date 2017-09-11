@@ -1,4 +1,4 @@
-/**
+/*+
 					==============================
 					 y_cgen - Reserved code space
 					==============================
@@ -10,7 +10,7 @@ Version:
 Changelog:
 	09/09/17:
 		First documentaiton.
-*//** *//*
+*//*+ *//*
 Legal:
 	Version: MPL 1.1
 	

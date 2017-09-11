@@ -1,4 +1,4 @@
-/**
+/*+
 							  ====================
 							   YSI - Master Funcs
 							  ====================
@@ -50,7 +50,7 @@ Natives:
 	V@ - Renaming of getproperty for size reasons.
 	S@ - Renaming of setproperty for size reasons.
 	P@ - Renaming of __CallLocalFunction for size reasons.
-*//** *//*
+*//*+ *//*
 Legal:
 	Version: MPL 1.1
 	

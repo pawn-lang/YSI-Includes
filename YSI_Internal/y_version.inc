@@ -1,4 +1,4 @@
-/**
+/*+
 						  =====================
 						   YSI - Version Check
 						  =====================
@@ -49,7 +49,7 @@ Operators:
 	-
 Natives:
 	-
-*//** *//*
+*//*+ *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -174,7 +174,7 @@ Optional plugins:
 	#endif
 	
 #else
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*+
 <returns>
 	OnScriptInit
 </returns>
@@ -289,7 +289,7 @@ Optional plugins:
 		forward YVers_OnScriptInit();
 	#endif
 	
-	/*---------------------------------------------------------------------*//**
+	/*---------------------------------------------------------------------*//*+
 	
 	<param name="	index">Not used.</param>
 	<param name="	code">Response code from the server.</param>
@@ -302,7 +302,7 @@ Optional plugins:
 		onlyolder or equal (unless they play with the version numbers, but then
 		that's their own fault).
 	</remarks>
-	**/
+	*//*---------------------------------------------------------------------**/
 	
 	public YVers_Callback(index, code, data[])
 	{

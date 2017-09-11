@@ -1150,7 +1150,7 @@ hook OnPlayerLeaveCheckpointEx(playerid, cpid)
 	<remarks>
 		Internal callback from YSI_pickups.
 	</remarks>
-	**/
+	*//*---------------------------------------------------------------------**/
 	
 	Property_OnPlayerPickUpPickup(playerid, pickupid)
 	{
@@ -1216,7 +1216,7 @@ hook OnPlayerLeaveCheckpointEx(playerid, cpid)
 	
 		Checks if a player has moved away from a pickup.
 	</remarks>
-	**/
+	*//*---------------------------------------------------------------------**/
 	
 	public Property_PickupTimeCheck(playerid, pickupid)
 	{

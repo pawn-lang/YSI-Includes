@@ -961,7 +961,7 @@ stock isnumeric(str[])
 	<remarks>
 		Now stops on invalid characters.
 	</remarks>
-	**/
+	*//*---------------------------------------------------------------------**/
 	
 	stock hexstr(string[])
 	{
@@ -1004,7 +1004,7 @@ stock isnumeric(str[])
 		nothing there.  Anything not one of those things (false is not case
 		sensitive) is assumed true.
 	</remarks>
-	**/
+	*//*---------------------------------------------------------------------**/
 	
 	stock bool:boolstr(string[])
 	{
@@ -1022,7 +1022,7 @@ stock isnumeric(str[])
 		This takes a value in 0110101 (boolean) format and returns it as a
 		regular value.
 	</remarks>
-	**/
+	*//*---------------------------------------------------------------------**/
 	
 	stock binstr(string[])
 	{

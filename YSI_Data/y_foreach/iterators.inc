@@ -457,7 +457,7 @@ stock Iter_All_Internal(array[], size, value)
 		evaluation in y_hooks meant that this got called before the user
 		"OnPlayerDisconnect".
 	</remarks>
-	**/
+	*//*---------------------------------------------------------------------**/
 	
 	hook OnPlayerDisconnect(playerid, reason)
 	{
@@ -472,7 +472,7 @@ stock Iter_All_Internal(array[], size, value)
 		Called AFTER "OnPlayerDisconnect" so that using "Kick" inside a
 		"foreach" loop doesn't crash the server due to an OOB error.
 	</remarks>
-	**/
+	*//*---------------------------------------------------------------------**/
 	
 	public Iter_OPDCInternal(playerid)
 	{

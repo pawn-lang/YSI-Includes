@@ -1,4 +1,4 @@
-/**
+/*+
 				==============================================
 				 y_thirdpartyinclude - Include other includes
 				==============================================
@@ -9,7 +9,7 @@ Version:
 Changelog:
 	09/09/17:
 		First documentaiton.
-*//** *//*
+*//*+ *//*
 Legal:
 	Version: MPL 1.1
 	

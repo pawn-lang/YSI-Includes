@@ -1,4 +1,4 @@
-/**
+/*+
 					====================================
 					 y_testing - Run unit tests easilly 
 					====================================
@@ -11,7 +11,7 @@ Changelog:
 		Integrated in to YSI.
 	06/08/10:
 		First version
-*//** *//*
+*//*+ *//*
 Legal:
 	Version: MPL 1.1
 	

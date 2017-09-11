@@ -1,4 +1,4 @@
-/**
+/*+
 					================================
 					Y Sever Includes - Compiler Pass
 					================================
@@ -48,7 +48,7 @@ Operators:
 	-
 Natives:
 	-
-*//** *//*
+*//*+ *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -179,7 +179,7 @@ static stock __COMPILER_SECOND_PASS() {}
 	#define __FixStringReturn("%0"%1);return%8(%8:(%3)) return $
 	//#define __FixStringDummy[YSI_MAX_STRING,%1] __FixStringDummy[%1]
 	
-	/*---------------------------------------------------------------------*//**
+	/*---------------------------------------------------------------------*//*+
 	
 	<param name="str">String to return.</param>
 	<param name="size">Size of the string.</param>
@@ -193,7 +193,7 @@ static stock __COMPILER_SECOND_PASS() {}
 		is because string returns are done with a secret extra parameter but it
 		is not correctly selected when the count is unknown or variable.
 	</remarks>
-	**/
+	*//*---------------------------------------------------------------------**/
 	
 	#include "y_funcinc"
 	

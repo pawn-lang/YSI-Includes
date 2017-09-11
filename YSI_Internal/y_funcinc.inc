@@ -1,4 +1,4 @@
-/**
+/*+
 					===============================
 					 y_funcinc - Fix SYSREQ.C bugs
 					===============================
@@ -12,7 +12,7 @@ Version:
 Changelog:
 	06/08/10:
 		First version
-*//** *//*
+*//*+ *//*
 Legal:
 	Version: MPL 1.1
 	
