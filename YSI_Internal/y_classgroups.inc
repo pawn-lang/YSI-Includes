@@ -10,7 +10,7 @@ Version:
 Changelog:
 	29/11/10:
 		First version
-*//*+ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	

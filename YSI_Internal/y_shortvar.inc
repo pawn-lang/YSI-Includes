@@ -47,7 +47,7 @@ Operators:
 	-
 Natives:
 	-
-*//*+ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	

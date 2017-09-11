@@ -13,7 +13,7 @@ Changelog:
 		Reversed check order so smallest numbers come first.
 	01/05/11:
 		First version.
-*//*+ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	

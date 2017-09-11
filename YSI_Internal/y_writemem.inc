@@ -47,7 +47,7 @@ Compile options:
 	-
 Operators:
 	-
-*//*+ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	

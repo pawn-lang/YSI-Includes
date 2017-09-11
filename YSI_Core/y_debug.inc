@@ -43,7 +43,7 @@ Functions:
 Callbacks:
 	-
 Definitions:
-	P:<0-6> - Print a message.
+	P:&lt;0-6&gt; - Print a message.
 	P:C - Run debug code.
 	P:E - Print an error message.
 	P:W - Print a warning message.

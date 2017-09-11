@@ -42,7 +42,7 @@ Commands:
 	-
 Compile options:
 	-
-*//*+ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	

@@ -17,7 +17,7 @@ Functions:
 Variables:
 	Global:
 		-
-*//*+ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	
