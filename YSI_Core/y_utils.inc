@@ -207,6 +207,16 @@ new stock
 	#define TIMING_ITERATIONS (10)
 #endif
 
+/*-------------------------------------------------------------------------*//**
+<param name="t">The time in ms.</param>
+<param name="iters">The number of iterations completed in this time.</param>
+<remarks>
+	Formats and returns a string representing the time taken for one iteration,
+	given the time required for many iterations.  This attempts to format the
+	number using a reasonable fraction of a second.
+</remarks>
+*//*-------------------------------------------------------------------------**/
+
 stock __TU(t, iters)
 {
 	// Number of times run.  Accounts for the string and optional count.
@@ -291,9 +301,6 @@ public OnPlayerDisconnect(playerid, reason)
 #endif
 
 /*-------------------------------------------------------------------------*//**
-<summary>
-	UCMP(value, upper);
-</summary>
 <param name="value">The unsigned number to compare.</param>
 <param name="upper">The upper limit.</param>
 <returns>
@@ -301,13 +308,20 @@ public OnPlayerDisconnect(playerid, reason)
 </returns>
 *//*-------------------------------------------------------------------------**/
 
-#define UCMP(%0,%1) IS_IN_RANGE(%0,0,(%1)) //(((%0) - cellmin) < ((%1) - cellmin))
+P:D(bool:UCMP(value, upper) return false;);
+#define UCMP(%0,%1) IS_IN_RANGE(%0,0,(%1))
+
+/*-------------------------------------------------------------------------*//**
+<param name="playerid">The player to check.</param>
+<returns>
+	Is this a valid playerid (NOT, is the player connected).
+</returns>
+*//*-------------------------------------------------------------------------**/
+
+P:D(bool:VALID_PLAYERID(playerid) return false;);
 #define VALID_PLAYERID(%0) UCMP((%0), MAX_PLAYERS)
 
 /*-------------------------------------------------------------------------*//**
-<summary>
-	IS_IN_RANGE(value, lower, upper);
-</summary>
 <param name="value">The number to compare.</param>
 <param name="lower">The lower limit.</param>
 <param name="upper">The upper limit.</param>
@@ -317,18 +331,33 @@ public OnPlayerDisconnect(playerid, reason)
 <remarks>
 	Equivalent to:
 	
-		(%1) &lt;= (%0) &lt; (%2)
+<c>		(%1) &lt;= (%0) &lt; (%2)</c>
 	
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(bool:IS_IN_RANGE(lower, value, upper) return false;);
 #define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
+
+/*-------------------------------------------------------------------------*//**
+<param name="value">The number to compare.</param>
+<param name="lower">The lower limit.</param>
+<param name="upper">The upper limit.</param>
+<returns>
+	Is the value outside the given range.
+</returns>
+<remarks>
+	Equivalent to:
+	
+<c>		(%1) &lt;= (%0) &lt; (%2)</c>
+	
+</remarks>
+*//*-------------------------------------------------------------------------**/
+
+P:D(bool:NOT_IN_RANGE(lower, value, upper) return false;);
 #define NOT_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
-<summary>
-	ceildiv(numerator, denominator);
-</summary>
 <param name="numerator">The top of the division.</param>
 <param name="denominator">The bottom of the division.</param>
 <returns>
@@ -339,6 +368,7 @@ public OnPlayerDisconnect(playerid, reason)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(ceildiv(numerator, denominator) return 0;);
 #define ceildiv(%0,%1) (((%0)-1)/(%1)+1)
 
 /*-------------------------------------------------------------------------*//**
@@ -356,21 +386,22 @@ public OnPlayerDisconnect(playerid, reason)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(floordiv(numerator, denominator) return 0;);
 #define floordiv(%0,%1) ((%0)/(%1))
 
 /*-------------------------------------------------------------------------*//**
 <param name="str">String to check if is null.</param>
 *//*-------------------------------------------------------------------------**/
 
-#if !defined isnull
-	#define isnull(%1) \
-		((%1[0] == 0) || (%1[0] == 1 && %1[1] == 0))
-#endif
+P:D(bool:isnull(str[]) return false;);
+#define isnull(%1) \
+	((%1[0] == 0) || (%1[0] == 1 && %1[1] == 0))
 
 /*-------------------------------------------------------------------------*//**
 <param name="value">Value to check if is odd.</param>
 *//*-------------------------------------------------------------------------**/
 
+P:D(bool:isodd(value) return false;);
 #define isodd(%1) \
 	((%1) & 1)
 
@@ -378,6 +409,7 @@ public OnPlayerDisconnect(playerid, reason)
 <param name="value">Value to check if is even.</param>
 *//*-------------------------------------------------------------------------**/
 
+P:D(bool:iseven(value) return false;);
 #define iseven(%1) \
 	(!isodd(%1))
 
@@ -387,6 +419,7 @@ public OnPlayerDisconnect(playerid, reason)
 <param name="len">(Implicit) maximum length of the destination.</param>
 *//*-------------------------------------------------------------------------**/
 
+P:D(strcpy(dest[], const src[], len = sizeof (dest)) return false;);
 #define strcpy(%0,%1) \
 	strcat((%0[0] = '\0', %0), %1)
 
@@ -558,6 +591,19 @@ stock chrfind(needle, haystack[], start = 0)
 	return -1;
 }
 
+/*-------------------------------------------------------------------------*//**
+<param name="needle">The character to find.</param>
+<param name="haystack">The string to find it in.</param>
+<param name="start">The offset to start from.</param>
+<returns>
+	Fail - -1, Success - pos
+</returns>
+<remarks>
+	Like <c>chrfind</c>, but with no upper-bounds check on <c>start</c>.
+</remarks>
+<seealso>chrfind</seealso>
+*//*-------------------------------------------------------------------------**/
+
 stock chrfindp(needle, haystack[], start = 0)
 {
 	P:7("chrfind called: %c, \"%s\", %i", needle, haystack, start);
@@ -716,6 +762,7 @@ stock unpack(const str[])
 *//*-------------------------------------------------------------------------**/
 
 // Cunning macro only uses "%0" once, yet is still safe.
+P:D(GetIP(playerid) return 0;);
 #define GetIP(%0) (YSI_gPlayerIP[min((%0) + cellmin, MAX_PLAYERS + cellmin) - cellmin])
 
 /*-------------------------------------------------------------------------*//**
@@ -1268,12 +1315,11 @@ stock Trim(const str[], &start, &end)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="f">The file to get our position in.</param>
-<returns>
-	The current position in the file.
-</returns>
+<param name="arr">The array to sort.</param>
+<param name="num">The size of the array.</param>
 <remarks>
-	Doesn't seem to work despite documentation claiming it will.
+	Sorts the array in place.  Uses bubble sort because it is easy and fast for
+	pre-sorted arrays (which the callers are likely to be).
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -1300,6 +1346,14 @@ static stock Utils_PreSort(arr[], num = sizeof (arr))
 	while (sort);
 }
 
+/*-------------------------------------------------------------------------*//**
+<param name="arr">The array whose values need summing.</param>
+<param name="num">The size of the array.</param>
+<returns>
+	All the values in the array added together.
+</returns>
+*//*-------------------------------------------------------------------------**/
+
 stock Sum(const arr[], num = sizeof (arr))
 {
 	new
@@ -1308,10 +1362,26 @@ stock Sum(const arr[], num = sizeof (arr))
 	return tot;
 }
 
+/*-------------------------------------------------------------------------*//**
+<param name="arr">The array whose values need averaging.</param>
+<param name="num">The size of the array.</param>
+<returns>
+	The mathematical mean value of the array.
+</returns>
+*//*-------------------------------------------------------------------------**/
+
 stock Mean(const arr[], num = sizeof (arr))
 {
 	return Sum(arr, num) / num;
 }
+
+/*-------------------------------------------------------------------------*//**
+<param name="arr">The array whose values need averaging.</param>
+<param name="num">The size of the array.</param>
+<returns>
+	The mathematical modal value of the array.
+</returns>
+*//*-------------------------------------------------------------------------**/
 
 stock Mode(arr[], num = sizeof (arr))
 {
@@ -1334,19 +1404,46 @@ stock Mode(arr[], num = sizeof (arr))
 	else return ret;
 }
 
+/*-------------------------------------------------------------------------*//**
+<param name="arr">The array whose values need averaging.</param>
+<param name="num">The size of the array.</param>
+<returns>
+	The mathematical median value of the array.
+</returns>
+*//*-------------------------------------------------------------------------**/
+
 stock Median(arr[], num = sizeof (arr))
 {
 	Utils_PreSort(arr, num);
 	new
 		idx = num >>> 1;
 	if (num & 1) return arr[idx];
-	else return (arr[idx] + arr[idx - 1]) >> 1;
+	else return (arr[idx] + arr[idx - 1]) / 2;
 }
+
+/*-------------------------------------------------------------------------*//**
+<param name="arr">The array whose values need averaging.</param>
+<param name="num">The size of the array.</param>
+<returns>
+	The mathematical range of the values of the array.
+</returns>
+*//*-------------------------------------------------------------------------**/
 
 stock Range(arr[], num = sizeof (arr))
 {
-	Utils_PreSort(arr, num);
-	return arr[num - 1] - arr[0];
+	new
+		min = cellmax,
+		max = cellmin,
+		cur;
+	while (num)
+	{
+		cur = arr[--num];
+		if (cur < min)
+			min = cur;
+		if (cur > max)
+			max = cur;
+	}
+	return max - min;
 }
 
 #include "..\YSI_Coding\y_va"
