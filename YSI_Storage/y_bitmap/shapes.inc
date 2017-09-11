@@ -87,7 +87,7 @@ Variables:
 		-
 */
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="ctx">The bitmap to modify.</param>
 <param name="minX">The left of the array.</param>
 <param name="minY">The top of the array.</param>
@@ -203,7 +203,7 @@ static stock _Bitmap_RectangleRecopy(n, BitArray:pattern<PATTERN_MASK_X>)
 	}
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="ctx">The bitmap to modify.</param>
 <param name="x">The x co-ordinate of the circle centre.</param>
 <param name="y">The y co-ordinate of the circle centre.</param>
@@ -227,7 +227,7 @@ stock Bitmap_DrawCircle(Bitmap:ctx, const x, const y, const Float:radius, fillCo
 	Bitmap_DrawRing(ctx, x, y, 0.0, radius, fillColour, fillPattern);
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="ctx">The bitmap to modify.</param>
 <param name="x">The x co-ordinate of the ring centre.</param>
 <param name="y">The y co-ordinate of the ring centre.</param>

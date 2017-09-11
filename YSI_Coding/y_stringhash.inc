@@ -307,7 +307,7 @@ enum e_HASH_TYPE
 	hash_fnv1a
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="str">The string to hash.</param>
 <param name="sensitive">Wether the hash is case sensitive or not.</param>
 <returns>

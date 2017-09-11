@@ -144,7 +144,7 @@ forward OnFloodLimitExceeded(ip[16], count);
 stock
 	Iterator:FloodingPlayer<MAX_PLAYERS>;
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="max">Maximum number of connections allowed from the same IP.</param>
 <param name="action">What to do if there's too many.</param>
 <remarks>
@@ -167,7 +167,7 @@ stock SetMaxConnections(max = -1, e_FLOOD_ACTION:action = e_FLOOD_ACTION_BLOCK)
 	YSI_g_sMaxConnections = (e_FLOOD_ACTION:max & e_FLOOD_ACTION_COUNT) | action;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="ip32">32-bit representation of the IP to unban.</param>
 <remarks>
 	Timers, by default, are not good with strings, so we can't pass the IP to
@@ -185,7 +185,7 @@ public Flooding_UnbanIP(ip32)
 	SendRconCommand(cmd);
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who joined.</param>
 <remarks>
 	Checks for too many connections from the same IP address and acts

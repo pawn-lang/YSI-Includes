@@ -153,7 +153,7 @@ foreign Player_ForceGroup(playerid, string:other[]);
 
 foreign Player_ForceLogin(playerid);
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who changed name.</param>
 <remarks>
 	Reload a player's basic data when they change name.
@@ -176,7 +176,7 @@ stock Player_SetPreload(playerid, data[E_USER_PRELOAD])
 	}
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who is logging in.</param>
 <remarks>
 	Loads a player's data to an array.
@@ -717,7 +717,7 @@ stock Player_GetYID(playerid)
 	return YSI_g_sPlayerYID[playerid];
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who is logging in.</param>
 <param name="password">Password they entered.</param>
 <param name="f">Show the failed to login message?</param>
@@ -782,7 +782,7 @@ global Player_TryLogin(playerid, string:password[])
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who is logging in.</param>
 <remarks>
 	Like "Player_TryLogin" but doesn't take a password so always works.
@@ -842,7 +842,7 @@ global Player_ForceLogin(playerid)
 	//}
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="name">Item to remove.</param>
 <remarks>
 	Wrapper for Player_AddToBuffer for removing data.
@@ -854,7 +854,7 @@ stock Player_RemoveEntry(name[])
 	INI_RemoveEntry(YSI_g_sPlayerWriteFile, name);
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="name">Data name.</param>
 <param name="data">Data.</param>
 <remarks>
@@ -876,7 +876,7 @@ stock Player_WriteArray(const name[], data[], len)
 	return 1;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="name">Data name.</param>
 <param name="data">Integer data.</param>
 <remarks>
@@ -889,7 +889,7 @@ stock Player_WriteInt(name[], data)
 	INI_WriteInt(YSI_g_sPlayerWriteFile, name, data);
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="name">Data name.</param>
 <param name="data">Hex data.</param>
 <remarks>
@@ -902,7 +902,7 @@ stock Player_WriteHex(name[], data)
 	INI_WriteHex(YSI_g_sPlayerWriteFile, name, data);
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="name">Data name.</param>
 <param name="data">Binary data.</param>
 <remarks>
@@ -915,7 +915,7 @@ stock Player_WriteBin(name[], data)
 	INI_WriteBin(YSI_g_sPlayerWriteFile, name, data);
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="name">Data name.</param>
 <param name="data">Boolean data.</param>
 <remarks>
@@ -928,7 +928,7 @@ stock Player_WriteBool(name[], bool:data)
 	INI_WriteBool(YSI_g_sPlayerWriteFile, name, data);
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="name">Data name.</param>
 <param name="data">Float data.</param>
 <param name="accuracy">number of decimal places to write.</param>
@@ -1013,7 +1013,7 @@ static stock Player_DoLogout(playerid, uid)
 	}
 }*/
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="pass">Data to hash.</param>
 <remarks>
 	Based on my Dad's hash system but slightly modifed.  Updated for reverse
@@ -1111,7 +1111,7 @@ stock Anything7()
 {
 }*/
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who is registering.</param>
 <param name="password">The password they entered.</param>
 <remarks>
@@ -1249,7 +1249,7 @@ global Player_ChangePassword(playerid, string:password[])
 	return 1;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player whose data should be saved.</param>
 <remarks>
 	When a player's preload data is modifed (new bit data or changed password),
@@ -1338,7 +1338,7 @@ static stock Player_RewritePreload(playerid)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who is joining a group.</param>
 <param name="other">A player name already in the group.</param>
 <param name="password">The password of the group.</param>
@@ -1447,7 +1447,7 @@ global Player_TryGroup(playerid, string:other[], string:password[])
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who is joining a group.</param>
 <param name="other">A player name already in the group.</param>
 <remarks>

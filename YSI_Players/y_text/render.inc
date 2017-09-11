@@ -147,7 +147,7 @@ static stock
 	//YSI_g_sExtraText[MAX_INI_ENTRY_TEXT],
 	gInitialColour;
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <transition keep="true" target="y_render_show : y_render_show_scm" />
 *//*-------------------------------------------------------------------------**/
 
@@ -163,7 +163,7 @@ stock Format_SetListSeparator(string:lst[])
 	strcpy(YSI_g_sListSep, lst);
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <transition keep="true" target="y_render_show : y_render_show_gt" />
 <transition keep="true" target="y_render_show : y_render_show_scm" />
 <transition keep="true" target="y_render_show : y_render_show_td" />
@@ -511,7 +511,7 @@ static stock Format_AddFade(str[], &pos, &len, endColour, &initialColour, step, 
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <transition keep="true" target="y_render_fade : y_render_fade_fake" />
 *//*-------------------------------------------------------------------------**/
 
@@ -570,7 +570,7 @@ static stock Format_DoEndFade(output[], &start, end, &rem, colour, &initial) //<
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="out">The destination string.</param>
 <param name="in">The data to add.</param>
 <param name="oidx">The index in "out" at which to add data.</param>
@@ -661,7 +661,7 @@ static stock Format_DoAddString(out[], const in[], &oidx, const len, &orem, &fak
 	}
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <transition keep="true" target="y_render_fade : y_render_fade_real" source="y_render_fade : y_render_fade_redo" />
 *//*-------------------------------------------------------------------------**/
 
@@ -749,7 +749,7 @@ static stock Format_DoDisplay(playerid, colour, out[]) <y_render_show : y_render
 	//out[0] = '\0';
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player to show the text to.</param>
 <param name="out">What the text to show is.</param>
 *//*-------------------------------------------------------------------------**/
@@ -774,7 +774,7 @@ stock Format_JustShow(playerid, out[]) <y_render_show : y_render_show_td>
 	TD_ShowForPlayer(playerid, Text:out[0]);
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <returns>
 	The basic ID linking all displayed elements together where appropriate (for
 	example SendClientMessage has no meaningful ID.  3D texts would, but that's
@@ -793,7 +793,7 @@ stock Text_GetLastID() <>
 	return -1;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 Generic function to handle rendering for all types of outputs.  Other functions
 such as Format_AddColour are specialised for different text styles.  The faster
 way to do this would be to store the characters removed from a string when

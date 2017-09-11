@@ -215,7 +215,7 @@ stock
 
 #include "..\YSI_Coding\y_va"
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="name">Name of the current function.</param>
 <remarks>
 	Gets a reference to the 
@@ -237,7 +237,7 @@ stock _Testing_Start(name[])
 	strcpy(YSI_gCurTestName, name[2]);
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player to ask a question to.</param>
 <param name="str">What to ask.</param>
 <param name="va_args">Additional data.</param>
@@ -282,7 +282,7 @@ stock Testing_Test(bool:x, str[] = "", va_args<>)
 	#endif
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="name">Name of the current function.</param>
 <remarks>
 	Gets a reference to the 
@@ -298,7 +298,7 @@ stock bool:_Testing_End()
 	return false;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="tests">Number of tests run.</param>
 <param name="fails">Number of tests which failed.</param>
 <param name="buffer">The name of the first test which failed.</param>
@@ -409,7 +409,7 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 #endif
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player to test on.</param>
 <param name="idx">Next test to run.</param>
 <param name="tests">Number of tests run.</param>

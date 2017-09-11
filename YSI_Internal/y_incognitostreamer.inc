@@ -135,7 +135,7 @@ static stock const
 	#include "y_groupsingle"
 	#include "y_groupsecond"
 	
-	/**----------------------------------------------------------------------**-
+	/*---------------------------------------------------------------------*//**
 	
 	<param name="	o">Object to set.</param>
 	<param name="	p">Player to set.</param>
@@ -155,7 +155,7 @@ static stock const
 		//return s;
 	}
 	
-	/**----------------------------------------------------------------------**-
+	/*---------------------------------------------------------------------*//**
 	
 	<remarks>
 		Hook the streamer creation function so that we can initialise the groups

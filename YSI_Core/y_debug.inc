@@ -151,7 +151,7 @@ stock YSI_gDebugLevel = 0;
 #define P:%1(%2); Debug_Print%1(%2);
 #define C:%1(%2); Debug_Code%1(%2);
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="level">Debug level to run the code at.</param>
 <param name="code">Code to run.</param>
 <remarks>
@@ -222,7 +222,7 @@ stock YSI_gDebugLevel = 0;
 	#define Debug_CodeX(%1);
 #endif
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="level">Debug level to print at.</param>
 <param name="format">Format.</param>
 <param name="..."></param>
@@ -368,7 +368,7 @@ public OnScriptInit()
 	return 1;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <transition keep="true" target="ysi_debug : on" source="ysi_debug : "/>
 *//*-------------------------------------------------------------------------**/
 

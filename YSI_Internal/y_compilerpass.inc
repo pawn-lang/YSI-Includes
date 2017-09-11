@@ -173,7 +173,7 @@ static stock __COMPILER_SECOND_PASS() {}
 	#define __FixStringReturn("%0"%1);return%8(%8:(%3)) return $
 	//#define __FixStringDummy[YSI_MAX_STRING,%1] __FixStringDummy[%1]
 	
-	/**----------------------------------------------------------------------**-
+	/*---------------------------------------------------------------------*//**
 	
 	<param name="str">String to return.</param>
 	<param name="size">Size of the string.</param>

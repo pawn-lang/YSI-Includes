@@ -213,7 +213,7 @@ Natives:
 		
 		forward _YCM();
 				
-		/**------------------------------------------------------------------**-
+		/*-----------------------------------------------------------------*//**
 		<transition keep="true" target="_YCM : y" />
 		<transition keep="true" target="_YCM : u" />
 		<transition keep="true" target="_YCM : y" />
@@ -605,7 +605,7 @@ Natives:
 		// that is a macro which is expanded every time this file is included.
 		// m is also now client/stub.
 		
-		/**------------------------------------------------------------------**-
+		/*-----------------------------------------------------------------*//**
 		<transition keep="true" target="_YCM : m" source="_YCM : y" />
 		<transition keep="true" target="_YCM : p" source="_YCM : y" />
 		<transition keep="true" target="_YCM : n" source="_YCM : y" />

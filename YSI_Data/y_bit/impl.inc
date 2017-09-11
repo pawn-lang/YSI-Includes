@@ -149,7 +149,7 @@ Compile options:
 	#endif
 #endif
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="size">Number of bits required.</param>
 <returns>
 	Number of cells required for the bit array.
@@ -159,7 +159,7 @@ Compile options:
 // If this ever changes, update the size reference in y_users.
 #define Bit_Bits(%1) (((%1)+cellbits-1)/cellbits)
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="value">Value to get the slot for.</param>
 <returns>
 	The true array slot for this value.
@@ -168,7 +168,7 @@ Compile options:
 
 #define Bit_Slot(%1) ((_:%1)>>>CELLSHIFT)
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="value">Value to get the mask for</param>
 <returns>
 	The bit in the array slot to use.
@@ -177,7 +177,7 @@ Compile options:
 
 #define Bit_Mask(%1) (Bit:(1<<((_:%1)&cellbits-1)))
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="array">Array of bits.</param>
 <param name="slot">Bit slot.</param>
 <returns>
@@ -190,7 +190,7 @@ Compile options:
 
 #define Bit_GetBit(%1,%2) (%1[(%2)>>>CELLSHIFT]&Bit:(1<<((%2)&cellbits-1)))
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="array">Array of bits.</param>
 <param name="slot">Bit slot.</param>
 <param name="size">Size of array.</param>
@@ -207,7 +207,7 @@ native Bit_Get(BitArray:array&lt;&gt;, slot);
 
 #define Bit_Get(%1,%2) bool:Bit_GetBit(Bit:%1,_:%2)
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="array">Array of bits.</param>
 <param name="slot">Bit slot.</param>
 <remarks>
@@ -217,7 +217,7 @@ native Bit_Get(BitArray:array&lt;&gt;, slot);
 
 #define Bit_Let(%1,%2) %1[(%2)>>>CELLSHIFT]|=Bit:(1<<((%2)&cellbits-1))
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="array">Array of bits.</param>
 <param name="slot">Bit slot.</param>
 <remarks>
@@ -227,7 +227,7 @@ native Bit_Get(BitArray:array&lt;&gt;, slot);
 
 #define Bit_Vet(%1,%2) %1[(%2)>>>CELLSHIFT]&=Bit:~(1<<((%2)&cellbits-1))
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="array">Array of bits.</param>
 <param name="slot">Bit slot.</param>
 <param name="set">State to set the slot to.</param>
@@ -241,7 +241,7 @@ stock Bit_Set(BitArray:array<>, slot, bool:set)//, size = sizeof (array))
 	else Bit_Vet(array, slot);
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="array">Array of bits.</param>
 <param name="slot">Bit slot.</param>
 <param name="set">State to set the slot to.</param>
@@ -256,7 +256,7 @@ native Bit_FastSet(BitArray:array&lt;&gt;, slot, bool:set, size = sizeof (array)
 
 #define Bit_FastSet(%0,%1,%2) ((%2)?(Bit_Let(%0,(%1))):(Bit_Vet(%0,(%1))))
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="array">Array to set all values of.</param>
 <param name="set">Wether to set them all 0 or 1.</param>
 <param name="size">Size of array.</param>
@@ -267,7 +267,7 @@ stock Bit_SetAll(BitArray:array<>, bool:set, size = sizeof (array))
 	memset(_:array, set ? 0xFFFFFFFF : 0, size);
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="array">Array to count.</param>
 <param name="size">Size of array.</param>
 <returns>

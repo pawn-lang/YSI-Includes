@@ -152,7 +152,7 @@ Changelog:
 static stock
 	bool:YSI_g_sInProfile = false;
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="profilings">Number of profilings run.</param>
 <returns>
 	Wether all profilings were sucessful or not.

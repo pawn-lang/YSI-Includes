@@ -82,7 +82,7 @@ Changelog:
 #endif
 #define _INC_y_pp
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <param name="%9">Number of times to repeat.</param>
 <param name="%0">What to repeat.</param>
 <param name="%1">What to insert between repetitions.</param>

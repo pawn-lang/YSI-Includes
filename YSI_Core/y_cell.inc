@@ -116,7 +116,7 @@ Compile options:
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_globaltags"
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <summary>
 	Cell_ReverseBits(number);
 </summary>
@@ -213,7 +213,7 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <summary>
 	Cell_ReverseNibbles(number);
 </summary>
@@ -284,7 +284,7 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <summary>
 	Cell_ReverseBytes(number);
 </summary>
@@ -342,7 +342,7 @@ stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <summary>
 	Cell_CountBits(number);
 </summary>
@@ -405,7 +405,7 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <summary>
 	Cell_GetLowestBit(number);
 </summary>
@@ -460,7 +460,7 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <summary>
 	Cell_GetLowestBitEx(number);
 </summary>
@@ -533,7 +533,7 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <summary>
 	Cell_GetLowestComponent(number);
 </summary>
@@ -572,7 +572,7 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <summary>
 	Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5]);
 </summary>
@@ -615,7 +615,7 @@ stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 		t = x & masks[4],     x ^ t | (t >>> 16);
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <summary>
 	Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 </summary>
@@ -643,7 +643,7 @@ stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 		t = x <<  1, m & (((x ^ t) & masks[0]) ^ x);
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <summary>
 	Cell_PrecomputeMaskPermutation(m)
 </summary>
@@ -685,7 +685,7 @@ stock Cell_PrecomputeMaskPermutation(m)
 	return masks;
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <summary>
 	Cell_CompressRight(GLOBAL_TAG_TYPES:x, m);
 </summary>
@@ -710,7 +710,7 @@ stock Cell_CompressRight(GLOBAL_TAG_TYPES:x, m)
 	return Cell_CompressRightPrecomputed(x, m, Cell_PrecomputeMaskPermutation(m));
 }
 
-/**--------------------------------------------------------------------------**-
+/*-------------------------------------------------------------------------*//**
 <summary>
 	Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 </summary>
