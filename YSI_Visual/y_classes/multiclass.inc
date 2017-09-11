@@ -252,8 +252,10 @@ stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <>
 #define Class_Skin(%1) (YSI_g_sClasses[(%1)][E_CLASS_FLAGS] & e_CLASS_FLAGS_SKIN)
 
 /**--------------------------------------------------------------------------**-
+<remarks>
 	Creates three real player classes so you can scroll correctly with the
 	direction being detected.
+</remarks>
 <transition keep="true" target="_YCM : u"/>
 <transition keep="true" target="_YCM : y"/>
 *//*-------------------------------------------------------------------------**/
@@ -327,8 +329,10 @@ static stock Class_FindNew(playerid, playerclass, dir)
 /**--------------------------------------------------------------------------**-
 <param name="playerid">Player who is changing class.</param>
 <param name="playerclass">The internal class they are switching to.</param>
+<remarks>
 	Does the visual faking through "SetPlayerSkin", and also calls
 	"SetSpawnInfo" to avoid any lag from "SetPlayerPos" under "OnPlayerSpawn".
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 foreign void:Class_Goto(playerid, playerclass);
@@ -344,10 +348,12 @@ global void:Class_Goto(playerid, playerclass)
 
 /**--------------------------------------------------------------------------**-
 <param name="playerid">Player who selected a spawn.</param>
+<remarks>
 	Has inbuilt protection for a bug where selections aren't correctly
 	debounced so you can press shift twice at once which can mess up some
 	scripts (e.g. the example team selection script).  Calls
 	OnPlayerRequestSpawnEx with an additional class parameter.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #if !defined YSI_NO_MASTER && (_YSIM_IS_CLIENT || _YSIM_IS_STUB)
@@ -409,7 +415,9 @@ HOOK_FORWARD:Class_OnPlayerRequestSpawn(playerid);
 
 /**--------------------------------------------------------------------------**-
 <param name="playerid">Player who spawned.</param>
+<remarks>
 	Sets a player's position based on skin.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 mhook OnPlayerSpawn(playerid)
@@ -450,7 +458,9 @@ mhook OnPlayerSpawn(playerid)
 
 /**--------------------------------------------------------------------------**-
 <param name="playerid">Player who joined the server.</param>
+<remarks>
 	Reset all the data on this player's current classes.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 mhook OnPlayerConnect(playerid)
@@ -471,7 +481,9 @@ mhook OnPlayerConnect(playerid)
 }
 
 /**--------------------------------------------------------------------------**-
+<remarks>
 	Converts the variable arguments to an array.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define _CLASS_WEAPON_CODE \
@@ -486,11 +498,13 @@ mhook OnPlayerConnect(playerid)
 <param name="z">Z spawn location.</param>
 <param name="a">A spawn location.</param>
 <param name="...">Spawn weapons and ammo (weapon then ammo)</param>
+<remarks>
 	Pretty much AddPlayerClass but allows greater control over the classes.
 	Now has infinate (MAX_CLASS_SPAWN_WEAPONS) spawn weapons.  This is one of
 	the few API functions which is not entirely remote.  This is because it has
 	variable parameters which is need to collect in to a single array to pass to
 	the remote function.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Class_Add(skin, Float:x, Float:y, Float:z, Float:a, ...)
@@ -515,8 +529,10 @@ stock Class_Add(skin, Float:x, Float:y, Float:z, Float:a, ...)
 <param name="z">Z spawn location.</param>
 <param name="a">A spawn location.</param>
 <param name="...">Spawn weapons and ammo (weapon then ammo)</param>
+<remarks>
 	Pretty much AddPlayerClass but allows greater control over the classes.
 	Now has infinate (MAX_CLASS_SPAWN_WEAPONS) spawn weapons.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Class_AddEx(Group:forgroup, Group:setgroup, skin, Float:x, Float:y, Float:z, Float:a, ...)
@@ -540,7 +556,9 @@ stock Class_AddEx(Group:forgroup, Group:setgroup, skin, Float:x, Float:y, Float:
 <param name="z">Z spawn location.</param>
 <param name="a">A spawn location.</param>
 <param name="...">Weapon data.</param>
+<remarks>
 	Adds a class only people in the specified group can use.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Class_AddForGroup(Group:group, skin, Float:x, Float:y, Float:z, Float:a, ...)
@@ -564,7 +582,9 @@ stock Class_AddForGroup(Group:group, skin, Float:x, Float:y, Float:z, Float:a, .
 <param name="z">Z spawn location.</param>
 <param name="a">A spawn location.</param>
 <param name="...">Spawn weapons.</param>
+<remarks>
 	Adds a class which puts you in the specified group when selected.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Class_AddWithGroupSet(Group:group, skin, Float:x, Float:y, Float:z, Float:a, ...)
@@ -590,9 +610,11 @@ stock Class_AddWithGroupSet(Group:group, skin, Float:x, Float:y, Float:z, Float:
 <param name="count">Number of weapons added.</param>
 <param name="forgroup">Group that can use the class.</param>
 <param name="asgroup">Group to assign people to with this class.</param>
+<remarks>
 	Does the hard work.  This took a long time to get working correctly with the
 	new master system, infact getting just this one function to compile took a
 	major re-working of the macros to reduce the length of intermediate stages.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 foreign Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,w[],c,Group:f,Group:g);
@@ -670,7 +692,9 @@ global Class_Enable(classid, bool:toggle)
 
 /**--------------------------------------------------------------------------**-
 <param name="classid">Class to delete.</param>
+<remarks>
 	Completely removes a class from the system.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 foreign void:Class_Delete(classid);
@@ -734,6 +758,7 @@ global Class_Get(playerid)
 /**--------------------------------------------------------------------------**-
 <param name="playerid">Player who requested a class.</param>
 <param name="class">Class they requested.</param>
+<remarks>
 	The input is one of the three real classes used to detect selected
 	direction of alteration.  Scans for a class the player is allowed to use
 	and hot swaps it out.  Uses SetPlayerSkin AND SetSpawnInfo to combat bugs
@@ -744,6 +769,7 @@ global Class_Get(playerid)
 	Last thing in the file to be simpler to call directly.  If we ever have a
 	more complex ALS hook on this callback the main body of this code will have
 	to be moved in to its own function.  As indeed it now does!
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 public OnPlayerRequestClass(playerid, classid)

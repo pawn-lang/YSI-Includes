@@ -183,7 +183,9 @@ Compile options:
 <returns>
 	State of the provided slot, 0 on fail.
 </returns>
+<remarks>
 	Unsafe but faster for when you're sure you're within range.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define Bit_GetBit(%1,%2) (%1[(%2)>>>CELLSHIFT]&Bit:(1<<((%2)&cellbits-1)))
@@ -195,10 +197,12 @@ Compile options:
 <returns>
 	State of the provided slot, 0 on fail.
 </returns>
+<remarks>
 	-
 
 native Bit_Get(BitArray:array&lt;&gt;, slot);
 
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define Bit_Get(%1,%2) bool:Bit_GetBit(Bit:%1,_:%2)
@@ -206,7 +210,9 @@ native Bit_Get(BitArray:array&lt;&gt;, slot);
 /**--------------------------------------------------------------------------**-
 <param name="array">Array of bits.</param>
 <param name="slot">Bit slot.</param>
+<remarks>
 	Sets the slot to 1.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define Bit_Let(%1,%2) %1[(%2)>>>CELLSHIFT]|=Bit:(1<<((%2)&cellbits-1))
@@ -214,7 +220,9 @@ native Bit_Get(BitArray:array&lt;&gt;, slot);
 /**--------------------------------------------------------------------------**-
 <param name="array">Array of bits.</param>
 <param name="slot">Bit slot.</param>
+<remarks>
 	Sets the slot to 0.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define Bit_Vet(%1,%2) %1[(%2)>>>CELLSHIFT]&=Bit:~(1<<((%2)&cellbits-1))
@@ -238,10 +246,12 @@ stock Bit_Set(BitArray:array<>, slot, bool:set)//, size = sizeof (array))
 <param name="slot">Bit slot.</param>
 <param name="set">State to set the slot to.</param>
 <param name="size">Size of array.</param>
+<remarks>
 	Exactly the same as "Bit_Set", but as a macro not a function.
 
 native Bit_FastSet(BitArray:array&lt;&gt;, slot, bool:set, size = sizeof (array));
 
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define Bit_FastSet(%0,%1,%2) ((%2)?(Bit_Let(%0,(%1))):(Bit_Vet(%0,(%1))))
@@ -263,11 +273,13 @@ stock Bit_SetAll(BitArray:array<>, bool:set, size = sizeof (array))
 <returns>
 	Number of 1s in the array.
 </returns>
+<remarks>
 	Code from:
 	http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
 
 native Bit_Count(BitArray:array&lt;&gt;, size = sizeof (array));
 
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define Bit_Count Bit_GetCount

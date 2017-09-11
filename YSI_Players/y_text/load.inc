@@ -197,7 +197,9 @@ enum e_COMPRESS_FORMAT_DATA (+= 0x10000000)
 <returns>
 	e_GAME_TEXT_KEYS - Enum representation of keys.
 </returns>
+<remarks>
 	Reads a GameText key identifier and compresses it essentially.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock e_GAME_TEXT_KEYS:Format_GetKeys(const input[], &idx)
@@ -381,6 +383,7 @@ stock e_GAME_TEXT_KEYS:Format_GetKeys(const input[], &idx)
 <returns>
 	The length of the string.
 </returns>
+<remarks>
 	Takes a string input and converts it to a standardised representation, i.e.
 	uses byte-codes instead of human readable codes to represent formats and
 	colours.  This makes it faster to format in to any other representation,
@@ -389,6 +392,7 @@ stock e_GAME_TEXT_KEYS:Format_GetKeys(const input[], &idx)
 	the different representations) to a single fast read format and then have
 	fairly simple to write methods to convert that single format to any other
 	format (see y_formatout.inc).
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Format_Standardise(input[], output[], len = sizeof (output), pt = false)
@@ -1053,8 +1057,10 @@ Format_Standardise_no_switch:
 <returns>
 	Single cell representation of the current specifier.
 </returns>
+<remarks>
 	Reads a series of characters from the input string and interprets them as a
 	format specifier (e.g. "%d").  Also returns the new current string index.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock Format_GetSpecifier(input[], &iIn)
@@ -1174,7 +1180,9 @@ static stock Format_GetSpecifier(input[], &iIn)
 <returns>
 	Colour.
 </returns>
+<remarks>
 	Reads a GameText colour format and converts it to single-cell RGB.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock Format_GTToSAMP(const str[], &idx)

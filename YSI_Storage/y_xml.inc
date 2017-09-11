@@ -167,7 +167,9 @@ static stock
 <returns>
 	XML
 </returns>
+<remarks>
 	Creates a new set of rules for parsing XML files.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock XML:XML_New()
@@ -197,7 +199,9 @@ stock XML_Destroy(XML:rule)
 /**--------------------------------------------------------------------------**-
 <param name="rule">Set of XML rules to parse against.</param>
 <param name="filename">XML file to parse.</param>
+<remarks>
 	Now supports self-closing tags and XML comments.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock XML_Parse(XML:rule, filename[])
@@ -380,8 +384,10 @@ stock XML_Parse(XML:rule, filename[])
 <param name="name">Identifer of data.</param>
 <param name="text">Data.</param>
 <param name="depth">Current XML tree depth.</param>
+<remarks>
 	Pushes an identifier and it's value (either explicitaly stated or returned
 	from another function) to the stack with basic parent info.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock XML_Push(name[], text[], depth)
@@ -405,8 +411,10 @@ stock XML_Push(name[], text[], depth)
 /**--------------------------------------------------------------------------**-
 <param name="line">Data to extract from.</param>
 <param name="pos">Start/end point of the text.</param>
+<remarks>
 	Gets the data from inside ""s in an identifier.  Now supports
 	\ for escape characters.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock XML_GetParameter(line[], &pos)
@@ -477,7 +485,9 @@ stock XML_GetParameter(line[], &pos)
 /**--------------------------------------------------------------------------**-
 <param name="line">Line to get data from.</param>
 <param name="pos">Start and end position of the data.</param>
+<remarks>
 	Gets the text between tags.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock XML_GetValue(line[], &pos)
@@ -500,7 +510,9 @@ stock XML_GetValue(line[], &pos)
 /**--------------------------------------------------------------------------**-
 <param name="line">Line to get data from.</param>
 <param name="pos">Start and end position of text.</param>
+<remarks>
 	Gets the identifier of a piece of data.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock XML_GetName(line[], &pos)
@@ -571,7 +583,9 @@ stock XML_ParseTag(XML:rule, name[], tagCount)
 <returns>
 	Data found.
 </returns>
+<remarks>
 	Pops items off the stack for use in custom functions.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock XML_GetKeyValue(key[], value[])
@@ -606,8 +620,10 @@ stock XML_GetKeyValue(key[], value[])
 <returns>
 	Data found.
 </returns>
+<remarks>
 	Does no poping, just searches for a value with the right name at the right
 	depth so children can use the data if they HAVE to.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock XML_GetParentValue(const key[], value[])
@@ -712,9 +728,11 @@ stock XMLEntry:XML_AddParameter(XMLEntry:parent, tag[], value[] = "")
 /**--------------------------------------------------------------------------**-
 <param name="tag">Type of data being added.</param>
 <param name="name">The optional name parameter for identifying tags.</param>
+<remarks>
 	Starts the creation of a new tag to be written to a file, the structure
 	has to be manually created then written.  There is no buffering of multiple
 	tags before writing as a single tag can have quite a bit of data.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define XML_CreateEntry XML_AddItem
@@ -742,7 +760,9 @@ stock XMLEntry:XML_AddItem(tag[], name[] = "", XMLEntry:parent = XMLEntry:cellma
 <param name="item">Handle to the tag to write.</param>
 <param name="bIncludeXML">Write the default <XML> tags or not?</param>
 <param name="bFavourShort">Write the shortest tags possible.</param>
+<remarks>
 	Writea the data for a tag to a file.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define XML_WriteEntry XML_WriteItem
@@ -831,7 +851,9 @@ stock XML_WriteItem(filename[], XMLEntry:item, bool:bIncludeXML = true, bool:bFa
 <param name="item">Item to write data for.</param>
 <param name="fHnd">File to write to.</param>
 <param name="depth">Current indentation.</param>
+<remarks>
 	Recursive function to write a tag and it's children to a file.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock XML_WriteItemData(item, File:fHnd, depth)
@@ -869,9 +891,11 @@ static stock XML_WriteItemData(item, File:fHnd, depth)
 <param name="item">Item to write data for.</param>
 <param name="fHnd">File to write to.</param>
 <param name="depth">Current indentation.</param>
+<remarks>
 	Recursive function to write a tag and it's children to a file.  Writes tags
 	in the shortest manner possible.  This does make it slower however (not much
 	though given the use of linked lists).
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock XML_WriteItemDataShort(item, File:fHnd, depth)
@@ -941,7 +965,9 @@ static stock XML_WriteItemDataShort(item, File:fHnd, depth)
 <param name="file">File to remove the tag from.</param>
 <param name="tag">Type of tag to remove.</param>
 <param name="name">Name of the tag to remove.</param>
+<remarks>
 	Does a replace on data in a file with no new data.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock XML_RemoveItem(file[], tag[], name[])
@@ -955,7 +981,9 @@ stock XML_RemoveItem(file[], tag[], name[])
 <param name="tag">Tag type of data to replace.</param>
 <param name="name">Name of data to replace.</param>
 <param name="replacement">Handle to the replacement data.</param>
+<remarks>
 	Replaces a tag's data with new data, basically changes a tag's value.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock XML_ReplaceItem(file[], tag[], name[], replacement)

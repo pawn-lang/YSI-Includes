@@ -294,8 +294,10 @@ stock Master_GetNext()
 <returns>
 	OnScriptInit
 </returns>
+<remarks>
 	Constructor.  Gets the script a master ID.  Now ALWAYS gets an ID, even if
 	the master system is disabled - doing otherwise is just too complicated.
+</remarks>
 <transition keep="true" target="_ALS : _ALS_go" />
 *//*-------------------------------------------------------------------------**/
 
@@ -349,7 +351,9 @@ forward YSIM_OnMasterSystemInit();
 <returns>
 	OnGameModeExit
 </returns>
+<remarks>
 	Destructor.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 public OnScriptExit()
@@ -390,7 +394,9 @@ HOOK_FORWARD:Master_OnScriptExit();
 //forward Master_OnScriptClose(id);
 
 /**--------------------------------------------------------------------------**-
+<remarks>
 	Rebuilds the collection of master data whenever a script is restarted.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 public Master_Reassert()

@@ -1072,7 +1072,9 @@ stock
 <returns>
 	Current vehicle speed.
 </returns>
+<remarks>
 	This function have returns in KM/H.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Vehicle_Speed(vehicleid)

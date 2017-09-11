@@ -167,8 +167,10 @@ static stock
 
 /**--------------------------------------------------------------------------**-
 <param name="name">Function name to modify.</param>
+<remarks>
 	Expands all name parts like "CP" and "Obj" to their full versions (in this
 	example "Checkpoint" and "Object").
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Hooks_MakeLongName(name[64])
@@ -246,8 +248,10 @@ stock Hooks_MakeLongName(name[64])
 
 /**--------------------------------------------------------------------------**-
 <param name="name">Function name to modify.</param>
+<remarks>
 	Compresses function names when required to fit within 32 characters
 	according to well defined rules (see "YSI_g_sReplacements").
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Hooks_MakeShortName(name[64])
@@ -295,6 +299,7 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 <param name="preloads">Desination in which to store all the preloads.</param>
 <param name="precount">Number of found preload libraries.</param>
 <param name="size">Maximum number of libraries to store.</param>
+<remarks>
 	Some includes, like "fixes.inc" and anti-cheats MUST come before all other
 	includes in order for everything to function correctly (at least fixes.inc
 	must).  This function looks for these definitions:
@@ -303,6 +308,7 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 	
 	Which tell y_hooks that any "FIXES_" prefixed callbacks are part of one of
 	these chains.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precount, size = sizeof (preloads))
@@ -359,8 +365,10 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precoun
 <param name="name">Name of the callback.</param>
 <param name="hooks">Destination in which to store the headers.</param>
 <param name="count">Number of headers found.</param>
+<remarks>
 	Finds all the AMX file headers for functions with a similar name to the
 	given callback that should be called before (or near) the given callback.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 _Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_PRE_HOOK], precount, name[64], hooks[], &count)
@@ -460,10 +468,12 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(hooks[], num, &ptr, &next, name[],
 <returns>
 	The address at which the actual code in this function starts.
 </returns>
+<remarks>
 	This handles three cases.  Regular functions end instantly as found.
 	Functions that start with a switch (even before "PROC") are assumed to be
 	state-based functions, and we find the most likely state to be used (i.e. we
 	remove all future state changes).
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
@@ -518,6 +528,7 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 <returns>
 	The number of hooks found.
 </returns>
+<remarks>
 	The name of the function currently being processed is derived from the first
 	found hook.  This means we already know of one hook, but to simplify the
 	code we get that one again here.  Above we only know the name not the
@@ -552,6 +563,7 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 	If there is only one hook, no original function, and the name of the hook is
 	shorter than the name of the original function then we have an issue and
 	will have to do something else instead.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[128], idx, &namelen)
@@ -706,8 +718,10 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(name[64], hooks[], count, write, bool:haspreh
 
 /**--------------------------------------------------------------------------**-
 <param name="entry">The public function slot to destroy.</param>
+<remarks>
 	Basically, once we know a function has been included, wipe it from the AMX
 	header.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
@@ -789,7 +803,9 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(name[64])
 <returns>
 	The number of bytes written to memory.
 </returns>
+<remarks>
 	Generate some new code, very nicely :D.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1, const skipable = true)
@@ -928,8 +944,10 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	0  - The addresses are the same
 	1  - The second address is bigger.
 </returns>
+<remarks>
 	Reads two addresses, converts them to big endian, and compares them as four
 	characters of a string at once.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 _Y_HOOKS_STATIC Hooks_CompareNextCell(addr0, addr1)
@@ -957,7 +975,9 @@ _Y_HOOKS_STATIC Hooks_CompareNextCell(addr0, addr1)
 /**--------------------------------------------------------------------------**-
 <param name="idx0">The index of the 1st public.</param>
 <param name="idx1">The index of the 2nd public.</param>
+<remarks>
 	Compares two public function entries, and if need-be, swaps them over.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
@@ -997,9 +1017,11 @@ _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 }
 
 /**--------------------------------------------------------------------------**-
+<remarks>
 	Goes through the whole of the public functions table and sorts them all in
 	to alphabetical order.  This is done as we move and rename some so we need
 	to fix the virtual machine's binary search.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 _Y_HOOKS_STATIC Hooks_SortPublics()
@@ -1039,7 +1061,9 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 }
 
 /**--------------------------------------------------------------------------**-
+<remarks>
 	Counts the number of public functions that have had their names erased.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
@@ -1057,7 +1081,9 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 }
 
 /**--------------------------------------------------------------------------**-
+<remarks>
 	Call the main hook run code, then advance the ALS chain.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 // New stuff.
@@ -1079,9 +1105,11 @@ stock _Hooks_AddReplacement(const longName[], const shortName[])
 }
 
 /**--------------------------------------------------------------------------**-
+<remarks>
 	Once all the replacement strings have been found, sort them by the length of
 	the short versions of the strings.  This is so that the longest (and special
 	case, e.g. "DynamicCP"-> "DynamicCP") replacements are always done first.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock Hooks_SortReplacements()
@@ -1118,7 +1146,9 @@ static stock Hooks_SortReplacements()
 }
 
 /**--------------------------------------------------------------------------**-
+<remarks>
 	Call the main hook run code, then advance the ALS chain.
+</remarks>
 <transition keep="true" target="_ALS : _ALS_go"/>
 *//*-------------------------------------------------------------------------**/
 

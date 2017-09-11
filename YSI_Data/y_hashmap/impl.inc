@@ -110,8 +110,10 @@ Definitions:
 /**--------------------------------------------------------------------------**-
 <param name="str">String to hash.</param>
 <param name="hash">Desination of the hash.</param>
+<remarks>
 	Quickly hashes the string using Bernstein.  Caters for both packed and
 	unpacked strings.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define HashMap_Hash(%0,%1) (%1=YHash(%0))
@@ -122,10 +124,12 @@ Definitions:
 <param name="size1">Number of entries.</param>
 <param name="size2">Total Size of each entry IN BYTES.</param>
 <param name="t2">Address of the name AND data start.</param>
+<remarks>
 	Finds the location of the hash map linked list data in the passed array data
 	and uses that to read the data through pointers subsequently.  It doesn't
 	matter WHERE in the enum the hash map data is, and if its not there you'll
 	get an error, or at least a warning.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
@@ -159,8 +163,10 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 <returns>
 	The number of BYTES this string takes up including the NULL.
 </returns>
+<remarks>
 	Caters for both packed and unpacked strings.  The weirdness is basically
 	just: "ispacked(str) ? (* 1) : (* 4)".
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define HashMap_ByteLen(%0) ((strlen((%0)) + 1) << (2 * _:!ispacked((%0))))
@@ -169,9 +175,11 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 <param name="m"></param>
 <param name="str"></param>
 <param name="value">More like the target slot.</param>
+<remarks>
 	Adds a value to the given hash map under the given string key.
 	
 	Actually more like adding an index, not a value...
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock bool:HashMap_Add(HashMap:m<>, const str[], value, bool:ignorecase = false)
@@ -327,8 +335,10 @@ stock HashMap_GetWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = fals
 /**--------------------------------------------------------------------------**-
 <param name="m">The hash map to modify.</param>
 <param name="str">The key to remove from the hash map.</param>
+<remarks>
 	Removes a given key and its associated value from the given hash map (if it
 	can be found in the map in the first place).
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock bool:HashMap_RemoveKeyWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = false)
@@ -463,8 +473,10 @@ static stock HashMap_GetBranchEnd(cur, &height, &parent, dir)
 /**--------------------------------------------------------------------------**-
 <param name="m">Hash map to modify.</param>
 <param name="value">Value to remove.</param>
+<remarks>
 	Removes a value from the hash map.  First it gets the string key for the
 	value, then removes that (to update associated linked lists correctly).
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock bool:HashMap_RemoveValue(HashMap:m<>, value)
@@ -485,9 +497,11 @@ stock bool:HashMap_RemoveValue(HashMap:m<>, value)
 <param name="m">The hash map to modify.</param>
 <param name="str">The key to modify.</param>
 <param name="value">The new value for the given key.</param>
+<remarks>
 	If this key is already in the hash map it is removed, and then the new value
 	is added in its place.  If the string already exists, its associated data is
 	removed.  If the value already exists, it is removed as well.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock HashMap_Set(HashMap:m<>, const str[], const value)

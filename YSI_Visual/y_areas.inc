@@ -468,9 +468,11 @@ static stock
 forward Area_Loop();
 
 /**--------------------------------------------------------------------------**-
+<remarks>
 	Sets up required variables.  Note that this hooks "OnScriptInit",
 	"OnGameModeInit" and "OnFilterScript".  This is because ALL scripts need to
 	initialise some things, and only the master needs to initialise others.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 mhook OnScriptInit()
@@ -525,7 +527,9 @@ hook OnFilterScriptInit()
 
 /**--------------------------------------------------------------------------**-
 <param name="num">Number of slots to add.</param>
+<remarks>
 	Actually removes slots from the unused count.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define Area_AddSlots(%1) \
@@ -533,8 +537,10 @@ hook OnFilterScriptInit()
 
 /**--------------------------------------------------------------------------**-
 <param name="area">Area to check validity of</param>
+<remarks>
 	An area slot could be used but still invalid if it's not the first slot in
 	an area set.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define Area_IsActive(%1) \
@@ -591,7 +597,9 @@ global void:Area_Debug(area)
 <returns>
 	Next available slot.
 </returns>
+<remarks>
 	Gets an empty slot, removes it from the unused list and returs a pointer.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock Area_GetFreeSlot()
@@ -608,7 +616,9 @@ static stock Area_GetFreeSlot()
 
 /**--------------------------------------------------------------------------**-
 <param name="area">Area to remove from the list.</param>
+<remarks>
 	You can only remove areas which are at the start of a list.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 foreign void:Area_Delete(area);
@@ -673,8 +683,10 @@ global void:Area_Delete(area)
 <param name="zone">The zone this area is in (right shifted 18).</param>
 <param name="start">The first of the allocated areas being removed.</param>
 <param name="end">The area in this zone after the last removed one.</param>
+<remarks>
 	Very tightly integrated with "Area_Delete", to the point where I could just
 	make them one function if I wanted (but I won't).
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock Area_DoRemove(zone, area, next)
@@ -724,8 +736,10 @@ static stock Area_DoRemove(zone, area, next)
 <returns>
 	All the zones this position overlaps.
 </returns>
+<remarks>
 	The most zones you can be in at once is 9 - I_, I_S, I_E, I_SE, X_, X_S,
 	X_E, X_SE, Z_ (or similar corners - NOT in O_ though).
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock Area_GetZones(Float:x, Float:y)
@@ -793,10 +807,12 @@ static stock Area_GetZones(Float:x, Float:y)
 <param name="maxy">End of an area.</param>
 <param name="area">The area to add to the determined zone.</param>
 <param name="last">The last slot that makes up the current zone.</param>
+<remarks>
 	Finds the smallest zone that this area will fit in completely.  Note that
 	due to a limitation in the code, any zones with a node touching the upper
 	edge of a zone will spill in to the next zone too.  Only lower zone edges
 	are inclusive.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock Area_DetermineZone(Float:minx, Float:miny, Float:maxx, Float:maxy, area, last)
@@ -1197,6 +1213,7 @@ global void:Area_SetAllWorlds(area, bool:set)
 /**--------------------------------------------------------------------------**-
 <param name="type">Type of area.</param>
 <param name="...">Points.</param>
+<remarks>
 	Types:
 		CUBE, Cube
 		CUBOID, Cuboid
@@ -1206,6 +1223,7 @@ global void:Area_SetAllWorlds(area, bool:set)
 		OVOID, Ovoid
 		SPHERE, Sphere
 		POLY, Poly
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define Area_Add(%0,%1) Area_Add%0(%1)
@@ -1352,8 +1370,10 @@ stock Area_AddBox(Float:minx, Float:miny, Float:maxx, Float:maxy)
 <returns>
 	Area slot or NO_AREA
 </returns>
+<remarks>
 	Technically a cylinder, no lower bound (ceiling added cos there was a
 	spare slot in the 4 float design which may as well have been used).
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Area_AddCircle(Float:x, Float:y, Float:r, Float:height = FLOAT_INFINITY)
@@ -1371,8 +1391,10 @@ stock Area_AddCircle(Float:x, Float:y, Float:r, Float:height = FLOAT_INFINITY)
 <returns>
 	Area slot or NO_AREA
 </returns>
+<remarks>
 	Technically a cylinder, no lower bound (ceiling added cos there was a
 	spare slot in the 4 float design which may as well have been used).
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 @foreign Area_AddOval(Float:x,Float:y,Float:rx,Float:ry,Float:h,Float:d);
@@ -1529,6 +1551,7 @@ stock Area_AddSphere(Float:x, Float:y, Float:z, Float:r)
 <returns>
 	Area slot or NO_AREA
 </returns>
+<remarks>
 	Creates an irregular shape to detect players in.  This is a 2d area made
 	up of a load of XY points.  If an odd number of parameters is passed the
 	extra one is assumed to be a ceiling so you can ignore interiors or planes.
@@ -1537,6 +1560,7 @@ stock Area_AddSphere(Float:x, Float:y, Float:z, Float:r)
 	
 	This is one of a few functions still written using the master system at a
 	low level (the other obvious one is "Class_Add").
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #if YSIM_HAS_MASTER
@@ -1833,8 +1857,10 @@ mhook OnPlayerConnect(playerid)
 
 /**--------------------------------------------------------------------------**-
 <param name="playerid">The player to check for.</param>
+<remarks>
 	Main processing for the system.  Takes one player and checks if they're in
 	some sort of range of somewhere.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #if defined AREAS_USE_TIMER
@@ -2045,9 +2071,11 @@ mhook OnPlayerConnect(playerid)
 <param name="x">X position to check.</param>
 <param name="y">Y position to check.</param>
 <param name="z">Z position to check.</param>
+<remarks>
 	Checks if the given position is in the give area.  All parameters are passed
 	to avoid calling functions over and over and over again.  If the return is
 	not true, "area" is updated to the next one in the chain.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock Area_CheckArea(playerid, world, area, Float:x, Float:y, Float:z, &next, areas[16], already)
@@ -2134,7 +2162,9 @@ static stock Area_CheckArea(playerid, world, area, Float:x, Float:y, Float:z, &n
 <param name="y">Y position to check.</param>
 <param name="z">Z position to check.</param>
 <param name="bounds">Data for the area position.</param>
+<remarks>
 	Checks if a point is in a given circle.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock Area_IsInCircle(Float:x, Float:y, Float:z, Float:bounds[])
@@ -2149,7 +2179,9 @@ static stock Area_IsInCircle(Float:x, Float:y, Float:z, Float:bounds[])
 <param name="y">Y position to check.</param>
 <param name="z">Z position to check.</param>
 <param name="bounds">Data for the area position.</param>
+<remarks>
 	Checks if a point is in a given sphere.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 /*static stock Area_IsInSphere(Float:x, Float:y, Float:z, Float:bounds[])
@@ -2165,7 +2197,9 @@ static stock Area_IsInCircle(Float:x, Float:y, Float:z, Float:bounds[])
 <param name="y">Y position to check.</param>
 <param name="z">Z position to check.</param>
 <param name="bounds">Data for the area position.</param>
+<remarks>
 	Checks if a point is in a given ovoid.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock Area_IsInOvoid(Float:x, Float:y, Float:z, Float:bounds[])
@@ -2181,6 +2215,7 @@ static stock Area_IsInOvoid(Float:x, Float:y, Float:z, Float:bounds[])
 <param name="y">Y position to check.</param>
 <param name="z">Z position to check.</param>
 <param name="header">Pointer to the start of the polygon data in the array.</param>
+<remarks>
 	Based on IsPlayerInAreaEx by koolk in the useful functions topic.  The
 	passed pointer is the pointer to the first set of co-ordinates in a one-
 	way not looping linked list of points in the polygod as the data may be
@@ -2197,6 +2232,7 @@ static stock Area_IsInOvoid(Float:x, Float:y, Float:z, Float:bounds[])
 	For simplicity's sake (and thus speed's sake) the lower pointes from the
 	last check are saved amd used as the upper points for the next check to
 	avoid loads of repeated array accesses and saving the last array position.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 /*static*/
@@ -2290,9 +2326,11 @@ stock Area_IsInPoly(Float:x, Float:y, Float:z, header)
 <param name="z">Z position to check.</param>
 <param name="lower">The lower corner of the cube.</param>
 <param name="upper">The upper corner of the cube.</param>
+<remarks>
 	Checks if a point is in a given cube.  This is another multi slot shape
 	but is much simpler than the poly as it's always 2 slots so we can easilly
 	get the data in one lump.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock Area_IsInCube(Float:x, Float:y, Float:z, Float:bounds[])
@@ -2304,10 +2342,12 @@ static stock Area_IsInCube(Float:x, Float:y, Float:z, Float:bounds[])
 <param name="x">X position to check.</param>
 <param name="y">Y position to check.</param>
 <param name="bounds">Data for the area position.</param>
+<remarks>
 	Checks if a point is in a given box.  There is no height check with this
 	one as any one area slot has 4 points which for this are upper and lower
 	x and y, adding a height check would make it require 2 slots and basically
 	make it a cube check.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 /*static stock Area_IsInBox(Float:x, Float:y, Float:bounds[])
@@ -2320,7 +2360,9 @@ static stock Area_IsInCube(Float:x, Float:y, Float:z, Float:bounds[])
 <returns>
 	The area a player is in or -1.
 </returns>
+<remarks>
 	Deprecated.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 //foreign Area_GetPlayerArea(playerid);
@@ -2340,7 +2382,9 @@ stock Area_GetPlayerArea(playerid)
 <param name="playerid">Player to set areas of.</param>
 <param name="idx">Which slot to set.</param>
 <param name="area">The area to store in that slot.</param>
+<remarks>
 	Sets a player as in a slot.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock
@@ -2377,9 +2421,11 @@ static stock
 <returns>
 	The area a player is in or -1.
 </returns>
+<remarks>
 	Replaces Area_GetPlayerArea for multiple areas.  Includes an internal
 	version for tighter loops within this code to use once it is known that a
 	player exists, and without using the global function system.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock
@@ -2438,7 +2484,9 @@ global void:Area_SetPlayer(area, playerid, bool:set)
 /**--------------------------------------------------------------------------**-
 <param name="area">Area to get for.</param>
 <param name="playerid">Player to get for.</param>
+<remarks>
 	Can the player USE this area (not are they in it)?
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 foreign bool:Area_GetPlayer(area, playerid);
@@ -2531,8 +2579,10 @@ global bool:Area_IsValid(area)
 <returns>
 	Is the passed area valid and empty.
 </returns>
+<remarks>
 	Currently very slow as it has to loop through multiple players!  I may add
 	an entry counter to zones to make this O(1) instead of O(nm).
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 foreign bool:Area_IsEmpty(area);
@@ -2565,11 +2615,13 @@ global bool:Area_IsEmpty(area)
 /**--------------------------------------------------------------------------**-
 <param name="area">Area to set for.</param>
 <param name="callback">Callback to use.</param>
+<remarks>
 	Adds a y_inline style callback (publics included) to an area to be called
 	when a player enters it.  This is NOT a remote function and instead records
 	the data locally to call functions in the correct script (or they'll just
 	end up crashing as you will be jumping to an arbitrary address in a script
 	that doesn't have sensible code at that address.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 /**--------------------------------------------------------------------------**-

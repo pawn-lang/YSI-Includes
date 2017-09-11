@@ -298,10 +298,12 @@ public OnPlayerDisconnect(playerid, reason)
 <returns>
 	Is the value in the given range.
 </returns>
+<remarks>
 	Equivalent to:
 	
 		(%1) &lt;= (%0) &lt; (%2)
 	
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
@@ -316,7 +318,9 @@ public OnPlayerDisconnect(playerid, reason)
 <returns>
 	(numerator / denominator) rounded up.
 </returns>
+<remarks>
 	Normal integer division ALWAYS rounds down - this always rounds up.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define ceildiv(%0,%1) (((%0)-1)/(%1)+1)
@@ -330,8 +334,10 @@ public OnPlayerDisconnect(playerid, reason)
 <returns>
 	(numerator / denominator) rounded down.
 </returns>
+<remarks>
 	Normal integer division ALWAYS rounds down - this also always rounds down,
 	making it a little pointless, but also more explicit in function.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define floordiv(%0,%1) ((%0)/(%1))
@@ -399,8 +405,10 @@ stock StrToUpper(str[], len = sizeof (str))
 /**--------------------------------------------------------------------------**-
 <param name="minmax">Lower bound, or upper bound when only parameter.</param>
 <param name="max">Upper bound.</param>
+<remarks>
 	Generate a random float between the given numbers (min &lt;= n &lt; max).
 	Default minimum is 0.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Random(min, max = cellmin)
@@ -420,8 +428,10 @@ stock Random(min, max = cellmin)
 <param name="minmax">Lower bound, or upper bound when only parameter.</param>
 <param name="max">Upper bound.</param>
 <param name="dp">How small to make the differences</param>
+<remarks>
 	Generate a random float between the given numbers (min &lt;= n &lt; max).  Default
 	minimum is 0.0.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
@@ -451,7 +461,9 @@ stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
 
 /**--------------------------------------------------------------------------**-
 <param name="str">The string to remove the newline characters from</param>
+<remarks>
 	Updated from old versions, should be more efficient
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock StripNL(str[])
@@ -495,7 +507,9 @@ stock Strip(str[])
 /**--------------------------------------------------------------------------**-
 <param name="line">String to check.</param>
 <param name="pos">Postion to start from.</param>
+<remarks>
 	Checks if the current point in a line is the end of non-whitespace data.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock endofline(line[], pos)
@@ -561,6 +575,7 @@ stock IPToInt(ip[])
 <returns>
 	the bernstein hash of the input string
 </returns>
+<remarks>
 	This is a 32bit hash system so is not very secure, however we're only
 	using this as a string enumerator to uniquely identify strings easilly
 	and allow for a binary search of strings based on the hash of their name.
@@ -584,6 +599,7 @@ stock IPToInt(ip[])
 	the function at all, I just mentioned it here for "interest".
 	
 	Rewritten in self-generating assembly.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock bernstein(string[] /* 12 */)
@@ -659,7 +675,9 @@ stock ishex(str[])
 <returns>
 	unpacked string
 </returns>
+<remarks>
 	Mainly used for debugging.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock unpack(const str[])
@@ -689,8 +707,10 @@ stock unpack(const str[])
 <returns>
 	string
 </returns>
+<remarks>
 	Is passed the result of getarg, which will be the address of a string (in
 	theory) and uses that for DMA to get the string.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define getstring        returnstringarg
@@ -753,9 +773,11 @@ stock returnstringarg(idx)
 <returns>
 	Formatted string.
 </returns>
+<remarks>
 	Just wraps `format` and returns a string instead.
 	
 	Has extra code to ensure that it works correct only the old compiler.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
@@ -802,7 +824,9 @@ stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
 
 /**--------------------------------------------------------------------------**-
 <param name="str">String to check</param>
+<remarks>
 	Checks if a given string is numeric.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock isnumeric(str[])
@@ -822,8 +846,10 @@ stock isnumeric(str[])
 	<returns>
 		value of the passed hex string.
 	</returns>
-			Now stops on invalid characters.
-		**/
+	<remarks>
+		Now stops on invalid characters.
+	</remarks>
+	**/
 	
 	stock hexstr(string[])
 	{
@@ -861,10 +887,12 @@ stock isnumeric(str[])
 	<returns>
 		bool: passed boolean.
 	</returns>
-			This can take a number of ways of representing booleans - 0, false and
+	<remarks>
+		This can take a number of ways of representing booleans - 0, false and
 		nothing there.  Anything not one of those things (false is not case
 		sensitive) is assumed true.
-		**/
+	</remarks>
+	**/
 	
 	stock bool:boolstr(string[])
 	{
@@ -878,9 +906,11 @@ stock isnumeric(str[])
 	<returns>
 		bool: passed boolean.
 	</returns>
-			This takes a value in 0110101 (boolean) format and returns it as a
+	<remarks>
+		This takes a value in 0110101 (boolean) format and returns it as a
 		regular value.
-		**/
+	</remarks>
+	**/
 	
 	stock binstr(string[])
 	{
@@ -934,7 +964,9 @@ stock isnumeric(str[])
 <param name="dest">Destination address.</param>
 <param name="src">Source data.</param>
 <param name="bytes">Number of bytes to copy.</param>
+<remarks>
 	Like memcpy, but takes addresses instead of arrays.  Also far less secure.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock rawMemcpy(dest, src, bytes)
@@ -956,6 +988,7 @@ stock rawMemcpy(dest, src, bytes)
 <param name="arr">Array or address to set to a value.</param>
 <param name="iValue">What to set the cells to.</param>
 <param name="iSize">Number of cells to fill.</param>
+<remarks>
 	Based on code by Slice:
 	
 	http://forum.sa-mp.com/showthread.php?p=1606781#post1606781
@@ -968,6 +1001,7 @@ stock rawMemcpy(dest, src, bytes)
 	"rawmemset" is similar, but takes an AMX data segment address instead and
 	the size is in bytes, not cells.  However, the size must still be a multiple
 	of 4.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock memset(arr[], val = 0, size = sizeof (arr))
@@ -984,6 +1018,7 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 <param name="iAddress">Array or address to set to a value.</param>
 <param name="iValue">What to set the cells to.</param>
 <param name="iSize">Number of cells to fill.</param>
+<remarks>
 	Based on code by Slice:
 	
 	http://forum.sa-mp.com/showthread.php?p=1606781#post1606781
@@ -996,6 +1031,7 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 	"rawmemset" is similar, but takes an AMX data segment address instead and
 	the size is in bytes, not cells.  However, the size must still be a multiple
 	of 4.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
@@ -1074,8 +1110,10 @@ stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 	ReturnPlayerName
 </summary>
 <param name="playerid">Player whose name you want to get.</param>
+<remarks>
 	Now uses a global array to avoid repeated function calls.  Actually doesn't
 	because that causes issues with multiple scripts.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock ReturnPlayerName(playerid)
@@ -1096,8 +1134,10 @@ stock ReturnPlayerName(playerid)
 	1 - File was created.
 	-1 - File was not created.
 </returns>
+<remarks>
 	This "touches" a file in the Unix sense of creating it but not opening or
 	editing it in any way.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock ftouch(const filename[])
@@ -1131,6 +1171,7 @@ stock ftouch(const filename[])
 <param name="value">The interpolation value between the endpoints.</param>
 <param name="maxvalue">One of the two numbers.</param>
 <param name="minvalue">The other of the two numbers.</param>
+<remarks>
 	This function takes two endpoint values (minvalue and maxvalue, with
 	minvalue defaulting to 0), along with a third value (value) whose distance
 	between the two endpoints is calculated (as a percentage).  This percentage
@@ -1140,6 +1181,7 @@ stock ftouch(const filename[])
 	For example, if the endpoints given are "0" and "10", and the value given is
 	"3", then that is "30%" of the way between the two endpoints.  We therefore
 	want to find a colour that is 30% of the way between the two given colours.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 // "Interpolation" is the technical name for what you are doing here.
@@ -1173,7 +1215,9 @@ stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
 <returns>
 	The end of the whitespace.
 </returns>
+<remarks>
 	Doesn't skip over NULL terminators.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock SkipWhitespace(const str[], pos)
@@ -1187,7 +1231,9 @@ stock SkipWhitespace(const str[], pos)
 <param name="str">The string to trim.</param>
 <param name="start">Start of the substring.</param>
 <param name="end">End of the substring.</param>
+<remarks>
 	Modifies "start" and "end" to be tight on text in "str".
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Trim(const str[], &start, &end)
@@ -1210,7 +1256,9 @@ stock Trim(const str[], &start, &end)
 <returns>
 	The current position in the file.
 </returns>
+<remarks>
 	Doesn't seem to work despite documentation claiming it will.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 //#define ftell(%0) fseek((%0), 0, seek_current)

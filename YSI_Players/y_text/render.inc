@@ -580,6 +580,7 @@ static stock Format_DoEndFade(output[], &start, end, &rem, colour, &initial) //<
 <returns>
 	The amount of data from "in" not added to "out".
 </returns>
+<remarks>
 	Takes an input string and adds it to an output string.  If the input string
 	is too long to fit in the remainder of the output string, what has been
 	added already (including part of the input string) is displayed and a new
@@ -589,6 +590,7 @@ static stock Format_DoEndFade(output[], &start, end, &rem, colour, &initial) //<
 	the right colour.  This will also require a method of winding back the state
 	to the point just after the initial input string was added to continue on to
 	show the next string including newly determined fade data.
+</remarks>
 <transition keep="true" target="y_render_fade : y_render_fade_real" source="y_render_fade : y_render_fade_redo" />
 *//*-------------------------------------------------------------------------**/
 

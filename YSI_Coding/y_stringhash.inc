@@ -313,6 +313,7 @@ enum e_HASH_TYPE
 <returns>
 	The reverse Bernstein hash of the string.
 </returns>
+<remarks>
 	Based on Bernstein hash, but backwards to match the macros.  The only
 	characters which can be used in the compile time version of this code are:
 	a-z, A-Z, 0-9, _ and space.
@@ -320,6 +321,7 @@ enum e_HASH_TYPE
 native Hash(str[]);
 
 	NOW FORWARD AGAIN.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstein, len = -1, pack = false)

@@ -217,7 +217,9 @@ stock
 
 /**--------------------------------------------------------------------------**-
 <param name="name">Name of the current function.</param>
+<remarks>
 	Gets a reference to the 
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock _Testing_Start(name[])
@@ -239,7 +241,9 @@ stock _Testing_Start(name[])
 <param name="playerid">Player to ask a question to.</param>
 <param name="str">What to ask.</param>
 <param name="va_args">Additional data.</param>
+<remarks>
 	Calls a dialog to ask the player if the given test actually passed.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Testing_Ask(playerid, str[] = "", va_args<>)
@@ -280,7 +284,9 @@ stock Testing_Test(bool:x, str[] = "", va_args<>)
 
 /**--------------------------------------------------------------------------**-
 <param name="name">Name of the current function.</param>
+<remarks>
 	Gets a reference to the 
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock bool:_Testing_End()
@@ -299,10 +305,12 @@ stock bool:_Testing_End()
 <returns>
 	Wether all tests were sucessful or not.
 </returns>
+<remarks>
 	-
 
 native Testing_Run(&tests, &fails, buffer[33] = "");
 
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
@@ -410,10 +418,12 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 <returns>
 	Wether all tests were sucessful or not.
 </returns>
+<remarks>
 	-
 
 native Testing_Run(&tests, &fails, buffer[33] = "");
 
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", bool:p = false)

@@ -9,9 +9,11 @@ global void:Command_SetDeniedReturn(bool:set)
 
 /**--------------------------------------------------------------------------**-
 <param name="p">Script.</param>
+<remarks>
 	Set the current provider to use for all commands being added. Basically
 	allows us to have the same command name in different scripts and have them
 	do different things, with different players targetting different ones.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 foreign void:Command_SetProvider(p);

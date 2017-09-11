@@ -330,9 +330,11 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 <returns>
 	Position when found, "cellmax - 1" on fail.
 </returns>
+<remarks>
 	Uses "cellmax" not "-1" as a failure return as it is easier to utilise in
 	later code (it is only used as an upper-bound on line positions).  This is
 	similar to "strfind", but accounts for escape sequences.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 /*_Y_INI_STATIC*/ stock INI_FindString(const str[], const sub[], pos = -1)
@@ -492,8 +494,10 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 <returns>
 	e_INI_LINE_TYPE
 </returns>
+<remarks>
 	This function's signature is so long that I put it on a separate line.  This
 	takes a line and determines what it is and where the parts are.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define INI_SkipWhitespace(%0,%1) while ('\0' < %0[%1] <= ' ') ++%1
@@ -635,6 +639,7 @@ state_in_comment:
 <param name="remoteFormat">The source format.</param>
 <param name="filename">The file we are currently parsing.</param>
 <param name="bFileFirst">The format parameter ordering.</param>
+<remarks>
 	Generates a partial function name for processing callbacks.  Includes the
 	filename and a placeholder for the tag name.  This now takes extra
 	characters in to account and strips or converts bits:
@@ -653,6 +658,7 @@ state_in_comment:
 	is no place for the function name to go.
 	
 	This is quite a complex function, but is only called once per file parse.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filename[], const bool:bFileFirst)
@@ -717,9 +723,11 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filena
 <returns>
 	Was the function found?
 </returns>
+<remarks>
 	Gets a callback given a partial function name and a tag name.  Also saves
 	the tag elsewhere.  This might not work as a separate function - it will
 	need to be in the function called by the function with the inlines in.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define INI_GetCallback(%0,%1,%2,%3,%4,%5) \
@@ -743,12 +751,14 @@ name.</param>
 <param name="bFilter">Apply the tag name filter to all tags or just prefixed
 ones?</param>
 <param name="filter">Text to use to search for which tags to load.</param>
+<remarks>
 	bFileFirst sets the order and inclusion of the possible remoteFormat
 	parameters.  If true the format will add the filename first then the 
 	current tag, if false the order will be reversed.  This can also be used
 	to exclude one or the other from the function name by setting the required
 	parameter to be entered first and then only having one %s in the format
 	sting.  The default order is tag first for languages compatibility.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock
@@ -896,12 +906,14 @@ name.</param>
 <param name="bFilter">Apply the tag name filter to all tags or just prefixed
 ones?</param>
 <param name="filter">Text to use to search for which tags to load.</param>
+<remarks>
 	bFileFirst sets the order and inclusion of the possible remoteFormat
 	parameters.  If true the format will add the filename first then the 
 	current tag, if false the order will be reversed.  This can also be used
 	to exclude one or the other from the function name by setting the required
 	parameter to be entered first and then only having one %s in the format
 	sting.  The default order is tag first for languages compatibility.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock INI_DoParentTag(const epos, const search[], File:f, callback[E_CALLBACK_DATA], bool:bExtra, extra, bool:bPassTag, tag[], bool:bFilter, filter[])

@@ -181,11 +181,13 @@ static stock __COMPILER_SECOND_PASS() {}
 	<returns>
 		string
 	</returns>
-			The old compiler has a very annoying bug where returning a string from a
+	<remarks>
+		The old compiler has a very annoying bug where returning a string from a
 		function that takes variable parameters will not work correctly.  This
 		is because string returns are done with a secret extra parameter but it
 		is not correctly selected when the count is unknown or variable.
-		**/
+	</remarks>
+	**/
 	
 	#include "y_funcinc"
 	

@@ -177,7 +177,9 @@ enum E_BINTREE_INPUT
 /**--------------------------------------------------------------------------**-
 <param name="input">Data to sort.</param>
 <param name="size">Size of data to sort.</param>
+<remarks>
 	Entry point for Bintree_QSort.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define Bintree_Sort(%1,%2) \
@@ -190,7 +192,9 @@ enum E_BINTREE_INPUT
 <returns>
 	Bintree_SortHalf.
 </returns>
+<remarks>
 	Entry point for Bintree_SortHalf.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #define Bintree_Fill(%1,%2,%3) \
@@ -200,7 +204,9 @@ enum E_BINTREE_INPUT
 <param name="output">Binary tree to store the data in.</param>
 <param name="input">Input data to get the data from.</param>
 <param name="size">Number of items to sort.</param>
+<remarks>
 	Just calls the sort and fill routines.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Bintree_Generate(BinaryTree:output<>, BinaryInput:input<>, size = sizeof (input))
@@ -221,7 +227,9 @@ stock Bintree_Generate(BinaryTree:output<>, BinaryInput:input<>, size = sizeof (
 /**--------------------------------------------------------------------------**-
 <param name="tree">Array to reset.</param>
 <param name="pointer">Position to reset.</param>
+<remarks>
 	Initialises the array for use.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Bintree_Reset(BinaryTree:tree<>, pointer = 0)
@@ -239,6 +247,7 @@ stock Bintree_Reset(BinaryTree:tree<>, pointer = 0)
 <param name="value">Value to search for.</param>
 <param name="cont">Start point.</param>
 <param name="old">The last real leaf.</param>
+<remarks>
 	Itterates through the array following the various paths till it locates
 	the value provided or reaches a dead end.  If the current value is greater
 	than the search value, the search goes left, otherwise right.
@@ -246,6 +255,7 @@ stock Bintree_Reset(BinaryTree:tree<>, pointer = 0)
 	If cont is not -1 the search will start from the data pointed to by the
 	data pointed to by conts' right path, this is to allow collisions to be
 	passed over if you want a subsequent one.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Bintree_FindValue(BinaryTree:tree<>, value, &cont = 0, &old = 0)
@@ -275,8 +285,10 @@ stock Bintree_FindValue(BinaryTree:tree<>, value, &cont = 0, &old = 0)
 <param name="numbers">Data to sort.</param>
 <param name="left">Start index.</param>
 <param name="right">End index.</param>
+<remarks>
 	Custom version of QSort (see YSI_misc) allows for E_BINTREE_INPUT data
 	types, preserving the relative pointers for the sorted data.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Bintree_QSort(numbers[][E_BINTREE_INPUT], left, right)
@@ -322,6 +334,7 @@ stock Bintree_QSort(numbers[][E_BINTREE_INPUT], left, right)
 <returns>
 	Size of balanced tree.
 </returns>
+<remarks>
 	Recursively calls itself.  Bisects the passed array and passed each half
 	back to itself, with the middle value of each half being the left and
 	right branches of the middle value of the passed array (which isn't
@@ -334,6 +347,7 @@ stock Bintree_QSort(numbers[][E_BINTREE_INPUT], left, right)
 	after bisecting values haven't been tested).
 	
 	Based on code written for PHP by me.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Bintree_SortHalf(BinaryTree:output<>, data[][E_BINTREE_INPUT], index, upper, offset, parent)
@@ -393,10 +407,12 @@ stock Bintree_SortHalf(BinaryTree:output<>, data[][E_BINTREE_INPUT], index, uppe
 <returns>
 	Next free location
 </returns>
+<remarks>
 	-
 
 native Bintree_Add(BinaryTree:tree<>, pointer, value, offset, maxsize = sizeof (data));
 
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Bintree_Add(BinaryTree:data<>, pointer, value, offset, maxsize = sizeof (data))
@@ -434,12 +450,14 @@ stock Bintree_Add(BinaryTree:data<>, pointer, value, offset, maxsize = sizeof (d
 <param name="tree">Data.</param>
 <param name="index">Index to remove.</param>
 <param name="count">Number of binary tree items.</param>
+<remarks>
 	The left branch is usually larger due to the division
 	method used so we start there.  Even though right is
 	>= and left is only < in even sized arrays the greater
 	chunk (unless there's only 2 items) goes left.
 	
 	Called itteratively to ensure branches are maintained.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Bintree_Delete(BinaryTree:source<>, index, count)
@@ -508,7 +526,9 @@ static stock Bintree_Compress(BinaryTree:data<>, index, count)
 /**--------------------------------------------------------------------------**-
 <param name="data">Array to search.</param>
 <param name="offset">Start of branch to search.</param>
+<remarks>
 	Finds the smallest value on a branch
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock Bintree_FindMin(BinaryTree:data<>, offset)
@@ -523,7 +543,9 @@ static stock Bintree_FindMin(BinaryTree:data<>, offset)
 /**--------------------------------------------------------------------------**-
 <param name="data">Array to search.</param>
 <param name="offset">Start of branch to search.</param>
+<remarks>
 	Finds the largest value on a branch
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 static stock Bintree_FindMax(BinaryTree:data<>, offset)
@@ -539,8 +561,10 @@ static stock Bintree_FindMax(BinaryTree:data<>, offset)
 <param name="data">Data to modify.</param>
 <param name="offset">Pointer to modify values after.</param>
 <param name="mod">Value to modify by.</param>
+<remarks>
 	Used for updating pointers when the target data has been modifed (i.e. a
 	value has been removed from the array and the array shifted).
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Bintree_UpdatePointers(BinaryTree:data<>, offset, size, mod = -1)

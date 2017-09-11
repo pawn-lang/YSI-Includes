@@ -124,6 +124,7 @@ Compile options:
 <returns>
 	All the bits in the input reversed.
 </returns>
+<remarks>
 	1)
 	Example: 0b11110000000000000000000000000000
 	Becomes: 0b00000000000000000000000000001111
@@ -135,6 +136,7 @@ Compile options:
 	3)
 	Example: 0b01010101010101010101010101010101
 	Becomes: 0b10101010101010101010101010101010
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
@@ -219,6 +221,7 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 <returns>
 	All the nibbles (4-bit chunks) in the input reversed.
 </returns>
+<remarks>
 	1)
 	Example: 0x12345678
 	Becomes: 0x87654321
@@ -230,6 +233,7 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 	3)
 	Example: 0xF0F0F0F0
 	Becomes: 0x0F0F0F0F
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
@@ -288,6 +292,7 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 <returns>
 	All the bytes in the input reversed.
 </returns>
+<remarks>
 	1)
 	Example: 0x12345678
 	Becomes: 0x78563412
@@ -299,6 +304,7 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 	3)
 	Example: 0xFF00FF00
 	Becomes: 0x00FF00FF
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
@@ -344,6 +350,7 @@ stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 <returns>
 	The number of 1s (set bits) in the input.
 </returns>
+<remarks>
 	1)
 	Example: 0
 	Returns: 0
@@ -359,6 +366,7 @@ stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 	I rewrote this in assembly just to see if I could pretty much.  I also
 	rewrote the lookup version in assembly.  In theory it should be faster, but
 	the marshalling of data was a little awkward.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
@@ -405,6 +413,7 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 <returns>
 	The integer position of the lowest set bit.
 </returns>
+<remarks>
 	1)
 	Example: 0b00000000000000000000000000000001
 	Returns: 0
@@ -422,6 +431,7 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	before passing it to this function.
 	
 	See: http://supertech.csail.mit.edu/papers/debruijn.pdf
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
@@ -458,6 +468,7 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 <returns>
 	The integer position of the lowest set bit PLUS ONE.
 </returns>
+<remarks>
 	This function is identical to "Cell_GetLowestBit", but gives different
 	results for 0 and non-zero numbers.  The examples below all have a result
 	one higher than the "Cell_GetLowestBit" function.
@@ -479,6 +490,7 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 	Returns: 0
 	
 	See: http://supertech.csail.mit.edu/papers/debruijn.pdf
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
@@ -529,6 +541,7 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 <returns>
 	The lowest set bit.
 </returns>
+<remarks>
 	Similar to Cell_GetLowestBit, but returns the bit, not the position of the
 	bit.
 	
@@ -543,6 +556,7 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 	3)
 	Example: 0b00010001100011000011100010001000
 	Returns: 0b00000000000000000000000000001000
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
@@ -568,6 +582,7 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 <returns>
 	Selected bits from "x", shifted to be LSBs.
 </returns>
+<remarks>
 	Very briefly, do "x &amp; m", to select certain bits, then shift those bits by
 	various amounts so that they are consecutive:
 	
@@ -585,6 +600,7 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 	
 	http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb
 	
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
@@ -609,9 +625,11 @@ stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 <returns>
 	LSBs from "x", shifted to selected bit positions.
 </returns>
+<remarks>
 	The reverse of "Cell_CompressRightPrecomputed".  Doesn't return exactly the
 	original number before a compression, just the original number ANDed with
 	the mask "m".
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
@@ -633,10 +651,12 @@ stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 <returns>
 	Five precomputed constants to help expand or contract this mask.
 </returns>
+<remarks>
 	The full maths for generalised expansion and contraction is quite complex;
 	however, much of the inner loop relies only on the mask and not on the value
 	being manipulated.  Given this we can do a lot of work in advance, say
 	outside a loop, to avoid repeated calculations.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Cell_PrecomputeMaskPermutation(m)
@@ -674,7 +694,9 @@ stock Cell_PrecomputeMaskPermutation(m)
 <returns>
 	Selected bits from "x", shifted to be LSBs.
 </returns>
+<remarks>
 	Doesn't require precomputation.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Cell_CompressRight(GLOBAL_TAG_TYPES:x, m)
@@ -697,7 +719,9 @@ stock Cell_CompressRight(GLOBAL_TAG_TYPES:x, m)
 <returns>
 	LSBs from "x", shifted to selected bit positions.
 </returns>
+<remarks>
 	Doesn't require precomputation.
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)

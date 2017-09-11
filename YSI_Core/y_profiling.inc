@@ -157,10 +157,12 @@ static stock
 <returns>
 	Wether all profilings were sucessful or not.
 </returns>
+<remarks>
 	-
 
 native Profiling_Run(&profilings, &fails, buffer[33] = "");
 
+</remarks>
 *//*-------------------------------------------------------------------------**/
 
 stock bool:Profiling_Run(&profilings)
