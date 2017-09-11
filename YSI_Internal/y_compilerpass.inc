@@ -1,4 +1,27 @@
-/*+
+/**
+<!--
+<transition target[^/]+/>
+
+:::::::: README ::::::::
+
+This information goes very close to the top of the generated XML documentation
+(because of include dependency orders), but doesn't appear in the visual output.
+
+There is a bug in the compiler related to outputting documentation on state
+transitions (https://github.com/Zeex/pawn/issues/184).  So after generation of
+the XML file, you should clean it up with the following RegEx replacement:
+
+Search: <transition target[^/]+/>
+Replace: (nothing)
+
+This works 99% of the time, though you may get one where the corrupted target
+includes the character `/`, in which case you should manually delete them.  Note
+that YSI now includes manual documentation for transitions, but these all
+include the parameter `keep="true"`, which exists simply to not match that
+RegEx.  I also put the search at the top of this block so it is easier to find
+in the output code.
+-->
+*//*+
 					================================
 					Y Sever Includes - Compiler Pass
 					================================
@@ -48,7 +71,7 @@ Operators:
 	-
 Natives:
 	-
-*//*+ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	
