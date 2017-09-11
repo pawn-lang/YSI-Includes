@@ -497,7 +497,7 @@ mhook OnPlayerConnect(playerid)
 <param name="y">Y spawn location.</param>
 <param name="z">Z spawn location.</param>
 <param name="a">A spawn location.</param>
-<param name="...">Spawn weapons and ammo (weapon then ammo)</param>
+<param name="">Spawn weapons and ammo (weapon then ammo)</param>
 <remarks>
 	Pretty much AddPlayerClass but allows greater control over the classes.
 	Now has infinate (MAX_CLASS_SPAWN_WEAPONS) spawn weapons.  This is one of
@@ -528,7 +528,7 @@ stock Class_Add(skin, Float:x, Float:y, Float:z, Float:a, ...)
 <param name="y">Y spawn location.</param>
 <param name="z">Z spawn location.</param>
 <param name="a">A spawn location.</param>
-<param name="...">Spawn weapons and ammo (weapon then ammo)</param>
+<param name="">Spawn weapons and ammo (weapon then ammo)</param>
 <remarks>
 	Pretty much AddPlayerClass but allows greater control over the classes.
 	Now has infinate (MAX_CLASS_SPAWN_WEAPONS) spawn weapons.
@@ -555,7 +555,7 @@ stock Class_AddEx(Group:forgroup, Group:setgroup, skin, Float:x, Float:y, Float:
 <param name="y">Y spawn location.</param>
 <param name="z">Z spawn location.</param>
 <param name="a">A spawn location.</param>
-<param name="...">Weapon data.</param>
+<param name="">Weapon data.</param>
 <remarks>
 	Adds a class only people in the specified group can use.
 </remarks>
@@ -581,7 +581,7 @@ stock Class_AddForGroup(Group:group, skin, Float:x, Float:y, Float:z, Float:a, .
 <param name="y">Y spawn location.</param>
 <param name="z">Z spawn location.</param>
 <param name="a">A spawn location.</param>
-<param name="...">Spawn weapons.</param>
+<param name="">Spawn weapons.</param>
 <remarks>
 	Adds a class which puts you in the specified group when selected.
 </remarks>

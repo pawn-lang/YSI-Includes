@@ -195,7 +195,7 @@ stock bool:Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 <param name="array">The array we want to resize a slot in.</param>
 <param name="size1">The number of slots in the array.</param>
 <param name="size2">The ORIGINAL size of every slot.</param>
-<param name="...">Multiple {slot, size} tuples.</param>
+<param name="">Multiple {slot, size} tuples.</param>
 <remarks>
 	Resize multiple array slots, maintining all of their data.
 </remarks>
@@ -221,7 +221,7 @@ stock bool:_Jagged_Resize(array[][], size1, size2, ...)
 <param name="array">The array we want to resize a slot in.</param>
 <param name="size1">The number of slots in the array.</param>
 <param name="size2">The ORIGINAL size of every slot.</param>
-<param name="...">New sizes for every slot.</param>
+<param name="">New sizes for every slot.</param>
 <remarks>
 	Resize multilpe array slots, maintining all of their data.
 </remarks>
@@ -301,7 +301,7 @@ stock bool:Jagged_MoveOne(array[][], size1, size2, slot, newSize)
 <param name="array">The array we want to resize a slot in.</param>
 <param name="size1">The number of slots in the array.</param>
 <param name="size2">The ORIGINAL size of every slot.</param>
-<param name="...">Multiple {slot, size} tuples.</param>
+<param name="">Multiple {slot, size} tuples.</param>
 <remarks>
 	"Resize" copies data to keep as much of the original data as possible.  This
 	just moves the boundaries.
@@ -328,7 +328,7 @@ stock bool:_Jagged_Move(array[][], size1, size2, ...)
 <param name="array">The array we want to resize a slot in.</param>
 <param name="size1">The number of slots in the array.</param>
 <param name="size2">The ORIGINAL size of every slot.</param>
-<param name="...">New sizes for every slot.</param>
+<param name="">New sizes for every slot.</param>
 <remarks>
 	"Resize" copies data to keep as much of the original data as possible.  This
 	just moves the boundaries.

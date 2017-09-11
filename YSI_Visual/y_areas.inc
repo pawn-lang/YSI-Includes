@@ -1212,7 +1212,7 @@ global void:Area_SetAllWorlds(area, bool:set)
 
 /*-------------------------------------------------------------------------*//**
 <param name="type">Type of area.</param>
-<param name="...">Points.</param>
+<param name="">Points.</param>
 <remarks>
 	Types:
 		CUBE, Cube
@@ -1547,7 +1547,7 @@ stock Area_AddSphere(Float:x, Float:y, Float:z, Float:r)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="...">X/Ys of points</param>
+<param name="">X/Ys of points</param>
 <returns>
 	Area slot or NO_AREA
 </returns>

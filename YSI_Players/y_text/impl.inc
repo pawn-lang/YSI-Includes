@@ -1427,7 +1427,7 @@ static stock
 <param name="players">A representation of players to show to.</param>
 <param name="search">Text sets to look in for this string.</param>
 <param name="ident">The name of the string to look for (or the string itself).</param>
-<param name="...">All the parameters to pass to the string.</param>
+<param name="">All the parameters to pass to the string.</param>
 <remarks>
 	Main entry point for showing any sort of code to anyone.
 	
@@ -1659,7 +1659,7 @@ stock _Text_Send(@PlayerSet:players, search[], ident[], GLOBAL_TAG_TYPES:...)
 /*-------------------------------------------------------------------------*//**
 <param name="search">Text sets to look in for this string.</param>
 <param name="ident">The name of the string to look for (or the string itself).</param>
-<param name="...">All the parameters to pass to the string.</param>
+<param name="">All the parameters to pass to the string.</param>
 <remarks>
 	This function renders some text to an array, but doesn't display it.
 </remarks>

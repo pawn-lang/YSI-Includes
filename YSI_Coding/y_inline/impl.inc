@@ -289,7 +289,7 @@ stock Function:GetLocalFunction(const func[], const spec[])
 
 /*-------------------------------------------------------------------------*//**
 <param name="func">Function pointer to call.</param>
-<param name="...">The function's parameters.</param>
+<param name="">The function's parameters.</param>
 <remarks>
 	Call the function in the given pointer with the given parameters.
 </remarks>
@@ -654,7 +654,7 @@ stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (
 <param name="interval">How long between subsequent calls?</param>
 <param name="repeat">How many times to call the function.</param>
 <param name="format">The additional parameters' types.</param>
-<param name="...">The additional parameters.</param>
+<param name="">The additional parameters.</param>
 <remarks>
 	Calls a function, which may be an inline function, after a given delay, and
 	with the given regularity after that.  The parameters are slightly different

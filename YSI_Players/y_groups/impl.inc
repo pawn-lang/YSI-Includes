@@ -805,7 +805,7 @@ stock Group:Group_SetBalancedArray(p, Group:gs[], c = sizeof (gs))
 
 /*-------------------------------------------------------------------------*//**
 <param name="playerid">Player to put in one of a number of groups</param>
-<param name="...">A list of groups.</param>
+<param name="">A list of groups.</param>
 <remarks>
 	Puts a player in whichever of the given groups currently has the least
 	players.
@@ -1262,7 +1262,7 @@ global Group:Iter_Func@GroupChild(start, Group:parent)
 	_Y_G@C_3
 </summary>
 <param name="func">Function to call.</param>
-<param name="...">0, 1, 2, or 3 parameters.</param>
+<param name="">0, 1, 2, or 3 parameters.</param>
 <returns>
 	0 - ALWAYS zero to make "_gchain" work properly.
 </returns>

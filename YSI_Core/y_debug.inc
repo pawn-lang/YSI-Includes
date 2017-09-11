@@ -225,7 +225,7 @@ stock YSI_gDebugLevel = 0;
 /*-------------------------------------------------------------------------*//**
 <param name="level">Debug level to print at.</param>
 <param name="format">Format.</param>
-<param name="..."></param>
+<param name=""></param>
 <remarks>
 	This isn't really a function as the first parameter is part of the name:
 	

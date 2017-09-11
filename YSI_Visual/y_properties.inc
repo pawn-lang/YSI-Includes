@@ -609,7 +609,7 @@ stock CreateBank(Float:x, Float:y, Float:z, name[] = "")
 <param name="z">Z position.</param>
 <param name="spawn">Wether you spawn with the weapon.</param>
 <param name="instant">Wether you get the weapon as soon as you buy it.</param>
-<param name="..."></param>
+<param name=""></param>
 <remarks>
 	spawn and instant can BOTH be 1.  The format of the additional parameters
 	is:

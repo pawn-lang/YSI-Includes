@@ -769,14 +769,14 @@ stock returnstringarg(idx)
 
 /*-------------------------------------------------------------------------*//**
 <param name="fmat">String format.</param>
-<param name="...">Parameters.</param>
+<param name="">Parameters.</param>
 <returns>
 	Formatted string.
 </returns>
 <remarks>
 	Just wraps `format` and returns a string instead.
 	
-	Has extra code to ensure that it works correct only the old compiler.
+	Has extra code to ensure that it works correct on the old compiler.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 

@@ -196,7 +196,7 @@ stock Distribute_Do(func[], GLOBAL_TAG_TYPES:...)
 <param name="func">The name of the receiving function.</param>
 <param name="idx">The index of the data being sent in its array.</param>
 <param name="masters">This data's masters.</param>
-<param name="...">The data and array sizes.</param>
+<param name="">The data and array sizes.</param>
 <remarks>
 	This function takes the data from a given slot in an array, along with the
 	master IDs for that data.  If the data is defined in more than the current

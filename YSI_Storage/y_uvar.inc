@@ -292,7 +292,7 @@ public OnUserData[y_uvar](playerid, name[], value[])
 /*-------------------------------------------------------------------------*//**
 <param name="val">Handle to the PAWN data array.</param>
 <param name="vardata">Handle to the memory location in which to store info.</param>
-<param name="...">Array slot size information.</param>
+<param name="">Array slot size information.</param>
 <remarks>
 	This function modifies "vardata" well beyond its original limits to contain
 	information on the structure of the enum used to define "val".  This code
