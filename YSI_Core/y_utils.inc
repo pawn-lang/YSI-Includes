@@ -1,9 +1,52 @@
-/*
-					=================================
-					Y Sever Includes - Misc Functions
-					=================================
-Description:
-	Misc functions used throughout.
+/**
+<section>=================================</section>
+<section>Y Sever Includes - Misc Functions</section>
+<section>=================================</section>
+<subsection>Description</subsection>
+Misc functions used throughout.
+<subsection>Version</subsection>
+	0.1.3
+<subsection>Changelog</subsection>
+	<em>06/10/12</em>
+<ul>
+<li>		Upgraded "memset" to use "FILL".</li>
+</ul>
+	<em>22/12/11</em>
+<ul>
+<li>		Changed "ceildiv" to only evaluate arguments once.</li>
+</ul>
+	<em>05/12/11</em>
+<ul>
+<li>		Added NO_VALUE to test if macros have no value.</li>
+</ul>
+	<em>08/09/10</em>
+<ul>
+<li>		Added strcpy and StripNL.</li>
+</ul>
+	<em>08/08/10</em>
+<ul>
+<li>		Scrapped almost everything.  Only VERY usefult things go in now.</li>
+</ul>
+<subsection>Functions</subsection>
+	<em>Stock</em>
+<ul>
+<li>		StripNL - Strips the newline characters from the end of a string.</li>
+</ul>
+	<em>Inline</em>
+<ul>
+<li>		iseven - Checks if a number is even.</li>
+<li>		isodd - Checks if a number is odd.</li>
+<li>		isnull - Checks if a string is NULL ("\1\0").</li>
+<li>		strcpy - Copy one string to another.</li>
+</ul>
+<subsection>Variables</subsection>
+	<em>Global</em>
+<ul>
+<li>		TRUE - True hack for infinate loops.</li>
+<li>		FALSE - False hack for one-time loops.</li>
+<li>		NULL - 1 long string for passing via Call(Remote|Local)Function.</li>
+</ul>
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -73,33 +116,6 @@ Legal:
 		Gamer_Z - GPS.
 		Incognito - Streamer.
 		Me - sscanf2, fixes2, Whirlpool.
-	
-Version:
-	0.1.3
-Changelog:
-	06/10/12:
-		Upgraded "memset" to use "FILL".
-	22/12/11:
-		Changed "ceildiv" to only evaluate arguments once.
-	05/12/11:
-		Added NO_VALUE to test if macros have no value.
-	08/09/10:
-		Added strcpy and StripNL.
-	08/08/10:
-		Scrapped almost everything.  Only VERY usefult things go in now.
-Functions:
-	Stock:
-		StripNL - Strips the newline characters from the end of a string.
-	Inline:
-		iseven - Checks if a number is even.
-		isodd - Checks if a number is odd.
-		isnull - Checks if a string is NULL ("\1\0").
-		strcpy - Copy one string to another.
-Variables:
-	Global:
-		TRUE - True hack for infinate loops.
-		FALSE - False hack for one-time loops.
-		NULL - 1 long string for passing via Call(Remote|Local)Function.
 */
 
 #if defined _INC_y_utils

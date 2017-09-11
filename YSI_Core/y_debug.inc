@@ -128,7 +128,6 @@ Compile options:
 	_DEBUG - Debugging level to use.
 Operators:
 	-
-</remarks>
 *//*-------------------------------------------------------------------------**/
 
 #if defined _INC_y_debug
