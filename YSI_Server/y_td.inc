@@ -314,9 +314,6 @@ public TD_LoadColour()
 <param name="box">Wether to use a box.</param>
 <param name="time">Time for the text to display in ms (0 = infinate).</param>
 <param name="name">Name of the style.</param>
-Return:
-	-
-</returns>
 <remarks>
 	Creates a text draw style structure according to given
 	parameters, can be used to display any text in the given

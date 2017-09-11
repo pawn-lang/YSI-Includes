@@ -308,7 +308,7 @@ stock bool:_Testing_End()
 <remarks>
 	-
 
-native Testing_Run(&tests, &fails, buffer[33] = "");
+native Testing_Run(&amp;tests, &amp;fails, buffer[33] = "");
 
 </remarks>
 *//*-------------------------------------------------------------------------**/
@@ -421,7 +421,7 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 <remarks>
 	-
 
-native Testing_Run(&tests, &fails, buffer[33] = "");
+native bool:Testing_Player(playerid, &amp;idx, &amp;tests, &amp;fails, lastfail[33] = "", bool:p = false);
 
 </remarks>
 *//*-------------------------------------------------------------------------**/

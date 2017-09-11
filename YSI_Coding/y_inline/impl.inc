@@ -217,7 +217,7 @@ stock Inline_Reset(callback[E_CALLBACK_DATA])
 		f - Float (also g)
 		s - String
 		ai - Array (followed by length)
-		v - Reference (&var, any tag)
+		v - Reference (&amp;var, any tag)
 	
 </remarks>
 *//*-------------------------------------------------------------------------**/
@@ -272,7 +272,7 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 		f - Float (also g)
 		s - String
 		ai - Array (followed by length)
-		v - Reference (&var, any tag)
+		v - Reference (&amp;var, any tag)
 	
 </remarks>
 *//*-------------------------------------------------------------------------**/

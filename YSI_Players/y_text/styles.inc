@@ -179,7 +179,7 @@ stock Styles_GetData(index, style[E_STYLE_DATA], label[E_3D_DATA])
 
 /*-------------------------------------------------------------------------*//**
 <remarks>
-	Called to load "<entry>" tags from XML style files.
+	Called to load "&lt;entry&gt;" tags from XML style files.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 

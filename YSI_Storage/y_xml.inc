@@ -758,7 +758,7 @@ stock XMLEntry:XML_AddItem(tag[], name[] = "", XMLEntry:parent = XMLEntry:cellma
 /*-------------------------------------------------------------------------*//**
 <param name="filename">File to write to.</param>
 <param name="item">Handle to the tag to write.</param>
-<param name="bIncludeXML">Write the default <XML> tags or not?</param>
+<param name="bIncludeXML">Write the default &lt;XML&gt; tags or not?</param>
 <param name="bFavourShort">Write the shortest tags possible.</param>
 <remarks>
 	Writea the data for a tag to a file.
