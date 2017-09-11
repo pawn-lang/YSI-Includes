@@ -252,7 +252,7 @@ stock TD_Parse(filename[])
 
 /**--------------------------------------------------------------------------**-
 <remarks>
-	XML callback for loading the <colour> tag.
+	XML callback for loading the &lt;colour&gt; tag.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -307,13 +307,13 @@ public TD_LoadColour()
 <param name="boxColour">Colour of the text box.</param>
 <param name="bgColour">Colour of the text background.</param>
 <param name="shadow">Text shadow size.</param>
-	outline - Text outline size.
-	align - Text alignment.
-	font - Text font style.
-	bool:proportional - Wether to make the text proportional.
-	bool:box - Wether to use a box.
-	time - Time for the text to display in ms (0 = infinate).
-	name[] - Name of the style.
+<param name="outline">Text outline size.</param>
+<param name="align">Text alignment.</param>
+<param name="font">Text font style.</param>
+<param name="proportional">Wether to make the text proportional.</param>
+<param name="box">Wether to use a box.</param>
+<param name="time">Time for the text to display in ms (0 = infinate).</param>
+<param name="name">Name of the style.</param>
 Return:
 	-
 </returns>
@@ -365,7 +365,7 @@ stock Style:TD_Create(Float:x = 0.0, Float:y = 0.0, Float:letterX = 0.48, Float:
 
 /**--------------------------------------------------------------------------**-
 <remarks>
-	XML callback for loading the <textdraw> tag.
+	XML callback for loading the &lt;textdraw&gt; tag.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -1386,15 +1386,10 @@ stock TD_Destroy(Text:textDraw)
 }
 
 /**--------------------------------------------------------------------------**-
-Params:Text:base
-	Text:other
-Return:
-	-
-</returns>
+<param name="td">Text draw to stop updating.</param>
 <remarks>
-	Links two TDs so that manipulating one does the other too.  They are already
-	linked through their style, but that's only for style updates.  This handles
-	things like screen position updates etc.
+	Unlinks a text draw from another one, so that updating the other one does
+	not update this one.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -1417,6 +1412,16 @@ stock TD_Unlink(Text:td)
 		next = YSI_g_sTDDisplay[next][E_TD_DISPLAY_LINKED];
 	}
 }
+
+/*-------------------------------------------------------------------------*//**
+<param name="base">Text draw whose updates will be propogated.</param>
+<param name="other">Text draw that will receive a parent's updates.</param>
+<remarks>
+	Links two TDs so that manipulating one does the other too.  They are already
+	linked through their style, but that's only for style updates.  This handles
+	things like screen position updates etc.
+</remarks>
+*//*-------------------------------------------------------------------------**/
 
 stock TD_Link(Text:base, Text:other)
 {

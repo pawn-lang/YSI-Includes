@@ -526,11 +526,8 @@ stock CreateHouse(Float:extX, Float:extY, Float:extZ, Float:intX, Float:intY, Fl
 <param name="sell">Wether you need to seel the property of people can just buy you out.</param>
 <param name="multi">Wether more than one person can own this property at once.</param>
 <param name="reduce">Wether selling this property gets you less then you paid for it.</param>
-	increase - Wether buying this property will put the price up for the future.
-	property - Wether this property uses a pickup instead of a checkpoint.
-Return:
-	-
-</returns>
+<param name="increase">Wether buying this property will put the price up for the future.</param>
+<param name="property">Wether this property uses a pickup instead of a checkpoint.</param>
 <remarks>
 	Creates a buyable property (business).
 </remarks>
@@ -1358,10 +1355,7 @@ static stock Property_WeaponName(weapon)
 	((%1) & 0xFFFFF)
 
 /**--------------------------------------------------------------------------**-
-Params:data = Compressed data.
-Return:
-	-
-</returns>
+<param name="data">Compressed data.</param>
 <remarks>
 	Extracts the ammo from the passed data.
 </remarks>

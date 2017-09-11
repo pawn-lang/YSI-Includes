@@ -240,7 +240,6 @@ static stock
 // =============================================================================
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
 <remarks>
 	This callback is hard coded in to YSI to be called absolutely last!  Note
 	that this WAS hard coded, but now uses a more generic chaining method not
@@ -497,7 +496,6 @@ public Text_RefreshLoaded() <y_text_ending:n>
 }
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
 *//*-------------------------------------------------------------------------**/
 
 static stock Text_AddLocal(buffer[], hash)
@@ -515,7 +513,6 @@ static stock Text_AddLocal(buffer[], hash)
 }
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
 *//*-------------------------------------------------------------------------**/
 
 forward Text_INILoad(offset, tag[], name[], value[]);
@@ -699,7 +696,6 @@ public Text_INILoad(offset, tag[], name[], value[])
 }
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
 *//*-------------------------------------------------------------------------**/
 
 static stock Text_LoadLocals()
@@ -753,11 +749,9 @@ static stock Text_LoadLocals()
 }
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
 *//*-------------------------------------------------------------------------**/
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
 *//*-------------------------------------------------------------------------**/
 
 forward Text_CheckLoad(buffer[], hash);
@@ -1081,7 +1075,6 @@ static stock Text_GetText(search[], name[], Language:l)
 }
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
 *//*-------------------------------------------------------------------------**/
 
 // To be public.
@@ -1113,7 +1106,6 @@ static stock Text_FindEntry(start, hash)
 }
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
 *//*-------------------------------------------------------------------------**/
 
 static stock Text_AddEntry(set, name[], value[], hash)
@@ -1178,7 +1170,6 @@ static stock Text_AddEntry(set, name[], value[], hash)
 }
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
 *//*-------------------------------------------------------------------------**/
 
 static stock Text_GetFreeSlot()
@@ -1201,10 +1192,7 @@ static stock Text_GetFreeSlot()
 }
 
 /**--------------------------------------------------------------------------**-
-Params:length
-Return:
-	-
-</returns>
+<param name="len">Length to make the array slot.</param>
 <remarks>
 	Adjusts the first index table in "YSI_g_sTextStrings" such that the next
 	call to "Text_GetFreeSlot" will point to a non-zero length target string.
@@ -1289,7 +1277,6 @@ static stock Text_GetCurNextOffset(i, &cur, &next)
 }
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
 <remarks>
 	Bypass run-time OOB errors when -d0 is disabled.  Set the initial "next"
 	pointer on the end of the string.
@@ -1304,7 +1291,6 @@ static stock Text_DoLinkedText(entry[], add, len)
 }
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
 <remarks>
 	Bypass run-time OOB errors when -d0 is disabled.  Get and set the "next"
 	pointer on the end of the string.
@@ -1320,7 +1306,6 @@ static stock Text_UpdateLinkedText(entry[], add, len)
 }
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
 <remarks>
 	Bypass run-time OOB errors when -d0 is disabled.  Get the "next" pointer on
 	the end of the string.
@@ -1338,7 +1323,6 @@ static stock Text_GetLinkedText(entry[], &ret, len)
 }
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
 <remarks>
 	Bypass run-time OOB errors when -d0 is disabled.  Check if there is a "next"
 	pointer.
@@ -1351,7 +1335,6 @@ static stock Text_HasLinkedText(entry[], len)
 }
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
 *//*-------------------------------------------------------------------------**/
 
 static stock Text_GetFreeEntry()
@@ -1892,7 +1875,6 @@ static stock
 	YSI_g_sButton2Text[YSI_MAX_LANGUAGES][16];
 
 /**--------------------------------------------------------------------------**-
-<summary>-</summary>
 *//*-------------------------------------------------------------------------**/
 
 //stock @PlayerArray:players<MAX_PLAYERS>, callback[], csearch[], cident[], isearch[], iident[], b1search[], b1ident[], b2search[], b2ident[], GLOBAL_TAG_TYPES:...)
