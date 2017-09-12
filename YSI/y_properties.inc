@@ -1,5 +1,4 @@
-#include "..\YSI_Internal\y_compilerpass"
-#if AUTO_INCLUDE_GUARD
+#if defined _inc_y_properties
 	#undef _inc_y_properties
 #endif
 

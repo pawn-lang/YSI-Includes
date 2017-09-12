@@ -207,6 +207,8 @@ static stock __COMPILER_SECOND_PASS() {}
 	#define __FixStringReturn("%0"%1);return%8(%8:(%3)) return $
 	//#define __FixStringDummy[YSI_MAX_STRING,%1] __FixStringDummy[%1]
 	
+	#include "y_funcinc"
+	
 	/*---------------------------------------------------------------------*//*+
 	
 	<param name="str">String to return.</param>
@@ -222,8 +224,6 @@ static stock __COMPILER_SECOND_PASS() {}
 		is not correctly selected when the count is unknown or variable.
 	</remarks>
 	*//*---------------------------------------------------------------------**/
-	
-	#include "y_funcinc"
 	
 	stock __FixStringReturn(const str[], size = sizeof (str), dummy = 0)
 	{

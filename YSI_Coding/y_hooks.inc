@@ -86,11 +86,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_compilerpass"
-#if AUTO_INCLUDE_GUARD
-	#if !defined _inc_y_hooks
-		#error Did you do <YSI/y_hooks> instead of the required <YSI\y_hooks>?
-	#endif
+#if defined _inc_y_hooks
 	#undef _inc_y_hooks
 #endif
 

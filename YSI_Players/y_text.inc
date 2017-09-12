@@ -175,12 +175,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-// Include "y_unique" multiple times.
-#include "..\YSI_Internal\y_unique"
-#if AUTO_INCLUDE_GUARD
-	#if !defined _inc_y_text
-		#error Did you do <YSI-Players/y_text> instead of the required <YSI-Players\y_text>?
-	#endif
+#if defined _inc_y_text
 	#undef _inc_y_text
 #endif
 

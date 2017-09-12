@@ -1,5 +1,4 @@
-#include "..\YSI_Internal\y_compilerpass"
-#if AUTO_INCLUDE_GUARD
+#if defined _inc_y_extra
 	#undef _inc_y_extra
 #endif
 

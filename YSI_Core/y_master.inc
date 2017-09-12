@@ -157,11 +157,7 @@ Optional plugins:
 
 // ALWAYS!  The compiler defines this automatically, don't use it as this is
 // included multiple times to handle multiple master systems.
-#include "..\YSI_Internal\y_compilerpass"
-#if AUTO_INCLUDE_GUARD
-	#if !defined _inc_y_master
-		#error Did you do <YSI-Core/y_master> instead of the required <YSI-Core\y_master>?
-	#endif
+#if defined _inc_y_master
 	#undef _inc_y_master
 #endif
 

@@ -84,11 +84,7 @@ Optional plugins:
 
 #include "..\YSI_Internal\y_version"
 
-#include "..\YSI_Internal\y_compilerpass"
-#if AUTO_INCLUDE_GUARD
-	#if !defined _inc_y_groups
-		#error Did you do <YSI/y_groups> instead of the required <YSI\y_groups>?
-	#endif
+#if defined _inc_y_groups
 	#undef _inc_y_groups
 #endif
 

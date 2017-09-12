@@ -104,11 +104,7 @@ Optional plugins:
 #endif
 
 // Allow multiple inclusions.
-#include "..\YSI_Internal\y_compilerpass"
-#if AUTO_INCLUDE_GUARD
-	#if !defined _inc_y_als
-		#error Did you do <YSI/y_als> instead of the required <YSI\y_als>?
-	#endif
+#if defined _inc_y_als
 	#undef _inc_y_als
 #endif
 

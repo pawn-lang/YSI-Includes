@@ -72,7 +72,7 @@ Optional plugins:
 
 static stock const Y_UNIQUE_800_to_899_CALLED;
 
-#if AUTO_INCLUDE_GUARD
+#if defined _inc__800_to_899
 	#undef _inc__800_to_899
 #endif
 

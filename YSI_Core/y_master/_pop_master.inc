@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if AUTO_INCLUDE_GUARD
+#if defined _inc__pop_master
 	#undef _inc__pop_master
 #endif
 
