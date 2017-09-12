@@ -31,46 +31,36 @@ Description:
 Version:
 	0.1
 Changelog:
+	12/09/17:
+		Renamed everything for consistency.
+		Documented macros.
 	14/04/13:
 		First version.
 Functions:
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		-
 	Static:
-		-
+		__CompilerStringReturn - Assembly for returning a string to its callers'
+			caller.  Used to bypass a known bug.
+		__CompilerSecondPass - Tested to determine the current compiler pass.
 	Inline:
-		-
-	API:
-		-
-	Hooks:
-		-
-Callbacks:
-	-
-Definitions:
-	-
-Enums:
-	-
+		__COMPILER_STRING_RETURN - Correctly return a string from a varargs
+			function.
 Macros:
-	-
-Tags:
-	-
-Variables:
-	Global:
-		-.
-	Static:
-		-
-Commands:
-	-
-Compile options:
-	-
-Operators:
-	-
-Natives:
-	-
+	__COMPILER_PASS - Which pass the compiler is currently running.
+	__COMPILER_DOCUMENTING - Is the compiler collecting documentation
+		information right now (i.e. is this the first pass)?
+	__COMPILER_1ST_PASS - Is this the first compiler pass?
+	__COMPILER_2ND_PASS - Is this the second compiler pass?
+	__COMPILER_FIRST_PASS - Is this the first compiler pass?
+	__COMPILER_SECOND_PASS - Is this the second compiler pass?
+	__COMPILER_MODIFIED - Is the compiler an updated/unofficial/modified one?
+	__COMPILER_OFFICIAL - Is the compiler an official one?
+	__COMPILER_COMPAT - Was the compiler built with `-Z`?
+	__COMPILER_INCLUDE_GUARDS - Does the compiler generate auto-include guards?
+	__COMPILER_NESTED_ELLIPSIS - Does the compiler support nested ellipses?
+	__COMPILER_BUGGED_STRING_RETURN - Are vararg function string returns
+		bugged?  Not needed for using `__COMPILER_STRING_RETURN`, as that will
+		do the best thing in both cases already.
+	P:D - Wrap a fake function declaration, so macros can be documented.
 *//** *//*
 Legal:
 	Version: MPL 1.1
@@ -148,16 +138,36 @@ Optional plugins:
 #endif
 #define _INC_y_compilerdata
 
+#pragma tabsize 4
+
+// Enable `P:D(func())` for forcing function-like macros in to documentation.
+// For example:
+//   
+//   /**
+//   <param name="playerid">An example named macro parameter (`%0`).</param>
+//   <remarks>
+//       This is a function-like macro.  By default, compiling with `-r` does
+//       not put macros in the XML, which is a shame if we are using a macro to
+//       fake a function, because then a function will be apparently missing
+//       from the documentation.  Instead, we make a function, THEN make the
+//       macro.  But, importantly, we only make the function on the first pass,
+//       not the second pass (documentation is apparently generated in the first
+//       pass).
+//   </remarks>
+//   */
+//   P:D(bool:MyFunc(playerid));
+//   #define MyFunc(%0) ((%0) < MAX_PLAYERS)
+//   
 #define P:%1(%2); Debug_Print%1(%2);
 #define C:%1(%2); Debug_Code%1(%2);
 
-#if defined __COMPILER_SECOND_PASS
+#if defined __CompilerSecondPass
 	#define __COMPILER_PASS (1)
-	#define __DOCUMENTATION (0)
+	#define __COMPILER_DOCUMENTING (0)
 	#define Debug_PrintD(%1);
 #else
 	#define __COMPILER_PASS (0)
-	#define __DOCUMENTATION (1)
+	#define __COMPILER_DOCUMENTING (1)
 	// Disable matching the resulting function against (most) macros that are
 	// defined with the same name (since the whole point of this is to provide a
 	// concrete implementation for documentation to see).
@@ -166,11 +176,18 @@ Optional plugins:
 	#define Debug_PrintD_CLOSE )
 #endif
 
-#define COMPILER_1ST_PASS (__COMPILER_PASS == (0))
-#define COMPILER_2ND_PASS (__COMPILER_PASS == (1))
-#define COMPILER_FIRST_PASS  COMPILER_1ST_PASS
-#define COMPILER_SECOND_PASS COMPILER_2ND_PASS
-static stock __COMPILER_SECOND_PASS() {}
+#define __COMPILER_1ST_PASS (__COMPILER_PASS == (0))
+#define __COMPILER_2ND_PASS (__COMPILER_PASS == (1))
+#define __COMPILER_FIRST_PASS  __COMPILER_1ST_PASS
+#define __COMPILER_SECOND_PASS __COMPILER_2ND_PASS
+
+/*-------------------------------------------------------------------------*//*+
+<remarks>
+	Exists purely to be detected before it is used.  If that check succeedes,
+	the compiler is on its second pass and already has a list of all functions.
+</remarks>
+*//*-------------------------------------------------------------------------**/
+static stock __CompilerSecondPass() {}
 
 #if __Pawn >= 0x0400
 	#error YSI does not yet support PAWN 4.0
@@ -178,39 +195,51 @@ static stock __COMPILER_SECOND_PASS() {}
 	#error YSI does not yet support PAWN 2.0/1.0
 #endif
 
-#if !defined __compat
-	#define __compat 1
-#endif
-
-#if __Pawn == 0x030A && !__compat
-	#define AUTO_INCLUDE_GUARD 0
+#if ((__Pawn & 0x0F) >= 0x0A) || ((__Pawn & 0xF0) >= 0xA0)
+	#define __COMPILER_MODIFIED (1)
+	#define __COMPILER_OFFICIAL (0)
 #else
-	#define AUTO_INCLUDE_GUARD 1
+	#define __COMPILER_MODIFIED (0)
+	#define __COMPILER_OFFICIAL (1)
 #endif
 
-#if __Pawn == 0x030A
-	#define NESTED_ELLIPSIS
-	//#define __only_one_fix_string_parameter:%8(%0,%1)%8(%9) (%0)%8(%0)
-	//#define __mayb_raw_fix_string_parameter:("%0"%1)%8(%9)
-	//#define __neither_fix_string_parameter:(%0)
-	//#define YSI_STRING_RETURN(%0) return __only_one_fix_string_parameter:__mayb_raw_fix_string_parameter:(%0)__neither_fix_string_parameter:(%0)
-	#define __only_one_fix_string_parameter:%8(%0,%1) (%0)
-	#define YSI_STRING_RETURN(%0) return __only_one_fix_string_parameter:(%0)
-	// Disable the recursion warning in the Russian compiler.
+#if __COMPILER_MODIFIED
+	#if defined __compat
+		#define __COMPILER_COMPAT (1)
+	#else
+		#define __COMPILER_COMPAT (0)
+	#endif
+#else
+	#define __COMPILER_COMPAT (0)
+#endif
+
+#if __COMPILER_OFFICIAL || __COMPILER_COMPAT
+	#define __COMPILER_INCLUDE_GUARDS (1)
+#else
+	#define __COMPILER_INCLUDE_GUARDS (0)
+#endif
+
+#if __COMPILER_MODIFIED
+	#define __COMPILER_NESTED_ELLIPSIS (1)
+	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
+	#define __COMPILER_STRING_RETURN(%0) return __compiler_one_string_parameter:(%0)
+	#define __COMPILER_BUGGED_STRING_RETURN (0)
+	// Disable the recursion warning in the Russian compiler (and the unknown
+	// pragma warning in other compilers temporarily).
 	#pragma warning push
 	#pragma warning disable 207
 	#pragma disablerecursion
 	#pragma warning pop
 #else
-	#define __only_one_fix_string_parameter:%8(%0,%1) (%0)
-	#define YSI_STRING_RETURN(%0) __FixStringReturn(%0);return (__only_one_fix_string_parameter:(%0))
-	#define __FixStringReturn("%0"%1);return%8(%8:(%3)) return $
-	//#define __FixStringDummy[YSI_MAX_STRING,%1] __FixStringDummy[%1]
+	#define __COMPILER_NESTED_ELLIPSIS (0)
+	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
+	#define __COMPILER_STRING_RETURN(%0) __CompilerStringReturn(%0);return (__compiler_one_string_parameter:(%0))
+	#define __CompilerStringReturn("%0"%1);return%8(%8:(%3)) return $
+	#define __COMPILER_BUGGED_STRING_RETURN (1)
 	
 	#include "y_funcinc"
 	
 	/*---------------------------------------------------------------------*//*+
-	
 	<param name="str">String to return.</param>
 	<param name="size">Size of the string.</param>
 	<param name="dummy">Ignored parameter for raw string given sizes.</param>
@@ -225,7 +254,7 @@ static stock __COMPILER_SECOND_PASS() {}
 	</remarks>
 	*//*---------------------------------------------------------------------**/
 	
-	stock __FixStringReturn(const str[], size = sizeof (str), dummy = 0)
+	stock __CompilerStringReturn(const str[], size = sizeof (str), dummy = 0)
 	{
 		#pragma unused dummy
 		#emit PUSH.S       size   // Push the first parameter.

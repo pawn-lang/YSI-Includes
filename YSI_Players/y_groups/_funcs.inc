@@ -138,7 +138,7 @@ static stock
 		#define _gchain%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 		#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 	#endif
-#elseif COMPILER_1ST_PASS
+#elseif __COMPILER_1ST_PASS
 	#if YSIM_HAS_MASTER
 		#if _YSIM_IS_CLIENT
 			#define gforeign%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);

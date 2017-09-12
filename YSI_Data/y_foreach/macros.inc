@@ -145,18 +145,18 @@ Optional plugins:
 /*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator array to initialise.</param>
 <remarks>
-	Wrapper for Iter_Init_Internal.  When "NESTED_ELLIPSIS" is set, this isn't
-	needed because multi-dimensional iterators can be initialised with the new
-	"{{0, 1, ...), ...}" feature.  In that case "I@ = 0" is called as a "void"
-	function that does nothing but ends in a semi-colon ("I@" is used a lot in
-	YSI as a "do nothing" enabler).
+	Wrapper for Iter_Init_Internal.  When "__COMPILER_NESTED_ELLIPSIS" is set,
+	this isn't needed because multi-dimensional iterators can be initialised
+	with the new "{{0, 1, ...), ...}" feature.  In that case "I@ = 0" is called
+	as a "void" function that does nothing but ends in a semi-colon ("I@" is
+	used a lot in YSI as a "do nothing" enabler).
 
 native Iter_Init(IteratorArray:Name[]&lt;&gt;);
 
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-#if defined NESTED_ELLIPSIS
+#if __COMPILER_NESTED_ELLIPSIS
 	#define Iter_Init(%0) (I@=0)
 #else
 	#define Iter_Init(%0) Iter_Init_Internal(F@r(Iterator@%0),F@r(Iterator@%0)[0],F@s(Iterator@%0),F@s(Iterator@%0[]),F@r(Iter_Init@%0))
@@ -663,7 +663,7 @@ native Iter_Index(Iterator:Name&lt;&gt;);
 // Detect array declarations: "Iterator:X[20]<4>", "Iterator:X<10, 4>", and the
 // frankly silly "Iterator:X[20]<10, 4>".
 #define F@c:F@d:((%0,%1)+1)]%2$,Iter_Single@%9$%7$ F@d:((%0)+(%1))]={0,1,...}F@a$,Iter_Multi@%9$[%0]%7$
-#if defined NESTED_ELLIPSIS
+#if __COMPILER_NESTED_ELLIPSIS
 	#define F@d:%0]%2$,Iter_%8@%9[%3$%7$ %0]={{0,1,...},...},Iter_%8@%9[%3$%7$
 #else
 	#define F@d:%0]%2$,Iter_%8@%9[%3$%7$ %0],Iter_%8@%9[%3$%7$,F@g(Iter_Init@%9,)=F@s(Iter_%8@%9[%3$)

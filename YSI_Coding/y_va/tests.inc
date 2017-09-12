@@ -249,7 +249,7 @@ static stock y_va2_Extract(num, ...)
 	new
 		ret[YSI_MAX_STRING];
 	va_getstring(ret, num + 1);
-	YSI_STRING_RETURN(ret);
+	__COMPILER_STRING_RETURN(ret);
 }
 
 static stock y_va2_Three(...)
@@ -412,8 +412,8 @@ Test:y_va2_PassThree()
 static stock y_va2_MyFunc3(...)
 {
 	new woo[32] = "woo";
-	YSI_STRING_RETURN(woo);
-	//YSI_STRING_RETURN("woo", 32);
+	__COMPILER_STRING_RETURN(woo);
+	//__COMPILER_STRING_RETURN("woo", 32);
 }
 
 static stock y_va2_MyFunc1(...)

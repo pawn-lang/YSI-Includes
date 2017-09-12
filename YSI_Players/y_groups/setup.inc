@@ -88,7 +88,7 @@ Optional plugins:
 
 // This is currently "leaking" code to the final script - code that we don't
 // want!  No longer.
-#if defined _YSI_HAS_y_groups || COMPILER_1ST_PASS
+#if defined _YSI_HAS_y_groups || __COMPILER_1ST_PASS
 	#define NO_GROUPS(%0) if(_GROUP_INITIALISE(%0))
 #else
 	#define NO_GROUPS(%0)
