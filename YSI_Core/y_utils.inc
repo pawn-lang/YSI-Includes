@@ -355,7 +355,7 @@ public OnPlayerDisconnect(playerid, reason)
 </returns>
 *//*-------------------------------------------------------------------------**/
 
-P:D(bool:UCMP(value, upper) return false;);
+P:D(bool:UCMP(value, upper));
 #define UCMP(%0,%1) IS_IN_RANGE(%0,0,(%1))
 
 /*-------------------------------------------------------------------------*//**
@@ -365,7 +365,7 @@ P:D(bool:UCMP(value, upper) return false;);
 </returns>
 *//*-------------------------------------------------------------------------**/
 
-P:D(bool:VALID_PLAYERID(playerid) return false;);
+P:D(bool:VALID_PLAYERID(playerid));
 #define VALID_PLAYERID(%0) UCMP((%0), MAX_PLAYERS)
 
 /*-------------------------------------------------------------------------*//**
@@ -383,7 +383,7 @@ P:D(bool:VALID_PLAYERID(playerid) return false;);
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(bool:IS_IN_RANGE(lower, value, upper) return false;);
+P:D(bool:IS_IN_RANGE(lower, value, upper));
 #define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
@@ -401,7 +401,7 @@ P:D(bool:IS_IN_RANGE(lower, value, upper) return false;);
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(bool:NOT_IN_RANGE(lower, value, upper) return false;);
+P:D(bool:NOT_IN_RANGE(lower, value, upper));
 #define NOT_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
@@ -415,7 +415,7 @@ P:D(bool:NOT_IN_RANGE(lower, value, upper) return false;);
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(ceildiv(numerator, denominator) return 0;);
+P:D(ceildiv(numerator, denominator));
 #define ceildiv(%0,%1) (((%0)-1)/(%1)+1)
 
 /*-------------------------------------------------------------------------*//**
@@ -433,14 +433,14 @@ P:D(ceildiv(numerator, denominator) return 0;);
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(floordiv(numerator, denominator) return 0;);
+P:D(floordiv(numerator, denominator));
 #define floordiv(%0,%1) ((%0)/(%1))
 
 /*-------------------------------------------------------------------------*//**
 <param name="str">String to check if is null.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(bool:isnull(str[]) return false;);
+P:D(bool:isnull(str[]));
 #define isnull(%1) \
 	((%1[0] == 0) || (%1[0] == 1 && %1[1] == 0))
 
@@ -448,7 +448,7 @@ P:D(bool:isnull(str[]) return false;);
 <param name="value">Value to check if is odd.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(bool:isodd(value) return false;);
+P:D(bool:isodd(value));
 #define isodd(%1) \
 	((%1) & 1)
 
@@ -456,7 +456,7 @@ P:D(bool:isodd(value) return false;);
 <param name="value">Value to check if is even.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(bool:iseven(value) return false;);
+P:D(bool:iseven(value));
 #define iseven(%1) \
 	(!isodd(%1))
 
@@ -466,7 +466,7 @@ P:D(bool:iseven(value) return false;);
 <param name="len">(Implicit) maximum length of the destination.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(strcpy(dest[], const src[], len = sizeof (dest)) return false;);
+P:D(strcpy(dest[], const src[], len = sizeof (dest)));
 #define strcpy(%0,%1) \
 	strcat((%0[0] = '\0', %0), %1)
 
@@ -811,7 +811,7 @@ stock unpack(const str[])
 *//*-------------------------------------------------------------------------**/
 
 // Cunning macro only uses "%0" once, yet is still safe.
-P:D(GetIP(playerid) return 0;);
+P:D(GetIP(playerid));
 #define GetIP(%0) (YSI_gPlayerIP[min((%0) + cellmin, MAX_PLAYERS + cellmin) - cellmin])
 
 /*-------------------------------------------------------------------------*//**

@@ -158,7 +158,12 @@ Optional plugins:
 #else
 	#define __COMPILER_PASS (0)
 	#define __DOCUMENTATION (1)
-	#define Debug_PrintD(%1); %1
+	// Disable matching the resulting function against (most) macros that are
+	// defined with the same name (since the whole point of this is to provide a
+	// concrete implementation for documentation to see).
+	#define Debug_PrintD(%1(%2)); %1 Debug_PrintD_OPEN %2 Debug_PrintD_CLOSE { return 0; }
+	#define Debug_PrintD_OPEN (
+	#define Debug_PrintD_CLOSE )
 #endif
 
 #define COMPILER_1ST_PASS (__COMPILER_PASS == (0))
