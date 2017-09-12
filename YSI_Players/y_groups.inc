@@ -94,7 +94,7 @@ Optional plugins:
 	// Get basic defines.
 	#include "..\YSI_Internal\y_plugins"
 	
-	#include "..\YSI_Internal\y_compilerpass"
+	#include "..\YSI_Internal\y_compilerdata"
 	#include "..\YSI_Data\y_bit"
 	
 	#if !defined _INC_y_groups__funcs

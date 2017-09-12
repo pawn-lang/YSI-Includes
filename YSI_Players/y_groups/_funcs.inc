@@ -85,7 +85,7 @@ Optional plugins:
 
 */
 
-#include "..\..\YSI_Internal\y_compilerpass"
+#include "..\..\YSI_Internal\y_compilerdata"
 #if defined _inc__funcs
 	#undef _inc__funcs
 #endif

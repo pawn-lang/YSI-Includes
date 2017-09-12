@@ -94,7 +94,7 @@ Optional plugins:
 #endif
 #define _INC_y_natives
 
-#include "y_compilerpass"
+#include "y_compilerdata"
 #include "y_globaltags"
 
 /*#if defined _YSI_MINI_MODE

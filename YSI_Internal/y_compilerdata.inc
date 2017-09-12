@@ -143,10 +143,10 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _INC_y_compilerpass
+#if defined _INC_y_compilerdata
 	#endinput
 #endif
-#define _INC_y_compilerpass
+#define _INC_y_compilerdata
 
 #define P:%1(%2); Debug_Print%1(%2);
 #define C:%1(%2); Debug_Code%1(%2);

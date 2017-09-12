@@ -85,7 +85,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "y_compilerpass"
+#include "y_compilerdata"
 
 #if defined _inc_y_unique
 	#undef _inc_y_unique
