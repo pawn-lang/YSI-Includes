@@ -20,15 +20,7 @@
 </ul></li></ul><subsection>Functions</subsection><ul>
 <li><em>Stock</em><ul>
 		Vehicle_Speed - Get current vehicle speed in KMH.
-</ul></li></ul><subsection>Callbacks</subsection><ul>
-	-
-</ul></li></ul><subsection>Hooks</subsection><ul>
-	-
-</ul></li></ul><subsection>Macros</subsection><ul>
-	-
-</ul></li></ul><subsection>Keywords</subsection><ul>
-	-
-</ul></li></ul><subsection>Tags</subsection><ul>
+</ul></li></ul></li></ul></li></ul></li></ul></li></ul><subsection>Tags</subsection><ul>
 	VIM - Vehicle Internal Modelid.
 </ul></li></ul><subsection>Variables</subsection><ul>
 <li><em>Global</em><ul>

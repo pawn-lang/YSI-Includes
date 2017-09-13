@@ -188,11 +188,6 @@ Optional plugins:
 		Added code for a script to remove itself from the global list.
 	11/10/07:
 		Not first version but added documentation months late.
-</ul></li></ul><subsection>Functions</subsection><ul>
-<li><em>API</em><ul>
-		-
-</ul></li></ul><subsection>Hooks</subsection><ul>
-		-
 </ul></li></ul><subsection>Macros</subsection><ul>
 	RF - Declare a function which may be remote.
 	RV - Declare a void function which may be remote.
@@ -209,11 +204,7 @@ Optional plugins:
 	YSI_NO_MASTER - Don't use the master system.
 	YSI_IS_CLIENT - Script is a client only script.
 	YSI_IS_SERVER - Script is a server only script.
-</ul></li></ul><subsection>Operators</subsection><ul>
-	-
-</ul></li></ul><subsection>Natives</subsection><ul>
-	-
-</ul>
+</ul></li></ul></li></ul>
 *//** */
 
 // Only include this lot once.

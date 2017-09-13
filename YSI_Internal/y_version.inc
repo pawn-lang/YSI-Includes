@@ -16,17 +16,9 @@
 		Added changelog capabilities.
 	22/10/10:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
-<li><em>API</em><ul>
-		-
 </ul></li></ul><subsection>Hooks</subsection><ul>
 		OnGameModeInit
-</ul></li></ul><subsection>Variables</subsection><ul>
-</ul><subsection>Operators</subsection><ul>
-	-
-</ul></li></ul><subsection>Natives</subsection><ul>
-	-
-</ul>
+</ul></li></ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

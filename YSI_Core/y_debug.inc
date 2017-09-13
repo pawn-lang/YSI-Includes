@@ -40,8 +40,7 @@
 	P:C - Run debug code.
 	P:E - Print an error message.
 	P:W - Print a warning message.
-</ul></li></ul><subsection>Variables</subsection><ul>
-</ul><subsection>Compile options</subsection><ul>
+</ul></li></ul><subsection>Compile options</subsection><ul>
 	_DEBUG - Debugging level to use.
 </ul></li></ul>
 *//** *//*

@@ -114,15 +114,11 @@
 		Iter_Count2 - Gets the number of items in an iterator array.
 		Iter_Debug2 - Wraps around Iter_ShowArray for arrays.
 		Iter_Free2 - Wraps around Iter_FreeInternal for arrays.
-</ul></li></ul><subsection>Callbacks</subsection><ul>
-	-
-</ul></li></ul><subsection>Hooks</subsection><ul>
+</ul></li></ul></li></ul><subsection>Hooks</subsection><ul>
 	Iter_OnPlayerConnect - Hook for the OnPlayerConnect callback.
 	Iter_OnPlayerDisconnect - Hook for the OnPlayerDisconnect callback.
 	Iter_OnGameModeInit - Only exists to make the code compile correctly...
-</ul></li></ul><subsection>Macros</subsection><ul>
-	-
-</ul></li></ul><subsection>Keywords</subsection><ul>
+</ul></li></ul></li></ul><subsection>Keywords</subsection><ul>
 	foreach - Command to loop an iterator.
 	foreachex - Like foreach but without a new variable.
 	foreach2 - Command to loop through an iterator array.

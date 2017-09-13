@@ -24,16 +24,7 @@
 		GangZoneStopPulse - Stop a zone pulsing for a set of players.
 		GangZoneStopPulseForPlayer - Stop a zone pulsing for a single player.
 		GangZoneStopPulseForAll - Stop a zone pulsing for everyone.
-</ul></li></ul><subsection>Callbacks</subsection><ul>
-	-
-</ul></li></ul><subsection>Hooks</subsection><ul>
-	-
-</ul></li></ul><subsection>Macros</subsection><ul>
-	-
-</ul></li></ul><subsection>Keywords</subsection><ul>
-	-
-</ul></li></ul><subsection>Variables</subsection><ul>
-</ul><subsection>Compile options</subsection><ul>
+</ul></li></ul></li></ul></li></ul></li></ul></li></ul><subsection>Compile options</subsection><ul>
 	ZONE_PULSE_STAGE_TIME - ms between each pulse frame.
 </ul></li></ul>
 *//** *//*

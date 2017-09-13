@@ -17,23 +17,13 @@
 		Added void: and string: returns.
 	04/10/12:
 		Added local versions of the function for no master system servers.
-</ul></li></ul><subsection>Functions</subsection><ul>
-<li><em>API</em><ul>
-		-
-</ul></li></ul><subsection>Hooks</subsection><ul>
-		-
 </ul></li></ul><subsection>Macros</subsection><ul>
 	remotefunc - Define a function to be called remotely (use like "stock").
 	broadcastfunc - Call the function, but in all scripts.
 	localfunc - Call the function by name, not address, in the current script.
-</ul></li></ul><subsection>Variables</subsection><ul>
-</ul><subsection>Compile options</subsection><ul>
+</ul></li></ul><subsection>Compile options</subsection><ul>
 	YSI_NO_MASTER - Disable all knowledge of other scripts.
-</ul></li></ul><subsection>Operators</subsection><ul>
-	-
-</ul></li></ul><subsection>Natives</subsection><ul>
-	-
-</ul>
+</ul></li></ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

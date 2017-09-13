@@ -15,9 +15,7 @@
 </ul></li></ul><subsection>Changelog</subsection><ul>
 	20/10/12:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
-</ul><subsection>Variables</subsection><ul>
-</ul>
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

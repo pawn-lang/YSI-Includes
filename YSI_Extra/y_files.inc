@@ -14,9 +14,7 @@
 </ul></li></ul><subsection>Changelog</subsection><ul>
 	15/09/10:
 		First version split from the old YSF.
-</ul></li></ul><subsection>Functions</subsection><ul>
-</ul><subsection>Variables</subsection><ul>
-</ul>
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

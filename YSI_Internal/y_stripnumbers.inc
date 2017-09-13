@@ -17,17 +17,7 @@
 	mismatch on "E_SOME_ENUM", both of which are problems.
 </ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Functions</subsection><ul>
-<li><em>API</em><ul>
-		-
-</ul></li></ul><subsection>Hooks</subsection><ul>
-		-
-</ul></li></ul><subsection>Variables</subsection><ul>
-</ul><subsection>Operators</subsection><ul>
-	-
-</ul></li></ul><subsection>Natives</subsection><ul>
-	-
-</ul>
+</ul></li></ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

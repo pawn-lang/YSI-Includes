@@ -15,9 +15,7 @@
 </ul></li></ul><subsection>Changelog</subsection><ul>
 	17/07/13:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
-</ul><subsection>Variables</subsection><ul>
-</ul><subsection>Compile options</subsection><ul>
+</ul></li></ul><subsection>Compile options</subsection><ul>
 	-
 </ul>
 *//** *//*

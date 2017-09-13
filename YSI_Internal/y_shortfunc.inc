@@ -14,15 +14,7 @@
 </ul></li></ul><subsection>Changelog</subsection><ul>
 	21/10/10:
 		Split in to y_shortfunc.
-</ul></li></ul><subsection>Functions</subsection><ul>
-<li><em>API</em><ul>
-		-
-</ul></li></ul><subsection>Hooks</subsection><ul>
-		-
-</ul></li></ul><subsection>Variables</subsection><ul>
-</ul><subsection>Operators</subsection><ul>
-	-
-</ul></li></ul><subsection>Natives</subsection><ul>
+</ul></li></ul></li></ul><subsection>Natives</subsection><ul>
 	W@ - Renaming of __CallRemoteFunction for size reasons.
 	V@ - Renaming of getproperty for size reasons.
 	S@ - Renaming of setproperty for size reasons.

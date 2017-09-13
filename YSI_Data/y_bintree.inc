@@ -51,8 +51,7 @@
 	E_BINTREE_INPUT - Structure of an array of data to be added to a tree.
 </ul></li></ul><subsection>Tags</subsection><ul>
 	Bintree - Binary tree type.
-</ul></li></ul><subsection>Variables</subsection><ul>
-</ul>
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

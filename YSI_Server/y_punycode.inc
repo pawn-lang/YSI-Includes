@@ -30,8 +30,7 @@
 		Puny_Encode - Convert a Unicode string to Punycode.
 		Puny_Decode - Convert a Punycode string to Unicode.
 		Puny_HTTP - Wrapper for "HTTP" to encode domain names.
-</ul></li></ul><subsection>Variables</subsection><ul>
-</ul>
+</ul></li></ul>
 
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_pp"

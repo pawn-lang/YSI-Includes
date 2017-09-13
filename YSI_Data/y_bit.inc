@@ -47,8 +47,7 @@
 	CELLSHIFT - Number of bits that can hold "cellbits"
 </ul></li></ul><subsection>Tags</subsection><ul>
 	Bit - Bit array type.
-</ul></li></ul><subsection>Variables</subsection><ul>
-</ul><subsection>Compile options</subsection><ul>
+</ul></li></ul><subsection>Compile options</subsection><ul>
 	-
 </ul>
 *//** *//*

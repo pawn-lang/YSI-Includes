@@ -21,10 +21,9 @@
 	11/11/11:
 		First version.
 </ul></li></ul><subsection>Functions</subsection><ul>
-	Public
+<li><em>Public:</em><ul>
 		-
-</ul></li></ul><subsection>Variables</subsection><ul>
-</ul>
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -16,9 +16,7 @@
 		Updated Langs_Add to accept the parameters in either order.
 	01/05/11:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
-</ul><subsection>Variables</subsection><ul>
-</ul>
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

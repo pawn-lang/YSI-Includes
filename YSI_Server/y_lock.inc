@@ -14,8 +14,7 @@
 </ul></li></ul><subsection>Changelog</subsection><ul>
 	25/02/12:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
-</ul><subsection>Variables</subsection><ul>
+</ul></li></ul><subsection>Variables</subsection><ul>
 <li><em>Global</em><ul>
 		-
 </ul>
