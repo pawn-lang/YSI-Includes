@@ -56,7 +56,7 @@
 	24/03/07:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Stock</em><ul>
+<li><em>Stock</em><ul><to_ul>
 		INI_Load - Loads an INI file using standard features.
 		INI_ParseFile - Loads a file as an ini and distributes data.
 		INI_GetEntryName - Gets the name of an INI item.
@@ -71,17 +71,17 @@
 		INI_WriteBin - Writes a binary to an INI.
 		INI_WriteBool - Writes a boolean to an INI.
 		INI_RemoveEntry - Remove an entry from a file.
-</ul></li><li><em>Static</em><ul>
+</ul></li><li><em>Static</em><ul><to_ul>
 		INI_WriteBuffer - Writes an INI's buffer to the file.
 		INI_AddToBuffer - Adds a string to an INI buffer.
-</ul></li><li><em>Inline</em><ul>
+</ul></li><li><em>Inline</em><ul><to_ul>
 		INI_Int - Parse an integer INI entry.
 		INI_Float - Parse a float INI entry.
 		INI_Hex - Parse a hex INI entry.
 		INI_Bin - Parse a binary INI entry.
 		INI_Bool - Parse a binary INI entry.
 		INI_String - Parse a string INI entry.
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><subsection>Definitions</subsection><ul><to_ul>
 	MAX_INI_TAG - Maximum length of an INI tagname.
 	MAX_INI_ENTRY_NAME - Maximum length of an INI entry name.
 	MAX_INI_ENTRY_TEXT - Maximum length of an INI's entries' value.
@@ -89,15 +89,15 @@
 	INI_NEW_LINE - String for new lines.
 	INI_MAX_WRITES - Maximum concurrent files open for writing.
 	MAX_INI_TAGS - Number of tags the buffer can hold data for at once.
-</ul><subsection>Enums</subsection><ul>
+</ul><subsection>Enums</subsection><ul><to_ul>
 	E_INI_WRITE - Storage for entries to be written.
 	E_INI_TAGS - Data for tags with data.
-</ul><subsection>Macros</subsection><ul>
+</ul><subsection>Macros</subsection><ul><to_ul>
 	INI_Parse - Header for ini parsing functions.
-</ul><subsection>Tags</subsection><ul>
+</ul><subsection>Tags</subsection><ul><to_ul>
 	INI - Handle to an INI file being written to.
 </ul><subsection>Variables</subsection><ul>
-<li><em>Static</em><ul>
+<li><em>Static</em><ul><to_ul>
 		YSI_g_sINIWriteBuffer - Basic data to be written.
 		YSI_g_sINIWritePos - Next slot to write to.
 		YSI_g_sINITagPos - Next slot to add a tag to.

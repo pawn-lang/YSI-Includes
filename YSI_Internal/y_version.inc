@@ -16,7 +16,7 @@
 		Added changelog capabilities.
 	22/10/10:
 		First version.
-</ul><subsection>Hooks</subsection><ul>
+</ul><subsection>Hooks</subsection><ul><to_ul>
 		OnGameModeInit
 </ul>
 *//** *//*

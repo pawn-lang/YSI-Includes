@@ -26,30 +26,30 @@
 	24/03/07:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Core</em><ul>
+<li><em>Core</em><ul><to_ul>
 		Bintree_QSort - Custom implementaion of QSort to keep pointers.
 		Bintree_SortHalf - Itteratively balances halves of an array.
-</ul></li><li><em>Stock</em><ul>
+</ul></li><li><em>Stock</em><ul><to_ul>
 		Bintree_Generate - Generates a balanced binary tree from given input.
 		Bintree_Reset - Resets a position in a tree.
 		Bintree_FindValue - Finds the pointer for a value in the tree.
 		Bintree_Add - Adds an item to a generated tree.
 		Bintree_Delete - Removes an item from a tree.
 		Bintree_UpdatePointers - Updates the pointers after a target change.
-</ul></li><li><em>Static</em><ul>
+</ul></li><li><em>Static</em><ul><to_ul>
 		Bintree_Compress - Removes space from an altered tree.
 		Bintree_FindMin - Finds the smallest value on a branch.
 		Bintree_FindMax - Finds the largest value on a branch.
-</ul></li><li><em>Inline</em><ul>
+</ul></li><li><em>Inline</em><ul><to_ul>
 		Bintree_Sort - Entry point for Bintree_QSort.
 		Bintree_Fill - Entry point for Bintree_SortHalf.
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><subsection>Definitions</subsection><ul><to_ul>
 	BINTREE_NO_BRANCH - Nowhere to go from the number in required direction.
 	BINTREE_NOT_FOUND - Failure return.
-</ul><subsection>Enums</subsection><ul>
+</ul><subsection>Enums</subsection><ul><to_ul>
 	E_BINTREE_TREE - Structure of a leaf of a binary tree.
 	E_BINTREE_INPUT - Structure of an array of data to be added to a tree.
-</ul><subsection>Tags</subsection><ul>
+</ul><subsection>Tags</subsection><ul><to_ul>
 	Bintree - Binary tree type.
 </ul>
 *//** *//*

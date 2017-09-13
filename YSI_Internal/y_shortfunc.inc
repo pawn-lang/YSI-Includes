@@ -14,7 +14,7 @@
 <subsection>Changelog</subsection><ul>
 	21/10/10:
 		Split in to y_shortfunc.
-</ul><subsection>Natives</subsection><ul>
+</ul><subsection>Natives</subsection><ul><to_ul>
 	W@ - Renaming of __CallRemoteFunction for size reasons.
 	V@ - Renaming of getproperty for size reasons.
 	S@ - Renaming of setproperty for size reasons.

@@ -24,7 +24,7 @@
 	26/04/13:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Stock</em><ul>
+<li><em>Stock</em><ul><to_ul>
 		Puny_Encode - Convert a Unicode string to Punycode.
 		Puny_Decode - Convert a Punycode string to Unicode.
 		Puny_HTTP - Wrapper for "HTTP" to encode domain names.

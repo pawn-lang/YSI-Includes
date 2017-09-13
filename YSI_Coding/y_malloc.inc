@@ -17,7 +17,7 @@
 	22/12/08:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Stock</em><ul>
+<li><em>Stock</em><ul><to_ul>
 		malloc - Allocate a block of memory (may be inline).
 		calloc - Allocate a block of memory and blank.
 		free - Free an allocated block of memory (may be inline).
@@ -29,10 +29,10 @@
 		Malloc_Free - Do the memory freeing (may be static).
 		Malloc_SlotSize - Get the size of an allocated block (may be inline).
 		Malloc_NewS - Allocate for and store a given string.
-</ul></li><li><em>Static</em><ul>
+</ul></li><li><em>Static</em><ul><to_ul>
 		Malloc_Allocate - Do the memory allocation (may be stock).
 		Malloc_Free - Do the memory freeing (may be stock).
-</ul></li><li><em>Inline</em><ul>
+</ul></li><li><em>Inline</em><ul><to_ul>
 		mget - Get data from an allocation unit.
 		mset - Set data in an allocation unit.
 		mgets - Get a string from an allocation unit.
@@ -47,15 +47,15 @@
 		Malloc_GetData - Direct data access getter.
 		Malloc_SetData - Direct data access setter.
 		Malloc_SlotSize - Get the size of an allocated block (may be stock).
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><subsection>Definitions</subsection><ul><to_ul>
 	MALLOC_KB_TO_CELL - Multiplication value to convert kb to cells.
 	NO_ALLOC - A failed allocation (NULL, but YSI already has NULL).
-</ul><subsection>Tags</subsection><ul>
+</ul><subsection>Tags</subsection><ul><to_ul>
 	Alloc - An allocated block handle variable.
 </ul><subsection>Variables</subsection><ul>
-<li><em>Global</em><ul>
+<li><em>Global</em><ul><to_ul>
 		YSI_gMallocMemory - Stores the data (may be static).
-</ul></li><li><em>Static</em><ul>
+</ul></li><li><em>Static</em><ul><to_ul>
 		YSI_gMallocMemory - Stores the data (may be global).
 		_YSI_g_sUnusedStart - Start of free memory.
 </ul></li></ul><subsection>Compile options</subsection><ul>

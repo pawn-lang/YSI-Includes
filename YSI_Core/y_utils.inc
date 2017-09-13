@@ -96,7 +96,7 @@ Misc functions used throughout.
 <li><seealso name="FALSE" /> - False hack for one-time loops.</li>
 <li><seealso name="NULL" /> - 1 long string for passing via Call(Remote|Local)Function.</li>
 </ul>
-</ul></li></ul><subsection>Examples</subsection><ul>
+</ul></li></ul><subsection>Examples</subsection><ul><to_ul>
 	N/A - This is a collection of independent functions.
 </ul>
 *//** *//*

@@ -29,18 +29,18 @@
 	08/05/07:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Public</em><ul>
+<li><em>Public</em><ul><to_ul>
 		Area_Loop - Main loop for checking who's where.
 		Area_Remote - Does minor functions remotely.
 		Area_AddRemote - Adds areas remotely.
 		YSIM_Areas - Master system interface.
 		Area_Broadcast - Recieves transmitted areas.
 		Area_UpdateEmpty - Resets the empty array after master change.
-</ul></li><li><em>Core</em><ul>
+</ul></li><li><em>Core</em><ul><to_ul>
 		Area_Area - Constructor.
 		Area_CheckArea - Gets an area's type anx calls the relevant function.
 		Area_OnPlayerConnect - Called when a player connects.
-</ul></li><li><em>Stock</em><ul>
+</ul></li><li><em>Stock</em><ul><to_ul>
 		Area_Delete - Deletes an area.
 		Area_AddCube - Adds a cube.
 		Area_AddBox - Adds a box.
@@ -53,7 +53,7 @@
 		Area_SetAllWorlds - Sets wether all worlds have this are.
 		Area_SetWorld - Sets wether this world has this area.
 		Area_IsValid - Checks if an area is valid.
-</ul></li><li><em>Static</em><ul>
+</ul></li><li><em>Static</em><ul><to_ul>
 		Area_IsInCircle - Checks if a player is in this circular area.
 		Area_IsInSphere - Checks if a player is in this spherical area.
 		Area_IsInPoly - Checks if a player is in this polygonal area.
@@ -61,24 +61,24 @@
 		Area_IsInBox - Checks if a player is in this rectangular area.
 		Area_AddToUnused - Adds a area pointer to the unused list.
 		Area_GetFreeSlot - Gets the next free area slot.
-</ul></li><li><em>Inline</em><ul>
+</ul></li><li><em>Inline</em><ul><to_ul>
 		Area_IsActive - Checks if an area is active.
 		Area_GetEmptySlotCount - Gets the number of empty slots.
 		Area_AddSlots - Removes slots from the unused count.
-</ul></li></ul><subsection>Callbacks</subsection><ul>
+</ul></li></ul><subsection>Callbacks</subsection><ul><to_ul>
 	OnPlayerEnterArea - Called when a player enters an area.
 	OnPlayerLeaveArea - Called when a player leaves an area.
-</ul><subsection>Definitions</subsection><ul>
+</ul><subsection>Definitions</subsection><ul><to_ul>
 	MAX_AREAS - Max number of areas.
 	NO_AREA - Fail return.
 	AREA_NO_NEXT - Marker for end of a list.
 	AREA_WORLDS - Number of worlds an area can be in.
 	AREA_WORLD_COUNT - Number of cells required for a bit array of AREA_WORLDS.
-</ul><subsection>Enums</subsection><ul>
+</ul><subsection>Enums</subsection><ul><to_ul>
 	e_AREA_FLAGS - Flags for each area.
 	E_AREA - Structure for part of an areas data.
 </ul><subsection>Variables</subsection><ul>
-<li><em>Static</em><ul>
+<li><em>Static</em><ul><to_ul>
 		YSI_g_sUnusedAreas - Pointer to the first unused area.
 		YSI_g_sLastUnused - Pointer to the last unused area.
 		YSI_g_sFreeCount - Number of unused slots.

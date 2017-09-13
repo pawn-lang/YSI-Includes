@@ -23,9 +23,9 @@
 	19/08/10:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Stock</em><ul>
+<li><em>Stock</em><ul><to_ul>
 		YHash - Generate a string hash at run time.
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><subsection>Definitions</subsection><ul><to_ul>
 	_H - Generate a string hash at compile time.
 	_I - Generate a case insensitive string hash at compile time.
 </ul>

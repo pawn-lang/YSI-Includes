@@ -188,7 +188,7 @@ Optional plugins:
 		Added code for a script to remove itself from the global list.
 	11/10/07:
 		Not first version but added documentation months late.
-</ul><subsection>Macros</subsection><ul>
+</ul><subsection>Macros</subsection><ul><to_ul>
 	RF - Declare a function which may be remote.
 	RV - Declare a void function which may be remote.
 	RS - Declare an optional callback.
@@ -198,9 +198,9 @@ Optional plugins:
 	RFPC - Combination of P and C.
 	RFCP - Combination of P and C.
 </ul><subsection>Variables</subsection><ul>
-<li><em>Global</em><ul>
+<li><em>Global</em><ul><to_ul>
 		_@ - ID of this script.
-</ul></li></ul><subsection>Compile options</subsection><ul>
+</ul></li></ul><subsection>Compile options</subsection><ul><to_ul>
 	YSI_NO_MASTER - Don't use the master system.
 	YSI_IS_CLIENT - Script is a client only script.
 	YSI_IS_SERVER - Script is a server only script.

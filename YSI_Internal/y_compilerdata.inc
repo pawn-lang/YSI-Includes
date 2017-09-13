@@ -45,14 +45,14 @@ in the output code.
 	14/04/13:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Static</em><ul>
+<li><em>Static</em><ul><to_ul>
 		__CompilerStringReturn - Assembly for returning a string to its callers'
 			caller.  Used to bypass a known bug.
 		__CompilerSecondPass - Tested to determine the current compiler pass.
-</ul></li><li><em>Inline</em><ul>
+</ul></li><li><em>Inline</em><ul><to_ul>
 		__COMPILER_STRING_RETURN - Correctly return a string from a varargs
 			function.
-</ul></li></ul><subsection>Macros</subsection><ul>
+</ul></li></ul><subsection>Macros</subsection><ul><to_ul>
 	__COMPILER_PASS - Which pass the compiler is currently running.
 	__COMPILER_DOCUMENTING - Is the compiler collecting documentation
 		information right now (i.e. is this the first pass)?

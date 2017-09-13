@@ -32,15 +32,15 @@
 	15/04/07:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Inline</em><ul>
+<li><em>Inline</em><ul><to_ul>
 		Debug_Code - Runs defined code if a certain level is active.
 		Debug_Print - Prints the formatted string provided at the given level.
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><subsection>Definitions</subsection><ul><to_ul>
 	P:&lt;0-6&gt; - Print a message.
 	P:C - Run debug code.
 	P:E - Print an error message.
 	P:W - Print a warning message.
-</ul><subsection>Compile options</subsection><ul>
+</ul><subsection>Compile options</subsection><ul><to_ul>
 	_DEBUG - Debugging level to use.
 </ul>
 *//** *//*

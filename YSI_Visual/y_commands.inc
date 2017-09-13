@@ -43,16 +43,16 @@
 	10/04/07:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Public</em><ul>
+<li><em>Public</em><ul><to_ul>
 		Command_Add - Adds a command to the array for processing.
 		Command_Remove - Removes a command.
 		Command_Name - Gets the name of a command in a property.
-</ul></li><li><em>Core</em><ul>
+</ul></li><li><em>Core</em><ul><to_ul>
 		Command_Process - Called from OnPlayerCommandText to process entered commands.
 		Command_Parse - Sorts added commands into a binary tree.
 		Command_Hash - Hashes a word for command hashing.
 		Command_ProcRem - Processes a help command in the master script.
-</ul></li><li><em>Stock</em><ul>
+</ul></li><li><em>Stock</em><ul><to_ul>
 		Command_SetDisconnectReturn - Sets the return value for unconnected players.
 		Command_UseShortCuts - Toggles use of per-player command shortcuts.
 		Command_SetDeniedReturn - Sets the return value for denied use commands.
@@ -66,19 +66,19 @@
 		Comamnd_SetPlayerUse - Sets wether or not a player can use a command.
 		Comamnd_SetPlayerUseByID - Sets wether or not a player can use a command.
 		Command_FindByName - Finds a command in a possibly sorted list.
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><subsection>Definitions</subsection><ul><to_ul>
 	MAX_COMMAND_LENGTH - The maximum length of a command string.
 	COMMAND_NOT_FOUND - Indicates that a searched for string is not a function.
-</ul><subsection>Enums</subsection><ul>
+</ul><subsection>Enums</subsection><ul><to_ul>
 	e_COMM_FLAG - Bit mappings for command options.
 	E_COMMANDS - Structure of the array holding the string data.
-</ul><subsection>Macros</subsection><ul>
+</ul><subsection>Macros</subsection><ul><to_ul>
 	Command_(%1) - Forwards and declares a standard command for calling.
 	ycmd(%1) - Adds a command to the array (wrapper for Command_Add).
-</ul><subsection>Tags</subsection><ul>
+</ul><subsection>Tags</subsection><ul><to_ul>
 	e_COMM_FLAG - Flag type.
 </ul><subsection>Variables</subsection><ul>
-<li><em>Static</em><ul>
+<li><em>Static</em><ul><to_ul>
 		YSI_g_sCommands - Holds all the textual data of the commands.
 		YSI_g_sSearchTree - Tree of hashes for function names.
 		YSI_g_sAltTree - Tree of hashes for alternate names.
@@ -87,9 +87,9 @@
 		YSI_g_sCommandIndex - Pointer to the next free index in the function array.
 		YSI_g_sAltCount - The number of commands with altnames.
 		YSI_g_sCommandFlags - Bit array of command options.
-</ul></li></ul><subsection>Commands</subsection><ul>
+</ul></li></ul><subsection>Commands</subsection><ul><to_ul>
 	commands - Lists all commands available to you.
-</ul><subsection>Compile options</subsection><ul>
+</ul><subsection>Compile options</subsection><ul><to_ul>
 	COMMAND_SENSITIVE - Make commands case sensitive.
 	COMMAND_ACCURATE - Can use '@' in command names.
 	MAX_COMMANDS - The maximum number of commands which can be used.

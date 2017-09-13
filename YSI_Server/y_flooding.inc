@@ -79,15 +79,15 @@ Legal:
 	11/03/08:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Core</em><ul>
+<li><em>Core</em><ul><to_ul>
 		OnPlayerConnect - Called to check IPs.
 		OnScriptInit - Sets the OnPlayerConnect function flag.
-</ul></li><li><em>API</em><ul>
+</ul></li><li><em>API</em><ul><to_ul>
 		SetMaxConnections - Sets the max allowed connections from an IP.
-</ul></li></ul><subsection>Enums</subsection><ul>
+</ul></li></ul><subsection>Enums</subsection><ul><to_ul>
 	e_FLOOD_ACTION - What to do if too many connections form.
 </ul><subsection>Variables</subsection><ul>
-<li><em>Static</em><ul>
+<li><em>Static</em><ul><to_ul>
 		YSI_g_sPlayerIPs - People's stored IPs for speed.
 		YSI_g_sMaxConnections - Data for the script.
 </ul></li></ul>

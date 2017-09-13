@@ -28,20 +28,20 @@ Legal:
 	24/08/07:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Public</em><ul>
+<li><em>Public</em><ul><to_ul>
 		Loader_Spawn - Processes a loaded spawn point.
 		Loader_Check - Processes a loaded checkpoint.
 		Loader_Obj - Processes a loaded object.
-</ul></li><li><em>Core</em><ul>
+</ul></li><li><em>Core</em><ul><to_ul>
 		Loader_Loader - Initialises data.
-</ul></li><li><em>Stock</em><ul>
+</ul></li><li><em>Stock</em><ul><to_ul>
 		Loader_Parse - Loads a file.
 		Loader_AddHandler - Adds a custom handle for the race file.
 		Loader_GetRace - Returns the current race handle.
-</ul></li></ul><subsection>Tags</subsection><ul>
+</ul></li></ul><subsection>Tags</subsection><ul><to_ul>
 	e_RACE_FLAGS - Race data flag.
 </ul><subsection>Variables</subsection><ul>
-<li><em>Static</em><ul>
+<li><em>Static</em><ul><to_ul>
 		YSI_g_sXMLRules - Handle to the XML parse rule set.
 		YSI_g_sCurRace - Handle to the current race being built.
 </ul></li></ul>

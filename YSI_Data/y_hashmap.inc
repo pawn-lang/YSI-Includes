@@ -16,13 +16,13 @@
 	23/06/13:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Stock</em><ul>
+<li><em>Stock</em><ul><to_ul>
 		HashMap_Init - Associate a hash map with an array.
 		HashMap_Add - Add a value under a given string.
 		HashMap_Get - Get a value from a string.
 		HashMap_RemoveKey - Remove a string and its value from a hash map.
 		HashMap_Set - Change the value associated with a key.
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><subsection>Definitions</subsection><ul><to_ul>
 	HASH_MAP_DATA - What should be added to enums to be hash map referenced.
 	HashMap - Declare a new hash map.
 </ul>

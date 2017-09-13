@@ -41,14 +41,14 @@
 	23/03/07:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Public</em><ul>
+<li><em>Public</em><ul><to_ul>
 		Text_ResetAll - Resets the entire text system.
 		Text_NewLanguage - Sets up to parse a new language.
 		Text_Parse - Sorts loaded text into a binary tree.
 		Text_DataSave_data - Saves text appearence data.
 		Text_DataSave_colours - Saves file colour defines.
 		Text_DataSave_colors - Wrapper for above function.
-</ul></li><li><em>Stock</em><ul>
+</ul></li><li><em>Stock</em><ul><to_ul>
 		Text_FindTextPointers - Should be static but can't be :(.
 		Text_AddToBuffer - Saves all passed text for processing.
 		Text_GetTextFromIndex - Gets text from an array pointer and language.
@@ -61,9 +61,9 @@
 		Text_SendToGroup - Sends a message to a defined group.
 		Text_SendToPlayers - Sends a message to a passed group.
 		Text_Display - Display an actual string to a player in a given style.
-</ul></li><li><em>Static</em><ul>
+</ul></li><li><em>Static</em><ul><to_ul>
 		Text_AddText - Adds text to the tree after sorting.
-</ul></li><li><em>Inline</em><ul>
+</ul></li><li><em>Inline</em><ul><to_ul>
 		Text_Text - Constructor - Calls Text_ResetAll.
 		Text_SetLangPointer - Sets the pointer for a language to a position.
 		Text_ResetLangPointers - Resets all the pointers for one language.
@@ -74,7 +74,7 @@
 		Text_SendToAllFormat - Sends a formatted message to all players.
 		Text_SendToGroupFormat - Sends a formatted message to a defined group.
 		Text_SendToPlayersFormat - Sends a formatted message to a passed group.
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><subsection>Definitions</subsection><ul><to_ul>
 	MAX_TEXT_NAME - Maximum length of a text identifier.
 	MAX_TEXT_ENTRY - Maximum length of a text string.
 	TEXT_NO_TEXT - Value for no text for that language.
@@ -82,12 +82,12 @@
 	TEXT_TYPE_CLIENT - Flag for sending a client formatted message (unused).
 	TEXT_TYPE_GAME - Flag for sending a game text formatted message (unused).
 	MAX_TEXT_COLOURS - Max number of defined colours in an ini file.
-</ul><subsection>Enums</subsection><ul>
+</ul><subsection>Enums</subsection><ul><to_ul>
 	E_TEXT_POINTERS - Structure of the language pointer array.
-</ul><subsection>Macros</subsection><ul>
+</ul><subsection>Macros</subsection><ul><to_ul>
 	Text_RegisterTag - Placed as a function, calls Text_AddToBuffer for tags.
 </ul><subsection>Variables</subsection><ul>
-<li><em>Static</em><ul>
+<li><em>Static</em><ul><to_ul>
 		YSI_g_sTextTable - Array of all text entries.
 		YSI_g_sNameTable - Array of all text names and language pointers.
 		YSI_g_sSearchTree - Binary tree of text hashes.

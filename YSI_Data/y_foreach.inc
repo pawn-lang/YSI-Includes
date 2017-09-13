@@ -89,17 +89,17 @@
 	08/09/07:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Public</em><ul>
+<li><em>Public</em><ul><to_ul>
 		OnPlayerDisconnect - Called when a player leaves to remove them.
 		OnPlayerConnect - Called when a player connects to add them.
-</ul></li><li><em>Stock</em><ul>
+</ul></li><li><em>Stock</em><ul><to_ul>
 		Iter_ShowArray - Displays the contents of the array.
 		Iter_AddInternal - Add a value to an iterator.
 		Iter_RemoveInternal - Remove a value from an iterator.
 		Iter_RandomInternal - Get a random item from an iterator.
 		Iter_FreeInternal - Gets the first free slot in the iterator.
 		Iter_InitInternal - Initialises a multi-dimensional iterator.
-</ul></li><li><em>Inline</em><ul>
+</ul></li><li><em>Inline</em><ul><to_ul>
 		Iter_Create - Create a new iterator value set.
 		Iter_Add - Wraps Iter_AddInternal.
 		Iter_Remove - Wraps Iter_RemoveInternal.
@@ -114,26 +114,26 @@
 		Iter_Count2 - Gets the number of items in an iterator array.
 		Iter_Debug2 - Wraps around Iter_ShowArray for arrays.
 		Iter_Free2 - Wraps around Iter_FreeInternal for arrays.
-</ul></li></ul><subsection>Hooks</subsection><ul>
+</ul></li></ul><subsection>Hooks</subsection><ul><to_ul>
 	Iter_OnPlayerConnect - Hook for the OnPlayerConnect callback.
 	Iter_OnPlayerDisconnect - Hook for the OnPlayerDisconnect callback.
 	Iter_OnGameModeInit - Only exists to make the code compile correctly...
-</ul><subsection>Keywords</subsection><ul>
+</ul><subsection>Keywords</subsection><ul><to_ul>
 	foreach - Command to loop an iterator.
 	foreachex - Like foreach but without a new variable.
 	foreach2 - Command to loop through an iterator array.
 	foreachex - Like foreach2 but without a new variable.
-</ul><subsection>Tags</subsection><ul>
+</ul><subsection>Tags</subsection><ul><to_ul>
 	Iterator - Declare an iterator.
 </ul><subsection>Variables</subsection><ul>
-<li><em>Static</em><ul>
+<li><em>Static</em><ul><to_ul>
 		YSI_g_OPC - Records wether Iter_OnPlayerConnect exists for speed.
 		YSI_g_OPDC - Records wether Iter_OnPlayerDisconnect exists for speed.
-</ul></li></ul><subsection>Compile options</subsection><ul>
+</ul></li></ul><subsection>Compile options</subsection><ul><to_ul>
 	YSI_ITTER_NO_SORT - Removed.
 	FOREACH_NO_BOTS - Remove the bot iterators for smaller code.
 	FOREACH_NO_PLAYERS - Remove all default code for player itteration.
-</ul><subsection>Iterators</subsection><ul>
+</ul><subsection>Iterators</subsection><ul><to_ul>
 	Player - List of all players connected.
 	Bot - List of all bots (npcs) connected.
 	NPC - Alias of Bot.

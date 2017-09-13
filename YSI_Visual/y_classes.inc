@@ -31,15 +31,15 @@
 	04/08/07:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Public</em><ul>
+<li><em>Public</em><ul><to_ul>
 		Class_AddRemote - Adds a class to the remote master.
 		Class_Remote - Updates settings remotely.
-</ul></li><li><em>Core</em><ul>
+</ul></li><li><em>Core</em><ul><to_ul>
 		Class_Class - Sets up the system.
 		Class_OnPlayerRequestSpawn - Called when a player requests a spawn.
 		Class_OnPlayerRequestClass - Called when a player requests a class.
 		Class_OnPlayerConnect - Called when a player connects.
-</ul></li><li><em>Stock</em><ul>
+</ul></li><li><em>Stock</em><ul><to_ul>
 		Class_Delete - Removes a class.
 		Class_SetPlayer - Sets whether or not a player can use a class.
 		Class_Disable - Disables a class.
@@ -53,9 +53,9 @@
 		Class_RequireSelectionLogin - Require people to login before selecting.
 		Class_RequireSelectionReg - Require people to register before selecting.
 		Class_RequireSpawnReg - Require people to register before spawning.
-</ul></li><li><em>Static</em><ul>
+</ul></li><li><em>Static</em><ul><to_ul>
 		Class_AddClass - Adds a class, wrapped by API and remote functions.
-</ul></li><li><em>Inline</em><ul>
+</ul></li><li><em>Inline</em><ul><to_ul>
 		Class_IsActive - Checks a class is active.
 		Class_Enabled - Checks a class is enabled.
 		Class_IsValid - Checks a class is valid.
@@ -64,16 +64,16 @@
 		Class_Z - Gets a classes z position.
 		Class_A - Gets a classes angle.
 		Class_Skin - Gets a classes skin.
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><subsection>Definitions</subsection><ul><to_ul>
 	MAX_CLASSES - Maximum number of classes storeable by the system.
 	CLASS_LEFT - Flag for last internal class viewed.
 	CLASS_MIDDLE - Flag for last internal class viewed.
 	CLASS_RIGHT - Flag for last internal class viewed.
-</ul><subsection>Enums</subsection><ul>
+</ul><subsection>Enums</subsection><ul><to_ul>
 	e_CLASS_FLAGS - Small data for individual classes.
 	E_CLASS - Class data structure.
 </ul><subsection>Variables</subsection><ul>
-<li><em>Static</em><ul>
+<li><em>Static</em><ul><to_ul>
 		YSI_g_sClasses - Data for classes.
 		YSI_g_sPlayerClass - Player's current classes.
 		YSI_g_sLeft - Handle for the first internal class.
