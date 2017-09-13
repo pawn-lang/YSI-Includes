@@ -123,6 +123,7 @@ static stock
 <param name="variable">Variable to fill with integer value.</param>
 *//*-------------------------------------------------------------------------**/
 
+P:D(INI_Int(%1,%2));
 #define INI_Int(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = strval(value)
 
@@ -131,6 +132,7 @@ static stock
 <param name="variable">Variable to fill with float value.</param>
 *//*-------------------------------------------------------------------------**/
 
+P:D(INI_Float(%1,%2));
 #define INI_Float(%1,%2) \
 	if (!strcmp((%1), name, true)) return _:(%2 = floatstr(value))
 
@@ -139,6 +141,7 @@ static stock
 <param name="variable">Variable to fill with hex value.</param>
 *//*-------------------------------------------------------------------------**/
 
+P:D(INI_Hex(%1,%2));
 #define INI_Hex(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = hexstr(value)
 
@@ -147,6 +150,7 @@ static stock
 <param name="variable">Variable to fill with binary value.</param>
 *//*-------------------------------------------------------------------------**/
 
+P:D(INI_Bin(%1,%2));
 #define INI_Bin(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = binstr(value)
 
@@ -161,6 +165,7 @@ static stock
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(INI_String(%1,%2));
 #define INI_String(%1,%2) \
 	if (!strcmp((%1), name, true)) return _:INI_CHECK_LEN:strcpy(%2, value)
 
@@ -171,6 +176,7 @@ static stock
 <param name="variable">Variable to fill with string value.</param>
 *//*-------------------------------------------------------------------------**/
 
+P:D(INI_Bool(%1,%2));
 #define INI_Bool(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = boolstr(value)
 
@@ -208,6 +214,7 @@ static stock
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(INI_GetCallback(%0,%1,%2,%3,%4,%5));
 #define INI_GetCallback(%0,%1,%2,%3,%4,%5) \
 	( \
 		strcpy((%2), (%3)), \

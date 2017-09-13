@@ -188,6 +188,7 @@ enum E_BINTREE_INPUT
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Bintree_Sort(%1,%2));
 #define Bintree_Sort(%1,%2) \
 	Bintree_QSort((%1), 0, (%2) - 1)
 
@@ -203,6 +204,7 @@ enum E_BINTREE_INPUT
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Bintree_Fill(%1,%2,%3));
 #define Bintree_Fill(%1,%2,%3) \
 	Bintree_SortHalf((%1), (%2), 0, (%3), 0, BINTREE_NO_BRANCH)
 

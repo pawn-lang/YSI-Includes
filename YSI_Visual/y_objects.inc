@@ -680,6 +680,7 @@ static
 	Checks if a passed id is a valid object.
 *//*-------------------------------------------------------------------------**/
 
+P:D(Object_IsValid(%1));
 #define Object_IsValid(%1) \
 	((%1) >= 0 && (%1) < MAX_DYN_OBJECTS && YSI_g_sObjects[(%1)][E_OBJECT_MODEL] & e_OBJ_FLAG_ACTIVE)
 
@@ -689,6 +690,7 @@ static
 	Actually checks a objSet of passed flags, not a passed object.
 *//*-------------------------------------------------------------------------**/
 
+P:D(Object_GetAttach(%1));
 #define Object_GetAttach(%1) \
 	((_:(%1) >> 15) & NO_ATTACH_PLAYER)
 
@@ -698,6 +700,7 @@ static
 	Actually checks a objSet of passed flags, not a passed object.
 *//*-------------------------------------------------------------------------**/
 
+P:D(Object_IsAttached(%1));
 #define Object_IsAttached(%1) \
 	(Object_GetAttach(%1) != NO_ATTACH_PLAYER)
 
@@ -712,6 +715,7 @@ static
 	of +/-13107.2 for x, y and z and a max of 102.4 for the speed to compress.
 *//*-------------------------------------------------------------------------**/
 
+P:D(Object_SetGateTarget(%1,%2,%3,%4,%5));
 #define Object_SetGateTarget(%1,%2,%3,%4,%5) \
 	new \
 		_o_sgt_y = floatround((%3) * 10); \
@@ -723,6 +727,7 @@ static
 	Actually checks a objSet of passed flags, not a passed object.
 *//*-------------------------------------------------------------------------**/
 
+P:D(Object_SetAttach(%1));
 #define Object_SetAttach(%1) \
 	e_OBJ_FLAG:(((%1) & NO_ATTACH_PLAYER) << 15)
 

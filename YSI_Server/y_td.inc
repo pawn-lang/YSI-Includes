@@ -201,6 +201,7 @@ static stock
 <param name="id">Text draw style to check validity of,</param>
 *//*-------------------------------------------------------------------------**/
 
+P:D(TD_IsValidStyle(%1));
 #define TD_IsValidStyle(%1) \
 	(Style:0 <= (%1) < MAX_TEXT_DRAW_STYLES && YSI_g_sTDData[(%1)][E_TD_DATA_HASH])
 

@@ -77,6 +77,7 @@ Optional plugins:
 </returns>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Malloc_GetSlotSize(%1));
 #define Malloc_GetSlotSize(%1) \
 	(YSI_gMallocMemory[_:(%1) - 1])
 
@@ -87,6 +88,7 @@ Optional plugins:
 </returns>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Malloc_SlotSize(%1));
 #if defined YSI_MALLOC_SECURE
 
 	stock Malloc_SlotSize(slot)
@@ -131,6 +133,7 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 <param name="size">The size to set it to.</param>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Malloc_SetSlotSize(%1,%2));
 #define Malloc_SetSlotSize(%1,%2) \
 	YSI_gMallocMemory[_:(%1) - 1] = (%2)
 
@@ -145,6 +148,7 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Malloc_GetData(%1,%2));
 #define Malloc_GetData(%1,%2) \
 	(YSI_gMallocMemory[_:((%1)+Alloc:(%2))])
 
@@ -154,6 +158,7 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 <param name="value">The value to save.</param>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Malloc_SetData(%1,%2,%3));
 #define Malloc_SetData(%1,%2,%3) \
 	YSI_gMallocMemory[_:((%1)+Alloc:(%2))]=(%3)
 
@@ -168,6 +173,7 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(mget(%1));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mget(%1) \
 		Malloc_Get(%1)
@@ -182,6 +188,7 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(mset(%1));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mset(%1) \
 		Malloc_Set(%1)
@@ -200,6 +207,8 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(mgets(%1));
+P:D(mgeta(%1));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mgets(%1) \
 		Malloc_GetS(%1)
@@ -217,6 +226,8 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(msets(%1));
+P:D(mseta(%1));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define msets(%1) \
 		Malloc_SetS(%1)
@@ -232,6 +243,7 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Malloc_NextSlot(%1));
 #define Malloc_NextSlot(%1) \
 	(YSI_gMallocMemory[(%1)])
 
@@ -246,6 +258,7 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Malloc_Get(%1,%2));
 #if defined YSI_MALLOC_SECURE
 
 	stock Malloc_Get(Alloc:array, index)
@@ -274,6 +287,7 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Malloc_Set(%1,%2,%3));
 #if defined YSI_MALLOC_SECURE
 
 	stock Malloc_Set(Alloc:array, index, value)
@@ -542,6 +556,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(malloc(%1));
 #if defined YSI_MALLOC_SECURE
 
 	stock Alloc:malloc(size)
@@ -569,7 +584,6 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-
 stock Alloc:calloc(size)
 {
 	new
@@ -596,6 +610,7 @@ stock Alloc:calloc(size)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(free(%1));
 #if defined YSI_MALLOC_SECURE
 
 	stock free(Alloc:slot)
@@ -789,3 +804,4 @@ stock Alloc:calloc(size)
 			}
 			return 1;
 		}
+

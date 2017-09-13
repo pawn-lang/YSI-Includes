@@ -394,6 +394,7 @@ loadtext core[ysi_properties];
 <param name="prop">Property to check.</param>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Property_IsActive(%1));
 #define Property_IsActive(%1) \
 	((%1) < MAX_PROPERTIES && (%1) >= 0 && YSI_g_sProperties[(%1)][E_PROP_DATA_FLAGS] & e_PROP_FLAGS_ACTIVE)
 
@@ -404,6 +405,7 @@ loadtext core[ysi_properties];
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Property_ResetMaxProperties());
 #define Property_ResetMaxProperties() \
 	Property_SetMaxProperties(cellmax)
 
@@ -415,6 +417,7 @@ loadtext core[ysi_properties];
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Property_SetOption(%1,%2));
 #define Property_SetOption(%1,%2) \
 	((%2) ? e_PROP_FLAGS_CUST_%1 : e_PROP_FLAGS:0)
 
@@ -423,6 +426,7 @@ loadtext core[ysi_properties];
 <param name="flags">flags cell to get it from.</param>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Property_GetOption(%1,%2));
 #define Property_GetOption(%1,%2) \
 	(e_PROP_FLAGS_CUST_%1 & e_PROP_FLAGS:(%2))
 
@@ -435,6 +439,7 @@ loadtext core[ysi_properties];
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Property_GivePlayerWeapon(%1,%2,%3));
 #define Property_GivePlayerWeapon(%1,%2,%3) \
 	if ((%2) == 39) SetPlayerArmour((%1), 100.0); else GivePlayerWeapon(%1, Property_GetWeaponFromSlot(%2), %3)
 
@@ -465,6 +470,7 @@ stock Property_IsValid(property)
 <param name="flags">Property flags for ownership type.</param>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Property_IsOwner(%1,%2,%3));
 #define Property_IsOwner(%1,%2,%3) \
 	((Property_GetOption(2, (%3))) ? (!Bit_GetBit(YSI_g_sProperties[(%2)][E_PROP_DATA_PLAYERS], (%1))) : (!(_:YSI_g_sProperties[(%2)][E_PROP_DATA_PLAYERS][0] == (%1))))
 
@@ -1481,6 +1487,7 @@ static stock Property_WeaponName(weapon)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Property_WeaponCost(%1));
 #define Property_WeaponCost(%1) \
 	((%1) & 0xFFFFF)
 
@@ -1491,6 +1498,7 @@ static stock Property_WeaponName(weapon)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Property_WeaponAmmo(%1));
 #define Property_WeaponAmmo(%1) \
 	((%1) >> 20)
 
@@ -2324,6 +2332,7 @@ ptask Property_Loop[500](i)
 <param name="playerid">Player to check for.</param>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Property_IsPlayerProperty(%1,%2));
 #define Property_IsPlayerProperty(%1,%2) \
 	((%1) & e_PROP_FLAGS_ACTIVE && (%1) & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_PROP && Checkpoint_HasPlayerNoWorld(_:((%1) & e_PROP_FLAGS_LINK), (%2)))
 

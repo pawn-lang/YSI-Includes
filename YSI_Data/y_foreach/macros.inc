@@ -105,6 +105,7 @@ Optional plugins:
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(foreach(%0));
 #define foreach(%0) for(new Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%0|||)
 
 /*-------------------------------------------------------------------------*//**
@@ -233,6 +234,7 @@ native Iter_Contains(Iterator:Name&lt;&gt;, value);
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Iter_Contains(%0));
 #define Iter_Contains(%0) (bool:_ITER<Contains>(%0))
 #define Iter_Contains_InternalA(%0,%1,%9)     Iter_Contains_InternalC(_:%1,F@s(%1)-F@s(%0),_:F@t:((%1[0]-%1[0])+%9))
 #define Iter_Contains_InternalB(%0,%2,%1,%9)  Iter_Contains_InternalD(%0[%2],_:%1,F@s(%1)-F@s(%0),-%2+F@s(%1)-1,_:F@t:((%1[0]-%1[0])+%9))
@@ -486,6 +488,7 @@ native Iter_FastClear(IteratorArray:Name[]&lt;&gt;);
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Iter_TrueArray(%1));
 #define Iter_TrueArray(%1) F@r(Iterator@%1)
 
 /*-------------------------------------------------------------------------*//**
@@ -495,6 +498,7 @@ native Iter_FastClear(IteratorArray:Name[]&lt;&gt;);
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Iter_TrueCount(%1));
 #define Iter_TrueCount(%1) F@r(Iter_Single@%1)
 
 /*-------------------------------------------------------------------------*//**
@@ -504,6 +508,7 @@ native Iter_FastClear(IteratorArray:Name[]&lt;&gt;);
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Iter_TrueMulti(%1));
 #define Iter_TrueMulti(%1) F@r(Iter_Multi@%1)
 
 /*-------------------------------------------------------------------------*//**

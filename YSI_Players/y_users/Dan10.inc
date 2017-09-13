@@ -134,6 +134,7 @@ forward y_users_SQLCallback(id, Result:r);
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(GetUsersSQLHost());
 #define GetUsersSQLHost()     (Player_LoadDBSettings(),YSI_g_sUsersSQLHost)
 #define GetUsersSQLReadUser() (Player_LoadDBSettings(),YSI_g_sUsersSQLReadUser)
 #define GetUsersSQLReadPass() (Player_LoadDBSettings(),YSI_g_sUsersSQLReadPass)

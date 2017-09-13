@@ -560,6 +560,7 @@ hook OnFilterScriptInit()
 </returns>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Area_GetEmptySlotCount());
 #define Area_GetEmptySlotCount() \
 	(YSI_g_sFreeCount)
 
@@ -570,6 +571,7 @@ hook OnFilterScriptInit()
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Area_AddSlots(%1));
 #define Area_AddSlots(%1) \
 	YSI_g_sFreeCount -= (%1)
 
@@ -581,6 +583,7 @@ hook OnFilterScriptInit()
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Area_IsActive(%1));
 #define Area_IsActive(%1) \
 	((%1) >= 0 && (%1) < MAX_AREAS && (YSI_g_sAreas[(%1)][E_AREA_FLAGS] & e_AREA_FLAGS_ACTIVE))
 
@@ -1264,6 +1267,7 @@ global void:Area_SetAllWorlds(area, bool:set)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
+P:D(Area_Add(%0,%1));
 #define Area_Add(%0,%1) Area_Add%0(%1)
 #define Area_AddCUBE Area_AddCube
 #define Area_AddCUBOID Area_AddCuboid
@@ -1286,6 +1290,7 @@ global void:Area_SetAllWorlds(area, bool:set)
 </returns>
 *//*-------------------------------------------------------------------------**/
 
+P:D(_AREA_MIN(%0,%1));
 #define _AREA_MIN(%0,%1) if (%1 < %0) %0 ^= %1, %1 ^= %0, %0 ^= %1
 
 @foreign Area_AddCuboid(Float:x0,Float:y0,Float:z0,Float:x1,Float:y1,Float:z1);
