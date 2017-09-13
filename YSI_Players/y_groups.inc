@@ -173,9 +173,9 @@ Optional plugins:
 </ul></li></ul><subsection>Description</subsection><ul>
 	Admin levels, gangs, teams etc - they're all "groups" of people, this
 	provides an abstraction for all of these collections.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	29/11/10:
 		First version
 </ul>

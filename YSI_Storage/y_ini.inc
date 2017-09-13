@@ -10,9 +10,9 @@
 </ul></li></ul><subsection>Description</subsection><ul>
 	Reads the INI and also exports a number of functions to other "classes" for
 	easy reading of data files there.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.5
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	07/01/13:
 		Rewrote almost everything!
 		Split in to multiple files.
@@ -55,7 +55,7 @@
 		Updated header documentation with more than changelog.
 	24/03/07:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Stock</em><ul>
 		INI_Load - Loads an INI file using standard features.
 		INI_ParseFile - Loads a file as an ini and distributes data.
@@ -89,14 +89,14 @@
 	INI_NEW_LINE - String for new lines.
 	INI_MAX_WRITES - Maximum concurrent files open for writing.
 	MAX_INI_TAGS - Number of tags the buffer can hold data for at once.
-</ul></li></ul><subsection>Enums</subsection><ul>
+</ul><subsection>Enums</subsection><ul>
 	E_INI_WRITE - Storage for entries to be written.
 	E_INI_TAGS - Data for tags with data.
-</ul></li></ul><subsection>Macros</subsection><ul>
+</ul><subsection>Macros</subsection><ul>
 	INI_Parse - Header for ini parsing functions.
-</ul></li></ul><subsection>Tags</subsection><ul>
+</ul><subsection>Tags</subsection><ul>
 	INI - Handle to an INI file being written to.
-</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 		YSI_g_sINIWriteBuffer - Basic data to be written.
 		YSI_g_sINIWritePos - Next slot to write to.

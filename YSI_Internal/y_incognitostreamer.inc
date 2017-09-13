@@ -10,12 +10,12 @@
 </ul></li></ul><subsection>Description</subsection><ul>
 	This file unites the YSI y_groups system with Incognito's streamer plugin so
 	that you can use more objects/areas etc with y_groups style permissions.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	20/10/12:
 		First version.
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

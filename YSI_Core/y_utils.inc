@@ -9,9 +9,9 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 Misc functions used throughout.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1.3
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	<em>06/10/12</em>
 <ul>
 <li>		Upgraded "memset" to use "FILL".</li>

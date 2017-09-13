@@ -9,12 +9,12 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Defines new names for native functions.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.2
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	21/10/10:
 		Split in to y_shortfunc.
-</ul></li></ul></li></ul><subsection>Natives</subsection><ul>
+</ul><subsection>Natives</subsection><ul>
 	W@ - Renaming of __CallRemoteFunction for size reasons.
 	V@ - Renaming of getproperty for size reasons.
 	S@ - Renaming of setproperty for size reasons.

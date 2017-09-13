@@ -10,9 +10,9 @@
 </ul></li></ul><subsection>Description</subsection><ul>
 	Configuration and detection for third-party SA:MP plugins (including
 	ones by Y_Less).
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	21/10/12:
 		First version
 </ul>

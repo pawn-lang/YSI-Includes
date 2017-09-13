@@ -15,9 +15,9 @@
 	
 	Note that y_commands has a few optimisations which bypass the code in here
 	so any modifications to bit array layouts will need to be reflected there.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.2
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	21/10/12:
 		Changed "Bit_Display" to print in the correct order.
 	22/02/12:
@@ -32,7 +32,7 @@
 		Added Bit_SetAll
 	15/04/07:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Stock</em><ul>
 		Bit_Set - Sets a slot to the given value.
 		Bit_Get - Gets a slot state.
@@ -45,9 +45,9 @@
 		Bit_GetBits - Gets the bit at a slot unsafely.
 </ul></li></ul><subsection>Definitions</subsection><ul>
 	CELLSHIFT - Number of bits that can hold "cellbits"
-</ul></li></ul><subsection>Tags</subsection><ul>
+</ul><subsection>Tags</subsection><ul>
 	Bit - Bit array type.
-</ul></li></ul><subsection>Compile options</subsection><ul>
+</ul><subsection>Compile options</subsection><ul>
 	-
 </ul>
 *//** *//*

@@ -9,9 +9,9 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Wrap natives to return known fake values for testing.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	09/09/17:
 		First documentaiton.
 </ul>

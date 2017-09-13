@@ -172,7 +172,7 @@ Optional plugins:
 	This is now over 2000 lines of repetitive and complex macros!
 </ul></li></ul><subsection>Version</subsection><ul>
 	0.2
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	06/08/10:
 		Managed the ultimate - got completely transparent inclusion!
 	05/08/10:
@@ -188,7 +188,7 @@ Optional plugins:
 		Added code for a script to remove itself from the global list.
 	11/10/07:
 		Not first version but added documentation months late.
-</ul></li></ul><subsection>Macros</subsection><ul>
+</ul><subsection>Macros</subsection><ul>
 	RF - Declare a function which may be remote.
 	RV - Declare a void function which may be remote.
 	RS - Declare an optional callback.
@@ -197,14 +197,14 @@ Optional plugins:
 	RFP - Declare a function with tags and give recall hints.
 	RFPC - Combination of P and C.
 	RFCP - Combination of P and C.
-</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
 <li><em>Global</em><ul>
 		_@ - ID of this script.
 </ul></li></ul><subsection>Compile options</subsection><ul>
 	YSI_NO_MASTER - Don't use the master system.
 	YSI_IS_CLIENT - Script is a client only script.
 	YSI_IS_SERVER - Script is a server only script.
-</ul></li></ul></li></ul>
+</ul>
 *//** */
 
 // Only include this lot once.

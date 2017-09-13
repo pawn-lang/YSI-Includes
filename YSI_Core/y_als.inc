@@ -129,9 +129,9 @@ Optional plugins:
 </ul></li></ul><subsection>Description</subsection><ul>
 	Provides a number of macros for making ALS (Advanced Library System)
 	callback hooking simpler.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	29/04/11:
 		Added "call" macro to make testing easier.
 	21/10/10:

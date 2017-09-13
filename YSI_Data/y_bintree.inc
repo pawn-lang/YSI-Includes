@@ -11,9 +11,9 @@
 	Provides functions to generate balanced binary search trees for efficient
 	searching of large arrays by value.  Left branch is less than, right branch
 	is greater than or equal to for multiple matching values.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1.3
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	12/08/07:
 		Fixed a bug with empty trees.
 	14/04/07:
@@ -25,7 +25,7 @@
 		Added Bintree_Add()
 	24/03/07:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Core</em><ul>
 		Bintree_QSort - Custom implementaion of QSort to keep pointers.
 		Bintree_SortHalf - Itteratively balances halves of an array.
@@ -46,12 +46,12 @@
 </ul></li></ul><subsection>Definitions</subsection><ul>
 	BINTREE_NO_BRANCH - Nowhere to go from the number in required direction.
 	BINTREE_NOT_FOUND - Failure return.
-</ul></li></ul><subsection>Enums</subsection><ul>
+</ul><subsection>Enums</subsection><ul>
 	E_BINTREE_TREE - Structure of a leaf of a binary tree.
 	E_BINTREE_INPUT - Structure of an array of data to be added to a tree.
-</ul></li></ul><subsection>Tags</subsection><ul>
+</ul><subsection>Tags</subsection><ul>
 	Bintree - Binary tree type.
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

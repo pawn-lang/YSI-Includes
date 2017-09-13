@@ -10,9 +10,9 @@
 </ul></li></ul><subsection>Description</subsection><ul>
 	Allows for advanced class selection options such as skins only certain
 	people can see and actually removing skins from class selection.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	29/11/10:
 		First version
 </ul>

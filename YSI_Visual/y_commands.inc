@@ -10,9 +10,9 @@
 </ul></li></ul><subsection>Description</subsection><ul>
 	Runs commands registered with the system and calls the required functions.
 	Also handles alternate names and prefixes.  Based very loosely on dcmd.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1.4
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	20/10/10:
 		Fixed a bug with insensitive commands - my fault for not testing.
 	06/01/08:
@@ -42,7 +42,7 @@
 		need a better way of ignoring names when alt names are used.
 	10/04/07:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
 		Command_Add - Adds a command to the array for processing.
 		Command_Remove - Removes a command.
@@ -69,15 +69,15 @@
 </ul></li></ul><subsection>Definitions</subsection><ul>
 	MAX_COMMAND_LENGTH - The maximum length of a command string.
 	COMMAND_NOT_FOUND - Indicates that a searched for string is not a function.
-</ul></li></ul><subsection>Enums</subsection><ul>
+</ul><subsection>Enums</subsection><ul>
 	e_COMM_FLAG - Bit mappings for command options.
 	E_COMMANDS - Structure of the array holding the string data.
-</ul></li></ul><subsection>Macros</subsection><ul>
+</ul><subsection>Macros</subsection><ul>
 	Command_(%1) - Forwards and declares a standard command for calling.
 	ycmd(%1) - Adds a command to the array (wrapper for Command_Add).
-</ul></li></ul><subsection>Tags</subsection><ul>
+</ul><subsection>Tags</subsection><ul>
 	e_COMM_FLAG - Flag type.
-</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 		YSI_g_sCommands - Holds all the textual data of the commands.
 		YSI_g_sSearchTree - Tree of hashes for function names.
@@ -89,7 +89,7 @@
 		YSI_g_sCommandFlags - Bit array of command options.
 </ul></li></ul><subsection>Commands</subsection><ul>
 	commands - Lists all commands available to you.
-</ul></li></ul><subsection>Compile options</subsection><ul>
+</ul><subsection>Compile options</subsection><ul>
 	COMMAND_SENSITIVE - Make commands case sensitive.
 	COMMAND_ACCURATE - Can use '@' in command names.
 	MAX_COMMANDS - The maximum number of commands which can be used.

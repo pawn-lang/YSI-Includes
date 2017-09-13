@@ -16,9 +16,9 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Automatically hooks any callbacks with a very simple syntax.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	2.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	25/02/12:
 		Extracted most of the code to a separate file.
 	17/03/11:

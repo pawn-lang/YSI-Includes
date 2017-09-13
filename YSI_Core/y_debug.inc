@@ -23,15 +23,15 @@
 	
 	If you use P:0 you get an optional debug print controlled by the global
 	state ysi_debug - which is either on or off.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	06/08/10:
 		Added new syntax.
 		Added level 0 debugging with state controlled functions.
 	15/04/07:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Inline</em><ul>
 		Debug_Code - Runs defined code if a certain level is active.
 		Debug_Print - Prints the formatted string provided at the given level.
@@ -40,9 +40,9 @@
 	P:C - Run debug code.
 	P:E - Print an error message.
 	P:W - Print a warning message.
-</ul></li></ul><subsection>Compile options</subsection><ul>
+</ul><subsection>Compile options</subsection><ul>
 	_DEBUG - Debugging level to use.
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -10,12 +10,12 @@
 </ul></li></ul><subsection>Description</subsection><ul>
 	Maps string indexes to integer indexes.  Uses a fast hash to get an array
 	slot, then a linked list to resolve collisions.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	2.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	23/06/13:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Stock</em><ul>
 		HashMap_Init - Associate a hash map with an array.
 		HashMap_Add - Add a value under a given string.

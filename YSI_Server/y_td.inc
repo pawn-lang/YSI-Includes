@@ -12,9 +12,9 @@
 	improved functionality including XML definable styles, safe display,
 	timed displays, styles and text separated, styles updateable dynamically
 	and more.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	06/08/10:
 		First version
 </ul>

@@ -9,16 +9,16 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Checks online to see if there is a newer version of YSI available.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.2
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	26/10/10:
 		Added changelog capabilities.
 	22/10/10:
 		First version.
-</ul></li></ul><subsection>Hooks</subsection><ul>
+</ul><subsection>Hooks</subsection><ul>
 		OnGameModeInit
-</ul></li></ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

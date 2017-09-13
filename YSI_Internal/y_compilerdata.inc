@@ -36,15 +36,15 @@ in the output code.
 	is.  Provide that information to the rest of the script through a series of
 	consistent macros.  Used by y_groups to include code that might be needed
 	before it is known if it is needed (it can be dumped later).
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	12/09/17:
 		Renamed everything for consistency.
 		Documented macros.
 	14/04/13:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Static</em><ul>
 		__CompilerStringReturn - Assembly for returning a string to its callers'
 			caller.  Used to bypass a known bug.

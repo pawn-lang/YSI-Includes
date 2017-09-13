@@ -9,14 +9,14 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Functions for using malloc/calloc/free type functions in PAWN.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	02/12/11:
 		Added variable argument functions.
 	22/12/08:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 	Public
 		-
 </ul></li><li><em>Stock</em><ul>
@@ -52,9 +52,9 @@
 </ul></li></ul><subsection>Definitions</subsection><ul>
 	MALLOC_KB_TO_CELL - Multiplication value to convert kb to cells.
 	NO_ALLOC - A failed allocation (NULL, but YSI already has NULL).
-</ul></li></ul><subsection>Tags</subsection><ul>
+</ul><subsection>Tags</subsection><ul>
 	Alloc - An allocated block handle variable.
-</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
 <li><em>Global</em><ul>
 		YSI_gMallocMemory - Stores the data (may be static).
 </ul></li><li><em>Static</em><ul>
@@ -67,7 +67,7 @@
 	MALLOC_MEMORY_MB - Number of megabytes to reserve.
 	YSI_MALLOC_SECURE - Use enhanced bounds checking.
 	YSI_MALLOC_NO_SHORT - Avoid conflicts with mget/mset.
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

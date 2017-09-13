@@ -11,9 +11,9 @@
 	Allows a script access to information about itself, such as function names.
 	This can be used for a range of things, including automatic callback hooking
 	and testing.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	13/11/13:
 		Simplified the main macros to work across multiple lines.
 	06/08/10:

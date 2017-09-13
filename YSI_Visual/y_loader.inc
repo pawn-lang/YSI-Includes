@@ -21,13 +21,13 @@ Legal:
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 	MA 02110-1301, USA.
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	12/10/07:
 		Added Loader_AddHandler.
 		Added Loader_GetRace.
 	24/08/07:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
 		Loader_Spawn - Processes a loaded spawn point.
 		Loader_Check - Processes a loaded checkpoint.
@@ -40,7 +40,7 @@ Legal:
 		Loader_GetRace - Returns the current race handle.
 </ul></li></ul><subsection>Tags</subsection><ul>
 	e_RACE_FLAGS - Race data flag.
-</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 		YSI_g_sXMLRules - Handle to the XML parse rule set.
 		YSI_g_sCurRace - Handle to the current race being built.

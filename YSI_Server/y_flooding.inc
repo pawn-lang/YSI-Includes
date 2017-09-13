@@ -73,12 +73,12 @@ Legal:
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
 	
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	15/11/10:
 		Updated to YSI 1.0.
 	11/03/08:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Core</em><ul>
 		OnPlayerConnect - Called to check IPs.
 		OnScriptInit - Sets the OnPlayerConnect function flag.
@@ -86,7 +86,7 @@ Legal:
 		SetMaxConnections - Sets the max allowed connections from an IP.
 </ul></li></ul><subsection>Enums</subsection><ul>
 	e_FLOOD_ACTION - What to do if too many connections form.
-</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 		YSI_g_sPlayerIPs - People's stored IPs for speed.
 		YSI_g_sMaxConnections - Data for the script.

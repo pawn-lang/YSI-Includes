@@ -10,9 +10,9 @@
 </ul></li></ul><subsection>Description</subsection><ul>
 	Large chunks of code that isn't used, so that the space can be reclaimed and
 	reused by other code generating functions.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	09/09/17:
 		First documentaiton.
 </ul>

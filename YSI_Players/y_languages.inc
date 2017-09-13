@@ -9,14 +9,14 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Handles language features - loading, listing and which one a player is.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	02/12/11:
 		Updated Langs_Add to accept the parameters in either order.
 	01/05/11:
 		First version.
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -15,9 +15,9 @@
 		
 	Without stripping you would end with code doing "42:0" or getting a tag
 	mismatch on "E_SOME_ENUM", both of which are problems.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

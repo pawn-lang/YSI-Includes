@@ -12,9 +12,9 @@
 	define functions which take one or more players, specified in a number of
 	formats, and perform the code for all those player.  Essentially it is an
 	abstraction of loops over players.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	30/04/11:
 		First version
 </ul>

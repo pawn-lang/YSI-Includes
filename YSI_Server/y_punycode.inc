@@ -16,14 +16,14 @@
 	
 	Also includes a function that hooks the "HTTP" function to allow for
 	internationalised domain names with that function.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	29/04/13:
 		Added Puny_HTTP.
 	26/04/13:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 	Public
 		-
 </ul></li><li><em>Stock</em><ul>

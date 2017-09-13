@@ -12,9 +12,9 @@
 	compiler crashes if the functions are not used in an included function
 	before being used in a SYSREQ.C call as the function is not in the native
 	functions table.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	06/08/10:
 		First version
 </ul>

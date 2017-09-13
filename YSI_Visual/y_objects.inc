@@ -10,7 +10,7 @@
 	by sections.
 </ul></li></ul><subsection>Version</subsection><ul>
 	0.2.7
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	27/12/07:
 		Fixed a bug in the moved object list system.
 	26/11/07:
@@ -73,7 +73,7 @@
 		Second version - completely rewritten after a chat with Peter.
 	16/04/07:
 		First version - adapted from my earlier e_objects.inc include.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
 		Object_Loop - Main loop for checking.
 		Object_CoOrdRemote - Does object location manipulation remotely.
@@ -142,7 +142,7 @@
 		RemoveObjectFromParent - Removes an object from another object.
 </ul></li></ul><subsection>Callbacks</subsection><ul>
 	OnDynamicObjectMoved
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul><subsection>Definitions</subsection><ul>
 	OBJECT_SECTOR_SIZE - Size of edge of a grid square for approximations.
 	MAX_DYN_OBJECTS - Maximum number of objects.
 	OBJECT_VIEW_DISTANCE - Range to stream objects for.
@@ -154,10 +154,10 @@
 	OBJECT_WORLDS - Maximum number of worlds objects show up in.
 	OBJECT_WORLD_COUNT - Size of bit array of worlds.
 	OBJECT_PLAYER_COUNT - Size of bit array of players.
-</ul></li></ul><subsection>Enums</subsection><ul>
+</ul><subsection>Enums</subsection><ul>
 	E_OBJECT - Structure of the dynamic object data.
 	e_OBJ_FLAG - Flags for the object.
-</ul></li></ul><subsection>Macros</subsection><ul>
+</ul><subsection>Macros</subsection><ul>
 	OBJECT_SECTOR_EDGE - Number of sectors on one edge of the world.
 	OBJECT_SECTOR_ARRAY - Number of grid squares.
 	OBJECT_SIGHT - OBJECT_VIEW_DISTANCE squared for speed.
@@ -168,9 +168,9 @@
 	OBJECT_BITS - Number of bits to hold all dynamic objects.
 	e_OBJ_FLAG_MOVED - Extension of e_OBJ_FLAG, both move flags together.
 	NEW_SECTOR - Sector based on origin sector and current offset.
-</ul></li></ul><subsection>Tags</subsection><ul>
+</ul><subsection>Tags</subsection><ul>
 	e_OBJ_FLAG - Flags for objects.
-</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 		YSI_g_sObjectSectors - Array of pointers to sector object lists.
 		YSI_g_sObjects - Array of objects.
@@ -182,7 +182,7 @@
 	NO_OBJECT_ATTACH - Objects can't be attached to each other.
 	NO_OBJECTS_MOVE - No processing is done for moving objects.
 	OBJECT_WORLDS 0 - All objects are visible in all worlds.
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -10,12 +10,12 @@
 </ul></li></ul><subsection>Description</subsection><ul>
 	Provides functions for dealing with dialogs, without needing to worry about
 	IDs or huge "OnDialogResponse" callbacks.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	25/02/12:
 		First version.
-</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
 <li><em>Global</em><ul>
 		-
 </ul>

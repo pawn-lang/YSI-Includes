@@ -10,12 +10,12 @@
 </ul></li></ul><subsection>Description</subsection><ul>
 	Provides a few functions for manipulating the bits in single cells.  Note
 	that this is distinct from the y_bit library.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.2
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	18/06/11:
 		First version.
-</ul></li></ul><subsection>Compile options</subsection><ul>
+</ul><subsection>Compile options</subsection><ul>
 	-
 </ul>
 *//** *//*

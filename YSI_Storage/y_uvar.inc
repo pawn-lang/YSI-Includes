@@ -9,12 +9,12 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Declares data to be automatically saved and loaded on a per-player basis.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1.3
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	25/02/12:
 		First version.
-</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
 <li><em>Global</em><ul>
 		-
 </ul>

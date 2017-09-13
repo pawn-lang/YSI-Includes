@@ -15,9 +15,9 @@
 	found to be called at some point its current local stack is stored in global
 	memory.  When the function actually is called, the stack is restored, and
 	additional parameters which are the inline function parameters, are passed.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	22/06/13:
 		Rewrote the library from scratch for better performance all round.
 	20/10/12:

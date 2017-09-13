@@ -9,9 +9,9 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Allows you to hash strings at compile time to use them in a switch.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	2.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	06/03/11:
 		Changed the order of some letters to better support numbers in _I.
 	01/03/11:
@@ -22,7 +22,7 @@
 		Added FNV1 and FNV1a hashes to avoid collisions.
 	19/08/10:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Stock</em><ul>
 		YHash - Generate a string hash at run time.
 </ul></li></ul><subsection>Definitions</subsection><ul>

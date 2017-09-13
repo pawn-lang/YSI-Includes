@@ -14,12 +14,12 @@
 	
 	This is bsed on the variable parameter passing method based on code by Zeex.
 	See page 15 of the code optimisations topic.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	02/05/11:
 		First version.
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -10,12 +10,12 @@
 </ul></li></ul><subsection>Description</subsection><ul>
 	This file unites various YSI features with Gamer_Z's GPS (Gamer_Z's
 	Positioning System) plugin so that you can use hooks and inlines with it.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	20/10/12:
 		First version.
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

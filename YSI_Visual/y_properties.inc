@@ -9,9 +9,9 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Handles properties and other common features for some modes.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	03/08/07:
 		Updated timer system.
 	31/07/07:
@@ -29,7 +29,7 @@
 		Updated functions to use checkpoint and area lookups
 	18/04/07:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
 		Property_Loop - Does the main system processing.
 		Property_AddPropRemote - Adds a property from another script.
@@ -98,7 +98,7 @@
 	NO_PROPERTY - Invalid return.
 	WEAPON_ARMOUR - Type for salling armour at ammunation.
 	PROPERTY_SELL_PERCENT - % of money got back for a reduced sale.
-</ul></li></ul><subsection>Enums</subsection><ul>
+</ul><subsection>Enums</subsection><ul>
 	e_PROP_FLAGS - Flags for property data.
 	E_PROP_DATA - Data for a property.
 	E_PROP_AMMU - Data for a persons current ammunation menu.
@@ -108,9 +108,9 @@
 	WEAPON_DATA - Gets ammo and cost from parameters and compresses them.
 	WEAPON_DATA_REM - Like WEAPON_DATA but reads from an array instead.
 	WEAPON - Saves a weapon id in the top byte of a cell.
-</ul></li></ul><subsection>Tags</subsection><ul>
+</ul><subsection>Tags</subsection><ul>
 	e_PROP_FLAGS - Flags.
-</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 		YSI_g_sProperties - Array of all property data.
 		YSI_g_sMoney - Array of player's banked money.
@@ -132,7 +132,7 @@
 Properties:
 	LReqProp - Return data from a remote script.
 	110953013 - Return properties for a player.
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

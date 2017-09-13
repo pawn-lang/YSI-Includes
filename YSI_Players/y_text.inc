@@ -16,9 +16,9 @@
 	Provides interfaces for displaying text from anywhere by way of native like
 	functions using text indexes rather than text.  Due to a compile problem a
 	number of the stock functions should be static but can't be.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1.1
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	17/02/07:
 		Added saving of style parameter for text draws.
 	27/12/07:
@@ -40,7 +40,7 @@
 		Added YSI_ prefix to all globals.
 	23/03/07:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
 		Text_ResetAll - Resets the entire text system.
 		Text_NewLanguage - Sets up to parse a new language.
@@ -82,11 +82,11 @@
 	TEXT_TYPE_CLIENT - Flag for sending a client formatted message (unused).
 	TEXT_TYPE_GAME - Flag for sending a game text formatted message (unused).
 	MAX_TEXT_COLOURS - Max number of defined colours in an ini file.
-</ul></li></ul><subsection>Enums</subsection><ul>
+</ul><subsection>Enums</subsection><ul>
 	E_TEXT_POINTERS - Structure of the language pointer array.
-</ul></li></ul><subsection>Macros</subsection><ul>
+</ul><subsection>Macros</subsection><ul>
 	Text_RegisterTag - Placed as a function, calls Text_AddToBuffer for tags.
-</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 		YSI_g_sTextTable - Array of all text entries.
 		YSI_g_sNameTable - Array of all text names and language pointers.

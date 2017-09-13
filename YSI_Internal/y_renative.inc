@@ -9,9 +9,9 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Obsolete, was macros for redefining native functions in default includes.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	25/10/10:
 		Integrated in to YSI.
 	06/08/10:

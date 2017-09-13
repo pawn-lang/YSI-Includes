@@ -19,7 +19,7 @@
 	while (XML_GetKeyValue(ident, data)) {}
 </ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	06/08/10:
 		First version
 </ul>

@@ -14,9 +14,9 @@
 	"YSI_FILTERSCRIPT" as a (partial) replacement for "FILTERSCRIPT" which
 	detects what the mode is at runtime for a more reliable system (but it is a
 	run-time variable, not a compile-time constant).
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	23/04/14:
 		Reduced code complexity.
 		Supports y_hooks better, without relying on it.

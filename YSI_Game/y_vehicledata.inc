@@ -10,19 +10,19 @@
 </ul></li></ul><subsection>Description</subsection><ul>
 	Basic functions for gathering data on various vehicle models.  Things like
 	what sort of vehicle they are and what organisation they belong to.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.2
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	15/03/15:
 		Changed clamp ranges.
 	01/06/14:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Stock</em><ul>
 		Vehicle_Speed - Get current vehicle speed in KMH.
-</ul></li></ul></li></ul></li></ul></li></ul></li></ul><subsection>Tags</subsection><ul>
+</ul></li></ul><subsection>Tags</subsection><ul>
 	VIM - Vehicle Internal Modelid.
-</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
 <li><em>Global</em><ul>
 		YSI_gVehicleFlags - Data on vehicles.
 		YSI_gVehicleNames - Names of vehicles.

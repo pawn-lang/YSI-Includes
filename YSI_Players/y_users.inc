@@ -9,9 +9,9 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Provides access to a user system for registering and saving users.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	2.2
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	02/02/13:
 		Added bits and join timestamp to preload data.
 		Added backwards compatible salting to the hash.
@@ -20,7 +20,7 @@
 		Added language to the top-level player data (needed for login).
 	11/11/11:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Public:</em><ul>
 		-
 </ul></li></ul>

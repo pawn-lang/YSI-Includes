@@ -13,9 +13,9 @@
 	set of X11 colours, both by name and by definition.  You can also define
 	your own if you so choose (up to 32 - should be enough given that this
 	includes the X11 colours).
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	06/08/10:
 		First version
 </ul>

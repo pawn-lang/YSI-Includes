@@ -10,12 +10,12 @@
 </ul></li></ul><subsection>Description</subsection><ul>
 	This library simplifies the task of sending data to the new master script
 	when one takes over from another.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	17/07/13:
 		First version.
-</ul></li></ul><subsection>Compile options</subsection><ul>
+</ul><subsection>Compile options</subsection><ul>
 	-
 </ul>
 *//** *//*

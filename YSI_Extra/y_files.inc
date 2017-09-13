@@ -9,12 +9,12 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Provides native declarations for YSF functions.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	15/09/10:
 		First version split from the old YSF.
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

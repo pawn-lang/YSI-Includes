@@ -15,9 +15,9 @@
 	
 		http://forum.sa-mp.com/showthread.php?t=481877
 	
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.4
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	29/03/15:
 		More testing.
 		Repaired special iterators.
@@ -88,7 +88,7 @@
 		Fixed version number.
 	08/09/07:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
 		OnPlayerDisconnect - Called when a player leaves to remove them.
 		OnPlayerConnect - Called when a player connects to add them.
@@ -114,18 +114,18 @@
 		Iter_Count2 - Gets the number of items in an iterator array.
 		Iter_Debug2 - Wraps around Iter_ShowArray for arrays.
 		Iter_Free2 - Wraps around Iter_FreeInternal for arrays.
-</ul></li></ul></li></ul><subsection>Hooks</subsection><ul>
+</ul></li></ul><subsection>Hooks</subsection><ul>
 	Iter_OnPlayerConnect - Hook for the OnPlayerConnect callback.
 	Iter_OnPlayerDisconnect - Hook for the OnPlayerDisconnect callback.
 	Iter_OnGameModeInit - Only exists to make the code compile correctly...
-</ul></li></ul></li></ul><subsection>Keywords</subsection><ul>
+</ul><subsection>Keywords</subsection><ul>
 	foreach - Command to loop an iterator.
 	foreachex - Like foreach but without a new variable.
 	foreach2 - Command to loop through an iterator array.
 	foreachex - Like foreach2 but without a new variable.
-</ul></li></ul><subsection>Tags</subsection><ul>
+</ul><subsection>Tags</subsection><ul>
 	Iterator - Declare an iterator.
-</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 		YSI_g_OPC - Records wether Iter_OnPlayerConnect exists for speed.
 		YSI_g_OPDC - Records wether Iter_OnPlayerDisconnect exists for speed.
@@ -133,7 +133,7 @@
 	YSI_ITTER_NO_SORT - Removed.
 	FOREACH_NO_BOTS - Remove the bot iterators for smaller code.
 	FOREACH_NO_PLAYERS - Remove all default code for player itteration.
-</ul></li></ul><subsection>Iterators</subsection><ul>
+</ul><subsection>Iterators</subsection><ul>
 	Player - List of all players connected.
 	Bot - List of all bots (npcs) connected.
 	NPC - Alias of Bot.

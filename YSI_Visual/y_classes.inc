@@ -10,9 +10,9 @@
 </ul></li></ul><subsection>Description</subsection><ul>
 	Allows greater control over classes so not everyone has every class.  Uses
 	a form of compression for locations.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	14/04/12:
 		Readded OnRequestSpawn logic.
 		Fixed Class_AddWithGroupSet.
@@ -30,7 +30,7 @@
 		Fixed a few bugs with repeated selection.
 	04/08/07:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
 		Class_AddRemote - Adds a class to the remote master.
 		Class_Remote - Updates settings remotely.
@@ -69,10 +69,10 @@
 	CLASS_LEFT - Flag for last internal class viewed.
 	CLASS_MIDDLE - Flag for last internal class viewed.
 	CLASS_RIGHT - Flag for last internal class viewed.
-</ul></li></ul><subsection>Enums</subsection><ul>
+</ul><subsection>Enums</subsection><ul>
 	e_CLASS_FLAGS - Small data for individual classes.
 	E_CLASS - Class data structure.
-</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 		YSI_g_sClasses - Data for classes.
 		YSI_g_sPlayerClass - Player's current classes.

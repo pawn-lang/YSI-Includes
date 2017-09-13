@@ -9,9 +9,9 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Handles area checks for player location based code not involving CPs.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.3
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	01/12/12:
 		Added ovals and ovoids.
 		Set cuboids to require only one slot in memory.
@@ -28,7 +28,7 @@
 		Made Area_GetPlayerArea safe.
 	08/05/07:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
 		Area_Loop - Main loop for checking who's where.
 		Area_Remote - Does minor functions remotely.
@@ -68,16 +68,16 @@
 </ul></li></ul><subsection>Callbacks</subsection><ul>
 	OnPlayerEnterArea - Called when a player enters an area.
 	OnPlayerLeaveArea - Called when a player leaves an area.
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul><subsection>Definitions</subsection><ul>
 	MAX_AREAS - Max number of areas.
 	NO_AREA - Fail return.
 	AREA_NO_NEXT - Marker for end of a list.
 	AREA_WORLDS - Number of worlds an area can be in.
 	AREA_WORLD_COUNT - Number of cells required for a bit array of AREA_WORLDS.
-</ul></li></ul><subsection>Enums</subsection><ul>
+</ul><subsection>Enums</subsection><ul>
 	e_AREA_FLAGS - Flags for each area.
 	E_AREA - Structure for part of an areas data.
-</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 		YSI_g_sUnusedAreas - Pointer to the first unused area.
 		YSI_g_sLastUnused - Pointer to the last unused area.

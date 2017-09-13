@@ -4,9 +4,9 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Defines a symbol differently every time it is included.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	1.0
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	19/04/13:
 		Upped the limit to 343.
 		Changed to a 7-ary tree.

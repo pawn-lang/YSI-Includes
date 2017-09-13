@@ -9,12 +9,12 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Declares a few variables with very short names, used all over YSI.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.2
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	21/10/10:
 		Split in to y_shortfunc.
-</ul></li></ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

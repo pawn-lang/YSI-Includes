@@ -9,12 +9,12 @@
 </section>
 </ul></li></ul><subsection>Description</subsection><ul>
 	Gradually fades a zone's colour between one colour and another, then back.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul><subsection>Version</subsection><ul>
 	0.1
-</ul></li></ul><subsection>Changelog</subsection><ul>
+</ul><subsection>Changelog</subsection><ul>
 	19/02/12:
 		First version.
-</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
 		__GangZonePulse - The timer that does the hard work.
 </ul></li><li><em>Stock</em><ul>
@@ -24,9 +24,9 @@
 		GangZoneStopPulse - Stop a zone pulsing for a set of players.
 		GangZoneStopPulseForPlayer - Stop a zone pulsing for a single player.
 		GangZoneStopPulseForAll - Stop a zone pulsing for everyone.
-</ul></li></ul></li></ul></li></ul></li></ul></li></ul><subsection>Compile options</subsection><ul>
+</ul></li></ul><subsection>Compile options</subsection><ul>
 	ZONE_PULSE_STAGE_TIME - ms between each pulse frame.
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1
