@@ -21,19 +21,19 @@
 <section>
 	Changelog
 </section><ul>
-	29/04/11:
+<changelog date="29/04/11"><to_cl>
 		Added version 2 of the code with more advanced options.
-	21/03/11:
+<changelog date="21/03/11"><to_cl>
 		Added debug printing to timer functions.  Uses "P:C" in compiling.
-	26/10/10:
+<changelog date="26/10/10"><to_cl>
 		Officially added simple calling.
 		Added "delay" functions.
-	12/10/10:
+<changelog date="12/10/10"><to_cl>
 		Rewrote for YSI 1.0 using y_scripting.
-	11/08/07:
+<changelog date="11/08/07"><to_cl>
 		Removed millions of defines to reduce pre-processing.
 		Added pickups.
-	03/08/07:
+<changelog date="03/08/07"><to_cl>
 		First version.
 </ul>
 *//** *//*

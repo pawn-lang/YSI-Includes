@@ -18,7 +18,7 @@
 <section>
 	Changelog
 </section><ul>
-	15/09/10:
+<changelog date="15/09/10"><to_cl>
 		First version split from the old YSF.
 </ul>
 *//** *//*

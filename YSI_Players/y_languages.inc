@@ -18,9 +18,9 @@
 <section>
 	Changelog
 </section><ul>
-	02/12/11:
+<changelog date="02/12/11"><to_cl>
 		Updated Langs_Add to accept the parameters in either order.
-	01/05/11:
+<changelog date="01/05/11"><to_cl>
 		First version.
 </ul>
 *//** *//*

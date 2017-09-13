@@ -18,21 +18,21 @@
 <section>
 	Changelog
 </section><ul>
-	01/12/12:
+<changelog date="01/12/12"><to_cl>
 		Added ovals and ovoids.
 		Set cuboids to require only one slot in memory.
 		Changed poly memory layout for vastly more efficient storage.
-	13/08/12:
+<changelog date="13/08/12"><to_cl>
 		Added overlapping areas support.
-	01/01/12:
+<changelog date="01/01/12"><to_cl>
 		Massive ground-up rewrite based on zones.
-	27/08/07:
+<changelog date="27/08/07"><to_cl>
 		Made master compatible.
-	03/08/07:
+<changelog date="03/08/07"><to_cl>
 		Updated timer system.
-	31/07/07:
+<changelog date="31/07/07"><to_cl>
 		Made Area_GetPlayerArea safe.
-	08/05/07:
+<changelog date="08/05/07"><to_cl>
 		First version.
 </ul><section>
 	Functions

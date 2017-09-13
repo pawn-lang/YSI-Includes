@@ -25,9 +25,9 @@
 <section>
 	Changelog
 </section><ul>
-	29/04/13:
+<changelog date="29/04/13"><to_cl>
 		Added Puny_HTTP.
-	26/04/13:
+<changelog date="26/04/13"><to_cl>
 		First version.
 </ul><section>
 	Functions

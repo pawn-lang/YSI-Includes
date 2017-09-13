@@ -18,9 +18,9 @@
 <section>
 	Changelog
 </section><ul>
-	26/10/10:
+<changelog date="26/10/10"><to_cl>
 		Added changelog capabilities.
-	22/10/10:
+<changelog date="22/10/10"><to_cl>
 		First version.
 </ul><section>
 	Hooks

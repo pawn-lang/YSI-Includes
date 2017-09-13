@@ -13,11 +13,11 @@
 <section>
 	Changelog
 </section><ul>
-	19/04/13:
+<changelog date="19/04/13"><to_cl>
 		Upped the limit to 343.
 		Changed to a 7-ary tree.
 		Reversed check order so smallest numbers come first.
-	01/05/11:
+<changelog date="01/05/11"><to_cl>
 		First version.
 </ul>
 *//** *//*

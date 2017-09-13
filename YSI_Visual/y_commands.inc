@@ -19,34 +19,34 @@
 <section>
 	Changelog
 </section><ul>
-	20/10/10:
+<changelog date="20/10/10"><to_cl>
 		Fixed a bug with insensitive commands - my fault for not testing.
-	06/01/08:
+<changelog date="06/01/08"><to_cl>
 		Improved master and /help support.
-	04/01/08:
+<changelog date="04/01/08"><to_cl>
 		Fixed bad element in Command_SetDeniedReturn.
-	12/08/07:
+<changelog date="12/08/07"><to_cl>
 		Added master support.
-	24/06/07:
+<changelog date="24/06/07"><to_cl>
 		Modifed a few functions to use Bit_GetBit for speed.
-	04/05/07:
+<changelog date="04/05/07"><to_cl>
 		Completed command use support.
 		Added invalid character protection.
-	02/05/07:
+<changelog date="02/05/07"><to_cl>
 		Added YSI_ prefix to all globals.
-	14/04/07:
+<changelog date="14/04/07"><to_cl>
 		Updated header documentation with more than changelog/functions.
 		Added function name requesting.
-	13/04/07:
+<changelog date="13/04/07"><to_cl>
 		Added function documentation.
 		Added wrapped functions for e_COMM_FLAG values missing them.
 		Added header function list.
-	12/04/07:
+<changelog date="12/04/07"><to_cl>
 		Added command removal.
-	11/04/07:
+<changelog date="11/04/07"><to_cl>
 		Changed system slightly to handle names and alt names separately.  Still
 		need a better way of ignoring names when alt names are used.
-	10/04/07:
+<changelog date="10/04/07"><to_cl>
 		First version.
 </ul><section>
 	Functions

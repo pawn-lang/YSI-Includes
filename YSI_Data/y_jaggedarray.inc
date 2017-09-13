@@ -18,7 +18,7 @@
 <section>
 	Changelog
 </section><ul>
-	06/10/12:
+<changelog date="06/10/12"><to_cl>
 		First version
 		Fixed a bug calling "rawMemset".
 </ul>

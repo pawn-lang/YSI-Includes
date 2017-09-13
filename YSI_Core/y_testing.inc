@@ -18,13 +18,13 @@
 <section>
 	Changelog
 </section><ul>
-	16/02/12:
+<changelog date="16/02/12"><to_cl>
 		Added better error reporting (less verbose passes).
 		Removed "Tests:".
 		Added player requiring tests.
-	25/10/10:
+<changelog date="25/10/10"><to_cl>
 		Integrated in to YSI.
-	06/08/10:
+<changelog date="06/08/10"><to_cl>
 		First version
 </ul>
 *//** *//*

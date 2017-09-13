@@ -19,47 +19,47 @@
 <section>
 	Changelog
 </section><ul>
-	07/01/13:
+<changelog date="07/01/13"><to_cl>
 		Rewrote almost everything!
 		Split in to multiple files.
 		Added sections.
-	08/09/10:
+<changelog date="08/09/10"><to_cl>
 		Started adding sscanf and file plugin compatibility.
 		Added tagless data at the start of a file (dini compatible).
 		Added new INI:file[tag]() syntax.
 		Added options to default file load.
 		Fixed bugs in default file load configuration.
 		Modified to be stand alone.
-	20/02/08:
+<changelog date="20/02/08"><to_cl>
 		Added INI_RemoveEntry.
-	18/08/07:
+<changelog date="18/08/07"><to_cl>
 		Fixed bug reading identifiers starting with a tag (i.e. names).
 		Added local file reading for non-serverwide broadcasting.
 		Added tag passing instead of tag based functions option.
 		Increased default pool size.
-	30/07/07:
+<changelog date="30/07/07"><to_cl>
 		Added auto creation of non-existant files.
-	13/07/07:
+<changelog date="13/07/07"><to_cl>
 		Fixed INI writing to actually work.
 		Added support for blank lines in INIs decently and quickly.
-	25/06/07:
+<changelog date="25/06/07"><to_cl>
 		Altered file write options to use lists.
 		Added buffer overwriting for updating values.
-	24/06/07:
+<changelog date="24/06/07"><to_cl>
 		Added file write options.
-	21/06/07:
+<changelog date="21/06/07"><to_cl>
 		Added INI_NEW_LINE for future writing functions.
-	20/06/07:
+<changelog date="20/06/07"><to_cl>
 		Added support for an optional parameter in broadcastfunc data.
-	15/04/07:
+<changelog date="15/04/07"><to_cl>
 		Updated for more whitespaces.
 		Added INI comment code.
 		Added support for value-less entries.
 		Modified entry extraction to use end of name location parameter.
 		Removed INI_GetTagName, now done via INI_GetEntryName.
-	14/04/07:
+<changelog date="14/04/07"><to_cl>
 		Updated header documentation with more than changelog.
-	24/03/07:
+<changelog date="24/03/07"><to_cl>
 		First version.
 </ul><section>
 	Functions

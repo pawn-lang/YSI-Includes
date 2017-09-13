@@ -78,9 +78,9 @@ Legal:
 <section>
 	Changelog
 </section><ul>
-	15/11/10:
+<changelog date="15/11/10"><to_cl>
 		Updated to YSI 1.0.
-	11/03/08:
+<changelog date="11/03/08"><to_cl>
 		First version.
 </ul><section>
 	Functions

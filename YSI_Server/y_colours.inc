@@ -22,17 +22,17 @@
 <section>
 	Changelog
 </section><ul>
-	06/01/14:
+<changelog date="06/01/14"><to_cl>
 		Added embeddable versions of all colours.
 		Cached all macros for faster compilation.
 		Added "GT" macro for "~r~" use in SA:MP text.
 		Split gametext colours in to a separate file.
-	20/02/12:
+<changelog date="20/02/12"><to_cl>
 		Added broadcastfunc of colours.	
-	29/11/10:
+<changelog date="29/11/10"><to_cl>
 		Added the ability to use "X11" prefixes in strings.
 		Added colourspace resolution for converting {FF0000} to ~r~.
-	25/11/10:
+<changelog date="25/11/10"><to_cl>
 		First version.
 </ul>
 *//** *//*

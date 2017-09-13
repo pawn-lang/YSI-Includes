@@ -25,12 +25,12 @@
 <section>
 	Changelog
 </section><ul>
-	25/02/12:
+<changelog date="25/02/12"><to_cl>
 		Extracted most of the code to a separate file.
-	17/03/11:
+<changelog date="17/03/11"><to_cl>
 		Second complete re-write using another new technique.  Now VERY fast!
 		Updated OnPlayerUpdate code using Google63's SCTRL jump code.
-	06/08/10:
+<changelog date="06/08/10"><to_cl>
 		First version
 </ul>
 *//** *//*

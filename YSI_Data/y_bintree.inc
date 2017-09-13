@@ -20,16 +20,16 @@
 <section>
 	Changelog
 </section><ul>
-	12/08/07:
+<changelog date="12/08/07"><to_cl>
 		Fixed a bug with empty trees.
-	14/04/07:
+<changelog date="14/04/07"><to_cl>
 		Updated header documentation with more than changelog.
-	10/04/07:
+<changelog date="10/04/07"><to_cl>
 		Added parents for easy deletion.
 		Added node deletion code.
-	08/04/07:
+<changelog date="08/04/07"><to_cl>
 		Added Bintree_Add()
-	24/03/07:
+<changelog date="24/03/07"><to_cl>
 		First version.
 </ul><section>
 	Functions

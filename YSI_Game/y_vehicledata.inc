@@ -19,9 +19,9 @@
 <section>
 	Changelog
 </section><ul>
-	15/03/15:
+<changelog date="15/03/15"><to_cl>
 		Changed clamp ranges.
-	01/06/14:
+<changelog date="01/06/14"><to_cl>
 		First version.
 </ul><section>
 	Functions

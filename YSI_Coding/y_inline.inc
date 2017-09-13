@@ -24,13 +24,13 @@
 <section>
 	Changelog
 </section><ul>
-	22/06/13:
+<changelog date="22/06/13"><to_cl>
 		Rewrote the library from scratch for better performance all round.
-	20/10/12:
+<changelog date="20/10/12"><to_cl>
 		Fixed a bug with "Callback_Release" with public functions.
-	15/11/11:
+<changelog date="15/11/11"><to_cl>
 		Changed the precedence of "using" types.
-	19/09/11:
+<changelog date="19/09/11"><to_cl>
 		First version
 </ul>
 *//** *//*

@@ -17,67 +17,67 @@
 <section>
 	Changelog
 </section><ul>
-	27/12/07:
+<changelog date="27/12/07"><to_cl>
 		Fixed a bug in the moved object list system.
-	26/11/07:
+<changelog date="26/11/07"><to_cl>
 		Finished up master system.
 		Fixed DestroyDynamicObject not removing client objects.
-	16/11/07:
+<changelog date="16/11/07"><to_cl>
 		Removed global flag as it wasn't doing anything.
-	27/10/07:
+<changelog date="27/10/07"><to_cl>
 		Fixed moving objects so they actually move
-	26/10/07:
+<changelog date="26/10/07"><to_cl>
 		Added object children to attach objects to each other.
-	09/10/07:
+<changelog date="09/10/07"><to_cl>
 		FINALLY found compile hang bug.
 		Repaired removed code.
 		Put object co-ordinate code in Object_ParseSet
-	23/09/07:
+<changelog date="23/09/07"><to_cl>
 		Updated FindSector, AddToSector and RemoveFromSector to use new system.
-	22/09/07:
+<changelog date="22/09/07"><to_cl>
 		Started work on new sector system, minor macro changes, lots of maths.
 		Wrote squareroot macro.
 		Updated constructor.
-	21/09/07:
+<changelog date="21/09/07"><to_cl>
 		Overhauled sector code, skips columns and interiors plus more efficient.
-	20/09/07:
+<changelog date="20/09/07"><to_cl>
 		Made some core functions static so they don't get called by accident.
 		Changed auto-adjust code so it rounds to nearest whole log number.
 		Moved zone-find code around to skip whole columns at once.
 		Added zone sorting so they're done in order of distance.
 		Added breakout code so once all objects are found processing is exited.
-	19/09/07:
+<changelog date="19/09/07"><to_cl>
 		Added auto-adjusting zone sizes based on object limits.
 		Altered zone find code to return only possible visible zones.
 		Fixed rare hanging bug in close list code.
-	18/09/07:
+<changelog date="18/09/07"><to_cl>
 		My birthday - yes I'm that sad to code on it and put it in a changelog.
 		Rewrote sectors code to use known sectors instead of position.
-	17/09/07:
+<changelog date="17/09/07"><to_cl>
 		Rewrote find code to find closest objects instead of random close ones.
-	03/08/07:
+<changelog date="03/08/07"><to_cl>
 		Updated timer system.
-	07/05/07:
+<changelog date="07/05/07"><to_cl>
 		Added groups support via default settings.
 		Corrected (unused) flag - bit pointless but meh.
-	02/05/07:
+<changelog date="02/05/07"><to_cl>
 		Added YSI_ prefix to all globals.
 		Added dynamic object API calls.
-	30/04/07:
+<changelog date="30/04/07"><to_cl>
 		Fixed bug in DestroyDynamicObject with OOB objects not 1st in list.
 		Exported sector removal code to Object_RemoveFromSector.
 		Added SECTOR parameter to E_OBJECT for ease of modification.
-	25/04/07:
+<changelog date="25/04/07"><to_cl>
 		Added 3d checking.
 		Added DestroyDynamicObject API function.
 		Fixed location checking on attached objects.
 		Fixed loop itteration for cyclic list structure.
-	24/04/07:
+<changelog date="24/04/07"><to_cl>
 		Fixed range leave checking.
 		Added moving objects list.
-	18/04/07:
+<changelog date="18/04/07"><to_cl>
 		Second version - completely rewritten after a chat with Peter.
-	16/04/07:
+<changelog date="16/04/07"><to_cl>
 		First version - adapted from my earlier e_objects.inc include.
 </ul><section>
 	Functions

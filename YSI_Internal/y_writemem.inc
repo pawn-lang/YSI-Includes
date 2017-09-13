@@ -19,7 +19,7 @@
 <section>
 	Changelog
 </section><ul>
-	01/02/12:
+<changelog date="01/02/12"><to_cl>
 		Zeex_: Changed to use SYSREQ.D call not SYSREQ.C.
 		Zeex_: Modified "VirtualProtect" pointer to SA:MP server one.
 		Added "VirtualProtect" calls to the code.

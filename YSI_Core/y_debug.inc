@@ -32,10 +32,10 @@
 <section>
 	Changelog
 </section><ul>
-	06/08/10:
+<changelog date="06/08/10"><to_cl>
 		Added new syntax.
 		Added level 0 debugging with state controlled functions.
-	15/04/07:
+<changelog date="15/04/07"><to_cl>
 		First version.
 </ul><section>
 	Functions

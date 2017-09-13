@@ -19,9 +19,9 @@
 <section>
 	Changelog
 </section><ul>
-	03/01/12:
+<changelog date="03/01/12"><to_cl>
 		Added void: and string: returns.
-	04/10/12:
+<changelog date="04/10/12"><to_cl>
 		Added local versions of the function for no master system servers.
 </ul><section>
 	Macros

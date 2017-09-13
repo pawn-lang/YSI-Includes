@@ -179,20 +179,20 @@ Optional plugins:
 <section>
 	Changelog
 </section><ul>
-	06/08/10:
+<changelog date="06/08/10"><to_cl>
 		Managed the ultimate - got completely transparent inclusion!
-	05/08/10:
+<changelog date="05/08/10"><to_cl>
 		Completed new master system, now does all syncing and clients.
-	06/10/09:
+<changelog date="06/10/09"><to_cl>
 		Rewrote using states.
 		Added remote function macros.
 		Reduced the number of masters to a single one.  It must have them all.
 		Vastly simplified the master model - ending the master ends everything.
-	06/01/08:
+<changelog date="06/01/08"><to_cl>
 		Added code to not pass data if no other script exists.
-	17/11/07:
+<changelog date="17/11/07"><to_cl>
 		Added code for a script to remove itself from the global list.
-	11/10/07:
+<changelog date="11/10/07"><to_cl>
 		Not first version but added documentation months late.
 </ul><section>
 	Macros

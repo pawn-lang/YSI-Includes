@@ -20,9 +20,9 @@
 <section>
 	Changelog
 </section><ul>
-	13/11/13:
+<changelog date="13/11/13"><to_cl>
 		Simplified the main macros to work across multiple lines.
-	06/08/10:
+<changelog date="06/08/10"><to_cl>
 		First version
 </ul>
 *//** *//*

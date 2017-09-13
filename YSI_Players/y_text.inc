@@ -25,26 +25,26 @@
 <section>
 	Changelog
 </section><ul>
-	17/02/07:
+<changelog date="17/02/07"><to_cl>
 		Added saving of style parameter for text draws.
-	27/12/07:
+<changelog date="27/12/07"><to_cl>
 		Added text_draw support.
-	24/06/07:
+<changelog date="24/06/07"><to_cl>
 		Modified a few functions to use Bit_GetBit for speed.
-	19/06/07:
+<changelog date="19/06/07"><to_cl>
 		Added default language for alt language with no text.
 		Added console errors.
 		Added support for blank INI strings to ignore the text.
 		Increased speed of non format sends by saving each language
-	14/06/07:
+<changelog date="14/06/07"><to_cl>
 		Added type and data loading for strings.
 		Altered display functions to use files defined styles.
-	13/06/07:
+<changelog date="13/06/07"><to_cl>
 		Removed unfound text ignorance in group send functions.
 		Added improved error handling to support custom messges.
-	02/05/07:
+<changelog date="02/05/07"><to_cl>
 		Added YSI_ prefix to all globals.
-	23/03/07:
+<changelog date="23/03/07"><to_cl>
 		First version.
 </ul><section>
 	Functions

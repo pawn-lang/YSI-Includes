@@ -26,10 +26,10 @@ Legal:
 <section>
 	Changelog
 </section><ul>
-	12/10/07:
+<changelog date="12/10/07"><to_cl>
 		Added Loader_AddHandler.
 		Added Loader_GetRace.
-	24/08/07:
+<changelog date="24/08/07"><to_cl>
 		First version.
 </ul><section>
 	Functions

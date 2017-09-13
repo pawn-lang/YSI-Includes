@@ -138,9 +138,9 @@ Optional plugins:
 <section>
 	Changelog
 </section><ul>
-	29/04/11:
+<changelog date="29/04/11"><to_cl>
 		Added "call" macro to make testing easier.
-	21/10/10:
+<changelog date="21/10/10"><to_cl>
 		First version
 </ul>
 *//** */

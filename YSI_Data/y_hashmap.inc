@@ -19,7 +19,7 @@
 <section>
 	Changelog
 </section><ul>
-	23/06/13:
+<changelog date="23/06/13"><to_cl>
 		First version.
 </ul><section>
 	Functions

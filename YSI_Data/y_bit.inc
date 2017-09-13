@@ -24,19 +24,19 @@
 <section>
 	Changelog
 </section><ul>
-	21/10/12:
+<changelog date="21/10/12"><to_cl>
 		Changed "Bit_Display" to print in the correct order.
-	22/02/12:
+<changelog date="22/02/12"><to_cl>
 		Added the "BITS" iterator.
-	01/12/08:
+<changelog date="01/12/08"><to_cl>
 		Rewrote most of the code to use shifts and ands not divs and mods.
-	24/06/07:
+<changelog date="24/06/07"><to_cl>
 		Added Bit_GetBit
-	18/06/07:
+<changelog date="18/06/07"><to_cl>
 		Added Bit_GetCount
-	30/04/07:
+<changelog date="30/04/07"><to_cl>
 		Added Bit_SetAll
-	15/04/07:
+<changelog date="15/04/07"><to_cl>
 		First version.
 </ul><section>
 	Functions

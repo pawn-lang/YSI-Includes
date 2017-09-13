@@ -23,10 +23,10 @@
 <section>
 	Changelog
 </section><ul>
-	23/04/14:
+<changelog date="23/04/14"><to_cl>
 		Reduced code complexity.
 		Supports y_hooks better, without relying on it.
-	30/04/11:
+<changelog date="30/04/11"><to_cl>
 		First version
 </ul>
 *//** *//*

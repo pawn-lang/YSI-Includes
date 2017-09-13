@@ -18,9 +18,9 @@
 <section>
 	Changelog
 </section><ul>
-	02/12/11:
+<changelog date="02/12/11"><to_cl>
 		Added variable argument functions.
-	22/12/08:
+<changelog date="22/12/08"><to_cl>
 		First version.
 </ul><section>
 	Functions
