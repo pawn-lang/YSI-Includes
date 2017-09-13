@@ -11,7 +11,7 @@
 Misc functions used throughout.
 <subsection>Version</subsection>
 	0.1.3
-<subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection>
 	<em>06/10/12</em>
 <ul>
 <li>		Upgraded "memset" to use "FILL".</li>
@@ -32,7 +32,7 @@ Misc functions used throughout.
 <ul>
 <li>		Scrapped almost everything.  Only VERY usefult things go in now.</li>
 </ul>
-</ul></li></ul><subsection>Functions</subsection><ul>
+<subsection>Functions</subsection>
 	<em>Stock</em>
 <ul>
 <li><seealso name="StrToLower" /> - Convert a whole string to lower-case.</li>
@@ -69,7 +69,7 @@ Misc functions used throughout.
 <li><seealso name="Median" /> - Get the mathematical median of an array.</li>
 <li><seealso name="Range" /> - Get the mathematical range of an array.</li>
 </ul>
-	<em>Inline</em>
+	<seealso name="Inline" />
 <ul>
 <li><seealso name="UCMP" /> - Unsigned compare.</li>
 <li><seealso name="VALID_PLAYERID" /> - Check if a player ID is valid (in range).</li>
@@ -89,17 +89,15 @@ Misc functions used throughout.
 <li><seealso name="ReturnStringArg" /> - Synonym for <seealso name="returnstringarg" /> (there are a lot).</li>
 <li><seealso name="InterpolateColor" /> - Synonym for <seealso name="InterpolateColour" /></li>
 </ul>
-</ul></li></ul><subsection>Variables</subsection><ul>
-	<em>Global</em>
+<subsection>Variables</subsection>
+	<seealso name="Global" />
 <ul>
 <li><seealso name="TRUE" /> - True hack for infinate loops.</li>
 <li><seealso name="FALSE" /> - False hack for one-time loops.</li>
 <li><seealso name="NULL" /> - 1 long string for passing via Call(Remote|Local)Function.</li>
 </ul>
-</ul></li></ul><subsection>Examples</subsection><ul>
-<li><seealso name="N/A" />
-		- This is a collection of independent functions.</li>
-</ul>
+<subsection>Examples</subsection>
+	N/A - This is a collection of independent functions.
 *//** *//*
 Legal:
 	Version: MPL 1.1
