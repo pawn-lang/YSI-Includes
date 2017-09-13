@@ -16,13 +16,13 @@
 		Split in to y_shortfunc.
 </ul><subsection>Natives</subsection><ul>
 <li><seealso name="W@" />
-		- Renaming of __CallRemoteFunction for size reasons.</li>
+		- Renaming of <seealso name="__CallRemoteFunction" /> for size reasons.</li>
 <li><seealso name="V@" />
-		- Renaming of getproperty for size reasons.</li>
+		- Renaming of <seealso name="getproperty" /> for size reasons.</li>
 <li><seealso name="S@" />
-		- Renaming of setproperty for size reasons.</li>
+		- Renaming of <seealso name="setproperty" /> for size reasons.</li>
 <li><seealso name="P@" />
-		- Renaming of __CallLocalFunction for size reasons.</li>
+		- Renaming of <seealso name="__CallLocalFunction" /> for size reasons.</li>
 </ul>
 *//** *//*
 Legal:

@@ -17,7 +17,7 @@
 	22/10/10:
 		First version.
 </ul><subsection>Hooks</subsection><ul>
-<li><seealso name="		OnGameModeInit
+<li>OnGameModeInit</li>
 </ul>
 *//** *//*
 Legal:
@@ -54,9 +54,8 @@ Contributors:
 	Ahmad45123
 	Zeex
 	irinel1996
-	Yiin" />
-		-</li>
-<li><seealso name="	Chaprnks
+	Yiin-
+	Chaprnks
 	Konstantinos
 	Masterchen09
 	Southclaws
@@ -66,50 +65,31 @@ Contributors:
 	udan111
 
 Thanks:
-	JoeBullet/Google63 " />
-		- Handy arbitrary ASM jump code using SCTRL.</li>
-<li><seealso name="ZeeX" />
-		- Very productive conversations.</li>
-<li><seealso name="koolk" />
-		- IsPlayerinAreaEx code.</li>
-<li><seealso name="TheAlpha" />
-		- Danish translation.</li>
-<li><seealso name="breadfish" />
-		- German translation.</li>
-<li><seealso name="Fireburn" />
-		- Dutch translation.</li>
-<li><seealso name="yom" />
-		- French translation.</li>
-<li><seealso name="50p" />
-		- Polish translation.</li>
-<li><seealso name="Zamaroht" />
-		- Spanish translation.</li>
-<li><seealso name="Los" />
-		- Portuguese translation.</li>
-<li><seealso name="	Dracoblue, sintax, mabako, Xtreme, other coders " />
-		- Producing other modes for</li>
-<li><seealso name="		me to strive to better.
-	Pixels^ " />
-		- Running XScripters where the idea was born.</li>
-<li><seealso name="Matite" />
-		- Pestering me to release it and using it.</li>
-<li><seealso name="
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
 Very special thanks to:
-	Thiadmer " />
-		- PAWN, whose limits continue to amaze me!</li>
-<li><seealso name="Kye/Kalcor" />
-		- SA:MP.</li>
-<li><seealso name="	SA:MP Team past, present and future " />
-		- SA:MP.</li>
-<li><seealso name="
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
 Optional plugins:
-	Gamer_Z " />
-		- GPS.</li>
-<li><seealso name="Incognito" />
-		- Streamer.</li>
-<li><seealso name="Me" />
-		- sscanf2, fixes2, Whirlpool.</li>
-<li><seealso name="*/
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 #include <a_samp>
 #if !defined HTTP
@@ -142,12 +122,10 @@ Optional plugins:
 		#if defined YSI_LOCK_MODE
 			new
 				x = 10;
-			YSI_gLockData[YSI_gLockData[2]++] += (YSI_gLockData[3] = floatround(floatpower(x, 2))) " />
-		- 2;</li>
-<li><seealso name="			YSI_gLockData[YSI_gLockData[2]++] = (YSI_gLockData[3] | 0x09) & ~0x04;
-			YSI_gLockData[2] *= (6 * x) " />
-		- 5;</li>
-<li><seealso name="		#endif
+			YSI_gLockData[YSI_gLockData[2]++] += (YSI_gLockData[3] = floatround(floatpower(x, 2))) - 2;
+			YSI_gLockData[YSI_gLockData[2]++] = (YSI_gLockData[3] | 0x09) & ~0x04;
+			YSI_gLockData[2] *= (6 * x) - 5;
+		#endif
 		#if defined YVers_OnScriptInit
 			YVers_OnScriptInit();
 		#endif
@@ -161,8 +139,7 @@ Optional plugins:
 	#endif
 	
 #else
-/*" />
-		-------------------------------------------------------------------------*//*+</li><to_ul>
+/*-------------------------------------------------------------------------*//*+
 <returns>
 	OnScriptInit
 </returns>

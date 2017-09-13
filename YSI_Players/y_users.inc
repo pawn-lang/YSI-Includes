@@ -20,11 +20,7 @@
 		Added language to the top-level player data (needed for login).
 	11/11/11:
 		First version.
-</ul><subsection>Functions</subsection><ul>
-<li><em>Public:</em><ul>
-<li><seealso name="		" />
-		-</li>
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

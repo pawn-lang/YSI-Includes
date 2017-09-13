@@ -38,8 +38,8 @@
 <li><seealso name="Debug_Print" />
 		- Prints the formatted string provided at the given level.</li>
 </ul></li></ul><subsection>Definitions</subsection><ul>
-<li><seealso name="P:&lt;0" />
-		-6&gt; - Print a message.</li>
+<li><seealso name="P:&lt;0-6&gt;" />
+		- Print a message.</li>
 <li><seealso name="P:C" />
 		- Run debug code.</li>
 <li><seealso name="P:E" />

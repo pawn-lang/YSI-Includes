@@ -25,9 +25,8 @@
 	09/10/07:
 		FINALLY found compile hang bug.
 		Repaired removed code.
-		Put object co" />
-		-ordinate code in Object_ParseSet</li>
-<li><seealso name="	23/09/07:
+		Put object co-ordinate code in Object_ParseSet
+	23/09/07:
 		Updated FindSector, AddToSector and RemoveFromSector to use new system.
 	22/09/07:
 		Started work on new sector system, minor macro changes, lots of maths.
@@ -37,30 +36,25 @@
 		Overhauled sector code, skips columns and interiors plus more efficient.
 	20/09/07:
 		Made some core functions static so they don't get called by accident.
-		Changed auto" />
-		-adjust code so it rounds to nearest whole log number.</li>
-<li><seealso name="		Moved zone" />
-		-find code around to skip whole columns at once.</li>
-<li><seealso name="		Added zone sorting so they're done in order of distance.
+		Changed auto-adjust code so it rounds to nearest whole log number.
+		Moved zone-find code around to skip whole columns at once.
+		Added zone sorting so they're done in order of distance.
 		Added breakout code so once all objects are found processing is exited.
 	19/09/07:
-		Added auto" />
-		-adjusting zone sizes based on object limits.</li>
-<li><seealso name="		Altered zone find code to return only possible visible zones.
+		Added auto-adjusting zone sizes based on object limits.
+		Altered zone find code to return only possible visible zones.
 		Fixed rare hanging bug in close list code.
 	18/09/07:
-		My birthday " />
-		- yes I'm that sad to code on it and put it in a changelog.</li>
-<li><seealso name="		Rewrote sectors code to use known sectors instead of position.
+		My birthday - yes I'm that sad to code on it and put it in a changelog.
+		Rewrote sectors code to use known sectors instead of position.
 	17/09/07:
 		Rewrote find code to find closest objects instead of random close ones.
 	03/08/07:
 		Updated timer system.
 	07/05/07:
 		Added groups support via default settings.
-		Corrected (unused) flag " />
-		- bit pointless but meh.</li>
-<li><seealso name="	02/05/07:
+		Corrected (unused) flag - bit pointless but meh.
+	02/05/07:
 		Added YSI_ prefix to all globals.
 		Added dynamic object API calls.
 	30/04/07:
@@ -76,11 +70,9 @@
 		Fixed range leave checking.
 		Added moving objects list.
 	18/04/07:
-		Second version " />
-		- completely rewritten after a chat with Peter.</li>
-<li><seealso name="	16/04/07:
-		First version " />
-		- adapted from my earlier e_objects.inc include.</li>
+		Second version - completely rewritten after a chat with Peter.
+	16/04/07:
+		First version - adapted from my earlier e_objects.inc include.
 </ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
 <li><seealso name="Object_Loop" />
@@ -98,7 +90,7 @@
 <li><seealso name="YSIM_Objects" />
 		- Processes master system instructions.</li>
 <li><seealso name="Object_AddRem" />
-		- Remote wrapper for Object_Add.</li>
+		- Remote wrapper for <seealso name="Object_Add" />.</li>
 </ul></li><li><em>Core</em><ul>
 <li><seealso name="Object_Object" />
 		- Constructor.</li>
@@ -177,15 +169,15 @@
 		- Checks if a player can see an object.</li>
 </ul></li><li><em>API</em><ul>
 <li><seealso name="MoveDynamicObject" />
-		- Wrapper for MoveObject.</li>
+		- Wrapper for <seealso name="MoveObject" />.</li>
 <li><seealso name="StopDynamicObject" />
-		- Wrapper for StopObject.</li>
+		- Wrapper for <seealso name="StopObject" />.</li>
 <li><seealso name="IsValidDynamicObject" />
 		- Wrapper for IsValidObject.</li>
 <li><seealso name="CreateDynamicObject" />
-		- Wrapper for CreateObject.</li>
+		- Wrapper for <seealso name="CreateObject" />.</li>
 <li><seealso name="CreatePlayerDynamicObject" />
-		- Wrapper for CreatePlayerObject.</li>
+		- Wrapper for <seealso name="CreatePlayerObject" />.</li>
 <li><seealso name="CreateVWDynamicObject" />
 		- Creates an object in only one world.</li>
 <li><seealso name="CreatePlayerVWDynamicObject" />
@@ -196,11 +188,12 @@
 		- Wrapper for GetObjectPos.</li>
 <li><seealso name="GetDynamicObjectRot" />
 		- Wrapper for GetObjectRot.</li>
-<li><seealso name="		SetDynamicObjectPos = Wrapper for SetObjectPos.
-		SetDynamicObjectRot " />
-		- Wrapper for SetObjectRot.</li>
+<li><seealso name="SetDynamicObjectPos" />
+		- Wrapper for <seealso name="SetObjectPos" />.
+<li><seealso name="SetDynamicObjectRot" />
+		- Wrapper for <seealso name="SetObjectRot" />.</li>
 <li><seealso name="AttachDynamicObjectToPlayer" />
-		- Wrapper for AttachObjectToPlayer.</li>
+		- Wrapper for <seealso name="AttachObjectToPlayer" />.</li>
 <li><seealso name="DetachDynamicObjectFromPlayer" />
 		- Removes an object from a player.</li>
 <li><seealso name="AttachObjectToObject" />
@@ -211,7 +204,6 @@
 <li><seealso name="	OnDynamicObjectMoved
 </ul><subsection>Definitions</subsection><ul>
 <li><seealso name="OBJECT_SECTOR_SIZE" />
-		" />
 		- Size of edge of a grid square for approximations.</li><to_ul></li>
 <li><seealso name="MAX_DYN_OBJECTS" />
 		- Maximum number of objects.</li>
