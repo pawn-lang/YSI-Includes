@@ -204,18 +204,18 @@ Optional plugins:
 <li><seealso name="RFPC" />
 		- Combination of P and C.</li>
 <li><seealso name="RFCP" />
-		- Combination of P and C.</li><to_ul>
+		- Combination of P and C.</li>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Global</em><ul>
 <li><seealso name="_@" />
-		- ID of this script.</li><to_ul>
+		- ID of this script.</li>
 </ul></li></ul><subsection>Compile options</subsection><ul>
 <li><seealso name="YSI_NO_MASTER" />
 		- Don't use the master system.</li>
 <li><seealso name="YSI_IS_CLIENT" />
 		- Script is a client only script.</li>
 <li><seealso name="YSI_IS_SERVER" />
-		- Script is a server only script.</li><to_ul>
+		- Script is a server only script.</li>
 </ul>
 *//** */
 

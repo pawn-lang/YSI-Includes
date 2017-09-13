@@ -23,10 +23,10 @@
 <li><seealso name="broadcastfunc" />
 		- Call the function, but in all scripts.</li>
 <li><seealso name="localfunc" />
-		- Call the function by name, not address, in the current script.</li><to_ul>
+		- Call the function by name, not address, in the current script.</li>
 </ul><subsection>Compile options</subsection><ul>
 <li><seealso name="YSI_NO_MASTER" />
-		- Disable all knowledge of other scripts.</li><to_ul>
+		- Disable all knowledge of other scripts.</li>
 </ul>
 *//** *//*
 Legal:

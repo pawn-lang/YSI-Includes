@@ -23,7 +23,7 @@
 </ul><subsection>Functions</subsection><ul>
 <li><em>Public:</em><ul>
 <li><seealso name="		" />
-		-</li><to_ul>
+		-</li>
 </ul></li></ul>
 *//** *//*
 Legal:

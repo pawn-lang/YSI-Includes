@@ -41,14 +41,14 @@
 <li><seealso name="Area_Broadcast" />
 		- Recieves transmitted areas.</li>
 <li><seealso name="Area_UpdateEmpty" />
-		- Resets the empty array after master change.</li><to_ul>
+		- Resets the empty array after master change.</li>
 </ul></li><li><em>Core</em><ul>
 <li><seealso name="Area_Area" />
 		- Constructor.</li>
 <li><seealso name="Area_CheckArea" />
 		- Gets an area's type anx calls the relevant function.</li>
 <li><seealso name="Area_OnPlayerConnect" />
-		- Called when a player connects.</li><to_ul>
+		- Called when a player connects.</li>
 </ul></li><li><em>Stock</em><ul>
 <li><seealso name="Area_Delete" />
 		- Deletes an area.</li>
@@ -73,7 +73,7 @@
 <li><seealso name="Area_SetWorld" />
 		- Sets wether this world has this area.</li>
 <li><seealso name="Area_IsValid" />
-		- Checks if an area is valid.</li><to_ul>
+		- Checks if an area is valid.</li>
 </ul></li><li><em>Static</em><ul>
 <li><seealso name="Area_IsInCircle" />
 		- Checks if a player is in this circular area.</li>
@@ -88,19 +88,19 @@
 <li><seealso name="Area_AddToUnused" />
 		- Adds a area pointer to the unused list.</li>
 <li><seealso name="Area_GetFreeSlot" />
-		- Gets the next free area slot.</li><to_ul>
+		- Gets the next free area slot.</li>
 </ul></li><li><em>Inline</em><ul>
 <li><seealso name="Area_IsActive" />
 		- Checks if an area is active.</li>
 <li><seealso name="Area_GetEmptySlotCount" />
 		- Gets the number of empty slots.</li>
 <li><seealso name="Area_AddSlots" />
-		- Removes slots from the unused count.</li><to_ul>
+		- Removes slots from the unused count.</li>
 </ul></li></ul><subsection>Callbacks</subsection><ul>
 <li><seealso name="OnPlayerEnterArea" />
 		- Called when a player enters an area.</li>
 <li><seealso name="OnPlayerLeaveArea" />
-		- Called when a player leaves an area.</li><to_ul>
+		- Called when a player leaves an area.</li>
 </ul><subsection>Definitions</subsection><ul>
 <li><seealso name="MAX_AREAS" />
 		- Max number of areas.</li>
@@ -111,12 +111,12 @@
 <li><seealso name="AREA_WORLDS" />
 		- Number of worlds an area can be in.</li>
 <li><seealso name="AREA_WORLD_COUNT" />
-		- Number of cells required for a bit array of AREA_WORLDS.</li><to_ul>
+		- Number of cells required for a bit array of AREA_WORLDS.</li>
 </ul><subsection>Enums</subsection><ul>
 <li><seealso name="e_AREA_FLAGS" />
 		- Flags for each area.</li>
 <li><seealso name="E_AREA" />
-		- Structure for part of an areas data.</li><to_ul>
+		- Structure for part of an areas data.</li>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sUnusedAreas" />
@@ -128,7 +128,7 @@
 <li><seealso name="YSI_g_sAreas" />
 		- Array of area data.</li>
 <li><seealso name="YSI_g_sPlayerArea" />
-		- Array of players' current areas.</li><to_ul>
+		- Array of players' current areas.</li>
 </ul></li></ul>
 *//** *//*
 Legal:

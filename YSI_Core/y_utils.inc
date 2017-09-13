@@ -98,7 +98,7 @@ Misc functions used throughout.
 </ul>
 </ul></li></ul><subsection>Examples</subsection><ul>
 <li><seealso name="N/A" />
-		- This is a collection of independent functions.</li><to_ul>
+		- This is a collection of independent functions.</li>
 </ul>
 *//** *//*
 Legal:

@@ -30,7 +30,7 @@
 <li><seealso name="Bintree_QSort" />
 		- Custom implementaion of QSort to keep pointers.</li>
 <li><seealso name="Bintree_SortHalf" />
-		- Itteratively balances halves of an array.</li><to_ul>
+		- Itteratively balances halves of an array.</li>
 </ul></li><li><em>Stock</em><ul>
 <li><seealso name="Bintree_Generate" />
 		- Generates a balanced binary tree from given input.</li>
@@ -43,32 +43,32 @@
 <li><seealso name="Bintree_Delete" />
 		- Removes an item from a tree.</li>
 <li><seealso name="Bintree_UpdatePointers" />
-		- Updates the pointers after a target change.</li><to_ul>
+		- Updates the pointers after a target change.</li>
 </ul></li><li><em>Static</em><ul>
 <li><seealso name="Bintree_Compress" />
 		- Removes space from an altered tree.</li>
 <li><seealso name="Bintree_FindMin" />
 		- Finds the smallest value on a branch.</li>
 <li><seealso name="Bintree_FindMax" />
-		- Finds the largest value on a branch.</li><to_ul>
+		- Finds the largest value on a branch.</li>
 </ul></li><li><em>Inline</em><ul>
 <li><seealso name="Bintree_Sort" />
 		- Entry point for Bintree_QSort.</li>
 <li><seealso name="Bintree_Fill" />
-		- Entry point for Bintree_SortHalf.</li><to_ul>
+		- Entry point for Bintree_SortHalf.</li>
 </ul></li></ul><subsection>Definitions</subsection><ul>
 <li><seealso name="BINTREE_NO_BRANCH" />
 		- Nowhere to go from the number in required direction.</li>
 <li><seealso name="BINTREE_NOT_FOUND" />
-		- Failure return.</li><to_ul>
+		- Failure return.</li>
 </ul><subsection>Enums</subsection><ul>
 <li><seealso name="E_BINTREE_TREE" />
 		- Structure of a leaf of a binary tree.</li>
 <li><seealso name="E_BINTREE_INPUT" />
-		- Structure of an array of data to be added to a tree.</li><to_ul>
+		- Structure of an array of data to be added to a tree.</li>
 </ul><subsection>Tags</subsection><ul>
 <li><seealso name="Bintree" />
-		- Binary tree type.</li><to_ul>
+		- Binary tree type.</li>
 </ul>
 *//** *//*
 Legal:

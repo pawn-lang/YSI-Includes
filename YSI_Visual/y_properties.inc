@@ -56,7 +56,7 @@
 <li><seealso name="Property_Broadcast" />
 		- Called to save properties on master shutdown.</li>
 <li><seealso name="Property_PickupTimeCheck" />
-		- Checks if a player is still stood on a pickup.</li><to_ul>
+		- Checks if a player is still stood on a pickup.</li>
 </ul></li><li><em>Core</em><ul>
 <li><seealso name="Property_OnPlayerSelectedMenuRow" />
 		- Called when someone selects something.</li>
@@ -75,7 +75,7 @@
 <li><seealso name="Property_OnPlayerLeaveArea" />
 		- Called when someone leaves an area (public).</li>
 <li><seealso name="Property_OnPlayerEnterArea" />
-		- Called when someone enters an area (public).</li><to_ul>
+		- Called when someone enters an area (public).</li>
 </ul></li><li><em>Stock</em><ul>
 <li><seealso name="Property_GetPlayerPropCount" />
 		- Gets the number of properties for a player.</li>
@@ -104,7 +104,7 @@
 <li><seealso name="Property_GetPropertyBits" />
 		- Gets a player's owned properties.</li>
 <li><seealso name="Property_SetRebuyDelay" />
-		- Set a delay on rebuying properties.</li><to_ul>
+		- Set a delay on rebuying properties.</li>
 </ul></li><li><em>Static</em><ul>
 <li><seealso name="Property_GetWeapon" />
 		- Gets weapon data for a slotid slot.</li>
@@ -113,7 +113,7 @@
 <li><seealso name="Property_GetWeaponFromSlot" />
 		- Gets a weaponid from a slotid.</li>
 <li><seealso name="Property_GenerateAmmuMenu" />
-		- Generates the menu for ammunation.</li><to_ul>
+		- Generates the menu for ammunation.</li>
 </ul></li><li><em>Inline</em><ul>
 <li><seealso name="Property_SetOption" />
 		- Sets a property's custom flag.</li>
@@ -128,7 +128,7 @@
 <li><seealso name="Property_WeaponAmmo" />
 		- Gets the ammo of a slot.</li>
 <li><seealso name="Property_IsPlayerProperty" />
-		- Checks if a player can have a property.</li><to_ul>
+		- Checks if a player can have a property.</li>
 </ul></li><li><em>API</em><ul>
 <li><seealso name="CreateProperty" />
 		- Creates a business.</li>
@@ -145,7 +145,7 @@
 <li><seealso name="CreateForbiddenArea" />
 		- Creates a forbidden area.</li>
 <li><seealso name="DestroyProperty" />
-		- Deletes a property from the array.</li><to_ul>
+		- Deletes a property from the array.</li>
 </ul></li></ul><subsection>Definitions</subsection><ul>
 <li><seealso name="PROPERTY_LOOP_GRANULARITY" />
 		- Number of itterations of the main loop a second.</li>
@@ -158,7 +158,7 @@
 <li><seealso name="WEAPON_ARMOUR" />
 		- Type for salling armour at ammunation.</li>
 <li><seealso name="PROPERTY_SELL_PERCENT" />
-		- % of money got back for a reduced sale.</li><to_ul>
+		- % of money got back for a reduced sale.</li>
 </ul><subsection>Enums</subsection><ul>
 	e_PROP_FLAGS - Flags for property data.
 	E_PROP_DATA - Data for a property.
@@ -172,10 +172,10 @@
 <li><seealso name="WEAPON_DATA_REM" />
 		- Like WEAPON_DATA but reads from an array instead.</li>
 <li><seealso name="WEAPON" />
-		- Saves a weapon id in the top byte of a cell.</li><to_ul>
+		- Saves a weapon id in the top byte of a cell.</li>
 </ul><subsection>Tags</subsection><ul>
 <li><seealso name="e_PROP_FLAGS" />
-		- Flags.</li><to_ul>
+		- Flags.</li>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sProperties" />
@@ -197,7 +197,7 @@
 <li><seealso name="YSI_g_sTempProp" />
 		- Temporary store for properties.</li>
 <li><seealso name="YSI_g_sIsMaster" />
-		- Is this script the global master.</li><to_ul>
+		- Is this script the global master.</li>
 </ul></li></ul><subsection>Commands</subsection><ul>
 <li><seealso name="buy" />
 		- Lets you buy your current property.</li>
@@ -215,7 +215,7 @@
 <li><seealso name="LReqProp" />
 		- Return data from a remote script.</li>
 <li><seealso name="110953013" />
-		- Return properties for a player.</li><to_ul>
+		- Return properties for a player.</li>
 </ul>
 *//** *//*
 Legal:

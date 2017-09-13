@@ -35,7 +35,7 @@
 <li><seealso name="Class_AddRemote" />
 		- Adds a class to the remote master.</li>
 <li><seealso name="Class_Remote" />
-		- Updates settings remotely.</li><to_ul>
+		- Updates settings remotely.</li>
 </ul></li><li><em>Core</em><ul>
 <li><seealso name="Class_Class" />
 		- Sets up the system.</li>
@@ -44,7 +44,7 @@
 <li><seealso name="Class_OnPlayerRequestClass" />
 		- Called when a player requests a class.</li>
 <li><seealso name="Class_OnPlayerConnect" />
-		- Called when a player connects.</li><to_ul>
+		- Called when a player connects.</li>
 </ul></li><li><em>Stock</em><ul>
 <li><seealso name="Class_Delete" />
 		- Removes a class.</li>
@@ -71,10 +71,10 @@
 <li><seealso name="Class_RequireSelectionReg" />
 		- Require people to register before selecting.</li>
 <li><seealso name="Class_RequireSpawnReg" />
-		- Require people to register before spawning.</li><to_ul>
+		- Require people to register before spawning.</li>
 </ul></li><li><em>Static</em><ul>
 <li><seealso name="Class_AddClass" />
-		- Adds a class, wrapped by API and remote functions.</li><to_ul>
+		- Adds a class, wrapped by API and remote functions.</li>
 </ul></li><li><em>Inline</em><ul>
 <li><seealso name="Class_IsActive" />
 		- Checks a class is active.</li>
@@ -91,7 +91,7 @@
 <li><seealso name="Class_A" />
 		- Gets a classes angle.</li>
 <li><seealso name="Class_Skin" />
-		- Gets a classes skin.</li><to_ul>
+		- Gets a classes skin.</li>
 </ul></li></ul><subsection>Definitions</subsection><ul>
 <li><seealso name="MAX_CLASSES" />
 		- Maximum number of classes storeable by the system.</li>
@@ -100,12 +100,12 @@
 <li><seealso name="CLASS_MIDDLE" />
 		- Flag for last internal class viewed.</li>
 <li><seealso name="CLASS_RIGHT" />
-		- Flag for last internal class viewed.</li><to_ul>
+		- Flag for last internal class viewed.</li>
 </ul><subsection>Enums</subsection><ul>
 <li><seealso name="e_CLASS_FLAGS" />
 		- Small data for individual classes.</li>
 <li><seealso name="E_CLASS" />
-		- Class data structure.</li><to_ul>
+		- Class data structure.</li>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sClasses" />
@@ -119,7 +119,7 @@
 <li><seealso name="YSI_g_sRight" />
 		- Handle for the third internal class.</li>
 <li><seealso name="YSI_g_sClassCount" />
-		- Number of classes stored.</li><to_ul>
+		- Number of classes stored.</li>
 </ul></li></ul>
 *//** *//*
 Legal:

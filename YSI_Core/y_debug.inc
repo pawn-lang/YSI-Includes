@@ -36,7 +36,7 @@
 <li><seealso name="Debug_Code" />
 		- Runs defined code if a certain level is active.</li>
 <li><seealso name="Debug_Print" />
-		- Prints the formatted string provided at the given level.</li><to_ul>
+		- Prints the formatted string provided at the given level.</li>
 </ul></li></ul><subsection>Definitions</subsection><ul>
 <li><seealso name="P:&lt;0" />
 		-6&gt; - Print a message.</li>
@@ -45,10 +45,10 @@
 <li><seealso name="P:E" />
 		- Print an error message.</li>
 <li><seealso name="P:W" />
-		- Print a warning message.</li><to_ul>
+		- Print a warning message.</li>
 </ul><subsection>Compile options</subsection><ul>
 <li><seealso name="_DEBUG" />
-		- Debugging level to use.</li><to_ul>
+		- Debugging level to use.</li>
 </ul>
 *//** *//*
 Legal:

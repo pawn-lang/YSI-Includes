@@ -21,14 +21,14 @@
 </ul><subsection>Functions</subsection><ul>
 <li><em>API</em><ul>
 <li><seealso name="WriteMem" />
-		- Write data to an address.</li><to_ul>
+		- Write data to an address.</li>
 </ul></li></ul><subsection>Definitions</subsection><ul>
 <li><seealso name="asm" />
-		- Convert a stream of assembly to a cell.</li><to_ul>
+		- Convert a stream of assembly to a cell.</li>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sWriteMem" />
-		- The assembly.</li><to_ul>
+		- The assembly.</li>
 </ul></li></ul>
 *//** *//*
 Legal:

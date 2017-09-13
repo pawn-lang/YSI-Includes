@@ -83,19 +83,19 @@ Legal:
 <li><seealso name="OnPlayerConnect" />
 		- Called to check IPs.</li>
 <li><seealso name="OnScriptInit" />
-		- Sets the OnPlayerConnect function flag.</li><to_ul>
+		- Sets the OnPlayerConnect function flag.</li>
 </ul></li><li><em>API</em><ul>
 <li><seealso name="SetMaxConnections" />
-		- Sets the max allowed connections from an IP.</li><to_ul>
+		- Sets the max allowed connections from an IP.</li>
 </ul></li></ul><subsection>Enums</subsection><ul>
 <li><seealso name="e_FLOOD_ACTION" />
-		- What to do if too many connections form.</li><to_ul>
+		- What to do if too many connections form.</li>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sPlayerIPs" />
 		- People's stored IPs for speed.</li>
 <li><seealso name="YSI_g_sMaxConnections" />
-		- Data for the script.</li><to_ul>
+		- Data for the script.</li>
 </ul></li></ul>
 *//** *//*
 Legal:

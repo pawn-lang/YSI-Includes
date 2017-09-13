@@ -93,7 +93,7 @@
 <li><seealso name="OnPlayerDisconnect" />
 		- Called when a player leaves to remove them.</li>
 <li><seealso name="OnPlayerConnect" />
-		- Called when a player connects to add them.</li><to_ul>
+		- Called when a player connects to add them.</li>
 </ul></li><li><em>Stock</em><ul>
 <li><seealso name="Iter_ShowArray" />
 		- Displays the contents of the array.</li>
@@ -106,7 +106,7 @@
 <li><seealso name="Iter_FreeInternal" />
 		- Gets the first free slot in the iterator.</li>
 <li><seealso name="Iter_InitInternal" />
-		- Initialises a multi-dimensional iterator.</li><to_ul>
+		- Initialises a multi-dimensional iterator.</li>
 </ul></li><li><em>Inline</em><ul>
 <li><seealso name="Iter_Create" />
 		- Create a new iterator value set.</li>
@@ -135,14 +135,14 @@
 <li><seealso name="Iter_Debug2" />
 		- Wraps around Iter_ShowArray for arrays.</li>
 <li><seealso name="Iter_Free2" />
-		- Wraps around Iter_FreeInternal for arrays.</li><to_ul>
+		- Wraps around Iter_FreeInternal for arrays.</li>
 </ul></li></ul><subsection>Hooks</subsection><ul>
 <li><seealso name="Iter_OnPlayerConnect" />
 		- Hook for the OnPlayerConnect callback.</li>
 <li><seealso name="Iter_OnPlayerDisconnect" />
 		- Hook for the OnPlayerDisconnect callback.</li>
 <li><seealso name="Iter_OnGameModeInit" />
-		- Only exists to make the code compile correctly...</li><to_ul>
+		- Only exists to make the code compile correctly...</li>
 </ul><subsection>Keywords</subsection><ul>
 <li><seealso name="foreach" />
 		- Command to loop an iterator.</li>
@@ -151,23 +151,23 @@
 <li><seealso name="foreach2" />
 		- Command to loop through an iterator array.</li>
 <li><seealso name="foreachex" />
-		- Like foreach2 but without a new variable.</li><to_ul>
+		- Like foreach2 but without a new variable.</li>
 </ul><subsection>Tags</subsection><ul>
 <li><seealso name="Iterator" />
-		- Declare an iterator.</li><to_ul>
+		- Declare an iterator.</li>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_OPC" />
 		- Records wether Iter_OnPlayerConnect exists for speed.</li>
 <li><seealso name="YSI_g_OPDC" />
-		- Records wether Iter_OnPlayerDisconnect exists for speed.</li><to_ul>
+		- Records wether Iter_OnPlayerDisconnect exists for speed.</li>
 </ul></li></ul><subsection>Compile options</subsection><ul>
 <li><seealso name="YSI_ITTER_NO_SORT" />
 		- Removed.</li>
 <li><seealso name="FOREACH_NO_BOTS" />
 		- Remove the bot iterators for smaller code.</li>
 <li><seealso name="FOREACH_NO_PLAYERS" />
-		- Remove all default code for player itteration.</li><to_ul>
+		- Remove all default code for player itteration.</li>
 </ul><subsection>Iterators</subsection><ul>
 <li><seealso name="Player" />
 		- List of all players connected.</li>
@@ -176,7 +176,7 @@
 <li><seealso name="NPC" />
 		- Alias of Bot.</li>
 <li><seealso name="Character" />
-		- All players and bots.</li><to_ul>
+		- All players and bots.</li>
 </ul>
 *//** *//*
 Legal:

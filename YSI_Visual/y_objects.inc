@@ -2,13 +2,13 @@
 <section>
 					y_objects
 </section>
-<subsection>Description</subsection><ul>
-<li><seealso name="	Handles object streaming for >150 objects per player.  Also provides VW
+<subsection>Description</subsection>
+	Handles object streaming for >150 objects per player.  Also provides VW
 	support and improved object attachment (i.e. it works).  New versions
 	combines mine and Peter's streaming systems to narrow down objects by
 	approximation by a grid system then check all objects visible in near
 	by sections.
-</ul></li></ul><subsection>Version</subsection>
+<subsection>Version</subsection>
 	0.2.7
 <subsection>Changelog</subsection><ul>
 	27/12/07:
@@ -80,7 +80,7 @@
 		- completely rewritten after a chat with Peter.</li>
 <li><seealso name="	16/04/07:
 		First version " />
-		- adapted from my earlier e_objects.inc include.</li><to_ul>
+		- adapted from my earlier e_objects.inc include.</li>
 </ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
 <li><seealso name="Object_Loop" />
@@ -98,12 +98,12 @@
 <li><seealso name="YSIM_Objects" />
 		- Processes master system instructions.</li>
 <li><seealso name="Object_AddRem" />
-		- Remote wrapper for Object_Add.</li><to_ul>
+		- Remote wrapper for Object_Add.</li>
 </ul></li><li><em>Core</em><ul>
 <li><seealso name="Object_Object" />
 		- Constructor.</li>
 <li><seealso name="Object_OnPlayerDisconnect" />
-		- Disconnects objects.</li><to_ul>
+		- Disconnects objects.</li>
 </ul></li><li><em>Stock</em><ul>
 <li><seealso name="Object_AddToWorld" />
 		- Make visible in world.</li>
@@ -128,7 +128,7 @@
 <li><seealso name="Object_SetViewDistance" />
 		- Sets an object's view distance.</li>
 <li><seealso name="Object_IsDescendant" />
-		- Checks if an object is related to another object.</li><to_ul>
+		- Checks if an object is related to another object.</li>
 </ul></li><li><em>Static</em><ul>
 <li><seealso name="Object_Add" />
 		- Internal add function.</li>
@@ -165,7 +165,7 @@
 <li><seealso name="Object_Destroy" />
 		- Delete an object with no checks.</li>
 <li><seealso name="Object_AddToUpdate" />
-		- Safely adds an object to the moved update list.</li><to_ul>
+		- Safely adds an object to the moved update list.</li>
 </ul></li><li><em>Inline</em><ul>
 <li><seealso name="Object_IsValid" />
 		- Internal validity check.</li>
@@ -174,7 +174,7 @@
 <li><seealso name="Object_SetAttach" />
 		- objSet player an object's attached to.</li>
 <li><seealso name="Object_HasPlayer" />
-		- Checks if a player can see an object.</li><to_ul>
+		- Checks if a player can see an object.</li>
 </ul></li><li><em>API</em><ul>
 <li><seealso name="MoveDynamicObject" />
 		- Wrapper for MoveObject.</li>
@@ -206,7 +206,7 @@
 <li><seealso name="AttachObjectToObject" />
 		- Attaches an object to another object.</li>
 <li><seealso name="RemoveObjectFromParent" />
-		- Removes an object from another object.</li><to_ul>
+		- Removes an object from another object.</li>
 </ul></li></ul><subsection>Callbacks</subsection><ul>
 <li><seealso name="	OnDynamicObjectMoved
 </ul><subsection>Definitions</subsection><ul>
@@ -232,12 +232,12 @@
 <li><seealso name="OBJECT_WORLD_COUNT" />
 		- Size of bit array of worlds.</li>
 <li><seealso name="OBJECT_PLAYER_COUNT" />
-		- Size of bit array of players.</li><to_ul>
+		- Size of bit array of players.</li>
 </ul><subsection>Enums</subsection><ul>
 <li><seealso name="E_OBJECT" />
 		- Structure of the dynamic object data.</li>
 <li><seealso name="e_OBJ_FLAG" />
-		- Flags for the object.</li><to_ul>
+		- Flags for the object.</li>
 </ul><subsection>Macros</subsection><ul>
 <li><seealso name="OBJECT_SECTOR_EDGE" />
 		- Number of sectors on one edge of the world.</li>
@@ -258,10 +258,10 @@
 <li><seealso name="e_OBJ_FLAG_MOVED" />
 		- Extension of e_OBJ_FLAG, both move flags together.</li>
 <li><seealso name="NEW_SECTOR" />
-		- Sector based on origin sector and current offset.</li><to_ul>
+		- Sector based on origin sector and current offset.</li>
 </ul><subsection>Tags</subsection><ul>
 <li><seealso name="e_OBJ_FLAG" />
-		- Flags for objects.</li><to_ul>
+		- Flags for objects.</li>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sObjectSectors" />
@@ -273,7 +273,7 @@
 <li><seealso name="YSI_g_sMovingObjects" />
 		- Pointer to moving object list.</li>
 <li><seealso name="YSI_g_sNoObjects" />
-		- Pointer to unused object list.</li><to_ul>
+		- Pointer to unused object list.</li>
 </ul></li></ul><subsection>Compile options</subsection><ul>
 <li><seealso name="NO_PERSONAL_OBJECTS" />
 		- All players see all objects.</li>
@@ -282,7 +282,7 @@
 <li><seealso name="NO_OBJECTS_MOVE" />
 		- No processing is done for moving objects.</li>
 <li><seealso name="	OBJECT_WORLDS 0 " />
-		- All objects are visible in all worlds.</li><to_ul>
+		- All objects are visible in all worlds.</li>
 </ul>
 *//** *//*
 Legal:

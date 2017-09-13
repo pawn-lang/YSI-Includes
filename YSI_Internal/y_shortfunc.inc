@@ -22,7 +22,7 @@
 <li><seealso name="S@" />
 		- Renaming of setproperty for size reasons.</li>
 <li><seealso name="P@" />
-		- Renaming of __CallLocalFunction for size reasons.</li><to_ul>
+		- Renaming of __CallLocalFunction for size reasons.</li>
 </ul>
 *//** *//*
 Legal:

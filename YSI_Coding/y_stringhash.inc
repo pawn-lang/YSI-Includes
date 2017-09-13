@@ -25,12 +25,12 @@
 </ul><subsection>Functions</subsection><ul>
 <li><em>Stock</em><ul>
 <li><seealso name="YHash" />
-		- Generate a string hash at run time.</li><to_ul>
+		- Generate a string hash at run time.</li>
 </ul></li></ul><subsection>Definitions</subsection><ul>
 <li><seealso name="_H" />
 		- Generate a string hash at compile time.</li>
 <li><seealso name="_I" />
-		- Generate a case insensitive string hash at compile time.</li><to_ul>
+		- Generate a case insensitive string hash at compile time.</li>
 </ul>
 *//** *//*
 Legal:

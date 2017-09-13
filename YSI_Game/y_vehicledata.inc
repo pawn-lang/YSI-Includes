@@ -20,10 +20,10 @@
 </ul><subsection>Functions</subsection><ul>
 <li><em>Stock</em><ul>
 <li><seealso name="Vehicle_Speed" />
-		- Get current vehicle speed in KMH.</li><to_ul>
+		- Get current vehicle speed in KMH.</li>
 </ul></li></ul><subsection>Tags</subsection><ul>
 <li><seealso name="VIM" />
-		- Vehicle Internal Modelid.</li><to_ul>
+		- Vehicle Internal Modelid.</li>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Global</em><ul>
 <li><seealso name="YSI_gVehicleFlags" />
@@ -31,7 +31,7 @@
 <li><seealso name="YSI_gVehicleNames" />
 		- Names of vehicles.</li>
 <li><seealso name="YSI_gVehicleTopSpeed" />
-		- Top speed of vehicles.</li><to_ul>
+		- Top speed of vehicles.</li>
 </ul></li></ul>
 *//** *//*
 Legal:

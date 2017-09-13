@@ -49,7 +49,7 @@
 <li><seealso name="Command_Remove" />
 		- Removes a command.</li>
 <li><seealso name="Command_Name" />
-		- Gets the name of a command in a property.</li><to_ul>
+		- Gets the name of a command in a property.</li>
 </ul></li><li><em>Core</em><ul>
 <li><seealso name="Command_Process" />
 		- Called from OnPlayerCommandText to process entered commands.</li>
@@ -58,7 +58,7 @@
 <li><seealso name="Command_Hash" />
 		- Hashes a word for command hashing.</li>
 <li><seealso name="Command_ProcRem" />
-		- Processes a help command in the master script.</li><to_ul>
+		- Processes a help command in the master script.</li>
 </ul></li><li><em>Stock</em><ul>
 <li><seealso name="Command_SetDisconnectReturn" />
 		- Sets the return value for unconnected players.</li>
@@ -85,25 +85,25 @@
 <li><seealso name="Comamnd_SetPlayerUseByID" />
 		- Sets wether or not a player can use a command.</li>
 <li><seealso name="Command_FindByName" />
-		- Finds a command in a possibly sorted list.</li><to_ul>
+		- Finds a command in a possibly sorted list.</li>
 </ul></li></ul><subsection>Definitions</subsection><ul>
 <li><seealso name="MAX_COMMAND_LENGTH" />
 		- The maximum length of a command string.</li>
 <li><seealso name="COMMAND_NOT_FOUND" />
-		- Indicates that a searched for string is not a function.</li><to_ul>
+		- Indicates that a searched for string is not a function.</li>
 </ul><subsection>Enums</subsection><ul>
 <li><seealso name="e_COMM_FLAG" />
 		- Bit mappings for command options.</li>
 <li><seealso name="E_COMMANDS" />
-		- Structure of the array holding the string data.</li><to_ul>
+		- Structure of the array holding the string data.</li>
 </ul><subsection>Macros</subsection><ul>
 <li><seealso name="Command_(%1)" />
 		- Forwards and declares a standard command for calling.</li>
 <li><seealso name="ycmd(%1)" />
-		- Adds a command to the array (wrapper for Command_Add).</li><to_ul>
+		- Adds a command to the array (wrapper for Command_Add).</li>
 </ul><subsection>Tags</subsection><ul>
 <li><seealso name="e_COMM_FLAG" />
-		- Flag type.</li><to_ul>
+		- Flag type.</li>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sCommands" />
@@ -121,17 +121,17 @@
 <li><seealso name="YSI_g_sAltCount" />
 		- The number of commands with altnames.</li>
 <li><seealso name="YSI_g_sCommandFlags" />
-		- Bit array of command options.</li><to_ul>
+		- Bit array of command options.</li>
 </ul></li></ul><subsection>Commands</subsection><ul>
 <li><seealso name="commands" />
-		- Lists all commands available to you.</li><to_ul>
+		- Lists all commands available to you.</li>
 </ul><subsection>Compile options</subsection><ul>
 <li><seealso name="COMMAND_SENSITIVE" />
 		- Make commands case sensitive.</li>
 <li><seealso name="COMMAND_ACCURATE" />
 		- Can use '@' in command names.</li>
 <li><seealso name="MAX_COMMANDS" />
-		- The maximum number of commands which can be used.</li><to_ul>
+		- The maximum number of commands which can be used.</li>
 </ul>
 *//** *//*
 Legal:

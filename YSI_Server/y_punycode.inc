@@ -30,7 +30,7 @@
 <li><seealso name="Puny_Decode" />
 		- Convert a Punycode string to Unicode.</li>
 <li><seealso name="Puny_HTTP" />
-		- Wrapper for "HTTP" to encode domain names.</li><to_ul>
+		- Wrapper for "HTTP" to encode domain names.</li>
 </ul></li></ul>
 
 #include "..\YSI_Internal\y_version"

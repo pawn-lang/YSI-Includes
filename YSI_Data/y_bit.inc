@@ -41,7 +41,7 @@
 <li><seealso name="Bit_SetAll" />
 		- Sets all the slots in an array to the same thing.</li>
 <li><seealso name="Bit_GetCount" />
-		- Gets the number of 1s in a bit array.</li><to_ul>
+		- Gets the number of 1s in a bit array.</li>
 </ul></li><li><em>Inline</em><ul>
 <li><seealso name="Bit_Bits" />
 		- Gets the number of cells required for a bit array.</li>
@@ -50,13 +50,13 @@
 <li><seealso name="Bit_Vet" />
 		- Sets a slot to 0.</li>
 <li><seealso name="Bit_GetBits" />
-		- Gets the bit at a slot unsafely.</li><to_ul>
+		- Gets the bit at a slot unsafely.</li>
 </ul></li></ul><subsection>Definitions</subsection><ul>
 <li><seealso name="CELLSHIFT" />
-		- Number of bits that can hold "cellbits"</li><to_ul>
+		- Number of bits that can hold "cellbits"</li>
 </ul><subsection>Tags</subsection><ul>
 <li><seealso name="Bit" />
-		- Bit array type.</li><to_ul>
+		- Bit array type.</li>
 </ul>
 *//** *//*
 Legal:

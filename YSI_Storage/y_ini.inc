@@ -84,12 +84,12 @@
 <li><seealso name="INI_WriteBool" />
 		- Writes a boolean to an INI.</li>
 <li><seealso name="INI_RemoveEntry" />
-		- Remove an entry from a file.</li><to_ul>
+		- Remove an entry from a file.</li>
 </ul></li><li><em>Static</em><ul>
 <li><seealso name="INI_WriteBuffer" />
 		- Writes an INI's buffer to the file.</li>
 <li><seealso name="INI_AddToBuffer" />
-		- Adds a string to an INI buffer.</li><to_ul>
+		- Adds a string to an INI buffer.</li>
 </ul></li><li><em>Inline</em><ul>
 <li><seealso name="INI_Int" />
 		- Parse an integer INI entry.</li>
@@ -102,7 +102,7 @@
 <li><seealso name="INI_Bool" />
 		- Parse a binary INI entry.</li>
 <li><seealso name="INI_String" />
-		- Parse a string INI entry.</li><to_ul>
+		- Parse a string INI entry.</li>
 </ul></li></ul><subsection>Definitions</subsection><ul>
 <li><seealso name="MAX_INI_TAG" />
 		- Maximum length of an INI tagname.</li>
@@ -117,18 +117,18 @@
 <li><seealso name="INI_MAX_WRITES" />
 		- Maximum concurrent files open for writing.</li>
 <li><seealso name="MAX_INI_TAGS" />
-		- Number of tags the buffer can hold data for at once.</li><to_ul>
+		- Number of tags the buffer can hold data for at once.</li>
 </ul><subsection>Enums</subsection><ul>
 <li><seealso name="E_INI_WRITE" />
 		- Storage for entries to be written.</li>
 <li><seealso name="E_INI_TAGS" />
-		- Data for tags with data.</li><to_ul>
+		- Data for tags with data.</li>
 </ul><subsection>Macros</subsection><ul>
 <li><seealso name="INI_Parse" />
-		- Header for ini parsing functions.</li><to_ul>
+		- Header for ini parsing functions.</li>
 </ul><subsection>Tags</subsection><ul>
 <li><seealso name="INI" />
-		- Handle to an INI file being written to.</li><to_ul>
+		- Handle to an INI file being written to.</li>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sINIWriteBuffer" />
@@ -142,7 +142,7 @@
 <li><seealso name="YSI_g_sINIWriteTag" />
 		- Data for tags,</li>
 <li><seealso name="YSI_g_sINIWriteFile" />
-		- Current files been written to.</li><to_ul>
+		- Current files been written to.</li>
 </ul></li></ul>
 *//** *//*
 Legal:

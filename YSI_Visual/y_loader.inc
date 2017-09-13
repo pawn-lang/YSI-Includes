@@ -34,26 +34,26 @@ Legal:
 <li><seealso name="Loader_Check" />
 		- Processes a loaded checkpoint.</li>
 <li><seealso name="Loader_Obj" />
-		- Processes a loaded object.</li><to_ul>
+		- Processes a loaded object.</li>
 </ul></li><li><em>Core</em><ul>
 <li><seealso name="Loader_Loader" />
-		- Initialises data.</li><to_ul>
+		- Initialises data.</li>
 </ul></li><li><em>Stock</em><ul>
 <li><seealso name="Loader_Parse" />
 		- Loads a file.</li>
 <li><seealso name="Loader_AddHandler" />
 		- Adds a custom handle for the race file.</li>
 <li><seealso name="Loader_GetRace" />
-		- Returns the current race handle.</li><to_ul>
+		- Returns the current race handle.</li>
 </ul></li></ul><subsection>Tags</subsection><ul>
 <li><seealso name="e_RACE_FLAGS" />
-		- Race data flag.</li><to_ul>
+		- Race data flag.</li>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sXMLRules" />
 		- Handle to the XML parse rule set.</li>
 <li><seealso name="YSI_g_sCurRace" />
-		- Handle to the current race being built.</li><to_ul>
+		- Handle to the current race being built.</li>
 </ul></li></ul>
 *//** *//*
 Legal:

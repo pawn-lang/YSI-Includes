@@ -53,7 +53,7 @@
 <li><seealso name="Text_DataSave_colours" />
 		- Saves file colour defines.</li>
 <li><seealso name="Text_DataSave_colors" />
-		- Wrapper for above function.</li><to_ul>
+		- Wrapper for above function.</li>
 </ul></li><li><em>Stock</em><ul>
 <li><seealso name="Text_FindTextPointers" />
 		- Should be static but can't be :(.</li>
@@ -78,10 +78,10 @@
 <li><seealso name="Text_SendToPlayers" />
 		- Sends a message to a passed group.</li>
 <li><seealso name="Text_Display" />
-		- Display an actual string to a player in a given style.</li><to_ul>
+		- Display an actual string to a player in a given style.</li>
 </ul></li><li><em>Static</em><ul>
 <li><seealso name="Text_AddText" />
-		- Adds text to the tree after sorting.</li><to_ul>
+		- Adds text to the tree after sorting.</li>
 </ul></li><li><em>Inline</em><ul>
 <li><seealso name="Text_Text" />
 		- Constructor - Calls Text_ResetAll.</li>
@@ -102,7 +102,7 @@
 <li><seealso name="Text_SendToGroupFormat" />
 		- Sends a formatted message to a defined group.</li>
 <li><seealso name="Text_SendToPlayersFormat" />
-		- Sends a formatted message to a passed group.</li><to_ul>
+		- Sends a formatted message to a passed group.</li>
 </ul></li></ul><subsection>Definitions</subsection><ul>
 <li><seealso name="MAX_TEXT_NAME" />
 		- Maximum length of a text identifier.</li>
@@ -117,13 +117,13 @@
 <li><seealso name="TEXT_TYPE_GAME" />
 		- Flag for sending a game text formatted message (unused).</li>
 <li><seealso name="MAX_TEXT_COLOURS" />
-		- Max number of defined colours in an ini file.</li><to_ul>
+		- Max number of defined colours in an ini file.</li>
 </ul><subsection>Enums</subsection><ul>
 <li><seealso name="E_TEXT_POINTERS" />
-		- Structure of the language pointer array.</li><to_ul>
+		- Structure of the language pointer array.</li>
 </ul><subsection>Macros</subsection><ul>
 <li><seealso name="Text_RegisterTag" />
-		- Placed as a function, calls Text_AddToBuffer for tags.</li><to_ul>
+		- Placed as a function, calls Text_AddToBuffer for tags.</li>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sTextTable" />
@@ -143,7 +143,7 @@
 <li><seealso name="YSI_g_sLangBuffer" />
 		- Saves the current position of each language.</li>
 <li><seealso name="YSI_g_sColours" />
-		- Saves defined colours for use.</li><to_ul>
+		- Saves defined colours for use.</li>
 </ul></li></ul>
 *//** *//*
 Legal:

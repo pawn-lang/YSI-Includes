@@ -26,12 +26,12 @@
 <li><seealso name="HashMap_RemoveKey" />
 		- Remove a string and its value from a hash map.</li>
 <li><seealso name="HashMap_Set" />
-		- Change the value associated with a key.</li><to_ul>
+		- Change the value associated with a key.</li>
 </ul></li></ul><subsection>Definitions</subsection><ul>
 <li><seealso name="HASH_MAP_DATA" />
 		- What should be added to enums to be hash map referenced.</li>
 <li><seealso name="HashMap" />
-		- Declare a new hash map.</li><to_ul>
+		- Declare a new hash map.</li>
 </ul>
 *//** *//*
 Legal:

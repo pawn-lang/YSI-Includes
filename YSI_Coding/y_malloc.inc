@@ -39,12 +39,12 @@
 <li><seealso name="Malloc_SlotSize" />
 		- Get the size of an allocated block (may be inline).</li>
 <li><seealso name="Malloc_NewS" />
-		- Allocate for and store a given string.</li><to_ul>
+		- Allocate for and store a given string.</li>
 </ul></li><li><em>Static</em><ul>
 <li><seealso name="Malloc_Allocate" />
 		- Do the memory allocation (may be stock).</li>
 <li><seealso name="Malloc_Free" />
-		- Do the memory freeing (may be stock).</li><to_ul>
+		- Do the memory freeing (may be stock).</li>
 </ul></li><li><em>Inline</em><ul>
 <li><seealso name="mget" />
 		- Get data from an allocation unit.</li>
@@ -73,24 +73,24 @@
 <li><seealso name="Malloc_SetData" />
 		- Direct data access setter.</li>
 <li><seealso name="Malloc_SlotSize" />
-		- Get the size of an allocated block (may be stock).</li><to_ul>
+		- Get the size of an allocated block (may be stock).</li>
 </ul></li></ul><subsection>Definitions</subsection><ul>
 <li><seealso name="MALLOC_KB_TO_CELL" />
 		- Multiplication value to convert kb to cells.</li>
 <li><seealso name="NO_ALLOC" />
-		- A failed allocation (NULL, but YSI already has NULL).</li><to_ul>
+		- A failed allocation (NULL, but YSI already has NULL).</li>
 </ul><subsection>Tags</subsection><ul>
 <li><seealso name="Alloc" />
-		- An allocated block handle variable.</li><to_ul>
+		- An allocated block handle variable.</li>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Global</em><ul>
 <li><seealso name="YSI_gMallocMemory" />
-		- Stores the data (may be static).</li><to_ul>
+		- Stores the data (may be static).</li>
 </ul></li><li><em>Static</em><ul>
 <li><seealso name="YSI_gMallocMemory" />
 		- Stores the data (may be global).</li>
 <li><seealso name="_YSI_g_sUnusedStart" />
-		- Start of free memory.</li><to_ul>
+		- Start of free memory.</li>
 </ul></li></ul><subsection>Compile options</subsection><ul>
 <li>	MALLOC_MEMORY - Number of cells to reserve.</li>
 	MALLOC_MEMORY_KB - Number of killobytes to reserve.

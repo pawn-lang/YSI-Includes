@@ -17,7 +17,7 @@
 </ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
 <li><seealso name="__GangZonePulse" />
-		- The timer that does the hard work.</li><to_ul>
+		- The timer that does the hard work.</li>
 </ul></li><li><em>Stock</em><ul>
 <li><seealso name="GangZonePulse" />
 		- Pulse a zone for player or collection of players.</li>
@@ -30,10 +30,10 @@
 <li><seealso name="GangZoneStopPulseForPlayer" />
 		- Stop a zone pulsing for a single player.</li>
 <li><seealso name="GangZoneStopPulseForAll" />
-		- Stop a zone pulsing for everyone.</li><to_ul>
+		- Stop a zone pulsing for everyone.</li>
 </ul></li></ul><subsection>Compile options</subsection><ul>
 <li><seealso name="ZONE_PULSE_STAGE_TIME" />
-		- ms between each pulse frame.</li><to_ul>
+		- ms between each pulse frame.</li>
 </ul>
 *//** *//*
 Legal:

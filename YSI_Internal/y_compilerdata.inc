@@ -47,22 +47,20 @@ in the output code.
 </ul><subsection>Functions</subsection><ul>
 <li><em>Static</em><ul>
 <li><seealso name="__CompilerStringReturn" />
-		- Assembly for returning a string to its callers'</li>
-<li><seealso name="			caller.  Used to bypass a known bug.
-		__CompilerSecondPass " />
-		- Tested to determine the current compiler pass.</li><to_ul>
+		- Assembly for returning a string to its callers' caller.  Used to
+		bypass a known bug.</li>
+<li><seealso name="__CompilerSecondPass" />
+		- Tested to determine the current compiler pass.</li>
 </ul></li><li><em>Inline</em><ul>
 <li><seealso name="__COMPILER_STRING_RETURN" />
-		- Correctly return a string from a varargs</li>
-<li><seealso name="			function.
+		- Correctly return a string from a varargs function.</li>
 </ul></li></ul><subsection>Macros</subsection><ul>
 <li><seealso name="__COMPILER_PASS" />
-		" />
 		- Which pass the compiler is currently running.</li><to_ul></li>
 <li><seealso name="__COMPILER_DOCUMENTING" />
 		- Is the compiler collecting documentation</li>
-<li><seealso name="		information right now (i.e. is this the first pass)?
-	__COMPILER_1ST_PASS " />
+		information right now (i.e. is this the first pass)?
+<li><seealso name="__COMPILER_1ST_PASS" />
 		- Is this the first compiler pass?</li>
 <li><seealso name="__COMPILER_2ND_PASS" />
 		- Is this the second compiler pass?</li>
@@ -81,11 +79,11 @@ in the output code.
 <li><seealso name="__COMPILER_NESTED_ELLIPSIS" />
 		- Does the compiler support nested ellipses?</li>
 <li><seealso name="__COMPILER_BUGGED_STRING_RETURN" />
-		- Are vararg function string returns</li>
-<li><seealso name="		bugged?  Not needed for using `__COMPILER_STRING_RETURN`, as that will
-		do the best thing in both cases already.
-	P:D " />
-		- Wrap a fake function declaration, so macros can be documented.</li><to_ul>
+		- Are vararg function string returns bugged?  Not needed for using
+		<seealso name="__COMPILER_STRING_RETURN" />, as that will do the best
+		thing in both cases already.</li>
+<li><seealso name="P:D" />
+		- Wrap a fake function declaration, so macros can be documented.</li>
 </ul>
 *//** *//*
 Legal:
