@@ -7,11 +7,11 @@
 <section>
 					y_shortvar
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Declares a few variables with very short names, used all over YSI.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.2
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	21/10/10:
 		Split in to y_shortfunc.
 </ul>

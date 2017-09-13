@@ -126,12 +126,12 @@ Optional plugins:
 <section>
 					y_als
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Provides a number of macros for making ALS (Advanced Library System)
 	callback hooking simpler.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	1.0
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	29/04/11:
 		Added "call" macro to make testing easier.
 	21/10/10:

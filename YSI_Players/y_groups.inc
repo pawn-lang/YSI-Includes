@@ -170,12 +170,12 @@ Optional plugins:
 <section>
 					y_groups
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Admin levels, gangs, teams etc - they're all "groups" of people, this
 	provides an abstraction for all of these collections.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	1.0
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	29/11/10:
 		First version
 </ul>

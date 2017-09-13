@@ -7,12 +7,12 @@
 <section>
 					y_writemem
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Write to any absolute address in the SA:MP server in pure PAWN with embedded
 	assembly (i.e. a new native).  Calls "VirtualProtect" to make writes safe.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	1.0
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	01/02/12:
 		Zeex_: Changed to use SYSREQ.D call not SYSREQ.C.
 		Zeex_: Modified "VirtualProtect" pointer to SA:MP server one.

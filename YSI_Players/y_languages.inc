@@ -7,11 +7,11 @@
 <section>
 					y_languages
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Handles language features - loading, listing and which one a player is.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	1.0
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	02/12/11:
 		Updated Langs_Add to accept the parameters in either order.
 	01/05/11:

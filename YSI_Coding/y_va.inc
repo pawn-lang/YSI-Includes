@@ -7,16 +7,16 @@
 <section>
 					y_va
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	This library currently provides two functions - va_printf and va_format
 	which perform printf and format using variable arguments passed to another
 	function.
 	
 	This is bsed on the variable parameter passing method based on code by Zeex.
 	See page 15 of the code optimisations topic.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	1.0
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	02/05/11:
 		First version.
 </ul>

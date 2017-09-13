@@ -7,16 +7,14 @@
 <section>
 					y_cell
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Provides a few functions for manipulating the bits in single cells.  Note
 	that this is distinct from the y_bit library.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.2
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	18/06/11:
 		First version.
-</ul><subsection>Compile options</subsection><ul>
-	-
 </ul>
 *//** *//*
 Legal:

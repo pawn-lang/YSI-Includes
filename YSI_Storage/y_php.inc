@@ -7,16 +7,13 @@
 <section>
 					y_php
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Sends and receives data from a PHP server with shmop installed.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.1
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	25/02/12:
 		First version.
-</ul><subsection>Variables</subsection><ul>
-<li><em>Global</em><ul>
-		-
 </ul>
 *//** *//*
 Legal:

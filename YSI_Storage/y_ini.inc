@@ -7,12 +7,12 @@
 <section>
 					y_ini
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Reads the INI and also exports a number of functions to other "classes" for
 	easy reading of data files there.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	1.5
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	07/01/13:
 		Rewrote almost everything!
 		Split in to multiple files.

@@ -152,7 +152,7 @@ Optional plugins:
 <section>
 					y_master
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection><ul>
 	Handles distribution of control of code segments across all running scripts
 	with YSI to avoid conflicts of checkpoint streamers etc and allow features
 	like "/commands" displaying all commands on the server.
@@ -170,9 +170,9 @@ Optional plugins:
 	while to figure out)...
 	
 	This is now over 2000 lines of repetitive and complex macros!
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul></li></ul><subsection>Version</subsection>
 	0.2
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	06/08/10:
 		Managed the ultimate - got completely transparent inclusion!
 	05/08/10:

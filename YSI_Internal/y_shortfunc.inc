@@ -7,11 +7,11 @@
 <section>
 					y_shortfunc
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Defines new names for native functions.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.2
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	21/10/10:
 		Split in to y_shortfunc.
 </ul><subsection>Natives</subsection><ul>

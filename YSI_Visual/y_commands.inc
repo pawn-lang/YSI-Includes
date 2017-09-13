@@ -7,12 +7,12 @@
 <section>
 					y_commands
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Runs commands registered with the system and calls the required functions.
 	Also handles alternate names and prefixes.  Based very loosely on dcmd.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.1.4
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	20/10/10:
 		Fixed a bug with insensitive commands - my fault for not testing.
 	06/01/08:

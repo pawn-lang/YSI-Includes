@@ -2,7 +2,7 @@
 <section>
 					y_loader
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Loads MTA XML format map files for use with the object and race systems.
 Legal:
 	Copyright (C) 2007 Alex "Y_Less" Cole
@@ -21,7 +21,7 @@ Legal:
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 	MA 02110-1301, USA.
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	12/10/07:
 		Added Loader_AddHandler.
 		Added Loader_GetRace.

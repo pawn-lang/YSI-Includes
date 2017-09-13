@@ -7,12 +7,12 @@
 <section>
 					y_classes
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Allows greater control over classes so not everyone has every class.  Uses
 	a form of compression for locations.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.1
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	14/04/12:
 		Readded OnRequestSpawn logic.
 		Fixed Class_AddWithGroupSet.

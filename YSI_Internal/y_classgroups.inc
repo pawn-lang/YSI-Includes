@@ -7,12 +7,12 @@
 <section>
 					y_classes
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Allows for advanced class selection options such as skins only certain
 	people can see and actually removing skins from class selection.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	1.0
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	29/11/10:
 		First version
 </ul>

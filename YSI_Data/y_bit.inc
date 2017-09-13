@@ -7,7 +7,7 @@
 <section>
 					y_bit
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Provides functions for bit manipulation and bit arrays greater than 32bits.
 	The arrays are usually bigger than required due to cell boundaries but this
 	shouldn't cause a major problem (bit tests on the 101st bit of a 100 bit
@@ -15,9 +15,9 @@
 	
 	Note that y_commands has a few optimisations which bypass the code in here
 	so any modifications to bit array layouts will need to be reflected there.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.2
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	21/10/12:
 		Changed "Bit_Display" to print in the correct order.
 	22/02/12:
@@ -47,8 +47,6 @@
 	CELLSHIFT - Number of bits that can hold "cellbits"
 </ul><subsection>Tags</subsection><ul>
 	Bit - Bit array type.
-</ul><subsection>Compile options</subsection><ul>
-	-
 </ul>
 *//** *//*
 Legal:

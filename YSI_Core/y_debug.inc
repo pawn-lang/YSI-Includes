@@ -7,7 +7,7 @@
 <section>
 					y_debug
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Ensures debug levels are set and defines debug functions.
 	
 	General debug levels:
@@ -23,9 +23,9 @@
 	
 	If you use P:0 you get an optional debug print controlled by the global
 	state ysi_debug - which is either on or off.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	1.0
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	06/08/10:
 		Added new syntax.
 		Added level 0 debugging with state controlled functions.

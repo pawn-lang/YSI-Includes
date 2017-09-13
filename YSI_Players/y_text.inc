@@ -12,13 +12,13 @@
 <section>
 					y_text
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Provides interfaces for displaying text from anywhere by way of native like
 	functions using text indexes rather than text.  Due to a compile problem a
 	number of the stock functions should be static but can't be.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.1.1
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	17/02/07:
 		Added saving of style parameter for text draws.
 	27/12/07:

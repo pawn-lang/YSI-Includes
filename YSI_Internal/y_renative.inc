@@ -7,11 +7,11 @@
 <section>
 					y_renative
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Obsolete, was macros for redefining native functions in default includes.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	1.0
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	25/10/10:
 		Integrated in to YSI.
 	06/08/10:

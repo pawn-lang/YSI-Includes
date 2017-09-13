@@ -7,12 +7,12 @@
 <section>
 					y_cgen
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Large chunks of code that isn't used, so that the space can be reclaimed and
 	reused by other code generating functions.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	1.0
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	09/09/17:
 		First documentaiton.
 </ul>

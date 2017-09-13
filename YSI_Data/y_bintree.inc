@@ -7,13 +7,13 @@
 <section>
 					y_bintree
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Provides functions to generate balanced binary search trees for efficient
 	searching of large arrays by value.  Left branch is less than, right branch
 	is greater than or equal to for multiple matching values.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.1.3
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	12/08/07:
 		Fixed a bug with empty trees.
 	14/04/07:

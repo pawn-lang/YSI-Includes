@@ -7,11 +7,11 @@
 <section>
 					y_testing
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Runs any functions named as tests when the Testing_Run function is called.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	1.0
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	16/02/12:
 		Added better error reporting (less verbose passes).
 		Removed "Tests:".

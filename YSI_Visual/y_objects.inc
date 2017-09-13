@@ -2,15 +2,15 @@
 <section>
 					y_objects
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection><ul>
 	Handles object streaming for >150 objects per player.  Also provides VW
 	support and improved object attachment (i.e. it works).  New versions
 	combines mine and Peter's streaming systems to narrow down objects by
 	approximation by a grid system then check all objects visible in near
 	by sections.
-</ul></li></ul><subsection>Version</subsection><ul>
+</ul></li></ul><subsection>Version</subsection>
 	0.2.7
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	27/12/07:
 		Fixed a bug in the moved object list system.
 	26/11/07:

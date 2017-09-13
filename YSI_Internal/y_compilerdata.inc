@@ -30,15 +30,15 @@ in the output code.
 <section>
 					y_compilerdata
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Detect various information about the compiler, including which pass it is
 	currently executing, what flags it was compiled with, and which version it
 	is.  Provide that information to the rest of the script through a series of
 	consistent macros.  Used by y_groups to include code that might be needed
 	before it is known if it is needed (it can be dumped later).
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.1
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	12/09/17:
 		Renamed everything for consistency.
 		Documented macros.

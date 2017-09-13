@@ -7,11 +7,11 @@
 <section>
 					y_properties
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Handles properties and other common features for some modes.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.1
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	03/08/07:
 		Updated timer system.
 	31/07/07:

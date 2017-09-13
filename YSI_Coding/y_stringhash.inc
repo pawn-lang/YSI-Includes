@@ -7,11 +7,11 @@
 <section>
 					y_stringhash
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Allows you to hash strings at compile time to use them in a switch.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	2.0
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	06/03/11:
 		Changed the order of some letters to better support numbers in _I.
 	01/03/11:

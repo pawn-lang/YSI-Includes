@@ -7,7 +7,7 @@
 <section>
 					y_punycode
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Functions for converting unicode strings to and from punycode, to be
 	represented in just ASCII characters.  Based on several public
 	implementations and the RFC, adapted for PAWN.  For more information see:
@@ -16,17 +16,15 @@
 	
 	Also includes a function that hooks the "HTTP" function to allow for
 	internationalised domain names with that function.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.1
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	29/04/13:
 		Added Puny_HTTP.
 	26/04/13:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-	Public
-		-
-</ul></li><li><em>Stock</em><ul>
+<li><em>Stock</em><ul>
 		Puny_Encode - Convert a Unicode string to Punycode.
 		Puny_Decode - Convert a Punycode string to Unicode.
 		Puny_HTTP - Wrapper for "HTTP" to encode domain names.

@@ -178,7 +178,7 @@ Optional plugins:
 <section>
 					y_iterate
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Provides efficient looping through sparse data sets, such as connected
 	players.  Significantly improved from the original version to be a generic
 	loop system, rather then purely a player loop system.  When used for
@@ -191,9 +191,9 @@ Optional plugins:
 	
 		http://forum.sa-mp.com/showthread.php?t=481877
 	
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.4
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	29/03/15:
 		More testing.
 		Repaired special iterators.

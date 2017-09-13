@@ -7,19 +7,17 @@
 <section>
 					y_malloc
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Functions for using malloc/calloc/free type functions in PAWN.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.1
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	02/12/11:
 		Added variable argument functions.
 	22/12/08:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-	Public
-		-
-</ul></li><li><em>Stock</em><ul>
+<li><em>Stock</em><ul>
 		malloc - Allocate a block of memory (may be inline).
 		calloc - Allocate a block of memory and blank.
 		free - Free an allocated block of memory (may be inline).
@@ -61,7 +59,7 @@
 		YSI_gMallocMemory - Stores the data (may be global).
 		_YSI_g_sUnusedStart - Start of free memory.
 </ul></li></ul><subsection>Compile options</subsection><ul>
-	MALLOC_MEMORY - Number of cells to reserve.
+<li>	MALLOC_MEMORY - Number of cells to reserve.</li>
 	MALLOC_MEMORY_KB - Number of killobytes to reserve.
 	MALLOC_MEMORY_B - Number of bytes to reserve.
 	MALLOC_MEMORY_MB - Number of megabytes to reserve.

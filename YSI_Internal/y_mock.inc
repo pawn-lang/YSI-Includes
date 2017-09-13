@@ -7,11 +7,11 @@
 <section>
 					y_mock
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Wrap natives to return known fake values for testing.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	1.0
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	09/09/17:
 		First documentaiton.
 </ul>

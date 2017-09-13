@@ -7,12 +7,12 @@
 <section>
 					y_vehicledata
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Basic functions for gathering data on various vehicle models.  Things like
 	what sort of vehicle they are and what organisation they belong to.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.2
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	15/03/15:
 		Changed clamp ranges.
 	01/06/14:

@@ -7,12 +7,12 @@
 <section>
 					y_hashmap
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Maps string indexes to integer indexes.  Uses a fast hash to get an array
 	slot, then a linked list to resolve collisions.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	2.0
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	23/06/13:
 		First version.
 </ul><subsection>Functions</subsection><ul>

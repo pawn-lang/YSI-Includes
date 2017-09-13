@@ -7,11 +7,11 @@
 <section>
 					y_utils
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 Misc functions used throughout.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.1.3
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	<em>06/10/12</em>
 <ul>
 <li>		Upgraded "memset" to use "FILL".</li>

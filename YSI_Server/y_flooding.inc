@@ -7,7 +7,7 @@
 <section>
 					y_flooding
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Allows a limited number of connections from a single IP.
 Legal:
 	Version: MPL 1.1
@@ -73,7 +73,7 @@ Legal:
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
 	
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	15/11/10:
 		Updated to YSI 1.0.
 	11/03/08:

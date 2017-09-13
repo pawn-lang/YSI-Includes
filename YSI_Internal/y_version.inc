@@ -7,11 +7,11 @@
 <section>
 					y_version
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Checks online to see if there is a newer version of YSI available.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.2
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	26/10/10:
 		Added changelog capabilities.
 	22/10/10:

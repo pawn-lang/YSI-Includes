@@ -7,11 +7,11 @@
 <section>
 					y_users
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Provides access to a user system for registering and saving users.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	2.2
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	02/02/13:
 		Added bits and join timestamp to preload data.
 		Added backwards compatible salting to the hash.

@@ -7,7 +7,7 @@
 <section>
 					y_stripnumbers
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Removes tag overrides which are actually numbers.  This allows for:
 		
 		uvar g_a[MAX_PLAYERS][E_SOME_ENUM];
@@ -15,9 +15,9 @@
 		
 	Without stripping you would end with code doing "42:0" or getting a tag
 	mismatch on "E_SOME_ENUM", both of which are problems.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	1.0
-</ul>
+
 *//** *//*
 Legal:
 	Version: MPL 1.1

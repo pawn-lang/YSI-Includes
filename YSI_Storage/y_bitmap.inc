@@ -7,18 +7,15 @@
 <section>
 					y_bitmap
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Code to generate images on the server in the bitmap format.  This is by far
 	the simplest format to write to as it is just a huge array of colours (at
 	least 24-bit bitmaps are, and we only do them).
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.1
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	29/03/13:
 		First version.
-</ul><subsection>Variables</subsection><ul>
-<li><em>Global</em><ul>
-		-
 </ul>
 *//** *//*
 Legal:

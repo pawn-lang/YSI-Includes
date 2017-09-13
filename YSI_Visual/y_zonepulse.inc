@@ -7,11 +7,11 @@
 <section>
 					y_zonepulse
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Gradually fades a zone's colour between one colour and another, then back.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.1
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	19/02/12:
 		First version.
 </ul><subsection>Functions</subsection><ul>

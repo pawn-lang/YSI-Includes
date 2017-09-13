@@ -7,16 +7,13 @@
 <section>
 					y_uvar
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Declares data to be automatically saved and loaded on a per-player basis.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.1.3
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	25/02/12:
 		First version.
-</ul><subsection>Variables</subsection><ul>
-<li><em>Global</em><ul>
-		-
 </ul>
 *//** *//*
 Legal:

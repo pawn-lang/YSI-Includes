@@ -7,14 +7,14 @@
 <section>
 					y_funcinc
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Calls functions which are used in SYSREQ.C calls before they are used.  The
 	compiler crashes if the functions are not used in an included function
 	before being used in a SYSREQ.C call as the function is not in the native
 	functions table.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	1.0
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	06/08/10:
 		First version
 </ul>

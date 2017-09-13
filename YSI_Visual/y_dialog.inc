@@ -7,18 +7,15 @@
 <section>
 					y_dialog
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Provides functions for dealing with dialogs, without needing to worry about
 	IDs or huge "OnDialogResponse" callbacks.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.1
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	25/02/12:
 		First version.
-</ul><subsection>Variables</subsection><ul>
-<li><em>Global</em><ul>
-		-
-</ul>
+</ul>>
 *//** *//*
 Legal:
 	Version: MPL 1.1

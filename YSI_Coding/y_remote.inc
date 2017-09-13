@@ -7,12 +7,12 @@
 <section>
 					y_remote
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Wrapper for "__CallRemoteFunction".  Enforces some features like no returns
 	and arrays being followed by their length.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	1.0
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	03/01/12:
 		Added void: and string: returns.
 	04/10/12:

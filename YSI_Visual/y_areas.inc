@@ -7,11 +7,11 @@
 <section>
 					y_areas
 </section>
-</ul></li></ul><subsection>Description</subsection><ul>
+<subsection>Description</subsection>
 	Handles area checks for player location based code not involving CPs.
-</ul><subsection>Version</subsection><ul>
+<subsection>Version</subsection>
 	0.3
-</ul><subsection>Changelog</subsection><ul>
+<subsection>Changelog</subsection><ul>
 	01/12/12:
 		Added ovals and ovoids.
 		Set cuboids to require only one slot in memory.
