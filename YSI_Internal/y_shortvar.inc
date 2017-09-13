@@ -1,3 +1,8 @@
+#if defined _INC_y_shortvar
+	#endinput
+#endif
+#define _INC_y_shortvar
+
 /*+
 <section>
 					y_shortvar
@@ -118,11 +123,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_shortvar
-	#endinput
-#endif
-#define _INC_y_shortvar
 
 // Public variable.
 public

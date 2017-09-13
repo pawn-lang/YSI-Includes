@@ -1,3 +1,8 @@
+#if defined _INC_y_utils
+	#endinput
+#endif
+#define _INC_y_utils
+
 /**
 <section>
 					y_utils
@@ -164,11 +169,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_utils
-	#endinput
-#endif
-#define _INC_y_utils
 
 #include "..\YSI_Internal\y_version"
 

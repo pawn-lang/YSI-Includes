@@ -1,16 +1,22 @@
-/**
-<section>
-					y_groups
-</section>
-<subsection>Description</subsection>
-	Admin levels, gangs, teams etc - they're all "groups" of people, this
-	provides an abstraction for all of these collections.
-<subsection>Version</subsection>
-	1.0
-<subsection>Changelog</subsection>
-	29/11/10:
-		First version
-*//** *//*
+/*
+
+      _____ ______ ______   ____  ______ _      ______          __  ______ ____  _____    
+     / ____|  ____|  ____| |  _ \|  ____| |    / __ \ \        / / |  ____/ __ \|  __ \   
+    | (___ | |__  | |__    | |_) | |__  | |   | |  | \ \  /\  / /  | |__ | |  | | |__) |  
+     \___ \|  __| |  __|   |  _ <|  __| | |   | |  | |\ \/  \/ /   |  __|| |  | |  _  /   
+     ____) | |____| |____  | |_) | |____| |___| |__| | \  /\  /    | |   | |__| | | \ \   
+    |_____/|______|______|_|____/|______|______\____/___\/__\/  ___|_|_ __\____/|_| _\_\_ 
+    |  __ \ / __ \ / ____| |  | |  \/  |  ____| \ | |__   __|/\|__   __|_   _/ __ \| \ | |
+    | |  | | |  | | |    | |  | | \  / | |__  |  \| |  | |  /  \  | |    | || |  | |  \| |
+    | |  | | |  | | |    | |  | | |\/| |  __| | . ` |  | | / /\ \ | |    | || |  | | . ` |
+    | |__| | |__| | |____| |__| | |  | | |____| |\  |  | |/ ____ \| |   _| || |__| | |\  |
+    |_____/ \____/ \_____|\____/|_|  |_|______|_| \_|  |_/_/    \_\_|  |_____\____/|_| \_|
+
+
+	This is required for technical reasons - to place it after `#endif` so as to
+	not generate multiple copies of it in XML when compiling with `-r`.
+
+*//*
 Legal:
 	Version: MPL 1.1
 	
@@ -81,7 +87,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
 #include "..\YSI_Internal\y_version"
 
 #if defined _inc_y_groups
@@ -160,6 +165,20 @@ Optional plugins:
 	#endinput
 #endif
 #define _INC_y_groups
+
+/**
+<section>
+					y_groups
+</section>
+<subsection>Description</subsection>
+	Admin levels, gangs, teams etc - they're all "groups" of people, this
+	provides an abstraction for all of these collections.
+<subsection>Version</subsection>
+	1.0
+<subsection>Changelog</subsection>
+	29/11/10:
+		First version
+*//** */
 
 stock _YSI_HAS_y_groups(_do_not_call_me_ever_, _like_never_)
 {

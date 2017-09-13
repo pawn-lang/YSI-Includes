@@ -1,3 +1,8 @@
+#if defined _INC_y_xml
+	#endinput
+#endif
+#define _INC_y_xml
+
 /**
 <section>
 					y_xml
@@ -88,11 +93,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_xml
-	#endinput
-#endif
-#define _INC_y_xml
 
 #include "..\YSI_Internal\y_version"
 

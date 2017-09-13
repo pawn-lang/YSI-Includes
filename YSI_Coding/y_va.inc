@@ -1,3 +1,8 @@
+#if defined _INC_y_va
+	#endinput
+#endif
+#define _INC_y_va
+
 /**
 <section>
 					y_va
@@ -119,11 +124,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_va
-	#endinput
-#endif
-#define _INC_y_va
 
 #if 0
 

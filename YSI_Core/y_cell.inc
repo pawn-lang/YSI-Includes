@@ -1,3 +1,8 @@
+#if defined _INC_y_cell
+	#endinput
+#endif
+#define _INC_y_cell
+
 /**
 <section>
 					y_cell
@@ -113,11 +118,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_cell
-	#endinput
-#endif
-#define _INC_y_cell
 
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_globaltags"

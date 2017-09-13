@@ -1,3 +1,8 @@
+#if defined _INC_y_colours
+	#endinput
+#endif
+#define _INC_y_colours
+
 /**
 <section>
 					y_colours
@@ -94,11 +99,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_colours
-	#endinput
-#endif
-#define _INC_y_colours
 
 #include "..\YSI_Internal\y_version"
 

@@ -1,3 +1,8 @@
+#if defined _INC_y_zonepulse
+	#endinput
+#endif
+#define _INC_y_zonepulse
+
 /**
 <section>
 					y_zonepulse
@@ -125,11 +130,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_zonepulse
-	#endinput
-#endif
-#define _INC_y_zonepulse
 
 /*
 native GangZonePulse(@PlayerSet:ps, zone, from, to, time, delay = ZONE_PULSE_STAGE_TIME);

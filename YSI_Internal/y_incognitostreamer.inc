@@ -1,3 +1,8 @@
+#if defined _INC_y_incognitostreamer
+	#endinput
+#endif
+#define _INC_y_incognitostreamer
+
 /*+
 <section>
 					y_incognitostreamer
@@ -115,11 +120,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_incognitostreamer
-	#endinput
-#endif
-#define _INC_y_incognitostreamer
 
 #include "y_plugins"
 

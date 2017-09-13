@@ -1,3 +1,15 @@
+#if defined _inc_y_hooks
+	#undef _inc_y_hooks
+#endif
+
+// Multiple includes!
+#include "..\YSI_Internal\y_unique"
+
+#if defined _INC_y_hooks
+	#endinput
+#endif
+#define _INC_y_hooks
+
 /**
 <section>
 					y_hooks
@@ -85,18 +97,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _inc_y_hooks
-	#undef _inc_y_hooks
-#endif
-
-// Multiple includes!
-#include "..\YSI_Internal\y_unique"
-
-#if defined _INC_y_hooks
-	#endinput
-#endif
-#define _INC_y_hooks
 
 #if defined YSI_TESTS
 	#define _Y_HOOKS_STATIC

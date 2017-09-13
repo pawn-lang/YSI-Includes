@@ -1,3 +1,8 @@
+#if defined _INC_y_areas
+	#endinput
+#endif
+#define _INC_y_areas
+
 /**
 <section>
 					y_areas
@@ -164,11 +169,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_areas
-	#endinput
-#endif
-#define _INC_y_areas
 
 #include "..\YSI_Internal\y_version"
 

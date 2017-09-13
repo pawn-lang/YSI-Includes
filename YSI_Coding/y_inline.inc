@@ -1,3 +1,8 @@
+#if defined _INC_y_inline
+	#endinput
+#endif
+#define _INC_y_inline
+
 /**
 <section>
 					y_inline
@@ -92,11 +97,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_inline
-	#endinput
-#endif
-#define _INC_y_inline
 
 #if !defined YSI_MAX_INLINE_STRING
 	#define YSI_MAX_INLINE_STRING YSI_MAX_STRING

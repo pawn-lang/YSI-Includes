@@ -1,3 +1,8 @@
+#if defined _INC_y_gamerzps
+	#endinput
+#endif
+#define _INC_y_gamerzps
+
 /*+
 <section>
 					y_gamerzps
@@ -115,10 +120,4 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_gamerzps
-	#endinput
-#endif
-#define _INC_y_gamerzps
-
 

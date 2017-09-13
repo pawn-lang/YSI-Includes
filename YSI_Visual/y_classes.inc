@@ -1,3 +1,8 @@
+#if defined _INC_y_classes
+	#endinput
+#endif
+#define _INC_y_classes
+
 /**
 <section>
 					y_classes
@@ -162,11 +167,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_classes
-	#endinput
-#endif
-#define _INC_y_classes
 
 stock _YSI_HAS_y_classes(_do_not_call_me_ever_, _like_never_)
 {

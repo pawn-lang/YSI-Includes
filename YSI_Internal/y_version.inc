@@ -1,3 +1,8 @@
+#if defined _INC_y_version
+	#endinput
+#endif
+#define _INC_y_version
+
 /*+
 <section>
 					y_version
@@ -120,11 +125,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_version
-	#endinput
-#endif
-#define _INC_y_version
 
 #include <a_samp>
 #if !defined HTTP

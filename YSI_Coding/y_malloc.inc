@@ -1,3 +1,8 @@
+#if defined _INC_y_malloc
+	#endinput
+#endif
+#define _INC_y_malloc
+
 /**
 <section>
 					y_malloc
@@ -147,11 +152,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_malloc
-	#endinput
-#endif
-#define _INC_y_malloc
 
 #if defined YSI_MALLOC_SECURE
 	#error YSI_MALLOC_SECURE has been removed.

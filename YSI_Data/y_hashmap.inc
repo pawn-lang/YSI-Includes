@@ -1,3 +1,8 @@
+#if defined _INC_y_hashmap
+	#endinput
+#endif
+#define _INC_y_hashmap
+
 /**
 <section>
 					y_hashmap
@@ -91,11 +96,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_hashmap
-	#endinput
-#endif
-#define _INC_y_hashmap
 
 #include "..\YSI_Internal\y_thirdpartyinclude"
 #include "..\YSI_Core\y_utils"

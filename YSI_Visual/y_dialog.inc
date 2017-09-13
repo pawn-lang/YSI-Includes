@@ -1,3 +1,8 @@
+#if defined _INC_y_dialog
+	#endinput
+#endif
+#define _INC_y_dialog
+
 /**
 <section>
 					y_dialog
@@ -89,11 +94,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_dialog
-	#endinput
-#endif
-#define _INC_y_dialog
 
 // y_dialog - does stuff with dialogs.
 

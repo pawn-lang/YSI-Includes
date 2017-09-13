@@ -1,3 +1,8 @@
+#if defined _INC_y_languages
+	#endinput
+#endif
+#define _INC_y_languages
+
 /**
 <section>
 					y_languages
@@ -116,11 +121,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_languages
-	#endinput
-#endif
-#define _INC_y_languages
 
 #include "..\YSI_Internal\y_version"
 

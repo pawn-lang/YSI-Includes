@@ -1,3 +1,8 @@
+#if defined _INC_y_commands
+	#endinput
+#endif
+#define _INC_y_commands
+
 /**
 <section>
 					y_commands
@@ -169,11 +174,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_commands
-	#endinput
-#endif
-#define _INC_y_commands
 
 #include "..\YSI_Internal\y_version"
 

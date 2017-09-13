@@ -1,3 +1,8 @@
+#if defined _INC_y_properties
+	#endinput
+#endif
+#define _INC_y_properties
+
 /**
 <section>
 					y_properties
@@ -206,11 +211,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_properties
-	#endinput
-#endif
-#define _INC_y_properties
 
 #if defined MAX_PROP_NAME
 	#if MAX_PROP_NAME < (39 - PLAYER_BIT_ARRAY)

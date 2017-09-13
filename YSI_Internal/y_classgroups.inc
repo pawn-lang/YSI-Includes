@@ -1,3 +1,8 @@
+#if defined _INC_y_classgroups
+	#endinput
+#endif
+#define _INC_y_classgroups
+
 /*+
 <section>
 					y_classes
@@ -81,11 +86,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_classgroups
-	#endinput
-#endif
-#define _INC_y_classgroups
 
 stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <YSI_has_groups:y>
 {

@@ -1,3 +1,8 @@
+#if defined _INC_y_funcinc
+	#endinput
+#endif
+#define _INC_y_funcinc
+
 /*+
 <section>
 					y_funcinc
@@ -83,11 +88,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_funcinc
-	#endinput
-#endif
-#define _INC_y_funcinc
 
 forward _@_y_funcinc_@_();
 

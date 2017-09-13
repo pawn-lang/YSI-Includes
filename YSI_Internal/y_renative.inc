@@ -1,3 +1,8 @@
+#if defined _INC_y_renative
+	#endinput
+#endif
+#define _INC_y_renative
+
 /*+
 <section>
 					y_renative
@@ -82,11 +87,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_renative
-	#endinput
-#endif
-#define _INC_y_renative
 
 #define @Rg<%0|||%1|||%2> %0(%1)=%2;
 #define _YSI_RE_NATIVE @Rg

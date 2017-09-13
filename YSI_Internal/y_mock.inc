@@ -1,3 +1,8 @@
+#if defined _INC_y_mock
+	#endinput
+#endif
+#define _INC_y_mock
+
 /*+
 <section>
 					y_mock
@@ -80,11 +85,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_mock
-	#endinput
-#endif
-#define _INC_y_mock
 
 #include "..\YSI_Coding\y_hooks"
 

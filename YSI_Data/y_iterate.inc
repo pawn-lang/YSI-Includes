@@ -1,3 +1,179 @@
+/*
+
+      _____ ______ ______   ____  ______ _      ______          __  ______ ____  _____    
+     / ____|  ____|  ____| |  _ \|  ____| |    / __ \ \        / / |  ____/ __ \|  __ \   
+    | (___ | |__  | |__    | |_) | |__  | |   | |  | \ \  /\  / /  | |__ | |  | | |__) |  
+     \___ \|  __| |  __|   |  _ <|  __| | |   | |  | |\ \/  \/ /   |  __|| |  | |  _  /   
+     ____) | |____| |____  | |_) | |____| |___| |__| | \  /\  /    | |   | |__| | | \ \   
+    |_____/|______|______|_|____/|______|______\____/___\/__\/  ___|_|_ __\____/|_| _\_\_ 
+    |  __ \ / __ \ / ____| |  | |  \/  |  ____| \ | |__   __|/\|__   __|_   _/ __ \| \ | |
+    | |  | | |  | | |    | |  | | \  / | |__  |  \| |  | |  /  \  | |    | || |  | |  \| |
+    | |  | | |  | | |    | |  | | |\/| |  __| | . ` |  | | / /\ \ | |    | || |  | | . ` |
+    | |__| | |__| | |____| |__| | |  | | |____| |\  |  | |/ ____ \| |   _| || |__| | |\  |
+    |_____/ \____/ \_____|\____/|_|  |_|______|_| \_|  |_/_/    \_\_|  |_____\____/|_| \_|
+
+
+	This is required for technical reasons - to place it after `#endif` so as to
+	not generate multiple copies of it in XML when compiling with `-r`.
+
+*//*
+Legal:
+	Version: MPL 1.1
+	
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 the "License"; you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
+	http://www.mozilla.org/MPL/
+	
+	Software distributed under the License is distributed on an "AS IS" basis,
+	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	for the specific language governing rights and limitations under the
+	License.
+	
+	The Original Code is the YSI framework.
+	
+	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright C 2011
+	the Initial Developer. All Rights Reserved.
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
+
+/*
+
+     ad88888ba                                              
+    d8"     "8b              ,d                             
+    Y8,                      88                             
+    `Y8aaaaa,    ,adPPYba, MM88MMM 88       88 8b,dPPYba,   
+      `"""""8b, a8P_____88   88    88       88 88P'    "8a  
+            `8b 8PP"""""""   88    88       88 88       d8  
+    Y8a     a8P "8b,   ,aa   88,   "8a,   ,a88 88b,   ,a8"  
+     "Y88888P"   `"Ybbd8"'   "Y888  `"YbbdP'Y8 88`YbbdP"'   
+                                               88           
+                                               88           
+    
+*/
+
+// "y_iterate" is always higher than "foreach".
+#define _Y_ITERATE_LOCAL_VERSION        43
+
+#if __Pawn != 0x030A
+	#define NO_CUSTOM_WARNINGS
+#endif
+
+#if !defined _inc_y_iterate
+	// The stand-alone version looks for this symbol, even on the new compiler.
+	#define _inc_y_iterate
+#endif
+
+// Extra macro so that those paranoid about accidentally including YSI can
+// ensure it never happens.
+#if defined NEVER_Y_ITERATE
+	// Set `FOREACH_VERSION` as equal to whatever the version of the stand-alone
+	// include is.
+	#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
+	#undef _inc_y_iterate
+	#undef _Y_ITERATE_LOCAL_VERSION
+	#if defined _FOREACH_INC_TEST
+		// This is `foreach` testing our version - nothing more need doing.
+		#endinput
+	#endif
+	// Otherwise, include `foreach`.  Don't use `#tryinclude`, since they want
+	// a version of `foreach` and it would be an error to not give them one.
+	#define _FOREACH_NO_TEST
+	#include <foreach>
+	#endinput
+#endif
+
+// Foreach is testing us.
+#if defined _FOREACH_INC_TEST
+	#if !defined _Y_ITERATE_FOUND
+		// Set up so that you can use `FOREACH_VERSION` even if the older
+		// stand-alone version doesn't support it.
+		#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
+		#define _FOREACH_CUR_VERSION _Y_ITERATE_LOCAL_VERSION
+	#endif
+	#endinput
+#endif
+
+#if !defined _FOREACH_NO_TEST
+	#define _FOREACH_INC_TEST
+	// Ignore the broken stand-alone version.
+	#define _foreach_included
+	#tryinclude <foreach>
+	#undef _FOREACH_INC_TEST
+	// <foreach> exists - test which is newer.
+	#if defined _FOREACH_LOCAL_VERSION
+		#if _FOREACH_LOCAL_VERSION > _Y_ITERATE_LOCAL_VERSION
+			// Foreach is newer.
+			#if defined _inc_foreach
+				#undef _inc_foreach
+			#endif
+			#define _FOREACH_NO_TEST
+			// Actually include the code.
+			#include <foreach>
+			// Mark the include as found and exit.
+			#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
+			#define _FOREACH_INC_TEST
+			#define _Y_ITERATE_FOUND
+			#endinput
+		#endif
+	#elseif defined foreach
+		// I made this a warning on compilers that supported them, but that's a
+		// silly idea!
+		#error The old <foreach> include is no longer compatible with YSI.
+	#endif
+#endif
+
 /**
 <section>
 					y_iterate
@@ -158,163 +334,7 @@ Iterators:
 	Bot - List of all bots (npcs) connected.
 	NPC - Alias of Bot.
 	Character - All players and bots.
-*//** *//*
-Legal:
-	Version: MPL 1.1
-	
-	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 the "License"; you may not use this file except in compliance with 
-	the License. You may obtain a copy of the License at 
-	http://www.mozilla.org/MPL/
-	
-	Software distributed under the License is distributed on an "AS IS" basis,
-	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-	for the specific language governing rights and limitations under the
-	License.
-	
-	The Original Code is the YSI framework.
-	
-	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright C 2011
-	the Initial Developer. All Rights Reserved.
-
-Contributors:
-	Y_Less
-	koolk
-	JoeBullet/Google63
-	g_aSlice/Slice
-	Misiur
-	samphunter
-	tianmeta
-	maddinat0r
-	spacemud
-	Crayder
-	Dayvison
-	Ahmad45123
-	Zeex
-	irinel1996
-	Yiin-
-	Chaprnks
-	Konstantinos
-	Masterchen09
-	Southclaws
-	PatchwerkQWER
-	m0k1
-	paulommu
-	udan111
-
-Thanks:
-	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-	ZeeX - Very productive conversations.
-	koolk - IsPlayerinAreaEx code.
-	TheAlpha - Danish translation.
-	breadfish - German translation.
-	Fireburn - Dutch translation.
-	yom - French translation.
-	50p - Polish translation.
-	Zamaroht - Spanish translation.
-	Los - Portuguese translation.
-	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
-		me to strive to better.
-	Pixels^ - Running XScripters where the idea was born.
-	Matite - Pestering me to release it and using it.
-
-Very special thanks to:
-	Thiadmer - PAWN, whose limits continue to amaze me!
-	Kye/Kalcor - SA:MP.
-	SA:MP Team past, present and future - SA:MP.
-
-Optional plugins:
-	Gamer_Z - GPS.
-	Incognito - Streamer.
-	Me - sscanf2, fixes2, Whirlpool.
-*/
-
-/*
-
-     ad88888ba                                              
-    d8"     "8b              ,d                             
-    Y8,                      88                             
-    `Y8aaaaa,    ,adPPYba, MM88MMM 88       88 8b,dPPYba,   
-      `"""""8b, a8P_____88   88    88       88 88P'    "8a  
-            `8b 8PP"""""""   88    88       88 88       d8  
-    Y8a     a8P "8b,   ,aa   88,   "8a,   ,a88 88b,   ,a8"  
-     "Y88888P"   `"Ybbd8"'   "Y888  `"YbbdP'Y8 88`YbbdP"'   
-                                               88           
-                                               88           
-    
-*/
-
-// "y_iterate" is always higher than "foreach".
-#define _Y_ITERATE_LOCAL_VERSION        43
-
-#if __Pawn != 0x030A
-	#define NO_CUSTOM_WARNINGS
-#endif
-
-#if !defined _inc_y_iterate
-	// The stand-alone version looks for this symbol, even on the new compiler.
-	#define _inc_y_iterate
-#endif
-
-// Extra macro so that those paranoid about accidentally including YSI can
-// ensure it never happens.
-#if defined NEVER_Y_ITERATE
-	// Set `FOREACH_VERSION` as equal to whatever the version of the stand-alone
-	// include is.
-	#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
-	#undef _inc_y_iterate
-	#undef _Y_ITERATE_LOCAL_VERSION
-	#if defined _FOREACH_INC_TEST
-		// This is `foreach` testing our version - nothing more need doing.
-		#endinput
-	#endif
-	// Otherwise, include `foreach`.  Don't use `#tryinclude`, since they want
-	// a version of `foreach` and it would be an error to not give them one.
-	#define _FOREACH_NO_TEST
-	#include <foreach>
-	#endinput
-#endif
-
-// Foreach is testing us.
-#if defined _FOREACH_INC_TEST
-	#if !defined _Y_ITERATE_FOUND
-		// Set up so that you can use `FOREACH_VERSION` even if the older
-		// stand-alone version doesn't support it.
-		#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
-		#define _FOREACH_CUR_VERSION _Y_ITERATE_LOCAL_VERSION
-	#endif
-	#endinput
-#endif
-
-#if !defined _FOREACH_NO_TEST
-	#define _FOREACH_INC_TEST
-	// Ignore the broken stand-alone version.
-	#define _foreach_included
-	#tryinclude <foreach>
-	#undef _FOREACH_INC_TEST
-	// <foreach> exists - test which is newer.
-	#if defined _FOREACH_LOCAL_VERSION
-		#if _FOREACH_LOCAL_VERSION > _Y_ITERATE_LOCAL_VERSION
-			// Foreach is newer.
-			#if defined _inc_foreach
-				#undef _inc_foreach
-			#endif
-			#define _FOREACH_NO_TEST
-			// Actually include the code.
-			#include <foreach>
-			// Mark the include as found and exit.
-			#define FOREACH_VERSION _FOREACH_LOCAL_VERSION
-			#define _FOREACH_INC_TEST
-			#define _Y_ITERATE_FOUND
-			#endinput
-		#endif
-	#elseif defined foreach
-		// I made this a warning on compilers that supported them, but that's a
-		// silly idea!
-		#error The old <foreach> include is no longer compatible with YSI.
-	#endif
-#endif
+*//** */
 
 // Set `FOREACH_VERSION` as this file's version.
 #if defined FOREACH_VERSION

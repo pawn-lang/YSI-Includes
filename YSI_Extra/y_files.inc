@@ -1,3 +1,8 @@
+#if defined _INC_y_files
+	#endinput
+#endif
+#define _INC_y_files
+
 /**
 <section>
 					y_files
@@ -114,11 +119,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_files
-	#endinput
-#endif
-#define _INC_y_files
 
 /*-------------------------------------------------------------------------*//**
 *					=================

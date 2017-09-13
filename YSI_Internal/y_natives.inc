@@ -1,3 +1,8 @@
+#if defined _INC_y_natives
+	#endinput
+#endif
+#define _INC_y_natives
+
 /*+
 <section>
 					y_natives
@@ -88,11 +93,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_natives
-	#endinput
-#endif
-#define _INC_y_natives
 
 #include "y_compilerdata"
 #include "y_globaltags"

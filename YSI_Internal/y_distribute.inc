@@ -1,3 +1,8 @@
+#if defined _INC_y_distribute
+	#endinput
+#endif
+#define _INC_y_distribute
+
 /*+
 <section>
 					y_distribute
@@ -113,11 +118,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_distribute
-	#endinput
-#endif
-#define _INC_y_distribute
 
 #include "y_globaltags"
 

@@ -1,3 +1,8 @@
+#if defined _INC_y_scriptinit
+	#endinput
+#endif
+#define _INC_y_scriptinit
+
 /**
 <section>
 					y_scriptinit
@@ -103,11 +108,6 @@ Optional plugins:
                                                88           
 
 */
-
-#if defined _INC_y_scriptinit
-	#endinput
-#endif
-#define _INC_y_scriptinit
 
 #include <a_samp>
 

@@ -1,3 +1,8 @@
+#if defined _INC_y_cgen
+	#endinput
+#endif
+#define _INC_y_cgen
+
 /*+
 <section>
 					y_cgen
@@ -81,11 +86,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_cgen
-	#endinput
-#endif
-#define _INC_y_cgen
 
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Internal\y_thirdpartyinclude"

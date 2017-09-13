@@ -1,3 +1,8 @@
+#if defined _INC_y_uvar
+	#endinput
+#endif
+#define _INC_y_uvar
+
 /**
 <section>
 					y_uvar
@@ -88,11 +93,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_uvar
-	#endinput
-#endif
-#define _INC_y_uvar
 
 // y_uvars
 

@@ -1,3 +1,8 @@
+#if defined _INC_y_lock
+	#endinput
+#endif
+#define _INC_y_lock
+
 /**
 <section>
 					y_lock
@@ -88,11 +93,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_lock
-	#endinput
-#endif
-#define _INC_y_lock
 
 #if defined _inc_y_version
 	#error YSI\y_lock must be the first include if you want to use it.

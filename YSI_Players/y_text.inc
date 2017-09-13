@@ -1,3 +1,13 @@
+#if defined _inc_y_text
+	#undef _inc_y_text
+#endif
+
+// Need an include guard here.
+#if defined _INC_y_text
+	#endinput
+#endif
+#define _INC_y_text
+
 /**
 <section>
 					y_text
@@ -174,16 +184,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _inc_y_text
-	#undef _inc_y_text
-#endif
-
-// Need an include guard here.
-#if defined _INC_y_text
-	#endinput
-#endif
-#define _INC_y_text
 
 #include <a_samp>
 

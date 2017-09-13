@@ -1,3 +1,8 @@
+#if defined _INC_y_amx
+	#endinput
+#endif
+#define _INC_y_amx
+
 /**
 <section>
 					y_amx
@@ -84,11 +89,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_amx
-	#endinput
-#endif
-#define _INC_y_amx
 
 // I debated porting this over to use ZeeX's advanced AMX system, but there's no
 // point - this is stable and works well.  Doing so would mean testing that all

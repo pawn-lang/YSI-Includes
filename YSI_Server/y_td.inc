@@ -1,3 +1,8 @@
+#if defined _INC_y_td
+	#endinput
+#endif
+#define _INC_y_td
+
 /**
 <section>
 					y_td
@@ -83,11 +88,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_td
-	#endinput
-#endif
-#define _INC_y_td
 
 #include "..\YSI_Internal\y_version"
 

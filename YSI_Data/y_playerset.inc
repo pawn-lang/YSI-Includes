@@ -1,3 +1,8 @@
+#if defined _INC_y_playerset
+	#endinput
+#endif
+#define _INC_y_playerset
+
 /**
 <section>
 					y_playerset
@@ -83,11 +88,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_playerset
-	#endinput
-#endif
-#define _INC_y_playerset
 
 #include <a_samp>
 #include "..\YSI_Data\y_iterate"

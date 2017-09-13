@@ -1,3 +1,8 @@
+#if defined _INC_y_remote
+	#endinput
+#endif
+#define _INC_y_remote
+
 /**
 <section>
 					y_remote
@@ -123,11 +128,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_remote
-	#endinput
-#endif
-#define _INC_y_remote
 
 #include "..\YSI_Internal\y_version"
 

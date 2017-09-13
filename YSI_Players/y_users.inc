@@ -1,3 +1,8 @@
+#if defined _INC_y_users
+	#endinput
+#endif
+#define _INC_y_users
+
 /**
 <section>
 					y_users
@@ -120,11 +125,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_users
-	#endinput
-#endif
-#define _INC_y_users
 
 #if !defined MODE_NAME
 	#error Please define "MODE_NAME" before including y_users.

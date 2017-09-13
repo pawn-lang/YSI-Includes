@@ -1,3 +1,8 @@
+#if defined _INC_y_jaggedarray
+	#endinput
+#endif
+#define _INC_y_jaggedarray
+
 /**
 <section>
 					y_jaggedarray
@@ -81,11 +86,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_jaggedarray
-	#endinput
-#endif
-#define _INC_y_jaggedarray
 
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Core\y_utils"

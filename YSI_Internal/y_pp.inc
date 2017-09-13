@@ -1,3 +1,8 @@
+#if defined _INC_y_pp
+	#endinput
+#endif
+#define _INC_y_pp
+
 /*+
 <section>
 					y_pp
@@ -82,11 +87,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_pp
-	#endinput
-#endif
-#define _INC_y_pp
 
 /*-------------------------------------------------------------------------*//*+
 <param name="%9">Number of times to repeat.</param>

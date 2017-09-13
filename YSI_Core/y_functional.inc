@@ -1,3 +1,8 @@
+#if defined _INC_y_functional
+	#endinput
+#endif
+#define _INC_y_functional
+
 /**
 <section>
 					y_functional
@@ -80,13 +85,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-// Pretty much all we need.
-
-#if defined _INC_y_functional
-	#endinput
-#endif
-#define _INC_y_functional
 
 #include "y_utils"
 #include y_debug

@@ -1,3 +1,8 @@
+#if defined _INC_y_profiling
+	#endinput
+#endif
+#define _INC_y_profiling
+
 /**
 <section>
 					y_profiling
@@ -80,11 +85,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_profiling
-	#endinput
-#endif
-#define _INC_y_profiling
 
 #include "y_debug"
 

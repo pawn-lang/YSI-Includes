@@ -1,3 +1,8 @@
+#if defined _INC_y_punycode
+	#endinput
+#endif
+#define _INC_y_punycode
+
 /*-------------------------------------------------------------------------*//**
 <section>
 					y_punycode
@@ -55,11 +60,6 @@
 <subsection>Operators</subsection>
 	-
 */
-
-#if defined _INC_y_punycode
-	#endinput
-#endif
-#define _INC_y_punycode
 
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_pp"

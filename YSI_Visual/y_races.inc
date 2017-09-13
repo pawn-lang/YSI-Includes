@@ -1,6 +1,11 @@
+#if defined _INC_y_races
+	#endinput
+#endif
+#define _INC_y_races
+
 /**
 <section>
-					y_rages
+					y_races
 </section>
 <subsection>Description</subsection>
 	Create, manage, and run races.
@@ -85,11 +90,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_races
-	#endinput
-#endif
-#define _INC_y_races
 
 #if !defined YSI_NO_RACE_POSITION && !defined RACE_POSITION
 	#define RACE_POSITION

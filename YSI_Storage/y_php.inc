@@ -1,3 +1,8 @@
+#if defined _INC_y_php
+	#endinput
+#endif
+#define _INC_y_php
+
 /**
 <section>
 					y_php
@@ -88,11 +93,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_php
-	#endinput
-#endif
-#define _INC_y_php
 
 #if !defined HTTP
 	#include <a_http>

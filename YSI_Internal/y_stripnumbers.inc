@@ -1,3 +1,8 @@
+#if defined _INC_y_stripnumbers
+	#endinput
+#endif
+#define _INC_y_stripnumbers
+
 /*+
 <section>
 					y_stripnumbers
@@ -123,11 +128,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_stripnumbers
-	#endinput
-#endif
-#define _INC_y_stripnumbers
 
 // This code uses the "@S.:" prefix, where "." is a number or underscore (for
 // any other symbol.  y_stringise (aka. y_stringize) uses several letters from

@@ -1,3 +1,8 @@
+#if defined _INC_y_bitmap
+	#endinput
+#endif
+#define _INC_y_bitmap
+
 /**
 <section>
 					y_bitmap
@@ -90,11 +95,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_bitmap
-	#endinput
-#endif
-#define _INC_y_bitmap
 
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Data\y_bit"

@@ -1,3 +1,8 @@
+#if defined _INC_y_plugins
+	#endinput
+#endif
+#define _INC_y_plugins
+
 /*+
 <section>
 					y_plugins
@@ -81,11 +86,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_plugins
-	#endinput
-#endif
-#define _INC_y_plugins
 
 // All the code in here relies on detecting FEATURES, not FILENAMES.
 #if defined Streamer_IncludeFileVersion

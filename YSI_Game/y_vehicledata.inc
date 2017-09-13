@@ -1,3 +1,8 @@
+#if defined _INC_y_vehicledata
+	#endinput
+#endif
+#define _INC_y_vehicledata
+
 /**
 <section>
 					y_vehicledata
@@ -125,11 +130,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_vehicledata
-	#endinput
-#endif
-#define _INC_y_vehicledata
 
 /*
 

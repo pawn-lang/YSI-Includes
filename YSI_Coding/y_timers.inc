@@ -1,3 +1,8 @@
+#if defined _INC_y_timers
+	#endinput
+#endif
+#define _INC_y_timers
+
 /**
 <section>
 					y_timers
@@ -95,11 +100,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_timers
-	#endinput
-#endif
-#define _INC_y_timers
 
 // y_uvars
 

@@ -1,18 +1,22 @@
-/**
-<section>
-					y_als
-</section>
-<subsection>Description</subsection>
-	Provides a number of macros for making ALS (Advanced Library System)
-	callback hooking simpler.
-<subsection>Version</subsection>
-	1.0
-<subsection>Changelog</subsection>
-	29/04/11:
-		Added "call" macro to make testing easier.
-	21/10/10:
-		First version
-*//** *//*
+/*
+
+      _____ ______ ______   ____  ______ _      ______          __  ______ ____  _____    
+     / ____|  ____|  ____| |  _ \|  ____| |    / __ \ \        / / |  ____/ __ \|  __ \   
+    | (___ | |__  | |__    | |_) | |__  | |   | |  | \ \  /\  / /  | |__ | |  | | |__) |  
+     \___ \|  __| |  __|   |  _ <|  __| | |   | |  | |\ \/  \/ /   |  __|| |  | |  _  /   
+     ____) | |____| |____  | |_) | |____| |___| |__| | \  /\  /    | |   | |__| | | \ \   
+    |_____/|______|______|_|____/|______|______\____/___\/__\/  ___|_|_ __\____/|_| _\_\_ 
+    |  __ \ / __ \ / ____| |  | |  \/  |  ____| \ | |__   __|/\|__   __|_   _/ __ \| \ | |
+    | |  | | |  | | |    | |  | | \  / | |__  |  \| |  | |  /  \  | |    | || |  | |  \| |
+    | |  | | |  | | |    | |  | | |\/| |  __| | . ` |  | | / /\ \ | |    | || |  | | . ` |
+    | |__| | |__| | |____| |__| | |  | | |____| |\  |  | |/ ____ \| |   _| || |__| | |\  |
+    |_____/ \____/ \_____|\____/|_|  |_|______|_| \_|  |_/_/    \_\_|  |_____\____/|_| \_|
+
+
+	This is required for technical reasons - to place it after `#endif` so as to
+	not generate multiple copies of it in XML when compiling with `-r`.
+
+*//*
 Legal:
 	Version: MPL 1.1
 	
@@ -83,9 +87,7 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
 #if !defined _INC_y_als
-	
 	#include "..\YSI_Internal\y_version"
 	#include "y_utils"
 	#include "..\YSI_Server\y_scriptinit"
@@ -100,7 +102,6 @@ Optional plugins:
 		#include "y_testing"
 		#include "y_als/tests"
 	#endif
-	#define _INC_y_als
 #endif
 
 // Allow multiple inclusions.
@@ -115,3 +116,25 @@ Optional plugins:
 	//&&&
 	#define ALS_MAKE<%0...%1> %0Mode_%1
 #endif
+
+#if defined _INC_y_als
+	#endinput
+#endif
+#define _INC_y_als
+
+/**
+<section>
+					y_als
+</section>
+<subsection>Description</subsection>
+	Provides a number of macros for making ALS (Advanced Library System)
+	callback hooking simpler.
+<subsection>Version</subsection>
+	1.0
+<subsection>Changelog</subsection>
+	29/04/11:
+		Added "call" macro to make testing easier.
+	21/10/10:
+		First version
+*//** */
+

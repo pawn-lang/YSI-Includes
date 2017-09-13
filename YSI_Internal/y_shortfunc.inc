@@ -1,3 +1,8 @@
+#if defined _INC_y_shortfunc
+	#endinput
+#endif
+#define _INC_y_shortfunc
+
 /*+
 <section>
 					y_shortfunc
@@ -121,11 +126,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_shortfunc
-	#endinput
-#endif
-#define _INC_y_shortfunc
 
 // Used to get rid of the "string:" tag once it has been used.
 #if !defined string

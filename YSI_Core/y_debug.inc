@@ -1,3 +1,8 @@
+#if defined _INC_y_debug
+	#endinput
+#endif
+#define _INC_y_debug
+
 /**
 <section>
 					y_debug
@@ -135,11 +140,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 *//*-------------------------------------------------------------------------**/
-
-#if defined _INC_y_debug
-	#endinput
-#endif
-#define _INC_y_debug
 
 #include "..\YSI_Internal\y_version"
 

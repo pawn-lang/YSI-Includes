@@ -1,3 +1,8 @@
+#if defined _INC_y_compilerdata
+	#endinput
+#endif
+#define _INC_y_compilerdata
+
 /**
 <!--
 <transition target[^/]+/>
@@ -135,11 +140,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#if defined _INC_y_compilerdata
-	#endinput
-#endif
-#define _INC_y_compilerdata
 
 #pragma tabsize 4
 
