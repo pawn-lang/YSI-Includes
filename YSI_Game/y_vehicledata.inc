@@ -7,58 +7,35 @@
 <section>
 					y_vehicledata
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Basic functions for gathering data on various vehicle models.  Things like
 	what sort of vehicle they are and what organisation they belong to.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.2
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	15/03/15:
 		Changed clamp ranges.
 	01/06/14:
 		First version.
-<subsection>Functions</subsection>
-	Public:
-		-
-	Core:
-		-
-	Stock:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Stock</em><ul>
 		Vehicle_Speed - Get current vehicle speed in KMH.
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-<subsection>Callbacks</subsection>
+</ul></li></ul><subsection>Callbacks</subsection><ul>
 	-
-Hooks:
+</ul></li></ul><subsection>Hooks</subsection><ul>
 	-
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Macros</subsection><ul>
 	-
-<subsection>Enums</subsection>
+</ul></li></ul><subsection>Keywords</subsection><ul>
 	-
-<subsection>Macros</subsection>
-	-
-Keywords:
-	-
-<subsection>Tags</subsection>
+</ul></li></ul><subsection>Tags</subsection><ul>
 	VIM - Vehicle Internal Modelid.
-<subsection>Variables</subsection>
-	Global:
+</ul></li></ul><subsection>Variables</subsection><ul>
+<li><em>Global</em><ul>
 		YSI_gVehicleFlags - Data on vehicles.
 		YSI_gVehicleNames - Names of vehicles.
 		YSI_gVehicleTopSpeed - Top speed of vehicles.
-	Static:
-		-
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
-Iterators:
-	-
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -7,13 +7,13 @@
 <section>
 					y_bintree
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Provides functions to generate balanced binary search trees for efficient
 	searching of large arrays by value.  Left branch is less than, right branch
 	is greater than or equal to for multiple matching values.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.1.3
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	12/08/07:
 		Fixed a bug with empty trees.
 	14/04/07:
@@ -25,51 +25,34 @@
 		Added Bintree_Add()
 	24/03/07:
 		First version.
-<subsection>Functions</subsection>
-	Public:
-		-
-	Core:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Core</em><ul>
 		Bintree_QSort - Custom implementaion of QSort to keep pointers.
 		Bintree_SortHalf - Itteratively balances halves of an array.
-	Stock:
+</ul></li><li><em>Stock</em><ul>
 		Bintree_Generate - Generates a balanced binary tree from given input.
 		Bintree_Reset - Resets a position in a tree.
 		Bintree_FindValue - Finds the pointer for a value in the tree.
 		Bintree_Add - Adds an item to a generated tree.
 		Bintree_Delete - Removes an item from a tree.
 		Bintree_UpdatePointers - Updates the pointers after a target change.
-	Static:
+</ul></li><li><em>Static</em><ul>
 		Bintree_Compress - Removes space from an altered tree.
 		Bintree_FindMin - Finds the smallest value on a branch.
 		Bintree_FindMax - Finds the largest value on a branch.
-	Inline:
+</ul></li><li><em>Inline</em><ul>
 		Bintree_Sort - Entry point for Bintree_QSort.
 		Bintree_Fill - Entry point for Bintree_SortHalf.
-	API:
-		-
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Definitions</subsection><ul>
 	BINTREE_NO_BRANCH - Nowhere to go from the number in required direction.
 	BINTREE_NOT_FOUND - Failure return.
-<subsection>Enums</subsection>
+</ul></li></ul><subsection>Enums</subsection><ul>
 	E_BINTREE_TREE - Structure of a leaf of a binary tree.
 	E_BINTREE_INPUT - Structure of an array of data to be added to a tree.
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
+</ul></li></ul><subsection>Tags</subsection><ul>
 	Bintree - Binary tree type.
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
-		-
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
+</ul></li></ul><subsection>Variables</subsection><ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

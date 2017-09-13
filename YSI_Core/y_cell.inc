@@ -7,46 +7,19 @@
 <section>
 					y_cell
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Provides a few functions for manipulating the bits in single cells.  Note
 	that this is distinct from the y_bit library.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.2
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	18/06/11:
 		First version.
-<subsection>Functions</subsection>
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-<subsection>Callbacks</subsection>
+</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
+</ul><subsection>Compile options</subsection><ul>
 	-
-<subsection>Definitions</subsection>
-	-
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
-		-
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

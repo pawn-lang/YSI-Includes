@@ -152,7 +152,7 @@ Optional plugins:
 <section>
 					y_master
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Handles distribution of control of code segments across all running scripts
 	with YSI to avoid conflicts of checkpoint streamers etc and allow features
 	like "/commands" displaying all commands on the server.
@@ -170,9 +170,9 @@ Optional plugins:
 	while to figure out)...
 	
 	This is now over 2000 lines of repetitive and complex macros!
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.2
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	06/08/10:
 		Managed the ultimate - got completely transparent inclusion!
 	05/08/10:
@@ -188,28 +188,12 @@ Optional plugins:
 		Added code for a script to remove itself from the global list.
 	11/10/07:
 		Not first version but added documentation months late.
-<subsection>Functions</subsection>
-	Public:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>API</em><ul>
 		-
-	Core:
+</ul></li></ul><subsection>Hooks</subsection><ul>
 		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-	Hooks:
-		-
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
-	-
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
+</ul></li></ul><subsection>Macros</subsection><ul>
 	RF - Declare a function which may be remote.
 	RV - Declare a void function which may be remote.
 	RS - Declare an optional callback.
@@ -218,23 +202,18 @@ Optional plugins:
 	RFP - Declare a function with tags and give recall hints.
 	RFPC - Combination of P and C.
 	RFCP - Combination of P and C.
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
+</ul></li></ul><subsection>Variables</subsection><ul>
+<li><em>Global</em><ul>
 		_@ - ID of this script.
-	Static:
-		-
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
+</ul></li></ul><subsection>Compile options</subsection><ul>
 	YSI_NO_MASTER - Don't use the master system.
 	YSI_IS_CLIENT - Script is a client only script.
 	YSI_IS_SERVER - Script is a server only script.
-<subsection>Operators</subsection>
+</ul></li></ul><subsection>Operators</subsection><ul>
 	-
-Natives:
+</ul></li></ul><subsection>Natives</subsection><ul>
 	-
+</ul>
 *//** */
 
 // Only include this lot once.

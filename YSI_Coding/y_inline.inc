@@ -7,7 +7,7 @@
 <section>
 					y_inline
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	This library allows a user to write inline functions in their script.  It
 	first detects all inline functions and generates data on them, such as
 	parameter counts and addresses.  When an inline function is passed in code
@@ -15,9 +15,9 @@
 	found to be called at some point its current local stack is stored in global
 	memory.  When the function actually is called, the stack is restored, and
 	additional parameters which are the inline function parameters, are passed.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	22/06/13:
 		Rewrote the library from scratch for better performance all round.
 	20/10/12:
@@ -26,6 +26,7 @@
 		Changed the precedence of "using" types.
 	19/09/11:
 		First version
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -7,21 +7,19 @@
 <section>
 					y_malloc
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Functions for using malloc/calloc/free type functions in PAWN.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.1
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	02/12/11:
 		Added variable argument functions.
 	22/12/08:
 		First version.
-<subsection>Functions</subsection>
+</ul></li></ul><subsection>Functions</subsection><ul>
 	Public
 		-
-	Core:
-		-
-	Stock:
+</ul></li><li><em>Stock</em><ul>
 		malloc - Allocate a block of memory (may be inline).
 		calloc - Allocate a block of memory and blank.
 		free - Free an allocated block of memory (may be inline).
@@ -33,10 +31,10 @@
 		Malloc_Free - Do the memory freeing (may be static).
 		Malloc_SlotSize - Get the size of an allocated block (may be inline).
 		Malloc_NewS - Allocate for and store a given string.
-	Static:
+</ul></li><li><em>Static</em><ul>
 		Malloc_Allocate - Do the memory allocation (may be stock).
 		Malloc_Free - Do the memory freeing (may be stock).
-	Inline:
+</ul></li><li><em>Inline</em><ul>
 		mget - Get data from an allocation unit.
 		mset - Set data in an allocation unit.
 		mgets - Get a string from an allocation unit.
@@ -51,36 +49,25 @@
 		Malloc_GetData - Direct data access getter.
 		Malloc_SetData - Direct data access setter.
 		Malloc_SlotSize - Get the size of an allocated block (may be stock).
-	API:
-		-
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Definitions</subsection><ul>
 	MALLOC_KB_TO_CELL - Multiplication value to convert kb to cells.
 	NO_ALLOC - A failed allocation (NULL, but YSI already has NULL).
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
+</ul></li></ul><subsection>Tags</subsection><ul>
 	Alloc - An allocated block handle variable.
-<subsection>Variables</subsection>
-	Global:
+</ul></li></ul><subsection>Variables</subsection><ul>
+<li><em>Global</em><ul>
 		YSI_gMallocMemory - Stores the data (may be static).
-	Static:
+</ul></li><li><em>Static</em><ul>
 		YSI_gMallocMemory - Stores the data (may be global).
 		_YSI_g_sUnusedStart - Start of free memory.
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
+</ul></li></ul><subsection>Compile options</subsection><ul>
 	MALLOC_MEMORY - Number of cells to reserve.
 	MALLOC_MEMORY_KB - Number of killobytes to reserve.
 	MALLOC_MEMORY_B - Number of bytes to reserve.
 	MALLOC_MEMORY_MB - Number of megabytes to reserve.
 	YSI_MALLOC_SECURE - Use enhanced bounds checking.
 	YSI_MALLOC_NO_SHORT - Avoid conflicts with mget/mset.
-<subsection>Operators</subsection>
-	-
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

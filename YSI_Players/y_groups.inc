@@ -170,14 +170,15 @@ Optional plugins:
 <section>
 					y_groups
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Admin levels, gangs, teams etc - they're all "groups" of people, this
 	provides an abstraction for all of these collections.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	29/11/10:
 		First version
+</ul>
 *//** */
 
 stock _YSI_HAS_y_groups(_do_not_call_me_ever_, _like_never_)

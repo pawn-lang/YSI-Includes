@@ -7,11 +7,11 @@
 <section>
 					y_utils
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 Misc functions used throughout.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.1.3
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	<em>06/10/12</em>
 <ul>
 <li>		Upgraded "memset" to use "FILL".</li>
@@ -32,7 +32,7 @@ Misc functions used throughout.
 <ul>
 <li>		Scrapped almost everything.  Only VERY usefult things go in now.</li>
 </ul>
-<subsection>Functions</subsection>
+</ul></li></ul><subsection>Functions</subsection><ul>
 	<em>Stock</em>
 <ul>
 <li><seealso name="StrToLower" /> - Convert a whole string to lower-case.</li>
@@ -69,7 +69,7 @@ Misc functions used throughout.
 <li><seealso name="Median" /> - Get the mathematical median of an array.</li>
 <li><seealso name="Range" /> - Get the mathematical range of an array.</li>
 </ul>
-	<seealso name="Inline" />
+	<em>Inline</em>
 <ul>
 <li><seealso name="UCMP" /> - Unsigned compare.</li>
 <li><seealso name="VALID_PLAYERID" /> - Check if a player ID is valid (in range).</li>
@@ -89,15 +89,16 @@ Misc functions used throughout.
 <li><seealso name="ReturnStringArg" /> - Synonym for <seealso name="returnstringarg" /> (there are a lot).</li>
 <li><seealso name="InterpolateColor" /> - Synonym for <seealso name="InterpolateColour" /></li>
 </ul>
-<subsection>Variables</subsection>
-	<seealso name="Global" />
+</ul></li></ul><subsection>Variables</subsection><ul>
+	<em>Global</em>
 <ul>
 <li><seealso name="TRUE" /> - True hack for infinate loops.</li>
 <li><seealso name="FALSE" /> - False hack for one-time loops.</li>
 <li><seealso name="NULL" /> - 1 long string for passing via Call(Remote|Local)Function.</li>
 </ul>
-<subsection>Examples</subsection>
+</ul></li></ul><subsection>Examples</subsection><ul>
 	N/A - This is a collection of independent functions.
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

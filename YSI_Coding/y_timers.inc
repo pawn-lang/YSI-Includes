@@ -7,14 +7,14 @@
 <section>
 					y_timers
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Sets up repeating timers without requiring any SetTimers and arranges them
 	so that they will be very unlikely to meet (at least for a long time) using
 	scheduling algorithms to get timers with the same period to be offset.  Also
 	fixes arrays and strings in timers so they can be passed properly.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	2.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	29/04/11:
 		Added version 2 of the code with more advanced options.
 	21/03/11:
@@ -29,6 +29,7 @@
 		Added pickups.
 	03/08/07:
 		First version.
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

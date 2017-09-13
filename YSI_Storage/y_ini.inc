@@ -7,12 +7,12 @@
 <section>
 					y_ini
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Reads the INI and also exports a number of functions to other "classes" for
 	easy reading of data files there.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.5
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	07/01/13:
 		Rewrote almost everything!
 		Split in to multiple files.
@@ -55,12 +55,8 @@
 		Updated header documentation with more than changelog.
 	24/03/07:
 		First version.
-<subsection>Functions</subsection>
-	Public:
-		-
-	Core:
-		-
-	Stock:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Stock</em><ul>
 		INI_Load - Loads an INI file using standard features.
 		INI_ParseFile - Loads a file as an ini and distributes data.
 		INI_GetEntryName - Gets the name of an INI item.
@@ -75,21 +71,17 @@
 		INI_WriteBin - Writes a binary to an INI.
 		INI_WriteBool - Writes a boolean to an INI.
 		INI_RemoveEntry - Remove an entry from a file.
-	Static:
+</ul></li><li><em>Static</em><ul>
 		INI_WriteBuffer - Writes an INI's buffer to the file.
 		INI_AddToBuffer - Adds a string to an INI buffer.
-	Inline:
+</ul></li><li><em>Inline</em><ul>
 		INI_Int - Parse an integer INI entry.
 		INI_Float - Parse a float INI entry.
 		INI_Hex - Parse a hex INI entry.
 		INI_Bin - Parse a binary INI entry.
 		INI_Bool - Parse a binary INI entry.
 		INI_String - Parse a string INI entry.
-	API:
-		-
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Definitions</subsection><ul>
 	MAX_INI_TAG - Maximum length of an INI tagname.
 	MAX_INI_ENTRY_NAME - Maximum length of an INI entry name.
 	MAX_INI_ENTRY_TEXT - Maximum length of an INI's entries' value.
@@ -97,29 +89,22 @@
 	INI_NEW_LINE - String for new lines.
 	INI_MAX_WRITES - Maximum concurrent files open for writing.
 	MAX_INI_TAGS - Number of tags the buffer can hold data for at once.
-<subsection>Enums</subsection>
+</ul></li></ul><subsection>Enums</subsection><ul>
 	E_INI_WRITE - Storage for entries to be written.
 	E_INI_TAGS - Data for tags with data.
-<subsection>Macros</subsection>
+</ul></li></ul><subsection>Macros</subsection><ul>
 	INI_Parse - Header for ini parsing functions.
-<subsection>Tags</subsection>
+</ul></li></ul><subsection>Tags</subsection><ul>
 	INI - Handle to an INI file being written to.
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
+</ul></li></ul><subsection>Variables</subsection><ul>
+<li><em>Static</em><ul>
 		YSI_g_sINIWriteBuffer - Basic data to be written.
 		YSI_g_sINIWritePos - Next slot to write to.
 		YSI_g_sINITagPos - Next slot to add a tag to.
 		YSI_g_sINICurrentTag - Pointer to the tag been writen to.
 		YSI_g_sINIWriteTag - Data for tags,
 		YSI_g_sINIWriteFile - Current files been written to.
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -7,14 +7,15 @@
 <section>
 					y_jaggedarray
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Provides code to easilly manipulate the sizes of 2d array slots.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	06/10/12:
 		First version
 		Fixed a bug calling "rawMemset".
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

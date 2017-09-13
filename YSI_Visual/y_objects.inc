@@ -2,15 +2,15 @@
 <section>
 					y_objects
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Handles object streaming for >150 objects per player.  Also provides VW
 	support and improved object attachment (i.e. it works).  New versions
 	combines mine and Peter's streaming systems to narrow down objects by
 	approximation by a grid system then check all objects visible in near
 	by sections.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.2.7
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	27/12/07:
 		Fixed a bug in the moved object list system.
 	26/11/07:
@@ -73,8 +73,8 @@
 		Second version - completely rewritten after a chat with Peter.
 	16/04/07:
 		First version - adapted from my earlier e_objects.inc include.
-<subsection>Functions</subsection>
-	Public:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Public</em><ul>
 		Object_Loop - Main loop for checking.
 		Object_CoOrdRemote - Does object location manipulation remotely.
 		Object_Remote - Does normal functions remotely.
@@ -83,10 +83,10 @@
 		Object_GetLimit - Gets the number of objects the remove master can hold.
 		YSIM_Objects - Processes master system instructions.
 		Object_AddRem - Remote wrapper for Object_Add.
-	Core:
+</ul></li><li><em>Core</em><ul>
 		Object_Object - Constructor.
 		Object_OnPlayerDisconnect - Disconnects objects.
-	Stock:
+</ul></li><li><em>Stock</em><ul>
 		Object_AddToWorld - Make visible in world.
 		Object_RemoveFromWorld - Make invisible in world.
 		Object_AddToPlayer - Make visible to player.
@@ -99,7 +99,7 @@
 		Object_IsGlobal - Checks if an object is visible by default.
 		Object_SetViewDistance - Sets an object's view distance.
 		Object_IsDescendant - Checks if an object is related to another object.
-	Static:
+</ul></li><li><em>Static</em><ul>
 		Object_Add - Internal add function.
 		Object_FindSector - Find a location's sector.
 		Object_AddToOOB - Add an object to the OOB list.
@@ -118,12 +118,12 @@
 		Object_CheckDescendant - Recursive call for Object_IsDescendant.
 		Object_Destroy - Delete an object with no checks.
 		Object_AddToUpdate - Safely adds an object to the moved update list.
-	Inline:
+</ul></li><li><em>Inline</em><ul>
 		Object_IsValid - Internal validity check.
 		Object_GetAttach - Get player an object's attached to.
 		Object_SetAttach - objSet player an object's attached to.
 		Object_HasPlayer - Checks if a player can see an object.
-	API:
+</ul></li><li><em>API</em><ul>
 		MoveDynamicObject - Wrapper for MoveObject.
 		StopDynamicObject - Wrapper for StopObject.
 		IsValidDynamicObject - Wrapper for IsValidObject.
@@ -140,9 +140,9 @@
 		DetachDynamicObjectFromPlayer - Removes an object from a player.
 		AttachObjectToObject - Attaches an object to another object.
 		RemoveObjectFromParent - Removes an object from another object.
-<subsection>Callbacks</subsection>
+</ul></li></ul><subsection>Callbacks</subsection><ul>
 	OnDynamicObjectMoved
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Definitions</subsection><ul>
 	OBJECT_SECTOR_SIZE - Size of edge of a grid square for approximations.
 	MAX_DYN_OBJECTS - Maximum number of objects.
 	OBJECT_VIEW_DISTANCE - Range to stream objects for.
@@ -154,10 +154,10 @@
 	OBJECT_WORLDS - Maximum number of worlds objects show up in.
 	OBJECT_WORLD_COUNT - Size of bit array of worlds.
 	OBJECT_PLAYER_COUNT - Size of bit array of players.
-<subsection>Enums</subsection>
+</ul></li></ul><subsection>Enums</subsection><ul>
 	E_OBJECT - Structure of the dynamic object data.
 	e_OBJ_FLAG - Flags for the object.
-<subsection>Macros</subsection>
+</ul></li></ul><subsection>Macros</subsection><ul>
 	OBJECT_SECTOR_EDGE - Number of sectors on one edge of the world.
 	OBJECT_SECTOR_ARRAY - Number of grid squares.
 	OBJECT_SIGHT - OBJECT_VIEW_DISTANCE squared for speed.
@@ -168,26 +168,21 @@
 	OBJECT_BITS - Number of bits to hold all dynamic objects.
 	e_OBJ_FLAG_MOVED - Extension of e_OBJ_FLAG, both move flags together.
 	NEW_SECTOR - Sector based on origin sector and current offset.
-<subsection>Tags</subsection>
+</ul></li></ul><subsection>Tags</subsection><ul>
 	e_OBJ_FLAG - Flags for objects.
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
+</ul></li></ul><subsection>Variables</subsection><ul>
+<li><em>Static</em><ul>
 		YSI_g_sObjectSectors - Array of pointers to sector object lists.
 		YSI_g_sObjects - Array of objects.
 		YSI_g_sOtherSector - Pointer to OOB object list.
 		YSI_g_sMovingObjects - Pointer to moving object list.
 		YSI_g_sNoObjects - Pointer to unused object list.
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
+</ul></li></ul><subsection>Compile options</subsection><ul>
 	NO_PERSONAL_OBJECTS - All players see all objects.
 	NO_OBJECT_ATTACH - Objects can't be attached to each other.
 	NO_OBJECTS_MOVE - No processing is done for moving objects.
 	OBJECT_WORLDS 0 - All objects are visible in all worlds.
-<subsection>Operators</subsection>
-	-
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

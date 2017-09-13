@@ -7,15 +7,16 @@
 <section>
 					y_pp
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	More complex processing in the pre-processor.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	25/10/10:
 		Integrated in to YSI.
 	06/08/10:
 		First version
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -7,12 +7,12 @@
 <section>
 					y_classes
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Allows greater control over classes so not everyone has every class.  Uses
 	a form of compression for locations.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.1
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	14/04/12:
 		Readded OnRequestSpawn logic.
 		Fixed Class_AddWithGroupSet.
@@ -30,16 +30,16 @@
 		Fixed a few bugs with repeated selection.
 	04/08/07:
 		First version.
-<subsection>Functions</subsection>
-	Public:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Public</em><ul>
 		Class_AddRemote - Adds a class to the remote master.
 		Class_Remote - Updates settings remotely.
-	Core:
+</ul></li><li><em>Core</em><ul>
 		Class_Class - Sets up the system.
 		Class_OnPlayerRequestSpawn - Called when a player requests a spawn.
 		Class_OnPlayerRequestClass - Called when a player requests a class.
 		Class_OnPlayerConnect - Called when a player connects.
-	Stock:
+</ul></li><li><em>Stock</em><ul>
 		Class_Delete - Removes a class.
 		Class_SetPlayer - Sets whether or not a player can use a class.
 		Class_Disable - Disables a class.
@@ -53,9 +53,9 @@
 		Class_RequireSelectionLogin - Require people to login before selecting.
 		Class_RequireSelectionReg - Require people to register before selecting.
 		Class_RequireSpawnReg - Require people to register before spawning.
-	Static:
+</ul></li><li><em>Static</em><ul>
 		Class_AddClass - Adds a class, wrapped by API and remote functions.
-	Inline:
+</ul></li><li><em>Inline</em><ul>
 		Class_IsActive - Checks a class is active.
 		Class_Enabled - Checks a class is enabled.
 		Class_IsValid - Checks a class is valid.
@@ -64,38 +64,23 @@
 		Class_Z - Gets a classes z position.
 		Class_A - Gets a classes angle.
 		Class_Skin - Gets a classes skin.
-	API:
-		-
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Definitions</subsection><ul>
 	MAX_CLASSES - Maximum number of classes storeable by the system.
 	CLASS_LEFT - Flag for last internal class viewed.
 	CLASS_MIDDLE - Flag for last internal class viewed.
 	CLASS_RIGHT - Flag for last internal class viewed.
-<subsection>Enums</subsection>
+</ul></li></ul><subsection>Enums</subsection><ul>
 	e_CLASS_FLAGS - Small data for individual classes.
 	E_CLASS - Class data structure.
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
+</ul></li></ul><subsection>Variables</subsection><ul>
+<li><em>Static</em><ul>
 		YSI_g_sClasses - Data for classes.
 		YSI_g_sPlayerClass - Player's current classes.
 		YSI_g_sLeft - Handle for the first internal class.
 		YSI_g_sMiddle - Handle for the second internal class.
 		YSI_g_sRight - Handle for the third internal class.
 		YSI_g_sClassCount - Number of classes stored.
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -7,48 +7,17 @@
 <section>
 					y_gamerzps
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	This file unites various YSI features with Gamer_Z's GPS (Gamer_Z's
 	Positioning System) plugin so that you can use hooks and inlines with it.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.1
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	20/10/12:
 		First version.
-<subsection>Functions</subsection>
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
-	-
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
-		-
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
+</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -7,7 +7,7 @@
 <section>
 					y_punycode
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Functions for converting unicode strings to and from punycode, to be
 	represented in just ASCII characters.  Based on several public
 	implementations and the RFC, adapted for PAWN.  For more information see:
@@ -16,50 +16,22 @@
 	
 	Also includes a function that hooks the "HTTP" function to allow for
 	internationalised domain names with that function.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.1
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	29/04/13:
 		Added Puny_HTTP.
 	26/04/13:
 		First version.
-<subsection>Functions</subsection>
+</ul></li></ul><subsection>Functions</subsection><ul>
 	Public
 		-
-	Core:
-		-
-	Stock:
+</ul></li><li><em>Stock</em><ul>
 		Puny_Encode - Convert a Unicode string to Punycode.
 		Puny_Decode - Convert a Punycode string to Unicode.
 		Puny_HTTP - Wrapper for "HTTP" to encode domain names.
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
-	-
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
-		-
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
-*/
+</ul></li></ul><subsection>Variables</subsection><ul>
+</ul>
 
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_pp"

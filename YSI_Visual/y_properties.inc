@@ -7,11 +7,11 @@
 <section>
 					y_properties
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Handles properties and other common features for some modes.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.1
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	03/08/07:
 		Updated timer system.
 	31/07/07:
@@ -29,8 +29,8 @@
 		Updated functions to use checkpoint and area lookups
 	18/04/07:
 		First version.
-<subsection>Functions</subsection>
-	Public:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Public</em><ul>
 		Property_Loop - Does the main system processing.
 		Property_AddPropRemote - Adds a property from another script.
 		Property_AddBankRemote - Adds a bank from another script.
@@ -44,7 +44,7 @@
 		YSIM_Properties - Master system callback.
 		Property_Broadcast - Called to save properties on master shutdown.
 		Property_PickupTimeCheck - Checks if a player is still stood on a pickup.
-	Core:
+</ul></li><li><em>Core</em><ul>
 		Property_OnPlayerSelectedMenuRow - Called when someone selects something.
 		Property_OnPlayerExitedMenu - Called when someone exits a menu.
 		Property_OnPlayerEnterCheckpointEx - Called when someone enters a checkpoint (public).
@@ -54,7 +54,7 @@
 		Property_OnPlayerConnect - Called when comaone connects.
 		Property_OnPlayerLeaveArea - Called when someone leaves an area (public).
 		Property_OnPlayerEnterArea - Called when someone enters an area (public).
-	Stock:
+</ul></li><li><em>Stock</em><ul>
 		Property_GetPlayerPropCount - Gets the number of properties for a player.
 		Property_GetLink - Gets the area or checkpoint for a property.
 		Property_GetType - Gets a property's type.
@@ -69,12 +69,12 @@
 		Property_GetSlotWeapon - Gets a player's spawn weapons.
 		Property_GetPropertyBits - Gets a player's owned properties.
 		Property_SetRebuyDelay - Set a delay on rebuying properties.
-	Static:
+</ul></li><li><em>Static</em><ul>
 		Property_GetWeapon - Gets weapon data for a slotid slot.
 		Property_WeaponName - Gets a weapon name for a slotid.
 		Property_GetWeaponFromSlot - Gets a weaponid from a slotid.
 		Property_GenerateAmmuMenu - Generates the menu for ammunation.
-	Inline:
+</ul></li><li><em>Inline</em><ul>
 		Property_SetOption - Sets a property's custom flag.
 		Property_IsActive - Checks if a property is active.
 		Property_GetOption - Gets a property's custom flag.
@@ -82,7 +82,7 @@
 		Property_WeaponCost - Gets the cost of a slot,
 		Property_WeaponAmmo - Gets the ammo of a slot.
 		Property_IsPlayerProperty - Checks if a player can have a property.
-	API:
+</ul></li><li><em>API</em><ul>
 		CreateProperty - Creates a business.
 		CreateBank - Creates a bank.
 		CreateAmmunation - Creates an ammunation.
@@ -91,31 +91,27 @@
 		CreateTeleport - Creates a teleport.
 		CreateForbiddenArea - Creates a forbidden area.
 		DestroyProperty - Deletes a property from the array.
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Definitions</subsection><ul>
 	PROPERTY_LOOP_GRANULARITY - Number of itterations of the main loop a second.
 	MAX_PROP_NAME - Max length of the name of a property.
 	MAX_PROPERTIES - Max number of properties.
 	NO_PROPERTY - Invalid return.
 	WEAPON_ARMOUR - Type for salling armour at ammunation.
 	PROPERTY_SELL_PERCENT - % of money got back for a reduced sale.
-<subsection>Enums</subsection>
+</ul></li></ul><subsection>Enums</subsection><ul>
 	e_PROP_FLAGS - Flags for property data.
 	E_PROP_DATA - Data for a property.
 	E_PROP_AMMU - Data for a persons current ammunation menu.
 	<unnamed> - Tagless remote instructions, must have new ones added to the end.
-<subsection>Macros</subsection>
+</ul></li></ul><subsection>Macros</subsection><ul>
 	WEAPON_DATA_OFFSET - Offset for saving weapons with variable size arrays,
 	WEAPON_DATA - Gets ammo and cost from parameters and compresses them.
 	WEAPON_DATA_REM - Like WEAPON_DATA but reads from an array instead.
 	WEAPON - Saves a weapon id in the top byte of a cell.
-<subsection>Tags</subsection>
+</ul></li></ul><subsection>Tags</subsection><ul>
 	e_PROP_FLAGS - Flags.
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
+</ul></li></ul><subsection>Variables</subsection><ul>
+<li><em>Static</em><ul>
 		YSI_g_sProperties - Array of all property data.
 		YSI_g_sMoney - Array of player's banked money.
 		YSI_g_sPlayerProperties - Bit array of properties a player has.
@@ -126,7 +122,7 @@
 		YSI_g_sTempPropReq - Script has requested a player's properties.
 		YSI_g_sTempProp - Temporary store for properties.
 		YSI_g_sIsMaster - Is this script the global master.
-<subsection>Commands</subsection>
+</ul></li></ul><subsection>Commands</subsection><ul>
 	buy - Lets you buy your current property.
 	bank - Lets you bank money.
 	properties - Lists properties and their owners.
@@ -136,10 +132,7 @@
 Properties:
 	LReqProp - Return data from a remote script.
 	110953013 - Return properties for a player.
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

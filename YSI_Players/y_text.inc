@@ -12,13 +12,13 @@
 <section>
 					y_text
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Provides interfaces for displaying text from anywhere by way of native like
 	functions using text indexes rather than text.  Due to a compile problem a
 	number of the stock functions should be static but can't be.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.1.1
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	17/02/07:
 		Added saving of style parameter for text draws.
 	27/12/07:
@@ -40,17 +40,15 @@
 		Added YSI_ prefix to all globals.
 	23/03/07:
 		First version.
-<subsection>Functions</subsection>
-	Public:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Public</em><ul>
 		Text_ResetAll - Resets the entire text system.
 		Text_NewLanguage - Sets up to parse a new language.
 		Text_Parse - Sorts loaded text into a binary tree.
 		Text_DataSave_data - Saves text appearence data.
 		Text_DataSave_colours - Saves file colour defines.
 		Text_DataSave_colors - Wrapper for above function.
-	Core:
-		-
-	Stock:
+</ul></li><li><em>Stock</em><ul>
 		Text_FindTextPointers - Should be static but can't be :(.
 		Text_AddToBuffer - Saves all passed text for processing.
 		Text_GetTextFromIndex - Gets text from an array pointer and language.
@@ -63,9 +61,9 @@
 		Text_SendToGroup - Sends a message to a defined group.
 		Text_SendToPlayers - Sends a message to a passed group.
 		Text_Display - Display an actual string to a player in a given style.
-	Static:
+</ul></li><li><em>Static</em><ul>
 		Text_AddText - Adds text to the tree after sorting.
-	Inline:
+</ul></li><li><em>Inline</em><ul>
 		Text_Text - Constructor - Calls Text_ResetAll.
 		Text_SetLangPointer - Sets the pointer for a language to a position.
 		Text_ResetLangPointers - Resets all the pointers for one language.
@@ -76,11 +74,7 @@
 		Text_SendToAllFormat - Sends a formatted message to all players.
 		Text_SendToGroupFormat - Sends a formatted message to a defined group.
 		Text_SendToPlayersFormat - Sends a formatted message to a passed group.
-	API:
-		-
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Definitions</subsection><ul>
 	MAX_TEXT_NAME - Maximum length of a text identifier.
 	MAX_TEXT_ENTRY - Maximum length of a text string.
 	TEXT_NO_TEXT - Value for no text for that language.
@@ -88,16 +82,12 @@
 	TEXT_TYPE_CLIENT - Flag for sending a client formatted message (unused).
 	TEXT_TYPE_GAME - Flag for sending a game text formatted message (unused).
 	MAX_TEXT_COLOURS - Max number of defined colours in an ini file.
-<subsection>Enums</subsection>
+</ul></li></ul><subsection>Enums</subsection><ul>
 	E_TEXT_POINTERS - Structure of the language pointer array.
-<subsection>Macros</subsection>
+</ul></li></ul><subsection>Macros</subsection><ul>
 	Text_RegisterTag - Placed as a function, calls Text_AddToBuffer for tags.
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
+</ul></li></ul><subsection>Variables</subsection><ul>
+<li><em>Static</em><ul>
 		YSI_g_sTextTable - Array of all text entries.
 		YSI_g_sNameTable - Array of all text names and language pointers.
 		YSI_g_sSearchTree - Binary tree of text hashes.
@@ -107,12 +97,7 @@
 		YSI_g_sBufferLang - Current language being loaded.
 		YSI_g_sLangBuffer - Saves the current position of each language.
 		YSI_g_sColours - Saves defined colours for use.
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

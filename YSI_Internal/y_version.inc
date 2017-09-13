@@ -7,53 +7,26 @@
 <section>
 					y_version
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Checks online to see if there is a newer version of YSI available.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.2
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	26/10/10:
 		Added changelog capabilities.
 	22/10/10:
 		First version.
-<subsection>Functions</subsection>
-	Public:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>API</em><ul>
 		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-	Hooks:
+</ul></li></ul><subsection>Hooks</subsection><ul>
 		OnGameModeInit
-<subsection>Callbacks</subsection>
+</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Operators</subsection><ul>
 	-
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Natives</subsection><ul>
 	-
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
-		-
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
-Natives:
-	-
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

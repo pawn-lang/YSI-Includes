@@ -30,29 +30,29 @@ in the output code.
 <section>
 					y_compilerdata
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Detect various information about the compiler, including which pass it is
 	currently executing, what flags it was compiled with, and which version it
 	is.  Provide that information to the rest of the script through a series of
 	consistent macros.  Used by y_groups to include code that might be needed
 	before it is known if it is needed (it can be dumped later).
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.1
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	12/09/17:
 		Renamed everything for consistency.
 		Documented macros.
 	14/04/13:
 		First version.
-<subsection>Functions</subsection>
-	Static:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Static</em><ul>
 		__CompilerStringReturn - Assembly for returning a string to its callers'
 			caller.  Used to bypass a known bug.
 		__CompilerSecondPass - Tested to determine the current compiler pass.
-	Inline:
+</ul></li><li><em>Inline</em><ul>
 		__COMPILER_STRING_RETURN - Correctly return a string from a varargs
 			function.
-<subsection>Macros</subsection>
+</ul></li></ul><subsection>Macros</subsection><ul>
 	__COMPILER_PASS - Which pass the compiler is currently running.
 	__COMPILER_DOCUMENTING - Is the compiler collecting documentation
 		information right now (i.e. is this the first pass)?
@@ -69,6 +69,7 @@ in the output code.
 		bugged?  Not needed for using `__COMPILER_STRING_RETURN`, as that will
 		do the best thing in both cases already.
 	P:D - Wrap a fake function declaration, so macros can be documented.
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

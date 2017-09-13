@@ -7,47 +7,16 @@
 <section>
 					y_files
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Provides native declarations for YSF functions.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.1
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	15/09/10:
 		First version split from the old YSF.
-<subsection>Functions</subsection>
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
-	-
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
-		-
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
+</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -7,21 +7,18 @@
 <section>
 					y_uvar
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Declares data to be automatically saved and loaded on a per-player basis.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.1.3
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	25/02/12:
 		First version.
-<subsection>Functions</subsection>
-	Stock:
+</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
+<li><em>Global</em><ul>
 		-
-	Inline:
-		-
-<subsection>Variables</subsection>
-	Global:
-		-
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

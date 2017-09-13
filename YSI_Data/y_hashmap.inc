@@ -7,24 +7,25 @@
 <section>
 					y_hashmap
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Maps string indexes to integer indexes.  Uses a fast hash to get an array
 	slot, then a linked list to resolve collisions.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	2.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	23/06/13:
 		First version.
-<subsection>Functions</subsection>
-	stock:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Stock</em><ul>
 		HashMap_Init - Associate a hash map with an array.
 		HashMap_Add - Add a value under a given string.
 		HashMap_Get - Get a value from a string.
 		HashMap_RemoveKey - Remove a string and its value from a hash map.
 		HashMap_Set - Change the value associated with a key.
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Definitions</subsection><ul>
 	HASH_MAP_DATA - What should be added to enums to be hash map referenced.
 	HashMap - Declare a new hash map.
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -7,48 +7,17 @@
 <section>
 					y_incognitostreamer
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	This file unites the YSI y_groups system with Incognito's streamer plugin so
 	that you can use more objects/areas etc with y_groups style permissions.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.1
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	20/10/12:
 		First version.
-<subsection>Functions</subsection>
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
-	-
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
-		-
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
+</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

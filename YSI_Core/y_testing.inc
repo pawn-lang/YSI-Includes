@@ -7,11 +7,11 @@
 <section>
 					y_testing
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Runs any functions named as tests when the Testing_Run function is called.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	16/02/12:
 		Added better error reporting (less verbose passes).
 		Removed "Tests:".
@@ -20,6 +20,7 @@
 		Integrated in to YSI.
 	06/08/10:
 		First version
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -7,15 +7,15 @@
 <section>
 					y_colours
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	This holds the colour information that used to be part of the text system
 	but which is far more useful than just for text.  This now supports the full
 	set of X11 colours, both by name and by definition.  You can also define
 	your own if you so choose (up to 32 - should be enough given that this
 	includes the X11 colours).
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	06/01/14:
 		Added embeddable versions of all colours.
 		Cached all macros for faster compilation.
@@ -28,6 +28,7 @@
 		Added colourspace resolution for converting {FF0000} to ~r~.
 	25/11/10:
 		First version.
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

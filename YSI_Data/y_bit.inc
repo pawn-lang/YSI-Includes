@@ -7,7 +7,7 @@
 <section>
 					y_bit
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Provides functions for bit manipulation and bit arrays greater than 32bits.
 	The arrays are usually bigger than required due to cell boundaries but this
 	shouldn't cause a major problem (bit tests on the 101st bit of a 100 bit
@@ -15,9 +15,9 @@
 	
 	Note that y_commands has a few optimisations which bypass the code in here
 	so any modifications to bit array layouts will need to be reflected there.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.2
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	21/10/12:
 		Changed "Bit_Display" to print in the correct order.
 	22/02/12:
@@ -32,44 +32,25 @@
 		Added Bit_SetAll
 	15/04/07:
 		First version.
-<subsection>Functions</subsection>
-	Public:
-		-
-	Core:
-		-
-	Stock:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Stock</em><ul>
 		Bit_Set - Sets a slot to the given value.
 		Bit_Get - Gets a slot state.
 		Bit_SetAll - Sets all the slots in an array to the same thing.
 		Bit_GetCount - Gets the number of 1s in a bit array.
-	Static:
-		-
-	Inline:
+</ul></li><li><em>Inline</em><ul>
 		Bit_Bits - Gets the number of cells required for a bit array.
 		Bit_Let - Sets a slot to 1.
 		Bit_Vet - Sets a slot to 0.
 		Bit_GetBits - Gets the bit at a slot unsafely.
-	API:
-		-
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Definitions</subsection><ul>
 	CELLSHIFT - Number of bits that can hold "cellbits"
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
+</ul></li></ul><subsection>Tags</subsection><ul>
 	Bit - Bit array type.
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
-		-
-<subsection>Commands</subsection>
+</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Compile options</subsection><ul>
 	-
-<subsection>Compile options</subsection>
-	-
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

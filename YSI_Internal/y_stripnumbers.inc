@@ -7,7 +7,7 @@
 <section>
 					y_stripnumbers
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Removes tag overrides which are actually numbers.  This allows for:
 		
 		uvar g_a[MAX_PLAYERS][E_SOME_ENUM];
@@ -15,48 +15,19 @@
 		
 	Without stripping you would end with code doing "42:0" or getting a tag
 	mismatch on "E_SOME_ENUM", both of which are problems.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
-	-
-<subsection>Functions</subsection>
-	Public:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>API</em><ul>
 		-
-	Core:
+</ul></li></ul><subsection>Hooks</subsection><ul>
 		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-	Hooks:
-		-
-<subsection>Callbacks</subsection>
+</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Operators</subsection><ul>
 	-
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Natives</subsection><ul>
 	-
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
-		-
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
-Natives:
-	-
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

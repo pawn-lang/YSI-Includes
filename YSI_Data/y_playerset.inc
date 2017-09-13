@@ -7,16 +7,17 @@
 <section>
 					y_playerset
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	This code is a huge abstraction of collections of players.  It allows you to
 	define functions which take one or more players, specified in a number of
 	formats, and perform the code for all those player.  Essentially it is an
 	abstraction of loops over players.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	30/04/11:
 		First version
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

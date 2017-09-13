@@ -2,7 +2,7 @@
 <section>
 					y_loader
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Loads MTA XML format map files for use with the object and race systems.
 Legal:
 	Copyright (C) 2007 Alex "Y_Less" Cole
@@ -21,51 +21,30 @@ Legal:
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 	MA 02110-1301, USA.
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	12/10/07:
 		Added Loader_AddHandler.
 		Added Loader_GetRace.
 	24/08/07:
 		First version.
-<subsection>Functions</subsection>
-	Public:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Public</em><ul>
 		Loader_Spawn - Processes a loaded spawn point.
 		Loader_Check - Processes a loaded checkpoint.
 		Loader_Obj - Processes a loaded object.
-	Core:
+</ul></li><li><em>Core</em><ul>
 		Loader_Loader - Initialises data.
-	Stock:
+</ul></li><li><em>Stock</em><ul>
 		Loader_Parse - Loads a file.
 		Loader_AddHandler - Adds a custom handle for the race file.
 		Loader_GetRace - Returns the current race handle.
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
-	-
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
+</ul></li></ul><subsection>Tags</subsection><ul>
 	e_RACE_FLAGS - Race data flag.
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
+</ul></li></ul><subsection>Variables</subsection><ul>
+<li><em>Static</em><ul>
 		YSI_g_sXMLRules - Handle to the XML parse rule set.
 		YSI_g_sCurRace - Handle to the current race being built.
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

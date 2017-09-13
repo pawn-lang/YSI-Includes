@@ -7,58 +7,35 @@
 <section>
 					y_zonepulse
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Gradually fades a zone's colour between one colour and another, then back.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.1
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	19/02/12:
 		First version.
-<subsection>Functions</subsection>
-	Public:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Public</em><ul>
 		__GangZonePulse - The timer that does the hard work.
-	Core:
-		-
-	Stock:
+</ul></li><li><em>Stock</em><ul>
 		GangZonePulse - Pulse a zone for player or collection of players.
 		GangZonePulseForPlayer - Pulse a zone for a player.
 		GangZonePulseForAll - Pulse a zone for everyone.
 		GangZoneStopPulse - Stop a zone pulsing for a set of players.
 		GangZoneStopPulseForPlayer - Stop a zone pulsing for a single player.
 		GangZoneStopPulseForAll - Stop a zone pulsing for everyone.
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-<subsection>Callbacks</subsection>
+</ul></li></ul><subsection>Callbacks</subsection><ul>
 	-
-Hooks:
+</ul></li></ul><subsection>Hooks</subsection><ul>
 	-
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Macros</subsection><ul>
 	-
-<subsection>Enums</subsection>
+</ul></li></ul><subsection>Keywords</subsection><ul>
 	-
-<subsection>Macros</subsection>
-	-
-Keywords:
-	-
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
-		-
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
+</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Compile options</subsection><ul>
 	ZONE_PULSE_STAGE_TIME - ms between each pulse frame.
-<subsection>Operators</subsection>
-	-
-Iterators:
-	-
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

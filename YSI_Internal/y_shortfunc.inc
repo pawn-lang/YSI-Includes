@@ -7,54 +7,27 @@
 <section>
 					y_shortfunc
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Defines new names for native functions.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.2
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	21/10/10:
 		Split in to y_shortfunc.
-<subsection>Functions</subsection>
-	Public:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>API</em><ul>
 		-
-	Core:
+</ul></li></ul><subsection>Hooks</subsection><ul>
 		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-	Hooks:
-		-
-<subsection>Callbacks</subsection>
+</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Operators</subsection><ul>
 	-
-<subsection>Definitions</subsection>
-	-
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
-		-
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
-Natives:
+</ul></li></ul><subsection>Natives</subsection><ul>
 	W@ - Renaming of __CallRemoteFunction for size reasons.
 	V@ - Renaming of getproperty for size reasons.
 	S@ - Renaming of setproperty for size reasons.
 	P@ - Renaming of __CallLocalFunction for size reasons.
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

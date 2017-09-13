@@ -7,13 +7,14 @@
 <section>
 					y_functional
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Lambda functions and functional program functions - map, fold, etc.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	09/09/17:
 		First documentation.
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

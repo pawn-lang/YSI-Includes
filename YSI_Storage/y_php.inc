@@ -7,21 +7,18 @@
 <section>
 					y_php
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Sends and receives data from a PHP server with shmop installed.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.1
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	25/02/12:
 		First version.
-<subsection>Functions</subsection>
-	Stock:
+</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
+<li><em>Global</em><ul>
 		-
-	Inline:
-		-
-<subsection>Variables</subsection>
-	Global:
-		-
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

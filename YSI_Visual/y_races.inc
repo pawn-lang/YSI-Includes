@@ -7,11 +7,11 @@
 <section>
 					y_races
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Create, manage, and run races.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	2.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	25/02/12:
 		Extracted most of the code to a separate file.
 	17/03/11:
@@ -19,6 +19,7 @@
 		Updated OnPlayerUpdate code using Google63's SCTRL jump code.
 	06/08/10:
 		First version
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

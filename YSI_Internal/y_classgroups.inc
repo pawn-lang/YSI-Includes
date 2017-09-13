@@ -7,14 +7,15 @@
 <section>
 					y_classes
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Allows for advanced class selection options such as skins only certain
 	people can see and actually removing skins from class selection.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	29/11/10:
 		First version
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

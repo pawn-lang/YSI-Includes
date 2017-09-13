@@ -7,17 +7,18 @@
 <section>
 					y_playerarray
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	This code provides arrays of players who can do things.  This is for support
 	of the text system which can take arrays of player ids, bit arrays or just a
 	single ID.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	25/02/11:
 		Scrapped pointless "playing" code I was unhappy with.
 	29/11/10:
 		First version
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

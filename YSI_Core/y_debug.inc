@@ -7,7 +7,7 @@
 <section>
 					y_debug
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Ensures debug levels are set and defines debug functions.
 	
 	General debug levels:
@@ -23,52 +23,27 @@
 	
 	If you use P:0 you get an optional debug print controlled by the global
 	state ysi_debug - which is either on or off.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	06/08/10:
 		Added new syntax.
 		Added level 0 debugging with state controlled functions.
 	15/04/07:
 		First version.
-<subsection>Functions</subsection>
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Inline</em><ul>
 		Debug_Code - Runs defined code if a certain level is active.
 		Debug_Print - Prints the formatted string provided at the given level.
-	API:
-		-
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Definitions</subsection><ul>
 	P:&lt;0-6&gt; - Print a message.
 	P:C - Run debug code.
 	P:E - Print an error message.
 	P:W - Print a warning message.
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
-		-
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
+</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Compile options</subsection><ul>
 	_DEBUG - Debugging level to use.
-<subsection>Operators</subsection>
-	-
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

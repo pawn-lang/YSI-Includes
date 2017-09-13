@@ -7,13 +7,14 @@
 <section>
 					y_profiling
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Runs any functions named as profilings when the Profiling_Run function is called.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	17/12/16:
 		First Version
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

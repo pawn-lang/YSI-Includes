@@ -7,13 +7,14 @@
 <section>
 					y_mock
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Wrap natives to return known fake values for testing.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	09/09/17:
 		First documentaiton.
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

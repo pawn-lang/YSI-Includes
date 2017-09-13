@@ -7,7 +7,7 @@
 <section>
 					y_flooding
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Allows a limited number of connections from a single IP.
 Legal:
 	Version: MPL 1.1
@@ -73,47 +73,24 @@ Legal:
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
 	
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	15/11/10:
 		Updated to YSI 1.0.
 	11/03/08:
 		First version.
-<subsection>Functions</subsection>
-	Public:
-		-
-	Core:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Core</em><ul>
 		OnPlayerConnect - Called to check IPs.
 		OnScriptInit - Sets the OnPlayerConnect function flag.
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
+</ul></li><li><em>API</em><ul>
 		SetMaxConnections - Sets the max allowed connections from an IP.
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
-	-
-<subsection>Enums</subsection>
+</ul></li></ul><subsection>Enums</subsection><ul>
 	e_FLOOD_ACTION - What to do if too many connections form.
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
+</ul></li></ul><subsection>Variables</subsection><ul>
+<li><em>Static</em><ul>
 		YSI_g_sPlayerIPs - People's stored IPs for speed.
 		YSI_g_sMaxConnections - Data for the script.
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

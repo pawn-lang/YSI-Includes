@@ -7,16 +7,17 @@
 <section>
 					y_td
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Provides a wrapper to the SA:MP text_draw functions offering much
 	improved functionality including XML definable styles, safe display,
 	timed displays, styles and text separated, styles updateable dynamically
 	and more.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	06/08/10:
 		First version
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

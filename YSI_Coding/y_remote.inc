@@ -7,56 +7,33 @@
 <section>
 					y_remote
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Wrapper for "__CallRemoteFunction".  Enforces some features like no returns
 	and arrays being followed by their length.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	03/01/12:
 		Added void: and string: returns.
 	04/10/12:
 		Added local versions of the function for no master system servers.
-<subsection>Functions</subsection>
-	Public:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>API</em><ul>
 		-
-	Core:
+</ul></li></ul><subsection>Hooks</subsection><ul>
 		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-	Hooks:
-		-
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
-	-
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
+</ul></li></ul><subsection>Macros</subsection><ul>
 	remotefunc - Define a function to be called remotely (use like "stock").
 	broadcastfunc - Call the function, but in all scripts.
 	localfunc - Call the function by name, not address, in the current script.
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
-		-
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
+</ul></li></ul><subsection>Variables</subsection><ul>
+</ul><subsection>Compile options</subsection><ul>
 	YSI_NO_MASTER - Disable all knowledge of other scripts.
-<subsection>Operators</subsection>
+</ul></li></ul><subsection>Operators</subsection><ul>
 	-
-Natives:
+</ul></li></ul><subsection>Natives</subsection><ul>
 	-
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

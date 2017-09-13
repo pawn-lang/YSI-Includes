@@ -7,11 +7,11 @@
 <section>
 					y_users
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Provides access to a user system for registering and saving users.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	2.2
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	02/02/13:
 		Added bits and join timestamp to preload data.
 		Added backwards compatible salting to the hash.
@@ -20,40 +20,11 @@
 		Added language to the top-level player data (needed for login).
 	11/11/11:
 		First version.
-<subsection>Functions</subsection>
+</ul></li></ul><subsection>Functions</subsection><ul>
 	Public
 		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-<subsection>Callbacks</subsection>
-	-
-<subsection>Definitions</subsection>
-	-
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
-		-
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
+</ul></li></ul><subsection>Variables</subsection><ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

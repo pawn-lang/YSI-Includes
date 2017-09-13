@@ -2,17 +2,18 @@
 <section>
 					y_unique
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Defines a symbol differently every time it is included.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	19/04/13:
 		Upped the limit to 343.
 		Changed to a 7-ary tree.
 		Reversed check order so smallest numbers come first.
 	01/05/11:
 		First version.
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

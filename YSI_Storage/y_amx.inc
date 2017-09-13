@@ -7,17 +7,18 @@
 <section>
 					y_amx
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Allows a script access to information about itself, such as function names.
 	This can be used for a range of things, including automatic callback hooking
 	and testing.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	13/11/13:
 		Simplified the main macros to work across multiple lines.
 	06/08/10:
 		First version
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

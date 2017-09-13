@@ -2,7 +2,7 @@
 <section>
 					y_foreach
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Provides efficient looping through sparse data sets, such as connected
 	players.  Significantly improved from the original version to be a generic
 	loop system, rather then purely a player loop system.  When used for
@@ -15,9 +15,9 @@
 	
 		http://forum.sa-mp.com/showthread.php?t=481877
 	
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.4
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	29/03/15:
 		More testing.
 		Repaired special iterators.
@@ -88,22 +88,18 @@
 		Fixed version number.
 	08/09/07:
 		First version.
-<subsection>Functions</subsection>
-	Public:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Public</em><ul>
 		OnPlayerDisconnect - Called when a player leaves to remove them.
 		OnPlayerConnect - Called when a player connects to add them.
-	Core:
-		-
-	Stock:
+</ul></li><li><em>Stock</em><ul>
 		Iter_ShowArray - Displays the contents of the array.
 		Iter_AddInternal - Add a value to an iterator.
 		Iter_RemoveInternal - Remove a value from an iterator.
 		Iter_RandomInternal - Get a random item from an iterator.
 		Iter_FreeInternal - Gets the first free slot in the iterator.
 		Iter_InitInternal - Initialises a multi-dimensional iterator.
-	Static:
-		-
-	Inline:
+</ul></li><li><em>Inline</em><ul>
 		Iter_Create - Create a new iterator value set.
 		Iter_Add - Wraps Iter_AddInternal.
 		Iter_Remove - Wraps Iter_RemoveInternal.
@@ -118,46 +114,35 @@
 		Iter_Count2 - Gets the number of items in an iterator array.
 		Iter_Debug2 - Wraps around Iter_ShowArray for arrays.
 		Iter_Free2 - Wraps around Iter_FreeInternal for arrays.
-	API:
-		-
-<subsection>Callbacks</subsection>
+</ul></li></ul><subsection>Callbacks</subsection><ul>
 	-
-Hooks:
+</ul></li></ul><subsection>Hooks</subsection><ul>
 	Iter_OnPlayerConnect - Hook for the OnPlayerConnect callback.
 	Iter_OnPlayerDisconnect - Hook for the OnPlayerDisconnect callback.
 	Iter_OnGameModeInit - Only exists to make the code compile correctly...
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Macros</subsection><ul>
 	-
-<subsection>Enums</subsection>
-	-
-<subsection>Macros</subsection>
-	-
-Keywords:
+</ul></li></ul><subsection>Keywords</subsection><ul>
 	foreach - Command to loop an iterator.
 	foreachex - Like foreach but without a new variable.
 	foreach2 - Command to loop through an iterator array.
 	foreachex - Like foreach2 but without a new variable.
-<subsection>Tags</subsection>
+</ul></li></ul><subsection>Tags</subsection><ul>
 	Iterator - Declare an iterator.
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
+</ul></li></ul><subsection>Variables</subsection><ul>
+<li><em>Static</em><ul>
 		YSI_g_OPC - Records wether Iter_OnPlayerConnect exists for speed.
 		YSI_g_OPDC - Records wether Iter_OnPlayerDisconnect exists for speed.
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
+</ul></li></ul><subsection>Compile options</subsection><ul>
 	YSI_ITTER_NO_SORT - Removed.
 	FOREACH_NO_BOTS - Remove the bot iterators for smaller code.
 	FOREACH_NO_PLAYERS - Remove all default code for player itteration.
-<subsection>Operators</subsection>
-	-
-Iterators:
+</ul></li></ul><subsection>Iterators</subsection><ul>
 	Player - List of all players connected.
 	Bot - List of all bots (npcs) connected.
 	NPC - Alias of Bot.
 	Character - All players and bots.
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

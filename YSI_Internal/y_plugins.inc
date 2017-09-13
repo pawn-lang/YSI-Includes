@@ -7,14 +7,15 @@
 <section>
 					y_plugins
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Configuration and detection for third-party SA:MP plugins (including
 	ones by Y_Less).
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	1.0
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	21/10/12:
 		First version
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

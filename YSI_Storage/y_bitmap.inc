@@ -7,23 +7,20 @@
 <section>
 					y_bitmap
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Code to generate images on the server in the bitmap format.  This is by far
 	the simplest format to write to as it is just a huge array of colours (at
 	least 24-bit bitmaps are, and we only do them).
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.1
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	29/03/13:
 		First version.
-<subsection>Functions</subsection>
-	Stock:
+</ul></li></ul><subsection>Functions</subsection><ul>
+</ul><subsection>Variables</subsection><ul>
+<li><em>Global</em><ul>
 		-
-	Inline:
-		-
-<subsection>Variables</subsection>
-	Global:
-		-
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

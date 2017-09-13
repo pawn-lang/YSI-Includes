@@ -7,11 +7,11 @@
 <section>
 					y_areas
 </section>
-<subsection>Description</subsection>
+</ul></li></ul><subsection>Description</subsection><ul>
 	Handles area checks for player location based code not involving CPs.
-<subsection>Version</subsection>
+</ul></li></ul><subsection>Version</subsection><ul>
 	0.3
-<subsection>Changelog</subsection>
+</ul></li></ul><subsection>Changelog</subsection><ul>
 	01/12/12:
 		Added ovals and ovoids.
 		Set cuboids to require only one slot in memory.
@@ -28,19 +28,19 @@
 		Made Area_GetPlayerArea safe.
 	08/05/07:
 		First version.
-<subsection>Functions</subsection>
-	Public:
+</ul></li></ul><subsection>Functions</subsection><ul>
+<li><em>Public</em><ul>
 		Area_Loop - Main loop for checking who's where.
 		Area_Remote - Does minor functions remotely.
 		Area_AddRemote - Adds areas remotely.
 		YSIM_Areas - Master system interface.
 		Area_Broadcast - Recieves transmitted areas.
 		Area_UpdateEmpty - Resets the empty array after master change.
-	Core:
+</ul></li><li><em>Core</em><ul>
 		Area_Area - Constructor.
 		Area_CheckArea - Gets an area's type anx calls the relevant function.
 		Area_OnPlayerConnect - Called when a player connects.
-	Stock:
+</ul></li><li><em>Stock</em><ul>
 		Area_Delete - Deletes an area.
 		Area_AddCube - Adds a cube.
 		Area_AddBox - Adds a box.
@@ -53,7 +53,7 @@
 		Area_SetAllWorlds - Sets wether all worlds have this are.
 		Area_SetWorld - Sets wether this world has this area.
 		Area_IsValid - Checks if an area is valid.
-	Static:
+</ul></li><li><em>Static</em><ul>
 		Area_IsInCircle - Checks if a player is in this circular area.
 		Area_IsInSphere - Checks if a player is in this spherical area.
 		Area_IsInPoly - Checks if a player is in this polygonal area.
@@ -61,43 +61,30 @@
 		Area_IsInBox - Checks if a player is in this rectangular area.
 		Area_AddToUnused - Adds a area pointer to the unused list.
 		Area_GetFreeSlot - Gets the next free area slot.
-	Inline:
+</ul></li><li><em>Inline</em><ul>
 		Area_IsActive - Checks if an area is active.
 		Area_GetEmptySlotCount - Gets the number of empty slots.
 		Area_AddSlots - Removes slots from the unused count.
-	API:
-		-
-<subsection>Callbacks</subsection>
+</ul></li></ul><subsection>Callbacks</subsection><ul>
 	OnPlayerEnterArea - Called when a player enters an area.
 	OnPlayerLeaveArea - Called when a player leaves an area.
-<subsection>Definitions</subsection>
+</ul></li></ul><subsection>Definitions</subsection><ul>
 	MAX_AREAS - Max number of areas.
 	NO_AREA - Fail return.
 	AREA_NO_NEXT - Marker for end of a list.
 	AREA_WORLDS - Number of worlds an area can be in.
 	AREA_WORLD_COUNT - Number of cells required for a bit array of AREA_WORLDS.
-<subsection>Enums</subsection>
+</ul></li></ul><subsection>Enums</subsection><ul>
 	e_AREA_FLAGS - Flags for each area.
 	E_AREA - Structure for part of an areas data.
-<subsection>Macros</subsection>
-	-
-<subsection>Tags</subsection>
-	-
-<subsection>Variables</subsection>
-	Global:
-		-
-	Static:
+</ul></li></ul><subsection>Variables</subsection><ul>
+<li><em>Static</em><ul>
 		YSI_g_sUnusedAreas - Pointer to the first unused area.
 		YSI_g_sLastUnused - Pointer to the last unused area.
 		YSI_g_sFreeCount - Number of unused slots.
 		YSI_g_sAreas - Array of area data.
 		YSI_g_sPlayerArea - Array of players' current areas.
-<subsection>Commands</subsection>
-	-
-<subsection>Compile options</subsection>
-	-
-<subsection>Operators</subsection>
-	-
+</ul></li></ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1
