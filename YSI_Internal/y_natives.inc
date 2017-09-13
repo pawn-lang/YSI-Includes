@@ -4,14 +4,14 @@
 #define _INC_y_natives
 
 /*+
-<section>
+<file>
 					y_natives
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Obsolete, but still required by y_lock.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	25/02/12:
 		First version.
 </ul>

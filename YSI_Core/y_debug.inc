@@ -4,10 +4,10 @@
 #define _INC_y_debug
 
 /**
-<section>
+<file>
 					y_debug
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Ensures debug levels are set and defines debug functions.
 	
 	General debug levels:
@@ -23,21 +23,21 @@
 	
 	If you use P:0 you get an optional debug print controlled by the global
 	state ysi_debug - which is either on or off.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	06/08/10:
 		Added new syntax.
 		Added level 0 debugging with state controlled functions.
 	15/04/07:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Inline</em><ul>
 <li><seealso name="Debug_Code" />
 		- Runs defined code if a certain level is active.</li>
 <li><seealso name="Debug_Print" />
 		- Prints the formatted string provided at the given level.</li>
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><section>Definitions</section><ul>
 <li><seealso name="P:&lt;0-6&gt;" />
 		- Print a message.</li>
 <li><seealso name="P:C" />
@@ -46,7 +46,7 @@
 		- Print an error message.</li>
 <li><seealso name="P:W" />
 		- Print a warning message.</li>
-</ul><subsection>Compile options</subsection><ul>
+</ul><section>Compile options</section><ul>
 <li><seealso name="_DEBUG" />
 		- Debugging level to use.</li>
 </ul>

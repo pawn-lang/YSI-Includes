@@ -423,7 +423,7 @@ global Command_AddAlt(oidx, string:cmd[])
 	Does all the command and error handling.  The macro version takes four
 	parameters:
 	
-	<c>Command_ReProcess(playerid,cmdtext,help,force);</c>
+	<code>Command_ReProcess(playerid,cmdtext,help,force);</code>
 	
 	<c>help</c> and <c>force</c> are combined together in to a bitmap.
 </remarks>

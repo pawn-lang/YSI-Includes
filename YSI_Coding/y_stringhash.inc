@@ -4,14 +4,14 @@
 #define _INC_y_stringhash
 
 /**
-<section>
+<file>
 					y_stringhash
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Allows you to hash strings at compile time to use them in a switch.
-<subsection>Version</subsection>
+<section>Version</section>
 	2.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	06/03/11:
 		Changed the order of some letters to better support numbers in _I.
 	01/03/11:
@@ -22,11 +22,11 @@
 		Added FNV1 and FNV1a hashes to avoid collisions.
 	19/08/10:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Stock</em><ul>
 <li><seealso name="YHash" />
 		- Generate a string hash at run time.</li>
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><section>Definitions</section><ul>
 <li><seealso name="_H" />
 		- Generate a string hash at compile time.</li>
 <li><seealso name="_I" />

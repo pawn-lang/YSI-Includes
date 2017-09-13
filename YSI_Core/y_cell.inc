@@ -4,15 +4,15 @@
 #define _INC_y_cell
 
 /**
-<section>
+<file>
 					y_cell
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Provides a few functions for manipulating the bits in single cells.  Note
 	that this is distinct from the y_bit library.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.2
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	18/06/11:
 		First version.
 </ul>
@@ -405,7 +405,7 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	the number "0", which has NO bits set.  Check that the number is valid
 	before passing it to this function.
 	
-	See: http://supertech.csail.mit.edu/papers/debruijn.pdf
+	See: <a href="http://supertech.csail.mit.edu/papers/debruijn.pdf" />
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -464,7 +464,7 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 	Example: 0
 	Returns: 0
 	
-	See: http://supertech.csail.mit.edu/papers/debruijn.pdf
+	See: <a href="http://supertech.csail.mit.edu/papers/debruijn.pdf" />
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -573,7 +573,7 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 	
 	Just read this question, it has a diagram:
 	
-	http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb
+	<a href="http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb" />
 	
 </remarks>
 *//*-------------------------------------------------------------------------**/
@@ -636,7 +636,7 @@ stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 
 stock Cell_PrecomputeMaskPermutation(m)
 {
-	// See also: http://www.hackersdelight.org/hdcodetxt/compress.c.txt
+	// See also: <a href="http://www.hackersdelight.org/hdcodetxt/compress.c.txt" />
 	new
 		mk = ~m << 1,
 		mp,
@@ -679,7 +679,7 @@ stock Cell_CompressRight(GLOBAL_TAG_TYPES:x, m)
 	// Compress the result so that all the masked bits are next to each other,
 	// regardless of their value.
 	// 
-	// http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb
+	// <a href="http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb" />
 	// Also Hackers Delight, section 7-4.
 	// 
 	return Cell_CompressRightPrecomputed(x, m, Cell_PrecomputeMaskPermutation(m));
@@ -704,7 +704,7 @@ stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 	// Compress the result so that all the masked bits are next to each other,
 	// regardless of their value.
 	// 
-	// http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb
+	// <a href="http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb" />
 	// Also Hackers Delight, section 7-5 (2nd edition only, which it turns out I
 	// don't have...)
 	// 

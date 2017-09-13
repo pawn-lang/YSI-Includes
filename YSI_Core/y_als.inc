@@ -123,15 +123,15 @@ Optional plugins:
 #define _INC_y_als
 
 /**
-<section>
+<file>
 					y_als
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Provides a number of macros for making ALS (Advanced Library System)
 	callback hooking simpler.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	29/04/11:
 		Added "call" macro to make testing easier.
 	21/10/10:

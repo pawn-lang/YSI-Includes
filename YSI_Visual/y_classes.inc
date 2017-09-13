@@ -4,15 +4,15 @@
 #define _INC_y_classes
 
 /**
-<section>
+<file>
 					y_classes
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Allows greater control over classes so not everyone has every class.  Uses
 	a form of compression for locations.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	14/04/12:
 		Readded OnRequestSpawn logic.
 		Fixed Class_AddWithGroupSet.
@@ -30,7 +30,7 @@
 		Fixed a few bugs with repeated selection.
 	04/08/07:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Public</em><ul>
 <li><seealso name="Class_AddRemote" />
 		- Adds a class to the remote master.</li>
@@ -92,7 +92,7 @@
 		- Gets a classes angle.</li>
 <li><seealso name="Class_Skin" />
 		- Gets a classes skin.</li>
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><section>Definitions</section><ul>
 <li><seealso name="MAX_CLASSES" />
 		- Maximum number of classes storeable by the system.</li>
 <li><seealso name="CLASS_LEFT" />
@@ -101,12 +101,12 @@
 		- Flag for last internal class viewed.</li>
 <li><seealso name="CLASS_RIGHT" />
 		- Flag for last internal class viewed.</li>
-</ul><subsection>Enums</subsection><ul>
+</ul><section>Enums</section><ul>
 <li><seealso name="e_CLASS_FLAGS" />
 		- Small data for individual classes.</li>
 <li><seealso name="E_CLASS" />
 		- Class data structure.</li>
-</ul><subsection>Variables</subsection><ul>
+</ul><section>Variables</section><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sClasses" />
 		- Data for classes.</li>

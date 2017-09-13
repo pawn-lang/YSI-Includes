@@ -4,14 +4,14 @@
 #define _INC_y_users
 
 /**
-<section>
+<file>
 					y_users
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Provides access to a user system for registering and saving users.
-<subsection>Version</subsection>
+<section>Version</section>
 	2.2
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	02/02/13:
 		Added bits and join timestamp to preload data.
 		Added backwards compatible salting to the hash.

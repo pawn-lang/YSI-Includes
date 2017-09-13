@@ -4,14 +4,14 @@
 #define _INC_y_php
 
 /**
-<section>
+<file>
 					y_php
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Sends and receives data from a PHP server with shmop installed.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	25/02/12:
 		First version.
 </ul>

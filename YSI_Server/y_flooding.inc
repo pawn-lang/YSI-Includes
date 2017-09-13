@@ -4,10 +4,10 @@
 #define _INC_y_flooding
 
 /**
-<section>
+<file>
 					y_flooding
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Allows a limited number of connections from a single IP.
 Legal:
 	Version: MPL 1.1
@@ -73,12 +73,12 @@ Legal:
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
 	
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	15/11/10:
 		Updated to YSI 1.0.
 	11/03/08:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Core</em><ul>
 <li><seealso name="OnPlayerConnect" />
 		- Called to check IPs.</li>
@@ -87,10 +87,10 @@ Legal:
 </ul></li><li><em>API</em><ul>
 <li><seealso name="SetMaxConnections" />
 		- Sets the max allowed connections from an IP.</li>
-</ul></li></ul><subsection>Enums</subsection><ul>
+</ul></li></ul><section>Enums</section><ul>
 <li><seealso name="e_FLOOD_ACTION" />
 		- What to do if too many connections form.</li>
-</ul><subsection>Variables</subsection><ul>
+</ul><section>Variables</section><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sPlayerIPs" />
 		- People's stored IPs for speed.</li>

@@ -4,14 +4,14 @@
 #define _INC_y_mock
 
 /*+
-<section>
+<file>
 					y_mock
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Wrap natives to return known fake values for testing.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	09/09/17:
 		First documentaiton.
 </ul>

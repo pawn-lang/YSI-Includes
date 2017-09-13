@@ -4,16 +4,16 @@
 #define _INC_y_amx
 
 /**
-<section>
+<file>
 					y_amx
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Allows a script access to information about itself, such as function names.
 	This can be used for a range of things, including automatic callback hooking
 	and testing.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	13/11/13:
 		Simplified the main macros to work across multiple lines.
 	06/08/10:

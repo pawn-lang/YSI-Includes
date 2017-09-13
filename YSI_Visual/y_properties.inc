@@ -4,14 +4,14 @@
 #define _INC_y_properties
 
 /**
-<section>
+<file>
 					y_properties
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Handles properties and other common features for some modes.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	03/08/07:
 		Updated timer system.
 	31/07/07:
@@ -29,7 +29,7 @@
 		Updated functions to use checkpoint and area lookups
 	18/04/07:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Public</em><ul>
 <li><seealso name="Property_Loop" />
 		- Does the main system processing.</li>
@@ -146,7 +146,7 @@
 		- Creates a forbidden area.</li>
 <li><seealso name="DestroyProperty" />
 		- Deletes a property from the array.</li>
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><section>Definitions</section><ul>
 <li><seealso name="PROPERTY_LOOP_GRANULARITY" />
 		- Number of itterations of the main loop a second.</li>
 <li><seealso name="MAX_PROP_NAME" />
@@ -159,12 +159,12 @@
 		- Type for salling armour at ammunation.</li>
 <li><seealso name="PROPERTY_SELL_PERCENT" />
 		- % of money got back for a reduced sale.</li>
-</ul><subsection>Enums</subsection><ul>
+</ul><section>Enums</section><ul>
 	e_PROP_FLAGS - Flags for property data.
 	E_PROP_DATA - Data for a property.
 	E_PROP_AMMU - Data for a persons current ammunation menu.
 	<unnamed> - Tagless remote instructions, must have new ones added to the end.
-</ul></li></ul><subsection>Macros</subsection><ul>
+</ul></li></ul><section>Macros</section><ul>
 <li><seealso name="WEAPON_DATA_OFFSET" />
 		- Offset for saving weapons with variable size arrays,</li>
 <li><seealso name="WEAPON_DATA" />
@@ -173,10 +173,10 @@
 		- Like WEAPON_DATA but reads from an array instead.</li>
 <li><seealso name="WEAPON" />
 		- Saves a weapon id in the top byte of a cell.</li>
-</ul><subsection>Tags</subsection><ul>
+</ul><section>Tags</section><ul>
 <li><seealso name="e_PROP_FLAGS" />
 		- Flags.</li>
-</ul><subsection>Variables</subsection><ul>
+</ul><section>Variables</section><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sProperties" />
 		- Array of all property data.</li>
@@ -198,7 +198,7 @@
 		- Temporary store for properties.</li>
 <li><seealso name="YSI_g_sIsMaster" />
 		- Is this script the global master.</li>
-</ul></li></ul><subsection>Commands</subsection><ul>
+</ul></li></ul><section>Commands</section><ul>
 <li><seealso name="buy" />
 		- Lets you buy your current property.</li>
 <li><seealso name="bank" />
@@ -211,7 +211,7 @@
 		- Allows you to take out money.</li>
 <li><seealso name="sell" />
 		- Allows you to sell a property.</li>
-</ul></li></ul><subsection>Properties</subsection><ul>
+</ul></li></ul><section>Properties</section><ul>
 <li><seealso name="LReqProp" />
 		- Return data from a remote script.</li>
 <li><seealso name="110953013" />

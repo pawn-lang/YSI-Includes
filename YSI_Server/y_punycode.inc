@@ -4,26 +4,26 @@
 #define _INC_y_punycode
 
 /**
-<section>
+<file>
 					y_punycode
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Functions for converting unicode strings to and from punycode, to be
 	represented in just ASCII characters.  Based on several public
 	implementations and the RFC, adapted for PAWN.  For more information see:
 	
-	https://en.wikipedia.org/wiki/Punycode
+	<a href="https://en.wikipedia.org/wiki/Punycode" />
 	
 	Also includes a function that hooks the "HTTP" function to allow for
 	internationalised domain names with that function.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	29/04/13:
 		Added Puny_HTTP.
 	26/04/13:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Stock</em><ul>
 <li><seealso name="Puny_Encode" />
 		- Convert a Unicode string to Punycode.</li>

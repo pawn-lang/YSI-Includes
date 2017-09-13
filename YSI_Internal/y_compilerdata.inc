@@ -13,8 +13,9 @@ This information goes very close to the top of the generated XML documentation
 (because of include dependency orders), but doesn't appear in the visual output.
 
 There is a bug in the compiler related to outputting documentation on state
-transitions (https://github.com/Zeex/pawn/issues/184).  So after generation of
-the XML file, you should clean it up with the following RegEx replacement:
+transitions (<a href="https://github.com/Zeex/pawn/issues/184" />).  So after
+generation of the XML file, you should clean it up with the following RegEx
+replacement:
 
 Search: <transition target[^/]+/>
 Replace: (nothing)
@@ -27,24 +28,24 @@ RegEx.  I also put the search at the top of this block so it is easier to find
 in the output code.
 -->
 *//*+
-<section>
+<file>
 					y_compilerdata
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Detect various information about the compiler, including which pass it is
 	currently executing, what flags it was compiled with, and which version it
 	is.  Provide that information to the rest of the script through a series of
 	consistent macros.  Used by y_groups to include code that might be needed
 	before it is known if it is needed (it can be dumped later).
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	12/09/17:
 		Renamed everything for consistency.
 		Documented macros.
 	14/04/13:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Static</em><ul>
 <li><seealso name="__CompilerStringReturn" />
 		- Assembly for returning a string to its callers' caller.  Used to
@@ -54,7 +55,7 @@ in the output code.
 </ul></li><li><em>Inline</em><ul>
 <li><seealso name="__COMPILER_STRING_RETURN" />
 		- Correctly return a string from a varargs function.</li>
-</ul></li></ul><subsection>Macros</subsection><ul>
+</ul></li></ul><section>Macros</section><ul>
 <li><seealso name="__COMPILER_PASS" />
 		- Which pass the compiler is currently running.</li><to_ul></li>
 <li><seealso name="__COMPILER_DOCUMENTING" />

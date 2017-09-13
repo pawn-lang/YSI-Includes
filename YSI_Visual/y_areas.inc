@@ -4,14 +4,14 @@
 #define _INC_y_areas
 
 /**
-<section>
+<file>
 					y_areas
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Handles area checks for player location based code not involving CPs.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.3
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	01/12/12:
 		Added ovals and ovoids.
 		Set cuboids to require only one slot in memory.
@@ -28,7 +28,7 @@
 		Made Area_GetPlayerArea safe.
 	08/05/07:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Public</em><ul>
 <li><seealso name="Area_Loop" />
 		- Main loop for checking who's where.</li>
@@ -96,12 +96,12 @@
 		- Gets the number of empty slots.</li>
 <li><seealso name="Area_AddSlots" />
 		- Removes slots from the unused count.</li>
-</ul></li></ul><subsection>Callbacks</subsection><ul>
+</ul></li></ul><section>Callbacks</section><ul>
 <li><seealso name="OnPlayerEnterArea" />
 		- Called when a player enters an area.</li>
 <li><seealso name="OnPlayerLeaveArea" />
 		- Called when a player leaves an area.</li>
-</ul><subsection>Definitions</subsection><ul>
+</ul><section>Definitions</section><ul>
 <li><seealso name="MAX_AREAS" />
 		- Max number of areas.</li>
 <li><seealso name="NO_AREA" />
@@ -112,12 +112,12 @@
 		- Number of worlds an area can be in.</li>
 <li><seealso name="AREA_WORLD_COUNT" />
 		- Number of cells required for a bit array of AREA_WORLDS.</li>
-</ul><subsection>Enums</subsection><ul>
+</ul><section>Enums</section><ul>
 <li><seealso name="e_AREA_FLAGS" />
 		- Flags for each area.</li>
 <li><seealso name="E_AREA" />
 		- Structure for part of an areas data.</li>
-</ul><subsection>Variables</subsection><ul>
+</ul><section>Variables</section><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sUnusedAreas" />
 		- Pointer to the first unused area.</li>

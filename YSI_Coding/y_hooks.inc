@@ -11,14 +11,14 @@
 #define _INC_y_hooks
 
 /**
-<section>
+<file>
 					y_hooks
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Automatically hooks any callbacks with a very simple syntax.
-<subsection>Version</subsection>
+<section>Version</section>
 	2.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	25/02/12:
 		Extracted most of the code to a separate file.
 	17/03/11:

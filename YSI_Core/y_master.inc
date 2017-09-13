@@ -149,10 +149,10 @@ Optional plugins:
 #define _INC_y_master
 
 /**
-<section>
+<file>
 					y_master
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Handles distribution of control of code segments across all running scripts
 	with YSI to avoid conflicts of checkpoint streamers etc and allow features
 	like "/commands" displaying all commands on the server.
@@ -170,9 +170,9 @@ Optional plugins:
 	while to figure out)...
 	
 	This is now over 2000 lines of repetitive and complex macros!
-<subsection>Version</subsection>
+<section>Version</section>
 	0.2
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	06/08/10:
 		Managed the ultimate - got completely transparent inclusion!
 	05/08/10:
@@ -188,7 +188,7 @@ Optional plugins:
 		Added code for a script to remove itself from the global list.
 	11/10/07:
 		Not first version but added documentation months late.
-</ul><subsection>Macros</subsection><ul>
+</ul><section>Macros</section><ul>
 <li><seealso name="RF" />
 		- Declare a function which may be remote.</li>
 <li><seealso name="RV" />
@@ -205,11 +205,11 @@ Optional plugins:
 		- Combination of P and C.</li>
 <li><seealso name="RFCP" />
 		- Combination of P and C.</li>
-</ul><subsection>Variables</subsection><ul>
+</ul><section>Variables</section><ul>
 <li><em>Global</em><ul>
 <li><seealso name="_@" />
 		- ID of this script.</li>
-</ul></li></ul><subsection>Compile options</subsection><ul>
+</ul></li></ul><section>Compile options</section><ul>
 <li><seealso name="YSI_NO_MASTER" />
 		- Don't use the master system.</li>
 <li><seealso name="YSI_IS_CLIENT" />

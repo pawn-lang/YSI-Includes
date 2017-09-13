@@ -4,15 +4,15 @@
 #define _INC_y_ini
 
 /**
-<section>
+<file>
 					y_ini
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Reads the INI and also exports a number of functions to other "classes" for
 	easy reading of data files there.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.5
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	07/01/13:
 		Rewrote almost everything!
 		Split in to multiple files.
@@ -55,7 +55,7 @@
 		Updated header documentation with more than changelog.
 	24/03/07:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Stock</em><ul>
 <li><seealso name="INI_Load" />
 		- Loads an INI file using standard features.</li>
@@ -103,7 +103,7 @@
 		- Parse a binary INI entry.</li>
 <li><seealso name="INI_String" />
 		- Parse a string INI entry.</li>
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><section>Definitions</section><ul>
 <li><seealso name="MAX_INI_TAG" />
 		- Maximum length of an INI tagname.</li>
 <li><seealso name="MAX_INI_ENTRY_NAME" />
@@ -118,18 +118,18 @@
 		- Maximum concurrent files open for writing.</li>
 <li><seealso name="MAX_INI_TAGS" />
 		- Number of tags the buffer can hold data for at once.</li>
-</ul><subsection>Enums</subsection><ul>
+</ul><section>Enums</section><ul>
 <li><seealso name="E_INI_WRITE" />
 		- Storage for entries to be written.</li>
 <li><seealso name="E_INI_TAGS" />
 		- Data for tags with data.</li>
-</ul><subsection>Macros</subsection><ul>
+</ul><section>Macros</section><ul>
 <li><seealso name="INI_Parse" />
 		- Header for ini parsing functions.</li>
-</ul><subsection>Tags</subsection><ul>
+</ul><section>Tags</section><ul>
 <li><seealso name="INI" />
 		- Handle to an INI file being written to.</li>
-</ul><subsection>Variables</subsection><ul>
+</ul><section>Variables</section><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sINIWriteBuffer" />
 		- Basic data to be written.</li>

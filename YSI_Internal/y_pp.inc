@@ -4,14 +4,14 @@
 #define _INC_y_pp
 
 /*+
-<section>
+<file>
 					y_pp
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	More complex processing in the pre-processor.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	25/10/10:
 		Integrated in to YSI.
 	06/08/10:

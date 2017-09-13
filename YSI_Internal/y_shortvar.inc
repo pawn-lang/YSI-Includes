@@ -4,14 +4,14 @@
 #define _INC_y_shortvar
 
 /*+
-<section>
+<file>
 					y_shortvar
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Declares a few variables with very short names, used all over YSI.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.2
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	21/10/10:
 		Split in to y_shortfunc.
 </ul>

@@ -4,27 +4,27 @@
 #define _INC_y_remote
 
 /**
-<section>
+<file>
 					y_remote
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Wrapper for "__CallRemoteFunction".  Enforces some features like no returns
 	and arrays being followed by their length.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	03/01/12:
 		Added void: and string: returns.
 	04/10/12:
 		Added local versions of the function for no master system servers.
-</ul><subsection>Macros</subsection><ul>
+</ul><section>Macros</section><ul>
 <li><seealso name="remotefunc" />
 		- Define a function to be called remotely (use like "stock").</li>
 <li><seealso name="broadcastfunc" />
 		- Call the function, but in all scripts.</li>
 <li><seealso name="localfunc" />
 		- Call the function by name, not address, in the current script.</li>
-</ul><subsection>Compile options</subsection><ul>
+</ul><section>Compile options</section><ul>
 <li><seealso name="YSI_NO_MASTER" />
 		- Disable all knowledge of other scripts.</li>
 </ul>

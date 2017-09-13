@@ -4,15 +4,15 @@
 #define _INC_y_plugins
 
 /*+
-<section>
+<file>
 					y_plugins
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Configuration and detection for third-party SA:MP plugins (including
 	ones by Y_Less).
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	21/10/12:
 		First version
 </ul>

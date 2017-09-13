@@ -4,14 +4,14 @@
 #define _INC_y_races
 
 /**
-<section>
+<file>
 					y_races
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Create, manage, and run races.
-<subsection>Version</subsection>
+<section>Version</section>
 	2.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	25/02/12:
 		Extracted most of the code to a separate file.
 	17/03/11:

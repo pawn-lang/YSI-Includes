@@ -4,15 +4,15 @@
 #define _INC_y_cgen
 
 /*+
-<section>
+<file>
 					y_cgen
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Large chunks of code that isn't used, so that the space can be reclaimed and
 	reused by other code generating functions.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	09/09/17:
 		First documentaiton.
 </ul>

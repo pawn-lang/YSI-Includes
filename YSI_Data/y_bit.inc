@@ -4,10 +4,10 @@
 #define _INC_y_bit
 
 /**
-<section>
+<file>
 					y_bit
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Provides functions for bit manipulation and bit arrays greater than 32bits.
 	The arrays are usually bigger than required due to cell boundaries but this
 	shouldn't cause a major problem (bit tests on the 101st bit of a 100 bit
@@ -15,9 +15,9 @@
 	
 	Note that y_commands has a few optimisations which bypass the code in here
 	so any modifications to bit array layouts will need to be reflected there.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.2
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	21/10/12:
 		Changed "Bit_Display" to print in the correct order.
 	22/02/12:
@@ -32,7 +32,7 @@
 		Added Bit_SetAll
 	15/04/07:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Stock</em><ul>
 <li><seealso name="Bit_Set" />
 		- Sets a slot to the given value.</li>
@@ -51,10 +51,10 @@
 		- Sets a slot to 0.</li>
 <li><seealso name="Bit_GetBits" />
 		- Gets the bit at a slot unsafely.</li>
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><section>Definitions</section><ul>
 <li><seealso name="CELLSHIFT" />
 		- Number of bits that can hold "cellbits"</li>
-</ul><subsection>Tags</subsection><ul>
+</ul><section>Tags</section><ul>
 <li><seealso name="Bit" />
 		- Bit array type.</li>
 </ul>

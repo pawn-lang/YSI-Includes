@@ -4,15 +4,15 @@
 #define _INC_y_distribute
 
 /*+
-<section>
+<file>
 					y_distribute
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	This library simplifies the task of sending data to the new master script
 	when one takes over from another.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	17/07/13:
 		First version.
 </ul>

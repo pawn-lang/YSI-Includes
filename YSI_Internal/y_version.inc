@@ -4,19 +4,19 @@
 #define _INC_y_version
 
 /*+
-<section>
+<file>
 					y_version
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Checks online to see if there is a newer version of YSI available.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.2
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	26/10/10:
 		Added changelog capabilities.
 	22/10/10:
 		First version.
-</ul><subsection>Hooks</subsection><ul>
+</ul><section>Hooks</section><ul>
 <li>OnGameModeInit</li>
 </ul>
 *//** *//*

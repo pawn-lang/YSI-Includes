@@ -4,16 +4,16 @@
 #define _INC_y_bitmap
 
 /**
-<section>
+<file>
 					y_bitmap
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Code to generate images on the server in the bitmap format.  This is by far
 	the simplest format to write to as it is just a huge array of colours (at
 	least 24-bit bitmaps are, and we only do them).
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	29/03/13:
 		First version.
 </ul>

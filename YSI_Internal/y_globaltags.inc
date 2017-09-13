@@ -4,14 +4,14 @@
 #define _INC_y_globaltags
 
 /*+
-<section>
+<file>
 					y_globaltags
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Declare GLOBAL_TAG_TYPES to define many tag types for function calls.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	25/02/12:
 		First version.
 </ul>

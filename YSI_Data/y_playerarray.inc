@@ -4,16 +4,16 @@
 #define _INC_y_playerarray
 
 /**
-<section>
+<file>
 					y_playerarray
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	This code provides arrays of players who can do things.  This is for support
 	of the text system which can take arrays of player ids, bit arrays or just a
 	single ID.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	25/02/11:
 		Scrapped pointless "playing" code I was unhappy with.
 	29/11/10:

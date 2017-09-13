@@ -4,14 +4,14 @@
 #define _INC_y_profiling
 
 /**
-<section>
+<file>
 					y_profiling
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Runs any functions named as profilings when the Profiling_Run function is called.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	17/12/16:
 		First Version
 </ul>

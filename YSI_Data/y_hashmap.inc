@@ -4,18 +4,18 @@
 #define _INC_y_hashmap
 
 /**
-<section>
+<file>
 					y_hashmap
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Maps string indexes to integer indexes.  Uses a fast hash to get an array
 	slot, then a linked list to resolve collisions.
-<subsection>Version</subsection>
+<section>Version</section>
 	2.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	23/06/13:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Stock</em><ul>
 <li><seealso name="HashMap_Init" />
 		- Associate a hash map with an array.</li>
@@ -27,7 +27,7 @@
 		- Remove a string and its value from a hash map.</li>
 <li><seealso name="HashMap_Set" />
 		- Change the value associated with a key.</li>
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><section>Definitions</section><ul>
 <li><seealso name="HASH_MAP_DATA" />
 		- What should be added to enums to be hash map referenced.</li>
 <li><seealso name="HashMap" />

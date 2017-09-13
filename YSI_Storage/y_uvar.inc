@@ -4,14 +4,14 @@
 #define _INC_y_uvar
 
 /**
-<section>
+<file>
 					y_uvar
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Declares data to be automatically saved and loaded on a per-player basis.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1.3
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	25/02/12:
 		First version.
 </ul>

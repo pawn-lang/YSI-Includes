@@ -221,7 +221,7 @@ stock Bit_SetAll(BitArray:array<>, bool:set, size = sizeof (array))
 </returns>
 <remarks>
 	Code from:
-	http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
+	<a href="http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel" />
 
 native Bit_Count(BitArray:array&lt;&gt;, size = sizeof (array));
 

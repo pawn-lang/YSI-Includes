@@ -4,15 +4,15 @@
 #define _INC_y_dialog
 
 /**
-<section>
+<file>
 					y_dialog
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Provides functions for dealing with dialogs, without needing to worry about
 	IDs or huge "OnDialogResponse" callbacks.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	25/02/12:
 		First version.
 </ul>>
@@ -147,7 +147,7 @@ global Dialog_ObtainID()
 		}
 	}
 	return -1;
-	// http://supertech.csail.mit.edu/papers/debruijn.pdf
+	// <a href="http://supertech.csail.mit.edu/papers/debruijn.pdf" />
 }
 
 foreign Dialog_TryObtainID(id);

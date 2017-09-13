@@ -678,7 +678,7 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 		#endif
 			{
 				P:2("_Group_SetPlayer called: %i, %s, %s, %i", p, Bit_Display(YSI_gGroupPlayers[p]), Bit_Display(g), s);
-				// http://supertech.csail.mit.edu/papers/debruijn.pdf
+				// <a href="http://supertech.csail.mit.edu/papers/debruijn.pdf" />
 				new
 					Bit:cur,
 					Bit:exor,

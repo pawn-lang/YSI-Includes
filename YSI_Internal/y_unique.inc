@@ -1,12 +1,12 @@
 /*+
-<section>
+<file>
 					y_unique
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Defines a symbol differently every time it is included.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	19/04/13:
 		Upped the limit to 343.
 		Changed to a 7-ary tree.

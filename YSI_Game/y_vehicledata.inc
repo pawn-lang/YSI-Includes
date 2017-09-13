@@ -4,27 +4,27 @@
 #define _INC_y_vehicledata
 
 /**
-<section>
+<file>
 					y_vehicledata
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Basic functions for gathering data on various vehicle models.  Things like
 	what sort of vehicle they are and what organisation they belong to.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.2
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	15/03/15:
 		Changed clamp ranges.
 	01/06/14:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Stock</em><ul>
 <li><seealso name="Vehicle_Speed" />
 		- Get current vehicle speed in KMH.</li>
-</ul></li></ul><subsection>Tags</subsection><ul>
+</ul></li></ul><section>Tags</section><ul>
 <li><seealso name="VIM" />
 		- Vehicle Internal Modelid.</li>
-</ul><subsection>Variables</subsection><ul>
+</ul><section>Variables</section><ul>
 <li><em>Global</em><ul>
 <li><seealso name="YSI_gVehicleFlags" />
 		- Data on vehicles.</li>

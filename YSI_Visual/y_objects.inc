@@ -1,16 +1,16 @@
 /**
-<section>
+<file>
 					y_objects
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Handles object streaming for >150 objects per player.  Also provides VW
 	support and improved object attachment (i.e. it works).  New versions
 	combines mine and Peter's streaming systems to narrow down objects by
 	approximation by a grid system then check all objects visible in near
 	by sections.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.2.7
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	27/12/07:
 		Fixed a bug in the moved object list system.
 	26/11/07:
@@ -73,7 +73,7 @@
 		Second version - completely rewritten after a chat with Peter.
 	16/04/07:
 		First version - adapted from my earlier e_objects.inc include.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Public</em><ul>
 <li><seealso name="Object_Loop" />
 		- Main loop for checking.</li>
@@ -200,9 +200,9 @@
 		- Attaches an object to another object.</li>
 <li><seealso name="RemoveObjectFromParent" />
 		- Removes an object from another object.</li>
-</ul></li></ul><subsection>Callbacks</subsection><ul>
+</ul></li></ul><section>Callbacks</section><ul>
 <li><seealso name="	OnDynamicObjectMoved
-</ul><subsection>Definitions</subsection><ul>
+</ul><section>Definitions</section><ul>
 <li><seealso name="OBJECT_SECTOR_SIZE" />
 		- Size of edge of a grid square for approximations.</li><to_ul></li>
 <li><seealso name="MAX_DYN_OBJECTS" />
@@ -225,12 +225,12 @@
 		- Size of bit array of worlds.</li>
 <li><seealso name="OBJECT_PLAYER_COUNT" />
 		- Size of bit array of players.</li>
-</ul><subsection>Enums</subsection><ul>
+</ul><section>Enums</section><ul>
 <li><seealso name="E_OBJECT" />
 		- Structure of the dynamic object data.</li>
 <li><seealso name="e_OBJ_FLAG" />
 		- Flags for the object.</li>
-</ul><subsection>Macros</subsection><ul>
+</ul><section>Macros</section><ul>
 <li><seealso name="OBJECT_SECTOR_EDGE" />
 		- Number of sectors on one edge of the world.</li>
 <li><seealso name="OBJECT_SECTOR_ARRAY" />
@@ -251,10 +251,10 @@
 		- Extension of e_OBJ_FLAG, both move flags together.</li>
 <li><seealso name="NEW_SECTOR" />
 		- Sector based on origin sector and current offset.</li>
-</ul><subsection>Tags</subsection><ul>
+</ul><section>Tags</section><ul>
 <li><seealso name="e_OBJ_FLAG" />
 		- Flags for objects.</li>
-</ul><subsection>Variables</subsection><ul>
+</ul><section>Variables</section><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sObjectSectors" />
 		- Array of pointers to sector object lists.</li>
@@ -266,7 +266,7 @@
 		- Pointer to moving object list.</li>
 <li><seealso name="YSI_g_sNoObjects" />
 		- Pointer to unused object list.</li>
-</ul></li></ul><subsection>Compile options</subsection><ul>
+</ul></li></ul><section>Compile options</section><ul>
 <li><seealso name="NO_PERSONAL_OBJECTS" />
 		- All players see all objects.</li>
 <li><seealso name="NO_OBJECT_ATTACH" />

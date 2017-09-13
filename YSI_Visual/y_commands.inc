@@ -4,15 +4,15 @@
 #define _INC_y_commands
 
 /**
-<section>
+<file>
 					y_commands
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Runs commands registered with the system and calls the required functions.
 	Also handles alternate names and prefixes.  Based very loosely on dcmd.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1.4
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	20/10/10:
 		Fixed a bug with insensitive commands - my fault for not testing.
 	06/01/08:
@@ -42,7 +42,7 @@
 		need a better way of ignoring names when alt names are used.
 	10/04/07:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Public</em><ul>
 <li><seealso name="Command_Add" />
 		- Adds a command to the array for processing.</li>
@@ -86,25 +86,25 @@
 		- Sets wether or not a player can use a command.</li>
 <li><seealso name="Command_FindByName" />
 		- Finds a command in a possibly sorted list.</li>
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><section>Definitions</section><ul>
 <li><seealso name="MAX_COMMAND_LENGTH" />
 		- The maximum length of a command string.</li>
 <li><seealso name="COMMAND_NOT_FOUND" />
 		- Indicates that a searched for string is not a function.</li>
-</ul><subsection>Enums</subsection><ul>
+</ul><section>Enums</section><ul>
 <li><seealso name="e_COMM_FLAG" />
 		- Bit mappings for command options.</li>
 <li><seealso name="E_COMMANDS" />
 		- Structure of the array holding the string data.</li>
-</ul><subsection>Macros</subsection><ul>
+</ul><section>Macros</section><ul>
 <li><seealso name="Command_(%1)" />
 		- Forwards and declares a standard command for calling.</li>
 <li><seealso name="ycmd(%1)" />
 		- Adds a command to the array (wrapper for Command_Add).</li>
-</ul><subsection>Tags</subsection><ul>
+</ul><section>Tags</section><ul>
 <li><seealso name="e_COMM_FLAG" />
 		- Flag type.</li>
-</ul><subsection>Variables</subsection><ul>
+</ul><section>Variables</section><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sCommands" />
 		- Holds all the textual data of the commands.</li>
@@ -122,10 +122,10 @@
 		- The number of commands with altnames.</li>
 <li><seealso name="YSI_g_sCommandFlags" />
 		- Bit array of command options.</li>
-</ul></li></ul><subsection>Commands</subsection><ul>
+</ul></li></ul><section>Commands</section><ul>
 <li><seealso name="commands" />
 		- Lists all commands available to you.</li>
-</ul><subsection>Compile options</subsection><ul>
+</ul><section>Compile options</section><ul>
 <li><seealso name="COMMAND_SENSITIVE" />
 		- Make commands case sensitive.</li>
 <li><seealso name="COMMAND_ACCURATE" />

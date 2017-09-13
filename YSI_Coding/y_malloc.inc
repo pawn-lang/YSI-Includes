@@ -4,19 +4,19 @@
 #define _INC_y_malloc
 
 /**
-<section>
+<file>
 					y_malloc
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Functions for using malloc/calloc/free type functions in PAWN.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	02/12/11:
 		Added variable argument functions.
 	22/12/08:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Stock</em><ul>
 <li><seealso name="malloc" />
 		- Allocate a block of memory (may be inline).</li>
@@ -74,15 +74,15 @@
 		- Direct data access setter.</li>
 <li><seealso name="Malloc_SlotSize" />
 		- Get the size of an allocated block (may be stock).</li>
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><section>Definitions</section><ul>
 <li><seealso name="MALLOC_KB_TO_CELL" />
 		- Multiplication value to convert kb to cells.</li>
 <li><seealso name="NO_ALLOC" />
 		- A failed allocation (NULL, but YSI already has NULL).</li>
-</ul><subsection>Tags</subsection><ul>
+</ul><section>Tags</section><ul>
 <li><seealso name="Alloc" />
 		- An allocated block handle variable.</li>
-</ul><subsection>Variables</subsection><ul>
+</ul><section>Variables</section><ul>
 <li><em>Global</em><ul>
 <li><seealso name="YSI_gMallocMemory" />
 		- Stores the data (may be static).</li>
@@ -91,7 +91,7 @@
 		- Stores the data (may be global).</li>
 <li><seealso name="_YSI_g_sUnusedStart" />
 		- Start of free memory.</li>
-</ul></li></ul><subsection>Compile options</subsection><ul>
+</ul></li></ul><section>Compile options</section><ul>
 <li>	MALLOC_MEMORY - Number of cells to reserve.</li>
 	MALLOC_MEMORY_KB - Number of killobytes to reserve.
 	MALLOC_MEMORY_B - Number of bytes to reserve.

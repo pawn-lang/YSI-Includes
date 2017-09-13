@@ -4,15 +4,15 @@
 #define _INC_y_classgroups
 
 /*+
-<section>
+<file>
 					y_classes
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Allows for advanced class selection options such as skins only certain
 	people can see and actually removing skins from class selection.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	29/11/10:
 		First version
 </ul>

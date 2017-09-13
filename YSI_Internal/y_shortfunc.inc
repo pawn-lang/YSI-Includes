@@ -4,17 +4,17 @@
 #define _INC_y_shortfunc
 
 /*+
-<section>
+<file>
 					y_shortfunc
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Defines new names for native functions.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.2
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	21/10/10:
 		Split in to y_shortfunc.
-</ul><subsection>Natives</subsection><ul>
+</ul><section>Natives</section><ul>
 <li><seealso name="W@" />
 		- Renaming of <seealso name="__CallRemoteFunction" /> for size reasons.</li>
 <li><seealso name="V@" />

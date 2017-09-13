@@ -257,7 +257,7 @@ ones?</param>
 	
 	This function is now EXTENSIVELY documented here:
 	
-		http://forum.sa-mp.com/showthread.php?t=485611
+		<a href="http://forum.sa-mp.com/showthread.php?t=485611" />
 	
 </remarks>
 *//*-------------------------------------------------------------------------**/

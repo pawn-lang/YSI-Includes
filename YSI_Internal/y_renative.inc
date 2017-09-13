@@ -4,14 +4,14 @@
 #define _INC_y_renative
 
 /*+
-<section>
+<file>
 					y_renative
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Obsolete, was macros for redefining native functions in default includes.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	25/10/10:
 		Integrated in to YSI.
 	06/08/10:

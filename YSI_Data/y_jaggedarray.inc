@@ -4,14 +4,14 @@
 #define _INC_y_jaggedarray
 
 /**
-<section>
+<file>
 					y_jaggedarray
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Provides code to easilly manipulate the sizes of 2d array slots.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	06/10/12:
 		First version
 		Fixed a bug calling "rawMemset".

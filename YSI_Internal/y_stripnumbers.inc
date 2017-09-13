@@ -4,10 +4,10 @@
 #define _INC_y_stripnumbers
 
 /*+
-<section>
+<file>
 					y_stripnumbers
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Removes tag overrides which are actually numbers.  This allows for:
 		
 		uvar g_a[MAX_PLAYERS][E_SOME_ENUM];
@@ -15,7 +15,7 @@
 		
 	Without stripping you would end with code doing "42:0" or getting a tag
 	mismatch on "E_SOME_ENUM", both of which are problems.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
 
 *//** *//*

@@ -4,14 +4,14 @@
 #define _INC_y_functional
 
 /**
-<section>
+<file>
 					y_functional
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Lambda functions and functional program functions - map, fold, etc.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	09/09/17:
 		First documentation.
 </ul>

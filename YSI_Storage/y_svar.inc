@@ -4,14 +4,14 @@
 #define _INC_y_svar
 
 /**
-<section>
+<file>
 					y_svar
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Declares data to be automatically saved and loaded for the whole server.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	25/02/12:
 		First version.
 </ul>

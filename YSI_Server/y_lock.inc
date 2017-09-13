@@ -4,14 +4,14 @@
 #define _INC_y_lock
 
 /**
-<section>
+<file>
 					y_lock
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Ensures that the server is running on the IP specified by "bind".
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	25/02/12:
 		First version.
 </ul>

@@ -89,7 +89,7 @@ Optional plugins:
 #define Iterator:%1<%2> Iterator:%1[]
 
 /*-------------------------------------------------------------------------*//**
-<param name="expr"><c>var : Iterator</c></param>
+<param name="expr"><code>var : Iterator</code></param>
 <remarks>
 </remarks>
 *//*-------------------------------------------------------------------------**/
@@ -102,47 +102,47 @@ Optional plugins:
 <remarks>
 	Used to declare a special iterator function.  Examples:
 	
-	<c>
-	stock iterfunc OnlyZero(cur)
-	{
-		if (cur == -1)
-			return 0;
-		return -1;
-	}
-	</c>
+	<code>
+stock iterfunc OnlyZero(cur)                                                    <br />
+{                                                                               <br /><indent />
+	if (cur == -1)                                                              <br /><indent /><indent />
+		return 0;                                                               <br /><indent />
+	return -1;                                                                  <br />
+}                                                                               <br />
+	</code>
 	
-	<c>
-	stock iterfunc AlsoOnlyZero[cellmin](cur)
-	{
-		if (cur == cellmin)
-			return 0;
-		return cellmin;
-	}
-	</c>
+	<code>
+stock iterfunc AlsoOnlyZero[cellmin](cur)                                       <br />
+{                                                                               <br /><indent />
+	if (cur == cellmin)                                                         <br /><indent /><indent />
+		return 0;                                                               <br /><indent />
+	return cellmin;                                                             <br />
+}                                                                               <br />
+	</code>
 	
-	<c>
-	stock iterfunc OneToTen[cellmin](cur)
-	{
-		if (cur == cellmin)
-			return 1;
-		if (cur == 10)
-			return cellmin;
-		return cur + 1;
-	}
-	</c>
+	<code>
+stock iterfunc OneToTen[cellmin](cur)                                           <br />
+{                                                                               <br /><indent />
+	if (cur == cellmin)                                                         <br /><indent /><indent />
+		return 1;                                                               <br /><indent />
+	if (cur == 10)                                                              <br /><indent /><indent />
+		return cellmin;                                                         <br /><indent />
+	return cur + 1;                                                             <br />
+}                                                                               <br />
+	</code>
 	
-	<c>
-	stock iterfunc OneToN(cur, n)
-	{
-		if (n < 1)
-			return -1;
-		if (cur == -1)
-			return 1;
-		if (cur == n)
-			return -1;
-		return cur + 1;
-	}
-	</c>
+	<code>
+stock iterfunc OneToN(cur, n)                                                   <br />
+{                                                                               <br /><indent />
+	if (n &lt; 1)                                                               <br /><indent /><indent />
+		return -1;                                                              <br /><indent />
+	if (cur == -1)                                                              <br /><indent /><indent />
+		return 1;                                                               <br /><indent />
+	if (cur == n)                                                               <br /><indent /><indent />
+		return -1;                                                              <br /><indent />
+	return cur + 1;                                                             <br />
+}                                                                               <br />
+	</code>
 	
 </remarks>
 *//*-------------------------------------------------------------------------**/
@@ -176,13 +176,14 @@ P:D(Iterator@Reverse(Iterator:iter<>));
 /*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator array to initialise.</param>
 <remarks>
-	Wrapper for Iter_Init_Internal.  When "__COMPILER_NESTED_ELLIPSIS" is set,
-	this isn't needed because multi-dimensional iterators can be initialised
-	with the new "{{0, 1, ...), ...}" feature.  In that case "I@ = 0" is called
-	as a "void" function that does nothing but ends in a semi-colon ("I@" is
-	used a lot in YSI as a "do nothing" enabler).
+	Wrapper for Iter_Init_Internal.  When <c>__COMPILER_NESTED_ELLIPSIS</c> is
+	set, this isn't needed because multi-dimensional iterators can be
+	initialised with the new <c>{{0, 1, ...), ...}</c> feature.  In that case
+	<c>I@ = 0</c> is called as a <c>void</c> function that does nothing but ends
+	in a semi-colon (<c>I@</c> is used a lot in YSI as a <c>do nothing</c>
+	enabler).
 
-native Iter_Init(IteratorArray:Name[]&lt;&gt;);
+<code>native Iter_Init(IteratorArray:Name[]&lt;&gt;);</code>
 
 </remarks>
 *//*-------------------------------------------------------------------------**/
@@ -812,7 +813,7 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 // Make the internal state an array if there is more than one value.
 #define itrst:%1=itrst:(%6,%7) %1[]={%6,%7}
 
-// Ultimate macro: http://forum.sa-mp.com/showpost.php?p=3801730
+// Ultimate macro: <a href="http://forum.sa-mp.com/showpost.php?p=3801730" />
 #define u@$ 0]);
 #define __:%0$ u@(u[_:%0 u@$
 #define U@%0\03;%0<%0>
@@ -824,7 +825,7 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 /*-------------------------------------------------------------------------*//**
 	The workings of these macros are very extensively documented at:
 	
-		http://forum.sa-mp.com/showpost.php?p=2823668
+		<a href="http://forum.sa-mp.com/showpost.php?p=2823668" />
 	
 *//*-------------------------------------------------------------------------**/
 

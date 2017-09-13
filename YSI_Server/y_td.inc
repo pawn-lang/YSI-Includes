@@ -4,17 +4,17 @@
 #define _INC_y_td
 
 /**
-<section>
+<file>
 					y_td
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Provides a wrapper to the SA:MP text_draw functions offering much
 	improved functionality including XML definable styles, safe display,
 	timed displays, styles and text separated, styles updateable dynamically
 	and more.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	06/08/10:
 		First version
 </ul>

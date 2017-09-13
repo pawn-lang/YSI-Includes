@@ -4,17 +4,17 @@
 #define _INC_y_funcinc
 
 /*+
-<section>
+<file>
 					y_funcinc
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Calls functions which are used in SYSREQ.C calls before they are used.  The
 	compiler crashes if the functions are not used in an included function
 	before being used in a SYSREQ.C call as the function is not in the native
 	functions table.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	06/08/10:
 		First version
 </ul>

@@ -9,16 +9,16 @@
 #define _INC_y_text
 
 /**
-<section>
+<file>
 					y_text
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Provides interfaces for displaying text from anywhere by way of native like
 	functions using text indexes rather than text.  Due to a compile problem a
 	number of the stock functions should be static but can't be.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	17/02/07:
 		Added saving of style parameter for text draws.
 	27/12/07:
@@ -40,7 +40,7 @@
 		Added YSI_ prefix to all globals.
 	23/03/07:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Public</em><ul>
 <li><seealso name="Text_ResetAll" />
 		- Resets the entire text system.</li>
@@ -103,7 +103,7 @@
 		- Sends a formatted message to a defined group.</li>
 <li><seealso name="Text_SendToPlayersFormat" />
 		- Sends a formatted message to a passed group.</li>
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><section>Definitions</section><ul>
 <li><seealso name="MAX_TEXT_NAME" />
 		- Maximum length of a text identifier.</li>
 <li><seealso name="MAX_TEXT_ENTRY" />
@@ -118,13 +118,13 @@
 		- Flag for sending a game text formatted message (unused).</li>
 <li><seealso name="MAX_TEXT_COLOURS" />
 		- Max number of defined colours in an ini file.</li>
-</ul><subsection>Enums</subsection><ul>
+</ul><section>Enums</section><ul>
 <li><seealso name="E_TEXT_POINTERS" />
 		- Structure of the language pointer array.</li>
-</ul><subsection>Macros</subsection><ul>
+</ul><section>Macros</section><ul>
 <li><seealso name="Text_RegisterTag" />
 		- Placed as a function, calls Text_AddToBuffer for tags.</li>
-</ul><subsection>Variables</subsection><ul>
+</ul><section>Variables</section><ul>
 <li><em>Static</em><ul>
 <li><seealso name="YSI_g_sTextTable" />
 		- Array of all text entries.</li>

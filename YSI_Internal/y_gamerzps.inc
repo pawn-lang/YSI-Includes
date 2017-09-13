@@ -4,15 +4,15 @@
 #define _INC_y_gamerzps
 
 /*+
-<section>
+<file>
 					y_gamerzps
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	This file unites various YSI features with Gamer_Z's GPS (Gamer_Z's
 	Positioning System) plugin so that you can use hooks and inlines with it.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	20/10/12:
 		First version.
 </ul>

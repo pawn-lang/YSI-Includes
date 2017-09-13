@@ -4,14 +4,14 @@
 #define _INC_y_utils
 
 /**
-<section>
+<file>
 					y_utils
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 Misc functions used throughout.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1.3
-<subsection>Changelog</subsection>
+<section>Changelog</section>
 	<em>06/10/12</em>
 <ul>
 <li>		Upgraded "memset" to use "FILL".</li>
@@ -32,7 +32,7 @@ Misc functions used throughout.
 <ul>
 <li>		Scrapped almost everything.  Only VERY usefult things go in now.</li>
 </ul>
-<subsection>Functions</subsection>
+<section>Functions</section>
 	<em>Stock</em>
 <ul>
 <li><seealso name="StrToLower" /> - Convert a whole string to lower-case.</li>
@@ -89,14 +89,14 @@ Misc functions used throughout.
 <li><seealso name="ReturnStringArg" /> - Synonym for <seealso name="returnstringarg" /> (there are a lot).</li>
 <li><seealso name="InterpolateColor" /> - Synonym for <seealso name="InterpolateColour" /></li>
 </ul>
-<subsection>Variables</subsection>
+<section>Variables</section>
 	<em>Global</em>
 <ul>
 <li><seealso name="TRUE" /> - True hack for infinate loops.</li>
 <li><seealso name="FALSE" /> - False hack for one-time loops.</li>
 <li><seealso name="NULL" /> - 1 long string for passing via Call(Remote|Local)Function.</li>
 </ul>
-<subsection>Examples</subsection>
+<section>Examples</section>
 	N/A - This is a collection of independent functions.
 *//** *//*
 Legal:
@@ -379,7 +379,7 @@ P:D(bool:VALID_PLAYERID(playerid));
 <remarks>
 	Equivalent to:
 	
-<c>		(%1) &lt;= (%0) &lt; (%2)</c>
+<code>		(%1) &lt;= (%0) &lt; (%2)</code>
 	
 </remarks>
 *//*-------------------------------------------------------------------------**/
@@ -397,7 +397,7 @@ P:D(bool:IS_IN_RANGE(lower, value, upper));
 <remarks>
 	Equivalent to:
 	
-<c>		(%1) &lt;= (%0) &lt; (%2)</c>
+<code>		(%1) &lt;= (%0) &lt; (%2)</code>
 	
 </remarks>
 *//*-------------------------------------------------------------------------**/
@@ -649,7 +649,8 @@ stock chrfind(needle, haystack[], start = 0)
 	Fail - -1, Success - pos
 </returns>
 <remarks>
-	Like <c>chrfind</c>, but with no upper-bounds check on <c>start</c>.
+	Like <seealso name="chrfind" />, but with no upper-bounds check on
+	<c>start</c>.
 </remarks>
 <seealso>chrfind</seealso>
 *//*-------------------------------------------------------------------------**/
@@ -699,8 +700,8 @@ stock IPToInt(ip[])
 	this should have none-few collisions).
 	
 	I modified it slightly from the original code pasted by aru, to code
-	closer to the code http://www.burtleburtle.net/bob/hash/doobs.html and
-	to work with PAWN (and shaved 0.2�s off the time for one call :D).
+	closer to the code <a href="http://www.burtleburtle.net/bob/hash/doobs.html" />
+	and to work with PAWN (and shaved 0.2�s off the time for one call :D).
 	
 	Uber reduced version (just for fun):
 	b(s[]){new h=-1,i,j;while((j=s[i++]))h=h*33+j;return h;}
@@ -1104,7 +1105,7 @@ stock rawMemcpy(dest, src, bytes)
 <remarks>
 	Based on code by Slice:
 	
-	http://forum.sa-mp.com/showthread.php?p=1606781#post1606781
+	<a href="http://forum.sa-mp.com/showthread.php?p=1606781#post1606781" />
 	
 	Modified to use binary flags instead of a loop.
 	
@@ -1134,7 +1135,7 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 <remarks>
 	Based on code by Slice:
 	
-	http://forum.sa-mp.com/showthread.php?p=1606781#post1606781
+	<a href="http://forum.sa-mp.com/showthread.php?p=1606781#post1606781" />
 	
 	Modified to use binary flags instead of a loop.
 	

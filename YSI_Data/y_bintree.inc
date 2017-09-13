@@ -4,16 +4,16 @@
 #define _INC_y_bintree
 
 /**
-<section>
+<file>
 					y_bintree
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Provides functions to generate balanced binary search trees for efficient
 	searching of large arrays by value.  Left branch is less than, right branch
 	is greater than or equal to for multiple matching values.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1.3
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	12/08/07:
 		Fixed a bug with empty trees.
 	14/04/07:
@@ -25,7 +25,7 @@
 		Added Bintree_Add()
 	24/03/07:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Core</em><ul>
 <li><seealso name="Bintree_QSort" />
 		- Custom implementaion of QSort to keep pointers.</li>
@@ -56,17 +56,17 @@
 		- Entry point for Bintree_QSort.</li>
 <li><seealso name="Bintree_Fill" />
 		- Entry point for Bintree_SortHalf.</li>
-</ul></li></ul><subsection>Definitions</subsection><ul>
+</ul></li></ul><section>Definitions</section><ul>
 <li><seealso name="BINTREE_NO_BRANCH" />
 		- Nowhere to go from the number in required direction.</li>
 <li><seealso name="BINTREE_NOT_FOUND" />
 		- Failure return.</li>
-</ul><subsection>Enums</subsection><ul>
+</ul><section>Enums</section><ul>
 <li><seealso name="E_BINTREE_TREE" />
 		- Structure of a leaf of a binary tree.</li>
 <li><seealso name="E_BINTREE_INPUT" />
 		- Structure of an array of data to be added to a tree.</li>
-</ul><subsection>Tags</subsection><ul>
+</ul><section>Tags</section><ul>
 <li><seealso name="Bintree" />
 		- Binary tree type.</li>
 </ul>

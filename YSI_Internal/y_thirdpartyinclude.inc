@@ -1,12 +1,12 @@
 /*+
-<section>
+<file>
 					y_thirdpartyinclude
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Try and include all YSI dependencies, looking in as many places as needed.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	09/09/17:
 		First documentaiton.
 </ul>

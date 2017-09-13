@@ -149,7 +149,7 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 </returns>
 <remarks>
 	Caters for both packed and unpacked strings.  The weirdness is basically
-	just: <c>ispacked(str) ? (* 1) : (* 4)</c>.
+	just: <code>ispacked(str) ? (* 1) : (* 4)</code>.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 

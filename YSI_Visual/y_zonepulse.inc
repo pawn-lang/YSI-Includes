@@ -4,17 +4,17 @@
 #define _INC_y_zonepulse
 
 /**
-<section>
+<file>
 					y_zonepulse
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Gradually fades a zone's colour between one colour and another, then back.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	19/02/12:
 		First version.
-</ul><subsection>Functions</subsection><ul>
+</ul><section>Functions</section><ul>
 <li><em>Public</em><ul>
 <li><seealso name="__GangZonePulse" />
 		- The timer that does the hard work.</li>
@@ -31,7 +31,7 @@
 		- Stop a zone pulsing for a single player.</li>
 <li><seealso name="GangZoneStopPulseForAll" />
 		- Stop a zone pulsing for everyone.</li>
-</ul></li></ul><subsection>Compile options</subsection><ul>
+</ul></li></ul><section>Compile options</section><ul>
 <li><seealso name="ZONE_PULSE_STAGE_TIME" />
 		- ms between each pulse frame.</li>
 </ul>

@@ -4,14 +4,14 @@
 #define _INC_y_files
 
 /**
-<section>
+<file>
 					y_files
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Provides native declarations for YSF functions.
-<subsection>Version</subsection>
+<section>Version</section>
 	0.1
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	15/09/10:
 		First version split from the old YSF.
 </ul>

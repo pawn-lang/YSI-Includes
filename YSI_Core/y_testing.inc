@@ -4,14 +4,14 @@
 #define _INC_y_testing
 
 /**
-<section>
+<file>
 					y_testing
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Runs any functions named as tests when the Testing_Run function is called.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	16/02/12:
 		Added better error reporting (less verbose passes).
 		Removed "Tests:".

@@ -167,15 +167,15 @@ Optional plugins:
 #define _INC_y_groups
 
 /**
-<section>
+<file>
 					y_groups
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	Admin levels, gangs, teams etc - they're all "groups" of people, this
 	provides an abstraction for all of these collections.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	29/11/10:
 		First version
 </ul>

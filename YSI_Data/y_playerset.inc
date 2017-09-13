@@ -4,17 +4,17 @@
 #define _INC_y_playerset
 
 /**
-<section>
+<file>
 					y_playerset
-</section>
-<subsection>Description</subsection>
+</file>
+<section>Description</section>
 	This code is a huge abstraction of collections of players.  It allows you to
 	define functions which take one or more players, specified in a number of
 	formats, and perform the code for all those player.  Essentially it is an
 	abstraction of loops over players.
-<subsection>Version</subsection>
+<section>Version</section>
 	1.0
-<subsection>Changelog</subsection><ul>
+<section>Changelog</section><ul>
 	30/04/11:
 		First version
 </ul>
