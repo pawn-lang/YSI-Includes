@@ -29,30 +29,30 @@ Legal:
 		First version.
 </ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
-<li><seealso name="		Loader_Spawn " />
+<li><seealso name="Loader_Spawn" />
 		- Processes a loaded spawn point.</li>
-<li><seealso name="		Loader_Check " />
+<li><seealso name="Loader_Check" />
 		- Processes a loaded checkpoint.</li>
-<li><seealso name="		Loader_Obj " />
+<li><seealso name="Loader_Obj" />
 		- Processes a loaded object.</li><to_ul>
 </ul></li><li><em>Core</em><ul>
-<li><seealso name="		Loader_Loader " />
+<li><seealso name="Loader_Loader" />
 		- Initialises data.</li><to_ul>
 </ul></li><li><em>Stock</em><ul>
-<li><seealso name="		Loader_Parse " />
+<li><seealso name="Loader_Parse" />
 		- Loads a file.</li>
-<li><seealso name="		Loader_AddHandler " />
+<li><seealso name="Loader_AddHandler" />
 		- Adds a custom handle for the race file.</li>
-<li><seealso name="		Loader_GetRace " />
+<li><seealso name="Loader_GetRace" />
 		- Returns the current race handle.</li><to_ul>
 </ul></li></ul><subsection>Tags</subsection><ul>
-<li><seealso name="	e_RACE_FLAGS " />
+<li><seealso name="e_RACE_FLAGS" />
 		- Race data flag.</li><to_ul>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
-<li><seealso name="		YSI_g_sXMLRules " />
+<li><seealso name="YSI_g_sXMLRules" />
 		- Handle to the XML parse rule set.</li>
-<li><seealso name="		YSI_g_sCurRace " />
+<li><seealso name="YSI_g_sCurRace" />
 		- Handle to the current race being built.</li><to_ul>
 </ul></li></ul>
 *//** *//*

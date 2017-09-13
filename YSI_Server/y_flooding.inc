@@ -80,21 +80,21 @@ Legal:
 		First version.
 </ul><subsection>Functions</subsection><ul>
 <li><em>Core</em><ul>
-<li><seealso name="		OnPlayerConnect " />
+<li><seealso name="OnPlayerConnect" />
 		- Called to check IPs.</li>
-<li><seealso name="		OnScriptInit " />
+<li><seealso name="OnScriptInit" />
 		- Sets the OnPlayerConnect function flag.</li><to_ul>
 </ul></li><li><em>API</em><ul>
-<li><seealso name="		SetMaxConnections " />
+<li><seealso name="SetMaxConnections" />
 		- Sets the max allowed connections from an IP.</li><to_ul>
 </ul></li></ul><subsection>Enums</subsection><ul>
-<li><seealso name="	e_FLOOD_ACTION " />
+<li><seealso name="e_FLOOD_ACTION" />
 		- What to do if too many connections form.</li><to_ul>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
-<li><seealso name="		YSI_g_sPlayerIPs " />
+<li><seealso name="YSI_g_sPlayerIPs" />
 		- People's stored IPs for speed.</li>
-<li><seealso name="		YSI_g_sMaxConnections " />
+<li><seealso name="YSI_g_sMaxConnections" />
 		- Data for the script.</li><to_ul>
 </ul></li></ul>
 *//** *//*

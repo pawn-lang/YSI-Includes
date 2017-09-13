@@ -97,7 +97,7 @@ Misc functions used throughout.
 <li><seealso name="NULL" /> - 1 long string for passing via Call(Remote|Local)Function.</li>
 </ul>
 </ul></li></ul><subsection>Examples</subsection><ul>
-<li><seealso name="	N/A " />
+<li><seealso name="N/A" />
 		- This is a collection of independent functions.</li><to_ul>
 </ul>
 *//** *//*

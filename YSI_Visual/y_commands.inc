@@ -44,93 +44,93 @@
 		First version.
 </ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
-<li><seealso name="		Command_Add " />
+<li><seealso name="Command_Add" />
 		- Adds a command to the array for processing.</li>
-<li><seealso name="		Command_Remove " />
+<li><seealso name="Command_Remove" />
 		- Removes a command.</li>
-<li><seealso name="		Command_Name " />
+<li><seealso name="Command_Name" />
 		- Gets the name of a command in a property.</li><to_ul>
 </ul></li><li><em>Core</em><ul>
-<li><seealso name="		Command_Process " />
+<li><seealso name="Command_Process" />
 		- Called from OnPlayerCommandText to process entered commands.</li>
-<li><seealso name="		Command_Parse " />
+<li><seealso name="Command_Parse" />
 		- Sorts added commands into a binary tree.</li>
-<li><seealso name="		Command_Hash " />
+<li><seealso name="Command_Hash" />
 		- Hashes a word for command hashing.</li>
-<li><seealso name="		Command_ProcRem " />
+<li><seealso name="Command_ProcRem" />
 		- Processes a help command in the master script.</li><to_ul>
 </ul></li><li><em>Stock</em><ul>
-<li><seealso name="		Command_SetDisconnectReturn " />
+<li><seealso name="Command_SetDisconnectReturn" />
 		- Sets the return value for unconnected players.</li>
-<li><seealso name="		Command_UseShortCuts " />
+<li><seealso name="Command_UseShortCuts" />
 		- Toggles use of per-player command shortcuts.</li>
-<li><seealso name="		Command_SetDeniedReturn " />
+<li><seealso name="Command_SetDeniedReturn" />
 		- Sets the return value for denied use commands.</li>
-<li><seealso name="		Command_UseDeniedMessage " />
+<li><seealso name="Command_UseDeniedMessage" />
 		- Toggles the use of an error message for denied.</li>
-<li><seealso name="		Command_SetIllegalReturn " />
+<li><seealso name="Command_SetIllegalReturn" />
 		- Sets the return value for illegal characters.</li>
-<li><seealso name="		Command_UseAltNames " />
+<li><seealso name="Command_UseAltNames" />
 		- Toggles the use of ini defined alternate names.</li>
-<li><seealso name="		Command_UsePrefix " />
+<li><seealso name="Command_UsePrefix" />
 		- Toggles the use of a global prefix.</li>
-<li><seealso name="		Command_UseSpace " />
+<li><seealso name="Command_UseSpace" />
 		- Toggles the use of a space between prefix and command.</li>
-<li><seealso name="		Command_SetAltName " />
+<li><seealso name="Command_SetAltName" />
 		- Sets the alternate name of a function.</li>
-<li><seealso name="		Command_SetPrefix " />
+<li><seealso name="Command_SetPrefix" />
 		- Sets the pfexix to be typed.</li>
-<li><seealso name="		Comamnd_SetPlayerUse " />
+<li><seealso name="Comamnd_SetPlayerUse" />
 		- Sets wether or not a player can use a command.</li>
-<li><seealso name="		Comamnd_SetPlayerUseByID " />
+<li><seealso name="Comamnd_SetPlayerUseByID" />
 		- Sets wether or not a player can use a command.</li>
-<li><seealso name="		Command_FindByName " />
+<li><seealso name="Command_FindByName" />
 		- Finds a command in a possibly sorted list.</li><to_ul>
 </ul></li></ul><subsection>Definitions</subsection><ul>
-<li><seealso name="	MAX_COMMAND_LENGTH " />
+<li><seealso name="MAX_COMMAND_LENGTH" />
 		- The maximum length of a command string.</li>
-<li><seealso name="	COMMAND_NOT_FOUND " />
+<li><seealso name="COMMAND_NOT_FOUND" />
 		- Indicates that a searched for string is not a function.</li><to_ul>
 </ul><subsection>Enums</subsection><ul>
-<li><seealso name="	e_COMM_FLAG " />
+<li><seealso name="e_COMM_FLAG" />
 		- Bit mappings for command options.</li>
-<li><seealso name="	E_COMMANDS " />
+<li><seealso name="E_COMMANDS" />
 		- Structure of the array holding the string data.</li><to_ul>
 </ul><subsection>Macros</subsection><ul>
-<li><seealso name="	Command_(%1) " />
+<li><seealso name="Command_(%1)" />
 		- Forwards and declares a standard command for calling.</li>
-<li><seealso name="	ycmd(%1) " />
+<li><seealso name="ycmd(%1)" />
 		- Adds a command to the array (wrapper for Command_Add).</li><to_ul>
 </ul><subsection>Tags</subsection><ul>
-<li><seealso name="	e_COMM_FLAG " />
+<li><seealso name="e_COMM_FLAG" />
 		- Flag type.</li><to_ul>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
-<li><seealso name="		YSI_g_sCommands " />
+<li><seealso name="YSI_g_sCommands" />
 		- Holds all the textual data of the commands.</li>
-<li><seealso name="		YSI_g_sSearchTree " />
+<li><seealso name="YSI_g_sSearchTree" />
 		- Tree of hashes for function names.</li>
-<li><seealso name="		YSI_g_sAltTree " />
+<li><seealso name="YSI_g_sAltTree" />
 		- Tree of hashes for alternate names.</li>
-<li><seealso name="		YSI_g_sPrefix " />
+<li><seealso name="YSI_g_sPrefix" />
 		- The command prefix.</li>
-<li><seealso name="		YSI_g_sPrefixLength " />
+<li><seealso name="YSI_g_sPrefixLength" />
 		- Length of the prefix.</li>
-<li><seealso name="		YSI_g_sCommandIndex " />
+<li><seealso name="YSI_g_sCommandIndex" />
 		- Pointer to the next free index in the function array.</li>
-<li><seealso name="		YSI_g_sAltCount " />
+<li><seealso name="YSI_g_sAltCount" />
 		- The number of commands with altnames.</li>
-<li><seealso name="		YSI_g_sCommandFlags " />
+<li><seealso name="YSI_g_sCommandFlags" />
 		- Bit array of command options.</li><to_ul>
 </ul></li></ul><subsection>Commands</subsection><ul>
-<li><seealso name="	commands " />
+<li><seealso name="commands" />
 		- Lists all commands available to you.</li><to_ul>
 </ul><subsection>Compile options</subsection><ul>
-<li><seealso name="	COMMAND_SENSITIVE " />
+<li><seealso name="COMMAND_SENSITIVE" />
 		- Make commands case sensitive.</li>
-<li><seealso name="	COMMAND_ACCURATE " />
+<li><seealso name="COMMAND_ACCURATE" />
 		- Can use '@' in command names.</li>
-<li><seealso name="	MAX_COMMANDS " />
+<li><seealso name="MAX_COMMANDS" />
 		- The maximum number of commands which can be used.</li><to_ul>
 </ul>
 *//** *//*

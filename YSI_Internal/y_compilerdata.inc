@@ -46,41 +46,41 @@ in the output code.
 		First version.
 </ul><subsection>Functions</subsection><ul>
 <li><em>Static</em><ul>
-<li><seealso name="		__CompilerStringReturn " />
+<li><seealso name="__CompilerStringReturn" />
 		- Assembly for returning a string to its callers'</li>
 <li><seealso name="			caller.  Used to bypass a known bug.
 		__CompilerSecondPass " />
 		- Tested to determine the current compiler pass.</li><to_ul>
 </ul></li><li><em>Inline</em><ul>
-<li><seealso name="		__COMPILER_STRING_RETURN " />
+<li><seealso name="__COMPILER_STRING_RETURN" />
 		- Correctly return a string from a varargs</li>
 <li><seealso name="			function.
 </ul></li></ul><subsection>Macros</subsection><ul>
-<li><seealso name="	__COMPILER_PASS " />
+<li><seealso name="__COMPILER_PASS" />
 		" />
 		- Which pass the compiler is currently running.</li><to_ul></li>
-<li><seealso name="	__COMPILER_DOCUMENTING " />
+<li><seealso name="__COMPILER_DOCUMENTING" />
 		- Is the compiler collecting documentation</li>
 <li><seealso name="		information right now (i.e. is this the first pass)?
 	__COMPILER_1ST_PASS " />
 		- Is this the first compiler pass?</li>
-<li><seealso name="	__COMPILER_2ND_PASS " />
+<li><seealso name="__COMPILER_2ND_PASS" />
 		- Is this the second compiler pass?</li>
-<li><seealso name="	__COMPILER_FIRST_PASS " />
+<li><seealso name="__COMPILER_FIRST_PASS" />
 		- Is this the first compiler pass?</li>
-<li><seealso name="	__COMPILER_SECOND_PASS " />
+<li><seealso name="__COMPILER_SECOND_PASS" />
 		- Is this the second compiler pass?</li>
-<li><seealso name="	__COMPILER_MODIFIED " />
+<li><seealso name="__COMPILER_MODIFIED" />
 		- Is the compiler an updated/unofficial/modified one?</li>
-<li><seealso name="	__COMPILER_OFFICIAL " />
+<li><seealso name="__COMPILER_OFFICIAL" />
 		- Is the compiler an official one?</li>
-<li><seealso name="	__COMPILER_COMPAT " />
+<li><seealso name="__COMPILER_COMPAT" />
 		- Was the compiler built with `-Z`?</li>
-<li><seealso name="	__COMPILER_INCLUDE_GUARDS " />
+<li><seealso name="__COMPILER_INCLUDE_GUARDS" />
 		- Does the compiler generate auto-include guards?</li>
-<li><seealso name="	__COMPILER_NESTED_ELLIPSIS " />
+<li><seealso name="__COMPILER_NESTED_ELLIPSIS" />
 		- Does the compiler support nested ellipses?</li>
-<li><seealso name="	__COMPILER_BUGGED_STRING_RETURN " />
+<li><seealso name="__COMPILER_BUGGED_STRING_RETURN" />
 		- Are vararg function string returns</li>
 <li><seealso name="		bugged?  Not needed for using `__COMPILER_STRING_RETURN`, as that will
 		do the best thing in both cases already.

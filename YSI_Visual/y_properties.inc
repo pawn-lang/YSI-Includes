@@ -31,133 +31,133 @@
 		First version.
 </ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
-<li><seealso name="		Property_Loop " />
+<li><seealso name="Property_Loop" />
 		- Does the main system processing.</li>
-<li><seealso name="		Property_AddPropRemote " />
+<li><seealso name="Property_AddPropRemote" />
 		- Adds a property from another script.</li>
-<li><seealso name="		Property_AddBankRemote " />
+<li><seealso name="Property_AddBankRemote" />
 		- Adds a bank from another script.</li>
-<li><seealso name="		Property_AddAmmuRemote " />
+<li><seealso name="Property_AddAmmuRemote" />
 		- Adds an ammunation from another script.</li>
-<li><seealso name="		Property_AddMARemote " />
+<li><seealso name="Property_AddMARemote" />
 		- Adds a money area from another script.</li>
-<li><seealso name="		Property_AddMPRemote " />
+<li><seealso name="Property_AddMPRemote" />
 		- Adds a money point from another script.</li>
-<li><seealso name="		Property_AddTeleRemote " />
+<li><seealso name="Property_AddTeleRemote" />
 		- Adds a teleport from another script.</li>
-<li><seealso name="		Property_AddFobRemote " />
+<li><seealso name="Property_AddFobRemote" />
 		- Adds a forbidden area from another script.</li>
-<li><seealso name="		Property_GetPropertyBitsReceive " />
+<li><seealso name="Property_GetPropertyBitsReceive" />
 		- Passes a player's properties.</li>
-<li><seealso name="		Property_Remote " />
+<li><seealso name="Property_Remote" />
 		- Remote wrapper for most minor functions.</li>
-<li><seealso name="		YSIM_Properties " />
+<li><seealso name="YSIM_Properties" />
 		- Master system callback.</li>
-<li><seealso name="		Property_Broadcast " />
+<li><seealso name="Property_Broadcast" />
 		- Called to save properties on master shutdown.</li>
-<li><seealso name="		Property_PickupTimeCheck " />
+<li><seealso name="Property_PickupTimeCheck" />
 		- Checks if a player is still stood on a pickup.</li><to_ul>
 </ul></li><li><em>Core</em><ul>
-<li><seealso name="		Property_OnPlayerSelectedMenuRow " />
+<li><seealso name="Property_OnPlayerSelectedMenuRow" />
 		- Called when someone selects something.</li>
-<li><seealso name="		Property_OnPlayerExitedMenu " />
+<li><seealso name="Property_OnPlayerExitedMenu" />
 		- Called when someone exits a menu.</li>
-<li><seealso name="		Property_OnPlayerEnterCheckpointEx " />
+<li><seealso name="Property_OnPlayerEnterCheckpointEx" />
 		- Called when someone enters a checkpoint (public).</li>
-<li><seealso name="		Property_OnPlayerLeaveCheckpointEx " />
+<li><seealso name="Property_OnPlayerLeaveCheckpointEx" />
 		- Called when someone leaves a checkpoint (public).</li>
-<li><seealso name="		Property_OnPlayerPickUpPickup " />
+<li><seealso name="Property_OnPlayerPickUpPickup" />
 		- Called when someone picks up a pickup (public).</li>
-<li><seealso name="		Property_OnPlayerSpawn " />
+<li><seealso name="Property_OnPlayerSpawn" />
 		- Called when someone spawns.</li>
-<li><seealso name="		Property_OnPlayerConnect " />
+<li><seealso name="Property_OnPlayerConnect" />
 		- Called when comaone connects.</li>
-<li><seealso name="		Property_OnPlayerLeaveArea " />
+<li><seealso name="Property_OnPlayerLeaveArea" />
 		- Called when someone leaves an area (public).</li>
-<li><seealso name="		Property_OnPlayerEnterArea " />
+<li><seealso name="Property_OnPlayerEnterArea" />
 		- Called when someone enters an area (public).</li><to_ul>
 </ul></li><li><em>Stock</em><ul>
-<li><seealso name="		Property_GetPlayerPropCount " />
+<li><seealso name="Property_GetPlayerPropCount" />
 		- Gets the number of properties for a player.</li>
-<li><seealso name="		Property_GetLink " />
+<li><seealso name="Property_GetLink" />
 		- Gets the area or checkpoint for a property.</li>
-<li><seealso name="		Property_GetType " />
+<li><seealso name="Property_GetType" />
 		- Gets a property's type.</li>
-<li><seealso name="		Property_IsValid " />
+<li><seealso name="Property_IsValid" />
 		- Checks if a property is valid.</li>
-<li><seealso name="		Property_Bank " />
+<li><seealso name="Property_Bank" />
 		- Moves money to/from an account.</li>
-<li><seealso name="		Property_SavePlayerWeapon " />
+<li><seealso name="Property_SavePlayerWeapon" />
 		- Saves a players weapon for spawn.</li>
-<li><seealso name="		Property_SaveWeapons " />
+<li><seealso name="Property_SaveWeapons" />
 		- Saves a player's spawn weapons.</li>
-<li><seealso name="		Property_LoadWeapons " />
+<li><seealso name="Property_LoadWeapons" />
 		- Loads a player's spawn weapons.</li>
-<li><seealso name="		Property_SaveBank " />
+<li><seealso name="Property_SaveBank" />
 		- Saves a player's banked money.</li>
-<li><seealso name="		Property_LoadBank " />
+<li><seealso name="Property_LoadBank" />
 		- Loads a player's banked money.</li>
-<li><seealso name="		Property_GetBank " />
+<li><seealso name="Property_GetBank" />
 		- Gets a player's banked money.</li>
-<li><seealso name="		Property_GetSlotWeapon " />
+<li><seealso name="Property_GetSlotWeapon" />
 		- Gets a player's spawn weapons.</li>
-<li><seealso name="		Property_GetPropertyBits " />
+<li><seealso name="Property_GetPropertyBits" />
 		- Gets a player's owned properties.</li>
-<li><seealso name="		Property_SetRebuyDelay " />
+<li><seealso name="Property_SetRebuyDelay" />
 		- Set a delay on rebuying properties.</li><to_ul>
 </ul></li><li><em>Static</em><ul>
-<li><seealso name="		Property_GetWeapon " />
+<li><seealso name="Property_GetWeapon" />
 		- Gets weapon data for a slotid slot.</li>
-<li><seealso name="		Property_WeaponName " />
+<li><seealso name="Property_WeaponName" />
 		- Gets a weapon name for a slotid.</li>
-<li><seealso name="		Property_GetWeaponFromSlot " />
+<li><seealso name="Property_GetWeaponFromSlot" />
 		- Gets a weaponid from a slotid.</li>
-<li><seealso name="		Property_GenerateAmmuMenu " />
+<li><seealso name="Property_GenerateAmmuMenu" />
 		- Generates the menu for ammunation.</li><to_ul>
 </ul></li><li><em>Inline</em><ul>
-<li><seealso name="		Property_SetOption " />
+<li><seealso name="Property_SetOption" />
 		- Sets a property's custom flag.</li>
-<li><seealso name="		Property_IsActive " />
+<li><seealso name="Property_IsActive" />
 		- Checks if a property is active.</li>
-<li><seealso name="		Property_GetOption " />
+<li><seealso name="Property_GetOption" />
 		- Gets a property's custom flag.</li>
-<li><seealso name="		Property_GivePlayerWeapon " />
+<li><seealso name="Property_GivePlayerWeapon" />
 		- Gives a player a weapon from it's slot.</li>
-<li><seealso name="		Property_WeaponCost " />
+<li><seealso name="Property_WeaponCost" />
 		- Gets the cost of a slot,</li>
-<li><seealso name="		Property_WeaponAmmo " />
+<li><seealso name="Property_WeaponAmmo" />
 		- Gets the ammo of a slot.</li>
-<li><seealso name="		Property_IsPlayerProperty " />
+<li><seealso name="Property_IsPlayerProperty" />
 		- Checks if a player can have a property.</li><to_ul>
 </ul></li><li><em>API</em><ul>
-<li><seealso name="		CreateProperty " />
+<li><seealso name="CreateProperty" />
 		- Creates a business.</li>
-<li><seealso name="		CreateBank " />
+<li><seealso name="CreateBank" />
 		- Creates a bank.</li>
-<li><seealso name="		CreateAmmunation " />
+<li><seealso name="CreateAmmunation" />
 		- Creates an ammunation.</li>
-<li><seealso name="		CreateMoneyArea " />
+<li><seealso name="CreateMoneyArea" />
 		- Creates a money area.</li>
-<li><seealso name="		CreateMoneyPoint " />
+<li><seealso name="CreateMoneyPoint" />
 		- Creates a money point.</li>
-<li><seealso name="		CreateTeleport " />
+<li><seealso name="CreateTeleport" />
 		- Creates a teleport.</li>
-<li><seealso name="		CreateForbiddenArea " />
+<li><seealso name="CreateForbiddenArea" />
 		- Creates a forbidden area.</li>
-<li><seealso name="		DestroyProperty " />
+<li><seealso name="DestroyProperty" />
 		- Deletes a property from the array.</li><to_ul>
 </ul></li></ul><subsection>Definitions</subsection><ul>
-<li><seealso name="	PROPERTY_LOOP_GRANULARITY " />
+<li><seealso name="PROPERTY_LOOP_GRANULARITY" />
 		- Number of itterations of the main loop a second.</li>
-<li><seealso name="	MAX_PROP_NAME " />
+<li><seealso name="MAX_PROP_NAME" />
 		- Max length of the name of a property.</li>
-<li><seealso name="	MAX_PROPERTIES " />
+<li><seealso name="MAX_PROPERTIES" />
 		- Max number of properties.</li>
-<li><seealso name="	NO_PROPERTY " />
+<li><seealso name="NO_PROPERTY" />
 		- Invalid return.</li>
-<li><seealso name="	WEAPON_ARMOUR " />
+<li><seealso name="WEAPON_ARMOUR" />
 		- Type for salling armour at ammunation.</li>
-<li><seealso name="	PROPERTY_SELL_PERCENT " />
+<li><seealso name="PROPERTY_SELL_PERCENT" />
 		- % of money got back for a reduced sale.</li><to_ul>
 </ul><subsection>Enums</subsection><ul>
 	e_PROP_FLAGS - Flags for property data.
@@ -165,56 +165,56 @@
 	E_PROP_AMMU - Data for a persons current ammunation menu.
 	<unnamed> - Tagless remote instructions, must have new ones added to the end.
 </ul></li></ul><subsection>Macros</subsection><ul>
-<li><seealso name="	WEAPON_DATA_OFFSET " />
+<li><seealso name="WEAPON_DATA_OFFSET" />
 		- Offset for saving weapons with variable size arrays,</li>
-<li><seealso name="	WEAPON_DATA " />
+<li><seealso name="WEAPON_DATA" />
 		- Gets ammo and cost from parameters and compresses them.</li>
-<li><seealso name="	WEAPON_DATA_REM " />
+<li><seealso name="WEAPON_DATA_REM" />
 		- Like WEAPON_DATA but reads from an array instead.</li>
-<li><seealso name="	WEAPON " />
+<li><seealso name="WEAPON" />
 		- Saves a weapon id in the top byte of a cell.</li><to_ul>
 </ul><subsection>Tags</subsection><ul>
-<li><seealso name="	e_PROP_FLAGS " />
+<li><seealso name="e_PROP_FLAGS" />
 		- Flags.</li><to_ul>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
-<li><seealso name="		YSI_g_sProperties " />
+<li><seealso name="YSI_g_sProperties" />
 		- Array of all property data.</li>
-<li><seealso name="		YSI_g_sMoney " />
+<li><seealso name="YSI_g_sMoney" />
 		- Array of player's banked money.</li>
-<li><seealso name="		YSI_g_sPlayerProperties " />
+<li><seealso name="YSI_g_sPlayerProperties" />
 		- Bit array of properties a player has.</li>
-<li><seealso name="		YSI_g_sSpawnWeapons " />
+<li><seealso name="YSI_g_sSpawnWeapons" />
 		- Array of weapons a player will spawn with.</li>
-<li><seealso name="		YSI_g_sShopMenu " />
+<li><seealso name="YSI_g_sShopMenu" />
 		- Array of players current menus.</li>
-<li><seealso name="		YSI_g_sAreaPointers " />
+<li><seealso name="YSI_g_sAreaPointers" />
 		- Array of properties for each area.</li>
-<li><seealso name="		YSI_g_sCheckpointPointers " />
+<li><seealso name="YSI_g_sCheckpointPointers" />
 		- Array of properties for each checkpoint.</li>
-<li><seealso name="		YSI_g_sTempPropReq " />
+<li><seealso name="YSI_g_sTempPropReq" />
 		- Script has requested a player's properties.</li>
-<li><seealso name="		YSI_g_sTempProp " />
+<li><seealso name="YSI_g_sTempProp" />
 		- Temporary store for properties.</li>
-<li><seealso name="		YSI_g_sIsMaster " />
+<li><seealso name="YSI_g_sIsMaster" />
 		- Is this script the global master.</li><to_ul>
 </ul></li></ul><subsection>Commands</subsection><ul>
-<li><seealso name="	buy " />
+<li><seealso name="buy" />
 		- Lets you buy your current property.</li>
-<li><seealso name="	bank " />
+<li><seealso name="bank" />
 		- Lets you bank money.</li>
-<li><seealso name="	properties " />
+<li><seealso name="properties" />
 		- Lists properties and their owners.</li>
-<li><seealso name="	balance " />
+<li><seealso name="balance" />
 		- Displays your current balance.</li>
-<li><seealso name="	withdraw " />
+<li><seealso name="withdraw" />
 		- Allows you to take out money.</li>
-<li><seealso name="	sell " />
+<li><seealso name="sell" />
 		- Allows you to sell a property.</li>
-<li><seealso name="Properties:
-	LReqProp " />
+</ul></li></ul><subsection>Properties</subsection><ul>
+<li><seealso name="LReqProp" />
 		- Return data from a remote script.</li>
-<li><seealso name="	110953013 " />
+<li><seealso name="110953013" />
 		- Return properties for a player.</li><to_ul>
 </ul>
 *//** *//*

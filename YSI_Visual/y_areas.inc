@@ -30,104 +30,104 @@
 		First version.
 </ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
-<li><seealso name="		Area_Loop " />
+<li><seealso name="Area_Loop" />
 		- Main loop for checking who's where.</li>
-<li><seealso name="		Area_Remote " />
+<li><seealso name="Area_Remote" />
 		- Does minor functions remotely.</li>
-<li><seealso name="		Area_AddRemote " />
+<li><seealso name="Area_AddRemote" />
 		- Adds areas remotely.</li>
-<li><seealso name="		YSIM_Areas " />
+<li><seealso name="YSIM_Areas" />
 		- Master system interface.</li>
-<li><seealso name="		Area_Broadcast " />
+<li><seealso name="Area_Broadcast" />
 		- Recieves transmitted areas.</li>
-<li><seealso name="		Area_UpdateEmpty " />
+<li><seealso name="Area_UpdateEmpty" />
 		- Resets the empty array after master change.</li><to_ul>
 </ul></li><li><em>Core</em><ul>
-<li><seealso name="		Area_Area " />
+<li><seealso name="Area_Area" />
 		- Constructor.</li>
-<li><seealso name="		Area_CheckArea " />
+<li><seealso name="Area_CheckArea" />
 		- Gets an area's type anx calls the relevant function.</li>
-<li><seealso name="		Area_OnPlayerConnect " />
+<li><seealso name="Area_OnPlayerConnect" />
 		- Called when a player connects.</li><to_ul>
 </ul></li><li><em>Stock</em><ul>
-<li><seealso name="		Area_Delete " />
+<li><seealso name="Area_Delete" />
 		- Deletes an area.</li>
-<li><seealso name="		Area_AddCube " />
+<li><seealso name="Area_AddCube" />
 		- Adds a cube.</li>
-<li><seealso name="		Area_AddBox " />
+<li><seealso name="Area_AddBox" />
 		- Adds a box.</li>
-<li><seealso name="		Area_AddCircle " />
+<li><seealso name="Area_AddCircle" />
 		- Adds a circle.</li>
-<li><seealso name="		Area_AddSphere " />
+<li><seealso name="Area_AddSphere" />
 		- Adds a sphere.</li>
-<li><seealso name="		Area_AddPoly " />
+<li><seealso name="Area_AddPoly" />
 		- Adds a polygon.</li>
-<li><seealso name="		Area_GetPlayerArea " />
+<li><seealso name="Area_GetPlayerArea" />
 		- Gets the area a player is in.</li>
-<li><seealso name="		Area_SetPlayer " />
+<li><seealso name="Area_SetPlayer" />
 		- Sets wether a player can use this area.</li>
-<li><seealso name="		Area_SetAllPlayers " />
+<li><seealso name="Area_SetAllPlayers" />
 		- Sets wether all players can use this area.</li>
-<li><seealso name="		Area_SetAllWorlds " />
+<li><seealso name="Area_SetAllWorlds" />
 		- Sets wether all worlds have this are.</li>
-<li><seealso name="		Area_SetWorld " />
+<li><seealso name="Area_SetWorld" />
 		- Sets wether this world has this area.</li>
-<li><seealso name="		Area_IsValid " />
+<li><seealso name="Area_IsValid" />
 		- Checks if an area is valid.</li><to_ul>
 </ul></li><li><em>Static</em><ul>
-<li><seealso name="		Area_IsInCircle " />
+<li><seealso name="Area_IsInCircle" />
 		- Checks if a player is in this circular area.</li>
-<li><seealso name="		Area_IsInSphere " />
+<li><seealso name="Area_IsInSphere" />
 		- Checks if a player is in this spherical area.</li>
-<li><seealso name="		Area_IsInPoly " />
+<li><seealso name="Area_IsInPoly" />
 		- Checks if a player is in this polygonal area.</li>
-<li><seealso name="		Area_IsInCube " />
+<li><seealso name="Area_IsInCube" />
 		- Checks if a player is in this cubic area.</li>
-<li><seealso name="		Area_IsInBox " />
+<li><seealso name="Area_IsInBox" />
 		- Checks if a player is in this rectangular area.</li>
-<li><seealso name="		Area_AddToUnused " />
+<li><seealso name="Area_AddToUnused" />
 		- Adds a area pointer to the unused list.</li>
-<li><seealso name="		Area_GetFreeSlot " />
+<li><seealso name="Area_GetFreeSlot" />
 		- Gets the next free area slot.</li><to_ul>
 </ul></li><li><em>Inline</em><ul>
-<li><seealso name="		Area_IsActive " />
+<li><seealso name="Area_IsActive" />
 		- Checks if an area is active.</li>
-<li><seealso name="		Area_GetEmptySlotCount " />
+<li><seealso name="Area_GetEmptySlotCount" />
 		- Gets the number of empty slots.</li>
-<li><seealso name="		Area_AddSlots " />
+<li><seealso name="Area_AddSlots" />
 		- Removes slots from the unused count.</li><to_ul>
 </ul></li></ul><subsection>Callbacks</subsection><ul>
-<li><seealso name="	OnPlayerEnterArea " />
+<li><seealso name="OnPlayerEnterArea" />
 		- Called when a player enters an area.</li>
-<li><seealso name="	OnPlayerLeaveArea " />
+<li><seealso name="OnPlayerLeaveArea" />
 		- Called when a player leaves an area.</li><to_ul>
 </ul><subsection>Definitions</subsection><ul>
-<li><seealso name="	MAX_AREAS " />
+<li><seealso name="MAX_AREAS" />
 		- Max number of areas.</li>
-<li><seealso name="	NO_AREA " />
+<li><seealso name="NO_AREA" />
 		- Fail return.</li>
-<li><seealso name="	AREA_NO_NEXT " />
+<li><seealso name="AREA_NO_NEXT" />
 		- Marker for end of a list.</li>
-<li><seealso name="	AREA_WORLDS " />
+<li><seealso name="AREA_WORLDS" />
 		- Number of worlds an area can be in.</li>
-<li><seealso name="	AREA_WORLD_COUNT " />
+<li><seealso name="AREA_WORLD_COUNT" />
 		- Number of cells required for a bit array of AREA_WORLDS.</li><to_ul>
 </ul><subsection>Enums</subsection><ul>
-<li><seealso name="	e_AREA_FLAGS " />
+<li><seealso name="e_AREA_FLAGS" />
 		- Flags for each area.</li>
-<li><seealso name="	E_AREA " />
+<li><seealso name="E_AREA" />
 		- Structure for part of an areas data.</li><to_ul>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
-<li><seealso name="		YSI_g_sUnusedAreas " />
+<li><seealso name="YSI_g_sUnusedAreas" />
 		- Pointer to the first unused area.</li>
-<li><seealso name="		YSI_g_sLastUnused " />
+<li><seealso name="YSI_g_sLastUnused" />
 		- Pointer to the last unused area.</li>
-<li><seealso name="		YSI_g_sFreeCount " />
+<li><seealso name="YSI_g_sFreeCount" />
 		- Number of unused slots.</li>
-<li><seealso name="		YSI_g_sAreas " />
+<li><seealso name="YSI_g_sAreas" />
 		- Array of area data.</li>
-<li><seealso name="		YSI_g_sPlayerArea " />
+<li><seealso name="YSI_g_sPlayerArea" />
 		- Array of players' current areas.</li><to_ul>
 </ul></li></ul>
 *//** *//*

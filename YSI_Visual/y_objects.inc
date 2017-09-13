@@ -83,203 +83,203 @@
 		- adapted from my earlier e_objects.inc include.</li><to_ul>
 </ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
-<li><seealso name="		Object_Loop " />
+<li><seealso name="Object_Loop" />
 		- Main loop for checking.</li>
-<li><seealso name="		Object_CoOrdRemote " />
+<li><seealso name="Object_CoOrdRemote" />
 		- Does object location manipulation remotely.</li>
-<li><seealso name="		Object_Remote " />
+<li><seealso name="Object_Remote" />
 		- Does normal functions remotely.</li>
-<li><seealso name="		Object_UpdateUnused " />
+<li><seealso name="Object_UpdateUnused" />
 		- Adds an object to the remote unused list.</li>
-<li><seealso name="		Object_Broadcast " />
+<li><seealso name="Object_Broadcast" />
 		- Saves an object remotely.</li>
-<li><seealso name="		Object_GetLimit " />
+<li><seealso name="Object_GetLimit" />
 		- Gets the number of objects the remove master can hold.</li>
-<li><seealso name="		YSIM_Objects " />
+<li><seealso name="YSIM_Objects" />
 		- Processes master system instructions.</li>
-<li><seealso name="		Object_AddRem " />
+<li><seealso name="Object_AddRem" />
 		- Remote wrapper for Object_Add.</li><to_ul>
 </ul></li><li><em>Core</em><ul>
-<li><seealso name="		Object_Object " />
+<li><seealso name="Object_Object" />
 		- Constructor.</li>
-<li><seealso name="		Object_OnPlayerDisconnect " />
+<li><seealso name="Object_OnPlayerDisconnect" />
 		- Disconnects objects.</li><to_ul>
 </ul></li><li><em>Stock</em><ul>
-<li><seealso name="		Object_AddToWorld " />
+<li><seealso name="Object_AddToWorld" />
 		- Make visible in world.</li>
-<li><seealso name="		Object_RemoveFromWorld " />
+<li><seealso name="Object_RemoveFromWorld" />
 		- Make invisible in world.</li>
-<li><seealso name="		Object_AddToPlayer " />
+<li><seealso name="Object_AddToPlayer" />
 		- Make visible to player.</li>
-<li><seealso name="		Object_RemoveFromPlayer " />
+<li><seealso name="Object_RemoveFromPlayer" />
 		- Make invisible to player.</li>
-<li><seealso name="		Object_AddToAllWorlds " />
+<li><seealso name="Object_AddToAllWorlds" />
 		- Make visible in all worlds.</li>
-<li><seealso name="		Object_RemoveFromAllWorlds " />
+<li><seealso name="Object_RemoveFromAllWorlds" />
 		- Make invisible in all worlds.</li>
-<li><seealso name="		Object_AddToAllPlayers " />
+<li><seealso name="Object_AddToAllPlayers" />
 		- Make visible to all players.</li>
-<li><seealso name="		Object_RemoveFromAllPlayers " />
+<li><seealso name="Object_RemoveFromAllPlayers" />
 		- Make invisible to all players.</li>
-<li><seealso name="		Object_IsValidModel " />
+<li><seealso name="Object_IsValidModel" />
 		- Checks if an object is good to be displayed.</li>
-<li><seealso name="		Object_IsGlobal " />
+<li><seealso name="Object_IsGlobal" />
 		- Checks if an object is visible by default.</li>
-<li><seealso name="		Object_SetViewDistance " />
+<li><seealso name="Object_SetViewDistance" />
 		- Sets an object's view distance.</li>
-<li><seealso name="		Object_IsDescendant " />
+<li><seealso name="Object_IsDescendant" />
 		- Checks if an object is related to another object.</li><to_ul>
 </ul></li><li><em>Static</em><ul>
-<li><seealso name="		Object_Add " />
+<li><seealso name="Object_Add" />
 		- Internal add function.</li>
-<li><seealso name="		Object_FindSector " />
+<li><seealso name="Object_FindSector" />
 		- Find a location's sector.</li>
-<li><seealso name="		Object_AddToOOB " />
+<li><seealso name="Object_AddToOOB" />
 		- Add an object to the OOB list.</li>
-<li><seealso name="		Object_AddToSector " />
+<li><seealso name="Object_AddToSector" />
 		- Add an object to the specified list.</li>
-<li><seealso name="		Object_RemoveFromSector " />
+<li><seealso name="Object_RemoveFromSector" />
 		- Remove an object from the given sector.</li>
-<li><seealso name="		Object_FindSectors " />
+<li><seealso name="Object_FindSectors" />
 		- Get near sectors.</li>
-<li><seealso name="		Object_ParseSet " />
+<li><seealso name="Object_ParseSet" />
 		- Check objects in list.</li>
-<li><seealso name="		Object_Update " />
+<li><seealso name="Object_Update" />
 		- Updates the position of a moving object.</li>
-<li><seealso name="		Object_UpdateChildSectors " />
+<li><seealso name="Object_UpdateChildSectors" />
 		- Updates the sectors of moved object children.</li>
-<li><seealso name="		Object_SetPos " />
+<li><seealso name="Object_SetPos" />
 		- Moves an object to the given position.</li>
-<li><seealso name="		Object_UpdateAttach " />
+<li><seealso name="Object_UpdateAttach" />
 		- Updates children after dynamic stop.</li>
-<li><seealso name="		Object_Move " />
+<li><seealso name="Object_Move" />
 		- Reursive MoveDynamicObject for children.</li>
-<li><seealso name="		Object_RemoveFromParent " />
+<li><seealso name="Object_RemoveFromParent" />
 		- Removes an object from it's parent.</li>
-<li><seealso name="		Object_AddToParent " />
+<li><seealso name="Object_AddToParent" />
 		- Adds an object to another object.</li>
-<li><seealso name="		Object_AttachToPlayer " />
+<li><seealso name="Object_AttachToPlayer" />
 		- Attaches objects to a player recursively.</li>
-<li><seealso name="		Object_CheckDescendant " />
+<li><seealso name="Object_CheckDescendant" />
 		- Recursive call for Object_IsDescendant.</li>
-<li><seealso name="		Object_Destroy " />
+<li><seealso name="Object_Destroy" />
 		- Delete an object with no checks.</li>
-<li><seealso name="		Object_AddToUpdate " />
+<li><seealso name="Object_AddToUpdate" />
 		- Safely adds an object to the moved update list.</li><to_ul>
 </ul></li><li><em>Inline</em><ul>
-<li><seealso name="		Object_IsValid " />
+<li><seealso name="Object_IsValid" />
 		- Internal validity check.</li>
-<li><seealso name="		Object_GetAttach " />
+<li><seealso name="Object_GetAttach" />
 		- Get player an object's attached to.</li>
-<li><seealso name="		Object_SetAttach " />
+<li><seealso name="Object_SetAttach" />
 		- objSet player an object's attached to.</li>
-<li><seealso name="		Object_HasPlayer " />
+<li><seealso name="Object_HasPlayer" />
 		- Checks if a player can see an object.</li><to_ul>
 </ul></li><li><em>API</em><ul>
-<li><seealso name="		MoveDynamicObject " />
+<li><seealso name="MoveDynamicObject" />
 		- Wrapper for MoveObject.</li>
-<li><seealso name="		StopDynamicObject " />
+<li><seealso name="StopDynamicObject" />
 		- Wrapper for StopObject.</li>
-<li><seealso name="		IsValidDynamicObject " />
+<li><seealso name="IsValidDynamicObject" />
 		- Wrapper for IsValidObject.</li>
-<li><seealso name="		CreateDynamicObject " />
+<li><seealso name="CreateDynamicObject" />
 		- Wrapper for CreateObject.</li>
-<li><seealso name="		CreatePlayerDynamicObject " />
+<li><seealso name="CreatePlayerDynamicObject" />
 		- Wrapper for CreatePlayerObject.</li>
-<li><seealso name="		CreateVWDynamicObject " />
+<li><seealso name="CreateVWDynamicObject" />
 		- Creates an object in only one world.</li>
-<li><seealso name="		CreatePlayerVWDynamicObject " />
+<li><seealso name="CreatePlayerVWDynamicObject" />
 		- Creates an object for one player in one world.</li>
-<li><seealso name="		DestroyDynamicObject " />
+<li><seealso name="DestroyDynamicObject" />
 		- Wrapper for DestroyObject.</li>
-<li><seealso name="		GetDynamicObjectPos " />
+<li><seealso name="GetDynamicObjectPos" />
 		- Wrapper for GetObjectPos.</li>
-<li><seealso name="		GetDynamicObjectRot " />
+<li><seealso name="GetDynamicObjectRot" />
 		- Wrapper for GetObjectRot.</li>
 <li><seealso name="		SetDynamicObjectPos = Wrapper for SetObjectPos.
 		SetDynamicObjectRot " />
 		- Wrapper for SetObjectRot.</li>
-<li><seealso name="		AttachDynamicObjectToPlayer " />
+<li><seealso name="AttachDynamicObjectToPlayer" />
 		- Wrapper for AttachObjectToPlayer.</li>
-<li><seealso name="		DetachDynamicObjectFromPlayer " />
+<li><seealso name="DetachDynamicObjectFromPlayer" />
 		- Removes an object from a player.</li>
-<li><seealso name="		AttachObjectToObject " />
+<li><seealso name="AttachObjectToObject" />
 		- Attaches an object to another object.</li>
-<li><seealso name="		RemoveObjectFromParent " />
+<li><seealso name="RemoveObjectFromParent" />
 		- Removes an object from another object.</li><to_ul>
 </ul></li></ul><subsection>Callbacks</subsection><ul>
 <li><seealso name="	OnDynamicObjectMoved
 </ul><subsection>Definitions</subsection><ul>
-<li><seealso name="	OBJECT_SECTOR_SIZE " />
+<li><seealso name="OBJECT_SECTOR_SIZE" />
 		" />
 		- Size of edge of a grid square for approximations.</li><to_ul></li>
-<li><seealso name="	MAX_DYN_OBJECTS " />
+<li><seealso name="MAX_DYN_OBJECTS" />
 		- Maximum number of objects.</li>
-<li><seealso name="	OBJECT_VIEW_DISTANCE " />
+<li><seealso name="OBJECT_VIEW_DISTANCE" />
 		- Range to stream objects for.</li>
-<li><seealso name="	NO_OBJECT " />
+<li><seealso name="NO_OBJECT" />
 		- No object pointer.</li>
-<li><seealso name="	NO_SECTOR " />
+<li><seealso name="NO_SECTOR" />
 		- No sector pointer.</li>
-<li><seealso name="	OBJECT_NO_SECTOR " />
+<li><seealso name="OBJECT_NO_SECTOR" />
 		- OOB object marker.</li>
-<li><seealso name="	OBJECT_LOOP_GRANULARITY " />
+<li><seealso name="OBJECT_LOOP_GRANULARITY" />
 		- Number of itterations per second for the loop.</li>
-<li><seealso name="	NO_ATTACH_PLAYER " />
+<li><seealso name="NO_ATTACH_PLAYER" />
 		- Marker for object not attached to anyone.</li>
-<li><seealso name="	OBJECT_WORLDS " />
+<li><seealso name="OBJECT_WORLDS" />
 		- Maximum number of worlds objects show up in.</li>
-<li><seealso name="	OBJECT_WORLD_COUNT " />
+<li><seealso name="OBJECT_WORLD_COUNT" />
 		- Size of bit array of worlds.</li>
-<li><seealso name="	OBJECT_PLAYER_COUNT " />
+<li><seealso name="OBJECT_PLAYER_COUNT" />
 		- Size of bit array of players.</li><to_ul>
 </ul><subsection>Enums</subsection><ul>
-<li><seealso name="	E_OBJECT " />
+<li><seealso name="E_OBJECT" />
 		- Structure of the dynamic object data.</li>
-<li><seealso name="	e_OBJ_FLAG " />
+<li><seealso name="e_OBJ_FLAG" />
 		- Flags for the object.</li><to_ul>
 </ul><subsection>Macros</subsection><ul>
-<li><seealso name="	OBJECT_SECTOR_EDGE " />
+<li><seealso name="OBJECT_SECTOR_EDGE" />
 		- Number of sectors on one edge of the world.</li>
-<li><seealso name="	OBJECT_SECTOR_ARRAY " />
+<li><seealso name="OBJECT_SECTOR_ARRAY" />
 		- Number of grid squares.</li>
-<li><seealso name="	OBJECT_SIGHT " />
+<li><seealso name="OBJECT_SIGHT" />
 		- OBJECT_VIEW_DISTANCE squared for speed.</li>
-<li><seealso name="	OBJECT_VIEW_RATIO " />
+<li><seealso name="OBJECT_VIEW_RATIO" />
 		- Number of sectors per view radius.</li>
-<li><seealso name="	OBJECT_VIEW_EDGES " />
+<li><seealso name="OBJECT_VIEW_EDGES" />
 		- Max width of view range in sectors.</li>
-<li><seealso name="	OBJECT_VIEW_SECTORS " />
+<li><seealso name="OBJECT_VIEW_SECTORS" />
 		- Max sectors visible at once.</li>
-<li><seealso name="	NO_OBJECT_CHECK " />
+<li><seealso name="NO_OBJECT_CHECK" />
 		- Invalid model.</li>
-<li><seealso name="	OBJECT_BITS " />
+<li><seealso name="OBJECT_BITS" />
 		- Number of bits to hold all dynamic objects.</li>
-<li><seealso name="	e_OBJ_FLAG_MOVED " />
+<li><seealso name="e_OBJ_FLAG_MOVED" />
 		- Extension of e_OBJ_FLAG, both move flags together.</li>
-<li><seealso name="	NEW_SECTOR " />
+<li><seealso name="NEW_SECTOR" />
 		- Sector based on origin sector and current offset.</li><to_ul>
 </ul><subsection>Tags</subsection><ul>
-<li><seealso name="	e_OBJ_FLAG " />
+<li><seealso name="e_OBJ_FLAG" />
 		- Flags for objects.</li><to_ul>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
-<li><seealso name="		YSI_g_sObjectSectors " />
+<li><seealso name="YSI_g_sObjectSectors" />
 		- Array of pointers to sector object lists.</li>
-<li><seealso name="		YSI_g_sObjects " />
+<li><seealso name="YSI_g_sObjects" />
 		- Array of objects.</li>
-<li><seealso name="		YSI_g_sOtherSector " />
+<li><seealso name="YSI_g_sOtherSector" />
 		- Pointer to OOB object list.</li>
-<li><seealso name="		YSI_g_sMovingObjects " />
+<li><seealso name="YSI_g_sMovingObjects" />
 		- Pointer to moving object list.</li>
-<li><seealso name="		YSI_g_sNoObjects " />
+<li><seealso name="YSI_g_sNoObjects" />
 		- Pointer to unused object list.</li><to_ul>
 </ul></li></ul><subsection>Compile options</subsection><ul>
-<li><seealso name="	NO_PERSONAL_OBJECTS " />
+<li><seealso name="NO_PERSONAL_OBJECTS" />
 		- All players see all objects.</li>
-<li><seealso name="	NO_OBJECT_ATTACH " />
+<li><seealso name="NO_OBJECT_ATTACH" />
 		- Objects can't be attached to each other.</li>
-<li><seealso name="	NO_OBJECTS_MOVE " />
+<li><seealso name="NO_OBJECTS_MOVE" />
 		- No processing is done for moving objects.</li>
 <li><seealso name="	OBJECT_WORLDS 0 " />
 		- All objects are visible in all worlds.</li><to_ul>

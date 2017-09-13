@@ -34,28 +34,28 @@
 		First version.
 </ul><subsection>Functions</subsection><ul>
 <li><em>Stock</em><ul>
-<li><seealso name="		Bit_Set " />
+<li><seealso name="Bit_Set" />
 		- Sets a slot to the given value.</li>
-<li><seealso name="		Bit_Get " />
+<li><seealso name="Bit_Get" />
 		- Gets a slot state.</li>
-<li><seealso name="		Bit_SetAll " />
+<li><seealso name="Bit_SetAll" />
 		- Sets all the slots in an array to the same thing.</li>
-<li><seealso name="		Bit_GetCount " />
+<li><seealso name="Bit_GetCount" />
 		- Gets the number of 1s in a bit array.</li><to_ul>
 </ul></li><li><em>Inline</em><ul>
-<li><seealso name="		Bit_Bits " />
+<li><seealso name="Bit_Bits" />
 		- Gets the number of cells required for a bit array.</li>
-<li><seealso name="		Bit_Let " />
+<li><seealso name="Bit_Let" />
 		- Sets a slot to 1.</li>
-<li><seealso name="		Bit_Vet " />
+<li><seealso name="Bit_Vet" />
 		- Sets a slot to 0.</li>
-<li><seealso name="		Bit_GetBits " />
+<li><seealso name="Bit_GetBits" />
 		- Gets the bit at a slot unsafely.</li><to_ul>
 </ul></li></ul><subsection>Definitions</subsection><ul>
-<li><seealso name="	CELLSHIFT " />
+<li><seealso name="CELLSHIFT" />
 		- Number of bits that can hold "cellbits"</li><to_ul>
 </ul><subsection>Tags</subsection><ul>
-<li><seealso name="	Bit " />
+<li><seealso name="Bit" />
 		- Bit array type.</li><to_ul>
 </ul>
 *//** *//*

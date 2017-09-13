@@ -25,11 +25,11 @@
 		First version.
 </ul><subsection>Functions</subsection><ul>
 <li><em>Stock</em><ul>
-<li><seealso name="		Puny_Encode " />
+<li><seealso name="Puny_Encode" />
 		- Convert a Unicode string to Punycode.</li>
-<li><seealso name="		Puny_Decode " />
+<li><seealso name="Puny_Decode" />
 		- Convert a Punycode string to Unicode.</li>
-<li><seealso name="		Puny_HTTP " />
+<li><seealso name="Puny_HTTP" />
 		- Wrapper for "HTTP" to encode domain names.</li><to_ul>
 </ul></li></ul>
 

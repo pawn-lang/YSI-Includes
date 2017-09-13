@@ -19,18 +19,18 @@
 		First version.
 </ul><subsection>Functions</subsection><ul>
 <li><em>Stock</em><ul>
-<li><seealso name="		Vehicle_Speed " />
+<li><seealso name="Vehicle_Speed" />
 		- Get current vehicle speed in KMH.</li><to_ul>
 </ul></li></ul><subsection>Tags</subsection><ul>
-<li><seealso name="	VIM " />
+<li><seealso name="VIM" />
 		- Vehicle Internal Modelid.</li><to_ul>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Global</em><ul>
-<li><seealso name="		YSI_gVehicleFlags " />
+<li><seealso name="YSI_gVehicleFlags" />
 		- Data on vehicles.</li>
-<li><seealso name="		YSI_gVehicleNames " />
+<li><seealso name="YSI_gVehicleNames" />
 		- Names of vehicles.</li>
-<li><seealso name="		YSI_gVehicleTopSpeed " />
+<li><seealso name="YSI_gVehicleTopSpeed" />
 		- Top speed of vehicles.</li><to_ul>
 </ul></li></ul>
 *//** *//*

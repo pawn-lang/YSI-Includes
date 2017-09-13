@@ -32,93 +32,93 @@
 		First version.
 </ul><subsection>Functions</subsection><ul>
 <li><em>Public</em><ul>
-<li><seealso name="		Class_AddRemote " />
+<li><seealso name="Class_AddRemote" />
 		- Adds a class to the remote master.</li>
-<li><seealso name="		Class_Remote " />
+<li><seealso name="Class_Remote" />
 		- Updates settings remotely.</li><to_ul>
 </ul></li><li><em>Core</em><ul>
-<li><seealso name="		Class_Class " />
+<li><seealso name="Class_Class" />
 		- Sets up the system.</li>
-<li><seealso name="		Class_OnPlayerRequestSpawn " />
+<li><seealso name="Class_OnPlayerRequestSpawn" />
 		- Called when a player requests a spawn.</li>
-<li><seealso name="		Class_OnPlayerRequestClass " />
+<li><seealso name="Class_OnPlayerRequestClass" />
 		- Called when a player requests a class.</li>
-<li><seealso name="		Class_OnPlayerConnect " />
+<li><seealso name="Class_OnPlayerConnect" />
 		- Called when a player connects.</li><to_ul>
 </ul></li><li><em>Stock</em><ul>
-<li><seealso name="		Class_Delete " />
+<li><seealso name="Class_Delete" />
 		- Removes a class.</li>
-<li><seealso name="		Class_SetPlayer " />
+<li><seealso name="Class_SetPlayer" />
 		- Sets whether or not a player can use a class.</li>
-<li><seealso name="		Class_Disable " />
+<li><seealso name="Class_Disable" />
 		- Disables a class.</li>
-<li><seealso name="		Class_Enable " />
+<li><seealso name="Class_Enable" />
 		- Enables a disabled class.</li>
-<li><seealso name="		Class_AddForGroup " />
+<li><seealso name="Class_AddForGroup" />
 		- Adds a class to the system for only one group.</li>
-<li><seealso name="		Class_Add " />
+<li><seealso name="Class_Add" />
 		- Adds a class to the system.</li>
-<li><seealso name="		Class_AddEx " />
+<li><seealso name="Class_AddEx" />
 		- Adds a class to the system with group selection and setting.</li>
-<li><seealso name="		Class_AddWithGroupSet " />
+<li><seealso name="Class_AddWithGroupSet" />
 		- Adds a class and sets their group on selection.</li>
-<li><seealso name="		Class_AllowReselection " />
+<li><seealso name="Class_AllowReselection" />
 		- Allows or disallows people to return to reselect a class.</li>
-<li><seealso name="		Class_RequireSpawnLogin " />
+<li><seealso name="Class_RequireSpawnLogin" />
 		- Require people to login before spawning.</li>
-<li><seealso name="		Class_RequireSelectionLogin " />
+<li><seealso name="Class_RequireSelectionLogin" />
 		- Require people to login before selecting.</li>
-<li><seealso name="		Class_RequireSelectionReg " />
+<li><seealso name="Class_RequireSelectionReg" />
 		- Require people to register before selecting.</li>
-<li><seealso name="		Class_RequireSpawnReg " />
+<li><seealso name="Class_RequireSpawnReg" />
 		- Require people to register before spawning.</li><to_ul>
 </ul></li><li><em>Static</em><ul>
-<li><seealso name="		Class_AddClass " />
+<li><seealso name="Class_AddClass" />
 		- Adds a class, wrapped by API and remote functions.</li><to_ul>
 </ul></li><li><em>Inline</em><ul>
-<li><seealso name="		Class_IsActive " />
+<li><seealso name="Class_IsActive" />
 		- Checks a class is active.</li>
-<li><seealso name="		Class_Enabled " />
+<li><seealso name="Class_Enabled" />
 		- Checks a class is enabled.</li>
-<li><seealso name="		Class_IsValid " />
+<li><seealso name="Class_IsValid" />
 		- Checks a class is valid.</li>
-<li><seealso name="		Class_X " />
+<li><seealso name="Class_X" />
 		- Gets a classes x position.</li>
-<li><seealso name="		Class_Y " />
+<li><seealso name="Class_Y" />
 		- Gets a classes y position.</li>
-<li><seealso name="		Class_Z " />
+<li><seealso name="Class_Z" />
 		- Gets a classes z position.</li>
-<li><seealso name="		Class_A " />
+<li><seealso name="Class_A" />
 		- Gets a classes angle.</li>
-<li><seealso name="		Class_Skin " />
+<li><seealso name="Class_Skin" />
 		- Gets a classes skin.</li><to_ul>
 </ul></li></ul><subsection>Definitions</subsection><ul>
-<li><seealso name="	MAX_CLASSES " />
+<li><seealso name="MAX_CLASSES" />
 		- Maximum number of classes storeable by the system.</li>
-<li><seealso name="	CLASS_LEFT " />
+<li><seealso name="CLASS_LEFT" />
 		- Flag for last internal class viewed.</li>
-<li><seealso name="	CLASS_MIDDLE " />
+<li><seealso name="CLASS_MIDDLE" />
 		- Flag for last internal class viewed.</li>
-<li><seealso name="	CLASS_RIGHT " />
+<li><seealso name="CLASS_RIGHT" />
 		- Flag for last internal class viewed.</li><to_ul>
 </ul><subsection>Enums</subsection><ul>
-<li><seealso name="	e_CLASS_FLAGS " />
+<li><seealso name="e_CLASS_FLAGS" />
 		- Small data for individual classes.</li>
-<li><seealso name="	E_CLASS " />
+<li><seealso name="E_CLASS" />
 		- Class data structure.</li><to_ul>
 </ul><subsection>Variables</subsection><ul>
 <li><em>Static</em><ul>
-<li><seealso name="		YSI_g_sClasses " />
+<li><seealso name="YSI_g_sClasses" />
 		- Data for classes.</li>
-<li><seealso name="		YSI_g_sPlayerClass " />
+<li><seealso name="YSI_g_sPlayerClass" />
 		- Player's current classes.</li>
-<li><seealso name="		YSI_g_sLeft " />
+<li><seealso name="YSI_g_sLeft" />
 		- Handle for the first internal class.</li>
-<li><seealso name="		YSI_g_sMiddle " />
+<li><seealso name="YSI_g_sMiddle" />
 		- Handle for the second internal class.</li>
-<li><seealso name="		YSI_g_sRight " />
+<li><seealso name="YSI_g_sRight" />
 		- Handle for the third internal class.</li>
-<li><seealso name="		YSI_g_sClassCount " />
+<li><seealso name="YSI_g_sClassCount" />
 		- Number of classes stored.</li><to_ul>
 </ul></li></ul>
 *//** *//*

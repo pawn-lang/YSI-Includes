@@ -68,36 +68,36 @@ Contributors:
 Thanks:
 	JoeBullet/Google63 " />
 		- Handy arbitrary ASM jump code using SCTRL.</li>
-<li><seealso name="	ZeeX " />
+<li><seealso name="ZeeX" />
 		- Very productive conversations.</li>
-<li><seealso name="	koolk " />
+<li><seealso name="koolk" />
 		- IsPlayerinAreaEx code.</li>
-<li><seealso name="	TheAlpha " />
+<li><seealso name="TheAlpha" />
 		- Danish translation.</li>
-<li><seealso name="	breadfish " />
+<li><seealso name="breadfish" />
 		- German translation.</li>
-<li><seealso name="	Fireburn " />
+<li><seealso name="Fireburn" />
 		- Dutch translation.</li>
-<li><seealso name="	yom " />
+<li><seealso name="yom" />
 		- French translation.</li>
-<li><seealso name="	50p " />
+<li><seealso name="50p" />
 		- Polish translation.</li>
-<li><seealso name="	Zamaroht " />
+<li><seealso name="Zamaroht" />
 		- Spanish translation.</li>
-<li><seealso name="	Los " />
+<li><seealso name="Los" />
 		- Portuguese translation.</li>
 <li><seealso name="	Dracoblue, sintax, mabako, Xtreme, other coders " />
 		- Producing other modes for</li>
 <li><seealso name="		me to strive to better.
 	Pixels^ " />
 		- Running XScripters where the idea was born.</li>
-<li><seealso name="	Matite " />
+<li><seealso name="Matite" />
 		- Pestering me to release it and using it.</li>
 <li><seealso name="
 Very special thanks to:
 	Thiadmer " />
 		- PAWN, whose limits continue to amaze me!</li>
-<li><seealso name="	Kye/Kalcor " />
+<li><seealso name="Kye/Kalcor" />
 		- SA:MP.</li>
 <li><seealso name="	SA:MP Team past, present and future " />
 		- SA:MP.</li>
@@ -105,9 +105,9 @@ Very special thanks to:
 Optional plugins:
 	Gamer_Z " />
 		- GPS.</li>
-<li><seealso name="	Incognito " />
+<li><seealso name="Incognito" />
 		- Streamer.</li>
-<li><seealso name="	Me " />
+<li><seealso name="Me" />
 		- sscanf2, fixes2, Whirlpool.</li>
 <li><seealso name="*/
 

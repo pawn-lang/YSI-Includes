@@ -18,14 +18,14 @@
 	04/10/12:
 		Added local versions of the function for no master system servers.
 </ul><subsection>Macros</subsection><ul>
-<li><seealso name="	remotefunc " />
+<li><seealso name="remotefunc" />
 		- Define a function to be called remotely (use like "stock").</li>
-<li><seealso name="	broadcastfunc " />
+<li><seealso name="broadcastfunc" />
 		- Call the function, but in all scripts.</li>
-<li><seealso name="	localfunc " />
+<li><seealso name="localfunc" />
 		- Call the function by name, not address, in the current script.</li><to_ul>
 </ul><subsection>Compile options</subsection><ul>
-<li><seealso name="	YSI_NO_MASTER " />
+<li><seealso name="YSI_NO_MASTER" />
 		- Disable all knowledge of other scripts.</li><to_ul>
 </ul>
 *//** *//*
