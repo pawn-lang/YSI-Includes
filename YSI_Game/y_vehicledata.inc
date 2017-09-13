@@ -43,7 +43,7 @@ Global
 	<symbol name="YSI_gVehicleFlags">Data on vehicles.</symbol>
 	<symbol name="YSI_gVehicleNames">Names of vehicles.</symbol>
 	<symbol name="YSI_gVehicleTopSpeed">Top speed of vehicles.</symbol>
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

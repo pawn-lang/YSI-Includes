@@ -123,7 +123,7 @@ Static
 	<symbol name="YSI_g_sBufferLang">Current language being loaded.</symbol>
 	<symbol name="YSI_g_sLangBuffer">Saves the current position of each language.</symbol>
 	<symbol name="YSI_g_sColours">Saves defined colours for use.</symbol>
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

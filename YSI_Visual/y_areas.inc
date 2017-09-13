@@ -112,7 +112,7 @@ Static
 	<symbol name="YSI_g_sFreeCount">Number of unused slots.</symbol>
 	<symbol name="YSI_g_sAreas">Array of area data.</symbol>
 	<symbol name="YSI_g_sPlayerArea">Array of players' current areas.</symbol>
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

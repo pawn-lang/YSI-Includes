@@ -42,7 +42,7 @@ API
 Static
 </subsection><ul>
 	<symbol name="YSI_g_sWriteMem">The assembly.</symbol>
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

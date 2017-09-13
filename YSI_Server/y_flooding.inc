@@ -106,7 +106,7 @@ Static
 </subsection><ul>
 	<symbol name="YSI_g_sPlayerIPs">People's stored IPs for speed.</symbol>
 	<symbol name="YSI_g_sMaxConnections">Data for the script.</symbol>
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

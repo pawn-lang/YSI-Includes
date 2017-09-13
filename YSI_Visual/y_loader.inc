@@ -62,7 +62,7 @@ Static
 </subsection><ul>
 	<symbol name="YSI_g_sXMLRules">Handle to the XML parse rule set.</symbol>
 	<symbol name="YSI_g_sCurRace">Handle to the current race being built.</symbol>
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

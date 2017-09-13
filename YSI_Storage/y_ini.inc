@@ -130,7 +130,7 @@ Static
 	<symbol name="YSI_g_sINICurrentTag">Pointer to the tag been writen to.</symbol>
 	<symbol name="YSI_g_sINIWriteTag">Data for tags,</symbol>
 	<symbol name="YSI_g_sINIWriteFile">Current files been written to.</symbol>
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

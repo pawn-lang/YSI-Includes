@@ -106,7 +106,7 @@ Static
 	<symbol name="YSI_g_sMiddle">Handle for the second internal class.</symbol>
 	<symbol name="YSI_g_sRight">Handle for the third internal class.</symbol>
 	<symbol name="YSI_g_sClassCount">Number of classes stored.</symbol>
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1

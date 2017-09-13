@@ -38,7 +38,7 @@ Stock
 	<symbol name="Puny_Encode">Convert a Unicode string to Punycode.</symbol>
 	<symbol name="Puny_Decode">Convert a Punycode string to Unicode.</symbol>
 	<symbol name="Puny_HTTP">Wrapper for "HTTP" to encode domain names.</symbol>
-</ul></li></ul>
+</ul>
 *//** *//*
 Legal:
 	Version: MPL 1.1
