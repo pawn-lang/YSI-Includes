@@ -36,6 +36,7 @@
 	LI.dependency { DISPLAY: inline; PADDING-RIGHT: 8px }
 	LI.seealso { DISPLAY: inline; PADDING-RIGHT: 8px }
 	LI.attribute { DISPLAY: inline; PADDING-RIGHT: 8px }
+	LI.changelog { DISPLAY: inline; }
 	LI.symbol A { PADDING-RIGHT: 8px }
 	OL { MARGIN-TOP: 0.5em; }
 	SPAN.paraminfo { FONT-WEIGHT:Bold; COLOR: #336699; }
@@ -290,7 +291,7 @@
 
 <xsl:template match="subsection"><h3 class="general"><xsl:apply-templates/></h3></xsl:template>
 
-<xsl:template match="file"><h1 class="file"><span style="float:right; padding-right:2px">enumeration</span><xsl:apply-templates/></h1></xsl:template>
+<xsl:template match="file"><h1 class="file"><span style="float:right; padding-right:2px">file</span><xsl:apply-templates/></h1></xsl:template>
 <xsl:template match="br"><br /></xsl:template>
 <xsl:template match="indent">&#160;&#160;&#160;&#160;</xsl:template>
 
@@ -304,6 +305,11 @@
 
 <xsl:template match="symbol">
 	<li class="symbol"><a><xsl:attribute name="href">#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="@name"/>:</a><xsl:apply-templates/></li>
+</xsl:template>
+
+<xsl:template match="changelog">
+	<li class="changelog"><h3 class="general"><xsl:value-of select="@date"/></h3>
+	<ul><xsl:apply-templates/></ul></li>
 </xsl:template>
 
 
