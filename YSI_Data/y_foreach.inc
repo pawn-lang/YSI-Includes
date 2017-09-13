@@ -24,76 +24,98 @@
 <section>
 	Changelog
 </section><ul>
-<changelog date="29/03/15"><to_cl>
-		More testing.
-		Repaired special iterators.
-<changelog date="28/03/15"><to_cl>
-		Breaking change: "Iter_Add" returns value added, not true/false.
-		Breaking change: Special iterators take "cellmin", not "-1".
-		Wrote many tests.
-		Split in to multiple files.
-		Added multi-iterators.
-		Officially deprecated "foreach (Player, i)".
-<changelog date="26/03/15"><to_cl>
-		Re-added reverse iterators.
-		Added support for extra spaces in "foreach".
-<changelog date="26/12/13"><to_cl>
-		Added sections.
-<changelog date="17/10/12"><to_cl>
-		Fixed a bug that was here but not in "foreach.inc".
-<changelog date="04/10/12"><to_cl>
-		Added a tiny tweak to detect tag-returning iterator functions.
-		Added Iter_InternalSize.
-<changelog date="13/01/12"><to_cl>
-		Fixed the count thanks to AndreT.
-<changelog date="05/01/12"><to_cl>
-		Fixed multi-dimensional iterators.
-		Fixed "FOREACH_NO_BOTS".
-		Made "Iterator:" support multi-dimensional arrays.
-<changelog date="24/12/11"><to_cl>
-		Added _YSI_SPECIAL_DEBUG support.
-		Added fix for function iterators.
-		Ported back to YSI.
-		Changed to use internal YSI "__" natives.
-		Fixed calls order by using ALS.
-<changelog date="31/10/11"><to_cl>
-		Changed the underlying loop code to be slightly faster.
-		Added support for Iter_SafeRemove, prompting refactoring.
-<changelog date="17/09/11"><to_cl>
-		Fixed arrays under the new syntax.
-<changelog date="28/04/11"><to_cl>
-		Moved iterator identifiers to end of variables.
-		Rewrote "foreach" to accept two syntaxes for "foreach (new i : Iter)".
-<changelog date="16/08/10"><to_cl>
-		Removed all the "2" versions of the functions.
-<changelog date="14/08/10"><to_cl>
-		Added Iter_Clear to reset an array.
-<changelog date="06/08/10"><to_cl>
-		Added special array declaration format.
-<changelog date="18/12/09"><to_cl>
-		Added Iter_Func2 functions for multi-dimensional iterators.
-		Renamed foreact et al as keywords in the documentation.
-		Changed licensing from GPL to MPL.
-<changelog date="02/09/09"><to_cl>
-		Fixed (again) for 0.3.
-		Added free slot finding.
-<changelog date="21/08/09"><to_cl>
-		Updated to include random functions.
-		Made entirely stand alone.
-		Ported to 0.3 (separate version).
-		Added automatic callback hook code.
-		Removed debug information from stand alone version.
-<changelog date="06/01/08"><to_cl>
-		Added debug information.
-<changelog date="09/10/07"><to_cl>
-		Moved to system.
-<changelog date="16/09/07"><to_cl>
-		Added list sorting.
-		Made this part of Y SeRver Includes, not Y Sever Includes.
-		Made list sorting optional.
-		Fixed version number.
-<changelog date="08/09/07"><to_cl>
-		First version.
+<changelog date="29/03/15">
+<li>More testing.</li>
+<li>Repaired special iterators.</li>
+</changelog>
+<changelog date="28/03/15">
+<li>Breaking change: "Iter_Add" returns value added, not true/false.</li>
+<li>Breaking change: Special iterators take "cellmin", not "-1".</li>
+<li>Wrote many tests.</li>
+<li>Split in to multiple files.</li>
+<li>Added multi-iterators.</li>
+<li>Officially deprecated "foreach (Player, i)".</li>
+</changelog>
+<changelog date="26/03/15">
+<li>Re-added reverse iterators.</li>
+<li>Added support for extra spaces in "foreach".</li>
+</changelog>
+<changelog date="26/12/13">
+<li>Added sections.</li>
+</changelog>
+<changelog date="17/10/12">
+<li>Fixed a bug that was here but not in "foreach.inc".</li>
+</changelog>
+<changelog date="04/10/12">
+<li>Added a tiny tweak to detect tag-returning iterator functions.</li>
+<li>Added Iter_InternalSize.</li>
+</changelog>
+<changelog date="13/01/12">
+<li>Fixed the count thanks to AndreT.</li>
+</changelog>
+<changelog date="05/01/12">
+<li>Fixed multi-dimensional iterators.</li>
+<li>Fixed "FOREACH_NO_BOTS".</li>
+<li>Made "Iterator:" support multi-dimensional arrays.</li>
+</changelog>
+<changelog date="24/12/11">
+<li>Added _YSI_SPECIAL_DEBUG support.</li>
+<li>Added fix for function iterators.</li>
+<li>Ported back to YSI.</li>
+<li>Changed to use internal YSI "__" natives.</li>
+<li>Fixed calls order by using ALS.</li>
+</changelog>
+<changelog date="31/10/11">
+<li>Changed the underlying loop code to be slightly faster.</li>
+<li>Added support for Iter_SafeRemove, prompting refactoring.</li>
+</changelog>
+<changelog date="17/09/11">
+<li>Fixed arrays under the new syntax.</li>
+</changelog>
+<changelog date="28/04/11">
+<li>Moved iterator identifiers to end of variables.</li>
+<li>Rewrote "foreach" to accept two syntaxes for "foreach (new i : Iter)".</li>
+</changelog>
+<changelog date="16/08/10">
+<li>Removed all the "2" versions of the functions.</li>
+</changelog>
+<changelog date="14/08/10">
+<li>Added Iter_Clear to reset an array.</li>
+</changelog>
+<changelog date="06/08/10">
+<li>Added special array declaration format.</li>
+</changelog>
+<changelog date="18/12/09">
+<li>Added Iter_Func2 functions for multi-dimensional iterators.</li>
+<li>Renamed foreact et al as keywords in the documentation.</li>
+<li>Changed licensing from GPL to MPL.</li>
+</changelog>
+<changelog date="02/09/09">
+<li>Fixed (again) for 0.3.</li>
+<li>Added free slot finding.</li>
+</changelog>
+<changelog date="21/08/09">
+<li>Updated to include random functions.</li>
+<li>Made entirely stand alone.</li>
+<li>Ported to 0.3 (separate version).</li>
+<li>Added automatic callback hook code.</li>
+<li>Removed debug information from stand alone version.</li>
+</changelog>
+<changelog date="06/01/08">
+<li>Added debug information.</li>
+</changelog>
+<changelog date="09/10/07">
+<li>Moved to system.</li>
+</changelog>
+<changelog date="16/09/07">
+<li>Added list sorting.</li>
+<li>Made this part of Y SeRver Includes, not Y Sever Includes.</li>
+<li>Made list sorting optional.</li>
+<li>Fixed version number.</li>
+</changelog>
+<changelog date="08/09/07">
+<li>First version.</li>
+</changelog>
 </ul><section>
 	Functions
 </section>

@@ -19,8 +19,9 @@
 <section>
 	Changelog
 </section><ul>
-<changelog date="21/10/12"><to_cl>
-		First version
+<changelog date="21/10/12">
+<li>First version</li>
+</changelog>
 </ul>
 *//** *//*
 Legal:

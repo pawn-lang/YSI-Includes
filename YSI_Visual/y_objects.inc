@@ -17,68 +17,89 @@
 <section>
 	Changelog
 </section><ul>
-<changelog date="27/12/07"><to_cl>
-		Fixed a bug in the moved object list system.
-<changelog date="26/11/07"><to_cl>
-		Finished up master system.
-		Fixed DestroyDynamicObject not removing client objects.
-<changelog date="16/11/07"><to_cl>
-		Removed global flag as it wasn't doing anything.
-<changelog date="27/10/07"><to_cl>
-		Fixed moving objects so they actually move
-<changelog date="26/10/07"><to_cl>
-		Added object children to attach objects to each other.
-<changelog date="09/10/07"><to_cl>
-		FINALLY found compile hang bug.
-		Repaired removed code.
-		Put object co-ordinate code in Object_ParseSet
-<changelog date="23/09/07"><to_cl>
-		Updated FindSector, AddToSector and RemoveFromSector to use new system.
-<changelog date="22/09/07"><to_cl>
-		Started work on new sector system, minor macro changes, lots of maths.
-		Wrote squareroot macro.
-		Updated constructor.
-<changelog date="21/09/07"><to_cl>
-		Overhauled sector code, skips columns and interiors plus more efficient.
-<changelog date="20/09/07"><to_cl>
-		Made some core functions static so they don't get called by accident.
-		Changed auto-adjust code so it rounds to nearest whole log number.
-		Moved zone-find code around to skip whole columns at once.
-		Added zone sorting so they're done in order of distance.
-		Added breakout code so once all objects are found processing is exited.
-<changelog date="19/09/07"><to_cl>
-		Added auto-adjusting zone sizes based on object limits.
-		Altered zone find code to return only possible visible zones.
-		Fixed rare hanging bug in close list code.
-<changelog date="18/09/07"><to_cl>
-		My birthday - yes I'm that sad to code on it and put it in a changelog.
-		Rewrote sectors code to use known sectors instead of position.
-<changelog date="17/09/07"><to_cl>
-		Rewrote find code to find closest objects instead of random close ones.
-<changelog date="03/08/07"><to_cl>
-		Updated timer system.
-<changelog date="07/05/07"><to_cl>
-		Added groups support via default settings.
-		Corrected (unused) flag - bit pointless but meh.
-<changelog date="02/05/07"><to_cl>
-		Added YSI_ prefix to all globals.
-		Added dynamic object API calls.
-<changelog date="30/04/07"><to_cl>
-		Fixed bug in DestroyDynamicObject with OOB objects not 1st in list.
-		Exported sector removal code to Object_RemoveFromSector.
-		Added SECTOR parameter to E_OBJECT for ease of modification.
-<changelog date="25/04/07"><to_cl>
-		Added 3d checking.
-		Added DestroyDynamicObject API function.
-		Fixed location checking on attached objects.
-		Fixed loop itteration for cyclic list structure.
-<changelog date="24/04/07"><to_cl>
-		Fixed range leave checking.
-		Added moving objects list.
-<changelog date="18/04/07"><to_cl>
-		Second version - completely rewritten after a chat with Peter.
-<changelog date="16/04/07"><to_cl>
-		First version - adapted from my earlier e_objects.inc include.
+<changelog date="27/12/07">
+<li>Fixed a bug in the moved object list system.</li>
+</changelog>
+<changelog date="26/11/07">
+<li>Finished up master system.</li>
+<li>Fixed DestroyDynamicObject not removing client objects.</li>
+</changelog>
+<changelog date="16/11/07">
+<li>Removed global flag as it wasn't doing anything.</li>
+</changelog>
+<changelog date="27/10/07">
+<li>Fixed moving objects so they actually move</li>
+</changelog>
+<changelog date="26/10/07">
+<li>Added object children to attach objects to each other.</li>
+</changelog>
+<changelog date="09/10/07">
+<li>FINALLY found compile hang bug.</li>
+<li>Repaired removed code.</li>
+<li>Put object co-ordinate code in Object_ParseSet</li>
+</changelog>
+<changelog date="23/09/07">
+<li>Updated FindSector, AddToSector and RemoveFromSector to use new system.</li>
+</changelog>
+<changelog date="22/09/07">
+<li>Started work on new sector system, minor macro changes, lots of maths.</li>
+<li>Wrote squareroot macro.</li>
+<li>Updated constructor.</li>
+</changelog>
+<changelog date="21/09/07">
+<li>Overhauled sector code, skips columns and interiors plus more efficient.</li>
+</changelog>
+<changelog date="20/09/07">
+<li>Made some core functions static so they don't get called by accident.</li>
+<li>Changed auto-adjust code so it rounds to nearest whole log number.</li>
+<li>Moved zone-find code around to skip whole columns at once.</li>
+<li>Added zone sorting so they're done in order of distance.</li>
+<li>Added breakout code so once all objects are found processing is exited.</li>
+</changelog>
+<changelog date="19/09/07">
+<li>Added auto-adjusting zone sizes based on object limits.</li>
+<li>Altered zone find code to return only possible visible zones.</li>
+<li>Fixed rare hanging bug in close list code.</li>
+</changelog>
+<changelog date="18/09/07">
+<li>My birthday - yes I'm that sad to code on it and put it in a changelog.</li>
+<li>Rewrote sectors code to use known sectors instead of position.</li>
+</changelog>
+<changelog date="17/09/07">
+<li>Rewrote find code to find closest objects instead of random close ones.</li>
+</changelog>
+<changelog date="03/08/07">
+<li>Updated timer system.</li>
+</changelog>
+<changelog date="07/05/07">
+<li>Added groups support via default settings.</li>
+<li>Corrected (unused) flag - bit pointless but meh.</li>
+</changelog>
+<changelog date="02/05/07">
+<li>Added YSI_ prefix to all globals.</li>
+<li>Added dynamic object API calls.</li>
+</changelog>
+<changelog date="30/04/07">
+<li>Fixed bug in DestroyDynamicObject with OOB objects not 1st in list.</li>
+<li>Exported sector removal code to Object_RemoveFromSector.</li>
+<li>Added SECTOR parameter to E_OBJECT for ease of modification.</li>
+</changelog>
+<changelog date="25/04/07">
+<li>Added 3d checking.</li>
+<li>Added DestroyDynamicObject API function.</li>
+<li>Fixed location checking on attached objects.</li>
+<li>Fixed loop itteration for cyclic list structure.</li>
+</changelog>
+<changelog date="24/04/07">
+<li>Fixed range leave checking.</li>
+<li>Added moving objects list.</li>
+</changelog>
+<changelog date="18/04/07">
+<li>Second version - completely rewritten after a chat with Peter.</li>
+</changelog>
+<changelog date="16/04/07">
+<li>First version - adapted from my earlier e_objects.inc include.</li>
+</changelog>
 </ul><section>
 	Functions
 </section>

@@ -19,10 +19,12 @@
 <section>
 	Changelog
 </section><ul>
-<changelog date="15/03/15"><to_cl>
-		Changed clamp ranges.
-<changelog date="01/06/14"><to_cl>
-		First version.
+<changelog date="15/03/15">
+<li>Changed clamp ranges.</li>
+</changelog>
+<changelog date="01/06/14">
+<li>First version.</li>
+</changelog>
 </ul><section>
 	Functions
 </section>

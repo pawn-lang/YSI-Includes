@@ -18,14 +18,17 @@
 <section>
 	Changelog
 </section><ul>
-<changelog date="02/02/13"><to_cl>
-		Added bits and join timestamp to preload data.
-		Added backwards compatible salting to the hash.
-<changelog date="15/11/11"><to_cl>
-		Added comments.
-		Added language to the top-level player data (needed for login).
-<changelog date="11/11/11"><to_cl>
-		First version.
+<changelog date="02/02/13">
+<li>Added bits and join timestamp to preload data.</li>
+<li>Added backwards compatible salting to the hash.</li>
+</changelog>
+<changelog date="15/11/11">
+<li>Added comments.</li>
+<li>Added language to the top-level player data (needed for login).</li>
+</changelog>
+<changelog date="11/11/11">
+<li>First version.</li>
+</changelog>
 </ul>
 *//** *//*
 Legal:

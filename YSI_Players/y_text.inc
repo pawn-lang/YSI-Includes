@@ -25,27 +25,35 @@
 <section>
 	Changelog
 </section><ul>
-<changelog date="17/02/07"><to_cl>
-		Added saving of style parameter for text draws.
-<changelog date="27/12/07"><to_cl>
-		Added text_draw support.
-<changelog date="24/06/07"><to_cl>
-		Modified a few functions to use Bit_GetBit for speed.
-<changelog date="19/06/07"><to_cl>
-		Added default language for alt language with no text.
-		Added console errors.
-		Added support for blank INI strings to ignore the text.
-		Increased speed of non format sends by saving each language
-<changelog date="14/06/07"><to_cl>
-		Added type and data loading for strings.
-		Altered display functions to use files defined styles.
-<changelog date="13/06/07"><to_cl>
-		Removed unfound text ignorance in group send functions.
-		Added improved error handling to support custom messges.
-<changelog date="02/05/07"><to_cl>
-		Added YSI_ prefix to all globals.
-<changelog date="23/03/07"><to_cl>
-		First version.
+<changelog date="17/02/07">
+<li>Added saving of style parameter for text draws.</li>
+</changelog>
+<changelog date="27/12/07">
+<li>Added text_draw support.</li>
+</changelog>
+<changelog date="24/06/07">
+<li>Modified a few functions to use Bit_GetBit for speed.</li>
+</changelog>
+<changelog date="19/06/07">
+<li>Added default language for alt language with no text.</li>
+<li>Added console errors.</li>
+<li>Added support for blank INI strings to ignore the text.</li>
+<li>Increased speed of non format sends by saving each language</li>
+</changelog>
+<changelog date="14/06/07">
+<li>Added type and data loading for strings.</li>
+<li>Altered display functions to use files defined styles.</li>
+</changelog>
+<changelog date="13/06/07">
+<li>Removed unfound text ignorance in group send functions.</li>
+<li>Added improved error handling to support custom messges.</li>
+</changelog>
+<changelog date="02/05/07">
+<li>Added YSI_ prefix to all globals.</li>
+</changelog>
+<changelog date="23/03/07">
+<li>First version.</li>
+</changelog>
 </ul><section>
 	Functions
 </section>

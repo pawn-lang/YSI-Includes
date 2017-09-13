@@ -18,8 +18,9 @@
 <section>
 	Changelog
 </section><ul>
-	19/02/12:
-		First version.
+<changelog date="19/02/12">
+<li>First version.</li>
+</changelog>
 </ul><section>
 	Functions
 </section>

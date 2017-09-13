@@ -46,11 +46,13 @@ in the output code.
 <section>
 	Changelog
 </section><ul>
-<changelog date="12/09/17"><to_cl>
-		Renamed everything for consistency.
-		Documented macros.
-<changelog date="14/04/13"><to_cl>
-		First version.
+<changelog date="12/09/17">
+<li>Renamed everything for consistency.</li>
+<li>Documented macros.</li>
+</changelog>
+<changelog date="14/04/13">
+<li>First version.</li>
+</changelog>
 </ul><section>
 	Functions
 </section>

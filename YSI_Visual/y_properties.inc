@@ -18,23 +18,31 @@
 <section>
 	Changelog
 </section><ul>
-<changelog date="03/08/07"><to_cl>
-		Updated timer system.
-<changelog date="31/07/07"><to_cl>
-		Made some functions safe.
-		Added tracking stats.
-<changelog date="03/07/07"><to_cl>
-		Added invert option on CreateRestrictedArea.
-<changelog date="24/06/07"><to_cl>
-		Modifed a few functions to use Bit_GetBit for speed.
-<changelog date="19/06/07"><to_cl>
-		Added minor functions (IsValid, GetType and GetLink)
-<changelog date="18/06/07"><to_cl>
-		Added commands.
-<changelog date="14/06/07"><to_cl>
-		Updated functions to use checkpoint and area lookups
-<changelog date="18/04/07"><to_cl>
-		First version.
+<changelog date="03/08/07">
+<li>Updated timer system.</li>
+</changelog>
+<changelog date="31/07/07">
+<li>Made some functions safe.</li>
+<li>Added tracking stats.</li>
+</changelog>
+<changelog date="03/07/07">
+<li>Added invert option on CreateRestrictedArea.</li>
+</changelog>
+<changelog date="24/06/07">
+<li>Modifed a few functions to use Bit_GetBit for speed.</li>
+</changelog>
+<changelog date="19/06/07">
+<li>Added minor functions (IsValid, GetType and GetLink)</li>
+</changelog>
+<changelog date="18/06/07">
+<li>Added commands.</li>
+</changelog>
+<changelog date="14/06/07">
+<li>Updated functions to use checkpoint and area lookups</li>
+</changelog>
+<changelog date="18/04/07">
+<li>First version.</li>
+</changelog>
 </ul><section>
 	Functions
 </section>

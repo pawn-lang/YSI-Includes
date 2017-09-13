@@ -18,26 +18,21 @@ Misc functions used throughout.
 <section>
 	Changelog
 </section>
-	<em>06/10/12</em>
-<ul>
+	<changelog date="06/10/12">
 <li>		Upgraded "memset" to use "FILL".</li>
-</ul>
-	<em>22/12/11</em>
-<ul>
+</changelog>
+	<changelog date="22/12/11">
 <li>		Changed "ceildiv" to only evaluate arguments once.</li>
-</ul>
-	<em>05/12/11</em>
-<ul>
+</changelog>
+	<changelog date="05/12/11">
 <li>		Added NO_VALUE to test if macros have no value.</li>
-</ul>
-	<em>08/09/10</em>
-<ul>
+</changelog>
+	<changelog date="08/09/10">
 <li>		Added strcpy and StripNL.</li>
-</ul>
-	<em>08/08/10</em>
-<ul>
+</changelog>
+	<changelog date="08/08/10">
 <li>		Scrapped almost everything.  Only VERY usefult things go in now.</li>
-</ul>
+</changelog>
 <section>
 	Functions
 </section>

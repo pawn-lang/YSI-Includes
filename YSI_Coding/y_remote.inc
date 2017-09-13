@@ -19,10 +19,12 @@
 <section>
 	Changelog
 </section><ul>
-<changelog date="03/01/12"><to_cl>
-		Added void: and string: returns.
-<changelog date="04/10/12"><to_cl>
-		Added local versions of the function for no master system servers.
+<changelog date="03/01/12">
+<li>Added void: and string: returns.</li>
+</changelog>
+<changelog date="04/10/12">
+<li>Added local versions of the function for no master system servers.</li>
+</changelog>
 </ul><section>
 	Macros
 </section><ul>

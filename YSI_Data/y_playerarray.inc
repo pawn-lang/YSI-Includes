@@ -20,10 +20,12 @@
 <section>
 	Changelog
 </section><ul>
-<changelog date="25/02/11"><to_cl>
-		Scrapped pointless "playing" code I was unhappy with.
-<changelog date="29/11/10"><to_cl>
-		First version
+<changelog date="25/02/11">
+<li>Scrapped pointless "playing" code I was unhappy with.</li>
+</changelog>
+<changelog date="29/11/10">
+<li>First version</li>
+</changelog>
 </ul>
 *//** *//*
 Legal:

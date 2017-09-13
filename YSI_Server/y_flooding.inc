@@ -78,10 +78,12 @@ Legal:
 <section>
 	Changelog
 </section><ul>
-<changelog date="15/11/10"><to_cl>
-		Updated to YSI 1.0.
-<changelog date="11/03/08"><to_cl>
-		First version.
+<changelog date="15/11/10">
+<li>Updated to YSI 1.0.</li>
+</changelog>
+<changelog date="11/03/08">
+<li>First version.</li>
+</changelog>
 </ul><section>
 	Functions
 </section>

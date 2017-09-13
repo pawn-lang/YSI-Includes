@@ -18,10 +18,12 @@
 <section>
 	Changelog
 </section><ul>
-<changelog date="02/12/11"><to_cl>
-		Updated Langs_Add to accept the parameters in either order.
-<changelog date="01/05/11"><to_cl>
-		First version.
+<changelog date="02/12/11">
+<li>Updated Langs_Add to accept the parameters in either order.</li>
+</changelog>
+<changelog date="01/05/11">
+<li>First version.</li>
+</changelog>
 </ul>
 *//** *//*
 Legal:

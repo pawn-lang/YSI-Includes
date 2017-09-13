@@ -18,10 +18,12 @@
 <section>
 	Changelog
 </section><ul>
-<changelog date="02/12/11"><to_cl>
-		Added variable argument functions.
-<changelog date="22/12/08"><to_cl>
-		First version.
+<changelog date="02/12/11">
+<li>Added variable argument functions.</li>
+</changelog>
+<changelog date="22/12/08">
+<li>First version.</li>
+</changelog>
 </ul><section>
 	Functions
 </section>

@@ -18,8 +18,9 @@
 <section>
 	Changelog
 </section><ul>
-<changelog date="21/10/10"><to_cl>
-		Split in to y_shortfunc.
+<changelog date="21/10/10">
+<li>Split in to y_shortfunc.</li>
+</changelog>
 </ul><section>
 	Natives
 </section><ul>

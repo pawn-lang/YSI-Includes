@@ -18,16 +18,20 @@
 <section>
 	Changelog
 </section><ul>
-<changelog date="06/03/11"><to_cl>
-		Changed the order of some letters to better support numbers in _I.
-<changelog date="01/03/11"><to_cl>
-		Rewrote compile-time hashes to not require commas.
-<changelog date="25/10/10"><to_cl>
-		Updated comments.
-		Added to YSI 1.0.
-		Added FNV1 and FNV1a hashes to avoid collisions.
-<changelog date="19/08/10"><to_cl>
-		First version.
+<changelog date="06/03/11">
+<li>Changed the order of some letters to better support numbers in _I.</li>
+</changelog>
+<changelog date="01/03/11">
+<li>Rewrote compile-time hashes to not require commas.</li>
+</changelog>
+<changelog date="25/10/10">
+<li>Updated comments.</li>
+<li>Added to YSI 1.0.</li>
+<li>Added FNV1 and FNV1a hashes to avoid collisions.</li>
+</changelog>
+<changelog date="19/08/10">
+<li>First version.</li>
+</changelog>
 </ul><section>
 	Functions
 </section>

@@ -19,35 +19,47 @@
 <section>
 	Changelog
 </section><ul>
-<changelog date="20/10/10"><to_cl>
-		Fixed a bug with insensitive commands - my fault for not testing.
-<changelog date="06/01/08"><to_cl>
-		Improved master and /help support.
-<changelog date="04/01/08"><to_cl>
-		Fixed bad element in Command_SetDeniedReturn.
-<changelog date="12/08/07"><to_cl>
-		Added master support.
-<changelog date="24/06/07"><to_cl>
-		Modifed a few functions to use Bit_GetBit for speed.
-<changelog date="04/05/07"><to_cl>
-		Completed command use support.
-		Added invalid character protection.
-<changelog date="02/05/07"><to_cl>
-		Added YSI_ prefix to all globals.
-<changelog date="14/04/07"><to_cl>
-		Updated header documentation with more than changelog/functions.
-		Added function name requesting.
-<changelog date="13/04/07"><to_cl>
-		Added function documentation.
-		Added wrapped functions for e_COMM_FLAG values missing them.
-		Added header function list.
-<changelog date="12/04/07"><to_cl>
-		Added command removal.
-<changelog date="11/04/07"><to_cl>
-		Changed system slightly to handle names and alt names separately.  Still
-		need a better way of ignoring names when alt names are used.
-<changelog date="10/04/07"><to_cl>
-		First version.
+<changelog date="20/10/10">
+<li>Fixed a bug with insensitive commands - my fault for not testing.</li>
+</changelog>
+<changelog date="06/01/08">
+<li>Improved master and /help support.</li>
+</changelog>
+<changelog date="04/01/08">
+<li>Fixed bad element in Command_SetDeniedReturn.</li>
+</changelog>
+<changelog date="12/08/07">
+<li>Added master support.</li>
+</changelog>
+<changelog date="24/06/07">
+<li>Modifed a few functions to use Bit_GetBit for speed.</li>
+</changelog>
+<changelog date="04/05/07">
+<li>Completed command use support.</li>
+<li>Added invalid character protection.</li>
+</changelog>
+<changelog date="02/05/07">
+<li>Added YSI_ prefix to all globals.</li>
+</changelog>
+<changelog date="14/04/07">
+<li>Updated header documentation with more than changelog/functions.</li>
+<li>Added function name requesting.</li>
+</changelog>
+<changelog date="13/04/07">
+<li>Added function documentation.</li>
+<li>Added wrapped functions for e_COMM_FLAG values missing them.</li>
+<li>Added header function list.</li>
+</changelog>
+<changelog date="12/04/07">
+<li>Added command removal.</li>
+</changelog>
+<changelog date="11/04/07">
+<li>Changed system slightly to handle names and alt names separately.  Still</li>
+<li>need a better way of ignoring names when alt names are used.</li>
+</changelog>
+<changelog date="10/04/07">
+<li>First version.</li>
+</changelog>
 </ul><section>
 	Functions
 </section>

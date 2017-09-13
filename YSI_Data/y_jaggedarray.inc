@@ -18,9 +18,10 @@
 <section>
 	Changelog
 </section><ul>
-<changelog date="06/10/12"><to_cl>
-		First version
-		Fixed a bug calling "rawMemset".
+<changelog date="06/10/12">
+<li>First version</li>
+<li>Fixed a bug calling "rawMemset".</li>
+</changelog>
 </ul>
 *//** *//*
 Legal:
