@@ -7,17 +7,17 @@
 <section>
 					y_xml
 </section>
-<subsection>Description</subsection><ul>
-	Parses XML files according to a set of defined rules.  A rule is a custom
+<subsection>Description</subsection>
+	<p>Parses XML files according to a set of defined rules.  A rule is a custom
 	function called on a tag when all the data for that tag has been collected.
-	The data for a tag could consist of simple bla="bla" pairs, <tag>data</tag>
-	pairs or cominations of the two, including subtags, each with their own
-	possible custom handlers.
+	The data for a tag could consist of simple <c>bla="bla"</c> pairs,
+	<c>&lt;tag&gt;data&lt;/tag&gt;</c> pairs or cominations of the two,
+	including subtags, each with their own possible custom handlers.</p>
 	
-	Data for the tag is retrieved from a custom function using only:
+	<p>Data for the tag is retrieved from a custom function using only:</p>
 	
-	while (XML_GetKeyValue(ident, data)) {}
-</ul></li></ul><subsection>Version</subsection>
+	<c>while (XML_GetKeyValue(ident, data)) {}</c>
+<subsection>Version</subsection>
 	1.0
 <subsection>Changelog</subsection><ul>
 	06/08/10:
