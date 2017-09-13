@@ -1,7 +1,7 @@
 /*+
-					===============================
-					 y_funcinc - Fix SYSREQ.C bugs
-					===============================
+<section>
+					y_funcinc
+</section>
 <subsection>Description</subsection>
 	Calls functions which are used in SYSREQ.C calls before they are used.  The
 	compiler crashes if the functions are not used in an included function

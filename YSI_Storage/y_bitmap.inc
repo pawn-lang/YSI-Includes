@@ -1,7 +1,7 @@
 /**
-					=================================
-					   y_bitmap - Generate bitmaps.
-					=================================
+<section>
+					y_bitmap
+</section>
 <subsection>Description</subsection>
 	Code to generate images on the server in the bitmap format.  This is by far
 	the simplest format to write to as it is just a huge array of colours (at

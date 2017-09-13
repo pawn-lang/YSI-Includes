@@ -1,7 +1,7 @@
 /**
-					=================================
-					 y_dialog - Dialogs wrapper.
-					=================================
+<section>
+					y_dialog
+</section>
 <subsection>Description</subsection>
 	Provides functions for dealing with dialogs, without needing to worry about
 	IDs or huge "OnDialogResponse" callbacks.

@@ -1,7 +1,7 @@
 /**
-					============================
-					Y Sever Includes - Cell Core
-					============================
+<section>
+					y_cell
+</section>
 <subsection>Description</subsection>
 	Provides a few functions for manipulating the bits in single cells.  Note
 	that this is distinct from the y_bit library.

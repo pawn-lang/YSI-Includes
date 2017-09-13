@@ -1,7 +1,7 @@
 /**
-					==================================
-					Y Sever Includes - Properties Core
-					==================================
+<section>
+					y_properties
+</section>
 <subsection>Description</subsection>
 	Handles properties and other common features for some modes.
 <subsection>Version</subsection>

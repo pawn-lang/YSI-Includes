@@ -1,7 +1,7 @@
 /*+
-					=========================================
-					     y_gamerzps - GPS plugin + YSI.
-					=========================================
+<section>
+					y_gamerzps
+</section>
 <subsection>Description</subsection>
 	This file unites various YSI features with Gamer_Z's GPS (Gamer_Z's
 	Positioning System) plugin so that you can use hooks and inlines with it.

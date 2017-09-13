@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------*//**
-  				===================================
-					 y_punycode - Character encodings.
-					===================================
+<section>
+					y_punycode
+</section>
 <subsection>Description</subsection>
 	Functions for converting unicode strings to and from punycode, to be
 	represented in just ASCII characters.  Based on several public

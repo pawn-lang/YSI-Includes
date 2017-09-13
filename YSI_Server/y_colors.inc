@@ -1,7 +1,7 @@
 /**
-					==========================
-					 y_colours - X11 colours!
-					==========================
+<section>
+					y_colours
+</section>
 <subsection>Description</subsection>
 	This holds the colour information that used to be part of the text system
 	but which is far more useful than just for text.  This now supports the full

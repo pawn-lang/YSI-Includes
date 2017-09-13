@@ -1,9 +1,9 @@
 /*+
-							  ====================
-							   YSI - Master Funcs
-							  ====================
+<section>
+					y_shortvar
+</section>
 <subsection>Description</subsection>
-	Defines new names for native functions.
+	Declares a few variables with very short names, used all over YSI.
 <subsection>Version</subsection>
 	0.2
 <subsection>Changelog</subsection>

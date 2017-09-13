@@ -1,7 +1,7 @@
 /**
-					==============================
-					 y_hooks - Hook any callback!
-					==============================
+<section>
+					y_hooks
+</section>
 <subsection>Description</subsection>
 	Automatically hooks any callbacks with a very simple syntax.
 <subsection>Version</subsection>

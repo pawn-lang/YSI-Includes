@@ -1,7 +1,7 @@
 /**
-                             ======================
-                              YSI - Master Include
-                             ======================
+<section>
+					y_master
+</section>
 <subsection>Description</subsection>
 	Handles distribution of control of code segments across all running scripts
 	with YSI to avoid conflicts of checkpoint streamers etc and allow features

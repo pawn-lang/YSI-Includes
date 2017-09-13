@@ -1,7 +1,7 @@
 /**
-					==============================
-					 y_va - Enhanced vararg code!
-					==============================
+<section>
+					y_va
+</section>
 <subsection>Description</subsection>
 	This library currently provides two functions - va_printf and va_format
 	which perform printf and format using variable arguments passed to another

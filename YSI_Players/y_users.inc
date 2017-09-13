@@ -1,7 +1,7 @@
 /**
-					===================================
-					 y_users - Registration functions.
-					===================================
+<section>
+					y_users
+</section>
 <subsection>Description</subsection>
 	Provides access to a user system for registering and saving users.
 <subsection>Version</subsection>

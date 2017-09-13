@@ -1,7 +1,7 @@
 /*+
-						============================
-						 y_pp - Preprocessor macros
-						============================
+<section>
+					y_pp
+</section>
 <subsection>Description</subsection>
 	More complex processing in the pre-processor.
 <subsection>Version</subsection>

@@ -1,7 +1,7 @@
 /**
-					=================================
-					 y_lock - Lock a server's IP.
-					=================================
+<section>
+					y_lock
+</section>
 <subsection>Description</subsection>
 	Ensures that the server is running on the IP specified by "bind".
 <subsection>Version</subsection>

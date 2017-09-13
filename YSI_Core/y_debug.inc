@@ -1,7 +1,7 @@
 /**
-					==============================
-					Y Sever Includes - Debug Setup
-					==============================
+<section>
+					y_debug
+</section>
 <subsection>Description</subsection>
 	Ensures debug levels are set and defines debug functions.
 	

@@ -1,7 +1,7 @@
 /*+
-					=======================================
-					 y_classes - Advanced class selection! 
-					=======================================
+<section>
+					y_classes
+</section>
 <subsection>Description</subsection>
 	Allows for advanced class selection options such as skins only certain
 	people can see and actually removing skins from class selection.

@@ -1,7 +1,7 @@
 /**
-					=======================================
-					 y_groups - Player group abstractions! 
-					=======================================
+<section>
+					y_groups
+</section>
 <subsection>Description</subsection>
 	Admin levels, gangs, teams etc - they're all "groups" of people, this
 	provides an abstraction for all of these collections.

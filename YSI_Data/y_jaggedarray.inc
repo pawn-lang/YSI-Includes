@@ -1,7 +1,7 @@
 /**
-						================================
-						 y_jaggedarray - Uneven arrays. 
-						================================
+<section>
+					y_jaggedarray
+</section>
 <subsection>Description</subsection>
 	Provides code to easilly manipulate the sizes of 2d array slots.
 <subsection>Version</subsection>

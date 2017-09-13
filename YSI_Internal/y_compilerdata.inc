@@ -22,12 +22,15 @@ RegEx.  I also put the search at the top of this block so it is easier to find
 in the output code.
 -->
 *//*+
-					================================
-					Y Sever Includes - Compiler Pass
-					================================
+<section>
+					y_compilerdata
+</section>
 <subsection>Description</subsection>
-	Detect which pass the compiler is on.  Used by y_groups to include code that
-	might be needed before it is known if it is needed (it can be dumped later).
+	Detect various information about the compiler, including which pass it is
+	currently executing, what flags it was compiled with, and which version it
+	is.  Provide that information to the rest of the script through a series of
+	consistent macros.  Used by y_groups to include code that might be needed
+	before it is known if it is needed (it can be dumped later).
 <subsection>Version</subsection>
 	0.1
 <subsection>Changelog</subsection>

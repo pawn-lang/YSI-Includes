@@ -1,7 +1,7 @@
 /**
-					====================================
-					 y_profiling - Run profilings easilly 
-					====================================
+<section>
+					y_profiling
+</section>
 <subsection>Description</subsection>
 	Runs any functions named as profilings when the Profiling_Run function is called.
 <subsection>Version</subsection>

@@ -1,7 +1,7 @@
 /*+
-					=========================================
-					 y_incognitostream - y_groups + streamer 
-					=========================================
+<section>
+					y_incognitostreamer
+</section>
 <subsection>Description</subsection>
 	This file unites the YSI y_groups system with Incognito's streamer plugin so
 	that you can use more objects/areas etc with y_groups style permissions.

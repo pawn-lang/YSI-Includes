@@ -1,7 +1,7 @@
 /**
-					======================================
-					 y_functional - Lambda-like functions
-					======================================
+<section>
+					y_functional
+</section>
 <subsection>Description</subsection>
 	Lambda functions and functional program functions - map, fold, etc.
 <subsection>Version</subsection>

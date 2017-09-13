@@ -1,7 +1,7 @@
 /**
-					=============================
-					 y_xml - XML file functions!
-					=============================
+<section>
+					y_xml
+</section>
 <subsection>Description</subsection>
 	Parses XML files according to a set of defined rules.  A rule is a custom
 	function called on a tag when all the data for that tag has been collected.

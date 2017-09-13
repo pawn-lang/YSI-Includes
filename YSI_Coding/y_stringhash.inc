@@ -1,7 +1,7 @@
 /**
-					========================================
-					 y_stringhash - Fast string comparisons 
-					========================================
+<section>
+					y_stringhash
+</section>
 <subsection>Description</subsection>
 	Allows you to hash strings at compile time to use them in a switch.
 <subsection>Version</subsection>

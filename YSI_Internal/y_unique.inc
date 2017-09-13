@@ -1,7 +1,7 @@
 /*+
-					============================
-					 y_unique - Similar symbols 
-					============================
+<section>
+					y_unique
+</section>
 <subsection>Description</subsection>
 	Defines a symbol differently every time it is included.
 <subsection>Version</subsection>

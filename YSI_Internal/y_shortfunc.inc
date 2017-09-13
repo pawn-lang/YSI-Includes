@@ -1,7 +1,7 @@
 /*+
-							  ====================
-							   YSI - Master Funcs
-							  ====================
+<section>
+					y_shortfunc
+</section>
 <subsection>Description</subsection>
 	Defines new names for native functions.
 <subsection>Version</subsection>

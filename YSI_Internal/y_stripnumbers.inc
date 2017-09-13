@@ -1,7 +1,7 @@
 /*+
-							 =====================
-							  YSI - Strip Numbers
-							 =====================
+<section>
+					y_stripnumbers
+</section>
 <subsection>Description</subsection>
 	Removes tag overrides which are actually numbers.  This allows for:
 		

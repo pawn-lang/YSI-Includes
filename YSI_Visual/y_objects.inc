@@ -1,7 +1,7 @@
 /**
-					===============================
-					Y Sever Includes - Objects Core
-					===============================
+<section>
+					y_objects
+</section>
 <subsection>Description</subsection>
 	Handles object streaming for >150 objects per player.  Also provides VW
 	support and improved object attachment (i.e. it works).  New versions

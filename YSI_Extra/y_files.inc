@@ -1,7 +1,7 @@
 /**
-							========================
-							 y_files - Include File 
-							========================
+<section>
+					y_files
+</section>
 <subsection>Description</subsection>
 	Provides native declarations for YSF functions.
 <subsection>Version</subsection>
@@ -121,9 +121,9 @@ Optional plugins:
 #define _INC_y_files
 
 /*-------------------------------------------------------------------------*//**
-					=================
-					 y_ini Libraries
-					=================
+*					=================
+*					 y_ini Libraries
+*					=================
 *//*-------------------------------------------------------------------------**/
 
 // File functions

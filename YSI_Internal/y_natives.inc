@@ -1,7 +1,7 @@
 /*+
-					=================================
-					 y_natives - Obsolete.
-					=================================
+<section>
+					y_natives
+</section>
 <subsection>Description</subsection>
 	Obsolete, but still required by y_lock.
 <subsection>Version</subsection>

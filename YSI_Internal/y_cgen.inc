@@ -1,7 +1,7 @@
 /*+
-					==============================
-					 y_cgen - Reserved code space
-					==============================
+<section>
+					y_cgen
+</section>
 <subsection>Description</subsection>
 	Large chunks of code that isn't used, so that the space can be reclaimed and
 	reused by other code generating functions.

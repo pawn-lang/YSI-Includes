@@ -1,7 +1,7 @@
 /**
-							 ====================
-							  GTA vehicles data.
-							 ====================
+<section>
+					y_vehicledata
+</section>
 <subsection>Description</subsection>
 	Basic functions for gathering data on various vehicle models.  Things like
 	what sort of vehicle they are and what organisation they belong to.

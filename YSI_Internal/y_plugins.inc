@@ -1,7 +1,7 @@
 /*+
-					  ===================================
-					   y_plugins - Used plugin detection 
-					  ===================================
+<section>
+					y_plugins
+</section>
 <subsection>Description</subsection>
 	Configuration and detection for third-party SA:MP plugins (including
 	ones by Y_Less).

@@ -1,7 +1,7 @@
 /**
-					=================================
-					 y_uvar - Automatic data saving.
-					=================================
+<section>
+					y_uvar
+</section>
 <subsection>Description</subsection>
 	Declares data to be automatically saved and loaded on a per-player basis.
 <subsection>Version</subsection>

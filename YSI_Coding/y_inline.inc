@@ -1,7 +1,7 @@
 /**
-					===================================
-					 y_inline - PAWN inline functions.
-					===================================
+<section>
+					y_inline
+</section>
 <subsection>Description</subsection>
 	This library allows a user to write inline functions in their script.  It
 	first detects all inline functions and generates data on them, such as

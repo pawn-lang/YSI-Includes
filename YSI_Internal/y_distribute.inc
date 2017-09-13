@@ -1,7 +1,7 @@
 /*+
-					================================
-					y_distribute - Share master data
-					================================
+<section>
+					y_distribute
+</section>
 <subsection>Description</subsection>
 	This library simplifies the task of sending data to the new master script
 	when one takes over from another.

@@ -1,7 +1,7 @@
 /**
-					==================================
-					 Y Sever Includes - Language Code 
-					==================================
+<section>
+					y_languages
+</section>
 <subsection>Description</subsection>
 	Handles language features - loading, listing and which one a player is.
 <subsection>Version</subsection>

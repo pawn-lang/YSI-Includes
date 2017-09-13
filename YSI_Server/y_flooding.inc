@@ -1,7 +1,7 @@
 /**
-					===================================
-					Y Sever Includes - Connections Core
-					===================================
+<section>
+					y_flooding
+</section>
 <subsection>Description</subsection>
 	Allows a limited number of connections from a single IP.
 Legal:

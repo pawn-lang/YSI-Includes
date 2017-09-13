@@ -1,7 +1,7 @@
 /*+
-					=====================================
-					 y_mock - Fake functions for testing
-					=====================================
+<section>
+					y_mock
+</section>
 <subsection>Description</subsection>
 	Wrap natives to return known fake values for testing.
 <subsection>Version</subsection>

@@ -1,7 +1,7 @@
 /**
-					===================================
-					Y Sever Includes - Binary Tree Core
-					===================================
+<section>
+					y_bintree
+</section>
 <subsection>Description</subsection>
 	Provides functions to generate balanced binary search trees for efficient
 	searching of large arrays by value.  Left branch is less than, right branch

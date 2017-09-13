@@ -1,7 +1,7 @@
 /**
-					=======================================
-					 y_scriptinit - Two useful callbacks.
-					=======================================
+<section>
+					y_scriptinit
+</section>
 <subsection>Description</subsection>
 	This file provides "OnScriptInit" and "OnScriptExit" which are called at the
 	start and end of the current script, regardless of what the type of the

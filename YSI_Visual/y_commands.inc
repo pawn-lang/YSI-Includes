@@ -1,7 +1,7 @@
 /**
-					================================
-					Y Sever Includes - Commands Core
-					================================
+<section>
+					y_commands
+</section>
 <subsection>Description</subsection>
 	Runs commands registered with the system and calls the required functions.
 	Also handles alternate names and prefixes.  Based very loosely on dcmd.

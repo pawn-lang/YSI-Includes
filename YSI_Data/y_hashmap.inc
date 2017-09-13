@@ -1,7 +1,7 @@
 /**
-					  ====================================
-					   y_hashmap - Link strings to values
-					  ====================================
+<section>
+					y_hashmap
+</section>
 <subsection>Description</subsection>
 	Maps string indexes to integer indexes.  Uses a fast hash to get an array
 	slot, then a linked list to resolve collisions.

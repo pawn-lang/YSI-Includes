@@ -1,7 +1,7 @@
 /**
-					==============================
-					 y_als - Useful codes for ALS
-					==============================
+<section>
+					y_als
+</section>
 <subsection>Description</subsection>
 	Provides a number of macros for making ALS (Advanced Library System)
 	callback hooking simpler.

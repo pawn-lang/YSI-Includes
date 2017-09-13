@@ -1,7 +1,7 @@
 /**
-					====================================
-					 y_testing - Run unit tests easilly 
-					====================================
+<section>
+					y_testing
+</section>
 <subsection>Description</subsection>
 	Runs any functions named as tests when the Testing_Run function is called.
 <subsection>Version</subsection>

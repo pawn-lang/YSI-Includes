@@ -1,7 +1,7 @@
 /**
-					  ====================================
-					   y_timers - Run timers efficiently. 
-					  ====================================
+<section>
+					y_timers
+</section>
 <subsection>Description</subsection>
 	Sets up repeating timers without requiring any SetTimers and arranges them
 	so that they will be very unlikely to meet (at least for a long time) using

@@ -1,7 +1,7 @@
 /**
-					===========================
-					 Gang Zone colour pulsing.
-					===========================
+<section>
+					y_zonepulse
+</section>
 <subsection>Description</subsection>
 	Gradually fades a zone's colour between one colour and another, then back.
 <subsection>Version</subsection>

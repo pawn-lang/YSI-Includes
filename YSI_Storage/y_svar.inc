@@ -1,7 +1,7 @@
 /**
-					=================================
-					 y_svar - Automatic data saving.
-					=================================
+<section>
+					y_svar
+</section>
 <subsection>Description</subsection>
 	Declares data to be automatically saved and loaded for the whole server.
 <subsection>Version</subsection>

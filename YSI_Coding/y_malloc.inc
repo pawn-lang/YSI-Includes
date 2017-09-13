@@ -1,7 +1,7 @@
 /**
-					===================================
-					Y Sever Includes - Malloc Functions
-					===================================
+<section>
+					y_malloc
+</section>
 <subsection>Description</subsection>
 	Functions for using malloc/calloc/free type functions in PAWN.
 <subsection>Version</subsection>

@@ -1,7 +1,7 @@
 /**
-					===========================
-					 foreach efficient looping
-					===========================
+<section>
+					y_foreach
+</section>
 <subsection>Description</subsection>
 	Provides efficient looping through sparse data sets, such as connected
 	players.  Significantly improved from the original version to be a generic

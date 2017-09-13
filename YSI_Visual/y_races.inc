@@ -1,9 +1,9 @@
 /**
-					==============================
-					 y_hooks - Hook any callback!
-					==============================
+<section>
+					y_rages
+</section>
 <subsection>Description</subsection>
-	Automatically hooks any callbacks with a very simple syntax.
+	Create, manage, and run races.
 <subsection>Version</subsection>
 	2.0
 <subsection>Changelog</subsection>

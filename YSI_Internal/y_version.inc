@@ -1,7 +1,7 @@
 /*+
-						  =====================
-						   YSI - Version Check
-						  =====================
+<section>
+					y_version
+</section>
 <subsection>Description</subsection>
 	Checks online to see if there is a newer version of YSI available.
 <subsection>Version</subsection>

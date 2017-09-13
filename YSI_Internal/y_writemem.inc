@@ -1,7 +1,7 @@
 /*+
-					===========================
-					Y Sever Includes - Writemem
-					===========================
+<section>
+					y_writemem
+</section>
 <subsection>Description</subsection>
 	Write to any absolute address in the SA:MP server in pure PAWN with embedded
 	assembly (i.e. a new native).  Calls "VirtualProtect" to make writes safe.

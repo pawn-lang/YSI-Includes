@@ -1,7 +1,7 @@
 /**
-					===========================
-					Y Sever Includes - INI Core
-					===========================
+<section>
+					y_ini
+</section>
 <subsection>Description</subsection>
 	Reads the INI and also exports a number of functions to other "classes" for
 	easy reading of data files there.

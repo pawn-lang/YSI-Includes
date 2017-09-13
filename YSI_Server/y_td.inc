@@ -1,7 +1,7 @@
 /**
-					===============================
-					 y_td - Styles for text draws!
-					===============================
+<section>
+					y_td
+</section>
 <subsection>Description</subsection>
 	Provides a wrapper to the SA:MP text_draw functions offering much
 	improved functionality including XML definable styles, safe display,

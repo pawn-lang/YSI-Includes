@@ -1,7 +1,7 @@
 /**
-					=============================
-					Y Sever Includes - Areas Core
-					=============================
+<section>
+					y_areas
+</section>
 <subsection>Description</subsection>
 	Handles area checks for player location based code not involving CPs.
 <subsection>Version</subsection>

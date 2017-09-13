@@ -1,7 +1,7 @@
 /*+
-				==============================================
-				 y_thirdpartyinclude - Include other includes
-				==============================================
+<section>
+					y_thirdpartyinclude
+</section>
 <subsection>Description</subsection>
 	Try and include all YSI dependencies, looking in as many places as needed.
 <subsection>Version</subsection>

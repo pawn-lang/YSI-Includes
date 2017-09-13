@@ -1,7 +1,7 @@
 /**
-					=====================================
-					Y Sever Includes - Language Text Core
-					=====================================
+<section>
+					y_text
+</section>
 <subsection>Description</subsection>
 	Provides interfaces for displaying text from anywhere by way of native like
 	functions using text indexes rather than text.  Due to a compile problem a

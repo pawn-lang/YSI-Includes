@@ -1,7 +1,7 @@
 /**
-					=================================
-					 y_php - PHP synchronisation.
-					=================================
+<section>
+					y_php
+</section>
 <subsection>Description</subsection>
 	Sends and receives data from a PHP server with shmop installed.
 <subsection>Version</subsection>

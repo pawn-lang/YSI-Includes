@@ -1,7 +1,7 @@
 /**
-					======================================
-					 y_classes - Advanced class selection 
-					======================================
+<section>
+					y_classes
+</section>
 <subsection>Description</subsection>
 	Allows greater control over classes so not everyone has every class.  Uses
 	a form of compression for locations.

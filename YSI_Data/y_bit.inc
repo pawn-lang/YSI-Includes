@@ -1,7 +1,7 @@
 /**
-					===========================
-					Y Sever Includes - Bit Core
-					===========================
+<section>
+					y_bit
+</section>
 <subsection>Description</subsection>
 	Provides functions for bit manipulation and bit arrays greater than 32bits.
 	The arrays are usually bigger than required due to cell boundaries but this

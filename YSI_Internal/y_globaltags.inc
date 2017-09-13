@@ -1,7 +1,7 @@
 /*+
-					=================================
-					 y_globaltags - Variable tags.
-					=================================
+<section>
+					y_globaltags
+</section>
 <subsection>Description</subsection>
 	Declare GLOBAL_TAG_TYPES to define many tag types for function calls.
 <subsection>Version</subsection>

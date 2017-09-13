@@ -1,7 +1,7 @@
 /**
-					===============================
-					 y_scripting - Access amx data
-					===============================
+<section>
+					y_amx
+</section>
 <subsection>Description</subsection>
 	Allows a script access to information about itself, such as function names.
 	This can be used for a range of things, including automatic callback hooking

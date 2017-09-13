@@ -1,7 +1,7 @@
 /**
-					==============================
-					Y Server Includes - MTA Loader
-					==============================
+<section>
+					y_loader
+</section>
 <subsection>Description</subsection>
 	Loads MTA XML format map files for use with the object and race systems.
 Legal:

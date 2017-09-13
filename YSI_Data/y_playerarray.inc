@@ -1,7 +1,7 @@
 /**
-					========================================
-					 y_playerarray - Bit arrays of players! 
-					========================================
+<section>
+					y_playerarray
+</section>
 <subsection>Description</subsection>
 	This code provides arrays of players who can do things.  This is for support
 	of the text system which can take arrays of player ids, bit arrays or just a

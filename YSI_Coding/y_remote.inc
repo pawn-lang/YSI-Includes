@@ -1,7 +1,7 @@
 /**
-								  ==========
-								   y_remote
-								  ==========
+<section>
+					y_remote
+</section>
 <subsection>Description</subsection>
 	Wrapper for "__CallRemoteFunction".  Enforces some features like no returns
 	and arrays being followed by their length.

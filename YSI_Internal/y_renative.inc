@@ -1,9 +1,9 @@
 /*+
-					====================================
-					 y_testing - Run unit tests easilly 
-					====================================
+<section>
+					y_renative
+</section>
 <subsection>Description</subsection>
-	Runs any functions named as tests when the Testing_Run function is called.
+	Obsolete, was macros for redefining native functions in default includes.
 <subsection>Version</subsection>
 	1.0
 <subsection>Changelog</subsection>

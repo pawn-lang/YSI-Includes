@@ -1,7 +1,7 @@
 /**
-					=======================================
-					 y_playerset - Collections of players! 
-					=======================================
+<section>
+					y_playerset
+</section>
 <subsection>Description</subsection>
 	This code is a huge abstraction of collections of players.  It allows you to
 	define functions which take one or more players, specified in a number of
