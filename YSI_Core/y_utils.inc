@@ -1,7 +1,5 @@
 /**
-<section>=================================</section>
-<section>Y Sever Includes - Misc Functions</section>
-<section>=================================</section>
+<section>y_utils</section>
 <subsection>Description</subsection>
 Misc functions used throughout.
 <subsection>Version</subsection>
@@ -30,66 +28,66 @@ Misc functions used throughout.
 <subsection>Functions</subsection>
 	<em>Stock</em>
 <ul>
-<li><em>StrToLower</em> - Convert a whole string to lower-case.</li>
-<li><em>StrToUpper</em> - Convert a whole string to upper-case.</li>
-<li><em>Random</em> - Generate a random number, optionally takes lower and upper bounds.</li>
-<li><em>RandomFloat</em> - Same as <c>Random</c>, but for floats.</li>
-<li><em>StripNL</em> - Strips the newline characters from the end of a string.</li>
-<li><em>StripR</em> - Synonym for <c>StripNL</c>.</li>
-<li><em>StripL</em> - Remove whitespace from the start of a string.</li>
-<li><em>Strip</em> - Remove whitespace from both ends of a string.</li>
-<li><em>endofline</em> - Check if the given position is the end of a string (ignoring whitespace).</li>
-<li><em>chrfind</em> - Return the first position (after <em>start</em>) of the given character.</li>
-<li><em>chrfindp</em> - Like <c>chrfind</c>, but without the upper-bounds check.</li>
-<li><em>bernstein</em> - Generate the Bernstein hash of the given string.</li>
-<li><em>ishex</em> - Is the given string hexadecimal?</li>
-<li><em>unpack</em> - Version of <c>strunpack</c> that returns the result.</li>
-<li><em>returnstringarg</em> - Get the string passed as a variable argument from the given index.</li>
-<li><em>va_return</em> - Like <c>sprintf</c>, formats a string and returns the result.</li>
-<li><em>isnumeric</em> - Is the given string a number?</li>
-<li><em>hexstr</em> - Return the value of the given hexadecimal string.</li>
-<li><em>boolstr</em> - Return the value of the given boolean string.</li>
-<li><em>binstr</em> - Return the value of the given binary string.</li>
-<li><em>rawMemcpy</em> - Copy memory between two address, instead of two arrays.</li>
-<li><em>memset</em> - Set all of an array to a value.</li>
-<li><em>rawMemset</em> - Set all of a given memory region to a value.</li>
-<li><em>ReturnPlayerName</em> - Return a player's name.</li>
-<li><em>ftouch</em> - Ensures that a file exists, but nothing more.</li>
-<li><em>InterpolateColour</em> - Get the colour (in 3D RGB space) between two other colours.</li>
-<li><em>SkipWhitespace</em> - Return the first position in a string of a non-whitespace character.</li>
-<li><em>Trim</em> - Get the first and last positions of non-whitespace characters in the string.  Like <em>Strip</em>, but doesn't modify the string.</li>
-<li><em>Sum</em> - Get the total (sum) of an array.</li>
-<li><em>Mean</em> - Get the mathematical mean of an array.</li>
-<li><em>Mode</em> - Get the mathematical mode of an array.</li>
-<li><em>Median</em> - Get the mathematical median of an array.</li>
-<li><em>Range</em> - Get the mathematical range of an array.</li>
+<li><seealso name="StrToLower" /> - Convert a whole string to lower-case.</li>
+<li><seealso name="StrToUpper" /> - Convert a whole string to upper-case.</li>
+<li><seealso name="Random" /> - Generate a random number, optionally takes lower and upper bounds.</li>
+<li><seealso name="RandomFloat" /> - Same as <seealso name="Random" />, but for floats.</li>
+<li><seealso name="StripNL" /> - Strips the newline characters from the end of a string.</li>
+<li><seealso name="StripR" /> - Synonym for <seealso name="StripNL" />.</li>
+<li><seealso name="StripL" /> - Remove whitespace from the start of a string.</li>
+<li><seealso name="Strip" /> - Remove whitespace from both ends of a string.</li>
+<li><seealso name="endofline" /> - Check if the given position is the end of a string (ignoring whitespace).</li>
+<li><seealso name="chrfind" /> - Return the first position (after <seealso name="start" />) of the given character.</li>
+<li><seealso name="chrfindp" /> - Like <seealso name="chrfind" />, but without the upper-bounds check.</li>
+<li><seealso name="bernstein" /> - Generate the Bernstein hash of the given string.</li>
+<li><seealso name="ishex" /> - Is the given string hexadecimal?</li>
+<li><seealso name="unpack" /> - Version of <seealso name="strunpack" /> that returns the result.</li>
+<li><seealso name="returnstringarg" /> - Get the string passed as a variable argument from the given index.</li>
+<li><seealso name="va_return" /> - Like <seealso name="sprintf" />, formats a string and returns the result.</li>
+<li><seealso name="isnumeric" /> - Is the given string a number?</li>
+<li><seealso name="hexstr" /> - Return the value of the given hexadecimal string.</li>
+<li><seealso name="boolstr" /> - Return the value of the given boolean string.</li>
+<li><seealso name="binstr" /> - Return the value of the given binary string.</li>
+<li><seealso name="rawMemcpy" /> - Copy memory between two address, instead of two arrays.</li>
+<li><seealso name="memset" /> - Set all of an array to a value.</li>
+<li><seealso name="rawMemset" /> - Set all of a given memory region to a value.</li>
+<li><seealso name="ReturnPlayerName" /> - Return a player's name.</li>
+<li><seealso name="ftouch" /> - Ensures that a file exists, but nothing more.</li>
+<li><seealso name="InterpolateColour" /> - Get the colour (in 3D RGB space) between two other colours.</li>
+<li><seealso name="SkipWhitespace" /> - Return the first position in a string of a non-whitespace character.</li>
+<li><seealso name="Trim" /> - Get the first and last positions of non-whitespace characters in the string.  Like <seealso name="Strip" />, but doesn't modify the string.</li>
+<li><seealso name="Sum" /> - Get the total (sum) of an array.</li>
+<li><seealso name="Mean" /> - Get the mathematical mean of an array.</li>
+<li><seealso name="Mode" /> - Get the mathematical mode of an array.</li>
+<li><seealso name="Median" /> - Get the mathematical median of an array.</li>
+<li><seealso name="Range" /> - Get the mathematical range of an array.</li>
 </ul>
-	<em>Inline</em>
+	<seealso name="Inline" />
 <ul>
-<li><em>UCMP</em> - Unsigned compare.</li>
-<li><em>VALID_PLAYERID</em> - Check if a player ID is valid (in range).</li>
-<li><em>IS_IN_RANGE</em> - Check if a number is in range.</li>
-<li><em>NOT_IN_RANGE</em> - Check if a number is outside a range.</li>
-<li><em>ceildiv</em> - Divide two numbers and round up.</li>
-<li><em>floordiv</em> - Divide two numbers and round down.</li>
-<li><em>isnull</em> - Checks if a string is NULL (<c>\1\0</c> or <c>\0</c>).</li>
-<li><em>isodd</em> - Checks if a number is odd.</li>
-<li><em>iseven</em> - Checks if a number is even.</li>
-<li><em>strcpy</em> - Copy one string to another.</li>
-<li><em>GetIP</em> - Return the encoded (32-bit) version of a player's IP.</li>
-<li><em>getstring</em> - Synonym for <c>returnstringarg</c> (there are a lot).</li>
-<li><em>GetString</em> - Synonym for <c>returnstringarg</c> (there are a lot).</li>
-<li><em>getstringarg</em> - Synonym for <c>returnstringarg</c> (there are a lot).</li>
-<li><em>GetStringArg</em> - Synonym for <c>returnstringarg</c> (there are a lot).</li>
-<li><em>ReturnStringArg</em> - Synonym for <c>returnstringarg</c> (there are a lot).</li>
-<li><em>InterpolateColor</em> - Synonym for <c>InterpolateColour</c></li>
+<li><seealso name="UCMP" /> - Unsigned compare.</li>
+<li><seealso name="VALID_PLAYERID" /> - Check if a player ID is valid (in range).</li>
+<li><seealso name="IS_IN_RANGE" /> - Check if a number is in range.</li>
+<li><seealso name="NOT_IN_RANGE" /> - Check if a number is outside a range.</li>
+<li><seealso name="ceildiv" /> - Divide two numbers and round up.</li>
+<li><seealso name="floordiv" /> - Divide two numbers and round down.</li>
+<li><seealso name="isnull" /> - Checks if a string is NULL (<c>\1\0</c> or <c>\0</c>).</li>
+<li><seealso name="isodd" /> - Checks if a number is odd.</li>
+<li><seealso name="iseven" /> - Checks if a number is even.</li>
+<li><seealso name="strcpy" /> - Copy one string to another.</li>
+<li><seealso name="GetIP" /> - Return the encoded (32-bit) version of a player's IP.</li>
+<li><seealso name="getstring" /> - Synonym for <seealso name="returnstringarg" /> (there are a lot).</li>
+<li><seealso name="GetString" /> - Synonym for <seealso name="returnstringarg" /> (there are a lot).</li>
+<li><seealso name="getstringarg" /> - Synonym for <seealso name="returnstringarg" /> (there are a lot).</li>
+<li><seealso name="GetStringArg" /> - Synonym for <seealso name="returnstringarg" /> (there are a lot).</li>
+<li><seealso name="ReturnStringArg" /> - Synonym for <seealso name="returnstringarg" /> (there are a lot).</li>
+<li><seealso name="InterpolateColor" /> - Synonym for <seealso name="InterpolateColour" /></li>
 </ul>
 <subsection>Variables</subsection>
-	<em>Global</em>
+	<seealso name="Global" />
 <ul>
-<li><em>TRUE</em> - True hack for infinate loops.</li>
-<li><em>FALSE</em> - False hack for one-time loops.</li>
-<li><em>NULL</em> - 1 long string for passing via Call(Remote|Local)Function.</li>
+<li><seealso name="TRUE" /> - True hack for infinate loops.</li>
+<li><seealso name="FALSE" /> - False hack for one-time loops.</li>
+<li><seealso name="NULL" /> - 1 long string for passing via Call(Remote|Local)Function.</li>
 </ul>
 <subsection>Examples</subsection>
 	N/A - This is a collection of independent functions.

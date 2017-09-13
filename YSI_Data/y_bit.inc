@@ -2,7 +2,7 @@
 					===========================
 					Y Sever Includes - Bit Core
 					===========================
-Description:
+<subsection>Description</subsection>
 	Provides functions for bit manipulation and bit arrays greater than 32bits.
 	The arrays are usually bigger than required due to cell boundaries but this
 	shouldn't cause a major problem (bit tests on the 101st bit of a 100 bit
@@ -10,9 +10,9 @@ Description:
 	
 	Note that y_commands has a few optimisations which bypass the code in here
 	so any modifications to bit array layouts will need to be reflected there.
-Version:
+<subsection>Version</subsection>
 	0.2
-Changelog:
+<subsection>Changelog</subsection>
 	21/10/12:
 		Changed "Bit_Display" to print in the correct order.
 	22/02/12:
@@ -27,7 +27,7 @@ Changelog:
 		Added Bit_SetAll
 	15/04/07:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		-
 	Core:
@@ -46,24 +46,24 @@ Functions:
 		Bit_GetBits - Gets the bit at a slot unsafely.
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	CELLSHIFT - Number of bits that can hold "cellbits"
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:
+<subsection>Tags</subsection>
 	Bit - Bit array type.
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
 		-
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
 *//** *//*
 Legal:

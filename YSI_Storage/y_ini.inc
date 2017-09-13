@@ -2,12 +2,12 @@
 					===========================
 					Y Sever Includes - INI Core
 					===========================
-Description:
+<subsection>Description</subsection>
 	Reads the INI and also exports a number of functions to other "classes" for
 	easy reading of data files there.
-Version:
+<subsection>Version</subsection>
 	1.5
-Changelog:
+<subsection>Changelog</subsection>
 	07/01/13:
 		Rewrote almost everything!
 		Split in to multiple files.
@@ -50,7 +50,7 @@ Changelog:
 		Updated header documentation with more than changelog.
 	24/03/07:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		-
 	Core:
@@ -82,9 +82,9 @@ Functions:
 		INI_String - Parse a string INI entry.
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	MAX_INI_TAG - Maximum length of an INI tagname.
 	MAX_INI_ENTRY_NAME - Maximum length of an INI entry name.
 	MAX_INI_ENTRY_TEXT - Maximum length of an INI's entries' value.
@@ -92,14 +92,14 @@ Definitions:
 	INI_NEW_LINE - String for new lines.
 	INI_MAX_WRITES - Maximum concurrent files open for writing.
 	MAX_INI_TAGS - Number of tags the buffer can hold data for at once.
-Enums:
+<subsection>Enums</subsection>
 	E_INI_WRITE - Storage for entries to be written.
 	E_INI_TAGS - Data for tags with data.
-Macros:
+<subsection>Macros</subsection>
 	INI_Parse - Header for ini parsing functions.
-Tags:
+<subsection>Tags</subsection>
 	INI - Handle to an INI file being written to.
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
@@ -109,11 +109,11 @@ Variables:
 		YSI_g_sINICurrentTag - Pointer to the tag been writen to.
 		YSI_g_sINIWriteTag - Data for tags,
 		YSI_g_sINIWriteFile - Current files been written to.
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 *//** *//*
 Legal:

@@ -2,7 +2,7 @@
 					==============================
 					Y Server Includes - MTA Loader
 					==============================
-Description:
+<subsection>Description</subsection>
 	Loads MTA XML format map files for use with the object and race systems.
 Legal:
 	Copyright (C) 2007 Alex "Y_Less" Cole
@@ -21,13 +21,13 @@ Legal:
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 	MA 02110-1301, USA.
-Changelog:
+<subsection>Changelog</subsection>
 	12/10/07:
 		Added Loader_AddHandler.
 		Added Loader_GetRace.
 	24/08/07:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		Loader_Spawn - Processes a loaded spawn point.
 		Loader_Check - Processes a loaded checkpoint.
@@ -44,26 +44,27 @@ Functions:
 		-
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	-
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:-e_RACE_FLAGS - Race data flag.
-Variables:
+<subsection>Tags</subsection>
+	e_RACE_FLAGS - Race data flag.
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
 		YSI_g_sXMLRules - Handle to the XML parse rule set.
 		YSI_g_sCurRace - Handle to the current race being built.
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 *//** *//*
 Legal:

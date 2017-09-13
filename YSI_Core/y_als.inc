@@ -2,12 +2,12 @@
 					==============================
 					 y_als - Useful codes for ALS
 					==============================
-Description:
+<subsection>Description</subsection>
 	Provides a number of macros for making ALS (Advanced Library System)
 	callback hooking simpler.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	29/04/11:
 		Added "call" macro to make testing easier.
 	21/10/10:

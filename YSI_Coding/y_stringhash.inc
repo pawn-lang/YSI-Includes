@@ -2,11 +2,11 @@
 					========================================
 					 y_stringhash - Fast string comparisons 
 					========================================
-Description:
+<subsection>Description</subsection>
 	Allows you to hash strings at compile time to use them in a switch.
-Version:
+<subsection>Version</subsection>
 	2.0
-Changelog:
+<subsection>Changelog</subsection>
 	06/03/11:
 		Changed the order of some letters to better support numbers in _I.
 	01/03/11:
@@ -17,10 +17,10 @@ Changelog:
 		Added FNV1 and FNV1a hashes to avoid collisions.
 	19/08/10:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	stock:
 		YHash - Generate a string hash at run time.
-Definitions:
+<subsection>Definitions</subsection>
 	_H - Generate a string hash at compile time.
 	_I - Generate a case insensitive string hash at compile time.
 *//** *//*

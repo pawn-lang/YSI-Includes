@@ -2,14 +2,14 @@
 					=======================================
 					 y_playerset - Collections of players! 
 					=======================================
-Description:
+<subsection>Description</subsection>
 	This code is a huge abstraction of collections of players.  It allows you to
 	define functions which take one or more players, specified in a number of
 	formats, and perform the code for all those player.  Essentially it is an
 	abstraction of loops over players.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	30/04/11:
 		First version
 *//** *//*

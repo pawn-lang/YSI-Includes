@@ -2,14 +2,14 @@
 							========================
 							 y_files - Include File 
 							========================
-Description:
+<subsection>Description</subsection>
 	Provides native declarations for YSF functions.
-Version:
+<subsection>Version</subsection>
 	0.1
-Changelog:
+<subsection>Changelog</subsection>
 	15/09/10:
 		First version split from the old YSF.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		-
 	Core:
@@ -22,26 +22,26 @@ Functions:
 		-
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	-
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:
+<subsection>Tags</subsection>
 	-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
 		-
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 *//** *//*
 Legal:

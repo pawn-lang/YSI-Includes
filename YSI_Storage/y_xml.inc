@@ -2,7 +2,7 @@
 					=============================
 					 y_xml - XML file functions!
 					=============================
-Description:
+<subsection>Description</subsection>
 	Parses XML files according to a set of defined rules.  A rule is a custom
 	function called on a tag when all the data for that tag has been collected.
 	The data for a tag could consist of simple bla="bla" pairs, <tag>data</tag>
@@ -12,9 +12,9 @@ Description:
 	Data for the tag is retrieved from a custom function using only:
 	
 	while (XML_GetKeyValue(ident, data)) {}
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	06/08/10:
 		First version
 *//** *//*

@@ -2,7 +2,7 @@
                              ======================
                               YSI - Master Include
                              ======================
-Description:
+<subsection>Description</subsection>
 	Handles distribution of control of code segments across all running scripts
 	with YSI to avoid conflicts of checkpoint streamers etc and allow features
 	like "/commands" displaying all commands on the server.
@@ -18,9 +18,9 @@ Description:
 	while to figure out)...
 	
 	This is now over 2000 lines of repetitive and complex macros!
-Version:
+<subsection>Version</subsection>
 	0.2
-Changelog:
+<subsection>Changelog</subsection>
 	06/08/10:
 		Managed the ultimate - got completely transparent inclusion!
 	05/08/10:
@@ -36,7 +36,7 @@ Changelog:
 		Added code for a script to remove itself from the global list.
 	11/10/07:
 		Not first version but added documentation months late.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		-
 	Core:
@@ -51,13 +51,13 @@ Functions:
 		-
 	Hooks:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	-
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	RF - Declare a function which may be remote.
 	RV - Declare a void function which may be remote.
 	RS - Declare an optional callback.
@@ -66,20 +66,20 @@ Macros:
 	RFP - Declare a function with tags and give recall hints.
 	RFPC - Combination of P and C.
 	RFCP - Combination of P and C.
-Tags:
+<subsection>Tags</subsection>
 	-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		_@ - ID of this script.
 	Static:
 		-
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	YSI_NO_MASTER - Don't use the master system.
 	YSI_IS_CLIENT - Script is a client only script.
 	YSI_IS_SERVER - Script is a server only script.
-Operators:
+<subsection>Operators</subsection>
 	-
 Natives:
 	-

@@ -2,19 +2,19 @@
 					=================================
 					 y_php - PHP synchronisation.
 					=================================
-Description:
+<subsection>Description</subsection>
 	Sends and receives data from a PHP server with shmop installed.
-Version:
+<subsection>Version</subsection>
 	0.1
-Changelog:
+<subsection>Changelog</subsection>
 	25/02/12:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Stock:
 		-
 	Inline:
 		-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 *//** *//*

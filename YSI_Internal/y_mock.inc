@@ -2,11 +2,11 @@
 					=====================================
 					 y_mock - Fake functions for testing
 					=====================================
-Description:
+<subsection>Description</subsection>
 	Wrap natives to return known fake values for testing.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	09/09/17:
 		First documentaiton.
 *//** *//*

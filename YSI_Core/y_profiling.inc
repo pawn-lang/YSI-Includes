@@ -2,11 +2,11 @@
 					====================================
 					 y_profiling - Run profilings easilly 
 					====================================
-Description:
+<subsection>Description</subsection>
 	Runs any functions named as profilings when the Profiling_Run function is called.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	17/12/16:
 		First Version
 *//** *//*

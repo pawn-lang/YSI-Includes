@@ -2,7 +2,7 @@
 					===========================
 					 foreach efficient looping
 					===========================
-Description:
+<subsection>Description</subsection>
 	Provides efficient looping through sparse data sets, such as connected
 	players.  Significantly improved from the original version to be a generic
 	loop system, rather then purely a player loop system.  When used for
@@ -15,9 +15,9 @@ Description:
 	
 		http://forum.sa-mp.com/showthread.php?t=481877
 	
-Version:
+<subsection>Version</subsection>
 	0.4
-Changelog:
+<subsection>Changelog</subsection>
 	29/03/15:
 		More testing.
 		Repaired special iterators.
@@ -88,7 +88,7 @@ Changelog:
 		Fixed version number.
 	08/09/07:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		OnPlayerDisconnect - Called when a player leaves to remove them.
 		OnPlayerConnect - Called when a player connects to add them.
@@ -120,38 +120,38 @@ Functions:
 		Iter_Free2 - Wraps around Iter_FreeInternal for arrays.
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
 Hooks:
 	Iter_OnPlayerConnect - Hook for the OnPlayerConnect callback.
 	Iter_OnPlayerDisconnect - Hook for the OnPlayerDisconnect callback.
 	Iter_OnGameModeInit - Only exists to make the code compile correctly...
-Definitions:
+<subsection>Definitions</subsection>
 	-
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	-
 Keywords:
 	foreach - Command to loop an iterator.
 	foreachex - Like foreach but without a new variable.
 	foreach2 - Command to loop through an iterator array.
 	foreachex - Like foreach2 but without a new variable.
-Tags:
+<subsection>Tags</subsection>
 	Iterator - Declare an iterator.
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
 		YSI_g_OPC - Records wether Iter_OnPlayerConnect exists for speed.
 		YSI_g_OPDC - Records wether Iter_OnPlayerDisconnect exists for speed.
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	YSI_ITTER_NO_SORT - Removed.
 	FOREACH_NO_BOTS - Remove the bot iterators for smaller code.
 	FOREACH_NO_PLAYERS - Remove all default code for player itteration.
-Operators:
+<subsection>Operators</subsection>
 	-
 Iterators:
 	Player - List of all players connected.

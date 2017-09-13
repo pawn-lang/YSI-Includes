@@ -2,13 +2,13 @@
 					===============================
 					 y_scripting - Access amx data
 					===============================
-Description:
+<subsection>Description</subsection>
 	Allows a script access to information about itself, such as function names.
 	This can be used for a range of things, including automatic callback hooking
 	and testing.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	13/11/13:
 		Simplified the main macros to work across multiple lines.
 	06/08/10:

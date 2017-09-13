@@ -2,14 +2,14 @@
 					===============================
 					 y_funcinc - Fix SYSREQ.C bugs
 					===============================
-Description:
+<subsection>Description</subsection>
 	Calls functions which are used in SYSREQ.C calls before they are used.  The
 	compiler crashes if the functions are not used in an included function
 	before being used in a SYSREQ.C call as the function is not in the native
 	functions table.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	06/08/10:
 		First version
 *//** *//*

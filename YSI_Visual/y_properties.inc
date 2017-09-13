@@ -2,11 +2,11 @@
 					==================================
 					Y Sever Includes - Properties Core
 					==================================
-Description:
+<subsection>Description</subsection>
 	Handles properties and other common features for some modes.
-Version:
+<subsection>Version</subsection>
 	0.1
-Changelog:
+<subsection>Changelog</subsection>
 	03/08/07:
 		Updated timer system.
 	31/07/07:
@@ -24,7 +24,7 @@ Changelog:
 		Updated functions to use checkpoint and area lookups
 	18/04/07:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		Property_Loop - Does the main system processing.
 		Property_AddPropRemote - Adds a property from another script.
@@ -86,28 +86,28 @@ Functions:
 		CreateTeleport - Creates a teleport.
 		CreateForbiddenArea - Creates a forbidden area.
 		DestroyProperty - Deletes a property from the array.
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	PROPERTY_LOOP_GRANULARITY - Number of itterations of the main loop a second.
 	MAX_PROP_NAME - Max length of the name of a property.
 	MAX_PROPERTIES - Max number of properties.
 	NO_PROPERTY - Invalid return.
 	WEAPON_ARMOUR - Type for salling armour at ammunation.
 	PROPERTY_SELL_PERCENT - % of money got back for a reduced sale.
-Enums:
+<subsection>Enums</subsection>
 	e_PROP_FLAGS - Flags for property data.
 	E_PROP_DATA - Data for a property.
 	E_PROP_AMMU - Data for a persons current ammunation menu.
 	<unnamed> - Tagless remote instructions, must have new ones added to the end.
-Macros:
+<subsection>Macros</subsection>
 	WEAPON_DATA_OFFSET - Offset for saving weapons with variable size arrays,
 	WEAPON_DATA - Gets ammo and cost from parameters and compresses them.
 	WEAPON_DATA_REM - Like WEAPON_DATA but reads from an array instead.
 	WEAPON - Saves a weapon id in the top byte of a cell.
-Tags:
+<subsection>Tags</subsection>
 	e_PROP_FLAGS - Flags.
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
@@ -121,7 +121,7 @@ Variables:
 		YSI_g_sTempPropReq - Script has requested a player's properties.
 		YSI_g_sTempProp - Temporary store for properties.
 		YSI_g_sIsMaster - Is this script the global master.
-Commands:
+<subsection>Commands</subsection>
 	buy - Lets you buy your current property.
 	bank - Lets you bank money.
 	properties - Lists properties and their owners.
@@ -131,9 +131,9 @@ Commands:
 Properties:
 	LReqProp - Return data from a remote script.
 	110953013 - Return properties for a player.
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 *//** *//*
 Legal:

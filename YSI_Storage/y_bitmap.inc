@@ -2,21 +2,21 @@
 					=================================
 					   y_bitmap - Generate bitmaps.
 					=================================
-Description:
+<subsection>Description</subsection>
 	Code to generate images on the server in the bitmap format.  This is by far
 	the simplest format to write to as it is just a huge array of colours (at
 	least 24-bit bitmaps are, and we only do them).
-Version:
+<subsection>Version</subsection>
 	0.1
-Changelog:
+<subsection>Changelog</subsection>
 	29/03/13:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Stock:
 		-
 	Inline:
 		-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 *//** *//*

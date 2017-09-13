@@ -2,18 +2,18 @@
 					===========================
 					Y Sever Includes - Writemem
 					===========================
-Description:
+<subsection>Description</subsection>
 	Write to any absolute address in the SA:MP server in pure PAWN with embedded
 	assembly (i.e. a new native).  Calls "VirtualProtect" to make writes safe.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	01/02/12:
 		Zeex_: Changed to use SYSREQ.D call not SYSREQ.C.
 		Zeex_: Modified "VirtualProtect" pointer to SA:MP server one.
 		Added "VirtualProtect" calls to the code.
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		-
 	Core:
@@ -26,26 +26,26 @@ Functions:
 		-
 	API:
 		WriteMem - Write data to an address.
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	asm - Convert a stream of assembly to a cell.
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:
+<subsection>Tags</subsection>
 	-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
 		YSI_g_sWriteMem - The assembly.
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 *//** *//*
 Legal:

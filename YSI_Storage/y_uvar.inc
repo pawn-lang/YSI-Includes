@@ -2,19 +2,19 @@
 					=================================
 					 y_uvar - Automatic data saving.
 					=================================
-Description:
+<subsection>Description</subsection>
 	Declares data to be automatically saved and loaded on a per-player basis.
-Version:
+<subsection>Version</subsection>
 	0.1.3
-Changelog:
+<subsection>Changelog</subsection>
 	25/02/12:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Stock:
 		-
 	Inline:
 		-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 *//** *//*

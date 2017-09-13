@@ -2,11 +2,11 @@
 						================================
 						 y_jaggedarray - Uneven arrays. 
 						================================
-Description:
+<subsection>Description</subsection>
 	Provides code to easilly manipulate the sizes of 2d array slots.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	06/10/12:
 		First version
 		Fixed a bug calling "rawMemset".

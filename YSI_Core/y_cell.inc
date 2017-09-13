@@ -2,15 +2,15 @@
 					============================
 					Y Sever Includes - Cell Core
 					============================
-Description:
+<subsection>Description</subsection>
 	Provides a few functions for manipulating the bits in single cells.  Note
 	that this is distinct from the y_bit library.
-Version:
+<subsection>Version</subsection>
 	0.2
-Changelog:
+<subsection>Changelog</subsection>
 	18/06/11:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		-
 	Core:
@@ -23,24 +23,24 @@ Functions:
 		-
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	-
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:
+<subsection>Tags</subsection>
 	-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
 		-
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
 *//** *//*
 Legal:

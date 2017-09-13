@@ -2,11 +2,11 @@
 					===================================
 					 y_users - Registration functions.
 					===================================
-Description:
+<subsection>Description</subsection>
 	Provides access to a user system for registering and saving users.
-Version:
+<subsection>Version</subsection>
 	2.2
-Changelog:
+<subsection>Changelog</subsection>
 	02/02/13:
 		Added bits and join timestamp to preload data.
 		Added backwards compatible salting to the hash.
@@ -15,7 +15,7 @@ Changelog:
 		Added language to the top-level player data (needed for login).
 	11/11/11:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public
 		-
 	Core:
@@ -28,26 +28,26 @@ Functions:
 		-
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	-
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:
+<subsection>Tags</subsection>
 	-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
 		-
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 *//** *//*
 Legal:

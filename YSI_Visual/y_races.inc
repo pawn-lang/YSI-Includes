@@ -2,11 +2,11 @@
 					==============================
 					 y_hooks - Hook any callback!
 					==============================
-Description:
+<subsection>Description</subsection>
 	Automatically hooks any callbacks with a very simple syntax.
-Version:
+<subsection>Version</subsection>
 	2.0
-Changelog:
+<subsection>Changelog</subsection>
 	25/02/12:
 		Extracted most of the code to a separate file.
 	17/03/11:

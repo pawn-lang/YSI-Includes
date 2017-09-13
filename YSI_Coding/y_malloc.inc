@@ -2,16 +2,16 @@
 					===================================
 					Y Sever Includes - Malloc Functions
 					===================================
-Description:
+<subsection>Description</subsection>
 	Functions for using malloc/calloc/free type functions in PAWN.
-Version:
+<subsection>Version</subsection>
 	0.1
-Changelog:
+<subsection>Changelog</subsection>
 	02/12/11:
 		Added variable argument functions.
 	22/12/08:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public
 		-
 	Core:
@@ -48,33 +48,33 @@ Functions:
 		Malloc_SlotSize - Get the size of an allocated block (may be stock).
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	MALLOC_KB_TO_CELL - Multiplication value to convert kb to cells.
 	NO_ALLOC - A failed allocation (NULL, but YSI already has NULL).
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:
+<subsection>Tags</subsection>
 	Alloc - An allocated block handle variable.
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		YSI_gMallocMemory - Stores the data (may be static).
 	Static:
 		YSI_gMallocMemory - Stores the data (may be global).
 		_YSI_g_sUnusedStart - Start of free memory.
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	MALLOC_MEMORY - Number of cells to reserve.
 	MALLOC_MEMORY_KB - Number of killobytes to reserve.
 	MALLOC_MEMORY_B - Number of bytes to reserve.
 	MALLOC_MEMORY_MB - Number of megabytes to reserve.
 	YSI_MALLOC_SECURE - Use enhanced bounds checking.
 	YSI_MALLOC_NO_SHORT - Avoid conflicts with mget/mset.
-Operators:
+<subsection>Operators</subsection>
 	-
 *//** *//*
 Legal:

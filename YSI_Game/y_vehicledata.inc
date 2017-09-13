@@ -2,17 +2,17 @@
 							 ====================
 							  GTA vehicles data.
 							 ====================
-Description:
+<subsection>Description</subsection>
 	Basic functions for gathering data on various vehicle models.  Things like
 	what sort of vehicle they are and what organisation they belong to.
-Version:
+<subsection>Version</subsection>
 	0.2
-Changelog:
+<subsection>Changelog</subsection>
 	15/03/15:
 		Changed clamp ranges.
 	01/06/14:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		-
 	Core:
@@ -25,32 +25,32 @@ Functions:
 		-
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
 Hooks:
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	-
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	-
 Keywords:
 	-
-Tags:
+<subsection>Tags</subsection>
 	VIM - Vehicle Internal Modelid.
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		YSI_gVehicleFlags - Data on vehicles.
 		YSI_gVehicleNames - Names of vehicles.
 		YSI_gVehicleTopSpeed - Top speed of vehicles.
 	Static:
 		-
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 Iterators:
 	-

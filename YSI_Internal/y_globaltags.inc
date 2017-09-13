@@ -2,19 +2,19 @@
 					=================================
 					 y_globaltags - Variable tags.
 					=================================
-Description:
+<subsection>Description</subsection>
 	Declare GLOBAL_TAG_TYPES to define many tag types for function calls.
-Version:
+<subsection>Version</subsection>
 	0.1
-Changelog:
+<subsection>Changelog</subsection>
 	25/02/12:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Stock:
 		-
 	Inline:
 		-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 *//** *//*

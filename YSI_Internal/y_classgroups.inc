@@ -2,12 +2,12 @@
 					=======================================
 					 y_classes - Advanced class selection! 
 					=======================================
-Description:
+<subsection>Description</subsection>
 	Allows for advanced class selection options such as skins only certain
 	people can see and actually removing skins from class selection.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	29/11/10:
 		First version
 *//** *//*

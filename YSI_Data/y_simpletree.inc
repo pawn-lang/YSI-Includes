@@ -2,13 +2,13 @@
 					===================================
 					Y Sever Includes - Binary Tree Core
 					===================================
-Description:
+<subsection>Description</subsection>
 	Provides functions to generate balanced binary search trees for efficient
 	searching of large arrays by value.  Left branch is less than, right branch
 	is greater than or equal to for multiple matching values.
-Version:
+<subsection>Version</subsection>
 	0.2
-Changelog:
+<subsection>Changelog</subsection>
 	12/04/15:
 		Ported to y_simpletree for unique integer searching.
 	12/08/07:
@@ -22,7 +22,7 @@ Changelog:
 		Added Bintree_Add()
 	24/03/07:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		-
 	Core:
@@ -44,28 +44,28 @@ Functions:
 		Bintree_Fill - Entry point for Bintree_SortHalf.
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	BINTREE_NO_BRANCH - Nowhere to go from the number in required direction.
 	BINTREE_NOT_FOUND - Failure return.
-Enums:
+<subsection>Enums</subsection>
 	E_BINTREE_TREE - Structure of a leaf of a binary tree.
 	E_BINTREE_INPUT - Structure of an array of data to be added to a tree.
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:
+<subsection>Tags</subsection>
 	Bintree - Binary tree type.
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
 		-
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 *//** *//*
 Legal:

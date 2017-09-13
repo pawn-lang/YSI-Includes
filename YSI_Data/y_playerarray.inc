@@ -2,13 +2,13 @@
 					========================================
 					 y_playerarray - Bit arrays of players! 
 					========================================
-Description:
+<subsection>Description</subsection>
 	This code provides arrays of players who can do things.  This is for support
 	of the text system which can take arrays of player ids, bit arrays or just a
 	single ID.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	25/02/11:
 		Scrapped pointless "playing" code I was unhappy with.
 	29/11/10:

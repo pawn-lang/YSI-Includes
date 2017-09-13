@@ -2,11 +2,11 @@
 					=============================
 					Y Sever Includes - Areas Core
 					=============================
-Description:
+<subsection>Description</subsection>
 	Handles area checks for player location based code not involving CPs.
-Version:
+<subsection>Version</subsection>
 	0.3
-Changelog:
+<subsection>Changelog</subsection>
 	01/12/12:
 		Added ovals and ovoids.
 		Set cuboids to require only one slot in memory.
@@ -23,7 +23,7 @@ Changelog:
 		Made Area_GetPlayerArea safe.
 	08/05/07:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		Area_Loop - Main loop for checking who's where.
 		Area_Remote - Does minor functions remotely.
@@ -62,23 +62,23 @@ Functions:
 		Area_AddSlots - Removes slots from the unused count.
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	OnPlayerEnterArea - Called when a player enters an area.
 	OnPlayerLeaveArea - Called when a player leaves an area.
-Definitions:
+<subsection>Definitions</subsection>
 	MAX_AREAS - Max number of areas.
 	NO_AREA - Fail return.
 	AREA_NO_NEXT - Marker for end of a list.
 	AREA_WORLDS - Number of worlds an area can be in.
 	AREA_WORLD_COUNT - Number of cells required for a bit array of AREA_WORLDS.
-Enums:
+<subsection>Enums</subsection>
 	e_AREA_FLAGS - Flags for each area.
 	E_AREA - Structure for part of an areas data.
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:
+<subsection>Tags</subsection>
 	-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
@@ -87,11 +87,11 @@ Variables:
 		YSI_g_sFreeCount - Number of unused slots.
 		YSI_g_sAreas - Array of area data.
 		YSI_g_sPlayerArea - Array of players' current areas.
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 *//** *//*
 Legal:

@@ -2,7 +2,7 @@
   				===================================
 					 y_punycode - Character encodings.
 					===================================
-Description:
+<subsection>Description</subsection>
 	Functions for converting unicode strings to and from punycode, to be
 	represented in just ASCII characters.  Based on several public
 	implementations and the RFC, adapted for PAWN.  For more information see:
@@ -11,14 +11,14 @@ Description:
 	
 	Also includes a function that hooks the "HTTP" function to allow for
 	internationalised domain names with that function.
-Version:
+<subsection>Version</subsection>
 	0.1
-Changelog:
+<subsection>Changelog</subsection>
 	29/04/13:
 		Added Puny_HTTP.
 	26/04/13:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public
 		-
 	Core:
@@ -33,26 +33,26 @@ Functions:
 		-
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	-
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:
+<subsection>Tags</subsection>
 	-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
 		-
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 */
 

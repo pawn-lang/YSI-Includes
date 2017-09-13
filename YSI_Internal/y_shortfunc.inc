@@ -2,14 +2,14 @@
 							  ====================
 							   YSI - Master Funcs
 							  ====================
-Description:
+<subsection>Description</subsection>
 	Defines new names for native functions.
-Version:
+<subsection>Version</subsection>
 	0.2
-Changelog:
+<subsection>Changelog</subsection>
 	21/10/10:
 		Split in to y_shortfunc.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		-
 	Core:
@@ -24,26 +24,26 @@ Functions:
 		-
 	Hooks:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	-
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:
+<subsection>Tags</subsection>
 	-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
 		-
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 Natives:
 	W@ - Renaming of __CallRemoteFunction for size reasons.

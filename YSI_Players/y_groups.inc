@@ -2,12 +2,12 @@
 					=======================================
 					 y_groups - Player group abstractions! 
 					=======================================
-Description:
+<subsection>Description</subsection>
 	Admin levels, gangs, teams etc - they're all "groups" of people, this
 	provides an abstraction for all of these collections.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	29/11/10:
 		First version
 *//** *//*

@@ -2,19 +2,19 @@
 					=================================
 					 y_natives - Obsolete.
 					=================================
-Description:
+<subsection>Description</subsection>
 	Obsolete, but still required by y_lock.
-Version:
+<subsection>Version</subsection>
 	0.1
-Changelog:
+<subsection>Changelog</subsection>
 	25/02/12:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Stock:
 		-
 	Inline:
 		-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 *//** *//*

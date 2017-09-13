@@ -2,13 +2,13 @@
 					=====================================
 					Y Sever Includes - Language Text Core
 					=====================================
-Description:
+<subsection>Description</subsection>
 	Provides interfaces for displaying text from anywhere by way of native like
 	functions using text indexes rather than text.  Due to a compile problem a
 	number of the stock functions should be static but can't be.
-Version:
+<subsection>Version</subsection>
 	0.1.1
-Changelog:
+<subsection>Changelog</subsection>
 	17/02/07:
 		Added saving of style parameter for text draws.
 	27/12/07:
@@ -30,7 +30,7 @@ Changelog:
 		Added YSI_ prefix to all globals.
 	23/03/07:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		Text_ResetAll - Resets the entire text system.
 		Text_NewLanguage - Sets up to parse a new language.
@@ -68,9 +68,9 @@ Functions:
 		Text_SendToPlayersFormat - Sends a formatted message to a passed group.
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	MAX_TEXT_NAME - Maximum length of a text identifier.
 	MAX_TEXT_ENTRY - Maximum length of a text string.
 	TEXT_NO_TEXT - Value for no text for that language.
@@ -78,13 +78,13 @@ Definitions:
 	TEXT_TYPE_CLIENT - Flag for sending a client formatted message (unused).
 	TEXT_TYPE_GAME - Flag for sending a game text formatted message (unused).
 	MAX_TEXT_COLOURS - Max number of defined colours in an ini file.
-Enums:
+<subsection>Enums</subsection>
 	E_TEXT_POINTERS - Structure of the language pointer array.
-Macros:
+<subsection>Macros</subsection>
 	Text_RegisterTag - Placed as a function, calls Text_AddToBuffer for tags.
-Tags:
+<subsection>Tags</subsection>
 	-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
@@ -97,11 +97,11 @@ Variables:
 		YSI_g_sBufferLang - Current language being loaded.
 		YSI_g_sLangBuffer - Saves the current position of each language.
 		YSI_g_sColours - Saves defined colours for use.
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 *//** *//*
 Legal:

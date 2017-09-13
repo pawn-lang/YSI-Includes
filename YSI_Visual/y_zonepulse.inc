@@ -2,14 +2,14 @@
 					===========================
 					 Gang Zone colour pulsing.
 					===========================
-Description:
+<subsection>Description</subsection>
 	Gradually fades a zone's colour between one colour and another, then back.
-Version:
+<subsection>Version</subsection>
 	0.1
-Changelog:
+<subsection>Changelog</subsection>
 	19/02/12:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		__GangZonePulse - The timer that does the hard work.
 	Core:
@@ -27,30 +27,30 @@ Functions:
 		-
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
 Hooks:
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	-
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	-
 Keywords:
 	-
-Tags:
+<subsection>Tags</subsection>
 	-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
 		-
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	ZONE_PULSE_STAGE_TIME - ms between each pulse frame.
-Operators:
+<subsection>Operators</subsection>
 	-
 Iterators:
 	-

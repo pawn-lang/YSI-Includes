@@ -25,18 +25,18 @@ in the output code.
 					================================
 					Y Sever Includes - Compiler Pass
 					================================
-Description:
+<subsection>Description</subsection>
 	Detect which pass the compiler is on.  Used by y_groups to include code that
 	might be needed before it is known if it is needed (it can be dumped later).
-Version:
+<subsection>Version</subsection>
 	0.1
-Changelog:
+<subsection>Changelog</subsection>
 	12/09/17:
 		Renamed everything for consistency.
 		Documented macros.
 	14/04/13:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Static:
 		__CompilerStringReturn - Assembly for returning a string to its callers'
 			caller.  Used to bypass a known bug.
@@ -44,7 +44,7 @@ Functions:
 	Inline:
 		__COMPILER_STRING_RETURN - Correctly return a string from a varargs
 			function.
-Macros:
+<subsection>Macros</subsection>
 	__COMPILER_PASS - Which pass the compiler is currently running.
 	__COMPILER_DOCUMENTING - Is the compiler collecting documentation
 		information right now (i.e. is this the first pass)?

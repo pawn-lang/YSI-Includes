@@ -2,12 +2,12 @@
 					======================================
 					 y_classes - Advanced class selection 
 					======================================
-Description:
+<subsection>Description</subsection>
 	Allows greater control over classes so not everyone has every class.  Uses
 	a form of compression for locations.
-Version:
+<subsection>Version</subsection>
 	0.1
-Changelog:
+<subsection>Changelog</subsection>
 	14/04/12:
 		Readded OnRequestSpawn logic.
 		Fixed Class_AddWithGroupSet.
@@ -25,7 +25,7 @@ Changelog:
 		Fixed a few bugs with repeated selection.
 	04/08/07:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		Class_AddRemote - Adds a class to the remote master.
 		Class_Remote - Updates settings remotely.
@@ -61,21 +61,21 @@ Functions:
 		Class_Skin - Gets a classes skin.
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	MAX_CLASSES - Maximum number of classes storeable by the system.
 	CLASS_LEFT - Flag for last internal class viewed.
 	CLASS_MIDDLE - Flag for last internal class viewed.
 	CLASS_RIGHT - Flag for last internal class viewed.
-Enums:
+<subsection>Enums</subsection>
 	e_CLASS_FLAGS - Small data for individual classes.
 	E_CLASS - Class data structure.
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:
+<subsection>Tags</subsection>
 	-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
@@ -85,11 +85,11 @@ Variables:
 		YSI_g_sMiddle - Handle for the second internal class.
 		YSI_g_sRight - Handle for the third internal class.
 		YSI_g_sClassCount - Number of classes stored.
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 *//** *//*
 Legal:

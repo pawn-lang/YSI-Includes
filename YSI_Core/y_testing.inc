@@ -2,11 +2,11 @@
 					====================================
 					 y_testing - Run unit tests easilly 
 					====================================
-Description:
+<subsection>Description</subsection>
 	Runs any functions named as tests when the Testing_Run function is called.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	16/02/12:
 		Added better error reporting (less verbose passes).
 		Removed "Tests:".

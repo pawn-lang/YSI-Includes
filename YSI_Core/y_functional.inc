@@ -2,11 +2,11 @@
 					======================================
 					 y_functional - Lambda-like functions
 					======================================
-Description:
+<subsection>Description</subsection>
 	Lambda functions and functional program functions - map, fold, etc.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	09/09/17:
 		First documentation.
 *//** *//*

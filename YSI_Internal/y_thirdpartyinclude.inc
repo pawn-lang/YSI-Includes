@@ -2,11 +2,11 @@
 				==============================================
 				 y_thirdpartyinclude - Include other includes
 				==============================================
-Description:
+<subsection>Description</subsection>
 	Try and include all YSI dependencies, looking in as many places as needed.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	09/09/17:
 		First documentaiton.
 *//** *//*

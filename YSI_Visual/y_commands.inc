@@ -2,12 +2,12 @@
 					================================
 					Y Sever Includes - Commands Core
 					================================
-Description:
+<subsection>Description</subsection>
 	Runs commands registered with the system and calls the required functions.
 	Also handles alternate names and prefixes.  Based very loosely on dcmd.
-Version:
+<subsection>Version</subsection>
 	0.1.4
-Changelog:
+<subsection>Changelog</subsection>
 	20/10/10:
 		Fixed a bug with insensitive commands - my fault for not testing.
 	06/01/08:
@@ -37,7 +37,7 @@ Changelog:
 		need a better way of ignoring names when alt names are used.
 	10/04/07:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		Command_Add - Adds a command to the array for processing.
 		Command_Remove - Removes a command.
@@ -67,20 +67,20 @@ Functions:
 		-
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	MAX_COMMAND_LENGTH - The maximum length of a command string.
 	COMMAND_NOT_FOUND - Indicates that a searched for string is not a function.
-Enums:
+<subsection>Enums</subsection>
 	e_COMM_FLAG - Bit mappings for command options.
 	E_COMMANDS - Structure of the array holding the string data.
-Macros:
+<subsection>Macros</subsection>
 	Command_(%1) - Forwards and declares a standard command for calling.
 	ycmd(%1) - Adds a command to the array (wrapper for Command_Add).
-Tags:
+<subsection>Tags</subsection>
 	e_COMM_FLAG - Flag type.
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
@@ -92,9 +92,9 @@ Variables:
 		YSI_g_sCommandIndex - Pointer to the next free index in the function array.
 		YSI_g_sAltCount - The number of commands with altnames.
 		YSI_g_sCommandFlags - Bit array of command options.
-Commands:
+<subsection>Commands</subsection>
 	commands - Lists all commands available to you.
-Compile options:
+<subsection>Compile options</subsection>
 	COMMAND_SENSITIVE - Make commands case sensitive.
 	COMMAND_ACCURATE - Can use '@' in command names.
 	MAX_COMMANDS - The maximum number of commands which can be used.

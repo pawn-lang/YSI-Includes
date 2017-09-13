@@ -2,7 +2,7 @@
 					===================================
 					Y Sever Includes - Connections Core
 					===================================
-Description:
+<subsection>Description</subsection>
 	Allows a limited number of connections from a single IP.
 Legal:
 	Version: MPL 1.1
@@ -68,12 +68,12 @@ Legal:
 		Kye/Kalcor - SA:MP.
 		SA:MP Team past, present and future - SA:MP.
 	
-Changelog:
+<subsection>Changelog</subsection>
 	15/11/10:
 		Updated to YSI 1.0.
 	11/03/08:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		-
 	Core:
@@ -87,27 +87,27 @@ Functions:
 		-
 	API:
 		SetMaxConnections - Sets the max allowed connections from an IP.
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	-
-Enums:
+<subsection>Enums</subsection>
 	e_FLOOD_ACTION - What to do if too many connections form.
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:
+<subsection>Tags</subsection>
 	-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
 		YSI_g_sPlayerIPs - People's stored IPs for speed.
 		YSI_g_sMaxConnections - Data for the script.
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 *//** *//*
 Legal:

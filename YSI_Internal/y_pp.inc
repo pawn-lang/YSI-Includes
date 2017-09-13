@@ -2,11 +2,11 @@
 						============================
 						 y_pp - Preprocessor macros
 						============================
-Description:
+<subsection>Description</subsection>
 	More complex processing in the pre-processor.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	25/10/10:
 		Integrated in to YSI.
 	06/08/10:

@@ -2,7 +2,7 @@
 					==============================
 					Y Sever Includes - Debug Setup
 					==============================
-Description:
+<subsection>Description</subsection>
 	Ensures debug levels are set and defines debug functions.
 	
 	General debug levels:
@@ -18,15 +18,15 @@ Description:
 	
 	If you use P:0 you get an optional debug print controlled by the global
 	state ysi_debug - which is either on or off.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	06/08/10:
 		Added new syntax.
 		Added level 0 debugging with state controlled functions.
 	15/04/07:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		-
 	Core:
@@ -40,29 +40,29 @@ Functions:
 		Debug_Print - Prints the formatted string provided at the given level.
 	API:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	P:&lt;0-6&gt; - Print a message.
 	P:C - Run debug code.
 	P:E - Print an error message.
 	P:W - Print a warning message.
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:
+<subsection>Tags</subsection>
 	-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
 		-
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	_DEBUG - Debugging level to use.
-Operators:
+<subsection>Operators</subsection>
 	-
 *//** *//*
 Legal:

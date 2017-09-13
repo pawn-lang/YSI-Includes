@@ -2,20 +2,20 @@
 					=================================
 					 y_dialog - Dialogs wrapper.
 					=================================
-Description:
+<subsection>Description</subsection>
 	Provides functions for dealing with dialogs, without needing to worry about
 	IDs or huge "OnDialogResponse" callbacks.
-Version:
+<subsection>Version</subsection>
 	0.1
-Changelog:
+<subsection>Changelog</subsection>
 	25/02/12:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Stock:
 		-
 	Inline:
 		-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 *//** *//*

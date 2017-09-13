@@ -2,11 +2,11 @@
 					============================
 					 y_unique - Similar symbols 
 					============================
-Description:
+<subsection>Description</subsection>
 	Defines a symbol differently every time it is included.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	19/04/13:
 		Upped the limit to 343.
 		Changed to a 7-ary tree.

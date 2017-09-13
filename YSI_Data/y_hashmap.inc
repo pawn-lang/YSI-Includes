@@ -2,22 +2,22 @@
 					  ====================================
 					   y_hashmap - Link strings to values
 					  ====================================
-Description:
+<subsection>Description</subsection>
 	Maps string indexes to integer indexes.  Uses a fast hash to get an array
 	slot, then a linked list to resolve collisions.
-Version:
+<subsection>Version</subsection>
 	2.0
-Changelog:
+<subsection>Changelog</subsection>
 	23/06/13:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	stock:
 		HashMap_Init - Associate a hash map with an array.
 		HashMap_Add - Add a value under a given string.
 		HashMap_Get - Get a value from a string.
 		HashMap_RemoveKey - Remove a string and its value from a hash map.
 		HashMap_Set - Change the value associated with a key.
-Definitions:
+<subsection>Definitions</subsection>
 	HASH_MAP_DATA - What should be added to enums to be hash map referenced.
 	HashMap - Declare a new hash map.
 *//** *//*

@@ -2,7 +2,7 @@
 							 =====================
 							  YSI - Strip Numbers
 							 =====================
-Description:
+<subsection>Description</subsection>
 	Removes tag overrides which are actually numbers.  This allows for:
 		
 		uvar g_a[MAX_PLAYERS][E_SOME_ENUM];
@@ -10,11 +10,11 @@ Description:
 		
 	Without stripping you would end with code doing "42:0" or getting a tag
 	mismatch on "E_SOME_ENUM", both of which are problems.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	-
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		-
 	Core:
@@ -29,26 +29,26 @@ Functions:
 		-
 	Hooks:
 		-
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	-
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:
+<subsection>Tags</subsection>
 	-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
 		-
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 Natives:
 	-

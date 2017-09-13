@@ -2,12 +2,12 @@
 					==============================
 					 y_cgen - Reserved code space
 					==============================
-Description:
+<subsection>Description</subsection>
 	Large chunks of code that isn't used, so that the space can be reclaimed and
 	reused by other code generating functions.
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	09/09/17:
 		First documentaiton.
 *//** *//*

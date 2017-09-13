@@ -2,12 +2,12 @@
 					  ===================================
 					   y_plugins - Used plugin detection 
 					  ===================================
-Description:
+<subsection>Description</subsection>
 	Configuration and detection for third-party SA:MP plugins (including
 	ones by Y_Less).
-Version:
+<subsection>Version</subsection>
 	1.0
-Changelog:
+<subsection>Changelog</subsection>
 	21/10/12:
 		First version
 *//** *//*

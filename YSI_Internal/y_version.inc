@@ -2,16 +2,16 @@
 						  =====================
 						   YSI - Version Check
 						  =====================
-Description:
+<subsection>Description</subsection>
 	Checks online to see if there is a newer version of YSI available.
-Version:
+<subsection>Version</subsection>
 	0.2
-Changelog:
+<subsection>Changelog</subsection>
 	26/10/10:
 		Added changelog capabilities.
 	22/10/10:
 		First version.
-Functions:
+<subsection>Functions</subsection>
 	Public:
 		-
 	Core:
@@ -26,26 +26,26 @@ Functions:
 		-
 	Hooks:
 		OnGameModeInit
-Callbacks:
+<subsection>Callbacks</subsection>
 	-
-Definitions:
+<subsection>Definitions</subsection>
 	-
-Enums:
+<subsection>Enums</subsection>
 	-
-Macros:
+<subsection>Macros</subsection>
 	-
-Tags:
+<subsection>Tags</subsection>
 	-
-Variables:
+<subsection>Variables</subsection>
 	Global:
 		-
 	Static:
 		-
-Commands:
+<subsection>Commands</subsection>
 	-
-Compile options:
+<subsection>Compile options</subsection>
 	-
-Operators:
+<subsection>Operators</subsection>
 	-
 Natives:
 	-
