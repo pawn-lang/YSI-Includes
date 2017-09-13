@@ -193,6 +193,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#include "..\YSI_Internal\y_compilerdata"
+
 stock _YSI_HAS_y_classes(_do_not_call_me_ever_, _like_never_)
 {
 	P:E("You called _YSI_HAS_y_classes!  Bad, don't do that!", _do_not_call_me_ever_, _like_never_);

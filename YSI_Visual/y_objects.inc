@@ -348,6 +348,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#include "..\YSI_Internal\y_compilerdata"
+
 #if !defined OBJECT_BOUNDS_MINX
 	#if defined OBJECT_BOUNDS
 		#define OBJECT_BOUNDS_MINX (-OBJECT_BOUNDS)

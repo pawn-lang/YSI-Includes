@@ -94,7 +94,7 @@ Optional plugins:
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(foreach(expr));
+//P:D(foreach(expr));
 #define foreach(%0) for(new Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%0|||)
 
 /*-------------------------------------------------------------------------*//**

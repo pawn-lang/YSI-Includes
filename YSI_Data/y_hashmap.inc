@@ -105,7 +105,9 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#include "..\YSI_Internal\y_compilerdata"
 #include "..\YSI_Internal\y_thirdpartyinclude"
+#include "..\YSI_Internal\y_version"
 #include "..\YSI_Core\y_utils"
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Coding\y_stringhash"

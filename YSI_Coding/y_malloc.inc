@@ -171,6 +171,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#include "..\YSI_Internal\y_compilerdata"
+
 #if defined YSI_MALLOC_SECURE
 	#error YSI_MALLOC_SECURE has been removed.
 #endif

@@ -216,6 +216,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#include "..\YSI_Internal\y_compilerdata"
+
 #define MAX_INI_LINE                    (MAX_INI_ENTRY_NAME + MAX_INI_ENTRY_TEXT + 32)
 
 #if !defined INI_NEW_LINE

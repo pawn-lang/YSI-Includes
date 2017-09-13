@@ -130,6 +130,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#include "..\YSI_Internal\y_compilerdata"
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Core\y_debug"
 #include "..\YSI_Core\y_utils"

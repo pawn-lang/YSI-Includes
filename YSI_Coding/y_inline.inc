@@ -99,12 +99,14 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#include "..\YSI_Internal\y_compilerdata"
+
 #if !defined YSI_MAX_INLINE_STRING
 	#define YSI_MAX_INLINE_STRING YSI_MAX_STRING
 #endif
 
-
 #include "..\YSI_Internal\y_thirdpartyinclude"
+#include "..\YSI_Internal\y_version"
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Internal\y_shortfunc"
 #include "..\YSI_Core\y_debug"

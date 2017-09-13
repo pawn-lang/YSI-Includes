@@ -92,6 +92,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#include "..\YSI_Internal\y_compilerdata"
+
 #if !defined YSI_NO_RACE_POSITION && !defined RACE_POSITION
 	#define RACE_POSITION
 #endif

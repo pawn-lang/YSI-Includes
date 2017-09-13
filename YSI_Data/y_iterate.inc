@@ -103,6 +103,8 @@ Optional plugins:
     
 */
 
+#include "..\YSI_Internal\y_compilerdata"
+
 // "y_iterate" is always higher than "foreach".
 #define _Y_ITERATE_LOCAL_VERSION        43
 
@@ -167,7 +169,7 @@ Optional plugins:
 			#define _Y_ITERATE_FOUND
 			#endinput
 		#endif
-	#elseif defined foreach
+	#elseif defined foreach && __COMPILER_FIRST_PASS
 		// I made this a warning on compilers that supported them, but that's a
 		// silly idea!
 		#error The old <foreach> include is no longer compatible with YSI.
@@ -484,7 +486,6 @@ Optional plugins:
 
 #include "..\YSI_Internal\y_natives"
 #include "..\YSI_Internal\y_shortfunc"
-#include "..\YSI_Internal\y_compilerdata"
 #include "..\YSI_Core\y_debug"
 
 #include "y_foreach/impl"
