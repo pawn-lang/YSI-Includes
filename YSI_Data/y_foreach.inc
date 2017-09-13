@@ -89,55 +89,94 @@
 	08/09/07:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Public</em><ul><to_ul>
-		OnPlayerDisconnect - Called when a player leaves to remove them.
-		OnPlayerConnect - Called when a player connects to add them.
-</ul></li><li><em>Stock</em><ul><to_ul>
-		Iter_ShowArray - Displays the contents of the array.
-		Iter_AddInternal - Add a value to an iterator.
-		Iter_RemoveInternal - Remove a value from an iterator.
-		Iter_RandomInternal - Get a random item from an iterator.
-		Iter_FreeInternal - Gets the first free slot in the iterator.
-		Iter_InitInternal - Initialises a multi-dimensional iterator.
-</ul></li><li><em>Inline</em><ul><to_ul>
-		Iter_Create - Create a new iterator value set.
-		Iter_Add - Wraps Iter_AddInternal.
-		Iter_Remove - Wraps Iter_RemoveInternal.
-		Iter_Random - Wraps Iter_RandomInternal.
-		Iter_Count - Gets the number of items in an iterator.
-		Iter_Debug - Wraps around Iter_ShowArray.
-		Iter_Free - Wraps around Iter_FreeInternal.
-		Iter_Create2 - Create a new iterator array value set.
-		Iter_Add2 - Wraps Iter_AddInternal for arrays.
-		Iter_Remove2 - Wraps Iter_RemoveInternal for arrays.
-		Iter_Random2 - Wraps Iter_RandomInternal for arrays.
-		Iter_Count2 - Gets the number of items in an iterator array.
-		Iter_Debug2 - Wraps around Iter_ShowArray for arrays.
-		Iter_Free2 - Wraps around Iter_FreeInternal for arrays.
-</ul></li></ul><subsection>Hooks</subsection><ul><to_ul>
-	Iter_OnPlayerConnect - Hook for the OnPlayerConnect callback.
-	Iter_OnPlayerDisconnect - Hook for the OnPlayerDisconnect callback.
-	Iter_OnGameModeInit - Only exists to make the code compile correctly...
-</ul><subsection>Keywords</subsection><ul><to_ul>
-	foreach - Command to loop an iterator.
-	foreachex - Like foreach but without a new variable.
-	foreach2 - Command to loop through an iterator array.
-	foreachex - Like foreach2 but without a new variable.
-</ul><subsection>Tags</subsection><ul><to_ul>
-	Iterator - Declare an iterator.
+<li><em>Public</em><ul>
+<li><seealso name="		OnPlayerDisconnect " />
+		- Called when a player leaves to remove them.</li>
+<li><seealso name="		OnPlayerConnect " />
+		- Called when a player connects to add them.</li><to_ul>
+</ul></li><li><em>Stock</em><ul>
+<li><seealso name="		Iter_ShowArray " />
+		- Displays the contents of the array.</li>
+<li><seealso name="		Iter_AddInternal " />
+		- Add a value to an iterator.</li>
+<li><seealso name="		Iter_RemoveInternal " />
+		- Remove a value from an iterator.</li>
+<li><seealso name="		Iter_RandomInternal " />
+		- Get a random item from an iterator.</li>
+<li><seealso name="		Iter_FreeInternal " />
+		- Gets the first free slot in the iterator.</li>
+<li><seealso name="		Iter_InitInternal " />
+		- Initialises a multi-dimensional iterator.</li><to_ul>
+</ul></li><li><em>Inline</em><ul>
+<li><seealso name="		Iter_Create " />
+		- Create a new iterator value set.</li>
+<li><seealso name="		Iter_Add " />
+		- Wraps Iter_AddInternal.</li>
+<li><seealso name="		Iter_Remove " />
+		- Wraps Iter_RemoveInternal.</li>
+<li><seealso name="		Iter_Random " />
+		- Wraps Iter_RandomInternal.</li>
+<li><seealso name="		Iter_Count " />
+		- Gets the number of items in an iterator.</li>
+<li><seealso name="		Iter_Debug " />
+		- Wraps around Iter_ShowArray.</li>
+<li><seealso name="		Iter_Free " />
+		- Wraps around Iter_FreeInternal.</li>
+<li><seealso name="		Iter_Create2 " />
+		- Create a new iterator array value set.</li>
+<li><seealso name="		Iter_Add2 " />
+		- Wraps Iter_AddInternal for arrays.</li>
+<li><seealso name="		Iter_Remove2 " />
+		- Wraps Iter_RemoveInternal for arrays.</li>
+<li><seealso name="		Iter_Random2 " />
+		- Wraps Iter_RandomInternal for arrays.</li>
+<li><seealso name="		Iter_Count2 " />
+		- Gets the number of items in an iterator array.</li>
+<li><seealso name="		Iter_Debug2 " />
+		- Wraps around Iter_ShowArray for arrays.</li>
+<li><seealso name="		Iter_Free2 " />
+		- Wraps around Iter_FreeInternal for arrays.</li><to_ul>
+</ul></li></ul><subsection>Hooks</subsection><ul>
+<li><seealso name="	Iter_OnPlayerConnect " />
+		- Hook for the OnPlayerConnect callback.</li>
+<li><seealso name="	Iter_OnPlayerDisconnect " />
+		- Hook for the OnPlayerDisconnect callback.</li>
+<li><seealso name="	Iter_OnGameModeInit " />
+		- Only exists to make the code compile correctly...</li><to_ul>
+</ul><subsection>Keywords</subsection><ul>
+<li><seealso name="	foreach " />
+		- Command to loop an iterator.</li>
+<li><seealso name="	foreachex " />
+		- Like foreach but without a new variable.</li>
+<li><seealso name="	foreach2 " />
+		- Command to loop through an iterator array.</li>
+<li><seealso name="	foreachex " />
+		- Like foreach2 but without a new variable.</li><to_ul>
+</ul><subsection>Tags</subsection><ul>
+<li><seealso name="	Iterator " />
+		- Declare an iterator.</li><to_ul>
 </ul><subsection>Variables</subsection><ul>
-<li><em>Static</em><ul><to_ul>
-		YSI_g_OPC - Records wether Iter_OnPlayerConnect exists for speed.
-		YSI_g_OPDC - Records wether Iter_OnPlayerDisconnect exists for speed.
-</ul></li></ul><subsection>Compile options</subsection><ul><to_ul>
-	YSI_ITTER_NO_SORT - Removed.
-	FOREACH_NO_BOTS - Remove the bot iterators for smaller code.
-	FOREACH_NO_PLAYERS - Remove all default code for player itteration.
-</ul><subsection>Iterators</subsection><ul><to_ul>
-	Player - List of all players connected.
-	Bot - List of all bots (npcs) connected.
-	NPC - Alias of Bot.
-	Character - All players and bots.
+<li><em>Static</em><ul>
+<li><seealso name="		YSI_g_OPC " />
+		- Records wether Iter_OnPlayerConnect exists for speed.</li>
+<li><seealso name="		YSI_g_OPDC " />
+		- Records wether Iter_OnPlayerDisconnect exists for speed.</li><to_ul>
+</ul></li></ul><subsection>Compile options</subsection><ul>
+<li><seealso name="	YSI_ITTER_NO_SORT " />
+		- Removed.</li>
+<li><seealso name="	FOREACH_NO_BOTS " />
+		- Remove the bot iterators for smaller code.</li>
+<li><seealso name="	FOREACH_NO_PLAYERS " />
+		- Remove all default code for player itteration.</li><to_ul>
+</ul><subsection>Iterators</subsection><ul>
+<li><seealso name="	Player " />
+		- List of all players connected.</li>
+<li><seealso name="	Bot " />
+		- List of all bots (npcs) connected.</li>
+<li><seealso name="	NPC " />
+		- Alias of Bot.</li>
+<li><seealso name="	Character " />
+		- All players and bots.</li><to_ul>
 </ul>
 *//** *//*
 Legal:

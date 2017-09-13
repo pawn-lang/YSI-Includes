@@ -188,22 +188,34 @@ Optional plugins:
 		Added code for a script to remove itself from the global list.
 	11/10/07:
 		Not first version but added documentation months late.
-</ul><subsection>Macros</subsection><ul><to_ul>
-	RF - Declare a function which may be remote.
-	RV - Declare a void function which may be remote.
-	RS - Declare an optional callback.
-	RFN - Declare an optional callback with no parameters.
-	RFC - Declare a slower but shorter function.
-	RFP - Declare a function with tags and give recall hints.
-	RFPC - Combination of P and C.
-	RFCP - Combination of P and C.
+</ul><subsection>Macros</subsection><ul>
+<li><seealso name="	RF " />
+		- Declare a function which may be remote.</li>
+<li><seealso name="	RV " />
+		- Declare a void function which may be remote.</li>
+<li><seealso name="	RS " />
+		- Declare an optional callback.</li>
+<li><seealso name="	RFN " />
+		- Declare an optional callback with no parameters.</li>
+<li><seealso name="	RFC " />
+		- Declare a slower but shorter function.</li>
+<li><seealso name="	RFP " />
+		- Declare a function with tags and give recall hints.</li>
+<li><seealso name="	RFPC " />
+		- Combination of P and C.</li>
+<li><seealso name="	RFCP " />
+		- Combination of P and C.</li><to_ul>
 </ul><subsection>Variables</subsection><ul>
-<li><em>Global</em><ul><to_ul>
-		_@ - ID of this script.
-</ul></li></ul><subsection>Compile options</subsection><ul><to_ul>
-	YSI_NO_MASTER - Don't use the master system.
-	YSI_IS_CLIENT - Script is a client only script.
-	YSI_IS_SERVER - Script is a server only script.
+<li><em>Global</em><ul>
+<li><seealso name="		_@ " />
+		- ID of this script.</li><to_ul>
+</ul></li></ul><subsection>Compile options</subsection><ul>
+<li><seealso name="	YSI_NO_MASTER " />
+		- Don't use the master system.</li>
+<li><seealso name="	YSI_IS_CLIENT " />
+		- Script is a client only script.</li>
+<li><seealso name="	YSI_IS_SERVER " />
+		- Script is a server only script.</li><to_ul>
 </ul>
 *//** */
 

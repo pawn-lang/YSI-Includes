@@ -21,8 +21,9 @@
 	11/11/11:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Public:</em><ul><to_ul>
-		-
+<li><em>Public:</em><ul>
+<li><seealso name="		" />
+		-</li><to_ul>
 </ul></li></ul>
 *//** *//*
 Legal:

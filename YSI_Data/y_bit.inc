@@ -33,20 +33,30 @@
 	15/04/07:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Stock</em><ul><to_ul>
-		Bit_Set - Sets a slot to the given value.
-		Bit_Get - Gets a slot state.
-		Bit_SetAll - Sets all the slots in an array to the same thing.
-		Bit_GetCount - Gets the number of 1s in a bit array.
-</ul></li><li><em>Inline</em><ul><to_ul>
-		Bit_Bits - Gets the number of cells required for a bit array.
-		Bit_Let - Sets a slot to 1.
-		Bit_Vet - Sets a slot to 0.
-		Bit_GetBits - Gets the bit at a slot unsafely.
-</ul></li></ul><subsection>Definitions</subsection><ul><to_ul>
-	CELLSHIFT - Number of bits that can hold "cellbits"
-</ul><subsection>Tags</subsection><ul><to_ul>
-	Bit - Bit array type.
+<li><em>Stock</em><ul>
+<li><seealso name="		Bit_Set " />
+		- Sets a slot to the given value.</li>
+<li><seealso name="		Bit_Get " />
+		- Gets a slot state.</li>
+<li><seealso name="		Bit_SetAll " />
+		- Sets all the slots in an array to the same thing.</li>
+<li><seealso name="		Bit_GetCount " />
+		- Gets the number of 1s in a bit array.</li><to_ul>
+</ul></li><li><em>Inline</em><ul>
+<li><seealso name="		Bit_Bits " />
+		- Gets the number of cells required for a bit array.</li>
+<li><seealso name="		Bit_Let " />
+		- Sets a slot to 1.</li>
+<li><seealso name="		Bit_Vet " />
+		- Sets a slot to 0.</li>
+<li><seealso name="		Bit_GetBits " />
+		- Gets the bit at a slot unsafely.</li><to_ul>
+</ul></li></ul><subsection>Definitions</subsection><ul>
+<li><seealso name="	CELLSHIFT " />
+		- Number of bits that can hold "cellbits"</li><to_ul>
+</ul><subsection>Tags</subsection><ul>
+<li><seealso name="	Bit " />
+		- Bit array type.</li><to_ul>
 </ul>
 *//** *//*
 Legal:

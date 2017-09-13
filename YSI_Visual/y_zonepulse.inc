@@ -15,17 +15,25 @@
 	19/02/12:
 		First version.
 </ul><subsection>Functions</subsection><ul>
-<li><em>Public</em><ul><to_ul>
-		__GangZonePulse - The timer that does the hard work.
-</ul></li><li><em>Stock</em><ul><to_ul>
-		GangZonePulse - Pulse a zone for player or collection of players.
-		GangZonePulseForPlayer - Pulse a zone for a player.
-		GangZonePulseForAll - Pulse a zone for everyone.
-		GangZoneStopPulse - Stop a zone pulsing for a set of players.
-		GangZoneStopPulseForPlayer - Stop a zone pulsing for a single player.
-		GangZoneStopPulseForAll - Stop a zone pulsing for everyone.
-</ul></li></ul><subsection>Compile options</subsection><ul><to_ul>
-	ZONE_PULSE_STAGE_TIME - ms between each pulse frame.
+<li><em>Public</em><ul>
+<li><seealso name="		__GangZonePulse " />
+		- The timer that does the hard work.</li><to_ul>
+</ul></li><li><em>Stock</em><ul>
+<li><seealso name="		GangZonePulse " />
+		- Pulse a zone for player or collection of players.</li>
+<li><seealso name="		GangZonePulseForPlayer " />
+		- Pulse a zone for a player.</li>
+<li><seealso name="		GangZonePulseForAll " />
+		- Pulse a zone for everyone.</li>
+<li><seealso name="		GangZoneStopPulse " />
+		- Stop a zone pulsing for a set of players.</li>
+<li><seealso name="		GangZoneStopPulseForPlayer " />
+		- Stop a zone pulsing for a single player.</li>
+<li><seealso name="		GangZoneStopPulseForAll " />
+		- Stop a zone pulsing for everyone.</li><to_ul>
+</ul></li></ul><subsection>Compile options</subsection><ul>
+<li><seealso name="	ZONE_PULSE_STAGE_TIME " />
+		- ms between each pulse frame.</li><to_ul>
 </ul>
 *//** *//*
 Legal:
