@@ -389,7 +389,7 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(INI_SkipWhitespace(str,p0s));
+P:D(INI_SkipWhitespace(str[],&p0s));
 #define INI_SkipWhitespace(%0,%1) while ('\0' < %0[%1] <= ' ') ++%1
 
 _Y_INI_STATIC stock e_INI_LINE_TYPE:
@@ -618,7 +618,7 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filena
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(INI_GetCallback(callback,format,tag,input,callbackFormat,remote));
+P:D(INI_GetCallback(callback[E_CALLBACK_DATA],format[32],tag[32],const input[],callbackFormat[5],bool:remote));
 #define INI_GetCallback(%0,%1,%2,%3,%4,%5) \
 	( \
 		strcpy((%2), (%3)), \

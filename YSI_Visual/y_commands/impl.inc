@@ -200,7 +200,7 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(_Command_IsEmptySlot(idx));
+P:D(bool:_Command_IsEmptySlot(idx));
 #define _Command_IsEmptySlot(%0) (!YSI_g_sCommands[(%0)][E_COMMAND_NAME])
 
 /*-------------------------------------------------------------------------*//**
@@ -210,7 +210,7 @@ P:D(_Command_IsEmptySlot(idx));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(_Command_IsAlt(idx));
+P:D(bool:_Command_IsAlt(idx));
 #define _Command_IsAlt(%0) (YSI_g_sCommands[(%0)][E_COMMAND_POINTER] & cellmin)
 
 /*-------------------------------------------------------------------------*//**
@@ -223,7 +223,7 @@ P:D(_Command_IsAlt(idx));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(_Command_GetReal(ptr,idx,%2));
+P:D(_Command_GetReal(&ptr,&idx,name[]));
 #define _Command_GetReal(%0,%1,%2);                             \
 	if((%0=YSI_g_sCommands[(%1)][E_COMMAND_POINTER])&cellmin)   \
 			%1=(%0)&~cellmin,									\
@@ -269,7 +269,7 @@ P:D(_Command_GetReal(ptr,idx,%2));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(_Command_IsActive(command));
+P:D(bool:_Command_IsActive(command));
 #define _Command_IsActive(%0) (YSI_g_sCommands[(%0)][E_COMMAND_NAME])
 
 /*-------------------------------------------------------------------------*//**
@@ -409,19 +409,27 @@ global Command_AddAlt(oidx, string:cmd[])
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player who entered the command.</param>
-<param name="cmdtext">Text entered.</param>
-<param name="help">Called from the help commmand or OnPlayerCommandText.</param>
+<param name="p">(playerid) - Player who entered the command.</param>
+<param name="c">(cmdtext) - Text entered.</param>
+<param name="h">
+	1 - Called from the help commmand or OnPlayerCommandText.
+	2 - Bypass permissions checks.
+</param>
 <returns>
 	true - success or hidden fail.
 	false - fail.
 </returns>
 <remarks>
-	Does all the command and error handling.
+	Does all the command and error handling.  The macro version takes four
+	parameters:
+	
+	<c>Command_ReProcess(playerid,cmdtext,help,force);</c>
+	
+	<c>help</c> and <c>force</c> are combined together in to a bitmap.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Command_ReProcess(playerid,cmdtext,%2,%3));
+//P:D(Command_ReProcess(playerid,cmdtext,help,force));
 #define Command_ReProcess(%0,%1,%2,%3) Command_ReProcess(%0,%1, _:(%2)|(_:(%3)<<1))
 
 foreign Command_ReProcess(p,string:c[],h);

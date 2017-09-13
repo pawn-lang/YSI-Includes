@@ -123,7 +123,7 @@ static stock
 <param name="variable">Variable to fill with integer value.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(INI_Int(name,variable));
+P:D(INI_Int(const name[],&variable));
 #define INI_Int(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = strval(value)
 
@@ -132,7 +132,7 @@ P:D(INI_Int(name,variable));
 <param name="variable">Variable to fill with float value.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(INI_Float(name,variable));
+P:D(INI_Float(const name[],&Float:variable));
 #define INI_Float(%1,%2) \
 	if (!strcmp((%1), name, true)) return _:(%2 = floatstr(value))
 
@@ -141,7 +141,7 @@ P:D(INI_Float(name,variable));
 <param name="variable">Variable to fill with hex value.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(INI_Hex(name,variable));
+P:D(INI_Hex(const name[],&variable));
 #define INI_Hex(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = hexstr(value)
 
@@ -150,7 +150,7 @@ P:D(INI_Hex(name,variable));
 <param name="variable">Variable to fill with binary value.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(INI_Bin(name,variable));
+P:D(INI_Bin(const name[],&variable));
 #define INI_Bin(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = binstr(value)
 
@@ -165,7 +165,7 @@ P:D(INI_Bin(name,variable));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(INI_String(name,variable));
+P:D(INI_String(const name[],variable[]));
 #define INI_String(%1,%2) \
 	if (!strcmp((%1), name, true)) return _:INI_CHECK_LEN:strcpy(%2, value)
 
@@ -176,7 +176,7 @@ P:D(INI_String(name,variable));
 <param name="variable">Variable to fill with string value.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(INI_Bool(name,variable));
+P:D(INI_Bool(const name[],&bool:variable));
 #define INI_Bool(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = boolstr(value)
 

@@ -680,7 +680,7 @@ static
 	Checks if a passed id is a valid object.
 *//*-------------------------------------------------------------------------**/
 
-P:D(Object_IsValid(objectid));
+P:D(bool:Object_IsValid(objectid));
 #define Object_IsValid(%1) \
 	((%1) >= 0 && (%1) < MAX_DYN_OBJECTS && YSI_g_sObjects[(%1)][E_OBJECT_MODEL] & e_OBJ_FLAG_ACTIVE)
 
@@ -690,7 +690,7 @@ P:D(Object_IsValid(objectid));
 	Actually checks a objSet of passed flags, not a passed object.
 *//*-------------------------------------------------------------------------**/
 
-P:D(Object_GetAttach(flags));
+P:D(Object_GetAttach(e_OBJ_FLAG:flags));
 #define Object_GetAttach(%1) \
 	((_:(%1) >> 15) & NO_ATTACH_PLAYER)
 
@@ -700,7 +700,7 @@ P:D(Object_GetAttach(flags));
 	Actually checks a objSet of passed flags, not a passed object.
 *//*-------------------------------------------------------------------------**/
 
-P:D(Object_IsAttached(flags));
+P:D(bool:Object_IsAttached(e_OBJ_FLAG:flags));
 #define Object_IsAttached(%1) \
 	(Object_GetAttach(%1) != NO_ATTACH_PLAYER)
 
@@ -715,7 +715,7 @@ P:D(Object_IsAttached(flags));
 	of +/-13107.2 for x, y and z and a max of 102.4 for the speed to compress.
 *//*-------------------------------------------------------------------------**/
 
-P:D(Object_SetGateTarget(gate,tx,ty,tz,ts));
+P:D(Object_SetGateTarget(gate,Float:tx,Float:ty,Float:tz,Float:ts));
 #define Object_SetGateTarget(%1,%2,%3,%4,%5) \
 	new \
 		_o_sgt_y = floatround((%3) * 10); \
@@ -727,7 +727,7 @@ P:D(Object_SetGateTarget(gate,tx,ty,tz,ts));
 	Actually checks a objSet of passed flags, not a passed object.
 *//*-------------------------------------------------------------------------**/
 
-P:D(Object_SetAttach(flags));
+P:D(Object_SetAttach(e_OBJ_FLAG:flags));
 #define Object_SetAttach(%1) \
 	e_OBJ_FLAG:(((%1) & NO_ATTACH_PLAYER) << 15)
 

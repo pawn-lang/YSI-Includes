@@ -129,7 +129,7 @@ P:D(Bit_Mask(value));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Bit_GetBit(array,slot));
+P:D(bool:Bit_GetBit(BitArray:array<>,slot));
 #define Bit_GetBit(%1,%2) (%1[(%2)>>>CELLSHIFT]&Bit:(1<<((%2)&cellbits-1)))
 
 /*-------------------------------------------------------------------------*//**
@@ -147,7 +147,7 @@ native Bit_Get(BitArray:array&lt;&gt;, slot);
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Bit_Get(array,slot));
+P:D(bool:Bit_Get(BitArray:array<>,slot));
 #define Bit_Get(%1,%2) bool:Bit_GetBit(Bit:%1,_:%2)
 
 /*-------------------------------------------------------------------------*//**
@@ -158,7 +158,7 @@ P:D(Bit_Get(array,slot));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Bit_Let(array,slot));
+P:D(Bit_Let(BitArray:array<>,slot));
 #define Bit_Let(%1,%2) %1[(%2)>>>CELLSHIFT]|=Bit:(1<<((%2)&cellbits-1))
 
 /*-------------------------------------------------------------------------*//**
@@ -169,7 +169,7 @@ P:D(Bit_Let(array,slot));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Bit_Vet(array,slot));
+P:D(Bit_Vet(BitArray:array<>,slot));
 #define Bit_Vet(%1,%2) %1[(%2)>>>CELLSHIFT]&=Bit:~(1<<((%2)&cellbits-1))
 
 /*-------------------------------------------------------------------------*//**
@@ -199,7 +199,7 @@ native Bit_FastSet(BitArray:array&lt;&gt;, slot, bool:set, size = sizeof (array)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Bit_FastSet(array,slot,%2));
+P:D(Bit_FastSet(BitArray:array<>,slot,bool:set,size = sizeof (array)));
 #define Bit_FastSet(%0,%1,%2) ((%2)?(Bit_Let(%0,(%1))):(Bit_Vet(%0,(%1))))
 
 /*-------------------------------------------------------------------------*//**

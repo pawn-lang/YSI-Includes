@@ -394,14 +394,13 @@ loadtext core[ysi_properties];
 <param name="prop">Property to check.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Property_IsActive(prop));
+P:D(bool:Property_IsActive(prop));
 #define Property_IsActive(%1) \
 	((%1) < MAX_PROPERTIES && (%1) >= 0 && YSI_g_sProperties[(%1)][E_PROP_DATA_FLAGS] & e_PROP_FLAGS_ACTIVE)
 
 /*-------------------------------------------------------------------------*//**
 <remarks>
-	Allows people to own as many properties as they like at
-	once.
+	Allows people to own as many properties as they like at once.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -426,7 +425,7 @@ P:D(Property_SetOption(slot,value));
 <param name="flags">flags cell to get it from.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Property_GetOption(slot,flags));
+P:D(Property_GetOption(slot,e_PROP_FLAGS:flags));
 #define Property_GetOption(%1,%2) \
 	(e_PROP_FLAGS_CUST_%1 & e_PROP_FLAGS:(%2))
 
@@ -439,7 +438,7 @@ P:D(Property_GetOption(slot,flags));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Property_GivePlayerWeapon(playerid,slot,%3));
+P:D(Property_GivePlayerWeapon(playerid,slot,ammo));
 #define Property_GivePlayerWeapon(%1,%2,%3) \
 	if ((%2) == 39) SetPlayerArmour((%1), 100.0); else GivePlayerWeapon(%1, Property_GetWeaponFromSlot(%2), %3)
 
@@ -470,7 +469,7 @@ stock Property_IsValid(property)
 <param name="flags">Property flags for ownership type.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Property_IsOwner(playerid,prop,%3));
+P:D(bool:Property_IsOwner(playerid,prop,e_PROP_FLAGS:flags));
 #define Property_IsOwner(%1,%2,%3) \
 	((Property_GetOption(2, (%3))) ? (!Bit_GetBit(YSI_g_sProperties[(%2)][E_PROP_DATA_PLAYERS], (%1))) : (!(_:YSI_g_sProperties[(%2)][E_PROP_DATA_PLAYERS][0] == (%1))))
 
@@ -2332,7 +2331,7 @@ ptask Property_Loop[500](i)
 <param name="playerid">Player to check for.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Property_IsPlayerProperty(flags,playerid));
+P:D(bool:Property_IsPlayerProperty(e_PROP_FLAGS:flags,playerid));
 #define Property_IsPlayerProperty(%1,%2) \
 	((%1) & e_PROP_FLAGS_ACTIVE && (%1) & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_PROP && Checkpoint_HasPlayerNoWorld(_:((%1) & e_PROP_FLAGS_LINK), (%2)))
 

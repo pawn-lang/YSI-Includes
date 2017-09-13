@@ -99,7 +99,7 @@ Optional plugins:
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(HashMap_Hash(str,hash));
+P:D(HashMap_Hash(str[],&hash));
 #define HashMap_Hash(%0,%1) (%1=YHash(%0))
 
 /*-------------------------------------------------------------------------*//**
@@ -149,11 +149,11 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 </returns>
 <remarks>
 	Caters for both packed and unpacked strings.  The weirdness is basically
-	just: "ispacked(str) ? (* 1) : (* 4)".
+	just: <c>ispacked(str) ? (* 1) : (* 4)</c>.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(HashMap_ByteLen(%0));
+P:D(HashMap_ByteLen(str[]));
 #define HashMap_ByteLen(%0) ((strlen((%0)) + 1) << (2 * _:!ispacked((%0))))
 
 /*-------------------------------------------------------------------------*//**

@@ -355,8 +355,8 @@ public OnPlayerDisconnect(playerid, reason)
 </returns>
 *//*-------------------------------------------------------------------------**/
 
-P:D(bool:UCMP(value, upper)upper
-#define UCMP(value,%1) IS_IN_RANGE(%0,0,(%1))
+P:D(bool:UCMP(value, upper));
+#define UCMP(%0,%1) IS_IN_RANGE(%0,0,(%1))
 
 /*-------------------------------------------------------------------------*//**
 <param name="playerid">The player to check.</param>
@@ -366,7 +366,7 @@ P:D(bool:UCMP(value, upper)upper
 *//*-------------------------------------------------------------------------**/
 
 P:D(bool:VALID_PLAYERID(playerid));
-#define VALID_PLAYERID(playerid) UCMP((%0), MAX_PLAYERS)
+#define VALID_PLAYERID(%0) UCMP((%0), MAX_PLAYERS)
 
 /*-------------------------------------------------------------------------*//**
 <param name="value">The number to compare.</param>
@@ -383,8 +383,8 @@ P:D(bool:VALID_PLAYERID(playerid));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(bool:IS_IN_RANGE(lower, value, upper)lower
-#define IS_IN_RANGE(value,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
+P:D(bool:IS_IN_RANGE(lower, value, upper));
+#define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
 <param name="value">The number to compare.</param>
@@ -401,8 +401,8 @@ P:D(bool:IS_IN_RANGE(lower, value, upper)lower
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(bool:NOT_IN_RANGE(lower, value, upper)lower
-#define NOT_IN_RANGE(value,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
+P:D(bool:NOT_IN_RANGE(lower, value, upper));
+#define NOT_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
 <param name="numerator">The top of the division.</param>
@@ -415,8 +415,8 @@ P:D(bool:NOT_IN_RANGE(lower, value, upper)lower
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(ceildiv(numerator, denominator)denominator
-#define ceildiv(numerator,%1) (((%0)-1)/(%1)+1)
+P:D(ceildiv(numerator, denominator));
+#define ceildiv(%0,%1) (((%0)-1)/(%1)+1)
 
 /*-------------------------------------------------------------------------*//**
 <summary>
@@ -441,15 +441,15 @@ P:D(floordiv(numerator, denominator));
 *//*-------------------------------------------------------------------------**/
 
 P:D(bool:isnull(str[]));
-#define isnull(str) \
+#define isnull(%1) \
 	((%1[0] == 0) || (%1[0] == 1 && %1[1] == 0))
 
 /*-------------------------------------------------------------------------*//**
 <param name="value">Value to check if is odd.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(bool:isodd(value)value
-#define isodd(value) \
+P:D(bool:isodd(value));
+#define isodd(%1) \
 	((%1) & 1)
 
 /*-------------------------------------------------------------------------*//**
@@ -457,7 +457,7 @@ P:D(bool:isodd(value)value
 *//*-------------------------------------------------------------------------**/
 
 P:D(bool:iseven(value));
-#define iseven(value) \
+#define iseven(%1) \
 	(!isodd(%1))
 
 /*-------------------------------------------------------------------------*//**
@@ -466,8 +466,8 @@ P:D(bool:iseven(value));
 <param name="len">(Implicit) maximum length of the destination.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(strcpy(dest[], const src[], len = sizeof (dest))dest
-#define strcpy(dest,%1) \
+P:D(strcpy(dest[], const src[], len = sizeof (dest)));
+#define strcpy(%0,%1) \
 	strcat((%0[0] = '\0', %0), %1)
 
 /*-------------------------------------------------------------------------*//**

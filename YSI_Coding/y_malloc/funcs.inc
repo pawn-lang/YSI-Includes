@@ -77,7 +77,7 @@ Optional plugins:
 </returns>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Malloc_GetSlotSize(slot));
+P:D(Malloc_GetSlotSize(Alloc:slot));
 #define Malloc_GetSlotSize(%1) \
 	(YSI_gMallocMemory[_:(%1) - 1])
 
@@ -88,16 +88,16 @@ P:D(Malloc_GetSlotSize(slot));
 </returns>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Malloc_SlotSize(slot));
 #if defined YSI_MALLOC_SECURE
 
-	stock Malloc_SlotSize(slot)
+	stock Malloc_SlotSize(Alloc:slot)
 	{
 		return Malloc_GetSlotSize(slot);
 	}
 
 #else
 
+	P:D(Malloc_SlotSize(Alloc:slot));
 	#define Malloc_SlotSize(%1) \
 		Malloc_GetSlotSize(%1)
 
@@ -148,7 +148,7 @@ P:D(Malloc_SetSlotSize(slot,size));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Malloc_GetData(slot,index)index
+P:D(Malloc_GetData(Alloc:slot,index));
 #define Malloc_GetData(%1,%2) \
 	(YSI_gMallocMemory[_:((%1)+Alloc:(%2))])
 
@@ -158,7 +158,7 @@ P:D(Malloc_GetData(slot,index)index
 <param name="value">The value to save.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Malloc_SetData(slot,index,%3));
+P:D(Malloc_SetData(Alloc:slot,index,value));
 #define Malloc_SetData(%1,%2,%3) \
 	YSI_gMallocMemory[_:((%1)+Alloc:(%2))]=(%3)
 
@@ -173,7 +173,7 @@ P:D(Malloc_SetData(slot,index,%3));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(mget(slot, index));
+P:D(mget(Alloc:slot, index));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mget(%1) \
 		Malloc_Get(%1)
@@ -188,7 +188,7 @@ P:D(mget(slot, index));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(mset(slot, index));
+P:D(mset(Alloc:slot, index, value));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mset(%1) \
 		Malloc_Set(%1)
@@ -291,7 +291,6 @@ P:D(Malloc_NextSlot(slot));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Malloc_Get(Alloc:array, index));
 #if defined YSI_MALLOC_SECURE
 
 	stock Malloc_Get(Alloc:array, index)
@@ -306,6 +305,7 @@ P:D(Malloc_Get(Alloc:array, index));
 
 #else
 
+	P:D(Malloc_Get(Alloc:array, index));
 	#define Malloc_Get(%1,%2) \
 		Malloc_GetData(%1, %2)
 
@@ -320,7 +320,6 @@ P:D(Malloc_Get(Alloc:array, index));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Malloc_Set(Alloc:array,index,value));
 #if defined YSI_MALLOC_SECURE
 
 	stock Malloc_Set(Alloc:array, index, value)
@@ -335,6 +334,7 @@ P:D(Malloc_Set(Alloc:array,index,value));
 
 #else
 
+	P:D(Malloc_Set(Alloc:array,index,value));
 	#define Malloc_Set(%1,%2,%3) \
 		Malloc_SetData(%1, %2, %3)
 
@@ -589,7 +589,6 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(malloc(size));
 #if defined YSI_MALLOC_SECURE
 
 	stock Alloc:malloc(size)
@@ -602,6 +601,7 @@ P:D(malloc(size));
 
 #else
 
+	P:D(Alloc:malloc(size));
 	#define malloc(%1) \
 		Malloc_Allocate(%1)
 
@@ -643,7 +643,6 @@ stock Alloc:calloc(size)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(free(slot));
 #if defined YSI_MALLOC_SECURE
 
 	stock free(Alloc:slot)
@@ -658,6 +657,7 @@ P:D(free(slot));
 
 #else
 
+	P:D(free(Alloc:slot));
 	#define free(%1) \
 		Malloc_Free(%1)
 
