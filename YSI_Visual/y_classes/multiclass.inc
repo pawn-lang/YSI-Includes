@@ -120,56 +120,56 @@ stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <>
 <param name="classid">Class to check if active.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(_Class_IsActive(%1));
+P:D(_Class_IsActive(classid));
 #define _Class_IsActive(%1) (YSI_g_sClasses[(%1)][E_CLASS_FLAGS] & e_CLASS_FLAGS_ACTIVE)
 
 /*-------------------------------------------------------------------------*//**
 <param name="classid">Class to check if valid.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(_Class_IsValid(%1));
+P:D(_Class_IsValid(classid)classid
 #define _Class_IsValid(%1) (IS_IN_RANGE((%1), 0, MAX_CLASSES) && _Class_IsActive(%1))
 
 /*-------------------------------------------------------------------------*//**
 <param name="classid">Class to check.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(_Class_Enabled(%1));
+P:D(_Class_Enabled(classid));
 #define _Class_Enabled(%1) (YSI_g_sClasses[(%1)][E_CLASS_FLAGS] & e_CLASS_FLAGS_ENABLED)
 
 /*-------------------------------------------------------------------------*//**
 <param name="classid">Class to get X location for.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Class_X(%1));
+P:D(Class_X(classid)classid
 #define Class_X(%1) YSI_g_sClasses[(%1)][E_CLASS_X]
 
 /*-------------------------------------------------------------------------*//**
 <param name="classid">Class to get Y location for.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Class_Y(%1));
+P:D(Class_Y(classid));
 #define Class_Y(%1) YSI_g_sClasses[(%1)][E_CLASS_Y]
 
 /*-------------------------------------------------------------------------*//**
 <param name="classid">Class to get Z location for.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Class_Z(%1));
+P:D(Class_Z(classid)classid
 #define Class_Z(%1) YSI_g_sClasses[(%1)][E_CLASS_Z]
 
 /*-------------------------------------------------------------------------*//**
 <param name="classid">Class to get angle for.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Class_A(%1));
+P:D(Class_A(classid));
 #define Class_A(%1) YSI_g_sClasses[(%1)][E_CLASS_A]
 
 /*-------------------------------------------------------------------------*//**
 <param name="classid">Class to get skin for.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Class_Skin(%1));
+P:D(Class_Skin(classid)classid
 #define Class_Skin(%1) (YSI_g_sClasses[(%1)][E_CLASS_FLAGS] & e_CLASS_FLAGS_SKIN)
 
 /*-------------------------------------------------------------------------*//**

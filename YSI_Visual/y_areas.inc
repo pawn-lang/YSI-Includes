@@ -571,7 +571,7 @@ P:D(Area_GetEmptySlotCount());
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Area_AddSlots(%1));
+P:D(Area_AddSlots(num));
 #define Area_AddSlots(%1) \
 	YSI_g_sFreeCount -= (%1)
 
@@ -583,7 +583,7 @@ P:D(Area_AddSlots(%1));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Area_IsActive(%1));
+P:D(Area_IsActive(area));
 #define Area_IsActive(%1) \
 	((%1) >= 0 && (%1) < MAX_AREAS && (YSI_g_sAreas[(%1)][E_AREA_FLAGS] & e_AREA_FLAGS_ACTIVE))
 
@@ -1267,7 +1267,7 @@ global void:Area_SetAllWorlds(area, bool:set)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Area_Add(%0,%1));
+P:D(Area_Add(type,%1));
 #define Area_Add(%0,%1) Area_Add%0(%1)
 #define Area_AddCUBE Area_AddCube
 #define Area_AddCUBOID Area_AddCuboid
@@ -1290,7 +1290,7 @@ P:D(Area_Add(%0,%1));
 </returns>
 *//*-------------------------------------------------------------------------**/
 
-P:D(_AREA_MIN(%0,%1));
+P:D(_AREA_MIN(minx,miny));
 #define _AREA_MIN(%0,%1) if (%1 < %0) %0 ^= %1, %1 ^= %0, %0 ^= %1
 
 @foreign Area_AddCuboid(Float:x0,Float:y0,Float:z0,Float:x1,Float:y1,Float:z1);

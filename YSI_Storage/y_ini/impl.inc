@@ -389,7 +389,7 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(INI_SkipWhitespace(%0,%1));
+P:D(INI_SkipWhitespace(str,p0s));
 #define INI_SkipWhitespace(%0,%1) while ('\0' < %0[%1] <= ' ') ++%1
 
 _Y_INI_STATIC stock e_INI_LINE_TYPE:
@@ -606,8 +606,6 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filena
 <param name="format">The function name format.</param>
 <param name="tag">The tag destination.</param>
 <param name="input">The tag source.</param>
-<param name="len">The tag length.</param>
-<param name="tag">The tag destination.</param>
 <param name="callbackFormat">The callback parameter specifiers.</param>
 <param name="remote">Use "CallRemoteFunction".</param>
 <returns>
@@ -620,7 +618,7 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filena
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(INI_GetCallback(%0,%1,%2,%3,%4,%5));
+P:D(INI_GetCallback(callback,format,tag,input,callbackFormat,remote));
 #define INI_GetCallback(%0,%1,%2,%3,%4,%5) \
 	( \
 		strcpy((%2), (%3)), \

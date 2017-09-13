@@ -200,7 +200,7 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(_Command_IsEmptySlot(%0));
+P:D(_Command_IsEmptySlot(idx));
 #define _Command_IsEmptySlot(%0) (!YSI_g_sCommands[(%0)][E_COMMAND_NAME])
 
 /*-------------------------------------------------------------------------*//**
@@ -210,7 +210,7 @@ P:D(_Command_IsEmptySlot(%0));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(_Command_IsAlt(%0));
+P:D(_Command_IsAlt(idx));
 #define _Command_IsAlt(%0) (YSI_g_sCommands[(%0)][E_COMMAND_POINTER] & cellmin)
 
 /*-------------------------------------------------------------------------*//**
@@ -223,7 +223,7 @@ P:D(_Command_IsAlt(%0));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(_Command_GetReal(%0,%1,%2));
+P:D(_Command_GetReal(ptr,idx,%2));
 #define _Command_GetReal(%0,%1,%2);                             \
 	if((%0=YSI_g_sCommands[(%1)][E_COMMAND_POINTER])&cellmin)   \
 			%1=(%0)&~cellmin,									\
@@ -269,7 +269,7 @@ P:D(_Command_GetReal(%0,%1,%2));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(_Command_IsActive(%0));
+P:D(_Command_IsActive(command));
 #define _Command_IsActive(%0) (YSI_g_sCommands[(%0)][E_COMMAND_NAME])
 
 /*-------------------------------------------------------------------------*//**
@@ -306,14 +306,14 @@ P:D(_Command_IsActive(%0));
 </returns>
 *//*-------------------------------------------------------------------------**/
 
-P:D(_Command_GetPrefix(%0));
+P:D(_Command_GetPrefix(c));
 #define _Command_GetPrefix(%0) (YSI_g_sCommands[(%0)][E_COMMAND_PREFIX])
 
 /*-------------------------------------------------------------------------*//**
 <param name="f">Command to get the name of.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Command_Name(%0));
+P:D(Command_Name(f));
 #define Command_Name(%0) (YSI_g_sCommands[(%0)][E_COMMAND_NAME])
 
 /*
@@ -421,7 +421,7 @@ global Command_AddAlt(oidx, string:cmd[])
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Command_ReProcess(%0,%1,%2,%3));
+P:D(Command_ReProcess(playerid,cmdtext,%2,%3));
 #define Command_ReProcess(%0,%1,%2,%3) Command_ReProcess(%0,%1, _:(%2)|(_:(%3)<<1))
 
 foreign Command_ReProcess(p,string:c[],h);

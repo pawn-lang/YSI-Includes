@@ -220,7 +220,7 @@ Notes:
 	Checks a race is active.
 *//*-------------------------------------------------------------------------**/
 
-P:D(Race__IsActive(%1));
+P:D(Race__IsActive(raceid));
 #define Race__IsActive(%1) \
 	(YSI_g_sRaceData[(%1)][E_RACE_FLAGS] & e_RACE_FLAGS_ACTIVE)
 
@@ -230,7 +230,7 @@ Notes:
 	Checks an id is valid and active.
 *//*-------------------------------------------------------------------------**/
 
-P:D(Race_IsValid(%1));
+P:D(Race_IsValid(raceid)raceid
 #define Race_IsValid(%1) \
 	(0 <= (%1) < MAX_RACES && Race__IsActive((%1)))
 

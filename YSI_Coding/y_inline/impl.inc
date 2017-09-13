@@ -155,7 +155,7 @@ public _@_y_inline_@_()
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Inline_DecodeSimple(%0,%1));
+P:D(Inline_DecodeSimple(from,at));
 #define Inline_DecodeSimple(%0,%1) (I@ = %0[(%1) >>> 5] & (2 << ((%1) & 0x1F)), (%1) += 2, I@)
 
 // This used to be a compile-time macro to convert its parameters to the

@@ -160,7 +160,7 @@ static stock
 <param name="file">File to check validity of.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(XML_IsValid(%1));
+P:D(XML_IsValid(file));
 #define XML_IsValid(%1) \
 	((%1) >= XML:0 && (%1) < XML_MAX_XML_FILES && YSI_g_sCurHandler[(%1)] != -1)
 
@@ -168,7 +168,7 @@ P:D(XML_IsValid(%1));
 <param name="char">Checks if a cell is a valid identifier character.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(XML_IsChar(%1));
+P:D(XML_IsChar(char));
 #define XML_IsChar(%1) \
 	(((%1) >= 'a' && (%1) <= 'z') || ((%1) >= 'A' && (%1) <= 'Z') || ((%1) >= '0' && (%1) <= '9') || (%1 == '_'))
 

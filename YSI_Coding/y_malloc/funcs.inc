@@ -77,7 +77,7 @@ Optional plugins:
 </returns>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Malloc_GetSlotSize(%1));
+P:D(Malloc_GetSlotSize(slot));
 #define Malloc_GetSlotSize(%1) \
 	(YSI_gMallocMemory[_:(%1) - 1])
 
@@ -88,7 +88,7 @@ P:D(Malloc_GetSlotSize(%1));
 </returns>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Malloc_SlotSize(%1));
+P:D(Malloc_SlotSize(slot));
 #if defined YSI_MALLOC_SECURE
 
 	stock Malloc_SlotSize(slot)
@@ -133,7 +133,7 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 <param name="size">The size to set it to.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Malloc_SetSlotSize(%1,%2));
+P:D(Malloc_SetSlotSize(slot,size));
 #define Malloc_SetSlotSize(%1,%2) \
 	YSI_gMallocMemory[_:(%1) - 1] = (%2)
 
@@ -144,11 +144,11 @@ P:D(Malloc_SetSlotSize(%1,%2));
 	The data
 </returns>
 <remarks>
-	Basically like Malloc_Get but used internally.
+	Basically like <seealso name="Malloc_Get" /> but used internally.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Malloc_GetData(%1,%2));
+P:D(Malloc_GetData(slot,index)index
 #define Malloc_GetData(%1,%2) \
 	(YSI_gMallocMemory[_:((%1)+Alloc:(%2))])
 
@@ -158,7 +158,7 @@ P:D(Malloc_GetData(%1,%2));
 <param name="value">The value to save.</param>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Malloc_SetData(%1,%2,%3));
+P:D(Malloc_SetData(slot,index,%3));
 #define Malloc_SetData(%1,%2,%3) \
 	YSI_gMallocMemory[_:((%1)+Alloc:(%2))]=(%3)
 
@@ -169,11 +169,11 @@ P:D(Malloc_SetData(%1,%2,%3));
 	The data
 </returns>
 <remarks>
-	Shorthand for Malloc_Get.
+	Shorthand for <seealso name="Malloc_Get" />.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(mget(%1));
+P:D(mget(slot, index));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mget(%1) \
 		Malloc_Get(%1)
@@ -184,11 +184,11 @@ P:D(mget(%1));
 <param name="index">Where in the unit to set.</param>
 <param name="value">The value to save.</param>
 <remarks>
-	Shorthand for Malloc_Set.
+	Shorthand for <seealso name="Malloc_Set" />.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(mset(%1));
+P:D(mset(slot, index));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define mset(%1) \
 		Malloc_Set(%1)
@@ -196,23 +196,41 @@ P:D(mset(%1));
 
 /*-------------------------------------------------------------------------*//**
 <param name="target">Target for the string.</param>
-<param name="len">Length of the target.</param>
+<param name="length">Length of the target.</param>
+<param name="array">Data unit to put information in.</param>
+<param name="index">Index in the unit.</param>
+<param name="pack">Return the string packed?</param>
+<returns>
+	The data
+</returns>
+<remarks>
+	Displays errors in secure mode.  Gets a string.
+	Shorthand for <seealso name="Malloc_GetS" />.
+</remarks>
+*//*-------------------------------------------------------------------------**/
+
+P:D(mgets(target[], length, Alloc:array, const index, const bool:pack = false));
+#if !defined YSI_MALLOC_NO_SHORT
+	#define mgets(%1) \
+		Malloc_GetS(%1)
+#endif
+
+/*-------------------------------------------------------------------------*//**
+<param name="target">Target for the string.</param>
+<param name="length">Length of the target.</param>
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
 <returns>
 	The data
 </returns>
 <remarks>
-	Shorthand for Malloc_GetS.
+	Displays errors in secure mode.  Gets an array.
+	Shorthand for <seealso name="Malloc_GetA" />.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(mgets(%1));
-P:D(mgeta(%1));
+P:D(mgeta(target[], length, Alloc:array, index));
 #if !defined YSI_MALLOC_NO_SHORT
-	#define mgets(%1) \
-		Malloc_GetS(%1)
-	
 	#define mgeta(%1) \
 		Malloc_GetA(%1)
 #endif
@@ -221,17 +239,32 @@ P:D(mgeta(%1));
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
 <param name="str">String to insert</param>
+<param name="pack">Should the string be packed in?</param>
 <remarks>
-	Shorthand for Malloc_SetS.
+	Displays errors in secure mode.  Inserts a string.
+	Shorthand for <seealso name="Malloc_SetS" />.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(msets(%1));
-P:D(mseta(%1));
+P:D(msets(Alloc:array, const index, const str[], const bool:pack = false));
 #if !defined YSI_MALLOC_NO_SHORT
 	#define msets(%1) \
 		Malloc_SetS(%1)
-	
+#endif
+
+/*-------------------------------------------------------------------------*//**
+<param name="array">Data unit to put information in.</param>
+<param name="index">Index in the unit.</param>
+<param name="str">Array to insert.</param>
+<param name="len">Length of the array.</param>
+<remarks>
+	Displays errors in secure mode.  Inserts an array.
+	Shorthand for <seealso name="Malloc_SetA" />.
+</remarks>
+*//*-------------------------------------------------------------------------**/
+
+P:D(mseta(Alloc:array, index, const str[], len));
+#if !defined YSI_MALLOC_NO_SHORT
 	#define mseta(%1) \
 		Malloc_SetA(%1)
 #endif
@@ -243,7 +276,7 @@ P:D(mseta(%1));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Malloc_NextSlot(%1));
+P:D(Malloc_NextSlot(slot));
 #define Malloc_NextSlot(%1) \
 	(YSI_gMallocMemory[(%1)])
 
@@ -258,7 +291,7 @@ P:D(Malloc_NextSlot(%1));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Malloc_Get(%1,%2));
+P:D(Malloc_Get(Alloc:array, index));
 #if defined YSI_MALLOC_SECURE
 
 	stock Malloc_Get(Alloc:array, index)
@@ -287,7 +320,7 @@ P:D(Malloc_Get(%1,%2));
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(Malloc_Set(%1,%2,%3));
+P:D(Malloc_Set(Alloc:array,index,value));
 #if defined YSI_MALLOC_SECURE
 
 	stock Malloc_Set(Alloc:array, index, value)
@@ -309,7 +342,7 @@ P:D(Malloc_Set(%1,%2,%3));
 
 /*-------------------------------------------------------------------------*//**
 <param name="target">Target for the string.</param>
-<param name="len">Length of the target.</param>
+<param name="length">Length of the target.</param>
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
 <param name="pack">Return the string packed?</param>
@@ -435,7 +468,7 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
 
 /*-------------------------------------------------------------------------*//**
 <param name="target">Target for the array.</param>
-<param name="len">Length of the target.</param>
+<param name="length">Length of the target.</param>
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
 <remarks>
@@ -556,7 +589,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(malloc(%1));
+P:D(malloc(size));
 #if defined YSI_MALLOC_SECURE
 
 	stock Alloc:malloc(size)
@@ -610,7 +643,7 @@ stock Alloc:calloc(size)
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
-P:D(free(%1));
+P:D(free(slot));
 #if defined YSI_MALLOC_SECURE
 
 	stock free(Alloc:slot)
@@ -642,7 +675,7 @@ P:D(free(%1));
 	if the user does proper bounds checking it shouldn't
 	matter.
 	
-	Implementation code for malloc().
+	Implementation code for <seealso name="malloc" />.
 	
 	This code will find an area in memory with sufficient
 	space to store the given data and 
@@ -728,7 +761,7 @@ P:D(free(%1));
 /*-------------------------------------------------------------------------*//**
 <param name="slot">Memory allocation unit to release</param>
 <remarks>
-	Implementation code for free().
+	Implementation code for <seealso name="free" />.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
