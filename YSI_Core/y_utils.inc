@@ -69,7 +69,7 @@ Misc functions used throughout.
 <li><seealso name="Median" /> - Get the mathematical median of an array.</li>
 <li><seealso name="Range" /> - Get the mathematical range of an array.</li>
 </ul>
-	<seealso name="Inline" />
+	<em>Inline</em>
 <ul>
 <li><seealso name="UCMP" /> - Unsigned compare.</li>
 <li><seealso name="VALID_PLAYERID" /> - Check if a player ID is valid (in range).</li>
@@ -90,7 +90,7 @@ Misc functions used throughout.
 <li><seealso name="InterpolateColor" /> - Synonym for <seealso name="InterpolateColour" /></li>
 </ul>
 <subsection>Variables</subsection>
-	<seealso name="Global" />
+	<em>Global</em>
 <ul>
 <li><seealso name="TRUE" /> - True hack for infinate loops.</li>
 <li><seealso name="FALSE" /> - False hack for one-time loops.</li>
