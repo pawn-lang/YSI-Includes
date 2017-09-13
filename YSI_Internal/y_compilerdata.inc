@@ -53,38 +53,38 @@ in the output code.
 		First version.
 </ul><section>
 	Functions
-</section><ul>
-<li><subsection>
+</section>
+<subsection>
 Static
 </subsection><ul>
-	<entry name="__CompilerStringReturn">
+	<symbol name="__CompilerStringReturn">
 		Assembly for returning a string to its callers' caller.  Used to
-		bypass a known bug.</entry>
-	<entry name="__CompilerSecondPass">Tested to determine the current compiler pass.</entry>
-</ul></li><li><subsection>
+		bypass a known bug.</symbol>
+	<symbol name="__CompilerSecondPass">Tested to determine the current compiler pass.</symbol>
+</ul><subsection>
 Inline
 </subsection><ul>
-	<entry name="__COMPILER_STRING_RETURN">Correctly return a string from a varargs function.</entry>
-</ul></li></ul><section>
+	<symbol name="__COMPILER_STRING_RETURN">Correctly return a string from a varargs function.</symbol>
+</ul><section>
 	Macros
 </section><ul>
-	<entry name="__COMPILER_PASS">Which pass the compiler is currently running.</li><to_ul></entry>
-	<entry name="__COMPILER_DOCUMENTING">Is the compiler collecting documentation
-		information right now (i.e. is this the first pass)?</entry>
-	<entry name="__COMPILER_1ST_PASS">Is this the first compiler pass?</entry>
-	<entry name="__COMPILER_2ND_PASS">Is this the second compiler pass?</entry>
-	<entry name="__COMPILER_FIRST_PASS">Is this the first compiler pass?</entry>
-	<entry name="__COMPILER_SECOND_PASS">Is this the second compiler pass?</entry>
-	<entry name="__COMPILER_MODIFIED">Is the compiler an updated/unofficial/modified one?</entry>
-	<entry name="__COMPILER_OFFICIAL">Is the compiler an official one?</entry>
-	<entry name="__COMPILER_COMPAT">Was the compiler built with `-Z`?</entry>
-	<entry name="__COMPILER_INCLUDE_GUARDS">Does the compiler generate auto-include guards?</entry>
-	<entry name="__COMPILER_NESTED_ELLIPSIS">Does the compiler support nested ellipses?</entry>
-	<entry name="__COMPILER_BUGGED_STRING_RETURN">
-		- Are vararg function string returns bugged?  Not needed for using
-		<seealso name="__COMPILER_STRING_RETURN" />, as that will do the best
-		thing in both cases already.</entry>
-	<entry name="P:D">Wrap a fake function declaration, so macros can be documented.</entry>
+	<symbol name="__COMPILER_PASS">Which pass the compiler is currently running.</li><to_ul></symbol>
+	<symbol name="__COMPILER_DOCUMENTING">Is the compiler collecting documentation
+		information right now (i.e. is this the first pass)?</symbol>
+	<symbol name="__COMPILER_1ST_PASS">Is this the first compiler pass?</symbol>
+	<symbol name="__COMPILER_2ND_PASS">Is this the second compiler pass?</symbol>
+	<symbol name="__COMPILER_FIRST_PASS">Is this the first compiler pass?</symbol>
+	<symbol name="__COMPILER_SECOND_PASS">Is this the second compiler pass?</symbol>
+	<symbol name="__COMPILER_MODIFIED">Is the compiler an updated/unofficial/modified one?</symbol>
+	<symbol name="__COMPILER_OFFICIAL">Is the compiler an official one?</symbol>
+	<symbol name="__COMPILER_COMPAT">Was the compiler built with `-Z`?</symbol>
+	<symbol name="__COMPILER_INCLUDE_GUARDS">Does the compiler generate auto-include guards?</symbol>
+	<symbol name="__COMPILER_NESTED_ELLIPSIS">Does the compiler support nested ellipses?</symbol>
+	<symbol name="__COMPILER_BUGGED_STRING_RETURN">
+		Are vararg function string returns bugged?  Not needed for using
+		<symbolref name="__COMPILER_STRING_RETURN" />, as that will do the best
+		thing in both cases already.</symbol>
+	<symbol name="P:D">Wrap a fake function declaration, so macros can be documented.</symbol>
 </ul>
 *//** *//*
 Legal:

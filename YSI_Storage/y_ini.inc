@@ -63,73 +63,73 @@
 		First version.
 </ul><section>
 	Functions
-</section><ul>
-<li><subsection>
+</section>
+<subsection>
 Stock
 </subsection><ul>
-	<entry name="INI_Load">Loads an INI file using standard features.</entry>
-	<entry name="INI_ParseFile">Loads a file as an ini and distributes data.</entry>
-	<entry name="INI_GetEntryName">Gets the name of an INI item.</entry>
-	<entry name="INI_GetEntryText">Gets the value of an INI item.</entry>
-	<entry name="INI_Open">Opens an INI for writing.</entry>
-	<entry name="INI_Close">Closes an INI being written to.</entry>
-	<entry name="INI_SetTag">Sets a subheading in an INI fo subsequent writes.</entry>
-	<entry name="INI_WriteString">Writes a string to an INI.</entry>
-	<entry name="INI_WriteInt">Writes an int to an INI.</entry>
-	<entry name="INI_WriteFloat">Writes a float to an INI.</entry>
-	<entry name="INI_WriteHex">Writes a hex to an INI.</entry>
-	<entry name="INI_WriteBin">Writes a binary to an INI.</entry>
-	<entry name="INI_WriteBool">Writes a boolean to an INI.</entry>
-	<entry name="INI_RemoveEntry">Remove an entry from a file.</entry>
-</ul></li><li><subsection>
+	<symbol name="INI_Load">Loads an INI file using standard features.</symbol>
+	<symbol name="INI_ParseFile">Loads a file as an ini and distributes data.</symbol>
+	<symbol name="INI_GetEntryName">Gets the name of an INI item.</symbol>
+	<symbol name="INI_GetEntryText">Gets the value of an INI item.</symbol>
+	<symbol name="INI_Open">Opens an INI for writing.</symbol>
+	<symbol name="INI_Close">Closes an INI being written to.</symbol>
+	<symbol name="INI_SetTag">Sets a subheading in an INI fo subsequent writes.</symbol>
+	<symbol name="INI_WriteString">Writes a string to an INI.</symbol>
+	<symbol name="INI_WriteInt">Writes an int to an INI.</symbol>
+	<symbol name="INI_WriteFloat">Writes a float to an INI.</symbol>
+	<symbol name="INI_WriteHex">Writes a hex to an INI.</symbol>
+	<symbol name="INI_WriteBin">Writes a binary to an INI.</symbol>
+	<symbol name="INI_WriteBool">Writes a boolean to an INI.</symbol>
+	<symbol name="INI_RemoveEntry">Remove an entry from a file.</symbol>
+</ul><subsection>
 Static
 </subsection><ul>
-	<entry name="INI_WriteBuffer">Writes an INI's buffer to the file.</entry>
-	<entry name="INI_AddToBuffer">Adds a string to an INI buffer.</entry>
-</ul></li><li><subsection>
+	<symbol name="INI_WriteBuffer">Writes an INI's buffer to the file.</symbol>
+	<symbol name="INI_AddToBuffer">Adds a string to an INI buffer.</symbol>
+</ul><subsection>
 Inline
 </subsection><ul>
-	<entry name="INI_Int">Parse an integer INI entry.</entry>
-	<entry name="INI_Float">Parse a float INI entry.</entry>
-	<entry name="INI_Hex">Parse a hex INI entry.</entry>
-	<entry name="INI_Bin">Parse a binary INI entry.</entry>
-	<entry name="INI_Bool">Parse a binary INI entry.</entry>
-	<entry name="INI_String">Parse a string INI entry.</entry>
-</ul></li></ul><section>
+	<symbol name="INI_Int">Parse an integer INI entry.</symbol>
+	<symbol name="INI_Float">Parse a float INI entry.</symbol>
+	<symbol name="INI_Hex">Parse a hex INI entry.</symbol>
+	<symbol name="INI_Bin">Parse a binary INI entry.</symbol>
+	<symbol name="INI_Bool">Parse a binary INI entry.</symbol>
+	<symbol name="INI_String">Parse a string INI entry.</symbol>
+</ul><section>
 	Definitions
 </section><ul>
-	<entry name="MAX_INI_TAG">Maximum length of an INI tagname.</entry>
-	<entry name="MAX_INI_ENTRY_NAME">Maximum length of an INI entry name.</entry>
-	<entry name="MAX_INI_ENTRY_TEXT">Maximum length of an INI's entries' value.</entry>
-	<entry name="MAX_INI_LINE">Maximum length of a line in a file.</entry>
-	<entry name="INI_NEW_LINE">String for new lines.</entry>
-	<entry name="INI_MAX_WRITES">Maximum concurrent files open for writing.</entry>
-	<entry name="MAX_INI_TAGS">Number of tags the buffer can hold data for at once.</entry>
+	<symbol name="MAX_INI_TAG">Maximum length of an INI tagname.</symbol>
+	<symbol name="MAX_INI_ENTRY_NAME">Maximum length of an INI entry name.</symbol>
+	<symbol name="MAX_INI_ENTRY_TEXT">Maximum length of an INI's entries' value.</symbol>
+	<symbol name="MAX_INI_LINE">Maximum length of a line in a file.</symbol>
+	<symbol name="INI_NEW_LINE">String for new lines.</symbol>
+	<symbol name="INI_MAX_WRITES">Maximum concurrent files open for writing.</symbol>
+	<symbol name="MAX_INI_TAGS">Number of tags the buffer can hold data for at once.</symbol>
 </ul><section>
 	Enums
 </section><ul>
-	<entry name="E_INI_WRITE">Storage for entries to be written.</entry>
-	<entry name="E_INI_TAGS">Data for tags with data.</entry>
+	<symbol name="E_INI_WRITE">Storage for entries to be written.</symbol>
+	<symbol name="E_INI_TAGS">Data for tags with data.</symbol>
 </ul><section>
 	Macros
 </section><ul>
-	<entry name="INI_Parse">Header for ini parsing functions.</entry>
+	<symbol name="INI_Parse">Header for ini parsing functions.</symbol>
 </ul><section>
 	Tags
 </section><ul>
-	<entry name="INI">Handle to an INI file being written to.</entry>
+	<symbol name="INI">Handle to an INI file being written to.</symbol>
 </ul><section>
 	Variables
-</section><ul>
-<li><subsection>
+</section>
+<subsection>
 Static
 </subsection><ul>
-	<entry name="YSI_g_sINIWriteBuffer">Basic data to be written.</entry>
-	<entry name="YSI_g_sINIWritePos">Next slot to write to.</entry>
-	<entry name="YSI_g_sINITagPos">Next slot to add a tag to.</entry>
-	<entry name="YSI_g_sINICurrentTag">Pointer to the tag been writen to.</entry>
-	<entry name="YSI_g_sINIWriteTag">Data for tags,</entry>
-	<entry name="YSI_g_sINIWriteFile">Current files been written to.</entry>
+	<symbol name="YSI_g_sINIWriteBuffer">Basic data to be written.</symbol>
+	<symbol name="YSI_g_sINIWritePos">Next slot to write to.</symbol>
+	<symbol name="YSI_g_sINITagPos">Next slot to add a tag to.</symbol>
+	<symbol name="YSI_g_sINICurrentTag">Pointer to the tag been writen to.</symbol>
+	<symbol name="YSI_g_sINIWriteTag">Data for tags,</symbol>
+	<symbol name="YSI_g_sINIWriteFile">Current files been written to.</symbol>
 </ul></li></ul>
 *//** *//*
 Legal:

@@ -104,6 +104,20 @@ P:D(HashMap_Hash(str[],&hash));
 
 /*-------------------------------------------------------------------------*//**
 <param name="m">Hash map to initialise.</param>
+<param name="target">Array to point in to.</param>
+<param name="slot">Second dimension slot of the hashed data.</param>
+<remarks>
+	Finds the location of the hash map linked list data in the passed array data
+	and uses that to read the data through pointers subsequently.  It doesn't
+	matter WHERE in the enum the hash map data is, and if its not there you'll
+	get an error, or at least a warning.
+</remarks>
+*//*-------------------------------------------------------------------------**/
+
+P:D(HashMap_Init(HashMap:m<>, target[][], slot));
+
+/*-------------------------------------------------------------------------*//**
+<param name="m">Hash map to initialise.</param>
 <param name="target">Address of the hashmap data.</param>
 <param name="size1">Number of entries.</param>
 <param name="size2">Total Size of each entry IN BYTES.</param>

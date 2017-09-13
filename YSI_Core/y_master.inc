@@ -197,25 +197,25 @@ Optional plugins:
 </ul><section>
 	Macros
 </section><ul>
-	<entry name="RF">Declare a function which may be remote.</entry>
-	<entry name="RV">Declare a void function which may be remote.</entry>
-	<entry name="RS">Declare an optional callback.</entry>
-	<entry name="RFN">Declare an optional callback with no parameters.</entry>
-	<entry name="RFC">Declare a slower but shorter function.</entry>
-	<entry name="RFP">Declare a function with tags and give recall hints.</entry>
-	<entry name="RFPC">Combination of P and C.</entry>
-	<entry name="RFCP">Combination of P and C.</entry>
+	<symbol name="RF">Declare a function which may be remote.</symbol>
+	<symbol name="RV">Declare a void function which may be remote.</symbol>
+	<symbol name="RS">Declare an optional callback.</symbol>
+	<symbol name="RFN">Declare an optional callback with no parameters.</symbol>
+	<symbol name="RFC">Declare a slower but shorter function.</symbol>
+	<symbol name="RFP">Declare a function with tags and give recall hints.</symbol>
+	<symbol name="RFPC">Combination of P and C.</symbol>
+	<symbol name="RFCP">Combination of P and C.</symbol>
 </ul><section>
 	Variables
-</section><ul>
-<li><subsection>
+</section>
+<subsection>
 Global
 </subsection><ul>
-	<entry name="_@">ID of this script.</entry>
-</ul></li></ul><section>Compile options</section><ul>
-	<entry name="YSI_NO_MASTER">Don't use the master system.</entry>
-	<entry name="YSI_IS_CLIENT">Script is a client only script.</entry>
-	<entry name="YSI_IS_SERVER">Script is a server only script.</entry>
+	<symbol name="_@">ID of this script.</symbol>
+</ul><section>Compile options</section><ul>
+	<symbol name="YSI_NO_MASTER">Don't use the master system.</symbol>
+	<symbol name="YSI_IS_CLIENT">Script is a client only script.</symbol>
+	<symbol name="YSI_IS_SERVER">Script is a server only script.</symbol>
 </ul>
 *//** */
 

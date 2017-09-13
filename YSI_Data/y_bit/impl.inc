@@ -96,6 +96,7 @@ Optional plugins:
 *//*-------------------------------------------------------------------------**/
 
 // If this ever changes, update the size reference in y_users.
+P:D(Bit_Bits(size));
 #define Bit_Bits(%1) (((%1)+cellbits-1)/cellbits)
 
 /*-------------------------------------------------------------------------*//**

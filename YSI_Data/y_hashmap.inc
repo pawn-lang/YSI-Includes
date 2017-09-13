@@ -23,20 +23,20 @@
 		First version.
 </ul><section>
 	Functions
-</section><ul>
-<li><subsection>
+</section>
+<subsection>
 Stock
 </subsection><ul>
-	<entry name="HashMap_Init">Associate a hash map with an array.</entry>
-	<entry name="HashMap_Add">Add a value under a given string.</entry>
-	<entry name="HashMap_Get">Get a value from a string.</entry>
-	<entry name="HashMap_RemoveKey">Remove a string and its value from a hash map.</entry>
-	<entry name="HashMap_Set">Change the value associated with a key.</entry>
-</ul></li></ul><section>
+	<symbol name="HashMap_Init">Associate a hash map with an array.</symbol>
+	<symbol name="HashMap_Add">Add a value under a given string.</symbol>
+	<symbol name="HashMap_Get">Get a value from a string.</symbol>
+	<symbol name="HashMap_RemoveKey">Remove a string and its value from a hash map.</symbol>
+	<symbol name="HashMap_Set">Change the value associated with a key.</symbol>
+</ul><section>
 	Definitions
 </section><ul>
-	<entry name="HASH_MAP_DATA">What should be added to enums to be hash map referenced.</entry>
-	<entry name="HashMap">Declare a new hash map.</entry>
+	<symbol name="HASH_MAP_DATA">What should be added to enums to be hash map referenced.</symbol>
+	<symbol name="HashMap">Declare a new hash map.</symbol>
 </ul>
 *//** *//*
 Legal:

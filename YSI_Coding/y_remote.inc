@@ -26,11 +26,11 @@
 </ul><section>
 	Macros
 </section><ul>
-	<entry name="remotefunc">Define a function to be called remotely (use like "stock").</entry>
-	<entry name="broadcastfunc">Call the function, but in all scripts.</entry>
-	<entry name="localfunc">Call the function by name, not address, in the current script.</entry>
+	<symbol name="remotefunc">Define a function to be called remotely (use like "stock").</symbol>
+	<symbol name="broadcastfunc">Call the function, but in all scripts.</symbol>
+	<symbol name="localfunc">Call the function by name, not address, in the current script.</symbol>
 </ul><section>Compile options</section><ul>
-	<entry name="YSI_NO_MASTER">Disable all knowledge of other scripts.</entry>
+	<symbol name="YSI_NO_MASTER">Disable all knowledge of other scripts.</symbol>
 </ul>
 *//** *//*
 Legal:

@@ -39,21 +39,21 @@
 		First version.
 </ul><section>
 	Functions
-</section><ul>
-<li><subsection>
+</section>
+<subsection>
 Inline
 </subsection><ul>
-	<entry name="Debug_Code">Runs defined code if a certain level is active.</entry>
-	<entry name="Debug_Print">Prints the formatted string provided at the given level.</entry>
-</ul></li></ul><section>
+	<symbol name="Debug_Code">Runs defined code if a certain level is active.</symbol>
+	<symbol name="Debug_Print">Prints the formatted string provided at the given level.</symbol>
+</ul><section>
 	Definitions
 </section><ul>
-	<entry name="P:&lt;0-6&gt;">Print a message.</entry>
-	<entry name="P:C">Run debug code.</entry>
-	<entry name="P:E">Print an error message.</entry>
-	<entry name="P:W">Print a warning message.</entry>
+	<symbol name="P:&lt;0-6&gt;">Print a message.</symbol>
+	<symbol name="P:C">Run debug code.</symbol>
+	<symbol name="P:E">Print an error message.</symbol>
+	<symbol name="P:W">Print a warning message.</symbol>
 </ul><section>Compile options</section><ul>
-	<entry name="_DEBUG">Debugging level to use.</entry>
+	<symbol name="_DEBUG">Debugging level to use.</symbol>
 </ul>
 *//** *//*
 Legal:

@@ -96,74 +96,74 @@
 		First version.
 </ul><section>
 	Functions
-</section><ul>
-<li><subsection>
+</section>
+<subsection>
 Public
 </subsection><ul>
-	<entry name="OnPlayerDisconnect">Called when a player leaves to remove them.</entry>
-	<entry name="OnPlayerConnect">Called when a player connects to add them.</entry>
-</ul></li><li><subsection>
+	<symbol name="OnPlayerDisconnect">Called when a player leaves to remove them.</symbol>
+	<symbol name="OnPlayerConnect">Called when a player connects to add them.</symbol>
+</ul><subsection>
 Stock
 </subsection><ul>
-	<entry name="Iter_ShowArray">Displays the contents of the array.</entry>
-	<entry name="Iter_AddInternal">Add a value to an iterator.</entry>
-	<entry name="Iter_RemoveInternal">Remove a value from an iterator.</entry>
-	<entry name="Iter_RandomInternal">Get a random item from an iterator.</entry>
-	<entry name="Iter_FreeInternal">Gets the first free slot in the iterator.</entry>
-	<entry name="Iter_InitInternal">Initialises a multi-dimensional iterator.</entry>
-</ul></li><li><subsection>
+	<symbol name="Iter_ShowArray">Displays the contents of the array.</symbol>
+	<symbol name="Iter_AddInternal">Add a value to an iterator.</symbol>
+	<symbol name="Iter_RemoveInternal">Remove a value from an iterator.</symbol>
+	<symbol name="Iter_RandomInternal">Get a random item from an iterator.</symbol>
+	<symbol name="Iter_FreeInternal">Gets the first free slot in the iterator.</symbol>
+	<symbol name="Iter_InitInternal">Initialises a multi-dimensional iterator.</symbol>
+</ul><subsection>
 Inline
 </subsection><ul>
-	<entry name="Iter_Create">Create a new iterator value set.</entry>
-	<entry name="Iter_Add">Wraps Iter_AddInternal.</entry>
-	<entry name="Iter_Remove">Wraps Iter_RemoveInternal.</entry>
-	<entry name="Iter_Random">Wraps Iter_RandomInternal.</entry>
-	<entry name="Iter_Count">Gets the number of items in an iterator.</entry>
-	<entry name="Iter_Debug">Wraps around Iter_ShowArray.</entry>
-	<entry name="Iter_Free">Wraps around Iter_FreeInternal.</entry>
-	<entry name="Iter_Create2">Create a new iterator array value set.</entry>
-	<entry name="Iter_Add2">Wraps Iter_AddInternal for arrays.</entry>
-	<entry name="Iter_Remove2">Wraps Iter_RemoveInternal for arrays.</entry>
-	<entry name="Iter_Random2">Wraps Iter_RandomInternal for arrays.</entry>
-	<entry name="Iter_Count2">Gets the number of items in an iterator array.</entry>
-	<entry name="Iter_Debug2">Wraps around Iter_ShowArray for arrays.</entry>
-	<entry name="Iter_Free2">Wraps around Iter_FreeInternal for arrays.</entry>
-</ul></li></ul><section>
+	<symbol name="Iter_Create">Create a new iterator value set.</symbol>
+	<symbol name="Iter_Add">Wraps Iter_AddInternal.</symbol>
+	<symbol name="Iter_Remove">Wraps Iter_RemoveInternal.</symbol>
+	<symbol name="Iter_Random">Wraps Iter_RandomInternal.</symbol>
+	<symbol name="Iter_Count">Gets the number of items in an iterator.</symbol>
+	<symbol name="Iter_Debug">Wraps around Iter_ShowArray.</symbol>
+	<symbol name="Iter_Free">Wraps around Iter_FreeInternal.</symbol>
+	<symbol name="Iter_Create2">Create a new iterator array value set.</symbol>
+	<symbol name="Iter_Add2">Wraps Iter_AddInternal for arrays.</symbol>
+	<symbol name="Iter_Remove2">Wraps Iter_RemoveInternal for arrays.</symbol>
+	<symbol name="Iter_Random2">Wraps Iter_RandomInternal for arrays.</symbol>
+	<symbol name="Iter_Count2">Gets the number of items in an iterator array.</symbol>
+	<symbol name="Iter_Debug2">Wraps around Iter_ShowArray for arrays.</symbol>
+	<symbol name="Iter_Free2">Wraps around Iter_FreeInternal for arrays.</symbol>
+</ul><section>
 	Hooks
 </section><ul>
-	<entry name="Iter_OnPlayerConnect">Hook for the OnPlayerConnect callback.</entry>
-	<entry name="Iter_OnPlayerDisconnect">Hook for the OnPlayerDisconnect callback.</entry>
-	<entry name="Iter_OnGameModeInit">Only exists to make the code compile correctly...</entry>
+	<symbol name="Iter_OnPlayerConnect">Hook for the OnPlayerConnect callback.</symbol>
+	<symbol name="Iter_OnPlayerDisconnect">Hook for the OnPlayerDisconnect callback.</symbol>
+	<symbol name="Iter_OnGameModeInit">Only exists to make the code compile correctly...</symbol>
 </ul><section>
 	Keywords
 </section><ul>
-	<entry name="foreach">Command to loop an iterator.</entry>
-	<entry name="foreachex">Like foreach but without a new variable.</entry>
-	<entry name="foreach2">Command to loop through an iterator array.</entry>
-	<entry name="foreachex">Like foreach2 but without a new variable.</entry>
+	<symbol name="foreach">Command to loop an iterator.</symbol>
+	<symbol name="foreachex">Like foreach but without a new variable.</symbol>
+	<symbol name="foreach2">Command to loop through an iterator array.</symbol>
+	<symbol name="foreachex">Like foreach2 but without a new variable.</symbol>
 </ul><section>
 	Tags
 </section><ul>
-	<entry name="Iterator">Declare an iterator.</entry>
+	<symbol name="Iterator">Declare an iterator.</symbol>
 </ul><section>
 	Variables
-</section><ul>
-<li><subsection>
+</section>
+<subsection>
 Static
 </subsection><ul>
-	<entry name="YSI_g_OPC">Records wether Iter_OnPlayerConnect exists for speed.</entry>
-	<entry name="YSI_g_OPDC">Records wether Iter_OnPlayerDisconnect exists for speed.</entry>
-</ul></li></ul><section>Compile options</section><ul>
-	<entry name="YSI_ITTER_NO_SORT">Removed.</entry>
-	<entry name="FOREACH_NO_BOTS">Remove the bot iterators for smaller code.</entry>
-	<entry name="FOREACH_NO_PLAYERS">Remove all default code for player itteration.</entry>
+	<symbol name="YSI_g_OPC">Records wether Iter_OnPlayerConnect exists for speed.</symbol>
+	<symbol name="YSI_g_OPDC">Records wether Iter_OnPlayerDisconnect exists for speed.</symbol>
+</ul><section>Compile options</section><ul>
+	<symbol name="YSI_ITTER_NO_SORT">Removed.</symbol>
+	<symbol name="FOREACH_NO_BOTS">Remove the bot iterators for smaller code.</symbol>
+	<symbol name="FOREACH_NO_PLAYERS">Remove all default code for player itteration.</symbol>
 </ul><section>
 	Iterators
 </section><ul>
-	<entry name="Player">List of all players connected.</entry>
-	<entry name="Bot">List of all bots (npcs) connected.</entry>
-	<entry name="NPC">Alias of Bot.</entry>
-	<entry name="Character">All players and bots.</entry>
+	<symbol name="Player">List of all players connected.</symbol>
+	<symbol name="Bot">List of all bots (npcs) connected.</symbol>
+	<symbol name="NPC">Alias of Bot.</symbol>
+	<symbol name="Character">All players and bots.</symbol>
 </ul>
 *//** *//*
 Legal:

@@ -41,75 +41,71 @@ Misc functions used throughout.
 <section>
 	Functions
 </section>
-	<em>Stock</em>
+	<subsection>Stock</subsection>
 <ul>
-	<entry name="StrToLower">Convert a whole string to lower-case.</entry>
-	<entry name="StrToUpper">Convert a whole string to upper-case.</entry>
-	<entry name="Random">Generate a random number, optionally takes lower and upper bounds.</entry>
-	<entry name="RandomFloat">Same as <seealso name="Random" />, but for floats.</entry>
-	<entry name="StripNL">Strips the newline characters from the end of a string.</entry>
-	<entry name="StripR">Synonym for <seealso name="StripNL" />.</entry>
-	<entry name="StripL">Remove whitespace from the start of a string.</entry>
-	<entry name="Strip">Remove whitespace from both ends of a string.</entry>
-	<entry name="endofline">Check if the given position is the end of a string (ignoring whitespace).</entry>
-	<entry name="chrfind">Return the first position (after <seealso name="start" />) of the given character.</entry>
-	<entry name="chrfindp">Like <seealso name="chrfind" />, but without the upper-bounds check.</entry>
-	<entry name="bernstein">Generate the Bernstein hash of the given string.</entry>
-	<entry name="ishex">Is the given string hexadecimal?</entry>
-	<entry name="unpack">Version of <seealso name="strunpack" /> that returns the result.</entry>
-	<entry name="returnstringarg">Get the string passed as a variable argument from the given index.</entry>
-	<entry name="va_return">Like <seealso name="sprintf" />, formats a string and returns the result.</entry>
-	<entry name="isnumeric">Is the given string a number?</entry>
-	<entry name="hexstr">Return the value of the given hexadecimal string.</entry>
-	<entry name="boolstr">Return the value of the given boolean string.</entry>
-	<entry name="binstr">Return the value of the given binary string.</entry>
-	<entry name="rawMemcpy">Copy memory between two address, instead of two arrays.</entry>
-	<entry name="memset">Set all of an array to a value.</entry>
-	<entry name="rawMemset">Set all of a given memory region to a value.</entry>
-	<entry name="ReturnPlayerName">Return a player's name.</entry>
-	<entry name="ftouch">Ensures that a file exists, but nothing more.</entry>
-	<entry name="InterpolateColour">Get the colour (in 3D RGB space) between two other colours.</entry>
-	<entry name="SkipWhitespace">Return the first position in a string of a non-whitespace character.</entry>
-	<entry name="Trim">Get the first and last positions of non-whitespace characters in the string.  Like <seealso name="Strip" />, but doesn't modify the string.</entry>
-	<entry name="Sum">Get the total (sum) of an array.</entry>
-	<entry name="Mean">Get the mathematical mean of an array.</entry>
-	<entry name="Mode">Get the mathematical mode of an array.</entry>
-	<entry name="Median">Get the mathematical median of an array.</entry>
-	<entry name="Range">Get the mathematical range of an array.</entry>
+	<symbol name="StrToLower">Convert a whole string to lower-case.</symbol>
+	<symbol name="StrToUpper">Convert a whole string to upper-case.</symbol>
+	<symbol name="Random">Generate a random number, optionally takes lower and upper bounds.</symbol>
+	<symbol name="RandomFloat">Same as <symbolref name="Random" />, but for floats.</symbol>
+	<symbol name="StripNL">Strips the newline characters from the end of a string.</symbol>
+	<symbol name="StripR">Synonym for <symbolref name="StripNL" />.</symbol>
+	<symbol name="StripL">Remove whitespace from the start of a string.</symbol>
+	<symbol name="Strip">Remove whitespace from both ends of a string.</symbol>
+	<symbol name="endofline">Check if the given position is the end of a string (ignoring whitespace).</symbol>
+	<symbol name="chrfind">Return the first position (after <symbolref name="start" />) of the given character.</symbol>
+	<symbol name="chrfindp">Like <symbolref name="chrfind" />, but without the upper-bounds check.</symbol>
+	<symbol name="bernstein">Generate the Bernstein hash of the given string.</symbol>
+	<symbol name="ishex">Is the given string hexadecimal?</symbol>
+	<symbol name="unpack">Version of <symbolref name="strunpack" /> that returns the result.</symbol>
+	<symbol name="returnstringarg">Get the string passed as a variable argument from the given index.</symbol>
+	<symbol name="va_return">Like <symbolref name="sprintf" />, formats a string and returns the result.</symbol>
+	<symbol name="isnumeric">Is the given string a number?</symbol>
+	<symbol name="hexstr">Return the value of the given hexadecimal string.</symbol>
+	<symbol name="boolstr">Return the value of the given boolean string.</symbol>
+	<symbol name="binstr">Return the value of the given binary string.</symbol>
+	<symbol name="rawMemcpy">Copy memory between two address, instead of two arrays.</symbol>
+	<symbol name="memset">Set all of an array to a value.</symbol>
+	<symbol name="rawMemset">Set all of a given memory region to a value.</symbol>
+	<symbol name="ReturnPlayerName">Return a player's name.</symbol>
+	<symbol name="ftouch">Ensures that a file exists, but nothing more.</symbol>
+	<symbol name="InterpolateColour">Get the colour (in 3D RGB space) between two other colours.</symbol>
+	<symbol name="SkipWhitespace">Return the first position in a string of a non-whitespace character.</symbol>
+	<symbol name="Trim">Get the first and last positions of non-whitespace characters in the string.  Like <symbolref name="Strip" />, but doesn't modify the string.</symbol>
+	<symbol name="Sum">Get the total (sum) of an array.</symbol>
+	<symbol name="Mean">Get the mathematical mean of an array.</symbol>
+	<symbol name="Mode">Get the mathematical mode of an array.</symbol>
+	<symbol name="Median">Get the mathematical median of an array.</symbol>
+	<symbol name="Range">Get the mathematical range of an array.</symbol>
 </ul>
-	<em>Inline</em>
+	<subsection>Inline</subsection>
 <ul>
-	<entry name="UCMP">Unsigned compare.</entry>
-	<entry name="VALID_PLAYERID">Check if a player ID is valid (in range).</entry>
-	<entry name="IS_IN_RANGE">Check if a number is in range.</entry>
-	<entry name="NOT_IN_RANGE">Check if a number is outside a range.</entry>
-	<entry name="ceildiv">Divide two numbers and round up.</entry>
-	<entry name="floordiv">Divide two numbers and round down.</entry>
-	<entry name="isnull">Checks if a string is NULL (<c>\1\0</c> or <c>\0</c>).</entry>
-	<entry name="isodd">Checks if a number is odd.</entry>
-	<entry name="iseven">Checks if a number is even.</entry>
-	<entry name="strcpy">Copy one string to another.</entry>
-	<entry name="GetIP">Return the encoded (32-bit) version of a player's IP.</entry>
-	<entry name="getstring">Synonym for <seealso name="returnstringarg" /> (there are a lot).</entry>
-	<entry name="GetString">Synonym for <seealso name="returnstringarg" /> (there are a lot).</entry>
-	<entry name="getstringarg">Synonym for <seealso name="returnstringarg" /> (there are a lot).</entry>
-	<entry name="GetStringArg">Synonym for <seealso name="returnstringarg" /> (there are a lot).</entry>
-	<entry name="ReturnStringArg">Synonym for <seealso name="returnstringarg" /> (there are a lot).</entry>
-	<entry name="InterpolateColor">Synonym for <seealso name="InterpolateColour" /></entry>
+	<symbol name="UCMP">Unsigned compare.</symbol>
+	<symbol name="VALID_PLAYERID">Check if a player ID is valid (in range).</symbol>
+	<symbol name="IS_IN_RANGE">Check if a number is in range.</symbol>
+	<symbol name="NOT_IN_RANGE">Check if a number is outside a range.</symbol>
+	<symbol name="ceildiv">Divide two numbers and round up.</symbol>
+	<symbol name="floordiv">Divide two numbers and round down.</symbol>
+	<symbol name="isnull">Checks if a string is NULL (<c>\1\0</c> or <c>\0</c>).</symbol>
+	<symbol name="isodd">Checks if a number is odd.</symbol>
+	<symbol name="iseven">Checks if a number is even.</symbol>
+	<symbol name="strcpy">Copy one string to another.</symbol>
+	<symbol name="GetIP">Return the encoded (32-bit) version of a player's IP.</symbol>
+	<symbol name="getstring">Synonym for <symbolref name="returnstringarg" /> (there are a lot).</symbol>
+	<symbol name="GetString">Synonym for <symbolref name="returnstringarg" /> (there are a lot).</symbol>
+	<symbol name="getstringarg">Synonym for <symbolref name="returnstringarg" /> (there are a lot).</symbol>
+	<symbol name="GetStringArg">Synonym for <symbolref name="returnstringarg" /> (there are a lot).</symbol>
+	<symbol name="ReturnStringArg">Synonym for <symbolref name="returnstringarg" /> (there are a lot).</symbol>
+	<symbol name="InterpolateColor">Synonym for <symbolref name="InterpolateColour" /></symbol>
 </ul>
 <section>
 	Variables
 </section>
-	<em>Global</em>
+	<subsection>Global</subsection>
 <ul>
-	<entry name="TRUE">True hack for infinate loops.</entry>
-	<entry name="FALSE">False hack for one-time loops.</entry>
-	<entry name="NULL">1 long string for passing via Call(Remote|Local)Function.</entry>
+	<symbol name="TRUE">True hack for infinate loops.</symbol>
+	<symbol name="FALSE">False hack for one-time loops.</symbol>
+	<symbol name="NULL">1 long string for passing via Call(Remote|Local)Function.</symbol>
 </ul>
-<section>
-	Examples
-</section>
-	N/A - This is a collection of independent functions.
 *//** *//*
 Legal:
 	Version: MPL 1.1
@@ -661,10 +657,9 @@ stock chrfind(needle, haystack[], start = 0)
 	Fail - -1, Success - pos
 </returns>
 <remarks>
-	Like <seealso name="chrfind" />, but with no upper-bounds check on
-	<c>start</c>.
+	Like <symbolref name="chrfind" />, but with no upper-bounds check on
+	<paramref name="start" />.
 </remarks>
-<seealso>chrfind</seealso>
 *//*-------------------------------------------------------------------------**/
 
 stock chrfindp(needle, haystack[], start = 0)

@@ -24,65 +24,65 @@
 		First version.
 </ul><section>
 	Functions
-</section><ul>
-<li><subsection>
+</section>
+<subsection>
 Stock
 </subsection><ul>
-	<entry name="malloc">Allocate a block of memory (may be inline).</entry>
-	<entry name="calloc">Allocate a block of memory and blank.</entry>
-	<entry name="free">Free an allocated block of memory (may be inline).</entry>
-	<entry name="Malloc_Set">Set a value in an allocated array (may be inline).</entry>
-	<entry name="Malloc_Get">Get a value in an allocated array (may be inline).</entry>
-	<entry name="Malloc_SetS">Set a string in an allocated array.</entry>
-	<entry name="Malloc_GetS">Get a string in an allocated array.</entry>
-	<entry name="Malloc_Allocate">Do the memory allocation (may be static).</entry>
-	<entry name="Malloc_Free">Do the memory freeing (may be static).</entry>
-	<entry name="Malloc_SlotSize">Get the size of an allocated block (may be inline).</entry>
-	<entry name="Malloc_NewS">Allocate for and store a given string.</entry>
-</ul></li><li><subsection>
+	<symbol name="malloc">Allocate a block of memory (may be inline).</symbol>
+	<symbol name="calloc">Allocate a block of memory and blank.</symbol>
+	<symbol name="free">Free an allocated block of memory (may be inline).</symbol>
+	<symbol name="Malloc_Set">Set a value in an allocated array (may be inline).</symbol>
+	<symbol name="Malloc_Get">Get a value in an allocated array (may be inline).</symbol>
+	<symbol name="Malloc_SetS">Set a string in an allocated array.</symbol>
+	<symbol name="Malloc_GetS">Get a string in an allocated array.</symbol>
+	<symbol name="Malloc_Allocate">Do the memory allocation (may be static).</symbol>
+	<symbol name="Malloc_Free">Do the memory freeing (may be static).</symbol>
+	<symbol name="Malloc_SlotSize">Get the size of an allocated block (may be inline).</symbol>
+	<symbol name="Malloc_NewS">Allocate for and store a given string.</symbol>
+</ul><subsection>
 Static
 </subsection><ul>
-	<entry name="Malloc_Allocate">Do the memory allocation (may be stock).</entry>
-	<entry name="Malloc_Free">Do the memory freeing (may be stock).</entry>
-</ul></li><li><subsection>
+	<symbol name="Malloc_Allocate">Do the memory allocation (may be stock).</symbol>
+	<symbol name="Malloc_Free">Do the memory freeing (may be stock).</symbol>
+</ul><subsection>
 Inline
 </subsection><ul>
-	<entry name="mget">Get data from an allocation unit.</entry>
-	<entry name="mset">Set data in an allocation unit.</entry>
-	<entry name="mgets">Get a string from an allocation unit.</entry>
-	<entry name="msets">Set a string in an allocation unit.</entry>
-	<entry name="malloc">Allocate a block of memory (may be stock).</entry>
-	<entry name="free">Free an allocated block of memory (may be stock).</entry>
-	<entry name="Malloc_Set">Set a value in an allocated array (may be stock).</entry>
-	<entry name="Malloc_Get">Get a value in an allocated array (may be stock).</entry>
-	<entry name="Malloc_NextSlot">Get the next free data block.</entry>
-	<entry name="Malloc_GetSlotSize">Get the size of a slot.</entry>
-	<entry name="Malloc_SetSlotSize">Set the size of a block.</entry>
-	<entry name="Malloc_GetData">Direct data access getter.</entry>
-	<entry name="Malloc_SetData">Direct data access setter.</entry>
-	<entry name="Malloc_SlotSize">Get the size of an allocated block (may be stock).</entry>
-</ul></li></ul><section>
+	<symbol name="mget">Get data from an allocation unit.</symbol>
+	<symbol name="mset">Set data in an allocation unit.</symbol>
+	<symbol name="mgets">Get a string from an allocation unit.</symbol>
+	<symbol name="msets">Set a string in an allocation unit.</symbol>
+	<symbol name="malloc">Allocate a block of memory (may be stock).</symbol>
+	<symbol name="free">Free an allocated block of memory (may be stock).</symbol>
+	<symbol name="Malloc_Set">Set a value in an allocated array (may be stock).</symbol>
+	<symbol name="Malloc_Get">Get a value in an allocated array (may be stock).</symbol>
+	<symbol name="Malloc_NextSlot">Get the next free data block.</symbol>
+	<symbol name="Malloc_GetSlotSize">Get the size of a slot.</symbol>
+	<symbol name="Malloc_SetSlotSize">Set the size of a block.</symbol>
+	<symbol name="Malloc_GetData">Direct data access getter.</symbol>
+	<symbol name="Malloc_SetData">Direct data access setter.</symbol>
+	<symbol name="Malloc_SlotSize">Get the size of an allocated block (may be stock).</symbol>
+</ul><section>
 	Definitions
 </section><ul>
-	<entry name="MALLOC_KB_TO_CELL">Multiplication value to convert kb to cells.</entry>
-	<entry name="NO_ALLOC">A failed allocation (NULL, but YSI already has NULL).</entry>
+	<symbol name="MALLOC_KB_TO_CELL">Multiplication value to convert kb to cells.</symbol>
+	<symbol name="NO_ALLOC">A failed allocation (NULL, but YSI already has NULL).</symbol>
 </ul><section>
 	Tags
 </section><ul>
-	<entry name="Alloc">An allocated block handle variable.</entry>
+	<symbol name="Alloc">An allocated block handle variable.</symbol>
 </ul><section>
 	Variables
-</section><ul>
-<li><subsection>
+</section>
+<subsection>
 Global
 </subsection><ul>
-	<entry name="YSI_gMallocMemory">Stores the data (may be static).</entry>
-</ul></li><li><subsection>
+	<symbol name="YSI_gMallocMemory">Stores the data (may be static).</symbol>
+</ul><subsection>
 Static
 </subsection><ul>
-	<entry name="YSI_gMallocMemory">Stores the data (may be global).</entry>
-	<entry name="_YSI_g_sUnusedStart">Start of free memory.</entry>
-</ul></li></ul><section>Compile options</section><ul>
+	<symbol name="YSI_gMallocMemory">Stores the data (may be global).</symbol>
+	<symbol name="_YSI_g_sUnusedStart">Start of free memory.</symbol>
+</ul><section>Compile options</section><ul>
 <li>	MALLOC_MEMORY - Number of cells to reserve.</li>
 	MALLOC_MEMORY_KB - Number of killobytes to reserve.
 	MALLOC_MEMORY_B - Number of bytes to reserve.

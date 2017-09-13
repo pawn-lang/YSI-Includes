@@ -48,81 +48,81 @@
 		First version.
 </ul><section>
 	Functions
-</section><ul>
-<li><subsection>
+</section>
+<subsection>
 Public
 </subsection><ul>
-	<entry name="Text_ResetAll">Resets the entire text system.</entry>
-	<entry name="Text_NewLanguage">Sets up to parse a new language.</entry>
-	<entry name="Text_Parse">Sorts loaded text into a binary tree.</entry>
-	<entry name="Text_DataSave_data">Saves text appearence data.</entry>
-	<entry name="Text_DataSave_colours">Saves file colour defines.</entry>
-	<entry name="Text_DataSave_colors">Wrapper for above function.</entry>
-</ul></li><li><subsection>
+	<symbol name="Text_ResetAll">Resets the entire text system.</symbol>
+	<symbol name="Text_NewLanguage">Sets up to parse a new language.</symbol>
+	<symbol name="Text_Parse">Sorts loaded text into a binary tree.</symbol>
+	<symbol name="Text_DataSave_data">Saves text appearence data.</symbol>
+	<symbol name="Text_DataSave_colours">Saves file colour defines.</symbol>
+	<symbol name="Text_DataSave_colors">Wrapper for above function.</symbol>
+</ul><subsection>
 Stock
 </subsection><ul>
-	<entry name="Text_FindTextPointers">Should be static but can't be :(.</entry>
-	<entry name="Text_AddToBuffer">Saves all passed text for processing.</entry>
-	<entry name="Text_GetTextFromIndex">Gets text from an array pointer and language.</entry>
-	<entry name="Text_GetErrorMessage">Gets an unfound message.</entry>
-	<entry name="Text_GetTextStyle">Gets text's style.</entry>
-	<entry name="Text_GetTextColour">Gets text's colour.</entry>
-	<entry name="Text_GetTextTime">Gets text's time.</entry>
-	<entry name="Text_Send">Sends a message to a player.</entry>
-	<entry name="Text_SendToAll">Sends a message to all players.</entry>
-	<entry name="Text_SendToGroup">Sends a message to a defined group.</entry>
-	<entry name="Text_SendToPlayers">Sends a message to a passed group.</entry>
-	<entry name="Text_Display">Display an actual string to a player in a given style.</entry>
-</ul></li><li><subsection>
+	<symbol name="Text_FindTextPointers">Should be static but can't be :(.</symbol>
+	<symbol name="Text_AddToBuffer">Saves all passed text for processing.</symbol>
+	<symbol name="Text_GetTextFromIndex">Gets text from an array pointer and language.</symbol>
+	<symbol name="Text_GetErrorMessage">Gets an unfound message.</symbol>
+	<symbol name="Text_GetTextStyle">Gets text's style.</symbol>
+	<symbol name="Text_GetTextColour">Gets text's colour.</symbol>
+	<symbol name="Text_GetTextTime">Gets text's time.</symbol>
+	<symbol name="Text_Send">Sends a message to a player.</symbol>
+	<symbol name="Text_SendToAll">Sends a message to all players.</symbol>
+	<symbol name="Text_SendToGroup">Sends a message to a defined group.</symbol>
+	<symbol name="Text_SendToPlayers">Sends a message to a passed group.</symbol>
+	<symbol name="Text_Display">Display an actual string to a player in a given style.</symbol>
+</ul><subsection>
 Static
 </subsection><ul>
-	<entry name="Text_AddText">Adds text to the tree after sorting.</entry>
-</ul></li><li><subsection>
+	<symbol name="Text_AddText">Adds text to the tree after sorting.</symbol>
+</ul><subsection>
 Inline
 </subsection><ul>
-	<entry name="Text_Text">Constructor - Calls Text_ResetAll.</entry>
-	<entry name="Text_SetLangPointer">Sets the pointer for a language to a position.</entry>
-	<entry name="Text_ResetLangPointers">Resets all the pointers for one language.</entry>
-	<entry name="Text_GetPlayerLanguage">Gets a players language.</entry>
-	<entry name="Text_GetText">Gets text from an identifier and language.</entry>
-	<entry name="Text_GetPlayerText">Gets text from an identifier and playerid.</entry>
-	<entry name="Text_SendFormat">Sends a formatted message to a player.</entry>
-	<entry name="Text_SendToAllFormat">Sends a formatted message to all players.</entry>
-	<entry name="Text_SendToGroupFormat">Sends a formatted message to a defined group.</entry>
-	<entry name="Text_SendToPlayersFormat">Sends a formatted message to a passed group.</entry>
-</ul></li></ul><section>
+	<symbol name="Text_Text">Constructor - Calls Text_ResetAll.</symbol>
+	<symbol name="Text_SetLangPointer">Sets the pointer for a language to a position.</symbol>
+	<symbol name="Text_ResetLangPointers">Resets all the pointers for one language.</symbol>
+	<symbol name="Text_GetPlayerLanguage">Gets a players language.</symbol>
+	<symbol name="Text_GetText">Gets text from an identifier and language.</symbol>
+	<symbol name="Text_GetPlayerText">Gets text from an identifier and playerid.</symbol>
+	<symbol name="Text_SendFormat">Sends a formatted message to a player.</symbol>
+	<symbol name="Text_SendToAllFormat">Sends a formatted message to all players.</symbol>
+	<symbol name="Text_SendToGroupFormat">Sends a formatted message to a defined group.</symbol>
+	<symbol name="Text_SendToPlayersFormat">Sends a formatted message to a passed group.</symbol>
+</ul><section>
 	Definitions
 </section><ul>
-	<entry name="MAX_TEXT_NAME">Maximum length of a text identifier.</entry>
-	<entry name="MAX_TEXT_ENTRY">Maximum length of a text string.</entry>
-	<entry name="TEXT_NO_TEXT">Value for no text for that language.</entry>
-	<entry name="TEXT_NO_POINTERS">Value for no text found.</entry>
-	<entry name="TEXT_TYPE_CLIENT">Flag for sending a client formatted message (unused).</entry>
-	<entry name="TEXT_TYPE_GAME">Flag for sending a game text formatted message (unused).</entry>
-	<entry name="MAX_TEXT_COLOURS">Max number of defined colours in an ini file.</entry>
+	<symbol name="MAX_TEXT_NAME">Maximum length of a text identifier.</symbol>
+	<symbol name="MAX_TEXT_ENTRY">Maximum length of a text string.</symbol>
+	<symbol name="TEXT_NO_TEXT">Value for no text for that language.</symbol>
+	<symbol name="TEXT_NO_POINTERS">Value for no text found.</symbol>
+	<symbol name="TEXT_TYPE_CLIENT">Flag for sending a client formatted message (unused).</symbol>
+	<symbol name="TEXT_TYPE_GAME">Flag for sending a game text formatted message (unused).</symbol>
+	<symbol name="MAX_TEXT_COLOURS">Max number of defined colours in an ini file.</symbol>
 </ul><section>
 	Enums
 </section><ul>
-	<entry name="E_TEXT_POINTERS">Structure of the language pointer array.</entry>
+	<symbol name="E_TEXT_POINTERS">Structure of the language pointer array.</symbol>
 </ul><section>
 	Macros
 </section><ul>
-	<entry name="Text_RegisterTag">Placed as a function, calls Text_AddToBuffer for tags.</entry>
+	<symbol name="Text_RegisterTag">Placed as a function, calls Text_AddToBuffer for tags.</symbol>
 </ul><section>
 	Variables
-</section><ul>
-<li><subsection>
+</section>
+<subsection>
 Static
 </subsection><ul>
-	<entry name="YSI_g_sTextTable">Array of all text entries.</entry>
-	<entry name="YSI_g_sNameTable">Array of all text names and language pointers.</entry>
-	<entry name="YSI_g_sSearchTree">Binary tree of text hashes.</entry>
-	<entry name="YSI_g_sTextInited">Flag for text binary sorted.</entry>
-	<entry name="YSI_g_sBufferIndex">Index of next text slot for the current language.</entry>
-	<entry name="YSI_g_sTextCount">Count of largest number of texts in one language.</entry>
-	<entry name="YSI_g_sBufferLang">Current language being loaded.</entry>
-	<entry name="YSI_g_sLangBuffer">Saves the current position of each language.</entry>
-	<entry name="YSI_g_sColours">Saves defined colours for use.</entry>
+	<symbol name="YSI_g_sTextTable">Array of all text entries.</symbol>
+	<symbol name="YSI_g_sNameTable">Array of all text names and language pointers.</symbol>
+	<symbol name="YSI_g_sSearchTree">Binary tree of text hashes.</symbol>
+	<symbol name="YSI_g_sTextInited">Flag for text binary sorted.</symbol>
+	<symbol name="YSI_g_sBufferIndex">Index of next text slot for the current language.</symbol>
+	<symbol name="YSI_g_sTextCount">Count of largest number of texts in one language.</symbol>
+	<symbol name="YSI_g_sBufferLang">Current language being loaded.</symbol>
+	<symbol name="YSI_g_sLangBuffer">Saves the current position of each language.</symbol>
+	<symbol name="YSI_g_sColours">Saves defined colours for use.</symbol>
 </ul></li></ul>
 *//** *//*
 Legal:

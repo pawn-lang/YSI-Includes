@@ -31,13 +31,13 @@
 		First version.
 </ul><section>
 	Functions
-</section><ul>
-<li><subsection>
+</section>
+<subsection>
 Stock
 </subsection><ul>
-	<entry name="Puny_Encode">Convert a Unicode string to Punycode.</entry>
-	<entry name="Puny_Decode">Convert a Punycode string to Unicode.</entry>
-	<entry name="Puny_HTTP">Wrapper for "HTTP" to encode domain names.</entry>
+	<symbol name="Puny_Encode">Convert a Unicode string to Punycode.</symbol>
+	<symbol name="Puny_Decode">Convert a Punycode string to Unicode.</symbol>
+	<symbol name="Puny_HTTP">Wrapper for "HTTP" to encode domain names.</symbol>
 </ul></li></ul>
 *//** *//*
 Legal:

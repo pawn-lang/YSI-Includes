@@ -26,22 +26,22 @@
 		First version.
 </ul><section>
 	Functions
-</section><ul>
-<li><subsection>
+</section>
+<subsection>
 API
 </subsection><ul>
-	<entry name="WriteMem">Write data to an address.</entry>
-</ul></li></ul><section>
+	<symbol name="WriteMem">Write data to an address.</symbol>
+</ul><section>
 	Definitions
 </section><ul>
-	<entry name="asm">Convert a stream of assembly to a cell.</entry>
+	<symbol name="asm">Convert a stream of assembly to a cell.</symbol>
 </ul><section>
 	Variables
-</section><ul>
-<li><subsection>
+</section>
+<subsection>
 Static
 </subsection><ul>
-	<entry name="YSI_g_sWriteMem">The assembly.</entry>
+	<symbol name="YSI_g_sWriteMem">The assembly.</symbol>
 </ul></li></ul>
 *//** *//*
 Legal:

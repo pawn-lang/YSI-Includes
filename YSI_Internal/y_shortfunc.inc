@@ -23,10 +23,10 @@
 </ul><section>
 	Natives
 </section><ul>
-	<entry name="W@">Renaming of <seealso name="__CallRemoteFunction" /> for size reasons.</entry>
-	<entry name="V@">Renaming of <seealso name="getproperty" /> for size reasons.</entry>
-	<entry name="S@">Renaming of <seealso name="setproperty" /> for size reasons.</entry>
-	<entry name="P@">Renaming of <seealso name="__CallLocalFunction" /> for size reasons.</entry>
+	<symbol name="W@">Renaming of <symbolref name="__CallRemoteFunction" /> for size reasons.</symbol>
+	<symbol name="V@">Renaming of <symbolref name="getproperty" /> for size reasons.</symbol>
+	<symbol name="S@">Renaming of <symbolref name="setproperty" /> for size reasons.</symbol>
+	<symbol name="P@">Renaming of <symbolref name="__CallLocalFunction" /> for size reasons.</symbol>
 </ul>
 *//** *//*
 Legal:

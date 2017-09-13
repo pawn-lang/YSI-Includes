@@ -144,7 +144,7 @@ P:D(Malloc_SetSlotSize(slot,size));
 	The data
 </returns>
 <remarks>
-	Basically like <seealso name="Malloc_Get" /> but used internally.
+	Basically like <symbolref name="Malloc_Get" /> but used internally.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -169,7 +169,7 @@ P:D(Malloc_SetData(Alloc:slot,index,value));
 	The data
 </returns>
 <remarks>
-	Shorthand for <seealso name="Malloc_Get" />.
+	Shorthand for <symbolref name="Malloc_Get" />.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -184,7 +184,7 @@ P:D(mget(Alloc:slot, index));
 <param name="index">Where in the unit to set.</param>
 <param name="value">The value to save.</param>
 <remarks>
-	Shorthand for <seealso name="Malloc_Set" />.
+	Shorthand for <symbolref name="Malloc_Set" />.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -205,7 +205,7 @@ P:D(mset(Alloc:slot, index, value));
 </returns>
 <remarks>
 	Displays errors in secure mode.  Gets a string.
-	Shorthand for <seealso name="Malloc_GetS" />.
+	Shorthand for <symbolref name="Malloc_GetS" />.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -225,7 +225,7 @@ P:D(mgets(target[], length, Alloc:array, const index, const bool:pack = false));
 </returns>
 <remarks>
 	Displays errors in secure mode.  Gets an array.
-	Shorthand for <seealso name="Malloc_GetA" />.
+	Shorthand for <symbolref name="Malloc_GetA" />.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -242,7 +242,7 @@ P:D(mgeta(target[], length, Alloc:array, index));
 <param name="pack">Should the string be packed in?</param>
 <remarks>
 	Displays errors in secure mode.  Inserts a string.
-	Shorthand for <seealso name="Malloc_SetS" />.
+	Shorthand for <symbolref name="Malloc_SetS" />.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -259,7 +259,7 @@ P:D(msets(Alloc:array, const index, const str[], const bool:pack = false));
 <param name="len">Length of the array.</param>
 <remarks>
 	Displays errors in secure mode.  Inserts an array.
-	Shorthand for <seealso name="Malloc_SetA" />.
+	Shorthand for <symbolref name="Malloc_SetA" />.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
@@ -675,7 +675,7 @@ stock Alloc:calloc(size)
 	if the user does proper bounds checking it shouldn't
 	matter.
 	
-	Implementation code for <seealso name="malloc" />.
+	Implementation code for <symbolref name="malloc" />.
 	
 	This code will find an area in memory with sufficient
 	space to store the given data and 
@@ -761,7 +761,7 @@ stock Alloc:calloc(size)
 /*-------------------------------------------------------------------------*//**
 <param name="slot">Memory allocation unit to release</param>
 <remarks>
-	Implementation code for <seealso name="free" />.
+	Implementation code for <symbolref name="free" />.
 </remarks>
 *//*-------------------------------------------------------------------------**/
 
