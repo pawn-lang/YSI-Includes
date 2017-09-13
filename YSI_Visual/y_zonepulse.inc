@@ -23,17 +23,21 @@
 </ul><section>
 	Functions
 </section><ul>
-<li><subsection>Public</subsection><ul>
-<entry name="__GangZonePulse">The timer that does the hard work.</entry>
-</ul></li><li><subsection>Stock</subsection><ul>
-<entry name="GangZonePulse">Pulse a zone for player or collection of players.</entry>
-<entry name="GangZonePulseForPlayer">Pulse a zone for a player.</entry>
-<entry name="GangZonePulseForAll">Pulse a zone for everyone.</entry>
-<entry name="GangZoneStopPulse">Stop a zone pulsing for a set of players.</entry>
-<entry name="GangZoneStopPulseForPlayer">Stop a zone pulsing for a single player.</entry>
-<entry name="GangZoneStopPulseForAll">Stop a zone pulsing for everyone.</entry>
+<li><subsection>
+Public
+</subsection><ul>
+	<entry name="__GangZonePulse">The timer that does the hard work.</entry>
+</ul></li><li><subsection>
+Stock
+</subsection><ul>
+	<entry name="GangZonePulse">Pulse a zone for player or collection of players.</entry>
+	<entry name="GangZonePulseForPlayer">Pulse a zone for a player.</entry>
+	<entry name="GangZonePulseForAll">Pulse a zone for everyone.</entry>
+	<entry name="GangZoneStopPulse">Stop a zone pulsing for a set of players.</entry>
+	<entry name="GangZoneStopPulseForPlayer">Stop a zone pulsing for a single player.</entry>
+	<entry name="GangZoneStopPulseForAll">Stop a zone pulsing for everyone.</entry>
 </ul></li></ul><section>Compile options</section><ul>
-<entry name="ZONE_PULSE_STAGE_TIME">ms between each pulse frame.</entry>
+	<entry name="ZONE_PULSE_STAGE_TIME">ms between each pulse frame.</entry>
 </ul>
 *//** *//*
 Legal:

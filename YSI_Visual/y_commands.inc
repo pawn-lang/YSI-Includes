@@ -51,68 +51,76 @@
 </ul><section>
 	Functions
 </section><ul>
-<li><subsection>Public</subsection><ul>
-<entry name="Command_Add">Adds a command to the array for processing.</entry>
-<entry name="Command_Remove">Removes a command.</entry>
-<entry name="Command_Name">Gets the name of a command in a property.</entry>
-</ul></li><li><subsection>Core</subsection><ul>
-<entry name="Command_Process">Called from OnPlayerCommandText to process entered commands.</entry>
-<entry name="Command_Parse">Sorts added commands into a binary tree.</entry>
-<entry name="Command_Hash">Hashes a word for command hashing.</entry>
-<entry name="Command_ProcRem">Processes a help command in the master script.</entry>
-</ul></li><li><subsection>Stock</subsection><ul>
-<entry name="Command_SetDisconnectReturn">Sets the return value for unconnected players.</entry>
-<entry name="Command_UseShortCuts">Toggles use of per-player command shortcuts.</entry>
-<entry name="Command_SetDeniedReturn">Sets the return value for denied use commands.</entry>
-<entry name="Command_UseDeniedMessage">Toggles the use of an error message for denied.</entry>
-<entry name="Command_SetIllegalReturn">Sets the return value for illegal characters.</entry>
-<entry name="Command_UseAltNames">Toggles the use of ini defined alternate names.</entry>
-<entry name="Command_UsePrefix">Toggles the use of a global prefix.</entry>
-<entry name="Command_UseSpace">Toggles the use of a space between prefix and command.</entry>
-<entry name="Command_SetAltName">Sets the alternate name of a function.</entry>
-<entry name="Command_SetPrefix">Sets the pfexix to be typed.</entry>
-<entry name="Comamnd_SetPlayerUse">Sets wether or not a player can use a command.</entry>
-<entry name="Comamnd_SetPlayerUseByID">Sets wether or not a player can use a command.</entry>
-<entry name="Command_FindByName">Finds a command in a possibly sorted list.</entry>
+<li><subsection>
+Public
+</subsection><ul>
+	<entry name="Command_Add">Adds a command to the array for processing.</entry>
+	<entry name="Command_Remove">Removes a command.</entry>
+	<entry name="Command_Name">Gets the name of a command in a property.</entry>
+</ul></li><li><subsection>
+Core
+</subsection><ul>
+	<entry name="Command_Process">Called from OnPlayerCommandText to process entered commands.</entry>
+	<entry name="Command_Parse">Sorts added commands into a binary tree.</entry>
+	<entry name="Command_Hash">Hashes a word for command hashing.</entry>
+	<entry name="Command_ProcRem">Processes a help command in the master script.</entry>
+</ul></li><li><subsection>
+Stock
+</subsection><ul>
+	<entry name="Command_SetDisconnectReturn">Sets the return value for unconnected players.</entry>
+	<entry name="Command_UseShortCuts">Toggles use of per-player command shortcuts.</entry>
+	<entry name="Command_SetDeniedReturn">Sets the return value for denied use commands.</entry>
+	<entry name="Command_UseDeniedMessage">Toggles the use of an error message for denied.</entry>
+	<entry name="Command_SetIllegalReturn">Sets the return value for illegal characters.</entry>
+	<entry name="Command_UseAltNames">Toggles the use of ini defined alternate names.</entry>
+	<entry name="Command_UsePrefix">Toggles the use of a global prefix.</entry>
+	<entry name="Command_UseSpace">Toggles the use of a space between prefix and command.</entry>
+	<entry name="Command_SetAltName">Sets the alternate name of a function.</entry>
+	<entry name="Command_SetPrefix">Sets the pfexix to be typed.</entry>
+	<entry name="Comamnd_SetPlayerUse">Sets wether or not a player can use a command.</entry>
+	<entry name="Comamnd_SetPlayerUseByID">Sets wether or not a player can use a command.</entry>
+	<entry name="Command_FindByName">Finds a command in a possibly sorted list.</entry>
 </ul></li></ul><section>
 	Definitions
 </section><ul>
-<entry name="MAX_COMMAND_LENGTH">The maximum length of a command string.</entry>
-<entry name="COMMAND_NOT_FOUND">Indicates that a searched for string is not a function.</entry>
+	<entry name="MAX_COMMAND_LENGTH">The maximum length of a command string.</entry>
+	<entry name="COMMAND_NOT_FOUND">Indicates that a searched for string is not a function.</entry>
 </ul><section>
 	Enums
 </section><ul>
-<entry name="e_COMM_FLAG">Bit mappings for command options.</entry>
-<entry name="E_COMMANDS">Structure of the array holding the string data.</entry>
+	<entry name="e_COMM_FLAG">Bit mappings for command options.</entry>
+	<entry name="E_COMMANDS">Structure of the array holding the string data.</entry>
 </ul><section>
 	Macros
 </section><ul>
-<entry name="Command_(%1)">Forwards and declares a standard command for calling.</entry>
-<entry name="ycmd(%1)">Adds a command to the array (wrapper for Command_Add).</entry>
+	<entry name="Command_(%1)">Forwards and declares a standard command for calling.</entry>
+	<entry name="ycmd(%1)">Adds a command to the array (wrapper for Command_Add).</entry>
 </ul><section>
 	Tags
 </section><ul>
-<entry name="e_COMM_FLAG">Flag type.</entry>
+	<entry name="e_COMM_FLAG">Flag type.</entry>
 </ul><section>
 	Variables
 </section><ul>
-<li><subsection>Static</subsection><ul>
-<entry name="YSI_g_sCommands">Holds all the textual data of the commands.</entry>
-<entry name="YSI_g_sSearchTree">Tree of hashes for function names.</entry>
-<entry name="YSI_g_sAltTree">Tree of hashes for alternate names.</entry>
-<entry name="YSI_g_sPrefix">The command prefix.</entry>
-<entry name="YSI_g_sPrefixLength">Length of the prefix.</entry>
-<entry name="YSI_g_sCommandIndex">Pointer to the next free index in the function array.</entry>
-<entry name="YSI_g_sAltCount">The number of commands with altnames.</entry>
-<entry name="YSI_g_sCommandFlags">Bit array of command options.</entry>
+<li><subsection>
+Static
+</subsection><ul>
+	<entry name="YSI_g_sCommands">Holds all the textual data of the commands.</entry>
+	<entry name="YSI_g_sSearchTree">Tree of hashes for function names.</entry>
+	<entry name="YSI_g_sAltTree">Tree of hashes for alternate names.</entry>
+	<entry name="YSI_g_sPrefix">The command prefix.</entry>
+	<entry name="YSI_g_sPrefixLength">Length of the prefix.</entry>
+	<entry name="YSI_g_sCommandIndex">Pointer to the next free index in the function array.</entry>
+	<entry name="YSI_g_sAltCount">The number of commands with altnames.</entry>
+	<entry name="YSI_g_sCommandFlags">Bit array of command options.</entry>
 </ul></li></ul><section>
 	Commands
 </section><ul>
-<entry name="commands">Lists all commands available to you.</entry>
+	<entry name="commands">Lists all commands available to you.</entry>
 </ul><section>Compile options</section><ul>
-<entry name="COMMAND_SENSITIVE">Make commands case sensitive.</entry>
-<entry name="COMMAND_ACCURATE">Can use '@' in command names.</entry>
-<entry name="MAX_COMMANDS">The maximum number of commands which can be used.</entry>
+	<entry name="COMMAND_SENSITIVE">Make commands case sensitive.</entry>
+	<entry name="COMMAND_ACCURATE">Can use '@' in command names.</entry>
+	<entry name="MAX_COMMANDS">The maximum number of commands which can be used.</entry>
 </ul>
 *//** *//*
 Legal:

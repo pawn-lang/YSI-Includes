@@ -26,19 +26,23 @@
 </ul><section>
 	Functions
 </section><ul>
-<li><subsection>Stock</subsection><ul>
-<entry name="Vehicle_Speed">Get current vehicle speed in KMH.</entry>
+<li><subsection>
+Stock
+</subsection><ul>
+	<entry name="Vehicle_Speed">Get current vehicle speed in KMH.</entry>
 </ul></li></ul><section>
 	Tags
 </section><ul>
-<entry name="VIM">Vehicle Internal Modelid.</entry>
+	<entry name="VIM">Vehicle Internal Modelid.</entry>
 </ul><section>
 	Variables
 </section><ul>
-<li><subsection>Global</subsection><ul>
-<entry name="YSI_gVehicleFlags">Data on vehicles.</entry>
-<entry name="YSI_gVehicleNames">Names of vehicles.</entry>
-<entry name="YSI_gVehicleTopSpeed">Top speed of vehicles.</entry>
+<li><subsection>
+Global
+</subsection><ul>
+	<entry name="YSI_gVehicleFlags">Data on vehicles.</entry>
+	<entry name="YSI_gVehicleNames">Names of vehicles.</entry>
+	<entry name="YSI_gVehicleTopSpeed">Top speed of vehicles.</entry>
 </ul></li></ul>
 *//** *//*
 Legal:

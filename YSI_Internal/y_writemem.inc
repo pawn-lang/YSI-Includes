@@ -27,17 +27,21 @@
 </ul><section>
 	Functions
 </section><ul>
-<li><subsection>API</subsection><ul>
-<entry name="WriteMem">Write data to an address.</entry>
+<li><subsection>
+API
+</subsection><ul>
+	<entry name="WriteMem">Write data to an address.</entry>
 </ul></li></ul><section>
 	Definitions
 </section><ul>
-<entry name="asm">Convert a stream of assembly to a cell.</entry>
+	<entry name="asm">Convert a stream of assembly to a cell.</entry>
 </ul><section>
 	Variables
 </section><ul>
-<li><subsection>Static</subsection><ul>
-<entry name="YSI_g_sWriteMem">The assembly.</entry>
+<li><subsection>
+Static
+</subsection><ul>
+	<entry name="YSI_g_sWriteMem">The assembly.</entry>
 </ul></li></ul>
 *//** *//*
 Legal:

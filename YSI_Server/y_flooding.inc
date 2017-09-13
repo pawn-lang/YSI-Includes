@@ -85,21 +85,27 @@ Legal:
 </ul><section>
 	Functions
 </section><ul>
-<li><subsection>Core</subsection><ul>
-<entry name="OnPlayerConnect">Called to check IPs.</entry>
-<entry name="OnScriptInit">Sets the OnPlayerConnect function flag.</entry>
-</ul></li><li><subsection>API</subsection><ul>
-<entry name="SetMaxConnections">Sets the max allowed connections from an IP.</entry>
+<li><subsection>
+Core
+</subsection><ul>
+	<entry name="OnPlayerConnect">Called to check IPs.</entry>
+	<entry name="OnScriptInit">Sets the OnPlayerConnect function flag.</entry>
+</ul></li><li><subsection>
+API
+</subsection><ul>
+	<entry name="SetMaxConnections">Sets the max allowed connections from an IP.</entry>
 </ul></li></ul><section>
 	Enums
 </section><ul>
-<entry name="e_FLOOD_ACTION">What to do if too many connections form.</entry>
+	<entry name="e_FLOOD_ACTION">What to do if too many connections form.</entry>
 </ul><section>
 	Variables
 </section><ul>
-<li><subsection>Static</subsection><ul>
-<entry name="YSI_g_sPlayerIPs">People's stored IPs for speed.</entry>
-<entry name="YSI_g_sMaxConnections">Data for the script.</entry>
+<li><subsection>
+Static
+</subsection><ul>
+	<entry name="YSI_g_sPlayerIPs">People's stored IPs for speed.</entry>
+	<entry name="YSI_g_sMaxConnections">Data for the script.</entry>
 </ul></li></ul>
 *//** *//*
 Legal:

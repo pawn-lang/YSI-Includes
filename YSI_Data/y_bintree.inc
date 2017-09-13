@@ -34,37 +34,45 @@
 </ul><section>
 	Functions
 </section><ul>
-<li><subsection>Core</subsection><ul>
-<entry name="Bintree_QSort">Custom implementaion of QSort to keep pointers.</entry>
-<entry name="Bintree_SortHalf">Itteratively balances halves of an array.</entry>
-</ul></li><li><subsection>Stock</subsection><ul>
-<entry name="Bintree_Generate">Generates a balanced binary tree from given input.</entry>
-<entry name="Bintree_Reset">Resets a position in a tree.</entry>
-<entry name="Bintree_FindValue">Finds the pointer for a value in the tree.</entry>
-<entry name="Bintree_Add">Adds an item to a generated tree.</entry>
-<entry name="Bintree_Delete">Removes an item from a tree.</entry>
-<entry name="Bintree_UpdatePointers">Updates the pointers after a target change.</entry>
-</ul></li><li><subsection>Static</subsection><ul>
-<entry name="Bintree_Compress">Removes space from an altered tree.</entry>
-<entry name="Bintree_FindMin">Finds the smallest value on a branch.</entry>
-<entry name="Bintree_FindMax">Finds the largest value on a branch.</entry>
-</ul></li><li><subsection>Inline</subsection><ul>
-<entry name="Bintree_Sort">Entry point for Bintree_QSort.</entry>
-<entry name="Bintree_Fill">Entry point for Bintree_SortHalf.</entry>
+<li><subsection>
+Core
+</subsection><ul>
+	<entry name="Bintree_QSort">Custom implementaion of QSort to keep pointers.</entry>
+	<entry name="Bintree_SortHalf">Itteratively balances halves of an array.</entry>
+</ul></li><li><subsection>
+Stock
+</subsection><ul>
+	<entry name="Bintree_Generate">Generates a balanced binary tree from given input.</entry>
+	<entry name="Bintree_Reset">Resets a position in a tree.</entry>
+	<entry name="Bintree_FindValue">Finds the pointer for a value in the tree.</entry>
+	<entry name="Bintree_Add">Adds an item to a generated tree.</entry>
+	<entry name="Bintree_Delete">Removes an item from a tree.</entry>
+	<entry name="Bintree_UpdatePointers">Updates the pointers after a target change.</entry>
+</ul></li><li><subsection>
+Static
+</subsection><ul>
+	<entry name="Bintree_Compress">Removes space from an altered tree.</entry>
+	<entry name="Bintree_FindMin">Finds the smallest value on a branch.</entry>
+	<entry name="Bintree_FindMax">Finds the largest value on a branch.</entry>
+</ul></li><li><subsection>
+Inline
+</subsection><ul>
+	<entry name="Bintree_Sort">Entry point for Bintree_QSort.</entry>
+	<entry name="Bintree_Fill">Entry point for Bintree_SortHalf.</entry>
 </ul></li></ul><section>
 	Definitions
 </section><ul>
-<entry name="BINTREE_NO_BRANCH">Nowhere to go from the number in required direction.</entry>
-<entry name="BINTREE_NOT_FOUND">Failure return.</entry>
+	<entry name="BINTREE_NO_BRANCH">Nowhere to go from the number in required direction.</entry>
+	<entry name="BINTREE_NOT_FOUND">Failure return.</entry>
 </ul><section>
 	Enums
 </section><ul>
-<entry name="E_BINTREE_TREE">Structure of a leaf of a binary tree.</entry>
-<entry name="E_BINTREE_INPUT">Structure of an array of data to be added to a tree.</entry>
+	<entry name="E_BINTREE_TREE">Structure of a leaf of a binary tree.</entry>
+	<entry name="E_BINTREE_INPUT">Structure of an array of data to be added to a tree.</entry>
 </ul><section>
 	Tags
 </section><ul>
-<entry name="Bintree">Binary tree type.</entry>
+	<entry name="Bintree">Binary tree type.</entry>
 </ul>
 *//** *//*
 Legal:

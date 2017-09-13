@@ -32,10 +32,12 @@
 </ul><section>
 	Functions
 </section><ul>
-<li><subsection>Stock</subsection><ul>
-<entry name="Puny_Encode">Convert a Unicode string to Punycode.</entry>
-<entry name="Puny_Decode">Convert a Punycode string to Unicode.</entry>
-<entry name="Puny_HTTP">Wrapper for "HTTP" to encode domain names.</entry>
+<li><subsection>
+Stock
+</subsection><ul>
+	<entry name="Puny_Encode">Convert a Unicode string to Punycode.</entry>
+	<entry name="Puny_Decode">Convert a Punycode string to Unicode.</entry>
+	<entry name="Puny_HTTP">Wrapper for "HTTP" to encode domain names.</entry>
 </ul></li></ul>
 *//** *//*
 Legal:

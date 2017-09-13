@@ -31,13 +31,15 @@
 </ul><section>
 	Functions
 </section><ul>
-<li><subsection>Stock</subsection><ul>
-<entry name="YHash">Generate a string hash at run time.</entry>
+<li><subsection>
+Stock
+</subsection><ul>
+	<entry name="YHash">Generate a string hash at run time.</entry>
 </ul></li></ul><section>
 	Definitions
 </section><ul>
-<entry name="_H">Generate a string hash at compile time.</entry>
-<entry name="_I">Generate a case insensitive string hash at compile time.</entry>
+	<entry name="_H">Generate a string hash at compile time.</entry>
+	<entry name="_I">Generate a case insensitive string hash at compile time.</entry>
 </ul>
 *//** *//*
 Legal:

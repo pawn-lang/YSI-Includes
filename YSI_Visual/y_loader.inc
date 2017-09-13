@@ -34,26 +34,34 @@ Legal:
 </ul><section>
 	Functions
 </section><ul>
-<li><subsection>Public</subsection><ul>
-<entry name="Loader_Spawn">Processes a loaded spawn point.</entry>
-<entry name="Loader_Check">Processes a loaded checkpoint.</entry>
-<entry name="Loader_Obj">Processes a loaded object.</entry>
-</ul></li><li><subsection>Core</subsection><ul>
-<entry name="Loader_Loader">Initialises data.</entry>
-</ul></li><li><subsection>Stock</subsection><ul>
-<entry name="Loader_Parse">Loads a file.</entry>
-<entry name="Loader_AddHandler">Adds a custom handle for the race file.</entry>
-<entry name="Loader_GetRace">Returns the current race handle.</entry>
+<li><subsection>
+Public
+</subsection><ul>
+	<entry name="Loader_Spawn">Processes a loaded spawn point.</entry>
+	<entry name="Loader_Check">Processes a loaded checkpoint.</entry>
+	<entry name="Loader_Obj">Processes a loaded object.</entry>
+</ul></li><li><subsection>
+Core
+</subsection><ul>
+	<entry name="Loader_Loader">Initialises data.</entry>
+</ul></li><li><subsection>
+Stock
+</subsection><ul>
+	<entry name="Loader_Parse">Loads a file.</entry>
+	<entry name="Loader_AddHandler">Adds a custom handle for the race file.</entry>
+	<entry name="Loader_GetRace">Returns the current race handle.</entry>
 </ul></li></ul><section>
 	Tags
 </section><ul>
-<entry name="e_RACE_FLAGS">Race data flag.</entry>
+	<entry name="e_RACE_FLAGS">Race data flag.</entry>
 </ul><section>
 	Variables
 </section><ul>
-<li><subsection>Static</subsection><ul>
-<entry name="YSI_g_sXMLRules">Handle to the XML parse rule set.</entry>
-<entry name="YSI_g_sCurRace">Handle to the current race being built.</entry>
+<li><subsection>
+Static
+</subsection><ul>
+	<entry name="YSI_g_sXMLRules">Handle to the XML parse rule set.</entry>
+	<entry name="YSI_g_sCurRace">Handle to the current race being built.</entry>
 </ul></li></ul>
 *//** *//*
 Legal:

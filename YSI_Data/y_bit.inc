@@ -41,24 +41,28 @@
 </ul><section>
 	Functions
 </section><ul>
-<li><subsection>Stock</subsection><ul>
-<entry name="Bit_Set">Sets a slot to the given value.</entry>
-<entry name="Bit_Get">Gets a slot state.</entry>
-<entry name="Bit_SetAll">Sets all the slots in an array to the same thing.</entry>
-<entry name="Bit_GetCount">Gets the number of 1s in a bit array.</entry>
-</ul></li><li><subsection>Inline</subsection><ul>
-<entry name="Bit_Bits">Gets the number of cells required for a bit array.</entry>
-<entry name="Bit_Let">Sets a slot to 1.</entry>
-<entry name="Bit_Vet">Sets a slot to 0.</entry>
-<entry name="Bit_GetBits">Gets the bit at a slot unsafely.</entry>
+<li><subsection>
+Stock
+</subsection><ul>
+	<entry name="Bit_Set">Sets a slot to the given value.</entry>
+	<entry name="Bit_Get">Gets a slot state.</entry>
+	<entry name="Bit_SetAll">Sets all the slots in an array to the same thing.</entry>
+	<entry name="Bit_GetCount">Gets the number of 1s in a bit array.</entry>
+</ul></li><li><subsection>
+Inline
+</subsection><ul>
+	<entry name="Bit_Bits">Gets the number of cells required for a bit array.</entry>
+	<entry name="Bit_Let">Sets a slot to 1.</entry>
+	<entry name="Bit_Vet">Sets a slot to 0.</entry>
+	<entry name="Bit_GetBits">Gets the bit at a slot unsafely.</entry>
 </ul></li></ul><section>
 	Definitions
 </section><ul>
-<entry name="CELLSHIFT">Number of bits that can hold "cellbits"</entry>
+	<entry name="CELLSHIFT">Number of bits that can hold "cellbits"</entry>
 </ul><section>
 	Tags
 </section><ul>
-<entry name="Bit">Bit array type.</entry>
+	<entry name="Bit">Bit array type.</entry>
 </ul>
 *//** *//*
 Legal:

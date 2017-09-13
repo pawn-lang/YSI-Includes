@@ -38,76 +38,88 @@
 </ul><section>
 	Functions
 </section><ul>
-<li><subsection>Public</subsection><ul>
-<entry name="Property_Loop">Does the main system processing.</entry>
-<entry name="Property_AddPropRemote">Adds a property from another script.</entry>
-<entry name="Property_AddBankRemote">Adds a bank from another script.</entry>
-<entry name="Property_AddAmmuRemote">Adds an ammunation from another script.</entry>
-<entry name="Property_AddMARemote">Adds a money area from another script.</entry>
-<entry name="Property_AddMPRemote">Adds a money point from another script.</entry>
-<entry name="Property_AddTeleRemote">Adds a teleport from another script.</entry>
-<entry name="Property_AddFobRemote">Adds a forbidden area from another script.</entry>
-<entry name="Property_GetPropertyBitsReceive">Passes a player's properties.</entry>
-<entry name="Property_Remote">Remote wrapper for most minor functions.</entry>
-<entry name="YSIM_Properties">Master system callback.</entry>
-<entry name="Property_Broadcast">Called to save properties on master shutdown.</entry>
-<entry name="Property_PickupTimeCheck">Checks if a player is still stood on a pickup.</entry>
-</ul></li><li><subsection>Core</subsection><ul>
-<entry name="Property_OnPlayerSelectedMenuRow">Called when someone selects something.</entry>
-<entry name="Property_OnPlayerExitedMenu">Called when someone exits a menu.</entry>
-<entry name="Property_OnPlayerEnterCheckpointEx">Called when someone enters a checkpoint (public).</entry>
-<entry name="Property_OnPlayerLeaveCheckpointEx">Called when someone leaves a checkpoint (public).</entry>
-<entry name="Property_OnPlayerPickUpPickup">Called when someone picks up a pickup (public).</entry>
-<entry name="Property_OnPlayerSpawn">Called when someone spawns.</entry>
-<entry name="Property_OnPlayerConnect">Called when comaone connects.</entry>
-<entry name="Property_OnPlayerLeaveArea">Called when someone leaves an area (public).</entry>
-<entry name="Property_OnPlayerEnterArea">Called when someone enters an area (public).</entry>
-</ul></li><li><subsection>Stock</subsection><ul>
-<entry name="Property_GetPlayerPropCount">Gets the number of properties for a player.</entry>
-<entry name="Property_GetLink">Gets the area or checkpoint for a property.</entry>
-<entry name="Property_GetType">Gets a property's type.</entry>
-<entry name="Property_IsValid">Checks if a property is valid.</entry>
-<entry name="Property_Bank">Moves money to/from an account.</entry>
-<entry name="Property_SavePlayerWeapon">Saves a players weapon for spawn.</entry>
-<entry name="Property_SaveWeapons">Saves a player's spawn weapons.</entry>
-<entry name="Property_LoadWeapons">Loads a player's spawn weapons.</entry>
-<entry name="Property_SaveBank">Saves a player's banked money.</entry>
-<entry name="Property_LoadBank">Loads a player's banked money.</entry>
-<entry name="Property_GetBank">Gets a player's banked money.</entry>
-<entry name="Property_GetSlotWeapon">Gets a player's spawn weapons.</entry>
-<entry name="Property_GetPropertyBits">Gets a player's owned properties.</entry>
-<entry name="Property_SetRebuyDelay">Set a delay on rebuying properties.</entry>
-</ul></li><li><subsection>Static</subsection><ul>
-<entry name="Property_GetWeapon">Gets weapon data for a slotid slot.</entry>
-<entry name="Property_WeaponName">Gets a weapon name for a slotid.</entry>
-<entry name="Property_GetWeaponFromSlot">Gets a weaponid from a slotid.</entry>
-<entry name="Property_GenerateAmmuMenu">Generates the menu for ammunation.</entry>
-</ul></li><li><subsection>Inline</subsection><ul>
-<entry name="Property_SetOption">Sets a property's custom flag.</entry>
-<entry name="Property_IsActive">Checks if a property is active.</entry>
-<entry name="Property_GetOption">Gets a property's custom flag.</entry>
-<entry name="Property_GivePlayerWeapon">Gives a player a weapon from it's slot.</entry>
-<entry name="Property_WeaponCost">Gets the cost of a slot,</entry>
-<entry name="Property_WeaponAmmo">Gets the ammo of a slot.</entry>
-<entry name="Property_IsPlayerProperty">Checks if a player can have a property.</entry>
-</ul></li><li><subsection>API</subsection><ul>
-<entry name="CreateProperty">Creates a business.</entry>
-<entry name="CreateBank">Creates a bank.</entry>
-<entry name="CreateAmmunation">Creates an ammunation.</entry>
-<entry name="CreateMoneyArea">Creates a money area.</entry>
-<entry name="CreateMoneyPoint">Creates a money point.</entry>
-<entry name="CreateTeleport">Creates a teleport.</entry>
-<entry name="CreateForbiddenArea">Creates a forbidden area.</entry>
-<entry name="DestroyProperty">Deletes a property from the array.</entry>
+<li><subsection>
+Public
+</subsection><ul>
+	<entry name="Property_Loop">Does the main system processing.</entry>
+	<entry name="Property_AddPropRemote">Adds a property from another script.</entry>
+	<entry name="Property_AddBankRemote">Adds a bank from another script.</entry>
+	<entry name="Property_AddAmmuRemote">Adds an ammunation from another script.</entry>
+	<entry name="Property_AddMARemote">Adds a money area from another script.</entry>
+	<entry name="Property_AddMPRemote">Adds a money point from another script.</entry>
+	<entry name="Property_AddTeleRemote">Adds a teleport from another script.</entry>
+	<entry name="Property_AddFobRemote">Adds a forbidden area from another script.</entry>
+	<entry name="Property_GetPropertyBitsReceive">Passes a player's properties.</entry>
+	<entry name="Property_Remote">Remote wrapper for most minor functions.</entry>
+	<entry name="YSIM_Properties">Master system callback.</entry>
+	<entry name="Property_Broadcast">Called to save properties on master shutdown.</entry>
+	<entry name="Property_PickupTimeCheck">Checks if a player is still stood on a pickup.</entry>
+</ul></li><li><subsection>
+Core
+</subsection><ul>
+	<entry name="Property_OnPlayerSelectedMenuRow">Called when someone selects something.</entry>
+	<entry name="Property_OnPlayerExitedMenu">Called when someone exits a menu.</entry>
+	<entry name="Property_OnPlayerEnterCheckpointEx">Called when someone enters a checkpoint (public).</entry>
+	<entry name="Property_OnPlayerLeaveCheckpointEx">Called when someone leaves a checkpoint (public).</entry>
+	<entry name="Property_OnPlayerPickUpPickup">Called when someone picks up a pickup (public).</entry>
+	<entry name="Property_OnPlayerSpawn">Called when someone spawns.</entry>
+	<entry name="Property_OnPlayerConnect">Called when comaone connects.</entry>
+	<entry name="Property_OnPlayerLeaveArea">Called when someone leaves an area (public).</entry>
+	<entry name="Property_OnPlayerEnterArea">Called when someone enters an area (public).</entry>
+</ul></li><li><subsection>
+Stock
+</subsection><ul>
+	<entry name="Property_GetPlayerPropCount">Gets the number of properties for a player.</entry>
+	<entry name="Property_GetLink">Gets the area or checkpoint for a property.</entry>
+	<entry name="Property_GetType">Gets a property's type.</entry>
+	<entry name="Property_IsValid">Checks if a property is valid.</entry>
+	<entry name="Property_Bank">Moves money to/from an account.</entry>
+	<entry name="Property_SavePlayerWeapon">Saves a players weapon for spawn.</entry>
+	<entry name="Property_SaveWeapons">Saves a player's spawn weapons.</entry>
+	<entry name="Property_LoadWeapons">Loads a player's spawn weapons.</entry>
+	<entry name="Property_SaveBank">Saves a player's banked money.</entry>
+	<entry name="Property_LoadBank">Loads a player's banked money.</entry>
+	<entry name="Property_GetBank">Gets a player's banked money.</entry>
+	<entry name="Property_GetSlotWeapon">Gets a player's spawn weapons.</entry>
+	<entry name="Property_GetPropertyBits">Gets a player's owned properties.</entry>
+	<entry name="Property_SetRebuyDelay">Set a delay on rebuying properties.</entry>
+</ul></li><li><subsection>
+Static
+</subsection><ul>
+	<entry name="Property_GetWeapon">Gets weapon data for a slotid slot.</entry>
+	<entry name="Property_WeaponName">Gets a weapon name for a slotid.</entry>
+	<entry name="Property_GetWeaponFromSlot">Gets a weaponid from a slotid.</entry>
+	<entry name="Property_GenerateAmmuMenu">Generates the menu for ammunation.</entry>
+</ul></li><li><subsection>
+Inline
+</subsection><ul>
+	<entry name="Property_SetOption">Sets a property's custom flag.</entry>
+	<entry name="Property_IsActive">Checks if a property is active.</entry>
+	<entry name="Property_GetOption">Gets a property's custom flag.</entry>
+	<entry name="Property_GivePlayerWeapon">Gives a player a weapon from it's slot.</entry>
+	<entry name="Property_WeaponCost">Gets the cost of a slot,</entry>
+	<entry name="Property_WeaponAmmo">Gets the ammo of a slot.</entry>
+	<entry name="Property_IsPlayerProperty">Checks if a player can have a property.</entry>
+</ul></li><li><subsection>
+API
+</subsection><ul>
+	<entry name="CreateProperty">Creates a business.</entry>
+	<entry name="CreateBank">Creates a bank.</entry>
+	<entry name="CreateAmmunation">Creates an ammunation.</entry>
+	<entry name="CreateMoneyArea">Creates a money area.</entry>
+	<entry name="CreateMoneyPoint">Creates a money point.</entry>
+	<entry name="CreateTeleport">Creates a teleport.</entry>
+	<entry name="CreateForbiddenArea">Creates a forbidden area.</entry>
+	<entry name="DestroyProperty">Deletes a property from the array.</entry>
 </ul></li></ul><section>
 	Definitions
 </section><ul>
-<entry name="PROPERTY_LOOP_GRANULARITY">Number of itterations of the main loop a second.</entry>
-<entry name="MAX_PROP_NAME">Max length of the name of a property.</entry>
-<entry name="MAX_PROPERTIES">Max number of properties.</entry>
-<entry name="NO_PROPERTY">Invalid return.</entry>
-<entry name="WEAPON_ARMOUR">Type for salling armour at ammunation.</entry>
-<entry name="PROPERTY_SELL_PERCENT">% of money got back for a reduced sale.</entry>
+	<entry name="PROPERTY_LOOP_GRANULARITY">Number of itterations of the main loop a second.</entry>
+	<entry name="MAX_PROP_NAME">Max length of the name of a property.</entry>
+	<entry name="MAX_PROPERTIES">Max number of properties.</entry>
+	<entry name="NO_PROPERTY">Invalid return.</entry>
+	<entry name="WEAPON_ARMOUR">Type for salling armour at ammunation.</entry>
+	<entry name="PROPERTY_SELL_PERCENT">% of money got back for a reduced sale.</entry>
 </ul><section>
 	Enums
 </section><ul>
@@ -118,42 +130,44 @@
 </ul></li></ul><section>
 	Macros
 </section><ul>
-<entry name="WEAPON_DATA_OFFSET">Offset for saving weapons with variable size arrays,</entry>
-<entry name="WEAPON_DATA">Gets ammo and cost from parameters and compresses them.</entry>
-<entry name="WEAPON_DATA_REM">Like WEAPON_DATA but reads from an array instead.</entry>
-<entry name="WEAPON">Saves a weapon id in the top byte of a cell.</entry>
+	<entry name="WEAPON_DATA_OFFSET">Offset for saving weapons with variable size arrays,</entry>
+	<entry name="WEAPON_DATA">Gets ammo and cost from parameters and compresses them.</entry>
+	<entry name="WEAPON_DATA_REM">Like WEAPON_DATA but reads from an array instead.</entry>
+	<entry name="WEAPON">Saves a weapon id in the top byte of a cell.</entry>
 </ul><section>
 	Tags
 </section><ul>
-<entry name="e_PROP_FLAGS">Flags.</entry>
+	<entry name="e_PROP_FLAGS">Flags.</entry>
 </ul><section>
 	Variables
 </section><ul>
-<li><subsection>Static</subsection><ul>
-<entry name="YSI_g_sProperties">Array of all property data.</entry>
-<entry name="YSI_g_sMoney">Array of player's banked money.</entry>
-<entry name="YSI_g_sPlayerProperties">Bit array of properties a player has.</entry>
-<entry name="YSI_g_sSpawnWeapons">Array of weapons a player will spawn with.</entry>
-<entry name="YSI_g_sShopMenu">Array of players current menus.</entry>
-<entry name="YSI_g_sAreaPointers">Array of properties for each area.</entry>
-<entry name="YSI_g_sCheckpointPointers">Array of properties for each checkpoint.</entry>
-<entry name="YSI_g_sTempPropReq">Script has requested a player's properties.</entry>
-<entry name="YSI_g_sTempProp">Temporary store for properties.</entry>
-<entry name="YSI_g_sIsMaster">Is this script the global master.</entry>
+<li><subsection>
+Static
+</subsection><ul>
+	<entry name="YSI_g_sProperties">Array of all property data.</entry>
+	<entry name="YSI_g_sMoney">Array of player's banked money.</entry>
+	<entry name="YSI_g_sPlayerProperties">Bit array of properties a player has.</entry>
+	<entry name="YSI_g_sSpawnWeapons">Array of weapons a player will spawn with.</entry>
+	<entry name="YSI_g_sShopMenu">Array of players current menus.</entry>
+	<entry name="YSI_g_sAreaPointers">Array of properties for each area.</entry>
+	<entry name="YSI_g_sCheckpointPointers">Array of properties for each checkpoint.</entry>
+	<entry name="YSI_g_sTempPropReq">Script has requested a player's properties.</entry>
+	<entry name="YSI_g_sTempProp">Temporary store for properties.</entry>
+	<entry name="YSI_g_sIsMaster">Is this script the global master.</entry>
 </ul></li></ul><section>
 	Commands
 </section><ul>
-<entry name="buy">Lets you buy your current property.</entry>
-<entry name="bank">Lets you bank money.</entry>
-<entry name="properties">Lists properties and their owners.</entry>
-<entry name="balance">Displays your current balance.</entry>
-<entry name="withdraw">Allows you to take out money.</entry>
-<entry name="sell">Allows you to sell a property.</entry>
+	<entry name="buy">Lets you buy your current property.</entry>
+	<entry name="bank">Lets you bank money.</entry>
+	<entry name="properties">Lists properties and their owners.</entry>
+	<entry name="balance">Displays your current balance.</entry>
+	<entry name="withdraw">Allows you to take out money.</entry>
+	<entry name="sell">Allows you to sell a property.</entry>
 </ul></li></ul><section>
 	Properties
 </section><ul>
-<entry name="LReqProp">Return data from a remote script.</entry>
-<entry name="110953013">Return properties for a player.</entry>
+	<entry name="LReqProp">Return data from a remote script.</entry>
+	<entry name="110953013">Return properties for a player.</entry>
 </ul>
 *//** *//*
 Legal:

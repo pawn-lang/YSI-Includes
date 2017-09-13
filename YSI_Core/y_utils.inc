@@ -43,68 +43,68 @@ Misc functions used throughout.
 </section>
 	<em>Stock</em>
 <ul>
-<entry name="StrToLower">Convert a whole string to lower-case.</entry>
-<entry name="StrToUpper">Convert a whole string to upper-case.</entry>
-<entry name="Random">Generate a random number, optionally takes lower and upper bounds.</entry>
-<entry name="RandomFloat">Same as <seealso name="Random" />, but for floats.</entry>
-<entry name="StripNL">Strips the newline characters from the end of a string.</entry>
-<entry name="StripR">Synonym for <seealso name="StripNL" />.</entry>
-<entry name="StripL">Remove whitespace from the start of a string.</entry>
-<entry name="Strip">Remove whitespace from both ends of a string.</entry>
-<entry name="endofline">Check if the given position is the end of a string (ignoring whitespace).</entry>
-<entry name="chrfind">Return the first position (after <seealso name="start" />) of the given character.</entry>
-<entry name="chrfindp">Like <seealso name="chrfind" />, but without the upper-bounds check.</entry>
-<entry name="bernstein">Generate the Bernstein hash of the given string.</entry>
-<entry name="ishex">Is the given string hexadecimal?</entry>
-<entry name="unpack">Version of <seealso name="strunpack" /> that returns the result.</entry>
-<entry name="returnstringarg">Get the string passed as a variable argument from the given index.</entry>
-<entry name="va_return">Like <seealso name="sprintf" />, formats a string and returns the result.</entry>
-<entry name="isnumeric">Is the given string a number?</entry>
-<entry name="hexstr">Return the value of the given hexadecimal string.</entry>
-<entry name="boolstr">Return the value of the given boolean string.</entry>
-<entry name="binstr">Return the value of the given binary string.</entry>
-<entry name="rawMemcpy">Copy memory between two address, instead of two arrays.</entry>
-<entry name="memset">Set all of an array to a value.</entry>
-<entry name="rawMemset">Set all of a given memory region to a value.</entry>
-<entry name="ReturnPlayerName">Return a player's name.</entry>
-<entry name="ftouch">Ensures that a file exists, but nothing more.</entry>
-<entry name="InterpolateColour">Get the colour (in 3D RGB space) between two other colours.</entry>
-<entry name="SkipWhitespace">Return the first position in a string of a non-whitespace character.</entry>
-<entry name="Trim">Get the first and last positions of non-whitespace characters in the string.  Like <seealso name="Strip" />, but doesn't modify the string.</entry>
-<entry name="Sum">Get the total (sum) of an array.</entry>
-<entry name="Mean">Get the mathematical mean of an array.</entry>
-<entry name="Mode">Get the mathematical mode of an array.</entry>
-<entry name="Median">Get the mathematical median of an array.</entry>
-<entry name="Range">Get the mathematical range of an array.</entry>
+	<entry name="StrToLower">Convert a whole string to lower-case.</entry>
+	<entry name="StrToUpper">Convert a whole string to upper-case.</entry>
+	<entry name="Random">Generate a random number, optionally takes lower and upper bounds.</entry>
+	<entry name="RandomFloat">Same as <seealso name="Random" />, but for floats.</entry>
+	<entry name="StripNL">Strips the newline characters from the end of a string.</entry>
+	<entry name="StripR">Synonym for <seealso name="StripNL" />.</entry>
+	<entry name="StripL">Remove whitespace from the start of a string.</entry>
+	<entry name="Strip">Remove whitespace from both ends of a string.</entry>
+	<entry name="endofline">Check if the given position is the end of a string (ignoring whitespace).</entry>
+	<entry name="chrfind">Return the first position (after <seealso name="start" />) of the given character.</entry>
+	<entry name="chrfindp">Like <seealso name="chrfind" />, but without the upper-bounds check.</entry>
+	<entry name="bernstein">Generate the Bernstein hash of the given string.</entry>
+	<entry name="ishex">Is the given string hexadecimal?</entry>
+	<entry name="unpack">Version of <seealso name="strunpack" /> that returns the result.</entry>
+	<entry name="returnstringarg">Get the string passed as a variable argument from the given index.</entry>
+	<entry name="va_return">Like <seealso name="sprintf" />, formats a string and returns the result.</entry>
+	<entry name="isnumeric">Is the given string a number?</entry>
+	<entry name="hexstr">Return the value of the given hexadecimal string.</entry>
+	<entry name="boolstr">Return the value of the given boolean string.</entry>
+	<entry name="binstr">Return the value of the given binary string.</entry>
+	<entry name="rawMemcpy">Copy memory between two address, instead of two arrays.</entry>
+	<entry name="memset">Set all of an array to a value.</entry>
+	<entry name="rawMemset">Set all of a given memory region to a value.</entry>
+	<entry name="ReturnPlayerName">Return a player's name.</entry>
+	<entry name="ftouch">Ensures that a file exists, but nothing more.</entry>
+	<entry name="InterpolateColour">Get the colour (in 3D RGB space) between two other colours.</entry>
+	<entry name="SkipWhitespace">Return the first position in a string of a non-whitespace character.</entry>
+	<entry name="Trim">Get the first and last positions of non-whitespace characters in the string.  Like <seealso name="Strip" />, but doesn't modify the string.</entry>
+	<entry name="Sum">Get the total (sum) of an array.</entry>
+	<entry name="Mean">Get the mathematical mean of an array.</entry>
+	<entry name="Mode">Get the mathematical mode of an array.</entry>
+	<entry name="Median">Get the mathematical median of an array.</entry>
+	<entry name="Range">Get the mathematical range of an array.</entry>
 </ul>
 	<em>Inline</em>
 <ul>
-<entry name="UCMP">Unsigned compare.</entry>
-<entry name="VALID_PLAYERID">Check if a player ID is valid (in range).</entry>
-<entry name="IS_IN_RANGE">Check if a number is in range.</entry>
-<entry name="NOT_IN_RANGE">Check if a number is outside a range.</entry>
-<entry name="ceildiv">Divide two numbers and round up.</entry>
-<entry name="floordiv">Divide two numbers and round down.</entry>
-<entry name="isnull">Checks if a string is NULL (<c>\1\0</c> or <c>\0</c>).</entry>
-<entry name="isodd">Checks if a number is odd.</entry>
-<entry name="iseven">Checks if a number is even.</entry>
-<entry name="strcpy">Copy one string to another.</entry>
-<entry name="GetIP">Return the encoded (32-bit) version of a player's IP.</entry>
-<entry name="getstring">Synonym for <seealso name="returnstringarg" /> (there are a lot).</entry>
-<entry name="GetString">Synonym for <seealso name="returnstringarg" /> (there are a lot).</entry>
-<entry name="getstringarg">Synonym for <seealso name="returnstringarg" /> (there are a lot).</entry>
-<entry name="GetStringArg">Synonym for <seealso name="returnstringarg" /> (there are a lot).</entry>
-<entry name="ReturnStringArg">Synonym for <seealso name="returnstringarg" /> (there are a lot).</entry>
-<entry name="InterpolateColor">Synonym for <seealso name="InterpolateColour" /></entry>
+	<entry name="UCMP">Unsigned compare.</entry>
+	<entry name="VALID_PLAYERID">Check if a player ID is valid (in range).</entry>
+	<entry name="IS_IN_RANGE">Check if a number is in range.</entry>
+	<entry name="NOT_IN_RANGE">Check if a number is outside a range.</entry>
+	<entry name="ceildiv">Divide two numbers and round up.</entry>
+	<entry name="floordiv">Divide two numbers and round down.</entry>
+	<entry name="isnull">Checks if a string is NULL (<c>\1\0</c> or <c>\0</c>).</entry>
+	<entry name="isodd">Checks if a number is odd.</entry>
+	<entry name="iseven">Checks if a number is even.</entry>
+	<entry name="strcpy">Copy one string to another.</entry>
+	<entry name="GetIP">Return the encoded (32-bit) version of a player's IP.</entry>
+	<entry name="getstring">Synonym for <seealso name="returnstringarg" /> (there are a lot).</entry>
+	<entry name="GetString">Synonym for <seealso name="returnstringarg" /> (there are a lot).</entry>
+	<entry name="getstringarg">Synonym for <seealso name="returnstringarg" /> (there are a lot).</entry>
+	<entry name="GetStringArg">Synonym for <seealso name="returnstringarg" /> (there are a lot).</entry>
+	<entry name="ReturnStringArg">Synonym for <seealso name="returnstringarg" /> (there are a lot).</entry>
+	<entry name="InterpolateColor">Synonym for <seealso name="InterpolateColour" /></entry>
 </ul>
 <section>
 	Variables
 </section>
 	<em>Global</em>
 <ul>
-<entry name="TRUE">True hack for infinate loops.</entry>
-<entry name="FALSE">False hack for one-time loops.</entry>
-<entry name="NULL">1 long string for passing via Call(Remote|Local)Function.</entry>
+	<entry name="TRUE">True hack for infinate loops.</entry>
+	<entry name="FALSE">False hack for one-time loops.</entry>
+	<entry name="NULL">1 long string for passing via Call(Remote|Local)Function.</entry>
 </ul>
 <section>
 	Examples
