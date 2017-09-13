@@ -36,6 +36,7 @@
 	LI.dependency { DISPLAY: inline; PADDING-RIGHT: 8px }
 	LI.seealso { DISPLAY: inline; PADDING-RIGHT: 8px }
 	LI.attribute { DISPLAY: inline; PADDING-RIGHT: 8px }
+	LI.symbol A { PADDING-RIGHT: 8px }
 	OL { MARGIN-TOP: 0.5em; }
 	SPAN.paraminfo { FONT-WEIGHT:Bold; COLOR: #336699; }
 	H1 { COLOR: #336699; FONT-SIZE: x-large; MARGIN-BOTTOM: 0.5em; MARGIN-TOP: 1em; PADDING-LEFT: 4px }
@@ -259,8 +260,12 @@
 	<pre><xsl:apply-templates/></pre>
 </xsl:template>
 
-<xsl:template match="seealso">
+<xsl:template match="seealso_list">
 	<li class="seealso"><a><xsl:attribute name="href">#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="@name"/></a></li>
+</xsl:template>
+
+<xsl:template match="seealso">
+	<a><xsl:attribute name="href">#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="@name"/></a>
 </xsl:template>
 
 <xsl:template match="paramref">
@@ -293,9 +298,12 @@
 	<a><xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute><xsl:value-of select="@href"/></a>
 </xsl:template>
 
+<xsl:template match="symbolref">
+	<a><xsl:attribute name="href">#<xsl:value-of select="@name"/></xsl:attribute><em><xsl:value-of select="@name"/></em></a>
+</xsl:template>
 
-<xsl:template match="seealso">
-	<li class="seealso"><a><xsl:attribute name="href">#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="@name"/></a> - <xsl:apply-templates/></li>
+<xsl:template match="symbol">
+	<li class="symbol"><a><xsl:attribute name="href">#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="@name"/>:</a><xsl:apply-templates/></li>
 </xsl:template>
 
 
