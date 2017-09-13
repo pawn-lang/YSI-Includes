@@ -290,8 +290,14 @@
 <xsl:template match="indent">&#160;&#160;&#160;&#160;</xsl:template>
 
 <xsl:template match="a">
-	<li class="seealso"><a><xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute><xsl:value-of select="@href"/></a></li>
+	<a><xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute><xsl:value-of select="@href"/></a>
 </xsl:template>
+
+
+<xsl:template match="seealso">
+	<li class="seealso"><a><xsl:attribute name="href">#<xsl:value-of select="@name"/></xsl:attribute><xsl:value-of select="@name"/></a> - <xsl:apply-templates/></li>
+</xsl:template>
+
 
 </xsl:stylesheet>
 

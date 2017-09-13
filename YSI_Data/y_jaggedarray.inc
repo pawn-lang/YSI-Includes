@@ -7,11 +7,17 @@
 <file>
 					y_jaggedarray
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Provides code to easilly manipulate the sizes of 2d array slots.
-<section>Version</section>
+<section>
+	Version
+</section>
 	1.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	06/10/12:
 		First version
 		Fixed a bug calling "rawMemset".

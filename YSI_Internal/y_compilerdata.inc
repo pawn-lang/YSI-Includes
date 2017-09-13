@@ -31,60 +31,56 @@ in the output code.
 <file>
 					y_compilerdata
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Detect various information about the compiler, including which pass it is
 	currently executing, what flags it was compiled with, and which version it
 	is.  Provide that information to the rest of the script through a series of
 	consistent macros.  Used by y_groups to include code that might be needed
 	before it is known if it is needed (it can be dumped later).
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.1
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	12/09/17:
 		Renamed everything for consistency.
 		Documented macros.
 	14/04/13:
 		First version.
-</ul><section>Functions</section><ul>
-<li><em>Static</em><ul>
-<li><seealso name="__CompilerStringReturn" />
-		- Assembly for returning a string to its callers' caller.  Used to
-		bypass a known bug.</li>
-<li><seealso name="__CompilerSecondPass" />
-		- Tested to determine the current compiler pass.</li>
-</ul></li><li><em>Inline</em><ul>
-<li><seealso name="__COMPILER_STRING_RETURN" />
-		- Correctly return a string from a varargs function.</li>
-</ul></li></ul><section>Macros</section><ul>
-<li><seealso name="__COMPILER_PASS" />
-		- Which pass the compiler is currently running.</li><to_ul></li>
-<li><seealso name="__COMPILER_DOCUMENTING" />
-		- Is the compiler collecting documentation</li>
-		information right now (i.e. is this the first pass)?
-<li><seealso name="__COMPILER_1ST_PASS" />
-		- Is this the first compiler pass?</li>
-<li><seealso name="__COMPILER_2ND_PASS" />
-		- Is this the second compiler pass?</li>
-<li><seealso name="__COMPILER_FIRST_PASS" />
-		- Is this the first compiler pass?</li>
-<li><seealso name="__COMPILER_SECOND_PASS" />
-		- Is this the second compiler pass?</li>
-<li><seealso name="__COMPILER_MODIFIED" />
-		- Is the compiler an updated/unofficial/modified one?</li>
-<li><seealso name="__COMPILER_OFFICIAL" />
-		- Is the compiler an official one?</li>
-<li><seealso name="__COMPILER_COMPAT" />
-		- Was the compiler built with `-Z`?</li>
-<li><seealso name="__COMPILER_INCLUDE_GUARDS" />
-		- Does the compiler generate auto-include guards?</li>
-<li><seealso name="__COMPILER_NESTED_ELLIPSIS" />
-		- Does the compiler support nested ellipses?</li>
-<li><seealso name="__COMPILER_BUGGED_STRING_RETURN" />
+</ul><section>
+	Functions
+</section><ul>
+<li><subsection>Static</subsection><ul>
+<entry name="__CompilerStringReturn">
+		Assembly for returning a string to its callers' caller.  Used to
+		bypass a known bug.</entry>
+<entry name="__CompilerSecondPass">Tested to determine the current compiler pass.</entry>
+</ul></li><li><subsection>Inline</subsection><ul>
+<entry name="__COMPILER_STRING_RETURN">Correctly return a string from a varargs function.</entry>
+</ul></li></ul><section>
+	Macros
+</section><ul>
+<entry name="__COMPILER_PASS">Which pass the compiler is currently running.</li><to_ul></entry>
+<entry name="__COMPILER_DOCUMENTING">Is the compiler collecting documentation
+		information right now (i.e. is this the first pass)?</entry>
+<entry name="__COMPILER_1ST_PASS">Is this the first compiler pass?</entry>
+<entry name="__COMPILER_2ND_PASS">Is this the second compiler pass?</entry>
+<entry name="__COMPILER_FIRST_PASS">Is this the first compiler pass?</entry>
+<entry name="__COMPILER_SECOND_PASS">Is this the second compiler pass?</entry>
+<entry name="__COMPILER_MODIFIED">Is the compiler an updated/unofficial/modified one?</entry>
+<entry name="__COMPILER_OFFICIAL">Is the compiler an official one?</entry>
+<entry name="__COMPILER_COMPAT">Was the compiler built with `-Z`?</entry>
+<entry name="__COMPILER_INCLUDE_GUARDS">Does the compiler generate auto-include guards?</entry>
+<entry name="__COMPILER_NESTED_ELLIPSIS">Does the compiler support nested ellipses?</entry>
+<entry name="__COMPILER_BUGGED_STRING_RETURN">
 		- Are vararg function string returns bugged?  Not needed for using
 		<seealso name="__COMPILER_STRING_RETURN" />, as that will do the best
-		thing in both cases already.</li>
-<li><seealso name="P:D" />
-		- Wrap a fake function declaration, so macros can be documented.</li>
+		thing in both cases already.</entry>
+<entry name="P:D">Wrap a fake function declaration, so macros can be documented.</entry>
 </ul>
 *//** *//*
 Legal:

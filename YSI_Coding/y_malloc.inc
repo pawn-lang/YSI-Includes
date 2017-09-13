@@ -7,90 +7,71 @@
 <file>
 					y_malloc
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Functions for using malloc/calloc/free type functions in PAWN.
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.1
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	02/12/11:
 		Added variable argument functions.
 	22/12/08:
 		First version.
-</ul><section>Functions</section><ul>
-<li><em>Stock</em><ul>
-<li><seealso name="malloc" />
-		- Allocate a block of memory (may be inline).</li>
-<li><seealso name="calloc" />
-		- Allocate a block of memory and blank.</li>
-<li><seealso name="free" />
-		- Free an allocated block of memory (may be inline).</li>
-<li><seealso name="Malloc_Set" />
-		- Set a value in an allocated array (may be inline).</li>
-<li><seealso name="Malloc_Get" />
-		- Get a value in an allocated array (may be inline).</li>
-<li><seealso name="Malloc_SetS" />
-		- Set a string in an allocated array.</li>
-<li><seealso name="Malloc_GetS" />
-		- Get a string in an allocated array.</li>
-<li><seealso name="Malloc_Allocate" />
-		- Do the memory allocation (may be static).</li>
-<li><seealso name="Malloc_Free" />
-		- Do the memory freeing (may be static).</li>
-<li><seealso name="Malloc_SlotSize" />
-		- Get the size of an allocated block (may be inline).</li>
-<li><seealso name="Malloc_NewS" />
-		- Allocate for and store a given string.</li>
-</ul></li><li><em>Static</em><ul>
-<li><seealso name="Malloc_Allocate" />
-		- Do the memory allocation (may be stock).</li>
-<li><seealso name="Malloc_Free" />
-		- Do the memory freeing (may be stock).</li>
-</ul></li><li><em>Inline</em><ul>
-<li><seealso name="mget" />
-		- Get data from an allocation unit.</li>
-<li><seealso name="mset" />
-		- Set data in an allocation unit.</li>
-<li><seealso name="mgets" />
-		- Get a string from an allocation unit.</li>
-<li><seealso name="msets" />
-		- Set a string in an allocation unit.</li>
-<li><seealso name="malloc" />
-		- Allocate a block of memory (may be stock).</li>
-<li><seealso name="free" />
-		- Free an allocated block of memory (may be stock).</li>
-<li><seealso name="Malloc_Set" />
-		- Set a value in an allocated array (may be stock).</li>
-<li><seealso name="Malloc_Get" />
-		- Get a value in an allocated array (may be stock).</li>
-<li><seealso name="Malloc_NextSlot" />
-		- Get the next free data block.</li>
-<li><seealso name="Malloc_GetSlotSize" />
-		- Get the size of a slot.</li>
-<li><seealso name="Malloc_SetSlotSize" />
-		- Set the size of a block.</li>
-<li><seealso name="Malloc_GetData" />
-		- Direct data access getter.</li>
-<li><seealso name="Malloc_SetData" />
-		- Direct data access setter.</li>
-<li><seealso name="Malloc_SlotSize" />
-		- Get the size of an allocated block (may be stock).</li>
-</ul></li></ul><section>Definitions</section><ul>
-<li><seealso name="MALLOC_KB_TO_CELL" />
-		- Multiplication value to convert kb to cells.</li>
-<li><seealso name="NO_ALLOC" />
-		- A failed allocation (NULL, but YSI already has NULL).</li>
-</ul><section>Tags</section><ul>
-<li><seealso name="Alloc" />
-		- An allocated block handle variable.</li>
-</ul><section>Variables</section><ul>
-<li><em>Global</em><ul>
-<li><seealso name="YSI_gMallocMemory" />
-		- Stores the data (may be static).</li>
-</ul></li><li><em>Static</em><ul>
-<li><seealso name="YSI_gMallocMemory" />
-		- Stores the data (may be global).</li>
-<li><seealso name="_YSI_g_sUnusedStart" />
-		- Start of free memory.</li>
+</ul><section>
+	Functions
+</section><ul>
+<li><subsection>Stock</subsection><ul>
+<entry name="malloc">Allocate a block of memory (may be inline).</entry>
+<entry name="calloc">Allocate a block of memory and blank.</entry>
+<entry name="free">Free an allocated block of memory (may be inline).</entry>
+<entry name="Malloc_Set">Set a value in an allocated array (may be inline).</entry>
+<entry name="Malloc_Get">Get a value in an allocated array (may be inline).</entry>
+<entry name="Malloc_SetS">Set a string in an allocated array.</entry>
+<entry name="Malloc_GetS">Get a string in an allocated array.</entry>
+<entry name="Malloc_Allocate">Do the memory allocation (may be static).</entry>
+<entry name="Malloc_Free">Do the memory freeing (may be static).</entry>
+<entry name="Malloc_SlotSize">Get the size of an allocated block (may be inline).</entry>
+<entry name="Malloc_NewS">Allocate for and store a given string.</entry>
+</ul></li><li><subsection>Static</subsection><ul>
+<entry name="Malloc_Allocate">Do the memory allocation (may be stock).</entry>
+<entry name="Malloc_Free">Do the memory freeing (may be stock).</entry>
+</ul></li><li><subsection>Inline</subsection><ul>
+<entry name="mget">Get data from an allocation unit.</entry>
+<entry name="mset">Set data in an allocation unit.</entry>
+<entry name="mgets">Get a string from an allocation unit.</entry>
+<entry name="msets">Set a string in an allocation unit.</entry>
+<entry name="malloc">Allocate a block of memory (may be stock).</entry>
+<entry name="free">Free an allocated block of memory (may be stock).</entry>
+<entry name="Malloc_Set">Set a value in an allocated array (may be stock).</entry>
+<entry name="Malloc_Get">Get a value in an allocated array (may be stock).</entry>
+<entry name="Malloc_NextSlot">Get the next free data block.</entry>
+<entry name="Malloc_GetSlotSize">Get the size of a slot.</entry>
+<entry name="Malloc_SetSlotSize">Set the size of a block.</entry>
+<entry name="Malloc_GetData">Direct data access getter.</entry>
+<entry name="Malloc_SetData">Direct data access setter.</entry>
+<entry name="Malloc_SlotSize">Get the size of an allocated block (may be stock).</entry>
+</ul></li></ul><section>
+	Definitions
+</section><ul>
+<entry name="MALLOC_KB_TO_CELL">Multiplication value to convert kb to cells.</entry>
+<entry name="NO_ALLOC">A failed allocation (NULL, but YSI already has NULL).</entry>
+</ul><section>
+	Tags
+</section><ul>
+<entry name="Alloc">An allocated block handle variable.</entry>
+</ul><section>
+	Variables
+</section><ul>
+<li><subsection>Global</subsection><ul>
+<entry name="YSI_gMallocMemory">Stores the data (may be static).</entry>
+</ul></li><li><subsection>Static</subsection><ul>
+<entry name="YSI_gMallocMemory">Stores the data (may be global).</entry>
+<entry name="_YSI_g_sUnusedStart">Start of free memory.</entry>
 </ul></li></ul><section>Compile options</section><ul>
 <li>	MALLOC_MEMORY - Number of cells to reserve.</li>
 	MALLOC_MEMORY_KB - Number of killobytes to reserve.

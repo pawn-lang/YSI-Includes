@@ -7,22 +7,26 @@
 <file>
 					y_shortfunc
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Defines new names for native functions.
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.2
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	21/10/10:
 		Split in to y_shortfunc.
-</ul><section>Natives</section><ul>
-<li><seealso name="W@" />
-		- Renaming of <seealso name="__CallRemoteFunction" /> for size reasons.</li>
-<li><seealso name="V@" />
-		- Renaming of <seealso name="getproperty" /> for size reasons.</li>
-<li><seealso name="S@" />
-		- Renaming of <seealso name="setproperty" /> for size reasons.</li>
-<li><seealso name="P@" />
-		- Renaming of <seealso name="__CallLocalFunction" /> for size reasons.</li>
+</ul><section>
+	Natives
+</section><ul>
+<entry name="W@">Renaming of <seealso name="__CallRemoteFunction" /> for size reasons.</entry>
+<entry name="V@">Renaming of <seealso name="getproperty" /> for size reasons.</entry>
+<entry name="S@">Renaming of <seealso name="setproperty" /> for size reasons.</entry>
+<entry name="P@">Renaming of <seealso name="__CallLocalFunction" /> for size reasons.</entry>
 </ul>
 *//** *//*
 Legal:

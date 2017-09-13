@@ -7,7 +7,9 @@
 <file>
 					y_xml
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	<p>Parses XML files according to a set of defined rules.  A rule is a custom
 	function called on a tag when all the data for that tag has been collected.
 	The data for a tag could consist of simple <c>bla="bla"</c> pairs,
@@ -17,9 +19,13 @@
 	<p>Data for the tag is retrieved from a custom function using only:</p>
 	
 	<c>while (XML_GetKeyValue(ident, data)) {}</c>
-<section>Version</section>
+<section>
+	Version
+</section>
 	1.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	06/08/10:
 		First version
 </ul>

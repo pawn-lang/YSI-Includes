@@ -152,7 +152,9 @@ Optional plugins:
 <file>
 					y_master
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Handles distribution of control of code segments across all running scripts
 	with YSI to avoid conflicts of checkpoint streamers etc and allow features
 	like "/commands" displaying all commands on the server.
@@ -170,9 +172,13 @@ Optional plugins:
 	while to figure out)...
 	
 	This is now over 2000 lines of repetitive and complex macros!
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.2
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	06/08/10:
 		Managed the ultimate - got completely transparent inclusion!
 	05/08/10:
@@ -188,34 +194,26 @@ Optional plugins:
 		Added code for a script to remove itself from the global list.
 	11/10/07:
 		Not first version but added documentation months late.
-</ul><section>Macros</section><ul>
-<li><seealso name="RF" />
-		- Declare a function which may be remote.</li>
-<li><seealso name="RV" />
-		- Declare a void function which may be remote.</li>
-<li><seealso name="RS" />
-		- Declare an optional callback.</li>
-<li><seealso name="RFN" />
-		- Declare an optional callback with no parameters.</li>
-<li><seealso name="RFC" />
-		- Declare a slower but shorter function.</li>
-<li><seealso name="RFP" />
-		- Declare a function with tags and give recall hints.</li>
-<li><seealso name="RFPC" />
-		- Combination of P and C.</li>
-<li><seealso name="RFCP" />
-		- Combination of P and C.</li>
-</ul><section>Variables</section><ul>
-<li><em>Global</em><ul>
-<li><seealso name="_@" />
-		- ID of this script.</li>
+</ul><section>
+	Macros
+</section><ul>
+<entry name="RF">Declare a function which may be remote.</entry>
+<entry name="RV">Declare a void function which may be remote.</entry>
+<entry name="RS">Declare an optional callback.</entry>
+<entry name="RFN">Declare an optional callback with no parameters.</entry>
+<entry name="RFC">Declare a slower but shorter function.</entry>
+<entry name="RFP">Declare a function with tags and give recall hints.</entry>
+<entry name="RFPC">Combination of P and C.</entry>
+<entry name="RFCP">Combination of P and C.</entry>
+</ul><section>
+	Variables
+</section><ul>
+<li><subsection>Global</subsection><ul>
+<entry name="_@">ID of this script.</entry>
 </ul></li></ul><section>Compile options</section><ul>
-<li><seealso name="YSI_NO_MASTER" />
-		- Don't use the master system.</li>
-<li><seealso name="YSI_IS_CLIENT" />
-		- Script is a client only script.</li>
-<li><seealso name="YSI_IS_SERVER" />
-		- Script is a server only script.</li>
+<entry name="YSI_NO_MASTER">Don't use the master system.</entry>
+<entry name="YSI_IS_CLIENT">Script is a client only script.</entry>
+<entry name="YSI_IS_SERVER">Script is a server only script.</entry>
 </ul>
 *//** */
 

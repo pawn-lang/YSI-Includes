@@ -7,11 +7,17 @@
 <file>
 					y_natives
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Obsolete, but still required by y_lock.
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.1
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	25/02/12:
 		First version.
 </ul>

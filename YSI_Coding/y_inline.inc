@@ -7,7 +7,9 @@
 <file>
 					y_inline
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	This library allows a user to write inline functions in their script.  It
 	first detects all inline functions and generates data on them, such as
 	parameter counts and addresses.  When an inline function is passed in code
@@ -15,9 +17,13 @@
 	found to be called at some point its current local stack is stored in global
 	memory.  When the function actually is called, the stack is restored, and
 	additional parameters which are the inline function parameters, are passed.
-<section>Version</section>
+<section>
+	Version
+</section>
 	1.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	22/06/13:
 		Rewrote the library from scratch for better performance all round.
 	20/10/12:

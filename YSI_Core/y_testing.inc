@@ -7,11 +7,17 @@
 <file>
 					y_testing
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Runs any functions named as tests when the Testing_Run function is called.
-<section>Version</section>
+<section>
+	Version
+</section>
 	1.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	16/02/12:
 		Added better error reporting (less verbose passes).
 		Removed "Tests:".

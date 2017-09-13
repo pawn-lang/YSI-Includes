@@ -7,11 +7,17 @@
 <file>
 					y_races
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Create, manage, and run races.
-<section>Version</section>
+<section>
+	Version
+</section>
 	2.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	25/02/12:
 		Extracted most of the code to a separate file.
 	17/03/11:

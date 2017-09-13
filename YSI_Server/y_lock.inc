@@ -7,11 +7,17 @@
 <file>
 					y_lock
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Ensures that the server is running on the IP specified by "bind".
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.1
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	25/02/12:
 		First version.
 </ul>

@@ -7,11 +7,17 @@
 <file>
 					y_globaltags
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Declare GLOBAL_TAG_TYPES to define many tag types for function calls.
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.1
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	25/02/12:
 		First version.
 </ul>

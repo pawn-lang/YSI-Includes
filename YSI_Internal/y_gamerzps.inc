@@ -7,12 +7,18 @@
 <file>
 					y_gamerzps
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	This file unites various YSI features with Gamer_Z's GPS (Gamer_Z's
 	Positioning System) plugin so that you can use hooks and inlines with it.
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.1
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	20/10/12:
 		First version.
 </ul>

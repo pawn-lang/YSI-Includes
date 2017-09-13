@@ -14,11 +14,17 @@
 <file>
 					y_hooks
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Automatically hooks any callbacks with a very simple syntax.
-<section>Version</section>
+<section>
+	Version
+</section>
 	2.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	25/02/12:
 		Extracted most of the code to a separate file.
 	17/03/11:

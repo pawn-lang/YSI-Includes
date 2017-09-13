@@ -7,13 +7,19 @@
 <file>
 					y_bintree
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Provides functions to generate balanced binary search trees for efficient
 	searching of large arrays by value.  Left branch is less than, right branch
 	is greater than or equal to for multiple matching values.
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.1.3
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	12/08/07:
 		Fixed a bug with empty trees.
 	14/04/07:
@@ -25,50 +31,40 @@
 		Added Bintree_Add()
 	24/03/07:
 		First version.
-</ul><section>Functions</section><ul>
-<li><em>Core</em><ul>
-<li><seealso name="Bintree_QSort" />
-		- Custom implementaion of QSort to keep pointers.</li>
-<li><seealso name="Bintree_SortHalf" />
-		- Itteratively balances halves of an array.</li>
-</ul></li><li><em>Stock</em><ul>
-<li><seealso name="Bintree_Generate" />
-		- Generates a balanced binary tree from given input.</li>
-<li><seealso name="Bintree_Reset" />
-		- Resets a position in a tree.</li>
-<li><seealso name="Bintree_FindValue" />
-		- Finds the pointer for a value in the tree.</li>
-<li><seealso name="Bintree_Add" />
-		- Adds an item to a generated tree.</li>
-<li><seealso name="Bintree_Delete" />
-		- Removes an item from a tree.</li>
-<li><seealso name="Bintree_UpdatePointers" />
-		- Updates the pointers after a target change.</li>
-</ul></li><li><em>Static</em><ul>
-<li><seealso name="Bintree_Compress" />
-		- Removes space from an altered tree.</li>
-<li><seealso name="Bintree_FindMin" />
-		- Finds the smallest value on a branch.</li>
-<li><seealso name="Bintree_FindMax" />
-		- Finds the largest value on a branch.</li>
-</ul></li><li><em>Inline</em><ul>
-<li><seealso name="Bintree_Sort" />
-		- Entry point for Bintree_QSort.</li>
-<li><seealso name="Bintree_Fill" />
-		- Entry point for Bintree_SortHalf.</li>
-</ul></li></ul><section>Definitions</section><ul>
-<li><seealso name="BINTREE_NO_BRANCH" />
-		- Nowhere to go from the number in required direction.</li>
-<li><seealso name="BINTREE_NOT_FOUND" />
-		- Failure return.</li>
-</ul><section>Enums</section><ul>
-<li><seealso name="E_BINTREE_TREE" />
-		- Structure of a leaf of a binary tree.</li>
-<li><seealso name="E_BINTREE_INPUT" />
-		- Structure of an array of data to be added to a tree.</li>
-</ul><section>Tags</section><ul>
-<li><seealso name="Bintree" />
-		- Binary tree type.</li>
+</ul><section>
+	Functions
+</section><ul>
+<li><subsection>Core</subsection><ul>
+<entry name="Bintree_QSort">Custom implementaion of QSort to keep pointers.</entry>
+<entry name="Bintree_SortHalf">Itteratively balances halves of an array.</entry>
+</ul></li><li><subsection>Stock</subsection><ul>
+<entry name="Bintree_Generate">Generates a balanced binary tree from given input.</entry>
+<entry name="Bintree_Reset">Resets a position in a tree.</entry>
+<entry name="Bintree_FindValue">Finds the pointer for a value in the tree.</entry>
+<entry name="Bintree_Add">Adds an item to a generated tree.</entry>
+<entry name="Bintree_Delete">Removes an item from a tree.</entry>
+<entry name="Bintree_UpdatePointers">Updates the pointers after a target change.</entry>
+</ul></li><li><subsection>Static</subsection><ul>
+<entry name="Bintree_Compress">Removes space from an altered tree.</entry>
+<entry name="Bintree_FindMin">Finds the smallest value on a branch.</entry>
+<entry name="Bintree_FindMax">Finds the largest value on a branch.</entry>
+</ul></li><li><subsection>Inline</subsection><ul>
+<entry name="Bintree_Sort">Entry point for Bintree_QSort.</entry>
+<entry name="Bintree_Fill">Entry point for Bintree_SortHalf.</entry>
+</ul></li></ul><section>
+	Definitions
+</section><ul>
+<entry name="BINTREE_NO_BRANCH">Nowhere to go from the number in required direction.</entry>
+<entry name="BINTREE_NOT_FOUND">Failure return.</entry>
+</ul><section>
+	Enums
+</section><ul>
+<entry name="E_BINTREE_TREE">Structure of a leaf of a binary tree.</entry>
+<entry name="E_BINTREE_INPUT">Structure of an array of data to be added to a tree.</entry>
+</ul><section>
+	Tags
+</section><ul>
+<entry name="Bintree">Binary tree type.</entry>
 </ul>
 *//** *//*
 Legal:

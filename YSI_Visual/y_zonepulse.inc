@@ -7,33 +7,33 @@
 <file>
 					y_zonepulse
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Gradually fades a zone's colour between one colour and another, then back.
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.1
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	19/02/12:
 		First version.
-</ul><section>Functions</section><ul>
-<li><em>Public</em><ul>
-<li><seealso name="__GangZonePulse" />
-		- The timer that does the hard work.</li>
-</ul></li><li><em>Stock</em><ul>
-<li><seealso name="GangZonePulse" />
-		- Pulse a zone for player or collection of players.</li>
-<li><seealso name="GangZonePulseForPlayer" />
-		- Pulse a zone for a player.</li>
-<li><seealso name="GangZonePulseForAll" />
-		- Pulse a zone for everyone.</li>
-<li><seealso name="GangZoneStopPulse" />
-		- Stop a zone pulsing for a set of players.</li>
-<li><seealso name="GangZoneStopPulseForPlayer" />
-		- Stop a zone pulsing for a single player.</li>
-<li><seealso name="GangZoneStopPulseForAll" />
-		- Stop a zone pulsing for everyone.</li>
+</ul><section>
+	Functions
+</section><ul>
+<li><subsection>Public</subsection><ul>
+<entry name="__GangZonePulse">The timer that does the hard work.</entry>
+</ul></li><li><subsection>Stock</subsection><ul>
+<entry name="GangZonePulse">Pulse a zone for player or collection of players.</entry>
+<entry name="GangZonePulseForPlayer">Pulse a zone for a player.</entry>
+<entry name="GangZonePulseForAll">Pulse a zone for everyone.</entry>
+<entry name="GangZoneStopPulse">Stop a zone pulsing for a set of players.</entry>
+<entry name="GangZoneStopPulseForPlayer">Stop a zone pulsing for a single player.</entry>
+<entry name="GangZoneStopPulseForAll">Stop a zone pulsing for everyone.</entry>
 </ul></li></ul><section>Compile options</section><ul>
-<li><seealso name="ZONE_PULSE_STAGE_TIME" />
-		- ms between each pulse frame.</li>
+<entry name="ZONE_PULSE_STAGE_TIME">ms between each pulse frame.</entry>
 </ul>
 *//** *//*
 Legal:

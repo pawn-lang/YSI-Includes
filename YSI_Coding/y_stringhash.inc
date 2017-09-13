@@ -7,11 +7,17 @@
 <file>
 					y_stringhash
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Allows you to hash strings at compile time to use them in a switch.
-<section>Version</section>
+<section>
+	Version
+</section>
 	2.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	06/03/11:
 		Changed the order of some letters to better support numbers in _I.
 	01/03/11:
@@ -22,15 +28,16 @@
 		Added FNV1 and FNV1a hashes to avoid collisions.
 	19/08/10:
 		First version.
-</ul><section>Functions</section><ul>
-<li><em>Stock</em><ul>
-<li><seealso name="YHash" />
-		- Generate a string hash at run time.</li>
-</ul></li></ul><section>Definitions</section><ul>
-<li><seealso name="_H" />
-		- Generate a string hash at compile time.</li>
-<li><seealso name="_I" />
-		- Generate a case insensitive string hash at compile time.</li>
+</ul><section>
+	Functions
+</section><ul>
+<li><subsection>Stock</subsection><ul>
+<entry name="YHash">Generate a string hash at run time.</entry>
+</ul></li></ul><section>
+	Definitions
+</section><ul>
+<entry name="_H">Generate a string hash at compile time.</entry>
+<entry name="_I">Generate a case insensitive string hash at compile time.</entry>
 </ul>
 *//** *//*
 Legal:

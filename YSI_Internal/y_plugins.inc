@@ -7,12 +7,18 @@
 <file>
 					y_plugins
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Configuration and detection for third-party SA:MP plugins (including
 	ones by Y_Less).
-<section>Version</section>
+<section>
+	Version
+</section>
 	1.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	21/10/12:
 		First version
 </ul>

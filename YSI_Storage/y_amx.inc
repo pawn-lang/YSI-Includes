@@ -7,13 +7,19 @@
 <file>
 					y_amx
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Allows a script access to information about itself, such as function names.
 	This can be used for a range of things, including automatic callback hooking
 	and testing.
-<section>Version</section>
+<section>
+	Version
+</section>
 	1.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	13/11/13:
 		Simplified the main macros to work across multiple lines.
 	06/08/10:

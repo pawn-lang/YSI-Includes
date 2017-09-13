@@ -2,7 +2,9 @@
 <file>
 					y_loader
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Loads MTA XML format map files for use with the object and race systems.
 Legal:
 	Copyright (C) 2007 Alex "Y_Less" Cole
@@ -21,39 +23,37 @@ Legal:
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 	MA 02110-1301, USA.
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	12/10/07:
 		Added Loader_AddHandler.
 		Added Loader_GetRace.
 	24/08/07:
 		First version.
-</ul><section>Functions</section><ul>
-<li><em>Public</em><ul>
-<li><seealso name="Loader_Spawn" />
-		- Processes a loaded spawn point.</li>
-<li><seealso name="Loader_Check" />
-		- Processes a loaded checkpoint.</li>
-<li><seealso name="Loader_Obj" />
-		- Processes a loaded object.</li>
-</ul></li><li><em>Core</em><ul>
-<li><seealso name="Loader_Loader" />
-		- Initialises data.</li>
-</ul></li><li><em>Stock</em><ul>
-<li><seealso name="Loader_Parse" />
-		- Loads a file.</li>
-<li><seealso name="Loader_AddHandler" />
-		- Adds a custom handle for the race file.</li>
-<li><seealso name="Loader_GetRace" />
-		- Returns the current race handle.</li>
-</ul></li></ul><section>Tags</section><ul>
-<li><seealso name="e_RACE_FLAGS" />
-		- Race data flag.</li>
-</ul><section>Variables</section><ul>
-<li><em>Static</em><ul>
-<li><seealso name="YSI_g_sXMLRules" />
-		- Handle to the XML parse rule set.</li>
-<li><seealso name="YSI_g_sCurRace" />
-		- Handle to the current race being built.</li>
+</ul><section>
+	Functions
+</section><ul>
+<li><subsection>Public</subsection><ul>
+<entry name="Loader_Spawn">Processes a loaded spawn point.</entry>
+<entry name="Loader_Check">Processes a loaded checkpoint.</entry>
+<entry name="Loader_Obj">Processes a loaded object.</entry>
+</ul></li><li><subsection>Core</subsection><ul>
+<entry name="Loader_Loader">Initialises data.</entry>
+</ul></li><li><subsection>Stock</subsection><ul>
+<entry name="Loader_Parse">Loads a file.</entry>
+<entry name="Loader_AddHandler">Adds a custom handle for the race file.</entry>
+<entry name="Loader_GetRace">Returns the current race handle.</entry>
+</ul></li></ul><section>
+	Tags
+</section><ul>
+<entry name="e_RACE_FLAGS">Race data flag.</entry>
+</ul><section>
+	Variables
+</section><ul>
+<li><subsection>Static</subsection><ul>
+<entry name="YSI_g_sXMLRules">Handle to the XML parse rule set.</entry>
+<entry name="YSI_g_sCurRace">Handle to the current race being built.</entry>
 </ul></li></ul>
 *//** *//*
 Legal:

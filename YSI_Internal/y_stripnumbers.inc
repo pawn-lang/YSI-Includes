@@ -7,7 +7,9 @@
 <file>
 					y_stripnumbers
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Removes tag overrides which are actually numbers.  This allows for:
 		
 		uvar g_a[MAX_PLAYERS][E_SOME_ENUM];
@@ -15,7 +17,9 @@
 		
 	Without stripping you would end with code doing "42:0" or getting a tag
 	mismatch on "E_SOME_ENUM", both of which are problems.
-<section>Version</section>
+<section>
+	Version
+</section>
 	1.0
 
 *//** *//*

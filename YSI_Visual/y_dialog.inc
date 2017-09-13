@@ -7,12 +7,18 @@
 <file>
 					y_dialog
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Provides functions for dealing with dialogs, without needing to worry about
 	IDs or huge "OnDialogResponse" callbacks.
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.1
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	25/02/12:
 		First version.
 </ul>>

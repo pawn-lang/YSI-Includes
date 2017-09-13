@@ -7,11 +7,17 @@
 <file>
 					y_files
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Provides native declarations for YSF functions.
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.1
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	15/09/10:
 		First version split from the old YSF.
 </ul>

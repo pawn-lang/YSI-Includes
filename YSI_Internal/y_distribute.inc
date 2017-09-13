@@ -7,12 +7,18 @@
 <file>
 					y_distribute
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	This library simplifies the task of sending data to the new master script
 	when one takes over from another.
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.1
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	17/07/13:
 		First version.
 </ul>

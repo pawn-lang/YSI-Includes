@@ -7,13 +7,19 @@
 <file>
 					y_playerarray
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	This code provides arrays of players who can do things.  This is for support
 	of the text system which can take arrays of player ids, bit arrays or just a
 	single ID.
-<section>Version</section>
+<section>
+	Version
+</section>
 	1.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	25/02/11:
 		Scrapped pointless "playing" code I was unhappy with.
 	29/11/10:

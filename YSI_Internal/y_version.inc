@@ -7,16 +7,24 @@
 <file>
 					y_version
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Checks online to see if there is a newer version of YSI available.
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.2
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	26/10/10:
 		Added changelog capabilities.
 	22/10/10:
 		First version.
-</ul><section>Hooks</section><ul>
+</ul><section>
+	Hooks
+</section><ul>
 <li>OnGameModeInit</li>
 </ul>
 *//** *//*

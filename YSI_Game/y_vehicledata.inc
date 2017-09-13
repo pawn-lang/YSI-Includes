@@ -7,31 +7,38 @@
 <file>
 					y_vehicledata
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Basic functions for gathering data on various vehicle models.  Things like
 	what sort of vehicle they are and what organisation they belong to.
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.2
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	15/03/15:
 		Changed clamp ranges.
 	01/06/14:
 		First version.
-</ul><section>Functions</section><ul>
-<li><em>Stock</em><ul>
-<li><seealso name="Vehicle_Speed" />
-		- Get current vehicle speed in KMH.</li>
-</ul></li></ul><section>Tags</section><ul>
-<li><seealso name="VIM" />
-		- Vehicle Internal Modelid.</li>
-</ul><section>Variables</section><ul>
-<li><em>Global</em><ul>
-<li><seealso name="YSI_gVehicleFlags" />
-		- Data on vehicles.</li>
-<li><seealso name="YSI_gVehicleNames" />
-		- Names of vehicles.</li>
-<li><seealso name="YSI_gVehicleTopSpeed" />
-		- Top speed of vehicles.</li>
+</ul><section>
+	Functions
+</section><ul>
+<li><subsection>Stock</subsection><ul>
+<entry name="Vehicle_Speed">Get current vehicle speed in KMH.</entry>
+</ul></li></ul><section>
+	Tags
+</section><ul>
+<entry name="VIM">Vehicle Internal Modelid.</entry>
+</ul><section>
+	Variables
+</section><ul>
+<li><subsection>Global</subsection><ul>
+<entry name="YSI_gVehicleFlags">Data on vehicles.</entry>
+<entry name="YSI_gVehicleNames">Names of vehicles.</entry>
+<entry name="YSI_gVehicleTopSpeed">Top speed of vehicles.</entry>
 </ul></li></ul>
 *//** *//*
 Legal:

@@ -7,11 +7,17 @@
 <file>
 					y_functional
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Lambda functions and functional program functions - map, fold, etc.
-<section>Version</section>
+<section>
+	Version
+</section>
 	1.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	09/09/17:
 		First documentation.
 </ul>

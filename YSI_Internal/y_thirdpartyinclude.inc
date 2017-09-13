@@ -2,11 +2,17 @@
 <file>
 					y_thirdpartyinclude
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Try and include all YSI dependencies, looking in as many places as needed.
-<section>Version</section>
+<section>
+	Version
+</section>
 	1.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	09/09/17:
 		First documentaiton.
 </ul>

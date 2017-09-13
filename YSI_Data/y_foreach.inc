@@ -2,7 +2,9 @@
 <file>
 					y_foreach
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Provides efficient looping through sparse data sets, such as connected
 	players.  Significantly improved from the original version to be a generic
 	loop system, rather then purely a player loop system.  When used for
@@ -15,9 +17,13 @@
 	
 		<a href="http://forum.sa-mp.com/showthread.php?t=481877" />
 	
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.4
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	29/03/15:
 		More testing.
 		Repaired special iterators.
@@ -88,95 +94,68 @@
 		Fixed version number.
 	08/09/07:
 		First version.
-</ul><section>Functions</section><ul>
-<li><em>Public</em><ul>
-<li><seealso name="OnPlayerDisconnect" />
-		- Called when a player leaves to remove them.</li>
-<li><seealso name="OnPlayerConnect" />
-		- Called when a player connects to add them.</li>
-</ul></li><li><em>Stock</em><ul>
-<li><seealso name="Iter_ShowArray" />
-		- Displays the contents of the array.</li>
-<li><seealso name="Iter_AddInternal" />
-		- Add a value to an iterator.</li>
-<li><seealso name="Iter_RemoveInternal" />
-		- Remove a value from an iterator.</li>
-<li><seealso name="Iter_RandomInternal" />
-		- Get a random item from an iterator.</li>
-<li><seealso name="Iter_FreeInternal" />
-		- Gets the first free slot in the iterator.</li>
-<li><seealso name="Iter_InitInternal" />
-		- Initialises a multi-dimensional iterator.</li>
-</ul></li><li><em>Inline</em><ul>
-<li><seealso name="Iter_Create" />
-		- Create a new iterator value set.</li>
-<li><seealso name="Iter_Add" />
-		- Wraps Iter_AddInternal.</li>
-<li><seealso name="Iter_Remove" />
-		- Wraps Iter_RemoveInternal.</li>
-<li><seealso name="Iter_Random" />
-		- Wraps Iter_RandomInternal.</li>
-<li><seealso name="Iter_Count" />
-		- Gets the number of items in an iterator.</li>
-<li><seealso name="Iter_Debug" />
-		- Wraps around Iter_ShowArray.</li>
-<li><seealso name="Iter_Free" />
-		- Wraps around Iter_FreeInternal.</li>
-<li><seealso name="Iter_Create2" />
-		- Create a new iterator array value set.</li>
-<li><seealso name="Iter_Add2" />
-		- Wraps Iter_AddInternal for arrays.</li>
-<li><seealso name="Iter_Remove2" />
-		- Wraps Iter_RemoveInternal for arrays.</li>
-<li><seealso name="Iter_Random2" />
-		- Wraps Iter_RandomInternal for arrays.</li>
-<li><seealso name="Iter_Count2" />
-		- Gets the number of items in an iterator array.</li>
-<li><seealso name="Iter_Debug2" />
-		- Wraps around Iter_ShowArray for arrays.</li>
-<li><seealso name="Iter_Free2" />
-		- Wraps around Iter_FreeInternal for arrays.</li>
-</ul></li></ul><section>Hooks</section><ul>
-<li><seealso name="Iter_OnPlayerConnect" />
-		- Hook for the OnPlayerConnect callback.</li>
-<li><seealso name="Iter_OnPlayerDisconnect" />
-		- Hook for the OnPlayerDisconnect callback.</li>
-<li><seealso name="Iter_OnGameModeInit" />
-		- Only exists to make the code compile correctly...</li>
-</ul><section>Keywords</section><ul>
-<li><seealso name="foreach" />
-		- Command to loop an iterator.</li>
-<li><seealso name="foreachex" />
-		- Like foreach but without a new variable.</li>
-<li><seealso name="foreach2" />
-		- Command to loop through an iterator array.</li>
-<li><seealso name="foreachex" />
-		- Like foreach2 but without a new variable.</li>
-</ul><section>Tags</section><ul>
-<li><seealso name="Iterator" />
-		- Declare an iterator.</li>
-</ul><section>Variables</section><ul>
-<li><em>Static</em><ul>
-<li><seealso name="YSI_g_OPC" />
-		- Records wether Iter_OnPlayerConnect exists for speed.</li>
-<li><seealso name="YSI_g_OPDC" />
-		- Records wether Iter_OnPlayerDisconnect exists for speed.</li>
+</ul><section>
+	Functions
+</section><ul>
+<li><subsection>Public</subsection><ul>
+<entry name="OnPlayerDisconnect">Called when a player leaves to remove them.</entry>
+<entry name="OnPlayerConnect">Called when a player connects to add them.</entry>
+</ul></li><li><subsection>Stock</subsection><ul>
+<entry name="Iter_ShowArray">Displays the contents of the array.</entry>
+<entry name="Iter_AddInternal">Add a value to an iterator.</entry>
+<entry name="Iter_RemoveInternal">Remove a value from an iterator.</entry>
+<entry name="Iter_RandomInternal">Get a random item from an iterator.</entry>
+<entry name="Iter_FreeInternal">Gets the first free slot in the iterator.</entry>
+<entry name="Iter_InitInternal">Initialises a multi-dimensional iterator.</entry>
+</ul></li><li><subsection>Inline</subsection><ul>
+<entry name="Iter_Create">Create a new iterator value set.</entry>
+<entry name="Iter_Add">Wraps Iter_AddInternal.</entry>
+<entry name="Iter_Remove">Wraps Iter_RemoveInternal.</entry>
+<entry name="Iter_Random">Wraps Iter_RandomInternal.</entry>
+<entry name="Iter_Count">Gets the number of items in an iterator.</entry>
+<entry name="Iter_Debug">Wraps around Iter_ShowArray.</entry>
+<entry name="Iter_Free">Wraps around Iter_FreeInternal.</entry>
+<entry name="Iter_Create2">Create a new iterator array value set.</entry>
+<entry name="Iter_Add2">Wraps Iter_AddInternal for arrays.</entry>
+<entry name="Iter_Remove2">Wraps Iter_RemoveInternal for arrays.</entry>
+<entry name="Iter_Random2">Wraps Iter_RandomInternal for arrays.</entry>
+<entry name="Iter_Count2">Gets the number of items in an iterator array.</entry>
+<entry name="Iter_Debug2">Wraps around Iter_ShowArray for arrays.</entry>
+<entry name="Iter_Free2">Wraps around Iter_FreeInternal for arrays.</entry>
+</ul></li></ul><section>
+	Hooks
+</section><ul>
+<entry name="Iter_OnPlayerConnect">Hook for the OnPlayerConnect callback.</entry>
+<entry name="Iter_OnPlayerDisconnect">Hook for the OnPlayerDisconnect callback.</entry>
+<entry name="Iter_OnGameModeInit">Only exists to make the code compile correctly...</entry>
+</ul><section>
+	Keywords
+</section><ul>
+<entry name="foreach">Command to loop an iterator.</entry>
+<entry name="foreachex">Like foreach but without a new variable.</entry>
+<entry name="foreach2">Command to loop through an iterator array.</entry>
+<entry name="foreachex">Like foreach2 but without a new variable.</entry>
+</ul><section>
+	Tags
+</section><ul>
+<entry name="Iterator">Declare an iterator.</entry>
+</ul><section>
+	Variables
+</section><ul>
+<li><subsection>Static</subsection><ul>
+<entry name="YSI_g_OPC">Records wether Iter_OnPlayerConnect exists for speed.</entry>
+<entry name="YSI_g_OPDC">Records wether Iter_OnPlayerDisconnect exists for speed.</entry>
 </ul></li></ul><section>Compile options</section><ul>
-<li><seealso name="YSI_ITTER_NO_SORT" />
-		- Removed.</li>
-<li><seealso name="FOREACH_NO_BOTS" />
-		- Remove the bot iterators for smaller code.</li>
-<li><seealso name="FOREACH_NO_PLAYERS" />
-		- Remove all default code for player itteration.</li>
-</ul><section>Iterators</section><ul>
-<li><seealso name="Player" />
-		- List of all players connected.</li>
-<li><seealso name="Bot" />
-		- List of all bots (npcs) connected.</li>
-<li><seealso name="NPC" />
-		- Alias of Bot.</li>
-<li><seealso name="Character" />
-		- All players and bots.</li>
+<entry name="YSI_ITTER_NO_SORT">Removed.</entry>
+<entry name="FOREACH_NO_BOTS">Remove the bot iterators for smaller code.</entry>
+<entry name="FOREACH_NO_PLAYERS">Remove all default code for player itteration.</entry>
+</ul><section>
+	Iterators
+</section><ul>
+<entry name="Player">List of all players connected.</entry>
+<entry name="Bot">List of all bots (npcs) connected.</entry>
+<entry name="NPC">Alias of Bot.</entry>
+<entry name="Character">All players and bots.</entry>
 </ul>
 *//** *//*
 Legal:

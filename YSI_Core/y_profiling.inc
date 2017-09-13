@@ -7,11 +7,17 @@
 <file>
 					y_profiling
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Runs any functions named as profilings when the Profiling_Run function is called.
-<section>Version</section>
+<section>
+	Version
+</section>
 	1.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	17/12/16:
 		First Version
 </ul>

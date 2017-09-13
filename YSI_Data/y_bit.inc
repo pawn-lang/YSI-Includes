@@ -7,7 +7,9 @@
 <file>
 					y_bit
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Provides functions for bit manipulation and bit arrays greater than 32bits.
 	The arrays are usually bigger than required due to cell boundaries but this
 	shouldn't cause a major problem (bit tests on the 101st bit of a 100 bit
@@ -15,9 +17,13 @@
 	
 	Note that y_commands has a few optimisations which bypass the code in here
 	so any modifications to bit array layouts will need to be reflected there.
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.2
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	21/10/12:
 		Changed "Bit_Display" to print in the correct order.
 	22/02/12:
@@ -32,31 +38,27 @@
 		Added Bit_SetAll
 	15/04/07:
 		First version.
-</ul><section>Functions</section><ul>
-<li><em>Stock</em><ul>
-<li><seealso name="Bit_Set" />
-		- Sets a slot to the given value.</li>
-<li><seealso name="Bit_Get" />
-		- Gets a slot state.</li>
-<li><seealso name="Bit_SetAll" />
-		- Sets all the slots in an array to the same thing.</li>
-<li><seealso name="Bit_GetCount" />
-		- Gets the number of 1s in a bit array.</li>
-</ul></li><li><em>Inline</em><ul>
-<li><seealso name="Bit_Bits" />
-		- Gets the number of cells required for a bit array.</li>
-<li><seealso name="Bit_Let" />
-		- Sets a slot to 1.</li>
-<li><seealso name="Bit_Vet" />
-		- Sets a slot to 0.</li>
-<li><seealso name="Bit_GetBits" />
-		- Gets the bit at a slot unsafely.</li>
-</ul></li></ul><section>Definitions</section><ul>
-<li><seealso name="CELLSHIFT" />
-		- Number of bits that can hold "cellbits"</li>
-</ul><section>Tags</section><ul>
-<li><seealso name="Bit" />
-		- Bit array type.</li>
+</ul><section>
+	Functions
+</section><ul>
+<li><subsection>Stock</subsection><ul>
+<entry name="Bit_Set">Sets a slot to the given value.</entry>
+<entry name="Bit_Get">Gets a slot state.</entry>
+<entry name="Bit_SetAll">Sets all the slots in an array to the same thing.</entry>
+<entry name="Bit_GetCount">Gets the number of 1s in a bit array.</entry>
+</ul></li><li><subsection>Inline</subsection><ul>
+<entry name="Bit_Bits">Gets the number of cells required for a bit array.</entry>
+<entry name="Bit_Let">Sets a slot to 1.</entry>
+<entry name="Bit_Vet">Sets a slot to 0.</entry>
+<entry name="Bit_GetBits">Gets the bit at a slot unsafely.</entry>
+</ul></li></ul><section>
+	Definitions
+</section><ul>
+<entry name="CELLSHIFT">Number of bits that can hold "cellbits"</entry>
+</ul><section>
+	Tags
+</section><ul>
+<entry name="Bit">Bit array type.</entry>
 </ul>
 *//** *//*
 Legal:

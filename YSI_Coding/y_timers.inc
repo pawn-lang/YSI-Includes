@@ -7,14 +7,20 @@
 <file>
 					y_timers
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Sets up repeating timers without requiring any SetTimers and arranges them
 	so that they will be very unlikely to meet (at least for a long time) using
 	scheduling algorithms to get timers with the same period to be offset.  Also
 	fixes arrays and strings in timers so they can be passed properly.
-<section>Version</section>
+<section>
+	Version
+</section>
 	2.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	29/04/11:
 		Added version 2 of the code with more advanced options.
 	21/03/11:

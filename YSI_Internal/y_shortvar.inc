@@ -7,11 +7,17 @@
 <file>
 					y_shortvar
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Declares a few variables with very short names, used all over YSI.
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.2
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	21/10/10:
 		Split in to y_shortfunc.
 </ul>

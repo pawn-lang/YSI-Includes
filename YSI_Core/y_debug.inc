@@ -7,7 +7,9 @@
 <file>
 					y_debug
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Ensures debug levels are set and defines debug functions.
 	
 	General debug levels:
@@ -23,32 +25,33 @@
 	
 	If you use P:0 you get an optional debug print controlled by the global
 	state ysi_debug - which is either on or off.
-<section>Version</section>
+<section>
+	Version
+</section>
 	1.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	06/08/10:
 		Added new syntax.
 		Added level 0 debugging with state controlled functions.
 	15/04/07:
 		First version.
-</ul><section>Functions</section><ul>
-<li><em>Inline</em><ul>
-<li><seealso name="Debug_Code" />
-		- Runs defined code if a certain level is active.</li>
-<li><seealso name="Debug_Print" />
-		- Prints the formatted string provided at the given level.</li>
-</ul></li></ul><section>Definitions</section><ul>
-<li><seealso name="P:&lt;0-6&gt;" />
-		- Print a message.</li>
-<li><seealso name="P:C" />
-		- Run debug code.</li>
-<li><seealso name="P:E" />
-		- Print an error message.</li>
-<li><seealso name="P:W" />
-		- Print a warning message.</li>
+</ul><section>
+	Functions
+</section><ul>
+<li><subsection>Inline</subsection><ul>
+<entry name="Debug_Code">Runs defined code if a certain level is active.</entry>
+<entry name="Debug_Print">Prints the formatted string provided at the given level.</entry>
+</ul></li></ul><section>
+	Definitions
+</section><ul>
+<entry name="P:&lt;0-6&gt;">Print a message.</entry>
+<entry name="P:C">Run debug code.</entry>
+<entry name="P:E">Print an error message.</entry>
+<entry name="P:W">Print a warning message.</entry>
 </ul><section>Compile options</section><ul>
-<li><seealso name="_DEBUG" />
-		- Debugging level to use.</li>
+<entry name="_DEBUG">Debugging level to use.</entry>
 </ul>
 *//** *//*
 Legal:

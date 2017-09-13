@@ -7,31 +7,34 @@
 <file>
 					y_hashmap
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Maps string indexes to integer indexes.  Uses a fast hash to get an array
 	slot, then a linked list to resolve collisions.
-<section>Version</section>
+<section>
+	Version
+</section>
 	2.0
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	23/06/13:
 		First version.
-</ul><section>Functions</section><ul>
-<li><em>Stock</em><ul>
-<li><seealso name="HashMap_Init" />
-		- Associate a hash map with an array.</li>
-<li><seealso name="HashMap_Add" />
-		- Add a value under a given string.</li>
-<li><seealso name="HashMap_Get" />
-		- Get a value from a string.</li>
-<li><seealso name="HashMap_RemoveKey" />
-		- Remove a string and its value from a hash map.</li>
-<li><seealso name="HashMap_Set" />
-		- Change the value associated with a key.</li>
-</ul></li></ul><section>Definitions</section><ul>
-<li><seealso name="HASH_MAP_DATA" />
-		- What should be added to enums to be hash map referenced.</li>
-<li><seealso name="HashMap" />
-		- Declare a new hash map.</li>
+</ul><section>
+	Functions
+</section><ul>
+<li><subsection>Stock</subsection><ul>
+<entry name="HashMap_Init">Associate a hash map with an array.</entry>
+<entry name="HashMap_Add">Add a value under a given string.</entry>
+<entry name="HashMap_Get">Get a value from a string.</entry>
+<entry name="HashMap_RemoveKey">Remove a string and its value from a hash map.</entry>
+<entry name="HashMap_Set">Change the value associated with a key.</entry>
+</ul></li></ul><section>
+	Definitions
+</section><ul>
+<entry name="HASH_MAP_DATA">What should be added to enums to be hash map referenced.</entry>
+<entry name="HashMap">Declare a new hash map.</entry>
 </ul>
 *//** *//*
 Legal:

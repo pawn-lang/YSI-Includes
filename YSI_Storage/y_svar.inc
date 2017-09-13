@@ -7,11 +7,17 @@
 <file>
 					y_svar
 </file>
-<section>Description</section>
+<section>
+	Description
+</section>
 	Declares data to be automatically saved and loaded for the whole server.
-<section>Version</section>
+<section>
+	Version
+</section>
 	0.1
-<section>Changelog</section><ul>
+<section>
+	Changelog
+</section><ul>
 	25/02/12:
 		First version.
 </ul>
