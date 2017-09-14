@@ -2429,7 +2429,7 @@ YCMD:enter(playerid, params[], help)
 			}
 		}
 		#if defined _YSI_VISUAL_PICKUPS
-			#pragma tabsize 0
+			#pragma tabsize 4
 			else if (YSI_g_sPickupTimer[playerid] != -1)
 			{
 				cpid = YSI_g_sPlayerPickup[playerid];

@@ -150,7 +150,9 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+// Die tabsize 0!
 #pragma tabsize 4
+#define tabsize%00%0\10;%0 _DUMMY_do_not_use_tabsize_0
 
 // Enable `P:D(func())` for forcing function-like macros in to documentation.
 // For example:

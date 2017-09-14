@@ -322,7 +322,7 @@ hook OnScriptInit()
 			") ENGINE InnoDB;");
 	P:5("Users_OnScriptInit: mkH = %d", _:mkH);
 	// "options" was "BIT(32)".
-	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
+	#pragma tabsize 4 // BAD BAD BAD!  HACK HACK HACK!
 	SQL_CLEANUP(r);
 	#pragma tabsize 4 // RESTORE FROM THE UGLINESS!
 	// Create the table for storing tags.
@@ -334,7 +334,7 @@ hook OnScriptInit()
 			"INDEX (mode) USING HASH,"									\
 			"UNIQUE KEY (mode, tag)"									\
 			") ENGINE InnoDB;");
-	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
+	#pragma tabsize 4 // BAD BAD BAD!  HACK HACK HACK!
 	SQL_CLEANUP(r);
 	#pragma tabsize 4 // RESTORE FROM THE UGLINESS!
 	// Create the table to map names to YIDs.
@@ -346,7 +346,7 @@ hook OnScriptInit()
 				"REFERENCES y_users_preload (yid) ON DELETE CASCADE,"	\
 			"INDEX (name) USING HASH"									\
 			") ENGINE InnoDB;");
-	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
+	#pragma tabsize 4 // BAD BAD BAD!  HACK HACK HACK!
 	SQL_CLEANUP(r);
 	#pragma tabsize 4 // RESTORE FROM THE UGLINESS!
 	// Create the table for storing key/value pairs.
@@ -360,7 +360,7 @@ hook OnScriptInit()
 			"CONSTRAINT FOREIGN KEY (yid) REFERENCES y_users_preload (yid) ON DELETE CASCADE," \
 			"UNIQUE KEY (yid, tagid, vkey), INDEX (yid)"				\
 			") ENGINE InnoDB;");
-	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
+	#pragma tabsize 4 // BAD BAD BAD!  HACK HACK HACK!
 	SQL_CLEANUP(r);
 	#pragma tabsize 4 // RESTORE FROM THE UGLINESS!
 	// Create the table to map names to IPs.
@@ -376,7 +376,7 @@ hook OnScriptInit()
 	// "validated" means that this name/IP combination logged in and was
 	// confirmed to be a valid connecting user, not someone trying to spoof a
 	// login.
-	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
+	#pragma tabsize 4 // BAD BAD BAD!  HACK HACK HACK!
 	SQL_CLEANUP(r);
 	#pragma tabsize 4 // RESTORE FROM THE UGLINESS!
 	// Create the table to map YIDs to IPs.
@@ -388,7 +388,7 @@ hook OnScriptInit()
 			"registered DATETIME,"										\
 			"leave_time DATETIME"										\
 			") ENGINE InnoDB;");
-	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
+	#pragma tabsize 4 // BAD BAD BAD!  HACK HACK HACK!
 	SQL_CLEANUP(r);
 	#pragma tabsize 4 // RESTORE FROM THE UGLINESS!
 	// Create the table to store failed logins.
@@ -401,7 +401,7 @@ hook OnScriptInit()
 			"validated BOOL," 											\
 			"attempt_time DATETIME"										\
 			") ENGINE InnoDB;");
-	#pragma tabsize 0 // BAD BAD BAD!  HACK HACK HACK!
+	#pragma tabsize 4 // BAD BAD BAD!  HACK HACK HACK!
 	SQL_CLEANUP(r);
 	#pragma tabsize 4 // RESTORE FROM THE UGLINESS!
 	sql_disconnect(mkH);

@@ -2147,7 +2147,7 @@ static stock Object_GetPos(objectid, &Float:x, &Float:y, &Float:z)
 			Object_GetPos(playerid, x, y, z);
 		}
 	#endif
-	#pragma tabsize 0
+	#pragma tabsize 4
 	else
 	#pragma tabsize 4
 	{
