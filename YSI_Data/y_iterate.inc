@@ -1,22 +1,22 @@
-/*
-
-      _____ ______ ______   ____  ______ _      ______          __  ______ ____  _____  
-     / ____|  ____|  ____| |  _ \|  ____| |    / __ \ \        / / |  ____/ __ \|  __ \ 
-    | (___ | |__  | |__    | |_) | |__  | |   | |  | \ \  /\  / /  | |__ | |  | | |__) |
-     \___ \|  __| |  __|   |  _ <|  __| | |   | |  | |\ \/  \/ /   |  __|| |  | |  _  / 
-     ____) | |____| |____  | |_) | |____| |___| |__| | \  /\  /    | |   | |__| | | \ \ 
-    |_____/|______|______| |____/|______|______\____/   \/  \/     |_|    \____/|_|  \_\
-    
-     _____   ____   _____ _    _ __  __ ______ _   _ _______    _______ _____ ____  _   _ 
-    |  __ \ / __ \ / ____| |  | |  \/  |  ____| \ | |__   __|/\|__   __|_   _/ __ \| \ | |
-    | |  | | |  | | |    | |  | | \  / | |__  |  \| |  | |  /  \  | |    | || |  | |  \| |
-    | |  | | |  | | |    | |  | | |\/| |  __| | . ` |  | | / /\ \ | |    | || |  | | . ` |
-    | |__| | |__| | |____| |__| | |  | | |____| |\  |  | |/ ____ \| |   _| || |__| | |\  |
-    |_____/ \____/ \_____|\____/|_|  |_|______|_| \_|  |_/_/    \_\_|  |_____\____/|_| \_|
-
-	This is required for technical reasons - to place it after `#endif` so as to
-	not generate multiple copies of it in XML when compiling with `-r`.
-
+/*                                                                                              *
+ *                                                                                              *
+ *      _____ ______ ______   ____  ______ _      ______          __  ______ ____  _____        *
+ *     / ____|  ____|  ____| |  _ \|  ____| |    / __ \ \        / / |  ____/ __ \|  __ \       *
+ *    | (___ | |__  | |__    | |_) | |__  | |   | |  | \ \  /\  / /  | |__ | |  | | |__) |      *
+ *     \___ \|  __| |  __|   |  _ <|  __| | |   | |  | |\ \/  \/ /   |  __|| |  | |  _  /       *
+ *     ____) | |____| |____  | |_) | |____| |___| |__| | \  /\  /    | |   | |__| | | \ \       *
+ *    |_____/|______|______| |____/|______|______\____/   \/  \/     |_|    \____/|_|  \_\      *
+ *                                                                                              *
+ *     _____   ____   _____ _    _ __  __ ______ _   _ _______    _______ _____ ____  _   _     *
+ *    |  __ \ / __ \ / ____| |  | |  \/  |  ____| \ | |__   __|/\|__   __|_   _/ __ \| \ | |    *
+ *    | |  | | |  | | |    | |  | | \  / | |__  |  \| |  | |  /  \  | |    | || |  | |  \| |    *
+ *    | |  | | |  | | |    | |  | | |\/| |  __| | . ` |  | | / /\ \ | |    | || |  | | . ` |    *
+ *    | |__| | |__| | |____| |__| | |  | | |____| |\  |  | |/ ____ \| |   _| || |__| | |\  |    *
+ *    |_____/ \____/ \_____|\____/|_|  |_|______|_| \_|  |_/_/    \_\_|  |_____\____/|_| \_|    *
+ *                                                                                              *
+ *    This is required for technical reasons - to place it after `#endinput` to not generate    *
+ *                    multiple copies of it in XML when compiling with `-r`.                    *
+ *                                                                                              *
 *//*
 Legal:
 	Version: MPL 1.1
@@ -365,7 +365,67 @@ Static
 	<symbol name="Bot">List of all bots (npcs) connected.</symbol>
 	<symbol name="NPC">Alias of Bot.</symbol>
 	<symbol name="Character">All players and bots.</symbol>
-</ul>
+</ul><section>
+	Examples
+</section>
+
+
+
+
+<subsection>Basic Iterators</subsection>
+
+<p>
+Basic iterators are simply collections of numbers - little more than an array.
+A number is either in the array, or not in the array, <em>y_iterate</em> loops
+through only the <em>in</em> numbers.</p>
+
+<p><em>Players</em><br /><br />
+
+This code will loop through every player connected to the server.
+
+<code>
+foreach (new i : Player)																				<br />
+{																				<br /><indent />
+	printf("player %d is connected", i);																				<br />
+}
+</code>
+</p>
+
+<p><em>Vehicles</em><br /><br />
+
+This code will loop through all the created vehicles on the server (including
+those made in other running scripts).
+
+<code>
+foreach (new vid : Vehicle)																				<br />
+{																				<br /><indent />
+	printf("vehicleid %d has been created", vid);																				<br />
+}
+</code>
+</p>
+
+<p><em>Create An Iterator</em><br /><br />
+
+To create your own iterator, first declare it, then add things to it, then loop
+over it:
+
+<code>
+new																				<br /><indent />
+	Iterator:MyIter&lt;100&gt;; // First declare it (this has room for 100 items numbered 0-99).																				<br />
+// Then add things to it.																				<br />
+Iter_Add(MyIter, 0);  // Fine.																				<br />
+Iter_Add(MyIter, 55); // Fine.																				<br />
+Iter_Add(MyIter, 100); // Will fail.																				<br />
+// Then loop over it.																				<br />
+foreach (new i : MyIter)																				<br />
+{																				<br /><indent />
+	printf("%d", i); // Will print "0" then "55".																				<br />
+}
+</code>
+</p>
+
+<subsection>Special Iterators</subsection>
+
 *//** */
 
 // Set `FOREACH_VERSION` as this file's version.
