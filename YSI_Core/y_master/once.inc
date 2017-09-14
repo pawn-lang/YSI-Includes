@@ -203,7 +203,7 @@ PRE_HOOK(Master)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER @CO_Master
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <returns>
 	Next master ID to be assigned.
 </returns>
@@ -226,7 +226,7 @@ stock Master_GetNext()
 	return -1;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <returns>
 	OnScriptInit
 </returns>
@@ -283,7 +283,7 @@ HOOK_FORWARD:Master_OnScriptInit();
 #define OnMasterSystemInit YSIM_OnMasterSystemInit
 forward YSIM_OnMasterSystemInit();
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <returns>
 	OnGameModeExit
 </returns>
@@ -329,7 +329,7 @@ HOOK_FORWARD:Master_OnScriptExit();
 //#define OnMasterSystemClose Master_OnScriptClose
 //forward Master_OnScriptClose(id);
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <remarks>
 	Rebuilds the collection of master data whenever a script is restarted.
 </remarks>
@@ -386,7 +386,7 @@ stock _Master_Relinquish(library[])
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="library">The name of the library to try become master for.</param>
 *//*-------------------------------------------------------------------------**/
 

@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_utils
 
-/**
+/*$
 <library>
 					y_utils
 </library>
@@ -83,7 +83,7 @@ Misc functions used throughout.
 	<symbol name="FALSE">False hack for one-time loops.</symbol>
 	<symbol name="NULL">1 long string for passing via Call(Remote|Local)Function.</symbol>
 </ul>
-*//** *//*
+*//*$ *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -240,7 +240,7 @@ new stock
 	#define TIMING_ITERATIONS (10)
 #endif
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="t">The time in ms.</param>
 <param name="iters">The number of iterations completed in this time.</param>
 <remarks>
@@ -333,7 +333,7 @@ public OnPlayerDisconnect(playerid, reason)
 	forward _y_utils_OnPlayerDisconnect(playerid, reason);
 #endif
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="value">The unsigned number to compare.</param>
 <param name="upper">The upper limit.</param>
 <returns>
@@ -344,7 +344,7 @@ public OnPlayerDisconnect(playerid, reason)
 P:D(bool:UCMP(value, upper));
 #define UCMP(%0,%1) IS_IN_RANGE(%0,0,(%1))
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="playerid">The player to check.</param>
 <returns>
 	Is this a valid playerid (NOT, is the player connected).
@@ -354,7 +354,7 @@ P:D(bool:UCMP(value, upper));
 P:D(bool:VALID_PLAYERID(playerid));
 #define VALID_PLAYERID(%0) UCMP((%0), MAX_PLAYERS)
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="value">The number to compare.</param>
 <param name="lower">The lower limit.</param>
 <param name="upper">The upper limit.</param>
@@ -372,7 +372,7 @@ P:D(bool:VALID_PLAYERID(playerid));
 P:D(bool:IS_IN_RANGE(lower, value, upper));
 #define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="value">The number to compare.</param>
 <param name="lower">The lower limit.</param>
 <param name="upper">The upper limit.</param>
@@ -390,7 +390,7 @@ P:D(bool:IS_IN_RANGE(lower, value, upper));
 P:D(bool:NOT_IN_RANGE(lower, value, upper));
 #define NOT_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="numerator">The top of the division.</param>
 <param name="denominator">The bottom of the division.</param>
 <returns>
@@ -404,7 +404,7 @@ P:D(bool:NOT_IN_RANGE(lower, value, upper));
 P:D(ceildiv(numerator, denominator));
 #define ceildiv(%0,%1) (((%0)-1)/(%1)+1)
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>
 	floordiv(numerator, denominator);
 </summary>
@@ -422,7 +422,7 @@ P:D(ceildiv(numerator, denominator));
 P:D(floordiv(numerator, denominator));
 #define floordiv(%0,%1) ((%0)/(%1))
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">String to check if is null.</param>
 *//*-------------------------------------------------------------------------**/
 
@@ -430,7 +430,7 @@ P:D(bool:isnull(str[]));
 #define isnull(%1) \
 	((%1[0] == 0) || (%1[0] == 1 && %1[1] == 0))
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="value">Value to check if is odd.</param>
 *//*-------------------------------------------------------------------------**/
 
@@ -438,7 +438,7 @@ P:D(bool:isodd(value));
 #define isodd(%1) \
 	((%1) & 1)
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="value">Value to check if is even.</param>
 *//*-------------------------------------------------------------------------**/
 
@@ -446,7 +446,7 @@ P:D(bool:iseven(value));
 #define iseven(%1) \
 	(!isodd(%1))
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="dest">Destination string.</param>
 <param name="src">Source string.</param>
 <param name="len">(Implicit) maximum length of the destination.</param>
@@ -456,7 +456,7 @@ P:D(strcpy(dest[], const src[], len = sizeof (dest)));
 #define strcpy(%0,%1) \
 	strcat((%0[0] = '\0', %0), %1)
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">String to convert.</param>
 <param name="len">How much of the string to convert.</param>
 *//*-------------------------------------------------------------------------**/
@@ -470,7 +470,7 @@ stock StrToLower(str[], len = sizeof (str))
 		str[i] = tolower(ch);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">String to convert.</param>
 <param name="len">How much of the string to convert.</param>
 *//*-------------------------------------------------------------------------**/
@@ -484,7 +484,7 @@ stock StrToUpper(str[], len = sizeof (str))
 		str[i] = toupper(ch);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="minmax">Lower bound, or upper bound when only parameter.</param>
 <param name="max">Upper bound.</param>
 <remarks>
@@ -506,7 +506,7 @@ stock Random(min, max = cellmin)
 	return random(max - min) + min;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="minmax">Lower bound, or upper bound when only parameter.</param>
 <param name="max">Upper bound.</param>
 <param name="dp">How small to make the differences</param>
@@ -541,7 +541,7 @@ stock Float:RandomFloat(Float:min, Float:max = FLOAT_NAN, dp = 2)
 	return float(random(floatround(max * mul - min * mul))) / mul + min;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">The string to remove whitespace from the end of.</param>
 <remarks>
 	Updated from old versions, should be more efficient
@@ -558,7 +558,7 @@ stock StripNL(str[])
 
 #define StripR StripNL
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">The string to remove whitespace from the start of.</param>
 *//*-------------------------------------------------------------------------**/
 
@@ -572,7 +572,7 @@ stock StripL(str[])
 	if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">The string to remove whitespace from the start and end of.</param>
 *//*-------------------------------------------------------------------------**/
 
@@ -588,7 +588,7 @@ stock Strip(str[])
 	if (i) memcpy(str[0], str[i], 0, (len - i) * 4, len);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="line">String to check.</param>
 <param name="pos">Postion to start from.</param>
 <remarks>
@@ -605,7 +605,7 @@ stock endofline(line[], pos)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="needle">The character to find.</param>
 <param name="haystack">The string to find it in.</param>
 <param name="start">The offset to start from.</param>
@@ -626,7 +626,7 @@ stock chrfind(needle, haystack[], start = 0)
 	return -1;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="needle">The character to find.</param>
 <param name="haystack">The string to find it in.</param>
 <param name="start">The offset to start from.</param>
@@ -650,7 +650,7 @@ stock chrfindp(needle, haystack[], start = 0)
 	return -1;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="ip">Dot notation IP to convert to an integer.</param>
 *//*-------------------------------------------------------------------------**/
 
@@ -667,7 +667,7 @@ stock IPToInt(ip[])
 	return ipv + strval(ip[pos]);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="string">the string to hash.</param>
 <returns>
 	the bernstein hash of the input string
@@ -744,7 +744,7 @@ stock bernstein(string[] /* 12 */)
 	return 0; // Make the compiler happy.
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">String to check.</param>
 <returns>
 	true/false.
@@ -767,7 +767,7 @@ stock ishex(str[])
 	return !cur; // Valid if this is the end of the string.
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">String to unpack</param>
 <returns>
 	unpacked string
@@ -789,7 +789,7 @@ stock unpack(const str[])
 	return ret;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="playerid">Player to get IP of.</param>
 <returns>
 	IP as a 32bit int.
@@ -800,7 +800,7 @@ stock unpack(const str[])
 P:D(GetIP(playerid));
 #define GetIP(%0) (YSI_gPlayerIP[min((%0) + cellmin, MAX_PLAYERS + cellmin) - cellmin])
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="idx">Index of the string in the parameters.</param>
 <returns>
 	string
@@ -865,7 +865,7 @@ stock returnstringarg(idx)
 	return ret;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="fmat">String format.</param>
 <param name="">Parameters.</param>
 <returns>
@@ -920,7 +920,7 @@ stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
 	return ret;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">String to check</param>
 <remarks>
 	Checks if a given string is numeric.
@@ -938,7 +938,7 @@ stock isnumeric(str[])
 }
 
 #if !defined _inc_sscanf || 1
-	/*---------------------------------------------------------------------*//**
+	/*---------------------------------------------------------------------*//*$
 	
 	<param name="	string[]">String to convert to a number.</param>
 	<returns>
@@ -979,7 +979,7 @@ stock isnumeric(str[])
 		return ret;
 	}
 	
-	/*---------------------------------------------------------------------*//**
+	/*---------------------------------------------------------------------*//*$
 	
 	<param name="	string[]">String to try convert to a boolean.</param>
 	<returns>
@@ -998,7 +998,7 @@ stock isnumeric(str[])
 		return string[0] && string[0] != '0' && strcmp(string, "false", true);
 	}
 	
-	/*---------------------------------------------------------------------*//**
+	/*---------------------------------------------------------------------*//*$
 	
 	<param name="	string[]">String to try convert to a boolean.</param>
 	<returns>
@@ -1055,7 +1055,7 @@ stock isnumeric(str[])
 	}
 #endif
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>
 	rawMemcpy
 </summary>
@@ -1082,7 +1082,7 @@ stock rawMemcpy(dest, src, bytes)
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="arr">Array or address to set to a value.</param>
 <param name="iValue">What to set the cells to.</param>
 <param name="iSize">Number of cells to fill.</param>
@@ -1112,7 +1112,7 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 	return rawMemset(addr, val, size * 4);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="iAddress">Array or address to set to a value.</param>
 <param name="iValue">What to set the cells to.</param>
 <param name="iSize">Number of cells to fill.</param>
@@ -1203,7 +1203,7 @@ stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 	return 0; //memset("", 0, 0);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>
 	ReturnPlayerName
 </summary>
@@ -1222,7 +1222,7 @@ stock ReturnPlayerName(playerid)
 	return str;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>
 	ftouch(filename);
 </summary>
@@ -1260,7 +1260,7 @@ stock ftouch(const filename[])
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>
 	InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0);
 </summary>
@@ -1307,7 +1307,7 @@ stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
 		(r << 24) | ((g & 0xFF) << 16) | ((b & 0xFF) << 8) | (a & 0xFF);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">The string to skip over part of.</param>
 <param name="pos">The start of the whitespace.</param>
 <returns>
@@ -1325,7 +1325,7 @@ stock SkipWhitespace(const str[], pos)
 	return pos;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">The string to trim.</param>
 <param name="start">Start of the substring.</param>
 <param name="end">End of the substring.</param>
@@ -1349,7 +1349,7 @@ stock Trim(const str[], &start, &end)
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="arr">The array to sort.</param>
 <param name="num">The size of the array.</param>
 <remarks>
@@ -1381,7 +1381,7 @@ static stock Utils_PreSort(arr[], num = sizeof (arr))
 	while (sort);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="arr">The array whose values need summing.</param>
 <param name="num">The size of the array.</param>
 <returns>
@@ -1397,7 +1397,7 @@ stock Sum(const arr[], num = sizeof (arr))
 	return tot;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="arr">The array whose values need averaging.</param>
 <param name="num">The size of the array.</param>
 <returns>
@@ -1410,7 +1410,7 @@ stock Mean(const arr[], num = sizeof (arr))
 	return Sum(arr, num) / num;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="arr">The array whose values need averaging.</param>
 <param name="num">The size of the array.</param>
 <returns>
@@ -1439,7 +1439,7 @@ stock Mode(arr[], num = sizeof (arr))
 	else return ret;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="arr">The array whose values need averaging.</param>
 <param name="num">The size of the array.</param>
 <returns>
@@ -1456,7 +1456,7 @@ stock Median(arr[], num = sizeof (arr))
 	else return (arr[idx] + arr[idx - 1]) / 2;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="arr">The array whose values need averaging.</param>
 <param name="num">The size of the array.</param>
 <returns>

@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_bit
 
-/**
+/*$
 <library>
 					y_bit
 </library>
@@ -47,7 +47,7 @@ Inline
 </section><ul>
 	<symbol name="Bit">Bit array type.</symbol>
 </ul>
-*//** *//*
+*//*$ *//*
 Legal:
 	Version: MPL 1.1
 	

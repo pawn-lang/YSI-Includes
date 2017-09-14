@@ -209,7 +209,7 @@ static stock
 	#endif
 #endif
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="x">The element that was added (maybe).</param>
 <remarks>
 	The name is a macro, so this function isn't actually called this.  This is
@@ -259,7 +259,7 @@ stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIM
 
 */
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>Group_Set...</summary>
 <param name="g">Group to set for.</param>
 <param name="el">Element to set.</param>
@@ -319,7 +319,7 @@ gglobal Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>Group_Get...</summary>
 <param name="g">Group to get from.</param>
 <param name="el">Element to get.</param>
@@ -336,7 +336,7 @@ gglobal bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el)
 	return (0 <= _:el < _GROUP_MAKE_LIMIT && GROUP_MASK <= g <= GROUP_GLOBAL && Bit_Get(YSI_g_sElementMembership[_:el], _:GROUP_TEMP_FIX(g)));
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>Group_Set...Default</summary>
 <param name="g">Group to set for.</param>
 <param name="s">Set or unset?</param>
@@ -417,7 +417,7 @@ gglobal Group_Set...Default(Group:g,bool:s)
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>Group_Set...New</summary>
 <param name="g">Group to set for.</param>
 <param name="s">Set or unset?</param>
@@ -441,7 +441,7 @@ gglobal Group_Set...New(Group:g,bool:s)
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>Group_Exclusive...</summary>
 <param name="g">Group to add this to.</param>
 <param name="el">Element to add.</param>
@@ -486,7 +486,7 @@ gglobal Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
 
 */
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>Group_SetGlobal...</summary>
 <param name="el">Element to set.</param>
 <param name="s">Set or unset?</param>
@@ -504,7 +504,7 @@ gglobal Group_SetGlobal...(_GROUP_MAKE_TAG:el,bool:s)
 	return _GROUP_MAKE_NAME<Group_Set...>(GROUP_GLOBAL, el, s);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>Group_GetGlobal...</summary>
 <param name="el">Element to get.</param>
 <returns>
@@ -520,7 +520,7 @@ gglobal bool:Group_GetGlobal...(_GROUP_MAKE_TAG:el)
 	return _GROUP_MAKE_NAME<Group_Get...>(GROUP_GLOBAL, el);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>Group_SetGlobal...Default</summary>
 <param name="s">Set or unset?</param>
 <remarks>
@@ -538,7 +538,7 @@ gglobal Group_SetGlobal...Default(bool:s)
 	return _GROUP_MAKE_NAME<Group_Set...Default>(GROUP_GLOBAL, s);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>Group_SetGlobal...New</summary>
 <param name="s">Set or unset?</param>
 <remarks>
@@ -554,7 +554,7 @@ gglobal Group_SetGlobal...New(bool:s)
 	return _GROUP_MAKE_NAME<Group_Set...New>(GROUP_GLOBAL, s);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>Group_GlobalExclusive...</summary>
 <param name="el">Element to add.</param>
 <remarks>
@@ -607,7 +607,7 @@ gpublic MAKE_YCM<HANDOFF_SOURCE...Group>()<p>
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="playerid">Player to check.</param>
 <param name="el">Element to show or hide.</param>
 <param name="previous">(p) The old state of affairs.</param>
@@ -695,7 +695,7 @@ static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
 
 */
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="ni">Next init function variable as returned by y_amx.</param>
 <param name="na">Next add function variable as returned by y_amx.</param>
 <param name="nu">Next update function variable as returned by y_amx.</param>
@@ -757,7 +757,7 @@ _gchain _yGI(&ni, &na, &nu)
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="group">The group that was just created.</param>
 <remarks>
 	The given group was just created, loop over all elements and make sure they
@@ -785,7 +785,7 @@ _gchain _yGA(&group)
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="pid">The player who joined or left groups.</param>
 <param name="p">Their previous groups.</param>
 <param name="c">Their new groups.</param>
@@ -827,7 +827,7 @@ _gchain _yGU(&pid, Bit:p[], Bit:c[])
 
 */
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <remarks>
 	Calls all functions to correctly include them in the AMX when required.
 	Also all variables as it turns out they were a problem too.

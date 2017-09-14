@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_compilerdata
 
-/**
+/*$
 <!--
 <transition target[^/]+/>
 
@@ -78,7 +78,7 @@ Inline
 		thing in both cases already.</symbol>
 	<symbol name="P:D">Wrap a fake function declaration, so macros can be documented.</symbol>
 </ul>
-*//** *//*
+*//*$ *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -155,7 +155,7 @@ Optional plugins:
 // Enable `P:D(func())` for forcing function-like macros in to documentation.
 // For example:
 //   
-//   /**
+//   /*$
 //   <param name="playerid">An example named macro parameter (`%0`).</param>
 //   <remarks>
 //       This is a function-like macro.  By default, compiling with `-r` does
@@ -176,14 +176,9 @@ Optional plugins:
 #if defined __CompilerSecondPass
 	#define __COMPILER_PASS (1)
 	#define __COMPILER_DOCUMENTING (0)
-	#define Debug_PrintD(%1);
 #else
 	#define __COMPILER_PASS (0)
 	#define __COMPILER_DOCUMENTING (1)
-	// Disable matching the resulting function against (most) macros that are
-	// defined with the same name (since the whole point of this is to provide a
-	// concrete implementation for documentation to see).
-	#define Debug_PrintD(%1(%2)); %1 Debug_PrintD_OPEN %2 Debug_PrintD_CLOSE { return 0; }
 	#define Debug_PrintD_OPEN (
 	#define Debug_PrintD_CLOSE )
 #endif
@@ -229,6 +224,15 @@ static stock __CompilerSecondPass() {}
 	#define __COMPILER_INCLUDE_GUARDS (1)
 #else
 	#define __COMPILER_INCLUDE_GUARDS (0)
+#endif
+
+#if __COMPILER_1ST_PASS && __COMPILER_MODIFIED
+	// Disable matching the resulting function against (most) macros that are
+	// defined with the same name (since the whole point of this is to provide a
+	// concrete implementation for documentation to see).
+	#define Debug_PrintD(%1(%2)); %1 Debug_PrintD_OPEN %2 Debug_PrintD_CLOSE { return 0; }
+#else
+	#define Debug_PrintD(%1);
 #endif
 
 #if __COMPILER_MODIFIED

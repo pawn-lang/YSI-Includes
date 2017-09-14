@@ -89,7 +89,7 @@ enum e_SPAWN_FLAGS (<<= 1)
 static stock
 	e_SPAWN_FLAGS:YSI_g_sPlayerFlags[MAX_PLAYERS];
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="playerid">Player to check.</param>
 <returns>
 	Is this player currently in the class selection screen?
@@ -103,7 +103,7 @@ global bool:Player_InSelection(playerid)
 	return bool:(YSI_g_sPlayerFlags[playerid] & e_SPAWN_FLAGS_INSELECT);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="playerid">Player to check.</param>
 <returns>
 	Has this player ever spawned?
@@ -117,7 +117,7 @@ global bool:Player_HasSpawned(playerid)
 	return bool:(YSI_g_sPlayerFlags[playerid] & e_SPAWN_FLAGS_HADFIRST);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="playerid">Player to check.</param>
 <returns>
 	Is this player spawned now?
@@ -137,7 +137,7 @@ global bool:Player_IsSpawned(playerid)
 	return (YSI_g_sPlayerFlags[playerid] & (e_SPAWN_FLAGS_INSELECT | e_SPAWN_FLAGS_HADFIRST)) == e_SPAWN_FLAGS_HADFIRST;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="playerid">Player who joined the server.</param>
 <remarks>
 	Reset all the data on this player's current classes.
@@ -150,7 +150,7 @@ mhook OnPlayerConnect(playerid)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="playerid">Player who requested a class.</param>
 <param name="class">Class they requested.</param>
 <remarks>
@@ -222,7 +222,7 @@ mhook OnPlayerRequestClass(playerid, classid)
 	return -2;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="playerid">Player who spawned.</param>
 <remarks>
 	Sets a player's position based on skin.

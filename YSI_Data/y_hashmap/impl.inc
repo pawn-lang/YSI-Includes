@@ -90,7 +90,7 @@ Optional plugins:
 //  
 #define HASH_MAP_DATA (3)
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">String to hash.</param>
 <param name="hash">Desination of the hash.</param>
 <remarks>
@@ -102,7 +102,7 @@ Optional plugins:
 P:D(HashMap_Hash(str[],&hash));
 #define HashMap_Hash(%0,%1) (%1=YHash(%0))
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="m">Hash map to initialise.</param>
 <param name="target">Array to point in to.</param>
 <param name="slot">Second dimension slot of the hashed data.</param>
@@ -116,7 +116,7 @@ P:D(HashMap_Hash(str[],&hash));
 
 P:D(HashMap_Init(HashMap:m<>, target[][], slot));
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="m">Hash map to initialise.</param>
 <param name="target">Address of the hashmap data.</param>
 <param name="size1">Number of entries.</param>
@@ -156,7 +156,7 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 // Uses "%2 - %2" to make a tagged 0 without knowing the tag.
 #define HashMap_Init(%0,%1,%2) _HashMap_Init(%0, %1[0][(%2)], sizeof (%1), sizeof (%1[]) * 4, %1[0][(%2) - (%2)])
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">String to get the size of.</param>
 <returns>
 	The number of BYTES this string takes up including the NULL.
@@ -170,7 +170,7 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 P:D(HashMap_ByteLen(str[]));
 #define HashMap_ByteLen(%0) ((strlen((%0)) + 1) << (2 * _:!ispacked((%0))))
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="m"></param>
 <param name="str"></param>
 <param name="value">More like the target slot.</param>
@@ -258,7 +258,7 @@ stock bool:HashMap_Add(HashMap:m<>, const str[], value, bool:ignorecase = false)
 	return false;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="m">The hash map to search.</param>
 <param name="str">The key to find.</param>
 <returns>
@@ -271,7 +271,7 @@ stock HashMap_Get(HashMap:m<>, const str[], bool:ignorecase = false)
 	return HashMap_GetWithHash(m, str, YHash(str, .sensitive = !ignorecase), ignorecase);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="m">The hash map to search.</param>
 <param name="str">The key to find.</param>
 <param name="hash">The hashed key.</param>
@@ -331,7 +331,7 @@ stock HashMap_GetWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = fals
 	return -1;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="m">The hash map to modify.</param>
 <param name="str">The key to remove from the hash map.</param>
 <remarks>
@@ -469,7 +469,7 @@ static stock HashMap_GetBranchEnd(cur, &height, &parent, dir)
 	return cur;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="m">Hash map to modify.</param>
 <param name="value">Value to remove.</param>
 <remarks>
@@ -492,7 +492,7 @@ stock bool:HashMap_RemoveValue(HashMap:m<>, value)
 	return false;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="m">The hash map to modify.</param>
 <param name="str">The key to modify.</param>
 <param name="value">The new value for the given key.</param>

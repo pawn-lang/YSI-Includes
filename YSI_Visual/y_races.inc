@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_races
 
-/**
+/*$
 <library>
 					y_races
 </library>
@@ -16,7 +16,7 @@
 </section>
 	2.0
 
-*//** *//*
+*//*$ *//*
 Legal:
 	Version: MPL 1.1
 	

@@ -73,7 +73,7 @@ Optional plugins:
 	Gamer_Z - GPS.
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
-*//** */
+*//*$ */
 
 // Include pretty much 90% of YSI in one fell swoop!
 

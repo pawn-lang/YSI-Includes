@@ -16,7 +16,7 @@
 </section>
 	0.1
 
-*//** *//*
+*//*$ *//*
 Legal:
 	Version: MPL 1.1
 	

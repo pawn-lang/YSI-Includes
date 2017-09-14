@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_bitmap
 
-/**
+/*$
 <library>
 					y_bitmap
 </library>
@@ -18,7 +18,7 @@
 </section>
 	0.1
 
-*//** *//*
+*//*$ *//*
 Legal:
 	Version: MPL 1.1
 	

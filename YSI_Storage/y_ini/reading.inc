@@ -118,7 +118,7 @@ static stock
 	forward @INI_%0_%1(%2); \
 	@INI_%0_%1(%2)
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="name">Name of the INI key.</param>
 <param name="variable">Variable to fill with integer value.</param>
 *//*-------------------------------------------------------------------------**/
@@ -127,7 +127,7 @@ P:D(INI_Int(const name[],&variable));
 #define INI_Int(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = strval(value)
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="name">Name of the INI key.</param>
 <param name="variable">Variable to fill with float value.</param>
 *//*-------------------------------------------------------------------------**/
@@ -136,7 +136,7 @@ P:D(INI_Float(const name[],&Float:variable));
 #define INI_Float(%1,%2) \
 	if (!strcmp((%1), name, true)) return _:(%2 = floatstr(value))
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="name">Name of the INI key.</param>
 <param name="variable">Variable to fill with hex value.</param>
 *//*-------------------------------------------------------------------------**/
@@ -145,7 +145,7 @@ P:D(INI_Hex(const name[],&variable));
 #define INI_Hex(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = hexstr(value)
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="name">Name of the INI key.</param>
 <param name="variable">Variable to fill with binary value.</param>
 *//*-------------------------------------------------------------------------**/
@@ -154,7 +154,7 @@ P:D(INI_Bin(const name[],&variable));
 #define INI_Bin(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = binstr(value)
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="name">Name of the INI key.</param>
 <param name="variable">Variable to fill with string value.</param>
 <param name="len">Optional string length.</param>
@@ -171,7 +171,7 @@ P:D(INI_String(const name[],variable[]));
 
 #define INI_CHECK_LEN:strcpy(%0,%1,%2) strcpy(%0,%2,%1)
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="name">Name of the INI key.</param>
 <param name="variable">Variable to fill with string value.</param>
 *//*-------------------------------------------------------------------------**/
@@ -195,7 +195,7 @@ P:D(INI_Bool(const name[],&bool:variable));
 
 #define INI_SkipWhitespace(%0,%1) while ('\0' < %0[%1] <= ' ') ++%1
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="callback">The callback destination.</param>
 <param name="format">The function name format.</param>
 <param name="tag">The tag destination.</param>
@@ -234,7 +234,7 @@ P:D(INI_GetCallback(callback,format,tag,input,callbackFormat,remote));
 
 */
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="filename">The file to load.</param>
 <param name="remoteFormat">The format string to generate the remote function to
 pass the data to once loaded.</param>
@@ -364,7 +364,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 		true;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="filename">The file to load.</param>
 <param name="bExtra">Send additional data.</param>
 <param name="extra">Additional data to send.</param>
@@ -399,7 +399,7 @@ stock bool:INI_Load(filename[], bool:bExtra = false, extra = 0, bool:bLocal = tr
 
 */
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">The string you want to type analyse.</param>
 <param name="p0s">Start of part 0.</param>
 <param name="p0e">End of part 0.</param>
@@ -568,7 +568,7 @@ state_in_comment:
 
 */
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="fmat">The format destination.</param>
 <param name="remoteFormat">The source format.</param>
 <param name="filename">The file we are currently parsing.</param>
@@ -659,7 +659,7 @@ _Y_INI_STATIC stock INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTa
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="filename">The file to load.</param>
 <param name="remoteFormat">The format string to generate the remote function
 t pass the data to once loaded.</param>

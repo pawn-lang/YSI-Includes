@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_lock
 
-/**
+/*$
 <library>
 					y_lock
 </library>
@@ -16,7 +16,7 @@
 </section>
 	0.1
 
-*//** *//*
+*//*$ *//*
 Legal:
 	Version: MPL 1.1
 	

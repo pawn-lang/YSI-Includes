@@ -17,7 +17,7 @@
 </section>
 	0.1
 
-*//** *//*
+*//*$ *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -123,7 +123,7 @@ static stock const
 		//return s;
 	}
 	
-	/*---------------------------------------------------------------------*//**
+	/*---------------------------------------------------------------------*//*$
 	
 	<remarks>
 		Hook the streamer creation function so that we can initialise the groups

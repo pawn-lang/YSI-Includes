@@ -138,7 +138,7 @@ static stock
 	YSI_g_sReplacementsShortOrder[MAX_HOOK_REPLACEMENTS],
 	YSI_g_sReplacePtr;
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="name">Function name to modify.</param>
 <remarks>
 	Expands all name parts like "CP" and "Obj" to their full versions (in this
@@ -219,7 +219,7 @@ stock Hooks_MakeLongName(name[64])
 	return Hooks_MakeShortName(name);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="name">Function name to modify.</param>
 <remarks>
 	Compresses function names when required to fit within 32 characters
@@ -250,7 +250,7 @@ stock Hooks_MakeShortName(name[64])
 	return len;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="name">The string to get the hooked function name from.</param>
 <returns>
 	The input string without y_hooks name decorations.
@@ -268,7 +268,7 @@ _Y_HOOKS_STATIC Hooks_IsolateName(string:name[])
 	strdel(name, 0, 4);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="preloads">Desination in which to store all the preloads.</param>
 <param name="precount">Number of found preload libraries.</param>
 <param name="size">Maximum number of libraries to store.</param>
@@ -332,7 +332,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precoun
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="preloads">Names of libraries that come before y_hooks.</param>
 <param name="precount">Number of pre libraries.</param>
 <param name="name">Name of the callback.</param>
@@ -362,7 +362,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_PRE_HOOK], precount, name[6
 	while (++idx <= precount);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="hooks">All the prehooks for this callback.</param>
 <param name="num">The number of prehooks.</param>
 <param name="ptr">A pointer to write the new stub address to.</param>
@@ -436,7 +436,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(hooks[], num, &ptr, &next, name[],
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="stub">Starting address of the function.</param>
 <returns>
 	The address at which the actual code in this function starts.
@@ -493,7 +493,7 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="name">The name of the callback (with y_hooks prefix).</param>
 <param name="hooks">Array in which to store the function headers.</param>
 <param name="idx">Current position in the AMX header.</param>
@@ -652,7 +652,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
 	Hooks_GenerateCode(sName, sHooks, hookCount, writePtr, pc > 1);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="name">Name of the function to generate.</param>
 <param name="hooks">All the functions to call.</param>
 <param name="count">Number of functions to call.</param>
@@ -689,7 +689,7 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(name[64], hooks[], count, write, bool:haspreh
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="entry">The public function slot to destroy.</param>
 <remarks>
 	Basically, once we know a function has been included, wipe it from the AMX
@@ -716,7 +716,7 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 
 */
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="name">The function to get the address pointer of.</param>
 <param name="write">Destination variable.</param>
 <returns>
@@ -731,7 +731,7 @@ _Y_HOOKS_STATIC stock Hooks_GetFunctionWritePoint(name[], &write)
 	AMX_GetPublicEntry(0, write, name, true);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="name">The function to get the default return of.</param>
 <returns>
 	The default return for a callback, normally 1.
@@ -768,7 +768,7 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(name[64])
 
 */
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="pointers">The hooks to link together.</param>
 <param name="size">The number of functions in the array.</param>
 <param name="ret">The default return.</param>
@@ -909,7 +909,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 
 */
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="addr0">The 1st address to read.</param>
 <param name="addr1">The 2nd address to read.</param>
 <returns>
@@ -945,7 +945,7 @@ _Y_HOOKS_STATIC Hooks_CompareNextCell(addr0, addr1)
 	else return 0;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="idx0">The index of the 1st public.</param>
 <param name="idx1">The index of the 2nd public.</param>
 <remarks>
@@ -989,7 +989,7 @@ _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <remarks>
 	Goes through the whole of the public functions table and sorts them all in
 	to alphabetical order.  This is done as we move and rename some so we need
@@ -1033,7 +1033,7 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 	// then inform it again to track down and replace those addresses.
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <remarks>
 	Counts the number of public functions that have had their names erased.
 </remarks>
@@ -1053,7 +1053,7 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 	return count;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <remarks>
 	Call the main hook run code, then advance the ALS chain.
 </remarks>
@@ -1077,7 +1077,7 @@ stock _Hooks_AddReplacement(const longName[], const shortName[])
 	++YSI_g_sReplacePtr;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <remarks>
 	Once all the replacement strings have been found, sort them by the length of
 	the short versions of the strings.  This is so that the longest (and special
@@ -1118,7 +1118,7 @@ static stock Hooks_SortReplacements()
 	P:C(for (new i = 0 ; i != YSI_g_sReplacePtr; ++i) P:0("Hook Replacement: %d, %d, %s, %s", YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MIN], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_MAX], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_SHORT], YSI_g_sReplacements[i][E_HOOK_NAME_REPLACEMENT_LONG]););
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <remarks>
 	Call the main hook run code, then advance the ALS chain.
 </remarks>

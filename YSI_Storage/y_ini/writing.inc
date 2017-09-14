@@ -146,7 +146,7 @@ forward bool:INI_Flush();
 
 */
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="filename">INI file to open.</param>
 <returns>
 	INI - handle to the file or INI_NO_FILE.
@@ -175,7 +175,7 @@ stock INI:INI_Open(const filename[])
 		INI:i;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="file">Handle to the ini to close.</param>
 <remarks>
 	Writes any outstanding buffer data to the file and ends the stream.
@@ -192,7 +192,7 @@ stock INI_Close(INI:file)
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="file">INI file handle to write to.</param>
 <param name="tag">Name of the new file subsection for subsequent data to write to.</param>
 <remarks>
@@ -231,7 +231,7 @@ stock INI_SetTag(INI:file, const tag[])
 	return -1;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="file">INI file handle to write to.</param>
 <param name="tag">Name of the whole section to delete.</param>
 <remarks>
@@ -264,7 +264,7 @@ stock INI_DeleteTag(INI:file, const tag[])
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="file">File to write to.</param>
 <param name="name">Item to remove.</param>
 <remarks>
@@ -293,7 +293,7 @@ stock INI_RemoveEntry(INI:file, name[])
 
 */
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="file">File to write to.</param>
 <param name="name">Data name.</param>
 <param name="data">Data.</param>
@@ -308,7 +308,7 @@ stock INI_WriteString(INI:file, name[], data[])
 	return INI_AddToBuffer(file, name, data);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="file">File to write to.</param>
 <param name="name">Data name.</param>
 <param name="data">Integer data.</param>
@@ -335,7 +335,7 @@ stock INI_WriteInt(INI:file, name[], data)
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="file">File to write to.</param>
 <param name="name">Data name.</param>
 <param name="data">Hex data.</param>
@@ -352,7 +352,7 @@ stock INI_WriteHex(INI:file, name[], data)
 		INI_AddToBuffer(file, name, YSI_g_sINITmpBuffer);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="file">File to write to.</param>
 <param name="name">Data name.</param>
 <param name="data">Binary data.</param>
@@ -369,7 +369,7 @@ stock INI_WriteBin(INI:file, name[], data)
 	return INI_AddToBuffer(file, name, YSI_g_sINITmpBuffer);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="file">File to write to.</param>
 <param name="name">Data name.</param>
 <param name="data">Boolean data.</param>
@@ -384,7 +384,7 @@ stock INI_WriteBool(INI:file, name[], bool:data)
 	return INI_AddToBuffer(file, name, data ? ("true") : ("false"));
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="file">File to write to.</param>
 <param name="name">Data name.</param>
 <param name="data">Float data.</param>
@@ -459,7 +459,7 @@ static stock INI_GetTag(INI:file, const tag[])
 	return -1;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="slot">Slot to remove.</param>
 <remarks>
 	
@@ -582,7 +582,7 @@ static stock INI_DumpTag(File:buffer, curTag)
 	return 1;
 }*/
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="file">INI file to write to.</param>
 <param name="name">Data name to write.</param>
 <param name="data">Data to write.</param>
@@ -697,7 +697,7 @@ static stock bool:INI_Flush()
 	return true;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="file">INI stream to write to file.</param>
 <returns>
 	Success/fail.

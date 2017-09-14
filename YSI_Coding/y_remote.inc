@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_remote
 
-/**
+/*$
 <library>
 					y_remote
 </library>
@@ -25,7 +25,7 @@
 </ul><section>Compile options</section><ul>
 	<symbol name="YSI_NO_MASTER">Disable all knowledge of other scripts.</symbol>
 </ul>
-*//** *//*
+*//*$ *//*
 Legal:
 	Version: MPL 1.1
 	

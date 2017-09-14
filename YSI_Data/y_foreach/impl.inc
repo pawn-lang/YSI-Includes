@@ -83,7 +83,7 @@ Optional plugins:
 
 */
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="count">Number of items in the iterator.</param>
 <param name="array">iterator data.</param>
 <param name="start">Size of the iterator.</param>
@@ -107,7 +107,7 @@ stock Iter_Random_Internal(count, array[], start)
 	return INVALID_ITERATOR_SLOT;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="count">Number of items in the iterator.</param>
 <param name="array">iterator data.</param>
 <param name="start">Size of the iterator.</param>
@@ -129,7 +129,7 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot)
 	return Iter_Add_InternalD(counts[slot], array, start, size, Iter_RandomFree_InternalD(counts, array, size, slots));
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="count">Number of items in the iterator.</param>
 <param name="array">iterator data.</param>
 <param name="start">Size of the iterator.</param>
@@ -151,7 +151,7 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start)
 	return Iter_Remove_InternalD(count, array, start, size, Iter_Random_Internal(count, array, start));
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="count">Number of items in the iterator.</param>
 <param name="array">iterator data.</param>
 <param name="start">Size of the iterator.</param>
@@ -189,7 +189,7 @@ stock Iter_RandomFree_InternalD(counts[], array[], start, slots)
 	return Iter_RandomFree_InternalC(count, array, start);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="count">Number of items in the iterator.</param>
 <param name="array">iterator data.</param>
 <param name="size">Array start index.</param>
@@ -249,7 +249,7 @@ stock Iter_Alloc_InternalD(&count, array[], start, size)
 	return INVALID_ITERATOR_SLOT;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="array">iterator data.</param>
 <param name="size">Size of the iterator.</param>
 <remarks>
@@ -282,7 +282,7 @@ stock Iter_Free_Internal(array[], size)
 	return INVALID_ITERATOR_SLOT;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="array">multi-iterator data.</param>
 <param name="trueSize">Size of the multi-iterator.</param>
 <param name="start">End [?, since start points are backwards] of the multi-iterator.</param>
@@ -301,7 +301,7 @@ stock Iter_FreeMulti_Internal(array[], trueSize, start)
     return INVALID_ITERATOR_SLOT;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="count">Number of items in the iterator.</param>
 <param name="array">iterator data.</param>
 <param name="size">Array start index.</param>
@@ -356,7 +356,7 @@ stock Iter_Add_InternalD(&count, array[], start, size, value)
 	return INVALID_ITERATOR_SLOT;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="count">Number of items in the iterator.</param>
 <param name="array">iterator data.</param>
 <param name="start">Array start index.</param>
@@ -388,7 +388,7 @@ stock Iter_Index_Internal(count, array[], start, size, index, bool:wrap = false)
 	return start;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="count">Number of items in the iterator.</param>
 <param name="array">iterator data.</param>
 <param name="size">Number of iterator elements.</param>
@@ -412,7 +412,7 @@ stock Iter_Remove_InternalD(&count, array[], start, size, value)
 	return Iter_SafeRemove_InternalD(count, array, start, size, value, last);
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="count">Number of items in the iterator.</param>
 <param name="array">Iterator data.</param>
 <param name="size">Number of iterator elements.</param>
@@ -461,7 +461,7 @@ stock Iter_SafeRemove_InternalD(&count, array[], start, size, value, &last)
 	return INVALID_ITERATOR_SLOT;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="array">iterator data.</param>
 <param name="value">Item to check.</param>
 <param name="size">Size of the iterator.</param>
@@ -496,7 +496,7 @@ stock Iter_Contains_InternalD(count, array[], size, start, value)
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="array">multi-iterator data.</param>
 <param name="trueSize">Size of the multi-iterator per index.</param>
 <param name="size">Size of the multi-iterator.</param>
@@ -522,7 +522,7 @@ stock Iter_GetMulti_Internal(array[], trueSize, size, value)
     return INVALID_ITERATOR_SLOT;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="array">iterator data.</param>
 <param name="size">Size of base array.</param>
 <param name="entries">Size of the count data.</param>
@@ -567,7 +567,7 @@ stock Iter_Clear_InternalD(array[], size, entries, elems, counts[], start)
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="array">Iterator array to initialise.</param>
 <param name="first">First iterator slot.</param>
 <param name="s0">Size of first dimension.</param>
@@ -597,7 +597,7 @@ stock
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="array">iterator data.</param>
 <param name="elems">Number of elements in the iterator.</param>
 <param name="size">Size of the iterator.</param>

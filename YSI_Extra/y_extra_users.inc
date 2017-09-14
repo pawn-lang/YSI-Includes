@@ -73,7 +73,7 @@ Optional plugins:
 	Gamer_Z - GPS.
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
-*//** */
+*//*$ */
 
 // Include pretty much 90% of YSI in one fell swoop!
 
@@ -82,7 +82,7 @@ Optional plugins:
 
 loadtext core[ysi_players], core[ysi_extras], core[ysi_dialog];
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>
 	Extra_DoLogin
 	Commands: /login
@@ -140,7 +140,7 @@ YCMD:login(playerid, params[], help)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <summary>
 	Extra_DoRegister
 	Command: /register

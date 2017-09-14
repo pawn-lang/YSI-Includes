@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_zonepulse
 
-/**
+/*$
 <library>
 					y_zonepulse
 </library>
@@ -34,7 +34,7 @@ Stock
 </ul><section>Compile options</section><ul>
 	<symbol name="ZONE_PULSE_STAGE_TIME">ms between each pulse frame.</symbol>
 </ul>
-*//** *//*
+*//*$ *//*
 Legal:
 	Version: MPL 1.1
 	

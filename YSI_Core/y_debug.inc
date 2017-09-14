@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_debug
 
-/**
+/*$
 <library>
 					y_debug
 </library>
@@ -58,7 +58,7 @@ Stock
 </ul><section>Compile options</section><ul>
 	<symbol name="_DEBUG">Debugging level to use.</symbol>
 </ul>
-*//** *//*
+*//*$ *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -147,7 +147,7 @@ stock YSI_gDebugLevel = 0;
 #define P:%1(%2); Debug_Print%1(%2);
 #define C:%1(%2); Debug_Code%1(%2);
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="code">Code to run.</param>
 <remarks>
 	Code is not a variable, it's a code chunk and may be written as so:
@@ -172,7 +172,7 @@ C:1(if (bla == 2) { bla++; printf("%d", bla); });
 
 P:D(Debug_Code1(code));
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="code">Code to run.</param>
 <remarks>
 	Code is not a variable, it's a code chunk and may be written as so:
@@ -197,7 +197,7 @@ C:2(if (bla == 2) { bla++; printf("%d", bla); });
 
 P:D(Debug_Code2(code));
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="code">Code to run.</param>
 <remarks>
 	Code is not a variable, it's a code chunk and may be written as so:
@@ -222,7 +222,7 @@ C:3(if (bla == 2) { bla++; printf("%d", bla); });
 
 P:D(Debug_Code3(code));
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="code">Code to run.</param>
 <remarks>
 	Code is not a variable, it's a code chunk and may be written as so:
@@ -247,7 +247,7 @@ C:4(if (bla == 2) { bla++; printf("%d", bla); });
 
 P:D(Debug_Code4(code));
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="code">Code to run.</param>
 <remarks>
 	Code is not a variable, it's a code chunk and may be written as so:
@@ -272,7 +272,7 @@ C:5(if (bla == 2) { bla++; printf("%d", bla); });
 
 P:D(Debug_Code5(code));
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="code">Code to run.</param>
 <remarks>
 	Code is not a variable, it's a code chunk and may be written as so:
@@ -297,7 +297,7 @@ C:6(if (bla == 2) { bla++; printf("%d", bla); });
 
 P:D(Debug_Code6(code));
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="code">Code to run.</param>
 <remarks>
 	Code is not a variable, it's a code chunk and may be written as so:
@@ -380,7 +380,7 @@ P:D(Debug_Code7(code));
 	#define Debug_CodeX(%1);
 #endif
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">Format.</param>
 <param name=""></param>
 <remarks>
@@ -403,7 +403,7 @@ P:1("variables: %d, %d", i, j);
 
 P:D(Debug_Print1(const str[], GLOBAL_TAG_TYPES:...));
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">Format.</param>
 <param name=""></param>
 <remarks>
@@ -426,7 +426,7 @@ P:2("variables: %d, %d", i, j);
 
 P:D(Debug_Print2(const str[], GLOBAL_TAG_TYPES:...));
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">Format.</param>
 <param name=""></param>
 <remarks>
@@ -449,7 +449,7 @@ P:3("variables: %d, %d", i, j);
 
 P:D(Debug_Print3(const str[], GLOBAL_TAG_TYPES:...));
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">Format.</param>
 <param name=""></param>
 <remarks>
@@ -472,7 +472,7 @@ P:4("variables: %d, %d", i, j);
 
 P:D(Debug_Print4(const str[], GLOBAL_TAG_TYPES:...));
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">Format.</param>
 <param name=""></param>
 <remarks>
@@ -495,7 +495,7 @@ P:5("variables: %d, %d", i, j);
 
 P:D(Debug_Print5(const str[], GLOBAL_TAG_TYPES:...));
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">Format.</param>
 <param name=""></param>
 <remarks>
@@ -518,7 +518,7 @@ P:6("variables: %d, %d", i, j);
 
 P:D(Debug_Print6(const str[], GLOBAL_TAG_TYPES:...));
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">Format.</param>
 <param name=""></param>
 <remarks>
@@ -608,7 +608,7 @@ P:D(Debug_Print7(const str[], GLOBAL_TAG_TYPES:...));
 #define Debug_PrintC(%1); \
 	Debug_CodeX(%1);
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="format">str.</param>
 <param name=""></param>
 <remarks>
@@ -676,7 +676,7 @@ stock Debug_PrintArray(arr[], size = sizeof (arr))
 	return str;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <remarks>
 	Does some strange mangling of <c>YSI_FILTERSCRIPT</c> because at one point I
 	found a compiler bug where the first automata in the script could conflict
@@ -713,7 +713,7 @@ public OnScriptInit()
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <transition keep="true" target="ysi_debug : on" source="ysi_debug : "/>
 <remarks>
 	Mostly exists to define the full range of <c>ysi_debug</c> states.
@@ -729,7 +729,7 @@ static stock Debug_SetState() <>
 	state ysi_debug : on;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <remarks>
 	Turn on level 0 prints.
 </remarks>
@@ -740,7 +740,7 @@ stock Debug_Enable()
 	state ysi_debug : on;
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <remarks>
 	Turn off level 0 prints.
 </remarks>
@@ -757,7 +757,7 @@ stock Debug_Disable()
 	forward Debug_OnScriptInit();
 #endif
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <remarks>
 	Set the debug level when the code is compiled with <c>_DEBUG=-1</c>, which
 	means full run-time selection.

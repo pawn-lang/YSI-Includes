@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_users
 
-/**
+/*$
 <library>
 					y_users
 </library>
@@ -16,7 +16,7 @@
 </section>
 	2.2
 
-*//** *//*
+*//*$ *//*
 Legal:
 	Version: MPL 1.1
 	

@@ -73,7 +73,7 @@ Optional plugins:
 	Gamer_Z - GPS.
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
-*//** */
+*//*$ */
 
 #tryinclude <sscanf2>
 #tryinclude <sscanf3>

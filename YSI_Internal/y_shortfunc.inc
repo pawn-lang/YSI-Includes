@@ -23,7 +23,7 @@
 	<symbol name="S@">Renaming of <symbolref name="setproperty" /> for size reasons.</symbol>
 	<symbol name="P@">Renaming of <symbolref name="__CallLocalFunction" /> for size reasons.</symbol>
 </ul>
-*//** *//*
+*//*$ *//*
 Legal:
 	Version: MPL 1.1
 	

@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_stringhash
 
-/**
+/*$
 <library>
 					y_stringhash
 </library>
@@ -28,7 +28,7 @@ Stock
 	<symbol name="_H">Generate a string hash at compile time.</symbol>
 	<symbol name="_I">Generate a case insensitive string hash at compile time.</symbol>
 </ul>
-*//** *//*
+*//*$ *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -313,7 +313,7 @@ enum e_HASH_TYPE
 	hash_fnv1a
 }
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//*$
 <param name="str">The string to hash.</param>
 <param name="sensitive">Wether the hash is case sensitive or not.</param>
 <returns>

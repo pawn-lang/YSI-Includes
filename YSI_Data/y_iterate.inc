@@ -177,7 +177,7 @@ Optional plugins:
 	#endif
 #endif
 
-/**
+/*$
 <library>
 					y_iterate
 </library>
@@ -331,7 +331,7 @@ foreach (new i : MyIter)																				<br />
 
 <subsection>Special Iterators</subsection>
 
-*//** */
+*//*$ */
 
 // Set `FOREACH_VERSION` as this file's version.
 #if defined FOREACH_VERSION

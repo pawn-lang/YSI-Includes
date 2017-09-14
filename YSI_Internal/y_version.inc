@@ -20,7 +20,7 @@
 </section><ul>
 <li>OnGameModeInit</li>
 </ul>
-*//** *//*
+*//*$ *//*
 Legal:
 	Version: MPL 1.1
 	
