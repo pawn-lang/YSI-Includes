@@ -16,24 +16,6 @@ Misc functions used throughout.
 </section>
 	0.1.3
 <section>
-	Changelog
-</section>
-	<changelog date="06/10/12">
-<li>		Upgraded "memset" to use "FILL".</li>
-</changelog>
-	<changelog date="22/12/11">
-<li>		Changed "ceildiv" to only evaluate arguments once.</li>
-</changelog>
-	<changelog date="05/12/11">
-<li>		Added NO_VALUE to test if macros have no value.</li>
-</changelog>
-	<changelog date="08/09/10">
-<li>		Added strcpy and StripNL.</li>
-</changelog>
-	<changelog date="08/08/10">
-<li>		Scrapped almost everything.  Only VERY usefult things go in now.</li>
-</changelog>
-<section>
 	Functions
 </section>
 	<subsection>Stock</subsection>
