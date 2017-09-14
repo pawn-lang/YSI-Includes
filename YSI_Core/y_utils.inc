@@ -25,7 +25,6 @@ Misc functions used throughout.
 	<symbol name="Random">Generate a random number, optionally takes lower and upper bounds.</symbol>
 	<symbol name="RandomFloat">Same as <symbolref name="Random" />, but for floats.</symbol>
 	<symbol name="StripNL">Strips the newline characters from the end of a string.</symbol>
-	<symbol name="StripR">Synonym for <symbolref name="StripNL" />.</symbol>
 	<symbol name="StripL">Remove whitespace from the start of a string.</symbol>
 	<symbol name="Strip">Remove whitespace from both ends of a string.</symbol>
 	<symbol name="endofline">Check if the given position is the end of a string (ignoring whitespace).</symbol>
@@ -67,12 +66,13 @@ Misc functions used throughout.
 	<symbol name="iseven">Checks if a number is even.</symbol>
 	<symbol name="strcpy">Copy one string to another.</symbol>
 	<symbol name="GetIP">Return the encoded (32-bit) version of a player's IP.</symbol>
-	<symbol name="getstring">Synonym for <symbolref name="returnstringarg" /> (there are a lot).</symbol>
-	<symbol name="GetString">Synonym for <symbolref name="returnstringarg" /> (there are a lot).</symbol>
-	<symbol name="getstringarg">Synonym for <symbolref name="returnstringarg" /> (there are a lot).</symbol>
-	<symbol name="GetStringArg">Synonym for <symbolref name="returnstringarg" /> (there are a lot).</symbol>
-	<symbol name="ReturnStringArg">Synonym for <symbolref name="returnstringarg" /> (there are a lot).</symbol>
-	<symbol name="InterpolateColor">Synonym for <symbolref name="InterpolateColour" /></symbol>
+	<synonym name="getstring" for="returnstringarg"> (there are a lot)</synonym>
+	<synonym name="GetString" for="returnstringarg"> (there are a lot)</synonym>
+	<synonym name="getstringarg" for="returnstringarg"> (there are a lot)</synonym>
+	<synonym name="GetStringArg" for="returnstringarg"> (there are a lot)</synonym>
+	<synonym name="ReturnStringArg" for="returnstringarg"> (there are a lot)</synonym>
+	<synonym name="InterpolateColor" for="InterpolateColour" />
+	<synonym name="StripR" for="StripNL" />
 </ul>
 <section>
 	Variables
