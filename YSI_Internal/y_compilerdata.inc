@@ -179,8 +179,6 @@ Optional plugins:
 #else
 	#define __COMPILER_PASS (0)
 	#define __COMPILER_DOCUMENTING (1)
-	#define Debug_PrintD_OPEN (
-	#define Debug_PrintD_CLOSE )
 #endif
 
 #define __COMPILER_1ST_PASS (__COMPILER_PASS == (0))
@@ -234,6 +232,8 @@ static stock __CompilerSecondPass() {}
 #else
 	#define Debug_PrintD(%1);
 #endif
+#define Debug_PrintD_OPEN (
+#define Debug_PrintD_CLOSE )
 
 #if __COMPILER_MODIFIED
 	#define __COMPILER_NESTED_ELLIPSIS (1)
