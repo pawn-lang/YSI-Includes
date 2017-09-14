@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_td
 
-/*$
+/**
 <library>
 					y_td
 </library>
@@ -19,7 +19,7 @@
 </section>
 	1.0
 
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -199,7 +199,7 @@ static stock
 
 #define TD_SetTimer(%0,%1,%2,%3) SetTimerEx("TD_HideForPlayerPub", (%2), 0, "iii", (%0), _:(%1), (%3))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="id">Text draw style to check validity of,</param>
 *//*-------------------------------------------------------------------------**/
 
@@ -219,7 +219,7 @@ P:D(bool:TD_IsValidStyle(Style:id));
 #define TDL_START(%1) for (new Text:__tdl_base = %1; ; ) {
 #define TDL_END(%1) {%1 = YSI_g_sTDDisplay[(%1)][E_TD_DISPLAY_LINKED]; if (%1 == __tdl_base) break;}}
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <remarks>
 	Constructor.
 </remarks>
@@ -250,7 +250,7 @@ hook OnScriptInit()
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="filename">File to parse as a textdraw data file.</param>
 *//*-------------------------------------------------------------------------**/
 
@@ -260,7 +260,7 @@ stock TD_Parse(filename[])
 	return XML_Parse(YSI_g_sXMLRules, filename);
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <remarks>
 	XML callback for loading the &lt;colour&gt; tag.
 </remarks>
@@ -306,7 +306,7 @@ public TD_LoadColour()
 	return colour;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="x">X position the text will appear at.</param>
 <param name="y">Y position the text will appear at,</param>
 <param name="letterX">Letter X size.</param>
@@ -370,7 +370,7 @@ stock Style:TD_Create(Float:x = 0.0, Float:y = 0.0, Float:letterX = 0.48, Float:
 	return Style:i;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <remarks>
 	XML callback for loading the &lt;textdraw&gt; tag.
 </remarks>
@@ -506,7 +506,7 @@ public TD_Textdraw()
 	return _:i;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="name">A style name to get a style index for.</param>
 *//*-------------------------------------------------------------------------**/
 
@@ -524,7 +524,7 @@ stock Style:TD_GetNamed(name[])
 	return i;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="hash">Hash of a style name to get a style index for.</param>
 *//*-------------------------------------------------------------------------**/
 
@@ -540,7 +540,7 @@ stock Style:TD_GetID(hash)
 	return i;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to clone.</param>
 <param name="name">Name of the new style.</param>
 <remarks>
@@ -587,7 +587,7 @@ stock Style:TD_Clone(Style:styleID, name[] = "\1")
 	return Style:i;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to get the data of.</param>
 <param name="data">Return array.</param>
 *//*-------------------------------------------------------------------------**/
@@ -602,7 +602,7 @@ stock TD_GetStyleData(Style:styleID, data[E_TD_DATA])
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="name">Name to give the style.</param>
 *//*-------------------------------------------------------------------------**/
@@ -621,7 +621,7 @@ stock TD_Name(Style:styleID, name[])
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="textID">Text to modify.</param>
 <param name="x">New horizontal position.</param>
 <param name="y">New vertical position.</param>
@@ -647,7 +647,7 @@ stock TD_TextPosition(Text:textID, Float:x, Float:y)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="textID">Text to modify.</param>
 <param name="x">New horizontal position.</param>
 <remarks>
@@ -671,7 +671,7 @@ stock TD_TextXPos(Text:textID, Float:x)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="textID">Text to modify.</param>
 <param name="y">New vertical position.</param>
 <remarks>
@@ -695,7 +695,7 @@ stock TD_TextYPos(Text:textID, Float:y)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="x">New horizontal position.</param>
 <param name="y">New vertical position.</param>
@@ -718,7 +718,7 @@ stock TD_StylePosition(Style:styleID, Float:x, Float:y)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="x">New horizontal position.</param>
 <param name="update">Wether to update the appearence for players.</param>
@@ -739,7 +739,7 @@ stock TD_StyleXPos(Style:styleID, Float:x)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="y">New vertical position.</param>
 <param name="update">Wether to update the appearence for players.</param>
@@ -760,7 +760,7 @@ stock TD_StyleYPos(Style:styleID, Float:y)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="x">New letter width.</param>
 <param name="y">New letter height.</param>
@@ -780,7 +780,7 @@ stock TD_LetterSize(Style:styleID, Float:x, Float:y)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="x">New letter width.</param>
 <param name="update">Wether to update the appearence for players.</param>
@@ -798,7 +798,7 @@ stock TD_LetterX(Style:styleID, Float:x)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="y">New letter height.</param>
 <param name="update">Wether to update the appearence for players.</param>
@@ -816,7 +816,7 @@ stock TD_LetterY(Style:styleID, Float:y)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="x">New text width.</param>
 <param name="y">New text height.</param>
@@ -836,7 +836,7 @@ stock TD_TextSize(Style:styleID, Float:x, Float:y)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="x">New text width.</param>
 <param name="update">Wether to update the appearence for players.</param>
@@ -854,7 +854,7 @@ stock TD_TextX(Style:styleID, Float:x)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="y">New text height.</param>
 <param name="update">Wether to update the appearence for players.</param>
@@ -872,7 +872,7 @@ stock TD_TextY(Style:styleID, Float:y)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="alignment">Where to align the text in it's box.</param>
 <param name="update">Wether to update the appearence for players.</param>
@@ -893,7 +893,7 @@ stock TD_Alignment(Style:styleID, alignment = _:td_align_none)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="colour">New text colour.</param>
 <param name="update">Wether to update the appearence for players.</param>
@@ -913,7 +913,7 @@ stock TD_Colour(Style:styleID, colour)
 
 #define TD_Color TD_Colour
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="use">Wether or not to show a box round the text.</param>
 <param name="update">Wether to update the appearence for players.</param>
@@ -932,7 +932,7 @@ stock TD_UseBox(Style:styleID, bool:use)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="colour">New box colour.</param>
 <param name="update">Wether to update the appearence for players.</param>
@@ -952,7 +952,7 @@ stock TD_BoxColour(Style:styleID, colour)
 
 #define TD_BoxColor TD_BoxColour
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="size">Size of the letter shadow,</param>
 <param name="update">Wether to update the appearence for players.</param>
@@ -970,7 +970,7 @@ stock TD_SetShadow(Style:styleID, size)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="size">Size of the letter outline.</param>
 <param name="update">Wether to update the appearence for players.</param>
@@ -988,7 +988,7 @@ stock TD_SetOutline(Style:styleID, size)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="colour">New background (outline/shadow) colour.</param>
 <param name="update">Wether to update the appearence for players.</param>
@@ -1008,7 +1008,7 @@ stock TD_BackgroundColour(Style:styleID, colour)
 
 #define TD_BackgroundColor TD_BackgroundColour
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="font">New text font style.</param>
 <param name="update">Wether to update the appearence for players.</param>
@@ -1026,7 +1026,7 @@ stock TD_Font(Style:styleID, font)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="set">Wether to make the letters proportional or not.</param>
 <param name="update">Wether to update the appearence for players.</param>
@@ -1045,7 +1045,7 @@ stock TD_SetProportional(Style:styleID, bool:set)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleID">Style to modify.</param>
 <param name="time">New time for the text to display for.</param>
 <param name="existing">Whether or not to change the display of existing text draws.</param>
@@ -1089,7 +1089,7 @@ stock TD_SetTime(Style:styleID, time, bool:existing = false)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <summary>Text:TD_RenderInternal</summary>
 <param name="text">String to output.</param>
 <param name="id">Text draw style to render the text in.</param>
@@ -1127,7 +1127,7 @@ static stock Text:TD_RenderInternal(text[], style[E_TD_DATA], Float:x, Float:y)
 	return textDraw;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <summary>Text:TD_Render</summary>
 <param name="text">String to output.</param>
 <param name="id">Text draw style to render the text in.</param>
@@ -1147,7 +1147,7 @@ static stock Text:TD_Render(text[], Style:id, Text:slot)
 	return TD_RenderInternal(text, YSI_g_sTDData[id], YSI_g_sTDDisplay[slot][E_TD_DISPLAY_X], YSI_g_sTDDisplay[slot][E_TD_DISPLAY_Y]);
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="id">Style to update for players.</param>
 <param name="pos">Wether or not to update children's positions.</param>
 <remarks>
@@ -1197,7 +1197,7 @@ public TD_UpdateInternal(Style:id)
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="slot">Text to update.</param>
 <param name="id">Style to use.</param>
 <remarks>
@@ -1234,7 +1234,7 @@ stock TD_UpdateOne(Text:slot, Style:id)
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="styleId">Text draw style ID you want to remove.</param>
 <remarks>
 	Just nulls the name to remove it's active marker.
@@ -1297,7 +1297,7 @@ stock TD_Delete(Style:styleId)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="textDraw">Text draw to destroy safely.</param>
 <remarks>
 	Destroys this text draw only if it is marked for garbage collection.  It
@@ -1318,7 +1318,7 @@ static stock TD_TryDestroy(Text:textDraw)
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="textDraw">Text draw to destroy safely.</param>
 <remarks>
 	Optimised for multiple people.  Not very well though...
@@ -1392,7 +1392,7 @@ stock TD_Destroy(Text:textDraw)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="td">Text draw to stop updating.</param>
 <remarks>
 	Unlinks a text draw from another one, so that updating the other one does
@@ -1420,7 +1420,7 @@ stock TD_Unlink(Text:td)
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="base">Text draw whose updates will be propogated.</param>
 <param name="other">Text draw that will receive a parent's updates.</param>
 <remarks>
@@ -1441,7 +1441,7 @@ stock TD_Link(Text:base, Text:other)
 	YSI_g_sTDDisplay[base][E_TD_DISPLAY_LINKED] = other;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <summary>Text:TD_Display</summary>
 <param name="text">Text to display onscreen.</param>
 <param name="id">Style to use to style text.</param>
@@ -1530,7 +1530,7 @@ stock Style:TD_GetDisplayStyle(Text:td)
 	return YSI_g_sTDDisplay[td][E_TD_DISPLAY_STYLE];
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="td">The text draw to modify.</param>
 <param name="text">Text to display onscreen.</param>
 <remarks>
@@ -1562,7 +1562,7 @@ stock TD_SetString(Text:td, text[])
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <summary>Text:TD_DisplayHashed</summary>
 <param name="text">Text to display.</param>
 <param name="hash">Hashed style name for styling.</param>
@@ -1601,7 +1601,7 @@ stock Text:TD_DisplayHashedForAll(text[], hash, Float:x = (Float:TEXT_DRAW_NAN),
 	return Text:INVALID_TEXT_DRAW;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <summary>Text:TD_DisplayNamed</summary>
 <param name="text">Text to display.</param>
 <param name="style">Named style to display the text with.</param>
@@ -1622,7 +1622,7 @@ stock Text:TD_DisplayNamedForAll(text[], style[], Float:x = (Float:TEXT_DRAW_NAN
 	return TD_DisplayHashedForAll(text, bernstein(style), x, y);
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player to show the text to.</param>
 <param name="textDraw">ID of the text to show.</param>
 <remarks>
@@ -1675,7 +1675,7 @@ stock TD_ShowForPlayer(playerid, Text:textDraw)
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player to hide the text for.</param>
 <param name="textDraw">Text to hide.</param>
 <param name="revision">The version of the text draw which existed when this was set.</param>
@@ -1740,7 +1740,7 @@ stock TD_HideForPlayer(playerid, Text:textDraw)
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="textDraw">Text to show to all players.</param>
 *//*-------------------------------------------------------------------------**/
 
@@ -1799,7 +1799,7 @@ stock TD_ShowForAll(Text:textDraw)
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="textDraw">Text to hide from all players.</param>
 <remarks>
 	Destroys the real text draw if marked for garbage collection.
@@ -1841,7 +1841,7 @@ stock TD_HideForAll(Text:textDraw)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who left.</param>
 <param name="reason">Why they left.</param>
 <remarks>
@@ -1885,7 +1885,7 @@ hook OnPlayerDisconnect(playerid, reason)
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="textDraw">Text to mark as garbage.</param>
 <remarks>
 	Tells the system to remove a text draw when no-one can see it
@@ -1915,7 +1915,7 @@ stock TD_Garbage(Text:textDraw)
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="textDraw">Text to morph from it's current style to another style.</param>
 <param name="style">The style to morph to.</param>
 <param name="time">The time to take in this morph.</param>

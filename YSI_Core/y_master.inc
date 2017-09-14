@@ -149,7 +149,7 @@ Optional plugins:
 #endif
 #define _INC_y_master
 
-/*$
+/**
 <library>
 					y_master
 </library>
@@ -200,7 +200,7 @@ Global
 	<symbol name="YSI_IS_CLIENT">Script is a client only script.</symbol>
 	<symbol name="YSI_IS_SERVER">Script is a server only script.</symbol>
 </ul>
-*//*$ */
+*//** */
 
 // Only include this lot once.
 #if defined YSI_TESTS

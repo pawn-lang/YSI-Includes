@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_malloc
 
-/*$
+/**
 <library>
 					y_malloc
 </library>
@@ -83,7 +83,7 @@ Static
 	YSI_MALLOC_SECURE - Use enhanced bounds checking.
 	YSI_MALLOC_NO_SHORT - Avoid conflicts with mget/mset.
 </ul>
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	

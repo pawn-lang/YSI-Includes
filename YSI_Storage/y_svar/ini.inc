@@ -242,7 +242,7 @@ public _Config_Load_y_svar(name[], value[])
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="vardata">Handle to the memory location in which to store info.</param>
 <param name="dataSize">The size of the array (first dimension).</param>
 <param name="pointer">The start of the data.</param>

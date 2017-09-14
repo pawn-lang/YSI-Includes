@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_uvar
 
-/*$
+/**
 <library>
 					y_uvar
 </library>
@@ -16,7 +16,7 @@
 </section>
 	0.1.3
 
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -283,7 +283,7 @@ public OnUserData[y_uvar](playerid, name[], value[])
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="val">Handle to the PAWN data array.</param>
 <param name="vardata">Handle to the memory location in which to store info.</param>
 <param name="">Array slot size information.</param>

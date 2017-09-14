@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_classes
 
-/*$
+/**
 <library>
 					y_classes
 </library>
@@ -87,7 +87,7 @@ Static
 	<symbol name="YSI_g_sRight">Handle for the third internal class.</symbol>
 	<symbol name="YSI_g_sClassCount">Number of classes stored.</symbol>
 </ul>
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	

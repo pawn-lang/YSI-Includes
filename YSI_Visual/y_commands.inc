@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_commands
 
-/*$
+/**
 <library>
 					y_commands
 </library>
@@ -90,7 +90,7 @@ Static
 	<symbol name="COMMAND_ACCURATE">Can use '@' in command names.</symbol>
 	<symbol name="MAX_COMMANDS">The maximum number of commands which can be used.</symbol>
 </ul>
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	

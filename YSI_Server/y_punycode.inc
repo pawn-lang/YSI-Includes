@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_punycode
 
-/*$
+/**
 <library>
 					y_punycode
 </library>
@@ -32,7 +32,7 @@ Stock
 	<symbol name="Puny_Decode">Convert a Punycode string to Unicode.</symbol>
 	<symbol name="Puny_HTTP">Wrapper for "HTTP" to encode domain names.</symbol>
 </ul>
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -143,7 +143,7 @@ static stock const
 			PP_LOOP<5>(PUNY_INVL)(,)
 		};
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="dst">Where to store the converted string.</param>
 <param name="src">The string to convert.</param>
 <param name="wlen">The length of the destination.</param>
@@ -211,7 +211,7 @@ stock Puny_Decode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="dst">Where to store the converted string.</param>
 <param name="src">The string to convert.</param>
 <param name="wlen">The length of the destination.</param>
@@ -285,7 +285,7 @@ stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 	return (dst[widx] = '\0'), 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="dst">Where to store the converted string.</param>
 <param name="src">The string to convert.</param>
 <param name="hash">Store the hash value.</param>
@@ -389,7 +389,7 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 	return (bPacked ? strpack(dst, dst, wlen) : 0), (dst[widx] = '\0'), rlen;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="num">The single number to encode.</param>
 <remarks>
 	Convert a single digit to base 36.
@@ -399,7 +399,7 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 P:D(_Puny_Basic(num));
 #define _Puny_Basic(%0) (((%0) > 25) ? ((%0) + ('0' - 25)) : ((%0) + 'a'))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="bias">Part of the state machine.</param>
 <param name="delta">Part of the state machine.</param>
 <param name="dst">Array to write to.</param>
@@ -439,7 +439,7 @@ static stock Puny_EncodeVarHash(bias, delta, dst[], wlen, &hash)
 	return i;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="bias">Part of the state machine.</param>
 <param name="delta">Part of the state machine.</param>
 <param name="dst">Array to write to.</param>
@@ -473,7 +473,7 @@ static stock Puny_EncodeVar(bias, delta, dst[], wlen)
 	return i;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="delta">Part of the state machine.</param>
 <param name="length">Written string size.</param>
 <param name="firstTime">Have special characters already been written?</param>
@@ -499,7 +499,7 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 }
 
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="index">The HTTP reference index.</param>
 <param name="type">How the request should be sent.</param>
 <param name="url">The (internationalised) URL address.</param>

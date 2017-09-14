@@ -128,7 +128,7 @@ static stock
 forward y_users_SQLLoaded(playerid, uid, Result:r);
 forward y_users_SQLCallback(id, Result:r);
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <remarks>
 	This code loads the settings for accessing your database from a file.
 </remarks>
@@ -168,7 +168,7 @@ static stock Player_LoadDBSettings()
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who changed name.</param>
 <remarks>
 	Reload a player's basic data when they change name.
@@ -191,7 +191,7 @@ stock Player_SetPreload(playerid, data[E_USER_PRELOAD])
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who is logging in.</param>
 <remarks>
 	Loads a player's data to an array.
@@ -473,7 +473,7 @@ hook OnPlayerConnect(playerid)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player to check.</param>
 <returns>
 	-1 - Registered but not logged in.
@@ -504,7 +504,7 @@ static remotefunc void:_Player_IsLoggedIn(playerid)
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who left.</param>
 <param name="reason">Why they left.</param>
 <remarks>
@@ -568,7 +568,7 @@ stock Player_GetYID(playerid)
 	return YSI_g_sPlayerYID[playerid];
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who is logging in.</param>
 <param name="password">Password they entered.</param>
 <param name="f">Show the failed to login message?</param>
@@ -650,7 +650,7 @@ global Player_TryLogin(playerid, string:password[])
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who is logging in.</param>
 <remarks>
 	Like "Player_TryLogin" but doesn't take a password so always works.
@@ -765,7 +765,7 @@ y_users_SQLCallback_done:
 		1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="name">Item to remove.</param>
 <remarks>
 	Wrapper for Player_AddToBuffer for removing data.
@@ -782,7 +782,7 @@ stock Player_RemoveEntry(name[])
 	sql_query(YSI_g_sWriteHandle, YSI_g_sSQLQuery, QUERY_THREADED, "y_users_SQLCallback", "ir", 1);
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="name">Data name.</param>
 <param name="data">Data.</param>
 <remarks>
@@ -822,7 +822,7 @@ stock Player_WriteArray(const name[], data[], len)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="name">Data name.</param>
 <param name="data">Integer data.</param>
 <remarks>
@@ -838,7 +838,7 @@ stock Player_WriteInt(name[], data)
 	Player_WriteString(name, sVal);
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="name">Data name.</param>
 <param name="data">Hex data.</param>
 <remarks>
@@ -854,7 +854,7 @@ stock Player_WriteHex(name[], data)
 	Player_WriteString(name, data);
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="name">Data name.</param>
 <param name="data">Binary data.</param>
 <remarks>
@@ -883,7 +883,7 @@ stock Player_WriteBin(name[], data)
 	Player_WriteString(name, str);
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="name">Data name.</param>
 <param name="data">Boolean data.</param>
 <remarks>
@@ -896,7 +896,7 @@ stock Player_WriteBool(name[], bool:data)
 	Player_WriteString(name, data ? ("true") : ("false"));
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="name">Data name.</param>
 <param name="data">Float data.</param>
 <param name="accuracy">number of decimal places to write.</param>
@@ -982,7 +982,7 @@ stock Player_SaveData(playerid, bool:logout = false)
 	YSI_g_sCurrentYID = stk;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="pass">Data to hash.</param>
 <remarks>
 	Based on my Dad's hash system but slightly modifed.  Updated for reverse
@@ -1048,7 +1048,7 @@ stock Player_SomeWeirdBugFix()
 {
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who is registering.</param>
 <param name="password">The password they entered.</param>
 <remarks>
@@ -1169,7 +1169,7 @@ global Player_ChangePassword(playerid, string:password[])
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player whose data should be saved.</param>
 <remarks>
 	When a player's preload data is modifed (new bit data or changed password),
@@ -1249,7 +1249,7 @@ static stock Player_RewritePreload(playerid)
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who is joining a group.</param>
 <param name="other">A player name already in the group.</param>
 <param name="password">The password of the group.</param>
@@ -1345,7 +1345,7 @@ global Player_TryGroup(playerid, string:other[], string:password[])
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who is joining a group.</param>
 <param name="other">A player name already in the group.</param>
 <remarks>

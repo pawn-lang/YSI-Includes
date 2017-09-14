@@ -154,7 +154,7 @@ forward Race_Timeout(playerid);
 
 loadtext core[ysi_race];
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="from">Which slot to start shifting up.</param>
 <param name="add">How to adjust the slots.</param>
 Notes:
@@ -170,7 +170,7 @@ _Y_RACES_STATIC stock RaceArray_IndexShift(from, add)
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="from">Which slot to start shifting up.</param>
 <param name="end">Slot to end the shifting on.</param>
 <param name="to">Slot to shift to.</param>
@@ -192,7 +192,7 @@ _Y_RACES_STATIC stock RaceArray_Shift(from, &end, to)
 	return true;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="slot">Slot to add to.</param>
 <param name="x">Position data.</param>
 <param name="y">Position data.</param>
@@ -214,7 +214,7 @@ _Y_RACES_STATIC stock RaceArray_Add(slot, Float:x, Float:y, Float:z)
 	return true;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to check.</param>
 Notes:
 	Checks a race is active.
@@ -224,7 +224,7 @@ P:D(bool:Race__IsActive(raceid));
 #define Race__IsActive(%1) \
 	(YSI_g_sRaceData[(%1)][E_RACE_FLAGS] & e_RACE_FLAGS_ACTIVE)
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to check.</param>
 Notes:
 	Checks an id is valid and active.
@@ -234,7 +234,7 @@ P:D(bool:Race_IsValid(raceid));
 #define Race_IsValid(%1) \
 	(0 <= (%1) < MAX_RACES && Race__IsActive((%1)))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="laps">Number of laps to race for.</param>
 <param name="entry">Cost of entry.</param>
 <param name="countdown">Time to count down from for start.</param>
@@ -256,7 +256,7 @@ stock Races_SetupGroups() <>
 {
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="laps">Number of laps to race for.</param>
 <param name="entry">Cost of entry.</param>
 <param name="countdown">Time to count down from for start.</param>
@@ -329,7 +329,7 @@ global _Race_Create(l,e,c,a,f,x,i,w,r)
 	return raceid;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="slot">Race to destroy.</param>
 <param name="refund">Should entrants get their money back?</param>
 Notes:
@@ -379,7 +379,7 @@ global void:_Race_Destroy(slot, refund)
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to add to.</param>
 <param name="x">X position.</param>
 <param name="y">Y position.</param>
@@ -397,7 +397,7 @@ global Race_AddCheckpoint(raceid, Float:x, Float:y, Float:z)
 	return count;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to add to.</param>
 <param name="x">X position.</param>
 <param name="y">Y position.</param>
@@ -423,7 +423,7 @@ global Race_AddStart(raceid, Float:x, Float:y, Float:z, Float:a)
 	return count;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to set for.</param>
 <param name="set">1/0.</param>
 Notes:
@@ -439,7 +439,7 @@ global void:Race_SetFixedWin(raceid, set)
 	else YSI_g_sRaceData[raceid][E_RACE_FLAGS] |= e_RACE_FLAGS_REL_WIN;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to set for.</param>
 <param name="set">1/0.</param>
 Notes:
@@ -453,7 +453,7 @@ global void:Race_SetRestart(raceid, set)
 	else YSI_g_sRaceData[raceid][E_RACE_FLAGS] &= ~e_RACE_FLAGS_RESTART;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to set for.</param>
 <param name="set">1/0.</param>
 Notes:
@@ -467,7 +467,7 @@ global void:Race_SetArial(raceid, set)
 	else YSI_g_sRaceData[raceid][E_RACE_FLAGS] &= ~e_RACE_FLAGS_ARIAL;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to set for.</param>
 <param name="set">1/0.</param>
 Notes:
@@ -481,7 +481,7 @@ _Y_RACES_STATIC stock Race_SetActive(raceid, set)
 	else YSI_g_sRaceData[raceid][E_RACE_FLAGS] &= ~e_RACE_FLAGS_ACTIVE;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to set for.</param>
 <param name="countdown">Number to count down from.</param>
 *//*-------------------------------------------------------------------------**/
@@ -492,7 +492,7 @@ global void:Race_SetCountdown(raceid, countdown)
 	YSI_g_sRaceData[raceid][E_RACE_COUNTDOWN] = countdown;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to set for.</param>
 <param name="interior">Interior where race is located.</param>
 Notes:
@@ -506,7 +506,7 @@ global void:Race_SetInterior(raceid, interior)
 	YSI_g_sRaceData[raceid][E_RACE_INT] = interior;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to set for.</param>
 <param name="world">World to run race in.</param>
 *//*-------------------------------------------------------------------------**/
@@ -517,7 +517,7 @@ global void:Race_SetWorld(raceid, world)
 	YSI_g_sRaceData[raceid][E_RACE_VW] = world;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to set for.</param>
 <param name="position">Winning position to set for/.</param>
 <param name="amount">Amount for that position to win.</param>
@@ -532,7 +532,7 @@ global void:Race_SetPrize(raceid, position, amount)
 	YSI_g_sRaceData[raceid][E_RACE_PRIZES][position - 1] = amount;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to set for.</param>
 <param name="time">Time to set.</param>
 Notes:
@@ -548,7 +548,7 @@ global void:Race_SetExitTime(raceid, time)
 	YSI_g_sRaceData[raceid][E_RACE_FLAGS] = (YSI_g_sRaceData[raceid][E_RACE_FLAGS] & (~e_RACE_FLAGS_EXIT_TIME)) | (e_RACE_FLAGS:time & e_RACE_FLAGS_EXIT_TIME);
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to check.</param>
 Notes:
 	Wrapper for Race_IsValid.
@@ -559,7 +559,7 @@ global Race_IsActive(raceid)
 	return Race_IsValid(raceid);
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to set for.</param>
 <param name="laps">Number of laps to set.</param>
 *//*-------------------------------------------------------------------------**/
@@ -570,7 +570,7 @@ global void:Race_SetLaps(raceid, laps)
 	YSI_g_sRaceData[raceid][E_RACE_LAPS] = laps;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="raceid">Race to set for.</param>
 <param name="cost">Cost of entry to the race.</param>
 *//*-------------------------------------------------------------------------**/
@@ -581,7 +581,7 @@ global void:Race_SetEntry(raceid, cost)
 	YSI_g_sRaceData[raceid][E_RACE_ENTRY] = cost;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player dropping out.</param>
 Notes:
 	Called when a player exits their vehicle.
@@ -594,7 +594,7 @@ _Y_RACES_STATIC Race_Dropout(playerid)
 	YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_TOUT] = GetTickCount();
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player rejoining.</param>
 Notes:
 	Called when a player gets in a new vehicle if not timmed
@@ -606,7 +606,7 @@ _Y_RACES_STATIC Race_Rejoin(playerid)
 	YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE] &= ~RACE_PLAYER_OUT;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player to check.</param>
 Notes:
 	Called from Race_Dropout after the race's exit time.  If
@@ -619,7 +619,7 @@ public Race_Timeout(playerid)
 	if (YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE] & RACE_PLAYER_OUT) Race_Exit(playerid);
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who left.</param>
 Notes:
 	Called when a player leaves a race prematurly.
@@ -635,7 +635,7 @@ _Y_RACES_STATIC Race_Exit(playerid)
 	Race_CheckEnd(slot);
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="slot">Race to check.</param>
 Notes:
 	Called whenever a player leaves the race, checks the
@@ -670,7 +670,7 @@ _Y_RACES_STATIC Race_CheckEnd(slot)
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player done.</param>
 Notes:
 	Generic cleanup for anyone who has left a race.  Sets
@@ -715,7 +715,7 @@ _Y_RACES_STATIC Race_PlayerDone(playerid)
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player to get time of.</param>
 <returns>The time a player has been out a vehicle.</returns>
 *//*-------------------------------------------------------------------------**/
@@ -725,7 +725,7 @@ global Race_GetPlayerExitedTime(playerid)
 	return GetTickCount() - YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_TOUT];
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player to add.</param>
 <param name="race">Race to add to.</param>
 Notes:
@@ -755,7 +755,7 @@ global Race_PlayerJoin(playerid, race)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player to leave the race.</param>
 <param name="refund">Wether or not to give them their entry fee back.</param>
 Notes:
@@ -783,7 +783,7 @@ global _Race_PlayerLeave(playerid, refund)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who finished the race.</param>
 Notes:
 	Called when a player completes a race.
@@ -804,7 +804,7 @@ _Y_RACES_STATIC Race_Finish(playerid)
 	Race_CheckEnd(slot);
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="race">Race to start.</param>
 Notes:
 	Loops through all players who have entered the race and
@@ -872,7 +872,7 @@ global Race_Start(race)
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="race">Race to do countdown for.</param>
 <param name="time">Seconds remaining.</param>
 *//*-------------------------------------------------------------------------**/
@@ -909,7 +909,7 @@ public Race_Countdown(race, time)
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who entered.</param>
 Sets up important variables
 *//*-------------------------------------------------------------------------**/
@@ -925,7 +925,7 @@ mhook OnScriptInit()
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who entered.</param>
 Checks a players position in the race and displays the corresponding next
 checkpoint or calls Race_Finish.
@@ -1012,7 +1012,7 @@ _Y_RACES_STATIC Race_DoEnterRaceCP(playerid)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who's state changed.</param>
 <param name="newstate">Their new state.</param>
 <param name="oldstate">Their last state.</param>
@@ -1036,7 +1036,7 @@ mhook OnPlayerStateChange(playerid, newstate, oldstate)
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who left.</param>
 <param name="reason">Why they left.</param>
 Notes:
@@ -1062,7 +1062,7 @@ mhook OnPlayerDisconnect(playerid, reason)
 	#pragma unused reason
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player who joined.</param>
 Just a fix for IsPlayerInRaceCheckpoint.
 *//*-------------------------------------------------------------------------**/
@@ -1075,7 +1075,7 @@ mhook OnPlayerConnect(playerid)
 
 #if defined RACE_POSITION
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 If compiled with RACE_POSITION this function will keep track of all player's
 positions in their race.  It uses current lap, checkpoint and distance from next
 checkpoint to approximate position.
@@ -1171,7 +1171,7 @@ another player thus show as a higher position when you are infact behind them.
 		}
 	}
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player to get position of.</param>
 <returns>Dynamic position in race.</returns>
 *//*-------------------------------------------------------------------------**/
@@ -1183,7 +1183,7 @@ global Race_GetPlayerPosition(playerid)
 
 #endif
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player to get time for.</param>
 <returns>Time in race so far.</returns>
 *//*-------------------------------------------------------------------------**/
@@ -1193,7 +1193,7 @@ global Race_GetPlayerRaceTime(playerid)
 	return GetTickCount() - YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_TIME];
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="playerid">Player to get race of.</param>
 <returns>Player's race.</returns>
 *//*-------------------------------------------------------------------------**/
@@ -1204,7 +1204,7 @@ global Race_GetPlayerRace(playerid)
 	return NO_RACE;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="race">Which race to add them to.</param>
 <param name="playerid">Player to set in the race.</param>
 <param name="set">Add or remove them.</param>

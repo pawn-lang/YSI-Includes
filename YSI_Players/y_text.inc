@@ -8,7 +8,7 @@
 #endif
 #define _INC_y_text
 
-/*$
+/**
 <library>
 					y_text
 </library>
@@ -100,7 +100,7 @@ Static
 	<symbol name="YSI_g_sLangBuffer">Saves the current position of each language.</symbol>
 	<symbol name="YSI_g_sColours">Saves defined colours for use.</symbol>
 </ul>
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	

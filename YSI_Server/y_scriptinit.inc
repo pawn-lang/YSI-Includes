@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_scriptinit
 
-/*$
+/**
 <library>
 					y_scriptinit
 </library>
@@ -21,7 +21,7 @@
 </section>
 	1.0
 
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -159,7 +159,7 @@ stock
 	#define DEBUG_MAYBE_DUMP(%0);
 #endif
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <transition keep="true" target="_script_init_fix_state : true"/>
 <transition keep="true" target="_ALS : _ALS_go"/>
 *//*-------------------------------------------------------------------------**/
@@ -201,7 +201,7 @@ public OnFilterScriptInit()
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <transition keep="true" target="_script_init_fix_state : false"/>
 <transition keep="true" target="_ALS : _ALS_go"/>
 *//*-------------------------------------------------------------------------**/

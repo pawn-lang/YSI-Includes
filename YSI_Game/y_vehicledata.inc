@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_vehicledata
 
-/*$
+/**
 <library>
 					y_vehicledata
 </library>
@@ -37,7 +37,7 @@ Global
 	<symbol name="YSI_gVehicleNames">Names of vehicles.</symbol>
 	<symbol name="YSI_gVehicleTopSpeed">Top speed of vehicles.</symbol>
 </ul>
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -1051,7 +1051,7 @@ stock
 			0,
             0
 		};
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="vehicleid">The vehicleid to get speed.</param>
 <returns>
 	Current vehicle speed.

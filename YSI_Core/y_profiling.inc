@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_profiling
 
-/*$
+/**
 <library>
 					y_profiling
 </library>
@@ -16,7 +16,7 @@
 </section>
 	1.0
 
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -160,7 +160,7 @@ Optional plugins:
 static stock
 	bool:YSI_g_sInProfile = false;
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="profilings">Number of profilings run.</param>
 <returns>
 	Wether all profilings were sucessful or not.

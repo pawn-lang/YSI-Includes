@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_va
 
-/*$
+/**
 <library>
 					y_va
 </library>
@@ -21,7 +21,7 @@
 </section>
 	1.0
 
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	

@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_colours
 
-/*$
+/**
 <library>
 					y_colours
 </library>
@@ -20,7 +20,7 @@
 </section>
 	1.0
 
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	

@@ -179,7 +179,7 @@ enum e_COMPRESS_FORMAT_DATA (+= 0x10000000)
 
 #define Y_FORMAT_STRING_SKIP(); //if(iOut+1<len)output[iOut]=0,lastChar=iOut++
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="input">String to read from.</param>
 <param name="idx">Current read index.</param>
 <returns>
@@ -363,7 +363,7 @@ stock e_GAME_TEXT_KEYS:Format_GetKeys(const input[], &idx)
 	return e_NO_KEY_SELECTED;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="input">The text to read in.</param>
 <param name="output">The destination array.  Can be the same as "input".</param>
 <param name="len">The length of the output array.</param>
@@ -1039,7 +1039,7 @@ Format_Standardise_no_switch:
 	return iOut;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="input">String to read from.</param>
 <param name="iIn">Index to read from.</param>
 <returns>
@@ -1162,7 +1162,7 @@ static stock Format_GetSpecifier(input[], &iIn)
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="str">Input.</param>
 <param name="idx">Read index.</param>
 <returns>

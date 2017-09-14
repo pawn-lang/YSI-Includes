@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_simpletree
 
-/*$
+/**
 <library>
 					y_simpletree
 </library>
@@ -60,7 +60,7 @@ Inline
 </section><ul>
 	<symbol name="Bintree">Binary tree type.</symbol>
 </ul>
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	

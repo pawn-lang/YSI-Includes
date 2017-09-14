@@ -1,4 +1,4 @@
-/*$
+/**
 <library>
 					y_loader
 </library>
@@ -55,7 +55,7 @@ Static
 	<symbol name="YSI_g_sXMLRules">Handle to the XML parse rule set.</symbol>
 	<symbol name="YSI_g_sCurRace">Handle to the current race being built.</symbol>
 </ul>
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -139,7 +139,7 @@ forward Loader_Spawn();
 forward Loader_Check();
 forward Loader_Obj();
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <remarks>
 Defines the parsing rules for reading MTA XML maps.
 </remarks>
@@ -160,7 +160,7 @@ Loader_Loader()
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="filename">File to parse as an XML race file.</param>
 <param name="laps">Number of laps to race for.</param>
 <param name="entry">Cost of entry.</param>
@@ -193,7 +193,7 @@ stock Loader_Parse(filename[], laps = 0, entry = 0, countdown = 3, bool:arial = 
 	return race;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="filename">File to parse.</param>
 <param name="world">World for the objects to appear in or -1 for all.</param>
 <remarks>
@@ -207,7 +207,7 @@ stock Loader_ParseObjects(filename[], world = -1)
 	return XML_Parse(YSI_g_sXMLRules, filename);
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="race">Race to remove objects for.</param>
 <remarks>
 Destroys all the objects created for a race loaded with the loader.
@@ -249,7 +249,7 @@ stock Loader_Unload(race)
 	#endif
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="radians">Radian angle to convert to degrees.</param>
 <returns>Float</returns>
 <remarks>
@@ -270,7 +270,7 @@ stock Float:Loader_Convert(Float:radians)
 	return retval;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <returns>CreateDynamicObject</returns>
 <remarks>
 Called when an end object tag is reached to create an object.
@@ -340,7 +340,7 @@ public Loader_Obj()
 	#endif
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <returns>Race_AddCheckpoint</returns>
 <remarks>
 Called when an end checkpoint tag is reached to add a checkpoint to a race.
@@ -377,7 +377,7 @@ public Loader_Check()
 	#endif
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <returns>Race_AddStart</returns>
 <remarks>
 Called when an end spawnpoint tag is reached to add a startpoint to a race.
@@ -419,7 +419,7 @@ public Loader_Spawn()
 	#endif
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="trigger">Tag to trigger the callback.</param>
 <param name="function">Function to call for the tag.</param>
 <remarks>
@@ -433,7 +433,7 @@ stock Loader_AddHandler(trigger[], function[])
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <returns>Current race handle.</returns>
 *//*-------------------------------------------------------------------------**/
 

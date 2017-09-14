@@ -164,7 +164,7 @@ stock Styles_GetData(index, style[E_STYLE_DATA], label[E_3D_DATA])
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <remarks>
 	Called to load "&lt;entry&gt;" tags from XML style files.
 </remarks>
@@ -397,7 +397,7 @@ public Styles_3DTag()
 	return YSI_g_sCur3D++;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <remarks>
 	Loads all the style files relevant to this script.  Filters by text group in
 	the XML callback.  Loops through all publics, then loops through them all
@@ -473,7 +473,7 @@ public _Styles_SpecialInit()
 	XML_Parse(YSI_g_sXMLRules, fname);
 }*/
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <remarks>
 	Reloads all the string styles in all scripts.  Use sparingly!
 </remarks>

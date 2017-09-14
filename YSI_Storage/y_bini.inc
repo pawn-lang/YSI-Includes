@@ -89,7 +89,7 @@ BIN_WriteChunk(const BIN:f, const pos, const arr[], const len = sizeof (arr), bu
 
 */
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="start">Start position of the possibly current key.</param>
 <param name="end">End position of the found key.</param>
 <remarks>

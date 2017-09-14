@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_functional
 
-/*$
+/**
 <library>
 					y_functional
 </library>
@@ -16,7 +16,7 @@
 </section>
 	1.0
 
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	

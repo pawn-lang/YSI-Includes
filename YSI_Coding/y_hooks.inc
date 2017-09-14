@@ -10,7 +10,7 @@
 #endif
 #define _INC_y_hooks
 
-/*$
+/**
 <library>
 					y_hooks
 </library>
@@ -23,7 +23,7 @@
 </section>
 	2.0
 
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	

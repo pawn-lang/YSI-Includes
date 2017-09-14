@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_playerset
 
-/*$
+/**
 <library>
 					y_playerset
 </library>
@@ -19,7 +19,7 @@
 </section>
 	1.0
 
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	

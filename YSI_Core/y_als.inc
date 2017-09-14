@@ -123,7 +123,7 @@ Optional plugins:
 #endif
 #define _INC_y_als
 
-/*$
+/**
 <library>
 					y_als
 </library>
@@ -137,5 +137,5 @@ Optional plugins:
 </section>
 	1.0
 
-*//*$ */
+*//** */
 

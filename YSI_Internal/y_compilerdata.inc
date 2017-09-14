@@ -3,7 +3,7 @@
 #endif
 #define _INC_y_compilerdata
 
-/*$
+/**
 <!--
 <transition target[^/]+/>
 
@@ -78,7 +78,7 @@ Inline
 		thing in both cases already.</symbol>
 	<symbol name="P:D">Wrap a fake function declaration, so macros can be documented.</symbol>
 </ul>
-*//*$ *//*
+*//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -155,7 +155,7 @@ Optional plugins:
 // Enable `P:D(func())` for forcing function-like macros in to documentation.
 // For example:
 //   
-//   /*$
+//   /**
 //   <param name="playerid">An example named macro parameter (`%0`).</param>
 //   <remarks>
 //       This is a function-like macro.  By default, compiling with `-r` does

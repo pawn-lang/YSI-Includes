@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="slot">Allocation unit to get the size of.</param>
 <returns>
 	The size.
@@ -81,7 +81,7 @@ P:D(Malloc_GetSlotSize(Alloc:slot));
 #define Malloc_GetSlotSize(%1) \
 	(YSI_gMallocMemory[_:(%1) - 1])
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="slot">Allocation unit to get the size of.</param>
 <returns>
 	The size.
@@ -103,7 +103,7 @@ P:D(Malloc_GetSlotSize(Alloc:slot));
 
 #endif
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="string">The string to store.</param>
 <param name="pack">Whether or not the string will be packed.</param>
 <returns>
@@ -128,7 +128,7 @@ stock Alloc:Malloc_NewS(const string[], bool:pack = false) {
 	return alloc;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="slot">The allocation unit to set the size of.</param>
 <param name="size">The size to set it to.</param>
 *//*-------------------------------------------------------------------------**/
@@ -137,7 +137,7 @@ P:D(Malloc_SetSlotSize(slot,size));
 #define Malloc_SetSlotSize(%1,%2) \
 	YSI_gMallocMemory[_:(%1) - 1] = (%2)
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="slot">The allocation unit to get data from.</param>
 <param name="index">The location in the unit to get.</param>
 <returns>
@@ -152,7 +152,7 @@ P:D(Malloc_GetData(Alloc:slot,index));
 #define Malloc_GetData(%1,%2) \
 	(YSI_gMallocMemory[_:((%1)+Alloc:(%2))])
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="slot">The allocation unit to set in.</param>
 <param name="index">Where in the unit to set.</param>
 <param name="value">The value to save.</param>
@@ -162,7 +162,7 @@ P:D(Malloc_SetData(Alloc:slot,index,value));
 #define Malloc_SetData(%1,%2,%3) \
 	YSI_gMallocMemory[_:((%1)+Alloc:(%2))]=(%3)
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="slot">The allocation unit to get data from.</param>
 <param name="index">The location in the unit to get.</param>
 <returns>
@@ -179,7 +179,7 @@ P:D(mget(Alloc:slot, index));
 		Malloc_Get(%1)
 #endif
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="slot">The allocation unit to set in.</param>
 <param name="index">Where in the unit to set.</param>
 <param name="value">The value to save.</param>
@@ -194,7 +194,7 @@ P:D(mset(Alloc:slot, index, value));
 		Malloc_Set(%1)
 #endif
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="target">Target for the string.</param>
 <param name="length">Length of the target.</param>
 <param name="array">Data unit to put information in.</param>
@@ -215,7 +215,7 @@ P:D(mgets(target[], length, Alloc:array, const index, const bool:pack = false));
 		Malloc_GetS(%1)
 #endif
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="target">Target for the string.</param>
 <param name="length">Length of the target.</param>
 <param name="array">Data unit to put information in.</param>
@@ -235,7 +235,7 @@ P:D(mgeta(target[], length, Alloc:array, index));
 		Malloc_GetA(%1)
 #endif
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
 <param name="str">String to insert</param>
@@ -252,7 +252,7 @@ P:D(msets(Alloc:array, const index, const str[], const bool:pack = false));
 		Malloc_SetS(%1)
 #endif
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
 <param name="str">Array to insert.</param>
@@ -269,7 +269,7 @@ P:D(mseta(Alloc:array, index, const str[], len));
 		Malloc_SetA(%1)
 #endif
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="slot">The unit to get the one after of.</param>
 <remarks>
 	Gets the next free block of memory after the current one.
@@ -280,7 +280,7 @@ P:D(Malloc_NextSlot(slot));
 #define Malloc_NextSlot(%1) \
 	(YSI_gMallocMemory[(%1)])
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="array">Data unit to get information from.</param>
 <param name="index">Index in the unit.</param>
 <returns>
@@ -311,7 +311,7 @@ P:D(Malloc_NextSlot(slot));
 
 #endif
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
 <param name="value">Value to insert</param>
@@ -340,7 +340,7 @@ P:D(Malloc_NextSlot(slot));
 
 #endif
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="target">Target for the string.</param>
 <param name="length">Length of the target.</param>
 <param name="array">Data unit to put information in.</param>
@@ -368,7 +368,7 @@ stock Malloc_GetS(target[], length, Alloc:array, const index, const bool:pack = 
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
 <param name="str">String to insert</param>
@@ -406,7 +406,7 @@ stock Malloc_SetS(Alloc:array, const index, const str[], const bool:pack = false
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
 <param name="arg">Offset in the stack of the string to store.</param>
@@ -466,7 +466,7 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
 	#endif
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="target">Target for the array.</param>
 <param name="length">Length of the target.</param>
 <param name="array">Data unit to put information in.</param>
@@ -493,7 +493,7 @@ stock Malloc_GetA(target[], length, Alloc:array, index)
 	return 0;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
 <param name="str">Array to insert.</param>
@@ -518,7 +518,7 @@ stock Malloc_SetA(Alloc:array, index, const str[], len)
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="array">Data unit to put information in.</param>
 <param name="index">Index in the unit.</param>
 <param name="arg">Offset in the stack of the array to store.</param>
@@ -579,7 +579,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 	#endif
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="size">Size of memory to allocate.</param>
 <returns>
 	0 on fail or a data handle on sucess.
@@ -607,7 +607,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 
 #endif
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="size">Size of memory to allocate.</param>
 <returns>
 	0 on fail or a data handle on sucess.
@@ -636,7 +636,7 @@ stock Alloc:calloc(size)
 	return slot;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="slot">Slot of memory to free up.</param>
 <remarks>
 	Displays errors in secure mode.
@@ -663,7 +663,7 @@ stock Alloc:calloc(size)
 
 #endif
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="size">Ammount of memory to allocate IN CELLS.</param>
 <param name="cleat">Blank the memory?</param>
 <returns>
@@ -758,7 +758,7 @@ stock Alloc:calloc(size)
 			return NO_ALLOC;
 		}
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="slot">Memory allocation unit to release</param>
 <remarks>
 	Implementation code for <symbolref name="free" />.

@@ -88,7 +88,7 @@ Optional plugins:
 // Temp definition for documentation.  Will be corrected at the end of the file.
 #define Iterator:%1<%2> Iterator:%1[]
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="expr"><code>var : Iterator</code></param>
 <remarks>
 </remarks>
@@ -97,7 +97,7 @@ Optional plugins:
 //P:D(foreach(expr));
 #define foreach(%0) for(new Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%0|||)
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="params">The iterator function's parameters.</param>
 <remarks>
 	Used to declare a special iterator function.  Examples:
@@ -150,7 +150,7 @@ stock iterfunc OneToN(cur, n)                                                   
 P:D(iterfunc(params));
 #define iterfunc%0(%1) F@y:%0(%1)
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Iterator to run backwards.</param>
 <remarks>
 	Run an iterator backwards.
@@ -173,7 +173,7 @@ P:D(Iterator@Reverse(Iterator:iter<>));
 
 */
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator array to initialise.</param>
 <remarks>
 	Wrapper for Iter_Init_Internal.  When <c>__COMPILER_NESTED_ELLIPSIS</c> is
@@ -195,7 +195,7 @@ P:D(Iter_Init(Iterator:iter[]<>));
 	#define Iter_Init(%0) Iter_Init_Internal(F@r(Iterator@%0),F@r(Iterator@%0)[0],F@s(Iterator@%0),F@s(Iterator@%0[]),F@r(Iter_Init@%0))
 #endif
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to add the data to.</param>
 <param name="value">Value to add to the iterator.</param>
 <remarks>
@@ -211,7 +211,7 @@ P:D(Iter_Add(Iterator:iter<>, value));
 #define Iter_Add_InternalA(%0,%1,%9)    Iter_Add_InternalC(%0,_:%1,F@s(%1)-1,_:F@t:((%1[0]-%1[0])+%9))
 #define Iter_Add_InternalB(%0,%2,%1,%9) Iter_Add_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:F@t:((%1[0]-%1[0])+%9))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to remove data from.</param>
 <param name="value">Data to remove.</param>
 <remarks>
@@ -227,7 +227,7 @@ P:D(Iter_Remove(Iterator:iter<>, value));
 #define Iter_Remove_InternalA(%0,%1,%9)    Iter_Remove_InternalC(%0,_:%1,F@s(%1)-1,_:F@t:((%1[0]-%1[0])+%9))
 #define Iter_Remove_InternalB(%0,%2,%1,%9) Iter_Remove_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:F@t:((%1[0]-%1[0])+%9))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get the first free slot in.</param>
 <remarks>
 	Wrapper for Iter_Free_Internal.  Returns a slot NOT in the current
@@ -243,7 +243,7 @@ P:D(Iter_Free(Iterator:iter<>));
 #define Iter_Free_InternalA(%0,%1)    Iter_Free_Internal(_:%1,F@s(%1)-F@s(%0))
 #define Iter_Free_InternalB(%0,%2,%1) Iter_Free_Internal(_:%1,F@s(%1)-F@s(%0))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the multi-iterator to get the first free slot in.</param>
 <remarks>
 	Wrapper for Iter_FreeMulti_Internal.  Returns a slot NOT in the current
@@ -259,7 +259,7 @@ P:D(Iter_FreeMulti(Iterator:iter<,>, ));
 #define Iter_FreeMulti_InternalA(%0,%1)    Iter_FreeMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0))
 #define Iter_FreeMulti_InternalB(%0,%2,%1) Iter_FreeMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to check membership of.</param>
 <param name="value">Value to check.</param>
 <remarks>
@@ -276,7 +276,7 @@ P:D(bool:Iter_Contains(Iterator:iter<>, value));
 #define Iter_Contains_InternalB(%0,%2,%1,%9)  Iter_Contains_InternalD(%0[%2],_:%1,F@s(%1)-F@s(%0),-%2+F@s(%1)-1,_:F@t:((%1[0]-%1[0])+%9))
 #define Iter_Contains_InternalD(%0,%1,%2,-+%8,%3) Iter_Contains_InternalC(%1,%2,%3)
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to check membership of.</param>
 <param name="value">Value to check.</param>
 <returns>
@@ -295,7 +295,7 @@ P:D(Iter_GetMulti(Iterator:iter<,>, value));
 #define Iter_GetMulti_InternalA(%0,%1,%9)    Iter_GetMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0),_:F@t:((%1[0]-%1[0])+%9))
 #define Iter_GetMulti_InternalB(%0,%2,%1,%9) Iter_GetMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0),_:F@t:((%1[0]-%1[0])+%9))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to remove data from.</param>
 <param name="value">Data to remove.</param>
 <param name="next">Container for the pointer to the next element.</param>
@@ -314,7 +314,7 @@ P:D(Iter_SafeRemove(Iterator:iter<>, value, &next));
 #define Iter_SafeRemove_InternalA(%0,%1,%9)    Iter_SafeRemove_InternalC(%0,_:%1,F@s(%1)-1,_:F@t:((%1[0]-%1[0])+%9))
 #define Iter_SafeRemove_InternalB(%0,%2,%1,%9) Iter_SafeRemove_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:F@t:((%1[0]-%1[0])+%9))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to add a random slot to.</param>
 <remarks>
 	Wrapper for Iter_RandomAddInternal.
@@ -329,7 +329,7 @@ P:D(Iter_RandomAdd(Iterator:iter<>));
 #define Iter_RandomAdd_InternalA(%0,%1)    Iter_RandomAdd_InternalC(%0,_:%1,F@s(%1)-1)
 #define Iter_RandomAdd_InternalB(%0,%2,%1) Iter_RandomAdd_InternalD(%0,_:%1,F@s(%1)-F@s(%0),F@s(%0),F@s(%1)-1-(%2),%2)
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to remove a random slot from.</param>
 <remarks>
 	Wrapper for Iter_RandomRemoveInternal.
@@ -344,7 +344,7 @@ P:D(Iter_RandomRemove(Iterator:iter<>));
 #define Iter_RandomRemove_InternalA(%0,%1)    Iter_RandomRemove_InternalC(%0,_:%1,F@s(%1)-1)
 #define Iter_RandomRemove_InternalB(%0,%2,%1) Iter_RandomRemove_InternalD(%0[%2],_:%1,F@s(%1)-F@s(%0),F@s(%1)-1-(%2))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get a random unused slot for.</param>
 <remarks>
 	Wrapper for Iter_RandomFree_Internal.
@@ -359,7 +359,7 @@ P:D(Iter_RandomFree(Iterator:iter<>));
 #define Iter_RandomFree_InternalA(%0,%1)    Iter_RandomFree_InternalC(%0,_:%1,F@s(%1)-1)
 #define Iter_RandomFree_InternalB(%0,%2,%1) Iter_RandomFree_InternalD(%0,_:%1,F@s(%1)-F@s(%0),F@s(%0))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get a random slot from.</param>
 <remarks>
 	Wrapper for Iter_RandomInternal.
@@ -374,7 +374,7 @@ P:D(Iter_Random(Iterator:iter<>));
 #define Iter_Random_InternalA(%0,%1)    Iter_Random_Internal(%0,_:%1,F@s(%1)-1)
 #define Iter_Random_InternalB(%0,%2,%1) Iter_Random_Internal(%0[%2],_:%1,F@s(%1)-1-(%2))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get a random slot from.</param>
 <remarks>
 	Returns the number of items in this iterator.
@@ -389,7 +389,7 @@ P:D(Iter_Count(Iterator:iter<>));
 #define Iter_Count_InternalA(%0,%1)    (%0)
 #define Iter_Count_InternalB(%0,%2,%1) (%0[%2])
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to empty.</param>
 <remarks>
 	Wrapper for Iter_Clear_Internal.
@@ -412,7 +412,7 @@ P:D(Iter_Clear(Iterator:iter<>));
 #define Iter_Clear_InternalB(%0,%2,%1)        Iter_Clear_InternalD(_:%1,F@s(%1),F@s(%0),F@s(%1)-F@s(%0),%0,%2)
 #define Iter_Clear_InternalD(%0,%1,%2,%3,%4,) Iter_Clear_InternalC(%0,%1,%2,%3-1,%4)
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get the first free slot in.</param>
 <remarks>
 	Finds an empty slot in an iterator, adds that slot to the iterator, and
@@ -441,7 +441,7 @@ P:D(Iter_Alloc(Iterator:iter<>));
 
 */
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to empty.</param>
 <remarks>
 	Uses a static array copy to blank the iterator instead of a loop.
@@ -458,7 +458,7 @@ P:D(Iter_FastClear(Iterator:iter<>));
 #define Iter_FastClear_InternalA(%0,%1);    {static YSII_Xg@Clear[F@s(%1)]={0,1,...};%1=YSII_Xg@Clear;%0=0;}
 #define Iter_FastClear_InternalB(%0,%2,%1); {static YSII_Xg@Clear[F@s(%1)]={0,1,...},YSII_Yg@Clear[F@s(%0)]={0,0,...};%1=YSII_Xg@Clear;%0=YSII_Yg@Clear;}
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get the start of.</param>
 <remarks>
 	Gets a point BEFORE the start of the iterator (the theoretical beginning).
@@ -470,7 +470,7 @@ P:D(Iter_Begin(Iterator:iter<>));
 #define Iter_Begin_InternalA(%0,%1)    (F@s(%1)-F@s(%0))
 #define Iter_Begin_InternalB(%0,%2,%1) (F@s(%1)-1-(%2))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get the end of.</param>
 <remarks>
 	Gets a point AFTER the end of the iterator (think "MAX_PLAYERS").
@@ -482,7 +482,7 @@ P:D(Iter_End(Iterator:iter<>));
 #define Iter_End_InternalA(%0,%1)    (F@s(%1)-F@s(%0))
 #define Iter_End_InternalB(%0,%2,%1) (F@s(%1)-1-(%2))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get the first valid element in.</param>
 <remarks>
 	Gets the first element in an iterator.
@@ -494,7 +494,7 @@ P:D(Iter_First(Iterator:iter<>));
 #define Iter_First_InternalA(%0,%1)    (%1[(F@s(%1)- F@s(%0))])
 #define Iter_First_InternalB(%0,%2,%1) (%1[(F@s(%1)-1-(%2))])
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to</param>
 <remarks>
 	Gets the last element in an iterator.  Works by getting the previous item
@@ -507,7 +507,7 @@ P:D(Iter_Last(Iterator:iter<>));
 #define Iter_Last_InternalA(%0,%1)    ((%1[Iter_End_InternalA(%0,%1)-1])-1)
 #define Iter_Last_InternalB(%0,%2,%1) (Iter_Prev_InternalB(%0,%2,%1,Iter_End_InternalB(%0,%2,%1)))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get the next element in.</param>
 <param name="cur">The current element.</param>
 <remarks>
@@ -520,7 +520,7 @@ P:D(Iter_Next(Iterator:iter<>, cur));
 #define Iter_Next_InternalA(%0,%1,%9)    (%1[_:F@t:((%1[0]-%1[0])+%9)])
 #define Iter_Next_InternalB(%0,%2,%1,%9) (%1[_:F@t:((%1[0]-%1[0])+%9)])
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get the previous element in.</param>
 <param name="cur">The current element.</param>
 <remarks>
@@ -533,7 +533,7 @@ P:D(Iter_Prev(Iterator:iter<>, cur));
 #define Iter_Prev_InternalA(%0,%1,%9)    (((%1[(_:((%1[0]-%1[0])+%9)-1)%F@s(%1)])-1)%F@s(%1))
 #define Iter_Prev_InternalB(%0,%2,%1,%9) Iter_Prev_Internal(%1,F@s(%1)-F@s(%0),F@s(%1),_:F@t:((%1[0]-%1[0])+%9))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get the true array of.</param>
 <remarks>
 	Accesses the internal array of an iterator.
@@ -543,7 +543,7 @@ P:D(Iter_Prev(Iterator:iter<>, cur));
 P:D(Iter_TrueArray(Iterator:iter<>));
 #define Iter_TrueArray(%1) F@r(Iterator@%1)
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get the true count of.</param>
 <remarks>
 	Accesses the internal count of an iterator.
@@ -553,7 +553,7 @@ P:D(Iter_TrueArray(Iterator:iter<>));
 P:D(Iter_TrueCount(Iterator:iter<>));
 #define Iter_TrueCount(%1) F@r(Iter_Single@%1)
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Multi iterator to get the true count of.</param>
 <remarks>
 	Accesses the internal count of a multi-iterator.
@@ -563,7 +563,7 @@ P:D(Iter_TrueCount(Iterator:iter<>));
 P:D(Iter_TrueMulti(Iterator:iter<,>));
 #define Iter_TrueMulti(%1) F@r(Iter_Multi@%1)
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get the true size of.</param>
 <remarks>
 	Accesses the internal size of an iterator.
@@ -575,7 +575,7 @@ P:D(Iter_TrueSize(Iterator:iter<>));
 #define Iter_TrueSize_InternalA(%0,%1)    (F@s(%1))
 #define Iter_TrueSize_InternalB(%0,%2,%1) (F@s(%1))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get the true starts of.</param>
 <remarks>
 	Accesses the number of starts in a multi-iterator.
@@ -587,7 +587,7 @@ P:D(Iter_Starts(Iterator:iter<>));
 #define Iter_Starts_InternalA(%0,%1)    (F@s(%0))
 #define Iter_Starts_InternalB(%0,%2,%1) (F@s(%0))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get the size of.</param>
 <remarks>
 	Accesses the size of an iterator.
@@ -599,7 +599,7 @@ P:D(Iter_Size(Iterator:iter<>));
 #define Iter_Size_InternalA(%0,%1)    (F@s(%1)-F@s(%0))
 #define Iter_Size_InternalB(%0,%2,%1) (F@s(%1)-F@s(%0))
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="iter">Name of the iterator to get a slot in by index.</param>
 <param name="index">Index.</param>
 <param name="wrap">Keep going around until a value is found?</param>
@@ -822,7 +822,7 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 // Consume spaces in the iterator state variables.
 #define Iter_State@%0\32;%1) Iter_State@%0%1)
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 	The workings of these macros are very extensively documented at:
 	
 		<a href="http://forum.sa-mp.com/showpost.php?p=2823668" />
@@ -866,7 +866,7 @@ stock const
 	F@o = 1;
 
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <remarks>
 	Creates a new iterator start/array pair.
 </remarks>

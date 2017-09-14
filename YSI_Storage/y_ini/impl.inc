@@ -181,7 +181,7 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 	return true;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="str">String with the character in.</param>
 <param name="pos">Location of the character.</param>
 <returns>
@@ -198,7 +198,7 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 	return escape;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="str">String with the whitespace in.</param>
 <param name="pos">End of the whitespace.</param>
 <returns>
@@ -212,7 +212,7 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 	return pos + 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="str">The string you want to search in.</param>
 <param name="sub">The string you want to search for.</param>
 <param name="pos">The start offset.</param>
@@ -371,7 +371,7 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 
 */
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="str">The string you want to type analyse.</param>
 <param name="p0s">Start of part 0.</param>
 <param name="p0e">End of part 0.</param>
@@ -524,7 +524,7 @@ state_in_comment:
 	return ret;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="fmat">The format destination.</param>
 <param name="remoteFormat">The source format.</param>
 <param name="filename">The file we are currently parsing.</param>
@@ -601,7 +601,7 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filena
 	return 1;
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="callback">The callback destination.</param>
 <param name="format">The function name format.</param>
 <param name="tag">The tag destination.</param>
@@ -627,7 +627,7 @@ P:D(INI_GetCallback(callback[E_CALLBACK_DATA],format[32],tag[32],const input[],c
 		Callback_Get(callback_tag:YSI_g_sCurLine, (%0), (%4), (%5)) \
 	)
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="filename">The file to load.</param>
 <param name="remoteFormat">The format string to generate the remote function
 t pass the data to once loaded.</param>
@@ -782,7 +782,7 @@ _Y_INI_STATIC stock INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTa
 	}
 }
 
-/*-------------------------------------------------------------------------*//*$
+/*-------------------------------------------------------------------------*//**
 <param name="filename">The file to load.</param>
 <param name="remoteFormat">The format string to generate the remote function
 t pass the data to once loaded.</param>
