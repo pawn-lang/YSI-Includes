@@ -44,16 +44,6 @@ in the output code.
 </section>
 	0.1
 <section>
-	Changelog
-</section><ul>
-<changelog date="12/09/17">
-<li>Renamed everything for consistency.</li>
-<li>Documented macros.</li>
-</changelog>
-<changelog date="14/04/13">
-<li>First version.</li>
-</changelog>
-</ul><section>
 	Functions
 </section>
 <subsection>

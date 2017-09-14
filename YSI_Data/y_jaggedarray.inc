@@ -15,14 +15,7 @@
 	Version
 </section>
 	1.0
-<section>
-	Changelog
-</section><ul>
-<changelog date="06/10/12">
-<li>First version</li>
-<li>Fixed a bug calling "rawMemset".</li>
-</changelog>
-</ul>
+
 *//** *//*
 Legal:
 	Version: MPL 1.1

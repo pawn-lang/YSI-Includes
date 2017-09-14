@@ -16,12 +16,6 @@
 </section>
 	0.2
 <section>
-	Changelog
-</section><ul>
-<changelog date="21/10/10">
-<li>Split in to y_shortfunc.</li>
-</changelog>
-</ul><section>
 	Natives
 </section><ul>
 	<symbol name="W@">Renaming of <symbolref name="__CallRemoteFunction" /> for size reasons.</symbol>

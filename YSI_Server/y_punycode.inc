@@ -23,15 +23,6 @@
 </section>
 	0.1
 <section>
-	Changelog
-</section><ul>
-<changelog date="29/04/13">
-<li>Added Puny_HTTP.</li>
-</changelog>
-<changelog date="26/04/13">
-<li>First version.</li>
-</changelog>
-</ul><section>
 	Functions
 </section>
 <subsection>

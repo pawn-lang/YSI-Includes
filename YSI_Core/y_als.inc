@@ -136,15 +136,6 @@ Optional plugins:
 	Version
 </section>
 	1.0
-<section>
-	Changelog
-</section><ul>
-<changelog date="29/04/11">
-<li>Added "call" macro to make testing easier.</li>
-</changelog>
-<changelog date="21/10/10">
-<li>First version</li>
-</changelog>
-</ul>
+
 *//** */
 

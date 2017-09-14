@@ -10,18 +10,7 @@
 	Version
 </section>
 	1.0
-<section>
-	Changelog
-</section><ul>
-<changelog date="19/04/13">
-<li>Upped the limit to 343.</li>
-<li>Changed to a 7-ary tree.</li>
-<li>Reversed check order so smallest numbers come first.</li>
-</changelog>
-<changelog date="01/05/11">
-<li>First version.</li>
-</changelog>
-</ul>
+
 *//** *//*
 Legal:
 	Version: MPL 1.1

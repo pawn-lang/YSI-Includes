@@ -17,33 +17,6 @@
 </section>
 	0.1
 <section>
-	Changelog
-</section><ul>
-<changelog date="14/04/12">
-<li>Readded OnRequestSpawn logic.</li>
-<li>Fixed Class_AddWithGroupSet.</li>
-<li>Improved GM/FS interaction.</li>
-</changelog>
-<changelog date="02/01/08">
-<li>First '08 edit - Fixed minus numbers in spawn points.</li>
-</changelog>
-<changelog date="18/11/07">
-<li>Improved location compression to allow larger areas.</li>
-<li>Moved position code to Class_OnPlayerSpawn to reduce overhead.</li>
-</changelog>
-<changelog date="10/10/07">
-<li>Fixed spawn data problem.</li>
-</changelog>
-<changelog date="31/08/07">
-<li>Added cheap master system - YSI_SLAVE_CLASSs can't be master.</li>
-</changelog>
-<changelog date="05/08/07">
-<li>Fixed a few bugs with repeated selection.</li>
-</changelog>
-<changelog date="04/08/07">
-<li>First version.</li>
-</changelog>
-</ul><section>
 	Functions
 </section>
 <subsection>

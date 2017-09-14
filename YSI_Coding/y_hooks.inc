@@ -22,20 +22,7 @@
 	Version
 </section>
 	2.0
-<section>
-	Changelog
-</section><ul>
-<changelog date="25/02/12">
-<li>Extracted most of the code to a separate file.</li>
-</changelog>
-<changelog date="17/03/11">
-<li>Second complete re-write using another new technique.  Now VERY fast!</li>
-<li>Updated OnPlayerUpdate code using Google63's SCTRL jump code.</li>
-</changelog>
-<changelog date="06/08/10">
-<li>First version</li>
-</changelog>
-</ul>
+
 *//** *//*
 Legal:
 	Version: MPL 1.1

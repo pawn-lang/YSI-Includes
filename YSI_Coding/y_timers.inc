@@ -18,30 +18,7 @@
 	Version
 </section>
 	2.0
-<section>
-	Changelog
-</section><ul>
-<changelog date="29/04/11">
-<li>Added version 2 of the code with more advanced options.</li>
-</changelog>
-<changelog date="21/03/11">
-<li>Added debug printing to timer functions.  Uses "P:C" in compiling.</li>
-</changelog>
-<changelog date="26/10/10">
-<li>Officially added simple calling.</li>
-<li>Added "delay" functions.</li>
-</changelog>
-<changelog date="12/10/10">
-<li>Rewrote for YSI 1.0 using y_scripting.</li>
-</changelog>
-<changelog date="11/08/07">
-<li>Removed millions of defines to reduce pre-processing.</li>
-<li>Added pickups.</li>
-</changelog>
-<changelog date="03/08/07">
-<li>First version.</li>
-</changelog>
-</ul>
+
 *//** *//*
 Legal:
 	Version: MPL 1.1

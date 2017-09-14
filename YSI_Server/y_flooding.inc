@@ -76,15 +76,6 @@ Legal:
 		SA:MP Team past, present and future - SA:MP.
 	
 <section>
-	Changelog
-</section><ul>
-<changelog date="15/11/10">
-<li>Updated to YSI 1.0.</li>
-</changelog>
-<changelog date="11/03/08">
-<li>First version.</li>
-</changelog>
-</ul><section>
 	Functions
 </section>
 <subsection>

@@ -16,15 +16,6 @@
 </section>
 	0.1
 <section>
-	Changelog
-</section><ul>
-<changelog date="02/12/11">
-<li>Added variable argument functions.</li>
-</changelog>
-<changelog date="22/12/08">
-<li>First version.</li>
-</changelog>
-</ul><section>
 	Functions
 </section>
 <subsection>

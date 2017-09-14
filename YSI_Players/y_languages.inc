@@ -15,16 +15,7 @@
 	Version
 </section>
 	1.0
-<section>
-	Changelog
-</section><ul>
-<changelog date="02/12/11">
-<li>Updated Langs_Add to accept the parameters in either order.</li>
-</changelog>
-<changelog date="01/05/11">
-<li>First version.</li>
-</changelog>
-</ul>
+
 *//** *//*
 Legal:
 	Version: MPL 1.1

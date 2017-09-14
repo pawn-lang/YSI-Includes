@@ -22,30 +22,6 @@
 </section>
 	0.2
 <section>
-	Changelog
-</section><ul>
-<changelog date="21/10/12">
-<li>Changed "Bit_Display" to print in the correct order.</li>
-</changelog>
-<changelog date="22/02/12">
-<li>Added the "BITS" iterator.</li>
-</changelog>
-<changelog date="01/12/08">
-<li>Rewrote most of the code to use shifts and ands not divs and mods.</li>
-</changelog>
-<changelog date="24/06/07">
-<li>Added Bit_GetBit</li>
-</changelog>
-<changelog date="18/06/07">
-<li>Added Bit_GetCount</li>
-</changelog>
-<changelog date="30/04/07">
-<li>Added Bit_SetAll</li>
-</changelog>
-<changelog date="15/04/07">
-<li>First version.</li>
-</changelog>
-</ul><section>
 	Functions
 </section>
 <subsection>

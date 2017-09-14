@@ -16,15 +16,6 @@
 </section>
 	0.2
 <section>
-	Changelog
-</section><ul>
-<changelog date="26/10/10">
-<li>Added changelog capabilities.</li>
-</changelog>
-<changelog date="22/10/10">
-<li>First version.</li>
-</changelog>
-</ul><section>
 	Hooks
 </section><ul>
 <li>OnGameModeInit</li>

@@ -17,15 +17,6 @@
 </section>
 	0.2
 <section>
-	Changelog
-</section><ul>
-<changelog date="15/03/15">
-<li>Changed clamp ranges.</li>
-</changelog>
-<changelog date="01/06/14">
-<li>First version.</li>
-</changelog>
-</ul><section>
 	Functions
 </section>
 <subsection>

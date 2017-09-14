@@ -17,15 +17,6 @@
 </section>
 	1.0
 <section>
-	Changelog
-</section><ul>
-<changelog date="03/01/12">
-<li>Added void: and string: returns.</li>
-</changelog>
-<changelog date="04/10/12">
-<li>Added local versions of the function for no master system servers.</li>
-</changelog>
-</ul><section>
 	Macros
 </section><ul>
 	<symbol name="remotefunc">Define a function to be called remotely (use like "stock").</symbol>

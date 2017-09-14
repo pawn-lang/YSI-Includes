@@ -17,15 +17,6 @@
 </section>
 	1.0
 <section>
-	Changelog
-</section><ul>
-<changelog date="01/02/12">
-<li>Zeex_: Changed to use SYSREQ.D call not SYSREQ.C.</li>
-<li>Zeex_: Modified "VirtualProtect" pointer to SA:MP server one.</li>
-<li>Added "VirtualProtect" calls to the code.</li>
-<li>First version.</li>
-</changelog>
-</ul><section>
 	Functions
 </section>
 <subsection>

@@ -15,21 +15,7 @@
 	Version
 </section>
 	1.0
-<section>
-	Changelog
-</section><ul>
-<changelog date="16/02/12">
-<li>Added better error reporting (less verbose passes).</li>
-<li>Removed "Tests:".</li>
-<li>Added player requiring tests.</li>
-</changelog>
-<changelog date="25/10/10">
-<li>Integrated in to YSI.</li>
-</changelog>
-<changelog date="06/08/10">
-<li>First version</li>
-</changelog>
-</ul>
+
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -178,30 +178,6 @@ Optional plugins:
 </section>
 	0.2
 <section>
-	Changelog
-</section><ul>
-<changelog date="06/08/10">
-<li>Managed the ultimate - got completely transparent inclusion!</li>
-</changelog>
-<changelog date="05/08/10">
-<li>Completed new master system, now does all syncing and clients.</li>
-</changelog>
-<changelog date="06/10/09">
-<li>Rewrote using states.</li>
-<li>Added remote function macros.</li>
-<li>Reduced the number of masters to a single one.  It must have them all.</li>
-<li>Vastly simplified the master model - ending the master ends everything.</li>
-</changelog>
-<changelog date="06/01/08">
-<li>Added code to not pass data if no other script exists.</li>
-</changelog>
-<changelog date="17/11/07">
-<li>Added code for a script to remove itself from the global list.</li>
-</changelog>
-<changelog date="11/10/07">
-<li>Not first version but added documentation months late.</li>
-</changelog>
-</ul><section>
 	Macros
 </section><ul>
 	<symbol name="RF">Declare a function which may be remote.</symbol>

@@ -15,13 +15,7 @@
 	Version
 </section>
 	0.2
-<section>
-	Changelog
-</section><ul>
-<changelog date="21/10/10">
-<li>Split in to y_shortfunc.</li>
-</changelog>
-</ul>
+
 *//** *//*
 Legal:
 	Version: MPL 1.1

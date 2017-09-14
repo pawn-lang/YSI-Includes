@@ -15,21 +15,7 @@
 	Version
 </section>
 	2.2
-<section>
-	Changelog
-</section><ul>
-<changelog date="02/02/13">
-<li>Added bits and join timestamp to preload data.</li>
-<li>Added backwards compatible salting to the hash.</li>
-</changelog>
-<changelog date="15/11/11">
-<li>Added comments.</li>
-<li>Added language to the top-level player data (needed for login).</li>
-</changelog>
-<changelog date="11/11/11">
-<li>First version.</li>
-</changelog>
-</ul>
+
 *//** *//*
 Legal:
 	Version: MPL 1.1

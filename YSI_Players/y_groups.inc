@@ -181,13 +181,7 @@ Optional plugins:
 	Version
 </section>
 	1.0
-<section>
-	Changelog
-</section><ul>
-<changelog date="29/11/10">
-<li>First version</li>
-</changelog>
-</ul>
+
 *//** */
 
 stock _YSI_HAS_y_groups(_do_not_call_me_ever_, _like_never_)

@@ -17,64 +17,6 @@
 </section>
 	1.5
 <section>
-	Changelog
-</section><ul>
-<changelog date="07/01/13">
-<li>Rewrote almost everything!</li>
-<li>Split in to multiple files.</li>
-<li>Added sections.</li>
-</changelog>
-<changelog date="08/09/10">
-<li>Started adding sscanf and file plugin compatibility.</li>
-<li>Added tagless data at the start of a file (dini compatible).</li>
-<li>Added new INI:file[tag]() syntax.</li>
-<li>Added options to default file load.</li>
-<li>Fixed bugs in default file load configuration.</li>
-<li>Modified to be stand alone.</li>
-</changelog>
-<changelog date="20/02/08">
-<li>Added INI_RemoveEntry.</li>
-</changelog>
-<changelog date="18/08/07">
-<li>Fixed bug reading identifiers starting with a tag (i.e. names).</li>
-<li>Added local file reading for non-serverwide broadcasting.</li>
-<li>Added tag passing instead of tag based functions option.</li>
-<li>Increased default pool size.</li>
-</changelog>
-<changelog date="30/07/07">
-<li>Added auto creation of non-existant files.</li>
-</changelog>
-<changelog date="13/07/07">
-<li>Fixed INI writing to actually work.</li>
-<li>Added support for blank lines in INIs decently and quickly.</li>
-</changelog>
-<changelog date="25/06/07">
-<li>Altered file write options to use lists.</li>
-<li>Added buffer overwriting for updating values.</li>
-</changelog>
-<changelog date="24/06/07">
-<li>Added file write options.</li>
-</changelog>
-<changelog date="21/06/07">
-<li>Added INI_NEW_LINE for future writing functions.</li>
-</changelog>
-<changelog date="20/06/07">
-<li>Added support for an optional parameter in broadcastfunc data.</li>
-</changelog>
-<changelog date="15/04/07">
-<li>Updated for more whitespaces.</li>
-<li>Added INI comment code.</li>
-<li>Added support for value-less entries.</li>
-<li>Modified entry extraction to use end of name location parameter.</li>
-<li>Removed INI_GetTagName, now done via INI_GetEntryName.</li>
-</changelog>
-<changelog date="14/04/07">
-<li>Updated header documentation with more than changelog.</li>
-</changelog>
-<changelog date="24/03/07">
-<li>First version.</li>
-</changelog>
-</ul><section>
 	Functions
 </section>
 <subsection>

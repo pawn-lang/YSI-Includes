@@ -17,12 +17,6 @@
 </section>
 	2.0
 <section>
-	Changelog
-</section><ul>
-<changelog date="23/06/13">
-<li>First version.</li>
-</changelog>
-</ul><section>
 	Functions
 </section>
 <subsection>

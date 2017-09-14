@@ -21,22 +21,7 @@
 	Version
 </section>
 	1.0
-<section>
-	Changelog
-</section><ul>
-<changelog date="22/06/13">
-<li>Rewrote the library from scratch for better performance all round.</li>
-</changelog>
-<changelog date="20/10/12">
-<li>Fixed a bug with "Callback_Release" with public functions.</li>
-</changelog>
-<changelog date="15/11/11">
-<li>Changed the precedence of "using" types.</li>
-</changelog>
-<changelog date="19/09/11">
-<li>First version</li>
-</changelog>
-</ul>
+
 *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -33,16 +33,6 @@
 </section>
 	1.0
 <section>
-	Changelog
-</section><ul>
-<changelog date="06/08/10">
-<li>Added new syntax.</li>
-<li>Added level 0 debugging with state controlled functions.</li>
-</changelog>
-<changelog date="15/04/07">
-<li>First version.</li>
-</changelog>
-</ul><section>
 	Functions
 </section>
 <subsection>

@@ -19,26 +19,7 @@
 	Version
 </section>
 	1.0
-<section>
-	Changelog
-</section><ul>
-<changelog date="06/01/14">
-<li>Added embeddable versions of all colours.</li>
-<li>Cached all macros for faster compilation.</li>
-<li>Added "GT" macro for "~r~" use in SA:MP text.</li>
-<li>Split gametext colours in to a separate file.</li>
-</changelog>
-<changelog date="20/02/12">
-<li>Added broadcastfunc of colours.	</li>
-</changelog>
-<changelog date="29/11/10">
-<li>Added the ability to use "X11" prefixes in strings.</li>
-<li>Added colourspace resolution for converting {FF0000} to ~r~.</li>
-</changelog>
-<changelog date="25/11/10">
-<li>First version.</li>
-</changelog>
-</ul>
+
 *//** *//*
 Legal:
 	Version: MPL 1.1

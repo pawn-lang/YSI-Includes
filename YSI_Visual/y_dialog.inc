@@ -16,13 +16,7 @@
 	Version
 </section>
 	0.1
-<section>
-	Changelog
-</section><ul>
-<changelog date="25/02/12">
-<li>First version.</li>
-</changelog>
-</ul>>
+
 *//** *//*
 Legal:
 	Version: MPL 1.1
