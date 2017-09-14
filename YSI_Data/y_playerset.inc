@@ -4,9 +4,9 @@
 #define _INC_y_playerset
 
 /**
-<file>
+<library>
 					y_playerset
-</file>
+</library>
 <section>
 	Description
 </section>

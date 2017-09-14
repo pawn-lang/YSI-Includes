@@ -4,9 +4,9 @@
 #define _INC_y_colors
 
 /**
-<file>
+<library>
 					y_colours
-</file>
+</library>
 <section>
 	Description
 </section>

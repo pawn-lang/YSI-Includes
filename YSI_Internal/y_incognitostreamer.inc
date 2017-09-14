@@ -4,9 +4,9 @@
 #define _INC_y_incognitostreamer
 
 /*+
-<file>
+<library>
 					y_incognitostreamer
-</file>
+</library>
 <section>
 	Description
 </section>

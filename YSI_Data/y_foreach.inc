@@ -1,7 +1,7 @@
 /**
-<file>
+<library>
 					y_foreach
-</file>
+</library>
 <section>
 	Description
 </section>

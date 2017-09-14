@@ -4,9 +4,9 @@
 #define _INC_y_files
 
 /**
-<file>
+<library>
 					y_files
-</file>
+</library>
 <section>
 	Description
 </section>

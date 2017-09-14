@@ -177,9 +177,9 @@ Optional plugins:
 #endif
 
 /**
-<file>
+<library>
 					y_iterate
-</file>
+</library>
 <section>
 	Description
 </section>

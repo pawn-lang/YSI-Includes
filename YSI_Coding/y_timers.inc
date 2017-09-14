@@ -4,9 +4,9 @@
 #define _INC_y_timers
 
 /**
-<file>
+<library>
 					y_timers
-</file>
+</library>
 <section>
 	Description
 </section>

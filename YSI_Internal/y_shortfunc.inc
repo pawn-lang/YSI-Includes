@@ -4,9 +4,9 @@
 #define _INC_y_shortfunc
 
 /*+
-<file>
+<library>
 					y_shortfunc
-</file>
+</library>
 <section>
 	Description
 </section>

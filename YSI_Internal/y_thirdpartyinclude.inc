@@ -1,7 +1,7 @@
 /*+
-<file>
+<library>
 					y_thirdpartyinclude
-</file>
+</library>
 <section>
 	Description
 </section>

@@ -4,9 +4,9 @@
 #define _INC_y_dialog
 
 /**
-<file>
+<library>
 					y_dialog
-</file>
+</library>
 <section>
 	Description
 </section>

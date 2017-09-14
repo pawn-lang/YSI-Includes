@@ -4,9 +4,9 @@
 #define _INC_y_malloc
 
 /**
-<file>
+<library>
 					y_malloc
-</file>
+</library>
 <section>
 	Description
 </section>

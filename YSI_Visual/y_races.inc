@@ -4,9 +4,9 @@
 #define _INC_y_races
 
 /**
-<file>
+<library>
 					y_races
-</file>
+</library>
 <section>
 	Description
 </section>

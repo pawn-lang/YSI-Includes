@@ -4,9 +4,9 @@
 #define _INC_y_playerarray
 
 /**
-<file>
+<library>
 					y_playerarray
-</file>
+</library>
 <section>
 	Description
 </section>

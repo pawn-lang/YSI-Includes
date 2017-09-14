@@ -4,9 +4,9 @@
 #define _INC_y_debug
 
 /**
-<file>
+<library>
 					y_debug
-</file>
+</library>
 <section>
 	Description
 </section>

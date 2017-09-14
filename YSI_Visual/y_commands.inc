@@ -4,9 +4,9 @@
 #define _INC_y_commands
 
 /**
-<file>
+<library>
 					y_commands
-</file>
+</library>
 <section>
 	Description
 </section>

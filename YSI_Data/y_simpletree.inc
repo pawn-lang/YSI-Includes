@@ -4,9 +4,9 @@
 #define _INC_y_simpletree
 
 /**
-<file>
+<library>
 					y_simpletree
-</file>
+</library>
 <section>
 	Description
 </section>

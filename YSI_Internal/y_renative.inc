@@ -4,9 +4,9 @@
 #define _INC_y_renative
 
 /*+
-<file>
+<library>
 					y_renative
-</file>
+</library>
 <section>
 	Description
 </section>

@@ -9,9 +9,9 @@
 #define _INC_y_text
 
 /**
-<file>
+<library>
 					y_text
-</file>
+</library>
 <section>
 	Description
 </section>

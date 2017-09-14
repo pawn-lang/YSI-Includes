@@ -4,9 +4,9 @@
 #define _INC_y_testing
 
 /**
-<file>
+<library>
 					y_testing
-</file>
+</library>
 <section>
 	Description
 </section>

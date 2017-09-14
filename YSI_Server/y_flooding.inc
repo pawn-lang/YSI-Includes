@@ -4,9 +4,9 @@
 #define _INC_y_flooding
 
 /**
-<file>
+<library>
 					y_flooding
-</file>
+</library>
 <section>
 	Description
 </section>

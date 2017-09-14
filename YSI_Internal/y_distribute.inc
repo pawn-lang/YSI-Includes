@@ -4,9 +4,9 @@
 #define _INC_y_distribute
 
 /*+
-<file>
+<library>
 					y_distribute
-</file>
+</library>
 <section>
 	Description
 </section>

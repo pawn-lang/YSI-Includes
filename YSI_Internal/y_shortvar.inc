@@ -4,9 +4,9 @@
 #define _INC_y_shortvar
 
 /*+
-<file>
+<library>
 					y_shortvar
-</file>
+</library>
 <section>
 	Description
 </section>

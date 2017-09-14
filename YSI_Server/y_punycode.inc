@@ -4,9 +4,9 @@
 #define _INC_y_punycode
 
 /**
-<file>
+<library>
 					y_punycode
-</file>
+</library>
 <section>
 	Description
 </section>

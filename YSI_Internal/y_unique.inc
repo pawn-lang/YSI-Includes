@@ -1,7 +1,7 @@
 /*+
-<file>
+<library>
 					y_unique
-</file>
+</library>
 <section>
 	Description
 </section>

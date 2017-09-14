@@ -4,9 +4,9 @@
 #define _INC_y_gamerzps
 
 /*+
-<file>
+<library>
 					y_gamerzps
-</file>
+</library>
 <section>
 	Description
 </section>

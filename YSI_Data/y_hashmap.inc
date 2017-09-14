@@ -4,9 +4,9 @@
 #define _INC_y_hashmap
 
 /**
-<file>
+<library>
 					y_hashmap
-</file>
+</library>
 <section>
 	Description
 </section>

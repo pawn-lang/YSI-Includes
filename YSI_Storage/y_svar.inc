@@ -4,9 +4,9 @@
 #define _INC_y_svar
 
 /**
-<file>
+<library>
 					y_svar
-</file>
+</library>
 <section>
 	Description
 </section>

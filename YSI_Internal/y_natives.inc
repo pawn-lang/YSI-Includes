@@ -4,9 +4,9 @@
 #define _INC_y_natives
 
 /*+
-<file>
+<library>
 					y_natives
-</file>
+</library>
 <section>
 	Description
 </section>

@@ -4,9 +4,9 @@
 #define _INC_y_vehicledata
 
 /**
-<file>
+<library>
 					y_vehicledata
-</file>
+</library>
 <section>
 	Description
 </section>

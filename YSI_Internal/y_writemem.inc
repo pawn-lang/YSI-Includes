@@ -4,9 +4,9 @@
 #define _INC_y_writemem
 
 /*+
-<file>
+<library>
 					y_writemem
-</file>
+</library>
 <section>
 	Description
 </section>

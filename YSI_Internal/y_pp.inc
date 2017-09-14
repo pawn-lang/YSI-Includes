@@ -4,9 +4,9 @@
 #define _INC_y_pp
 
 /*+
-<file>
+<library>
 					y_pp
-</file>
+</library>
 <section>
 	Description
 </section>

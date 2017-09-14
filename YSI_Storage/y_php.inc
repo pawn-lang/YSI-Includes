@@ -4,9 +4,9 @@
 #define _INC_y_php
 
 /**
-<file>
+<library>
 					y_php
-</file>
+</library>
 <section>
 	Description
 </section>

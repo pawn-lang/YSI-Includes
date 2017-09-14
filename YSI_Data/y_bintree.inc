@@ -4,9 +4,9 @@
 #define _INC_y_bintree
 
 /**
-<file>
+<library>
 					y_bintree
-</file>
+</library>
 <section>
 	Description
 </section>

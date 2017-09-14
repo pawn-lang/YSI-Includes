@@ -4,9 +4,9 @@
 #define _INC_y_lock
 
 /**
-<file>
+<library>
 					y_lock
-</file>
+</library>
 <section>
 	Description
 </section>

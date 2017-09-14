@@ -4,9 +4,9 @@
 #define _INC_y_jaggedarray
 
 /**
-<file>
+<library>
 					y_jaggedarray
-</file>
+</library>
 <section>
 	Description
 </section>

@@ -4,9 +4,9 @@
 #define _INC_y_areas
 
 /**
-<file>
+<library>
 					y_areas
-</file>
+</library>
 <section>
 	Description
 </section>

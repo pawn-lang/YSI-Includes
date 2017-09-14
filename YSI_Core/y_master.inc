@@ -149,9 +149,9 @@ Optional plugins:
 #define _INC_y_master
 
 /**
-<file>
+<library>
 					y_master
-</file>
+</library>
 <section>
 	Description
 </section>

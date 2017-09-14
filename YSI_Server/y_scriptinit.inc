@@ -4,9 +4,9 @@
 #define _INC_y_scriptinit
 
 /**
-<file>
+<library>
 					y_scriptinit
-</file>
+</library>
 <section>
 	Description
 </section>

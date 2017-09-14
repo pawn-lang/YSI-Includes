@@ -4,9 +4,9 @@
 #define _INC_y_properties
 
 /**
-<file>
+<library>
 					y_properties
-</file>
+</library>
 <section>
 	Description
 </section>

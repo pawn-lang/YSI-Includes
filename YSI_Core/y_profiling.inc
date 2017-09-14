@@ -4,9 +4,9 @@
 #define _INC_y_profiling
 
 /**
-<file>
+<library>
 					y_profiling
-</file>
+</library>
 <section>
 	Description
 </section>

@@ -4,9 +4,9 @@
 #define _INC_y_xml
 
 /**
-<file>
+<library>
 					y_xml
-</file>
+</library>
 <section>
 	Description
 </section>

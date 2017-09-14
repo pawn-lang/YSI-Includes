@@ -4,9 +4,9 @@
 #define _INC_y_languages
 
 /**
-<file>
+<library>
 					y_languages
-</file>
+</library>
 <section>
 	Description
 </section>

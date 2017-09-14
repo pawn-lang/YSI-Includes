@@ -4,9 +4,9 @@
 #define _INC_y_remote
 
 /**
-<file>
+<library>
 					y_remote
-</file>
+</library>
 <section>
 	Description
 </section>

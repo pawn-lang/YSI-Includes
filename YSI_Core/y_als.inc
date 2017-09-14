@@ -123,9 +123,9 @@ Optional plugins:
 #define _INC_y_als
 
 /**
-<file>
+<library>
 					y_als
-</file>
+</library>
 <section>
 	Description
 </section>

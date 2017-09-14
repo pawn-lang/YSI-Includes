@@ -1,7 +1,7 @@
 /**
-<file>
+<library>
 					y_objects
-</file>
+</library>
 <section>
 	Description
 </section>

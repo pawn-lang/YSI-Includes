@@ -4,9 +4,9 @@
 #define _INC_y_plugins
 
 /*+
-<file>
+<library>
 					y_plugins
-</file>
+</library>
 <section>
 	Description
 </section>

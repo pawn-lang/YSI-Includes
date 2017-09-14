@@ -4,9 +4,9 @@
 #define _INC_y_amx
 
 /**
-<file>
+<library>
 					y_amx
-</file>
+</library>
 <section>
 	Description
 </section>

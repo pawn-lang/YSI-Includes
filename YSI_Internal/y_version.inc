@@ -4,9 +4,9 @@
 #define _INC_y_version
 
 /*+
-<file>
+<library>
 					y_version
-</file>
+</library>
 <section>
 	Description
 </section>

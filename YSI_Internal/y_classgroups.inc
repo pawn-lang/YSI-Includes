@@ -4,9 +4,9 @@
 #define _INC_y_classgroups
 
 /*+
-<file>
+<library>
 					y_classes
-</file>
+</library>
 <section>
 	Description
 </section>

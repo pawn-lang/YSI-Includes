@@ -28,9 +28,9 @@ RegEx.  I also put the search at the top of this block so it is easier to find
 in the output code.
 -->
 *//*+
-<file>
+<library>
 					y_compilerdata
-</file>
+</library>
 <section>
 	Description
 </section>

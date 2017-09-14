@@ -167,9 +167,9 @@ Optional plugins:
 #define _INC_y_groups
 
 /**
-<file>
+<library>
 					y_groups
-</file>
+</library>
 <section>
 	Description
 </section>

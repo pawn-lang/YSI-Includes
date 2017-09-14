@@ -291,7 +291,7 @@
 
 <xsl:template match="subsection"><h3 class="general"><xsl:apply-templates/></h3></xsl:template>
 
-<xsl:template match="file"><h1 class="file"><span style="float:right; padding-right:2px">file</span><xsl:apply-templates/></h1></xsl:template>
+<xsl:template match="library"><h1 class="file"><span style="float:right; padding-right:2px">library</span><xsl:apply-templates/></h1></xsl:template>
 <xsl:template match="br"><br /></xsl:template>
 <xsl:template match="indent">&#160;&#160;&#160;&#160;</xsl:template>
 

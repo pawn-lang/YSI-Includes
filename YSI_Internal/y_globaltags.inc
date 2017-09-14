@@ -4,9 +4,9 @@
 #define _INC_y_globaltags
 
 /*+
-<file>
+<library>
 					y_globaltags
-</file>
+</library>
 <section>
 	Description
 </section>

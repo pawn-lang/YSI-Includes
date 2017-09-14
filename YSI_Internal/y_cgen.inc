@@ -4,9 +4,9 @@
 #define _INC_y_cgen
 
 /*+
-<file>
+<library>
 					y_cgen
-</file>
+</library>
 <section>
 	Description
 </section>

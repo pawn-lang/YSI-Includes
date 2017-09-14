@@ -11,9 +11,9 @@
 #define _INC_y_hooks
 
 /**
-<file>
+<library>
 					y_hooks
-</file>
+</library>
 <section>
 	Description
 </section>

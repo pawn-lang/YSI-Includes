@@ -4,9 +4,9 @@
 #define _INC_y_mock
 
 /*+
-<file>
+<library>
 					y_mock
-</file>
+</library>
 <section>
 	Description
 </section>

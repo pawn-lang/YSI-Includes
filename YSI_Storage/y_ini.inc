@@ -4,9 +4,9 @@
 #define _INC_y_ini
 
 /**
-<file>
+<library>
 					y_ini
-</file>
+</library>
 <section>
 	Description
 </section>

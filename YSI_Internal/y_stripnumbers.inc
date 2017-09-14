@@ -4,9 +4,9 @@
 #define _INC_y_stripnumbers
 
 /*+
-<file>
+<library>
 					y_stripnumbers
-</file>
+</library>
 <section>
 	Description
 </section>

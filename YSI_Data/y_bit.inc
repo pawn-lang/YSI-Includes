@@ -4,9 +4,9 @@
 #define _INC_y_bit
 
 /**
-<file>
+<library>
 					y_bit
-</file>
+</library>
 <section>
 	Description
 </section>

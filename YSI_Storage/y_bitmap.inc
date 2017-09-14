@@ -4,9 +4,9 @@
 #define _INC_y_bitmap
 
 /**
-<file>
+<library>
 					y_bitmap
-</file>
+</library>
 <section>
 	Description
 </section>

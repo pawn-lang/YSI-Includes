@@ -1,7 +1,7 @@
 /**
-<file>
+<library>
 					y_loader
-</file>
+</library>
 <section>
 	Description
 </section>

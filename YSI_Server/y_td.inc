@@ -4,9 +4,9 @@
 #define _INC_y_td
 
 /**
-<file>
+<library>
 					y_td
-</file>
+</library>
 <section>
 	Description
 </section>

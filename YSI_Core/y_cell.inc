@@ -4,9 +4,9 @@
 #define _INC_y_cell
 
 /**
-<file>
+<library>
 					y_cell
-</file>
+</library>
 <section>
 	Description
 </section>

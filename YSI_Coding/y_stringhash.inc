@@ -4,9 +4,9 @@
 #define _INC_y_stringhash
 
 /**
-<file>
+<library>
 					y_stringhash
-</file>
+</library>
 <section>
 	Description
 </section>
