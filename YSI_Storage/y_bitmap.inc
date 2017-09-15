@@ -4,21 +4,21 @@
 #define _INC_y_bitmap
 
 /**
-<library>
-					y_bitmap
-</library>
-<section>
-	Description
-</section>
-	Code to generate images on the server in the bitmap format.  This is by far
-	the simplest format to write to as it is just a huge array of colours (at
-	least 24-bit bitmaps are, and we only do them).
-<section>
-	Version
-</section>
-	0.1
+ * <library>
+ * 					y_bitmap
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Code to generate images on the server in the bitmap format.  This is by far
+ * 	the simplest format to write to as it is just a huge array of colours (at
+ * 	least 24-bit bitmaps are, and we only do them).
+ * <section>
+ * 	Version
+ * </section>
+ * 	0.1
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

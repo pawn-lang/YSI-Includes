@@ -4,23 +4,23 @@
 #define _INC_y_version
 
 /*+
-<library>
-					y_version
-</library>
-<section>
-	Description
-</section>
-	Checks online to see if there is a newer version of YSI available.
-<section>
-	Version
-</section>
-	0.2
-<section>
-	Hooks
-</section><ul>
-<li>OnGameModeInit</li>
-</ul>
-*//** *//*
+ * <library>
+ * 					y_version
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Checks online to see if there is a newer version of YSI available.
+ * <section>
+ * 	Version
+ * </section>
+ * 	0.2
+ * <section>
+ * 	Hooks
+ * </section><ul>
+ * <li>OnGameModeInit</li>
+ * </ul>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -141,15 +141,15 @@ Optional plugins:
 	
 #else
 /*-------------------------------------------------------------------------*//*+
-<returns>
-	OnScriptInit
-</returns>
-<remarks>
-		Constructor.  Checks to see if there is a new version available.  This
-		code can not use ANY of the rest of YSI as it needs to be included by
-		everything first.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <returns>
+ * 	OnScriptInit
+ * </returns>
+ * <remarks>
+ * 		Constructor.  Checks to see if there is a new version available.  This
+ * 		code can not use ANY of the rest of YSI as it needs to be included by
+ * 		everything first.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 	
 	#if !defined HTTP
 	
@@ -256,19 +256,19 @@ Optional plugins:
 	#endif
 	
 	/*---------------------------------------------------------------------*//*+
-	
+	 * 
 	<param name="	index">Not used.</param>
-	<param name="	code">Response code from the server.</param>
-	<param name="	data[]">HTTP data sent from the server.</param>
-	<remarks>
-		This is called when my server responds to the HTTP request sent above
-		(or when it doesn't).  This prints information on the current and any
-		future versions of YSI.  Note that it only does a strcmp to determine if
-		the version is newer - people can't have versions newer than the latest,
-		onlyolder or equal (unless they play with the version numbers, but then
-		that's their own fault).
-	</remarks>
-	*//*---------------------------------------------------------------------**/
+	 * <param name="	code">Response code from the server.</param>
+	 * <param name="	data[]">HTTP data sent from the server.</param>
+	 * <remarks>
+	 * 	This is called when my server responds to the HTTP request sent above
+	 * 	(or when it doesn't).  This prints information on the current and any
+	 * 	future versions of YSI.  Note that it only does a strcmp to determine if
+	 * 	the version is newer - people can't have versions newer than the latest,
+	 * 	onlyolder or equal (unless they play with the version numbers, but then
+	 * 	that's their own fault).
+	 * </remarks>
+	 *//*---------------------------------------------------------------------**/
 	
 	public YVers_Callback(index, code, data[])
 	{

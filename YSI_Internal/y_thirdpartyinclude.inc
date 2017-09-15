@@ -1,17 +1,17 @@
 /*+
-<library>
-					y_thirdpartyinclude
-</library>
-<section>
-	Description
-</section>
-	Try and include all YSI dependencies, looking in as many places as needed.
-<section>
-	Version
-</section>
-	1.0
+ * <library>
+ * 					y_thirdpartyinclude
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Try and include all YSI dependencies, looking in as many places as needed.
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

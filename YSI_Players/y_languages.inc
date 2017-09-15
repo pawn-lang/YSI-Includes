@@ -4,19 +4,19 @@
 #define _INC_y_languages
 
 /**
-<library>
-					y_languages
-</library>
-<section>
-	Description
-</section>
-	Handles language features - loading, listing and which one a player is.
-<section>
-	Version
-</section>
-	1.0
+ * <library>
+ * 					y_languages
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Handles language features - loading, listing and which one a player is.
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -120,8 +120,8 @@ static stock
 	Language:YSI_g_sLanguageCount;
 
 /*-------------------------------------------------------------------------*//**
-<summary>-</summary>
-*//*-------------------------------------------------------------------------**/
+ * <summary>-</summary>
+ *//*-------------------------------------------------------------------------**/
 
 #define Langs_Add Langs_AddLanguage
 #define Languages_Add Langs_AddLanguage
@@ -213,8 +213,8 @@ global Language:_Langs_AddLanguage(string:code[], string:name[])
 }
 
 /*-------------------------------------------------------------------------*//**
-<summary>-</summary>
-*//*-------------------------------------------------------------------------**/
+ * <summary>-</summary>
+ *//*-------------------------------------------------------------------------**/
 
 #if _YSIM_IS_CLIENT
 	// Don't give a warning if this is a client script.  Note that stubs are
@@ -229,8 +229,8 @@ global Language:_Langs_AddLanguage(string:code[], string:name[])
 #pragma tabsize 4
 
 /*-------------------------------------------------------------------------*//**
-<summary>-</summary>
-*//*-------------------------------------------------------------------------**/
+ * <summary>-</summary>
+ *//*-------------------------------------------------------------------------**/
 
 foreign Language:Langs_GetLanguageAt(id);
 
@@ -250,8 +250,8 @@ global Language:Langs_GetLanguageAt(id)
 }
 
 /*-------------------------------------------------------------------------*//**
-<summary>-</summary>
-*//*-------------------------------------------------------------------------**/
+ * <summary>-</summary>
+ *//*-------------------------------------------------------------------------**/
 
 foreign void:Langs_RemoveLanguage(Language:l);
 
@@ -270,8 +270,8 @@ global void:Langs_RemoveLanguage(Language:l)
 }
 
 /*-------------------------------------------------------------------------*//**
-<summary>-</summary>
-*//*-------------------------------------------------------------------------**/
+ * <summary>-</summary>
+ *//*-------------------------------------------------------------------------**/
 
 foreign Language:Langs_GetLanguage(string:identifier[]);
 
@@ -302,8 +302,8 @@ global Language:Langs_GetLanguage(string:identifier[])
 }
 
 /*-------------------------------------------------------------------------*//**
-<summary>-</summary>
-*//*-------------------------------------------------------------------------**/
+ * <summary>-</summary>
+ *//*-------------------------------------------------------------------------**/
 
 foreign Language:Langs_GetLanguageCount();
 
@@ -313,8 +313,8 @@ global Language:Langs_GetLanguageCount()
 }
 
 /*-------------------------------------------------------------------------*//**
-<summary>-</summary>
-*//*-------------------------------------------------------------------------**/
+ * <summary>-</summary>
+ *//*-------------------------------------------------------------------------**/
 
 foreign string:Langs_GetLanguageCodes();
 
@@ -325,8 +325,8 @@ global string:Langs_GetLanguageCodes()
 }
 
 /*-------------------------------------------------------------------------*//**
-<summary>-</summary>
-*//*-------------------------------------------------------------------------**/
+ * <summary>-</summary>
+ *//*-------------------------------------------------------------------------**/
 
 foreign string:Langs_GetName(Language:l);
 
@@ -343,8 +343,8 @@ global string:Langs_GetName(Language:l)
 }
 
 /*-------------------------------------------------------------------------*//**
-<summary>-</summary>
-*//*-------------------------------------------------------------------------**/
+ * <summary>-</summary>
+ *//*-------------------------------------------------------------------------**/
 
 foreign string:Langs_GetCode(Language:l);
 
@@ -360,8 +360,8 @@ global string:Langs_GetCode(Language:l)
 }
 
 /*-------------------------------------------------------------------------*//**
-<summary>-</summary>
-*//*-------------------------------------------------------------------------**/
+ * <summary>-</summary>
+ *//*-------------------------------------------------------------------------**/
 
 foreign bool:Langs_IsValid(Language:l);
 
@@ -371,8 +371,8 @@ global bool:Langs_IsValid(Language:l)
 }
 
 /*-------------------------------------------------------------------------*//**
-<summary>-</summary>
-*//*-------------------------------------------------------------------------**/
+ * <summary>-</summary>
+ *//*-------------------------------------------------------------------------**/
 
 foreign Language:Langs_GetPlayerLanguage(playerid);
 
@@ -387,8 +387,8 @@ global Language:Langs_GetPlayerLanguage(playerid)
 }
 
 /*-------------------------------------------------------------------------*//**
-<summary>-</summary>
-*//*-------------------------------------------------------------------------**/
+ * <summary>-</summary>
+ *//*-------------------------------------------------------------------------**/
 
 foreign Language:Langs_SetPlayerLanguage(playerid, Language:l);
 
@@ -402,8 +402,8 @@ global Language:Langs_SetPlayerLanguage(playerid, Language:l)
 }
 
 /*-------------------------------------------------------------------------*//**
-<summary>-</summary>
-*//*-------------------------------------------------------------------------**/
+ * <summary>-</summary>
+ *//*-------------------------------------------------------------------------**/
 
 foreign Language:Langs_SetPlayerCode(playerid, string:code[]);
 
@@ -413,8 +413,8 @@ global Language:Langs_SetPlayerCode(playerid, string:code[])
 }
 
 /*-------------------------------------------------------------------------*//**
-<summary>-</summary>
-*//*-------------------------------------------------------------------------**/
+ * <summary>-</summary>
+ *//*-------------------------------------------------------------------------**/
 
 mhook OnPlayerConnect(playerid)
 {

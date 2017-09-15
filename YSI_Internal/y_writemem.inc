@@ -4,38 +4,38 @@
 #define _INC_y_writemem
 
 /*+
-<library>
-					y_writemem
-</library>
-<section>
-	Description
-</section>
-	Write to any absolute address in the SA:MP server in pure PAWN with embedded
-	assembly (i.e. a new native).  Calls "VirtualProtect" to make writes safe.
-<section>
-	Version
-</section>
-	1.0
-<section>
-	Functions
-</section>
-<subsection>
-API
-</subsection><ul>
-	<symbol name="WriteMem">Write data to an address.</symbol>
-</ul><section>
-	Definitions
-</section><ul>
-	<symbol name="asm">Convert a stream of assembly to a cell.</symbol>
-</ul><section>
-	Variables
-</section>
-<subsection>
-Static
-</subsection><ul>
-	<symbol name="YSI_g_sWriteMem">The assembly.</symbol>
-</ul>
-*//** *//*
+ * <library>
+ * 					y_writemem
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Write to any absolute address in the SA:MP server in pure PAWN with embedded
+ * 	assembly (i.e. a new native).  Calls "VirtualProtect" to make writes safe.
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
+ * <section>
+ * 	Functions
+ * </section>
+ * <subsection>
+ * API
+ * </subsection><ul>
+ * 	<symbol name="WriteMem">Write data to an address.</symbol>
+ * </ul><section>
+ * 	Definitions
+ * </section><ul>
+ * 	<symbol name="asm">Convert a stream of assembly to a cell.</symbol>
+ * </ul><section>
+ * 	Variables
+ * </section>
+ * <subsection>
+ * Static
+ * </subsection><ul>
+ * 	<symbol name="YSI_g_sWriteMem">The assembly.</symbol>
+ * </ul>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

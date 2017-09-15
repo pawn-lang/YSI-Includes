@@ -4,19 +4,19 @@
 #define _INC_y_profiling
 
 /**
-<library>
-					y_profiling
-</library>
-<section>
-	Description
-</section>
-	Runs any functions named as profilings when the Profiling_Run function is called.
-<section>
-	Version
-</section>
-	1.0
+ * <library>
+ * 					y_profiling
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Runs any functions named as profilings when the Profiling_Run function is called.
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -161,17 +161,17 @@ static stock
 	bool:YSI_g_sInProfile = false;
 
 /*-------------------------------------------------------------------------*//**
-<param name="profilings">Number of profilings run.</param>
-<returns>
-	Wether all profilings were sucessful or not.
-</returns>
-<remarks>
-	-
-
+ * <param name="profilings">Number of profilings run.</param>
+ * <returns>
+ * 	Wether all profilings were sucessful or not.
+ * </returns>
+ * <remarks>
+ * 	-
+ * 
 native Profiling_Run(&profilings, &fails, buffer[33] = "");
-
+ * 
 </remarks>
-*//*-------------------------------------------------------------------------**/
+ *//*-------------------------------------------------------------------------**/
 
 stock bool:Profiling_Run(&profilings)
 {

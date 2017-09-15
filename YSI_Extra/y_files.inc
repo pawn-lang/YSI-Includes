@@ -4,19 +4,19 @@
 #define _INC_y_files
 
 /**
-<library>
-					y_files
-</library>
-<section>
-	Description
-</section>
-	Provides native declarations for YSF functions.
-<section>
-	Version
-</section>
-	0.1
+ * <library>
+ * 					y_files
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Provides native declarations for YSF functions.
+ * <section>
+ * 	Version
+ * </section>
+ * 	0.1
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -88,7 +88,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-/*-------------------------------------------------------------------------*//**
+/*-------------------------------------------------------------------------*//**<to_comment/>
 *					=================
 *					 y_ini Libraries
 *					=================

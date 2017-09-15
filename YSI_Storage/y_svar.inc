@@ -4,19 +4,19 @@
 #define _INC_y_svar
 
 /**
-<library>
-					y_svar
-</library>
-<section>
-	Description
-</section>
-	Declares data to be automatically saved and loaded for the whole server.
-<section>
-	Version
-</section>
-	0.1
+ * <library>
+ * 					y_svar
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Declares data to be automatically saved and loaded for the whole server.
+ * <section>
+ * 	Version
+ * </section>
+ * 	0.1
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

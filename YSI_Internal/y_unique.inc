@@ -1,17 +1,17 @@
 /*+
-<library>
-					y_unique
-</library>
-<section>
-	Description
-</section>
-	Defines a symbol differently every time it is included.
-<section>
-	Version
-</section>
-	1.0
+ * <library>
+ * 					y_unique
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Defines a symbol differently every time it is included.
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

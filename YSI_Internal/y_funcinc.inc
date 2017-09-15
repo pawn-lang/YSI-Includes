@@ -4,22 +4,22 @@
 #define _INC_y_funcinc
 
 /*+
-<library>
-					y_funcinc
-</library>
-<section>
-	Description
-</section>
-	Calls functions which are used in SYSREQ.C calls before they are used.  The
-	compiler crashes if the functions are not used in an included function
-	before being used in a SYSREQ.C call as the function is not in the native
-	functions table.
-<section>
-	Version
-</section>
-	1.0
+ * <library>
+ * 					y_funcinc
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Calls functions which are used in SYSREQ.C calls before they are used.  The
+ * 	compiler crashes if the functions are not used in an included function
+ * 	before being used in a SYSREQ.C call as the function is not in the native
+ * 	functions table.
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

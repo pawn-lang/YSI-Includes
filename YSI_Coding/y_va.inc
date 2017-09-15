@@ -4,24 +4,24 @@
 #define _INC_y_va
 
 /**
-<library>
-					y_va
-</library>
-<section>
-	Description
-</section>
-	This library currently provides two functions - va_printf and va_format
-	which perform printf and format using variable arguments passed to another
-	function.
-	
+ * <library>
+ * 					y_va
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	This library currently provides two functions - va_printf and va_format
+ * 	which perform printf and format using variable arguments passed to another
+ * 	function.
+ * 	
 	This is bsed on the variable parameter passing method based on code by Zeex.
-	See page 15 of the code optimisations topic.
-<section>
-	Version
-</section>
-	1.0
+ * 	See page 15 of the code optimisations topic.
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

@@ -169,20 +169,20 @@ Optional plugins:
 #define _INC_y_groups
 
 /**
-<library>
-					y_groups
-</library>
-<section>
-	Description
-</section>
-	Admin levels, gangs, teams etc - they're all "groups" of people, this
-	provides an abstraction for all of these collections.
-<section>
-	Version
-</section>
-	1.0
+ * <library>
+ * 					y_groups
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Admin levels, gangs, teams etc - they're all "groups" of people, this
+ * 	provides an abstraction for all of these collections.
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** */
+ *//** */
 
 stock _YSI_HAS_y_groups(_do_not_call_me_ever_, _like_never_)
 {

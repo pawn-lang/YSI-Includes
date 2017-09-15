@@ -11,19 +11,19 @@
 #define _INC_y_hooks
 
 /**
-<library>
-					y_hooks
-</library>
-<section>
-	Description
-</section>
-	Automatically hooks any callbacks with a very simple syntax.
-<section>
-	Version
-</section>
-	2.0
+ * <library>
+ * 					y_hooks
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Automatically hooks any callbacks with a very simple syntax.
+ * <section>
+ * 	Version
+ * </section>
+ * 	2.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

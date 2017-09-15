@@ -4,23 +4,23 @@
 #define _INC_y_colors
 
 /**
-<library>
-					y_colours
-</library>
-<section>
-	Description
-</section>
-	This holds the colour information that used to be part of the text system
-	but which is far more useful than just for text.  This now supports the full
-	set of X11 colours, both by name and by definition.  You can also define
-	your own if you so choose (up to 32 - should be enough given that this
-	includes the X11 colours).
-<section>
-	Version
-</section>
-	1.0
+ * <library>
+ * 					y_colours
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	This holds the colour information that used to be part of the text system
+ * 	but which is far more useful than just for text.  This now supports the full
+ * 	set of X11 colours, both by name and by definition.  You can also define
+ * 	your own if you so choose (up to 32 - should be enough given that this
+ * 	includes the X11 colours).
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

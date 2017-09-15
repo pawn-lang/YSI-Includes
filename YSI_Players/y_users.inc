@@ -4,19 +4,19 @@
 #define _INC_y_users
 
 /**
-<library>
-					y_users
-</library>
-<section>
-	Description
-</section>
-	Provides access to a user system for registering and saving users.
-<section>
-	Version
-</section>
-	2.2
+ * <library>
+ * 					y_users
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Provides access to a user system for registering and saving users.
+ * <section>
+ * 	Version
+ * </section>
+ * 	2.2
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

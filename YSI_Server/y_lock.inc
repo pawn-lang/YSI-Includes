@@ -4,19 +4,19 @@
 #define _INC_y_lock
 
 /**
-<library>
-					y_lock
-</library>
-<section>
-	Description
-</section>
-	Ensures that the server is running on the IP specified by "bind".
-<section>
-	Version
-</section>
-	0.1
+ * <library>
+ * 					y_lock
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Ensures that the server is running on the IP specified by "bind".
+ * <section>
+ * 	Version
+ * </section>
+ * 	0.1
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

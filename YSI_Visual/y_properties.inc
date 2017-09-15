@@ -4,152 +4,152 @@
 #define _INC_y_properties
 
 /**
-<library>
-					y_properties
-</library>
-<section>
-	Description
-</section>
-	Handles properties and other common features for some modes.
-<section>
-	Version
-</section>
-	0.1
-<section>
-	Functions
-</section>
-<subsection>
-Public
-</subsection><ul>
-	<symbol name="Property_Loop">Does the main system processing.</symbol>
-	<symbol name="Property_AddPropRemote">Adds a property from another script.</symbol>
-	<symbol name="Property_AddBankRemote">Adds a bank from another script.</symbol>
-	<symbol name="Property_AddAmmuRemote">Adds an ammunation from another script.</symbol>
-	<symbol name="Property_AddMARemote">Adds a money area from another script.</symbol>
-	<symbol name="Property_AddMPRemote">Adds a money point from another script.</symbol>
-	<symbol name="Property_AddTeleRemote">Adds a teleport from another script.</symbol>
-	<symbol name="Property_AddFobRemote">Adds a forbidden area from another script.</symbol>
-	<symbol name="Property_GetPropertyBitsReceive">Passes a player's properties.</symbol>
-	<symbol name="Property_Remote">Remote wrapper for most minor functions.</symbol>
-	<symbol name="YSIM_Properties">Master system callback.</symbol>
-	<symbol name="Property_Broadcast">Called to save properties on master shutdown.</symbol>
-	<symbol name="Property_PickupTimeCheck">Checks if a player is still stood on a pickup.</symbol>
-</ul><subsection>
-Core
-</subsection><ul>
-	<symbol name="Property_OnPlayerSelectedMenuRow">Called when someone selects something.</symbol>
-	<symbol name="Property_OnPlayerExitedMenu">Called when someone exits a menu.</symbol>
-	<symbol name="Property_OnPlayerEnterCheckpointEx">Called when someone enters a checkpoint (public).</symbol>
-	<symbol name="Property_OnPlayerLeaveCheckpointEx">Called when someone leaves a checkpoint (public).</symbol>
-	<symbol name="Property_OnPlayerPickUpPickup">Called when someone picks up a pickup (public).</symbol>
-	<symbol name="Property_OnPlayerSpawn">Called when someone spawns.</symbol>
-	<symbol name="Property_OnPlayerConnect">Called when comaone connects.</symbol>
-	<symbol name="Property_OnPlayerLeaveArea">Called when someone leaves an area (public).</symbol>
-	<symbol name="Property_OnPlayerEnterArea">Called when someone enters an area (public).</symbol>
-</ul><subsection>
-Stock
-</subsection><ul>
-	<symbol name="Property_GetPlayerPropCount">Gets the number of properties for a player.</symbol>
-	<symbol name="Property_GetLink">Gets the area or checkpoint for a property.</symbol>
-	<symbol name="Property_GetType">Gets a property's type.</symbol>
-	<symbol name="Property_IsValid">Checks if a property is valid.</symbol>
-	<symbol name="Property_Bank">Moves money to/from an account.</symbol>
-	<symbol name="Property_SavePlayerWeapon">Saves a players weapon for spawn.</symbol>
-	<symbol name="Property_SaveWeapons">Saves a player's spawn weapons.</symbol>
-	<symbol name="Property_LoadWeapons">Loads a player's spawn weapons.</symbol>
-	<symbol name="Property_SaveBank">Saves a player's banked money.</symbol>
-	<symbol name="Property_LoadBank">Loads a player's banked money.</symbol>
-	<symbol name="Property_GetBank">Gets a player's banked money.</symbol>
-	<symbol name="Property_GetSlotWeapon">Gets a player's spawn weapons.</symbol>
-	<symbol name="Property_GetPropertyBits">Gets a player's owned properties.</symbol>
-	<symbol name="Property_SetRebuyDelay">Set a delay on rebuying properties.</symbol>
-</ul><subsection>
-Static
-</subsection><ul>
-	<symbol name="Property_GetWeapon">Gets weapon data for a slotid slot.</symbol>
-	<symbol name="Property_WeaponName">Gets a weapon name for a slotid.</symbol>
-	<symbol name="Property_GetWeaponFromSlot">Gets a weaponid from a slotid.</symbol>
-	<symbol name="Property_GenerateAmmuMenu">Generates the menu for ammunation.</symbol>
-</ul><subsection>
-Inline
-</subsection><ul>
-	<symbol name="Property_SetOption">Sets a property's custom flag.</symbol>
-	<symbol name="Property_IsActive">Checks if a property is active.</symbol>
-	<symbol name="Property_GetOption">Gets a property's custom flag.</symbol>
-	<symbol name="Property_GivePlayerWeapon">Gives a player a weapon from it's slot.</symbol>
-	<symbol name="Property_WeaponCost">Gets the cost of a slot,</symbol>
-	<symbol name="Property_WeaponAmmo">Gets the ammo of a slot.</symbol>
-	<symbol name="Property_IsPlayerProperty">Checks if a player can have a property.</symbol>
-</ul><subsection>
-API
-</subsection><ul>
-	<symbol name="CreateProperty">Creates a business.</symbol>
-	<symbol name="CreateBank">Creates a bank.</symbol>
-	<symbol name="CreateAmmunation">Creates an ammunation.</symbol>
-	<symbol name="CreateMoneyArea">Creates a money area.</symbol>
-	<symbol name="CreateMoneyPoint">Creates a money point.</symbol>
-	<symbol name="CreateTeleport">Creates a teleport.</symbol>
-	<symbol name="CreateForbiddenArea">Creates a forbidden area.</symbol>
-	<symbol name="DestroyProperty">Deletes a property from the array.</symbol>
-</ul><section>
-	Definitions
-</section><ul>
-	<symbol name="PROPERTY_LOOP_GRANULARITY">Number of itterations of the main loop a second.</symbol>
-	<symbol name="MAX_PROP_NAME">Max length of the name of a property.</symbol>
-	<symbol name="MAX_PROPERTIES">Max number of properties.</symbol>
-	<symbol name="NO_PROPERTY">Invalid return.</symbol>
-	<symbol name="WEAPON_ARMOUR">Type for salling armour at ammunation.</symbol>
-	<symbol name="PROPERTY_SELL_PERCENT">% of money got back for a reduced sale.</symbol>
-</ul><section>
-	Enums
-</section><ul>
-	e_PROP_FLAGS - Flags for property data.
-	E_PROP_DATA - Data for a property.
-	E_PROP_AMMU - Data for a persons current ammunation menu.
-	<unnamed> - Tagless remote instructions, must have new ones added to the end.
-</ul><section>
-	Macros
-</section><ul>
-	<symbol name="WEAPON_DATA_OFFSET">Offset for saving weapons with variable size arrays,</symbol>
-	<symbol name="WEAPON_DATA">Gets ammo and cost from parameters and compresses them.</symbol>
-	<symbol name="WEAPON_DATA_REM">Like WEAPON_DATA but reads from an array instead.</symbol>
-	<symbol name="WEAPON">Saves a weapon id in the top byte of a cell.</symbol>
-</ul><section>
-	Tags
-</section><ul>
-	<symbol name="e_PROP_FLAGS">Flags.</symbol>
-</ul><section>
-	Variables
-</section>
-<subsection>
-Static
-</subsection><ul>
-	<symbol name="YSI_g_sProperties">Array of all property data.</symbol>
-	<symbol name="YSI_g_sMoney">Array of player's banked money.</symbol>
-	<symbol name="YSI_g_sPlayerProperties">Bit array of properties a player has.</symbol>
-	<symbol name="YSI_g_sSpawnWeapons">Array of weapons a player will spawn with.</symbol>
-	<symbol name="YSI_g_sShopMenu">Array of players current menus.</symbol>
-	<symbol name="YSI_g_sAreaPointers">Array of properties for each area.</symbol>
-	<symbol name="YSI_g_sCheckpointPointers">Array of properties for each checkpoint.</symbol>
-	<symbol name="YSI_g_sTempPropReq">Script has requested a player's properties.</symbol>
-	<symbol name="YSI_g_sTempProp">Temporary store for properties.</symbol>
-	<symbol name="YSI_g_sIsMaster">Is this script the global master.</symbol>
-</ul><section>
-	Commands
-</section><ul>
-	<symbol name="buy">Lets you buy your current property.</symbol>
-	<symbol name="bank">Lets you bank money.</symbol>
-	<symbol name="properties">Lists properties and their owners.</symbol>
-	<symbol name="balance">Displays your current balance.</symbol>
-	<symbol name="withdraw">Allows you to take out money.</symbol>
-	<symbol name="sell">Allows you to sell a property.</symbol>
-</ul><section>
-	Properties
-</section><ul>
-	<symbol name="LReqProp">Return data from a remote script.</symbol>
-	<symbol name="110953013">Return properties for a player.</symbol>
-</ul>
-*//** *//*
+ * <library>
+ * 					y_properties
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Handles properties and other common features for some modes.
+ * <section>
+ * 	Version
+ * </section>
+ * 	0.1
+ * <section>
+ * 	Functions
+ * </section>
+ * <subsection>
+ * Public
+ * </subsection><ul>
+ * 	<symbol name="Property_Loop">Does the main system processing.</symbol>
+ * 	<symbol name="Property_AddPropRemote">Adds a property from another script.</symbol>
+ * 	<symbol name="Property_AddBankRemote">Adds a bank from another script.</symbol>
+ * 	<symbol name="Property_AddAmmuRemote">Adds an ammunation from another script.</symbol>
+ * 	<symbol name="Property_AddMARemote">Adds a money area from another script.</symbol>
+ * 	<symbol name="Property_AddMPRemote">Adds a money point from another script.</symbol>
+ * 	<symbol name="Property_AddTeleRemote">Adds a teleport from another script.</symbol>
+ * 	<symbol name="Property_AddFobRemote">Adds a forbidden area from another script.</symbol>
+ * 	<symbol name="Property_GetPropertyBitsReceive">Passes a player's properties.</symbol>
+ * 	<symbol name="Property_Remote">Remote wrapper for most minor functions.</symbol>
+ * 	<symbol name="YSIM_Properties">Master system callback.</symbol>
+ * 	<symbol name="Property_Broadcast">Called to save properties on master shutdown.</symbol>
+ * 	<symbol name="Property_PickupTimeCheck">Checks if a player is still stood on a pickup.</symbol>
+ * </ul><subsection>
+ * Core
+ * </subsection><ul>
+ * 	<symbol name="Property_OnPlayerSelectedMenuRow">Called when someone selects something.</symbol>
+ * 	<symbol name="Property_OnPlayerExitedMenu">Called when someone exits a menu.</symbol>
+ * 	<symbol name="Property_OnPlayerEnterCheckpointEx">Called when someone enters a checkpoint (public).</symbol>
+ * 	<symbol name="Property_OnPlayerLeaveCheckpointEx">Called when someone leaves a checkpoint (public).</symbol>
+ * 	<symbol name="Property_OnPlayerPickUpPickup">Called when someone picks up a pickup (public).</symbol>
+ * 	<symbol name="Property_OnPlayerSpawn">Called when someone spawns.</symbol>
+ * 	<symbol name="Property_OnPlayerConnect">Called when comaone connects.</symbol>
+ * 	<symbol name="Property_OnPlayerLeaveArea">Called when someone leaves an area (public).</symbol>
+ * 	<symbol name="Property_OnPlayerEnterArea">Called when someone enters an area (public).</symbol>
+ * </ul><subsection>
+ * Stock
+ * </subsection><ul>
+ * 	<symbol name="Property_GetPlayerPropCount">Gets the number of properties for a player.</symbol>
+ * 	<symbol name="Property_GetLink">Gets the area or checkpoint for a property.</symbol>
+ * 	<symbol name="Property_GetType">Gets a property's type.</symbol>
+ * 	<symbol name="Property_IsValid">Checks if a property is valid.</symbol>
+ * 	<symbol name="Property_Bank">Moves money to/from an account.</symbol>
+ * 	<symbol name="Property_SavePlayerWeapon">Saves a players weapon for spawn.</symbol>
+ * 	<symbol name="Property_SaveWeapons">Saves a player's spawn weapons.</symbol>
+ * 	<symbol name="Property_LoadWeapons">Loads a player's spawn weapons.</symbol>
+ * 	<symbol name="Property_SaveBank">Saves a player's banked money.</symbol>
+ * 	<symbol name="Property_LoadBank">Loads a player's banked money.</symbol>
+ * 	<symbol name="Property_GetBank">Gets a player's banked money.</symbol>
+ * 	<symbol name="Property_GetSlotWeapon">Gets a player's spawn weapons.</symbol>
+ * 	<symbol name="Property_GetPropertyBits">Gets a player's owned properties.</symbol>
+ * 	<symbol name="Property_SetRebuyDelay">Set a delay on rebuying properties.</symbol>
+ * </ul><subsection>
+ * Static
+ * </subsection><ul>
+ * 	<symbol name="Property_GetWeapon">Gets weapon data for a slotid slot.</symbol>
+ * 	<symbol name="Property_WeaponName">Gets a weapon name for a slotid.</symbol>
+ * 	<symbol name="Property_GetWeaponFromSlot">Gets a weaponid from a slotid.</symbol>
+ * 	<symbol name="Property_GenerateAmmuMenu">Generates the menu for ammunation.</symbol>
+ * </ul><subsection>
+ * Inline
+ * </subsection><ul>
+ * 	<symbol name="Property_SetOption">Sets a property's custom flag.</symbol>
+ * 	<symbol name="Property_IsActive">Checks if a property is active.</symbol>
+ * 	<symbol name="Property_GetOption">Gets a property's custom flag.</symbol>
+ * 	<symbol name="Property_GivePlayerWeapon">Gives a player a weapon from it's slot.</symbol>
+ * 	<symbol name="Property_WeaponCost">Gets the cost of a slot,</symbol>
+ * 	<symbol name="Property_WeaponAmmo">Gets the ammo of a slot.</symbol>
+ * 	<symbol name="Property_IsPlayerProperty">Checks if a player can have a property.</symbol>
+ * </ul><subsection>
+ * API
+ * </subsection><ul>
+ * 	<symbol name="CreateProperty">Creates a business.</symbol>
+ * 	<symbol name="CreateBank">Creates a bank.</symbol>
+ * 	<symbol name="CreateAmmunation">Creates an ammunation.</symbol>
+ * 	<symbol name="CreateMoneyArea">Creates a money area.</symbol>
+ * 	<symbol name="CreateMoneyPoint">Creates a money point.</symbol>
+ * 	<symbol name="CreateTeleport">Creates a teleport.</symbol>
+ * 	<symbol name="CreateForbiddenArea">Creates a forbidden area.</symbol>
+ * 	<symbol name="DestroyProperty">Deletes a property from the array.</symbol>
+ * </ul><section>
+ * 	Definitions
+ * </section><ul>
+ * 	<symbol name="PROPERTY_LOOP_GRANULARITY">Number of itterations of the main loop a second.</symbol>
+ * 	<symbol name="MAX_PROP_NAME">Max length of the name of a property.</symbol>
+ * 	<symbol name="MAX_PROPERTIES">Max number of properties.</symbol>
+ * 	<symbol name="NO_PROPERTY">Invalid return.</symbol>
+ * 	<symbol name="WEAPON_ARMOUR">Type for salling armour at ammunation.</symbol>
+ * 	<symbol name="PROPERTY_SELL_PERCENT">% of money got back for a reduced sale.</symbol>
+ * </ul><section>
+ * 	Enums
+ * </section><ul>
+ * 	e_PROP_FLAGS - Flags for property data.
+ * 	E_PROP_DATA - Data for a property.
+ * 	E_PROP_AMMU - Data for a persons current ammunation menu.
+ * 	<unnamed> - Tagless remote instructions, must have new ones added to the end.
+ * </ul><section>
+ * 	Macros
+ * </section><ul>
+ * 	<symbol name="WEAPON_DATA_OFFSET">Offset for saving weapons with variable size arrays,</symbol>
+ * 	<symbol name="WEAPON_DATA">Gets ammo and cost from parameters and compresses them.</symbol>
+ * 	<symbol name="WEAPON_DATA_REM">Like WEAPON_DATA but reads from an array instead.</symbol>
+ * 	<symbol name="WEAPON">Saves a weapon id in the top byte of a cell.</symbol>
+ * </ul><section>
+ * 	Tags
+ * </section><ul>
+ * 	<symbol name="e_PROP_FLAGS">Flags.</symbol>
+ * </ul><section>
+ * 	Variables
+ * </section>
+ * <subsection>
+ * Static
+ * </subsection><ul>
+ * 	<symbol name="YSI_g_sProperties">Array of all property data.</symbol>
+ * 	<symbol name="YSI_g_sMoney">Array of player's banked money.</symbol>
+ * 	<symbol name="YSI_g_sPlayerProperties">Bit array of properties a player has.</symbol>
+ * 	<symbol name="YSI_g_sSpawnWeapons">Array of weapons a player will spawn with.</symbol>
+ * 	<symbol name="YSI_g_sShopMenu">Array of players current menus.</symbol>
+ * 	<symbol name="YSI_g_sAreaPointers">Array of properties for each area.</symbol>
+ * 	<symbol name="YSI_g_sCheckpointPointers">Array of properties for each checkpoint.</symbol>
+ * 	<symbol name="YSI_g_sTempPropReq">Script has requested a player's properties.</symbol>
+ * 	<symbol name="YSI_g_sTempProp">Temporary store for properties.</symbol>
+ * 	<symbol name="YSI_g_sIsMaster">Is this script the global master.</symbol>
+ * </ul><section>
+ * 	Commands
+ * </section><ul>
+ * 	<symbol name="buy">Lets you buy your current property.</symbol>
+ * 	<symbol name="bank">Lets you bank money.</symbol>
+ * 	<symbol name="properties">Lists properties and their owners.</symbol>
+ * 	<symbol name="balance">Displays your current balance.</symbol>
+ * 	<symbol name="withdraw">Allows you to take out money.</symbol>
+ * 	<symbol name="sell">Allows you to sell a property.</symbol>
+ * </ul><section>
+ * 	Properties
+ * </section><ul>
+ * 	<symbol name="LReqProp">Return data from a remote script.</symbol>
+ * 	<symbol name="110953013">Return properties for a player.</symbol>
+ * </ul>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -325,60 +325,60 @@ static
 loadtext core[ysi_properties];
 
 /*-------------------------------------------------------------------------*//**
-<param name="prop">Property to check.</param>
-*//*-------------------------------------------------------------------------**/
+ * <param name="prop">Property to check.</param>
+ *//*-------------------------------------------------------------------------**/
 
 P:D(bool:Property_IsActive(prop));
 #define Property_IsActive(%1) \
 	((%1) < MAX_PROPERTIES && (%1) >= 0 && YSI_g_sProperties[(%1)][E_PROP_DATA_FLAGS] & e_PROP_FLAGS_ACTIVE)
 
 /*-------------------------------------------------------------------------*//**
-<remarks>
-	Allows people to own as many properties as they like at once.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <remarks>
+ * 	Allows people to own as many properties as they like at once.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 P:D(Property_ResetMaxProperties());
 #define Property_ResetMaxProperties() \
 	Property_SetMaxProperties(cellmax)
 
 /*-------------------------------------------------------------------------*//**
-<param name="slot">Custom flag to set.</param>
-<param name="value">Value to set it to.</param>
-<remarks>
-	Can't be changed except from 0 to 1.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="slot">Custom flag to set.</param>
+ * <param name="value">Value to set it to.</param>
+ * <remarks>
+ * 	Can't be changed except from 0 to 1.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 P:D(Property_SetOption(slot,value));
 #define Property_SetOption(%1,%2) \
 	((%2) ? e_PROP_FLAGS_CUST_%1 : e_PROP_FLAGS:0)
 
 /*-------------------------------------------------------------------------*//**
-<param name="slot">Custom flag to get.</param>
-<param name="flags">flags cell to get it from.</param>
-*//*-------------------------------------------------------------------------**/
+ * <param name="slot">Custom flag to get.</param>
+ * <param name="flags">flags cell to get it from.</param>
+ *//*-------------------------------------------------------------------------**/
 
 P:D(Property_GetOption(slot,e_PROP_FLAGS:flags));
 #define Property_GetOption(%1,%2) \
 	(e_PROP_FLAGS_CUST_%1 & e_PROP_FLAGS:(%2))
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player to gice a weapon to.</param>
-<param name="slot">Weapon slot to give.</param>
-<param name="ammo">Ammo to give.</param>
-<remarks>
-	Gives a player a weapon by slot instead of weaponid or assignes armour.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player to gice a weapon to.</param>
+ * <param name="slot">Weapon slot to give.</param>
+ * <param name="ammo">Ammo to give.</param>
+ * <remarks>
+ * 	Gives a player a weapon by slot instead of weaponid or assignes armour.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 P:D(Property_GivePlayerWeapon(playerid,slot,ammo));
 #define Property_GivePlayerWeapon(%1,%2,%3) \
 	if ((%2) == 39) SetPlayerArmour((%1), 100.0); else GivePlayerWeapon(%1, Property_GetWeaponFromSlot(%2), %3)
 
 /*-------------------------------------------------------------------------*//**
-<param name="delay">Time till a property can be bought again.</param>
-*//*-------------------------------------------------------------------------**/
+ * <param name="delay">Time till a property can be bought again.</param>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_SetRebuyDelay(delay)
 {
@@ -386,11 +386,11 @@ stock Property_SetRebuyDelay(delay)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="property">Property to check.</param>
-<returns>
-	Is the property a valid active property.
-</returns>
-*//*-------------------------------------------------------------------------**/
+ * <param name="property">Property to check.</param>
+ * <returns>
+ * 	Is the property a valid active property.
+ * </returns>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_IsValid(property)
 {
@@ -398,21 +398,21 @@ stock Property_IsValid(property)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player to check.</param>
-<param name="prop">Property to check.</param>
-<param name="flags">Property flags for ownership type.</param>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player to check.</param>
+ * <param name="prop">Property to check.</param>
+ * <param name="flags">Property flags for ownership type.</param>
+ *//*-------------------------------------------------------------------------**/
 
 P:D(bool:Property_IsOwner(playerid,prop,e_PROP_FLAGS:flags));
 #define Property_IsOwner(%1,%2,%3) \
 	((Property_GetOption(2, (%3))) ? (!Bit_GetBit(YSI_g_sProperties[(%2)][E_PROP_DATA_PLAYERS], (%1))) : (!(_:YSI_g_sProperties[(%2)][E_PROP_DATA_PLAYERS][0] == (%1))))
 
 /*-------------------------------------------------------------------------*//**
-<param name="count">Number of ownable properties.</param>
-<remarks>
-	Sets the number of properties a player can own at once.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="count">Number of ownable properties.</param>
+ * <remarks>
+ * 	Sets the number of properties a player can own at once.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_SetMaxProperties(count)
 {
@@ -420,11 +420,11 @@ stock Property_SetMaxProperties(count)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="count">Number of ownable houses.</param>
-<remarks>
-	Sets the number of houses a player can own at once.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="count">Number of ownable houses.</param>
+ * <remarks>
+ * 	Sets the number of houses a player can own at once.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_SetMaxHouses(count)
 {
@@ -432,11 +432,11 @@ stock Property_SetMaxHouses(count)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="property">Property to get the type of.</param>
-<returns>
-	0 if invalid or type.
-</returns>
-*//*-------------------------------------------------------------------------**/
+ * <param name="property">Property to get the type of.</param>
+ * <returns>
+ * 	0 if invalid or type.
+ * </returns>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_GetType(property)
 {
@@ -445,10 +445,10 @@ stock Property_GetType(property)
 }
 
 /*-------------------------------------------------------------------------*//**
-<remarks>
-	Sets variable initial states.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <remarks>
+ * 	Sets variable initial states.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 hook OnScriptInit()
 {
@@ -479,8 +479,8 @@ hook OnScriptInit()
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="property">Property to destroy.</param>
-*//*-------------------------------------------------------------------------**/
+ * <param name="property">Property to destroy.</param>
+ *//*-------------------------------------------------------------------------**/
 
 stock DestroyProperty(property)
 {
@@ -513,20 +513,20 @@ stock DestroyProperty(property)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="extX">X position of the external marker.</param>
-<param name="extY">Y position of the external marker.</param>
-<param name="extZ">Z position of the external marker.</param>
-<param name="intX">X position of the internal marker.</param>
-<param name="intY">Y position of the internal marker.</param>
-<param name="intZ">Z position of the internal marker.</param>
-<param name="interior">Interior ID of the house.</param>
-<param name="world">Virtual world of the house.</param>
-<param name="price">Price of the house.</param>
-<param name="checkpoint">Use a checkpoint instead of a pickup.</param>
-<remarks>
-	Creates a buyable property (business).
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="extX">X position of the external marker.</param>
+ * <param name="extY">Y position of the external marker.</param>
+ * <param name="extZ">Z position of the external marker.</param>
+ * <param name="intX">X position of the internal marker.</param>
+ * <param name="intY">Y position of the internal marker.</param>
+ * <param name="intZ">Z position of the internal marker.</param>
+ * <param name="interior">Interior ID of the house.</param>
+ * <param name="world">Virtual world of the house.</param>
+ * <param name="price">Price of the house.</param>
+ * <param name="checkpoint">Use a checkpoint instead of a pickup.</param>
+ * <remarks>
+ * 	Creates a buyable property (business).
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock CreateHouse(Float:extX, Float:extY, Float:extZ, Float:intX, Float:intY, Float:intZ, interior, world, price, checkpoint = 0)
 {
@@ -585,22 +585,22 @@ stock CreateHouse(Float:extX, Float:extY, Float:extZ, Float:intX, Float:intY, Fl
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="name">Name of the property.</param>
-<param name="x">X position.</param>
-<param name="y">Y position.</param>
-<param name="z">Z position.</param>
-<param name="price">Cost of the property.</param>
-<param name="reward">Money earnt from the property periodically.</param>
-<param name="interval">How often you earn money.</param>
-<param name="sell">Wether you need to seel the property of people can just buy you out.</param>
-<param name="multi">Wether more than one person can own this property at once.</param>
-<param name="reduce">Wether selling this property gets you less then you paid for it.</param>
-<param name="increase">Wether buying this property will put the price up for the future.</param>
-<param name="property">Wether this property uses a pickup instead of a checkpoint.</param>
-<remarks>
-	Creates a buyable property (business).
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="name">Name of the property.</param>
+ * <param name="x">X position.</param>
+ * <param name="y">Y position.</param>
+ * <param name="z">Z position.</param>
+ * <param name="price">Cost of the property.</param>
+ * <param name="reward">Money earnt from the property periodically.</param>
+ * <param name="interval">How often you earn money.</param>
+ * <param name="sell">Wether you need to seel the property of people can just buy you out.</param>
+ * <param name="multi">Wether more than one person can own this property at once.</param>
+ * <param name="reduce">Wether selling this property gets you less then you paid for it.</param>
+ * <param name="increase">Wether buying this property will put the price up for the future.</param>
+ * <param name="property">Wether this property uses a pickup instead of a checkpoint.</param>
+ * <remarks>
+ * 	Creates a buyable property (business).
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock CreateProperty(name[], Float:x, Float:y, Float:z, price, reward, interval = 60000, sell = 0, multi = 0, reduce = 0, increase = 0, pickup = 0)
 {
@@ -646,11 +646,11 @@ stock CreateProperty(name[], Float:x, Float:y, Float:z, price, reward, interval 
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="x">X position.</param>
-<param name="y">Y position.</param>
-<param name="z">Z position.</param>
-<param name="name">Name of the bank.</param>
-*//*-------------------------------------------------------------------------**/
+ * <param name="x">X position.</param>
+ * <param name="y">Y position.</param>
+ * <param name="z">Z position.</param>
+ * <param name="name">Name of the bank.</param>
+ *//*-------------------------------------------------------------------------**/
 
 stock CreateBank(Float:x, Float:y, Float:z, name[] = "")
 {
@@ -673,22 +673,22 @@ stock CreateBank(Float:x, Float:y, Float:z, name[] = "")
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="x">X position.</param>
-<param name="y">Y position.</param>
-<param name="z">Z position.</param>
-<param name="spawn">Wether you spawn with the weapon.</param>
-<param name="instant">Wether you get the weapon as soon as you buy it.</param>
-<param name=""></param>
-<remarks>
-	spawn and instant can BOTH be 1.  The format of the additional parameters
-	is:
-	
+ * <param name="x">X position.</param>
+ * <param name="y">Y position.</param>
+ * <param name="z">Z position.</param>
+ * <param name="spawn">Wether you spawn with the weapon.</param>
+ * <param name="instant">Wether you get the weapon as soon as you buy it.</param>
+ * <param name=""></param>
+ * <remarks>
+ * 	spawn and instant can BOTH be 1.  The format of the additional parameters
+ * 	is:
+ * 	
 	weapon, ammo, price
-	
+ * 	
 	They MUST come in sets of three of the function will fail.  Weapon is in
-	the form of the WEAPON_ defines in a_samp or WEAPON_ARMOUR.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * 	the form of the WEAPON_ defines in a_samp or WEAPON_ARMOUR.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock CreateAmmunation(Float:x, Float:y, Float:z, spawn, instant, ...)
 {
@@ -864,14 +864,14 @@ stock CreateAmmunation(Float:x, Float:y, Float:z, spawn, instant, ...)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="area">Reference to a defined area.</param>
-<param name="money">How much you earn.</param>
-<param name="interval">How often you earn.</param>
-<remarks>
-	This function has internal checking for invalid areas so you can just pass
-	the return from an Area_ funtion directly.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="area">Reference to a defined area.</param>
+ * <param name="money">How much you earn.</param>
+ * <param name="interval">How often you earn.</param>
+ * <remarks>
+ * 	This function has internal checking for invalid areas so you can just pass
+ * 	the return from an Area_ funtion directly.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock CreateMoneyArea(area, money = 100, interval = 10000)
 {
@@ -893,16 +893,16 @@ stock CreateMoneyArea(area, money = 100, interval = 10000)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="x">X position.</param>
-<param name="y">Y position.</param>
-<param name="z">Z position.</param>
-<param name="s">Size of checkpoint.</param>
-<param name="money">How much you earn.</param>
-<param name="interval">How often you earn.</param>
-<remarks>
-	Like CreateMoneyArea but you must be in a checkpoint.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="x">X position.</param>
+ * <param name="y">Y position.</param>
+ * <param name="z">Z position.</param>
+ * <param name="s">Size of checkpoint.</param>
+ * <param name="money">How much you earn.</param>
+ * <param name="interval">How often you earn.</param>
+ * <remarks>
+ * 	Like CreateMoneyArea but you must be in a checkpoint.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock CreateMoneyPoint(Float:x, Float:y, Float:z, Float:s, money = 100, interval = 10000)
 {
@@ -926,18 +926,18 @@ stock CreateMoneyPoint(Float:x, Float:y, Float:z, Float:s, money = 100, interval
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="sx">Start X.</param>
-<param name="sy">Start Y.</param>
-<param name="sz">Start Z.</param>
-<param name="tz">Target X.</param>
-<param name="ty">Target Y.</param>
-<param name="tz">Target Z.</param>
-<param name="cost">Price to use the teleport.</param>
-<param name="name">Name of the destination.</param>
-<remarks>
-	Will teleport you the moment you step in.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="sx">Start X.</param>
+ * <param name="sy">Start Y.</param>
+ * <param name="sz">Start Z.</param>
+ * <param name="tz">Target X.</param>
+ * <param name="ty">Target Y.</param>
+ * <param name="tz">Target Z.</param>
+ * <param name="cost">Price to use the teleport.</param>
+ * <param name="name">Name of the destination.</param>
+ * <remarks>
+ * 	Will teleport you the moment you step in.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock CreateTeleport(Float:sx, Float:sy, Float:sz, Float:tx, Float:ty, Float:tz, cost = 0, name[] = "")
 {
@@ -964,16 +964,16 @@ stock CreateTeleport(Float:sx, Float:sy, Float:sz, Float:tx, Float:ty, Float:tz,
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="area">Reference to a defined area.</param>
-<param name="kick">Wether they should be kicked out not hurt.</param>
-<param name="health">How much health should be removed every itteration they're in.</param>
-<param name="invert">Not allowed to leave the area rather than enter.</param>
-<param name="name">Name of the area.</param>
-<remarks>
-	If kick is 1 people will simply be constantly replaced outside the area
-	from the direction they came.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="area">Reference to a defined area.</param>
+ * <param name="kick">Wether they should be kicked out not hurt.</param>
+ * <param name="health">How much health should be removed every itteration they're in.</param>
+ * <param name="invert">Not allowed to leave the area rather than enter.</param>
+ * <param name="name">Name of the area.</param>
+ * <remarks>
+ * 	If kick is 1 people will simply be constantly replaced outside the area
+ * 	from the direction they came.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock CreateForbiddenArea(area, kick = 0, health = 1000, invert = 0, name[] = "")
 {
@@ -995,12 +995,12 @@ stock CreateForbiddenArea(area, kick = 0, health = 1000, invert = 0, name[] = ""
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player who entered an area.</param>
-<param name="area">Area they entered.</param>
-<remarks>
-	Internal callback from YSI_areas.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player who entered an area.</param>
+ * <param name="area">Area they entered.</param>
+ * <remarks>
+ * 	Internal callback from YSI_areas.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 Property_OnPlayerEnterArea(playerid, area)
 {
@@ -1024,12 +1024,12 @@ Property_OnPlayerEnterArea(playerid, area)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player who left an area.</param>
-<param name="areaid">Area they left.</param>
-<remarks>
-	Internal callback from YSI_areas.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player who left an area.</param>
+ * <param name="areaid">Area they left.</param>
+ * <remarks>
+ * 	Internal callback from YSI_areas.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 Property_OnPlayerLeaveArea(playerid, area)
 {
@@ -1044,11 +1044,11 @@ Property_OnPlayerLeaveArea(playerid, area)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player who connected.</param>
-<remarks>
-	Internal callback.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player who connected.</param>
+ * <remarks>
+ * 	Internal callback.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 hook OnPlayerConnect(playerid)
 {
@@ -1060,11 +1060,11 @@ hook OnPlayerConnect(playerid)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player who connected.</param>
-<remarks>
-	Internal callback.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player who connected.</param>
+ * <remarks>
+ * 	Internal callback.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 hook OnPlayerDisconnect(playerid, reason)
 {
@@ -1119,11 +1119,11 @@ hook OnPlayerDisconnect(playerid, reason)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player who spawned.</param>
-<remarks>
-	Internal callback.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player who spawned.</param>
+ * <remarks>
+ * 	Internal callback.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 hook OnPlayerSpawn(playerid)
 {
@@ -1133,12 +1133,12 @@ hook OnPlayerSpawn(playerid)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player who left a checkpoint.</param>
-<param name="cpid">Checkpoint they left.</param>
-<remarks>
-	Internal callback from YSI_checkpoints.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player who left a checkpoint.</param>
+ * <param name="cpid">Checkpoint they left.</param>
+ * <remarks>
+ * 	Internal callback from YSI_checkpoints.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 hook OnPlayerLeaveCheckpointEx(playerid, cpid)
 {
@@ -1160,13 +1160,13 @@ hook OnPlayerLeaveCheckpointEx(playerid, cpid)
 
 #if defined _YSI_VISUAL_PICKUPS
 	/*---------------------------------------------------------------------*//**
-	
+	 * 
 	<param name="playerid">Player who picked up a pickup.</param>
-	<param name="pickupid">Pickup they picked up.</param>
-	<remarks>
-		Internal callback from YSI_pickups.
-	</remarks>
-	*//*---------------------------------------------------------------------**/
+	 * <param name="pickupid">Pickup they picked up.</param>
+	 * <remarks>
+	 * 	Internal callback from YSI_pickups.
+	 * </remarks>
+	 *//*---------------------------------------------------------------------**/
 	
 	Property_OnPlayerPickUpPickup(playerid, pickupid)
 	{
@@ -1226,13 +1226,13 @@ hook OnPlayerLeaveCheckpointEx(playerid, cpid)
 	}
 	
 	/*---------------------------------------------------------------------*//**
-	
+	 * 
 	<param name="playerid">Player who is on a pickup.</param>
-	<param name="pickupid">Pickup to check.</param>
-	
+	 * <param name="pickupid">Pickup to check.</param>
+	 * 
 		Checks if a player has moved away from a pickup.
-	</remarks>
-	*//*---------------------------------------------------------------------**/
+	 * </remarks>
+	 *//*---------------------------------------------------------------------**/
 	
 	public Property_PickupTimeCheck(playerid, pickupid)
 	{
@@ -1258,12 +1258,12 @@ hook OnPlayerLeaveCheckpointEx(playerid, cpid)
 #endif
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player who entered a checkpoint.</param>
-<param name="cpid">Checkpoint they entered.</param>
-<remarks>
-	Internal callback from YSI_checkpoints.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player who entered a checkpoint.</param>
+ * <param name="cpid">Checkpoint they entered.</param>
+ * <remarks>
+ * 	Internal callback from YSI_checkpoints.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 Property_OnPlayerEnterCheckpointEx(playerid, cpid)
 {
@@ -1343,15 +1343,15 @@ Property_OnPlayerEnterCheckpointEx(playerid, cpid)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="ammu">Ammunation to get the weapon from.</param>
-<param name="slot">Number of active slots to skip.</param>
-<param name="page">Start slot.</param>
-<remarks>
-	Gets the slot active weapon from page start.  If you want the first one
-	use page = 0 and slot = 0.  If you want the second use page = 0 and slot
-	= 1 or slot = 0 and page > position of first.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="ammu">Ammunation to get the weapon from.</param>
+ * <param name="slot">Number of active slots to skip.</param>
+ * <param name="page">Start slot.</param>
+ * <remarks>
+ * 	Gets the slot active weapon from page start.  If you want the first one
+ * 	use page = 0 and slot = 0.  If you want the second use page = 0 and slot
+ * 	= 1 or slot = 0 and page > position of first.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 static stock Property_GetWeapon(ammu, slot, &page = 0)
 {
@@ -1386,11 +1386,11 @@ static stock Property_GetWeapon(ammu, slot, &page = 0)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="weapon">Weapon slot to get the name of.</param>
-<remarks>
-	Gets a real weapon name based on the slot of the weapon, not the weapon id.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="weapon">Weapon slot to get the name of.</param>
+ * <remarks>
+ * 	Gets a real weapon name based on the slot of the weapon, not the weapon id.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 static stock Property_WeaponName(weapon)
 {
@@ -1414,33 +1414,33 @@ static stock Property_WeaponName(weapon)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="data">Compressed data.</param>
-<remarks>
-	Extracts the cost from the passed data.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="data">Compressed data.</param>
+ * <remarks>
+ * 	Extracts the cost from the passed data.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 P:D(Property_WeaponCost(data));
 #define Property_WeaponCost(%1) \
 	((%1) & 0xFFFFF)
 
 /*-------------------------------------------------------------------------*//**
-<param name="data">Compressed data.</param>
-<remarks>
-	Extracts the ammo from the passed data.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="data">Compressed data.</param>
+ * <remarks>
+ * 	Extracts the ammo from the passed data.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 P:D(Property_WeaponAmmo(data));
 #define Property_WeaponAmmo(%1) \
 	((%1) >> 20)
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player who left a menu.</param>
-<remarks>
-	Internal callback.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player who left a menu.</param>
+ * <remarks>
+ * 	Internal callback.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 #define Property_OnPlayerExitedMenu Property_OnPlayerExited
 
@@ -1463,11 +1463,11 @@ Property_OnPlayerExitedMenu(playerid)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="slot">Data slot to translate.</param>
-<returns>
-	weaponid represented by that slot.
-</returns>
-*//*-------------------------------------------------------------------------**/
+ * <param name="slot">Data slot to translate.</param>
+ * <returns>
+ * 	weaponid represented by that slot.
+ * </returns>
+ *//*-------------------------------------------------------------------------**/
 
 static stock Property_GetWeaponFromSlot(slot)
 {
@@ -1481,16 +1481,16 @@ static stock Property_GetWeaponFromSlot(slot)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player to save the weapon for.</param>
-<param name="weaponslot">Slot of the weapon.</param>
-<param name="ammo">Ammo to save.</param>
-<remarks>
-	Saves weapons based on slots so you only have 13 spawn weapons based on
-	real weapon slots (armour is slot 12).  This is similar to weapon slot
-	sorting but it's sorting slots which are packed from original weapon
-	numbers and missing some.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player to save the weapon for.</param>
+ * <param name="weaponslot">Slot of the weapon.</param>
+ * <param name="ammo">Ammo to save.</param>
+ * <remarks>
+ * 	Saves weapons based on slots so you only have 13 spawn weapons based on
+ * 	real weapon slots (armour is slot 12).  This is similar to weapon slot
+ * 	sorting but it's sorting slots which are packed from original weapon
+ * 	numbers and missing some.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_SavePlayerWeapon(playerid, weaponslot, ammo)
 {
@@ -1521,14 +1521,14 @@ stock Property_SavePlayerWeapon(playerid, weaponslot, ammo)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player to get the weapon for.</param>
-<param name="slot">Slot to get.</param>
-<param name="weaponslot">Return for the weapon type.</param>
-<param name="ammo">Return for the ammo.</param>
-<remarks>
-	Gets a player's stored for spawn weapons.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player to get the weapon for.</param>
+ * <param name="slot">Slot to get.</param>
+ * <param name="weaponslot">Return for the weapon type.</param>
+ * <param name="ammo">Return for the ammo.</param>
+ * <remarks>
+ * 	Gets a player's stored for spawn weapons.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_GetSlotWeapon(playerid, slot, &weapon, &ammo)
 {
@@ -1538,12 +1538,12 @@ stock Property_GetSlotWeapon(playerid, slot, &weapon, &ammo)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player to save weapons for.</param>
-<remarks>
-	Saves a players current spawn weapon data to an ini (i.e. their save file).
-	110953013 is props in adler32
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player to save weapons for.</param>
+ * <remarks>
+ * 	Saves a players current spawn weapon data to an ini (i.e. their save file).
+ * 	110953013 is props in adler32
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_SaveWeapons(playerid)
 {
@@ -1572,13 +1572,13 @@ stock Property_SaveWeapons(playerid)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player to load weapons for.</param>
-<param name="identifier">Slot data.</param>
-<param name="text">Weapon data.</param>
-<remarks>
-	Called when a player logs in to load their previous weapons.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player to load weapons for.</param>
+ * <param name="identifier">Slot data.</param>
+ * <param name="text">Weapon data.</param>
+ * <remarks>
+ * 	Called when a player logs in to load their previous weapons.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_LoadWeapons(playerid, identifier[], text[])
 {
@@ -1593,11 +1593,11 @@ stock Property_LoadWeapons(playerid, identifier[], text[])
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player to save bank for.</param>
-<remarks>
-	Saves a players current bank data to an ini (i.e. their save file).
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player to save bank for.</param>
+ * <remarks>
+ * 	Saves a players current bank data to an ini (i.e. their save file).
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_SaveBank(playerid)
 {
@@ -1608,13 +1608,13 @@ stock Property_SaveBank(playerid)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player to get bank for.</param>
-<returns>
-	Money in bank.
-</returns>
-<remarks>
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player to get bank for.</param>
+ * <returns>
+ * 	Money in bank.
+ * </returns>
+ * <remarks>
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_GetBank(playerid)
 {
@@ -1623,13 +1623,13 @@ stock Property_GetBank(playerid)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player to load bank for.</param>
-<param name="identifier">Identifier name to check.</param>
-<param name="text">Possibly bank amount.</param>
-<remarks>
-	Called when a player logs in to load their previous banked money.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player to load bank for.</param>
+ * <param name="identifier">Identifier name to check.</param>
+ * <param name="text">Possibly bank amount.</param>
+ * <remarks>
+ * 	Called when a player logs in to load their previous banked money.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_LoadBank(playerid, identifier[], text[])
 {
@@ -1640,12 +1640,12 @@ stock Property_LoadBank(playerid, identifier[], text[])
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player who selected a row.</param>
-<param name="row">Row they selected.</param>
-<remarks>
-	Internal callback.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player who selected a row.</param>
+ * <param name="row">Row they selected.</param>
+ * <remarks>
+ * 	Internal callback.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 #define Property_OnPlayerSelectedMenuRow Property_OnPlayerSelectedRow
 
@@ -1694,17 +1694,17 @@ Property_OnPlayerSelectedMenuRow(playerid, row)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player who watns the menu.</param>
-<param name="ammu">Ammunation they're in.</param>
-<param name="stage">Current menu view if any.</param>
-<param name="page">Current menu page.</param>
-<remarks>
-	If slot is 0 the main selection will be displayed and page will represent
-	the offset from the start if there are more than 12 weapons for sale.  If
-	stage is 1 the individual confirmation menu for one weapon will show and
-	page will determine which weapon to show.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player who watns the menu.</param>
+ * <param name="ammu">Ammunation they're in.</param>
+ * <param name="stage">Current menu view if any.</param>
+ * <param name="page">Current menu page.</param>
+ * <remarks>
+ * 	If slot is 0 the main selection will be displayed and page will represent
+ * 	the offset from the start if there are more than 12 weapons for sale.  If
+ * 	stage is 1 the individual confirmation menu for one weapon will show and
+ * 	page will determine which weapon to show.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 static stock Property_GenerateAmmuMenu(playerid, ammu, stage, page)
 {
@@ -1765,15 +1765,15 @@ static stock Property_GenerateAmmuMenu(playerid, ammu, stage, page)
 }
 
 /*-------------------------------------------------------------------------*//**
-Command:
-	sell
-Parameters:
-	<id> - Property to sell.
-</returns>
-<remarks>
-	Sells a property you own if it can be sold.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * Command:
+ * 	sell
+ * Parameters:
+ * 	<id> - Property to sell.
+ * </returns>
+ * <remarks>
+ * 	Sells a property you own if it can be sold.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 YCMD:sell(playerid, params[], help)
 {
@@ -1852,12 +1852,12 @@ YCMD:sell(playerid, params[], help)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player who is banking money.</param>
-<param name="amount">Amount of money they're banking.</param>
-<remarks>
-	Does banks and withdrawls.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player who is banking money.</param>
+ * <param name="amount">Amount of money they're banking.</param>
+ * <remarks>
+ * 	Does banks and withdrawls.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_Bank(playerid, amount)
 {
@@ -1888,15 +1888,15 @@ stock Property_Bank(playerid, amount)
 }
 
 /*-------------------------------------------------------------------------*//**
-Command:
-	bank
-Parameters:
-	<amount> - Value to bank.
-</returns>
-<remarks>
-	Calls Property_Bank with positive input amount.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * Command:
+ * 	bank
+ * Parameters:
+ * 	<amount> - Value to bank.
+ * </returns>
+ * <remarks>
+ * 	Calls Property_Bank with positive input amount.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 YCMD:bank(playerid, params[], help)
 {
@@ -1918,16 +1918,16 @@ YCMD:bank(playerid, params[], help)
 }
 
 /*-------------------------------------------------------------------------*//**
-Command:
-	balance
-Parameters:
-	-
-</returns>
-<remarks>
-	Displays how much you have in the bank.  Does not require you to be in a
-	bank.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * Command:
+ * 	balance
+ * Parameters:
+ * 	-
+ * </returns>
+ * <remarks>
+ * 	Displays how much you have in the bank.  Does not require you to be in a
+ * 	bank.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 YCMD:balance(playerid, params[], help)
 {
@@ -1937,15 +1937,15 @@ YCMD:balance(playerid, params[], help)
 }
 
 /*-------------------------------------------------------------------------*//**
-Command:
-	withdraw
-Parameters:
-	<amount> - Amount to withdraw.
-</returns>
-<remarks>
-	Calls Property_Bank with negative input amount.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * Command:
+ * 	withdraw
+ * Parameters:
+ * 	<amount> - Amount to withdraw.
+ * </returns>
+ * <remarks>
+ * 	Calls Property_Bank with negative input amount.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 YCMD:withdraw(playerid, params[], help)
 {
@@ -1967,15 +1967,15 @@ YCMD:withdraw(playerid, params[], help)
 }
 
 /*-------------------------------------------------------------------------*//**
-Command:
-	buy
-Parameters:
-	-
-</returns>
-<remarks>
-	Allows you to purchase the property you are at.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * Command:
+ * 	buy
+ * Parameters:
+ * 	-
+ * </returns>
+ * <remarks>
+ * 	Allows you to purchase the property you are at.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 YCMD:buy(playerid, params[], help)
 {
@@ -2128,11 +2128,11 @@ YCMD:buy(playerid, params[], help)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="prop">Property to make available.</param>
-<remarks>
-	Makes a property available for purchase after a delay.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="prop">Property to make available.</param>
+ * <remarks>
+ * 	Makes a property available for purchase after a delay.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 public Property_ResetRebuy(prop)
 {
@@ -2155,11 +2155,11 @@ public Property_ResetRebuy(prop)
 }
 
 /*-------------------------------------------------------------------------*//**
-<remarks>
-	Does the main processing for the library.  Removes or kills people in areas
-	they shouldn't be and gives out money to people who earnt it.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <remarks>
+ * 	Does the main processing for the library.  Removes or kills people in areas
+ * 	they shouldn't be and gives out money to people who earnt it.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 ptask Property_Loop[500](i)
 {
@@ -2261,20 +2261,20 @@ ptask Property_Loop[500](i)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="flags">Property data to check.</param>
-<param name="playerid">Player to check for.</param>
-*//*-------------------------------------------------------------------------**/
+ * <param name="flags">Property data to check.</param>
+ * <param name="playerid">Player to check for.</param>
+ *//*-------------------------------------------------------------------------**/
 
 P:D(bool:Property_IsPlayerProperty(e_PROP_FLAGS:flags,playerid));
 #define Property_IsPlayerProperty(%1,%2) \
 	((%1) & e_PROP_FLAGS_ACTIVE && (%1) & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_PROP && Checkpoint_HasPlayerNoWorld(_:((%1) & e_PROP_FLAGS_LINK), (%2)))
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player to count for.</param>
-<remarks>
-	Gets the number of properties this player could theoretically own.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player to count for.</param>
+ * <remarks>
+ * 	Gets the number of properties this player could theoretically own.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_GetPlayerPropCount(playerid)
 {
@@ -2290,12 +2290,12 @@ stock Property_GetPlayerPropCount(playerid)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player to get properties of.</param>
-<param name="properties">Array to return properties in.</param>
-<remarks>
-	Gets the properties currently owned by this player.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player to get properties of.</param>
+ * <param name="properties">Array to return properties in.</param>
+ * <remarks>
+ * 	Gets the properties currently owned by this player.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_GetPropertyBits(playerid, Bit:properties[])
 {
@@ -2310,15 +2310,15 @@ stock Property_GetPropertyBits(playerid, Bit:properties[])
 }
 
 /*-------------------------------------------------------------------------*//**
-Command:
-	properties
-Parameters:
-	<page> - Page of properties to view (optional).
-</returns>
-<remarks>
-	Lista all properties available to a player and who owns them.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * Command:
+ * 	properties
+ * Parameters:
+ * 	<page> - Page of properties to view (optional).
+ * </returns>
+ * <remarks>
+ * 	Lista all properties available to a player and who owns them.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 YCMD:properties(playerid, params[], help)
 {
@@ -2381,12 +2381,12 @@ YCMD:properties(playerid, params[], help)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="property">Property to get link of.</param>
-<remarks>
-	Returns a reference to the area or checkpoint used by this property or
-	NO_PROPERTY on fail.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="property">Property to get link of.</param>
+ * <remarks>
+ * 	Returns a reference to the area or checkpoint used by this property or
+ * 	NO_PROPERTY on fail.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock Property_GetLink(property)
 {
@@ -2395,15 +2395,15 @@ stock Property_GetLink(property)
 }
 
 /*-------------------------------------------------------------------------*//**
-Command:
-	enter
-Parameters:
-	-
-</returns>
-<remarks>
-	Allows you to enter a house you own.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * Command:
+ * 	enter
+ * Parameters:
+ * 	-
+ * </returns>
+ * <remarks>
+ * 	Allows you to enter a house you own.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 YCMD:enter(playerid, params[], help)
 {
@@ -2466,15 +2466,15 @@ YCMD:enter(playerid, params[], help)
 }
 
 /*-------------------------------------------------------------------------*//**
-Command:
-	exit
-Parameters:
-	-
-</returns>
-<remarks>
-	Allows you to exit a house you own.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * Command:
+ * 	exit
+ * Parameters:
+ * 	-
+ * </returns>
+ * <remarks>
+ * 	Allows you to exit a house you own.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 YCMD:exit(playerid, params[], help)
 {

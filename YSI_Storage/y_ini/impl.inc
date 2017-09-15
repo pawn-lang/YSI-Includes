@@ -182,12 +182,12 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="str">String with the character in.</param>
-<param name="pos">Location of the character.</param>
-<returns>
-	Is the current character escaped?
-</returns>
-*//*-------------------------------------------------------------------------**/
+ * <param name="str">String with the character in.</param>
+ * <param name="pos">Location of the character.</param>
+ * <returns>
+ * 	Is the current character escaped?
+ * </returns>
+ *//*-------------------------------------------------------------------------**/
 
 /*_Y_INI_STATIC*/ stock bool:INI_IsEscapeSequence(const str[], pos)
 {
@@ -199,12 +199,12 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="str">String with the whitespace in.</param>
-<param name="pos">End of the whitespace.</param>
-<returns>
-	Start of the whitespace.
-</returns>
-*//*-------------------------------------------------------------------------**/
+ * <param name="str">String with the whitespace in.</param>
+ * <param name="pos">End of the whitespace.</param>
+ * <returns>
+ * 	Start of the whitespace.
+ * </returns>
+ *//*-------------------------------------------------------------------------**/
 
 /*_Y_INI_STATIC*/ stock INI_ReverseWhitespace(const str[], pos)
 {
@@ -213,18 +213,18 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="str">The string you want to search in.</param>
-<param name="sub">The string you want to search for.</param>
-<param name="pos">The start offset.</param>
-<returns>
-	Position when found, "cellmax - 1" on fail.
-</returns>
-<remarks>
-	Uses "cellmax" not "-1" as a failure return as it is easier to utilise in
-	later code (it is only used as an upper-bound on line positions).  This is
-	similar to "strfind", but accounts for escape sequences.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="str">The string you want to search in.</param>
+ * <param name="sub">The string you want to search for.</param>
+ * <param name="pos">The start offset.</param>
+ * <returns>
+ * 	Position when found, "cellmax - 1" on fail.
+ * </returns>
+ * <remarks>
+ * 	Uses "cellmax" not "-1" as a failure return as it is easier to utilise in
+ * 	later code (it is only used as an upper-bound on line positions).  This is
+ * 	similar to "strfind", but accounts for escape sequences.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 /*_Y_INI_STATIC*/ stock INI_FindString(const str[], const sub[], pos = -1)
 {
@@ -372,22 +372,22 @@ _Y_INI_STATIC stock bool:INI_AtStartOfLine(const str[], index)
 */
 
 /*-------------------------------------------------------------------------*//**
-<param name="str">The string you want to type analyse.</param>
-<param name="p0s">Start of part 0.</param>
-<param name="p0e">End of part 0.</param>
-<param name="p1s">Start of part 1.</param>
-<param name="p1e">End of part 1.</param>
-<param name="p2s">Start of part 2.</param>
-<param name="p2e">End of part 2.</param>
-<param name="cont">Is this a line continuation?</param>
-<returns>
-	e_INI_LINE_TYPE
-</returns>
-<remarks>
-	This function's signature is so long that I put it on a separate line.  This
-	takes a line and determines what it is and where the parts are.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="str">The string you want to type analyse.</param>
+ * <param name="p0s">Start of part 0.</param>
+ * <param name="p0e">End of part 0.</param>
+ * <param name="p1s">Start of part 1.</param>
+ * <param name="p1e">End of part 1.</param>
+ * <param name="p2s">Start of part 2.</param>
+ * <param name="p2e">End of part 2.</param>
+ * <param name="cont">Is this a line continuation?</param>
+ * <returns>
+ * 	e_INI_LINE_TYPE
+ * </returns>
+ * <remarks>
+ * 	This function's signature is so long that I put it on a separate line.  This
+ * 	takes a line and determines what it is and where the parts are.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 P:D(INI_SkipWhitespace(str[],&p0s));
 #define INI_SkipWhitespace(%0,%1) while ('\0' < %0[%1] <= ' ') ++%1
@@ -525,31 +525,31 @@ state_in_comment:
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="fmat">The format destination.</param>
-<param name="remoteFormat">The source format.</param>
-<param name="filename">The file we are currently parsing.</param>
-<param name="bFileFirst">The format parameter ordering.</param>
-<remarks>
-	Generates a partial function name for processing callbacks.  Includes the
-	filename and a placeholder for the tag name.  This now takes extra
-	characters in to account and strips or converts bits:
-	
+ * <param name="fmat">The format destination.</param>
+ * <param name="remoteFormat">The source format.</param>
+ * <param name="filename">The file we are currently parsing.</param>
+ * <param name="bFileFirst">The format parameter ordering.</param>
+ * <remarks>
+ * 	Generates a partial function name for processing callbacks.  Includes the
+ * 	filename and a placeholder for the tag name.  This now takes extra
+ * 	characters in to account and strips or converts bits:
+ * 	
 		some/dir/file name.ext
-	
+ * 	
 	Becomes:
-	
+ * 	
 		file_name
-	
+ * 	
 	Before being formatted in to the specified remote format.  The filename
-	also takes in to account "/" directory separators and "\\" ones on Windows.
-	
+ * 	also takes in to account "/" directory separators and "\\" ones on Windows.
+ * 	
 	Because the	majority of this function is concerned with formatting just part
-	of the function name correctly, it short-circuits if it detects that there
-	is no place for the function name to go.
-	
+ * 	of the function name correctly, it short-circuits if it detects that there
+ * 	is no place for the function name to go.
+ * 	
 	This is quite a complex function, but is only called once per file parse.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filename[], const bool:bFileFirst)
 {
@@ -602,21 +602,21 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filena
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="callback">The callback destination.</param>
-<param name="format">The function name format.</param>
-<param name="tag">The tag destination.</param>
-<param name="input">The tag source.</param>
-<param name="callbackFormat">The callback parameter specifiers.</param>
-<param name="remote">Use "CallRemoteFunction".</param>
-<returns>
-	Was the function found?
-</returns>
-<remarks>
-	Gets a callback given a partial function name and a tag name.  Also saves
-	the tag elsewhere.  This might not work as a separate function - it will
-	need to be in the function called by the function with the inlines in.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="callback">The callback destination.</param>
+ * <param name="format">The function name format.</param>
+ * <param name="tag">The tag destination.</param>
+ * <param name="input">The tag source.</param>
+ * <param name="callbackFormat">The callback parameter specifiers.</param>
+ * <param name="remote">Use "CallRemoteFunction".</param>
+ * <returns>
+ * 	Was the function found?
+ * </returns>
+ * <remarks>
+ * 	Gets a callback given a partial function name and a tag name.  Also saves
+ * 	the tag elsewhere.  This might not work as a separate function - it will
+ * 	need to be in the function called by the function with the inlines in.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 P:D(INI_GetCallback(callback[E_CALLBACK_DATA],format[32],tag[32],const input[],callbackFormat[5],bool:remote));
 #define INI_GetCallback(%0,%1,%2,%3,%4,%5) \
@@ -628,27 +628,27 @@ P:D(INI_GetCallback(callback[E_CALLBACK_DATA],format[32],tag[32],const input[],c
 	)
 
 /*-------------------------------------------------------------------------*//**
-<param name="filename">The file to load.</param>
-<param name="remoteFormat">The format string to generate the remote function
-t pass the data to once loaded.</param>
-<param name="bFileFirst">The order of the remoteFormat parameters.</param>
-<param name="bExtra">Send additional data.</param>
-<param name="extra">Additional data to send.</param>
-<param name="bLocal">Call local functions instead of global ones.</param>
-<param name="bPassTag">Pass the tag as an extra parameter not the function
-name.</param>
-<param name="bFilter">Apply the tag name filter to all tags or just prefixed
-ones?</param>
-<param name="filter">Text to use to search for which tags to load.</param>
-<remarks>
-	bFileFirst sets the order and inclusion of the possible remoteFormat
-	parameters.  If true the format will add the filename first then the 
-	current tag, if false the order will be reversed.  This can also be used
-	to exclude one or the other from the function name by setting the required
-	parameter to be entered first and then only having one %s in the format
-	sting.  The default order is tag first for languages compatibility.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="filename">The file to load.</param>
+ * <param name="remoteFormat">The format string to generate the remote function
+ * t pass the data to once loaded.</param>
+ * <param name="bFileFirst">The order of the remoteFormat parameters.</param>
+ * <param name="bExtra">Send additional data.</param>
+ * <param name="extra">Additional data to send.</param>
+ * <param name="bLocal">Call local functions instead of global ones.</param>
+ * <param name="bPassTag">Pass the tag as an extra parameter not the function
+ * name.</param>
+ * <param name="bFilter">Apply the tag name filter to all tags or just prefixed
+ * ones?</param>
+ * <param name="filter">Text to use to search for which tags to load.</param>
+ * <remarks>
+ * 	bFileFirst sets the order and inclusion of the possible remoteFormat
+ * 	parameters.  If true the format will add the filename first then the 
+ * 	current tag, if false the order will be reversed.  This can also be used
+ * 	to exclude one or the other from the function name by setting the required
+ * 	parameter to be entered first and then only having one %s in the format
+ * 	sting.  The default order is tag first for languages compatibility.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 static stock
 	YSI_g_sCurLine[YSI_MAX_INLINE_STRING];
@@ -783,27 +783,27 @@ _Y_INI_STATIC stock INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTa
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="filename">The file to load.</param>
-<param name="remoteFormat">The format string to generate the remote function
-t pass the data to once loaded.</param>
-<param name="bFileFirst">The order of the remoteFormat parameters.</param>
-<param name="bExtra">Send additional data.</param>
-<param name="extra">Additional data to send.</param>
-<param name="bLocal">Call local functions instead of global ones.</param>
-<param name="bPassTag">Pass the tag as an extra parameter not the function
-name.</param>
-<param name="bFilter">Apply the tag name filter to all tags or just prefixed
-ones?</param>
-<param name="filter">Text to use to search for which tags to load.</param>
-<remarks>
-	bFileFirst sets the order and inclusion of the possible remoteFormat
-	parameters.  If true the format will add the filename first then the 
-	current tag, if false the order will be reversed.  This can also be used
-	to exclude one or the other from the function name by setting the required
-	parameter to be entered first and then only having one %s in the format
-	sting.  The default order is tag first for languages compatibility.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="filename">The file to load.</param>
+ * <param name="remoteFormat">The format string to generate the remote function
+ * t pass the data to once loaded.</param>
+ * <param name="bFileFirst">The order of the remoteFormat parameters.</param>
+ * <param name="bExtra">Send additional data.</param>
+ * <param name="extra">Additional data to send.</param>
+ * <param name="bLocal">Call local functions instead of global ones.</param>
+ * <param name="bPassTag">Pass the tag as an extra parameter not the function
+ * name.</param>
+ * <param name="bFilter">Apply the tag name filter to all tags or just prefixed
+ * ones?</param>
+ * <param name="filter">Text to use to search for which tags to load.</param>
+ * <remarks>
+ * 	bFileFirst sets the order and inclusion of the possible remoteFormat
+ * 	parameters.  If true the format will add the filename first then the 
+ * 	current tag, if false the order will be reversed.  This can also be used
+ * 	to exclude one or the other from the function name by setting the required
+ * 	parameter to be entered first and then only having one %s in the format
+ * 	sting.  The default order is tag first for languages compatibility.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 static stock INI_DoParentTag(const epos, const search[], File:f, callback[E_CALLBACK_DATA], bool:bExtra, extra, bool:bPassTag, tag[], bool:bFilter, filter[])
 {

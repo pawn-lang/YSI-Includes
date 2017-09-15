@@ -4,31 +4,31 @@
 #define _INC_y_stringhash
 
 /**
-<library>
-					y_stringhash
-</library>
-<section>
-	Description
-</section>
-	Allows you to hash strings at compile time to use them in a switch.
-<section>
-	Version
-</section>
-	2.0
-<section>
-	Functions
-</section>
-<subsection>
-Stock
-</subsection><ul>
-	<symbol name="YHash">Generate a string hash at run time.</symbol>
-</ul><section>
-	Definitions
-</section><ul>
-	<symbol name="_H">Generate a string hash at compile time.</symbol>
-	<symbol name="_I">Generate a case insensitive string hash at compile time.</symbol>
-</ul>
-*//** *//*
+ * <library>
+ * 					y_stringhash
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Allows you to hash strings at compile time to use them in a switch.
+ * <section>
+ * 	Version
+ * </section>
+ * 	2.0
+ * <section>
+ * 	Functions
+ * </section>
+ * <subsection>
+ * Stock
+ * </subsection><ul>
+ * 	<symbol name="YHash">Generate a string hash at run time.</symbol>
+ * </ul><section>
+ * 	Definitions
+ * </section><ul>
+ * 	<symbol name="_H">Generate a string hash at compile time.</symbol>
+ * 	<symbol name="_I">Generate a case insensitive string hash at compile time.</symbol>
+ * </ul>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -314,21 +314,21 @@ enum e_HASH_TYPE
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="str">The string to hash.</param>
-<param name="sensitive">Wether the hash is case sensitive or not.</param>
-<returns>
-	The reverse Bernstein hash of the string.
-</returns>
-<remarks>
-	Based on Bernstein hash, but backwards to match the macros.  The only
-	characters which can be used in the compile time version of this code are:
-	a-z, A-Z, 0-9, _ and space.
-
+ * <param name="str">The string to hash.</param>
+ * <param name="sensitive">Wether the hash is case sensitive or not.</param>
+ * <returns>
+ * 	The reverse Bernstein hash of the string.
+ * </returns>
+ * <remarks>
+ * 	Based on Bernstein hash, but backwards to match the macros.  The only
+ * 	characters which can be used in the compile time version of this code are:
+ * 	a-z, A-Z, 0-9, _ and space.
+ * 
 native Hash(str[]);
-
+ * 
 	NOW FORWARD AGAIN.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstein, len = -1, pack = false)
 {

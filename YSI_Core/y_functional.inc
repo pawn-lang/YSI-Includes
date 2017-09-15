@@ -4,19 +4,19 @@
 #define _INC_y_functional
 
 /**
-<library>
-					y_functional
-</library>
-<section>
-	Description
-</section>
-	Lambda functions and functional program functions - map, fold, etc.
-<section>
-	Version
-</section>
-	1.0
+ * <library>
+ * 					y_functional
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Lambda functions and functional program functions - map, fold, etc.
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

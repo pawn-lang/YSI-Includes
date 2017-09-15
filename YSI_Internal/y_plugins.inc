@@ -4,20 +4,20 @@
 #define _INC_y_plugins
 
 /*+
-<library>
-					y_plugins
-</library>
-<section>
-	Description
-</section>
-	Configuration and detection for third-party SA:MP plugins (including
-	ones by Y_Less).
-<section>
-	Version
-</section>
-	1.0
+ * <library>
+ * 					y_plugins
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Configuration and detection for third-party SA:MP plugins (including
+ * 	ones by Y_Less).
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

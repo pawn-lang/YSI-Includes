@@ -84,8 +84,8 @@ Optional plugins:
 */
 
 /*-------------------------------------------------------------------------*//**
-Create the internal iterators.
-*//*-------------------------------------------------------------------------**/
+ * Create the internal iterators.
+ *//*-------------------------------------------------------------------------**/
 
 #if _FOREACH_PLAYERS
 	new
@@ -337,11 +337,11 @@ stock Iter_All_Internal(array[], size, value)
 */
 
 /*-------------------------------------------------------------------------*//**
-<remarks>
-	Sets up all existing iterators.  Does nothing for "XXLocal" ones, since they
-	are by definition empty when a script starts.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <remarks>
+ * 	Sets up all existing iterators.  Does nothing for "XXLocal" ones, since they
+ * 	are by definition empty when a script starts.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 #if _FOREACH_CHARACTERS || _FOREACH_VEHICLES || _FOREACH_ACTORS
 	hook OnScriptInit()
@@ -414,18 +414,18 @@ stock Iter_All_Internal(array[], size, value)
 */
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player who joined.</param>
-<remarks>
-	Adds a player to the loop data.  Now sorts the list too.  Note that I found
-	the most bizzare bug ever (I *think* it may be a compiler but, but it
-	requires further investigation), basically it seems that multiple variables
-	were being treated as the same variable (namely @YSII_EgotS and
-	@YSII_CgharacterS were the same and @YSII_EgotC and @YSII_CgharacterC were the
-	same).  Adding print statements which reference these variables seem to fix
-	the problem, and I've tried to make sure that the values will never actually
-	get printed.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player who joined.</param>
+ * <remarks>
+ * 	Adds a player to the loop data.  Now sorts the list too.  Note that I found
+ * 	the most bizzare bug ever (I *think* it may be a compiler but, but it
+ * 	requires further investigation), basically it seems that multiple variables
+ * 	were being treated as the same variable (namely @YSII_EgotS and
+ * 	@YSII_CgharacterS were the same and @YSII_EgotC and @YSII_CgharacterC were the
+ * 	same).  Adding print statements which reference these variables seem to fix
+ * 	the problem, and I've tried to make sure that the values will never actually
+ * 	get printed.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 #if _FOREACH_CHARACTERS
 	hook OnPlayerConnect(playerid)
@@ -449,15 +449,15 @@ stock Iter_All_Internal(array[], size, value)
 	}
 	
 	/*---------------------------------------------------------------------*//**
-	
+	 * 
 	<param name="playerid">Player who left.</param>
-	<remarks>
-		Removes a player from the loop data.  No longer uses "hook" to ENSURE
-		that this is always last.  Previously I think that the order of
-		evaluation in y_hooks meant that this got called before the user
-		"OnPlayerDisconnect".
-	</remarks>
-	*//*---------------------------------------------------------------------**/
+	 * <remarks>
+	 * 	Removes a player from the loop data.  No longer uses "hook" to ENSURE
+	 * 	that this is always last.  Previously I think that the order of
+	 * 	evaluation in y_hooks meant that this got called before the user
+	 * 	"OnPlayerDisconnect".
+	 * </remarks>
+	 *//*---------------------------------------------------------------------**/
 	
 	hook OnPlayerDisconnect(playerid, reason)
 	{
@@ -466,13 +466,13 @@ stock Iter_All_Internal(array[], size, value)
 	}
 	
 	/*---------------------------------------------------------------------*//**
-	
+	 * 
 	<param name="playerid">Player who left.</param>
-	<remarks>
-		Called AFTER "OnPlayerDisconnect" so that using "Kick" inside a
-		"foreach" loop doesn't crash the server due to an OOB error.
-	</remarks>
-	*//*---------------------------------------------------------------------**/
+	 * <remarks>
+	 * 	Called AFTER "OnPlayerDisconnect" so that using "Kick" inside a
+	 * 	"foreach" loop doesn't crash the server due to an OOB error.
+	 * </remarks>
+	 *//*---------------------------------------------------------------------**/
 	
 	public Iter_OPDCInternal(playerid)
 	{

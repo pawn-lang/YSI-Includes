@@ -4,19 +4,19 @@
 #define _INC_y_renative
 
 /*+
-<library>
-					y_renative
-</library>
-<section>
-	Description
-</section>
-	Obsolete, was macros for redefining native functions in default includes.
-<section>
-	Version
-</section>
-	1.0
+ * <library>
+ * 					y_renative
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Obsolete, was macros for redefining native functions in default includes.
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

@@ -4,19 +4,19 @@
 #define _INC_y_uvar
 
 /**
-<library>
-					y_uvar
-</library>
-<section>
-	Description
-</section>
-	Declares data to be automatically saved and loaded on a per-player basis.
-<section>
-	Version
-</section>
-	0.1.3
+ * <library>
+ * 					y_uvar
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Declares data to be automatically saved and loaded on a per-player basis.
+ * <section>
+ * 	Version
+ * </section>
+ * 	0.1.3
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -284,25 +284,25 @@ public OnUserData[y_uvar](playerid, name[], value[])
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="val">Handle to the PAWN data array.</param>
-<param name="vardata">Handle to the memory location in which to store info.</param>
-<param name="">Array slot size information.</param>
-<remarks>
-	This function modifies "vardata" well beyond its original limits to contain
-	information on the structure of the enum used to define "val".  This code
-	uses the name and size information passed in the additional parameters as
-	strings, and makes assumptions about how the compiler lays out memory to
-	combine all the passed strings in to one big string in what could be ROM,
-	but in SA:MP isn't.  This takes a human readable(ish) description of the
-	array elements and converts it in to a much simpler to read format for the
-	computer to use later when loading and storing data.
-	
+ * <param name="val">Handle to the PAWN data array.</param>
+ * <param name="vardata">Handle to the memory location in which to store info.</param>
+ * <param name="">Array slot size information.</param>
+ * <remarks>
+ * 	This function modifies "vardata" well beyond its original limits to contain
+ * 	information on the structure of the enum used to define "val".  This code
+ * 	uses the name and size information passed in the additional parameters as
+ * 	strings, and makes assumptions about how the compiler lays out memory to
+ * 	combine all the passed strings in to one big string in what could be ROM,
+ * 	but in SA:MP isn't.  This takes a human readable(ish) description of the
+ * 	array elements and converts it in to a much simpler to read format for the
+ * 	computer to use later when loading and storing data.
+ * 	
 	The description above is no longer the case.  This code now just saves the
-	size of the data, the number of players in the array, the address of the
-	data, a pointer to another data set and the name of this data.  This is by
-	far much simpler than the old version.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * 	size of the data, the number of players in the array, the address of the
+ * 	data, a pointer to another data set and the name of this data.  This is by
+ * 	far much simpler than the old version.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock N@(volatile const vardata[], playerCount, dataSize, &pointer)
 {

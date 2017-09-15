@@ -124,18 +124,18 @@ Optional plugins:
 #define _INC_y_als
 
 /**
-<library>
-					y_als
-</library>
-<section>
-	Description
-</section>
-	Provides a number of macros for making ALS (Advanced Library System)
-	callback hooking simpler.
-<section>
-	Version
-</section>
-	1.0
+ * <library>
+ * 					y_als
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Provides a number of macros for making ALS (Advanced Library System)
+ * 	callback hooking simpler.
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** */
+ *//** */
 

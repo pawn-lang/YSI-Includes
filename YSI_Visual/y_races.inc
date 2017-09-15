@@ -4,19 +4,19 @@
 #define _INC_y_races
 
 /**
-<library>
-					y_races
-</library>
-<section>
-	Description
-</section>
-	Create, manage, and run races.
-<section>
-	Version
-</section>
-	2.0
+ * <library>
+ * 					y_races
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Create, manage, and run races.
+ * <section>
+ * 	Version
+ * </section>
+ * 	2.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

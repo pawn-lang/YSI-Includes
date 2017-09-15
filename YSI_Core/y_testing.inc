@@ -4,19 +4,19 @@
 #define _INC_y_testing
 
 /**
-<library>
-					y_testing
-</library>
-<section>
-	Description
-</section>
-	Runs any functions named as tests when the Testing_Run function is called.
-<section>
-	Version
-</section>
-	1.0
+ * <library>
+ * 					y_testing
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Runs any functions named as tests when the Testing_Run function is called.
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -218,11 +218,11 @@ stock
 #include "..\YSI_Coding\y_va"
 
 /*-------------------------------------------------------------------------*//**
-<param name="name">Name of the current function.</param>
-<remarks>
-	Gets a reference to the 
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="name">Name of the current function.</param>
+ * <remarks>
+ * 	Gets a reference to the 
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock _Testing_Start(name[])
 {
@@ -240,13 +240,13 @@ stock _Testing_Start(name[])
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player to ask a question to.</param>
-<param name="str">What to ask.</param>
-<param name="va_args">Additional data.</param>
-<remarks>
-	Calls a dialog to ask the player if the given test actually passed.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="playerid">Player to ask a question to.</param>
+ * <param name="str">What to ask.</param>
+ * <param name="va_args">Additional data.</param>
+ * <remarks>
+ * 	Calls a dialog to ask the player if the given test actually passed.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock Testing_Ask(playerid, str[] = "", va_args<>)
 {
@@ -285,11 +285,11 @@ stock Testing_Test(bool:x, str[] = "", va_args<>)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="name">Name of the current function.</param>
-<remarks>
-	Gets a reference to the 
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="name">Name of the current function.</param>
+ * <remarks>
+ * 	Gets a reference to the 
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock bool:_Testing_End()
 {
@@ -301,19 +301,19 @@ stock bool:_Testing_End()
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="tests">Number of tests run.</param>
-<param name="fails">Number of tests which failed.</param>
-<param name="buffer">The name of the first test which failed.</param>
-<returns>
-	Wether all tests were sucessful or not.
-</returns>
-<remarks>
-	-
-
+ * <param name="tests">Number of tests run.</param>
+ * <param name="fails">Number of tests which failed.</param>
+ * <param name="buffer">The name of the first test which failed.</param>
+ * <returns>
+ * 	Wether all tests were sucessful or not.
+ * </returns>
+ * <remarks>
+ * 	-
+ * 
 native Testing_Run(&amp;tests, &amp;fails, buffer[33] = "");
-
+ * 
 </remarks>
-*//*-------------------------------------------------------------------------**/
+ *//*-------------------------------------------------------------------------**/
 
 stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 {
@@ -412,21 +412,21 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="playerid">Player to test on.</param>
-<param name="idx">Next test to run.</param>
-<param name="tests">Number of tests run.</param>
-<param name="fails">Number of tests which failed.</param>
-<param name="buffer">The name of the first test which failed.</param>
-<returns>
-	Wether all tests were sucessful or not.
-</returns>
-<remarks>
-	-
-
+ * <param name="playerid">Player to test on.</param>
+ * <param name="idx">Next test to run.</param>
+ * <param name="tests">Number of tests run.</param>
+ * <param name="fails">Number of tests which failed.</param>
+ * <param name="buffer">The name of the first test which failed.</param>
+ * <returns>
+ * 	Wether all tests were sucessful or not.
+ * </returns>
+ * <remarks>
+ * 	-
+ * 
 native bool:Testing_Player(playerid, &amp;idx, &amp;tests, &amp;fails, lastfail[33] = "", bool:p = false);
-
+ * 
 </remarks>
-*//*-------------------------------------------------------------------------**/
+ *//*-------------------------------------------------------------------------**/
 
 stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", bool:p = false)
 {

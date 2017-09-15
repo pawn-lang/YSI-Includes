@@ -4,20 +4,20 @@
 #define _INC_y_gamerzps
 
 /*+
-<library>
-					y_gamerzps
-</library>
-<section>
-	Description
-</section>
-	This file unites various YSI features with Gamer_Z's GPS (Gamer_Z's
-	Positioning System) plugin so that you can use hooks and inlines with it.
-<section>
-	Version
-</section>
-	0.1
+ * <library>
+ * 					y_gamerzps
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	This file unites various YSI features with Gamer_Z's GPS (Gamer_Z's
+ * 	Positioning System) plugin so that you can use hooks and inlines with it.
+ * <section>
+ * 	Version
+ * </section>
+ * 	0.1
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

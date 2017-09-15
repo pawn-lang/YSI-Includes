@@ -4,19 +4,19 @@
 #define _INC_y_mock
 
 /*+
-<library>
-					y_mock
-</library>
-<section>
-	Description
-</section>
-	Wrap natives to return known fake values for testing.
-<section>
-	Version
-</section>
-	1.0
+ * <library>
+ * 					y_mock
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Wrap natives to return known fake values for testing.
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

@@ -4,19 +4,19 @@
 #define _INC_y_php
 
 /**
-<library>
-					y_php
-</library>
-<section>
-	Description
-</section>
-	Sends and receives data from a PHP server with shmop installed.
-<section>
-	Version
-</section>
-	0.1
+ * <library>
+ * 					y_php
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Sends and receives data from a PHP server with shmop installed.
+ * <section>
+ * 	Version
+ * </section>
+ * 	0.1
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

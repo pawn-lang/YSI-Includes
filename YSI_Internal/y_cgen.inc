@@ -4,20 +4,20 @@
 #define _INC_y_cgen
 
 /*+
-<library>
-					y_cgen
-</library>
-<section>
-	Description
-</section>
-	Large chunks of code that isn't used, so that the space can be reclaimed and
-	reused by other code generating functions.
-<section>
-	Version
-</section>
-	1.0
+ * <library>
+ * 					y_cgen
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Large chunks of code that isn't used, so that the space can be reclaimed and
+ * 	reused by other code generating functions.
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

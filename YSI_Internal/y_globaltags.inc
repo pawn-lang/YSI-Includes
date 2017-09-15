@@ -4,19 +4,19 @@
 #define _INC_y_globaltags
 
 /*+
-<library>
-					y_globaltags
-</library>
-<section>
-	Description
-</section>
-	Declare GLOBAL_TAG_TYPES to define many tag types for function calls.
-<section>
-	Version
-</section>
-	0.1
+ * <library>
+ * 					y_globaltags
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Declare GLOBAL_TAG_TYPES to define many tag types for function calls.
+ * <section>
+ * 	Version
+ * </section>
+ * 	0.1
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

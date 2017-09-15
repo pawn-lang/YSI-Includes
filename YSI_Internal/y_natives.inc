@@ -4,19 +4,19 @@
 #define _INC_y_natives
 
 /*+
-<library>
-					y_natives
-</library>
-<section>
-	Description
-</section>
-	Obsolete, but still required by y_lock.
-<section>
-	Version
-</section>
-	0.1
+ * <library>
+ * 					y_natives
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Obsolete, but still required by y_lock.
+ * <section>
+ * 	Version
+ * </section>
+ * 	0.1
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

@@ -4,19 +4,19 @@
 #define _INC_y_shortvar
 
 /*+
-<library>
-					y_shortvar
-</library>
-<section>
-	Description
-</section>
-	Declares a few variables with very short names, used all over YSI.
-<section>
-	Version
-</section>
-	0.2
+ * <library>
+ * 					y_shortvar
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Declares a few variables with very short names, used all over YSI.
+ * <section>
+ * 	Version
+ * </section>
+ * 	0.2
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	

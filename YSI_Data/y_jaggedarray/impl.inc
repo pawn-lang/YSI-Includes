@@ -114,17 +114,17 @@ static stock Jagged_MovePtr(array[][], maxSize, slot, shift)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="array">The array we want to resize a slot in.</param>
-<param name="size1">The number of slots in the array.</param>
-<param name="size2">The ORIGINAL size of every slot.</param>
-<param name="slot">The slot to resize.</param>
-<param name="newSize">The new size of the slot.</param>
-<remarks>
-	Resize an array slot, maintining all of its data.  The "slot" variable is
-	usually used to hold the NEXT slot - we barely need the number of the
-	current slot once we have its address.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="array">The array we want to resize a slot in.</param>
+ * <param name="size1">The number of slots in the array.</param>
+ * <param name="size2">The ORIGINAL size of every slot.</param>
+ * <param name="slot">The slot to resize.</param>
+ * <param name="newSize">The new size of the slot.</param>
+ * <remarks>
+ * 	Resize an array slot, maintining all of its data.  The "slot" variable is
+ * 	usually used to hold the NEXT slot - we barely need the number of the
+ * 	current slot once we have its address.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock bool:Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 {
@@ -186,14 +186,14 @@ stock bool:Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="array">The array we want to resize a slot in.</param>
-<param name="size1">The number of slots in the array.</param>
-<param name="size2">The ORIGINAL size of every slot.</param>
-<param name="">Multiple {slot, size} tuples.</param>
-<remarks>
-	Resize multiple array slots, maintining all of their data.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="array">The array we want to resize a slot in.</param>
+ * <param name="size1">The number of slots in the array.</param>
+ * <param name="size2">The ORIGINAL size of every slot.</param>
+ * <param name="">Multiple {slot, size} tuples.</param>
+ * <remarks>
+ * 	Resize multiple array slots, maintining all of their data.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock bool:_Jagged_Resize(array[][], size1, size2, ...)
 {
@@ -212,14 +212,14 @@ stock bool:_Jagged_Resize(array[][], size1, size2, ...)
 #define _ALS_Jagged_Resize
 
 /*-------------------------------------------------------------------------*//**
-<param name="array">The array we want to resize a slot in.</param>
-<param name="size1">The number of slots in the array.</param>
-<param name="size2">The ORIGINAL size of every slot.</param>
-<param name="">New sizes for every slot.</param>
-<remarks>
-	Resize multilpe array slots, maintining all of their data.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="array">The array we want to resize a slot in.</param>
+ * <param name="size1">The number of slots in the array.</param>
+ * <param name="size2">The ORIGINAL size of every slot.</param>
+ * <param name="">New sizes for every slot.</param>
+ * <remarks>
+ * 	Resize multilpe array slots, maintining all of their data.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock bool:_Jagged_ResizeAll(array[][], size1, size2, ...)
 {
@@ -238,18 +238,18 @@ stock bool:_Jagged_ResizeAll(array[][], size1, size2, ...)
 #define _ALS_Jagged_ResizeAll
 
 /*-------------------------------------------------------------------------*//**
-<param name="array">The array we want to resize a slot in.</param>
-<param name="size1">The number of slots in the array.</param>
-<param name="size2">The ORIGINAL size of every slot.</param>
-<param name="slot">The slot to resize.</param>
-<param name="newSize">The new size of the slot.</param>
-<remarks>
-	The "slot" variable is usually used to hold the NEXT slot - we barely need
-	the number of the current slot once we have its address.  "Resize" copies
-	data to keep as much of the original data as possible.  This just moves the
-	boundaries.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="array">The array we want to resize a slot in.</param>
+ * <param name="size1">The number of slots in the array.</param>
+ * <param name="size2">The ORIGINAL size of every slot.</param>
+ * <param name="slot">The slot to resize.</param>
+ * <param name="newSize">The new size of the slot.</param>
+ * <remarks>
+ * 	The "slot" variable is usually used to hold the NEXT slot - we barely need
+ * 	the number of the current slot once we have its address.  "Resize" copies
+ * 	data to keep as much of the original data as possible.  This just moves the
+ * 	boundaries.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock bool:Jagged_MoveOne(array[][], size1, size2, slot, newSize)
 {
@@ -292,15 +292,15 @@ stock bool:Jagged_MoveOne(array[][], size1, size2, slot, newSize)
 }
 
 /*-------------------------------------------------------------------------*//**
-<param name="array">The array we want to resize a slot in.</param>
-<param name="size1">The number of slots in the array.</param>
-<param name="size2">The ORIGINAL size of every slot.</param>
-<param name="">Multiple {slot, size} tuples.</param>
-<remarks>
-	"Resize" copies data to keep as much of the original data as possible.  This
-	just moves the boundaries.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="array">The array we want to resize a slot in.</param>
+ * <param name="size1">The number of slots in the array.</param>
+ * <param name="size2">The ORIGINAL size of every slot.</param>
+ * <param name="">Multiple {slot, size} tuples.</param>
+ * <remarks>
+ * 	"Resize" copies data to keep as much of the original data as possible.  This
+ * 	just moves the boundaries.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock bool:_Jagged_Move(array[][], size1, size2, ...)
 {
@@ -319,15 +319,15 @@ stock bool:_Jagged_Move(array[][], size1, size2, ...)
 #define _ALS_Jagged_Move
 
 /*-------------------------------------------------------------------------*//**
-<param name="array">The array we want to resize a slot in.</param>
-<param name="size1">The number of slots in the array.</param>
-<param name="size2">The ORIGINAL size of every slot.</param>
-<param name="">New sizes for every slot.</param>
-<remarks>
-	"Resize" copies data to keep as much of the original data as possible.  This
-	just moves the boundaries.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="array">The array we want to resize a slot in.</param>
+ * <param name="size1">The number of slots in the array.</param>
+ * <param name="size2">The ORIGINAL size of every slot.</param>
+ * <param name="">New sizes for every slot.</param>
+ * <remarks>
+ * 	"Resize" copies data to keep as much of the original data as possible.  This
+ * 	just moves the boundaries.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock bool:_Jagged_MoveAll(array[][], size1, size2, ...)
 {
@@ -346,17 +346,17 @@ stock bool:_Jagged_MoveAll(array[][], size1, size2, ...)
 #define _ALS_Jagged_MoveAll
 
 /*-------------------------------------------------------------------------*//**
-<param name="array">The array we want to get the size of a slot in.</param>
-<param name="size1">The number of slots in the array.</param>
-<param name="size2">The ORIGINAL size of every slot.</param>
-<param name="slot">The slot to get the size of.</param>
-<returns>
-	The current size of this slot.  This is NOT a compile-time operation.
-</returns>
-<remarks>
-	Returns the data in BYTES NOT CELLS.
-</remarks>
-*//*-------------------------------------------------------------------------**/
+ * <param name="array">The array we want to get the size of a slot in.</param>
+ * <param name="size1">The number of slots in the array.</param>
+ * <param name="size2">The ORIGINAL size of every slot.</param>
+ * <param name="slot">The slot to get the size of.</param>
+ * <returns>
+ * 	The current size of this slot.  This is NOT a compile-time operation.
+ * </returns>
+ * <remarks>
+ * 	Returns the data in BYTES NOT CELLS.
+ * </remarks>
+ *//*-------------------------------------------------------------------------**/
 
 stock _Jagged_SizeOf(array[][], size1, size2, slot)
 {
@@ -383,14 +383,14 @@ stock _Jagged_SizeOf(array[][], size1, size2, slot)
 #define jaggedsizeof(%0[%1]) (_Jagged_SizeOf(_Jagged(%0),%1)>>2)
 
 /*-------------------------------------------------------------------------*//**
-<param name="array">The array we want to get the address of a slot in.</param>
-<param name="size1">The number of slots in the array.</param>
-<param name="size2">The ORIGINAL size of every slot.</param>
-<param name="slot">The slot to get the address of.</param>
-<returns>
-	The absolute address of this slot.
-</returns>
-*//*-------------------------------------------------------------------------**/
+ * <param name="array">The array we want to get the address of a slot in.</param>
+ * <param name="size1">The number of slots in the array.</param>
+ * <param name="size2">The ORIGINAL size of every slot.</param>
+ * <param name="slot">The slot to get the address of.</param>
+ * <returns>
+ * 	The absolute address of this slot.
+ * </returns>
+ *//*-------------------------------------------------------------------------**/
 
 #if _DEBUG == 0
 	static
@@ -409,13 +409,13 @@ stock _Jagged_SizeOf(array[][], size1, size2, slot)
 		}
 
 /*-------------------------------------------------------------------------*//**
-<param name="array">The array we want to get the end of.</param>
-<param name="size1">The number of slots in the array.</param>
-<param name="size2">The ORIGINAL size of every slot.</param>
-<returns>
-	The absolute address of the end of this array.
-</returns>
-*//*-------------------------------------------------------------------------**/
+ * <param name="array">The array we want to get the end of.</param>
+ * <param name="size1">The number of slots in the array.</param>
+ * <param name="size2">The ORIGINAL size of every slot.</param>
+ * <returns>
+ * 	The absolute address of the end of this array.
+ * </returns>
+ *//*-------------------------------------------------------------------------**/
 
 #if _DEBUG == 0
 	static

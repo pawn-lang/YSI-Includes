@@ -4,19 +4,19 @@
 #define _INC_y_jaggedarray
 
 /**
-<library>
-					y_jaggedarray
-</library>
-<section>
-	Description
-</section>
-	Provides code to easilly manipulate the sizes of 2d array slots.
-<section>
-	Version
-</section>
-	1.0
+ * <library>
+ * 					y_jaggedarray
+ * </library>
+ * <section>
+ * 	Description
+ * </section>
+ * 	Provides code to easilly manipulate the sizes of 2d array slots.
+ * <section>
+ * 	Version
+ * </section>
+ * 	1.0
 
-*//** *//*
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
