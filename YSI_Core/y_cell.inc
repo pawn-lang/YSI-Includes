@@ -16,7 +16,6 @@
  *  Version
  * </section>
  *  0.2
-
  *//** *//*
 Legal:
 	Version: MPL 1.1
@@ -559,8 +558,8 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
  *  Selected bits from "x", shifted to be LSBs.
  * </returns>
  * <remarks>
- *  Very briefly, do "x &amp; m", to select certain bits, then shift those bits by
- *  various amounts so that they are consecutive:
+ *  Very briefly, do "x &amp; m", to select certain bits, then shift those bits
+ *  by various amounts so that they are consecutive:
  *
  *      x = 0b110011
  *      m = 0b011010

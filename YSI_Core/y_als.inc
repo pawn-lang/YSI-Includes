@@ -136,6 +136,5 @@ Optional plugins:
  *  Version
  * </section>
  *  1.0
-
  *//** */
 

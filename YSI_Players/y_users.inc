@@ -15,7 +15,6 @@
  *  Version
  * </section>
  *  2.2
-
  *//** *//*
 Legal:
 	Version: MPL 1.1
