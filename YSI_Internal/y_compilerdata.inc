@@ -157,17 +157,25 @@ Optional plugins:
 // Enable `P:D(func())` for forcing function-like macros in to documentation.
 // For example:
 //   
-//   /**
-//   <param name="playerid">An example named macro parameter (`%0`).</param>
-//   <remarks>
-//       This is a function-like macro.  By default, compiling with `-r` does
-//       not put macros in the XML, which is a shame if we are using a macro to
-//       fake a function, because then a function will be apparently missing
-//       from the documentation.  Instead, we make a function, THEN make the
-//       macro.  But, importantly, we only make the function on the first pass,
-//       not the second pass (documentation is apparently generated in the first
-//       pass).
-//   </remarks>
+//  /**  
+//   * <param name="playerid">An example named macro parameter (`%0`).</param>
+//   * <remarks>
+//   *   This is a function-like macro.  By default, compiling with `-r` does
+//   *   not put macros in the XML, which is a shame if we are using a macro to
+//   *   fake a function, because then a function will be apparently missing
+//   *   from the documentation.  Instead, we make a function, THEN make the
+//   *   macro.  But, importantly, we only make the function on the first pass,
+//   *   not the second pass (documentation is apparently generated in the first
+//   *   pass).
+//   * </remarks>
+//   * <example>
+//   * 
+//   *   for (new i = 0; MyFunc(i); ++i)
+//   *   {
+//   *      printf("%d", i);
+//   *   }
+//   * 
+//   * </example>
 //   */
 //   P:D(bool:MyFunc(playerid));
 //   #define MyFunc(%0) ((%0) < MAX_PLAYERS)
