@@ -5,19 +5,19 @@
 
 /**
  * <library>
- * 					y_playerset
+ *                  y_playerset
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	This code is a huge abstraction of collections of players.  It allows you to
- * 	define functions which take one or more players, specified in a number of
- * 	formats, and perform the code for all those player.  Essentially it is an
- * 	abstraction of loops over players.
+ *  This code is a huge abstraction of collections of players.  It allows you to
+ *  define functions which take one or more players, specified in a number of
+ *  formats, and perform the code for all those player.  Essentially it is an
+ *  abstraction of loops over players.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:

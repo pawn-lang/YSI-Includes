@@ -5,16 +5,16 @@
 
 /**
  * <library>
- * 					y_php
+ *                  y_php
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Sends and receives data from a PHP server with shmop installed.
+ *  Sends and receives data from a PHP server with shmop installed.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.1
+ *  0.1
 
  *//** *//*
 Legal:

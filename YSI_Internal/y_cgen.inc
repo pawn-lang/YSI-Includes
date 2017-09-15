@@ -5,17 +5,17 @@
 
 /*+
  * <library>
- * 					y_cgen
+ *                  y_cgen
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Large chunks of code that isn't used, so that the space can be reclaimed and
- * 	reused by other code generating functions.
+ *  Large chunks of code that isn't used, so that the space can be reclaimed and
+ *  reused by other code generating functions.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:

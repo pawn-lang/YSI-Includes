@@ -5,16 +5,16 @@
 
 /**
  * <library>
- * 					y_profiling
+ *                  y_profiling
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Runs any functions named as profilings when the Profiling_Run function is called.
+ *  Runs any functions named as profilings when the Profiling_Run function is called.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:
@@ -163,15 +163,15 @@ static stock
 /*-------------------------------------------------------------------------*//**
  * <param name="profilings">Number of profilings run.</param>
  * <returns>
- * 	Wether all profilings were sucessful or not.
+ *  Wether all profilings were sucessful or not.
  * </returns>
  * <remarks>
- * 	-
- * 
-native Profiling_Run(&profilings, &fails, buffer[33] = "");
- * 
-</remarks>
- *//*-------------------------------------------------------------------------**/
+ *  -
+ *
+ * native Profiling_Run(&profilings, &fails, buffer[33] = "");
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:Profiling_Run(&profilings)
 {

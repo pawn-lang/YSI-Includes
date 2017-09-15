@@ -5,21 +5,21 @@
 
 /**
  * <library>
- * 					y_va
+ *                  y_va
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	This library currently provides two functions - va_printf and va_format
- * 	which perform printf and format using variable arguments passed to another
- * 	function.
- * 	
-	This is bsed on the variable parameter passing method based on code by Zeex.
- * 	See page 15 of the code optimisations topic.
+ *  This library currently provides two functions - va_printf and va_format
+ *  which perform printf and format using variable arguments passed to another
+ *  function.
+ *
+ *  This is bsed on the variable parameter passing method based on code by Zeex.
+ *  See page 15 of the code optimisations topic.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:

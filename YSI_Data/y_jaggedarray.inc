@@ -5,16 +5,16 @@
 
 /**
  * <library>
- * 					y_jaggedarray
+ *                  y_jaggedarray
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Provides code to easilly manipulate the sizes of 2d array slots.
+ *  Provides code to easilly manipulate the sizes of 2d array slots.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:

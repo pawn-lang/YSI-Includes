@@ -1,15 +1,15 @@
 /*+
  * <library>
- * 					y_thirdpartyinclude
+ *                  y_thirdpartyinclude
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Try and include all YSI dependencies, looking in as many places as needed.
+ *  Try and include all YSI dependencies, looking in as many places as needed.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:

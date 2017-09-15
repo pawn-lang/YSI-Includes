@@ -5,16 +5,16 @@
 
 /*+
  * <library>
- * 					y_renative
+ *                  y_renative
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Obsolete, was macros for redefining native functions in default includes.
+ *  Obsolete, was macros for redefining native functions in default includes.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:

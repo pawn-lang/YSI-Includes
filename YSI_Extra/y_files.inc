@@ -5,16 +5,16 @@
 
 /**
  * <library>
- * 					y_files
+ *                  y_files
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Provides native declarations for YSF functions.
+ *  Provides native declarations for YSF functions.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.1
+ *  0.1
 
  *//** *//*
 Legal:

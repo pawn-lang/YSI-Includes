@@ -5,17 +5,17 @@
 
 /**
  * <library>
- * 					y_dialog
+ *                  y_dialog
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Provides functions for dealing with dialogs, without needing to worry about
- * 	IDs or huge "OnDialogResponse" callbacks.
+ *  Provides functions for dealing with dialogs, without needing to worry about
+ *  IDs or huge "OnDialogResponse" callbacks.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.1
+ *  0.1
 
  *//** *//*
 Legal:

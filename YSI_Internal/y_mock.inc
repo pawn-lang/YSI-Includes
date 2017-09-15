@@ -5,16 +5,16 @@
 
 /*+
  * <library>
- * 					y_mock
+ *                  y_mock
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Wrap natives to return known fake values for testing.
+ *  Wrap natives to return known fake values for testing.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:

@@ -5,24 +5,24 @@
 
 /**
  * <library>
- * 					y_xml
+ *                  y_xml
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	<p>Parses XML files according to a set of defined rules.  A rule is a custom
- * 	function called on a tag when all the data for that tag has been collected.
- * 	The data for a tag could consist of simple <c>bla="bla"</c> pairs,
- * 	<c>&lt;tag&gt;data&lt;/tag&gt;</c> pairs or cominations of the two,
- * 	including subtags, each with their own possible custom handlers.</p>
- * 	
-	<p>Data for the tag is retrieved from a custom function using only:</p>
- * 	
-	<c>while (XML_GetKeyValue(ident, data)) {}</c>
+ *  <p>Parses XML files according to a set of defined rules.  A rule is a custom
+ *  function called on a tag when all the data for that tag has been collected.
+ *  The data for a tag could consist of simple <c>bla="bla"</c> pairs,
+ *  <c>&lt;tag&gt;data&lt;/tag&gt;</c> pairs or cominations of the two,
+ *  including subtags, each with their own possible custom handlers.</p>
+ *
+ *  <p>Data for the tag is retrieved from a custom function using only:</p>
+ *
+ *  <c>while (XML_GetKeyValue(ident, data)) {}</c>
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:
@@ -160,7 +160,7 @@ static stock
 
 /*-------------------------------------------------------------------------*//**
  * <param name="file">File to check validity of.</param>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 P:D(bool:XML_IsValid(XML:file));
 #define XML_IsValid(%1) \
@@ -168,7 +168,7 @@ P:D(bool:XML_IsValid(XML:file));
 
 /*-------------------------------------------------------------------------*//**
  * <param name="ch">Checks if a cell is a valid identifier character.</param>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 P:D(bool:XML_IsChar(ch));
 #define XML_IsChar(%1) \
@@ -176,12 +176,12 @@ P:D(bool:XML_IsChar(ch));
 
 /*-------------------------------------------------------------------------*//**
  * <returns>
- * 	XML
+ *  XML
  * </returns>
  * <remarks>
- * 	Creates a new set of rules for parsing XML files.
+ *  Creates a new set of rules for parsing XML files.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock XML:XML_New()
 {
@@ -196,7 +196,7 @@ stock XML:XML_New()
 
 /*-------------------------------------------------------------------------*//**
  * <param name="rule">Removes a set of rules from the system</param>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock XML_Destroy(XML:rule)
 {
@@ -211,9 +211,9 @@ stock XML_Destroy(XML:rule)
  * <param name="rule">Set of XML rules to parse against.</param>
  * <param name="filename">XML file to parse.</param>
  * <remarks>
- * 	Now supports self-closing tags and XML comments.
+ *  Now supports self-closing tags and XML comments.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock XML_Parse(XML:rule, filename[])
 {
@@ -396,10 +396,10 @@ stock XML_Parse(XML:rule, filename[])
  * <param name="text">Data.</param>
  * <param name="depth">Current XML tree depth.</param>
  * <remarks>
- * 	Pushes an identifier and it's value (either explicitaly stated or returned
- * 	from another function) to the stack with basic parent info.
+ *  Pushes an identifier and it's value (either explicitaly stated or returned
+ *  from another function) to the stack with basic parent info.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock XML_Push(name[], text[], depth)
 {
@@ -423,10 +423,10 @@ stock XML_Push(name[], text[], depth)
  * <param name="line">Data to extract from.</param>
  * <param name="pos">Start/end point of the text.</param>
  * <remarks>
- * 	Gets the data from inside ""s in an identifier.  Now supports
- * 	\ for escape characters.
+ *  Gets the data from inside ""s in an identifier.  Now supports
+ *  \ for escape characters.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock XML_GetParameter(line[], &pos)
 {
@@ -497,9 +497,9 @@ stock XML_GetParameter(line[], &pos)
  * <param name="line">Line to get data from.</param>
  * <param name="pos">Start and end position of the data.</param>
  * <remarks>
- * 	Gets the text between tags.
+ *  Gets the text between tags.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock XML_GetValue(line[], &pos)
 {
@@ -522,9 +522,9 @@ stock XML_GetValue(line[], &pos)
  * <param name="line">Line to get data from.</param>
  * <param name="pos">Start and end position of text.</param>
  * <remarks>
- * 	Gets the identifier of a piece of data.
+ *  Gets the identifier of a piece of data.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock XML_GetName(line[], &pos)
 {
@@ -547,7 +547,7 @@ stock XML_GetName(line[], &pos)
  * <param name="rule">Rule set to parse according to.</param>
  * <param name="name">Name if identifier.</param>
  * <param name="tagCount">New tree depth.</param>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock XML_ParseTag(XML:rule, name[], tagCount)
 {
@@ -592,12 +592,12 @@ stock XML_ParseTag(XML:rule, name[], tagCount)
  * <param name="key">Variable to return identifier in.</param>
  * <param name="value">Variable to return value in.</param>
  * <returns>
- * 	Data found.
+ *  Data found.
  * </returns>
  * <remarks>
- * 	Pops items off the stack for use in custom functions.
+ *  Pops items off the stack for use in custom functions.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock XML_GetKeyValue(key[], value[])
 {
@@ -629,13 +629,13 @@ stock XML_GetKeyValue(key[], value[])
  * <param name="key">Name of the parameter to get.</param>
  * <param name="value">Variable to return value in.</param>
  * <returns>
- * 	Data found.
+ *  Data found.
  * </returns>
  * <remarks>
- * 	Does no poping, just searches for a value with the right name at the right
- * 	depth so children can use the data if they HAVE to.
+ *  Does no poping, just searches for a value with the right name at the right
+ *  depth so children can use the data if they HAVE to.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock XML_GetParentValue(const key[], value[])
 {
@@ -672,7 +672,7 @@ stock XML_GetParentValue(const key[], value[])
  * <param name="ruls">Rule set to add data to.</param>
  * <param name="trigger">Identifier which calls it.</param>
  * <param name="function">Function to parse identifier in.</param>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock XML_AddHandler(XML:rule, trigger[], function[])
 {
@@ -689,7 +689,7 @@ stock XML_AddHandler(XML:rule, trigger[], function[])
 /*-------------------------------------------------------------------------*//**
  * <param name="rule">Set to remove handler from.</param>
  * <param name="trigger">Handler name to remove.</param>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock XML_RemoveHandler(XML:rule, trigger[])
 {
@@ -718,7 +718,7 @@ stock XML_RemoveHandler(XML:rule, trigger[])
  * <param name="parent">Tag this is a parameter of.</param>
  * <param name="tag">Name of this data.</param>
  * <param name="value">Value of this data, if this is blank there is sub parameters.</param>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 //#define XML_AddSubEntry XML_AddParameter
 stock XMLEntry:XML_AddParameter(XMLEntry:parent, tag[], value[] = "")
@@ -740,11 +740,11 @@ stock XMLEntry:XML_AddParameter(XMLEntry:parent, tag[], value[] = "")
  * <param name="tag">Type of data being added.</param>
  * <param name="name">The optional name parameter for identifying tags.</param>
  * <remarks>
- * 	Starts the creation of a new tag to be written to a file, the structure
- * 	has to be manually created then written.  There is no buffering of multiple
- * 	tags before writing as a single tag can have quite a bit of data.
+ *  Starts the creation of a new tag to be written to a file, the structure
+ *  has to be manually created then written.  There is no buffering of multiple
+ *  tags before writing as a single tag can have quite a bit of data.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 #define XML_CreateEntry XML_AddItem
 #define XML_AddSubEntry XML_AddItem
@@ -772,9 +772,9 @@ stock XMLEntry:XML_AddItem(tag[], name[] = "", XMLEntry:parent = XMLEntry:cellma
  * <param name="bIncludeXML">Write the default &lt;XML&gt; tags or not?</param>
  * <param name="bFavourShort">Write the shortest tags possible.</param>
  * <remarks>
- * 	Writea the data for a tag to a file.
+ *  Writea the data for a tag to a file.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 #define XML_WriteEntry XML_WriteItem
 stock XML_WriteItem(filename[], XMLEntry:item, bool:bIncludeXML = true, bool:bFavourShort = false)
@@ -863,9 +863,9 @@ stock XML_WriteItem(filename[], XMLEntry:item, bool:bIncludeXML = true, bool:bFa
  * <param name="fHnd">File to write to.</param>
  * <param name="depth">Current indentation.</param>
  * <remarks>
- * 	Recursive function to write a tag and it's children to a file.
+ *  Recursive function to write a tag and it's children to a file.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock XML_WriteItemData(item, File:fHnd, depth)
 {
@@ -903,11 +903,11 @@ static stock XML_WriteItemData(item, File:fHnd, depth)
  * <param name="fHnd">File to write to.</param>
  * <param name="depth">Current indentation.</param>
  * <remarks>
- * 	Recursive function to write a tag and it's children to a file.  Writes tags
- * 	in the shortest manner possible.  This does make it slower however (not much
- * 	though given the use of linked lists).
+ *  Recursive function to write a tag and it's children to a file.  Writes tags
+ *  in the shortest manner possible.  This does make it slower however (not much
+ *  though given the use of linked lists).
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock XML_WriteItemDataShort(item, File:fHnd, depth)
 {
@@ -977,9 +977,9 @@ static stock XML_WriteItemDataShort(item, File:fHnd, depth)
  * <param name="tag">Type of tag to remove.</param>
  * <param name="name">Name of the tag to remove.</param>
  * <remarks>
- * 	Does a replace on data in a file with no new data.
+ *  Does a replace on data in a file with no new data.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock XML_RemoveItem(file[], tag[], name[])
 {
@@ -993,9 +993,9 @@ stock XML_RemoveItem(file[], tag[], name[])
  * <param name="name">Name of data to replace.</param>
  * <param name="replacement">Handle to the replacement data.</param>
  * <remarks>
- * 	Replaces a tag's data with new data, basically changes a tag's value.
+ *  Replaces a tag's data with new data, basically changes a tag's value.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock XML_ReplaceItem(file[], tag[], name[], replacement)
 {

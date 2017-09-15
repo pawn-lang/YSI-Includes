@@ -5,87 +5,87 @@
 
 /**
  * <library>
- * 					y_classes
+ *                  y_classes
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Allows greater control over classes so not everyone has every class.  Uses
- * 	a form of compression for locations.
+ *  Allows greater control over classes so not everyone has every class.  Uses
+ *  a form of compression for locations.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.1
+ *  0.1
  * <section>
- * 	Functions
+ *  Functions
  * </section>
  * <subsection>
  * Public
  * </subsection><ul>
- * 	<symbol name="Class_AddRemote">Adds a class to the remote master.</symbol>
- * 	<symbol name="Class_Remote">Updates settings remotely.</symbol>
+ *  <symbol name="Class_AddRemote">Adds a class to the remote master.</symbol>
+ *  <symbol name="Class_Remote">Updates settings remotely.</symbol>
  * </ul><subsection>
  * Core
  * </subsection><ul>
- * 	<symbol name="Class_Class">Sets up the system.</symbol>
- * 	<symbol name="Class_OnPlayerRequestSpawn">Called when a player requests a spawn.</symbol>
- * 	<symbol name="Class_OnPlayerRequestClass">Called when a player requests a class.</symbol>
- * 	<symbol name="Class_OnPlayerConnect">Called when a player connects.</symbol>
+ *  <symbol name="Class_Class">Sets up the system.</symbol>
+ *  <symbol name="Class_OnPlayerRequestSpawn">Called when a player requests a spawn.</symbol>
+ *  <symbol name="Class_OnPlayerRequestClass">Called when a player requests a class.</symbol>
+ *  <symbol name="Class_OnPlayerConnect">Called when a player connects.</symbol>
  * </ul><subsection>
  * Stock
  * </subsection><ul>
- * 	<symbol name="Class_Delete">Removes a class.</symbol>
- * 	<symbol name="Class_SetPlayer">Sets whether or not a player can use a class.</symbol>
- * 	<symbol name="Class_Disable">Disables a class.</symbol>
- * 	<symbol name="Class_Enable">Enables a disabled class.</symbol>
- * 	<symbol name="Class_AddForGroup">Adds a class to the system for only one group.</symbol>
- * 	<symbol name="Class_Add">Adds a class to the system.</symbol>
- * 	<symbol name="Class_AddEx">Adds a class to the system with group selection and setting.</symbol>
- * 	<symbol name="Class_AddWithGroupSet">Adds a class and sets their group on selection.</symbol>
- * 	<symbol name="Class_AllowReselection">Allows or disallows people to return to reselect a class.</symbol>
- * 	<symbol name="Class_RequireSpawnLogin">Require people to login before spawning.</symbol>
- * 	<symbol name="Class_RequireSelectionLogin">Require people to login before selecting.</symbol>
- * 	<symbol name="Class_RequireSelectionReg">Require people to register before selecting.</symbol>
- * 	<symbol name="Class_RequireSpawnReg">Require people to register before spawning.</symbol>
+ *  <symbol name="Class_Delete">Removes a class.</symbol>
+ *  <symbol name="Class_SetPlayer">Sets whether or not a player can use a class.</symbol>
+ *  <symbol name="Class_Disable">Disables a class.</symbol>
+ *  <symbol name="Class_Enable">Enables a disabled class.</symbol>
+ *  <symbol name="Class_AddForGroup">Adds a class to the system for only one group.</symbol>
+ *  <symbol name="Class_Add">Adds a class to the system.</symbol>
+ *  <symbol name="Class_AddEx">Adds a class to the system with group selection and setting.</symbol>
+ *  <symbol name="Class_AddWithGroupSet">Adds a class and sets their group on selection.</symbol>
+ *  <symbol name="Class_AllowReselection">Allows or disallows people to return to reselect a class.</symbol>
+ *  <symbol name="Class_RequireSpawnLogin">Require people to login before spawning.</symbol>
+ *  <symbol name="Class_RequireSelectionLogin">Require people to login before selecting.</symbol>
+ *  <symbol name="Class_RequireSelectionReg">Require people to register before selecting.</symbol>
+ *  <symbol name="Class_RequireSpawnReg">Require people to register before spawning.</symbol>
  * </ul><subsection>
  * Static
  * </subsection><ul>
- * 	<symbol name="Class_AddClass">Adds a class, wrapped by API and remote functions.</symbol>
+ *  <symbol name="Class_AddClass">Adds a class, wrapped by API and remote functions.</symbol>
  * </ul><subsection>
  * Inline
  * </subsection><ul>
- * 	<symbol name="Class_IsActive">Checks a class is active.</symbol>
- * 	<symbol name="Class_Enabled">Checks a class is enabled.</symbol>
- * 	<symbol name="Class_IsValid">Checks a class is valid.</symbol>
- * 	<symbol name="Class_X">Gets a classes x position.</symbol>
- * 	<symbol name="Class_Y">Gets a classes y position.</symbol>
- * 	<symbol name="Class_Z">Gets a classes z position.</symbol>
- * 	<symbol name="Class_A">Gets a classes angle.</symbol>
- * 	<symbol name="Class_Skin">Gets a classes skin.</symbol>
+ *  <symbol name="Class_IsActive">Checks a class is active.</symbol>
+ *  <symbol name="Class_Enabled">Checks a class is enabled.</symbol>
+ *  <symbol name="Class_IsValid">Checks a class is valid.</symbol>
+ *  <symbol name="Class_X">Gets a classes x position.</symbol>
+ *  <symbol name="Class_Y">Gets a classes y position.</symbol>
+ *  <symbol name="Class_Z">Gets a classes z position.</symbol>
+ *  <symbol name="Class_A">Gets a classes angle.</symbol>
+ *  <symbol name="Class_Skin">Gets a classes skin.</symbol>
  * </ul><section>
- * 	Definitions
+ *  Definitions
  * </section><ul>
- * 	<symbol name="MAX_CLASSES">Maximum number of classes storeable by the system.</symbol>
- * 	<symbol name="CLASS_LEFT">Flag for last internal class viewed.</symbol>
- * 	<symbol name="CLASS_MIDDLE">Flag for last internal class viewed.</symbol>
- * 	<symbol name="CLASS_RIGHT">Flag for last internal class viewed.</symbol>
+ *  <symbol name="MAX_CLASSES">Maximum number of classes storeable by the system.</symbol>
+ *  <symbol name="CLASS_LEFT">Flag for last internal class viewed.</symbol>
+ *  <symbol name="CLASS_MIDDLE">Flag for last internal class viewed.</symbol>
+ *  <symbol name="CLASS_RIGHT">Flag for last internal class viewed.</symbol>
  * </ul><section>
- * 	Enums
+ *  Enums
  * </section><ul>
- * 	<symbol name="e_CLASS_FLAGS">Small data for individual classes.</symbol>
- * 	<symbol name="E_CLASS">Class data structure.</symbol>
+ *  <symbol name="e_CLASS_FLAGS">Small data for individual classes.</symbol>
+ *  <symbol name="E_CLASS">Class data structure.</symbol>
  * </ul><section>
- * 	Variables
+ *  Variables
  * </section>
  * <subsection>
  * Static
  * </subsection><ul>
- * 	<symbol name="YSI_g_sClasses">Data for classes.</symbol>
- * 	<symbol name="YSI_g_sPlayerClass">Player's current classes.</symbol>
- * 	<symbol name="YSI_g_sLeft">Handle for the first internal class.</symbol>
- * 	<symbol name="YSI_g_sMiddle">Handle for the second internal class.</symbol>
- * 	<symbol name="YSI_g_sRight">Handle for the third internal class.</symbol>
- * 	<symbol name="YSI_g_sClassCount">Number of classes stored.</symbol>
+ *  <symbol name="YSI_g_sClasses">Data for classes.</symbol>
+ *  <symbol name="YSI_g_sPlayerClass">Player's current classes.</symbol>
+ *  <symbol name="YSI_g_sLeft">Handle for the first internal class.</symbol>
+ *  <symbol name="YSI_g_sMiddle">Handle for the second internal class.</symbol>
+ *  <symbol name="YSI_g_sRight">Handle for the third internal class.</symbol>
+ *  <symbol name="YSI_g_sClassCount">Number of classes stored.</symbol>
  * </ul>
  *//** *//*
 Legal:

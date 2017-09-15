@@ -5,32 +5,32 @@
 
 /**
  * <library>
- * 					y_punycode
+ *                  y_punycode
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Functions for converting unicode strings to and from punycode, to be
- * 	represented in just ASCII characters.  Based on several public
- * 	implementations and the RFC, adapted for PAWN.  For more information see:
- * 	
-	<a href="https://en.wikipedia.org/wiki/Punycode" />
- * 	
-	Also includes a function that hooks the "HTTP" function to allow for
- * 	internationalised domain names with that function.
+ *  Functions for converting unicode strings to and from punycode, to be
+ *  represented in just ASCII characters.  Based on several public
+ *  implementations and the RFC, adapted for PAWN.  For more information see:
+ *
+ *  <a href="https://en.wikipedia.org/wiki/Punycode" />
+ *
+ *  Also includes a function that hooks the "HTTP" function to allow for
+ *  internationalised domain names with that function.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.1
+ *  0.1
  * <section>
- * 	Functions
+ *  Functions
  * </section>
  * <subsection>
  * Stock
  * </subsection><ul>
- * 	<symbol name="Puny_Encode">Convert a Unicode string to Punycode.</symbol>
- * 	<symbol name="Puny_Decode">Convert a Punycode string to Unicode.</symbol>
- * 	<symbol name="Puny_HTTP">Wrapper for "HTTP" to encode domain names.</symbol>
+ *  <symbol name="Puny_Encode">Convert a Unicode string to Punycode.</symbol>
+ *  <symbol name="Puny_Decode">Convert a Punycode string to Unicode.</symbol>
+ *  <symbol name="Puny_HTTP">Wrapper for "HTTP" to encode domain names.</symbol>
  * </ul>
  *//** *//*
 Legal:
@@ -149,9 +149,9 @@ static stock const
  * <param name="wlen">The length of the destination.</param>
  * <param name="delimiter">What character is between the parts.</param>
  * <remarks>
- * 	Takes a punycode string and converts it to unicode.
+ *  Takes a punycode string and converts it to unicode.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Puny_Decode(string:dst[], string:src[], wlen = sizeof (dst), const delimiter = PUNY_CHAR)
 {
@@ -217,9 +217,9 @@ stock Puny_Decode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
  * <param name="wlen">The length of the destination.</param>
  * <param name="delimiter">What character to place between the parts.</param>
  * <remarks>
- * 	Takes a unicode string and converts it to punycode.
+ *  Takes a unicode string and converts it to punycode.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimiter = PUNY_CHAR)
 {
@@ -292,13 +292,13 @@ stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
  * <param name="wlen">The length of the destination.</param>
  * <param name="delimiter">What character to place between the parts.</param>
  * <returns>
- * 	The length of string read.
+ *  The length of string read.
  * </returns>
  * <remarks>
- * 	Takes a unicode string and converts it to punycode, while at the same time
- * 	generating a Bernstein hash of the string.  CASE INSENSITIVE.
+ *  Takes a unicode string and converts it to punycode, while at the same time
+ *  generating a Bernstein hash of the string.  CASE INSENSITIVE.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), const delimiter = PUNY_CHAR)
 {
@@ -392,9 +392,9 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 /*-------------------------------------------------------------------------*//**
  * <param name="num">The single number to encode.</param>
  * <remarks>
- * 	Convert a single digit to base 36.
+ *  Convert a single digit to base 36.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 P:D(_Puny_Basic(num));
 #define _Puny_Basic(%0) (((%0) > 25) ? ((%0) + ('0' - 25)) : ((%0) + 'a'))
@@ -406,10 +406,10 @@ P:D(_Puny_Basic(num));
  * <param name="wlen">Size of the array.</param>
  * <param name="hash">Hashed string.</param>
  * <remarks>
- * 	This is part of how the punycode algorithm encodes numbers as very clever
- * 	strings, but honestly I don't fully understand it!
+ *  This is part of how the punycode algorithm encodes numbers as very clever
+ *  strings, but honestly I don't fully understand it!
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Puny_EncodeVarHash(bias, delta, dst[], wlen, &hash)
 {
@@ -445,10 +445,10 @@ static stock Puny_EncodeVarHash(bias, delta, dst[], wlen, &hash)
  * <param name="dst">Array to write to.</param>
  * <param name="wlen">Size of the array.</param>
  * <remarks>
- * 	This is part of how the punycode algorithm encodes numbers as very clever
- * 	strings, but honestly I don't fully understand it!
+ *  This is part of how the punycode algorithm encodes numbers as very clever
+ *  strings, but honestly I don't fully understand it!
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Puny_EncodeVar(bias, delta, dst[], wlen)
 {
@@ -478,10 +478,10 @@ static stock Puny_EncodeVar(bias, delta, dst[], wlen)
  * <param name="length">Written string size.</param>
  * <param name="firstTime">Have special characters already been written?</param>
  * <remarks>
- * 	This is part of how the punycode algorithm encodes numbers as very clever
- * 	strings, but honestly I don't fully understand it!
+ *  This is part of how the punycode algorithm encodes numbers as very clever
+ *  strings, but honestly I don't fully understand it!
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Puny_Adapt(delta, length, bool:firstTime)
 {
@@ -506,9 +506,9 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
  * <param name="data">The GET/POST data.</param>
  * <param name="callback">Which function to return the data to.</param>
  * <remarks>
- * 	Hooks the "HTTP" function.
+ *  Hooks the "HTTP" function.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 #if defined PUNY_HTTP_HOOK
 	stock Puny_HTTP(index, type, url[], data[], callback[])

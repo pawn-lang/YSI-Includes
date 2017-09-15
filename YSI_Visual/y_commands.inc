@@ -5,90 +5,90 @@
 
 /**
  * <library>
- * 					y_commands
+ *                  y_commands
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Runs commands registered with the system and calls the required functions.
- * 	Also handles alternate names and prefixes.  Based very loosely on dcmd.
+ *  Runs commands registered with the system and calls the required functions.
+ *  Also handles alternate names and prefixes.  Based very loosely on dcmd.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.1.4
+ *  0.1.4
  * <section>
- * 	Functions
+ *  Functions
  * </section>
  * <subsection>
  * Public
  * </subsection><ul>
- * 	<symbol name="Command_Add">Adds a command to the array for processing.</symbol>
- * 	<symbol name="Command_Remove">Removes a command.</symbol>
- * 	<symbol name="Command_Name">Gets the name of a command in a property.</symbol>
+ *  <symbol name="Command_Add">Adds a command to the array for processing.</symbol>
+ *  <symbol name="Command_Remove">Removes a command.</symbol>
+ *  <symbol name="Command_Name">Gets the name of a command in a property.</symbol>
  * </ul><subsection>
  * Core
  * </subsection><ul>
- * 	<symbol name="Command_Process">Called from OnPlayerCommandText to process entered commands.</symbol>
- * 	<symbol name="Command_Parse">Sorts added commands into a binary tree.</symbol>
- * 	<symbol name="Command_Hash">Hashes a word for command hashing.</symbol>
- * 	<symbol name="Command_ProcRem">Processes a help command in the master script.</symbol>
+ *  <symbol name="Command_Process">Called from OnPlayerCommandText to process entered commands.</symbol>
+ *  <symbol name="Command_Parse">Sorts added commands into a binary tree.</symbol>
+ *  <symbol name="Command_Hash">Hashes a word for command hashing.</symbol>
+ *  <symbol name="Command_ProcRem">Processes a help command in the master script.</symbol>
  * </ul><subsection>
  * Stock
  * </subsection><ul>
- * 	<symbol name="Command_SetDisconnectReturn">Sets the return value for unconnected players.</symbol>
- * 	<symbol name="Command_UseShortCuts">Toggles use of per-player command shortcuts.</symbol>
- * 	<symbol name="Command_SetDeniedReturn">Sets the return value for denied use commands.</symbol>
- * 	<symbol name="Command_UseDeniedMessage">Toggles the use of an error message for denied.</symbol>
- * 	<symbol name="Command_SetIllegalReturn">Sets the return value for illegal characters.</symbol>
- * 	<symbol name="Command_UseAltNames">Toggles the use of ini defined alternate names.</symbol>
- * 	<symbol name="Command_UsePrefix">Toggles the use of a global prefix.</symbol>
- * 	<symbol name="Command_UseSpace">Toggles the use of a space between prefix and command.</symbol>
- * 	<symbol name="Command_SetAltName">Sets the alternate name of a function.</symbol>
- * 	<symbol name="Command_SetPrefix">Sets the pfexix to be typed.</symbol>
- * 	<symbol name="Comamnd_SetPlayerUse">Sets wether or not a player can use a command.</symbol>
- * 	<symbol name="Comamnd_SetPlayerUseByID">Sets wether or not a player can use a command.</symbol>
- * 	<symbol name="Command_FindByName">Finds a command in a possibly sorted list.</symbol>
+ *  <symbol name="Command_SetDisconnectReturn">Sets the return value for unconnected players.</symbol>
+ *  <symbol name="Command_UseShortCuts">Toggles use of per-player command shortcuts.</symbol>
+ *  <symbol name="Command_SetDeniedReturn">Sets the return value for denied use commands.</symbol>
+ *  <symbol name="Command_UseDeniedMessage">Toggles the use of an error message for denied.</symbol>
+ *  <symbol name="Command_SetIllegalReturn">Sets the return value for illegal characters.</symbol>
+ *  <symbol name="Command_UseAltNames">Toggles the use of ini defined alternate names.</symbol>
+ *  <symbol name="Command_UsePrefix">Toggles the use of a global prefix.</symbol>
+ *  <symbol name="Command_UseSpace">Toggles the use of a space between prefix and command.</symbol>
+ *  <symbol name="Command_SetAltName">Sets the alternate name of a function.</symbol>
+ *  <symbol name="Command_SetPrefix">Sets the pfexix to be typed.</symbol>
+ *  <symbol name="Comamnd_SetPlayerUse">Sets wether or not a player can use a command.</symbol>
+ *  <symbol name="Comamnd_SetPlayerUseByID">Sets wether or not a player can use a command.</symbol>
+ *  <symbol name="Command_FindByName">Finds a command in a possibly sorted list.</symbol>
  * </ul><section>
- * 	Definitions
+ *  Definitions
  * </section><ul>
- * 	<symbol name="MAX_COMMAND_LENGTH">The maximum length of a command string.</symbol>
- * 	<symbol name="COMMAND_NOT_FOUND">Indicates that a searched for string is not a function.</symbol>
+ *  <symbol name="MAX_COMMAND_LENGTH">The maximum length of a command string.</symbol>
+ *  <symbol name="COMMAND_NOT_FOUND">Indicates that a searched for string is not a function.</symbol>
  * </ul><section>
- * 	Enums
+ *  Enums
  * </section><ul>
- * 	<symbol name="e_COMM_FLAG">Bit mappings for command options.</symbol>
- * 	<symbol name="E_COMMANDS">Structure of the array holding the string data.</symbol>
+ *  <symbol name="e_COMM_FLAG">Bit mappings for command options.</symbol>
+ *  <symbol name="E_COMMANDS">Structure of the array holding the string data.</symbol>
  * </ul><section>
- * 	Macros
+ *  Macros
  * </section><ul>
- * 	<symbol name="Command_(%1)">Forwards and declares a standard command for calling.</symbol>
- * 	<symbol name="ycmd(%1)">Adds a command to the array (wrapper for Command_Add).</symbol>
+ *  <symbol name="Command_(%1)">Forwards and declares a standard command for calling.</symbol>
+ *  <symbol name="ycmd(%1)">Adds a command to the array (wrapper for Command_Add).</symbol>
  * </ul><section>
- * 	Tags
+ *  Tags
  * </section><ul>
- * 	<symbol name="e_COMM_FLAG">Flag type.</symbol>
+ *  <symbol name="e_COMM_FLAG">Flag type.</symbol>
  * </ul><section>
- * 	Variables
+ *  Variables
  * </section>
  * <subsection>
  * Static
  * </subsection><ul>
- * 	<symbol name="YSI_g_sCommands">Holds all the textual data of the commands.</symbol>
- * 	<symbol name="YSI_g_sSearchTree">Tree of hashes for function names.</symbol>
- * 	<symbol name="YSI_g_sAltTree">Tree of hashes for alternate names.</symbol>
- * 	<symbol name="YSI_g_sPrefix">The command prefix.</symbol>
- * 	<symbol name="YSI_g_sPrefixLength">Length of the prefix.</symbol>
- * 	<symbol name="YSI_g_sCommandIndex">Pointer to the next free index in the function array.</symbol>
- * 	<symbol name="YSI_g_sAltCount">The number of commands with altnames.</symbol>
- * 	<symbol name="YSI_g_sCommandFlags">Bit array of command options.</symbol>
+ *  <symbol name="YSI_g_sCommands">Holds all the textual data of the commands.</symbol>
+ *  <symbol name="YSI_g_sSearchTree">Tree of hashes for function names.</symbol>
+ *  <symbol name="YSI_g_sAltTree">Tree of hashes for alternate names.</symbol>
+ *  <symbol name="YSI_g_sPrefix">The command prefix.</symbol>
+ *  <symbol name="YSI_g_sPrefixLength">Length of the prefix.</symbol>
+ *  <symbol name="YSI_g_sCommandIndex">Pointer to the next free index in the function array.</symbol>
+ *  <symbol name="YSI_g_sAltCount">The number of commands with altnames.</symbol>
+ *  <symbol name="YSI_g_sCommandFlags">Bit array of command options.</symbol>
  * </ul><section>
- * 	Commands
+ *  Commands
  * </section><ul>
- * 	<symbol name="commands">Lists all commands available to you.</symbol>
+ *  <symbol name="commands">Lists all commands available to you.</symbol>
  * </ul><section>Compile options</section><ul>
- * 	<symbol name="COMMAND_SENSITIVE">Make commands case sensitive.</symbol>
- * 	<symbol name="COMMAND_ACCURATE">Can use '@' in command names.</symbol>
- * 	<symbol name="MAX_COMMANDS">The maximum number of commands which can be used.</symbol>
+ *  <symbol name="COMMAND_SENSITIVE">Make commands case sensitive.</symbol>
+ *  <symbol name="COMMAND_ACCURATE">Can use '@' in command names.</symbol>
+ *  <symbol name="MAX_COMMANDS">The maximum number of commands which can be used.</symbol>
  * </ul>
  *//** *//*
 Legal:

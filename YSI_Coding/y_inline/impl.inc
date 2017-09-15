@@ -128,9 +128,9 @@ stock
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- * 	Calls functions we call via "SYSREQ.C".
+ *  Calls functions we call via "SYSREQ.C".
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 forward _@_y_inline_@_();
 
@@ -147,13 +147,13 @@ public _@_y_inline_@_()
  * <param name="from">Array of variable types.</param>
  * <param name="at">Type slot.</param>
  * <returns>
- * 	The next variable type stored in the bit array.
+ *  The next variable type stored in the bit array.
  * </returns>
  * <remarks>
- * 	Returns data from a bit array when it is known that only basic types are
- * 	stored (i.e. no arrays with length parameters).
+ *  Returns data from a bit array when it is known that only basic types are
+ *  stored (i.e. no arrays with length parameters).
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 P:D(Inline_DecodeSimple(from[],at));
 #define Inline_DecodeSimple(%0,%1) (I@ = %0[(%1) >>> 5] & (2 << ((%1) & 0x1F)), (%1) += 2, I@)
@@ -192,19 +192,19 @@ stock Inline_Reset(callback[E_CALLBACK_DATA])
  * <param name="func">Public function to get.</param>
  * <param name="spec">The structure of the function's parameters.</param>
  * <returns>
- * 	A pointer to the function.
+ *  A pointer to the function.
  * </returns>
  * <remarks>
- * 	Accepts the following parameter specifiers:
- * 	
-		i - Integer (also x/c/d/h)
- * 		f - Float (also g)
- * 		s - String
- * 		ai - Array (followed by length)
- * 		v - Reference (&amp;var, any tag)
- * 	
-</remarks>
- *//*-------------------------------------------------------------------------**/
+ *  Accepts the following parameter specifiers:
+ *
+ *      i - Integer (also x/c/d/h)
+ *      f - Float (also g)
+ *      s - String
+ *      ai - Array (followed by length)
+ *      v - Reference (&amp;var, any tag)
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Function:GetRemoteFunction(const func[], const spec[])
 {
@@ -247,19 +247,19 @@ stock Function:GetRemoteFunction(const func[], const spec[])
  * <param name="func">Public function to get.</param>
  * <param name="spec">The structure of the function's parameters.</param>
  * <returns>
- * 	A pointer to the function.
+ *  A pointer to the function.
  * </returns>
  * <remarks>
- * 	Accepts the following parameter specifiers:
- * 	
-		i - Integer (also x/c/d/h)
- * 		f - Float (also g)
- * 		s - String
- * 		ai - Array (followed by length)
- * 		v - Reference (&amp;var, any tag)
- * 	
-</remarks>
- *//*-------------------------------------------------------------------------**/
+ *  Accepts the following parameter specifiers:
+ *
+ *      i - Integer (also x/c/d/h)
+ *      f - Float (also g)
+ *      s - String
+ *      ai - Array (followed by length)
+ *      v - Reference (&amp;var, any tag)
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Function:GetLocalFunction(const func[], const spec[])
 {
@@ -275,9 +275,9 @@ stock Function:GetLocalFunction(const func[], const spec[])
  * <param name="func">Function pointer to call.</param>
  * <param name="">The function's parameters.</param>
  * <remarks>
- * 	Call the function in the given pointer with the given parameters.
+ *  Call the function in the given pointer with the given parameters.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
 {
@@ -314,16 +314,16 @@ stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
  * <param name="expect">What parameters the function takes.</param>
  * <param name="remote">Is this function called on one or all scripts?</param>
  * <remarks>
- * 	Looks up the callback by name.  If the name has the correct data embedded
- * 	within it that's great and we use that directly.  Otherwise this function
- * 	loops backwards over the callbacks currently in scope (mostly) to the start
- * 	of the parent function.  If a match is still not found this looks for a
- * 	public function of the same name.  If that isn't found either it gives up.
- * 	
-	The new "remote" parameter returns instantly with a remote public function
- * 	stub, and no stored data.
+ *  Looks up the callback by name.  If the name has the correct data embedded
+ *  within it that's great and we use that directly.  Otherwise this function
+ *  loops backwards over the callbacks currently in scope (mostly) to the start
+ *  of the parent function.  If a match is still not found this looks for a
+ *  public function of the same name.  If that isn't found either it gives up.
+ *
+ *  The new "remote" parameter returns instantly with a remote public function
+ *  stub, and no stored data.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool:remote = false)
 {
@@ -443,9 +443,9 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool
 /*-------------------------------------------------------------------------*//**
  * <param name="input">Callback to release.</param>
  * <remarks>
- * 	Releases all the data associated with a given callback (closure storage).
+ *  Releases all the data associated with a given callback (closure storage).
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Callback_Release(input[E_CALLBACK_DATA])
 {
@@ -470,16 +470,16 @@ stock Callback_Release(input[E_CALLBACK_DATA])
 /*-------------------------------------------------------------------------*//**
  * <param name="func">Info on the restoration function.</param>
  * <remarks>
- * 	Makes variables referenced, instead of valued.  When used after
- * 	"Callback_Call" the values of any variables in the enclosing function that
- * 	were modified in the inline function will be propgated so that their new
- * 	values are seen by the original parent function (rather than that function
- * 	still seeing the original values prior to the inline function modifying
- * 	them).  Note that this does no checks at all at the minute - if you call an
- * 	inline function whose parent is not currently on the stack, this will
- * 	probably fail catastrophically!
+ *  Makes variables referenced, instead of valued.  When used after
+ *  "Callback_Call" the values of any variables in the enclosing function that
+ *  were modified in the inline function will be propgated so that their new
+ *  values are seen by the original parent function (rather than that function
+ *  still seeing the original values prior to the inline function modifying
+ *  them).  Note that this does no checks at all at the minute - if you call an
+ *  inline function whose parent is not currently on the stack, this will
+ *  probably fail catastrophically!
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Callback_Restore(func[E_CALLBACK_DATA])
 {
@@ -515,11 +515,11 @@ stock Callback_Restore(func[E_CALLBACK_DATA])
 /*-------------------------------------------------------------------------*//**
  * <param name="func">Info on the function to be called.</param>
  * <remarks>
- * 	Takes an inline function handler and parameters, and either calls the
- * 	public function while passing through the parameters, or just jumps to the
- * 	carefully crafted inline function code.
+ *  Takes an inline function handler and parameters, and either calls the
+ *  public function while passing through the parameters, or just jumps to the
+ *  carefully crafted inline function code.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 {
@@ -557,18 +557,18 @@ stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
  * <param name="params">Array of data pointers.</param>
  * <param name="num">Size of the array.</param>
  * <remarks>
- * 	This is very similar to Callback_Call, but takes an array of ADDRESSES
- * 	instead of normal parameters.  This is designed to help support some
- * 	experimental OO code I was working on...
- * 	
-	If the target is a public function, the parameters are resolved and passed
- * 	normally.  If the target is an inline function we are optimised for the
- * 	common case, so move the data on to the stack (currently done value-by-value
- * 	not all at once) and call "Callback_Call".
- * 	
-	The new assembly is based on "rawMemset" in "y_utils".
+ *  This is very similar to Callback_Call, but takes an array of ADDRESSES
+ *  instead of normal parameters.  This is designed to help support some
+ *  experimental OO code I was working on...
+ *
+ *  If the target is a public function, the parameters are resolved and passed
+ *  normally.  If the target is an inline function we are optimised for the
+ *  common case, so move the data on to the stack (currently done value-by-value
+ *  not all at once) and call "Callback_Call".
+ *
+ *  The new assembly is based on "rawMemset" in "y_utils".
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (params))
 {
@@ -640,19 +640,19 @@ stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (
  * <param name="format">The additional parameters' types.</param>
  * <param name="">The additional parameters.</param>
  * <remarks>
- * 	Calls a function, which may be an inline function, after a given delay, and
- * 	with the given regularity after that.  The parameters are slightly different
- * 	to those in SetTimer - that takes only an interval and a repeat boolean.
- * 	This instead takes two times - the first is the delay before the first call,
- * 	the second is the delay between all subsequent calls (mainly to offset
- * 	different timers within a given period).  The "repeat" parameter is also
- * 	different - instead of being a boolean, it is a count.  "0" no longer means
- * 	"don't repeat", but "repeat forever".  "1" no longer means "repeat forever",
- * 	but "call once".  All other numbers (beside 0) specify an exact number of
- * 	times to call the function before calling it no more.  This is in line with
- * 	the "SetTimer_" and "SetTimerEx_" functions in the fixes2 plugin.
+ *  Calls a function, which may be an inline function, after a given delay, and
+ *  with the given regularity after that.  The parameters are slightly different
+ *  to those in SetTimer - that takes only an interval and a repeat boolean.
+ *  This instead takes two times - the first is the delay before the first call,
+ *  the second is the delay between all subsequent calls (mainly to offset
+ *  different timers within a given period).  The "repeat" parameter is also
+ *  different - instead of being a boolean, it is a count.  "0" no longer means
+ *  "don't repeat", but "repeat forever".  "1" no longer means "repeat forever",
+ *  but "call once".  All other numbers (beside 0) specify an exact number of
+ *  times to call the function before calling it no more.  This is in line with
+ *  the "SetTimer_" and "SetTimerEx_" functions in the fixes2 plugin.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 /*
 
@@ -671,14 +671,14 @@ stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (
  * <param name="s">The array to store an inline function's data in.</param>
  * <param name="constFunc">Should this function copy the stack back?</param>
  * <remarks>
- * 	AKA. Inline_Entry
- * 	
-	This function gets the start of an inline function's code block.  It then
- * 	removes itself from the compiled code so that it can never be called agian.
- * 	
-	If "constFunc" is 3, copy the stack back, if it isn't don't.
+ *  AKA. Inline_Entry
+ *
+ *  This function gets the start of an inline function's code block.  It then
+ *  removes itself from the compiled code so that it can never be called agian.
+ *
+ *  If "constFunc" is 3, copy the stack back, if it isn't don't.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock I@E(/* mutable */ const s[])
 {
@@ -779,13 +779,13 @@ stock I@E(/* mutable */ const s[])
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- * 	AKA. Inline_Allocator.
- * 	
-	This function determines the exact address of the start of the main inline
- * 	function container loop.  That is, the label that things like "continue"
- * 	jump to so that we know how much space we have to play with and where it is.
+ *  AKA. Inline_Allocator.
+ *
+ *  This function determines the exact address of the start of the main inline
+ *  function container loop.  That is, the label that things like "continue"
+ *  jump to so that we know how much space we have to play with and where it is.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock I@F()
 {
@@ -831,33 +831,33 @@ stock I@F()
 
 /*-------------------------------------------------------------------------*//**
  * <returns>
- * 	0
+ *  0
  * </returns>
  * <remarks>
- * 	AKA. Inline_Main.
- * 	
-	The code before the start of the function is split in to three parts:
- * 	
-	The first part comes before the start of the loop condition, and is where
- * 	all the variables are initialised in the compiled code.  As we don't want to
- * 	initialise any variables, this can be repurposed for function entry code.
- * 	The address of this is stored in "entry", and it ends at "loop".
- * 	
-	The second part is where the function loops back to.  This MUST start with a
- * 	"RETN" instruction to end the function in all cases, so any startup code in
- * 	the first segment must jump over that "RETN".  The remainder of this section
- * 	can be used for any more entry or exit code that is required.  Note that
- * 	it can also start with a "STACK" opcode when required.  This section starts
- * 	at "loop" and ends at "code".
- * 	
-	The final segment is not technically BEFORE the main function code but
- * 	AFTER.  That's normally where the stack is restored, but we now have full
- * 	control of that (so don't forget to write it in to the process exit code).
- * 	
-	"Inline_Allocator" currently marks the end of the first segment, and
- * 	"Inline_Main" marks the end of the second segment.
+ *  AKA. Inline_Main.
+ *
+ *  The code before the start of the function is split in to three parts:
+ *
+ *  The first part comes before the start of the loop condition, and is where
+ *  all the variables are initialised in the compiled code.  As we don't want to
+ *  initialise any variables, this can be repurposed for function entry code.
+ *  The address of this is stored in "entry", and it ends at "loop".
+ *
+ *  The second part is where the function loops back to.  This MUST start with a
+ *  "RETN" instruction to end the function in all cases, so any startup code in
+ *  the first segment must jump over that "RETN".  The remainder of this section
+ *  can be used for any more entry or exit code that is required.  Note that
+ *  it can also start with a "STACK" opcode when required.  This section starts
+ *  at "loop" and ends at "code".
+ *
+ *  The final segment is not technically BEFORE the main function code but
+ *  AFTER.  That's normally where the stack is restored, but we now have full
+ *  control of that (so don't forget to write it in to the process exit code).
+ *
+ *  "Inline_Allocator" currently marks the end of the first segment, and
+ *  "Inline_Main" marks the end of the second segment.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock
 	YSI_g_sJumpAddress,
@@ -1286,9 +1286,9 @@ stock I@L(constFunc, ...)
 /*-------------------------------------------------------------------------*//**
  * <param name="addr">Function start address.</param>
  * <returns>
- * 	Is the function at this address already hooked by us?
+ *  Is the function at this address already hooked by us?
  * </returns>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock StoredF_IsHooked(addr)
 {
@@ -1301,9 +1301,9 @@ static stock StoredF_IsHooked(addr)
  * <param name="ctx">Current code generation context.</param>
  * <param name="error">The error given.</param>
  * <remarks>
- * 	This is a fatal error as there isn't really anything we can do about it.
+ *  This is a fatal error as there isn't really anything we can do about it.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 forward StoredF_OnPubGenError(ctx[AsmContext], AsmError:error);
 
@@ -1317,18 +1317,18 @@ public StoredF_OnPubGenError(ctx[AsmContext], AsmError:error)
  * <param name="fptr">Function start address.</param>
  * <param name="spec">Function parameter types.</param>
  * <returns>
- * 	the new function pointer.
+ *  the new function pointer.
  * </returns>
  * <remarks>
- * 	Writes a stub for calling a public function with an alternate method.
- * 	Because "CallStoredFunction" (the call entry point) takes all its parameters
- * 	by reference and some of the actual function's parameters won't be, we have
- * 	to generate the code to convert those that aren't to values only.  Also,
- * 	because "CallStoredFunction" takes an extra parameter that's the address of
- * 	the function to call, we have to wipe that from the stack and update the
- * 	resulting frame header.
+ *  Writes a stub for calling a public function with an alternate method.
+ *  Because "CallStoredFunction" (the call entry point) takes all its parameters
+ *  by reference and some of the actual function's parameters won't be, we have
+ *  to generate the code to convert those that aren't to values only.  Also,
+ *  because "CallStoredFunction" takes an extra parameter that's the address of
+ *  the function to call, we have to wipe that from the stack and update the
+ *  resulting frame header.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock StoredF_WritePublicCode(fptr, const spec[])
 {
@@ -1410,9 +1410,9 @@ static stock StoredF_WritePublicCode(fptr, const spec[])
  * <param name="str">String to find.</param>
  * <param name="ptr">Start of the linked list.</param>
  * <remarks>
- * 	Finds a given string in a given list.
+ *  Finds a given string in a given list.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Remote_DoSearch(const str[], ptr)
 {
@@ -1446,11 +1446,11 @@ static stock Remote_DoSearch(const str[], ptr)
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- * 	This rewrites itself to be the bulk of the call to "CallRemoteFunction".  It
- * 	modifies the stack so that the parameters already pushed are the parameters
- * 	passed to the native function.
+ *  This rewrites itself to be the bulk of the call to "CallRemoteFunction".  It
+ *  modifies the stack so that the parameters already pushed are the parameters
+ *  passed to the native function.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Remote_WriteStubCode()
 {
@@ -1562,14 +1562,14 @@ static stock Remote_WriteJustSpec(/* & */ sptr, const spec[])
  * <param name="sptr">Pointer to the stored specifier string.</param>
  * <param name="spec">Usable specifier string.</param>
  * <returns>
- * 	A pointer to the start of the newly generated code.
+ *  A pointer to the start of the newly generated code.
  * </returns>
  * <remarks>
- * 	Generates a tiny function-specific stub that sets the values for the
- * 	function and specifier strings to pass to "CallRemoteFunction", and checks
- * 	for any empty strings - converting them to "NULL" instead.
+ *  Generates a tiny function-specific stub that sets the values for the
+ *  function and specifier strings to pass to "CallRemoteFunction", and checks
+ *  for any empty strings - converting them to "NULL" instead.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Remote_WriteSpecAndFunc(/* & */ fptr, const func[], sptr, const spec[])
 {
@@ -1630,15 +1630,15 @@ static stock Remote_WriteSpecAndFunc(/* & */ fptr, const func[], sptr, const spe
  * <param name="at">Type slot.</param>
  * <param name="len">Return for array sizes.</param>
  * <returns>
- * 	The next variable type stored in the bit array, and the length of arrays.
+ *  The next variable type stored in the bit array, and the length of arrays.
  * </returns>
  * <remarks>
- * 	Returns data from a bit array when the parameter could be basic (variable or
- * 	reference), or an array with a length (includes strings).  This requries far
- * 	more complex code to decode as the lengths may span multiple cells, types
- * 	can't because they are always 2 bits and always start on an even bit.
+ *  Returns data from a bit array when the parameter could be basic (variable or
+ *  reference), or an array with a length (includes strings).  This requries far
+ *  more complex code to decode as the lengths may span multiple cells, types
+ *  can't because they are always 2 bits and always start on an even bit.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Inline_DecodeComplex(from[], &at, &len)
 {
@@ -1762,10 +1762,10 @@ static stock Inline_EncodeFormatString(const str[], ret[2])
  * <param name="a">Dummy variable.</param>
  * <param name="b">Return value.</param>
  * <remarks>
- * 	This is a prefix function that takes some value and returns it to the
- * 	caller's caller.  This makes "@return" in inline functions work.
+ *  This is a prefix function that takes some value and returns it to the
+ *  caller's caller.  This makes "@return" in inline functions work.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock InlineRet:operator+(InlineRet:a, _:b)
 {

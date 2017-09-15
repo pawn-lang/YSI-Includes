@@ -1,15 +1,15 @@
 /*+
  * <library>
- * 					y_unique
+ *                  y_unique
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Defines a symbol differently every time it is included.
+ *  Defines a symbol differently every time it is included.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:

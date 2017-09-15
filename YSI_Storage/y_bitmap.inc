@@ -5,18 +5,18 @@
 
 /**
  * <library>
- * 					y_bitmap
+ *                  y_bitmap
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Code to generate images on the server in the bitmap format.  This is by far
- * 	the simplest format to write to as it is just a huge array of colours (at
- * 	least 24-bit bitmaps are, and we only do them).
+ *  Code to generate images on the server in the bitmap format.  This is by far
+ *  the simplest format to write to as it is just a huge array of colours (at
+ *  least 24-bit bitmaps are, and we only do them).
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.1
+ *  0.1
 
  *//** *//*
 Legal:

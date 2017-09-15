@@ -5,16 +5,16 @@
 
 /**
  * <library>
- * 					y_lock
+ *                  y_lock
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Ensures that the server is running on the IP specified by "bind".
+ *  Ensures that the server is running on the IP specified by "bind".
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.1
+ *  0.1
 
  *//** *//*
 Legal:

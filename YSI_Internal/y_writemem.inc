@@ -5,35 +5,35 @@
 
 /*+
  * <library>
- * 					y_writemem
+ *                  y_writemem
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Write to any absolute address in the SA:MP server in pure PAWN with embedded
- * 	assembly (i.e. a new native).  Calls "VirtualProtect" to make writes safe.
+ *  Write to any absolute address in the SA:MP server in pure PAWN with embedded
+ *  assembly (i.e. a new native).  Calls "VirtualProtect" to make writes safe.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
  * <section>
- * 	Functions
+ *  Functions
  * </section>
  * <subsection>
  * API
  * </subsection><ul>
- * 	<symbol name="WriteMem">Write data to an address.</symbol>
+ *  <symbol name="WriteMem">Write data to an address.</symbol>
  * </ul><section>
- * 	Definitions
+ *  Definitions
  * </section><ul>
- * 	<symbol name="asm">Convert a stream of assembly to a cell.</symbol>
+ *  <symbol name="asm">Convert a stream of assembly to a cell.</symbol>
  * </ul><section>
- * 	Variables
+ *  Variables
  * </section>
  * <subsection>
  * Static
  * </subsection><ul>
- * 	<symbol name="YSI_g_sWriteMem">The assembly.</symbol>
+ *  <symbol name="YSI_g_sWriteMem">The assembly.</symbol>
  * </ul>
  *//** *//*
 Legal:

@@ -29,54 +29,54 @@ in the output code.
 -->
 *//*+
  * <library>
- * 					y_compilerdata
+ *                  y_compilerdata
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Detect various information about the compiler, including which pass it is
- * 	currently executing, what flags it was compiled with, and which version it
- * 	is.  Provide that information to the rest of the script through a series of
- * 	consistent macros.  Used by y_groups to include code that might be needed
- * 	before it is known if it is needed (it can be dumped later).
+ *  Detect various information about the compiler, including which pass it is
+ *  currently executing, what flags it was compiled with, and which version it
+ *  is.  Provide that information to the rest of the script through a series of
+ *  consistent macros.  Used by y_groups to include code that might be needed
+ *  before it is known if it is needed (it can be dumped later).
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.1
+ *  0.1
  * <section>
- * 	Functions
+ *  Functions
  * </section>
  * <subsection>
  * Static
  * </subsection><ul>
- * 	<symbol name="__CompilerStringReturn">
- * 		Assembly for returning a string to its callers' caller.  Used to
- * 		bypass a known bug.</symbol>
- * 	<symbol name="__CompilerSecondPass">Tested to determine the current compiler pass.</symbol>
+ *  <symbol name="__CompilerStringReturn">
+ *      Assembly for returning a string to its callers' caller.  Used to
+ *      bypass a known bug.</symbol>
+ *  <symbol name="__CompilerSecondPass">Tested to determine the current compiler pass.</symbol>
  * </ul><subsection>
  * Inline
  * </subsection><ul>
- * 	<symbol name="__COMPILER_STRING_RETURN">Correctly return a string from a varargs function.</symbol>
+ *  <symbol name="__COMPILER_STRING_RETURN">Correctly return a string from a varargs function.</symbol>
  * </ul><section>
- * 	Macros
+ *  Macros
  * </section><ul>
- * 	<symbol name="__COMPILER_PASS">Which pass the compiler is currently running.</li><to_ul></symbol>
- * 	<symbol name="__COMPILER_DOCUMENTING">Is the compiler collecting documentation
- * 		information right now (i.e. is this the first pass)?</symbol>
- * 	<symbol name="__COMPILER_1ST_PASS">Is this the first compiler pass?</symbol>
- * 	<symbol name="__COMPILER_2ND_PASS">Is this the second compiler pass?</symbol>
- * 	<symbol name="__COMPILER_FIRST_PASS">Is this the first compiler pass?</symbol>
- * 	<symbol name="__COMPILER_SECOND_PASS">Is this the second compiler pass?</symbol>
- * 	<symbol name="__COMPILER_MODIFIED">Is the compiler an updated/unofficial/modified one?</symbol>
- * 	<symbol name="__COMPILER_OFFICIAL">Is the compiler an official one?</symbol>
- * 	<symbol name="__COMPILER_COMPAT">Was the compiler built with `-Z`?</symbol>
- * 	<symbol name="__COMPILER_INCLUDE_GUARDS">Does the compiler generate auto-include guards?</symbol>
- * 	<symbol name="__COMPILER_NESTED_ELLIPSIS">Does the compiler support nested ellipses?</symbol>
- * 	<symbol name="__COMPILER_BUGGED_STRING_RETURN">
- * 		Are vararg function string returns bugged?  Not needed for using
- * 		<symbolref name="__COMPILER_STRING_RETURN" />, as that will do the best
- * 		thing in both cases already.</symbol>
- * 	<symbol name="P:D">Wrap a fake function declaration, so macros can be documented.</symbol>
+ *  <symbol name="__COMPILER_PASS">Which pass the compiler is currently running.</li><to_ul></symbol>
+ *  <symbol name="__COMPILER_DOCUMENTING">Is the compiler collecting documentation
+ *      information right now (i.e. is this the first pass)?</symbol>
+ *  <symbol name="__COMPILER_1ST_PASS">Is this the first compiler pass?</symbol>
+ *  <symbol name="__COMPILER_2ND_PASS">Is this the second compiler pass?</symbol>
+ *  <symbol name="__COMPILER_FIRST_PASS">Is this the first compiler pass?</symbol>
+ *  <symbol name="__COMPILER_SECOND_PASS">Is this the second compiler pass?</symbol>
+ *  <symbol name="__COMPILER_MODIFIED">Is the compiler an updated/unofficial/modified one?</symbol>
+ *  <symbol name="__COMPILER_OFFICIAL">Is the compiler an official one?</symbol>
+ *  <symbol name="__COMPILER_COMPAT">Was the compiler built with `-Z`?</symbol>
+ *  <symbol name="__COMPILER_INCLUDE_GUARDS">Does the compiler generate auto-include guards?</symbol>
+ *  <symbol name="__COMPILER_NESTED_ELLIPSIS">Does the compiler support nested ellipses?</symbol>
+ *  <symbol name="__COMPILER_BUGGED_STRING_RETURN">
+ *      Are vararg function string returns bugged?  Not needed for using
+ *      <symbolref name="__COMPILER_STRING_RETURN" />, as that will do the best
+ *      thing in both cases already.</symbol>
+ *  <symbol name="P:D">Wrap a fake function declaration, so macros can be documented.</symbol>
  * </ul>
  *//** *//*
 Legal:
@@ -160,21 +160,21 @@ Optional plugins:
 //  /**  
 //   * <param name="playerid">An example named macro parameter (`%0`).</param>
 //   * <remarks>
-//   *   This is a function-like macro.  By default, compiling with `-r` does
-//   *   not put macros in the XML, which is a shame if we are using a macro to
-//   *   fake a function, because then a function will be apparently missing
-//   *   from the documentation.  Instead, we make a function, THEN make the
-//   *   macro.  But, importantly, we only make the function on the first pass,
-//   *   not the second pass (documentation is apparently generated in the first
-//   *   pass).
+//   *  This is a function-like macro.  By default, compiling with `-r` does
+//   *  not put macros in the XML, which is a shame if we are using a macro to
+//   *  fake a function, because then a function will be apparently missing
+//   *  from the documentation.  Instead, we make a function, THEN make the
+//   *  macro.  But, importantly, we only make the function on the first pass,
+//   *  not the second pass (documentation is apparently generated in the first
+//   *  pass).
 //   * </remarks>
 //   * <example>
-//   * 
-//   *   for (new i = 0; MyFunc(i); ++i)
-//   *   {
-//   *      printf("%d", i);
-//   *   }
-//   * 
+//   *
+//   *  for (new i = 0; MyFunc(i); ++i)
+//   *  {
+//   *     printf("%d", i);
+//   *  }
+//   *
 //   * </example>
 //   */
 //   P:D(bool:MyFunc(playerid));
@@ -198,10 +198,10 @@ Optional plugins:
 
 /*-------------------------------------------------------------------------*//*+
  * <remarks>
- * 	Exists purely to be detected before it is used.  If that check succeedes,
- * 	the compiler is on its second pass and already has a list of all functions.
+ *  Exists purely to be detected before it is used.  If that check succeedes,
+ *  the compiler is on its second pass and already has a list of all functions.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 static stock __CompilerSecondPass() {}
 
 #if __Pawn >= 0x0400
@@ -270,15 +270,15 @@ static stock __CompilerSecondPass() {}
 	 * <param name="size">Size of the string.</param>
 	 * <param name="dummy">Ignored parameter for raw string given sizes.</param>
 	 * <returns>
-	 * 	string
+	 *  string
 	 * </returns>
 	 * <remarks>
-	 * 	The old compiler has a very annoying bug where returning a string from a
-	 * 	function that takes variable parameters will not work correctly.  This
-	 * 	is because string returns are done with a secret extra parameter but it
-	 * 	is not correctly selected when the count is unknown or variable.
+	 *  The old compiler has a very annoying bug where returning a string from a
+	 *  function that takes variable parameters will not work correctly.  This
+	 *  is because string returns are done with a secret extra parameter but it
+	 *  is not correctly selected when the count is unknown or variable.
 	 * </remarks>
-	 *//*---------------------------------------------------------------------**/
+	 *//*--------------------------------------------------------------------**/
 	
 	stock __CompilerStringReturn(const str[], size = sizeof (str), dummy = 0)
 	{

@@ -4,7 +4,7 @@
 #define _INC_y_zonenames
 
 /*  SA:MP Functions
- *  
+ *
  *  ZONES Functions By ~Cueball~
  *  ZONES Functions Aided By Betamaster (locations), Mabako (locations), Simon (finetuning)
  *

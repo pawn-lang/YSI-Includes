@@ -5,21 +5,21 @@
 
 /**
  * <library>
- * 					y_scriptinit
+ *                  y_scriptinit
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	This file provides "OnScriptInit" and "OnScriptExit" which are called at the
- * 	start and end of the current script, regardless of what the type of the
- * 	script is (note: doesn't support NPC modes).  It also provides
- * 	"YSI_FILTERSCRIPT" as a (partial) replacement for "FILTERSCRIPT" which
- * 	detects what the mode is at runtime for a more reliable system (but it is a
- * 	run-time variable, not a compile-time constant).
+ *  This file provides "OnScriptInit" and "OnScriptExit" which are called at the
+ *  start and end of the current script, regardless of what the type of the
+ *  script is (note: doesn't support NPC modes).  It also provides
+ *  "YSI_FILTERSCRIPT" as a (partial) replacement for "FILTERSCRIPT" which
+ *  detects what the mode is at runtime for a more reliable system (but it is a
+ *  run-time variable, not a compile-time constant).
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:
@@ -162,7 +162,7 @@ stock
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="_script_init_fix_state : true"/>
  * <transition keep="true" target="_ALS : _ALS_go"/>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 public OnFilterScriptInit()
 {
@@ -204,7 +204,7 @@ public OnFilterScriptInit()
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="_script_init_fix_state : false"/>
  * <transition keep="true" target="_ALS : _ALS_go"/>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 public OnGameModeInit()
 {

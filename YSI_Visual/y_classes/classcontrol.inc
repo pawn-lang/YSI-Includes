@@ -92,9 +92,9 @@ static stock
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player to check.</param>
  * <returns>
- * 	Is this player currently in the class selection screen?
+ *  Is this player currently in the class selection screen?
  * </returns>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 foreign bool:Player_InSelection(playerid);
 
@@ -106,9 +106,9 @@ global bool:Player_InSelection(playerid)
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player to check.</param>
  * <returns>
- * 	Has this player ever spawned?
+ *  Has this player ever spawned?
  * </returns>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 foreign bool:Player_HasSpawned(playerid);
 
@@ -120,15 +120,15 @@ global bool:Player_HasSpawned(playerid)
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player to check.</param>
  * <returns>
- * 	Is this player spawned now?
+ *  Is this player spawned now?
  * </returns>
  * <remarks>
- * 	Returns true if they are not in class selection, and if they have ever
- * 	spawned.  It could be that both "Player_IsSpawned" and "Player_InSelection"
- * 	return "false" - if they haven't even reached the class selection screen yet
- * 	(mainly happens in "OnPlayerConnect").
+ *  Returns true if they are not in class selection, and if they have ever
+ *  spawned.  It could be that both "Player_IsSpawned" and "Player_InSelection"
+ *  return "false" - if they haven't even reached the class selection screen yet
+ *  (mainly happens in "OnPlayerConnect").
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 foreign bool:Player_IsSpawned(playerid);
 
@@ -140,9 +140,9 @@ global bool:Player_IsSpawned(playerid)
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who joined the server.</param>
  * <remarks>
- * 	Reset all the data on this player's current classes.
+ *  Reset all the data on this player's current classes.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 mhook OnPlayerConnect(playerid)
 {
@@ -154,9 +154,9 @@ mhook OnPlayerConnect(playerid)
  * <param name="playerid">Player who requested a class.</param>
  * <param name="class">Class they requested.</param>
  * <remarks>
- * 	Not the first call of this function by y_classes.
+ *  Not the first call of this function by y_classes.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Class_Spawn(playerid)
 {
@@ -225,9 +225,9 @@ mhook OnPlayerRequestClass(playerid, classid)
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who spawned.</param>
  * <remarks>
- * 	Sets a player's position based on skin.
+ *  Sets a player's position based on skin.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 mhook OnPlayerSpawn(playerid)
 {

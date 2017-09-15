@@ -5,16 +5,16 @@
 
 /**
  * <library>
- * 					y_races
+ *                  y_races
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Create, manage, and run races.
+ *  Create, manage, and run races.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	2.0
+ *  2.0
 
  *//** *//*
 Legal:

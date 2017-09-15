@@ -5,17 +5,17 @@
 
 /*+
  * <library>
- * 					y_classes
+ *                  y_classes
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Allows for advanced class selection options such as skins only certain
- * 	people can see and actually removing skins from class selection.
+ *  Allows for advanced class selection options such as skins only certain
+ *  people can see and actually removing skins from class selection.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:

@@ -5,16 +5,16 @@
 
 /*+
  * <library>
- * 					y_shortvar
+ *                  y_shortvar
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Declares a few variables with very short names, used all over YSI.
+ *  Declares a few variables with very short names, used all over YSI.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.2
+ *  0.2
 
  *//** *//*
 Legal:

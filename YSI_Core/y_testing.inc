@@ -5,16 +5,16 @@
 
 /**
  * <library>
- * 					y_testing
+ *                  y_testing
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Runs any functions named as tests when the Testing_Run function is called.
+ *  Runs any functions named as tests when the Testing_Run function is called.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:
@@ -220,9 +220,9 @@ stock
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Name of the current function.</param>
  * <remarks>
- * 	Gets a reference to the 
+ *  Gets a reference to the 
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock _Testing_Start(name[])
 {
@@ -244,9 +244,9 @@ stock _Testing_Start(name[])
  * <param name="str">What to ask.</param>
  * <param name="va_args">Additional data.</param>
  * <remarks>
- * 	Calls a dialog to ask the player if the given test actually passed.
+ *  Calls a dialog to ask the player if the given test actually passed.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Testing_Ask(playerid, str[] = "", va_args<>)
 {
@@ -287,9 +287,9 @@ stock Testing_Test(bool:x, str[] = "", va_args<>)
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Name of the current function.</param>
  * <remarks>
- * 	Gets a reference to the 
+ *  Gets a reference to the 
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock bool:_Testing_End()
 {
@@ -305,15 +305,15 @@ stock bool:_Testing_End()
  * <param name="fails">Number of tests which failed.</param>
  * <param name="buffer">The name of the first test which failed.</param>
  * <returns>
- * 	Wether all tests were sucessful or not.
+ *  Wether all tests were sucessful or not.
  * </returns>
  * <remarks>
- * 	-
- * 
-native Testing_Run(&amp;tests, &amp;fails, buffer[33] = "");
- * 
-</remarks>
- *//*-------------------------------------------------------------------------**/
+ *  -
+ *
+ * native Testing_Run(&amp;tests, &amp;fails, buffer[33] = "");
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 {
@@ -418,15 +418,15 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
  * <param name="fails">Number of tests which failed.</param>
  * <param name="buffer">The name of the first test which failed.</param>
  * <returns>
- * 	Wether all tests were sucessful or not.
+ *  Wether all tests were sucessful or not.
  * </returns>
  * <remarks>
- * 	-
- * 
-native bool:Testing_Player(playerid, &amp;idx, &amp;tests, &amp;fails, lastfail[33] = "", bool:p = false);
- * 
-</remarks>
- *//*-------------------------------------------------------------------------**/
+ *  -
+ *
+ * native bool:Testing_Player(playerid, &amp;idx, &amp;tests, &amp;fails, lastfail[33] = "", bool:p = false);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", bool:p = false)
 {

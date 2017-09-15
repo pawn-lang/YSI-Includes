@@ -5,25 +5,25 @@
 
 /**
  * <library>
- * 					y_remote
+ *                  y_remote
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Wrapper for "__CallRemoteFunction".  Enforces some features like no returns
- * 	and arrays being followed by their length.
+ *  Wrapper for "__CallRemoteFunction".  Enforces some features like no returns
+ *  and arrays being followed by their length.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
  * <section>
- * 	Macros
+ *  Macros
  * </section><ul>
- * 	<symbol name="remotefunc">Define a function to be called remotely (use like "stock").</symbol>
- * 	<symbol name="broadcastfunc">Call the function, but in all scripts.</symbol>
- * 	<symbol name="localfunc">Call the function by name, not address, in the current script.</symbol>
+ *  <symbol name="remotefunc">Define a function to be called remotely (use like "stock").</symbol>
+ *  <symbol name="broadcastfunc">Call the function, but in all scripts.</symbol>
+ *  <symbol name="localfunc">Call the function by name, not address, in the current script.</symbol>
  * </ul><section>Compile options</section><ul>
- * 	<symbol name="YSI_NO_MASTER">Disable all knowledge of other scripts.</symbol>
+ *  <symbol name="YSI_NO_MASTER">Disable all knowledge of other scripts.</symbol>
  * </ul>
  *//** *//*
 Legal:

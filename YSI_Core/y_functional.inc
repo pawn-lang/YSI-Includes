@@ -5,16 +5,16 @@
 
 /**
  * <library>
- * 					y_functional
+ *                  y_functional
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Lambda functions and functional program functions - map, fold, etc.
+ *  Lambda functions and functional program functions - map, fold, etc.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:

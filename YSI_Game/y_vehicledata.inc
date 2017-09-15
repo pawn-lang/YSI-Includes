@@ -5,37 +5,37 @@
 
 /**
  * <library>
- * 					y_vehicledata
+ *                  y_vehicledata
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Basic functions for gathering data on various vehicle models.  Things like
- * 	what sort of vehicle they are and what organisation they belong to.
+ *  Basic functions for gathering data on various vehicle models.  Things like
+ *  what sort of vehicle they are and what organisation they belong to.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.2
+ *  0.2
  * <section>
- * 	Functions
+ *  Functions
  * </section>
  * <subsection>
  * Stock
  * </subsection><ul>
- * 	<symbol name="Vehicle_Speed">Get current vehicle speed in KMH.</symbol>
+ *  <symbol name="Vehicle_Speed">Get current vehicle speed in KMH.</symbol>
  * </ul><section>
- * 	Tags
+ *  Tags
  * </section><ul>
- * 	<symbol name="VIM">Vehicle Internal Modelid.</symbol>
+ *  <symbol name="VIM">Vehicle Internal Modelid.</symbol>
  * </ul><section>
- * 	Variables
+ *  Variables
  * </section>
  * <subsection>
  * Global
  * </subsection><ul>
- * 	<symbol name="YSI_gVehicleFlags">Data on vehicles.</symbol>
- * 	<symbol name="YSI_gVehicleNames">Names of vehicles.</symbol>
- * 	<symbol name="YSI_gVehicleTopSpeed">Top speed of vehicles.</symbol>
+ *  <symbol name="YSI_gVehicleFlags">Data on vehicles.</symbol>
+ *  <symbol name="YSI_gVehicleNames">Names of vehicles.</symbol>
+ *  <symbol name="YSI_gVehicleTopSpeed">Top speed of vehicles.</symbol>
  * </ul>
  *//** *//*
 Legal:
@@ -1054,12 +1054,12 @@ stock
 /*-------------------------------------------------------------------------*//**
  * <param name="vehicleid">The vehicleid to get speed.</param>
  * <returns>
- * 	Current vehicle speed.
+ *  Current vehicle speed.
  * </returns>
  * <remarks>
- * 	This function have returns in KM/H.
+ *  This function have returns in KM/H.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Vehicle_Speed(vehicleid)
 {

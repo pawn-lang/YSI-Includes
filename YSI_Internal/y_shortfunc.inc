@@ -5,23 +5,23 @@
 
 /*+
  * <library>
- * 					y_shortfunc
+ *                  y_shortfunc
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Defines new names for native functions.
+ *  Defines new names for native functions.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.2
+ *  0.2
  * <section>
- * 	Natives
+ *  Natives
  * </section><ul>
- * 	<symbol name="W@">Renaming of <symbolref name="__CallRemoteFunction" /> for size reasons.</symbol>
- * 	<symbol name="V@">Renaming of <symbolref name="getproperty" /> for size reasons.</symbol>
- * 	<symbol name="S@">Renaming of <symbolref name="setproperty" /> for size reasons.</symbol>
- * 	<symbol name="P@">Renaming of <symbolref name="__CallLocalFunction" /> for size reasons.</symbol>
+ *  <symbol name="W@">Renaming of <symbolref name="__CallRemoteFunction" /> for size reasons.</symbol>
+ *  <symbol name="V@">Renaming of <symbolref name="getproperty" /> for size reasons.</symbol>
+ *  <symbol name="S@">Renaming of <symbolref name="setproperty" /> for size reasons.</symbol>
+ *  <symbol name="P@">Renaming of <symbolref name="__CallLocalFunction" /> for size reasons.</symbol>
  * </ul>
  *//** *//*
 Legal:

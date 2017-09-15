@@ -135,7 +135,7 @@ static stock
 
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="y_render_show : y_render_show_scm" />
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock _Text_SetDialogMode()
 {
@@ -154,7 +154,7 @@ stock Format_SetListSeparator(string:lst[])
  * <transition keep="true" target="y_render_show : y_render_show_scm" />
  * <transition keep="true" target="y_render_show : y_render_show_td" />
  * <transition keep="true" target="y_render_show : y_render_show_print" />
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock _Format_SetStyleData(master, index, style[E_STYLE_DATA], label[E_3D_DATA])
 {
@@ -499,7 +499,7 @@ static stock Format_AddFade(str[], &pos, &len, endColour, &initialColour, step, 
 
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="y_render_fade : y_render_fade_fake" />
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Format_DoEndFade(output[], &start, end, &rem, colour, &initial) //<>
 {
@@ -564,21 +564,21 @@ static stock Format_DoEndFade(output[], &start, end, &rem, colour, &initial) //<
  * <param name="orem">Space remaining in "out".</param>
  * <param name="fakePos">Like "oidx", but cumulative over line breaks.</param>
  * <returns>
- * 	The amount of data from "in" not added to "out".
+ *  The amount of data from "in" not added to "out".
  * </returns>
  * <remarks>
- * 	Takes an input string and adds it to an output string.  If the input string
- * 	is too long to fit in the remainder of the output string, what has been
- * 	added already (including part of the input string) is displayed and a new
- * 	string is added.  Format_TryShow handles this, including adding formatting
- * 	of colour fades, which may involve fake rendering of more of the string to
- * 	determine how much of the remainder of the string needs processing to get
- * 	the right colour.  This will also require a method of winding back the state
- * 	to the point just after the initial input string was added to continue on to
- * 	show the next string including newly determined fade data.
+ *  Takes an input string and adds it to an output string.  If the input string
+ *  is too long to fit in the remainder of the output string, what has been
+ *  added already (including part of the input string) is displayed and a new
+ *  string is added.  Format_TryShow handles this, including adding formatting
+ *  of colour fades, which may involve fake rendering of more of the string to
+ *  determine how much of the remainder of the string needs processing to get
+ *  the right colour.  This will also require a method of winding back the state
+ *  to the point just after the initial input string was added to continue on to
+ *  show the next string including newly determined fade data.
  * </remarks>
  * <transition keep="true" target="y_render_fade : y_render_fade_real" source="y_render_fade : y_render_fade_redo" />
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Format_DoAddString(out[], const in[], &oidx, const len, &orem, &fakepos) <y_render_fade : y_render_fade_fake>
 {
@@ -649,7 +649,7 @@ static stock Format_DoAddString(out[], const in[], &oidx, const len, &orem, &fak
 
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="y_render_fade : y_render_fade_real" source="y_render_fade : y_render_fade_redo" />
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock bool:Format_DoAddChar(out[], const in, &oidx, &orem, &fakepos) <y_render_fade : y_render_fade_fake>
 {
@@ -738,7 +738,7 @@ static stock Format_DoDisplay(playerid, colour, out[]) <y_render_show : y_render
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player to show the text to.</param>
  * <param name="out">What the text to show is.</param>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Format_JustShow(playerid, out[]) <y_render_show : y_render_show_scm>
 {
@@ -762,12 +762,12 @@ stock Format_JustShow(playerid, out[]) <y_render_show : y_render_show_td>
 
 /*-------------------------------------------------------------------------*//**
  * <returns>
- * 	The basic ID linking all displayed elements together where appropriate (for
- * 	example SendClientMessage has no meaningful ID.  3D texts would, but that's
- * 	not implemented.  So do game texts, but that's not implemented either, so
- * 	really it's just text draws.
+ *  The basic ID linking all displayed elements together where appropriate (for
+ *  example SendClientMessage has no meaningful ID.  3D texts would, but that's
+ *  not implemented.  So do game texts, but that's not implemented either, so
+ *  really it's just text draws.
  * </returns>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Text_GetLastID() <y_render_show : y_render_show_td>
 {
@@ -793,7 +793,7 @@ stock Text_GetLastID() <>
  * <transition keep="true" target="y_render_fade : y_render_fade_redo" />
  * <transition keep="true" target="y_render_fade : y_render_fade_real" />
  * <transition keep="true" target="y_render_fade : y_render_fade_fake" />
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 //stock Format_Render(pid, Language:l, output[], maxlen, idx, target, string[], {Float,_}:...)
 stock Format_Render(pid, Language:l, output[], maxlen, idx, target, string[], argCount, GLOBAL_TAG_TYPES:...)
 {

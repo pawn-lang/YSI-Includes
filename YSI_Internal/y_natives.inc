@@ -5,16 +5,16 @@
 
 /*+
  * <library>
- * 					y_natives
+ *                  y_natives
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Obsolete, but still required by y_lock.
+ *  Obsolete, but still required by y_lock.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.1
+ *  0.1
 
  *//** *//*
 Legal:

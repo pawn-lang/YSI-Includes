@@ -12,16 +12,16 @@
 
 /**
  * <library>
- * 					y_hooks
+ *                  y_hooks
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Automatically hooks any callbacks with a very simple syntax.
+ *  Automatically hooks any callbacks with a very simple syntax.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	2.0
+ *  2.0
 
  *//** *//*
 Legal:

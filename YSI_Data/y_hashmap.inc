@@ -5,33 +5,33 @@
 
 /**
  * <library>
- * 					y_hashmap
+ *                  y_hashmap
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Maps string indexes to integer indexes.  Uses a fast hash to get an array
- * 	slot, then a linked list to resolve collisions.
+ *  Maps string indexes to integer indexes.  Uses a fast hash to get an array
+ *  slot, then a linked list to resolve collisions.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	2.0
+ *  2.0
  * <section>
- * 	Functions
+ *  Functions
  * </section>
  * <subsection>
  * Stock
  * </subsection><ul>
- * 	<symbol name="HashMap_Init">Associate a hash map with an array.</symbol>
- * 	<symbol name="HashMap_Add">Add a value under a given string.</symbol>
- * 	<symbol name="HashMap_Get">Get a value from a string.</symbol>
- * 	<symbol name="HashMap_RemoveKey">Remove a string and its value from a hash map.</symbol>
- * 	<symbol name="HashMap_Set">Change the value associated with a key.</symbol>
+ *  <symbol name="HashMap_Init">Associate a hash map with an array.</symbol>
+ *  <symbol name="HashMap_Add">Add a value under a given string.</symbol>
+ *  <symbol name="HashMap_Get">Get a value from a string.</symbol>
+ *  <symbol name="HashMap_RemoveKey">Remove a string and its value from a hash map.</symbol>
+ *  <symbol name="HashMap_Set">Change the value associated with a key.</symbol>
  * </ul><section>
- * 	Definitions
+ *  Definitions
  * </section><ul>
- * 	<symbol name="HASH_MAP_DATA">What should be added to enums to be hash map referenced.</symbol>
- * 	<symbol name="HashMap">Declare a new hash map.</symbol>
+ *  <symbol name="HASH_MAP_DATA">What should be added to enums to be hash map referenced.</symbol>
+ *  <symbol name="HashMap">Declare a new hash map.</symbol>
  * </ul>
  *//** *//*
 Legal:

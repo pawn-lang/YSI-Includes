@@ -5,17 +5,17 @@
 
 /*+
  * <library>
- * 					y_plugins
+ *                  y_plugins
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Configuration and detection for third-party SA:MP plugins (including
- * 	ones by Y_Less).
+ *  Configuration and detection for third-party SA:MP plugins (including
+ *  ones by Y_Less).
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:

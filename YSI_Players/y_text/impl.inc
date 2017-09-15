@@ -202,11 +202,11 @@ static stock
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- * 	This callback is hard coded in to YSI to be called absolutely last!  Note
- * 	that this WAS hard coded, but now uses a more generic chaining method not
- * 	based on y_scriptinit and instead just uses the regular ALS method.
+ *  This callback is hard coded in to YSI to be called absolutely last!  Note
+ *  that this WAS hard coded, but now uses a more generic chaining method not
+ *  based on y_scriptinit and instead just uses the regular ALS method.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 public OnGameModeInit()
 {
@@ -275,7 +275,7 @@ public OnFilterScriptInit()
  * <transition keep="true" target="y_text_ending : n" />
  * <transition keep="true" target="y_text_get_text : n" />
  * <transition keep="true" target="y_render_show : y_render_show_print" />
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 //static stock Text_GetDistributionID()
 hook OnScriptInit()
@@ -345,7 +345,7 @@ hook OnScriptInit()
 
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="y_text_ending : y" />
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 hook OnScriptExit()
 {
@@ -377,10 +377,10 @@ hook OnScriptExit()
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- * 	When a mode ends this is called so that other scripts can know to re-load
- * 	any text which was previously owned by this script that they still need.
+ *  When a mode ends this is called so that other scripts can know to re-load
+ *  any text which was previously owned by this script that they still need.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 forward Text_ResetLoaded();
 
@@ -402,12 +402,12 @@ public Text_ResetLoaded() <y_text_ending:n>
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- * 	Loops through all text definition functions in the mode (defined as:
- * 	"file@section@unique@yX_" (note that "@unique" is optional but irrelevant).
- * 	If any are found and the property "file:section" isn't defined claims
- * 	ownership of that section so that the text can be loaded in to this mode.
+ *  Loops through all text definition functions in the mode (defined as:
+ *  "file@section@unique@yX_" (note that "@unique" is optional but irrelevant).
+ *  If any are found and the property "file:section" isn't defined claims
+ *  ownership of that section so that the text can be loaded in to this mode.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 forward Text_RefreshLoaded();
 
@@ -457,7 +457,7 @@ public Text_RefreshLoaded() <y_text_ending:n>
 }
 
 /*-------------------------------------------------------------------------*//**
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_AddLocal(buffer[], hash)
 {
@@ -474,7 +474,7 @@ static stock Text_AddLocal(buffer[], hash)
 }
 
 /*-------------------------------------------------------------------------*//**
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 forward Text_INILoad(offset, tag[], name[], value[]);
 
@@ -657,7 +657,7 @@ public Text_INILoad(offset, tag[], name[], value[])
 }
 
 /*-------------------------------------------------------------------------*//**
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_LoadLocals()
 {
@@ -710,10 +710,10 @@ static stock Text_LoadLocals()
 }
 
 /*-------------------------------------------------------------------------*//**
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 /*-------------------------------------------------------------------------*//**
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 forward Text_CheckLoad(buffer[], hash);
 
@@ -755,19 +755,19 @@ public Text_CheckLoad(buffer[], hash) <y_text_ending:n>
  * <param name="label">The 3D label style of the string.</param>
  * <param name="len2">The length of the 3D array.</param>
  * <remarks>
- * 	This function is used to pass data from the owner script to the script
- * 	which is doing the display.  It passes the string to format (as an array,
- * 	not as a string, to keep the non-standard characters).  A copy of the style
- * 	data, any 3D text label style data, the index and the master ID.  Note that
- * 	TD data isn't handled here - if there is need to use a text draw the script
- * 	will have to call to the remote script for display functions.  TD data is
- * 	loaded in all scripts where it is relevant.  This does mean that if people
- * 	modify a style we need to modify it in ALL scripts.
- * 	
-	TODO: Modify the y_text system to store copies of required strings in all
- * 	modes, just because it's slightly better.
+ *  This function is used to pass data from the owner script to the script
+ *  which is doing the display.  It passes the string to format (as an array,
+ *  not as a string, to keep the non-standard characters).  A copy of the style
+ *  data, any 3D text label style data, the index and the master ID.  Note that
+ *  TD data isn't handled here - if there is need to use a text draw the script
+ *  will have to call to the remote script for display functions.  TD data is
+ *  loaded in all scripts where it is relevant.  This does mean that if people
+ *  modify a style we need to modify it in ALL scripts.
+ *
+ *  TODO: Modify the y_text system to store copies of required strings in all
+ *  modes, just because it's slightly better.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 forward Text_ReturnTheText(master, index, str[], len0, style[E_STYLE_DATA], len1, label[E_3D_DATA], len2);
 
@@ -786,12 +786,12 @@ public Text_ReturnTheText(master, index, str[], len0, style[E_STYLE_DATA], len1,
  * <param name="file">File to check.</param>
  * <param name="str">Section name to check.</param>
  * <returns>
- * 	Does this script own the named section in the current file?
+ *  Does this script own the named section in the current file?
  * </returns>
  * <remarks>
- * 	Sets "YSI_g_sReturnText" for use in "_Text_LookupName" too.
+ *  Sets "YSI_g_sReturnText" for use in "_Text_LookupName" too.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock _Text_CheckOwnership(file[], str[])
 {
@@ -803,16 +803,16 @@ stock _Text_CheckOwnership(file[], str[])
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Name of the string to look up.</param>
  * <returns>
- * 	Slot storing the pointers for the named section.
+ *  Slot storing the pointers for the named section.
  * </returns>
  * <remarks>
- * 	Assumes this script owns the section based on previously having called
- * 	"_Text_CheckOwnership".  This is assumed as both functions are called from
- * 	only y_styles (hence the private naming convention).  Note that the string
- * 	"YSI_g_sReturnText" is set in "_Text_CheckOwnership" because we make
- * 	guarantees about the order in which these functions are called.
+ *  Assumes this script owns the section based on previously having called
+ *  "_Text_CheckOwnership".  This is assumed as both functions are called from
+ *  only y_styles (hence the private naming convention).  Note that the string
+ *  "YSI_g_sReturnText" is set in "_Text_CheckOwnership" because we make
+ *  guarantees about the order in which these functions are called.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock _Text_LookupName(name[])
 {
@@ -835,11 +835,11 @@ stock _Text_LookupName(name[])
  * <param name="str">String to be returned.</param>
  * <param name="len0">The length of the string.</param>
  * <remarks>
- * 	This function, along with _Text_RemoteSingle, is used to get a single string
- * 	from a remote script when the exact ID is known in advance and no other data
- * 	like stlyes are required.
+ *  This function, along with _Text_RemoteSingle, is used to get a single string
+ *  from a remote script when the exact ID is known in advance and no other data
+ *  like stlyes are required.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 forward _Text_ReturnSingle(str[], len0);
 
@@ -866,7 +866,7 @@ public _Text_RemoteSingle(master, id)
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="y_text_get_text : y" />
  * <transition keep="true" target="y_text_get_text : n" />
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock _Text_GetPointer(master, id)
 {
@@ -899,9 +899,9 @@ stock _Text_GetPointer(master, id)
  * <param name="nh">Hash of the string name to find.</param>
  * <param name="l">Language in which to get the text.</param>
  * <remarks>
- * 	Gets a string in a language from a hash and a text set.
+ *  Gets a string in a language from a hash and a text set.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 forward Text_GetStandard(search[], nh, Language:l);
 
@@ -969,18 +969,18 @@ public Text_GetStandard(search[], nh, Language:l)
  * <param name="name">The text entry to look for.</param>
  * <param name="l">The language to get.</param>
  * <returns>
- * 	The specified string in the specified language.
+ *  The specified string in the specified language.
  * </returns>
  * <remarks>
- * 	Uses "YSI_g_sReturnText" instead of a normal return because this may call
- * 	remote scripts which will need to return a standardised string as an array
- * 	to preserve all the non-standard characters (passing data as a string using
- * 	__CallRemoteFunction packs the string, which we don't want).
+ *  Uses "YSI_g_sReturnText" instead of a normal return because this may call
+ *  remote scripts which will need to return a standardised string as an array
+ *  to preserve all the non-standard characters (passing data as a string using
+ *  __CallRemoteFunction packs the string, which we don't want).
  * </remarks>
  * <transition keep="true" target="y_text_get_text : y" />
  * <transition keep="true" target="y_text_get_text : n" />
  * <transition keep="true" target="y_text_get_text : n" />
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 // Get the loaded standardised version of this string.
 //forward Text_GetStandard(start[] name[], Language:l);
@@ -1036,7 +1036,7 @@ static stock Text_GetText(search[], name[], Language:l)
 }
 
 /*-------------------------------------------------------------------------*//**
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 // To be public.
 //stock Text_GetProvider(search[])
@@ -1067,7 +1067,7 @@ static stock Text_FindEntry(start, hash)
 }
 
 /*-------------------------------------------------------------------------*//**
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_AddEntry(set, name[], value[], hash)
 {
@@ -1131,7 +1131,7 @@ static stock Text_AddEntry(set, name[], value[], hash)
 }
 
 /*-------------------------------------------------------------------------*//**
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_GetFreeSlot()
 {
@@ -1155,10 +1155,10 @@ static stock Text_GetFreeSlot()
 /*-------------------------------------------------------------------------*//**
  * <param name="len">Length to make the array slot.</param>
  * <remarks>
- * 	Adjusts the first index table in "YSI_g_sTextStrings" such that the next
- * 	call to "Text_GetFreeSlot" will point to a non-zero length target string.
+ *  Adjusts the first index table in "YSI_g_sTextStrings" such that the next
+ *  call to "Text_GetFreeSlot" will point to a non-zero length target string.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_UpdateFreeSlot(len)
 {
@@ -1197,10 +1197,10 @@ static stock Text_UpdateFreeSlot(len)
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- * 	Prints all the strings loaded by the system, including their data offsets
- * 	and storage array lengths (cunning tightly packed array).
+ *  Prints all the strings loaded by the system, including their data offsets
+ *  and storage array lengths (cunning tightly packed array).
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Text_DebugAllText()
 {
@@ -1239,10 +1239,10 @@ static stock Text_GetCurNextOffset(i, &cur, &next)
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- * 	Bypass run-time OOB errors when -d0 is disabled.  Set the initial "next"
- * 	pointer on the end of the string.
+ *  Bypass run-time OOB errors when -d0 is disabled.  Set the initial "next"
+ *  pointer on the end of the string.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_DoLinkedText(entry[], add, len)
 {
@@ -1253,10 +1253,10 @@ static stock Text_DoLinkedText(entry[], add, len)
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- * 	Bypass run-time OOB errors when -d0 is disabled.  Get and set the "next"
- * 	pointer on the end of the string.
+ *  Bypass run-time OOB errors when -d0 is disabled.  Get and set the "next"
+ *  pointer on the end of the string.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_UpdateLinkedText(entry[], add, len)
 {
@@ -1268,10 +1268,10 @@ static stock Text_UpdateLinkedText(entry[], add, len)
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- * 	Bypass run-time OOB errors when -d0 is disabled.  Get the "next" pointer on
- * 	the end of the string.
+ *  Bypass run-time OOB errors when -d0 is disabled.  Get the "next" pointer on
+ *  the end of the string.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_GetLinkedText(entry[], &ret, len)
 {
@@ -1285,10 +1285,10 @@ static stock Text_GetLinkedText(entry[], &ret, len)
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- * 	Bypass run-time OOB errors when -d0 is disabled.  Check if there is a "next"
- * 	pointer.
+ *  Bypass run-time OOB errors when -d0 is disabled.  Check if there is a "next"
+ *  pointer.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_HasLinkedText(entry[], len)
 {
@@ -1296,7 +1296,7 @@ static stock Text_HasLinkedText(entry[], len)
 }
 
 /*-------------------------------------------------------------------------*//**
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_GetFreeEntry()
 {
@@ -1321,10 +1321,10 @@ static stock Text_GetFreeEntry()
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- * 	Checks if the string we are trying to display is owned by the local script,
- * 	and if so just use that pointer and text directly.
+ *  Checks if the string we are trying to display is owned by the local script,
+ *  and if so just use that pointer and text directly.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_IsLocalOwner(search[], ident[], &len)
 {
@@ -1390,12 +1390,12 @@ static stock
  * <param name="ident">The name of the string to look for (or the string itself).</param>
  * <param name="">All the parameters to pass to the string.</param>
  * <remarks>
- * 	Main entry point for showing any sort of code to anyone.
- * 	
-	TODO: Change the code to push the parameters to Format_Render only once and
- * 	reuse the resulting stack.
+ *  Main entry point for showing any sort of code to anyone.
+ *
+ *  TODO: Change the code to push the parameters to Format_Render only once and
+ *  reuse the resulting stack.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock _Text_Send(@PlayerSet:players, search[], ident[], GLOBAL_TAG_TYPES:...)
 {
@@ -1622,9 +1622,9 @@ stock _Text_Send(@PlayerSet:players, search[], ident[], GLOBAL_TAG_TYPES:...)
  * <param name="ident">The name of the string to look for (or the string itself).</param>
  * <param name="">All the parameters to pass to the string.</param>
  * <remarks>
- * 	This function renders some text to an array, but doesn't display it.
+ *  This function renders some text to an array, but doesn't display it.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Text_GetPreRender(Language:lang)
 {
@@ -1836,7 +1836,7 @@ static stock
 	YSI_g_sButton2Text[YSI_MAX_LANGUAGES][16];
 
 /*-------------------------------------------------------------------------*//**
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 //stock @PlayerArray:players<MAX_PLAYERS>, callback[], csearch[], cident[], isearch[], iident[], b1search[], b1ident[], b2search[], b2ident[], GLOBAL_TAG_TYPES:...)
 //stock _Text_MessageBox(@PlayerArray:players<MAX_PLAYERS>, callback[], csearch[], cident[], isearch[], iident[], b1search[], b1ident[], b2search[], b2ident[], GLOBAL_TAG_TYPES:...)

@@ -5,16 +5,16 @@
 
 /**
  * <library>
- * 					y_users
+ *                  y_users
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Provides access to a user system for registering and saving users.
+ *  Provides access to a user system for registering and saving users.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	2.2
+ *  2.2
 
  *//** *//*
 Legal:

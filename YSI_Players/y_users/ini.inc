@@ -120,9 +120,9 @@ static stock
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who changed name.</param>
  * <remarks>
- * 	Reload a player's basic data when they change name.
+ *  Reload a player's basic data when they change name.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Player_Reload(playerid)
 {
@@ -143,9 +143,9 @@ stock Player_SetPreload(playerid, data[E_USER_PRELOAD])
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who is logging in.</param>
  * <remarks>
- * 	Loads a player's data to an array.
+ *  Loads a player's data to an array.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 #if _YSI_PLUGINS_MYSQL == 7
 	public _Player_Preload(ret[E_USER_PRELOAD])
@@ -431,11 +431,11 @@ stock Player_GetYID(playerid)
  * <param name="password">Password they entered.</param>
  * <param name="f">Show the failed to login message?</param>
  * <remarks>
- * 	Tries to log in a player - hashes and checks their password and if it's
- * 	right calls the core login code.  It doesn't matter WHICH script does this
- * 	as they ALL get called and ALL track the login status of a player.
+ *  Tries to log in a player - hashes and checks their password and if it's
+ *  right calls the core login code.  It doesn't matter WHICH script does this
+ *  as they ALL get called and ALL track the login status of a player.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 //stock Player_TryLogin(playerid, string:password[], f = 0)
 //{
@@ -494,9 +494,9 @@ global Player_TryLogin(playerid, string:password[])
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who is logging in.</param>
  * <remarks>
- * 	Like "Player_TryLogin" but doesn't take a password so always works.
+ *  Like "Player_TryLogin" but doesn't take a password so always works.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 global Player_ForceLogin(playerid)
 {
@@ -555,9 +555,9 @@ global Player_ForceLogin(playerid)
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Item to remove.</param>
  * <remarks>
- * 	Wrapper for Player_AddToBuffer for removing data.
+ *  Wrapper for Player_AddToBuffer for removing data.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Player_RemoveEntry(name[])
 {
@@ -568,9 +568,9 @@ stock Player_RemoveEntry(name[])
  * <param name="name">Data name.</param>
  * <param name="data">Data.</param>
  * <remarks>
- * 	Wrapper for Player_AddToBuffer for strings.
+ *  Wrapper for Player_AddToBuffer for strings.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Player_WriteString(name[], data[])
 {
@@ -590,9 +590,9 @@ stock Player_WriteArray(const name[], data[], len)
  * <param name="name">Data name.</param>
  * <param name="data">Integer data.</param>
  * <remarks>
- * 	Wrapper for Player_AddToBuffer for integers.
+ *  Wrapper for Player_AddToBuffer for integers.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Player_WriteInt(name[], data)
 {
@@ -603,9 +603,9 @@ stock Player_WriteInt(name[], data)
  * <param name="name">Data name.</param>
  * <param name="data">Hex data.</param>
  * <remarks>
- * 	Wrapper for Player_AddToBuffer for integers to be written as hex values.
+ *  Wrapper for Player_AddToBuffer for integers to be written as hex values.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Player_WriteHex(name[], data)
 {
@@ -616,9 +616,9 @@ stock Player_WriteHex(name[], data)
  * <param name="name">Data name.</param>
  * <param name="data">Binary data.</param>
  * <remarks>
- * 	Wrapper for Player_AddToBuffer for integers to be written as binary values.
+ *  Wrapper for Player_AddToBuffer for integers to be written as binary values.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Player_WriteBin(name[], data)
 {
@@ -629,9 +629,9 @@ stock Player_WriteBin(name[], data)
  * <param name="name">Data name.</param>
  * <param name="data">Boolean data.</param>
  * <remarks>
- * 	Wrapper for Player_AddToBuffer for booleans.
+ *  Wrapper for Player_AddToBuffer for booleans.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Player_WriteBool(name[], bool:data)
 {
@@ -643,10 +643,10 @@ stock Player_WriteBool(name[], bool:data)
  * <param name="data">Float data.</param>
  * <param name="accuracy">number of decimal places to write.</param>
  * <remarks>
- * 	Wrapper for Player_AddToBuffer for floats.  Uses custom code instead of
- * 	format() as it's actually faster for something simple like this.
+ *  Wrapper for Player_AddToBuffer for floats.  Uses custom code instead of
+ *  format() as it's actually faster for something simple like this.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Player_WriteFloat(name[], Float:data, accuracy = 6)
 {
@@ -693,10 +693,10 @@ stock _Player_ForceSave(playerid, bool:logout = false)
 /*-------------------------------------------------------------------------*//**
  * <param name="pass">Data to hash.</param>
  * <remarks>
- * 	Based on my Dad's hash system but slightly modifed.  Updated for reverse
- * 	compatability with other login systems.  Needs more code for Whirlpool.
+ *  Based on my Dad's hash system but slightly modifed.  Updated for reverse
+ *  compatability with other login systems.  Needs more code for Whirlpool.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Player_HashPass(pass[], target[])
 {
@@ -787,13 +787,13 @@ stock Anything7()
  * <param name="playerid">Player who is registering.</param>
  * <param name="password">The password they entered.</param>
  * <remarks>
- * 	Register the player with the given password if there is no-one else with the
- * 	name already.  Or log them in if the username and password match an existing
- * 	account.  Note that there is no "Player_ForceRegister" as it would do the
- * 	same thing with no less parameters (a password MUST be given to write in the
- * 	file).
+ *  Register the player with the given password if there is no-one else with the
+ *  name already.  Or log them in if the username and password match an existing
+ *  account.  Note that there is no "Player_ForceRegister" as it would do the
+ *  same thing with no less parameters (a password MUST be given to write in the
+ *  file).
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 global Player_TryRegister(playerid, string:password[])
 {
@@ -938,10 +938,10 @@ global Player_ChangeLanguage(playerid, string:code[])
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player whose data should be saved.</param>
  * <remarks>
- * 	When a player's preload data is modifed (new bit data or changed password),
- * 	it needs to be written back out to file.
+ *  When a player's preload data is modifed (new bit data or changed password),
+ *  it needs to be written back out to file.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 static stock Player_RewritePreload(playerid)
 {
@@ -1044,9 +1044,9 @@ static stock Player_RewritePreload(playerid)
  * <param name="other">A player name already in the group.</param>
  * <param name="password">The password of the group.</param>
  * <remarks>
- * 	Links a player with an existing player such that they share all stats.
+ *  Links a player with an existing player such that they share all stats.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 global Player_TryGroup(playerid, string:other[], string:password[])
 {
@@ -1151,10 +1151,10 @@ global Player_TryGroup(playerid, string:other[], string:password[])
  * <param name="playerid">Player who is joining a group.</param>
  * <param name="other">A player name already in the group.</param>
  * <remarks>
- * 	Like "Player_TryGroup", but doesn't take a password and instead just uses
- * 	the password of the old player (hashed).
+ *  Like "Player_TryGroup", but doesn't take a password and instead just uses
+ *  the password of the old player (hashed).
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 global Player_ForceGroup(playerid, string:other[])
 {

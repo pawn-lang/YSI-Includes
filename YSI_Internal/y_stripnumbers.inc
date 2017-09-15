@@ -5,22 +5,22 @@
 
 /*+
  * <library>
- * 					y_stripnumbers
+ *                  y_stripnumbers
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Removes tag overrides which are actually numbers.  This allows for:
- * 		
-		uvar g_a[MAX_PLAYERS][E_SOME_ENUM];
- * 		uvar g_b[MAX_PLAYERS][42];
- * 		
-	Without stripping you would end with code doing "42:0" or getting a tag
- * 	mismatch on "E_SOME_ENUM", both of which are problems.
+ *  Removes tag overrides which are actually numbers.  This allows for:
+ *
+ *      uvar g_a[MAX_PLAYERS][E_SOME_ENUM];
+ *      uvar g_b[MAX_PLAYERS][42];
+ *
+ *  Without stripping you would end with code doing "42:0" or getting a tag
+ *  mismatch on "E_SOME_ENUM", both of which are problems.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:

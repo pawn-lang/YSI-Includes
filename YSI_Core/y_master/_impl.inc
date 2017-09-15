@@ -337,7 +337,7 @@ forward _YCM();
  * <transition keep="true" target="_YCM : u" />
  * <transition keep="true" target="_YCM : y" />
  * <transition keep="true" target="_YCM : n" />
- *//*-----------------------------------------------------------------**/
+ *//*----------------------------------------------------------------**/
 
 static stock Master_GetCurrentMaster()
 {
@@ -729,7 +729,7 @@ public OnMasterSystemInit()
  * <transition keep="true" target="_YCM : p" source="_YCM : y" />
  * <transition keep="true" target="_YCM : n" source="_YCM : y" />
  * <transition keep="true" target="_YCM : y" source="_YCM : u" />
- *//*-----------------------------------------------------------------**/
+ *//*----------------------------------------------------------------**/
 
 public _YCM() <_YCM:y>
 {

@@ -5,16 +5,16 @@
 
 /*+
  * <library>
- * 					y_globaltags
+ *                  y_globaltags
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Declare GLOBAL_TAG_TYPES to define many tag types for function calls.
+ *  Declare GLOBAL_TAG_TYPES to define many tag types for function calls.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.1
+ *  0.1
 
  *//** *//*
 Legal:

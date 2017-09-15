@@ -5,16 +5,16 @@
 
 /**
  * <library>
- * 					y_svar
+ *                  y_svar
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Declares data to be automatically saved and loaded for the whole server.
+ *  Declares data to be automatically saved and loaded for the whole server.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.1
+ *  0.1
 
  *//** *//*
 Legal:

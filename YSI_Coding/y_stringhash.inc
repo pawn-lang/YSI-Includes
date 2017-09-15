@@ -5,28 +5,28 @@
 
 /**
  * <library>
- * 					y_stringhash
+ *                  y_stringhash
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Allows you to hash strings at compile time to use them in a switch.
+ *  Allows you to hash strings at compile time to use them in a switch.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	2.0
+ *  2.0
  * <section>
- * 	Functions
+ *  Functions
  * </section>
  * <subsection>
  * Stock
  * </subsection><ul>
- * 	<symbol name="YHash">Generate a string hash at run time.</symbol>
+ *  <symbol name="YHash">Generate a string hash at run time.</symbol>
  * </ul><section>
- * 	Definitions
+ *  Definitions
  * </section><ul>
- * 	<symbol name="_H">Generate a string hash at compile time.</symbol>
- * 	<symbol name="_I">Generate a case insensitive string hash at compile time.</symbol>
+ *  <symbol name="_H">Generate a string hash at compile time.</symbol>
+ *  <symbol name="_I">Generate a case insensitive string hash at compile time.</symbol>
  * </ul>
  *//** *//*
 Legal:
@@ -317,18 +317,18 @@ enum e_HASH_TYPE
  * <param name="str">The string to hash.</param>
  * <param name="sensitive">Wether the hash is case sensitive or not.</param>
  * <returns>
- * 	The reverse Bernstein hash of the string.
+ *  The reverse Bernstein hash of the string.
  * </returns>
  * <remarks>
- * 	Based on Bernstein hash, but backwards to match the macros.  The only
- * 	characters which can be used in the compile time version of this code are:
- * 	a-z, A-Z, 0-9, _ and space.
- * 
-native Hash(str[]);
- * 
-	NOW FORWARD AGAIN.
+ *  Based on Bernstein hash, but backwards to match the macros.  The only
+ *  characters which can be used in the compile time version of this code are:
+ *  a-z, A-Z, 0-9, _ and space.
+ *
+ * native Hash(str[]);
+ *
+ *  NOW FORWARD AGAIN.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstein, len = -1, pack = false)
 {

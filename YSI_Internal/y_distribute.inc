@@ -5,17 +5,17 @@
 
 /*+
  * <library>
- * 					y_distribute
+ *                  y_distribute
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	This library simplifies the task of sending data to the new master script
- * 	when one takes over from another.
+ *  This library simplifies the task of sending data to the new master script
+ *  when one takes over from another.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.1
+ *  0.1
 
  *//** *//*
 Legal:
@@ -174,12 +174,12 @@ stock Distribute_Do(func[], GLOBAL_TAG_TYPES:...)
  * <param name="masters">This data's masters.</param>
  * <param name="">The data and array sizes.</param>
  * <remarks>
- * 	This function takes the data from a given slot in an array, along with the
- * 	master IDs for that data.  If the data is defined in more than the current
- * 	script, then this script is removed and the remainder of the data is sent to
- * 	the new master system.
+ *  This function takes the data from a given slot in an array, along with the
+ *  master IDs for that data.  If the data is defined in more than the current
+ *  script, then this script is removed and the remainder of the data is sent to
+ *  the new master system.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Distribute_So(func[], idx, Bit:masters[], GLOBAL_TAG_TYPES:...)
 {
@@ -214,12 +214,12 @@ stock Distribute_So(func[], idx, Bit:masters[], GLOBAL_TAG_TYPES:...)
 /*-------------------------------------------------------------------------*//*+
  * <param name="str">String to get the size of.</param>
  * <returns>
- * 	The number of BYTES this string takes up including the NULL.
+ *  The number of BYTES this string takes up including the NULL.
  * </returns>
  * <remarks>
- * 	Caters for both packed and unpacked strings.
+ *  Caters for both packed and unpacked strings.
  * </remarks>
- *//*-------------------------------------------------------------------------**/
+ *//*------------------------------------------------------------------------**/
 
 stock Distribute_To(from[], ss, GLOBAL_TAG_TYPES:...)
 {

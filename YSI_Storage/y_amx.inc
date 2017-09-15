@@ -5,18 +5,18 @@
 
 /**
  * <library>
- * 					y_amx
+ *                  y_amx
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	Allows a script access to information about itself, such as function names.
- * 	This can be used for a range of things, including automatic callback hooking
- * 	and testing.
+ *  Allows a script access to information about itself, such as function names.
+ *  This can be used for a range of things, including automatic callback hooking
+ *  and testing.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:

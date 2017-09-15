@@ -5,17 +5,17 @@
 
 /*+
  * <library>
- * 					y_gamerzps
+ *                  y_gamerzps
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	This file unites various YSI features with Gamer_Z's GPS (Gamer_Z's
- * 	Positioning System) plugin so that you can use hooks and inlines with it.
+ *  This file unites various YSI features with Gamer_Z's GPS (Gamer_Z's
+ *  Positioning System) plugin so that you can use hooks and inlines with it.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	0.1
+ *  0.1
 
  *//** *//*
 Legal:

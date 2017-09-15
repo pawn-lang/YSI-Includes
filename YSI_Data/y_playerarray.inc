@@ -5,18 +5,18 @@
 
 /**
  * <library>
- * 					y_playerarray
+ *                  y_playerarray
  * </library>
  * <section>
- * 	Description
+ *  Description
  * </section>
- * 	This code provides arrays of players who can do things.  This is for support
- * 	of the text system which can take arrays of player ids, bit arrays or just a
- * 	single ID.
+ *  This code provides arrays of players who can do things.  This is for support
+ *  of the text system which can take arrays of player ids, bit arrays or just a
+ *  single ID.
  * <section>
- * 	Version
+ *  Version
  * </section>
- * 	1.0
+ *  1.0
 
  *//** *//*
 Legal:
