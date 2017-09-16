@@ -44,7 +44,7 @@
 	.symbol { PADDING-RIGHT: 8px }
 	OL { MARGIN-TOP: 0.5em; }
 	SPAN.paraminfo { FONT-WEIGHT:Bold; COLOR: #336699; }
-	H1 { COLOR: #336699; FONT-SIZE: x-large; MARGIN-BOTTOM: 0.5em; MARGIN-TOP: 1em; PADDING-LEFT: 4px }
+	H1 { COLOR: #4e4887; FONT-SIZE: x-large; MARGIN-BOTTOM: 0.5em; MARGIN-TOP: 1em; PADDING-LEFT: 4px }
 	H2 { BORDER-RIGHT: #4e4887 8px solid; BORDER-TOP: #4e4887 2px solid; COLOR: #4e4887; MARGIN-BOTTOM: 0.5em; MARGIN-TOP: 1em; }
 	H2.general { BORDER: none; }
 	H3 { COLOR: #4e4887; FONT-SIZE: x-small; MARGIN-BOTTOM: 0.5em }
@@ -305,9 +305,9 @@
 
 <xsl:template match="para"><hr class="para"/><xsl:apply-templates/></xsl:template>
 
-<xsl:template match="section"><h2 class="general"><xsl:apply-templates/></h2></xsl:template>
+<xsl:template match="section"><h1 class="general"><xsl:apply-templates/></h1></xsl:template>
 
-<xsl:template match="subsection"><h3 class="general"><xsl:apply-templates/></h3></xsl:template>
+<xsl:template match="subsection"><h2 class="general"><xsl:apply-templates/></h2></xsl:template>
 
 <xsl:template match="library">
 	<div class="library">
@@ -326,7 +326,20 @@
 <xsl:template match="indent">&#160;&#160;&#160;&#160;</xsl:template>
 
 <xsl:template match="a">
-	<a><xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute><xsl:value-of select="@href"/></a>
+	<xsl:choose>
+		<xsl:when test="node()">
+			<a>
+				<xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute>
+				<xsl:apply-templates/>
+			</a>
+		</xsl:when>
+		<xsl:otherwise>
+			<a>
+				<xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute>
+				<xsl:value-of select="@href"/>
+			</a>
+		</xsl:otherwise>
+	</xsl:choose>
 </xsl:template>
 
 <xsl:template match="symbolref">
@@ -354,8 +367,10 @@
 	<xsl:if test="@fixed">
 		<p><b>Fixed in <xsl:value-of select="@fixed"/></b></p>
 	</xsl:if>
-	<xsl:if test="@default">
-		<p><b>Disabled By Default</b></p>
+	<xsl:if test="@disabled">
+		<xsl:if test="@disabled='true'">
+			<p><b>Disabled By Default</b></p>
+		</xsl:if>
 	</xsl:if>
 
 	<h3>Problem</h3>
@@ -386,10 +401,10 @@
 	<li class="author">
 		<xsl:choose>
 			<xsl:when test="@href">
-				<a><xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute><xsl:value-of select="@name"/></a>
+				<a><xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute><xsl:apply-templates/></a>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:value-of select="@name"/>
+				<xsl:apply-templates/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</li>
