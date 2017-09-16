@@ -329,8 +329,8 @@ Optional plugins:
  *
  * <subsection>Special Iterators</subsection>
  *
- *  *//** 
- * </library>*/
+ * </library>
+ *//** */
 
 // Set `FOREACH_VERSION` as this file's version.
 #if defined FOREACH_VERSION
