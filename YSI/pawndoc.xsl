@@ -313,5 +313,56 @@
 </xsl:template>
 
 
+<!-- fixes.inc -->
+
+<xsl:template match="fix">
+	<li>
+		<h3><xsl:value-of select="@name"/></h3>
+		<xsl:if test="@fixed">
+			<b>Fixed in <xsl:value-of select="@fixed"/></b>
+		</xsl:if>
+		<xsl:if test="@default">
+			<b>Disabled By Default</b>
+		</xsl:if>
+		<h4>Problem</h4><xsl:apply-templates select="problem"/>
+		<h4>Solution</h4><xsl:apply-templates select="solution"/>
+		<xsl:if test="see">
+			<h4>See</h4>
+			<xsl:apply-templates select="see"/>
+		</xsl:if>
+		<xsl:if test="post">
+			<h4>Author(s)</h4>
+			<xsl:apply-templates select="author"/>
+		</xsl:if>
+		<xsl:if test="post">
+			<h4>Post(s)</h4>
+			<xsl:apply-templates select="post"/>
+		</xsl:if>
+	</li>
+</xsl:template>
+
+<xsl:template match="post">
+	<a><xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute><xsl:value-of select="@href"/></a>
+</xsl:template>
+<xsl:template match="problem">
+	<xsl:apply-templates/>
+</xsl:template>
+<xsl:template match="solution">
+	<xsl:apply-templates/>
+</xsl:template>
+<xsl:template match="see">
+	<a><xsl:attribute name="href">#<xsl:apply-templates/></xsl:attribute><code><xsl:apply-templates/></code></a>
+</xsl:template>
+<xsl:template match="author">
+	<xsl:choose>
+		<xsl:when test="@href">
+			<a><xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute><xsl:value-of select="@name"/></a>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:value-of select="@name"/>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
 </xsl:stylesheet>
 

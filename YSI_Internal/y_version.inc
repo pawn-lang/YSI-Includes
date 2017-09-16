@@ -18,7 +18,7 @@
  * <section>
  *  Hooks
  * </section><ul>
- * <li>OnGameModeInit</li>
+ *  <symbol name="OnGameModeInit">Initialises things.</symbol>
  * </ul>
  *//** *//*
 Legal:

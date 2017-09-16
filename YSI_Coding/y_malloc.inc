@@ -76,12 +76,12 @@
  *  <symbol name="YSI_gMallocMemory">Stores the data (may be global).</symbol>
  *  <symbol name="_YSI_g_sUnusedStart">Start of free memory.</symbol>
  * </ul><section>Compile options</section><ul>
- * <li>	MALLOC_MEMORY - Number of cells to reserve.</li>
- *  MALLOC_MEMORY_KB - Number of killobytes to reserve.
- *  MALLOC_MEMORY_B - Number of bytes to reserve.
- *  MALLOC_MEMORY_MB - Number of megabytes to reserve.
- *  YSI_MALLOC_SECURE - Use enhanced bounds checking.
- *  YSI_MALLOC_NO_SHORT - Avoid conflicts with mget/mset.
+ *  <symbol name="MALLOC_MEMORY">Number of cells to reserve.</symbol>
+ *  <symbol name="MALLOC_MEMORY_KB">Number of killobytes to reserve.</symbol>
+ *  <symbol name="MALLOC_MEMORY_B">Number of bytes to reserve.</symbol>
+ *  <symbol name="MALLOC_MEMORY_MB">Number of megabytes to reserve.</symbol>
+ *  <symbol name="YSI_MALLOC_SECURE">Use enhanced bounds checking.</symbol>
+ *  <symbol name="YSI_MALLOC_NO_SHORT">Avoid conflicts with mget/mset.</symbol>
  * </ul>
  *//** *//*
 Legal:
