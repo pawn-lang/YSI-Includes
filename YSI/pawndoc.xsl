@@ -51,7 +51,9 @@
 	H4 { COLOR: #4e4887; FONT-SIZE: x-small; FONT-STYLE: italic; MARGIN-BOTTOM: 0.5em; DISPLAY: inline; MARGIN: 50px 8px 0px 0px }
 	H5 { COLOR: #4e4887; FONT-SIZE: xx-small; MARGIN-BOTTOM: 0.5em }
 	H6 { COLOR: #4e4887; FONT-SIZE: xx-small; FONT-STYLE: italic; MARGIN-BOTTOM: 0.5em }
-	H1.file { BORDER-RIGHT: #4e4887 8px solid; BORDER-TOP: #4e4887 2px solid; COLOR: #4e4887; MARGIN-BOTTOM: 0.5em; MARGIN-TOP: 1em; }
+	DIV.library { TEXT-ALIGN: center; BORDER-RIGHT: #4e4887 8px solid; BORDER-TOP: #4e4887 2px solid; COLOR: #4e4887; MARGIN-BOTTOM: 0.5em; MARGIN-TOP: 1em; }
+	H1.library { TEXT-ALIGN: center; COLOR: #4e4887; MARGIN-TOP: 0.3em; }
+	H2.library { TEXT-ALIGN: center; BORDER: none; }
 	PRE { BACKGROUND-COLOR: #ddeeff; FONT-SIZE: small; MARGIN: 1em }
 </STYLE>
 </HEAD>
@@ -307,7 +309,19 @@
 
 <xsl:template match="subsection"><h3 class="general"><xsl:apply-templates/></h3></xsl:template>
 
-<xsl:template match="library"><h1 class="file"><span style="float:right; padding-right:2px">library</span><xsl:apply-templates/></h1></xsl:template>
+<xsl:template match="library">
+	<div class="library">
+		<span style="float:right; padding-right:2px; height: 6em"><h1 class="library">library</h1></span>
+		<h1 class="library">
+			<xsl:value-of select="@name"/>
+		</h1>
+		<xsl:if test="@description">
+			<h2 class="library"><xsl:value-of select="@description"/></h2>
+		</xsl:if>
+	</div>
+	<xsl:apply-templates/>
+</xsl:template>
+
 <xsl:template match="br"><br /></xsl:template>
 <xsl:template match="indent">&#160;&#160;&#160;&#160;</xsl:template>
 
@@ -386,6 +400,8 @@
 <xsl:template match="solution">
 	<p><xsl:apply-templates/></p>
 </xsl:template>
+
+<xsl:template match="fixeslist"><xsl:apply-templates/></xsl:template>
 
 <xsl:template match="fixes">
 	<li class="fixes"><a><xsl:attribute name="href">#FIX_<xsl:apply-templates/></xsl:attribute><xsl:apply-templates/></a></li>
