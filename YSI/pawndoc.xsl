@@ -36,6 +36,10 @@
 	LI.dependency { DISPLAY: inline; PADDING-RIGHT: 8px }
 	LI.seealso { DISPLAY: inline; PADDING-RIGHT: 8px }
 	LI.attribute { DISPLAY: inline; PADDING-RIGHT: 8px }
+	LI.post { DISPLAY: inline; PADDING-RIGHT: 8px }
+	LI.author { DISPLAY: inline; PADDING-RIGHT: 8px }
+	LI.fixes { DISPLAY: inline; PADDING-RIGHT: 8px }
+	LI.see { DISPLAY: inline; PADDING-RIGHT: 8px }
 	LI.changelog { DISPLAY: inline; }
 	.symbol { PADDING-RIGHT: 8px }
 	OL { MARGIN-TOP: 0.5em; }
@@ -44,7 +48,7 @@
 	H2 { BORDER-RIGHT: #4e4887 8px solid; BORDER-TOP: #4e4887 2px solid; COLOR: #4e4887; MARGIN-BOTTOM: 0.5em; MARGIN-TOP: 1em; }
 	H2.general { BORDER: none; }
 	H3 { COLOR: #4e4887; FONT-SIZE: x-small; MARGIN-BOTTOM: 0.5em }
-	H4 { COLOR: #4e4887; FONT-SIZE: x-small; FONT-STYLE: italic; MARGIN-BOTTOM: 0.5em }
+	H4 { COLOR: #4e4887; FONT-SIZE: x-small; FONT-STYLE: italic; MARGIN-BOTTOM: 0.5em; DISPLAY: inline; MARGIN: 50px 8px 0px 0px }
 	H5 { COLOR: #4e4887; FONT-SIZE: xx-small; MARGIN-BOTTOM: 0.5em }
 	H6 { COLOR: #4e4887; FONT-SIZE: xx-small; FONT-STYLE: italic; MARGIN-BOTTOM: 0.5em }
 	H1.file { BORDER-RIGHT: #4e4887 8px solid; BORDER-TOP: #4e4887 2px solid; COLOR: #4e4887; MARGIN-BOTTOM: 0.5em; MARGIN-TOP: 1em; }
@@ -84,6 +88,10 @@
 				<h3>Used by</h3>
 				<ul><xsl:apply-templates select="referrer"/></ul>
 			</xsl:if>
+			<xsl:if test="fixes">
+				<h3>Fixes</h3>
+				<ul><xsl:apply-templates select="fixes"/></ul>
+			</xsl:if>
 			<xsl:if test="dependency">
 				<h3>Depends on</h3>
 				<ul><xsl:apply-templates select="dependency"/></ul>
@@ -107,6 +115,10 @@
 			<xsl:if test="referrer">
 				<h3>Used by</h3>
 				<ul><xsl:apply-templates select="referrer"/></ul>
+			</xsl:if>
+			<xsl:if test="fixes">
+				<h3>Fixes</h3>
+				<ul><xsl:apply-templates select="fixes"/></ul>
 			</xsl:if>
 			<xsl:if test="dependency">
 				<h3>Depends on</h3>
@@ -134,6 +146,10 @@
 			<xsl:if test="referrer">
 				<h3>Used by</h3>
 				<ul><xsl:apply-templates select="referrer"/></ul>
+			</xsl:if>
+			<xsl:if test="fixes">
+				<h3>Fixes</h3>
+				<ul><xsl:apply-templates select="fixes"/></ul>
 			</xsl:if>
 			<xsl:if test="dependency">
 				<h3>Depends on</h3>
@@ -171,6 +187,10 @@
 			<xsl:if test="referrer">
 				<h3>Used by</h3>
 				<ul><xsl:apply-templates select="referrer"/></ul>
+			</xsl:if>
+			<xsl:if test="fixes">
+				<h3>Fixes</h3>
+				<ul><xsl:apply-templates select="fixes"/></ul>
 			</xsl:if>
 			<xsl:if test="dependency">
 				<h3>Depends on</h3>
@@ -316,52 +336,59 @@
 <!-- fixes.inc -->
 
 <xsl:template match="fix">
-	<li>
-		<h3><xsl:value-of select="@name"/></h3>
-		<xsl:if test="@fixed">
-			<b>Fixed in <xsl:value-of select="@fixed"/></b>
-		</xsl:if>
-		<xsl:if test="@default">
-			<b>Disabled By Default</b>
-		</xsl:if>
-		<h4>Problem</h4><xsl:apply-templates select="problem"/>
-		<h4>Solution</h4><xsl:apply-templates select="solution"/>
-		<xsl:if test="see">
-			<h4>See</h4>
-			<xsl:apply-templates select="see"/>
-		</xsl:if>
-		<xsl:if test="post">
-			<h4>Author(s)</h4>
-			<xsl:apply-templates select="author"/>
-		</xsl:if>
-		<xsl:if test="post">
-			<h4>Post(s)</h4>
-			<xsl:apply-templates select="post"/>
-		</xsl:if>
-	</li>
+	<a><xsl:attribute name="name">FIX_<xsl:value-of select="@name"/></xsl:attribute><h2><span style="float:right; padding-right:2px">fix</span><xsl:value-of select="@name"/></h2></a>
+	<xsl:if test="@fixed">
+		<p><b>Fixed in <xsl:value-of select="@fixed"/></b></p>
+	</xsl:if>
+	<xsl:if test="@default">
+		<p><b>Disabled By Default</b></p>
+	</xsl:if>
+
+	<h3>Problem</h3>
+	<xsl:apply-templates select="problem"/>
+	<h3>Solution</h3>
+	<xsl:apply-templates select="solution"/>
+	<xsl:if test="see">
+		<h3>See</h3>
+		<ul><xsl:apply-templates select="see"/></ul>
+	</xsl:if>
+	<xsl:if test="author">
+		<h3>Author(s)</h3>
+		<ul><xsl:apply-templates select="author"/></ul>
+	</xsl:if>
+	<xsl:if test="post">
+		<h3>Post(s)</h3>
+		<ul><xsl:apply-templates select="post"/></ul>
+	</xsl:if>
 </xsl:template>
 
 <xsl:template match="post">
-	<a><xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute><xsl:value-of select="@href"/></a>
-</xsl:template>
-<xsl:template match="problem">
-	<xsl:apply-templates/>
-</xsl:template>
-<xsl:template match="solution">
-	<xsl:apply-templates/>
+	<li class="post"><a><xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute><xsl:value-of select="@href"/></a></li>
 </xsl:template>
 <xsl:template match="see">
-	<a><xsl:attribute name="href">#<xsl:apply-templates/></xsl:attribute><code><xsl:apply-templates/></code></a>
+	<li class="see"><a><xsl:attribute name="href">#<xsl:apply-templates/></xsl:attribute><code><xsl:apply-templates/></code></a></li>
 </xsl:template>
 <xsl:template match="author">
-	<xsl:choose>
-		<xsl:when test="@href">
-			<a><xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute><xsl:value-of select="@name"/></a>
-		</xsl:when>
-		<xsl:otherwise>
-			<xsl:value-of select="@name"/>
-		</xsl:otherwise>
-	</xsl:choose>
+	<li class="author">
+		<xsl:choose>
+			<xsl:when test="@href">
+				<a><xsl:attribute name="href"><xsl:value-of select="@href"/></xsl:attribute><xsl:value-of select="@name"/></a>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="@name"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</li>
+</xsl:template>
+<xsl:template match="problem">
+	<p><xsl:apply-templates/></p>
+</xsl:template>
+<xsl:template match="solution">
+	<p><xsl:apply-templates/></p>
+</xsl:template>
+
+<xsl:template match="fixes">
+	<li class="fixes"><a><xsl:attribute name="href">#FIX_<xsl:apply-templates/></xsl:attribute><xsl:apply-templates/></a></li>
 </xsl:template>
 
 </xsl:stylesheet>
