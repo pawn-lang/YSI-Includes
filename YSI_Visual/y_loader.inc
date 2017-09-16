@@ -1,7 +1,5 @@
 /**
- * <library>
- *                  y_loader
- * </library>
+ * <library name="y_loader">
  * <section>
  *  Description
  * </section>
@@ -55,6 +53,7 @@
  *  <symbol name="YSI_g_sXMLRules">Handle to the XML parse rule set.</symbol>
  *  <symbol name="YSI_g_sCurRace">Handle to the current race being built.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

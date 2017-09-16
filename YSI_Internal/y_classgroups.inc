@@ -4,9 +4,7 @@
 #define _INC_y_classgroups
 
 /*+
- * <library>
- *                  y_classes
- * </library>
+ * <library name="y_classes">
  * <section>
  *  Description
  * </section>
@@ -16,6 +14,7 @@
  *  Version
  * </section>
  *  1.0
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

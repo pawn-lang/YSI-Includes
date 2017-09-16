@@ -4,9 +4,7 @@
 #define _INC_y_vehicledata
 
 /**
- * <library>
- *                  y_vehicledata
- * </library>
+ * <library name="y_vehicledata">
  * <section>
  *  Description
  * </section>
@@ -37,6 +35,7 @@
  *  <symbol name="YSI_gVehicleNames">Names of vehicles.</symbol>
  *  <symbol name="YSI_gVehicleTopSpeed">Top speed of vehicles.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

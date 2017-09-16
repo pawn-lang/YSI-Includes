@@ -30,9 +30,7 @@ RegEx.  I also put the search at the top of this block so it is easier to find
 in the output code.
 -->
 *//*+
- * <library>
- *                  y_compilerdata
- * </library>
+ * <library name="y_compilerdata">
  * <section>
  *  Description
  * </section>
@@ -80,6 +78,7 @@ in the output code.
  *      thing in both cases already.</symbol>
  *  <symbol name="P:D">Wrap a fake function declaration, so macros can be documented.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -4,9 +4,7 @@
 #define _INC_y_bitmap
 
 /**
- * <library>
- *                  y_bitmap
- * </library>
+ * <library name="y_bitmap">
  * <section>
  *  Description
  * </section>
@@ -17,6 +15,7 @@
  *  Version
  * </section>
  *  0.1
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

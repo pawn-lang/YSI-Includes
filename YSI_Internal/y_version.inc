@@ -4,9 +4,7 @@
 #define _INC_y_version
 
 /*+
- * <library>
- *                  y_version
- * </library>
+ * <library name="y_version">
  * <section>
  *  Description
  * </section>
@@ -20,6 +18,7 @@
  * </section><ul>
  *  <symbol name="OnGameModeInit">Initialises things.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

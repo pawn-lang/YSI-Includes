@@ -4,9 +4,7 @@
 #define _INC_y_flooding
 
 /**
- * <library>
- *                  y_flooding
- * </library>
+ * <library name="y_flooding">
  * <section>
  *  Description
  * </section>
@@ -36,6 +34,7 @@
  *  <symbol name="YSI_g_sPlayerIPs">People's stored IPs for speed.</symbol>
  *  <symbol name="YSI_g_sMaxConnections">Data for the script.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

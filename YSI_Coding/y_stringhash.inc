@@ -4,9 +4,7 @@
 #define _INC_y_stringhash
 
 /**
- * <library>
- *                  y_stringhash
- * </library>
+ * <library name="y_stringhash">
  * <section>
  *  Description
  * </section>
@@ -28,6 +26,7 @@
  *  <symbol name="_H">Generate a string hash at compile time.</symbol>
  *  <symbol name="_I">Generate a case insensitive string hash at compile time.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

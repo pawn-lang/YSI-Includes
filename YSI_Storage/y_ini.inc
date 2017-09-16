@@ -4,9 +4,7 @@
 #define _INC_y_ini
 
 /**
- * <library>
- *                  y_ini
- * </library>
+ * <library name="y_ini">
  * <section>
  *  Description
  * </section>
@@ -86,6 +84,7 @@
  *  <symbol name="YSI_g_sINIWriteTag">Data for tags,</symbol>
  *  <symbol name="YSI_g_sINIWriteFile">Current files been written to.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

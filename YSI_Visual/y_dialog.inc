@@ -4,9 +4,7 @@
 #define _INC_y_dialog
 
 /**
- * <library>
- *                  y_dialog
- * </library>
+ * <library name="y_dialog">
  * <section>
  *  Description
  * </section>
@@ -16,6 +14,7 @@
  *  Version
  * </section>
  *  0.1
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

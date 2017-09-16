@@ -1,7 +1,5 @@
 /*+
- * <library>
- *                  y_unique
- * </library>
+ * <library name="y_unique">
  * <section>
  *  Description
  * </section>
@@ -10,6 +8,7 @@
  *  Version
  * </section>
  *  1.0
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

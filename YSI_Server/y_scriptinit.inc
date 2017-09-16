@@ -4,9 +4,7 @@
 #define _INC_y_scriptinit
 
 /**
- * <library>
- *                  y_scriptinit
- * </library>
+ * <library name="y_scriptinit">
  * <section>
  *  Description
  * </section>
@@ -20,6 +18,7 @@
  *  Version
  * </section>
  *  1.0
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

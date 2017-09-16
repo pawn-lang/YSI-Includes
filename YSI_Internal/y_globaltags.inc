@@ -4,9 +4,7 @@
 #define _INC_y_globaltags
 
 /*+
- * <library>
- *                  y_globaltags
- * </library>
+ * <library name="y_globaltags">
  * <section>
  *  Description
  * </section>
@@ -15,6 +13,7 @@
  *  Version
  * </section>
  *  0.1
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

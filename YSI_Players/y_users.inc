@@ -4,9 +4,7 @@
 #define _INC_y_users
 
 /**
- * <library>
- *                  y_users
- * </library>
+ * <library name="y_users">
  * <section>
  *  Description
  * </section>
@@ -15,6 +13,7 @@
  *  Version
  * </section>
  *  2.2
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

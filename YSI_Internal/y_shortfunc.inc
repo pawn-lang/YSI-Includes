@@ -4,9 +4,7 @@
 #define _INC_y_shortfunc
 
 /*+
- * <library>
- *                  y_shortfunc
- * </library>
+ * <library name="y_shortfunc">
  * <section>
  *  Description
  * </section>
@@ -23,6 +21,7 @@
  *  <symbol name="S@">Renaming of <symbolref name="setproperty" /> for size reasons.</symbol>
  *  <symbol name="P@">Renaming of <symbolref name="__CallLocalFunction" /> for size reasons.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -1,7 +1,5 @@
 /**
- * <library>
- *                  y_objects
- * </library>
+ * <library name="y_objects">
  * <section>
  *  Description
  * </section>
@@ -152,6 +150,7 @@
  *  <symbol name="NO_OBJECTS_MOVE">No processing is done for moving objects.</symbol>
  *  <symbol name="	OBJECT_WORLDS 0 ">All objects are visible in all worlds.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

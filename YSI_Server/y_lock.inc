@@ -4,9 +4,7 @@
 #define _INC_y_lock
 
 /**
- * <library>
- *                  y_lock
- * </library>
+ * <library name="y_lock">
  * <section>
  *  Description
  * </section>
@@ -15,6 +13,7 @@
  *  Version
  * </section>
  *  0.1
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

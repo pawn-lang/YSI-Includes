@@ -4,9 +4,7 @@
 #define _INC_y_natives
 
 /*+
- * <library>
- *                  y_natives
- * </library>
+ * <library name="y_natives">
  * <section>
  *  Description
  * </section>
@@ -15,6 +13,7 @@
  *  Version
  * </section>
  *  0.1
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

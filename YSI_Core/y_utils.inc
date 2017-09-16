@@ -4,9 +4,7 @@
 #define _INC_y_utils
 
 /**
- * <library>
- *                  y_utils
- * </library>
+ * <library name="y_utils">
  * <section>
  *  Description
  * </section>
@@ -83,6 +81,7 @@
  *  <symbol name="FALSE">False hack for one-time loops.</symbol>
  *  <symbol name="NULL">1 long string for passing via Call(Remote|Local)Function.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

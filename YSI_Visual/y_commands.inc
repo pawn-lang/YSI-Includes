@@ -4,9 +4,7 @@
 #define _INC_y_commands
 
 /**
- * <library>
- *                  y_commands
- * </library>
+ * <library name="y_commands">
  * <section>
  *  Description
  * </section>
@@ -90,6 +88,7 @@
  *  <symbol name="COMMAND_ACCURATE">Can use '@' in command names.</symbol>
  *  <symbol name="MAX_COMMANDS">The maximum number of commands which can be used.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

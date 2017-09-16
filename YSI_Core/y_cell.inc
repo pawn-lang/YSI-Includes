@@ -4,9 +4,7 @@
 #define _INC_y_cell
 
 /**
- * <library>
- *                  y_cell
- * </library>
+ * <library name="y_cell">
  * <section>
  *  Description
  * </section>
@@ -16,6 +14,7 @@
  *  Version
  * </section>
  *  0.2
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -4,9 +4,7 @@
 #define _INC_y_simpletree
 
 /**
- * <library>
- *                  y_simpletree
- * </library>
+ * <library name="y_simpletree">
  * <section>
  *  Description
  * </section>
@@ -60,6 +58,7 @@
  * </section><ul>
  *  <symbol name="Bintree">Binary tree type.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

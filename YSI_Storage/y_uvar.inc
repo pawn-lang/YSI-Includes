@@ -4,9 +4,7 @@
 #define _INC_y_uvar
 
 /**
- * <library>
- *                  y_uvar
- * </library>
+ * <library name="y_uvar">
  * <section>
  *  Description
  * </section>
@@ -15,6 +13,7 @@
  *  Version
  * </section>
  *  0.1.3
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

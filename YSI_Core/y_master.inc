@@ -150,9 +150,7 @@ Optional plugins:
 #define _INC_y_master
 
 /**
- * <library>
- *                  y_master
- * </library>
+ * <library name="y_master">
  * <section>
  *  Description
  * </section>
@@ -200,6 +198,7 @@ Optional plugins:
  *  <symbol name="YSI_IS_CLIENT">Script is a client only script.</symbol>
  *  <symbol name="YSI_IS_SERVER">Script is a server only script.</symbol>
  * </ul>
+ * </library>
  *//** */
 
 // Only include this lot once.

@@ -4,9 +4,7 @@
 #define _INC_y_incognitostreamer
 
 /*+
- * <library>
- *                  y_incognitostreamer
- * </library>
+ * <library name="y_incognitostreamer">
  * <section>
  *  Description
  * </section>
@@ -16,6 +14,7 @@
  *  Version
  * </section>
  *  0.1
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

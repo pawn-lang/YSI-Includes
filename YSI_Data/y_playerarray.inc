@@ -4,9 +4,7 @@
 #define _INC_y_playerarray
 
 /**
- * <library>
- *                  y_playerarray
- * </library>
+ * <library name="y_playerarray">
  * <section>
  *  Description
  * </section>
@@ -17,6 +15,7 @@
  *  Version
  * </section>
  *  1.0
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

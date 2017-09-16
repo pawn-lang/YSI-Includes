@@ -4,9 +4,7 @@
 #define _INC_y_colours
 
 /**
- * <library>
- *                  y_colours
- * </library>
+ * <library name="y_colours">
  * <section>
  *  Description
  * </section>
@@ -19,6 +17,7 @@
  *  Version
  * </section>
  *  1.0
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

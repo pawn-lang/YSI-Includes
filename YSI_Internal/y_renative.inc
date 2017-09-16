@@ -4,9 +4,7 @@
 #define _INC_y_renative
 
 /*+
- * <library>
- *                  y_renative
- * </library>
+ * <library name="y_renative">
  * <section>
  *  Description
  * </section>
@@ -15,6 +13,7 @@
  *  Version
  * </section>
  *  1.0
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

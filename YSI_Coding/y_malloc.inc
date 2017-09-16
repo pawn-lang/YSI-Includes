@@ -4,9 +4,7 @@
 #define _INC_y_malloc
 
 /**
- * <library>
- *                  y_malloc
- * </library>
+ * <library name="y_malloc">
  * <section>
  *  Description
  * </section>
@@ -83,6 +81,7 @@
  *  <symbol name="YSI_MALLOC_SECURE">Use enhanced bounds checking.</symbol>
  *  <symbol name="YSI_MALLOC_NO_SHORT">Avoid conflicts with mget/mset.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

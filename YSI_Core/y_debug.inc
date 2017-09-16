@@ -4,9 +4,7 @@
 #define _INC_y_debug
 
 /**
- * <library>
- *                  y_debug
- * </library>
+ * <library name="y_debug">
  * <section>
  *  Description
  * </section>
@@ -58,6 +56,7 @@
  * </ul><section>Compile options</section><ul>
  *  <symbol name="_DEBUG">Debugging level to use.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

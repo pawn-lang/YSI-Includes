@@ -4,9 +4,7 @@
 #define _INC_y_hashmap
 
 /**
- * <library>
- *                  y_hashmap
- * </library>
+ * <library name="y_hashmap">
  * <section>
  *  Description
  * </section>
@@ -33,6 +31,7 @@
  *  <symbol name="HASH_MAP_DATA">What should be added to enums to be hash map referenced.</symbol>
  *  <symbol name="HashMap">Declare a new hash map.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

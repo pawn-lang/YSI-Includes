@@ -4,9 +4,7 @@
 #define _INC_y_writemem
 
 /*+
- * <library>
- *                  y_writemem
- * </library>
+ * <library name="y_writemem">
  * <section>
  *  Description
  * </section>
@@ -35,6 +33,7 @@
  * </subsection><ul>
  *  <symbol name="YSI_g_sWriteMem">The assembly.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

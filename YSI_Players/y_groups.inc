@@ -169,9 +169,7 @@ Optional plugins:
 #define _INC_y_groups
 
 /**
- * <library>
- *                  y_groups
- * </library>
+ * <library name="y_groups">
  * <section>
  *  Description
  * </section>
@@ -181,6 +179,7 @@ Optional plugins:
  *  Version
  * </section>
  *  1.0
+ * </library>
  *//** */
 
 stock _YSI_HAS_y_groups(_do_not_call_me_ever_, _like_never_)

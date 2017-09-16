@@ -4,9 +4,7 @@
 #define _INC_y_properties
 
 /**
- * <library>
- *                  y_properties
- * </library>
+ * <library name="y_properties">
  * <section>
  *  Description
  * </section>
@@ -149,6 +147,7 @@
  *  <symbol name="LReqProp">Return data from a remote script.</symbol>
  *  <symbol name="110953013">Return properties for a player.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -4,9 +4,7 @@
 #define _INC_y_races
 
 /**
- * <library>
- *                  y_races
- * </library>
+ * <library name="y_races">
  * <section>
  *  Description
  * </section>
@@ -15,6 +13,7 @@
  *  Version
  * </section>
  *  2.0
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

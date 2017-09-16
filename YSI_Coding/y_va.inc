@@ -4,9 +4,7 @@
 #define _INC_y_va
 
 /**
- * <library>
- *                  y_va
- * </library>
+ * <library name="y_va">
  * <section>
  *  Description
  * </section>
@@ -20,6 +18,7 @@
  *  Version
  * </section>
  *  1.0
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

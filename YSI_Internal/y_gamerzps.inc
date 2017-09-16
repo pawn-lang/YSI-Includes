@@ -4,9 +4,7 @@
 #define _INC_y_gamerzps
 
 /*+
- * <library>
- *                  y_gamerzps
- * </library>
+ * <library name="y_gamerzps">
  * <section>
  *  Description
  * </section>
@@ -16,6 +14,7 @@
  *  Version
  * </section>
  *  0.1
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

@@ -4,9 +4,7 @@
 #define _INC_y_distribute
 
 /*+
- * <library>
- *                  y_distribute
- * </library>
+ * <library name="y_distribute">
  * <section>
  *  Description
  * </section>
@@ -16,6 +14,7 @@
  *  Version
  * </section>
  *  0.1
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

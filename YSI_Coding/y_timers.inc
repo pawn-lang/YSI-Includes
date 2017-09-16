@@ -4,9 +4,7 @@
 #define _INC_y_timers
 
 /**
- * <library>
- *                  y_timers
- * </library>
+ * <library name="y_timers">
  * <section>
  *  Description
  * </section>
@@ -18,6 +16,7 @@
  *  Version
  * </section>
  *  2.0
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

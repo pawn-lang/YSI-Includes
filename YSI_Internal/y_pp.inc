@@ -4,9 +4,7 @@
 #define _INC_y_pp
 
 /*+
- * <library>
- *                  y_pp
- * </library>
+ * <library name="y_pp">
  * <section>
  *  Description
  * </section>
@@ -15,6 +13,7 @@
  *  Version
  * </section>
  *  1.0
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

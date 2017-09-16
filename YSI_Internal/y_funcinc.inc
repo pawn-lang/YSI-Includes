@@ -4,9 +4,7 @@
 #define _INC_y_funcinc
 
 /*+
- * <library>
- *                  y_funcinc
- * </library>
+ * <library name="y_funcinc">
  * <section>
  *  Description
  * </section>
@@ -18,6 +16,7 @@
  *  Version
  * </section>
  *  1.0
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

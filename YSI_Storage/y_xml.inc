@@ -4,9 +4,7 @@
 #define _INC_y_xml
 
 /**
- * <library>
- *                  y_xml
- * </library>
+ * <library name="y_xml">
  * <section>
  *  Description
  * </section>
@@ -23,6 +21,7 @@
  *  Version
  * </section>
  *  1.0
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

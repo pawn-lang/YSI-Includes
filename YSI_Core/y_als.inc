@@ -124,9 +124,7 @@ Optional plugins:
 #define _INC_y_als
 
 /**
- * <library>
- *                  y_als
- * </library>
+ * <library name="y_als">
  * <section>
  *  Description
  * </section>
@@ -136,5 +134,6 @@ Optional plugins:
  *  Version
  * </section>
  *  1.0
+ * </library>
  *//** */
 

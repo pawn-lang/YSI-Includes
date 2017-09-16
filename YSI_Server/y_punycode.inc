@@ -4,9 +4,7 @@
 #define _INC_y_punycode
 
 /**
- * <library>
- *                  y_punycode
- * </library>
+ * <library name="y_punycode">
  * <section>
  *  Description
  * </section>
@@ -32,6 +30,7 @@
  *  <symbol name="Puny_Decode">Convert a Punycode string to Unicode.</symbol>
  *  <symbol name="Puny_HTTP">Wrapper for "HTTP" to encode domain names.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

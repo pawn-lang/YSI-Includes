@@ -4,9 +4,7 @@
 #define _INC_y_areas
 
 /**
- * <library>
- *                  y_areas
- * </library>
+ * <library name="y_areas">
  * <section>
  *  Description
  * </section>
@@ -94,6 +92,7 @@
  *  <symbol name="YSI_g_sAreas">Array of area data.</symbol>
  *  <symbol name="YSI_g_sPlayerArea">Array of players' current areas.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

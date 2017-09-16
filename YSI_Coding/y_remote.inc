@@ -4,9 +4,7 @@
 #define _INC_y_remote
 
 /**
- * <library>
- *                  y_remote
- * </library>
+ * <library name="y_remote">
  * <section>
  *  Description
  * </section>
@@ -25,6 +23,7 @@
  * </ul><section>Compile options</section><ul>
  *  <symbol name="YSI_NO_MASTER">Disable all knowledge of other scripts.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

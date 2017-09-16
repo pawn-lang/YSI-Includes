@@ -4,9 +4,7 @@
 #define _INC_y_classes
 
 /**
- * <library>
- *                  y_classes
- * </library>
+ * <library name="y_classes">
  * <section>
  *  Description
  * </section>
@@ -87,6 +85,7 @@
  *  <symbol name="YSI_g_sRight">Handle for the third internal class.</symbol>
  *  <symbol name="YSI_g_sClassCount">Number of classes stored.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

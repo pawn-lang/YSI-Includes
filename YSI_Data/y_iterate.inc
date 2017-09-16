@@ -178,9 +178,7 @@ Optional plugins:
 #endif
 
 /**
- * <library>
- *                  y_iterate
- * </library>
+ * <library name="y_iterate">
  * <section>
  *  Description
  * </section>
@@ -331,7 +329,8 @@ Optional plugins:
  *
  * <subsection>Special Iterators</subsection>
  *
- *  *//** */
+ *  *//** 
+ * </library>*/
 
 // Set `FOREACH_VERSION` as this file's version.
 #if defined FOREACH_VERSION

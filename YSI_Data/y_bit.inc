@@ -4,9 +4,7 @@
 #define _INC_y_bit
 
 /**
- * <library>
- *                  y_bit
- * </library>
+ * <library name="y_bit">
  * <section>
  *  Description
  * </section>
@@ -47,6 +45,7 @@
  * </section><ul>
  *  <symbol name="Bit">Bit array type.</symbol>
  * </ul>
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1

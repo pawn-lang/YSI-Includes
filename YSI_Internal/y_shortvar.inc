@@ -4,9 +4,7 @@
 #define _INC_y_shortvar
 
 /*+
- * <library>
- *                  y_shortvar
- * </library>
+ * <library name="y_shortvar">
  * <section>
  *  Description
  * </section>
@@ -15,6 +13,7 @@
  *  Version
  * </section>
  *  0.2
+ * </library>
  *//** *//*
 Legal:
 	Version: MPL 1.1
