@@ -9,7 +9,8 @@ enum E_ITER_YIELD
 	E_ITER_YIELD_STACK_END,   // Where the pointer was at `yield`.
 	E_ITER_YIELD_HEAP_END,    // Where the pointer was at `yield`.
 	E_ITER_YIELD_HEAP_ALLOC,  // `malloc`ed memory.
-	E_ITER_YIELD_STACK_ALLOC  // `malloc`ed memory.
+	E_ITER_YIELD_STACK_ALLOC, // `malloc`ed memory.
+	E_ITER_YIELD_FIRST        // First call of a pair to `Iter_YieldLoop`.
 }
 
 static stock
@@ -48,68 +49,115 @@ stock bool:Iter_YieldEnter()
 	// Save the stack depth at this function's return point.
 	#emit LCTRL      4
 	#emit STOR.pri   tmp
-	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_START] = tmp + 12;
+	iter[E_ITER_YIELD_STACK_START] = tmp + 12;
 	#emit LCTRL      2
 	#emit STOR.pri   tmp
-	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_START] = tmp;
+	iter[E_ITER_YIELD_HEAP_START] = tmp;
+	iter[E_ITER_YIELD_FIRST] = 0;
 	// After we return, every time "Iter_YieldReturn" is called, we store
 	// everything from between the (then) current stack pointer and the value we
 	// just saved.  Also for the heap.  Then when we re-enter it, we can restore
 	// all of that data and resume as if nothing happened.  Also `CIP`.
-	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_ALLOC] =
-		YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_ALLOC] = NO_ALLOC;
+	iter[E_ITER_YIELD_HEAP_ALLOC] =
+		iter[E_ITER_YIELD_STACK_ALLOC] = NO_ALLOC;
+}
+
+static stock bool:_Iter_YieldLoop(iter[E_ITER_YIELD])
+{
+	static
+		end,
+		src,
+		dst,
+		frm,
+		cip;
+	if ((iter[E_ITER_YIELD_FIRST] ^= 1))
+	{
+		// If there is nothing allocated here, we fell out of the iterator
+		// function and so the loop is over.
+		if (!iter[E_ITER_YIELD_STACK_ALLOC])
+		{
+			// Release our stack.
+			--YSI_g_sIteratorDepth;
+			return false;
+		}
+	}
+	else
+	{
+		// Copy the heap.
+		if ((cip = iter[E_ITER_YIELD_HEAP_ALLOC]))
+		{
+			dst = iter[E_ITER_YIELD_HEAP_START],
+			end = iter[E_ITER_YIELD_HEAP_END];
+			#emit LOAD.pri   end
+			#emit SCTRL      2
+			rawMemcpy(dst, cip, end - dst);
+			// TODO: Adjust this from raw memory to an allocation offset.
+			free(cip);
+		}
+		// Copy the stack.
+		frm = iter[E_ITER_YIELD_FRM],
+		cip = iter[E_ITER_YIELD_CIP],
+		src = iter[E_ITER_YIELD_STACK_ALLOC],
+		end = iter[E_ITER_YIELD_STACK_START],
+		dst = iter[E_ITER_YIELD_STACK_END];
+		#emit LOAD.pri   dst
+		#emit SCTRL      4
+		rawMemcpy(dst, src, end - dst),
+		free(src);
+		// Copy the frame.
+		#emit LOAD.pri   frm
+		#emit SCTRL      5
+		// Jump back in to our earlier function.
+		#emit LOAD.pri   cip
+		#emit SCTRL      6
+		// Technically, we never return from here, but the compiler can't know!
+	}
+	return true;
 }
 
 /**
- * <param name=""></param>
  * <remarks>
- *     Although it might not look like it from general code, this function is
- *     called, by replacing calls to an underlying iterator function with calls
- *     to this function instead.  In that way, we can restore the stack each
- *     time.
+ * <p>Because of the strange way we manipulate the stack, this function actually
+ * gets called twice as often as you would expect.  Essentially, for this
+ * (psudo-)loop:</p>
+ *   
+ *   <code>
+ *   for (new i = iter_func(); Iter_YieldLoop(); )                              <br />
+ *   {                                                                          <br />
+ *   }
+ *   </code>
+ *   
+ * <p>The loop is entered and <c>iter_func()</c> is called.  This indirectly
+ * calls <c>yield</c>, which returns to the call point of that function.  The
+ * loop check is then entered and <c>Iter_YieldLoop()</c> is called.  Depending
+ * on if <c>yield</c> was actually used, the main loop body is entered.  At the
+ * end of that iteration, the loop check is run again and so
+ * <c>Iter_YieldLoop()</c> is called again.</p>
+ * 
+ * <p>This is where it gets wierd!</p>
+ * 
+ * <p><c>Iter_YieldLoop()</c> does a stack copy and a jump in to the earlier
+ * call to <c>iter_func</c>, whose return address is earlier in the code.  When
+ * a <c>yield</c> is done again, that return is to the first part of the
+ * <c>for</c> loop, which then instantly enters the loop check section and calls
+ * <c>Iter_YieldLoop()</c> again (as a side-effect, saving the iterator value in
+ * the loop variable).</p>
+ * 
+ * <p>So for <c>N</c> iterations of the loop, <c>Iter_YieldLoop()</c> is called
+ * <c>2N + 1</c> times, and should be made aware of which phase of its calls it
+ * is in.</p>
+ * 
+ * <p>This is, of course, made more complicated by nested loops, but that just
+ * means we need to store the state on our own stack.</p>
  * </remarks>
  */
 
-stock bool:Iter_YieldLoop(...)
+stock bool:Iter_YieldLoop()
 {
-	// Because of the strange way we manipulate the stack, this function
-	// actually gets called twice as often as you would expect.  Essentially,
-	// for this (psudo-)loop:
-	//   
-	//   for (new i = iter_func(); Iter_YieldLoop(); )
-	//   {
-	//   }
-	//   
-	// The loop is entered and `iter_func()` is called.  This indirectly calls
-	// `yield`, which returns to the call point of that function.  The loop
-	// check is then entered and `Iter_YieldLoop()` is called.  Depending on if
-	// `yield` was actually used, the main loop body is entered.  At the end of
-	// that iteration, the loop check is run again and so `Iter_YieldLoop()` is
-	// called again.
-	// 
-	// This is where it gets wierd!
-	// 
-	// `Iter_YieldLoop()` does a stack copy and a jump in to the earlier call to
-	// `iter_func`, whose return address is earlier in the code.  When a `yield`
-	// is done again, that return is to the first part of the `for` loop, which
-	// then instantly enters the loop check section and calls `Iter_YieldLoop()`
-	// again (as a side-effect, saving the iterator value in the loop variable).
-	// 
-	// So for `N` iterations of the loop, `Iter_YieldLoop()` is called `2N + 1`
-	// times, and should be made aware of which phase of its calls it is in.
-	// 
-	// This is, of course, made more complicated by nested loops, but that just
-	// means we need to store the state on our own stack.
-	// 
 	// There are too many loops inside each other.  Ignore some.
 	if (YSI_g_sIteratorDepth >= MAX_NESTED_ITERATORS)
 		return false;
-	// If there is nothing allocated here, we fell out of the iterator function
-	// and so the loop is over.
-	new
-		bool:ret = false;
-	// Resume the function from the last point.
-	return false;
+	return _Iter_YieldLoop(iter);
 }
 
 stock Iter_YieldEnd()
