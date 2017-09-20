@@ -838,3 +838,36 @@ stock Alloc:calloc(size)
 			return 1;
 		}
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="slot">Memory allocation unit to find</param>
+ * <remarks>
+ *   Transforms a memory slot in to a memory address.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock ResolvedAlloc:Malloc_Resolve(Alloc:slot)
+{
+	#emit CONST.alt     YSI_gMallocMemory
+	#emit LOAD.S.pri    slot
+	#emit IDXADDR
+	#emit RETN
+	return ResolvedAlloc:0;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="addr">Memory address to find</param>
+ * <remarks>
+ *   Transforms a memory address in to a memory slot.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Alloc:Malloc_Reconcile(ResolvedAlloc:addr)
+{
+	#emit CONST.alt     YSI_gMallocMemory
+	#emit LOAD.S.pri    addr
+	#emit SUB
+	#emit SHR.C.pri     2
+	#emit RETN
+	return Alloc:0;
+}
+

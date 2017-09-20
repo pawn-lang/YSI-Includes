@@ -414,14 +414,10 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool
 	// printf("local: %d, params: %d, stack: %d", local, params, stack);
 	if (a)
 	{
-		// Get the address of the data.
-		#emit CONST.alt     YSI_gMallocMemory
-		#emit LOAD.S.pri    a
-		#emit IDXADDR
-		#emit STOR.S.pri    frm
 		// Get the stack size in bytes.
 		stack <<= 2,
-		ret[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:frm,
+		// Get the address of the data.
+		ret[E_CALLBACK_DATA_ALLOC] = Malloc_Resolve(a),
 		ret[E_CALLBACK_DATA_OFFSET] = stack,
 		// Copy the stack over.  First get the frame of the function that used
 		// an inline function, thus calling us indirectly.
