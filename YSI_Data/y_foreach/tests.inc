@@ -3429,8 +3429,7 @@ iterfunc stock y_iter_yield7c(n)
 
 iterfunc stock y_iter_yield7b()
 {
-	// foreach (new i : y_iter_yield7c(10))
-	for (new i = 0; i != 5; ++i)
+	foreach (new i : y_iter_yield7c(4))
 	{
 		yield return i;
 	}
@@ -3457,11 +3456,11 @@ Test:y_iter_yield7a()
 {
 	new
 		answers[] = {
-			15, 16, 17, 18, 19, 14, 13,
-			15, 16, 17, 18, 19, 14, 13,
-			15, 16, 17, 18, 19, 14, 13,
-			15, 16, 17, 18, 19, 14, 13,
-			25, 26, 27, 28, 29, 24, 23,
+			15, 16, 17, 19, 14, 13,
+			15, 16, 17, 19, 14, 13,
+			15, 16, 17, 19, 14, 13,
+			15, 16, 17, 19, 14, 13,
+			25, 26, 27, 29, 24, 23,
 			2
 		},
 		idx = 0;
