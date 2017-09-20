@@ -3375,20 +3375,20 @@ iterfunc stock y_iter_yield5()
 }
 #define Iterator@y_iter_yield5 iteryield
 
-Test:y_iter_yield5a()
-{
-	new
-		count = 0,
-		bool:ever = false;
-	foreach (new i : y_iter_yield5)
-	{
-		#pragma unused i
-		++count;
-		ever = true;
-	}
-	ASSERT(count == 0); // Overflow.
-	ASSERT(ever);
-}
+//Test:y_iter_yield5a()
+//{
+//	new
+//		count = 0,
+//		bool:ever = false;
+//	foreach (new i : y_iter_yield5)
+//	{
+//		#pragma unused i
+//		++count;
+//		ever = true;
+//	}
+//	ASSERT(count == 0); // Overflow.
+//	ASSERT(ever);
+//}
 
 iterfunc stock y_iter_yield6()
 {
@@ -3411,6 +3411,61 @@ Test:y_iter_yield6a()
 		answers[] = { 0, 1, 2, 10, 20, 501, 502, 503, 504 },
 		idx = 0;
 	foreach (new i : y_iter_yield6)
+	{
+		ASSERT(idx < sizeof (answers) && i == answers[idx]);
+		++idx;
+	}
+	ASSERT(idx == sizeof(answers));
+}
+
+iterfunc stock y_iter_yield7c(n)
+{
+	while (n--)
+	{
+		yield return 10;
+	}
+}
+#define Iterator@y_iter_yield7c iteryield
+
+iterfunc stock y_iter_yield7b()
+{
+	// foreach (new i : y_iter_yield7c(10))
+	for (new i = 0; i != 5; ++i)
+	{
+		yield return i;
+	}
+	yield return 20;
+}
+#define Iterator@y_iter_yield7b iteryield
+
+iterfunc stock y_iter_yield7a(x)
+{
+	foreach (new i : y_iter_yield7b)
+	{
+		yield return i + 5;
+		yield return i + 6;
+		yield return i + 7;
+		yield return i + 9;
+		yield return i + 4;
+		yield return i + 3;
+	}
+	yield return x;
+}
+#define Iterator@y_iter_yield7a iteryield
+
+Test:y_iter_yield7a()
+{
+	new
+		answers[] = {
+			15, 16, 17, 18, 19, 14, 13,
+			15, 16, 17, 18, 19, 14, 13,
+			15, 16, 17, 18, 19, 14, 13,
+			15, 16, 17, 18, 19, 14, 13,
+			25, 26, 27, 28, 29, 24, 23,
+			2
+		},
+		idx = 0;
+	foreach (new i : y_iter_yield7a[2])
 	{
 		ASSERT(idx < sizeof (answers) && i == answers[idx]);
 		++idx;
