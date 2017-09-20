@@ -137,6 +137,9 @@ Optional plugins:
 #if !defined deref
 	#error Please update "https://github.com/Zeex/amx_assembly" to get "deref()"
 #endif
+#if !defined GetAmxNextInstructionPointer
+	#error Please update "https://github.com/Zeex/amx_assembly" to get "GetAmxNextInstructionPointer()"
+#endif
 
 #tryinclude "..\amx\asm"
 #tryinclude <amx_assembly\asm>
