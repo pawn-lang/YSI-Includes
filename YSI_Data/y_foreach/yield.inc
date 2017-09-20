@@ -2,15 +2,24 @@
 	#define MAX_NESTED_ITERATORS (4)
 #endif
 
+#define yield%0\32;%1; yield%0%1;
+#define yieldreturn%0; Iter_YieldReturn(%0);
+#define yieldbreak%0; return;
+
+#define iteryield%9;_:(%9=Iter%9@%0$[_:%2]%9; F@o)&&(I@=-1,Iter_YieldEnter())))?I@:_:F@u:F@l:(F@C:Iter_Func@%0$(),I@)?1:2;Iter_YieldLoop();
+#define F@C:%0(,%1) %0(%1)
+
 enum E_ITER_YIELD
 {
 	E_ITER_YIELD_STACK_START, // Where the pointer was before the loop.
 	E_ITER_YIELD_HEAP_START,  // Where the pointer was before the loop.
 	E_ITER_YIELD_STACK_END,   // Where the pointer was at `yield`.
 	E_ITER_YIELD_HEAP_END,    // Where the pointer was at `yield`.
-	E_ITER_YIELD_HEAP_ALLOC,  // `malloc`ed memory.
-	E_ITER_YIELD_STACK_ALLOC, // `malloc`ed memory.
+	ResolvedAlloc:E_ITER_YIELD_HEAP_ALLOC,  // `malloc`ed memory.
+	ResolvedAlloc:E_ITER_YIELD_STACK_ALLOC, // `malloc`ed memory.
 	E_ITER_YIELD_FIRST,       // First call of a pair to `Iter_YieldLoop`.
+	E_ITER_YIELD_FRM,         // The iterator function context.
+	E_ITER_YIELD_CIP,         // The iterator function continuation.
 	E_ITER_YIELD_RETURN,      // The return address from `yield`.
 	E_ITER_YIELD_FRAME        // The return frame from `yield`.
 }
@@ -24,25 +33,11 @@ static stock
  * </remarks>
  */
 
-stock Iter_YieldReturn(iterstate[], ...)
-{
-	// "iterstate" contains the 
-}
-
-/**
- */
-static stock
-	YSI_g_sC,
-	YSI_g_sB,
-	YSI_g_sE,
-	YSI_g_sA,
-	YSI_g_sD;
-
 stock bool:Iter_YieldEnter()
 {
 	// This is called as:
 	//   
-	//   iter_var = (I@ = -1, Iter_YieldEnter() ? I@ : iter_func());
+	//   iter_var = (I@ = -1, Iter_YieldEnter() ? I@ : (iter_func(), I@));
 	//   
 	// This means we can skip ever entering the iterator in error cases.  Better
 	// yet, we can use the default iterator value for the fail case!  It is
@@ -54,72 +49,33 @@ stock bool:Iter_YieldEnter()
 		return true;
 	}
 	{}
-	// Save the stack depth at this function's return point.
-	#emit LCTRL      4
-	#emit STOR.pri   YSI_g_sC
-	iter[E_ITER_YIELD_STACK_START] = YSI_g_sC + 12;
-	#emit LCTRL      2
-	#emit STOR.pri   YSI_g_sC
-	iter[E_ITER_YIELD_HEAP_START] = YSI_g_sC;
-	iter[E_ITER_YIELD_FIRST] = 0;
-	// After we return, every time "Iter_YieldReturn" is called, we store
-	// everything from between the (then) current stack pointer and the value we
-	// just saved.  Also for the heap.  Then when we re-enter it, we can restore
-	// all of that data and resume as if nothing happened.  Also `CIP`.
-	iter[E_ITER_YIELD_HEAP_ALLOC] =
-		iter[E_ITER_YIELD_STACK_ALLOC] = NO_ALLOC;
+	// Save the stack depth at this function's return point (adjust for this
+	// function's preamble).
+	// TODO:  Make this all inline assembly, but keep it simple for the first
+	// test version.
+	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_START] = GetAmxStackBottom() + 12;
+	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_START]  = GetAmxHeapTop();
+	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_END]   = 0;
+	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_END]    = 0;
+	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_ALLOC]  = ResolvedAlloc:0;
+	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_ALLOC] = ResolvedAlloc:0;
+	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_FIRST]       = 0;
+	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_RETURN]      = GetCurrentFrameReturn();
+	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_FRAME]       = GetCurrentFramePreviousFrame();
+//	#emit LCTRL      4
+//	#emit STOR.pri   YSI_g_sC
+//	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_START] = YSI_g_sC + 12;
+//	#emit LCTRL      2
+//	#emit STOR.pri   YSI_g_sC
+//	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_START] = YSI_g_sC;
+//	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_FIRST] = 0;
+//	// After we return, every time "Iter_YieldReturn" is called, we store
+//	// everything from between the (then) current stack pointer and the value we
+//	// just saved.  Also for the heap.  Then when we re-enter it, we can restore
+//	// all of that data and resume as if nothing happened.  Also `CIP`.
+//	iter[E_ITER_YIELD_HEAP_ALLOC] =
+//		iter[E_ITER_YIELD_STACK_ALLOC] = ResolvedAlloc:0;
 	return false;
-}
-
-static stock bool:_Iter_YieldLoop(iter[E_ITER_YIELD])
-{
-	if ((iter[E_ITER_YIELD_FIRST] ^= 1))
-	{
-		// If there is nothing allocated here, we fell out of the iterator
-		// function and so the loop is over.
-		if (!iter[E_ITER_YIELD_STACK_ALLOC])
-		{
-			// Release our stack.
-			--YSI_g_sIteratorDepth;
-			return false;
-		}
-		// Otherwise, the iterator continued, so the loop should as well.
-	}
-	else
-	{
-		// Restore the heap.
-		if ((YSI_g_sB = iter[E_ITER_YIELD_HEAP_ALLOC]))
-		{
-			iter[E_ITER_YIELD_HEAP_ALLOC] = NO_ALLOC,
-			YSI_g_sE = iter[E_ITER_YIELD_HEAP_START],
-			YSI_g_sC = iter[E_ITER_YIELD_HEAP_END];
-			#emit LOAD.pri   YSI_g_sC
-			#emit SCTRL      2
-			rawMemcpy(YSI_g_sE, YSI_g_sB, YSI_g_sC - YSI_g_sE),
-			// TODO: Adjust this from raw memory to an allocation offset.
-			free(Malloc_Reconcile(YSI_g_sB));
-		}
-		YSI_g_sA = iter[E_ITER_YIELD_FRM],
-		YSI_g_sD = iter[E_ITER_YIELD_CIP],
-		YSI_g_sB = iter[E_ITER_YIELD_STACK_ALLOC],
-		YSI_g_sC = iter[E_ITER_YIELD_STACK_START], // Correct (grows down).
-		YSI_g_sE = iter[E_ITER_YIELD_STACK_END],   // Correct (grows down).
-		iter[E_ITER_YIELD_STACK_ALLOC] = NO_ALLOC;
-		// Restore the stack.
-		#emit LOAD.pri   YSI_g_sE
-		#emit SCTRL      4
-		// Restore the frame.
-		#emit LOAD.pri   YSI_g_sA
-		#emit SCTRL      5
-		// Copy the stack.
-		rawMemcpy(YSI_g_sE, YSI_g_sB, YSI_g_sC - YSI_g_sE),
-		free(Malloc_Reconcile(YSI_g_sB));
-		// Jump back in to our earlier function.
-		#emit LOAD.pri   YSI_g_sD
-		#emit SCTRL      6
-		// Technically, we never return from here, but the compiler can't know!
-	}
-	return true;
 }
 
 /**
@@ -161,60 +117,82 @@ static stock bool:_Iter_YieldLoop(iter[E_ITER_YIELD])
 
 stock bool:Iter_YieldLoop()
 {
-	// There are too many loops inside each other.  Ignore some.
-	if (YSI_g_sIteratorDepth >= MAX_NESTED_ITERATORS)
-		return false;
-	return _Iter_YieldLoop(YSI_g_sIteratorStack[YSI_g_sIteratorDepth]);
-}
-
-stock Iter_YieldEnd()
-{
-	if (--YSI_g_sIteratorDepth >= MAX_NESTED_ITERATORS)
-		return;
-	// Free everything.
+	if ((YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_FIRST] ^= 1))
+	{
+		// If there is nothing allocated here, we fell out of the iterator
+		// function and so the loop is over.
+		if (!YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_ALLOC])
+		{
+			// Release our stack.
+			--YSI_g_sIteratorDepth;
+			return false;
+		}
+		// Otherwise, the iterator continued, so the loop should as well.
+	}
+	else
+	{
+		// Restore the heap.
+		if (YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_ALLOC])
+		{
+			SetAmxHeapTop(YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_END]);
+			rawMemcpy(
+				YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_START],
+				_:YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_ALLOC],
+				YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_END] - YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_START]);
+			free(Malloc_Reconcile(YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_ALLOC]));
+			YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_ALLOC] = ResolvedAlloc:0;
+		}
+		// Restore the stack.
+		SetAmxStackBottom(YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_END]);
+		rawMemcpy(
+			YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_END],
+			_:YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_ALLOC],
+			YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_START] - YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_END]);
+		free(Malloc_Reconcile(YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_ALLOC]));
+		YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_ALLOC] = ResolvedAlloc:0;
+		// Jump back in to our earlier function.
+		SetAmxFrame(YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_FRM]);
+		SetAmxNextInstructionPointer(YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_CIP]);
+		// Technically, we never return from here, but the compiler can't know!
+	}
+	return true;
 }
 
 stock Iter_YieldReturn(value)
 {
-	// Store the heap.
-	#emit LCTRL      2
-	#emit STOR.pri   YSI_g_sB
-	YSI_g_sE = YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_START],
-	YSI_g_sD = YSI_g_sB - YSI_g_sE;
-	if (YSI_g_sD)
-	{
-		YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_END] = YSI_g_sB,
-		YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_ALLOC] = YSI_g_sA = Malloc_Resolve(malloc(YSI_g_sD / cellbytes)),
-		rawMemcpy(YSI_g_sA, YSI_g_sE, YSI_g_sD);
-	}
-	{}
-	// Store the stack.
-	#emit LCTRL      4
-	#emit STOR.pri   YSI_g_sB
-	YSI_g_sD = YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_START],
-	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_END] = YSI_g_sB,
-	YSI_g_sC = YSI_g_sD - YSI_g_sB,
-	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_ALLOC] = YSI_g_sA = Malloc_Resolve(malloc(YSI_g_sC / cellbytes)),
-	rawMemcpy(YSI_g_sA, YSI_g_sB, YSI_g_sC);
-	// Store the frame.
-	#emit LCTRL      5
-	#emit STOR.pri   YSI_g_sB
-	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_FRM] = YSI_g_sB;
-	// Store the return value in `I@` so we can access it.
+	// This does the return through the global scope.
 	I@ = value;
-	// Wipe out the stack (YSI_g_sD).
-	#emit LOAD.pri   YSI_g_sD
-	#emit SCTRL      4
-	// Wipe out the heap (YSI_g_sE).
-	#emit LOAD.pri   YSI_g_sE
-	#emit SCTRL      2
-	// Reset the frame.
-	YSI_g_sA = YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_FRAME];
-	#emit LOAD.pri   YSI_g_sA
-	#emit SCTRL      5
-	// Jump to the return location.
-	YSI_g_sA = YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_RETURN];
-	#emit LOAD.pri   YSI_g_sA
-	#emit SCTRL      6
+	static
+		size;
+	// Heap.
+	size =
+		(YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_END] = GetAmxHeapTop())
+		- YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_START];
+	if (size)
+	{
+		YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_ALLOC] = Malloc_Resolve(malloc(size / cellbytes));
+		rawMemcpy(
+			_:YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_ALLOC],
+			YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_START],
+			size);
+	}
+	// Stack (excluding this function).
+	size =
+		YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_START] -
+		(YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_END] = GetAmxStackBottom() + 16);
+	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_ALLOC] = Malloc_Resolve(malloc(size / cellbytes));
+	rawMemcpy(
+		_:YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_ALLOC],
+		YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_END],
+		size);
+	// Store the data to jump straight back to the caller.
+	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_FRM] = GetCurrentFramePreviousFrame();
+	YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_CIP] = GetCurrentFrameReturn();
+	// Go to the caller.  From this point on, we can't use any stack-local
+	// storage, because we just destroyed the stack!
+	SetAmxFrame(YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_FRAME]);
+	SetAmxStackBottom(YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_STACK_START]);
+	SetAmxHeapTop(YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_HEAP_START]);
+	SetAmxNextInstructionPointer(YSI_g_sIteratorStack[YSI_g_sIteratorDepth][E_ITER_YIELD_RETURN]);
 }
 

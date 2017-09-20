@@ -778,8 +778,8 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 #define F@o))-1+(%5,%6));_:(%9)!=_:%9(%1=%2$(_:%1)); F@o))-1+(%5)),itrst:Iter_State@%1=itrst:(%6);_:(%5)!=_:F@u:F@l:(%1=%2$(_:Iter_State@%1,_:%1));
 
 //#define F@l:%9$%1,%0(%2)%8$ F@r(Iterator@%0));_:(F@r(Iterator@%0))!=_:(%1=F@h:Iter_Func@%0(_:%1,%2));
-#define F@u:F@l:(%0(%2)%8$(%1)%9); (%0(%1,%2)%8$%9);
-#define F@l:(%0[%2]%8$(%1)%9); (%0(%1,%2)%8$%9);
+#define F@u:F@l:(%0(%2)%8$(%1)%9) (%0(%1,%2)%8$%9)
+#define F@l:(%0[%2]%8$(%1)%9) (%0(%1,%2)%8$%9)
 
 // Normal iterator.
 #define F@m:%9$%1,%0$ F@s(Iterator@%0)-1);_:(%1=Iterator@%0 F@a$[_:%1])!=(F@s(Iterator@%0)-1);
