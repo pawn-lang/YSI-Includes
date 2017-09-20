@@ -680,6 +680,11 @@ rehook y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_3>
 	g_y_hooksVar += strval(c[5]);
 }
 
+hook public y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_4>
+{
+	g_y_hooksVar = strval(c[5]);
+}
+
 Test:y_hooks_State1()
 {
 	state y_hooks_state : y_hooks_state_1;

@@ -85,7 +85,10 @@ Optional plugins:
 
 */
 
-#define hook%1(%2) forward public UNIQUE_FUNCTION<@yH_%1@...>(%2);UNIQUE_FUNCTION<@yH_%1@...>(%2)
+#define @yH_public%0\32;%1(%2);%3(%4) @yH_%0%1(%2);@yH_%0%1(%2)
+#define @yH_native%0\32;%1(%2);%3(%4) @Hy_%0%1(%2);@Hy_%0%1(%2)
+
+#define hook%1(%2) forward UNIQUE_FUNCTION<@yH_%1@...>(%2);UNIQUE_FUNCTION<@yH_%1@...>(%2)
 #define rehook hook
 #define Hook:%0_%1(%2) forward public @yH_%1@%0(%2);@yH_%1@%0(%2)
 // Strip out extra spaces (nicely recursive)
