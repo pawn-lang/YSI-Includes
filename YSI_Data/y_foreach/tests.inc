@@ -3191,3 +3191,230 @@ Test:y_iter_MacroLess()
 	ASSERT(i == 0);
 }
 
+iterfunc stock y_iter_yield0()
+{
+}
+#define Iterator@y_iter_yield0 iteryield
+
+Test:y_iter_yield0a()
+{
+	new
+		count;
+	count = 0;
+	foreach (new i : y_iter_yield0())
+	{
+		#pragma unused i
+		++count;
+	}
+	ASSERT(count == 0);
+	count = 0;
+	foreach (new i : y_iter_yield0)
+	{
+		#pragma unused i
+		++count;
+	}
+	ASSERT(count == 0);
+	count = 0;
+	foreach (new i : y_iter_yield0[])
+	{
+		#pragma unused i
+		++count;
+	}
+	ASSERT(count == 0);
+}
+
+iterfunc stock y_iter_yield1()
+{
+	for (new i = 0; i != 10; ++i)
+	{
+		yield return i;
+	}
+}
+#define Iterator@y_iter_yield1 iteryield
+
+Test:y_iter_yield1a()
+{
+	new
+		count;
+	count = 0;
+	foreach (new i : y_iter_yield1())
+	{
+		#pragma unused i
+		++count;
+	}
+	ASSERT(count == 10);
+	count = 0;
+	foreach (new i : y_iter_yield1)
+	{
+		#pragma unused i
+		++count;
+	}
+	ASSERT(count == 10);
+	count = 0;
+	foreach (new i : y_iter_yield1[])
+	{
+		#pragma unused i
+		++count;
+	}
+	ASSERT(count == 10);
+}
+
+iterfunc stock y_iter_yield2(step, target = 100)
+{
+	new
+		total = 0;
+	while (total < target)
+	{
+		yield return total;
+		total += step;
+	}
+}
+#define Iterator@y_iter_yield2 iteryield
+
+Test:y_iter_yield2a()
+{
+	new
+		count;
+	count = 0;
+	foreach (new i : y_iter_yield2(10))
+	{
+		ASSERT(i % 10 == 0);
+		++count;
+	}
+	ASSERT(count == 10);
+	count = 0;
+	foreach (new i : y_iter_yield2(10, 20))
+	{
+		ASSERT(i == 0 || i == 10);
+		++count;
+	}
+	ASSERT(count == 2);
+	count = 0;
+	foreach (new i : y_iter_yield2[5])
+	{
+		ASSERT(i % 5 == 0);
+		++count;
+	}
+	ASSERT(count == 20);
+}
+
+iterfunc stock y_iter_yield3(step, target = 100)
+{
+	new
+		total = 0;
+	for ( ; ; )
+	{
+		if (total >= target)
+			yield break;
+		yield return total;
+		total += step;
+	}
+}
+#define Iterator@y_iter_yield3 iteryield
+
+Test:y_iter_yield3a()
+{
+	new
+		count;
+	count = 0;
+	foreach (new i : y_iter_yield3(10))
+	{
+		ASSERT(i % 10 == 0);
+		++count;
+	}
+	ASSERT(count == 10);
+	count = 0;
+	foreach (new i : y_iter_yield3(10, 20))
+	{
+		ASSERT(i == 0 || i == 10);
+		++count;
+	}
+	ASSERT(count == 2);
+	count = 0;
+	foreach (new i : y_iter_yield3[5])
+	{
+		ASSERT(i % 5 == 0);
+		++count;
+	}
+	ASSERT(count == 20);
+}
+
+iterfunc stock y_iter_yield4(arr[], size = sizeof (arr))
+{
+	for (new i = 0; i != size; ++i)
+	{
+		yield return arr[i];
+	}
+}
+#define Iterator@y_iter_yield4 iteryield
+
+Test:y_iter_yield4a()
+{
+	new
+		count = 0,
+		arr[] = { 2, 3, 6, 7, 110, 5432 };
+	foreach (new i : y_iter_yield4(arr))
+	{
+		ASSERT(i == 2 || i == 3 || i == 6 || i == 7 || i == 110 || i == 5432);
+		++count;
+	}
+}
+
+iterfunc stock y_iter_yield5()
+{
+	new
+		k = 0;
+	for (new i = 0; i != 65536; ++i)
+	{
+		for (new j = 0; j != 65536; ++j)
+		{
+			yield return k;
+			++k;
+		}
+	}
+}
+#define Iterator@y_iter_yield5 iteryield
+
+Test:y_iter_yield5a()
+{
+	new
+		count = 0,
+		bool:ever = false;
+	foreach (new i : y_iter_yield5)
+	{
+		#pragma unused i
+		++count;
+		ever = true;
+	}
+	ASSERT(count == 0); // Overflow.
+	ASSERT(ever);
+}
+
+iterfunc stock y_iter_yield6()
+{
+	for (new i = 0; i != 3; ++i)
+	{
+		yield return i;
+	}
+	yield return 10;
+	yield return 20;
+	for (new i = 501; i != 505; ++i)
+	{
+		yield return i;
+	}
+}
+#define Iterator@y_iter_yield6 iteryield
+
+Test:y_iter_yield6a()
+{
+	new
+		answers[] = { 0, 1, 2, 10, 20, 501, 502, 503, 504 },
+		idx = 0;
+	foreach (new i : y_iter_yield6)
+	{
+		ASSERT(idx < sizeof (answers) && i == answers[idx]);
+		++idx;
+	}
+	ASSERT(idx == sizeof(answers));
+}
+
