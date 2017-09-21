@@ -248,6 +248,11 @@ stock Iter_YieldReturn(value)
 	#emit LREF.alt     YSI_g_sPtr
 	#emit SUB.alt
 	#emit STOR.pri     size_l
+//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC] = Malloc_Resolve(malloc(size_l / cellbytes));
+//	rawMemcpy(
+//		_:YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC],
+//		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END],
+//		size_l);
 	dest_l = _:Malloc_Resolve(malloc(size_l / cellbytes)),
 	rawMemcpy(dest_l, src_l, size_l);
 	#emit LOAD.pri     YSI_g_sPtr
@@ -255,23 +260,40 @@ stock Iter_YieldReturn(value)
 	#emit MOVE.alt
 	#emit LOAD.pri     dest_l
 	#emit STOR.I
-//	printf("%d %d", YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END], size_l);
-//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC] = Malloc_Resolve(malloc(size_l / cellbytes));
-//	rawMemcpy(
-//		_:YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC],
-//		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END],
-//		size_l);
 	// Store the data to jump straight back to the caller.
-	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FRM] = GetCurrentFramePreviousFrame();
-	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_CIP] = GetCurrentFrameReturn();
+//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FRM] = GetCurrentFramePreviousFrame();
+	#emit LOAD.pri     YSI_g_sPtr
+	#emit ADD.C        16
+	#emit MOVE.alt
+	#emit LOAD.S.pri   0
+	#emit STOR.I
+//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_CIP] = GetCurrentFrameReturn();
+	#emit MOVE.pri
+	#emit ADD.C        4
+	#emit MOVE.alt
+	#emit LOAD.S.pri   4
+	#emit STOR.I
 	// Go to the caller.  From this point on, we can't use any stack-local
 	// storage, because we just destroyed the stack!
-	SetAmxFrame(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FRAME]);
-	SetAmxStackBottom(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START]);
-	SetAmxHeapTop(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START]);
-	size_l = YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_RETURN];
+//	SetAmxFrame(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FRAME]);
+	#emit CONST.pri    1
+	#emit LIDX
+	#emit SCTRL        5
+//	SetAmxStackBottom(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START]);
+	#emit CONST.pri    0xFFFFFFFB // -5
+	#emit LIDX
+	#emit SCTRL        4
+//	SetAmxHeapTop(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START]);
+	#emit CONST.pri    0xFFFFFFF8 // -8
+	#emit LIDX
+	#emit SCTRL        2
+//	size_l = YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_RETURN];
 	// No longer in this iterator.
-	--YSI_gIteratorDepth;
-	SetAmxNextInstructionPointer(size_l);
+//	--YSI_gIteratorDepth;
+	#emit DEC          YSI_gIteratorDepth
+//	SetAmxNextInstructionPointer(size_l);
+	#emit CONST.pri    2
+	#emit LIDX
+	#emit SCTRL        6
 }
 
