@@ -20,8 +20,8 @@ enum E_ITER_YIELD
 	E_ITER_YIELD_FIRST,       // First call of a pair to `Iter_YieldLoop`.
 	E_ITER_YIELD_FRM,         // The iterator function context.
 	E_ITER_YIELD_CIP,         // The iterator function continuation.
-	E_ITER_YIELD_RETURN,      // The return address from `yield`.
-	E_ITER_YIELD_FRAME        // The return frame from `yield`.
+	E_ITER_YIELD_FRAME,       // The return frame from `yield`.
+	E_ITER_YIELD_RETURN       // The return address from `yield`.
 }
 
 static stock
@@ -29,6 +29,10 @@ static stock
 
 stock
 	YSI_gIteratorDepth = -1;
+
+static
+	YSI_g_sPtr;
+#pragma unused YSI_g_sPtr
 
 /**
  * <remarks>
@@ -39,8 +43,10 @@ stock bool:Iter_YieldEnter()
 {
 	// This is called as:
 	//   
-	//   iter_var = (I@ = -1, Iter_YieldEnter() ? I@ : (iter_func(), I@));
+	//   iter_var = (I@ = -1, Iter_YieldEnter() ? I@ : (iter_func(), --YSI_gIteratorDepth));
 	//   
+	// (More-or-less, there's an extra conditional to avoid a compiler bug).
+	// 
 	// This means we can skip ever entering the iterator in error cases.  Better
 	// yet, we can use the default iterator value for the fail case!  It is
 	// important that the `true` case is the fail case, as the return value may
@@ -51,19 +57,51 @@ stock bool:Iter_YieldEnter()
 		return true;
 	}
 	{}
-	// Save the stack depth at this function's return point (adjust for this
-	// function's preamble).
-	// TODO:  Make this all inline assembly, but keep it simple for the first
-	// test version.
-	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START] = GetAmxStackBottom() + 12;
-	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START]  = GetAmxHeapTop();
-	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END]   = 0;
-	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_END]    = 0;
-	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_ALLOC]  = ResolvedAlloc:0;
-	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC] = ResolvedAlloc:0;
-	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FIRST]       = 0;
-	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_RETURN]      = GetCurrentFrameReturn();
-	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FRAME]       = GetCurrentFramePreviousFrame();
+	// Load a pointer to the first address.  We know we are in range, so there's
+	// no `BOUNDS` check here.
+	#emit CONST.alt    YSI_g_sIteratorStack
+	#emit LOAD.pri     YSI_gIteratorDepth
+	#emit IDXADDR
+	#emit MOVE.alt
+	#emit LOAD.I
+	#emit ADD
+	#emit STOR.pri     YSI_g_sPtr
+	// Blank a load of data.
+	#emit MOVE.alt
+	#emit ZERO.pri
+	#emit FILL         44
+	// Save the stack size after this function ends.
+//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START] = GetAmxStackBottom() + 12;
+	#emit LCTRL        4
+	#emit ADD.C        12
+	#emit STOR.I
+	#emit XCHG
+	#emit ADD.C        4  // Move on to `E_ITER_YIELD_HEAP_START`.
+	#emit XCHG
+	// Save the heap size.
+	#emit LCTRL        2
+	#emit STOR.I
+	#emit XCHG
+	#emit ADD.C        32 // Move on to `E_ITER_YIELD_FRAME`.
+	#emit XCHG
+//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START]  = GetAmxHeapTop();
+	// Load of data already blanked.
+//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END]   = 0;
+//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_END]    = 0;
+//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_ALLOC]  = ResolvedAlloc:0;
+//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC] = ResolvedAlloc:0;
+//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FIRST]       = 0;
+	// Store the previous function's frame pointer.
+//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FRAME]       = GetCurrentFramePreviousFrame();
+	#emit LOAD.S.pri   0
+	#emit STOR.I
+	#emit XCHG
+	#emit ADD.C        4  // Move on to `E_ITER_YIELD_RETURN`.
+	#emit XCHG
+	// Store the return address (next instruction to execute).
+//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_RETURN]      = GetCurrentFrameReturn();
+	#emit LOAD.S.pri   4
+	#emit STOR.I
 	return false;
 }
 
