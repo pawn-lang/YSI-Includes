@@ -9,10 +9,14 @@
 #define iteryield%9;_:(%9=Iter%9@%0$[_:%2]%9; F@o)&&(I@=-1,Iter_YieldEnter())))?I@:_:F@u:F@l:(F@C:Iter_Func@%0$(),--YSI_gIteratorDepth)?1:2;Iter_YieldLoop();
 #define F@C:%0(,%1) %0(%1)
 
+#if !defined MAX_YIELD_MEMORY
+	#define MAX_YIELD_MEMORY (512)
+#endif
+
 enum E_ITER_YIELD
 {
-	E_ITER_YIELD_HEAP_START,  // Where the pointer was before the loop.
 	E_ITER_YIELD_HEAP_END,    // Where the pointer was at `yield`.
+	E_ITER_YIELD_HEAP_START,  // Where the pointer was before the loop.
 	ResolvedAlloc:E_ITER_YIELD_HEAP_ALLOC,  // `malloc`ed memory.
 	E_ITER_YIELD_STACK_START, // Where the pointer was before the loop.
 	E_ITER_YIELD_STACK_END,   // Where the pointer was at `yield`.
@@ -25,7 +29,9 @@ enum E_ITER_YIELD
 }
 
 static stock
-	YSI_g_sIteratorStack[MAX_NESTED_ITERATORS][E_ITER_YIELD];
+	YSI_g_sIteratorStack[MAX_NESTED_ITERATORS][E_ITER_YIELD],
+	YSI_g_sStack[MAX_YIELD_MEMORY],
+	YSI_g_sStackPtr;
 
 stock
 	YSI_gIteratorDepth = -1;
@@ -33,6 +39,17 @@ stock
 static
 	YSI_g_sPtr;
 #pragma unused YSI_g_sPtr
+
+/**
+ * <remarks>
+ * </remarks>
+ */
+
+hook public OnScriptInit()
+{
+	#emit CONST.pri    YSI_g_sStack
+	#emit STOR.pri     YSI_g_sStackPtr
+}
 
 /**
  * <remarks>
@@ -65,6 +82,7 @@ stock bool:Iter_YieldEnter()
 	#emit MOVE.alt
 	#emit LOAD.I
 	#emit ADD
+	#emit ADD.C        4
 	#emit MOVE.alt
 	// Blank a load of data.
 	#emit ZERO.pri
@@ -74,7 +92,7 @@ stock bool:Iter_YieldEnter()
 	#emit LCTRL        2
 	#emit STOR.I
 	#emit XCHG
-	#emit ADD.C        12 // Move on to `E_ITER_YIELD_STACK_START`.
+	#emit ADD.C        8  // Move on to `E_ITER_YIELD_STACK_START`.
 	#emit XCHG
 	// Save the stack size after this function ends.
 //	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START] = GetAmxStackBottom() + 12;
@@ -202,7 +220,6 @@ stock Iter_YieldReturn(value)
 	#emit ADD
 	// Heap.
 	#emit STOR.pri     YSI_g_sPtr
-	#emit ADD.C        4
 	#emit MOVE.alt
 	#emit LCTRL        2
 	#emit STOR.I
