@@ -15,8 +15,8 @@
 
 enum E_ITER_YIELD
 {
-	E_ITER_YIELD_HEAP_END,    // Where the pointer was at `yield`.
 	E_ITER_YIELD_HEAP_START,  // Where the pointer was before the loop.
+	E_ITER_YIELD_HEAP_END,    // Where the pointer was at `yield`.
 	E_ITER_YIELD_HEAP_SIZE,   // `malloc`ed memory.
 	E_ITER_YIELD_STACK_START, // Where the pointer was before the loop.
 	E_ITER_YIELD_STACK_END,   // Where the pointer was at `yield`.
@@ -82,7 +82,6 @@ stock bool:Iter_YieldEnter()
 	#emit MOVE.alt
 	#emit LOAD.I
 	#emit ADD
-	#emit ADD.C        4
 	#emit MOVE.alt
 	// Blank a load of data.
 	#emit ZERO.pri
@@ -92,7 +91,7 @@ stock bool:Iter_YieldEnter()
 	#emit LCTRL        2
 	#emit STOR.I
 	#emit XCHG
-	#emit ADD.C        8  // Move on to `E_ITER_YIELD_STACK_START`.
+	#emit ADD.C        12  // Move on to `E_ITER_YIELD_STACK_START`.
 	#emit XCHG
 	// Save the stack size after this function ends.
 //	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START] = GetAmxStackBottom() + 12;
@@ -226,6 +225,7 @@ stock Iter_YieldReturn(value)
 	#emit ADD
 	// Heap.
 	#emit STOR.pri     YSI_g_sPtr
+	#emit ADD.C        4
 	#emit MOVE.alt
 	#emit LCTRL        2
 	#emit STOR.I
