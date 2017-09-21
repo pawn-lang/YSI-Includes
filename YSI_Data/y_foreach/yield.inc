@@ -15,12 +15,12 @@
 
 enum E_ITER_YIELD
 {
-	E_ITER_YIELD_HEAP_START,  // Where the pointer was before the loop.
-	E_ITER_YIELD_HEAP_END,    // Where the pointer was at `yield`.
-	E_ITER_YIELD_HEAP_SIZE,   // `malloc`ed memory.
 	E_ITER_YIELD_STACK_START, // Where the pointer was before the loop.
 	E_ITER_YIELD_STACK_END,   // Where the pointer was at `yield`.
 	E_ITER_YIELD_STACK_SIZE,  // `malloc`ed memory.
+	E_ITER_YIELD_HEAP_START,  // Where the pointer was before the loop.
+	E_ITER_YIELD_HEAP_END,    // Where the pointer was at `yield`.
+	E_ITER_YIELD_HEAP_SIZE,   // `malloc`ed memory.
 	E_ITER_YIELD_FIRST,       // First call of a pair to `Iter_YieldLoop`.
 	E_ITER_YIELD_FRM,         // The iterator function context.
 	E_ITER_YIELD_CIP,         // The iterator function continuation.
@@ -86,17 +86,17 @@ stock bool:Iter_YieldEnter()
 	// Blank a load of data.
 	#emit ZERO.pri
 	#emit FILL         44
-	// Save the heap size.
-//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START]  = GetAmxHeapTop();
-	#emit LCTRL        2
-	#emit STOR.I
-	#emit XCHG
-	#emit ADD.C        12  // Move on to `E_ITER_YIELD_STACK_START`.
-	#emit XCHG
 	// Save the stack size after this function ends.
 //	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START] = GetAmxStackBottom() + 12;
 	#emit LCTRL        4
 	#emit ADD.C        12
+	#emit STOR.I
+	#emit XCHG
+	#emit ADD.C        12  // Move on to `E_ITER_YIELD_HEAP_START`.
+	#emit XCHG
+	// Save the heap size.
+//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START]  = GetAmxHeapTop();
+	#emit LCTRL        2
 	#emit STOR.I
 	#emit XCHG
 	#emit ADD.C        24 // Move on to `E_ITER_YIELD_FRAME`.
@@ -223,20 +223,19 @@ stock Iter_YieldReturn(value)
 	#emit MOVE.alt
 	#emit LOAD.I
 	#emit ADD
-	// Heap.
 	#emit STOR.pri     YSI_g_sPtr
+	// Stack (excluding this function and intermediate results).
 	#emit ADD.C        4
 	#emit MOVE.alt
-	#emit LCTRL        2
+	#emit LCTRL        4
+	#emit ADD.C        16
+	#emit STOR.pri     src_l
 	#emit STOR.I
-	// Using `LCTRL 2` is faster than saving and restoring the value.
-//	#emit STOR.pri     size_l
 //	size_l =
-//		(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_END] = GetAmxHeapTop())
-//		- YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START];
+//		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START] -
+//		(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END] = size_l + 16);
 	#emit LREF.alt     YSI_g_sPtr
-	#emit STOR.alt     src_l
-	#emit SUB
+	#emit SUB.alt
 	#emit STOR.pri     size_l
 	#emit MOVE.alt
 	#emit LOAD.pri     YSI_g_sPtr
@@ -261,22 +260,23 @@ stock Iter_YieldReturn(value)
 ////			size_l);
 //	}
 //	{}
-	// Stack (excluding this function and intermediate results).
 //	size_l = GetAmxStackBottom();
 	#emit LOAD.pri     YSI_g_sPtr
 	#emit ADD.C        12
 	#emit STOR.pri     YSI_g_sPtr
+	// Heap.
 	#emit ADD.C        4
 	#emit MOVE.alt
-	#emit LCTRL        4
-	#emit ADD.C        16
-	#emit STOR.pri     src_l
+	#emit LCTRL        2
 	#emit STOR.I
+	// Using `LCTRL 2` is faster than saving and restoring the value.
+//	#emit STOR.pri     size_l
 //	size_l =
-//		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START] -
-//		(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END] = size_l + 16);
+//		(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_END] = GetAmxHeapTop())
+//		- YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START];
 	#emit LREF.alt     YSI_g_sPtr
-	#emit SUB.alt
+	#emit STOR.alt     src_l
+	#emit SUB
 	#emit STOR.pri     size_l
 	#emit MOVE.alt
 	#emit LOAD.pri     YSI_g_sPtr
@@ -312,11 +312,11 @@ stock Iter_YieldReturn(value)
 	#emit LIDX
 	#emit SCTRL        5
 //	SetAmxStackBottom(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START]);
-	#emit CONST.pri    0xFFFFFFFB // -5
+	#emit CONST.pri    0xFFFFFFF8 // -8
 	#emit LIDX
 	#emit SCTRL        4
 //	SetAmxHeapTop(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START]);
-	#emit CONST.pri    0xFFFFFFF8 // -8
+	#emit CONST.pri    0xFFFFFFFB // -5
 	#emit LIDX
 	#emit SCTRL        2
 //	size_l = YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_RETURN];
