@@ -218,9 +218,14 @@ stock bool:Iter_YieldLoop()
 //		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_SIZE] = 0;
 		// Jump back in to our earlier function.
 		#emit LOAD.alt     YSI_g_sPtr
-
-		SetAmxFrame(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FRM]);
-		SetAmxNextInstructionPointer(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_CIP]);
+//		SetAmxFrame(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FRM]);
+		#emit CONST.pri    5
+		#emit LIDX
+		#emit SCTRL        5
+//		SetAmxNextInstructionPointer(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_CIP]);
+		#emit CONST.pri    6
+		#emit LIDX
+		#emit SCTRL        6
 		// Technically, we never return from here, but the compiler can't know!
 	}
 	return true;
