@@ -189,30 +189,58 @@ stock Iter_YieldReturn(value)
 	// This does the return through the global scope.
 	I@ = value;
 	static
-		tmp_l;
+		size_l,
+		dest_l,
+		src_l;
 	// Load a pointer to the first address.  We know we are in range, so there's
 	// no `BOUNDS` check here.
-	tmp_l =
-		(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_END] = GetAmxHeapTop())
-		- YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START];
-	if (tmp_l)
+	#emit CONST.alt    YSI_g_sIteratorStack
+	#emit LOAD.pri     YSI_gIteratorDepth
+	#emit IDXADDR
+	#emit MOVE.alt
+	#emit LOAD.I
+	#emit ADD
+	// Heap.
+	#emit STOR.pri     YSI_g_sPtr
+	#emit ADD.C        4
+	#emit MOVE.alt
+	#emit LCTRL        2
+	#emit STOR.I
+	// Using `LCTRL 2` is faster than saving and restoring the value.
+//	#emit STOR.pri     size_l
+	#emit LREF.alt     YSI_g_sPtr
+	#emit STOR.alt     src_l
+	#emit SUB
+//	
+//	size_l =
+//		(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_END] = GetAmxHeapTop())
+//		- YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START];
+	#emit STOR.pri     size_l
+	if (size_l)
 	{
-		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_ALLOC] = Malloc_Resolve(malloc(tmp_l / cellbytes));
-		rawMemcpy(
-			_:YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_ALLOC],
-			YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START],
-			tmp_l);
+		dest_l = _:Malloc_Resolve(malloc(size_l / cellbytes)),
+		rawMemcpy(dest_l, src_l, size_l);
+		#emit LOAD.pri     YSI_g_sPtr
+		#emit ADD.C        8
+		#emit MOVE.alt
+		#emit LOAD.pri     dest_l
+		#emit STOR.I
+//		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_ALLOC] = Malloc_Resolve(malloc(size_l / cellbytes));
+//		rawMemcpy(
+//			_:YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_ALLOC],
+//			YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START],
+//			size_l);
 	}
 	// Stack (excluding this function and intermediate results).
-	tmp_l = GetAmxStackBottom();
-	tmp_l =
+	size_l = GetAmxStackBottom();
+	size_l =
 		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START] -
-		(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END] = tmp_l + 16);
-	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC] = Malloc_Resolve(malloc(tmp_l / cellbytes));
+		(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END] = size_l + 16);
+	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC] = Malloc_Resolve(malloc(size_l / cellbytes));
 	rawMemcpy(
 		_:YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC],
 		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END],
-		tmp_l);
+		size_l);
 	// Store the data to jump straight back to the caller.
 	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FRM] = GetCurrentFramePreviousFrame();
 	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_CIP] = GetCurrentFrameReturn();
@@ -221,9 +249,9 @@ stock Iter_YieldReturn(value)
 	SetAmxFrame(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FRAME]);
 	SetAmxStackBottom(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START]);
 	SetAmxHeapTop(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START]);
-	tmp_l = YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_RETURN];
+	size_l = YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_RETURN];
 	// No longer in this iterator.
 	--YSI_gIteratorDepth;
-	SetAmxNextInstructionPointer(tmp_l);
+	SetAmxNextInstructionPointer(size_l);
 }
 
