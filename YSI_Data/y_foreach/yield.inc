@@ -87,7 +87,6 @@ stock bool:Iter_YieldEnter()
 	#emit ZERO.pri
 	#emit FILL         44
 	// Save the stack size after this function ends.
-//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START] = GetAmxStackBottom() + 12;
 	#emit LCTRL        4
 	#emit ADD.C        12
 	#emit STOR.I
@@ -95,27 +94,19 @@ stock bool:Iter_YieldEnter()
 	#emit ADD.C        12  // Move on to `E_ITER_YIELD_HEAP_START`.
 	#emit XCHG
 	// Save the heap size.
-//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START]  = GetAmxHeapTop();
 	#emit LCTRL        2
 	#emit STOR.I
 	#emit XCHG
 	#emit ADD.C        24 // Move on to `E_ITER_YIELD_FRAME`.
 	#emit XCHG
 	// Load of data already blanked.
-//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END]   = 0;
-//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_END]    = 0;
-//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_ALLOC]  = ResolvedAlloc:0;
-//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC] = ResolvedAlloc:0;
-//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FIRST]       = 0;
 	// Store the previous function's frame pointer.
-//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FRAME]       = GetCurrentFramePreviousFrame();
 	#emit LOAD.S.pri   0
 	#emit STOR.I
 	#emit XCHG
 	#emit ADD.C        4  // Move on to `E_ITER_YIELD_RETURN`.
 	#emit XCHG
 	// Store the return address (next instruction to execute).
-//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_RETURN]      = GetCurrentFrameReturn();
 	#emit LOAD.S.pri   4
 	#emit STOR.I
 	return false;
@@ -187,7 +178,6 @@ stock bool:Iter_YieldLoop()
 		#emit ADD.C        8
 		#emit STOR.pri     YSI_g_sPtr
 		#emit MOVE.alt
-//		++YSI_gIteratorDepth;
 		// Restore the heap.
 		#emit CONST.pri    3
 		#emit LIDX
@@ -200,7 +190,6 @@ stock bool:Iter_YieldLoop()
 		#emit SCTRL        2
 		YSI_g_sStackPtr -= size_l,
 		rawMemcpy(src_l, YSI_g_sStackPtr, size_l);
-//		++YSI_gIteratorDepth;
 		// Restore the stack.
 		#emit LOAD.alt     YSI_g_sPtr
 		#emit ZERO.pri
@@ -214,15 +203,11 @@ stock bool:Iter_YieldLoop()
 		#emit SCTRL        4
 		YSI_g_sStackPtr -= size_l,
 		rawMemcpy(src_l, YSI_g_sStackPtr, size_l);
-		//free(Malloc_Reconcile(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC]));
-//		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_SIZE] = 0;
 		// Jump back in to our earlier function.
 		#emit LOAD.alt     YSI_g_sPtr
-//		SetAmxFrame(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FRM]);
 		#emit CONST.pri    5
 		#emit LIDX
 		#emit SCTRL        5
-//		SetAmxNextInstructionPointer(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_CIP]);
 		#emit CONST.pri    6
 		#emit LIDX
 		#emit SCTRL        6
@@ -251,9 +236,6 @@ stock Iter_YieldReturn(value)
 	#emit ADD.C        16
 	#emit STOR.pri     src_l
 	#emit STOR.I
-//	size_l =
-//		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START] -
-//		(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END] = size_l + 16);
 	#emit LREF.alt     YSI_g_sPtr
 	#emit SUB.alt
 	#emit STOR.pri     size_l
@@ -264,23 +246,6 @@ stock Iter_YieldReturn(value)
 	#emit STOR.I
 	rawMemcpy(YSI_g_sStackPtr, src_l, size_l);
 	YSI_g_sStackPtr += size_l;
-//	if (size_l)
-//	{
-//		dest_l = _:Malloc_Resolve(malloc(size_l / cellbytes)),
-//		rawMemcpy(dest_l, src_l, size_l);
-//		#emit LOAD.pri     YSI_g_sPtr
-//		#emit ADD.C        8
-//		#emit MOVE.alt
-//		#emit LOAD.pri     dest_l
-//		#emit STOR.I
-////		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_ALLOC] = Malloc_Resolve(malloc(size_l / cellbytes));
-////		rawMemcpy(
-////			_:YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_ALLOC],
-////			YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START],
-////			size_l);
-//	}
-//	{}
-//	size_l = GetAmxStackBottom();
 	#emit LOAD.pri     YSI_g_sPtr
 	#emit ADD.C        12
 	#emit STOR.pri     YSI_g_sPtr
@@ -290,10 +255,6 @@ stock Iter_YieldReturn(value)
 	#emit LCTRL        2
 	#emit STOR.I
 	// Using `LCTRL 2` is faster than saving and restoring the value.
-//	#emit STOR.pri     size_l
-//	size_l =
-//		(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_END] = GetAmxHeapTop())
-//		- YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START];
 	#emit LREF.alt     YSI_g_sPtr
 	#emit STOR.alt     src_l
 	#emit SUB
@@ -305,21 +266,12 @@ stock Iter_YieldReturn(value)
 	#emit STOR.I
 	rawMemcpy(YSI_g_sStackPtr, src_l, size_l);
 	YSI_g_sStackPtr += size_l;
-//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC] = Malloc_Resolve(malloc(size_l / cellbytes));
-//	rawMemcpy(
-//		_:YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC],
-//		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END],
-//		size_l);
-//	dest_l = _:Malloc_Resolve(malloc(size_l / cellbytes)),
-//	rawMemcpy(dest_l, src_l, size_l);
-	// Store the data to jump straight back to the caller.
-//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FRM] = GetCurrentFramePreviousFrame();
 	#emit LOAD.pri     YSI_g_sPtr
 	#emit ADD.C        16
 	#emit MOVE.alt
 	#emit LOAD.S.pri   0
 	#emit STOR.I
-//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_CIP] = GetCurrentFrameReturn();
+	// Frame.
 	#emit MOVE.pri
 	#emit ADD.C        4
 	#emit MOVE.alt
@@ -327,23 +279,17 @@ stock Iter_YieldReturn(value)
 	#emit STOR.I
 	// Go to the caller.  From this point on, we can't use any stack-local
 	// storage, because we just destroyed the stack!
-//	SetAmxFrame(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FRAME]);
 	#emit CONST.pri    1
 	#emit LIDX
 	#emit SCTRL        5
-//	SetAmxStackBottom(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START]);
 	#emit CONST.pri    0xFFFFFFF8 // -8
 	#emit LIDX
 	#emit SCTRL        4
-//	SetAmxHeapTop(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START]);
 	#emit CONST.pri    0xFFFFFFFB // -5
 	#emit LIDX
 	#emit SCTRL        2
-//	size_l = YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_RETURN];
 	// No longer in this iterator.
-//	--YSI_gIteratorDepth;
 	#emit DEC          YSI_gIteratorDepth
-//	SetAmxNextInstructionPointer(size_l);
 	#emit CONST.pri    2
 	#emit LIDX
 	#emit SCTRL        6
