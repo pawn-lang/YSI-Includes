@@ -11,11 +11,11 @@
 
 enum E_ITER_YIELD
 {
-	E_ITER_YIELD_STACK_START, // Where the pointer was before the loop.
 	E_ITER_YIELD_HEAP_START,  // Where the pointer was before the loop.
-	E_ITER_YIELD_STACK_END,   // Where the pointer was at `yield`.
 	E_ITER_YIELD_HEAP_END,    // Where the pointer was at `yield`.
 	ResolvedAlloc:E_ITER_YIELD_HEAP_ALLOC,  // `malloc`ed memory.
+	E_ITER_YIELD_STACK_START, // Where the pointer was before the loop.
+	E_ITER_YIELD_STACK_END,   // Where the pointer was at `yield`.
 	ResolvedAlloc:E_ITER_YIELD_STACK_ALLOC, // `malloc`ed memory.
 	E_ITER_YIELD_FIRST,       // First call of a pair to `Iter_YieldLoop`.
 	E_ITER_YIELD_FRM,         // The iterator function context.
@@ -65,26 +65,25 @@ stock bool:Iter_YieldEnter()
 	#emit MOVE.alt
 	#emit LOAD.I
 	#emit ADD
-	#emit STOR.pri     YSI_g_sPtr
-	// Blank a load of data.
 	#emit MOVE.alt
+	// Blank a load of data.
 	#emit ZERO.pri
 	#emit FILL         44
+	// Save the heap size.
+//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START]  = GetAmxHeapTop();
+	#emit LCTRL        2
+	#emit STOR.I
+	#emit XCHG
+	#emit ADD.C        12 // Move on to `E_ITER_YIELD_STACK_START`.
+	#emit XCHG
 	// Save the stack size after this function ends.
 //	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START] = GetAmxStackBottom() + 12;
 	#emit LCTRL        4
 	#emit ADD.C        12
 	#emit STOR.I
 	#emit XCHG
-	#emit ADD.C        4  // Move on to `E_ITER_YIELD_HEAP_START`.
+	#emit ADD.C        24 // Move on to `E_ITER_YIELD_FRAME`.
 	#emit XCHG
-	// Save the heap size.
-	#emit LCTRL        2
-	#emit STOR.I
-	#emit XCHG
-	#emit ADD.C        32 // Move on to `E_ITER_YIELD_FRAME`.
-	#emit XCHG
-//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START]  = GetAmxHeapTop();
 	// Load of data already blanked.
 //	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END]   = 0;
 //	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_END]    = 0;
@@ -191,7 +190,8 @@ stock Iter_YieldReturn(value)
 	I@ = value;
 	static
 		tmp_l;
-	// Heap.
+	// Load a pointer to the first address.  We know we are in range, so there's
+	// no `BOUNDS` check here.
 	tmp_l =
 		(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_END] = GetAmxHeapTop())
 		- YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START];
