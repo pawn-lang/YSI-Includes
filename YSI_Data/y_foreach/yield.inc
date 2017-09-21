@@ -208,13 +208,12 @@ stock Iter_YieldReturn(value)
 	#emit STOR.I
 	// Using `LCTRL 2` is faster than saving and restoring the value.
 //	#emit STOR.pri     size_l
-	#emit LREF.alt     YSI_g_sPtr
-	#emit STOR.alt     src_l
-	#emit SUB
-//	
 //	size_l =
 //		(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_END] = GetAmxHeapTop())
 //		- YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START];
+	#emit LREF.alt     YSI_g_sPtr
+	#emit STOR.alt     src_l
+	#emit SUB
 	#emit STOR.pri     size_l
 	if (size_l)
 	{
@@ -231,16 +230,37 @@ stock Iter_YieldReturn(value)
 //			YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_HEAP_START],
 //			size_l);
 	}
+	{}
 	// Stack (excluding this function and intermediate results).
-	size_l = GetAmxStackBottom();
-	size_l =
-		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START] -
-		(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END] = size_l + 16);
-	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC] = Malloc_Resolve(malloc(size_l / cellbytes));
-	rawMemcpy(
-		_:YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC],
-		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END],
-		size_l);
+//	size_l = GetAmxStackBottom();
+	#emit LOAD.pri     YSI_g_sPtr
+	#emit ADD.C        12
+	#emit STOR.pri     YSI_g_sPtr
+	#emit ADD.C        4
+	#emit MOVE.alt
+	#emit LCTRL        4
+	#emit ADD.C        16
+	#emit STOR.pri     src_l
+	#emit STOR.I
+//	size_l =
+//		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START] -
+//		(YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END] = size_l + 16);
+	#emit LREF.alt     YSI_g_sPtr
+	#emit SUB.alt
+	#emit STOR.pri     size_l
+	dest_l = _:Malloc_Resolve(malloc(size_l / cellbytes)),
+	rawMemcpy(dest_l, src_l, size_l);
+	#emit LOAD.pri     YSI_g_sPtr
+	#emit ADD.C        8
+	#emit MOVE.alt
+	#emit LOAD.pri     dest_l
+	#emit STOR.I
+//	printf("%d %d", YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END], size_l);
+//	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC] = Malloc_Resolve(malloc(size_l / cellbytes));
+//	rawMemcpy(
+//		_:YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_ALLOC],
+//		YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END],
+//		size_l);
 	// Store the data to jump straight back to the caller.
 	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_FRM] = GetCurrentFramePreviousFrame();
 	YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_CIP] = GetCurrentFrameReturn();
