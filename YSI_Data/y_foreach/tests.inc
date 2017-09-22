@@ -3366,6 +3366,8 @@ iterfunc stock y_iter_yield5()
 		k = 0;
 	for (new i = 0; i != 65536; ++i)
 	{
+		if (i % 655 == 0)
+			printf("%d%%...", i / 655);
 		for (new j = 0; j != 65536; ++j)
 		{
 			yield return k;
@@ -3377,6 +3379,18 @@ iterfunc stock y_iter_yield5()
 
 //Test:y_iter_yield5a()
 //{
+//	new
+//		k = 0;
+//	for (new i = 0; i != 65536; ++i)
+//	{
+//		if (i % 655 == 0)
+//			printf("%d%%...", i / 655);
+//		for (new j = 0; j != 65536; ++j)
+//		{
+//			++k;
+//		}
+//	}
+//	ASSERT(k == 0); // Overflow.
 //	new
 //		count = 0,
 //		bool:ever = false;
