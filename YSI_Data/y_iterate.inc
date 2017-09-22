@@ -460,10 +460,13 @@ Optional plugins:
 
 #include "..\YSI_Internal\y_natives"
 #include "..\YSI_Internal\y_shortfunc"
+#include "..\YSI_Internal\y_funcinc"
 #include "..\YSI_Core\y_debug"
-#include "..\YSI_Coding\y_malloc"
+//#include "..\YSI_Coding\y_malloc"
 
 #include "y_foreach/impl"
+
+#include "..\YSI_Coding\y_hooks"
 #include "y_foreach/yield"
 
 #if _FOREACH_CHARACTERS || _FOREACH_VEHICLES || _FOREACH_ACTORS
