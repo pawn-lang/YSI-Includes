@@ -181,15 +181,26 @@ stock bool:Iter_YieldLoop()
 		// Restore the heap.
 		#emit CONST.pri    3
 		#emit LIDX
-		#emit STOR.pri     size_l
+//		#emit STOR.pri     size_l
+		#emit PUSH.pri
+		#emit PUSH.pri
+		#emit PUSH.C       0
+		#emit LOAD.alt     YSI_g_sStackPtr
+		#emit SUB.alt
+		#emit PUSH.pri
+		#emit STOR.pri     YSI_g_sStackPtr
+		#emit LOAD.alt     YSI_g_sPtr
 		#emit CONST.pri    1
 		#emit LIDX
-		#emit STOR.pri     src_l
+//		#emit STOR.pri     src_l
+		#emit PUSH.pri
 		#emit CONST.pri    2
 		#emit LIDX
 		#emit SCTRL        2
-		YSI_g_sStackPtr -= size_l,
-		rawMemcpy(src_l, YSI_g_sStackPtr, size_l);
+		#emit PUSH.C       20
+		#emit SYSREQ.C     memcpy
+//		YSI_g_sStackPtr -= size_l,
+//		rawMemcpy(src_l, YSI_g_sStackPtr, size_l);
 		// Restore the stack.
 		#emit LOAD.alt     YSI_g_sPtr
 		#emit ZERO.pri
