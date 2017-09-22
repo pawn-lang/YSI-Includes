@@ -181,7 +181,6 @@ stock bool:Iter_YieldLoop()
 		// Restore the heap.
 		#emit CONST.pri    3
 		#emit LIDX
-//		#emit STOR.pri     size_l
 		#emit PUSH.pri
 		#emit PUSH.pri
 		#emit PUSH.C       0
@@ -192,15 +191,12 @@ stock bool:Iter_YieldLoop()
 		#emit LOAD.alt     YSI_g_sPtr
 		#emit CONST.pri    1
 		#emit LIDX
-//		#emit STOR.pri     src_l
 		#emit PUSH.pri
 		#emit CONST.pri    2
 		#emit LIDX
 		#emit SCTRL        2
 		#emit PUSH.C       20
 		#emit SYSREQ.C     memcpy
-//		YSI_g_sStackPtr -= size_l,
-//		rawMemcpy(src_l, YSI_g_sStackPtr, size_l);
 		// Restore the stack.
 		#emit LOAD.alt     YSI_g_sPtr
 		#emit CONST.pri    0xFFFFFFFF // -1
@@ -209,7 +205,6 @@ stock bool:Iter_YieldLoop()
 		#emit LREF.pri     YSI_g_sPtr // Or ZERO.pri, LIDX
 		#emit PUSH.pri
 		#emit PUSH.pri
-//		#emit PUSH.C       0
 		#emit LOAD.alt     YSI_g_sStackPtr
 		#emit SUB.alt
 		#emit ZERO.alt
@@ -223,8 +218,6 @@ stock bool:Iter_YieldLoop()
 		#emit PUSH.C       20
 		#emit SYSREQ.C     memcpy
 		#emit STACK        24
-//		YSI_g_sStackPtr -= size_l,
-//		rawMemcpy(src_l, YSI_g_sStackPtr, size_l);
 		// Jump back in to our earlier function.
 		#emit LOAD.alt     YSI_g_sPtr
 		#emit CONST.pri    5
@@ -256,11 +249,9 @@ stock Iter_YieldReturn(value)
 	#emit MOVE.alt
 	#emit LCTRL        4
 	#emit ADD.C        16
-//	#emit STOR.pri     src_l
 	#emit STOR.I
 	#emit LREF.alt     YSI_g_sPtr
 	#emit SUB.alt
-//	#emit STOR.pri     size_l
 	#emit MOVE.alt
 	#emit PUSH.pri
 	#emit PUSH.pri
@@ -272,7 +263,6 @@ stock Iter_YieldReturn(value)
 	#emit LCTRL        4
 	#emit ADD.C        28
 	#emit PUSH.pri
-//	#emit PUSH         src_l
 	#emit LOAD.alt     YSI_g_sStackPtr
 	#emit PUSH.alt
 	#emit PUSH.C       20
@@ -282,8 +272,6 @@ stock Iter_YieldReturn(value)
 	#emit POP.alt
 	#emit ADD
 	#emit STOR.pri     YSI_g_sStackPtr
-//	rawMemcpy(YSI_g_sStackPtr, src_l, size_l);
-//	YSI_g_sStackPtr += size_l;
 	#emit LOAD.pri     YSI_g_sPtr
 	#emit ADD.C        12
 	#emit STOR.pri     YSI_g_sPtr
@@ -294,9 +282,7 @@ stock Iter_YieldReturn(value)
 	#emit STOR.I
 	// Using `LCTRL 2` is faster than saving and restoring the value.
 	#emit LREF.alt     YSI_g_sPtr
-//	#emit STOR.alt     src_l
 	#emit SUB
-//	#emit STOR.pri     size_l
 	#emit MOVE.alt
 	#emit PUSH.pri
 	#emit PUSH.pri
@@ -316,8 +302,6 @@ stock Iter_YieldReturn(value)
 	#emit POP.alt
 	#emit ADD
 	#emit STOR.pri     YSI_g_sStackPtr
-//	rawMemcpy(YSI_g_sStackPtr, src_l, size_l);
-//	YSI_g_sStackPtr += size_l;
 	#emit LOAD.pri     YSI_g_sPtr
 	#emit ADD.C        16
 	#emit MOVE.alt
