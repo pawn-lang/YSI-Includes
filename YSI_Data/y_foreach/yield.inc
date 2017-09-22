@@ -203,17 +203,28 @@ stock bool:Iter_YieldLoop()
 //		rawMemcpy(src_l, YSI_g_sStackPtr, size_l);
 		// Restore the stack.
 		#emit LOAD.alt     YSI_g_sPtr
-		#emit ZERO.pri
-		#emit LIDX
-		#emit STOR.pri     size_l
-		#emit ZERO.pri
-		#emit STOR.I
 		#emit CONST.pri    0xFFFFFFFF // -1
 		#emit LIDX
-		#emit STOR.pri     src_l
 		#emit SCTRL        4
-		YSI_g_sStackPtr -= size_l,
-		rawMemcpy(src_l, YSI_g_sStackPtr, size_l);
+		#emit LREF.pri     YSI_g_sPtr // Or ZERO.pri, LIDX
+		#emit PUSH.pri
+		#emit PUSH.pri
+//		#emit PUSH.C       0
+		#emit LOAD.alt     YSI_g_sStackPtr
+		#emit SUB.alt
+		#emit ZERO.alt
+		#emit PUSH.alt
+		#emit SREF.alt     YSI_g_sPtr
+		#emit PUSH.pri
+		#emit STOR.pri     YSI_g_sStackPtr
+		#emit LCTRL        4
+		#emit ADD.C        16
+		#emit PUSH.pri
+		#emit PUSH.C       20
+		#emit SYSREQ.C     memcpy
+		#emit STACK        24
+//		YSI_g_sStackPtr -= size_l,
+//		rawMemcpy(src_l, YSI_g_sStackPtr, size_l);
 		// Jump back in to our earlier function.
 		#emit LOAD.alt     YSI_g_sPtr
 		#emit CONST.pri    5

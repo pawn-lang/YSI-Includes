@@ -3360,49 +3360,53 @@ Test:y_iter_yield4a()
 	}
 }
 
-iterfunc stock y_iter_yield5()
-{
-	new
-		k = 0;
-	for (new i = 0; i != 65536; ++i)
+#if defined YSI_SLOW_TESTS
+
+	iterfunc stock y_iter_yield5()
 	{
-		if (i % 655 == 0)
-			printf("%d%%...", i / 655);
-		for (new j = 0; j != 65536; ++j)
+		new
+			k = 0;
+		for (new i = 0; i != 65536; ++i)
 		{
-			yield return k;
-			++k;
+			if (i % 655 == 0)
+				printf("%d%%...", i / 655);
+			for (new j = 0; j != 65536; ++j)
+			{
+				yield return k;
+				++k;
+			}
 		}
 	}
-}
-#define Iterator@y_iter_yield5 iteryield
+	#define Iterator@y_iter_yield5 iteryield
+	
+	Test:y_iter_yield5a()
+	{
+		new
+			k = 0;
+		for (new i = 0; i != 65536; ++i)
+		{
+			if (i % 655 == 0)
+				printf("%d%%...", i / 655);
+			for (new j = 0; j != 65536; ++j)
+			{
+				++k;
+			}
+		}
+		ASSERT(k == 0); // Overflow.
+		new
+			count = 0,
+			bool:ever = false;
+		foreach (new i : y_iter_yield5)
+		{
+			#pragma unused i
+			++count;
+			ever = true;
+		}
+		ASSERT(count == 0); // Overflow.
+		ASSERT(ever);
+	}
 
-//Test:y_iter_yield5a()
-//{
-//	new
-//		k = 0;
-//	for (new i = 0; i != 65536; ++i)
-//	{
-//		if (i % 655 == 0)
-//			printf("%d%%...", i / 655);
-//		for (new j = 0; j != 65536; ++j)
-//		{
-//			++k;
-//		}
-//	}
-//	ASSERT(k == 0); // Overflow.
-//	new
-//		count = 0,
-//		bool:ever = false;
-//	foreach (new i : y_iter_yield5)
-//	{
-//		#pragma unused i
-//		++count;
-//		ever = true;
-//	}
-//	ASSERT(count == 0); // Overflow.
-//	ASSERT(ever);
-//}
+#endif
 
 iterfunc stock y_iter_yield6()
 {
