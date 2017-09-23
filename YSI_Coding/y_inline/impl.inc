@@ -418,6 +418,7 @@ stock bool:Callback_Get(callback:name, ret[E_CALLBACK_DATA], expect[] = "", bool
 		stack <<= 2,
 		// Get the address of the data.
 		ret[E_CALLBACK_DATA_ALLOC] = Malloc_Resolve(a),
+		frm = _:ret[E_CALLBACK_DATA_ALLOC],
 		ret[E_CALLBACK_DATA_OFFSET] = stack,
 		// Copy the stack over.  First get the frame of the function that used
 		// an inline function, thus calling us indirectly.
