@@ -268,7 +268,19 @@ Optional plugins:
 #define Text_InputBox(%0,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,DIALOG_STYLE_INPUT,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 ```,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
 #define Text_ListBox(%0,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,DIALOG_STYLE_LIST,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 ```,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
 #define Text_PasswordBox(%0,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,DIALOG_STYLE_PASSWORD,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 ```,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
+#define Text_TablistBox(%0,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,DIALOG_STYLE_TABLIST,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 ```,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
+#define Text_TablistHeadersBox(%0,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,DIALOG_STYLE_TABLIST_HEADERS,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 ```,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
 #define Text_DialogBox(%0,%9,%1,%2,%3,%4,%5) PSF:_Text_DialogBox(%0,%9,%1,DO_TEXT_SET:%2 DO_MOVE|||,DO_TEXT_SET:%3 ```,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
+
+#define Text_FormattedMessageBox(%0,%1,%2,%3,%4,%5) PSF:_Text_FormattedDialogBox(%0,DIALOG_STYLE_MSGBOX,%1,DO_TEXT_SET:%2 DO_MOVE|||,%3,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
+#define Text_FormattedInputBox(%0,%1,%2,%3,%4,%5) PSF:_Text_FormattedDialogBox(%0,DIALOG_STYLE_INPUT,%1,DO_TEXT_SET:%2 DO_MOVE|||, %3,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
+#define Text_FormattedListBox(%0,%1,%2,%3,%4,%5) PSF:_Text_FormattedDialogBox(%0,DIALOG_STYLE_LIST,%1,DO_TEXT_SET:%2 DO_MOVE|||, %3,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
+#define Text_FormattedPasswordBox(%0,%1,%2,%3,%4,%5) PSF:_Text_FormattedDialogBox(%0,DIALOG_STYLE_PASSWORD,%1,DO_TEXT_SET:%2 DO_MOVE|||, %3,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
+#define Text_FormattedTablistBox(%0,%1,%2,%3,%4,%5) PSF:_Text_FormattedDialogBox(%0,DIALOG_STYLE_TABLIST,%1,DO_TEXT_SET:%2 DO_MOVE|||, %3,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
+#define Text_FormattedTablistHeadersBox(%0,%1,%2,%3,%4,%5) PSF:_Text_FormattedDialogBox(%0,DIALOG_STYLE_TABLIST_HEADERS,%1,DO_TEXT_SET:%2 DO_MOVE|||, %3,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
+#define Text_FormattedDialogBox(%0,%9,%1,%2,%3,%4,%5) PSF:_Text_FormattedDialogBox(%0,%9,%1,DO_TEXT_SET:%2 DO_MOVE|||, %3,DO_TEXT_SET:%4 ```,DO_TEXT_SET:%5 UN```)
+
+
 //#define Text_MessageBox(%0,%1,%2,%3) PSF:_Text_MessageBox(%0,%1,DEFAULT_TEXT_SET,#%2 DO_MOVE|||,DEFAULT_TEXT_SET,#%3 $$$,DEFAULT_TEXT_SET,#%4 $$$,DEFAULT_TEXT_SET,#%5 UN$$$)
 
 //#define _Text_MessageBox(%0YCMD:%1) _Text_MessageBox(%0_:YCMD_REP_0:YCMD_REP_1:%1)
