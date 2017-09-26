@@ -2,6 +2,9 @@
 	#undef _inc_y_text
 #endif
 
+// Multiple includes!
+#include "..\YSI_Internal\y_unique"
+
 // Need an include guard here.
 #if defined _INC_y_text
 	#endinput
