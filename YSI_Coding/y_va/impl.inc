@@ -392,7 +392,7 @@ static stock YVA2_FoundPush(m[CodeScanner])
 	CodeScanGetMatchAsm(m, YSI_g_sContexts[YSI_g_sPassthroughNestings]),
 	YSI_g_sStacks[YSI_g_sPassthroughNestings] = CodeScanGetMatchStack(m),
 	// If the code is 96 bytes long, `ZERO_PRI` was used not a constant number.
-	YSI_g_sSkips[YSI_g_sPassthroughNestings] = (YSI_g_sLength[YSI_g_sPassthroughNestings] == 120) ? 0 : CodeScanGetMatchHole(m, 0);
+	YSI_g_sSkips[YSI_g_sPassthroughNestings] = (YSI_g_sLength[YSI_g_sPassthroughNestings] == 112) ? 0 : CodeScanGetMatchHole(m, 0);
 	if (!YSI_g_sPassthroughNestings)
 	{
 		// Check if this function is returning a string.  It has an extra hidden
@@ -454,10 +454,6 @@ public OnScriptInit()
 	*/
 	CodeScanMatcherInit(csmO0A, &YVA2_FoundPush);
 	CodeScanMatcherPattern(csmO0A,
-		OP(ZERO_PRI)                    // 12
-		OP(PUSH_PRI)                    // 16
-		OP(ZERO_PRI)                    // 20
-		OP(PUSH_PRI)                    // 24
 		OP(ZERO_PRI)                    // 4
 		OP(PUSH_PRI)                    // 8
 		OP(ZERO_PRI)                    // 12
@@ -466,26 +462,26 @@ public OnScriptInit()
 		OP(PUSH_PRI)                    // 24
 		OP(ZERO_PRI)                    // 28
 		OP(PUSH_PRI)                    // 32
-		OP(CONST_PRI,  4)               // 40
-		OP(PUSH_PRI)                    // 44
-		OP(ZERO_PRI)                    // 48
-		OP(PUSH_PRI)                    // 52
-		OP(ZERO_PRI)                    // 56
+		OP(ZERO_PRI)                    // 36
+		OP(PUSH_PRI)                    // 40
+		OP(ZERO_PRI)                    // 44
+		OP(PUSH_PRI)                    // 48
+		OP(CONST_PRI,  4)               // 56
 		OP(PUSH_PRI)                    // 60
-		OP(PUSH_C,     36)              // 68
-		OP(CALL,       &YVA2_DummyPush) // 76
-		OP(HEAP,       4)               // 84
-		OP(STOR_I)                      // 88
-		OP(MOVE_PRI)                    // 92
-		OP(PUSH_PRI)                    // 96
+		OP(ZERO_PRI)                    // 64
+		OP(PUSH_PRI)                    // 68
+		OP(ZERO_PRI)                    // 72
+		OP(PUSH_PRI)                    // 76
+		OP(PUSH_C,     36)              // 84
+		OP(CALL,       &YVA2_DummyPush) // 92
+		OP(HEAP,       4)               // 100
+		OP(STOR_I)                      // 104
+		OP(MOVE_PRI)                    // 108
+		OP(PUSH_PRI)                    // 112
 	);
 	CodeScanAddMatcher(scanner, csmO0A);
 	CodeScanMatcherInit(csmO0B, &YVA2_FoundPush);
 	CodeScanMatcherPattern(csmO0B,
-		OP(ZERO_PRI)                    // 12
-		OP(PUSH_PRI)                    // 16
-		OP(ZERO_PRI)                    // 20
-		OP(PUSH_PRI)                    // 24
 		OP(ZERO_PRI)                    // 4
 		OP(PUSH_PRI)                    // 8
 		OP(ZERO_PRI)                    // 12
@@ -494,18 +490,22 @@ public OnScriptInit()
 		OP(PUSH_PRI)                    // 24
 		OP(ZERO_PRI)                    // 28
 		OP(PUSH_PRI)                    // 32
-		OP(CONST_PRI,  4)               // 40
-		OP(PUSH_PRI)                    // 44
-		OP(ZERO_PRI)                    // 52
-		OP(PUSH_PRI)                    // 56
-		OP(CONST_PRI,  ???)             // 60
-		OP(PUSH_PRI)                    // 64
-		OP(PUSH_C,     36)              // 72
-		OP(CALL,       &YVA2_DummyPush) // 80
-		OP(HEAP,       4)               // 88
-		OP(STOR_I)                      // 92
-		OP(MOVE_PRI)                    // 96
-		OP(PUSH_PRI)                    // 100
+		OP(ZERO_PRI)                    // 36
+		OP(PUSH_PRI)                    // 40
+		OP(ZERO_PRI)                    // 44
+		OP(PUSH_PRI)                    // 48
+		OP(CONST_PRI,  4)               // 56
+		OP(PUSH_PRI)                    // 60
+		OP(ZERO_PRI)                    // 64
+		OP(PUSH_PRI)                    // 68
+		OP(CONST_PRI,  ???)             // 76
+		OP(PUSH_PRI)                    // 80
+		OP(PUSH_C,     36)              // 88
+		OP(CALL,       &YVA2_DummyPush) // 96
+		OP(HEAP,       4)               // 104
+		OP(STOR_I)                      // 108
+		OP(MOVE_PRI)                    // 112
+		OP(PUSH_PRI)                    // 116
 	);
 	CodeScanAddMatcher(scanner, csmO0B);
 	/*
@@ -521,20 +521,20 @@ public OnScriptInit()
 	*/
 	CodeScanMatcherInit(csmO1, &YVA2_FoundPush);
 	CodeScanMatcherPattern(csmO1,
-		OP(PUSH_C,     0)               // 16
-		OP(PUSH_C,     0)               // 24
 		OP(PUSH_C,     0)               // 8
 		OP(PUSH_C,     0)               // 16
 		OP(PUSH_C,     0)               // 24
 		OP(PUSH_C,     0)               // 32
-		OP(PUSH_C,     4)               // 40
+		OP(PUSH_C,     0)               // 40
 		OP(PUSH_C,     0)               // 48
-		OP(PUSH_C,     ???)             // 56
-		OP(PUSH_C,     36)              // 64
-		OP(CALL,       &YVA2_DummyPush) // 72
-		OP(HEAP,       4)               // 80
-		OP(STOR_I)                      // 84
-		OP(PUSH_ALT)                    // 88
+		OP(PUSH_C,     4)               // 56
+		OP(PUSH_C,     0)               // 64
+		OP(PUSH_C,     ???)             // 72
+		OP(PUSH_C,     36)              // 80
+		OP(CALL,       &YVA2_DummyPush) // 84
+		OP(HEAP,       4)               // 92
+		OP(STOR_I)                      // 96
+		OP(PUSH_ALT)                    // 100
 	);
 	CodeScanAddMatcher(scanner, csmO1);
 	// Match ANY function calls anywhere.  Will even match calls to `___`, but

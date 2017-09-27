@@ -426,3 +426,47 @@ static stock y_va2_MyFunc2(...)
 	format(YSI_g_sDestString, sizeof (YSI_g_sDestString), "%s %s %s", ___);
 }
 
+static stock y_va_BlankFormat1(...)
+{
+	new string[144];
+	va_format(string, sizeof (string), "%s", ___);
+//	print(string);
+}
+
+Test:y_va_BlankFormat1()
+{
+	new abc[32] = "WAT";
+	y_va_BlankFormat1(abc);
+	y_va_BlankFormat1(abc);
+	y_va_BlankFormat1(abc);
+	y_va_BlankFormat1(abc);
+}
+
+static stock
+	YSI_g_sString[144];
+
+static stock y_va_BlankFormat2(...)
+{
+	new string[144];
+	va_format(YSI_g_sString, sizeof (YSI_g_sString), "%s", ___);
+	#pragma unused string
+//	print(string);
+}
+
+Test:y_va_BlankFormat2()
+{
+	new abc[32] = "WAT";
+	YSI_g_sString[0] = '\0';
+	y_va_BlankFormat2(abc);
+	ASSERT(!strcmp(YSI_g_sString, "WAT"));
+	YSI_g_sString[0] = '\0';
+	y_va_BlankFormat2(abc);
+	ASSERT(!strcmp(YSI_g_sString, "WAT"));
+	YSI_g_sString[0] = '\0';
+	y_va_BlankFormat2(abc);
+	ASSERT(!strcmp(YSI_g_sString, "WAT"));
+	YSI_g_sString[0] = '\0';
+	y_va_BlankFormat2(abc);
+	ASSERT(!strcmp(YSI_g_sString, "WAT"));
+}
+
