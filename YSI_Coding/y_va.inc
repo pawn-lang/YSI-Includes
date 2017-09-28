@@ -131,7 +131,7 @@ Optional plugins:
 // is my first ever use of `#pragma deprecated`!  Actually quite happy about
 // that - it's one of the few language features I've never used in earnest, so
 // its almost an occassion when that happens.
-#pragma deprecated
+#pragma deprecated Use formatex instead
 forward va_formatex(output[], size = sizeof(output), const fmat[], va_:STATIC_ARGS);
 
 // Backwards compatability.
