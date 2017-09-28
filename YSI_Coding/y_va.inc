@@ -127,8 +127,12 @@ Optional plugins:
 #define va_args<%0> GLOBAL_TAG_TYPES:...
 #define va_start<%0> ___(%0)
 
-// Detect Slice's va_formatex function, which now doesn't need to exist.
-#define va_:STATIC_ARGS STATIC_ARGS, please_upgrade_va_formatex
+// Detect Slice's va_formatex function, which now doesn't need to exist.  This
+// is my first ever use of `#pragma deprecated`!  Actually quite happy about
+// that - it's one of the few language features I've never used in earnest, so
+// its almost an occassion when that happens.
+#pragma deprecated
+forward va_formatex(output[], size = sizeof(output), const fmat[], va_:STATIC_ARGS);
 
 // Backwards compatability.
 native va_printf            (const format[], GLOBAL_TAG_TYPES:...)                                        = printf;
