@@ -151,6 +151,9 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+// The macros `P:C` and `P:#` don't work without this.
+#pragma semicolon 1
+
 // Die tabsize 0!
 #pragma tabsize 4
 #define tabsize%00%0\10;%0 _DUMMY_do_not_use_tabsize_0
