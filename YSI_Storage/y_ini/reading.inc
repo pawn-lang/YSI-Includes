@@ -454,7 +454,10 @@ stock e_INI_LINE_TYPE:
 			case '\\':
 				if (str[pos]) end = ++pos;           // Skip next character too.
 				else return e_INI_LINE_TYPE_INVALID; // Escaping nothing.
-			case '=': break;
+			case '=': {
+				end = pos - 1;
+				break;
+			}
 			case '\1' .. ' ': {} // Whitespace, skip it.
 			default: end = pos;  // Characters, save this position.
 		}
