@@ -80,7 +80,8 @@ static stock
 	YSI_g_sStacks[MAX_NESTED_PASSTHROUGHS],
 	YSI_g_sContexts[MAX_NESTED_PASSTHROUGHS][AsmContext],
 	YSI_g_sMaxNesting = 0,
-	YSI_g_sPassthroughNestings = 0;
+	YSI_g_sPassthroughNestings = 0,
+	YSI_g_sInitialised = 0;
 
 #define CALL@YVA2_DoPush YVA2_DoPush(-1, -1, -1)
 static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequirements)
@@ -192,6 +193,7 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 // PARAMETER BYTE COUNT IN THE SCANNER!  ONLY DONE IT EVERY TIME SO FAR...
 stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRequirements = 4, const dummy0 = 0, const dummy1 = 0, const dummy2 = 0, const dummy3 = 0, const dummy4 = 0, const dummy5 = 0)
 {
+	P:3("YVA2_DummyPush start");
 	#pragma unused dummy0, dummy1, dummy2, dummy3, dummy4, dummy5
 	// This function serves four purposes:
 	//   
@@ -208,11 +210,26 @@ stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRe
 	//       we always have all the matcher functions - but if they are
 	//       including this library they probably want to use this library!
 	//   
-	if (FALSE)
+	if (YSI_g_sInitialised)
+	{
+		P:W("Bare `___` usage found - make sure it is a function parameter.");
+	}
+	else if (TRUE)
+	{
+		// Save the return address.
+		#emit LOAD.S.pri   4
+		#emit STOR.pri     YSI_g_sInitialised
+		// Run lazy initialisation.  This now means that the code is only
+		// scanned and set up when the first `___` is actually found.
+		YVA2_Initalise();
+		// Change the return to jump back to the start of this code.
+		#emit LOAD.pri     YSI_g_sInitialised
+		#emit STOR.S.pri   4
+	}
+	else
 	{
 		YVA2_DoPush(pushedBytes, skippedBytes, pushRequirements);
 	}
-	P:W("Bare `___` usage found - make sure it is a function parameter.");
 	return 0;
 }
 
@@ -380,6 +397,8 @@ static stock YVA2_FoundCall(m[CodeScanner])
 
 static stock YVA2_FoundPush(m[CodeScanner])
 {
+	new
+		addr = CodeScanGetMatchAddress(m);
 	if (YSI_g_sPassthroughNestings >= MAX_NESTED_PASSTHROUGHS)
 	{
 		P:F("`___` nested too deeply - increase `MAX_NESTED_PASSTHROUGHS`.");
@@ -413,6 +432,12 @@ static stock YVA2_FoundPush(m[CodeScanner])
 	}
 	++YSI_g_sPassthroughNestings;
 	P:3("YVA2_FoundPush: %d", CodeScanGetMatchStack(m));
+	P:5("YVA2_FoundPush: %d %d", addr, YSI_g_sInitialised);
+	if (addr < YSI_g_sInitialised < addr + 100)
+	{
+		P:5("YVA2_FoundPush: Found match");
+		YSI_g_sInitialised = addr;
+	}
 }
 
 // Add a scanner to find the `___` function call.
@@ -427,8 +452,9 @@ static stock YVA2_FoundPush(m[CodeScanner])
 // `Func1`'s `___` will be first in the code, but before finding the call to
 // `Func1` itself, we would see the inner `___` AND the inner function call.
 
-public OnScriptInit()
+static stock YVA2_Initalise()
 {
+	P:3("YVA2_Initalise start");
 	new
 		scanner[CodeScanner],
 		csmO0A[CodeScanMatcher],
@@ -567,22 +593,8 @@ public OnScriptInit()
 	// Replace calls with the correct parameter counts etc.
 	CodeScanRun(scanner);
 	//DisasmDump("yva2.asm");
-	#if defined _y_va_OnScriptInit
-		_y_va_OnScriptInit();
-	#endif
 	return 1;
 }
-
-#if defined _ALS_OnScriptInit
-	#undef OnScriptInit
-#else
-	#define _ALS_OnScriptInit
-#endif
-#define OnScriptInit _y_va_OnScriptInit
-
-#if defined _y_va_OnScriptInit
-	forward _y_va_OnScriptInit();
-#endif
 
 stock va_strlen(arg)
 {
