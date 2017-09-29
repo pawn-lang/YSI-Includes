@@ -175,6 +175,7 @@ static stock
 	YSI_g_sTestResult,
 	YSI_g_sFailMessage[512],
 	YSI_g_sPlayer = cellmax,
+	bool:YSI_gTestComplete,
 	bool:YSI_g_sAsked,
 	YSI_g_sTests,
 	YSI_g_sFails;
@@ -224,6 +225,7 @@ stock
 
 stock _Testing_Start(name[])
 {
+	YSI_gTestComplete = false;
 	// Gets a reference to the name string, which is also an intrusive linked
 	// list of failures.
 	name[0] = name[1] = 0,
@@ -291,6 +293,7 @@ stock Testing_Test(bool:x, str[] = "", va_args<>)
 
 stock bool:_Testing_End()
 {
+	YSI_gTestComplete = true;
 	new
 		space = heapspace();
 	Testing_Test(YSI_g_sCurHeap == space, TEST_FAILED " Heap allocation leak - was: %d, now: %d", YSI_g_sCurHeap, space);
@@ -347,7 +350,6 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 				CallLocalFunction(buffer2, "");
 			}
 		}
-
 		// Call the setup function if there is one.
 		buffer[0] = '_',
 		buffer[1] = 'y',
@@ -364,6 +366,7 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 		YSI_g_sInTest = true;
 		CallLocalFunction(buffer, "");
 		YSI_g_sInTest = false;
+		Testing_Test(YSI_gTestComplete, "Test did not complete (possible crash).\n");
 		if (YSI_g_sFails != fails)
 		{
 			WriteAmxMemory(YSI_g_sCurTest, YSI_g_sFailTests),
