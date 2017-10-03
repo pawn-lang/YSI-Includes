@@ -948,7 +948,7 @@ Test:y_iter_Starting()
 	ASSERT(Iter_Contains(Test1_y_iter, j));
 }
 
-Test:y_iter_Iter_Contains()
+Test:y_iter_Iter_Contains1()
 {
 	new
 		Iterator:iter1<60>;
@@ -965,6 +965,33 @@ Test:y_iter_Iter_Contains()
 	ASSERT(Iter_Contains(iter2< >, 5));
 	ASSERT(!Iter_Contains(iter2<0>, 5));
 	ASSERT(Iter_Contains(iter2<4>, 5));
+}
+
+Test:y_iter_Iter_Contains2()
+{
+	new
+		Iterator:iter1[4]<60>;
+	Iter_Init(iter1);
+	ASSERT(!Iter_Contains(iter1[0], 7));
+	ASSERT(!Iter_Contains(iter1[1], 7));
+	Iter_Add(iter1[0], 7);
+	ASSERT(Iter_Contains(iter1[0], 7));
+	ASSERT(!Iter_Contains(iter1[1], 7));
+	new
+		Iterator:iter2[7]<5, 60>;
+	Iter_Init(iter2);
+	ASSERT(!Iter_Contains(iter2[3]<>, 5));
+	ASSERT(!Iter_Contains(iter2[3]<0>, 5));
+	ASSERT(!Iter_Contains(iter2[3]<4>, 5));
+	Iter_Add(iter2[3]<4>, 5);
+	ASSERT(Iter_Contains(iter2[3]<>, 5));
+	ASSERT(Iter_Contains(iter2[3]< >, 5));
+	ASSERT(!Iter_Contains(iter2[3]<0>, 5));
+	ASSERT(Iter_Contains(iter2[3]<4>, 5));
+	ASSERT(!Iter_Contains(iter2[5]<>, 5));
+	ASSERT(!Iter_Contains(iter2[5]< >, 5));
+	ASSERT(!Iter_Contains(iter2[5]<0>, 5));
+	ASSERT(!Iter_Contains(iter2[5]<4>, 5));
 }
 
 Test:y_iter_Iter_Free()
