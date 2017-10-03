@@ -645,7 +645,7 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 // "stock iterfunc" is the hardest, because we have to detect it BEFORE our own
 // macro, but still use it on the function itself.  It does nothing on the
 // forward.
-#define Iter_Func@stock%1$ stock Iter_Func@%1$U@<>
+#define Iter_Func@stock stock Iter_Func@
 #define Iter_Func@static static Iter_Func@
 // Must do this manually I think.
 //#define Iter_Func@foreign%0(%2) foreign Iter_Func@%0(%2)
@@ -793,11 +793,7 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 // Special iterator function declaration.
 #define F@y:%0(%1) Y_FOREACH_SQ:Iter_Func@%0[]$(%1);Y_FOREACH_STOCK stock const F@z:Iterator@%0=F@z:0,iterstart@%0=-1;Iter_Func@%0(%1)F@a$
 
-// Remove extra `stock`s.
-#define F@z:%6=F@z:%7;%0(%1)%2\03;<%3> %6=%7;%3 %0(%1)%2<>
-
-#define Y_FOREACH_STOCK __:F@v:F@w:$
-#define F@v:%8$%0\10;%1 %8$%0
+#define Y_FOREACH_STOCK __:F@w:$
 
 // Get rid of ALL square brackets after the first function name.
 #define Y_FOREACH_SQ:%0[%1$ %0
@@ -807,17 +803,12 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 // Part of y_text for some reason.
 //#define F@k
 
-// Initial values for special iterators.
-//#define iterstart(%0) (%0)
-
 // Make the internal state an array if there is more than one value.
 #define itrst:%1=itrst:(%6,%7) %1[]={%6,%7}
 
 // Ultimate macro: <a href="http://forum.sa-mp.com/showpost.php?p=3801730" />
 #define u@$ 0]);
 #define __:%0$ u@(u[_:%0 u@$
-#define U@%0\03;%0<%0>
-#define stock%0(%2)%3\10;%1 stock%0(%2)%3 U@<stock>
 
 // Consume spaces in the iterator state variables.
 #define Iter_State@%0\32;%1) Iter_State@%0%1)

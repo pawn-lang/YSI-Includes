@@ -3174,6 +3174,57 @@ iterfunc static       y_iterDecl5[0](cur) { return cur == 0 ? 5 : 0; }
 iterfunc stock static y_iterDecl6(&iterstate, cur) { return cur == -1 ? iterstate : -1; }
 #define iterstart@y_iterDecl6 iterstate(-1, 5)
 
+/* ========================================================================== */
+/* | THERE IS MEANT TO BE A WARNING ON THIS LINE                            | */
+/* |                                                                        | */
+/* | */ iterfunc y_iterDecl1X[cellmin](cur)                              /* | */
+/* | */ {                                                                /* | */
+/* | */     return cur == cellmin ? 5 : cellmin;                         /* | */
+/* | */ }                                                                /* | */
+/* |                                                                        | */
+/* | It tests the lack of "stock" with "iterfunc".                          | */
+/* ========================================================================== */
+
+/* ========================================================================== */
+/* | THERE IS NOT MEANT TO BE A WARNING ON THIS LINE...                     | */
+/* |          ===                                                           | */
+/* | */ stock iterfunc y_iterDecl2X(cur)                                 /* | */
+/* | */ {                                                                /* | */
+/* | */     return cur == cellmin ? 5 : cellmin;                         /* | */
+/* | */ }                                                                /* | */
+/* |                                                                        | */
+/* | It tests that "stock iterfunc" works.  TODO: Fix it.                   | */
+/* ========================================================================== */
+#define iterstart@y_iterDecl2X (cellmin)
+
+/* ========================================================================== */
+/* | THERE IS NOT MEANT TO BE A WARNING ON THIS LINE...                     | */
+/* |          ===                                                           | */
+/* | */ static stock iterfunc y_iterDecl3X(cur)                          /* | */
+/* | */ {                                                                /* | */
+/* | */     return cur == -1 ? 5 : -1;                                   /* | */
+/* | */ }                                                                /* | */
+/* |                                                                        | */
+/* | It tests that "static stock iterfunc" works.  TODO: Fix it.            | */
+/* ========================================================================== */
+
+static iterfunc stock y_iterDecl4X(cur) { return cur == 0 ? 5 : 0; }
+#define Iterator@y_iterDecl4X iterstart(0)
+
+/* ========================================================================== */
+/* | THERE IS MEANT TO BE A WARNING ON THIS LINE                            | */
+/* |                                                                        | */
+/* | */ static iterfunc y_iterDecl5X[0](cur)                             /* | */
+/* | */ {                                                                /* | */
+/* | */     return cur == 0 ? 5 : 0;                                     /* | */
+/* | */ }                                                                /* | */
+/* |                                                                        | */
+/* | It tests the lack of "stock" with "static iterfunc".                   | */
+/* ========================================================================== */
+
+iterfunc stock static y_iterDecl6X(&iterstate, cur) { return cur == -1 ? iterstate : -1; }
+#define iterstart@y_iterDecl6X iterstate(-1, 5)
+
 Test:y_iter_MacroLess()
 {
 	new i;
