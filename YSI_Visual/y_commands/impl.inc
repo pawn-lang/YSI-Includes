@@ -126,6 +126,7 @@ enum e_COMMAND_FLAGS (<<= 1)
 	e_COMMAND_FLAGS_NOT_FOUND,     // Command doesn't exist.
 	e_COMMAND_FLAGS_DENIED,        // Can't use the command.
 	e_COMMAND_FLAGS_HIDDEN,
+	_e_COMMAND_FLAGS_unused,
 	e_COMMAND_FLAGS_NO_PLAYER,     // Used by a player who shouldn't exist.
 	e_COMMAND_FLAGS_DISABLED,      // All commands are disabled for this player.
 	e_COMMAND_FLAGS_BAD_PREFIX,
@@ -243,8 +244,8 @@ P:D(_Command_GetReal(&ptr,&idx,name[]));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#define Command_ErrorRet(%2) (YSI_g_sCommandFlags&e_COMMAND_FLAGS:(1<<_:(%2)))
 #if defined COMMAND_USE_ERRORS
-	#define Command_ErrorRet(%2) (YSI_g_sCommandFlags&e_COMMAND_FLAGS:(1<<_:(%2)))
 	
 	#define Command_ErrorMsg(%2) YSI_g_sErrorMessages[%2]
 	
@@ -254,7 +255,7 @@ P:D(_Command_GetReal(&ptr,&idx,name[]));
 		#define Command_Error(%0,%2) (Command_ErrorMsg(%2)[0]?(SendClientMessage((%0),0xFF0000AA,Command_ErrorMsg(%2)),Command_ErrorRet(%2)):Command_ErrorRet(%2))
 	#endif
 #else
-	#define Command_Error(%0,%2) ((%2) & e_COMMAND_ERRORS:1)
+	#define Command_Error(%0,%2) Command_ErrorRet(%2)
 #endif
 
 #define Command_OnReceived(%2,%0,%1) ((sErr=(YSI_g_sCommandFlags&e_COMM_FLAG_OPCR)?(e_COMMAND_ERRORS:W@(YSI_gscOPCR,YSI_gscISI,(%0),(%1),(_:COMMAND_%2))):(COMMAND_%2)),Command_Error(%0,sErr))
@@ -699,6 +700,98 @@ global void:Command_Touch(command)
 			return;
 		}
 	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign void:Command_SetDeniedReturn(bool:set);
+
+global void:Command_SetDeniedReturn(bool:set)
+{
+	if (set)
+		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_DENIED;
+	else
+		YSI_g_sCommandFlags &= ~e_COMMAND_FLAGS_DENIED;
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign bool:Command_GetDeniedReturn();
+
+global bool:Command_GetDeniedReturn()
+{
+	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_DENIED);
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign void:Command_SetIllegalReturn(bool:set);
+
+global void:Command_SetIllegalReturn(bool:set)
+{
+	if (set)
+		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_INVALID_INPUT;
+	else
+		YSI_g_sCommandFlags &= ~e_COMMAND_FLAGS_INVALID_INPUT;
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign bool:Command_GetIllegalReturn();
+
+global bool:Command_GetIllegalReturn()
+{
+	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_INVALID_INPUT);
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign void:Command_SetUnknownReturn(bool:set);
+
+global void:Command_SetUnknownReturn(bool:set)
+{
+	if (set)
+		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_NOT_FOUND;
+	else
+		YSI_g_sCommandFlags &= ~e_COMMAND_FLAGS_NOT_FOUND;
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign bool:Command_GetUnknownReturn();
+
+global bool:Command_GetUnknownReturn()
+{
+	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_NOT_FOUND);
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign void:Command_SetDisconnectReturn(bool:set);
+
+global void:Command_SetDisconnectReturn(bool:set)
+{
+	if (set)
+		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_NO_PLAYER;
+	else
+		YSI_g_sCommandFlags &= ~e_COMMAND_FLAGS_NO_PLAYER;
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign bool:Command_GetDisconnectReturn();
+
+global bool:Command_GetDisconnectReturn()
+{
+	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_NO_PLAYER);
 }
 
 /*
@@ -1242,6 +1335,7 @@ mhook OnPlayerCommandText(playerid, cmdtext[])
 hook OnScriptInit()
 {
 	P:1("Command_OnScriptInit called");
+	YSI_g_sCommandFlags = e_COMMAND_FLAGS_OK;
 	#if YSIM_NOT_CLIENT
 		#if defined Y_COMMANDS_USE_CHARS
 			Bit_SetAll(YSI_g_sPrefixes, false),
