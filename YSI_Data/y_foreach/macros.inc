@@ -103,7 +103,7 @@ Optional plugins:
  *  Used to declare a special iterator function.  Examples:
  *
  *  <code>
- * stock iterfunc OnlyZero(cur)                                                    <br />
+ * iterfunc stock OnlyZero(cur)                                                    <br />
  * {                                                                               <br /><indent />
  *  if (cur == -1)                                                              <br /><indent /><indent />
  *      return 0;                                                               <br /><indent />
@@ -112,7 +112,7 @@ Optional plugins:
  *  </code>
  *
  *  <code>
- * stock iterfunc AlsoOnlyZero[cellmin](cur)                                       <br />
+ * iterfunc stock AlsoOnlyZero[cellmin](cur)                                       <br />
  * {                                                                               <br /><indent />
  *  if (cur == cellmin)                                                         <br /><indent /><indent />
  *      return 0;                                                               <br /><indent />
@@ -121,7 +121,7 @@ Optional plugins:
  *  </code>
  *
  *  <code>
- * stock iterfunc OneToTen[cellmin](cur)                                           <br />
+ * iterfunc stock OneToTen[cellmin](cur)                                           <br />
  * {                                                                               <br /><indent />
  *  if (cur == cellmin)                                                         <br /><indent /><indent />
  *      return 1;                                                               <br /><indent />
@@ -132,7 +132,7 @@ Optional plugins:
  *  </code>
  *
  *  <code>
- * stock iterfunc OneToN(cur, n)                                                   <br />
+ * iterfunc stock OneToN(cur, n)                                                   <br />
  * {                                                                               <br /><indent />
  *  if (n &lt; 1)                                                               <br /><indent /><indent />
  *      return -1;                                                              <br /><indent />
@@ -641,8 +641,8 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 #define Iter_Multi@%0\32;%1$ Iter_Multi@%0%1$
 #define Iter_Init@%0\32;%1$ Iter_Init@%0%1$
 
-// Allow "iterfunc stock", "stock iterfunc", and other varieties.
-// "stock iterfunc" is the hardest, because we have to detect it BEFORE our own
+// Allow "iterfunc stock", "iterfunc stock", and other varieties.
+// "iterfunc stock" is the hardest, because we have to detect it BEFORE our own
 // macro, but still use it on the function itself.  It does nothing on the
 // forward.
 #define Iter_Func@stock stock Iter_Func@

@@ -117,7 +117,7 @@ Optional plugins:
 		Iterator:Vehicle<MAX_VEHICLES>;
 #endif
 
-stock iterfunc Range[cellmin](cur, min, max, step = 1)
+iterfunc stock Range[cellmin](cur, min, max, step = 1)
 {
 	if (cur == cellmin) cur = min;
 	else cur += step;
@@ -145,7 +145,7 @@ iterfunc stock Powers(&iterstate, cur, base)
 
 #define iterstart@Powers iterstate(0, 0)
 
-stock iterfunc Fib(&iterstate, cur)
+iterfunc stock Fib(&iterstate, cur)
 {
 	// Returns every number in the Fibaonacci sequence that can be stored in a
 	// PAWN cell.
@@ -170,7 +170,7 @@ stock iterfunc Fib(&iterstate, cur)
 
 #define iterstart@Fib iterstate(-1, 1)
 
-stock iterfunc Random(&iterstate, cur, count, min = cellmax, max = 0)
+iterfunc stock Random(&iterstate, cur, count, min = cellmax, max = 0)
 {
 	// Return a given count of random numbers:
 	//   
@@ -220,7 +220,7 @@ stock iterfunc Random(&iterstate, cur, count, min = cellmax, max = 0)
 
 #define iterstart@Random iterstate(cellmin, 0)
 
-stock iterfunc Null(cur, arr[], size = sizeof (arr))
+iterfunc stock Null(cur, arr[], size = sizeof (arr))
 {
 	// Loop over all the indexes of this array that are zero.
 	//   
@@ -239,7 +239,7 @@ stock iterfunc Null(cur, arr[], size = sizeof (arr))
 	return -1;
 }
 
-stock iterfunc NonNull(cur, arr[], size = sizeof (arr))
+iterfunc stock NonNull(cur, arr[], size = sizeof (arr))
 {
 	// Loop over all the indexes of this array that are not zero.
 	//   
@@ -258,7 +258,7 @@ stock iterfunc NonNull(cur, arr[], size = sizeof (arr))
 	return -1;
 }
 
-stock iterfunc Until(cur, val, arr[], size = sizeof (arr))
+iterfunc stock Until(cur, val, arr[], size = sizeof (arr))
 {
 	// Loop over all the indexes of this array until one equals the given value:
 	//   
@@ -270,7 +270,7 @@ stock iterfunc Until(cur, val, arr[], size = sizeof (arr))
 	return (++cur >= size || arr[cur] == val) ? -1 : cur;
 }
 
-stock iterfunc Filter(cur, val, arr[], size = sizeof (arr))
+iterfunc stock Filter(cur, val, arr[], size = sizeof (arr))
 {
 	while (++cur < size)
 	{
