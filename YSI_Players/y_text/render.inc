@@ -1600,21 +1600,29 @@ Format_Render_start:
 			}
 			case '\t':
 			{
-				// Somehow display a tab.  Maybe keep track of characters
-				// displayed and show "n % 4" spaces.
-				arg = 4 - (p & 0x03); // The number of spaces to add.
-				static
-					sTabs[] = "    ";
-				for (new __added; (__added = Format_DoAddString(output, sTabs[4 - arg], p, arg, llen, fakePos)); arg -= __added)
+				// Omit this on dialogs.
+				if (YSI_g_sTempStyle[E_STYLE_DATA_TYPE] != e_STYLE_TYPE_DIALOG)
 				{
-					if (fade) //flags & 4)
+					// Somehow display a tab.  Maybe keep track of characters
+					// displayed and show "n % 4" spaces.
+					arg = 4 - (p & 0x03); // The number of spaces to add.
+					static
+						sTabs[] = "    ";
+					for (new __added; (__added = Format_DoAddString(output, sTabs[4 - arg], p, arg, llen, fakePos)); arg -= __added)
 					{
-						state y_render_fade : y_render_fade_fake;
+						if (fade) //flags & 4)
+						{
+							state y_render_fade : y_render_fade_fake;
+						}
+						else
+						{
+							Y_RENDER_DO_DISPLAY()
+						}
 					}
-					else
-					{
-						Y_RENDER_DO_DISPLAY()
-					}
+				}
+				else
+				{
+					 Y_RENDER_CHAR(ch)
 				}
 			}
 			case '\06' .. '\08', '\11', '\12', '\14' .. '\32':
