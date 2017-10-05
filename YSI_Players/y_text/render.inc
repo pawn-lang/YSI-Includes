@@ -1,15 +1,9 @@
-/**--------------------------------------------------------------------------**\
-					=================================
-					 y_textrender - Show text.
-					=================================
-Description:
-	Part of the y_text system.  Handles formatting loaded text in the correct
-	manner for display in the currently selected style.
+/*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -18,50 +12,63 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI utils include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	0.1
-Changelog:
-	25/02/12:
-		First version.
-Functions:
-	Stock:
-		-
-	Inline:
-		-
-Variables:
-	Global:
-		-
-</remarks>
-\**--------------------------------------------------------------------------**/
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 #if !defined FORMAT_FADE_STEP
 	#define FORMAT_FADE_STEP 2
@@ -126,6 +133,10 @@ static stock
 	//YSI_g_sExtraText[MAX_INI_ENTRY_TEXT],
 	gInitialColour;
 
+/*-------------------------------------------------------------------------*//**
+ * <transition keep="true" target="y_render_show : y_render_show_scm" />
+ *//*------------------------------------------------------------------------**/
+
 stock _Text_SetDialogMode()
 {
 	YSI_g_sTempStyle[E_STYLE_DATA_TYPE] = e_STYLE_TYPE_DIALOG;
@@ -137,6 +148,13 @@ stock Format_SetListSeparator(string:lst[])
 {
 	strcpy(YSI_g_sListSep, lst);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <transition keep="true" target="y_render_show : y_render_show_gt" />
+ * <transition keep="true" target="y_render_show : y_render_show_scm" />
+ * <transition keep="true" target="y_render_show : y_render_show_td" />
+ * <transition keep="true" target="y_render_show : y_render_show_print" />
+ *//*------------------------------------------------------------------------**/
 
 stock _Format_SetStyleData(master, index, style[E_STYLE_DATA], label[E_3D_DATA])
 {
@@ -303,7 +321,7 @@ static stock Format_AddColour(str[], pos, &rem, &curCol, newCol) <y_render_show 
 	}
 	if (YSI_g_sTempStyle[E_STYLE_DATA_TYPE] != e_STYLE_TYPE_DIALOG && pos == 0)
 	{
-		gInitialColour = curCol;
+		gInitialColour = newCol;
 		// Don't add the colour - this is handled in the text display function.
 		curCol = rgb;
 		return 0;
@@ -479,6 +497,10 @@ static stock Format_AddFade(str[], &pos, &len, endColour, &initialColour, step, 
 	return 0;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <transition keep="true" target="y_render_fade : y_render_fade_fake" />
+ *//*------------------------------------------------------------------------**/
+
 static stock Format_DoEndFade(output[], &start, end, &rem, colour, &initial) //<>
 {
 	// If "colour" is 0 this is the end of a string before the close colour is
@@ -534,29 +556,29 @@ static stock Format_DoEndFade(output[], &start, end, &rem, colour, &initial) //<
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Format_DoAddString</summary>
-<param name="out[]">The destination string.</param>
-<param name="in[]">The data to add.</param>
-<param name="&oidx">The index in "out" at which to add data.</param>
-<param name="len">The length of "in".</param>
-<param name="&orem">Space remaining in "out".</param>
-<param name="&fakePos">Like "oidx", but cumulative over line breaks.</param>
-<returns>
-	The amount of data from "in" not added to "out".
-</returns>
-<remarks>
-	Takes an input string and adds it to an output string.  If the input string
-	is too long to fit in the remainder of the output string, what has been
-	added already (including part of the input string) is displayed and a new
-	string is added.  Format_TryShow handles this, including adding formatting
-	of colour fades, which may involve fake rendering of more of the string to
-	determine how much of the remainder of the string needs processing to get
-	the right colour.  This will also require a method of winding back the state
-	to the point just after the initial input string was added to continue on to
-	show the next string including newly determined fade data.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="out">The destination string.</param>
+ * <param name="in">The data to add.</param>
+ * <param name="oidx">The index in "out" at which to add data.</param>
+ * <param name="len">The length of "in".</param>
+ * <param name="orem">Space remaining in "out".</param>
+ * <param name="fakePos">Like "oidx", but cumulative over line breaks.</param>
+ * <returns>
+ *  The amount of data from "in" not added to "out".
+ * </returns>
+ * <remarks>
+ *  Takes an input string and adds it to an output string.  If the input string
+ *  is too long to fit in the remainder of the output string, what has been
+ *  added already (including part of the input string) is displayed and a new
+ *  string is added.  Format_TryShow handles this, including adding formatting
+ *  of colour fades, which may involve fake rendering of more of the string to
+ *  determine how much of the remainder of the string needs processing to get
+ *  the right colour.  This will also require a method of winding back the state
+ *  to the point just after the initial input string was added to continue on to
+ *  show the next string including newly determined fade data.
+ * </remarks>
+ * <transition keep="true" target="y_render_fade : y_render_fade_real" source="y_render_fade : y_render_fade_redo" />
+ *//*------------------------------------------------------------------------**/
 
 static stock Format_DoAddString(out[], const in[], &oidx, const len, &orem, &fakepos) <y_render_fade : y_render_fade_fake>
 {
@@ -624,6 +646,10 @@ static stock Format_DoAddString(out[], const in[], &oidx, const len, &orem, &fak
 		return len - orem;
 	}
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <transition keep="true" target="y_render_fade : y_render_fade_real" source="y_render_fade : y_render_fade_redo" />
+ *//*------------------------------------------------------------------------**/
 
 static stock bool:Format_DoAddChar(out[], const in, &oidx, &orem, &fakepos) <y_render_fade : y_render_fade_fake>
 {
@@ -709,17 +735,10 @@ static stock Format_DoDisplay(playerid, colour, out[]) <y_render_show : y_render
 	//out[0] = '\0';
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Format_JustShow</summary>
-<param name="playerid">Player to show the text to.</param>
-<param name="out[]">What the text to show is.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player to show the text to.</param>
+ * <param name="out">What the text to show is.</param>
+ *//*------------------------------------------------------------------------**/
 
 stock Format_JustShow(playerid, out[]) <y_render_show : y_render_show_scm>
 {
@@ -741,18 +760,14 @@ stock Format_JustShow(playerid, out[]) <y_render_show : y_render_show_td>
 	TD_ShowForPlayer(playerid, Text:out[0]);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Text_GetLastID</summary>
-<returns>
-	The basic ID linking all displayed elements together where appropriate (for
-	example SendClientMessage has no meaningful ID.  3D texts would, but that's
-	not implemented.  So do game texts, but that's not implemented either, so
-	really it's just text draws.
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <returns>
+ *  The basic ID linking all displayed elements together where appropriate (for
+ *  example SendClientMessage has no meaningful ID.  3D texts would, but that's
+ *  not implemented.  So do game texts, but that's not implemented either, so
+ *  really it's just text draws.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 stock Text_GetLastID() <y_render_show : y_render_show_td>
 {
@@ -764,32 +779,25 @@ stock Text_GetLastID() <>
 	return -1;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-// Generic function to handle rendering for all types of outputs.  Other
-// functions such as Format_AddColour are specialised for different text styles.
-// The faster way to do this would be to store the characters removed from a
-// string when adding in fade data, but this is hard to code.  The simpler
-// method is to fake re-render the string, having previously determined the
-// length of the string which will be faded across.  Note that this may mean
-// that some parts of the string can get rendered many times, but we can just
-// issue a performance warning when the player uses fades which go over a line
-// boundary.  That is the only time in which it is a problem, more specifically
-// it is only a problem when text in a fade goes over a line boundardy before
-// the end fade marker has been reached.
+/*-------------------------------------------------------------------------*//**
+ * Generic function to handle rendering for all types of outputs.  Other functions
+ * such as Format_AddColour are specialised for different text styles.  The faster
+ * way to do this would be to store the characters removed from a string when
+ * adding in fade data, but this is hard to code.  The simpler method is to fake
+ * re-render the string, having previously determined the length of the string
+ * which will be faded across.  Note that this may mean that some parts of the
+ * string can get rendered many times, but we can just issue a performance warning
+ * when the player uses fades which go over a line boundary.  That is the only time
+ * in which it is a problem, more specifically it is only a problem when text in a
+ * fade goes over a line boundardy before the end fade marker has been reached.
+ * <transition keep="true" target="y_render_fade : y_render_fade_redo" />
+ * <transition keep="true" target="y_render_fade : y_render_fade_real" />
+ * <transition keep="true" target="y_render_fade : y_render_fade_fake" />
+ *//*------------------------------------------------------------------------**/
 //stock Format_Render(pid, Language:l, output[], maxlen, idx, target, string[], {Float,_}:...)
 stock Format_Render(pid, Language:l, output[], maxlen, idx, target, string[], argCount, GLOBAL_TAG_TYPES:...)
 {
 	P:3("Format_Render called: %i, %i, %s, %i, %i, %i, %s (+%i)", pid, _:l, output, maxlen, idx, target, argCount, numargs() - 8);
-	//state y_text_colour_fade:full_render;
 	gInitialColour = (YSI_g_sTempStyle[E_STYLE_DATA_COLOUR] >>> 4) & 0x00FFFFFF;
 	new
 		colour = gInitialColour;

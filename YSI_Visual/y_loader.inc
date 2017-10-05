@@ -1,71 +1,130 @@
-/*----------------------------------------------------------------------------*-
-					==============================
-					Y Server Includes - MTA Loader
-					==============================
-Description:
-	Loads MTA XML format map files for use with the object and race systems.
+/**
+ * <library name="y_loader">
+ * <section>
+ *  Description
+ * </section>
+ *  Loads MTA XML format map files for use with the object and race systems.
+ * Legal:
+ *  Copyright (C) 2007 Alex "Y_Less" Cole
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ *  MA 02110-1301, USA.
+ * <section>
+ *  Functions
+ * </section>
+ * <subsection>
+ * Public
+ * </subsection><ul>
+ *  <symbol name="Loader_Spawn">Processes a loaded spawn point.</symbol>
+ *  <symbol name="Loader_Check">Processes a loaded checkpoint.</symbol>
+ *  <symbol name="Loader_Obj">Processes a loaded object.</symbol>
+ * </ul><subsection>
+ * Core
+ * </subsection><ul>
+ *  <symbol name="Loader_Loader">Initialises data.</symbol>
+ * </ul><subsection>
+ * Stock
+ * </subsection><ul>
+ *  <symbol name="Loader_Parse">Loads a file.</symbol>
+ *  <symbol name="Loader_AddHandler">Adds a custom handle for the race file.</symbol>
+ *  <symbol name="Loader_GetRace">Returns the current race handle.</symbol>
+ * </ul><section>
+ *  Tags
+ * </section><ul>
+ *  <symbol name="e_RACE_FLAGS">Race data flag.</symbol>
+ * </ul><section>
+ *  Variables
+ * </section>
+ * <subsection>
+ * Static
+ * </subsection><ul>
+ *  <symbol name="YSI_g_sXMLRules">Handle to the XML parse rule set.</symbol>
+ *  <symbol name="YSI_g_sCurRace">Handle to the current race being built.</symbol>
+ * </ul>
+ * </library>
+ *//** *//*
 Legal:
-	Copyright (C) 2007 Alex "Y_Less" Cole
+	Version: MPL 1.1
+	
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 the "License"; you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
+	http://www.mozilla.org/MPL/
+	
+	Software distributed under the License is distributed on an "AS IS" basis,
+	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	for the specific language governing rights and limitations under the
+	License.
+	
+	The Original Code is the YSI framework.
+	
+	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright C 2011
+	the Initial Developer. All Rights Reserved.
 
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-	MA 02110-1301, USA.
-Changelog:
-	12/10/07:
-		Added Loader_AddHandler.
-		Added Loader_GetRace.
-	24/08/07:
-		First version.
-Functions:
-	Public:
-		Loader_Spawn - Processes a loaded spawn point.
-		Loader_Check - Processes a loaded checkpoint.
-		Loader_Obj - Processes a loaded object.
-	Core:
-		Loader_Loader - Initialises data.
-	Stock:
-		Loader_Parse - Loads a file.
-		Loader_AddHandler - Adds a custom handle for the race file.
-		Loader_GetRace - Returns the current race handle.
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-Callbacks:
-	-
-Definitions:
-	-
-Enums:
-	-
-Macros:
-	-
-Tags:-e_RACE_FLAGS - Race data flag.
-Variables:
-	Global:
-		-
-	Static:
-		YSI_g_sXMLRules - Handle to the XML parse rule set.
-		YSI_g_sCurRace - Handle to the current race being built.
-Commands:
-	-
-Compile options:
-	-
-Operators:
-	-
--*----------------------------------------------------------------------------*/
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 static stock
 	XML:YSI_g_sXMLRules = NO_XML_FILE,
@@ -79,16 +138,11 @@ forward Loader_Spawn();
 forward Loader_Check();
 forward Loader_Obj();
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Loader_Loader
-Params:
-	-
-Return:
-	-
-Notes:
-	Defines the parsing rules for reading MTA XML maps.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ * Defines the parsing rules for reading MTA XML maps.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 Loader_Loader()
 {
@@ -105,25 +159,22 @@ Loader_Loader()
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Loader_Parse
-Params:
-	filename[] - File to parse as an XML race file.
-	laps - Number of laps to race for.
-	entry - Cost of entry.
-	countdown - Time to count down from for start.
-	bool:arial - Use arial checkpoints instead.
-	bool:fixedPrize - Set prize amounts manually.
-	exitTime - Time allowed out a vehicle before fail.
-	interior - The interior of the race.
-	world - The world of the race.
-	bool:restart - Don't destroy the race on completion.
-Return:
-	Created race.
-Notes:
-	Tries to create a new race to save to then parses the file.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="filename">File to parse as an XML race file.</param>
+ * <param name="laps">Number of laps to race for.</param>
+ * <param name="entry">Cost of entry.</param>
+ * <param name="countdown">Time to count down from for start.</param>
+ * <param name="arial">Use arial checkpoints instead.</param>
+ * <param name="fixedPrize">Set prize amounts manually.</param>
+ * <param name="exitTime">Time allowed out a vehicle before fail.</param>
+ * <param name="interior">The interior of the race.</param>
+ * <param name="world">The world of the race.</param>
+ * <param name="restart">Don't destroy the race on completion.</param>
+ * <returns>Created race.</returns>
+ * <remarks>
+ * Tries to create a new race to save to then parses the file.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Loader_Parse(filename[], laps = 0, entry = 0, countdown = 3, bool:arial = false, bool:fixedPrize = true, exitTime = 0, interior = 0, world = 0, bool:restart = false)
 {
@@ -141,17 +192,13 @@ stock Loader_Parse(filename[], laps = 0, entry = 0, countdown = 3, bool:arial = 
 	return race;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Loader_ParseObjects
-Params:
-	filename[] - File to parse.
-	world - World for the objects to appear in or -1 for all.
-Return:
-	-
-Notes:
-	Parses a map file, loading only the objects.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="filename">File to parse.</param>
+ * <param name="world">World for the objects to appear in or -1 for all.</param>
+ * <remarks>
+ * Parses a map file, loading only the objects.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Loader_ParseObjects(filename[], world = -1)
 {
@@ -159,16 +206,12 @@ stock Loader_ParseObjects(filename[], world = -1)
 	return XML_Parse(YSI_g_sXMLRules, filename);
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Loader_Unload
-Params:
-	race - Race to remove objects for.
-Return:
-	-
-Notes:
-	Destroys all the objects created for a race loaded with the loader.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="race">Race to remove objects for.</param>
+ * <remarks>
+ * Destroys all the objects created for a race loaded with the loader.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Loader_Unload(race)
 {
@@ -205,17 +248,14 @@ stock Loader_Unload(race)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Loader_Convert
-Params:
-	Float:radians - Radian angle to convert to degrees.
-Return:
-	Float
-Notes:
-	Based on mtarad2deg made by Trix and fixed by Mike.  Converts radians to
-	degrees and rationalises.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="radians">Radian angle to convert to degrees.</param>
+ * <returns>Float</returns>
+ * <remarks>
+ * Based on mtarad2deg made by Trix and fixed by Mike.  Converts radians to degrees
+ * and rationalises.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Float:Loader_Convert(Float:radians)
 {
@@ -229,16 +269,12 @@ stock Float:Loader_Convert(Float:radians)
 	return retval;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Loader_Obj
-Params:
-	-
-Return:
-	CreateDynamicObject
-Notes:
-	Called when an end object tag is reached to create an object.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <returns>CreateDynamicObject</returns>
+ * <remarks>
+ * Called when an end object tag is reached to create an object.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 public Loader_Obj()
 {
@@ -303,16 +339,12 @@ public Loader_Obj()
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Loader_Check
-Params:
-	-
-Return:
-	Race_AddCheckpoint
-Notes:
-	Called when an end checkpoint tag is reached to add a checkpoint to a race.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <returns>Race_AddCheckpoint</returns>
+ * <remarks>
+ * Called when an end checkpoint tag is reached to add a checkpoint to a race.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 public Loader_Check()
 {
@@ -344,16 +376,12 @@ public Loader_Check()
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Loader_Spawn
-Params:
-	-
-Return:
-	Race_AddStart
-Notes:
-	Called when an end spawnpoint tag is reached to add a startpoint to a race.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <returns>Race_AddStart</returns>
+ * <remarks>
+ * Called when an end spawnpoint tag is reached to add a startpoint to a race.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 public Loader_Spawn()
 {
@@ -390,17 +418,13 @@ public Loader_Spawn()
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Loader_AddHandler
-Params:
-	trigger[] - Tag to trigger the callback.
-	function[] - Function to call for the tag.
-Return:
-	-
-Notes:
-	Used to add custom handlers to non-default tags in the race file format.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="trigger">Tag to trigger the callback.</param>
+ * <param name="function">Function to call for the tag.</param>
+ * <remarks>
+ * Used to add custom handlers to non-default tags in the race file format.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Loader_AddHandler(trigger[], function[])
 {
@@ -408,16 +432,9 @@ stock Loader_AddHandler(trigger[], function[])
 	return 0;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Loader_GetRace
-Params:
-	-
-Return:
-	Current race handle.
-Notes:
-	-
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <returns>Current race handle.</returns>
+ *//*------------------------------------------------------------------------**/
 
 stock Loader_GetRace()
 {

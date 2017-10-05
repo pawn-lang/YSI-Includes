@@ -1,15 +1,9 @@
-/**--------------------------------------------------------------------------**\
-					================================
-					Y Sever Includes - Commands Core
-					================================
-Description:
-	Runs commands registered with the system and calls the required functions.
-	Also handles alternate names and prefixes.  Based very loosely on dcmd.
+/*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -18,107 +12,63 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI commands include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	2.0
-Changelog:
-	26/12/13:
-		Added sections.
-	23/06/13:
-		Rewritten from scratch for MORE speed.
-		Punycode support.
-		More failure messages.
-		Cleaner code.
-	20/10/10:
-		Fixed a bug with insensitive commands - my fault for not testing.
-	06/01/08:
-		Improved master and /help support.
-	04/01/08:
-		Fixed bad element in Command_SetDeniedReturn.
-	12/08/07:
-		Added master support.
-	24/06/07:
-		Modifed a few functions to use Bit_GetBit for speed.
-	04/05/07:
-		Completed command use support.
-		Added invalid character protection.
-	02/05/07:
-		Added YSI_ prefix to all globals.
-	14/04/07:
-		Updated header documentation with more than changelog/functions.
-		Added function name requesting.
-	13/04/07:
-		Added function documentation.
-		Added wrapped functions for e_COMM_FLAG values missing them.
-		Added header function list.
-	12/04/07:
-		Added command removal.
-	11/04/07:
-		Changed system slightly to handle names and alt names separately.  Still
-		need a better way of ignoring names when alt names are used.
-	10/04/07:
-		First version.
-Functions:
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-Callbacks:
-	-
-Definitions:
-	-
-Enums:
-	-
-Macros:
-	-
-Tags:
-	-
-Variables:
-	Global:
-		-
-	Static:
-		-
-Commands:
-	-
-Compile options:
-	-
-\**--------------------------------------------------------------------------**/
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 /*
 
@@ -176,6 +126,7 @@ enum e_COMMAND_FLAGS (<<= 1)
 	e_COMMAND_FLAGS_NOT_FOUND,     // Command doesn't exist.
 	e_COMMAND_FLAGS_DENIED,        // Can't use the command.
 	e_COMMAND_FLAGS_HIDDEN,
+	_e_COMMAND_FLAGS_unused,
 	e_COMMAND_FLAGS_NO_PLAYER,     // Used by a player who shouldn't exist.
 	e_COMMAND_FLAGS_DISABLED,      // All commands are disabled for this player.
 	e_COMMAND_FLAGS_BAD_PREFIX,
@@ -243,71 +194,58 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 
 #define _Command_GetPlayer(%0,%1) (PA_Get(YSI_g_sCommands[(%0)][E_COMMAND_USERS], (%1)))
 
-/**--------------------------------------------------------------------------**\
-<summary>_Command_IsEmptySlot</summary>
-<param name="idx">Command to test.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Tests if the given slot is empty.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="idx">Command to test.</param>
+ * <remarks>
+ *  Tests if the given slot is empty.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
+P:D(bool:_Command_IsEmptySlot(idx));
 #define _Command_IsEmptySlot(%0) (!YSI_g_sCommands[(%0)][E_COMMAND_NAME])
 
-/**--------------------------------------------------------------------------**\
-<summary>_Command_IsAlt</summary>
-<param name="idx">Command to test.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Tests if the given slot is an alternate command.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="idx">Command to test.</param>
+ * <remarks>
+ *  Tests if the given slot is an alternate command.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
+P:D(bool:_Command_IsAlt(idx));
 #define _Command_IsAlt(%0) (YSI_g_sCommands[(%0)][E_COMMAND_POINTER] & cellmin)
 
-/**--------------------------------------------------------------------------**\
-<summary>_Command_GetReal</summary>
-<param name="ptr">AMX function pointer.</param>
-<param name="idx">Index of the parent command data.</param>
-<param name="name">Destination for the parent function name.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Finds the original version of an alt command.  Updated to not contain long
-	chains (along with "Command_AddAlt").
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="ptr">AMX function pointer.</param>
+ * <param name="idx">Index of the parent command data.</param>
+ * <param name="name">Destination for the parent function name.</param>
+ * <remarks>
+ *  Finds the original version of an alt command.  Updated to not contain long
+ *  chains (along with "Command_AddAlt").
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
+P:D(_Command_GetReal(&ptr,&idx,name[]));
 #define _Command_GetReal(%0,%1,%2);                             \
 	if((%0=YSI_g_sCommands[(%1)][E_COMMAND_POINTER])&cellmin)   \
 			%1=(%0)&~cellmin,									\
 			%0=YSI_g_sCommands[(%1)][E_COMMAND_POINTER],		\
 			strunpack(%2,YSI_g_sCommands[(%1)][E_COMMAND_NAME]);
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_OnReceived</summary>
-<param name="error">Which error to show.</param>
-<param name="playerid">Player who typed the command.</param>
-<param name="cmdtext">What they typed.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Call OnPlayerCommandReceived once the system knows how the player can use
-	this command (if they can).  The order of the parameters is such that the
-	error comes first.  This is because it is compile-time concatenated to make
-	the error enum value, and putting that parameter first means that we don't
-	need to ommit the space after any comma.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="error">Which error to show.</param>
+ * <param name="playerid">Player who typed the command.</param>
+ * <param name="cmdtext">What they typed.</param>
+ * <remarks>
+ *  Call OnPlayerCommandReceived once the system knows how the player can use
+ *  this command (if they can).  The order of the parameters is such that the
+ *  error comes first.  This is because it is compile-time concatenated to make
+ *  the error enum value, and putting that parameter first means that we don't
+ *  need to ommit the space after any comma.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
+#define Command_ErrorRet(%2) (YSI_g_sCommandFlags&e_COMMAND_FLAGS:(1<<_:(%2)))
 #if defined COMMAND_USE_ERRORS
-	#define Command_ErrorRet(%2) (YSI_g_sCommandFlags&e_COMMAND_FLAGS:(1<<_:(%2)))
 	
 	#define Command_ErrorMsg(%2) YSI_g_sErrorMessages[%2]
 	
@@ -317,49 +255,44 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 		#define Command_Error(%0,%2) (Command_ErrorMsg(%2)[0]?(SendClientMessage((%0),0xFF0000AA,Command_ErrorMsg(%2)),Command_ErrorRet(%2)):Command_ErrorRet(%2))
 	#endif
 #else
-	#define Command_Error(%0,%2) ((%2) & e_COMMAND_ERRORS:1)
+	#define Command_Error(%0,%2) Command_ErrorRet(%2)
 #endif
 
 #define Command_OnReceived(%2,%0,%1) ((sErr=(YSI_g_sCommandFlags&e_COMM_FLAG_OPCR)?(e_COMMAND_ERRORS:W@(YSI_gscOPCR,YSI_gscISI,(%0),(%1),(_:COMMAND_%2))):(COMMAND_%2)),Command_Error(%0,sErr))
 
-/**--------------------------------------------------------------------------**\
-<summary>_Command_IsActive</summary>
-<param name="command">Command to get for.</param>
-<returns>
-	Is this command ID active?
-</returns>
-<remarks>
-	Doesn't do any bounds checks - use "_Command_IsValid" for that.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="command">Command to get for.</param>
+ * <returns>
+ *  Is this command ID active?
+ * </returns>
+ * <remarks>
+ *  Doesn't do any bounds checks - use "_Command_IsValid" for that.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
+P:D(bool:_Command_IsActive(command));
 #define _Command_IsActive(%0) (YSI_g_sCommands[(%0)][E_COMMAND_NAME])
 
-/**--------------------------------------------------------------------------**\
-<summary>_Command_IsValid</summary>
-<param name="command">Command to get for.</param>
-<returns>
-	Is this command ID valid?
-</returns>
-<remarks>
-	Internal direct-access check.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="command">Command to get for.</param>
+ * <returns>
+ *  Is this command ID valid?
+ * </returns>
+ * <remarks>
+ *  Internal direct-access check.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 //#define _Command_IsValid(%0) ((0 <= (%0) < YSI_g_sHighestID) && _Command_IsActive(%0))
 #define _Command_IsValid(%0) (IS_IN_RANGE((%0), 0, MAX_COMMANDS) && _Command_IsActive(%0))
 
-/**--------------------------------------------------------------------------**\
-<summary>_Command_IsPrefix</summary>
-<param name="idx">Command to test.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Checks to see if a character is a possible prefix character.  May use an
-	unsigned comparison.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="idx">Command to test.</param>
+ * <remarks>
+ *  Checks to see if a character is a possible prefix character.  May use an
+ *  unsigned comparison.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
 	#define _Command_IsPrefix(%0) (IS_IN_RANGE((%0), 0, 128 + 1) && Bit_Get(YSI_g_sPrefixes, (%0)))
@@ -367,30 +300,21 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 	#define _Command_IsPrefix(%0) ((%0) == '/')
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>_Command_GetPrefix</summary>
-<param name="c">Command to get.</param>
-<returns>
-	The prefix for this command.
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="c">Command to get.</param>
+ * <returns>
+ *  The prefix for this command.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
+P:D(_Command_GetPrefix(c));
 #define _Command_GetPrefix(%0) (YSI_g_sCommands[(%0)][E_COMMAND_PREFIX])
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_Name</summary>
-<param name="f">Command to get the name of.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="f">Command to get the name of.</param>
+ *//*------------------------------------------------------------------------**/
 
+P:D(Command_Name(f));
 #define Command_Name(%0) (YSI_g_sCommands[(%0)][E_COMMAND_NAME])
 
 /*
@@ -406,19 +330,18 @@ forward e_COMMAND_ERRORS:OnPlayerCommandPerformed(playerid, cmdtext[], e_COMMAND
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetID</summary>
-<param name="function[]">Function name to find.</param>
-<returns>
-	The ID of the passed function.
-</returns>
-<remarks>
-	-
-
-native Command_GetID(function[])
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="function">Function name to find.</param>
+ * <returns>
+ *  The ID of the passed function.
+ * </returns>
+ * <remarks>
+ *  -
+ *
+ * native Command_GetID(function[])
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign Command_GetID(string:function[]);
 
@@ -428,17 +351,13 @@ global Command_GetID(string:function[])
 	return Command_Find(function);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_AddAlt</summary>
-<param name="oidx">The function this is an alternate to.</param>
-<param name="cmd[]">The new name.</param>
-<returns>
-	The command's ID.
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="oidx">The function this is an alternate to.</param>
+ * <param name="cmd">The new name.</param>
+ * <returns>
+ *  The command's ID.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 foreign Command_AddAlt(oidx, string:cmd[]);
 
@@ -490,19 +409,28 @@ global Command_AddAlt(oidx, string:cmd[])
 	return id;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_ReProcess</summary>
-<param name="playerid">Player who entered the command.</param>
-<param name="cmdtext[]">Text entered.</param>
-<param name="help">Called from the help commmand or OnPlayerCommandText.</param>
-<returns>
-	true - success or hidden fail.
-	false - fail.
-</returns>
-<remarks>
-	Does all the command and error handling.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="p">(playerid) - Player who entered the command.</param>
+ * <param name="c">(cmdtext) - Text entered.</param>
+ * <param name="h">
+ *  1 - Called from the help commmand or OnPlayerCommandText.
+ *  2 - Bypass permissions checks.
+ * </param>
+ * <returns>
+ *  true - success or hidden fail.
+ *  false - fail.
+ * </returns>
+ * <remarks>
+ *  Does all the command and error handling.  The macro version takes four
+ *  parameters:
+ *
+ *  <code>Command_ReProcess(playerid,cmdtext,help,force);</code>
+ *
+ *  <c>help</c> and <c>force</c> are combined together in to a bitmap.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+//P:D(Command_ReProcess(playerid,cmdtext,help,force));
 #define Command_ReProcess(%0,%1,%2,%3) Command_ReProcess(%0,%1, _:(%2)|(_:(%3)<<1))
 
 foreign Command_ReProcess(p,string:c[],h);
@@ -630,19 +558,18 @@ global Command_ReProcess(p,string:c[],h)
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetPlayer</summary>
-<param name="command">Command to get for.</param>
-<param name="playerid">Player to get.</param>
-<returns>
-	Can this player use this command?
-</returns>
-<remarks>
-
-native bool:Command_GetPlayer(command, playerid);
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="command">Command to get for.</param>
+ * <param name="playerid">Player to get.</param>
+ * <returns>
+ *  Can this player use this command?
+ * </returns>
+ * <remarks>
+ *
+ * native bool:Command_GetPlayer(command, playerid);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign bool:Command_GetPlayer(cmd, pid);
 
@@ -652,20 +579,16 @@ global bool:Command_GetPlayer(cmd, pid)
 	return false;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetPlayerNamed</summary>
-<param name="funcname[]">Command to get for.</param>
-<param name="playerid">Player to get.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Like Command_GetPlayer but for a function name.
-
-native bool:Command_GetPlayerNamed(funcname[], playerid);
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="funcname">Command to get for.</param>
+ * <param name="playerid">Player to get.</param>
+ * <remarks>
+ *  Like Command_GetPlayer but for a function name.
+ *
+ * native bool:Command_GetPlayerNamed(funcname[], playerid);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign bool:Command_GetPlayerNamed(string:func[], playerid);
 
@@ -674,20 +597,16 @@ global bool:Command_GetPlayerNamed(string:func[], playerid)
 	return Command_GetPlayer(Command_Find(func), playerid);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_SetPlayer</summary>
-<param name="command">Command to set for.</param>
-<param name="playerid">Player to set.</param>
-<param name="bool:set">Wether or not this player can use this command.</param>
-<returns>
-	-
-</returns>
-<remarks>
-
-native bool:Command_SetPlayer(command, playerid, bool:set);
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="command">Command to set for.</param>
+ * <param name="playerid">Player to set.</param>
+ * <param name="set">Wether or not this player can use this command.</param>
+ * <remarks>
+ *
+ * native bool:Command_SetPlayer(command, playerid, bool:set);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign void:Command_SetPlayer(c, p, bool:s);
 
@@ -697,21 +616,17 @@ global void:Command_SetPlayer(c, p, bool:s)
 	if (_Command_IsValid(c) && VALID_PLAYERID(p)) PA_Set(YSI_g_sCommands[c][E_COMMAND_USERS], p, s);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_SetPlayerNamed</summary>
-<param name="funcname[]">Command to set for.</param>
-<param name="playerid">Player to set.</param>
-<param name="set">Wether or not this player can use this command.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Like Command_SetPlayer but for a function name.
-
-native bool:Command_SetPlayerNamed(funcname[], playerid, bool:set);
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="funcname">Command to set for.</param>
+ * <param name="playerid">Player to set.</param>
+ * <param name="set">Wether or not this player can use this command.</param>
+ * <remarks>
+ *  Like Command_SetPlayer but for a function name.
+ *
+ * native bool:Command_SetPlayerNamed(funcname[], playerid, bool:set);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign void:Command_SetPlayerNamed(string:f[],p,bool:s);
 
@@ -721,16 +636,12 @@ global void:Command_SetPlayerNamed(string:f[],p,bool:s)
 }
 
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_Find</summary>
-<param name="cmd[]">The command name to find.</param>
-<returns>
-	The array slot of this command, or -1.
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="cmd">The command name to find.</param>
+ * <returns>
+ *  The array slot of this command, or -1.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 foreign Command_Find(string:cmd[]);
 
@@ -747,17 +658,13 @@ global Command_Find(string:cmd[])
 
 
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_TouchNamed</summary>
-<param name="string:command[]">Command to "touch".</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Used within "GROUP_ADD" to quickly assign a load of commands to just one
-	group.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="command">Command to "touch".</param>
+ * <remarks>
+ *  Used within "GROUP_ADD" to quickly assign a load of commands to just one
+ *  group.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign void:Command_TouchNamed(string:command[]);
 
@@ -774,17 +681,13 @@ global void:Command_TouchNamed(string:command[])
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_Touch</summary>
-<param name="string:command[]">Command to "touch".</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Used within "GROUP_ADD" to quickly assign a load of commands to just one
-	group.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="command">Command to "touch".</param>
+ * <remarks>
+ *  Used within "GROUP_ADD" to quickly assign a load of commands to just one
+ *  group.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign void:Command_Touch(command);
 
@@ -797,6 +700,98 @@ global void:Command_Touch(command)
 			return;
 		}
 	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign void:Command_SetDeniedReturn(bool:set);
+
+global void:Command_SetDeniedReturn(bool:set)
+{
+	if (set)
+		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_DENIED;
+	else
+		YSI_g_sCommandFlags &= ~e_COMMAND_FLAGS_DENIED;
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign bool:Command_GetDeniedReturn();
+
+global bool:Command_GetDeniedReturn()
+{
+	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_DENIED);
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign void:Command_SetIllegalReturn(bool:set);
+
+global void:Command_SetIllegalReturn(bool:set)
+{
+	if (set)
+		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_INVALID_INPUT;
+	else
+		YSI_g_sCommandFlags &= ~e_COMMAND_FLAGS_INVALID_INPUT;
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign bool:Command_GetIllegalReturn();
+
+global bool:Command_GetIllegalReturn()
+{
+	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_INVALID_INPUT);
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign void:Command_SetUnknownReturn(bool:set);
+
+global void:Command_SetUnknownReturn(bool:set)
+{
+	if (set)
+		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_NOT_FOUND;
+	else
+		YSI_g_sCommandFlags &= ~e_COMMAND_FLAGS_NOT_FOUND;
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign bool:Command_GetUnknownReturn();
+
+global bool:Command_GetUnknownReturn()
+{
+	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_NOT_FOUND);
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign void:Command_SetDisconnectReturn(bool:set);
+
+global void:Command_SetDisconnectReturn(bool:set)
+{
+	if (set)
+		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_NO_PLAYER;
+	else
+		YSI_g_sCommandFlags &= ~e_COMMAND_FLAGS_NO_PLAYER;
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+foreign bool:Command_GetDisconnectReturn();
+
+global bool:Command_GetDisconnectReturn()
+{
+	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_NO_PLAYER);
 }
 
 /*
@@ -812,20 +807,16 @@ global void:Command_Touch(command)
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_AddAltNamed</summary>
-<param name="function[]">The function this is an alternate to.</param>
-<param name="altname[]">The new name.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Add an alternate command for an existing command.
-
-native Command_AddAltNamed(function[], altname[]);
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="function">The function this is an alternate to.</param>
+ * <param name="altname">The new name.</param>
+ * <remarks>
+ *  Add an alternate command for an existing command.
+ *
+ * native Command_AddAltNamed(function[], altname[]);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign Command_AddAltNamed(string:function[], string:altname[]);
 
@@ -834,18 +825,14 @@ global Command_AddAltNamed(string:function[], string:altname[])
 	return Command_AddAlt(Command_Find(function), altname);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_Remove</summary>
-<param name="func">The slot of the command to remove.</param>
-<returns>
-	-
-</returns>
-<remarks>
-
-native Command_Remove(func);
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="func">The slot of the command to remove.</param>
+ * <remarks>
+ *
+ * native Command_Remove(func);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign void:Command_Remove(func);
 
@@ -862,18 +849,14 @@ global void:Command_Remove(func)
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_RemoveNamed</summary>
-<param name="func">The name of the command to remove.</param>
-<returns>
-	-
-</returns>
-<remarks>
-
-native Command_RemoveNamed(string:func[]);
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="func">The name of the command to remove.</param>
+ * <remarks>
+ *
+ * native Command_RemoveNamed(string:func[]);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign void:Command_RemoveNamed(string:func[]);
 
@@ -882,16 +865,12 @@ global void:Command_RemoveNamed(string:func[])
 	Command_Remove(Command_Find(func));
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_IsValid</summary>
-<param name="command">Command to get for.</param>
-<returns>
-	Is this command ID valid?
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="command">Command to get for.</param>
+ * <returns>
+ *  Is this command ID valid?
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 foreign bool:Command_IsValid(cmd);
 
@@ -900,15 +879,11 @@ global bool:Command_IsValid(cmd)
 	return _Command_IsValid(cmd);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetCurrent</summary>
-<returns>
-	The command currently being processed, or "COMMAND_NOT_FOUND".
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <returns>
+ *  The command currently being processed, or "COMMAND_NOT_FOUND".
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 foreign Command_GetCurrent();
 
@@ -917,19 +892,15 @@ global Command_GetCurrent()
 	return YSI_g_sCurrentID;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetPlayerCommandCount</summary>
-<param name="playerid">Player to count for.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Gets the number of comamnds this player can use.
-
-native Command_GetPlayerCommandCount(playerid);
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player to count for.</param>
+ * <remarks>
+ *  Gets the number of comamnds this player can use.
+ *
+ * native Command_GetPlayerCommandCount(playerid);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign Command_GetPlayerCommandCount(playerid);
 
@@ -963,18 +934,14 @@ global Command_GetPlayerCommandCount(playerid)
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetName</summary>
-<param name="f">Command to get the name of.</param>
-<returns>
-	-
-</returns>
-<remarks>
-
-native Command_GetName(funcid);
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="f">Command to get the name of.</param>
+ * <remarks>
+ *
+ * native Command_GetName(funcid);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign string:Command_GetName(f);
 
@@ -985,21 +952,20 @@ global string:Command_GetName(f)
 	return YSI_g_sReturnBuffer;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetDisplay</summary>
-<param name="f">Command to get the real name of.</param>
-<param name="p">Player to get the name for.</param>
-<returns>
-	The name of a command for a single player.
-</returns>
-<remarks>
-	Abstracted because there's a crash when chain returning a string from a
-	foreign function (see "Command_GetDisplayNamed").
-
-native Command_GetDisplay(funcid, playerid);
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="f">Command to get the real name of.</param>
+ * <param name="p">Player to get the name for.</param>
+ * <returns>
+ *  The name of a command for a single player.
+ * </returns>
+ * <remarks>
+ *  Abstracted because there's a crash when chain returning a string from a
+ *  foreign function (see "Command_GetDisplayNamed").
+ *
+ * native Command_GetDisplay(funcid, playerid);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign string:Command_GetDisplay(funcid, playerid);
 
@@ -1010,22 +976,21 @@ global string:Command_GetDisplay(funcid, playerid)
 		YSI_g_sReturnBuffer;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetDisplayNamed</summary>
-<param name="f[]">Command to get the real name of.</param>
-<param name="p">Player to get the name for.</param>
-<returns>
-	The name of a named function for one player.
-</returns>
-<remarks>
-	Remote function call for Command_GetDisplayNameNamed - avoids needing to
-	expose users to the master system's odd way of returning strings.  This is
-	the only part I've not yet fixed up to be nice and hidden.
-
-native string:Command_GetDisplayNamed(string:funcid[], playerid);
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="f">Command to get the real name of.</param>
+ * <param name="p">Player to get the name for.</param>
+ * <returns>
+ *  The name of a named function for one player.
+ * </returns>
+ * <remarks>
+ *  Remote function call for Command_GetDisplayNameNamed - avoids needing to
+ *  expose users to the master system's odd way of returning strings.  This is
+ *  the only part I've not yet fixed up to be nice and hidden.
+ *
+ * native string:Command_GetDisplayNamed(string:funcid[], playerid);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign string:Command_GetDisplayNamed(string:func[], playerid);
 
@@ -1036,20 +1001,19 @@ global string:Command_GetDisplayNamed(string:func[], playerid)
 		YSI_g_sReturnBuffer;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetNext</summary>
-<param name="index">Index of the next command for this player.</param>
-<param name="playerid">Player to get the name for.</param>
-<returns>
-	The name of a command for a single player.
-</returns>
-<remarks>
-	-
-
-native Command_GetNext(index, playerid);
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="index">Index of the next command for this player.</param>
+ * <param name="playerid">Player to get the name for.</param>
+ * <returns>
+ *  The name of a command for a single player.
+ * </returns>
+ * <remarks>
+ *  -
+ *
+ * native Command_GetNext(index, playerid);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign string:Command_GetNext(index, playerid);
 
@@ -1096,21 +1060,18 @@ global string:Command_GetNext(index, playerid)
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>Command</summary>
-<param name="start">Last value.</param>
-<returns>
-	The next command.
-</returns>
-<remarks>
-	Internal implementation of the "Command()" iterator for "foreach".  Returns
-	all the commands that exist.  Normally iterator functions take two
-	parameters, but this needs only one.  Really quite simple, but probably
-	faster this way as it has access to internal information.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Iterator@Command @iterfunc
+/*-------------------------------------------------------------------------*//**
+ * <param name="start">Last value.</param>
+ * <returns>
+ *  The next command.
+ * </returns>
+ * <remarks>
+ *  Internal implementation of the "Command()" iterator for "foreach".  Returns
+ *  all the commands that exist.  Normally iterator functions take two
+ *  parameters, but this needs only one.  Really quite simple, but probably
+ *  faster this way as it has access to internal information.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign Iter_Func@Command(start);
 
@@ -1123,25 +1084,22 @@ global Iter_Func@Command(start)
 	return COMMAND_NOT_FOUND;
 }
 
-#define iterstart@Command -1
+#define Iterator@Command iterstart(-1)
 
-/**--------------------------------------------------------------------------**\
-<summary>PlayerCommand</summary>
-<param name="pid">Player to check for.</param>
-<param name="start">Last value.</param>
-<returns>
-	The next command.
-</returns>
-<remarks>
-	Internal implementation of the "PlayerCommand()" iterator for "foreach".
-	Returns all the commands this player can use.
-	
-	This is similar to "Command_GetNext", but returns an ID not a string - I
-	actually think this way is slightly better.
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-#define Iterator@PlayerCommand @iterfunc
+/*-------------------------------------------------------------------------*//**
+ * <param name="pid">Player to check for.</param>
+ * <param name="start">Last value.</param>
+ * <returns>
+ *  The next command.
+ * </returns>
+ * <remarks>
+ *  Internal implementation of the "PlayerCommand()" iterator for "foreach".
+ *  Returns all the commands this player can use.
+ *
+ *  This is similar to "Command_GetNext", but returns an ID not a string - I
+ *  actually think this way is slightly better.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign Iter_Func@PlayerCommand(start, pid);
 
@@ -1157,7 +1115,7 @@ global Iter_Func@PlayerCommand(start, pid)
 	return COMMAND_NOT_FOUND;
 }
 
-#define iterstart@PlayerCommand -1
+#define Iterator@PlayerCommand iterstart(-1)
 
 /*
   
@@ -1172,16 +1130,12 @@ global Iter_Func@PlayerCommand(start, pid)
   
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetPrefix</summary>
-<param name="c">Command to get.</param>
-<returns>
-	The prefix for this command ('/' by default).
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="c">Command to get.</param>
+ * <returns>
+ *  The prefix for this command ('/' by default).
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
 	foreign Command_GetPrefix(c);
@@ -1201,17 +1155,16 @@ global Iter_Func@PlayerCommand(start, pid)
 	// Don't compile at all if it is disabled.
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_IsValidPrefix</summary>
-<param name="prefix">Possible prefix character.</param>
-<returns>
-	Is this a valid character for a prefix?
-</returns>
-<remarks>
-	This is the ONLY place the list of valid prefixes is defined!  They are
-	symbols, not an alphanumerics, and under 128.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="prefix">Possible prefix character.</param>
+ * <returns>
+ *  Is this a valid character for a prefix?
+ * </returns>
+ * <remarks>
+ *  This is the ONLY place the list of valid prefixes is defined!  They are
+ *  symbols, not an alphanumerics, and under 128.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
 	stock bool:Command_IsValidPrefix(prefix)
@@ -1224,16 +1177,12 @@ global Iter_Func@PlayerCommand(start, pid)
 	}
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_IsPrefixUsed</summary>
-<param name="prefix">Possible prefix character.</param>
-<returns>
-	Is this a prefix used for any command?
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="prefix">Possible prefix character.</param>
+ * <returns>
+ *  Is this a prefix used for any command?
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
 	foreign bool:Command_IsPrefixUsed(prefix);
@@ -1244,17 +1193,13 @@ global Iter_Func@PlayerCommand(start, pid)
 	}
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_FlushPrefixes</summary>
-<param name="prefix">Prefix to maybe remove.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	If one command uses a prefix, then STOPS using said prefix, the global list
-	of valid prefixes will need to be updated.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="prefix">Prefix to maybe remove.</param>
+ * <remarks>
+ *  If one command uses a prefix, then STOPS using said prefix, the global list
+ *  of valid prefixes will need to be updated.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
 	static stock Command_FlushPrefixes(prefix)
@@ -1269,17 +1214,13 @@ global Iter_Func@PlayerCommand(start, pid)
 	}
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_SetPrefix</summary>
-<param name="c">Command to set.</param>
-<param name="prefix">First character of the command.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Change what command to type "/x" vs "#x" for example.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="c">Command to set.</param>
+ * <param name="prefix">First character of the command.</param>
+ * <remarks>
+ *  Change what command to type "/x" vs "#x" for example.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
 	foreign bool:Command_SetPrefix(c, prefix);
@@ -1304,17 +1245,13 @@ global Iter_Func@PlayerCommand(start, pid)
 	}
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_SetPrefixNamed</summary>
-<param name="c">Named command to set.</param>
-<param name="prefix">First character of the command.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Change what command to type "/x" vs "#x" for example.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="c">Named command to set.</param>
+ * <param name="prefix">First character of the command.</param>
+ * <remarks>
+ *  Change what command to type "/x" vs "#x" for example.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
 	foreign bool:Command_SetPrefixNamed(string:c[], prefix);
@@ -1338,18 +1275,17 @@ global Iter_Func@PlayerCommand(start, pid)
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_OnPlayerText</summary>
-<param name="playerid">Player who typed something.</param>
-<param name="text[]">What they typed.</param>
-<returns>
-	0 - Could not process the command.
-	1 - Called the command.
-</returns>
-<remarks>
-	Used to implement alternate command prefixes.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player who typed something.</param>
+ * <param name="text">What they typed.</param>
+ * <returns>
+ *  0 - Could not process the command.
+ *  1 - Called the command.
+ * </returns>
+ * <remarks>
+ *  Used to implement alternate command prefixes.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 mhook OnPlayerText(playerid, text[])
 {
@@ -1363,25 +1299,24 @@ mhook OnPlayerText(playerid, text[])
 	return 1;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_OnPlayerCommandText</summary>
-<param name="playerid">Player who typed a command.</param>
-<param name="cmdtext[]">What they typed.</param>
-<returns>
-	0 - Could not process the command.
-	1 - Called the command.
-</returns>
-<remarks>
-	The core of the command processor.  Now vsatly simplified.
-	
-	This function first finds the command in our hash map.  If it exists, it
-	checks if the player can use it.  If they can, it checks if it is only in
-	the current script.  If it is it calls it directly, if it isn't it calls it
-	using "CallRemoteFunction", which takes in to account master states in
-	multiple scripts and the special master 23, which calls it in only one
-	other script.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player who typed a command.</param>
+ * <param name="cmdtext">What they typed.</param>
+ * <returns>
+ *  0 - Could not process the command.
+ *  1 - Called the command.
+ * </returns>
+ * <remarks>
+ *  The core of the command processor.  Now vsatly simplified.
+ *
+ *  This function first finds the command in our hash map.  If it exists, it
+ *  checks if the player can use it.  If they can, it checks if it is only in
+ *  the current script.  If it is it calls it directly, if it isn't it calls it
+ *  using "CallRemoteFunction", which takes in to account master states in
+ *  multiple scripts and the special master 23, which calls it in only one
+ *  other script.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 mhook OnPlayerCommandText(playerid, cmdtext[])
 {
@@ -1391,19 +1326,16 @@ mhook OnPlayerCommandText(playerid, cmdtext[])
 	return Command_ReProcess(playerid, cmdtext, 0);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>OnScriptInit</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Add all local commands in to the system.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Add all local commands in to the system.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 hook OnScriptInit()
 {
 	P:1("Command_OnScriptInit called");
+	YSI_g_sCommandFlags = e_COMMAND_FLAGS_OK;
 	#if YSIM_NOT_CLIENT
 		#if defined Y_COMMANDS_USE_CHARS
 			Bit_SetAll(YSI_g_sPrefixes, false),
@@ -1443,15 +1375,11 @@ hook OnScriptInit()
 	if (funcidx(YSI_gscOPCP) != -1) Command_IncOPCP();
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>HANDOFF</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Passes additional commands data to the new master.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Passes additional commands data to the new master.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 HANDOFF()
 {
@@ -1466,15 +1394,11 @@ HANDOFF()
 	_Command_Rebuild();
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>OnScriptExit</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	When a script ends, update the status of any new callback hooks.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  When a script ends, update the status of any new callback hooks.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 hook OnScriptExit()
 {
@@ -1535,15 +1459,11 @@ hook OnScriptExit()
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>_Command_Rebuild</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Rebuilds the hashmap of command pointers after a master script hands off.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Rebuilds the hashmap of command pointers after a master script hands off.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign void:_Command_Rebuild();
 
@@ -1570,17 +1490,13 @@ global void:_Command_Rebuild()
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_IncOPCR</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	This function, and the three other related ones, increment and decrement the
-	number of callbacks known to exist on the server.  If they are 0, there's no
-	point trying to call them on errors etc.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  This function, and the three other related ones, increment and decrement the
+ *  number of callbacks known to exist on the server.  If they are 0, there's no
+ *  point trying to call them on errors etc.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign void:Command_IncOPCR();
 
@@ -1614,15 +1530,11 @@ global void:Command_DecOPCP()
 	YSI_g_sCommandFlags -= e_COMM_FLAG_OPCP_ADD;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetEmptySlot</summary>
-<returns>
-	The first available slot in "YSI_g_sCommands".
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <returns>
+ *  The first available slot in "YSI_g_sCommands".
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 static stock Command_GetEmptySlot()
 {
@@ -1634,19 +1546,18 @@ static stock Command_GetEmptySlot()
 	return COMMAND_NOT_FOUND;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_Add</summary>
-<param name="cmd[]">The command name to add.</param>
-<param name="ptr">The command's pointer.</param>
-<param name="id">Where to store the command (default -1 = find).</param>
-<returns>
-	The command's ID.
-</returns>
-<remarks>
-	This was an external API function, but there is no reason for it to be as it
-	is called for all found commands at mode start.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="cmd">The command name to add.</param>
+ * <param name="ptr">The command's pointer.</param>
+ * <param name="id">Where to store the command (default -1 = find).</param>
+ * <returns>
+ *  The command's ID.
+ * </returns>
+ * <remarks>
+ *  This was an external API function, but there is no reason for it to be as it
+ *  is called for all found commands at mode start.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 @foreign Command_Add(string:cmd[], ptr);
 
@@ -1691,17 +1602,13 @@ static stock Command_GetEmptySlot()
 	return id;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>_Command_GetDisplay</summary>
-<param name="f">Command to get the real name of.</param>
-<param name="p">Player to get the name for.</param>
-<returns>
-	The name of a command for a single player.
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="f">Command to get the real name of.</param>
+ * <param name="p">Player to get the name for.</param>
+ * <returns>
+ *  The name of a command for a single player.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 static stock _Command_GetDisplay(funcid, playerid)
 {

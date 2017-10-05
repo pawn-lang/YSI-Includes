@@ -1,14 +1,9 @@
-/**--------------------------------------------------------------------------**\
-					=================================
-					 y_svar - Automatic data saving.
-					=================================
-Description:
-	Declares data to be automatically saved and loaded for the whole server.
+/*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -17,50 +12,63 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI utils include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	0.1
-Changelog:
-	25/02/12:
-		First version.
-Functions:
-	Stock:
-		-
-	Inline:
-		-
-Variables:
-	Global:
-		-
-</remarks>
-\**--------------------------------------------------------------------------**/
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 // Third "uvar" version.
 #define _YS@LE@E%0>
@@ -234,26 +242,22 @@ public _Config_Load_y_svar(name[], value[])
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>M@</summary>
-<param name="volatile vardata[]">Handle to the memory location in which to store info.</param>
-<param name="dataSize">The size of the array (first dimension).</param>
-<param name="&pointer">The start of the data.</param>
-<param name="ds2 = 1">The second dimension of the data.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	This function modifies "vardata" well beyond its original limits to contain
-	information on the structure of the enum used to define "val".  This code
-	uses the name and size information passed in the additional parameters as
-	strings, and makes assumptions about how the compiler lays out memory to
-	combine all the passed strings in to one big string in what could be ROM,
-	but in SA:MP isn't.  This takes a human readable(ish) description of the
-	array elements and converts it in to a much simpler to read format for the
-	computer to use later when loading and storing data.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="vardata">Handle to the memory location in which to store info.</param>
+ * <param name="dataSize">The size of the array (first dimension).</param>
+ * <param name="pointer">The start of the data.</param>
+ * <param name="ds2">The second dimension of the data.</param>
+ * <remarks>
+ *  This function modifies "vardata" well beyond its original limits to contain
+ *  information on the structure of the enum used to define "val".  This code
+ *  uses the name and size information passed in the additional parameters as
+ *  strings, and makes assumptions about how the compiler lays out memory to
+ *  combine all the passed strings in to one big string in what could be ROM,
+ *  but in SA:MP isn't.  This takes a human readable(ish) description of the
+ *  array elements and converts it in to a much simpler to read format for the
+ *  computer to use later when loading and storing data.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock M@(volatile const vardata[], dataSize, &pointer, ds2 = 1)
 {

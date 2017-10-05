@@ -1,18 +1,9 @@
-/**--------------------------------------------------------------------------**\
-					=================================
-					   y_bitmap - Generate bitmaps.
-					=================================
-Description:
-	Code to generate images on the server in the bitmap format.  This is by far
-	the simplest format to write to as it is just a huge array of colours (at
-	least 24-bit bitmaps are, and we only do them).
-	
-	This file contains functions to draw various shapes.
+/*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -21,71 +12,81 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI utils include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	0.1
-Changelog:
-	29/03/13:
-		First version.
-Functions:
-	Stock:
-		-
-	Inline:
-		-
-Variables:
-	Global:
-		-
-\**--------------------------------------------------------------------------**/
 
-/**--------------------------------------------------------------------------**\
-<summary>Bitmap_DrawRectangle</summary>
-<param name="Bitmap:ctx">The bitmap to modify.</param>
-<param name="const minX">The left of the array.</param>
-<param name="const minY">The top of the array.</param>
-<param name="const maxX">The right of the array.</param>
-<param name="const maxY">The bottom of the array.</param>
-<param name="fillColour">The colour of the inside of the rectangle.</param>
-<param name="lineColour = 0">The colour of the rectangle border.</param>
-<param name="linePattern[] = \"SOLID\"">How to draw the inside.</param>
-<param name="fillPattern[] = \"SOLID\"">How to draw the border.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	This function draws a rectangle between two given co-ordinates.  It can also
-	draw a border around the rectangle OUTSIDE the specified area of the
-	rectangle.  If you want the border within the area specified you need to use
-	a smaller area.
-</remarks>
-\**--------------------------------------------------------------------------**/
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="ctx">The bitmap to modify.</param>
+ * <param name="minX">The left of the array.</param>
+ * <param name="minY">The top of the array.</param>
+ * <param name="maxX">The right of the array.</param>
+ * <param name="maxY">The bottom of the array.</param>
+ * <param name="fillColour">The colour of the inside of the rectangle.</param>
+ * <param name="lineColour">The colour of the rectangle border.</param>
+ * <param name="linePattern[] = \"SOLID\"">How to draw the inside.</param>
+ * <param name="fillPattern[] = \"SOLID\"">How to draw the border.</param>
+ * <remarks>
+ *  This function draws a rectangle between two given co-ordinates.  It can also
+ *  draw a border around the rectangle OUTSIDE the specified area of the
+ *  rectangle.  If you want the border within the area specified you need to use
+ *  a smaller area.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 // End the input above because all this code is being written with no testing
 // or compiling until I am home again.  So in the interests of leaving the code
@@ -185,27 +186,23 @@ static stock _Bitmap_RectangleRecopy(n, BitArray:pattern<PATTERN_MASK_X>)
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bitmap_DrawRectangle</summary>
-<param name="Bitmap:ctx">The bitmap to modify.</param>
-<param name="const x">The x co-ordinate of the circle centre.</param>
-<param name="const y">The y co-ordinate of the circle centre.</param>
-<param name="const Float:radius">The size of the circle.</param>
-<param name="fillColour">The colour of the inside of the circle.</param>
-<param name="lineColour = 0">The colour of the circle border.</param>
-<param name="linePattern[] = \"SOLID\"">How to draw the inside.</param>
-<param name="fillPattern[] = \"SOLID\"">How to draw the border.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	This function draws a circle centered on the given co-ordinates with the
-	given FLOAT radius, not an integer size because of diagonals. It can also
-	draw a border around the circle OUTSIDE the specified area of the circle.
-	If you want the border within the area specified you need to use a smaller
-	area.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="ctx">The bitmap to modify.</param>
+ * <param name="x">The x co-ordinate of the circle centre.</param>
+ * <param name="y">The y co-ordinate of the circle centre.</param>
+ * <param name="radius">The size of the circle.</param>
+ * <param name="fillColour">The colour of the inside of the circle.</param>
+ * <param name="lineColour">The colour of the circle border.</param>
+ * <param name="linePattern[] = \"SOLID\"">How to draw the inside.</param>
+ * <param name="fillPattern[] = \"SOLID\"">How to draw the border.</param>
+ * <remarks>
+ *  This function draws a circle centered on the given co-ordinates with the
+ *  given FLOAT radius, not an integer size because of diagonals. It can also
+ *  draw a border around the circle OUTSIDE the specified area of the circle.
+ *  If you want the border within the area specified you need to use a smaller
+ *  area.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Bitmap_DrawCircle(Bitmap:ctx, const x, const y, const Float:radius, fillColour, lineColour = 0, linePattern[] = "SOLID", fillPattern[] = "SOLID")
 {
@@ -213,25 +210,21 @@ stock Bitmap_DrawCircle(Bitmap:ctx, const x, const y, const Float:radius, fillCo
 	Bitmap_DrawRing(ctx, x, y, 0.0, radius, fillColour, fillPattern);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bitmap_DrawRectangle</summary>
-<param name="Bitmap:ctx">The bitmap to modify.</param>
-<param name="x">The x co-ordinate of the ring centre.</param>
-<param name="y">The y co-ordinate of the ring centre.</param>
-<param name="const Float:inner">The inner size of the ring.</param>
-<param name="const Float:outer">The outer size of the ring.</param>
-<param name="colour">The colour of the ring.</param>
-<param name="pattern[] = \"SOLID\"">How to draw the inside.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	This function draws a ring centered on the given co-ordinates with the
-	given FLOAT radius, not an integer size because of diagonals.  This does not
-	draw a border as it is used for borders, and a border on a ring is ambiguous
-	- do you have it on the inside or not?  Better to let the user decide.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="ctx">The bitmap to modify.</param>
+ * <param name="x">The x co-ordinate of the ring centre.</param>
+ * <param name="y">The y co-ordinate of the ring centre.</param>
+ * <param name="inner">The inner size of the ring.</param>
+ * <param name="outer">The outer size of the ring.</param>
+ * <param name="colour">The colour of the ring.</param>
+ * <param name="pattern[] = \"SOLID\"">How to draw the inside.</param>
+ * <remarks>
+ *  This function draws a ring centered on the given co-ordinates with the
+ *  given FLOAT radius, not an integer size because of diagonals.  This does not
+ *  draw a border as it is used for borders, and a border on a ring is ambiguous
+ *  - do you have it on the inside or not?  Better to let the user decide.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Bitmap_DrawRing(Bitmap:ctx, x, y, Float:inner, Float:outer, colour, pattern[] = "SOLID")
 {

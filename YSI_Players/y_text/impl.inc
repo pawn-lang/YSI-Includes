@@ -1,14 +1,9 @@
-/**--------------------------------------------------------------------------**\
-					===========================
-					Y Sever Includes - INI Core
-					===========================
-Description:
-	Does some internal processing for the text system.
+/*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -17,76 +12,63 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI ini include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	1.0
-Changelog:
-	01/05/11:
-		First version.
-Functions:
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-Callbacks:
-	-
-Definitions:
-	-
-Enums:
-	-
-Macros:
-	-
-Tags:
-	-
-Variables:
-	Global:
-		-
-	Static:
-		-
-Commands:
-	-
-Compile options:
-	-
-Operators:
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 enum e_TEXT_DISPLAY_TYPE
 {
@@ -218,17 +200,13 @@ static stock
 // | ========================================================================= |
 // =============================================================================
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	This callback is hard coded in to YSI to be called absolutely last!  Note
-	that this WAS hard coded, but now uses a more generic chaining method not
-	based on y_scriptinit and instead just uses the regular ALS method.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  This callback is hard coded in to YSI to be called absolutely last!  Note
+ *  that this WAS hard coded, but now uses a more generic chaining method not
+ *  based on y_scriptinit and instead just uses the regular ALS method.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 public OnGameModeInit()
 {
@@ -293,15 +271,11 @@ public OnFilterScriptInit()
 //	P:2("Text_SpecialInit ended");
 //}
 
-/**--------------------------------------------------------------------------**\
-<summary></summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <transition keep="true" target="y_text_ending : n" />
+ * <transition keep="true" target="y_text_get_text : n" />
+ * <transition keep="true" target="y_render_show : y_render_show_print" />
+ *//*------------------------------------------------------------------------**/
 
 //static stock Text_GetDistributionID()
 hook OnScriptInit()
@@ -369,15 +343,9 @@ hook OnScriptInit()
 	state y_render_show : y_render_show_print;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <transition keep="true" target="y_text_ending : y" />
+ *//*------------------------------------------------------------------------**/
 
 hook OnScriptExit()
 {
@@ -407,16 +375,12 @@ hook OnScriptExit()
 	CallRemoteFunction("Text_RefreshLoaded", "");
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Text_ResetLoaded</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	When a mode ends this is called so that other scripts can know to re-load
-	any text which was previously owned by this script that they still need.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  When a mode ends this is called so that other scripts can know to re-load
+ *  any text which was previously owned by this script that they still need.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 forward Text_ResetLoaded();
 
@@ -436,18 +400,14 @@ public Text_ResetLoaded() <y_text_ending:n>
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Text_RefreshLoaded</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Loops through all text definition functions in the mode (defined as:
-	"file@section@unique@yX_" (note that "@unique" is optional but irrelevant).
-	If any are found and the property "file:section" isn't defined claims
-	ownership of that section so that the text can be loaded in to this mode.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Loops through all text definition functions in the mode (defined as:
+ *  "file@section@unique@yX_" (note that "@unique" is optional but irrelevant).
+ *  If any are found and the property "file:section" isn't defined claims
+ *  ownership of that section so that the text can be loaded in to this mode.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 forward Text_RefreshLoaded();
 
@@ -496,15 +456,8 @@ public Text_RefreshLoaded() <y_text_ending:n>
 	Text_LoadLocals();
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_AddLocal(buffer[], hash)
 {
@@ -520,15 +473,8 @@ static stock Text_AddLocal(buffer[], hash)
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
 
 forward Text_INILoad(offset, tag[], name[], value[]);
 
@@ -710,15 +656,8 @@ public Text_INILoad(offset, tag[], name[], value[])
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_LoadLocals()
 {
@@ -758,8 +697,8 @@ static stock Text_LoadLocals()
 			{
 				format(YSI_g_sCurLoadTextFile, sizeof (YSI_g_sCurLoadTextFile), "YSI/text/%.*s.%.2s", offset, YSI_g_sTextSets[i][e_TEXT_SETS_NAME], langs[pos - 2]);
 				INI_ParseFile(YSI_g_sCurLoadTextFile, "Text_INILoad", _, true, offset + 1, _, true);
-				++pos;
 				++YSI_g_sLangIndex;
+				++pos;
 				// We can add code here to load the data from y_styles.
 			}
 			//format(YSI_g_sCurLoadTextFile, sizeof (YSI_g_sCurLoadTextFile), "%.*s", offset, YSI_g_sTextSets[i][e_TEXT_SETS_NAME]);
@@ -770,25 +709,11 @@ static stock Text_LoadLocals()
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
 
 forward Text_CheckLoad(buffer[], hash);
 
@@ -820,33 +745,29 @@ public Text_CheckLoad(buffer[], hash) <y_text_ending:n>
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Text_ReturnTheText</summary>
-<param name="master">The script which owns this string.</param>
-<param name="index">The slot in which this string is stored.</param>
-<param name="str[]">The string to display.</param>
-<param name="len0">The length of the string array.</param>
-<param name="style[E_STYLE_DATA]">The style of the string.</param>
-<param name="len1">The length of the style array.</param>
-<param name="label[E_3D_DATA]">The 3D label style of the string.</param>
-<param name="len2">The length of the 3D array.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	This function is used to pass data from the owner script to the script
-	which is doing the display.  It passes the string to format (as an array,
-	not as a string, to keep the non-standard characters).  A copy of the style
-	data, any 3D text label style data, the index and the master ID.  Note that
-	TD data isn't handled here - if there is need to use a text draw the script
-	will have to call to the remote script for display functions.  TD data is
-	loaded in all scripts where it is relevant.  This does mean that if people
-	modify a style we need to modify it in ALL scripts.
-	
-	TODO: Modify the y_text system to store copies of required strings in all
-	modes, just because it's slightly better.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="master">The script which owns this string.</param>
+ * <param name="index">The slot in which this string is stored.</param>
+ * <param name="str">The string to display.</param>
+ * <param name="len0">The length of the string array.</param>
+ * <param name="style">The style of the string.</param>
+ * <param name="len1">The length of the style array.</param>
+ * <param name="label">The 3D label style of the string.</param>
+ * <param name="len2">The length of the 3D array.</param>
+ * <remarks>
+ *  This function is used to pass data from the owner script to the script
+ *  which is doing the display.  It passes the string to format (as an array,
+ *  not as a string, to keep the non-standard characters).  A copy of the style
+ *  data, any 3D text label style data, the index and the master ID.  Note that
+ *  TD data isn't handled here - if there is need to use a text draw the script
+ *  will have to call to the remote script for display functions.  TD data is
+ *  loaded in all scripts where it is relevant.  This does mean that if people
+ *  modify a style we need to modify it in ALL scripts.
+ *
+ *  TODO: Modify the y_text system to store copies of required strings in all
+ *  modes, just because it's slightly better.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 forward Text_ReturnTheText(master, index, str[], len0, style[E_STYLE_DATA], len1, label[E_3D_DATA], len2);
 
@@ -861,17 +782,16 @@ public Text_ReturnTheText(master, index, str[], len0, style[E_STYLE_DATA], len1,
 	setproperty(8, YSIM_TXTLEN, _Format_SetStyleData(master, index, style, label));
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>_Text_CheckOwnership</summary>
-<param name="file[]">File to check.</param>
-<param name="str[]">Section name to check.</param>
-<returns>
-	Does this script own the named section in the current file?
-</returns>
-<remarks>
-	Sets "YSI_g_sReturnText" for use in "_Text_LookupName" too.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="file">File to check.</param>
+ * <param name="str">Section name to check.</param>
+ * <returns>
+ *  Does this script own the named section in the current file?
+ * </returns>
+ * <remarks>
+ *  Sets "YSI_g_sReturnText" for use in "_Text_LookupName" too.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock _Text_CheckOwnership(file[], str[])
 {
@@ -880,20 +800,19 @@ stock _Text_CheckOwnership(file[], str[])
 	return existproperty(7, YSI_g_sReturnText) && (getproperty(7, YSI_g_sReturnText) == TEXT_MASTER);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>_Text_LookupName</summary>
-<param name="name[]">Name of the string to look up.</param>
-<returns>
-	Slot storing the pointers for the named section.
-</returns>
-<remarks>
-	Assumes this script owns the section based on previously having called
-	"_Text_CheckOwnership".  This is assumed as both functions are called from
-	only y_styles (hence the private naming convention).  Note that the string
-	"YSI_g_sReturnText" is set in "_Text_CheckOwnership" because we make
-	guarantees about the order in which these functions are called.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Name of the string to look up.</param>
+ * <returns>
+ *  Slot storing the pointers for the named section.
+ * </returns>
+ * <remarks>
+ *  Assumes this script owns the section based on previously having called
+ *  "_Text_CheckOwnership".  This is assumed as both functions are called from
+ *  only y_styles (hence the private naming convention).  Note that the string
+ *  "YSI_g_sReturnText" is set in "_Text_CheckOwnership" because we make
+ *  guarantees about the order in which these functions are called.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock _Text_LookupName(name[])
 {
@@ -912,19 +831,15 @@ stock _Text_LookupName(name[])
 	return -1;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>_Text_ReturnSingle</summary>
-<param name="str[]">String to be returned.</param>
-<param name="len0">The length of the string.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	This function, along with _Text_RemoteSingle, is used to get a single string
-	from a remote script when the exact ID is known in advance and no other data
-	like stlyes are required.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="str">String to be returned.</param>
+ * <param name="len0">The length of the string.</param>
+ * <remarks>
+ *  This function, along with _Text_RemoteSingle, is used to get a single string
+ *  from a remote script when the exact ID is known in advance and no other data
+ *  like stlyes are required.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 forward _Text_ReturnSingle(str[], len0);
 
@@ -947,6 +862,11 @@ public _Text_RemoteSingle(master, id)
 		CallRemoteFunction("_Text_ReturnSingle", "ai", YSI_g_sTextStrings[id], MAX_SINGLE_TEXT_ITEM); //sizeof (YSI_g_sTextStrings[]));
 	}
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <transition keep="true" target="y_text_get_text : y" />
+ * <transition keep="true" target="y_text_get_text : n" />
+ *//*------------------------------------------------------------------------**/
 
 stock _Text_GetPointer(master, id)
 {
@@ -974,18 +894,14 @@ stock _Text_GetPointer(master, id)
 	return id;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Text_GetStandard</summary>
-<param name="search[]">Search blocks to look in.</param>
-<param name="nh">Hash of the string name to find.</param>
-<param name="Language:l">Language in which to get the text.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Gets a string in a language from a hash and a text set.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="search">Search blocks to look in.</param>
+ * <param name="nh">Hash of the string name to find.</param>
+ * <param name="l">Language in which to get the text.</param>
+ * <remarks>
+ *  Gets a string in a language from a hash and a text set.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 forward Text_GetStandard(search[], nh, Language:l);
 
@@ -1048,21 +964,23 @@ public Text_GetStandard(search[], nh, Language:l)
 	//return fail;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Text_GetText</summary>
-<param name="search[]">A "|" separated list of files and sections to search in.</param>
-<param name="name[]">The text entry to look for.</param>
-<param name="Language:l">The language to get.</param>
-<returns>
-	The specified string in the specified language.
-</returns>
-<remarks>
-	Uses "YSI_g_sReturnText" instead of a normal return because this may call
-	remote scripts which will need to return a standardised string as an array
-	to preserve all the non-standard characters (passing data as a string using
-	__CallRemoteFunction packs the string, which we don't want).
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="search">A "|" separated list of files and sections to search in.</param>
+ * <param name="name">The text entry to look for.</param>
+ * <param name="l">The language to get.</param>
+ * <returns>
+ *  The specified string in the specified language.
+ * </returns>
+ * <remarks>
+ *  Uses "YSI_g_sReturnText" instead of a normal return because this may call
+ *  remote scripts which will need to return a standardised string as an array
+ *  to preserve all the non-standard characters (passing data as a string using
+ *  __CallRemoteFunction packs the string, which we don't want).
+ * </remarks>
+ * <transition keep="true" target="y_text_get_text : y" />
+ * <transition keep="true" target="y_text_get_text : n" />
+ * <transition keep="true" target="y_text_get_text : n" />
+ *//*------------------------------------------------------------------------**/
 
 // Get the loaded standardised version of this string.
 //forward Text_GetStandard(start[] name[], Language:l);
@@ -1117,15 +1035,8 @@ static stock Text_GetText(search[], name[], Language:l)
 	return;// ret;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
 
 // To be public.
 //stock Text_GetProvider(search[])
@@ -1155,15 +1066,8 @@ static stock Text_FindEntry(start, hash)
 	return -1;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_AddEntry(set, name[], value[], hash)
 {
@@ -1226,15 +1130,8 @@ static stock Text_AddEntry(set, name[], value[], hash)
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_GetFreeSlot()
 {
@@ -1255,17 +1152,13 @@ static stock Text_GetFreeSlot()
 	return ret;*/
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Text_UpdateFreeSlot</summary>
-Params:length
-Return:
-	-
-</returns>
-<remarks>
-	Adjusts the first index table in "YSI_g_sTextStrings" such that the next
-	call to "Text_GetFreeSlot" will point to a non-zero length target string.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="len">Length to make the array slot.</param>
+ * <remarks>
+ *  Adjusts the first index table in "YSI_g_sTextStrings" such that the next
+ *  call to "Text_GetFreeSlot" will point to a non-zero length target string.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_UpdateFreeSlot(len)
 {
@@ -1302,16 +1195,12 @@ static stock Text_UpdateFreeSlot(len)
 	return len;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Text_DebugAll</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Prints all the strings loaded by the system, including their data offsets
-	and storage array lengths (cunning tightly packed array).
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Prints all the strings loaded by the system, including their data offsets
+ *  and storage array lengths (cunning tightly packed array).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Text_DebugAllText()
 {
@@ -1348,16 +1237,12 @@ static stock Text_GetCurNextOffset(i, &cur, &next)
 	#emit SREF.S.pri    next
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Bypass run-time OOB errors when -d0 is disabled.  Set the initial "next"
-	pointer on the end of the string.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Bypass run-time OOB errors when -d0 is disabled.  Set the initial "next"
+ *  pointer on the end of the string.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_DoLinkedText(entry[], add, len)
 {
@@ -1366,16 +1251,12 @@ static stock Text_DoLinkedText(entry[], add, len)
 	entry[len + 2] = '\0';
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Bypass run-time OOB errors when -d0 is disabled.  Get and set the "next"
-	pointer on the end of the string.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Bypass run-time OOB errors when -d0 is disabled.  Get and set the "next"
+ *  pointer on the end of the string.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_UpdateLinkedText(entry[], add, len)
 {
@@ -1385,16 +1266,12 @@ static stock Text_UpdateLinkedText(entry[], add, len)
 	return ret;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Bypass run-time OOB errors when -d0 is disabled.  Get the "next" pointer on
-	the end of the string.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Bypass run-time OOB errors when -d0 is disabled.  Get the "next" pointer on
+ *  the end of the string.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_GetLinkedText(entry[], &ret, len)
 {
@@ -1406,31 +1283,20 @@ static stock Text_GetLinkedText(entry[], &ret, len)
 	return 1;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Bypass run-time OOB errors when -d0 is disabled.  Check if there is a "next"
-	pointer.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Bypass run-time OOB errors when -d0 is disabled.  Check if there is a "next"
+ *  pointer.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_HasLinkedText(entry[], len)
 {
 	return (entry[len - 2] == '\05');
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_GetFreeEntry()
 {
@@ -1453,16 +1319,12 @@ static stock Text_GetFreeEntry()
 	return ret;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Text_IsLocalOwner</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Checks if the string we are trying to display is owned by the local script,
-	and if so just use that pointer and text directly.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Checks if the string we are trying to display is owned by the local script,
+ *  and if so just use that pointer and text directly.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Text_IsLocalOwner(search[], ident[], &len)
 {
@@ -1522,22 +1384,18 @@ static stock Text_IsLocalOwner(search[], ident[], &len)
 static stock
 	YSI_g_sLangBuffer[YSI_MAX_LANGUAGES][MAX_SINGLE_TEXT_ITEM];
 
-/**--------------------------------------------------------------------------**\
-<summary>_Text_Send</summary>
-<param name="@PlayerSet:players">A representation of players to show to.</param>
-<param name="search[]">Text sets to look in for this string.</param>
-<param name="ident[]">The name of the string to look for (or the string itself).</param>
-<param name="GLOBAL_TAG_TYPES:...">All the parameters to pass to the string.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Main entry point for showing any sort of code to anyone.
-	
-	TODO: Change the code to push the parameters to Format_Render only once and
-	reuse the resulting stack.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="players">A representation of players to show to.</param>
+ * <param name="search">Text sets to look in for this string.</param>
+ * <param name="ident">The name of the string to look for (or the string itself).</param>
+ * <param name="">All the parameters to pass to the string.</param>
+ * <remarks>
+ *  Main entry point for showing any sort of code to anyone.
+ *
+ *  TODO: Change the code to push the parameters to Format_Render only once and
+ *  reuse the resulting stack.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock _Text_Send(@PlayerSet:players, search[], ident[], GLOBAL_TAG_TYPES:...)
 {
@@ -1759,18 +1617,14 @@ stock _Text_Send(@PlayerSet:players, search[], ident[], GLOBAL_TAG_TYPES:...)
 	return Text_GetLastID();
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>_Text_Render</summary>
-<param name="search[]">Text sets to look in for this string.</param>
-<param name="ident[]">The name of the string to look for (or the string itself).</param>
-<param name="GLOBAL_TAG_TYPES:...">All the parameters to pass to the string.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	This function renders some text to an array, but doesn't display it.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="search">Text sets to look in for this string.</param>
+ * <param name="ident">The name of the string to look for (or the string itself).</param>
+ * <param name="">All the parameters to pass to the string.</param>
+ * <remarks>
+ *  This function renders some text to an array, but doesn't display it.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Text_GetPreRender(Language:lang)
 {
@@ -1981,15 +1835,8 @@ static stock
 	YSI_g_sButton1Text[YSI_MAX_LANGUAGES][16],
 	YSI_g_sButton2Text[YSI_MAX_LANGUAGES][16];
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
 
 //stock @PlayerArray:players<MAX_PLAYERS>, callback[], csearch[], cident[], isearch[], iident[], b1search[], b1ident[], b2search[], b2ident[], GLOBAL_TAG_TYPES:...)
 //stock _Text_MessageBox(@PlayerArray:players<MAX_PLAYERS>, callback[], csearch[], cident[], isearch[], iident[], b1search[], b1ident[], b2search[], b2ident[], GLOBAL_TAG_TYPES:...)
@@ -2367,4 +2214,58 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 	Dialog_Garbage(dialog);
 	Format_SetListSeparator(", ");
 	return dialog;
+}
+
+stock _Text_Format(dest[], size, Language:lang, e_STYLE_TYPE:style, search[], ident[], ...)
+{
+	P:4("Text_Format: %s %d %d %d %s %s", dest, size, _:lang, style, search, ident);
+
+	Text_GetText(search, ident, lang);
+	
+	new
+		styleData[E_STYLE_DATA],
+		label[E_3D_DATA],
+		argCount = numargs() - 6,
+		bool:foundStyle = false
+	;
+
+	if (style != e_STYLE_TYPE_DIALOG)
+	{
+		new hash = bernstein(ident);
+		for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
+		{
+			new
+				ret = Text_FindEntry(YSI_g_sTextSets[i][e_TEXT_SETS_INDEX], hash)
+			;
+			P:7("Text_Format: Textset %d entry %d", i, ret);
+			if (ret != -1)
+			{
+				Styles_GetData(ret, styleData, label);
+				if ((styleData[E_STYLE_DATA_TYPE] & e_STYLE_TYPE_MASK) != style)
+				{
+					P:7("Text_Format: No matching style data. Types differ 0x%08x == 0x%08x", (styleData[E_STYLE_DATA_TYPE] & e_STYLE_TYPE_MASK), style);
+					break;
+				}
+
+				foundStyle = true;
+				break;
+			}
+		}
+
+		if (!foundStyle)
+		{
+			P:7("Text_Format: Style not found, using default");
+		}
+
+		_Format_SetStyleData(TEXT_MASTER, 0, styleData, label);
+	}
+	else
+	{
+		P:7("Text_Format: Toggling dialog mode");
+		_Text_SetDialogMode();
+	}
+
+	Format_Render(INVALID_PLAYER_ID, lang, dest, size, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, argCount, ___(6));
+
+	return 1;
 }

@@ -1,211 +1,229 @@
-/*----------------------------------------------------------------------------*-
-					===============================
-					Y Sever Includes - Objects Core
-					===============================
-Description:
-	Handles object streaming for >150 objects per player.  Also provides VW
-	support and improved object attachment (i.e. it works).  New versions
-	combines mine and Peter's streaming systems to narrow down objects by
-	approximation by a grid system then check all objects visible in near
-	by sections.
+/**
+ * <library name="y_objects">
+ * <section>
+ *  Description
+ * </section>
+ *  Handles object streaming for >150 objects per player.  Also provides VW
+ *  support and improved object attachment (i.e. it works).  New versions
+ *  combines mine and Peter's streaming systems to narrow down objects by
+ *  approximation by a grid system then check all objects visible in near
+ *  by sections.
+ * <section>
+ *  Version
+ * </section>
+ *  0.2.7
+ * <section>
+ *  Functions
+ * </section>
+ * <subsection>
+ * Public
+ * </subsection><ul>
+ *  <symbol name="Object_Loop">Main loop for checking.</symbol>
+ *  <symbol name="Object_CoOrdRemote">Does object location manipulation remotely.</symbol>
+ *  <symbol name="Object_Remote">Does normal functions remotely.</symbol>
+ *  <symbol name="Object_UpdateUnused">Adds an object to the remote unused list.</symbol>
+ *  <symbol name="Object_Broadcast">Saves an object remotely.</symbol>
+ *  <symbol name="Object_GetLimit">Gets the number of objects the remove master can hold.</symbol>
+ *  <symbol name="YSIM_Objects">Processes master system instructions.</symbol>
+ *  <symbol name="Object_AddRem">Remote wrapper for <symbolref name="Object_Add" />.</symbol>
+ * </ul><subsection>
+ * Core
+ * </subsection><ul>
+ *  <symbol name="Object_Object">Constructor.</symbol>
+ *  <symbol name="Object_OnPlayerDisconnect">Disconnects objects.</symbol>
+ * </ul><subsection>
+ * Stock
+ * </subsection><ul>
+ *  <symbol name="Object_AddToWorld">Make visible in world.</symbol>
+ *  <symbol name="Object_RemoveFromWorld">Make invisible in world.</symbol>
+ *  <symbol name="Object_AddToPlayer">Make visible to player.</symbol>
+ *  <symbol name="Object_RemoveFromPlayer">Make invisible to player.</symbol>
+ *  <symbol name="Object_AddToAllWorlds">Make visible in all worlds.</symbol>
+ *  <symbol name="Object_RemoveFromAllWorlds">Make invisible in all worlds.</symbol>
+ *  <symbol name="Object_AddToAllPlayers">Make visible to all players.</symbol>
+ *  <symbol name="Object_RemoveFromAllPlayers">Make invisible to all players.</symbol>
+ *  <symbol name="Object_IsValidModel">Checks if an object is good to be displayed.</symbol>
+ *  <symbol name="Object_IsGlobal">Checks if an object is visible by default.</symbol>
+ *  <symbol name="Object_SetViewDistance">Sets an object's view distance.</symbol>
+ *  <symbol name="Object_IsDescendant">Checks if an object is related to another object.</symbol>
+ * </ul><subsection>
+ * Static
+ * </subsection><ul>
+ *  <symbol name="Object_Add">Internal add function.</symbol>
+ *  <symbol name="Object_FindSector">Find a location's sector.</symbol>
+ *  <symbol name="Object_AddToOOB">Add an object to the OOB list.</symbol>
+ *  <symbol name="Object_AddToSector">Add an object to the specified list.</symbol>
+ *  <symbol name="Object_RemoveFromSector">Remove an object from the given sector.</symbol>
+ *  <symbol name="Object_FindSectors">Get near sectors.</symbol>
+ *  <symbol name="Object_ParseSet">Check objects in list.</symbol>
+ *  <symbol name="Object_Update">Updates the position of a moving object.</symbol>
+ *  <symbol name="Object_UpdateChildSectors">Updates the sectors of moved object children.</symbol>
+ *  <symbol name="Object_SetPos">Moves an object to the given position.</symbol>
+ *  <symbol name="Object_UpdateAttach">Updates children after dynamic stop.</symbol>
+ *  <symbol name="Object_Move">Reursive MoveDynamicObject for children.</symbol>
+ *  <symbol name="Object_RemoveFromParent">Removes an object from it's parent.</symbol>
+ *  <symbol name="Object_AddToParent">Adds an object to another object.</symbol>
+ *  <symbol name="Object_AttachToPlayer">Attaches objects to a player recursively.</symbol>
+ *  <symbol name="Object_CheckDescendant">Recursive call for Object_IsDescendant.</symbol>
+ *  <symbol name="Object_Destroy">Delete an object with no checks.</symbol>
+ *  <symbol name="Object_AddToUpdate">Safely adds an object to the moved update list.</symbol>
+ * </ul><subsection>
+ * Inline
+ * </subsection><ul>
+ *  <symbol name="Object_IsValid">Internal validity check.</symbol>
+ *  <symbol name="Object_GetAttach">Get player an object's attached to.</symbol>
+ *  <symbol name="Object_SetAttach">objSet player an object's attached to.</symbol>
+ *  <symbol name="Object_HasPlayer">Checks if a player can see an object.</symbol>
+ * </ul><subsection>
+ * API
+ * </subsection><ul>
+ *  <symbol name="MoveDynamicObject">Wrapper for <symbolref name="MoveObject" />.</symbol>
+ *  <symbol name="StopDynamicObject">Wrapper for <symbolref name="StopObject" />.</symbol>
+ *  <symbol name="IsValidDynamicObject">Wrapper for IsValidObject.</symbol>
+ *  <symbol name="CreateDynamicObject">Wrapper for <symbolref name="CreateObject" />.</symbol>
+ *  <symbol name="CreatePlayerDynamicObject">Wrapper for <symbolref name="CreatePlayerObject" />.</symbol>
+ *  <symbol name="CreateVWDynamicObject">Creates an object in only one world.</symbol>
+ *  <symbol name="CreatePlayerVWDynamicObject">Creates an object for one player in one world.</symbol>
+ *  <symbol name="DestroyDynamicObject">Wrapper for DestroyObject.</symbol>
+ *  <symbol name="GetDynamicObjectPos">Wrapper for GetObjectPos.</symbol>
+ *  <symbol name="GetDynamicObjectRot">Wrapper for GetObjectRot.</symbol>
+ *  <symbol name="SetDynamicObjectPos">Wrapper for <symbolref name="SetObjectPos" />.</symbol>
+ *  <symbol name="SetDynamicObjectRot">Wrapper for <symbolref name="SetObjectRot" />.</symbol>
+ *  <symbol name="AttachDynamicObjectToPlayer">Wrapper for <symbolref name="AttachObjectToPlayer" />.</symbol>
+ *  <symbol name="DetachDynamicObjectFromPlayer">Removes an object from a player.</symbol>
+ *  <symbol name="AttachObjectToObject">Attaches an object to another object.</symbol>
+ *  <symbol name="RemoveObjectFromParent">Removes an object from another object.</symbol>
+ * </ul><section>
+ *  Callbacks
+ * </section><ul>
+ *  <symbol name="OnDynamicObjectMoved">Called when the object finishes moving.</symbol>
+ * </ul><section>
+ *  Definitions
+ * </section><ul>
+ *  <symbol name="OBJECT_SECTOR_SIZE">Size of edge of a grid square for approximations.</li><to_ul></symbol>
+ *  <symbol name="MAX_DYN_OBJECTS">Maximum number of objects.</symbol>
+ *  <symbol name="OBJECT_VIEW_DISTANCE">Range to stream objects for.</symbol>
+ *  <symbol name="NO_OBJECT">No object pointer.</symbol>
+ *  <symbol name="NO_SECTOR">No sector pointer.</symbol>
+ *  <symbol name="OBJECT_NO_SECTOR">OOB object marker.</symbol>
+ *  <symbol name="OBJECT_LOOP_GRANULARITY">Number of itterations per second for the loop.</symbol>
+ *  <symbol name="NO_ATTACH_PLAYER">Marker for object not attached to anyone.</symbol>
+ *  <symbol name="OBJECT_WORLDS">Maximum number of worlds objects show up in.</symbol>
+ *  <symbol name="OBJECT_WORLD_COUNT">Size of bit array of worlds.</symbol>
+ *  <symbol name="OBJECT_PLAYER_COUNT">Size of bit array of players.</symbol>
+ * </ul><section>
+ *  Enums
+ * </section><ul>
+ *  <symbol name="E_OBJECT">Structure of the dynamic object data.</symbol>
+ *  <symbol name="e_OBJ_FLAG">Flags for the object.</symbol>
+ * </ul><section>
+ *  Macros
+ * </section><ul>
+ *  <symbol name="OBJECT_SECTOR_EDGE">Number of sectors on one edge of the world.</symbol>
+ *  <symbol name="OBJECT_SECTOR_ARRAY">Number of grid squares.</symbol>
+ *  <symbol name="OBJECT_SIGHT">OBJECT_VIEW_DISTANCE squared for speed.</symbol>
+ *  <symbol name="OBJECT_VIEW_RATIO">Number of sectors per view radius.</symbol>
+ *  <symbol name="OBJECT_VIEW_EDGES">Max width of view range in sectors.</symbol>
+ *  <symbol name="OBJECT_VIEW_SECTORS">Max sectors visible at once.</symbol>
+ *  <symbol name="NO_OBJECT_CHECK">Invalid model.</symbol>
+ *  <symbol name="OBJECT_BITS">Number of bits to hold all dynamic objects.</symbol>
+ *  <symbol name="e_OBJ_FLAG_MOVED">Extension of e_OBJ_FLAG, both move flags together.</symbol>
+ *  <symbol name="NEW_SECTOR">Sector based on origin sector and current offset.</symbol>
+ * </ul><section>
+ *  Tags
+ * </section><ul>
+ *  <symbol name="e_OBJ_FLAG">Flags for objects.</symbol>
+ * </ul><section>
+ *  Variables
+ * </section>
+ * <subsection>
+ * Static
+ * </subsection><ul>
+ *  <symbol name="YSI_g_sObjectSectors">Array of pointers to sector object lists.</symbol>
+ *  <symbol name="YSI_g_sObjects">Array of objects.</symbol>
+ *  <symbol name="YSI_g_sOtherSector">Pointer to OOB object list.</symbol>
+ *  <symbol name="YSI_g_sMovingObjects">Pointer to moving object list.</symbol>
+ *  <symbol name="YSI_g_sNoObjects">Pointer to unused object list.</symbol>
+ * </ul><section>Compile options</section><ul>
+ *  <symbol name="NO_PERSONAL_OBJECTS">All players see all objects.</symbol>
+ *  <symbol name="NO_OBJECT_ATTACH">Objects can't be attached to each other.</symbol>
+ *  <symbol name="NO_OBJECTS_MOVE">No processing is done for moving objects.</symbol>
+ *  <symbol name="	OBJECT_WORLDS 0 ">All objects are visible in all worlds.</symbol>
+ * </ul>
+ * </library>
+ *//** *//*
 Legal:
-	Copyright (C) 2007 Alex "Y_Less" Cole
+	Version: MPL 1.1
+	
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 the "License"; you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
+	http://www.mozilla.org/MPL/
+	
+	Software distributed under the License is distributed on an "AS IS" basis,
+	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	for the specific language governing rights and limitations under the
+	License.
+	
+	The Original Code is the YSI framework.
+	
+	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright C 2011
+	the Initial Developer. All Rights Reserved.
 
-	This program is free software; you can redistribute it and/or
-	modify it under the terms of the GNU General Public License
-	as published by the Free Software Foundation; either version 2
-	of the License, or (at your option) any later version.
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-	MA 02110-1301, USA.
-Version:
-	0.2.7
-Changelog:
-	27/12/07:
-		Fixed a bug in the moved object list system.
-	26/11/07:
-		Finished up master system.
-		Fixed DestroyDynamicObject not removing client objects.
-	16/11/07:
-		Removed global flag as it wasn't doing anything.
-	27/10/07:
-		Fixed moving objects so they actually move
-	26/10/07:
-		Added object children to attach objects to each other.
-	09/10/07:
-		FINALLY found compile hang bug.
-		Repaired removed code.
-		Put object co-ordinate code in Object_ParseSet
-	23/09/07:
-		Updated FindSector, AddToSector and RemoveFromSector to use new system.
-	22/09/07:
-		Started work on new sector system, minor macro changes, lots of maths.
-		Wrote squareroot macro.
-		Updated constructor.
-	21/09/07:
-		Overhauled sector code, skips columns and interiors plus more efficient.
-	20/09/07:
-		Made some core functions static so they don't get called by accident.
-		Changed auto-adjust code so it rounds to nearest whole log number.
-		Moved zone-find code around to skip whole columns at once.
-		Added zone sorting so they're done in order of distance.
-		Added breakout code so once all objects are found processing is exited.
-	19/09/07:
-		Added auto-adjusting zone sizes based on object limits.
-		Altered zone find code to return only possible visible zones.
-		Fixed rare hanging bug in close list code.
-	18/09/07:
-		My birthday - yes I'm that sad to code on it and put it in a changelog.
-		Rewrote sectors code to use known sectors instead of position.
-	17/09/07:
-		Rewrote find code to find closest objects instead of random close ones.
-	03/08/07:
-		Updated timer system.
-	07/05/07:
-		Added groups support via default settings.
-		Corrected (unused) flag - bit pointless but meh.
-	02/05/07:
-		Added YSI_ prefix to all globals.
-		Added dynamic object API calls.
-	30/04/07:
-		Fixed bug in DestroyDynamicObject with OOB objects not 1st in list.
-		Exported sector removal code to Object_RemoveFromSector.
-		Added SECTOR parameter to E_OBJECT for ease of modification.
-	25/04/07:
-		Added 3d checking.
-		Added DestroyDynamicObject API function.
-		Fixed location checking on attached objects.
-		Fixed loop itteration for cyclic list structure.
-	24/04/07:
-		Fixed range leave checking.
-		Added moving objects list.
-	18/04/07:
-		Second version - completely rewritten after a chat with Peter.
-	16/04/07:
-		First version - adapted from my earlier e_objects.inc include.
-Functions:
-	Public:
-		Object_Loop - Main loop for checking.
-		Object_CoOrdRemote - Does object location manipulation remotely.
-		Object_Remote - Does normal functions remotely.
-		Object_UpdateUnused - Adds an object to the remote unused list.
-		Object_Broadcast - Saves an object remotely.
-		Object_GetLimit - Gets the number of objects the remove master can hold.
-		YSIM_Objects - Processes master system instructions.
-		Object_AddRem - Remote wrapper for Object_Add.
-	Core:
-		Object_Object - Constructor.
-		Object_OnPlayerDisconnect - Disconnects objects.
-	Stock:
-		Object_AddToWorld - Make visible in world.
-		Object_RemoveFromWorld - Make invisible in world.
-		Object_AddToPlayer - Make visible to player.
-		Object_RemoveFromPlayer - Make invisible to player.
-		Object_AddToAllWorlds - Make visible in all worlds.
-		Object_RemoveFromAllWorlds - Make invisible in all worlds.
-		Object_AddToAllPlayers - Make visible to all players.
-		Object_RemoveFromAllPlayers - Make invisible to all players.
-		Object_IsValidModel - Checks if an object is good to be displayed.
-		Object_IsGlobal - Checks if an object is visible by default.
-		Object_SetViewDistance - Sets an object's view distance.
-		Object_IsDescendant - Checks if an object is related to another object.
-	Static:
-		Object_Add - Internal add function.
-		Object_FindSector - Find a location's sector.
-		Object_AddToOOB - Add an object to the OOB list.
-		Object_AddToSector - Add an object to the specified list.
-		Object_RemoveFromSector - Remove an object from the given sector.
-		Object_FindSectors - Get near sectors.
-		Object_ParseSet - Check objects in list.
-		Object_Update - Updates the position of a moving object.
-		Object_UpdateChildSectors - Updates the sectors of moved object children.
-		Object_SetPos - Moves an object to the given position.
-		Object_UpdateAttach - Updates children after dynamic stop.
-		Object_Move - Reursive MoveDynamicObject for children.
-		Object_RemoveFromParent - Removes an object from it's parent.
-		Object_AddToParent - Adds an object to another object.
-		Object_AttachToPlayer - Attaches objects to a player recursively.
-		Object_CheckDescendant - Recursive call for Object_IsDescendant.
-		Object_Destroy - Delete an object with no checks.
-		Object_AddToUpdate - Safely adds an object to the moved update list.
-	Inline:
-		Object_IsValid - Internal validity check.
-		Object_GetAttach - Get player an object's attached to.
-		Object_SetAttach - objSet player an object's attached to.
-		Object_HasPlayer - Checks if a player can see an object.
-	API:
-		MoveDynamicObject - Wrapper for MoveObject.
-		StopDynamicObject - Wrapper for StopObject.
-		IsValidDynamicObject - Wrapper for IsValidObject.
-		CreateDynamicObject - Wrapper for CreateObject.
-		CreatePlayerDynamicObject - Wrapper for CreatePlayerObject.
-		CreateVWDynamicObject - Creates an object in only one world.
-		CreatePlayerVWDynamicObject - Creates an object for one player in one world.
-		DestroyDynamicObject - Wrapper for DestroyObject.
-		GetDynamicObjectPos - Wrapper for GetObjectPos.
-		GetDynamicObjectRot - Wrapper for GetObjectRot.
-		SetDynamicObjectPos = Wrapper for SetObjectPos.
-		SetDynamicObjectRot - Wrapper for SetObjectRot.
-		AttachDynamicObjectToPlayer - Wrapper for AttachObjectToPlayer.
-		DetachDynamicObjectFromPlayer - Removes an object from a player.
-		AttachObjectToObject - Attaches an object to another object.
-		RemoveObjectFromParent - Removes an object from another object.
-Callbacks:
-	OnDynamicObjectMoved
-Definitions:
-	OBJECT_SECTOR_SIZE - Size of edge of a grid square for approximations.
-	MAX_DYN_OBJECTS - Maximum number of objects.
-	OBJECT_VIEW_DISTANCE - Range to stream objects for.
-	NO_OBJECT - No object pointer.
-	NO_SECTOR - No sector pointer.
-	OBJECT_NO_SECTOR - OOB object marker.
-	OBJECT_LOOP_GRANULARITY - Number of itterations per second for the loop.
-	NO_ATTACH_PLAYER - Marker for object not attached to anyone.
-	OBJECT_WORLDS - Maximum number of worlds objects show up in.
-	OBJECT_WORLD_COUNT - Size of bit array of worlds.
-	OBJECT_PLAYER_COUNT - Size of bit array of players.
-Enums:
-	E_OBJECT - Structure of the dynamic object data.
-	e_OBJ_FLAG - Flags for the object.
-Macros:
-	OBJECT_SECTOR_EDGE - Number of sectors on one edge of the world.
-	OBJECT_SECTOR_ARRAY - Number of grid squares.
-	OBJECT_SIGHT - OBJECT_VIEW_DISTANCE squared for speed.
-	OBJECT_VIEW_RATIO - Number of sectors per view radius.
-	OBJECT_VIEW_EDGES - Max width of view range in sectors.
-	OBJECT_VIEW_SECTORS - Max sectors visible at once.
-	NO_OBJECT_CHECK - Invalid model.
-	OBJECT_BITS - Number of bits to hold all dynamic objects.
-	e_OBJ_FLAG_MOVED - Extension of e_OBJ_FLAG, both move flags together.
-	NEW_SECTOR - Sector based on origin sector and current offset.
-Tags:
-	e_OBJ_FLAG - Flags for objects.
-Variables:
-	Global:
-		-
-	Static:
-		YSI_g_sObjectSectors - Array of pointers to sector object lists.
-		YSI_g_sObjects - Array of objects.
-		YSI_g_sOtherSector - Pointer to OOB object list.
-		YSI_g_sMovingObjects - Pointer to moving object list.
-		YSI_g_sNoObjects - Pointer to unused object list.
-Commands:
-	-
-Compile options:
-	NO_PERSONAL_OBJECTS - All players see all objects.
-	NO_OBJECT_ATTACH - Objects can't be attached to each other.
-	NO_OBJECTS_MOVE - No processing is done for moving objects.
-	OBJECT_WORLDS 0 - All objects are visible in all worlds.
-Operators:
-	-
--*----------------------------------------------------------------------------*/
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
+
+#include "..\YSI_Internal\y_compilerdata"
 
 #if !defined OBJECT_BOUNDS_MINX
 	#if defined OBJECT_BOUNDS
@@ -534,99 +552,70 @@ static
 	#endif
 	YSI_g_sNoObjects;
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_IsValid
-Params:
-	objectid - Object to check
-Return:
-	-
-Notes:
-	Checks if a passed id is a valid object.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to check</param>
+ *  Checks if a passed id is a valid object.
+ *//*------------------------------------------------------------------------**/
 
+P:D(bool:Object_IsValid(objectid));
 #define Object_IsValid(%1) \
 	((%1) >= 0 && (%1) < MAX_DYN_OBJECTS && YSI_g_sObjects[(%1)][E_OBJECT_MODEL] & e_OBJ_FLAG_ACTIVE)
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_GetAttach
-Params:
-	flags - Flags to check.
-Return:
-	Player the object is attached to.
-Notes:
-	Actually checks a objSet of passed flags, not a passed object.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="flags">Flags to check.</param>
+ * <returns>Player the object is attached to.</returns>
+ *  Actually checks a objSet of passed flags, not a passed object.
+ *//*------------------------------------------------------------------------**/
 
+P:D(Object_GetAttach(e_OBJ_FLAG:flags));
 #define Object_GetAttach(%1) \
 	((_:(%1) >> 15) & NO_ATTACH_PLAYER)
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_IsAttached
-Params:
-	flags - Flags to check.
-Return:
-	If the object is attached to a player.
-Notes:
-	Actually checks a objSet of passed flags, not a passed object.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="flags">Flags to check.</param>
+ * <returns>If the object is attached to a player.</returns>
+ *  Actually checks a objSet of passed flags, not a passed object.
+ *//*------------------------------------------------------------------------**/
 
+P:D(bool:Object_IsAttached(e_OBJ_FLAG:flags));
 #define Object_IsAttached(%1) \
 	(Object_GetAttach(%1) != NO_ATTACH_PLAYER)
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_SetGateTarget
-Params:
-	gate - Gate to objSet target for.
-	Float:tx - X point to open to.
-	Float:ty - Y point to open to.
-	Float:tz - Z point to open to.
-	Float:ts - Speed to open at.
-Return:
-	-
-Notes:
-	Stores a location into the two variables provided for targets.  Uses
-	complex bit shifting to fit the floats nicely into 2 cells.  Assumes a max
-	of +/-13107.2 for x, y and z and a max of 102.4 for the speed to compress.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="gate">Gate to objSet target for.</param>
+ * <param name="tx">X point to open to.</param>
+ * <param name="ty">Y point to open to.</param>
+ * <param name="tz">Z point to open to.</param>
+ * <param name="ts">Speed to open at.</param>
+ *  Stores a location into the two variables provided for targets.  Uses
+ *  complex bit shifting to fit the floats nicely into 2 cells.  Assumes a max
+ *  of +/-13107.2 for x, y and z and a max of 102.4 for the speed to compress.
+ *//*------------------------------------------------------------------------**/
 
+P:D(Object_SetGateTarget(gate,Float:tx,Float:ty,Float:tz,Float:ts));
 #define Object_SetGateTarget(%1,%2,%3,%4,%5) \
 	new \
 		_o_sgt_y = floatround((%3) * 10); \
 	YSI_g_sGateInfo[(%1)][E_GATE_INFO_XY] = ((floatround((%2) * 10) & 0x3FFFF) << 14) | (_o_sgt_y & 0x3FFF); \
 	YSI_g_sGateInfo[(%1)][E_GATE_INFO_ZA] = ((_o_sgt_y & 0x3C000) << 14) | ((floatround((%4) * 10) & 0x3FFFF) << 10) | (floatround((%5) * 10) & 0x3FF)
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_SetAttach
-Params:
-	flags - Flags to check.
-Return:
-	-
-Notes:
-	Actually checks a objSet of passed flags, not a passed object.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="flags">Flags to check.</param>
+ *  Actually checks a objSet of passed flags, not a passed object.
+ *//*------------------------------------------------------------------------**/
 
+P:D(Object_SetAttach(e_OBJ_FLAG:flags));
 #define Object_SetAttach(%1) \
 	e_OBJ_FLAG:(((%1) & NO_ATTACH_PLAYER) << 15)
 
 #if defined _YSI_SETUP_MASTER
 
-	/*----------------------------------------------------------------------------*-
-	Function:
-		Object_Remote
-	Params:
-		ident - Object to do code on.
-		info - Extra data for function.
-		instruction - Function to perform.
-	Return:
-		-
-	Notes:
-		Performs operations on objects remotely.
-	-*----------------------------------------------------------------------------*/
+	/*---------------------------------------------------------------------*//**
+	 * <param name="ident">Object to do code on.</param>
+	 * <param name="info">Extra data for function.</param>
+	 * <param name="instruction">Function to perform.</param>
+	 *      Performs operations on objects remotely.
+	 *//*--------------------------------------------------------------------**/
 
 	public Object_Remote(ident, info, instruction)
 	{
@@ -786,16 +775,10 @@ Notes:
 		return 1;
 	}
 	
-	/*----------------------------------------------------------------------------*-
-	Function:
-		YSIM_Objects
-	Params:
-		command - Instruction from the master system.
-	Return:
-		-
-	Notes:
-		Performs instructions on script start/end.
-	-*----------------------------------------------------------------------------*/
+	/*---------------------------------------------------------------------*//**
+	 * <param name="command">Instruction from the master system.</param>
+	 *      Performs instructions on script start/end.
+	 *//*--------------------------------------------------------------------**/
 
 	public YSIM_Objects(command)
 	{
@@ -971,17 +954,10 @@ Notes:
 		}
 	}
 	
-	/*----------------------------------------------------------------------------*-
-	Function:
-		Object_GetLimit
-	Params:
-		-
-	Return:
-		-
-	Notes:
-		Sets up the new master for streaming and gets the number of objects it
-		can handle.
-	-*----------------------------------------------------------------------------*/
+	/*---------------------------------------------------------------------*//**
+	 *  Sets up the new master for streaming and gets the number of objects it
+	 *  can handle.
+	 *//*--------------------------------------------------------------------**/
 
 	public Object_GetLimit()
 	{
@@ -990,37 +966,31 @@ Notes:
 		YSI_g_sNoObjects = NO_OBJECT;
 	}
 	
-	/*----------------------------------------------------------------------------*-
-	Function:
-		Object_Broadcast
-	Params:
-		id - Slot of the object.
-		e_OBJ_FLAG:model - Object model data and flags.
-		master - Script which owns the object.
-		Float:x - X position.
-		Float:y - Y position.
-		Float:z - Z position.
-		Float:rx - X rotation.
-		Float:ry - Y rotation.
-		Float:rz - Z rotation.
-		Float:view - Object view distance.
-		Float:mx - Movement x target.
-		Float:my - Movement y target.
-		Float:mz - Movement z target.
-		Float:ms - Movement speed.
-		parent - Object attachment parent.
-		siblings - Object attachment sibling list.
-		children - Object attachment children list.
-		Bit:worlds[] - Worlds the object is in.
-		wCount - Size of the world array.
-		Bit:players[] - Players who can see the object.
-		pCount - Size of the players array.
-	Return:
-		-
-	Notes:
-		Recieves data sent from the old master to the new master and stores it in
-		the object data array.
-	-*----------------------------------------------------------------------------*/
+	/*---------------------------------------------------------------------*//**
+	 * <param name="id">Slot of the object.</param>
+	 * <param name="model">Object model data and flags.</param>
+	 * <param name="master">Script which owns the object.</param>
+	 * <param name="x">X position.</param>
+	 * <param name="y">Y position.</param>
+	 * <param name="z">Z position.</param>
+	 * <param name="rx">X rotation.</param>
+	 * <param name="ry">Y rotation.</param>
+	 * <param name="rz">Z rotation.</param>
+	 * <param name="view">Object view distance.</param>
+	 * <param name="mx">Movement x target.</param>
+	 * <param name="my">Movement y target.</param>
+	 * <param name="mz">Movement z target.</param>
+	 * <param name="ms">Movement speed.</param>
+	 * <param name="parent">Object attachment parent.</param>
+	 * <param name="siblings">Object attachment sibling list.</param>
+	 * <param name="children">Object attachment children list.</param>
+	 * <param name="worlds">Worlds the object is in.</param>
+	 * <param name="wCount">Size of the world array.</param>
+	 * <param name="players">Players who can see the object.</param>
+	 * <param name="pCount">Size of the players array.</param>
+	 *      Recieves data sent from the old master to the new master and stores it in
+	 *  the object data array.
+	 *//*--------------------------------------------------------------------**/
 
 	public Object_Broadcast(id, e_OBJ_FLAG:model, master, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz, Float:view,
 				Float:mx, Float:my, Float:mz, Float:ms, parent, siblings, children, Bit:worlds[], wCount, Bit:players[], pCount)
@@ -1071,16 +1041,9 @@ Notes:
 		return 1;
 	}
 	
-	/*----------------------------------------------------------------------------*-
-	Function:
-		Object_UpdateUnused
-	Params:
-		obj - Object to add to the remote unused list.
-	Return:
-		-
-	Notes:
-		-
-	-*----------------------------------------------------------------------------*/
+	/*---------------------------------------------------------------------*//**
+	 * <param name="obj">Object to add to the remote unused list.</param>
+	 *//*--------------------------------------------------------------------**/
 	
 	public Object_UpdateUnused(obj)
 	{
@@ -1088,21 +1051,15 @@ Notes:
 		YSI_g_sNoObjects = obj;
 	}
 
-	/*----------------------------------------------------------------------------*-
-	Function:
-		Object_CoOrdRemote
-	Params:
-		ident - Object to do code on.
-		instruction - Function to perform.
-		Float:f1 - First float data.
-		Float:f2 - Second float data.
-		Float:f3 - Third float data.
-		Float:f4 - Fourth float data.
-	Return:
-		-
-	Notes:
-		Performs operations with locations on objects remotely.
-	-*----------------------------------------------------------------------------*/
+	/*---------------------------------------------------------------------*//**
+	 * <param name="ident">Object to do code on.</param>
+	 * <param name="instruction">Function to perform.</param>
+	 * <param name="f1">First float data.</param>
+	 * <param name="f2">Second float data.</param>
+	 * <param name="f3">Third float data.</param>
+	 * <param name="f4">Fourth float data.</param>
+	 *      Performs operations with locations on objects remotely.
+	 *//*--------------------------------------------------------------------**/
 
 	public Object_CoOrdRemote(ident, instruction, Float:f1, Float:f2, Float:f3, Float:f4)
 	{
@@ -1148,17 +1105,11 @@ Notes:
 	}
 #endif
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_SetViewDistance
-Params:
-	objectid - Object to objSet custom view distance for.
-	Float:view - Distance the object can be seen from.
-Return:
-	-
-Notes:
-	Sets how far away an object can be seen from.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to objSet custom view distance for.</param>
+ * <param name="view">Distance the object can be seen from.</param>
+ *  Sets how far away an object can be seen from.
+ *//*------------------------------------------------------------------------**/
 
 stock Object_SetViewDistance(objectid, Float:view)
 {
@@ -1201,16 +1152,10 @@ stock Object_SetViewDistance(objectid, Float:view)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_AddToUpdate
-Params:
-	objectid - Object to add to the update list.
-Return:
-	-
-Notes:
-	Safely adds an object to the moved update list.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to add to the update list.</param>
+ *  Safely adds an object to the moved update list.
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_AddToUpdate(objectid)
 {
@@ -1221,16 +1166,9 @@ static stock Object_AddToUpdate(objectid)
 	}
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_Object
-Params:
-	-
-Return:
-	-
-Notes:
-	Sets up variables for initial use.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * Sets up variables for initial use.
+ *//*------------------------------------------------------------------------**/
 
 Object_Object()
 {
@@ -1298,22 +1236,16 @@ Object_Object()
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	CreateDynamicObject
-Params:
-	model - Model of object.
-	Float:X - x position.
-	Float:Y - y position.
-	Float:Z - z position.
-	Float:RX - x rotation.
-	Float:RY - y rotation.
-	Float:RZ - z rotation.
-Return:
-	-
-Notes:
-	Dynamic wrapper for CreateObject.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="model">Model of object.</param>
+ * <param name="X">x position.</param>
+ * <param name="Y">y position.</param>
+ * <param name="Z">z position.</param>
+ * <param name="RX">x rotation.</param>
+ * <param name="RY">y rotation.</param>
+ * <param name="RZ">z rotation.</param>
+ *  Dynamic wrapper for CreateObject.
+ *//*------------------------------------------------------------------------**/
 
 stock CreateDynamicObject(model, Float:X, Float:Y, Float:Z, Float:RX = 0.0, Float:RY = 0.0, Float:RZ = 0.0)
 {
@@ -1327,23 +1259,17 @@ stock CreateDynamicObject(model, Float:X, Float:Y, Float:Z, Float:RX = 0.0, Floa
 	return object;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	CreatePlayerDynamicObject
-Params:
-	playerid - Player to create it for.
-	model - Model of object.
-	Float:X - x position.
-	Float:Y - y position.
-	Float:Z - z position.
-	Float:RX - x rotation.
-	Float:RY - y rotation.
-	Float:RZ - z rotation.
-Return:
-	-
-Notes:
-	Dynamic wrapper for CreatePlayerObject.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player to create it for.</param>
+ * <param name="model">Model of object.</param>
+ * <param name="X">x position.</param>
+ * <param name="Y">y position.</param>
+ * <param name="Z">z position.</param>
+ * <param name="RX">x rotation.</param>
+ * <param name="RY">y rotation.</param>
+ * <param name="RZ">z rotation.</param>
+ *  Dynamic wrapper for CreatePlayerObject.
+ *//*------------------------------------------------------------------------**/
 
 stock CreatePlayerDynamicObject(playerid, model, Float:X, Float:Y, Float:Z, Float:RX = 0.0, Float:RY = 0.0, Float:RZ = 0.0)
 {
@@ -1364,23 +1290,17 @@ stock CreatePlayerDynamicObject(playerid, model, Float:X, Float:Y, Float:Z, Floa
 	return object;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	CreateVWDynamicObject
-Params:
-	virtualworld - World to create it in.
-	model - Model of object.
-	Float:X - x position.
-	Float:Y - y position.
-	Float:Z - z position.
-	Float:RX - x rotation.
-	Float:RY - y rotation.
-	Float:RZ - z rotation.
-Return:
-	-
-Notes:
-	Dynamic wrapper for CreateObject with VW support.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="virtualworld">World to create it in.</param>
+ * <param name="model">Model of object.</param>
+ * <param name="X">x position.</param>
+ * <param name="Y">y position.</param>
+ * <param name="Z">z position.</param>
+ * <param name="RX">x rotation.</param>
+ * <param name="RY">y rotation.</param>
+ * <param name="RZ">z rotation.</param>
+ *  Dynamic wrapper for CreateObject with VW support.
+ *//*------------------------------------------------------------------------**/
 
 stock CreateVWDynamicObject(virtualworld, model, Float:X, Float:Y, Float:Z, Float:RX = 0.0, Float:RY = 0.0, Float:RZ = 0.0)
 {
@@ -1401,24 +1321,17 @@ stock CreateVWDynamicObject(virtualworld, model, Float:X, Float:Y, Float:Z, Floa
 	return object;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	CreatePlayerVWDynamicObject
-Params:
-	playerid 0 Player to create it for.
-	virtualworld - World to create it in.
-	model - Model of object.
-	Float:X - x position.
-	Float:Y - y position.
-	Float:Z - z position.
-	Float:RX - x rotation.
-	Float:RY - y rotation.
-	Float:RZ - z rotation.
-Return:
-	-
-Notes:
-	Dynamic wrapper for CreatePlayerObject with VW support.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid"virtualworld ">World to create it in.</param>
+ * <param name="model">Model of object.</param>
+ * <param name="X">x position.</param>
+ * <param name="Y">y position.</param>
+ * <param name="Z">z position.</param>
+ * <param name="RX">x rotation.</param>
+ * <param name="RY">y rotation.</param>
+ * <param name="RZ">z rotation.</param>
+ *  Dynamic wrapper for CreatePlayerObject with VW support.
+ *//*------------------------------------------------------------------------**/
 
 stock CreatePlayerVWDynamicObject(playerid, virtualworld, model, Float:X, Float:Y, Float:Z, Float:RX = 0.0, Float:RY = 0.0, Float:RZ = 0.0)
 {
@@ -1448,24 +1361,18 @@ stock CreatePlayerVWDynamicObject(playerid, virtualworld, model, Float:X, Float:
 	return object;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_Add
-Params:
-	model - The object model.
-	Float:x - X position.
-	Float:y - Y position.
-	Float:z - Z position.
-	Float:rx - X rotation.
-	Float:ry - Y rotation.
-	Float:rz - Z rotation.
-Return:
-	-
-Notes:
-	Internal object addition function.  Checks if there are any slots open
-	and adds the object to the list if there are.  Sets up initial flags and
-	stores the position.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="model">The object model.</param>
+ * <param name="x">X position.</param>
+ * <param name="y">Y position.</param>
+ * <param name="z">Z position.</param>
+ * <param name="rx">X rotation.</param>
+ * <param name="ry">Y rotation.</param>
+ * <param name="rz">Z rotation.</param>
+ *  Internal object addition function.  Checks if there are any slots open
+ *  and adds the object to the list if there are.  Sets up initial flags and
+ *  stores the position.
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_Add(model, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz)
 {
@@ -1482,23 +1389,17 @@ static stock Object_Add(model, Float:x, Float:y, Float:z, Float:rx, Float:ry, Fl
 		}
 	}
 	
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_AddRem
-Params:
-	master - The script which owns the object being made.
-	model - The object model.
-	Float:x - X position.
-	Float:y - Y position.
-	Float:z - Z position.
-	Float:rx - X rotation.
-	Float:ry - Y rotation.
-	Float:rz - Z rotation.
-Return:
-	-
-Notes:
-	Remote wrapper for Object_Add.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="master">The script which owns the object being made.</param>
+ * <param name="model">The object model.</param>
+ * <param name="x">X position.</param>
+ * <param name="y">Y position.</param>
+ * <param name="z">Z position.</param>
+ * <param name="rx">X rotation.</param>
+ * <param name="ry">Y rotation.</param>
+ * <param name="rz">Z rotation.</param>
+ *  Remote wrapper for Object_Add.
+ *//*------------------------------------------------------------------------**/
 
 	public Object_AddRem(master, model, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz)
 	{
@@ -1539,18 +1440,13 @@ Notes:
 	return pointer;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_FindSector
-Params:
-	Float:x - X point.
-	Float:y - Y point.
-	Float:z - Z point.
-Return:
-	Point's sector.
-Notes:
-	Finds the sector of a point.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="x">X point.</param>
+ * <param name="y">Y point.</param>
+ * <param name="z">Z point.</param>
+ * <returns>Point's sector.</returns>
+ *  Finds the sector of a point.
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_FindSector(Float:x, Float:y, Float:z)
 {
@@ -1564,17 +1460,11 @@ static stock Object_FindSector(Float:x, Float:y, Float:z)
 	return val;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_AddToOOB
-Params:
-	pointer - Index of the object to add.
-Return:
-	-
-Notes:
-	Adds an object to the linked list for objects out of bounds of the grid
-	system (i.e. stores objects out the +/-OBJECT_BOUNDS world limit).
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="pointer">Index of the object to add.</param>
+ *  Adds an object to the linked list for objects out of bounds of the grid
+ *  system (i.e. stores objects out the +/-OBJECT_BOUNDS world limit).
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_AddToOOB(pointer)
 {
@@ -1591,16 +1481,10 @@ static stock Object_AddToOOB(pointer)
 	YSI_g_sObjects[pointer][E_OBJECT_SECTOR] = OBJECT_NO_SECTOR;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_AddToLOD
-Params:
-	pointer - Index of the object to add.
-Return:
-	-
-Notes:
-	Adds an object to the linked list for objects with views > OBJECT_MAX_VIEW
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="pointer">Index of the object to add.</param>
+ *  Adds an object to the linked list for objects with views > OBJECT_MAX_VIEW
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_AddToLOD(pointer)
 {
@@ -1617,16 +1501,10 @@ static stock Object_AddToLOD(pointer)
 	YSI_g_sObjects[pointer][E_OBJECT_SECTOR] = OBJECT_LOD_SECTOR;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_AddToINT
-Params:
-	pointer - Index of the object to add.
-Return:
-	-
-Notes:
-	Adds an object to the linked list for objects in interiors.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="pointer">Index of the object to add.</param>
+ *  Adds an object to the linked list for objects in interiors.
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_AddToINT(pointer)
 {
@@ -1643,16 +1521,10 @@ static stock Object_AddToINT(pointer)
 	YSI_g_sObjects[pointer][E_OBJECT_SECTOR] = OBJECT_LOD_SECTOR;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_AddToMovingList
-Params:
-	pointer - Index of the object to add.
-Return:
-	-
-Notes:
-	Adds an object to the linked list for dynamic objects.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="pointer">Index of the object to add.</param>
+ *  Adds an object to the linked list for dynamic objects.
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_AddToMovingList(pointer)
 {
@@ -1669,18 +1541,12 @@ static stock Object_AddToMovingList(pointer)
 	YSI_g_sObjects[pointer][E_OBJECT_SECTOR] = OBJECT_NO_SECTOR;
 }
  
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_AddToSector
-Params:
-	sector - Sector of object.
-	pointer - Index of object.
-	Float:view - Distance the object can be seen from.
-Return:
-	-
-Notes:
-	Saves an object as being in a sector.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="sector">Sector of object.</param>
+ * <param name="pointer">Index of object.</param>
+ * <param name="view">Distance the object can be seen from.</param>
+ *  Saves an object as being in a sector.
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_AddToSector(sector, pointer, Float:view)
 {
@@ -1706,21 +1572,15 @@ static stock Object_AddToSector(sector, pointer, Float:view)
 	}
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	DestroyDynamicObject
-Params:
-	objectid - Object to destroy.
-Return:
-	-
-Notes:
-	Dynamic wrapper for DestroyObject.  Removes the object from it's list by
-	using the cyclic property to find the previous object and repointing it to
-	the object after the removed one.  This ay make it point to itself but
-	this is a good thing.  The object is then added to the unassigned list in
-	the same way as it's added to a normal list and finally the object flags
-	are reset to destroy the data.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to destroy.</param>
+ *  Dynamic wrapper for DestroyObject.  Removes the object from it's list by
+ *  using the cyclic property to find the previous object and repointing it to
+ *  the object after the removed one.  This ay make it point to itself but
+ *  this is a good thing.  The object is then added to the unassigned list in
+ *  the same way as it's added to a normal list and finally the object flags
+ *  are reset to destroy the data.
+ *//*------------------------------------------------------------------------**/
 
 stock DestroyDynamicObject(objectid)
 {
@@ -1743,17 +1603,11 @@ stock DestroyDynamicObject(objectid)
 #endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_Destroy
-Params:
-	objectid - Object to destroy.
-	remove - Wether to update client side objects.
-Return:
-	-
-Notes:
-	Does the hard work for DestroyDynamicObject.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to destroy.</param>
+ * <param name="remove">Wether to update client side objects.</param>
+ *  Does the hard work for DestroyDynamicObject.
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_Destroy(objectid, remove = 1)
 {
@@ -1825,18 +1679,12 @@ static stock Object_Destroy(objectid, remove = 1)
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_RemoveFromSector
-Params:
-	sector - Sector list to modify.
-	objectid - Object to remove.
-Return:
-	-
-Notes:
-	Used to be part of DestroyDynamicObject but is needed by other API
-	functions.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="sector">Sector list to modify.</param>
+ * <param name="objectid">Object to remove.</param>
+ *  Used to be part of DestroyDynamicObject but is needed by other API
+ *  functions.
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_RemoveFromSector(sector, objectid)
 {
@@ -1890,19 +1738,13 @@ static stock Object_RemoveFromSector(sector, objectid)
 	}
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	SetDynamicObjectPos
-Params:
-	objectid - Object to objSet new position of.
-	Float:x - X co-ordinate.
-	Float:y - Y co-ordintae.
-	Float:z - Z co-ordinate.
-Return:
-	-
-Notes:
-	Updated to update child positions to (but NOT parent).
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to objSet new position of.</param>
+ * <param name="x">X co-ordinate.</param>
+ * <param name="y">Y co-ordintae.</param>
+ * <param name="z">Z co-ordinate.</param>
+ *  Updated to update child positions to (but NOT parent).
+ *//*------------------------------------------------------------------------**/
 
 stock SetDynamicObjectPos(objectid, Float:x, Float:y, Float:z)
 {
@@ -1925,19 +1767,13 @@ stock SetDynamicObjectPos(objectid, Float:x, Float:y, Float:z)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_SetPos
-Params:
-	objectid - Object to objSet new position of.
-	Float:x - X co-ordinate.
-	Float:y - Y co-ordintae.
-	Float:z - Z co-ordinate.
-Return:
-	-
-Notes:
-	Does the actual relocation of an object.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to objSet new position of.</param>
+ * <param name="x">X co-ordinate.</param>
+ * <param name="y">Y co-ordintae.</param>
+ * <param name="z">Z co-ordinate.</param>
+ *  Does the actual relocation of an object.
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_SetPos(objectid, Float:x, Float:y, Float:z)
 {
@@ -1977,21 +1813,15 @@ static stock Object_SetPos(objectid, Float:x, Float:y, Float:z)
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_UpdateChildSectors
-Params:
-	objectid - Object to update children of.
-	Float:x - X co-ordinate of parent.
-	Float:y - Y co-ordintae of parent.
-	Float:z - Z co-ordinate of parent.
-Return:
-	-
-Notes:
-	Doesn't update the position parameter as that's relative to the parent for
-	child objects.  Recursive function to update sectors of children of
-	children.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to update children of.</param>
+ * <param name="x">X co-ordinate of parent.</param>
+ * <param name="y">Y co-ordintae of parent.</param>
+ * <param name="z">Z co-ordinate of parent.</param>
+ *  Doesn't update the position parameter as that's relative to the parent for
+ *  child objects.  Recursive function to update sectors of children of
+ *  children.
+ *//*------------------------------------------------------------------------**/
 
 #if !defined NO_OBJECT_ATTACH
 static stock Object_UpdateChildSectors(objectid, Float:x, Float:y, Float:z)
@@ -2023,19 +1853,12 @@ static stock Object_UpdateChildSectors(objectid, Float:x, Float:y, Float:z)
 }
 #endif
 
-/*----------------------------------------------------------------------------*-
-Function:
-	SetDynamicObjectRot
-Params:
-	objectid - Object to objSet new rotation of.
-	Float:x - X rotation.
-	Float:y - Y rotation.
-	Float:z - Z rotation.
-Return:
-	-
-Notes:
-	-
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to objSet new rotation of.</param>
+ * <param name="x">X rotation.</param>
+ * <param name="y">Y rotation.</param>
+ * <param name="z">Z rotation.</param>
+ *//*------------------------------------------------------------------------**/
 
 stock SetDynamicObjectRot(objectid, Float:x, Float:y, Float:z)
 {
@@ -2060,19 +1883,12 @@ stock SetDynamicObjectRot(objectid, Float:x, Float:y, Float:z)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	GetDynamicObjectRot
-Params:
-	objectid - Object to objSet new rotation of.
-	&Float:x - X rotation store.
-	&Float:y - Y rotation store.
-	&Float:z - Z rotation store.
-Return:
-	-
-Notes:
-	-
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to objSet new rotation of.</param>
+ * <param name="x">X rotation store.</param>
+ * <param name="y">Y rotation store.</param>
+ * <param name="z">Z rotation store.</param>
+ *//*------------------------------------------------------------------------**/
 
 stock GetDynamicObjectRot(objectid, &Float:x, &Float:y, &Float:z)
 {
@@ -2099,17 +1915,11 @@ stock GetDynamicObjectRot(objectid, &Float:x, &Float:y, &Float:z)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_AddToWorld
-Params:
-	object - Object to add.
-	world - World to add to.
-Return:
-	-
-Notes:
-	Makes an object visible in a world.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="object">Object to add.</param>
+ * <param name="world">World to add to.</param>
+ *  Makes an object visible in a world.
+ *//*------------------------------------------------------------------------**/
 
 stock Object_AddToWorld(object, world)
 {
@@ -2131,17 +1941,11 @@ stock Object_AddToWorld(object, world)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_RemoveFromWorld
-Params:
-	object - Object to remove.
-	world - World to remove from.
-Return:
-	-
-Notes:
-	Makes an object invisible in a world.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="object">Object to remove.</param>
+ * <param name="world">World to remove from.</param>
+ *  Makes an object invisible in a world.
+ *//*------------------------------------------------------------------------**/
 
 stock Object_RemoveFromWorld(object, world)
 {
@@ -2163,17 +1967,11 @@ stock Object_RemoveFromWorld(object, world)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_AddToPlayer
-Params:
-	object - Object to add.
-	playerid - Player to add to.
-Return:
-	-
-Notes:
-	Makes an object visible to a player.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="object">Object to add.</param>
+ * <param name="playerid">Player to add to.</param>
+ *  Makes an object visible to a player.
+ *//*------------------------------------------------------------------------**/
 
 stock Object_AddToPlayer(object, playerid)
 {
@@ -2195,17 +1993,11 @@ stock Object_AddToPlayer(object, playerid)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_RemoveFromWorld
-Params:
-	object - Object to remove.
-	playerid - Player to remove from.
-Return:
-	-
-Notes:
-	Makes an object invisible to a player.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="object">Object to remove.</param>
+ * <param name="playerid">Player to remove from.</param>
+ *  Makes an object invisible to a player.
+ *//*------------------------------------------------------------------------**/
 
 stock Object_RemoveFromPlayer(object, playerid)
 {
@@ -2227,16 +2019,10 @@ stock Object_RemoveFromPlayer(object, playerid)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_AddToAllWorlds
-Params:
-	object - Object to add.
-Return:
-	-
-Notes:
-	Makes an object visible in all worlds.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="object">Object to add.</param>
+ *  Makes an object visible in all worlds.
+ *//*------------------------------------------------------------------------**/
 
 stock Object_AddToAllWorlds(object)
 {
@@ -2258,16 +2044,10 @@ stock Object_AddToAllWorlds(object)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_RemoveFromAllWorlds
-Params:
-	object - Object to remove.
-Return:
-	-
-Notes:
-	Makes an object invisible in all worlds.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="object">Object to remove.</param>
+ *  Makes an object invisible in all worlds.
+ *//*------------------------------------------------------------------------**/
 
 stock Object_RemoveFromAllWorlds(object)
 {
@@ -2289,16 +2069,10 @@ stock Object_RemoveFromAllWorlds(object)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_AddToAllPlayers
-Params:
-	object - Object to add.
-Return:
-	-
-Notes:
-	Makes an object visible to all players.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="object">Object to add.</param>
+ *  Makes an object visible to all players.
+ *//*------------------------------------------------------------------------**/
 
 stock Object_AddToAllPlayers(object)
 {
@@ -2323,16 +2097,10 @@ stock Object_AddToAllPlayers(object)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_RemoveFromAllPlayers
-Params:
-	object - Object to remove.
-Return:
-	-
-Notes:
-	Makes an object invisible to all players.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="object">Object to remove.</param>
+ *  Makes an object invisible to all players.
+ *//*------------------------------------------------------------------------**/
 
 stock Object_RemoveFromAllPlayers(object)
 {
@@ -2357,19 +2125,12 @@ stock Object_RemoveFromAllPlayers(object)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_GetPos
-Params:
-	objectid - Object to get position of.
-	&Float:x - X return.
-	&Float:y - Y return.
-	&Float:z - Z return.
-Return:
-	-
-Notes:
-	-
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to get position of.</param>
+ * <param name="x">X return.</param>
+ * <param name="y">Y return.</param>
+ * <param name="z">Z return.</param>
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_GetPos(objectid, &Float:x, &Float:y, &Float:z)
 {
@@ -2385,7 +2146,7 @@ static stock Object_GetPos(objectid, &Float:x, &Float:y, &Float:z)
 			Object_GetPos(playerid, x, y, z);
 		}
 	#endif
-	#pragma tabsize 0
+	#pragma tabsize 4
 	else
 	#pragma tabsize 4
 	{
@@ -2399,19 +2160,13 @@ static stock Object_GetPos(objectid, &Float:x, &Float:y, &Float:z)
 	z += YSI_g_sObjects[objectid][E_OBJECT_Z];
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	GetDynamicObjectPos
-Params:
-	objectid - Object to get position of.
-	&Float:x - X return.
-	&Float:y - Y return.
-	&Float:z - Z return.
-Return:
-	-
-Notes:
-	API wrapper for Object_GetPos.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to get position of.</param>
+ * <param name="x">X return.</param>
+ * <param name="y">Y return.</param>
+ * <param name="z">Z return.</param>
+ *  API wrapper for Object_GetPos.
+ *//*------------------------------------------------------------------------**/
 
 stock GetDynamicObjectPos(objectid, &Float:x, &Float:y, &Float:z)
 {
@@ -2436,19 +2191,14 @@ stock GetDynamicObjectPos(objectid, &Float:x, &Float:y, &Float:z)
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_HasPlayer
-Params:
-	objectid - Object to check.
-	playerid - Player to check.
-	worldid - World to check.
-Return:
-	Whether the object is visible to that player in that world.
-Notes:
-	This is a variable function.  Depending on the compile time settings it may
-	or may not use all the parameters (it may use none).
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to check.</param>
+ * <param name="playerid">Player to check.</param>
+ * <param name="worldid">World to check.</param>
+ * <returns>Whether the object is visible to that player in that world.</returns>
+ *  This is a variable function.  Depending on the compile time settings it may
+ *  or may not use all the parameters (it may use none).
+ *//*------------------------------------------------------------------------**/
 
 #if !defined NO_PERSONAL_OBJECTS
 	#if OBJECT_WORLDS > 0
@@ -2468,16 +2218,10 @@ Notes:
 	#endif
 #endif
 
-/*----------------------------------------------------------------------------*-
-Function:
-	IsValidDynamicObject
-Params:
-	objectid - Object to check.
-Return:
-	Object_IsValid.
-Notes:
-	-
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to check.</param>
+ * <returns>Object_IsValid.</returns>
+ *//*------------------------------------------------------------------------**/
 
 stock IsValidDynamicObject(objectid)
 {
@@ -2496,24 +2240,18 @@ stock IsValidDynamicObject(objectid)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	AttachDynamicObjectToPlayer
-Params:
-	objectid - Object to attach.
-	playerid - Player to attach to.
-	Float:X - X offset.
-	Float:Y - Y offset.
-	Float:Z - Z offset.
-	Float:RX - X rotation.
-	Float:RY - Y rotation.
-	Float:RZ - Z rotation.
-	Float:S - Speed.
-Return:
-	-
-Notes:
-	Updated for children.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to attach.</param>
+ * <param name="playerid">Player to attach to.</param>
+ * <param name="X">X offset.</param>
+ * <param name="Y">Y offset.</param>
+ * <param name="Z">Z offset.</param>
+ * <param name="RX">X rotation.</param>
+ * <param name="RY">Y rotation.</param>
+ * <param name="RZ">Z rotation.</param>
+ * <param name="S">Speed.</param>
+ *  Updated for children.
+ *//*------------------------------------------------------------------------**/
 
 stock AttachDynamicObjectToPlayer(objectid, playerid, Float:X, Float:Y, Float:Z, Float:RX, Float:RY, Float:RZ)
 {
@@ -2543,24 +2281,18 @@ stock AttachDynamicObjectToPlayer(objectid, playerid, Float:X, Float:Y, Float:Z,
 #if !defined NO_OBJECTS_MOVE
 
 	#if defined _YSI_SETUP_MASTER
-		/*----------------------------------------------------------------------------*-
-		Function:
-			Object_AttachRemote
-		Params:
-			objectid - Object to attach.
-			playerid - Player to attach to.
-			Float:X - X offset.
-			Float:Y - Y offset.
-			Float:Z - Z offset.
-			Float:RX - X rotation.
-			Float:RY - Y rotation.
-			Float:RZ - Z rotation.
-			Float:S - Speed.
-		Return:
-			-
-		Notes:
-			Remote call for AttachDynamicObjectToPlayer.
-		-*----------------------------------------------------------------------------*/
+		/*-----------------------------------------------------------------*//**
+		 *              <param name="objectid">Object to attach.</param>
+		 * <param name="playerid">Player to attach to.</param>
+		 * <param name="X">X offset.</param>
+		 * <param name="Y">Y offset.</param>
+		 * <param name="Z">Z offset.</param>
+		 * <param name="RX">X rotation.</param>
+		 * <param name="RY">Y rotation.</param>
+		 * <param name="RZ">Z rotation.</param>
+		 * <param name="S">Speed.</param>
+		 *          Remote call for AttachDynamicObjectToPlayer.
+		 *//*----------------------------------------------------------------**/
 		
 		public Object_AttachRemote(objectid, playerid, Float:X, Float:Y, Float:Z, Float:RX, Float:RY, Float:RZ)
 		{
@@ -2575,24 +2307,18 @@ stock AttachDynamicObjectToPlayer(objectid, playerid, Float:X, Float:Y, Float:Z,
 		}
 	#endif
 
-	/*----------------------------------------------------------------------------*-
-	Function:
-		Object_AttachToPlayer
-	Params:
-		objectid - Object to attach.
-		playerid - Player to attach to.
-		Float:X - X offset.
-		Float:Y - Y offset.
-		Float:Z - Z offset.
-		Float:RX - X rotation.
-		Float:RY - Y rotation.
-		Float:RZ - Z rotation.
-		Float:S - Speed.
-	Return:
-		-
-	Notes:
-		Recursive call for AttachDynamicObjectToPlayer.
-	-*----------------------------------------------------------------------------*/
+	/*---------------------------------------------------------------------*//**
+	 * <param name="objectid">Object to attach.</param>
+	 * <param name="playerid">Player to attach to.</param>
+	 * <param name="X">X offset.</param>
+	 * <param name="Y">Y offset.</param>
+	 * <param name="Z">Z offset.</param>
+	 * <param name="RX">X rotation.</param>
+	 * <param name="RY">Y rotation.</param>
+	 * <param name="RZ">Z rotation.</param>
+	 * <param name="S">Speed.</param>
+	 *      Recursive call for AttachDynamicObjectToPlayer.
+	 *//*--------------------------------------------------------------------**/
 
 	static stock Object_AttachToPlayer(objectid, playerid, Float:X, Float:Y, Float:Z, Float:RX, Float:RY, Float:RZ)
 	{
@@ -2620,16 +2346,10 @@ stock AttachDynamicObjectToPlayer(objectid, playerid, Float:X, Float:Y, Float:Z,
 	}
 #endif
 
-/*----------------------------------------------------------------------------*-
-Function:
-	DetachDynamicObjectFromPlayer
-Params:
-	objectid - Object to detach.
-Return:
-	-
-Notes:
-	Detaches an object from a player.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to detach.</param>
+ *  Detaches an object from a player.
+ *//*------------------------------------------------------------------------**/
 
 stock DetachDynamicObjectFromPlayer(objectid)
 {
@@ -2673,24 +2393,18 @@ stock DetachDynamicObjectFromPlayer(objectid)
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_UpdateAttach
-Params:
-	child - Start of children list to positionally update.
-	Float:x - x offset of parent.
-	Float:y - y offset of parent.
-	Float:z - z offset of parent.
-	Float:rx - Real x location.
-	Float:ry - Real y location.
-	Float:rz - Real z location.
-	moved - Wether the object was previously moving or attached.
-Return:
-	-
-Notes:
-	Restores the object sectors and offsets from parents based on positions
-	relative to other items (origin or a player).
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="child">Start of children list to positionally update.</param>
+ * <param name="x">x offset of parent.</param>
+ * <param name="y">y offset of parent.</param>
+ * <param name="z">z offset of parent.</param>
+ * <param name="rx">Real x location.</param>
+ * <param name="ry">Real y location.</param>
+ * <param name="rz">Real z location.</param>
+ * <param name="moved">Wether the object was previously moving or attached.</param>
+ *  Restores the object sectors and offsets from parents based on positions
+ *  relative to other items (origin or a player).
+ *//*------------------------------------------------------------------------**/
 
 #if !defined NO_OBJECT_ATTACH
 static stock Object_UpdateAttach(child, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz, moving = true)
@@ -2723,20 +2437,13 @@ static stock Object_UpdateAttach(child, Float:x, Float:y, Float:z, Float:rx, Flo
 }
 #endif
 
-/*----------------------------------------------------------------------------*-
-Function:
-	MoveDynamicObject
-Params:
-	objectid - Object to move.
-	Float:X - X position of target.
-	Float:Y - Y position of target.
-	Float:Z - Z position of target.
-	Float:S - Speed.
-Return:
-	-
-Notes:
-	-
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to move.</param>
+ * <param name="X">X position of target.</param>
+ * <param name="Y">Y position of target.</param>
+ * <param name="Z">Z position of target.</param>
+ * <param name="S">Speed.</param>
+ *//*------------------------------------------------------------------------**/
 
 stock MoveDynamicObject(objectid, Float:X, Float:Y, Float:Z, Float:S)
 {
@@ -2766,20 +2473,14 @@ stock MoveDynamicObject(objectid, Float:X, Float:Y, Float:Z, Float:S)
 }
 
 #if !defined NO_OBJECTS_MOVE
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_Move
-Params:
-	objectid - Object to move.
-	Float:X - X position of target.
-	Float:Y - Y position of target.
-	Float:Z - Z position of target.
-	Float:S - Speed.
-Return:
-	-
-Notes:
-	Recursive function for MoveDynamicObject to move children.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to move.</param>
+ * <param name="X">X position of target.</param>
+ * <param name="Y">Y position of target.</param>
+ * <param name="Z">Z position of target.</param>
+ * <param name="S">Speed.</param>
+ *  Recursive function for MoveDynamicObject to move children.
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_Move(objectid, Float:X, Float:Y, Float:Z, Float:S)
 {
@@ -2809,18 +2510,12 @@ static stock Object_Move(objectid, Float:X, Float:Y, Float:Z, Float:S)
 }
 #endif
 
-/*----------------------------------------------------------------------------*-
-Function:
-	AttachObjectToObject
-Params:
-	attachobject - Object to attach.
-	toobject - Object to attach to.
-Return:
-	-
-Notes:
-	Variables named to hopefully avoid confusion.  Now checks the parent is not
-	a descendent of the child to avoid infinate loops.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="attachobject">Object to attach.</param>
+ * <param name="toobject">Object to attach to.</param>
+ *  Variables named to hopefully avoid confusion.  Now checks the parent is not
+ *  a descendent of the child to avoid infinate loops.
+ *//*------------------------------------------------------------------------**/
 
 stock AttachObjectToObject(attachobject, toobject)
 {
@@ -2864,17 +2559,11 @@ stock AttachObjectToObject(attachobject, toobject)
 	return 0;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_IsDesendant
-Params:
-	objectid - Object to check.
-	ancestor - Object to check family tree of for objectid.
-Return:
-	-
-Notes:
-	Checks if objectid is a descendant of the ancestor object.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to check.</param>
+ * <param name="ancestor">Object to check family tree of for objectid.</param>
+ *  Checks if objectid is a descendant of the ancestor object.
+ *//*------------------------------------------------------------------------**/
 
 stock Object_IsDescendant(objectid, ancestor)
 {
@@ -2901,17 +2590,11 @@ stock Object_IsDescendant(objectid, ancestor)
 	return 0;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_CheckDesendant
-Params:
-	objectid - Object to check.
-	ancestor - Object to check family tree of for objectid.
-Return:
-	-
-Notes:
-	Recursive call for Object_IsDescendant.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to check.</param>
+ * <param name="ancestor">Object to check family tree of for objectid.</param>
+ *  Recursive call for Object_IsDescendant.
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_CheckDescendant(objectid, ancestor)
 {
@@ -2926,16 +2609,9 @@ static stock Object_CheckDescendant(objectid, ancestor)
 	return 0;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	RemoveObjectFromParent
-Params:
-	objectid - Object to remove from it's parent.
-Return:
-	-
-Notes:
-	-
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to remove from it's parent.</param>
+ *//*------------------------------------------------------------------------**/
 
 stock RemoveObjectFromParent(objectid)
 {
@@ -2975,18 +2651,12 @@ stock RemoveObjectFromParent(objectid)
 
 #if !defined NO_OBJECT_ATTACH
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_RemoveFromParent
-Params:
-	objectid - Object to remove from an object.
-	parent - Object to remove from.
-Return:
-	-
-Notes:
-	Removes an object from another object's children list.  Has parent passed
-	as existance is checked in calling function so is already retrieved.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to remove from an object.</param>
+ * <param name="parent">Object to remove from.</param>
+ *  Removes an object from another object's children list.  Has parent passed
+ *  as existance is checked in calling function so is already retrieved.
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_RemoveFromParent(objectid, parent)
 {
@@ -3006,17 +2676,11 @@ static stock Object_RemoveFromParent(objectid, parent)
 	YSI_g_sObjects[objectid][E_OBJECT_SIBLINGS] = NO_OBJECT;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_AddToParent
-Params:
-	objectid - Object to attach.
-	parentid - Object to attach to.
-Return:
-	-
-Notes:
-	Adds an object to another objects child list.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to attach.</param>
+ * <param name="parentid">Object to attach to.</param>
+ *  Adds an object to another objects child list.
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_AddToParent(objectid, parentid)
 {
@@ -3030,16 +2694,10 @@ static stock Object_AddToParent(objectid, parentid)
 
 #endif
 
-/*----------------------------------------------------------------------------*-
-Function:
-	StopDynamicObject
-Params:
-	objectid - Object to stop.
-Return:
-	-
-Notes:
-	Stops an object and reassigns it's sector.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to stop.</param>
+ *  Stops an object and reassigns it's sector.
+ *//*------------------------------------------------------------------------**/
 
 stock StopDynamicObject(objectid)
 {
@@ -3073,18 +2731,12 @@ stock StopDynamicObject(objectid)
 
 #if !defined NO_OBJECTS_MOVE
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_Update
-Params:
-	objectid - Object to process.
-	Float:elapsedTime - Time since last update in seconds.
-Return:
-	-
-Notes:
-	Updates a moving object's position in our internal memory based on speed
-	and time (d = s * t)
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to process.</param>
+ * <param name="elapsedTime">Time since last update in seconds.</param>
+ *  Updates a moving object's position in our internal memory based on speed
+ *  and time (d = s * t)
+ *//*------------------------------------------------------------------------**/
 
 static Object_Update(objectid, Float:elapsedTime)
 {
@@ -3127,25 +2779,18 @@ static Object_Update(objectid, Float:elapsedTime)
 
 #endif
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_Loop
-Params:
-	-
-Return:
-	-
-Notes:
-	Checks what objects are in the player's range repeatedly to stream them
-	as required.  Only checks objects near the player, based on sectors, and
-	moving objects which are handled as their own 'sector'.  If the player is
-	near the edge of the grid (+/-OBJECT_BOUNDS x/y) OOB objects are also checked, only
-	one sector is used for all those regardless of location.  Moving objects
-	and already visible objects are assumed higher priority.
-	
-	Now orders objects so only the closest are displayed.
-	
-	Fixed moving objects.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ *  Checks what objects are in the player's range repeatedly to stream them
+ *  as required.  Only checks objects near the player, based on sectors, and
+ *  moving objects which are handled as their own 'sector'.  If the player is
+ *  near the edge of the grid (+/-OBJECT_BOUNDS x/y) OOB objects are also checked, only
+ *  one sector is used for all those regardless of location.  Moving objects
+ *  and already visible objects are assumed higher priority.
+ *
+ *  Now orders objects so only the closest are displayed.
+ *
+ *  Fixed moving objects.
+ *//*------------------------------------------------------------------------**/
 
 public Object_Loop()
 {
@@ -3312,27 +2957,21 @@ public Object_Loop()
 	}
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_ParseSet
-Params:
-	playerid - Player to check for.
-	objSet - Pointer to first object in the list.
-	Float:x - Player's x position.
-	Float:y - Player's y position.
-	Float:z - Player's z position.
-	world - Player's world.
-	objList[][E_OBJECT_ITTER] - List of closest objects.
-	&objStart - Entrypoint to list.
-	&objEnd - Last object in list.
-	&objCount - Number of objects in list.
-	bool:dynam - Is this the dynamic objSet.
-Return:
-	-
-Notes:
-	Itterates through the linked list for one sector of objects and checks
-	their real location relative to the player, if in range displays them.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player to check for.</param>
+ * <param name="objSet">Pointer to first object in the list.</param>
+ * <param name="x">Player's x position.</param>
+ * <param name="y">Player's y position.</param>
+ * <param name="z">Player's z position.</param>
+ * <param name="world">Player's world.</param>
+ * <param name="objList">List of closest objects.</param>
+ * <param name="objStart">Entrypoint to list.</param>
+ * <param name="objEnd">Last object in list.</param>
+ * <param name="objCount">Number of objects in list.</param>
+ * <param name="dynam">Is this the dynamic objSet.</param>
+ *  Itterates through the linked list for one sector of objects and checks
+ *  their real location relative to the player, if in range displays them.
+ *//*------------------------------------------------------------------------**/
 
 static Object_ParseSet(playerid, objSet, Float:x, Float:y, Float:z, world, objList[][E_OBJECT_ITTER], &objStart, &objEnd, &objCount, bool:dynam)
 {
@@ -3456,34 +3095,28 @@ static Object_ParseSet(playerid, objSet, Float:x, Float:y, Float:z, world, objLi
 	while (objSet != start);
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_FindSectors
-Params:
-	playerid - Player we're finding the sectors for.
-	Float:x - X location to check.
-	Float:y - Y location to check.
-	sectors[OBJECT_VIEW_SECTORS][E_OSEC_ITTER] - Array to store all visible sectors.
-	&secStart - Start point to itterator
-Return:
-	-
-Notes:
-	Finds all the sectors which encompas points within the sight range of the
-	player.  Initial checks are done as a square so some returned sectors may
-	not have points within a circular range of the player.
-	
-	The original version tested if the edges of each sector were visible and
-	if not excluded them from the list.  This would have been faster in terms
-	of objects checked but slower if there were no objects, which is likely to
-	be more frequently the case.  The code also didn't actually work but that's
-	a minor point as the theory was there.  This is also alot neater.
-	
-	Rewritten to not use Object_FindSector on a new area, just calculate the
-	area from known initial area.
-	
-	Now also only returns the zones visible, not the zones theoretically
-	visible (still assumes square vision though which the code doesn't use).
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player we're finding the sectors for.</param>
+ * <param name="x">X location to check.</param>
+ * <param name="y">Y location to check.</param>
+ * <param name="sectors">Array to store all visible sectors.</param>
+ * <param name="secStart">Start point to itterator</param>
+ *  Finds all the sectors which encompas points within the sight range of the
+ *  player.  Initial checks are done as a square so some returned sectors may
+ *  not have points within a circular range of the player.
+ *
+ *  The original version tested if the edges of each sector were visible and
+ *  if not excluded them from the list.  This would have been faster in terms
+ *  of objects checked but slower if there were no objects, which is likely to
+ *  be more frequently the case.  The code also didn't actually work but that's
+ *  a minor point as the theory was there.  This is also alot neater.
+ *
+ *  Rewritten to not use Object_FindSector on a new area, just calculate the
+ *  area from known initial area.
+ *
+ *  Now also only returns the zones visible, not the zones theoretically
+ *  visible (still assumes square vision though which the code doesn't use).
+ *//*------------------------------------------------------------------------**/
 
 static Object_FindSectors(playerid, Float:x, Float:y, sectors[][E_OSEC_ITTER], &secStart)
 {
@@ -3668,19 +3301,13 @@ static Object_FindSectors(playerid, Float:x, Float:y, sectors[][E_OSEC_ITTER], &
 	return 1;
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_IsValidModel
-Params:
-	modelid - Model to check won't crash SA.
-Return:
-	-
-Notes:
-	I wrote this function a long time ago and have barely updated it at all.
-	The only changes are the formatting and the use of the Bit class now,
-	despite the fact this was the first large bit array I did and is thus
-	the founding array of the whole idea behind the bit class.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="modelid">Model to check won't crash SA.</param>
+ *  I wrote this function a long time ago and have barely updated it at all.
+ *  The only changes are the formatting and the use of the Bit class now,
+ *  despite the fact this was the first large bit array I did and is thus
+ *  the founding array of the whole idea behind the bit class.
+ *//*------------------------------------------------------------------------**/
 
 stock Object_IsValidModel(modelid)
 {
@@ -3731,17 +3358,11 @@ stock Object_IsValidModel(modelid)
 	return Bit_Get(Bit:modeldat, modelid);
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_OnPlayerDisconnect
-Params:
-	playerid - Player who left.
-	reason - Why they left.
-Return:
-	-
-Notes:
-	Just to automatically disconnect attached objects from players.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player who left.</param>
+ * <param name="reason">Why they left.</param>
+ *  Just to automatically disconnect attached objects from players.
+ *//*------------------------------------------------------------------------**/
 
 Object_OnPlayerDisconnect(playerid, reason)
 {
@@ -3774,21 +3395,15 @@ Object_OnPlayerDisconnect(playerid, reason)
 	#pragma unused reason
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_SetAreaGate
-Params:
-	objectid - Object to make into a gate.
-	areaid - Area to trigger gate in.
-	Float:tx - X point to open to.
-	Float:ty - Y point to open to.
-	Float:tz - Z point to open to.
-	Float:ts - Speed to open at.
-Return:
-	-
-Notes:
-	Just to automatically disconnect attached objects from players.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object to make into a gate.</param>
+ * <param name="areaid">Area to trigger gate in.</param>
+ * <param name="tx">X point to open to.</param>
+ * <param name="ty">Y point to open to.</param>
+ * <param name="tz">Z point to open to.</param>
+ * <param name="ts">Speed to open at.</param>
+ *  Just to automatically disconnect attached objects from players.
+ *//*------------------------------------------------------------------------**/
 
 stock Object_SetAreaGate(objectid, areaid, Float:tx, Float:ty, Float:tz, Float:ts, time = 10000)
 {
@@ -3845,17 +3460,11 @@ stock Object_SetAreaGate(objectid, areaid, Float:tx, Float:ty, Float:tz, Float:t
 }
 
 #if defined _YSI_VISUAL_AREAS
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_OnPlayerEnterArea
-Params:
-	playerid - Player who entered an area.
-	areaid - Area they entered.
-Return:
-	-
-Notes:
-	Internal callback from YSI_areas.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player who entered an area.</param>
+ * <param name="areaid">Area they entered.</param>
+ *  Internal callback from YSI_areas.
+ *//*------------------------------------------------------------------------**/
 
 #if defined _YSI_SETUP_MASTER
 	public Object_OnPlayerEnterArea(playerid, areaid)
@@ -3929,16 +3538,10 @@ Notes:
 #endif
 
 #if !defined NO_OBJECTS_MOVE
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_GateMoved
-Params:
-	objectid - Object that moved.
-Return:
-	-
-Notes:
-	Checks if the object which moved is a gate.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="objectid">Object that moved.</param>
+ *  Checks if the object which moved is a gate.
+ *//*------------------------------------------------------------------------**/
 
 static stock Object_GateMoved(objectid)
 {
@@ -3971,16 +3574,10 @@ static stock Object_GateMoved(objectid)
 #endif
 
 #if defined _YSI_VISUAL_AREAS
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_GateClose
-Params:
-	gate - Gate to close.
-Return:
-	-
-Notes:
-	Closes an area triggered gate after a delay.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="gate">Gate to close.</param>
+ *  Closes an area triggered gate after a delay.
+ *//*------------------------------------------------------------------------**/
 
 public Object_GateClose(gate)
 {
@@ -4021,26 +3618,20 @@ public Object_GateClose(gate)
 }
 #endif
 
-/*----------------------------------------------------------------------------*-
-Function:
-	CreateGate
-Params:
-	modelid - Model of the gate.
-	Float:x - X start location.
-	Float:y - Y start location.
-	Float:z - Z start location.
-	Float:tx - X target location.
-	Float:ty - Y target location.
-	Float:tz - Z target location.
-	Float:rx - X rotation.
-	Float:ry - Y rotation.
-	Float:rz - Z rotation.
-	Float:speed - Speed the gate will move at.
-Return:
-	-
-Notes:
-	Creates a gate.
--*----------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------*//**
+ * <param name="modelid">Model of the gate.</param>
+ * <param name="x">X start location.</param>
+ * <param name="y">Y start location.</param>
+ * <param name="z">Z start location.</param>
+ * <param name="tx">X target location.</param>
+ * <param name="ty">Y target location.</param>
+ * <param name="tz">Z target location.</param>
+ * <param name="rx">X rotation.</param>
+ * <param name="ry">Y rotation.</param>
+ * <param name="rz">Z rotation.</param>
+ * <param name="speed">Speed the gate will move at.</param>
+ *  Creates a gate.
+ *//*------------------------------------------------------------------------**/
 
 stock CreateGate(modelid, Float:x, Float:y, Float:z, Float:tx, Float:ty, Float:tz, Float:rx = 0.0, Float:ry = 0.0, Float:rz = 0.0, Float:speed = 2.0)
 {
@@ -4064,16 +3655,10 @@ stock CreateGate(modelid, Float:x, Float:y, Float:z, Float:tx, Float:ty, Float:t
 	#endif
 }
 
-/*----------------------------------------------------------------------------*-
-Function:
-	Object_GetGateArea
-Params:
-	gate - Gate to get the area of for permissions.
-Return:
-	-
-Notes:
+/*-------------------------------------------------------------------------*//**
+<param name="gate">Gate to get the area of for permissions.</param>
 	Returns the areaid used by the gate for detection.
--*----------------------------------------------------------------------------*/
+*//*-------------------------------------------------------------------------**/
 
 stock Object_GetGateArea(gate)
 {

@@ -1,16 +1,70 @@
-/**--------------------------------------------------------------------------**\
-					===================================
-					Y Sever Includes - Binary Tree Core
-					===================================
-Description:
-	Provides functions to generate balanced binary search trees for efficient
-	searching of large arrays by value.  Left branch is less than, right branch
-	is greater than or equal to for multiple matching values.
+#if defined _INC_y_bintree
+	#endinput
+#endif
+#define _INC_y_bintree
+
+/**
+ * <library name="y_bintree">
+ * <section>
+ *  Description
+ * </section>
+ *  Provides functions to generate balanced binary search trees for efficient
+ *  searching of large arrays by value.  Left branch is less than, right branch
+ *  is greater than or equal to for multiple matching values.
+ * <section>
+ *  Version
+ * </section>
+ *  0.1.3
+ * <section>
+ *  Functions
+ * </section>
+ * <subsection>
+ * Core
+ * </subsection><ul>
+ *  <symbol name="Bintree_QSort">Custom implementaion of QSort to keep pointers.</symbol>
+ *  <symbol name="Bintree_SortHalf">Itteratively balances halves of an array.</symbol>
+ * </ul><subsection>
+ * Stock
+ * </subsection><ul>
+ *  <symbol name="Bintree_Generate">Generates a balanced binary tree from given input.</symbol>
+ *  <symbol name="Bintree_Reset">Resets a position in a tree.</symbol>
+ *  <symbol name="Bintree_FindValue">Finds the pointer for a value in the tree.</symbol>
+ *  <symbol name="Bintree_Add">Adds an item to a generated tree.</symbol>
+ *  <symbol name="Bintree_Delete">Removes an item from a tree.</symbol>
+ *  <symbol name="Bintree_UpdatePointers">Updates the pointers after a target change.</symbol>
+ * </ul><subsection>
+ * Static
+ * </subsection><ul>
+ *  <symbol name="Bintree_Compress">Removes space from an altered tree.</symbol>
+ *  <symbol name="Bintree_FindMin">Finds the smallest value on a branch.</symbol>
+ *  <symbol name="Bintree_FindMax">Finds the largest value on a branch.</symbol>
+ * </ul><subsection>
+ * Inline
+ * </subsection><ul>
+ *  <symbol name="Bintree_Sort">Entry point for Bintree_QSort.</symbol>
+ *  <symbol name="Bintree_Fill">Entry point for Bintree_SortHalf.</symbol>
+ * </ul><section>
+ *  Definitions
+ * </section><ul>
+ *  <symbol name="BINTREE_NO_BRANCH">Nowhere to go from the number in required direction.</symbol>
+ *  <symbol name="BINTREE_NOT_FOUND">Failure return.</symbol>
+ * </ul><section>
+ *  Enums
+ * </section><ul>
+ *  <symbol name="E_BINTREE_TREE">Structure of a leaf of a binary tree.</symbol>
+ *  <symbol name="E_BINTREE_INPUT">Structure of an array of data to be added to a tree.</symbol>
+ * </ul><section>
+ *  Tags
+ * </section><ul>
+ *  <symbol name="Bintree">Binary tree type.</symbol>
+ * </ul>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -19,101 +73,65 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI binary tree include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	0.1.3
-Changelog:
-	12/08/07:
-		Fixed a bug with empty trees.
-	14/04/07:
-		Updated header documentation with more than changelog.
-	10/04/07:
-		Added parents for easy deletion.
-		Added node deletion code.
-	08/04/07:
-		Added Bintree_Add()
-	24/03/07:
-		First version.
-Functions:
-	Public:
-		-
-	Core:
-		Bintree_QSort - Custom implementaion of QSort to keep pointers.
-		Bintree_SortHalf - Itteratively balances halves of an array.
-	Stock:
-		Bintree_Generate - Generates a balanced binary tree from given input.
-		Bintree_Reset - Resets a position in a tree.
-		Bintree_FindValue - Finds the pointer for a value in the tree.
-		Bintree_Add - Adds an item to a generated tree.
-		Bintree_Delete - Removes an item from a tree.
-		Bintree_UpdatePointers - Updates the pointers after a target change.
-	Static:
-		Bintree_Compress - Removes space from an altered tree.
-		Bintree_FindMin - Finds the smallest value on a branch.
-		Bintree_FindMax - Finds the largest value on a branch.
-	Inline:
-		Bintree_Sort - Entry point for Bintree_QSort.
-		Bintree_Fill - Entry point for Bintree_SortHalf.
-	API:
-		-
-Callbacks:
-	-
-Definitions:
-	BINTREE_NO_BRANCH - Nowhere to go from the number in required direction.
-	BINTREE_NOT_FOUND - Failure return.
-Enums:
-	E_BINTREE_TREE - Structure of a leaf of a binary tree.
-	E_BINTREE_INPUT - Structure of an array of data to be added to a tree.
-Macros:
-	-
-Tags:
-	Bintree - Binary tree type.
-Variables:
-	Global:
-		-
-	Static:
-		-
-Commands:
-	-
-Compile options:
-	-
-Operators:
-	-
-\**--------------------------------------------------------------------------**/
 
-#if defined _INC_y_bintree
-	#endinput
-#endif
-#define _INC_y_bintree
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
 
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
+
+#include "..\YSI_Internal\y_compilerdata"
 #include "..\YSI_Internal\y_version"
 
 #include "..\YSI_Core\y_debug"
@@ -152,49 +170,42 @@ enum E_BINTREE_INPUT
 #define Bintree_DisplayOutput(%0) "<bintree output>"
 #define Bintree_DisplayInput(%0) "<bintree input>"
 
-/**--------------------------------------------------------------------------**\
-<summary>Bintree_Sort</summary>
-<param name="input[][E_BINTREE_INPUT]">Data to sort.</param>
-<param name="size">Size of data to sort.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Entry point for Bintree_QSort.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="input">Data to sort.</param>
+ * <param name="size">Size of data to sort.</param>
+ * <remarks>
+ *  Entry point for Bintree_QSort.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
+P:D(Bintree_Sort(numbers[][E_BINTREE_INPUT], size = sizeof (data)));
 #define Bintree_Sort(%1,%2) \
 	Bintree_QSort((%1), 0, (%2) - 1)
 
-/**--------------------------------------------------------------------------**\
-<summary>Bintree_Fill</summary>
-<param name="BinaryTree:output<>">Destination for balanced tree.</param>
-<param name="data[][E_BINTREE_INPUT]">Source data.</param>
-<param name="size">Size of data.</param>
-<returns>
-	Bintree_SortHalf.
-</returns>
-<remarks>
-	Entry point for Bintree_SortHalf.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="output">Destination for balanced tree.</param>
+ * <param name="data">Source data.</param>
+ * <param name="size">Size of data.</param>
+ * <returns>
+ *  Bintree_SortHalf.
+ * </returns>
+ * <remarks>
+ *  Entry point for Bintree_SortHalf.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
+P:D(Bintree_Fill(BinaryTree:output<>, data[][E_BINTREE_INPUT], size = sizeof (data)));
 #define Bintree_Fill(%1,%2,%3) \
 	Bintree_SortHalf((%1), (%2), 0, (%3), 0, BINTREE_NO_BRANCH)
 
-/**--------------------------------------------------------------------------**\
-<summary>Bintree_Generate</summary>
-<param name="BinaryTree:output<>">Binary tree to store the data in.</param>
-<param name="input[][E_BINTREE_INPUT]">Input data to get the data from.</param>
-<param name="size">Number of items to sort.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Just calls the sort and fill routines.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="output">Binary tree to store the data in.</param>
+ * <param name="input">Input data to get the data from.</param>
+ * <param name="size">Number of items to sort.</param>
+ * <remarks>
+ *  Just calls the sort and fill routines.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Bintree_Generate(BinaryTree:output<>, BinaryInput:input<>, size = sizeof (input))
 {
@@ -211,17 +222,13 @@ stock Bintree_Generate(BinaryTree:output<>, BinaryInput:input<>, size = sizeof (
 	return 1;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bintree_Reset</summary>
-<param name="BinaryTree:tree<>">Array to reset.</param>
-<param name="pointer">Position to reset.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Initialises the array for use.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="tree">Array to reset.</param>
+ * <param name="pointer">Position to reset.</param>
+ * <remarks>
+ *  Initialises the array for use.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Bintree_Reset(BinaryTree:tree<>, pointer = 0)
 {
@@ -233,25 +240,21 @@ stock Bintree_Reset(BinaryTree:tree<>, pointer = 0)
 	tree[pointer][E_BINTREE_TREE_POINTER] = BINTREE_NOT_FOUND;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bintree_FindValue</summary>
-<param name="BinaryTree:tree<>">Tree to find the data in.</param>
-<param name="value">Value to search for.</param>
-<param name="&cont">Start point.</param>
-<param name="&old">The last real leaf.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Itterates through the array following the various paths till it locates
-	the value provided or reaches a dead end.  If the current value is greater
-	than the search value, the search goes left, otherwise right.
-	
-	If cont is not -1 the search will start from the data pointed to by the
-	data pointed to by conts' right path, this is to allow collisions to be
-	passed over if you want a subsequent one.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="tree">Tree to find the data in.</param>
+ * <param name="value">Value to search for.</param>
+ * <param name="cont">Start point.</param>
+ * <param name="old">The last real leaf.</param>
+ * <remarks>
+ *  Itterates through the array following the various paths till it locates
+ *  the value provided or reaches a dead end.  If the current value is greater
+ *  than the search value, the search goes left, otherwise right.
+ *
+ *  If cont is not -1 the search will start from the data pointed to by the
+ *  data pointed to by conts' right path, this is to allow collisions to be
+ *  passed over if you want a subsequent one.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Bintree_FindValue(BinaryTree:tree<>, value, &cont = 0, &old = 0)
 {
@@ -276,19 +279,15 @@ stock Bintree_FindValue(BinaryTree:tree<>, value, &cont = 0, &old = 0)
 	return BINTREE_NOT_FOUND;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bintree_QSort</summary>
-<param name="numbers[][E_BINTREE_INPUT]">Data to sort.</param>
-<param name="left">Start index.</param>
-<param name="right">End index.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Custom version of QSort (see YSI_misc) allows for E_BINTREE_INPUT data
-	types, preserving the relative pointers for the sorted data.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="numbers">Data to sort.</param>
+ * <param name="left">Start index.</param>
+ * <param name="right">End index.</param>
+ * <remarks>
+ *  Custom version of QSort (see YSI_misc) allows for E_BINTREE_INPUT data
+ *  types, preserving the relative pointers for the sorted data.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Bintree_QSort(numbers[][E_BINTREE_INPUT], left, right)
 {
@@ -324,31 +323,30 @@ stock Bintree_QSort(numbers[][E_BINTREE_INPUT], left, right)
 	if (right > pivot) Bintree_QSort(numbers, pivot + 1, right);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bintree_SortHalf</summary>
-<param name="BinaryTree:output<>">Destination array.</param>
-<param name="data[][E_BINTREE_INPUT]">Source array.</param>
-<param name="index">Start index of the source for processing.</param>
-<param name="upper">End index of the source for processing.</param>
-<param name="offset">Current offset in the destination array for writing.</param>
-<returns>
-	Size of balanced tree.
-</returns>
-<remarks>
-	Recursively calls itself.  Bisects the passed array and passed each half
-	back to itself, with the middle value of each half being the left and
-	right branches of the middle value of the passed array (which isn't
-	included in either bisected half).  This is itterative so those are again
-	split and again split.  If the passed array is only one or two elements
-	big the behaviour is set and hardcoded.
-	
-	Equal values SHOULD branch right, the code is designed for this however
-	the generation is not fully tested (it mostly branches right but adjacent
-	after bisecting values haven't been tested).
-	
-	Based on code written for PHP by me.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="output">Destination array.</param>
+ * <param name="data">Source array.</param>
+ * <param name="index">Start index of the source for processing.</param>
+ * <param name="upper">End index of the source for processing.</param>
+ * <param name="offset">Current offset in the destination array for writing.</param>
+ * <returns>
+ *  Size of balanced tree.
+ * </returns>
+ * <remarks>
+ *  Recursively calls itself.  Bisects the passed array and passed each half
+ *  back to itself, with the middle value of each half being the left and
+ *  right branches of the middle value of the passed array (which isn't
+ *  included in either bisected half).  This is itterative so those are again
+ *  split and again split.  If the passed array is only one or two elements
+ *  big the behaviour is set and hardcoded.
+ *
+ *  Equal values SHOULD branch right, the code is designed for this however
+ *  the generation is not fully tested (it mostly branches right but adjacent
+ *  after bisecting values haven't been tested).
+ *
+ *  Based on code written for PHP by me.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Bintree_SortHalf(BinaryTree:output<>, data[][E_BINTREE_INPUT], index, upper, offset, parent)
 {
@@ -398,23 +396,22 @@ stock Bintree_SortHalf(BinaryTree:output<>, data[][E_BINTREE_INPUT], index, uppe
 	return offset + 1;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bintree_Add</summary>
-<param name="BinaryTree:data<>">Array to add to.</param>
-<param name="pointer">Pointer to add.</param>
-<param name="value">Value to add.</param>
-<param name="offset">Location in the array to store the data.</param>
-<param name="maxsize">Size of data.</param>
-<returns>
-	Next free location
-</returns>
-<remarks>
-	-
-
-native Bintree_Add(BinaryTree:tree<>, pointer, value, offset, maxsize = sizeof (data));
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="data">Array to add to.</param>
+ * <param name="pointer">Pointer to add.</param>
+ * <param name="value">Value to add.</param>
+ * <param name="offset">Location in the array to store the data.</param>
+ * <param name="maxsize">Size of data.</param>
+ * <returns>
+ *  Next free location
+ * </returns>
+ * <remarks>
+ *  -
+ *
+ * native Bintree_Add(BinaryTree:tree<>, pointer, value, offset, maxsize = sizeof (data));
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Bintree_Add(BinaryTree:data<>, pointer, value, offset, maxsize = sizeof (data))
 {
@@ -447,23 +444,19 @@ stock Bintree_Add(BinaryTree:data<>, pointer, value, offset, maxsize = sizeof (d
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bintree_Delete</summary>
-<param name="BinaryTree:tree<>">Data.</param>
-<param name="index">Index to remove.</param>
-<param name="count">Number of binary tree items.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	The left branch is usually larger due to the division
-	method used so we start there.  Even though right is
-	>= and left is only < in even sized arrays the greater
-	chunk (unless there's only 2 items) goes left.
-	
-	Called itteratively to ensure branches are maintained.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="tree">Data.</param>
+ * <param name="index">Index to remove.</param>
+ * <param name="count">Number of binary tree items.</param>
+ * <remarks>
+ *  The left branch is usually larger due to the division
+ *  method used so we start there.  Even though right is
+ *  >= and left is only < in even sized arrays the greater
+ *  chunk (unless there's only 2 items) goes left.
+ *
+ *  Called itteratively to ensure branches are maintained.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Bintree_Delete(BinaryTree:source<>, index, count)
 {
@@ -496,18 +489,11 @@ stock Bintree_Delete(BinaryTree:source<>, index, count)
 	return BINTREE_NO_BRANCH;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bintree_Compress</summary>
-<param name="BinaryTree:tree<>">Array to compress.</param>
-<param name="index">Point to start at.</param>
-<param name="count">Number of items total.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="tree">Array to compress.</param>
+ * <param name="index">Point to start at.</param>
+ * <param name="count">Number of items total.</param>
+ *//*------------------------------------------------------------------------**/
 
 static stock Bintree_Compress(BinaryTree:data<>, index, count)
 {
@@ -535,17 +521,13 @@ static stock Bintree_Compress(BinaryTree:data<>, index, count)
 	return count - 1;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bintree_FindMin</summary>
-<param name="BinaryTree:data<>">Array to search.</param>
-<param name="offset">Start of branch to search.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Finds the smallest value on a branch
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="data">Array to search.</param>
+ * <param name="offset">Start of branch to search.</param>
+ * <remarks>
+ *  Finds the smallest value on a branch
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Bintree_FindMin(BinaryTree:data<>, offset)
 {
@@ -556,17 +538,13 @@ static stock Bintree_FindMin(BinaryTree:data<>, offset)
 	return offset;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bintree_FindMax</summary>
-<param name="BinaryTree:data<>">Array to search.</param>
-<param name="offset">Start of branch to search.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Finds the largest value on a branch
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="data">Array to search.</param>
+ * <param name="offset">Start of branch to search.</param>
+ * <remarks>
+ *  Finds the largest value on a branch
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Bintree_FindMax(BinaryTree:data<>, offset)
 {
@@ -577,19 +555,15 @@ static stock Bintree_FindMax(BinaryTree:data<>, offset)
 	return offset;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Bintree_UpdatePointers</summary>
-<param name="BinaryTree:data<>">Data to modify.</param>
-<param name="offset">Pointer to modify values after.</param>
-<param name="mod">Value to modify by.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Used for updating pointers when the target data has been modifed (i.e. a
-	value has been removed from the array and the array shifted).
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="data">Data to modify.</param>
+ * <param name="offset">Pointer to modify values after.</param>
+ * <param name="mod">Value to modify by.</param>
+ * <remarks>
+ *  Used for updating pointers when the target data has been modifed (i.e. a
+ *  value has been removed from the array and the array shifted).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Bintree_UpdatePointers(BinaryTree:data<>, offset, size, mod = -1)
 {

@@ -1,15 +1,28 @@
-/**--------------------------------------------------------------------------**\
-					=======================================
-					 y_groups - Player group abstractions! 
-					=======================================
-Description:
-	Admin levels, gangs, teams etc - they're all "groups" of people, this
-	provides an abstraction for all of these collections.
+/*                                                                                              *
+ *                                                                                             *
+ *     _____ ______ ______   ____  ______ _      ______          __  ______ ____  _____        *
+ *    / ____|  ____|  ____| |  _ \|  ____| |    / __ \ \        / / |  ____/ __ \|  __ \       *
+ *   | (___ | |__  | |__    | |_) | |__  | |   | |  | \ \  /\  / /  | |__ | |  | | |__) |      *
+ *    \___ \|  __| |  __|   |  _ <|  __| | |   | |  | |\ \/  \/ /   |  __|| |  | |  _  /       *
+ *    ____) | |____| |____  | |_) | |____| |___| |__| | \  /\  /    | |   | |__| | | \ \       *
+ *   |_____/|______|______| |____/|______|______\____/   \/  \/     |_|    \____/|_|  \_\      *
+ *                                                                                             *
+ *    _____   ____   _____ _    _ __  __ ______ _   _ _______    _______ _____ ____  _   _     *
+ *   |  __ \ / __ \ / ____| |  | |  \/  |  ____| \ | |__   __|/\|__   __|_   _/ __ \| \ | |    *
+ *   | |  | | |  | | |    | |  | | \  / | |__  |  \| |  | |  /  \  | |    | || |  | |  \| |    *
+ *   | |  | | |  | | |    | |  | | |\/| |  __| | . ` |  | | / /\ \ | |    | || |  | | . ` |    *
+ *   | |__| | |__| | |____| |__| | |  | | |____| |\  |  | |/ ____ \| |   _| || |__| | |\  |    *
+ *   |_____/ \____/ \_____|\____/|_|  |_|______|_| \_|  |_/_/    \_\_|  |_____\____/|_| \_|    *
+ *                                                                                             *
+ *   This is required for technical reasons - to place it after `#endinput` to not generate    *
+ *                   multiple copies of it in XML when compiling with `-r`.                    *
+ *                                                                                             *
+*//*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -18,49 +31,67 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI groups include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	1.0
-Changelog:
-	29/11/10:
-		First version
-\**--------------------------------------------------------------------------**/
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 #include "..\YSI_Internal\y_version"
 
-#include "..\YSI_Internal\y_compilerpass"
-#if AUTO_INCLUDE_GUARD
-	#if !defined _inc_y_groups
-		#error Did you do <YSI/y_groups> instead of the required <YSI\y_groups>?
-	#endif
+#if defined _inc_y_groups
 	#undef _inc_y_groups
 #endif
 
@@ -70,7 +101,7 @@ Changelog:
 	// Get basic defines.
 	#include "..\YSI_Internal\y_plugins"
 	
-	#include "..\YSI_Internal\y_compilerpass"
+	#include "..\YSI_Internal\y_compilerdata"
 	#include "..\YSI_Data\y_bit"
 	
 	#if !defined _INC_y_groups__funcs
@@ -136,6 +167,20 @@ Changelog:
 	#endinput
 #endif
 #define _INC_y_groups
+
+/**
+ * <library name="y_groups">
+ * <section>
+ *  Description
+ * </section>
+ *  Admin levels, gangs, teams etc - they're all "groups" of people, this
+ *  provides an abstraction for all of these collections.
+ * <section>
+ *  Version
+ * </section>
+ *  1.0
+ * </library>
+ *//** */
 
 stock _YSI_HAS_y_groups(_do_not_call_me_ever_, _like_never_)
 {

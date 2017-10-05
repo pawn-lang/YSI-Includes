@@ -1,66 +1,92 @@
-/**--------------------------------------------------------------------------**\
-					===============================
-					 y_scripting - Access amx data
-					===============================
-Description:
-	Allows a script access to information about itself, such as function names.
-	This can be used for a range of things, including automatic callback hooking
-	and testing.
-Legal:
-	Version: MPL 1.1
-
-	The contents of this file are subject to the Mozilla Public License Version
-	1.1 (the "License"); you may not use this file except in compliance with
-	the License. You may obtain a copy of the License at
-	http://www.mozilla.org/MPL/
-
-	Software distributed under the License is distributed on an "AS IS" basis,
-	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-	for the specific language governing rights and limitations under the
-	License.
-
-	The Original Code is the YSI AMX include.
-
-	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
-	the Initial Developer. All Rights Reserved.
-
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-
-Version:
-	1.0
-Changelog:
-	13/11/13:
-		Simplified the main macros to work across multiple lines.
-	06/08/10:
-		First version
-\**--------------------------------------------------------------------------**/
-
 #if defined _INC_y_amx
 	#endinput
 #endif
 #define _INC_y_amx
+
+/**
+ * <library name="y_amx">
+ * <section>
+ *  Description
+ * </section>
+ *  Allows a script access to information about itself, such as function names.
+ *  This can be used for a range of things, including automatic callback hooking
+ *  and testing.
+ * <section>
+ *  Version
+ * </section>
+ *  1.0
+ * </library>
+ *//** *//*
+Legal:
+	Version: MPL 1.1
+	
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 the "License"; you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
+	http://www.mozilla.org/MPL/
+	
+	Software distributed under the License is distributed on an "AS IS" basis,
+	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	for the specific language governing rights and limitations under the
+	License.
+	
+	The Original Code is the YSI framework.
+	
+	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright C 2011
+	the Initial Developer. All Rights Reserved.
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 // I debated porting this over to use ZeeX's advanced AMX system, but there's no
 // point - this is stable and works well.  Doing so would mean testing that all
@@ -74,7 +100,7 @@ Changelog:
 #include "..\YSI_Core\y_debug"
 #include "..\YSI_Internal\y_natives"
 
-#include "..\YSI_Internal\amx_assembly"
+#include "..\YSI_Internal\y_thirdpartyinclude"
 
 #define AMX_FastString(%1,%2,%3,%4) \
 	(((%1) << 0) | ((%2) << 8) | ((%3) << 16) | ((%4) << 24))
@@ -419,14 +445,17 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 				str[32];
 			do
 			{
+				++idx;
 				#emit LREF.S.pri pos
 				#emit STOR.S.pri addr
-				AMX_ReadString(AMX_BASE_ADDRESS + addr, str);
-				++idx;
-				if (exact ? (str{0} && !strcmp(str, pattern)) : (strfind(str, pattern) != -1))
+				if (addr)
 				{
-					buffer = pos - 4;
-					return idx;
+					AMX_ReadString(AMX_BASE_ADDRESS + addr, str);
+					if (exact ? (str{0} && !strcmp(str, pattern)) : (strfind(str, pattern) != -1))
+					{
+						buffer = pos - 4;
+						return idx;
+					}
 				}
 				pos += 8;
 			}
@@ -447,31 +476,30 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	P:7("AMX_GetEntryPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		base,
-		count;
+		count,
+		addr;
 	AMX_GetBaseCount(table, base, count);
-	if (idx < count)
+	new
+		pos = idx * 8 + base + 4;
+	while (idx < count)
 	{
-		new
-			addr,
-			pos = idx * 8 + base + 4;
-		do
+		++idx;
+		// Get the address of the string.
+		#emit LREF.S.pri                pos
+		#emit STOR.S.pri                addr
+		if (addr)
 		{
-			// Get the address of the string.
-			#emit LREF.S.pri                pos
-			#emit STOR.S.pri                addr
 			// Get the 4 bytes 5 bytes before this position.
 			addr += AMX_BASE_ADDRESS;
 			#emit LREF.S.pri                addr
 			#emit STOR.S.pri                addr
-			++idx;
 			if (addr == pattern)
 			{
 				buffer = pos - 4;
 				return idx;
 			}
-			pos += 8;
 		}
-		while (idx < count);
+		pos += 8;
 	}
 	return 0;
 }
@@ -487,76 +515,55 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	P:7("AMX_GetEntrySuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
 		base,
-		count;
+		count,
+		addr,
+		ch;
 	AMX_GetBaseCount(table, base, count);
-	if (idx < --count)
+	new
+		pos = idx * 8 + base + 4;
+	while (idx < count)
 	{
-		new
-			addr,
-			pos = idx * 8 + base + 12;
-		do
-		{
-			// Get the address of the string.
-			#emit LREF.S.pri                pos
-			#emit STOR.S.pri                addr
-			// Get the 4 bytes 5 bytes before this position.
-			addr += AMX_BASE_ADDRESS - 5;
-			#emit LREF.S.pri                addr
-			#emit STOR.S.pri                addr
-			++idx;
-			if (addr == pattern)
-			{
-				buffer = pos - 12;
-				return idx;
-			}
-			pos += 8;
-		}
-		while (idx < count);
-	}
-	if (idx == count)
-	{
-		// Do the final one, this is more of an issue!
-		new
-			addr,
-			ch,
-			pos = idx * 8 + base + 4;
+		++idx;
 		// Get the address of the string.
 		#emit LREF.S.pri                pos
 		#emit STOR.S.pri                addr
-		addr += AMX_BASE_ADDRESS;
-		for ( ; ; )
+		if (addr)
 		{
-			// Find the end of the string.
-			#emit LREF.S.pri            addr
-			#emit STOR.S.pri            ch
-			if (ch & 0x000000FF)
+			addr += AMX_BASE_ADDRESS;
+			for ( ; ; )
 			{
-				if (ch & 0x0000FF00)
+				// Find the end of the string.
+				#emit LREF.S.pri            addr
+				#emit STOR.S.pri            ch
+				if (ch & 0x000000FF)
 				{
-					if (ch & 0x00FF0000)
+					if (ch & 0x0000FF00)
 					{
-						if (ch & 0xFF000000)
+						if (ch & 0x00FF0000)
 						{
-							addr += 4;
-							continue;
+							if (ch & 0xFF000000)
+							{
+								addr += 4;
+								continue;
+							}
+							else addr -= 1;
 						}
-						else addr -= 1;
+						else addr -= 2;
 					}
-					else addr -= 2;
+					else addr -= 3;
 				}
-				else addr -= 3;
+				else addr -= 4;
+				break;
 			}
-			else addr -= 4;
-			break;
+			#emit LREF.S.pri                addr
+			#emit STOR.S.pri                ch
+			if (ch == pattern)
+			{
+				buffer = pos - 4;
+				return idx;
+			}
 		}
-		#emit LREF.S.pri                addr
-		#emit STOR.S.pri                ch
-		++idx;
-		if (ch == pattern)
-		{
-			buffer = pos - 4;
-			return idx;
-		}
+		pos += 8;
 	}
 	return 0;
 }
@@ -572,42 +579,25 @@ stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[32], const pattern[] = "", cons
 	P:7("AMX_GetName called: %i, %i, \"%s\", \"%s\"", _:table, idx, buffer, pattern);
 	new
 		base,
-		count;
+		count,
+		addr;
 	AMX_GetBaseCount(table, base, count);
-	if (idx < count)
+	new
+		pos = idx * 8 + base + 4;
+	while (idx < count)
 	{
-		if (pattern[0] == '\0')
+		++idx;
+		#emit LREF.S.pri pos
+		#emit STOR.S.pri addr
+		if (addr)
 		{
-			new
-				addr,
-				pos = idx * 8 + base + 4;
-			#emit LREF.S.pri pos
-			#emit STOR.S.pri addr
 			AMX_ReadString(AMX_BASE_ADDRESS + addr, buffer);
-			++idx;
-			//buffer = idx * 8 + base;
-			return idx;
-		}
-		else
-		{
-			new
-				addr,
-				pos = idx * 8 + base + 4;
-			do
+			if ((pattern[0] == '\0') || (exact ? (!strcmp(buffer, pattern)) : (strfind(buffer, pattern) != -1)))
 			{
-				#emit LREF.S.pri pos
-				#emit STOR.S.pri addr
-				AMX_ReadString(AMX_BASE_ADDRESS + addr, buffer);
-				++idx;
-				if (exact ? (!strcmp(buffer, pattern)) : (strfind(buffer, pattern) != -1))//if (strfind(buffer, pattern) != -1)
-				{
-					//buffer = idx * 8 + base;
-					return idx;
-				}
-				pos += 8;
+				return idx;
 			}
-			while (idx < count);
 		}
+		pos += 8;
 	}
 	return 0;
 }
@@ -623,23 +613,23 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[32], pattern)
 	P:7("AMX_GetNamePrefix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
 	new
 		base,
-		count;
+		count,
+		addr;
 	AMX_GetBaseCount(table, base, count);
-	if (idx < count)
+	new
+		pos = idx * 8 + base + 4;
+	while (idx < count)
 	{
-		new
-			addr,
-			pos = idx * 8 + base + 4;
-		do
+		++idx;
+		// Get the address of the string.
+		#emit LREF.S.pri                pos
+		#emit STOR.S.pri                addr
+		if (addr)
 		{
-			// Get the address of the string.
-			#emit LREF.S.pri                pos
-			#emit STOR.S.pri                addr
 			// Get the 4 bytes 5 bytes before this position.
 			addr += AMX_BASE_ADDRESS;
 			#emit LREF.S.pri                addr
 			#emit STOR.S.pri                addr
-			++idx;
 			if (addr == pattern)
 			{
 				#emit LREF.S.pri            pos
@@ -647,9 +637,8 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[32], pattern)
 				AMX_ReadString(AMX_BASE_ADDRESS + addr, buffer);
 				return idx;
 			}
-			pos += 8;
 		}
-		while (idx < count);
+		pos += 8;
 	}
 	return 0;
 }
@@ -665,83 +654,61 @@ stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[32], pattern)
 	P:7("AMX_GetNameSuffix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
 	new
 		base,
-		count;
+		count,
+		addr,
+		ch;
 	AMX_GetBaseCount(table, base, count);
-	if (idx < --count)
+	new
+		pos = idx * 8 + base + 4;
+	while (idx < count)
 	{
-		new
-			addr,
-			pos = idx * 8 + base + 12;
-		do
+		++idx;
+		#emit LREF.S.pri                pos
+		#emit STOR.S.pri                addr
+		if (addr)
 		{
-			// Get the address of the string.
-			#emit LREF.S.pri                pos
-			#emit STOR.S.pri                addr
-			// Get the 4 bytes 5 bytes before this position.
-			addr += AMX_BASE_ADDRESS - 5;
-			#emit LREF.S.pri                addr
-			#emit STOR.S.pri                addr
-			++idx;
-			if (addr == pattern)
+			// We used to do this by using the next entry in the table.
+			// However, we have since started mangling the table at run-time, so
+			// we can no longer use the shortcut as a) the next entries may not
+			// exist (bypassable) and b) the strings are no longer in order (an
+			// unfixable problem).
+			addr += AMX_BASE_ADDRESS;
+			for ( ; ; )
 			{
-				//buffer = pos - 12;
-				pos -= 8;
+				// Find the end of the string.
+				#emit LREF.S.pri            addr
+				#emit STOR.S.pri            ch
+				if (ch & 0x000000FF)
+				{
+					if (ch & 0x0000FF00)
+					{
+						if (ch & 0x00FF0000)
+						{
+							if (ch & 0xFF000000)
+							{
+								addr += 4;
+								continue;
+							}
+							else addr -= 1;
+						}
+						else addr -= 2;
+					}
+					else addr -= 3;
+				}
+				else addr -= 4;
+				break;
+			}
+			#emit LREF.S.pri                addr
+			#emit STOR.S.pri                ch
+			if (ch == pattern)
+			{
 				#emit LREF.S.pri            pos
 				#emit STOR.S.pri            addr
-				//addr += AMX_BASE_ADDRESS;
 				AMX_ReadString(AMX_BASE_ADDRESS + addr, buffer);
 				return idx;
 			}
-			pos += 8;
 		}
-		while (idx < count);
-	}
-	if (idx == count)
-	{
-		// Do the final one, this is more of an issue!
-		new
-			addr,
-			ch,
-			pos = idx * 8 + base + 4;
-		// Get the address of the string.
-		#emit LREF.S.pri                pos
-		#emit STOR.S.pri                addr
-		addr += AMX_BASE_ADDRESS;
-		for ( ; ; )
-		{
-			// Find the end of the string.
-			#emit LREF.S.pri            addr
-			#emit STOR.S.pri            ch
-			if (ch & 0x000000FF)
-			{
-				if (ch & 0x0000FF00)
-				{
-					if (ch & 0x00FF0000)
-					{
-						if (ch & 0xFF000000)
-						{
-							addr += 4;
-							continue;
-						}
-						else addr -= 1;
-					}
-					else addr -= 2;
-				}
-				else addr -= 3;
-			}
-			else addr -= 4;
-			break;
-		}
-		#emit LREF.S.pri                addr
-		#emit STOR.S.pri                ch
-		++idx;
-		if (ch == pattern)
-		{
-			#emit LREF.S.pri            pos
-			#emit STOR.S.pri            addr
-			AMX_ReadString(AMX_BASE_ADDRESS + addr, buffer);
-			return idx;
-		}
+		pos += 8;
 	}
 	return 0;
 }
@@ -984,6 +951,14 @@ stock AMX_GetPublicIndexFromEntry(entry)
 	return (entry - AMX_HEADER_PUBLICS) / 8;
 }
 
+stock AMX_GetStringFromEntry(entry, str[], size = sizeof (str))
+{
+	entry += 4;
+	#emit LREF.S.pri entry
+	#emit STOR.S.pri entry
+	AMX_ReadString(AMX_BASE_ADDRESS + entry, str, size);
+}
+
 /*stock AMX_GetEntryType(entry)
 {
 	if (AMX_HEADER_PUBLICS <= entry < AMX_HEADER_NATIVES) return e_AMX_HEADER_TYPE_PUBLIC;
@@ -1207,11 +1182,14 @@ stock AMX_WriteArray(addr, const src[], len = sizeof (src))
 	}
 }
 
-stock AMX_CodToDat(ptr)
-{
-	// Convert a pointer in to the code segment in to a data offset.
-	return ptr + AMX_HEADER_COD;
-}
+//stock AMX_CodToDat(ptr)
+//{
+//	// Convert a pointer in to the code segment in to a data offset.
+//	return ptr + AMX_HEADER_COD;
+//}
+
+#define AMX_CodToDat(%0) ((%0) + AMX_HEADER_COD)
+#define AMX_DatToCod(%0) ((%0) - AMX_HEADER_COD)
 
 #define _A<%0> (_:H_Re(%0,0))
 
@@ -1364,3 +1342,156 @@ stock AMX_CodToDat(ptr)
 #define H_Ne7(%0,%3) @E8:H_Se(%0,8,%3)
 #define H_Ne8(%0,%3) @E9:H_Se(%0,9,%3)
 #define H_Ne9(%0,%3) ()
+
+#define _C<%0> (_:H_Rc(%0,24))
+
+// Do the next character test as this one failed.
+#define H_Sc(%0,%1,%3) H_Nc%1(%0,%3)
+// End of string test failed.
+#define H_Ec(%0,%3)    @C_:H_Sc(%0,_,%3)
+// Do the single addition.
+#define H_Dc(%0,%1,%3) (_:H_Rc(%0,%3-8))|%1<<%3
+// Recurse through the string.
+#define H_Rc(%0,%3)    hc:H_Ec(%0,%3)
+// Test for the end of a string (4 characters only).
+#define hc:H_Ec(%0,24-8-8-8-8)   0
+
+// Test for the current character.
+
+#define @C_:H_Sc(_%0,%1,%3) H_Dc(%0,95,%3)
+#define @C@:H_Sc(@%0,%1,%3) H_Dc(%0,64,%3)
+#define @Cy:H_Sc(y%0,%1,%3) H_Dc(%0,121,%3)
+
+#define @Ca:H_Sc(a%0,%1,%3) H_Dc(%0,97,%3)
+#define @Cb:H_Sc(b%0,%1,%3) H_Dc(%0,98,%3)
+#define @Cc:H_Sc(c%0,%1,%3) H_Dc(%0,99,%3)
+#define @Cd:H_Sc(d%0,%1,%3) H_Dc(%0,100,%3)
+#define @Ce:H_Sc(e%0,%1,%3) H_Dc(%0,101,%3)
+#define @Cf:H_Sc(f%0,%1,%3) H_Dc(%0,102,%3)
+#define @Cg:H_Sc(g%0,%1,%3) H_Dc(%0,103,%3)
+#define @Ch:H_Sc(h%0,%1,%3) H_Dc(%0,104,%3)
+#define @Ci:H_Sc(i%0,%1,%3) H_Dc(%0,105,%3)
+#define @Cj:H_Sc(j%0,%1,%3) H_Dc(%0,106,%3)
+#define @Ck:H_Sc(k%0,%1,%3) H_Dc(%0,107,%3)
+#define @Cl:H_Sc(l%0,%1,%3) H_Dc(%0,108,%3)
+#define @Cm:H_Sc(m%0,%1,%3) H_Dc(%0,109,%3)
+#define @Cn:H_Sc(n%0,%1,%3) H_Dc(%0,110,%3)
+#define @Co:H_Sc(o%0,%1,%3) H_Dc(%0,111,%3)
+#define @Cp:H_Sc(p%0,%1,%3) H_Dc(%0,112,%3)
+#define @Cq:H_Sc(q%0,%1,%3) H_Dc(%0,113,%3)
+#define @Cr:H_Sc(r%0,%1,%3) H_Dc(%0,114,%3)
+#define @Cs:H_Sc(s%0,%1,%3) H_Dc(%0,115,%3)
+#define @Ct:H_Sc(t%0,%1,%3) H_Dc(%0,116,%3)
+#define @Cu:H_Sc(u%0,%1,%3) H_Dc(%0,117,%3)
+#define @Cv:H_Sc(v%0,%1,%3) H_Dc(%0,118,%3)
+#define @Cw:H_Sc(w%0,%1,%3) H_Dc(%0,119,%3)
+#define @Cx:H_Sc(x%0,%1,%3) H_Dc(%0,120,%3)
+#define @Cz:H_Sc(z%0,%1,%3) H_Dc(%0,122,%3)
+
+#define @CA:H_Sc(A%0,%1,%3) H_Dc(%0,65,%3)
+#define @CB:H_Sc(B%0,%1,%3) H_Dc(%0,66,%3)
+#define @CC:H_Sc(C%0,%1,%3) H_Dc(%0,67,%3)
+#define @CD:H_Sc(D%0,%1,%3) H_Dc(%0,68,%3)
+#define @CE:H_Sc(E%0,%1,%3) H_Dc(%0,69,%3)
+#define @CF:H_Sc(F%0,%1,%3) H_Dc(%0,70,%3)
+#define @CG:H_Sc(G%0,%1,%3) H_Dc(%0,71,%3)
+#define @CH:H_Sc(H%0,%1,%3) H_Dc(%0,72,%3)
+#define @CI:H_Sc(I%0,%1,%3) H_Dc(%0,73,%3)
+#define @CJ:H_Sc(J%0,%1,%3) H_Dc(%0,74,%3)
+#define @CK:H_Sc(K%0,%1,%3) H_Dc(%0,75,%3)
+#define @CL:H_Sc(L%0,%1,%3) H_Dc(%0,76,%3)
+#define @CM:H_Sc(M%0,%1,%3) H_Dc(%0,77,%3)
+#define @CN:H_Sc(N%0,%1,%3) H_Dc(%0,78,%3)
+#define @CO:H_Sc(O%0,%1,%3) H_Dc(%0,79,%3)
+#define @CP:H_Sc(P%0,%1,%3) H_Dc(%0,80,%3)
+#define @CQ:H_Sc(Q%0,%1,%3) H_Dc(%0,81,%3)
+#define @CR:H_Sc(R%0,%1,%3) H_Dc(%0,82,%3)
+#define @CS:H_Sc(S%0,%1,%3) H_Dc(%0,83,%3)
+#define @CT:H_Sc(T%0,%1,%3) H_Dc(%0,84,%3)
+#define @CU:H_Sc(U%0,%1,%3) H_Dc(%0,85,%3)
+#define @CV:H_Sc(V%0,%1,%3) H_Dc(%0,86,%3)
+#define @CW:H_Sc(W%0,%1,%3) H_Dc(%0,87,%3)
+#define @CX:H_Sc(X%0,%1,%3) H_Dc(%0,88,%3)
+#define @CY:H_Sc(Y%0,%1,%3) H_Dc(%0,89,%3)
+#define @CZ:H_Sc(Z%0,%1,%3) H_Dc(%0,90,%3)
+
+#define @C0:H_Sc(0%0,%1,%3) H_Dc(%0,48,%3)
+#define @C1:H_Sc(1%0,%1,%3) H_Dc(%0,49,%3)
+#define @C2:H_Sc(2%0,%1,%3) H_Dc(%0,50,%3)
+#define @C3:H_Sc(3%0,%1,%3) H_Dc(%0,51,%3)
+#define @C4:H_Sc(4%0,%1,%3) H_Dc(%0,52,%3)
+#define @C5:H_Sc(5%0,%1,%3) H_Dc(%0,53,%3)
+#define @C6:H_Sc(6%0,%1,%3) H_Dc(%0,54,%3)
+#define @C7:H_Sc(7%0,%1,%3) H_Dc(%0,55,%3)
+#define @C8:H_Sc(8%0,%1,%3) H_Dc(%0,56,%3)
+#define @C9:H_Sc(9%0,%1,%3) H_Dc(%0,57,%3)
+
+// Find the next character to test.
+#define H_Nc_(%0,%3) @C@:H_Sc(%0,@,%3)
+#define H_Nc@(%0,%3) @Cy:H_Sc(%0,y,%3)
+#define H_Ncy(%0,%3) @Ca:H_Sc(%0,a,%3)
+
+#define H_Nca(%0,%3) @Cb:H_Sc(%0,b,%3)
+#define H_Ncb(%0,%3) @Cc:H_Sc(%0,c,%3)
+#define H_Ncc(%0,%3) @Cd:H_Sc(%0,d,%3)
+#define H_Ncd(%0,%3) @Ce:H_Sc(%0,e,%3)
+#define H_Nce(%0,%3) @Cf:H_Sc(%0,f,%3)
+#define H_Ncf(%0,%3) @Cg:H_Sc(%0,g,%3)
+#define H_Ncg(%0,%3) @Ch:H_Sc(%0,h,%3)
+#define H_Nch(%0,%3) @Ci:H_Sc(%0,i,%3)
+#define H_Nci(%0,%3) @Cj:H_Sc(%0,j,%3)
+#define H_Ncj(%0,%3) @Ck:H_Sc(%0,k,%3)
+#define H_Nck(%0,%3) @Cl:H_Sc(%0,l,%3)
+#define H_Ncl(%0,%3) @Cm:H_Sc(%0,m,%3)
+#define H_Ncm(%0,%3) @Cn:H_Sc(%0,n,%3)
+#define H_Ncn(%0,%3) @Co:H_Sc(%0,o,%3)
+#define H_Nco(%0,%3) @Cp:H_Sc(%0,p,%3)
+#define H_Ncp(%0,%3) @Cq:H_Sc(%0,q,%3)
+#define H_Ncq(%0,%3) @Cr:H_Sc(%0,r,%3)
+#define H_Ncr(%0,%3) @Cs:H_Sc(%0,s,%3)
+#define H_Ncs(%0,%3) @Ct:H_Sc(%0,t,%3)
+#define H_Nct(%0,%3) @Cu:H_Sc(%0,u,%3)
+#define H_Ncu(%0,%3) @Cv:H_Sc(%0,v,%3)
+#define H_Ncv(%0,%3) @Cw:H_Sc(%0,w,%3)
+#define H_Ncw(%0,%3) @Cx:H_Sc(%0,x,%3)
+#define H_Ncx(%0,%3) @Cz:H_Sc(%0,z,%3)
+#define H_Ncz(%0,%3) @CA:H_Sc(%0,A,%3)
+
+#define H_NcA(%0,%3) @CB:H_Sc(%0,B,%3)
+#define H_NcB(%0,%3) @CC:H_Sc(%0,C,%3)
+#define H_NcC(%0,%3) @CD:H_Sc(%0,D,%3)
+#define H_NcD(%0,%3) @CE:H_Sc(%0,E,%3)
+#define H_NcE(%0,%3) @CF:H_Sc(%0,F,%3)
+#define H_NcF(%0,%3) @CG:H_Sc(%0,G,%3)
+#define H_NcG(%0,%3) @CH:H_Sc(%0,H,%3)
+#define H_NcH(%0,%3) @CI:H_Sc(%0,I,%3)
+#define H_NcI(%0,%3) @CJ:H_Sc(%0,J,%3)
+#define H_NcJ(%0,%3) @CK:H_Sc(%0,K,%3)
+#define H_NcK(%0,%3) @CL:H_Sc(%0,L,%3)
+#define H_NcL(%0,%3) @CM:H_Sc(%0,M,%3)
+#define H_NcM(%0,%3) @CN:H_Sc(%0,N,%3)
+#define H_NcN(%0,%3) @CO:H_Sc(%0,O,%3)
+#define H_NcO(%0,%3) @CP:H_Sc(%0,P,%3)
+#define H_NcP(%0,%3) @CQ:H_Sc(%0,Q,%3)
+#define H_NcQ(%0,%3) @CR:H_Sc(%0,R,%3)
+#define H_NcR(%0,%3) @CS:H_Sc(%0,S,%3)
+#define H_NcS(%0,%3) @CT:H_Sc(%0,T,%3)
+#define H_NcT(%0,%3) @CU:H_Sc(%0,U,%3)
+#define H_NcU(%0,%3) @CV:H_Sc(%0,V,%3)
+#define H_NcV(%0,%3) @CW:H_Sc(%0,W,%3)
+#define H_NcW(%0,%3) @CX:H_Sc(%0,X,%3)
+#define H_NcX(%0,%3) @CY:H_Sc(%0,Y,%3)
+#define H_NcY(%0,%3) @CZ:H_Sc(%0,Z,%3)
+#define H_NcZ(%0,%3) @C0:H_Sc(%0,0,%3)
+
+#define H_Nc0(%0,%3) @C1:H_Sc(%0,1,%3)
+#define H_Nc1(%0,%3) @C2:H_Sc(%0,2,%3)
+#define H_Nc2(%0,%3) @C3:H_Sc(%0,3,%3)
+#define H_Nc3(%0,%3) @C4:H_Sc(%0,4,%3)
+#define H_Nc4(%0,%3) @C5:H_Sc(%0,5,%3)
+#define H_Nc5(%0,%3) @C6:H_Sc(%0,6,%3)
+#define H_Nc6(%0,%3) @C7:H_Sc(%0,7,%3)
+#define H_Nc7(%0,%3) @C8:H_Sc(%0,8,%3)
+#define H_Nc8(%0,%3) @C9:H_Sc(%0,9,%3)
+#define H_Nc9(%0,%3) ()
+

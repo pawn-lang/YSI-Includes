@@ -1,20 +1,9 @@
-/**--------------------------------------------------------------------------**\
-					===================================
-					 y_inline - PAWN inline functions.
-					===================================
-Description:
-	This library allows a user to write inline functions in their script.  It
-	first detects all inline functions and generates data on them, such as
-	parameter counts and addresses.  When an inline function is passed in code
-	its current context data is stored.  Finally, when an inline function is
-	found to be called at some point its current local stack is stored in global
-	memory.  When the function actually is called, the stack is restored, and
-	additional parameters which are the inline function parameters, are passed.
+/*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -23,47 +12,63 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI Inline Function include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	1.0
-Changelog:
-	22/06/13:
-		Rewrote the library from scratch for better performance all round.
-	20/10/12:
-		Fixed a bug with "Callback_Release" with public functions.
-	15/11/11:
-		Changed the precedence of "using" types.
-	19/09/11:
-		First version
-\**--------------------------------------------------------------------------**/
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 #if 0
 
@@ -126,23 +131,12 @@ somewhere_after_this_func:
 #define LAMBDA_iii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2|||,0,0,0|||<%9>{%0}(%1)%8;
 #define LAMBDA_iiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3|||,0,0,0,0|||<%9>{%0}(%1)%8;
 #define LAMBDA_iiiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3,_4|||,0,0,0,0,0|||<%9>{%0}(%1)%8;
-//#define LAMBDA_v<%9>{%0}(%1) _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)
-//#define LAMBDA_s<%9>{%0}(%1) _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)
-// #define LAMBDA_a<%9>{%0}(%1) _DO_LAMBDA|||new _0|||,0|||<%9>{%0}(%1)
 
 #define _DO_LAMBDA|||%6|||%5|||<%9>{%0}(%1)%8; LAM@0()%8;{LAM@1();static const YSII[]="@:....";if(I@E(YSII))for(%6;I@F();)while(I@L(I@K()%5))YSI_gInlineRet+=(%0);LAM@2(%9(callback_tag:YSII%1));}
-
-// Make sure there's a space after the "return".
-//#define YSI_gInlineRet+=(%0);%9(%1);}=> YSI_gInlineRet+=(%0);%3= %9(%1);
-//#define return= return
-//#define return%0({%1}%2)%3; %0({%1}%2)%3=>
-#define return%0({%1}%2)%3; I@=%0({%1}%2)%3;return I@;
 
 #define inline%0(%1) static %0[_:I@E:32]=#%0":....";if(I@E(_:_YI@CP:%0))for(new%1,,;I@F();)while(I@L(I@K(1)))
 
 #define I@E:32]=#%9const%7\32;%8":....";if(I@E(_:_YI@CP:%9const%7\32;%8))for(%1)while(I@L(I@K(1))) 32]=#%8":....";if(I@E(_:_YI@CP:%8))for(%1)while(I@L(I@K()))
-
-//#define i@Im:%9&%0[]=#%9&%0":....";if(I@E(_:_YI@CP:%9&%0)) %0[]=#%0":....";if(I@E(_:_YI@CP:%0,3))
 
 #define _YI@CP:%8))for(new%0,%1; @Ia:@Ib:@Ic:@Id:@Iz:%8))for(new|||%0|||%1;
 
@@ -174,8 +168,6 @@ stock const
 #define callback:%0) const callback_tag:callback_check:%0$$$
 #define callback_tag:callback_check:%0,%1$$$ callback_tag:%0[],%1)
 #define callback_check:%0$$$ %0[])
-
-
 
 #define using%0\10;%1 callback_tag:@Ik:@Il:%0
 

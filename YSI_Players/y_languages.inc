@@ -1,14 +1,25 @@
-/**--------------------------------------------------------------------------**\
-					==================================
-					 Y Sever Includes - Language Code 
-					==================================
-Description:
-	Handles language features - loading, listing and which one a player is.
+#if defined _INC_y_languages
+	#endinput
+#endif
+#define _INC_y_languages
+
+/**
+ * <library name="y_languages">
+ * <section>
+ *  Description
+ * </section>
+ *  Handles language features - loading, listing and which one a player is.
+ * <section>
+ *  Version
+ * </section>
+ *  1.0
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -17,82 +28,63 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI ini include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	1.0
-Changelog:
-	02/12/11:
-		Updated Langs_Add to accept the parameters in either order.
-	01/05/11:
-		First version.
-Functions:
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-Callbacks:
-	-
-Definitions:
-	-
-Enums:
-	-
-Macros:
-	-
-Tags:
-	-
-Variables:
-	Global:
-		-
-	Static:
-		-
-Commands:
-	-
-Compile options:
-	-
-Operators:
-	-
-\**--------------------------------------------------------------------------**/
 
-#if defined _INC_y_languages
-	#endinput
-#endif
-#define _INC_y_languages
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 #include "..\YSI_Internal\y_version"
 
@@ -125,15 +117,9 @@ static stock
 	YSI_g_sLanguages[YSI_MAX_LANGUAGES][MAX_LANGUAGE_NAME],
 	Language:YSI_g_sLanguageCount;
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>-</summary>
+ *//*------------------------------------------------------------------------**/
 
 #define Langs_Add Langs_AddLanguage
 #define Languages_Add Langs_AddLanguage
@@ -224,15 +210,9 @@ global Language:_Langs_AddLanguage(string:code[], string:name[])
 	return NO_LANGUAGE;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>-</summary>
+ *//*------------------------------------------------------------------------**/
 
 #if _YSIM_IS_CLIENT
 	// Don't give a warning if this is a client script.  Note that stubs are
@@ -246,15 +226,9 @@ global Language:_Langs_AddLanguage(string:code[], string:name[])
 		}
 #pragma tabsize 4
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>-</summary>
+ *//*------------------------------------------------------------------------**/
 
 foreign Language:Langs_GetLanguageAt(id);
 
@@ -273,15 +247,9 @@ global Language:Langs_GetLanguageAt(id)
 	return NO_LANGUAGE;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>-</summary>
+ *//*------------------------------------------------------------------------**/
 
 foreign void:Langs_RemoveLanguage(Language:l);
 
@@ -299,15 +267,9 @@ global void:Langs_RemoveLanguage(Language:l)
 	//return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>-</summary>
+ *//*------------------------------------------------------------------------**/
 
 foreign Language:Langs_GetLanguage(string:identifier[]);
 
@@ -337,15 +299,9 @@ global Language:Langs_GetLanguage(string:identifier[])
 	return NO_LANGUAGE;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>-</summary>
+ *//*------------------------------------------------------------------------**/
 
 foreign Language:Langs_GetLanguageCount();
 
@@ -354,15 +310,9 @@ global Language:Langs_GetLanguageCount()
 	return YSI_g_sLanguageCount;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>-</summary>
+ *//*------------------------------------------------------------------------**/
 
 foreign string:Langs_GetLanguageCodes();
 
@@ -372,15 +322,9 @@ global string:Langs_GetLanguageCodes()
 	return YSI_g_sLanguageCodes;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>-</summary>
+ *//*------------------------------------------------------------------------**/
 
 foreign string:Langs_GetName(Language:l);
 
@@ -396,15 +340,9 @@ global string:Langs_GetName(Language:l)
 	return ret;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>-</summary>
+ *//*------------------------------------------------------------------------**/
 
 foreign string:Langs_GetCode(Language:l);
 
@@ -419,15 +357,9 @@ global string:Langs_GetCode(Language:l)
 	return ret;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>-</summary>
+ *//*------------------------------------------------------------------------**/
 
 foreign bool:Langs_IsValid(Language:l);
 
@@ -436,15 +368,9 @@ global bool:Langs_IsValid(Language:l)
 	return Language_IsValid(l);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>-</summary>
+ *//*------------------------------------------------------------------------**/
 
 foreign Language:Langs_GetPlayerLanguage(playerid);
 
@@ -458,15 +384,9 @@ global Language:Langs_GetPlayerLanguage(playerid)
 	#endif
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>-</summary>
+ *//*------------------------------------------------------------------------**/
 
 foreign Language:Langs_SetPlayerLanguage(playerid, Language:l);
 
@@ -479,15 +399,9 @@ global Language:Langs_SetPlayerLanguage(playerid, Language:l)
 	return NO_LANGUAGE;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>-</summary>
+ *//*------------------------------------------------------------------------**/
 
 foreign Language:Langs_SetPlayerCode(playerid, string:code[]);
 
@@ -496,15 +410,9 @@ global Language:Langs_SetPlayerCode(playerid, string:code[])
 	return Langs_SetPlayerLanguage(playerid, Langs_GetLanguage(code));
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>-</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>-</summary>
+ *//*------------------------------------------------------------------------**/
 
 mhook OnPlayerConnect(playerid)
 {

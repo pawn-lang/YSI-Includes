@@ -1,206 +1,74 @@
-/**--------------------------------------------------------------------------**\
-					===========================
-					 foreach efficient looping
-					===========================
-Description:
-	Provides efficient looping through sparse data sets, such as connected
-	players.  Significantly improved from the original version to be a generic
-	loop system, rather then purely a player loop system.  When used for
-	players this has constant time O(n) for number of connected players (n),
-	unlike standard player loops which are O(MAX_PLAYERS), regardless of the
-	actual number of connected players.  Even when n is MAX_PLAYERS this is
-	still faster.
-	
-	For extensive documentation on writing and using iterators, see this topic:
-	
-		http://forum.sa-mp.com/showthread.php?t=481877
-	
+/*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
-	[url]http://www.mozilla.org/MPL/[/url]
+	http://www.mozilla.org/MPL/
 	
 	Software distributed under the License is distributed on an "AS IS" basis,
 	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI foreach include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	0.4
-Changelog:
-	29/03/15:
-		More testing.
-		Repaired special iterators.
-	28/03/15:
-		Breaking change: "Iter_Add" returns value added, not true/false.
-		Breaking change: Special iterators take "cellmin", not "-1".
-		Wrote many tests.
-		Split in to multiple files.
-		Added multi-iterators.
-		Officially deprecated "foreach (Player, i)".
-	26/03/15:
-		Re-added reverse iterators.
-		Added support for extra spaces in "foreach".
-	26/12/13:
-		Added sections.
-	17/10/12:
-		Fixed a bug that was here but not in "foreach.inc".
-	04/10/12:
-		Added a tiny tweak to detect tag-returning iterator functions.
-		Added Iter_InternalSize.
-	13/01/12:
-		Fixed the count thanks to AndreT.
-	05/01/12:
-		Fixed multi-dimensional iterators.
-		Fixed "FOREACH_NO_BOTS".
-		Made "Iterator:" support multi-dimensional arrays.
-	24/12/11:
-		Added _YSI_SPECIAL_DEBUG support.
-		Added fix for function iterators.
-		Ported back to YSI.
-		Changed to use internal YSI "__" natives.
-		Fixed calls order by using ALS.
-	31/10/11:
-		Changed the underlying loop code to be slightly faster.
-		Added support for Iter_SafeRemove, prompting refactoring.
-	17/09/11:
-		Fixed arrays under the new syntax.
-	28/04/11:
-		Moved iterator identifiers to end of variables.
-		Rewrote "foreach" to accept two syntaxes for "foreach (new i : Iter)".
-	16/08/10:
-		Removed all the "2" versions of the functions.
-	14/08/10:
-		Added Iter_Clear to reset an array.
-	06/08/10:
-		Added special array declaration format.
-	18/12/09:
-		Added Iter_Func2 functions for multi-dimensional iterators.
-		Renamed foreact et al as keywords in the documentation.
-		Changed licensing from GPL to MPL.
-	02/09/09:
-		Fixed (again) for 0.3.
-		Added free slot finding.
-	21/08/09:
-		Updated to include random functions.
-		Made entirely stand alone.
-		Ported to 0.3 (separate version).
-		Added automatic callback hook code.
-		Removed debug information from stand alone version.
-	06/01/08:
-		Added debug information.
-	09/10/07:
-		Moved to system.
-	16/09/07:
-		Added list sorting.
-		Made this part of Y SeRver Includes, not Y Sever Includes.
-		Made list sorting optional.
-		Fixed version number.
-	08/09/07:
-		First version.
-Functions:
-	Public:
-		OnPlayerDisconnect - Called when a player leaves to remove them.
-		OnPlayerConnect - Called when a player connects to add them.
-	Core:
-		-
-	Stock:
-		Iter_ShowArray - Displays the contents of the array.
-		Iter_AddInternal - Add a value to an iterator.
-		Iter_RemoveInternal - Remove a value from an iterator.
-		Iter_RandomInternal - Get a random item from an iterator.
-		Iter_FreeInternal - Gets the first free slot in the iterator.
-		Iter_InitInternal - Initialises a multi-dimensional iterator.
-	Static:
-		-
-	Inline:
-		Iter_Create - Create a new iterator value set.
-		Iter_Add - Wraps Iter_AddInternal.
-		Iter_Remove - Wraps Iter_RemoveInternal.
-		Iter_Random - Wraps Iter_RandomInternal.
-		Iter_Count - Gets the number of items in an iterator.
-		Iter_Debug - Wraps around Iter_ShowArray.
-		Iter_Free - Wraps around Iter_FreeInternal.
-		Iter_Create2 - Create a new iterator array value set.
-		Iter_Add2 - Wraps Iter_AddInternal for arrays.
-		Iter_Remove2 - Wraps Iter_RemoveInternal for arrays.
-		Iter_Random2 - Wraps Iter_RandomInternal for arrays.
-		Iter_Count2 - Gets the number of items in an iterator array.
-		Iter_Debug2 - Wraps around Iter_ShowArray for arrays.
-		Iter_Free2 - Wraps around Iter_FreeInternal for arrays.
-	API:
-		-
-Callbacks:
-	-
-Hooks:
-	Iter_OnPlayerConnect - Hook for the OnPlayerConnect callback.
-	Iter_OnPlayerDisconnect - Hook for the OnPlayerDisconnect callback.
-	Iter_OnGameModeInit - Only exists to make the code compile correctly...
-Definitions:
-	-
-Enums:
-	-
-Macros:
-	-
-Keywords:
-	foreach - Command to loop an iterator.
-	foreachex - Like foreach but without a new variable.
-	foreach2 - Command to loop through an iterator array.
-	foreachex - Like foreach2 but without a new variable.
-Tags:
-	Iterator - Declare an iterator.
-Variables:
-	Global:
-		-
-	Static:
-		YSI_g_OPC - Records wether Iter_OnPlayerConnect exists for speed.
-		YSI_g_OPDC - Records wether Iter_OnPlayerDisconnect exists for speed.
-Commands:
-	-
-Compile options:
-	YSI_ITTER_NO_SORT - Removed.
-	FOREACH_NO_BOTS - Remove the bot iterators for smaller code.
-	FOREACH_NO_PLAYERS - Remove all default code for player itteration.
-Operators:
-	-
-Iterators:
-	Player - List of all players connected.
-	Bot - List of all bots (npcs) connected.
-	NPC - Alias of Bot.
-	Character - All players and bots.
-\**--------------------------------------------------------------------------**/
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 iterfunc Test2a_y_iter(start)
 {
@@ -217,7 +85,7 @@ iterfunc Test2a_y_iter(start)
 	return -1;
 }
 
-#define iterstart@Test2a_y_iter -1
+#define Iterator@Test2a_y_iter iterstart(-1)
 
 iterfunc static stock Test2b_y_iter(start )
 {
@@ -234,7 +102,7 @@ iterfunc static stock Test2b_y_iter(start )
 	return -1;
 }
 
-#define iterstart@Test2b_y_iter -1
+#define Iterator@Test2b_y_iter iterstart(-1)
 
 iterfunc static Test2c_y_iter (start)//__declspec(stock)
 {
@@ -251,7 +119,7 @@ iterfunc static Test2c_y_iter (start)//__declspec(stock)
 	return -1;
 }
 
-#define iterstart@Test2c_y_iter -1
+#define Iterator@Test2c_y_iter iterstart(-1)
 
 iterfunc stock Test2d_y_iter (start )
 {
@@ -268,7 +136,55 @@ iterfunc stock Test2d_y_iter (start )
 	return -1;
 }
 
-#define iterstart@Test2d_y_iter -1
+#define Iterator@Test2d_y_iter iterstart(-1)
+
+iterfunc stock TestState1_y_iter(&iterstate, cur)
+{
+	new
+		ret = iterstate;
+	iterstate = cur;
+	return ret;
+}
+
+#define Iterator@TestState1_y_iter iterstate(-1, 800)
+
+Test:TestState1_y_iter()
+{
+	new
+		count = 0;
+	foreach (new i : TestState1_y_iter())
+	{
+		ASSERT(i == 800);
+		++count;
+	}
+	ASSERT(count == 1);
+}
+
+iterfunc stock TestState2_y_iter(iterstate[2], cur)
+{
+	new
+		ret = iterstate[0];
+	iterstate[0] = iterstate[1];
+	iterstate[1] = cur;
+	return ret;
+}
+
+#define Iterator@TestState2_y_iter iterstate(-1, 500, 600)
+
+Test:TestState2_y_iter()
+{
+	new
+		count = 0;
+	foreach (new i : TestState2_y_iter())
+	{
+		if (count)
+			ASSERT(i == 600);
+		else
+			ASSERT(i == 500);
+		++count;
+	}
+	ASSERT(count == 2);
+}
 
 Test:y_iter_Range()
 {
@@ -282,6 +198,20 @@ Test:y_iter_Range()
 	}
 	ASSERT(count == 10);
 	count = 0;
+	foreach (new i : Range(0, 10, 2))
+	{
+		ASSERT(0 <= i < 10);
+		++count;
+	}
+	ASSERT(count == 5);
+	count = 0;
+	foreach (new i : Range(0, 9, 2))
+	{
+		ASSERT(0 <= i < 10);
+		++count;
+	}
+	ASSERT(count == 5);
+	count = 0;
 	foreach (new i : Range(-10, 10))
 	{
 		ASSERT(-10 <= i < 10);
@@ -294,6 +224,18 @@ Test:y_iter_Range()
 		++count;
 	}
 	ASSERT(count == 0);
+	count = 0;
+	foreach (new i : Range(10, 5, -1))
+	{
+		++count;
+	}
+	ASSERT(count == 5);
+	count = 0;
+	foreach (new i : Range(10, 5, -5))
+	{
+		++count;
+	}
+	ASSERT(count == 1);
 }
 
 Test:y_iter_Add1()
@@ -940,6 +882,7 @@ Test:y_iter_Tags()
 		GG:gg = GG:4;
 	Iter_Init(iter);
 	Iter_Add(iter[_:gg], 2);
+	Iter_Add(iter[_:gg], 1);
 	Iter_Clear(iter[_:gg]);
 }
 
@@ -1005,7 +948,7 @@ Test:y_iter_Starting()
 	ASSERT(Iter_Contains(Test1_y_iter, j));
 }
 
-Test:y_iter_Iter_Contains()
+Test:y_iter_Iter_Contains1()
 {
 	new
 		Iterator:iter1<60>;
@@ -1024,6 +967,33 @@ Test:y_iter_Iter_Contains()
 	ASSERT(Iter_Contains(iter2<4>, 5));
 }
 
+Test:y_iter_Iter_Contains2()
+{
+	new
+		Iterator:iter1[4]<60>;
+	Iter_Init(iter1);
+	ASSERT(!Iter_Contains(iter1[0], 7));
+	ASSERT(!Iter_Contains(iter1[1], 7));
+	Iter_Add(iter1[0], 7);
+	ASSERT(Iter_Contains(iter1[0], 7));
+	ASSERT(!Iter_Contains(iter1[1], 7));
+	new
+		Iterator:iter2[7]<5, 60>;
+	Iter_Init(iter2);
+	ASSERT(!Iter_Contains(iter2[3]<>, 5));
+	ASSERT(!Iter_Contains(iter2[3]<0>, 5));
+	ASSERT(!Iter_Contains(iter2[3]<4>, 5));
+	Iter_Add(iter2[3]<4>, 5);
+	ASSERT(Iter_Contains(iter2[3]<>, 5));
+	ASSERT(Iter_Contains(iter2[3]< >, 5));
+	ASSERT(!Iter_Contains(iter2[3]<0>, 5));
+	ASSERT(Iter_Contains(iter2[3]<4>, 5));
+	ASSERT(!Iter_Contains(iter2[5]<>, 5));
+	ASSERT(!Iter_Contains(iter2[5]< >, 5));
+	ASSERT(!Iter_Contains(iter2[5]<0>, 5));
+	ASSERT(!Iter_Contains(iter2[5]<4>, 5));
+}
+
 Test:y_iter_Iter_Free()
 {
 	new
@@ -1040,6 +1010,64 @@ Test:y_iter_Iter_Free()
 	ASSERT(Iter_Free(iter2<>) != 0);
 	ASSERT(Iter_Free(iter2<1>) != 0);
 	ASSERT(Iter_Free(iter2<3>) != 0);
+}
+
+Test:y_iter_Tag()
+{
+	new
+		Iterator:Group:iter1<60>;
+	Iter_Add(iter1, Group:33);
+	#pragma tabsize 4
+	/* ====================================================================== */
+	/* | THERE IS MEANT TO BE A WARNING ON THIS LINE                        | */
+	/* |                                                                    | */
+	/* | */ Iter_Add(iter1, 44);                                         /* | */
+	/* |                                                                    | */
+	/* | It tests that iterators use tags correctly and warn otherwise.     | */
+	/* ====================================================================== */
+	#pragma tabsize 4
+	Iter_Add(iter1, Group:55);
+	Iter_Add(iter1, Group:22);
+	Iter_Add(iter1, Group:11);
+	#pragma tabsize 4
+	/* ====================================================================== */
+	/* | THERE IS MEANT TO BE A WARNING ON THIS LINE                        | */
+	/* |                                                                    | */
+	/* | */ Iter_Remove(iter1, 11);                                      /* | */
+	/* |                                                                    | */
+	/* | It tests that iterators use tags correctly and warn otherwise.     | */
+	/* ====================================================================== */
+	#pragma tabsize 4
+	Iter_Alloc(iter1);
+	foreach (new Group:i : iter1)
+	{
+		ASSERT(i / Group:11 * Group:11 == i);
+	}
+}
+
+Test:y_iter_Iter_Alloc()
+{
+	new
+		Iterator:iter1<60>;
+	ASSERT(Iter_Alloc(iter1) == 0);
+	ASSERT(Iter_Alloc(iter1) == 1);
+	ASSERT(Iter_Alloc(iter1) == 2);
+	ASSERT(Iter_Alloc(iter1) == 3);
+	ASSERT(Iter_Alloc(iter1) == 4);
+	ASSERT(Iter_Alloc(iter1) == 5);
+	Iter_Remove(iter1, 5);
+	ASSERT(Iter_Alloc(iter1) == 5);
+	ASSERT(Iter_Alloc(iter1) == 6);
+	ASSERT(Iter_Alloc(iter1) == 7);
+	ASSERT(Iter_Alloc(iter1) == 8);
+	ASSERT(Iter_Alloc(iter1) == 9);
+	Iter_Remove(iter1, 5);
+	Iter_Remove(iter1, 6);
+	Iter_Remove(iter1, 7);
+	ASSERT(Iter_Alloc(iter1) == 5);
+	ASSERT(Iter_Alloc(iter1) == 6);
+	ASSERT(Iter_Alloc(iter1) == 7);
+	ASSERT(Iter_Alloc(iter1) == 10);
 }
 
 Test:y_iter_Normal()
@@ -2168,6 +2196,180 @@ Test:y_iter_Syntax3d()
 	ASSERT(count == 7 * 2 * 32);
 }
 
+stock iterfunc y_iter_Syntax6(&iterstate, cur, inc)
+{
+	cur += (inc * iterstate);
+	return cur;
+}
+
+#define Iterator@y_iter_Syntax6 iterstate(0, 1024)
+
+Test:y_iter_Syntax6a()
+{
+	new
+		count = 0;
+	foreach (new i : y_iter_Syntax6(1024))
+	{
+		ASSERT(i % 1048576 == 0);
+		++count;
+	}
+	ASSERT(count == 4095);
+}
+
+Test:y_iter_Syntax6b()
+{
+	new
+		count = 0;
+	foreach(new i:y_iter_Syntax6(1024)) { ++count; }
+	foreach(new i:y_iter_Syntax6(1024) ) { ++count; }
+	foreach(new i: y_iter_Syntax6(1024)) { ++count; }
+	foreach(new i: y_iter_Syntax6(1024) ) { ++count; }
+	foreach(new i :y_iter_Syntax6(1024)) { ++count; }
+	foreach(new i :y_iter_Syntax6(1024) ) { ++count; }
+	foreach(new i : y_iter_Syntax6(1024)) { ++count; }
+	foreach(new i : y_iter_Syntax6(1024) ) { ++count; }
+	foreach( new i:y_iter_Syntax6(1024)) { ++count; }
+	foreach( new i:y_iter_Syntax6(1024) ) { ++count; }
+	foreach( new i: y_iter_Syntax6(1024)) { ++count; }
+	foreach( new i: y_iter_Syntax6(1024) ) { ++count; }
+	foreach( new i :y_iter_Syntax6(1024)) { ++count; }
+	foreach( new i :y_iter_Syntax6(1024) ) { ++count; }
+	foreach( new i : y_iter_Syntax6(1024)) { ++count; }
+	foreach( new i : y_iter_Syntax6(1024) ) { ++count; }
+	foreach (new i:y_iter_Syntax6(1024)) { ++count; }
+	foreach (new i:y_iter_Syntax6(1024) ) { ++count; }
+	foreach (new i: y_iter_Syntax6(1024)) { ++count; }
+	foreach (new i: y_iter_Syntax6(1024) ) { ++count; }
+	foreach (new i :y_iter_Syntax6(1024)) { ++count; }
+	foreach (new i :y_iter_Syntax6(1024) ) { ++count; }
+	foreach (new i : y_iter_Syntax6(1024)) { ++count; }
+	foreach (new i : y_iter_Syntax6(1024) ) { ++count; }
+	foreach ( new i:y_iter_Syntax6(1024)) { ++count; }
+	foreach ( new i:y_iter_Syntax6(1024) ) { ++count; }
+	foreach ( new i: y_iter_Syntax6(1024)) { ++count; }
+	foreach ( new i: y_iter_Syntax6(1024) ) { ++count; }
+	foreach ( new i :y_iter_Syntax6(1024)) { ++count; }
+	foreach ( new i :y_iter_Syntax6(1024) ) { ++count; }
+	foreach ( new i : y_iter_Syntax6(1024)) { ++count; }
+	foreach ( new i : y_iter_Syntax6(1024) ) { ++count; }
+	ASSERT(count == 4095 * 1 * 32);
+#if _DEBUG
+	new TODO@issue_217;
+#endif
+//	new
+//		j;
+//	foreach(j:y_iter_Syntax6(1024)) { ++count; }
+//	foreach(j:y_iter_Syntax6(1024) ) { ++count; }
+//	foreach(j: y_iter_Syntax6(1024)) { ++count; }
+//	foreach(j: y_iter_Syntax6(1024) ) { ++count; }
+//	foreach(j :y_iter_Syntax6(1024)) { ++count; }
+//	foreach(j :y_iter_Syntax6(1024) ) { ++count; }
+//	foreach(j : y_iter_Syntax6(1024)) { ++count; }
+//	foreach(j : y_iter_Syntax6(1024) ) { ++count; }
+//	foreach( j:y_iter_Syntax6(1024)) { ++count; }
+//	foreach( j:y_iter_Syntax6(1024) ) { ++count; }
+//	foreach( j: y_iter_Syntax6(1024)) { ++count; }
+//	foreach( j: y_iter_Syntax6(1024) ) { ++count; }
+//	foreach( j :y_iter_Syntax6(1024)) { ++count; }
+//	foreach( j :y_iter_Syntax6(1024) ) { ++count; }
+//	foreach( j : y_iter_Syntax6(1024)) { ++count; }
+//	foreach( j : y_iter_Syntax6(1024) ) { ++count; }
+//	foreach (j:y_iter_Syntax6(1024)) { ++count; }
+//	foreach (j:y_iter_Syntax6(1024) ) { ++count; }
+//	foreach (j: y_iter_Syntax6(1024)) { ++count; }
+//	foreach (j: y_iter_Syntax6(1024) ) { ++count; }
+//	foreach (j :y_iter_Syntax6(1024)) { ++count; }
+//	foreach (j :y_iter_Syntax6(1024) ) { ++count; }
+//	foreach (j : y_iter_Syntax6(1024)) { ++count; }
+//	foreach (j : y_iter_Syntax6(1024) ) { ++count; }
+//	foreach ( j:y_iter_Syntax6(1024)) { ++count; }
+//	foreach ( j:y_iter_Syntax6(1024) ) { ++count; }
+//	foreach ( j: y_iter_Syntax6(1024)) { ++count; }
+//	foreach ( j: y_iter_Syntax6(1024) ) { ++count; }
+//	foreach ( j :y_iter_Syntax6(1024)) { ++count; }
+//	foreach ( j :y_iter_Syntax6(1024) ) { ++count; }
+//	foreach ( j : y_iter_Syntax6(1024)) { ++count; }
+//	foreach ( j : y_iter_Syntax6(1024) ) { ++count; }
+//	ASSERT(count == 4095 * 2 * 32);
+}
+
+Test:y_iter_Syntax6c()
+{
+	new
+		count = 0;
+	foreach(new i:y_iter_Syntax6[1024]) { ++count; }
+	foreach(new i:y_iter_Syntax6[1024] ) { ++count; }
+	foreach(new i: y_iter_Syntax6[1024]) { ++count; }
+	foreach(new i: y_iter_Syntax6[1024] ) { ++count; }
+	foreach(new i :y_iter_Syntax6[1024]) { ++count; }
+	foreach(new i :y_iter_Syntax6[1024] ) { ++count; }
+	foreach(new i : y_iter_Syntax6[1024]) { ++count; }
+	foreach(new i : y_iter_Syntax6[1024] ) { ++count; }
+	foreach( new i:y_iter_Syntax6[1024]) { ++count; }
+	foreach( new i:y_iter_Syntax6[1024] ) { ++count; }
+	foreach( new i: y_iter_Syntax6[1024]) { ++count; }
+	foreach( new i: y_iter_Syntax6[1024] ) { ++count; }
+	foreach( new i :y_iter_Syntax6[1024]) { ++count; }
+	foreach( new i :y_iter_Syntax6[1024] ) { ++count; }
+	foreach( new i : y_iter_Syntax6[1024]) { ++count; }
+	foreach( new i : y_iter_Syntax6[1024] ) { ++count; }
+	foreach (new i:y_iter_Syntax6[1024]) { ++count; }
+	foreach (new i:y_iter_Syntax6[1024] ) { ++count; }
+	foreach (new i: y_iter_Syntax6[1024]) { ++count; }
+	foreach (new i: y_iter_Syntax6[1024] ) { ++count; }
+	foreach (new i :y_iter_Syntax6[1024]) { ++count; }
+	foreach (new i :y_iter_Syntax6[1024] ) { ++count; }
+	foreach (new i : y_iter_Syntax6[1024]) { ++count; }
+	foreach (new i : y_iter_Syntax6[1024] ) { ++count; }
+	foreach ( new i:y_iter_Syntax6[1024]) { ++count; }
+	foreach ( new i:y_iter_Syntax6[1024] ) { ++count; }
+	foreach ( new i: y_iter_Syntax6[1024]) { ++count; }
+	foreach ( new i: y_iter_Syntax6[1024] ) { ++count; }
+	foreach ( new i :y_iter_Syntax6[1024]) { ++count; }
+	foreach ( new i :y_iter_Syntax6[1024] ) { ++count; }
+	foreach ( new i : y_iter_Syntax6[1024]) { ++count; }
+	foreach ( new i : y_iter_Syntax6[1024] ) { ++count; }
+	ASSERT(count == 4095 * 1 * 32);
+#if _DEBUG
+	new TODO@issue_217;
+#endif
+//	new
+//		j;
+//	foreach(j:y_iter_Syntax6[1024]) { ++count; }
+//	foreach(j:y_iter_Syntax6[1024] ) { ++count; }
+//	foreach(j: y_iter_Syntax6[1024]) { ++count; }
+//	foreach(j: y_iter_Syntax6[1024] ) { ++count; }
+//	foreach(j :y_iter_Syntax6[1024]) { ++count; }
+//	foreach(j :y_iter_Syntax6[1024] ) { ++count; }
+//	foreach(j : y_iter_Syntax6[1024]) { ++count; }
+//	foreach(j : y_iter_Syntax6[1024] ) { ++count; }
+//	foreach( j:y_iter_Syntax6[1024]) { ++count; }
+//	foreach( j:y_iter_Syntax6[1024] ) { ++count; }
+//	foreach( j: y_iter_Syntax6[1024]) { ++count; }
+//	foreach( j: y_iter_Syntax6[1024] ) { ++count; }
+//	foreach( j :y_iter_Syntax6[1024]) { ++count; }
+//	foreach( j :y_iter_Syntax6[1024] ) { ++count; }
+//	foreach( j : y_iter_Syntax6[1024]) { ++count; }
+//	foreach( j : y_iter_Syntax6[1024] ) { ++count; }
+//	foreach (j:y_iter_Syntax6[1024]) { ++count; }
+//	foreach (j:y_iter_Syntax6[1024] ) { ++count; }
+//	foreach (j: y_iter_Syntax6[1024]) { ++count; }
+//	foreach (j: y_iter_Syntax6[1024] ) { ++count; }
+//	foreach (j :y_iter_Syntax6[1024]) { ++count; }
+//	foreach (j :y_iter_Syntax6[1024] ) { ++count; }
+//	foreach (j : y_iter_Syntax6[1024]) { ++count; }
+//	foreach (j : y_iter_Syntax6[1024] ) { ++count; }
+//	foreach ( j:y_iter_Syntax6[1024]) { ++count; }
+//	foreach ( j:y_iter_Syntax6[1024] ) { ++count; }
+//	foreach ( j: y_iter_Syntax6[1024]) { ++count; }
+//	foreach ( j: y_iter_Syntax6[1024] ) { ++count; }
+//	foreach ( j :y_iter_Syntax6[1024]) { ++count; }
+//	foreach ( j :y_iter_Syntax6[1024] ) { ++count; }
+//	foreach ( j : y_iter_Syntax6[1024]) { ++count; }
+//	foreach ( j : y_iter_Syntax6[1024] ) { ++count; }
+//	ASSERT(count == 4095 * 2 * 32);
+}
+
 Test:y_iter_Syntax2a()
 {
 	new
@@ -2238,6 +2440,79 @@ Test:y_iter_Syntax2a()
 	foreach ( j :Test2a_y_iter() ) { ++count; }
 	foreach ( j : Test2a_y_iter()) { ++count; }
 	foreach ( j : Test2a_y_iter() ) { ++count; }
+	ASSERT(count == 7 * 2 * 32);
+}
+
+Test:y_iter_Syntax2e()
+{
+	new
+		count = 0;
+	foreach(new i:Test2a_y_iter) { ++count; }
+	foreach(new i:Test2a_y_iter ) { ++count; }
+	foreach(new i: Test2a_y_iter) { ++count; }
+	foreach(new i: Test2a_y_iter ) { ++count; }
+	foreach(new i :Test2a_y_iter) { ++count; }
+	foreach(new i :Test2a_y_iter ) { ++count; }
+	foreach(new i : Test2a_y_iter) { ++count; }
+	foreach(new i : Test2a_y_iter ) { ++count; }
+	foreach( new i:Test2a_y_iter) { ++count; }
+	foreach( new i:Test2a_y_iter ) { ++count; }
+	foreach( new i: Test2a_y_iter) { ++count; }
+	foreach( new i: Test2a_y_iter ) { ++count; }
+	foreach( new i :Test2a_y_iter) { ++count; }
+	foreach( new i :Test2a_y_iter ) { ++count; }
+	foreach( new i : Test2a_y_iter) { ++count; }
+	foreach( new i : Test2a_y_iter ) { ++count; }
+	foreach (new i:Test2a_y_iter) { ++count; }
+	foreach (new i:Test2a_y_iter ) { ++count; }
+	foreach (new i: Test2a_y_iter) { ++count; }
+	foreach (new i: Test2a_y_iter ) { ++count; }
+	foreach (new i :Test2a_y_iter) { ++count; }
+	foreach (new i :Test2a_y_iter ) { ++count; }
+	foreach (new i : Test2a_y_iter) { ++count; }
+	foreach (new i : Test2a_y_iter ) { ++count; }
+	foreach ( new i:Test2a_y_iter) { ++count; }
+	foreach ( new i:Test2a_y_iter ) { ++count; }
+	foreach ( new i: Test2a_y_iter) { ++count; }
+	foreach ( new i: Test2a_y_iter ) { ++count; }
+	foreach ( new i :Test2a_y_iter) { ++count; }
+	foreach ( new i :Test2a_y_iter ) { ++count; }
+	foreach ( new i : Test2a_y_iter) { ++count; }
+	foreach ( new i : Test2a_y_iter ) { ++count; }
+	new
+		j;
+	foreach(j:Test2a_y_iter) { ++count; }
+	foreach(j:Test2a_y_iter ) { ++count; }
+	foreach(j: Test2a_y_iter) { ++count; }
+	foreach(j: Test2a_y_iter ) { ++count; }
+	foreach(j :Test2a_y_iter) { ++count; }
+	foreach(j :Test2a_y_iter ) { ++count; }
+	foreach(j : Test2a_y_iter) { ++count; }
+	foreach(j : Test2a_y_iter ) { ++count; }
+	foreach( j:Test2a_y_iter) { ++count; }
+	foreach( j:Test2a_y_iter ) { ++count; }
+	foreach( j: Test2a_y_iter) { ++count; }
+	foreach( j: Test2a_y_iter ) { ++count; }
+	foreach( j :Test2a_y_iter) { ++count; }
+	foreach( j :Test2a_y_iter ) { ++count; }
+	foreach( j : Test2a_y_iter) { ++count; }
+	foreach( j : Test2a_y_iter ) { ++count; }
+	foreach (j:Test2a_y_iter) { ++count; }
+	foreach (j:Test2a_y_iter ) { ++count; }
+	foreach (j: Test2a_y_iter) { ++count; }
+	foreach (j: Test2a_y_iter ) { ++count; }
+	foreach (j :Test2a_y_iter) { ++count; }
+	foreach (j :Test2a_y_iter ) { ++count; }
+	foreach (j : Test2a_y_iter) { ++count; }
+	foreach (j : Test2a_y_iter ) { ++count; }
+	foreach ( j:Test2a_y_iter) { ++count; }
+	foreach ( j:Test2a_y_iter ) { ++count; }
+	foreach ( j: Test2a_y_iter) { ++count; }
+	foreach ( j: Test2a_y_iter ) { ++count; }
+	foreach ( j :Test2a_y_iter) { ++count; }
+	foreach ( j :Test2a_y_iter ) { ++count; }
+	foreach ( j : Test2a_y_iter) { ++count; }
+	foreach ( j : Test2a_y_iter ) { ++count; }
 	ASSERT(count == 7 * 2 * 32);
 }
 
@@ -2624,12 +2899,22 @@ Test:y_iter_ArrayMulti()
 	ASSERT(count == 0);
 }
 
-Test:y_iter_Deprecate()
-{
-	foreach (Player, i)
+#if _FOREACH_PLAYERS
+	Test:y_iter_Deprecate()
 	{
+		#pragma tabsize 4
+		/* ================================================================== */
+		/* | THERE IS MEANT TO BE A WARNING ON THIS LINE                    | */
+		/* |                                                                | */
+		/* | */ foreach (Player, i)                                      /* | */
+		/* |                                                                | */
+		/* | It tests that the old syntax is nicely deprecated.             | */
+		/* ================================================================== */
+		#pragma tabsize 4
+		{
+		}
 	}
-}
+#endif
 
 Test:y_iter_Random()
 {
@@ -2816,5 +3101,470 @@ Test:y_iter_None2()
 		++count;
 	}
 	ASSERT(count == 6);
+}
+
+Test:y_iter_Index1()
+{
+	new Iterator:a<20>;
+	Iter_Add(a, 6);
+	Iter_Add(a, 8);
+	Iter_Add(a, 9);
+	Iter_Add(a, 14);
+	Iter_Add(a, 17);
+	Iter_Add(a, 19);
+	ASSERT(Iter_Index(a, -100) == cellmin);
+	ASSERT(Iter_Index(a, -100, true) == cellmin);
+	ASSERT(Iter_Index(a, -1) == cellmin);
+	ASSERT(Iter_Index(a, -1, true) == cellmin);
+	ASSERT(Iter_Index(a, 0) == 6);
+	ASSERT(Iter_Index(a, 0, true) == 6);
+	ASSERT(Iter_Index(a, 1) == 8);
+	ASSERT(Iter_Index(a, 1, true) == 8);
+	ASSERT(Iter_Index(a, 2) == 9);
+	ASSERT(Iter_Index(a, 2, true) == 9);
+	ASSERT(Iter_Index(a, 3) == 14);
+	ASSERT(Iter_Index(a, 3, true) == 14);
+	ASSERT(Iter_Index(a, 4) == 17);
+	ASSERT(Iter_Index(a, 4, true) == 17);
+	ASSERT(Iter_Index(a, 5) == 19);
+	ASSERT(Iter_Index(a, 5, true) == 19);
+	ASSERT(Iter_Index(a, 6) == cellmin);
+	ASSERT(Iter_Index(a, 6, true) == 6);
+	ASSERT(Iter_Index(a, 7) == cellmin);
+	ASSERT(Iter_Index(a, 7, true) == 8);
+	ASSERT(Iter_Index(a, 8) == cellmin);
+	ASSERT(Iter_Index(a, 8, true) == 9);
+	ASSERT(Iter_Index(a, 9) == cellmin);
+	ASSERT(Iter_Index(a, 9, true) == 14);
+	ASSERT(Iter_Index(a, 10) == cellmin);
+	ASSERT(Iter_Index(a, 10, true) == 17);
+	ASSERT(Iter_Index(a, 11) == cellmin);
+	ASSERT(Iter_Index(a, 11, true) == 19);
+	ASSERT(Iter_Index(a, 12) == cellmin);
+	ASSERT(Iter_Index(a, 12, true) == 6);
+	ASSERT(Iter_Index(a, 13) == cellmin);
+	ASSERT(Iter_Index(a, 13, true) == 8);
+	ASSERT(Iter_Index(a, 130) == cellmin);
+	ASSERT(Iter_Index(a, 130, true) == 17);
+}
+
+Test:y_iter_Index2()
+{
+	new Iterator:a<5, 20>;
+	Iter_Add(a<3>, 0);
+	Iter_Add(a<3>, 1);
+	Iter_Add(a<3>, 2);
+	Iter_Add(a<3>, 14);
+	Iter_Add(a<4>, 10);
+	Iter_Add(a<4>, 11);
+	Iter_Add(a<4>, 15);
+	Iter_Add(a<4>, 18);
+	ASSERT(Iter_Index(a<0>, -1) == cellmin);
+	ASSERT(Iter_Index(a<0>, -1, true) == cellmin);
+	ASSERT(Iter_Index(a<0>, 0) == cellmin);
+	ASSERT(Iter_Index(a<0>, 10) == cellmin);
+	ASSERT(Iter_Index(a<0>, 0, true) == cellmin);
+	ASSERT(Iter_Index(a<0>, 10, true) == cellmin);
+	ASSERT(Iter_Index(a<1>, 0) == cellmin);
+	ASSERT(Iter_Index(a<1>, 10) == cellmin);
+	ASSERT(Iter_Index(a<1>, 0, true) == cellmin);
+	ASSERT(Iter_Index(a<1>, 10, true) == cellmin);
+	ASSERT(Iter_Index(a<2>, 0) == cellmin);
+	ASSERT(Iter_Index(a<2>, 10) == cellmin);
+	ASSERT(Iter_Index(a<2>, 0, true) == cellmin);
+	ASSERT(Iter_Index(a<2>, 10, true) == cellmin);
+	ASSERT(Iter_Index(a<3>, 0) == 0);
+	ASSERT(Iter_Index(a<3>, 1) == 1);
+	ASSERT(Iter_Index(a<3>, 2) == 2);
+	ASSERT(Iter_Index(a<3>, 3) == 14);
+	ASSERT(Iter_Index(a<3>, 4) == cellmin);
+	ASSERT(Iter_Index(a<3>, 4, true) == 0);
+	ASSERT(Iter_Index(a<3>, 5) == cellmin);
+	ASSERT(Iter_Index(a<3>, 5, true) == 1);
+	ASSERT(Iter_Index(a<3>, 403) == cellmin);
+	ASSERT(Iter_Index(a<3>, 403, true) == 14);
+	ASSERT(Iter_Index(a<4>, -1) == cellmin);
+	ASSERT(Iter_Index(a<4>, -1, true) == cellmin);
+	ASSERT(Iter_Index(a<4>, 0) == 10);
+	ASSERT(Iter_Index(a<4>, 0, true) == 10);
+	ASSERT(Iter_Index(a<4>, 10) == cellmin);
+	ASSERT(Iter_Index(a<4>, 10, true) == 15);
+}
+
+iterfunc              y_iterDecl1[cellmin](cur) { return cur == cellmin ? 5 : cellmin; }
+stock iterfunc        y_iterDecl2(cur) { return cur == cellmin ? 5 : cellmin; }
+#define iterstart@y_iterDecl2 (cellmin)
+static stock iterfunc y_iterDecl3(cur) { return cur == -1 ? 5 : -1; }
+static iterfunc stock y_iterDecl4(cur) { return cur == 0 ? 5 : 0; }
+#define Iterator@y_iterDecl4 iterstart(0)
+iterfunc static       y_iterDecl5[0](cur) { return cur == 0 ? 5 : 0; }
+iterfunc stock static y_iterDecl6(&iterstate, cur) { return cur == -1 ? iterstate : -1; }
+#define iterstart@y_iterDecl6 iterstate(-1, 5)
+
+/* ========================================================================== */
+/* | THERE IS MEANT TO BE A WARNING ON THIS LINE                            | */
+/* |                                                                        | */
+/* | */ iterfunc y_iterDecl1X[cellmin](cur)                              /* | */
+/* | */ {                                                                /* | */
+/* | */     return cur == cellmin ? 5 : cellmin;                         /* | */
+/* | */ }                                                                /* | */
+/* |                                                                        | */
+/* | It tests the lack of "stock" with "iterfunc".                          | */
+/* ========================================================================== */
+
+/* ========================================================================== */
+/* | THERE IS NOT MEANT TO BE A WARNING ON THIS LINE...                     | */
+/* |          ===                                                           | */
+/* | */ stock iterfunc y_iterDecl2X(cur)                                 /* | */
+/* | */ {                                                                /* | */
+/* | */     return cur == cellmin ? 5 : cellmin;                         /* | */
+/* | */ }                                                                /* | */
+/* |                                                                        | */
+/* | It tests that "stock iterfunc" works.  TODO: Fix it.                   | */
+/* ========================================================================== */
+#define iterstart@y_iterDecl2X (cellmin)
+
+/* ========================================================================== */
+/* | THERE IS NOT MEANT TO BE A WARNING ON THIS LINE...                     | */
+/* |          ===                                                           | */
+/* | */ static stock iterfunc y_iterDecl3X(cur)                          /* | */
+/* | */ {                                                                /* | */
+/* | */     return cur == -1 ? 5 : -1;                                   /* | */
+/* | */ }                                                                /* | */
+/* |                                                                        | */
+/* | It tests that "static stock iterfunc" works.  TODO: Fix it.            | */
+/* ========================================================================== */
+
+static iterfunc stock y_iterDecl4X(cur) { return cur == 0 ? 5 : 0; }
+#define Iterator@y_iterDecl4X iterstart(0)
+
+/* ========================================================================== */
+/* | THERE IS MEANT TO BE A WARNING ON THIS LINE                            | */
+/* |                                                                        | */
+/* | */ static iterfunc y_iterDecl5X[0](cur)                             /* | */
+/* | */ {                                                                /* | */
+/* | */     return cur == 0 ? 5 : 0;                                     /* | */
+/* | */ }                                                                /* | */
+/* |                                                                        | */
+/* | It tests the lack of "stock" with "static iterfunc".                   | */
+/* ========================================================================== */
+
+iterfunc stock static y_iterDecl6X(&iterstate, cur) { return cur == -1 ? iterstate : -1; }
+#define iterstart@y_iterDecl6X iterstate(-1, 5)
+
+Test:y_iter_MacroLess()
+{
+	new i;
+	foreach (i : y_iterDecl1()) { ASSERT(i == 5); }
+	ASSERT(i == cellmin);
+	foreach (i : y_iterDecl5()) { ASSERT(i == 5); }
+	ASSERT(i == 0);
+	foreach (i : y_iterDecl3()) { ASSERT(i == 5); }
+	ASSERT(i == -1);
+	foreach (i : y_iterDecl2()) { ASSERT(i == 5); }
+	ASSERT(i == cellmin);
+	foreach (i : y_iterDecl4()) { ASSERT(i == 5); }
+	ASSERT(i == 0);
+	foreach (new j : y_iterDecl6()) { ASSERT(j == 5); }
+	ASSERT(i == 0);
+}
+
+iterfunc stock y_iter_yield0()
+{
+}
+#define Iterator@y_iter_yield0 iteryield
+
+Test:y_iter_yield0a()
+{
+	new
+		count;
+	count = 0;
+	foreach (new i : y_iter_yield0())
+	{
+		#pragma unused i
+		++count;
+	}
+	ASSERT(count == 0);
+	count = 0;
+	foreach (new i : y_iter_yield0)
+	{
+		#pragma unused i
+		++count;
+	}
+	ASSERT(count == 0);
+	count = 0;
+	foreach (new i : y_iter_yield0[])
+	{
+		#pragma unused i
+		++count;
+	}
+	ASSERT(count == 0);
+}
+
+iterfunc stock y_iter_yield1()
+{
+	for (new i = 0; i != 10; ++i)
+	{
+		yield return i;
+	}
+}
+#define Iterator@y_iter_yield1 iteryield
+
+Test:y_iter_yield1a()
+{
+	new
+		count;
+	count = 0;
+	foreach (new i : y_iter_yield1())
+	{
+		#pragma unused i
+		++count;
+	}
+	ASSERT(count == 10);
+	count = 0;
+	foreach (new i : y_iter_yield1)
+	{
+		#pragma unused i
+		++count;
+	}
+	ASSERT(count == 10);
+	count = 0;
+	foreach (new i : y_iter_yield1[])
+	{
+		#pragma unused i
+		++count;
+	}
+	ASSERT(count == 10);
+}
+
+iterfunc stock y_iter_yield2(step, target = 100)
+{
+	new
+		total = 0;
+	while (total < target)
+	{
+		yield return total;
+		total += step;
+	}
+}
+#define Iterator@y_iter_yield2 iteryield
+
+Test:y_iter_yield2a()
+{
+	new
+		count;
+	count = 0;
+	foreach (new i : y_iter_yield2(10))
+	{
+		ASSERT(i % 10 == 0);
+		++count;
+	}
+	ASSERT(count == 10);
+	count = 0;
+	foreach (new i : y_iter_yield2(10, 20))
+	{
+		ASSERT(i == 0 || i == 10);
+		++count;
+	}
+	ASSERT(count == 2);
+	count = 0;
+	foreach (new i : y_iter_yield2[5])
+	{
+		ASSERT(i % 5 == 0);
+		++count;
+	}
+	ASSERT(count == 20);
+}
+
+iterfunc stock y_iter_yield3(step, target = 100)
+{
+	new
+		total = 0;
+	for ( ; ; )
+	{
+		if (total >= target)
+			yield break;
+		yield return total;
+		total += step;
+	}
+}
+#define Iterator@y_iter_yield3 iteryield
+
+Test:y_iter_yield3a()
+{
+	new
+		count;
+	count = 0;
+	foreach (new i : y_iter_yield3(10))
+	{
+		ASSERT(i % 10 == 0);
+		++count;
+	}
+	ASSERT(count == 10);
+	count = 0;
+	foreach (new i : y_iter_yield3(10, 20))
+	{
+		ASSERT(i == 0 || i == 10);
+		++count;
+	}
+	ASSERT(count == 2);
+	count = 0;
+	foreach (new i : y_iter_yield3[5])
+	{
+		ASSERT(i % 5 == 0);
+		++count;
+	}
+	ASSERT(count == 20);
+}
+
+iterfunc stock y_iter_yield4(arr[], size = sizeof (arr))
+{
+	for (new i = 0; i != size; ++i)
+	{
+		yield return arr[i];
+	}
+}
+#define Iterator@y_iter_yield4 iteryield
+
+Test:y_iter_yield4a()
+{
+	new
+		count = 0,
+		arr[] = { 2, 3, 6, 7, 110, 5432 };
+	foreach (new i : y_iter_yield4(arr))
+	{
+		ASSERT(i == 2 || i == 3 || i == 6 || i == 7 || i == 110 || i == 5432);
+		++count;
+	}
+}
+
+#if defined YSI_SLOW_TESTS
+
+	iterfunc stock y_iter_yield5()
+	{
+		new
+			k = 0;
+		for (new i = 0; i != 65536; ++i)
+		{
+			if (i % 655 == 0)
+				printf("%d%%...", i / 655);
+			for (new j = 0; j != 65536; ++j)
+			{
+				yield return k;
+				++k;
+			}
+		}
+	}
+	#define Iterator@y_iter_yield5 iteryield
+	
+	Test:y_iter_yield5a()
+	{
+		new
+			k = 0;
+		for (new i = 0; i != 65536; ++i)
+		{
+			if (i % 655 == 0)
+				printf("%d%%...", i / 655);
+			for (new j = 0; j != 65536; ++j)
+			{
+				++k;
+			}
+		}
+		ASSERT(k == 0); // Overflow.
+		new
+			count = 0,
+			bool:ever = false;
+		foreach (new i : y_iter_yield5)
+		{
+			#pragma unused i
+			++count;
+			ever = true;
+		}
+		ASSERT(count == 0); // Overflow.
+		ASSERT(ever);
+	}
+
+#endif
+
+iterfunc stock y_iter_yield6()
+{
+	for (new i = 0; i != 3; ++i)
+	{
+		yield return i;
+	}
+	yield return 10;
+	yield return 20;
+	for (new i = 501; i != 505; ++i)
+	{
+		yield return i;
+	}
+}
+#define Iterator@y_iter_yield6 iteryield
+
+Test:y_iter_yield6a()
+{
+	new
+		answers[] = { 0, 1, 2, 10, 20, 501, 502, 503, 504 },
+		idx = 0;
+	foreach (new i : y_iter_yield6)
+	{
+		ASSERT(idx < sizeof (answers) && i == answers[idx]);
+		++idx;
+	}
+	ASSERT(idx == sizeof(answers));
+}
+
+iterfunc stock y_iter_yield7c(n)
+{
+	while (n--)
+	{
+		yield return 10;
+	}
+}
+#define Iterator@y_iter_yield7c iteryield
+
+iterfunc stock y_iter_yield7b()
+{
+	foreach (new i : y_iter_yield7c(4))
+	{
+		yield return i;
+	}
+	yield return 20;
+}
+#define Iterator@y_iter_yield7b iteryield
+
+iterfunc stock y_iter_yield7a(x)
+{
+	foreach (new i : y_iter_yield7b)
+	{
+		yield return i + 5;
+		yield return i + 6;
+		yield return i + 7;
+		yield return i + 9;
+		yield return i + 4;
+		yield return i + 3;
+	}
+	yield return x;
+}
+#define Iterator@y_iter_yield7a iteryield
+
+Test:y_iter_yield7a()
+{
+	new
+		answers[] = {
+			15, 16, 17, 19, 14, 13,
+			15, 16, 17, 19, 14, 13,
+			15, 16, 17, 19, 14, 13,
+			15, 16, 17, 19, 14, 13,
+			25, 26, 27, 29, 24, 23,
+			2
+		},
+		idx = 0;
+	foreach (new i : y_iter_yield7a[2])
+	{
+		ASSERT(idx < sizeof (answers) && i == answers[idx]);
+		++idx;
+	}
+	ASSERT(idx == sizeof(answers));
 }
 

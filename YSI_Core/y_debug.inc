@@ -1,28 +1,68 @@
-/**--------------------------------------------------------------------------**\
-					==============================
-					Y Sever Includes - Debug Setup
-					==============================
-Description:
-	Ensures debug levels are set and defines debug functions.
-	
-	General debug levels:
-	
-	0 - No debug information.
-	1 - Callbacks and timers.
-	2 - Remote functions.
-	3 - Stock functions.
-	4 - Static functions.
-	5 - Code.
-	6 - Loops.
-	7 - Extra loop code.
-	
-	If you use P:0 you get an optional debug print controlled by the global
-	state ysi_debug - which is either on or off.
+#if defined _INC_y_debug
+	#endinput
+#endif
+#define _INC_y_debug
+
+/**
+ * <library name="y_debug">
+ * <section>
+ *  Description
+ * </section>
+ *  <p>Ensures debug levels are set and defines debug functions.</p>
+ *
+ *  <p>General debug levels:</p>
+ *
+ *  <ul>
+ *  <li>-1 - Run-time selected debug level.</li>
+ *  <li>0 - No debug information.</li>
+ *  <li>1 - Callbacks and timers.</li>
+ *  <li>2 - Remote functions.</li>
+ *  <li>3 - Stock functions.</li>
+ *  <li>4 - Static functions.</li>
+ *  <li>5 - Code.</li>
+ *  <li>6 - Loops.</li>
+ *  <li>7 - Extra loop code.</li>
+ *  </ul>
+ *
+ *  <p>If you use <c>P:0</c> you get an optional debug print controlled by the
+ *  global state <c>ysi_debug</c> - which is either on or off.</p>
+ * <section>
+ *  Version
+ * </section>
+ *  1.0
+ * <section>
+ *  Functions
+ * </section>
+ * <subsection>
+ * Inline
+ * </subsection><ul>
+ *  <symbol name="Debug_Code">Runs defined code if a certain level is active.</symbol>
+ *  <symbol name="Debug_Print">Prints the formatted string provided at the given level.</symbol>
+ * </ul><subsection>
+ * Stock
+ * </subsection><ul>
+ *  <symbol name="Debug_PrintArray">Print several items from an array for debugging purposes.</symbol>
+ *  <symbol name="Debug_Enable">Turn on level 0 prints.</symbol>
+ *  <symbol name="Debug_Disable">Turn off level 0 prints.</symbol>
+ *  <symbol name="Debug_Level">Set the debug level when the code is compiled with
+ *  <c>_DEBUG=-1</c>, which means full run-time selection.</symbol>
+ * </ul><section>
+ *  Definitions
+ * </section><ul>
+ *  <symbol name="P:&lt;0-6&gt;">Print a message.</symbol>
+ *  <symbol name="P:C">Run debug code.</symbol>
+ *  <symbol name="P:E">Print an error message.</symbol>
+ *  <symbol name="P:W">Print a warning message.</symbol>
+ * </ul><section>Compile options</section><ul>
+ *  <symbol name="_DEBUG">Debugging level to use.</symbol>
+ * </ul>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -31,89 +71,66 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI debug include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	1.0
-Changelog:
-	06/08/10:
-		Added new syntax.
-		Added level 0 debugging with state controlled functions.
-	15/04/07:
-		First version.
-Functions:
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		Debug_Code - Runs defined code if a certain level is active.
-		Debug_Print - Prints the formatted string provided at the given level.
-	API:
-		-
-Callbacks:
-	-
-Definitions:
-	P:<0-6> - Print a message.
-	P:C - Run debug code.
-	P:E - Print an error message.
-	P:W - Print a warning message.
-Enums:
-	-
-Macros:
-	-
-Tags:
-	-
-Variables:
-	Global:
-		-
-	Static:
-		-
-Commands:
-	-
-Compile options:
-	_DEBUG - Debugging level to use.
-Operators:
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
 
-#if defined _INC_y_debug
-	#endinput
-#endif
-#define _INC_y_debug
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
 
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*//*-------------------------------------------------------------------------**/
+
+#include "..\YSI_Internal\y_compilerdata"
+#include "..\YSI_Internal\y_globaltags"
 #include "..\YSI_Internal\y_version"
 
 #include "..\YSI_Internal\y_funcinc"
@@ -129,22 +146,180 @@ stock YSI_gDebugLevel = 0;
 #define P:%1(%2); Debug_Print%1(%2);
 #define C:%1(%2); Debug_Code%1(%2);
 
-/**--------------------------------------------------------------------------**\
-<summary>Debug_Code</summary>
-<param name="level">Debug level to run the code at.</param>
-<param name="code">Code to run.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Code is not a variable, it's a code chunk and may be written as so:
-	
-	Debug_Code1(if (bla == 2) { bla++; printf("%d", bla); });
-	
-	The code must all be on one line to avoid errors.
-	This isn't really a function as the first parameter is part of the name.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="code">Code to run.</param>
+ * <remarks>
+ *  Code is not a variable, it's a code chunk and may be written as so:
+ *
+ *  <code>
+ * Debug_Code1(if (bla == 2) { bla++; printf("%d", bla); });
+ *  </code>
+ *
+ *  Or:
+ *
+ *  <code>
+ * C:1(if (bla == 2) { bla++; printf("%d", bla); });
+ *  </code>
+ *
+ *  The code must all be on one line to avoid errors.
+ *  This isn't really a function as the first parameter is part of the name.
+ *
+ *  Only compiles the code when <c>_DEBUG %gt;= 1</c>.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Debug_Code1(code));
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="code">Code to run.</param>
+ * <remarks>
+ *  Code is not a variable, it's a code chunk and may be written as so:
+ *
+ *  <code>
+ * Debug_Code2(if (bla == 2) { bla++; printf("%d", bla); });
+ *  </code>
+ *
+ *  Or:
+ *
+ *  <code>
+ * C:2(if (bla == 2) { bla++; printf("%d", bla); });
+ *  </code>
+ *
+ *  The code must all be on one line to avoid errors.
+ *  This isn't really a function as the first parameter is part of the name.
+ *
+ *  Only compiles the code when <c>_DEBUG %gt;= 2</c>.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Debug_Code2(code));
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="code">Code to run.</param>
+ * <remarks>
+ *  Code is not a variable, it's a code chunk and may be written as so:
+ *
+ *  <code>
+ * Debug_Code3(if (bla == 2) { bla++; printf("%d", bla); });
+ *  </code>
+ *
+ *  Or:
+ *
+ *  <code>
+ * C:3(if (bla == 2) { bla++; printf("%d", bla); });
+ *  </code>
+ *
+ *  The code must all be on one line to avoid errors.
+ *  This isn't really a function as the first parameter is part of the name.
+ *
+ *  Only compiles the code when <c>_DEBUG %gt;= 3</c>.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Debug_Code3(code));
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="code">Code to run.</param>
+ * <remarks>
+ *  Code is not a variable, it's a code chunk and may be written as so:
+ *
+ *  <code>
+ * Debug_Code4(if (bla == 2) { bla++; printf("%d", bla); });
+ *  </code>
+ *
+ *  Or:
+ *
+ *  <code>
+ * C:4(if (bla == 2) { bla++; printf("%d", bla); });
+ *  </code>
+ *
+ *  The code must all be on one line to avoid errors.
+ *  This isn't really a function as the first parameter is part of the name.
+ *
+ *  Only compiles the code when <c>_DEBUG %gt;= 4</c>.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Debug_Code4(code));
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="code">Code to run.</param>
+ * <remarks>
+ *  Code is not a variable, it's a code chunk and may be written as so:
+ *
+ *  <code>
+ * Debug_Code5(if (bla == 2) { bla++; printf("%d", bla); });
+ *  </code>
+ *
+ *  Or:
+ *
+ *  <code>
+ * C:5(if (bla == 2) { bla++; printf("%d", bla); });
+ *  </code>
+ *
+ *  The code must all be on one line to avoid errors.
+ *  This isn't really a function as the first parameter is part of the name.
+ *
+ *  Only compiles the code when <c>_DEBUG %gt;= 5</c>.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Debug_Code5(code));
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="code">Code to run.</param>
+ * <remarks>
+ *  Code is not a variable, it's a code chunk and may be written as so:
+ *
+ *  <code>
+ * Debug_Code6(if (bla == 2) { bla++; printf("%d", bla); });
+ *  </code>
+ *
+ *  Or:
+ *
+ *  <code>
+ * C:6(if (bla == 2) { bla++; printf("%d", bla); });
+ *  </code>
+ *
+ *  The code must all be on one line to avoid errors.
+ *  This isn't really a function as the first parameter is part of the name.
+ *
+ *  Only compiles the code when <c>_DEBUG %gt;= 6</c>.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Debug_Code6(code));
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="code">Code to run.</param>
+ * <remarks>
+ *  Code is not a variable, it's a code chunk and may be written as so:
+ *
+ *  <code>
+ * Debug_Code7(if (bla == 2) { bla++; printf("%d", bla); });
+ *  </code>
+ *
+ *  Or:
+ *
+ *  <code>
+ * C:7(if (bla == 2) { bla++; printf("%d", bla); });
+ *  </code>
+ *
+ *  The code must all be on one line to avoid errors.
+ *  This isn't really a function as the first parameter is part of the name.
+ *
+ *  Only compiles the code when <c>_DEBUG %gt;= 7</c>.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Debug_Code7(code));
 
 #if _DEBUG == -1
 	#define Debug_Code1(%1); { if (YSI_gDebugLevel >= 1) { %1 }}
@@ -204,20 +379,166 @@ stock YSI_gDebugLevel = 0;
 	#define Debug_CodeX(%1);
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>Debug_Print</summary>
-<param name="level">Debug level to print at.</param>
-<param name="format[]">Format.</param>
-<param name="..."></param>
-<returns>
-	-
-</returns>
-<remarks>
-	This isn't really a function as the first parameter is part of the name:
-	
-	Debug_Print4("variables: %d, %d", i, j);
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="str">Format.</param>
+ * <param name=""></param>
+ * <remarks>
+ *  This isn't really a function as the first parameter is part of the name:
+ *
+ *  <code>
+ * Debug_Print1("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  Or:
+ *
+ *  <code>
+ * P:1("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  Only prints the data when <c>_DEBUG %gt;= 1</c>.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Debug_Print1(const str[], GLOBAL_TAG_TYPES:...));
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="str">Format.</param>
+ * <param name=""></param>
+ * <remarks>
+ *  This isn't really a function as the first parameter is part of the name:
+ *
+ *  <code>
+ * Debug_Print2("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  Or:
+ *
+ *  <code>
+ * P:2("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  Only prints the data when <c>_DEBUG %gt;= 2</c>.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Debug_Print2(const str[], GLOBAL_TAG_TYPES:...));
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="str">Format.</param>
+ * <param name=""></param>
+ * <remarks>
+ *  This isn't really a function as the first parameter is part of the name:
+ *
+ *  <code>
+ * Debug_Print3("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  Or:
+ *
+ *  <code>
+ * P:3("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  Only prints the data when <c>_DEBUG %gt;= 3</c>.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Debug_Print3(const str[], GLOBAL_TAG_TYPES:...));
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="str">Format.</param>
+ * <param name=""></param>
+ * <remarks>
+ *  This isn't really a function as the first parameter is part of the name:
+ *
+ *  <code>
+ * Debug_Print4("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  Or:
+ *
+ *  <code>
+ * P:4("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  Only prints the data when <c>_DEBUG %gt;= 4</c>.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Debug_Print4(const str[], GLOBAL_TAG_TYPES:...));
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="str">Format.</param>
+ * <param name=""></param>
+ * <remarks>
+ *  This isn't really a function as the first parameter is part of the name:
+ *
+ *  <code>
+ * Debug_Print5("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  Or:
+ *
+ *  <code>
+ * P:5("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  Only prints the data when <c>_DEBUG %gt;= 5</c>.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Debug_Print5(const str[], GLOBAL_TAG_TYPES:...));
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="str">Format.</param>
+ * <param name=""></param>
+ * <remarks>
+ *  This isn't really a function as the first parameter is part of the name:
+ *
+ *  <code>
+ * Debug_Print6("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  Or:
+ *
+ *  <code>
+ * P:6("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  Only prints the data when <c>_DEBUG %gt;= 6</c>.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Debug_Print6(const str[], GLOBAL_TAG_TYPES:...));
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="str">Format.</param>
+ * <param name=""></param>
+ * <remarks>
+ *  This isn't really a function as the first parameter is part of the name:
+ *
+ *  <code>
+ * Debug_Print7("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  Or:
+ *
+ *  <code>
+ * P:7("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  Only prints the data when <c>_DEBUG %gt;= 7</c>.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Debug_Print7(const str[], GLOBAL_TAG_TYPES:...));
 
 #if _DEBUG == -1
 	#define Debug_Print1(%1); { if (YSI_gDebugLevel >= 1) printf(%1); }
@@ -286,22 +607,51 @@ stock YSI_gDebugLevel = 0;
 #define Debug_PrintC(%1); \
 	Debug_CodeX(%1);
 
-stock Debug_Print0(const str[], {Float,_}:...) <ysi_debug : on>
+/*-------------------------------------------------------------------------*//**
+ * <param name="format">str.</param>
+ * <param name=""></param>
+ * <remarks>
+ *  This isn't really a function as the first parameter is part of the name:
+ *
+ *  <code>
+ * Debug_Print0("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  Or:
+ *
+ *  <code>
+ * P:0("variables: %d, %d", i, j);
+ *  </code>
+ *
+ *  <c>_DEBUG</c> level 0 prints are ALWAYS compiled, but are runtime switched
+ *  using the automata <c>ysi_debug</c>.  When then state is <c>ysi_debug :
+ *  on</c>, the prints are executed.  When then state is <c>ysi_debug : off</c>,
+ *  they aren't.
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Debug_Print0(const str[], GLOBAL_TAG_TYPES:...) <ysi_debug : on>
 {
-	#emit STACK        8
+	static tmp1, tmp2;
+	#emit POP.pri
+	#emit STOR.pri     tmp1
+	#emit POP.alt
+	#emit STOR.alt     tmp2
 	#emit SYSREQ.C     printf
-	#emit STACK        0xFFFFFFF8
+	#emit PUSH         tmp2
+	#emit PUSH         tmp1
 	#pragma unused str
 	return 0;
 }
 
-stock Debug_Print0(const str[], {Float,_}:...) <>
+stock Debug_Print0(const str[], GLOBAL_TAG_TYPES:...) <>
 {
 	#pragma unused str
 	return 0;
 }
 
-stock Debug_PrintArray(arr[], size)
+stock Debug_PrintArray(arr[], size = sizeof (arr))
 {
 	new
 		str[96];
@@ -324,6 +674,19 @@ stock Debug_PrintArray(arr[], size)
 	}
 	return str;
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Does some strange mangling of <c>YSI_FILTERSCRIPT</c> because at one point I
+ *  found a compiler bug where the first automata in the script could conflict
+ *  with the first variable in the script.  I don't know what triggered it, and
+ *  it has never shown up since I messed about with this file to try mangle some
+ *  things.  Never the less, if it ever happens again this code might detect it.
+ *
+ *  Actually, that's less likely now, since that variable is now very unlikely
+ *  to be the first in the script ever.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 public OnScriptInit()
 {
@@ -349,6 +712,13 @@ public OnScriptInit()
 	return 1;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <transition keep="true" target="ysi_debug : on" source="ysi_debug : "/>
+ * <remarks>
+ *  Mostly exists to define the full range of <c>ysi_debug</c> states.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock Debug_SetState() <ysi_debug : off>
 {
 }
@@ -358,13 +728,42 @@ static stock Debug_SetState() <>
 	state ysi_debug : on;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Turn on level 0 prints.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Debug_Enable()
+{
+	state ysi_debug : on;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Turn off level 0 prints.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Debug_Disable()
+{
+	state ysi_debug : off;
+}
+
 #undef OnScriptInit
 #define OnScriptInit Debug_OnScriptInit
 #if defined Debug_OnScriptInit
 	forward Debug_OnScriptInit();
 #endif
 
-stock DebugLevel(level = -1)
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Set the debug level when the code is compiled with <c>_DEBUG=-1</c>, which
+ *  means full run-time selection.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Debug_Level(level = -1)
 {
 	if (0 <= level <= 7)
 	{
@@ -372,4 +771,5 @@ stock DebugLevel(level = -1)
 	}
 	return YSI_gDebugLevel;
 }
+#define DebugLevel Debug_Level
 

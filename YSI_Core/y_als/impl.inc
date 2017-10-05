@@ -1,3 +1,75 @@
+/*
+Legal:
+	Version: MPL 1.1
+	
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 the "License"; you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
+	http://www.mozilla.org/MPL/
+	
+	Software distributed under the License is distributed on an "AS IS" basis,
+	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	for the specific language governing rights and limitations under the
+	License.
+	
+	The Original Code is the YSI framework.
+	
+	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright C 2011
+	the Initial Developer. All Rights Reserved.
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
+
 enum ALS
 {
 	Bit:ALS_OnScriptInit,
@@ -56,6 +128,14 @@ enum ALS
 	Bit:ALS_OnPlayerClickPlayerTextDraw,
 	Bit:ALS_OnPlayerEditObject,
 	Bit:ALS_OnPlayerEditAttachedObject,
+	// Added 05/07/17
+	Bit:ALS_OnPlayerWeaponShot,
+	Bit:ALS_OnIncomingConnection,
+	Bit:ALS_OnTrailerUpdate,
+	Bit:ALS_OnVehicleSirenStateChange,
+	Bit:ALS_OnPlayerGiveDamageActor,
+	Bit:ALS_OnActorStreamIn,
+	Bit:ALS_OnActorStreamOut,
 	// YSI
 	Bit:ALS_OnPlayerEnterArea,
 	Bit:ALS_OnPlayerLeaveArea,
@@ -184,6 +264,14 @@ enum ALS
 #define ALS_R_PlayerLeaveDynRaceCP 1
 #define ALS_R_PlayerEnterDynArea 1
 #define ALS_R_PlayerLeaveDynArea 1
+// Added 05/07/17
+#define ALS_R_PlayerWeaponShot 1
+#define ALS_R_IncomingConnection 1
+#define ALS_R_TrailerUpdate 1
+#define ALS_R_VehicleSirenStateChange 1
+#define ALS_R_PlayerGiveDamageActor 1
+#define ALS_R_ActorStreamIn 1
+#define ALS_R_ActorStreamOut 1
 
 // Chain call declarations.
 #define ALS_DO_ScriptInit<%0> %0<ScriptInit,>(none:)
@@ -261,8 +349,8 @@ enum ALS
 #define ALS_DO_RaceEnd<%0> %0<RaceEnd,i>(end:race)
 // Streamer plugin.
 #define ALS_DO_DynamicObjectMoved<%0> %0<DynamicObjectMoved,i>(end:objectid)
-#define ALS_DO_PlayerEditDynamicObject<%0> %0<PlayerEditDynamicObject,iiiiiiiii>(more:playerid,more:objectid,more:response,Float:x,Float:y,Float:z,Float:rx,Float:ry,end_Float:rz)
-#define ALS_DO_PlayerSelectDynamicObject<%0> %0<PlayerSelectDynamicObject,iiiiii>(more:playerid,more:objectid,more:modelid,Float:x,Float:y,end_Float:z)
+#define ALS_DO_PlayerEditDynamicObject<%0> %0<PlayerEditDynamicObject,iiiffffff>(more:playerid,more:objectid,more:response,Float:x,Float:y,Float:z,Float:rx,Float:ry,end_Float:rz)
+#define ALS_DO_PlayerSelectDynamicObject<%0> %0<PlayerSelectDynamicObject,iiifff>(more:playerid,more:objectid,more:modelid,Float:x,Float:y,end_Float:z)
 #define ALS_DO_PlayerPickUpDynamicPickup<%0> %0<PlayerPickUpDynamicPickup,ii>(more:playerid,end:pickupid)
 #define ALS_DO_PlayerEnterDynamicCP<%0> %0<PlayerEnterDynamicCP,ii>(more:playerid,end:checkpointid)
 #define ALS_DO_PlayerLeaveDynamicCP<%0> %0<PlayerLeaveDynamicCP,ii>(more:playerid,end:checkpointid)
@@ -270,6 +358,14 @@ enum ALS
 #define ALS_DO_PlayerLeaveDynamicRaceCP<%0> %0<PlayerLeaveDynamicRaceCP,ii>(more:playerid,end:checkpointid)
 #define ALS_DO_PlayerEnterDynamicArea<%0> %0<PlayerEnterDynamicArea,ii>(more:playerid,end:areaid)
 #define ALS_DO_PlayerLeaveDynamicArea<%0> %0<PlayerLeaveDynamicArea,ii>(more:playerid,end:areaid)
+// Added 05/07/17
+#define ALS_DO_PlayerWeaponShot<%0> %0<PlayerWeaponShot,iiiifff>(more:playerid,more:weaponid,more:hittype,more:hitid,Float:fX,Float:fY,end_Float:fZ)
+#define ALS_DO_IncomingConnection<%0> %0<IncomingConnection,i>(more:playerid,string:ip_address[],end:port)
+#define ALS_DO_TrailerUpdate<%0> %0<TrailerUpdate,ii>(more:playerid,end:vehicleid)
+#define ALS_DO_VehicleSirenStateChange<%0> %0<VehicleSirenStateChange,iii>(more:playerid,more:vehicleid,end:newstate)
+#define ALS_DO_PlayerGiveDamageActor<%0> %0<PlayerGiveDamageActor,iifii>(more:playerid,more:damaged_actorid,Float:amount,more:weaponid,end:bodypart)
+#define ALS_DO_ActorStreamIn<%0> %0<ActorStreamIn,ii>(more:actorid,end:forplayerid)
+#define ALS_DO_ActorStreamOut<%0> %0<ActorStreamOut,ii>(more:actorid,end:forplayerid)
 
 #define ALS_KS_more:%0,         %0,ALS_KS_
 #define ALS_KS_string:%0[],     %0[],ALS_KS_

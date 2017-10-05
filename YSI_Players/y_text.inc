@@ -1,16 +1,113 @@
-/**--------------------------------------------------------------------------**\
-					=====================================
-					Y Sever Includes - Language Text Core
-					=====================================
-Description:
-	Provides interfaces for displaying text from anywhere by way of native like
-	functions using text indexes rather than text.  Due to a compile problem a
-	number of the stock functions should be static but can't be.
+#if defined _inc_y_text
+	#undef _inc_y_text
+#endif
+
+// Multiple includes!
+#include "..\YSI_Internal\y_unique"
+
+// Need an include guard here.
+#if defined _INC_y_text
+	#endinput
+#endif
+#define _INC_y_text
+
+/**
+ * <library name="y_text">
+ * <section>
+ *  Description
+ * </section>
+ *  Provides interfaces for displaying text from anywhere by way of native like
+ *  functions using text indexes rather than text.  Due to a compile problem a
+ *  number of the stock functions should be static but can't be.
+ * <section>
+ *  Version
+ * </section>
+ *  0.1.1
+ * <section>
+ *  Functions
+ * </section>
+ * <subsection>
+ * Public
+ * </subsection><ul>
+ *  <symbol name="Text_ResetAll">Resets the entire text system.</symbol>
+ *  <symbol name="Text_NewLanguage">Sets up to parse a new language.</symbol>
+ *  <symbol name="Text_Parse">Sorts loaded text into a binary tree.</symbol>
+ *  <symbol name="Text_DataSave_data">Saves text appearence data.</symbol>
+ *  <symbol name="Text_DataSave_colours">Saves file colour defines.</symbol>
+ *  <symbol name="Text_DataSave_colors">Wrapper for above function.</symbol>
+ * </ul><subsection>
+ * Stock
+ * </subsection><ul>
+ *  <symbol name="Text_FindTextPointers">Should be static but can't be :(.</symbol>
+ *  <symbol name="Text_AddToBuffer">Saves all passed text for processing.</symbol>
+ *  <symbol name="Text_GetTextFromIndex">Gets text from an array pointer and language.</symbol>
+ *  <symbol name="Text_GetErrorMessage">Gets an unfound message.</symbol>
+ *  <symbol name="Text_GetTextStyle">Gets text's style.</symbol>
+ *  <symbol name="Text_GetTextColour">Gets text's colour.</symbol>
+ *  <symbol name="Text_GetTextTime">Gets text's time.</symbol>
+ *  <symbol name="Text_Send">Sends a message to a player.</symbol>
+ *  <symbol name="Text_SendToAll">Sends a message to all players.</symbol>
+ *  <symbol name="Text_SendToGroup">Sends a message to a defined group.</symbol>
+ *  <symbol name="Text_SendToPlayers">Sends a message to a passed group.</symbol>
+ *  <symbol name="Text_Display">Display an actual string to a player in a given style.</symbol>
+ * </ul><subsection>
+ * Static
+ * </subsection><ul>
+ *  <symbol name="Text_AddText">Adds text to the tree after sorting.</symbol>
+ * </ul><subsection>
+ * Inline
+ * </subsection><ul>
+ *  <symbol name="Text_Text">Constructor - Calls Text_ResetAll.</symbol>
+ *  <symbol name="Text_SetLangPointer">Sets the pointer for a language to a position.</symbol>
+ *  <symbol name="Text_ResetLangPointers">Resets all the pointers for one language.</symbol>
+ *  <symbol name="Text_GetPlayerLanguage">Gets a players language.</symbol>
+ *  <symbol name="Text_GetText">Gets text from an identifier and language.</symbol>
+ *  <symbol name="Text_GetPlayerText">Gets text from an identifier and playerid.</symbol>
+ *  <symbol name="Text_SendFormat">Sends a formatted message to a player.</symbol>
+ *  <symbol name="Text_SendToAllFormat">Sends a formatted message to all players.</symbol>
+ *  <symbol name="Text_SendToGroupFormat">Sends a formatted message to a defined group.</symbol>
+ *  <symbol name="Text_SendToPlayersFormat">Sends a formatted message to a passed group.</symbol>
+ * </ul><section>
+ *  Definitions
+ * </section><ul>
+ *  <symbol name="MAX_TEXT_NAME">Maximum length of a text identifier.</symbol>
+ *  <symbol name="MAX_TEXT_ENTRY">Maximum length of a text string.</symbol>
+ *  <symbol name="TEXT_NO_TEXT">Value for no text for that language.</symbol>
+ *  <symbol name="TEXT_NO_POINTERS">Value for no text found.</symbol>
+ *  <symbol name="TEXT_TYPE_CLIENT">Flag for sending a client formatted message (unused).</symbol>
+ *  <symbol name="TEXT_TYPE_GAME">Flag for sending a game text formatted message (unused).</symbol>
+ *  <symbol name="MAX_TEXT_COLOURS">Max number of defined colours in an ini file.</symbol>
+ * </ul><section>
+ *  Enums
+ * </section><ul>
+ *  <symbol name="E_TEXT_POINTERS">Structure of the language pointer array.</symbol>
+ * </ul><section>
+ *  Macros
+ * </section><ul>
+ *  <symbol name="Text_RegisterTag">Placed as a function, calls Text_AddToBuffer for tags.</symbol>
+ * </ul><section>
+ *  Variables
+ * </section>
+ * <subsection>
+ * Static
+ * </subsection><ul>
+ *  <symbol name="YSI_g_sTextTable">Array of all text entries.</symbol>
+ *  <symbol name="YSI_g_sNameTable">Array of all text names and language pointers.</symbol>
+ *  <symbol name="YSI_g_sSearchTree">Binary tree of text hashes.</symbol>
+ *  <symbol name="YSI_g_sTextInited">Flag for text binary sorted.</symbol>
+ *  <symbol name="YSI_g_sBufferIndex">Index of next text slot for the current language.</symbol>
+ *  <symbol name="YSI_g_sTextCount">Count of largest number of texts in one language.</symbol>
+ *  <symbol name="YSI_g_sBufferLang">Current language being loaded.</symbol>
+ *  <symbol name="YSI_g_sLangBuffer">Saves the current position of each language.</symbol>
+ *  <symbol name="YSI_g_sColours">Saves defined colours for use.</symbol>
+ * </ul>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -19,149 +116,63 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI text include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	0.1.1
-Changelog:
-	17/02/07:
-		Added saving of style parameter for text draws.
-	27/12/07:
-		Added text_draw support.
-	24/06/07:
-		Modified a few functions to use Bit_GetBit for speed.
-	19/06/07:
-		Added default language for alt language with no text.
-		Added console errors.
-		Added support for blank INI strings to ignore the text.
-		Increased speed of non format sends by saving each language
-	14/06/07:
-		Added type and data loading for strings.
-		Altered display functions to use files defined styles.
-	13/06/07:
-		Removed unfound text ignorance in group send functions.
-		Added improved error handling to support custom messges.
-	02/05/07:
-		Added YSI_ prefix to all globals.
-	23/03/07:
-		First version.
-Functions:
-	Public:
-		Text_ResetAll - Resets the entire text system.
-		Text_NewLanguage - Sets up to parse a new language.
-		Text_Parse - Sorts loaded text into a binary tree.
-		Text_DataSave_data - Saves text appearence data.
-		Text_DataSave_colours - Saves file colour defines.
-		Text_DataSave_colors - Wrapper for above function.
-	Core:
-		-
-	Stock:
-		Text_FindTextPointers - Should be static but can't be :(.
-		Text_AddToBuffer - Saves all passed text for processing.
-		Text_GetTextFromIndex - Gets text from an array pointer and language.
-		Text_GetErrorMessage - Gets an unfound message.
-		Text_GetTextStyle - Gets text's style.
-		Text_GetTextColour - Gets text's colour.
-		Text_GetTextTime - Gets text's time.
-		Text_Send - Sends a message to a player.
-		Text_SendToAll - Sends a message to all players.
-		Text_SendToGroup - Sends a message to a defined group.
-		Text_SendToPlayers - Sends a message to a passed group.
-		Text_Display - Display an actual string to a player in a given style.
-	Static:
-		Text_AddText - Adds text to the tree after sorting.
-	Inline:
-		Text_Text - Constructor - Calls Text_ResetAll.
-		Text_SetLangPointer - Sets the pointer for a language to a position.
-		Text_ResetLangPointers - Resets all the pointers for one language.
-		Text_GetPlayerLanguage - Gets a players language.
-		Text_GetText - Gets text from an identifier and language.
-		Text_GetPlayerText - Gets text from an identifier and playerid.
-		Text_SendFormat - Sends a formatted message to a player.
-		Text_SendToAllFormat - Sends a formatted message to all players.
-		Text_SendToGroupFormat - Sends a formatted message to a defined group.
-		Text_SendToPlayersFormat - Sends a formatted message to a passed group.
-	API:
-		-
-Callbacks:
-	-
-Definitions:
-	MAX_TEXT_NAME - Maximum length of a text identifier.
-	MAX_TEXT_ENTRY - Maximum length of a text string.
-	TEXT_NO_TEXT - Value for no text for that language.
-	TEXT_NO_POINTERS - Value for no text found.
-	TEXT_TYPE_CLIENT - Flag for sending a client formatted message (unused).
-	TEXT_TYPE_GAME - Flag for sending a game text formatted message (unused).
-	MAX_TEXT_COLOURS - Max number of defined colours in an ini file.
-Enums:
-	E_TEXT_POINTERS - Structure of the language pointer array.
-Macros:
-	Text_RegisterTag - Placed as a function, calls Text_AddToBuffer for tags.
-Tags:
-	-
-Variables:
-	Global:
-		-
-	Static:
-		YSI_g_sTextTable - Array of all text entries.
-		YSI_g_sNameTable - Array of all text names and language pointers.
-		YSI_g_sSearchTree - Binary tree of text hashes.
-		YSI_g_sTextInited - Flag for text binary sorted.
-		YSI_g_sBufferIndex - Index of next text slot for the current language.
-		YSI_g_sTextCount - Count of largest number of texts in one language.
-		YSI_g_sBufferLang - Current language being loaded.
-		YSI_g_sLangBuffer - Saves the current position of each language.
-		YSI_g_sColours - Saves defined colours for use.
-Commands:
-	-
-Compile options:
-	-
-Operators:
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
 
-// Include "y_unique" multiple times.
-#include "..\YSI_Internal\y_unique"
-#if AUTO_INCLUDE_GUARD
-	#if !defined _inc_y_text
-		#error Did you do <YSI-Players/y_text> instead of the required <YSI-Players\y_text>?
-	#endif
-	#undef _inc_y_text
-#endif
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
 
-// Need an include guard here.
-#if defined _INC_y_text
-	#endinput
-#endif
-#define _INC_y_text
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 #include <a_samp>
 
@@ -231,6 +242,21 @@ Operators:
 
 #define Text_Send(%0,%1) PSF:_Text_Send(%0,DO_TEXT_SET:%1 UNDO_MOVE|||)
 #define Text_Render(%0,%1) _Text_Render(%0,DO_TEXT_SET:%1 UNDO_MOVE|||)
+#define Text_Format(%0,%1,%2,%3,%4) _Text_Format(%0,%1,%2,%3,DO_TEXT_SET:%4 UNDO_MOVE|||)
+
+#define Text_Format_GT_0(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_GT_0,%3)
+#define Text_Format_GT_1(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_GT_1,%3)
+#define Text_Format_GT_2(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_GT_2,%3)
+#define Text_Format_GT_3(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_GT_3,%3)
+#define Text_Format_GT_4(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_GT_4,%3)
+#define Text_Format_GT_5(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_GT_5,%3)
+#define Text_Format_GT_6(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_GT_6,%3)
+#define Text_Format_TD(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_TD,%3)
+#define Text_Format_3D(%0,%1,%2,%3 Text_Format(%0,%1,%2, e_STYLE_TYPE_3D,%3)
+#define Text_Format_Client(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_CLIENT,%3)
+#define Text_Format_Player(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_PLAYER,%3)
+#define Text_Format_Other(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_OTHER,%3)
+#define Text_Format_Dialog(%0,%1,%2,%3) Text_Format(%0,%1,%2, e_STYLE_TYPE_DIALOG,%3)
 
 //#define _Text_Send(%0YCMD:%1) _Text_Send(%0_:YCMD_REP_0:YCMD_REP_1:%1)
 

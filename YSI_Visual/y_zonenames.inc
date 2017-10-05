@@ -1,16 +1,16 @@
+#if defined _INC_y_zonenames
+	#endinput
+#endif
+#define _INC_y_zonenames
+
 /*  SA:MP Functions
- *  
+ *
  *  ZONES Functions By ~Cueball~
  *  ZONES Functions Aided By Betamaster (locations), Mabako (locations), Simon (finetuning)
  *
  *  (c) Copyright 2005-2008, SA:MP Team
  *
  */
-
-#if defined _INC_y_zonenames
-	#endinput
-#endif
-#define _INC_y_zonenames
 
 #include "..\YSI_Players\y_text"
 #include "..\YSI_Visual\y_areas"

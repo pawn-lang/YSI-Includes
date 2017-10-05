@@ -1,15 +1,100 @@
-/**--------------------------------------------------------------------------**\
-					================================
-					Y Sever Includes - Commands Core
-					================================
-Description:
-	Runs commands registered with the system and calls the required functions.
-	Also handles alternate names and prefixes.  Based very loosely on dcmd.
+#if defined _INC_y_commands
+	#endinput
+#endif
+#define _INC_y_commands
+
+/**
+ * <library name="y_commands">
+ * <section>
+ *  Description
+ * </section>
+ *  Runs commands registered with the system and calls the required functions.
+ *  Also handles alternate names and prefixes.  Based very loosely on dcmd.
+ * <section>
+ *  Version
+ * </section>
+ *  0.1.4
+ * <section>
+ *  Functions
+ * </section>
+ * <subsection>
+ * Public
+ * </subsection><ul>
+ *  <symbol name="Command_Add">Adds a command to the array for processing.</symbol>
+ *  <symbol name="Command_Remove">Removes a command.</symbol>
+ *  <symbol name="Command_Name">Gets the name of a command in a property.</symbol>
+ * </ul><subsection>
+ * Core
+ * </subsection><ul>
+ *  <symbol name="Command_Process">Called from OnPlayerCommandText to process entered commands.</symbol>
+ *  <symbol name="Command_Parse">Sorts added commands into a binary tree.</symbol>
+ *  <symbol name="Command_Hash">Hashes a word for command hashing.</symbol>
+ *  <symbol name="Command_ProcRem">Processes a help command in the master script.</symbol>
+ * </ul><subsection>
+ * Stock
+ * </subsection><ul>
+ *  <symbol name="Command_SetDisconnectReturn">Sets the return value for unconnected players.</symbol>
+ *  <symbol name="Command_UseShortCuts">Toggles use of per-player command shortcuts.</symbol>
+ *  <symbol name="Command_SetDeniedReturn">Sets the return value for denied use commands.</symbol>
+ *  <symbol name="Command_UseDeniedMessage">Toggles the use of an error message for denied.</symbol>
+ *  <symbol name="Command_SetIllegalReturn">Sets the return value for illegal characters.</symbol>
+ *  <symbol name="Command_UseAltNames">Toggles the use of ini defined alternate names.</symbol>
+ *  <symbol name="Command_UsePrefix">Toggles the use of a global prefix.</symbol>
+ *  <symbol name="Command_UseSpace">Toggles the use of a space between prefix and command.</symbol>
+ *  <symbol name="Command_SetAltName">Sets the alternate name of a function.</symbol>
+ *  <symbol name="Command_SetPrefix">Sets the pfexix to be typed.</symbol>
+ *  <symbol name="Comamnd_SetPlayerUse">Sets wether or not a player can use a command.</symbol>
+ *  <symbol name="Comamnd_SetPlayerUseByID">Sets wether or not a player can use a command.</symbol>
+ *  <symbol name="Command_FindByName">Finds a command in a possibly sorted list.</symbol>
+ * </ul><section>
+ *  Definitions
+ * </section><ul>
+ *  <symbol name="MAX_COMMAND_LENGTH">The maximum length of a command string.</symbol>
+ *  <symbol name="COMMAND_NOT_FOUND">Indicates that a searched for string is not a function.</symbol>
+ * </ul><section>
+ *  Enums
+ * </section><ul>
+ *  <symbol name="e_COMM_FLAG">Bit mappings for command options.</symbol>
+ *  <symbol name="E_COMMANDS">Structure of the array holding the string data.</symbol>
+ * </ul><section>
+ *  Macros
+ * </section><ul>
+ *  <symbol name="Command_(%1)">Forwards and declares a standard command for calling.</symbol>
+ *  <symbol name="ycmd(%1)">Adds a command to the array (wrapper for Command_Add).</symbol>
+ * </ul><section>
+ *  Tags
+ * </section><ul>
+ *  <symbol name="e_COMM_FLAG">Flag type.</symbol>
+ * </ul><section>
+ *  Variables
+ * </section>
+ * <subsection>
+ * Static
+ * </subsection><ul>
+ *  <symbol name="YSI_g_sCommands">Holds all the textual data of the commands.</symbol>
+ *  <symbol name="YSI_g_sSearchTree">Tree of hashes for function names.</symbol>
+ *  <symbol name="YSI_g_sAltTree">Tree of hashes for alternate names.</symbol>
+ *  <symbol name="YSI_g_sPrefix">The command prefix.</symbol>
+ *  <symbol name="YSI_g_sPrefixLength">Length of the prefix.</symbol>
+ *  <symbol name="YSI_g_sCommandIndex">Pointer to the next free index in the function array.</symbol>
+ *  <symbol name="YSI_g_sAltCount">The number of commands with altnames.</symbol>
+ *  <symbol name="YSI_g_sCommandFlags">Bit array of command options.</symbol>
+ * </ul><section>
+ *  Commands
+ * </section><ul>
+ *  <symbol name="commands">Lists all commands available to you.</symbol>
+ * </ul><section>Compile options</section><ul>
+ *  <symbol name="COMMAND_SENSITIVE">Make commands case sensitive.</symbol>
+ *  <symbol name="COMMAND_ACCURATE">Can use '@' in command names.</symbol>
+ *  <symbol name="MAX_COMMANDS">The maximum number of commands which can be used.</symbol>
+ * </ul>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -18,135 +103,65 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI commands include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	0.1.4
-Changelog:
-	20/10/10:
-		Fixed a bug with insensitive commands - my fault for not testing.
-	06/01/08:
-		Improved master and /help support.
-	04/01/08:
-		Fixed bad element in Command_SetDeniedReturn.
-	12/08/07:
-		Added master support.
-	24/06/07:
-		Modifed a few functions to use Bit_GetBit for speed.
-	04/05/07:
-		Completed command use support.
-		Added invalid character protection.
-	02/05/07:
-		Added YSI_ prefix to all globals.
-	14/04/07:
-		Updated header documentation with more than changelog/functions.
-		Added function name requesting.
-	13/04/07:
-		Added function documentation.
-		Added wrapped functions for e_COMM_FLAG values missing them.
-		Added header function list.
-	12/04/07:
-		Added command removal.
-	11/04/07:
-		Changed system slightly to handle names and alt names separately.  Still
-		need a better way of ignoring names when alt names are used.
-	10/04/07:
-		First version.
-Functions:
-	Public:
-		Command_Add - Adds a command to the array for processing.
-		Command_Remove - Removes a command.
-		Command_Name - Gets the name of a command in a property.
-	Core:
-		Command_Process - Called from OnPlayerCommandText to process entered commands.
-		Command_Parse - Sorts added commands into a binary tree.
-		Command_Hash - Hashes a word for command hashing.
-		Command_ProcRem - Processes a help command in the master script.
-	Stock:
-		Command_SetDisconnectReturn - Sets the return value for unconnected players.
-		Command_UseShortCuts - Toggles use of per-player command shortcuts.
-		Command_SetDeniedReturn - Sets the return value for denied use commands.
-		Command_UseDeniedMessage - Toggles the use of an error message for denied.
-		Command_SetIllegalReturn - Sets the return value for illegal characters.
-		Command_UseAltNames - Toggles the use of ini defined alternate names.
-		Command_UsePrefix - Toggles the use of a global prefix.
-		Command_UseSpace - Toggles the use of a space between prefix and command.
-		Command_SetAltName - Sets the alternate name of a function.
-		Command_SetPrefix - Sets the pfexix to be typed.
-		Comamnd_SetPlayerUse - Sets wether or not a player can use a command.
-		Comamnd_SetPlayerUseByID - Sets wether or not a player can use a command.
-		Command_FindByName - Finds a command in a possibly sorted list.
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-Callbacks:
-	-
-Definitions:
-	MAX_COMMAND_LENGTH - The maximum length of a command string.
-	COMMAND_NOT_FOUND - Indicates that a searched for string is not a function.
-Enums:
-	e_COMM_FLAG - Bit mappings for command options.
-	E_COMMANDS - Structure of the array holding the string data.
-Macros:
-	Command_(%1) - Forwards and declares a standard command for calling.
-	ycmd(%1) - Adds a command to the array (wrapper for Command_Add).
-Tags:
-	e_COMM_FLAG - Flag type.
-Variables:
-	Global:
-		-
-	Static:
-		YSI_g_sCommands - Holds all the textual data of the commands.
-		YSI_g_sSearchTree - Tree of hashes for function names.
-		YSI_g_sAltTree - Tree of hashes for alternate names.
-		YSI_g_sPrefix - The command prefix.
-		YSI_g_sPrefixLength - Length of the prefix.
-		YSI_g_sCommandIndex - Pointer to the next free index in the function array.
-		YSI_g_sAltCount - The number of commands with altnames.
-		YSI_g_sCommandFlags - Bit array of command options.
-Commands:
-	commands - Lists all commands available to you.
-Compile options:
-	COMMAND_SENSITIVE - Make commands case sensitive.
-	COMMAND_ACCURATE - Can use '@' in command names.
-	MAX_COMMANDS - The maximum number of commands which can be used.
-\**--------------------------------------------------------------------------**/
 
-#if defined _INC_y_commands
-	#endinput
-#endif
-#define _INC_y_commands
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
 
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
+
+#include "..\YSI_Internal\y_compilerdata"
 #include "..\YSI_Internal\y_version"
 
 #define MAX_COMMAND_LENGTH              (32)

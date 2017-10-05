@@ -1,15 +1,9 @@
-/**--------------------------------------------------------------------------**\
-					=======================================
-					 y_groups - Player group abstractions! 
-					=======================================
-Description:
-	Admin levels, gangs, teams etc - they're all "groups" of people, this
-	provides an abstraction for all of these collections.
+/*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -18,47 +12,63 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI group include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	2.0
-Changelog:
-	14/04/13:
-		Reduced complexity for different include styles.
-	21/10/12:
-		Added Group_Get... functions.
-	20/10/12:
-		Pretty much a ground-up API-compatible rewrite.  Shorter and reliabler.
-	29/11/10:
-		First version
-\**--------------------------------------------------------------------------**/
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 /*
 
@@ -75,8 +85,8 @@ Changelog:
 
 */
 
-#include "..\..\YSI_Internal\y_compilerpass"
-#if AUTO_INCLUDE_GUARD
+#include "..\..\YSI_Internal\y_compilerdata"
+#if defined _inc__funcs
 	#undef _inc__funcs
 #endif
 #if !defined _INC_y_groups__funcs
@@ -128,7 +138,7 @@ static stock
 		#define _gchain%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 		#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 	#endif
-#elseif COMPILER_1ST_PASS
+#elseif __COMPILER_1ST_PASS
 	#if YSIM_HAS_MASTER
 		#if _YSIM_IS_CLIENT
 			#define gforeign%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);
@@ -199,24 +209,20 @@ static stock
 	#endif
 #endif
 
-/**--------------------------------------------------------------------------**\
-<summary>_GROUP_INITIALISE</summary>
-<param name="x">The element that was added (maybe).</param>
-<returns>
-	-
-</returns>
-<remarks>
-	The name is a macro, so this function isn't actually called this.  This is
-	called when a new element is created, and as such it is NOT chained to other
-	parts of the groups system because each part handles one type of element.
-	Loop through all players and set up the element for them if they are in a
-	group that this is also in by default.
-	
-	If x is "_GROUP_MAKE_LIMIT" then this is the test used in OnPlayerConnect in
-	various libraries to see if the groups system exists, and if not locally
-	initialise the player instead of leaving it up to this system.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="x">The element that was added (maybe).</param>
+ * <remarks>
+ *  The name is a macro, so this function isn't actually called this.  This is
+ *  called when a new element is created, and as such it is NOT chained to other
+ *  parts of the groups system because each part handles one type of element.
+ *  Loop through all players and set up the element for them if they are in a
+ *  group that this is also in by default.
+ *
+ *  If x is "_GROUP_MAKE_LIMIT" then this is the test used in OnPlayerConnect in
+ *  various libraries to see if the groups system exists, and if not locally
+ *  initialise the player instead of leaving it up to this system.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
 {
@@ -253,19 +259,16 @@ stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIM
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>Group_Set...</summary>
-<param name="Group:g">Group to set for.</param>
-<param name="el">Element to set.</param>
-<param name="bool:s">Set or unset?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	If "s" is true, then one element is added to the current group.  False it is
-	removed.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>Group_Set...</summary>
+ * <param name="g">Group to set for.</param>
+ * <param name="el">Element to set.</param>
+ * <param name="s">Set or unset?</param>
+ * <remarks>
+ *  If "s" is true, then one element is added to the current group.  False it is
+ *  removed.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 gforeign Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s);
 
@@ -316,17 +319,14 @@ gglobal Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Group_Get...</summary>
-<param name="Group:g">Group to get from.</param>
-<param name="el">Element to get.</param>
-<returns>
-	bool: Does the group have the element?
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>Group_Get...</summary>
+ * <param name="g">Group to get from.</param>
+ * <param name="el">Element to get.</param>
+ * <returns>
+ *  bool: Does the group have the element?
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 gforeign bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el);
 
@@ -336,19 +336,16 @@ gglobal bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el)
 	return (0 <= _:el < _GROUP_MAKE_LIMIT && GROUP_MASK <= g <= GROUP_GLOBAL && Bit_Get(YSI_g_sElementMembership[_:el], _:GROUP_TEMP_FIX(g)));
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Group_Set...Default</summary>
-<param name="Group:g">Group to set for.</param>
-<param name="bool:s">Set or unset?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	If "s" is true, then all elements are added to this group (i.e. the default
-	is set to true and all previous settings are wiped out).  If it is false
-	then all elements are removed and a full update is done.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>Group_Set...Default</summary>
+ * <param name="g">Group to set for.</param>
+ * <param name="s">Set or unset?</param>
+ * <remarks>
+ *  If "s" is true, then all elements are added to this group (i.e. the default
+ *  is set to true and all previous settings are wiped out).  If it is false
+ *  then all elements are removed and a full update is done.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 gforeign Group_Set...Default(Group:g,bool:s);
 
@@ -420,18 +417,15 @@ gglobal Group_Set...Default(Group:g,bool:s)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Group_Set...New</summary>
-<param name="Group:g">Group to set for.</param>
-<param name="bool:s">Set or unset?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Similar to "Group_Set...Default", but doesn't reset all existing elements,
-	just sets the permissions for any future items.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>Group_Set...New</summary>
+ * <param name="g">Group to set for.</param>
+ * <param name="s">Set or unset?</param>
+ * <remarks>
+ *  Similar to "Group_Set...Default", but doesn't reset all existing elements,
+ *  just sets the permissions for any future items.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 gforeign Group_Set...New(Group:g,bool:s);
 
@@ -447,18 +441,15 @@ gglobal Group_Set...New(Group:g,bool:s)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Group_Exclusive...</summary>
-<param name="Group:g">Group to add this to.</param>
-<param name="_GROUP_MAKE_TAG:el">Element to add.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Add this element to ONLY this group and remove it from any others it might
-	already be in.  This is basically a simplified version of "GROUP_ADD".
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>Group_Exclusive...</summary>
+ * <param name="g">Group to add this to.</param>
+ * <param name="el">Element to add.</param>
+ * <remarks>
+ *  Add this element to ONLY this group and remove it from any others it might
+ *  already be in.  This is basically a simplified version of "GROUP_ADD".
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 gforeign Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el);
 
@@ -495,18 +486,15 @@ gglobal Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>Group_SetGlobal...</summary>
-<param name="el">Element to set.</param>
-<param name="bool:s">Set or unset?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	If "s" is true, then one element is added to the global group.  False it is
-	removed.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>Group_SetGlobal...</summary>
+ * <param name="el">Element to set.</param>
+ * <param name="s">Set or unset?</param>
+ * <remarks>
+ *  If "s" is true, then one element is added to the global group.  False it is
+ *  removed.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 gforeign Group_SetGlobal...(_GROUP_MAKE_TAG:el,bool:s);
 
@@ -516,16 +504,13 @@ gglobal Group_SetGlobal...(_GROUP_MAKE_TAG:el,bool:s)
 	return _GROUP_MAKE_NAME<Group_Set...>(GROUP_GLOBAL, el, s);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Group_GetGlobal...</summary>
-<param name="el">Element to get.</param>
-<returns>
-	bool: Does the global group have the element?
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>Group_GetGlobal...</summary>
+ * <param name="el">Element to get.</param>
+ * <returns>
+ *  bool: Does the global group have the element?
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 gforeign bool:Group_GetGlobal...(_GROUP_MAKE_TAG:el);
 
@@ -535,18 +520,15 @@ gglobal bool:Group_GetGlobal...(_GROUP_MAKE_TAG:el)
 	return _GROUP_MAKE_NAME<Group_Get...>(GROUP_GLOBAL, el);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Group_SetGlobal...Default</summary>
-<param name="bool:s">Set or unset?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	If "s" is true, then all elements are added to the global group (i.e. the
-	default is set to true and all previous settings are wiped out).  If it is
-	false then all elements are removed and a full update is done.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>Group_SetGlobal...Default</summary>
+ * <param name="s">Set or unset?</param>
+ * <remarks>
+ *  If "s" is true, then all elements are added to the global group (i.e. the
+ *  default is set to true and all previous settings are wiped out).  If it is
+ *  false then all elements are removed and a full update is done.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 gforeign Group_SetGlobal...Default(bool:s);
 
@@ -556,16 +538,13 @@ gglobal Group_SetGlobal...Default(bool:s)
 	return _GROUP_MAKE_NAME<Group_Set...Default>(GROUP_GLOBAL, s);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Group_SetGlobal...New</summary>
-<param name="bool:s">Set or unset?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	All elements created FROM THIS POINT ON will have this default setting.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>Group_SetGlobal...New</summary>
+ * <param name="s">Set or unset?</param>
+ * <remarks>
+ *  All elements created FROM THIS POINT ON will have this default setting.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 gforeign Group_SetGlobal...New(bool:s);
 
@@ -575,17 +554,14 @@ gglobal Group_SetGlobal...New(bool:s)
 	return _GROUP_MAKE_NAME<Group_Set...New>(GROUP_GLOBAL, s);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Group_GlobalExclusive...</summary>
-<param name="_GROUP_MAKE_TAG:el">Element to add.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Add this element to ONLY the global group and remove it from any others it
-	might already be in.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>Group_GlobalExclusive...</summary>
+ * <param name="el">Element to add.</param>
+ * <remarks>
+ *  Add this element to ONLY the global group and remove it from any others it
+ *  might already be in.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 gforeign Group_GlobalExclusive...(_GROUP_MAKE_TAG:el);
 
@@ -631,31 +607,27 @@ gpublic MAKE_YCM<HANDOFF_SOURCE...Group>()<p>
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Group_FullPlayerUpdate</summary>
-<param name="playerid">Player to check.</param>
-<param name="el">Element to show or hide.</param>
-<param name="previous">(p) The old state of affairs.</param>
-<param name="current">(c) The new state of affairs.</param>
-<param name="reference">(r) What to compare changes to.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	I did have a good reason for calling this "FU", but I forgot it!  Anyway,
-	the state of some groups has changed - either a player's groups or an
-	elements groups have changed.  If the player could previously see the
-	element but now can't, hide it.  If the player previously couldn't see it
-	but now can, show it.  If there is no change do nothing.  The old version of
-	this library would just re-show the element even if they could already see
-	it, but this was a bad design as it could incur large overheads in other
-	libraries when they had to do IO to enable or disable something for a
-	player.
-	
-	The change can be in either the player's groups or the element's groups,
-	either way this code will work regardless.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player to check.</param>
+ * <param name="el">Element to show or hide.</param>
+ * <param name="previous">(p) The old state of affairs.</param>
+ * <param name="current">(c) The new state of affairs.</param>
+ * <param name="reference">(r) What to compare changes to.</param>
+ * <remarks>
+ *  I did have a good reason for calling this "FU", but I forgot it!  Anyway,
+ *  the state of some groups has changed - either a player's groups or an
+ *  elements groups have changed.  If the player could previously see the
+ *  element but now can't, hide it.  If the player previously couldn't see it
+ *  but now can, show it.  If there is no change do nothing.  The old version of
+ *  this library would just re-show the element even if they could already see
+ *  it, but this was a bad design as it could incur large overheads in other
+ *  libraries when they had to do IO to enable or disable something for a
+ *  player.
+ *
+ *  The change can be in either the player's groups or the element's groups,
+ *  either way this code will work regardless.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
 {
@@ -723,26 +695,22 @@ static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>_yGI</summary>
-<param name="&ni">Next init function variable as returned by y_amx.</param>
-<param name="&na">Next add function variable as returned by y_amx.</param>
-<param name="&nu">Next update function variable as returned by y_amx.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	This function is called when the group system first starts up to initialise
-	the global group and all the various function pointers.  The way the
-	"_gchain" macro works means that the fact that "ni" etc are references is
-	irrelevant; however, it does make the code LOOK much nicer and like
-	assigning to the variables does have some wider meaning.
-	
-	If this is called with "ni = -1", it is special code to temporarily set or
-	restore the defaults for use with the "GROUP_ADD" macro.  So basically, it
-	is poor design giving two distinct uses to a single function.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="ni">Next init function variable as returned by y_amx.</param>
+ * <param name="na">Next add function variable as returned by y_amx.</param>
+ * <param name="nu">Next update function variable as returned by y_amx.</param>
+ * <remarks>
+ *  This function is called when the group system first starts up to initialise
+ *  the global group and all the various function pointers.  The way the
+ *  "_gchain" macro works means that the fact that "ni" etc are references is
+ *  irrelevant; however, it does make the code LOOK much nicer and like
+ *  assigning to the variables does have some wider meaning.
+ *
+ *  If this is called with "ni = -1", it is special code to temporarily set or
+ *  restore the defaults for use with the "GROUP_ADD" macro.  So basically, it
+ *  is poor design giving two distinct uses to a single function.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 _gchain _yGI(&ni, &na, &nu)
 {
@@ -789,19 +757,15 @@ _gchain _yGI(&ni, &na, &nu)
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>_yGA</summary>
-<param name="&group">The group that was just created.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	The given group was just created, loop over all elements and make sure they
-	are NOT in this group - only the global group has a "default default" of
-	true.  We don't need to update any players with this as no-one will ever be
-	in a brand new group.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="group">The group that was just created.</param>
+ * <remarks>
+ *  The given group was just created, loop over all elements and make sure they
+ *  are NOT in this group - only the global group has a "default default" of
+ *  true.  We don't need to update any players with this as no-one will ever be
+ *  in a brand new group.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 _gchain _yGA(&group)
 {
@@ -821,21 +785,17 @@ _gchain _yGA(&group)
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>_yGU</summary>
-<param name="&pid">The player who joined or left groups.</param>
-<param name="Bit:p[]">Their previous groups.</param>
-<param name="Bit:c[]">Their new groups.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	The player "pid" just joined or left a group (or groups - can do multiple).
-	Update their visibility accordingly.  This function is ONLY called if there
-	is a CHANGE - earlier functions confirm that they weren't already in (or
-	not) this group(s) before the call.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="pid">The player who joined or left groups.</param>
+ * <param name="p">Their previous groups.</param>
+ * <param name="c">Their new groups.</param>
+ * <remarks>
+ *  The player "pid" just joined or left a group (or groups - can do multiple).
+ *  Update their visibility accordingly.  This function is ONLY called if there
+ *  is a CHANGE - earlier functions confirm that they weren't already in (or
+ *  not) this group(s) before the call.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 _gchain _yGU(&pid, Bit:p[], Bit:c[])
 {
@@ -867,16 +827,12 @@ _gchain _yGU(&pid, Bit:p[], Bit:c[])
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>_GROUP_UNIQUE_FUNCTION</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Calls all functions to correctly include them in the AMX when required.
-	Also all variables as it turns out they were a problem too.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Calls all functions to correctly include them in the AMX when required.
+ *  Also all variables as it turns out they were a problem too.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #if !defined _GROUP_STOP_INCLUDES
 	static stock _GROUP_PREVIOUS_FUNCTION()

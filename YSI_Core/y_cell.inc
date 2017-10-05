@@ -1,15 +1,26 @@
-/**--------------------------------------------------------------------------**\
-					============================
-					Y Sever Includes - Cell Core
-					============================
-Description:
-	Provides a few functions for manipulating the bits in single cells.  Note
-	that this is distinct from the y_bit library.
+#if defined _INC_y_cell
+	#endinput
+#endif
+#define _INC_y_cell
+
+/**
+ * <library name="y_cell">
+ * <section>
+ *  Description
+ * </section>
+ *  Provides a few functions for manipulating the bits in single cells.  Note
+ *  that this is distinct from the y_bit library.
+ * <section>
+ *  Version
+ * </section>
+ *  0.2
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -18,104 +29,89 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI bit include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	0.2
-Changelog:
-	18/06/11:
-		First version.
-Functions:
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-Callbacks:
-	-
-Definitions:
-	-
-Enums:
-	-
-Macros:
-	-
-Tags:
-	-
-Variables:
-	Global:
-		-
-	Static:
-		-
-Commands:
-	-
-Compile options:
-	-
-\**--------------------------------------------------------------------------**/
 
-#if defined _INC_y_cell
-	#endinput
-#endif
-#define _INC_y_cell
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_globaltags"
 
-/**--------------------------------------------------------------------------**\
-<summary>
-	Cell_ReverseBits(number);
-</summary>
-<param name="number">The number to manipulate.</param>
-<returns>
-	All the bits in the input reversed.
-</returns>
-<remarks>
-	1)
-	Example: 0b11110000000000000000000000000000
-	Becomes: 0b00000000000000000000000000001111
-	
-	2)
-	Example: 0b10110011100011110000111110000010
-	Becomes: 0b01000001111100001111000111001101
-	
-	3)
-	Example: 0b01010101010101010101010101010101
-	Becomes: 0b10101010101010101010101010101010
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_ReverseBits(number);
+ * </summary>
+ * <param name="number">The number to manipulate.</param>
+ * <returns>
+ *  All the bits in the input reversed.
+ * </returns>
+ * <remarks>
+ *  1)
+ *  Example: 0b11110000000000000000000000000000
+ *  Becomes: 0b00000000000000000000000000001111
+ *
+ *  2)
+ *  Example: 0b10110011100011110000111110000010
+ *  Becomes: 0b01000001111100001111000111001101
+ *
+ *  3)
+ *  Example: 0b01010101010101010101010101010101
+ *  Becomes: 0b10101010101010101010101010101010
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 {
@@ -191,28 +187,28 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>
-	Cell_ReverseNibbles(number);
-</summary>
-<param name="number">The number to manipulate.</param>
-<returns>
-	All the nibbles (4-bit chunks) in the input reversed.
-</returns>
-<remarks>
-	1)
-	Example: 0x12345678
-	Becomes: 0x87654321
-	
-	2)
-	Example: 0x010F0703
-	Becomes: 0x3070F010
-	
-	3)
-	Example: 0xF0F0F0F0
-	Becomes: 0x0F0F0F0F
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_ReverseNibbles(number);
+ * </summary>
+ * <param name="number">The number to manipulate.</param>
+ * <returns>
+ *  All the nibbles (4-bit chunks) in the input reversed.
+ * </returns>
+ * <remarks>
+ *  1)
+ *  Example: 0x12345678
+ *  Becomes: 0x87654321
+ *
+ *  2)
+ *  Example: 0x010F0703
+ *  Becomes: 0x3070F010
+ *
+ *  3)
+ *  Example: 0xF0F0F0F0
+ *  Becomes: 0x0F0F0F0F
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 {
@@ -262,28 +258,28 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>
-	Cell_ReverseBytes(number);
-</summary>
-<param name="number">The number to manipulate.</param>
-<returns>
-	All the bytes in the input reversed.
-</returns>
-<remarks>
-	1)
-	Example: 0x12345678
-	Becomes: 0x78563412
-	
-	2)
-	Example: 0x01020304
-	Becomes: 0x04030201
-	
-	3)
-	Example: 0xFF00FF00
-	Becomes: 0x00FF00FF
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_ReverseBytes(number);
+ * </summary>
+ * <param name="number">The number to manipulate.</param>
+ * <returns>
+ *  All the bytes in the input reversed.
+ * </returns>
+ * <remarks>
+ *  1)
+ *  Example: 0x12345678
+ *  Becomes: 0x78563412
+ *
+ *  2)
+ *  Example: 0x01020304
+ *  Becomes: 0x04030201
+ *
+ *  3)
+ *  Example: 0xFF00FF00
+ *  Becomes: 0x00FF00FF
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 {
@@ -320,32 +316,32 @@ stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>
-	Cell_CountBits(number);
-</summary>
-<param name="number">The number to get the number of 1s in.</param>
-<returns>
-	The number of 1s (set bits) in the input.
-</returns>
-<remarks>
-	1)
-	Example: 0
-	Returns: 0
-	
-	2)
-	Example: 1
-	Returns: 1
-	
-	3)
-	Example: 0x01010101
-	Returns: 4
-	
-	I rewrote this in assembly just to see if I could pretty much.  I also
-	rewrote the lookup version in assembly.  In theory it should be faster, but
-	the marshalling of data was a little awkward.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_CountBits(number);
+ * </summary>
+ * <param name="number">The number to get the number of 1s in.</param>
+ * <returns>
+ *  The number of 1s (set bits) in the input.
+ * </returns>
+ * <remarks>
+ *  1)
+ *  Example: 0
+ *  Returns: 0
+ *
+ *  2)
+ *  Example: 1
+ *  Returns: 1
+ *
+ *  3)
+ *  Example: 0x01010101
+ *  Returns: 4
+ *
+ *  I rewrote this in assembly just to see if I could pretty much.  I also
+ *  rewrote the lookup version in assembly.  In theory it should be faster, but
+ *  the marshalling of data was a little awkward.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 {
@@ -383,34 +379,34 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>
-	Cell_GetLowestBit(number);
-</summary>
-<param name="number">The number to get the lowest set bit of.</param>
-<returns>
-	The integer position of the lowest set bit.
-</returns>
-<remarks>
-	1)
-	Example: 0b00000000000000000000000000000001
-	Returns: 0
-	
-	2)
-	Example: 0b00000000000000000000000000001000
-	Returns: 3
-	
-	3)
-	Example: 0b00010001100011000011100010001000
-	Returns: 3
-	
-	NOTE: This function returns "0" for both numbers with the "1" bit set AND
-	the number "0", which has NO bits set.  Check that the number is valid
-	before passing it to this function.
-	
-	See: http://supertech.csail.mit.edu/papers/debruijn.pdf
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_GetLowestBit(number);
+ * </summary>
+ * <param name="number">The number to get the lowest set bit of.</param>
+ * <returns>
+ *  The integer position of the lowest set bit.
+ * </returns>
+ * <remarks>
+ *  1)
+ *  Example: 0b00000000000000000000000000000001
+ *  Returns: 0
+ *
+ *  2)
+ *  Example: 0b00000000000000000000000000001000
+ *  Returns: 3
+ *
+ *  3)
+ *  Example: 0b00010001100011000011100010001000
+ *  Returns: 3
+ *
+ *  NOTE: This function returns "0" for both numbers with the "1" bit set AND
+ *  the number "0", which has NO bits set.  Check that the number is valid
+ *  before passing it to this function.
+ *
+ *  See: <a href="http://supertech.csail.mit.edu/papers/debruijn.pdf" />
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 {
@@ -438,38 +434,38 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>
-	Cell_GetLowestBitEx(number);
-</summary>
-<param name="number">The number to get the lowest set bit of PLUS ONE.</param>
-<returns>
-	The integer position of the lowest set bit PLUS ONE.
-</returns>
-<remarks>
-	This function is identical to "Cell_GetLowestBit", but gives different
-	results for 0 and non-zero numbers.  The examples below all have a result
-	one higher than the "Cell_GetLowestBit" function.
-	
-	1)
-	Example: 0b00000000000000000000000000000001
-	Returns: 1
-	
-	2)
-	Example: 0b00000000000000000000000000001000
-	Returns: 4
-	
-	3)
-	Example: 0b00010001100011000011100010001000
-	Returns: 4
-	
-	4)
-	Example: 0
-	Returns: 0
-	
-	See: http://supertech.csail.mit.edu/papers/debruijn.pdf
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_GetLowestBitEx(number);
+ * </summary>
+ * <param name="number">The number to get the lowest set bit of PLUS ONE.</param>
+ * <returns>
+ *  The integer position of the lowest set bit PLUS ONE.
+ * </returns>
+ * <remarks>
+ *  This function is identical to "Cell_GetLowestBit", but gives different
+ *  results for 0 and non-zero numbers.  The examples below all have a result
+ *  one higher than the "Cell_GetLowestBit" function.
+ *
+ *  1)
+ *  Example: 0b00000000000000000000000000000001
+ *  Returns: 1
+ *
+ *  2)
+ *  Example: 0b00000000000000000000000000001000
+ *  Returns: 4
+ *
+ *  3)
+ *  Example: 0b00010001100011000011100010001000
+ *  Returns: 4
+ *
+ *  4)
+ *  Example: 0
+ *  Returns: 0
+ *
+ *  See: <a href="http://supertech.csail.mit.edu/papers/debruijn.pdf" />
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 {
@@ -511,31 +507,31 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>
-	Cell_GetLowestComponent(number);
-</summary>
-<param name="number">The number to get the number of 1s in.</param>
-<returns>
-	The lowest set bit.
-</returns>
-<remarks>
-	Similar to Cell_GetLowestBit, but returns the bit, not the position of the
-	bit.
-	
-	1)
-	Example: 0b00000000000000000000000000000001
-	Returns: 0b00000000000000000000000000000001
-	
-	2)
-	Example: 0b00000000000000000000000000001000
-	Returns: 0b00000000000000000000000000001000
-	
-	3)
-	Example: 0b00010001100011000011100010001000
-	Returns: 0b00000000000000000000000000001000
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_GetLowestComponent(number);
+ * </summary>
+ * <param name="number">The number to get the number of 1s in.</param>
+ * <returns>
+ *  The lowest set bit.
+ * </returns>
+ * <remarks>
+ *  Similar to Cell_GetLowestBit, but returns the bit, not the position of the
+ *  bit.
+ *
+ *  1)
+ *  Example: 0b00000000000000000000000000000001
+ *  Returns: 0b00000000000000000000000000000001
+ *
+ *  2)
+ *  Example: 0b00000000000000000000000000001000
+ *  Returns: 0b00000000000000000000000000001000
+ *
+ *  3)
+ *  Example: 0b00010001100011000011100010001000
+ *  Returns: 0b00000000000000000000000000001000
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 {
@@ -550,36 +546,36 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>
-	Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5]);
-</summary>
-<param name="x">The number to compress.</param>
-<param name="m">The mask for which bits to compress.</param>
-<param name="masks">Precomputed constants for the compression.</param>
-<returns>
-	Selected bits from "x", shifted to be LSBs.
-</returns>
-<remarks>
-	Very briefly, do "x & m", to select certain bits, then shift those bits by
-	various amounts so that they are consecutive:
-	
-		x = 0b110011
-		m = 0b011010
-		
-		x & m = 0b010010
-		
-	From here, because the mask was three bits we know we want just those three
-	bits in the LSBs, so the answer becomes:
-	
-		0b000101
-	
-	Just read this question, it has a diagram:
-	
-	http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb
-	
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5]);
+ * </summary>
+ * <param name="x">The number to compress.</param>
+ * <param name="m">The mask for which bits to compress.</param>
+ * <param name="masks">Precomputed constants for the compression.</param>
+ * <returns>
+ *  Selected bits from "x", shifted to be LSBs.
+ * </returns>
+ * <remarks>
+ *  Very briefly, do "x &amp; m", to select certain bits, then shift those bits
+ *  by various amounts so that they are consecutive:
+ *
+ *      x = 0b110011
+ *      m = 0b011010
+ *
+ *      x &amp; m = 0b010010
+ *
+ *  From here, because the mask was three bits we know we want just those three
+ *  bits in the LSBs, so the answer becomes:
+ *
+ *      0b000101
+ *
+ *  Just read this question, it has a diagram:
+ *
+ *  <a href="http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb" />
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 {
@@ -593,22 +589,22 @@ stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 		t = x & masks[4],     x ^ t | (t >>> 16);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>
-	Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
-</summary>
-<param name="x">The number to expand.</param>
-<param name="m">The mask for which bits to expand to.</param>
-<param name="masks">Precomputed constants for the expansion.</param>
-<returns>
-	LSBs from "x", shifted to selected bit positions.
-</returns>
-<remarks>
-	The reverse of "Cell_CompressRightPrecomputed".  Doesn't return exactly the
-	original number before a compression, just the original number ANDed with
-	the mask "m".
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
+ * </summary>
+ * <param name="x">The number to expand.</param>
+ * <param name="m">The mask for which bits to expand to.</param>
+ * <param name="masks">Precomputed constants for the expansion.</param>
+ * <returns>
+ *  LSBs from "x", shifted to selected bit positions.
+ * </returns>
+ * <remarks>
+ *  The reverse of "Cell_CompressRightPrecomputed".  Doesn't return exactly the
+ *  original number before a compression, just the original number ANDed with
+ *  the mask "m".
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 {
@@ -621,25 +617,25 @@ stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
 		t = x <<  1, m & (((x ^ t) & masks[0]) ^ x);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>
-	Cell_PrecomputeMaskPermutation(m)
-</summary>
-<param name="m">The mask.</param>
-<returns>
-	Five precomputed constants to help expand or contract this mask.
-</returns>
-<remarks>
-	The full maths for generalised expansion and contraction is quite complex;
-	however, much of the inner loop relies only on the mask and not on the value
-	being manipulated.  Given this we can do a lot of work in advance, say
-	outside a loop, to avoid repeated calculations.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_PrecomputeMaskPermutation(m)
+ * </summary>
+ * <param name="m">The mask.</param>
+ * <returns>
+ *  Five precomputed constants to help expand or contract this mask.
+ * </returns>
+ * <remarks>
+ *  The full maths for generalised expansion and contraction is quite complex;
+ *  however, much of the inner loop relies only on the mask and not on the value
+ *  being manipulated.  Given this we can do a lot of work in advance, say
+ *  outside a loop, to avoid repeated calculations.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Cell_PrecomputeMaskPermutation(m)
 {
-	// See also: http://www.hackersdelight.org/hdcodetxt/compress.c.txt
+	// See also: <a href="http://www.hackersdelight.org/hdcodetxt/compress.c.txt" />
 	new
 		mk = ~m << 1,
 		mp,
@@ -663,51 +659,51 @@ stock Cell_PrecomputeMaskPermutation(m)
 	return masks;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>
-	Cell_CompressRight(GLOBAL_TAG_TYPES:x, m);
-</summary>
-<param name="x">The number to compress.</param>
-<param name="m">The mask for which bits to compress.</param>
-<returns>
-	Selected bits from "x", shifted to be LSBs.
-</returns>
-<remarks>
-	Doesn't require precomputation.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_CompressRight(GLOBAL_TAG_TYPES:x, m);
+ * </summary>
+ * <param name="x">The number to compress.</param>
+ * <param name="m">The mask for which bits to compress.</param>
+ * <returns>
+ *  Selected bits from "x", shifted to be LSBs.
+ * </returns>
+ * <remarks>
+ *  Doesn't require precomputation.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Cell_CompressRight(GLOBAL_TAG_TYPES:x, m)
 {
 	// Compress the result so that all the masked bits are next to each other,
 	// regardless of their value.
 	// 
-	// http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb
+	// <a href="http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb" />
 	// Also Hackers Delight, section 7-4.
 	// 
 	return Cell_CompressRightPrecomputed(x, m, Cell_PrecomputeMaskPermutation(m));
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>
-	Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
-</summary>
-<param name="x">The number to expand.</param>
-<param name="m">The mask for which bits to expand to.</param>
-<returns>
-	LSBs from "x", shifted to selected bit positions.
-</returns>
-<remarks>
-	Doesn't require precomputation.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
+ * </summary>
+ * <param name="x">The number to expand.</param>
+ * <param name="m">The mask for which bits to expand to.</param>
+ * <returns>
+ *  LSBs from "x", shifted to selected bit positions.
+ * </returns>
+ * <remarks>
+ *  Doesn't require precomputation.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 {
 	// Compress the result so that all the masked bits are next to each other,
 	// regardless of their value.
 	// 
-	// http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb
+	// <a href="http://stackoverflow.com/questions/28282869/shift-masked-bits-to-the-lsb" />
 	// Also Hackers Delight, section 7-5 (2nd edition only, which it turns out I
 	// don't have...)
 	// 

@@ -1,21 +1,42 @@
-/**--------------------------------------------------------------------------**\
-  				===================================
-					 y_punycode - Character encodings.
-					===================================
-Description:
-	Functions for converting unicode strings to and from punycode, to be
-	represented in just ASCII characters.  Based on several public
-	implementations and the RFC, adapted for PAWN.  For more information see:
-	
-	https://en.wikipedia.org/wiki/Punycode
-	
-	Also includes a function that hooks the "HTTP" function to allow for
-	internationalised domain names with that function.
+#if defined _INC_y_punycode
+	#endinput
+#endif
+#define _INC_y_punycode
+
+/**
+ * <library name="y_punycode">
+ * <section>
+ *  Description
+ * </section>
+ *  Functions for converting unicode strings to and from punycode, to be
+ *  represented in just ASCII characters.  Based on several public
+ *  implementations and the RFC, adapted for PAWN.  For more information see:
+ *
+ *  <a href="https://en.wikipedia.org/wiki/Punycode" />
+ *
+ *  Also includes a function that hooks the "HTTP" function to allow for
+ *  internationalised domain names with that function.
+ * <section>
+ *  Version
+ * </section>
+ *  0.1
+ * <section>
+ *  Functions
+ * </section>
+ * <subsection>
+ * Stock
+ * </subsection><ul>
+ *  <symbol name="Puny_Encode">Convert a Unicode string to Punycode.</symbol>
+ *  <symbol name="Puny_Decode">Convert a Punycode string to Unicode.</symbol>
+ *  <symbol name="Puny_HTTP">Wrapper for "HTTP" to encode domain names.</symbol>
+ * </ul>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -24,85 +45,65 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI punycode include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	0.1
-Changelog:
-	29/04/13:
-		Added Puny_HTTP.
-	26/04/13:
-		First version.
-Functions:
-	Public
-		-
-	Core:
-		-
-	Stock:
-		Puny_Encode - Convert a Unicode string to Punycode.
-		Puny_Decode - Convert a Punycode string to Unicode.
-		Puny_HTTP - Wrapper for "HTTP" to encode domain names.
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-Callbacks:
-	-
-Definitions:
-	-
-Enums:
-	-
-Macros:
-	-
-Tags:
-	-
-Variables:
-	Global:
-		-
-	Static:
-		-
-Commands:
-	-
-Compile options:
-	-
-Operators:
-	-
-\**--------------------------------------------------------------------------**/
 
-#if defined _INC_y_punycode
-	#endinput
-#endif
-#define _INC_y_punycode
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
 
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
+
+#include "..\YSI_Internal\y_compilerdata"
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Internal\y_pp"
 #include "..\YSI_Core\y_debug"
@@ -141,19 +142,15 @@ static stock const
 			PP_LOOP<5>(PUNY_INVL)(,)
 		};
 
-/**--------------------------------------------------------------------------**\
-<summary>Puny_Decode</summary>
-<param name="dst">Where to store the converted string.</param>
-<param name="src">The string to convert.</param>
-<param name="wlen">The length of the destination.</param>
-<param name="delimiter">What character is between the parts.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Takes a punycode string and converts it to unicode.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="dst">Where to store the converted string.</param>
+ * <param name="src">The string to convert.</param>
+ * <param name="wlen">The length of the destination.</param>
+ * <param name="delimiter">What character is between the parts.</param>
+ * <remarks>
+ *  Takes a punycode string and converts it to unicode.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Puny_Decode(string:dst[], string:src[], wlen = sizeof (dst), const delimiter = PUNY_CHAR)
 {
@@ -213,19 +210,15 @@ stock Puny_Decode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 	return 1;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Puny_Encode</summary>
-<param name="dst">Where to store the converted string.</param>
-<param name="src">The string to convert.</param>
-<param name="wlen">The length of the destination.</param>
-<param name="delimiter">What character to place between the parts.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Takes a unicode string and converts it to punycode.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="dst">Where to store the converted string.</param>
+ * <param name="src">The string to convert.</param>
+ * <param name="wlen">The length of the destination.</param>
+ * <param name="delimiter">What character to place between the parts.</param>
+ * <remarks>
+ *  Takes a unicode string and converts it to punycode.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimiter = PUNY_CHAR)
 {
@@ -291,21 +284,20 @@ stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
 	return (dst[widx] = '\0'), 1;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Puny_EncodeHash</summary>
-<param name="dst">Where to store the converted string.</param>
-<param name="src">The string to convert.</param>
-<param name="hash">Store the hash value.</param>
-<param name="wlen">The length of the destination.</param>
-<param name="delimiter">What character to place between the parts.</param>
-<returns>
-	The length of string read.
-</returns>
-<remarks>
-	Takes a unicode string and converts it to punycode, while at the same time
-	generating a Bernstein hash of the string.  CASE INSENSITIVE.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="dst">Where to store the converted string.</param>
+ * <param name="src">The string to convert.</param>
+ * <param name="hash">Store the hash value.</param>
+ * <param name="wlen">The length of the destination.</param>
+ * <param name="delimiter">What character to place between the parts.</param>
+ * <returns>
+ *  The length of string read.
+ * </returns>
+ * <remarks>
+ *  Takes a unicode string and converts it to punycode, while at the same time
+ *  generating a Bernstein hash of the string.  CASE INSENSITIVE.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), const delimiter = PUNY_CHAR)
 {
@@ -396,34 +388,27 @@ stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), co
 	return (bPacked ? strpack(dst, dst, wlen) : 0), (dst[widx] = '\0'), rlen;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>_Puny_Basic</summary>
-<param name="num">The single number to encode.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Convert a single digit to base 36.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="num">The single number to encode.</param>
+ * <remarks>
+ *  Convert a single digit to base 36.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
+P:D(_Puny_Basic(num));
 #define _Puny_Basic(%0) (((%0) > 25) ? ((%0) + ('0' - 25)) : ((%0) + 'a'))
 
-/**--------------------------------------------------------------------------**\
-<summary>Puny_EncodeVarHash</summary>
-<param name="bias">Part of the state machine.</param>
-<param name="delta">Part of the state machine.</param>
-<param name="dst">Array to write to.</param>
-<param name="wlen">Size of the array.</param>
-<param name="hash">Hashed string.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	This is part of how the punycode algorithm encodes numbers as very clever
-	strings, but honestly I don't fully understand it!
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="bias">Part of the state machine.</param>
+ * <param name="delta">Part of the state machine.</param>
+ * <param name="dst">Array to write to.</param>
+ * <param name="wlen">Size of the array.</param>
+ * <param name="hash">Hashed string.</param>
+ * <remarks>
+ *  This is part of how the punycode algorithm encodes numbers as very clever
+ *  strings, but honestly I don't fully understand it!
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Puny_EncodeVarHash(bias, delta, dst[], wlen, &hash)
 {
@@ -453,20 +438,16 @@ static stock Puny_EncodeVarHash(bias, delta, dst[], wlen, &hash)
 	return i;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Puny_EncodeVar</summary>
-<param name="bias">Part of the state machine.</param>
-<param name="delta">Part of the state machine.</param>
-<param name="dst">Array to write to.</param>
-<param name="wlen">Size of the array.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	This is part of how the punycode algorithm encodes numbers as very clever
-	strings, but honestly I don't fully understand it!
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="bias">Part of the state machine.</param>
+ * <param name="delta">Part of the state machine.</param>
+ * <param name="dst">Array to write to.</param>
+ * <param name="wlen">Size of the array.</param>
+ * <remarks>
+ *  This is part of how the punycode algorithm encodes numbers as very clever
+ *  strings, but honestly I don't fully understand it!
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Puny_EncodeVar(bias, delta, dst[], wlen)
 {
@@ -491,19 +472,15 @@ static stock Puny_EncodeVar(bias, delta, dst[], wlen)
 	return i;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Puny_Adapt</summary>
-<param name="delta">Part of the state machine.</param>
-<param name="length">Written string size.</param>
-<param name="firstTime">Have special characters already been written?</param>
-<returns>
-	-
-</returns>
-<remarks>
-	This is part of how the punycode algorithm encodes numbers as very clever
-	strings, but honestly I don't fully understand it!
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="delta">Part of the state machine.</param>
+ * <param name="length">Written string size.</param>
+ * <param name="firstTime">Have special characters already been written?</param>
+ * <remarks>
+ *  This is part of how the punycode algorithm encodes numbers as very clever
+ *  strings, but honestly I don't fully understand it!
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Puny_Adapt(delta, length, bool:firstTime)
 {
@@ -521,20 +498,16 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 }
 
 
-/**--------------------------------------------------------------------------**\
-<summary>Puny_HTTP</summary>
-<param name="index">The HTTP reference index.</param>
-<param name="type">How the request should be sent.</param>
-<param name="url[]">The (internationalised) URL address.</param>
-<param name="data[]">The GET/POST data.</param>
-<param name="callback[]">Which function to return the data to.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Hooks the "HTTP" function.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="index">The HTTP reference index.</param>
+ * <param name="type">How the request should be sent.</param>
+ * <param name="url">The (internationalised) URL address.</param>
+ * <param name="data">The GET/POST data.</param>
+ * <param name="callback">Which function to return the data to.</param>
+ * <remarks>
+ *  Hooks the "HTTP" function.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 #if defined PUNY_HTTP_HOOK
 	stock Puny_HTTP(index, type, url[], data[], callback[])

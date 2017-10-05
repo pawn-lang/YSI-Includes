@@ -1,31 +1,11 @@
-/**--------------------------------------------------------------------------**\
-<summary>Command_SetDeniedReturn</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-foreign void:Command_SetDeniedReturn(bool:set);
-
-global void:Command_SetDeniedReturn(bool:set)
-{
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Command_SetProvider</summary>
-<param name="p">Script.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Set the current provider to use for all commands being added. Basically
-	allows us to have the same command name in different scripts and have them
-	do different things, with different players targetting different ones.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="p">Script.</param>
+ * <remarks>
+ *  Set the current provider to use for all commands being added. Basically
+ *  allows us to have the same command name in different scripts and have them
+ *  do different things, with different players targetting different ones.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 foreign void:Command_SetProvider(p);
 
@@ -33,146 +13,26 @@ global void:Command_SetProvider(p)
 {
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetDeniedReturn</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-foreign bool:Command_GetDeniedReturn();
-
-global bool:Command_GetDeniedReturn()
-{
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Command_SetIllegalReturn</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-foreign void:Command_SetIllegalReturn(bool:set);
-
-global void:Command_SetIllegalReturn(bool:set)
-{
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetIllegalReturn</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-foreign bool:Command_GetIllegalReturn();
-
-global bool:Command_GetIllegalReturn()
-{
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Command_SetIllegalReturn</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-foreign void:Command_SetUnknownReturn(bool:set);
-
-global void:Command_SetUnknownReturn(bool:set)
-{
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetIllegalReturn</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-foreign bool:Command_GetUnknownReturn();
-
-global bool:Command_GetUnknownReturn()
-{
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Command_SetDisconnectReturn</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-foreign void:Command_SetDisconnectReturn(bool:set);
-
-global void:Command_SetDisconnectReturn(bool:set)
-{
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetDisconnectReturn</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
-
-foreign bool:Command_GetDisconnectReturn();
-
-global bool:Command_GetDisconnectReturn()
-{
-}
-
-/**--------------------------------------------------------------------------**\
-<summary>Command_SetDeniedDisplay</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
 
 foreign void:Command_SetDeniedDisplay(bool:set);
 
 global void:Command_SetDeniedDisplay(bool:set)
 {
+	if (set)
+		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_HIDDEN;
+	else
+		YSI_g_sCommandFlags &= ~e_COMMAND_FLAGS_HIDDEN;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Command_GetDeniedDisplay</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
 
 foreign bool:Command_GetDeniedDisplay();
 
 global bool:Command_GetDeniedDisplay()
 {
+	return YSI_g_sCommandFlags & e_COMMAND_FLAGS_HIDDEN;
 }
+

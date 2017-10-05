@@ -89,28 +89,24 @@ BIN_WriteChunk(const BIN:f, const pos, const arr[], const len = sizeof (arr), bu
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>INI_TryGetValue</summary>
-<param name="start">Start position of the possibly current key.</param>
-<param name="end">End position of the found key.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	The INI system uses basic string functions to find candidate keys.  They
-	always start searching from the known start of the current tag, and check
-	that the found key is before the start of the next known tag.  If both those
-	conditions are true, this function is called to further verify the found
-	text - it could be a substring in a larger key, it could be a value, or it
-	could be commented out.  This function therefore checks that the found
-	position in the stored string is the first item on a line, and is followed
-	only by either nothing or an equals sign.
-	
-	If this IS the key we are searching for, then we return a later position
-	corresponding to the start of the value (or cellmax if there is no value).
-	If this isn't a valid key, we return -1.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="start">Start position of the possibly current key.</param>
+ * <param name="end">End position of the found key.</param>
+ * <remarks>
+ *  The INI system uses basic string functions to find candidate keys.  They
+ *  always start searching from the known start of the current tag, and check
+ *  that the found key is before the start of the next known tag.  If both those
+ *  conditions are true, this function is called to further verify the found
+ *  text - it could be a substring in a larger key, it could be a value, or it
+ *  could be commented out.  This function therefore checks that the found
+ *  position in the stored string is the first item on a line, and is followed
+ *  only by either nothing or an equals sign.
+ *
+ *  If this IS the key we are searching for, then we return a later position
+ *  corresponding to the start of the value (or cellmax if there is no value).
+ *  If this isn't a valid key, we return -1.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock bool:INI_TryGetValue(start, end)
 {

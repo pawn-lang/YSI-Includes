@@ -1,15 +1,9 @@
-/**--------------------------------------------------------------------------**\
-                              ===================
-                               YSI - Master Core
-                              ===================
-Description:
-	There seems to be a bug with a compiler when using #emit in files included
-	more than once, so this code has been moved to a file only included once.
+/*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -18,99 +12,63 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI master include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	0.2
-Changelog:
-	03/01/13:
-		Added "@foreign" and "@global" for EXPLICIT Master_Caller use.
-		Added "void:" return tag to simplify common code.
-	07/08/10:
-		Split in to y_masteronce.
-		Added assembly for publics scanning.
-	06/08/10:
-		Managed the ultimate - got completely transparent inclusion!
-	05/08/10:
-		Completed new master system, now does all syncing and clients.
-	06/10/09:
-		Rewrote using states.
-		Added remote function macros.
-		Reduced the number of masters to a single one.  It must have them all.
-		Vastly simplified the master model - ending the master ends everything.
-	06/01/08:
-		Added code to not pass data if no other script exists.
-	17/11/07:
-		Added code for a script to remove itself from the global list.
-	11/10/07:
-		Not first version but added documentation months late.
-Functions:
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-	Hooks:
-		OnGameModeInit
-		OnGameModeExit
-Callbacks:
-	-
-Definitions:
-	-
-Enums:
-	-
-Macros:
-	-
-Tags:
-	-
-Variables:
-	Global:
-		_@ - ID of this script.
-	Static:
-		-
-Commands:
-	-
-Compile options:
-	-
-Operators:
-	-
-Natives:
-	-
-\**--------------------------------------------------------------------------**/
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 #define Master_ID() (_@)
 
@@ -245,15 +203,11 @@ PRE_HOOK(Master)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER @CO_Master
 
-/**--------------------------------------------------------------------------**\
-<summary>Master_GetNext</summary>
-<returns>
-	Next master ID to be assigned.
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <returns>
+ *  Next master ID to be assigned.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 stock Master_GetNext()
 {
@@ -272,15 +226,16 @@ stock Master_GetNext()
 	return -1;
 }
 
-/**--------------------------------------------------------------------------**\
-Hook:
-	OnScriptInit
-</returns>
-<remarks>
-	Constructor.  Gets the script a master ID.  Now ALWAYS gets an ID, even if
-	the master system is disabled - doing otherwise is just too complicated.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <returns>
+ *  OnScriptInit
+ * </returns>
+ * <remarks>
+ *  Constructor.  Gets the script a master ID.  Now ALWAYS gets an ID, even if
+ *  the master system is disabled - doing otherwise is just too complicated.
+ * </remarks>
+ * <transition keep="true" target="_ALS : _ALS_go" />
+ *//*------------------------------------------------------------------------**/
 
 public OnScriptInit()
 {
@@ -328,14 +283,14 @@ HOOK_FORWARD:Master_OnScriptInit();
 #define OnMasterSystemInit YSIM_OnMasterSystemInit
 forward YSIM_OnMasterSystemInit();
 
-/**--------------------------------------------------------------------------**\
-Hook:
-	OnGameModeExit
-</returns>
-<remarks>
-	Destructor.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <returns>
+ *  OnGameModeExit
+ * </returns>
+ * <remarks>
+ *  Destructor.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 public OnScriptExit()
 {
@@ -374,15 +329,11 @@ HOOK_FORWARD:Master_OnScriptExit();
 //#define OnMasterSystemClose Master_OnScriptClose
 //forward Master_OnScriptClose(id);
 
-/**--------------------------------------------------------------------------**\
-<summary>Master_Reassert</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Rebuilds the collection of master data whenever a script is restarted.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Rebuilds the collection of master data whenever a script is restarted.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 public Master_Reassert()
 {
@@ -435,16 +386,9 @@ stock _Master_Relinquish(library[])
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>_Master_Get</summary>
-<param name="library[]">The name of the library to try become master for.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="library">The name of the library to try become master for.</param>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:_Master_Get(library[], bool:force = false)
 {

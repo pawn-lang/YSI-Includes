@@ -1,14 +1,30 @@
-/**--------------------------------------------------------------------------**\
-                              =====================
-                               YSI - Version Check
-                              =====================
-Description:
-	Checks online to see if there is a newer version of YSI available.
+#if defined _INC_y_version
+	#endinput
+#endif
+#define _INC_y_version
+
+/*+
+ * <library name="y_version">
+ * <section>
+ *  Description
+ * </section>
+ *  Checks online to see if there is a newer version of YSI available.
+ * <section>
+ *  Version
+ * </section>
+ *  0.2
+ * <section>
+ *  Hooks
+ * </section><ul>
+ *  <symbol name="OnGameModeInit">Initialises things.</symbol>
+ * </ul>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -17,87 +33,63 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI version check include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	0.2
-Changelog:
-	26/10/10:
-		Added changelog capabilities.
-	22/10/10:
-		First version.
-Functions:
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-	Hooks:
-		OnGameModeInit
-Callbacks:
-	-
-Definitions:
-	-
-Enums:
-	-
-Macros:
-	-
-Tags:
-	-
-Variables:
-	Global:
-		-
-	Static:
-		-
-Commands:
-	-
-Compile options:
-	-
-Operators:
-	-
-Natives:
-	-
-</remarks>
-\**--------------------------------------------------------------------------**/
 
-#if defined _INC_y_version
-	#endinput
-#endif
-#define _INC_y_version
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 #include <a_samp>
 #if !defined HTTP
@@ -147,16 +139,16 @@ Natives:
 	#endif
 	
 #else
-/**----------------------------------------------------------------------**\
-	Hook:
-		OnScriptInit
-	</returns>
-<remarks>
-		Constructor.  Checks to see if there is a new version available.  This
-		code can not use ANY of the rest of YSI as it needs to be included by
-		everything first.
-</remarks>
-\**----------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//*+
+ * <returns>
+ *  OnScriptInit
+ * </returns>
+ * <remarks>
+ *      Constructor.  Checks to see if there is a new version available.  This
+ *      code can not use ANY of the rest of YSI as it needs to be included by
+ *      everything first.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 	
 	#if !defined HTTP
 	
@@ -262,23 +254,20 @@ Natives:
 		forward YVers_OnScriptInit();
 	#endif
 	
-	/**----------------------------------------------------------------------**\
-	<summary>YVers_Callback</summary>
-	<param name="	index">Not used.</param>
-	<param name="	code">Response code from the server.</param>
-	<param name="	data[]">HTTP data sent from the server.</param>
-	<returns>
-		-
-	</returns>
-	<remarks>
-		This is called when my server responds to the HTTP request sent above
-		(or when it doesn't).  This prints information on the current and any
-		future versions of YSI.  Note that it only does a strcmp to determine if
-		the version is newer - people can't have versions newer than the latest,
-		onlyolder or equal (unless they play with the version numbers, but then
-		that's their own fault).
-	</remarks>
-	\**----------------------------------------------------------------------**/
+	/*---------------------------------------------------------------------*//*+
+	 *
+	 * <param name="	index">Not used.</param>
+	 * <param name="	code">Response code from the server.</param>
+	 * <param name="	data[]">HTTP data sent from the server.</param>
+	 * <remarks>
+	 *  This is called when my server responds to the HTTP request sent above
+	 *  (or when it doesn't).  This prints information on the current and any
+	 *  future versions of YSI.  Note that it only does a strcmp to determine if
+	 *  the version is newer - people can't have versions newer than the latest,
+	 *  onlyolder or equal (unless they play with the version numbers, but then
+	 *  that's their own fault).
+	 * </remarks>
+	 *//*--------------------------------------------------------------------**/
 	
 	public YVers_Callback(index, code, data[])
 	{

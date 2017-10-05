@@ -1,14 +1,25 @@
-/**--------------------------------------------------------------------------**\
-					====================================
-					 y_testing - Run unit tests easilly 
-					====================================
-Description:
-	Runs any functions named as tests when the Testing_Run function is called.
+#if defined _INC_y_testing
+	#endinput
+#endif
+#define _INC_y_testing
+
+/**
+ * <library name="y_testing">
+ * <section>
+ *  Description
+ * </section>
+ *  Runs any functions named as tests when the Testing_Run function is called.
+ * <section>
+ *  Version
+ * </section>
+ *  1.0
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -17,58 +28,72 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI testing include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	1.0
-Changelog:
-	16/02/12:
-		Added better error reporting (less verbose passes).
-		Removed "Tests:".
-		Added player requiring tests.
-	25/10/10:
-		Integrated in to YSI.
-	06/08/10:
-		First version
-</remarks>
-\**--------------------------------------------------------------------------**/
 
-#if defined _INC_y_testing
-	#endinput
-#endif
-#define _INC_y_testing
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
+
+forward bool:_Testing_End();
 
 #include <a_samp>
 #include "y_debug"
 #include "..\YSI_Storage\y_amx"
-#include "..\YSI_Internal\amx_assembly"
+#include "..\YSI_Internal\y_thirdpartyinclude"
+
+#include "..\YSI_Internal\y_shortvar"
 
 #if defined YSI_TESTS
 	#if defined INCLUDE_TESTS
@@ -137,15 +162,20 @@ static stock const
 	Y_TESTING_SHUT = _A<yQ_@>,
 	Y_TESTING_PTEST = _A<_@yQ>,
 	Y_TESTING_PINIT = _A<_y@Q>,
-	Y_TESTING_PSHUT = _A<y_@Q>;
+	Y_TESTING_PSHUT = _A<y_@Q>,
+	Y_TESTING_BEFORE = _A<yB_@>,
+	Y_TESTING_AFTER = _A<yA_@>
+;
 
 static stock
 	YSI_g_sCurTest = 0,
+	YSI_g_sCurHeap = 0,
 	YSI_g_sFailTests = 0,
 	YSI_g_sInTest = false,
 	YSI_g_sTestResult,
 	YSI_g_sFailMessage[512],
 	YSI_g_sPlayer = cellmax,
+	bool:YSI_gTestComplete,
 	bool:YSI_g_sAsked,
 	YSI_g_sTests,
 	YSI_g_sFails;
@@ -154,17 +184,21 @@ stock
 	YSI_gCurTestName[32];
 
 #if defined RUN_TESTS
-	#define Test:%1() forward bool:yQ@_%1(); public bool:yQ@_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = (TEST_REPORT(" ") && false))
+	#define Test:%1() forward bool:yQ@_%1(); public bool:yQ@_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())
 	#define TestInit:%1() forward _yQ@%1(); public _yQ@%1() for (new bool:__once = true; __once; __once = false)
 	#define TestClose:%1() forward yQ_@%1(); public yQ_@%1() for (new bool:__once = true; __once; __once = false)
-	
-	#define PTest:%1(%2) forward bool:_@yQ%1(%2); public bool:_@yQ%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = (TEST_REPORT(" ") && false))
+	#define TestBeforeEach:%1() forward yB_@%1(); public yB_@%1()
+	#define TestAfterEach:%1() forward yA_@%1(); public yA_@%1()
+
+	#define PTest:%1(%2) forward bool:_@yQ%1(%2); public bool:_@yQ%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())
 	#define PTestInit:%1(%2) forward _y@Q%1(%2); public _y@Q%1(%2) for (new bool:__once = true; __once; __once = false)
 	#define PTestClose:%1(%2) forward y_@Q%1(%2); public y_@Q%1(%2) for (new bool:__once = true; __once; __once = false)
 #else
 	#define Test:%1() stock bool:yQ@_%1()
 	#define TestInit:%1() stock _yQ@%1()
 	#define TestClose:%1() stock yQ_@%1()
+	#define TestBeforeEach:%1() stock yB_@%1()
+	#define TestAfterEach:%1() stock yA_@%1()
 	
 	#define PTest:%1(%2) stock bool:_@yQ%1(%2)
 	#define PTestInit:%1(%2) stock _y@Q%1(%2)
@@ -182,40 +216,37 @@ stock
 
 #include "..\YSI_Coding\y_va"
 
-/**--------------------------------------------------------------------------**\
-<summary>Testing_Start</summary>
-<param name="name">Name of the current function.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Gets a reference to the 
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Name of the current function.</param>
+ * <remarks>
+ *  Gets a reference to the 
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock _Testing_Start(name[])
 {
+	YSI_gTestComplete = false;
 	// Gets a reference to the name string, which is also an intrusive linked
 	// list of failures.
 	name[0] = name[1] = 0,
 	YSI_g_sCurTest = ref(name);
+	// My very first legitimate usage of `heapspace()` for something other than
+	// as a dummy no-op function call!  I'm actually quite happy I found a use
+	// for it!
+	YSI_g_sCurHeap = heapspace();
 	P:3("_Testing_Start %d %d %s = %d", name[0], name[1], name[2], YSI_g_sCurTest);
 	YSI_gCurTestName[0] = '\0',
 	strcpy(YSI_gCurTestName, name[2]);
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Testing_Ask</summary>
-<param name="playerid">Player to ask a question to.</param>
-<param name="str[]">What to ask.</param>
-<param name="va_args<>">Additional data.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Calls a dialog to ask the player if the given test actually passed.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player to ask a question to.</param>
+ * <param name="str">What to ask.</param>
+ * <param name="va_args">Additional data.</param>
+ * <remarks>
+ *  Calls a dialog to ask the player if the given test actually passed.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Testing_Ask(playerid, str[] = "", va_args<>)
 {
@@ -233,7 +264,7 @@ stock Testing_Test(bool:x, str[] = "", va_args<>)
 			++YSI_g_sFails;
 			if (numargs() == 2)
 			{
-				P:T(TEST_FAILED " %s", va_start<1>);
+				P:T(TEST_FAILED " %s", str);
 			}
 			else
 			{
@@ -253,21 +284,37 @@ stock Testing_Test(bool:x, str[] = "", va_args<>)
 	#endif
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Testing_Run</summary>
-<param name="&tests">Number of tests run.</param>
-<param name="&fails">Number of tests which failed.</param>
-<param name="buffer[33]">The name of the first test which failed.</param>
-<returns>
-	Wether all tests were sucessful or not.
-</returns>
-<remarks>
-	-
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Name of the current function.</param>
+ * <remarks>
+ *  Gets a reference to the 
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
-native Testing_Run(&tests, &fails, buffer[33] = "");
+stock bool:_Testing_End()
+{
+	YSI_gTestComplete = true;
+	new
+		space = heapspace();
+	Testing_Test(YSI_g_sCurHeap == space, TEST_FAILED " Heap allocation leak - was: %d, now: %d", YSI_g_sCurHeap, space);
+	TEST_REPORT(" ");
+	return false;
+}
 
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="tests">Number of tests run.</param>
+ * <param name="fails">Number of tests which failed.</param>
+ * <param name="buffer">The name of the first test which failed.</param>
+ * <returns>
+ *  Wether all tests were sucessful or not.
+ * </returns>
+ * <remarks>
+ *  -
+ *
+ * native Testing_Run(&amp;tests, &amp;fails, buffer[33] = "");
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 {
@@ -277,11 +324,32 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 	P:2("Testing_Run() called");
 	new
 		idx,
+		bidx,
+		buffer2[32],
 		buffer[32];
 	YSI_g_sCurTest = YSI_g_sFailTests = 0;
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_TESTING_TEST)))
 	{
 		strunpack(buffer, buffer);
+
+		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_BEFORE))) {
+			strunpack(buffer2, buffer2);
+			new
+				i = 4,
+				bool:match = true
+			;
+			while (buffer[i] != EOS && buffer2[i] != EOS) {
+				if (buffer[i] != buffer2[i]) {
+					match = false;
+					break;
+				}
+
+				i++;
+			}
+			if (match) {
+				CallLocalFunction(buffer2, "");
+			}
+		}
 		// Call the setup function if there is one.
 		buffer[0] = '_',
 		buffer[1] = 'y',
@@ -298,6 +366,7 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 		YSI_g_sInTest = true;
 		CallLocalFunction(buffer, "");
 		YSI_g_sInTest = false;
+		Testing_Test(YSI_gTestComplete, "Test did not complete (possible crash).\n");
 		if (YSI_g_sFails != fails)
 		{
 			WriteAmxMemory(YSI_g_sCurTest, YSI_g_sFailTests),
@@ -314,6 +383,25 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 		buffer[2] = '_',
 		buffer[3] = '@',
 		CallLocalFunction(buffer, "");
+
+		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_AFTER))) {
+			strunpack(buffer2, buffer2);
+			new
+				i = 4,
+				bool:match = true
+			;
+			while (buffer[i] != EOS && buffer2[i] != EOS) {
+				if (buffer[i] != buffer2[i]) {
+					match = false;
+					break;
+				}
+
+				i++;
+			}
+			if (match) {
+				CallLocalFunction(buffer2, "");
+			}
+		}
 	}
 	tests = YSI_g_sTests;
 	fails = YSI_g_sFails;
@@ -324,23 +412,22 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 #endif
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Testing_Player</summary>
-<param name="playerid">Player to test on.</param>
-<param name="&idx">Next test to run.</param>
-<param name="&tests">Number of tests run.</param>
-<param name="&fails">Number of tests which failed.</param>
-<param name="buffer[33]">The name of the first test which failed.</param>
-<returns>
-	Wether all tests were sucessful or not.
-</returns>
-<remarks>
-	-
-
-native Testing_Run(&tests, &fails, buffer[33] = "");
-
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player to test on.</param>
+ * <param name="idx">Next test to run.</param>
+ * <param name="tests">Number of tests run.</param>
+ * <param name="fails">Number of tests which failed.</param>
+ * <param name="buffer">The name of the first test which failed.</param>
+ * <returns>
+ *  Wether all tests were sucessful or not.
+ * </returns>
+ * <remarks>
+ *  -
+ *
+ * native bool:Testing_Player(playerid, &amp;idx, &amp;tests, &amp;fails, lastfail[33] = "", bool:p = false);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", bool:p = false)
 {

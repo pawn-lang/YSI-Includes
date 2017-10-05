@@ -1,18 +1,9 @@
-/**--------------------------------------------------------------------------**\
-					==========================
-					 y_colours - X11 colours!
-					==========================
-Description:
-	This holds the colour information that used to be part of the text system
-	but which is far more useful than just for text.  This now supports the full
-	set of X11 colours, both by name and by definition.  You can also define
-	your own if you so choose (up to 32 - should be enough given that this
-	includes the X11 colours).
+/*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -21,45 +12,63 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI format include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	1.0
-Changelog:
-	29/11/10:
-		Added the ability to use "X11" prefixes in strings.
-		Added colourspace resolution for converting {FF0000} to ~r~.
-	25/11/10:
-		First version.
-</remarks>
-\**--------------------------------------------------------------------------**/
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 // Custom specifier data.
 #define F@k<%0>(%1) F@k%0(%1)
@@ -170,17 +179,16 @@ enum e_COMPRESS_FORMAT_DATA (+= 0x10000000)
 
 #define Y_FORMAT_STRING_SKIP(); //if(iOut+1<len)output[iOut]=0,lastChar=iOut++
 
-/**--------------------------------------------------------------------------**\
-<summary>Format_GetKeys</summary>
-<param name="const input[]">String to read from.</param>
-<param name="&idx">Current read index.</param>
-<returns>
-	e_GAME_TEXT_KEYS - Enum representation of keys.
-</returns>
-<remarks>
-	Reads a GameText key identifier and compresses it essentially.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="input">String to read from.</param>
+ * <param name="idx">Current read index.</param>
+ * <returns>
+ *  e_GAME_TEXT_KEYS - Enum representation of keys.
+ * </returns>
+ * <remarks>
+ *  Reads a GameText key identifier and compresses it essentially.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock e_GAME_TEXT_KEYS:Format_GetKeys(const input[], &idx)
 {
@@ -355,26 +363,25 @@ stock e_GAME_TEXT_KEYS:Format_GetKeys(const input[], &idx)
 	return e_NO_KEY_SELECTED;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Format_Standardise</summary>
-<param name="input[]">The text to read in.</param>
-<param name="output[]">The destination array.  Can be the same as "input".</param>
-<param name="len">The length of the output array.</param>
-<param name="pt - Special mode for parsing player text">has "()" but no "%" or keys.</param>
-<returns>
-	The length of the string.
-</returns>
-<remarks>
-	Takes a string input and converts it to a standardised representation, i.e.
-	uses byte-codes instead of human readable codes to represent formats and
-	colours.  This makes it faster to format in to any other representation,
-	instead of having to convert between all possible combinations, we just have
-	this to convert basically all formats at once (it can handle hybrids of all
-	the different representations) to a single fast read format and then have
-	fairly simple to write methods to convert that single format to any other
-	format (see y_formatout.inc).
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="input">The text to read in.</param>
+ * <param name="output">The destination array.  Can be the same as "input".</param>
+ * <param name="len">The length of the output array.</param>
+ * <param name="pt">Special mode for parsing player text has "()" but no "%" or keys.</param>
+ * <returns>
+ *  The length of the string.
+ * </returns>
+ * <remarks>
+ *  Takes a string input and converts it to a standardised representation, i.e.
+ *  uses byte-codes instead of human readable codes to represent formats and
+ *  colours.  This makes it faster to format in to any other representation,
+ *  instead of having to convert between all possible combinations, we just have
+ *  this to convert basically all formats at once (it can handle hybrids of all
+ *  the different representations) to a single fast read format and then have
+ *  fairly simple to write methods to convert that single format to any other
+ *  format (see y_formatout.inc).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Format_Standardise(input[], output[], len = sizeof (output), pt = false)
 {
@@ -1032,18 +1039,17 @@ Format_Standardise_no_switch:
 	return iOut;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Format_GetSpecifier</summary>
-<param name="input[]">String to read from.</param>
-<param name="&iIn">Index to read from.</param>
-<returns>
-	Single cell representation of the current specifier.
-</returns>
-<remarks>
-	Reads a series of characters from the input string and interprets them as a
-	format specifier (e.g. "%d").  Also returns the new current string index.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="input">String to read from.</param>
+ * <param name="iIn">Index to read from.</param>
+ * <returns>
+ *  Single cell representation of the current specifier.
+ * </returns>
+ * <remarks>
+ *  Reads a series of characters from the input string and interprets them as a
+ *  format specifier (e.g. "%d").  Also returns the new current string index.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Format_GetSpecifier(input[], &iIn)
 {
@@ -1156,17 +1162,16 @@ static stock Format_GetSpecifier(input[], &iIn)
 	return 0;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Format_GTToSAMP</summary>
-<param name="const str[]">Input.</param>
-<param name="&idx">Read index.</param>
-<returns>
-	Colour.
-</returns>
-<remarks>
-	Reads a GameText colour format and converts it to single-cell RGB.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="str">Input.</param>
+ * <param name="idx">Read index.</param>
+ * <returns>
+ *  Colour.
+ * </returns>
+ * <remarks>
+ *  Reads a GameText colour format and converts it to single-cell RGB.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Format_GTToSAMP(const str[], &idx)
 {

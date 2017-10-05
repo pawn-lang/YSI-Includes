@@ -1,14 +1,9 @@
-/**--------------------------------------------------------------------------**\
-					=================================
-					 y_styles - Text style handling.
-					=================================
-Description:
-	Determines how a piece of text should be shown.
+/*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -17,50 +12,63 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI utils include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	0.1
-Changelog:
-	25/02/12:
-		First version.
-Functions:
-	Stock:
-		-
-	Inline:
-		-
-Variables:
-	Global:
-		-
-</remarks>
-\**--------------------------------------------------------------------------**/
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 // Load the styles for the current item.  I have decided to completely switch
 // over to XML as there are just too many options now to make INI files worth
@@ -156,15 +164,11 @@ stock Styles_GetData(index, style[E_STYLE_DATA], label[E_3D_DATA])
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Styles_EntryTag</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Called to load "<entry>" tags from XML style files.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Called to load "&lt;entry&gt;" tags from XML style files.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 forward Styles_EntryTag();
 
@@ -393,19 +397,15 @@ public Styles_3DTag()
 	return YSI_g_sCur3D++;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Styles_OnScriptInit</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Loads all the style files relevant to this script.  Filters by text group in
-	the XML callback.  Loops through all publics, then loops through them all
-	again to check that the current file hasn't already been loaded.  Despite
-	the filtering, it is done this way to ensure that all relevant text draw
-	styles are loaded for when we are displaying text.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Loads all the style files relevant to this script.  Filters by text group in
+ *  the XML callback.  Loops through all publics, then loops through them all
+ *  again to check that the current file hasn't already been loaded.  Despite
+ *  the filtering, it is done this way to ensure that all relevant text draw
+ *  styles are loaded for when we are displaying text.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 //hook OnScriptInit()
 public _Styles_SpecialInit()
@@ -473,15 +473,11 @@ public _Styles_SpecialInit()
 	XML_Parse(YSI_g_sXMLRules, fname);
 }*/
 
-/**--------------------------------------------------------------------------**\
-<summary>Styles_Reload</summary>
-<returns>
-	-
-</returns>
-<remarks>
-	Reloads all the string styles in all scripts.  Use sparingly!
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Reloads all the string styles in all scripts.  Use sparingly!
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Styles_Reload()
 {

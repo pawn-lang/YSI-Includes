@@ -1,15 +1,9 @@
-/**--------------------------------------------------------------------------**\
-					===========================
-					Y Sever Includes - INI Core
-					===========================
-Description:
-	Reads the INI and also exports a number of functions to other "classes" for
-	easy reading of data files there.
+/*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -18,146 +12,63 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI ini include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	1.5
-Changelog:
-	07/01/13:
-		Rewrote almost everything!
-		Split in to multiple files.
-		Added sections.
-	08/09/10:
-		Started adding sscanf and file plugin compatibility.
-		Added tagless data at the start of a file (dini compatible).
-		Added new INI:file[tag]() syntax.
-		Added options to default file load.
-		Fixed bugs in default file load configuration.
-		Modified to be stand alone.
-	20/02/08:
-		Added INI_RemoveEntry.
-	18/08/07:
-		Fixed bug reading identifiers starting with a tag (i.e. names).
-		Added local file reading for non-serverwide broadcasting.
-		Added tag passing instead of tag based functions option.
-		Increased default pool size.
-	30/07/07:
-		Added auto creation of non-existant files.
-	13/07/07:
-		Fixed INI writing to actually work.
-		Added support for blank lines in INIs decently and quickly.
-	25/06/07:
-		Altered file write options to use lists.
-		Added buffer overwriting for updating values.
-	24/06/07:
-		Added file write options.
-	21/06/07:
-		Added INI_NEW_LINE for future writing functions.
-	20/06/07:
-		Added support for an optional parameter in broadcastfunc data.
-	15/04/07:
-		Updated for more whitespaces.
-		Added INI comment code.
-		Added support for value-less entries.
-		Modified entry extraction to use end of name location parameter.
-		Removed INI_GetTagName, now done via INI_GetEntryName.
-	14/04/07:
-		Updated header documentation with more than changelog.
-	24/03/07:
-		First version.
-Functions:
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		INI_Load - Loads an INI file using standard features.
-		INI_ParseFile - Loads a file as an ini and distributes data.
-		INI_GetEntryName - Gets the name of an INI item.
-		INI_GetEntryText - Gets the value of an INI item.
-		INI_Open - Opens an INI for writing.
-		INI_Close - Closes an INI being written to.
-		INI_SetTag - Sets a subheading in an INI fo subsequent writes.
-		INI_WriteString - Writes a string to an INI.
-		INI_WriteInt - Writes an int to an INI.
-		INI_WriteFloat - Writes a float to an INI.
-		INI_WriteHex - Writes a hex to an INI.
-		INI_WriteBin - Writes a binary to an INI.
-		INI_WriteBool - Writes a boolean to an INI.
-		INI_RemoveEntry - Remove an entry from a file.
-	Static:
-		INI_WriteBuffer - Writes an INI's buffer to the file.
-		INI_AddToBuffer - Adds a string to an INI buffer.
-	Inline:
-		INI_Int - Parse an integer INI entry.
-		INI_Float - Parse a float INI entry.
-		INI_Hex - Parse a hex INI entry.
-		INI_Bin - Parse a binary INI entry.
-		INI_Bool - Parse a binary INI entry.
-		INI_String - Parse a string INI entry.
-	API:
-		-
-Callbacks:
-	-
-Definitions:
-	MAX_INI_TAG - Maximum length of an INI tagname.
-	MAX_INI_ENTRY_NAME - Maximum length of an INI entry name.
-	MAX_INI_ENTRY_TEXT - Maximum length of an INI's entries' value.
-	MAX_INI_LINE - Maximum length of a line in a file.
-	INI_NEW_LINE - String for new lines.
-	INI_MAX_WRITES - Maximum concurrent files open for writing.
-	MAX_INI_TAGS - Number of tags the buffer can hold data for at once.
-Enums:
-	E_INI_WRITE - Storage for entries to be written.
-	E_INI_TAGS - Data for tags with data.
-Macros:
-	INI_Parse - Header for ini parsing functions.
-Tags:
-	INI - Handle to an INI file being written to.
-Variables:
-	Global:
-		-
-	Static:
-		YSI_g_sINIWriteBuffer - Basic data to be written.
-		YSI_g_sINIWritePos - Next slot to write to.
-		YSI_g_sINITagPos - Next slot to add a tag to.
-		YSI_g_sINICurrentTag - Pointer to the tag been writen to.
-		YSI_g_sINIWriteTag - Data for tags,
-		YSI_g_sINIWriteFile - Current files been written to.
-Commands:
-	-
-Compile options:
-	-
-Operators:
-	-
-\**--------------------------------------------------------------------------**/
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 /*
 
@@ -207,97 +118,65 @@ static stock
 	forward @INI_%0_%1(%2); \
 	@INI_%0_%1(%2)
 
-/**----------------------------------------------------------------------**\
-<summary>INI_Int</summary>
-<param name="name[]">Name of the INI key.</param>
-<param name="variable">Variable to fill with integer value.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**----------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Name of the INI key.</param>
+ * <param name="variable">Variable to fill with integer value.</param>
+ *//*------------------------------------------------------------------------**/
 
+P:D(INI_Int(const name[],&variable));
 #define INI_Int(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = strval(value)
 
-/**----------------------------------------------------------------------**\
-<summary>INI_Float</summary>
-<param name="name[]">Name of the INI key.</param>
-<param name="variable">Variable to fill with float value.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**----------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Name of the INI key.</param>
+ * <param name="variable">Variable to fill with float value.</param>
+ *//*------------------------------------------------------------------------**/
 
+P:D(INI_Float(const name[],&Float:variable));
 #define INI_Float(%1,%2) \
 	if (!strcmp((%1), name, true)) return _:(%2 = floatstr(value))
 
-/**----------------------------------------------------------------------**\
-<summary>INI_Hex</summary>
-<param name="name[]">Name of the INI key.</param>
-<param name="variable">Variable to fill with hex value.</param>
-<returns>
-	-
-</returns>
-	-
-</remarks>
-\**----------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Name of the INI key.</param>
+ * <param name="variable">Variable to fill with hex value.</param>
+ *//*------------------------------------------------------------------------**/
 
+P:D(INI_Hex(const name[],&variable));
 #define INI_Hex(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = hexstr(value)
 
-/**----------------------------------------------------------------------**\
-<summary>INI_Bin</summary>
-<param name="name[]">Name of the INI key.</param>
-<param name="variable">Variable to fill with binary value.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**----------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Name of the INI key.</param>
+ * <param name="variable">Variable to fill with binary value.</param>
+ *//*------------------------------------------------------------------------**/
 
+P:D(INI_Bin(const name[],&variable));
 #define INI_Bin(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = binstr(value)
 
-/**----------------------------------------------------------------------**\
-<summary>INI_String</summary>
-<param name="name[]">Name of the INI key.</param>
-<param name="variable">Variable to fill with string value.</param>
-<param name="len">Optional string length.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	The old version of "INI_String" didn't like not having a length.  It gave a
-	very odd error message too.  This has now been corrected by making the
-	length parameter optional.
-</remarks>
-\**----------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Name of the INI key.</param>
+ * <param name="variable">Variable to fill with string value.</param>
+ * <param name="len">Optional string length.</param>
+ * <remarks>
+ *  The old version of "INI_String" didn't like not having a length.  It gave a
+ *  very odd error message too.  This has now been corrected by making the
+ *  length parameter optional.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
+P:D(INI_String(const name[],variable[]));
 #define INI_String(%1,%2) \
 	if (!strcmp((%1), name, true)) return _:INI_CHECK_LEN:strcpy(%2, value)
 
 #define INI_CHECK_LEN:strcpy(%0,%1,%2) strcpy(%0,%2,%1)
 
-/**----------------------------------------------------------------------**\
-<summary>INI_Bool</summary>
-<param name="name[]">Name of the INI key.</param>
-<param name="variable">Variable to fill with string value.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	-
-</remarks>
-\**----------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Name of the INI key.</param>
+ * <param name="variable">Variable to fill with string value.</param>
+ *//*------------------------------------------------------------------------**/
 
+P:D(INI_Bool(const name[],&bool:variable));
 #define INI_Bool(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = boolstr(value)
 
@@ -316,26 +195,24 @@ static stock
 
 #define INI_SkipWhitespace(%0,%1) while ('\0' < %0[%1] <= ' ') ++%1
 
-/**--------------------------------------------------------------------------**\
-<summary>INI_GetCallback</summary>
-<param name="callback[E_CALLBACK_DATA]">The callback destination.</param>
-<param name="const format[]">The function name format.</param>
-<param name="tag[]">The tag destination.</param>
-<param name="const input[]">The tag source.</param>
-<param name="const len">The tag length.</param>
-<param name="tag[]">The tag destination.</param>
-<param name="callbackFormat[]">The callback parameter specifiers.</param>
-<param name="const bool:remote">Use "CallRemoteFunction".</param>
-<returns>
-	Was the function found?
-</returns>
-<remarks>
-	Gets a callback given a partial function name and a tag name.  Also saves
-	the tag elsewhere.  This might not work as a separate function - it will
-	need to be in the function called by the function with the inlines in.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="callback">The callback destination.</param>
+ * <param name="format">The function name format.</param>
+ * <param name="tag">The tag destination.</param>
+ * <param name="input">The tag source.</param>
+ * <param name="callbackFormat">The callback parameter specifiers.</param>
+ * <param name="remote">Use "CallRemoteFunction".</param>
+ * <returns>
+ *  Was the function found?
+ * </returns>
+ * <remarks>
+ *  Gets a callback given a partial function name and a tag name.  Also saves
+ *  the tag elsewhere.  This might not work as a separate function - it will
+ *  need to be in the function called by the function with the inlines in.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
+P:D(INI_GetCallback(callback,format,tag,input,callbackFormat,remote));
 #define INI_GetCallback(%0,%1,%2,%3,%4,%5) \
 	( \
 		strcpy((%2), (%3)), \
@@ -357,37 +234,33 @@ static stock
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>INI_ParseFile</summary>
-<param name="filename[]">The file to load.</param>
-<param name="remoteFormat[]">The format string to generate the remote function
-t pass the data to once loaded.</param>
-<param name="bool:bFileFirst">The order of the remoteFormat parameters.</param>
-<param name="bool:bExtra">Send additional data.</param>
-<param name="extra">Additional data to send.</param>
-<param name="bLocal">Call local functions instead of global ones.</param>
-<param name="bPassTag">Pass the tag as an extra parameter not the function
-name.</param>
-<param name="bFilter">Apply the tag name filter to all tags or just prefixed
-ones?</param>
-<param name="filter">Text to use to search for which tags to load.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	bFileFirst sets the order and inclusion of the possible remoteFormat
-	parameters.  If true the format will add the filename first then the 
-	current tag, if false the order will be reversed.  This can also be used
-	to exclude one or the other from the function name by setting the required
-	parameter to be entered first and then only having one %s in the format
-	sting.  The default order is tag first for languages compatibility.
-	
-	This function is now EXTENSIVELY documented here:
-	
-		http://forum.sa-mp.com/showthread.php?t=485611
-	
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="filename">The file to load.</param>
+ * <param name="remoteFormat">The format string to generate the remote function to
+ * pass the data to once loaded.</param>
+ * <param name="bFileFirst">The order of the remoteFormat parameters.</param>
+ * <param name="bExtra">Send additional data.</param>
+ * <param name="extra">Additional data to send.</param>
+ * <param name="bLocal">Call local functions instead of global ones.</param>
+ * <param name="bPassTag">Pass the tag as an extra parameter not the function
+ * name.</param>
+ * <param name="bFilter">Apply the tag name filter to all tags or just prefixed
+ * ones?</param>
+ * <param name="filter">Text to use to search for which tags to load.</param>
+ * <remarks>
+ *  bFileFirst sets the order and inclusion of the possible remoteFormat
+ *  parameters.  If true the format will add the filename first then the 
+ *  current tag, if false the order will be reversed.  This can also be used
+ *  to exclude one or the other from the function name by setting the required
+ *  parameter to be entered first and then only having one %s in the format
+ *  sting.  The default order is tag first for languages compatibility.
+ *
+ *  This function is now EXTENSIVELY documented here:
+ *
+ *      <a href="http://forum.sa-mp.com/showthread.php?t=485611" />
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:bExtra = false, extra = 0, bool:bLocal = true, bool:bPassTag = false, bool:bFilter = true, filter[] = "")
 {
@@ -491,20 +364,19 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 		true;
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>INI_Load</summary>
-<param name="filename[]">The file to load.</param>
-<param name="bool:bExtra">Send additional data.</param>
-<param name="extra">Additional data to send.</param>
-<param name="bLocal">Call local functions instead of gloabal ones.</param>
-<returns>
-	INI_ParseFile
-</returns>
-<remarks>
-	Wrapper for INI_ParseFile to use standard API features so people can
-	worry even less.  Designed for use with INI_Parse.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="filename">The file to load.</param>
+ * <param name="bExtra">Send additional data.</param>
+ * <param name="extra">Additional data to send.</param>
+ * <param name="bLocal">Call local functions instead of gloabal ones.</param>
+ * <returns>
+ *  INI_ParseFile
+ * </returns>
+ * <remarks>
+ *  Wrapper for INI_ParseFile to use standard API features so people can
+ *  worry even less.  Designed for use with INI_Parse.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:INI_Load(filename[], bool:bExtra = false, extra = 0, bool:bLocal = true)
 {
@@ -527,24 +399,23 @@ stock bool:INI_Load(filename[], bool:bExtra = false, extra = 0, bool:bLocal = tr
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>INI_IdentifyLineType</summary>
-<param name="str[]">The string you want to type analyse.</param>
-<param name="p0s">Start of part 0.</param>
-<param name="p0e">End of part 0.</param>
-<param name="p1s">Start of part 1.</param>
-<param name="p1e">End of part 1.</param>
-<param name="p2s">Start of part 2.</param>
-<param name="p2e">End of part 2.</param>
-<param name="cont">Is this a line continuation?</param>
-<returns>
-	e_INI_LINE_TYPE
-</returns>
-<remarks>
-	This function's signature is so long that I put it on a separate line.  This
-	takes a line and determines what it is and where the parts are.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="str">The string you want to type analyse.</param>
+ * <param name="p0s">Start of part 0.</param>
+ * <param name="p0e">End of part 0.</param>
+ * <param name="p1s">Start of part 1.</param>
+ * <param name="p1e">End of part 1.</param>
+ * <param name="p2s">Start of part 2.</param>
+ * <param name="p2e">End of part 2.</param>
+ * <param name="cont">Is this a line continuation?</param>
+ * <returns>
+ *  e_INI_LINE_TYPE
+ * </returns>
+ * <remarks>
+ *  This function's signature is so long that I put it on a separate line.  This
+ *  takes a line and determines what it is and where the parts are.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock e_INI_LINE_TYPE:
 	INI_IdentifyLineType(const str[], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e)
@@ -697,36 +568,32 @@ state_in_comment:
 
 */
 
-/**--------------------------------------------------------------------------**\
-<summary>INI_SetupCallbackName</summary>
-<param name="fmat[]">The format destination.</param>
-<param name="const remoteFormat[]">The source format.</param>
-<param name="filename[]">The file we are currently parsing.</param>
-<param name="const bool:bFileFirst">The format parameter ordering.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	Generates a partial function name for processing callbacks.  Includes the
-	filename and a placeholder for the tag name.  This now takes extra
-	characters in to account and strips or converts bits:
-	
-		some/dir/file name.ext
-	
-	Becomes:
-	
-		file_name
-	
-	Before being formatted in to the specified remote format.  The filename
-	also takes in to account "/" directory separators and "\\" ones on Windows.
-	
-	Because the	majority of this function is concerned with formatting just part
-	of the function name correctly, it short-circuits if it detects that there
-	is no place for the function name to go.
-	
-	This is quite a complex function, but is only called once per file parse.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="fmat">The format destination.</param>
+ * <param name="remoteFormat">The source format.</param>
+ * <param name="filename">The file we are currently parsing.</param>
+ * <param name="bFileFirst">The format parameter ordering.</param>
+ * <remarks>
+ *  Generates a partial function name for processing callbacks.  Includes the
+ *  filename and a placeholder for the tag name.  This now takes extra
+ *  characters in to account and strips or converts bits:
+ *
+ *      some/dir/file name.ext
+ *
+ *  Becomes:
+ *
+ *      file_name
+ *
+ *  Before being formatted in to the specified remote format.  The filename
+ *  also takes in to account "/" directory separators and "\\" ones on Windows.
+ *
+ *  Because the	majority of this function is concerned with formatting just part
+ *  of the function name correctly, it short-circuits if it detects that there
+ *  is no place for the function name to go.
+ *
+ *  This is quite a complex function, but is only called once per file parse.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filename[], const bool:bFileFirst)
 {
@@ -792,32 +659,28 @@ _Y_INI_STATIC stock INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTa
 	}
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>INI_DoParentTag</summary>
-<param name="filename[]">The file to load.</param>
-<param name="remoteFormat[]">The format string to generate the remote function
-t pass the data to once loaded.</param>
-<param name="bool:bFileFirst">The order of the remoteFormat parameters.</param>
-<param name="bool:bExtra">Send additional data.</param>
-<param name="extra">Additional data to send.</param>
-<param name="bLocal">Call local functions instead of global ones.</param>
-<param name="bPassTag">Pass the tag as an extra parameter not the function
-name.</param>
-<param name="bFilter">Apply the tag name filter to all tags or just prefixed
-ones?</param>
-<param name="filter">Text to use to search for which tags to load.</param>
-<returns>
-	-
-</returns>
-<remarks>
-	bFileFirst sets the order and inclusion of the possible remoteFormat
-	parameters.  If true the format will add the filename first then the 
-	current tag, if false the order will be reversed.  This can also be used
-	to exclude one or the other from the function name by setting the required
-	parameter to be entered first and then only having one %s in the format
-	sting.  The default order is tag first for languages compatibility.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="filename">The file to load.</param>
+ * <param name="remoteFormat">The format string to generate the remote function
+ * t pass the data to once loaded.</param>
+ * <param name="bFileFirst">The order of the remoteFormat parameters.</param>
+ * <param name="bExtra">Send additional data.</param>
+ * <param name="extra">Additional data to send.</param>
+ * <param name="bLocal">Call local functions instead of global ones.</param>
+ * <param name="bPassTag">Pass the tag as an extra parameter not the function
+ * name.</param>
+ * <param name="bFilter">Apply the tag name filter to all tags or just prefixed
+ * ones?</param>
+ * <param name="filter">Text to use to search for which tags to load.</param>
+ * <remarks>
+ *  bFileFirst sets the order and inclusion of the possible remoteFormat
+ *  parameters.  If true the format will add the filename first then the 
+ *  current tag, if false the order will be reversed.  This can also be used
+ *  to exclude one or the other from the function name by setting the required
+ *  parameter to be entered first and then only having one %s in the format
+ *  sting.  The default order is tag first for languages compatibility.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock INI_DoParentTag(const epos, const search[], File:f, callback[E_CALLBACK_DATA], bool:bExtra, extra, bool:bPassTag, tag[], bool:bFilter, filter[])
 {

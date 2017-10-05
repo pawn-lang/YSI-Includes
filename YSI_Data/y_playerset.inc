@@ -1,17 +1,28 @@
-/**--------------------------------------------------------------------------**\
-					=======================================
-					 y_playerset - Collections of players! 
-					=======================================
-Description:
-	This code is a huge abstraction of collections of players.  It allows you to
-	define functions which take one or more players, specified in a number of
-	formats, and perform the code for all those player.  Essentially it is an
-	abstraction of loops over players.
+#if defined _INC_y_playerset
+	#endinput
+#endif
+#define _INC_y_playerset
+
+/**
+ * <library name="y_playerset">
+ * <section>
+ *  Description
+ * </section>
+ *  This code is a huge abstraction of collections of players.  It allows you to
+ *  define functions which take one or more players, specified in a number of
+ *  formats, and perform the code for all those player.  Essentially it is an
+ *  abstraction of loops over players.
+ * <section>
+ *  Version
+ * </section>
+ *  1.0
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -20,47 +31,63 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI playerset include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	1.0
-Changelog:
-	30/04/11:
-		First version
-</remarks>
-\**--------------------------------------------------------------------------**/
 
-#if defined _INC_y_playerset
-	#endinput
-#endif
-#define _INC_y_playerset
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 #include <a_samp>
 #include "..\YSI_Data\y_iterate"
@@ -162,12 +189,12 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 			// Should really add error-checking code for overflows.
 			__ps_stack[__ps_pointer][0] = _:addr;
 			// Single value - either a playerid or a groupid.
-			#if defined _YSI_HAS_GROUP_SYSTEM
-				if (Group:addr & GROUP_MASK)
+			#if defined _YSI_HAS_y_groups
+				if (Group:addr & (Group:0x80000000))//GROUP_MASK)
 				{
 					// Use the pre-made iterator functionality.
 					__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_GROUP;
-					cur = Iter_Func@Group(-1, Group:addr);
+					cur = Iter_Func@GroupMember(-1, Group:addr);
 					if (cur == -1)
 					{
 						--__ps_pointer;
@@ -183,7 +210,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 				{
 					// Uses the new "foreach" format of the infinate loop.
 					__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_PLAYERS;
-					cur = Iter_Begin(Player);
+					cur = Iter_First(Player);
 					if (cur == Iter_End(Player))
 					{
 						--__ps_pointer;
@@ -195,7 +222,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 					case ALL_BOTS:
 					{
 						__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_BOTS;
-						cur = Iter_Begin(Bot);
+						cur = Iter_First(Bot);
 						if (cur == Iter_End(Bot))
 						{
 							--__ps_pointer;
@@ -206,7 +233,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 					case ALL_CHARACTERS:
 					{
 						__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_CHARACTERS;
-						cur = Iter_Begin(Character);
+						cur = Iter_First(Character);
 						if (cur == Iter_End(Character))
 						{
 							--__ps_pointer;
@@ -335,10 +362,10 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 	// Each mode has a different end condition.
 	switch (__ps_type{__ps_pointer})
 	{
-		#if defined _YSI_HAS_GROUP_SYSTEM
+		#if defined _YSI_HAS_y_groups
 			case e_PLAYER_SET_TYPE_GROUP:
 			{
-				cur = Iter_Func@Group(cur, Group:_:addr);
+				cur = Iter_Func@GroupMember(cur, Group:_:addr);
 				if (cur == -1)
 				{
 					--__ps_pointer;
@@ -497,7 +524,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 	return -1;
 }
 
-#define iterstart@PS -1
+#define Iterator@PS iterstart(-1)
 
 // This function gets the required data from custom format (enum) arrays.
 stock __PS_C(source[MAX_PLAYERS][], idx)

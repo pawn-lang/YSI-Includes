@@ -1,14 +1,38 @@
-/**--------------------------------------------------------------------------**\
-					========================================
-					 y_stringhash - Fast string comparisons 
-					========================================
-Description:
-	Allows you to hash strings at compile time to use them in a switch.
+#if defined _INC_y_stringhash
+	#endinput
+#endif
+#define _INC_y_stringhash
+
+/**
+ * <library name="y_stringhash">
+ * <section>
+ *  Description
+ * </section>
+ *  Allows you to hash strings at compile time to use them in a switch.
+ * <section>
+ *  Version
+ * </section>
+ *  2.0
+ * <section>
+ *  Functions
+ * </section>
+ * <subsection>
+ * Stock
+ * </subsection><ul>
+ *  <symbol name="YHash">Generate a string hash at run time.</symbol>
+ * </ul><section>
+ *  Definitions
+ * </section><ul>
+ *  <symbol name="_H">Generate a string hash at compile time.</symbol>
+ *  <symbol name="_I">Generate a case insensitive string hash at compile time.</symbol>
+ * </ul>
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
 	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 (the "License"); you may not use this file except in compliance with 
+	1.1 the "License"; you may not use this file except in compliance with 
 	the License. You may obtain a copy of the License at 
 	http://www.mozilla.org/MPL/
 	
@@ -17,60 +41,63 @@ Legal:
 	for the specific language governing rights and limitations under the
 	License.
 	
-	The Original Code is the YSI stringhash include.
+	The Original Code is the YSI framework.
 	
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
-	Portions created by the Initial Developer are Copyright (C) 2011
+	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	2.0
-Changelog:
-	06/03/11:
-		Changed the order of some letters to better support numbers in _I.
-	01/03/11:
-		Rewrote compile-time hashes to not require commas.
-	25/10/10:
-		Updated comments.
-		Added to YSI 1.0.
-		Added FNV1 and FNV1a hashes to avoid collisions.
-	19/08/10:
-		First version.
-Functions:
-	stock:
-		YHash - Generate a string hash at run time.
-Definitions:
-	_H - Generate a string hash at compile time.
-	_I - Generate a case insensitive string hash at compile time.
-\**--------------------------------------------------------------------------**/
 
-#if defined _INC_y_stringhash
-	#endinput
-#endif
-#define _INC_y_stringhash
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Core\y_debug"
@@ -285,23 +312,22 @@ enum e_HASH_TYPE
 	hash_fnv1a
 }
 
-/**--------------------------------------------------------------------------**\
-<summary>Hash</summary>
-<param name="str">The string to hash.</param>
-<param name="sensitive">Wether the hash is case sensitive or not.</param>
-<returns>
-	The reverse Bernstein hash of the string.
-</returns>
-<remarks>
-	Based on Bernstein hash, but backwards to match the macros.  The only
-	characters which can be used in the compile time version of this code are:
-	a-z, A-Z, 0-9, _ and space.
-
-native Hash(str[]);
-
-	NOW FORWARD AGAIN.
-</remarks>
-\**--------------------------------------------------------------------------**/
+/*-------------------------------------------------------------------------*//**
+ * <param name="str">The string to hash.</param>
+ * <param name="sensitive">Wether the hash is case sensitive or not.</param>
+ * <returns>
+ *  The reverse Bernstein hash of the string.
+ * </returns>
+ * <remarks>
+ *  Based on Bernstein hash, but backwards to match the macros.  The only
+ *  characters which can be used in the compile time version of this code are:
+ *  a-z, A-Z, 0-9, _ and space.
+ *
+ * native Hash(str[]);
+ *
+ *  NOW FORWARD AGAIN.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstein, len = -1, pack = false)
 {
