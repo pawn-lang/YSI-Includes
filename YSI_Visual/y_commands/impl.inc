@@ -457,7 +457,16 @@ global Command_ReProcess(p,string:c[],h)
 	#if !defined Y_COMMANDS_NO_IPC
 		if (!IsPlayerConnected(p)) return Command_OnReceived(NO_PLAYER, p, c);
 	#endif
-	if (PA_Get(YSI_g_sDisabledPlayers, p)) return Command_OnReceived(DISABLED, p, c);
+	if (PA_Get(YSI_g_sDisabledPlayers, p))
+	{
+		sRet = Command_OnReceived(DISABLED, p, c);
+		if (sErr != COMMAND_OK)
+		{
+			return
+				YSI_g_sCurrentID = prevID,
+				sRet;
+		}
+	}
 	P:1("Commands_OnPlayerCommandText called: %d %s", p, c);
 	new
 		prevID = YSI_g_sCurrentID;
@@ -482,67 +491,62 @@ global Command_ReProcess(p,string:c[],h)
 		}
 	#endif
 	P:5("Commands_OnPlayerCommandText: Use %d", _Command_GetPlayer(YSI_g_sCurrentID, p));
-	// Can the player use this command?
+	// Can the player use this command?  `Command_OnReceived` sets "sErr".
 	if ((h&2) || _Command_GetPlayer(YSI_g_sCurrentID, p))
-	{
-		// This macro sets "sErr".
 		sRet = Command_OnReceived(OK, p, c);
-		if (sErr != COMMAND_OK)
-		{
-			return
-				YSI_g_sCurrentID = prevID,
-				sRet;
-		}
-		// Find the true version of the command (alts etc).
-		_Command_GetReal(sHash, YSI_g_sCurrentID, sCmd[4]);
-		P:5("Commands_OnPlayerCommandText: Read %d", YSI_g_sCurrentID);
-		P:5("Commands_OnPlayerCommandText: Master %d %d", Master_ID(), _:MASTER_GET<YSI_g_sCurrentID>);
-		#if YSIM_HAS_MASTER
-			if (MASTER_EXCLUSIVE<YSI_g_sCurrentID>)
-		#endif
-			{
-				P:5("Commands_OnPlayerCommandText: Local");
-				// In this script.  More to the point, in ONLY this script, so
-				// we can't have another script as the master.  I tried updating
-				// this code but then realised that the update would ignore the
-				// case where a command was in both the current script and
-				// another script, but the other script was the master script.
-				h=h&1;
-				#emit PUSH.S      h
-				#emit LOAD.pri    sPos
-				#emit LOAD.S.alt  c
-				#emit IDXADDR
-				#emit PUSH.pri
-				#emit PUSH.S      p
-				#emit PUSH.C      12
-				#emit LCTRL       6
-				#emit ADD.C       28
-				#emit PUSH.pri
-				#emit LOAD.pri    sHash
-				#emit SCTRL       6
-				#emit STOR.pri    sRet
-				P:5("Command_ReProces: Result = %d %d %d", sRet, Command_Error(p, e_COMMAND_ERRORS:sRet), _:COMMAND_OK);
-			}
-		#if YSIM_HAS_MASTER
-			else
-			{
-				// This is in another script, or multiple scripts.
-				// Call the command in another script.  If no particular script
-				// is set up as the "master", call it in the first one found...
-				if (c[sPos]) CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos], h&1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
-				else CallRemoteFunction(sCmd, YSI_gscISII, p, NULL, h&1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
-				sRet = getproperty(8, YSIM_RETURN);
-			}
-		#endif
-		if (YSI_g_sCommandFlags & e_COMM_FLAG_OPCP) sRet = CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, p, c, sRet);
+	else
+		sRet = Command_OnReceived(DENIED, p, c);
+	if (sErr != COMMAND_OK)
+	{
 		return
 			YSI_g_sCurrentID = prevID,
-			Command_Error(p, e_COMMAND_ERRORS:sRet);
+			sRet;
 	}
+	// Find the true version of the command (alts etc).
+	_Command_GetReal(sHash, YSI_g_sCurrentID, sCmd[4]);
+	P:5("Commands_OnPlayerCommandText: Read %d", YSI_g_sCurrentID);
+	P:5("Commands_OnPlayerCommandText: Master %d %d", Master_ID(), _:MASTER_GET<YSI_g_sCurrentID>);
+	#if YSIM_HAS_MASTER
+		if (MASTER_EXCLUSIVE<YSI_g_sCurrentID>)
+	#endif
+		{
+			P:5("Commands_OnPlayerCommandText: Local");
+			// In this script.  More to the point, in ONLY this script, so
+			// we can't have another script as the master.  I tried updating
+			// this code but then realised that the update would ignore the
+			// case where a command was in both the current script and
+			// another script, but the other script was the master script.
+			h=h&1;
+			#emit PUSH.S      h
+			#emit LOAD.pri    sPos
+			#emit LOAD.S.alt  c
+			#emit IDXADDR
+			#emit PUSH.pri
+			#emit PUSH.S      p
+			#emit PUSH.C      12
+			#emit LCTRL       6
+			#emit ADD.C       28
+			#emit PUSH.pri
+			#emit LOAD.pri    sHash
+			#emit SCTRL       6
+			#emit STOR.pri    sRet
+			P:5("Command_ReProces: Result = %d %d %d", sRet, Command_Error(p, e_COMMAND_ERRORS:sRet), _:COMMAND_OK);
+		}
+	#if YSIM_HAS_MASTER
+		else
+		{
+			// This is in another script, or multiple scripts.
+			// Call the command in another script.  If no particular script
+			// is set up as the "master", call it in the first one found...
+			if (c[sPos]) CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos], h&1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+			else CallRemoteFunction(sCmd, YSI_gscISII, p, NULL, h&1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+			sRet = getproperty(8, YSIM_RETURN);
+		}
+	#endif
+	if (YSI_g_sCommandFlags & e_COMM_FLAG_OPCP) sRet = CallRemoteFunction(YSI_gscOPCP, YSI_gscISI, p, c, sRet);
 	return
-		sRet = Command_OnReceived(DENIED, p, c),
 		YSI_g_sCurrentID = prevID,
-		sRet;
+		Command_Error(p, e_COMMAND_ERRORS:sRet);
 }
 
 /*
@@ -557,6 +561,39 @@ global Command_ReProcess(p,string:c[],h)
     88          `"Ybbd8"' 88         88      88      88 88 `"YbbdP"' `"YbbdP"' 88  `"YbbdP"'  88       88 `"YbbdP"'  
 
 */
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player to set.</param>
+ * <param name="set">Can they use any commands at all.</param>
+ * <remarks>
+ *   Enables or disables using commands for this player.  Enabling commands does
+ *   not enable ALL commands, just allows them to use the ones for which they
+ *   have otherwise set permissions.  Disabling prevents them from using ANY
+ *   commands at all (though this can be overridden by returning `COMMAND_OK` in
+ *   `OnPlayerCommandReceived`).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+foreign void:Command_SetPlayerDisabled(playerid, bool:set);
+
+global void:Command_SetPlayerDisabled(playerid, bool:set)
+{
+	PA_Set(YSI_g_sDisabledPlayers, playerid, set);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player to get.</param>
+ * <returns>
+ *  Can this player use any commands?
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+foreign bool:Command_GetPlayerDisabled(playerid);
+
+global bool:Command_GetPlayerDisabled(playerid)
+{
+	return PA_Get(YSI_g_sDisabledPlayers, playerid);
+}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="command">Command to get for.</param>
