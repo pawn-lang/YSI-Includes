@@ -1414,11 +1414,11 @@ stock _Text_Send(@PlayerSet:players, search[], ident[], GLOBAL_TAG_TYPES:...)
 		{
 			// Null - error.
 			P:E("Text_Send called with NULL");
-			return;
+			return -1;
 		}
 		case '\2':
 			source = cellmin;
-		default
+		default:
 			source = Text_IsLocalOwner(search, ident, maxlen);
 	}
 	// Loop through all the players passed to the function (however they were
@@ -1503,7 +1503,7 @@ stock _Text_Render(playerid, search[], ident[], GLOBAL_TAG_TYPES:...)
 		}
 		case '\2':
 			source = cellmin;
-		default
+		default:
 			source = Text_IsLocalOwner(search, ident, maxlen);
 	}
 	for (new Language:lang; lang != YSI_MAX_LANGUAGES; ++lang) if (Langs_IsValid(lang))
@@ -1561,7 +1561,7 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 	{
 		// Null - error.
 		P:E("Text_Send called with NULL");
-		return;
+		return -1;
 	}
 	if (isearch[0] == '\2')
 		source = cellmin;
