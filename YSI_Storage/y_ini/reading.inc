@@ -262,7 +262,7 @@ P:D(INI_GetCallback(callback,format,tag,input,callbackFormat,remote));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:bExtra = false, extra = 0, bool:bLocal = true, bool:bPassTag = false, bool:bFilter = true, filter[] = "")
+stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:bExtra = false, extra = 0, bool:bLocal = true, bool:bPassTag = false, bool:bFilter = true, filter[] = "", bool:bPassFile = false)
 {
 	P:3("bool:INI_ParseFile called: \"%s\", \"%s\", %i, %i, %i, %i, %i, %i, \"%s\"", fname, remoteFormat, bFileFirst, bExtra, extra, bLocal, bPassTag, bFilter, filter);
 	static
@@ -333,7 +333,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 				if ((handle = INI_GetCallback(callback, cbName, tag, YSI_g_sCurLine[p0s], cbSpec, bLocal)) && p1s != p1e)
 				{
 					// No point recursing if there's no handler is there?
-					if (!INI_DoParentTag(ppos, parent, f, callback, bExtra, extra, bPassTag, tag, bFilter, filter))
+					if (!INI_DoParentTag(ppos, parent, fname, f, callback, bExtra, extra, bPassTag, tag, bFilter, filter))
 						P:I("Invalid hierarchy in INI file: \"%s\" for tag \"%s\"", fname, tag);
 					fseek(f, ppos, seek_start);
 				}
@@ -345,13 +345,29 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 				YSI_g_sCurLine[p0e] = YSI_g_sCurLine[p1e] = '\0';
 				if (bExtra)
 				{
-					if (bPassTag) Callback_Call(callback, extra, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-					else          Callback_Call(callback, extra,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					if (bPassFile)
+					{
+						if (bPassTag) Callback_Call(callback, extra, fname, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback, extra, fname,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					}
+					else
+					{
+						if (bPassTag) Callback_Call(callback, extra,        tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback, extra,             YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					}
 				}
 				else
 				{
-					if (bPassTag) Callback_Call(callback,        tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-					else          Callback_Call(callback,             YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					if (bPassFile)
+					{
+						if (bPassTag) Callback_Call(callback,      , fname, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback,      , fname,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					}
+					else
+					{
+						if (bPassTag) Callback_Call(callback,      ,        tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback,      ,             YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					}
 				}
 			}
 		}
@@ -682,7 +698,7 @@ _Y_INI_STATIC stock INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTa
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock INI_DoParentTag(const epos, const search[], File:f, callback[E_CALLBACK_DATA], bool:bExtra, extra, bool:bPassTag, tag[], bool:bFilter, filter[])
+static stock INI_DoParentTag(const epos, const search[], fname, File:f, callback[E_CALLBACK_DATA], bool:bExtra, extra, bool:bPassTag, tag[], bool:bFilter, filter[], bool:bPassFile)
 {
 	// The bulk of this function is basically the same as INI_ParseFile (which
 	// is a shame as it is a symptom of poor, unmaintainable code).
@@ -726,7 +742,7 @@ static stock INI_DoParentTag(const epos, const search[], File:f, callback[E_CALL
 							parent[32];
 						YSI_g_sCurLine[p1e] = '\0',
 						strcat(parent, YSI_g_sCurLine[p1s]);
-						if (!INI_DoParentTag(ppos, parent, f, callback, bExtra, extra, bPassTag, tag, bFilter, filter)) return false;
+						if (!INI_DoParentTag(ppos, parent, fname, f, callback, bExtra, extra, bPassTag, tag, bFilter, filter, bPassFile)) return false;
 						fseek(f, ppos, seek_start);
 					}
 				}
@@ -743,13 +759,29 @@ static stock INI_DoParentTag(const epos, const search[], File:f, callback[E_CALL
 				YSI_g_sCurLine[p0e] = YSI_g_sCurLine[p1e] = '\0';
 				if (bExtra)
 				{
-					if (bPassTag) Callback_Call(callback, extra, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-					else          Callback_Call(callback, extra,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					if (bPassFile)
+					{
+						if (bPassTag) Callback_Call(callback, extra, fname, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback, extra, fname,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					}
+					else
+					{
+						if (bPassTag) Callback_Call(callback, extra,        tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback, extra,             YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					}
 				}
 				else
 				{
-					if (bPassTag) Callback_Call(callback,        tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-					else          Callback_Call(callback,             YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					if (bPassFile)
+					{
+						if (bPassTag) Callback_Call(callback,      , fname, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback,      , fname,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					}
+					else
+					{
+						if (bPassTag) Callback_Call(callback,      ,        tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback,      ,             YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+					}
 				}
 			}
 		}
