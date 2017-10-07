@@ -177,6 +177,7 @@ enum e_TEXT_ENTRY
 #endif
 
 static stock
+	YSI_g_sTextLength,
 	YSI_g_sTextSets[Y_TEXT_MAX_SETS][e_TEXT_SETS],
 	YSI_g_sTextEntries[MAX_TEXT_ENTRIES][e_TEXT_ENTRY],
 	YSI_g_sTextStrings[MAX_TEXT_ENTRIES * _:YSI_MAX_LANGUAGES][MAX_INI_ENTRY_TEXT / 4],// char],
@@ -779,7 +780,9 @@ public Text_ReturnTheText(master, index, str[], len0, style[E_STYLE_DATA], len1,
 {
 	P:4("Text_ReturnTheText called: %d,%d,%d,%d,%d len = %d (%s)", str[0], str[1], str[2], str[3], str[4], len0, str);
 	strcpy(YSI_g_sReturnText, str, len0);
-	setproperty(8, YSIM_TXTLEN, _Format_SetStyleData(master, index, style, label));
+	// Here we return store the maximum length of a string, given the output
+	// type.  E.g. 144 for `SendClientMessage`.
+	YSI_g_sTextLength = _Format_SetStyleData(master, index, style, label) - 1;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1381,9 +1384,6 @@ static stock Text_IsLocalOwner(search[], ident[], &len)
 	return -1;
 }
 
-static stock
-	YSI_g_sLangBuffer[YSI_MAX_LANGUAGES][MAX_SINGLE_TEXT_ITEM];
-
 /*-------------------------------------------------------------------------*//**
  * <param name="players">A representation of players to show to.</param>
  * <param name="search">Text sets to look in for this string.</param>
@@ -1397,221 +1397,76 @@ static stock
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+static stock
+	YSI_g_sLangBuffer[YSI_MAX_LANGUAGES][MAX_SINGLE_TEXT_ITEM];
+
 stock _Text_Send(@PlayerSet:players, search[], ident[], GLOBAL_TAG_TYPES:...)
 {
-	setproperty(8, YSIM_TXTLEN, 1023);
+	YSI_g_sTextLength = MAX_SINGLE_TEXT_ITEM - 1;
 	new
 		bool:wasOnce[YSI_MAX_LANGUAGES] = {false, ...},
-		n = (numargs() - 3) * 4,
 		maxlen,
-		owned = Text_IsLocalOwner(search, ident, maxlen);
+		source,
+		ret;
+	switch (search[0])
+	{
+		case '\1':
+		{
+			// Null - error.
+			P:E("Text_Send called with NULL");
+			return;
+		}
+		case '\2':
+			source = cellmin;
+		default
+			source = Text_IsLocalOwner(search, ident, maxlen);
+	}
 	// Loop through all the players passed to the function (however they were
 	// passed to the function).  This uses "@PlayerArray" instead of
 	// "@PlayerVar" so that we can optimised for multiple languages.  Now it
 	// uses "@PlayerSet" instead because that's the new one designed for
 	// situations like this in which we want direct access to the variable.
-	if (n)
+	foreach (new playerid : PS(players))
+	//new playerid = 0;
 	{
 		new
-			arg_start,
-			arg_end;
-		// Load the real address of the last static parameter.  Do this by
-		// loading the address of the parameter and then adding the value of
-		// [FRM] (frame pointer).
-		#emit CONST.alt                 ident
-		#emit LCTRL                     5
-		#emit ADD
-		#emit STOR.S.pri                arg_start
-		// Load the address of the last variable parameter.  Do this by adding
-		// the number of variables on the value just loaded.
-		#emit LOAD.S.alt                n
-		#emit ADD
-		#emit STOR.S.pri                arg_end
-		// Push the variable arguments.  This is done by loading the value of
-		// each one in reverse order and pushing them.  I'd love to be able to
-		// rewrite this to use the values of pri and alt for comparison, instead
-		// of having or constantly reload two variables.
-		foreach (new playerid : PS(players))
-		//new playerid = 0;
+			Language:lang = Langs_GetPlayerLanguage(playerid);
+		if (lang == NO_LANGUAGE)
 		{
-			new
-				Language:lang = Langs_GetPlayerLanguage(playerid);
-			if (lang == NO_LANGUAGE)
-			{
-				lang = Language:0;
-			}
-			if (wasOnce[lang])
-			{
-				// Optimisation for sending messages to multiple players.
-				Format_JustShow(playerid, YSI_g_sLangBuffer[lang]);
-				continue;
-			}
-			new
-				arg_cur = arg_end,
-				ret;
-			do
-			{
-				#emit LOAD.S.pri            arg_cur
-				#emit LOAD.I
-				#emit PUSH.pri
-				arg_cur -= 4;
-			}
-			while (arg_cur > arg_start);
-			switch (search[0])
-			{
-				case '\1':
-				{
-					// Null - error.
-					P:E("Text_Send called with NULL");
-				}
-				case '\2':
-				{
-					// None - just print the string directly.
-					ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, 0, ident, n / 4);
-				}
-				case '\3':
-				{
-					if (owned == -1)
-					{
-						new
-							pos = strfind(ident, ">"),
-							br = strfind(ident, "[");
-						if (pos > 1 && br != -1)
-						{
-							ident[pos - 2] = '\0';
-							if (br)
-							{
-								ident[br] = ':';
-								Text_GetText(ident, ident[pos + 1], lang);
-							}
-							else
-							{
-								Text_GetText(ident[1], ident[pos + 1], lang);
-							}
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, 0, YSI_g_sReturnText, n / 4);
-						}
-						else
-						{
-							// Var - May contain location search information in
-							// "name".  Maybe add an "all" search parameter...
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, 0, "Could not find text source", n / 4);
-							// The code generated messes up the pushing.
-						}
-					}
-					else
-					{
-						ret = YSI_g_sTextEntries[owned][e_TEXT_ENTRY_POINTERS][lang];
-						if (ret == -1)
-						{
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], maxlen, 0, 0, "Language text not found", n / 4);
-						}
-						else
-						{
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], maxlen, 0, 0, YSI_g_sTextStrings[ret], n / 4);
-						}
-					}
-				}
-				default:
-				{
-					if (owned == -1)
-					{
-						Text_GetText(search, ident, lang);
-						ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, 0, YSI_g_sReturnText, n / 4);
-					}
-					else
-					{
-						ret = YSI_g_sTextEntries[owned][e_TEXT_ENTRY_POINTERS][lang];
-						if (ret == -1)
-						{
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], maxlen, 0, 0, "Language text not found", n / 4);
-						}
-						else
-						{
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], maxlen, 0, 0, YSI_g_sTextStrings[ret], n / 4);
-						}
-					}
-				}
-			}
-			#emit LCTRL                     4
-			#emit LOAD.S.alt                n
-			#emit ADD
-			#emit SCTRL                     4
-			wasOnce[lang] = !ret;
+			lang = Language:0;
 		}
-	}
-	else
-	{
-		foreach (new playerid : PS(players))
+		if (wasOnce[lang])
 		{
-			new
-				Language:lang = Langs_GetPlayerLanguage(playerid);
-			if (wasOnce[lang])
+			// Optimisation for sending messages to multiple players.
+			Format_JustShow(playerid, YSI_g_sLangBuffer[lang]);
+			continue;
+		}
+		switch (source)
+		{
+			case cellmin:
 			{
-				// Optimisation for sending messages to multiple players.
-				Format_JustShow(playerid, YSI_g_sLangBuffer[lang]);
-				continue;
+				ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], YSI_g_sTextLength, 0, 0, ident, ___(3));
 			}
-			switch (search[0])
+			case -1:
 			{
-				case '\1':
+				Text_GetText(search, ident, lang);
+				ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], YSI_g_sTextLength, 0, 0, YSI_g_sReturnText, ___(3));
+			}
+			default:
+			{
+				ret = YSI_g_sTextEntries[source][e_TEXT_ENTRY_POINTERS][lang];
+				if (ret == -1)
 				{
-					// Null - error.
-					P:E("Text_Send called with NULL");
+					ret = 0;
+					YSI_g_sLangBuffer[lang] = "Language text not found";
 				}
-				case '\2':
+				else
 				{
-					// None - just print the string directly.
-					wasOnce[lang] = !Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, 0, ident, 0);
-				}
-				case '\3':
-				{
-					new
-						pos = strfind(ident, ">"),
-						br = strfind(ident, "[");
-					if (pos > 1 && br != -1)
-					{
-						ident[pos - 2] = '\0';
-						if (br)
-						{
-							ident[br] = ':';
-							Text_GetText(ident, ident[pos + 1], lang);
-						}
-						else
-						{
-							Text_GetText(ident[1], ident[pos + 1], lang);
-						}
-						wasOnce[lang] = !Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, 0, YSI_g_sReturnText, 0);
-					}
-					else
-					{
-						// Var - May contain location search information in
-						// "name".  Maybe add an "all" search parameter...
-						wasOnce[lang] = !Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, 0, "Could not find text source", 0);
-					}
-				}
-				default:
-				{
-					if (owned == -1)
-					{
-						Text_GetText(search, ident, lang);
-						wasOnce[lang] = !Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, 0, YSI_g_sReturnText, 0);
-					}
-					else
-					{
-						new
-							ret = YSI_g_sTextEntries[owned][e_TEXT_ENTRY_POINTERS][lang];
-						if (ret == -1)
-						{
-							wasOnce[lang] = !Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], maxlen, 0, 0, "Language text not found", 0);
-						}
-						else
-						{
-							wasOnce[lang] = !Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], maxlen, 0, 0, YSI_g_sTextStrings[ret], 0);
-						}
-					}
+					ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], maxlen, 0, 0, YSI_g_sTextStrings[ret], ___(3));
 				}
 			}
 		}
+		wasOnce[lang] = !ret;
 	}
 	Format_SetListSeparator(", ");
 	return Text_GetLastID();
@@ -1633,200 +1488,52 @@ stock Text_GetPreRender(Language:lang)
 
 stock _Text_Render(playerid, search[], ident[], GLOBAL_TAG_TYPES:...)
 {
-	setproperty(8, YSIM_TXTLEN, 1023);
+	YSI_g_sTextLength = MAX_SINGLE_TEXT_ITEM - 1;
 	new
-		bool:wasOnce[YSI_MAX_LANGUAGES] = {false, ...},
-		n = (numargs() - 3) * 4,
 		maxlen,
-		owned = Text_IsLocalOwner(search, ident, maxlen);
-	// Loop through all the players passed to the function (however they were
-	// passed to the function).  This uses "@PlayerArray" instead of
-	// "@PlayerVar" so that we can optimised for multiple languages.  Now it
-	// uses "@PlayerSet" instead because that's the new one designed for
-	// situations like this in which we want direct access to the variable.
-	if (n)
+		source,
+		ret;
+	switch (search[0])
 	{
-		new
-			arg_start,
-			arg_end;
-		// Load the real address of the last static parameter.  Do this by
-		// loading the address of the parameter and then adding the value of
-		// [FRM] (frame pointer).
-		#emit CONST.alt                 ident
-		#emit LCTRL                     5
-		#emit ADD
-		#emit STOR.S.pri                arg_start
-		// Load the address of the last variable parameter.  Do this by adding
-		// the number of variables on the value just loaded.
-		#emit LOAD.S.alt                n
-		#emit ADD
-		#emit STOR.S.pri                arg_end
-		// Push the variable arguments.  This is done by loading the value of
-		// each one in reverse order and pushing them.  I'd love to be able to
-		// rewrite this to use the values of pri and alt for comparison, instead
-		// of having or constantly reload two variables.
-		for (new Language:lang; lang != YSI_MAX_LANGUAGES; ++lang) if (Langs_IsValid(lang))
+		case '\1':
 		{
-			new
-				arg_cur = arg_end,
-				ret;
-			do
-			{
-				#emit LOAD.S.pri            arg_cur
-				#emit LOAD.I
-				#emit PUSH.pri
-				arg_cur -= 4;
-			}
-			while (arg_cur > arg_start);
-			switch (search[0])
-			{
-				case '\1':
-				{
-					// Null - error.
-					P:E("Text_Send called with NULL");
-				}
-				case '\2':
-				{
-					// None - just print the string directly.
-					ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, e_FORMAT_FLAGS_NONE, ident, n / 4);
-				}
-				case '\3':
-				{
-					if (owned == -1)
-					{
-						new
-							pos = strfind(ident, ">"),
-							br = strfind(ident, "[");
-						if (pos > 1 && br != -1)
-						{
-							ident[pos - 2] = '\0';
-							if (br)
-							{
-								ident[br] = ':';
-								Text_GetText(ident, ident[pos + 1], lang);
-							}
-							else
-							{
-								Text_GetText(ident[1], ident[pos + 1], lang);
-							}
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, n / 4);
-						}
-						else
-						{
-							// Var - May contain location search information in
-							// "name".  Maybe add an "all" search parameter...
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, e_FORMAT_FLAGS_NONE, "Could not find text source", n / 4);
-							// The code generated messes up the pushing.
-						}
-					}
-					else
-					{
-						ret = YSI_g_sTextEntries[owned][e_TEXT_ENTRY_POINTERS][lang];
-						if (ret == -1)
-						{
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], maxlen, 0, e_FORMAT_FLAGS_NONE, "Language text not found", n / 4);
-						}
-						else
-						{
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], maxlen, 0, e_FORMAT_FLAGS_NONE, YSI_g_sTextStrings[ret], n / 4);
-						}
-					}
-				}
-				default:
-				{
-					if (owned == -1)
-					{
-						Text_GetText(search, ident, lang);
-						ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, n / 4);
-					}
-					else
-					{
-						ret = YSI_g_sTextEntries[owned][e_TEXT_ENTRY_POINTERS][lang];
-						if (ret == -1)
-						{
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], maxlen, 0, e_FORMAT_FLAGS_NONE, "Language text not found", n / 4);
-						}
-						else
-						{
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], maxlen, 0, e_FORMAT_FLAGS_NONE, YSI_g_sTextStrings[ret], n / 4);
-						}
-					}
-				}
-			}
-			#emit LCTRL                     4
-			#emit LOAD.S.alt                n
-			#emit ADD
-			#emit SCTRL                     4
-			wasOnce[lang] = !ret;
+			// Null - error.
+			P:E("Text_Send called with NULL");
+			return;
 		}
+		case '\2':
+			source = cellmin;
+		default
+			source = Text_IsLocalOwner(search, ident, maxlen);
 	}
-	else
+	for (new Language:lang; lang != YSI_MAX_LANGUAGES; ++lang) if (Langs_IsValid(lang))
 	{
-		for (new Language:lang; lang != YSI_MAX_LANGUAGES; ++lang) if (Langs_IsValid(lang))
+		switch (source)
 		{
-			switch (search[0])
+			case cellmin:
 			{
-				case '\1':
+				ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], YSI_g_sTextLength, 0, e_FORMAT_FLAGS_NONE, ident, ___(3));
+			}
+			case -1:
+			{
+				Text_GetText(search, ident, lang);
+				ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], YSI_g_sTextLength, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, ___(3));
+			}
+			default:
+			{
+				ret = YSI_g_sTextEntries[source][e_TEXT_ENTRY_POINTERS][lang];
+				if (ret == -1)
 				{
-					// Null - error.
-					P:E("Text_Send called with NULL");
+					ret = 0;
+					YSI_g_sLangBuffer[lang] = "Language text not found";
 				}
-				case '\2':
+				else
 				{
-					// None - just print the string directly.
-					wasOnce[lang] = !Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, e_FORMAT_FLAGS_NONE, ident, 0);
-				}
-				case '\3':
-				{
-					new
-						pos = strfind(ident, ">"),
-						br = strfind(ident, "[");
-					if (pos > 1 && br != -1)
-					{
-						ident[pos - 2] = '\0';
-						if (br)
-						{
-							ident[br] = ':';
-							Text_GetText(ident, ident[pos + 1], lang);
-						}
-						else
-						{
-							Text_GetText(ident[1], ident[pos + 1], lang);
-						}
-						wasOnce[lang] = !Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
-					}
-					else
-					{
-						// Var - May contain location search information in
-						// "name".  Maybe add an "all" search parameter...
-						wasOnce[lang] = !Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, e_FORMAT_FLAGS_NONE, "Could not find text source", 0);
-					}
-				}
-				default:
-				{
-					if (owned == -1)
-					{
-						Text_GetText(search, ident, lang);
-						wasOnce[lang] = !Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], getproperty(8, YSIM_TXTLEN) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
-					}
-					else
-					{
-						new
-							ret = YSI_g_sTextEntries[owned][e_TEXT_ENTRY_POINTERS][lang];
-						if (ret == -1)
-						{
-							wasOnce[lang] = !Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], maxlen, 0, e_FORMAT_FLAGS_NONE, "Language text not found", 0);
-						}
-						else
-						{
-							wasOnce[lang] = !Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], maxlen, 0, e_FORMAT_FLAGS_NONE, YSI_g_sTextStrings[ret], 0);
-						}
-					}
+					ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], maxlen, 0, e_FORMAT_FLAGS_NONE, YSI_g_sTextStrings[ret], ___(3));
 				}
 			}
 		}
 	}
-	//return Text_GetLastID();
 	Format_SetListSeparator(", ");
 }
 
@@ -1838,12 +1545,7 @@ static stock
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-//stock @PlayerArray:players<MAX_PLAYERS>, callback[], csearch[], cident[], isearch[], iident[], b1search[], b1ident[], b2search[], b2ident[], GLOBAL_TAG_TYPES:...)
-//stock _Text_MessageBox(@PlayerArray:players<MAX_PLAYERS>, callback[], csearch[], cident[], isearch[], iident[], b1search[], b1ident[], b2search[], b2ident[], GLOBAL_TAG_TYPES:...)
-
-//stock _Text_MessageBox(@PlayerArray:players<MAX_PLAYERS>, callback[], csearch[], cident[], isearch[], iident[], b1search[], b1ident[], b2search[], b2ident[], GLOBAL_TAG_TYPES:...)
 stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], cident[], isearch[], iident[], b1search[], b1ident[], b2search[], b2ident[], GLOBAL_TAG_TYPES:...)
-//stock _Text_MessageBox(__ps_addr_t:__ps_addr, callback[], csearch[], cident[], isearch[], iident[], b1search[], b1ident[], b2search[], b2ident[], GLOBAL_TAG_TYPES:...)
 {
 	// This is what the "@PlayerArray" macro expands to, but I needed more
 	// control to allow me to return a value.  The fact that I can't ATM is a
@@ -1851,359 +1553,109 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 	new
 		bool:wasOnce[YSI_MAX_LANGUAGES] = {false, ...},
 		bool:gotExtras[YSI_MAX_LANGUAGES] = {false, ...},
-		n = (numargs() - 11) * 4,
-		dialog = Dialog_ObtainID();//,
-		//maxlen,
-		//owned = Text_IsLocalOwner(isearch, iident, maxlen);
+		dialog = Dialog_ObtainID(),
+		maxlen,
+		source,
+		ret;
+	if (isearch[0] == '\1' || csearch[0] == '\1' || b1search[0] == '\1' || (b2ident[0] && b2search[0] == '\1')
+	{
+		// Null - error.
+		P:E("Text_Send called with NULL");
+		return;
+	}
+	if (isearch[0] == '\2')
+		source = cellmin;
+	else
+		source = Text_IsLocalOwner(isearch, iident, maxlen);
+	YSI_g_sTextLength = MAX_SINGLE_TEXT_ITEM - 1;
 	// Loop through all the players passed to the function (however they were
 	// passed to the function).  This uses "@PlayerArray" instead of
 	// "@PlayerVar" so that we can optimised for multiple languages.
-	if (n)
+	foreach (new playerid : PS(players))
 	{
 		new
-			arg_start,
-			arg_end;
-		// Load the real address of the last static parameter.  Do this by
-		// loading the address of the parameter and then adding the value of
-		// [FRM] (frame pointer).
-		#emit CONST.alt                 b2ident
-		#emit LCTRL                     5
-		#emit ADD
-		#emit STOR.S.pri                arg_start
-		// Load the address of the last variable parameter.  Do this by adding
-		// the number of variables on the value just loaded.
-		#emit LOAD.S.alt                n
-		#emit ADD
-		#emit STOR.S.pri                arg_end
-		// Push the variable arguments.  This is done by loading the value of
-		// each one in reverse order and pushing them.  I'd love to be able to
-		// rewrite this to use the values of pri and alt for comparison, instead
-		// of having or constantly reload two variables.
-		//for (new PlayerArray:players<MAX_PLAYERS>; __PS_A(_:__ps_addr, players); )
-		foreach (new playerid : PS(players))
+			Language:lang = Langs_GetPlayerLanguage(playerid);
+		if (lang == NO_LANGUAGE)
 		{
-			new
-				Language:lang = Langs_GetPlayerLanguage(playerid);
-			if (lang == NO_LANGUAGE)
-			{
-				lang = Language:0;
-			}
-			// Only ever do this part once per language.
-			if (!gotExtras[lang])
-			{
-				// Get the text for the caption in this language.
-				switch (csearch[0])
-				{
-					case '\1': P:E("Text_Send called with NULL");
-					case '\2': strcpy(YSI_g_sCaptionText[lang], cident, sizeof (YSI_g_sCaptionText[]));
-					case '\3':
-					{
-						new pos = strfind(cident, ">"), br = strfind(cident, "[");
-						if (pos > 1 && br != -1)
-						{
-							cident[pos - 2] = '\0';
-							if (br) cident[br] = ':', Text_GetText(cident, cident[pos + 1], lang);
-							else Text_GetText(cident[1], cident[pos + 1], lang);
-							_Text_SetDialogMode();
-							Format_Render(playerid, lang, YSI_g_sCaptionText[lang], sizeof (YSI_g_sCaptionText[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
-						}
-						else YSI_g_sCaptionText[lang] = "Could not find title source";
-					}
-					default:
-					{
-						Text_GetText(csearch, cident, lang);
-						_Text_SetDialogMode();
-						Format_Render(playerid, lang, YSI_g_sCaptionText[lang], sizeof (YSI_g_sCaptionText[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
-					}
-				}
-				// Get the text for button 1 in this language.
-				switch (b1search[0])
-				{
-					case '\1': P:E("Text_Send called with NULL");
-					case '\2': strcpy(YSI_g_sButton1Text[lang], b1ident, sizeof (YSI_g_sButton1Text[]));
-					case '\3':
-					{
-						new pos = strfind(b1ident, ">"), br = strfind(b1ident, "[");
-						if (pos > 1 && br != -1)
-						{
-							b1ident[pos - 2] = '\0';
-							if (br) b1ident[br] = ':', Text_GetText(b1ident, b1ident[pos + 1], lang);
-							else Text_GetText(b1ident[1], b1ident[pos + 1], lang);
-							_Text_SetDialogMode();
-							Format_Render(playerid, lang, YSI_g_sButton1Text[lang], sizeof (YSI_g_sButton1Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
-						}
-						else YSI_g_sButton1Text[lang] = "???";
-					}
-					default:
-					{
-						Text_GetText(b1search, b1ident, lang);
-						_Text_SetDialogMode();
-						Format_Render(playerid, lang, YSI_g_sButton1Text[lang], sizeof (YSI_g_sButton1Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
-					}
-				}
-				// Get the text for button 1 in this language.
-				if (b2ident[0])
-				{
-					switch (b2search[0])
-					{
-						case '\1': P:E("Text_Send called with NULL");
-						case '\2': strcpy(YSI_g_sButton2Text[lang], b2ident, sizeof (YSI_g_sButton2Text[]));
-						case '\3':
-						{
-							new pos = strfind(b2ident, ">"), br = strfind(b2ident, "[");
-							if (pos > 1 && br != -1)
-							{
-								b2ident[pos - 2] = '\0';
-								if (br) b2ident[br] = ':', Text_GetText(b2ident, b2ident[pos + 1], lang);
-								else Text_GetText(b2ident[1], b2ident[pos + 1], lang);
-								_Text_SetDialogMode();
-								Format_Render(playerid, lang, YSI_g_sButton2Text[lang], sizeof (YSI_g_sButton2Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
-							}
-							else YSI_g_sButton2Text[lang] = "";
-						}
-						default:
-						{
-							Text_GetText(b2search, b2ident, lang);
-							_Text_SetDialogMode();
-							Format_Render(playerid, lang, YSI_g_sButton2Text[lang], sizeof (YSI_g_sButton2Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
-						}
-					}
-				}
-				else YSI_g_sButton2Text[lang] = "";
-				gotExtras[lang] = true;
-			}
-			if (!wasOnce[lang])
-			{
-				// Optimisation for sending messages to multiple players.
-				//Format_DoDisplay(playerid, 0xFF0000AA, YSI_g_sLangBuffer[lang]);
-				//continue;
-				new
-					arg_cur = arg_end,
-					ret;
-				do
-				{
-					#emit LOAD.S.pri            arg_cur
-					#emit LOAD.I
-					#emit PUSH.pri
-					arg_cur -= 4;
-				}
-				while (arg_cur > arg_start);
-				switch (isearch[0])
-				{
-					case '\1':
-					{
-						// Null - error.
-						P:E("Text_Send called with NULL");
-					}
-					case '\2':
-					{
-						// None - just print the string directly.
-						_Text_SetDialogMode();
-						ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, iident, n / 4);
-					}
-					case '\3':
-					{
-						new
-							pos = strfind(iident, ">"),
-							br = strfind(iident, "[");
-						if (pos > 1 && br != -1)
-						{
-							iident[pos - 2] = '\0';
-							if (br)
-							{
-								iident[br] = ':';
-								Text_GetText(iident, iident[pos + 1], lang);
-							}
-							else
-							{
-								Text_GetText(iident[1], iident[pos + 1], lang);
-							}
-							_Text_SetDialogMode();
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, n / 4);
-						}
-						else
-						{
-							// Var - May contain location isearch information in
-							// "name".  Maybe add an "all" isearch parameter...
-							_Text_SetDialogMode();
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, "Could not find text source", n / 4);
-							// The code generated messes up the pushing.
-						}
-					}
-					default:
-					{
-						Text_GetText(isearch, iident, lang);
-						_Text_SetDialogMode();
-						ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, n / 4);
-					}
-				}
-				#emit LCTRL                     4
-				#emit LOAD.S.alt                n
-				#emit ADD
-				#emit SCTRL                     4
-				wasOnce[lang] = !ret;
-			}
-			// Display the message.
-			Dialog_Show(playerid, style, YSI_g_sCaptionText[lang], YSI_g_sLangBuffer[lang], YSI_g_sButton1Text[lang], YSI_g_sButton2Text[lang], dialog);
+			lang = Language:0;
 		}
-	}
-	else
-	{
-		// Push the variable arguments.  This is done by loading the value of
-		// each one in reverse order and pushing them.  I'd love to be able to
-		// rewrite this to use the values of pri and alt for comparison, instead
-		// of having or constantly reload two variables.
-		foreach (new playerid : PS(players))
-		//for (new PlayerArray:players<MAX_PLAYERS>; __PS_A(_:__ps_addr, players); )
+		// Only ever do this part once per language.
+		if (!gotExtras[lang])
 		{
-			new
-				Language:lang = Langs_GetPlayerLanguage(playerid);
-			if (lang == NO_LANGUAGE)
+			// Get the text for the caption in this language.
+			switch (csearch[0])
 			{
-				lang = Language:0;
+				case '\1': P:E("Text_Send called with NULL");
+				case '\2': strcpy(YSI_g_sCaptionText[lang], cident, sizeof (YSI_g_sCaptionText[]));
+				default:
+				{
+					Text_GetText(csearch, cident, lang);
+					strcpy(YSI_g_sCaptionText[lang], YSI_g_sReturnText, sizeof (YSI_g_sCaptionText[]));
+				}
 			}
-			// Only ever do this part once per language.
-			if (!gotExtras[lang])
+			// Get the text for button 1 in this language.
+			switch (b1search[0])
 			{
-				// Get the text for the caption in this language.
-				switch (csearch[0])
+				case '\1': P:E("Text_Send called with NULL");
+				case '\2': strcpy(YSI_g_sButton1Text[lang], b1ident, sizeof (YSI_g_sButton1Text[]));
+				default:
+				{
+					Text_GetText(b1search, b1ident, lang);
+					strcpy(YSI_g_sButton1Text[lang], YSI_g_sReturnText, sizeof (YSI_g_sButton1Text[]));
+				}
+			}
+			// Get the text for button 1 in this language.
+			if (b2ident[0])
+			{
+				switch (b2search[0])
 				{
 					case '\1': P:E("Text_Send called with NULL");
-					case '\2': strcpy(YSI_g_sCaptionText[lang], cident, sizeof (YSI_g_sCaptionText[]));
-					case '\3':
-					{
-						new pos = strfind(cident, ">"), br = strfind(cident, "[");
-						if (pos > 1 && br != -1)
-						{
-							cident[pos - 2] = '\0';
-							if (br) cident[br] = ':', Text_GetText(cident, cident[pos + 1], lang);
-							else Text_GetText(cident[1], cident[pos + 1], lang);
-							_Text_SetDialogMode();
-							Format_Render(playerid, lang, YSI_g_sCaptionText[lang], sizeof (YSI_g_sCaptionText[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
-						}
-						else YSI_g_sCaptionText[lang] = "Could not find title source";
-					}
+					case '\2': strcpy(YSI_g_sButton2Text[lang], b2ident, sizeof (YSI_g_sButton2Text[]));
 					default:
 					{
-						Text_GetText(csearch, cident, lang);
-						_Text_SetDialogMode();
-						Format_Render(playerid, lang, YSI_g_sCaptionText[lang], sizeof (YSI_g_sCaptionText[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
+						Text_GetText(b2search, b2ident, lang);
+						strcpy(YSI_g_sButton2Text[lang], YSI_g_sReturnText, sizeof (YSI_g_sButton2Text[]));
 					}
 				}
-				// Get the text for button 1 in this language.
-				switch (b1search[0])
-				{
-					case '\1': P:E("Text_Send called with NULL");
-					case '\2': strcpy(YSI_g_sButton1Text[lang], b1ident, sizeof (YSI_g_sButton1Text[]));
-					case '\3':
-					{
-						new pos = strfind(b1ident, ">"), br = strfind(b1ident, "[");
-						if (pos > 1 && br != -1)
-						{
-							b1ident[pos - 2] = '\0';
-							if (br) b1ident[br] = ':', Text_GetText(b1ident, b1ident[pos + 1], lang);
-							else Text_GetText(b1ident[1], b1ident[pos + 1], lang);
-							_Text_SetDialogMode();
-							Format_Render(playerid, lang, YSI_g_sButton1Text[lang], sizeof (YSI_g_sButton1Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
-						}
-						else YSI_g_sButton1Text[lang] = "???";
-					}
-					default:
-					{
-						Text_GetText(b1search, b1ident, lang);
-						_Text_SetDialogMode();
-						Format_Render(playerid, lang, YSI_g_sButton1Text[lang], sizeof (YSI_g_sButton1Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
-					}
-				}
-				// Get the text for button 1 in this language.
-				if (b2ident[0])
-				{
-					switch (b2search[0])
-					{
-						case '\1': P:E("Text_Send called with NULL");
-						case '\2': strcpy(YSI_g_sButton2Text[lang], b2ident, sizeof (YSI_g_sButton2Text[]));
-						case '\3':
-						{
-							new pos = strfind(b2ident, ">"), br = strfind(b2ident, "[");
-							if (pos > 1 && br != -1)
-							{
-								b2ident[pos - 2] = '\0';
-								if (br) b2ident[br] = ':', Text_GetText(b2ident, b2ident[pos + 1], lang);
-								else Text_GetText(b2ident[1], b2ident[pos + 1], lang);
-								_Text_SetDialogMode();
-								Format_Render(playerid, lang, YSI_g_sButton2Text[lang], sizeof (YSI_g_sButton2Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
-							}
-							else YSI_g_sButton2Text[lang] = "";
-						}
-						default:
-						{
-							Text_GetText(b2search, b2ident, lang);
-							_Text_SetDialogMode();
-							Format_Render(playerid, lang, YSI_g_sButton2Text[lang], sizeof (YSI_g_sButton2Text[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
-						}
-					}
-				}
-				else YSI_g_sButton2Text[lang] = "";
-				gotExtras[lang] = true;
 			}
-			if (!wasOnce[lang])
-			{
-				new
-					ret;
-				switch (isearch[0])
-				{
-					case '\1':
-					{
-						// Null - error.
-						P:E("Text_Send called with NULL");
-					}
-					case '\2':
-					{
-						// None - just print the string directly.
-						_Text_SetDialogMode();
-						ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, iident, 0);
-					}
-					case '\3':
-					{
-						new
-							pos = strfind(iident, ">"),
-							br = strfind(iident, "[");
-						if (pos > 1 && br != -1)
-						{
-							iident[pos - 2] = '\0';
-							if (br)
-							{
-								iident[br] = ':';
-								Text_GetText(iident, iident[pos + 1], lang);
-							}
-							else
-							{
-								Text_GetText(iident[1], iident[pos + 1], lang);
-							}
-							_Text_SetDialogMode();
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
-						}
-						else
-						{
-							// Var - May contain location isearch information in
-							// "name".  Maybe add an "all" isearch parameter...
-							_Text_SetDialogMode();
-							ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, "Could not find text source", 0);
-							// The code generated messes up the pushing.
-						}
-					}
-					default:
-					{
-						Text_GetText(isearch, iident, lang);
-						_Text_SetDialogMode();
-						ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], sizeof (YSI_g_sLangBuffer[]) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, 0);
-					}
-				}
-				wasOnce[lang] = !ret;
-			}
-			// Display the message.
-			Dialog_Show(playerid, style, YSI_g_sCaptionText[lang], YSI_g_sLangBuffer[lang], YSI_g_sButton1Text[lang], YSI_g_sButton2Text[lang], dialog);
+			else
+				YSI_g_sButton2Text[lang][0] = '\0';
+			gotExtras[lang] = true;
 		}
+		if (!wasOnce[lang])
+		{
+			switch (source)
+			{
+				case cellmin:
+				{
+					_Text_SetDialogMode();
+					ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], YSI_g_sTextLength, 0, e_FORMAT_FLAGS_NONE, iident, ___(11));
+				}
+				case -1:
+				{
+					Text_GetText(isearch, iident, lang);
+					_Text_SetDialogMode();
+					ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], YSI_g_sTextLength, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, ___(11));
+				}
+				default:
+				{
+					ret = YSI_g_sTextEntries[source][e_TEXT_ENTRY_POINTERS][lang];
+					if (ret == -1)
+					{
+						ret = 0;
+						YSI_g_sLangBuffer[lang] = "Language text not found";
+					}
+					else
+					{
+						_Text_SetDialogMode();
+						ret = Format_Render(playerid, lang, YSI_g_sLangBuffer[lang], maxlen, 0, e_FORMAT_FLAGS_NONE, YSI_g_sTextStrings[ret], ___(11));
+					}
+				}
+			}
+			wasOnce[lang] = !ret;
+		}
+		// Display the message.
+		Dialog_Show(playerid, style, YSI_g_sCaptionText[lang], YSI_g_sLangBuffer[lang], YSI_g_sButton1Text[lang], YSI_g_sButton2Text[lang], dialog);
 	}
 	// Sort out the callbacks etc for the dialog return.
 	new
@@ -2225,7 +1677,6 @@ stock _Text_Format(dest[], size, Language:lang, e_STYLE_TYPE:style, search[], id
 	new
 		styleData[E_STYLE_DATA],
 		label[E_3D_DATA],
-		argCount = numargs() - 6,
 		bool:foundStyle = false
 	;
 
@@ -2265,7 +1716,8 @@ stock _Text_Format(dest[], size, Language:lang, e_STYLE_TYPE:style, search[], id
 		_Text_SetDialogMode();
 	}
 
-	Format_Render(INVALID_PLAYER_ID, lang, dest, size, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, argCount, ___(6));
+	Format_Render(INVALID_PLAYER_ID, lang, dest, size, 0, e_FORMAT_FLAGS_NONE, YSI_g_sReturnText, ___(6));
 
 	return 1;
 }
+

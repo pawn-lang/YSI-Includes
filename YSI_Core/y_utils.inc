@@ -209,7 +209,6 @@ new stock
 #define YSIM_TEXT_D #T
 #define YSIM_TXTFND #X
 #define YSIM_TXTIND #I
-#define YSIM_TXTLEN #E
 #define YSIM_LOG_IN #U
 #define YSIM_VARARG #V
 

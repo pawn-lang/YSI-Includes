@@ -795,9 +795,9 @@ stock Text_GetLastID() <>
  * <transition keep="true" target="y_render_fade : y_render_fade_fake" />
  *//*------------------------------------------------------------------------**/
 //stock Format_Render(pid, Language:l, output[], maxlen, idx, target, string[], {Float,_}:...)
-stock Format_Render(pid, Language:l, output[], maxlen, idx, target, string[], argCount, GLOBAL_TAG_TYPES:...)
+stock Format_Render(pid, Language:l, output[], maxlen, idx, target, string[], GLOBAL_TAG_TYPES:...)
 {
-	P:3("Format_Render called: %i, %i, %s, %i, %i, %i, %s (+%i)", pid, _:l, output, maxlen, idx, target, argCount, numargs() - 8);
+	P:3("Format_Render called: %i, %i, %s, %i, %i, %i, %s (+%i)", pid, _:l, output, maxlen, idx, target, numargs() - 7);
 	gInitialColour = (YSI_g_sTempStyle[E_STYLE_DATA_COLOUR] >>> 4) & 0x00FFFFFF;
 	new
 		colour = gInitialColour;
@@ -827,8 +827,8 @@ Format_Render_start:
 		llen = maxlen,
 		//output[128], // Always 128.
 		p = 0,
-		curArg = 8, // Account for additionaly pushed arguments.
-		numArgs = numargs() + argCount,
+		curArg = 7, // Account for additionaly pushed arguments.
+		numArgs = numargs(),
 		//llen = sizeof (output) - 1,
 		arg,
 		none = (target & e_FORMAT_FLAGS_NONE),
