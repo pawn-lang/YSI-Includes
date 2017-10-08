@@ -331,7 +331,10 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_TESTING_TEST)))
 	{
 		strunpack(buffer, buffer);
-
+#if defined JUST_TEST
+		if (strcmp(buffer[4], #JUST_TEST))
+			continue;
+#endif
 		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_BEFORE))) {
 			strunpack(buffer2, buffer2);
 			new
@@ -437,9 +440,16 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 		P:2("Testing_Player() called");
 		new
 			buffer[32];
+#if defined JUST_TEST
+Testing_Player_retry:
+#endif
 		if ((idx = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST)))
 		{
 			strunpack(buffer, buffer);
+#if defined JUST_TEST
+			if (strcmp(buffer[4], #JUST_TEST))
+				goto Testing_Player_retry;
+#endif
 			// Call the setup function if there is one.
 			buffer[0] = '_';
 			buffer[1] = 'y';
@@ -454,11 +464,11 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 			YSI_g_sInTest = true;
 			CallLocalFunction(buffer, "");
 #if !defined TEST_SHOW_PASSES
-		if (YSI_g_sFails == fails)
-		{
-			TEST_REPORT(TEST_PASSED);
-			TEST_REPORT(" ");
-		}
+			if (YSI_g_sFails == fails)
+			{
+				TEST_REPORT(TEST_PASSED);
+				TEST_REPORT(" ");
+			}
 #endif
 		}
 		tests = YSI_g_sTests;
@@ -522,7 +532,7 @@ forward OnTestsComplete(tests, fails);
 			new
 				fails = YSI_g_sFails;
 			// Get the last test (nicely fails for cellmax).
-			if ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST)))
+			while ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST)))
 			{
 				strunpack(buffer, buffer);
 				// Call the shutdown function if there is one.
@@ -532,11 +542,18 @@ forward OnTestsComplete(tests, fails);
 				buffer[3] = 'Q';
 				CallLocalFunction(buffer, "i", playerid);
 			}
+#if defined JUST_TEST
+Testing_Next_retry:
+#endif
 			// Get the new test, but don't store the index.
 			if (AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST))
 			{
-				YSI_g_sAsked = false;
 				strunpack(buffer, buffer);
+#if defined JUST_TEST
+				if (strcmp(buffer[4], #JUST_TEST))
+					goto Testing_Next_retry;
+#endif
+				YSI_g_sAsked = false;
 				// Call the setup function if there is one.
 				buffer[0] = '_';
 				buffer[1] = 'y';
@@ -685,8 +702,10 @@ stock Testing_RunAll()
 	TEST_REPORT("  ||===================||  ");
 	TEST_REPORT(" ");
 	Testing_Run(tests, fails, _, true);
+#if !defined JUST_TEST
 	if (YSI_g_sTestResult != 9) printf("*** Test system verification failed!");
 	else
+#endif
 	{
 		printf("*** Tests: %d, Fails: %d", tests, fails);
 		if (fails)
