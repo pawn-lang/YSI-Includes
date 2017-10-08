@@ -126,7 +126,7 @@ static stock Jagged_MovePtr(array[][], maxSize, slot, shift)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
+stock bool:_Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 {
 	if (newSize < 0)
 	{
@@ -184,6 +184,7 @@ stock bool:Jagged_ResizeOne(array[][], size1, size2, slot, newSize)
 	P:C(else if (slot == size1) printf("Cannot alter the last slot in an array."););
 	return false;
 }
+#define Jagged_ResizeOne(%0,%1) _Jagged_ResizeOne(_Jagged(%0),%1)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="array">The array we want to resize a slot in.</param>
@@ -204,8 +205,10 @@ stock bool:_Jagged_Resize(array[][], size1, size2, ...)
 	for (new i = 3; i != num; ++i)
 	{
 		P:7("_Jagged_Resize: loop %d %d %d", i, getarg(i, 0), getarg(i, 1));
-		Jagged_ResizeOne(array, size1, size2, getarg(i, 0), getarg(i, 1));
+		if (!_Jagged_ResizeOne(array, size1, size2, getarg(i, 0), getarg(i, 1)))
+			return false;
 	}
+	return true;
 }
 
 #define Jagged_Resize(%0,%1) _Jagged_Resize(_Jagged(%0),%1)
@@ -230,7 +233,7 @@ stock bool:_Jagged_ResizeAll(array[][], size1, size2, ...)
 	for (new i = 3, j = 0; j != num; ++i, ++j)
 	{
 		P:7("_Jagged_Resize: loop %d %d %d", i, j, getarg(i));
-		Jagged_ResizeOne(array, size1, size2, j, getarg(i));
+		_Jagged_ResizeOne(array, size1, size2, j, getarg(i));
 	}
 }
 

@@ -282,6 +282,8 @@ Optional plugins:
 #include <a_samp>
 #include "..\YSI_Core\y_debug"
 #include "..\YSI_Server\y_colours"
+#include "..\YSI_Data\y_hashmap"
+#include "..\YSI_Data\y_jaggedarray"
 
 #include "y_text/load"
 

@@ -35,7 +35,7 @@ Test:y_text_Text_Send_1()
 	static
 		result[] = "Hello World";
 	TextTest_Reset();
-	Text_Send(42, Language:0, $TEST_STRING_3, "World");
+	Text_Send(42, Language:0, $TEST_STRING_C, "World");
 	P:3("y_text_Text_Send_1:\r\n    player: %d\r\n    colour: %04x%04x\r\n    output: \"%s\"", YSI_gTextTestPlayer[0], YSI_gTextTestStyle[0] >>> 16, YSI_gTextTestStyle[0] & 0xFFFF, YSI_gTextTestOutput[0]);
 	ASSERT(YSI_gTextTestOutput[0][0] && !strcmp(YSI_gTextTestOutput[0], result));
 }

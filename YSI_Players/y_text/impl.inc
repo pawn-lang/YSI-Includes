@@ -134,7 +134,7 @@ enum E_TEXT_SETS
 
 enum E_TEXT_ENTRY
 {
-	E_TEXT_ENTRY_NAME[MAX_INI_ENTRY_NAME * 2],
+	E_TEXT_ENTRY_NAME[MAX_INI_ENTRY_NAME],
 	E_TEXT_ENTRY_HASHMAP[HASH_MAP_DATA],
 	E_TEXT_ENTRY_POINTERS[YSI_MAX_LANGUAGES]
 }
@@ -146,17 +146,30 @@ enum E_TEXT_ENTRY
 #endif
 
 static stock
-	HashMap:YSI_g_sTextMap<>.
+	HashMap:YSI_g_sTextMap<>,
 	YSI_g_sTextLength,
 	YSI_g_sTextSets[Y_TEXT_MAX_SETS][E_TEXT_SETS],
 	YSI_g_sTextEntries[MAX_TEXT_ENTRIES][E_TEXT_ENTRY],
-	YSI_g_sTextStrings[MAX_TEXT_ENTRIES * _:YSI_MAX_LANGUAGES][MAX_INI_ENTRY_TEXT / 4],
+	YSI_g_sTextStrings[MAX_TEXT_ENTRIES * _:YSI_MAX_LANGUAGES][MAX_INI_ENTRY_TEXT / 2],
 	YSI_g_sDistributionID = -1,
 	YSI_g_sUnusedSlot = 0,
 	YSI_g_sRemaining = sizeof (YSI_g_sTextStrings) * sizeof (YSI_g_sTextStrings[]);
 
 P:D(Text_FindEntry(set, name, hash));
-#define Text_FindEntry(%0,%1) HashMap_GetWithHash(YSI_g_sTextMap, (%1), (%0) + (%2))
+#define Text_FindEntry(%0,%1,%2) HashMap_GetWithHash(YSI_g_sTextMap, (%1), (%0) + (%2))
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="len">Length to make the array slot.</param>
+ * <remarks>
+ *   Adjusts the first index table in "YSI_g_sTextStrings" such that the next
+ *   call to "Text_GetFreeSlot" will point to a non-zero length target string.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock bool:Text_UpdateSlotSize(slot, len)
+{
+	return Jagged_Resize(YSI_g_sTextStrings, { slot, len });
+}
 
 //                                                                                               
 //    88           ,ad8888ba,         db         88888888ba,    88  888b      88    ,ad8888ba,   
@@ -232,39 +245,12 @@ public OnFilterScriptInit()
 
 hook OnScriptInit()
 {
+	new
+		fakePtrs[YSI_MAX_LANGUAGES] = { -1, ... };
 	P:1("Text_OnScriptInit called");
-	// Initialise.
-	new
-		i;
 	HashMap_Init(YSI_g_sTextMap, YSI_g_sTextEntries, E_TEXT_ENTRY_HASHMAP);
-	// Redirect all the pointers to the last cell.
-	new
-		offset = (sizeof (YSI_g_sTextStrings) - 1) * 4;
-	i = (sizeof (YSI_g_sTextStrings[]) - 1) * 4;
-	// Get the absolute address of the pointer to the last array.
-	#emit CONST.pri     YSI_g_sTextStrings
-	#emit LOAD.S.alt    offset
-	#emit ADD
-	// Get the data at that address (i.e. the RELATIVE pointer).
-	#emit LOAD.I
-	// Get the RELATIVE address of the last element.
-	#emit LOAD.S.alt    i
-	#emit ADD
-	#emit STOR.S.pri    offset
-	for (i = sizeof (YSI_g_sTextStrings) - 1; i != 0; --i)
-	{
-		//YSI_g_sTextStrings[i][0] = i + 1;
-		#emit CONST.pri     YSI_g_sTextStrings
-		#emit LOAD.S.alt    i
-		#emit SHL.C.alt     2
-		#emit ADD
-		#emit MOVE.alt
-		#emit LOAD.S.pri    offset
-		#emit STOR.I
-		#emit ADD.C         4
-		#emit STOR.S.pri    offset
-	}
-	state y_text_get_text : n;
+	for (new i = 0; i != sizeof (YSI_g_sTextEntries); ++i)
+		YSI_g_sTextEntries[i][E_TEXT_ENTRY_POINTERS] = fakePtrs;
 	state y_render_show : y_render_show_print;
 }
 
@@ -279,6 +265,7 @@ hook OnScriptInit()
 
 static stock Text_LoadAll()
 {
+	P:4("Text_LoadAll called");
 	//printf("Text_LoadAll: n");
 	if (Langs_GetLanguageCount() == Language:0)
 	{
@@ -290,13 +277,14 @@ static stock Text_LoadAll()
 		pos;
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, _A<@yX_>)))
 	{
-		strunpack(buffer, buffer[1]);
+		strunpack(buffer, buffer);
+		P:6("Text_LoadAll: Adding %s to list", buffer);
 		// Get rid of the end parts, doesn't matter if "Y_TEXT_UNIQUE" is
 		// defined or not as EVERYTHING later is dropped.  Find the SECOND "@" -
 		// there will always be at least one.
-		if ((pos = strfind(buffer, "@", false, strfind(buffer, "@") + 1)) != -1)
+		if ((pos = strfind(buffer, "@", false, strfind(buffer, "@", false, 4) + 1)) != -1)
 			buffer[pos] = '\0';
-		Text_AddLocal(buffer);
+		Text_AddLocal(buffer[4]);
 	}
 	// I am trying very hard NOT to rewrite this code right now.  It might not
 	// be as "nice" as I'd like, but it is well tested and works.  Rewriting it
@@ -329,6 +317,105 @@ static stock Text_AddLocal(buffer[])
 	}
 }
 
+static stock bool:Text_InsertString(target[], const str[], slot, number)
+{
+	// "target" is passed as a separate string, rather than just used as
+	// "YSI_g_sTextStrings[slot]" because that way we do not generate the
+	// "BOUNDS" OpCode for the code here, because the compiler can't know the
+	// size of any arbitrary passed string.  Plus, it is slightly faster.  We
+	// could not do any other slot in this manner because we resize the slot,
+	// which moves other slots, but crucially not this one.
+	P:4("Text_InsertString called (%s, %d, %d) (%d)", str, slot, number, YSI_g_sUnusedSlot);
+	new
+		newlen = strlen(str);
+	if (number == 0)
+	{
+		P:5("Text_InsertString: A %d (%d)", newlen, YSI_g_sUnusedSlot);
+		// If there is no number, there can be no multiple strings.
+		if (!Jagged_ResizeOne(YSI_g_sTextStrings, slot, newlen + 1))
+			return false;
+		P:5("Text_InsertString: A %d (%d)", newlen, YSI_g_sUnusedSlot);
+		strcpy(target, str, newlen + 1);
+		return true;
+	}
+	// Prepend "\05;\number;" to the string, for later compression.
+	new
+		insert[3] = { '\05', 0, 0 },
+		oldlen = strlen(target) + 1,
+		largest;
+	printf("%d %d %d %d %d", target[0], target[1], target[2], target[3], target[4]);
+	// "oldlen" is +1 to cater for "NULL".  If the existing string doesn't
+	// begin with `\05`, it was not an extendable string.
+	if (oldlen == 1)
+		largest = 0;
+	else if (target[0] == '\05')
+		largest = target[oldlen - 2];
+	else
+		return false;
+	if (largest == number)
+	{
+		P:5("Text_InsertString: B %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+		if (!Jagged_ResizeOne(YSI_g_sTextStrings, slot, oldlen + newlen + 2))
+			return false;
+		P:5("Text_InsertString: B %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+		--oldlen,
+		insert[1] = number + 1,
+		strcat(target[oldlen], str, cellmax),
+		strcat(target[oldlen + newlen], insert, cellmax);
+	}
+	else if (largest < number)
+	{
+		P:5("Text_InsertString: C %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+		if (!Jagged_ResizeOne(YSI_g_sTextStrings, slot, oldlen + newlen + 2 + 2 * (number - largest)))
+			return false;
+		P:5("Text_InsertString: C %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+		--oldlen;
+		do
+		{
+			insert[1] = ++largest,
+			strcat(target[oldlen], insert, cellmax);
+		}
+		while (largest < number);
+		insert[1] = number + 1,
+		strcat(target[oldlen], str, cellmax),
+		strcat(target[oldlen + newlen], insert, cellmax);
+	}
+	else
+	{
+		P:5("Text_InsertString: D %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+		new
+			p0 = strfind(target, (insert[1] = number, insert), false, 0),
+			p1 = strfind(target, (insert[1] = number + 1, insert), false, p0 + 1);
+		// Don't know what to do in this case!
+		if (p0 == -1 || p1 == -1)
+			return false;
+		P:5("Text_InsertString: D %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+		newlen += oldlen;
+		oldlen = p1 - p0 - 2;
+		if (oldlen)
+		{
+			P:5("Text_InsertString: E %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+			if (!Jagged_ResizeOne(YSI_g_sTextStrings, slot, newlen - oldlen))
+				return false;
+			P:5("Text_InsertString: E %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+			strdel(target[p0 + 2], 0, oldlen);
+			// Delete any existing text in this position.
+			strins(target[p0], str, 2, cellmax);
+		}
+		else
+		{
+			P:5("Text_InsertString: F %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+			// Nothing to delete, just insert.
+			if (!Jagged_ResizeOne(YSI_g_sTextStrings, slot, newlen))
+				return false;
+			P:5("Text_InsertString: F %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
+			strins(target[p0], str, 2, cellmax);
+		}
+	}
+	printf("%d %d %d %d %d", target[0], target[1], target[2], target[3], target[4]);
+	return true;
+}
+
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
@@ -352,7 +439,7 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 			new
 				fhash = YSI_g_sTextSets[i][E_TEXT_SETS_HASH],
 				len = strlen(name),
-				slot = name[--len],
+				slot = name[len - 1],
 				number,
 				hash = 1;
 			P:6("Text_INILoad: Get Number");
@@ -362,23 +449,23 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 			// manually edit the files)).
 			while ('0' <= slot <= '9')
 			{
-				name[len] = '\0';
+				name[--len] = '\0';
 				number += (slot - '0') * hash;
 				hash *= 10;
-				slot = name[--len];
+				slot = name[len - 1];
 			}
 			// So "MY_TEXT_1" becomes "MY_TEXT", not "MY_TEXT_".
 			if (slot == '_')
 			{
-				name[len] = '\0';
+				name[--len] = '\0';
 			}
 			hash = bernstein(name);
 			slot = Text_FindEntry(fhash, name, hash);
 			P:6("Text_INILoad: Check slot %d", slot);
 			if (slot == -1)
 			{
-				slot = Text_GetFreeEntry(),
-				if (slot == -1)
+				slot = Text_GetFreeEntry();
+				if (slot == -1 || !HashMap_AddWithHash(YSI_g_sTextMap, name, fhash + hash, slot))
 				{
 					P:E("Text buffer full!");
 					return;
@@ -386,88 +473,21 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 				// Add this string to the hashmap.  We identify it by name, but
 				// the hash is a combination of the string's hash and the search
 				// space's hash (through addition).
-				slot = HashMap_AddWithHash(YSI_g_sTextMap, name, fhash + hash, slot);
 			}
 			P:6("Text_INILoad: Check Collision");
-			if (YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex] == -1)
+			new
+				ss = YSI_g_sTextEntries[slot][E_TEXT_ENTRY_POINTERS][langIndex];
+			if (ss == -1)
 			{
-				new
-					ss = Text_GetFreeSlot();
+				ss = Text_GetFreeSlot();
 				if (ss == -1)
 				{
 					P:E("Text buffer full!");
 					return;
 				}
-				Text_UpdateFreeSlot(Format_Standardise(value, YSI_g_sTextStrings[ss], MAX_INI_ENTRY_TEXT));
-				YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex] = ss;
+				YSI_g_sTextEntries[slot][E_TEXT_ENTRY_POINTERS][langIndex] = ss;
 			}
-			else if (number)
-			{
-				// Found a string with multiple entries in the INI file to
-				// be linked together dynamically.
-				new
-					ss = Text_GetFreeSlot();
-				if (ss == -1)
-				{
-					P:E("Text buffer full!");
-					return;
-				}
-				Text_UpdateFreeSlot(Format_Standardise(value, YSI_g_sTextStrings[ss], MAX_INI_ENTRY_TEXT));
-				hash = YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex];
-				if (hash == -1)
-				{
-					// Will happen when the text entry exists in other
-					// languages but not yet in this one.
-					YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex] = ss;
-				}
-				else if (number == 1)
-				{
-					YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex] = ss;
-					len = strlen(YSI_g_sTextStrings[ss]);
-					// Add the linked list.
-					Text_DoLinkedText(YSI_g_sTextStrings[ss], hash, len);
-				}
-				else
-				{
-					// Add the string to the chain.
-					slot = 2;
-					len = strlen(YSI_g_sTextStrings[hash]);
-					// Loop through existing strings in this list till we
-					// find the right position (either the specified ID or
-					// the last item) at which to add the new string.
-					while (slot < number)
-					{
-						if (len < 2)
-						{
-							break;
-						}
-						if (!Text_GetLinkedText(YSI_g_sTextStrings[hash], hash, len))
-						{
-							break;
-						}
-						len = strlen(YSI_g_sTextStrings[hash]);
-						++slot;
-					}
-					if (len < 2)
-					{
-						Text_DoLinkedText(YSI_g_sTextStrings[hash], ss, len);
-					}
-					else if (Text_HasLinkedText(YSI_g_sTextStrings[hash], len))
-					{
-						slot = Text_UpdateLinkedText(YSI_g_sTextStrings[hash], ss, len);
-						len = strlen(YSI_g_sTextStrings[ss]);
-						Text_DoLinkedText(YSI_g_sTextStrings[ss], slot, len);
-					}
-					else
-					{
-						Text_DoLinkedText(YSI_g_sTextStrings[hash], ss, len);
-					}
-				}
-			}
-			else
-			{
-				P:W("Text repeat on \"%s\"!", name);
-			}
+			Text_InsertString(YSI_g_sTextStrings[slot], value, ss, number);
 			break;
 		}
 	}
@@ -475,6 +495,19 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
+
+static stock Text_CompressLoaded()
+{
+	P:4("Text_CompressLoaded called");
+	// Remove all the "\05;\number;"s from the strings, now they are all loaded.
+	for (new i = 0, pos; i != sizeof (YSI_g_sTextStrings); ++i)
+	{
+		while ((pos = strfind(YSI_g_sTextStrings[i], "\05;")) != -1)
+			strdel(YSI_g_sTextStrings[i], pos, pos + 2);
+		printf("    \"%s\"", YSI_g_sTextStrings[i]);
+	}
+	P:4("Text_CompressLoaded ended");
+}
 
 static stock Text_LoadLocals()
 {
@@ -487,17 +520,19 @@ static stock Text_LoadLocals()
 	langs = Langs_GetLanguageCodes();
 	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 	{
-		P:6("Text_LoadLocals: i = %d, text = %s, %d, %d", i, YSI_g_sTextSets[i][E_TEXT_SETS_NAME], YSI_g_sTextSets[i][E_TEXT_SETS_INDEX], YSI_g_sTextSets[i][E_TEXT_SETS_HASH]);
+		P:6("Text_LoadLocals: i = %d, text = %s, %d, %d", i, YSI_g_sTextSets[i][E_TEXT_SETS_NAME], YSI_g_sTextSets[i][E_TEXT_SETS_LOAD], YSI_g_sTextSets[i][E_TEXT_SETS_HASH]);
 		if (YSI_g_sTextSets[i][E_TEXT_SETS_LOAD])
 		{
 			// This is in a file that has apparently not been loaded yet.
 			new
 				Language:langIndex = Language:0,
-				pos = -1;
+				pos = -1,
+				offset = strfind(YSI_g_sTextSets[i][E_TEXT_SETS_NAME], "@");
 			// Loop through all the language extensions.
 			while ((pos = strfind(langs, "|", false, pos + 1)) != -1)
 			{
 				format(loadTextFile, sizeof (loadTextFile), "YSI/text/%.*s.%.2s", offset, YSI_g_sTextSets[i][E_TEXT_SETS_NAME], langs[pos - 2]);
+				P:4("Text_LoadLocals: %s", loadTextFile);
 				INI_ParseFile(loadTextFile, "Text_INILoad",
 					.bExtra = true,
 					.extra = _:langIndex,
@@ -512,45 +547,7 @@ static stock Text_LoadLocals()
 			//YSI_g_sTextSets[i][E_TEXT_SETS_NAME][offset] = ':';
 		}
 	}
-}
-
-/*-------------------------------------------------------------------------*//**
- * <param name="master">The script which owns this string.</param>
- * <param name="index">The slot in which this string is stored.</param>
- * <param name="str">The string to display.</param>
- * <param name="len0">The length of the string array.</param>
- * <param name="style">The style of the string.</param>
- * <param name="len1">The length of the style array.</param>
- * <param name="label">The 3D label style of the string.</param>
- * <param name="len2">The length of the 3D array.</param>
- * <remarks>
- *  This function is used to pass data from the owner script to the script
- *  which is doing the display.  It passes the string to format (as an array,
- *  not as a string, to keep the non-standard characters).  A copy of the style
- *  data, any 3D text label style data, the index and the master ID.  Note that
- *  TD data isn't handled here - if there is need to use a text draw the script
- *  will have to call to the remote script for display functions.  TD data is
- *  loaded in all scripts where it is relevant.  This does mean that if people
- *  modify a style we need to modify it in ALL scripts.
- *
- *  TODO: Modify the y_text system to store copies of required strings in all
- *  modes, just because it's slightly better.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-forward Text_ReturnTheText(master, index, str[], len0, style[E_STYLE_DATA], len1, label[E_3D_DATA], len2);
-
-public Text_ReturnTheText(master, index, str[], len0, style[E_STYLE_DATA], len1, label[E_3D_DATA], len2) <y_text_get_text:n>
-{
-}
-
-public Text_ReturnTheText(master, index, str[], len0, style[E_STYLE_DATA], len1, label[E_3D_DATA], len2) <y_text_get_text:y>
-{
-	P:4("Text_ReturnTheText called: %d,%d,%d,%d,%d len = %d (%s)", str[0], str[1], str[2], str[3], str[4], len0, str);
-	strcpy(YSI_g_sReturnText, str, len0);
-	// Here we return store the maximum length of a string, given the output
-	// type.  E.g. 144 for `SendClientMessage`.
-	YSI_g_sTextLength = _Format_SetStyleData(master, index, style, label) - 1;
+	Text_CompressLoaded();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -566,9 +563,10 @@ public Text_ReturnTheText(master, index, str[], len0, style[E_STYLE_DATA], len1,
 
 stock _Text_CheckOwnership(file[], str[])
 {
-	P:4("_Text_CheckOwnership called: %s, %s", file, str);
-	format(YSI_g_sReturnText, sizeof (YSI_g_sReturnText), "%s:%s", file, str);
-	return existproperty(7, YSI_g_sReturnText) && (getproperty(7, YSI_g_sReturnText) == TEXT_MASTER);
+	// TODO...
+//	P:4("_Text_CheckOwnership called: %s, %s", file, str);
+//	format(YSI_g_sReturnText, sizeof (YSI_g_sReturnText), "%s:%s", file, str);
+	return 1;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -587,17 +585,18 @@ stock _Text_CheckOwnership(file[], str[])
 
 stock _Text_LookupName(name[])
 {
-	P:4("_Text_LookupName called: %s, %s", name, YSI_g_sReturnText);
-	new
-		sh = bernstein(YSI_g_sReturnText);
-	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
-	{
-		if (sh == YSI_g_sTextSets[i][E_TEXT_SETS_HASH] && !strcmp(YSI_g_sReturnText, YSI_g_sTextSets[i][E_TEXT_SETS_NAME]))
-		{
-			// Got the start slot.
-			return Text_FindEntry(YSI_g_sTextSets[i][E_TEXT_SETS_HASH], name, bernstein(name));
-		}
-	}
+	// TODO...
+//	P:4("_Text_LookupName called: %s, %s", name, YSI_g_sReturnText);
+//	new
+//		sh = bernstein(YSI_g_sReturnText);
+//	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
+//	{
+//		if (sh == YSI_g_sTextSets[i][E_TEXT_SETS_HASH] && !strcmp(YSI_g_sReturnText, YSI_g_sTextSets[i][E_TEXT_SETS_NAME]))
+//		{
+//			// Got the start slot.
+//			return Text_FindEntry(YSI_g_sTextSets[i][E_TEXT_SETS_HASH], name, bernstein(name));
+//		}
+//	}
 	return -1;
 }
 
@@ -671,7 +670,7 @@ static stock Text_GetStandard(search[], nh, Language:l)
 						style[E_STYLE_DATA],
 						label[E_3D_DATA];
 					Styles_GetData(slot, style, label);
-					CallRemoteFunction("Text_ReturnTheText", "iiaiaiai", TEXT_MASTER, pointer, YSI_g_sTextStrings[pointer], MAX_SINGLE_TEXT_ITEM /*sizeof (YSI_g_sTextStrings[])*/, style, _:E_STYLE_DATA, label, _:E_3D_DATA);
+//					CallRemoteFunction("Text_ReturnTheText", "iiaiaiai", TEXT_MASTER, pointer, YSI_g_sTextStrings[pointer], MAX_SINGLE_TEXT_ITEM /*sizeof (YSI_g_sTextStrings[])*/, style, _:E_STYLE_DATA, label, _:E_3D_DATA);
 					//format(fail, sizeof (fail), "%s", YSI_g_sTextStrings[pointer]);
 					//printf("fail: %s", fail);
 					//break;
@@ -803,7 +802,7 @@ static stock Text_AddEntry(set, name[], value[], hash)
 	}
 	// Save the string.
 	//strpack(YSI_g_sTextStrings[slot], value, MAX_INI_ENTRY_TEXT * 4);
-	Text_UpdateFreeSlot(Format_Standardise(value, YSI_g_sTextStrings[slot], YSI_g_sRemaining));
+	Text_UpdateSlotSize(Format_Standardise(value, YSI_g_sTextStrings[slot], YSI_g_sRemaining));
 	//strpack(YSI_g_sTextStrings[slot], value, MAX_INI_ENTRY_TEXT * 4);
 	//strcpy(YSI_g_sTextStrings[slot], value, MAX_INI_ENTRY_TEXT * 4);
 	// Save the identifier.
@@ -856,56 +855,9 @@ static stock Text_AddEntry(set, name[], value[], hash)
 
 static stock Text_GetFreeSlot()
 {
-	if (YSI_g_sUnusedSlot == MAX_TEXT_ENTRIES * _:YSI_MAX_LANGUAGES)
-	{
+	if (YSI_g_sUnusedSlot == sizeof (YSI_g_sTextStrings))
 		return -1;
-	}
 	return YSI_g_sUnusedSlot++;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <param name="len">Length to make the array slot.</param>
- * <remarks>
- *   Adjusts the first index table in "YSI_g_sTextStrings" such that the next
- *   call to "Text_GetFreeSlot" will point to a non-zero length target string.
- *   Adds 3 to the length for extensions (pointers to other strings that are
- *   actually part of this string).
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-static stock Text_UpdateFreeSlot(len)
-{
-	YSI_g_sRemaining -= len + 3;
-	// Get the address of the previous slot's pointer.
-	#emit LOAD.pri      YSI_g_sUnusedSlot
-	#emit ADD.C         0xFFFFFFFF
-	#emit SHL.C.pri     2
-	#emit CONST.alt     YSI_g_sTextStrings
-	#emit ADD
-	// Get the pointer to the start of the data.
-	#emit LOAD.I
-	// Get the pointer to the end of the data.
-	#emit LOAD.S.alt    len
-	#emit SHL.C.alt     2
-	#emit ADD
-	// Add an offset for "\05" (NULL is implicit in the code because we get an
-	// extra four bytes of offset from shifting the index up a slot).
-	#emit ADD.C         12
-	// Temporarily store the data on the stack.
-	#emit PUSH.pri
-	// Now get the address of the slot of the CURRENT data.
-	#emit LOAD.pri      YSI_g_sUnusedSlot
-	#emit SHL.C.pri     2
-	#emit CONST.alt     YSI_g_sTextStrings
-	#emit ADD
-	#emit MOVE.alt
-	// Retrieve the data and store it in the new index.
-	#emit POP.pri
-	#emit STOR.I
-	#emit RETN
-	//printf("%d %d", len, YSI_g_sUnusedSlot - 1);
-	// Bypass compiler warnings.
-	return len;
 }
 
 /*-------------------------------------------------------------------------*//**
