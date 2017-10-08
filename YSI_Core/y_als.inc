@@ -88,7 +88,9 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if !defined _INC_y_als
+	#define _INC_y_als
 	#include "..\YSI_Internal\y_version"
 	#include "y_utils"
 	#include "..\YSI_Server\y_scriptinit"
@@ -117,11 +119,6 @@ Optional plugins:
 	//&&&
 	#define ALS_MAKE<%0...%1> %0Mode_%1
 #endif
-
-#if defined _INC_y_als
-	#endinput
-#endif
-#define _INC_y_als
 
 /**
  * <library name="y_als">
