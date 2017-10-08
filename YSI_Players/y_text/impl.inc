@@ -129,7 +129,7 @@ enum E_TEXT_SETS
 {
 	E_TEXT_SETS_NAME[28],
 	E_TEXT_SETS_HASH,
-	bool:E_TEXT_SETS_LOADED
+	bool:E_TEXT_SETS_LOAD
 }
 
 enum E_TEXT_ENTRY
@@ -154,11 +154,10 @@ static stock
 	YSI_g_sUnusedEntry = 0,
 	YSI_g_sDistributionID = -1,
 	YSI_g_sUnusedSlot = 0,
-	YSI_g_sRemaining = sizeof (YSI_g_sTextStrings) * sizeof (YSI_g_sTextStrings[]),
-	Language:YSI_g_sLangIndex;
+	YSI_g_sRemaining = sizeof (YSI_g_sTextStrings) * sizeof (YSI_g_sTextStrings[]);
 
-P:D(Text_FindEntry(start, hash));
-#define Text_FindEntry(%0,%1) HashMap_GetWithHash(YSI_g_sTextMap, , (%1))
+P:D(Text_FindEntry(set, name, hash));
+#define Text_FindEntry(%0,%1) HashMap_GetWithHash(YSI_g_sTextMap, (%1), (%0) + (%2))
 
 //                                                                                               
 //    88           ,ad8888ba,         db         88888888ba,    88  888b      88    ,ad8888ba,   
@@ -293,20 +292,12 @@ static stock Text_LoadAll()
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, _A<@yX_>)))
 	{
 		strunpack(buffer, buffer[1]);
-		pos = chrfind('@', buffer);
-		//printf("%d, %x", pos, buffer[0]);
-		if (pos != -1)
-		{
-			// Get rid of the end parts, doesn't matter if "Y_TEXT_UNIQUE" is
-			// defined or not as EVERYTHING later is dropped.
-			buffer[pos] = ':';
-			pos = chrfind('@', buffer, pos);
-			if (pos != -1)
-			{
-				buffer[pos] = '\0';
-				Text_AddLocal(buffer, bernstein(buffer));
-			}
-		}
+		// Get rid of the end parts, doesn't matter if "Y_TEXT_UNIQUE" is
+		// defined or not as EVERYTHING later is dropped.  Find the SECOND "@" -
+		// there will always be at least one.
+		if ((pos = strfind(buffer, "@", false, strfind(buffer, "@") + 1)) != -1)
+			buffer[pos] = '\0';
+		Text_AddLocal(buffer);
 	}
 	// I am trying very hard NOT to rewrite this code right now.  It might not
 	// be as "nice" as I'd like, but it is well tested and works.  Rewriting it
@@ -318,26 +309,33 @@ static stock Text_LoadAll()
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-static stock Text_AddLocal(buffer[], hash)
+static stock Text_AddLocal(buffer[])
 {
-	P:4("Text_AddLocal called: \"%s\", %i", buffer, hash);
+	P:4("Text_AddLocal called: \"%s\", %i", buffer);
+	// Check if this already exists.  If not, add it to a found free slot.
+	new
+		slot = -1;
 	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 	{
-		if (YSI_g_sTextSets[i][e_TEXT_SETS_NAME][0] == '\1')
-		{
-			YSI_g_sTextSets[i][e_TEXT_SETS_HASH] = hash;
-			strcpy(YSI_g_sTextSets[i][e_TEXT_SETS_NAME], buffer, 28);
+		if (YSI_g_sTextSets[i][E_TEXT_SETS_NAME][0] == '\0')
+			slot = i;
+		else if (!strcmp(buffer, YSI_g_sTextSets[i][E_TEXT_SETS_NAME]))
 			return;
-		}
+	}
+	if (slot != -1)
+	{
+		YSI_g_sTextSets[slot][E_TEXT_SETS_HASH] = bernstein(buffer);
+		YSI_g_sTextSets[slot][E_TEXT_SETS_LOAD] = true;
+		strcpy(YSI_g_sTextSets[slot][E_TEXT_SETS_NAME], buffer, 28);
 	}
 }
 
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-forward Text_INILoad(file[], tag[], name[], value[]);
+forward Text_INILoad(Language:langIndex, file[], tag[], name[], value[]);
 
-public Text_INILoad(file[], tag[], name[], value[])
+public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 {
 	// Get the path.
 	// Get the file.
@@ -349,10 +347,11 @@ public Text_INILoad(file[], tag[], name[], value[])
 	format(fname, sizeof (fname), "%s:%s", file, tag);
 	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 	{
-		if (!strcmp(YSI_g_sTextSets[i][e_TEXT_SETS_NAME], fname, true))
+		if (!strcmp(YSI_g_sTextSets[i][E_TEXT_SETS_NAME], fname, true))
 		{
+			YSI_g_sTextSets[i][E_TEXT_SETS_LOAD] = false;
 			new
-				fhash = YSI_g_sTextSets[i][e_TEXT_SETS_HASH],
+				fhash = YSI_g_sTextSets[i][E_TEXT_SETS_HASH],
 				len = strlen(name),
 				slot = name[--len],
 				number,
@@ -375,7 +374,7 @@ public Text_INILoad(file[], tag[], name[], value[])
 				name[len] = '\0';
 			}
 			hash = bernstein(name);
-			slot = Text_FindEntry(YSI_g_sTextSets[i][e_TEXT_SETS_INDEX], hash);
+			slot = Text_FindEntry(fhash, name, hash);
 			P:6("Text_INILoad: Check slot %d", slot);
 			if (slot == -1)
 			{
@@ -386,10 +385,10 @@ public Text_INILoad(file[], tag[], name[], value[])
 				P:6("Text_INILoad: Check Collision");
 				if (strcmp(name, YSI_g_sTextEntries[slot][e_TEXT_ENTRY_NAME], true))
 				{
-					P:E("Text collision on \"%s\" and \"%s\"!", name, YSI_g_sTextSets[i][e_TEXT_SETS_NAME]);
+					P:E("Text collision on \"%s\" and \"%s\"!", name, YSI_g_sTextSets[i][E_TEXT_SETS_NAME]);
 					return;
 				}
-				else if (YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][YSI_g_sLangIndex] == -1)
+				else if (YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex] == -1)
 				{
 					new
 						ss = Text_GetFreeSlot();
@@ -399,7 +398,7 @@ public Text_INILoad(file[], tag[], name[], value[])
 						return;
 					}
 					Text_UpdateFreeSlot(Format_Standardise(value, YSI_g_sTextStrings[ss], MAX_INI_ENTRY_TEXT));
-					YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][YSI_g_sLangIndex] = ss;
+					YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex] = ss;
 				}
 				else if (number)
 				{
@@ -413,16 +412,16 @@ public Text_INILoad(file[], tag[], name[], value[])
 						return;
 					}
 					Text_UpdateFreeSlot(Format_Standardise(value, YSI_g_sTextStrings[ss], MAX_INI_ENTRY_TEXT));
-					hash = YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][YSI_g_sLangIndex];
+					hash = YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex];
 					if (hash == -1)
 					{
 						// Will happen when the text entry exists in other
 						// languages but not yet in this one.
-						YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][YSI_g_sLangIndex] = ss;
+						YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex] = ss;
 					}
 					else if (number == 1)
 					{
-						YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][YSI_g_sLangIndex] = ss;
+						YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex] = ss;
 						len = strlen(YSI_g_sTextStrings[ss]);
 						// Add the linked list.
 						Text_DoLinkedText(YSI_g_sTextStrings[ss], hash, len);
@@ -469,7 +468,6 @@ public Text_INILoad(file[], tag[], name[], value[])
 					P:W("Text repeat on \"%s\"!", name);
 				}
 			}
-			// Add the current value to the current tag.
 			break;
 		}
 	}
@@ -485,49 +483,33 @@ static stock Text_LoadLocals()
 	// '\1' and an index of -1.
 	new
 		loadTextFile[64],
+		langs[YSI_MAX_STRING];
+	langs = Langs_GetLanguageCodes();
 	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 	{
-		P:6("Text_LoadLocals: i = %d, text = %s, %d, %d", i, YSI_g_sTextSets[i][e_TEXT_SETS_NAME], YSI_g_sTextSets[i][e_TEXT_SETS_INDEX], YSI_g_sTextSets[i][e_TEXT_SETS_HASH]);
-		if (YSI_g_sTextSets[i][e_TEXT_SETS_INDEX] == -1 && YSI_g_sTextSets[i][e_TEXT_SETS_HASH])
+		P:6("Text_LoadLocals: i = %d, text = %s, %d, %d", i, YSI_g_sTextSets[i][E_TEXT_SETS_NAME], YSI_g_sTextSets[i][E_TEXT_SETS_INDEX], YSI_g_sTextSets[i][E_TEXT_SETS_HASH]);
+		if (YSI_g_sTextSets[i][E_TEXT_SETS_LOAD])
 		{
+			// This is in a file that has apparently not been loaded yet.
 			new
-				offset = chrfind(':', YSI_g_sTextSets[i][e_TEXT_SETS_NAME]) + 1,
-				j = i + 1;
-			while (j != Y_TEXT_MAX_SETS)
+				Language:langIndex = Language:0,
+				pos = -1;
+			// Loop through all the language extensions.
+			while ((pos = strfind(langs, "|", false, pos + 1)) != -1)
 			{
-				if (YSI_g_sTextSets[j][e_TEXT_SETS_INDEX] == -1 && YSI_g_sTextSets[j][e_TEXT_SETS_HASH] && !strcmp(YSI_g_sTextSets[i][e_TEXT_SETS_NAME], YSI_g_sTextSets[j][e_TEXT_SETS_NAME], false, offset))
-				{
-					break;
-				}
-				++j;
-			}
-			// Only load a file one.
-			if (j != Y_TEXT_MAX_SETS)
-			{
-				continue;
-			}
-			--offset;
-			//YSI_g_sTextSets[i][e_TEXT_SETS_NAME][offset] = '\0';
-			YSI_g_sLangIndex = Language:0;
-			new
-				langs[YSI_MAX_STRING],
-				pos;
-			langs = Langs_GetLanguageCodes();
-			while ((pos = chrfind('|', langs, pos)) != -1)
-			{
-				format(loadTextFile, sizeof (loadTextFile), "YSI/text/%.*s.%.2s", offset, YSI_g_sTextSets[i][e_TEXT_SETS_NAME], langs[pos - 2]);
+				format(loadTextFile, sizeof (loadTextFile), "YSI/text/%.*s.%.2s", offset, YSI_g_sTextSets[i][E_TEXT_SETS_NAME], langs[pos - 2]);
 				INI_ParseFile(loadTextFile, "Text_INILoad",
-					.bExtra = false,
+					.bExtra = true,
+					.extra = _:langIndex,
 					.bPassTag = true,
 					.bPassFile = true);
-				++YSI_g_sLangIndex;
-				++pos;
+				++langIndex;
 				// We can add code here to load the data from y_styles.
 			}
-			//format(YSI_g_sCurLoadTextFile, sizeof (YSI_g_sCurLoadTextFile), "%.*s", offset, YSI_g_sTextSets[i][e_TEXT_SETS_NAME]);
+			//format(YSI_g_sCurLoadTextFile, sizeof (YSI_g_sCurLoadTextFile), "%.*s", offset, YSI_g_sTextSets[i][E_TEXT_SETS_NAME]);
 			P:6("Text_LoadLocals: Loading style %s (%d)", loadTextFile, offset);
 			//_Styles_ParseOne(YSI_g_sCurLoadTextFile);
-			//YSI_g_sTextSets[i][e_TEXT_SETS_NAME][offset] = ':';
+			//YSI_g_sTextSets[i][E_TEXT_SETS_NAME][offset] = ':';
 		}
 	}
 }
@@ -613,7 +595,7 @@ stock _Text_LookupName(name[])
 		if (sh == YSI_g_sTextSets[i][E_TEXT_SETS_HASH] && !strcmp(YSI_g_sReturnText, YSI_g_sTextSets[i][E_TEXT_SETS_NAME]))
 		{
 			// Got the start slot.
-			return Text_FindEntry(YSI_g_sTextSets[i][E_TEXT_SETS_INDEX], bernstein(name));
+			return Text_FindEntry(YSI_g_sTextSets[i][E_TEXT_SETS_HASH], name, bernstein(name));
 		}
 	}
 	return -1;
@@ -712,7 +694,7 @@ static stock Text_GetStandard(search[], nh, Language:l)
 		{
 			// Got the start slot.
 			new
-				slot = Text_FindEntry(YSI_g_sTextSets[i][E_TEXT_SETS_INDEX], nh);
+				slot = |(YSI_g_sTextSets[i][E_TEXT_SETS_INDEX], nh);
 			P:7("Text_GetStandard: found %d, %d, %d", YSI_g_sTextSets[i][E_TEXT_SETS_INDEX], nh, slot);
 			if (slot != -1)
 			{
@@ -874,7 +856,7 @@ static stock Text_AddEntry(set, name[], value[], hash)
 	strpack(YSI_g_sTextEntries[entry][E_TEXT_ENTRY_NAME], name, MAX_INI_ENTRY_NAME * 4);
 	//strcpy(YSI_g_sTextEntries[entry][E_TEXT_ENTRY_NAME], name, MAX_INI_ENTRY_NAME * 4);
 	YSI_g_sTextEntries[entry][E_TEXT_ENTRY_HASH] = hash;
-	YSI_g_sTextEntries[entry][E_TEXT_ENTRY_POINTERS][YSI_g_sLangIndex] = slot;
+	YSI_g_sTextEntries[entry][E_TEXT_ENTRY_POINTERS][langIndex] = slot;
 	// Set the default style.
 	_Style_Init(entry);
 	// Insert the identifier.
@@ -1128,7 +1110,7 @@ static stock Text_IsLocalOwner(search[], ident[], &len)
 			if (hash == YSI_g_sTextSets[i][E_TEXT_SETS_HASH] && !strcmp(search[lst], YSI_g_sTextSets[i][E_TEXT_SETS_NAME]))
 			{
 				new
-					ret = Text_FindEntry(YSI_g_sTextSets[i][E_TEXT_SETS_INDEX], bernstein(ident));
+					ret = Text_FindEntry(YSI_g_sTextSets[i][E_TEXT_SETS_HASH], ident, bernstein(ident));
 				if (ret != -1)
 				{
 					search[lst + pos] = '|';
@@ -1433,7 +1415,7 @@ stock _Text_Format(dest[], size, Language:lang, e_STYLE_TYPE:style, search[], id
 		for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 		{
 			new
-				ret = Text_FindEntry(YSI_g_sTextSets[i][E_TEXT_SETS_INDEX], hash)
+				ret = Text_FindEntry(YSI_g_sTextSets[i][E_TEXT_SETS_HASH], ident, hash)
 			;
 			P:7("Text_Format: Textset %d entry %d", i, ret);
 			if (ret != -1)
