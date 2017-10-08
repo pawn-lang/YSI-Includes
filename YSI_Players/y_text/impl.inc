@@ -602,38 +602,6 @@ stock _Text_LookupName(name[])
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="str">String to be returned.</param>
- * <param name="len0">The length of the string.</param>
- * <remarks>
- *  This function, along with _Text_RemoteSingle, is used to get a single string
- *  from a remote script when the exact ID is known in advance and no other data
- *  like stlyes are required.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-forward _Text_ReturnSingle(str[], len0);
-
-public _Text_ReturnSingle(str[], len0) <y_text_get_text : n>
-{
-}
-
-public _Text_ReturnSingle(str[], len0) <y_text_get_text : y>
-{
-	#pragma unused len0
-	strcpy(YSI_g_sExtraText, str);
-}
-
-forward _Text_RemoteSingle(master, id);
-
-public _Text_RemoteSingle(master, id)
-{
-	if (master == TEXT_MASTER)
-	{
-		CallRemoteFunction("_Text_ReturnSingle", "ai", YSI_g_sTextStrings[id], MAX_SINGLE_TEXT_ITEM); //sizeof (YSI_g_sTextStrings[]));
-	}
-}
-
-/*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="y_text_get_text : y" />
  * <transition keep="true" target="y_text_get_text : n" />
  *//*------------------------------------------------------------------------**/
@@ -898,8 +866,10 @@ static stock Text_GetFreeSlot()
 /*-------------------------------------------------------------------------*//**
  * <param name="len">Length to make the array slot.</param>
  * <remarks>
- *  Adjusts the first index table in "YSI_g_sTextStrings" such that the next
- *  call to "Text_GetFreeSlot" will point to a non-zero length target string.
+ *   Adjusts the first index table in "YSI_g_sTextStrings" such that the next
+ *   call to "Text_GetFreeSlot" will point to a non-zero length target string.
+ *   Adds 3 to the length for extensions (pointers to other strings that are
+ *   actually part of this string).
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
