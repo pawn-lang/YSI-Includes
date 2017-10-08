@@ -341,17 +341,17 @@ Test:INI_SetupCallbackName1()
 {
 	new
 		dest[32];
-	INI_SetupCallbackName(dest, "%s", "hi/there", false);
+	INI_SetupCallbackName(dest, "%s", "there", false);
 	ASSERT(!strcmp(dest, "%s"));
-	INI_SetupCallbackName(dest, "%s", "hi/there", true);
+	INI_SetupCallbackName(dest, "%s", "there", true);
 	ASSERT(!strcmp(dest, "there"));
-	INI_SetupCallbackName(dest, "%s%s", "hi/there", false);
+	INI_SetupCallbackName(dest, "%s%s", "there", false);
 	ASSERT(!strcmp(dest, "%sthere"));
-	INI_SetupCallbackName(dest, "%s%s", "hi/there.txt", false);
+	INI_SetupCallbackName(dest, "%s%s", "there", false);
 	ASSERT(!strcmp(dest, "%sthere"));
-	INI_SetupCallbackName(dest, "%s%s", "hi/there", true);
+	INI_SetupCallbackName(dest, "%s%s", "there", true);
 	ASSERT(!strcmp(dest, "there%s"));
-	INI_SetupCallbackName(dest, "%s%s", "hi/there.txt", true);
+	INI_SetupCallbackName(dest, "%s%s", "there", true);
 	ASSERT(!strcmp(dest, "there%s"));
 }
 
@@ -359,17 +359,17 @@ Test:INI_SetupCallbackName2()
 {
 	new
 		dest[32];
-	INI_SetupCallbackName(dest, "%s", "hi/there you", false);
+	INI_SetupCallbackName(dest, "%s", "there you", false);
 	ASSERT(!strcmp(dest, "%s"));
-	INI_SetupCallbackName(dest, "%s", "hi/there you", true);
+	INI_SetupCallbackName(dest, "%s", "there you", true);
 	ASSERT(!strcmp(dest, "there_you"));
-	INI_SetupCallbackName(dest, "%s%s", "hi/there you", false);
+	INI_SetupCallbackName(dest, "%s%s", "there you", false);
 	ASSERT(!strcmp(dest, "%sthere_you"));
-	INI_SetupCallbackName(dest, "%s%s", "hi/there you.txt", false);
+	INI_SetupCallbackName(dest, "%s%s", "there you", false);
 	ASSERT(!strcmp(dest, "%sthere_you"));
-	INI_SetupCallbackName(dest, "%s%s", "hi/there you", true);
+	INI_SetupCallbackName(dest, "%s%s", "there you", true);
 	ASSERT(!strcmp(dest, "there_you%s"));
-	INI_SetupCallbackName(dest, "%s%s", "hi/there you.txt", true);
+	INI_SetupCallbackName(dest, "%s%s", "there you", true);
 	ASSERT(!strcmp(dest, "there_you%s"));
 }
 
@@ -377,12 +377,11 @@ Test:INI_SetupCallbackName3()
 {
 	new
 		dest[32];
-	INI_SetupCallbackName(dest, "%s%s", "one/two/three/hello_there you.some.ini", false);
+	INI_SetupCallbackName(dest, "%s%s", "hello_there you", false);
 	ASSERT(!strcmp(dest, "%shello_there_you"));
-	INI_SetupCallbackName(dest, "%s%s", "one\\two\\three\\four.five.six", false);
+	INI_SetupCallbackName(dest, "%s%s", "four", false);
 	// My first conditional assertation.
-	if (IsWindows()) ASSERT(!strcmp(dest, "%sfour"));
-	else ASSERT(!strcmp(dest, "%sone"));
+	ASSERT(!strcmp(dest, "%sfour"));
 }
 
 static stock
@@ -1143,5 +1142,86 @@ Test:INI_Write2()
 		INI:f = INI_Open("YSI/test_ini/test6.ini");
 	INI_DeleteTag(f, "woo");
 	INI_Close(f);
+}
+
+enum E_INI14_TEST
+{
+	E_INI14_TEST_FIRST_KEY[32],
+	E_INI14_TEST_SECOND_KEY,
+	E_INI14_TEST_C,
+	Float:E_INI14_TEST_THIRD_KEY,
+	E_INI14_TEST_FOURTH_KEY[32],
+	E_INI14_TEST_FIFTH_KEY
+}
+
+static stock
+	YSI_g_sTestParents[4][E_INI14_TEST];
+
+forward INI_Parents(extra, file[], tag[], name[], value[]);
+
+public INI_Parents(extra, file[], tag[], name[], value[])
+{
+	printf("%s %s %s", tag, name, value);
+	printf("%d %s %d %d", strcmp(("first_key"), name, true), YSI_g_sTestParents[extra][E_INI14_TEST_FIRST_KEY],  value, 32);
+
+	ASSERT(!strcmp(file, "test7"));
+	if (!strcmp(tag, "parent"))
+		extra = extra - 3;
+	else if (!strcmp(tag, "child"))
+		extra = extra - 2;
+	else if (!strcmp(tag, "grandchild"))
+		extra = extra - 1;
+	else
+		ASSERT(false);
+	INI_String("first_key", YSI_g_sTestParents[extra][E_INI14_TEST_FIRST_KEY], 32);
+	INI_Int("second_key", YSI_g_sTestParents[extra][E_INI14_TEST_SECOND_KEY]);
+	INI_Int("c", YSI_g_sTestParents[extra][E_INI14_TEST_C]);
+	INI_Float("third_key", YSI_g_sTestParents[extra][E_INI14_TEST_THIRD_KEY]);
+	INI_String("fourth_key", YSI_g_sTestParents[extra][E_INI14_TEST_FOURTH_KEY], 32);
+	INI_Int("fifth_key", YSI_g_sTestParents[extra][E_INI14_TEST_FIFTH_KEY]);
+	return 0;
+}
+
+Test:INI_Parents()
+{
+	INI_ParseFile(
+			"YSI/test_ini/test7.ini",
+			"INI_Parents",
+			.bExtra    = true,
+			.extra     = 3,
+			.bPassTag  = true,
+			.bPassFile = true);
+	printf("%d %s", YSI_g_sTestParents[0][E_INI14_TEST_FIRST_KEY][0], YSI_g_sTestParents[0][E_INI14_TEST_FIRST_KEY]);
+	printf("%d %s", YSI_g_sTestParents[0][E_INI14_TEST_FIRST_KEY][1], YSI_g_sTestParents[1][E_INI14_TEST_FIRST_KEY]);
+	printf("%d %s", YSI_g_sTestParents[0][E_INI14_TEST_FIRST_KEY][2], YSI_g_sTestParents[2][E_INI14_TEST_FIRST_KEY]);
+	printf("%d %s", YSI_g_sTestParents[0][E_INI14_TEST_FIRST_KEY][3], YSI_g_sTestParents[3][E_INI14_TEST_FIRST_KEY]);
+	// Parent.
+	ASSERT(!strcmp(YSI_g_sTestParents[0][E_INI14_TEST_FIRST_KEY], "how are you?"));
+	ASSERT(!strcmp(YSI_g_sTestParents[0][E_INI14_TEST_FOURTH_KEY], "Some string...."));
+	ASSERT(YSI_g_sTestParents[0][E_INI14_TEST_SECOND_KEY] == 11);
+	ASSERT(YSI_g_sTestParents[0][E_INI14_TEST_C         ] == 8);
+	ASSERT(YSI_g_sTestParents[0][E_INI14_TEST_THIRD_KEY ] == 0.0);
+	ASSERT(YSI_g_sTestParents[0][E_INI14_TEST_FIFTH_KEY ] == 99);
+	// Child.
+	ASSERT(!strcmp(YSI_g_sTestParents[1][E_INI14_TEST_FIRST_KEY], "how are you?"));
+	ASSERT(!strcmp(YSI_g_sTestParents[1][E_INI14_TEST_FOURTH_KEY], "Some other string...."));
+	ASSERT(YSI_g_sTestParents[1][E_INI14_TEST_SECOND_KEY] == 11);
+	ASSERT(YSI_g_sTestParents[1][E_INI14_TEST_C         ] == 9);
+	ASSERT(YSI_g_sTestParents[1][E_INI14_TEST_THIRD_KEY ] == 6.6);
+	ASSERT(YSI_g_sTestParents[1][E_INI14_TEST_FIFTH_KEY ] == 99);
+	// Grandchild.
+	ASSERT(!strcmp(YSI_g_sTestParents[2][E_INI14_TEST_FIRST_KEY], "how are you?"));
+	ASSERT(!strcmp(YSI_g_sTestParents[2][E_INI14_TEST_FOURTH_KEY], "Some other string...."));
+	ASSERT(YSI_g_sTestParents[2][E_INI14_TEST_SECOND_KEY] == 12);
+	ASSERT(YSI_g_sTestParents[2][E_INI14_TEST_C         ] == 10);
+	ASSERT(YSI_g_sTestParents[2][E_INI14_TEST_THIRD_KEY ] == 6.6);
+	ASSERT(YSI_g_sTestParents[2][E_INI14_TEST_FIFTH_KEY ] == 99);
+	// Overflow.
+	ASSERT(!YSI_g_sTestParents[3][E_INI14_TEST_FIRST_KEY][0]);
+	ASSERT(!YSI_g_sTestParents[3][E_INI14_TEST_FOURTH_KEY][0]);
+	ASSERT(YSI_g_sTestParents[3][E_INI14_TEST_SECOND_KEY] == 0);
+	ASSERT(YSI_g_sTestParents[3][E_INI14_TEST_C         ] == 0);
+	ASSERT(YSI_g_sTestParents[3][E_INI14_TEST_THIRD_KEY ] == 0.0);
+	ASSERT(YSI_g_sTestParents[3][E_INI14_TEST_FIFTH_KEY ] == 0);
 }
 

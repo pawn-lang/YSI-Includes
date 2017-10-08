@@ -269,7 +269,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 		file[32],
 		callback[E_CALLBACK_DATA],
 		tag[32],    // The current tag being parsed.
-		cbSpec[5],  // The callback specifier.
+		cbSpec[6],  // The callback specifier.
 		cbName[32]; // The callback name format.
 	new
 		File:f = fopen(fname, io_read);
@@ -289,7 +289,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 	rlen = ppos = 0;
 	P:5("INI_ParseFile: Opened.");
 	bLocal = !bLocal, // Invert for "remote".
-	INI_MakeCallbackFormat(bExtra, bPassTag, cbSpec),
+	INI_MakeCallbackFormat(bExtra, bPassTag, bPassFile, cbSpec),
 	INI_SetupCallbackName(cbName, remoteFormat, file, bFileFirst);
 	new
 		bool:handle = INI_GetCallback(callback, cbName, tag, "", cbSpec, bLocal);
@@ -344,7 +344,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 				if ((handle = INI_GetCallback(callback, cbName, tag, YSI_g_sCurLine[p0s], cbSpec, bLocal)) && p1s != p1e)
 				{
 					// No point recursing if there's no handler is there?
-					if (!INI_DoParentTag(ppos, parent, file, f, callback, bExtra, extra, bPassTag, tag, bFilter, filter))
+					if (!INI_DoParentTag(ppos, parent, file, f, callback, bExtra, extra, bPassTag, tag, bFilter, filter, bPassFile))
 						P:I("Invalid hierarchy in INI file: \"%s\" for tag \"%s\"", fname, tag);
 					fseek(f, ppos, seek_start);
 				}
@@ -371,13 +371,13 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 				{
 					if (bPassFile)
 					{
-						if (bPassTag) Callback_Call(callback,      , file, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback,      , file,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						if (bPassTag) Callback_Call(callback,        file, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback,        file,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
 					}
 					else
 					{
-						if (bPassTag) Callback_Call(callback,      ,       tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback,      ,            YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						if (bPassTag) Callback_Call(callback,              tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback,                   YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
 					}
 				}
 			}
@@ -632,22 +632,38 @@ _Y_INI_STATIC stock INI_SetupCallbackName(fmat[32], const remoteFormat[], filena
 	// Add spaces as "_".
 	new
 		pos = -1;
-	while ((pos = strfind(fmat, " ", false, pos + 1) != -1)
+	while ((pos = strfind(fmat, " ", false, pos + 1)) != -1)
 		fmat[pos] = '_';
 	return 1;
 }
 
-_Y_INI_STATIC stock INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTag, callbackFormat[5])
+_Y_INI_STATIC stock INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTag, const bool:bPassFile, callbackFormat[6])
 {
 	if (bExtra)
 	{
-		if (bPassTag) callbackFormat = _F<isss>;
-		else          callbackFormat = _F<iss>;
+		if (bPassFile)
+		{
+			if (bPassTag) callbackFormat = _F<issss>;
+			else          callbackFormat = _F<isss>;
+		}
+		else
+		{
+			if (bPassTag) callbackFormat = _F<isss>;
+			else          callbackFormat = _F<iss>;
+		}
 	}
 	else
 	{
-		if (bPassTag) callbackFormat = _F<sss>;
-		else          callbackFormat = _F<ss>;
+		if (bPassFile)
+		{
+			if (bPassTag) callbackFormat = _F<ssss>;
+			else          callbackFormat = _F<sss>;
+		}
+		else
+		{
+			if (bPassTag) callbackFormat = _F<sss>;
+			else          callbackFormat = _F<ss>;
+		}
 	}
 }
 
@@ -674,7 +690,7 @@ _Y_INI_STATIC stock INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTa
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock INI_DoParentTag(const epos, const search[], file, File:f, callback[E_CALLBACK_DATA], bool:bExtra, extra, bool:bPassTag, tag[], bool:bFilter, filter[], bool:bPassFile)
+static stock INI_DoParentTag(const epos, const search[], const file[], File:f, callback[E_CALLBACK_DATA], bool:bExtra, extra, bool:bPassTag, tag[], bool:bFilter, filter[], bool:bPassFile)
 {
 	// The bulk of this function is basically the same as INI_ParseFile (which
 	// is a shame as it is a symptom of poor, unmaintainable code).
@@ -750,13 +766,13 @@ static stock INI_DoParentTag(const epos, const search[], file, File:f, callback[
 				{
 					if (bPassFile)
 					{
-						if (bPassTag) Callback_Call(callback,      , file, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback,      , file,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						if (bPassTag) Callback_Call(callback,        file, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback,        file,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
 					}
 					else
 					{
-						if (bPassTag) Callback_Call(callback,      ,       tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback,      ,            YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						if (bPassTag) Callback_Call(callback,              tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						else          Callback_Call(callback,                   YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
 					}
 				}
 			}
