@@ -307,6 +307,10 @@ static stock Text_LoadAll()
 			}
 		}
 	}
+	// I am trying very hard NOT to rewrite this code right now.  It might not
+	// be as "nice" as I'd like, but it is well tested and works.  Rewriting it
+	// would only introduce new bugs.  I do have to update it slightly to use
+	// y_hashmap, but that should be a small edit, not a ground-up rewrite.
 	Text_LoadLocals();
 }
 
@@ -342,14 +346,11 @@ public Text_INILoad(offset, tag[], name[], value[])
 	new
 		fname[sizeof (YSI_g_sCurLoadTextFile) - (3 + 9)],
 		len = strlen(YSI_g_sCurLoadTextFile);
-	//format(fname, sizeof (fname
 	strcpy(fname, YSI_g_sCurLoadTextFile[9], len - (3 + 9 - 1));
 	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 	{
-		//printf("fname: %s, %d, %d, %s", fname, len, offset, YSI_g_sTextSets[i][e_TEXT_SETS_NAME]);
 		if (!strcmp(YSI_g_sTextSets[i][e_TEXT_SETS_NAME], fname, true, offset - 1) && !strcmp(YSI_g_sTextSets[i][e_TEXT_SETS_NAME][offset], tag, true))
 		{
-			//printf("%d \"%s\" \"%s\" \"%s\"", len, fname, YSI_g_sCurLoadTextFile[len - 2], tag);
 			len = strlen(name);
 			new
 				slot = name[--len],
@@ -363,7 +364,6 @@ public Text_INILoad(offset, tag[], name[], value[])
 				hash *= 10;
 				slot = name[--len];
 			}
-			// So "MY_TEXT_1" becomes "MY_TEXT", not "MY_TEXT_".
 			if (slot == '_')
 			{
 				name[len] = '\0';
@@ -374,7 +374,6 @@ public Text_INILoad(offset, tag[], name[], value[])
 			if (slot == -1)
 			{
 				Text_AddEntry(i, name, value, hash);
-				//P:5("%d,%d,%d,%d,%d", YSI_g_sTextStrings[ss][0], YSI_g_sTextStrings[ss][1], YSI_g_sTextStrings[ss][2], YSI_g_sTextStrings[ss][3], YSI_g_sTextStrings[ss][4]);
 			}
 			else
 			{
@@ -393,10 +392,7 @@ public Text_INILoad(offset, tag[], name[], value[])
 						P:E("Text buffer full!");
 						return;
 					}
-					//strpack(YSI_g_sTextStrings[ss], value, MAX_INI_ENTRY_TEXT * 4);
 					Text_UpdateFreeSlot(Format_Standardise(value, YSI_g_sTextStrings[ss], MAX_INI_ENTRY_TEXT));
-					//P:5("%d,%d,%d,%d,%d", YSI_g_sTextStrings[ss][0], YSI_g_sTextStrings[ss][1], YSI_g_sTextStrings[ss][2], YSI_g_sTextStrings[ss][3], YSI_g_sTextStrings[ss][4]);
-					//strcpy(YSI_g_sTextStrings[ss], value, MAX_INI_ENTRY_TEXT * 4);
 					YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][YSI_g_sLangIndex] = ss;
 				}
 				else if (number)
@@ -422,15 +418,8 @@ public Text_INILoad(offset, tag[], name[], value[])
 					{
 						YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][YSI_g_sLangIndex] = ss;
 						len = strlen(YSI_g_sTextStrings[ss]);
-						//if (len < sizeof (YSI_g_sTextStrings[]) - 2)
-						//{
-							// Add the linked list.
+						// Add the linked list.
 						Text_DoLinkedText(YSI_g_sTextStrings[ss], hash, len);
-						//}
-						//else
-						//{
-						//	P:W("Text size error on \"%s\"!", name);
-						//}
 					}
 					else
 					{
@@ -446,11 +435,6 @@ public Text_INILoad(offset, tag[], name[], value[])
 							{
 								break;
 							}
-							//if (YSI_g_sTextStrings[hash][len - 2] != '\05')
-							//{
-							//	break;
-							//}
-							//hash = YSI_g_sTextStrings[hash][len - 1];
 							if (!Text_GetLinkedText(YSI_g_sTextStrings[hash], hash, len))
 							{
 								break;
@@ -462,40 +446,15 @@ public Text_INILoad(offset, tag[], name[], value[])
 						{
 							Text_DoLinkedText(YSI_g_sTextStrings[hash], ss, len);
 						}
-						//else if (YSI_g_sTextStrings[hash][len - 2] == '\05')
 						else if (Text_HasLinkedText(YSI_g_sTextStrings[hash], len))
 						{
 							slot = Text_UpdateLinkedText(YSI_g_sTextStrings[hash], ss, len);
-							//slot = YSI_g_sTextStrings[hash][len - 1];
-							//YSI_g_sTextStrings[hash][len - 1] = ss;
 							len = strlen(YSI_g_sTextStrings[ss]);
-							//if (len < sizeof (YSI_g_sTextStrings[]) - 2)
-							//{
-							//	// Add the linked list.
-							//	YSI_g_sTextStrings[ss][len] = '\05';
-							//	YSI_g_sTextStrings[ss][len + 1] = slot;
-							//	YSI_g_sTextStrings[ss][len + 2] = '\0';
 							Text_DoLinkedText(YSI_g_sTextStrings[ss], slot, len);
-							//}
-							//else
-							//{
-							//	P:W("Text size error on \"%s\"!", name);
-							//}
 						}
 						else
 						{
-							//if (len < sizeof (YSI_g_sTextStrings[]) - 2)
-							//{
-							//	// Add the linked list.
-							//	YSI_g_sTextStrings[hash][len] = '\05';
-							//	YSI_g_sTextStrings[hash][len + 1] = ss;
-							//	YSI_g_sTextStrings[hash][len + 2] = '\0';
 							Text_DoLinkedText(YSI_g_sTextStrings[hash], ss, len);
-							//}
-							//else
-							//{
-							//	P:W("Text size error on \"%s\"!", name);
-							//}
 						}
 					}
 				}
