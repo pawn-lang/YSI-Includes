@@ -158,7 +158,7 @@ static stock
 	Language:YSI_g_sLangIndex;
 
 P:D(Text_FindEntry(start, hash));
-#define Text_FindEntry(%0,%1)
+#define Text_FindEntry(%0,%1) HashMap_GetWithHash(YSI_g_sTextMap, , (%1))
 
 //                                                                                               
 //    88           ,ad8888ba,         db         88888888ba,    88  888b      88    ,ad8888ba,   
@@ -352,7 +352,7 @@ public Text_INILoad(file[], tag[], name[], value[])
 		if (!strcmp(YSI_g_sTextSets[i][e_TEXT_SETS_NAME], fname, true))
 		{
 			new
-				fhash = bernstein(YSI_g_sTextSets[i][e_TEXT_SETS_NAME]),
+				fhash = YSI_g_sTextSets[i][e_TEXT_SETS_HASH],
 				len = strlen(name),
 				slot = name[--len],
 				number,
