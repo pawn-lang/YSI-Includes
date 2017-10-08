@@ -82,9 +82,15 @@ Test:y_hashmap_Init()
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
-	ASSERT(data[88][E_HASH_MAP_TEST_DATA][0] == 0);
+	ASSERT(data[0][E_HASH_MAP_TEST_DATA][0] != 0);
+	ASSERT(data[0][E_HASH_MAP_TEST_DATA][1] == 0);
+	ASSERT(data[0][E_HASH_MAP_TEST_DATA][2] == 0);
+	ASSERT(data[88][E_HASH_MAP_TEST_DATA][0] != 0);
 	ASSERT(data[88][E_HASH_MAP_TEST_DATA][1] == 0);
 	ASSERT(data[88][E_HASH_MAP_TEST_DATA][2] == 0);
+	ASSERT(data[99][E_HASH_MAP_TEST_DATA][0] == 0);
+	ASSERT(data[99][E_HASH_MAP_TEST_DATA][1] == 0);
+	ASSERT(data[99][E_HASH_MAP_TEST_DATA][2] == 0);
 }
 
 Test:rawMemcpy()
@@ -121,6 +127,45 @@ Test:y_hashmap_Get1()
 		, data[42][E_HASH_MAP_TEST_1]
 		, data[42][E_HASH_MAP_TEST_2]);*/
 	ASSERT(HashMap_Get(m, "Hello") == 42);
+}
+
+Test:y_hashmap_GetUnused1()
+{
+	new HashMap:m<>;
+	new data[6][E_HASH_MAP_TEST];
+	new prev;
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
+	prev = data[0][E_HASH_MAP_TEST_DATA][0];
+	ASSERT(prev != 0);
+	ASSERT(HashMap_GetUnused(m) == 0);
+	ASSERT(m[260] == prev);
+	prev = data[1][E_HASH_MAP_TEST_DATA][0];
+	ASSERT(prev != 0);
+	ASSERT(prev != data[0][E_HASH_MAP_TEST_DATA][0]);
+	ASSERT(HashMap_GetUnused(m) == 1);
+	ASSERT(m[260] == prev);
+	ASSERT(HashMap_GetUnused(m) == 2);
+	ASSERT(HashMap_GetUnused(m) == 3);
+	ASSERT(HashMap_GetUnused(m) == 4);
+	ASSERT(HashMap_GetUnused(m) == 5);
+	ASSERT(HashMap_GetUnused(m) == -1);
+	ASSERT(m[260] == 0);
+}
+
+Test:y_hashmap_GetUnused2()
+{
+	new HashMap:m<>;
+	new data[100][E_HASH_MAP_TEST];
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
+	ASSERT(HashMap_GetUnused(m) == 0);
+	ASSERT(HashMap_GetUnused(m) == 1);
+	ASSERT(HashMap_GetUnused(m) == 2);
+	HashMap_AddUnused(m, 2);
+	HashMap_AddUnused(m, 0);
+	ASSERT(HashMap_GetUnused(m) == 0);
+	ASSERT(HashMap_GetUnused(m) == 2);
+	ASSERT(HashMap_GetUnused(m) == 3);
+	ASSERT(HashMap_GetUnused(m) == 4);
 }
 
 Test:y_hashmap_GetVarious()
@@ -299,6 +344,7 @@ Test:y_hashmap_RemoveValues()
 
 Test:y_hashmap_Get1000()
 {
+	ASSERT(heapspace() >= 145000);
 	new HashMap:m<>;
 	new data[1000][E_HASH_MAP_TEST];
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
@@ -316,6 +362,7 @@ Test:y_hashmap_Get1000()
 
 Test:y_hashmap_Remove500()
 {
+	ASSERT(heapspace() >= 145000);
 	new HashMap:m<>;
 	new data[1000][E_HASH_MAP_TEST];
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
@@ -348,6 +395,7 @@ Test:y_hashmap_Remove500()
 
 Test:y_hashmap_Set500()
 {
+	ASSERT(heapspace() >= 145000);
 	new HashMap:m<>;
 	new data[1000][E_HASH_MAP_TEST];
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);

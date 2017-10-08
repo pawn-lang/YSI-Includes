@@ -75,8 +75,9 @@ Optional plugins:
 #define HASH_MAP_SIZE_1 (HASH_MAP_SIZE + 1)
 #define HASH_MAP_SIZE_2 (HASH_MAP_SIZE + 2)
 #define HASH_MAP_SIZE_3 (HASH_MAP_SIZE + 3)
+#define HASH_MAP_UNUSED (HASH_MAP_SIZE + 4)
 
-#define HashMap:%0<%1> %0[HASH_MAP_SIZE + 4]
+#define HashMap:%0<%1> %0[HASH_MAP_SIZE + 5]
 
 #define HASH_MAP_DIR_LEFT  (4)
 #define HASH_MAP_DIR_RIGHT (8)
@@ -140,6 +141,7 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 	// Save the pointer.
 	#emit LOAD.S.pri target
 	#emit STOR.S.pri ptr
+	m[HASH_MAP_UNUSED] = ptr,
 	m[HASH_MAP_PTR] = ptr,
 	// Store the number of elements in the array.
 	m[HASH_MAP_SIZE_1] = size1,
@@ -151,10 +153,82 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 	#emit SUB
 	#emit STOR.S.pri ptr
 	m[HASH_MAP_SIZE_3] = ptr;
+	// Using the hash for the list (in "target"), pointing to the hash of the
+	// next element; initialise the whole hash map in to a linked list of unused
+	// elements.
+	while (--size1)
+	{
+		// Increment "target" by "size2".
+		#emit LOAD.S.alt target
+		#emit LOAD.S.pri size2
+		#emit ADD
+		#emit STOR.I
+		#emit STOR.S.pri target
+	}
+	// End the list.
+	target = 0;
 }
 
 // Uses "%2 - %2" to make a tagged 0 without knowing the tag.
-#define HashMap_Init(%0,%1,%2) _HashMap_Init(%0, %1[0][(%2)], sizeof (%1), sizeof (%1[]) * 4, %1[0][(%2) - (%2)])
+#define HashMap_Init(%0,%1,%2) _HashMap_Init(%0, %1[0][(%2)], sizeof (%1), sizeof (%1[]) * cellbytes, %1[0][(%2) - (%2)])
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="m">Hash map to get a free slot in.</param>
+ * <returns>
+ *   The index of a currently unused slot.
+ * </returns>
+ * <remarks>
+ *   This assumes that you correct use <c>GetUnused</c> and <c>AddUnused</c> in
+ *   pairs.  If your code has a different way of tracking unused slots, don't
+ *   try and mix that with this!
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock HashMap_GetUnused(HashMap:m<>)
+{
+	new
+		ptr = m[HASH_MAP_UNUSED];
+	if (ptr)
+	{
+		// Get the next slot.
+		#emit LOAD.S.pri m
+		#emit ADD.C      1040 // (256 + 4) * 4
+		#emit MOVE.alt
+		#emit LREF.S.pri ptr
+		#emit STOR.I
+		return (ptr - m[HASH_MAP_PTR]) / m[HASH_MAP_SIZE_2];
+	}
+	return -1;
+}
+/*-------------------------------------------------------------------------*//**
+ * <param name="m">Hash map to get a free slot in.</param>
+ * <returns>
+ *   The index of a currently unused slot.
+ * </returns>
+ * <remarks>
+ *   This assumes that you correct use <c>GetUnused</c> and <c>AddUnused</c> in
+ *   pairs.  If your code has a different way of tracking unused slots, don't
+ *   try and mix that with this!
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock HashMap_AddUnused(HashMap:m<>, value)
+{
+	if (0 <= value < m[HASH_MAP_SIZE_1])
+	{
+		// Convert the index to a pointer.
+		value = value * m[HASH_MAP_SIZE_2] + m[HASH_MAP_PTR];
+		#emit LOAD.S.pri m
+		#emit ADD.C      1040 // (256 + 4) * 4
+		#emit MOVE.alt
+		// Store the current value of "m[HASH_MAP_UNUSED]" in "*value".
+		#emit LOAD.I
+		#emit SREF.S.pri value
+		// Set "m[HASH_MAP_UNUSED]" to "value"
+		#emit LOAD.S.pri value
+		#emit STOR.I
+	}
+}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to get the size of.</param>
@@ -171,6 +245,8 @@ P:D(HashMap_ByteLen(str[]));
 #define HashMap_ByteLen(%0) ((strlen((%0)) + 1) << (2 * _:!ispacked((%0))))
 
 /*-------------------------------------------------------------------------*//**
+ * <param name="ignorecase"></param>
+ * <param name="hash"></param>
  * <param name="m"></param>
  * <param name="str"></param>
  * <param name="value">More like the target slot.</param>
@@ -181,7 +257,7 @@ P:D(HashMap_ByteLen(str[]));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:HashMap_Add(HashMap:m<>, const str[], value, bool:ignorecase = false)
+stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignorecase = false)
 {
 	P:3("HashMap_Add called: %d <= %d < %d", 0, value, m[HASH_MAP_SIZE_1]);
 	if (0 <= value < m[HASH_MAP_SIZE_1])
@@ -192,9 +268,7 @@ stock bool:HashMap_Add(HashMap:m<>, const str[], value, bool:ignorecase = false)
 		// if (AMX_Read(ptr + 4) || AMX_Read(ptr + 8)) return false;
 		static
 			ptr,
-			hash,
 			res;
-		hash = YHash(str, .sensitive = !ignorecase);
 		// Add this entry to the correct binary tree.
 		P:5("HashMap_Add: mask = %d", hash & 0xFF);
 		new
@@ -256,6 +330,23 @@ stock bool:HashMap_Add(HashMap:m<>, const str[], value, bool:ignorecase = false)
 		return true;
 	}
 	return false;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="ignorecase"></param>
+ * <param name="m"></param>
+ * <param name="str"></param>
+ * <param name="value">More like the target slot.</param>
+ * <remarks>
+ *  Adds a value to the given hash map under the given string key.
+ *
+ *  Actually more like adding an index, not a value...
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:HashMap_Add(HashMap:m<>, const str[], value, bool:ignorecase = false)
+{
+	return HashMap_AddWithHash(m, str, YHash(str, .sensitive = !ignorecase), value, ignorecase);
 }
 
 /*-------------------------------------------------------------------------*//**
