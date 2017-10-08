@@ -154,10 +154,11 @@ static stock
 	YSI_g_sUnusedEntry = 0,
 	YSI_g_sDistributionID = -1,
 	YSI_g_sUnusedSlot = 0,
-	YSI_g_sCurLoadTextFile[64],
-	//YSI_g_sCallbacks,
 	YSI_g_sRemaining = sizeof (YSI_g_sTextStrings) * sizeof (YSI_g_sTextStrings[]),
 	Language:YSI_g_sLangIndex;
+
+P:D(Text_FindEntry(start, hash));
+#define Text_FindEntry(%0,%1)
 
 //                                                                                               
 //    88           ,ad8888ba,         db         88888888ba,    88  888b      88    ,ad8888ba,   
@@ -334,29 +335,33 @@ static stock Text_AddLocal(buffer[], hash)
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-forward Text_INILoad(offset, tag[], name[], value[]);
+forward Text_INILoad(file[], tag[], name[], value[]);
 
-public Text_INILoad(offset, tag[], name[], value[])
+public Text_INILoad(file[], tag[], name[], value[])
 {
 	// Get the path.
 	// Get the file.
 	// Get the extension.
-	P:5("Text_INILoad called: %d, %s, %s, %s", offset, tag, name, value);
+	P:5("Text_INILoad called: %s, %s, %s, %s", file, tag, name, value);
 	P:5("Text_INILoad: IsPacked? %08x%08x", value[0], value[1]);
 	new
-		fname[sizeof (YSI_g_sCurLoadTextFile) - (3 + 9)],
-		len = strlen(YSI_g_sCurLoadTextFile);
-	strcpy(fname, YSI_g_sCurLoadTextFile[9], len - (3 + 9 - 1));
+		fname[32];
+	format(fname, sizeof (fname), "%s:%s", file, tag);
 	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 	{
-		if (!strcmp(YSI_g_sTextSets[i][e_TEXT_SETS_NAME], fname, true, offset - 1) && !strcmp(YSI_g_sTextSets[i][e_TEXT_SETS_NAME][offset], tag, true))
+		if (!strcmp(YSI_g_sTextSets[i][e_TEXT_SETS_NAME], fname))
 		{
-			len = strlen(name);
 			new
+				fhash = bernstein(fname),
+				len = strlen(name),
 				slot = name[--len],
 				number,
 				hash = 1;
 			P:6("Text_INILoad: Get Number");
+			// Find trailing numbers - they are used to concatenate strings, not
+			// differentiate.  This should really be a y_ini feature (and then I
+			// can add ordering guarantees to simplify the code (unless people
+			// manually edit the files)).
 			while ('0' <= slot <= '9')
 			{
 				name[len] = '\0';
@@ -364,6 +369,7 @@ public Text_INILoad(offset, tag[], name[], value[])
 				hash *= 10;
 				slot = name[--len];
 			}
+			// So "MY_TEXT_1" becomes "MY_TEXT", not "MY_TEXT_".
 			if (slot == '_')
 			{
 				name[len] = '\0';
@@ -474,10 +480,11 @@ public Text_INILoad(offset, tag[], name[], value[])
 
 static stock Text_LoadLocals()
 {
-	//printf("Text_LoadLocals called");
 	P:4("Text_LoadLocals called");
 	// This is the interesting part.  Load all the sets which have a name not
 	// '\1' and an index of -1.
+	new
+		loadTextFile[64],
 	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 	{
 		P:6("Text_LoadLocals: i = %d, text = %s, %d, %d", i, YSI_g_sTextSets[i][e_TEXT_SETS_NAME], YSI_g_sTextSets[i][e_TEXT_SETS_INDEX], YSI_g_sTextSets[i][e_TEXT_SETS_HASH]);
@@ -508,14 +515,17 @@ static stock Text_LoadLocals()
 			langs = Langs_GetLanguageCodes();
 			while ((pos = chrfind('|', langs, pos)) != -1)
 			{
-				format(YSI_g_sCurLoadTextFile, sizeof (YSI_g_sCurLoadTextFile), "YSI/text/%.*s.%.2s", offset, YSI_g_sTextSets[i][e_TEXT_SETS_NAME], langs[pos - 2]);
-				INI_ParseFile(YSI_g_sCurLoadTextFile, "Text_INILoad", _, true, offset + 1, _, true);
+				format(loadTextFile, sizeof (loadTextFile), "YSI/text/%.*s.%.2s", offset, YSI_g_sTextSets[i][e_TEXT_SETS_NAME], langs[pos - 2]);
+				INI_ParseFile(loadTextFile, "Text_INILoad",
+					.bExtra = false,
+					.bPassTag = true,
+					.bPassFile = true);
 				++YSI_g_sLangIndex;
 				++pos;
 				// We can add code here to load the data from y_styles.
 			}
 			//format(YSI_g_sCurLoadTextFile, sizeof (YSI_g_sCurLoadTextFile), "%.*s", offset, YSI_g_sTextSets[i][e_TEXT_SETS_NAME]);
-			P:6("Text_LoadLocals: Loading style %s (%d)", YSI_g_sCurLoadTextFile, offset);
+			P:6("Text_LoadLocals: Loading style %s (%d)", loadTextFile, offset);
 			//_Styles_ParseOne(YSI_g_sCurLoadTextFile);
 			//YSI_g_sTextSets[i][e_TEXT_SETS_NAME][offset] = ':';
 		}
@@ -596,7 +606,6 @@ stock _Text_CheckOwnership(file[], str[])
 stock _Text_LookupName(name[])
 {
 	P:4("_Text_LookupName called: %s, %s", name, YSI_g_sReturnText);
-	//format(YSI_g_sReturnText, sizeof (YSI_g_sReturnText), "%s:%s", YSI_g_sCurLoadTextFile, str);
 	new
 		sh = bernstein(YSI_g_sReturnText);
 	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
@@ -818,28 +827,28 @@ static stock Text_GetText(search[], name[], Language:l)
 //{
 //}
 
-static stock Text_FindEntry(start, hash)
-{
-	P:4("Text_FindEntry called: %i, %i", start, hash);
-	while (start != -1)
-	{
-		new
-			cmp = YSI_g_sTextEntries[start][E_TEXT_ENTRY_HASH] - hash;
-		if (cmp < 0)
-		{
-			start = YSI_g_sTextEntries[start][E_TEXT_ENTRY_RIGHT];
-		}
-		else if (cmp > 0)
-		{
-			start = YSI_g_sTextEntries[start][E_TEXT_ENTRY_LEFT];
-		}
-		else
-		{
-			return start;
-		}
-	}
-	return -1;
-}
+//static stock Text_FindEntry(start, hash)
+//{
+//	P:4("Text_FindEntry called: %i, %i", start, hash);
+//	while (start != -1)
+//	{
+//		new
+//			cmp = YSI_g_sTextEntries[start][E_TEXT_ENTRY_HASH] - hash;
+//		if (cmp < 0)
+//		{
+//			start = YSI_g_sTextEntries[start][E_TEXT_ENTRY_RIGHT];
+//		}
+//		else if (cmp > 0)
+//		{
+//			start = YSI_g_sTextEntries[start][E_TEXT_ENTRY_LEFT];
+//		}
+//		else
+//		{
+//			return start;
+//		}
+//	}
+//	return -1;
+//}
 
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
