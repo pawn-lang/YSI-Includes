@@ -349,10 +349,10 @@ public Text_INILoad(file[], tag[], name[], value[])
 	format(fname, sizeof (fname), "%s:%s", file, tag);
 	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 	{
-		if (!strcmp(YSI_g_sTextSets[i][e_TEXT_SETS_NAME], fname))
+		if (!strcmp(YSI_g_sTextSets[i][e_TEXT_SETS_NAME], fname, true))
 		{
 			new
-				fhash = bernstein(fname),
+				fhash = bernstein(YSI_g_sTextSets[i][e_TEXT_SETS_NAME]),
 				len = strlen(name),
 				slot = name[--len],
 				number,
