@@ -130,7 +130,6 @@ static stock
 	YSI_g_sTemp3D[E_3D_DATA],
 	YSI_g_sTempMaster,
 	Text:YSI_g_sBaseTD = TEXT_DRAW_NO_NEXT,
-	//YSI_g_sExtraText[MAX_INI_ENTRY_TEXT],
 	gInitialColour;
 
 /*-------------------------------------------------------------------------*//**
@@ -1661,3 +1660,4 @@ Format_Render_start:
 	P:5("Text_Render end");
 	return one;
 }
+

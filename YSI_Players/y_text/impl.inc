@@ -151,7 +151,6 @@ static stock
 	YSI_g_sTextSets[Y_TEXT_MAX_SETS][E_TEXT_SETS],
 	YSI_g_sTextEntries[MAX_TEXT_ENTRIES][E_TEXT_ENTRY],
 	YSI_g_sTextStrings[MAX_TEXT_ENTRIES * _:YSI_MAX_LANGUAGES][MAX_INI_ENTRY_TEXT / 4],
-	YSI_g_sUnusedEntry = 0,
 	YSI_g_sDistributionID = -1,
 	YSI_g_sUnusedSlot = 0,
 	YSI_g_sRemaining = sizeof (YSI_g_sTextStrings) * sizeof (YSI_g_sTextStrings[]);
@@ -378,95 +377,96 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 			P:6("Text_INILoad: Check slot %d", slot);
 			if (slot == -1)
 			{
-				Text_AddEntry(i, name, value, hash);
-			}
-			else
-			{
-				P:6("Text_INILoad: Check Collision");
-				if (strcmp(name, YSI_g_sTextEntries[slot][e_TEXT_ENTRY_NAME], true))
+				slot = Text_GetFreeEntry(),
+				if (slot == -1)
 				{
-					P:E("Text collision on \"%s\" and \"%s\"!", name, YSI_g_sTextSets[i][E_TEXT_SETS_NAME]);
+					P:E("Text buffer full!");
 					return;
 				}
-				else if (YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex] == -1)
+				// Add this string to the hashmap.  We identify it by name, but
+				// the hash is a combination of the string's hash and the search
+				// space's hash (through addition).
+				slot = HashMap_AddWithHash(YSI_g_sTextMap, name, fhash + hash, slot);
+			}
+			P:6("Text_INILoad: Check Collision");
+			if (YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex] == -1)
+			{
+				new
+					ss = Text_GetFreeSlot();
+				if (ss == -1)
 				{
-					new
-						ss = Text_GetFreeSlot();
-					if (ss == -1)
-					{
-						P:E("Text buffer full!");
-						return;
-					}
-					Text_UpdateFreeSlot(Format_Standardise(value, YSI_g_sTextStrings[ss], MAX_INI_ENTRY_TEXT));
+					P:E("Text buffer full!");
+					return;
+				}
+				Text_UpdateFreeSlot(Format_Standardise(value, YSI_g_sTextStrings[ss], MAX_INI_ENTRY_TEXT));
+				YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex] = ss;
+			}
+			else if (number)
+			{
+				// Found a string with multiple entries in the INI file to
+				// be linked together dynamically.
+				new
+					ss = Text_GetFreeSlot();
+				if (ss == -1)
+				{
+					P:E("Text buffer full!");
+					return;
+				}
+				Text_UpdateFreeSlot(Format_Standardise(value, YSI_g_sTextStrings[ss], MAX_INI_ENTRY_TEXT));
+				hash = YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex];
+				if (hash == -1)
+				{
+					// Will happen when the text entry exists in other
+					// languages but not yet in this one.
 					YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex] = ss;
 				}
-				else if (number)
+				else if (number == 1)
 				{
-					// Found a string with multiple entries in the INI file to
-					// be linked together dynamically.
-					new
-						ss = Text_GetFreeSlot();
-					if (ss == -1)
-					{
-						P:E("Text buffer full!");
-						return;
-					}
-					Text_UpdateFreeSlot(Format_Standardise(value, YSI_g_sTextStrings[ss], MAX_INI_ENTRY_TEXT));
-					hash = YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex];
-					if (hash == -1)
-					{
-						// Will happen when the text entry exists in other
-						// languages but not yet in this one.
-						YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex] = ss;
-					}
-					else if (number == 1)
-					{
-						YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex] = ss;
-						len = strlen(YSI_g_sTextStrings[ss]);
-						// Add the linked list.
-						Text_DoLinkedText(YSI_g_sTextStrings[ss], hash, len);
-					}
-					else
-					{
-						// Add the string to the chain.
-						slot = 2;
-						len = strlen(YSI_g_sTextStrings[hash]);
-						// Loop through existing strings in this list till we
-						// find the right position (either the specified ID or
-						// the last item) at which to add the new string.
-						while (slot < number)
-						{
-							if (len < 2)
-							{
-								break;
-							}
-							if (!Text_GetLinkedText(YSI_g_sTextStrings[hash], hash, len))
-							{
-								break;
-							}
-							len = strlen(YSI_g_sTextStrings[hash]);
-							++slot;
-						}
-						if (len < 2)
-						{
-							Text_DoLinkedText(YSI_g_sTextStrings[hash], ss, len);
-						}
-						else if (Text_HasLinkedText(YSI_g_sTextStrings[hash], len))
-						{
-							slot = Text_UpdateLinkedText(YSI_g_sTextStrings[hash], ss, len);
-							len = strlen(YSI_g_sTextStrings[ss]);
-							Text_DoLinkedText(YSI_g_sTextStrings[ss], slot, len);
-						}
-						else
-						{
-							Text_DoLinkedText(YSI_g_sTextStrings[hash], ss, len);
-						}
-					}
+					YSI_g_sTextEntries[slot][e_TEXT_ENTRY_POINTERS][langIndex] = ss;
+					len = strlen(YSI_g_sTextStrings[ss]);
+					// Add the linked list.
+					Text_DoLinkedText(YSI_g_sTextStrings[ss], hash, len);
 				}
 				else
 				{
-					P:W("Text repeat on \"%s\"!", name);
+					// Add the string to the chain.
+					slot = 2;
+					len = strlen(YSI_g_sTextStrings[hash]);
+					// Loop through existing strings in this list till we
+					// find the right position (either the specified ID or
+					// the last item) at which to add the new string.
+					while (slot < number)
+					{
+						if (len < 2)
+						{
+							break;
+						}
+						if (!Text_GetLinkedText(YSI_g_sTextStrings[hash], hash, len))
+						{
+							break;
+						}
+						len = strlen(YSI_g_sTextStrings[hash]);
+						++slot;
+					}
+					if (len < 2)
+					{
+						Text_DoLinkedText(YSI_g_sTextStrings[hash], ss, len);
+					}
+					else if (Text_HasLinkedText(YSI_g_sTextStrings[hash], len))
+					{
+						slot = Text_UpdateLinkedText(YSI_g_sTextStrings[hash], ss, len);
+						len = strlen(YSI_g_sTextStrings[ss]);
+						Text_DoLinkedText(YSI_g_sTextStrings[ss], slot, len);
+					}
+					else
+					{
+						Text_DoLinkedText(YSI_g_sTextStrings[hash], ss, len);
+					}
 				}
+			}
+			else
+			{
+				P:W("Text repeat on \"%s\"!", name);
 			}
 			break;
 		}
@@ -640,28 +640,15 @@ public _Text_RemoteSingle(master, id)
 
 stock _Text_GetPointer(master, id)
 {
-	if (master == TEXT_MASTER)
-	{
-		//new
-		//	ret = id * sizeof (YSI_g_sTextStrings[]);
-		//printf("%d", ret);
-		#emit CONST.alt   YSI_g_sTextStrings
-		#emit LOAD.S.pri  id
-		#emit IDXADDR
-		#emit MOVE.alt
-		#emit LOAD.i
-		#emit ADD
-		#emit RETN
-	}
-	state y_text_get_text : y;
-	CallRemoteFunction("_Text_RemoteSingle", "ii", master, id);
-	state y_text_get_text : n;
-	#emit CONST.pri  YSI_g_sExtraText
+	#pragma unused master
+	#emit CONST.alt   YSI_g_sTextStrings
+	#emit LOAD.S.pri  id
+	#emit IDXADDR
+	#emit MOVE.alt
+	#emit LOAD.i
+	#emit ADD
 	#emit RETN
-	//#emit STOR.S.pri  ret
-	//printf("%d", ret);
-	// Never actually called, but shuts up the compiler
-	return id;
+	return 0;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -906,16 +893,6 @@ static stock Text_GetFreeSlot()
 		return -1;
 	}
 	return YSI_g_sUnusedSlot++;
-	/*P:4("Text_GetFreeSlot called");
-	if (YSI_g_sUnusedSlot == MAX_TEXT_ENTRIES * _:YSI_MAX_LANGUAGES)
-	{
-		return -1;
-	}
-	new
-		ret = YSI_g_sUnusedSlot;
-	YSI_g_sUnusedSlot = YSI_g_sTextStrings[ret][0];
-	YSI_g_sTextStrings[ret][0] = '\0';
-	return ret;*/
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1067,16 +1044,10 @@ static stock Text_HasLinkedText(entry[], len)
 static stock Text_GetFreeEntry()
 {
 	P:4("Text_GetFreeEntry called");
-	if (YSI_g_sUnusedEntry == MAX_TEXT_ENTRIES)
-	{
-		return -1;
-	}
 	new
-		ret = YSI_g_sUnusedEntry;
-	YSI_g_sUnusedEntry = YSI_g_sTextEntries[ret][E_TEXT_ENTRY_HASH];
-	YSI_g_sTextEntries[ret][E_TEXT_ENTRY_HASH] = 0;
-	YSI_g_sTextEntries[ret][E_TEXT_ENTRY_LEFT] = -1;
-	YSI_g_sTextEntries[ret][E_TEXT_ENTRY_RIGHT] = -1;
+		ret = HashMap_GetUnused(YSI_g_sTextMap);
+	if (ret == -1)
+		return -1;
 	// Reset text storage pointers.
 	for (new Language:i = Language:0; i != YSI_MAX_LANGUAGES; ++i)
 	{
