@@ -457,6 +457,9 @@ global Command_ReProcess(p,string:c[],h)
 	#if !defined Y_COMMANDS_NO_IPC
 		if (!IsPlayerConnected(p)) return Command_OnReceived(NO_PLAYER, p, c);
 	#endif
+	P:1("Commands_OnPlayerCommandText called: %d %s", p, c);
+	new
+		prevID = YSI_g_sCurrentID;
 	if (PA_Get(YSI_g_sDisabledPlayers, p))
 	{
 		sRet = Command_OnReceived(DISABLED, p, c);
@@ -467,9 +470,6 @@ global Command_ReProcess(p,string:c[],h)
 				sRet;
 		}
 	}
-	P:1("Commands_OnPlayerCommandText called: %d %s", p, c);
-	new
-		prevID = YSI_g_sCurrentID;
 	// Get the hashed version of the decoded string, skipping the possible  "/".
 	sPos = Puny_EncodeHash(sCmd[4], c[sRet], sHash, .delimiter = '@') + sRet;
 	while (c[sPos] == ' ') ++sPos; // Better/slower: ('\0' < c[sPos] <= ' ').
