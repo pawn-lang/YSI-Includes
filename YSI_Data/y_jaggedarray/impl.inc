@@ -84,14 +84,14 @@ Optional plugins:
 static stock Jagged_MovePtr(array[][], maxSize, slot, shift)
 {
 	new
-		tmp0,
-		tmp1,
+		//tmp0,
+		//tmp1,
 		ptr;
 	// Get the slot pointer.
 	#emit LOAD.S.alt            array
 	#emit LOAD.S.pri            slot
 	#emit IDXADDR
-	#emit STOR.S.pri tmp0
+	//#emit STOR.S.pri tmp0
 	//#emit MOVE.alt
 	#emit LOAD.I
 	#emit STOR.S.pri            ptr
@@ -102,7 +102,7 @@ static stock Jagged_MovePtr(array[][], maxSize, slot, shift)
 	#emit LOAD.S.alt            array
 	#emit LOAD.S.pri            slot
 	#emit IDXADDR
-	#emit STOR.S.pri tmp1
+	//#emit STOR.S.pri tmp1
 	#emit STOR.S.pri            shift
 	#emit LOAD.S.pri            ptr
 	#emit SREF.S.pri            shift
@@ -320,6 +320,80 @@ stock bool:_Jagged_Move(array[][], size1, size2, ...)
 
 #define Jagged_Move(%0,%1) _Jagged_Move(_Jagged(%0),%1)
 #define _ALS_Jagged_Move
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="array">The array we want to resize a slot in.</param>
+ * <param name="size1">The number of slots in the array.</param>
+ * <param name="size2">The ORIGINAL size of every slot.</param>
+ * <remarks>
+ *   Changes all pointers except the first one to point at the very end of the
+ *   array.  I.e. makes <c>sizeof (array[0]) == sizeof (array) * sizeof
+ *   (array[])</c>
+ *   and <c>sizeof (array[n &gt; 0]) == 0</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock _Jagged_Empty(array[][], size1, size2)
+{
+	// The size of the main storage area, including the header.
+	size2 = (size1 + size1 * size2) * cellbytes;
+	while (--size1)
+	{
+		#emit LOAD.S.pri array
+		#emit ADD.C      4
+		#emit MOVE.alt
+		#emit LOAD.S.pri size2
+		#emit ADD.C      0xFFFFFFFC // -4
+		#emit STOR.I
+		#emit STOR.S.pri size2
+		#emit STOR.S.alt array
+	}
+}
+
+#define Jagged_Empty(%0) _Jagged_Empty(_Jagged(%0))
+#define _ALS_Jagged_Empty
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="array">The array we want to resize a slot in.</param>
+ * <param name="slot">The slot we want to resize.</param>
+ * <param name="newSize">The new size of the slot.</param>
+ * <remarks>
+ *   This purely moves the next pointer in the array.  It does nothing at all
+ *   with any data stored in the array, or any other pointers.  This means many
+ *   bad things can happen when it is used incorrectly.  Just one example is
+ *   that extending a slot over the next few slots will mean those later slots
+ *   will now point in to the middle of the current slot's data.  This is best
+ *   used in conjunction with Jagged_Empty, so that the array is an almost blank
+ *   slate before dangerous messing.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Jagged_UnsafeResizeOne(array[][], slot, newSize)
+{
+	// Get a pointer to the next slot.
+	#emit LOAD.S.alt array
+	#emit LOAD.S.pri slot
+	#emit INC.I
+	#emit IDXADDR
+	#emit PUSH.pri
+	// Get the offset to this array's current start point.
+	#emit LOAD.S.pri slot
+	#emit LIDX
+	// Get the offset to the new end.
+	#emit LOAD.S.alt newSize
+	#emit XCHG
+	#emit IDXADDR
+	// Subtract 4 to make it the offset for the next slot, save it to the
+	// pointer we pushed earlier.
+	#emit ADD.C 0xFFFFFFFC
+	#emit SREF.S.pri 0xFFFFFFFC
+	// End.
+	#emit POP.pri
+	#emit RETN
+}
+
+//#define Jagged_UnsafeResizeOne(%0,%1) _Jagged_UnsafeResizeOne(_Jagged(%0),%1)
+//#define _ALS_Jagged_UnsafeResizeOne
 
 /*-------------------------------------------------------------------------*//**
  * <param name="array">The array we want to resize a slot in.</param>

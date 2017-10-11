@@ -317,7 +317,7 @@ static stock Text_AddLocal(buffer[])
 	}
 }
 
-static stock bool:Text_InsertString(target[], const str[], slot, number)
+static stock bool:Text_InsertString(target[][], const str[], slot, number)
 {
 	// "target" is passed as a separate string, rather than just used as
 	// "YSI_g_sTextStrings[slot]" because that way we do not generate the
@@ -332,60 +332,60 @@ static stock bool:Text_InsertString(target[], const str[], slot, number)
 	{
 		P:5("Text_InsertString: A %d (%d)", newlen, YSI_g_sUnusedSlot);
 		// If there is no number, there can be no multiple strings.
-		if (!Jagged_ResizeOne(YSI_g_sTextStrings, slot, newlen + 1))
+		if (!Jagged_UnsafeResizeOne(target, slot, newlen + 1))
 			return false;
 		P:5("Text_InsertString: A %d (%d)", newlen, YSI_g_sUnusedSlot);
-		strcpy(target, str, newlen + 1);
+		strcpy(target[slot], str, newlen + 1);
 		return true;
 	}
 	// Prepend "\05;\number;" to the string, for later compression.
 	new
 		insert[3] = { '\05', 0, 0 },
-		oldlen = strlen(target) + 1,
+		oldlen = strlen(target[slot]) + 1,
 		largest;
-	printf("%d %d %d %d %d", target[0], target[1], target[2], target[3], target[4]);
+	printf("%d %d %d %d %d", target[slot][0], target[slot][1], target[slot][2], target[slot][3], target[slot][4]);
 	// "oldlen" is +1 to cater for "NULL".  If the existing string doesn't
 	// begin with `\05`, it was not an extendable string.
 	if (oldlen == 1)
 		largest = 0;
-	else if (target[0] == '\05')
-		largest = target[oldlen - 2];
+	else if (target[slot][0] == '\05')
+		largest = target[slot][oldlen - 2];
 	else
 		return false;
 	if (largest == number)
 	{
 		P:5("Text_InsertString: B %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
-		if (!Jagged_ResizeOne(YSI_g_sTextStrings, slot, oldlen + newlen + 2))
+		if (!Jagged_UnsafeResizeOne(target, slot, oldlen + newlen + 2))
 			return false;
 		P:5("Text_InsertString: B %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
 		--oldlen,
 		insert[1] = number + 1,
-		strcat(target[oldlen], str, cellmax),
-		strcat(target[oldlen + newlen], insert, cellmax);
+		strcat(target[slot][oldlen], str, cellmax),
+		strcat(target[slot][oldlen + newlen], insert, cellmax);
 	}
 	else if (largest < number)
 	{
 		P:5("Text_InsertString: C %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
-		if (!Jagged_ResizeOne(YSI_g_sTextStrings, slot, oldlen + newlen + 2 + 2 * (number - largest)))
+		if (!Jagged_UnsafeResizeOne(target, slot, oldlen + newlen + 2 + 2 * (number - largest)))
 			return false;
 		P:5("Text_InsertString: C %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
 		--oldlen;
 		do
 		{
 			insert[1] = ++largest,
-			strcat(target[oldlen], insert, cellmax);
+			strcat(target[slot][oldlen], insert, cellmax);
 		}
 		while (largest < number);
 		insert[1] = number + 1,
-		strcat(target[oldlen], str, cellmax),
-		strcat(target[oldlen + newlen], insert, cellmax);
+		strcat(target[slot][oldlen], str, cellmax),
+		strcat(target[slot][oldlen + newlen], insert, cellmax);
 	}
 	else
 	{
 		P:5("Text_InsertString: D %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
 		new
-			p0 = strfind(target, (insert[1] = number, insert), false, 0),
-			p1 = strfind(target, (insert[1] = number + 1, insert), false, p0 + 1);
+			p0 = strfind(target[slot], (insert[1] = number, insert), false, 0),
+			p1 = strfind(target[slot], (insert[1] = number + 1, insert), false, p0 + 1);
 		// Don't know what to do in this case!
 		if (p0 == -1 || p1 == -1)
 			return false;
@@ -395,24 +395,24 @@ static stock bool:Text_InsertString(target[], const str[], slot, number)
 		if (oldlen)
 		{
 			P:5("Text_InsertString: E %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
-			if (!Jagged_ResizeOne(YSI_g_sTextStrings, slot, newlen - oldlen))
+			if (!Jagged_UnsafeResizeOne(target, slot, newlen - oldlen))
 				return false;
 			P:5("Text_InsertString: E %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
-			strdel(target[p0 + 2], 0, oldlen);
+			strdel(target[slot][p0 + 2], 0, oldlen);
 			// Delete any existing text in this position.
-			strins(target[p0], str, 2, cellmax);
+			strins(target[slot][p0], str, 2, cellmax);
 		}
 		else
 		{
 			P:5("Text_InsertString: F %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
 			// Nothing to delete, just insert.
-			if (!Jagged_ResizeOne(YSI_g_sTextStrings, slot, newlen))
+			if (!Jagged_UnsafeResizeOne(target, slot, newlen))
 				return false;
 			P:5("Text_InsertString: F %d %d %d (%d)", newlen, oldlen, largest, YSI_g_sUnusedSlot);
-			strins(target[p0], str, 2, cellmax);
+			strins(target[slot][p0], str, 2, cellmax);
 		}
 	}
-	printf("%d %d %d %d %d", target[0], target[1], target[2], target[3], target[4]);
+	printf("%d %d %d %d %d", target[slot][0], target[slot][1], target[slot][2], target[slot][3], target[slot][4]);
 	return true;
 }
 
@@ -487,7 +487,7 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 				}
 				YSI_g_sTextEntries[slot][E_TEXT_ENTRY_POINTERS][langIndex] = ss;
 			}
-			Text_InsertString(YSI_g_sTextStrings[slot], value, ss, number);
+			Text_InsertString(YSI_g_sTextStrings, value, ss, number);
 			break;
 		}
 	}
@@ -496,15 +496,16 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-static stock Text_CompressLoaded()
+static stock Text_CompressLoaded(strings[][])
 {
+	Jagged_PrintHeader(YSI_g_sTextStrings);
 	P:4("Text_CompressLoaded called");
 	// Remove all the "\05;\number;"s from the strings, now they are all loaded.
-	for (new i = 0, pos; i != sizeof (YSI_g_sTextStrings); ++i)
+	for (new i = 0, pos; i != YSI_g_sUnusedSlot; ++i)
 	{
-		while ((pos = strfind(YSI_g_sTextStrings[i], "\05;")) != -1)
-			strdel(YSI_g_sTextStrings[i], pos, pos + 2);
-		printf("    \"%s\"", YSI_g_sTextStrings[i]);
+		while ((pos = strfind(strings[i], "\05;")) != -1)
+			strdel(strings[i], pos, pos + 2);
+		printf("    \"%s\"", strings[i]);
 	}
 	P:4("Text_CompressLoaded ended");
 }
@@ -547,7 +548,7 @@ static stock Text_LoadLocals()
 			//YSI_g_sTextSets[i][E_TEXT_SETS_NAME][offset] = ':';
 		}
 	}
-	Text_CompressLoaded();
+	Text_CompressLoaded(YSI_g_sTextStrings);
 }
 
 /*-------------------------------------------------------------------------*//**
