@@ -1055,6 +1055,165 @@ stock isnumeric(str[])
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
+ *  rawUUEncode
+ * </summary>
+ * <remarks>
+ *  <c>uuencode</c>, with a byte offset to deal with the strange 45 byte design.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock rawUUEncode(dest[], const src[], byteoffset, numbytes = 45, maxlength = sizeof (dest))
+{
+	#emit PUSH.S       maxlength
+	#emit PUSH.S       numbytes
+	#emit LOAD.S.pri   src
+	#emit LOAD.S.alt   byteoffset
+	#emit ADD
+	#emit PUSH.pri
+	#emit PUSH.S       dest
+	#emit PUSH.C       16
+	#emit SYSREQ.C     uuencode
+	#emit RETN
+	return 0;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  rawUUDecode
+ * </summary>
+ * <remarks>
+ *  <c>uudecode</c>, with a byte offset to deal with the strange 45 byte design.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock rawUUDecode(dest[], const src[], byteoffset, maxlength = sizeof (dest))
+{
+	#emit PUSH.S       maxlength
+	#emit PUSH.S       src
+	#emit LOAD.S.pri   dest
+	#emit LOAD.S.alt   byteoffset
+	#emit ADD
+	#emit PUSH.pri
+	#emit PUSH.C       12
+	#emit SYSREQ.C     uudecode
+	#emit RETN
+	return 0;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Base64Encode
+ * </summary>
+ * <remarks>
+ *  Encodes data using proper base64.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
+{
+	static
+		// This is what the encoding should look like.  We mangle it to make the
+		// representation in memory look like a C string, not a PAWN packed
+		// string.
+		//sEncoding[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+		sEncoding[65 char] = !"DCBAHGFELKJIPONMTSRQXWVUbaZYfedcjihgnmlkrqpovutszyxw32107654/+98";
+	// Set up the array for preincrement.
+	#emit LOAD.S.pri   src
+	#emit ADD.C        0xFFFFFFFD // -3
+	#emit PUSH.pri
+	
+//	#emit LREF.S.alt   src
+	#emit POP.pri
+	#emit ADD.C        3
+	#emit PUSH.pri
+	#emit LOAD.I
+//	#emit CONST.alt    sEncoding
+	
+	#emit PUSH.pri
+	#emit SHL.C.pri    24 // (pri >> 2) & 0x3F
+	#emit SHR.C.pri    26 // 
+//	#emit LIDX
+	#emit SWAP.pri
+	
+	#emit PUSH.pri
+	#emit MOVE.alt
+	#emit SHL.C.pri    30 // (pri << 4) & 0x30
+	#emit SHR.C.pri    26 // 
+	#emit XCHG
+	#emit SHL.C.pri    16 // (alt >> 12) & 0x0F
+	#emit SHR.C.pri    28 // 
+	#emit OR
+//	#emit LIDX
+	#emit SWAP.pri
+	
+	#emit PUSH.pri
+	#emit MOVE.alt
+	#emit SHL.C.pri    8  // (pri >> 22) & 0x03
+	#emit SHR.C.pri    30 // 
+	#emit XCHG
+	#emit SHL.C.pri    20 // (alt >> 6) & 0x3C
+	#emit SHR.C.pri    28 // 
+	#emit SHL.C.pri    2  // 
+	#emit OR
+//	#emit LIDX
+	#emit SWAP.pri
+	
+	#emit SHL.C.pri    10 // (pri >> 16) & 0x3F
+	#emit SHR.C.pri    26 // 
+//	#emit LIDX
+	
+	// We only have indexes here, get the encodings.  The value currently in
+	// `pri` will be the last character in the string.  In PAWN packed strings
+	// that makes it the LSB, which actually comes first in memory, so if we
+	// write the data in order, we reverse up through the stack.
+	#emit ADD.C        sEncoding
+	#emit LODB.I       1
+	#emit MOVE.alt
+	
+	#emit POP.pri
+	#emit ADD.C        sEncoding
+	#emit LODB.I       1
+	#emit SHL.C.pri    8
+	#emit OR
+	#emit MOVE.alt
+	
+	#emit POP.pri
+	#emit ADD.C        sEncoding
+	#emit LODB.I       1
+	#emit SHL.C.pri    16
+	#emit OR
+	#emit MOVE.alt
+	
+	#emit POP.pri
+	#emit ADD.C        sEncoding
+	#emit LODB.I       1
+	#emit SHL.C.pri    24
+	#emit OR
+	
+	// Now write the data out as a packed string and increment the pointer.
+	#emit SREF.S.pri   dest
+	#emit LOAD.S.pri   dest
+	#emit ADD.C        4
+	#emit STOR.S.pri   dest
+	
+	#emit LOAD.S.alt   dest
+	#emit STOR.I
+	#emit MOVE.pri
+	#emit ADD.C        4
+	#emit STOR.S.pri   dest
+
+	#emit LOAD.S.alt   dest
+	#emit STOR.I
+	#emit CONST.pri    1
+	#emit IDXADDR
+	#emit STOR.S.pri   dest
+	
+	#emit STACK        4
+	#emit RETN
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
  *  rawMemcpy
  * </summary>
  * <param name="dest">Destination address.</param>
