@@ -354,7 +354,7 @@ Test:y_als_Generation()
 		Float:fRotY = 21.34,
 		Float:fRotZ = 22.44;
 	__PRINT<PlayerEditObject, "OnPlayerEditObject(42, 2234, 1234, 404, 10.239999, 11.340000, 12.439999, 20.239999, 21.340000, 22.440000)">
-	#if 0
+	#if __COMPILER_MODIFIED
 		// This ends up too long to compile :(.
 		new
 			index = 650,
