@@ -439,7 +439,7 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 			new
 				fhash = YSI_g_sTextSets[i][E_TEXT_SETS_HASH],
 				len = strlen(name),
-				slot = name[len - 1],
+				slot = name[--len],
 				number,
 				hash = 1;
 			P:6("Text_INILoad: Get Number");
@@ -449,16 +449,21 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 			// manually edit the files)).
 			while ('0' <= slot <= '9')
 			{
-				name[--len] = '\0';
+//				name[--len] = '\0';
 				number += (slot - '0') * hash;
 				hash *= 10;
-				slot = name[len - 1];
+				slot = name[--len];
 			}
-			// So "MY_TEXT_1" becomes "MY_TEXT", not "MY_TEXT_".
-			if (slot == '_')
-			{
-				name[--len] = '\0';
-			}
+			#if !defined Y_TEXT_ACCEPT_BREAKING_CHANGE_1
+				if (number)
+					P:W("y_text line extensions must now use \"NAME-part\" not \"NAME_part\".\n\tTo acknowledge this change and disable this warning, recompile with:\n\n\t\t#define Y_TEXT_ACCEPT_BREAKING_CHANGE_1\n.");
+			#endif
+			// So "MY_TEXT@1" becomes "MY_TEXT", not "MY_TEXT@".
+			if (slot == '@')
+				name[len] = '\0';
+			else
+				number = 0;
+			// `len` is now useless.
 			hash = bernstein(name);
 			slot = Text_FindEntry(fhash, name, hash);
 			P:6("Text_INILoad: Check slot %d", slot);
