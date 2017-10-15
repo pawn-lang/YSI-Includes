@@ -1523,21 +1523,6 @@ Format_Render_start:
 				P:6("Text_Render: Key");
 				++idx;
 			}
-			case '\05':
-			{
-				// String extension.
-				P:6("Text_Render: Extension %d %d %d", YSI_g_sTempMaster, string[idx], string[idx - 1]);
-				// TODO!
-				// This should change the current input to a new one.  May
-				// require some more advanced hacking to support fades over
-				// these boundaries (or just ban them)...  Actually, I don't
-				// think it will require extra work...
-				// Just use the text directly.
-				idx = _Text_GetPointer(YSI_g_sTempMaster, string[idx]);
-				#emit LOAD.S.pri idx
-				#emit STOR.S.pri string
-				idx = 0;
-			}
 			case '\n':
 			{
 				P:6("Text_Render: NL");

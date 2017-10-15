@@ -904,64 +904,6 @@ static stock Text_GetCurNextOffset(i, &cur, &next)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <remarks>
- *  Bypass run-time OOB errors when -d0 is disabled.  Set the initial "next"
- *  pointer on the end of the string.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-static stock Text_DoLinkedText(entry[], add, len)
-{
-	entry[len] = '\05';
-	entry[len + 1] = add;
-	entry[len + 2] = '\0';
-}
-
-/*-------------------------------------------------------------------------*//**
- * <remarks>
- *  Bypass run-time OOB errors when -d0 is disabled.  Get and set the "next"
- *  pointer on the end of the string.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-static stock Text_UpdateLinkedText(entry[], add, len)
-{
-	new
-		ret = entry[len - 1];
-	entry[len - 1] = add;
-	return ret;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <remarks>
- *  Bypass run-time OOB errors when -d0 is disabled.  Get the "next" pointer on
- *  the end of the string.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-static stock Text_GetLinkedText(entry[], &ret, len)
-{
-	if (entry[len - 2] != '\05')
-	{
-		return 0;
-	}
-	ret = entry[len - 1];
-	return 1;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <remarks>
- *  Bypass run-time OOB errors when -d0 is disabled.  Check if there is a "next"
- *  pointer.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-static stock Text_HasLinkedText(entry[], len)
-{
-	return (entry[len - 2] == '\05');
-}
-
-/*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
 static stock Text_GetFreeEntry()
