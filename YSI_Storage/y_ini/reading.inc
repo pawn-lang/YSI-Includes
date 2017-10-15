@@ -748,7 +748,12 @@ static stock INI_DoParentTag(const epos, const search[], const file[], File:f, c
 			}
 			default: // e_INI_LINE_TYPE_ENTRY and e_INI_LINE_TYPE_CONT.
 			{
-				if (!handle) continue;
+				if (!handle)
+					continue;
+				// Skip lines starting with `@` here.  They indicate packed array data,
+				// which is only read by using `INI_Array`.
+				if (YSI_g_sCurLine[p0s] == '@')
+					continue;
 				// Standard key-value pair.
 				YSI_g_sCurLine[p0e] = YSI_g_sCurLine[p1e] = '\0';
 				if (bExtra)
