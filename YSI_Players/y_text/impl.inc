@@ -458,7 +458,7 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 				if (number)
 					P:W("y_text line extensions must now use \"NAME-part\" not \"NAME_part\".\n\tTo acknowledge this change and disable this warning, recompile with:\n\n\t\t#define Y_TEXT_ACCEPT_BREAKING_CHANGE_1\n.");
 			#endif
-			// So "MY_TEXT@1" becomes "MY_TEXT", not "MY_TEXT@".
+			// So "MY_TEXT-1" becomes "MY_TEXT", not "MY_TEXT-".
 			if (slot == '-')
 				name[len] = '\0';
 			else
