@@ -274,32 +274,32 @@ Optional plugins:
 //  Case insensitive 
 // ==================
 
-#define @Ba:%9$(%1a%0)$ @Ba:%9$(<%1>65%0)$
-#define @Bb:%9$(%1b%0)$ @Bb:%9$(<%1>66%0)$
-#define @Bc:%9$(%1c%0)$ @Bc:%9$(<%1>67%0)$
-#define @Bd:%9$(%1d%0)$ @Bd:%9$(<%1>68%0)$
-#define @Be:%9$(%1e%0)$ @Be:%9$(<%1>69%0)$
-#define @Bf:%9$(%1f%0)$ @Bf:%9$(<%1>70%0)$
-#define @Bg:%9$(%1g%0)$ @Bg:%9$(<%1>71%0)$
-#define @Bh:%9$(%1h%0)$ @Bh:%9$(<%1>72%0)$
-#define @Bi:%9$(%1i%0)$ @Bi:%9$(<%1>73%0)$
-#define @Bj:%9$(%1j%0)$ @Bj:%9$(<%1>74%0)$
-#define @Bk:%9$(%1k%0)$ @Bk:%9$(<%1>75%0)$
-#define @Bl:%9$(%1l%0)$ @Bl:%9$(<%1>76%0)$
-#define @Bm:%9$(%1m%0)$ @Bm:%9$(<%1>77%0)$
-#define @Bn:%9$(%1n%0)$ @Bn:%9$(<%1>78%0)$
-#define @Bo:%9$(%1o%0)$ @Bo:%9$(<%1>79%0)$
-#define @Bp:%9$(%1p%0)$ @Bp:%9$(<%1>80%0)$
-#define @Bq:%9$(%1q%0)$ @Bq:%9$(<%1>81%0)$
-#define @Br:%9$(%1r%0)$ @Br:%9$(<%1>82%0)$
-#define @Bs:%9$(%1s%0)$ @Bs:%9$(<%1>83%0)$
-#define @Bt:%9$(%1t%0)$ @Bt:%9$(<%1>84%0)$
-#define @Bu:%9$(%1u%0)$ @Bu:%9$(<%1>85%0)$
-#define @Bv:%9$(%1v%0)$ @Bv:%9$(<%1>86%0)$
-#define @Bw:%9$(%1w%0)$ @Bw:%9$(<%1>87%0)$
-#define @Bx:%9$(%1x%0)$ @Bx:%9$(<%1>88%0)$
-#define @By:%9$(%1y%0)$ @By:%9$(<%1>89%0)$
-#define @Bz:%9$(%1z%0)$ @Bz:%9$(<%1>90%0)$
+#define @Ba:%9$(%1a%0)$ @Ba:%9$(<%1>97%0)$
+#define @Bb:%9$(%1b%0)$ @Bb:%9$(<%1>98%0)$
+#define @Bc:%9$(%1c%0)$ @Bc:%9$(<%1>99%0)$
+#define @Bd:%9$(%1d%0)$ @Bd:%9$(<%1>100%0)$
+#define @Be:%9$(%1e%0)$ @Be:%9$(<%1>101%0)$
+#define @Bf:%9$(%1f%0)$ @Bf:%9$(<%1>102%0)$
+#define @Bg:%9$(%1g%0)$ @Bg:%9$(<%1>103%0)$
+#define @Bh:%9$(%1h%0)$ @Bh:%9$(<%1>104%0)$
+#define @Bi:%9$(%1i%0)$ @Bi:%9$(<%1>105%0)$
+#define @Bj:%9$(%1j%0)$ @Bj:%9$(<%1>106%0)$
+#define @Bk:%9$(%1k%0)$ @Bk:%9$(<%1>107%0)$
+#define @Bl:%9$(%1l%0)$ @Bl:%9$(<%1>108%0)$
+#define @Bm:%9$(%1m%0)$ @Bm:%9$(<%1>109%0)$
+#define @Bn:%9$(%1n%0)$ @Bn:%9$(<%1>110%0)$
+#define @Bo:%9$(%1o%0)$ @Bo:%9$(<%1>111%0)$
+#define @Bp:%9$(%1p%0)$ @Bp:%9$(<%1>112%0)$
+#define @Bq:%9$(%1q%0)$ @Bq:%9$(<%1>113%0)$
+#define @Br:%9$(%1r%0)$ @Br:%9$(<%1>114%0)$
+#define @Bs:%9$(%1s%0)$ @Bs:%9$(<%1>115%0)$
+#define @Bt:%9$(%1t%0)$ @Bt:%9$(<%1>116%0)$
+#define @Bu:%9$(%1u%0)$ @Bu:%9$(<%1>117%0)$
+#define @Bv:%9$(%1v%0)$ @Bv:%9$(<%1>118%0)$
+#define @Bw:%9$(%1w%0)$ @Bw:%9$(<%1>119%0)$
+#define @Bx:%9$(%1x%0)$ @Bx:%9$(<%1>120%0)$
+#define @By:%9$(%1y%0)$ @By:%9$(<%1>121%0)$
+#define @Bz:%9$(%1z%0)$ @Bz:%9$(<%1>122%0)$
 
 // ============
 //  Other code 
@@ -359,7 +359,7 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 				{
 					while (i != len)
 					{
-						hash = hash * 33 + toupper(str{i++});
+						hash = hash * 33 + (str{i++} | 0x20);
 					}
 				}
 				return hash;
@@ -379,7 +379,7 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 				{
 					while (i != len)
 					{
-						hash = hash * 16777619 ^ toupper(str{i++});
+						hash = hash * 16777619 ^ (str{i++} | 0x20);
 					}
 				}
 				return hash;
@@ -399,7 +399,7 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 				{
 					while (i != len)
 					{
-						hash = (hash ^ toupper(str{i++})) * 16777619;
+						hash = (hash ^ (str{i++} | 0x20)) * 16777619;
 					}
 				}
 				return hash;
@@ -425,8 +425,7 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 				{
 					while (i != len)
 					{
-						//printf("hash: %d, old: %d, add: %d", hash, str[i], toupper(str[i]));
-						hash = hash * 33 + toupper(str[i++]);
+						hash = hash * 33 + (str[i++] | 0x20);
 					}
 				}
 				return hash;
@@ -446,7 +445,7 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 				{
 					while (i != len)
 					{
-						hash = hash * 16777619 ^ toupper(str[i++]);
+						hash = hash * 16777619 ^ (str[i++] | 0x20);
 					}
 				}
 				return hash;
@@ -466,7 +465,7 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 				{
 					while (i != len)
 					{
-						hash = (hash ^ toupper(str[i++])) * 16777619;
+						hash = (hash ^ (str[i++] | 0x20)) * 16777619;
 					}
 				}
 				return hash;
