@@ -1150,6 +1150,10 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
 			#emit LOAD.S.alt   dest
 			#emit ZERO.pri
 			#emit STRB.I       1
+			
+			#emit LOAD.pri     ret
+			#emit SUB.alt
+			#emit RETN
 		}
 		case 1:
 		{
@@ -1181,7 +1185,9 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
 			#emit ZERO.pri
 			#emit STRB.I       1
 			
-			#emit STOR.S.alt   dest
+			#emit LOAD.pri     ret
+			#emit SUB.alt
+			#emit RETN
 		}
 		case 2:
 		{
@@ -1227,16 +1233,12 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
 			#emit ZERO.pri
 			#emit STRB.I       1
 			
-			#emit STOR.S.alt   dest
+			#emit LOAD.pri     ret
+			#emit SUB.alt
+			#emit RETN
 		}
 	}
-	{}
-	// NULL byte.
-	#emit LOAD.S.pri   dest
-	#emit LOAD.alt     ret
-	#emit SUB.alt
-	#emit RETN
-	return ret;
+	return 0;
 }
 
 /*-------------------------------------------------------------------------*//**
