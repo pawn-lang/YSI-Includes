@@ -1071,11 +1071,10 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
 		// representation in memory look like a C string, not a PAWN packed
 		// string.
 		//sEncoding[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-		sEncoding[65 char] = !"DCBAHGFELKJIPONMTSRQXWVUbaZYfedcjihgnmlkrqpovutszyxw32107654/+98";
-	num *= cellbytes;
-	static
+		sEncoding[65 char] = !"DCBAHGFELKJIPONMTSRQXWVUbaZYfedcjihgnmlkrqpovutszyxw32107654/+98",
 		//tmp,
 		ret;
+	num *= cellbytes;
 	if (len <= ceildiv(num, 3))
 	{
 		// How many complete chunks can we fit in?
@@ -1237,6 +1236,132 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
 			#emit SUB.alt
 			#emit RETN
 		}
+	}
+	return 0;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Base64Decode
+ * </summary>
+ * <remarks>
+ *  Decodes data using proper base64.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Base64Decode(dest[], const src[], len = sizeof (dest))
+{
+	static
+		// Again, the encoding looks slightly mangled as we want the bytes in
+		// order, while cells are little-endian.
+		sDecoding[128 char] = {
+			0x000000FF, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+			0x00000000, 0x00000000, 0x3E000000, 0x3F000000, 0x37363534, 0x3B3A3938, 0x00003D3C, 0x0000FF00,
+			0x02010000, 0x06050403, 0x0A090807, 0x0E0D0C0B, 0x1211100F, 0x16151413, 0x00191817, 0x00000000,
+			0x1C1B1A00, 0x201F1E1D, 0x24232221, 0x28272625, 0x2C2B2A29, 0x302F2E2D, 0x00333231, 0x00000000
+		},
+		cells,
+		num,
+		tmp,altt,
+		ret;
+	num = strlen(src);
+	if (num < 4)
+		return 0;
+	// Should always be a multiple of 4 bytes.
+	if (num & 0x03)
+		return 0;
+	// Work out the final length.  Subtract some for incomplete bytes.
+	cells = num / 4;
+	ret = num / 4 * 3;
+	if (src{num - 1}  == '=')
+	{
+		--cells;
+		--ret;
+		if (src{num - 2}  == '=')
+			--ret;
+	}
+	// Do complete blocks of 4 (one cell).
+	{}
+	// x - 1 - 3
+	#emit LOAD.S.pri   dest
+	#emit ADD.C        0xFFFFFFFC // -4
+	#emit STOR.S.pri   dest
+	#emit LOAD.S.pri   src
+	#emit ADD.C        0xFFFFFFFC // -4
+	#emit STOR.S.pri   src
+	while (cells--)
+	{
+		#emit LOAD.S.pri   src
+		#emit ADD.C        4
+		#emit STOR.S.pri   src
+		#emit LOAD.I
+		#emit MOVE.alt
+		
+		// The data has now been loaded.  The data MSB comes from the string's
+		// LSB (which for PAWN is the last character).
+		#emit SHL.C.pri    24 // (pri & 0xFF)
+		#emit SHR.C.pri    24
+		#emit ADD.C        sDecoding
+		#emit LODB.I        1
+		#emit SHL.C.pri    24 // (pri << 24)
+		#emit PUSH.pri
+		
+		#emit MOVE.pri
+		#emit SHL.C.pri    16 // (pri & 0xFF)
+		#emit SHR.C.pri    24
+		#emit ADD.C        sDecoding
+		#emit LODB.I        1
+		#emit PUSH.pri
+		#emit SHL.C.pri    30 // (pri << 30)
+		#emit SWAP.pri
+		#emit SHR.C.pri     2 // (pri >> 2 << 16)
+		#emit SHL.C.pri    16
+		#emit PUSH.pri
+		
+		#emit MOVE.pri
+		#emit SHL.C.pri     8 // (pri & 0xFF)
+		#emit SHR.C.pri    24
+		#emit ADD.C        sDecoding
+		#emit LODB.I        1
+		#emit PUSH.pri
+		#emit SHR.C.pri     4 // (pri >> 4 << 8)
+		#emit SHL.C.pri     8
+		#emit SWAP.pri
+		#emit SHL.C.pri    28 // (pri << 28 >> 8)
+		#emit SHR.C.pri     8
+		#emit PUSH.pri
+		
+		#emit MOVE.pri
+		#emit SHR.C.pri    24 // (pri & 0xFF)
+		#emit ADD.C        sDecoding
+		#emit LODB.I        1
+		#emit SHL.C.pri    10 // (pri << 10)
+		#emit MOVE.alt
+		// Get the byte before the one we want to write loaded as the LSB then
+		// shift the other bytes in to this one.
+		#emit LOAD.S.pri   dest
+		#emit ADD.C        3
+		#emit STOR.S.pri   dest
+		#emit LODB.I       1
+		
+		#emit OR
+		#emit POP.alt
+		#emit OR
+		#emit POP.alt
+		#emit OR
+		#emit POP.alt
+		#emit OR
+		#emit POP.alt
+		#emit OR
+		#emit POP.alt
+		#emit OR
+		
+		#emit SREF.S.pri   dest
+#emit STOR.alt altt
+#emit STOR.pri tmp
+printf("%08x", tmp);
+#emit LOAD.pri tmp
+#emit LOAD.alt altt
 	}
 	return 0;
 }
