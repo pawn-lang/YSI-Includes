@@ -297,7 +297,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 		return false;
 	new
 		rlen,
-		p0s, p0e, p1s, p1e;
+		p0s, p0e, p1s, p1e, p2s, p2e;
 	// Get just the filename.
 	YSI_g_sParentPos = strlen(fname);
 	while (YSI_g_sParentPos && fname[YSI_g_sParentPos - 1] != '/' && fname[YSI_g_sParentPos - 1] != '\\')
@@ -318,7 +318,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 	while ((rlen = fread(YSI_g_sCurFile, YSI_g_sCurLine)))
 	{
 		YSI_g_sParentPos += rlen;
-		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e))
+		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e, p2s, p2e))
 		{
 			case e_INI_LINE_TYPE_INVALID:
 			{
@@ -458,6 +458,8 @@ stock bool:INI_Load(filename[], bool:bExtra = false, extra = 0, bool:bLocal = tr
  * <param name="p0e">End of part 0.</param>
  * <param name="p1s">Start of part 1.</param>
  * <param name="p1e">End of part 1.</param>
+ * <param name="p2s">Start of part 2.</param>
+ * <param name="p2e">End of part 2.</param>
  * <param name="cont">Is this a line continuation?</param>
  * <returns>
  *  e_INI_LINE_TYPE
@@ -469,10 +471,10 @@ stock bool:INI_Load(filename[], bool:bExtra = false, extra = 0, bool:bLocal = tr
  *//*------------------------------------------------------------------------**/
 
 stock e_INI_LINE_TYPE:
-	INI_IdentifyLineType(const str[], &p0s, &p0e, &p1s, &p1e)
+	INI_IdentifyLineType(const str[], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e)
 {
 	// Reset everything.
-	p0s = p0e = p1s = p1e = 0;
+	p0s = p0e = p1s = p1e = p2s = p2e = 0;
 	// Do this purely with a single main loop, and a state machine.
 	new
 		end,
@@ -596,6 +598,15 @@ state_in_tag:
 		default  : return e_INI_LINE_TYPE_INVALID; // Unexpected characters.
 	}
 state_in_comment:
+	INI_SkipWhitespace(str, pos);
+	if (str[pos])
+	{
+		p2s = pos,
+		// Non-empty comment.
+		pos = strlen(str);
+		while (pos-- && str[pos] <= ' ') {}
+		p2e = pos + 1;
+	}
 	return ret;
 }
 
@@ -716,11 +727,11 @@ static stock INI_DoParentTag(const search[], const file[], callback[E_CALLBACK_D
 	new
 		epos = YSI_g_sParentPos,
 		bool:handle = false,
-		p0s, p0e, p1s, p1e;
+		p0s, p0e, p1s, p1e, p2s, p2e;
 	YSI_g_sParentPos = 0;
 	while ((YSI_g_sParentPos += fread(YSI_g_sCurFile, YSI_g_sCurLine)) < epos)
 	{
-		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e))
+		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e, p2s, p2e))
 		{
 			case e_INI_LINE_TYPE_INVALID, e_INI_LINE_TYPE_DATALESS: {}
 			case e_INI_LINE_TYPE_TAG:
@@ -834,7 +845,7 @@ stock _INI_Array(const name[], len, ...)
 		packed[YSI_MAX_STRING char];
 	while ((rlen = fread(YSI_g_sCurFile, YSI_g_sCurLine)))
 	{
-		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e))
+		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e, p2s, p2e))
 		{
 			case e_INI_LINE_TYPE_INVALID:
 			{
