@@ -664,6 +664,34 @@ stock Alloc:calloc(size)
 #endif
 
 /*-------------------------------------------------------------------------*//**
+ * <param name="slot">Slot to resize.</param>
+ * <param name="size">New size of the memory.</param>
+ * <param name="clear">Should we erase the memory first?</param>
+ * <remarks>
+ *  Displays errors in secure mode.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Alloc:realloc(Alloc:slot, size, const bool:clear = true)
+{
+	if (!size || !slot || !Malloc_GetSlotSize(_:slot))
+	{
+		P:1("Realloc failed (%d)", _:slot);
+		return NO_ALLOC;
+	}
+	new
+		Alloc:ret = Malloc_Allocate(size, clear);
+	if (!ret)
+	{
+		P:1("Realloc failed (%d)", _:slot);
+		return NO_ALLOC;
+	}
+	memcpy(YSI_gMallocMemory[_:ret], YSI_gMallocMemory[_:slot], 0, Malloc_GetSlotSize(slot) * cellbytes, size);
+	Malloc_Free(slot);
+	return ret;
+}
+
+/*-------------------------------------------------------------------------*//**
  * <param name="size">Ammount of memory to allocate IN CELLS.</param>
  * <param name="cleat">Blank the memory?</param>
  * <returns>
