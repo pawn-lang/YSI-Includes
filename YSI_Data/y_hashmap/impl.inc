@@ -77,18 +77,7 @@ Optional plugins:
 #define HASH_MAP_SIZE_3 (HASH_MAP_SIZE + 3)
 #define HASH_MAP_UNUSED (HASH_MAP_SIZE + 4)
 
-#define HashMap:%0<%1> HashMap_Non:HashMap_Init@%0=HashMap_Non:HashMap_Ext:0,HashMap@%0[HASH_MAP_SIZE + 5],%0[%1]
-
-// For backwards compatability, remove the other arrays when "<>" is empty.
-#define HashMap_Non:%9,%9@%0[%1],%9[] %0[%1]
-
-// Detect `HashMap:name<capacity>[E_NUM]`.  Store the offset to the hashmap data
-// in `HashMap_Init@%0` (i.e. the size of the unmodified enum).
-#define HashMap_Ext:0,%0[%1],%2[%3][%4] (%4),%0[_:STRIP_NUMBERS:(%1)],%2[%3]|||%4:(_:(%4)+3)|||
-
-// Consume spaces.
-#define HashMap_Init@%0\32;%1, HashMap_Init@%0%1,
-#define HashMap@%0\32;%1, HashMap@%0%1,
+#define HashMap:%0<%1> %0[HASH_MAP_SIZE + 5]
 
 #define HASH_MAP_DIR_LEFT  (4)
 #define HASH_MAP_DIR_RIGHT (8)
