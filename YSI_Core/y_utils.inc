@@ -1055,57 +1055,12 @@ stock isnumeric(str[])
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  rawUUEncode
- * </summary>
- * <remarks>
- *  <c>uuencode</c>, with a byte offset to deal with the strange 45 byte design.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock rawUUEncode(dest[], const src[], byteoffset, numbytes = 45, maxlength = sizeof (dest))
-{
-	#emit PUSH.S       maxlength
-	#emit PUSH.S       numbytes
-	#emit LOAD.S.pri   src
-	#emit LOAD.S.alt   byteoffset
-	#emit ADD
-	#emit PUSH.pri
-	#emit PUSH.S       dest
-	#emit PUSH.C       16
-	#emit SYSREQ.C     uuencode
-	#emit RETN
-	return 0;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <summary>
- *  rawUUDecode
- * </summary>
- * <remarks>
- *  <c>uudecode</c>, with a byte offset to deal with the strange 45 byte design.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock rawUUDecode(dest[], const src[], byteoffset, maxlength = sizeof (dest))
-{
-	#emit PUSH.S       maxlength
-	#emit PUSH.S       src
-	#emit LOAD.S.pri   dest
-	#emit LOAD.S.alt   byteoffset
-	#emit ADD
-	#emit PUSH.pri
-	#emit PUSH.C       12
-	#emit SYSREQ.C     uudecode
-	#emit RETN
-	return 0;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <summary>
  *  Base64Encode
  * </summary>
  * <remarks>
- *  Encodes data using proper base64.
+ *  Encodes data using proper base64.  This code is complicated by the fact that
+ *  PAWN packed strings are backwards by cells in memory, so we need to do the
+ *  writes in what seems like a strange order.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1117,99 +1072,170 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
 		// string.
 		//sEncoding[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 		sEncoding[65 char] = !"DCBAHGFELKJIPONMTSRQXWVUbaZYfedcjihgnmlkrqpovutszyxw32107654/+98";
+	num *= cellbytes;
+	new
+		ret;
+	if (len <= ceildiv(num, 3))
+	{
+		// How many complete chunks can we fit in?
+		num = (len - 1) * 3;
+	}
+	len = num % 3;
+	num /= 3;
+	printf("%d %d", num, len);
 	// Set up the array for preincrement.
 	#emit LOAD.S.pri   src
 	#emit ADD.C        0xFFFFFFFD // -3
 	#emit PUSH.pri
-	
-//	#emit LREF.S.alt   src
-	#emit POP.pri
-	#emit ADD.C        3
-	#emit PUSH.pri
-	#emit LOAD.I
-//	#emit CONST.alt    sEncoding
-	
-	#emit PUSH.pri
-	#emit SHL.C.pri    24 // (pri >> 2) & 0x3F
-	#emit SHR.C.pri    26 // 
-//	#emit LIDX
-	#emit SWAP.pri
-	
-	#emit PUSH.pri
-	#emit MOVE.alt
-	#emit SHL.C.pri    30 // (pri << 4) & 0x30
-	#emit SHR.C.pri    26 // 
-	#emit XCHG
-	#emit SHL.C.pri    16 // (alt >> 12) & 0x0F
-	#emit SHR.C.pri    28 // 
-	#emit OR
-//	#emit LIDX
-	#emit SWAP.pri
-	
-	#emit PUSH.pri
-	#emit MOVE.alt
-	#emit SHL.C.pri    8  // (pri >> 22) & 0x03
-	#emit SHR.C.pri    30 // 
-	#emit XCHG
-	#emit SHL.C.pri    20 // (alt >> 6) & 0x3C
-	#emit SHR.C.pri    28 // 
-	#emit SHL.C.pri    2  // 
-	#emit OR
-//	#emit LIDX
-	#emit SWAP.pri
-	
-	#emit SHL.C.pri    10 // (pri >> 16) & 0x3F
-	#emit SHR.C.pri    26 // 
-//	#emit LIDX
-	
-	// We only have indexes here, get the encodings.  The value currently in
-	// `pri` will be the last character in the string.  In PAWN packed strings
-	// that makes it the LSB, which actually comes first in memory, so if we
-	// write the data in order, we reverse up through the stack.
-	#emit ADD.C        sEncoding
-	#emit LODB.I       1
-	#emit MOVE.alt
-	
-	#emit POP.pri
-	#emit ADD.C        sEncoding
-	#emit LODB.I       1
-	#emit SHL.C.pri    8
-	#emit OR
-	#emit MOVE.alt
-	
-	#emit POP.pri
-	#emit ADD.C        sEncoding
-	#emit LODB.I       1
-	#emit SHL.C.pri    16
-	#emit OR
-	#emit MOVE.alt
-	
-	#emit POP.pri
-	#emit ADD.C        sEncoding
-	#emit LODB.I       1
-	#emit SHL.C.pri    24
-	#emit OR
-	
-	// Now write the data out as a packed string and increment the pointer.
-	#emit SREF.S.pri   dest
 	#emit LOAD.S.pri   dest
-	#emit ADD.C        4
-	#emit STOR.S.pri   dest
-	
-	#emit LOAD.S.alt   dest
-	#emit STOR.I
-	#emit MOVE.pri
-	#emit ADD.C        4
-	#emit STOR.S.pri   dest
-
-	#emit LOAD.S.alt   dest
-	#emit STOR.I
-	#emit CONST.pri    1
-	#emit IDXADDR
-	#emit STOR.S.pri   dest
-	
+	#emit STOR.S.pri   ret
+	// Loop for the whole chunks.
+	while (num--)
+	{
+		// Using a post-increment just refuses to work, and I have no idea why.
+		#emit POP.pri
+		#emit ADD.C        3
+		#emit PUSH.pri
+		#emit LOAD.I       // `LODB.I 3` doesn't work.
+		#emit PUSH.pri
+		
+		#emit SHL.C.pri    10 // (pri >> 16) & 0x3F
+		#emit SHR.C.pri    26 // 
+		#emit ADD.C        sEncoding
+		#emit LODB.I       1
+		#emit SREF.S.pri   dest
+		#emit INC.S        dest
+		
+		#emit LOAD.S.pri   0xFFFFFFF8
+		#emit MOVE.alt
+		#emit SHL.C.pri     8 // (pri >> 22) & 0x03
+		#emit SHR.C.pri    30 // Would be just `SHR.C.pri` with `LODB.I 3`...
+		#emit XCHG
+		#emit SHL.C.pri    20 // (alt >> 6) & 0x3C
+		#emit SHR.C.pri    28 //
+		#emit SHL.C.pri    2  //
+		#emit OR
+		#emit ADD.C        sEncoding
+		#emit LODB.I       1
+		#emit SREF.S.pri   dest
+		#emit INC.S        dest
+		
+		#emit LOAD.S.pri   0xFFFFFFF8
+		#emit MOVE.alt
+		#emit SHL.C.pri    30 // (pri << 4) & 0x30
+		#emit SHR.C.pri    26 //
+		#emit XCHG
+		#emit SHL.C.pri    16 // (alt >> 12) & 0x0F
+		#emit SHR.C.pri    28 //
+		#emit OR
+		#emit ADD.C        sEncoding
+		#emit LODB.I       1
+		#emit SREF.S.pri   dest
+		#emit INC.S        dest
+		
+		#emit POP.pri
+		#emit SHL.C.pri    24 // (pri >> 2) & 0x3F
+		#emit SHR.C.pri    26 //
+		#emit ADD.C        sEncoding
+		#emit LODB.I       1
+		#emit SREF.S.pri   dest
+		#emit INC.S        dest
+	}
+	{}
 	#emit STACK        4
+	switch (len)
+	{
+		case 0:
+		{
+			#emit LOAD.S.alt   dest
+			#emit ZERO.pri
+			#emit STRB.I       1
+		}
+		case 1:
+		{
+			#emit LOAD.S.alt   dest
+			#emit CONST.pri    '='
+			#emit STRB.I       1
+			#emit INC.alt
+			#emit STRB.I       1
+			#emit INC.alt
+			#emit LOAD.S.pri   src
+			#emit LODB.I       1
+			#emit PUSH.pri
+			
+			#emit SHL.C.pri    30 // (pri << 4) & 0x30
+			#emit SHR.C.pri    26 //
+			#emit ADD.C        sEncoding
+			#emit LODB.I       1
+			#emit STRB.I       1
+			#emit INC.alt
+			
+			#emit POP.pri
+			#emit SHL.C.pri    24 // (pri >> 2) & 0x3F
+			#emit SHR.C.pri    26 //
+			#emit ADD.C        sEncoding
+			#emit LODB.I       1
+			#emit STRB.I       1
+			#emit INC.alt
+			#emit ZERO.pri
+			#emit STRB.I       1
+			
+			#emit STOR.S.alt   dest
+		}
+		case 2:
+		{
+			printf("2");
+			// Write out remaining `=` signs.
+			#emit LOAD.S.alt   dest
+			#emit CONST.pri    '='
+			#emit STRB.I       1
+			#emit INC.alt
+			#emit LOAD.S.pri   src
+			#emit LODB.I       2
+			#emit PUSH.pri
+			
+			#emit SHL.C.pri    20 // (alt >> 6) & 0x3C
+			#emit SHR.C.pri    26 //
+			#emit ADD.C        sEncoding
+			#emit LODB.I       1
+			#emit STRB.I       1
+			
+			#emit LOAD.S.pri   0xFFFFFFF8
+			#emit MOVE.alt
+			#emit SHL.C.pri    30 // (pri << 4) & 0x30
+			#emit SHR.C.pri    26 //
+			#emit XCHG
+			#emit SHL.C.pri    16 // (alt >> 12) & 0x0F
+			#emit SHR.C.pri    28 //
+			#emit OR
+			#emit ADD.C        sEncoding
+			#emit LODB.I       1
+			#emit LOAD.S.alt   dest
+			#emit INC.alt
+			#emit INC.alt
+			#emit STRB.I       1
+			#emit INC.alt
+			
+			#emit POP.pri
+			#emit SHL.C.pri    24 // (pri >> 2) & 0x3F
+			#emit SHR.C.pri    26 //
+			#emit ADD.C        sEncoding
+			#emit LODB.I       1
+			#emit STRB.I       1
+			#emit INC.alt
+			#emit ZERO.pri
+			#emit STRB.I       1
+			
+			#emit STOR.S.alt   dest
+		}
+	}
+	{}
+	// NULL byte.
+	#emit LOAD.S.pri   dest
+	#emit POP.alt
+	#emit SUB.alt
 	#emit RETN
+	return ret;
 }
 
 /*-------------------------------------------------------------------------*//**
