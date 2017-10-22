@@ -1185,7 +1185,6 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
 		}
 		case 2:
 		{
-			printf("2");
 			// Write out remaining `=` signs.
 			#emit LOAD.S.alt   dest
 			#emit CONST.pri    '='
