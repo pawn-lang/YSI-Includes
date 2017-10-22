@@ -1255,31 +1255,31 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest))
 		// Again, the encoding looks slightly mangled as we want the bytes in
 		// order, while cells are little-endian.
 		sDecoding[128 char] = {
-			0x000000FF, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-			0x00000000, 0x00000000, 0x3E000000, 0x3F000000, 0x37363534, 0x3B3A3938, 0x00003D3C, 0x0000FF00,
+			0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+			0x00000000, 0x00000000, 0x3E000000, 0x3F000000, 0x37363534, 0x3B3A3938, 0x00003D3C, 0x00000000,
 			0x02010000, 0x06050403, 0x0A090807, 0x0E0D0C0B, 0x1211100F, 0x16151413, 0x00191817, 0x00000000,
 			0x1C1B1A00, 0x201F1E1D, 0x24232221, 0x28272625, 0x2C2B2A29, 0x302F2E2D, 0x00333231, 0x00000000
 		},
-		cells,
-		num,
-		tmp,altt,
-		ret;
+		blocks,
+		num;
+	// Work out the final length.  Subtract some for incomplete bytes and
+	// insufficient destination data.
 	num = strlen(src);
-	if (num < 4)
-		return 0;
-	// Should always be a multiple of 4 bytes.
-	if (num & 0x03)
-		return 0;
-	// Work out the final length.  Subtract some for incomplete bytes.
-	cells = num / 4;
-	ret = num / 4 * 3;
+	len *= cellbytes;
+	blocks = num / cellbytes;
 	if (src{num - 1}  == '=')
 	{
-		--cells;
-		--ret;
+		--blocks;
 		if (src{num - 2}  == '=')
-			--ret;
+			num = 1;
+		else
+			num = 2;
 	}
+	else
+		num = 0;
+	blocks = min(blocks, len / 3);
+	num = min(num, len - blocks * 3);
+	len = blocks * 3 + num;
 	// Do complete blocks of 4 (one cell).
 	{}
 	// x - 1 - 3
@@ -1289,7 +1289,7 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest))
 	#emit LOAD.S.pri   src
 	#emit ADD.C        0xFFFFFFFC // -4
 	#emit STOR.S.pri   src
-	while (cells--)
+	while (blocks--)
 	{
 		#emit LOAD.S.pri   src
 		#emit ADD.C        4
@@ -1337,6 +1337,7 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest))
 		#emit LODB.I        1
 		#emit SHL.C.pri    10 // (pri << 10)
 		#emit MOVE.alt
+		
 		// Get the byte before the one we want to write loaded as the LSB then
 		// shift the other bytes in to this one.
 		#emit LOAD.S.pri   dest
@@ -1357,13 +1358,80 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest))
 		#emit OR
 		
 		#emit SREF.S.pri   dest
-#emit STOR.alt altt
-#emit STOR.pri tmp
-printf("%08x", tmp);
-#emit LOAD.pri tmp
-#emit LOAD.alt altt
 	}
-	return 0;
+	switch (num)
+	{
+		case 1:
+		{
+			// Need to store just one byte (the LSB).
+			#emit LOAD.S.pri   src
+			#emit ADD.C        4
+			#emit LOAD.I
+			#emit MOVE.alt
+			
+			#emit SHR.C.pri    24
+			#emit ADD.C        sDecoding
+			#emit LODB.I        1
+			#emit SHL.C.pri     2 // (pri << 2)
+			#emit XCHG
+			#emit SHL.C.pri     8
+			#emit SHR.C.pri    24
+			#emit ADD.C        sDecoding
+			#emit LODB.I        1
+			#emit SHR.C.pri     4 // (pri >> 4)
+			#emit OR
+			#emit MOVE.alt
+			
+			#emit LOAD.S.pri   dest
+			#emit ADD.C        4
+			#emit XCHG
+			#emit STRB.I       1
+		}
+		case 2:
+		{
+			// Need to store two bytes (the LSBs).
+			#emit LOAD.S.pri   src
+			#emit ADD.C        4
+			#emit LOAD.I
+			#emit MOVE.alt
+			#emit PUSH.pri
+			
+			#emit SHR.C.pri    24
+			#emit ADD.C        sDecoding
+			#emit LODB.I        1
+			#emit SHL.C.pri     2 // (pri << 2)
+			#emit XCHG
+			#emit SHL.C.pri     8
+			#emit SHR.C.pri    24
+			#emit ADD.C        sDecoding
+			#emit LODB.I        1
+			#emit PUSH.pri
+			#emit SHR.C.pri     4 // (pri >> 4)
+			#emit OR
+			#emit MOVE.alt
+			
+			// This has extra bits left in, but they are cut off by `STRB.I 2`.
+			#emit POP.pri
+			#emit SHL.C.pri    12 // (pri << 12)
+			#emit OR
+			#emit POP.alt
+			#emit XCHG
+			#emit SHL.C.pri    16
+			#emit SHR.C.pri    24
+			#emit ADD.C        sDecoding
+			#emit LODB.I        1
+			#emit SHR.C.pri     2 // (pri >> 2 << 8)
+			#emit SHL.C.pri     8
+			#emit OR
+			#emit MOVE.alt
+			
+			#emit LOAD.S.pri   dest
+			#emit ADD.C        4
+			#emit XCHG
+			#emit STRB.I       2
+		}
+	}
+	return len;
 }
 
 /*-------------------------------------------------------------------------*//**
