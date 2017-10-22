@@ -95,6 +95,8 @@ enum e_INI_LINE_TYPE
 }
 
 static stock
+	YSI_g_sParentPos,
+	File:YSI_g_sCurFile,
 	YSI_g_sCurLine[MAX_INI_LINE];
 
 /*
@@ -179,6 +181,22 @@ P:D(INI_String(const name[],variable[]));
 P:D(INI_Bool(const name[],&bool:variable));
 #define INI_Bool(%1,%2) \
 	if (!strcmp((%1), name, true)) return %2 = boolstr(value)
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Name of the INI key.</param>
+ * <param name="">Variable to fill with array value.</param>
+ *//*------------------------------------------------------------------------**/
+
+// Taken from y_iterate.  Safe `sizeof` that corrects `sizeof (x[0])`.
+#define F@a$
+#define F@b|||
+#define F@e:%0|||(%1[%2]%3|||%4)) F@e:%0|||(%1%3|||%4[]))
+#define F@f:%0|||(F@g(%1,%5)%3|||) %0|||(%1 %3|||)
+#define F@s(%0) (_:F@f:F@e:sizeof F@b|||(%0 F@a$F@b|||))
+
+P:D(INI_Array(const name[],variable[]));
+#define INI_Array(%1,%2) \
+	if (!strcmp((%1), name, true)) return _INI_Array((%1), strval(value), _:%2[0])
 
 /*
 
@@ -271,37 +289,36 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 		tag[32],    // The current tag being parsed.
 		cbSpec[6],  // The callback specifier.
 		cbName[32]; // The callback name format.
+	YSI_g_sCurFile = fopen(fname, io_read);
+	if (!YSI_g_sCurFile)
+		return false;
 	new
-		File:f = fopen(fname, io_read);
-	if (!f) return false;
-	new
-		rlen, ppos,
+		rlen,
 		p0s, p0e, p1s, p1e, p2s, p2e;
 	// Get just the filename.
-	ppos = strlen(fname);
-	while (ppos && fname[ppos - 1] != '/' && fname[ppos - 1] != '\\')
-		--ppos;
-	rlen = ppos;
+	YSI_g_sParentPos = strlen(fname);
+	while (YSI_g_sParentPos && fname[YSI_g_sParentPos - 1] != '/' && fname[YSI_g_sParentPos - 1] != '\\')
+		--YSI_g_sParentPos;
+	rlen = YSI_g_sParentPos;
 	while (fname[rlen] && fname[rlen] != '.')
 		++rlen;
 	file[0] = '\0';
-	strcat(file, fname[ppos], rlen - ppos + 1);
-	rlen = ppos = 0;
+	strcat(file, fname[YSI_g_sParentPos], rlen - YSI_g_sParentPos + 1);
+	rlen = YSI_g_sParentPos = 0;
 	P:5("INI_ParseFile: Opened.");
 	bLocal = !bLocal, // Invert for "remote".
 	INI_MakeCallbackFormat(bExtra, bPassTag, bPassFile, cbSpec),
 	INI_SetupCallbackName(cbName, remoteFormat, file, bFileFirst);
 	new
 		bool:handle = INI_GetCallback(callback, cbName, tag, "", cbSpec, bLocal);
-	while ((rlen = fread(f, YSI_g_sCurLine)))
+	while ((rlen = fread(YSI_g_sCurFile, YSI_g_sCurLine)))
 	{
-		ppos += rlen;
+		YSI_g_sParentPos += rlen;
 		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e, p2s, p2e))
 		{
 			case e_INI_LINE_TYPE_INVALID:
 			{
-				// "P:I" not "P:W" because this is not a script issue.
-				P:I("Invalid line in INI file \"%s\": %s", fname, YSI_g_sCurLine);
+				P:W("Invalid line in INI file \"%s\": %s", fname, YSI_g_sCurLine);
 			}
 			case e_INI_LINE_TYPE_DATALESS:
 			{
@@ -321,7 +338,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 					// If there is no filter then everything will be loaded.
 					if (p0e == p0s + 2 || !YSI_g_sCurLine[p0e + 1])
 					{
-						P:I("Invalid line in INI file \"%s\": %s", fname, YSI_g_sCurLine);
+						P:W("Invalid line in INI file \"%s\": %s", fname, YSI_g_sCurLine);
 						continue;
 					}
 					YSI_g_sCurLine[p0e] = '\0';
@@ -344,14 +361,19 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 				if ((handle = INI_GetCallback(callback, cbName, tag, YSI_g_sCurLine[p0s], cbSpec, bLocal)) && p1s != p1e)
 				{
 					// No point recursing if there's no handler is there?
-					if (!INI_DoParentTag(ppos, parent, file, f, callback, bExtra, extra, bPassTag, tag, bFilter, filter, bPassFile))
-						P:I("Invalid hierarchy in INI file: \"%s\" for tag \"%s\"", fname, tag);
-					fseek(f, ppos, seek_start);
+					if (!INI_DoParentTag(parent, file, callback, bExtra, extra, bPassTag, tag, bFilter, filter, bPassFile))
+						P:W("Invalid hierarchy in INI file: \"%s\" for tag \"%s\"", fname, tag);
+					fseek(YSI_g_sCurFile, YSI_g_sParentPos, seek_start);
 				}
 			}
 			default: // e_INI_LINE_TYPE_ENTRY and e_INI_LINE_TYPE_CONT.
 			{
-				if (!handle) continue;
+				if (!handle)
+					continue;
+				// Skip lines starting with `@` here.  They indicate packed
+				// array data, which is only read by using `INI_Array`.
+				if (YSI_g_sCurLine[p0s] == '@')
+					continue;
 				// Standard key-value pair.
 				YSI_g_sCurLine[p0e] = YSI_g_sCurLine[p1e] = '\0';
 				if (bExtra)
@@ -387,7 +409,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 	return
 		Callback_Restore(callback),
 		Callback_Release(callback),
-		fclose(f),
+		fclose(YSI_g_sCurFile),
 		true;
 }
 
@@ -692,16 +714,18 @@ _Y_INI_STATIC stock INI_MakeCallbackFormat(const bool:bExtra, const bool:bPassTa
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock INI_DoParentTag(const epos, const search[], const file[], File:f, callback[E_CALLBACK_DATA], bool:bExtra, extra, bool:bPassTag, tag[], bool:bFilter, filter[], bool:bPassFile)
+static stock INI_DoParentTag(const search[], const file[], callback[E_CALLBACK_DATA], bool:bExtra, extra, bool:bPassTag, tag[], bool:bFilter, filter[], bool:bPassFile)
 {
 	// The bulk of this function is basically the same as INI_ParseFile (which
 	// is a shame as it is a symptom of poor, unmaintainable code).
-	fseek(f, 0, seek_start); // Jump back to the start.
+	fseek(YSI_g_sCurFile, 0, seek_start); // Jump back to the start.
 	P:4("bool:INI_DoParentTag called: \"%s\", %i, %i, %i, %i, \"%s\"", search, bExtra, extra, bPassTag, bFilter, filter);
 	new
-		ppos, bool:handle = false,
+		epos = YSI_g_sParentPos,
+		bool:handle = false,
 		p0s, p0e, p1s, p1e, p2s, p2e;
-	while ((ppos += fread(f, YSI_g_sCurLine)) < epos)
+	YSI_g_sParentPos = 0;
+	while ((YSI_g_sParentPos += fread(YSI_g_sCurFile, YSI_g_sCurLine)) < epos)
 	{
 		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e, p2s, p2e))
 		{
@@ -736,14 +760,21 @@ static stock INI_DoParentTag(const epos, const search[], const file[], File:f, c
 							parent[32];
 						YSI_g_sCurLine[p1e] = '\0',
 						strcat(parent, YSI_g_sCurLine[p1s]);
-						if (!INI_DoParentTag(ppos, parent, file, f, callback, bExtra, extra, bPassTag, tag, bFilter, filter, bPassFile)) return false;
-						fseek(f, ppos, seek_start);
+						if (!INI_DoParentTag(parent, file, YSI_g_sCurFile, callback, bExtra, extra, bPassTag, tag, bFilter, filter, bPassFile))
+						{
+							return
+								YSI_g_sParentPos = epos,
+								false;
+						}
+						fseek(YSI_g_sCurFile, YSI_g_sParentPos, seek_start);
 					}
 				}
 				else if (handle)
 				{
 					// Parent tag over.
-					return true;
+					return
+						YSI_g_sParentPos = epos,
+						true;
 				}
 			}
 			default: // e_INI_LINE_TYPE_ENTRY and e_INI_LINE_TYPE_CONT.
@@ -786,6 +817,97 @@ static stock INI_DoParentTag(const epos, const search[], const file[], File:f, c
 		}
 	}
 	// Return to where we were before.
-	return handle;
+	return
+		YSI_g_sParentPos = epos,
+		handle;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Name of the INI key.</param>
+ * <param name="len">Size of the data in the file.</param>
+ * <param name="">Variable to fill with array value.</param>
+ *//*------------------------------------------------------------------------**/
+
+stock _INI_Array(const name[], len, ...)
+{
+	// Load an array from the file, putting the data directly in to the
+	// desired memory storage location.
+	// 
+	// Continue reading through the file.  Since this code is now in y_ini, we
+	// can guarantee that the data will be in order in the file.
+	new
+		rlen,
+		offset = 0;
+	while ((rlen = fread(YSI_g_sCurFile, YSI_g_sCurLine)))
+	{
+		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e, p2s, p2e))
+		{
+			case e_INI_LINE_TYPE_INVALID:
+			{
+				P:W("Invalid line in INI file: %s", fname, YSI_g_sCurLine);
+			}
+			case e_INI_LINE_TYPE_DATALESS:
+			{
+				// Do nothing.
+			}
+			case e_INI_LINE_TYPE_TAG:
+			{
+				if (offset < len)
+					goto _INI_Array_return;
+			}
+			default: // e_INI_LINE_TYPE_ENTRY and e_INI_LINE_TYPE_CONT.
+			{
+				if (!handle)
+					continue;
+				// Read lines starting with `@` here.  They indicate packed
+				// array data, which is only read by using `INI_Array`.
+				if (YSI_g_sCurLine[p0s] != '@')
+					goto _INI_Array_return;
+				if (YSI_g_sCurLine[p0s + 1] == '@')
+				{
+					if (strcmp(YSI_g_sCurLine[p0s + 2], name))
+						goto _INI_Array_return;
+					// Old-style packed arrays.  Used a double `@` prefix and a
+					// custom packing system.
+					
+				}
+				else
+				{
+					if (strcmp(YSI_g_sCurLine[p0s + 1], name))
+						goto _INI_Array_return;
+					// New-style packed arrays.  Use `uuencode`/`uudecode`.  The
+					// reason I didn't do this originally is that it is VERY
+					// strange - it encodes data in blocks of 45 bytes.  Not 45
+					// cells - 45 bytes.  That's 11.25 cells, and you can't
+					// index part of a cell.  The official string documentation
+					// suggests using `memcpy`, which can take byte offsets, to
+					// move the correct data in to another array and encode
+					// that.  However, now that we can use `#emit`, we can do
+					// one better.
+					// 
+					// Note that at a ratio of 3:4, 45 bytes of input gives 60
+					// bytes of output, which is perfect as our max value length
+					// is `YSI_MAX_STRING`, currently at least 130.  I could
+					// write this code to be generic and chunk the data in the
+					// best way possible given the current value of
+					// `YSI_MAX_STRING`, but I can't be bothered so I'll just
+					// assume it fits 2 blocks.
+#if YSI_MAX_STRING <= 120
+	#error YSI_MAX_STRING Must be at least 121 to use y_ini.
+#endif
+				}
+				// Move on.
+				YSI_g_sParentPos += rlen;
+			}
+		}
+	}
+_INI_Array_return:
+	if (offset < len)
+	{
+		P:W("Incomplete array data in INI file for \"%s\"", name);
+		// Reparse the previous line.
+		fseek(YSI_g_sCurFile, YSI_g_sParentPos, seek_start);
+	}
+	return 0;
 }
 
