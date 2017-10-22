@@ -837,7 +837,8 @@ stock _INI_Array(const name[], len, ...)
 	// can guarantee that the data will be in order in the file.
 	new
 		rlen,
-		offset = 0;
+		offset = 0,
+		packed[YSI_MAX_STRING char];
 	while ((rlen = fread(YSI_g_sCurFile, YSI_g_sCurLine)))
 	{
 		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e, p2s, p2e))
@@ -875,26 +876,10 @@ stock _INI_Array(const name[], len, ...)
 				{
 					if (strcmp(YSI_g_sCurLine[p0s + 1], name))
 						goto _INI_Array_return;
-					// New-style packed arrays.  Use `uuencode`/`uudecode`.  The
-					// reason I didn't do this originally is that it is VERY
-					// strange - it encodes data in blocks of 45 bytes.  Not 45
-					// cells - 45 bytes.  That's 11.25 cells, and you can't
-					// index part of a cell.  The official string documentation
-					// suggests using `memcpy`, which can take byte offsets, to
-					// move the correct data in to another array and encode
-					// that.  However, now that we can use `#emit`, we can do
-					// one better.
-					// 
-					// Note that at a ratio of 3:4, 45 bytes of input gives 60
-					// bytes of output, which is perfect as our max value length
-					// is `YSI_MAX_STRING`, currently at least 130.  I could
-					// write this code to be generic and chunk the data in the
-					// best way possible given the current value of
-					// `YSI_MAX_STRING`, but I can't be bothered so I'll just
-					// assume it fits 2 blocks.
-#if YSI_MAX_STRING <= 120
-	#error YSI_MAX_STRING Must be at least 121 to use y_ini.
-#endif
+					// Base 64 encoded data.
+					YSI_g_sCurLine[p1e] = '\0';
+					strpack(packed, YSI_g_sCurLine[p1s]);
+					len -= Base64Decode(argderef(2), packed, len);
 				}
 				// Move on.
 				YSI_g_sParentPos += rlen;
