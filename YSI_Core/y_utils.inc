@@ -1073,7 +1073,8 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
 		//sEncoding[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 		sEncoding[65 char] = !"DCBAHGFELKJIPONMTSRQXWVUbaZYfedcjihgnmlkrqpovutszyxw32107654/+98";
 	num *= cellbytes;
-	new
+	static
+		//tmp,
 		ret;
 	if (len <= ceildiv(num, 3))
 	{
@@ -1082,13 +1083,12 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
 	}
 	len = num % 3;
 	num /= 3;
-	printf("%d %d", num, len);
 	// Set up the array for preincrement.
 	#emit LOAD.S.pri   src
 	#emit ADD.C        0xFFFFFFFD // -3
 	#emit PUSH.pri
 	#emit LOAD.S.pri   dest
-	#emit STOR.S.pri   ret
+	#emit STOR.pri     ret
 	// Loop for the whole chunks.
 	while (num--)
 	{
@@ -1142,11 +1142,11 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
 		#emit INC.S        dest
 	}
 	{}
-	#emit STACK        4
 	switch (len)
 	{
 		case 0:
 		{
+			#emit POP.pri
 			#emit LOAD.S.alt   dest
 			#emit ZERO.pri
 			#emit STRB.I       1
@@ -1159,7 +1159,8 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
 			#emit INC.alt
 			#emit STRB.I       1
 			#emit INC.alt
-			#emit LOAD.S.pri   src
+			#emit POP.pri
+			#emit ADD.C        3
 			#emit LODB.I       1
 			#emit PUSH.pri
 			
@@ -1190,7 +1191,8 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
 			#emit CONST.pri    '='
 			#emit STRB.I       1
 			#emit INC.alt
-			#emit LOAD.S.pri   src
+			#emit POP.pri
+			#emit ADD.C        3
 			#emit LODB.I       2
 			#emit PUSH.pri
 			
@@ -1200,7 +1202,7 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
 			#emit LODB.I       1
 			#emit STRB.I       1
 			
-			#emit LOAD.S.pri   0xFFFFFFF8
+			#emit LOAD.S.pri   0xFFFFFFFC
 			#emit MOVE.alt
 			#emit SHL.C.pri    30 // (pri << 4) & 0x30
 			#emit SHR.C.pri    26 //
@@ -1232,7 +1234,7 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
 	{}
 	// NULL byte.
 	#emit LOAD.S.pri   dest
-	#emit POP.alt
+	#emit LOAD.alt     ret
 	#emit SUB.alt
 	#emit RETN
 	return ret;
