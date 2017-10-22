@@ -77,7 +77,15 @@ Optional plugins:
 #define HASH_MAP_SIZE_3 (HASH_MAP_SIZE + 3)
 #define HASH_MAP_UNUSED (HASH_MAP_SIZE + 4)
 
-#define HashMap:%0<%1> %0[HASH_MAP_SIZE + 5]
+#define HashMap:%0<%1> HashMap_Non:HashMap_Init@%0,HashMap@%0[_:STRIP_NUMBERS:(HASH_MAP_SIZE + 5)],%0|||%1:(_:(%1)+3)|||
+
+// For backwards compatability, remove the other arrays when "<>" is empty
+// (denoted by a leading colon, since there is no tag generated).
+#define HashMap_Non:%9,HashMap@%0[%1],%9|||:%9||| %0[%1]
+
+// Consume spaces.
+#define HashMap_Init@%0\32;%1, HashMap_Init@%0%1,
+#define HashMap@%0\32;%1, HashMap@%0%1,
 
 #define HASH_MAP_DIR_LEFT  (4)
 #define HASH_MAP_DIR_RIGHT (8)

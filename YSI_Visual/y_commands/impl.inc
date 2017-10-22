@@ -153,7 +153,7 @@ static stock
 	YSI_g_sHighestID,
 	YSI_g_sReturnBuffer[YSI_MAX_STRING],
 	// Quickly reference and store commands by name.
-	HashMap:YSI_g_sCommandMap<MAX_COMMANDS>;
+	HashMap:YSI_g_sCommandMap<>;
 
 static stock __declspec(dist_master) YSI_g_sCommands[MAX_COMMANDS][E_COMMAND];
 
