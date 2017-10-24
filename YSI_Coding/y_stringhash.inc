@@ -101,6 +101,7 @@ Optional plugins:
 
 #include "..\YSI_Internal\y_version"
 #include "..\YSI_Core\y_debug"
+#include "..\YSI_Core\y_utils"
 
 // Note: H_a, H_b, H_c, H_d, H_f and H_g are defined here, H_e in y_amx, H_z in
 // y_masteronce, H_u in y_users, H_y in y_timers.
@@ -154,7 +155,7 @@ Optional plugins:
 #define HASH_:%0(,@,@) 2166136261
 
 #define _Y_HASH_H(%0,%1)(%9) @B%0:@A0:@A1:@A2:@A3:@A4:@A5:@A6:@A7:@A8:@A9:@Aa:@Ab:@Ac:@Ad:@Ae:@Af:@Ag:@Ah:@Ai:@Aj:@Ak:@Al:@Am:@An:@Ao:@Ap:@Aq:@Ar:@As:@At:@Au:@Av:@Aw:@Ax:@Ay:@Az:@AA:@AB:@AC:@AD:@AE:@AF:@AG:@AH:@AI:@AJ:@AK:@AL:@AM:@AN:@AO:@AP:@AQ:@AR:@AS:@AT:@AU:@AV:@AW:@AX:@AY:@AZ:@A_:@A@:@B_:@B%1$(%9)$
-#define _Y_HASH_I(%0,%1)(%9) @B%0:@A0:@A1:@A2:@A3:@A4:@A5:@A6:@A7:@A8:@A9:@Ba:@Bb:@Bc:@Bd:@Be:@Bf:@Bg:@Bh:@Bi:@Bj:@Bk:@Bl:@Bm:@Bn:@Bo:@Bp:@Bq:@Br:@Bs:@Bt:@Bu:@Bv:@Bw:@Bx:@By:@Bz:@AA:@AB:@AC:@AD:@AE:@AF:@AG:@AH:@AI:@AJ:@AK:@AL:@AM:@AN:@AO:@AP:@AQ:@AR:@AS:@AT:@AU:@AV:@AW:@AX:@AY:@AZ:@A_:@A@:@B_:@B%1$(%9)$
+#define _Y_HASH_I(%0,%1)(%9) @B%0:@A0:@A1:@A2:@A3:@A4:@A5:@A6:@A7:@A8:@A9:@Aa:@Ab:@Ac:@Ad:@Ae:@Af:@Ag:@Ah:@Ai:@Aj:@Ak:@Al:@Am:@An:@Ao:@Ap:@Aq:@Ar:@As:@At:@Au:@Av:@Aw:@Ax:@Ay:@Az:@Ba:@Bb:@Bc:@Bd:@Be:@Bf:@Bg:@Bh:@Bi:@Bj:@Bk:@Bl:@Bm:@Bn:@Bo:@Bp:@Bq:@Br:@Bs:@Bt:@Bu:@Bv:@Bw:@Bx:@By:@Bz:@A_:@A@:@B_:@B%1$(%9)$
 
 // Bernstein
 #define @B0:%9$()$ -1
@@ -274,32 +275,32 @@ Optional plugins:
 //  Case insensitive 
 // ==================
 
-#define @Ba:%9$(%1a%0)$ @Ba:%9$(<%1>97%0)$
-#define @Bb:%9$(%1b%0)$ @Bb:%9$(<%1>98%0)$
-#define @Bc:%9$(%1c%0)$ @Bc:%9$(<%1>99%0)$
-#define @Bd:%9$(%1d%0)$ @Bd:%9$(<%1>100%0)$
-#define @Be:%9$(%1e%0)$ @Be:%9$(<%1>101%0)$
-#define @Bf:%9$(%1f%0)$ @Bf:%9$(<%1>102%0)$
-#define @Bg:%9$(%1g%0)$ @Bg:%9$(<%1>103%0)$
-#define @Bh:%9$(%1h%0)$ @Bh:%9$(<%1>104%0)$
-#define @Bi:%9$(%1i%0)$ @Bi:%9$(<%1>105%0)$
-#define @Bj:%9$(%1j%0)$ @Bj:%9$(<%1>106%0)$
-#define @Bk:%9$(%1k%0)$ @Bk:%9$(<%1>107%0)$
-#define @Bl:%9$(%1l%0)$ @Bl:%9$(<%1>108%0)$
-#define @Bm:%9$(%1m%0)$ @Bm:%9$(<%1>109%0)$
-#define @Bn:%9$(%1n%0)$ @Bn:%9$(<%1>110%0)$
-#define @Bo:%9$(%1o%0)$ @Bo:%9$(<%1>111%0)$
-#define @Bp:%9$(%1p%0)$ @Bp:%9$(<%1>112%0)$
-#define @Bq:%9$(%1q%0)$ @Bq:%9$(<%1>113%0)$
-#define @Br:%9$(%1r%0)$ @Br:%9$(<%1>114%0)$
-#define @Bs:%9$(%1s%0)$ @Bs:%9$(<%1>115%0)$
-#define @Bt:%9$(%1t%0)$ @Bt:%9$(<%1>116%0)$
-#define @Bu:%9$(%1u%0)$ @Bu:%9$(<%1>117%0)$
-#define @Bv:%9$(%1v%0)$ @Bv:%9$(<%1>118%0)$
-#define @Bw:%9$(%1w%0)$ @Bw:%9$(<%1>119%0)$
-#define @Bx:%9$(%1x%0)$ @Bx:%9$(<%1>120%0)$
-#define @By:%9$(%1y%0)$ @By:%9$(<%1>121%0)$
-#define @Bz:%9$(%1z%0)$ @Bz:%9$(<%1>122%0)$
+#define @Ba:%9$(%1A%0)$ @Ba:%9$(<%1>97%0)$
+#define @Bb:%9$(%1B%0)$ @Bb:%9$(<%1>98%0)$
+#define @Bc:%9$(%1C%0)$ @Bc:%9$(<%1>99%0)$
+#define @Bd:%9$(%1D%0)$ @Bd:%9$(<%1>100%0)$
+#define @Be:%9$(%1E%0)$ @Be:%9$(<%1>101%0)$
+#define @Bf:%9$(%1F%0)$ @Bf:%9$(<%1>102%0)$
+#define @Bg:%9$(%1G%0)$ @Bg:%9$(<%1>103%0)$
+#define @Bh:%9$(%1H%0)$ @Bh:%9$(<%1>104%0)$
+#define @Bi:%9$(%1I%0)$ @Bi:%9$(<%1>105%0)$
+#define @Bj:%9$(%1J%0)$ @Bj:%9$(<%1>106%0)$
+#define @Bk:%9$(%1K%0)$ @Bk:%9$(<%1>107%0)$
+#define @Bl:%9$(%1L%0)$ @Bl:%9$(<%1>108%0)$
+#define @Bm:%9$(%1M%0)$ @Bm:%9$(<%1>109%0)$
+#define @Bn:%9$(%1N%0)$ @Bn:%9$(<%1>110%0)$
+#define @Bo:%9$(%1O%0)$ @Bo:%9$(<%1>111%0)$
+#define @Bp:%9$(%1P%0)$ @Bp:%9$(<%1>112%0)$
+#define @Bq:%9$(%1Q%0)$ @Bq:%9$(<%1>113%0)$
+#define @Br:%9$(%1R%0)$ @Br:%9$(<%1>114%0)$
+#define @Bs:%9$(%1S%0)$ @Bs:%9$(<%1>115%0)$
+#define @Bt:%9$(%1T%0)$ @Bt:%9$(<%1>116%0)$
+#define @Bu:%9$(%1U%0)$ @Bu:%9$(<%1>117%0)$
+#define @Bv:%9$(%1V%0)$ @Bv:%9$(<%1>118%0)$
+#define @Bw:%9$(%1W%0)$ @Bw:%9$(<%1>119%0)$
+#define @Bx:%9$(%1X%0)$ @Bx:%9$(<%1>120%0)$
+#define @By:%9$(%1Y%0)$ @By:%9$(<%1>121%0)$
+#define @Bz:%9$(%1Z%0)$ @Bz:%9$(<%1>122%0)$
 
 // ============
 //  Other code 
@@ -329,15 +330,10 @@ enum e_HASH_TYPE
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstein, len = -1, pack = false)
+stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstein, len = cellmax, pack = false)
 {
-	#pragma unused pack
 	P:3("YHash called: \"%s\", %i, %i, %i, %i", str, _:sensitive, _:type, len, pack);
-	
-	//pack = str[0] > 255;
-	
-	if (len < 0) len = strlen(str);
-	else len = min(len, strlen(str));
+	len = min(len, strlen(str));
 	new
 		i = 0;
 	if (str[0] > 255)
@@ -359,7 +355,8 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 				{
 					while (i != len)
 					{
-						hash = hash * 33 + (str{i++} | 0x20);
+						pack = str{i++},
+						hash = hash * 33 + (IS_IN_RANGE(pack, 'A', 'Z' + 1) ? pack | 0x20 : pack);
 					}
 				}
 				return hash;
@@ -379,7 +376,8 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 				{
 					while (i != len)
 					{
-						hash = hash * 16777619 ^ (str{i++} | 0x20);
+						pack = str{i++},
+						hash = hash * 16777619 ^ (IS_IN_RANGE(pack, 'A', 'Z' + 1) ? pack | 0x20 : pack);
 					}
 				}
 				return hash;
@@ -399,7 +397,8 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 				{
 					while (i != len)
 					{
-						hash = (hash ^ (str{i++} | 0x20)) * 16777619;
+						pack = str{i++},
+						hash = (hash ^ (IS_IN_RANGE(pack, 'A', 'Z' + 1) ? pack | 0x20 : pack)) * 16777619;
 					}
 				}
 				return hash;
@@ -425,7 +424,8 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 				{
 					while (i != len)
 					{
-						hash = hash * 33 + (str[i++] | 0x20);
+						pack = str[i++],
+						hash = hash * 33 + (IS_IN_RANGE(pack, 'A', 'Z' + 1) ? pack | 0x20 : pack);
 					}
 				}
 				return hash;
@@ -445,7 +445,8 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 				{
 					while (i != len)
 					{
-						hash = hash * 16777619 ^ (str[i++] | 0x20);
+						pack = str[i++],
+						hash = hash * 16777619 ^ (IS_IN_RANGE(pack, 'A', 'Z' + 1) ? pack | 0x20 : pack);
 					}
 				}
 				return hash;
@@ -465,7 +466,8 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 				{
 					while (i != len)
 					{
-						hash = (hash ^ (str[i++] | 0x20)) * 16777619;
+						pack = str[i++],
+						hash = (hash ^ (IS_IN_RANGE(pack, 'A', 'Z' + 1) ? pack | 0x20 : pack)) * 16777619;
 					}
 				}
 				return hash;

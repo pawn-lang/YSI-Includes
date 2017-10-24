@@ -1,19 +1,19 @@
 /*
 Legal:
 	Version: MPL 1.1
-	
-	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 the "License"; you may not use this file except in compliance with 
-	the License. You may obtain a copy of the License at 
+
+	The contents of this file are subject to the Mozilla Public License Version
+	1.1 the "License"; you may not use this file except in compliance with
+	the License. You may obtain a copy of the License at
 	http://www.mozilla.org/MPL/
-	
+
 	Software distributed under the License is distributed on an "AS IS" basis,
 	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 	for the specific language governing rights and limitations under the
 	License.
-	
+
 	The Original Code is the YSI framework.
-	
+
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
@@ -145,6 +145,27 @@ Test:y_stringhash__Chars0()
 	ASSERT(hh == YHash("SSTTUUVVWWXX", .sensitive = false, .type = hash_bernstein));
 	hh = _I<YYZZ  @@__yh>;
 	ASSERT(hh == YHash("YYZZ  @@__yh", .sensitive = false, .type = hash_bernstein));
+	// Ignore cases.
+	hh = _I<aabbccddeeff>;
+	ASSERT(hh == YHash("AABBCCDDEEFF", .sensitive = false, .type = hash_bernstein));
+	hh = _I<gghhiijjkkll>;
+	ASSERT(hh == YHash("gghhiijjkkll", .sensitive = false, .type = hash_bernstein));
+	hh = _I<mmnnooppqqrr>;
+	ASSERT(hh == YHash("MMNNOOPPQQRR", .sensitive = false, .type = hash_bernstein));
+	hh = _I<ssttuuvvwwxx>;
+	ASSERT(hh == YHash("SSTTUUVVWWXX", .sensitive = false, .type = hash_bernstein));
+	hh = _I<yyzz00112233>;
+	ASSERT(hh == YHash("YYZZ00112233", .sensitive = false, .type = hash_bernstein));
+	hh = _I<AABBCCDDEEFF>;
+	ASSERT(hh == YHash("aabbccddeeff", .sensitive = false, .type = hash_bernstein));
+	hh = _I<GGHHIIJJKKLL>;
+	ASSERT(hh == YHash("GGHHIIJJKKLL", .sensitive = false, .type = hash_bernstein));
+	hh = _I<MMNNOOPPQQRR>;
+	ASSERT(hh == YHash("mmnnooppqqrr", .sensitive = false, .type = hash_bernstein));
+	hh = _I<SSTTUUVVWWXX>;
+	ASSERT(hh == YHash("ssttuuvvwwxx", .sensitive = false, .type = hash_bernstein));
+	hh = _I<YYZZ  @@__yh>;
+	ASSERT(hh == YHash("yyzz  @@__yh", .sensitive = false, .type = hash_bernstein));
 }
 
 Test:y_stringhash__Chars1()
@@ -195,6 +216,27 @@ Test:y_stringhash__Chars1()
 	ASSERT(hh == YHash("SSTTUUVVWWXX", .sensitive = false, .type = hash_fnv1));
 	hh = _I@f<YYZZ  @@__yh>;
 	ASSERT(hh == YHash("YYZZ  @@__yh", .sensitive = false, .type = hash_fnv1));
+	// Ignore cases.
+	hh = _I@f<aabbccddeeff>;
+	ASSERT(hh == YHash("AABBCCDDEEFF", .sensitive = false, .type = hash_fnv1));
+	hh = _I@f<gghhiijjkkll>;
+	ASSERT(hh == YHash("gghhiijjkkll", .sensitive = false, .type = hash_fnv1));
+	hh = _I@f<mmnnooppqqrr>;
+	ASSERT(hh == YHash("MMNNOOPPQQRR", .sensitive = false, .type = hash_fnv1));
+	hh = _I@f<ssttuuvvwwxx>;
+	ASSERT(hh == YHash("SSTTUUVVWWXX", .sensitive = false, .type = hash_fnv1));
+	hh = _I@f<yyzz00112233>;
+	ASSERT(hh == YHash("YYZZ00112233", .sensitive = false, .type = hash_fnv1));
+	hh = _I@f<AABBCCDDEEFF>;
+	ASSERT(hh == YHash("aabbccddeeff", .sensitive = false, .type = hash_fnv1));
+	hh = _I@f<GGHHIIJJKKLL>;
+	ASSERT(hh == YHash("GGHHIIJJKKLL", .sensitive = false, .type = hash_fnv1));
+	hh = _I@f<MMNNOOPPQQRR>;
+	ASSERT(hh == YHash("mmnnooppqqrr", .sensitive = false, .type = hash_fnv1));
+	hh = _I@f<SSTTUUVVWWXX>;
+	ASSERT(hh == YHash("ssttuuvvwwxx", .sensitive = false, .type = hash_fnv1));
+	hh = _I@f<YYZZ  @@__yh>;
+	ASSERT(hh == YHash("yyzz  @@__yh", .sensitive = false, .type = hash_fnv1));
 }
 
 Test:y_stringhash__Chars2()
@@ -245,6 +287,67 @@ Test:y_stringhash__Chars2()
 	ASSERT(hh == YHash("SSTTUUVVWWXX", .sensitive = false, .type = hash_fnv1a));
 	hh = _I@a<YYZZ  @@__yh>;
 	ASSERT(hh == YHash("YYZZ  @@__yh", .sensitive = false, .type = hash_fnv1a));
+	// Ignore cases.
+	hh = _I@a<aabbccddeeff>;
+	ASSERT(hh == YHash("AABBCCDDEEFF", .sensitive = false, .type = hash_fnv1a));
+	hh = _I@a<gghhiijjkkll>;
+	ASSERT(hh == YHash("gghhiijjkkll", .sensitive = false, .type = hash_fnv1a));
+	hh = _I@a<mmnnooppqqrr>;
+	ASSERT(hh == YHash("MMNNOOPPQQRR", .sensitive = false, .type = hash_fnv1a));
+	hh = _I@a<ssttuuvvwwxx>;
+	ASSERT(hh == YHash("SSTTUUVVWWXX", .sensitive = false, .type = hash_fnv1a));
+	hh = _I@a<yyzz00112233>;
+	ASSERT(hh == YHash("YYZZ00112233", .sensitive = false, .type = hash_fnv1a));
+	hh = _I@a<AABBCCDDEEFF>;
+	ASSERT(hh == YHash("aabbccddeeff", .sensitive = false, .type = hash_fnv1a));
+	hh = _I@a<GGHHIIJJKKLL>;
+	ASSERT(hh == YHash("GGHHIIJJKKLL", .sensitive = false, .type = hash_fnv1a));
+	hh = _I@a<MMNNOOPPQQRR>;
+	ASSERT(hh == YHash("mmnnooppqqrr", .sensitive = false, .type = hash_fnv1a));
+	hh = _I@a<SSTTUUVVWWXX>;
+	ASSERT(hh == YHash("ssttuuvvwwxx", .sensitive = false, .type = hash_fnv1a));
+	hh = _I@a<YYZZ  @@__yh>;
+	ASSERT(hh == YHash("yyzz  @@__yh", .sensitive = false, .type = hash_fnv1a));
+}
+
+Test:y_stringhash__Letters1()
+{
+	new
+		hh;
+	hh = _I<A>;
+	ASSERT(hh == YHash("A", .sensitive = false));
+	hh = _I<A>;
+	ASSERT(hh == YHash("a", .sensitive = false));
+	hh = _I<a>;
+	ASSERT(hh == YHash("A", .sensitive = false));
+	hh = _I<a>;
+	ASSERT(hh == YHash("a", .sensitive = false));
+	hh = _I<0>;
+	ASSERT(hh == YHash("0", .sensitive = false));
+	hh = _I<_>;
+	ASSERT(hh == YHash("_", .sensitive = false));
+	hh = _I<@>;
+	ASSERT(hh == YHash("@", .sensitive = false));
+}
+
+Test:y_stringhash__Letters2()
+{
+	new
+		hh;
+	hh = _H<A>;
+	ASSERT(hh == YHash("A"));
+	hh = _H<A>;
+	ASSERT(hh != YHash("a"));
+	hh = _H<a>;
+	ASSERT(hh != YHash("A"));
+	hh = _H<a>;
+	ASSERT(hh == YHash("a"));
+	hh = _H<0>;
+	ASSERT(hh == YHash("0"));
+	hh = _H<_>;
+	ASSERT(hh == YHash("_"));
+	hh = _H<@>;
+	ASSERT(hh == YHash("@"));
 }
 
 Test:y_stringhash__case()
