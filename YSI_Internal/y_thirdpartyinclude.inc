@@ -133,14 +133,11 @@ Optional plugins:
 #tryinclude <amx_memory>
 #if !defined AMX_MEMORY_INC
 	#define AMX_INCLUDING_FAILED
-#endif
-#if !defined argderef
+#elseif !defined argderef
 	#error Please update "https://github.com/Zeex/amx_assembly" to get "argderef()"
-#endif
-#if !defined deref
+#elseif !defined deref
 	#error Please update "https://github.com/Zeex/amx_assembly" to get "deref()"
-#endif
-#if !defined GetAmxNextInstructionPointer
+#elseif !defined GetAmxNextInstructionPointer
 	#error Please update "https://github.com/Zeex/amx_assembly" to get "GetAmxNextInstructionPointer()"
 #endif
 
@@ -172,8 +169,7 @@ Optional plugins:
 #tryinclude <codescan>
 #if !defined CODESCAN_INC
 	#error Please update "https://github.com/Zeex/amx_assembly" to get "codescan.inc"
-#endif
-#if !defined AsmEmitCallAbs
+#elseif !defined AsmEmitCallAbs
 	#error Please update "https://github.com/Zeex/amx_assembly" to get "AsmEmitCallAbs()"
 #endif
 
