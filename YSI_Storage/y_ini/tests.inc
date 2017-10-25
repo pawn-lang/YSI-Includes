@@ -227,7 +227,7 @@ Test:INI_IdentifyLineType6()
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
 	ASSERT(p0s == 0 && p1e == 10);
 	ASSERT(INI_IdentifyLineType("hi = there  \\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_CONT);
-	ASSERT(p0s == 0 && p1e == 10);
+	ASSERT(p0s == 0 && p1e == 12);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
 	ASSERT(INI_IdentifyLineType("hi =    \\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 0 && p0e == 2);
@@ -243,7 +243,7 @@ Test:INI_IdentifyLineType6()
 	ASSERT(INI_IdentifyLineType("hi =    \\ ; Hello  ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 0 && p0e == 2);
 	ASSERT(p1s == 8 && p1e == 8);
-	ASSERT(p2s == 11 && p2e == 18);
+	ASSERT(p2s == 10 && p2e == 17);
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
 	ASSERT(INI_IdentifyLineType("hello there ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_INVALID);
 	ASSERT(INI_IdentifyLineType("hello there \\  ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_INVALID);
@@ -257,6 +257,17 @@ Test:INI_IdentifyLineType6()
 	ASSERT(INI_IdentifyLineType("hi = hello     ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 2);
 	ASSERT(p1s == 5 && p1e == 10);
+}
+
+Test:INI_Continuation()
+{
+	new p0s, p0e, p1s, p1e, p2s, p2e;
+	INI_IdentifyLineType("hi = hello \\\r\n", p0s, p0e, p1s, p1e, p2s, p2e);
+	INI_IdentifyLineType("world = the \\ ; Ignore me", p0s, p0e, p1s, p1e, p2s, p2e);
+	INI_IdentifyLineType("\\ whole string     ", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(!strcmp(mget(YSI_g_sExtendedLine, 1), "hello world = the \\ whole string"));
+	// Cleanup.
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
 }
 
 Test:Trim1()

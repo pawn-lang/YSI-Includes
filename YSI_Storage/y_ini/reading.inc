@@ -595,6 +595,7 @@ state_in_continue_line:
 		case '\\':
 		{
 			// Only allow ';' to immediately follow '\\'.
+			end = pos - 1;
 			switch (str[pos])
 			{
 #if defined Y_INI_NO_ESCAPES
