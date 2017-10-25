@@ -1107,6 +1107,8 @@ stock _INI_Array(const name[], len, ...)
 				}
 				// Move on.
 				YSI_g_sParentPos += rlen;
+				if (!len)
+					return 0;
 			}
 		}
 	}
