@@ -1046,14 +1046,15 @@ stock _INI_Array(const name[], len, ...)
 	new
 		rlen,
 		offset = 0,
-		packed[YSI_MAX_STRING char];
+		packed[YSI_MAX_STRING char],
+		p0s, p0e, p1s, p1e, p2s, p2e;
 	while ((rlen = fread(YSI_g_sCurFile, YSI_g_sCurLine)))
 	{
 		switch (INI_IdentifyLineType(YSI_g_sCurLine, p0s, p0e, p1s, p1e, p2s, p2e))
 		{
 			case e_INI_LINE_TYPE_INVALID:
 			{
-				P:W("Invalid line in INI file: %s", fname, YSI_g_sCurLine);
+				P:W("Invalid line in INI file: %s", YSI_g_sCurLine);
 			}
 			case e_INI_LINE_TYPE_DATALESS:
 			{
@@ -1061,8 +1062,7 @@ stock _INI_Array(const name[], len, ...)
 			}
 			case e_INI_LINE_TYPE_TAG:
 			{
-				if (offset < len)
-					goto _INI_Array_return;
+				break;
 			}
 			case e_INI_LINE_TYPE_CONT:
 			{
@@ -1079,18 +1079,17 @@ stock _INI_Array(const name[], len, ...)
 					free(YSI_g_sExtendedLine),
 					YSI_g_sExtendedLine = NO_ALLOC,
 					YSI_g_sExtendedName[0] = '\0';
-					goto _INI_Array_return;
+					break;
 				}
-				if (!handle)
-					continue;
 				// Read lines starting with `@` here.  They indicate packed
 				// array data, which is only read by using `INI_Array`.
 				if (YSI_g_sCurLine[p0s] != '@')
-					goto _INI_Array_return;
+					break;
+				YSI_g_sCurLine[p0e] = '\0';
 				if (YSI_g_sCurLine[p0s + 1] == '@')
 				{
 					if (strcmp(YSI_g_sCurLine[p0s + 2], name))
-						goto _INI_Array_return;
+						break;
 					// Old-style packed arrays.  Used a double `@` prefix and a
 					// custom packing system.
 					
@@ -1098,24 +1097,23 @@ stock _INI_Array(const name[], len, ...)
 				else
 				{
 					if (strcmp(YSI_g_sCurLine[p0s + 1], name))
-						goto _INI_Array_return;
+						break;
 					// Base 64 encoded data.
-					YSI_g_sCurLine[p1e] = '\0';
-					strpack(packed, YSI_g_sCurLine[p1s]);
-					len -= Base64Decode(argderef(2), packed, len);
+					YSI_g_sCurLine[p1e] = '\0',
+					strpack(packed, YSI_g_sCurLine[p1s]),
+					p2e = Base64Decode(argderef(2), packed, len, offset),
+					len -= p2e,
+					offset += p2e;
 				}
 				// Move on.
 				YSI_g_sParentPos += rlen;
 			}
 		}
 	}
-_INI_Array_return:
-	if (offset < len)
-	{
+	if (len)
 		P:W("Incomplete array data in INI file for \"%s\"", name);
-		// Reparse the previous line.
-		fseek(YSI_g_sCurFile, YSI_g_sParentPos, seek_start);
-	}
+	// Reparse the previous line.
+	fseek(YSI_g_sCurFile, YSI_g_sParentPos, seek_start);
 	return 0;
 }
 

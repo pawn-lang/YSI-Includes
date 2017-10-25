@@ -1198,3 +1198,43 @@ Test:INI_Parents()
 	ASSERT(YSI_g_sTestParents[3][E_INI14_TEST_FIFTH_KEY ] == 0);
 }
 
+static
+	YSI_g_sINIBinaryData[3][60 char],
+	YSI_g_sStringData[32];
+
+forward INI_BinaryData(name[], value[]);
+
+public INI_BinaryData(name[], value[])
+{
+	INI_Array("BINARY_DATA_1", YSI_g_sINIBinaryData[0]);
+	INI_Array("BINARY_DATA_2", YSI_g_sINIBinaryData[1]);
+	INI_Array("BINARY_DATA_3", YSI_g_sINIBinaryData[2]);
+	INI_Int("INT_DATA", YSI_g_sINI_Parse0);
+	INI_String("STRING_DATA", YSI_g_sStringData);
+	return 0;
+}
+
+Test:INI_BinaryData()
+{
+	INI_ParseFile(
+			"YSI/test_ini/test8.ini",
+			"INI_BinaryData",
+			.bExtra    = false,
+			.bPassTag  = false,
+			.bPassFile = false);
+	static
+		l_ResultData[3][60 char] = {
+			{ 0xFF0000AA, 0x67452301, 0x01234567, 0x48000000, 0x9CE0F932, 0xAD8193B8, 0xD7B99AE0, 0x10653129, 0x99999999, 0x99999999, 0x99999999, 0x99999999, 0x99999999, 0x99999999, 0x004223BB },
+			{ 0xFF0000AA, 0x67452301, 0x01234567, 0x48000000, 0x9CE0F932, 0xAD8193B8, 0xD7B99AE0, 0x10653129, 0x99999999, 0x99999999, 0x99999999, 0x99999999, 0xBB999999, 0x00004223, 0x00000000 },
+			{ 0xFF0000AA, 0x67452301, 0x01234567, 0x48000000, 0x9CE0F932, 0xAD8193B8, 0xD7B99AE0, 0x10653129, 0x99999999, 0x99999999, 0x99999999, 0x99999999, 0x99999999, 0x004223BB, 0x00000000 }
+	};
+	ASSERT(YSI_g_sINI_Parse0 == 888777);
+	ASSERT(!strcmp(YSI_g_sStringData, "Hello"));
+	for (new i = 0; i != sizeof (YSI_g_sINIBinaryData[]); ++i)
+	{
+		ASSERT(YSI_g_sINIBinaryData[0][i] == l_ResultData[0][i]);
+		ASSERT(YSI_g_sINIBinaryData[1][i] == l_ResultData[1][i]);
+		ASSERT(YSI_g_sINIBinaryData[2][i] == l_ResultData[2][i]);
+	}
+}
+

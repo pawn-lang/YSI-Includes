@@ -1064,7 +1064,7 @@ stock isnumeric(str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
+stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest), offset = 0)
 {
 	static
 		// This is what the encoding should look like.  We mangle it to make the
@@ -1085,6 +1085,8 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
 	// Set up the array for preincrement.
 	#emit LOAD.S.pri   src
 	#emit ADD.C        0xFFFFFFFD // -3
+	#emit LOAD.S.alt   offset
+	#emit ADD
 	#emit PUSH.pri
 	#emit LOAD.S.pri   dest
 	#emit STOR.pri     ret
@@ -1249,7 +1251,7 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Base64Decode(dest[], const src[], len = sizeof (dest))
+stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
 {
 	static
 		// Again, the encoding looks slightly mangled as we want the bytes in
@@ -1285,6 +1287,8 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest))
 	// x - 1 - 3
 	#emit LOAD.S.pri   dest
 	#emit ADD.C        0xFFFFFFFC // -4
+	#emit LOAD.S.alt   offset
+	#emit ADD
 	#emit STOR.S.pri   dest
 	#emit LOAD.S.pri   src
 	#emit ADD.C        0xFFFFFFFC // -4
