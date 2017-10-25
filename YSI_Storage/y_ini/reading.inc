@@ -94,7 +94,7 @@ enum e_INI_LINE_TYPE
 	e_INI_LINE_TYPE_TAG
 }
 
-static stock
+_Y_INI_STATIC stock
 	YSI_g_sParentPos,
 	File:YSI_g_sCurFile,
 	Alloc:YSI_g_sExtendedLine,
@@ -214,7 +214,7 @@ P:D(INI_Array(const name[],variable[]));
 
 */
 
-#define INI_SkipWhitespace(%0,%1) while ('\0' < %0[%1] <= ' ') ++%1
+#define INI_SkipWhitespace(%0,%1) while (IS_IN_RANGE(%0[%1], '\0' + 1, ' ' + 1)) ++%1
 
 /*-------------------------------------------------------------------------*//**
  * <param name="callback">The callback destination.</param>
@@ -296,7 +296,6 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 	if (!YSI_g_sCurFile)
 		return false;
 	new
-		bool:continuation,
 		rlen,
 		p0s, p0e, p1s, p1e, p2s, p2e;
 	// Get just the filename.
@@ -523,7 +522,7 @@ stock bool:INI_Load(filename[], bool:bExtra = false, extra = 0, bool:bLocal = tr
  *//*------------------------------------------------------------------------**/
 
 stock e_INI_LINE_TYPE:
-	INI_IdentifyLineType(const str[], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e)
+	INI_IdentifyLineType(str[MAX_INI_LINE], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e)
 {
 	// Reset everything.
 	p0s = p0e = p1s = p1e = p2s = p2e = 0;
@@ -575,62 +574,14 @@ stock e_INI_LINE_TYPE:
 state_in_continue_line:
 	// See what comes next.
 	INI_SkipWhitespace(str, pos);
-	switch (str[pos])
-	{
-		case '\0':
-			if (YSI_g_sExtendedLine)
-			{
-				p1s = p1e = pos, ret = e_INI_LINE_TYPE_ENTRY;
-				goto state_in_continuation;
-			}
-			else
-				return p1s = p1e = pos, e_INI_LINE_TYPE_ENTRY;
-		case  ';':
-		{
-			p1s = p1e = pos++,
-			ret = e_INI_LINE_TYPE_ENTRY;
-			goto state_in_comment;
-		}
-		case '\\':
-			if (str[pos + 1]) p1s = pos++, end = ++pos;
-			else return e_INI_LINE_TYPE_INVALID;
-		case '\\':
-		{
-			// Only allow ';' to immediately follow '\\'.
-			p1s = end = pos;
-			if (str[++pos] == ';')
-				end = ++pos;
-			else for ( ; ; ) switch (str[pos])
-			{
-			case '\0':
-				return e_INI_LINE_TYPE_INVALID; // Escaping nothing.
-			case '\r', '\n':
-				p1e = end,
-				ret  = e_INI_LINE_TYPE_CONT;
-				goto state_in_continuation;
-			case ';':
-				// We saw a comment, but separated from '\\' by at least one
-				// space.  This means we have a line continuation that also
-				// has a comment at the end.
-				p1e = end,
-				ret  = e_INI_LINE_TYPE_CONT;
-				goto state_in_comment;
-			case ' ', '\t':
-				++pos;
-				continue;
-			default:
-				end = ++pos;
-				break;
-			}
-		}
-		default: p1s = pos++, end = pos;
-	}
+	p1s = end = pos;
 	for ( ; ; ) switch (str[pos++])
 	{
 		case '\0':
 			if (YSI_g_sExtendedLine)
 			{
-				p1e = pos, ret = e_INI_LINE_TYPE_ENTRY;
+				p1e = end,
+				ret = e_INI_LINE_TYPE_ENTRY;
 				goto state_in_continuation;
 			}
 			else
@@ -644,29 +595,59 @@ state_in_continue_line:
 		case '\\':
 		{
 			// Only allow ';' to immediately follow '\\'.
-			if (str[pos] == ';')
-				end = ++pos;
-			else for ( ; ; ) switch (str[pos])
+			switch (str[pos])
 			{
-			case '\0':
-				return e_INI_LINE_TYPE_INVALID; // Escaping nothing.
-			case '\r', '\n':
-				p1e = end,
-				ret  = e_INI_LINE_TYPE_CONT;
-				goto state_in_continuation;
-			case ';':
-				// We saw a comment, but separated from '\\' by at least one
-				// space.  This means we have a line continuation that also
-				// has a comment at the end.
-				p1e = end,
-				ret  = e_INI_LINE_TYPE_CONT;
-				goto state_in_comment;
-			case ' ', '\t':
-				++pos;
-				continue;
-			default:
-				end = ++pos;
-				break;
+#if defined Y_INI_NO_ESCAPES
+				case ';':
+					end = ++pos;
+#else
+				case 'n':
+					str[pos] = '\n',
+					strdel(str[pos - 1], 0, 1),
+					end = pos;
+				case 'r':
+					str[pos] = '\r',
+					strdel(str[pos - 1], 0, 1),
+					end = pos;
+				case 't':
+					str[pos] = '\t',
+					strdel(str[pos - 1], 0, 1),
+					end = pos;
+				case '\\':
+					strdel(str[pos - 1], 0, 1),
+					end = pos;
+				case ';':
+					strdel(str[pos - 1], 0, 1),
+					end = pos;
+#endif
+				default: for ( ; ; ) switch (str[pos])
+				{
+					case '\0', '\r', '\n':
+					{
+						p1e = end,
+						ret  = e_INI_LINE_TYPE_CONT;
+						goto state_in_continuation;
+					}
+					case ';':
+					{
+						// We saw a comment, but separated from '\\' by at least one
+						// space.  This means we have a line continuation that also
+						// has a comment at the end.
+						p1e = end,
+						ret  = e_INI_LINE_TYPE_CONT;
+						goto state_in_comment;
+					}
+					case ' ', '\t':
+					{
+						++pos;
+						continue;
+					}
+					default:
+					{
+						end = ++pos;
+						break;
+					}
+				}
 			}
 		}
 		case '\1' .. ' ': {} // Whitespace, skip it.
@@ -750,11 +731,11 @@ state_in_continuation:
 		if (pos + mget(YSI_g_sExtendedLine, 0) + 2 > Malloc_SlotSize(YSI_g_sExtendedLine))
 		{
 			// Not enough memory - reallocate.
-			YSI_g_sExtendedLine = realloc(YSI_g_sExtendedLine, MAX_INI_LINE, false);
+			YSI_g_sExtendedLine = realloc(YSI_g_sExtendedLine, Malloc_SlotSize(YSI_g_sExtendedLine) + MAX_INI_LINE, false);
 			if (!YSI_g_sExtendedLine)
 			{
 				P:E("Could not allocate memory for continuation line.");
-					return e_INI_LINE_TYPE_INVALID;
+				return e_INI_LINE_TYPE_INVALID;
 			}
 		}
 	}
@@ -766,7 +747,7 @@ state_in_continuation:
 		if (!YSI_g_sExtendedLine)
 		{
 			P:E("Could not allocate memory for continuation line.");
-				return e_INI_LINE_TYPE_INVALID;
+			return e_INI_LINE_TYPE_INVALID;
 		}
 		mset(YSI_g_sExtendedLine, 0, 0);
 	}

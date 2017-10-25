@@ -137,7 +137,6 @@ Test:INI_IdentifyLineType3()
 	ASSERT(INI_IdentifyLineType("key=value", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 4 && p1e == 9 && p2s == p2e);
 	ASSERT(INI_IdentifyLineType("key = value ; comment", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
-	//printf("%d %d %d %d %d %d", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 6 && p1e == 11 && p2s == 14 && p2e == 21);
 	ASSERT(INI_IdentifyLineType("key = value ;   comment\r\n", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 6 && p1e == 11 && p2s == 16 && p2e == 23);
@@ -174,7 +173,6 @@ Test:INI_IdentifyLineType4()
 	ASSERT(INI_IdentifyLineType("[hello   ]", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 1 && p0e == 6 && p1s == p1e && p2s == p2e);
 	ASSERT(INI_IdentifyLineType("[   hello ]", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_TAG);
-	// printf("%d %d %d %d %d %d", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT(p0s == 4 && p0e == 9 && p1s == p1e && p2s == p2e);
 }
 
@@ -204,48 +202,10 @@ Test:INI_IdentifyLineType5()
 	ASSERT(p0s == 1 && p0e == 6 && p1s == p1e && p2s == 9 && p2e == 10);
 	ASSERT(INI_IdentifyLineType("[hello] ; : first, second ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 1 && p0e == 6 && p1s == p1e && p2s == 10 && p2e == 25);
-	// printf("%d %d %d %d %d %d", p0s, p0e, p1s, p1e, p2s, p2e);
 	// Both.
 	ASSERT(INI_IdentifyLineType(" [ hello ]  :  inheritance  ;  : first, second ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 3 && p0e == 8 && p1s == 15 && p1e == 26 && p2s == 31 && p2e == 46);
-	// printf("%d %d %d %d %d %d", p0s, p0e, p1s, p1e, p2s, p2e);
 }
-
-// Test:INI_IdentifyLineType6()
-// {
-	// new p0s, p0e, p1s, p1e, p2s, p2e, bool:;;
-	// // Continuation.
-	// new
-		// e_INI_LINE_TYPE:result;
-	// cont = false;
-	// result = INI_IdentifyLineType("hi = there\\ ", p0s, p0e, p1s, p1e, p2s, p2e);
-	// ASSERT(result == e_INI_LINE_TYPE_ENTRY);
-	// //printf("%d %d %d %d %d %d", p0s, p0e, p1s, p1e, p2s, p2e);
-	// ASSERT(p0s == 0 && p1e == 10);
-	// ASSERT(cont);
-	// cont = false;
-	// ASSERT(INI_IdentifyLineType("hi = there  \\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
-	// ASSERT(p0s == 0 && p1e == 10);
-	// ASSERT(cont);
-	// cont = false;
-	// ASSERT(INI_IdentifyLineType("hi =    \\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
-	// ASSERT(p0s == 0 && p0e == 2);
-	// ASSERT(p1s == p1e);
-	// ASSERT(cont);
-	// cont = true;
-	// ASSERT(INI_IdentifyLineType("hello there ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_CONT);
-	// ASSERT(p0s == p0e && p1s == 0 && p1e == 11);
-	// ASSERT(!cont);
-	// cont = true;
-	// ASSERT(INI_IdentifyLineType("hello there \\  ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_CONT);
-	// ASSERT(p0s == p0e && p1s == 0 && p1e == 11);
-	// ASSERT(cont);
-	// cont = true;
-	// result = INI_IdentifyLineType("   \\", p0s, p0e, p1s, p1e, p2s, p2e);
-	// ASSERT(result == e_INI_LINE_TYPE_CONT);
-	// ASSERT(cont);
-	// ASSERT(p0s == p0e && p1s == p1e);
-// }
 
 Test:INI_IdentifyLineType6()
 {
@@ -254,30 +214,49 @@ Test:INI_IdentifyLineType6()
 	new
 		e_INI_LINE_TYPE:result;
 	result = INI_IdentifyLineType("hi = there\\ ", p0s, p0e, p1s, p1e, p2s, p2e);
-	ASSERT(result == e_INI_LINE_TYPE_ENTRY);
-	//printf("%d %d %d %d %d %d", p0s, p0e, p1s, p1e, p2s, p2e);
-	ASSERT(p0s == 0 && p1e == 12);
-	// ASSERT(cont);
-	ASSERT(INI_IdentifyLineType("hi = there  \\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
-	ASSERT(p0s == 0 && p1e == 14);
-	// ASSERT(cont);
-	ASSERT(INI_IdentifyLineType("hi =    \\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
+	ASSERT(result == e_INI_LINE_TYPE_CONT);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	result = INI_IdentifyLineType("hi = there\\\r", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(result == e_INI_LINE_TYPE_CONT);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	result = INI_IdentifyLineType("hi = there\\\n", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(result == e_INI_LINE_TYPE_CONT);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	result = INI_IdentifyLineType("hi = there\\ \n", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT(result == e_INI_LINE_TYPE_CONT);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	ASSERT(p0s == 0 && p1e == 10);
+	ASSERT(INI_IdentifyLineType("hi = there  \\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_CONT);
+	ASSERT(p0s == 0 && p1e == 10);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	ASSERT(INI_IdentifyLineType("hi =    \\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_CONT);
 	ASSERT(p0s == 0 && p0e == 2);
-	// ASSERT(p1s == p1e);
-	ASSERT(p1s == 8 && p1e == 10);
-	// ASSERT(cont);
-	// cont = true;
+	ASSERT(p1s == 8 && p1e == 8);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	ASSERT(INI_IdentifyLineType("hi =    \\;  Hello  ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
+	ASSERT(p0s == 0 && p0e == 2);
+#if defined Y_INI_NO_ESCAPES
+	ASSERT(p1s == 8 && p1e == 17);
+#else
+	ASSERT(p1s == 8 && p1e == 16);
+#endif
+	ASSERT(INI_IdentifyLineType("hi =    \\ ; Hello  ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_CONT);
+	ASSERT(p0s == 0 && p0e == 2);
+	ASSERT(p1s == 8 && p1e == 8);
+	ASSERT(p2s == 11 && p2e == 18);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
 	ASSERT(INI_IdentifyLineType("hello there ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_INVALID);
-	// ASSERT(p0s == p0e && p1s == 0 && p1e == 11);
-	// cont = true;
 	ASSERT(INI_IdentifyLineType("hello there \\  ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_INVALID);
-	// ASSERT(p0s == p0e && p1s == 0 && p1e == 11);
-	// ASSERT(cont);
-	// cont = true;
-	// result = INI_IdentifyLineType("   \\", p0s, p0e, p1s, p1e, p2s, p2e);
-	// ASSERT(result == e_INI_LINE_TYPE_CONT);
-	// // ASSERT(cont);
-	// ASSERT(p0s == p0e && p1s == p1e);
+	ASSERT(INI_IdentifyLineType("hi = hello\\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_CONT);
+	ASSERT(p0s == 0 && p0e == 2);
+	ASSERT(p1s == 5 && p1e == 10);
+	ASSERT(INI_IdentifyLineType("hi = hello     ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
+	ASSERT(p0s == 0 && p0e == 0);
+	ASSERT(p1s == 0 && p1e == 10);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	ASSERT(INI_IdentifyLineType("hi = hello     ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
+	ASSERT(p0s == 0 && p0e == 2);
+	ASSERT(p1s == 5 && p1e == 10);
 }
 
 Test:Trim1()
@@ -391,7 +370,6 @@ forward TestINI_Parse0_test1(key[], value[]);
 
 public TestINI_Parse0_test1(key[], value[])
 {
-	//printf("called");
 	++YSI_g_sINI_Parse0;
 }
 
@@ -795,14 +773,6 @@ static stock DoINI_Int3()
 		tk1[8];
 	inline Inl_(string:tag[], string:name[], string:value[])
 	{
-		// #emit NOP
-		// #emit NOP
-		// #emit NOP
-		// #emit NOP
-		// printf("%s (%d): %d %d %d", tag, YHash(tag, false),
-			// _I<>,
-			// _I<atag>,
-			// _I<tag2>);
 		// TODO:  I think there's a bug in here somewhere, with "GTYPE=0 MTYPE=1
 		// -O1 -d0", which crashes on ENTRY to this inlineю  I think that the
 		// problem may be too much, or incorrect, code being output.
@@ -1079,7 +1049,6 @@ Test:INI_VariousWriting1()
 	s = INI_WriteFloat(f, "vvv", 0.2);
 	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
 	ASSERT(!strcmp("0.200000", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
-	//printf("%s %f", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], 0.2);
 	s = INI_WriteFloat(f, "vvv", 0.2, 2);
 	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
 	ASSERT(!strcmp("0.20", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
@@ -1161,9 +1130,6 @@ forward INI_Parents(extra, file[], tag[], name[], value[]);
 
 public INI_Parents(extra, file[], tag[], name[], value[])
 {
-	printf("%s %s %s", tag, name, value);
-	printf("%d %s %d %d", strcmp(("first_key"), name, true), YSI_g_sTestParents[extra][E_INI14_TEST_FIRST_KEY],  value, 32);
-
 	ASSERT(!strcmp(file, "test7"));
 	if (!strcmp(tag, "parent"))
 		extra = extra - 3;
@@ -1191,10 +1157,6 @@ Test:INI_Parents()
 			.extra     = 3,
 			.bPassTag  = true,
 			.bPassFile = true);
-	printf("%d %s", YSI_g_sTestParents[0][E_INI14_TEST_FIRST_KEY][0], YSI_g_sTestParents[0][E_INI14_TEST_FIRST_KEY]);
-	printf("%d %s", YSI_g_sTestParents[0][E_INI14_TEST_FIRST_KEY][1], YSI_g_sTestParents[1][E_INI14_TEST_FIRST_KEY]);
-	printf("%d %s", YSI_g_sTestParents[0][E_INI14_TEST_FIRST_KEY][2], YSI_g_sTestParents[2][E_INI14_TEST_FIRST_KEY]);
-	printf("%d %s", YSI_g_sTestParents[0][E_INI14_TEST_FIRST_KEY][3], YSI_g_sTestParents[3][E_INI14_TEST_FIRST_KEY]);
 	// Parent.
 	ASSERT(!strcmp(YSI_g_sTestParents[0][E_INI14_TEST_FIRST_KEY], "how are you?"));
 	ASSERT(!strcmp(YSI_g_sTestParents[0][E_INI14_TEST_FOURTH_KEY], "Some string...."));
