@@ -134,6 +134,9 @@ Optional plugins:
 #if !defined AMX_MEMORY_INC
 	#define AMX_INCLUDING_FAILED
 #endif
+#if !defined argderef
+	#error Please update "https://github.com/Zeex/amx_assembly" to get "argderef()"
+#endif
 #if !defined deref
 	#error Please update "https://github.com/Zeex/amx_assembly" to get "deref()"
 #endif
