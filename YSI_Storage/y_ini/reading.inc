@@ -296,6 +296,7 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 	if (!YSI_g_sCurFile)
 		return false;
 	new
+		bool:continuation,
 		rlen,
 		p0s, p0e, p1s, p1e, p2s, p2e;
 	// Get just the filename.
@@ -370,40 +371,91 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 					fseek(YSI_g_sCurFile, YSI_g_sParentPos, seek_start);
 				}
 			}
-			default: // e_INI_LINE_TYPE_ENTRY and e_INI_LINE_TYPE_CONT.
+			case e_INI_LINE_TYPE_CONT:
+			{
+				// Do nothing, wait for the rest of the line.
+			}
+			case e_INI_LINE_TYPE_ENTRY:
 			{
 				if (!handle)
-					continue;
-				// Skip lines starting with `@` here.  They indicate packed
-				// array data, which is only read by using `INI_Array`.
-				if (YSI_g_sCurLine[p0s] == '@')
-					continue;
-				// Standard key-value pair.
-				YSI_g_sCurLine[p0e] = YSI_g_sCurLine[p1e] = '\0';
-				if (bExtra)
 				{
-					if (bPassFile)
+					if (YSI_g_sExtendedLine)
 					{
-						if (bPassTag) Callback_Call(callback, extra, file, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback, extra, file,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						free(YSI_g_sExtendedLine),
+						YSI_g_sExtendedLine = NO_ALLOC,
+						YSI_g_sExtendedName[0] = '\0';
+					}
+					continue;
+				}
+				else if (YSI_g_sExtendedLine)
+				{
+					if (Malloc_Get(YSI_g_sExtendedLine, 1) == '@')
+					{
+						P:E("Binary arrays cannot use continuation lines.");
+					}
+					else if (bExtra)
+					{
+						if (bPassFile)
+						{
+							if (bPassTag) Callback_Call(callback, extra, file, tag, YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+							else          Callback_Call(callback, extra, file,      YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+						}
+						else
+						{
+							if (bPassTag) Callback_Call(callback, extra,       tag, YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+							else          Callback_Call(callback, extra,            YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+						}
 					}
 					else
 					{
-						if (bPassTag) Callback_Call(callback, extra,       tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback, extra,            YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						if (bPassFile)
+						{
+							if (bPassTag) Callback_Call(callback,        file, tag, YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+							else          Callback_Call(callback,        file,      YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+						}
+						else
+						{
+							if (bPassTag) Callback_Call(callback,              tag, YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+							else          Callback_Call(callback,                   YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+						}
 					}
+					free(YSI_g_sExtendedLine),
+					YSI_g_sExtendedLine = NO_ALLOC,
+					YSI_g_sExtendedName[0] = '\0';
 				}
 				else
 				{
-					if (bPassFile)
+					// Skip lines starting with `@` here.  They indicate packed
+					// array data, which is only read by using `INI_Array`.
+					if (YSI_g_sCurLine[p0s] == '@')
+						continue;
+					// Standard key-value pair.
+					YSI_g_sCurLine[p0e] = YSI_g_sCurLine[p1e] = '\0';
+					if (bExtra)
 					{
-						if (bPassTag) Callback_Call(callback,        file, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback,        file,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						if (bPassFile)
+						{
+							if (bPassTag) Callback_Call(callback, extra, file, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+							else          Callback_Call(callback, extra, file,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						}
+						else
+						{
+							if (bPassTag) Callback_Call(callback, extra,       tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+							else          Callback_Call(callback, extra,            YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						}
 					}
 					else
 					{
-						if (bPassTag) Callback_Call(callback,              tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback,                   YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						if (bPassFile)
+						{
+							if (bPassTag) Callback_Call(callback,        file, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+							else          Callback_Call(callback,        file,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						}
+						else
+						{
+							if (bPassTag) Callback_Call(callback,              tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+							else          Callback_Call(callback,                   YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						}
 					}
 				}
 			}
@@ -480,6 +532,11 @@ stock e_INI_LINE_TYPE:
 		end,
 		e_INI_LINE_TYPE:ret = e_INI_LINE_TYPE_DATALESS,
 		pos;
+	// If there is memory allocated for a line continuation, that means the
+	// previous line ended with '\\', so this line is just part of that one,
+	// regardless of what it contains.
+	if (YSI_g_sExtendedLine)
+		goto state_in_continue_line;
 	INI_SkipWhitespace(str, pos);
 	switch (str[pos++])
 	{
@@ -500,74 +557,137 @@ stock e_INI_LINE_TYPE:
 	end = pos;
 //state_in_entry: // Default (fall-through).
 	// Get the key.
-	for ( ; ; )
+	for ( ; ; ) switch (str[pos++])
 	{
-		switch (str[pos++])
-		{
-			case '\0', ';':
-				return e_INI_LINE_TYPE_INVALID;      // No value.
-			case '\\':
-				if (str[pos]) end = ++pos;           // Skip next character too.
-				else return e_INI_LINE_TYPE_INVALID; // Escaping nothing.
-			case '=': break;
-			case '\1' .. ' ': {} // Whitespace, skip it.
-			default: end = pos;  // Characters, save this position.
-		}
+		case '\0', ';':
+			return e_INI_LINE_TYPE_INVALID;      // No value.
+		case '\\':
+			if (str[pos]) end = ++pos;           // Skip next character too.
+			else return e_INI_LINE_TYPE_INVALID; // Escaping nothing.
+		case '=':
+			break;
+		case '\1' .. ' ':
+			{} // Whitespace, skip it.
+		default:
+			end = pos;  // Characters, save this position.
 	}
 	p0e = end;
+state_in_continue_line:
 	// See what comes next.
 	INI_SkipWhitespace(str, pos);
 	switch (str[pos])
 	{
-			case '\0': return p1s = p1e = pos, e_INI_LINE_TYPE_ENTRY;
-			case  ';':
+		case '\0':
+			if (YSI_g_sExtendedLine)
 			{
-				p1s = p1e = pos++,
-				ret  = e_INI_LINE_TYPE_ENTRY;
-				goto state_in_comment;
+				p1s = p1e = pos, ret = e_INI_LINE_TYPE_ENTRY;
+				goto state_in_continuation;
 			}
-			case '\\':
+			else
+				return p1s = p1e = pos, e_INI_LINE_TYPE_ENTRY;
+		case  ';':
+		{
+			p1s = p1e = pos++,
+			ret = e_INI_LINE_TYPE_ENTRY;
+			goto state_in_comment;
+		}
+		case '\\':
 			if (str[pos + 1]) p1s = pos++, end = ++pos;
 			else return e_INI_LINE_TYPE_INVALID;
+		case '\\':
+		{
+			// Only allow ';' to immediately follow '\\'.
+			p1s = end = pos;
+			if (str[++pos] == ';')
+				end = ++pos;
+			else for ( ; ; ) switch (str[pos])
+			{
+			case '\0':
+				return e_INI_LINE_TYPE_INVALID; // Escaping nothing.
+			case '\r', '\n':
+				p1e = end,
+				ret  = e_INI_LINE_TYPE_CONT;
+				goto state_in_continuation;
+			case ';':
+				// We saw a comment, but separated from '\\' by at least one
+				// space.  This means we have a line continuation that also
+				// has a comment at the end.
+				p1e = end,
+				ret  = e_INI_LINE_TYPE_CONT;
+				goto state_in_comment;
+			case ' ', '\t':
+				++pos;
+				continue;
+			default:
+				end = ++pos;
+				break;
+			}
+		}
 		default: p1s = pos++, end = pos;
 	}
-	for ( ; ; )
+	for ( ; ; ) switch (str[pos++])
 	{
-		switch (str[pos++])
-		{
-			case '\0': return p1e = end, e_INI_LINE_TYPE_ENTRY;
-			case  ';':
+		case '\0':
+			if (YSI_g_sExtendedLine)
 			{
-				p1e = end,
-				ret  = e_INI_LINE_TYPE_ENTRY;
-				goto state_in_comment;
+				p1e = pos, ret = e_INI_LINE_TYPE_ENTRY;
+				goto state_in_continuation;
 			}
-			case '\\':
-				if (str[pos]) end = ++pos;           // Skip next character too.
-				else return e_INI_LINE_TYPE_INVALID; // Escaping nothing.
-			case '\1' .. ' ': {} // Whitespace, skip it.
-			default: end = pos;  // Characters, save this position.
+			else
+				return p1e = end, e_INI_LINE_TYPE_ENTRY;
+		case  ';':
+		{
+			p1e = end,
+			ret = e_INI_LINE_TYPE_ENTRY;
+			goto state_in_comment;
 		}
+		case '\\':
+		{
+			// Only allow ';' to immediately follow '\\'.
+			if (str[pos] == ';')
+				end = ++pos;
+			else for ( ; ; ) switch (str[pos])
+			{
+			case '\0':
+				return e_INI_LINE_TYPE_INVALID; // Escaping nothing.
+			case '\r', '\n':
+				p1e = end,
+				ret  = e_INI_LINE_TYPE_CONT;
+				goto state_in_continuation;
+			case ';':
+				// We saw a comment, but separated from '\\' by at least one
+				// space.  This means we have a line continuation that also
+				// has a comment at the end.
+				p1e = end,
+				ret  = e_INI_LINE_TYPE_CONT;
+				goto state_in_comment;
+			case ' ', '\t':
+				++pos;
+				continue;
+			default:
+				end = ++pos;
+				break;
+			}
+		}
+		case '\1' .. ' ': {} // Whitespace, skip it.
+		default: end = pos;  // Characters, save this position.
 	}
 state_in_tag:
 	// Get the tag name.
 	INI_SkipWhitespace(str, pos);
 	p0s = pos;
-	for ( ; ; )
+	for ( ; ; ) switch (str[pos++])
 	{
-		switch (str[pos++])
-		{
-			case '\0', ';':
-				return e_INI_LINE_TYPE_INVALID;      // No tag end.
-			case '\\':
-				if (str[pos]) end = ++pos;           // Skip next character too.
-				else return e_INI_LINE_TYPE_INVALID; // Escaping nothing.
-			case ']':
-				if (end) break;                      // End of the tag.
-				else return e_INI_LINE_TYPE_INVALID; // Tag is empty.
-			case '\1' .. ' ': {} // Whitespace, skip it.
-			default: end = pos;  // Characters, save this position.
-		}
+		case '\0', ';':
+			return e_INI_LINE_TYPE_INVALID;      // No tag end.
+		case '\\':
+			if (str[pos]) end = ++pos;           // Skip next character too.
+			else return e_INI_LINE_TYPE_INVALID; // Escaping nothing.
+		case ']':
+			if (end) break;                      // End of the tag.
+			else return e_INI_LINE_TYPE_INVALID; // Tag is empty.
+		case '\1' .. ' ': {} // Whitespace, skip it.
+		default: end = pos;  // Characters, save this position.
 	}
 	p0e = end;
 	// See what comes next.
@@ -607,7 +727,58 @@ state_in_comment:
 		while (pos-- && str[pos] <= ' ') {}
 		p2e = pos + 1;
 	}
-	return ret;
+	if (ret != e_INI_LINE_TYPE_CONT && !YSI_g_sExtendedLine)
+		return ret;
+	// Fall through to handle continuations before comments.
+state_in_continuation:
+	// We get here if a line ended with `\\`.  We need to copy the data from
+	// this line in to allocated space.
+	if (!YSI_g_sExtendedName[0])
+	{
+		// Haven't yet stored the name of this line.  Do so.
+		end = str[p0e],
+		str[p0e] = '\0',
+		strcpy(YSI_g_sExtendedName, str[p0s]),
+		str[p0e] = end;
+	}
+	// Get the length of this new part.
+	pos = p1e - p1s;
+	if (YSI_g_sExtendedLine)
+	{
+		// Enough space for the new string, the old string, the length, and the
+		// NULL.
+		if (pos + mget(YSI_g_sExtendedLine, 0) + 2 > Malloc_SlotSize(YSI_g_sExtendedLine))
+		{
+			// Not enough memory - reallocate.
+			YSI_g_sExtendedLine = realloc(YSI_g_sExtendedLine, MAX_INI_LINE, false);
+			if (!YSI_g_sExtendedLine)
+			{
+				P:E("Could not allocate memory for continuation line.");
+					return e_INI_LINE_TYPE_INVALID;
+			}
+		}
+	}
+	else
+	{
+		// There was no previous allocation, implying this the first line of a
+		// continuation.
+		YSI_g_sExtendedLine = malloc(MAX_INI_LINE + 1, false);
+		if (!YSI_g_sExtendedLine)
+		{
+			P:E("Could not allocate memory for continuation line.");
+				return e_INI_LINE_TYPE_INVALID;
+		}
+		mset(YSI_g_sExtendedLine, 0, 0);
+	}
+	return
+		// Copy the string over.
+		end = str[p1e],
+		str[p1e] = '\0',
+		msets(YSI_g_sExtendedLine, mget(YSI_g_sExtendedLine, 0) + 1, str[p1s]),
+		str[p1e] = end,
+		// Store the new length.
+		mset(YSI_g_sExtendedLine, 0, mget(YSI_g_sExtendedLine, 0) + pos),
+		ret;
 }
 
 /*
@@ -764,7 +935,7 @@ static stock INI_DoParentTag(const search[], const file[], callback[E_CALLBACK_D
 							parent[32];
 						YSI_g_sCurLine[p1e] = '\0',
 						strcat(parent, YSI_g_sCurLine[p1s]);
-						if (!INI_DoParentTag(parent, file, YSI_g_sCurFile, callback, bExtra, extra, bPassTag, tag, bFilter, filter, bPassFile))
+						if (!INI_DoParentTag(parent, file, callback, bExtra, extra, bPassTag, tag, bFilter, filter, bPassFile))
 						{
 							return
 								YSI_g_sParentPos = epos,
@@ -781,40 +952,91 @@ static stock INI_DoParentTag(const search[], const file[], callback[E_CALLBACK_D
 						true;
 				}
 			}
-			default: // e_INI_LINE_TYPE_ENTRY and e_INI_LINE_TYPE_CONT.
+			case e_INI_LINE_TYPE_CONT:
+			{
+				// Do nothing, wait for the rest of the line.
+			}
+			case e_INI_LINE_TYPE_ENTRY:
 			{
 				if (!handle)
-					continue;
-				// Skip lines starting with `@` here.  They indicate packed array data,
-				// which is only read by using `INI_Array`.
-				if (YSI_g_sCurLine[p0s] == '@')
-					continue;
-				// Standard key-value pair.
-				YSI_g_sCurLine[p0e] = YSI_g_sCurLine[p1e] = '\0';
-				if (bExtra)
 				{
-					if (bPassFile)
+					if (YSI_g_sExtendedLine)
 					{
-						if (bPassTag) Callback_Call(callback, extra, file, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback, extra, file,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						free(YSI_g_sExtendedLine),
+						YSI_g_sExtendedLine = NO_ALLOC,
+						YSI_g_sExtendedName[0] = '\0';
+					}
+					continue;
+				}
+				else if (YSI_g_sExtendedLine)
+				{
+					if (Malloc_Get(YSI_g_sExtendedLine, 1) == '@')
+					{
+						P:E("Binary arrays cannot use continuation lines.");
+					}
+					else if (bExtra)
+					{
+						if (bPassFile)
+						{
+							if (bPassTag) Callback_Call(callback, extra, file, tag, YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+							else          Callback_Call(callback, extra, file,      YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+						}
+						else
+						{
+							if (bPassTag) Callback_Call(callback, extra,       tag, YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+							else          Callback_Call(callback, extra,            YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+						}
 					}
 					else
 					{
-						if (bPassTag) Callback_Call(callback, extra,       tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback, extra,            YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						if (bPassFile)
+						{
+							if (bPassTag) Callback_Call(callback,        file, tag, YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+							else          Callback_Call(callback,        file,      YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+						}
+						else
+						{
+							if (bPassTag) Callback_Call(callback,              tag, YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+							else          Callback_Call(callback,                   YSI_g_sExtendedName, Malloc_Get(YSI_g_sExtendedLine, 1));
+						}
 					}
+					free(YSI_g_sExtendedLine),
+					YSI_g_sExtendedLine = NO_ALLOC,
+					YSI_g_sExtendedName[0] = '\0';
 				}
 				else
 				{
-					if (bPassFile)
+					// Skip lines starting with `@` here.  They indicate packed
+					// array data, which is only read by using `INI_Array`.
+					if (YSI_g_sCurLine[p0s] == '@')
+						continue;
+					// Standard key-value pair.
+					YSI_g_sCurLine[p0e] = YSI_g_sCurLine[p1e] = '\0';
+					if (bExtra)
 					{
-						if (bPassTag) Callback_Call(callback,        file, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback,        file,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						if (bPassFile)
+						{
+							if (bPassTag) Callback_Call(callback, extra, file, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+							else          Callback_Call(callback, extra, file,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						}
+						else
+						{
+							if (bPassTag) Callback_Call(callback, extra,       tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+							else          Callback_Call(callback, extra,            YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						}
 					}
 					else
 					{
-						if (bPassTag) Callback_Call(callback,              tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
-						else          Callback_Call(callback,                   YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						if (bPassFile)
+						{
+							if (bPassTag) Callback_Call(callback,        file, tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+							else          Callback_Call(callback,        file,      YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						}
+						else
+						{
+							if (bPassTag) Callback_Call(callback,              tag, YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+							else          Callback_Call(callback,                   YSI_g_sCurLine[p0s], YSI_g_sCurLine[p1s]);
+						}
 					}
 				}
 			}
@@ -860,8 +1082,23 @@ stock _INI_Array(const name[], len, ...)
 				if (offset < len)
 					goto _INI_Array_return;
 			}
-			default: // e_INI_LINE_TYPE_ENTRY and e_INI_LINE_TYPE_CONT.
+			case e_INI_LINE_TYPE_CONT:
 			{
+				// Do nothing, wait for the rest of the line.
+			}
+			case e_INI_LINE_TYPE_ENTRY:
+			{
+				if (YSI_g_sExtendedLine)
+				{
+					if (Malloc_Get(YSI_g_sExtendedLine, 1) == '@')
+					{
+						P:E("Binary arrays cannot use continuation lines.");
+					}
+					free(YSI_g_sExtendedLine),
+					YSI_g_sExtendedLine = NO_ALLOC,
+					YSI_g_sExtendedName[0] = '\0';
+					goto _INI_Array_return;
+				}
 				if (!handle)
 					continue;
 				// Read lines starting with `@` here.  They indicate packed
