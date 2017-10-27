@@ -1832,8 +1832,8 @@ stock _Text_Render(playerid, search[], ident[], GLOBAL_TAG_TYPES:...)
 
 static stock
 	YSI_g_sCaptionText[YSI_MAX_LANGUAGES][64],
-	YSI_g_sButton1Text[YSI_MAX_LANGUAGES][16],
-	YSI_g_sButton2Text[YSI_MAX_LANGUAGES][16];
+	YSI_g_sButton1Text[YSI_MAX_LANGUAGES][24],
+	YSI_g_sButton2Text[YSI_MAX_LANGUAGES][24];
 
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
