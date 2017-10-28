@@ -229,8 +229,8 @@ Iterators:
 	#define _inc_y_iterate
 #endif
 
-	// Extra macro so that those paranoid about accidentally including YSI can
-	// ensure it never happens.
+// Extra macro so that those paranoid about accidentally including YSI can
+// ensure it never happens.
 #if defined NEVER_Y_ITERATE
 	// Set `FOREACH_VERSION` as equal to whatever the version of the stand-alone
 	// include is.

@@ -10,12 +10,9 @@ const INLINE_PATTERN_4 = _C<Cole>;
 #define CALL@I@L I@L()
 #define CALL@I@K I@K(0)
 
-forward Inline_FoundStart(scanner[CodeScanner]);
-forward Inline_FoundMid(scanner[CodeScanner]);
-forward Inline_FoundVar(scanner[CodeScanner]);
-forward Inline_FoundRef(scanner[CodeScanner]);
-forward Inline_FoundEnd(scanner[CodeScanner]);
-forward Inline_FoundConst(scanner[CodeScanner]);
+#if !defined MAX_INLINE_PARAMETERS
+	#define MAX_INLINE_PARAMETERS (32)
+#endif
 
 #if !defined MAX_INLINE_PARAMETERS
 	#define MAX_INLINE_PARAMETERS (32)
@@ -34,93 +31,119 @@ static stock
 	YSI_g_sCurInlineLoop,      // The loopback pos if user code ends naturally.
 	YSI_g_sCurInlineUser;      // The location of the user code.
 
-public Inline_FoundStart(scanner[CodeScanner])
+
+enum e_CALLBACK_DATA
 {
-	if (YSI_g_sCurInlineState != 0)
+	e_CALLBACK_DATA_FUNCTION,
+	e_CALLBACK_DATA_PARAMETERS,
+	e_CALLBACK_DATA_CLOSURE,
+	e_CALLBACK_DATA_PARAMETER_COUNT,
+}
+
+enum E_INLINE_DATA
+{
+	// The fake "parameters" for the inline function.
+	E_INLINE_DATA_PARAMETERS[MAX_INLINE_PARAMETERS],
+	E_INLINE_DATA_PARAMETER_COUNT,
+	E_INLINE_DATA_STATE,   // Which part of the header scanning we are on.
+	E_INLINE_DATA_LOCALS,  // Container function locals.
+	E_INLINE_DATA_PASSED,  // Inline function parameters.
+	E_INLINE_DATA_PARAMS,  // Container function parameters (undetermined).
+	E_INLINE_DATA_POINTER, // The struct to store the inline data in.
+	E_INLINE_DATA_START,   // The start of the writable code space.
+	E_INLINE_DATA_BEYOND,  // The end of the user code.
+	E_INLINE_DATA_LOOP,    // The loopback pos if user code ends naturally.
+	E_INLINE_DATA_USER     // The location of the user code.
+}
+
+static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
+{
+	if (data[E_INLINE_DATA_STATE] != 0)
 		return 0;
-	YSI_g_sCurInlineLocals = CodeScanGetMatchStack(scanner);
-	YSI_g_sCurInlineParams = -1; // No way to know!
-	YSI_g_sCurInlinePointer = CodeScanGetMatchHole(scanner, 0);
-	YSI_g_sCurInlineStart = CodeScanGetMatchAddress(scanner);
-	YSI_g_sCurInlineEnd = CodeScanGetMatchHole(scanner, 1);
-	YSI_g_sCurInlineState = 1;
-	YSI_g_sCurInlineParameterCount = 0;
+	data[E_INLINE_DATA_LOCALS] = CodeScanGetMatchStack(scanner);
+	data[E_INLINE_DATA_PARAMS] = -1; // No way to know!
+	data[E_INLINE_DATA_POINTER] = CodeScanGetMatchHole(scanner, 0);
+	data[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
+	data[E_INLINE_DATA_BEYOND] = CodeScanGetMatchHole(scanner, 2);
+	data[E_INLINE_DATA_STATE] = 1;
+	data[E_INLINE_DATA_PARAMETER_COUNT] = 0;
 	return 0;
 }
 
-public Inline_FoundMid(scanner[CodeScanner])
+static stock Inline_FoundMid(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	if (YSI_g_sCurInlineState != 1)
+	if (data[E_INLINE_DATA_STATE] != 1)
 		return 0;
-	YSI_g_sCurInlineLoop = CodeScanGetMatchAddress(scanner) + 6 * cellbytes;
-	if (AMX_Read(YSI_g_sCurInlineLoop + AMX_HEADER_COD) == _:RelocateOpcode(OP_BREAK))
-		YSI_g_sCurInlineLoop += cellbytes;
-	YSI_g_sCurInlinePassed = CodeScanGetMatchStack(scanner) - YSI_g_sCurInlineLocals;
-	YSI_g_sCurInlineState = 2;
+	data[E_INLINE_DATA_LOOP] = CodeScanGetMatchAddress(scanner) + 6 * cellbytes;
+	if (AMX_Read(data[E_INLINE_DATA_LOOP] + AMX_HEADER_COD) == _:RelocateOpcode(OP_BREAK))
+		data[E_INLINE_DATA_LOOP] += cellbytes;
+	data[E_INLINE_DATA_PASSED] = CodeScanGetMatchStack(scanner) - data[E_INLINE_DATA_LOCALS];
+	data[E_INLINE_DATA_STATE] = 2;
 	return 0;
 }
 
-static stock Inline_FoundDescriptor(size)
+static stock Inline_FoundDescriptor(size, data[E_INLINE_DATA])
 {
-	if (YSI_g_sCurInlineParameterCount == MAX_INLINE_PARAMETERS)
+	if (data[E_INLINE_DATA_PARAMETER_COUNT] == MAX_INLINE_PARAMETERS)
 		P:F("y_inline: Max inline parameter count exceeded (%d).", MAX_INLINE_PARAMETERS);
 	else switch (size)
 	{
-		case 0:
+		case INLINE_DESCRIPTOR_VAR:
 		{
-			YSI_g_sCurInlineParameters[YSI_g_sCurInlineParameterCount++] = 0;
+			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = 0;
 		}
-		case -1:
+		case INLINE_DESCRIPTOR_REF:
 		{
-			YSI_g_sCurInlineParameters[YSI_g_sCurInlineParameterCount++] = -1;
-			YSI_g_sCurInlineState |= 16;
+			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = -1;
+			data[E_INLINE_DATA_STATE] |= 16;
 		}
-		case cellmax:
+		case INLINE_DESCRIPTOR_STR:
 		{
-			YSI_g_sCurInlineParameters[YSI_g_sCurInlineParameterCount++] = cellmax;
-			YSI_g_sCurInlineState |= 8;
+			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = cellmax;
+			data[E_INLINE_DATA_STATE] |= 8;
 		}
 		default:
 		{
-			YSI_g_sCurInlineParameters[YSI_g_sCurInlineParameterCount++] = size * 4;
-			YSI_g_sCurInlineState |= 8;
+			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = size * 4;
+			data[E_INLINE_DATA_STATE] |= 8;
 		}
 	}
 }
 
-public Inline_FoundConst(scanner[CodeScanner])
+static stock Inline_FoundConst(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	if (YSI_g_sCurInlineState != 2)
+	if (data[E_INLINE_DATA_STATE] != 2)
 		return 0;
-	YSI_g_sCurInlineState = 3 + CodeScanGetMatchHole(scanner, 0);
+	data[E_INLINE_DATA_STATE] = 3 + CodeScanGetMatchHole(scanner, 0);
 	return 0;
 }
 
-public Inline_FoundVar(scanner[CodeScanner])
+static stock Inline_FoundVar(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	if (YSI_g_sCurInlineState < 3)
+	#pragma unused scanner
+	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
-	Inline_FoundDescriptor(0);
+	Inline_FoundDescriptor(0, data);
 	return 0;
 }
 
-public Inline_FoundRef(scanner[CodeScanner])
+static stock Inline_FoundRef(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	if (YSI_g_sCurInlineState < 3)
+	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
-	Inline_FoundDescriptor(CodeScanGetMatchHole(scanner, 0));
+	Inline_FoundDescriptor(CodeScanGetMatchHole(scanner, 0), data);
 	return 0;
 }
 
-public Inline_FoundEnd(scanner[CodeScanner])
+static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
-	if (YSI_g_sCurInlineState < 3)
+	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
-	YSI_g_sCurInlineUser = CodeScanGetMatchAddress(scanner) + CodeScanGetMatchLength(scanner);
-	printf("End: %08x", YSI_g_sCurInlineUser);
+	data[E_INLINE_DATA_USER] = CodeScanGetMatchAddress(scanner) + CodeScanGetMatchLength(scanner);
+	printf("End: %08x", data[E_INLINE_DATA_USER]);
 	// Do the actual codegen here.
 	Inline_DoCodeGen();
-	// Remove the return for the outer loop, since it may now point to an
+	// Remove the return for the inner loop, since it may now point to an
 	// invalid address (in the middle of an OpCode we just wrote out).
 	new
 		Opcode:nop = RelocateOpcode(OP_NOP),
@@ -128,7 +151,7 @@ public Inline_FoundEnd(scanner[CodeScanner])
 	AMX_Write(addr + 0, _:nop);
 	AMX_Write(addr + 4, _:nop);
 	// Restart scanning for the next inline.
-	YSI_g_sCurInlineState = 0;
+	data[E_INLINE_DATA_STATE] = 0;
 	return 0;
 }
 
@@ -137,9 +160,13 @@ public OnCodeInit()
 	new scanner[CodeScanner];
 	CodeScanInit(scanner);
 	
+	// Allocate the inline scanning data on the stack, instead of globally.
+	new data[E_INLINE_DATA];
+	
 	// Optimised.
 	new csm0[CodeScanMatcher];
 	CodeScanMatcherInit(csm0, &Inline_FoundStart);
+	CodeScanMatcherData(csm0, ref(data));
 	CodeScanMatcherPattern(csm0,
 		OP(PUSH_C, INLINE_PATTERN_4)
 		OP(PUSH_C, INLINE_PATTERN_3)
@@ -149,12 +176,14 @@ public OnCodeInit()
 		OP(PUSH_C, 20)
 		OP(CALL, &I@E)
 		OP(JZER, ???)
+		OP(JUMP, ???)
 	);
 	CodeScanAddMatcher(scanner, csm0);
 	
 	// Unoptimised.
 	new csm1[CodeScanMatcher];
 	CodeScanMatcherInit(csm1, &Inline_FoundStart);
+	CodeScanMatcherData(csm1, ref(data));
 	CodeScanMatcherPattern(csm1,
 		OP(CONST_PRI, INLINE_PATTERN_4)
 		OP(PUSH_PRI)
@@ -169,12 +198,14 @@ public OnCodeInit()
 		OP(PUSH_C, 20)
 		OP(CALL, &I@E)
 		OP(JZER, ???)
+		OP(JUMP, ???)
 	);
 	CodeScanAddMatcher(scanner, csm1);
 	
 	// Mid point.
 	new csm2[CodeScanMatcher];
 	CodeScanMatcherInit(csm2, &Inline_FoundMid);
+	CodeScanMatcherData(csm2, ref(data));
 	CodeScanMatcherPattern(csm2,
 		OP(PUSH_C, 0)
 		OP(CALL, &I@F)
@@ -191,6 +222,7 @@ public OnCodeInit()
 	//   
 	new csm3[CodeScanMatcher];
 	CodeScanMatcherInit(csm3, &Inline_FoundVar);
+	CodeScanMatcherData(csm3, ref(data));
 	CodeScanMatcherPattern(csm3,
 		OP(ZERO_PRI)
 		OP(HEAP, 4)
@@ -222,6 +254,7 @@ public OnCodeInit()
 	//   
 	new csm4[CodeScanMatcher];
 	CodeScanMatcherInit(csm4, &Inline_FoundRef);
+	CodeScanMatcherData(csm4, ref(data));
 	CodeScanMatcherPattern(csm4,
 		OP(CONST_PRI, ???)
 		OP(HEAP, 4)
@@ -233,6 +266,7 @@ public OnCodeInit()
 	// End
 	new csm5[CodeScanMatcher];
 	CodeScanMatcherInit(csm5, &Inline_FoundEnd);
+	CodeScanMatcherData(csm5, ref(data));
 	CodeScanMatcherPattern(csm5,
 		OP(CALL, &I@L)
 		OP(HEAP, ???)
@@ -243,6 +277,7 @@ public OnCodeInit()
 	// Constness
 	new csm6[CodeScanMatcher];
 	CodeScanMatcherInit(csm6, &Inline_FoundConst);
+	CodeScanMatcherData(csm6, ref(data));
 	CodeScanMatcherPattern(csm6,
 		OP(PUSH_C, ???)
 		OP(PUSH_C, 4)
@@ -252,6 +287,7 @@ public OnCodeInit()
 	
 	new csm7[CodeScanMatcher];
 	CodeScanMatcherInit(csm7, &Inline_FoundConst);
+	CodeScanMatcherData(csm7, ref(data));
 	CodeScanMatcherPattern(csm7,
 		OP(CONST_PRI, ???)
 		OP(PUSH_PRI)
@@ -261,10 +297,12 @@ public OnCodeInit()
 	CodeScanAddMatcher(scanner, csm7);
 	
 	// Run all the scanners in parallel.
+	// TODO: Try and determine rough types for parent function parameters, using
+	// Opcodes like LREF, SREF, and IDXADDR (IDXARRAY?  Can't remember off the
+	// top of my head).
 	CodeScanRun(scanner);
 	return 1;
 }
-
 
 
 
@@ -302,9 +340,9 @@ public OnCodeInit()
 #define INLINE_NUM(%9,%9,%2)%8$(%0)%1(%3) %8$(%0,%2)%1(0,%3)
 #define INLINE_REF(%9,%9,%2)%8$(%0)%1(%3) %8$(%0,%2)%1(-1,%3)
 
-#define INLINE_END(%9)%8$(,%0)%1(%3) %8$#%9":....";if (I@E(%9))for(new %0;I@F();)while(I@L(%3I@K(%1)))
+#define INLINE_END(%9)%8$(,%0)%1(%3) %8$#%9":....";if (I@E(%9)){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
 
-#define INLINE_NUL(%9)%8$()%1() %8$#%9":....";if (I@E(%9))for(;I@F();)while(I@L(I@K(%1)))
+#define INLINE_NUL(%9)%8$()%1() %8$#%9":....";if (I@E(%9)){}else for(;I@F();)while(I@L(I@K(%1)))
 
 #define I@O$ 32]=
 
@@ -401,15 +439,391 @@ Inline_Start(const &name, a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE
 	return 0;
 }
 
-
-
-
-
-
-
 #endif
 
-static stock Inline_DoCodeGen()
+#endinput
+
+static stock
+	YSI_g_sLoadTemp;
+
+static stock Inline_GenerateParametersCopy()
 {
+	// We can't play about with the stack as much as we used to any more, nor
+	// can we use run-time code rewriting to use `MOV` to copy the data.
+	// Instead we need to allocate space on the stack then `memcpy` it in.
+	_@emit STACK                    -(cells * cellbytes)
+	_@emit PUSH.C                   cells
+	_@emit PUSH.C                   (cells * cellbytes)
+	_@emit PUSH.C                   0
+	// `pri` should always be a pointer to the function data.
+	_@emit MOVE.alt
+	_@emit CONST.pri                e_CALLBACK_DATA_CLOSURE
+	_@emit LIDX
+	_@emit PUSH.pri
+	_@emit LCTRL                    4 // Load the stack address.
+	_@emit ADD.C                    (4 * cellbytes)
+	_@emit PUSH.pri
+	_@emit PUSH.C                   (5 * cellbytes) // Number of parameters.
+	_@emit SYSREQ                   "memcpy"
+	// Don't need the return value, so restore `pri` before clobbering `alt`
+	// with the stack adjustment.
+	_@emit MOVE.pri
+	_@emit STACK                    (6 * cellbytes)
+}
+
+static stock Inline_GenerateClosureCopyIn(cells)
+{
+	new
+		tmp = ref(YSI_g_sLoadTemp);
+	// Copy from `pri` to the stack.
+	// First allocate space on the stack.
+	_@emit STACK                    -(cells * cellbytes)
+	// `MOVS` copies from `pri` to `alt`, `pri` currently holds the pointer to
+	// the passed in callback information, which includes the source address as
+	// a field, but we need to make a copy.  We also can't use `LREF.S` here
+	// because we don't actually know the frame pointer offset.  Instead we use
+	// `LREF` with a single global.
+	_@emit ADD.C                    e_CALLBACK_DATA_CLOSURE
+	_@emit STOR.pri                 tmp
+	_@emit LREF                     tmp
+	
+}
+
+static stock Inline_GenerateClosureCopyOut()
+{
+	// TODO:
+	// We CAN use `MOVS` for this actually, just not for function parameters...
+	_@emit PUSH.C                   cells
+	_@emit PUSH.C                   (cells * cellbytes)
+	_@emit PUSH.C                   0
+	// `pri` should always be a pointer to the function data.
+	_@emit MOVE.alt
+	_@emit LCTRL                    4 // Load the stack address.
+	_@emit ADD.C                    (3 * cellbytes)
+	_@emit PUSH.pri
+	_@emit CONST.pri                e_CALLBACK_DATA_CLOSURE
+	_@emit LIDX
+	_@emit PUSH.pri
+	_@emit PUSH.C                   (5 * cellbytes) // Number of parameters.
+	_@emit SYSREQ                   "memcpy"
+	// Don't need the return value, so restore `pri` before clobbering `alt`
+	// with the stack adjustment.
+	_@emit MOVE.pri
+	_@emit STACK                    (6 * cellbytes + cells * cellbytes)
+}
+
+static stock Inline_DoCodeGen(data[E_INLINE_DATA])
+{
+	// The code will be written between "E_INLINE_DATA_START" and
+	// "E_INLINE_DATA_USER", except for a few bytes at "E_INLINE_DATA_LOOP",
+	// which is the point that user code will return to when it ends, and so
+	// should handle that case (mostly just a `STACK` and `RETN`).
+	// 
+	// In order to simplify the code generation, I use the `_@emit` macro, which
+	// is the same as the `@emit` macro, but transparently handles the void for
+	// "_LOOP" by running out of space, erroring, putting in the end code, and
+	// reinitialising the assembly context after that gap.
+	// 
+	// =========================================================================
+	//     NOW WE CAN DO THE MAIN FUNCTION CODE.
+	// =========================================================================
+	new
+		argSize = data[E_INLINE_DATA_LOCALS];
+	new
+		ctx[AsmContext];
+	// =========================================================================
+	//     CODE SPACE AVAILABLE
+	// =========================================================================
+	//  
+	//  Inline_Entry: 6
+	//  Vars: 2 v+r
+	//  Arrays: 7 a
+	//  JUMP: 2
+	//  Inline_Allocator: 6
+	//  
+	//  Arrays: 6 a
+	//  Vars: 5 v
+	//  Refs: 6 r
+	//  
+	//  Inline_Main: 19
+	//  
+	//  Simple Total: 14 + 7v + 8r + 19
+	//  Complex Total: 14 + 7v + 8r + 17a + 19
+	//  
+	//  Simple Required: 15 + 3v + 7r + 16
+	//  Complex Required: 15 + 4v + 8r + 6a + 16
+	//  
+	// =========================================================================
+	//     SEGMENT 1 - RESOLVE AND PUSH CLOSURE DATA AND PARAMETERS
+	// =========================================================================
+	AsmInitPtr(ctx, data[E_INLINE_DATA_START] + AMX_HEADER_COD, data[E_INLINE_DATA_LOOP] - data[E_INLINE_DATA_START]);
+	AsmSetErrorHandler(ctx, GetPublicAddressFromName("Inline_OnAsmError"));
+	
+	
+	if (data[E_INLINE_DATA_STATE] & 24)
+	{
+		// Has arrays or references (things that need copying back).
+		if (data[E_INLINE_DATA_LOCALS])
+		{
+			// Has a closure.
+		}
+		else
+		{
+			// No closure data to copy over (but may have parent function passed
+			// in parameters - we can't know that now).
+		}
+	}
+	else
+	{
+		// Only simple variables.
+		if (data[E_INLINE_DATA_LOCALS])
+		{
+			// Has a closure.
+		}
+		else
+		{
+			// The simplest method - no closure data to copy over (but may have
+			// parent function passed in parameters - we can't know that now).
+		}
+	}
+	
+	
+	
+	
+	// Space for params + count.
+	new
+		// Size of stored closure data.
+		offset = (YSI_g_sCurInlineParams + YSI_g_sCurInlineLocals + 12);
+	if (varCount == args) // Only variables.
+	{
+		// =====================================================================
+		//     SIMPLE CODE - NO ARRAYS OR STRINGS
+		// =====================================================================
+		if (YSI_g_sCurInlineLocals)
+		{
+			P:5("Inline_Main: TYPE 0");
+			YSI_g_sRequiredSpace = 4 * 3 * args + 4 * 13;
+			_@emit STACK      (-offset)
+			_@emit ADDR.alt   (-offset) // Like "LCTRL 4; XCHG", but shorter.
+			_@emit LREF.S.pri 12   // Load "func" variable.
+			// Sadly "MOVS" checks that the destination is valid and in the stack, which
+			// is what we didn't want.
+			_@emit MOVS       offset
+			// Reduce the stack again.  This is the shortest way I know (5 cells).
+			_@emit STACK      (4 + YSI_g_sCurInlineLocals)
+			_@emit PROC       // Set up the new frame.
+			_@emit STACK      (-YSI_g_sCurInlineLocals) // Skip other locals again.
+			new
+				// Get the offset to the calling function's passed parameters.
+				// 12 for this function's header, plus this function's parameters, plus
+				// the last function's locals (currently none, MUST BE KEPT UP TO DATE),
+				// plus the last function's header, plus the "func" variable.
+				load = 12 + YSI_g_sCurInlineParams + 0 + 12 + 4,
+				i = 0;
+			while (i++ < args)
+			{
+				// Loop over the arguments and push them.
+				_@emit LREF.S.pri load
+				_@emit PUSH.pri
+				load += 4;
+			}
+		}
+		else
+		{
+			P:5("Inline_Main: TYPE 1 (%d, %d, %d, %d, %d)", offset, offset - 4, args, 4 * 3 * args + 4 * 9, 12 + YSI_g_sCurInlineParams + 0 + 12 + 4);
+			// This is the simplest of the four versions of the code.  Here
+			// there are no arrays to copy over, nor are there any local
+			// variables from the closure.
+			offset -= 4,
+			YSI_g_sRequiredSpace = 4 * 3 * args + 4 * 9;
+			_@emit STACK      (-offset)
+			_@emit ADDR.alt   (-offset)
+			_@emit LREF.S.pri 12
+			_@emit MOVS       offset
+			_@emit PROC
+			new
+				load = 12 + YSI_g_sCurInlineParams + 0 + 12 + 4,
+				i = 0;
+			while (i++ < args)
+			{
+				_@emit LREF.S.pri load
+				_@emit PUSH.pri
+				load += 4;
+			}
+			offset += 4;
+		}
+	}
+	else
+	{
+		// =====================================================================
+		//     COMPLEX CODE - ARRAYS OR STRINGS
+		// =====================================================================
+		if (YSI_g_sCurInlineLocals)
+		{
+			P:5("Inline_Main: TYPE 2");
+			YSI_g_sRequiredSpace = 4 * 4 * varCount + 4 * 6 * arrCount + 4 * 14 * strCount + 4 * 13;
+			_@emit STACK      (-offset)
+			_@emit STACK      (YSI_g_sCurInlineLocals - argSize)
+			_@emit LREF.S.pri 12
+			_@emit MOVS       offset
+			new
+				load = 12 + 4,
+				stor = -offset,
+				i = 0;
+			while (i < args)
+			{
+				if ((varCount = getarg(++i)) == cellmax)
+				{
+					// String.
+					stor -= YSI_MAX_INLINE_STRING * 4;
+					_@emit PUSH.C     YSI_MAX_INLINE_STRING
+					_@emit PUSH.S     load // src = *cur
+					_@emit ZERO.S     stor // dest[0] = '\0';
+					_@emit PUSH.adr   stor // dst = &dest
+					_@emit PUSH.C     12
+					_@emit SYSREQ     "strcat"
+					_@emit STACK      16
+				}
+				else
+				{
+					if ((varCount *= 4) <= 0)
+					{
+						// Normal variable.
+						stor -= 4;
+						_@emit LREF.S.pri load
+						_@emit STOR.S.pri stor
+					}
+					else 
+					{
+						// Array.
+						stor -= varCount;
+						_@emit LOAD.S.pri load
+						_@emit ADDR.alt   stor
+						_@emit MOVS       varCount
+					}
+				}
+				load += 4;
+			}
+			_@emit STACK      (4 + argSize)
+			_@emit PROC
+			_@emit STACK      (-argSize)
+		}
+		else
+		{
+			P:5("Inline_Main: TYPE 3");
+			offset -= 4,
+			YSI_g_sRequiredSpace = 4 * 4 * varCount + 4 * 6 * arrCount + 4 * 14 * strCount + 4 * 11;
+			_@emit STACK      (-offset)
+			_@emit ADDR.alt   (-offset)
+			_@emit LREF.S.pri 12
+			_@emit MOVS       offset
+			_@emit PROC
+			_@emit STACK      (-argSize)
+			new
+				load = 12 + YSI_g_sCurInlineParams + 0 + 12 + 4,
+				stor = 0,
+				i = 0;
+			while (i < args)
+			{
+				if ((varCount = getarg(++i)) == cellmax)
+				{
+					// String.
+					stor -= YSI_MAX_INLINE_STRING * 4;
+					_@emit PUSH.C     YSI_MAX_INLINE_STRING
+					_@emit PUSH.S     load // src = *cur
+					_@emit ZERO.S     stor // dest[0] = '\0';
+					_@emit PUSH.adr   stor // dst = &dest
+					_@emit PUSH.C     12
+					_@emit SYSREQ     "strcat"
+					_@emit STACK      16
+				}
+				else
+				{
+					if ((varCount *= 4) <= 0)
+					{
+						// Normal variable.
+						stor -= 4;
+						_@emit LREF.S.pri load
+						_@emit STOR.S.pri stor
+					}
+					else 
+					{
+						// Array.
+						stor -= varCount;
+						_@emit LOAD.S.pri load
+						_@emit ADDR.alt   stor
+						_@emit MOVS       varCount
+					}
+				}
+				load += 4;
+			}
+			offset += 4;
+		}
+	}
+	// =========================================================================
+	//     SEGMENT 2 - SAVE REFERENCES BACK
+	// =========================================================================
+	if (YSI_g_sJumpAddress == 0)
+	{
+		// Fake an error.  This indirectly calls the "Inline_OnAsmError"
+		// function above to fill the intervening space with NOPs.
+		ctx[AsmContext_buffer_size] = 0;
+		@emit NOP
+	}
+	// The maths should now be correct.
+	AsmInitPtr(ctx, YSI_g_sCurInlineLoop + AMX_HEADER_COD, cellmax);
+	if (argSize)
+	{
+		@emit STACK     argSize
+		YSI_g_sJumpAddress = YSI_g_sCurInlineLoop + 16;
+	}
+	else
+	{
+		YSI_g_sJumpAddress = YSI_g_sCurInlineLoop + 8;
+	}
+	@emit ZERO.pri // Default return value.
+	@emit RETN
+	// Save this return address, so the instruction above goes to the one below.
+	// Save references.
+	new
+		load = -offset,
+		stor = 12 + 4,
+		i = 0;
+	while (i < args)
+	{
+		varCount = getarg(++i);
+		switch (varCount)
+		{
+			case -1:
+			{
+				load -= 4;
+				@emit LOAD.S.alt load
+				@emit SREF.S.alt stor
+			}
+			case 0: load -= 4;
+			case cellmax: load -= YSI_MAX_INLINE_STRING * 4;
+			default: load -= varCount * 4;
+		}
+		stor += 4;
+	}
+	// Copy the closure back (if there is anything that needs copying).
+	if (constFunc && (YSI_g_sCurInlineParams || YSI_g_sCurInlineLocals))
+	{
+		if (!YSI_g_sCurInlineLocals) offset -= 4;
+		@emit STACK      (-offset)
+		@emit PUSH.pri
+		@emit ADDR.pri   (-offset)
+		@emit LREF.S.alt 12
+		@emit MOVS       offset
+		@emit POP.pri
+		@emit STACK      offset
+	}
+	// Finish.
+	@emit RETN
+	// =========================================================================
+	//     STORE THE RETURN ADDRESS
+	// =========================================================================
+	AMX_Write(YSI_g_sCurInlinePointer, YSI_g_sJumpAddress),
+	AMX_Write(YSI_g_sCurInlinePointer - 12, '\02;');
 }
 
