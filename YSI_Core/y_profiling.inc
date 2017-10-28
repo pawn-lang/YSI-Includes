@@ -120,14 +120,14 @@ Optional plugins:
 #endif
 
 #if defined RUN_PROFILINGS
-	#define ProfileInit:%0(%1) @yP_();@yP_()
-	#define Profile:%0(%1) __TZ:@y_P%0(%1);__TZ:@y_P%0(%1)RUN_TIMING(#%0)y_P@%0();static y_P@%0()
-	#define ProfileClose:%0(%1) @P_y();@P_y()
+	#define ProfileInit:%0(%1) @yP_%0();@yP_%0()
+	#define Profile:%0(%1) __TZ:@y_P%0();__TZ:@y_P%0(%1)RUN_TIMING(#%0)y_P@%0();static y_P@%0()
+	#define ProfileClose:%0(%1) @P_y%0();@P_y%0()
 	#define __TZ:%0[%2](%1);%0[%2](%1)RUN_TIMING(%3)%4[%5](%6);%9[%5](%6) %0_%2(%1);%0_%2(%1)RUN_TIMING(%3,%2)%4_%2(%6);static %4_%2(%6)
 #else
-	#define ProfileInit:%0(%1) static stock yP_@()
-	#define Profile:%1() static stock __TZ:y_P@%1()
-	#define ProfileClose:%0(%1) static stock P_y@()
+	#define ProfileInit:%0(%1) static stock yP_@%0()
+	#define Profile:%0(%1) static stock __TZ:y_P@%0()
+	#define ProfileClose:%0(%1) static stock P_y@%0()
 	#define __TZ:%0[%2](%1) __TZ:%0_%2(%1)
 #endif
 
