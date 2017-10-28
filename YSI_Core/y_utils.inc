@@ -1850,18 +1850,18 @@ stock Median(arr[], num = sizeof (arr))
 stock Range(arr[], num = sizeof (arr))
 {
 	new
-		min = cellmax,
-		max = cellmin,
+		min2 = cellmax,
+		max2 = cellmin,
 		cur;
 	while (num)
 	{
 		cur = arr[--num];
-		if (cur < min)
-			min = cur;
-		if (cur > max)
-			max = cur;
+		if (cur < min2)
+			min2 = cur;
+		if (cur > max2)
+			max2 = cur;
 	}
-	return max - min;
+	return max2 - min2;
 }
 
 #include "..\YSI_Coding\y_va"
