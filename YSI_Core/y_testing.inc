@@ -164,6 +164,8 @@ forward bool:_Testing_End();
 #define Y_TESTING_PINIT _C<@Q_y>
 #define Y_TESTING_PTEST _C<@_Qy>
 #define Y_TESTING_PSHUT _C<@_yQ>
+#define Y_TESTING_BEFORE _A<yB_@>
+#define Y_TESTING_AFTER _A<yA_@>
 
 static stock
 	YSI_g_sCurTest = 0,
