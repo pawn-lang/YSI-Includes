@@ -109,6 +109,7 @@ public _@_y_funcinc_@_()
 	heapspace();
 	setproperty(0, "", 0, "");
 	getproperty(0, "", 0, _funcinc_a);
+	swapchars(0);
 	memset("", 0, 0);
 	strcmp("", "");
 }

@@ -132,14 +132,17 @@ Optional plugins:
 #include "..\YSI_Internal\y_compilerdata"
 #include "..\YSI_Internal\y_globaltags"
 #include "..\YSI_Internal\y_version"
-
 #include "..\YSI_Internal\y_funcinc"
-
 #include "..\YSI_Server\y_scriptinit"
+#include "..\YSI_Internal\y_prehook"
 
 #if !defined _DEBUG
 	#define _DEBUG 0
 #endif
+
+CHAIN_HOOK(Debug)
+#undef CHAIN_ORDER
+#define CHAIN_ORDER CHAIN_NEXT(Debug)
 
 stock YSI_gDebugLevel = 0;
 
@@ -651,6 +654,21 @@ stock Debug_Print0(const str[], GLOBAL_TAG_TYPES:...) <>
 	return 0;
 }
 
+forward Debug_ErrorHandler(asmError);
+
+public Debug_ErrorHandler(asmError)
+{
+	switch (asmError)
+	{
+	case 1:
+		P:W("ASM: Unknown opcode");
+	case 2:
+		P:W("ASM: Operand invalid");
+	case 3:
+		P:W("ASM: Insufficient space");
+	}
+}
+
 stock Debug_PrintArray(arr[], size = sizeof (arr))
 {
 	new
@@ -688,7 +706,7 @@ stock Debug_PrintArray(arr[], size = sizeof (arr))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-public OnScriptInit()
+public OnCodeInit()
 {
 	Debug_SetState();
 	new
@@ -698,12 +716,8 @@ public OnScriptInit()
 	#emit STOR.S.pri s
 	if (s)
 	{
-		//goto Debug_OnScriptInit_no_fault();
-		#if defined Debug_OnScriptInit
-			return Debug_OnScriptInit();
-		#else
-			return 1;
-		#endif
+		//goto Debug_OnCodeInit_no_fault();
+		return Debug_OnCodeInit();
 	}
 	P:F("YSI_FILTERSCRIPT == 0");
 	while (s != 10000000) ++s;
@@ -728,6 +742,9 @@ static stock Debug_SetState() <>
 	state ysi_debug : on;
 }
 
+CHAIN_FORWARD:Debug_OnCodeInit() = 1;
+#undef OnCodeInit
+#define OnCodeInit(%0) CHAIN_PUBLIC:Debug_OnCodeInit(%0)
 /*-------------------------------------------------------------------------*//**
  * <remarks>
  *  Turn on level 0 prints.
@@ -750,11 +767,6 @@ stock Debug_Disable()
 	state ysi_debug : off;
 }
 
-#undef OnScriptInit
-#define OnScriptInit Debug_OnScriptInit
-#if defined Debug_OnScriptInit
-	forward Debug_OnScriptInit();
-#endif
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>

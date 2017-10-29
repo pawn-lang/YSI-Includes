@@ -70,10 +70,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-PRE_HOOK(Class)
-#undef CHAIN_ORDER
-#define CHAIN_ORDER @CO_Class
-
 forward Class_ResolveGroups(class, Group:forgroup, bool:cp);
 
 enum e_CLASS_FLAGS (<<= 1)
@@ -326,13 +322,13 @@ global void:Class_Goto(playerid, playerclass)
 		}
 #endif
 
-HOOK_FORWARD:Class_OnPlayerRequestSpawn(playerid);
+CHAIN_FORWARD:Class_OnPlayerRequestSpawn(playerid) = 1;
 #if defined _ALS_OnPlayerRequestSpawn
 	#undef OnPlayerRequestSpawn
 #else
 	#define _ALS_OnPlayerRequestSpawn
 #endif
-#define OnPlayerRequestSpawn(%0) Class_OnPlayerRequestSpawn(%0) <_ALS : _ALS_go>
+#define OnPlayerRequestSpawn(%0) CHAIN_PUBLIC:Class_OnPlayerRequestSpawn(%0)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who spawned.</param>
@@ -745,11 +741,11 @@ public OnPlayerRequestClass(playerid, classid)
 #endif
 
 // Use the special pre-y_hooks hook method.
-HOOK_FORWARD:Class_OnPlayerRequestClass(playerid, classid);
+CHAIN_FORWARD:Class_OnPlayerRequestClass(playerid, classid) = 1;
 #if defined _ALS_OnPlayerRequestClass
 	#undef OnPlayerRequestClass
 #else
 	#define _ALS_OnPlayerRequestClass
 #endif
-#define OnPlayerRequestClass(%0) Class_OnPlayerRequestClass(%0) <_ALS : _ALS_go>
+#define OnPlayerRequestClass(%0) CHAIN_PUBLIC:Class_OnPlayerRequestClass(%0)
 

@@ -104,7 +104,9 @@ Optional plugins:
 #endif
 
 #include "..\YSI_Core\y_utils"
+#include "..\YSI_Coding\y_va"
 #include "y_globaltags"
+#include "y_renative"
 #include "y_shortvar"
 #include "..\YSI_Core\y_debug"
 
@@ -137,9 +139,8 @@ Optional plugins:
 // Z@ - Detect string
 // 
 
-// N@ taken by y_uvar.
-// M@ taken by y_svar.
-// L@ taken by y_testing.
+new
+	Q@[YSI_MAX_STRING];
 
 static stock
 	YSI_g_sPropVarArg[3] = YSIM_VARARG;
@@ -370,8 +371,10 @@ stock T@(string:ret[YSI_MAX_STRING], GLOBAL_TAG_TYPES:...)
 	return 1;
 }
 
+// Used by y_master and y_remote.  Re-evaluate after rewrites.
 native _YSI_RE_NATIVE<U@|||id=0, const name[]="", value=cellmin, const string[]=""|||setproperty>
 
+// Used by y_master and y_remote.  Re-evaluate after rewrites.
 native _YSI_RE_NATIVE<V@|||GLOBAL_TAG_TYPES:id=0, const name[]="", value=cellmin, string[]=""|||getproperty>
 
 #if defined _YSI_MINI_MODE
@@ -391,30 +394,10 @@ native _YSI_RE_NATIVE<V@|||GLOBAL_TAG_TYPES:id=0, const name[]="", value=cellmin
 // tag mismatch warnings with remote functions with strong tag parameters.
 native _YSI_RE_NATIVE<W@|||const function[], const format[], GLOBAL_TAG_TYPES:...|||CallRemoteFunction>
 
-native _YSI_RE_NATIVE<P@|||const function[], const format[], GLOBAL_TAG_TYPES:...|||CallLocalFunction>
-
 #if defined _ALS_CallRemoteFunction
 	#if defined BAD_CallRemoteFunction
 		#define CallRemoteFunction( FIXES_CallRemoteFunction(
 	#endif
-#endif
-
-#if defined _YSI_MINI_MODE
-	#if defined _ALS_CallRemoteFunction
-		#undef CallRemoteFunction
-	#else
-		#define _ALS_CallRemoteFunction
-	#endif
-	
-	#define CallRemoteFunction _MMD(CallRemoteFunction)
-	
-	#if defined _ALS_CallLocalFunction
-		#undef CallLocalFunction
-	#else
-		#define _ALS_CallLocalFunction
-	#endif
-	
-	#define CallLocalFunction  _MMD(CallLocalFunction)
 #endif
 
 #if defined _ALS_SetTimerEx
@@ -433,8 +416,6 @@ native _YSI_RE_NATIVE<O@|||const function[], time, repeat, const format[], GLOBA
 	#endif
 #endif
 
-native _YSI_RE_NATIVE<K@|||const function[], time, repeat|||SetTimer>
-
 stock X@(GLOBAL_TAG_TYPES:n)
 {
 	// THIS MUST REMAIN FOREVER!  Detected by fixes.inc.
@@ -442,35 +423,9 @@ stock X@(GLOBAL_TAG_TYPES:n)
 	setproperty(8, YSIM_RETURN, n);
 }
 
-stock Y@()
-{
-	P:4("Y@ called");
-	// Already returns the previous value.
-	return setproperty(8, YSIM_CALLER, _@);
-}
-
-stock Z@(GLOBAL_TAG_TYPES:v = -1)
-{
-	P:4("Z@ called");
-	return
-		setproperty(8, YSIM_CALLER, v),
-		getproperty(8, YSIM_RETURN);
-}
-
-new Q@[YSI_MAX_STRING];
-
-stock S@(GLOBAL_TAG_TYPES:v = -1)
-{
-	P:4("S@ called");
-	return
-		getproperty(8, "", YSIM_STRING, Q@),
-		strunpack(Q@, Q@),
-		setproperty(8, YSIM_CALLER, v);
-	//return Q@;
-}
-
 stock R@(buffer[])
 {
+	// To remove on completion of y_remote upgrade.
 	P:4("R@ called: \"%s\"", buffer);
 	return setproperty(8, "", YSIM_STRING, buffer);
 }
@@ -485,31 +440,19 @@ stock H@(GLOBAL_TAG_TYPES:...)
 #define _H@0:_H@1:%0&%1) _H@0:_H@1:%0%1)
 #define _H@1:%0[%9]%1) _H@1:%0%1)
 
-stock G@(GLOBAL_TAG_TYPES:...)
-{
-	// Just a dead-end for spare parameters which returns a string.
-	return Q@;
-}
-
 stock F@()
 {
+	// To remove on completion of y_remote upgrade.
 	P:4("F@ called");
 	return
 		getproperty(8, "", YSIM_STRING, Q@),
-		//P:4("2"),
-		//P:4("3"),
 		strunpack(Q@, Q@);
-	
-	//return Q@;
 }
 
 // Consume trailing spaces.  Despite being a common letter, this is unlkely to
 // ever be matched due to the unusual series of operators after it.  If anyone
 // else tries to define "x" however they may have a slight problem (they can't).
-//#define x,), x),
-// Changed as x,): was also needed (for ?:).
 #define x:##),) #))
-//#define x,) )
 #define q:##),ALS_RS_none:) #))
 
 // This is for getting excess parameters on non-strings.  Now safely recursive.

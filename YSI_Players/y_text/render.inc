@@ -1064,7 +1064,7 @@ Format_Render_start:
 								new
 									lst = setproperty(8, YSIM_CALLER),
 									_j = 0;
-								setproperty(8, YSIM_CALLER, _@);
+								setproperty(8, YSIM_CALLER, Y@);
 								for ( ; ; )
 								{
 									CallRemoteFunction(func, "ii", _:l, _j);
@@ -1107,7 +1107,7 @@ Format_Render_start:
 								new
 									lst = setproperty(8, YSIM_CALLER),
 									_j = 0;
-								setproperty(8, YSIM_CALLER, _@);
+								setproperty(8, YSIM_CALLER, Y@);
 								for ( ; ; )
 								{
 									CallRemoteFunction(func, "iii", pid, _:l, _j);

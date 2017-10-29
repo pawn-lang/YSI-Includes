@@ -36,6 +36,96 @@ Legal:
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
+	
+	Contributors:
+		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
+	
+	Thanks:
+		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+		ZeeX - Very productive conversations.
+		koolk - IsPlayerinAreaEx code.
+		TheAlpha - Danish translation.
+		breadfish - German translation.
+		Fireburn - Dutch translation.
+		yom - French translation.
+		50p - Polish translation.
+		Zamaroht - Spanish translation.
+		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
+			for me to strive to better.
+		Pixels^ - Running XScripters where the idea was born.
+		Matite - Pestering me to release it and using it.
+	
+	Very special thanks to:
+		Thiadmer - PAWN, whose limits continue to amaze me!
+		Kye/Kalcor - SA:MP.
+		SA:MP Team past, present and future - SA:MP.
+	
+Version:
+	0.2
+Changelog:
+	06/08/10:
+		Managed the ultimate - got completely transparent inclusion!
+	05/08/10:
+		Completed new master system, now does all syncing and clients.
+	06/10/09:
+		Rewrote using states.
+		Added remote function macros.
+		Reduced the number of masters to a single one.  It must have them all.
+		Vastly simplified the master model - ending the master ends everything.
+	06/01/08:
+		Added code to not pass data if no other script exists.
+	17/11/07:
+		Added code for a script to remove itself from the global list.
+	11/10/07:
+		Not first version but added documentation months late.
+Functions:
+	Public:
+		-
+	Core:
+		-
+	Stock:
+		-
+	Static:
+		-
+	Inline:
+		-
+	API:
+		-
+	Hooks:
+		-
+Callbacks:
+	-
+Definitions:
+	-
+Enums:
+	-
+Macros:
+	RF - Declare a function which may be remote.
+	RV - Declare a void function which may be remote.
+	RS - Declare an optional callback.
+	RFN - Declare an optional callback with no parameters.
+	RFC - Declare a slower but shorter function.
+	RFP - Declare a function with tags and give recall hints.
+	RFPC - Combination of P and C.
+	RFCP - Combination of P and C.
+Tags:
+	-
+Variables:
+	Global:
+		Y@ - ID of this script.
+	Static:
+		-
+Commands:
+	-
+Compile options:
+	YSI_NO_MASTER - Don't use the master system.
+	YSI_IS_CLIENT - Script is a client only script.
+	YSI_IS_SERVER - Script is a server only script.
+Operators:
+	-
+Natives:
+	-
+\**--------------------------------------------------------------------------**/
 
 Contributors:
 	Y_Less
@@ -95,6 +185,11 @@ Optional plugins:
 	#include "..\YSI_Internal\y_shortfunc"
 	
 	#include "..\YSI_Internal\y_natives"
+	#include "..\YSI_Internal\y_prehook"
+	
+	CHAIN_HOOK(Master)
+	#undef CHAIN_ORDER
+	#define CHAIN_ORDER CHAIN_NEXT(Master)
 	
 	#include "y_master/once"
 #endif

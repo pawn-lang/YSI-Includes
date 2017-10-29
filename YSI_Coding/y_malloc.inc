@@ -168,6 +168,7 @@ Optional plugins:
 #include "..\YSI_Core\y_utils"
 
 #include "..\YSI_Internal\y_thirdpartyinclude"
+#include "..\YSI_Internal\y_prehook"
 
 #define GB_TO_MB(%0) ((%0) * 1024)
 
@@ -198,6 +199,15 @@ Optional plugins:
 		#define MALLOC_MEMORY MB_TO_CELL(16)
 	#endif
 #endif
+
+CHAIN_HOOK(Malloc)
+#undef CHAIN_ORDER
+#define CHAIN_ORDER CHAIN_NEXT(Malloc)
+
+#define MALLOC_FORWARD:%0(%1); \
+	forward Malloc_%0(%1); \
+	public Malloc_%0(%1) <_ALS : _ALS_x0, _ALS : _ALS_x1> { return 1; } \
+	public Malloc_%0(%1) <> { return 1; }
 
 #if defined YSI_NO_HEAP_MALLOC
 	#if defined DYNAMIC_MEMORY
@@ -261,26 +271,41 @@ forward Alloc:calloc(size);
 	new
 		YSI_gMallocMemory[MALLOC_MEMORY];
 	
-	public OnScriptInit()
+	public OnCodeInit()
 	{
 		YSI_g_sHeapStart = 0;
 		YSI_gMallocMemory[0] = MALLOC_MEMORY - 1;
 		YSI_g_sUnusedStart = 1;
-		memset(YSI_gMallocMemory[1], 0, MALLOC_MEMORY - 1);
-		#if defined Malloc_OnScriptInit
-			Malloc_OnScriptInit();
-		#endif
+		Malloc_OnCodeInit();
 		return 1;
 	}
 	
-	#undef OnScriptInit
-	#define OnScriptInit Malloc_OnScriptInit
-	#if defined Malloc_OnScriptInit
-		forward Malloc_OnScriptInit();
-	#endif
+	CHAIN_FORWARD:Malloc_OnCodeInit() = 1;
+	#undef OnCodeInit
+	#define OnCodeInit(%0) CHAIN_PUBLIC:Malloc_OnCodeInit(%0)
 #else
 	new
 		YSI_gMallocMemory[1];
+	
+	#if !defined _ALS_OnJITCompile
+		forward OnJITCompile();
+	#endif
+	
+	public OnJITCompile()
+	{
+		P:E("y_malloc with JIT requires \"#define YSI_NO_HEAP_MALLOC\"");
+		// Disable the JIT.
+		Malloc_OnJITCompile();
+		return 0;
+	}
+	
+	CHAIN_FORWARD:Malloc_OnJITCompile() = 1;
+	#if defined _ALS_OnJITCompile
+		#undef OnJITCompile
+	#else
+		#define _ALS_OnJITCompile
+	#endif
+	#define OnJITCompile(%0) CHAIN_PUBLIC:Malloc_OnJITCompile(%0)
 	
 	// Allocate space on the heap permanently.
 	#include "y_malloc/heapalloc"

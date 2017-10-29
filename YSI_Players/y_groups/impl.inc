@@ -410,7 +410,7 @@ foreign void:Group_Destroy(Group:group);
 global void:Group_Destroy(Group:group)
 {
 	P:2("Group_Destroy called: %i", _:group);
-	P:2("Group_Destroy called in %d", _@);
+	P:2("Group_Destroy called in %d", Y@);
 	// You can't destroy the global group.
 	if (_Group_IsValid(group) && group != GROUP_GLOBAL)
 	{
@@ -539,7 +539,7 @@ hook OnPlayerConnect@9(playerid)
 					return 1;
 				}
 				//_Group_
-				_Group_InitPlayer(playerid, _@);
+				_Group_InitPlayer(playerid, Y@);
 			}
 	#endif
 	return 1;
@@ -1078,7 +1078,7 @@ static remotefunc void:_Group_CreateChain(Group:g)
 @global Group:_Group_Create(string:name[])
 {
 	P:2("Group:Group_Create called: \"%s\"", name);
-	P:2("Group_Create called in %d", _@);
+	P:2("Group_Create called in %d", Y@);
 	new
 		i;
 	if (!isnull(name))
