@@ -129,15 +129,17 @@ Optional plugins:
 // O@ - SetTimerEx
 // P@ - CallLocalFunction
 // Q@ - Temp string
-// S@ - Get string return
 // R@ - Set string return
+// S@ - Get string return
 // T@ - String return storage
 // U@ - setproperty
 // V@ - getproperty
 // W@ - CallRemoteFunction
 // X@ - Set return
-// _@ - Script ID
+// Y@ - Unused function prefix
+// @Y - Public function prefix
 // Z@ - Detect string
+// _@ - Script ID
 // 
 
 static stock
@@ -342,8 +344,8 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 #define C@(%9:%0);%1; C@(%0); // Get word.
 #define D@(%9:%0);%1; D@(%0); // Get string.
 
-#define @__%0\32; @__
-#define __@%0\32; __@
+#define @Y%0\32; @Y
+#define Y@%0\32; Y@
 
 stock L@(GLOBAL_TAG_TYPES:...)
 {

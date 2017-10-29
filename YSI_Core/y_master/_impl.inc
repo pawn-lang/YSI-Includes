@@ -106,7 +106,8 @@ Optional plugins:
 	#define _YSIM_IS_CLOUD  0
 	#define _YSIM_IS_STUB   1
 #else
-	#error Unknown y_master settings.
+//	#error Unknown y_master settings.
+const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 #endif
 
 #undef YSIM_STORED_SETTINGS

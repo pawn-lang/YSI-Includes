@@ -172,8 +172,8 @@ Optional plugins:
 	#define MAX_COMMANDS                (512)
 #endif
 
-// Set commands as master 25.
-#define MASTER 63
+// Set commands as master 51.
+#define MASTER 51
 #define YSIM_U_DISABLE
 #include "..\YSI_Core\y_master"
 
