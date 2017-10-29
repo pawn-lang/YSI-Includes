@@ -2253,9 +2253,7 @@ Test:y_iter_Syntax6b()
 	foreach ( new i : y_iter_Syntax6(1024)) { ++count; }
 	foreach ( new i : y_iter_Syntax6(1024) ) { ++count; }
 	ASSERT(count == 4095 * 1 * 32);
-#if _DEBUG
-	new TODO@issue_217;
-#endif
+	TODO(217, "Iterators with state in `foreach` without `new`.");
 //	new
 //		j;
 //	foreach(j:y_iter_Syntax6(1024)) { ++count; }
@@ -2330,9 +2328,7 @@ Test:y_iter_Syntax6c()
 	foreach ( new i : y_iter_Syntax6[1024]) { ++count; }
 	foreach ( new i : y_iter_Syntax6[1024] ) { ++count; }
 	ASSERT(count == 4095 * 1 * 32);
-#if _DEBUG
-	new TODO@issue_217;
-#endif
+	TODO(217, "Iterators with state in `foreach` without `new`.");
 //	new
 //		j;
 //	foreach(j:y_iter_Syntax6[1024]) { ++count; }

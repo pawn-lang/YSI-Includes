@@ -45,7 +45,7 @@ static
  * </remarks>
  */
 
-hook public OnScriptInit()
+hook public OnCodeInit()
 {
 	#emit CONST.pri    YSI_g_sStack
 	#emit STOR.pri     YSI_g_sStackPtr
@@ -155,6 +155,14 @@ static stock
 
 stock bool:Iter_YieldLoop()
 {
+	static pri, alt;
+	#emit LCTRL 4
+	#emit STOR.pri pri
+	#emit HEAP 0
+	#emit STOR.alt alt
+	printf("1: %08x %08x", pri, alt);
+	#emit LOAD.pri pri
+	#emit LOAD.alt alt
 	if ((YSI_g_sIteratorStack[YSI_gIteratorDepth + 1][E_ITER_YIELD_FIRST] ^= 1))
 	{
 		// If there is nothing allocated here, we fell out of the iterator
@@ -178,6 +186,11 @@ stock bool:Iter_YieldLoop()
 		#emit ADD.C        8
 		#emit STOR.pri     YSI_g_sPtr
 		#emit MOVE.alt
+	#emit STOR.pri pri
+	#emit STOR.alt alt
+	printf("2");
+	#emit LOAD.pri pri
+	#emit LOAD.alt alt
 		// Restore the heap.
 		#emit CONST.pri    3
 		#emit LIDX
@@ -197,6 +210,11 @@ stock bool:Iter_YieldLoop()
 		#emit SCTRL        2
 		#emit PUSH.C       20
 		#emit SYSREQ.C     memcpy
+	#emit STOR.pri pri
+	#emit STOR.alt alt
+	printf("3");
+	#emit LOAD.pri pri
+	#emit LOAD.alt alt
 		// Restore the stack.
 		#emit LOAD.alt     YSI_g_sPtr
 		#emit CONST.pri    0xFFFFFFFF // -1
@@ -205,6 +223,11 @@ stock bool:Iter_YieldLoop()
 		#emit LREF.pri     YSI_g_sPtr // Or ZERO.pri, LIDX
 		#emit PUSH.pri
 		#emit PUSH.pri
+	#emit STOR.pri pri
+	#emit STOR.alt alt
+	printf("3b: %08x %08x", pri, alt);
+	#emit LOAD.pri pri
+	#emit LOAD.alt alt
 		#emit LOAD.alt     YSI_g_sStackPtr
 		#emit SUB.alt
 		#emit ZERO.alt
@@ -216,8 +239,39 @@ stock bool:Iter_YieldLoop()
 		#emit ADD.C        16
 		#emit PUSH.pri
 		#emit PUSH.C       20
+	#emit STOR.pri pri
+	#emit STOR.alt alt
+	printf("q: %08x %08x", YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_START], YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_END]);
+	printf("q: %08x %08x", YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_STACK_SIZE], YSI_g_sIteratorStack[YSI_gIteratorDepth][E_ITER_YIELD_CIP]);
+	static count, dest, source, index, numbytes, maxlength;
+	#emit POP.pri
+	#emit STOR.pri count
+	#emit POP.pri
+	#emit STOR.pri dest
+	#emit POP.pri
+	#emit STOR.pri source
+	#emit POP.pri
+	#emit STOR.pri index
+	#emit POP.pri
+	#emit STOR.pri numbytes
+	#emit POP.pri
+	#emit STOR.pri maxlength
+	printf("%08x %08x %08x %08x %08x %08x", count, dest, source, index, numbytes, maxlength);
+	#emit PUSH maxlength
+	#emit PUSH numbytes
+	#emit PUSH index
+	#emit PUSH source
+	#emit PUSH dest
+	#emit PUSH count
+	#emit LOAD.pri pri
+	#emit LOAD.alt alt
 		#emit SYSREQ.C     memcpy
 		#emit STACK        24
+	#emit STOR.pri pri
+	#emit STOR.alt alt
+	printf("4");
+	#emit LOAD.pri pri
+	#emit LOAD.alt alt
 		// Jump back in to our earlier function.
 		#emit LOAD.alt     YSI_g_sPtr
 		#emit CONST.pri    5
@@ -225,6 +279,7 @@ stock bool:Iter_YieldLoop()
 		#emit SCTRL        5
 		#emit CONST.pri    6
 		#emit LIDX
+		#emit SCTRL        8
 		#emit SCTRL        6
 		// Technically, we never return from here, but the compiler can't know!
 	}
@@ -233,6 +288,7 @@ stock bool:Iter_YieldLoop()
 
 stock Iter_YieldReturn(value)
 {
+	static pri, alt;
 	// This does the return through the global scope.
 	I@ = value;
 	// Load a pointer to the first address.  We know we are in range, so there's
@@ -244,6 +300,11 @@ stock Iter_YieldReturn(value)
 	#emit LOAD.I
 	#emit ADD
 	#emit STOR.pri     YSI_g_sPtr
+#emit STOR.pri pri
+#emit STOR.alt alt
+printf("a");
+#emit LOAD.pri pri
+#emit LOAD.alt alt
 	// Stack (excluding this function and intermediate results).
 	#emit ADD.C        4
 	#emit MOVE.alt
@@ -280,6 +341,11 @@ stock Iter_YieldReturn(value)
 	#emit MOVE.alt
 	#emit LCTRL        2
 	#emit STOR.I
+#emit STOR.pri pri
+#emit STOR.alt alt
+printf("b");
+#emit LOAD.pri pri
+#emit LOAD.alt alt
 	// Using `LCTRL 2` is faster than saving and restoring the value.
 	#emit LREF.alt     YSI_g_sPtr
 	#emit SUB
@@ -307,6 +373,11 @@ stock Iter_YieldReturn(value)
 	#emit MOVE.alt
 	#emit LOAD.S.pri   0
 	#emit STOR.I
+#emit STOR.pri pri
+#emit STOR.alt alt
+printf("c");
+#emit LOAD.pri pri
+#emit LOAD.alt alt
 	// Frame.
 	#emit MOVE.pri
 	#emit ADD.C        4
@@ -324,10 +395,16 @@ stock Iter_YieldReturn(value)
 	#emit CONST.pri    0xFFFFFFFB // -5
 	#emit LIDX
 	#emit SCTRL        2
+#emit STOR.pri pri
+#emit STOR.alt alt
+printf("d");
+#emit LOAD.pri pri
+#emit LOAD.alt alt
 	// No longer in this iterator.
 	#emit DEC          YSI_gIteratorDepth
 	#emit CONST.pri    2
 	#emit LIDX
+	#emit SCTRL        8
 	#emit SCTRL        6
 }
 
