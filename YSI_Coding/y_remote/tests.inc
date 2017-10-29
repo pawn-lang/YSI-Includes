@@ -1,16 +1,16 @@
 
-remote stock yrt_1(hi);
+remotefunc stock yrt_1(hi);
 
-static stock remote yrt_2(const hi, string:you[], there[], &other, &len = 7);
+static stock remotefunc yrt_2(const hi, string:you[], there[], &other, &len = 7);
 
-remote stock yrt_3(hi, string:you[], there[], len)
+remotefunc stock yrt_3(hi, string:you[], there[], len)
 {
 	#pragma unused hi, you, there, len
 	// Impl...
 	return 99;
 }
 
-remote Float:yrt_335(hi, string:you[], there[], len)
+remotefunc Float:yrt_335(hi, string:you[], there[], len)
 {
 	#pragma unused hi, you, there, len
 	// Impl...
@@ -18,12 +18,12 @@ remote Float:yrt_335(hi, string:you[], there[], len)
 	return float(hi);
 }
 
-remote stock static void:yrt_4(hi)
+remotefunc stock static void:yrt_4(hi)
 {
 	#pragma unused hi
 }
 
-static remote stock string:yrt_5(hi, const string:you[], there[], tt, &other, const len = 7)
+static remotefunc stock string:yrt_5(hi, const string:you[], there[], tt, &other, const len = 7)
 {
 	#pragma unused hi, you, there, tt, len
 	new str[130];
@@ -32,18 +32,19 @@ static remote stock string:yrt_5(hi, const string:you[], there[], tt, &other, co
 	return str;
 }
 
-remote Float:yrt_55(hi, const string:you[], there[], tt, &other, const len = 7)
+remotefunc Float:yrt_55(hi, const string:you[], there[], tt, &other, const len = 7)
 {
-	// TODO: Figure out why this fails with the "len" parameter (allocates too
-	// much heap data and doesn't fully clear it).
+	TODO(244, "Allocates too much heap with `len`.");
+	// Figure out why this fails with the "len" parameter (allocates too much
+	// heap data and doesn't fully clear it).
 	#pragma unused you, there, tt, len
 	other = hi + 5;
 	return 5.5;
 }
 
-remote stock Float:yrt_6(hi, string:you[], there[], len);
+remotefunc stock Float:yrt_6(hi, string:you[], there[], len);
 
-remote static void:yrt_7(&a, &b, c, &d)
+remotefunc static void:yrt_7(&a, &b, c, &d)
 {
 	a = 8;
 	b = a;
@@ -51,9 +52,9 @@ remote static void:yrt_7(&a, &b, c, &d)
 	d -= 4;
 }
 
-remote stock string:yrt_8();
+remotefunc stock string:yrt_8();
 
-remote Float:yrt_9();
+remotefunc Float:yrt_9();
 
 Test:y_remote_1()
 {

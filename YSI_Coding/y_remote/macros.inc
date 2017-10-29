@@ -1,5 +1,5 @@
 
-#define remote%0(%1) FUNC_PARSER(Y_REMOTE,NUM_CST_DEF:STR_CST_DEF:REF_DEF:ARR_CST:QAL:RET_VOD_STR_TAG:LEN:)(%0(%1))(%1)#()()()()
+#define Y_REMOTE_FUNC%0(%1) FUNC_PARSER(Y_REMOTE,NUM_CST_DEF:STR_CST_DEF:REF_DEF:ARR_CST:QAL:RET_VOD_STR_TAG:LEN:)(%0(%1))(%1)#()()()()
 
 // This code uses "i" for normal variables and "d" for references.  These are
 // both seen by "CallRemoteFunction" as the same thing, but we can
