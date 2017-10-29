@@ -49,6 +49,7 @@ hook public OnCodeInit()
 {
 	#emit CONST.pri    YSI_g_sStack
 	#emit STOR.pri     YSI_g_sStackPtr
+	printf("OnCodeInit %08x", YSI_g_sStackPtr);
 }
 
 /**
@@ -58,6 +59,10 @@ hook public OnCodeInit()
 
 stock bool:Iter_YieldEnter()
 {
+	static pri, alt;
+	#emit CONST.pri    YSI_g_sStack
+	#emit STOR.pri     pri
+	printf("Iter_YieldEnter %08x %08x", YSI_g_sStackPtr, pri);
 	// This is called as:
 	//   
 	//   iter_var = (I@ = -1, Iter_YieldEnter() ? I@ : (iter_func(), --YSI_gIteratorDepth));
@@ -156,6 +161,9 @@ static stock
 stock bool:Iter_YieldLoop()
 {
 	static pri, alt;
+	#emit CONST.pri    YSI_g_sStack
+	#emit STOR.pri     pri
+	printf("OnCodeInit %08x %08x", YSI_g_sStackPtr, pri);
 	#emit LCTRL 4
 	#emit STOR.pri pri
 	#emit HEAP 0
@@ -188,7 +196,7 @@ stock bool:Iter_YieldLoop()
 		#emit MOVE.alt
 	#emit STOR.pri pri
 	#emit STOR.alt alt
-	printf("2");
+	printf("2 %08x", YSI_g_sStackPtr);
 	#emit LOAD.pri pri
 	#emit LOAD.alt alt
 		// Restore the heap.
@@ -212,7 +220,7 @@ stock bool:Iter_YieldLoop()
 		#emit SYSREQ.C     memcpy
 	#emit STOR.pri pri
 	#emit STOR.alt alt
-	printf("3");
+	printf("3 %08x", YSI_g_sStackPtr);
 	#emit LOAD.pri pri
 	#emit LOAD.alt alt
 		// Restore the stack.
@@ -269,7 +277,7 @@ stock bool:Iter_YieldLoop()
 		#emit STACK        24
 	#emit STOR.pri pri
 	#emit STOR.alt alt
-	printf("4");
+	printf("4 %08x", YSI_g_sStackPtr);
 	#emit LOAD.pri pri
 	#emit LOAD.alt alt
 		// Jump back in to our earlier function.
@@ -302,7 +310,7 @@ stock Iter_YieldReturn(value)
 	#emit STOR.pri     YSI_g_sPtr
 #emit STOR.pri pri
 #emit STOR.alt alt
-printf("a");
+printf("a %08x", YSI_g_sStackPtr);
 #emit LOAD.pri pri
 #emit LOAD.alt alt
 	// Stack (excluding this function and intermediate results).
@@ -327,7 +335,17 @@ printf("a");
 	#emit LOAD.alt     YSI_g_sStackPtr
 	#emit PUSH.alt
 	#emit PUSH.C       20
+#emit STOR.pri pri
+#emit STOR.alt alt
+printf("pre %08x %08x", pri, alt);
+#emit LOAD.pri pri
+#emit LOAD.alt alt
 	#emit SYSREQ.C     memcpy
+#emit STOR.pri pri
+#emit STOR.alt alt
+printf("post %08x %08x", pri, alt);
+#emit LOAD.pri pri
+#emit LOAD.alt alt
 	#emit MOVE.pri
 	#emit STACK        20
 	#emit POP.alt
@@ -343,7 +361,7 @@ printf("a");
 	#emit STOR.I
 #emit STOR.pri pri
 #emit STOR.alt alt
-printf("b");
+printf("b %08x", YSI_g_sStackPtr);
 #emit LOAD.pri pri
 #emit LOAD.alt alt
 	// Using `LCTRL 2` is faster than saving and restoring the value.
@@ -375,7 +393,7 @@ printf("b");
 	#emit STOR.I
 #emit STOR.pri pri
 #emit STOR.alt alt
-printf("c");
+printf("c %08x", YSI_g_sStackPtr);
 #emit LOAD.pri pri
 #emit LOAD.alt alt
 	// Frame.
@@ -397,7 +415,7 @@ printf("c");
 	#emit SCTRL        2
 #emit STOR.pri pri
 #emit STOR.alt alt
-printf("d");
+printf("d %08x", YSI_g_sStackPtr);
 #emit LOAD.pri pri
 #emit LOAD.alt alt
 	// No longer in this iterator.
