@@ -223,7 +223,7 @@ static WM_Shift(from, to, data[], len = sizeof (data))
 	}
 }
 
-hook OnScriptInit()
+hook OnCodeInit()
 {
 	// 00 4A 61 98
 	new
