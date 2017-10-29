@@ -106,6 +106,7 @@ Optional plugins:
 #include "..\YSI_Core\y_utils"
 #include "..\YSI_Coding\y_va"
 #include "y_globaltags"
+#include "y_funcinc"
 #include "y_renative"
 #include "y_shortvar"
 #include "..\YSI_Core\y_debug"
@@ -416,11 +417,35 @@ native _YSI_RE_NATIVE<O@|||const function[], time, repeat, const format[], GLOBA
 	#endif
 #endif
 
+stock S@(GLOBAL_TAG_TYPES:v = -1)
+{
+	P:4("S@ called");
+	return
+		getproperty(8, "", YSIM_STRING, Q@),
+		strunpack(Q@, Q@),
+		setproperty(8, YSIM_CALLER, v);
+}
+
 stock X@(GLOBAL_TAG_TYPES:n)
 {
 	// THIS MUST REMAIN FOREVER!  Detected by fixes.inc.
 	P:4("X@ called: %i", n);
 	setproperty(8, YSIM_RETURN, n);
+}
+
+stock E@()
+{
+	P:4("E@ called");
+	// Already returns the previous value.
+	return setproperty(8, YSIM_CALLER, Y@);
+}
+
+stock Z@(GLOBAL_TAG_TYPES:v = -1)
+{
+	P:4("Z@ called");
+	return
+		setproperty(8, YSIM_CALLER, v),
+		getproperty(8, YSIM_RETURN);
 }
 
 stock R@(buffer[])
@@ -439,6 +464,15 @@ stock H@(GLOBAL_TAG_TYPES:...)
 #define _UNUSED(%0) H@(_:_H@0:_H@1:%0)
 #define _H@0:_H@1:%0&%1) _H@0:_H@1:%0%1)
 #define _H@1:%0[%9]%1) _H@1:%0%1)
+
+// Correctly stringise "On" callbacks without ALS interferring.
+#define B@:#On%0) "On"#%0)
+
+stock G@(GLOBAL_TAG_TYPES:...)
+{
+	// Just a dead-end for spare parameters which returns a string.
+	return Q@;
+}
 
 stock F@()
 {
