@@ -95,10 +95,6 @@ enum E_CHAIN_HOOK
 	E_CHAIN_HOOK_VALUE
 }
 
-static stock _HookChain_IncludeStates() <_ALS : _ALS_go>
-{
-}
-
 HOOK_RET:OnPlayerCommandText()
 {
 	return 0;

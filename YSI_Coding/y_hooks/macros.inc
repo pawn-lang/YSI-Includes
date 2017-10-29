@@ -110,16 +110,5 @@ Optional plugins:
 // Strip spaces from the generated function name.
 #define @_yH%0\32;%1(%2) @_yH%0%1(%2)
 
-#if !defined CHAIN_ORDER
-	#define CHAIN_ORDER() 0
-#endif
-
-#define PRE_HOOK(%0) forward @CO_%0();public @CO_%0(){return CHAIN_ORDER()+1;}
-
-#define HOOK_FORWARD:%0_%2(%1); \
-	forward %0_%2(%1); \
-	public %0_%2(%1) <_ALS : _ALS_x0, _ALS : _ALS_x1> { return 1; } \
-	public %0_%2(%1) <> { return 1; }
-
 #define HOOK_RET:%0(%1) forward @RET%0(); public @RET%0()
 
