@@ -233,6 +233,25 @@ stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRe
 	return 0;
 }
 
+public OnJITCompile()
+{
+	// To ensure it is correctly initialised with the JIT as well, since we
+	// switched to lazy loading.  VERY few YSI features can be used in
+	// `OnCodeInit`, and if there are ever any issues relating to that, the
+	// correct response is "don't do that"!
+	if (!YSI_g_sInitialised)
+		YVA2_Initalise();
+	return VA_OnJITCompile();
+}
+
+CHAIN_FORWARD:VA_OnJITCompile() = 1;
+#if defined _ALS_OnJITCompile
+	#undef OnJITCompile
+#else
+	#define _ALS_OnJITCompile
+#endif
+#define OnJITCompile(%0) CHAIN_PUBLIC:VA_OnJITCompile(%0)
+
 static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skippedBytes/*, const depth*/, const offset)
 {
 	// `pushedBytes` is the number of bytes originally pushed to the target

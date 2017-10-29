@@ -139,7 +139,7 @@ static stock y_va_SetTimerEx(va_args<>)
 	return va_SetTimerEx("y_va_SetTimerExPublic", 1000, false, "iii", va_start<0>);
 }
 
-Test:va_SetTimerEx()
+Test:y_va_SetTimerEx()
 {
 	ASSERT(y_va_SetTimerEx(5, 6, 7) != 0);
 }
