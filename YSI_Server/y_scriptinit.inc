@@ -128,6 +128,16 @@ static
 	bool:YSI_g_sCodeJITed = false,
 	bool:YSI_g_sCodeJITing = false;
 
+#if defined _DEBUG
+	#if _DEBUG > 0
+		// Dump the final assembly of this script so we can inspect it.
+		#define DEBUG_MAYBE_DUMP(%0) DisasmDump(%0)
+	#endif
+#endif
+#if !defined DEBUG_MAYBE_DUMP
+	#define DEBUG_MAYBE_DUMP(%0);
+#endif
+
 stock bool:JIT_Exists()
 {
 	return YSI_g_sCodeJITing;
@@ -144,6 +154,7 @@ stock bool:JIT_Complete()
 
 public OnJITCompile()
 {
+	DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 	state _ALS : _ALS_go;
 	state _script_init_fix_state : false;
 	// Got it being called twice for some reason.  I think it was a file glitch,
@@ -155,6 +166,7 @@ public OnJITCompile()
 	new ret = ScriptInit_OnJITCompile();
 	if (ret)
 		YSI_g_sCodeJITed = true;
+	DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
 	return ret;
 }
 
@@ -170,16 +182,6 @@ public OnJITCompile()
     88 88       88 88   "Y888  
 
 */
-
-#if defined _DEBUG
-	#if _DEBUG > 0
-		// Dump the final assembly of this script so we can inspect it.
-		#define DEBUG_MAYBE_DUMP(%0) DisasmDump(%0)
-	#endif
-#endif
-#if !defined DEBUG_MAYBE_DUMP
-	#define DEBUG_MAYBE_DUMP(%0);
-#endif
 
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="_script_init_fix_state : true"/>
