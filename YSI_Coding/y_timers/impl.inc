@@ -77,7 +77,7 @@ static stock
 	Alloc:YSI_g_sFirstSlot = NO_ALLOC,
 	YSI_g_sPlayerTimers = -1;
 
-hook OnScriptInit()
+hook OnCodeInit()
 {
 	P:1("hook Timers_OnScriptInit called");
 	new
