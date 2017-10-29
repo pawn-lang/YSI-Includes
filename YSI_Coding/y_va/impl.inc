@@ -140,6 +140,7 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 	#emit SCTRL        5 // Go back to the previous frame.
 	// The frame is now the same.
 	#emit POP.pri
+	#emit MOVE.alt
 	#emit STOR.pri     sReturnAddress
 	#emit POP.pri        // Don't care about this parameter count (don't save).
 	#emit POP.alt                        // skippedBytes
@@ -184,7 +185,7 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 	// Return from this function.  We are already in the parent frame and have
 	// no parameters on the stack, so function postamble is not required.
 	#emit LOAD.pri     sReturnAddress
-	#emit LCTRL        8
+	#emit SCTRL        8
 	#emit SCTRL        6
 }
 
