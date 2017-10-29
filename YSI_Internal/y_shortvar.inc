@@ -88,11 +88,14 @@ Optional plugins:
 
 // Public variable.
 public
-	Y@ = 0;
+	_@ = 0;
 
 // J@ is a "nul" target - send things there if they need ignoring or if a
 // parameter needs using.  I@ is too now.
 stock
 	I@,
 	J@;
+
+new
+	Q@[YSI_MAX_STRING];
 

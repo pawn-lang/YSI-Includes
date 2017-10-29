@@ -17,96 +17,60 @@ Legal:
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
-	
-	Contributors:
-		ZeeX, koolk, JoeBullet/Google63, g_aSlice/Slice
-	
-	Thanks:
-		JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
-		ZeeX - Very productive conversations.
-		koolk - IsPlayerinAreaEx code.
-		TheAlpha - Danish translation.
-		breadfish - German translation.
-		Fireburn - Dutch translation.
-		yom - French translation.
-		50p - Polish translation.
-		Zamaroht - Spanish translation.
-		Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes
-			for me to strive to better.
-		Pixels^ - Running XScripters where the idea was born.
-		Matite - Pestering me to release it and using it.
-	
-	Very special thanks to:
-		Thiadmer - PAWN, whose limits continue to amaze me!
-		Kye/Kalcor - SA:MP.
-		SA:MP Team past, present and future - SA:MP.
-	
-Version:
-	0.2
-Changelog:
-	03/01/13:
-		Added "@foreign" and "@global" for EXPLICIT Master_Caller use.
-		Added "void:" return tag to simplify common code.
-	07/08/10:
-		Split in to y_masteronce.
-		Added assembly for publics scanning.
-	06/08/10:
-		Managed the ultimate - got completely transparent inclusion!
-	05/08/10:
-		Completed new master system, now does all syncing and clients.
-	06/10/09:
-		Rewrote using states.
-		Added remote function macros.
-		Reduced the number of masters to a single one.  It must have them all.
-		Vastly simplified the master model - ending the master ends everything.
-	06/01/08:
-		Added code to not pass data if no other script exists.
-	17/11/07:
-		Added code for a script to remove itself from the global list.
-	11/10/07:
-		Not first version but added documentation months late.
-Functions:
-	Public:
-		-
-	Core:
-		-
-	Stock:
-		-
-	Static:
-		-
-	Inline:
-		-
-	API:
-		-
-	Hooks:
-		OnGameModeInit
-		OnGameModeExit
-Callbacks:
-	-
-Definitions:
-	-
-Enums:
-	-
-Macros:
-	-
-Tags:
-	-
-Variables:
-	Global:
-		Y@ - ID of this script.
-	Static:
-		-
-Commands:
-	-
-Compile options:
-	-
-Operators:
-	-
-Natives:
-	-
-\**--------------------------------------------------------------------------**/
 
-#define Master_ID() (Y@)
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
+
+#define Master_ID() (_@)
 
 // These parts should only be defined once ever.  This code is not dependent on
 // the current MASTER value, it's all generic.
@@ -178,7 +142,7 @@ Natives:
 #define YSIM_SERVER_FUNC%0(%1)<%9> forward%0(%1);public%0(%1)
 #define YSIM_SERVER_GRUP%0(%1)     _GROUP_MAKE_NAME<hook%0...>(%1)
 #define YSIM_SERVER_YCMD%0(%1)     @yC_%0(a,b[],c);@yC_%0(a,b[],c)U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
-#define YSIM_SERVER_ZERO%0(%1)     @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==Y@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
+#define YSIM_SERVER_ZERO%0(%1)     @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==_@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 
 #define YSIM_CLIENT_FOREIGN        YSIM_PARSER(YSIM_UF)
 // Hide the local implementations.
@@ -199,7 +163,7 @@ Natives:
 #define YSIM_CLOUD_FUNC%0(%1)<%9>  %0(%1);public%0(%1)<>{}public%0(%1)<_YCM:%9>
 #define YSIM_CLOUD_GRUP%0(%1)      _GROUP_MAKE_NAME<hook%0...>(%1)<>{}_GROUP_MAKE_NAME<rehook%0...>(%1)<_YCM:y>
 #define YSIM_CLOUD_YCMD%0(%1)      @yC_%0(a,b[],c);@yC_%0(a,b[],c)<>{}@yC_%0(a,b[],c)<_YCM:y>U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
-#define YSIM_CLOUD_ZERO%0(%1)      @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==Y@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
+#define YSIM_CLOUD_ZERO%0(%1)      @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==_@&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 
 // A stub foreign is the same as a client foreign - define it as existing, but
 // not here.
@@ -460,7 +424,7 @@ public OnScriptInit()
 	{
 		if (!(masters & (1 << i)))
 		{
-			Y@ = i;
+			_@ = i;
 			masters |= 1 << i;
 			break;
 		}
@@ -470,10 +434,10 @@ public OnScriptInit()
 	{
 		setproperty(8, YSIM_MASTER, masters);
 	}
-	C:1(if (!Y@) P:E("MasterID not assigned"););
+	C:1(if (!_@) P:E("MasterID not assigned"););
 	// Make sure this is called before all other YSI initialisations, at least
 	// all the ones which use the master system.
-	CallLocalFunction("OnMasterSystemInit", "i", Y@);
+	CallLocalFunction("OnMasterSystemInit", "i", _@);
 	Master_OnScriptInit();
 	return 1;
 }
@@ -517,9 +481,9 @@ public OnScriptExit()
 		// The properties currently clear instantly, but that may not always be
 		// the case.
 	}
-	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~(1 << Y@)),
+	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~(1 << _@)),
 	Master_OnScriptExit(),
-	CallRemoteFunction("OnMasterSystemClose", "i", Y@);
+	CallRemoteFunction("OnMasterSystemClose", "i", _@);
 	return 1;
 }
 
@@ -542,10 +506,10 @@ public Master_Reassert()
 {
 	// Make sure that the caller parameter is always 0 by default.
 	U@(8, YSIM_CALLER, 0);
-	if (Y@)
+	if (_@)
 	{
 		// Read this script's master value.
-		setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) | (1 << Y@) | 1);
+		setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) | (1 << _@) | 1);
 		// Readd this script's owned scripts.
 		new
 			func[4];
@@ -557,7 +521,7 @@ public Master_Reassert()
 			func[0] = YSI_g_sMasterData[i] & 0xFF;
 			func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF;
 			func[2] = YSI_g_sMasterData[i] >> 16;
-			setproperty(9, func, Y@);
+			setproperty(9, func, _@);
 		}
 	}
 }
@@ -603,17 +567,17 @@ stock bool:_Master_Get(library[], bool:force = false)
 	{
 		new
 			master = getproperty(9, library);
-		P:4("_Master_Get: Prop exists: %d %d", master, Y@);
+		P:4("_Master_Get: Prop exists: %d %d", master, _@);
 		if (master != -1)
 		{
 			P:4("_Master_Get: Prop set");
-			if (master == Y@) return true; // Nothing has changed.
+			if (master == _@) return true; // Nothing has changed.
 			else if (force) ret = false; // A server is forcing itself.
 			else return false; // Not got the master.
 		}
 	}
 	P:4("_Master_Get: Get master.");
-	setproperty(9, library, Y@);
+	setproperty(9, library, _@);
 	P:4("_Master_Get: Set master.");
 	// Add this library to the list.  The list is designed to only deal with
 	// two or three character master names now!
