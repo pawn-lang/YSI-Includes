@@ -234,7 +234,6 @@ stock bool:Iter_YieldLoop()
 
 stock Iter_YieldReturn(value)
 {
-	static pri, alt;
 	// This does the return through the global scope.
 	I@ = value;
 	// Load a pointer to the first address.  We know we are in range, so there's

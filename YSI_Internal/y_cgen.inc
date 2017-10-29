@@ -90,6 +90,10 @@ Optional plugins:
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Internal\y_thirdpartyinclude"
 
+CHAIN_HOOK(CGen)
+#undef CHAIN_ORDER
+#define CHAIN_ORDER CHAIN_NEXT(CGen)
+
 // We use "s" not a string literal as we are trying to use up code space, not
 // data space!
 #define _CODE_1 SetTimerEx(s,0,0,s,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
@@ -171,14 +175,10 @@ static stock CGen_SetupCodeSpace()
 	YSI_g_sCodeSpace += 12;
 }
 
-forward OnCodeInit();
-
 public OnCodeInit()
 {
 	CGen_SetupCodeSpace();
-	#if defined CGen_OnCodeInit
-		CGen_OnCodeInit();
-	#endif
+	CGen_OnCodeInit();
 	// Check that the code at this point is valid.  An OpCode is at most two
 	// bytes (except "OP_SWITCH", but there are none of them in this area of
 	// code because there are no "switch"es).  If the code here fails to
@@ -198,15 +198,13 @@ public OnCodeInit()
 	return 1;
 }
 
-#if defined CGen_OnCodeInit
-	forward CGen_OnCodeInit();
-#endif
+CHAIN_FORWARD:CGen_OnCodeInit() = 1;
 #if defined _ALS_OnCodeInit
 	#undef OnCodeInit
 #else
 	#define _ALS_OnCodeInit
 #endif
-#define OnCodeInit CGen_OnCodeInit
+#define OnCodeInit(%0) CHAIN_PUBLIC:CGen_OnCodeInit(%0)
 
 stock CGen_UseCodeSpace(ctx[AsmContext])
 {

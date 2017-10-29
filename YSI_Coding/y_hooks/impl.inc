@@ -85,7 +85,7 @@ Optional plugins:
 
 */
 
-PRE_HOOK(HookChain)
+CHAIN_HOOK(HookChain)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER CHAIN_NEXT(HookChain)
 
