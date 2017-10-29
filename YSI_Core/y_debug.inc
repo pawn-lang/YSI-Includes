@@ -140,6 +140,13 @@ Optional plugins:
 	#define _DEBUG 0
 #endif
 
+#if _DEBUG
+	#define TODO_MESSAGE:%0,%1; %0[]=#%1;
+	#define TODO(%0); new TODO_MESSAGE:TODO@%0;
+#else
+	#define TODO(%0);
+#endif
+
 CHAIN_HOOK(Debug)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER CHAIN_NEXT(Debug)
@@ -766,7 +773,6 @@ stock Debug_Disable()
 {
 	state ysi_debug : off;
 }
-
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
