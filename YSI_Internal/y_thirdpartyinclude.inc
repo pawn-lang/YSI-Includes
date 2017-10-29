@@ -284,6 +284,30 @@ Optional plugins:
 #endif
 
 #if defined AMX_INCLUDING_FAILED
-	#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "includes\amx_assembly\"
+	#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
+#endif
+
+#tryinclude "..\md-sort\md-sort"
+#tryinclude <md-sort\md-sort>
+#tryinclude "..\md-sort-master\md-sort"
+#tryinclude <md-sort-master\md-sort>
+#tryinclude "md-sort"
+#tryinclude <md-sort>
+#if !defined _INC_md_sort
+	#error Could not include "https://github.com/oscar-broman/md-sort" - ensure its files are in "include\md-sort\"
+#elseif !defined ResetDeepArray_Entry
+	#error Please update "https://github.com/oscar-broman/md-sort" to get "ResetDeepArray()"
+#endif
+
+#tryinclude "..\code-parse\code-parse"
+#tryinclude <code-parse\code-parse>
+#tryinclude "..\code-parse.inc\code-parse"
+#tryinclude <code-parse.inc\code-parse>
+#tryinclude "..\code-parse.inc-master\code-parse"
+#tryinclude <code-parse.inc-master\code-parse>
+#tryinclude "code-parse"
+#tryinclude <code-parse>
+#if !defined _INC_code_parse_inc
+	#error Could not include "https://github.com/Y-Less/code-parse.inc" - ensure its files are in "include\code-parse\"
 #endif
 
