@@ -184,6 +184,7 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 	// Return from this function.  We are already in the parent frame and have
 	// no parameters on the stack, so function postamble is not required.
 	#emit LOAD.pri     sReturnAddress
+	#emit LCTRL        8
 	#emit SCTRL        6
 }
 
@@ -233,24 +234,27 @@ stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRe
 	return 0;
 }
 
-public OnJITCompile()
+public OnCodeInit()
 {
 	// To ensure it is correctly initialised with the JIT as well, since we
 	// switched to lazy loading.  VERY few YSI features can be used in
 	// `OnCodeInit`, and if there are ever any issues relating to that, the
 	// correct response is "don't do that"!
 	if (!YSI_g_sInitialised)
+	{
 		YVA2_Initalise();
-	return VA_OnJITCompile();
+		YSI_g_sInitialised = -1;
+	}
+	return VA_OnCodeInit();
 }
 
-CHAIN_FORWARD:VA_OnJITCompile() = 1;
-#if defined _ALS_OnJITCompile
-	#undef OnJITCompile
+CHAIN_FORWARD:VA_OnCodeInit() = 1;
+#if defined _ALS_OnCodeInit
+	#undef OnCodeInit
 #else
-	#define _ALS_OnJITCompile
+	#define _ALS_OnCodeInit
 #endif
-#define OnJITCompile(%0) CHAIN_PUBLIC:VA_OnJITCompile(%0)
+#define OnCodeInit(%0) CHAIN_PUBLIC:VA_OnCodeInit(%0)
 
 static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skippedBytes/*, const depth*/, const offset)
 {
