@@ -510,7 +510,7 @@ stock Iter_All_Internal(array[], size, value)
 */
 
 #if _FOREACH_ACTORS
-	remotefunc void:Iter_ActorDo(bool:add, actorid)
+	remotefunc stock void:Iter_ActorDo(bool:add, actorid)
 	{
 		// Because there may be multiple scripts running, we need to tell all of
 		// them when an actor is created or destroyed.
@@ -569,7 +569,7 @@ stock Iter_All_Internal(array[], size, value)
 */
 
 #if _FOREACH_VEHICLES
-	remotefunc void:Iter_VehicleDo(bool:add, vehicleid)
+	remotefunc stock void:Iter_VehicleDo(bool:add, vehicleid)
 	{
 		// Because there may be multiple scripts running, we need to tell all of
 		// them when a vehicle is created or destroyed.

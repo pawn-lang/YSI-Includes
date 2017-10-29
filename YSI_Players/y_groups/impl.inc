@@ -230,7 +230,7 @@ HANDOFF()
 
 #define GROUP_ADD<%0> for(J@=_Group_AddInternal(1,(%0));J@;J@=_Group_AddInternal(0,(%0)))
 
-static remotefunc void:__Group_AddInternal(a,g)
+remotefunc static void:__Group_AddInternal(a,g)
 {
 	GROUP_CHAIN?<YSI_g_sNextInitFunc>(-1, a, g);
 }
@@ -264,7 +264,7 @@ stock _Group_AddInternal(a, Group:g)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static remotefunc void:_Group_FakePlayer(p,Bit:g[sizeof RG@],s)
+remotefunc static void:_Group_FakePlayer(p,Bit:g[sizeof RG@],s)
 {
 	for (new i = 0; i != sizeof (g); ++i)
 	{
@@ -369,7 +369,7 @@ public OnScriptExit()
  * <param name="group">Group to destroy from the system.</param>
  *//*------------------------------------------------------------------------**/
 
-static remotefunc void:_Group_Destroy(g, Iterator@gp[MAX_PLAYERS + 1], s)
+remotefunc static void:_Group_Destroy(g, Iterator@gp[MAX_PLAYERS + 1], s)
 {
 	#pragma unused s
 	new
@@ -1068,7 +1068,7 @@ global Group_GetCount(Group:g)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static remotefunc void:_Group_CreateChain(Group:g)
+remotefunc static void:_Group_CreateChain(Group:g)
 {
 	GROUP_CHAIN?<YSI_g_sNextAddFunc>(g);
 }

@@ -1,7 +1,7 @@
 
 remotefunc stock yrt_1(hi);
 
-static stock remotefunc yrt_2(const hi, string:you[], there[], &other, &len = 7);
+remotefunc static stock yrt_2(const hi, string:you[], there[], &other, &len = 7);
 
 remotefunc stock yrt_3(hi, string:you[], there[], len)
 {
@@ -23,7 +23,7 @@ remotefunc stock static void:yrt_4(hi)
 	#pragma unused hi
 }
 
-static remotefunc stock string:yrt_5(hi, const string:you[], there[], tt, &other, const len = 7)
+remotefunc static stock string:yrt_5(hi, const string:you[], there[], tt, &other, const len = 7)
 {
 	#pragma unused hi, you, there, tt, len
 	new str[130];

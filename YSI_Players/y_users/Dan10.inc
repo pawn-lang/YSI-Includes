@@ -271,7 +271,7 @@ stock Player_GetPreloadBits(playerid)
 	return YSI_g_sPreloadData[playerid][E_USER_PRELOAD_BITS];
 }
 
-static remotefunc void:_Player_SetPreloadBits(playerid, bits)
+remotefunc static void:_Player_SetPreloadBits(playerid, bits)
 {
 	YSI_g_sPreloadData[playerid][E_USER_PRELOAD_BITS] = bits;
 }
@@ -487,7 +487,7 @@ hook OnPlayerConnect(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static remotefunc void:_Player_IsLoggedIn(playerid)
+remotefunc static void:_Player_IsLoggedIn(playerid)
 {
 	P:4("_Player_IsLoggedIn called: %d %d", playerid, YSI_g_sPlayerYID[playerid]);
 	if (YSI_g_sPlayerYID[playerid] > 0)
