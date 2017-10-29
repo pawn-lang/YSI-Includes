@@ -163,15 +163,19 @@ Test:y_commands_removable()
 {
 	YSI_g_sRemovableRan = 0;
 	Command_SetPlayerNamed("y_commands_removable", 103, true);
-	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") == 1);
+	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") != 0);
 	ASSERT(YSI_g_sRemovableRan == 1);
 	YSI_g_sRemovableRan = 0;
 	Command_SetPlayerNamed("y_commands_removable", 103, false);
-	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") == 1);
+	Command_SetDeniedReturn(false);
+	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") == 0);
+	Command_SetDeniedReturn(true);
+	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") != 0);
+	Command_SetDeniedReturn(false);
 	ASSERT(YSI_g_sRemovableRan == 0);
 	YSI_g_sRemovableRan = 0;
 	Command_SetPlayerNamed("y_commands_removable", 103, true);
-	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") == 1);
+	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") != 0);
 	ASSERT(YSI_g_sRemovableRan == 1);
 	YSI_g_sRemovableRan = 0;
 	Command_RemoveNamed("y_commands_removable");
@@ -188,7 +192,7 @@ Test:y_commands_removable2()
 {
 	//printf("%d", YCMD:y_commands_removable2);
 	Command_SetPlayer(YCMD:y_commands_removable2, 103, true);
-	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable2") == 1);
+	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable2") != 0);
 	Command_Remove(YCMD:y_commands_removable2);
 	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable2") == 0);
 }
@@ -201,7 +205,7 @@ Test:y_commands_count()
 	}
 	ASSERT(Command_GetPlayerCommandCount(22) == 0);
 	Command_SetPlayerNamed("y_commands_1", 22, true);
-	ASSERT(Command_GetPlayerCommandCount(22) == 1);
+	ASSERT(Command_GetPlayerCommandCount(22) != 0);
 }
 
 Test:y_commands_display1()
@@ -313,11 +317,11 @@ YCMD:y_commands_1(playerid, cmdtext[], help)
 Test:y_commands_1()
 {
 	call OnPlayerConnect(142);
-	ASSERT(call OnPlayerCommandText(142, "/y_commands_1") == 1);
-	ASSERT(call OnPlayerCommandText(142, "/y_comMands_1") == 1);
-	ASSERT(call OnPlayerCommandText(142, "/Y_COMMANDS_1") == 1);
-	ASSERT(call OnPlayerCommandText(142, "/Y_commandS_1") == 1);
-	ASSERT(call OnPlayerCommandText(142, "/y_Commands_1") == 1);
+	ASSERT(call OnPlayerCommandText(142, "/y_commands_1") != 0);
+	ASSERT(call OnPlayerCommandText(142, "/y_comMands_1") != 0);
+	ASSERT(call OnPlayerCommandText(142, "/Y_COMMANDS_1") != 0);
+	ASSERT(call OnPlayerCommandText(142, "/Y_commandS_1") != 0);
+	ASSERT(call OnPlayerCommandText(142, "/y_Commands_1") != 0);
 }
 
 Test:y_commands_2()
@@ -550,12 +554,12 @@ Test:y_commands_iterator1()
 Test:y_commands_lengths()
 {
 	call OnPlayerConnect(88);
-	ASSERT(call OnPlayerCommandText(88, "/y_commands_t1") == 1);
-	ASSERT(call OnPlayerCommandText(88, "/y_commands_t11") == 1);
-	ASSERT(call OnPlayerCommandText(88, "/y_commands_t111") == 1);
-	ASSERT(call OnPlayerCommandText(88, "/y_commands_t1111") == 1);
-	ASSERT(call OnPlayerCommandText(88, "/y_commands_t11111") == 1);
-	ASSERT(call OnPlayerCommandText(88, "/y_commands_t111111") == 1);
+	ASSERT(call OnPlayerCommandText(88, "/y_commands_t1") != 0);
+	ASSERT(call OnPlayerCommandText(88, "/y_commands_t11") != 0);
+	ASSERT(call OnPlayerCommandText(88, "/y_commands_t111") != 0);
+	ASSERT(call OnPlayerCommandText(88, "/y_commands_t1111") != 0);
+	ASSERT(call OnPlayerCommandText(88, "/y_commands_t11111") != 0);
+	ASSERT(call OnPlayerCommandText(88, "/y_commands_t111111") != 0);
 	ASSERT(call OnPlayerCommandText(88, "/y_commands_t1111111") == 0);
 }
 
@@ -572,8 +576,8 @@ Test:y_commands_lengths()
 			b = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00);
 		ASSERT(a == b);
 		call OnPlayerConnect(89);
-		ASSERT(call OnPlayerCommandText(89, "/y_commands_prefix1") == 1);
-		ASSERT(call OnPlayerText(89, "!y_commands_prefix1") == 1);
+		ASSERT(call OnPlayerCommandText(89, "/y_commands_prefix1") != 0);
+		ASSERT(call OnPlayerText(89, "!y_commands_prefix1") != 0);
 		ASSERT(Command_SetPrefix(YCMD:y_commands_prefix1, 'q') == false);
 		ASSERT(Command_SetPrefix(YCMD:y_commands_prefix1, '!') == true);
 		ASSERT(call OnPlayerCommandText(89, "/y_commands_prefix1") == 0);

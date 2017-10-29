@@ -511,14 +511,16 @@ global Command_ReProcess(p,string:c[],h)
 		if (MASTER_EXCLUSIVE<YSI_g_sCurrentID>)
 	#endif
 		{
-			P:5("Commands_OnPlayerCommandText: Local");
+			P:5("Commands_OnPlayerCommandText: Local %08x (%d, \"%s\", %d)", sHash, p, c[sPos], h & 1);
 			// In this script.  More to the point, in ONLY this script, so
 			// we can't have another script as the master.  I tried updating
 			// this code but then realised that the update would ignore the
 			// case where a command was in both the current script and
 			// another script, but the other script was the master script.
-			h=h&1;
-			#emit PUSH.S      h
+			#emit LOAD.S.pri  h
+			#emit CONST.alt   1
+			#emit AND
+			#emit PUSH.pri
 			#emit LOAD.pri    sPos
 			#emit LOAD.S.alt  c
 			#emit IDXADDR
@@ -526,9 +528,11 @@ global Command_ReProcess(p,string:c[],h)
 			#emit PUSH.S      p
 			#emit PUSH.C      12
 			#emit LCTRL       6
-			#emit ADD.C       28
+			#emit ADD.C       44
+			#emit LCTRL       8
 			#emit PUSH.pri
 			#emit LOAD.pri    sHash
+			#emit SCTRL       8
 			#emit SCTRL       6
 			#emit STOR.pri    sRet
 			P:5("Command_ReProces: Result = %d %d %d", sRet, Command_Error(p, e_COMMAND_ERRORS:sRet), _:COMMAND_OK);
@@ -1407,7 +1411,7 @@ hook OnScriptInit()
 			if (buffer{id2} != tolower(buffer{id2})) P:E("Commands must be in lower-case in your source code.");
 		}
 		// Add the command regardless.
-		Command_Add(buffer[1], AMX_Read(entry));
+		Command_Add(buffer[1], ResolveJITAddress(AMX_Read(entry)));
 		P:6("Command_OnScriptInit: Name %s", unpack(buffer[1]));
 	}
 	if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();
@@ -1477,7 +1481,7 @@ hook OnScriptExit()
 						continue;
 					}
 					// Store the new pointer.
-					YSI_g_sCommands[i][E_COMMAND_POINTER] = AMX_Read(AMX_HEADER_PUBLICS + id2 * 8);
+					YSI_g_sCommands[i][E_COMMAND_POINTER] = ResolveJITAddress(AMX_Read(AMX_HEADER_PUBLICS + id2 * 8));
 				}
 			}
 		}
