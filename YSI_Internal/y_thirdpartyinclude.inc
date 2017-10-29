@@ -168,9 +168,31 @@ Optional plugins:
 #tryinclude "codescan"
 #tryinclude <codescan>
 #if !defined CODESCAN_INC
-	#error Please update "https://github.com/Zeex/amx_assembly" to get "codescan.inc"
+	// If it failed because they don't have ANY of amx-assembly, just give the
+	// generic error message at the end of this file.  Otherwise, tell them to
+	// update as they have one version, but not a new enough one.
+	#if !defined AMX_INCLUDING_FAILED
+		#error Please update "https://github.com/Zeex/amx_assembly" to get "codescan.inc"
+	#endif
 #elseif !defined AsmEmitCallAbs
 	#error Please update "https://github.com/Zeex/amx_assembly" to get "AsmEmitCallAbs()"
+#endif
+
+#tryinclude "..\amx\amx_jit"
+#tryinclude <amx_assembly\amx_jit>
+#tryinclude "..\amx_assembly\amx_jit"
+#tryinclude "..\..\amx_assembly\amx_jit"
+#tryinclude "amx_jit"
+#tryinclude <amx_jit>
+#if !defined AMX_JIT_INC
+	// If it failed because they don't have ANY of amx-assembly, just give the
+	// generic error message at the end of this file.  Otherwise, tell them to
+	// update as they have one version, but not a new enough one.
+	#if !defined AMX_INCLUDING_FAILED
+		#error Please update "https://github.com/Zeex/amx_assembly" to get "amx_jit.inc"
+	#endif
+#elseif !defined ResolveJITAddress
+	#error Please update "https://github.com/Zeex/amx_assembly" to get "ResolveJITAddress()"
 #endif
 
 #tryinclude "..\amx\disasm"
