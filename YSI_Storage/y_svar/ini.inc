@@ -341,7 +341,7 @@ Svar_Save()
 	INI_Close(__fwrite);
 }
 
-hook OnScriptInit()
+hook OnCodeInit()
 {
 	P:1("hook Svar_OnScriptInit called");
 	// List them all.

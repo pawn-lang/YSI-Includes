@@ -327,7 +327,7 @@ stock N@(volatile const vardata[], playerCount, dataSize, &pointer)
 	P:5("N@: %d", YSI_g_sFirstUVarData);
 }
 
-hook OnScriptInit()
+hook OnCodeInit()
 {
 	// List them all.
 	YSI_g_sFirstUVarData = -1;
