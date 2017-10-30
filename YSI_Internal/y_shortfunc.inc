@@ -372,49 +372,13 @@ stock T@(string:ret[YSI_MAX_STRING], GLOBAL_TAG_TYPES:...)
 }
 
 // Used by y_master and y_remote.  Re-evaluate after rewrites.
-native _YSI_RE_NATIVE<U@|||id=0, const name[]="", value=cellmin, const string[]=""|||setproperty>
-
-// Used by y_master and y_remote.  Re-evaluate after rewrites.
-native _YSI_RE_NATIVE<V@|||GLOBAL_TAG_TYPES:id=0, const name[]="", value=cellmin, string[]=""|||getproperty>
-
-#if defined _YSI_MINI_MODE
-	#undef CallRemoteFunction
-	#undef CallLocalFunction
-#endif
-
-#if defined _ALS_CallRemoteFunction
-	#if defined BAD_CallRemoteFunction
-		#undef CallRemoteFunction
-	#else
-		#error Unknown redefinition of CallRemoteFunction.
-	#endif
-#endif
+native U@(id=0, const name[]="", value=cellmin, const string[]="") = setproperty;
+native V@(GLOBAL_TAG_TYPES:id=0, const name[]="", value=cellmin, string[]="") = getproperty;
 
 // Define this command with basically every strong tag in existence to avoid
 // tag mismatch warnings with remote functions with strong tag parameters.
-native _YSI_RE_NATIVE<W@|||const function[], const format[], GLOBAL_TAG_TYPES:...|||CallRemoteFunction>
-
-#if defined _ALS_CallRemoteFunction
-	#if defined BAD_CallRemoteFunction
-		#define CallRemoteFunction( FIXES_CallRemoteFunction(
-	#endif
-#endif
-
-#if defined _ALS_SetTimerEx
-	#if defined CST_SetTimerEx
-		#undef SetTimerEx
-	#else
-		#error Unknown redefinition of SetTimerEx.
-	#endif
-#endif
-
-native _YSI_RE_NATIVE<O@|||const function[], time, repeat, const format[], GLOBAL_TAG_TYPES:...|||SetTimerEx>
-
-#if defined _ALS_SetTimerEx
-	#if defined BAD_SetTimerEx
-		#define SetTimerEx( CST_SetTimerEx(
-	#endif
-#endif
+native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallRemoteFunction;
+native O@(const function[], time, repeat, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
 
 stock S@(GLOBAL_TAG_TYPES:v = -1)
 {
