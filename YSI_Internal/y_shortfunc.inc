@@ -107,7 +107,6 @@ Optional plugins:
 #include "..\YSI_Coding\y_va"
 #include "y_globaltags"
 #include "y_funcinc"
-#include "y_renative"
 #include "y_shortvar"
 #include "..\YSI_Core\y_debug"
 

@@ -166,13 +166,6 @@ Optional plugins:
 // Add new tags to the START of this list.
 #include "..\YSI_Internal\y_globaltags"
 
-// VERY VERY VERY IMPORTANT!!! y_inline uses "130" instead of "YSI_MAX_STRING"
-// for two lines (one is "520" for "130 * 4").  SO DOES y_shortfunc.
-#define YSI_MAX_STRING                  (130)
-#if YSI_MAX_STRING != 130
-	#error Please update all explicit YSI_MAX_STRING uses.
-#endif
-
 #define FUNCTION_LENGTH                 (32)
 
 // Better handling of operator precedences and floating point numbers.  This
