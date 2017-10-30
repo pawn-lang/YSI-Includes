@@ -136,9 +136,15 @@ Optional plugins:
 // W@ - CallRemoteFunction
 // X@ - Set return
 // Y@ - Unused function prefix
-// @Y - Public function prefix
 // Z@ - Detect string
 // _@ - Script ID
+// @@ - Public function prefix
+// 
+// I didn't want to use `@@` for that, but there is some symmetry to it - now
+// all these internal macros end with `@`, and the one that needs to be public
+// starts with `@` as well.  I'm still saving `#define @` for something very
+// VERY special.  It's taken several years, but I finally have an idea of what
+// it would be good for - the indirection operator.  I won't say more yet...
 // 
 
 static stock
@@ -343,7 +349,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 #define C@(%9:%0);%1; C@(%0); // Get word.
 #define D@(%9:%0);%1; D@(%0); // Get string.
 
-#define @Y%0\32; @Y
+#define @@%0\32; @@
 #define Y@%0\32; Y@
 
 stock L@(GLOBAL_TAG_TYPES:...)
