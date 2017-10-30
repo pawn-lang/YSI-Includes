@@ -209,7 +209,7 @@ stock
 	#define TestAfterEach:%1() forward yA_@%1(); public yA_@%1()
 
 	#define PTestInit:%1(%2) @Q_y%1(%2);@Q_y%1(%2)
-	#define PTest:%1(%2) bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())_Qy@%1();static _Qy@%1()
+	#define PTest:%1(%2) bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
 	#define PTestClose:%1(%2) @_yQ%1(%2);@_yQ%1(%2)
 #else
 	#define TestInit:%1() static stock y_Q@%1()
