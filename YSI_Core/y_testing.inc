@@ -121,7 +121,7 @@ forward bool:_Testing_End();
 #endif
 
 #if defined LIGHT_TEST_REPORT
-	#define TEST_REPORT(%0);
+	#define TEST_REPORT(%0) H@()
 #else
 	#define TEST_REPORT(%0) printf(%0)
 #endif
