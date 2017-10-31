@@ -155,6 +155,7 @@ Optional plugins:
 */
 
 #include "..\YSI_Internal\y_compilerdata"
+#include "..\YSI_Internal\y_shortvar"
 #include "..\YSI_Internal\y_version"
 
 #include "..\YSI_Core\y_debug"

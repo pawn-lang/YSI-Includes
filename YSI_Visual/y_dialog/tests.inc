@@ -1,21 +1,4 @@
-#if defined _INC_y_dialog
-	#endinput
-#endif
-#define _INC_y_dialog
-
-/**
- * <library name="y_dialog">
- * <section>
- *  Description
- * </section>
- *  Provides functions for dealing with dialogs, without needing to worry about
- *  IDs or huge "OnDialogResponse" callbacks.
- * <section>
- *  Version
- * </section>
- *  0.1
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	
@@ -87,17 +70,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Data\y_bit"
-
-#include "..\YSI_Coding\y_remote"
-#include "..\YSI_Coding\y_inline"
-#include "..\YSI_Coding\y_hooks"
-#include "..\YSI_Storage\y_amx"
-#include "y_dialog/impl"
-
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_dialog/tests"
-#endif
+// Using "y_testing" in here isn't actually possible, because it needs dialogs
+// to ask players for feedback...
 
