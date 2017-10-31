@@ -1,3 +1,4 @@
+TODO(000, "Support localfunc and targetfunc");
 
 remotefunc stock yrt_1(hi);
 
@@ -64,7 +65,7 @@ Test:y_remote_1()
 Test:y_remote_2()
 {
 	new arr[89], oo = sizeof (arr);
-	ASSERT(yrt_2(789, "string", arr, oo) == 0);
+	ASSERT(broadcastfunc yrt_2(789, "string", arr, oo) == 0);
 	ASSERT(oo == sizeof (arr));
 }
 
@@ -121,6 +122,6 @@ Test:y_remote_8()
 Test:y_remote_9()
 {
 	X@(_:(55.8));
-	ASSERT(yrt_9() == 0.0);
+	ASSERT(broadcastfunc yrt_9() == 0.0);
 }
 
