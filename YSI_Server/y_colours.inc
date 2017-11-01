@@ -148,7 +148,7 @@ static stock
 	YSI_g_sColours[MAX_TEXT_COLOURS][2],
 	bool:YSI_g_sCheckSpaces = X11_ALLOW_SPACES;
 
-remotefunc void:_SetColoursCanHaveSpaces(bool:set)
+remotefunc static stock void:_SetColoursCanHaveSpaces(bool:set)
 {
 	YSI_g_sCheckSpaces = set;
 }

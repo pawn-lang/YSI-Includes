@@ -2,6 +2,7 @@ TODO(000, "Support localfunc and targetfunc");
 
 remotefunc stock yrt_1(hi);
 
+TODO(244, "Allocates too much heap with `len`.");
 remotefunc static stock yrt_2(const hi, string:you[], there[], &other, &len = 7);
 
 remotefunc stock yrt_3(hi, string:you[], there[], len)
@@ -35,7 +36,6 @@ remotefunc static stock string:yrt_5(hi, const string:you[], there[], tt, &other
 
 remotefunc Float:yrt_55(hi, const string:you[], there[], tt, &other, const len = 7)
 {
-	TODO(244, "Allocates too much heap with `len`.");
 	// Figure out why this fails with the "len" parameter (allocates too much
 	// heap data and doesn't fully clear it).
 	#pragma unused you, there, tt, len

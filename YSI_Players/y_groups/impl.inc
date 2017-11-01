@@ -230,19 +230,17 @@ HANDOFF()
 
 #define GROUP_ADD<%0> for(J@=_Group_AddInternal(1,(%0));J@;J@=_Group_AddInternal(0,(%0)))
 
-remotefunc static void:__Group_AddInternal(a,g)
+remotefunc static stock void:Group_AddInternal_(a,g)
 {
 	GROUP_CHAIN?<YSI_g_sNextInitFunc>(-1, a, g);
 }
-// Can't use "stock remotefunc".
-#pragma unused __Group_AddInternal
 
 stock _Group_AddInternal(a, Group:g)
 {
 	//printf("_Group_AddInternal %d %d", a, _:g);
 	if (_Group_IsValid(g))
 	{
-		broadcastfunc __Group_AddInternal(a, _:GROUP_TEMP_FIX(g));
+		broadcastfunc Group_AddInternal_(a, _:GROUP_TEMP_FIX(g));
 		return a;
 	}
 	else

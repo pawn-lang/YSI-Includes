@@ -592,7 +592,7 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 	// Get the preloaders.
 	new
 		precount = 0,
-		preloads[8][E_CHAIN_HOOK];
+		preloads[32][E_CHAIN_HOOK];
 	Hooks_GetPreloadLibraries(preloads, precount);
 	// Main loop
 	new
