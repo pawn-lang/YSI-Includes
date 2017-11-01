@@ -461,11 +461,7 @@ global Command_ReProcess(p,string:c[],h)
 	{
 		sRet = Command_OnReceived(DISABLED, p, c);
 		if (sErr != COMMAND_OK)
-		{
-			return
-				YSI_g_sCurrentID = prevID,
-				sRet;
-		}
+			return sRet;
 	}
 	P:1("Commands_OnPlayerCommandText called: %d %s", p, c);
 	new
