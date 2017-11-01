@@ -1623,7 +1623,7 @@ stock Area_AddSphere(Float:x, Float:y, Float:z, Float:r)
 			}
 			new
 				p = getproperty(8, YSIM_CALLER);
-			setproperty(8, YSIM_CALLER, Y@);
+			setproperty(8, YSIM_CALLER, _@);
 			CallRemoteFunction("Area_AddPoly@", "aii", points, sizeof (points), args);
 			setproperty(8, YSIM_CALLER, p);
 			return getproperty(8, YSIM_RETURN);
@@ -1646,6 +1646,11 @@ stock Area_AddSphere(Float:x, Float:y, Float:z, Float:r)
 				{
 					return 0;
 				}
+				
+				/*{
+					X@(_:@Zk:_YM@CP:%0(%1,,));
+					setproperty(8, YSIM_RETURN, n);
+				}*/
 				
 				stock Area_AddPoly(Float:x1, Float:y1, Float:x2, Float:y2, Float:x3, Float:y3, Float:...) <_YCM : y>
 				{

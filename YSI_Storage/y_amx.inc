@@ -146,7 +146,8 @@ enum E_AMX_TABLE
 
 // This is based on the AMX version used in SA:MP - it DOES NOT match the code
 // found in the PAWN documentation as that's for a later version.
-public OnCodeInit()
+
+public OnScriptInit()
 {
 	new
 		addr,
@@ -226,16 +227,16 @@ public OnCodeInit()
 	#if defined YSI_LOCK_MODE
 		GetServerVarAsString(YSI_gLockData, YSI_gLockData[5], sizeof (YSI_gLockData) - 5);
 	#endif
-	#if defined AMX_OnCodeInit
-		AMX_OnCodeInit();
+	#if defined AMX_OnScriptInit
+		AMX_OnScriptInit();
 	#endif
 	return 1;
 }
 
-#undef OnCodeInit
-#define OnCodeInit AMX_OnCodeInit
-#if defined AMX_OnCodeInit
-	forward AMX_OnCodeInit();
+#undef OnScriptInit
+#define OnScriptInit AMX_OnScriptInit
+#if defined AMX_OnScriptInit
+	forward AMX_OnScriptInit();
 #endif
 
 stock AMX_GetGlobalAddress(...)
@@ -992,7 +993,8 @@ stock AMX_ReadString(addr, str[], len = sizeof (str))
 		#emit LREF.S.pri                addr
 		#emit STOR.S.pri                buffer
 		// Write PACKED strings.
-		str[idx] = swapchars(buffer);
+		buffer = (buffer >>> 24) | (buffer >> 8 & 0x0000FF00) | (buffer << 8 & 0x00FF0000) | (buffer << 24);
+		str[idx] = buffer;
 		if (!(buffer & 0x000000FF && buffer & 0x0000FF00 && buffer & 0x00FF0000 && buffer & 0xFF000000))
 		{
 			return;
@@ -1089,9 +1091,37 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 
 stock AMX_Read(addr)
 {
-	#emit LREF.S.pri                    addr
-	#emit RETN
-	return 0;
+	// This is now, AFAIK, the first ever self-inlining function!
+	static
+		sFrame;
+	// Get the current stack pointer.
+	#emit LCTRL      4
+	#emit ADD.C      12
+	// Get the previous frame pointer.
+	#emit LOAD.S.alt 0
+	#emit SUB
+	#emit STOR.pri   sFrame
+	P:7("AMX_Read called: %i %d", addr, sFrame);
+	new
+		start = GetCurrentFrameReturn() - 16,
+		ctx2[DisasmContext];
+	DisasmInit(ctx2, start, start + 16);
+	if (!DisasmDecodeInsn(ctx2) || DisasmGetOpcode(ctx2) != OP_PUSH_C || DisasmGetOperand(ctx2) != 4)
+	{
+		P:W("Couldn't rewrite \"AMX_Read\" call");
+		return AMX_RawRead(addr);
+	}
+	new
+		ctx[AsmContext];
+	AsmInitPtr(ctx, start + AMX_HEADER_COD, 16);
+	// This is the actual code.  The standard function call puts the variable to
+	// read from on to the stack, so use that as a frame offset and call "LREF"
+	// on that stack value.  Then remove it from the stack and skip the next
+	// cell - since we are replacing 4 cells with just 3.
+	@emit LREF.S.pri   sFrame
+	@emit POP.alt
+	@emit NOP
+	return AMX_RawRead(addr);
 }
 
 stock AMX_Write(addr, value)
@@ -1160,20 +1190,6 @@ stock AMX_WriteArray(addr, const src[], len = sizeof (src))
 
 #define AMX_CodToDat(%0) ((%0) + AMX_HEADER_COD)
 #define AMX_DatToCod(%0) ((%0) - AMX_HEADER_COD)
-
-stock AMX_DumpHeader()
-{
-	new
-		idx,
-		buffer[32];
-	printf("================================");
-	while ((idx = AMX_GetPublicName(idx, buffer)))
-	{
-		strunpack(buffer, buffer);
-		printf(buffer);
-	}
-	printf("================================");
-}
 
 #define _A<%0> (_:H_Re(%0,0))
 
@@ -1478,3 +1494,4 @@ stock AMX_DumpHeader()
 #define H_Nc7(%0,%3) @C8:H_Sc(%0,8,%3)
 #define H_Nc8(%0,%3) @C9:H_Sc(%0,9,%3)
 #define H_Nc9(%0,%3) ()
+

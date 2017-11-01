@@ -78,13 +78,27 @@ Optional plugins:
 static stock y_als_Print(result[], fmat[], va_args<>)
 {
 	// This function formats the incoming data and compares it to the reference.
-	new
-		msg[512];
-	format(msg, sizeof (msg), fmat, ___2);
+	static
+		msg[256];
+	//printf("ONE: %d", numargs());
+	// printf("\"%s\" \"%s\"", result, fmat);
+	//printf("%s", result);
+	//printf("%s", fmat);
+	//printf("%s", msg);
+	// msg[0] = '\0';
+	// format(msg, sizeof (msg), fmat, 0);
+	va_format(msg, sizeof (msg), fmat, va_start<2>);
+	//printf("TWO");
+	//printf("%s", msg);
 	new
 		bool:cmp = !strcmp(result, msg);
+	//va_format(msg, sizeof (msg), fmat, va_start<2>);
+	//printf("%s", msg);
+	//printf("%s %s", result, fmat);
 	format(msg, sizeof (msg), "\"%s\" != \"%s\" (%d)", result, msg, cmp);
 	Testing_Test(cmp, msg);
+	//printf("THREE");
+	//printf("%s", msg);
 }
 
 // Defines for our "__PRINT" macro, see:
@@ -340,7 +354,7 @@ Test:y_als_Generation()
 		Float:fRotY = 21.34,
 		Float:fRotZ = 22.44;
 	__PRINT<PlayerEditObject, "OnPlayerEditObject(42, 2234, 1234, 404, 10.239999, 11.340000, 12.439999, 20.239999, 21.340000, 22.440000)">
-	#if __COMPILER_MODIFIED
+	#if 0
 		// This ends up too long to compile :(.
 		new
 			index = 650,
@@ -352,7 +366,7 @@ Test:y_als_Generation()
 			Float:fScaleX = 404.04,
 			Float:fScaleY = 505.05,
 			Float:fScaleZ = 606.06;
-		__PRINT<PlayerEditAttachedObject, "OnPlayerEditAttachedObject(42, 404, 650, 651, 652, 101.010002, 202.020004, 303.029998, 20.239999, 21.340000, 22.440000, 404.040008, 505.049987, 606.059997)">
+		__PRINT<PlayerEditAttachedObject, "OnPlayerEditAttachedObject(42, 404, 650, 651, 652, 20.240000, 21.340000, 22.440000, 101.010000, 202.020000, 303.030000, 404.040000, 505.050000, 606.060000)">
 	#endif
 }
 

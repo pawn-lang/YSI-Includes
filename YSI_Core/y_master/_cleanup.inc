@@ -74,6 +74,18 @@ Optional plugins:
 	#undef _inc__cleanup
 #endif
 
+// Remote hook
+#undef RH
+
+// Remote timer
+#undef RT
+
+// Remote command
+#undef RC
+
+// Remote ALS
+#undef RA
+
 #undef Master_Caller
 
 // New hooks
@@ -82,9 +94,11 @@ Optional plugins:
 #undef master_ptask
 #undef master_func
 #undef group_hook
+#undef @foreign
 #undef foreign
 #undef global
-#undef YSIM_COMMAND
+
+//#undef Master_Init
 
 // Clear any previous settings.
 #undef YSIM_HAS_MASTER

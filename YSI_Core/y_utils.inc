@@ -167,11 +167,8 @@ Optional plugins:
 #include "..\YSI_Internal\y_globaltags"
 
 // VERY VERY VERY IMPORTANT!!! y_inline uses "130" instead of "YSI_MAX_STRING"
-// for two lines (one is "520" for "130 * 4").  SO DOES y_shortfunc.
+// for two lines (one is "520" for "130 * 4").
 #define YSI_MAX_STRING                  (130)
-#if YSI_MAX_STRING != 130
-	#error Please update all explicit YSI_MAX_STRING uses.
-#endif
 
 #define FUNCTION_LENGTH                 (32)
 
@@ -212,11 +209,12 @@ new stock
 #define YSIM_TEXT_D #T
 #define YSIM_TXTFND #X
 #define YSIM_TXTIND #I
+#define YSIM_TXTLEN #E
 #define YSIM_LOG_IN #U
 #define YSIM_VARARG #V
 
 #if !defined YSIM_STRING
-	#define YSIM_STRING (1000)
+	#define YSIM_STRING (42)
 #endif
 
 #define FLOAT_INFINITY                  (Float:0x7F800000)
@@ -370,7 +368,7 @@ P:D(bool:VALID_PLAYERID(playerid));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IS_IN_RANGE(value, lower, upper));
+P:D(bool:IS_IN_RANGE(lower, value, upper));
 #define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
@@ -388,7 +386,7 @@ P:D(bool:IS_IN_RANGE(value, lower, upper));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:NOT_IN_RANGE(value, lower, upper));
+P:D(bool:NOT_IN_RANGE(lower, value, upper));
 #define NOT_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
@@ -702,50 +700,18 @@ stock IPToInt(ip[])
 
 stock bernstein(string[] /* 12 */)
 {
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	return 0;
+	// Only shown the very first time this function is run.
+	P:7("bernstein called: \"%s\"", string);
 	#pragma unused string
-}
-
-forward OnCodeInit();
-
-public OnCodeInit()
-{
 	new
 		base,
 		ctx[AsmContext];
-	// Get the function.
+	// Get this function.
 	#emit CONST.pri  bernstein
 	#emit LOAD.alt   AMX_HEADER_COD
 	#emit ADD
 	#emit STOR.S.pri base
-	P:7("bernstein: base = %d, %d", AMX_HEADER_COD, base);
-	AsmInitPtr(ctx, base, 25 * 4), // Don't need any more than that.
-	AsmSetErrorHandlerName(ctx, "Debug_ErrorHandler");
+	AsmInitPtr(ctx, base, 128), // Don't need any more than that.
 	// Setup.
 	@emit PROC
 	@emit CONST.alt   -1
@@ -768,23 +734,14 @@ public OnCodeInit()
 	@emit MOVE.pri
 	@emit STACK       4
 	@emit RETN
-	if (FALSE)
-		bernstein("");
-	#if defined Utils_OnCodeInit
-		Utils_OnCodeInit();
-	#endif
+	// Now actually CALL the written function.
+	#emit LCTRL      5
+	#emit SCTRL      4
+	#emit CONST.pri  bernstein
+	#emit ADD.C      4
+	#emit SCTRL      6
 	return 0; // Make the compiler happy.
 }
-
-#if defined Utils_OnCodeInit
-	forward Utils_OnCodeInit();
-#endif
-#if defined _ALS_OnCodeInit
-	#undef OnCodeInit
-#else
-	#define _ALS_OnCodeInit
-#endif
-#define OnCodeInit Utils_OnCodeInit
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to check.</param>
@@ -1099,391 +1056,6 @@ stock isnumeric(str[])
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  Base64Encode
- * </summary>
- * <remarks>
- *  Encodes data using proper base64.  This code is complicated by the fact that
- *  PAWN packed strings are backwards by cells in memory, so we need to do the
- *  writes in what seems like a strange order.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest), offset = 0)
-{
-	static
-		// This is what the encoding should look like.  We mangle it to make the
-		// representation in memory look like a C string, not a PAWN packed
-		// string.
-		//sEncoding[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-		sEncoding[65 char] = !"DCBAHGFELKJIPONMTSRQXWVUbaZYfedcjihgnmlkrqpovutszyxw32107654/+98",
-		//tmp,
-		ret;
-	num *= cellbytes;
-	if (len <= ceildiv(num, 3))
-	{
-		// How many complete chunks can we fit in?
-		num = (len - 1) * 3;
-	}
-	len = num % 3;
-	num /= 3;
-	// Set up the array for preincrement.
-	#emit LOAD.S.pri   src
-	#emit ADD.C        0xFFFFFFFD // -3
-	#emit LOAD.S.alt   offset
-	#emit ADD
-	#emit PUSH.pri
-	#emit LOAD.S.pri   dest
-	#emit STOR.pri     ret
-	// Loop for the whole chunks.
-	while (num--)
-	{
-		// Using a post-increment just refuses to work, and I have no idea why.
-		#emit POP.pri
-		#emit ADD.C        3
-		#emit PUSH.pri
-		#emit LOAD.I       // `LODB.I 3` doesn't work.
-		#emit PUSH.pri
-		
-		#emit SHL.C.pri    10 // (pri >> 16) & 0x3F
-		#emit SHR.C.pri    26 // 
-		#emit ADD.C        sEncoding
-		#emit LODB.I       1
-		#emit SREF.S.pri   dest
-		#emit INC.S        dest
-		
-		#emit LOAD.S.pri   0xFFFFFFF8
-		#emit MOVE.alt
-		#emit SHL.C.pri     8 // (pri >> 22) & 0x03
-		#emit SHR.C.pri    30 // Would be just `SHR.C.pri` with `LODB.I 3`...
-		#emit XCHG
-		#emit SHL.C.pri    20 // (alt >> 6) & 0x3C
-		#emit SHR.C.pri    28 //
-		#emit SHL.C.pri    2  //
-		#emit OR
-		#emit ADD.C        sEncoding
-		#emit LODB.I       1
-		#emit SREF.S.pri   dest
-		#emit INC.S        dest
-		
-		#emit LOAD.S.pri   0xFFFFFFF8
-		#emit MOVE.alt
-		#emit SHL.C.pri    30 // (pri << 4) & 0x30
-		#emit SHR.C.pri    26 //
-		#emit XCHG
-		#emit SHL.C.pri    16 // (alt >> 12) & 0x0F
-		#emit SHR.C.pri    28 //
-		#emit OR
-		#emit ADD.C        sEncoding
-		#emit LODB.I       1
-		#emit SREF.S.pri   dest
-		#emit INC.S        dest
-		
-		#emit POP.pri
-		#emit SHL.C.pri    24 // (pri >> 2) & 0x3F
-		#emit SHR.C.pri    26 //
-		#emit ADD.C        sEncoding
-		#emit LODB.I       1
-		#emit SREF.S.pri   dest
-		#emit INC.S        dest
-	}
-	{}
-	switch (len)
-	{
-		case 0:
-		{
-			#emit POP.pri
-			#emit LOAD.S.alt   dest
-			#emit ZERO.pri
-			#emit STRB.I       1
-			
-			#emit LOAD.pri     ret
-			#emit SUB.alt
-			#emit RETN
-		}
-		case 1:
-		{
-			#emit LOAD.S.alt   dest
-			#emit CONST.pri    '='
-			#emit STRB.I       1
-			#emit INC.alt
-			#emit STRB.I       1
-			#emit INC.alt
-			#emit POP.pri
-			#emit ADD.C        3
-			#emit LODB.I       1
-			#emit PUSH.pri
-			
-			#emit SHL.C.pri    30 // (pri << 4) & 0x30
-			#emit SHR.C.pri    26 //
-			#emit ADD.C        sEncoding
-			#emit LODB.I       1
-			#emit STRB.I       1
-			#emit INC.alt
-			
-			#emit POP.pri
-			#emit SHL.C.pri    24 // (pri >> 2) & 0x3F
-			#emit SHR.C.pri    26 //
-			#emit ADD.C        sEncoding
-			#emit LODB.I       1
-			#emit STRB.I       1
-			#emit INC.alt
-			#emit ZERO.pri
-			#emit STRB.I       1
-			
-			#emit LOAD.pri     ret
-			#emit SUB.alt
-			#emit RETN
-		}
-		case 2:
-		{
-			// Write out remaining `=` signs.
-			#emit LOAD.S.alt   dest
-			#emit CONST.pri    '='
-			#emit STRB.I       1
-			#emit INC.alt
-			#emit POP.pri
-			#emit ADD.C        3
-			#emit LODB.I       2
-			#emit PUSH.pri
-			
-			#emit SHL.C.pri    20 // (alt >> 6) & 0x3C
-			#emit SHR.C.pri    26 //
-			#emit ADD.C        sEncoding
-			#emit LODB.I       1
-			#emit STRB.I       1
-			
-			#emit LOAD.S.pri   0xFFFFFFFC
-			#emit MOVE.alt
-			#emit SHL.C.pri    30 // (pri << 4) & 0x30
-			#emit SHR.C.pri    26 //
-			#emit XCHG
-			#emit SHL.C.pri    16 // (alt >> 12) & 0x0F
-			#emit SHR.C.pri    28 //
-			#emit OR
-			#emit ADD.C        sEncoding
-			#emit LODB.I       1
-			#emit LOAD.S.alt   dest
-			#emit INC.alt
-			#emit INC.alt
-			#emit STRB.I       1
-			#emit INC.alt
-			
-			#emit POP.pri
-			#emit SHL.C.pri    24 // (pri >> 2) & 0x3F
-			#emit SHR.C.pri    26 //
-			#emit ADD.C        sEncoding
-			#emit LODB.I       1
-			#emit STRB.I       1
-			#emit INC.alt
-			#emit ZERO.pri
-			#emit STRB.I       1
-			
-			#emit LOAD.pri     ret
-			#emit SUB.alt
-			#emit RETN
-		}
-	}
-	return 0;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <summary>
- *  Base64Decode
- * </summary>
- * <remarks>
- *  Decodes data using proper base64.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
-{
-	static
-		// Again, the encoding looks slightly mangled as we want the bytes in
-		// order, while cells are little-endian.
-		sDecoding[128 char] = {
-			0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-			0x00000000, 0x00000000, 0x3E000000, 0x3F000000, 0x37363534, 0x3B3A3938, 0x00003D3C, 0x00000000,
-			0x02010000, 0x06050403, 0x0A090807, 0x0E0D0C0B, 0x1211100F, 0x16151413, 0x00191817, 0x00000000,
-			0x1C1B1A00, 0x201F1E1D, 0x24232221, 0x28272625, 0x2C2B2A29, 0x302F2E2D, 0x00333231, 0x00000000
-		},
-		blocks,
-		num;
-	// Work out the final length.  Subtract some for incomplete bytes and
-	// insufficient destination data.
-	num = strlen(src);
-	len *= cellbytes;
-	blocks = num / cellbytes;
-	if (src{num - 1}  == '=')
-	{
-		--blocks;
-		if (src{num - 2}  == '=')
-			num = 1;
-		else
-			num = 2;
-	}
-	else
-		num = 0;
-	blocks = min(blocks, len / 3);
-	num = min(num, len - blocks * 3);
-	len = blocks * 3 + num;
-	// Do complete blocks of 4 (one cell).
-	{}
-	// x - 1 - 3
-	#emit LOAD.S.pri   dest
-	#emit ADD.C        0xFFFFFFFC // -4
-	#emit LOAD.S.alt   offset
-	#emit ADD
-	#emit STOR.S.pri   dest
-	#emit LOAD.S.pri   src
-	#emit ADD.C        0xFFFFFFFC // -4
-	#emit STOR.S.pri   src
-	while (blocks--)
-	{
-		#emit LOAD.S.pri   src
-		#emit ADD.C        4
-		#emit STOR.S.pri   src
-		#emit LOAD.I
-		#emit MOVE.alt
-		
-		// The data has now been loaded.  The data MSB comes from the string's
-		// LSB (which for PAWN is the last character).
-		#emit SHL.C.pri    24 // (pri & 0xFF)
-		#emit SHR.C.pri    24
-		#emit ADD.C        sDecoding
-		#emit LODB.I        1
-		#emit SHL.C.pri    24 // (pri << 24)
-		#emit PUSH.pri
-		
-		#emit MOVE.pri
-		#emit SHL.C.pri    16 // (pri & 0xFF)
-		#emit SHR.C.pri    24
-		#emit ADD.C        sDecoding
-		#emit LODB.I        1
-		#emit PUSH.pri
-		#emit SHL.C.pri    30 // (pri << 30)
-		#emit SWAP.pri
-		#emit SHR.C.pri     2 // (pri >> 2 << 16)
-		#emit SHL.C.pri    16
-		#emit PUSH.pri
-		
-		#emit MOVE.pri
-		#emit SHL.C.pri     8 // (pri & 0xFF)
-		#emit SHR.C.pri    24
-		#emit ADD.C        sDecoding
-		#emit LODB.I        1
-		#emit PUSH.pri
-		#emit SHR.C.pri     4 // (pri >> 4 << 8)
-		#emit SHL.C.pri     8
-		#emit SWAP.pri
-		#emit SHL.C.pri    28 // (pri << 28 >> 8)
-		#emit SHR.C.pri     8
-		#emit PUSH.pri
-		
-		#emit MOVE.pri
-		#emit SHR.C.pri    24 // (pri & 0xFF)
-		#emit ADD.C        sDecoding
-		#emit LODB.I        1
-		#emit SHL.C.pri    10 // (pri << 10)
-		#emit MOVE.alt
-		
-		// Get the byte before the one we want to write loaded as the LSB then
-		// shift the other bytes in to this one.
-		#emit LOAD.S.pri   dest
-		#emit ADD.C        3
-		#emit STOR.S.pri   dest
-		#emit LODB.I       1
-		
-		#emit OR
-		#emit POP.alt
-		#emit OR
-		#emit POP.alt
-		#emit OR
-		#emit POP.alt
-		#emit OR
-		#emit POP.alt
-		#emit OR
-		#emit POP.alt
-		#emit OR
-		
-		#emit SREF.S.pri   dest
-	}
-	switch (num)
-	{
-		case 1:
-		{
-			// Need to store just one byte (the LSB).
-			#emit LOAD.S.pri   src
-			#emit ADD.C        4
-			#emit LOAD.I
-			#emit MOVE.alt
-			
-			#emit SHR.C.pri    24
-			#emit ADD.C        sDecoding
-			#emit LODB.I        1
-			#emit SHL.C.pri     2 // (pri << 2)
-			#emit XCHG
-			#emit SHL.C.pri     8
-			#emit SHR.C.pri    24
-			#emit ADD.C        sDecoding
-			#emit LODB.I        1
-			#emit SHR.C.pri     4 // (pri >> 4)
-			#emit OR
-			#emit MOVE.alt
-			
-			#emit LOAD.S.pri   dest
-			#emit ADD.C        4
-			#emit XCHG
-			#emit STRB.I       1
-		}
-		case 2:
-		{
-			// Need to store two bytes (the LSBs).
-			#emit LOAD.S.pri   src
-			#emit ADD.C        4
-			#emit LOAD.I
-			#emit MOVE.alt
-			#emit PUSH.pri
-			
-			#emit SHR.C.pri    24
-			#emit ADD.C        sDecoding
-			#emit LODB.I        1
-			#emit SHL.C.pri     2 // (pri << 2)
-			#emit XCHG
-			#emit SHL.C.pri     8
-			#emit SHR.C.pri    24
-			#emit ADD.C        sDecoding
-			#emit LODB.I        1
-			#emit PUSH.pri
-			#emit SHR.C.pri     4 // (pri >> 4)
-			#emit OR
-			#emit MOVE.alt
-			
-			// This has extra bits left in, but they are cut off by `STRB.I 2`.
-			#emit POP.pri
-			#emit SHL.C.pri    12 // (pri << 12)
-			#emit OR
-			#emit POP.alt
-			#emit XCHG
-			#emit SHL.C.pri    16
-			#emit SHR.C.pri    24
-			#emit ADD.C        sDecoding
-			#emit LODB.I        1
-			#emit SHR.C.pri     2 // (pri >> 2 << 8)
-			#emit SHL.C.pri     8
-			#emit OR
-			#emit MOVE.alt
-			
-			#emit LOAD.S.pri   dest
-			#emit ADD.C        4
-			#emit XCHG
-			#emit STRB.I       2
-		}
-	}
-	return len;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <summary>
  *  rawMemcpy
  * </summary>
  * <param name="dest">Destination address.</param>
@@ -1561,108 +1133,73 @@ stock memset(arr[], val = 0, size = sizeof (arr))
 
 stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 {
-	if (iSize < 4)
-		return 0;
-	if (iAddress < 0)
-	{
-		// Somewhere in COD, not DAT.  Can't use FILL because it checks the
-		// address.  Unless we are running in the JIT, which doesn't have
-		// checks, but we shouldn't be writing to COD after the JIT has started
-		// anyway.
-		do
-		{
-			#emit LOAD.S.pri iValue
-			#emit SREF.S.pri iAddress
-			iAddress += 4;
-		}
-		while ((iSize -= 4) > 0);
-		return 1;
-	}
-	else //if (JIT_Complete())
-	{
-		while (iSize >= 4096)
-		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
-			#emit FILL       4096
-			iAddress += 4096;
-			iSize -= 4096;
-		}
-		if (iSize & 2048)
-		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
-			#emit FILL       2048
-			iAddress += 2048;
-		}
-		if (iSize & 1024)
-		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
-			#emit FILL       1024
-			iAddress += 1024;
-		}
-		if (iSize & 512)
-		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
-			#emit FILL       512
-			iAddress += 512;
-		}
-		if (iSize & 256)
-		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
-			#emit FILL       256
-			iAddress += 256;
-		}
-		if (iSize & 128)
-		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
-			#emit FILL       128
-			iAddress += 128;
-		}
-		if (iSize & 64)
-		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
-			#emit FILL       64
-			iAddress += 64;
-		}
-		if (iSize & 32)
-		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
-			#emit FILL       32
-			iAddress += 32;
-		}
-		if (iSize & 16)
-		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
-			#emit FILL       16
-			iAddress += 16;
-		}
-		if (iSize & 8)
-		{
-			#emit LOAD.S.pri iValue
-			#emit LOAD.S.alt iAddress
-			#emit FILL       8
-			iAddress += 8;
-		}
-		if (iSize & 4)
-		{
-			#emit LOAD.S.pri iValue
-			#emit SREF.S.pri iAddress
-		}
-		return 1;
-	}
-//	else
-//	{
-//		// JIT not started/non-existant.  We can use code rewriting.
-//		return 1;
-//	}
+	// They are really, trust me!
+	#pragma unused iAddress, iSize, iValue
+	// The first time this is called it rewrites itself.  Any other times it is
+	// called it just uses the new code.  This is like doing:
+	//  
+	//  static
+	//      bInitialised = false;
+	//  if (!bInitialised)
+	//  {
+	//      // Do something
+	//      bInitialised = true;
+	//  }
+	//  // Do rest.
+	//  
+	// But better (though FAR more complex).
+	// There is NO checking here that we don't write the function bigger than
+	// the space available, or even that we don't overwrite "CIP", which would
+	// be bad.  The only way to make sure that doesn't happen is write a little
+	// with a lot of code!
+	new
+		base,
+		ctx[AsmContext];
+	// Get this function.
+	#emit CONST.pri  rawMemset
+	#emit LOAD.alt   AMX_HEADER_COD
+	#emit ADD
+	#emit STOR.S.pri base
+	AsmInitPtr(ctx, base, 80), // Don't need any more than that.
+	// Frankly by this point we have probably already written more code than
+	// will be generated!
+	@emit PROC
+	@emit LOAD.S.pri 20
+	@emit CONST.alt  0xFFFFFFC
+	@emit AND
+	@emit STOR.pri   (ctx[AsmContext_buffer] + 13 * 4)
+	// The documentation says "PRI" should be a pointer, but that's not true!
+	@emit LOAD.S.alt 12
+	@emit LOAD.S.pri 16
+	@emit FILL       0
+	// Return the bytes filled.
+	@emit LOAD.pri   (ctx[AsmContext_buffer] + 13 * 4)
+	@emit RETN
+	// Do the second version.
+	#emit CONST.pri  memset
+	#emit LOAD.alt   AMX_HEADER_COD
+	#emit ADD
+	#emit STOR.S.pri base
+	AsmInitPtr(ctx, base, 80),
+	@emit PROC
+	@emit LOAD.S.pri 20
+	@emit SHL.C.pri  2
+	@emit STOR.pri   (ctx[AsmContext_buffer] + 12 * 4)
+	@emit LOAD.S.alt 12
+	@emit LOAD.S.pri 16
+	@emit FILL       0
+	// Return the bytes filled.
+	@emit LOAD.pri   (ctx[AsmContext_buffer] + 12 * 4)
+	@emit RETN
+	// Call this function again (the new version), but don't let the compiler
+	// know...  First clear the stack.
+	#emit LCTRL      5
+	#emit SCTRL      4
+	#emit CONST.pri  rawMemset
+	#emit ADD.C      4
+	#emit SCTRL      6
+	// Never hit because of going to an earlier "RETN".
+	return 0; //memset("", 0, 0);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1929,18 +1466,18 @@ stock Median(arr[], num = sizeof (arr))
 stock Range(arr[], num = sizeof (arr))
 {
 	new
-		min2 = cellmax,
-		max2 = cellmin,
+		min = cellmax,
+		max = cellmin,
 		cur;
 	while (num)
 	{
 		cur = arr[--num];
-		if (cur < min2)
-			min2 = cur;
-		if (cur > max2)
-			max2 = cur;
+		if (cur < min)
+			min = cur;
+		if (cur > max)
+			max = cur;
 	}
-	return max2 - min2;
+	return max - min;
 }
 
 #include "..\YSI_Coding\y_va"

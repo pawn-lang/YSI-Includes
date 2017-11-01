@@ -176,11 +176,6 @@ Optional plugins:
 
 #include <a_samp>
 
-#if defined YSI_TESTS
-	// Fake `IsPlayerConnected`.
-	#define _YSI_SPECIAL_DEBUG
-#endif
-
 #include "..\YSI_Internal\y_version"
 
 // Make sure this is included early.
@@ -201,67 +196,7 @@ Optional plugins:
 	#define MAX_TEXT_ENTRIES (Y_TEXT_PER_SET * Y_TEXT_MAX_SETS)
 #endif
 
-#include "..\YSI_Core\y_utils"
-
-#if defined YSI_TESTS
-	#define MAX_Y_TEXT_TEST_LINES (10)
-	#define MAX_Y_TEXT_TEST_LENGTH (1024)
-
-	// These mocks DO NOT use ALS or stock, so that we get compile-time warnings
-	// about anything that may interfere.  Tests shouldn't really be run on a
-	// full mode with all other things (unless you are doing integration tests),
-	// so the warnings are appropriate.
-	new
-		YSI_gTextTestPlayer[MAX_Y_TEXT_TEST_LINES],
-		YSI_gTextTestStyle[MAX_Y_TEXT_TEST_LINES],
-		YSI_gTextTestTime[MAX_Y_TEXT_TEST_LINES],
-		YSI_gTextTestOutput[MAX_Y_TEXT_TEST_LINES][MAX_Y_TEXT_TEST_LENGTH],
-		YSI_gTextTest;
-
-	// Hook SA:MP natives, so that calls to print functions are routed to us
-	// instead.  "TxT" = "TextTest".
-	TxT_SendClientMessage(playerid, color, const message[])
-	{
-		YSI_gTextTestPlayer[YSI_gTextTest] = playerid,
-		YSI_gTextTestStyle[YSI_gTextTest] = color,
-		strcpy(YSI_gTextTestOutput[YSI_gTextTest], message),
-		++YSI_gTextTest;
-	}
-	#define SendClientMessage TxT_SendClientMessage
-
-	TxT_SendPlayerMessageToPlayer(playerid, senderid, const message[])
-	{
-		YSI_gTextTestPlayer[YSI_gTextTest] = playerid,
-		YSI_gTextTestStyle[YSI_gTextTest] = senderid,
-		strcpy(YSI_gTextTestOutput[YSI_gTextTest], message),
-		++YSI_gTextTest;
-	}
-	#define SendPlayerMessageToPlayer TxT_SendPlayerMessageToPlayer
-
-	TxT_GameTextForPlayer(playerid, const string[], time, style)
-	{
-		YSI_gTextTestPlayer[YSI_gTextTest] = playerid,
-		YSI_gTextTestStyle[YSI_gTextTest] = style,
-		YSI_gTextTestTime[YSI_gTextTest] = time,
-		strcpy(YSI_gTextTestOutput[YSI_gTextTest], string),
-		++YSI_gTextTest;
-	}
-	#define GameTextForPlayer TxT_GameTextForPlayer
-
-	TextTest_Reset()
-	{
-		for (new i = 0; i != MAX_Y_TEXT_TEST_LINES; ++i)
-		{
-			YSI_gTextTestPlayer[i] = cellmin,
-			YSI_gTextTestStyle[i] = cellmin,
-			YSI_gTextTestTime[i] = cellmin,
-			YSI_gTextTestOutput[i][0] = '\0';
-		}
-		YSI_gTextTest = 0;
-	}
-
-	// TODO: TextDraw hooks.
-#endif
+#include "..\YSI_Internal\y_version"
 
 #include "..\YSI_Storage\y_xml"
 #include "..\YSI_Server\y_td"
@@ -276,17 +211,15 @@ Optional plugins:
 // This is a horribly eclectic collection of libraries from all over the place
 // and written at different times with different aims - frankly I'll be AMAZED
 // if it all comes together and works.
-// 
-// 2017: I'm still amazed it works!
+
 
 #include <a_samp>
 #include "..\YSI_Core\y_debug"
 #include "..\YSI_Server\y_colours"
-#include "..\YSI_Data\y_hashmap"
-#include "..\YSI_Data\y_jaggedarray"
 
 #include "y_text/load"
 
+#include "..\YSI_Core\y_utils"
 #include "..\YSI_Internal\y_shortfunc"
 #include "..\YSI_Internal\y_natives"
 #include "..\YSI_Coding\y_va"
@@ -344,37 +277,106 @@ Optional plugins:
 //#define _Text_MessageBox(%0YCMD:%1) _Text_MessageBox(%0_:YCMD_REP_0:YCMD_REP_1:%1)
 
 //stock Text_GetAllIDs(
-static stock
-	YSI_g_sFormat[1024],
-	YSI_g_sTemp[1024];
 
-stock Text_FormatEx(output[], len, const format[], GLOBAL_TAG_TYPES:...)
+stock formatex(output[], len, const format[], GLOBAL_TAG_TYPES:...)
 {
+	static
+		sFormat[1024],
+		sTemp[1024];
 	// "Format_Standardise" modifies "input" repeatedly.
-	strcpy(YSI_g_sFormat, format);
-	Format_Standardise(YSI_g_sFormat, YSI_g_sTemp);
-	Format_Render(INVALID_PLAYER_ID, NO_LANGUAGE, output, len - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sTemp, ___(3));
+	//strcpy(sTemp, format);
+	strcpy(sFormat, format);
+	Format_Standardise(sFormat, sTemp);
+	new
+		n = (numargs() - 3) * 4;
+	if (n)
+	{
+		// Push all passed parameters.
+		new
+			arg_start,
+			arg_end;
+		// Load the real address of the last static parameter.  Do this by
+		// loading the address of the parameter and then adding the value of
+		// [FRM] (frame pointer).
+		#emit CONST.alt                 format
+		#emit LCTRL                     5
+		#emit ADD
+		#emit STOR.S.pri                arg_start
+		// Load the address of the last variable parameter.  Do this by adding
+		// the number of variables on the value just loaded.
+		#emit LOAD.S.alt                n
+		#emit ADD
+		#emit STOR.S.pri                arg_end
+		new
+			arg_cur = arg_end;
+		do
+		{
+			#emit LOAD.S.pri            arg_cur
+			#emit LOAD.I
+			#emit PUSH.pri
+			arg_cur -= 4;
+		}
+		while (arg_cur > arg_start);
+		Format_Render(INVALID_PLAYER_ID, NO_LANGUAGE, output, len - 1, 0, e_FORMAT_FLAGS_NONE, sTemp, n / 4);
+		#emit LCTRL                     4
+		#emit LOAD.S.alt                n
+		#emit ADD
+		#emit SCTRL                     4
+	}
+	else
+	{
+		Format_Render(INVALID_PLAYER_ID, NO_LANGUAGE, output, len - 1, 0, e_FORMAT_FLAGS_NONE, sTemp, 0);
+	}
 }
 
-stock Text_PrintFEx(const format[], GLOBAL_TAG_TYPES:...)
+stock printfex(const format[], GLOBAL_TAG_TYPES:...)
 {
+	static
+		sFormat[1024],
+		sTemp[1024];
 	// "Format_Standardise" modifies "input" repeatedly.
-	strcpy(YSI_g_sFormat, format);
-	Format_Standardise(YSI_g_sFormat, YSI_g_sTemp);
-	Format_Render(INVALID_PLAYER_ID, NO_LANGUAGE, YSI_g_sFormat, sizeof (YSI_g_sFormat) - 1, 0, e_FORMAT_FLAGS_NONE, YSI_g_sTemp, ___(1));
+	strcpy(sFormat, format);
+	Format_Standardise(sFormat, sTemp);
+	new
+		n = (numargs() - 1) * 4;
+	if (n)
+	{
+		// Push all passed parameters.
+		new
+			arg_start,
+			arg_end;
+		// Load the real address of the last static parameter.  Do this by
+		// loading the address of the parameter and then adding the value of
+		// [FRM] (frame pointer).
+		#emit CONST.alt                 format
+		#emit LCTRL                     5
+		#emit ADD
+		#emit STOR.S.pri                arg_start
+		// Load the address of the last variable parameter.  Do this by adding
+		// the number of variables on the value just loaded.
+		#emit LOAD.S.alt                n
+		#emit ADD
+		#emit STOR.S.pri                arg_end
+		new
+			arg_cur = arg_end;
+		do
+		{
+			#emit LOAD.S.pri            arg_cur
+			#emit LOAD.I
+			#emit PUSH.pri
+			arg_cur -= 4;
+		}
+		while (arg_cur > arg_start);
+		Format_Render(INVALID_PLAYER_ID, NO_LANGUAGE, sFormat, sizeof (sFormat) - 1, 0, e_FORMAT_FLAGS_NONE, sTemp, n / 4);
+		#emit LCTRL                     4
+		#emit LOAD.S.alt                n
+		#emit ADD
+		#emit SCTRL                     4
+	}
+	else
+	{
+		Format_Render(INVALID_PLAYER_ID, NO_LANGUAGE, sFormat, sizeof (sFormat) - 1, 0, e_FORMAT_FLAGS_NONE, sTemp, 0);
+	}
 	print(sFormat);
 }
-
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_text/tests"
-#endif
-
-#if !defined formatex
-	#define formatex Text_FormatEx
-#endif
-#if !defined printfex
-	#define printfex Text_PrintFEx
-#endif
-
 

@@ -130,6 +130,7 @@ static stock
 	YSI_g_sTemp3D[E_3D_DATA],
 	YSI_g_sTempMaster,
 	Text:YSI_g_sBaseTD = TEXT_DRAW_NO_NEXT,
+	//YSI_g_sExtraText[MAX_INI_ENTRY_TEXT],
 	gInitialColour;
 
 /*-------------------------------------------------------------------------*//**
@@ -794,9 +795,9 @@ stock Text_GetLastID() <>
  * <transition keep="true" target="y_render_fade : y_render_fade_fake" />
  *//*------------------------------------------------------------------------**/
 //stock Format_Render(pid, Language:l, output[], maxlen, idx, target, string[], {Float,_}:...)
-stock Format_Render(pid, Language:l, output[], maxlen, idx, target, string[], GLOBAL_TAG_TYPES:...)
+stock Format_Render(pid, Language:l, output[], maxlen, idx, target, string[], argCount, GLOBAL_TAG_TYPES:...)
 {
-	P:3("Format_Render called: %i, %i, %s, %i, %i, %i, %s (+%i)", pid, _:l, output, maxlen, idx, target, numargs() - 7);
+	P:3("Format_Render called: %i, %i, %s, %i, %i, %i, %s (+%i)", pid, _:l, output, maxlen, idx, target, argCount, numargs() - 8);
 	gInitialColour = (YSI_g_sTempStyle[E_STYLE_DATA_COLOUR] >>> 4) & 0x00FFFFFF;
 	new
 		colour = gInitialColour;
@@ -826,8 +827,8 @@ Format_Render_start:
 		llen = maxlen,
 		//output[128], // Always 128.
 		p = 0,
-		curArg = 7, // Account for additionaly pushed arguments.
-		numArgs = numargs(),
+		curArg = 8, // Account for additionaly pushed arguments.
+		numArgs = numargs() + argCount,
 		//llen = sizeof (output) - 1,
 		arg,
 		none = (target & e_FORMAT_FLAGS_NONE),
@@ -1064,7 +1065,7 @@ Format_Render_start:
 								new
 									lst = setproperty(8, YSIM_CALLER),
 									_j = 0;
-								setproperty(8, YSIM_CALLER, Y@);
+								setproperty(8, YSIM_CALLER, _@);
 								for ( ; ; )
 								{
 									CallRemoteFunction(func, "ii", _:l, _j);
@@ -1107,7 +1108,7 @@ Format_Render_start:
 								new
 									lst = setproperty(8, YSIM_CALLER),
 									_j = 0;
-								setproperty(8, YSIM_CALLER, Y@);
+								setproperty(8, YSIM_CALLER, _@);
 								for ( ; ; )
 								{
 									CallRemoteFunction(func, "iii", pid, _:l, _j);
@@ -1523,6 +1524,21 @@ Format_Render_start:
 				P:6("Text_Render: Key");
 				++idx;
 			}
+			case '\05':
+			{
+				// String extension.
+				P:6("Text_Render: Extension %d %d %d", YSI_g_sTempMaster, string[idx], string[idx - 1]);
+				// TODO!
+				// This should change the current input to a new one.  May
+				// require some more advanced hacking to support fades over
+				// these boundaries (or just ban them)...  Actually, I don't
+				// think it will require extra work...
+				// Just use the text directly.
+				idx = _Text_GetPointer(YSI_g_sTempMaster, string[idx]);
+				#emit LOAD.S.pri idx
+				#emit STOR.S.pri string
+				idx = 0;
+			}
 			case '\n':
 			{
 				P:6("Text_Render: NL");
@@ -1645,4 +1661,3 @@ Format_Render_start:
 	P:5("Text_Render end");
 	return one;
 }
-

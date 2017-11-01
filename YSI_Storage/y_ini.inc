@@ -219,7 +219,7 @@ stock const
 #include "..\YSI_Coding\y_hooks"
 
 forward e_INI_LINE_TYPE:
-	INI_IdentifyLineType(str[MAX_INI_LINE], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e);
+	INI_IdentifyLineType(const str[], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e);
 
 #include "y_ini/reading"
 #include "y_ini/writing"

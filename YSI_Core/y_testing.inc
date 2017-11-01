@@ -121,7 +121,7 @@ forward bool:_Testing_End();
 #endif
 
 #if defined LIGHT_TEST_REPORT
-	#define TEST_REPORT(%0);
+	#define TEST_REPORT(%0) H@(%0)
 #else
 	#define TEST_REPORT(%0) printf(%0)
 #endif
@@ -156,14 +156,16 @@ forward bool:_Testing_End();
 
 #define ASK(%0) Testing_Ask(playerid,%0)
 
-#define Y_TESTING_TEST_SEARCH _A<@yQ_>
-#define Y_TESTING_PTEST_SEARCH _A<@_Qy>
-#define Y_TESTING_INIT  _C<@y_Q>
-#define Y_TESTING_TEST  _C<@yQ_>
-#define Y_TESTING_SHUT  _C<@Qy_>
-#define Y_TESTING_PINIT _C<@Q_y>
-#define Y_TESTING_PTEST _C<@_Qy>
-#define Y_TESTING_PSHUT _C<@_yQ>
+static stock const
+	Y_TESTING_TEST = _A<yQ@_>,
+	Y_TESTING_INIT = _A<_yQ@>,
+	Y_TESTING_SHUT = _A<yQ_@>,
+	Y_TESTING_PTEST = _A<_@yQ>,
+	Y_TESTING_PINIT = _A<_y@Q>,
+	Y_TESTING_PSHUT = _A<y_@Q>,
+	Y_TESTING_BEFORE = _A<yB_@>,
+	Y_TESTING_AFTER = _A<yA_@>
+;
 
 static stock
 	YSI_g_sCurTest = 0,
@@ -181,59 +183,27 @@ static stock
 stock
 	YSI_gCurTestName[32];
 
-// Each function type has a dedicated three letter prefix associated with it:
-//   
-//   y_Q Init
-//   yQ_ Test
-//   Qy_ Close
-//   
-//   Q_y PInit
-//   _Qy PTest
-//   _yQ PClose
-//   
-// An "@" symbol is added to complete the four letter prefix, with its location
-// determined by the function type - publics lead (obviously), static
-// implementations trail, static stock placeholders for ommitted tests are in
-// position 1 (these could be tailing again).  So the public function called
-// "@y_Q<test>" would call the static function "y_Q@<test>".  The letter
-// combinations are a sort of hamming code to reduce the number of changes
-// required between each function call to two.
-
 #if defined RUN_TESTS
-	#define TestInit:%1() @y_Q%1();@y_Q%1()
-	#define Test:%1() bool:@yQ_%1();bool:@yQ_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())yQ_@%1();static yQ_@%1()
-	#define TestClose:%1() @Qy_%1();@Qy_%1()
+	#define Test:%1() forward bool:yQ@_%1(); public bool:yQ@_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())
+	#define TestInit:%1() forward _yQ@%1(); public _yQ@%1() for (new bool:__once = true; __once; __once = false)
+	#define TestClose:%1() forward yQ_@%1(); public yQ_@%1() for (new bool:__once = true; __once; __once = false)
 	#define TestBeforeEach:%1() forward yB_@%1(); public yB_@%1()
 	#define TestAfterEach:%1() forward yA_@%1(); public yA_@%1()
 
-	#define PTestInit:%1(%2) @Q_y%1(%2);@Q_y%1(%2)
-	#define PTest:%1(%2) bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())_Qy@%1();static _Qy@%1()
-	#define PTestClose:%1(%2) @_yQ%1(%2);@_yQ%1(%2)
+	#define PTest:%1(%2) forward bool:_@yQ%1(%2); public bool:_@yQ%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())
+	#define PTestInit:%1(%2) forward _y@Q%1(%2); public _y@Q%1(%2) for (new bool:__once = true; __once; __once = false)
+	#define PTestClose:%1(%2) forward y_@Q%1(%2); public y_@Q%1(%2) for (new bool:__once = true; __once; __once = false)
 #else
-	#define TestInit:%1() static stock y_Q@%1()
-	#define Test:%1() static stock bool:yQ_@%1()
-	#define TestClose:%1() static stock Qy_@%1()
+	#define Test:%1() stock bool:yQ@_%1()
+	#define TestInit:%1() stock _yQ@%1()
+	#define TestClose:%1() stock yQ_@%1()
 	#define TestBeforeEach:%1() stock yB_@%1()
 	#define TestAfterEach:%1() stock yA_@%1()
 	
-	#define PTestInit:%1(%2) static stock Q_y@%1(%2)
-	#define PTest:%1(%2) static stock bool:_Qy@%1(%2)
-	#define PTestClose:%1(%2) static stock _yQ@%1(%2)
+	#define PTest:%1(%2) stock bool:_@yQ%1(%2)
+	#define PTestInit:%1(%2) stock _y@Q%1(%2)
+	#define PTestClose:%1(%2) stock y_@Q%1(%2)
 #endif
-
-#define @y_Q%0\32; @y_Q
-#define @yQ_%0\32; @yQ_
-#define @Qy_%0\32; @Qy_
-#define y_Q@%0\32; y_Q@
-#define yQ_@%0\32; yQ_@
-#define Qy_@%0\32; Qy_@
-
-#define @Q_y%0\32; @Q_y
-#define @_Qy%0\32; @_Qy
-#define @_yQ%0\32; @_yQ
-#define Q_y@%0\32; Q_y@
-#define _Qy@%0\32; _Qy@
-#define _yQ@%0\32; _yQ@
 
 // These all need to come AFTER the types are defined in case the have tests.
 #include "..\YSI_Internal\y_version"
@@ -358,12 +328,10 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 		buffer2[32],
 		buffer[32];
 	YSI_g_sCurTest = YSI_g_sFailTests = 0;
-	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_TESTING_TEST_SEARCH)))
+	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_TESTING_TEST)))
 	{
-#if defined JUST_TEST
-		if (strcmp(buffer[4], #JUST_TEST))
-			continue;
-#endif
+		strunpack(buffer, buffer);
+
 		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_BEFORE))) {
 			strunpack(buffer2, buffer2);
 			new
@@ -383,14 +351,20 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 			}
 		}
 		// Call the setup function if there is one.
-		buffer[0] = Y_TESTING_INIT,
-		CallLocalFunction(buffer, ""),
+		buffer[0] = '_',
+		buffer[1] = 'y',
+		buffer[2] = 'Q',
+		buffer[3] = '@',
+		CallLocalFunction(buffer, "");
 		// Call the test.
-		buffer[0] = Y_TESTING_TEST,
+		buffer[0] = 'y',
+		buffer[1] = 'Q',
+		buffer[2] = '@',
+		buffer[3] = '_',
 		fails = YSI_g_sFails;
 		P:5("Testing_Run(): Calling %s", unpack(buffer[1]));
-		YSI_g_sInTest = true,
-		CallLocalFunction(buffer, ""),
+		YSI_g_sInTest = true;
+		CallLocalFunction(buffer, "");
 		YSI_g_sInTest = false;
 		Testing_Test(YSI_gTestComplete, "Test did not complete (possible crash).\n");
 		if (YSI_g_sFails != fails)
@@ -406,7 +380,8 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 			TEST_REPORT(" ");
 		}
 #endif
-		buffer[0] = Y_TESTING_SHUT,
+		buffer[2] = '_',
+		buffer[3] = '@',
 		CallLocalFunction(buffer, "");
 
 		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_AFTER))) {
@@ -462,30 +437,28 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", boo
 		P:2("Testing_Player() called");
 		new
 			buffer[32];
-#if defined JUST_TEST
-Testing_Player_retry:
-#endif
-		if ((idx = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH)))
+		if ((idx = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST)))
 		{
-#if defined JUST_TEST
-			if (strcmp(buffer[4], #JUST_TEST))
-				goto Testing_Player_retry;
-#endif
+			strunpack(buffer, buffer);
 			// Call the setup function if there is one.
-			buffer[0] = Y_TESTING_PINIT,
-			CallLocalFunction(buffer, ""),
+			buffer[0] = '_';
+			buffer[1] = 'y';
+			buffer[2] = '@';
+			buffer[3] = 'Q';
+			CallLocalFunction(buffer, "");
 			// Call the test.
-			buffer[0] = Y_TESTING_PTEST,
+			buffer[1] = '@';
+			buffer[2] = 'y';
 			fails = YSI_g_sFails;
-			P:5("Testing_Player(): Calling %s", unpack(buffer[1]));
+			P:5("Testing_Player(): Calling %s", buffer[6]);
 			YSI_g_sInTest = true;
 			CallLocalFunction(buffer, "");
 #if !defined TEST_SHOW_PASSES
-			if (YSI_g_sFails == fails)
-			{
-				TEST_REPORT(TEST_PASSED);
-				TEST_REPORT(" ");
-			}
+		if (YSI_g_sFails == fails)
+		{
+			TEST_REPORT(TEST_PASSED);
+			TEST_REPORT(" ");
+		}
 #endif
 		}
 		tests = YSI_g_sTests;
@@ -549,29 +522,30 @@ forward OnTestsComplete(tests, fails);
 			new
 				fails = YSI_g_sFails;
 			// Get the last test (nicely fails for cellmax).
-			while ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH)))
-			{
-				// Call the shutdown function if there is one.
-				buffer[0] = Y_TESTING_PSHUT,
-				CallLocalFunction(buffer, "i", playerid);
-			}
-#if defined JUST_TEST
-Testing_Next_retry:
-#endif
-			// Get the new test, but don't store the index.
-			if (AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH))
+			if ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST)))
 			{
 				strunpack(buffer, buffer);
-#if defined JUST_TEST
-				if (strcmp(buffer[4], #JUST_TEST))
-					goto Testing_Next_retry;
-#endif
+				// Call the shutdown function if there is one.
+				buffer[0] = 'y';
+				buffer[1] = '_';
+				buffer[2] = '@';
+				buffer[3] = 'Q';
+				CallLocalFunction(buffer, "i", playerid);
+			}
+			// Get the new test, but don't store the index.
+			if (AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST))
+			{
 				YSI_g_sAsked = false;
+				strunpack(buffer, buffer);
 				// Call the setup function if there is one.
-				buffer[0] = Y_TESTING_PINIT,
-				CallLocalFunction(buffer, ""),
+				buffer[0] = '_';
+				buffer[1] = 'y';
+				buffer[2] = '@';
+				buffer[3] = 'Q';
+				CallLocalFunction(buffer, "i", playerid);
 				// Call the test.
-				buffer[0] = Y_TESTING_PTEST;
+				buffer[1] = '@';
+				buffer[2] = 'y';
 				P:5("Testing_Next(): Calling %s", unpack(buffer[1]));
 				YSI_g_sInTest = true;
 				CallLocalFunction(buffer, "i", playerid);
@@ -703,23 +677,16 @@ stock Testing_RunAll()
 	// Disable error messages (as we're likely to generate them).
 	//state ysi_debug : off;
 	new
-		startTime,
-		endTime,
 		tests,
 		fails;
-	// The timing will be inaccurate since it will include many prints, but it
-	// isn't that important to be accurate.
-	startTime = GetTickCount();
 	TEST_REPORT(" ");
 	TEST_REPORT("  ||===================||  ");
 	TEST_REPORT("  || STARTING TESTS... ||  ");
 	TEST_REPORT("  ||===================||  ");
 	TEST_REPORT(" ");
 	Testing_Run(tests, fails, _, true);
-#if !defined JUST_TEST
 	if (YSI_g_sTestResult != 9) printf("*** Test system verification failed!");
 	else
-#endif
 	{
 		printf("*** Tests: %d, Fails: %d", tests, fails);
 		if (fails)
@@ -741,9 +708,6 @@ stock Testing_RunAll()
 		}
 		TEST_REPORT(" ");
 	}
-	endTime = GetTickCount();
-	printf("*** Time: %dms", endTime - startTime);
-	TEST_REPORT(" ");
 	//state ysi_debug : on;
 	CallLocalFunction("OnTestsComplete", "ii", tests, fails);
 	#if defined TEST_AUTO_EXIT
@@ -808,7 +772,6 @@ Test:y_testing_1()
 	ASSERT(true);
 	#undef Testing_Test
 	YSI_g_sTestResult = x + 3;
-	ASSERT(YSI_g_sTestResult == 8);
 }
 
 TestClose:y_testing_1()
@@ -817,8 +780,4 @@ TestClose:y_testing_1()
 }
 
 #include "..\YSI_Internal\y_shortfunc"
-
-#if defined RUN_TESTS
-	#include "y_testing/md_sort.inc"
-#endif
 

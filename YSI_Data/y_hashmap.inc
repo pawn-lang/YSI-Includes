@@ -111,7 +111,6 @@ Optional plugins:
 #include "..\YSI_Storage\y_amx"
 #include "..\YSI_Coding\y_stringhash"
 #include "..\YSI_Internal\y_shortfunc"
-#include "..\YSI_Internal\y_stripnumbers"
 
 #include "y_hashmap/impl"
 

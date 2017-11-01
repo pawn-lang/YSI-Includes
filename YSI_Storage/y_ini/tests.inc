@@ -137,6 +137,7 @@ Test:INI_IdentifyLineType3()
 	ASSERT(INI_IdentifyLineType("key=value", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 4 && p1e == 9 && p2s == p2e);
 	ASSERT(INI_IdentifyLineType("key = value ; comment", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
+	//printf("%d %d %d %d %d %d", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 6 && p1e == 11 && p2s == 14 && p2e == 21);
 	ASSERT(INI_IdentifyLineType("key = value ;   comment\r\n", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 6 && p1e == 11 && p2s == 16 && p2e == 23);
@@ -173,6 +174,7 @@ Test:INI_IdentifyLineType4()
 	ASSERT(INI_IdentifyLineType("[hello   ]", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 1 && p0e == 6 && p1s == p1e && p2s == p2e);
 	ASSERT(INI_IdentifyLineType("[   hello ]", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_TAG);
+	// printf("%d %d %d %d %d %d", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT(p0s == 4 && p0e == 9 && p1s == p1e && p2s == p2e);
 }
 
@@ -202,10 +204,48 @@ Test:INI_IdentifyLineType5()
 	ASSERT(p0s == 1 && p0e == 6 && p1s == p1e && p2s == 9 && p2e == 10);
 	ASSERT(INI_IdentifyLineType("[hello] ; : first, second ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 1 && p0e == 6 && p1s == p1e && p2s == 10 && p2e == 25);
+	// printf("%d %d %d %d %d %d", p0s, p0e, p1s, p1e, p2s, p2e);
 	// Both.
 	ASSERT(INI_IdentifyLineType(" [ hello ]  :  inheritance  ;  : first, second ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 3 && p0e == 8 && p1s == 15 && p1e == 26 && p2s == 31 && p2e == 46);
+	// printf("%d %d %d %d %d %d", p0s, p0e, p1s, p1e, p2s, p2e);
 }
+
+// Test:INI_IdentifyLineType6()
+// {
+	// new p0s, p0e, p1s, p1e, p2s, p2e, bool:;;
+	// // Continuation.
+	// new
+		// e_INI_LINE_TYPE:result;
+	// cont = false;
+	// result = INI_IdentifyLineType("hi = there\\ ", p0s, p0e, p1s, p1e, p2s, p2e);
+	// ASSERT(result == e_INI_LINE_TYPE_ENTRY);
+	// //printf("%d %d %d %d %d %d", p0s, p0e, p1s, p1e, p2s, p2e);
+	// ASSERT(p0s == 0 && p1e == 10);
+	// ASSERT(cont);
+	// cont = false;
+	// ASSERT(INI_IdentifyLineType("hi = there  \\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
+	// ASSERT(p0s == 0 && p1e == 10);
+	// ASSERT(cont);
+	// cont = false;
+	// ASSERT(INI_IdentifyLineType("hi =    \\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
+	// ASSERT(p0s == 0 && p0e == 2);
+	// ASSERT(p1s == p1e);
+	// ASSERT(cont);
+	// cont = true;
+	// ASSERT(INI_IdentifyLineType("hello there ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_CONT);
+	// ASSERT(p0s == p0e && p1s == 0 && p1e == 11);
+	// ASSERT(!cont);
+	// cont = true;
+	// ASSERT(INI_IdentifyLineType("hello there \\  ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_CONT);
+	// ASSERT(p0s == p0e && p1s == 0 && p1e == 11);
+	// ASSERT(cont);
+	// cont = true;
+	// result = INI_IdentifyLineType("   \\", p0s, p0e, p1s, p1e, p2s, p2e);
+	// ASSERT(result == e_INI_LINE_TYPE_CONT);
+	// ASSERT(cont);
+	// ASSERT(p0s == p0e && p1s == p1e);
+// }
 
 Test:INI_IdentifyLineType6()
 {
@@ -214,60 +254,30 @@ Test:INI_IdentifyLineType6()
 	new
 		e_INI_LINE_TYPE:result;
 	result = INI_IdentifyLineType("hi = there\\ ", p0s, p0e, p1s, p1e, p2s, p2e);
-	ASSERT(result == e_INI_LINE_TYPE_CONT);
-	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	result = INI_IdentifyLineType("hi = there\\\r", p0s, p0e, p1s, p1e, p2s, p2e);
-	ASSERT(result == e_INI_LINE_TYPE_CONT);
-	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	result = INI_IdentifyLineType("hi = there\\\n", p0s, p0e, p1s, p1e, p2s, p2e);
-	ASSERT(result == e_INI_LINE_TYPE_CONT);
-	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	result = INI_IdentifyLineType("hi = there\\ \n", p0s, p0e, p1s, p1e, p2s, p2e);
-	ASSERT(result == e_INI_LINE_TYPE_CONT);
-	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	ASSERT(p0s == 0 && p1e == 10);
-	ASSERT(INI_IdentifyLineType("hi = there  \\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_CONT);
+	ASSERT(result == e_INI_LINE_TYPE_ENTRY);
+	//printf("%d %d %d %d %d %d", p0s, p0e, p1s, p1e, p2s, p2e);
 	ASSERT(p0s == 0 && p1e == 12);
-	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	ASSERT(INI_IdentifyLineType("hi =    \\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_CONT);
+	// ASSERT(cont);
+	ASSERT(INI_IdentifyLineType("hi = there  \\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
+	ASSERT(p0s == 0 && p1e == 14);
+	// ASSERT(cont);
+	ASSERT(INI_IdentifyLineType("hi =    \\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 2);
-	ASSERT(p1s == 8 && p1e == 8);
-	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	ASSERT(INI_IdentifyLineType("hi =    \\;  Hello  ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
-	ASSERT(p0s == 0 && p0e == 2);
-#if defined Y_INI_NO_ESCAPES
-	ASSERT(p1s == 8 && p1e == 17);
-#else
-	ASSERT(p1s == 8 && p1e == 16);
-#endif
-	ASSERT(INI_IdentifyLineType("hi =    \\ ; Hello  ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_CONT);
-	ASSERT(p0s == 0 && p0e == 2);
-	ASSERT(p1s == 8 && p1e == 8);
-	ASSERT(p2s == 10 && p2e == 17);
-	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	// ASSERT(p1s == p1e);
+	ASSERT(p1s == 8 && p1e == 10);
+	// ASSERT(cont);
+	// cont = true;
 	ASSERT(INI_IdentifyLineType("hello there ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_INVALID);
+	// ASSERT(p0s == p0e && p1s == 0 && p1e == 11);
+	// cont = true;
 	ASSERT(INI_IdentifyLineType("hello there \\  ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_INVALID);
-	ASSERT(INI_IdentifyLineType("hi = hello\\   ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_CONT);
-	ASSERT(p0s == 0 && p0e == 2);
-	ASSERT(p1s == 5 && p1e == 10);
-	ASSERT(INI_IdentifyLineType("hi = hello     ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
-	ASSERT(p0s == 0 && p0e == 0);
-	ASSERT(p1s == 0 && p1e == 10);
-	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
-	ASSERT(INI_IdentifyLineType("hi = hello     ", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_ENTRY);
-	ASSERT(p0s == 0 && p0e == 2);
-	ASSERT(p1s == 5 && p1e == 10);
-}
-
-Test:INI_Continuation()
-{
-	new p0s, p0e, p1s, p1e, p2s, p2e;
-	INI_IdentifyLineType("hi = hello \\\r\n", p0s, p0e, p1s, p1e, p2s, p2e);
-	INI_IdentifyLineType("world = the \\ ; Ignore me", p0s, p0e, p1s, p1e, p2s, p2e);
-	INI_IdentifyLineType("\\ whole string     ", p0s, p0e, p1s, p1e, p2s, p2e);
-	ASSERT(!strcmp(mget(YSI_g_sExtendedLine, 1), "hello world = the \\ whole string"));
-	// Cleanup.
-	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	// ASSERT(p0s == p0e && p1s == 0 && p1e == 11);
+	// ASSERT(cont);
+	// cont = true;
+	// result = INI_IdentifyLineType("   \\", p0s, p0e, p1s, p1e, p2s, p2e);
+	// ASSERT(result == e_INI_LINE_TYPE_CONT);
+	// // ASSERT(cont);
+	// ASSERT(p0s == p0e && p1s == p1e);
 }
 
 Test:Trim1()
@@ -331,17 +341,17 @@ Test:INI_SetupCallbackName1()
 {
 	new
 		dest[32];
-	INI_SetupCallbackName(dest, "%s", "there", false);
+	INI_SetupCallbackName(dest, "%s", "hi/there", false);
 	ASSERT(!strcmp(dest, "%s"));
-	INI_SetupCallbackName(dest, "%s", "there", true);
+	INI_SetupCallbackName(dest, "%s", "hi/there", true);
 	ASSERT(!strcmp(dest, "there"));
-	INI_SetupCallbackName(dest, "%s%s", "there", false);
+	INI_SetupCallbackName(dest, "%s%s", "hi/there", false);
 	ASSERT(!strcmp(dest, "%sthere"));
-	INI_SetupCallbackName(dest, "%s%s", "there", false);
+	INI_SetupCallbackName(dest, "%s%s", "hi/there.txt", false);
 	ASSERT(!strcmp(dest, "%sthere"));
-	INI_SetupCallbackName(dest, "%s%s", "there", true);
+	INI_SetupCallbackName(dest, "%s%s", "hi/there", true);
 	ASSERT(!strcmp(dest, "there%s"));
-	INI_SetupCallbackName(dest, "%s%s", "there", true);
+	INI_SetupCallbackName(dest, "%s%s", "hi/there.txt", true);
 	ASSERT(!strcmp(dest, "there%s"));
 }
 
@@ -349,17 +359,17 @@ Test:INI_SetupCallbackName2()
 {
 	new
 		dest[32];
-	INI_SetupCallbackName(dest, "%s", "there you", false);
+	INI_SetupCallbackName(dest, "%s", "hi/there you", false);
 	ASSERT(!strcmp(dest, "%s"));
-	INI_SetupCallbackName(dest, "%s", "there you", true);
+	INI_SetupCallbackName(dest, "%s", "hi/there you", true);
 	ASSERT(!strcmp(dest, "there_you"));
-	INI_SetupCallbackName(dest, "%s%s", "there you", false);
+	INI_SetupCallbackName(dest, "%s%s", "hi/there you", false);
 	ASSERT(!strcmp(dest, "%sthere_you"));
-	INI_SetupCallbackName(dest, "%s%s", "there you", false);
+	INI_SetupCallbackName(dest, "%s%s", "hi/there you.txt", false);
 	ASSERT(!strcmp(dest, "%sthere_you"));
-	INI_SetupCallbackName(dest, "%s%s", "there you", true);
+	INI_SetupCallbackName(dest, "%s%s", "hi/there you", true);
 	ASSERT(!strcmp(dest, "there_you%s"));
-	INI_SetupCallbackName(dest, "%s%s", "there you", true);
+	INI_SetupCallbackName(dest, "%s%s", "hi/there you.txt", true);
 	ASSERT(!strcmp(dest, "there_you%s"));
 }
 
@@ -367,11 +377,12 @@ Test:INI_SetupCallbackName3()
 {
 	new
 		dest[32];
-	INI_SetupCallbackName(dest, "%s%s", "hello_there you", false);
+	INI_SetupCallbackName(dest, "%s%s", "one/two/three/hello_there you.some.ini", false);
 	ASSERT(!strcmp(dest, "%shello_there_you"));
-	INI_SetupCallbackName(dest, "%s%s", "four", false);
+	INI_SetupCallbackName(dest, "%s%s", "one\\two\\three\\four.five.six", false);
 	// My first conditional assertation.
-	ASSERT(!strcmp(dest, "%sfour"));
+	if (IsWindows()) ASSERT(!strcmp(dest, "%sfour"));
+	else ASSERT(!strcmp(dest, "%sone"));
 }
 
 static stock
@@ -381,6 +392,7 @@ forward TestINI_Parse0_test1(key[], value[]);
 
 public TestINI_Parse0_test1(key[], value[])
 {
+	//printf("called");
 	++YSI_g_sINI_Parse0;
 }
 
@@ -784,6 +796,14 @@ static stock DoINI_Int3()
 		tk1[8];
 	inline Inl_(string:tag[], string:name[], string:value[])
 	{
+		// #emit NOP
+		// #emit NOP
+		// #emit NOP
+		// #emit NOP
+		// printf("%s (%d): %d %d %d", tag, YHash(tag, false),
+			// _I<>,
+			// _I<atag>,
+			// _I<tag2>);
 		// TODO:  I think there's a bug in here somewhere, with "GTYPE=0 MTYPE=1
 		// -O1 -d0", which crashes on ENTRY to this inlineю  I think that the
 		// problem may be too much, or incorrect, code being output.
@@ -1060,6 +1080,7 @@ Test:INI_VariousWriting1()
 	s = INI_WriteFloat(f, "vvv", 0.2);
 	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
 	ASSERT(!strcmp("0.200000", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	//printf("%s %f", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], 0.2);
 	s = INI_WriteFloat(f, "vvv", 0.2, 2);
 	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
 	ASSERT(!strcmp("0.20", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
@@ -1122,119 +1143,5 @@ Test:INI_Write2()
 		INI:f = INI_Open("YSI/test_ini/test6.ini");
 	INI_DeleteTag(f, "woo");
 	INI_Close(f);
-}
-
-enum E_INI14_TEST
-{
-	E_INI14_TEST_FIRST_KEY[32],
-	E_INI14_TEST_SECOND_KEY,
-	E_INI14_TEST_C,
-	Float:E_INI14_TEST_THIRD_KEY,
-	E_INI14_TEST_FOURTH_KEY[32],
-	E_INI14_TEST_FIFTH_KEY
-}
-
-static stock
-	YSI_g_sTestParents[4][E_INI14_TEST];
-
-forward INI_Parents(extra, file[], tag[], name[], value[]);
-
-public INI_Parents(extra, file[], tag[], name[], value[])
-{
-	ASSERT(!strcmp(file, "test7"));
-	if (!strcmp(tag, "parent"))
-		extra = extra - 3;
-	else if (!strcmp(tag, "child"))
-		extra = extra - 2;
-	else if (!strcmp(tag, "grandchild"))
-		extra = extra - 1;
-	else
-		ASSERT(false);
-	INI_String("first_key", YSI_g_sTestParents[extra][E_INI14_TEST_FIRST_KEY], 32);
-	INI_Int("second_key", YSI_g_sTestParents[extra][E_INI14_TEST_SECOND_KEY]);
-	INI_Int("c", YSI_g_sTestParents[extra][E_INI14_TEST_C]);
-	INI_Float("third_key", YSI_g_sTestParents[extra][E_INI14_TEST_THIRD_KEY]);
-	INI_String("fourth_key", YSI_g_sTestParents[extra][E_INI14_TEST_FOURTH_KEY], 32);
-	INI_Int("fifth_key", YSI_g_sTestParents[extra][E_INI14_TEST_FIFTH_KEY]);
-	return 0;
-}
-
-Test:INI_Parents()
-{
-	INI_ParseFile(
-			"YSI/test_ini/test7.ini",
-			"INI_Parents",
-			.bExtra    = true,
-			.extra     = 3,
-			.bPassTag  = true,
-			.bPassFile = true);
-	// Parent.
-	ASSERT(!strcmp(YSI_g_sTestParents[0][E_INI14_TEST_FIRST_KEY], "how are you?"));
-	ASSERT(!strcmp(YSI_g_sTestParents[0][E_INI14_TEST_FOURTH_KEY], "Some string...."));
-	ASSERT(YSI_g_sTestParents[0][E_INI14_TEST_SECOND_KEY] == 11);
-	ASSERT(YSI_g_sTestParents[0][E_INI14_TEST_C         ] == 8);
-	ASSERT(YSI_g_sTestParents[0][E_INI14_TEST_THIRD_KEY ] == 0.0);
-	ASSERT(YSI_g_sTestParents[0][E_INI14_TEST_FIFTH_KEY ] == 99);
-	// Child.
-	ASSERT(!strcmp(YSI_g_sTestParents[1][E_INI14_TEST_FIRST_KEY], "how are you?"));
-	ASSERT(!strcmp(YSI_g_sTestParents[1][E_INI14_TEST_FOURTH_KEY], "Some other string...."));
-	ASSERT(YSI_g_sTestParents[1][E_INI14_TEST_SECOND_KEY] == 11);
-	ASSERT(YSI_g_sTestParents[1][E_INI14_TEST_C         ] == 9);
-	ASSERT(YSI_g_sTestParents[1][E_INI14_TEST_THIRD_KEY ] == 6.6);
-	ASSERT(YSI_g_sTestParents[1][E_INI14_TEST_FIFTH_KEY ] == 99);
-	// Grandchild.
-	ASSERT(!strcmp(YSI_g_sTestParents[2][E_INI14_TEST_FIRST_KEY], "how are you?"));
-	ASSERT(!strcmp(YSI_g_sTestParents[2][E_INI14_TEST_FOURTH_KEY], "Some other string...."));
-	ASSERT(YSI_g_sTestParents[2][E_INI14_TEST_SECOND_KEY] == 12);
-	ASSERT(YSI_g_sTestParents[2][E_INI14_TEST_C         ] == 10);
-	ASSERT(YSI_g_sTestParents[2][E_INI14_TEST_THIRD_KEY ] == 6.6);
-	ASSERT(YSI_g_sTestParents[2][E_INI14_TEST_FIFTH_KEY ] == 99);
-	// Overflow.
-	ASSERT(!YSI_g_sTestParents[3][E_INI14_TEST_FIRST_KEY][0]);
-	ASSERT(!YSI_g_sTestParents[3][E_INI14_TEST_FOURTH_KEY][0]);
-	ASSERT(YSI_g_sTestParents[3][E_INI14_TEST_SECOND_KEY] == 0);
-	ASSERT(YSI_g_sTestParents[3][E_INI14_TEST_C         ] == 0);
-	ASSERT(YSI_g_sTestParents[3][E_INI14_TEST_THIRD_KEY ] == 0.0);
-	ASSERT(YSI_g_sTestParents[3][E_INI14_TEST_FIFTH_KEY ] == 0);
-}
-
-static
-	YSI_g_sINIBinaryData[3][60 char],
-	YSI_g_sStringData[32];
-
-forward INI_BinaryData(name[], value[]);
-
-public INI_BinaryData(name[], value[])
-{
-	INI_Array("BINARY_DATA_1", YSI_g_sINIBinaryData[0]);
-	INI_Array("BINARY_DATA_2", YSI_g_sINIBinaryData[1]);
-	INI_Array("BINARY_DATA_3", YSI_g_sINIBinaryData[2]);
-	INI_Int("INT_DATA", YSI_g_sINI_Parse0);
-	INI_String("STRING_DATA", YSI_g_sStringData);
-	return 0;
-}
-
-Test:INI_BinaryData()
-{
-	INI_ParseFile(
-			"YSI/test_ini/test8.ini",
-			"INI_BinaryData",
-			.bExtra    = false,
-			.bPassTag  = false,
-			.bPassFile = false);
-	static
-		l_ResultData[3][60 char] = {
-			{ 0xFF0000AA, 0x67452301, 0x01234567, 0x48000000, 0x9CE0F932, 0xAD8193B8, 0xD7B99AE0, 0x10653129, 0x99999999, 0x99999999, 0x99999999, 0x99999999, 0x99999999, 0x99999999, 0x004223BB },
-			{ 0xFF0000AA, 0x67452301, 0x01234567, 0x48000000, 0x9CE0F932, 0xAD8193B8, 0xD7B99AE0, 0x10653129, 0x99999999, 0x99999999, 0x99999999, 0x99999999, 0xBB999999, 0x00004223, 0x00000000 },
-			{ 0xFF0000AA, 0x67452301, 0x01234567, 0x48000000, 0x9CE0F932, 0xAD8193B8, 0xD7B99AE0, 0x10653129, 0x99999999, 0x99999999, 0x99999999, 0x99999999, 0x99999999, 0x004223BB, 0x00000000 }
-	};
-	ASSERT(YSI_g_sINI_Parse0 == 888777);
-	ASSERT(!strcmp(YSI_g_sStringData, "Hello"));
-	for (new i = 0; i != sizeof (YSI_g_sINIBinaryData[]); ++i)
-	{
-		ASSERT(YSI_g_sINIBinaryData[0][i] == l_ResultData[0][i]);
-		ASSERT(YSI_g_sINIBinaryData[1][i] == l_ResultData[1][i]);
-		ASSERT(YSI_g_sINIBinaryData[2][i] == l_ResultData[2][i]);
-	}
 }
 

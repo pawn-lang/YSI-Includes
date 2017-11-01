@@ -128,7 +128,6 @@ Optional plugins:
 #if defined YSI_TESTS
 	#include "..\YSI_Data\y_iterate"
 	#include "..\YSI_Core\y_testing"
-	#include "..\YSI_Data\y_iterate"
 	#include "y_bit/tests"
 #endif
 
