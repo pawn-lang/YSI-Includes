@@ -256,8 +256,11 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// doing this we know out string return fix/optimisation will apply.
 	#emit LOAD.S.pri   0
 	#emit SCTRL        5
+	#emit LOAD.S.alt   0xFFFFFFFC
 	#emit SCTRL        4
-	#emit HEAP         0xFFFFFDF8 // -520
+	#emit MOVE.pri
+	#emit SCTRL        2
+	#emit ZERO.pri
 	#emit RETN
 	
 	// Let the compiler do size checks.  There is a bug in the old compiler
@@ -272,9 +275,10 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 }
 
 // CallRemoteFunction wrapper that handles references and regular returns.
-stock D@(const function[], const fmat[])
+stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
 	static lRet;
+	#pragma unused function, fmat
 	// New implementation of "CallRemoteFunction".  Wraps the old function
 	// efficiently (using assembly stack manipulation tricks, better even than
 	// the ones in "y_va" since we have more control over exactly how this is
@@ -296,29 +300,22 @@ stock D@(const function[], const fmat[])
 	// Back up the frame header information and the return value.  "MOVS" copies
 	// from "pri" to "alt".
 	#emit STOR.S.pri   0xFFFFFFF8 // -8
-	#emit HEAP         52         // 13 * 4
+	#emit HEAP         28
 	#emit LCTRL        4
-	#emit MOVS         52
+	#emit MOVS         28
 	
 	// Call "CallRemoteFunction".
-	#emit LOAD.S.pri   fmat
-	#emit STOR.S.pri   28
-	#emit LOAD.S.pri   function
-	#emit STOR.S.pri   24
-	#emit CONST.pri    8
-	#emit ADD
-	#emit STOR.S.pri   20
-	#emit STACK        40
+	#emit STACK        28
 	#emit SYSREQ.C     CallRemoteFunction
 	#emit STOR.pri     lRet
 	
 	// Restore the stack.
-	#emit STACK        0xFFFFFFD8 // -40
+	#emit STACK        0xFFFFFFE4 // -28
 	#emit STACK        0          // Load new stack pointer in to "alt".
 	#emit LCTRL        2
-	#emit ADD.C        0xFFFFFFCC // -52
-	#emit MOVS         52
-	#emit HEAP         0xFFFFFFCC
+	#emit ADD.C        0xFFFFFFE4
+	#emit MOVS         28
+	#emit HEAP         0xFFFFFFE4
 	
 	// Restore the master caller.  Already pushed the parameters earlier, before
 	// backing them up on the heap (saved extra work now sorting out which saved
@@ -339,15 +336,17 @@ stock D@(const function[], const fmat[])
 		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
 		{
 			YSI_g_sPropVarArg[1] = '@' + ++j,
-			setarg(i + 5, 0, getproperty(8, YSI_g_sPropVarArg));
+			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
 		}
 	}
 	{}
 	
-	// Return from two functions at once, while unpopping all our data.
 	#emit LOAD.S.pri   0
 	#emit SCTRL        5
+	#emit LOAD.S.alt   0xFFFFFFFC
 	#emit SCTRL        4
+	#emit MOVE.pri
+	#emit SCTRL        2
 	#emit LOAD.pri     lRet
 	#emit RETN
 	
@@ -450,13 +449,16 @@ stock G@(GLOBAL_TAG_TYPES:...)
 	return Q@;
 }
 
-stock F@()
+stock F@(heapptr = 0)
 {
-	// To remove on completion of y_remote upgrade.
-	P:4("F@ called");
-	return
-		getproperty(8, "", YSIM_STRING, Q@),
-		strunpack(Q@, Q@);
+	// This function stores the heap size before certain calls so that we can
+	// revert afterwards.  It puts the size on the stack, then lies about the
+	// stack size for the return, so that the value stays on.
+	#emit LCTRL        2
+	#emit STOR.S.pri   heapptr
+	#emit ZERO.S       8
+	#emit RETN
+	return 0;
 }
 
 // Consume trailing spaces.  Despite being a common letter, this is unlkely to

@@ -4,6 +4,7 @@ remotefunc stock yrt_1(hi);
 
 TODO(244, "Allocates too much heap with `len`.");
 remotefunc static stock yrt_2(const hi, string:you[], there[], &other, &len = 7);
+remotefunc static stock string:yrt_2b(const hi, string:you[], there[], &other, &len = 7);
 
 remotefunc stock yrt_3(hi, string:you[], there[], len)
 {
@@ -66,6 +67,7 @@ Test:y_remote_2()
 {
 	new arr[89], oo = sizeof (arr);
 	ASSERT(broadcastfunc yrt_2(789, "string", arr, oo) == 0);
+	ASSERT(strlen(broadcastfunc yrt_2b(789, "string", arr, oo)) == 0);
 	ASSERT(oo == sizeof (arr));
 }
 
