@@ -465,11 +465,7 @@ global Command_ReProcess(p,string:c[],h)
 	{
 		sRet = Command_OnReceived(DISABLED, p, c);
 		if (sErr != COMMAND_OK)
-		{
-			return
-				YSI_g_sCurrentID = prevID,
-				sRet;
-		}
+			return sRet;
 	}
 	// Get the hashed version of the decoded string, skipping the possible  "/".
 	sPos = Puny_EncodeHash(sCmd[4], c[sRet], sHash, .delimiter = '@') + sRet;
