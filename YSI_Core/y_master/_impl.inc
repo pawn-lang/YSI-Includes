@@ -157,7 +157,7 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 	#else
 		#define YSIM_COMMAND YSIM_SERVER_YCMD
 	#endif
-	#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==0)?(_@):(I@))
+	#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==0)?(@_):(I@))
 #elseif _YSIM_IS_CLIENT
 	#define foreign      YSIM_CLIENT_FOREIGN
 	#define global       YSIM_CLIENT_GLOBAL
@@ -202,7 +202,7 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 	#else
 		#define YSIM_COMMAND YSIM_CLOUD_YCMD
 	#endif
-	#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==0)?(_@):(I@))
+	#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==0)?(@_):(I@))
 #endif
 
 #if defined YSIM_T_ENABLE
@@ -662,8 +662,8 @@ public OnMasterSystemInit(id)
 
 public _YCM() <_YCM:y>
 {
-	P:1("%d: " #_YCM "<y> called, master = %d", _@, getproperty(9, #_YCM));
-	if (getproperty(9, #_YCM) == _@)
+	P:1("%d: " #_YCM "<y> called, master = %d", Master_ID(), getproperty(9, #_YCM));
+	if (getproperty(9, #_YCM) == Master_ID())
 	{
 		P:2(#_YCM " natural end");
 		// Disable the current mastership.
@@ -692,7 +692,7 @@ public _YCM() <_YCM:y>
 
 public _YCM() <_YCM:n>
 {
-	P:1("%d: " #_YCM "<n> called", _@);
+	P:1("%d: " #_YCM "<n> called", Master_ID());
 	// This has been called remotely from a script which owns the
 	// library masterhood (that's the only way this can ever be called).
 	Master_GetCurrentMaster();
@@ -700,14 +700,14 @@ public _YCM() <_YCM:n>
 
 public _YCM() <_YCM:m, _YCM:p>
 {
-	P:1("%d: " #_YCM "<m,p> called", _@);
+	P:1("%d: " #_YCM "<m,p> called", Master_ID());
 	// Do nothing at all (just define states).
 }
 
 public _YCM() <_YCM:u>
 {
 	// Finish initialisation.
-	P:1("%d: " #_YCM "<u> called", _@);
+	P:1("%d: " #_YCM "<u> called", Master_ID());
 	state _YCM:y;
 	_YCM@ = _E_YCM@y;
 }

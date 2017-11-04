@@ -159,6 +159,8 @@ Optional plugins:
 #tryinclude <asm_macros>
 #if !defined ASM_MACROS_INC
 	#define AMX_INCLUDING_FAILED
+#elseif !defined AsmEmitJumpLabelInstruction
+	#error Please update "https://github.com/Zeex/amx_assembly" to get "AsmEmitJumpLabelInstruction()"
 #endif
 
 #tryinclude "..\amx\codescan"

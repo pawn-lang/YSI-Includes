@@ -135,9 +135,9 @@ Optional plugins:
 // V@ - getproperty
 // W@ - CallRemoteFunction
 // X@ - Set return
-// Y@ - Unused function prefix
 // Z@ - Detect string
-// _@ - Script ID
+// @_ - Script ID
+// _@ - Unused function prefix
 // @@ - Public function prefix
 // 
 // I didn't want to use `@@` for that, but there is some symmetry to it - now
@@ -174,7 +174,7 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// master ID stored in the property, which we can shove on to the heap to
 	// restore later.
 	#emit PUSH.C       Q@
-	#emit PUSH         _@
+	#emit PUSH         @_
 	#emit PUSH.C       YSI_g_sPropCaller
 	#emit PUSH.C       8
 	#emit PUSH.C       16
@@ -291,7 +291,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// master ID stored in the property, which we can shove on to the heap to
 	// restore later.
 	#emit PUSH.C       YSI_g_sPropEmpty
-	#emit PUSH         _@
+	#emit PUSH         @_
 	#emit PUSH.C       YSI_g_sPropCaller
 	#emit PUSH.C       8
 	#emit PUSH.C       16
@@ -412,7 +412,7 @@ stock E@()
 {
 	P:4("E@ called");
 	// Already returns the previous value.
-	return setproperty(8, YSIM_CALLER, _@);
+	return setproperty(8, YSIM_CALLER, Master_ID());
 }
 
 stock Z@(GLOBAL_TAG_TYPES:v = -1)

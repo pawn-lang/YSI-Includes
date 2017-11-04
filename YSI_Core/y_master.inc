@@ -197,7 +197,7 @@ Optional plugins:
  * <subsection>
  * Global
  * </subsection><ul>
- *  <symbol name="_@">ID of this script.</symbol>
+ *  <symbol name="@_">ID of this script.</symbol>
  * </ul><section>Compile options</section><ul>
  *  <symbol name="YSI_NO_MASTER">Don't use the master system.</symbol>
  *  <symbol name="YSI_IS_CLIENT">Script is a client only script.</symbol>
