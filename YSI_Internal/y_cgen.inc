@@ -94,60 +94,66 @@ CHAIN_HOOK(CGen)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER CHAIN_NEXT(CGen)
 
-// We use "s" not a string literal as we are trying to use up code space, not
-// data space!
-#define _CODE_1 SetTimerEx(s,0,0,s,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
-#define _CODE_2 _CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1;_CODE_1
+#if !defined CGEN_MEMORY
+	#define CGEN_MEMORY (10000)
+#endif
 
 static stock
 	YSI_g_sCodeSpace = -1,
 	YSI_g_sCodeEnd = -1;
+
+static stock CGEN(&a = 1, &b = 1, &c = 1, &d = 1, &e = 1, &f = 1, &g = 1, &h = 1, &i = 1, &j = 1, &k = 1, &l = 1, &m = 1, &n = 1, &o = 1, &p = 1, &q = 1, &r = 1, &s = 1, &t = 1, &u = 1, &v = 1, &w = 1, &x = 1, &y = 1, &z = 1)
+{
+	// We use `= 1` instead of `= 0` because that takes slightly more code - it
+	// is a `CONST.pri 1` not `ZERO.pri`.
+	#pragma unused a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
+}
 
 forward _@_y_cgen_@_0();
 
 public _@_y_cgen_@_0()
 {
 	// Reserve a huge area of "COD" for our own use!
-	static
-		s[] = "";
-	// This reserves about 10kb of space in "COD".  If 10kb isn't enough I don't
-	// know WHAT you're doing - that's enough space for about 200 hooks!
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	// These are blocks of 16 lines.  If you ever need to increase this space,
-	// just duplicate a block of 16 lines.  Do not put multiple "_CODE_2;"
-	// statements on one line - the pre-processor expands this so much that that
-	// will probably just crash.
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
-	_CODE_2;
+	// This is currently many calls to `CGEN()`, which takes up huge amounts of
+	// space because of all the default parameters, which means we get to pass
+	// loads without having them in code limiting the line lengths.  This gives:
+	//   
+	//   bytes_per_call = ((6 * 4 * 26) + 6)
+	//   bytes_per_call = 630
+	//   bytes_per_line = bytes_per_call * 16
+	//   bytes_per_line = 10080 (~10KiB)
+	//   N = 16.25
+	//   
+	#if CGEN_MEMORY >= 10000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 20000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 30000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 40000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 50000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 60000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 70000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 80000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 90000
+		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
+	#endif
+	#if CGEN_MEMORY >= 100000
+		#error Too much codespace requested, please edit YSI_Internal\y_cgen
+	#endif
 }
 
 forward _@_y_cgen_@_1();
@@ -221,7 +227,4 @@ stock CGen_AddCodeSpace(num)
 	if (YSI_g_sCodeSpace == -1) P:E("YSI_g_sCodeSpace is -1 in \"CGen_AddCodeSpace\"");
 	else YSI_g_sCodeSpace += num;
 }
-
-#undef _CODE_2
-#undef _CODE_1
 
