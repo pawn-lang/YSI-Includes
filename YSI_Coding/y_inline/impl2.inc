@@ -1,8 +1,8 @@
 // Revert to the old scanning design, but using the new code scanner.
 
-const INLINE_PATTERN_1 = _A<Alex>;
-const INLINE_PATTERN_2 = _C<Alex>;
-const INLINE_PATTERN_3 = _A<Cole>;
+const INLINE_PATTERN_1 = _C<Alex>;
+const INLINE_PATTERN_2 = _C<_Y_L>;
+const INLINE_PATTERN_3 = _C<ess_>;
 const INLINE_PATTERN_4 = _C<Cole>;
 
 #define CALL@I@E I@E("", 0, 0, 0, 0)
@@ -129,7 +129,7 @@ static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	data[E_INLINE_DATA_USER] = CodeScanGetMatchAddress(scanner) + CodeScanGetMatchLength(scanner);
 	printf("End: %08x", data[E_INLINE_DATA_USER]);
 	// Do the actual codegen here.
-	Inline_DoCodeGen();
+	Inline_DoCodeGen(data);
 	// Remove the return for the inner loop, since it may now point to an
 	// invalid address (in the middle of an OpCode we just wrote out).
 	new
@@ -428,8 +428,6 @@ Inline_Start(const &name, a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE
 
 #endif
 
-#endinput
-
 static stock
 	YSI_g_sLoadTemp;
 
@@ -575,6 +573,8 @@ static stock Inline_DoCodeGen(data[E_INLINE_DATA])
 	}
 	
 	
+}
+#endinput
 	
 	
 	// Space for params + count.
