@@ -188,7 +188,7 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit MOVS         28
 	
 	// Call "CallRemoteFunction".
-	if (YSI_g_sCallType)
+	if (YSI_g_sCallData)
 	{
 		#emit STACK        28
 		#emit SYSREQ.C     CallRemoteFunction
@@ -314,7 +314,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit MOVS         28
 	
 	// Call "CallRemoteFunction".
-	if (YSI_g_sCallType)
+	if (YSI_g_sCallData)
 	{
 		#emit STACK        28
 		#emit SYSREQ.C     CallRemoteFunction
