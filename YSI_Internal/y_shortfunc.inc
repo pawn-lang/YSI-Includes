@@ -148,7 +148,8 @@ Optional plugins:
 // 
 
 static stock
-	YSI_g_sPropVarArg[3] = YSIM_VARARG;
+	YSI_g_sPropVarArg[3] = YSIM_VARARG,
+	YSI_g_sCallData;
 
 static stock const
 	YSI_g_sPropCaller[] = YSIM_CALLER,
@@ -160,7 +161,6 @@ static stock const
 // CallRemoteFunction wrapper that handles references and string returns.
 stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	static lRet;
 	#pragma unused function, fmat
 	// New implementation of "CallRemoteFunction".  Wraps the old function
 	// efficiently (using assembly stack manipulation tricks, better even than
@@ -188,9 +188,19 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit MOVS         28
 	
 	// Call "CallRemoteFunction".
-	#emit STACK        28
-	#emit SYSREQ.C     CallRemoteFunction
-	#emit STOR.pri     lRet
+	if (YSI_g_sCallType)
+	{
+		#emit STACK        28
+		#emit SYSREQ.C     CallRemoteFunction
+		#emit STOR.pri     YSI_g_sCallData
+	}
+	else
+	{
+		#emit STACK        28
+		#emit SYSREQ.C     CallLocalFunction
+		#emit STOR.pri     YSI_g_sCallData
+	}
+	{}
 	
 	// Restore the stack.
 	#emit STACK        0xFFFFFFE4 // -28
@@ -204,7 +214,7 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// backing them up on the heap (saved extra work now sorting out which saved
 	// parameter went where).
 	#emit SYSREQ.C     setproperty
-	if (lRet)
+	if (YSI_g_sCallData)
 	{
 		// Get the return value.  Already have most of the parameters pushed,
 		// just modify one of them (the name).
@@ -277,7 +287,6 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 // CallRemoteFunction wrapper that handles references and regular returns.
 stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	static lRet;
 	#pragma unused function, fmat
 	// New implementation of "CallRemoteFunction".  Wraps the old function
 	// efficiently (using assembly stack manipulation tricks, better even than
@@ -305,9 +314,19 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit MOVS         28
 	
 	// Call "CallRemoteFunction".
-	#emit STACK        28
-	#emit SYSREQ.C     CallRemoteFunction
-	#emit STOR.pri     lRet
+	if (YSI_g_sCallType)
+	{
+		#emit STACK        28
+		#emit SYSREQ.C     CallRemoteFunction
+		#emit STOR.pri     YSI_g_sCallData
+	}
+	else
+	{
+		#emit STACK        28
+		#emit SYSREQ.C     CallLocalFunction
+		#emit STOR.pri     YSI_g_sCallData
+	}
+	{}
 	
 	// Restore the stack.
 	#emit STACK        0xFFFFFFE4 // -28
@@ -322,14 +341,14 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// parameter went where).
 	#emit SYSREQ.C     setproperty
 	
-	if (lRet)
+	if (YSI_g_sCallData)
 	{
 		// Get the return value.  Already have most of the parameters pushed,
 		// just modify one of them (the name).
 		#emit CONST.pri    YSI_g_sPropReturn
 		#emit STOR.S.pri   0xFFFFFFF4 // -12
 		#emit SYSREQ.C     getproperty
-		#emit STOR.pri     lRet
+		#emit STOR.pri     YSI_g_sCallData
 		
 		// Get all the varargs (without using our corrupted stack).
 		static i, j, ch;
@@ -347,7 +366,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit SCTRL        4
 	#emit MOVE.pri
 	#emit SCTRL        2
-	#emit LOAD.pri     lRet
+	#emit LOAD.pri     YSI_g_sCallData
 	#emit RETN
 	
 	return 0;
@@ -358,6 +377,27 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 
 #define @@%0\32; @@
 #define _@%0\32; _@
+
+stock F@(calltype = 1, master = -1, heapptr = 0)
+{
+	// First copy the calltype to a global, so it can be read from the functions
+	// that actually call `CallLocalFunction` (0) and `CallRemoteFunction` (1).
+	YSI_g_sCallData = calltype;
+	// The store the address of the second parameter in the first parameter,
+	// which means the bottom of the stack becomes a reference parameter to
+	// elsewhere on the stack, and the string specifier in the call will spill
+	// in to this memory.
+	#emit ADDR.pri     master
+	#emit STOR.S.pri   calltype
+	// This function stores the heap size before certain calls so that we can
+	// revert afterwards.  It puts the size on the stack, then lies about the
+	// stack size for the return, so that the value stays on.
+	#emit LCTRL        2
+	#emit STOR.S.pri   heapptr
+	#emit ZERO.S       8
+	#emit RETN
+	return 0;
+}
 
 stock L@(GLOBAL_TAG_TYPES:...)
 {
@@ -447,27 +487,6 @@ stock G@(GLOBAL_TAG_TYPES:...)
 {
 	// Just a dead-end for spare parameters which returns a string.
 	return Q@;
-}
-
-stock F@(calltype = 1, master = -1, heapptr = 0)
-{
-	// First copy the calltype to a global, so it can be read from the functions
-	// that actually call `CallLocalFunction` (0) and `CallRemoteFunction` (1).
-	YSI_g_sCallType = calltype;
-	// The store the address of the second parameter in the first parameter,
-	// which means the bottom of the stack becomes a reference parameter to
-	// elsewhere on the stack, and the string specifier in the call will spill
-	// in to this memory.
-	#emit ADDR.pri     master
-	#emit STOR.S.pri   calltype
-	// This function stores the heap size before certain calls so that we can
-	// revert afterwards.  It puts the size on the stack, then lies about the
-	// stack size for the return, so that the value stays on.
-	#emit LCTRL        2
-	#emit STOR.S.pri   heapptr
-	#emit ZERO.S       8
-	#emit RETN
-	return 0;
 }
 
 // Consume trailing spaces.  Despite being a common letter, this is unlkely to
