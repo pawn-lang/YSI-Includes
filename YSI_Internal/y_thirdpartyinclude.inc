@@ -161,6 +161,8 @@ Optional plugins:
 	#define AMX_INCLUDING_FAILED
 #elseif !defined AsmEmitJumpLabelInstruction
 	#error Please update "https://github.com/Zeex/amx_assembly" to get "AsmEmitJumpLabelInstruction()"
+#elseif !defined AsmEmitCallLabelStringize
+	#error Please update "https://github.com/Zeex/amx_assembly" to get "AsmEmitCallLabelStringize()"
 #endif
 
 #tryinclude "..\amx\codescan"
