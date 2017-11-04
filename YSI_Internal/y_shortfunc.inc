@@ -449,8 +449,17 @@ stock G@(GLOBAL_TAG_TYPES:...)
 	return Q@;
 }
 
-stock F@(heapptr = 0)
+stock F@(calltype = 1, master = -1, heapptr = 0)
 {
+	// First copy the calltype to a global, so it can be read from the functions
+	// that actually call `CallLocalFunction` (0) and `CallRemoteFunction` (1).
+	YSI_g_sCallType = calltype;
+	// The store the address of the second parameter in the first parameter,
+	// which means the bottom of the stack becomes a reference parameter to
+	// elsewhere on the stack, and the string specifier in the call will spill
+	// in to this memory.
+	#emit ADDR.pri     master
+	#emit STOR.S.pri   calltype
 	// This function stores the heap size before certain calls so that we can
 	// revert afterwards.  It puts the size on the stack, then lies about the
 	// stack size for the return, so that the value stays on.
