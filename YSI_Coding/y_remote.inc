@@ -114,9 +114,9 @@ Optional plugins:
 	#define targetfunc%3<%2>%0(%1) (%3%0(%1))
 #else	
 	#define remotefunc Y_REMOTE_FUNC
-	#define localfunc%0(%1) (J@=0,I@=-1,Y@%0(%1))
-	#define broadcastfunc%0(%1) (J@=1,I@=-1,Y@%0(%1))
-	#define targetfunc%0<%2>%9(%1) (J@=1,I@=(%2),Y@%0(%1))
+	#define localfunc%0(%1) (J@=0,I@=-1,_@%0(%1))
+	#define broadcastfunc%0(%1) (J@=1,I@=-1,_@%0(%1))
+	#define targetfunc%0<%2>%9(%1) (J@=1,I@=(%2),_@%0(%1))
 #endif
 
 #if defined YSI_TESTS

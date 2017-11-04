@@ -357,7 +357,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 #define D@(%9:%0);%1; D@(%0); // Get string.
 
 #define @@%0\32; @@
-#define Y@%0\32; Y@
+#define _@%0\32; _@
 
 stock L@(GLOBAL_TAG_TYPES:...)
 {

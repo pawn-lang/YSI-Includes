@@ -286,19 +286,19 @@ Optional plugins:
 #define YSIM_MF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@@%9(){%9();return L@(0);}forward @@%9()
 #define YSIM_MF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9();@@%9()return L@(%9());forward @@%9()
 
-#define YSIM_UF_END(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9(%1)return F@(),D@(#@@%9,%3%7);forward Y@%9(%1)
-#define YSIM_UF_END_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9(%1)return F@(),C@(#@@%9,%3%7);forward Y@%9(%1)
-#define YSIM_UF_END_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9(%1)F@(),D@(#@@%9,%3%7);forward Y@%9(%1)
-#define YSIM_UF_END_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9(%1)return F@(),%5D@(#@@%9,%3%7);forward %5Y@%9(%1)
+#define YSIM_UF_END(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9(%1)return F@(),D@(#@@%9,%3%7);forward _@%9(%1)
+#define YSIM_UF_END_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9(%1)return F@(),C@(#@@%9,%3%7);forward _@%9(%1)
+#define YSIM_UF_END_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9(%1)F@(),D@(#@@%9,%3%7);forward _@%9(%1)
+#define YSIM_UF_END_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9(%1)return F@(),%5D@(#@@%9,%3%7);forward %5_@%9(%1)
 #define YSIM_UF_NUL     YSIM_UF_END
 #define YSIM_UF_NUL_STR YSIM_UF_END_STR
 #define YSIM_UF_NUL_VOD YSIM_UF_END_VOD
 #define YSIM_UF_NUL_TAG YSIM_UF_END_TAG
 
-#define YSIM_UG_END(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4Y@%9(%1);static stock Y@%9(%1)
+#define YSIM_UG_END(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4_@%9(%1);static stock _@%9(%1)
 #define YSIM_UG_END_STR YSIM_UG_END
 #define YSIM_UG_END_VOD YSIM_UG_END
-#define YSIM_UG_END_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5Y@%9(%1);static stock %5Y@%9(%1)
+#define YSIM_UG_END_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5_@%9(%1);static stock %5_@%9(%1)
 #define YSIM_UG_NUL     YSIM_UG_END
 #define YSIM_UG_NUL_STR YSIM_UG_END
 #define YSIM_UG_NUL_VOD YSIM_UG_END
@@ -322,14 +322,14 @@ Optional plugins:
 #define YSIM_DG_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9()<>F@(),D@(#@@%9,%3);@@%9()<_YCM:y>{%9();return L@(0%0);}%9()<_YCM:y>
 #define YSIM_DG_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9()<>return F@(),%5D@(#@@%9,%3);@@%9()<_YCM:y>return L@(%9()%0);%5%9()<_YCM:y>
 
-#define YSIM_TG_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4Y@%9(%1);@@%9();@@%9()stub_body_%9();static stock Y@%9(%1)
+#define YSIM_TG_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4_@%9(%1);@@%9();@@%9()stub_body_%9();static stock _@%9(%1)
 #define YSIM_TG_END_STR YSIM_TG_NUL
 #define YSIM_TG_END_VOD YSIM_TG_NUL
-#define YSIM_TG_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5Y@%9(%1);@@%9();@@%9()stub_body_%9();static stock %5Y@%9(%1)
-#define YSIM_TG_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4Y@%9();@@%9();@@%9()stub_body_%9();static stock Y@%9()
+#define YSIM_TG_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5_@%9(%1);@@%9();@@%9()stub_body_%9();static stock %5_@%9(%1)
+#define YSIM_TG_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4_@%9();@@%9();@@%9()stub_body_%9();static stock _@%9()
 #define YSIM_TG_NUL_STR YSIM_TG_NUL
 #define YSIM_TG_NUL_VOD YSIM_TG_NUL
-#define YSIM_TG_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5Y@%9();@@%9();@@%9()stub_body_%9();static stock %5Y@%9()
+#define YSIM_TG_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5_@%9();@@%9();@@%9()stub_body_%9();static stock %5_@%9()
 
 #define @_yC%0\32; @_yC
 #define @yC_%0\32; @yC_
