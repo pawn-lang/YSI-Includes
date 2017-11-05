@@ -79,11 +79,11 @@ Optional plugins:
 
 #define MASTER_DATA<%0> static stock Bit:YSI_g_sMasterData[_:(%0)];
 #define MASTER_RESET<%0> (YSI_g_sMasterData[_:(%0)] = Bit:0);
-#define MASTER_SET<%0> (YSI_g_sMasterData[_:(%0)] = Bit:((1) << (Master_Caller())));
-#define MASTER_ADD<%0> (YSI_g_sMasterData[_:(%0)] |= Bit:(1 << Master_Caller()));
-#define MASTER_REMOVE<%0> (YSI_g_sMasterData[_:(%0)] &= Bit:(~(1 << Master_Caller())));
+#define MASTER_SET<%0> (YSI_g_sMasterData[_:(%0)] = Bit:Master_Caller());
+#define MASTER_ADD<%0> (YSI_g_sMasterData[_:(%0)] |= Bit:Master_Caller());
+#define MASTER_REMOVE<%0> (YSI_g_sMasterData[_:(%0)] &= Bit:(~Master_Caller()));
 #define MASTER_EMPTY<%0> if(!YSI_g_sMasterData[_:(%0)])
-#define MASTER_EXCLUSIVE<%0> (YSI_g_sMasterData[_:(%0)] == Bit:(1 << Master_ID()))
+#define MASTER_EXCLUSIVE<%0> (YSI_g_sMasterData[_:(%0)] == Bit:Master_ID())
 #define MASTER_GET<%0> (YSI_g_sMasterData[_:(%0)])
 #define MASTER_COPY<%0,%1> (YSI_g_sMasterData[_:(%0)] = YSI_g_sMasterData[_:(%1)]);
 
@@ -413,29 +413,12 @@ public OnScriptInit()
 {
 	P:1("Master_OnScriptInit");
 	state _ALS : _ALS_go;
-	if (!existproperty(8, YSIM_MASTER))
-	{
-		setproperty(8, YSIM_MASTER, 1);
-	}
 	// Properties get lost between script changes so we need to force a rebuild.
 	CallRemoteFunction("Master_Reassert", "");
 	new
-		masters = getproperty(8, YSIM_MASTER),
-		i = 1;
-	while (i != 32)
-	{
-		if (!(masters & (1 << i)))
-		{
-			@_ = i;
-			masters |= 1 << i;
-			break;
-		}
-		++i;
-	}
-	if (i != 32)
-	{
-		setproperty(8, YSIM_MASTER, masters);
-	}
+		masters = getproperty(8, YSIM_MASTER);
+	@_ = Cell_GetLowestEmpty(masters);
+	setproperty(8, YSIM_MASTER, masters | Master_ID());
 	C:1(if (!Master_ID()) P:E("MasterID not assigned"););
 	// Make sure this is called before all other YSI initialisations, at least
 	// all the ones which use the master system.
@@ -483,7 +466,7 @@ public OnScriptExit()
 		// The properties currently clear instantly, but that may not always be
 		// the case.
 	}
-	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~(1 << Master_ID())),
+	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~Master_ID()),
 	Master_OnScriptExit(),
 	CallRemoteFunction("OnMasterSystemClose", "i", Master_ID());
 	return 1;
@@ -511,7 +494,7 @@ public Master_Reassert()
 	if (Master_ID())
 	{
 		// Read this script's master value.
-		setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) | (1 << Master_ID()) | 1);
+		setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) | Master_ID());
 		// Readd this script's owned scripts.
 		new
 			func[4];

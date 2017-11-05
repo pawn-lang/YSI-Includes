@@ -438,9 +438,139 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
+ *  Cell_CountBlanks(number);
+ * </summary>
+ * <param name="number">The number to get the number of 0s in.</param>
+ * <returns>
+ *  The number of 0s (unset bits) in the input.
+ * </returns>
+ * <remarks>
+ *  Like Cell_CountBits, but for 0s not 1s.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Cell_CountBlanks(GLOBAL_TAG_TYPES:data)
+{
+	// This function is a perfect candidate for re-writing in pure assembly.
+	// data = data - ((data >>> 1) & 0x55555555);
+	#emit LOAD.S.pri           data // From this point on, just use registers!
+	#emit INVERT
+	#emit PUSH.pri
+	#emit SHR.C.pri            1
+	#emit CONST.alt            0x55555555
+	#emit AND                  // No "AND.C" annoyingly.
+	#emit POP.alt
+	#emit SUB.alt
+	
+	// data = (data & 0x33333333) + ((data >>> 2) & 0x33333333);
+	#emit PUSH.pri
+	#emit SHR.C.pri            2
+	#emit CONST.alt            0x33333333
+	#emit AND
+	#emit SWAP.pri             // Put the second half of the code on the stack.
+	#emit AND                  // "alt" is already the correct value.
+	#emit POP.alt
+	#emit ADD
+	
+	// return ((data + (data >>> 4) & 0xF0F0F0F) * 0x1010101) >>> 24;
+	#emit MOVE.alt
+	#emit SHR.C.pri            4
+	#emit ADD
+	#emit CONST.alt            0xF0F0F0F
+	#emit AND
+	#emit SMUL.C               0x1010101
+	#emit SHR.C.pri            24
+	#emit RETN
+	
+	// Make the compiler happy.
+	return 0;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_GetLowestBlank(number);
+ * </summary>
+ * <param name="number">The number to get the lowest unset bit of.</param>
+ * <returns>
+ *  The integer position of the lowest unset bit.
+ * </returns>
+ * <remarks>
+ *  Like Cell_GetLowestBit, but for 0s not 1s.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Cell_GetLowestBlank(GLOBAL_TAG_TYPES:data)
+{
+	static const
+		scDeBruijn[] =
+			{
+				 0,  1, 28,  2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17,  4,  8, 
+				31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18,  6, 11,  5, 10,  9
+			};
+	
+	// return scDeBruijn[((data & -data) * 0x077CB531) >>> 27];
+	#emit LOAD.S.pri           data
+	#emit INVERT
+	#emit MOVE.alt
+	#emit NEG
+	#emit AND
+	#emit SMUL.C               0x077CB531
+	#emit SHR.C.pri            27
+	
+	#emit CONST.alt            scDeBruijn
+	#emit LIDX
+	
+	#emit RETN
+	
+	// Make the compiler happy.
+	return 0;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_GetLowestBlankEx(number);
+ * </summary>
+ * <param name="number">The number to get the lowest unset bit of PLUS ONE.</param>
+ * <returns>
+ *  The integer position of the lowest unset bit PLUS ONE.
+ * </returns>
+ * <remarks>
+ *  Like Cell_GetLowestBitEx, but for 0s not 1s.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Cell_GetLowestBlankEx(GLOBAL_TAG_TYPES:data)
+{
+	static const
+		scDeBruijn[] =
+			{
+				 1,  2, 29,  3, 30, 15, 25,  4, 31, 23, 21, 16, 26, 18,  5,  9, 
+				32, 28, 14, 24, 22, 20, 17,  8, 27, 13, 19,  7, 12,  6, 11, 10
+			};
+	data = ~data;
+	if (data)
+	{
+		#emit MOVE.alt
+		#emit NEG
+		#emit AND
+		#emit SMUL.C               0x077CB531
+		#emit SHR.C.pri            27
+		
+		#emit CONST.alt            scDeBruijn
+		#emit LIDX
+	}
+	{} // Zero-cost bug fix.
+	#emit RETN
+	
+	// Make the compiler happy.
+	return 0;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
  *  Cell_GetLowestComponent(number);
  * </summary>
- * <param name="number">The number to get the number of 1s in.</param>
+ * <param name="number">The number to get the lowest 1 in.</param>
  * <returns>
  *  The lowest set bit.
  * </returns>
@@ -470,6 +600,33 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 {
 	// return data & -data;
 	#emit LOAD.S.pri           data
+	#emit MOVE.alt
+	#emit NEG
+	#emit AND
+	#emit RETN
+	
+	// Make the compiler happy.
+	return 0;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_GetLowestEmpty(number);
+ * </summary>
+ * <param name="number">The number to get the lowest 0 in.</param>
+ * <returns>
+ *  The lowest unset bit.
+ * </returns>
+ * <remarks>
+ *  Like Cell_GetLowestComponent, but for 0s not 1s.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Cell_GetLowestEmpty(GLOBAL_TAG_TYPES:data)
+{
+	// return ~data & -~data;
+	#emit LOAD.S.pri           data
+	#emit INVERT
 	#emit MOVE.alt
 	#emit NEG
 	#emit AND

@@ -1455,7 +1455,7 @@ hook OnScriptExit()
 	{
 		new
 			cmdname[32 char] = {_C<@_yC>, 0, 0, ...},
-			Bit:cur = Bit:(1 << Master_ID()),
+			Bit:cur = Bit:Master_ID(),
 			Bit:bit = Bit:(1 << id),
 			Bit:rem = ~bit;
 		for (new i = 0; i != MAX_COMMANDS; ++i)

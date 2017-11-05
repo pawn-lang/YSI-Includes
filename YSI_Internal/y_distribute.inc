@@ -182,7 +182,7 @@ stock Distribute_Do(func[], GLOBAL_TAG_TYPES:...)
 stock Distribute_So(func[], idx, Bit:masters[], GLOBAL_TAG_TYPES:...)
 {
 	new
-		m = _:masters[idx] & ~(1 << Master_ID());
+		m = _:masters[idx] & ~Master_ID();
 	// Only owned by the current script - skip it.
 	if (m)
 	{
