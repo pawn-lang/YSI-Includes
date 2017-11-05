@@ -170,6 +170,20 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// ones which don't work well for "CallRemoteFunction" (they depend on
 	// script call order).
 	
+	// Swap the last two parameters - one is the hidden return value, the other
+	// is the hidden master ID pointer.
+	#emit LOAD.S.pri   8
+	#emit ADDR.alt     12
+	#emit ADD
+	#emit PUSH.pri
+	#emit ADD.C        4
+	#emit PUSH.pri
+	#emit LREF.S.pri   0xFFFFFFFC
+	#emit LREF.S.alt   0xFFFFFFF8
+	#emit SREF.S.pri   0xFFFFFFF8
+	#emit SREF.S.alt   0xFFFFFFFC
+	#emit STACK        8
+	
 	// Push the current master ID on to the master stack.  Returns the old
 	// master ID stored in the property, which we can shove on to the heap to
 	// restore later.
