@@ -460,46 +460,6 @@ Inline_Start(const &name, a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE
 
 #endif
 
-static stock
-	YSI_g_sLoadTemp;
-
-static stock Inline_GenerateParametersCopy(ctx[AsmContext])
-{
-	// Can't use the old code here, it assumed that the given parameters were
-	// constant for all calls (which did mean it didn't work for varargs
-	// functions with inlines in them, but they often won't work due to the
-	// pointers anyway).
-	
-	// When this code is called, we are still in the frame context of
-	// `Callback_Call`, so the required parameters are still the local
-	// parameters.
-	
-	// Get the callback data (`E_CALLBACK_DATA`).
-//	@emit LREF.S.pri   12
-//	// Get the size.
-//	@emit ADD.C        -4
-//	@emit LOAD.I
-//	@emit MOVE.alt
-//	// Grow the stack.
-//	@emit SHL.C.alt    2
-//	@emit LCTRL        4
-//	@emit SUB
-//	@emit SCTRL        4
-//	// Call memcpy.
-//	@emit SHR.C.alt    2
-//	@emit PUSH.alt
-//	@emit SHL.C.alt    2
-//	@emit PUSH.alt
-//	@emit PUSH.C       0
-//	@emit LREF.S.alt   12
-//	@emit PUSH.alt
-//	@emit PUSH.pri
-//	@emit PUSH.C       20
-//	@emit SYSREQ       "memcpy"
-//	@emit STACK        24
-	// That's an annoying ammount of code.  It leaves only 15 cells to use.
-}
-
 stock Callback_Call(callback:callback, GLOBAL_TAG_TYPES:...)
 {
 	#emit LREF.S.pri   12
@@ -764,19 +724,32 @@ static stock Inline_DoRetnGen(scanner[CodeScanner], data[E_INLINE_DATA])
 	}
 }
 
+#define CALL@Inline_OnAsmError Inline_OnAsmError("", ASM_ERROR_NONE)
+
+static stock Inline_OnAsmError(ctx[AsmContext], AsmError:error)
+{
+	switch (numargs() == 1 ? AsmGetError(ctx) : error)
+	{
+	case ASM_ERROR_OPCODE:          P:E("ASM_ERROR_OPCODE in Inline_Main.");
+	case ASM_ERROR_OPERAND:         P:E("ASM_ERROR_OPERAND in Inline_Main.");
+	case ASM_ERROR_SPACE:           P:E("ASM_ERROR_SPACE in Inline_Main.");
+	case ASM_ERROR_LABEL_OVERFLOW:  P:E("ASM_ERROR_LABEL_OVERFLOW in Inline_Main.");
+	case ASM_ERROR_LABEL_DUPLICATE: P:E("ASM_ERROR_LABEL_DUPLICATE in Inline_Main.");
+	case ASM_ERROR_NONE: return;
+	default: P:E("Unknown error in Inline_Main.");
+	}
+	// TODO: Abort codegen.
+}
+
 static stock Inline_DoCodeGen(data[E_INLINE_DATA])
 {
 	new
 		ctx[AsmContext];
 	AsmInitPtr(ctx, data[E_INLINE_DATA_START] + AMX_HEADER_COD, data[E_INLINE_DATA_USER] - data[E_INLINE_DATA_START]);
-	//AsmSetErrorHandler(ctx, GetPublicAddressFromName("Inline_OnAsmError"));
-	Inline_GenerateParametersCopy(ctx);
+	AsmSetErrorHandler(ctx, addressof (Inline_OnAsmError));
 	Inline_GenerateLocalsCopy(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT]);
 	Inline_GeneratePostamble(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT], bool:(data[E_INLINE_DATA_STATE] & 4), data[E_INLINE_DATA_LOCALS]);
-	@emit NOP
-	@emit NOP
-	@emit NOP
-	@emit NOP
+	AsmEmitPadding(ctx);
 }
 
 #endinput
