@@ -207,6 +207,8 @@ Optional plugins:
 #tryinclude <disasm>
 #if !defined DISASM_INC
 	#define AMX_INCLUDING_FAILED
+#elseif !defined DisasmReloc
+	#error Please update "https://github.com/Zeex/amx_assembly" to get "DisasmReloc()"
 #endif
 
 #tryinclude "..\amx\dynamic_call"
