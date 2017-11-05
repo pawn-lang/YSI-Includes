@@ -45,11 +45,9 @@ enum E_INLINE_DATA
 	E_INLINE_DATA_STATE,   // Which part of the header scanning we are on.
 	E_INLINE_DATA_LOCALS,  // Container function locals.
 	E_INLINE_DATA_PASSED,  // Inline function parameters.
-	E_INLINE_DATA_PARAMS,  // Container function parameters (undetermined).
 	E_INLINE_DATA_POINTER, // The struct to store the inline data in.
 	E_INLINE_DATA_START,   // The start of the writable code space.
 	E_INLINE_DATA_BEYOND,  // The end of the user code (skip jump location).
-	E_INLINE_DATA_LOOP,    // The loopback pos if user code ends naturally.
 	E_INLINE_DATA_USER     // The location of the user code.
 }
 
@@ -58,7 +56,6 @@ static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	if (data[E_INLINE_DATA_STATE] != 0)
 		return 0;
 	data[E_INLINE_DATA_LOCALS] = CodeScanGetMatchStack(scanner);
-	data[E_INLINE_DATA_PARAMS] = -1; // No way to know!
 	data[E_INLINE_DATA_POINTER] = CodeScanGetMatchHole(scanner, 0);
 	data[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
 	data[E_INLINE_DATA_BEYOND] = CodeScanGetMatchHole(scanner, 2);
@@ -71,9 +68,6 @@ static stock Inline_FoundMid(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
 	if (data[E_INLINE_DATA_STATE] != 1)
 		return 0;
-	data[E_INLINE_DATA_LOOP] = CodeScanGetMatchAddress(scanner) + 6 * cellbytes;
-	if (AMX_Read(data[E_INLINE_DATA_LOOP] + AMX_HEADER_COD) == _:RelocateOpcode(OP_BREAK))
-		data[E_INLINE_DATA_LOOP] += cellbytes;
 	data[E_INLINE_DATA_PASSED] = CodeScanGetMatchStack(scanner) - data[E_INLINE_DATA_LOCALS];
 	data[E_INLINE_DATA_STATE] = 2;
 	return 0;
@@ -481,124 +475,265 @@ static stock Inline_GenerateParametersCopy(ctx[AsmContext])
 	// parameters.
 	
 	// Get the callback data (`E_CALLBACK_DATA`).
-	@emit LREF.S.pri   12
+//	@emit LREF.S.pri   12
+//	// Get the size.
+//	@emit ADD.C        -4
+//	@emit LOAD.I
+//	@emit MOVE.alt
+//	// Grow the stack.
+//	@emit SHL.C.alt    2
+//	@emit LCTRL        4
+//	@emit SUB
+//	@emit SCTRL        4
+//	// Call memcpy.
+//	@emit SHR.C.alt    2
+//	@emit PUSH.alt
+//	@emit SHL.C.alt    2
+//	@emit PUSH.alt
+//	@emit PUSH.C       0
+//	@emit LREF.S.alt   12
+//	@emit PUSH.alt
+//	@emit PUSH.pri
+//	@emit PUSH.C       20
+//	@emit SYSREQ       "memcpy"
+//	@emit STACK        24
+	// That's an annoying ammount of code.  It leaves only 15 cells to use.
+}
+
+stock Callback_Call(callback:callback, GLOBAL_TAG_TYPES:...)
+{
+	#emit LREF.S.pri   12
 	// Get the size.
-	@emit ADD.C        -4
-	@emit LOAD.I
-	@emit MOVE.alt
+	#emit ADD.C        0xFFFFFFFC
+	#emit LOAD.I
+	#emit MOVE.alt
 	// Grow the stack.
-	@emit SHL.C.alt    2
-	@emit LCTRL        4
-	@emit SUB
-	@emit SCTRL        4
+	#emit SHL.C.alt    2
+	#emit LCTRL        4
+	#emit SUB
+	#emit SCTRL        4
 	// Call memcpy.
-	@emit SHR.C.alt    2
-	@emit PUSH.alt
-	@emit SHL.C.alt    2
-	@emit PUSH.alt
-	@emit PUSH.C       0
-	@emit LREF.S.alt   12
-	@emit PUSH.alt
-	@emit PUSH.pri
-	@emit PUSH.C       20
-	@emit SYSREQ       "memcpy"
-	// That's an annoying ammount of code.  It leaves only 17 cells to use.
-	// Note that after here, the stack still contains the parameters used to
-	// call `memcpy` - only adjust the stack by the difference required for the
-	// local parameters, not twice for the call and the parameters.
-}
-
-static stock Inline_GenerateLocalsCopy(ctx[AsmContext], parameters[MAX_INLINE_PARAMETERS], count)
-{
-	// First get their total size.
-	new
-		localsSize = 0;
-	for (new i = 0; i != count; ++i)
-	{
-		switch (parameters[i])
-		{
-		case 0:
-			localsSize += cellbytes;
-		case -1:
-			localsSize += cellbytes;
-		case cellmax:
-			localsSize += YSI_MAX_INLINE_STRING * cellbytes;
-		default:
-			// Already has the `cellbytes` adjustment.
-			localsSize += parameters[i];
-		}
-	}
-	// Adjust for the number of new parameters, minus the 24 we already have on
-	// the stack from the earlier call to `memcpy`.
-	@emit STACK        24 - localsSize
-	// Now move the data from the parameter stack to the local stack.
-	// THIS IS THE ONLY TIME I'VE FOUND A USEFUL EXPLOIT FOR:
-	//   
-	//   https://github.com/compuphase/pawn/issues/35
-	//   
-	// That does mean the code would need updating should an upgrade ever be
-	// made.  Either reverse the code or store the stack start elsewhere.
-	new input = 16;
-	for (new i = 0; i != count; ++i)
-	{
-		switch (parameters[i])
-		{
-		case 0:
-		{
-			@emit ADD.C        -4
-			@emit LREF.S.alt   input
-		}
-			localsSize += cellbytes;
-		case -1:
-			localsSize += cellbytes;
-		case cellmax:
-			localsSize += YSI_MAX_INLINE_STRING * cellbytes;
-		default:
-			// Already has the `cellbytes` adjustment.
-			localsSize += parameters[i];
-		}
-	}
-}
-
-static stock Inline_GenerateClosureCopyIn(cells)
-{
-	new
-		tmp = ref(YSI_g_sLoadTemp);
-	// Copy from `pri` to the stack.
-	// First allocate space on the stack.
-	@emit STACK                    -(cells * cellbytes)
-	// `MOVS` copies from `pri` to `alt`, `pri` currently holds the pointer to
-	// the passed in callback information, which includes the source address as
-	// a field, but we need to make a copy.  We also can't use `LREF.S` here
-	// because we don't actually know the frame pointer offset.  Instead we use
-	// `LREF` with a single global.
-	@emit ADD.C                    e_CALLBACK_DATA_CLOSURE
-	@emit STOR.pri                 tmp
-	@emit LREF                     tmp
+	#emit SHR.C.alt    2
+	#emit PUSH.alt
+	#emit SHL.C.alt    2
+	#emit PUSH.alt
+	#emit PUSH.C       0
+	#emit LREF.S.alt   12
+	#emit PUSH.alt
+	#emit PUSH.pri
+	#emit PUSH.C       20
+	#emit SYSREQ.C     memcpy
+	#emit STACK        24
+	// "jump" in to the code.
+	#emit LREF.S.pri   12
+	// Get the size.
+	#emit ADD.C        4
+	#emit LOAD.I
+	#emit SCTRL        8
+	#emit SCTRL        6
 	
+	// There's a bug with jumping forward in assembly.  This label neatly
+	// includes the `LCTRL`/`SCTRL` pair we were going to `#emit` anyway.
+Callback_Call_nothing_to_save:
+	#emit LOAD.pri     I@
+	#emit RETN
+	
+//Callback_Call_restore_stack:
+	// If the code jumps back to here, restore then save the stack.
+	#emit STOR.pri     I@
+	// Get the data size to copy back out.
+	#emit LREF.S.pri   12
+	// Get the size.
+	#emit ADD.C        -4
+	#emit LOAD.I
+//Callback_Call_save_stack:
+	// If the code decides to jump back to here, save the stack out again.
+	#emit CONST.alt    12
+	#emit JSLEQ        Callback_Call_nothing_to_save
+	// The stack hasn't been restored yet, and we need it.
+	#emit STOR.pri     J@
+	#emit STACK        0
+	#emit SUB.alt
+	#emit SCTRL        4
+	#emit LOAD.alt     J@
+	#emit PUSH.alt
+	#emit SHL.C.alt    2
+	#emit PUSH.alt
+	#emit PUSH.C       0
+	#emit LREF.S.alt   12
+	#emit PUSH.pri
+	#emit PUSH.alt
+	#emit PUSH.C       20
+	#emit SYSREQ.C     memcpy
+	#emit LCTRL        5
+	#emit SCTRL        4
+	#emit LOAD.pri     I@
+	#emit RETN
 }
 
-static stock Inline_GenerateClosureCopyOut()
+static stock Inline_GenerateLocalsCopy(ctx[AsmContext], parameters[], count)
 {
-	// TODO:
-	// We CAN use `MOVS` for this actually, just not for function parameters...
-	@emit PUSH.C                   cells
-	@emit PUSH.C                   (cells * cellbytes)
-	@emit PUSH.C                   0
-	// `pri` should always be a pointer to the function data.
-	@emit MOVE.alt
-	@emit LCTRL                    4 // Load the stack address.
-	@emit ADD.C                    (3 * cellbytes)
-	@emit PUSH.pri
-	@emit CONST.pri                e_CALLBACK_DATA_CLOSURE
-	@emit LIDX
-	@emit PUSH.pri
-	@emit PUSH.C                   (5 * cellbytes) // Number of parameters.
-	@emit SYSREQ                   "memcpy"
-	// Don't need the return value, so restore `pri` before clobbering `alt`
-	// with the stack adjustment.
-	@emit MOVE.pri
-	@emit STACK                    (6 * cellbytes + cells * cellbytes)
+	new
+		input = 16;
+	for (new i = 0; i != count; ++i)
+	{
+		switch (parameters[i])
+		{
+		case -1, 0:
+		{
+			// This is the smallest way to adjust `alt` that I can find.  This
+			// would be the same number of cells, but one more instruction, and
+			// much larger for anything not a single cell:
+			//   
+			//   @emit DEC.alt
+			//   @emit DEC.alt
+			//   @emit DEC.alt
+			//   @emit DEC.alt
+			//   
+			// This would be equivalent, there's no compelling reason for
+			// either right now other than clarity
+			//   
+			//   @emit CONST.pri    -4
+			//   @emit ADD
+			//   @emit MOVE.alt
+			//   
+			// Or:
+			//   
+			//   @emit CONST.pri    4
+			//   @emit SUB.alt
+			//   @emit MOVE.alt
+			//   
+			@emit LREF.S.pri   input
+			@emit PUSH.pri
+		}
+		case cellmax:
+		{
+			@emit STACK        -(YSI_MAX_INLINE_STRING * cellbytes)
+			@emit STACK        0
+			@emit LOAD.S.pri   input
+			@emit MOVS         (YSI_MAX_INLINE_STRING * cellbytes)
+		}
+		default:
+		{
+			@emit STACK        -(parameters[i])
+			@emit STACK        0
+			@emit LOAD.S.pri   input
+			@emit MOVS         (parameters[i])
+		}
+		}
+		input += cellbytes;
+	}
+}
+
+static stock Inline_GenerateLocalsStore(ctx[AsmContext], parameters[], count)
+{
+	new
+		accumulate = 0;
+	while (count--)
+	{
+		switch (parameters[count])
+		{
+		case -1:
+		{
+			if (accumulate)
+				@emit STACK        accumulate
+			accumulate = 0;
+			@emit POP.pri
+			@emit SREF.S.pri       count * cellbytes + 16
+		}
+		case 0:
+			accumulate += cellbytes;
+		case cellmax:
+			accumulate += YSI_MAX_INLINE_STRING * cellbytes;
+		default:
+			accumulate += parameters[count];
+		}
+	}
+	// Return how much of this data was left on the stack.  We might need to
+	// clear it, we might not...
+	return accumulate;
+}
+
+static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count, bool:isConst, closureSize)
+{
+	new
+		bool:needStore = false,
+		localsSize = 0,
+		accumulate = 0;
+	for (new i = 0; i != count; ++i)
+	{
+		switch (parameters[i])
+		{
+		case -1:
+		{
+			needStore = true;
+			localsSize += cellbytes;
+		}
+		case 0:
+			localsSize += cellbytes;
+		case cellmax:
+			localsSize += YSI_MAX_INLINE_STRING * cellbytes;
+		default:
+			// Already has the `cellbytes` adjustment.
+			localsSize += parameters[i];
+		}
+	}
+	// When we "return" from the function, we end up here, with all our stack
+	// data removed.  Put it back (which is easy, because the top should still
+	// be in `alt` - actually, it might not in some cases).  Turns out that's
+	// irrelevant, since the only time it can happen is if there are no locals
+	// to save!
+	if (isConst)
+	{
+		if (needStore)
+		{
+			// Back up `pri` somewhere for returning later.
+			@emit STOR.pri     ref(I@)
+			// The last stack location is still in `alt` from removing
+			// everything from the stack.  This actually exploits the fact that
+			// the value in `alt` after `STACK` is the value BEFORE the
+			// adjustment, not after.  Normally this is very odd, and it was
+			// changed for PAWN 4.0 here:
+			//   
+			//   https://github.com/compuphase/pawn/issues/35
+			//   
+			// This is the first case I've ever found where it is useful!
+			@emit MOVE.pri
+			@emit SCTRL        4
+			Inline_GenerateLocalsStore(ctx, parameters, count);
+			// Restore the return value.
+			@emit LCTRL        5
+			@emit SCTRL        4
+			@emit LOAD.pri     ref(I@)
+		}
+		// If we are here, we arein the context of `Callback_Call`, with no
+		// locals on the stack.
+		@emit RETN
+	}
+	else if (needStore)
+	{
+		@emit STOR.pri     ref(I@)
+		// Get the data size to copy back out.
+		@emit LREF.S.pri   12
+		// Get the size.
+		@emit ADD.C        -4
+		@emit LOAD.I
+		@emit STOR.pri     ref(J@)
+		@emit MOVE.pri
+		@emit SCTRL        4
+		accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
+		if (accumulate)
+			@emit STACK        accumulate
+		@emit LOAD.pri     ref(J@)
+		@emit JUMP         0//Callback_Call_save_stack
+	}
+	else
+		@emit JUMP         0//Callback_Call_restore_stack
+	// This is the loop handler, where all other code jumps to for non-standard
+	// returns.  Ends up in the code above.
+	@emit STACK        localsSize + closureSize
+	@emit RETN
+	// Now pad the remainder with `NOP`s.
 }
 
 static stock Inline_DoRetnGen(scanner[CodeScanner], data[E_INLINE_DATA])
@@ -631,81 +766,19 @@ static stock Inline_DoRetnGen(scanner[CodeScanner], data[E_INLINE_DATA])
 
 static stock Inline_DoCodeGen(data[E_INLINE_DATA])
 {
-	// The code will be written between "E_INLINE_DATA_START" and
-	// "E_INLINE_DATA_USER", except for a few bytes at "E_INLINE_DATA_LOOP",
-	// which is the point that user code will return to when it ends, and so
-	// should handle that case (mostly just a `STACK` and `RETN`).
-	// 
-	// In order to simplify the code generation, I use the `_@emit` macro, which
-	// is the same as the `@emit` macro, but transparently handles the void for
-	// "_LOOP" by running out of space, erroring, putting in the end code, and
-	// reinitialising the assembly context after that gap.
-	// 
-	// =========================================================================
-	//     NOW WE CAN DO THE MAIN FUNCTION CODE.
-	// =========================================================================
-	new
-		argSize = data[E_INLINE_DATA_LOCALS];
 	new
 		ctx[AsmContext];
-	// =========================================================================
-	//     CODE SPACE AVAILABLE
-	// =========================================================================
-	//  
-	//  Inline_Entry: 6
-	//  Vars: 2 v+r
-	//  Arrays: 7 a
-	//  JUMP: 2
-	//  Inline_Allocator: 6
-	//  
-	//  Arrays: 6 a
-	//  Vars: 5 v
-	//  Refs: 6 r
-	//  
-	//  Inline_Main: 19
-	//  
-	//  Simple Total: 14 + 7v + 8r + 19
-	//  Complex Total: 14 + 7v + 8r + 17a + 19
-	//  
-	//  Simple Required: 15 + 3v + 7r + 16
-	//  Complex Required: 15 + 4v + 8r + 6a + 16
-	//  
-	// =========================================================================
-	//     SEGMENT 1 - RESOLVE AND PUSH CLOSURE DATA AND PARAMETERS
-	// =========================================================================
-	AsmInitPtr(ctx, data[E_INLINE_DATA_START] + AMX_HEADER_COD, data[E_INLINE_DATA_LOOP] - data[E_INLINE_DATA_START]);
-	AsmSetErrorHandler(ctx, GetPublicAddressFromName("Inline_OnAsmError"));
-	
-	
-	if (data[E_INLINE_DATA_STATE] & 24)
-	{
-		// Has arrays or references (things that need copying back).
-		if (data[E_INLINE_DATA_LOCALS])
-		{
-			// Has a closure.
-		}
-		else
-		{
-			// No closure data to copy over (but may have parent function passed
-			// in parameters - we can't know that now).
-		}
-	}
-	else
-	{
-		// Only simple variables.
-		if (data[E_INLINE_DATA_LOCALS])
-		{
-			// Has a closure.
-		}
-		else
-		{
-			// The simplest method - no closure data to copy over (but may have
-			// parent function passed in parameters - we can't know that now).
-		}
-	}
-	
-	
+	AsmInitPtr(ctx, data[E_INLINE_DATA_START] + AMX_HEADER_COD, data[E_INLINE_DATA_USER] - data[E_INLINE_DATA_START]);
+	//AsmSetErrorHandler(ctx, GetPublicAddressFromName("Inline_OnAsmError"));
+	Inline_GenerateParametersCopy(ctx);
+	Inline_GenerateLocalsCopy(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT]);
+	Inline_GeneratePostamble(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT], bool:(data[E_INLINE_DATA_STATE] & 4), data[E_INLINE_DATA_LOCALS]);
+	@emit NOP
+	@emit NOP
+	@emit NOP
+	@emit NOP
 }
+
 #endinput
 	
 	
