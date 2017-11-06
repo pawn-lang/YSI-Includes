@@ -109,6 +109,16 @@ static stock Inline_FoundConst(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	return 0;
 }
 
+static stock Inline_FoundConst2(scanner[CodeScanner], data[E_INLINE_DATA] = "")
+{
+	// Can't use size to determine this match as two pieces of code are the same
+	// size in the same place, but mean very different things.
+	if (data[E_INLINE_DATA_STATE] != 2)
+		return 0;
+	data[E_INLINE_DATA_STATE] = 3;
+	return 0;
+}
+
 static stock Inline_FoundVar(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
 	#pragma unused scanner
@@ -148,10 +158,10 @@ public OnCodeInit()
 	new data[E_INLINE_DATA];
 	
 	// Optimised.
-	new csm0[CodeScanMatcher];
-	CodeScanMatcherInit(csm0, &Inline_FoundStart);
-	CodeScanMatcherData(csm0, ref(data));
-	CodeScanMatcherPattern(csm0,
+	new csm1a[CodeScanMatcher];
+	CodeScanMatcherInit(csm1a, &Inline_FoundStart);
+	CodeScanMatcherData(csm1a, ref(data));
+	CodeScanMatcherPattern(csm1a,
 		OP(PUSH_C, INLINE_PATTERN_4)
 		OP(PUSH_C, INLINE_PATTERN_3)
 		OP(PUSH_C, INLINE_PATTERN_2)
@@ -162,13 +172,13 @@ public OnCodeInit()
 		OP(JZER, ???)
 		OP(JUMP, ???)
 	);
-	CodeScanAddMatcher(scanner, csm0);
+	CodeScanAddMatcher(scanner, csm1a);
 	
 	// Unoptimised.
-	new csm1[CodeScanMatcher];
-	CodeScanMatcherInit(csm1, &Inline_FoundStart);
-	CodeScanMatcherData(csm1, ref(data));
-	CodeScanMatcherPattern(csm1,
+	new csm1b[CodeScanMatcher];
+	CodeScanMatcherInit(csm1b, &Inline_FoundStart);
+	CodeScanMatcherData(csm1b, ref(data));
+	CodeScanMatcherPattern(csm1b,
 		OP(CONST_PRI, INLINE_PATTERN_4)
 		OP(PUSH_PRI)
 		OP(CONST_PRI, INLINE_PATTERN_3)
@@ -184,18 +194,18 @@ public OnCodeInit()
 		OP(JZER, ???)
 		OP(JUMP, ???)
 	);
-	CodeScanAddMatcher(scanner, csm1);
+	CodeScanAddMatcher(scanner, csm1b);
 	
 	// Mid point.
-	new csm2[CodeScanMatcher];
-	CodeScanMatcherInit(csm2, &Inline_FoundMid);
-	CodeScanMatcherData(csm2, ref(data));
-	CodeScanMatcherPattern(csm2,
+	new csm2a[CodeScanMatcher];
+	CodeScanMatcherInit(csm2a, &Inline_FoundMid);
+	CodeScanMatcherData(csm2a, ref(data));
+	CodeScanMatcherPattern(csm2a,
 		OP(PUSH_C, 0)
 		OP(CALL, &I@F)
 		OP(JZER, ???)
 	);
-	CodeScanAddMatcher(scanner, csm2);
+	CodeScanAddMatcher(scanner, csm2a);
 	
 	// Normal parameter.
 	//   
@@ -204,16 +214,28 @@ public OnCodeInit()
 	//   STOR.I
 	//   PUSH.alt
 	//   
-	new csm3[CodeScanMatcher];
-	CodeScanMatcherInit(csm3, &Inline_FoundVar);
-	CodeScanMatcherData(csm3, ref(data));
-	CodeScanMatcherPattern(csm3,
+	new csm3a[CodeScanMatcher];
+	CodeScanMatcherInit(csm3a, &Inline_FoundVar);
+	CodeScanMatcherData(csm3a, ref(data));
+	CodeScanMatcherPattern(csm3a,
 		OP(ZERO_PRI)
 		OP(HEAP, 4)
 		OP(STOR_I)
 		OP(PUSH_ALT)
 	);
-	CodeScanAddMatcher(scanner, csm3);
+	CodeScanAddMatcher(scanner, csm3a);
+	
+	new csm3b[CodeScanMatcher];
+	CodeScanMatcherInit(csm3b, &Inline_FoundVar);
+	CodeScanMatcherData(csm3b, ref(data));
+	CodeScanMatcherPattern(csm3b,
+		OP(ZERO_PRI)
+		OP(HEAP, 4)
+		OP(STOR_I)
+		OP(MOVE_PRI)
+		OP(PUSH_PRI)
+	);
+	CodeScanAddMatcher(scanner, csm3b);
 	
 	// Reference parameter.
 	//   
@@ -236,49 +258,72 @@ public OnCodeInit()
 	//   STOR.I
 	//   PUSH.alt
 	//   
-	new csm4[CodeScanMatcher];
-	CodeScanMatcherInit(csm4, &Inline_FoundRef);
-	CodeScanMatcherData(csm4, ref(data));
-	CodeScanMatcherPattern(csm4,
+	new csm4a[CodeScanMatcher];
+	CodeScanMatcherInit(csm4a, &Inline_FoundRef);
+	CodeScanMatcherData(csm4a, ref(data));
+	CodeScanMatcherPattern(csm4a,
 		OP(CONST_PRI, ???)
 		OP(HEAP, 4)
 		OP(STOR_I)
 		OP(PUSH_ALT)
 	);
-	CodeScanAddMatcher(scanner, csm4);
+	CodeScanAddMatcher(scanner, csm4a);
+	
+	new csm4b[CodeScanMatcher];
+	CodeScanMatcherInit(csm4b, &Inline_FoundRef);
+	CodeScanMatcherData(csm4b, ref(data));
+	CodeScanMatcherPattern(csm4b,
+		OP(CONST_PRI, ???)
+		OP(HEAP, 4)
+		OP(STOR_I)
+		OP(MOVE_PRI)
+		OP(PUSH_PRI)
+	);
+	CodeScanAddMatcher(scanner, csm4b);
 	
 	// End
-	new csm5[CodeScanMatcher];
-	CodeScanMatcherInit(csm5, &Inline_FoundEnd);
-	CodeScanMatcherData(csm5, ref(data));
-	CodeScanMatcherPattern(csm5,
+	new csm5a[CodeScanMatcher];
+	CodeScanMatcherInit(csm5a, &Inline_FoundEnd);
+	CodeScanMatcherData(csm5a, ref(data));
+	CodeScanMatcherPattern(csm5a,
 		OP(CALL, &I@L)
 		OP(HEAP, ???)
 		OP(JZER, ???)
 	);
-	CodeScanAddMatcher(scanner, csm5);
+	CodeScanAddMatcher(scanner, csm5a);
 	
 	// Constness
-	new csm6[CodeScanMatcher];
-	CodeScanMatcherInit(csm6, &Inline_FoundConst);
-	CodeScanMatcherData(csm6, ref(data));
-	CodeScanMatcherPattern(csm6,
+	new csm6a[CodeScanMatcher];
+	CodeScanMatcherInit(csm6a, &Inline_FoundConst);
+	CodeScanMatcherData(csm6a, ref(data));
+	CodeScanMatcherPattern(csm6a,
 		OP(PUSH_C, ???)
 		OP(PUSH_C, 4)
 		OP(CALL, &I@K)
 	);
-	CodeScanAddMatcher(scanner, csm6);
+	CodeScanAddMatcher(scanner, csm6a);
 	
-	new csm7[CodeScanMatcher];
-	CodeScanMatcherInit(csm7, &Inline_FoundConst);
-	CodeScanMatcherData(csm7, ref(data));
-	CodeScanMatcherPattern(csm7,
+	new csm6b[CodeScanMatcher];
+	CodeScanMatcherInit(csm6b, &Inline_FoundConst);
+	CodeScanMatcherData(csm6b, ref(data));
+	CodeScanMatcherPattern(csm6b,
 		OP(CONST_PRI, ???)
 		OP(PUSH_PRI)
 		OP(PUSH_C, 4)
 		OP(CALL, &I@K)
 	);
-	CodeScanAddMatcher(scanner, csm7);
+	CodeScanAddMatcher(scanner, csm6b);
+	
+	new csm6c[CodeScanMatcher];
+	CodeScanMatcherInit(csm6c, &Inline_FoundConst2);
+	CodeScanMatcherData(csm6c, ref(data));
+	CodeScanMatcherPattern(csm6c,
+		OP(ZERO_PRI)
+		OP(PUSH_PRI)
+		OP(PUSH_C, 4)
+		OP(CALL, &I@K)
+	);
+	CodeScanAddMatcher(scanner, csm6c);
 	
 	// Run all the scanners in parallel.
 	// TODO: Try and determine rough types for parent function parameters, using
@@ -462,50 +507,56 @@ Inline_Start(const &name, a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE
 
 stock Callback_Call(callback:callback, GLOBAL_TAG_TYPES:...)
 {
-	#emit LREF.S.pri   12
+	//#emit PROC                  //  1
+	#emit LREF.S.pri   12         //  3
 	// Get the size.
-	#emit ADD.C        0xFFFFFFFC
-	#emit LOAD.I
-	#emit MOVE.alt
-	// Grow the stack.
-	#emit SHL.C.alt    2
-	#emit LCTRL        4
-	#emit SUB
-	#emit SCTRL        4
-	// Call memcpy.
-	#emit SHR.C.alt    2
-	#emit PUSH.alt
-	#emit SHL.C.alt    2
-	#emit PUSH.alt
-	#emit PUSH.C       0
-	#emit LREF.S.alt   12
-	#emit PUSH.alt
-	#emit PUSH.pri
-	#emit PUSH.C       20
-	#emit SYSREQ.C     memcpy
-	#emit STACK        24
-	// "jump" in to the code.
-	#emit LREF.S.pri   12
-	// Get the size.
-	#emit ADD.C        4
-	#emit LOAD.I
-	#emit SCTRL        8
-	#emit SCTRL        6
+	#emit ADD.C        0xFFFFFFFC //  5
+	#emit LOAD.I                  //  6
+	#emit MOVE.alt                //  7
+	// Grow the stack. 
+	#emit SHL.C.alt    2          //  9
+	#emit LCTRL        4          // 11
+	#emit SUB                     // 12
+	#emit SCTRL        4          // 14
+	// Call memcpy. 
+	#emit SHR.C.alt    2          // 16
+	#emit PUSH.alt                // 17
+	#emit SHL.C.alt    2          // 19
+	#emit PUSH.alt                // 20
+	#emit PUSH.C       0          // 22
+	#emit LREF.S.alt   12         // 24
+	#emit PUSH.alt                // 25
+	#emit PUSH.pri                // 26
+	#emit PUSH.C       20         // 28
+	#emit SYSREQ.C     memcpy     // 30
+	#emit STACK        24         // 32
+	// "jump" in to the code. 
+	#emit LREF.S.pri   12         // 34
+	// Get the size. 
+	#emit ADD.C        4          // 36
+	#emit LOAD.I                  // 37
+	#emit SCTRL        8          // 39
+	#emit SCTRL        6          // 41
 	
 	// There's a bug with jumping forward in assembly.  This label neatly
 	// includes the `LCTRL`/`SCTRL` pair we were going to `#emit` anyway.
-Callback_Call_nothing_to_save:
-	#emit LOAD.pri     I@
-	#emit RETN
+Callback_Call_nothing_to_save:    // 45
+	#emit LOAD.pri     I@         // 47
+	#emit RETN                    // 48
 	
+	// Padding to account for debug builds.
+	#emit BREAK                   // 49
+	#emit BREAK                   // 50
 //Callback_Call_restore_stack:
 	// If the code jumps back to here, restore then save the stack.
-	#emit STOR.pri     I@
+	#emit STOR.pri     I@         // 52
 	// Get the data size to copy back out.
-	#emit LREF.S.pri   12
+	#emit LREF.S.pri   12         // 54
 	// Get the size.
-	#emit ADD.C        -4
-	#emit LOAD.I
+	#emit ADD.C        -4         // 56
+	#emit LOAD.I                  // 57
+	#emit BREAK                   // 58
+	#emit BREAK                   // 59
 //Callback_Call_save_stack:
 	// If the code decides to jump back to here, save the stack out again.
 	#emit CONST.alt    12
@@ -670,25 +721,32 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 		// locals on the stack.
 		@emit RETN
 	}
-	else if (needStore)
-	{
-		@emit STOR.pri     ref(I@)
-		// Get the data size to copy back out.
-		@emit LREF.S.pri   12
-		// Get the size.
-		@emit ADD.C        -4
-		@emit LOAD.I
-		@emit STOR.pri     ref(J@)
-		@emit MOVE.pri
-		@emit SCTRL        4
-		accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
-		if (accumulate)
-			@emit STACK        accumulate
-		@emit LOAD.pri     ref(J@)
-		@emit JUMP         0//Callback_Call_save_stack
-	}
 	else
-		@emit JUMP         0//Callback_Call_restore_stack
+	{
+		new
+			jmp;
+		#emit CONST.pri    Callback_Call
+		#emit STOR.S.pri   jmp
+		if (needStore)
+		{
+			@emit STOR.pri     ref(I@)
+			// Get the data size to copy back out.
+			@emit LREF.S.pri   12
+			// Get the size.
+			@emit ADD.C        -4
+			@emit LOAD.I
+			@emit STOR.pri     ref(J@)
+			@emit MOVE.pri
+			@emit SCTRL        4
+			accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
+			if (accumulate)
+				@emit STACK        accumulate
+			@emit LOAD.pri     ref(J@)
+			@emit JUMP         jmp + 50 * cellbytes // Callback_Call_save_stack
+		}
+		else
+			@emit JUMP         jmp + 59 * cellbytes // Callback_Call_restore_stack
+	}
 	// This is the loop handler, where all other code jumps to for non-standard
 	// returns.  Ends up in the code above.
 	@emit STACK        localsSize + closureSize
@@ -748,6 +806,7 @@ static stock Inline_DoCodeGen(data[E_INLINE_DATA])
 	AsmInitPtr(ctx, data[E_INLINE_DATA_START] + AMX_HEADER_COD, data[E_INLINE_DATA_USER] - data[E_INLINE_DATA_START]);
 	AsmSetErrorHandler(ctx, addressof (Inline_OnAsmError));
 	Inline_GenerateLocalsCopy(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT]);
+	// if (!JIT && remaining > 2) @emit JUMP user_code
 	Inline_GeneratePostamble(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT], bool:(data[E_INLINE_DATA_STATE] & 4), data[E_INLINE_DATA_LOCALS]);
 	AsmEmitPadding(ctx);
 }
