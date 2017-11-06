@@ -133,12 +133,6 @@ Optional plugins:
 #tryinclude <amx_memory>
 #if !defined AMX_MEMORY_INC
 	#define AMX_INCLUDING_FAILED
-#elseif !defined argderef
-	#error Please update "https://github.com/Zeex/amx_assembly" to get "argderef()"
-#elseif !defined deref
-	#error Please update "https://github.com/Zeex/amx_assembly" to get "deref()"
-#elseif !defined GetAmxNextInstructionPointer
-	#error Please update "https://github.com/Zeex/amx_assembly" to get "GetAmxNextInstructionPointer()"
 #endif
 
 #tryinclude "..\amx\asm"
@@ -159,10 +153,6 @@ Optional plugins:
 #tryinclude <asm_macros>
 #if !defined ASM_MACROS_INC
 	#define AMX_INCLUDING_FAILED
-#elseif !defined AsmEmitJumpLabelInstruction
-	#error Please update "https://github.com/Zeex/amx_assembly" to get "AsmEmitJumpLabelInstruction()"
-#elseif !defined AsmEmitCallLabelStringize
-	#error Please update "https://github.com/Zeex/amx_assembly" to get "AsmEmitCallLabelStringize()"
 #endif
 
 #tryinclude "..\amx\codescan"
@@ -172,14 +162,7 @@ Optional plugins:
 #tryinclude "codescan"
 #tryinclude <codescan>
 #if !defined CODESCAN_INC
-	// If it failed because they don't have ANY of amx-assembly, just give the
-	// generic error message at the end of this file.  Otherwise, tell them to
-	// update as they have one version, but not a new enough one.
-	#if !defined AMX_INCLUDING_FAILED
-		#error Please update "https://github.com/Zeex/amx_assembly" to get "codescan.inc"
-	#endif
-#elseif !defined AsmEmitCallAbs
-	#error Please update "https://github.com/Zeex/amx_assembly" to get "AsmEmitCallAbs()"
+	#define AMX_INCLUDING_FAILED
 #endif
 
 #tryinclude "..\amx\amx_jit"
@@ -189,14 +172,7 @@ Optional plugins:
 #tryinclude "amx_jit"
 #tryinclude <amx_jit>
 #if !defined AMX_JIT_INC
-	// If it failed because they don't have ANY of amx-assembly, just give the
-	// generic error message at the end of this file.  Otherwise, tell them to
-	// update as they have one version, but not a new enough one.
-	#if !defined AMX_INCLUDING_FAILED
-		#error Please update "https://github.com/Zeex/amx_assembly" to get "amx_jit.inc"
-	#endif
-#elseif !defined ResolveJITAddress
-	#error Please update "https://github.com/Zeex/amx_assembly" to get "ResolveJITAddress()"
+	#define AMX_INCLUDING_FAILED
 #endif
 
 #tryinclude "..\amx\disasm"
@@ -207,8 +183,6 @@ Optional plugins:
 #tryinclude <disasm>
 #if !defined DISASM_INC
 	#define AMX_INCLUDING_FAILED
-#elseif !defined DisasmReloc
-	#error Please update "https://github.com/Zeex/amx_assembly" to get "DisasmReloc()"
 #endif
 
 #tryinclude "..\amx\dynamic_call"
@@ -249,8 +223,6 @@ Optional plugins:
 #tryinclude <opcode>
 #if !defined OPCODE_INC
 	#define AMX_INCLUDING_FAILED
-#elseif !defined GetOpcodeInstructionInformation
-	#error Please update "https://github.com/Zeex/amx_assembly" to get "GetOpcodeInstructionInformation()"
 #endif
 
 #tryinclude "..\amx\os"
@@ -315,6 +287,8 @@ Optional plugins:
 
 #if defined AMX_INCLUDING_FAILED
 	#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
+#elseif !defined GetOpcodeInstructionInformation
+	#error Please update "https://github.com/Zeex/amx_assembly" to the latest version.
 #endif
 
 #tryinclude "..\md-sort\md-sort"
@@ -326,7 +300,7 @@ Optional plugins:
 #if !defined _INC_md_sort
 	#error Could not include "https://github.com/oscar-broman/md-sort" - ensure its files are in "include\md-sort\"
 #elseif !defined ResetDeepArray_Entry
-	#error Please update "https://github.com/oscar-broman/md-sort" to get "ResetDeepArray()"
+	#error Please update "https://github.com/oscar-broman/md-sort" to the latest version.
 #endif
 
 #tryinclude "..\code-parse\code-parse"
