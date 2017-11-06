@@ -249,6 +249,8 @@ Optional plugins:
 #tryinclude <opcode>
 #if !defined OPCODE_INC
 	#define AMX_INCLUDING_FAILED
+#elseif !defined GetOpcodeInstructionInformation
+	#error Please update "https://github.com/Zeex/amx_assembly" to get "GetOpcodeInstructionInformation()"
 #endif
 
 #tryinclude "..\amx\os"
