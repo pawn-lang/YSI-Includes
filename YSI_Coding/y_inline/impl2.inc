@@ -51,6 +51,10 @@ enum E_INLINE_DATA
 	E_INLINE_DATA_USER     // The location of the user code.
 }
 
+static stock
+	YSI_g_sJumpOffset,
+	YSI_g_sCallbackCallAddress;
+
 static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
 	if (data[E_INLINE_DATA_STATE] != 0)
@@ -142,8 +146,7 @@ static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 		return 0;
 	data[E_INLINE_DATA_USER] = CodeScanGetMatchAddress(scanner) + CodeScanGetMatchLength(scanner);
 	// Do the actual codegen here.
-	Inline_DoRetnGen(scanner, data);
-	Inline_DoCodeGen(data);
+	Inline_DoCodeGen(scanner, data);
 	// Restart scanning for the next inline.
 	data[E_INLINE_DATA_STATE] = 0;
 	return 0;
@@ -151,6 +154,14 @@ static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 
 public OnCodeInit()
 {
+	new
+		hdr[AMX_HDR];
+	GetAmxHeader(hdr);
+	YSI_g_sJumpOffset = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
+	#emit CONST.pri    Callback_Call
+	#emit STOR.pri     YSI_g_sCallbackCallAddress
+	YSI_g_sCallbackCallAddress += YSI_g_sJumpOffset;
+	
 	new scanner[CodeScanner];
 	CodeScanInit(scanner);
 	
@@ -580,6 +591,7 @@ Callback_Call_nothing_to_save:    // 45
 	#emit SCTRL        4
 	#emit LOAD.pri     I@
 	#emit RETN
+	return 0;
 }
 
 static stock Inline_GenerateLocalsCopy(ctx[AsmContext], parameters[], count)
@@ -665,28 +677,17 @@ static stock Inline_GenerateLocalsStore(ctx[AsmContext], parameters[], count)
 	return accumulate;
 }
 
-static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count, bool:isConst, closureSize)
+static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count, bool:isConst)
 {
 	new
 		bool:needStore = false,
-		localsSize = 0,
 		accumulate = 0;
 	for (new i = 0; i != count; ++i)
 	{
-		switch (parameters[i])
-		{
-		case -1:
+		if (parameters[i] == -1)
 		{
 			needStore = true;
-			localsSize += cellbytes;
-		}
-		case 0:
-			localsSize += cellbytes;
-		case cellmax:
-			localsSize += YSI_MAX_INLINE_STRING * cellbytes;
-		default:
-			// Already has the `cellbytes` adjustment.
-			localsSize += parameters[i];
+			break;
 		}
 	}
 	// When we "return" from the function, we end up here, with all our stack
@@ -723,10 +724,6 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 	}
 	else
 	{
-		new
-			jmp;
-		#emit CONST.pri    Callback_Call
-		#emit STOR.S.pri   jmp
 		if (needStore)
 		{
 			@emit STOR.pri     ref(I@)
@@ -742,27 +739,21 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 			if (accumulate)
 				@emit STACK        accumulate
 			@emit LOAD.pri     ref(J@)
-			@emit JUMP         jmp + 50 * cellbytes // Callback_Call_save_stack
+			@emit JUMP         YSI_g_sCallbackCallAddress + 50 * cellbytes // Callback_Call_save_stack
 		}
 		else
-			@emit JUMP         jmp + 59 * cellbytes // Callback_Call_restore_stack
+			@emit JUMP         YSI_g_sCallbackCallAddress + 59 * cellbytes // Callback_Call_restore_stack
 	}
-	// This is the loop handler, where all other code jumps to for non-standard
-	// returns.  Ends up in the code above.
-	@emit STACK        localsSize + closureSize
-	@emit RETN
-	// Now pad the remainder with `NOP`s.
 }
 
-static stock Inline_DoRetnGen(scanner[CodeScanner], data[E_INLINE_DATA])
+static stock Inline_DoRetnGen(ctx[AsmContext], scanner[CodeScanner], data[E_INLINE_DATA])
 {
 	// Remove the return for the inner loop, since it may now point to an
 	// invalid address (in the middle of an OpCode we just wrote out).
 	new
-		Opcode:retn = RelocateOpcode(OP_RETN),
-		Opcode:nop = RelocateOpcode(OP_NOP),
 		startaddr = data[E_INLINE_DATA_USER],
 		endaddr = CodeScanGetMatchHole(scanner, 1) - 8,
+		target = endaddr + YSI_g_sJumpOffset,
 		dctx[DisasmContext];
 	// Using the local decompiler, go through the code and remove any jumps to
 	// outside of [startaddr, endaddr].  Convert them all to `RETN; NOP`.
@@ -776,10 +767,33 @@ static stock Inline_DoRetnGen(scanner[CodeScanner], data[E_INLINE_DATA])
 		// `break`, `continue`, or `goto`.
 		if (DisasmGetOpcode(dctx) == OP_JUMP && !(startaddr <= DisasmGetOperandReloc(dctx) < endaddr))
 		{
-			AMX_Write(DisasmGetCurIp(dctx), _:retn),
-			AMX_Write(DisasmGetCurIp(dctx) + 4, _:nop);
+			AMX_Write(DisasmGetCurIp(dctx) + 4, target);
 		}
 	}
+	// Now at the end address, write the cleanup and return code.
+	if (data[E_INLINE_DATA_PASSED] + data[E_INLINE_DATA_LOCALS])
+	{
+		AMX_Write(endaddr + AMX_HEADER_COD +  0, _:RelocateOpcode(OP_STACK));
+		AMX_Write(endaddr + AMX_HEADER_COD +  4, data[E_INLINE_DATA_PASSED] + data[E_INLINE_DATA_LOCALS]);
+		AMX_Write(endaddr + AMX_HEADER_COD +  8, _:RelocateOpcode(OP_RETN));
+		AMX_Write(endaddr + AMX_HEADER_COD + 12, _:RelocateOpcode(OP_NOP));
+	}
+	else
+	{
+		AMX_Write(endaddr + AMX_HEADER_COD +  0, _:RelocateOpcode(OP_NOP));
+		AMX_Write(endaddr + AMX_HEADER_COD +  4, _:RelocateOpcode(OP_NOP));
+		AMX_Write(endaddr + AMX_HEADER_COD +  8, _:RelocateOpcode(OP_NOP));
+		AMX_Write(endaddr + AMX_HEADER_COD + 12, _:RelocateOpcode(OP_NOP));
+	}
+	dctx[DisasmContext_end_ip] += 8;
+	if (DisasmNext(dctx) != DISASM_DONE && DisasmGetOpcode(dctx) == OP_STACK)
+	{
+		AMX_Write(endaddr + AMX_HEADER_COD + 16, _:RelocateOpcode(OP_NOP));
+		AMX_Write(endaddr + AMX_HEADER_COD + 20, _:RelocateOpcode(OP_NOP));
+		@emit JUMP         target + 24
+	}
+	else
+		@emit JUMP         target + 16
 }
 
 #define CALL@Inline_OnAsmError Inline_OnAsmError("", ASM_ERROR_NONE)
@@ -799,15 +813,16 @@ static stock Inline_OnAsmError(ctx[AsmContext], AsmError:error)
 	// TODO: Abort codegen.
 }
 
-static stock Inline_DoCodeGen(data[E_INLINE_DATA])
+static stock Inline_DoCodeGen(scanner[CodeScanner], data[E_INLINE_DATA])
 {
 	new
 		ctx[AsmContext];
 	AsmInitPtr(ctx, data[E_INLINE_DATA_START] + AMX_HEADER_COD, data[E_INLINE_DATA_USER] - data[E_INLINE_DATA_START]);
 	AsmSetErrorHandler(ctx, addressof (Inline_OnAsmError));
+	Inline_DoRetnGen(ctx, scanner, data);
 	Inline_GenerateLocalsCopy(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT]);
 	// if (!JIT && remaining > 2) @emit JUMP user_code
-	Inline_GeneratePostamble(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT], bool:(data[E_INLINE_DATA_STATE] & 4), data[E_INLINE_DATA_LOCALS]);
+	Inline_GeneratePostamble(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT], bool:(data[E_INLINE_DATA_STATE] & 4));
 	AsmEmitPadding(ctx);
 }
 
