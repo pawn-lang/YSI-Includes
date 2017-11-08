@@ -29,7 +29,7 @@ remotefunc stock static void:yrt_4(hi)
 remotefunc static stock string:yrt_5(hi, const string:you[], there[], tt, &other, const len = 7)
 {
 	#pragma unused hi, you, there, tt, len
-	new str[130];
+	new str[144];
 	str = "Hello World";
 	other += 5;
 	return str;

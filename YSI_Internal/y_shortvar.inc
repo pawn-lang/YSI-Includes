@@ -86,10 +86,9 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-// VERY VERY VERY IMPORTANT!!! y_inline uses "130" instead of "YSI_MAX_STRING"
-// for two lines (one is "520" for "130 * 4").  SO DOES y_shortfunc.
-#define YSI_MAX_STRING                  (130)
-#if YSI_MAX_STRING != 130
+// VERY VERY VERY IMPORTANT!!! y_text uses "144" explicitly.  Change it too.
+#define YSI_MAX_STRING                  (144)
+#if YSI_MAX_STRING != 144
 	#error Please update all explicit YSI_MAX_STRING uses.
 #endif
 
