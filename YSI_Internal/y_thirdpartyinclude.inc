@@ -95,6 +95,16 @@ Optional plugins:
 	#define CODE_SCAN_MAX_PATTERN (32)
 #endif
 
+#tryinclude "..\amx\addressof"
+#tryinclude <amx_assembly\addressof>
+#tryinclude "..\amx_assembly\addressof"
+#tryinclude "..\..\amx_assembly\addressof"
+#tryinclude "addressof"
+#tryinclude <addressof>
+#if !defined ADDRESSOF_INC
+	#define AMX_INCLUDING_FAILED
+#endif
+
 #tryinclude "..\amx\amx"
 #tryinclude <amx_assembly\amx>
 #tryinclude "..\amx_assembly\amx"
