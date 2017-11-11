@@ -105,6 +105,16 @@ Optional plugins:
 	#define AMX_INCLUDING_FAILED
 #endif
 
+#tryinclude "..\amx\addressof_jit"
+#tryinclude <amx_assembly\addressof_jit>
+#tryinclude "..\amx_assembly\addressof_jit"
+#tryinclude "..\..\amx_assembly\addressof_jit"
+#tryinclude "addressof_jit"
+#tryinclude <addressof_jit>
+#if !defined ADDRESSOF_JIT_INC
+	#define AMX_INCLUDING_FAILED
+#endif
+
 #tryinclude "..\amx\amx"
 #tryinclude <amx_assembly\amx>
 #tryinclude "..\amx_assembly\amx"
@@ -297,7 +307,7 @@ Optional plugins:
 
 #if defined AMX_INCLUDING_FAILED
 	#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
-#elseif !defined GetOpcodeInstructionInformation
+#elseif !defined AddressofResolve
 	#error Please update "https://github.com/Zeex/amx_assembly" to the latest version.
 #endif
 
