@@ -162,6 +162,7 @@ public OnJITCompile()
 	if (YSI_g_sCodeJITing)
 		return 0;
 	YSI_g_sCodeJITing = true;
+	AddressofResolve();
 	ScriptInit_OnCodeInit();
 	new ret = ScriptInit_OnJITCompile();
 	if (ret)
@@ -195,10 +196,11 @@ public OnFilterScriptInit()
 	state _ALS : _ALS_go;
 	// Dump the final assembly of this script so we can inspect it.
 	DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
-	#if defined ScriptInit_OnCodeInit
-		if (!YSI_g_sCodeJITing)
-			ScriptInit_OnCodeInit();
-	#endif
+	if (!YSI_g_sCodeJITing)
+	{
+		AddressofResolve();
+		ScriptInit_OnCodeInit();
+	}
 	#if defined ScriptInit_OnScriptInit
 		ScriptInit_OnScriptInit();
 	#endif
@@ -242,10 +244,11 @@ public OnGameModeInit()
 		state _script_init_fix_state : false;
 		// Dump the final assembly of this script so we can inspect it.
 		DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
-		#if defined ScriptInit_OnCodeInit
-			if (!YSI_g_sCodeJITing)
-				ScriptInit_OnCodeInit();
-		#endif
+		if (!YSI_g_sCodeJITing)
+		{
+			AddressofResolve();
+			ScriptInit_OnCodeInit();
+		}
 		#if defined ScriptInit_OnScriptInit
 			ScriptInit_OnScriptInit();
 		#endif
