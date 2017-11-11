@@ -51,6 +51,49 @@ static stock
 #define string:
 #define void:
 
+#if !defined TAGOF
+	#if ((__Pawn & 0x0F) >= 0x0A) || ((__Pawn & 0xF0) >= 0xA0)
+		#define TAGOF(%0);
+	#else
+		#define TAGOF(%0); stock const %0:TAGOF@%0;
+		#define TAGOF@%0\32; TAGOF@
+		#define tagof(%0:%1) (tagof(TAGOF@%0))
+	#endif
+	#define TAGOF@TAG@%0\32; TAGOF@TAG@
+	#define SPECIFIER(%0) TAGOF(TAG@%0)
+	
+	TAGOF(Float);
+	TAGOF(File);
+#endif
+#define TAG@%0\32; TAG@
+
+// This is for getting excess parameters on non-strings.
+#define _:%0,) _:%0)
+
+SPECIFIER(i);
+SPECIFIER(s);
+
+// I did consider an alternate method of making `@` do this:
+//   
+//   #define @.%0(%1) Indirect_Data(%0),Indirect_Call(%1)
+//   
+// But that would fail when an `@` call contained another `@` call:
+//   
+//   @.Func1(@.Func2(42, 43));
+//   
+// It would save the stack manipulation though (not convinced it would be less
+// code though with the generation of multiple function calls).
+#define @%0(%1) (Indirect_Call(_:INDIRECT_DOT:%0,_:(tagof(%0)),%1))
+#define Indirect_Call(_:INDIRECT_DOT:%9&%0,_:(tagof(%9)),%2) Indirect_Call(_:TAGOF_ADDRESSOF:addressof(%0),_:0,%2)
+#define INDIRECT_DOT:.%0,_:(tagof(.%0)) %0,_:(tagof(%0))
+#define TAGOF_ADDRESSOF:addressof(%0<%2>),_:0, addressof(%0),_:tagof(TAG@%2:),
+// Can now do:
+//   
+//   @.var(params)
+//   @&func<iis>(params)
+//   @.&func(params)
+//   
+
 stock Indirect_Call(func, tag, GLOBAL_TAG_TYPES:...)
 {
 	// Read the memory at `handler`.  If it is `OP_PROC`, this is just a normal
@@ -103,7 +146,7 @@ stock Indirect_Call(func, tag, GLOBAL_TAG_TYPES:...)
 			addr,
 			lTag[32];
 		GetTagNameFromID(INDIRECTION_TAG, lTag);
-		i = 0;
+		i = 4; // Skip the `TAG@` prefix.
 		#emit ADDR.pri     12
 		#emit STOR.pri     addr
 		for ( ; ; )
@@ -211,19 +254,6 @@ stock void:Indirect_Callvoid(const func[E_INDIRECTION], tag, GLOBAL_TAG_TYPES:..
 	#emit SCTRL        6
 	// Don't return anything.
 }
-
-// I did consider an alternate method of making `@` do this:
-//   
-//   #define @.%0(%1) Indirect_Data(%0),Indirect_Call(%1)
-//   
-// But that would fail when an `@` call contained another `@` call:
-//   
-//   @.Func1(@.Func2(42, 43));
-//   
-// It would save the stack manipulation though (not convinced it would be less
-// code though with the generation of multiple function calls).
-#define @.%0(%1) (Indirect_Call(_:%0,(tagof (%0)),%1))
-#define Indirect_Call(%0,%1,) Indirect_Call(%0)
 
 #define Indirect<%2>:%0<%1> @TAG%2:%0[E_INDIRECTION]
 static stock
