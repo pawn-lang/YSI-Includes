@@ -166,52 +166,110 @@ stock Indirect_Call(func, tag, GLOBAL_TAG_TYPES:...)
 			addr += 4;
 		}
 		{}
-		// No handler, and no tag data.  Just jump to it and hope.
+		// No handler, and no tag data.  Just jump to it and hope (but skip the
+		// starting `PROC`, since we already did that).
 		#emit LOAD.pri     INDIRECTION_DATA
+		#emit ADD.C        4
 		#emit SCTRL        6
 	}
 	else
 	{
-		// No handler, and no tag data.  Just jump to it and hope.
+		// No handler, and no tag data.  Just jump to it and hope (but skip the
+		// starting `PROC`, since we already did that).
 		#emit LOAD.pri     INDIRECTION_DATA
+		#emit ADD.C        4
 		#emit SCTRL        6
 	}
 	return 0;
 }
 
 // Not `Indirect_CallString` to make use of the `string:` macro.
-stock string:Indirect_Callstring(const func[E_INDIRECTION], tag, GLOBAL_TAG_TYPES:...)
+stock string:Indirect_Callstring(func, tag, GLOBAL_TAG_TYPES:...)
 {
+	// Read the memory at `handler`.  If it is `OP_PROC`, this is just a normal
+	// function not a special handler function.  If so, translate the parameters
+	// in to the correct forms from the tag and jump to `handler + cellbytes`.
+	// If it isn't `OP_PROC` (don't ask me what happens with state functions),
+	// Copy the data and then jump straight to it.
+	// 
+	// If I make `func` a reference, I think I can trick vars and arrays in to
+	// behaving similarly.  No, that will easilly loose its referenceness if
+	// people pass it as a regular parameter.  BUT - the COD and DAT segments
+	// are different.  So something pointing in to DAT relative to COD will not
+	// be a valid pointer, and THAT you can detect!
+	#emit LOAD.S.pri   tag
+	#emit STOR.pri     INDIRECTION_TAG
 	// Get the previous frame.
-	#emit POP.alt
-	// Get the return address.
 	#emit POP.pri
-	// Get the parameter count.
+	// Get the return address.
+	#emit POP.alt
+	// Get the parameter count and put the frame back on.
 	#emit SWAP.pri
-	// Put the old frame back on.
-	#emit PUSH.alt
 	// Reduce the parameter count.
-	#emit ADD.C        0xFFFFFFFC
-	// Get the indirection data.
-	#emit LOAD.S.alt   func
+	#emit ADD.C        0xFFFFFFF8
 	// Store the new parameter count.
-	#emit STOR.S.pri   func
+	#emit STOR.S.pri   tag
+	// Get the indirection data.
+	#emit LOAD.S.pri   func
+	#emit STOR.pri     INDIRECTION_DATA
+	// Store the return address.
+	#emit STOR.S.alt   func
 	// Move the frame up slightly.
 	#emit LCTRL        4
 	#emit SCTRL        5
-	// Get the indirection data.
-	#emit CONST.pri    1
-	#emit LIDX
-	#emit STOR.pri     INDIRECTION_DATA_1
-	// Get the indirection size.
-	#emit CONST.pri    2
-	#emit LIDX
-	#emit STOR.pri     INDIRECTION_DATA_2
-	// Jump to the handler.
-	#emit ZERO.pri
-	#emit LIDX
-	#emit SCTRL        8
-	#emit SCTRL        6
+	// Check the pointer type.  If it is in the `COD` area, jump straight to it
+	// with the tag for parameter types (if it isn't 0).  Otherwise, use the
+	// `func` from `DAT` as a pointer to a handler.
+	if (INDIRECTION_DATA > gsCodSize)
+	{
+		#emit LOAD.pri     INDIRECTION_DATA
+		#emit LOAD.alt     gsCodSize
+		#emit SUB
+		#emit STOR.pri     INDIRECTION_DATA
+		#emit LOAD.I
+		#emit SCTRL        6
+	}
+	else if (INDIRECTION_TAG)
+	{
+		static
+			i,
+			addr,
+			lTag[32];
+		GetTagNameFromID(INDIRECTION_TAG, lTag);
+		i = 4; // Skip the `TAG@` prefix.
+		#emit ADDR.pri     12
+		#emit STOR.pri     addr
+		for ( ; ; )
+		{
+			switch (lTag[i++])
+			{
+			case 'i', 'd', 'x', 'f', 'c':
+			{
+				// Resolve non-reference parameters.
+				#emit LREF.pri   addr
+				#emit LOAD.I
+				#emit SREF.pri   addr
+			}
+			case '\0':
+				break;
+			}
+			addr += 4;
+		}
+		{}
+		// No handler, and no tag data.  Just jump to it and hope (but skip the
+		// starting `PROC`, since we already did that).
+		#emit LOAD.pri     INDIRECTION_DATA
+		#emit ADD.C        4
+		#emit SCTRL        6
+	}
+	else
+	{
+		// No handler, and no tag data.  Just jump to it and hope (but skip the
+		// starting `PROC`, since we already did that).
+		#emit LOAD.pri     INDIRECTION_DATA
+		#emit ADD.C        4
+		#emit SCTRL        6
+	}
 	// Never called.  Don't use "static" because it would allocate real memory
 	// in advance.  Instead, this will want to allocate on the stack but never
 	// get hit to do so.
@@ -220,44 +278,98 @@ stock string:Indirect_Callstring(const func[E_INDIRECTION], tag, GLOBAL_TAG_TYPE
 }
 
 // Not `Indirect_Callvoid` to make use of the `void:` macro.
-stock void:Indirect_Callvoid(const func[E_INDIRECTION], tag, GLOBAL_TAG_TYPES:...)
+stock void:Indirect_Callvoid(func, tag, GLOBAL_TAG_TYPES:...)
 {
+	// Read the memory at `handler`.  If it is `OP_PROC`, this is just a normal
+	// function not a special handler function.  If so, translate the parameters
+	// in to the correct forms from the tag and jump to `handler + cellbytes`.
+	// If it isn't `OP_PROC` (don't ask me what happens with state functions),
+	// Copy the data and then jump straight to it.
+	// 
+	// If I make `func` a reference, I think I can trick vars and arrays in to
+	// behaving similarly.  No, that will easilly loose its referenceness if
+	// people pass it as a regular parameter.  BUT - the COD and DAT segments
+	// are different.  So something pointing in to DAT relative to COD will not
+	// be a valid pointer, and THAT you can detect!
+	#emit LOAD.S.pri   tag
+	#emit STOR.pri     INDIRECTION_TAG
 	// Get the previous frame.
-	#emit POP.alt
-	// Get the return address.
 	#emit POP.pri
-	// Get the parameter count.
+	// Get the return address.
+	#emit POP.alt
+	// Get the parameter count and put the frame back on.
 	#emit SWAP.pri
-	// Put the old frame back on.
-	#emit PUSH.alt
 	// Reduce the parameter count.
-	#emit ADD.C        0xFFFFFFFC
-	// Get the indirection data.
-	#emit LOAD.S.alt   func
+	#emit ADD.C        0xFFFFFFF8
 	// Store the new parameter count.
-	#emit STOR.S.pri   func
+	#emit STOR.S.pri   tag
+	// Get the indirection data.
+	#emit LOAD.S.pri   func
+	#emit STOR.pri     INDIRECTION_DATA
+	// Store the return address.
+	#emit STOR.S.alt   func
 	// Move the frame up slightly.
 	#emit LCTRL        4
 	#emit SCTRL        5
-	// Get the indirection data.
-	#emit CONST.pri    1
-	#emit LIDX
-	#emit STOR.pri     INDIRECTION_DATA_1
-	// Get the indirection size.
-	#emit CONST.pri    2
-	#emit LIDX
-	#emit STOR.pri     INDIRECTION_DATA_2
-	// Jump to the handler.
-	#emit ZERO.pri
-	#emit LIDX
-	#emit SCTRL        8
-	#emit SCTRL        6
+	// Check the pointer type.  If it is in the `COD` area, jump straight to it
+	// with the tag for parameter types (if it isn't 0).  Otherwise, use the
+	// `func` from `DAT` as a pointer to a handler.
+	if (INDIRECTION_DATA > gsCodSize)
+	{
+		#emit LOAD.pri     INDIRECTION_DATA
+		#emit LOAD.alt     gsCodSize
+		#emit SUB
+		#emit STOR.pri     INDIRECTION_DATA
+		#emit LOAD.I
+		#emit SCTRL        6
+	}
+	else if (INDIRECTION_TAG)
+	{
+		static
+			i,
+			addr,
+			lTag[32];
+		GetTagNameFromID(INDIRECTION_TAG, lTag);
+		i = 4; // Skip the `TAG@` prefix.
+		#emit ADDR.pri     12
+		#emit STOR.pri     addr
+		for ( ; ; )
+		{
+			switch (lTag[i++])
+			{
+			case 'i', 'd', 'x', 'f', 'c':
+			{
+				// Resolve non-reference parameters.
+				#emit LREF.pri   addr
+				#emit LOAD.I
+				#emit SREF.pri   addr
+			}
+			case '\0':
+				break;
+			}
+			addr += 4;
+		}
+		{}
+		// No handler, and no tag data.  Just jump to it and hope (but skip the
+		// starting `PROC`, since we already did that).
+		#emit LOAD.pri     INDIRECTION_DATA
+		#emit ADD.C        4
+		#emit SCTRL        6
+	}
+	else
+	{
+		// No handler, and no tag data.  Just jump to it and hope (but skip the
+		// starting `PROC`, since we already did that).
+		#emit LOAD.pri     INDIRECTION_DATA
+		#emit ADD.C        4
+		#emit SCTRL        6
+	}
 	// Don't return anything.
 }
 
-#define Indirect<%2>:%0<%1> @TAG%2:%0[E_INDIRECTION]
-static stock
-	Indirect<>:gsIndirectData<>;
+//#define Indirect<%2>:%0<%1> @TAG%2:%0[E_INDIRECTION]
+//static stock
+//	Indirect<>:gsIndirectData<>;
 
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Function name to modify.</param>
@@ -280,38 +392,38 @@ static stock Indirect_NullHandler_(GLOBAL_TAG_TYPES:...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Indirect_FuncHandler_(GLOBAL_TAG_TYPES:...)
-{
-	// Get the pointer to the first parameter.
-	#emit ADDR.alt     12
-	#emit PUSH.alt
-	while (INDIRECTION_DATA_2)
-	{
-		if (INDIRECTION_DATA_2 & 1)
-		{
-			// The parameter is an integer type, not a reference type, resolve
-			// the value from how it was passed by reference.
-			#emit LREF.S.pri   0xFFFFFFFC
-			#emit LOAD.I
-			#emit SREF.S.pri   0xFFFFFFFC
-			#emit POP.pri
-			#emit ADD.C        4
-			#emit PUSH.pri
-		}
-		else
-		{
-			#emit POP.pri
-			#emit ADD.C        4
-			#emit PUSH.pri
-		}
-		INDIRECTION_DATA_2 >>= 1;
-	}
-	{}
-	#emit POP.pri
-	#emit LOAD.pri     INDIRECTION_DATA_1
-	#emit SCTRL        8
-	#emit SCTRL        6
-}
+//static stock Indirect_FuncHandler_(GLOBAL_TAG_TYPES:...)
+//{
+//	// Get the pointer to the first parameter.
+//	#emit ADDR.alt     12
+//	#emit PUSH.alt
+//	while (INDIRECTION_DATA_2)
+//	{
+//		if (INDIRECTION_DATA_2 & 1)
+//		{
+//			// The parameter is an integer type, not a reference type, resolve
+//			// the value from how it was passed by reference.
+//			#emit LREF.S.pri   0xFFFFFFFC
+//			#emit LOAD.I
+//			#emit SREF.S.pri   0xFFFFFFFC
+//			#emit POP.pri
+//			#emit ADD.C        4
+//			#emit PUSH.pri
+//		}
+//		else
+//		{
+//			#emit POP.pri
+//			#emit ADD.C        4
+//			#emit PUSH.pri
+//		}
+//		INDIRECTION_DATA_2 >>= 1;
+//	}
+//	{}
+//	#emit POP.pri
+//	#emit LOAD.pri     INDIRECTION_DATA_1
+//	#emit SCTRL        8
+//	#emit SCTRL        6
+//}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Function name to modify.</param>
@@ -321,47 +433,47 @@ static stock Indirect_FuncHandler_(GLOBAL_TAG_TYPES:...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Indirect_Func(const fmat[], const name[] = "", ptr = 0)
-{
-	if (name[0])
-		ptr = GetPublicAddressFromName(name);
-	if (ptr)
-	{
-		#emit LOAD.S.pri   ptr
-		#emit ADD.C        4
-		#emit LCTRL        8
-		#emit STOR.S.pri   ptr
-		gsIndirectData[E_INDIRECTION_DATA_1] = ptr;
-		#emit CONST.pri    Indirect_FuncHandler_
-		#emit ADD.C        4
-		#emit LCTRL        8
-		#emit STOR.S.pri   ptr
-		gsIndirectData[E_INDIRECTION_HANDLER] = ptr;
-		ptr = 0;
-		for (new i; i != 32; ++i)
-		{
-			switch (fmat[i])
-			{
-			case '\0':
-				break;
-			case 'i', 'd', 'x', 'f', 'c':
-				ptr |= 1 << i;
-			}
-		}
-		gsIndirectData[E_INDIRECTION_DATA_2] = ptr;
-	}
-	else
-	{
-		#emit CONST.pri    Indirect_NullHandler_
-		#emit ADD.C        4
-		#emit LCTRL        8
-		#emit STOR.S.pri   ptr
-		gsIndirectData[E_INDIRECTION_HANDLER] = ptr;
-	}
-	return gsIndirectData;
-}
-
-#define Indirect_Func(%1,&%0) Indirect_Func(%1, .ptr = addressof (%0))
+//stock Indirect_Func(const fmat[], const name[] = "", ptr = 0)
+//{
+//	if (name[0])
+//		ptr = GetPublicAddressFromName(name);
+//	if (ptr)
+//	{
+//		#emit LOAD.S.pri   ptr
+//		#emit ADD.C        4
+//		#emit LCTRL        8
+//		#emit STOR.S.pri   ptr
+//		gsIndirectData[E_INDIRECTION_DATA_1] = ptr;
+//		#emit CONST.pri    Indirect_FuncHandler_
+//		#emit ADD.C        4
+//		#emit LCTRL        8
+//		#emit STOR.S.pri   ptr
+//		gsIndirectData[E_INDIRECTION_HANDLER] = ptr;
+//		ptr = 0;
+//		for (new i; i != 32; ++i)
+//		{
+//			switch (fmat[i])
+//			{
+//			case '\0':
+//				break;
+//			case 'i', 'd', 'x', 'f', 'c':
+//				ptr |= 1 << i;
+//			}
+//		}
+//		gsIndirectData[E_INDIRECTION_DATA_2] = ptr;
+//	}
+//	else
+//	{
+//		#emit CONST.pri    Indirect_NullHandler_
+//		#emit ADD.C        4
+//		#emit LCTRL        8
+//		#emit STOR.S.pri   ptr
+//		gsIndirectData[E_INDIRECTION_HANDLER] = ptr;
+//	}
+//	return gsIndirectData;
+//}
+//
+//#define Indirect_Func(%1,&%0) Indirect_Func(%1, .ptr = addressof (%0))
 
 #if !defined _ALS_OnJITCompile
 	forward OnJITCompile();
