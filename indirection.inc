@@ -96,6 +96,9 @@ SPECIFIER(s);
 
 stock Indirect_Call(func, tag, GLOBAL_TAG_TYPES:...)
 {
+	static
+		addr;
+	#pragma unused func, tag
 	// Read the memory at `handler`.  If it is `OP_PROC`, this is just a normal
 	// function not a special handler function.  If so, translate the parameters
 	// in to the correct forms from the tag and jump to `handler + cellbytes`.
@@ -107,26 +110,26 @@ stock Indirect_Call(func, tag, GLOBAL_TAG_TYPES:...)
 	// people pass it as a regular parameter.  BUT - the COD and DAT segments
 	// are different.  So something pointing in to DAT relative to COD will not
 	// be a valid pointer, and THAT you can detect!
-	#emit LOAD.S.pri   tag
-	#emit STOR.pri     INDIRECTION_TAG
-	// Get the previous frame.
+	// Get the previous frame.  This undoes the effects of our `PROC` so the
+	// called function will have a proper `PROC`.
+	#emit ADDR.pri     20
+	#emit STOR.pri     addr
 	#emit POP.pri
+	#emit SCTRL        5
 	// Get the return address.
 	#emit POP.alt
-	// Get the parameter count and put the frame back on.
-	#emit SWAP.pri
+	// Get the parameter count.
+	#emit POP.pri
 	// Reduce the parameter count.
 	#emit ADD.C        0xFFFFFFF8
-	// Store the new parameter count.
-	#emit STOR.S.pri   tag
-	// Get the indirection data.
-	#emit LOAD.S.pri   func
-	#emit STOR.pri     INDIRECTION_DATA
 	// Store the return address.
-	#emit STOR.S.alt   func
-	// Move the frame up slightly.
-	#emit LCTRL        4
-	#emit SCTRL        5
+	#emit SWAP.alt
+	#emit STOR.alt     INDIRECTION_DATA
+	#emit POP.alt
+	// Store the new parameter count.
+	#emit SWAP.pri
+	#emit STOR.pri     INDIRECTION_TAG
+	#emit PUSH.alt
 	// Check the pointer type.  If it is in the `COD` area, jump straight to it
 	// with the tag for parameter types (if it isn't 0).  Otherwise, use the
 	// `func` from `DAT` as a pointer to a handler.
@@ -143,12 +146,9 @@ stock Indirect_Call(func, tag, GLOBAL_TAG_TYPES:...)
 	{
 		static
 			i,
-			addr,
 			lTag[32];
 		GetTagNameFromID(INDIRECTION_TAG, lTag);
 		i = 4; // Skip the `TAG@` prefix.
-		#emit ADDR.pri     12
-		#emit STOR.pri     addr
 		for ( ; ; )
 		{
 			switch (lTag[i++])
@@ -166,18 +166,14 @@ stock Indirect_Call(func, tag, GLOBAL_TAG_TYPES:...)
 			addr += 4;
 		}
 		{}
-		// No handler, and no tag data.  Just jump to it and hope (but skip the
-		// starting `PROC`, since we already did that).
+		// No handler, and no tag data.  Just jump to it and hope.
 		#emit LOAD.pri     INDIRECTION_DATA
-		#emit ADD.C        4
 		#emit SCTRL        6
 	}
 	else
 	{
-		// No handler, and no tag data.  Just jump to it and hope (but skip the
-		// starting `PROC`, since we already did that).
+		// No handler, and no tag data.  Just jump to it and hope.
 		#emit LOAD.pri     INDIRECTION_DATA
-		#emit ADD.C        4
 		#emit SCTRL        6
 	}
 	return 0;
@@ -186,6 +182,9 @@ stock Indirect_Call(func, tag, GLOBAL_TAG_TYPES:...)
 // Not `Indirect_CallString` to make use of the `string:` macro.
 stock string:Indirect_Callstring(func, tag, GLOBAL_TAG_TYPES:...)
 {
+	static
+		addr;
+	#pragma unused func, tag
 	// Read the memory at `handler`.  If it is `OP_PROC`, this is just a normal
 	// function not a special handler function.  If so, translate the parameters
 	// in to the correct forms from the tag and jump to `handler + cellbytes`.
@@ -197,26 +196,26 @@ stock string:Indirect_Callstring(func, tag, GLOBAL_TAG_TYPES:...)
 	// people pass it as a regular parameter.  BUT - the COD and DAT segments
 	// are different.  So something pointing in to DAT relative to COD will not
 	// be a valid pointer, and THAT you can detect!
-	#emit LOAD.S.pri   tag
-	#emit STOR.pri     INDIRECTION_TAG
-	// Get the previous frame.
+	// Get the previous frame.  This undoes the effects of our `PROC` so the
+	// called function will have a proper `PROC`.
+	#emit ADDR.pri     20
+	#emit STOR.pri     addr
 	#emit POP.pri
+	#emit SCTRL        5
 	// Get the return address.
 	#emit POP.alt
-	// Get the parameter count and put the frame back on.
-	#emit SWAP.pri
+	// Get the parameter count.
+	#emit POP.pri
 	// Reduce the parameter count.
 	#emit ADD.C        0xFFFFFFF8
-	// Store the new parameter count.
-	#emit STOR.S.pri   tag
-	// Get the indirection data.
-	#emit LOAD.S.pri   func
-	#emit STOR.pri     INDIRECTION_DATA
 	// Store the return address.
-	#emit STOR.S.alt   func
-	// Move the frame up slightly.
-	#emit LCTRL        4
-	#emit SCTRL        5
+	#emit SWAP.alt
+	#emit STOR.alt     INDIRECTION_DATA
+	#emit POP.alt
+	// Store the new parameter count.
+	#emit SWAP.pri
+	#emit STOR.pri     INDIRECTION_TAG
+	#emit PUSH.alt
 	// Check the pointer type.  If it is in the `COD` area, jump straight to it
 	// with the tag for parameter types (if it isn't 0).  Otherwise, use the
 	// `func` from `DAT` as a pointer to a handler.
@@ -233,12 +232,9 @@ stock string:Indirect_Callstring(func, tag, GLOBAL_TAG_TYPES:...)
 	{
 		static
 			i,
-			addr,
 			lTag[32];
 		GetTagNameFromID(INDIRECTION_TAG, lTag);
 		i = 4; // Skip the `TAG@` prefix.
-		#emit ADDR.pri     12
-		#emit STOR.pri     addr
 		for ( ; ; )
 		{
 			switch (lTag[i++])
@@ -256,18 +252,14 @@ stock string:Indirect_Callstring(func, tag, GLOBAL_TAG_TYPES:...)
 			addr += 4;
 		}
 		{}
-		// No handler, and no tag data.  Just jump to it and hope (but skip the
-		// starting `PROC`, since we already did that).
+		// No handler, and no tag data.  Just jump to it and hope.
 		#emit LOAD.pri     INDIRECTION_DATA
-		#emit ADD.C        4
 		#emit SCTRL        6
 	}
 	else
 	{
-		// No handler, and no tag data.  Just jump to it and hope (but skip the
-		// starting `PROC`, since we already did that).
+		// No handler, and no tag data.  Just jump to it and hope.
 		#emit LOAD.pri     INDIRECTION_DATA
-		#emit ADD.C        4
 		#emit SCTRL        6
 	}
 	// Never called.  Don't use "static" because it would allocate real memory
@@ -280,6 +272,9 @@ stock string:Indirect_Callstring(func, tag, GLOBAL_TAG_TYPES:...)
 // Not `Indirect_Callvoid` to make use of the `void:` macro.
 stock void:Indirect_Callvoid(func, tag, GLOBAL_TAG_TYPES:...)
 {
+	static
+		addr;
+	#pragma unused func, tag
 	// Read the memory at `handler`.  If it is `OP_PROC`, this is just a normal
 	// function not a special handler function.  If so, translate the parameters
 	// in to the correct forms from the tag and jump to `handler + cellbytes`.
@@ -291,26 +286,26 @@ stock void:Indirect_Callvoid(func, tag, GLOBAL_TAG_TYPES:...)
 	// people pass it as a regular parameter.  BUT - the COD and DAT segments
 	// are different.  So something pointing in to DAT relative to COD will not
 	// be a valid pointer, and THAT you can detect!
-	#emit LOAD.S.pri   tag
-	#emit STOR.pri     INDIRECTION_TAG
-	// Get the previous frame.
+	// Get the previous frame.  This undoes the effects of our `PROC` so the
+	// called function will have a proper `PROC`.
+	#emit ADDR.pri     20
+	#emit STOR.pri     addr
 	#emit POP.pri
+	#emit SCTRL        5
 	// Get the return address.
 	#emit POP.alt
-	// Get the parameter count and put the frame back on.
-	#emit SWAP.pri
+	// Get the parameter count.
+	#emit POP.pri
 	// Reduce the parameter count.
 	#emit ADD.C        0xFFFFFFF8
-	// Store the new parameter count.
-	#emit STOR.S.pri   tag
-	// Get the indirection data.
-	#emit LOAD.S.pri   func
-	#emit STOR.pri     INDIRECTION_DATA
 	// Store the return address.
-	#emit STOR.S.alt   func
-	// Move the frame up slightly.
-	#emit LCTRL        4
-	#emit SCTRL        5
+	#emit SWAP.alt
+	#emit STOR.alt     INDIRECTION_DATA
+	#emit POP.alt
+	// Store the new parameter count.
+	#emit SWAP.pri
+	#emit STOR.pri     INDIRECTION_TAG
+	#emit PUSH.alt
 	// Check the pointer type.  If it is in the `COD` area, jump straight to it
 	// with the tag for parameter types (if it isn't 0).  Otherwise, use the
 	// `func` from `DAT` as a pointer to a handler.
@@ -327,12 +322,9 @@ stock void:Indirect_Callvoid(func, tag, GLOBAL_TAG_TYPES:...)
 	{
 		static
 			i,
-			addr,
 			lTag[32];
 		GetTagNameFromID(INDIRECTION_TAG, lTag);
 		i = 4; // Skip the `TAG@` prefix.
-		#emit ADDR.pri     12
-		#emit STOR.pri     addr
 		for ( ; ; )
 		{
 			switch (lTag[i++])
@@ -350,18 +342,14 @@ stock void:Indirect_Callvoid(func, tag, GLOBAL_TAG_TYPES:...)
 			addr += 4;
 		}
 		{}
-		// No handler, and no tag data.  Just jump to it and hope (but skip the
-		// starting `PROC`, since we already did that).
+		// No handler, and no tag data.  Just jump to it and hope.
 		#emit LOAD.pri     INDIRECTION_DATA
-		#emit ADD.C        4
 		#emit SCTRL        6
 	}
 	else
 	{
-		// No handler, and no tag data.  Just jump to it and hope (but skip the
-		// starting `PROC`, since we already did that).
+		// No handler, and no tag data.  Just jump to it and hope.
 		#emit LOAD.pri     INDIRECTION_DATA
-		#emit ADD.C        4
 		#emit SCTRL        6
 	}
 	// Don't return anything.
