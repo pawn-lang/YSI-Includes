@@ -335,3 +335,13 @@ Optional plugins:
 	#error Could not include "https://github.com/Y-Less/code-parse.inc" - ensure its files are in "include\code-parse\"
 #endif
 
+#tryinclude "..\indirection\indirection"
+#tryinclude <indirection\indirection>
+#tryinclude "..\indirection-master\indirection"
+#tryinclude <indirection-master\indirection>
+#tryinclude "indirection"
+#tryinclude <indirection>
+#if !defined _INC_indirection
+	#error Could not include "https://github.com/Y-Less/indirection" - ensure its files are in "include\indirection\"
+#endif
+
