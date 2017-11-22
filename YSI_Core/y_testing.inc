@@ -111,13 +111,7 @@ forward bool:_Testing_End();
 	#define _AUTO_RUN_TESTS
 	#define Debug_PrintT va_printf
 #else
-	#if _DEBUG > 0 || defined _YSI_SPECIAL_DEBUG
-		#define RUN_TESTS
-		#define _AUTO_RUN_TESTS
-		#define Debug_PrintT va_printf
-	#else
-		#define Debug_PrintT(%0);
-	#endif
+	#define Debug_PrintT(%0);
 #endif
 
 #if defined LIGHT_TEST_REPORT
