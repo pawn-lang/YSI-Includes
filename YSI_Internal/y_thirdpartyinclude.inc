@@ -88,6 +88,9 @@ Optional plugins:
 
 #if defined CODE_SCAN_MAX_PATTERN
 	#if CODE_SCAN_MAX_PATTERN < (32)
+		#if defined CODESCAN_INC
+			#error Include "YSI" before "codescan", or increase `CODE_SCAN_MAX_PATTERN`.
+		#endif
 		#undef CODE_SCAN_MAX_PATTERN
 		#define CODE_SCAN_MAX_PATTERN (32)
 	#endif
@@ -307,7 +310,7 @@ Optional plugins:
 
 #if defined AMX_INCLUDING_FAILED
 	#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
-#elseif !defined AddressofResolve
+#elseif CODE_SCAN_MAX_HOLES > CODE_SCAN_MAX_PATTERN
 	#error Please update "https://github.com/Zeex/amx_assembly" to the latest version.
 #endif
 
