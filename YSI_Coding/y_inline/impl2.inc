@@ -1,3 +1,28 @@
+// How to convert from old y_inline to new y_inline:
+// 
+// 1) Delete all `[E_CALLBACK_DATA]` everywhere.  This can optionally be
+//   replaced by a specifier tag.  So what used to be:
+// 
+//     new cb[E_CALLBACK_DATA];
+// 
+//   Becomes:
+// 
+//     new funcptr<iiis>:cb;
+// 
+// 2) Replace `Callback_Get`, `Callback_Restore`, and `Callback_Release` with
+//   `Inline_Get`, `Inline_Restore`, and `Inline_Release`.
+// 
+// 3) Replace `callback:` tags with specifier tags.  So:
+// 
+//     MyFunc(callback:x)
+// 
+//   Becomes:
+// 
+//     MyFunc(funcptr<fff>:cb)
+// 
+// Note that this is all optional.  Not doing so will continue to work, but
+// give warnings.
+
 // Revert to the old scanning design, but using the new code scanner.
 
 const INLINE_PATTERN_1 = _C<Alex>;
@@ -5,14 +30,13 @@ const INLINE_PATTERN_2 = _C<_Y_L>;
 const INLINE_PATTERN_3 = _C<ess_>;
 const INLINE_PATTERN_4 = _C<Cole>;
 
-#define CALL@I@E I@E("", 0, 0, 0, 0)
+#define CALL@I@E I@E(0, 0, 0, 0)
 #define CALL@I@F I@F()
 #define CALL@I@L I@L()
 #define CALL@I@K I@K(0)
+#define CALL@ref ref()
 
-#if !defined MAX_INLINE_PARAMETERS
-	#define MAX_INLINE_PARAMETERS (32)
-#endif
+#define MAX_INLINE_PARAMETERS (32)
 
 #define INLINE_DESCRIPTOR_VAR (0)
 #define INLINE_DESCRIPTOR_REF (-1)
@@ -20,13 +44,8 @@ const INLINE_PATTERN_4 = _C<Cole>;
 
 enum E_CALLBACK_DATA
 {
-	// ===== ALWAYS FIRST  =====
-	ResolvedAlloc:E_CALLBACK_DATA_ALLOC = 0, // Fully resolved memory address.
-	// ===== ALWAYS SECOND =====
-	Function:E_CALLBACK_DATA_POINTER = 1,    // Inline entry point.
-	// ===== ALWAYS AFTER  =====
-	E_CALLBACK_DATA_OFFSET,                  // Local variables size.
-	E_CALLBACK_DATA_FORMAT[2]
+	// Now only one item.
+	ResolvedFunc:E_CALLBACK_DATA_ALLOC
 }
 
 enum E_INLINE_DATA
@@ -49,12 +68,13 @@ static stock
 
 static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
+	P:4("Inline_FoundStart called");
 	if (data[E_INLINE_DATA_STATE] != 0)
 		return 0;
+	P:5("Inline_FoundStart OK");
 	data[E_INLINE_DATA_LOCALS] = CodeScanGetMatchStack(scanner);
-	data[E_INLINE_DATA_POINTER] = CodeScanGetMatchHole(scanner, 0);
 	data[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
-	data[E_INLINE_DATA_BEYOND] = CodeScanGetMatchHole(scanner, 2);
+	data[E_INLINE_DATA_BEYOND] = CodeScanGetMatchHole(scanner, 5);
 	data[E_INLINE_DATA_STATE] = 1;
 	data[E_INLINE_DATA_PARAMETER_COUNT] = 0;
 	return 0;
@@ -62,8 +82,10 @@ static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 
 static stock Inline_FoundMid(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
+	P:4("Inline_FoundMid called");
 	if (data[E_INLINE_DATA_STATE] != 1)
 		return 0;
+	P:5("Inline_FoundMid OK");
 	data[E_INLINE_DATA_PASSED] = CodeScanGetMatchStack(scanner) - data[E_INLINE_DATA_LOCALS];
 	data[E_INLINE_DATA_STATE] = 2;
 	return 0;
@@ -99,43 +121,54 @@ static stock Inline_FoundDescriptor(size, data[E_INLINE_DATA])
 
 static stock Inline_FoundConst(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
+	P:4("Inline_FoundConst called");
 	if (data[E_INLINE_DATA_STATE] != 2)
 		return 0;
+	P:5("Inline_FoundConst OK");
 	data[E_INLINE_DATA_STATE] = 3 + CodeScanGetMatchHole(scanner, 0);
 	return 0;
 }
 
 static stock Inline_FoundConst2(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
+	P:4("Inline_FoundConst2 called");
+	#pragma unused scanner
 	// Can't use size to determine this match as two pieces of code are the same
 	// size in the same place, but mean very different things.
 	if (data[E_INLINE_DATA_STATE] != 2)
 		return 0;
+	P:5("Inline_FoundConst2 OK");
 	data[E_INLINE_DATA_STATE] = 3;
 	return 0;
 }
 
 static stock Inline_FoundVar(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
+	P:4("Inline_FoundVar called");
 	#pragma unused scanner
 	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
+	P:5("Inline_FoundVar OK");
 	Inline_FoundDescriptor(0, data);
 	return 0;
 }
 
 static stock Inline_FoundRef(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
+	P:4("Inline_FoundRef called");
 	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
+	P:5("Inline_FoundRef OK");
 	Inline_FoundDescriptor(CodeScanGetMatchHole(scanner, 0), data);
 	return 0;
 }
 
 static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
+	P:4("Inline_FoundEnd called");
 	if (data[E_INLINE_DATA_STATE] < 3)
 		return 0;
+	P:5("Inline_FoundEnd OK");
 	data[E_INLINE_DATA_USER] = CodeScanGetMatchAddress(scanner) + CodeScanGetMatchLength(scanner);
 	// Do the actual codegen here.
 	Inline_DoCodeGen(scanner, data);
@@ -165,15 +198,25 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm1a, &Inline_FoundStart);
 	CodeScanMatcherData(csm1a, ref(data));
 	CodeScanMatcherPattern(csm1a,
-		OP(PUSH_C, INLINE_PATTERN_4)
-		OP(PUSH_C, INLINE_PATTERN_3)
-		OP(PUSH_C, INLINE_PATTERN_2)
-		OP(PUSH_C, INLINE_PATTERN_1)
-		OP(PUSH_C, ???)
-		OP(PUSH_C, 20)
-		OP(CALL, &I@E)
-		OP(JZER, ???)
-		OP(JUMP, ???)
+		OP(STACK,      -4)
+		OP(CONST_PRI,  ???)
+		OP(INVERT)
+		OP(INVERT)
+		OP(PUSH_PRI)
+		OP(PUSH_C,     4)
+		OP(CALL,       &ref)
+		OP(STOR_S_PRI, ???)
+		OP(STACK,      -4)
+		OP(LOAD_S_PRI, ???)
+		OP(STOR_S_PRI, ???)
+		OP(PUSH_C,     INLINE_PATTERN_4)
+		OP(PUSH_C,     INLINE_PATTERN_3)
+		OP(PUSH_C,     INLINE_PATTERN_2)
+		OP(PUSH_C,     INLINE_PATTERN_1)
+		OP(PUSH_C,     16)
+		OP(CALL,       &I@E)
+		OP(JZER,       ???)
+		OP(JUMP,       ???)
 	);
 	CodeScanAddMatcher(scanner, csm1a);
 	
@@ -182,20 +225,29 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm1b, &Inline_FoundStart);
 	CodeScanMatcherData(csm1b, ref(data));
 	CodeScanMatcherPattern(csm1b,
-		OP(CONST_PRI, INLINE_PATTERN_4)
+		OP(STACK,      -4)
+		OP(CONST_PRI,  ???)
+		OP(INVERT)
+		OP(INVERT)
 		OP(PUSH_PRI)
-		OP(CONST_PRI, INLINE_PATTERN_3)
+		OP(PUSH_C,     4)
+		OP(CALL,       &ref)
+		OP(STOR_S_PRI, ???)
+		OP(STACK,      -4)
+		OP(LOAD_S_PRI, ???)
+		OP(STOR_S_PRI, ???)
+		OP(CONST_PRI,  INLINE_PATTERN_4)
 		OP(PUSH_PRI)
-		OP(CONST_PRI, INLINE_PATTERN_2)
+		OP(CONST_PRI,  INLINE_PATTERN_3)
 		OP(PUSH_PRI)
-		OP(CONST_PRI, INLINE_PATTERN_1)
+		OP(CONST_PRI,  INLINE_PATTERN_2)
 		OP(PUSH_PRI)
-		OP(CONST_PRI, ???)
+		OP(CONST_PRI,  INLINE_PATTERN_1)
 		OP(PUSH_PRI)
-		OP(PUSH_C, 20)
-		OP(CALL, &I@E)
-		OP(JZER, ???)
-		OP(JUMP, ???)
+		OP(PUSH_C,     16)
+		OP(CALL,       &I@E)
+		OP(JZER,       ???)
+		OP(JUMP,       ???)
 	);
 	CodeScanAddMatcher(scanner, csm1b);
 	
@@ -204,9 +256,9 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm2a, &Inline_FoundMid);
 	CodeScanMatcherData(csm2a, ref(data));
 	CodeScanMatcherPattern(csm2a,
-		OP(PUSH_C, 0)
-		OP(CALL, &I@F)
-		OP(JZER, ???)
+		OP(PUSH_C,     0)
+		OP(CALL,       &I@F)
+		OP(JZER,       ???)
 	);
 	CodeScanAddMatcher(scanner, csm2a);
 	
@@ -222,7 +274,7 @@ public OnCodeInit()
 	CodeScanMatcherData(csm3a, ref(data));
 	CodeScanMatcherPattern(csm3a,
 		OP(ZERO_PRI)
-		OP(HEAP, 4)
+		OP(HEAP,       4)
 		OP(STOR_I)
 		OP(PUSH_ALT)
 	);
@@ -233,7 +285,7 @@ public OnCodeInit()
 	CodeScanMatcherData(csm3b, ref(data));
 	CodeScanMatcherPattern(csm3b,
 		OP(ZERO_PRI)
-		OP(HEAP, 4)
+		OP(HEAP,       4)
 		OP(STOR_I)
 		OP(MOVE_PRI)
 		OP(PUSH_PRI)
@@ -265,8 +317,8 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm4a, &Inline_FoundRef);
 	CodeScanMatcherData(csm4a, ref(data));
 	CodeScanMatcherPattern(csm4a,
-		OP(CONST_PRI, ???)
-		OP(HEAP, 4)
+		OP(CONST_PRI,  ???)
+		OP(HEAP,       4)
 		OP(STOR_I)
 		OP(PUSH_ALT)
 	);
@@ -276,8 +328,8 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm4b, &Inline_FoundRef);
 	CodeScanMatcherData(csm4b, ref(data));
 	CodeScanMatcherPattern(csm4b,
-		OP(CONST_PRI, ???)
-		OP(HEAP, 4)
+		OP(CONST_PRI,  ???)
+		OP(HEAP,       4)
 		OP(STOR_I)
 		OP(MOVE_PRI)
 		OP(PUSH_PRI)
@@ -289,9 +341,9 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm5a, &Inline_FoundEnd);
 	CodeScanMatcherData(csm5a, ref(data));
 	CodeScanMatcherPattern(csm5a,
-		OP(CALL, &I@L)
-		OP(HEAP, ???)
-		OP(JZER, ???)
+		OP(CALL,       &I@L)
+		OP(HEAP,       ???)
+		OP(JZER,       ???)
 	);
 	CodeScanAddMatcher(scanner, csm5a);
 	
@@ -300,9 +352,9 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm6a, &Inline_FoundConst);
 	CodeScanMatcherData(csm6a, ref(data));
 	CodeScanMatcherPattern(csm6a,
-		OP(PUSH_C, ???)
-		OP(PUSH_C, 4)
-		OP(CALL, &I@K)
+		OP(PUSH_C,     ???)
+		OP(PUSH_C,     4)
+		OP(CALL,       &I@K)
 	);
 	CodeScanAddMatcher(scanner, csm6a);
 	
@@ -310,10 +362,10 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm6b, &Inline_FoundConst);
 	CodeScanMatcherData(csm6b, ref(data));
 	CodeScanMatcherPattern(csm6b,
-		OP(CONST_PRI, ???)
+		OP(CONST_PRI,  ???)
 		OP(PUSH_PRI)
-		OP(PUSH_C, 4)
-		OP(CALL, &I@K)
+		OP(PUSH_C,     4)
+		OP(CALL,       &I@K)
 	);
 	CodeScanAddMatcher(scanner, csm6b);
 	
@@ -323,8 +375,8 @@ public OnCodeInit()
 	CodeScanMatcherPattern(csm6c,
 		OP(ZERO_PRI)
 		OP(PUSH_PRI)
-		OP(PUSH_C, 4)
-		OP(CALL, &I@K)
+		OP(PUSH_C,     4)
+		OP(CALL,       &I@K)
 	);
 	CodeScanAddMatcher(scanner, csm6c);
 	
@@ -400,37 +452,47 @@ Plus:
 
 // Follows the "code-parse.inc" internal structure.  Ugly but required, since we
 // are parsing functions, but not at a top level.
-#define PARSER@INLINE:%0(%5)%6(%7)$ static %6[_:%0(%5)%6(%7) I@O$
+#define PARSER@INLINE:%0(%5)%6(%7)$ new _@%6=ref(_:%0(%5)%6(%7) I@O$
 
 #define INLINE_STR(%9,%9,%2,%9)%8$(%0)%1(%3) %8$(%0,%2[YSI_MAX_INLINE_STRING])%1(cellmax,%3)
 #define INLINE_ARR(%9,%9,%2,%9)%8$(%0)%1(%3) %8$(%0,%2[%9])%1(%9,%3)
 #define INLINE_NUM(%9,%9,%2)%8$(%0)%1(%3) %8$(%0,%2)%1(0,%3)
 #define INLINE_REF(%9,%9,%2)%8$(%0)%1(%3) %8$(%0,%2)%1(-1,%3)
 
-#define INLINE_END(%9)%8$(,%0)%1(%3) %8$#%9":....";if (I@E(%9)){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
+#define INLINE_END(%9)%8$(,%0)%1(%3) %8$#%9":...."),%9=_@%9;if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
 
-#define INLINE_NUL(%9)%8$()%1() %8$#%9":....";if (I@E(%9)){}else for(;I@F();)while(I@L(I@K(%1)))
+#define INLINE_NUL(%9)%8$()%1() %8$#%9":...."),%9=_@%9;if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
 
-#define I@O$ 32]=
+#define I@O$
 
 #define INLINE_const(%9)%8$(%0)%1(%2) %8$(%0)1(%2)
 
 // Parameter type for passing callbacks about.
-#define callback:%0) const callback_tag:callback_check:%0$$$
-#define callback_tag:callback_check:%0,%1$$$ callback_tag:%0[],%1)
-#define callback_check:%0$$$ %0[])
-
 #define using%0\10;%1 callback_tag:@Ik:@Il:%0
+//#define using%0\32; using
+//#define usingcallback
+//#define usingpublic usingcallback
+//#define usinginline
+//#define usingresolved
+
+#if 0
+
+MyFunc(funcptr<>)
+{
+	
+}
+
+#endif
 
 // Get ONLY this ONE parameter (this is a VERY important stage)!
-#define @Ik:@Il:%0, @Ip:@Iq:@Io:@Iu:@Iw:|||%0|||,
-#define @Il:%0) @Ip:@Iq:@Io:@Iu:@Iw:|||%0|||)
+//#define @Ik:@Il:%0, @Ip:@Iq:@Io:@Iu:@Iw:|||%0|||,
+//#define @Il:%0) @Ip:@Iq:@Io:@Iu:@Iw:|||%0|||)
 
-#define @Ip:%9|||%0callback%1||| @Ir:@Is:"\03;"#%1||||
-#define @Iq:%9|||%0public%1||| @Ir:@Is:"\03;"#%1||||
-#define @Io:%9|||%0inline%1||| @In:@It:%0%1||||
-#define @Iu:%9|||%0resolved%1||| @In:@It:%1[E_CALLBACK_DATA:0]||||
-#define @Iw:|||%1||| @In:@It:#%1||||
+//#define @Ip:%9|||%0callback%1||| @Ir:@Is:"\03;"#%1||||
+//#define @Iq:%9|||%0public%1||| @Ir:@Is:"\03;"#%1||||
+//#define @Io:%9|||%0inline%1||| @In:@It:%0%1||||
+//#define @Iu:%9|||%0resolved%1||| @In:@It:%1[E_CALLBACK_DATA:0]||||
+//#define @Iw:|||%1||| @In:@It:#%1||||
 
 // Callbacks with "On" in the name (often overidden by y_hooks and ALS).
 #define @Ir:@Is:%0On%1|||| @In:@It:%0"On"#%1||||
@@ -440,23 +502,25 @@ Plus:
 #define @In:@It:%0(%1)%3||||%2) %0%3%2,.bExtra=true,.extra=%1)
 #define @It:%0|||| %0
 
-I@E(const name[], a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE_PATTERN_3, d = INLINE_PATTERN_4)
+stock I@E(a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE_PATTERN_3, d = INLINE_PATTERN_4)
+{
+	#pragma unused a, b, c, d
+	return 0;
+}
+
+stock I@F()
 {
 	return 0;
 }
 
-I@F()
+stock I@L(...)
 {
 	return 0;
 }
 
-I@L(...)
+stock I@K(n)
 {
-	return 0;
-}
-
-I@K(n)
-{
+	#pragma unused n
 	return 0;
 }
 
@@ -510,6 +574,7 @@ Inline_Start(const &name, a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE
 
 stock Callback_Call(callback:callback, GLOBAL_TAG_TYPES:...)
 {
+	#pragma unused callback
 	//#emit PROC                  //  1
 	#emit LREF.S.pri   12         //  3
 	// Get the size.
@@ -556,7 +621,7 @@ Callback_Call_nothing_to_save:    // 45
 	// Get the data size to copy back out.
 	#emit LREF.S.pri   12         // 54
 	// Get the size.
-	#emit ADD.C        -4         // 56
+	#emit ADD.C        0xFFFFFFFC // 56
 	#emit LOAD.I                  // 57
 	#emit BREAK                   // 58
 	#emit BREAK                   // 59
