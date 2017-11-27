@@ -423,6 +423,11 @@ Plus:
         that we can co-opt for `RETN` and do away with the bounds check code).
      N useless cells at the end.
 
+Note:
+
+    I just added two variables, so their declaration also exists, but the maths
+	above hasn't been updated to reflect this fact.
+
 */
 
 
@@ -842,6 +847,10 @@ static stock Inline_DoRetnGen(ctx[AsmContext], scanner[CodeScanner], data[E_INLI
 		AMX_Write(endaddr + AMX_HEADER_COD +  8, _:RelocateOpcode(OP_NOP));
 		AMX_Write(endaddr + AMX_HEADER_COD + 12, _:RelocateOpcode(OP_NOP));
 	}
+	// Push the inline address and current frame.
+	@emit PUSH.C       0
+	@emit PUSH.ADR     (4 - data[E_INLINE_DATA_LOCALS])
+	// Jump past the whole inline code.
 	dctx[DisasmContext_end_ip] += 8;
 	if (DisasmNext(dctx) != DISASM_DONE && DisasmGetOpcode(dctx) == OP_STACK)
 	{
@@ -878,7 +887,6 @@ static stock Inline_DoCodeGen(scanner[CodeScanner], data[E_INLINE_DATA])
 	AsmSetErrorHandler(ctx, addressof (Inline_OnAsmError));
 	Inline_DoRetnGen(ctx, scanner, data);
 	Inline_GenerateLocalsCopy(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT]);
-	// if (!JIT && remaining > 2) @emit JUMP user_code
 	Inline_GeneratePostamble(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT], bool:(data[E_INLINE_DATA_STATE] & 4));
 	AsmEmitPadding(ctx);
 }
