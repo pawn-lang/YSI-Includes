@@ -473,12 +473,30 @@ Note:
 #define INLINE_const(%9)%8$(%0)%1(%2) %8$(%0)1(%2)
 
 // Parameter type for passing callbacks about.
-#define using%0\10;%1 callback_tag:@Ik:@Il:%0
-//#define using%0\32; using
-//#define usingcallback
-//#define usingpublic usingcallback
-//#define usinginline
-//#define usingresolved
+#define using%0\32; using
+#define usingcallback (@Ik:@Il:I@O$Inline_UP_())
+#define usingpublic usingcallback
+#define usinginline (@Ik:@Il:I@O$Inline_UI_())
+#define usingresolved // Do nothing.
+
+// Detect a `using` parameter that is not the last parameter.
+#define @Ik:%9$%0)%1, %0,%1),
+
+// Detect a `using` parameter that is the last parameter.
+#define @Il:%9$%0)%1) %0,%1))
+
+// Detect a callback with a tag.
+#define @Ir:%9#%0:%1),%2$) %9#%1),%0:%2$)
+
+// Detect a callback that starts with "On".  These are often redefined and we
+// want to keep the original.
+#define @Is:%9#On%0),%2$) %9#On#%0),%2$)
+
+// Callbacks with additional parameters (MUST have matching parameters (y_ini)).
+#define @In:%0(%1)),%2$) %0),%2$),.bExtra=true,.extra=%1)
+
+// Move the callback parameter inside the brackets.
+#define Inline_UP_(),%0) Inline_UP_(_:@Ir:@Is:@In:#%0),Q@ I@O$)
 
 #if 0
 
@@ -890,4 +908,24 @@ static stock Inline_DoCodeGen(scanner[CodeScanner], data[E_INLINE_DATA])
 	Inline_GeneratePostamble(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT], bool:(data[E_INLINE_DATA_STATE] & 4));
 	AsmEmitPadding(ctx);
 }
+
+stock Inline_UseI_(...)
+{
+	assert(numargs() == 1);
+	new
+		ret[3];
+	return
+		// Get the handler.
+		ret[0] = 0,
+		// Get the first item.
+		ret[1] = getarg(1),
+		// Get the parent frame.
+		ret[2] = GetCurrentFramePreviousFrame(),
+		ret;
+}
+
+#endinput
+
+// using inline
+(_:_@%0 = Inline_UseI_(%0), _@%0)
 
