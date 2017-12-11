@@ -684,28 +684,6 @@ static stock Inline_GenerateLocalsCopy(ctx[AsmContext], parameters[], count)
 		{
 		case -1, 0:
 		{
-			// This is the smallest way to adjust `alt` that I can find.  This
-			// would be the same number of cells, but one more instruction, and
-			// much larger for anything not a single cell:
-			//   
-			//   @emit DEC.alt
-			//   @emit DEC.alt
-			//   @emit DEC.alt
-			//   @emit DEC.alt
-			//   
-			// This would be equivalent, there's no compelling reason for
-			// either right now other than clarity
-			//   
-			//   @emit CONST.pri    -4
-			//   @emit ADD
-			//   @emit MOVE.alt
-			//   
-			// Or:
-			//   
-			//   @emit CONST.pri    4
-			//   @emit SUB.alt
-			//   @emit MOVE.alt
-			//   
 			@emit LREF.S.pri   input
 			@emit PUSH.pri
 		}
