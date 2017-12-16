@@ -443,6 +443,8 @@ stock e_INI_LINE_TYPE:
 		case '=': return e_INI_LINE_TYPE_INVALID;
 		default: p0s = pos - 1;
 	}
+	// Default end point, for single-character lines.
+	end = pos;
 //state_in_entry: // Default (fall-through).
 	// Get the key.
 	for ( ; ; )
