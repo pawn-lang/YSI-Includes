@@ -740,7 +740,7 @@ stock bernstein(string[] /* 12 */)
 	#emit CONST.pri  bernstein
 	#emit ADD.C      4
 	#emit SCTRL      6
-	return 0; // Make the compiler happy.
+	__COMPILER_NO_RETURN // Make the compiler happy.
 }
 
 /*-------------------------------------------------------------------------*//**

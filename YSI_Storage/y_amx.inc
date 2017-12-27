@@ -866,7 +866,7 @@ stock AMX_GetEntryPointer(entry)
 {
 	#emit LREF.S.pri entry
 	#emit RETN
-	return 0; // Make the compiler happy.
+	__COMPILER_NO_RETURN // Make the compiler happy.
 }
 
 /*stock bool:AMX_GetData(const name[], ret[E_AMX_HEADER], e_AMX_HEADER_TYPE:type = e_AMX_HEADER_TYPE_NONE)

@@ -184,7 +184,7 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 	#emit RETN
 	
 	// Make the compiler happy.
-	return 0;
+	__COMPILER_NO_RETURN
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -255,7 +255,7 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 	#emit RETN
 	
 	// Make the compiler happy.
-	return 0;
+	__COMPILER_NO_RETURN
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -313,7 +313,7 @@ stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 	#emit RETN
 	
 	// Make the compiler happy.
-	return 0;
+	__COMPILER_NO_RETURN
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -376,7 +376,7 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	#emit RETN
 	
 	// Make the compiler happy.
-	return 0;
+	__COMPILER_NO_RETURN
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -431,7 +431,7 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 	#emit RETN
 	
 	// Make the compiler happy.
-	return 0;
+	__COMPILER_NO_RETURN
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -504,7 +504,7 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 	#emit RETN
 	
 	// Make the compiler happy.
-	return 0;
+	__COMPILER_NO_RETURN
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -543,7 +543,7 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 	#emit RETN
 	
 	// Make the compiler happy.
-	return 0;
+	__COMPILER_NO_RETURN
 }
 
 /*-------------------------------------------------------------------------*//**

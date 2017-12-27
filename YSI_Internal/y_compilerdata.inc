@@ -232,6 +232,12 @@ static stock __CompilerSecondPass() {}
 	#define __COMPILER_COMPAT (0)
 #endif
 
+#if __COMPILER_MODIFIED
+	#define __COMPILER_NO_RETURN __pragma(naked);
+#else
+	#define __COMPILER_NO_RETURN return 0;
+#endif
+
 #if __COMPILER_OFFICIAL || __COMPILER_COMPAT
 	#define __COMPILER_INCLUDE_GUARDS (1)
 #else
