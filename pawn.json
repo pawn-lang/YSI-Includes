@@ -1,0 +1,17 @@
+{
+    "user": "Misiur",
+    "repo": "YSI-Includes",
+    "dependencies": ["Zeex/amx_assembly"],
+    "contributors": [
+        "Y_Less",
+        "Misiur",
+        "samphunter",
+        "maddinat0r",
+        "tianmetal",
+        "RIDE2DAY",
+        "Crayder",
+        "Zeex",
+        "Ahmad45123",
+        "spacemud"
+    ]
+}
