@@ -1,8 +1,6 @@
 {
     "user": "Misiur",
     "repo": "YSI-Includes",
-    "entry": "test.pwn",
-    "output": "test.amx",
     "dependencies": ["Zeex/amx_assembly"],
     "contributors": [
         "Y_Less",
