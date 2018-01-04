@@ -70,6 +70,27 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+TestCompile:y_cell()
+{
+	new masks[5];
+	Cell_ReverseBits(0);
+	Cell_ReverseNibbles(0);
+	Cell_ReverseBytes(0);
+	Cell_CountBits(0);
+	Cell_GetLowestBit(0);
+	Cell_GetLowestBitEx(0);
+	Cell_CountBlanks(0);
+	Cell_GetLowestBlank(0);
+	Cell_GetLowestBlankEx(0);
+	Cell_GetLowestComponent(0);
+	Cell_GetLowestEmpty(0);
+	Cell_CompressRightPrecomputed(0, 0, masks);
+	Cell_ExpandLeftPrecomputed(0, 0, masks);
+	Cell_PrecomputeMaskPermutation(0);
+	Cell_CompressRight(0, 0);
+	Cell_ExpandLeft(0, 0);
+}
+
 Test:y_cell_ReverseBits0()
 {
 	ASSERT(Cell_ReverseBits(0) == 0x00000000);

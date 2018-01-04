@@ -1940,3 +1940,8 @@ stock Range(arr[], num = sizeof (arr))
 #include "..\YSI_Coding\y_va"
 #include "..\YSI_Internal\y_shortfunc"
 
+#if defined YSI_TESTS
+	#include "y_testing"
+	#include "y_utils/tests"
+#endif
+
