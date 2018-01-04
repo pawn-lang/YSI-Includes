@@ -158,8 +158,8 @@ forward bool:_Testing_End();
 #define Y_TESTING_PINIT _C<@Q_y>
 #define Y_TESTING_PTEST _C<@_Qy>
 #define Y_TESTING_PSHUT _C<@_yQ>
-#define Y_TESTING_BEFORE _A<yB_@>
-#define Y_TESTING_AFTER _A<yA_@>
+#define Y_TESTING_BEFORE _A<y@Q_>
+#define Y_TESTING_AFTER _A<y@_Q>
 
 static stock
 	YSI_g_sCurTest = 0,
@@ -188,33 +188,34 @@ stock
 //   _yQ PClose
 //   
 // An "@" symbol is added to complete the four letter prefix, with its location
-// determined by the function type - publics lead (obviously), static
-// implementations trail, static stock placeholders for ommitted tests are in
-// position 1 (these could be tailing again).  So the public function called
-// "@y_Q<test>" would call the static function "y_Q@<test>".  The letter
-// combinations are a sort of hamming code to reduce the number of changes
-// required between each function call to two.
+// determined by the function type - publics lead (obviously), static and stock
+// implementations trail.  So the public function called "@y_Q<test>" would call
+// the static function "y_Q@<test>".
 
 #if defined RUN_TESTS
 	#define TestInit:%1() @y_Q%1();@y_Q%1()
 	#define Test:%1() bool:@yQ_%1();bool:@yQ_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())yQ_@%1();static yQ_@%1()
 	#define TestClose:%1() @Qy_%1();@Qy_%1()
-	#define TestBeforeEach:%1() forward yB_@%1(); public yB_@%1()
-	#define TestAfterEach:%1() forward yA_@%1(); public yA_@%1()
-
+	#define TestBeforeEach:%1() forward y@Q_%1(); public y@Q_%1()
+	#define TestAfterEach:%1() forward y@_Q%1(); public y@_Q%1()
+	
 	#define PTestInit:%1(%2) @Q_y%1(%2);@Q_y%1(%2)
 	#define PTest:%1(%2) bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
 	#define PTestClose:%1(%2) @_yQ%1(%2);@_yQ%1(%2)
+	
+	#define TestCompile:%1() forward Q@y_%1();public Q@y_%1(){if(FALSE)Q@_y%1();P:W("Compile test " #%1 " called.");}static stock Q@_y%1()
 #else
 	#define TestInit:%1() static stock y_Q@%1()
 	#define Test:%1() static stock bool:yQ_@%1()
 	#define TestClose:%1() static stock Qy_@%1()
-	#define TestBeforeEach:%1() stock yB_@%1()
-	#define TestAfterEach:%1() stock yA_@%1()
+	#define TestBeforeEach:%1() stock y@Q_%1()
+	#define TestAfterEach:%1() stock y@_Q%1()
 	
 	#define PTestInit:%1(%2) static stock Q_y@%1(%2)
 	#define PTest:%1(%2) static stock bool:_Qy@%1(%2)
 	#define PTestClose:%1(%2) static stock _yQ@%1(%2)
+	
+	#define TestCompile:%1() static stock Q@_y%1()
 #endif
 
 #define @y_Q%0\32; @y_Q
@@ -230,6 +231,21 @@ stock
 #define Q_y@%0\32; Q_y@
 #define _Qy@%0\32; _Qy@
 #define _yQ@%0\32; _yQ@
+
+#define y@Q_%0\32; y@Q_
+#define y@_Q%0\32; y@_Q
+#define Q@_y%0\32; Q@_y
+#define Q@y_%0\32; Q@y_
+
+// Currently unused.
+//#define _@Qy%0\32; _@Qy
+//#define _@yQ%0\32; _@yQ
+//#define y_@Q%0\32; y_@Q
+//#define yQ@_%0\32; yQ@_
+//#define Qy@_%0\32; Qy@_
+//#define Q_@y%0\32; Q_@y
+//#define _Q@y%0\32; _Q@y
+//#define _y@Q%0\32; _y@Q
 
 // These all need to come AFTER the types are defined in case the have tests.
 #include "..\YSI_Internal\y_version"
@@ -360,23 +376,15 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 		if (strcmp(buffer[4], #JUST_TEST))
 			continue;
 #endif
-		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_BEFORE))) {
-			strunpack(buffer2, buffer2);
-			new
-				i = 4,
-				bool:match = true
-			;
-			while (buffer[i] != EOS && buffer2[i] != EOS) {
-				if (buffer[i] != buffer2[i]) {
-					match = false;
-					break;
-				}
-
-				i++;
+		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_BEFORE)))
+		{
+			for (new i = 4; buffer{i} && buffer2{i}; ++i)
+			{
+				if (buffer{i} != buffer2{i})
+					goto Testing_Run_before_fail;
 			}
-			if (match) {
-				CallLocalFunction(buffer2, "");
-			}
+			CallLocalFunction(buffer2, "");
+Testing_Run_before_fail:
 		}
 		// Call the setup function if there is one.
 		buffer[0] = Y_TESTING_INIT,
@@ -405,23 +413,15 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 		buffer[0] = Y_TESTING_SHUT,
 		CallLocalFunction(buffer, "");
 
-		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_AFTER))) {
-			strunpack(buffer2, buffer2);
-			new
-				i = 4,
-				bool:match = true
-			;
-			while (buffer[i] != EOS && buffer2[i] != EOS) {
-				if (buffer[i] != buffer2[i]) {
-					match = false;
-					break;
-				}
-
-				i++;
+		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_AFTER)))
+		{
+			for (new i = 4; buffer{i} && buffer2{i}; ++i)
+			{
+				if (buffer{i} != buffer2{i})
+					goto Testing_Run_after_fail;
 			}
-			if (match) {
-				CallLocalFunction(buffer2, "");
-			}
+			CallLocalFunction(buffer2, "");
+Testing_Run_after_fail:
 		}
 	}
 	tests = YSI_g_sTests;
