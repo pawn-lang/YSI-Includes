@@ -208,15 +208,15 @@ Optional plugins:
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#tryinclude "..\amx\dynamic_call"
-#tryinclude <amx_assembly\dynamic_call>
-#tryinclude "..\amx_assembly\dynamic_call"
-#tryinclude "..\..\amx_assembly\dynamic_call"
-#tryinclude "dynamic_call"
-#tryinclude <dynamic_call>
-#if !defined DYNAMIC_CALL_INC
-	#define AMX_INCLUDING_FAILED
-#endif
+//#tryinclude "..\amx\dynamic_call"
+//#tryinclude <amx_assembly\dynamic_call>
+//#tryinclude "..\amx_assembly\dynamic_call"
+//#tryinclude "..\..\amx_assembly\dynamic_call"
+//#tryinclude "dynamic_call"
+//#tryinclude <dynamic_call>
+//#if !defined DYNAMIC_CALL_INC
+//	#define AMX_INCLUDING_FAILED
+//#endif
 
 #tryinclude "..\amx\frame_info"
 #tryinclude <amx_assembly\frame_info>
@@ -228,15 +228,25 @@ Optional plugins:
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#tryinclude "..\amx\heap_alloc"
-#tryinclude <amx_assembly\heap_alloc>
-#tryinclude "..\amx_assembly\heap_alloc"
-#tryinclude "..\..\amx_assembly\heap_alloc"
-#tryinclude "heap_alloc"
-#tryinclude <heap_alloc>
-#if !defined HEAP_ALLOC_INC
-	#define AMX_INCLUDING_FAILED
-#endif
+//#tryinclude "..\amx\heap_alloc"
+//#tryinclude <amx_assembly\heap_alloc>
+//#tryinclude "..\amx_assembly\heap_alloc"
+//#tryinclude "..\..\amx_assembly\heap_alloc"
+//#tryinclude "heap_alloc"
+//#tryinclude <heap_alloc>
+//#if !defined HEAP_ALLOC_INC
+//	#define AMX_INCLUDING_FAILED
+//#endif
+
+//#tryinclude "..\amx\jit"
+//#tryinclude <amx_assembly\jit>
+//#tryinclude "..\amx_assembly\jit"
+//#tryinclude "..\..\amx_assembly\jit"
+//#tryinclude "jit"
+//#tryinclude <jit>
+//#if !defined JIT_INC
+//	#define AMX_INCLUDING_FAILED
+//#endif
 
 #tryinclude "..\amx\opcode"
 #tryinclude <amx_assembly\opcode>
@@ -258,25 +268,25 @@ Optional plugins:
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#tryinclude "..\amx\phys_memory"
-#tryinclude <amx_assembly\phys_memory>
-#tryinclude "..\amx_assembly\phys_memory"
-#tryinclude "..\..\amx_assembly\phys_memory"
-#tryinclude "phys_memory"
-#tryinclude <phys_memory>
-#if !defined PHYS_MEMORY_INC
-	#define AMX_INCLUDING_FAILED
-#endif
+//#tryinclude "..\amx\phys_memory"
+//#tryinclude <amx_assembly\phys_memory>
+//#tryinclude "..\amx_assembly\phys_memory"
+//#tryinclude "..\..\amx_assembly\phys_memory"
+//#tryinclude "phys_memory"
+//#tryinclude <phys_memory>
+//#if !defined PHYS_MEMORY_INC
+//	#define AMX_INCLUDING_FAILED
+//#endif
 
-#tryinclude "..\amx\profiler"
-#tryinclude <amx_assembly\profiler>
-#tryinclude "..\amx_assembly\profiler"
-#tryinclude "..\..\amx_assembly\profiler"
-#tryinclude "profiler"
-#tryinclude <profiler>
-#if !defined PROFILER_INC
-	#define AMX_INCLUDING_FAILED
-#endif
+//#tryinclude "..\amx\profiler"
+//#tryinclude <amx_assembly\profiler>
+//#tryinclude "..\amx_assembly\profiler"
+//#tryinclude "..\..\amx_assembly\profiler"
+//#tryinclude "profiler"
+//#tryinclude <profiler>
+//#if !defined PROFILER_INC
+//	#define AMX_INCLUDING_FAILED
+//#endif
 
 //#tryinclude "..\amx\shellcode"
 //#tryinclude <amx_assembly\shellcode>
@@ -288,25 +298,25 @@ Optional plugins:
 //	#define AMX_INCLUDING_FAILED
 //#endif
 
-#tryinclude "..\amx\stack_dump"
-#tryinclude <amx_assembly\stack_dump>
-#tryinclude "..\amx_assembly\stack_dump"
-#tryinclude "..\..\amx_assembly\stack_dump"
-#tryinclude "stack_dump"
-#tryinclude <stack_dump>
-#if !defined STACK_DUMP_INC
-	#define AMX_INCLUDING_FAILED
-#endif
+//#tryinclude "..\amx\stack_dump"
+//#tryinclude <amx_assembly\stack_dump>
+//#tryinclude "..\amx_assembly\stack_dump"
+//#tryinclude "..\..\amx_assembly\stack_dump"
+//#tryinclude "stack_dump"
+//#tryinclude <stack_dump>
+//#if !defined STACK_DUMP_INC
+//	#define AMX_INCLUDING_FAILED
+//#endif
 
-#tryinclude "..\amx\stack_trace"
-#tryinclude <amx_assembly\stack_trace>
-#tryinclude "..\amx_assembly\stack_trace"
-#tryinclude "..\..\amx_assembly\stack_trace"
-#tryinclude "stack_trace"
-#tryinclude <stack_trace>
-#if !defined STACK_TRACE_INC
-	#define AMX_INCLUDING_FAILED
-#endif
+//#tryinclude "..\amx\stack_trace"
+//#tryinclude <amx_assembly\stack_trace>
+//#tryinclude "..\amx_assembly\stack_trace"
+//#tryinclude "..\..\amx_assembly\stack_trace"
+//#tryinclude "stack_trace"
+//#tryinclude <stack_trace>
+//#if !defined STACK_TRACE_INC
+//	#define AMX_INCLUDING_FAILED
+//#endif
 
 #if defined AMX_INCLUDING_FAILED
 	#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
@@ -347,4 +357,7 @@ Optional plugins:
 #if !defined _INC_indirection
 	#error Could not include "https://github.com/Y-Less/indirection" - ensure its files are in "include\indirection\"
 #endif
+
+// "y_thirdpartyinclude\tests" is NOT included here when tests are active, because it complicates
+// dependency orders massively!
 
