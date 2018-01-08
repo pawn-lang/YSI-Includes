@@ -1,7 +1,7 @@
 {
     "user": "Misiur",
     "repo": "YSI-Includes",
-    "dependencies": ["Zeex/amx_assembly"],
+    "dependencies": ["sampctl/samp-stdlib", "Zeex/amx_assembly"],
     "contributors": [
         "Y_Less",
         "Misiur",
