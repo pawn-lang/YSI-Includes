@@ -815,6 +815,8 @@ TestClose:y_testing_1()
 #include "..\YSI_Internal\y_shortfunc"
 
 #if defined RUN_TESTS
-	#include "y_testing/md_sort.inc"
+	// Why did I move this here, and why is it not included from the normal place in
+	// `y_thirdpartyinclude.inc` itself?  Simple - resolving circular dependencies.
+	#include "..\YSI_Internal\y_thirdpartyinclude\tests"
 #endif
 
