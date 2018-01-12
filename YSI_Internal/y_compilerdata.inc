@@ -254,6 +254,7 @@ static stock __CompilerSecondPass() {}
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) return __compiler_one_string_parameter:(%0)
 	#define __COMPILER_BUGGED_STRING_RETURN (0)
+	#define __COMPILER_BUGGED_SYSREQ (0)
 	// Disable the recursion warning in the Russian compiler (and the unknown
 	// pragma warning in other compilers temporarily).
 	#pragma warning push
@@ -266,6 +267,7 @@ static stock __CompilerSecondPass() {}
 	#define __COMPILER_STRING_RETURN(%0) __CompilerStringReturn(%0);return (__compiler_one_string_parameter:(%0))
 	#define __CompilerStringReturn("%0"%1);return%8(%8:(%3)) return $
 	#define __COMPILER_BUGGED_STRING_RETURN (1)
+	#define __COMPILER_BUGGED_SYSREQ (1)
 	
 	#include "y_funcinc"
 	
