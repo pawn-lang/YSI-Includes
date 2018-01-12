@@ -114,7 +114,6 @@ Optional plugins:
 		getproperty(0, "", 0, _funcinc_a);
 		swapchars(0);
 		strcmp("", "");
-		strlen("");
 	}
 #endif
 
