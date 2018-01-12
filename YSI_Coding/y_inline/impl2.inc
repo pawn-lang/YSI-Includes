@@ -184,10 +184,10 @@ static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 
 static stock Inline_RawStrlen(addr)
 {
-	#emit PUSH.S   addr
-	#emit PUSH.C   4
-	#emit SYSREQ.C strlen
-	#emit STACK    8
+	#emit PUSH.S           addr
+	#emit PUSH.C           4
+	#emit SYSREQ.C         strlen
+	#emit STACK            8
 	#emit RETN
 	return 0;
 }
@@ -197,7 +197,16 @@ static stock Inline_StoreData(data[E_INLINE_DATA])
 	// `data[E_INLINE_DATA_NAME]` stores the address of a string with the inline function's name,
 	// followed by extra space for storing: a pointer to the name, a pointer to the function, a
 	// pointer to the next inline in the linked list of names, and something else?
-	//data[E_INLINE_DATA_NAME]
+	new
+		len = Inline_RawStrlen(data[E_INLINE_DATA_NAME]),
+		header = data[E_INLINE_DATA_NAME] + len + cellbytes;
+	// Add this to the list.
+	AMX_Write(header, YSI_g_sInlineLinkedList);
+	YSI_g_sInlineLinkedList = header;
+	// Add the pointer back to the name.
+	AMX_Write(header + cellbytes, data[E_INLINE_DATA_NAME]);
+	// Add a pointer to the function itself.
+	AMX_Write(header + cellbytes, data[E_INLINE_DATA_NAME]);
 }
 
 public OnCodeInit()
