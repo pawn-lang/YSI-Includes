@@ -30,6 +30,8 @@ const INLINE_PATTERN_2 = _C<_Y_L>;
 const INLINE_PATTERN_3 = _C<ess_>;
 const INLINE_PATTERN_4 = _C<Cole>;
 
+forward Inline_MaybeFree_(ResolvedAlloc:a);
+
 #define CALL@I@E I@E(0, 0, 0, 0)
 #define CALL@I@F I@F()
 #define CALL@I@L I@L()
@@ -440,33 +442,33 @@ Note:
 
 
 
-#define LAMBDA_i<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0|||0,|||<%9>{%0}(%1)%8;
-#define LAMBDA_ii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1|||0,0,|||<%9>{%0}(%1)%8;
-#define LAMBDA_iii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2|||0,0,0,|||<%9>{%0}(%1)%8;
-#define LAMBDA_iiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3|||0,0,0,0,|||<%9>{%0}(%1)%8;
-#define LAMBDA_iiiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3,_4|||0,0,0,0,0,|||<%9>{%0}(%1)%8;
-
-#define _DO_LAMBDA|||%6|||%5|||<%9>{%0}(%1)%8; LAM@0()%8;{LAM@1();static const YSII[]="@:....";if(I@E(YSII))for(%6;I@F();)while(I@L(%5I@K()))YSI_gInlineRet+=(%0);LAM@2(%9(callback_tag:YSII%1));}
+//#define LAMBDA_i<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0|||0,|||<%9>{%0}(%1)%8;
+//#define LAMBDA_ii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1|||0,0,|||<%9>{%0}(%1)%8;
+//#define LAMBDA_iii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2|||0,0,0,|||<%9>{%0}(%1)%8;
+//#define LAMBDA_iiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3|||0,0,0,0,|||<%9>{%0}(%1)%8;
+//#define LAMBDA_iiiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3,_4|||0,0,0,0,0,|||<%9>{%0}(%1)%8;
+//
+//#define _DO_LAMBDA|||%6|||%5|||<%9>{%0}(%1)%8; LAM@0()%8;{LAM@1();static const YSII[]="@:....";if(I@E(YSII))for(%6;I@F();)while(I@L(%5I@K()))YSI_gInlineRet+=(%0);LAM@2(%9(callback_tag:YSII%1));}
 
 // Make sure there's a space after the "return".
 #define return%0({%1}%2)%3; I@=%0({%1}%2)%3;return I@;
 
 // The "INLINE" in the types here will override "PARSER@" to "PARSE@INLINE",
 // because there is no colon (well not "because", but it helps).
-#define inline%0(%1) MAKE_PARSER(INLINE,ARR:REF:STR:NUM:QAL::INLINE)(%0(%1))()0()
+#define inline%0(%1) MAKE_PARSER(INLINE,ARR:REF:STR:NUM:QAL::INLINE)(%0(%1))()0()#
 
 // Follows the "code-parse.inc" internal structure.  Ugly but required, since we
 // are parsing functions, but not at a top level.
 #define PARSER@INLINE:%0(%5)%6(%7)$ new _@%6=ref(_:%0(%5)%6(%7) I@O$
 
-#define INLINE_STR(%9,%9,%2,%9)%8$(%0)%1(%3) %8$(%0,%2[YSI_MAX_INLINE_STRING])%1(cellmax,%3)
-#define INLINE_ARR(%9,%9,%2,%9)%8$(%0)%1(%3) %8$(%0,%2[%9])%1(%9,%3)
-#define INLINE_NUM(%9,%9,%2)%8$(%0)%1(%3) %8$(%0,%2)%1(0,%3)
-#define INLINE_REF(%9,%9,%2)%8$(%0)%1(%3) %8$(%0,%2)%1(-1,%3)
+#define INLINE_STR(%9,%9,%2,%9)%8$(%0)%1(%3)%4# %8$(%0,%2[YSI_MAX_INLINE_STRING])%1(cellmax,%3)%4s#
+#define INLINE_ARR(%9,%9,%2,%9)%8$(%0)%1(%3)%4# %8$(%0,%2[%9])%1(%9,%3)%4a#
+#define INLINE_NUM(%9,%9,%2)%8$(%0)%1(%3)%4# %8$(%0,%2)%1(0,%3)%4i#
+#define INLINE_REF(%9,%9,%2)%8$(%0)%1(%3)%4# %8$(%0,%2)%1(-1,%3)%4v#
 
-#define INLINE_END(%9)%8$(,%0)%1(%3) %8$#%9":...."),%9=_@%9;if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
+#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#%9":...."),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
 
-#define INLINE_NUL(%9)%8$()%1() %8$#%9":...."),%9=_@%9;if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
+#define INLINE_NUL(%9)%8$()%1()%4# %8$#%9":...."),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
 
 #define I@O$
 
@@ -486,7 +488,11 @@ Note:
 #define @Il:%9$%0)%1) %0,%1))
 
 // Detect a callback with a tag.
-#define @Ir:%9#%0:%1),%2$) %9#%1),%0:%2$)
+#define @Ir:%9#%0:%1),F@_@:%2$) @It:%9#%1),F@_@%0:%2$)
+
+// Normally `F@_@` doesn't consume spaces because it is a valid tag on its own.  However, in this
+// case we know that extra specifiers after the tag prefix exist so we can check fairly safely.
+#define @It:%0),F@_@%9\32;%1:%2$) @It:%0),F@_@%9%1:%2$)
 
 // Detect a callback that starts with "On".  These are often redefined and we
 // want to keep the original.
@@ -496,7 +502,8 @@ Note:
 #define @In:%0(%1)),%2$) %0),%2$),.bExtra=true,.extra=%1)
 
 // Move the callback parameter inside the brackets.
-#define Inline_UP_(),%0) Inline_UP_(_:@Ir:@Is:@In:#%0),Q@ I@O$)
+#define Inline_UI_(),%0) Inline_UI_(_@%0,_:%0),%0)
+#define Inline_UP_(),%0) Inline_UP_(_:@Ir:@Is:@In:#%0),F@_@:Q@ I@O$)
 
 #if 0
 
@@ -506,24 +513,6 @@ MyFunc(funcptr<>)
 }
 
 #endif
-
-// Get ONLY this ONE parameter (this is a VERY important stage)!
-//#define @Ik:@Il:%0, @Ip:@Iq:@Io:@Iu:@Iw:|||%0|||,
-//#define @Il:%0) @Ip:@Iq:@Io:@Iu:@Iw:|||%0|||)
-
-//#define @Ip:%9|||%0callback%1||| @Ir:@Is:"\03;"#%1||||
-//#define @Iq:%9|||%0public%1||| @Ir:@Is:"\03;"#%1||||
-//#define @Io:%9|||%0inline%1||| @In:@It:%0%1||||
-//#define @Iu:%9|||%0resolved%1||| @In:@It:%1[E_CALLBACK_DATA:0]||||
-//#define @Iw:|||%1||| @In:@It:#%1||||
-
-// Callbacks with "On" in the name (often overidden by y_hooks and ALS).
-#define @Ir:@Is:%0On%1|||| @In:@It:%0"On"#%1||||
-#define @Is:%0|||| @In:@It:#%0|||| //Using_unknown_callback
-
-// Callbacks with additional parameters (MUST have matching parameters (y_ini)).
-#define @In:@It:%0(%1)%3||||%2) %0%3%2,.bExtra=true,.extra=%1)
-#define @It:%0|||| %0
 
 stock I@E(a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE_PATTERN_3, d = INLINE_PATTERN_4)
 {
@@ -674,6 +663,23 @@ Callback_Call_nothing_to_save:    // 45
 	return 0;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="ctx">The code generation output context.</param>
+ * <param name="parameters">Information on the fake parameter types.</param>
+ * <param name="count">How many parameters there are.</param>
+ * <remarks>
+ *  Generates the code which copies the parameters from `Callback_Call` in to
+ *  the local stack.  All those parameters are passed by reference, since the
+ *  function is a varargs function.  Since an inline function's "input"
+ *  parameters are just regular variables on the stack, they all need resolving,
+ *  which is what this code does.  Regular variables are dereferenced, and
+ *  arryas and strings are fully copied over.
+ *
+ *  Technically this doesn't ACTUALLY do the copy, but generates the code for
+ *  the copy.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
 static stock Inline_GenerateLocalsCopy(ctx[AsmContext], parameters[], count)
 {
 	new
@@ -705,6 +711,42 @@ static stock Inline_GenerateLocalsCopy(ctx[AsmContext], parameters[], count)
 		input += cellbytes;
 	}
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="ctx">The code generation output context.</param>
+ * <param name="parameters">Information on the fake parameter types.</param>
+ * <param name="count">How many parameters there are.</param>
+ * <remarks>
+ *  When the inline function ends, any parameters that were defined as being
+ *  passed by reference are copied back.  This is because true locals are never
+ *  by reference, so we fake it.  There is one bug with this method - aliased
+ *  variables won't work correctly:
+ *
+ *  <c>
+ *      inline Func(&a, &b)
+ *      {
+ *  	    ++a; 
+ *  	    printf("%d", b); 
+ *      }
+ *      
+ *      new a = 10;
+ *      Callback_Call(using inline Func, a, a);
+ *  </c>
+ *
+ *  That will print <c>10</c> while the same code with a normal function will
+ *  print <c>11</c> thanks to <c>a</c> and <c>b</c> being aliased.  Maybe I
+ *  should add a <c>restrict</c> keyword, but even then I don't know how to
+ *  solve unrestricted variables (at best I can warn for them).  And this is not
+ *  a totally unheard of situation.  I have at least seen this for getting only
+ *  a player's height:
+ *
+ *  <c>
+ *      new z;
+ *      GetPlayerPos(playerid, z, z, z);
+ *  </c>
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Inline_GenerateLocalsStore(ctx[AsmContext], parameters[], count)
 {
@@ -887,23 +929,38 @@ static stock Inline_DoCodeGen(scanner[CodeScanner], data[E_INLINE_DATA])
 	AsmEmitPadding(ctx);
 }
 
-stock Inline_UseI_(...)
+public Inline_MaybeFree_(ResolvedAlloc:a)
 {
-	assert(numargs() == 1);
-	new
-		ret[3];
-	return
-		// Get the handler.
-		ret[0] = 0,
-		// Get the first item.
-		ret[1] = getarg(1),
-		// Get the parent frame.
-		ret[2] = GetCurrentFramePreviousFrame(),
-		ret;
+	// `Callback_Get` kills the timer (maybe repeatedly, but that's fine).
+	free(Malloc_Reconcile(a));
 }
+
+#define Inline_StoreInlineStack Inline_UI_
+
+stock Inline_StoreInlineStack(const func, &ret)
+{
+	// We use `&ret` instead of `return` so that we can keep the tags correct.  This also passes an
+	// address that we know is the bottom of the part of the stack that we need to save for the
+	// closure.  The bottom two variables in the stack must be preserved, since they store
+	// information about the inline function (name and address), which may be required even in the
+	// inline if it is called recursively.
+//	assert(numargs() == 1);
+//	new
+//		ret[3];
+//	return
+//		// Get the handler.
+//		ret[0] = 0,
+//		// Get the first item.
+//		ret[1] = getarg(1),
+//		// Get the parent frame.
+//		ret[2] = GetCurrentFramePreviousFrame(),
+//		ret;
+}
+
+#undef Inline_StoreInlineStack
 
 #endinput
 
 // using inline
-(_:_@%0 = Inline_UseI_(%0), _@%0)
+(_:_@%0 = Inline_UI_(%0), _@%0)
 
