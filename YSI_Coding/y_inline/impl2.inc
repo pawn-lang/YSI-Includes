@@ -55,6 +55,7 @@ enum E_INLINE_DATA
 	// The fake "parameters" for the inline function.
 	E_INLINE_DATA_PARAMETERS[MAX_INLINE_PARAMETERS],
 	E_INLINE_DATA_PARAMETER_COUNT,
+	E_INLINE_DATA_NAME,    // The address of the string with the name in.
 	E_INLINE_DATA_STATE,   // Which part of the header scanning we are on.
 	E_INLINE_DATA_LOCALS,  // Container function locals.
 	E_INLINE_DATA_PASSED,  // Inline function parameters.
@@ -77,6 +78,7 @@ static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	data[E_INLINE_DATA_LOCALS] = CodeScanGetMatchStack(scanner);
 	data[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
 	data[E_INLINE_DATA_BEYOND] = CodeScanGetMatchHole(scanner, 5);
+	data[E_INLINE_DATA_NAME] = CodeScanGetMatchHole(scanner, 0);
 	data[E_INLINE_DATA_STATE] = 1;
 	data[E_INLINE_DATA_PARAMETER_COUNT] = 0;
 	return 0;
@@ -174,9 +176,28 @@ static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	data[E_INLINE_DATA_USER] = CodeScanGetMatchAddress(scanner) + CodeScanGetMatchLength(scanner);
 	// Do the actual codegen here.
 	Inline_DoCodeGen(scanner, data);
+	Inline_StoreData(data);
 	// Restart scanning for the next inline.
 	data[E_INLINE_DATA_STATE] = 0;
 	return 0;
+}
+
+static stock Inline_RawStrlen(addr)
+{
+	#emit PUSH.S   addr
+	#emit PUSH.C   4
+	#emit SYSREQ.C strlen
+	#emit STACK    8
+	#emit RETN
+	return 0;
+}
+
+static stock Inline_StoreData(data[E_INLINE_DATA])
+{
+	// `data[E_INLINE_DATA_NAME]` stores the address of a string with the inline function's name,
+	// followed by extra space for storing: a pointer to the name, a pointer to the function, a
+	// pointer to the next inline in the linked list of names, and something else?
+	//data[E_INLINE_DATA_NAME]
 }
 
 public OnCodeInit()
@@ -466,9 +487,9 @@ Note:
 #define INLINE_NUM(%9,%9,%2)%8$(%0)%1(%3)%4# %8$(%0,%2)%1(0,%3)%4i#
 #define INLINE_REF(%9,%9,%2)%8$(%0)%1(%3)%4# %8$(%0,%2)%1(-1,%3)%4v#
 
-#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#%9":...."),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
+#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#%9"\0;..."),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
 
-#define INLINE_NUL(%9)%8$()%1()%4# %8$#%9":...."),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
+#define INLINE_NUL(%9)%8$()%1()%4# %8$#%9"\0;..."),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
 
 #define I@O$
 
@@ -886,8 +907,8 @@ static stock Inline_DoRetnGen(ctx[AsmContext], scanner[CodeScanner], data[E_INLI
 		AMX_Write(endaddr + AMX_HEADER_COD + 12, _:RelocateOpcode(OP_NOP));
 	}
 	// Push the inline address and current frame.
+	@emit PUSH.C       data[E_INLINE_DATA_NAME]
 	@emit PUSH.C       0
-	@emit PUSH.ADR     (4 - data[E_INLINE_DATA_LOCALS])
 	// Jump past the whole inline code.
 	dctx[DisasmContext_end_ip] += 8;
 	if (DisasmNext(dctx) != DISASM_DONE && DisasmGetOpcode(dctx) == OP_STACK)
