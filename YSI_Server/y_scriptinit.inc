@@ -187,12 +187,9 @@ public OnRuntimeError(code, &bool:suppress)
 	{
 		YSI_g_sCrashdetect = true;
 		suppress = true;
+		return 1;
 	}
-	else
-	{
-		ScriptInit_OnRuntimeError(code, suppress);
-	}
-	return 1;
+	return ScriptInit_OnRuntimeError(code, suppress);
 }
 
 /*
