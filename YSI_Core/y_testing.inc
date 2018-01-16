@@ -636,7 +636,9 @@ Testing_Next_retry:
 		forward Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
 	#endif
 	
-	forward OnRuntimeError(code, &bool:suppress);
+	#if !defined _ALS_OnRuntimeError
+		forward OnRuntimeError(code, &bool:suppress);
+	#endif
 	
 	public OnRuntimeError(code, &bool:suppress)
 	{
