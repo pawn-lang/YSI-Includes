@@ -23,6 +23,54 @@
 // Note that this is all optional.  Not doing so will continue to work, but
 // give warnings.
 
+#if 0
+
+// This:
+
+Func()
+{
+	inline Inner(a, string:b[], c[64], &d)
+	{
+		// Code.
+	}
+}
+
+// Becomes:
+
+Func()
+{
+	static const Inner = 0;
+	while (Inline_Start(Inner)) for (new a, string:b[], c[64], d; Inline_Def(0, cellmax, 64, -1); Inline_End())
+	{
+		// Code.
+	}
+}
+
+// Rewrite "Inline_Start()" with entry code and a jump over the whole inline.
+
+// Rewrite "Inline_Def" with 
+
+// Where:
+
+Inline_Start(const &name, a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE_PATTERN_3, d = INLINE_PATTERN_4)
+{
+	// The four extra parameters are just for putting unique scannable patterns
+	// in to the code so that we can locate these function calls and rewrite
+	// them.
+	#pragma unused a, b, c, d
+	// It turns out that "const &" IS valid!  Pointless, but valid, which is
+	// good because we want to bypass the compiler restrictions.
+	// This allows us to write to a const reference without the compiler
+	// objecting to it.  This is, of course, a TERRIBLE idea!  In fact, this is
+	// only logically what happens, since this function is in reality never
+	// called, only scanned for and rewritten.
+	setarg(0, 0, inlineAddress);
+	// NEVER loop.
+	return 0;
+}
+
+#endif
+
 // Revert to the old scanning design, but using the new code scanner.
 
 const INLINE_PATTERN_1 = _C<Alex>;
@@ -67,7 +115,13 @@ enum E_INLINE_DATA
 
 static stock
 	YSI_g_sJumpOffset,
-	YSI_g_sCallbackCallAddress;
+	YSI_g_sCallbackCallAddress,
+	// This is the start of the linked list of inline functions.  It goes backwards through the code
+	// space, and should be used to find the nearest function matching the given name (as there may
+	// be more than one).  It points to the start of the entry's data, but the first item in that
+	// data is the function pointer, not the "next" pointer.  The start of the string with the name
+	// in is 2 cells after this address.
+	YSI_g_sInlineLinkedList;
 
 static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
@@ -182,31 +236,18 @@ static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	return 0;
 }
 
-static stock Inline_RawStrlen(addr)
-{
-	#emit PUSH.S           addr
-	#emit PUSH.C           4
-	#emit SYSREQ.C         strlen
-	#emit STACK            8
-	#emit RETN
-	return 0;
-}
-
 static stock Inline_StoreData(data[E_INLINE_DATA])
 {
 	// `data[E_INLINE_DATA_NAME]` stores the address of a string with the inline function's name,
 	// followed by extra space for storing: a pointer to the name, a pointer to the function, a
 	// pointer to the next inline in the linked list of names, and something else?
 	new
-		len = Inline_RawStrlen(data[E_INLINE_DATA_NAME]),
-		header = data[E_INLINE_DATA_NAME] + len + cellbytes;
-	// Add this to the list.
-	AMX_Write(header, YSI_g_sInlineLinkedList);
-	YSI_g_sInlineLinkedList = header;
-	// Add the pointer back to the name.
-	AMX_Write(header + cellbytes, data[E_INLINE_DATA_NAME]);
+		header = data[E_INLINE_DATA_NAME];
 	// Add a pointer to the function itself.
-	AMX_Write(header + cellbytes, data[E_INLINE_DATA_NAME]);
+	AMX_Write(header, data[E_INLINE_DATA_NAME]);
+	// Add this to the list.
+	AMX_Write(header + cellbytes, YSI_g_sInlineLinkedList);
+	YSI_g_sInlineLinkedList = header;
 }
 
 public OnCodeInit()
@@ -496,9 +537,9 @@ Note:
 #define INLINE_NUM(%9,%9,%2)%8$(%0)%1(%3)%4# %8$(%0,%2)%1(0,%3)%4i#
 #define INLINE_REF(%9,%9,%2)%8$(%0)%1(%3)%4# %8$(%0,%2)%1(-1,%3)%4v#
 
-#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#%9"\0;..."),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
+#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#..#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
 
-#define INLINE_NUL(%9)%8$()%1()%4# %8$#%9"\0;..."),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
+#define INLINE_NUL(%9)%8$()%1()%4# %8$#..#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
 
 #define I@O$
 
@@ -565,54 +606,6 @@ stock I@K(n)
 	#pragma unused n
 	return 0;
 }
-
-#if 0
-
-// This:
-
-Func()
-{
-	inline Inner(a, string:b[], c[64], &d)
-	{
-		// Code.
-	}
-}
-
-// Becomes:
-
-Func()
-{
-	static const Inner = 0;
-	while (Inline_Start(Inner)) for (new a, string:b[], c[64], d; Inline_Def(0, cellmax, 64, -1); Inline_End())
-	{
-		// Code.
-	}
-}
-
-// Rewrite "Inline_Start()" with entry code and a jump over the whole inline.
-
-// Rewrite "Inline_Def" with 
-
-// Where:
-
-Inline_Start(const &name, a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE_PATTERN_3, d = INLINE_PATTERN_4)
-{
-	// The four extra parameters are just for putting unique scannable patterns
-	// in to the code so that we can locate these function calls and rewrite
-	// them.
-	#pragma unused a, b, c, d
-	// It turns out that "const &" IS valid!  Pointless, but valid, which is
-	// good because we want to bypass the compiler restrictions.
-	// This allows us to write to a const reference without the compiler
-	// objecting to it.  This is, of course, a TERRIBLE idea!  In fact, this is
-	// only logically what happens, since this function is in reality never
-	// called, only scanned for and rewritten.
-	setarg(0, 0, inlineAddress);
-	// NEVER loop.
-	return 0;
-}
-
-#endif
 
 stock Callback_Call(callback:callback, GLOBAL_TAG_TYPES:...)
 {
@@ -955,6 +948,7 @@ static stock Inline_DoCodeGen(scanner[CodeScanner], data[E_INLINE_DATA])
 	AsmSetErrorHandler(ctx, addressof (Inline_OnAsmError));
 	Inline_DoRetnGen(ctx, scanner, data);
 	Inline_GenerateLocalsCopy(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT]);
+	// TODO:  Code to call in to and return from user code.
 	Inline_GeneratePostamble(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT], bool:(data[E_INLINE_DATA_STATE] & 4));
 	AsmEmitPadding(ctx);
 }
@@ -985,6 +979,8 @@ stock Inline_StoreInlineStack(const func, &ret)
 //		// Get the parent frame.
 //		ret[2] = GetCurrentFramePreviousFrame(),
 //		ret;
+	// So it turns out - PAWN HAS DESTRUCTORS!  Why did I not know this?  And does it actually help
+	// me at all?
 }
 
 #undef Inline_StoreInlineStack
