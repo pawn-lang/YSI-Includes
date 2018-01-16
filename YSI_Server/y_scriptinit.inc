@@ -139,7 +139,7 @@ static
 	#define DEBUG_MAYBE_DUMP(%0);
 #endif
 
-stock bool:JIT_Exists()
+stock bool:Server_JITExists()
 {
 	return YSI_g_sCodeJITing;
 }
@@ -172,7 +172,7 @@ public OnJITCompile()
 	return ret;
 }
 
-stock bool:Crashdetect_Exists()
+stock bool:Server_CrashDetectExists()
 {
 	return YSI_g_sCrashdetect;
 }

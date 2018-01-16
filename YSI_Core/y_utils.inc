@@ -1572,7 +1572,7 @@ stock rawMemset(iAddress /* 12 */, iValue /* 16 */, iSize /* 20 */)
 		while ((iSize -= 4) > 0);
 		return 1;
 	}
-	else //if (JIT_Complete())
+	else //if (Server_JITComplete())
 	{
 		while (iSize >= 4096)
 		{

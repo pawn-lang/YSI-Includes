@@ -816,7 +816,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	// Copy the stack to itself (MOVS).
 	// Allocate space.
 	@emit LOAD.S.pri    8               // 5
-	if (JIT_Exists())
+	if (Server_JITExists())
 		@emit JZER.rel  ((31 - 7) * 4)  // 7
 	else
 		@emit JZER.rel  ((22 - 7) * 4)  // 7
@@ -826,7 +826,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	@emit SCTRL         4               // 13
 	@emit XCHG                          // 14
 	
-	if (JIT_Exists())
+	if (Server_JITExists())
 	{
 		// Need to use memcpy to move about in the stack.
 		@emit PUSH.C        4096        // 16
@@ -1053,7 +1053,7 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 	if (YSI_g_sInitPublicDiff)
 	{
 		// Update stored values in y_amx so they reflect the new structure.
-		if (!JIT_Exists() || YSI_g_sSortedOnce)
+		if (!Server_JITExists() || YSI_g_sSortedOnce)
 		{
 			AMX_Write(AMX_BASE_ADDRESS + 32, AMX_Read(AMX_BASE_ADDRESS + 32) + YSI_g_sInitPublicDiff);
 			AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff;
@@ -1167,7 +1167,7 @@ public OnCodeInit()
 	new
 		idx,
 		entry;
-	if (JIT_Exists())
+	if (Server_JITExists())
 	{
 		// Get the indexes of the startup functions that get recorded before the
 		// JIT plugin compiles, but called after it.  We thus need to fiddle the
@@ -1198,7 +1198,7 @@ public OnCodeInit()
 	//DisasmDump("YSI_TEST.asm");
 	HookChain_OnCodeInit();
 	P:1("Hooks_OnCodeInit end");
-	if (JIT_Exists())
+	if (Server_JITExists())
 		Hooks_RepairJITInit();
 	return 1;
 }
