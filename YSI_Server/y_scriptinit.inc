@@ -183,7 +183,7 @@ stock bool:Server_CrashDetectExists()
 
 public OnRuntimeError(code, &bool:suppress)
 {
-	if (code == 0x59534900)
+	if (code == 0x00495359)
 	{
 		YSI_g_sCrashdetect = true;
 		suppress = true;
@@ -249,7 +249,7 @@ public OnFilterScriptInit()
 		#endif
 	#endif
 	ScriptInit_OnFilterScriptInit();
-	#emit HALT 0x59534900 // "YSI".
+	#emit HALT 0x00495359 // "YSI".
 	return 1;
 }
 
@@ -295,7 +295,7 @@ public OnGameModeInit()
 	ScriptInit_OnGameModeInit();
 	if (!YSI_FILTERSCRIPT)
 	{
-		#emit HALT 0x59534900 // "YSI".
+		#emit HALT 0x00495359 // "YSI".
 	}
 	return 1;
 }
