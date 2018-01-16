@@ -125,6 +125,7 @@ stock
 	bool:YSI_FILTERSCRIPT = false;
 
 static
+	bool:YSI_g_sCrashdetect = false,
 	bool:YSI_g_sCodeJITed = false,
 	bool:YSI_g_sCodeJITing = false;
 
@@ -169,6 +170,29 @@ public OnJITCompile()
 		YSI_g_sCodeJITed = true;
 	DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
 	return ret;
+}
+
+stock bool:Crashdetect_Exists()
+{
+	return YSI_g_sCrashdetect;
+}
+
+#if !defined _ALS_OnRuntimeError
+	forward OnRuntimeError(code, &bool:suppress);
+#endif
+
+public OnRuntimeError(code, &bool:suppress)
+{
+	if (code == 0x59534900)
+	{
+		YSI_g_sCrashdetect = true;
+		suppress = true;
+	}
+	else
+	{
+		ScriptInit_OnRuntimeError(code, suppress);
+	}
+	return 1;
 }
 
 /*
@@ -228,6 +252,7 @@ public OnFilterScriptInit()
 		#endif
 	#endif
 	ScriptInit_OnFilterScriptInit();
+	#emit HALT 0x59534900 // "YSI".
 	return 1;
 }
 
@@ -271,6 +296,10 @@ public OnGameModeInit()
 		#endif
 	}
 	ScriptInit_OnGameModeInit();
+	if (!YSI_FILTERSCRIPT)
+	{
+		#emit HALT 0x59534900 // "YSI".
+	}
 	return 1;
 }
 
@@ -329,6 +358,14 @@ CHAIN_FORWARD:ScriptInit_OnScriptInit() = 1;
 #endif
 #define _ALS_OnScriptInit
 #define OnScriptInit(%0) CHAIN_PUBLIC:ScriptInit_OnScriptInit(%0)
+
+CHAIN_FORWARD:ScriptInit_OnRuntimeError(code, &bool:suppress) = 1;
+#if defined _ALS_OnRuntimeError
+	#undef OnRuntimeError
+#else
+	#define _ALS_OnRuntimeError
+#endif
+#define OnRuntimeError(%0) CHAIN_PUBLIC:ScriptInit_OnRuntimeError(%0)
 
 CHAIN_FORWARD:ScriptInit_OnJITCompile() = 1;
 #if defined _ALS_OnJITCompile
