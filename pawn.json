@@ -1,5 +1,5 @@
 {
-    "user": "Misiur",
+    "user": "pawn-lang",
     "repo": "YSI-Includes",
     "dependencies": ["sampctl/samp-stdlib", "Zeex/amx_assembly"],
     "contributors": [
