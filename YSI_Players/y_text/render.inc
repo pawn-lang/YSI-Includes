@@ -500,6 +500,78 @@ static stock Format_AddFade(str[], &pos, &len, endColour, &initialColour, step, 
 	return 0;
 }
 
+static stock Format_GetKeyString(output[YSI_MAX_STRING], key)
+{
+	output[0] = '\0';
+	switch (key)
+	{
+	case e_PED_ANSWER_PHONE:
+		output = "~k~~PED_ANSWER_PHONE~";
+	case e_PED_DUCK:
+		output = "~k~~PED_DUCK~";
+	case e_PED_FIREWEAPON:
+		output = "~k~~PED_FIREWEAPON~";
+	case e_PED_FIREWEAPON_ALT:
+		output = "~k~~PED_FIREWEAPON_ALT~";
+	case e_PED_SPRINT:
+		output = "~k~~PED_SPRINT~";
+	case e_VEHICLE_ENTER_EXIT:
+		output = "~k~~VEHICLE_ENTER_EXIT~";
+	case e_PED_JUMPING:
+		output = "~k~~PED_JUMPING~";
+	case e_PED_LOCK_TARGET:
+		output = "~k~~PED_LOCK_TARGET~";
+	case e_PED_LOOKBEHIND:
+		output = "~k~~PED_LOOKBEHIND~";
+	case e_SNEAK_ABOUT:
+		output = "~k~~SNEAK_ABOUT~";
+	case e_VEHICLE_LOOKLEFT:
+		output = "~k~~VEHICLE_LOOKLEFT~";
+	case e_VEHICLE_LOOKRIGHT:
+		output = "~k~~VEHICLE_LOOKRIGHT~";
+	case e_GO_FORWARD:
+		output = "~k~~GO_FORWARD~";
+	case e_GO_BACK:
+		output = "~k~~GO_BACK~";
+	case e_GO_LEFT:
+		output = "~k~~GO_LEFT~";
+	case e_GO_RIGHT:
+		output = "~k~~GO_RIGHT~";
+	case e_VEHICLE_FIREWEAPON:
+		output = "~k~~VEHICLE_FIREWEAPON~";
+	case e_VEHICLE_HORN:
+		output = "~k~~VEHICLE_HORN~";
+	case e_VEHICLE_FIREWEAPON_ALT:
+		output = "~k~~VEHICLE_FIREWEAPON_ALT~";
+	case e_VEHICLE_ACCELERATE:
+		output = "~k~~VEHICLE_ACCELERATE~";
+	case e_VEHICLE_BRAKE:
+		output = "~k~~VEHICLE_BRAKE~";
+	case e_VEHICLE_HANDBRAKE:
+		output = "~k~~VEHICLE_HANDBRAKE~";
+	case e_VEHICLE_SUBMISSIONS:
+		output = "~k~~VEHICLE_SUBMISSIONS~";
+	case e_VEHICLE_LOOKBEHIND:
+		output = "~k~~VEHICLE_LOOKBEHIND~" ;
+	case e_VEHICLE_TURRETUP:
+		output = "~k~~VEHICLE_TURRETUP~";
+	case e_VEHICLE_TURRETDOWN:
+		output = "~k~~VEHICLE_TURRETDOWN~";
+	case e_VEHICLE_TURRETLEFT:
+		output = "~k~~VEHICLE_TURRETLEFT~";
+	case e_VEHICLE_TURRETRIGHT:
+		output = "~k~~VEHICLE_TURRETRIGHT~";
+	case e_VEHICLE_STEERUP:
+		output = "~k~~VEHICLE_STEERUP~";
+	case e_VEHICLE_STEERDOWN:
+		output = "~k~~VEHICLE_STEERDOWN~";
+	case e_VEHICLE_STEERLEFT:
+		output = "~k~~VEHICLE_STEERLEFT~";
+	case e_VEHICLE_STEERRIGHT:
+		output = "~k~~VEHICLE_STEERRIGHT~";
+	}
+}
+
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="y_render_fade : y_render_fade_fake" />
  *//*------------------------------------------------------------------------**/
@@ -1525,7 +1597,16 @@ Format_Render_start:
 			case '\04':
 			{
 				P:6("Text_Render: Key");
-				++idx;
+				Format_GetKeyString(ts, string[idx++] >>> 8);
+				new __len=strlen(ts);
+				if (llen < __len)
+				{
+					Y_RENDER_DO_DISPLAY();
+				}
+				llen -= __len,
+				output[p] = '\0',
+				p += __len,
+				strcat(output, ts);
 			}
 			case '\n':
 			{
