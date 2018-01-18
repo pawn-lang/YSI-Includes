@@ -1600,13 +1600,11 @@ Format_Render_start:
 				Format_GetKeyString(ts, string[idx++] >>> 8);
 				new __len=strlen(ts);
 				if (llen < __len)
-				{
-					Y_RENDER_DO_DISPLAY();
-				}
+					Y_RENDER_DO_DISPLAY()
 				llen -= __len,
 				output[p] = '\0',
 				p += __len,
-				strcat(output, ts);
+				strcat(output, ts, maxlen);
 			}
 			case '\n':
 			{
