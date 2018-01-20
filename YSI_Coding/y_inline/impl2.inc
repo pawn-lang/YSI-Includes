@@ -618,9 +618,10 @@ __COMPILER_STATIC_ENUM E_INLINE_CALL
 	/* 1 */ E_INLINE_CALL_HANDLER,
 	/* 2 */ E_INLINE_CALL_CLAIM,
 	/* 3 */ E_INLINE_CALL_RELEASE,
-	/* 4 */ E_INLINE_CALL_SIZE,
-	/* 5 */ E_INLINE_CALL_FUNCTION,
-	/* 6 */ E_INLINE_CALL_PARAMS[3] // 3 or more (at least the frame header).
+	/* 4 */ E_INLINE_CALL_TIMER, // To release unneeded inlines.
+	/* 5 */ E_INLINE_CALL_SIZE,
+	/* 6 */ E_INLINE_CALL_FUNCTION,
+	/* 7 */ E_INLINE_CALL_PARAMS[3] // 3 or more (at least the frame header).
 }
 
 static stock Callback_CallHandler(...)
@@ -628,13 +629,13 @@ static stock Callback_CallHandler(...)
 	// This is called by `@`, and given the above enum in `INDIRECTION_DATA`.
 	// Get the size, and update `INDIRECTION_DATA` to point to the data.
 	#emit LOAD.alt         INDIRECTION_DATA    // 2
-	#emit CONST.pri        4                   // 4
+	#emit CONST.pri        5                   // 4
 	#emit LIDX                                 // 5
 	#emit PUSH.pri                             // 6
 	#emit SHL.C.pri        2                   // 8
 	#emit PUSH.pri                             // 9
 	#emit XCHG                                 // 10
-	#emit ADD.C            24                  // 12
+	#emit ADD.C            28                  // 12
 	#emit PUSH.pri                             // 13
 	// Grow the stack.
 	// Call memcpy (put the native's parameters on the stack beyond `dest`).
@@ -846,6 +847,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 		}
 		// If we are here, we are in the context of `Callback_Call`, with no
 		// locals on the stack.
+		@emit STACK        12
 		@emit RETN
 	}
 	else
