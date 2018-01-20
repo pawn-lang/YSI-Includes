@@ -250,6 +250,12 @@ static stock __CompilerSecondPass() {}
 #define Debug_PrintD_CLOSE )
 
 #if __COMPILER_MODIFIED
+	#if 0
+		// TODO: Check for a minor version that might have this.
+		#define __COMPILER_NAKED __pragma(naked);
+	#else
+		#define __COMPILER_NAKED return 0;
+	#endif
 	#define __COMPILER_STATIC_ENUM static enum
 	#define __COMPILER_NESTED_ELLIPSIS (1)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
@@ -263,6 +269,7 @@ static stock __CompilerSecondPass() {}
 	#pragma disablerecursion
 	#pragma warning pop
 #else
+	#define __COMPILER_NAKED return 0;
 	#define __COMPILER_STATIC_ENUM enum
 	#define __COMPILER_NESTED_ELLIPSIS (0)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)

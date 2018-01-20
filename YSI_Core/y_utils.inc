@@ -721,7 +721,7 @@ stock bernstein(string[] /* 12 */)
 	#emit NOP
 	#emit NOP
 	#emit NOP
-	return 0;
+	__COMPILER_NAKED
 	#pragma unused string
 }
 
@@ -767,7 +767,7 @@ public OnCodeInit()
 	#if defined Utils_OnCodeInit
 		Utils_OnCodeInit();
 	#endif
-	return 0; // Make the compiler happy.
+	__COMPILER_NAKED
 }
 
 #if defined Utils_OnCodeInit
@@ -1500,7 +1500,7 @@ stock rawMemcpy(dest, src, bytes)
 	#emit SYSREQ.C   memcpy
 	#emit STACK      24
 	#emit RETN
-	return 0;
+	__COMPILER_NAKED
 }
 
 /*-------------------------------------------------------------------------*//**
