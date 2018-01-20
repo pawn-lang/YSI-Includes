@@ -1277,7 +1277,7 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest),
 			#emit RETN
 		}
 	}
-	return 0;
+	__COMPILER_NAKED
 }
 
 /*-------------------------------------------------------------------------*//**
