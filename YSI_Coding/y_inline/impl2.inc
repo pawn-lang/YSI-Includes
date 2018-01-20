@@ -105,8 +105,8 @@ enum E_INLINE_DATA
 	E_INLINE_DATA_PARAMETER_COUNT,
 	E_INLINE_DATA_NAME,    // The address of the string with the name in.
 	E_INLINE_DATA_STATE,   // Which part of the header scanning we are on.
-	E_INLINE_DATA_LOCALS,  // Container function locals.
-	E_INLINE_DATA_PASSED,  // Inline function parameters.
+	E_INLINE_DATA_LOCALS,  // Closure size.
+	E_INLINE_DATA_STACK,   // Count of all locals.
 	E_INLINE_DATA_POINTER, // The struct to store the inline data in.
 	E_INLINE_DATA_START,   // The start of the writable code space.
 	E_INLINE_DATA_BEYOND,  // The end of the user code (skip jump location).
@@ -144,7 +144,7 @@ static stock Inline_FoundMid(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	if (data[E_INLINE_DATA_STATE] != 1)
 		return 0;
 	P:5("Inline_FoundMid OK");
-	data[E_INLINE_DATA_PASSED] = CodeScanGetMatchStack(scanner) - data[E_INLINE_DATA_LOCALS];
+	data[E_INLINE_DATA_STACK] = CodeScanGetMatchStack(scanner);
 	data[E_INLINE_DATA_STATE] = 2;
 	return 0;
 }
@@ -256,7 +256,7 @@ public OnCodeInit()
 		hdr[AMX_HDR];
 	GetAmxHeader(hdr);
 	YSI_g_sJumpOffset = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
-	#emit CONST.pri    Callback_Call
+	#emit CONST.pri    Callback_CallHandler
 	#emit STOR.pri     YSI_g_sCallbackCallAddress
 	YSI_g_sCallbackCallAddress += YSI_g_sJumpOffset;
 	
@@ -607,9 +607,10 @@ stock I@K(n)
 	return 0;
 }
 
-stock Callback_Call(callback:callback, GLOBAL_TAG_TYPES:...)
-{
-}
+// Old API.
+#define Callback_Call(%0,%1) Indirect_Call(%0[0], %0[1], %1)
+//#define Callback_Get(%0,%1) Indirect_Call(%0[0], %0[1], %1)
+//#define Callback_Release(%0,%1) Indirect_Call(%0[0], %0[1], %1)
 
 __COMPILER_STATIC_ENUM E_INLINE_CALL
 {
@@ -651,27 +652,23 @@ static stock Callback_CallHandler(...)
 	#emit LOAD.I                               // 33
 	#emit SCTRL            6                   // 35
 	
-//Callback_Call_save_stack:
-	// Padding to account for debug builds.
+//Callback_Call_restore_stack:
+	// The stack hasn't been restored yet, and we need it.
 	#emit NOP                                  // 36
 	#emit NOP                                  // 37
-	#emit STOR.pri         I@                  // 39
+	// Padding to account for debug builds.
 	// If the code decides to jump back to here, save the stack out again.
-	#emit LOAD.S.alt       0xFFFFFFF8          // 41
-	#emit LCTRL            4                   // 43
-	#emit SUB                                  // 44
-	#emit SCTRL            4                   // 46
-	#emit PUSH.S           0xFFFFFFFC          // 48
-	#emit PUSH.S           0xFFFFFFF8          // 50
-	#emit PUSH.S           0xFFFFFFF4          // 52
-	#emit PUSH.C           0                   // 54
-	#emit PUSH.pri                             // 55
-	#emit PUSH.C           20                  // 57
-	#emit SYSREQ.C         memcpy              // 59
-	#emit LCTRL            5                   // 61
-	#emit SCTRL            4                   // 63
-	#emit LOAD.pri         I@                  // 65
-	#emit RETN                                 // 66
+	#emit PUSH.S           0xFFFFFFFC          // 39
+	#emit PUSH.S           0xFFFFFFF8          // 41
+	#emit PUSH.S           0xFFFFFFF4          // 43
+	#emit PUSH.C           0                   // 45
+	#emit PUSH.pri                             // 46
+	#emit PUSH.C           20                  // 48
+	#emit SYSREQ.C         memcpy              // 50
+	#emit LCTRL            5                   // 52
+	#emit SCTRL            4                   // 54
+	#emit LOAD.pri         I@                  // 56
+	#emit RETN                                 // 57
 	__COMPILER_NAKED
 }
 
@@ -722,6 +719,8 @@ static stock Inline_GenerateLocalsCopy(ctx[AsmContext], parameters[], count)
 		}
 		input += cellbytes;
 	}
+	// Jump past the postamble, which puts a return address on the stack.
+	@emit CALL.label       Inline_Start
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -789,7 +788,23 @@ static stock Inline_GenerateLocalsStore(ctx[AsmContext], parameters[], count)
 	return accumulate;
 }
 
-static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count, bool:isConst)
+static stock Inline_GeneratePreamble(ctx[AsmContext], locals)
+{
+	// This is sort of the start of the code.
+	@emit Inline_Start:
+	// Set the local frame.
+	@emit STACK            0
+	@emit LCTRL            5
+	@emit XCHG
+	@emit ADD.C            locals + 4
+	@emit SCTRL            5
+	@emit STOR.S.alt       0
+	// Get the return address.
+	@emit POP.pri
+	@emit STOR.S.pri       4
+}
+
+static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count, bool:isConst, locals, inlineParams)
 {
 	new
 		bool:needStore = false,
@@ -824,10 +839,9 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 			// This is the first case I've ever found where it is useful!
 			@emit MOVE.pri
 			@emit SCTRL        4
-			Inline_GenerateLocalsStore(ctx, parameters, count);
+			accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
+			@emit STACK        accumulate + locals - inlineParams
 			// Restore the return value.
-			@emit LCTRL        5
-			@emit SCTRL        4
 			@emit LOAD.pri     ref(I@)
 		}
 		// If we are here, we are in the context of `Callback_Call`, with no
@@ -836,25 +850,26 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 	}
 	else
 	{
+		@emit STOR.pri     ref(I@)
 		if (needStore)
 		{
-			@emit STOR.pri     ref(I@)
-			// Get the data size to copy back out.
-			@emit LREF.S.pri   12
-			// Get the size.
-			@emit ADD.C        -4
-			@emit LOAD.I
-			@emit STOR.pri     ref(J@)
 			@emit MOVE.pri
 			@emit SCTRL        4
 			accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
 			if (accumulate)
 				@emit STACK        accumulate
-			@emit LOAD.pri     ref(J@)
-			@emit JUMP         YSI_g_sCallbackCallAddress + 50 * cellbytes // Callback_Call_save_stack
 		}
 		else
-			@emit JUMP         YSI_g_sCallbackCallAddress + 59 * cellbytes // Callback_Call_restore_stack
+		{
+			// Go back down the stack, up to where the inline parameters began,
+			// but not including them.  This will set us up the bomb (sorry,
+			// couldn't resist).  This will set us up nicely for the jump in to
+			// `Callback_CallHandler` for copying the stack back out again.
+			@emit MOVE.pri
+			@emit ADD.C        inlineParams
+			@emit SCTRL        4
+		}
+		@emit JUMP         YSI_g_sCallbackCallAddress + 37 * cellbytes // Callback_Call_restore_stack
 	}
 }
 
@@ -885,10 +900,10 @@ static stock Inline_DoRetnGen(ctx[AsmContext], scanner[CodeScanner], data[E_INLI
 	}
 	endaddrDAT += AMX_HEADER_COD;
 	// Now at the end address, write the cleanup and return code.
-	if (data[E_INLINE_DATA_PASSED] + data[E_INLINE_DATA_LOCALS])
+	if (data[E_INLINE_DATA_STACK])
 	{
 		AMX_Write(endaddrDAT, _:RelocateOpcode(OP_STACK));
-		AMX_Write(endaddrDAT + 4, data[E_INLINE_DATA_PASSED] + data[E_INLINE_DATA_LOCALS]);
+		AMX_Write(endaddrDAT + 4, data[E_INLINE_DATA_STACK]);
 	}
 	else
 	{
@@ -937,9 +952,8 @@ static stock Inline_DoCodeGen(scanner[CodeScanner], data[E_INLINE_DATA])
 	AsmSetErrorHandler(ctx, addressof (Inline_OnAsmError));
 	Inline_DoRetnGen(ctx, scanner, data);
 	Inline_GenerateLocalsCopy(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT]);
-	Inline_GeneratePreamble(ctx);
-	// TODO:  Code to call in to and return from user code.
-	Inline_GeneratePostamble(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT], bool:(data[E_INLINE_DATA_STATE] & 4));
+	Inline_GeneratePostamble(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT], bool:(data[E_INLINE_DATA_STATE] & 4), data[E_INLINE_DATA_STACK], data[E_INLINE_DATA_LOCALS]);
+	Inline_GeneratePreamble(ctx, data[E_INLINE_DATA_STACK]);
 	AsmEmitPadding(ctx);
 }
 
