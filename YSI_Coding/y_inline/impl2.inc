@@ -613,94 +613,66 @@ stock Callback_Call(callback:callback, GLOBAL_TAG_TYPES:...)
 
 __COMPILER_STATIC_ENUM E_INLINE_CALL
 {
-	E_INLINE_CALL_NULL,
-	E_INLINE_CALL_HANDLER,
-	E_INLINE_CALL_CLAIM,
-	E_INLINE_CALL_RELEASE,
-	E_INLINE_CALL_COUNT,
-	E_INLINE_CALL_FUNCTION,
-	E_INLINE_CALL_CLOSURE,
+	/* 0 */ E_INLINE_CALL_NULL,
+	/* 1 */ E_INLINE_CALL_HANDLER,
+	/* 2 */ E_INLINE_CALL_CLAIM,
+	/* 3 */ E_INLINE_CALL_RELEASE,
+	/* 4 */ E_INLINE_CALL_SIZE,
+	/* 5 */ E_INLINE_CALL_FUNCTION,
+	/* 6 */ E_INLINE_CALL_PARAMS[3] // 3 or more (at least the frame header).
 }
 
-static stock Callback_CallHandler()
+static stock Callback_CallHandler(...)
 {
-	// This is called by `@`, and given the following 
-
-	#pragma unused callback
-	//#emit PROC                  //  1
-	#emit LREF.S.pri   12         //  3
-	// Get the size.
-	#emit ADD.C        0xFFFFFFFC //  5
-	#emit LOAD.I                  //  6
-	#emit MOVE.alt                //  7
-	// Grow the stack. 
-	#emit SHL.C.alt    2          //  9
-	#emit LCTRL        4          // 11
-	#emit SUB                     // 12
-	#emit SCTRL        4          // 14
-	// Call memcpy. 
-	#emit SHR.C.alt    2          // 16
-	#emit PUSH.alt                // 17
-	#emit SHL.C.alt    2          // 19
-	#emit PUSH.alt                // 20
-	#emit PUSH.C       0          // 22
-	#emit LREF.S.alt   12         // 24
-	#emit PUSH.alt                // 25
-	#emit PUSH.pri                // 26
-	#emit PUSH.C       20         // 28
-	#emit SYSREQ.C     memcpy     // 30
-	#emit STACK        24         // 32
-	// "jump" in to the code. 
-	#emit LREF.S.pri   12         // 34
-	// Get the size. 
-	#emit ADD.C        4          // 36
-	#emit LOAD.I                  // 37
-	#emit SCTRL        8          // 39
-	#emit SCTRL        6          // 41
+	// This is called by `@`, and given the above enum in `INDIRECTION_DATA`.
+	// Get the size, and update `INDIRECTION_DATA` to point to the data.
+	#emit LOAD.alt         INDIRECTION_DATA    // 2
+	#emit CONST.pri        4                   // 4
+	#emit LIDX                                 // 5
+	#emit PUSH.pri                             // 6
+	#emit SHL.C.pri        2                   // 8
+	#emit PUSH.pri                             // 9
+	#emit XCHG                                 // 10
+	#emit ADD.C            24                  // 12
+	#emit PUSH.pri                             // 13
+	// Grow the stack.
+	// Call memcpy (put the native's parameters on the stack beyond `dest`).
+	#emit PUSH.S           0xFFFFFFFC          // 15
+	#emit PUSH.S           0xFFFFFFF8          // 17
+	#emit PUSH.C           0                   // 19
+	#emit PUSH.S           0xFFFFFFF4          // 21
+	#emit PUSH.pri                             // 22
+	#emit PUSH.C           20                  // 24
+	#emit SYSREQ.C         memcpy              // 26
+	#emit STACK            24                  // 28
+	// "jump" in to the code.
+	#emit LOAD.S.pri       0xFFFFFFF4          // 30
+	#emit ADD.C            0xFFFFFFFC          // 32
+	#emit LOAD.I                               // 33
+	#emit SCTRL            6                   // 35
 	
-	// There's a bug with jumping forward in assembly.  This label neatly
-	// includes the `LCTRL`/`SCTRL` pair we were going to `#emit` anyway.
-Callback_Call_nothing_to_save:    // 45
-	#emit LOAD.pri     I@         // 47
-	#emit RETN                    // 48
-	
-	// Padding to account for debug builds.
-	#emit BREAK                   // 49
-	#emit BREAK                   // 50
-//Callback_Call_restore_stack:
-	// If the code jumps back to here, restore then save the stack.
-	#emit STOR.pri     I@         // 52
-	// Get the data size to copy back out.
-	#emit LREF.S.pri   12         // 54
-	// Get the size.
-	#emit ADD.C        0xFFFFFFFC // 56
-	#emit LOAD.I                  // 57
-	#emit BREAK                   // 58
-	#emit BREAK                   // 59
 //Callback_Call_save_stack:
+	// Padding to account for debug builds.
+	#emit NOP                                  // 36
+	#emit NOP                                  // 37
+	#emit STOR.pri         I@                  // 39
 	// If the code decides to jump back to here, save the stack out again.
-	#emit CONST.alt    12
-	#emit JSLEQ        Callback_Call_nothing_to_save
-	// The stack hasn't been restored yet, and we need it.
-	#emit STOR.pri     J@
-	#emit STACK        0
-	#emit SUB.alt
-	#emit SCTRL        4
-	#emit LOAD.alt     J@
-	#emit PUSH.alt
-	#emit SHL.C.alt    2
-	#emit PUSH.alt
-	#emit PUSH.C       0
-	#emit LREF.S.alt   12
-	#emit PUSH.pri
-	#emit PUSH.alt
-	#emit PUSH.C       20
-	#emit SYSREQ.C     memcpy
-	#emit LCTRL        5
-	#emit SCTRL        4
-	#emit LOAD.pri     I@
-	#emit RETN
-	return 0;
+	#emit LOAD.S.alt       0xFFFFFFF8          // 41
+	#emit LCTRL            4                   // 43
+	#emit SUB                                  // 44
+	#emit SCTRL            4                   // 46
+	#emit PUSH.S           0xFFFFFFFC          // 48
+	#emit PUSH.S           0xFFFFFFF8          // 50
+	#emit PUSH.S           0xFFFFFFF4          // 52
+	#emit PUSH.C           0                   // 54
+	#emit PUSH.pri                             // 55
+	#emit PUSH.C           20                  // 57
+	#emit SYSREQ.C         memcpy              // 59
+	#emit LCTRL            5                   // 61
+	#emit SCTRL            4                   // 63
+	#emit LOAD.pri         I@                  // 65
+	#emit RETN                                 // 66
+	__COMPILER_NAKED
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -723,7 +695,7 @@ Callback_Call_nothing_to_save:    // 45
 static stock Inline_GenerateLocalsCopy(ctx[AsmContext], parameters[], count)
 {
 	new
-		input = 16;
+		input = 12;
 	for (new i = 0; i != count; ++i)
 	{
 		switch (parameters[i])
@@ -802,7 +774,7 @@ static stock Inline_GenerateLocalsStore(ctx[AsmContext], parameters[], count)
 				@emit STACK        accumulate
 			accumulate = 0;
 			@emit POP.pri
-			@emit SREF.S.pri       count * cellbytes + 16
+			@emit SREF.S.pri       count * cellbytes + 12
 		}
 		case 0:
 			accumulate += cellbytes;
@@ -858,7 +830,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 			@emit SCTRL        4
 			@emit LOAD.pri     ref(I@)
 		}
-		// If we are here, we arein the context of `Callback_Call`, with no
+		// If we are here, we are in the context of `Callback_Call`, with no
 		// locals on the stack.
 		@emit RETN
 	}
@@ -892,52 +864,52 @@ static stock Inline_DoRetnGen(ctx[AsmContext], scanner[CodeScanner], data[E_INLI
 	// invalid address (in the middle of an OpCode we just wrote out).
 	new
 		startaddr = data[E_INLINE_DATA_USER],
-		endaddr = CodeScanGetMatchHole(scanner, 1) - 8,
-		target = endaddr + YSI_g_sJumpOffset,
+		endaddrDAT = CodeScanGetMatchHole(scanner, 1) - 8,
+		endaddrCOD = endaddrDAT + YSI_g_sJumpOffset,
+		nop = _:RelocateOpcode(OP_NOP),
 		dctx[DisasmContext];
 	// Using the local decompiler, go through the code and remove any jumps to
-	// outside of [startaddr, endaddr].  Convert them all to `RETN; NOP`.
+	// outside of [startaddr, endaddrDAT].  Convert them all to `RETN; NOP`.
 	CodeScanGetMatchDisasm(scanner, dctx, CodeScanGetMatchLength(scanner));
-	dctx[DisasmContext_end_ip] = endaddr + AMX_HEADER_COD + 16;
+	dctx[DisasmContext_end_ip] = endaddrDAT + AMX_HEADER_COD + 16;
 	while (DisasmNext(dctx) != DISASM_DONE)
 	{
 		// Is this a jump?  The only jumps that can get out of this constraint
 		// are `JUMP` ones - all others like `JNEQ` etc would be generated by
 		// `if` statements and so constrained by syntax.  `JUMP` would come from
 		// `break`, `continue`, or `goto`.
-		if (DisasmGetOpcode(dctx) == OP_JUMP && !(startaddr <= DisasmGetOperandReloc(dctx) < endaddr))
+		if (DisasmGetOpcode(dctx) == OP_JUMP && !(startaddr <= DisasmGetOperandReloc(dctx) < endaddrDAT))
 		{
-			AMX_Write(DisasmGetCurIp(dctx) + 4, target);
+			AMX_Write(DisasmGetCurIp(dctx) + 4, endaddrCOD);
 		}
 	}
+	endaddrDAT += AMX_HEADER_COD;
 	// Now at the end address, write the cleanup and return code.
 	if (data[E_INLINE_DATA_PASSED] + data[E_INLINE_DATA_LOCALS])
 	{
-		AMX_Write(endaddr + AMX_HEADER_COD +  0, _:RelocateOpcode(OP_STACK));
-		AMX_Write(endaddr + AMX_HEADER_COD +  4, data[E_INLINE_DATA_PASSED] + data[E_INLINE_DATA_LOCALS]);
-		AMX_Write(endaddr + AMX_HEADER_COD +  8, _:RelocateOpcode(OP_RETN));
-		AMX_Write(endaddr + AMX_HEADER_COD + 12, _:RelocateOpcode(OP_NOP));
+		AMX_Write(endaddrDAT, _:RelocateOpcode(OP_STACK));
+		AMX_Write(endaddrDAT + 4, data[E_INLINE_DATA_PASSED] + data[E_INLINE_DATA_LOCALS]);
 	}
 	else
 	{
-		AMX_Write(endaddr + AMX_HEADER_COD +  0, _:RelocateOpcode(OP_NOP));
-		AMX_Write(endaddr + AMX_HEADER_COD +  4, _:RelocateOpcode(OP_NOP));
-		AMX_Write(endaddr + AMX_HEADER_COD +  8, _:RelocateOpcode(OP_NOP));
-		AMX_Write(endaddr + AMX_HEADER_COD + 12, _:RelocateOpcode(OP_NOP));
+		AMX_Write(endaddrDAT, nop);
+		AMX_Write(endaddrDAT + 4, nop);
 	}
+	AMX_Write(endaddrDAT + 8, _:RelocateOpcode(OP_RETN));
+	AMX_Write(endaddrDAT + 12, nop);
 	// Push the inline address and current frame.
-	@emit PUSH.C       data[E_INLINE_DATA_NAME]
-	@emit PUSH.C       0
-	// Jump past the whole inline code.
+	@emit PUSH.C           data[E_INLINE_DATA_NAME]
+	@emit PUSH.C           0
+	// Jump past the whole inline code.  Also remove trailing stack codes.
 	dctx[DisasmContext_end_ip] += 8;
 	if (DisasmNext(dctx) != DISASM_DONE && DisasmGetOpcode(dctx) == OP_STACK)
 	{
-		AMX_Write(endaddr + AMX_HEADER_COD + 16, _:RelocateOpcode(OP_NOP));
-		AMX_Write(endaddr + AMX_HEADER_COD + 20, _:RelocateOpcode(OP_NOP));
-		@emit JUMP         target + 24
+		AMX_Write(endaddrDAT + 16, nop);
+		AMX_Write(endaddrDAT + 20, nop);
+		@emit JUMP             endaddrCOD + 24
 	}
 	else
-		@emit JUMP         target + 16
+		@emit JUMP             endaddrCOD + 16
 }
 
 #define CALL@Inline_OnAsmError Inline_OnAsmError("", ASM_ERROR_NONE)
@@ -965,6 +937,7 @@ static stock Inline_DoCodeGen(scanner[CodeScanner], data[E_INLINE_DATA])
 	AsmSetErrorHandler(ctx, addressof (Inline_OnAsmError));
 	Inline_DoRetnGen(ctx, scanner, data);
 	Inline_GenerateLocalsCopy(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT]);
+	Inline_GeneratePreamble(ctx);
 	// TODO:  Code to call in to and return from user code.
 	Inline_GeneratePostamble(ctx, data[E_INLINE_DATA_PARAMETERS], data[E_INLINE_DATA_PARAMETER_COUNT], bool:(data[E_INLINE_DATA_STATE] & 4));
 	AsmEmitPadding(ctx);
