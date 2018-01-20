@@ -264,7 +264,9 @@ static const
 		"    ============================================================================\n" \
 		" \n";
 
-forward OnRuntimeError(code, &bool:suppress);
+#if !defined _ALS_OnRuntimeError
+	forward OnRuntimeError(code, &bool:suppress);
+#endif
 
 public OnRuntimeError(code, &bool:suppress)
 {
