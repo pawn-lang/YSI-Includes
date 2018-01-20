@@ -609,6 +609,23 @@ stock I@K(n)
 
 stock Callback_Call(callback:callback, GLOBAL_TAG_TYPES:...)
 {
+}
+
+__COMPILER_STATIC_ENUM E_INLINE_CALL
+{
+	E_INLINE_CALL_NULL,
+	E_INLINE_CALL_HANDLER,
+	E_INLINE_CALL_CLAIM,
+	E_INLINE_CALL_RELEASE,
+	E_INLINE_CALL_COUNT,
+	E_INLINE_CALL_FUNCTION,
+	E_INLINE_CALL_CLOSURE,
+}
+
+static stock Callback_CallHandler()
+{
+	// This is called by `@`, and given the following 
+
 	#pragma unused callback
 	//#emit PROC                  //  1
 	#emit LREF.S.pri   12         //  3
