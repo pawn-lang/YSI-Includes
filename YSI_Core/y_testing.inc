@@ -714,7 +714,7 @@ stock Testing_RunAll()
 	TEST_REPORT("  ||===================||  ");
 	TEST_REPORT(" ");
 	Testing_Run(tests, fails, _, true);
-#if !defined JUST_TEST
+#if !defined JUST_TEST && defined YSI_TESTS
 	if (YSI_g_sTestResult != 9) printf("*** Test system verification failed!");
 	else
 #endif
@@ -750,6 +750,8 @@ stock Testing_RunAll()
 	//state ysi_debug : on;
 }
 
+#if defined YSI_TESTS
+
 // Meta tests.
 
 stock Testing_TestRedirect(bool:x, str[] = "", va_args<>)
@@ -758,8 +760,6 @@ stock Testing_TestRedirect(bool:x, str[] = "", va_args<>)
 	ASSERT(str[0] != '\0');
 	ASSERT(!strcmp(str, "\2\2\2\2\2", false, 5));
 }
-
-#if defined YSI_TESTS
 
 Test:y_testing_2()
 {
