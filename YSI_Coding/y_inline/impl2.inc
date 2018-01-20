@@ -621,7 +621,7 @@ __COMPILER_STATIC_ENUM E_INLINE_CALL
 	/* 4 */ E_INLINE_CALL_TIMER, // To release unneeded inlines.
 	/* 5 */ E_INLINE_CALL_SIZE,
 	/* 6 */ E_INLINE_CALL_FUNCTION,
-	/* 7 */ E_INLINE_CALL_PARAMS[3] // 3 or more (at least the frame header).
+	/* 7 */ ResolvedAlloc:E_INLINE_CALL_PARAMS // At least the frame header.
 }
 
 static stock Callback_CallHandler(...)
@@ -636,40 +636,42 @@ static stock Callback_CallHandler(...)
 	#emit PUSH.pri                             // 9
 	#emit XCHG                                 // 10
 	#emit ADD.C            28                  // 12
-	#emit PUSH.pri                             // 13
+	#emit LOAD.I                               // 13
+	#emit PUSH.pri                             // 14
 	// Grow the stack.
 	// Call memcpy (put the native's parameters on the stack beyond `dest`).
-	#emit PUSH.S           0xFFFFFFFC          // 15
-	#emit PUSH.S           0xFFFFFFF8          // 17
-	#emit PUSH.C           0                   // 19
-	#emit PUSH.S           0xFFFFFFF4          // 21
-	#emit PUSH.pri                             // 22
-	#emit PUSH.C           20                  // 24
-	#emit SYSREQ.C         memcpy              // 26
-	#emit STACK            24                  // 28
+	#emit PUSH.S           0xFFFFFFFC          // 16
+	#emit PUSH.S           0xFFFFFFF8          // 18
+	#emit PUSH.C           0                   // 20
+	#emit PUSH.S           0xFFFFFFF4          // 22
+	#emit PUSH.pri                             // 23
+	#emit PUSH.C           20                  // 25
+	#emit SYSREQ.C         memcpy              // 27
+	#emit STACK            24                  // 29
 	// "jump" in to the code.
-	#emit LOAD.S.pri       0xFFFFFFF4          // 30
-	#emit ADD.C            0xFFFFFFFC          // 32
-	#emit LOAD.I                               // 33
-	#emit SCTRL            6                   // 35
+	#emit LOAD.S.pri       0xFFFFFFF4          // 31
+	#emit ADD.C            0xFFFFFFFC          // 33
+	#emit LOAD.I                               // 34
+	#emit SCTRL            6                   // 36
 	
 //Callback_Call_restore_stack:
 	// The stack hasn't been restored yet, and we need it.
-	#emit NOP                                  // 36
 	#emit NOP                                  // 37
+	#emit NOP                                  // 38
 	// Padding to account for debug builds.
 	// If the code decides to jump back to here, save the stack out again.
-	#emit PUSH.S           0xFFFFFFFC          // 39
-	#emit PUSH.S           0xFFFFFFF8          // 41
-	#emit PUSH.S           0xFFFFFFF4          // 43
-	#emit PUSH.C           0                   // 45
-	#emit PUSH.pri                             // 46
-	#emit PUSH.C           20                  // 48
-	#emit SYSREQ.C         memcpy              // 50
-	#emit LCTRL            5                   // 52
-	#emit SCTRL            4                   // 54
-	#emit LOAD.pri         I@                  // 56
-	#emit RETN                                 // 57
+	#emit PUSH.S           0xFFFFFFFC          // 40
+	#emit PUSH.S           0xFFFFFFF8          // 42
+	#emit PUSH.C           0                   // 44
+	#emit LCTRL            4                   // 46
+	#emit PUSH.pri                             // 47
+	#emit PUSH.S           0xFFFFFFF4          // 49
+	#emit PUSH.C           20                  // 51
+	#emit SYSREQ.C         memcpy              // 53
+	#emit LCTRL            5                   // 55
+	#emit SCTRL            4                   // 57
+	#emit LOAD.pri         I@                  // 59
+	#emit RETN                                 // 60
 	__COMPILER_NAKED
 }
 
@@ -871,7 +873,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 			@emit ADD.C        inlineParams
 			@emit SCTRL        4
 		}
-		@emit JUMP         YSI_g_sCallbackCallAddress + 37 * cellbytes // Callback_Call_restore_stack
+		@emit JUMP         YSI_g_sCallbackCallAddress + 38 * cellbytes // Callback_Call_restore_stack
 	}
 }
 
