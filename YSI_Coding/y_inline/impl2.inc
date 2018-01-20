@@ -915,16 +915,31 @@ static stock Inline_DoRetnGen(ctx[AsmContext], scanner[CodeScanner], data[E_INLI
 	// Push the inline address and current frame.
 	@emit PUSH.C           data[E_INLINE_DATA_NAME]
 	@emit PUSH.C           0
-	// Jump past the whole inline code.  Also remove trailing stack codes.
+	// Jump past the whole inline code.  Also remove trailing stack codes that
+	// would only remove our local data.
 	dctx[DisasmContext_end_ip] += 8;
 	if (DisasmNext(dctx) != DISASM_DONE && DisasmGetOpcode(dctx) == OP_STACK)
 	{
-		AMX_Write(endaddrDAT + 16, nop);
-		AMX_Write(endaddrDAT + 20, nop);
-		@emit JUMP             endaddrCOD + 24
+		// Remove any stack cleanup that only deals with the inline function's
+		// parameters.
+		startaddr = DisasmGetOperand(dctx) - data[E_INLINE_DATA_STACK] + data[E_INLINE_DATA_LOCALS];
+		if (startaddr == 0)
+		{
+			AMX_Write(endaddrDAT + 16, nop);
+			AMX_Write(endaddrDAT + 20, nop);
+			@emit JUMP             endaddrCOD + 24
+		}
+		else
+		{
+			// Less cleanup required, but still some.
+			AMX_Write(endaddrDAT + 20, startaddr);
+			@emit JUMP             endaddrCOD + 16
+		}
 	}
 	else
+	{
 		@emit JUMP             endaddrCOD + 16
+	}
 }
 
 #define CALL@Inline_OnAsmError Inline_OnAsmError("", ASM_ERROR_NONE)
