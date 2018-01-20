@@ -759,6 +759,8 @@ stock Testing_TestRedirect(bool:x, str[] = "", va_args<>)
 	ASSERT(!strcmp(str, "\2\2\2\2\2", false, 5));
 }
 
+#if defined YSI_TESTS
+
 Test:y_testing_2()
 {
 	new
@@ -814,9 +816,11 @@ TestClose:y_testing_1()
 	++YSI_g_sTestResult;
 }
 
+#endif
+
 #include "..\YSI_Internal\y_shortfunc"
 
-#if defined RUN_TESTS
+#if defined YSI_TESTS
 	// Why did I move this here, and why is it not included from the normal place in
 	// `y_thirdpartyinclude.inc` itself?  Simple - resolving circular dependencies.
 	#include "..\YSI_Internal\y_thirdpartyinclude\tests"
