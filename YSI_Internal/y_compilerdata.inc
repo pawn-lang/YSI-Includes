@@ -250,6 +250,7 @@ static stock __CompilerSecondPass() {}
 #define Debug_PrintD_CLOSE )
 
 #if __COMPILER_MODIFIED
+	#define __COMPILER_STATIC_ENUM static enum
 	#define __COMPILER_NESTED_ELLIPSIS (1)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) return __compiler_one_string_parameter:(%0)
@@ -262,6 +263,7 @@ static stock __CompilerSecondPass() {}
 	#pragma disablerecursion
 	#pragma warning pop
 #else
+	#define __COMPILER_STATIC_ENUM enum
 	#define __COMPILER_NESTED_ELLIPSIS (0)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) __CompilerStringReturn(%0);return (__compiler_one_string_parameter:(%0))
