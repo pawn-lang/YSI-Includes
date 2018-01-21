@@ -552,6 +552,8 @@ Note:
 #define usinginline (@Ik:@Il:I@O$Inline_UI_())
 #define usingresolved // Do nothing.
 
+
+
 // Detect a `using` parameter that is not the last parameter.
 #define @Ik:%9$%0)%1, %0,%1),
 
@@ -559,7 +561,7 @@ Note:
 #define @Il:%9$%0)%1) %0,%1))
 
 // Detect a callback with a tag.
-#define @Ir:%9#%0:%1),F@_@:%2$) @It:%9#%1),F@_@%0:%2$)
+#define @Ir:%9#%1<%0>),F@_@:%2$) @It:%9#%1),F@_@%0:%2$)
 
 // Normally `F@_@` doesn't consume spaces because it is a valid tag on its own.  However, in this
 // case we know that extra specifiers after the tag prefix exist so we can check fairly safely.
@@ -574,7 +576,7 @@ Note:
 
 // Move the callback parameter inside the brackets.
 #define Inline_UI_(),%0) Inline_UI_(_@%0,_:%0),%0)
-#define Inline_UP_(),%0) Inline_UP_(_:@Ir:@Is:@In:#%0),F@_@:Q@ I@O$)
+#define Inline_UP_(),%0) Inline_UP_(_:@Ir:@Is:@In:#%0),F@_@:I@ I@O$)
 
 #if 0
 
@@ -636,42 +638,41 @@ static stock Callback_CallHandler(...)
 	#emit PUSH.pri                             // 9
 	#emit XCHG                                 // 10
 	#emit ADD.C            28                  // 12
-	#emit LOAD.I                               // 13
-	#emit PUSH.pri                             // 14
+	#emit PUSH.pri                             // 13
 	// Grow the stack.
 	// Call memcpy (put the native's parameters on the stack beyond `dest`).
-	#emit PUSH.S           0xFFFFFFFC          // 16
-	#emit PUSH.S           0xFFFFFFF8          // 18
-	#emit PUSH.C           0                   // 20
-	#emit PUSH.S           0xFFFFFFF4          // 22
-	#emit PUSH.pri                             // 23
-	#emit PUSH.C           20                  // 25
-	#emit SYSREQ.C         memcpy              // 27
-	#emit STACK            24                  // 29
+	#emit PUSH.S           0xFFFFFFFC          // 15
+	#emit PUSH.S           0xFFFFFFF8          // 17
+	#emit PUSH.C           0                   // 19
+	#emit PUSH.S           0xFFFFFFF4          // 21
+	#emit PUSH.pri                             // 22
+	#emit PUSH.C           20                  // 24
+	#emit SYSREQ.C         memcpy              // 26
+	#emit STACK            24                  // 28
 	// "jump" in to the code.
-	#emit LOAD.S.pri       0xFFFFFFF4          // 31
-	#emit ADD.C            0xFFFFFFFC          // 33
-	#emit LOAD.I                               // 34
-	#emit SCTRL            6                   // 36
+	#emit LOAD.S.pri       0xFFFFFFF4          // 30
+	#emit ADD.C            0xFFFFFFFC          // 32
+	#emit LOAD.I                               // 33
+	#emit SCTRL            6                   // 35
 	
 //Callback_Call_restore_stack:
 	// The stack hasn't been restored yet, and we need it.
+	#emit NOP                                  // 36
 	#emit NOP                                  // 37
-	#emit NOP                                  // 38
 	// Padding to account for debug builds.
 	// If the code decides to jump back to here, save the stack out again.
-	#emit PUSH.S           0xFFFFFFFC          // 40
-	#emit PUSH.S           0xFFFFFFF8          // 42
-	#emit PUSH.C           0                   // 44
-	#emit LCTRL            4                   // 46
-	#emit PUSH.pri                             // 47
-	#emit PUSH.S           0xFFFFFFF4          // 49
-	#emit PUSH.C           20                  // 51
-	#emit SYSREQ.C         memcpy              // 53
-	#emit LCTRL            5                   // 55
-	#emit SCTRL            4                   // 57
-	#emit LOAD.pri         I@                  // 59
-	#emit RETN                                 // 60
+	#emit PUSH.S           0xFFFFFFFC          // 39
+	#emit PUSH.S           0xFFFFFFF8          // 41
+	#emit PUSH.C           0                   // 43
+	#emit LCTRL            4                   // 45
+	#emit PUSH.pri                             // 46
+	#emit PUSH.S           0xFFFFFFF4          // 48
+	#emit PUSH.C           20                  // 50
+	#emit SYSREQ.C         memcpy              // 52
+	#emit LCTRL            5                   // 54
+	#emit SCTRL            4                   // 56
+	#emit LOAD.pri         I@                  // 58
+	#emit RETN                                 // 59
 	__COMPILER_NAKED
 }
 
@@ -874,7 +875,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 			@emit SCTRL            4
 		}
 		// Jump to `Callback_Call_restore_stack:` to perform common cleanup.
-		@emit JUMP             YSI_g_sCallbackCallAddress + 38 * cellbytes
+		@emit JUMP             YSI_g_sCallbackCallAddress + 37 * cellbytes
 	}
 }
 
@@ -983,9 +984,7 @@ public Inline_MaybeFree_(ResolvedAlloc:a)
 	free(Malloc_Reconcile(a));
 }
 
-#define Inline_StoreInlineStack Inline_UI_
-
-stock Inline_StoreInlineStack(const func, &ret)
+stock Inline_UI_(const func, &ret)
 {
 	// We use `&ret` instead of `return` so that we can keep the tags correct.  This also passes an
 	// address that we know is the bottom of the part of the stack that we need to save for the
@@ -1004,10 +1003,30 @@ stock Inline_StoreInlineStack(const func, &ret)
 //		ret[2] = GetCurrentFramePreviousFrame(),
 //		ret;
 	// So it turns out - PAWN HAS DESTRUCTORS!  Why did I not know this?  And does it actually help
-	// me at all?
+	// me at all?  No: 
+	new
+		frm = GetCurrentFramePreviousFrame(),
+		ptr = ref(ret);
+	while (ptr > frm)
+	{
+		// Find the frame the pointer is in.  This should just be the previous
+		// frame, but we can't really guarantee that.
+		frm = GetFramePreviousFrame(frm);
+	}
+	// Get the space required for the closure.
+	new
+		closure = frm - ptr + GetFrameHeaderSize(frm) + GetFrameParameterSize(frm),
+		Alloc:data = malloc(closure + )
+	
+	
+	ret = _:Malloc_Resolve
 }
 
-#undef Inline_StoreInlineStack
+stock Inline_UP_(const func[])
+{
+	// Convert a function name to a pointer.
+	I@ = GetPublicAddressFromName(func);
+}
 
 #endinput
 
