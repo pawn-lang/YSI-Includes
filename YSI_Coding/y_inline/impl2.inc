@@ -256,8 +256,8 @@ public OnCodeInit()
 		hdr[AMX_HDR];
 	GetAmxHeader(hdr);
 	YSI_g_sJumpOffset = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
-	#emit CONST.pri    Callback_CallHandler
-	#emit STOR.pri     YSI_g_sCallbackCallAddress
+	#emit CONST.pri        Callback_CallHandler
+	#emit STOR.pri         YSI_g_sCallbackCallAddress
 	YSI_g_sCallbackCallAddress += YSI_g_sJumpOffset;
 	
 	new scanner[CodeScanner];
@@ -271,25 +271,25 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm1a, &Inline_FoundStart);
 	CodeScanMatcherData(csm1a, ref(data));
 	CodeScanMatcherPattern(csm1a,
-		OP(STACK,      -4)
-		OP(CONST_PRI,  ???)
+		OP(STACK,              -4)
+		OP(CONST_PRI,          ???)
 		OP(INVERT)
 		OP(INVERT)
 		OP(PUSH_PRI)
-		OP(PUSH_C,     4)
-		OP(CALL,       &ref)
-		OP(STOR_S_PRI, ???)
-		OP(STACK,      -4)
-		OP(LOAD_S_PRI, ???)
-		OP(STOR_S_PRI, ???)
-		OP(PUSH_C,     INLINE_PATTERN_4)
-		OP(PUSH_C,     INLINE_PATTERN_3)
-		OP(PUSH_C,     INLINE_PATTERN_2)
-		OP(PUSH_C,     INLINE_PATTERN_1)
-		OP(PUSH_C,     16)
-		OP(CALL,       &I@E)
-		OP(JZER,       ???)
-		OP(JUMP,       ???)
+		OP(PUSH_C,             4)
+		OP(CALL,               &ref)
+		OP(STOR_S_PRI,         ???)
+		OP(STACK,              -4)
+		OP(LOAD_S_PRI,         ???)
+		OP(STOR_S_PRI,         ???)
+		OP(PUSH_C,             INLINE_PATTERN_4)
+		OP(PUSH_C,             INLINE_PATTERN_3)
+		OP(PUSH_C,             INLINE_PATTERN_2)
+		OP(PUSH_C,             INLINE_PATTERN_1)
+		OP(PUSH_C,             16)
+		OP(CALL,               &I@E)
+		OP(JZER,               ???)
+		OP(JUMP,               ???)
 	);
 	CodeScanAddMatcher(scanner, csm1a);
 	
@@ -298,29 +298,29 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm1b, &Inline_FoundStart);
 	CodeScanMatcherData(csm1b, ref(data));
 	CodeScanMatcherPattern(csm1b,
-		OP(STACK,      -4)
-		OP(CONST_PRI,  ???)
+		OP(STACK,              -4)
+		OP(CONST_PRI,          ???)
 		OP(INVERT)
 		OP(INVERT)
 		OP(PUSH_PRI)
-		OP(PUSH_C,     4)
-		OP(CALL,       &ref)
-		OP(STOR_S_PRI, ???)
-		OP(STACK,      -4)
-		OP(LOAD_S_PRI, ???)
-		OP(STOR_S_PRI, ???)
-		OP(CONST_PRI,  INLINE_PATTERN_4)
+		OP(PUSH_C,             4)
+		OP(CALL,               &ref)
+		OP(STOR_S_PRI,         ???)
+		OP(STACK,              -4)
+		OP(LOAD_S_PRI,         ???)
+		OP(STOR_S_PRI,         ???)
+		OP(CONST_PRI,          INLINE_PATTERN_4)
 		OP(PUSH_PRI)
-		OP(CONST_PRI,  INLINE_PATTERN_3)
+		OP(CONST_PRI,          INLINE_PATTERN_3)
 		OP(PUSH_PRI)
-		OP(CONST_PRI,  INLINE_PATTERN_2)
+		OP(CONST_PRI,          INLINE_PATTERN_2)
 		OP(PUSH_PRI)
-		OP(CONST_PRI,  INLINE_PATTERN_1)
+		OP(CONST_PRI,          INLINE_PATTERN_1)
 		OP(PUSH_PRI)
-		OP(PUSH_C,     16)
-		OP(CALL,       &I@E)
-		OP(JZER,       ???)
-		OP(JUMP,       ???)
+		OP(PUSH_C,             16)
+		OP(CALL,               &I@E)
+		OP(JZER,               ???)
+		OP(JUMP,               ???)
 	);
 	CodeScanAddMatcher(scanner, csm1b);
 	
@@ -329,9 +329,9 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm2a, &Inline_FoundMid);
 	CodeScanMatcherData(csm2a, ref(data));
 	CodeScanMatcherPattern(csm2a,
-		OP(PUSH_C,     0)
-		OP(CALL,       &I@F)
-		OP(JZER,       ???)
+		OP(PUSH_C,             0)
+		OP(CALL,               &I@F)
+		OP(JZER,               ???)
 	);
 	CodeScanAddMatcher(scanner, csm2a);
 	
@@ -347,7 +347,7 @@ public OnCodeInit()
 	CodeScanMatcherData(csm3a, ref(data));
 	CodeScanMatcherPattern(csm3a,
 		OP(ZERO_PRI)
-		OP(HEAP,       4)
+		OP(HEAP,               4)
 		OP(STOR_I)
 		OP(PUSH_ALT)
 	);
@@ -358,7 +358,7 @@ public OnCodeInit()
 	CodeScanMatcherData(csm3b, ref(data));
 	CodeScanMatcherPattern(csm3b,
 		OP(ZERO_PRI)
-		OP(HEAP,       4)
+		OP(HEAP,               4)
 		OP(STOR_I)
 		OP(MOVE_PRI)
 		OP(PUSH_PRI)
@@ -390,8 +390,8 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm4a, &Inline_FoundRef);
 	CodeScanMatcherData(csm4a, ref(data));
 	CodeScanMatcherPattern(csm4a,
-		OP(CONST_PRI,  ???)
-		OP(HEAP,       4)
+		OP(CONST_PRI,          ???)
+		OP(HEAP,               4)
 		OP(STOR_I)
 		OP(PUSH_ALT)
 	);
@@ -401,8 +401,8 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm4b, &Inline_FoundRef);
 	CodeScanMatcherData(csm4b, ref(data));
 	CodeScanMatcherPattern(csm4b,
-		OP(CONST_PRI,  ???)
-		OP(HEAP,       4)
+		OP(CONST_PRI,          ???)
+		OP(HEAP,               4)
 		OP(STOR_I)
 		OP(MOVE_PRI)
 		OP(PUSH_PRI)
@@ -414,9 +414,9 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm5a, &Inline_FoundEnd);
 	CodeScanMatcherData(csm5a, ref(data));
 	CodeScanMatcherPattern(csm5a,
-		OP(CALL,       &I@L)
-		OP(HEAP,       ???)
-		OP(JZER,       ???)
+		OP(CALL,               &I@L)
+		OP(HEAP,               ???)
+		OP(JZER,               ???)
 	);
 	CodeScanAddMatcher(scanner, csm5a);
 	
@@ -425,9 +425,9 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm6a, &Inline_FoundConst);
 	CodeScanMatcherData(csm6a, ref(data));
 	CodeScanMatcherPattern(csm6a,
-		OP(PUSH_C,     ???)
-		OP(PUSH_C,     4)
-		OP(CALL,       &I@K)
+		OP(PUSH_C,             ???)
+		OP(PUSH_C,             4)
+		OP(CALL,               &I@K)
 	);
 	CodeScanAddMatcher(scanner, csm6a);
 	
@@ -435,10 +435,10 @@ public OnCodeInit()
 	CodeScanMatcherInit(csm6b, &Inline_FoundConst);
 	CodeScanMatcherData(csm6b, ref(data));
 	CodeScanMatcherPattern(csm6b,
-		OP(CONST_PRI,  ???)
+		OP(CONST_PRI,          ???)
 		OP(PUSH_PRI)
-		OP(PUSH_C,     4)
-		OP(CALL,       &I@K)
+		OP(PUSH_C,             4)
+		OP(CALL,               &I@K)
 	);
 	CodeScanAddMatcher(scanner, csm6b);
 	
@@ -448,8 +448,8 @@ public OnCodeInit()
 	CodeScanMatcherPattern(csm6c,
 		OP(ZERO_PRI)
 		OP(PUSH_PRI)
-		OP(PUSH_C,     4)
-		OP(CALL,       &I@K)
+		OP(PUSH_C,             4)
+		OP(CALL,               &I@K)
 	);
 	CodeScanAddMatcher(scanner, csm6c);
 	
@@ -702,22 +702,22 @@ static stock Inline_GenerateLocalsCopy(ctx[AsmContext], parameters[], count)
 		{
 		case -1, 0:
 		{
-			@emit LREF.S.pri   input
+			@emit LREF.S.pri       input
 			@emit PUSH.pri
 		}
 		case cellmax:
 		{
-			@emit STACK        -(YSI_MAX_INLINE_STRING * cellbytes)
-			@emit STACK        0
-			@emit LOAD.S.pri   input
-			@emit MOVS         (YSI_MAX_INLINE_STRING * cellbytes)
+			@emit STACK            -(YSI_MAX_INLINE_STRING * cellbytes)
+			@emit STACK            0
+			@emit LOAD.S.pri       input
+			@emit MOVS             (YSI_MAX_INLINE_STRING * cellbytes)
 		}
 		default:
 		{
-			@emit STACK        -(parameters[i])
-			@emit STACK        0
-			@emit LOAD.S.pri   input
-			@emit MOVS         (parameters[i])
+			@emit STACK            -(parameters[i])
+			@emit STACK            0
+			@emit LOAD.S.pri       input
+			@emit MOVS             (parameters[i])
 		}
 		}
 		input += cellbytes;
@@ -773,7 +773,7 @@ static stock Inline_GenerateLocalsStore(ctx[AsmContext], parameters[], count)
 		case -1:
 		{
 			if (accumulate)
-				@emit STACK        accumulate
+				@emit STACK            accumulate
 			accumulate = 0;
 			@emit POP.pri
 			@emit SREF.S.pri       count * cellbytes + 12
@@ -830,7 +830,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 		if (needStore)
 		{
 			// Back up `pri` somewhere for returning later.
-			@emit STOR.pri     ref(I@)
+			@emit STOR.pri         ref(I@)
 			// The last stack location is still in `alt` from removing
 			// everything from the stack.  This actually exploits the fact that
 			// the value in `alt` after `STACK` is the value BEFORE the
@@ -841,27 +841,27 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 			//   
 			// This is the first case I've ever found where it is useful!
 			@emit MOVE.pri
-			@emit SCTRL        4
+			@emit SCTRL            4
 			accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
-			@emit STACK        accumulate + locals - inlineParams
+			@emit STACK            accumulate + locals - inlineParams
 			// Restore the return value.
-			@emit LOAD.pri     ref(I@)
+			@emit LOAD.pri         ref(I@)
 		}
 		// If we are here, we are in the context of `Callback_Call`, with no
 		// locals on the stack.
-		@emit STACK        12
+		@emit STACK            12
 		@emit RETN
 	}
 	else
 	{
-		@emit STOR.pri     ref(I@)
+		@emit STOR.pri         ref(I@)
 		if (needStore)
 		{
 			@emit MOVE.pri
-			@emit SCTRL        4
+			@emit SCTRL            4
 			accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
 			if (accumulate)
-				@emit STACK        accumulate
+				@emit STACK            accumulate
 		}
 		else
 		{
@@ -870,10 +870,11 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 			// couldn't resist).  This will set us up nicely for the jump in to
 			// `Callback_CallHandler` for copying the stack back out again.
 			@emit MOVE.pri
-			@emit ADD.C        inlineParams
-			@emit SCTRL        4
+			@emit ADD.C            inlineParams
+			@emit SCTRL            4
 		}
-		@emit JUMP         YSI_g_sCallbackCallAddress + 38 * cellbytes // Callback_Call_restore_stack
+		// Jump to `Callback_Call_restore_stack:` to perform common cleanup.
+		@emit JUMP             YSI_g_sCallbackCallAddress + 38 * cellbytes
 	}
 }
 
