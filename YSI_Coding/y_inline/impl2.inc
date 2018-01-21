@@ -649,16 +649,16 @@ static stock Callback_CallHandler(...)
 	#emit SCTRL            4                   // 15
 	// Grow the stack.
 	// Call memcpy (put the native's parameters on the stack beyond `dest`).
-	#emit PUSH.S           0xFFFFFFF4          // 17
-	#emit PUSH.S           0xFFFFFFF4          // 19
+	#emit PUSH.S           0xFFFFFFF8          // 17
+	#emit PUSH.S           0xFFFFFFF8          // 19
 	#emit PUSH.C           0                   // 21
-	#emit PUSH.S           0xFFFFFFF8          // 23
+	#emit PUSH.S           0xFFFFFFFC          // 23
 	#emit PUSH.pri                             // 24
 	#emit PUSH.C           20                  // 26
 	#emit SYSREQ.C         memcpy              // 28
 	#emit STACK            24                  // 30
 	// "jump" in to the code.
-	#emit LOAD.S.pri       0xFFFFFFF8          // 32
+	#emit LOAD.S.pri       0xFFFFFFFC          // 32
 	#emit ADD.C            0xFFFFFFFC          // 34
 	#emit LOAD.I                               // 35
 	#emit SCTRL            6                   // 37
@@ -669,12 +669,12 @@ static stock Callback_CallHandler(...)
 	#emit NOP                                  // 39
 	// Padding to account for debug builds.
 	// If the code decides to jump back to here, save the stack out again.
-	#emit PUSH.S           0xFFFFFFF4          // 41
-	#emit PUSH.S           0xFFFFFFF4          // 43
+	#emit PUSH.S           0xFFFFFFF8          // 41
+	#emit PUSH.S           0xFFFFFFF8          // 43
 	#emit PUSH.C           0                   // 45
 	#emit LCTRL            4                   // 47
 	#emit PUSH.pri                             // 48
-	#emit PUSH.S           0xFFFFFFF8          // 50
+	#emit PUSH.S           0xFFFFFFFC          // 50
 	#emit PUSH.C           20                  // 52
 	#emit SYSREQ.C         memcpy              // 54
 	#emit LCTRL            5                   // 56
