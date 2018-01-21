@@ -78,7 +78,7 @@ const INLINE_PATTERN_2 = _C<_Y_L>;
 const INLINE_PATTERN_3 = _C<ess_>;
 const INLINE_PATTERN_4 = _C<Cole>;
 
-forward Inline_MaybeFree_(ResolvedAlloc:a);
+forward Callback_Release(ResolvedAlloc:a);
 
 #define CALL@I@E I@E(0, 0, 0, 0)
 #define CALL@I@F I@F()
@@ -243,10 +243,12 @@ static stock Inline_StoreData(data[E_INLINE_DATA])
 	// pointer to the next inline in the linked list of names, and something else?
 	new
 		header = data[E_INLINE_DATA_NAME];
-	// Add a pointer to the function itself.
-	AMX_Write(header, data[E_INLINE_DATA_NAME]);
+	// Add a pointer to the function name.
+	AMX_Write(header + cellbytes * 0, header + cellbytes * 3);
+	// Add a pointer to the function itself (after `JUMP`).
+	AMX_Write(header + cellbytes * 1, data[E_INLINE_DATA_START] + 6 * cellbytes);
 	// Add this to the list.
-	AMX_Write(header + cellbytes, YSI_g_sInlineLinkedList);
+	AMX_Write(header + cellbytes * 2, YSI_g_sInlineLinkedList);
 	YSI_g_sInlineLinkedList = header;
 }
 
@@ -537,9 +539,8 @@ Note:
 #define INLINE_NUM(%9,%9,%2)%8$(%0)%1(%3)%4# %8$(%0,%2)%1(0,%3)%4i#
 #define INLINE_REF(%9,%9,%2)%8$(%0)%1(%3)%4# %8$(%0,%2)%1(-1,%3)%4v#
 
-#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#..#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
-
-#define INLINE_NUL(%9)%8$()%1()%4# %8$#..#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
+#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#...#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
+#define INLINE_NUL(%9)%8$()%1()%4# %8$#...#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
 
 #define I@O$
 
@@ -624,6 +625,11 @@ __COMPILER_STATIC_ENUM E_INLINE_CALL
 	/* 5 */ E_INLINE_CALL_SIZE,
 	/* 6 */ E_INLINE_CALL_FUNCTION,
 	/* 7 */ ResolvedAlloc:E_INLINE_CALL_PARAMS // At least the frame header.
+}
+
+static stock Callback_Claim(func[E_INLINE_CALL])
+{
+	KillTimer(func[E_INLINE_CALL_TIMER]);
 }
 
 static stock Callback_CallHandler(...)
@@ -978,7 +984,7 @@ static stock Inline_DoCodeGen(scanner[CodeScanner], data[E_INLINE_DATA])
 	AsmEmitPadding(ctx);
 }
 
-public Inline_MaybeFree_(ResolvedAlloc:a)
+public Callback_Release(ResolvedAlloc:a)
 {
 	// `Callback_Get` kills the timer (maybe repeatedly, but that's fine).
 	free(Malloc_Reconcile(a));
@@ -1015,12 +1021,25 @@ stock Inline_UI_(const func, &ret)
 	}
 	// Get the space required for the closure.
 	new
-		closure = frm - ptr + GetFrameHeaderSize(frm) + GetFrameParameterSize(frm),
-		Alloc:data = malloc(closure / cellbytes + 7);
-	
-	
-	
-	ret = _:Malloc_Resolve
+		size = frm - ptr + GetFrameHeaderSize(frm) + GetFrameParameterSize(frm),
+		Alloc:closure = malloc(size / cellbytes + 7),
+		ResolvedAlloc:ra = Malloc_Resolve(closure);
+	// E_INLINE_CALL_NULL
+	mset(closure, 0, 0);
+	// E_INLINE_CALL_HANDLER
+	mset(closure, 1, _:addressof (Callback_CallHandler<x>));
+	// E_INLINE_CALL_CLAIM
+	mset(closure, 2, _:addressof (Callback_Claim<a>));
+	// E_INLINE_CALL_RELEASE
+	mset(closure, 3, _:addressof (Callback_Release<tResolvedAlloc:>));    
+	// E_INLINE_CALL_TIMER
+	mset(closure, 4, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
+	// E_INLINE_CALL_SIZE
+	mset(closure, 5, size);
+	// E_INLINE_CALL_FUNCTION
+	mset(closure, 5, AMX_Read(func + cellbytes));
+	rawMemcpy(_:ra + 7 * cellbytes, ptr, size);
+	ret = Indirect_Ptr(ra);
 }
 
 stock Inline_UP_(const func[])
