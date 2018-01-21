@@ -90,6 +90,9 @@ Optional plugins:
 
 // This makes hex and binary format specifiers display correctly with negative
 // numbers in all cases (e.g. %5x etc).
+#if YSI_MAX_STRING != 144
+	#error Please update all explicit YSI_MAX_STRING uses.
+#endif
 #define Y_RENDER_FIX_NEGATIVE(%0:%1) if(width>%1)arg=(ch&_:e_COMPRESS_FORMAT_DATA_LEFT)?((ch&_:e_COMPRESS_FORMAT_DATA_ZERO)?format(ts,144,"%"#%0"%0-*"#%0,arg>>>32/%1,width-(%1-1),arg&(1<<32/%1)-1):format(ts,144,"%"#%0"%-*"#%0,arg>>>32/%1,width-(%1-1),arg&(1<<32/%1)-1)):(ch&_:e_COMPRESS_FORMAT_DATA_ZERO)?format(ts,144,"%0*"#%0"%"#%0,width-1,arg>>>32/%1,arg&(1<<32/%1)-1):format(ts,144,"%*"#%0"%"#%0,width-1,arg>>>32/%1,arg&(1<<32/%1)-1);else format(ts,144,"%"#%0"%"#%0,arg>>>32/%1,arg&(1<<32/%1)-1)
 
 // Try add a string to the current output.  This needs modifying to reset the
@@ -178,6 +181,7 @@ stock _Format_SetStyleData(master, index, style[E_STYLE_DATA], label[E_3D_DATA])
 			// Now that we know the style, we can store only the exact style.
 			YSI_g_sTempStyle[E_STYLE_DATA_TYPE] = ((style[E_STYLE_DATA_TYPE] & e_STYLE_TYPE_MASK) >>> e_STYLE_TYPE_SHIFT) - e_STYLE_TYPE:1;
 			YSI_g_sJustOne = true;
+			// THIS IS NOT `YSI_MAX_STRING`.  Don't change it for that reason.
 			return 144;
 		}
 		case e_STYLE_TYPE_CLIENT:
@@ -815,7 +819,7 @@ Format_Render_start:
 		scSpecifier[8],
 		// =====================================================================
 		//  UPDATE Y_RENDER_FIX_NEGATIVE MACRO ON CHANGE!!!!!!!
-		ts[144],
+		ts[YSI_MAX_STRING],
 		//  Max handleable input string length is 128 (hopefully sufficient).
 		// =====================================================================
 		func[32],
