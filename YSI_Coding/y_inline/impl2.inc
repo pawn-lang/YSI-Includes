@@ -250,7 +250,6 @@ static stock Inline_StoreData(data[E_INLINE_DATA])
 	// Add this to the list.
 	AMX_Write(header + cellbytes * 2, YSI_g_sInlineLinkedList);
 	YSI_g_sInlineLinkedList = header;
-	printf("%08x", data[E_INLINE_DATA_START] + 6 * cellbytes);
 }
 
 public OnCodeInit()
