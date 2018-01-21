@@ -92,11 +92,8 @@ forward Inline_MaybeFree_(ResolvedAlloc:a);
 #define INLINE_DESCRIPTOR_REF (-1)
 #define INLINE_DESCRIPTOR_STR (cellmax)
 
-enum E_CALLBACK_DATA
-{
-	// Now only one item.
-	ResolvedFunc:E_CALLBACK_DATA_ALLOC
-}
+// Now only one item to pretend to look like an array.
+#define E_CALLBACK_DATA (1)
 
 enum E_INLINE_DATA
 {
@@ -131,7 +128,7 @@ static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	P:5("Inline_FoundStart OK");
 	data[E_INLINE_DATA_LOCALS] = CodeScanGetMatchStack(scanner);
 	data[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
-	data[E_INLINE_DATA_BEYOND] = CodeScanGetMatchHole(scanner, 5);
+	data[E_INLINE_DATA_BEYOND] = CodeScanGetMatchHole(scanner, 4);
 	data[E_INLINE_DATA_NAME] = CodeScanGetMatchHole(scanner, 0);
 	data[E_INLINE_DATA_STATE] = 1;
 	data[E_INLINE_DATA_PARAMETER_COUNT] = 0;
@@ -280,8 +277,11 @@ public OnCodeInit()
 		OP(CALL,       &ref)
 		OP(STOR_S_PRI, ???)
 		OP(STACK,      -4)
-		OP(LOAD_S_PRI, ???)
-		OP(STOR_S_PRI, ???)
+		//OP(LOAD_S_PRI, ???)
+		OP(ZERO_PRI)
+		OP(ADDR_ALT,   ???)
+		OP(FILL,       4)
+		//OP(STOR_S_PRI, ???)
 		OP(PUSH_C,     INLINE_PATTERN_4)
 		OP(PUSH_C,     INLINE_PATTERN_3)
 		OP(PUSH_C,     INLINE_PATTERN_2)
@@ -307,8 +307,11 @@ public OnCodeInit()
 		OP(CALL,       &ref)
 		OP(STOR_S_PRI, ???)
 		OP(STACK,      -4)
-		OP(LOAD_S_PRI, ???)
-		OP(STOR_S_PRI, ???)
+		//OP(LOAD_S_PRI, ???)
+		OP(ZERO_PRI)
+		OP(ADDR_ALT,   ???)
+		OP(FILL,       4)
+		//OP(STOR_S_PRI, ???)
 		OP(CONST_PRI,  INLINE_PATTERN_4)
 		OP(PUSH_PRI)
 		OP(CONST_PRI,  INLINE_PATTERN_3)
@@ -537,9 +540,9 @@ Note:
 #define INLINE_NUM(%9,%9,%2)%8$(%0)%1(%3)%4# %8$(%0,%2)%1(0,%3)%4i#
 #define INLINE_REF(%9,%9,%2)%8$(%0)%1(%3)%4# %8$(%0,%2)%1(-1,%3)%4v#
 
-#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#..#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
+#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#..#%9),F@_@%4:%9[1];if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
 
-#define INLINE_NUL(%9)%8$()%1()%4# %8$#..#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
+#define INLINE_NUL(%9)%8$()%1()%4# %8$#..#%9),F@_@%4:%9[1];if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
 
 #define I@O$
 
