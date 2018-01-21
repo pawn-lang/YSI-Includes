@@ -1016,7 +1016,8 @@ stock Inline_UI_(const func, &ret)
 	// Get the space required for the closure.
 	new
 		closure = frm - ptr + GetFrameHeaderSize(frm) + GetFrameParameterSize(frm),
-		Alloc:data = malloc(closure + )
+		Alloc:data = malloc(closure / cellbytes + 7);
+	
 	
 	
 	ret = _:Malloc_Resolve
