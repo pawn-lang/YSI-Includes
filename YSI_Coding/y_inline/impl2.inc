@@ -250,6 +250,7 @@ static stock Inline_StoreData(data[E_INLINE_DATA])
 	// Add this to the list.
 	AMX_Write(header + cellbytes * 2, YSI_g_sInlineLinkedList);
 	YSI_g_sInlineLinkedList = header;
+	printf("%08x", data[E_INLINE_DATA_START] + 6 * cellbytes);
 }
 
 public OnCodeInit()
@@ -637,48 +638,49 @@ static stock Callback_CallHandler(...)
 	// This is called by `@`, and given the above enum in `INDIRECTION_DATA`.
 	// Get the size, and update `INDIRECTION_DATA` to point to the data.
 	#emit LOAD.alt         INDIRECTION_DATA    // 2
-	#emit CONST.pri        5                   // 4
-	#emit LIDX                                 // 5
+	#emit MOVE.pri                             // 3
+	#emit ADD.C            28                  // 5
 	#emit PUSH.pri                             // 6
-	#emit SHL.C.pri        2                   // 8
-	#emit PUSH.pri                             // 9
-	#emit XCHG                                 // 10
-	#emit ADD.C            28                  // 12
-	#emit PUSH.pri                             // 13
+	#emit CONST.pri        5                   // 8
+	#emit LIDX                                 // 9
+	#emit PUSH.pri                             // 10
+	#emit STACK            0                   // 12
+	#emit SUB.alt                              // 13
+	#emit SCTRL            4                   // 15
 	// Grow the stack.
 	// Call memcpy (put the native's parameters on the stack beyond `dest`).
-	#emit PUSH.S           0xFFFFFFFC          // 15
-	#emit PUSH.S           0xFFFFFFF8          // 17
-	#emit PUSH.C           0                   // 19
-	#emit PUSH.S           0xFFFFFFF4          // 21
-	#emit PUSH.pri                             // 22
-	#emit PUSH.C           20                  // 24
-	#emit SYSREQ.C         memcpy              // 26
-	#emit STACK            24                  // 28
+	#emit PUSH.S           0xFFFFFFF4          // 17
+	#emit PUSH.S           0xFFFFFFF4          // 19
+	#emit PUSH.C           0                   // 21
+	#emit PUSH.S           0xFFFFFFF8          // 23
+	#emit PUSH.pri                             // 24
+	#emit PUSH.C           20                  // 26
+	#emit SYSREQ.C         memcpy              // 28
+	#emit STACK            24                  // 30
 	// "jump" in to the code.
-	#emit LOAD.S.pri       0xFFFFFFF4          // 30
-	#emit ADD.C            0xFFFFFFFC          // 32
-	#emit LOAD.I                               // 33
-	#emit SCTRL            6                   // 35
+	#emit LOAD.S.pri       0xFFFFFFF8          // 32
+	#emit ADD.C            0xFFFFFFFC          // 34
+	#emit LOAD.I                               // 35
+	#emit SCTRL            6                   // 37
 	
 //Callback_Call_restore_stack:
 	// The stack hasn't been restored yet, and we need it.
-	#emit NOP                                  // 36
-	#emit NOP                                  // 37
+	#emit NOP                                  // 38
+	#emit NOP                                  // 39
 	// Padding to account for debug builds.
 	// If the code decides to jump back to here, save the stack out again.
-	#emit PUSH.S           0xFFFFFFFC          // 39
-	#emit PUSH.S           0xFFFFFFF8          // 41
-	#emit PUSH.C           0                   // 43
-	#emit LCTRL            4                   // 45
-	#emit PUSH.pri                             // 46
-	#emit PUSH.S           0xFFFFFFF4          // 48
-	#emit PUSH.C           20                  // 50
-	#emit SYSREQ.C         memcpy              // 52
-	#emit LCTRL            5                   // 54
-	#emit SCTRL            4                   // 56
-	#emit LOAD.pri         I@                  // 58
-	#emit RETN                                 // 59
+	#emit PUSH.S           0xFFFFFFF4          // 41
+	#emit PUSH.S           0xFFFFFFF4          // 43
+	#emit PUSH.C           0                   // 45
+	#emit LCTRL            4                   // 47
+	#emit PUSH.pri                             // 48
+	#emit PUSH.S           0xFFFFFFF8          // 50
+	#emit PUSH.C           20                  // 52
+	#emit SYSREQ.C         memcpy              // 54
+	#emit LCTRL            5                   // 56
+	#emit SCTRL            4                   // 58
+	#emit LOAD.pri         I@                  // 60
+	#emit RETN                                 // 61
 	__COMPILER_NAKED
 }
 
@@ -881,7 +883,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 			@emit SCTRL            4
 		}
 		// Jump to `Callback_Call_restore_stack:` to perform common cleanup.
-		@emit JUMP             YSI_g_sCallbackCallAddress + 37 * cellbytes
+		@emit JUMP             YSI_g_sCallbackCallAddress + 39 * cellbytes
 	}
 }
 
@@ -1037,7 +1039,7 @@ stock Inline_UI_(const func, &ret)
 	// E_INLINE_CALL_SIZE
 	mset(closure, 5, size);
 	// E_INLINE_CALL_FUNCTION
-	mset(closure, 5, AMX_Read(func + cellbytes));
+	mset(closure, 6, AMX_Read(func + cellbytes));
 	rawMemcpy(_:ra + 7 * cellbytes, ptr, size);
 	ret = Indirect_Ptr(ra);
 }
