@@ -1482,26 +1482,16 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
  * </summary>
  * <param name="dest">Destination address.</param>
  * <param name="src">Source data.</param>
- * <param name="bytes">Number of bytes to copy.</param>
+ * <param name="numbytes">Number of bytes to copy.</param>
  * <remarks>
- *  Like memcpy, but takes addresses instead of arrays.  Also far less secure.
+ *  Like memcpy, but takes addresses instead of arrays.  Also far less secure
+ *  because it doesn't check the destination size - it just assumes it is large
+ *  enough.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock rawMemcpy(dest, src, bytes)
-{
-	// Don't use "MOVS" as these blocks might overlap.
-	#emit PUSH.S     bytes
-	#emit PUSH.S     bytes
-	#emit PUSH.C     0
-	#emit PUSH.S     src
-	#emit PUSH.S     dest
-	#emit PUSH.C     20
-	#emit SYSREQ.C   memcpy
-	#emit STACK      24
-	#emit RETN
-	__COMPILER_NAKED
-}
+native rawMemcpy_(dest, src, index, numbytes, maxlength) = memcpy;
+#define rawMemcpy(%0,%1,%2) rawMemcpy_((%0),(%1),0,(%2),(cellmax>>>2))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="arr">Array or address to set to a value.</param>
