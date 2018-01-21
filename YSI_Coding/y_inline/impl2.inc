@@ -576,8 +576,9 @@ Note:
 #define @In:%0(%1)),%2$) %0),%2$),.bExtra=true,.extra=%1)
 
 // Move the callback parameter inside the brackets.
-#define Inline_UI_(),%0) Inline_UI_(_@%0,_:%0),%0)
-#define Inline_UP_(),%0) Inline_UP_(_:@Ir:@Is:@In:#%0),F@_@:Q@ I@O$)
+#define Inline_UI_(),%0) Inline_UI_(_@%0,_:%0[0]),%0[0])
+#define Inline_UP_(),%0) 0,F@_@:Q@ I@O$)
+
 
 #if 0
 
