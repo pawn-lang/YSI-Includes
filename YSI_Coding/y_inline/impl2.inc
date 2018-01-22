@@ -998,19 +998,6 @@ stock Inline_UI_(const func, &ret)
 	// closure.  The bottom two variables in the stack must be preserved, since they store
 	// information about the inline function (name and address), which may be required even in the
 	// inline if it is called recursively.
-//	assert(numargs() == 1);
-//	new
-//		ret[3];
-//	return
-//		// Get the handler.
-//		ret[0] = 0,
-//		// Get the first item.
-//		ret[1] = getarg(1),
-//		// Get the parent frame.
-//		ret[2] = GetCurrentFramePreviousFrame(),
-//		ret;
-	// So it turns out - PAWN HAS DESTRUCTORS!  Why did I not know this?  And does it actually help
-	// me at all?  No: 
 	new
 		frm = GetCurrentFramePreviousFrame(),
 		ptr = ref(ret);
