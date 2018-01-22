@@ -526,10 +526,8 @@ stock Iter_GetMulti_Internal(array[], trueSize, size, value)
  * <param name="array">iterator data.</param>
  * <param name="size">Size of base array.</param>
  * <param name="entries">Size of the count data.</param>
- * <param name="count">Number of items in the iterator.</param>
- * <param name="elems">Number of iterator elements.</param>
  * <param name="lst">Last valid index in the iterator array.</param>
- * <param name="start">Optional single multi-iterator to clear.</param>
+ * <param name="">Optional single multi-iterator to clear.</param>
  * <remarks>
  *  Resets an iterator.
  * </remarks>
@@ -548,6 +546,18 @@ stock Iter_Clear_InternalC(array[], size, entries, lst, ...)
 		setarg(4, entries, 0);
 	}
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="array">iterator data.</param>
+ * <param name="size">Size of base array.</param>
+ * <param name="entries">Size of the count data.</param>
+ * <param name="counts">Number of items in the iterator.</param>
+ * <param name="elems">Number of iterator elements.</param>
+ * <param name="start">Optional single multi-iterator to clear.</param>
+ * <remarks>
+ *  Resets an iterator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock Iter_Clear_InternalD(array[], size, entries, elems, counts[], start)
 {
