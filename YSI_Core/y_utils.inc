@@ -368,8 +368,8 @@ P:D(bool:VALID_PLAYERID(playerid));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:IS_IN_RANGE(lower, value, upper));
-#define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
+	P:D(bool:IS_IN_RANGE(value, lower, upper));
+	#define IS_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))<((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">The number to compare.</param>
@@ -386,7 +386,7 @@ P:D(bool:IS_IN_RANGE(lower, value, upper));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(bool:NOT_IN_RANGE(lower, value, upper));
+P:D(bool:NOT_IN_RANGE(value, lower, upper));
 #define NOT_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
 
 /*-------------------------------------------------------------------------*//**
