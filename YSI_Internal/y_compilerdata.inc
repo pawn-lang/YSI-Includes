@@ -217,6 +217,11 @@ static stock __CompilerSecondPass() {}
 #if ((__Pawn & 0x0F) >= 0x0A) || ((__Pawn & 0xF0) >= 0xA0)
 	#define __COMPILER_MODIFIED (1)
 	#define __COMPILER_OFFICIAL (0)
+	#if defined __PawnBuild
+		#if __PawnBuild >= 4
+			#pragma option -(+
+		#endif
+	#endif
 #else
 	#define __COMPILER_MODIFIED (0)
 	#define __COMPILER_OFFICIAL (1)
