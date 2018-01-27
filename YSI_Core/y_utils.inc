@@ -419,27 +419,32 @@ P:D(floordiv(numerator, denominator));
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to check if is null.</param>
+ * <remarks>
+ *  Uses a new shorter and branchless method, which also works with offsets so
+ *  this is valid:
+ *
+ *  <code>
+ *    new str[32]; isnull(str[5]);
+ *  </code>
+ * </remarks>
  *//*------------------------------------------------------------------------**/
 
 P:D(bool:isnull(str[]));
-#define isnull(%1) \
-	((%1[0] == 0) || (%1[0] == 1 && %1[1] == 0))
+#define isnull(%1) ((%0)[(%0)[0]=='\1']=='\0')
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to check if is odd.</param>
  *//*------------------------------------------------------------------------**/
 
 P:D(bool:isodd(value));
-#define isodd(%1) \
-	((%1) & 1)
+#define isodd(%1) ((%1)&1)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to check if is even.</param>
  *//*------------------------------------------------------------------------**/
 
 P:D(bool:iseven(value));
-#define iseven(%1) \
-	(!isodd(%1))
+#define iseven(%1) (!isodd(%1))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="dest">Destination string.</param>
@@ -448,8 +453,7 @@ P:D(bool:iseven(value));
  *//*------------------------------------------------------------------------**/
 
 P:D(strcpy(dest[], const src[], len = sizeof (dest)));
-#define strcpy(%0,%1) \
-	strcat((%0[0] = '\0', %0), %1)
+#define strcpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to convert.</param>
