@@ -23,6 +23,29 @@
 // Note that this is all optional.  Not doing so will continue to work, but
 // give warnings.
 
+__COMPILER_STATIC_ENUM E_INLINE_CALL
+{
+	/* 0 */ E_INLINE_CALL_NULL,
+	/* 1 */ E_INLINE_CALL_HANDLER,
+	/* 2 */ E_INLINE_CALL_CLAIM,
+	/* 3 */ E_INLINE_CALL_RELEASE,
+	/* 4 */ E_INLINE_CALL_TIMER, // To release unneeded inlines.
+	/* 5 */ E_INLINE_CALL_SIZE,
+	/* 6 */ E_INLINE_CALL_FUNCTION,
+	/* 7 */ ResolvedAlloc:E_INLINE_CALL_PARAMS // At least the frame header.
+}
+
+__COMPILER_STATIC_ENUM E_PUBLIC_CALL
+{
+	/*  0 */ E_PUBLIC_CALL_NULL,
+	/*  1 */ E_PUBLIC_CALL_HANDLER,
+	/*  2 */ E_PUBLIC_CALL_CLAIM,
+	/*  3 */ E_PUBLIC_CALL_RELEASE,
+	/*  4 */ E_PUBLIC_CALL_TIMER, // To release unneeded remotes.
+	/*  5 */ E_PUBLIC_CALL_SPECIFIER[32],
+	/* 37 */ E_PUBLIC_CALL_FUNCTION[32]
+}
+
 #if 0
 
 // This:
@@ -95,7 +118,7 @@ forward Callback_Release(ResolvedAlloc:a);
 enum E_CALLBACK_DATA
 {
 	// Now only one item.
-	ResolvedFunc:E_CALLBACK_DATA_ALLOC
+	E_CALLBACK_DATA_ALLOC
 }
 
 enum E_INLINE_DATA
@@ -505,16 +528,6 @@ Note:
 
 */
 
-
-
-
-
-
-
-
-
-
-
 //#define LAMBDA_i<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0|||0,|||<%9>{%0}(%1)%8;
 //#define LAMBDA_ii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1|||0,0,|||<%9>{%0}(%1)%8;
 //#define LAMBDA_iii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2|||0,0,0,|||<%9>{%0}(%1)%8;
@@ -553,8 +566,6 @@ Note:
 #define usinginline (@Ik:@Il:I@O$Inline_UI_())
 #define usingresolved // Do nothing.
 
-
-
 // Detect a `using` parameter that is not the last parameter.
 #define @Ik:%9$%0)%1, %0,%1),
 
@@ -579,15 +590,6 @@ Note:
 #define Inline_UI_(),%0) Inline_UI_(_@%0,_:%0),%0)
 #define Inline_UP_(),%0) Inline_UP_(_:@Ir:@Is:@In:#%0),F@_@:I@ I@O$)
 
-#if 0
-
-MyFunc(funcptr<>)
-{
-	
-}
-
-#endif
-
 stock I@E(a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE_PATTERN_3, d = INLINE_PATTERN_4)
 {
 	#pragma unused a, b, c, d
@@ -611,26 +613,218 @@ stock I@K(n)
 }
 
 // Old API.
-#define Callback_Call(%0,%1) Indirect_Call(%0[0], %0[1], %1)
-//#define Callback_Get(%0,%1) Indirect_Call(%0[0], %0[1], %1)
-//#define Callback_Release(%0,%1) Indirect_Call(%0[0], %0[1], %1)
 
-__COMPILER_STATIC_ENUM E_INLINE_CALL
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Callback to find by name.</param>
+ * <param name="ret">Where to store the pointer.</param>
+ * <param name="expect">What parameters the function takes.</param>
+ * <param name="remote">Is this function called on one or all scripts?</param>
+ * <remarks>
+ *  Looks up the callback by name.  If the name has the correct data embedded
+ *  within it that's great and we use that directly.  Otherwise this function
+ *  loops backwards over the callbacks currently in scope (mostly) to the start
+ *  of the parent function.  If a match is still not found this looks for a
+ *  public function of the same name.  If that isn't found either it gives up.
+ *
+ *  The new "remote" parameter returns instantly with a remote public function
+ *  stub, and no stored data.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#pragma deprecated
+//stock bool:Callback_Get(name[], ret[E_CALLBACK_DATA], expect[] = "", bool:remote = false)
+stock bool:Callback_Get(...)
 {
-	/* 0 */ E_INLINE_CALL_NULL,
-	/* 1 */ E_INLINE_CALL_HANDLER,
-	/* 2 */ E_INLINE_CALL_CLAIM,
-	/* 3 */ E_INLINE_CALL_RELEASE,
-	/* 4 */ E_INLINE_CALL_TIMER, // To release unneeded inlines.
-	/* 5 */ E_INLINE_CALL_SIZE,
-	/* 6 */ E_INLINE_CALL_FUNCTION,
-	/* 7 */ ResolvedAlloc:E_INLINE_CALL_PARAMS // At least the frame header.
+	// Construct the old API arguments from the new prototype.  The new
+	// prototype can take both old-style strings and new-style resolved
+	// callbacks from `using inline`.
+	new
+		numArgs = numargs(),
+		name[32],
+		ret,
+		expect[32] = "",
+		bool:remote = false;
+	assert(2 <= numArgs <= 4);
+	getstringarg(name, 0);
+	if (numArgs >= 3)
+	{
+		getstringarg(expect, 2);
+		if (numArgs == 4)
+			remote = getarg(3);
+	}
+	P:2("Callback_Get called: %s", name);
+	// Check that the assumption made here is valid.  I can't imagine a case,
+	// given the number of libraries in use here, where it couldn't be!  We
+	// check this since any inline data pointer will point in to the `DAT`
+	// segment relative to the start of `COD`.  Any bare string will just be a
+	// normal string starting with an ASCII letter.  This is different to in the
+	// indirection include which knows to resolve the pointer before checking
+	// this, unlike here were we don't know the type.
+	assert(AMX_HEADER_DAT - AMX_HEADER_COD > 128);
+	ret = name[0];
+	if (!(0 < ret < 128))
+	{
+		// Resolved inline.
+		P:3("Callback_Get: Found resolved callback.");
+		setarg(1, 0, ret);
+		Indirect_Claim(ret);
+		return true;
+	}
+	// Wrap the new string-find API.
+	ret = Callback_FindInternal(name, expect, remote);
+	if (ret)
+	{
+		ret = Indirect_Ptr(ret);
+		setarg(1, 0, ret);
+		Indirect_Claim(ret);
+		return true;
+	}
+	return false;
+//	else if (name[0] == callback_tag:'\03')
+//	{
+//		// This prefix is ALWAYS for publics not inlines.
+//		return bool:(ret[E_CALLBACK_DATA_POINTER] = (remote ? GetRemoteFunction(name[1], expect) : GetLocalFunction(name[1], expect)));
+//	}
+//	else if (remote)
+//	{
+//		// "remote" functions must always be done this way.
+//		return bool:(ret[E_CALLBACK_DATA_POINTER] = GetRemoteFunction(name, expect));
+//	}
+//	new
+//		pos = strfind(name, "\02"),
+//		frm = GetCurrentFramePreviousFrame(),
+//		prf = GetFramePreviousFrame(frm);
+//	if (pos == -1)
+//	{
+//		new
+//			cur = YSI_g_sPrevInlineFunc,
+//			parent = GetFrameFunction(prf),
+//			res;
+//		pos = strlen(name),
+//		frm = GetFrameReturn(frm);
+//		// Find the function by name.
+//		while (cur)
+//		{
+//			#emit PUSH.S      pos
+//			#emit PUSH.C      0
+//			#emit PUSH.S      name
+//			#emit PUSH.S      cur
+//			#emit PUSH.C      16
+//			#emit SYSREQ.C    strcmp
+//			#emit STACK       20
+//			#emit STOR.S.pri  res
+//			if (res == 0 && AMX_Read(cur + pos * 4) == '\02')
+//			{
+//				if (parent <= AMX_Read(cur + pos * 4 + 1 * 4) <= frm)
+//				{
+//					// Rewrite the value of "name" for the subsequent code.
+//					#emit LOAD.S.pri cur
+//					#emit STOR.S.pri name
+//					break;
+//				}
+//			}
+//			static const
+//				gsSearch[] = "\02";
+//			#emit PUSH.C      0
+//			#emit PUSH.C      0
+//			#emit PUSH.C      gsSearch
+//			#emit PUSH.S      cur
+//			#emit PUSH.C      16
+//			#emit SYSREQ.C    strfind
+//			#emit STACK       20
+//			#emit LOAD.S.alt  cur
+//			#emit IDXADDR
+//			#emit ADD.C       16
+//			#emit LOAD.I
+//			#emit STOR.S.pri  cur
+//		}
+//		if (!cur)
+//		{
+//			// Try publics...
+//			return bool:(ret[E_CALLBACK_DATA_POINTER] = GetLocalFunction(name, expect));
+//		}
+//	}
+//	static
+//		spec[2];
+//	Inline_EncodeFormatString(expect, spec),
+//	ret[E_CALLBACK_DATA_FORMAT] = spec,
+//	// Load this inline function's data in to our closure (and allocate memory).
+//	ret[E_CALLBACK_DATA_POINTER] = Function:name[pos + 1];
+//	new
+//		to = name[pos + 2],
+//		local = to >> 8, // Sign-extending!
+//		params = to & 0xFF,
+//		stack = params + local + 3,
+//		Alloc:a = malloc(stack); // Allocate closure space.
+//	// printf("local: %d, params: %d, stack: %d", local, params, stack);
+//	if (a)
+//	{
+//		// Get the stack size in bytes.
+//		stack <<= 2,
+//		// Get the address of the data.
+//		ret[E_CALLBACK_DATA_ALLOC] = Malloc_Resolve(a),
+//		frm = _:ret[E_CALLBACK_DATA_ALLOC],
+//		ret[E_CALLBACK_DATA_OFFSET] = stack,
+//		// Copy the stack over.  First get the frame of the function that used
+//		// an inline function, thus calling us indirectly.
+//		prf -= local << 2,
+//		// Adjust to the bottom of that stack, at least the bottom of the parts
+//		// we need (there may be more locals declared later that we don't need).
+//		// Copy "stack" bytes from "prf" to "frm".
+//		rawMemcpy(frm, prf, stack),
+//		// Save the "return" address for the inline to our fake stack.
+//		mset(a, local + 1, name[pos + 3]),
+//		// Save the parameter count (may be mangled by y_hooks).
+//		mset(a, local + 2, params << 2);
+//		P:2("Callback_Get end");
+//		return true;
+//	}
+//	return false;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="input">Callback to release.</param>
+ * <remarks>
+ *  Releases all the data associated with a given callback (closure storage).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#pragma deprecated
+stock Callback_Release(input[E_CALLBACK_DATA])
+{
+	// Check we were called by the correct frame.
+	static
+		ResolvedAlloc:ra,
+		Alloc:a;
+	if ((ra = input[E_CALLBACK_DATA_ALLOC]))
+	{
+		#emit CONST.alt     YSI_gMallocMemory
+		#emit LOAD.pri      ra
+		#emit SUB
+		#emit SHR.C.pri     2
+		#emit STOR.pri      a
+		// Publics don't have any stored data.
+		free(a),
+		input[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:0;
+	}
+	return _:(input[E_CALLBACK_DATA_POINTER] = Function:0);
 }
 
 static stock Callback_Claim(func[E_INLINE_CALL])
 {
 	KillTimer(func[E_INLINE_CALL_TIMER]);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="">The parameters passed to this function via <see>@</see>.</param>
+ * <remarks>
+ *  When you call an inline function using <c>@.name</c>, the underlying
+ *  <c>Indirect_Call</c> function jumps to a handler.  This is that handler.
+ *  The code here copies the function closure then jumps to the start of the
+ *  inline code.  Once that is completed, the inline jumps back to midway
+ *  through this function to store the closure back again (if required).
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 static stock Callback_CallHandler(...)
 {
@@ -680,6 +874,98 @@ static stock Callback_CallHandler(...)
 	#emit SCTRL            4                   // 58
 	#emit LOAD.pri         I@                  // 60
 	#emit RETN                                 // 61
+	__COMPILER_NAKED
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="">The parameters passed to this function via <see>@</see>.</param>
+ * <remarks>
+ *  When you call a remote function using <c>@.name</c>, the underlying
+ *  <c>Indirect_Call</c> function jumps to a handler.  This is that handler.
+ *  The code here simply wraps <c>CallRemoteFunction</c>, passing the specifier
+ *  and function name stored in <c>INDIRECTION_DATA</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock Callback_RemoteHandler(...)
+{
+	#emit LOAD.S.alt       8
+	#emit LCTRL            4
+	#emit SUB
+	#emit SCTRL            4
+	// Call `memcpy` to make a new copy of the parameters for
+	// `CallRemoteFunction`.
+	#emit PUSH.alt
+	#emit PUSH.alt
+	#emit PUSH.C           0
+	#emit ADDR.alt         12
+	#emit PUSH.alt
+	#emit PUSH.pri
+	#emit PUSH.C           20
+	#emit SYSREQ.C         memcpy
+	#emit STACK 24
+	// Push the specifier and function name.
+	#emit LOAD.pri         INDIRECTION_DATA
+	#emit ADD.C            20
+	#emit PUSH.pri
+	#emit ADD.C            128
+	#emit PUSH.pri
+	#emit LOAD.S.pri       8
+	#emit ADD.C            8
+	#emit PUSH.pri
+	#emit SYSREQ.C         CallRemoteFunction
+	// Store the return, then do the return.
+	#emit MOVE.alt
+	#emit LCTRL            5
+	#emit SCTRL            4
+	#emit MOVE.pri
+	#emit RETN
+	__COMPILER_NAKED
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="">The parameters passed to this function via <see>@</see>.</param>
+ * <remarks>
+ *  When you call a local function using <c>@.name</c>, the underlying
+ *  <c>Indirect_Call</c> function jumps to a handler.  This is that handler.
+ *  The code here simply wraps <c>CallLocalFunction</c>, passing the specifier
+ *  and function name stored in <c>INDIRECTION_DATA</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock Callback_LocalHandler(...)
+{
+	#emit LOAD.S.alt       8
+	#emit LCTRL            4
+	#emit SUB
+	#emit SCTRL            4
+	// Call `memcpy` to make a new copy of the parameters for
+	// `CallLocalFunction`.
+	#emit PUSH.alt
+	#emit PUSH.alt
+	#emit PUSH.C           0
+	#emit ADDR.alt         12
+	#emit PUSH.alt
+	#emit PUSH.pri
+	#emit PUSH.C           20
+	#emit SYSREQ.C         memcpy
+	#emit STACK 24
+	// Push the specifier and function name.
+	#emit LOAD.pri         INDIRECTION_DATA
+	#emit ADD.C            20
+	#emit PUSH.pri
+	#emit ADD.C            128
+	#emit PUSH.pri
+	#emit LOAD.S.pri       8
+	#emit ADD.C            8
+	#emit PUSH.pri
+	#emit SYSREQ.C         CallLocalFunction
+	// Store the return, then do the return.
+	#emit MOVE.alt
+	#emit LCTRL            5
+	#emit SCTRL            4
+	#emit MOVE.pri
+	#emit RETN
 	__COMPILER_NAKED
 }
 
@@ -1035,9 +1321,4 @@ stock Inline_UP_(const func[])
 	// Convert a function name to a pointer.
 	I@ = GetPublicAddressFromName(func);
 }
-
-#endinput
-
-// using inline
-(_:_@%0 = Inline_UI_(%0), _@%0)
 
