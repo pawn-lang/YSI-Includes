@@ -114,6 +114,7 @@ Optional plugins:
 
 #include "..\YSI_Internal\y_natives"
 #include "..\YSI_Internal\y_prehook"
+#include "..\YSI_Internal\y_thirdpartyinclude"
 
 forward _ScriptInit_FixState();
 
