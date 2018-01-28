@@ -77,7 +77,7 @@ static stock va_return_Pass(message[], va_args<>)
 {
 	new
 		str[64];
-	printf("<prefix> %s", va_return(message, va_start<1>));
+	format(str, sizeof (str), "<prefix> %s", va_return(message, va_start<1>));
 	return str;
 }
 
