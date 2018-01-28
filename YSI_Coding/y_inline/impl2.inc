@@ -101,13 +101,19 @@ const INLINE_PATTERN_2 = _C<_Y_L>;
 const INLINE_PATTERN_3 = _C<ess_>;
 const INLINE_PATTERN_4 = _C<Cole>;
 
-forward Callback_Release(ResolvedAlloc:a);
+forward Callback_Release_(ResolvedAlloc:a);
 
 #define CALL@I@E I@E(0, 0, 0, 0)
 #define CALL@I@F I@F()
 #define CALL@I@L I@L()
 #define CALL@I@K I@K(0)
-#define CALL@ref ref()
+#define CALL@I@T I@T("")
+
+stock I@T:I@T(const str[])
+{
+	#pragma unused str
+	return I@T:0;
+}
 
 #define MAX_INLINE_PARAMETERS (32)
 
@@ -139,11 +145,10 @@ enum E_INLINE_DATA
 static stock
 	YSI_g_sJumpOffset,
 	YSI_g_sCallbackCallAddress,
-	// This is the start of the linked list of inline functions.  It goes backwards through the code
-	// space, and should be used to find the nearest function matching the given name (as there may
-	// be more than one).  It points to the start of the entry's data, but the first item in that
-	// data is the function pointer, not the "next" pointer.  The start of the string with the name
-	// in is 2 cells after this address.
+	// This is the start of the linked list of inline functions.  Each time a function goes in to
+	// scope, the address of the local pointing to the function header data is pushed to this stack.
+	// Each time a function goes out of scope a destructor is used to remove that inline from the
+	// list again.
 	YSI_g_sInlineLinkedList;
 
 static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
@@ -266,13 +271,10 @@ static stock Inline_StoreData(data[E_INLINE_DATA])
 	// pointer to the next inline in the linked list of names, and something else?
 	new
 		header = data[E_INLINE_DATA_NAME];
-	// Add a pointer to the function name.
-	AMX_Write(header + cellbytes * 0, header + cellbytes * 3);
 	// Add a pointer to the function itself (after `JUMP`).
-	AMX_Write(header + cellbytes * 1, data[E_INLINE_DATA_START] + 6 * cellbytes);
-	// Add this to the list.
-	AMX_Write(header + cellbytes * 2, YSI_g_sInlineLinkedList);
-	YSI_g_sInlineLinkedList = header;
+	AMX_Write(header, data[E_INLINE_DATA_START] + 6 * cellbytes);
+	// Store the local stack size at this point.
+	AMX_Write(header + cellbytes, data[E_INLINE_DATA_LOCALS]);
 }
 
 public OnCodeInit()
@@ -302,7 +304,7 @@ public OnCodeInit()
 		OP(INVERT)
 		OP(PUSH_PRI)
 		OP(PUSH_C,             4)
-		OP(CALL,               &ref)
+		OP(CALL,               &I@T)
 		OP(STOR_S_PRI,         ???)
 		OP(STACK,              -4)
 		OP(LOAD_S_PRI,         ???)
@@ -329,7 +331,7 @@ public OnCodeInit()
 		OP(INVERT)
 		OP(PUSH_PRI)
 		OP(PUSH_C,             4)
-		OP(CALL,               &ref)
+		OP(CALL,               &I@T)
 		OP(STOR_S_PRI,         ???)
 		OP(STACK,              -4)
 		OP(LOAD_S_PRI,         ???)
@@ -478,6 +480,8 @@ public OnCodeInit()
 	);
 	CodeScanAddMatcher(scanner, csm6c);
 	
+	// TODO: Destructors.
+	
 	// Run all the scanners in parallel.
 	// TODO: Try and determine rough types for parent function parameters, using
 	// Opcodes like LREF, SREF, and IDXADDR (IDXARRAY?  Can't remember off the
@@ -545,15 +549,19 @@ Note:
 
 // Follows the "code-parse.inc" internal structure.  Ugly but required, since we
 // are parsing functions, but not at a top level.
-#define PARSER@INLINE:%0(%5)%6(%7)$ new _@%6=ref(_:%0(%5)%6(%7) I@O$
+#define PARSER@INLINE:%0(%5)%6(%7)$ new I@T:_@%6=I@T(_:%0(%5)%6(%7) I@O$
 
 #define INLINE_STR(%9,%9,%2,%9)%8$(%0)%1(%3)%4# %8$(%0,%2[YSI_MAX_INLINE_STRING])%1(cellmax,%3)%4s#
 #define INLINE_ARR(%9,%9,%2,%9)%8$(%0)%1(%3)%4# %8$(%0,%2[%9])%1(%9,%3)%4a#
 #define INLINE_NUM(%9,%9,%2)%8$(%0)%1(%3)%4# %8$(%0,%2)%1(0,%3)%4i#
 #define INLINE_REF(%9,%9,%2)%8$(%0)%1(%3)%4# %8$(%0,%2)%1(-1,%3)%4v#
 
-#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#...#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
-#define INLINE_NUL(%9)%8$()%1()%4# %8$#...#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
+// ".." is used to reserve memory at the start of the string for:
+// 
+//   +0 - Inline function start pointer.
+//   +1 - Stack size.
+#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#..#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
+#define INLINE_NUL(%9)%8$()%1()%4# %8$#..#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
 
 #define I@O$
 
@@ -587,7 +595,7 @@ Note:
 #define @In:%0(%1)),%2$) %0),%2$),.bExtra=true,.extra=%1)
 
 // Move the callback parameter inside the brackets.
-#define Inline_UI_(),%0) Inline_UI_(_@%0,_:%0),%0)
+#define Inline_UI_(),%0) Inline_UI_(_:%0),%0)
 #define Inline_UP_(),%0) Inline_UP_(_:@Ir:@Is:@In:#%0),F@_@:I@ I@O$)
 
 stock I@E(a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE_PATTERN_3, d = INLINE_PATTERN_4)
@@ -610,6 +618,11 @@ stock I@K(n)
 {
 	#pragma unused n
 	return 0;
+}
+
+stock operator~(I@T:inlines[], size)
+{
+	// Remove these inlines from the stack of in-scope callable functions.
 }
 
 // Old API.
@@ -1211,9 +1224,12 @@ static stock Inline_DoRetnGen(ctx[AsmContext], scanner[CodeScanner], data[E_INLI
 	}
 	AMX_Write(endaddrDAT + 8, _:RelocateOpcode(OP_RETN));
 	AMX_Write(endaddrDAT + 12, nop);
-	// Push the inline address and current frame.
+	// Add the current inline to the linked list of in-scope inlines.  Also push
+	// the inline address and current frame data.
+	@emit PUSH             ref(YSI_g_sInlineLinkedList)
 	@emit PUSH.C           data[E_INLINE_DATA_NAME]
-	@emit PUSH.C           0
+	@emit ADDR.alt         -data[E_INLINE_DATA_LOCALS]
+	@emit STOR.alt         ref(YSI_g_sInlineLinkedList)
 	// Jump past the whole inline code.  Also remove trailing stack codes that
 	// would only remove our local data.
 	dctx[DisasmContext_end_ip] += 8;
@@ -1271,22 +1287,37 @@ static stock Inline_DoCodeGen(scanner[CodeScanner], data[E_INLINE_DATA])
 	AsmEmitPadding(ctx);
 }
 
-public Callback_Release(ResolvedAlloc:a)
+public Callback_Release_(ResolvedAlloc:a)
 {
 	// `Callback_Get` kills the timer (maybe repeatedly, but that's fine).
 	free(Malloc_Reconcile(a));
 }
 
-stock Inline_UI_(const func, &ret)
+static stock Inline_Ref(const &ptr)
 {
-	// We use `&ret` instead of `return` so that we can keep the tags correct.  This also passes an
-	// address that we know is the bottom of the part of the stack that we need to save for the
-	// closure.  The bottom two variables in the stack must be preserved, since they store
-	// information about the inline function (name and address), which may be required even in the
-	// inline if it is called recursively.
+	#emit LOAD.S.pri       ptr
+	#emit RETN
+	__COMPILER_NAKED
+}
+
+stock Inline_UI_(const &ret)
+{
+	// We use `&ret` instead of `return` so that we can keep the tags correct.
+	// This also passes an address that we know is the bottom of the part of the
+	// stack that we need to save for the closure.  The bottom two variables in
+	// the stack must be preserved, since they store information about the
+	// inline function (name and address), which may be required even in the
+	// inline if it is called recursively.  The code is compiled to pass `ret`
+	// as the inline structure.  However, that is just for tag checking, and we
+	// change that in assembly so that the return from this function is truly
+	// what is pushed.
+	// 
+	// We can't use `ref()` here because passing a `const &` to a `...` function
+	// gets the address of a heap temporary, instead of the original.  Even
+	// `const ...` doesn't solve this.
 	new
 		frm = GetCurrentFramePreviousFrame(),
-		ptr = ref(ret);
+		ptr = Inline_Ref(ret);
 	while (ptr > frm)
 	{
 		// Find the frame the pointer is in.  This should just be the previous
@@ -1298,6 +1329,7 @@ stock Inline_UI_(const func, &ret)
 		size = frm - ptr + GetFrameHeaderSize(frm) + GetFrameParameterSize(frm),
 		Alloc:closure = malloc(size / cellbytes + 7),
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
+	printf("%08x, %08x, %d, %d, %d", ptr, frm, size, GetFrameHeaderSize(frm), GetFrameParameterSize(frm));
 	// E_INLINE_CALL_NULL
 	mset(closure, 0, 0);
 	// E_INLINE_CALL_HANDLER
@@ -1305,15 +1337,15 @@ stock Inline_UI_(const func, &ret)
 	// E_INLINE_CALL_CLAIM
 	mset(closure, 2, _:addressof (Callback_Claim<a>));
 	// E_INLINE_CALL_RELEASE
-	mset(closure, 3, _:addressof (Callback_Release<tResolvedAlloc:>));    
+	mset(closure, 3, _:addressof (Callback_Release_<tResolvedAlloc:>));    
 	// E_INLINE_CALL_TIMER
 	mset(closure, 4, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
 	// E_INLINE_CALL_SIZE
 	mset(closure, 5, size);
 	// E_INLINE_CALL_FUNCTION
-	mset(closure, 6, AMX_Read(func + cellbytes));
+	mset(closure, 6, AMX_Read(ret));
 	rawMemcpy(_:ra + 7 * cellbytes, ptr, size);
-	ret = Indirect_Ptr(ra);
+	return Indirect_Ptr(ra);
 }
 
 stock Inline_UP_(const func[])
