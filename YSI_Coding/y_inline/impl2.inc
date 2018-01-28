@@ -109,6 +109,8 @@ forward Callback_Release_(ResolvedAlloc:a);
 #define CALL@I@K I@K(0)
 #define CALL@I@T I@T("")
 
+#define CALL@Inline_UI_ Inline_UI_(REF)
+
 stock I@T:I@T(const str[])
 {
 	#pragma unused str
@@ -272,9 +274,39 @@ static stock Inline_StoreData(data[E_INLINE_DATA])
 	new
 		header = data[E_INLINE_DATA_NAME];
 	// Add a pointer to the function itself (after `JUMP`).
-	AMX_Write(header, data[E_INLINE_DATA_START] + 6 * cellbytes);
+	AMX_Write(header, data[E_INLINE_DATA_START] + 10 * cellbytes);
 	// Store the local stack size at this point.
 	AMX_Write(header + cellbytes, data[E_INLINE_DATA_LOCALS]);
+}
+
+static stock Inline_FoundUsingInline(scanner[CodeScanner])
+{
+	// Found a call to `using inline`.  Change it from (the equivalent of)
+	// `(a = Inline_UI_(a), a)` to `Inline_UI_(a)`
+	new
+		local = CodeScanGetMatchHole(scanner, 0);
+	// First, check that the two holes are the same.  If they're not, this isn't
+	// what we want to optimise.
+	if (local != CodeScanGetMatchHole(scanner, 1))
+		return 0;
+	new
+		ctx[AsmContext];
+	switch (CodeScanGetMatchLength(scanner))
+	{
+		case 8 * cellbytes:
+		{
+			CodeScanGetMatchAsm(scanner, ctx, 6 * cellbytes);
+			@emit                  PUSH.pri
+			@emit                  NOP
+		}
+		case 10 * cellbytes:
+		{
+			CodeScanGetMatchAsm(scanner, ctx, 7 * cellbytes);
+			@emit                  NOP
+			@emit                  NOP
+		}
+	}
+	return 0;
 }
 
 public OnCodeInit()
@@ -479,6 +511,29 @@ public OnCodeInit()
 		OP(CALL,               &I@K)
 	);
 	CodeScanAddMatcher(scanner, csm6c);
+	
+	// Replace code that was `(Inline_UI_(x), x)` with just `Inline_UI_()`.
+	new csm7a[CodeScanMatcher];
+	CodeScanMatcherInit(csm7a, &Inline_FoundUsingInline);
+	CodeScanMatcherPattern(csm7a,
+		OP(ADDR_PRI,           ???)
+		OP(PUSH_PRI)
+		OP(PUSH_C,             4)
+		OP(CALL,               &Inline_UI_)
+		OP(LOAD_S_PRI,         ???)
+		OP(PUSH_PRI)
+	);
+	CodeScanAddMatcher(scanner, csm7a);
+	
+	new csm7b[CodeScanMatcher];
+	CodeScanMatcherInit(csm7b, &Inline_FoundUsingInline);
+	CodeScanMatcherPattern(csm7b,
+		OP(PUSH_ADR,           ???)
+		OP(PUSH_C,             4)
+		OP(CALL,               &Inline_UI_)
+		OP(PUSH_S,             ???)
+	);
+	CodeScanAddMatcher(scanner, csm7b);
 	
 	// TODO: Destructors.
 	
@@ -1329,7 +1384,6 @@ stock Inline_UI_(const &ret)
 		size = frm - ptr + GetFrameHeaderSize(frm) + GetFrameParameterSize(frm),
 		Alloc:closure = malloc(size / cellbytes + 7),
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
-	printf("%08x, %08x, %d, %d, %d", ptr, frm, size, GetFrameHeaderSize(frm), GetFrameParameterSize(frm));
 	// E_INLINE_CALL_NULL
 	mset(closure, 0, 0);
 	// E_INLINE_CALL_HANDLER
