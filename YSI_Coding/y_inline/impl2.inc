@@ -111,12 +111,6 @@ forward Callback_Release_(ResolvedAlloc:a);
 
 #define CALL@Inline_UI_ Inline_UI_(REF)
 
-stock I@T:I@T(const str[])
-{
-	#pragma unused str
-	return I@T:0;
-}
-
 #define MAX_INLINE_PARAMETERS (32)
 
 #define INLINE_DESCRIPTOR_VAR (0)
@@ -150,8 +144,32 @@ static stock
 	// This is the start of the linked list of inline functions.  Each time a function goes in to
 	// scope, the address of the local pointing to the function header data is pushed to this stack.
 	// Each time a function goes out of scope a destructor is used to remove that inline from the
-	// list again.
+	// list again.  TODO:  If there is a crash, clear this list.
 	YSI_g_sInlineLinkedList;
+
+stock I@T:I@T(const str[])
+{
+	#pragma unused str
+	return I@T:0;
+}
+
+stock operator~(I@T:inlines[], size)
+{
+	#pragma unused inlines
+	// Get the return address.
+	#emit LOAD.S.alt       4
+	// Read the code before the return.
+	#emit LCTRL            0
+	#emit ADD
+	#emit MOVE.alt
+	#emit LCTRL            1
+	#emit SUB.alt
+	#emit ADD.C            0xFFFFFFFC
+	#emit STOR.S.pri       size
+	#emit LREF.S.pri       size
+	#emit STOR.S.pri       size
+	YSI_g_sInlineLinkedList = DisasmReloc(size);
+}
 
 static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
@@ -282,12 +300,9 @@ static stock Inline_StoreData(data[E_INLINE_DATA])
 static stock Inline_FoundUsingInline(scanner[CodeScanner])
 {
 	// Found a call to `using inline`.  Change it from (the equivalent of)
-	// `(a = Inline_UI_(a), a)` to `Inline_UI_(a)`
-	new
-		local = CodeScanGetMatchHole(scanner, 0);
-	// First, check that the two holes are the same.  If they're not, this isn't
-	// what we want to optimise.
-	if (local != CodeScanGetMatchHole(scanner, 1))
+	// `(a = Inline_UI_(a), a)` to `Inline_UI_(a)`.  First, check that the two
+	// holes are the same.  If they're not, this isn't what we want to optimise.
+	if (CodeScanGetMatchHole(scanner, 0) != CodeScanGetMatchHole(scanner, 1))
 		return 0;
 	new
 		ctx[AsmContext];
@@ -296,16 +311,40 @@ static stock Inline_FoundUsingInline(scanner[CodeScanner])
 		case 8 * cellbytes:
 		{
 			CodeScanGetMatchAsm(scanner, ctx, 6 * cellbytes);
-			@emit                  PUSH.pri
-			@emit                  NOP
+			@emit PUSH.pri
+			@emit NOP
 		}
 		case 10 * cellbytes:
 		{
 			CodeScanGetMatchAsm(scanner, ctx, 7 * cellbytes);
-			@emit                  NOP
-			@emit                  NOP
+			@emit NOP
+			@emit NOP
 		}
 	}
+	return 0;
+}
+
+static stock Inline_FoundDestructor(scanner[CodeScanner])
+{
+	// Found a call to `operator~(I@T:inlines[], size)`.
+	if (CodeScanGetMatchHole(scanner, 0) != 1)
+		return 0;
+	// Get the offset of the variable we store the linked list in.  Note that
+	// the linked list doesn't point to this variable, but the next variable on
+	// the stack, the variable containing the function header data.  So when we
+	// use the list, we need to take that in to account; but not here.
+	new
+		func = CodeScanGetMatchHole(scanner, 1),
+		ctx[AsmContext];
+	// Remove this inline function from the linked list of inlines.
+	CodeScanGetMatchAsm(scanner, ctx);
+	@emit LOAD.S.pri       func
+	@emit STOR.pri         ref(YSI_g_sInlineLinkedList)
+	@emit NOP
+	@emit NOP
+	@emit NOP
+	@emit NOP
+	@emit NOP
 	return 0;
 }
 
@@ -535,7 +574,28 @@ public OnCodeInit()
 	);
 	CodeScanAddMatcher(scanner, csm7b);
 	
-	// TODO: Destructors.
+	// Destructors.
+	{
+		// We can't directly get the address of a destructor.  Instead, we need
+		// to create a local that will be destroyed and read the call from that.
+		new I@T:search;
+	}
+	// Now we have the destructor address, replace all calls to it.  I've never
+	// seen this using `PUSH.adr` instead of `ADDR.pri`/`PUSH.pri`, even on
+	// optimising builds.
+	new csm8a[CodeScanMatcher];
+	CodeScanMatcherInit(csm8a, &Inline_FoundDestructor);
+	CodeScanMatcherPattern(csm8a,
+		OP(PUSH_C,             ???)
+		OP(ADDR_PRI,           ???)
+		OP(PUSH_PRI)
+		OP(PUSH_C,             8)
+		OP(CALL,               YSI_g_sInlineLinkedList)
+	);
+	CodeScanAddMatcher(scanner, csm8a);
+	
+	// Reset the linked list whose variable we borrowed as a temporary.
+	YSI_g_sInlineLinkedList = 0;
 	
 	// Run all the scanners in parallel.
 	// TODO: Try and determine rough types for parent function parameters, using
@@ -673,11 +733,6 @@ stock I@K(n)
 {
 	#pragma unused n
 	return 0;
-}
-
-stock operator~(I@T:inlines[], size)
-{
-	// Remove these inlines from the stack of in-scope callable functions.
 }
 
 // Old API.
