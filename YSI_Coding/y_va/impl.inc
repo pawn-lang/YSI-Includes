@@ -255,7 +255,7 @@ public OnScriptInit()
 
 #undef OnScriptInit
 #define OnScriptInit VA_OnScriptInit
-#if defined VS_OnScriptInit
+#if defined VA_OnScriptInit
 	forward VA_OnScriptInit();
 #endif
 
