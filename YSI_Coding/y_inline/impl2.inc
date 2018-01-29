@@ -326,13 +326,11 @@ static stock Inline_FoundUsingInline(scanner[CodeScanner])
 
 static stock Inline_FoundDestructor(scanner[CodeScanner])
 {
-	// Found a call to `operator~(I@T:inlines[], size)`.
-	if (CodeScanGetMatchHole(scanner, 0) != 1)
-		return 0;
-	// Get the offset of the variable we store the linked list in.  Note that
-	// the linked list doesn't point to this variable, but the next variable on
-	// the stack, the variable containing the function header data.  So when we
-	// use the list, we need to take that in to account; but not here.
+	// Found a call to `operator~(I@T:inlines[], size)`.  Get the offset of the
+	// variable we store the linked list in.  Note that the linked list doesn't
+	// point to this variable, but the next variable on the stack, the variable
+	// containing the function header data.  So when we use the list, we need to
+	// take that in to account; but not here.
 	new
 		func = CodeScanGetMatchHole(scanner, 1),
 		ctx[AsmContext];
@@ -601,7 +599,8 @@ public OnCodeInit()
 	{
 		// We can't directly get the address of a destructor.  Instead, we need
 		// to create a local that will be destroyed and read the call from that.
-		new I@T:search;
+		// Use `[2]` so it doesn't match the scanner later.
+		new I@T:search[2];
 	}
 	// Now we have the destructor address, replace all calls to it.  I've never
 	// seen this using `PUSH.adr` instead of `ADDR.pri`/`PUSH.pri`, even on
@@ -609,7 +608,7 @@ public OnCodeInit()
 	new csm8a[CodeScanMatcher];
 	CodeScanMatcherInit(csm8a, &Inline_FoundDestructor);
 	CodeScanMatcherPattern(csm8a,
-		OP(PUSH_C,             ???)
+		OP(PUSH_C,             1)
 		OP(ADDR_PRI,           ???)
 		OP(PUSH_PRI)
 		OP(PUSH_C,             8)
