@@ -155,6 +155,9 @@ stock I@T:I@T(const str[])
 
 stock operator~(I@T:inlines[], size)
 {
+	// This destructor is actually only ever called once, even though it might
+	// exist many times in the compiled code; the rest are replaced at init time
+	// using information gathered here.
 	#pragma unused inlines
 	// Get the return address.
 	#emit LOAD.S.alt       4
@@ -601,10 +604,16 @@ public OnCodeInit()
 		// to create a local that will be destroyed and read the call from that.
 		// Use `[2]` so it doesn't match the scanner later.
 		new I@T:search[2];
+		// THIS BLOCK IS NOT POINTLESS!  IT CALLS A REQUIRED DESTRUCTOR.
 	}
 	// Now we have the destructor address, replace all calls to it.  I've never
 	// seen this using `PUSH.adr` instead of `ADDR.pri`/`PUSH.pri`, even on
-	// optimising builds.
+	// optimising builds.  `YSI_g_sInlineLinkedList` currently holds the address
+	// of the `I@T:` destructor.  We used that as a temporary to return the
+	// function address from the (seemingly) pointless block directly above
+	// because `addressof` and `&` don't work for operators (I don't know a
+	// generic solution to this problem, but it has only ever come up once and I
+	// could get a non-portable solution in that one instance).
 	new csm8a[CodeScanMatcher];
 	CodeScanMatcherInit(csm8a, &Inline_FoundDestructor);
 	CodeScanMatcherPattern(csm8a,
