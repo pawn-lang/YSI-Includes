@@ -348,6 +348,29 @@ static stock Inline_FoundDestructor(scanner[CodeScanner])
 	return 0;
 }
 
+#if !defined _ALS_OnRuntimeError
+	forward OnRuntimeError(code, &bool:suppress);
+#endif
+
+public OnRuntimeError(code, &bool:suppress)
+{
+	// No inlines are in scope, because the scope just crashed.  Clear the list.
+	YSI_g_sInlineLinkedList = 0;
+	#if defined Inline_OnRuntimeError
+		Inline_OnRuntimeError(code, suppress);
+	#endif
+	return 1;
+}
+
+#if defined _ALS_OnRuntimeError
+	#undef OnRuntimeError
+#else
+	#define _ALS_OnRuntimeError
+#endif
+#if defined Inline_OnRuntimeError
+	forward Inline_OnRuntimeError(code, &bool:suppress);
+#endif
+
 public OnCodeInit()
 {
 	new
@@ -602,8 +625,18 @@ public OnCodeInit()
 	// Opcodes like LREF, SREF, and IDXADDR (IDXARRAY?  Can't remember off the
 	// top of my head).
 	CodeScanRun(scanner);
+	
+	#if defined Inline_OnCodeInit
+		Inline_OnCodeInit();
+	#endif
 	return 1;
 }
+
+#undef OnCodeInit
+#define OnCodeInit Inline_OnCodeInit
+#if defined Inline_OnCodeInit
+	forward Inline_OnCodeInit();
+#endif
 
 /*
 
