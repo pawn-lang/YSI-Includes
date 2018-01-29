@@ -208,16 +208,16 @@ static stock Inline_FoundDescriptor(size, data[E_INLINE_DATA])
 	{
 		case INLINE_DESCRIPTOR_VAR:
 		{
-			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = 0;
+			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = INLINE_DESCRIPTOR_VAR;
 		}
 		case INLINE_DESCRIPTOR_REF:
 		{
-			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = -1;
+			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = INLINE_DESCRIPTOR_REF;
 			data[E_INLINE_DATA_STATE] |= 16;
 		}
 		case INLINE_DESCRIPTOR_STR:
 		{
-			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = cellmax;
+			data[E_INLINE_DATA_PARAMETERS][data[E_INLINE_DATA_PARAMETER_COUNT]++] = INLINE_DESCRIPTOR_STR;
 			data[E_INLINE_DATA_STATE] |= 8;
 		}
 		default:
@@ -298,6 +298,24 @@ static stock Inline_StoreData(data[E_INLINE_DATA])
 	AMX_Write(header, data[E_INLINE_DATA_START] + 10 * cellbytes);
 	// Store the local stack size at this point.
 	AMX_Write(header + cellbytes, data[E_INLINE_DATA_LOCALS]);
+	// Store the tag data.  TODO: Put this in the compiler with `InlineName = tagof (InlineName);`.
+	new
+		tag[32] = "F@_@";
+	for (new cur = 0; cur != data[E_INLINE_DATA_PARAMETER_COUNT]; ++cur)
+	{
+		switch (data[E_INLINE_DATA_PARAMETERS][cur])
+		{
+		case INLINE_DESCRIPTOR_VAR:
+			tag[cur + 4] = 'i';
+		case INLINE_DESCRIPTOR_REF:
+			tag[cur + 4] = 'v';
+		case INLINE_DESCRIPTOR_STR:
+			tag[cur + 4] = 's';
+		default:
+			tag[cur + 4] = 'a';
+		}
+	}
+	AMX_Write(header + 2 * cellbytes, GetTagIDFromName(tag));
 }
 
 static stock Inline_FoundUsingInline(scanner[CodeScanner])
@@ -716,8 +734,8 @@ Note:
 // 
 //   +0 - Inline function start pointer.
 //   +1 - Stack size.
-#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#..#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
-#define INLINE_NUL(%9)%8$()%1()%4# %8$#..#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
+#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#...#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
+#define INLINE_NUL(%9)%8$()%1()%4# %8$#...#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
 
 #define I@O$
 
@@ -776,13 +794,100 @@ stock I@K(n)
 	return 0;
 }
 
-// Old API.
+/*-------------------------------------------------------------------------*//**
+ * <param name="string1">First string as a pointer.</param>
+ * <param name="string2">Second string as a string.</param>
+ * <param name="ignorecase">Do a case-insensitive search.</param>
+ * <param name="length">Length of string to compare over.</param>
+ * <remarks>
+ *  Just <c>strcmp</c>, but pretending the first parameter is a value not an
+ *  array so that we can trick the compiler in to accepting a pointer.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+native Inline_Strcmp(const string1, const string2[], bool:ignorecase=false, length=cellmax) = strcmp;
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Inline to find by name.</param>
+ * <remarks>
+ *  Traverses up the stack to find an in-scope inline with the same name AND
+ *  SIGNATURE.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock Callback_FindByName(const name[], tag)
+{
+	new
+		ptr = YSI_g_sInlineLinkedList;
+	while (ptr)
+	{
+		// Get the pointer to the inline function data.
+		new
+			ret = AMX_Read(ptr);
+		// Compare the tags.
+		if (tag == AMX_Read(ret + 2 * cellbytes))
+		{
+			// Compare the names.
+			if (!Inline_Strcmp(ret + 3 * cellbytes, name))
+			{
+				new
+					frm = ptr + AMX_Read(ret + cellbytes) + 12,
+					size = frm - ptr + 12 + GetFrameParameterSize(frm),
+					Alloc:closure = malloc(size / cellbytes + 7),
+					ResolvedAlloc:ra = Malloc_Resolve(closure);
+				mset(closure, 0, 0);
+				mset(closure, 1, _:addressof (Callback_CallHandler<x>));
+				mset(closure, 2, _:addressof (Callback_Claim<a>));
+				mset(closure, 3, _:addressof (Callback_Release_<tResolvedAlloc:>));    
+				mset(closure, 4, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
+				mset(closure, 5, size);
+				mset(closure, 6, AMX_Read(ret));
+				rawMemcpy(_:ra + 7 * cellbytes, ptr, size);
+				return Indirect_Ptr(ra);
+			}
+		}
+		// Read the next data.
+		ptr = AMX_Read(ptr + cellbytes);
+	}
+	return 0;
+}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Callback to find by name.</param>
- * <param name="ret">Where to store the pointer.</param>
- * <param name="expect">What parameters the function takes.</param>
+ * <param name="dest">Where to store the function.</param>
  * <param name="remote">Is this function called on one or all scripts?</param>
+ * <param name="tag">The tag of the return value for type reasons.</param>
+ * <remarks>
+ *  Replacement for `Callback_Call`.  Just returns a pointer, and no longer
+ *  relies on strict control of where is called from.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
+{
+	if (remote)
+	{
+		// Remote calls must always be publics.
+	}
+	new
+		addr = funcidx(name);
+	if (addr == -1)
+	{
+		// Not a public.  Iterate through the in-scope inlines stack to see if
+		// any match this name.
+	}
+	else
+	{
+		// Indirection handles this case natively.
+	}
+}
+
+#define Callback_Find(%0,%1) Callback_Find_(%0,_:%1,.tag=tagof(%1))
+#define Callback_Find_(%0,_:%1,%2,.tag=tagof(%3)) Callback_Find_(%0,_:%1,%2,tagof(%1))
+
+// Old API.
+
+/*-------------------------------------------------------------------------*//**
  * <remarks>
  *  Looks up the callback by name.  If the name has the correct data embedded
  *  within it that's great and we use that directly.  Otherwise this function
@@ -1047,7 +1152,8 @@ static stock Callback_CallHandler(...)
  *  When you call a remote function using <c>@.name</c>, the underlying
  *  <c>Indirect_Call</c> function jumps to a handler.  This is that handler.
  *  The code here simply wraps <c>CallRemoteFunction</c>, passing the specifier
- *  and function name stored in <c>INDIRECTION_DATA</c>.
+ *  and function name stored in <c>INDIRECTION_DATA</c>, which is  assumed to be
+ *  a pointer to <c>enum E_PUBLIC_CALL</c>.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1467,17 +1573,9 @@ stock Inline_UI_(const &ret)
 	// gets the address of a heap temporary, instead of the original.  Even
 	// `const ...` doesn't solve this.
 	new
-		frm = GetCurrentFramePreviousFrame(),
-		ptr = Inline_Ref(ret);
-	while (ptr > frm)
-	{
-		// Find the frame the pointer is in.  This should just be the previous
-		// frame, but we can't really guarantee that.
-		frm = GetFramePreviousFrame(frm);
-	}
-	// Get the space required for the closure.
-	new
-		size = frm - ptr + GetFrameHeaderSize(frm) + GetFrameParameterSize(frm),
+		ptr = Inline_Ref(ret),
+		frm = ptr + AMX_Read(ret + cellbytes) + 12,
+		size = frm - ptr + 12 + GetFrameParameterSize(frm),
 		Alloc:closure = malloc(size / cellbytes + 7),
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
 	// E_INLINE_CALL_NULL
