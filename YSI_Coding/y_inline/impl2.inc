@@ -871,14 +871,14 @@ stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 	}
 	new
 		addr = funcidx(name);
+	// Not a public.  Iterate through the in-scope inlines stack to see if
+	// any match this name.
 	if (addr == -1)
-	{
-		// Not a public.  Iterate through the in-scope inlines stack to see if
-		// any match this name.
-	}
+		return !!(dest = Callback_FindByName(name, tag));
 	else
 	{
 		// Indirection handles this case natively.
+		return false;
 	}
 }
 
