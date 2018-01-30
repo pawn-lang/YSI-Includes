@@ -1517,7 +1517,7 @@ stock Inline_UI_(const &header)
 	// `const ...` doesn't solve this.
 	new
 		ptr = Inline_Ref(header),
-		frm = ptr + AMX_Read(header + cellbytes) + 12,
+		frm = ptr + AMX_Read(header + cellbytes),
 		size = frm - ptr + 12 + GetFrameParameterSize(frm),
 		Alloc:closure = malloc(size / cellbytes + 7);
 	if (!closure)
@@ -1563,7 +1563,7 @@ stock Callback_Restore_(...)
 	new
 		closure = Indirect_DePtr(getarg(0)),
 		ptr = AMX_Read(closure + _:E_INLINE_CALL_SOURCE * cellbytes),
-		frm = ptr + AMX_Read(AMX_Read(ptr) + cellbytes) + 12,
+		frm = ptr + AMX_Read(AMX_Read(ptr) + cellbytes),
 		ret = GetFrameReturn(frm),
 		pfr = GetFramePreviousFrame(frm);
 	rawMemcpy(ptr, closure + _:E_INLINE_CALL_PARAMS * cellbytes, AMX_Read(closure + _:E_INLINE_CALL_SIZE * cellbytes)),
