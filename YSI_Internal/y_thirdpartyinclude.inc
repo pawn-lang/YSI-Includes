@@ -320,7 +320,7 @@ Optional plugins:
 
 #if defined AMX_INCLUDING_FAILED
 	#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
-#elseif CODE_SCAN_MAX_HOLES > CODE_SCAN_MAX_PATTERN
+#elseif !defined AMX_ASSEMBLY_NO_BUGGED_TAGS
 	#error Please update "https://github.com/Zeex/amx_assembly" to the latest version.
 #endif
 
@@ -356,6 +356,8 @@ Optional plugins:
 #tryinclude <indirection>
 #if !defined _INC_indirection
 	#error Could not include "https://github.com/Y-Less/indirection" - ensure its files are in "include\indirection\"
+#elseif !defined Indirect_DePtr_
+	#error Please update "https://github.com/Y-Less/indirection" to the latest version.
 #endif
 
 // "y_thirdpartyinclude\tests" is NOT included here when tests are active, because it complicates
