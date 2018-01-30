@@ -1502,8 +1502,6 @@ stock Inline_UI_(const &header)
 		frm = ptr + AMX_Read(header + cellbytes) + 12,
 		size = frm - ptr + 12 + GetFrameParameterSize(frm),
 		Alloc:closure = malloc(size / cellbytes + 7);
-	printf("ptr = %08x, frm = %08x, size = %08x", ptr, frm, size);
-	printf("ret = %08x, pfr = %08x", GetFrameReturn(frm), GetFramePreviousFrame(frm));
 	if (!closure)
 		return 0;
 	mset(closure, _:E_INLINE_CALL_NULL, 0);
@@ -1517,11 +1515,6 @@ stock Inline_UI_(const &header)
 	new
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
 	rawMemcpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
-	for (new i = 0; i != 40; i += 4)
-	{
-		printf("%08x ", AMX_Read(ra + _:E_INLINE_CALL_PARAMS * cellbytes + i));
-	}
-	printf("Output: %08x, %08x", _:ra, Indirect_Ptr(ra));
 	return Indirect_Ptr(ra);
 }
 
@@ -1547,7 +1540,6 @@ stock Inline_UP_(const func[])
 
 stock Callback_Restore_(...)
 {
-	printf("Input: %08x, %08x", Indirect_DePtr(getarg(0)), getarg(0));
 	assert(numargs() == 1);
 	// Maintain the frame header.
 	new
@@ -1556,17 +1548,9 @@ stock Callback_Restore_(...)
 		frm = ptr + AMX_Read(AMX_Read(ptr) + cellbytes) + 12,
 		ret = GetFrameReturn(frm),
 		pfr = GetFramePreviousFrame(frm);
-	printf("ptr = %08x, frm = %08x, size = %08x", ptr, frm, AMX_Read(closure + _:E_INLINE_CALL_SIZE * cellbytes));
-	printf("ret = %08x, pfr = %08x", GetFrameReturn(frm), GetFramePreviousFrame(frm));
 	rawMemcpy(ptr, closure + _:E_INLINE_CALL_PARAMS * cellbytes, AMX_Read(closure + _:E_INLINE_CALL_SIZE * cellbytes)),
-	printf("ret = %08x, pfr = %08x", GetFrameReturn(frm), GetFramePreviousFrame(frm));
 	SetFrameReturn(frm, ret),
 	SetFramePreviousFrame(frm, pfr);
-	printf("ret = %08x, pfr = %08x", GetFrameReturn(frm), GetFramePreviousFrame(frm));
-	for (new i = 0; i != 40; i += 4)
-	{
-		printf("%08x ", AMX_Read(closure + _:E_INLINE_CALL_PARAMS * cellbytes + i));
-	}
 	return 0;
 }
 #define Callback_Restore(%0) Callback_Restore_(_:%0)
