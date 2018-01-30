@@ -7,21 +7,39 @@
 // 
 //   Becomes:
 // 
-//     new funcptr<iiis>:cb;
+//     new Func:cb<iiis>;
 // 
-// 2) Replace `Callback_Get`, `Callback_Restore`, and `Callback_Release` with
-//   `Inline_Get`, `Inline_Restore`, and `Inline_Release`.
+// 2) Replace `Callback_Get` and `Callback_Release` with `Indirect_Claim` and
+//    `Indirect_Release`.  But only if you plan to store the callback for use in
+//    the future.  If you plan to use it immediately, just delete them.
 // 
-// 3) Replace `callback:` tags with specifier tags.  So:
+// 3) Use `Callback_Find` if you want to search for a callback by name.  This
+//    means the old behviour of `Callback_Call` is now split between two
+//    functions, both of which are optional depending on what you want to do.
+// 
+// 4) Replace `callback:` tags with specifier tags.  So:
 // 
 //     MyFunc(callback:x)
 // 
 //   Becomes:
 // 
-//     MyFunc(funcptr<fff>:cb)
+//     MyFunc(Func:cb<iiis>)
+// 
+// 5) Replace:
+// 
+//     Callback_Call(cb, your, params);
+//    With:
+// 
+//     @.cb(your, params);
 // 
 // Note that this is all optional.  Not doing so will continue to work, but
 // give warnings.
+
+#define inline_return YSI_gInlineRet[0]=
+#define @return inline_return
+
+stock
+	YSI_gInlineRet[1];
 
 __COMPILER_STATIC_ENUM E_INLINE_CALL
 {
