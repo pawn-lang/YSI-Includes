@@ -396,7 +396,7 @@ public OnCodeInit()
 		hdr[AMX_HDR];
 	GetAmxHeader(hdr);
 	YSI_g_sJumpOffset = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
-	#emit CONST.pri        Callback_CallHandler
+	#emit CONST.pri        Callback_CallHandler_
 	#emit STOR.pri         YSI_g_sCallbackCallAddress
 	YSI_g_sCallbackCallAddress += YSI_g_sJumpOffset;
 	
@@ -815,7 +815,7 @@ native Inline_Strcmp(const string1, const string2[], bool:ignorecase=false, leng
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Callback_FindByName(const name[], tag)
+static stock Callback_InlineByName(const name[], tag)
 {
 	new
 		ptr = YSI_g_sInlineLinkedList;
@@ -833,16 +833,19 @@ static stock Callback_FindByName(const name[], tag)
 				new
 					frm = ptr + AMX_Read(ret + cellbytes) + 12,
 					size = frm - ptr + 12 + GetFrameParameterSize(frm),
-					Alloc:closure = malloc(size / cellbytes + 7),
+					Alloc:closure = malloc(size / cellbytes + 7);
+				if (!closure)
+					return 0;
+				mset(closure, _:E_INLINE_CALL_NULL, 0);
+				mset(closure, _:E_INLINE_CALL_HANDLER, _:addressof (Callback_CallHandler_<x>));
+				mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_<a>));
+				mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
+				mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
+				mset(closure, _:E_INLINE_CALL_SIZE, size);
+				mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(ret));
+				new
 					ResolvedAlloc:ra = Malloc_Resolve(closure);
-				mset(closure, 0, 0);
-				mset(closure, 1, _:addressof (Callback_CallHandler<x>));
-				mset(closure, 2, _:addressof (Callback_Claim<a>));
-				mset(closure, 3, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-				mset(closure, 4, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
-				mset(closure, 5, size);
-				mset(closure, 6, AMX_Read(ret));
-				rawMemcpy(_:ra + 7 * cellbytes, ptr, size);
+				rawMemcpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
 				return Indirect_Ptr(ra);
 			}
 		}
@@ -850,6 +853,34 @@ static stock Callback_FindByName(const name[], tag)
 		ptr = AMX_Read(ptr + cellbytes);
 	}
 	return 0;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">Public to find by name.</param>
+ * <param name="tag">Tag to find by ID.</param>
+ * <param name="remote">Use <c>CallRemoteFunction</c>?</param>
+ * <remarks>
+ *  Traverses up the stack to find an in-scope inline with the same name AND
+ *  SIGNATURE.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock Callback_PublicByName(const name[], tag, bool:remote)
+{
+	new
+		Alloc:closure = malloc(_:E_PUBLIC_CALL),
+		tagname[32];
+	if (!closure)
+		return 0;
+	mset(closure, _:E_PUBLIC_CALL_NULL, 0);
+	mset(closure, _:E_PUBLIC_CALL_HANDLER, remote ? (_:addressof (Callback_RemoteHandler_<x>)) : (_:addressof (Callback_LocalHandler_<x>)));
+	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_<a>));
+	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
+	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
+	GetTagNameFromID(tag, tagname);
+	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, tagname);
+	msets(closure, _:E_PUBLIC_CALL_FUNCTION, name);
+	return Indirect_Ptr(Malloc_Resolve(closure));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -865,21 +896,14 @@ static stock Callback_FindByName(const name[], tag)
 
 stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 {
-	if (remote)
-	{
-		// Remote calls must always be publics.
-	}
-	new
-		addr = funcidx(name);
-	// Not a public.  Iterate through the in-scope inlines stack to see if
-	// any match this name.
-	if (addr == -1)
-		return !!(dest = Callback_FindByName(name, tag));
-	else
-	{
-		// Indirection handles this case natively.
-		return false;
-	}
+	// Remote calls must always be publics.  Indirection handles publics
+	// natively.  However, it doesn't handle it amazingly since it needs to
+	// handle it very generically.
+	if (remote || funcidx(name) != -1)
+		return !!(dest = Callback_PublicByName(name, tag, remote));
+	// Otherwise iterate through the in-scope inlines stack to see if any match
+	// this name.
+	return !!(dest = Callback_InlineByName(name, tag));
 }
 
 #define Callback_Find(%0,%1) Callback_Find_(%0,_:%1,.tag=tagof(%1))
@@ -1079,7 +1103,7 @@ stock Callback_Release(input[E_CALLBACK_DATA])
 	return _:(input[E_CALLBACK_DATA_POINTER] = Function:0);
 }
 
-static stock Callback_Claim(func[E_INLINE_CALL])
+static stock Callback_Claim_(func[E_INLINE_CALL])
 {
 	KillTimer(func[E_INLINE_CALL_TIMER]);
 }
@@ -1095,7 +1119,7 @@ static stock Callback_Claim(func[E_INLINE_CALL])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Callback_CallHandler(...)
+static stock Callback_CallHandler_(...)
 {
 	// This is called by `@`, and given the above enum in `INDIRECTION_DATA`.
 	// Get the size, and update `INDIRECTION_DATA` to point to the data.
@@ -1157,7 +1181,7 @@ static stock Callback_CallHandler(...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Callback_RemoteHandler(...)
+static stock Callback_RemoteHandler_(...)
 {
 	#emit LOAD.S.alt       8
 	#emit LCTRL            4
@@ -1203,7 +1227,7 @@ static stock Callback_RemoteHandler(...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Callback_LocalHandler(...)
+static stock Callback_LocalHandler_(...)
 {
 	#emit LOAD.S.alt       8
 	#emit LCTRL            4
@@ -1576,23 +1600,19 @@ stock Inline_UI_(const &ret)
 		ptr = Inline_Ref(ret),
 		frm = ptr + AMX_Read(ret + cellbytes) + 12,
 		size = frm - ptr + 12 + GetFrameParameterSize(frm),
-		Alloc:closure = malloc(size / cellbytes + 7),
+		Alloc:closure = malloc(size / cellbytes + 7);
+	if (!closure)
+		return 0;
+	mset(closure, _:E_INLINE_CALL_NULL, 0);
+	mset(closure, _:E_INLINE_CALL_HANDLER, _:addressof (Callback_CallHandler_<x>));
+	mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_<a>));
+	mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
+	mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
+	mset(closure, _:E_INLINE_CALL_SIZE, size);
+	mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(ret));
+	new
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
-	// E_INLINE_CALL_NULL
-	mset(closure, 0, 0);
-	// E_INLINE_CALL_HANDLER
-	mset(closure, 1, _:addressof (Callback_CallHandler<x>));
-	// E_INLINE_CALL_CLAIM
-	mset(closure, 2, _:addressof (Callback_Claim<a>));
-	// E_INLINE_CALL_RELEASE
-	mset(closure, 3, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	// E_INLINE_CALL_TIMER
-	mset(closure, 4, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
-	// E_INLINE_CALL_SIZE
-	mset(closure, 5, size);
-	// E_INLINE_CALL_FUNCTION
-	mset(closure, 6, AMX_Read(ret));
-	rawMemcpy(_:ra + 7 * cellbytes, ptr, size);
+	rawMemcpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
 	return Indirect_Ptr(ra);
 }
 
