@@ -31,8 +31,9 @@ __COMPILER_STATIC_ENUM E_INLINE_CALL
 	/* 3 */ E_INLINE_CALL_RELEASE,
 	/* 4 */ E_INLINE_CALL_TIMER, // To release unneeded inlines.
 	/* 5 */ E_INLINE_CALL_SIZE,
-	/* 6 */ E_INLINE_CALL_FUNCTION,
-	/* 7 */ ResolvedAlloc:E_INLINE_CALL_PARAMS // At least the frame header.
+	/* 6 */ E_INLINE_CALL_SOURCE,
+	/* 7 */ E_INLINE_CALL_FUNCTION,
+	/* 8 */ ResolvedAlloc:E_INLINE_CALL_PARAMS // At least the frame header.
 }
 
 __COMPILER_STATIC_ENUM E_PUBLIC_CALL
@@ -842,6 +843,7 @@ static stock Callback_InlineByName(const name[], tag)
 				mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
 				mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
 				mset(closure, _:E_INLINE_CALL_SIZE, size);
+				mset(closure, _:E_INLINE_CALL_SOURCE, ptr);
 				mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(ret));
 				new
 					ResolvedAlloc:ra = Malloc_Resolve(closure);
@@ -1024,7 +1026,7 @@ static stock Callback_CallHandler_(...)
 	// Get the size, and update `INDIRECTION_DATA` to point to the data.
 	#emit LOAD.alt         INDIRECTION_DATA    // 2
 	#emit MOVE.pri                             // 3
-	#emit ADD.C            28                  // 5
+	#emit ADD.C            32                  // 5
 	#emit PUSH.pri                             // 6
 	#emit CONST.pri        5                   // 8
 	#emit LIDX                                 // 9
@@ -1054,10 +1056,10 @@ static stock Callback_CallHandler_(...)
 	#emit NOP                                  // 39
 	// Padding to account for debug builds.
 	// If the code decides to jump back to here, save the stack out again.
-	#emit PUSH.S           0xFFFFFFF8          // 41
+	#emit LCTRL            4                   // 41
 	#emit PUSH.S           0xFFFFFFF8          // 43
-	#emit PUSH.C           0                   // 45
-	#emit LCTRL            4                   // 47
+	#emit PUSH.S           0xFFFFFFF8          // 45
+	#emit PUSH.C           0                   // 47
 	#emit PUSH.pri                             // 48
 	#emit PUSH.S           0xFFFFFFFC          // 50
 	#emit PUSH.C           20                  // 52
@@ -1357,7 +1359,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 			// couldn't resist).  This will set us up nicely for the jump in to
 			// `Callback_CallHandler` for copying the stack back out again.
 			@emit MOVE.pri
-			@emit ADD.C            inlineParams
+			@emit ADD.C            locals - inlineParams
 			@emit SCTRL            4
 		}
 		// Jump to `Callback_Call_restore_stack:` to perform common cleanup.
@@ -1480,26 +1482,28 @@ static stock Inline_Ref(const &ptr)
 	__COMPILER_NAKED
 }
 
-stock Inline_UI_(const &ret)
+stock Inline_UI_(const &header)
 {
-	// We use `&ret` instead of `return` so that we can keep the tags correct.
-	// This also passes an address that we know is the bottom of the part of the
-	// stack that we need to save for the closure.  The bottom two variables in
-	// the stack must be preserved, since they store information about the
-	// inline function (name and address), which may be required even in the
-	// inline if it is called recursively.  The code is compiled to pass `ret`
-	// as the inline structure.  However, that is just for tag checking, and we
-	// change that in assembly so that the return from this function is truly
-	// what is pushed.
+	// We use `&header` instead of `return` so that we can keep the tags
+	// correct.  This also passes an address that we know is the bottom of the
+	// part of the stack that we need to save for the closure.  The bottom two
+	// variables in the stack must be preserved, since they store information
+	// about the inline function (name and address), which may be required even
+	// in the inline if it is called recursively.  The code is compiled to pass
+	// `header` as the inline structure.  However, that is just for tag
+	// checking, and we change that in assembly so that the return from this
+	// function is truly what is pushed.
 	// 
 	// We can't use `ref()` here because passing a `const &` to a `...` function
 	// gets the address of a heap temporary, instead of the original.  Even
 	// `const ...` doesn't solve this.
 	new
-		ptr = Inline_Ref(ret),
-		frm = ptr + AMX_Read(ret + cellbytes) + 12,
+		ptr = Inline_Ref(header),
+		frm = ptr + AMX_Read(header + cellbytes) + 12,
 		size = frm - ptr + 12 + GetFrameParameterSize(frm),
 		Alloc:closure = malloc(size / cellbytes + 7);
+	printf("ptr = %08x, frm = %08x, size = %08x", ptr, frm, size);
+	printf("ret = %08x, pfr = %08x", GetFrameReturn(frm), GetFramePreviousFrame(frm));
 	if (!closure)
 		return 0;
 	mset(closure, _:E_INLINE_CALL_NULL, 0);
@@ -1508,10 +1512,16 @@ stock Inline_UI_(const &ret)
 	mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
 	mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
 	mset(closure, _:E_INLINE_CALL_SIZE, size);
-	mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(ret));
+	mset(closure, _:E_INLINE_CALL_SOURCE, ptr);
+	mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(header));
 	new
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
 	rawMemcpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
+	for (new i = 0; i != 40; i += 4)
+	{
+		printf("%08x ", AMX_Read(ra + _:E_INLINE_CALL_PARAMS * cellbytes + i));
+	}
+	printf("Output: %08x, %08x", _:ra, Indirect_Ptr(ra));
 	return Indirect_Ptr(ra);
 }
 
@@ -1520,4 +1530,44 @@ stock Inline_UP_(const func[])
 	// Convert a function name to a pointer.
 	I@ = GetPublicAddressFromName(func);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="">Info on the restoration function.</param>
+ * <remarks>
+ *  Makes variables referenced, instead of valued.  When used after
+ *  "Callback_Call" the values of any variables in the enclosing function that
+ *  were modified in the inline function will be propgated so that their new
+ *  values are seen by the original parent function (rather than that function
+ *  still seeing the original values prior to the inline function modifying
+ *  them).  Note that this does no checks at all at the minute - if you call an
+ *  inline function whose parent is not currently on the stack, this will
+ *  probably fail catastrophically!
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Callback_Restore_(...)
+{
+	printf("Input: %08x, %08x", Indirect_DePtr(getarg(0)), getarg(0));
+	assert(numargs() == 1);
+	// Maintain the frame header.
+	new
+		closure = Indirect_DePtr(getarg(0)),
+		ptr = AMX_Read(closure + _:E_INLINE_CALL_SOURCE * cellbytes),
+		frm = ptr + AMX_Read(AMX_Read(ptr) + cellbytes) + 12,
+		ret = GetFrameReturn(frm),
+		pfr = GetFramePreviousFrame(frm);
+	printf("ptr = %08x, frm = %08x, size = %08x", ptr, frm, AMX_Read(closure + _:E_INLINE_CALL_SIZE * cellbytes));
+	printf("ret = %08x, pfr = %08x", GetFrameReturn(frm), GetFramePreviousFrame(frm));
+	rawMemcpy(ptr, closure + _:E_INLINE_CALL_PARAMS * cellbytes, AMX_Read(closure + _:E_INLINE_CALL_SIZE * cellbytes)),
+	printf("ret = %08x, pfr = %08x", GetFrameReturn(frm), GetFramePreviousFrame(frm));
+	SetFrameReturn(frm, ret),
+	SetFramePreviousFrame(frm, pfr);
+	printf("ret = %08x, pfr = %08x", GetFrameReturn(frm), GetFramePreviousFrame(frm));
+	for (new i = 0; i != 40; i += 4)
+	{
+		printf("%08x ", AMX_Read(closure + _:E_INLINE_CALL_PARAMS * cellbytes + i));
+	}
+	return 0;
+}
+#define Callback_Restore(%0) Callback_Restore_(_:%0)
 
