@@ -825,7 +825,7 @@ static stock Callback_InlineByName(const name[], tag)
 		new
 			ret = AMX_Read(ptr);
 		// Compare the tags.
-		if (tag == AMX_Read(ret + 2 * cellbytes))
+		if (tag == 0 || tag == AMX_Read(ret + 2 * cellbytes))
 		{
 			// Compare the names.
 			if (!Inline_Strcmp(ret + 3 * cellbytes, name))
@@ -878,7 +878,7 @@ static stock Callback_PublicByName(const name[], tag, bool:remote)
 	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
 	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
 	GetTagNameFromID(tag, tagname);
-	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, tagname);
+	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, tagname[4]);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, name);
 	return Indirect_Ptr(Malloc_Resolve(closure));
 }
@@ -889,7 +889,7 @@ static stock Callback_PublicByName(const name[], tag, bool:remote)
  * <param name="remote">Is this function called on one or all scripts?</param>
  * <param name="tag">The tag of the return value for type reasons.</param>
  * <remarks>
- *  Replacement for `Callback_Call`.  Just returns a pointer, and no longer
+ *  Replacement for `Callback_Get`.  Just returns a pointer, and no longer
  *  relies on strict control of where is called from.
  * </remarks>
  *//*------------------------------------------------------------------------**/
@@ -910,6 +910,21 @@ stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 #define Callback_Find_(%0,_:%1,%2,.tag=tagof(%3)) Callback_Find_(%0,_:%1,%2,tagof(%1))
 
 // Old API.
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="func">Info on the function to be called.</param>
+ * <remarks>
+ *  Takes an inline function handler and parameters, and either calls the
+ *  public function while passing through the parameters, or just jumps to the
+ *  carefully crafted inline function code.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#pragma deprecated
+stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
+{
+	return Indirect_Call(func[E_CALLBACK_DATA_ALLOC], 0, ___(1));
+}
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
@@ -935,15 +950,15 @@ stock bool:Callback_Get(...)
 		numArgs = numargs(),
 		name[32],
 		ret,
-		expect[32] = "",
+		expect[32] = "F@_@",
 		bool:remote = false;
 	assert(2 <= numArgs <= 4);
 	getstringarg(name, 0);
 	if (numArgs >= 3)
 	{
-		getstringarg(expect, 2);
+		getstringarg(expect[4], 2);
 		if (numArgs == 4)
-			remote = getarg(3);
+			remote = bool:getarg(3);
 	}
 	P:2("Callback_Get called: %s", name);
 	// Check that the assumption made here is valid.  I can't imagine a case,
@@ -964,115 +979,13 @@ stock bool:Callback_Get(...)
 		return true;
 	}
 	// Wrap the new string-find API.
-	ret = Callback_FindInternal(name, expect, remote);
-	if (ret)
+	if (Callback_Find_(name, ret, remote, GetTagIDFromName(expect)))
 	{
-		ret = Indirect_Ptr(ret);
 		setarg(1, 0, ret);
 		Indirect_Claim(ret);
 		return true;
 	}
 	return false;
-//	else if (name[0] == callback_tag:'\03')
-//	{
-//		// This prefix is ALWAYS for publics not inlines.
-//		return bool:(ret[E_CALLBACK_DATA_POINTER] = (remote ? GetRemoteFunction(name[1], expect) : GetLocalFunction(name[1], expect)));
-//	}
-//	else if (remote)
-//	{
-//		// "remote" functions must always be done this way.
-//		return bool:(ret[E_CALLBACK_DATA_POINTER] = GetRemoteFunction(name, expect));
-//	}
-//	new
-//		pos = strfind(name, "\02"),
-//		frm = GetCurrentFramePreviousFrame(),
-//		prf = GetFramePreviousFrame(frm);
-//	if (pos == -1)
-//	{
-//		new
-//			cur = YSI_g_sPrevInlineFunc,
-//			parent = GetFrameFunction(prf),
-//			res;
-//		pos = strlen(name),
-//		frm = GetFrameReturn(frm);
-//		// Find the function by name.
-//		while (cur)
-//		{
-//			#emit PUSH.S      pos
-//			#emit PUSH.C      0
-//			#emit PUSH.S      name
-//			#emit PUSH.S      cur
-//			#emit PUSH.C      16
-//			#emit SYSREQ.C    strcmp
-//			#emit STACK       20
-//			#emit STOR.S.pri  res
-//			if (res == 0 && AMX_Read(cur + pos * 4) == '\02')
-//			{
-//				if (parent <= AMX_Read(cur + pos * 4 + 1 * 4) <= frm)
-//				{
-//					// Rewrite the value of "name" for the subsequent code.
-//					#emit LOAD.S.pri cur
-//					#emit STOR.S.pri name
-//					break;
-//				}
-//			}
-//			static const
-//				gsSearch[] = "\02";
-//			#emit PUSH.C      0
-//			#emit PUSH.C      0
-//			#emit PUSH.C      gsSearch
-//			#emit PUSH.S      cur
-//			#emit PUSH.C      16
-//			#emit SYSREQ.C    strfind
-//			#emit STACK       20
-//			#emit LOAD.S.alt  cur
-//			#emit IDXADDR
-//			#emit ADD.C       16
-//			#emit LOAD.I
-//			#emit STOR.S.pri  cur
-//		}
-//		if (!cur)
-//		{
-//			// Try publics...
-//			return bool:(ret[E_CALLBACK_DATA_POINTER] = GetLocalFunction(name, expect));
-//		}
-//	}
-//	static
-//		spec[2];
-//	Inline_EncodeFormatString(expect, spec),
-//	ret[E_CALLBACK_DATA_FORMAT] = spec,
-//	// Load this inline function's data in to our closure (and allocate memory).
-//	ret[E_CALLBACK_DATA_POINTER] = Function:name[pos + 1];
-//	new
-//		to = name[pos + 2],
-//		local = to >> 8, // Sign-extending!
-//		params = to & 0xFF,
-//		stack = params + local + 3,
-//		Alloc:a = malloc(stack); // Allocate closure space.
-//	// printf("local: %d, params: %d, stack: %d", local, params, stack);
-//	if (a)
-//	{
-//		// Get the stack size in bytes.
-//		stack <<= 2,
-//		// Get the address of the data.
-//		ret[E_CALLBACK_DATA_ALLOC] = Malloc_Resolve(a),
-//		frm = _:ret[E_CALLBACK_DATA_ALLOC],
-//		ret[E_CALLBACK_DATA_OFFSET] = stack,
-//		// Copy the stack over.  First get the frame of the function that used
-//		// an inline function, thus calling us indirectly.
-//		prf -= local << 2,
-//		// Adjust to the bottom of that stack, at least the bottom of the parts
-//		// we need (there may be more locals declared later that we don't need).
-//		// Copy "stack" bytes from "prf" to "frm".
-//		rawMemcpy(frm, prf, stack),
-//		// Save the "return" address for the inline to our fake stack.
-//		mset(a, local + 1, name[pos + 3]),
-//		// Save the parameter count (may be mangled by y_hooks).
-//		mset(a, local + 2, params << 2);
-//		P:2("Callback_Get end");
-//		return true;
-//	}
-//	return false;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1085,22 +998,8 @@ stock bool:Callback_Get(...)
 #pragma deprecated
 stock Callback_Release(input[E_CALLBACK_DATA])
 {
-	// Check we were called by the correct frame.
-	static
-		ResolvedAlloc:ra,
-		Alloc:a;
-	if ((ra = input[E_CALLBACK_DATA_ALLOC]))
-	{
-		#emit CONST.alt     YSI_gMallocMemory
-		#emit LOAD.pri      ra
-		#emit SUB
-		#emit SHR.C.pri     2
-		#emit STOR.pri      a
-		// Publics don't have any stored data.
-		free(a),
-		input[E_CALLBACK_DATA_ALLOC] = ResolvedAlloc:0;
-	}
-	return _:(input[E_CALLBACK_DATA_POINTER] = Function:0);
+	Indirect_Release(input[E_CALLBACK_DATA_ALLOC]);
+	return 0;
 }
 
 static stock Callback_Claim_(func[E_INLINE_CALL])
