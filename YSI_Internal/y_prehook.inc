@@ -106,8 +106,6 @@ static stock _PreHook_IncludeStates() <_ALS : _ALS_go>
 
 #endinput
 
-
-
 //                                                                                           
 //    88888888888                                                            88              
 //    88                                                                     88              
