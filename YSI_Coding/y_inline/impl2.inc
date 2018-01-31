@@ -35,11 +35,38 @@
 // Note that this is all optional.  Not doing so will continue to work, but
 // give warnings.
 
-#define inline_return YSI_gInlineRet[0]=
+#define inline_return%0; {Callback_Return_(_:(%0));continue;}
 #define @return inline_return
 
 stock
-	YSI_gInlineRet[1];
+	InlineRet:YSI_gInlineRet;
+
+stock Callback_Return_(value)
+{
+	#pragma unused a
+	// Modify the return address.
+	#emit LOAD.S.pri 0
+	#emit ADD.C      4
+	#emit LOAD.I
+	#emit STOR.S.pri 4
+	// Get the last function's parameters.
+	#emit LOAD.S.pri 0
+	#emit ADD.C      8
+	#emit LOAD.I
+	#emit LOAD.S.alt 0
+	#emit ADD
+	#emit ADDR.alt   0
+	#emit SUB
+	#emit STOR.S.pri 8
+	// Load the return value.
+	#emit LOAD.S.pri b
+	// Copy the previous frame.
+	#emit LREF.S.alt 0
+	#emit STOR.S.alt 0
+	// Do the return
+	#emit RETN
+	return InlineRet:0;
+}
 
 __COMPILER_STATIC_ENUM E_INLINE_CALL
 {
