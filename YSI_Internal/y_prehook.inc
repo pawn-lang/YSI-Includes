@@ -104,3 +104,106 @@ static stock _PreHook_IncludeStates() <_ALS : _ALS_go>
 
 #define CHAIN_PUBLIC:%0(%1) %0(%1) <_ALS : _ALS_go>
 
+#endinput
+
+
+
+//                                                                                           
+//    88888888888                                                            88              
+//    88                                                                     88              
+//    88                                                                     88              
+//    88aaaaa      8b,     ,d8  ,adPPYYba,  88,dPYba,,adPYba,   8b,dPPYba,   88   ,adPPYba,  
+//    88"""""       `Y8, ,8P'   ""     `Y8  88P'   "88"    "8a  88P'    "8a  88  a8P_____88  
+//    88              )888(     ,adPPPPP88  88      88      88  88       d8  88  8PP"""""""  
+//    88            ,d8" "8b,   88,    ,88  88      88      88  88b,   ,a8"  88  "8b,   ,aa  
+//    88888888888  8P'     `Y8  `"8bbdP"Y8  88      88      88  88`YbbdP"'   88   `"Ybbd8"'  
+//                                                              88                           
+//                                                              88                           
+//    
+
+// STEP 0
+
+// First, decide on your library prefix.  For this example I will use `<LIB>`,
+// you should use an actually valid name.
+
+// STEP 1
+
+// Do this once at the top of the file.  This hard-codes the call order.
+forward @CO_<LIB>();public @CO_<LIB>(){return CHAIN_ORDER()+1;}
+#undef CHAIN_ORDER
+#define CHAIN_ORDER @CO_<LIB>
+
+// If you are using `y_prehook` this simplifies to:
+CHAIN_HOOK(<LIB>)
+#undef CHAIN_ORDER
+#define CHAIN_ORDER CHAIN_NEXT(<LIB>)
+
+// Note that both the order and the `@CO_` are fixed and very important.
+
+// STEP 2
+
+// Insert the callback to hook as normal:
+
+public OnPlayerConnect(playerid)
+{
+}
+
+// STEP 3:
+
+// Call the next callback in the chain.  Note that this is not conditionally
+// compiled in any way:
+
+public OnPlayerConnect(playerid)
+{
+	return <LIB>_OnPlayerConnect(playerid)
+}
+
+// STEP 4:
+
+// ALS
+
+#if defined _ALS_OnPlayerConnect
+	#undef OnPlayerConnect
+#else
+	#define _ALS_OnPlayerConnect
+#endif
+
+// STEP 5:
+
+// Forward the next callback and define it in unused states (with an appropriate
+// default return, usually `1`).
+forward <LIB>_OnPlayerConnect(playerid);
+public <LIB>_OnPlayerConnect(playerid) <_ALS : _ALS_x0, _ALS : _ALS_x1> { return 1; }
+public <LIB>_OnPlayerConnect(playerid) <> { return 1; }
+
+// Again, if you are using `y_prehook` this massively simplifies to:
+CHAIN_FORWARD:<LIB>_OnPlayerConnect(playerid)=1;
+
+// STEP 6:
+
+// Define the chain:
+#define OnPlayerConnect(%0) <LIB>_OnPlayerConnect(%0) <_ALS : _ALS_go>
+
+// Or with `y_prehook`:
+#define OnPlayerConnect(%0) CHAIN_PUBLIC:<LIB>_OnPlayerConnect(%0)
+
+// STEP 7:
+
+// Somewhere in one of your init functions (or all of them) add:
+public OnScriptInit()
+{
+	state _ALS : _ALS_go;
+}
+
+// STEP 8 (optional):
+
+// If you get warnings about undefined states, put this in your code to define
+// all the valid states:
+static stock _<LIB>_IncludeStates() <_ALS : _ALS_x0, _ALS : _ALS_x1, _ALS : _ALS_x2, _ALS : _ALS_x3>
+{
+}
+
+static stock _<LIB>_IncludeStates() <_ALS : _ALS_go>
+{
+}
+
