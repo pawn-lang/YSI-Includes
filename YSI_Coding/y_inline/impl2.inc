@@ -43,29 +43,7 @@ stock
 
 stock Callback_Return_(value)
 {
-	#pragma unused a
-	// Modify the return address.
-	#emit LOAD.S.pri 0
-	#emit ADD.C      4
-	#emit LOAD.I
-	#emit STOR.S.pri 4
-	// Get the last function's parameters.
-	#emit LOAD.S.pri 0
-	#emit ADD.C      8
-	#emit LOAD.I
-	#emit LOAD.S.alt 0
-	#emit ADD
-	#emit ADDR.alt   0
-	#emit SUB
-	#emit STOR.S.pri 8
-	// Load the return value.
-	#emit LOAD.S.pri b
-	// Copy the previous frame.
-	#emit LREF.S.alt 0
-	#emit STOR.S.alt 0
-	// Do the return
-	#emit RETN
-	return InlineRet:0;
+	return value;
 }
 
 __COMPILER_STATIC_ENUM E_INLINE_CALL
@@ -155,6 +133,8 @@ forward Callback_Release_(ResolvedAlloc:a);
 #define CALL@I@T I@T("")
 
 #define CALL@Inline_UI_ Inline_UI_(REF)
+
+#define CALL@Callback_Return_ Callback_Return_(0)
 
 #define MAX_INLINE_PARAMETERS (32)
 
@@ -422,6 +402,18 @@ static stock Inline_FoundDestructor(scanner[CodeScanner])
 	return 0;
 }
 
+static stock Inline_Found@return(scanner[CodeScanner])
+{
+	new
+		ctx[AsmContext];
+	CodeScanGetMatchAsm(scanner, ctx);
+	@emit POP.pri
+	@emit NOP
+	@emit NOP
+	@emit NOP
+	return 0;
+}
+
 #if !defined _ALS_OnRuntimeError
 	forward OnRuntimeError(code, &bool:suppress);
 #endif
@@ -677,6 +669,15 @@ public OnCodeInit()
 		OP(CALL,               YSI_g_sInlineLinkedList)
 	);
 	CodeScanAddMatcher(scanner, csm8a);
+	
+	// Detect `@return` and make it a real return.
+	new csm9a[CodeScanMatcher];
+	CodeScanMatcherInit(csm9a, &Inline_Found@return);
+	CodeScanMatcherPattern(csm9a,
+		OP(PUSH_C,             4)
+		OP(CALL,               &Callback_Return_)
+	);
+	CodeScanAddMatcher(scanner, csm9a);
 	
 	// Reset the linked list whose variable we borrowed as a temporary.
 	YSI_g_sInlineLinkedList = 0;
