@@ -149,7 +149,6 @@ const INLINE_PATTERN_4 = _C<Cole>;
 
 forward Callback_Release_(ResolvedAlloc:a);
 
-#define CALL@I@E I@E(0, 0, 0, 0)
 #define CALL@I@F I@F()
 #define CALL@I@L I@L()
 #define CALL@I@K I@K(0)
@@ -180,7 +179,6 @@ enum E_INLINE_DATA
 	E_INLINE_DATA_STACK,   // Count of all locals.
 	E_INLINE_DATA_POINTER, // The struct to store the inline data in.
 	E_INLINE_DATA_START,   // The start of the writable code space.
-	E_INLINE_DATA_BEYOND,  // The end of the user code (skip jump location).
 	E_INLINE_DATA_USER     // The location of the user code.
 }
 
@@ -228,7 +226,6 @@ static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	P:5("Inline_FoundStart OK");
 	data[E_INLINE_DATA_LOCALS] = CodeScanGetMatchStack(scanner);
 	data[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
-	data[E_INLINE_DATA_BEYOND] = CodeScanGetMatchHole(scanner, 5);
 	data[E_INLINE_DATA_NAME] = CodeScanGetMatchHole(scanner, 0);
 	data[E_INLINE_DATA_STATE] = 1;
 	data[E_INLINE_DATA_PARAMETER_COUNT] = 0;
@@ -468,14 +465,6 @@ public OnCodeInit()
 		OP(STACK,              -4)
 		OP(LOAD_S_PRI,         ???)
 		OP(STOR_S_PRI,         ???)
-		OP(PUSH_C,             INLINE_PATTERN_4)
-		OP(PUSH_C,             INLINE_PATTERN_3)
-		OP(PUSH_C,             INLINE_PATTERN_2)
-		OP(PUSH_C,             INLINE_PATTERN_1)
-		OP(PUSH_C,             16)
-		OP(CALL,               &I@E)
-		OP(JZER,               ???)
-		OP(JUMP,               ???)
 	);
 	CodeScanAddMatcher(scanner, csm1a);
 	
@@ -495,18 +484,6 @@ public OnCodeInit()
 		OP(STACK,              -4)
 		OP(LOAD_S_PRI,         ???)
 		OP(STOR_S_PRI,         ???)
-		OP(CONST_PRI,          INLINE_PATTERN_4)
-		OP(PUSH_PRI)
-		OP(CONST_PRI,          INLINE_PATTERN_3)
-		OP(PUSH_PRI)
-		OP(CONST_PRI,          INLINE_PATTERN_2)
-		OP(PUSH_PRI)
-		OP(CONST_PRI,          INLINE_PATTERN_1)
-		OP(PUSH_PRI)
-		OP(PUSH_C,             16)
-		OP(CALL,               &I@E)
-		OP(JZER,               ???)
-		OP(JUMP,               ???)
 	);
 	CodeScanAddMatcher(scanner, csm1b);
 	
@@ -737,8 +714,6 @@ At maximum optimisation we get...
 
 Plus:
 
-    18 cells for the initial call to `I@E` (the last one contains the end
-        address).
      8 cells for the call to `I@F` (the address after which is the loop repeat).
     20 cells for the call to `I@L` (the address after which is the start of
         code, and whose final part jumps to just after the code return jump,
@@ -780,8 +755,8 @@ Note:
 // 
 //   +0 - Inline function start pointer.
 //   +1 - Stack size.
-#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#...#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(new %0;I@F();)while(I@L(%3I@K(%1)))
-#define INLINE_NUL(%9)%8$()%1()%4# %8$#...#%9),F@_@%4:%9=F@_@%4:_@%9;if (I@E()){}else for(;I@F();)while(I@L(I@K(%1)))
+#define INLINE_END(%9)%8$(,%0)%1(%3)%4# %8$#...#%9),F@_@%4:%9=F@_@%4:_@%9;for(new %0;I@F();)while(I@L(%3I@K(%1)))
+#define INLINE_NUL(%9)%8$()%1()%4# %8$#...#%9),F@_@%4:%9=F@_@%4:_@%9;for(;I@F();)while(I@L(I@K(%1)))
 
 #define I@O$
 
@@ -817,12 +792,6 @@ Note:
 // Move the callback parameter inside the brackets.
 #define Inline_UI_(),%0) Inline_UI_(_:%0),%0)
 #define Inline_UP_(),%0) Inline_UP_(_:@Ir:@Is:@In:#%0),F@_@:I@ I@O$)
-
-stock I@E(a = INLINE_PATTERN_1, b = INLINE_PATTERN_2, c = INLINE_PATTERN_3, d = INLINE_PATTERN_4)
-{
-	#pragma unused a, b, c, d
-	return 0;
-}
 
 stock I@F()
 {
