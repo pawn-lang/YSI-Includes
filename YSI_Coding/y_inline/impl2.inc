@@ -1346,16 +1346,18 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 		{
 			// Back up `pri` somewhere for returning later.
 			@emit STOR.pri         ref(I@)
-			// The last stack location is still in `alt` from removing
-			// everything from the stack.  This actually exploits the fact that
-			// the value in `alt` after `STACK` is the value BEFORE the
-			// adjustment, not after.  Normally this is very odd, and it was
-			// changed for PAWN 4.0 here:
-			//   
+			// This used to exploit the fact that the bottom of the stack was
+			// still in `alt`, as in:
+			//
 			//   https://github.com/compuphase/pawn/issues/35
-			//   
-			// This is the first case I've ever found where it is useful!
-			@emit MOVE.pri
+			//
+			// However, that was brittle (it has already been changed in the
+			// official distribution), and was inaccurate if there were extra
+			// locals declared in the inline.
+			@emit LOAD.S.alt       0xFFFFFFF8
+			@emit LCTRL            4
+			@emit ADD.C            inlineParams - locals
+			@emit SUB
 			@emit SCTRL            4
 			accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
 			@emit STACK            accumulate + locals - inlineParams
@@ -1372,7 +1374,10 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 		@emit STOR.pri         ref(I@)
 		if (needStore)
 		{
-			@emit MOVE.pri
+			@emit LOAD.S.alt       0xFFFFFFF8
+			@emit LCTRL            4
+			@emit ADD.C            inlineParams - locals
+			@emit SUB
 			@emit SCTRL            4
 			accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
 			if (accumulate)
@@ -1384,8 +1389,9 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 			// but not including them.  This will set us up the bomb (sorry,
 			// couldn't resist).  This will set us up nicely for the jump in to
 			// `Callback_CallHandler` for copying the stack back out again.
-			@emit MOVE.pri
-			@emit ADD.C            locals - inlineParams
+			@emit LOAD.S.alt       0xFFFFFFF8
+			@emit LCTRL            4
+			@emit SUB
 			@emit SCTRL            4
 		}
 		// Jump to `Callback_Call_restore_stack:` to perform common cleanup.
