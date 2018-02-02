@@ -183,6 +183,7 @@ enum E_INLINE_DATA
 }
 
 static stock
+	YSI_g_sInlineEndPoint,
 	YSI_g_sJumpOffset,
 	YSI_g_sCallbackCallAddress,
 	// This is the start of the linked list of inline functions.  Each time a function goes in to
@@ -398,10 +399,21 @@ static stock Inline_FoundDestructor(scanner[CodeScanner])
 	new
 		func = CodeScanGetMatchHole(scanner, 1),
 		ctx[AsmContext];
-	// Remove this inline function from the linked list of inlines.
 	CodeScanGetMatchAsm(scanner, ctx);
-	@emit LOAD.S.pri       func
-	@emit STOR.pri         ref(YSI_g_sInlineLinkedList)
+	if (YSI_g_sInlineEndPoint > CodeScanGetMatchAddress(scanner))
+	{
+		// Do not call inline function destructors in inlines.
+		@emit NOP
+		@emit NOP
+		@emit NOP
+		@emit NOP
+	}
+	else
+	{
+		// Remove this inline function from the linked list of inlines.
+		@emit LOAD.S.pri       func
+		@emit STOR.pri         ref(YSI_g_sInlineLinkedList)
+	}
 	@emit NOP
 	@emit NOP
 	@emit NOP
@@ -1406,6 +1418,7 @@ static stock Inline_DoRetnGen(ctx[AsmContext], scanner[CodeScanner], data[E_INLI
 			AMX_Write(DisasmGetCurIp(dctx) + 4, endaddrCOD);
 		}
 	}
+	YSI_g_sInlineEndPoint = endaddrDAT;
 	endaddrDAT += AMX_HEADER_COD;
 	// Now at the end address, write the cleanup and return code.
 	if (data[E_INLINE_DATA_STACK])
