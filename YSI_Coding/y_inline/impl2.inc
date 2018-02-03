@@ -28,15 +28,29 @@
 // 5) Replace:
 // 
 //     Callback_Call(cb, your, params);
+// 
 //    With:
 // 
 //     @.cb(your, params);
+// 
+// 6) If you used plain strings as:
+// 
+//     MyFunc(callback_tag:"func");
+// 
+//    This has been entirely removed and must be:
+// 
+//     MyFunc(using func);
+// 
+//    Note the lack of `inline` or `callback`.  This was the syntax for plain
+//    string searches, but plain strings were also possible.  Now they are not.
 // 
 // Note that this is all optional.  Not doing so will continue to work, but
 // give warnings.
 
 #define inline_return%0; {Callback_Return_(_:(%0));continue;}
 #define @return inline_return
+
+#define _F<%0> (#%0)
 
 stock
 	InlineRet:YSI_gInlineRet;
@@ -776,7 +790,7 @@ Note:
 #define INLINE_const(%9)%8$(%0)%1(%2) %8$(%0)1(%2)
 
 // Parameter type for passing callbacks about.
-#define using%0\32; (@Ip:@Iq:@Io:@Iu:@Ik:@Il:Inline_UI_(),)
+#define using%0\32; (@Ip:@Iq:@Io:@Iu:@Im:@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
 #define @Ip:@Iq:@Io:@Iu:%0)inline %0)
 #define @Iq:@Io:@Iu:%0)callback @Ik:@Il:Inline_UP_(),)
 #define @Io:@Iu:%0)public @Ik:@Il:Inline_UP_(),)
@@ -805,6 +819,7 @@ Note:
 // Move the callback parameter inside the brackets.
 #define Inline_UI_(),%0) Inline_UI_(_:%0),%0)
 #define Inline_UP_(),%0) Inline_UP_(_:@Ir:@Is:@In:#%0),F@_@:I@ I@O$)
+#define @Im:Callback_Find_(,I@),F@_@:I@%0) Callback_Find_(#%0,I@),F@_@:I@)
 
 stock I@F()
 {
