@@ -261,7 +261,8 @@ Test:y_inline10()
 	new
 		cc[E_CALLBACK_DATA];
 	ASSERT(y_inline_Get(using callback y_inline10, cc, _F<is>));
-//	ASSERT(y_inline_Get(using callback y_inline10<is>, cc));
+	ASSERT(Callback_Call(cc, 67, "50") == 12345 + 67 + '5');
+	ASSERT(y_inline_Get(using callback y_inline10<is>, cc));
 	ASSERT(Callback_Call(cc, 67, "50") == 12345 + 67 + '5');
 	Callback_Release(cc);
 }

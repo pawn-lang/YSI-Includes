@@ -805,7 +805,7 @@ Note:
 #define @Il:%0)%1) %0%1))
 
 // Detect a callback with a tag.
-#define @Ir:%9#%1<%0>),F@_@:%2$) @It:%9#%1,#0),F@_@%0:%2$)
+#define @Ir:%9#%1<%0>),F@_@:%2$) @It:%9#%1,#%0),F@_@%0:%2$)
 
 // Normally `F@_@` doesn't consume spaces because it is a valid tag on its own.  However, in this
 // case we know that extra specifiers after the tag prefix exist so we can check fairly safely.
@@ -816,7 +816,7 @@ Note:
 #define @Is:%9#On%0),%2$) %9#On#%0),%2$)
 
 // Callbacks with additional parameters (MUST have matching parameters (y_ini)).
-#define @In:%0(%1)),%2$) %0),%2$),.bExtra=true,.extra=%1)
+#define @In:%0(%1)%3),%2$) %0%3),%2$),.bExtra=true,.extra=%1)
 
 // Move the callback parameter inside the brackets.
 #define Inline_UI_(),%0) Inline_UI_(_:%0),%0)
@@ -895,6 +895,7 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 
 stock Function:GetLocalFunction(const func[], const spec[])
 {
+	printf("%s", spec);
 	new
 		Alloc:closure = malloc(_:E_PUBLIC_CALL);
 	if (!closure)
@@ -911,6 +912,14 @@ stock Function:GetLocalFunction(const func[], const spec[])
 	printf("%d", mget(closure, _:E_PUBLIC_CALL_FUNCTION + 0));
 	//printf("%d", mget(closure, _:E_PUBLIC_CALL_SPECIFIER + 2));
 	printf("%d", AMX_Read(Malloc_Resolve(closure) + _:E_PUBLIC_CALL_HANDLER * cellbytes));
+	new tmp[32];
+	mgets(tmp, 32, closure, _:E_PUBLIC_CALL_SPECIFIER);
+	printf("%s", tmp);
+	printf("%c%c%c%c",
+		AMX_Read(Malloc_Resolve(closure) + _:E_PUBLIC_CALL_SPECIFIER * cellbytes + 0),
+		AMX_Read(Malloc_Resolve(closure) + _:E_PUBLIC_CALL_SPECIFIER * cellbytes + 4),
+		AMX_Read(Malloc_Resolve(closure) + _:E_PUBLIC_CALL_SPECIFIER * cellbytes + 8),
+		AMX_Read(Malloc_Resolve(closure) + _:E_PUBLIC_CALL_SPECIFIER * cellbytes + 12));
 	printf("%d", mget(closure, _:E_PUBLIC_CALL_HANDLER));
 	return Indirect_Ptr(Malloc_Resolve(closure));
 }
@@ -1711,6 +1720,7 @@ stock Inline_UI_(const &header)
 
 stock Inline_UP_(const func[], const spec[] = "")
 {
+	printf("%s", spec);
 	// Convert a function name to a pointer.
 	I@ = _:GetLocalFunction(func, spec);
 	printf("Indirect_Ptr(I@) %d", I@);
