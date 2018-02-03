@@ -965,7 +965,7 @@ static stock Callback_InlineByName(const name[], tag)
 				new
 					frm = ptr + AMX_Read(ret + cellbytes) + 12,
 					size = frm - ptr + 12 + GetFrameParameterSize(frm),
-					Alloc:closure = malloc(size / cellbytes + 7);
+					Alloc:closure = malloc(size / cellbytes + _:E_INLINE_CALL - 1);
 				if (!closure)
 					return 0;
 				mset(closure, _:E_INLINE_CALL_NULL, 0);
@@ -1119,7 +1119,7 @@ stock bool:Callback_Get(...)
 	if (!(0 < ret < 128))
 	{
 		// Resolved inline.
-		P:3("Callback_Get: Found resolved callback.");
+		P:3("Callback_Get: Found resolved callback: %08x", ret);
 		setarg(1, 0, ret);
 		Indirect_Claim(ret);
 		return true;
@@ -1649,11 +1649,13 @@ stock Inline_UI_(const &header)
 	// We can't use `ref()` here because passing a `const &` to a `...` function
 	// gets the address of a heap temporary, instead of the original.  Even
 	// `const ...` doesn't solve this.
+	P:3("Inline_UI_ called: %d", header);
 	new
 		ptr = Inline_Ref(header),
 		frm = ptr + AMX_Read(header + cellbytes),
 		size = frm - ptr + 12 + GetFrameParameterSize(frm),
-		Alloc:closure = malloc(size / cellbytes + 7);
+		Alloc:closure = malloc(size / cellbytes + _:E_INLINE_CALL - 1);
+	P:5("Inline_UI_: %d %d %d %d", ptr, frm, size, _:closure);
 	if (!closure)
 		return 0;
 	mset(closure, _:E_INLINE_CALL_NULL, 0);
