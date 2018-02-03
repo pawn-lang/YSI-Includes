@@ -840,6 +840,91 @@ stock I@K(n)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <param name="func">Public function to get.</param>
+ * <param name="spec">The structure of the function's parameters.</param>
+ * <returns>
+ *  A pointer to the function.
+ * </returns>
+ * <remarks>
+ *  Accepts the following parameter specifiers:
+ *
+ *      i - Integer (also x/c/d/h)
+ *      f - Float (also g)
+ *      s - String
+ *      ai - Array (followed by length)
+ *      v - Reference (&amp;var, any tag)
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#define Function: F@_@:
+stock Function:GetRemoteFunction(const func[], const spec[])
+{
+	new
+		Alloc:closure = malloc(_:E_PUBLIC_CALL);
+	if (!closure)
+		return 0;
+	mset(closure, _:E_PUBLIC_CALL_NULL, 0);
+	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_RemoteHandler_<x>));
+	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_<a>));
+	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
+	mset(closure, _:E_PUBLIC_CALL_TIMER, 0);
+	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
+	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
+	return Indirect_Ptr(Malloc_Resolve(closure));
+}
+#define GetRemoteFunction(&%0<%1>) (F@_@%1:GetRemoteFunction(#%0, #%1))
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="func">Public function to get.</param>
+ * <param name="spec">The structure of the function's parameters.</param>
+ * <returns>
+ *  A pointer to the function.
+ * </returns>
+ * <remarks>
+ *  Accepts the following parameter specifiers:
+ *
+ *      i - Integer (also x/c/d/h)
+ *      f - Float (also g)
+ *      s - String
+ *      ai - Array (followed by length)
+ *      v - Reference (&amp;var, any tag)
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Function:GetLocalFunction(const func[], const spec[])
+{
+	new
+		Alloc:closure = malloc(_:E_PUBLIC_CALL);
+	if (!closure)
+		return 0;
+	mset(closure, _:E_PUBLIC_CALL_NULL, 0);
+	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_LocalHandler_<x>));
+	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_<a>));
+	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
+	mset(closure, _:E_PUBLIC_CALL_TIMER, 0);
+	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
+	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
+	return Indirect_Ptr(Malloc_Resolve(closure));
+}
+#define GetLocalFunction(&%0<%1>) (F@_@%1:GetLocalFunction(#%0, #%1))
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="func">Function pointer to call.</param>
+ * <param name="">The function's parameters.</param>
+ * <remarks>
+ *  Call the function in the given pointer with the given parameters.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#pragma deprecated
+stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
+{
+	return Indirect_Call(func, 0, ___(1));
+}
+
+/*-------------------------------------------------------------------------*//**
  * <param name="string1">First string as a pointer.</param>
  * <param name="string2">Second string as a string.</param>
  * <param name="ignorecase">Do a case-insensitive search.</param>
@@ -902,34 +987,6 @@ static stock Callback_InlineByName(const name[], tag)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="name">Public to find by name.</param>
- * <param name="tag">Tag to find by ID.</param>
- * <param name="remote">Use <c>CallRemoteFunction</c>?</param>
- * <remarks>
- *  Traverses up the stack to find an in-scope inline with the same name AND
- *  SIGNATURE.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-static stock Callback_PublicByName(const name[], tag, bool:remote)
-{
-	new
-		Alloc:closure = malloc(_:E_PUBLIC_CALL),
-		tagname[32];
-	if (!closure)
-		return 0;
-	mset(closure, _:E_PUBLIC_CALL_NULL, 0);
-	mset(closure, _:E_PUBLIC_CALL_HANDLER, remote ? (_:addressof (Callback_RemoteHandler_<x>)) : (_:addressof (Callback_LocalHandler_<x>)));
-	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_<a>));
-	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
-	GetTagNameFromID(tag, tagname);
-	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, tagname[4]);
-	msets(closure, _:E_PUBLIC_CALL_FUNCTION, name);
-	return Indirect_Ptr(Malloc_Resolve(closure));
-}
-
-/*-------------------------------------------------------------------------*//**
  * <param name="name">Callback to find by name.</param>
  * <param name="dest">Where to store the function.</param>
  * <param name="remote">Is this function called on one or all scripts?</param>
@@ -945,8 +1002,20 @@ stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
 	// Remote calls must always be publics.  Indirection handles publics
 	// natively.  However, it doesn't handle it amazingly since it needs to
 	// handle it very generically.
-	if (remote || funcidx(name) != -1)
-		return !!(dest = Callback_PublicByName(name, tag, remote));
+	if (remote)
+	{
+		new
+			tagname[32];
+		GetTagNameFromID(tag, tagname);
+		return !!(dest = _:GetRemoteFunction(name, tagname[4]));
+	}
+	else if (funcidx(name) != -1)
+	{
+		new
+			tagname[32];
+		GetTagNameFromID(tag, tagname);
+		return !!(dest = _:GetLocalFunction(name, tagname[4]));
+	}
 	// Otherwise iterate through the in-scope inlines stack to see if any match
 	// this name.
 	return !!(dest = Callback_InlineByName(name, tag));
@@ -992,6 +1061,12 @@ stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (params))
 {
 	return Indirect_Array(func[E_CALLBACK_DATA_ALLOC], 0, params, num);
+}
+
+#pragma deprecated
+stock Inline_Reset(callback[E_CALLBACK_DATA])
+{
+	return (callback[E_CALLBACK_DATA_ALLOC] = 0);
 }
 
 /*-------------------------------------------------------------------------*//**
