@@ -373,7 +373,7 @@ stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_TESTING_TEST_SEARCH)))
 	{
 #if defined JUST_TEST
-		if (strcmp(buffer[4], #JUST_TEST))
+		if (strcmp(buffer[1], #JUST_TEST))
 			continue;
 #endif
 		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_BEFORE)))
