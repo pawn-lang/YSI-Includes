@@ -787,7 +787,9 @@ Note:
 
 #define I@O$
 
+// Detect `const` in the function name, and strip it from the variable name.
 #define INLINE_const(%9)%8$(%0)%1(%2) %8$(%0)1(%2)
+#define _@const%0\32; _@
 
 // Parameter type for passing callbacks about.
 #define using%0\32; (@Ip:@Iq:@Io:@Iu:@Im:@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
