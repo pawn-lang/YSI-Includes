@@ -1501,7 +1501,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 		}
 		// If we are here, we are in the context of `Callback_Call`, with no
 		// locals on the stack.
-		@emit STACK            12
+		@emit STACK            8
 		@emit RETN
 	}
 	else
