@@ -871,7 +871,6 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_TIMER, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
-	printf("allocating: %08x for %s", Malloc_Resolve(closure), func);
 	return Indirect_Ptr(Malloc_Resolve(closure));
 }
 #define GetRemoteFunction(&%0<%1>) (F@_@%1:GetRemoteFunction(#%0, #%1))
@@ -907,7 +906,6 @@ stock Function:GetLocalFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_TIMER, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
-	printf("allocating: %08x for %s", Malloc_Resolve(closure), func);
 	return Indirect_Ptr(Malloc_Resolve(closure));
 }
 #define GetLocalFunction(&%0<%1>) (F@_@%1:GetLocalFunction(#%0, #%1))
@@ -979,7 +977,6 @@ static stock Callback_InlineByName(const name[], tag)
 				new
 					ResolvedAlloc:ra = Malloc_Resolve(closure);
 				rawMemcpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
-				printf("allocating: %08x for %s", ra, name);
 				return Indirect_Ptr(ra);
 			}
 		}
@@ -1144,7 +1141,6 @@ stock bool:Callback_Get(...)
 #pragma deprecated
 stock Callback_Release(input[E_CALLBACK_DATA])
 {
-	printf("freeing: %08x", input[E_CALLBACK_DATA_ALLOC]);
 	Indirect_Release(input[E_CALLBACK_DATA_ALLOC]);
 	return 0;
 }
@@ -1668,7 +1664,6 @@ stock Inline_UI_(const &header)
 	mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(header));
 	new
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
-	printf("allocating: %08x", ra);
 	rawMemcpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
 	return Indirect_Ptr(ra);
 }
