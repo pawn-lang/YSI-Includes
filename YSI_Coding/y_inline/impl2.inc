@@ -805,7 +805,7 @@ Note:
 #define @Il:%0)%1) %0%1))
 
 // Detect a callback with a tag.
-#define @Ir:%9#%1<%0>),F@_@:%2$) @It:%9#%1),F@_@%0:%2$)
+#define @Ir:%9#%1<%0>),F@_@:%2$) @It:%9#%1,#0),F@_@%0:%2$)
 
 // Normally `F@_@` doesn't consume spaces because it is a valid tag on its own.  However, in this
 // case we know that extra specifiers after the tag prefix exist so we can check fairly safely.
@@ -906,6 +906,12 @@ stock Function:GetLocalFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_TIMER, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
+	printf("closure = %d", Malloc_Resolve(closure));
+	printf("%d", mget(closure, _:E_PUBLIC_CALL_SPECIFIER + 0));
+	printf("%d", mget(closure, _:E_PUBLIC_CALL_FUNCTION + 0));
+	//printf("%d", mget(closure, _:E_PUBLIC_CALL_SPECIFIER + 2));
+	printf("%d", AMX_Read(Malloc_Resolve(closure) + _:E_PUBLIC_CALL_HANDLER * cellbytes));
+	printf("%d", mget(closure, _:E_PUBLIC_CALL_HANDLER));
 	return Indirect_Ptr(Malloc_Resolve(closure));
 }
 #define GetLocalFunction(&%0<%1>) (F@_@%1:GetLocalFunction(#%0, #%1))
@@ -1069,6 +1075,8 @@ stock Inline_Reset(callback[E_CALLBACK_DATA])
 	return (callback[E_CALLBACK_DATA_ALLOC] = 0);
 }
 
+native Callback_Strcat_(dest, const src[], len) = strcat;
+
 /*-------------------------------------------------------------------------*//**
  * <remarks>
  *  Looks up the callback by name.  If the name has the correct data embedded
@@ -1090,8 +1098,8 @@ stock bool:Callback_Get(...)
 	// prototype can take both old-style strings and new-style resolved
 	// callbacks from `using inline`.
 	new
-		numArgs = numargs(),
 		name[32],
+		numArgs = numargs(),
 		ret,
 		expect[32] = "F@_@",
 		bool:remote = false;
@@ -1099,11 +1107,19 @@ stock bool:Callback_Get(...)
 	getstringarg(name, 0);
 	if (numArgs >= 3)
 	{
-		getstringarg(expect[4], 2);
+		getstringarg(expect[4], 2, sizeof (expect) - 4);
 		if (numArgs == 4)
 			remote = bool:getarg(3);
 	}
-	P:2("Callback_Get called: %s", name);
+	printf("%s", expect);
+	printf("%c", getarg(2, 0));
+	printf("%c", getarg(2, 1));
+	printf("%c", getarg(2, 2));
+	printf("%c", expect[0 + 4]);
+	printf("%c", expect[1 + 4]);
+	printf("%c", expect[2 + 4]);
+	printf("Callback_Get called: %d %s", numArgs, name);
+	P:2("Callback_Get called: %d %s", numArgs, name);
 	// Check that the assumption made here is valid.  I can't imagine a case,
 	// given the number of libraries in use here, where it couldn't be!  We
 	// check this since any inline data pointer will point in to the `DAT`
@@ -1112,15 +1128,36 @@ stock bool:Callback_Get(...)
 	// indirection include which knows to resolve the pointer before checking
 	// this, unlike here were we don't know the type.
 	assert(AMX_HEADER_DAT - AMX_HEADER_COD > 128);
-	ret = name[0];
+	ret = getarg(0);
+	printf("%d", ret);
 	if (!(0 < ret < 128))
 	{
 		// Resolved inline.
 		P:3("Callback_Get: Found resolved callback: %08x", ret);
 		setarg(1, 0, ret);
+		// Direct function pointer.
 		Indirect_Claim(ret);
+		ret = Indirect_DePtr_(ret);
+		if (ret < 0 || AMX_Read(ret))
+			return true;
+		// Check the format, since we might have a new one to use here.
+		printf("%d", ret);
+		numArgs = AMX_Read(ret + _:E_PUBLIC_CALL_HANDLER * cellbytes);
+		printf("%d %d %d", numArgs, expect[4], AMX_Read(ret + _:E_PUBLIC_CALL_SPECIFIER * cellbytes));
+		printf("%d %d", _:addressof (Callback_LocalHandler_<x>), addressof (Callback_RemoteHandler_<x>));
+		if (numArgs == _:addressof (Callback_LocalHandler_<x>) || numArgs == _:addressof (Callback_RemoteHandler_<x>))
+		{
+			if (expect[4] && AMX_Read(ret + _:E_PUBLIC_CALL_SPECIFIER * cellbytes) == '\0')
+			{
+				// Given an explicit specifier here, not before.
+				Callback_Strcat_(ret + _:E_PUBLIC_CALL_SPECIFIER * cellbytes, expect[4], 32);
+			}
+		}
 		return true;
 	}
+//	new
+//		name[32];
+	getstringarg(name, 0);
 	// Wrap the new string-find API.
 	if (Callback_Find_(name, ret, remote, GetTagIDFromName(expect)))
 	{
@@ -1271,6 +1308,10 @@ static stock Callback_RemoteHandler_(...)
 
 static stock Callback_LocalHandler_(...)
 {
+	printf("%c", AMX_Read(INDIRECTION_DATA + 20));
+	printf("%c", AMX_Read(INDIRECTION_DATA + 24));
+	printf("%c", AMX_Read(INDIRECTION_DATA + 28));
+	printf("Callback_LocalHandler_ %d %d %d", numargs(), INDIRECTION_DATA, getarg(0));
 	#emit LOAD.S.alt       8
 	#emit LCTRL            4
 	#emit SUB
@@ -1280,8 +1321,7 @@ static stock Callback_LocalHandler_(...)
 	#emit PUSH.alt
 	#emit PUSH.alt
 	#emit PUSH.C           0
-	#emit ADDR.alt         12
-	#emit PUSH.alt
+	#emit PUSH.adr         12
 	#emit PUSH.pri
 	#emit PUSH.C           20
 	#emit SYSREQ.C         memcpy
@@ -1665,13 +1705,15 @@ stock Inline_UI_(const &header)
 	new
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
 	rawMemcpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
+	printf("Indirect_Ptr(ra) %d", Indirect_Ptr(ra));
 	return Indirect_Ptr(ra);
 }
 
-stock Inline_UP_(const func[])
+stock Inline_UP_(const func[], const spec[] = "")
 {
 	// Convert a function name to a pointer.
-	I@ = GetPublicAddressFromName(func);
+	I@ = _:GetLocalFunction(func, spec);
+	printf("Indirect_Ptr(I@) %d", I@);
 }
 
 /*-------------------------------------------------------------------------*//**
