@@ -309,29 +309,19 @@ Test:y_inline13()
 	new
 		g = 5,
 		cc[E_CALLBACK_DATA];
-	printf("9");
 	inline const func()
 	{
 		ASSERT(g == 5);
 		++g;
 	}
-	printf("0");
 	y_inline_Get(using inline func, cc);
-	printf("1");
 	Callback_Call(cc);
-	printf("2");
 	Callback_Call(cc);
-	printf("3");
 	Callback_Call(cc);
-	printf("4");
 	Callback_Call(cc);
-	printf("5");
 	y_inline_Restore(cc);
-	printf("6");
 	ASSERT(g == 5);
-	printf("7");
 	Callback_Release(cc);
-	printf("8");
 }
 
 Test:Callback_AA()

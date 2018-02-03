@@ -1422,11 +1422,13 @@ static stock Inline_GenerateLocalsStore(ctx[AsmContext], parameters[], count)
 		{
 		case -1:
 		{
+			// Only use `alt` in here, since `Inline_GeneratePostamble` holds
+			// the final stack value in `pri`.
 			if (accumulate)
 				@emit STACK            accumulate
 			accumulate = 0;
-			@emit POP.pri
-			@emit SREF.S.pri       count * cellbytes + 12
+			@emit POP.alt
+			@emit SREF.S.alt       count * cellbytes + 12
 		}
 		case 0:
 			accumulate += cellbytes;
@@ -1489,20 +1491,28 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 			// However, that was brittle (it has already been changed in the
 			// official distribution), and was inaccurate if there were extra
 			// locals declared in the inline.
-			@emit LOAD.S.alt       0xFFFFFFF8
-			@emit LCTRL            4
-			@emit ADD.C            inlineParams - locals
-			@emit SUB
+			@emit LOAD.S.pri       0xFFFFFFF8
+			@emit STACK            0
+			@emit ADD.C            locals - inlineParams
+			@emit SUB.alt
 			@emit SCTRL            4
+			// We will remove everything from the stack later, as well as the
+			// two values on the stack for `memcpy` restoration.
+			@emit CONST.pri        8
+			@emit ADD
 			accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
-			@emit STACK            accumulate + locals - inlineParams
 			// Restore the return value.
+			@emit SCTRL            4
 			@emit LOAD.pri         ref(I@)
+			@emit RETN
 		}
-		// If we are here, we are in the context of `Callback_Call`, with no
-		// locals on the stack.
-		@emit STACK            8
-		@emit RETN
+		else
+		{
+			// If we are here, we are in the context of `Callback_Call`, with no
+			// locals on the stack.
+			@emit STACK            8
+			@emit RETN
+		}
 	}
 	else
 	{
