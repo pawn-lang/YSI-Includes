@@ -320,7 +320,11 @@ Optional plugins:
 
 #if defined AMX_INCLUDING_FAILED
 	#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
-#elseif !defined AMX_ASSEMBLY_NO_BUGGED_TAGS
+#elseif defined AMX_ASSEMBLY_NO_BUGGED_TAGS
+	#if AMX_ASSEMBLY_NO_BUGGED_TAGS < 2
+		#error Please update "https://github.com/Zeex/amx_assembly" to the latest version.
+	#endif
+#else
 	#error Please update "https://github.com/Zeex/amx_assembly" to the latest version.
 #endif
 
