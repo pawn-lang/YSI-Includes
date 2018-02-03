@@ -356,7 +356,7 @@ Optional plugins:
 #tryinclude <indirection>
 #if !defined _INC_indirection
 	#error Could not include "https://github.com/Y-Less/indirection" - ensure its files are in "include\indirection\"
-#elseif !defined Indirect_DePtr_
+#elseif !defined Indirect_Array
 	#error Please update "https://github.com/Y-Less/indirection" to the latest version.
 #endif
 

@@ -973,6 +973,28 @@ stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <param name="func">Info on the function to be called.</param>
+ * <param name="params">Array of data pointers.</param>
+ * <param name="num">Size of the array.</param>
+ * <remarks>
+ *  This is very similar to Callback_Call, but takes an array of ADDRESSES
+ *  instead of normal parameters.  This is designed to help support some
+ *  experimental OO code I was working on...
+ *
+ *  If the target is a public function, the parameters are resolved and passed
+ *  normally.  If the target is an inline function we are optimised for the
+ *  common case, so move the data on to the stack (currently done value-by-value
+ *  not all at once) and call "Callback_Call".
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#pragma deprecated
+stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (params))
+{
+	return Indirect_Array(func[E_CALLBACK_DATA_ALLOC], 0, params, num);
+}
+
+/*-------------------------------------------------------------------------*//**
  * <remarks>
  *  Looks up the callback by name.  If the name has the correct data embedded
  *  within it that's great and we use that directly.  Otherwise this function
