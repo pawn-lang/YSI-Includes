@@ -776,17 +776,17 @@ Note:
 #define INLINE_const(%9)%8$(%0)%1(%2) %8$(%0)1(%2)
 
 // Parameter type for passing callbacks about.
-#define using%0\32; using
-#define usingcallback (@Ik:@Il:I@O$Inline_UP_())
-#define usingpublic usingcallback
-#define usinginline (@Ik:@Il:I@O$Inline_UI_())
-#define usingresolved // Do nothing.
+#define using%0\32; (@Ip:@Iq:@Io:@Iu:@Ik:@Il:Inline_UI_(),)
+#define @Ip:@Iq:@Io:@Iu:%0)inline %0)
+#define @Iq:@Io:@Iu:%0)callback @Ik:@Il:Inline_UP_(),)
+#define @Io:@Iu:%0)public @Ik:@Il:Inline_UP_(),)
+#define @Iu:%0)resolved @Ik:@Il:0,)
 
 // Detect a `using` parameter that is not the last parameter.
-#define @Ik:%9$%0)%1, %0,%1),
+#define @Ik:@Il:%0)%1, %0%1),
 
 // Detect a `using` parameter that is the last parameter.
-#define @Il:%9$%0)%1) %0,%1))
+#define @Il:%0)%1) %0%1))
 
 // Detect a callback with a tag.
 #define @Ir:%9#%1<%0>),F@_@:%2$) @It:%9#%1),F@_@%0:%2$)
