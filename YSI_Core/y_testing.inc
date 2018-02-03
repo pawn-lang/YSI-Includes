@@ -464,7 +464,7 @@ Testing_Player_retry:
 		if ((idx = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH)))
 		{
 #if defined JUST_TEST
-			if (strcmp(buffer[4], #JUST_TEST))
+			if (strcmp(buffer[1], #JUST_TEST))
 				goto Testing_Player_retry;
 #endif
 			// Call the setup function if there is one.
@@ -557,9 +557,8 @@ Testing_Next_retry:
 			// Get the new test, but don't store the index.
 			if (AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH))
 			{
-				strunpack(buffer, buffer);
 #if defined JUST_TEST
-				if (strcmp(buffer[4], #JUST_TEST))
+				if (strcmp(buffer[1], #JUST_TEST))
 					goto Testing_Next_retry;
 #endif
 				YSI_g_sAsked = false;
