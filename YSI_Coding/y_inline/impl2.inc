@@ -895,7 +895,6 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 
 stock Function:GetLocalFunction(const func[], const spec[])
 {
-	printf("%s", spec);
 	new
 		Alloc:closure = malloc(_:E_PUBLIC_CALL);
 	if (!closure)
@@ -907,20 +906,8 @@ stock Function:GetLocalFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_TIMER, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
-	printf("closure = %d", Malloc_Resolve(closure));
-	printf("%d", mget(closure, _:E_PUBLIC_CALL_SPECIFIER + 0));
-	printf("%d", mget(closure, _:E_PUBLIC_CALL_FUNCTION + 0));
-	//printf("%d", mget(closure, _:E_PUBLIC_CALL_SPECIFIER + 2));
-	printf("%d", AMX_Read(Malloc_Resolve(closure) + _:E_PUBLIC_CALL_HANDLER * cellbytes));
 	new tmp[32];
 	mgets(tmp, 32, closure, _:E_PUBLIC_CALL_SPECIFIER);
-	printf("%s", tmp);
-	printf("%c%c%c%c",
-		AMX_Read(Malloc_Resolve(closure) + _:E_PUBLIC_CALL_SPECIFIER * cellbytes + 0),
-		AMX_Read(Malloc_Resolve(closure) + _:E_PUBLIC_CALL_SPECIFIER * cellbytes + 4),
-		AMX_Read(Malloc_Resolve(closure) + _:E_PUBLIC_CALL_SPECIFIER * cellbytes + 8),
-		AMX_Read(Malloc_Resolve(closure) + _:E_PUBLIC_CALL_SPECIFIER * cellbytes + 12));
-	printf("%d", mget(closure, _:E_PUBLIC_CALL_HANDLER));
 	return Indirect_Ptr(Malloc_Resolve(closure));
 }
 #define GetLocalFunction(&%0<%1>) (F@_@%1:GetLocalFunction(#%0, #%1))
@@ -1120,14 +1107,6 @@ stock bool:Callback_Get(...)
 		if (numArgs == 4)
 			remote = bool:getarg(3);
 	}
-	printf("%s", expect);
-	printf("%c", getarg(2, 0));
-	printf("%c", getarg(2, 1));
-	printf("%c", getarg(2, 2));
-	printf("%c", expect[0 + 4]);
-	printf("%c", expect[1 + 4]);
-	printf("%c", expect[2 + 4]);
-	printf("Callback_Get called: %d %s", numArgs, name);
 	P:2("Callback_Get called: %d %s", numArgs, name);
 	// Check that the assumption made here is valid.  I can't imagine a case,
 	// given the number of libraries in use here, where it couldn't be!  We
@@ -1138,7 +1117,6 @@ stock bool:Callback_Get(...)
 	// this, unlike here were we don't know the type.
 	assert(AMX_HEADER_DAT - AMX_HEADER_COD > 128);
 	ret = getarg(0);
-	printf("%d", ret);
 	if (!(0 < ret < 128))
 	{
 		// Resolved inline.
@@ -1150,10 +1128,7 @@ stock bool:Callback_Get(...)
 		if (ret < 0 || AMX_Read(ret))
 			return true;
 		// Check the format, since we might have a new one to use here.
-		printf("%d", ret);
 		numArgs = AMX_Read(ret + _:E_PUBLIC_CALL_HANDLER * cellbytes);
-		printf("%d %d %d", numArgs, expect[4], AMX_Read(ret + _:E_PUBLIC_CALL_SPECIFIER * cellbytes));
-		printf("%d %d", _:addressof (Callback_LocalHandler_<x>), addressof (Callback_RemoteHandler_<x>));
 		if (numArgs == _:addressof (Callback_LocalHandler_<x>) || numArgs == _:addressof (Callback_RemoteHandler_<x>))
 		{
 			if (expect[4] && AMX_Read(ret + _:E_PUBLIC_CALL_SPECIFIER * cellbytes) == '\0')
@@ -1317,10 +1292,6 @@ static stock Callback_RemoteHandler_(...)
 
 static stock Callback_LocalHandler_(...)
 {
-	printf("%c", AMX_Read(INDIRECTION_DATA + 20));
-	printf("%c", AMX_Read(INDIRECTION_DATA + 24));
-	printf("%c", AMX_Read(INDIRECTION_DATA + 28));
-	printf("Callback_LocalHandler_ %d %d %d", numargs(), INDIRECTION_DATA, getarg(0));
 	#emit LOAD.S.alt       8
 	#emit LCTRL            4
 	#emit SUB
@@ -1714,16 +1685,13 @@ stock Inline_UI_(const &header)
 	new
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
 	rawMemcpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
-	printf("Indirect_Ptr(ra) %d", Indirect_Ptr(ra));
 	return Indirect_Ptr(ra);
 }
 
 stock Inline_UP_(const func[], const spec[] = "")
 {
-	printf("%s", spec);
 	// Convert a function name to a pointer.
 	I@ = _:GetLocalFunction(func, spec);
-	printf("Indirect_Ptr(I@) %d", I@);
 }
 
 /*-------------------------------------------------------------------------*//**

@@ -251,8 +251,8 @@ forward y_inline10(a, b[]);
 
 public y_inline10(a, b[])
 {
-	printf("y_inline10 %d", numargs());
-	printf("y_inline10 %d %s", a, b);
+	//printf("y_inline10 %d", numargs());
+	//printf("y_inline10 %d %s", a, b);
 	return 12345 + a + b[0];
 }
 
