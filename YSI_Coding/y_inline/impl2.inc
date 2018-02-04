@@ -1359,8 +1359,12 @@ static stock Inline_GenerateLocalsCopy(ctx[AsmContext], parameters[], count)
 		{
 			@emit STACK            -(YSI_MAX_INLINE_STRING * cellbytes)
 			@emit STACK            0
-			@emit LOAD.S.pri       input
-			@emit MOVS             (YSI_MAX_INLINE_STRING * cellbytes)
+			@emit PUSH.C           YSI_MAX_INLINE_STRING
+			@emit PUSH.S           input
+			@emit PUSH.alt
+			@emit PUSH.C           12
+			@emit SYSREQ           "strunpack"
+			@emit STACK            16
 		}
 		default:
 		{
