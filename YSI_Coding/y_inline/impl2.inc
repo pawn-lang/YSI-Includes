@@ -1616,8 +1616,8 @@ static stock Inline_DoRetnGen(ctx[AsmContext], scanner[CodeScanner], data[E_INLI
 		AMX_Write(endaddrDAT, nop);
 		AMX_Write(endaddrDAT + 4, nop);
 	}
-	AMX_Write(endaddrDAT + 8, _:RelocateOpcode(OP_RETN));
-	AMX_Write(endaddrDAT + 12, nop);
+	AMX_Write(endaddrDAT + 8, _:RelocateOpcode(OP_ZERO_PRI));
+	AMX_Write(endaddrDAT + 12, _:RelocateOpcode(OP_RETN));
 	// Add the current inline to the linked list of in-scope inlines.  Also push
 	// the inline address and current frame data.
 	@emit PUSH             ref(YSI_g_sInlineLinkedList)
