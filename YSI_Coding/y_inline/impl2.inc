@@ -1117,6 +1117,8 @@ stock bool:Callback_Get(...)
 	// this, unlike here were we don't know the type.
 	assert(AMX_HEADER_DAT - AMX_HEADER_COD > 128);
 	ret = getarg(0);
+	if (ret == 0)
+		return false;
 	if (!(0 < ret < 128))
 	{
 		// Resolved inline.
