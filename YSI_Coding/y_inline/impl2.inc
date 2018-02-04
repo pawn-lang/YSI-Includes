@@ -958,10 +958,9 @@ Inline_NumArgs_load:
 	#emit ZERO.alt
 	#emit PUSH.pri
 	#emit SGEQ
-	#emit LREF.S.alt          0
+	#emit LREF.S.alt          frm
 	#emit JZER                Inline_NumArgs_load
 	#emit POP.pri
-	#emit SHR.C.pri           2
 	#emit RETN
 	__COMPILER_NAKED
 }
@@ -990,8 +989,9 @@ static stock Callback_InlineByName(const name[], tag)
 			if (!Inline_Strcmp(ret + 3 * cellbytes, name))
 			{
 				new
-					frm = ptr + AMX_Read(ret + cellbytes) + 12,
-					size = frm - ptr + 12 + Inline_NumArgs(frm),
+					frm = ptr + AMX_Read(ret + cellbytes),
+					args = Inline_NumArgs(frm),
+					size = frm - ptr + 12 + args,
 					Alloc:closure = malloc(size / cellbytes + _:E_INLINE_CALL - 1);
 				if (!closure)
 					return 0;
@@ -1006,6 +1006,7 @@ static stock Callback_InlineByName(const name[], tag)
 				new
 					ResolvedAlloc:ra = Malloc_Resolve(closure);
 				rawMemcpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
+				AMX_Write(_:ra + (_:E_INLINE_CALL_PARAMS + 2) * cellbytes + frm - ptr, args);
 				return Indirect_Ptr(ra);
 			}
 		}
@@ -1712,7 +1713,8 @@ stock Inline_UI_(const &header)
 	new
 		ptr = Inline_Ref(header),
 		frm = ptr + AMX_Read(header + cellbytes),
-		size = frm - ptr + 12 + Inline_NumArgs(frm),
+		args = Inline_NumArgs(frm),
+		size = frm - ptr + 12 + args,
 		Alloc:closure = malloc(size / cellbytes + _:E_INLINE_CALL - 1);
 	P:5("Inline_UI_: %d %d %d %d", ptr, frm, size, _:closure);
 	if (!closure)
@@ -1728,6 +1730,7 @@ stock Inline_UI_(const &header)
 	new
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
 	rawMemcpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
+	AMX_Write(_:ra + (_:E_INLINE_CALL_PARAMS + 2) * cellbytes + frm - ptr, args);
 	return Indirect_Ptr(ra);
 }
 
