@@ -391,7 +391,7 @@ static stock Inline_FoundDestructor(scanner[CodeScanner])
 	// containing the function header data.  So when we use the list, we need to
 	// take that in to account; but not here.
 	new
-		func = CodeScanGetMatchHole(scanner, 1),
+		func = CodeScanGetMatchHole(scanner, 0),
 		ctx[AsmContext];
 	CodeScanGetMatchAsm(scanner, ctx);
 	if (YSI_g_sInlineEndPoint > CodeScanGetMatchAddress(scanner))
