@@ -629,6 +629,7 @@ hook y_inline_InHook2@0(a, b)
 		r = 100;
 	inline func(&r2)
 	{
+		ASSERT(numargs() == 2);
 		#pragma unused r2
 		YSI_g_sInlineTestVar0 += a * b;
 		r2 = 96;

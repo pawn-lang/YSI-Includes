@@ -925,7 +925,7 @@ stock Function:GetLocalFunction(const func[], const spec[])
 #pragma deprecated
 stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
 {
-	return Indirect_Call(func, 0, ___(1));
+	return Indirect_Call(_:func, 0, ___(1));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -940,6 +940,31 @@ stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
  *//*------------------------------------------------------------------------**/
 
 native Inline_Strcmp(const string1, const string2[], bool:ignorecase=false, length=cellmax) = strcmp;
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="frm">Frame to get the parameters from.</param>
+ * <remarks>
+ *  Deals with y_hooks parameter count mangling.  Stolen from <c>Hooks_NumArgs</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+static stock Inline_NumArgs(frm)
+{
+	#emit LOAD.S.alt          frm
+Inline_NumArgs_load:
+	#emit CONST.pri           8
+	#emit ADD
+	#emit LOAD.I
+	#emit ZERO.alt
+	#emit PUSH.pri
+	#emit SGEQ
+	#emit LREF.S.alt          0
+	#emit JZER                Inline_NumArgs_load
+	#emit POP.pri
+	#emit SHR.C.pri           2
+	#emit RETN
+	__COMPILER_NAKED
+}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Inline to find by name.</param>
@@ -966,7 +991,7 @@ static stock Callback_InlineByName(const name[], tag)
 			{
 				new
 					frm = ptr + AMX_Read(ret + cellbytes) + 12,
-					size = frm - ptr + 12 + GetFrameParameterSize(frm),
+					size = frm - ptr + 12 + Inline_NumArgs(frm),
 					Alloc:closure = malloc(size / cellbytes + _:E_INLINE_CALL - 1);
 				if (!closure)
 					return 0;
@@ -1687,7 +1712,7 @@ stock Inline_UI_(const &header)
 	new
 		ptr = Inline_Ref(header),
 		frm = ptr + AMX_Read(header + cellbytes),
-		size = frm - ptr + 12 + GetFrameParameterSize(frm),
+		size = frm - ptr + 12 + Inline_NumArgs(frm),
 		Alloc:closure = malloc(size / cellbytes + _:E_INLINE_CALL - 1);
 	P:5("Inline_UI_: %d %d %d %d", ptr, frm, size, _:closure);
 	if (!closure)
