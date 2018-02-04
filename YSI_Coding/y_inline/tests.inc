@@ -217,7 +217,7 @@ Test:y_inline8()
 		if (!i)
 		{
 			ASSERT(y_inline_Get(using func8a, cc) == false);
-			ASSERT(y_inline_Get(using func8b, cc));
+			ASSERT(y_inline_Get(using func8b, cc) == false);
 			Callback_Release(cc);
 			ASSERT(y_inline_Get(using public y_inline8, cc) == false);
 			Callback_Release(cc);

@@ -863,7 +863,7 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 	new
 		Alloc:closure = malloc(_:E_PUBLIC_CALL);
 	if (!closure)
-		return 0;
+		return Function:0;
 	mset(closure, _:E_PUBLIC_CALL_NULL, 0);
 	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_RemoteHandler_<x>));
 	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_<a>));
@@ -871,7 +871,7 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_TIMER, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
-	return Indirect_Ptr(Malloc_Resolve(closure));
+	return Function:Indirect_Ptr(Malloc_Resolve(closure));
 }
 #define GetRemoteFunction(&%0<%1>) (F@_@%1:GetRemoteFunction(#%0, #%1))
 
@@ -895,10 +895,12 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 
 stock Function:GetLocalFunction(const func[], const spec[])
 {
+	if (funcidx(func) == -1)
+		return Function:0;
 	new
 		Alloc:closure = malloc(_:E_PUBLIC_CALL);
 	if (!closure)
-		return 0;
+		return Function:0;
 	mset(closure, _:E_PUBLIC_CALL_NULL, 0);
 	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_LocalHandler_<x>));
 	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_<a>));
@@ -908,7 +910,7 @@ stock Function:GetLocalFunction(const func[], const spec[])
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
 	new tmp[32];
 	mgets(tmp, 32, closure, _:E_PUBLIC_CALL_SPECIFIER);
-	return Indirect_Ptr(Malloc_Resolve(closure));
+	return Function:Indirect_Ptr(Malloc_Resolve(closure));
 }
 #define GetLocalFunction(&%0<%1>) (F@_@%1:GetLocalFunction(#%0, #%1))
 
