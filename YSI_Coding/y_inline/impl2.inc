@@ -422,9 +422,8 @@ static stock Inline_Found@return(scanner[CodeScanner])
 		ctx[AsmContext];
 	CodeScanGetMatchAsm(scanner, ctx);
 	@emit POP.pri
-	@emit NOP
-	@emit NOP
-	@emit NOP
+	@emit STACK            CodeScanGetMatchStack(scanner)
+	@emit RETN
 	return 0;
 }
 
