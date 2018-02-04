@@ -44,6 +44,19 @@
 //    Note the lack of `inline` or `callback`.  This was the syntax for plain
 //    string searches, but plain strings were also possible.  Now they are not.
 // 
+// 7) If you used an inline that was not in scope as:
+// 
+//     {
+//         inline Func() {}
+//     }
+//     {
+//         Other(using Func);
+//     }
+// 
+//    You now can't do that - it won't work.  The old code was not fully aware
+//    of scopes and would attempt to find the nearest potential function.  The
+//    new code is fully scope aware and will correct deal with it.
+// 
 // Note that this is all optional.  Not doing so will continue to work, but
 // give warnings.
 
