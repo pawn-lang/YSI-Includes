@@ -804,7 +804,8 @@ Note:
 #define _@const%0\32; _@
 
 // Parameter type for passing callbacks about.
-#define using%0\32; (@Ip:@Iq:@Io:@Iu:@Im:@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
+#define callback_tag: (@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
+#define using%0\32; (@Ip:@Iq:@Io:@Iu:@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
 #define @Ip:@Iq:@Io:@Iu:%0)inline @Ik:@Il:Inline_UI_(),)
 #define @Iq:@Io:@Iu:%0)callback @Ik:@Il:Inline_UP_(),)
 #define @Io:@Iu:%0)public @Ik:@Il:Inline_UP_(),)

@@ -192,10 +192,10 @@ Test:y_inline7b()
 	Callback_Release(cc);
 	ASSERT(y_inline_Get(using public y_inline7a, cc));
 	Callback_Release(cc);
-//	ASSERT(y_inline_Get(callback_tag:"func7b", cc));
-//	Callback_Release(cc);
-//	ASSERT(y_inline_Get(callback_tag:"y_inline7a", cc));
-//	Callback_Release(cc);
+	ASSERT(y_inline_Get(callback_tag:"func7b", cc));
+	Callback_Release(cc);
+	ASSERT(y_inline_Get(callback_tag:"y_inline7a", cc));
+	Callback_Release(cc);
 	ASSERT(y_inline_Get(using func7b, cc));
 	Callback_Release(cc);
 	ASSERT(y_inline_Get(using y_inline7a, cc));
