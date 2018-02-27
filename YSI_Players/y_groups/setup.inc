@@ -168,7 +168,7 @@ Optional plugins:
 	// The variable is now based on both input variables to avoid shadow
 	// warnings when used within another check (as in "Group_FullPlayerUpdate").
 	#define _GROUPS_CHECK_ANY(%0,%1) \
-		for (new %1__g%0 = bits<_MAX_GROUPS_G>; %1__g%0--; ) if (%0[%1__g%0] & %1[%1__g%0])
+		for (new %1__g%0 = bits<_MAX_GROUPS_G>; %1__g%0--; ) if ((%0[%1__g%0] & %1[%1__g%0]) && !((%1__g%0 = 0)))
 #endif
 
 stock
