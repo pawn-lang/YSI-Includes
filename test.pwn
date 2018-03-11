@@ -64,63 +64,63 @@ public OnGameModeInit()
 #endif
 
 // Failing tests are removed with "//", slow tests with "////".
-#include "YSI_Coding\y_hooks"
-#include "YSI_Coding\y_inline"
-#include "YSI_Coding\y_malloc"
-#include "YSI_Coding\y_remote"
-#include "YSI_Coding\y_stringhash"
-#include "YSI_Coding\y_timers"
-#include "YSI_Coding\y_va"
+// #include "YSI_Coding\y_hooks"
+// #include "YSI_Coding\y_inline"
+// #include "YSI_Coding\y_malloc"
+// #include "YSI_Coding\y_remote"
+// #include "YSI_Coding\y_stringhash"
+// #include "YSI_Coding\y_timers"
+// #include "YSI_Coding\y_va"
 
-#include "YSI_Core\y_als"
-#include "YSI_Core\y_cell"
-#include "YSI_Core\y_debug"
-#include "YSI_Core\y_functional"
-#include "YSI_Core\y_master"
+// #include "YSI_Core\y_als"
+// #include "YSI_Core\y_cell"
+// #include "YSI_Core\y_debug"
+// #include "YSI_Core\y_functional"
+// #include "YSI_Core\y_master"
 #include "YSI_Core\y_testing"
-#include "YSI_Core\y_utils"
+// #include "YSI_Core\y_utils"
 
-#include "YSI_Data\y_bintree"
-#include "YSI_Data\y_bit"
-#include "YSI_Data\y_hashmap"
-#include "YSI_Data\y_iterate"
-#include "YSI_Data\y_jaggedarray"
-#include "YSI_Data\y_playerarray"
-#include "YSI_Data\y_playerset"
+// #include "YSI_Data\y_bintree"
+// #include "YSI_Data\y_bit"
+// #include "YSI_Data\y_hashmap"
+// #include "YSI_Data\y_iterate"
+// #include "YSI_Data\y_jaggedarray"
+// #include "YSI_Data\y_playerarray"
+// #include "YSI_Data\y_playerset"
 
-#if GTYPE == 1
-	#include "YSI_Players\y_groups"
-#endif
+// #if GTYPE == 1
+// 	#include "YSI_Players\y_groups"
+// #endif
 #include "YSI_Players\y_languages"
-#include "YSI_Players\y_text"
-#include "YSI_Players\y_users"
+// #include "YSI_Players\y_text"
+// #include "YSI_Players\y_users"
 
-#include "YSI_Server\y_colours"
-#include "YSI_Server\y_flooding"
-#include "YSI_Server\y_punycode"
-#include "YSI_Server\y_scriptinit"
-#include "YSI_Server\y_td"
+// #include "YSI_Server\y_colours"
+// #include "YSI_Server\y_flooding"
+// #include "YSI_Server\y_punycode"
+// #include "YSI_Server\y_scriptinit"
+// #include "YSI_Server\y_td"
 
-#include "YSI_Storage\y_amx"
+//#include "YSI_Storage\y_amx"
 ////#include "YSI_Storage\y_bitmap"
-#include "YSI_Storage\y_ini"
+//#include "YSI_Storage\y_ini"
 //#include "YSI_Storage\y_php"
 //#include "YSI_Storage\y_svar"
 //#include "YSI_Storage\y_uvar"
-#include "YSI_Storage\y_xml"
+//#include "YSI_Storage\y_xml"
 
-#include "YSI_Visual\y_areas"
+//#include "YSI_Visual\y_areas"
 //#include "YSI_Visual\y_classes"
-#include "YSI_Visual\y_commands"
-#include "YSI_Visual\y_dialog"
+//#include "YSI_Visual\y_commands"
+//#include "YSI_Visual\y_dialog"
 //#include "YSI_Visual\y_properties"
-#include "YSI_Visual\y_races"
-#include "YSI_Visual\y_zonenames"
-#include "YSI_Visual\y_zonepulse"
+// #include "YSI_Visual\y_races"
+// #include "YSI_Visual\y_zonenames"
+// #include "YSI_Visual\y_zonepulse"
 
-#if GTYPE == 2
-	#include <YSI_Players\y_groups>
-#endif
+// #if GTYPE == 2
+// 	#include <YSI_Players\y_groups>
+// #endif
 
 main()
 {

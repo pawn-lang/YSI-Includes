@@ -41,5 +41,8 @@
         {
             "name": "all"
         }
-    ]
+    ],
+    "runtime": {
+        "mode": "y_testing"
+    }
 }
