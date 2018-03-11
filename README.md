@@ -1,6 +1,7 @@
 # Y_Less' Server Includes - YSI
 
 [![sampctl](https://shields.southcla.ws/badge/sampctl-YSI--Includes-2f2f2f.svg?style=for-the-badge)](https://github.com/pawn-lang/YSI-Includes)
+[![Build Status](https://travis-ci.org/Southclaws/YSI-Includes.svg?branch=YSI.tl)](https://travis-ci.org/Southclaws/YSI-Includes)
 
 The infamous YSI!
 
