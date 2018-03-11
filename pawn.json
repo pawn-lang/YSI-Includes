@@ -1,38 +1,45 @@
 {
-	"user": "pawn-lang",
-	"repo": "YSI-Includes",
-	"dependencies": [
-		"oscar-broman/md-sort",
-		"sampctl/samp-stdlib",
-		"Y-Less/code-parse.inc",
-		"Y-Less/indirection",
-		"Zeex/amx_assembly"
-	],
-	"contributors": [
-		"Ahmad45123",
-		"Chaprnks",
-		"Crayder",
-		"Dayvison",
-		"g_aSlice/Slice",
-		"irinel1996",
-		"JoeBullet/Google63",
-		"Konstantinos",
-		"koolk",
-		"m0k1",
-		"maddinat0r",
-		"Masterchen09",
-		"Misiur",
-		"PatchwerkQWER",
-		"paulommu",
-		"RIDE2DAY",
-		"samphunter",
-		"Southclaws",
-		"spacemud",
-		"tianmetal",
-		"udan111",
-		"Y_Less",
-		"Yiin-",
-		"Zeex"
-	]
+    "user": "pawn-lang",
+    "repo": "YSI-Includes",
+    "contributors": [
+        "Ahmad45123",
+        "Chaprnks",
+        "Crayder",
+        "Dayvison",
+        "g_aSlice/Slice",
+        "irinel1996",
+        "JoeBullet/Google63",
+        "Konstantinos",
+        "koolk",
+        "m0k1",
+        "maddinat0r",
+        "Masterchen09",
+        "Misiur",
+        "PatchwerkQWER",
+        "paulommu",
+        "RIDE2DAY",
+        "samphunter",
+        "Southclaws",
+        "spacemud",
+        "tianmetal",
+        "udan111",
+        "Y_Less",
+        "Yiin-",
+        "Zeex"
+    ],
+    "entry": "test.pwn",
+    "output": "test.amx",
+    "dependencies": [
+        "sampctl/samp-stdlib",
+        "oscar-broman/md-sort",
+        "Y-Less/code-parse.inc",
+        "Y-Less/indirection",
+        "Zeex/amx_assembly"
+    ],
+    "dev_dependencies": ["Open-GTO/sa-mp-fixes"],
+    "builds": [
+        {
+            "name": "all"
+        }
+    ]
 }
-
