@@ -1,0 +1,10 @@
+language: cpp
+sudo: enabled
+install:
+- curl https://raw.githubusercontent.com/Southclaws/sampctl/master/install-deb.sh | sh
+- sudo dpkg --add-architecture i386
+- sudo apt update && sudo apt install -y g++-multilib
+script:
+- sampctl package ensure
+- sampctl package build
+- sampctl package run
