@@ -86,6 +86,11 @@ Optional plugins:
 #define GROUP_TEMP_FIX(%0)              ((%0)&~GROUP_MASK)
 #define GROUP_MANGLE(%0)                (Group:(%0) | GROUP_MASK)
 
+#define _GROUP_MAKE_PUBLIC:%0<%1> u@(u[_:_Y_G@C4:_Y_G@C5:0]);%0<%1>$
+
+#define _Y_G@C4:_Y_G@C5:%0;%1<%2:%3>$ %0;%1<@@%3>
+#define _Y_G@C5:%0;%1<%3>$ %0;%1<@@%3>
+
 // This is currently "leaking" code to the final script - code that we don't
 // want!  No longer.
 #if defined _YSI_HAS_y_groups || __COMPILER_1ST_PASS
