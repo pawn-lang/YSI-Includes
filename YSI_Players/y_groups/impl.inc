@@ -287,6 +287,18 @@ global bool:Group_IsValid(Group:g)
 	return _Group_IsValid(g);
 }
 
+static stock Group_DefineStates_() <YSI_has_groups : y>
+{
+}
+
+static stock Group_DefineStates_() <YSI_has_groups : n>
+{
+}
+
+static stock Group_DefineStates_() <YSI_has_groups : other>
+{
+}
+
 /*-------------------------------------------------------------------------*//**
  * <remarks>
  *  Finds three functions by prefix:
@@ -300,7 +312,7 @@ global bool:Group_IsValid(Group:g)
 hook OnScriptInit()
 {
 	P:1("Group_OnScriptInit called");
-	//state YSI_has_groups:y;
+	state YSI_has_groups : y;
 	// Set up the global groups.
 	#if !(YSIM_HAS_MASTER && (_YSIM_IS_STUB || _YSIM_IS_CLIENT))
 		#if _YSIM_IS_CLOUD

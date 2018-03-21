@@ -137,7 +137,7 @@ P:D(bool:_Class_Enabled(classid));
  * <param name="classid">Class to get X location for.</param>
  *//*------------------------------------------------------------------------**/
 
-P:D(Float:Class_X(classid)classid
+P:D(Float:Class_X(classid));
 #define Class_X(%1) YSI_g_sClasses[(%1)][E_CLASS_X]
 
 /*-------------------------------------------------------------------------*//**
@@ -671,6 +671,39 @@ global Class_Get(playerid)
 	#define _ALS_AddPlayerClass
 #endif
 #define AddPlayerClass Class_Add
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player whose current class view may need to change.</param>
+ * <remarks>
+ *  If you change a player's groups while they are in class selection, call this
+ *  function to potentially update the currently displayed class.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Class_Reprocess(playerid)
+{
+	if (!Player_InSelection(playerid))
+		return 0;
+	new
+		classid = -1;
+	if (YSI_g_sClassCount)
+	{
+		// Find the next available skin for this player.  I'm still not
+		// sure how this handles the case where you can't use any skin.
+		// I'll have to look in to that - don't want to get stuck
+		// constantly adding "0".
+		classid = Class_FindNew(playerid, YSI_g_sPlayerClass[playerid], 0),
+		Class_Goto(playerid, classid);
+		P:5("Class_Reprocess() selected: %d", classid);
+	}
+	else
+	{
+		P:E("No YSI classes found");
+		SetSpawnInfo(playerid, NO_TEAM, 0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0),
+		SetPlayerSkin(playerid, 0);
+	}
+	return CallRemoteFunction("Class_OnPlayerRequestClass", "ii", playerid, classid);
+}
 
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who requested a class.</param>

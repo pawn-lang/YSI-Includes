@@ -214,6 +214,10 @@ CHAIN_HOOK(Class)
 	#include "y_classes/tests"
 #endif
 
+#if defined _INC_y_groups
+	#include "y_classes/classgroups"
+#endif
+
 // Reset.
 #undef _GROUP_MAKE_LIMIT
 #undef _GROUP_MAKE_NAME
