@@ -210,6 +210,10 @@ stock _YSI_HAS_y_classes(_do_not_call_me_ever_, _like_never_)
 	#include "y_classes/tests"
 #endif
 
+#if defined _INC_y_groups
+	#include "y_classes/classgroups"
+#endif
+
 // Reset.
 #undef _GROUP_MAKE_LIMIT
 #undef _GROUP_MAKE_NAME

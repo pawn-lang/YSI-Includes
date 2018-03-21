@@ -168,6 +168,10 @@ Optional plugins:
 #endif
 #define _INC_y_groups
 
+#if defined _INC_y_classes
+	#include "..\YSI_Visual\y_classes/classgroups"
+#endif
+
 /**
  * <library name="y_groups">
  * <section>
