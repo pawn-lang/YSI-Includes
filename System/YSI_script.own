@@ -1,0 +1,901 @@
+/*----------------------------------------------------------------------------*-
+					==============================
+					Y Sever Includes - Script Core
+					==============================
+Description:
+	Provides a simple interface for basic script creation with no hassle.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Changelog:
+	07/08/07:
+		Merged a few callbacks and their Ex's.
+	29/06/07:
+		Added reset protection for filterscripts.
+		Moved LoadScript() out the new file for greater seamlessness.
+	13/06/07:
+		First version
+Functions:
+	Public:
+		-
+	Core:
+		-
+	Stock:
+		-
+	Static:
+		-
+	Inline:
+		Script_OnFilterScriptInit - Wrapper for OnFilterScriptInit.
+		Script_OnFilterScriptExit - Wrapper for OnFilterScriptExit.
+		Script_OnGameModeInit - Wrapper for OnGameModeInit.
+		Script_OnGameModeExit - Wrapper for OnGameModeExit.
+		Script_OnPlayerRequestClass - Wrapper for OnPlayerRequestClass
+		Script_OnPlayerRequestSpawnEx - Wrapper for OnPlayerRequestSpawn.
+		Script_OnPlayerConnect - Wrapper for OnPlayerConnect.
+		Script_OnPlayerDisconnect - Wrapper for OnPlayerDisconnect.
+		Script_OnPlayerSpawn - Wrapper for OnPlayerSpawn.
+		Script_OnPlayerDeath - Wrapper for OnPlayerDeath.
+		Script_OnVehicleSpawn - Wrapper for OnVehicleSpawn.
+		Script_OnVehicleDeath - Wrapper for OnVehicleDeath.
+		Script_OnPlayerText - Wrapper for OnPlayerText.
+		Script_OnPlayerPrivmsg - Wrapper for OnPlayerPrivmsg.
+		Script_OnPlayerCommandText - Wrapper for OnPlayerCommandText.
+		Script_OnPlayerInfoChange - Wrapper for OnPlayerInfoChange.
+		Script_OnPlayerEnterVehicle - Wrapper for OnPlayerEnterVehicle.
+		Script_OnPlayerExitVehicle - Wrapper for OnPlayerExitVehicle.
+		Script_OnPlayerStateChange - Wrapper for OnPlayerStateChange.
+		Script_OnPlayerEnterCheckpointEx - Wrapper for OnPlayerEnterCheckpoint.
+		Script_OnPlayerLeaveCheckpointEx - Wrapper for OnPlayerLeaveCheckpoint.
+		Script_OnPlayerEnterRaceCheckpoint - Wrapper for OnPlayerEnterRaceCheckpoint.
+		Script_OnPlayerLeaveRaceCheckpoint - Wrapper for OnPlayerLeaveRaceCheckpoint.
+		Script_OnRconCommand - Wrapper for OnRconCommand.
+		Script_OnPlayerObjectMoved - Wrapper for OnPlayerObjectMoved.
+		Script_OnPlayerPickUpPickup - Wrapper for OnPlayerPickUpPickup.
+		Script_OnPlayerSelectedMenuRow - Wrapper for OnPlayerSelectedMenuRow.
+		Script_OnPlayerExitedMenu - Wrapper for OnPlayerExitedMenu.
+		Script_OnVehicleMod - Wrapper for OnVehicleMod.
+		Script_OnVehiclePaintjob - Wrapper for OnVehiclePaintjob.
+		Script_OnVehicleRespray - Wrapper for OnVehicleRespray.
+		Script_OnPlayerLogin - Wrapper for OnPlayerLogin.
+		Script_OnPlayerLogout - Wrapper for OnPlayerLogout.
+		Script_OnPlayerLeaveArea - Wrapper for OnPlayerLeaveArea.
+		Script_OnPlayerEnterArea - Wrapper for OnPlayerEnterArea.
+		Script_OnRaceEnd - Wrapper for OnRaceEnd.
+		Script_OnPlayerExitRace - Wrapper for OnPlayerExitRace.
+		Script_OnPlayerFinishRace - Wrapper for OnPlayerFinishRace.
+		Script_OnPlayerInteriorChange - Wrapper for OnPlayerInteriorChange.
+		Script_OnPlayerKeyStateChange - Wrapper for OnPlayerKeyStateChange.
+		Script_OnDynamicObjectMoved - Wrapper for OnDynamicObjectMoved.
+		Script_OnGangWarCapture - Wrapper for OnGangWarCapture.
+		Script_OnGangWarStart - Wrapper for OnGangWarStart.
+		Script_OnGangWarDefend - Wrapper for OnGangWarEnd.
+	API:
+		-
+Definitions:
+	-
+Enums:
+	-
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		YSI_g_sSetup - Used for filterscripts to not reset variables in GMs.
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnFilterScriptInit
+Params:
+	-
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#if defined FILTERSCRIPT
+
+public OnFilterScriptInit()
+{
+	Default_OnFilterScriptInit();
+	Script_OnFilterScriptInit();
+	LoadScript();
+	return 1;
+}
+
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnGameModeInit
+Params:
+	-
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+public OnGameModeInit()
+{
+	Default_OnGameModeInit();
+	Script_OnGameModeInit();
+	#if !defined FILTERSCRIPT
+		LoadScript();
+	#endif
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnFilterScriptExit
+Params:
+	-
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnFilterScriptExit() \
+	public OnFilterScriptExit() if (Default_OnFilterScriptExit() && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnGameModeExit
+Params:
+	-
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnGameModeExit() \
+	public OnGameModeExit() if (Default_OnGameModeExit() && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerRequestClassEx
+Params:
+	playerid - The player who requested a class.
+	classid - The class they requested.
+Return:
+	-
+Notes:
+	Over rules standard code.  Merged with OnPlayerRequestClassEx
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerRequestClass(%1,%2) \
+	public OnPlayerRequestClass(%1, %2) return Default_OnPlayerRequestClass(%1, %2); \
+	forward OnPlayerRequestClassEx(%1, %2); \
+	public OnPlayerRequestClassEx(%1, %2)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerRequestSpawn
+Params:
+	playerid - Player who requested the spawn.
+Return:
+	-
+Notes:
+	Over rules standard code.
+-*----------------------------------------------------------------------------*/
+
+#if YSI_VERSION <= 2
+	#define Script_OnPlayerRequestSpawn(%1) \
+		public OnPlayerRequestSpawn(%1) if (Default_OnPlayerRequestSpawn(%1)) return 1; else
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerRequestSpawnEx
+Params:
+	playerid - Player who requested the spawn.
+	classid - Class they're spawning as.
+Return:
+	-
+Notes:
+	Over rules standard code.
+-*----------------------------------------------------------------------------*/
+
+#if YSI_VERSION > 2
+	#define Script_OnPlayerRequestSpawnEx(%1,%2) \
+		public OnPlayerRequestSpawn(%1) return Default_OnPlayerRequestSpawn(%1); \
+		forward OnPlayerRequestSpawnEx(%1, %2); \
+		public OnPlayerRequestSpawnEx(%1, %2)
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerConnect
+Params:
+	playerid - The player who connected.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerConnect(%1) \
+	public OnPlayerConnect(%1) if (Default_OnPlayerConnect(%1) && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerDisconnect
+Params:
+	playerid - The player who disconnected.
+	reason - Why they left.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#if defined _YSI_SYSTEM_ITTER
+	public OnPlayerDisconnect(playerid, reason)
+	{
+		new
+			ret;
+		Default_OnPlayerDisconnect(playerid, reason);
+		ret = Script_OnPlayerDisconnect(playerid, reason);
+		Itter_OnPlayerDisconnect(playerid);
+		return ret;
+	}
+#else
+	#define Script_OnPlayerDisconnect(%1,%2) \
+		public OnPlayerDisconnect(%1, %2) if (Default_OnPlayerDisconnect(%1, %2) && FALSE) return 1; else
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerSpawn
+Params:
+	playerid - The player who spawned.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerSpawn(%1) \
+	public OnPlayerSpawn(%1) if (Default_OnPlayerSpawn(%1) && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerDeath
+Params:
+	playerid - The player who died.
+	killerid - The player who killed them.
+	reason - How they died.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerDeath(%1,%2,%3) \
+	public OnPlayerDeath(%1, %2, %3) if (Default_OnPlayerDeath(%1, %2, %3) && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnVehicleSpawn
+Params:
+	vehicleid - The vehicle which spawned.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnVehicleSpawn(%1) \
+	public OnVehicleSpawn(%1) if (Default_OnVehicleSpawn(%1) && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnVehicleDeath
+Params:
+	vehicleid - The vehicle that was destroyed.
+	killerid - Who destroyed it.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnVehicleDeath(%1,%2) \
+	public OnVehicleDeath(%1, %2) if (Default_OnVehicleDeath(%1, %2) && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerText
+Params:
+	playerid - The player who typed some text.
+	text[] - The text they entered.
+Return:
+	-
+Notes:
+	Over rules standard code.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerText(%1,%2[]) \
+	public OnPlayerText(%1, %2[]) if (!Default_OnPlayerText(%1, %2)) return 0; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerPrivmsg
+Params:
+	playerid - Player who sent the message.
+	recieverid - Player who recieved the message.
+	text[] - The message.
+Return:
+	-
+Notes:
+	Over rules standard code.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerPrivmsg(%1,%2,%3[]) \
+	public OnPlayerPrivmsg(%1, %2, %3[]) if (!Default_OnPlayerPrivmsg(%1, %2, %3)) return 0; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerCommandText
+Params:
+	playerid - The player who typed a command.
+	cmdtext[] - The command they entered.
+Return:
+	-
+Notes:
+	Over rules standard code.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerCommandText(%1,%2[]) \
+	public OnPlayerCommandText(%1, %2[]) if (Default_OnPlayerCommandText(%1, %2)) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerInfoChange
+Params:
+	playerid - The player who did nothing.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerInfoChange(%1) \
+	public OnPlayerInfoChange(%1) if (Default_OnPlayerInfoChange(%1) && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerEnterVehicle
+Params:
+	playerid - The player who got in.
+	vehicleid - The vehicle they got in.
+	ispassenger - Where they got in.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerEnterVehicle(%1,%2,%3) \
+	public OnPlayerEnterVehicle(%1, %2, %3) if (Default_OnPlayerEnterVehicle(%1, %2, %3) && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerExitVehicle
+Params:
+	playerid - The player who left.
+	vehicleid - The vehicle they left.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerExitVehicle(%1,%2) \
+	public OnPlayerExitVehicle(%1, %2) if (Default_OnPlayerExitVehicle(%1, %2) && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerStateChange
+Params:
+	playerid - The player who changed state.
+	newstate - Their new state.
+	oldstate - Their last state.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerStateChange(%1,%2,%3) \
+	public OnPlayerStateChange(%1, %2, %3) if (Default_OnPlayerStateChange(%1, %2, %3) && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerEnterCheckpoint
+Params:
+	playerid - The player who entered a checkpoint.
+Return:
+	-
+Notes:
+	Over rules standard code.
+-*----------------------------------------------------------------------------*/
+
+#if YSI_VERSION <= 2
+	#define Script_OnPlayerEnterCheckpoint(%1) \
+		public OnPlayerEnterCheckpoint(%1) if (Default_OnPlayerEnterCheckpoint(%1)) return 1; else
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerLeaveCheckpoint
+Params:
+	playerid - The player who left a checkpoint.
+Return:
+	-
+Notes:
+	Over rules standard code.
+-*----------------------------------------------------------------------------*/
+
+#if YSI_VERSION <= 2
+	#define Script_OnPlayerLeaveCheckpoint(%1) \
+		public OnPlayerLeaveCheckpoint(%1) if (Default_OnPlayerLeaveCheckpoint(%1)) return 1; else
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerEnterCheckpointEx
+Params:
+	playerid - The player who entered a checkpoint.
+	cpid - Checkpoint they enterd
+Return:
+	-
+Notes:
+	Over rules standard code.
+-*----------------------------------------------------------------------------*/
+
+#if YSI_VERSION > 2
+	#define Script_OnPlayerEnterCheckpointEx(%1,%2) \
+		public OnPlayerEnterCheckpoint(%1) return Default_OnPlayerEnterCheckpoint(%1); \
+		forward OnPlayerEnterCheckpointEx(%1, %2); \
+		public OnPlayerEnterCheckpointEx(%1, %2)
+#else
+	#define Script_OnPlayerEnterCheckpointEx(%1,%2) \
+		forward OnPlayerEnterCheckpointEx(%1, %2); \
+		public OnPlayerEnterCheckpointEx(%1, %2)
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerLeaveCheckpointEx
+Params:
+	playerid - The player who left a checkpoint.
+	cpid - Checkpoint they left.
+Return:
+	-
+Notes:
+	Over rules standard code.
+-*----------------------------------------------------------------------------*/
+
+#if YSI_VERSION > 2
+	#define Script_OnPlayerLeaveCheckpointEx(%1,%2) \
+		public OnPlayerLeaveCheckpoint(%1) return Default_OnPlayerLeaveCheckpoint(%1); \
+		forward OnPlayerLeaveCheckpointEx(%1, %2); \
+		public OnPlayerLeaveCheckpointEx(%1, %2)
+#else
+	#define Script_OnPlayerLeaveCheckpointEx(%1,%2) \
+		forward OnPlayerLeaveCheckpointEx(%1, %2); \
+		public OnPlayerLeaveCheckpointEx(%1, %2)
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerEnterRaceCheckpoint
+Params:
+	playerid - The player who entered a checkpoint.
+Return:
+	-
+Notes:
+	Over rules standard code.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerEnterRaceCheckpoint(%1) \
+	public OnPlayerEnterRaceCheckpoint(%1) if (Default_OnPlayerEnterRaceCheckpoint(%1)) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerLeaveRaceCheckpoint
+Params:
+	playerid - The player who left a checkpoint.
+Return:
+	-
+Notes:
+	Over rules standard code.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerLeaveRaceCheckpoint(%1) \
+	public OnPlayerLeaveRaceCheckpoint(%1) if (Default_OnPlayerLeaveRaceCheckpoint(%1)) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnRconCommand
+Params:
+	cmd[] - The RCON command sent.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnRconCommand(%1[]) \
+	public OnRconCommand(%1[]) if (Default_OnRconCommand(%1) && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerPickUpPickup
+Params:
+	playerid - Player who picked up a pickup.
+	pickupid - Pickup picked up.
+Return:
+	-
+Notes:
+	Over rules standard code.  Calls secondary function for internal IDs.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerPickUpPickup(%1,%2) \
+	public OnPlayerPickUpPickup(%1, %2) return Default_OnPlayerPickUpPickup(%1, %2); \
+	forward OnPlayerPickUpPickupEx(%1, %2); \
+	public OnPlayerPickUpPickupEx(%1, %2)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerSelectedMenuRow
+Params:
+	playerid - Player who selected something.
+	row - Thing selected.
+Return:
+	-
+Notes:
+	Over rules standard code.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerSelectedMenuRow(%1,%2) \
+	public OnPlayerSelectedMenuRow(%1, %2) if (Default_OnPlayerSelectedMenuRow(%1, %2)) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerExitedMenu
+Params:
+	playerid - Player who exited a menu.
+Return:
+	-
+Notes:
+	Over rules standard code.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerExitedMenu(%1) \
+	public OnPlayerExitedMenu(%1) if (Default_OnPlayerExitedMenu(%1)) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnVehicleMod
+Params:
+	vehicleid - Vehicle modded.
+	componentid - Mod added.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnVehicleMod(%1,%2) \
+	public OnVehicleMod(%1, %2) if (Default_OnVehicleMod(%1, %2) && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnVehiclePaintjob
+Params:
+	vehicleid - Vehicle modded.
+	paintjobid - Paintjob applied.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnVehiclePaintjob(%1,%2) \
+	public OnVehiclePaintjob(%1, %2) if (Default_OnVehiclePaintjob(%1, %2) && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnVehicleRespray
+Params:
+	vehicleid - Vehicle being resprayed.
+	color1 - New primary colour.
+	color2 - New secondary colour.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnVehicleRespray(%1,%2,%3) \
+	public OnVehicleRespray(%1, %2, %3) if (Default_OnVehicleRespray(%1, %2, %3) && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerLogin
+Params:
+	playerid - Player who logged in.
+	yid - Internal player id.
+Return:
+	-
+Notes:
+	Forwards itself as people may not know it's public.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerLogin(%1,%2) \
+	forward OnPlayerLogin(playerid, uid); \
+	public OnPlayerLogin(playerid, uid) \
+		if (!Default_OnPlayerLogin(playerid, uid)) return 0; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerLogout
+Params:
+	playerid - Player who logged out.
+	yid - Their YSI user ID.
+Return:
+	-
+Notes:
+	Forwards itself as people may not know it's public.
+-*----------------------------------------------------------------------------*/
+
+#if YSI_VERSION > 2
+	#define Script_OnPlayerLogout(%1,%2) \
+		forward OnPlayerLogout(%1, %2); \
+		public OnPlayerLogout(%1, %2)
+#else
+	#define Script_OnPlayerLogout(%1) \
+		forward OnPlayerLogout(%1); \
+		public OnPlayerLogout(%1)
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerEnterArea
+Params:
+	playerid - Player who entered an area.
+	area - Area they entered.
+Return:
+	-
+Notes:
+	Forwards itself as people may not know it's public.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerEnterArea(%1,%2) \
+	forward OnPlayerEnterArea(%1, %2); \
+	public OnPlayerEnterArea(%1, %2)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerLeaveArea
+Params:
+	playerid - Player who left an area.
+	area - Area they left.
+Return:
+	-
+Notes:
+	Forwards itself as people may not know it's public.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerLeaveArea(%1,%2) \
+	forward OnPlayerLeaveArea(%1, %2); \
+	public OnPlayerLeaveArea(%1, %2)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnRaceEnd
+Params:
+	raceid - The race which ended.
+Return:
+	-
+Notes:
+	Forwards itself as people may not know it's public.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnRaceEnd(%1) \
+	forward OnRaceEnd(%1); \
+	public OnRaceEnd(%1)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerExitRace
+Params:
+	playerid - The player who left the race.
+	raceid - The race they left.
+Return:
+	-
+Notes:
+	Forwards itself as people may not know it's public.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerExitRace(%1,%2) \
+	forward OnPlayerExitRace(%1, %2); \
+	public OnPlayerExitRace(%1, %2)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerFinishRace
+Params:
+	playerid - The player who finished.
+	raceid - The race they finished.
+	position - Where they came (starting from 1).
+	prixe - What they won.
+	time - How long they took.
+Return:
+	-
+Notes:
+	Forwards itself as people may not know it's public.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerFinishRace(%1,%2,%3,%4,%5) \
+	forward OnPlayerFinishRace(%1, %2, %3, %4, %5); \
+	public OnPlayerFinishRace(%1, %2, %3, %4, %5)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerKeyStateChange
+Params:
+	playerid - Player who pressed a key.
+	newkeys - Keys currently pressed.
+	oldkeys - Keys pressed prior to now.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerKeyStateChange(%1,%2,%3) \
+	public OnPlayerKeyStateChange(%1, %2, %3) if (Default_OnPlayerKeyStateChange(%1, %2, %3) && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerInteriorChange
+Params:
+	playerid - Player who changed interior.
+	newinteriorid - Interior they entered.
+	oldinteriorid - Interior they left.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerInteriorChange(%1,%2,%3) \
+	public OnPlayerInteriorChange(%1, %2, %3) if (Default_OnPlayerInteriorChange(%1, %2, %3) && FALSE) return 1; else
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerKeyPress
+Params:
+	playerid - The player who pressed a key.
+	key - Key they pressed.
+Return:
+	-
+Notes:
+	Forwards itself as people may not know it's public.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerKeyPress(%1,%2) \
+	forward OnPlayerKeyPress(%1, %2); \
+	public OnPlayerKeyPress(%1, %2)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnPlayerKeyRelease
+Params:
+	playerid - The player who released a key.
+	key - Key they released.
+Return:
+	-
+Notes:
+	Forwards itself as people may not know it's public.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnPlayerKeyRelease(%1,%2) \
+	forward OnPlayerKeyRelease(%1, %2); \
+	public OnPlayerKeyRelease(%1, %2)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnDynamicObjectMoved
+Params:
+	objectid - Object that moved.
+Return:
+	-
+Notes:
+	Forwards itself as people may not know it's public.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnDynamicObjectMoved(%1) \
+	forward OnDynamicObjectMoved(%1); \
+	public OnDynamicObjectMoved(%1)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnGangWarCapture
+Params:
+	zoneid - Zone that's been won.
+	attacker - Group that won the zone.
+	defender - Group that lost the zone.
+Return:
+	-
+Notes:
+	Forwards itself as people may not know it's public.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnGangWarCapture(%1,%2,%3) \
+	forward OnGangWarCapture(%1, %2, %3); \
+	public OnGangWarCapture(%1, %2, %3)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnGangWarStart
+Params:
+	zoneid - Zone that's been fought over.
+	attacker - Group that's attacking.
+	defender - Group that's defending.
+Return:
+	-
+Notes:
+	Forwards itself as people may not know it's public.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnGangWarStart(%1,%2,%3) \
+	forward OnGangWarStart(%1, %2, %3); \
+	public OnGangWarStart(%1, %2, %3)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Script_OnGangWarDefend
+Params:
+	zoneid - Zone that's been lost.
+	attacker - Group that failed to capture.
+	defender - Group that defended.
+Return:
+	-
+Notes:
+	Forwards itself as people may not know it's public.
+-*----------------------------------------------------------------------------*/
+
+#define Script_OnGangWarDefend(%1,%2,%3) \
+	forward OnGangWarEnd(%1, %2, %3); \
+	public OnGangWarEnd(%1, %2, %3)

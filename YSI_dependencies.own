@@ -1,0 +1,197 @@
+/*----------------------------------------------------------------------------*-
+					===============================
+					Y Sever Includes - Dependencies
+					===============================
+Description:
+	Ensures all files are included for your specified options.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1.1
+Changelog:
+	03/08/07:
+		Added timers.
+	28/07/07:
+		Added zones.
+		Added versioning info.
+	07/05/07:
+		Added groups.
+	18/04/07:
+		Added new files.
+		Moved objects and checkpoints to YSI/Visual/.
+	17/04/07:
+		First version.
+Functions:
+	Public:
+		-
+	Core:
+		-
+	Stock:
+		-
+	Static:
+		-
+	Inline:
+		-
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	_YSI_DEBUG - Use YSI/YSI_debug.own.
+	_YSI_MISC - Use YSI/YSI_misc.own.
+	_YSI_CORE_BIT - Use YSI/Core/YSI_bit.own.
+	_YSI_CORE_BINTREE - Use YSI/Core/YSI_bintree.own.
+	_YSI_CORE_INI - Use YSI/Core/YSI_INI.own.
+	_YSI_CORE_TEXT - Use YSI/Core/YSI_text.own.
+	_YSI_CORE_FORMAT - Use YSI/Core/YSI_format.own.
+	_YSI_CORE_LANGUAGES - Use YSI/Core/YSI_languages.own.
+	_YSI_CORE_COMMANDS - Use YSI/Core/YSI_commands.own.
+	_YSI_CORE_PLAYER - Use YSI/Core/YSI_player.own.
+	_YSI_SERVER_MODULES - Use YSI/Server/YSI_modules.own.
+	_YSI_VISUAL_OBJECTS - Use YSI/Visual/YSI_objects.own
+	_YSI_VISUAL_CHECKPOINTS - Use YSI/Visual/YSI_checkpoints.own.
+	_YSI_VISUAL_AREAS - Use YSI/Visual/YSI_areas.own.
+	_YSI_VISUAL_RACE - Use YSI/Visual/YSI_race.own.
+	_YSI_GAMEMODE_PROPERTIES - Use YSI/Gamemode/YSI_properties.own.
+	_YSI_SYSTEM_DEFAULT - Use YSI/System/YSI_default.own.
+	_YSI_SYSTEM_GROUPS - Use YSI/System/YSI_groups.own
+	_YSI_SYSTEM_SCRIPT - Use YSI/System/YSI_script.own.
+Enums:
+	-
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		-
+Commands:
+	-
+Compile options:
+	YSI_NO_MODULES - Exclude modules code.
+	YSI_NO_OBJECTS - Exclude objects code.
+	YSI_NO_RACES - Exclude races code.
+	YSI_NO_CHECKPOINTS - Exclude checkpoints code.
+	YSI_NO_AREAS - Exclude areas code.
+	YSI_NO_TEXT - Exclude advanced text code.
+	YSI_NO_COMMANDS - Exclude advanced text code.
+	YSI_NO_SYSTEM - Exclude standard minimal setup.
+	YSI_NO_GROUPS - Exclude groups code.
+	YSI_NO_PROPERTIES - Exclude properties code.
+	YSI_NO_STANDARD - Exclude custom new script code.
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#if !defined YSI_VERSION
+	#define YSI_VERSION 3
+#endif
+
+#define _YSI_DEBUG
+#define _YSI_MISC
+#define _YSI_CORE_BIT
+#define _YSI_CORE_INI
+#define _YSI_CORE_BINTREE
+#define _YSI_CORE_XML
+#define _YSI_POST
+#define _YSI_SETUP_TIMERS
+#define _YSI_SYSTEM_ITTER
+
+#if !defined YSI_NO_USERS
+	#define _YSI_CORE_PLAYER
+#endif
+
+#if !defined YSI_NO_TEXT
+	#define _YSI_CORE_TEXT
+	#define _YSI_CORE_FORMAT
+	#define _YSI_CORE_LANGUAGES
+#endif
+
+#if !defined YSI_NO_COMMANDS
+	#define _YSI_CORE_COMMANDS
+#endif
+
+#if !defined YSI_NO_MODULES
+	#define _YSI_SERVER_MODULES
+#endif
+
+#if !defined YSI_NO_OBJECTS
+	#define _YSI_VISUAL_OBJECTS
+#endif
+
+#if !defined YSI_NO_CHECKPOINTS
+	#define _YSI_VISUAL_CHECKPOINTS
+#endif
+
+#if !defined YSI_NO_AREAS
+	#define _YSI_VISUAL_AREAS
+#endif
+
+#if !defined YSI_NO_SYSTEM
+	#define _YSI_SYSTEM_DEFAULT
+#endif
+
+#if !defined YSI_NO_RACES
+	#define _YSI_VISUAL_RACE
+#endif
+
+#if YSI_VERSION >= 3
+	#if !defined YSI_NO_ZONES
+		#define _YSI_VISUAL_ZONES
+	#endif
+	
+	#if !defined YSI_NO_TRACKING
+		#define _YSI_TRACKING_LIVE
+	#endif
+	
+	#if !defined YSI_NO_CALLBACKS
+		#define _YSI_SYSTEM_CALLBACKS
+	#endif
+	
+	#if !defined YSI_NO_MASTER
+		#define _YSI_SETUP_MASTER
+	#endif
+	
+	#if !defined FILTERSCRIPT
+		#if !defined YSI_NO_CLASSES
+			#define _YSI_GAMEMODE_CLASSES
+		#endif
+	#endif
+	
+	#if !defined YSI_NO_PICKUPS
+		#define _YSI_VISUAL_PICKUPS
+	#endif
+#endif
+
+#if !defined YSI_NO_GROUPS
+	#define _YSI_SYSTEM_GROUPS
+#endif
+
+#if !defined YSI_NO_PROPERTIES && !defined YSI_NO_CHECKPOINTS && !defined YSI_NO_AREAS
+	#define _YSI_GAMEMODE_PROPERTIES
+#endif
+
+#if !defined YSI_NO_STANDARD
+	#define _YSI_SYSTEM_SCRIPT
+#endif
+
+#if !defined YSI_NO_LOADER
+	#define _YSI_GAMEMODE_LOADER
+#endif

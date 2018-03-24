@@ -1,0 +1,865 @@
+/*----------------------------------------------------------------------------*-
+					=================================
+					Y Sever Includes - Gang Zone Core
+					=================================
+Description:
+	Handles gang warfare and zones.  Does NOT use the areas code as all areas
+	must be square and it's simpler to use an internal system and faster.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1
+Changelog:
+	03/08/07:
+		Updated timer system.
+	29/07/07:
+		Added initial function and file documentation.
+	23/07/07:
+		First version.
+Functions:
+	Public:
+		Zone_Loop - Main processing loop.
+	Core:
+		Zone_OnPlayerLeaveGroup - Called when a player joins a group.
+		Zone_OnPlayerJoinGroup - Called when a player leaves a group.
+		Zone_Zone - Sets up the script.
+		Zone_OnPlayerConnect - Called when a player connects.
+		Zone_OnPlayerDisconnect - Called when a player disconnects.
+		Zone_OnPlayerDeath - Called when a player dies.
+	Stock:
+		Zone_Remove - Removes a zone from the system.
+		Zone_SetOwner - Sets the group owner of a system.
+		Zone_Protect - Sets a zone as protected or unprotected.
+		Zone_Add - Adds a zone to the system.
+		Zone_GetPlayerZone - Gets a player's current zone.
+	Static:
+		Zone_StartCapture - Triggers a gang war.
+		Zone_CancelCapture - Ends a gang war by loss.
+	Inline:
+		Zone_IsActive - Checks a valid zone is active.
+		Zone_IsValid - Checks a zone is valid and active.
+		Zone_IsInArea - Checks a point is in a zone.
+		Zone_GetOwner - Gets the group who own a zone.
+		Zone_GetAttacker - Gets the group attacking a zone.
+		Zone_CalculateElapse - Calculates the elapsed time for capture.
+		Zone_GetGangZone - Gets a real pointer of a zone.
+		Zone_IsProtected - Checks if a zone is protected.
+		Zone_GetColour - Gets the colour of a zone.
+		Zone_OnPlayerEnterZone - Calls callbacks.
+		Zone_OnPlayerLeaveZone - Calls callbacks.
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	NO_ZONE - Fail return.
+	ZONE_NO_OWNER - Representation for no current zone owner.
+	ZONE_NO_ATTACKER - Representation for no current attacker.
+	ZONE_LOOP_GRANULARITY - Number of times a second to call the main loop.
+	ZONE_TIME_MODIFIER - Modifier for the time elapsed based on players.
+	MAX_ZONES - Maximum number of zones handled by the script.
+	ZONE_CAPTURE_TIME - Base time for capturing a zone in a war.
+	ZONE_TRIGGER_TIME - Base time for triggering a zone war.
+	ZONE_KILL_BONUS - Time bonus for killing someone.
+Enums:
+	e_ZONE_FLAGS
+	E_ZONE_DATA
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		YSI_g_sGangZones - Data on one zone.
+		YSI_g_sPlayerZone - Player's current zones.
+		YSI_g_sGangCounts - Number of group members in a zone.
+		YSI_g_sGangTimes - Time left for a group for a zone for capture.
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#if !defined ZONE_LOOP_GRANULARITY
+	#define ZONE_LOOP_GRANULARITY 1
+#endif
+
+#if !defined ZONE_TIME_MODIFIER
+	#define ZONE_TIME_MODIFIER 2
+#endif
+
+#if !defined MAX_ZONES
+	#define MAX_ZONES 512
+#endif
+
+#if !defined ZONE_CAPTURE_TIME
+	#define ZONE_CAPTURE_TIME 180000
+#endif
+
+#if !defined ZONE_TRIGGER_TIME
+	#define ZONE_TRIGGER_TIME 180000
+#endif
+
+#if !defined ZONE_KILL_BONUS
+	#define ZONE_KILL_BONUS 60000
+#endif
+
+#define NO_ZONE -1
+#define ZONE_NO_OWNER (_:e_ZONE_FLAGS_OWNER)
+#define ZONE_NO_ATTACKER (_:e_ZONE_FLAGS_ATTACK >> 14)
+
+enum e_ZONE_FLAGS (<<= 1)
+{
+	e_ZONE_FLAGS_OWNER = 0x00003FFF,
+	e_ZONE_FLAGS_ATTACK = 0x0FFFC000,
+	e_ZONE_FLAGS_ACTIVE = 0x10000000,
+	e_ZONE_FLAGS_PROTECTED,
+	e_ZONE_FLAGS_CONTENDED
+}
+
+enum E_ZONE_DATA
+{
+	Float:E_ZONE_DATA_MIN_X,
+	Float:E_ZONE_DATA_MIN_Y,
+	Float:E_ZONE_DATA_MAX_X,
+	Float:E_ZONE_DATA_MAX_Y,
+	e_ZONE_FLAGS:E_ZONE_DATA_FLAGS,
+	E_ZONE_DATA_TIME,
+	E_ZONE_DATA_POINTER,
+	E_ZONE_DATA_COLOUR
+}
+
+static
+	YSI_g_sGangZones[MAX_ZONES][E_ZONE_DATA],
+	YSI_g_sPlayerZone[MAX_PLAYERS] = {NO_ZONE, ...},
+	YSI_g_sGangCounts[MAX_ZONES][MAX_GROUPS],
+	YSI_g_sGangTimes[MAX_ZONES][MAX_GROUPS];
+
+forward Zone_Loop();
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_IsActive
+Params:
+	zoneid - Zone to check activity of.
+Return:
+	-
+Notes:
+	Checks a valid zone to see if it is active.
+-*----------------------------------------------------------------------------*/
+
+#define Zone_IsActive(%1) \
+	(YSI_g_sGangZones[(%1)][E_ZONE_DATA_FLAGS] & e_ZONE_FLAGS_ACTIVE)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_IsValid
+Params:
+	zoneid - A reference.
+Return:
+	-
+Notes:
+	Checks the passed reference is a valid, active xone.
+-*----------------------------------------------------------------------------*/
+
+#define Zone_IsValid(%1) \
+	((%1) >= 0 && (%1) < MAX_ZONES && Zone_IsActive((%1)))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_IsInArea
+Params:
+	zoneid - Zone to check for.
+	Float:x - X point to check.
+	Float:y - Y point to check.
+Return:
+	-
+Notes:
+	Checks a given x,y point is within a specified zone's boundary.
+-*----------------------------------------------------------------------------*/
+
+#define Zone_IsInArea(%1,%2,%3) \
+	( \
+		((%2) > YSI_g_sGangZones[(%1)][E_ZONE_DATA_MIN_X]) && \
+		((%3) > YSI_g_sGangZones[(%1)][E_ZONE_DATA_MIN_Y]) && \
+		((%2) < YSI_g_sGangZones[(%1)][E_ZONE_DATA_MAX_X]) && \
+		((%3) < YSI_g_sGangZones[(%1)][E_ZONE_DATA_MAX_Y]) \
+	)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_GetOwner
+Params:
+	zoneid - Zone to get the owner of.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Zone_GetOwner(%1) \
+	(_:(YSI_g_sGangZones[(%1)][E_ZONE_DATA_FLAGS] & e_ZONE_FLAGS_OWNER))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_GetAttacker
+Params:
+	zoneid - Zone to get attacker of.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Zone_GetAttacker(%1) \
+	(_:(YSI_g_sGangZones[(%1)][E_ZONE_DATA_FLAGS] & e_ZONE_FLAGS_ATTACK) >> 14)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_CalculateElapse
+Params:
+	playercount - Number of players from a gang in a zone.
+	elapsedtime - Milliseconds since the last check.
+Return:
+	-
+Notes:
+	Calculates the relative elapsed time for a given number of players.  The
+	more players from one gang there are in one zone the faster the time to
+	capture will pass, however it's a sliding scale, the more players you get
+	the less of a difference it will make.  Current values (to 2dp):
+	
+	1 player   - 0.00 (i.e. infinate capture time)
+	2 players  - 0.67 - 0.67 difference
+	3 players  - 1.14 - 0.47
+	4 players  - 1.50 - 0.36
+	5 players  - 1.78 - 0.28
+	6 players  - 2.00 - 0.22
+	7 players  - 2.18 - 0.18
+	8 players  - 2.33 - 0.15
+	9 players  - 2.46 - 0.13
+	10 players - 2.57 - 0.11
+-*----------------------------------------------------------------------------*/
+
+#define Zone_CalculateElapse(%1,%2) \
+	(floatround(float((%2)) * (((-10.0 / (float((%1)) + 4.0)) + 2.0) * ZONE_TIME_MODIFIER)))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_GetGangZone
+Params:
+	zoneid - Zone to get the pointer for.
+Return:
+	-
+Notes:
+	Gets the pointer to the visual zone for this slot.
+-*----------------------------------------------------------------------------*/
+
+#define Zone_GetGangZone(%1) \
+	(YSI_g_sGangZones[(%1)][E_ZONE_DATA_POINTER])
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_IsProtected
+Params:
+	zoneid - Zone to check.
+Return:
+	-
+Notes:
+	Checks to see if a zone can be captured or not.
+-*----------------------------------------------------------------------------*/
+
+#define Zone_IsProtected(%1) \
+	(YSI_g_sGangZones[(%1)][E_ZONE_DATA_FLAGS] & e_ZONE_FLAGS_PROTECTED)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_GetColour
+Params:
+	zoneid - Zone to get the colour of.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Zone_GetColour(%1) \
+	(YSI_g_sGangZones[(%1)][E_ZONE_DATA_COLOUR])
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_OnPlayerEnterZone
+Params:
+	playerid - Player who entered a zone.
+	zoneid - Zone they entered.
+Return
+	-
+Notes:
+	Calls the callback for entering zones.
+-*----------------------------------------------------------------------------*/
+
+#define Zone_OnPlayerEnterZone(%1,%2) \
+	CallRemoteFunction("OnPlayerEnterZone", "ii", (%1), (%2))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_OnPlayerLeaveZone
+Params:
+	playerid - Player who left a zone.
+	zoneid - Zone they left.
+Return:
+	-
+Notes:
+	Calls the callback for leaving zones.
+-*----------------------------------------------------------------------------*/
+
+#define Zone_OnPlayerLeaveZone(%1,%2) \
+	CallRemoteFunction("OnPlayerLeaveZone", "ii", (%1), (%2))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_Zone
+Params:
+	-
+Return:
+	-
+Notes:
+	Constructor.  Starts the loop.
+-*----------------------------------------------------------------------------*/
+
+Zone_Zone()
+{
+	static
+		timer;
+	if (!timer)
+	{
+		timer = Timer_Add("Zone_Loop", ZONE_LOOP_GRANULARITY);
+	}
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_Add
+Params:
+	Float:minx - Lower edge of the zone on the x axis.
+	Float:miny - Lower edge of the zone on the y axis.
+	Float:maxx - Upper edge of the zone on the x axis.
+	Float:maxy - Upper edge of the zone on the y axis.
+Return:
+	Handle to the zone data.
+Notes:
+	Creates a zone if there are any slots left and a visual zone can be
+	created.  Sets the zone colour to a pale black to start with.
+-*----------------------------------------------------------------------------*/
+
+stock Zone_Add(Float:minx, Float:miny, Float:maxx, Float:maxy)
+{
+	new
+		zone;
+	while (zone < MAX_ZONES)
+	{
+		if (!Zone_IsActive(zone)) break;
+		zone++;
+	}
+	if (zone == MAX_ZONES) return NO_ZONE;
+	new
+		pointer = GangZoneCreate(minx, miny, maxx, maxy);
+	if (pointer == NO_ZONE) return NO_ZONE;
+	YSI_g_sGangZones[zone][E_ZONE_DATA_POINTER] = pointer;
+	YSI_g_sGangZones[zone][E_ZONE_DATA_MIN_X] = minx;
+	YSI_g_sGangZones[zone][E_ZONE_DATA_MIN_Y] = miny;
+	YSI_g_sGangZones[zone][E_ZONE_DATA_MAX_X] = maxx;
+	YSI_g_sGangZones[zone][E_ZONE_DATA_MAX_Y] = maxy;
+	YSI_g_sGangZones[zone][E_ZONE_DATA_FLAGS] = e_ZONE_FLAGS_ACTIVE | e_ZONE_FLAGS_OWNER | e_ZONE_FLAGS_ATTACK;
+	YSI_g_sGangZones[zone][E_ZONE_DATA_COLOUR] = 0x33;
+	return zone;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_OnPlayerConnect
+Params:
+	playerid - Player who connected.
+Return:
+	-
+Notes:
+	Called when a player connects.  Sets up existing zones for the player.
+-*----------------------------------------------------------------------------*/
+
+Zone_OnPlayerConnect(playerid)
+{
+	for (new i = 0; i < MAX_ZONES; i++)
+	{
+		if (Zone_IsActive(i))
+		{
+			GangZoneShowForPlayer(playerid, Zone_GetGangZone(i), Zone_GetColour(i));
+		}
+	}
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_OnPlayerDisconnect.
+Params:
+	playerid - Player who left.
+	reason - Why they left.
+Return:
+	-
+Notes:
+	Called when a player leaves, removes the player from counting towards any
+	current captures in progress.
+-*----------------------------------------------------------------------------*/
+
+Zone_OnPlayerDisconnect(playerid, reason)
+{
+	new
+		curzone = YSI_g_sPlayerZone[playerid];
+	if (curzone != NO_ZONE)
+	{
+		new
+			gang = Group_GetGangGroup(playerid);
+		if (gang != -1)
+		{
+			YSI_g_sGangCounts[curzone][gang]--;
+		}
+	}
+	YSI_g_sPlayerZone[playerid] = NO_ZONE;
+	return 1;
+	#pragma unused reason
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_OnPlayerDeath
+Params:
+	playerid - Player who died.
+	killerid - Player who killed them.
+	reason - How they were killed.
+Return:
+	-
+Notes:
+	Rewards the killer's team if both players were in a zone and one player
+	was in the zone owner's team.
+-*----------------------------------------------------------------------------*/
+
+Zone_OnPlayerDeath(playerid, killerid, reason)
+{
+	if (killerid == INVALID_PLAYER_ID) return 0;
+	new
+		zone = YSI_g_sPlayerZone[playerid];
+	if (Zone_IsValid(zone) && !Zone_IsProtected(zone) && zone == YSI_g_sPlayerZone[killerid])
+	{
+		new
+			owner = Zone_GetOwner(zone);
+		if (owner != ZONE_NO_OWNER) 
+		{
+			new
+				killergroup = Group_GetGangGroup(killerid),
+				playergroup = Group_GetGangGroup(playerid);
+			if (playergroup == owner)
+			{
+				YSI_g_sGangTimes[zone][killergroup] -= ZONE_KILL_BONUS;
+			}
+			else if (killergroup == owner)
+			{
+				YSI_g_sGangTimes[zone][playergroup] += ZONE_KILL_BONUS;
+			}
+			return 1;
+		}
+	}
+	return 0;
+	#pragma unused reason
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_Remove
+Params:
+	zoneid - Zone to remove.
+Return:
+	-
+Notes:
+	Removes a zone from the system.
+-*----------------------------------------------------------------------------*/
+
+stock Zone_Remove(zoneid)
+{
+	if (Zone_IsValid(zoneid))
+	{
+		GangZoneHideForAll(Zone_GetGangZone(zoneid));
+		YSI_g_sGangZones[zoneid][E_ZONE_DATA_FLAGS] = e_ZONE_FLAGS:0;
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_Protect
+Params:
+	zoneid - Zone to protect.
+	protect - Whether to protect or unprotect the zone.
+Return:
+	-
+Notes:
+	Stops or allows the zone to be captured.
+-*----------------------------------------------------------------------------*/
+
+stock Zone_Protect(zoneid, protect)
+{
+	if (Zone_IsValid(zoneid))
+	{
+		if (protect) YSI_g_sGangZones[zoneid][E_ZONE_DATA_FLAGS] |= e_ZONE_FLAGS_PROTECTED;
+		else YSI_g_sGangZones[zoneid][E_ZONE_DATA_FLAGS] &= ~e_ZONE_FLAGS_PROTECTED;
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_SetOwner
+Params:
+	zoneid - Zone to set owner for.
+	group - Group to assign as owner.
+Return:
+	-
+Notes:
+	Sets a zone's owner, either by manual call or capture.
+-*----------------------------------------------------------------------------*/
+
+stock Zone_SetOwner(zoneid, group)
+{
+	if (Zone_IsValid(zoneid))
+	{
+		YSI_g_sGangZones[zoneid][E_ZONE_DATA_FLAGS] = (YSI_g_sGangZones[zoneid][E_ZONE_DATA_FLAGS] & (~e_ZONE_FLAGS_OWNER)) | ((e_ZONE_FLAGS:group & e_ZONE_FLAGS_OWNER) | e_ZONE_FLAGS_ATTACK);
+		GangZoneStopFlashForAll(Zone_GetGangZone(zoneid));
+		YSI_g_sGangZones[zoneid][E_ZONE_DATA_COLOUR] = (Group_GetColour(group) & 0xFFFFFF00) | 0x33;
+		GangZoneShowForAll(Zone_GetGangZone(zoneid), Zone_GetColour(zoneid));
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_Loop
+Params:
+	-
+Return:
+	-
+Notes:
+	Does the main processing for the zone system.  There are two main parts to
+	the loop.
+	
+	The first part handles individual players, checking what zone they are in
+	by first checking if they have left the zone there were in previously and
+	if so looping through the other zones to see where they are.
+	
+	The second part handles captures.  After the first part has sorted out who
+	is where and what groups they're in the second part processes that
+	information and calculates capture times based on numbers of people in
+	zones.
+	
+	To capture a zone you must first trigger a gang war, this is done by
+	holding a zone for a certain amount of time (varies depending on the
+	number of people in the zone) or killing people in the zone (knocks time
+	off the hold time).  If there is only one person in the zone the time
+	won't decrease but will not reset either, if there are no people (from your
+	group) in the zone your group's capture time will reset.
+	
+	If the zone is unowned triggering a gang war will award you the zone
+	instantly.  If it is owner a war will trigger.  A war is very similar to
+	the trigger but other gangs can't continue triggering while a war is in
+	progress and the defenders now count for something.  The defenders have
+	the slight upper hand in a war, if there is no-one at all in the zone the
+	defender's will slowly increase towards victory and the attacker's time
+	will decrease.  If there is one attacker the time will not move either way.
+	Player values above those two (or 1 defender, no attackers) will move the
+	time in one team or another's direction.  The defenders count as having one
+	more man than they actually have because they're defenders so 4 attackers
+	vs. 3 defenders is a stalemate and the time will not move either way.  You
+	can get bonus time by killing the opposition and this gives you far more
+	than just standing there so 1 attacker can still take a zone, even against
+	superior numbers.
+	
+	Only kills made when both participants are in the contended zone count.
+-*----------------------------------------------------------------------------*/
+
+public Zone_Loop()
+{
+	static
+		sCheck = ZONE_LOOP_GRANULARITY;
+	new
+		Bit:bGangTriggered[Bit_Bits(MAX_GROUPS)];
+	sCheck--;
+	foreach (Player, playerid)
+	{
+		new
+			gang = Group_GetGangGroup(playerid);
+		if (gang != -1)
+		{
+			new
+				Float:x,
+				Float:y,
+				Float:z,
+				curzone = YSI_g_sPlayerZone[playerid];
+			GetPlayerPos(playerid, x, y, z);
+			if (curzone >= 0 && curzone < MAX_ZONES)
+			{
+				if (Zone_IsActive(curzone) && Zone_IsInArea(curzone, x, y))
+				{
+					if (!sCheck) Bit_Set(bGangTriggered, gang, 1, Bit_Bits(MAX_GROUPS));
+					continue;
+				}
+				Zone_OnPlayerLeaveZone(playerid, curzone);
+				YSI_g_sGangCounts[curzone][gang]--;
+				YSI_g_sPlayerZone[playerid] = NO_ZONE;
+			}
+			for (new zoneid = 0; zoneid < MAX_ZONES; zoneid++)
+			{
+				if (Zone_IsActive(zoneid) && Zone_IsInArea(zoneid, x, y))
+				{
+					YSI_g_sPlayerZone[playerid] = zoneid;
+					Zone_OnPlayerEnterZone(playerid, zoneid);
+					YSI_g_sGangCounts[zoneid][gang]++;
+					if (!sCheck) Bit_Set(bGangTriggered, gang, 1, Bit_Bits(MAX_GROUPS));
+					break;
+				}
+			}
+		}
+		else
+		{
+			YSI_g_sPlayerZone[playerid] = NO_ZONE;
+		}
+	}
+	if (!sCheck)
+	{
+		static
+			sLastCall;
+		new
+			curTime = GetTickCount(),
+			timeSinceLast = curTime - sLastCall;
+		for (new zoneid = 0; zoneid < MAX_ZONES; zoneid++)
+		{
+			if (!Zone_IsActive(zoneid) || Zone_IsProtected(zoneid)) continue;
+			
+			new
+				owner = Zone_GetOwner(zoneid),
+				attacker = Zone_GetAttacker(zoneid);
+			if (attacker != ZONE_NO_ATTACKER)
+			{
+				if (owner != ZONE_NO_OWNER)
+				{
+					new
+						captime = YSI_g_sGangTimes[zoneid][attacker],
+						deftime = YSI_g_sGangTimes[zoneid][owner],
+						attackers = YSI_g_sGangCounts[zoneid][attacker],
+						defenders = YSI_g_sGangCounts[zoneid][owner];
+					captime = (captime - Zone_CalculateElapse(attackers, timeSinceLast)) + Zone_CalculateElapse(defenders + 1, timeSinceLast);
+					deftime = ZONE_CAPTURE_TIME - captime;
+					if (captime <= 0)
+					{
+						Zone_SetOwner(zoneid, attacker);
+						CallRemoteFunction("OnGangWarCapture", "iii", zoneid, attacker, owner);
+						continue;
+					}
+					else if (deftime <= 0)
+					{
+						Zone_CancelCapture(zoneid);
+						continue;
+					}
+					YSI_g_sGangTimes[zoneid][attacker] = captime;
+					YSI_g_sGangTimes[zoneid][owner] = deftime;
+				}
+				else
+				{
+					Zone_SetOwner(zoneid, attacker);
+					CallRemoteFunction("OnGangWarCapture", "iii", zoneid, attacker, owner);
+				}
+			}
+			else
+			{
+				for (new gangid = 0; gangid < MAX_GROUPS; gangid++)
+				{
+					if (Bit_GetBit(bGangTriggered, gangid))
+					{
+						new
+							val = YSI_g_sGangCounts[zoneid][gangid];
+						if (gangid != owner)
+						{
+							if (val)
+							{
+								if (val > 1)
+								{
+									YSI_g_sGangTimes[zoneid][gangid] -= Zone_CalculateElapse(val, timeSinceLast);
+									if (YSI_g_sGangTimes[zoneid][gangid] <= 0)
+									{
+										Zone_StartCapture(zoneid, gangid);
+										break;
+									}
+								}
+							}
+							else
+							{
+								YSI_g_sGangTimes[zoneid][gangid] = ZONE_TRIGGER_TIME;
+							}
+						}
+					}
+					else
+					{
+						YSI_g_sGangTimes[zoneid][gangid] = ZONE_TRIGGER_TIME;
+					}
+				}
+			}
+		}
+		sLastCall = curTime;
+		sCheck = ZONE_LOOP_GRANULARITY;
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_StartCapture
+Params:
+	zoneid - Zone to start capturing.
+	attackers - Group attacking.
+Return:
+	-
+Notes:
+	Starts a gang war for a zone between the current owners and attackers.
+-*----------------------------------------------------------------------------*/
+
+static Zone_StartCapture(zoneid, attackers)
+{
+	YSI_g_sGangZones[zoneid][E_ZONE_DATA_FLAGS] = (YSI_g_sGangZones[zoneid][E_ZONE_DATA_FLAGS] & (~e_ZONE_FLAGS_ATTACK)) | (e_ZONE_FLAGS:(attackers << 14) & e_ZONE_FLAGS_ATTACK);
+	new
+		flash = (Group_GetColour(attackers) & 0xFFFFFF00) | 0x33;
+	GangZoneFlashForAll(Zone_GetGangZone(zoneid), flash);
+	YSI_g_sGangTimes[zoneid][attackers] = ZONE_CAPTURE_TIME / 2;
+	new
+		owner = Zone_GetOwner(zoneid);
+	if (owner != ZONE_NO_OWNER) YSI_g_sGangTimes[zoneid][owner] = ZONE_CAPTURE_TIME / 2;
+	CallRemoteFunction("OnGangWarStart", "iii", zoneid, attackers, owner);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_CancelCapture
+Params:
+	zoneid - Zone to cancel war in.
+Return:
+	-
+Notes:
+	Basically a loss for the attackers.
+-*----------------------------------------------------------------------------*/
+
+static Zone_CancelCapture(zoneid)
+{
+	new
+		attackers = Zone_GetAttacker(zoneid);
+	if (attackers != ZONE_NO_ATTACKER)
+	{
+		YSI_g_sGangTimes[zoneid][attackers] = ZONE_TRIGGER_TIME;
+	}
+	YSI_g_sGangZones[zoneid][E_ZONE_DATA_FLAGS] |= e_ZONE_FLAGS_ATTACK;
+	GangZoneStopFlashForAll(Zone_GetGangZone(zoneid));
+	CallRemoteFunction("OnGangWarEnd", "iii", zoneid, attackers, Zone_GetOwner(zoneid));
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_OnPlayerJoinGroup
+Params:
+	playerid - Player who joined a group.
+	group - Group they joined.
+Return:
+	-
+Notes:
+	Updates team statuses if a player's new group is a zone capturing group.
+	Also called when groups are modified.
+-*----------------------------------------------------------------------------*/
+
+stock Zone_OnPlayerJoinGroup(playerid, group)
+{
+	new
+		zone = YSI_g_sPlayerZone[playerid];
+	if (zone != NO_ZONE)
+	{
+		new
+			gang = Group_GetGangGroup(playerid);
+		if (gang == group)
+		{
+			gang = Group_GetGangGroup(playerid, group + 1);
+			if (gang != -1)
+			{
+				YSI_g_sGangCounts[zone][gang]--;
+			}
+			YSI_g_sGangCounts[zone][group]++;
+		}
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_OnPlayerLeaveGroup
+Params:
+	playerid - Player who left a group.
+	group - Group they left.
+Return:
+	-
+Notes:
+	Updates zone statuses if the group a player left was a zone taking group.
+	Also called when groups are modified.
+-*----------------------------------------------------------------------------*/
+
+stock Zone_OnPlayerLeaveGroup(playerid, group)
+{
+	new
+		zone = YSI_g_sPlayerZone[playerid];
+	if (zone != NO_ZONE)
+	{
+		new
+			gang = Group_GetGangGroup(playerid);
+		if (gang == group)
+		{
+			gang = Group_GetGangGroup(playerid, group + 1);
+			if (gang != -1)
+			{
+				YSI_g_sGangCounts[zone][gang]++;
+			}
+			YSI_g_sGangCounts[zone][group]--;
+		}
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Zone_GetPlayerZone
+Params:
+	playerid - Player to get zone of.
+Return:
+	Player's zone.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Zone_GetPlayerZone(playerid)
+{
+	if (playerid >= 0 && playerid < MAX_PLAYERS) return YSI_g_sPlayerZone[playerid];
+	return NO_ZONE;
+}

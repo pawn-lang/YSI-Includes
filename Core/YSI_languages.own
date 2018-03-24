@@ -1,0 +1,552 @@
+/*----------------------------------------------------------------------------*-
+					=================================
+					Y Sever Includes - Languages Core
+					=================================
+Description:
+	Handles language file loading and passes text to the text core.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1.2
+Changelog:
+	20/06/07:
+		Added Langs_GetLanguageName.
+		Edited Langs_GetLanguageIdentifier to return correctly.
+		Added Langs_IsValid.
+	13/06/07:
+		Made file paths optional.
+	07/06/07
+		Added multiple file support.
+	17/05/07:
+		Added file options.
+		Added checking for loading before setting.
+	02/05/07:
+		Added YSI_ prefix to all globals.
+	14/04/07:
+		Updated header documentation with more than changelog.
+	13/04/07:
+		Removed Langs_GetPlayerLanguage - moved to player class.
+	23/03/07:
+		First version.
+Functions
+	Public:
+		-
+	Core:
+		Langs_AddLanguage - Adds a language to the list to be loaded.
+		Langs_LoadAll - Loads all added languages.
+		Langs_AddFile - Adds a file to be loaded.
+	Stock:
+		Langs_GetLanguageID - Gets a languageid from the identifier.
+		Langs_GetLanguageIdentifier - Wrapper for Langs_LanguageIdentifier.
+		Langs_GetLanguageName - Gets the name of a language.
+	Static:
+		Langs_LoadLanguage - Loads a single language.
+		Langs_LoadFile - Loads a single file.
+	Inline:
+		Langs_Langs - Constructor.
+		Langs_IsActive - Checks a language is in use (loaded).
+		Langs_LanguageIdentifier - Gets the text identifier of a language.
+		Langs_NewInput - Sets the text functions up for a new language.
+		Langs_ResetAll - Resets all the languages.
+		Langs_SaveEnteredData - Tells the text functions to parse data.
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	LANGUAGE_FILE_NAME - Name of file to open.
+	LANGUAGE_FILE_PATH - Location of the file.
+	MAX_LANGUAGE_IDENTIFIER - Max length of a language file extension.
+	MAX_LANGUAGE_NAME - Max length of a language file name.
+	MAX_LANGUAGE_PATH - Max length of a language file path.
+	NO_LANGUAGE_SLOT - Failure return.
+Enums:
+	e_LANG_FLAG - Flags for languages.
+	E_LANGUAGES - Structure of the language string array.
+Macros:
+	-
+Tags:
+	Language - Language identifier.
+	e_LANG_FLAG - Flag type.
+Variables:
+	Global:
+		-
+	Static:
+		YSI_g_sLoaded - Set when the first language has been loaded for sorting.
+		YSI_g_sLanguages - Array of language names and identifiers.
+Commands:
+	language - List languages or sets your language.
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define LANGUAGE_FILE_NAME(%1)		YSI_g_sName[(%1)]
+#define LANGUAGE_FILE_PATH(%1)		YSI_g_sPath[(%1)]
+#define MAX_LANGUAGE_IDENTIFIER	4
+#define MAX_LANGUAGE_NAME		32
+#define MAX_LANGUAGE_PATH		64
+#define MAX_LANGUAGE_FILES		4
+#define NO_LANGUAGE_SLOT		Language:-1
+#if !defined MAX_LANGUAGES
+	#define MAX_LANGUAGES Language:4
+#endif
+#if MAX_LANGUAGE_FILES > 32
+	#error Only 32 language files currently supported
+#endif
+
+enum e_LANG_FLAG (<<= 1)
+{
+	e_LANG_FLAG_NONE,
+	e_LANG_FLAG_ACTIVE = 1
+}
+
+enum E_LANGUAGES
+{
+	E_LANGUAGES_IDENTIFIER[MAX_LANGUAGE_IDENTIFIER],
+	E_LANGUAGES_NAME[MAX_LANGUAGE_NAME],
+	e_LANG_FLAG:E_LANGUAGES_FLAGS
+}
+
+static
+	YSI_g_sLoaded,
+	YSI_g_sFiles,
+	YSI_g_sFileDataLoaded,
+	YSI_g_sLanguages[MAX_LANGUAGES][E_LANGUAGES],
+	YSI_g_sPath[MAX_LANGUAGE_FILES][MAX_LANGUAGE_PATH],
+	YSI_g_sName[MAX_LANGUAGE_FILES][MAX_LANGUAGE_NAME];
+
+forward ycmd_language(playerid, params[], help);
+
+Text_RegisterTag(ysi_langs);
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Langs_Langs
+Params:
+	-
+Return:
+	Langs_LoadAll().
+Notes:
+	The "constructor" for all this.
+-*----------------------------------------------------------------------------*/
+
+Langs_Langs()
+{
+	ycmd(language);
+	return Langs_LoadAll();
+}
+	
+/*----------------------------------------------------------------------------*-
+Function:
+	Langs_IsActive
+Params:
+	Language:languageID - The language index you want to check the state of.
+Return:
+	e_LANG_FLAG_ACTIVE state.
+Notes:
+	Tries to be an inline function.
+-*----------------------------------------------------------------------------*/
+
+#define Langs_IsActive(%1) \
+	(YSI_g_sLanguages[(%1)][E_LANGUAGES_FLAGS] & e_LANG_FLAG_ACTIVE)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Langs_LanguageIdentifier
+Params:
+	Language:languageID - index of language to get identifier for.
+Return:
+	YSI_g_sLanguages[languageID][E_LANGUAGES_IDENTIFIER].
+Notes:
+	Gets the identifier for a language for INTERNAL use.
+	
+	See also Langs_GetLanguageIdentifier.
+-*----------------------------------------------------------------------------*/
+
+#define Langs_LanguageIdentifier(%1) \
+	(YSI_g_sLanguages[(%1)][E_LANGUAGES_IDENTIFIER])
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Langs_NewInput
+Params:
+	Language:LanguageID
+Return:
+	-
+Notes:
+	Sets the remote systems up to recieve data for the new language.
+-*----------------------------------------------------------------------------*/
+
+#if defined _LOCAL
+	#define Langs_NewInput(%1) \
+		Text_NewLanguage((%1))
+#else
+	#define Langs_NewInput(%1) \
+		CallRemoteFunction("Text_NewLanguage", "i", _:(%1))
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Langs_ResetAll
+Params:
+	-
+Return:
+	-
+Notes:
+	Resets the local state and the remote text states.
+-*----------------------------------------------------------------------------*/
+
+#if defined _LOCAL
+	#define Langs_ResetAll() \
+		Text_ResetAll(); \
+		YSI_g_sLoaded = 0
+#else
+	#define Langs_ResetAll() \
+		CallRemoteFunction("Text_ResetAll", ""); \
+		YSI_g_sLoaded = 0
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Langs_SaveEnteredData
+Params:
+	Language:languageID, the index of the language you want to save.
+Return:
+	-
+Notes:
+	Once all the data for a language has been loaded it needs to be parsed
+	so that when the data needs to be accessed it's all nicely formatted for
+	speedy retrieval.  See Text_Parse for more details.
+-*----------------------------------------------------------------------------*/
+
+#if defined _LOCAL
+	#define Langs_SaveEnteredData() \
+		Text_Parse()
+#else
+	#define Langs_SaveEnteredData() \
+		CallRemoteFunction("Text_Parse", "")
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Langs_LoadLanguage
+Params:
+	Language:languageID - The index of the language we want to retrieve the
+		data for.
+Return:
+	bool: language file load success
+Notes:
+	Loads one the data for one passed language, currently holds all the data
+	in one ini like file using ini functions to read the data then broadcast
+	it to specially named Text wrapper functions:
+	
+	Text_Tag_<tag>
+	
+	Where <tag> is the name of the tag in the file currently being read.  All
+	these remote functions are actually identical, all just calling the buffer
+	function but this method allows us to filter which text groups any one
+	module recieves.
+	
+	Updated - can now handle multiple files loaded at different times.
+-*----------------------------------------------------------------------------*/
+
+static bool:Langs_LoadLanguage(Language:languageID)
+{
+	new
+		filename[MAX_LANGUAGE_PATH],
+		parse;
+	Langs_NewInput(languageID);
+	for (new i = 0; i < YSI_g_sFiles; i++)
+	{
+		format(filename, sizeof (filename), "%s%s%s.%s", LANGUAGE_FILE_PATH(i), LANGUAGE_FILE_PATH(i)[0] ? ("/") : (""), LANGUAGE_FILE_NAME(i), Langs_LanguageIdentifier(languageID));
+		if (INI_ParseFile(filename, "Text_Tag_%s", .bLocal = true)) parse = 1;
+	}
+	if (parse) Langs_SaveEnteredData();
+	return true;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Langs_LoadFile
+Params:
+	file - ID of the file to load for all languages.
+Return:
+	bool: language file load success
+Notes:
+	Loads a file for all languages after the initial load is done.
+-*----------------------------------------------------------------------------*/
+
+static stock bool:Langs_LoadFile(file)
+{
+	new
+		filename[MAX_LANGUAGE_PATH];
+	for (new Language:i = Language:0; i < MAX_LANGUAGES; i++)
+	{
+		if (Langs_IsActive(i))
+		{
+			format(filename, sizeof (filename), "%s%s%s.%s", LANGUAGE_FILE_PATH(file), LANGUAGE_FILE_PATH(file)[0] ? ("/") : (""), LANGUAGE_FILE_NAME(file), Langs_LanguageIdentifier(i));
+			Langs_NewInput(i);
+			if (!INI_ParseFile(filename, "Text_Tag_%s", .bLocal = true)) continue;
+			Langs_SaveEnteredData();
+		}
+	}
+	if (!(YSI_g_sFileDataLoaded & (1 << file)))
+	{
+		format(filename, sizeof (filename), "%s%s%s_LANG_DATA.YSI", LANGUAGE_FILE_PATH(file), LANGUAGE_FILE_PATH(file)[0] ? ("/") : (""), LANGUAGE_FILE_NAME(file));
+		if (INI_ParseFile(filename, "Text_DataSave_%s", .bLocal = true)) YSI_g_sFileDataLoaded |= 1 << file;
+	}
+	return true;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Langs_LoadAll
+Params:
+	-
+Return:
+	-
+Notes:
+	Loops through the language files requested in the ini and calls
+	the loading function for that one. Languages required are loaded from the
+	ini and passed via Langs_AddLangage to be loaded here.
+-*----------------------------------------------------------------------------*/
+
+Langs_LoadAll()
+{
+	if (!(YSI_g_sLoaded & 2) || !(YSI_g_sLoaded & 8)) return 0;
+	Langs_ResetAll();
+	for (new Language:i; i < MAX_LANGUAGES; i++) if (Langs_IsActive(i) && Langs_LoadLanguage(i)) YSI_g_sLoaded |= 5;
+	new
+		filename[MAX_LANGUAGE_PATH];
+	for (new i = 0; i < YSI_g_sFiles; i++)
+	{
+		if (!(YSI_g_sFileDataLoaded & (1 << i)))
+		{
+			format(filename, sizeof (filename), "%s%s%s_format.YSI", LANGUAGE_FILE_PATH(i), LANGUAGE_FILE_PATH(i)[0] ? ("/") : (""), LANGUAGE_FILE_NAME(i));
+			if (INI_ParseFile(filename, "Text_DataSave_%s", .bLocal = true)) YSI_g_sFileDataLoaded |= 1 << i;
+		}
+	}
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Langs_AddLanguage
+Params:
+	identifier[] - The two or three character shortcode for language identi-
+		fication and for the extension on the language file (e.g. "EN").
+	name[] - The real-world name of this language (e.g. "English").
+Return:
+	Language: Fail - -1, Success - index.
+Notes:
+	If all the languages have been loaded initially this adds the langauge
+	to the list and then loads the data.  If they've not been initialise it
+	just adds it to the list of languages to load.
+-*----------------------------------------------------------------------------*/
+
+Language:Langs_AddLanguage(identifier[], name[])
+{
+	new
+		Language:i;
+	while (i < MAX_LANGUAGES)
+	{
+		if (!Langs_IsActive(i)) break;
+		i++;
+	}
+	if (i == MAX_LANGUAGES) return NO_LANGUAGE_SLOT;
+	YSI_g_sLanguages[i][E_LANGUAGES_FLAGS] = e_LANG_FLAG_ACTIVE;
+	strcpy(YSI_g_sLanguages[i][E_LANGUAGES_IDENTIFIER], identifier, MAX_LANGUAGE_IDENTIFIER, MAX_LANGUAGE_IDENTIFIER);
+	strcpy(YSI_g_sLanguages[i][E_LANGUAGES_NAME], name, MAX_LANGUAGE_NAME, MAX_LANGUAGE_NAME);
+	if (!(YSI_g_sLoaded & 3)) YSI_g_sLoaded |= 2;
+	else if (YSI_g_sLoaded & 1)
+	{
+		Langs_LoadLanguage(i);
+	}
+	return i;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Langs_AddFile
+Params:
+	filename[] - The filename.
+	path[] - The file path.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+Langs_AddFile(filename[], path[] = "")
+{
+	if (YSI_g_sFiles < MAX_LANGUAGE_FILES)
+	strcpy(LANGUAGE_FILE_NAME(YSI_g_sFiles), filename, MAX_LANGUAGE_PATH);
+	strcpy(LANGUAGE_FILE_PATH(YSI_g_sFiles), path, MAX_LANGUAGE_NAME);
+	if (!(YSI_g_sLoaded & 12)) YSI_g_sLoaded |= 8;
+	else if (YSI_g_sLoaded & 4)
+	{
+		Langs_LoadFile(YSI_g_sFiles);
+	}
+	YSI_g_sFiles++;
+	return YSI_g_sFiles - 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Langs_GetLanguageIdentifier
+Params:
+	Language:languageID - index of language to get identifier for.
+Return:
+	YSI_g_sLanguages[languageID][E_LANGUAGES_IDENTIFIER].
+Notes:
+	Gets the identifier for a language for EXTERNAL use.
+	
+	See also: Langs_LanguageIdentifier.
+-*----------------------------------------------------------------------------*/
+
+stock Langs_GetLanguageIdentifier(Language:languageID)
+{
+	new
+		ret[MAX_LANGUAGE_IDENTIFIER];
+	strcpy(ret, Langs_LanguageIdentifier(languageID), MAX_LANGUAGE_IDENTIFIER);
+	return ret;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Langs_GetLanguageID
+Params:
+	identifier[] - The string identifier of the language you want to get.
+Return:
+	The Language: id.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Language:Langs_GetLanguageID(identifier[])
+{
+	for (new Language:i; i < MAX_LANGUAGES; i++)
+	{
+		if (!strcmp(identifier, YSI_g_sLanguages[i][E_LANGUAGES_IDENTIFIER])) return i;
+	}
+	return NO_LANGUAGE_SLOT;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Langs_GetLanguageName
+Params:
+	Language:languageID - index of language to get name of.
+Return:
+	YSI_g_sLanguages[languageID][E_LANGUAGES_NAME].
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Langs_GetLanguageName(Language:languageID)
+{
+	new
+		ret[MAX_LANGUAGE_IDENTIFIER];
+	strcpy(ret, YSI_g_sLanguages[languageID][E_LANGUAGES_NAME], MAX_LANGUAGE_NAME);
+	return ret;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Langs_IsValid
+Params:
+	Language:languageID - index of language to get state of.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock bool:Langs_IsValid(Language:languageID)
+{
+	return (languageID >= Language:0 && languageID < MAX_LANGUAGES && Langs_IsActive(languageID));
+}
+
+/*----------------------------------------------------------------------------*-
+Command:
+	language
+Parameters:
+	<page> - Page of languages to view (optional).
+Notes:
+	With no parameters lists all available languages.  With a parameter sets
+	your language to the selected language.
+-*----------------------------------------------------------------------------*/
+
+public ycmd_language(playerid, params[], help)
+{
+	if (help)
+	{
+		Text_Send(playerid, "YSI_LANGS_HELP1");
+		Text_Send(playerid, "YSI_LANGS_HELP2");
+	}
+	else
+	{
+		if (params[0] == 1)
+		{
+			#if MAX_LANGUAGES > Language:8
+				static
+					sPages[MAX_PLAYERS];
+				new
+					count,
+					Language:start,
+					Language:end;
+				for (start = Language:0; start < MAX_LANGUAGES; start++) if (Langs_IsValid(start)) count++;
+				if (sPages[playerid] > (count - 1) / 8) sPages[playerid] = 0;
+				start = Language:(sPages[playerid] * 8);
+				end = start + Language:8;
+				if (end > Language:count) end = Language:count;
+			#else
+				new
+					Language:start = Language:0,
+					Language:end = MAX_LANGUAGES;
+			#endif
+			while (start < end)
+			{
+				if (Langs_IsValid(start))
+				{
+					Text_SendFormat(playerid, "YSI_LANGS_DISP", _:start, YSI_g_sLanguages[start][E_LANGUAGES_NAME], YSI_g_sLanguages[start][E_LANGUAGES_IDENTIFIER]);
+				}
+				start++;
+			}
+			#if MAX_LANGUAGES > Language:8
+				if (count > 8) Text_SendFormat(playerid, "YSI_LANGS_MORE", "language");
+				sPages[playerid]++;
+			#endif
+			Text_SendFormat(playerid, "YSI_LANGS_SET", "language");
+		}
+		else
+		{
+			new
+				Language:lang = Language:strval(params);
+			if (Langs_IsValid(lang))
+			{
+				Player_SetPlayerLanguage(playerid, lang);
+				Text_SendFormat(playerid, "YSI_LANGS_DONE", _:lang, YSI_g_sLanguages[lang][E_LANGUAGES_NAME]);
+			}
+			else Text_Send(playerid, "YSI_LANGS_INV"); 
+		}
+	}
+	return 1;
+}

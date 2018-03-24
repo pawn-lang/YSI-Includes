@@ -1,0 +1,1094 @@
+/*----------------------------------------------------------------------------*-
+					=================================
+					Y Sever Includes - Misc Functions
+					=================================
+Description:
+	Misc functions used throughout.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1.3
+Changelog:
+	20/09/07:
+		Added abs.
+	18/08/07:
+		Added endofline, GetIP, timestamp, mktime.
+		Fixed bug in numstr vith large numbers (due to valstr).
+	22/07/07:
+		Added Ramjet's strtoupper and chrtoupper.
+	21/06/07:
+		Rewrote chrfind and chrnfind to remove strlen for speed.
+	19/06/07:
+		Added bounds checking to ReturnPlayerName.
+	14/06/07:
+		Rewrote hexstr, still not a nice function though.
+		Added IsHex.
+	13/06/07:
+		Rewrote strcpy, now forces the max parameter for safe copying.
+	06/06/07:
+		Added ReturnPlayerName
+	14/05/07:
+		Added isodd for ease.
+	12/05/07:
+		Added iseven.
+	07/05/07:
+		Rewrote strcpy again.
+	15/04/07:
+		Updated StripNL to remove all trailing whitespace.
+	14/04/07:
+		Updated header documentation with more than changelog.
+	13/04/07:
+		Added strtolower and chrtolower.
+	24/03/07:
+		First version.
+Functions:
+	Public
+		KickDelayCall - Delay function for cleanly kicking people.
+		BanDelayCall - Delay function for cleanly banning people.
+	Core:
+		-
+	Stock:
+		chrfind - Finds the position in a string of a single character.
+		chrnfind - Finds the position of the end of a character.
+		strcpy - Copies a string.
+		bernstein - Generates a bernstein hash of a string.
+		StripNL - Strips the newline characters from the end of a string.
+		strconcat - Concatenates strings and returns the result.
+		QSort - Itterative function for sorting by quicksort.
+		strtolower - Makes a string lowercase.
+		strtoupper - Makes a string uppercase.
+		ReturnPlayerName - Returns a player's name.
+		ishex - Checks if a string is a hex number.
+		binstr - Converts a string to boolean.
+		numstr - Converts a number to a string and returns it.
+		endofline - Checks if the current point is the end of a line.
+		GetIP - Returns a player's IP as a number.
+		timestamp - Wrapper for mktime for right now.
+		mktime - Makes a unix timestamp based on passed date/time.
+		sscanf - Get parameters from a string.
+	Static:
+		-
+	Inline:
+		QuickSort - Entry point for QSort.
+		chrtolower - Makes a character lowercase.
+		ceildiv - Rounded up integer division.
+		floordiv - Rounded down integer division.
+		iseven - Checks if a number is even.
+		isodd - Checks if a number is odd.
+		chrtoupper - Makes a character uppercase.
+		isnull - Checks if a string is NULL ("\1\0")
+		IsConnected - Fast version of IsPlayerConnected.
+		KickDelay - Kicks a player after a second.
+		BanDelay - Bans a player after a second.
+		abs - Returns the absolute value of a number.
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	COLOR_WARN - Color used in warning messages.
+	MAX_STRING - Max standard length of a string.
+	MAX_LANGUAGES - Max number of loaded languages.
+	MAX_MODULES - Max number of loaded modules.
+	MAX_TEXT - Max number of loaded text entries per language.
+	MAX_COMMANDS - Maximum number of commands.
+	PLAYER_BIT_ARRAY - Number of cells required for players.
+	MAX_WORLDS - Default number of worlds used throughout.
+Enums:
+	-
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		TRUE - True hack for infinate loops.
+		FALSE - False hack for one-time loops.
+		NULL - 1 long string for passing via Call(Remote|Local)Function.
+	Static:
+		-
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	xor == - Does an xor comparison on 2 values.
+-*----------------------------------------------------------------------------*/
+
+new
+	bool:TRUE = true,
+	bool:FALSE = false,
+	NULL[2] = {1, 0};
+#pragma unused TRUE, FALSE, NULL
+
+#if !defined COLOR_WARN
+	#define COLOR_WARN	0xFF0000AA
+#endif
+
+#if !defined MAX_STRING
+	#define MAX_STRING	256
+#endif
+
+#if !defined MAX_LANGUAGES
+	#define MAX_LANGUAGES		Language:4
+#endif
+
+#if !defined MAX_MODULES
+	#define MAX_MODULES			Module:10 // Absolute maximum is 50 (MAX_FILTER_SCRIPTS)
+#endif
+
+#if !defined MAX_TEXT
+	#define MAX_TEXT			256
+#endif
+
+#if !defined MAX_COMMANDS
+	#define MAX_COMMANDS		128
+#endif
+
+#if !defined MAX_COMMAND_LENGTH
+	#define MAX_COMMAND_LENGTH	16
+#endif
+
+#if !defined MAX_GROUPS
+	#define MAX_GROUPS 32
+#endif
+
+#if MAX_PLAYERS > 32
+	#define PLAYER_BIT_ARRAY Bit_Bits(MAX_PLAYERS)
+#else
+	#define PLAYER_BIT_ARRAY 2
+#endif
+
+#if defined _YSI_SYSTEM_GROUPS
+	#define DEFAULT_SEE 0
+#else
+	#define DEFAULT_SEE 1
+#endif
+
+#define MAX_WORLDS 256
+
+#if !defined _YSI_CORE_TEXT
+	#define Text_RegisterTag(%1);
+#endif
+
+stock bool:operator==(xor:oper1, xor:oper2)
+	return (oper1 || oper2) && !(oper1 && oper2);
+
+#if defined _YSI_CORE_TEXT
+	forward Bit:Group_GetGroupMembers(group);
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	ceildiv
+Params:
+	num - Numerator.
+	div - Denominator.
+Return:
+	num / div rounded up.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define ceildiv(%1,%2) \
+	(((%1) + (%2) - 1) / (%2))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	isnull
+Params:
+	str - String to check if is null.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define isnull(%1) \
+	((%1[0] == 0) || (%1[0] == 1 && %1[1] == 0))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	iseven
+Params:
+	value - Value to check if is even.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define iseven(%1) \
+	((((%1) / 2) * 2) == (%1))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	isodd
+Params:
+	value - Value to check if is odd.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define isodd(%1) \
+	(!iseven((%1)))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	floordiv
+Params:
+	num - Numerator.
+	div - Denominator.
+Return:
+	num / div rounded down.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define floordiv(%1,%2) \
+	(((%1) - (%2) + 1) / (%2))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	chrfind
+Params:
+	needle - The character to find.
+	haystack[] - The string to find it in.
+	start - The offset to start from.
+Return:
+	Fail - -1, Success - pos
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock chrfind(needle, haystack[], start = 0)
+{
+	while (haystack[start]) if (haystack[start++] == needle) return start - 1;
+	return -1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	chrnfind
+Params:
+	needle - The character to not find.
+	haystack[] - The string to find it in.
+	start - The offset to start from.
+Return:
+	Fail - -1, Success - pos
+Notes:
+	Opposite of chrfind, finds the end of a character.
+-*----------------------------------------------------------------------------*/
+
+stock chrnfind(needle, haystack[], start = 0)
+{
+	while (haystack[start]) if (haystack[start++] != needle) return start - 1;
+	return -1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	strcpy
+Params:
+	dest[] - Location to copy the string too.
+	source[] - Location to copy the string from.
+	max - Size of target.
+	len - Length of string to copy.
+Return:
+	-
+Notes:
+	This has gone through so many revisions to make it safe.  I was trying to
+	make it so there were only 2 parameters by default by having max default
+	to sizeof (dest) but apparently the compiler returns 1 for the size of
+	enum member arrays which is annoying.
+-*----------------------------------------------------------------------------*/
+
+stock strcpy(dest[], source[], max, len = -1)
+{
+	new
+		i;
+	if (len == -1) len = strlen(source);
+	while (i < len && i < max && (dest[i] = source[i])) i++;
+	if (i == len) dest[i == max ? i - 1 : i] = '\0';
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	bernstein
+Params:
+	string[] - the string to hash.
+Return:
+	the bernstein hash of the input string
+Notes:
+	This is a 32bit hash system so is not very secure, however we're only
+	using this as a string enumerator to uniquely identify strings easilly
+	and allow for a binary search of strings based on the hash of their name.
+	crc32, then jenkins were originally used however this is far faster, if a
+	little collision prone, but we're checking the strings manually anyway.
+	This doesn't matter as it would be done regardless of hash method, so this
+	doesn't need to be accounted for.  Speed is all that matters with at 
+	least a bit of non collision (the number of strings we're dealing with,
+	this should have none-few collisions).
+	
+	I modified it slightly from the original code pasted by aru, to code
+	closer to the code http://www.burtleburtle.net/bob/hash/doobs.html and
+	to work with PAWN (and shaved 0.2µs off the time for one call :D).
+	
+	Uber reduced version (just for fun):
+	b(s[]){new h=-1,i,j;while((j=s[i++]))h=h*33+j;return h;}
+	
+	Update: Contrary to what I said above this is also used to identify colour
+	strings for the updated text system involving file based styling and this
+	is not checked for collisions as it's unimportant.  But this doesn't affect
+	the function at all, I just mentioned it here for "interest".
+-*----------------------------------------------------------------------------*/
+
+stock bernstein(string[])
+{
+	new
+		hash = -1,
+		i,
+		j;
+	while ((j = string[i++]))
+	{
+		hash = hash * 33 + j;
+	}
+	return hash;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	StripNL
+Params:
+	str[] - The string to remove the newline characters from
+Return:
+	-
+Notes:
+	Updated from old versions, should be more efficient
+-*----------------------------------------------------------------------------*/
+
+stock StripNL(str[])
+{
+	new
+		l = strlen(str);
+	while (l-- && str[l] <= ' ') str[l] = 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	strconcat
+Params:
+	...
+Return:
+	All passed strings concatenated.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock strconcat(str1[], str2[])
+{
+	new
+		str[MAX_STRING],
+		c,
+		i,
+		j;
+	while ((c = str1[i++])) str[j++] = c;
+	i = 0;
+	while ((c = str2[i++])) str[j++] = c;
+	str[j] = '\0';
+	return str;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	quickSort
+Params:
+	numbers[] - Array of values you want sorting.
+	arraySize - Number of items.
+Return:
+	-
+Notes:
+	Entry point for the recursive q_sort function
+-*----------------------------------------------------------------------------*/
+
+#define QuickSort(%1,%2) \
+	QSort((%1), 0, (%2) - 1)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	QSort
+Params:
+	numbers[] - Array of values to be sorted.
+	left - Start index in the array.
+	right - End index in the array.
+Return:
+	-
+Notes:
+	Adapted from: http://linux.wku.edu/~lamonml/algor/sort/quick.html
+	Implementation of the quicksort routine.
+-*----------------------------------------------------------------------------*/
+
+stock QSort(numbers[], left, right)
+{
+	new
+		pivot = numbers[left],
+		l_hold = left,
+		r_hold = right;
+	while (left < right)
+	{
+		while ((numbers[right] >= pivot) && (left < right)) right--;
+		if (left != right)
+		{
+			numbers[left] = numbers[right];
+			left++;
+		}
+		while ((numbers[left] <= pivot) && (left < right)) left++;
+		if (left != right)
+		{
+			numbers[right] = numbers[left];
+			right--;
+		}
+	}
+	numbers[left] = pivot;
+	pivot = left;
+	left = l_hold;
+	right = r_hold;
+	if (left < pivot) QSort(numbers, left, pivot - 1);
+	if (right > pivot) QSort(numbers, pivot + 1, right);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	chrtolower
+Params:
+	chr - Character to make lowercase.
+Return:
+	Lowercase character.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define chrtolower(%1) \
+	(((%1) > 0x40 && (%1) <= 0x5A) ? ((%1) | 0x20) : (%1))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	strtolower
+Params:
+	string[] - String to make lower case.
+Return:
+	Lowercase string.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock strtolower(string[])
+{
+	new
+		retStr[MAX_STRING],
+		i,
+		j;
+	while ((j = string[i])) retStr[i++] = chrtolower(j);
+	retStr[i] = '\0';
+	return retStr;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	hexstr
+Params:
+	string[] - String to convert to a number.
+Return:
+	value of the passed hex string.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock hexstr(string[])
+{
+	new
+		ret,
+		val,
+		i;
+	if (string[0] == '0' && (string[1] == 'x' || string[1] == 'X')) i = 2;
+	while (string[i])
+	{
+		ret <<= 4;
+		val = string[i++] - '0';
+		if (val > 0x09) val -= 0x07;
+		if (val > 0x0F) val -= 0x20;
+		if (val < 0x01) continue;
+		if (val < 0x10) ret += val;
+	}
+	return ret;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	binstr
+Params:
+	string[] - String to try convert to a boolean.
+Return:
+	bool: passed boolean.
+Notes:
+	This can take a number of ways of representing booleans - 0, false and
+	nothing there.  Anything not one of those things (false is not case
+	sensitive) is assumed true.
+-*----------------------------------------------------------------------------*/
+
+stock bool:binstr(string[])
+{
+	if (!string[0] || string[0] == '0' || !strcmp(string, "false", true)) return false;
+	return true;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	ReturnPlayerName
+Params:
+	playerid - Player to get the name of;
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock ReturnPlayerName(playerid)
+{
+	new
+		name[MAX_PLAYER_NAME] = " -NONE- ";
+	if (playerid < MAX_PLAYERS && IsPlayerConnected(playerid)) GetPlayerName(playerid, name, MAX_PLAYER_NAME);
+	return name;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	ishex
+Params:
+	str[] - String to check.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock ishex(str[])
+{
+	new
+		i,
+		cur;
+	if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X')) i = 2;
+	while (str[i])
+	{
+		cur = str[i++];
+		if ((cur < '0') || (cur > '9' && cur < 'A') || (cur > 'F' && cur < 'a') || (cur > 'f')) return 0;
+	}
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	numstr
+Params:
+	num - Number to convert to a string.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock numstr(num)
+{
+	new
+		str[32];
+	format(str, sizeof (str), "%d", num);
+	return str;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	chrtoupper
+Params:
+	chr - Character to make uppercase.
+Return:
+	Uppercase character.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define chrtoupper(%1) \
+	(((%1) > 0x60 && (%1) <= 0x7A) ? ((%1) ^ 0x20) : (%1))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	strtoupper
+Params:
+	string[] - String to make upper case.
+Return:
+	Uppercase string.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock strtoupper(string[])
+{
+	new
+		retStr[MAX_STRING],
+		i,
+		j;
+	while ((j = string[i])) retStr[i++] = chrtoupper(j);
+	retStr[i] = '\0';
+	return retStr;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	timestamp
+Params:
+	-
+Return:
+	Timestamp of the current moment.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock timestamp()
+{
+	new
+		h,
+		m,
+		s,
+		d,
+		n,
+		y;
+	gettime(h, m, s);
+	getdate(y, n, d);
+	return mktime(h, m, s, d, n, y);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	mktime
+Params:
+	hour - Hour of time.
+	minute - Minute of time.
+	second - Second of time.
+	day - Day of date.
+	month - Month of date.
+	year - Year of date.
+Return:
+	Timestame of a given date and time.
+Notes:
+	Uses a check system as it's used in Player_OnPlayerDisconnect when lots of
+	people can disconnect at the same time on gmx so has code to make large
+	numbers of simultaneous calls more efficient.
+-*----------------------------------------------------------------------------*/
+
+stock mktime(hour, minute, second, day, month, year)
+{
+	static
+		days_of_month[12] =
+		{
+			31,
+			29,
+			31,
+			30,
+			31,
+			30,
+			31,
+			31,
+			30,
+			31,
+			30,
+			31
+		},
+		lMinute,
+		lHour,
+		lDay,
+		lMonth,
+		lYear,
+		lMinuteS,
+		lHourS,
+		lDayS,
+		lMonthS,
+		lYearS;
+	if (year != lYear)
+	{
+		lYearS = 0;
+		for (new j = 1970; j < year; j++)
+		{
+			lYearS += 31536000;
+			if ((!(j % 4) && (j % 100)) || !(j % 400)) lYearS += 86400;
+		}
+		lYear = year;
+	}
+	if (month != lMonth)
+	{
+		lMonthS = 0;
+		month--;
+		for (new i = 0; i < month; i++)
+		{
+			lMonthS += days_of_month[i] * 86400;
+			if ((i == 1) && ((!(year % 4) && (year % 100)) || !(year % 400))) lMonthS += 86400;
+		}
+		lMonth = month;
+	}
+	if (day != lDay)
+	{
+		lDayS = day * 86400;
+		lDay = day;
+	}
+	if (hour != lHour)
+	{
+		lHourS = hour * 3600;
+		lHour = hour;
+	}
+	if (minute != lMinute)
+	{
+		lMinuteS = minute * 60;
+		lMinute = minute;
+	}
+	return lYearS + lMonthS + lDayS + lHourS + lMinuteS + second;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	GetIP
+Params:
+	playerid - Player to get IP of.
+Return:
+	IP as a 32bit int.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock GetIP(playerid)
+{
+	new
+		ip[16];
+	GetPlayerIp(playerid, ip, sizeof (ip));
+	new
+		ipv = strval(ip) << 24,
+		pos = 0;
+	while (pos < 15 && ip[pos++] != '.') {}
+	ipv += strval(ip[pos]) << 16;
+	while (pos < 15 && ip[pos++] != '.') {}
+	ipv += strval(ip[pos]) << 8;
+	while (pos < 15 && ip[pos++] != '.') {}
+	ipv += strval(ip[pos]);
+	return ipv;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	getintpar
+Params:
+	line[] - String to get integer from.
+	&int - Return variable;
+	&pos - Return the position of the number.
+Return:
+	Wether a valid integer was found.
+Notes:
+	Checks if the string contains an integer first and returns it.
+-*----------------------------------------------------------------------------*/
+
+stock getintpar(line[], &int, &pos = 0)
+{
+	new
+		ch;
+	while ((ch = line[pos++]) && ch <= ' ');
+	if (ch && ch >= '0' && ch <= '9')
+	{
+		int = strval(line[--pos])
+		return 1;
+	}
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	IsConnected
+Params:
+	playerid - Player to check connection of.
+Return:
+	Wether a player is connected.
+Notes:
+	Faster than using IsPlayerConnected.
+-*----------------------------------------------------------------------------*/
+
+#define IsConnected(%1) \
+	((%1) < MAX_PLAYERS && (%1) >= 0 && YSI_gPlayerA[(%1) != -1)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	KickDelay
+Params:
+	playerid - Player to kick.
+Return:
+	-
+Notes:
+	Kicks a player after a second.
+-*----------------------------------------------------------------------------*/
+
+#define KickDelay(%1) \
+	SetTimerEx("KickDelayCall", 1000, 0, "i", (%1))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	KickDelayCall
+Params:
+	playerid - Player to kick.
+Return:
+	-
+Notes:
+	Called by KickDelay after a second.
+-*----------------------------------------------------------------------------*/
+
+forward KickDelayCall(playerid);
+public KickDelayCall(playerid)
+{
+	Kick(playerid);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	BanDelay
+Params:
+	playerid - Player to ban.
+Return:
+	-
+Notes:
+	Kicks a player after a second.
+-*----------------------------------------------------------------------------*/
+
+#define BanDelay(%1) \
+	SetTimerEx("BanDelayCall", 1000, 0, "i", (%1))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	BanDelayCall
+Params:
+	playerid - Player to ban.
+Return:
+	-
+Notes:
+	Called by BanDelay after a second.
+-*----------------------------------------------------------------------------*/
+
+forward BanDelayCall(playerid);
+public BanDelayCall(playerid)
+{
+	Ban(playerid);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	endofline
+Params:
+	line[] - String to check.
+	pos - Postion to start from.
+Return:
+	-
+Notes:
+	Checks if the current point in a line is the end of non-whitespace data.
+-*----------------------------------------------------------------------------*/
+
+stock endofline(line[], pos)
+{
+	while (line[pos]) if (line[pos++] > ' ') return 0;
+	return 1;
+}
+
+stock isnumeric(str[])
+{
+	new
+		ch,
+		i;
+	while ((ch = str[i++])) if (ch < '0' || ch > '9') return 0;
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	abs
+Params:
+	num - Number to return absolute value of.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define abs(%1) \
+	(((%1) < 0) ? (-(%1)) : ((%1)))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	sscanf
+Params:
+	string[] - String to extract parameters from.
+	format[] - Parameter types to get.
+	{Float,_}:... - Data return variables.
+Return:
+	0 - Successful, not 0 - fail.
+Notes:
+	A fail is either insufficient variables to store the data or insufficient
+	data for the format string - excess data is disgarded.
+
+	A string in the middle of the input data is extracted as a single word, a
+	string at the end of the data collects all remaining text.
+
+	The format codes are:
+
+	c - A character.
+	d, i - An integer.
+	h - A hex number (e.g. a colour).
+	f - A float.
+	s - A string.
+	
+	Now has IsNumeric integrated into the code.
+-*----------------------------------------------------------------------------*/
+
+stock sscanf(string[], format[], {Float,_}:...)
+{
+	new
+		formatPos = 0,
+		stringPos = 0,
+		paramPos = 2,
+		paramCount = numargs();
+	while (paramPos < paramCount && string[stringPos])
+	{
+		while (string[stringPos] == ' ')
+		{
+			stringPos++;
+		}
+		switch (format[formatPos++])
+		{
+			case '\0':
+			{
+				break;
+			}
+			case 'i', 'd':
+			{
+				new
+					neg = 1,
+					num = 0,
+					i = 0;
+					ch = string[stringPos++];
+				if (ch == '-')
+				{
+					neg = -1;
+					ch = string[stringPos++];
+				}
+				do
+				{
+					if (ch >= '0' && ch <= '9')
+					{
+						num = (num * 10) + (ch - '0');
+					}
+					else
+					{
+						return 1;
+					}
+				}
+				while ((ch = string[stringPos++]) && ch != ' ');
+				setarg(paramPos, 0, num * neg);
+			}
+			case 'h':
+			{
+				new
+					ch,
+					num = 0;
+				while ((ch = string[stringPos++]))
+				{
+					switch (ch)
+					{
+						case 'x', 'X':
+						{
+							num = 0;
+							i = 0;
+							continue;
+						}
+						case '0' .. '9':
+						{
+							num = (num << 4) | (ch - '0');
+						}
+						case 'a' .. 'f':
+						{
+							num = (num << 4) | (ch - ('a' - 10));
+						}
+						case 'A' .. 'F':
+						{
+							num = (num << 4) | (ch - ('A' - 10));
+						}
+						case ' ':
+						{
+							break;
+						}
+						default:
+						{
+							return 1;
+						}
+					}
+				}
+				setarg(paramPos, 0, num);
+			}
+			case 'c':
+			{
+				setarg(paramPos, 0, string[stringPos]);
+			}
+			case 'f':
+			{
+				setarg(paramPos, 0, _:floatstr(string[stringPos]));
+			}
+			case 's':
+			{
+				new
+					i = 0,
+					ch;
+				if (format[formatPos])
+				{
+					while ((ch = string[stringPos++]) && ch != ' ')
+					{
+						setarg(paramPos, i++, ch);
+					}
+				}
+				else 
+				{
+					while ((ch = string[stringPos++]))
+					{
+						setarg(paramPos, i++, ch);
+					}
+				}
+				setarg(paramPos, i, '\0');
+			}
+			default:
+			{
+				continue;
+			}
+		}
+		while (string[stringPos] && string[stringPos] != ' ')
+		{
+			stringPos++;
+		}
+		paramPos++;
+	}
+	return format[formatPos];
+}

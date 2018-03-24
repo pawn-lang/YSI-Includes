@@ -1,0 +1,1193 @@
+/*----------------------------------------------------------------------------*-
+					===================================
+					Y Sever Includes - Checkpoints Core
+					===================================
+Description:
+	Handles checkpoint streaming for >1 checkpoint per player.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1.1
+Changelog:
+	26/08/07:
+		Made master compatible.
+	03/08/07:
+		Updated timer system.
+	19/06/07:
+		Added function list descriptions.
+	18/06/07:
+		Added Checkpoint_HasPlayerNoWorld for /properties.
+	06/06/07:
+		Added internal calling for system custom callbacks.
+	07/05/07:
+		Added groups support vis default values.
+	04/05/07:
+		Changed loop to not GetPlayerPos for every checkpoint.
+	02/05/07:
+		Added YSI_ prefix to all globals.
+		Removed all world and all player flags, just uses bits now.
+		Changed (Enter|Leave) to OnPlayer(Enter|Leave)Checkpoint.
+	18/04/07:
+		Added checkpoint entry handling.
+	16/04/07:
+		First version.
+Functions:
+	Public:
+		Checkpoint_Loop - Main processing loop for streaming.
+	Core:
+		Checkpoint_Checkpoint - Constructor.
+		Checkpoint_OnPlayerEnterCheckpoint - Called when someone enteres a checkpoint.
+		Checkpoint_OnPlayerLeaveCheckpoint - Called when someone leaves a checkpoint.
+		Checkpoint_OnPlayerConnect - Called when a player connects.
+	Stock:
+		Checkpoint_SetActive - Marks a checkpoint as active.
+		Checkpoint_SetVisible - Removes a checkpoint's visibility while maintining flags.
+		Checkpoint_SetAllWorlds - Sets all worlds (in)active for a checkpoint.
+		Checkpoint_SetAllPlayers - Sets all players (in)active for a checkpoint.
+		Checkpoint_AddPlayer - Adds a player to a checkpoint.
+		Checkpoint_RemovePlayer - Removes a player from a checkpoint.
+		Checkpoint_AddVW - Adds a world to a checkpoint.
+		Checkpoint_RemoveVW - Removes a world from a checkpoint.
+		Checkpoint_GetDifference - Gets distance to origin from a checkpoint.
+		Checkpoint_HasPlayer - Checks if a player can see a checkpoint.
+		Checkpoint_Get - Gets a players current checkpoint.
+		Checkpoint_HasPlayerNoWorld - Checks if a player can see this ignoring worlds.
+		Checkpoint_IsGlobal - Checks if a checkpoint has been temporarilly disabled.
+	Static:
+		-
+	Inline:
+		Checkpoint_IsActive - Checks if a checkpoint is active (not visible).
+		Checkpoint_IsValid - Checks if a checkpoint slot is valid.
+		Checkpoint__AddPlayer - Adds a player to a checkpoint.
+		Checkpoint__RemovePlayer - Removes a player from a checkpoint.
+		Checkpoint__AddVW - Adds a world to a checkpoint.
+		Checkpoint__RemoveVW - Removes a world from a checkpoint.
+	API:
+		CreateCheckpoint - Creates a new dynamic checkpoint.
+		IsValidCheckpoint - Checks if a checkpoint is valid and active.
+		DestroyCheckpoint - Destriys a dynamic checkpoint.
+Callbacks:
+	OnPlayerEnterCheckpointEx - Wrapper for OnPlayerEnterCheckpoint with cp id.
+	OnPlayerLeaveCheckpointEx - Wrapper for OnPlayerLeaveCheckpoint with cp id.
+Definitions:
+	MAX_CHECKPOINTS - Number of checkpoints in the system.
+	NO_CHECKPOINT - Fail return.
+	CHECKPOINT_WORLDS - Max number of worlds which can have checkpoints.
+	CHECKPOINT_WORLDS_BITS - Cells required for world bit array.
+	CHECKPOINT_PLAYER_BITS - Cells required for player bit array.
+	CHECKPOINT_LOOP_GRANULARITY - Number of times to process a second.
+	CHECKPOINT_VIEW_DISTANCE - Distance from checkpoint to see it.
+Enums:
+	e_CHECK_FLAG - Flags for checkpoints.
+	E_CHECKPOINTS - Structure for checkpoint data.
+Macros:
+	-
+Tags:
+	e_Check_Flag - Flags for checkpoints.
+Variables:
+	Global:
+		-
+	Static:
+		YSI_g_sCheckpointPoints - Array of checkpoint data.
+		YSI_g_sCheckpointCount - Number of checkpoints in the system.
+		YSI_g_sPlayerCP - The current checkpoint of a player.
+Commands:
+	-
+Compile options:
+	CHECKPOINT_WORLDS 0 - Disables world processing.
+	CHECKPOINT_LOCAL - Makes callback calls local to the current script.
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#if !defined MAX_CHECKPOINTS
+	#define MAX_CHECKPOINTS 128
+#endif
+
+#define NO_CHECKPOINT -1
+
+#if !defined CHECKPOINT_WORLDS
+	#define CHECKPOINT_WORLDS MAX_WORLDS
+#endif
+
+#if CHECKPOINT_WORLDS > 0
+	#if CHECKPOINT_WORLDS <= 32
+		#define CHECKPOINT_WORLDS_BITS 2
+	#else
+		#define CHECKPOINT_WORLDS_BITS Bit_Bits(CHECKPOINT_WORLDS)
+	#endif
+#endif
+
+#if !defined CHECKPOINT_LOOP_GRANULARITY
+	#define CHECKPOINT_LOOP_GRANULARITY 1
+#endif
+
+#if !defined CHECKPOINT_VIEW_DISTANCE
+	#define CHECKPOINT_VIEW_DISTANCE 100.0
+#endif
+
+enum e_CHECK_FLAG (<<= 1)
+{
+	e_CHECK_FLAG_MASTER = 0xFF,
+	e_CHECK_FLAG_SHOW = 0x100,
+	e_CHECK_FLAG_ACTIVE,
+	e_CHECK_FLAG_PLAYERS,
+	e_CHECK_FLAG_WORLDS
+}
+
+enum E_CHECKPOINTS
+{
+	Float:E_CHECKPOINTS_X,
+	Float:E_CHECKPOINTS_Y,
+	Float:E_CHECKPOINTS_Z,
+	Float:E_CHECKPOINTS_S,
+	Bit:E_CHECKPOINTS_PLAYERS[PLAYER_BIT_ARRAY],
+	#if CHECKPOINT_WORLDS > 0
+		Bit:E_CHECKPOINTS_VW[CHECKPOINT_WORLDS_BITS],
+	#endif
+	e_CHECK_FLAG:E_CHECKPOINTS_FLAGS
+}
+
+enum
+{
+	E_CHECKPOINT_REMOTE_WORLD_REM,
+	E_CHECKPOINT_REMOTE_WORLD_ADD,
+	E_CHECKPOINT_REMOTE_WORLD,
+	E_CHECKPOINT_REMOTE_WORLD_ALL,
+	E_CHECKPOINT_REMOTE_PLAYER_REM,
+	E_CHECKPOINT_REMOTE_PLAYER_ADD,
+	E_CHECKPOINT_REMOTE_DESTROY,
+	E_CHECKPOINT_REMOTE_CP,
+	E_CHECKPOINT_REMOTE_HAS,
+	E_CHECKPOINT_REMOTE_GLOBAL,
+	E_CHECKPOINT_REMOTE_VALID,
+	E_CHECKPOINT_REMOTE_ACTIVE,
+	E_CHECKPOINT_REMOTE_SHOW,
+	E_CHECKPOINT_REMOTE_PLAYER_ALL
+}
+
+#if defined _YSI_SETUP_MASTER
+	forward Checkpoint_Create(Float:x, Float:y, Float:z, Float:size, master);
+	forward Checkpoint_Remote(ident, data, info);
+	forward Checkpoint_Broadcast(id, Float:x, Float:y, Float:z, Float:size, e_CHECK_FLAG:flags, Bit:players[], playercount, Bit:worlds[], worldcount);
+	forward YSIM_Checkpoints(command);
+#endif
+
+forward Checkpoint_Loop();
+
+static
+	YSI_g_sCheckpointPoints[MAX_CHECKPOINTS][E_CHECKPOINTS],
+	YSI_g_sCheckpointCount,
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sIsMaster,
+	#endif
+	YSI_g_sPlayerCP[MAX_PLAYERS];
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_IsActive
+Params:
+	cpid
+Return:
+	Checkpoint active state.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Checkpoint_IsActive(%1) \
+	(YSI_g_sCheckpointPoints[(%1)][E_CHECKPOINTS_FLAGS] & e_CHECK_FLAG_ACTIVE)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_IsValid
+Params:
+	cpid - Checkpoint to check.
+Return:
+	Is the checkpoint valid.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Checkpoint_IsValid(%1) \
+	((%1) >= 0 && (%1) < MAX_CHECKPOINTS && Checkpoint_IsActive((%1)))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_SetActive
+Params:
+	cpid - Checkpoint to modify.
+	set - State to set to.
+Return:
+	-
+Notes:
+	Sets whether or not this checkpoint is active.
+-*----------------------------------------------------------------------------*/
+
+stock Checkpoint_SetActive(cpid, set)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (set) YSI_g_sCheckpointPoints[cpid][E_CHECKPOINTS_FLAGS] |= e_CHECK_FLAG_ACTIVE;
+			else YSI_g_sCheckpointPoints[cpid][E_CHECKPOINTS_FLAGS] &= ~e_CHECK_FLAG_ACTIVE;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Checkpoint_Remote", "iii", cpid, set, E_CHECKPOINT_REMOTE_ACTIVE);
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_SetVisible
+Params:
+	cpid - Checkpoint to modify.
+	set - State to set to.
+Return:
+	-
+Notes:
+	A global hide flag to keep states and activity but not show for properties
+	functionality.
+-*----------------------------------------------------------------------------*/
+
+stock Checkpoint_SetVisible(cpid, set)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (set) YSI_g_sCheckpointPoints[cpid][E_CHECKPOINTS_FLAGS] |= e_CHECK_FLAG_SHOW;
+			else YSI_g_sCheckpointPoints[cpid][E_CHECKPOINTS_FLAGS] &= ~e_CHECK_FLAG_SHOW;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Checkpoint_Remote", "iii", cpid, set, E_CHECKPOINT_REMOTE_SHOW);
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_SetAllWorlds
+Params:
+	cpid - Checkpoint to modify.
+	set - State of worlds.
+Return:
+	-
+Notes:
+	Sets or unsets all worlds having this checkpoint.
+-*----------------------------------------------------------------------------*/
+
+stock Checkpoint_SetAllWorlds(cpid, set)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			#if CHECKPOINT_WORLDS > 0
+				if (Checkpoint_IsValid(cpid)) Bit_SetAll(YSI_g_sCheckpointPoints[cpid][E_CHECKPOINTS_VW], set, CHECKPOINT_WORLDS_BITS);
+			#endif
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Checkpoint_Remote", "iii", cpid, set, E_CHECKPOINT_REMOTE_WORLD_ALL);
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_SetAllPlayers
+Params:
+	cpid - Checkpoint to modify.
+	set - State of players.
+Return:
+	-
+Notes:
+	Sets or unsets all players being able to see this checkpoint.
+-*----------------------------------------------------------------------------*/
+
+stock Checkpoint_SetAllPlayers(cpid, set)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (Checkpoint_IsValid(cpid))
+			{
+				Bit_SetAll(YSI_g_sCheckpointPoints[cpid][E_CHECKPOINTS_PLAYERS], set, PLAYER_BIT_ARRAY);
+				if (set) YSI_g_sCheckpointPoints[cpid][E_CHECKPOINTS_FLAGS] |= e_CHECK_FLAG_PLAYERS;
+				else YSI_g_sCheckpointPoints[cpid][E_CHECKPOINTS_FLAGS] &= ~e_CHECK_FLAG_PLAYERS;
+			}
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Checkpoint_Remote", "iii", cpid, set, E_CHECKPOINT_REMOTE_PLAYER_ALL);
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint__AddPlayer
+Params:
+	cpid - Checkpoint to modify.
+	playerid - Player to add to visibility.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Checkpoint__AddPlayer(%1,%2) \
+	Bit_Set(YSI_g_sCheckpointPoints[(%1)][E_CHECKPOINTS_PLAYERS], (%2), 1, PLAYER_BIT_ARRAY)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint__RemovePlayer
+Params:
+	cpid - Checkpoint to modify.
+	playerid - Player to remove from visibility.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Checkpoint__RemovePlayer(%1,%2) \
+	Bit_Set(YSI_g_sCheckpointPoints[(%1)][E_CHECKPOINTS_PLAYERS], (%2), 0, PLAYER_BIT_ARRAY)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint__AddVW
+Params:
+	cpid - Checkpoint to modify.
+	vwid - World to add to visibility.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Checkpoint__AddVW(%1,%2) \
+	Bit_Set(YSI_g_sCheckpointPoints[(%1)][E_CHECKPOINTS_VW], (%2), 1, CHECKPOINT_WORLDS_BITS)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint__RemoveVW
+Params:
+	cpid - Checkpoint to modify.
+	vwid - World to remove from visibility.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Checkpoint__RemoveVW(%1,%2) \
+	Bit_Set(YSI_g_sCheckpointPoints[(%1)][E_CHECKPOINTS_VW], (%2), 0, CHECKPOINT_WORLDS_BITS)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	CreateCheckpoint
+Params:
+	Float:x - X position.
+	Float:y - Y position.
+	Float:z - Z position.
+	Float:size - Size.
+Return:
+	Checkpoint id or NO_CHECKPOINT on fail.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock CreateCheckpoint(Float:x, Float:y, Float:z, Float:size)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster)
+		{
+			CallRemoteFunction("Checkpoint_Create", "ffffi", x, y, z, size, YSI_gMasterID);
+			return getproperty(0, "YSIReq");
+		}
+		else
+		{
+			return Checkpoint_Create(x, y, z, size, YSI_gMasterID);
+		}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_Create
+Params:
+	Float:x - X position.
+	Float:y - Y position.
+	Float:z - Z position.
+	Float:size - Size.
+	master - Script which owns it.
+Return:
+	-
+Notes:
+	Creates a checkpoint remotely.
+-*----------------------------------------------------------------------------*/
+
+public Checkpoint_Create(Float:x, Float:y, Float:z, Float:size, master)
+{
+	if (!YSI_g_sIsMaster) return NO_CHECKPOINT;
+	setproperty(0, "YSIReq", NO_CHECKPOINT);
+#endif
+	if (YSI_g_sCheckpointCount >= MAX_CHECKPOINTS) return NO_CHECKPOINT;
+	new
+		i;
+	while (i < MAX_CHECKPOINTS)
+	{
+		if (!Checkpoint_IsActive(i)) break;
+		i++;
+	}
+	if (i == MAX_CHECKPOINTS) return NO_CHECKPOINT;
+	#if CHECKPOINT_WORLDS > 0
+		Bit_SetAll(YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_VW], 1, CHECKPOINT_WORLDS_BITS);
+	#endif
+	Bit_SetAll(YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_PLAYERS], 1, PLAYER_BIT_ARRAY);
+	YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_X] = x;
+	YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Y] = y;
+	YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Z] = z;
+	YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_S] = size;
+	YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_FLAGS] = e_CHECK_FLAG_ACTIVE | e_CHECK_FLAG_SHOW;
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_FLAGS] |= e_CHECK_FLAG:master;
+		setproperty(0, "YSIReq", i);
+	#endif
+	YSI_g_sCheckpointCount++;
+	return i;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	IsValidCheckpoint
+Params:
+	cpid - Checkpoint to check.
+Return:
+	If the checkpoint is valid.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock IsValidCheckpoint(cpid)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (Checkpoint_IsValid(cpid)) return 1;
+			return 0;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Checkpoint_Remote", "iii", cpid, 0, E_CHECKPOINT_REMOTE_VALID);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	DestroyCheckpoint
+Params:
+	cpid - Checkpoint to destroy.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock DestroyCheckpoint(cpid)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (Checkpoint_IsValid(cpid))
+			{
+				YSI_g_sCheckpointPoints[cpid][E_CHECKPOINTS_FLAGS] = e_CHECK_FLAG:0;
+				YSI_g_sCheckpointCount--;
+			}
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Checkpoint_Remote", "iii", cpid, 0, E_CHECKPOINT_REMOTE_DESTROY);
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_AddPlayer
+Params:
+	cpid - Checkpoint to modify.
+	playerid - Player to add to visibility.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Checkpoint_AddPlayer(cpid, playerid)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (Checkpoint_IsValid(cpid)) Checkpoint__AddPlayer(cpid, playerid);
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Checkpoint_Remote", "iii", cpid, playerid, E_CHECKPOINT_REMOTE_PLAYER_ADD);
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_RemovePlayer
+Params:
+	cpid - Checkpoint to modify.
+	playerid - Player to remove from visibility.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Checkpoint_RemovePlayer(cpid, playerid)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (Checkpoint_IsValid(cpid)) Checkpoint__RemovePlayer(cpid, playerid);
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Checkpoint_Remote", "iii", cpid, playerid, E_CHECKPOINT_REMOTE_PLAYER_REM);
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_AddVW
+Params:
+	cpid - Checkpoint to modify.
+	vwid - World to add to visibility.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Checkpoint_AddVW(cpid, vwid)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			#if CHECKPOINT_WORLDS > 0
+				if (Checkpoint_IsValid(cpid)) Checkpoint__AddVW(cpid, vwid);
+			#else
+				#pragma unused cpid, vwid
+			#endif
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Checkpoint_Remote", "iii", cpid, vwid, E_CHECKPOINT_REMOTE_WORLD_ADD);
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_RemoveVW
+Params:
+	cpid - Checkpoint to modify.
+	vwid - World to remove from visibility.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Checkpoint_RemoveVW(cpid, vwid)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			#if CHECKPOINT_WORLDS > 0
+				if (Checkpoint_IsValid(cpid)) Checkpoint__RemoveVW(cpid, vwid);
+			#else
+				#pragma unused cpid, vwid
+			#endif
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Checkpoint_Remote", "iii", cpid, vwid, E_CHECKPOINT_REMOTE_WORLD_REM);
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_Remote
+Params:
+	ident - Item to modify.
+	data - Parameter for modification.
+	info - Modification to make.
+Return:
+	-
+Notes:
+	Performs minor functions remotely.
+-*----------------------------------------------------------------------------*/
+
+#if defined _YSI_SETUP_MASTER
+	public Checkpoint_Remote(ident, data, info)
+	{
+		if (YSI_g_sIsMaster)
+		{
+			switch (info)
+			{
+				#if CHECKPOINT_WORLDS > 0
+					case E_CHECKPOINT_REMOTE_WORLD_REM:
+					{
+						if (Checkpoint_IsValid(ident)) Checkpoint__RemoveVW(ident, data);
+					}
+					case E_CHECKPOINT_REMOTE_WORLD_ADD:
+					{
+						if (Checkpoint_IsValid(ident)) Checkpoint__AddVW(ident, data);
+					}
+					case E_CHECKPOINT_REMOTE_WORLD:
+					{
+						setproperty(0, "YSIReq", Bit_Get(YSI_g_sCheckpointPoints[data][E_CHECKPOINTS_VW], GetPlayerVirtualWorld(ident)));
+					}
+					case E_CHECKPOINT_REMOTE_WORLD_ALL:
+					{
+						if (Checkpoint_IsValid(ident)) Bit_SetAll(YSI_g_sCheckpointPoints[ident][E_CHECKPOINTS_VW], data, CHECKPOINT_WORLDS_BITS);
+					}
+				#endif
+				case E_CHECKPOINT_REMOTE_PLAYER_REM:
+				{
+					if (Checkpoint_IsValid(ident)) Checkpoint__RemovePlayer(ident, data);
+				}
+				case E_CHECKPOINT_REMOTE_PLAYER_ADD:
+				{
+					if (Checkpoint_IsValid(ident)) Checkpoint__AddPlayer(ident, data);
+				}
+				case E_CHECKPOINT_REMOTE_DESTROY:
+				{
+					if (Checkpoint_IsValid(ident))
+					{
+						YSI_g_sCheckpointPoints[ident][E_CHECKPOINTS_FLAGS] = e_CHECK_FLAG:0;
+						YSI_g_sCheckpointCount--;
+					}
+				}
+				case E_CHECKPOINT_REMOTE_CP:
+				{
+					setproperty(0, "YSIReq", YSI_g_sPlayerCP[ident]);
+				}
+				case E_CHECKPOINT_REMOTE_HAS:
+				{
+					setproperty(0, "YSIReq", Bit_Get(YSI_g_sCheckpointPoints[data][E_CHECKPOINTS_PLAYERS], ident));
+				}
+				case E_CHECKPOINT_REMOTE_GLOBAL:
+				{
+					if (Checkpoint_IsValid(data)) setproperty(0, "YSIReq", YSI_g_sCheckpointPoints[data][E_CHECKPOINTS_FLAGS] & e_CHECK_FLAG_PLAYERS);
+					else setproperty(0, "YSIReq", 0);
+				}
+				case E_CHECKPOINT_REMOTE_VALID:
+				{
+					setproperty(0, "YSIReq", Checkpoint_IsValid(ident));
+				}
+				case E_CHECKPOINT_REMOTE_ACTIVE:
+				{
+					if (Checkpoint_IsValid(ident))
+					{
+						if (data) YSI_g_sCheckpointPoints[ident][E_CHECKPOINTS_FLAGS] |= e_CHECK_FLAG_ACTIVE;
+						else YSI_g_sCheckpointPoints[ident][E_CHECKPOINTS_FLAGS] &= ~e_CHECK_FLAG_ACTIVE;
+					}
+				}
+				case E_CHECKPOINT_REMOTE_SHOW:
+				{
+					if (Checkpoint_IsValid(ident))
+					{
+						if (data) YSI_g_sCheckpointPoints[ident][E_CHECKPOINTS_FLAGS] |= e_CHECK_FLAG_SHOW;
+						else YSI_g_sCheckpointPoints[ident][E_CHECKPOINTS_FLAGS] &= ~e_CHECK_FLAG_SHOW;
+					}
+				}
+				case E_CHECKPOINT_REMOTE_PLAYER_ALL:
+				{
+					if (Checkpoint_IsValid(ident))
+					{
+						Bit_SetAll(YSI_g_sCheckpointPoints[ident][E_CHECKPOINTS_PLAYERS], data, PLAYER_BIT_ARRAY);
+						if (data) YSI_g_sCheckpointPoints[ident][E_CHECKPOINTS_FLAGS] |= e_CHECK_FLAG_PLAYERS;
+						else YSI_g_sCheckpointPoints[ident][E_CHECKPOINTS_FLAGS] &= ~e_CHECK_FLAG_PLAYERS;
+					}
+				}
+			}
+		}
+	}
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_GetDifference
+Params:
+	x - X point.
+	y - Y point.
+	z - Z point.
+Return:
+	Squared distance to origin.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+static stock Float:Checkpoint_GetDifference(Float:x, Float:y, Float:z)
+{
+	return ((x * x) + (y * y) + (z * z));
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_IsGlobal
+Params:
+	checkpoint - Checkpoint to check
+Return:
+	-
+Notes:
+	Checks if a checkpoint is visible by default.
+-*----------------------------------------------------------------------------*/
+
+stock Checkpoint_IsGlobal(checkpoint)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (Checkpoint_IsValid(checkpoint)) return YSI_g_sCheckpointPoints[checkpoint][E_CHECKPOINTS_FLAGS] & e_CHECK_FLAG_PLAYERS;
+			else return 0;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Checkpoint_Remote", "iii", 0, checkpoint, E_CHECKPOINT_REMOTE_GLOBAL);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_HasPlayer
+Params:
+	cpid - Checkpoint to check.
+	playerid - Player to check for.
+Return:
+	-
+Notes:
+	Checks if a player can see the checkpoint.
+-*----------------------------------------------------------------------------*/
+
+stock Checkpoint_HasPlayer(cpid, playerid)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			#if CHECKPOINT_WORLDS > 0
+				if (Bit_Get(YSI_g_sCheckpointPoints[cpid][E_CHECKPOINTS_VW], GetPlayerVirtualWorld(playerid)))
+				{
+			#endif
+					if (Bit_Get(YSI_g_sCheckpointPoints[cpid][E_CHECKPOINTS_PLAYERS], playerid)) return 1;
+			#if CHECKPOINT_WORLDS > 0
+				}
+			#endif
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			#if CHECKPOINT_WORLDS > 0
+				CallRemoteFunction("Checkpoint_Remote", "iii", playerid, cpid, E_CHECKPOINT_REMOTE_WORLD);
+				if (getproperty(0, "YSIReq"))
+				{
+			#endif
+					CallRemoteFunction("Checkpoint_Remote", "iii", playerid, cpid, E_CHECKPOINT_REMOTE_HAS);
+					if (getproperty(0, "YSIReq")) return 1;
+			#if CHECKPOINT_WORLDS > 0
+				}
+			#endif
+		}
+	#endif
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_HasPlayerNoWorld
+Params:
+	cpid - Checkpoint to check.
+	playerid - Player to check for.
+Return:
+	-
+Notes:
+	Checks if a player can use the checkpoint regardless of world.
+-*----------------------------------------------------------------------------*/
+
+stock Checkpoint_HasPlayerNoWorld(cpid, playerid)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			return Bit_Get(YSI_g_sCheckpointPoints[cpid][E_CHECKPOINTS_PLAYERS], playerid);
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Checkpoint_Remote", "iii", playerid, cpid, E_CHECKPOINT_REMOTE_HAS);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_Checkpoint
+Params:
+	-
+Return:
+	-
+Notes:
+	Constructor, sets up the main loop.
+-*----------------------------------------------------------------------------*/
+
+Checkpoint_Checkpoint()
+{
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sIsMaster = Master_Add("YSIM_Checkpoints");
+	#endif
+	static
+		sTimer;
+	if (sTimer) return 0;
+	sTimer = Timer_Add("Checkpoint_Loop", CHECKPOINT_LOOP_GRANULARITY);
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	YSIM_Checkpoint
+Params:
+	command - Data from master system.
+Return:
+	-
+Notes:
+	Performs handling of master changovers.
+-*----------------------------------------------------------------------------*/
+
+#if defined _YSI_SETUP_MASTER
+	public YSIM_Checkpoints(command)
+	{
+		#if CHECKPOINT_WORLDS <= 0
+			static
+				sFake[2] = {-1, -1};
+		#endif
+		switch (command & 0xFF000000)
+		{
+			case E_MASTER_SET_MASTER:
+			{
+				YSI_g_sIsMaster = 1;
+			}
+			case E_MASTER_RELINQUISH:
+			{
+				new
+					master = (command & 0x00FFFFFF);
+				if (master == YSI_gMasterID)
+				{
+					for (new i = 0; i < MAX_CHECKPOINTS; i++)
+					{
+						if (Checkpoint_IsActive(i))
+						{
+							if (_:(YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_FLAGS] & e_CHECK_FLAG_MASTER) != master)
+							{
+								#if CHECKPOINT_WORLDS > 0
+									CallRemoteFunction("Checkpoint_Broadcast", "iffffiaiai", i,
+										YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_X],
+										YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Y],
+										YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Z],
+										YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_S],
+										_:YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_FLAGS],
+										_:YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_VW], CHECKPOINT_WORLDS_BITS,
+										_:YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_PLAYERS], PLAYER_BIT_ARRAY
+									);
+								#else
+									CallRemoteFunction("Checkpoint_Broadcast", "iffffiaiai", i,
+										YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_X],
+										YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Y],
+										YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Z],
+										YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_S],
+										_:YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_FLAGS],
+										sFake, 2,
+										_:YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_PLAYERS], PLAYER_BIT_ARRAY
+									);
+								#endif
+							}
+						}
+					}
+				}
+				else
+				{
+					for (new i = 0; i < MAX_CHECKPOINTS; i++)
+					{
+						if (_:(YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_FLAGS] & e_CHECK_FLAG_MASTER) == master)
+						{
+							YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_FLAGS] = e_CHECK_FLAG:0;
+							YSI_g_sCheckpointCount--;
+						}
+					}
+				}
+			}
+			case E_MASTER_NOT_MASTER:
+			{
+				YSI_g_sIsMaster = 0;
+			}
+		}
+	}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_Broadcast
+Params:
+	id - Checkpoint id.
+	Float:x - X position.
+	Float:y - Y position.
+	Float:z - Z position.
+	Float:size - Size of the checkpoint.
+	e_CHECK_FLAGS:flags - Checkpoint flags.
+	Bit:players[] - Who can see the checkpoint.
+	playercount - Size of players array.
+	Bit:worlds[] - Worlds the checkpoint is in.
+	worldcount - Size of worlds array.
+Return:
+	-
+Notes:
+	Recieves handover data from the old master to continue streaming.
+-*----------------------------------------------------------------------------*/
+
+	public Checkpoint_Broadcast(id, Float:x, Float:y, Float:z, Float:size, e_CHECK_FLAG:flags, Bit:players[], playercount, Bit:worlds[], worldcount)
+	{
+		if (!YSI_g_sIsMaster) return 0;
+		YSI_g_sCheckpointPoints[id][E_CHECKPOINTS_X] = x;
+		YSI_g_sCheckpointPoints[id][E_CHECKPOINTS_Y] = y;
+		YSI_g_sCheckpointPoints[id][E_CHECKPOINTS_Z] = z;
+		YSI_g_sCheckpointPoints[id][E_CHECKPOINTS_S] = size;
+		YSI_g_sCheckpointPoints[id][E_CHECKPOINTS_FLAGS] = flags;
+		#if CHECKPOINT_WORLDS > 0
+			for (new i = 0; i < worldcount; i++)
+			{
+				YSI_g_sCheckpointPoints[id][E_CHECKPOINTS_VW][i] = worlds[i];
+			}
+		#endif
+		for (new i = 0; i < playercount; i++)
+		{
+			YSI_g_sCheckpointPoints[id][E_CHECKPOINTS_PLAYERS][i] = players[i];
+		}
+		YSI_g_sCheckpointCount++;
+		return 1;
+	}
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_OnPlayerConnect
+Params:
+	playerid
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+Checkpoint_OnPlayerConnect(playerid)
+{
+	YSI_g_sPlayerCP[playerid] = NO_CHECKPOINT;
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_Loop
+Params:
+	-
+Return:
+	-
+Notes:
+	Processes which checkpoint should be displayed for any player at any one
+	time.
+-*----------------------------------------------------------------------------*/
+
+public Checkpoint_Loop()
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return;
+	#endif
+	foreach (Player, j)
+	{
+		new
+			i,
+			Float:distance = ((CHECKPOINT_VIEW_DISTANCE) * (CHECKPOINT_VIEW_DISTANCE)),
+			Float:temp,
+			dis = NO_CHECKPOINT,
+			Float:x,
+			Float:y,
+			Float:z;
+		GetPlayerPos(j, x, y, z);
+		for (; i < MAX_CHECKPOINTS; i++)
+		{
+			if (!Checkpoint_IsActive(i) || !Checkpoint_HasPlayer(i, j)) continue;
+			temp = Checkpoint_GetDifference(x - YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_X], y - YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Y], z - YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Z]);
+			if (temp < distance)
+			{
+				distance = temp;
+				dis = i;
+			}
+		}
+		if (dis != NO_CHECKPOINT && YSI_g_sPlayerCP[j] != dis)
+		{
+			SetPlayerCheckpoint(j, YSI_g_sCheckpointPoints[dis][E_CHECKPOINTS_X], YSI_g_sCheckpointPoints[dis][E_CHECKPOINTS_Y], YSI_g_sCheckpointPoints[dis][E_CHECKPOINTS_Z], YSI_g_sCheckpointPoints[dis][E_CHECKPOINTS_S]);
+			YSI_g_sPlayerCP[j] = dis;
+		}
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_Get
+Params:
+	playerid - Player to get current checkpoint of.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Checkpoint_Get(playerid)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			return YSI_g_sPlayerCP[playerid];
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Checkpoint_Remote", "iii", playerid, 0, E_CHECKPOINT_REMOTE_CP);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_OnPlayerEnterCheckpoint
+Params:
+	playerid - Player who entered the checkpoint.
+Return:
+	-
+Notes:
+	Calls the internal functions itself.
+-*----------------------------------------------------------------------------*/
+
+#define Checkpoint_OnPlayerEnterCheckpoint Checkpoint_OnPlayerEnterCP
+
+Checkpoint_OnPlayerEnterCheckpoint(playerid)
+{
+	new
+		ret;
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+	#endif
+	{
+		#if defined _YSI_GAMEMODE_PROPERTIES
+			#if defined _YSI_SETUP_MASTER
+				CallRemoteFunction("Property_OnPlayerEnterCP", "ii", playerid, YSI_g_sPlayerCP[playerid]);
+				ret = getproperty(0, "YSIReq");
+			#else
+				ret = Property_OnPlayerEnterCP(playerid, YSI_g_sPlayerCP[playerid]);
+			#endif
+		#endif
+		#if defined CHECKPOINT_LOCAL
+			ret = CallLocalFunction("OnPlayerEnterCheckpointEx", "ii", playerid, YSI_g_sPlayerCP[playerid]) ? 1 : ret;
+		#else
+			ret = CallRemoteFunction("OnPlayerEnterCheckpointEx", "ii", playerid, YSI_g_sPlayerCP[playerid]) ? 1 : ret;
+		#endif
+	}
+	return ret;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Checkpoint_OnPlayerLeaveCheckpoint
+Params:
+	playerid - Player who left the checkpoint.
+Return:
+	-
+Notes:
+	Calls internal functions itself.
+-*----------------------------------------------------------------------------*/
+
+#define Checkpoint_OnPlayerLeaveCheckpoint Checkpoint_OnPlayerLeaveCP
+
+Checkpoint_OnPlayerLeaveCheckpoint(playerid)
+{
+	new
+		ret;
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+	#endif
+	{
+		#if defined _YSI_GAMEMODE_PROPERTIES
+			ret = Property_OnPlayerLeaveCP(playerid, YSI_g_sPlayerCP[playerid]) ? 1 : ret;
+		#endif
+		#if defined CHECKPOINT_LOCAL
+			ret = CallLocalFunction("OnPlayerLeaveCheckpointEx", "ii", playerid, YSI_g_sPlayerCP[playerid]) ? 1 : ret;
+		#else
+			ret = CallRemoteFunction("OnPlayerLeaveCheckpointEx", "ii", playerid, YSI_g_sPlayerCP[playerid]) ? 1 : ret;
+		#endif
+	}
+	return ret;
+}

@@ -1,0 +1,361 @@
+/*----------------------------------------------------------------------------*-
+					==============================
+					Y Sever Includes - Pickup Core
+					==============================
+Description:
+	Streams pickups to bypass the limits.  Also allows greater control of
+	timings and automatic destruction.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1
+Changelog:
+	11/08/07:
+		Wrote documentation.
+	10/08/07:
+		First version.
+Functions:
+	Public
+		Pickup_Loop - Main streaming loop.
+	Core:
+		Pickup_Pickup - Sets up the system.
+		Pickup_OnPlayerPickUpPickup - Called when a player picks up a pickup.
+	Stock:
+		Pickup_Add - Adds a pickup to the streamer.
+		Pickup_Remove - Removes a pickup from the system.
+	Static:
+		-
+	Inline:
+		-
+	API:
+		-
+Callbacks:
+	OnPlayerPickUpPickupEx - Same as OnPlayerPickUpPickup but internal ID.
+Definitions:
+	PICKUP_VIEW - Range people can see pickups from.
+	MAX_DYN_PICKUPS - Max pickups held by the system.
+	MAX_PICKUPS - Max pickups displayable by SA.
+	PICKUP_LOOP_GRANULARITY - Number of streamer itterations a second.
+Enums:
+	e_PICKUP_FLAGS - Basic pickup data.
+	E_PICKUP - Structure for pickup data storage.
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		YSI_g_sPickupData - Data for all the pickups.
+		YSI_g_sPickupLookup - Internal IDs of real pickups.
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#if !defined PICKUP_LOOP_GRANULARITY
+	#define PICKUP_LOOP_GRANULARITY 1
+#endif
+
+#if !defined MAX_DYN_PICKUPS
+	#define MAX_DYN_PICKUPS 1024
+#endif
+
+#if !defined PICKUP_VIEW
+	#define PICKUP_VIEW (100.0)
+#endif
+
+#if !defined MAX_PICKUPS
+	#define MAX_PICKUPS 400
+#endif
+
+enum e_PICKUP_FLAGS (<<= 1)
+{
+	e_PICKUP_FLAGS_VALID = 1,
+	e_PICKUP_FLAGS_VISIBLE,
+	e_PICKUP_FLAGS_RESPAWN,
+	e_PICKUP_FLAGS_REMOVE
+}
+
+enum E_PICKUP
+{
+	E_PICKUP_MODEL,
+	E_PICKUP_ID,
+	E_PICKUP_RESPAWN,
+	E_PICKUP_REMOVE,
+	E_PICKUP_TIME,
+	Float:E_PICKUP_X,
+	Float:E_PICKUP_Y,
+	Float:E_PICKUP_Z,
+	e_PICKUP_FLAGS:E_PICKUP_FLAGS
+}
+
+static
+	YSI_g_sPickupData[MAX_DYN_PICKUPS][E_PICKUP],
+	YSI_g_sPickupLookup[MAX_PICKUPS];
+
+forward Pickup_Loop();
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Pickup_Pickup
+Params:
+	-
+Return:
+	-
+Notes:
+	Sets up the main loop.
+-*----------------------------------------------------------------------------*/
+
+Pickup_Pickup()
+{
+	static
+		sTimer;
+	if (!sTimer)
+	{
+		sTimer = Timer_Add("Pickup_Loop", PICKUP_LOOP_GRANULARITY);
+	}
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Pickup_Add
+Params:
+	model - Model appearence of the pickup.
+	Float:x - X position.
+	Float:y - Y position.
+	Float:z - Z position.
+	respawn - Time after pickup before it reappears.
+	destroy - Time after creation till the pickup is destroyed.
+Return:
+	-
+Notes:
+	Adds a new pickup to the system with much greater control than normal ones.
+	Pickups are assigned IDs randomly to increase dispursion so a group added
+	first in one area aren't all going to appear and blank the rest of the
+	world.
+-*----------------------------------------------------------------------------*/
+
+stock Pickup_Add(model, Float:x, Float:y, Float:z, respawn = 60000, destroy = -1)
+{
+	new
+		pickupid = random(MAX_DYN_PICKUPS),
+		looped;
+	while (looped < MAX_DYN_PICKUPS)
+	{
+		if (!(YSI_g_sPickupData[pickupid][E_PICKUP_FLAGS] & e_PICKUP_FLAGS_VALID)) break;
+		looped++;
+		pickupid++;
+		if (pickupid == MAX_DYN_PICKUPS) pickupid = 0;
+	}
+	if (looped == MAX_DYN_PICKUPS) return -1;
+	YSI_g_sPickupData[pickupid][E_PICKUP_X] = x;
+	YSI_g_sPickupData[pickupid][E_PICKUP_Y] = y;
+	YSI_g_sPickupData[pickupid][E_PICKUP_Z] = z;
+	YSI_g_sPickupData[pickupid][E_PICKUP_MODEL] = model;
+	YSI_g_sPickupData[pickupid][E_PICKUP_RESPAWN] = respawn;
+	YSI_g_sPickupData[pickupid][E_PICKUP_REMOVE] = destroy;
+	YSI_g_sPickupData[pickupid][E_PICKUP_TIME] = destroy;
+	YSI_g_sPickupData[pickupid][E_PICKUP_FLAGS] = e_PICKUP_FLAGS_VALID | ((destroy != -1) ? (e_PICKUP_FLAGS_REMOVE) : (e_PICKUP_FLAGS:0));
+	return pickupid;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Pickup_Remove
+Params:
+	pickupid - Pickup to remove.
+Return:
+	-
+Notes:
+	Not instant, just tells the system to remove it next loop itteration.
+-*----------------------------------------------------------------------------*/
+
+stock Pickup_Remove(pickupid)
+{
+	if (pickupid >= 0 && pickupid < MAX_DYN_PICKUPS && (YSI_g_sPickupData[pickupid][E_PICKUP_FLAGS] & e_PICKUP_FLAGS_VALID))
+	{
+		YSI_g_sPickupData[pickupid][E_PICKUP_TIME] = 0;
+		YSI_g_sPickupData[pickupid][E_PICKUP_FLAGS] |= e_PICKUP_FLAGS_REMOVE;
+		return 1;
+	}
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Pickup_Loop
+Params:
+	-
+Return:
+	-
+Notes:
+	Main processing for the system.  After timing experiments it was decided
+	this was the best way to evenly distribute pickups among people as they're
+	checked in an almost random order so shouldn't group up around one player.
+	
+	Respawn and remove flags are checked first to see if the pickup needs to
+	do anything special.  If it is supposed to exist it is then checked against
+	all players and if someone can see it it's spawned.  If it already exists
+	it is just not destroyed however unlike other streaming systems existence
+	is not a guarantee that it will remain existant while visible.
+-*----------------------------------------------------------------------------*/
+
+public Pickup_Loop()
+{
+	static
+		sLastCall;
+	new
+		tick = GetTickCount();
+	if (sLastCall)
+	{
+		new
+			Float:x,
+			Float:y,
+			Float:z,
+			Float:px,
+			Float:py,
+			Float:pz,
+			ok,
+			e_PICKUP_FLAGS:flags,
+			active,
+			elapsed = tick - sLastCall;
+		for (new pickup = 0; pickup < MAX_DYN_PICKUPS; pickup++)
+		{
+			flags = YSI_g_sPickupData[pickup][E_PICKUP_FLAGS];
+			if ((flags & e_PICKUP_FLAGS_VALID))
+			{
+				new
+					time = (YSI_g_sPickupData[pickup][E_PICKUP_TIME] -= elapsed);
+				if (flags & e_PICKUP_FLAGS_RESPAWN)
+				{
+					if (time <= 0)
+					{
+						flags &= ~e_PICKUP_FLAGS_RESPAWN;
+					}
+				}
+				if (flags & e_PICKUP_FLAGS_REMOVE)
+				{
+					if (time <= 0)
+					{
+						flags = (flags | e_PICKUP_FLAGS_RESPAWN) & (~e_PICKUP_FLAGS_VALID);
+					}
+				}
+				if (active >= MAX_PICKUPS)
+				{
+					if ((flags & e_PICKUP_FLAGS_VISIBLE) || (flags & e_PICKUP_FLAGS_RESPAWN))
+					{
+						DestroyPickup(YSI_g_sPickupData[pickup][E_PICKUP_ID]);
+						flags &= ~e_PICKUP_FLAGS_VISIBLE;
+					}
+				}
+				else if (flags & e_PICKUP_FLAGS_RESPAWN)
+				{
+					if (flags & e_PICKUP_FLAGS_VISIBLE)
+					{
+						DestroyPickup(YSI_g_sPickupData[pickup][E_PICKUP_ID]);
+					}
+				}
+				else
+				{
+					px = YSI_g_sPickupData[pickup][E_PICKUP_X];
+					py = YSI_g_sPickupData[pickup][E_PICKUP_Y];
+					pz = YSI_g_sPickupData[pickup][E_PICKUP_Z];
+					ok = 0;
+					foreach (Player, playerid)
+					{
+						if (GetPlayerPos(playerid, x, y, z))
+						{
+							if ((((x - px) * (x - px)) + ((y - py) * (y - py)) + ((z - pz) * (z - pz))) < (PICKUP_VIEW * PICKUP_VIEW))
+							{
+								ok = 1;
+								break;
+							}
+						}
+					}
+					if (flags & e_PICKUP_FLAGS_VISIBLE)
+					{
+						if (!ok)
+						{
+							DestroyPickup(YSI_g_sPickupData[pickup][E_PICKUP_ID]);
+							flags &= ~e_PICKUP_FLAGS_VISIBLE;
+						}
+						else active++;
+					}
+					else
+					{
+						if (ok)
+						{
+							new
+								pid = CreatePickup(YSI_g_sPickupData[pickup][E_PICKUP_MODEL], 3, px, py, pz);
+							YSI_g_sPickupLookup[pid] = pickup;
+							YSI_g_sPickupData[pickup][E_PICKUP_ID] = pid;
+							flags |= e_PICKUP_FLAGS_VISIBLE;
+							active++;
+						}
+					}
+				}
+			}
+			YSI_g_sPickupData[pickup][E_PICKUP_FLAGS] = flags;
+		}
+	}
+	sLastCall = tick;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Pickup_OnPlayerPickUpPickup
+Params:
+	playerid - Player who picked up a pickup.
+	pickupid - Pickup they picked up.
+Return:
+	-
+Notes:
+	Calls a remote function with the internal pickupid, not the real one.  If
+	the pickup is set for instant respawn it's done here.  If the pickup is
+	supposed to be destroyed but picked up first it won't respawn but will
+	still go through the respawn timeing.
+-*----------------------------------------------------------------------------*/
+
+Pickup_OnPlayerPickUpPickup(playerid, pickupid)
+{
+	DestroyPickup(pickupid);
+	new
+		pid = YSI_g_sPickupLookup[pickupid],
+		time = YSI_g_sPickupData[pid][E_PICKUP_RESPAWN];
+	if (time == -1) YSI_g_sPickupData[pid][E_PICKUP_FLAGS] = e_PICKUP_FLAGS:0;
+	else if (!time)
+	{
+		pickupid = CreatePickup(YSI_g_sPickupData[pid][E_PICKUP_MODEL], 3, YSI_g_sPickupData[pid][E_PICKUP_X], YSI_g_sPickupData[pid][E_PICKUP_Y], YSI_g_sPickupData[pid][E_PICKUP_Z]);
+		YSI_g_sPickupData[pid][E_PICKUP_ID] = pickupid;
+		YSI_g_sPickupLookup[pickupid] = pid;
+	}
+	else
+	{
+		YSI_g_sPickupData[pid][E_PICKUP_FLAGS] = (YSI_g_sPickupData[pid][E_PICKUP_FLAGS] | e_PICKUP_FLAGS_RESPAWN) & (~e_PICKUP_FLAGS_VISIBLE);
+		YSI_g_sPickupData[pid][E_PICKUP_TIME] = time;
+		
+	}
+	CallRemoteFunction("OnPlayerPickUpPickupEx", "ii", playerid, pid);
+	return 1;
+}

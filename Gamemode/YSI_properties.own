@@ -1,0 +1,3037 @@
+/*----------------------------------------------------------------------------*-
+					==================================
+					Y Sever Includes - Properties Core
+					==================================
+Description:
+	Handles properties and other common features for some modes.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1
+Changelog:
+	03/08/07:
+		Updated timer system.
+	31/07/07:
+		Made some functions safe.
+		Added tracking stats.
+	03/07/07:
+		Added invert option on CreateRestrictedArea.
+	24/06/07:
+		Modifed a few functions to use Bit_GetBit for speed.
+	19/06/07:
+		Added minor functions (IsValid, GetType and GetLink)
+	18/06/07:
+		Added commands.
+	14/06/07:
+		Updated functions to use checkpoint and area lookups
+	18/04/07:
+		First version.
+Functions:
+	Public:
+		Property_Loop - Does the main system processing.
+		Property_AddPropRemote - Adds a property from another script.
+		Property_AddBankRemote - Adds a bank from another script.
+		Property_AddAmmuRemote - Adds an ammunation from another script.
+		Property_AddMARemote - Adds a money area from another script.
+		Property_AddMPRemote - Adds a money point from another script.
+		Property_AddTeleRemote - Adds a teleport from another script.
+		Property_AddFobRemote - Adds a forbidden area from another script.
+		Property_GetPropertyBitsReceive - Passes a player's properties.
+		Property_Remote - Remote wrapper for most minor functions.
+		YSIM_Properties - Master system callback.
+		Property_Broadcast - Called to save properties on master shutdown.
+	Core:
+		Property_OnPlayerSelectedMenuRow - Called when someone selects something.
+		Property_OnPlayerExitedMenu - Called when someone exits a menu.
+		Property_OnPlayerEnterCheckpointEx - Called when someone enters a checkpoint (public).
+		Property_OnPlayerLeaveCheckpointEx - Called when someone leaves a checkpoint (public).
+		Property_OnPlayerSpawn - Called when someone spawns.
+		Property_OnPlayerConnect - Called when comaone connects.
+		Property_OnPlayerLeaveArea - Called when someone leaves an area (public).
+		Property_OnPlayerEnterArea - Called when someone enters an area (public).
+	Stock:
+		Property_GetPlayerPropCount - Gets the number of properties for a player.
+		Property_GetLink - Gets the area or checkpoint for a property.
+		Property_GetType - Gets a property's type.
+		Property_IsValid - Checks if a property is valid.
+		Property_Bank - Moves money to/from an account.
+		Property_SavePlayerWeapon - Saves a players weapon for spawn.
+		Property_SaveWeapons - Saves a player's spawn weapons.
+		Property_LoadWeapons - Loads a player's spawn weapons.
+		Property_SaveBank - Saves a player's banked money.
+		Property_LoadBank - Loads a player's banked money.
+		Property_GetBank - Gets a player's banked money.
+		Property_GetSlotWeapon - Gets a player's spawn weapons.
+		Property_GetPropertyBits - Gets a player's owned properties.
+	Static:
+		Property_GetWeapon - Gets weapon data for a slotid slot.
+		Property_WeaponName - Gets a weapon name for a slotid.
+		Property_GetWeaponFromSlot - Gets a weaponid from a slotid.
+		Property_GenerateAmmuMenu - Generates the menu for ammunation.
+	Inline:
+		Property_SetOption - Sets a property's custom flag.
+		Property_IsActive - Checks if a property is active.
+		Property_GetOption - Gets a property's custom flag.
+		Property_GivePlayerWeapon - Gives a player a weapon from it's slot.
+		Property_WeaponCost - Gets the cost of a slot,
+		Property_WeaponAmmo - Gets the ammo of a slot.
+		Property_IsPlayerProperty - Checks if a player can have a property.
+	API:
+		CreateProperty - Creates a business.
+		CreateBank - Creates a bank.
+		CreateAmmunation - Creates an ammunation.
+		CreateMoneyArea - Creates a money area.
+		CreateMoneyPoint - Creates a money point.
+		CreateTeleport - Creates a teleport.
+		CreateForbiddenArea - Creates a forbidden area.
+		DestroyProperty - Deletes a property from the array.
+Callbacks:
+	-
+Definitions:
+	PROPERTY_LOOP_GRANULARITY - Number of itterations of the main loop a second.
+	MAX_PROP_NAME - Max length of the name of a property.
+	MAX_PROPERTIES - Max number of properties.
+	NO_PROPERTY - Invalid return.
+	WEAPON_ARMOUR - Type for salling armour at ammunation.
+	PROPERTY_SELL_PERCENT - % of money got back for a reduced sale.
+Enums:
+	e_PROP_FLAGS - Flags for property data.
+	E_PROP_DATA - Data for a property.
+	E_PROP_AMMU - Data for a persons current ammunation menu.
+	<unnamed> - Tagless remote instructions, must have new ones added to the end.
+Macros:
+	WEAPON_DATA_OFFSET - Offset for saving weapons with variable size arrays,
+	WEAPON_DATA - Gets ammo and cost from parameters and compresses them.
+	WEAPON_DATA_REM - Like WEAPON_DATA but reads from an array instead.
+	WEAPON - Saves a weapon id in the top byte of a cell.
+Tags:
+	e_PROP_FLAGS - Flags.
+Variables:
+	Global:
+		-
+	Static:
+		YSI_g_sProperties - Array of all property data.
+		YSI_g_sMoney - Array of player's banked money.
+		YSI_g_sPlayerProperties - Bit array of properties a player has.
+		YSI_g_sSpawnWeapons - Array of weapons a player will spawn with.
+		YSI_g_sShopMenu - Array of players current menus.
+		YSI_g_sAreaPointers - Array of properties for each area.
+		YSI_g_sCheckpointPointers - Array of properties for each checkpoint.
+		YSI_g_sTempPropReq - Script has requested a player's properties.
+		YSI_g_sTempProp - Temporary store for properties.
+		YSI_g_sIsMaster - Is this script the global master.
+Commands:
+	buy - Lets you buy your current property.
+	bank - Lets you bank money.
+	properties - Lists properties and their owners.
+	balance - Displays your current balance.
+	withdraw - Allows you to take out money.
+	sell - Allows you to sell a property.
+Properties:
+	LReqProp - Return data from a remote script.
+	110953013 - Return properties for a player.
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#if !defined PROPERTY_LOOP_GRANULARITY
+	#define PROPERTY_LOOP_GRANULARITY 2
+#endif
+
+#if defined MAX_PROP_NAME
+	#if MAX_PROP_NAME < (39 - PLAYER_BIT_ARRAY)
+		#undef MAX_PROP_NAME
+	#endif
+#endif
+
+#if !defined MAX_PROP_NAME
+	#define MAX_PROP_NAME (39 - PLAYER_BIT_ARRAY)
+#endif
+
+#if !defined MAX_PROPERTIES
+	#define MAX_PROPERTIES 256
+#endif
+
+#if !defined GROUP_PROPERTY_BITS
+	#if MAX_PROPERTIES <= 32
+		#define GROUP_PROPERTY_BITS 2
+	#else
+		#define GROUP_PROPERTY_BITS Bit_Bits(MAX_PROPERTIES)
+	#endif
+#endif
+
+#define NO_PROPERTY -1
+
+#define WEAPON_ARMOUR 100
+
+#define PROPERTY_SELL_PERCENT 60
+
+#define PROPERTY_INCREASE_PERCENT 125
+
+#define WEAPON_DATA_OFFSET (PLAYER_BIT_ARRAY - 2)
+
+#define WEAPON_DATA (((getarg(pos++) & 0xFFF) << 20) | (getarg(pos++) & 0xFFFFF))
+
+#define WEAPON_DATA_REM (((dat[pos++] & 0xFFF) << 20) | (dat[pos++] & 0xFFFFF))
+
+#define WEAPON(%1) ((%1) << 24)
+
+#define Property_OnPlayerLeaveCheckpointEx Property_OnPlayerLeaveCP
+#define Property_OnPlayerEnterCheckpointEx Property_OnPlayerEnterCP
+
+enum e_PROP_FLAGS (+= 0x10000)
+{
+	e_PROP_FLAGS_LINK		= 0x0000FFFF,
+	e_PROP_FLAGS_TYPES		= 0x00FF0000,
+	e_PROP_FLAGS_TYPE_PROP	= 0x00010000,
+	e_PROP_FLAGS_TYPE_BANK,
+	e_PROP_FLAGS_TYPE_AMMU,
+	e_PROP_FLAGS_TYPE_TELS,
+	e_PROP_FLAGS_TYPE_TELT,
+	e_PROP_FLAGS_TYPE_MONP,
+	e_PROP_FLAGS_TYPE_MONA,
+	e_PROP_FLAGS_TYPE_RSRC,
+	e_PROP_FLAGS_FLAGS		= 0xFF000000,
+	e_PROP_FLAGS_CUST_1		= 0x01000000,
+	e_PROP_FLAGS_CUST_2		= 0x02000000,
+	e_PROP_FLAGS_CUST_3		= 0x04000000,
+	e_PROP_FLAGS_CUST_4		= 0x08000000,
+	e_PROP_FLAGS_CUST_5		= 0x10000000,
+	e_PROP_FLAGS_ACTIVE		= 0x80000000
+}
+
+enum E_PROP_DATA
+{
+	E_PROP_DATA_NAME[MAX_PROP_NAME],
+	e_PROP_FLAGS:E_PROP_DATA_FLAGS,
+	E_PROP_DATA_DATA_1,
+	E_PROP_DATA_DATA_2,
+	#if defined _YSI_SETUP_MASTER
+		E_PROP_DATA_MASTER,
+	#endif
+	Bit:E_PROP_DATA_PLAYERS[PLAYER_BIT_ARRAY]
+}
+
+enum E_PROP_AMMU
+{
+	Menu:E_PROP_AMMU_MENU,
+	E_PROP_AMMU_DATA
+}
+
+enum
+{
+	E_PROP_REMOTE_LINK,
+	E_PROP_REMOTE_PROBITS,
+	E_PROP_REMOTE_PPCO,
+	E_PROP_REMOTE_BANK,
+	E_PROP_REMOTE_LBANK,
+	E_PROP_REMOTE_GBANK,
+	E_PROP_REMOTE_LWEAP,
+	E_PROP_REMOTE_SWEAP,
+	E_PROP_REMOTE_GOWEAP,
+	E_PROP_REMOTE_SAVEWEAP,
+	E_PROP_REMOTE_DELETE,
+	E_PROP_REMOTE_TYPE,
+	E_PROP_REMOTE_VALID
+}
+
+static
+	YSI_g_sProperties[MAX_PROPERTIES][E_PROP_DATA],
+	YSI_g_sMoney[MAX_PLAYERS],
+	Bit:YSI_g_sPlayerProperties[MAX_PLAYERS][GROUP_PROPERTY_BITS],
+	YSI_g_sSpawnWeapons[MAX_PLAYERS][13],
+	YSI_g_sShopMenu[MAX_PLAYERS][E_PROP_AMMU],
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sTempPropReq,
+		Bit:YSI_g_sTempProp[GROUP_PROPERTY_BITS],
+		YSI_g_sIsMaster,
+	#endif
+	YSI_g_sAreaPointers[MAX_AREAS],
+	YSI_g_sCheckpointPointers[MAX_CHECKPOINTS];
+
+forward Property_Loop();
+forward ycmd_sell(playerid, params[], help);
+forward ycmd_bank(playerid, params[], help);
+forward ycmd_balance(playerid, params[], help);
+forward ycmd_buy(playerid, params[], help);
+forward ycmd_withdraw(playerid, params[], help);
+forward ycmd_properties(playerid, params[], help);
+
+#if defined _YSI_SETUP_MASTER
+	forward Property_AddPropRemote(master, name[], Float:x, Float:y, Float:z, price, reward, interval, sell, multi, reduce, increase);
+	forward Property_AddBankRemote(master, Float:x, Float:y, Float:z, name[]);
+	forward Property_AddAmmuRemote(master, Float:x, Float:y, Float:z, spawn, instant, dat[], num);
+	forward Property_AddMARemote(master, area, money, interval);
+	forward Property_AddMPRemote(master, Float:x, Float:y, Float:z, Float:s, money, interval);
+	forward Property_AddTeleRemote(master, Float:sx, Float:sy, Float:sz, Float:tx, Float:ty, Float:tz, cost, name[]);
+	forward Property_AddFobRemote(master, area, kick, health, invert, name[]);
+	forward Property_OnPlayerEnterCheckpointEx(playerid, cpid);
+	forward Property_OnPlayerLeaveCheckpointEx(playerid, cpid);
+	forward Property_OnPlayerLeaveArea(playerid, area);
+	forward Property_OnPlayerEnterArea(playerid, area);
+	forward Property_GetPropertyBitsReceive(playerid, Bit:properties[], count);
+	forward Property_Remote(ident, info, instruction);
+	forward YSIM_Properties(command);
+	forward Property_Broadcast(id, name[], nlength, e_PROP_FLAGS:flags, data1, data2, master, Bit:players[], plength);
+#endif
+
+Text_RegisterTag(ysi_properties);
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_IsActive
+Params:
+	prop - Property to check.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Property_IsActive(%1) \
+	((%1) < MAX_PROPERTIES && (%1) >= 0 && YSI_g_sProperties[(%1)][E_PROP_DATA_FLAGS] & e_PROP_FLAGS_ACTIVE)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_SetOption
+Params:
+	slot - Custom flag to set.
+	value - Value to set it to.
+Return:
+	-
+Notes:
+	Can't be changed except from 0 to 1.
+-*----------------------------------------------------------------------------*/
+
+#define Property_SetOption(%1,%2) \
+	((%2) ? e_PROP_FLAGS_CUST_%1 : e_PROP_FLAGS:0)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_GetOption
+Params:
+	slot - Custom flag to get.
+	flags - flags cell to get it from.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Property_GetOption(%1,%2) \
+	(e_PROP_FLAGS_CUST_%1 & e_PROP_FLAGS:(%2))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_GivePlayerWeapon
+Params:
+	playerid - Player to gice a weapon to.
+	slot - Weapon slot to give.
+	ammo - Ammo to give.
+Return:
+	-
+Notes:
+	Gives a player a weapon by slot instead of weaponid or assignes armour.
+-*----------------------------------------------------------------------------*/
+
+#define Property_GivePlayerWeapon(%1,%2,%3) \
+	if ((%2) == 39) SetPlayerArmour((%1), 100.0); else GivePlayerWeapon(%1, Property_GetWeaponFromSlot(%2), %3)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_IsValid
+Params:
+	property - Property to check.
+Return:
+	Is the property a valid active property.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Property_IsValid(property)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			return Property_IsActive(property);
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Property_Remote", "iii", property, 0, E_PROP_REMOTE_VALID);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_GetType
+Params:
+	property - Property to get the type of.
+Return:
+	0 if invalid or type.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Property_GetType(property)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (!Property_IsActive(property)) return 0;
+			return _:(YSI_g_sProperties[property][E_PROP_DATA_FLAGS] & e_PROP_FLAGS_TYPES);
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Property_Remote", "iii", property, 0, E_PROP_REMOTE_TYPE);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_Property
+Params:
+	-
+Return:
+	-
+Notes:
+	Sets variable initial states.
+-*----------------------------------------------------------------------------*/
+
+Property_Property()
+{
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sIsMaster = Master_Add("YSIM_Properties");
+	#endif
+	Timer_Add("Property_Loop", PROPERTY_LOOP_GRANULARITY);
+	#if defined _YSI_CORE_COMMANDS
+		ycmd("buy");
+		ycmd("bank");
+		ycmd("properties");
+		ycmd("balance");
+		ycmd("withdraw");
+		ycmd("sell");
+	#endif
+	for (new i = 0; i < MAX_AREAS; i++) YSI_g_sAreaPointers[i] = NO_PROPERTY;
+	for (new i = 0; i < MAX_CHECKPOINTS; i++) YSI_g_sCheckpointPointers[i] = NO_PROPERTY;
+	return 1;
+}
+
+#if defined _YSI_SETUP_MASTER
+
+/*----------------------------------------------------------------------------*-
+Function:
+	YSIM_Properties
+Params:
+	command - Instruction from the master system.
+Return:
+	-
+Notes:
+	Called when the properties master is being shut down to handle arbitration.
+-*----------------------------------------------------------------------------*/
+
+	public YSIM_Properties(command)
+	{
+		switch (command & 0xFF000000)
+		{
+			case E_MASTER_SET_MASTER:
+			{
+				YSI_g_sIsMaster = 1;
+			}
+			case E_MASTER_RELINQUISH:
+			{
+				new
+					master = (command & 0x00FFFFFF);
+				if (master == YSI_gMasterID)
+				{
+					for (new i = 0; i < MAX_CHECKPOINTS; i++)
+					{
+						if (Property_IsActive(i))
+						{
+							if (YSI_g_sProperties[i][E_PROP_DATA_MASTER] != master)
+							{
+								CallRemoteFunction("Property_Broadcast", "iaiiiiiai", i,
+									YSI_g_sProperties[i][E_PROP_DATA_NAME], MAX_PROP_NAME,
+									_:YSI_g_sProperties[i][E_PROP_DATA_FLAGS],
+									YSI_g_sProperties[i][E_PROP_DATA_DATA_1],
+									YSI_g_sProperties[i][E_PROP_DATA_DATA_2],
+									YSI_g_sProperties[i][E_PROP_DATA_MASTER],
+									_:YSI_g_sProperties[i][E_PROP_DATA_PLAYERS], PLAYER_BIT_ARRAY
+								);
+							}
+						}
+					}
+				}
+				else
+				{
+					for (new i = 0; i < MAX_CHECKPOINTS; i++)
+					{
+						if (Property_IsActive(i))
+						{
+							if (YSI_g_sProperties[i][E_PROP_DATA_MASTER] == master)
+							{
+								new
+									e_PROP_FLAGS:flags = YSI_g_sProperties[i][E_PROP_DATA_FLAGS];
+								YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS:0;
+								if (flags & e_PROP_FLAGS_TYPES > e_PROP_FLAGS_TYPE_MONP)
+								{
+									YSI_g_sAreaPointers[_:(flags & e_PROP_FLAGS_LINK)] = NO_PROPERTY;
+									Area_Delete(_:(flags & e_PROP_FLAGS_LINK));
+								}
+								else
+								{
+									YSI_g_sCheckpointPointers[_:(flags & e_PROP_FLAGS_LINK)] = NO_PROPERTY;
+									DestroyCheckpoint(_:(flags & e_PROP_FLAGS_LINK));
+								}
+								for (new j = 0; j < MAX_PLAYERS; j++) Bit_Set(YSI_g_sPlayerProperties[j], i, 0, GROUP_PROPERTY_BITS);
+							}
+						}
+					}
+				}
+			}
+			case E_MASTER_NOT_MASTER:
+			{
+				YSI_g_sIsMaster = 0;
+			}
+		}
+	}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_Broadcast
+Params:
+	id - Property being transferred.
+	name[] - Data in name array for property.
+	nlength - Size of name data.
+	e_PROP_FLAGS:flags - Flags for the property.
+	data1 - Data for the property.
+	data2 - More data for the property.
+	master - Which script owns the property.
+	Bit:players[] - Array of player data for the property.
+	plength - Size of player data.
+Return:
+	-
+Notes:
+	Recieves data on existing properties when the property master is changed.
+	The old master broadcasts data for properties not owned by itself and this
+	function recieves the data in the new master and saves it for seamless
+	processing.
+-*----------------------------------------------------------------------------*/
+
+	public Property_Broadcast(id, name[], nlength, e_PROP_FLAGS:flags, data1, data2, master, Bit:players[], plength)
+	{
+		if (!YSI_g_sIsMaster) return;
+		for (new i = 0; i < nlength && i < MAX_PROP_NAME; i++)
+		{
+			YSI_g_sProperties[id][E_PROP_DATA_NAME][i] = name[i];
+		}
+		YSI_g_sProperties[id][E_PROP_DATA_FLAGS] = flags;
+		YSI_g_sProperties[id][E_PROP_DATA_DATA_1] = data1;
+		YSI_g_sProperties[id][E_PROP_DATA_DATA_2] = data2;
+		YSI_g_sProperties[id][E_PROP_DATA_MASTER] = master;
+		for (new i = 0; i < plength && i < PLAYER_BIT_ARRAY; i++)
+		{
+			YSI_g_sProperties[id][E_PROP_DATA_PLAYERS][i] = players[i];
+		}
+		if (flags & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_PROP)
+		{
+			if (Property_GetOption(2, flags))
+			{
+				foreach (Player, i)
+				{
+					if (Bit_Get(players, i, plength))
+					{
+						Bit_Set(YSI_g_sPlayerProperties[i], id, 1, GROUP_PROPERTY_BITS);
+					}
+				}
+			}
+			else
+			{
+				if (IsPlayerConnected(_:players[0]))
+				{
+					Bit_Set(YSI_g_sPlayerProperties[_:players[0]], id, 1, GROUP_PROPERTY_BITS);
+				}
+			}
+		}
+		if (flags & e_PROP_FLAGS_TYPES >= e_PROP_FLAGS_TYPE_MONA)
+		{
+			YSI_g_sAreaPointers[_:(flags & e_PROP_FLAGS_LINK)] = id;
+		}
+		else
+		{
+			YSI_g_sCheckpointPointers[_:(flags & e_PROP_FLAGS_LINK)] = id;
+		}
+	}
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	DestroyProperty
+Params:
+	property - Property to destroy.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock DestroyProperty(property)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (!Property_IsActive(property)) return 0;
+			new
+				e_PROP_FLAGS:flags = YSI_g_sProperties[property][E_PROP_DATA_FLAGS];
+			YSI_g_sProperties[property][E_PROP_DATA_FLAGS] = e_PROP_FLAGS:0;
+			if (flags & e_PROP_FLAGS_TYPES > e_PROP_FLAGS_TYPE_MONP)
+			{
+				YSI_g_sAreaPointers[_:(flags & e_PROP_FLAGS_LINK)] = NO_PROPERTY;
+				Area_Delete(_:(flags & e_PROP_FLAGS_LINK));
+			}
+			else
+			{
+				YSI_g_sCheckpointPointers[_:(flags & e_PROP_FLAGS_LINK)] = NO_PROPERTY;
+				DestroyCheckpoint(_:(flags & e_PROP_FLAGS_LINK));
+			}
+			for (new i = 0; i < MAX_PLAYERS; i++) Bit_Set(YSI_g_sPlayerProperties[i], property, 0, GROUP_PROPERTY_BITS);
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Property_Remote", "iii", property, 0, E_PROP_REMOTE_DELETE);
+		}
+	#endif
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	CreateProperty
+Params:
+	name[] - Name of the property.
+	Float:x - X position.
+	Float:y - Y position.
+	Float:z - Z position.
+	price - Cost of the property.
+	reward - Money earnt from the property periodically.
+	interval - How often you earn money.
+	sell - Wether you need to seel the property of people can just buy you out.
+	multi - Wether more than one person can own this property at once.
+	reduce - Wether selling this property gets you less then you paid for it.
+	increase - Wether buying this property will put the price up for the future.
+Return:
+	-
+Notes:
+	Creates a buyable property (business).
+-*----------------------------------------------------------------------------*/
+
+stock CreateProperty(name[], Float:x, Float:y, Float:z, price, reward, interval = 60000, sell = 0, multi = 0, reduce = 0, increase = 0)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+			return Property_AddPropRemote(YSI_gMasterID, name, x, y, z, price, reward, interval, sell, multi, reduce, increase);
+		}
+		else
+		{
+			if (name[0]) CallRemoteFunction("Property_AddPropRemote", "isfffiiiiiii", YSI_gMasterID, name, x, y, z, price, reward, interval, sell, multi, reduce, increase);
+			else CallRemoteFunction("Property_AddPropRemote", "isfffiiiiiii", YSI_gMasterID, NULL, x, y, z, price, reward, interval, sell, multi, reduce, increase);
+			return getproperty(0, "YSIReq");
+		}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_AddRemote
+Params:
+	master - Which script owns the property.
+	name[] - Name of the property.
+	Float:x - X position.
+	Float:y - Y position.
+	Float:z - Z position.
+	price - Cost of the property.
+	reward - Money gained from the property.
+	interval - Time between money rewards.
+	sell - Property must be sold.
+	multi - Property can have multiple owners.
+	reduce - Property gives you less money on sale.
+	increase - Property costs more for people to buy off you.
+Return:
+	-
+Notes:
+	Remote wrapper for CreateProperty.
+-*----------------------------------------------------------------------------*/
+
+public Property_AddPropRemote(master, name[], Float:x, Float:y, Float:z, price, reward, interval, sell, multi, reduce, increase)
+{
+	if (!YSI_g_sIsMaster) return NO_PROPERTY;
+	setproperty(0, "YSIReq", NO_PROPERTY);
+#endif
+	new
+		i;
+	while (i < MAX_PROPERTIES)
+	{
+		if (!Property_IsActive(i)) break;
+		i++;
+	}
+	if (i == MAX_PROPERTIES) return NO_PROPERTY;
+	new
+		cp = CreateCheckpoint(x, y, z, 3.0);
+	if (cp == NO_CHECKPOINT) return NO_PROPERTY;
+	YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS_TYPE_PROP | e_PROP_FLAGS_ACTIVE | e_PROP_FLAGS:cp | Property_SetOption(1, sell) | Property_SetOption(2, multi) | Property_SetOption(3, reduce) | Property_SetOption(4, increase);
+	if (multi) Bit_SetAll(YSI_g_sProperties[i][E_PROP_DATA_PLAYERS], 0, PLAYER_BIT_ARRAY);
+	else YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][0] = Bit:INVALID_PLAYER_ID;
+	YSI_g_sProperties[i][E_PROP_DATA_NAME][MAX_PROP_NAME - 1] = interval & 0xFFFFF;
+	YSI_g_sProperties[i][E_PROP_DATA_DATA_1] = (interval & 0xFFFFF) | ((price & 0x00000FFF) << 20);
+	YSI_g_sProperties[i][E_PROP_DATA_DATA_2] = (reward & 0x3FFFF) | ((price & 0x03FFF000) << 6);
+	if (!isnull(name)) strcpy(YSI_g_sProperties[i][E_PROP_DATA_NAME], name, MAX_PROP_NAME - 1);
+	else YSI_g_sProperties[i][E_PROP_DATA_NAME][0] = '\0';
+	YSI_g_sCheckpointPointers[cp] = i;
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sProperties[i][E_PROP_DATA_MASTER] = master;
+		setproperty(0, "YSIReq", i);
+	#endif
+	return i;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	CreateBank
+Params:
+	Float:x - X position.
+	Float:y - Y position.
+	Float:z - Z position.
+	name[] - Name of the bank.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock CreateBank(Float:x, Float:y, Float:z, name[] = "")
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+			return Property_AddBankRemote(YSI_gMasterID, x, y, z, name);
+		}
+		else
+		{
+			if (name[0]) CallRemoteFunction("Property_AddBankRemote", "ifffs", YSI_gMasterID, x, y, z, name);
+			else CallRemoteFunction("Property_AddBankRemote", "ifffs", YSI_gMasterID, x, y, z, NULL);
+			return getproperty(0, "YSIReq");
+		}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_AddBankRemote
+Params:
+	master - Which script owns the bank.
+	Float:x - X position.
+	Float:y - Y position.
+	Float:z - Z position.
+	name[] - Name of the bank.
+Return:
+	-
+Notes:
+	Remote wrapper for CreateBank.
+-*----------------------------------------------------------------------------*/
+
+public Property_AddBankRemote(master, Float:x, Float:y, Float:z, name[])
+{
+	if (!YSI_g_sIsMaster) return NO_PROPERTY;
+	setproperty(0, "YSIReq", NO_PROPERTY);
+#endif
+	new
+		i;
+	while (i < MAX_PROPERTIES)
+	{
+		if (!Property_IsActive(i)) break;
+		i++;
+	}
+	if (i == MAX_PROPERTIES) return NO_PROPERTY;
+	new
+		cp = CreateCheckpoint(x, y, z, 3.0);
+	if (cp == NO_CHECKPOINT) return NO_PROPERTY;
+	YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS_TYPE_BANK | e_PROP_FLAGS_ACTIVE | e_PROP_FLAGS:cp;
+	if (!isnull(name)) strcpy(YSI_g_sProperties[i][E_PROP_DATA_NAME], name, MAX_PROP_NAME);
+	else YSI_g_sProperties[i][E_PROP_DATA_NAME][0] = '\0';
+	YSI_g_sCheckpointPointers[cp] = i;
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sProperties[i][E_PROP_DATA_MASTER] = master;
+		setproperty(0, "YSIReq", i);
+	#endif
+	return i;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	CreateAmmunation
+Params:
+	Float:x - X position.
+	Float:y - Y position.
+	Float:z - Z position.
+	spawn - Wether you spawn with the weapon.
+	instant - Wether you get the weapon as soon as you buy it.
+	...
+Return:
+	-
+Notes:
+	spawn and instant can BOTH be 1.  The format of the additional parameters
+	is:
+	
+	weapon, ammo, price
+	
+	They MUST come in sets of three of the function will fail.  Weapon is in
+	the form of the WEAPON_ defines in a_samp or WEAPON_ARMOUR.
+-*----------------------------------------------------------------------------*/
+
+stock CreateAmmunation(Float:x, Float:y, Float:z, spawn, instant, ...)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			new
+				num = numargs();
+			if (((num) <= 5) || (((num - 5) / 3) * 3 != (num - 5))) return NO_PROPERTY;
+			new
+				i;
+			while (i < MAX_PROPERTIES)
+			{
+				if (!Property_IsActive(i)) break;
+				i++;
+			}
+			if (i == MAX_PROPERTIES) return NO_PROPERTY;
+			new
+				cp = CreateCheckpoint(x, y, z, 3.0);
+			if (cp == NO_CHECKPOINT) return NO_PROPERTY;
+			YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS_TYPE_AMMU | e_PROP_FLAGS_ACTIVE | e_PROP_FLAGS:cp | Property_SetOption(1, spawn) | Property_SetOption(2, instant);
+			new
+				pos = 5,
+				count;
+			while (pos < num)
+			{
+				switch (getarg(pos++))
+				{
+					case WEAPON_BRASSKNUCKLE:
+						YSI_g_sProperties[i][E_PROP_DATA_DATA_1] = WEAPON_DATA;
+					case WEAPON_GOLFCLUB:
+						YSI_g_sProperties[i][E_PROP_DATA_DATA_2] = WEAPON_DATA;
+					case WEAPON_NITESTICK:
+						YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][0] = Bit:WEAPON_DATA;
+					case WEAPON_KNIFE:
+						YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][1] = Bit:WEAPON_DATA;
+					case WEAPON_BAT:
+						#if PLAYER_BIT_ARRAY > 2
+							YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][2] = Bit:WEAPON_DATA;
+						#else
+							YSI_g_sProperties[i][E_PROP_DATA_NAME][0 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#endif
+					case WEAPON_SHOVEL:
+						#if PLAYER_BIT_ARRAY > 3
+							YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][3] = Bit:WEAPON_DATA;
+						#else
+							YSI_g_sProperties[i][E_PROP_DATA_NAME][1 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#endif
+					case WEAPON_POOLSTICK:
+						#if PLAYER_BIT_ARRAY > 4
+							YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][4] = Bit:WEAPON_DATA;
+						#else
+							YSI_g_sProperties[i][E_PROP_DATA_NAME][2 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#endif
+					case WEAPON_KATANA:
+						#if PLAYER_BIT_ARRAY > 5
+							YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][5] = Bit:WEAPON_DATA;
+						#else
+							YSI_g_sProperties[i][E_PROP_DATA_NAME][3 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#endif
+					case WEAPON_CHAINSAW:
+						#if PLAYER_BIT_ARRAY > 6
+							YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][6] = Bit:WEAPON_DATA;
+						#else
+							YSI_g_sProperties[i][E_PROP_DATA_NAME][4 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#endif
+					case WEAPON_DILDO:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][5 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_DILDO2:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][6 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_VIBRATOR:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][7 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_VIBRATOR2:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][8 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_FLOWER:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][9 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_CANE:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][10 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_GRENADE:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][11 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_TEARGAS:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][12 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_MOLTOV:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][13 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_COLT45:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][14 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_SILENCED:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][15 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_DEAGLE:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][16 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_SHOTGUN:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][17 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_SAWEDOFF:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][18 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_SHOTGSPA:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][19 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_UZI:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][20 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_MP5:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][21 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_AK47:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][22 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_M4:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][23 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_TEC9:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][24 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_RIFLE:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][25 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_SNIPER:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][26 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_ROCKETLAUNCHER:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][27 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_FLAMETHROWER:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][28 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_MINIGUN:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][29 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_SATCHEL:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][30 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_SPRAYCAN:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][31 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_FIREEXTINGUISHER:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][32 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_CAMERA:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][33 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_PARACHUTE:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][34 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					case WEAPON_ARMOUR:
+						YSI_g_sProperties[i][E_PROP_DATA_NAME][35 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+					default:
+					{
+						pos += 2;
+						count--;
+					}
+				}
+				count++;
+			}
+			YSI_g_sProperties[i][E_PROP_DATA_NAME][MAX_PROP_NAME - 1] = count;
+			YSI_g_sCheckpointPointers[cp] = i;
+			#if defined _YSI_SETUP_MASTER
+				YSI_g_sProperties[i][E_PROP_DATA_MASTER] = YSI_gMasterID;
+			#endif
+			return i;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			new
+				num = numargs();
+			if (((num) <= 5) || (((num - 5) / 3) * 3 != (num - 5))) return NO_PROPERTY;
+			new
+				pos = 5,
+				idx,
+				arr[128];
+			while (pos < num && idx < sizeof (arr))
+			{
+				arr[idx++] = getarg(pos++);
+			}
+			CallRemoteFunction("Property_AddAmmuRemote", "ifffiiai", YSI_gMasterID, x, y, z, spawn, instant, arr, idx);
+			return getproperty(0, "YSIReq");
+		}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_AddAmmuRemote
+Params:
+	master - Which script owns the ammunation.
+	Float:x - X position.
+	Float:y - Y position.
+	Float:z - Z position.
+	spawn - Wether you spawn with the weapon.
+	instant - Wether you get the weapon straight away.
+	dat[] - Weapon data for the ammunation.
+	num - Ammount of data.
+Return:
+	-
+Notes:
+	Remote wrapper for CreateAmmunation.
+-*----------------------------------------------------------------------------*/
+
+public Property_AddAmmuRemote(master, Float:x, Float:y, Float:z, spawn, instant, dat[], num)
+{
+	if (!YSI_g_sIsMaster) return NO_PROPERTY;
+	setproperty(0, "YSIReq", NO_PROPERTY);
+	new
+		i;
+	while (i < MAX_PROPERTIES)
+	{
+		if (!Property_IsActive(i)) break;
+		i++;
+	}
+	if (i == MAX_PROPERTIES) return NO_PROPERTY;
+	new
+		cp = CreateCheckpoint(x, y, z, 3.0);
+	if (cp == NO_CHECKPOINT) return NO_PROPERTY;
+	YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS_TYPE_AMMU | e_PROP_FLAGS_ACTIVE | e_PROP_FLAGS:cp | Property_SetOption(1, spawn) | Property_SetOption(2, instant);
+	new
+		pos,
+		count;
+	while (pos < num)
+	{
+		switch (dat[pos++])
+		{
+			case WEAPON_BRASSKNUCKLE:
+				YSI_g_sProperties[i][E_PROP_DATA_DATA_1] = WEAPON_DATA_REM;
+			case WEAPON_GOLFCLUB:
+				YSI_g_sProperties[i][E_PROP_DATA_DATA_2] = WEAPON_DATA_REM;
+			case WEAPON_NITESTICK:
+				YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][0] = Bit:WEAPON_DATA_REM;
+			case WEAPON_KNIFE:
+				YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][1] = Bit:WEAPON_DATA_REM;
+			case WEAPON_BAT:
+				#if PLAYER_BIT_ARRAY > 2
+					YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][2] = Bit:WEAPON_DATA_REM;
+				#else
+					YSI_g_sProperties[i][E_PROP_DATA_NAME][0 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#endif
+			case WEAPON_SHOVEL:
+				#if PLAYER_BIT_ARRAY > 3
+					YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][3] = Bit:WEAPON_DATA_REM;
+				#else
+					YSI_g_sProperties[i][E_PROP_DATA_NAME][1 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#endif
+			case WEAPON_POOLSTICK:
+				#if PLAYER_BIT_ARRAY > 4
+					YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][4] = Bit:WEAPON_DATA_REM;
+				#else
+					YSI_g_sProperties[i][E_PROP_DATA_NAME][2 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#endif
+			case WEAPON_KATANA:
+				#if PLAYER_BIT_ARRAY > 5
+					YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][5] = Bit:WEAPON_DATA_REM;
+				#else
+					YSI_g_sProperties[i][E_PROP_DATA_NAME][3 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#endif
+			case WEAPON_CHAINSAW:
+				#if PLAYER_BIT_ARRAY > 6
+					YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][6] = Bit:WEAPON_DATA_REM;
+				#else
+					YSI_g_sProperties[i][E_PROP_DATA_NAME][4 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#endif
+			case WEAPON_DILDO:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][5 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_DILDO2:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][6 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_VIBRATOR:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][7 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_VIBRATOR2:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][8 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_FLOWER:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][9 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_CANE:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][10 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_GRENADE:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][11 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_TEARGAS:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][12 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_MOLTOV:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][13 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_COLT45:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][14 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_SILENCED:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][15 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_DEAGLE:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][16 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_SHOTGUN:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][17 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_SAWEDOFF:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][18 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_SHOTGSPA:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][19 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_UZI:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][20 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_MP5:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][21 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_AK47:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][22 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_M4:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][23 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_TEC9:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][24 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_RIFLE:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][25 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_SNIPER:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][26 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_ROCKETLAUNCHER:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][27 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_FLAMETHROWER:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][28 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_MINIGUN:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][29 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_SATCHEL:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][30 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_SPRAYCAN:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][31 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_FIREEXTINGUISHER:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][32 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_CAMERA:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][33 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_PARACHUTE:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][34 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			case WEAPON_ARMOUR:
+				YSI_g_sProperties[i][E_PROP_DATA_NAME][35 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+			default:
+			{
+				pos += 2;
+				count--;
+			}
+		}
+		count++;
+	}
+	YSI_g_sProperties[i][E_PROP_DATA_NAME][MAX_PROP_NAME - 1] = count;
+	YSI_g_sCheckpointPointers[cp] = i;
+	YSI_g_sProperties[i][E_PROP_DATA_MASTER] = master;
+	setproperty(0, "YSIReq", i);
+	return i;
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	CreateMoneyArea
+Params:
+	area - Reference to a defined area.
+	money - How much you earn.
+	interval - How often you earn.
+Return:
+	-
+Notes:
+	This function has internal checking for invalid areas so you can just pass
+	the return from an Area_ funtion directly.
+-*----------------------------------------------------------------------------*/
+
+stock CreateMoneyArea(area, money = 100, interval = 10000)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+			return Property_AddMARemote(YSI_gMasterID, area, money, interval);
+		}
+		else
+		{
+			CallRemoteFunction("Property_AddMARemote", "iiii", YSI_gMasterID, area, money, interval);
+			return getproperty(0, "YSIReq");
+		}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_AddMARemote
+Params:
+	master - Which script owns the area.
+	area - Pointer to the area.
+	manoey - Money awarded.
+	interval - Time between money awards.
+Return:
+	-
+Notes:
+	Remote wrapper for CreateMoneyArea.
+-*----------------------------------------------------------------------------*/
+
+public Property_AddMARemote(master, area, money, interval)
+{
+	if (!YSI_g_sIsMaster) return NO_PROPERTY;
+	setproperty(0, "YSIReq", NO_PROPERTY);
+#endif
+	if (area == NO_AREA) return NO_PROPERTY;
+	new
+		i;
+	while (i < MAX_PROPERTIES)
+	{
+		if (!Property_IsActive(i)) break;
+		i++;
+	}
+	if (i == MAX_PROPERTIES) return NO_PROPERTY;
+	YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS_TYPE_MONA | e_PROP_FLAGS_ACTIVE | e_PROP_FLAGS:area;
+	YSI_g_sProperties[i][E_PROP_DATA_DATA_1] = money;
+	YSI_g_sProperties[i][E_PROP_DATA_DATA_2] = interval;
+	YSI_g_sProperties[i][E_PROP_DATA_NAME][0] = interval;
+	YSI_g_sAreaPointers[area] = i;
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sProperties[i][E_PROP_DATA_MASTER] = master;
+		setproperty(0, "YSIReq", i);
+	#endif
+	return i;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	CreateMoneyPoint
+Params:
+	Float:x - X position.
+	Float:y - Y position.
+	Float:z - Z position.
+	Float:s - Size of checkpoint.
+	money - How much you earn.
+	interval - How often you earn.
+Return:
+	-
+Notes:
+	Like CreateMoneyArea but you must be in a checkpoint.
+-*----------------------------------------------------------------------------*/
+
+stock CreateMoneyPoint(Float:x, Float:y, Float:z, Float:s, money = 100, interval = 10000)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+			return Property_AddMPRemote(YSI_gMasterID, x, y, z, s, money, interval);
+		}
+		else
+		{
+			CallRemoteFunction("Property_AddMPRemote", "iffffii", YSI_gMasterID, x, y, z, s, money, interval);
+			return getproperty(0, "YSIReq");
+		}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_AddMPRemote
+Params:
+	master - Which script owns the point.
+	Float:x - X position.
+	Float:y - Y position.
+	Float:z - Z position.
+	Float:s - Size of the point.
+	money - Money earnt.
+	interval - Time between money awards.
+Return:
+	-
+Notes:
+	Remote wrapper for CreateMoneyPoint.
+-*----------------------------------------------------------------------------*/
+
+public Property_AddMPRemote(master, Float:x, Float:y, Float:z, Float:s, money, interval)
+{
+	if (!YSI_g_sIsMaster) return NO_PROPERTY;
+	setproperty(0, "YSIReq", NO_PROPERTY);
+#endif
+	new
+		i;
+	while (i < MAX_PROPERTIES)
+	{
+		if (!Property_IsActive(i)) break;
+		i++;
+	}
+	if (i == MAX_PROPERTIES) return NO_PROPERTY;
+	new
+		cp = CreateCheckpoint(x, y, z, s);
+	if (cp == NO_CHECKPOINT) return NO_PROPERTY;
+	YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS_TYPE_MONP | e_PROP_FLAGS_ACTIVE | e_PROP_FLAGS:cp;
+	YSI_g_sProperties[i][E_PROP_DATA_DATA_1] = money;
+	YSI_g_sProperties[i][E_PROP_DATA_DATA_2] = interval;
+	YSI_g_sProperties[i][E_PROP_DATA_NAME][0] = interval;
+	YSI_g_sCheckpointPointers[cp] = i;
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sProperties[i][E_PROP_DATA_MASTER] = master;
+		setproperty(0, "YSIReq", i);
+	#endif
+	return i;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	CreateTeleport
+Params:
+	Float:sx - Start X.
+	Float:sy - Start Y.
+	Float:sz - Start Z.
+	Float:tz - Target X.
+	Float:ty - Target Y.
+	Float:tz - Target Z.
+	cost - Price to use the teleport.
+	name[] - Name of the destination.
+Return:
+	-
+Notes:
+	Will teleport you the moment you step in.
+-*----------------------------------------------------------------------------*/
+
+stock CreateTeleport(Float:sx, Float:sy, Float:sz, Float:tx, Float:ty, Float:tz, cost = 0, name[] = "")
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+			return Property_AddTeleRemote(YSI_gMasterID, sx, sy, sz, tx, ty, tz, cost, name);
+		}
+		else
+		{
+			if (name[0]) CallRemoteFunction("Property_AddTeleRemote", "iffffffis", YSI_gMasterID, sx, sy, sz, tx, ty, tz, cost, name);
+			else CallRemoteFunction("Property_AddTeleRemote", "iffffffis", YSI_gMasterID, sx, sy, sz, tx, ty, tz, cost, NULL);
+			return getproperty(0, "YSIReq");
+		}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_AddTeleRemote
+Params:
+	master - Script which owns the teleport.
+	Float:sx - Start x point of the teleport.
+	Float:sy - Start y point of the teleport.
+	Float:sz - Start z point of the teleport.
+	Float:tx - End x point of the teleport.
+	Float:ty - End y point of the teleport.
+	Float:tz - End z point of the teleport.
+	cost - Cost of teleporting.
+	name[] - Name of the teleport.
+Return:
+	-
+Notes:
+	Remote wrapper for CreateTeleport.
+-*----------------------------------------------------------------------------*/
+
+public Property_AddTeleRemote(master, Float:sx, Float:sy, Float:sz, Float:tx, Float:ty, Float:tz, cost, name[])
+{
+	if (!YSI_g_sIsMaster) return NO_PROPERTY;
+	setproperty(0, "YSIReq", NO_PROPERTY);
+#endif
+	new
+		i;
+	while (i < MAX_PROPERTIES)
+	{
+		if (!Property_IsActive(i)) break;
+		i++;
+	}
+	if (i == MAX_PROPERTIES) return NO_PROPERTY;
+	new
+		cp = CreateCheckpoint(sx, sy, sz, 3.0);
+	if (cp == NO_CHECKPOINT) return NO_PROPERTY;
+	YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS_TYPE_TELS | e_PROP_FLAGS_ACTIVE | e_PROP_FLAGS:cp;
+	YSI_g_sProperties[i][E_PROP_DATA_DATA_1] = cost;
+	YSI_g_sProperties[i][E_PROP_DATA_DATA_2] = _:tx;
+	YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][0] = Bit:ty;
+	YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][1] = Bit:tz;
+	if (!isnull(name)) strcpy(YSI_g_sProperties[i][E_PROP_DATA_NAME], name, MAX_PROP_NAME);
+	else YSI_g_sProperties[i][E_PROP_DATA_NAME][0] = '\0';
+	YSI_g_sCheckpointPointers[cp] = i;
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sProperties[i][E_PROP_DATA_MASTER] = master;
+		setproperty(0, "YSIReq", i);
+	#endif
+	return i;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	CreateForbiddenArea
+Params:
+	area - Reference to a defined area.
+	kick - Wether they should be kicked out not hurt.
+	health - How much health should be removed every itteration they're in.
+	invert - Not allowed to leave the area rather than enter.
+	name[] - Name of the area.
+Return:
+	-
+Notes:
+	If kick is 1 people will simply be constantly replaced outside the area
+	from the direction they came.
+-*----------------------------------------------------------------------------*/
+
+stock CreateForbiddenArea(area, kick = 0, health = 1000, invert = 0, name[] = "")
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+			return Property_AddFobRemote(YSI_gMasterID, area, kick, health, invert, name);
+		}
+		else
+		{
+			if (name[0]) CallRemoteFunction("Property_AddFobRemote", "iiiiis", YSI_gMasterID, area, kick, health, invert, name);
+			else CallRemoteFunction("Property_AddFobRemote", "iiiiis", YSI_gMasterID, area, kick, health, invert, NULL);
+			return getproperty(0, "YSIReq");
+		}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_AddFobRemote
+Params:
+	master - Which script owns the area.
+	area - Pointer to the area.
+	kick - Wether or not to just kick people out.
+	health - How much health to remove per itteration.
+	invert - Keep people in instead of out.
+	name[] - Name of the area.
+Return:
+	-
+Notes:
+	Remote wrapper for CreateForbiddenArea.
+-*----------------------------------------------------------------------------*/
+
+public Property_AddFobRemote(master, area, kick, health, invert, name[])
+{
+	if (!YSI_g_sIsMaster) return NO_PROPERTY;
+	setproperty(0, "YSIReq", NO_PROPERTY);
+#endif
+	if (area == NO_AREA) return NO_PROPERTY;
+	new
+		i;
+	while (i < MAX_PROPERTIES)
+	{
+		if (!Property_IsActive(i)) break;
+		i++;
+	}
+	if (i == MAX_PROPERTIES) return NO_PROPERTY;
+	YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS_TYPE_RSRC | e_PROP_FLAGS_ACTIVE | e_PROP_FLAGS:area | Property_SetOption(1, kick) | Property_SetOption(2, invert);
+	YSI_g_sProperties[i][E_PROP_DATA_DATA_2] = health;
+	if (!isnull(name)) strcpy(YSI_g_sProperties[i][E_PROP_DATA_NAME], name, MAX_PROP_NAME);
+	else YSI_g_sProperties[i][E_PROP_DATA_NAME][0] = '\0';
+	YSI_g_sAreaPointers[area] = i;
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sProperties[i][E_PROP_DATA_MASTER] = master;
+		setproperty(0, "YSIReq", i);
+	#endif
+	return i;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_OnPlayerEnterArea
+Params:
+	playerid - Player who entered an area.
+	area - Area they entered.
+Return:
+	-
+Notes:
+	Internal callback from YSI_areas.
+-*----------------------------------------------------------------------------*/
+
+#if defined _YSI_SETUP_MASTER
+	public Property_OnPlayerEnterArea(playerid, area)
+	if (!YSI_g_sIsMaster) return 0;
+	else
+#else
+	Property_OnPlayerEnterArea(playerid, area)
+#endif
+{
+	#if defined _YSI_SETUP_MASTER
+		setproperty(0, "YSIReq", 0);
+	#endif
+	new
+		prop = YSI_g_sAreaPointers[area];
+	if (prop == NO_PROPERTY)
+	{
+		return 0;
+	}
+	if (YSI_g_sProperties[prop][E_PROP_DATA_FLAGS] & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_RSRC)
+	{
+		if (!Property_GetOption(2, YSI_g_sProperties[prop][E_PROP_DATA_FLAGS]))
+		{
+			if (YSI_g_sProperties[prop][E_PROP_DATA_NAME][0]) Text_SendFormat(playerid, "YSI_FORBIDDEN_2", YSI_g_sProperties[prop][E_PROP_DATA_NAME]);
+			else Text_Send(playerid, "YSI_FORBIDDEN");
+			Bit_Set(YSI_g_sPlayerProperties[playerid], prop, 1, GROUP_PROPERTY_BITS);
+		}
+	}
+	else Bit_Set(YSI_g_sPlayerProperties[playerid], prop, 1, GROUP_PROPERTY_BITS);
+	#if defined _YSI_SETUP_MASTER
+		setproperty(0, "YSIReq", 1);
+	#endif
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_OnPlayerLeaveArea
+Params:
+	playerid - Player who left an area.
+	areaid - Area they left.
+Return:
+	-
+Notes:
+	Internal callback from YSI_areas.
+-*----------------------------------------------------------------------------*/
+
+#if defined _YSI_SETUP_MASTER
+	public Property_OnPlayerLeaveArea(playerid, area)
+	if (!YSI_g_sIsMaster) return 0;
+	else
+#else
+	Property_OnPlayerLeaveArea(playerid, area)
+#endif
+{
+	new
+		prop = YSI_g_sAreaPointers[area];
+	if (prop == NO_PROPERTY)
+	{
+		#if defined _YSI_SETUP_MASTER
+			setproperty(0, "YSIReq", 0);
+		#endif
+		return 0;
+	}
+	if (YSI_g_sProperties[prop][E_PROP_DATA_FLAGS] & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_RSRC && Property_GetOption(2, YSI_g_sProperties[prop][E_PROP_DATA_FLAGS]))
+	{
+		Bit_Set(YSI_g_sPlayerProperties[playerid], prop, 1, GROUP_PROPERTY_BITS);
+	}
+	else Bit_Set(YSI_g_sPlayerProperties[playerid], prop, 0, GROUP_PROPERTY_BITS);
+	#if defined _YSI_SETUP_MASTER
+		setproperty(0, "YSIReq", 1);
+	#endif
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_OnPlayerConnect
+Params:
+	playerid - Player who connected.
+Return:
+	-
+Notes:
+	Internal callback.
+-*----------------------------------------------------------------------------*/
+
+Property_OnPlayerConnect(playerid)
+{
+	YSI_g_sShopMenu[playerid][E_PROP_AMMU_MENU] = Menu:-1;
+	Bit_SetAll(YSI_g_sPlayerProperties[playerid], 0, GROUP_PROPERTY_BITS);
+	for (new i = 0; i < 13; i++) YSI_g_sSpawnWeapons[playerid][i] = 0;
+	YSI_g_sMoney[playerid] = 0;
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_OnPlayerSpawn
+Params:
+	playerid - Player who spawned.
+Return:
+	-
+Notes:
+	Internal callback.
+-*----------------------------------------------------------------------------*/
+
+Property_OnPlayerSpawn(playerid)
+{
+	for (new i = 0; i < 12; i++) if (YSI_g_sSpawnWeapons[playerid][i]) GivePlayerWeapon(playerid, (YSI_g_sSpawnWeapons[playerid][i] >> 24) & 0xFF, YSI_g_sSpawnWeapons[playerid][i] & 0xFFFFFF);
+	if (YSI_g_sSpawnWeapons[playerid][12]) SetPlayerArmour(playerid, 100.0);
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_OnPlayerLeaveCheckpointEx
+Params:
+	playerid - Player who left a checkpoint.
+	cpid - Checkpoint they left.
+Return:
+	-
+Notes:
+	Internal callback from YSI_checkpoints.
+-*----------------------------------------------------------------------------*/
+
+#if defined _YSI_SETUP_MASTER
+	public Property_OnPlayerLeaveCheckpointEx(playerid, cpid)
+	if (!YSI_g_sIsMaster) return 0;
+	else
+#else
+	Property_OnPlayerLeaveCheckpointEx(playerid, cpid)
+#endif
+{
+	new
+		cp = YSI_g_sCheckpointPointers[cpid];
+	if (cp == NO_CHECKPOINT)
+	{
+		#if defined _YSI_SETUP_MASTER
+			setproperty(0, "YSIReq", 0);
+		#endif
+		return 0;
+	}
+	new
+		flags = YSI_g_sProperties[cp][E_PROP_DATA_FLAGS];
+	if (((_:flags & _:e_PROP_FLAGS_TYPES) != _:e_PROP_FLAGS_TYPE_PROP || Property_GetOption(2, flags)) ? (!Bit_GetBit(YSI_g_sProperties[cp][E_PROP_DATA_PLAYERS], playerid)) : (!(_:YSI_g_sProperties[cp][E_PROP_DATA_PLAYERS][0] == playerid))) Bit_Set(YSI_g_sPlayerProperties[playerid], cp, 0, GROUP_PROPERTY_BITS);
+	#if defined _YSI_SETUP_MASTER
+		setproperty(0, "YSIReq", 1);
+	#endif
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_OnPlayerEnterCheckpointEx
+Params:
+	playerid - Player who entered a checkpoint.
+	cpid - Checkpoint they entered.
+Return:
+	-
+Notes:
+	Internal callback from YSI_checkpoints.
+-*----------------------------------------------------------------------------*/
+
+#if defined _YSI_SETUP_MASTER
+	public Property_OnPlayerEnterCheckpointEx(playerid, cpid)
+	if (!YSI_g_sIsMaster) return 0;
+	else
+#else
+	Property_OnPlayerEnterCheckpointEx(playerid, cpid)
+#endif
+{
+	printf("eee");
+	new
+		prop = YSI_g_sCheckpointPointers[cpid];
+	if (prop == NO_PROPERTY)
+	{
+		printf("no!?");
+		#if defined _YSI_SETUP_MASTER
+			setproperty(0, "YSIReq", 0);
+		#endif
+		return 0;
+	}
+	printf("in");
+	new
+		e_PROP_FLAGS:flag = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
+	switch (flag & e_PROP_FLAGS_TYPES)
+	{
+		case e_PROP_FLAGS_TYPE_PROP:
+		{
+			Text_SendFormat(playerid, "YSI_PROP_NAME", YSI_g_sProperties[prop][E_PROP_DATA_NAME], ((YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] >>> 6) & 0x03FFF000) | ((YSI_g_sProperties[prop][E_PROP_DATA_DATA_1] >>> 20) & 0x00000FFF), YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] & 0x3FFFF);
+			if (Property_GetOption(2, flag))
+			{
+				if (Bit_GetBit(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS], playerid)) Text_Send(playerid, "YSI_PROP_YOURS");
+				else Text_SendFormat(playerid, "YSI_PROP_BUY", "buy");
+			}
+			else
+			{
+				new
+					owner = _:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0];
+				if (owner == playerid) Text_Send(playerid, "YSI_PROP_YOURS");
+				else if (IsPlayerConnected(owner)) Text_SendFormat(playerid, "YSI_PROP_OWNER", ReturnPlayerName(owner), owner);
+				if (owner != playerid) Text_SendFormat(playerid, "YSI_PROP_BUY", "buy");
+			}
+		}
+		case e_PROP_FLAGS_TYPE_AMMU:
+		{
+			printf("ammu");
+			Property_GenerateAmmuMenu(playerid, prop, 0, 0);
+			TogglePlayerControllable(playerid, 0);
+		}
+		case e_PROP_FLAGS_TYPE_BANK:
+		{
+			if (YSI_g_sProperties[prop][E_PROP_DATA_NAME][0]) Text_SendFormat(playerid, "YSI_BANK_NAME", YSI_g_sProperties[prop][E_PROP_DATA_NAME]);
+			else Text_Send(playerid, "YSI_BANK_WELCOME");
+			Text_SendFormat(playerid, "YSI_BANK_HELP1", "bank");
+			Text_SendFormat(playerid, "YSI_BANK_HELP2", "withdraw");
+			Text_SendFormat(playerid, "YSI_BANK_HELP3", "balance");
+			Text_SendFormat(playerid, "YSI_BANK_BALANCE", YSI_g_sMoney[playerid]);
+		}
+		case e_PROP_FLAGS_TYPE_TELS:
+		{
+			if (GetPlayerMoney(playerid) >= YSI_g_sProperties[prop][E_PROP_DATA_DATA_1])
+			{
+				GivePlayerMoney(playerid, -YSI_g_sProperties[prop][E_PROP_DATA_DATA_1]);
+				SetPlayerPos(playerid, Float:YSI_g_sProperties[prop][E_PROP_DATA_DATA_2], Float:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0], Float:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][1]);
+				if (YSI_g_sProperties[prop][E_PROP_DATA_NAME][0]) Text_SendFormat(playerid, "YSI_TELS_NAME", YSI_g_sProperties[prop][E_PROP_DATA_NAME]);
+				else Text_Send(playerid, "YSI_TELS_TELE");
+			}
+			else Text_SendFormat(playerid, "YSI_TELS_MONEY", YSI_g_sProperties[prop][E_PROP_DATA_DATA_1]);
+			#if defined _YSI_SETUP_MASTER
+				setproperty(0, "YSIReq", 1);
+			#endif
+			return 1;
+		}
+		case e_PROP_FLAGS_TYPE_MONP: {}
+		default:
+		{
+			#if defined _YSI_SETUP_MASTER
+				setproperty(0, "YSIReq", 0);
+			#endif
+			return 0;
+		}
+	}
+	Bit_Set(YSI_g_sPlayerProperties[playerid], prop, 1, GROUP_PROPERTY_BITS);
+	#if defined _YSI_SETUP_MASTER
+		setproperty(0, "YSIReq", 1);
+	#endif
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_GetWeapon
+Params:
+	ammu - Ammunation to get the weapon from.
+	slot - Number of active slots to skip.
+	&page - Start slot.
+Return:
+	-
+Notes:
+	Gets the slot active weapon from page start.  If you want the first one
+	use page = 0 and slot = 0.  If you want the second use page = 0 and slot
+	= 1 or slot = 0 and page > position of first.
+-*----------------------------------------------------------------------------*/
+
+static stock Property_GetWeapon(ammu, slot, &page = 0)
+{
+	new
+		weapon;
+	while (page < 40)
+	{
+		if (!page)
+		{
+			weapon = YSI_g_sProperties[ammu][E_PROP_DATA_DATA_1];
+		}
+		else if (page == 1)
+		{
+			weapon = YSI_g_sProperties[ammu][E_PROP_DATA_DATA_2];
+		}
+		else if (page < PLAYER_BIT_ARRAY + 2)
+		{
+			weapon = _:YSI_g_sProperties[ammu][E_PROP_DATA_PLAYERS][page - 2];
+		}
+		else
+		{
+			weapon = YSI_g_sProperties[ammu][E_PROP_DATA_NAME][page - (PLAYER_BIT_ARRAY + 2)];
+		}
+		if (weapon)
+		{
+			if (!slot) return weapon;
+			else slot--;
+		}
+		page++;
+	}
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_WeaponName
+Params:
+	weapon - Weapon slot to get the name of.
+Return:
+	-
+Notes:
+	Gets a real weapon name based on the slot of the weapon, not the weapon id.
+-*----------------------------------------------------------------------------*/
+
+static stock Property_WeaponName(weapon)
+{
+	static
+		names[][18] = 
+		{
+			"Brassknuckle",			"Golfclub",		"Night Stick",		"Knife",
+			"Bat",					"Shovel",		"Poolstick",		"Katana",
+			"Chainsaw",				"Dildo",		"Dildo 2",			"Vibrator",
+			"Vibrator 2",			"Flower",		"Cane",				"Grenade",
+			"Teargas",				"Molotov",		"Colt 45",			"Silenced Pistol",
+			"Desert Eagle",			"Shotgun",		"Sawnoff",			"Spaz 9",
+			"Uzi",					"MP5",			"AK47",				"M4",
+			"TEC9",					"Rifle",		"Sniper Rifle",		"Rocket Launcher",
+			"Flame Thrower",		"Minigun",		"Satchel Charge",	"Spraycan",
+			"Fire Extinguisher",	"Camera",		"Parachute",		"Armour"
+		},
+		none[18] = "NONE";
+	if (weapon >=0 && weapon < sizeof (names)) return names[weapon];
+	else return none;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_WeaponCost
+Params:
+	data - Compressed data.
+Return:
+	-
+Notes:
+	Extracts the cost from the passed data.
+-*----------------------------------------------------------------------------*/
+
+#define Property_WeaponCost(%1) \
+	((%1) & 0xFFFFF)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_WeaponAmmo
+Params:
+	data = Compressed data.
+Return:
+	-
+Notes:
+	Extracts the ammo from the passed data.
+-*----------------------------------------------------------------------------*/
+
+#define Property_WeaponAmmo(%1) \
+	((%1) >> 20)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_OnPlayerExitedMenu
+Params:
+	playerid - Player who left a menu.
+Return:
+	-
+Notes:
+	Internal callback.
+-*----------------------------------------------------------------------------*/
+
+#define Property_OnPlayerExitedMenu Property_OnPlayerExited
+
+Property_OnPlayerExitedMenu(playerid)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 0;
+	#endif
+	if (GetPlayerMenu(playerid) == YSI_g_sShopMenu[playerid][E_PROP_AMMU_MENU])
+	{
+		new
+			data = YSI_g_sShopMenu[playerid][E_PROP_AMMU_DATA];
+		if (data & 0x01)
+		{
+			Property_GenerateAmmuMenu(playerid, data >> 16, 0, 0);
+			return 1;
+		}
+	}
+	YSI_g_sShopMenu[playerid][E_PROP_AMMU_MENU] = Menu:-1;
+	TogglePlayerControllable(playerid, 1);
+	YSI_g_sShopMenu[playerid][E_PROP_AMMU_DATA] = 0;
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_GetWeaponFromSlot
+Params:
+	slot - Data slot to translate.
+Return:
+	weaponid represented byt that slot.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+static stock Property_GetWeaponFromSlot(slot)
+{
+	if (slot < 18) return slot + 1;
+	else if (slot < 33) return slot + 4;
+	else if (slot < 36) return slot + 5;
+	else if (slot < 38) return slot + 6;
+	else if (slot == 38) return WEAPON_PARACHUTE;
+	else if (slot == 39) return WEAPON_ARMOUR;
+	else return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_SavePlayerWeapon
+Params:
+	playerid - Player to save the weapon for.
+	weaponslot - Slot of the weapon.
+	ammo - Ammo to save.
+Return:
+	-
+Notes:
+	Saves weapons based on slots so you only have 13 spawn weapons based on
+	real weapon slots (armour is slot 12).  This is similar to weapon slot
+	sorting but it's sorting slots which are packed from original weapon
+	numbers and missing some.
+-*----------------------------------------------------------------------------*/
+
+stock Property_SavePlayerWeapon(playerid, weaponslot, ammo)
+{
+	new
+		slot,
+		weapon;
+	switch (weaponslot)
+	{
+		case 0: slot = 0, weapon = WEAPON(WEAPON_BRASSKNUCKLE);
+		case 1, 2, 3, 4, 5, 6, 7, 8: slot = 1, weapon = WEAPON(weaponslot + 1);
+		case 18, 19, 20: slot = 2, weapon = WEAPON(weaponslot + 4);
+		case 21, 22, 23: slot = 3, weapon = WEAPON(weaponslot + 4);
+		case 24, 25, 28: slot = 4, weapon = WEAPON(weaponslot + 4);
+		case 26, 27: slot = 5, weapon = WEAPON(weaponslot + 4);
+		case 29, 30: slot = 6, weapon = WEAPON(weaponslot + 4);
+		case 31: slot = 7, weapon = WEAPON(WEAPON_ROCKETLAUNCHER); 
+		case 32, 33: slot = 7, weapon = WEAPON(weaponslot + 5);
+		case 15, 16, 17: slot = 8, weapon = WEAPON(weaponslot + 1);
+		case 34: slot = 8, weapon = WEAPON(WEAPON_SATCHEL);
+		case 35, 36, 37: slot = 9, weapon = WEAPON(weaponslot + 6);
+		case 9, 10, 11, 12, 13, 14: slot = 10, weapon = WEAPON(weaponslot + 1);
+		case 38: slot = 11, weapon = WEAPON(WEAPON_PARACHUTE);
+		case 39: slot = 12, weapon = 1;
+		default: return;
+	}
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (YSI_g_sSpawnWeapons[playerid][slot] & 0xFF000000 == weapon) YSI_g_sSpawnWeapons[playerid][slot] += ammo & 0x00FFFFFF;
+			else YSI_g_sSpawnWeapons[playerid][slot] = (weapon & 0xFF000000) | (ammo & 0x00FFFFFF);
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Property_Remote", "iii", ((playerid & 0xFFFF) << 16) | (slot & 0xFFFF), (weapon & 0xFF000000) | (ammo & 0x00FFFFFF), E_PROP_REMOTE_SAVEWEAP);
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_GetSlotWeapon
+Params:
+	playerid - Player to get the weapon for.
+	slot - Slot to get.
+	weaponslot - Return for the weapon type.
+	ammo - Return for the ammo.
+Return:
+	-
+Notes:
+	Gets a player's stored for spawn weapons.
+-*----------------------------------------------------------------------------*/
+
+stock Property_GetSlotWeapon(playerid, slot, &weapon, &ammo)
+{
+	if (playerid < 0 || playerid >= MAX_PLAYERS || slot < 0 || slot >= 13) return;
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			weapon = (YSI_g_sSpawnWeapons[playerid][slot] & 0xFF000000) >> 24;
+			ammo = YSI_g_sSpawnWeapons[playerid][slot] & 0x00FFFFFF;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Property_Remote", "iii", playerid, slot, E_PROP_REMOTE_GOWEAP);
+			new
+				weaps = getproperty(0, "YSIReq");
+			weapon = (weaps & 0xFF000000) >> 24;
+			ammo = weaps & 0x00FFFFFF;
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_SaveWeapons
+Params:
+	playerid - Player to save weapons for.
+Return:
+	-
+Notes:
+	Saves a players current spawn weapon data to an ini (i.e. their save file).
+	110953013 is props in adler32
+-*----------------------------------------------------------------------------*/
+
+stock Property_SaveWeapons(playerid)
+{
+	if (playerid >= 0 && playerid < MAX_PLAYERS)
+	{
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsMaster)
+			{
+		#endif
+				new
+					str[8] = "wslot";
+				for (new i = 0; i <= 12; i++)
+				{
+					if (i >= 10)
+					{
+						new
+							tens = i / 10;
+						str[5] = tens + '0';
+						str[6] = (i - (tens * 10)) + '0';
+						str[7] = '\0';
+					}
+					else
+					{
+						str[5] = i + '0';
+						str[6] = '\0';
+					}
+					Player_WriteInt(str, YSI_g_sSpawnWeapons[playerid][i]);
+				}
+		#if defined _YSI_SETUP_MASTER
+			}
+			else
+			{
+				CallRemoteFunction("Property_Remote", "iii", playerid, 0, E_PROP_REMOTE_SWEAP);
+				new
+					weaps[14];
+				getproperty(0, "", 110953013, weaps);
+				strunpack(weaps, weaps);
+				new
+					str[8] = "wslot";
+				for (new i = 0; i < 13; i++)
+				{
+					if (i >= 10)
+					{
+						new
+							tens = i / 10;
+						str[5] = tens + '0';
+						str[6] = (i - (tens * 10)) + '0';
+						str[7] = '\0';
+					}
+					else
+					{
+						str[5] = i + '0';
+						str[6] = '\0';
+					}
+					Player_WriteInt(str, weaps[i] >> 1);
+				}
+			}
+		#endif
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_LoadWeapons
+Params:
+	playerid - Player to load weapons for.
+	identifier[] - Slot data.
+	text[] - Weapon data.
+Return:
+	-
+Notes:
+	Called when a player logs in to load their previous weapons.
+-*----------------------------------------------------------------------------*/
+
+stock Property_LoadWeapons(playerid, identifier[], text[])
+{
+	if (playerid >= 0 && playerid < MAX_PLAYERS)
+	{
+		if (strcmp(identifier, "wslot", false, 5)) return;
+		new
+			slot = strval(identifier[5]);
+		if (slot < 0 || slot > 12) return;
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsMaster)
+			{
+		#endif
+				YSI_g_sSpawnWeapons[playerid][slot] = strval(text);
+		#if defined _YSI_SETUP_MASTER
+			}
+			else
+			{
+				CallRemoteFunction("Property_Remote", "iii", playerid, ((slot & 0xFFFF) << 16) | (strval(text) & 0xFFFF), E_PROP_REMOTE_LWEAP);
+			}
+		#endif
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_SaveBank
+Params:
+	playerid - Player to save bank for.
+Return:
+	-
+Notes:
+	Saves a players current bank data to an ini (i.e. their save file).
+-*----------------------------------------------------------------------------*/
+
+stock Property_SaveBank(playerid)
+{
+	if (playerid >= 0 && playerid < MAX_PLAYERS)
+	{
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsMaster)
+			{
+		#endif
+				Player_WriteInt("bankmoney", YSI_g_sMoney[playerid]);
+		#if defined _YSI_SETUP_MASTER
+			}
+			else
+			{
+				CallRemoteFunction("Property_Remote", "iii", playerid, 0, E_PROP_REMOTE_GBANK);
+				Player_WriteInt("bankmoney", getproperty(0, "YSIReq"));
+			}
+		#endif
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_GetBank
+Params:
+	playerid - Player to get bank for.
+Return:
+	Money in bank.
+Notes:
+-*----------------------------------------------------------------------------*/
+
+stock Property_GetBank(playerid)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (playerid >= 0 && playerid < MAX_PLAYERS) return YSI_g_sMoney[playerid];
+			return 0;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Property_Remote", "iii", playerid, 0, E_PROP_REMOTE_GBANK);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_LoadBank
+Params:
+	playerid - Player to load bank for.
+	identifier[] - Identifier name to check.
+	text[] - Possibly bank amount.
+Return:
+	-
+Notes:
+	Called when a player logs in to load their previous banked money.
+-*----------------------------------------------------------------------------*/
+
+stock Property_LoadBank(playerid, identifier[], text[])
+{
+	if (playerid >= 0 && playerid < MAX_PLAYERS && !strcmp(identifier, "bankmoney"))
+	{
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsMaster)
+			{
+		#endif
+				YSI_g_sMoney[playerid] = strval(text);
+		#if defined _YSI_SETUP_MASTER
+			}
+			else
+			{
+				CallRemoteFunction("Property_Remote", "iii", playerid, strval(text), E_PROP_REMOTE_LBANK);
+			}
+		#endif
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_OnPlayerSelectedMenuRow
+Params:
+	playerid - Player who selected a row.
+	row - Row they selected.
+Return:
+	-
+Notes:
+	Internal callback.
+-*----------------------------------------------------------------------------*/
+
+#define Property_OnPlayerSelectedMenuRow Property_OnPlayerSelectedRow
+
+Property_OnPlayerSelectedMenuRow(playerid, row)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 0;
+	#endif
+	if (GetPlayerMenu(playerid) == YSI_g_sShopMenu[playerid][E_PROP_AMMU_MENU])
+	{
+		new
+			data = YSI_g_sShopMenu[playerid][E_PROP_AMMU_DATA],
+			slot = (data >> 8) & 0xFF,
+			ammu = data >> 16,
+			count = YSI_g_sProperties[ammu][E_PROP_DATA_NAME][MAX_PROP_NAME - 1];
+		if (data & 0x01)
+		{
+			new
+				weapon,
+				flags = _:YSI_g_sProperties[ammu][E_PROP_DATA_FLAGS],
+				wdat;
+			wdat = Property_GetWeapon(ammu, slot, weapon);
+			if (GetPlayerMoney(playerid) >= Property_WeaponCost(wdat))
+			{
+				if (Property_GetOption(1, flags)) Property_SavePlayerWeapon(playerid, weapon, Property_WeaponAmmo(wdat));
+				if (Property_GetOption(2, flags)) Property_GivePlayerWeapon(playerid, weapon, Property_WeaponAmmo(wdat));
+				GivePlayerMoney(playerid, 0 - Property_WeaponCost(wdat));
+			}
+			else Text_Send(playerid, "YSI_AMMU_NO_MONEY");
+			Property_GenerateAmmuMenu(playerid, ammu, 0, 0);
+		}
+		else
+		{
+			if (count > slot && row == 11) Property_GenerateAmmuMenu(playerid, ammu, 0, slot);
+			else if (count > 12)
+			{
+				if (slot > 11 && row == 0) Property_GenerateAmmuMenu(playerid, ammu, 0, ((slot - 12) / 11) * 11);
+				else Property_GenerateAmmuMenu(playerid, ammu, 1, ((slot - 1) / 11) * 10 + row);
+			}
+			else
+			{
+				Property_GenerateAmmuMenu(playerid, ammu, 1, row);
+			}
+		}
+		return 1;
+	}
+	else YSI_g_sShopMenu[playerid][E_PROP_AMMU_MENU] = Menu:-1;
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_GenerateAmmuMenu
+Params:
+	playerid - Player who watns the menu.
+	ammu - Ammunation they're in.
+	stage - Current menu view if any.
+	page - Current menu page.
+Return:
+	-
+Notes:
+	If slot is 0 the main selection will be displayed and page will represent
+	the offset from the start if there are more than 12 weapons for sale.  If
+	stage is 1 the individual confirmation menu for one weapon will show and
+	page will determine which weapon to show.
+-*----------------------------------------------------------------------------*/
+
+static stock Property_GenerateAmmuMenu(playerid, ammu, stage, page)
+{
+	new
+		Menu:menu = CreateMenu("Ammunation", 2, 270.0, 150.0, 200.0, 50.0),
+		slot = page;
+	SetMenuColumnHeader(menu, 0, "Weapon");
+	SetMenuColumnHeader(menu, 1, "Price");
+	if (stage)
+	{
+		new
+			start,
+			weapon = Property_GetWeapon(ammu, page, start);
+		if (weapon)
+		{
+			AddMenuItem(menu, 0, Property_WeaponName(start));
+			AddMenuItem(menu, 1, numstr(Property_WeaponCost(weapon)));
+		}
+	}
+	else
+	{
+		new
+			weapon,
+			start,
+			row,
+			end = page + 12,
+			next = page,
+			money = GetPlayerMoney(playerid);
+		if (YSI_g_sProperties[ammu][E_PROP_DATA_NAME][MAX_PROP_NAME - 1] - page > 12) end--;
+		if (YSI_g_sProperties[ammu][E_PROP_DATA_NAME][MAX_PROP_NAME - 1] > 12 && page)
+		{
+			end--;
+			AddMenuItem(menu, 0, "Back...");
+			AddMenuItem(menu, 1, " ");
+		}
+		while (slot < end && (weapon = Property_GetWeapon(ammu, next, start)))
+		{
+			new
+				cost = Property_WeaponCost(weapon);
+			AddMenuItem(menu, 0, Property_WeaponName(start));
+			AddMenuItem(menu, 1, numstr(cost));
+			if (cost > money) DisableMenuRow(menu, row);
+			slot++;
+			row++;
+			start++;
+			next = 0;
+		}
+		if (end != 12 && Property_GetWeapon(ammu, 0, start))
+		{
+			AddMenuItem(menu, 0, "Next...");
+			AddMenuItem(menu, 1, " ");
+		}
+	}
+	YSI_g_sShopMenu[playerid][E_PROP_AMMU_MENU] = menu;
+	YSI_g_sShopMenu[playerid][E_PROP_AMMU_DATA] = ((ammu & 0xFFFF) << 16) | ((slot & 0xFF) << 8) | (stage ? 1 : 0) | 2;
+	ShowMenuForPlayer(menu, playerid);
+	DestroyMenu(menu);
+}
+
+/*----------------------------------------------------------------------------*-
+Command:
+	sell
+Parameters:
+	<id> - Property to sell.
+Notes:
+	Sells a property you own if it can be sold.
+-*----------------------------------------------------------------------------*/
+
+public ycmd_sell(playerid, params[], help)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 1;
+	#endif
+	if (help)
+	{
+		Text_Send(playerid, "YSI_SELL_HELP_1");
+		Text_Send(playerid, "YSI_SELL_HELP_2");
+		Text_Send(playerid, "YSI_SELL_HELP_3");
+		Text_Send(playerid, "YSI_SELL_HELP_4");
+	}
+	else
+	{
+		if (params[0] >= '0' && params[0] <= '9')
+		{
+			new
+				prop = strval(params);
+			if (Property_IsActive(prop))
+			{
+				new
+					e_PROP_FLAGS:flag = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
+				if ((flag & e_PROP_FLAGS_TYPES) == e_PROP_FLAGS_TYPE_PROP)
+				{
+					if (Property_GetOption(1, flag))
+					{
+						if (Property_GetOption(2, flag))
+						{
+							if (Bit_GetBit(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS], playerid)) Bit_Set(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS], playerid, 0, PLAYER_BIT_ARRAY);
+							else return Text_Send(playerid, "YSI_SELL_CANT");
+						}
+						else
+						{
+							if (_:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] == playerid) YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] = Bit:INVALID_PLAYER_ID;
+							else return Text_Send(playerid, "YSI_SELL_CANT");
+						}
+						new
+							cost = ((((YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] >>> 6) & 0x03FFF000) | ((YSI_g_sProperties[prop][E_PROP_DATA_DATA_1] >>> 20) & 0x00000FFF)) * ((Property_GetOption(3, flag)) ? PROPERTY_SELL_PERCENT : 100)) / 100;
+						Text_SendFormat(playerid, "YSI_SELL_SOLD", cost);
+						Checkpoint_SetVisible(_:(flag & e_PROP_FLAGS_LINK), 1);
+						GivePlayerMoney(playerid, cost);
+						Bit_Set(YSI_g_sPlayerProperties[playerid], prop, 0, GROUP_PROPERTY_BITS);
+					}
+					else Text_Send(playerid, "YSI_SELL_CANT");
+					return 1;
+				}
+			}
+		}
+		Text_Send(playerid, "YSI_SELL_NO_ID");
+	}
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_Bank
+Params:
+	playerid - Player who is banking money.
+	amount - Amount of money they're banking.
+Return:
+	-
+Notes:
+	Does banks and withdrawls.
+-*----------------------------------------------------------------------------*/
+
+stock Property_Bank(playerid, amount)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (IsPlayerInCheckpoint(playerid))
+			{
+				new
+					cpid = Checkpoint_Get(playerid),
+					prop = YSI_g_sCheckpointPointers[cpid];
+				if (prop != NO_PROPERTY)
+				{
+					new
+						e_PROP_FLAGS:flag = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
+					if (flag & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_BANK)
+					{
+						if ((amount > 0) ? (GetPlayerMoney(playerid) >= amount) : (YSI_g_sMoney[playerid] + amount >= 0))
+						{
+							YSI_g_sMoney[playerid] += amount;
+							GivePlayerMoney(playerid, -amount);
+						}
+						else return 0;
+					}
+					else Text_Send(playerid, "YSI_BANK_NOT");
+				}
+				else Text_Send(playerid, "YSI_BANK_NOT");
+			}
+			else Text_Send(playerid, "YSI_BANK_CP");
+			return 1;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Property_Remote", "iii", playerid, amount, E_PROP_REMOTE_BANK);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Command:
+	bank
+Parameters:
+	<amount> - Value to bank.
+Notes:
+	Calls Property_Bank with positive input amount.
+-*----------------------------------------------------------------------------*/
+
+public ycmd_bank(playerid, params[], help)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 1;
+	#endif
+	if (help)
+	{
+		Text_Send(playerid, "YSI_BANK_HELP_1");
+		Text_Send(playerid, "YSI_BANK_HELP_2");
+		Text_Send(playerid, "YSI_BANK_HELP_3");
+		Text_SendFormat(playerid, "YSI_BANK_HELP_4", "bank");
+	}
+	else
+	{
+		new
+			bank = strval(params);
+		if (Property_Bank(playerid, bank)) Text_SendFormat(playerid, "YSI_BANK_BANKED", bank, YSI_g_sMoney[playerid]);
+		else Text_Send(playerid, "YSI_BANK_INSUFFICIENT");
+	}
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Command:
+	balance
+Parameters:
+	-
+Notes:
+	Displays how much you have in the bank.  Does not require you to be in a
+	bank.
+-*----------------------------------------------------------------------------*/
+
+public ycmd_balance(playerid, params[], help)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 1;
+	#endif
+	if (help) Text_Send(playerid, "YSI_BAL_HELP");
+	else Text_SendFormat(playerid, "YSI_BANK_BALANCE", YSI_g_sMoney[playerid]);
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Command:
+	withdraw
+Parameters:
+	<amount> - Amount to withdraw.
+Notes:
+	Calls Property_Bank with negative input amount.
+-*----------------------------------------------------------------------------*/
+
+public ycmd_withdraw(playerid, params[], help)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 1;
+	#endif
+	if (help)
+	{
+		Text_Send(playerid, "YSI_WITH_HELP1");
+		Text_Send(playerid, "YSI_WITH_HELP2");
+		Text_Send(playerid, "YSI_WITH_HELP3");
+		Text_SendFormat(playerid, "YSI_WITH_HELP4", "withdraw");
+	}
+	else
+	{
+		new
+			bank = -strval(params);
+		if (Property_Bank(playerid, bank)) Text_SendFormat(playerid, "YSI_WITHDREW", bank, YSI_g_sMoney[playerid]);
+		else Text_Send(playerid, "YSI_BANK_INSUFFUCUENT");
+	}
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Command:
+	buy
+Parameters:
+	-
+Notes:
+	Allows you to purchase the property you are at.
+-*----------------------------------------------------------------------------*/
+
+public ycmd_buy(playerid, params[], help)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 1;
+	#endif
+	if (help)
+	{
+		Text_Send(playerid, "YSI_BUY_HELP_1");
+		Text_Send(playerid, "YSI_BUY_HELP_2");
+		Text_Send(playerid, "YSI_BUY_HELP_3");
+		Text_Send(playerid, "YSI_BUY_HELP_4");
+	}
+	else
+	{
+		if (IsPlayerInCheckpoint(playerid))
+		{
+			new
+				cpid = Checkpoint_Get(playerid),
+				prop = YSI_g_sCheckpointPointers[cpid];
+			if (prop != NO_PROPERTY)
+			{
+				new
+					e_PROP_FLAGS:flag = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
+				if (flag & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_PROP)
+				{
+					new
+						price = ((YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] >>> 6) & 0x03FFF000) | ((YSI_g_sProperties[prop][E_PROP_DATA_DATA_1] >>> 20) & 0x00000FFF);
+					if (GetPlayerMoney(playerid) >= price)
+					{
+						if (Property_GetOption(2, flag))
+						{
+							if (Bit_GetBit(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS], playerid))
+							{
+								Text_Send(playerid, "YSI_PROP_OWN");
+								return 1;
+							}
+							Bit_Set(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS], playerid, 1, PLAYER_BIT_ARRAY);
+						}
+						else
+						{
+							new
+								owner = _:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0];
+							if (owner == playerid)
+							{
+								Text_Send(playerid, "YSI_PROP_OWN");
+								return 1;
+							}
+							if (IsPlayerConnected(owner))
+							{
+								GivePlayerMoney(owner, price);
+								Text_SendFormat(owner, "YSI_PROP_OUT", YSI_g_sProperties[prop][E_PROP_DATA_NAME], ReturnPlayerName(playerid), playerid);
+							}
+							YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] = Bit:playerid;
+							if (Property_GetOption(1, flag)) Checkpoint_SetVisible(cpid, 0);
+						}
+						GivePlayerMoney(playerid, -price);
+						Text_SendFormat(playerid, "YSI_PROP_BOUGHT", YSI_g_sProperties[prop][E_PROP_DATA_NAME], price);
+						if (Property_GetOption(4, flag))
+						{
+							price = (price * PROPERTY_INCREASE_PERCENT) / 100;
+							YSI_g_sProperties[prop][E_PROP_DATA_DATA_1] = (YSI_g_sProperties[prop][E_PROP_DATA_DATA_1] & 0xFFFFF) | ((price & 0x00000FFF) << 20);
+							YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] = (YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] & 0x3FFFF) | ((price & 0x03FFF000) << 6);
+						}
+						if (Property_GetOption(1, flag)) Text_SendFormat(playerid, "YSI_PROP_SELL", "sell", prop, (price * ((Property_GetOption(3, flag)) ? PROPERTY_SELL_PERCENT : 100)) / 100);
+					}
+					else Text_Send(playerid, "YSI_PROP_AFFORD");
+				}
+				else Text_Send(playerid, "YSI_PROP_NOT");
+			}
+			else Text_Send(playerid, "YSI_PROP_NOT");
+		}
+		else Text_Send(playerid, "YSI_PROP_CP");
+	}
+	return 1;
+	#pragma unused params
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_Loop
+Params:
+	-
+Return:
+	-
+Notes:
+	Does the main processing for the library.  Removes or kills people in areas
+	they shouldn't be and gives out money to people who earnt it.
+-*----------------------------------------------------------------------------*/
+
+public Property_Loop()
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return;
+	#endif
+	static
+		Float:s_fLastGoodPos[MAX_PLAYERS][3],
+		sLastTick = 0;
+	new
+		currentTick = GetTickCount(),
+		elapse = currentTick - sLastTick;
+	for (new i = 0; i < MAX_PROPERTIES; i++)
+	{
+		new
+			flags = YSI_g_sProperties[i][E_PROP_DATA_FLAGS];
+		if (flags & _:e_PROP_FLAGS_ACTIVE)
+		{
+			switch (flags & _:e_PROP_FLAGS_TYPES)
+			{
+				case e_PROP_FLAGS_TYPE_MONP, e_PROP_FLAGS_TYPE_MONA:
+				{
+					new
+						time = YSI_g_sProperties[i][E_PROP_DATA_DATA_2];
+					if (!time) time = YSI_g_sProperties[i][E_PROP_DATA_NAME][0];
+					time -= elapse;
+					if (time < 0) time = 0;
+					YSI_g_sProperties[i][E_PROP_DATA_DATA_2] = time;
+				}
+				case e_PROP_FLAGS_TYPE_PROP:
+				{
+					new
+						time = YSI_g_sProperties[i][E_PROP_DATA_NAME][MAX_PROP_NAME - 1];
+					if (!time) time = YSI_g_sProperties[i][E_PROP_DATA_DATA_1] & 0x000FFFFF;
+					time -= elapse;
+					if (time <= 0) time = 0;
+					YSI_g_sProperties[i][E_PROP_DATA_NAME][MAX_PROP_NAME - 1] = time;
+				}
+			}
+		}
+	}
+	foreach (Player, i)
+	{
+		new
+			money,
+			bad;
+		for (new j = 0; j < GROUP_PROPERTY_BITS; j++)
+		{
+			new
+				props = _:YSI_g_sPlayerProperties[i][j],
+				slot = 1,
+				bit;
+			while (props)
+			{
+				if (props & slot)
+				{
+					new
+						prop = (j * 32) + bit,
+						flags = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
+					if (flags & _:e_PROP_FLAGS_ACTIVE)
+					{
+						switch (flags & _:e_PROP_FLAGS_TYPES)
+						{
+							case e_PROP_FLAGS_TYPE_MONP, e_PROP_FLAGS_TYPE_MONA:
+								if (!YSI_g_sProperties[prop][E_PROP_DATA_DATA_2]) GivePlayerMoney(i, YSI_g_sProperties[prop][E_PROP_DATA_DATA_1]);
+							case e_PROP_FLAGS_TYPE_PROP:
+							{
+								if (((Property_GetOption(2, flags)) ? (_:Bit_GetBit(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS], i)) : (_:(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] == Bit:i))) && !YSI_g_sProperties[prop][E_PROP_DATA_NAME][MAX_PROP_NAME - 1]) money += YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] & 0x3FFFF;
+							}
+							case e_PROP_FLAGS_TYPE_RSRC:
+							{
+								if (Property_GetOption(1, flags))
+								{
+									SetPlayerPos(i, s_fLastGoodPos[i][0], s_fLastGoodPos[i][1], s_fLastGoodPos[i][2]);
+									bad = 1;
+								}
+								else
+								{
+									new Float:health;
+									GetPlayerHealth(i, health);
+									SetPlayerHealth(i, health - YSI_g_sProperties[prop][E_PROP_DATA_DATA_2]);
+								}
+							}
+						}
+					}
+					props ^= slot;
+				}
+				slot <<= 1;
+				bit++;
+			}
+		}
+		if (money)
+		{
+			Text_SendFormat(i, "YSI_PROP_EARNT", money);
+			GivePlayerMoney(i, money);
+		}
+		if (!bad) GetPlayerPos(i, s_fLastGoodPos[i][0], s_fLastGoodPos[i][1], s_fLastGoodPos[i][2]);
+	}
+	sLastTick = currentTick;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_IsPlayerProperty
+Params:
+	flags - Property data to check.
+	playerid - Player to check for.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Property_IsPlayerProperty(%1,%2) \
+	((%1) & e_PROP_FLAGS_ACTIVE && (%1) & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_PROP && Checkpoint_HasPlayerNoWorld(_:((%1) & e_PROP_FLAGS_LINK), (%2)))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_GetPlayerPropCount
+Params:
+	playerid - Player to count for.
+Return:
+	-
+Notes:
+	Gets the number of properties this player could theoretically own.
+-*----------------------------------------------------------------------------*/
+
+stock Property_GetPlayerPropCount(playerid)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			new
+				count;
+			for (new i = 0; i < MAX_PROPERTIES; i++)
+			{
+				new
+					e_PROP_FLAGS:flags = YSI_g_sProperties[i][E_PROP_DATA_FLAGS];
+				if (Property_IsPlayerProperty(flags, playerid)) count++;
+			}
+			return count;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Property_Remote", "iii", playerid, 0, E_PROP_REMOTE_PPCO);
+			return getproperty(0, "LRegProp");
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_GetPropertyBits
+Params:
+	playerid - Player to get properties of.
+	Bit:properties[] - Array to return properties in.
+Return:
+	-
+Notes:
+	Gets the properties currently owned by this player.
+-*----------------------------------------------------------------------------*/
+
+stock Property_GetPropertyBits(playerid, Bit:properties[])
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (playerid < 0 || playerid >= MAX_PLAYERS) return 0;
+			for (new i = 0; i < MAX_PROPERTIES; i++)
+			{
+				new
+					e_PROP_FLAGS:flags = YSI_g_sProperties[i][E_PROP_DATA_FLAGS];
+				if (flags & e_PROP_FLAGS_ACTIVE && flags & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_PROP && ((Property_GetOption(2, flags)) ? (_:Bit_GetBit(YSI_g_sProperties[i][E_PROP_DATA_PLAYERS], playerid)) : (_:(_:YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][0] == playerid)))) Bit_Set(properties, i, 1, GROUP_PROPERTY_BITS);
+			}
+			return 1;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			YSI_g_sTempPropReq = 1;
+			CallRemoteFunction("Property_Remote", "iii", playerid, 0, E_PROP_REMOTE_PROBITS);
+			YSI_g_sTempPropReq = 0;
+			for (new i = 0; i < sizeof (YSI_g_sTempProp); i++) properties[i] = YSI_g_sTempProp[i];
+			return 1;
+		}
+	#endif
+}
+
+#if defined _YSI_SETUP_MASTER
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_GetPropertyBitsReceive
+Params:
+	playerid - Player who's properties are being got.
+	Bit:properties[] - Properties owned by the player.
+	count - Size of array.
+Return:
+	-
+Notes:
+	Receives data requested from the master on properties owned by a player.
+-*----------------------------------------------------------------------------*/
+
+	public Property_GetPropertyBitsReceive(playerid, Bit:properties[], count)
+	{
+		if (!YSI_g_sTempPropReq) return;
+		for (new i = 0; i < count && i < sizeof (YSI_g_sTempProp); i++) YSI_g_sTempProp[i] = properties[i];
+	}
+#endif
+
+/*----------------------------------------------------------------------------*-
+Command:
+	properties
+Parameters:
+	<page> - Page of properties to view (optional).
+Notes:
+	Lista all properties available to a player and who owns them.
+-*----------------------------------------------------------------------------*/
+
+public ycmd_properties(playerid, params[], help)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 1;
+	#endif
+	if (help)
+	{
+		Text_Send(playerid, "YSI_LIST_HELP_1");
+		Text_Send(playerid, "YSI_LIST_HELP_2");
+		Text_Send(playerid, "YSI_LIST_HELP_3");
+		return 1;
+	}
+	new
+		props = Property_GetPlayerPropCount(playerid),
+		pages = (props + 7) / 8,
+		page = strval(params);
+	if (props > 8)
+	{
+		if (page)
+		{
+			if (page <= pages)
+			{
+				for (new i = 0, j = 0, k = (page - 1) * 8, n = k + 8; i < MAX_PROPERTIES && j < n; i++)
+				{
+					new
+						e_PROP_FLAGS:flags = YSI_g_sProperties[i][E_PROP_DATA_FLAGS];
+					if (Property_IsPlayerProperty(flags, playerid))
+					{
+						if (j >= k)
+						{
+							if (Property_GetOption(2, flags)) Text_SendFormat(playerid, "YSI_LIST_MULTI", YSI_g_sProperties[i][E_PROP_DATA_NAME], Bit_GetCount(YSI_g_sProperties[i][E_PROP_DATA_PLAYERS], PLAYER_BIT_ARRAY));
+							else Text_SendFormat(playerid, "YSI_LIST_FORM", YSI_g_sProperties[i][E_PROP_DATA_NAME], ReturnPlayerName(_:YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][0]));
+						}
+						j++;
+					}
+				}
+			}
+			else Text_SendFormat(playerid, "YSI_LIST_PAGES", "properties", pages);
+		}
+		else
+		{
+			Text_Send(playerid, "YSI_LIST_MORE");
+			Text_SendFormat(playerid, "YSI_LIST_PAGES", "properties", pages);
+		}
+	}
+	else if (props)
+	{
+		for (new j = 0, i = 0; i < props && j < MAX_PROPERTIES; j++)
+		{
+			new
+				e_PROP_FLAGS:flags = YSI_g_sProperties[j][E_PROP_DATA_FLAGS];
+			if (Property_IsPlayerProperty(flags, playerid))
+			{
+				if (Property_GetOption(2, flags)) Text_SendFormat(playerid, "YSI_LIST_MULTI", YSI_g_sProperties[j][E_PROP_DATA_NAME], Bit_GetCount(YSI_g_sProperties[j][E_PROP_DATA_PLAYERS], PLAYER_BIT_ARRAY));
+				else Text_SendFormat(playerid, "YSI_LIST_FORM", YSI_g_sProperties[j][E_PROP_DATA_NAME], ReturnPlayerName(_:YSI_g_sProperties[j][E_PROP_DATA_PLAYERS][0]));
+				i++;
+			}
+		}
+	}
+	else Text_Send(playerid, "YSI_LIST_NONE");
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_GetLink
+Params:
+	property - Property to get link of.
+Return:
+	-
+Notes:
+	Returns a reference to the area or checkpoint used by this property or
+	NO_PROPERTY on fail.
+-*----------------------------------------------------------------------------*/
+
+stock Property_GetLink(property)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (Property_IsActive(property)) return _:(YSI_g_sProperties[property][E_PROP_DATA_FLAGS] & e_PROP_FLAGS_LINK);
+			return NO_PROPERTY;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Property_Remote", "iii", property, 0, E_PROP_REMOTE_LINK);
+			return getproperty(0, "LRegProp");
+		}
+	#endif
+}
+
+#if defined _YSI_SETUP_MASTER
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_Remote
+Params:
+	ident - Item to do instruction on.
+	info - Data to work with.
+	instruction - What to do.
+Return:
+	-
+Notes:
+	Wraps a load of minor functions for remote calling.
+-*----------------------------------------------------------------------------*/
+
+	public Property_Remote(ident, info, instruction)
+	{
+		switch (instruction)
+		{
+			case E_PROP_REMOTE_LINK:
+			{
+				if (Property_IsActive(ident)) setproperty(0, "YSIReq", _:(YSI_g_sProperties[ident][E_PROP_DATA_FLAGS] & e_PROP_FLAGS_LINK));
+				else setproperty(0, "YSIReq", NO_PROPERTY);
+			}
+			case E_PROP_REMOTE_PROBITS:
+			{
+				new
+					Bit:properties[GROUP_PROPERTY_BITS];
+				if (ident < 0 || ident >= MAX_PLAYERS)
+				{
+					CallRemoteFunction("Property_GetPropertyBitsReceive", "iai", ident, _:properties, sizeof (properties));
+					return;
+				}
+				for (new i = 0; i < MAX_PROPERTIES; i++)
+				{
+					new
+						e_PROP_FLAGS:flags = YSI_g_sProperties[i][E_PROP_DATA_FLAGS];
+					if (flags & e_PROP_FLAGS_ACTIVE && flags & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_PROP && ((Property_GetOption(2, flags)) ? (_:Bit_GetBit(YSI_g_sProperties[i][E_PROP_DATA_PLAYERS], ident)) : (_:(_:YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][0] == ident)))) Bit_Set(properties, i, 1, GROUP_PROPERTY_BITS);
+				}
+				CallRemoteFunction("Property_GetPropertyBitsReceive", "iai", ident, _:properties, sizeof (properties));
+			}
+			case E_PROP_REMOTE_PPCO:
+			{
+				new
+					count;
+				for (new i = 0; i < MAX_PROPERTIES; i++)
+				{
+					new
+						e_PROP_FLAGS:flags = YSI_g_sProperties[i][E_PROP_DATA_FLAGS];
+					if (Property_IsPlayerProperty(flags, ident)) count++;
+				}
+				setproperty(0, "YSIReq", count);
+			}
+			case E_PROP_REMOTE_BANK:
+			{
+				if (IsPlayerInCheckpoint(ident))
+				{
+					new
+						cpid = Checkpoint_Get(ident),
+						prop = YSI_g_sCheckpointPointers[cpid];
+					if (prop != NO_PROPERTY)
+					{
+						new
+							e_PROP_FLAGS:flag = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
+						if (flag & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_BANK)
+						{
+							if ((info > 0) ? (GetPlayerMoney(ident) >= info) : (YSI_g_sMoney[ident] + info >= 0))
+							{
+								YSI_g_sMoney[ident] += info;
+								GivePlayerMoney(ident, -info);
+							}
+							else
+							{
+								setproperty(0, "LRegProp", 0);
+								return;
+							}
+						}
+						else Text_Send(ident, "YSI_BANK_NOT");
+					}
+					else Text_Send(ident, "YSI_BANK_NOT");
+				}
+				else Text_Send(ident, "YSI_BANK_CP");
+				setproperty(0, "LRegProp", 1);
+			}
+			case E_PROP_REMOTE_LBANK:
+			{
+				YSI_g_sMoney[ident] = info;
+			}
+			case E_PROP_REMOTE_GBANK:
+			{
+				setproperty(0, "LRegProp", YSI_g_sMoney[ident]);
+			}
+			case E_PROP_REMOTE_LWEAP:
+			{
+				YSI_g_sSpawnWeapons[ident][info >> 16] = info & 0xFFFF;
+			}
+			case E_PROP_REMOTE_SWEAP:
+			{
+				new
+					str[14];
+				for (new i = 0; i < 13; i++)
+				{
+					str[i] = (YSI_g_sSpawnWeapons[ident][i] << 1) | 0x01;
+				}
+				str[13] = '\0';
+				setproperty(0, "", 110953013, str);
+			}
+			case E_PROP_REMOTE_GOWEAP:
+			{
+				setproperty(0, "YSIReq", YSI_g_sSpawnWeapons[ident][info]);
+			}
+			case E_PROP_REMOTE_SAVEWEAP:
+			{
+				new
+					slot = ident & 0xFFFF,
+					playerid = (ident >> 16) & 0xFFFF;
+				if ((YSI_g_sSpawnWeapons[playerid][slot] & 0xFF000000) == (info >> 24)) YSI_g_sSpawnWeapons[playerid][slot] += info & 0x00FFFFFF;
+				else YSI_g_sSpawnWeapons[playerid][slot] = info;
+			}
+			case E_PROP_REMOTE_DELETE:
+			{
+				if (!Property_IsActive(ident)) return;
+				new
+					e_PROP_FLAGS:flags = YSI_g_sProperties[ident][E_PROP_DATA_FLAGS];
+				YSI_g_sProperties[ident][E_PROP_DATA_FLAGS] = e_PROP_FLAGS:0;
+				if (flags & e_PROP_FLAGS_TYPES > e_PROP_FLAGS_TYPE_MONP)
+				{
+					YSI_g_sAreaPointers[_:(flags & e_PROP_FLAGS_LINK)] = NO_PROPERTY;
+					Area_Delete(_:(flags & e_PROP_FLAGS_LINK));
+				}
+				else
+				{
+					YSI_g_sCheckpointPointers[_:(flags & e_PROP_FLAGS_LINK)] = NO_PROPERTY;
+					DestroyCheckpoint(_:(flags & e_PROP_FLAGS_LINK));
+				}
+				for (new i = 0; i < MAX_PLAYERS; i++) Bit_Set(YSI_g_sPlayerProperties[i], ident, 0, GROUP_PROPERTY_BITS);
+			}
+			case E_PROP_REMOTE_TYPE:
+			{
+				if (!Property_IsActive(ident)) setproperty(0, "YSIReq", 0);
+				setproperty(0, "YSIReq", _:(YSI_g_sProperties[ident][E_PROP_DATA_FLAGS] & e_PROP_FLAGS_TYPES));
+			}
+			case E_PROP_REMOTE_VALID:
+			{
+				setproperty(0, "YSIReq", Property_IsActive(ident));
+			}
+		}
+	}
+#endif

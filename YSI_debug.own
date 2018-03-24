@@ -1,0 +1,170 @@
+/*----------------------------------------------------------------------------*-
+					==============================
+					Y Sever Includes - Debug Setup
+					==============================
+Description:
+	Ensures debug levels are set and defines debug functions.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1
+Changelog:
+	15/04/07:
+		First version.
+Functions:
+	Public:
+		-
+	Core:
+		-
+	Stock:
+		-
+	Static:
+		-
+	Inline:
+		Debug_Code - Runs defined code if a certain level is active.
+		Debug_Print - Prints the formatted string provided at the given level.
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	_DEBUG %n - Activate debugging at given level
+Enums:
+	-
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		-
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#if !defined _DEBUG
+	#define _DEBUG 0
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Debug_Code
+Params:
+	level - Debug level to run the code at.
+	code - Code to run.
+Return:
+	-
+Notes:
+	Code is not a variable, it's a code chunk and may be written as so:
+	
+	Debug_Code_1(if (bla == 2) { bla++; printf("%d", bla); });
+	
+	The code must all be on one line to avoid errors.
+	This isn't really a function as the first parameter is part of the name.
+-*----------------------------------------------------------------------------*/
+
+#if _DEBUG >= 1
+	#define Debug_Code_1(%1); \
+		%1
+#else
+	#define Debug_Code_1(%1);
+#endif
+
+#if _DEBUG >= 2
+	#define Debug_Code_2(%1); \
+		%1
+#else
+	#define Debug_Code_2(%1);
+#endif
+
+#if _DEBUG >= 3
+	#define Debug_Code_3(%1); \
+		%1
+#else
+	#define Debug_Code_3(%1);
+#endif
+
+#if _DEBUG >= 4
+	#define Debug_Code_4(%1); \
+		%1
+#else
+	#define Debug_Code_4(%1);
+#endif
+
+#if _DEBUG >= 5
+	#define Debug_Code_5(%1); \
+		%1
+#else
+	#define Debug_Code_5(%1);
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Debug_Print
+Params:
+	level - Debug level to print at.
+	format[] - Format.
+	...
+Return:
+	-
+Notes:
+	This isn't really a function as the first parameter is part of the name:
+	
+	Debug_Print_4("variables: %d, %d", i, j);
+-*----------------------------------------------------------------------------*/
+
+#if _DEBUG >= 1
+	#define Debug_Print_1(%1); \
+		printf(%1);
+#else
+	#define Debug_Print_1(%1);
+#endif
+
+#if _DEBUG >= 2
+	#define Debug_Print_2(%1); \
+		printf(%1);
+#else
+	#define Debug_Print_2(%1);
+#endif
+
+#if _DEBUG >= 3
+	#define Debug_Print_3(%1); \
+		printf(%1);
+#else
+	#define Debug_Print_3(%1);
+#endif
+
+#if _DEBUG >= 4
+	#define Debug_Print_4(%1); \
+		printf(%1);
+#else
+	#define Debug_Print_4(%1);
+#endif
+
+#if _DEBUG >= 5
+	#define Debug_Print_5(%1); \
+		printf(%1);
+#else
+	#define Debug_Print_5(%1);
+#endif

@@ -1,0 +1,124 @@
+/*----------------------------------------------------------------------------*-
+					============================
+					Y Sever Includes - Help Core
+					============================
+Description:
+	Provides the help command to give help on the mode and commands.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1
+Changelog:
+	25/06/07:
+		First version.
+Functions
+	Public:
+		-
+	Core:
+		Help_Help - Declares the help command.
+	Stock:
+		-
+	Static:
+		-
+	Inline:
+		-
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	-
+Enums:
+	-
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		-
+Commands:
+	help - The help command.
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+forward ycmd_help(playerid, params[], help);
+
+Text_RegisterTag(ysi_help);
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Help_Help
+Params:
+	-
+Return:
+	-
+Notes:
+	Declares the command.
+-*----------------------------------------------------------------------------*/
+
+#define Help_Help() \
+	ycmd(help)
+
+/*----------------------------------------------------------------------------*-
+Command:
+	help
+Parameters:
+	<command> - Command you want help on (optional).
+Notes:
+	Displays general server help or help on a specific command.
+-*----------------------------------------------------------------------------*/
+
+public ycmd_help(playerid, params[], help)
+{
+	if (help)
+	{
+		Text_Send(playerid, "YSI_HELP_HELP1");
+		Text_SendFormat(playerid, "YSI_HELP_HELP2", "help", "help");
+		Text_SendFormat(playerid, "YSI_HELP_HELP3", "commands");
+	}
+	else
+	{
+		if (params[0])
+		{
+			if (!Command_Process(playerid, params, 1))
+			{
+				Text_Send(playerid, "YSI_HELP_NOTF");
+			}
+		}
+		else
+		{
+			Text_Send(playerid, "YSI_HELP_1");
+			Text_Send(playerid, "YSI_HELP_2");
+			Text_Send(playerid, "YSI_HELP_3");
+			Text_Send(playerid, "YSI_HELP_4");
+			Text_Send(playerid, "YSI_HELP_5");
+			Text_Send(playerid, "YSI_HELP_6");
+			Text_Send(playerid, "YSI_HELP_7");
+			Text_Send(playerid, "YSI_HELP_8");
+			Text_SendFormat(playerid, "YSI_HELP_9", "commands", "help");
+			Text_Send(playerid, "YSI_HELP_10");
+		}
+	}
+	return 1;
+}

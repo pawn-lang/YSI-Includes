@@ -1,0 +1,1592 @@
+/*----------------------------------------------------------------------------*-
+					=============================
+					Y Sever Includes - Areas Core
+					=============================
+Description:
+	Handles area checks for player location based code not involving CPs.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1
+Changelog:
+	27/08/07:
+		Made master compatible.
+	03/08/07:
+		Updated timer system.
+	31/07/07:
+		Made Area_GetPlayerArea safe.
+	08/05/07:
+		First version.
+Functions:
+	Public:
+		Area_Loop - Main loop for checking who's where.
+		Area_Remote - Does minor functions remotely.
+		Area_AddRemote - Adds areas remotely.
+		YSIM_Areas - Master system interface.
+		Area_Broadcast - Recieves transmitted areas.
+		Area_UpdateEmpty - Resets the empty array after master change.
+	Core:
+		Area_Area - Constructor.
+		Area_CheckArea - Gets an area's type anx calls the relevant function.
+		Area_OnPlayerConnect - Called when a player connects.
+	Stock:
+		Area_Delete - Deletes an area.
+		Area_AddCube - Adds a cube.
+		Area_AddBox - Adds a box.
+		Area_AddCircle - Adds a circle.
+		Area_AddSphere - Adds a sphere.
+		Area_AddPoly - Adds a polygon.
+		Area_GetPlayerArea - Gets the area a player is in.
+		Area_SetPlayer - Sets wether a player can use this area.
+		Area_SetAllPlayers - Sets wether all players can use this area.
+		Area_SetAllWorlds - Sets wether all worlds have this are.
+		Area_SetWorld - Sets wether this world has this area.
+		Area_IsValid - Checks if an area is valid.
+	Static:
+		Area_IsInCircle - Checks if a player is in this circular area.
+		Area_IsInSphere - Checks if a player is in this spherical area.
+		Area_IsInPoly - Checks if a player is in this polygonal area.
+		Area_IsInCube - Checks if a player is in this cubic area.
+		Area_IsInBox - Checks if a player is in this rectangular area.
+		Area_AddToUnused - Adds a area pointer to the unused list.
+		Area_GetFreeSlot - Gets the next free area slot.
+	Inline:
+		Area_IsActive - Checks if an area is active.
+		Area_GetEmptySlotCount - Gets the number of empty slots.
+		Area_AddSlots - Removes slots from the unused count.
+	API:
+		-
+Callbacks:
+	OnPlayerEnterArea - Called when a player enters an area.
+	OnPlayerLeaveArea - Called when a player leaves an area.
+Definitions:
+	MAX_AREAS - Max number of areas.
+	AREA_LOOP_GRANULARITY - Number of loops per second for the checking.
+	NO_AREA - Fail return.
+	SINGLE_SLOT_AREA - Marker for only one part to the area.
+	AREA_NO_NEXT - Marker for end of a list.
+	AREA_WORLDS - Number of worlds an area can be in.
+	AREA_WORLD_COUNT - Number of cells required for a bit array of AREA_WORLDS.
+Enums:
+	e_AREA_FLAGS - Flags for each area.
+	E_AREA - Structure for part of an areas data.
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		YSI_g_sUnusedAreas - Pointer to the first unused area.
+		YSI_g_sLastUnused - Pointer to the last unused area.
+		YSI_g_sFreeCount - Number of unused slots.
+		YSI_g_sAreas - Array of area data.
+		YSI_g_sPlayerArea - Array of players' current areas.
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#if !defined MAX_AREAS
+	#define MAX_AREAS 64
+#endif
+
+#if !defined AREA_LOOP_GRANULARITY
+	#define AREA_LOOP_GRANULARITY 3
+#endif
+
+#define NO_AREA -1
+#define SINGLE_SLOT_AREA e_AREA_FLAGS_NEXT
+#define AREA_NO_NEXT (_:e_AREA_FLAGS_NEXT)
+
+#if !defined AREA_WORLDS
+	#define AREA_WORLDS 256
+#endif
+
+#if AREA_WORLDS > 32
+	#define AREA_WORLD_COUNT Bit_Bits(AREA_WORLDS)
+#else
+	#define AREA_WORLD_COUNT 2
+#endif
+
+enum e_AREA_FLAGS (<<= 1)
+{
+	e_AREA_FLAGS_NEXT = 0x00000FFF,
+	e_AREA_FLAGS_COUNT = 0x00FFF000,
+	e_AREA_FLAGS_SPHERE = 0x01000000,
+	e_AREA_FLAGS_CIRCLE,
+	e_AREA_FLAGS_POLY,
+	e_AREA_FLAGS_CUBE,
+	e_AREA_FLAGS_BOX,
+	e_AREA_FLAGS_ACTIVE,
+	e_AREA_FLAGS_USED
+}
+
+enum
+{
+	E_AREA_REMOTE_DELETE,
+	E_AREA_REMOTE_GET_AREA,
+	E_AREA_REMOTE_PLAYER_LET,
+	E_AREA_REMOTE_PLAYER_VET,
+	E_AREA_REMOTE_WORLD_LET,
+	E_AREA_REMOTE_WORLD_VET,
+	E_AREA_REMOTE_AWORLD,
+	E_AREA_REMOTE_APLAYER,
+	E_AREA_REMOTE_VALID,
+	E_AREA_REMOTE_EMPTY
+}
+
+enum E_AREA
+{
+	e_AREA_FLAGS:E_AREA_FLAGS,
+	#if AREA_WORLDS > 0
+		Bit:E_AREA_WORLDS[AREA_WORLD_COUNT],
+	#endif
+	#if defined _YSI_SETUP_MASTER
+		E_AREA_MASTER,
+	#endif
+	Bit:E_AREA_PLAYERS[PLAYER_BIT_ARRAY],
+	Float:E_AREA_POS[4]
+}
+
+static
+	YSI_g_sUnusedAreas,
+	YSI_g_sLastUnused = MAX_AREAS - 1,
+	YSI_g_sFreeCount = MAX_AREAS,
+	YSI_g_sAreas[MAX_AREAS][E_AREA],
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sIsMaster,
+	#endif
+	YSI_g_sPlayerArea[MAX_PLAYERS];
+
+#if MAX_AREAS >= 0xFFF
+	#error This version does not support more than 4096 areas
+#endif
+
+#if defined _YSI_SETUP_MASTER
+	forward Area_Remote(ident, data, info);
+	forward Area_AddRemote(e_AREA_FLAGS:type, Float:bounds[], count, master);
+	forward YSIM_Areas(command);
+	forward Area_Broadcast(id, e_AREA_FLAGS:flags, master, Float:f1, Float:f2, Float:f3, Float:f4, Bit:worlds[], worldcount, Bit:players[], playercount);
+	forward Area_UpdateEmpty();
+#endif
+
+forward Area_Loop();
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_GetEmptySlotCount
+Params:
+	-
+Return:
+	Number of unused area slots.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Area_GetEmptySlotCount() \
+	(YSI_g_sFreeCount)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_AddSlots
+Params:
+	num - Number of slots to add.
+Return:
+	-
+Notes:
+	Actually removes slots from the unused count.
+-*----------------------------------------------------------------------------*/
+
+#define Area_AddSlots(%1) \
+	YSI_g_sFreeCount -= (%1)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_IsActive
+Params:
+	area - Area to check validity of
+Return:
+	-
+Notes:
+	An area slot could be used but still invalid if it's not the first slot in
+	an area set.
+-*----------------------------------------------------------------------------*/
+
+#define Area_IsActive(%1) \
+	((%1) >= 0 && (%1) < MAX_AREAS && (YSI_g_sAreas[(%1)][E_AREA_FLAGS] & e_AREA_FLAGS_ACTIVE))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_GetFreeSlot
+Params:
+	-
+Return:
+	Next available slot.
+Notes:
+	Gets an empty slot, removes it from the unused list and returs a pointer.
+-*----------------------------------------------------------------------------*/
+
+static stock Area_GetFreeSlot()
+{
+	if (YSI_g_sUnusedAreas == NO_AREA) return NO_AREA;
+	new
+		old = YSI_g_sUnusedAreas,
+		next = YSI_g_sAreas[old][E_AREA_FLAGS];
+	if (next == old)
+	{
+		YSI_g_sUnusedAreas = NO_AREA;
+		YSI_g_sLastUnused = NO_AREA;
+	}
+	else
+	{
+		YSI_g_sUnusedAreas = next;
+		YSI_g_sAreas[YSI_g_sLastUnused][E_AREA_FLAGS] = e_AREA_FLAGS:next;
+	}
+	YSI_g_sFreeCount--;
+	return old;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_Delete
+Params:
+	area - Area to remove from the list.
+Return:
+	-
+Notes:
+	You can only remove areas which are at the start of a list.
+-*----------------------------------------------------------------------------*/
+
+stock Area_Delete(area)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (!Area_IsActive(area)) return 0;
+			do
+			{
+				new
+					next = _:(YSI_g_sAreas[area][E_AREA_FLAGS] & e_AREA_FLAGS_NEXT);
+				Area_AddToUnused(area);
+				area = next;
+			}
+			while (area != AREA_NO_NEXT);
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Area_Remote", "iii", area, 0, E_AREA_REMOTE_DELETE);
+		}
+	#endif
+	return 1;
+}
+
+#if defined _YSI_SETUP_MASTER
+	/*----------------------------------------------------------------------------*-
+	Function:
+		Area_Remote
+	Params:
+		ident - Thing to do instruction for.
+		data - Additional parameter data.
+		info - Command to do.
+	Return:
+		-
+	Notes:
+		Does minor functions remotely.
+	-*----------------------------------------------------------------------------*/
+
+	public Area_Remote(ident, data, info)
+	{
+		if (YSI_g_sIsMaster)
+		{
+			switch (info)
+			{
+				case E_AREA_REMOTE_DELETE:
+				{
+					if (!Area_IsActive(ident)) return;
+					do
+					{
+						new
+							next = _:(YSI_g_sAreas[ident][E_AREA_FLAGS] & e_AREA_FLAGS_NEXT);
+						Area_AddToUnused(ident);
+						ident = next;
+					}
+					while (ident != AREA_NO_NEXT);
+				}
+				case E_AREA_REMOTE_PLAYER_LET:
+				{
+					if (Area_IsActive(ident)) Bit_Set(YSI_g_sAreas[ident][E_AREA_PLAYERS], data, 1, PLAYER_BIT_ARRAY);
+				}
+				case E_AREA_REMOTE_PLAYER_VET:
+				{
+					if (Area_IsActive(ident)) Bit_Set(YSI_g_sAreas[ident][E_AREA_PLAYERS], data, 0, PLAYER_BIT_ARRAY);
+				}
+				#if AREA_WORLDS > 0
+					case E_AREA_REMOTE_WORLD_LET:
+					{
+						if (Area_IsActive(ident)) Bit_Set(YSI_g_sAreas[ident][E_AREA_WORLDS], data, 1, AREA_WORLD_COUNT);
+					}
+					case E_AREA_REMOTE_WORLD_VET:
+					{
+						if (Area_IsActive(ident)) Bit_Set(YSI_g_sAreas[ident][E_AREA_WORLDS], data, 0, AREA_WORLD_COUNT);
+					}
+					case E_AREA_REMOTE_AWORLD:
+					{
+						if (Area_IsActive(ident)) Bit_SetAll(YSI_g_sAreas[ident][E_AREA_WORLDS], data, AREA_WORLD_COUNT);
+					}
+				#endif
+				case E_AREA_REMOTE_APLAYER:
+				{
+					if (Area_IsActive(ident)) Bit_SetAll(YSI_g_sAreas[ident][E_AREA_PLAYERS], data, PLAYER_BIT_ARRAY);
+				}
+				case E_AREA_REMOTE_VALID:
+				{
+					setproperty(0, "YSIReq", Area_IsActive(ident));
+				}
+				case E_AREA_REMOTE_EMPTY:
+				{
+					if (Area_IsActive(ident))
+					{
+						foreach (Player, playerid)
+						{
+							if (YSI_g_sPlayerArea[playerid] == ident)
+							{
+								setproperty(0, "YSIReq", 0);
+								return;
+							}
+						}
+					}
+					setproperty(0, "YSIReq", 1);
+				}
+			}
+		}
+	}
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_AddToUnused
+Params:
+	area - Slot to make unused.
+Return:
+	-
+Notes:
+	Removes any slot regardless, pointers to it must be updated manually.
+-*----------------------------------------------------------------------------*/
+
+static stock Area_AddToUnused(area)
+{
+	if (YSI_g_sUnusedAreas == NO_AREA)
+	{
+		YSI_g_sUnusedAreas = area;
+		YSI_g_sLastUnused = area;
+		YSI_g_sAreas[area][E_AREA_FLAGS] = e_AREA_FLAGS:area;
+	}
+	else
+	{
+		YSI_g_sAreas[area][E_AREA_FLAGS] = e_AREA_FLAGS:YSI_g_sUnusedAreas;
+		YSI_g_sAreas[YSI_g_sLastUnused][E_AREA_FLAGS] = e_AREA_FLAGS:area;
+		YSI_g_sLastUnused = area;
+	}
+	YSI_g_sFreeCount++;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_AddCube
+Params:
+	Float:minx - Lowest X corner of box
+	Float:miny - Lowest Y corner of box.
+	Float:minx - Lowest Z corner of box.
+	Float:maxx - Highest X corner of box.
+	Float:maxy - Highest Y corner of box.
+	Float:maxz - Highest Z corner of box.
+Return:
+	Area slot or NO_AREA
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Area_AddCube(Float:minx, Float:miny, Float:minz, Float:maxx, Float:maxy, Float:maxz)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (Area_GetEmptySlotCount() < 2) return NO_AREA;
+			new
+				slot = Area_GetFreeSlot(),
+				next = Area_GetFreeSlot();
+			YSI_g_sAreas[slot][E_AREA_FLAGS] = e_AREA_FLAGS_CUBE | e_AREA_FLAGS_ACTIVE | e_AREA_FLAGS_USED | e_AREA_FLAGS:next;
+			YSI_g_sAreas[slot][E_AREA_POS][0] = minx;
+			YSI_g_sAreas[slot][E_AREA_POS][1] = miny;
+			YSI_g_sAreas[slot][E_AREA_POS][2] = minz;
+			YSI_g_sAreas[next][E_AREA_FLAGS] = SINGLE_SLOT_AREA | e_AREA_FLAGS_USED;
+			YSI_g_sAreas[next][E_AREA_POS][0] = maxx;
+			YSI_g_sAreas[next][E_AREA_POS][1] = maxy;
+			YSI_g_sAreas[next][E_AREA_POS][2] = maxz;
+			#if defined _YSI_SETUP_MASTER
+				YSI_g_sAreas[next][E_AREA_MASTER] = YSI_g_sAreas[slot][E_AREA_MASTER] = YSI_gMasterID;
+			#endif
+			Area_SetAllWorlds(slot, 1);
+			return slot;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			new
+				Float:bounds[6];
+			bounds[0] = minx;
+			bounds[1] = miny;
+			bounds[2] = minz;
+			bounds[3] = maxx;
+			bounds[4] = maxy;
+			bounds[5] = maxz;
+			CallRemoteFunction("Area_AddRemote", "iaii", _:e_AREA_FLAGS_CUBE, bounds, sizeof (bounds), YSI_gMasterID);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+}
+
+#if defined _YSI_SETUP_MASTER
+	/*----------------------------------------------------------------------------*-
+	Function:
+		Area_AddRemote
+	Params:
+		e_AREA_FLAGS:type - What sort of area it is.
+		Float:bounds[] - Array of points for the area.
+		count - Number of points.
+		master - Script owner.
+	Return:
+		-
+	Notes:
+		Adds areas remotely.
+	-*----------------------------------------------------------------------------*/
+
+	public Area_AddRemote(e_AREA_FLAGS:type, Float:bounds[], count, master)
+	{
+		switch (type)
+		{
+			case e_AREA_FLAGS_CUBE:
+			{
+				if (Area_GetEmptySlotCount() < 2) setproperty(0, "YSIReq", NO_AREA);
+				else
+				{
+					new
+						slot = Area_GetFreeSlot(),
+						next = Area_GetFreeSlot();
+					YSI_g_sAreas[slot][E_AREA_FLAGS] = e_AREA_FLAGS_CUBE | e_AREA_FLAGS_ACTIVE | e_AREA_FLAGS_USED | e_AREA_FLAGS:next;
+					YSI_g_sAreas[slot][E_AREA_POS][0] = bounds[0];
+					YSI_g_sAreas[slot][E_AREA_POS][1] = bounds[1];
+					YSI_g_sAreas[slot][E_AREA_POS][2] = bounds[2];
+					YSI_g_sAreas[next][E_AREA_FLAGS] = SINGLE_SLOT_AREA | e_AREA_FLAGS_USED;
+					YSI_g_sAreas[next][E_AREA_POS][0] = bounds[3];
+					YSI_g_sAreas[next][E_AREA_POS][1] = bounds[4];
+					YSI_g_sAreas[next][E_AREA_POS][2] = bounds[5];
+					YSI_g_sAreas[next][E_AREA_MASTER] = YSI_g_sAreas[slot][E_AREA_MASTER] = master;
+					Area_SetAllWorlds(slot, 1);
+					setproperty(0, "YSIReq", slot);
+				}
+			}
+			case e_AREA_FLAGS_BOX:
+			{
+				new
+					slot = Area_GetFreeSlot();
+				if (slot == NO_AREA) setproperty(0, "YSIReq", NO_AREA);
+				else
+				{
+					YSI_g_sAreas[slot][E_AREA_FLAGS] = SINGLE_SLOT_AREA | e_AREA_FLAGS_BOX | e_AREA_FLAGS_USED | e_AREA_FLAGS_ACTIVE;
+					YSI_g_sAreas[slot][E_AREA_POS][0] = bounds[0];
+					YSI_g_sAreas[slot][E_AREA_POS][1] = bounds[1];
+					YSI_g_sAreas[slot][E_AREA_POS][2] = bounds[2];
+					YSI_g_sAreas[slot][E_AREA_POS][3] = bounds[3];
+					YSI_g_sAreas[slot][E_AREA_MASTER] = master;
+					Area_SetAllWorlds(slot, 1);
+					setproperty(0, "YSIReq", slot);
+				}
+			}
+			case e_AREA_FLAGS_CIRCLE:
+			{
+				new
+					slot = Area_GetFreeSlot();
+				if (slot == NO_AREA) setproperty(0, "YSIReq", NO_AREA);
+				else
+				{
+					YSI_g_sAreas[slot][E_AREA_FLAGS] = SINGLE_SLOT_AREA | e_AREA_FLAGS_CIRCLE | e_AREA_FLAGS_USED | e_AREA_FLAGS_ACTIVE;
+					YSI_g_sAreas[slot][E_AREA_POS][0] = bounds[0];
+					YSI_g_sAreas[slot][E_AREA_POS][1] = bounds[1];
+					YSI_g_sAreas[slot][E_AREA_POS][2] = bounds[2];
+					YSI_g_sAreas[slot][E_AREA_POS][3] = bounds[3];
+					YSI_g_sAreas[slot][E_AREA_MASTER] = master;
+					Area_SetAllWorlds(slot, 1);
+					setproperty(0, "YSIReq", slot);
+				}
+			}
+			case e_AREA_FLAGS_SPHERE:
+			{
+				new
+					slot = Area_GetFreeSlot();
+				if (slot == NO_AREA) setproperty(0, "YSIReq", NO_AREA);
+				else
+				{
+					YSI_g_sAreas[slot][E_AREA_FLAGS] = SINGLE_SLOT_AREA | e_AREA_FLAGS_SPHERE | e_AREA_FLAGS_USED | e_AREA_FLAGS_ACTIVE;
+					YSI_g_sAreas[slot][E_AREA_POS][0] = bounds[0];
+					YSI_g_sAreas[slot][E_AREA_POS][1] = bounds[1];
+					YSI_g_sAreas[slot][E_AREA_POS][2] = bounds[2];
+					YSI_g_sAreas[slot][E_AREA_POS][3] = bounds[3];
+					YSI_g_sAreas[slot][E_AREA_MASTER] = master;
+					Area_SetAllWorlds(slot, 1);
+					setproperty(0, "YSIReq", slot);
+				}
+			}
+			case e_AREA_FLAGS_POLY:
+			{
+				if (Area_GetEmptySlotCount() < ceildiv(count, 4)) setproperty(0, "YSIReq", NO_AREA);
+				else
+				{
+					new
+						done,
+						slot = 4,
+						real = -1,
+						first;
+					if (isodd(count))
+					{
+						real = Area_GetFreeSlot();
+						YSI_g_sAreas[real][E_AREA_FLAGS] = SINGLE_SLOT_AREA;
+						YSI_g_sAreas[real][E_AREA_POS][0] = bounds[--count];
+						YSI_g_sAreas[real][E_AREA_MASTER] = master;
+						slot = 2;
+					}
+					while (done < count)
+					{
+						if (slot == 4)
+						{
+							new
+								next = Area_GetFreeSlot();
+							if (real != -1)
+							{
+								YSI_g_sAreas[real][E_AREA_FLAGS] = e_AREA_FLAGS:next | e_AREA_FLAGS_USED;
+							}
+							else first = next;
+							real = next;
+							YSI_g_sAreas[real][E_AREA_MASTER] = master;
+							YSI_g_sAreas[real][E_AREA_FLAGS] = SINGLE_SLOT_AREA | e_AREA_FLAGS_USED;
+							slot = 0;
+						}
+						YSI_g_sAreas[real][E_AREA_POS][slot++] = bounds[done++];
+						YSI_g_sAreas[real][E_AREA_POS][slot++] = bounds[done++];
+					}
+					YSI_g_sAreas[first][E_AREA_FLAGS] |= e_AREA_FLAGS_POLY | e_AREA_FLAGS_ACTIVE | ((e_AREA_FLAGS:(count << 12)) & e_AREA_FLAGS_COUNT);
+					Area_SetAllWorlds(first, 1);
+					setproperty(0, "YSIReq", first);
+				}
+			}
+		}
+	}
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_AddBox
+Params:
+	Float:minx - Lowest X corner of box
+	Float:miny - Lowest Y corner of box.
+	Float:maxx - Highest X corner of box.
+	Float:maxy - Highest Y corner of box.
+Return:
+	Area slot or NO_AREA
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Area_AddBox(Float:minx, Float:miny, Float:maxx, Float:maxy)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			new
+				slot = Area_GetFreeSlot();
+			if (slot == NO_AREA) return NO_AREA;
+			YSI_g_sAreas[slot][E_AREA_FLAGS] = SINGLE_SLOT_AREA | e_AREA_FLAGS_BOX | e_AREA_FLAGS_USED | e_AREA_FLAGS_ACTIVE;
+			YSI_g_sAreas[slot][E_AREA_POS][0] = minx;
+			YSI_g_sAreas[slot][E_AREA_POS][1] = miny;
+			YSI_g_sAreas[slot][E_AREA_POS][2] = maxx;
+			YSI_g_sAreas[slot][E_AREA_POS][3] = maxy;
+			#if defined _YSI_SETUP_MASTER
+				YSI_g_sAreas[slot][E_AREA_MASTER] = YSI_gMasterID;
+			#endif
+			Area_SetAllWorlds(slot, 1);
+			return slot;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			new
+				Float:bounds[4];
+			bounds[0] = minx;
+			bounds[1] = miny;
+			bounds[2] = maxx;
+			bounds[3] = maxy;
+			CallRemoteFunction("Area_AddRemote", "iaii", _:e_AREA_FLAGS_BOX, bounds, sizeof (bounds), YSI_gMasterID);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_AddCircle
+Params:
+	Float:x - X position of circle.
+	Float:y - Y position of circle.
+	Float:r - Radius of circle.
+	Float:h - Ceiling of circle.
+Return:
+	Area slot or NO_AREA
+Notes:
+	Technically a cylinder, no lower bound (ceiling added cos there was a
+	spare slot in the 4 float design which may as well have been used).
+-*----------------------------------------------------------------------------*/
+
+stock Area_AddCircle(Float:x, Float:y, Float:r, Float:h = 10000.0)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			new
+				slot = Area_GetFreeSlot();
+			if (slot == NO_AREA) return NO_AREA;
+			YSI_g_sAreas[slot][E_AREA_FLAGS] = SINGLE_SLOT_AREA | e_AREA_FLAGS_CIRCLE | e_AREA_FLAGS_USED | e_AREA_FLAGS_ACTIVE;
+			YSI_g_sAreas[slot][E_AREA_POS][0] = x;
+			YSI_g_sAreas[slot][E_AREA_POS][1] = y;
+			YSI_g_sAreas[slot][E_AREA_POS][2] = r * r;
+			YSI_g_sAreas[slot][E_AREA_POS][3] = h;
+			#if defined _YSI_SETUP_MASTER
+				YSI_g_sAreas[slot][E_AREA_MASTER] = YSI_gMasterID;
+			#endif
+			Area_SetAllWorlds(slot, 1);
+			return slot;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			new
+				Float:bounds[4];
+			bounds[0] = x;
+			bounds[1] = y;
+			bounds[2] = r * r;
+			bounds[3] = h;
+			CallRemoteFunction("Area_AddRemote", "iaii", _:e_AREA_FLAGS_CIRCLE, bounds, sizeof (bounds), YSI_gMasterID);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_AddSphere
+Params:
+	Float:x - X position of sphere.
+	Float:y - Y position of sphere.
+	Float:z - Z position of sphere.
+	Float:r - Radius of sphere.
+Return:
+	Area slot or NO_AREA
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Area_AddSphere(Float:x, Float:y, Float:z, Float:r)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			new
+				slot = Area_GetFreeSlot();
+			if (slot == NO_AREA) return NO_AREA;
+			YSI_g_sAreas[slot][E_AREA_FLAGS] = SINGLE_SLOT_AREA | e_AREA_FLAGS_SPHERE | e_AREA_FLAGS_USED | e_AREA_FLAGS_ACTIVE;
+			YSI_g_sAreas[slot][E_AREA_POS][0] = x;
+			YSI_g_sAreas[slot][E_AREA_POS][1] = y;
+			YSI_g_sAreas[slot][E_AREA_POS][2] = z;
+			YSI_g_sAreas[slot][E_AREA_POS][3] = r * r;
+			#if defined _YSI_SETUP_MASTER
+				YSI_g_sAreas[slot][E_AREA_MASTER] = YSI_gMasterID;
+			#endif
+			Area_SetAllWorlds(slot, 1);
+			return slot;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			new
+				Float:bounds[4];
+			bounds[0] = x;
+			bounds[1] = y;
+			bounds[2] = z;
+			bounds[3] = r * r;
+			CallRemoteFunction("Area_AddRemote", "iaii", _:e_AREA_FLAGS_SPHERE, bounds, sizeof (bounds), YSI_gMasterID);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_AddPoly
+Params:
+	Float:... - X/Ys of points
+Return:
+	Area slot or NO_AREA
+Notes:
+	Creates an irregular shape to detect players in.  This is a 2d area made
+	up of a load of XY points.  If an odd number of parameters is passed the
+	extra one is assumed to be a ceiling so you can ignore interiors or planes.
+	
+	Checks that there is enough space to store the data first (as the array
+	is split up into 4 float sections for general efficiency) so this check
+	uses at least 2 slots (smallest 2d shape is a triangle - 3 points, 6 co-
+	ordinates, 2 slots).
+	
+	The height parameter goes first as it's easiest to check.
+-*----------------------------------------------------------------------------*/
+
+stock Area_AddPoly(Float:x1, Float:y1, Float:x2, Float:y2, Float:x3, Float:y3, Float:...)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			new
+				count = numargs();
+			if (count > 255) return NO_AREA;
+			if (Area_GetEmptySlotCount() < ceildiv(count, 4)) return NO_AREA;
+			new
+				done,
+				slot = 4,
+				real = -1,
+				first;
+			if (isodd(count))
+			{
+				real = Area_GetFreeSlot();
+				YSI_g_sAreas[real][E_AREA_FLAGS] = SINGLE_SLOT_AREA;
+				YSI_g_sAreas[real][E_AREA_POS][0] = Float:getarg(--count);
+				#if defined _YSI_SETUP_MASTER
+					YSI_g_sAreas[real][E_AREA_MASTER] = YSI_gMasterID;
+				#endif
+				slot = 2;
+			}
+			while (done < count)
+			{
+				if (slot == 4)
+				{
+					new
+						next = Area_GetFreeSlot();
+					if (real != -1)
+					{
+						YSI_g_sAreas[real][E_AREA_FLAGS] = e_AREA_FLAGS:next | e_AREA_FLAGS_USED;
+					}
+					else first = next;
+					real = next;
+					YSI_g_sAreas[real][E_AREA_FLAGS] = SINGLE_SLOT_AREA | e_AREA_FLAGS_USED;
+					#if defined _YSI_SETUP_MASTER
+						YSI_g_sAreas[real][E_AREA_MASTER] = YSI_gMasterID;
+					#endif
+					slot = 0;
+				}
+				if (done < 2)
+				{
+					YSI_g_sAreas[real][E_AREA_POS][slot++] = x1;
+					YSI_g_sAreas[real][E_AREA_POS][slot++] = y1;
+					done += 2;
+				}
+				else if (done < 4)
+				{
+					YSI_g_sAreas[real][E_AREA_POS][slot++] = x2;
+					YSI_g_sAreas[real][E_AREA_POS][slot++] = y2;
+					done += 2;
+				}
+				else if (done < 6)
+				{
+					YSI_g_sAreas[real][E_AREA_POS][slot++] = x3;
+					YSI_g_sAreas[real][E_AREA_POS][slot++] = y3;
+					done += 2;
+				}
+				else
+				{
+					YSI_g_sAreas[real][E_AREA_POS][slot++] = Float:getarg(done++);
+					YSI_g_sAreas[real][E_AREA_POS][slot++] = Float:getarg(done++);
+				}
+			}
+			YSI_g_sAreas[first][E_AREA_FLAGS] |= e_AREA_FLAGS_POLY | e_AREA_FLAGS_ACTIVE | ((e_AREA_FLAGS:(count << 12)) & e_AREA_FLAGS_COUNT);
+			Area_SetAllWorlds(first, 1);
+			return first;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			new
+				count = numargs();
+			if (count > 255) return NO_AREA;
+			new
+				bounds[256];
+			for (new i = 0; i < count; i++)
+			{
+				switch (i)
+				{
+					case 0: bounds[0] = x1;
+					case 1: bounds[1] = y1;
+					case 2: bounds[2] = x2;
+					case 3: bounds[3] = y2;
+					case 4: bounds[4] = x3;
+					case 5: bounds[5] = y3;
+					default: bounds[i] = Float:getarg(i);
+				}
+			}
+			CallRemoteFunction("Area_AddRemote", "iaii", _:e_AREA_FLAGS_POLY, bounds, count, YSI_gMasterID);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_OnPlayerConnect
+Params:
+	playerid - Player who connected
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+Area_OnPlayerConnect(playerid)
+{
+	YSI_g_sPlayerArea[playerid] = NO_AREA;
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_Area
+Params:
+	-
+Return:
+	-
+Notes:
+	Sets up required variables.
+-*----------------------------------------------------------------------------*/
+
+Area_Area()
+{
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sIsMaster = Master_Add("YSIM_Areas");
+	#endif
+	static
+		sTimer;
+	if (!sTimer)
+	{
+		new i;
+		while (i < MAX_AREAS - 1)
+		{
+			YSI_g_sAreas[i++][E_AREA_FLAGS] = e_AREA_FLAGS:i;
+		}
+		i = 0;
+		while (i < MAX_PLAYERS) YSI_g_sPlayerArea[i++] = NO_AREA;
+		sTimer = Timer_Add("Area_Loop", AREA_LOOP_GRANULARITY);
+	}
+	return 1;
+}
+
+#if defined _YSI_SETUP_MASTER
+	/*----------------------------------------------------------------------------*-
+	Function:
+		YSIM_Aras
+	Params:
+		command - Command passed from the master script
+	Return:
+		-
+	Notes:
+		Recieves commands from the master system at script starts/ends.
+	-*----------------------------------------------------------------------------*/
+
+	public YSIM_Areas(command)
+	{
+		#if AREA_WORLDS <= 0
+			static
+				sFake[2] = {-1, -1};
+		#endif
+		switch (command & 0xFF000000)
+		{
+			case E_MASTER_SET_MASTER:
+			{
+				YSI_g_sIsMaster = 1;
+			}
+			case E_MASTER_RELINQUISH:
+			{
+				new
+					master = (command & 0x00FFFFFF);
+				if (master == YSI_gMasterID)
+				{
+					for (new i = 0; i < MAX_AREAS; i++)
+					{
+						if ((YSI_g_sAreas[i][E_AREA_FLAGS] & e_AREA_FLAGS_USED))
+						{
+							if (YSI_g_sAreas[i][E_AREA_MASTER] != master)
+							{
+								#if AREA_WORLDS > 0
+									CallRemoteFunction("Area_Broadcast", "iiiffffaiai", i,
+										_:YSI_g_sAreas[i][E_AREA_FLAGS],
+										YSI_g_sAreas[i][E_AREA_MASTER],
+										YSI_g_sAreas[i][E_AREA_POS][0],
+										YSI_g_sAreas[i][E_AREA_POS][1],
+										YSI_g_sAreas[i][E_AREA_POS][2],
+										YSI_g_sAreas[i][E_AREA_POS][3],
+										_:YSI_g_sAreas[i][E_AREA_WORLDS], AREA_WORLD_COUNT,
+										_:YSI_g_sAreas[i][E_AREA_PLAYERS], PLAYER_BIT_ARRAY
+									);
+								#else
+									CallRemoteFunction("Area_Broadcast", "iiiffffaiai", i,
+										_:YSI_g_sAreas[i][E_AREA_FLAGS],
+										YSI_g_sAreas[i][E_AREA_MASTER],
+										YSI_g_sAreas[i][E_AREA_POS][0],
+										YSI_g_sAreas[i][E_AREA_POS][1],
+										YSI_g_sAreas[i][E_AREA_POS][2],
+										YSI_g_sAreas[i][E_AREA_POS][3],
+										sFake, 2,
+										_:YSI_g_sAreas[i][E_AREA_PLAYERS], PLAYER_BIT_ARRAY
+									);
+								#endif
+							}
+						}
+					}
+					CallRemoteFunction("Area_UpdateEmpty", "");
+				}
+				else
+				{
+					for (new i = 0; i < MAX_AREAS; i++)
+					{
+						if (YSI_g_sAreas[i][E_AREA_MASTER] == master && (YSI_g_sAreas[i][E_AREA_FLAGS] & e_AREA_FLAGS_ACTIVE))
+						{
+							new
+								area = i;
+							do
+							{
+								new
+									next = _:(YSI_g_sAreas[area][E_AREA_FLAGS] & e_AREA_FLAGS_NEXT);
+								Area_AddToUnused(area);
+								area = next;
+							}
+							while (area != AREA_NO_NEXT);
+						}
+					}
+				}
+			}
+			case E_MASTER_NOT_MASTER:
+			{
+				YSI_g_sIsMaster = 0;
+			}
+		}
+	}
+
+	/*----------------------------------------------------------------------------*-
+	Function:
+		Area_Broadcast
+	Params:
+		id - Slot to set.
+		e_AREA_FLAGS:flags - Flags for the slot.
+		master - Owner of the area.
+		Float:f1 - Slot float 1.
+		Float:f2 - Slot float 2.
+		Float:f3 - Slot float 3.
+		Float:f4 - Slot float 4.
+		Bit:worlds[] - Worlds the area is in.
+		worldcount - Size of the worlds array.
+		Bit:players[] - Players who can use the area.
+		playercount - Size of the area array.
+	Return:
+		-
+	Notes:
+		Recieves transmitted data on master shutdown.
+	-*----------------------------------------------------------------------------*/
+
+	public Area_Broadcast(id, e_AREA_FLAGS:flags, master, Float:f1, Float:f2, Float:f3, Float:f4, Bit:worlds[], worldcount, Bit:players[], playercount)
+	{
+		if (!YSI_g_sIsMaster) return 0;
+		YSI_g_sAreas[id][E_AREA_FLAGS] = flags;
+		YSI_g_sAreas[id][E_AREA_MASTER] = master;
+		YSI_g_sAreas[id][E_AREA_POS][0] = f1;
+		YSI_g_sAreas[id][E_AREA_POS][1] = f2;
+		YSI_g_sAreas[id][E_AREA_POS][2] = f3;
+		YSI_g_sAreas[id][E_AREA_POS][3] = f4;
+		#if AREA_WORLDS > 0
+			for (new i = 0; i < worldcount; i++)
+			{
+				YSI_g_sAreas[id][E_AREA_WORLDS][i] = worlds[i];
+			}
+		#endif
+		for (new i = 0; i < playercount; i++)
+		{
+			YSI_g_sAreas[id][E_AREA_PLAYERS][i] = players[i];
+		}
+		return 1;
+	}
+	
+	/*----------------------------------------------------------------------------*-
+	Function:
+		Area_UpdateEmpty
+	Params:
+		-
+	Return:
+		-
+	Notes:
+		Called after Area_Broadcast to set up the empty slot array.
+	-*----------------------------------------------------------------------------*/
+
+	public Area_UpdateEmpty()
+	{
+		if (!YSI_g_sIsMaster) return;
+		YSI_g_sUnusedAreas = NO_AREA;
+		YSI_g_sLastUnused = NO_AREA;
+		YSI_g_sFreeCount = 0;
+		for (new area = 0; area < MAX_AREAS; area++)
+		{
+			if (!(YSI_g_sAreas[area][E_AREA_FLAGS] & e_AREA_FLAGS_USED))
+			{
+				if (YSI_g_sUnusedAreas == NO_AREA)
+				{
+					YSI_g_sUnusedAreas = area;
+					YSI_g_sLastUnused = area;
+					YSI_g_sAreas[area][E_AREA_FLAGS] = e_AREA_FLAGS:area;
+				}
+				else
+				{
+					YSI_g_sAreas[area][E_AREA_FLAGS] = e_AREA_FLAGS:YSI_g_sUnusedAreas;
+					YSI_g_sAreas[YSI_g_sLastUnused][E_AREA_FLAGS] = e_AREA_FLAGS:area;
+					YSI_g_sLastUnused = area;
+				}
+				YSI_g_sFreeCount++;
+			}
+		}
+	}
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_loop
+Params:
+	-
+Return:
+	-
+Notes:
+	Main processing for the system, loops through players and areas to check
+	their area periodically.
+-*----------------------------------------------------------------------------*/
+
+public Area_Loop()
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return;
+	#endif
+	foreach (Player, playerid)
+	{
+		new
+			Float:x,
+			Float:y,
+			Float:z,
+			area = YSI_g_sPlayerArea[playerid],
+			world = GetPlayerVirtualWorld(playerid);
+		GetPlayerPos(playerid, x, y, z);
+		if (area != NO_AREA)
+		{
+			if (Area_CheckArea(playerid, world, area, x, y, z)) continue;
+			YSI_g_sPlayerArea[playerid] = NO_AREA;
+			#if defined _YSI_GAMEMODE_PROPERTIES
+				if (!Property_OnPlayerLeaveArea(playerid, area))
+			#endif
+					CallRemoteFunction("OnPlayerLeaveArea", "ii", playerid, area);
+		}
+		for (area = 0; area < MAX_AREAS; area++)
+		{
+			if (Area_CheckArea(playerid, world, area, x, y, z))
+			{
+				YSI_g_sPlayerArea[playerid] = area;
+				#if defined _YSI_GAMEMODE_PROPERTIES
+					#if defined _YSI_SETUP_MASTER
+						CallRemoteFunction("Property_OnPlayerEnterArea", "ii", playerid, area);
+						if (getproperty(0, "YSIReq")) break;
+					#else
+						if (Property_OnPlayerEnterArea(playerid, area)) break;
+					#endif
+				#endif
+				#if defined _YSI_VISUAL_OBJECTS
+					#if defined _YSI_SETUP_MASTER
+						CallRemoteFunction("Object_OnPlayerEnterArea", "ii", playerid, area);
+						if (getproperty(0, "YSIReq")) break;
+					#else
+						if (Object_OnPlayerEnterArea(playerid, area)) break;
+					#endif
+				#endif
+				CallRemoteFunction("OnPlayerEnterArea", "ii", playerid, area);
+				break;
+			}
+		}
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_CheckArea
+Params:
+	playerid - Player being checked for.
+	world - VW the player is in.
+	area - Area to check against.
+	Float:x - X position to check.
+	Float:y - Y position to check.
+	Float:z - Z position to check.
+Return:
+	-
+Notes:
+	Checks if the given position is in the give area.  All parameters are
+	passed to avoid calling functions over and over and over again.
+-*----------------------------------------------------------------------------*/
+
+Area_CheckArea(playerid, world, area, Float:x, Float:y, Float:z)
+{
+	new
+		flags = _:YSI_g_sAreas[area][E_AREA_FLAGS];
+	if ((flags & _:e_AREA_FLAGS_ACTIVE))
+	{
+		#if AREA_WORLDS > 0
+			if (!Bit_Get(YSI_g_sAreas[area][E_AREA_WORLDS], world)) return 0;
+		#else
+			#pragma unused world
+		#endif
+		if (!Bit_Get(YSI_g_sAreas[area][E_AREA_PLAYERS], playerid)) return 0;
+		switch (flags & _:(e_AREA_FLAGS_CIRCLE | e_AREA_FLAGS_SPHERE | e_AREA_FLAGS_POLY | e_AREA_FLAGS_CUBE | e_AREA_FLAGS_BOX))
+		{
+			case e_AREA_FLAGS_CIRCLE:
+			{
+				if (Area_IsInCircle(x, y, z, YSI_g_sAreas[area][E_AREA_POS])) return 1;
+			}
+			case e_AREA_FLAGS_SPHERE:
+			{
+				if (Area_IsInSphere(x, y, z, YSI_g_sAreas[area][E_AREA_POS])) return 1;
+			}
+			case e_AREA_FLAGS_POLY:
+			{
+				if (Area_IsInPoly(x, y, z, area, (flags & _:e_AREA_FLAGS_COUNT) >> 16)) return 1;
+			}
+			case e_AREA_FLAGS_CUBE:
+			{
+				if (Area_IsInCube(x, y, z, YSI_g_sAreas[area][E_AREA_POS], YSI_g_sAreas[flags & _:e_AREA_FLAGS_NEXT][E_AREA_POS])) return 1;
+			}
+			case e_AREA_FLAGS_BOX:
+			{
+				if (Area_IsInBox(x, y, YSI_g_sAreas[area][E_AREA_POS])) return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_IsInCircle
+Params:
+	Float:x - X position to check.
+	Float:y - Y position to check.
+	Float:z - Z position to check.
+	Float:bounds[] - Data for the area position.
+Return:
+	-
+Notes:
+	Checks if a point is in a given circle.
+-*----------------------------------------------------------------------------*/
+
+static Area_IsInCircle(Float:x, Float:y, Float:z, Float:bounds[])
+{
+	x -= bounds[0];
+	y -= bounds[1];
+	return (z < bounds[3] && ((x * x) + (y * y)) < bounds[2]);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_IsInSphere
+Params:
+	Float:x - X position to check.
+	Float:y - Y position to check.
+	Float:z - Z position to check.
+	Float:bounds[] - Data for the area position.
+Return:
+	-
+Notes:
+	Checks if a point is in a given sphere.
+-*----------------------------------------------------------------------------*/
+
+static Area_IsInSphere(Float:x, Float:y, Float:z, Float:bounds[])
+{
+	x -= bounds[0];
+	y -= bounds[1];
+	z -= bounds[2];
+	return (((x * x) + (y * y) + (z * z)) < bounds[3]);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_IsInPoly
+Params:
+	Float:x - X position to check.
+	Float:y - Y position to check.
+	Float:z - Z position to check.
+	pointer - Pointer to the start of the polygon data in the array.
+	count - Number of points in the polygon (x/y are counted separate).
+Return:
+	-
+Notes:
+	Based on IsPlayerInAreaEx by koolk in the useful functions topic.  The
+	passed pointer is the pointer to the first set of co-ordinates in a one-
+	way not looping linked list of points in the polygod as the data may be
+	spread throughout the areas array.  This is as otherwise there may be
+	enough free spaces but not in one block.
+	
+	The code first checks if there is a height component as it's the easiest
+	to check thus may save a load of pointless processing.  If this passes it
+	then does the main loop.  This loops till there are no points left to do
+	(monitored by decreasing count).  When 2 points (four pieces of data) have
+	been checked the poiner for the data is moved on to the next group and the
+	checking continues.
+	
+	For simplicity's sake (and thus speed's sake) the lower pointes from the
+	last check are saved amd used as the upper points for the next check to
+	avoid loads of repeated array accesses and saving the last array position.
+-*----------------------------------------------------------------------------*/
+
+static Area_IsInPoly(Float:x, Float:y, Float:z, pointer, count)
+{
+	new
+		slot;
+	if (isodd(count))
+	{
+		if (YSI_g_sAreas[pointer][E_AREA_POS][0] < z) return 0;
+		slot = 2;
+		count--;
+	}
+	new
+		lines,
+		Float:fx = YSI_g_sAreas[pointer][E_AREA_POS][slot++],
+		Float:fy = YSI_g_sAreas[pointer][E_AREA_POS][slot++],
+		Float:minx = fx,
+		Float:miny = fy,
+		Float:maxx,
+		Float:maxy;
+	while (count)
+	{
+		if (slot == 4)
+		{
+			pointer = _:(YSI_g_sAreas[pointer][E_AREA_FLAGS] & e_AREA_FLAGS_NEXT);
+			slot = 0;
+		}
+		if (count == 2)
+		{
+			maxx = fx;
+			maxy = fy;
+		}
+		else
+		{
+			maxx = YSI_g_sAreas[pointer][E_AREA_POS][slot++];
+			maxy = YSI_g_sAreas[pointer][E_AREA_POS][slot++];
+		}
+		if (((y >= miny && y <= maxy) || (y >= maxy && y <= miny)) && (minx + ((y - miny) * (maxx - minx) / (maxy - miny))) < x) lines++;
+		count -= 2;
+		minx = maxx;
+		miny = maxy;
+	}
+	return isodd(lines);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_IsInCube
+Params:
+	Float:x - X position to check.
+	Float:y - Y position to check.
+	Float:z - Z position to check.
+	Float:lower[] - The lower corner of the cube.
+	Float:upper[] - The upper corner of the cube.
+Return:
+	-
+Notes:
+	Checks if a point is in a given cube.  This is another multi slot shape
+	but is much simpler than the poly as it's always 2 slots so we can easilly
+	get the data in one lump.
+-*----------------------------------------------------------------------------*/
+
+static Area_IsInCube(Float:x, Float:y, Float:z, Float:lower[], Float:upper[])
+{
+	return (x > lower[0] && x < upper[0] && y > lower[1] && y < upper[1] && z > lower[2] && z < upper[2]);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_IsInBox
+Params:
+	Float:x - X position to check.
+	Float:y - Y position to check.
+	Float:bounds[] - Data for the area position.
+Return:
+	-
+Notes:
+	Checks if a point is in a given box.  There is no height check with this
+	one as any one area slot has 4 points which for this are upper and lower
+	x and y, adding a height check would make it require 2 slots and basically
+	make it a cube check.
+-*----------------------------------------------------------------------------*/
+
+static Area_IsInBox(Float:x, Float:y, Float:bounds[])
+{
+	return (x > bounds[0] && x < bounds[2] && y > bounds[1] && y < bounds[3]);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_GetPlayerArea
+Params:
+	playerid - Player to get area of.
+Return:
+	The area a player is in or -1.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Area_GetPlayerArea(playerid)
+{
+	if (playerid >= 0 && playerid < MAX_PLAYERS)
+	{
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsMaster)
+			{
+		#endif
+				return YSI_g_sPlayerArea[playerid];
+		#if defined _YSI_SETUP_MASTER
+			}
+			else
+			{
+				CallRemoteFunction("Area_Remote", "iii", playerid, 0, E_AREA_REMOTE_GET_AREA);
+				return getproperty(0, "YSIReq");
+			}
+		#endif
+	}
+	return NO_AREA;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_SetPlayer
+Params:
+	area - Area to set for.
+	playerid - Player to set for.
+	set - Wether or not the player can use the area.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Area_SetPlayer(area, playerid, set)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (Area_IsActive(area)) Bit_Set(YSI_g_sAreas[area][E_AREA_PLAYERS], playerid, set, PLAYER_BIT_ARRAY);
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			if (set) CallRemoteFunction("Area_Remote", "iii", area, playerid, E_AREA_REMOTE_PLAYER_LET);
+			else CallRemoteFunction("Area_Remote", "iii", area, playerid, E_AREA_REMOTE_PLAYER_VET);
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_SetWorld
+Params:
+	area - Area to set for.
+	world - World to set for.
+	set - Wether or not the area is active in this world.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Area_SetWorld(area, world, set)
+{
+	#if AREA_WORLDS > 0
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsMaster)
+			{
+		#endif
+				if (Area_IsActive(area)) Bit_Set(YSI_g_sAreas[area][E_AREA_WORLDS], world, set, AREA_WORLD_COUNT);
+		#if defined _YSI_SETUP_MASTER
+			}
+			else
+			{
+				if (set) CallRemoteFunction("Area_Remote", "iii", area, world, E_AREA_REMOTE_WORLD_LET);
+				else CallRemoteFunction("Area_Remote", "iii", area, world, E_AREA_REMOTE_WORLD_VET);
+			}
+		#endif
+	#else
+		#pragma unused area, world, set
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_SetAllPlayers
+Params:
+	area - Area to set for.
+	set - Wether or not all players can use this area.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Area_SetAllPlayers(area, set)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (Area_IsActive(area)) Bit_SetAll(YSI_g_sAreas[area][E_AREA_PLAYERS], set, PLAYER_BIT_ARRAY);
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Area_Remote", "iii", area, set, E_AREA_REMOTE_APLAYER);
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_SetAllWorlds
+Params:
+	area - Area to set for.
+	set - Wether or not this area is usable in all worlds.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Area_SetAllWorlds(area, set)
+{
+	#if AREA_WORLDS > 0
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsMaster)
+			{
+		#endif
+				if (Area_IsActive(area)) Bit_SetAll(YSI_g_sAreas[area][E_AREA_WORLDS], set, AREA_WORLD_COUNT);
+		#if defined _YSI_SETUP_MASTER
+			}
+			else
+			{
+				CallRemoteFunction("Area_Remote", "iii", area, set, E_AREA_REMOTE_AWORLD);
+			}
+		#endif
+	#else
+		#pragma unused area, set
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_IsValid
+Params:
+	area - Area to check.
+Return:
+	Is the passed area valid and active.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Area_IsValid(area)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			return Area_IsActive(area);
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Area_Remote", "iii", area, 0, E_AREA_REMOTE_VALID);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Area_IsEmpty
+Params:
+	area - Area to check.
+Return:
+	Is the passed area valid and empty.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Area_IsEmpty(area)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			if (Area_IsActive(area))
+			{
+				foreach (Player, playerid)
+				{
+					if (YSI_g_sPlayerArea[playerid] == area) return 0;
+				}
+			}
+			return 1;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Area_Remote", "iii", area, 0, E_AREA_REMOTE_EMPTY);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+}

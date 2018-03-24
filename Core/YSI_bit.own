@@ -1,0 +1,217 @@
+/*----------------------------------------------------------------------------*-
+					===========================
+					Y Sever Includes - Bit Core
+					===========================
+Description:
+	Provides functions for bit manipulation and bit arrays greater than 32bits.
+	The arrays are usually bigger than required due to cell boundaries but this
+	shouldn't cause a major problem (bit tests on the 101st bit of a 100 bit
+	array won't return 0 for out of bounds, but the 129th will).
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1
+Changelog:
+	24/06/07:
+		Added Bit_GetBit
+	18/06/07:
+		Added Bit_GetCount
+	30/04/07:
+		Added Bit_SetAll
+	15/04/07:
+		First version.
+Functions:
+	Public:
+		-
+	Core:
+		-
+	Stock:
+		Bit_Set - Sets a slot to the given value.
+		Bit_Get - Gets a slot state.
+		Bit_SetAll - Sets all the slots in an array to the same thing.
+		Bit_GetAll - Gets the number of 1s in a bit array.
+	Static:
+		-
+	Inline:
+		Bit_Bits - Gets the number of cells required for a bit array.
+		Bit_Let - Sets a slot to 1.
+		Bit_Vet - Sets a slot to 0.
+		Bit_GetBits - Gets the bit at a slot unsafely.
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	-
+Enums:
+	-
+Macros:
+	-
+Tags:
+	Bit - Bit array type.
+Variables:
+	Global:
+		-
+	Static:
+		-
+Commands:
+	-
+Compile options:
+	-
+-*----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Bit_Bits
+Params:
+	size - Number of bits required.
+Return:
+	Number of cells required for the bit array.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Bit_Bits(%1) \
+	ceildiv((%1), cellbits)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Bit_GetBit
+Params:
+	Bit:array[] - Array of bits.
+	slot - Bit slot.
+Return:
+	State of the provided slot, 0 on fail.
+Notes:
+	Unsafe but faster for when you're sure you're within range.
+-*----------------------------------------------------------------------------*/
+
+#define Bit_GetBit(%1,%2) \
+	((%1[(%2) / cellbits]) & Bit:(1 << ((%2) % cellbits)))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Bit_Get
+Params:
+	Bit:array[] - Array of bits.
+	slot - Bit slot.
+	size - Size of array.
+Return:
+	State of the provided slot, 0 on fail.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Bit_Get(%1,%2) \
+	_:Bit_GetBit(Bit:%1, _:%2)
+/*stock Bit_Get(Bit:array[], slot, size = sizeof (array))
+{
+	if (slot / cellbits >= size) return 0;
+	return (Bit_GetBit(array, slot) ? (1) : (0));
+}*/
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Bit_Let
+Params:
+	Bit:array[] - Array of bits.
+	slot - Bit slot.
+Return:
+	-
+Notes:
+	Sets the slot to 1.
+-*----------------------------------------------------------------------------*/
+
+#define Bit_Let(%1,%2) \
+	%1[(%2) / cellbits] |= Bit:(1 << ((%2) % cellbits))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Bit_Vet
+Params:
+	Bit:array[] - Array of bits.
+	slot - Bit slot.
+Return:
+	-
+Notes:
+	Sets the slot to 0.
+-*----------------------------------------------------------------------------*/
+
+#define Bit_Vet(%1,%2) \
+	%1[(%2) / cellbits] &= Bit:~(1 << ((%2) % cellbits))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Bit_Set
+Params:
+	Bit:array[] - Array of bits.
+	slot - Bit slot.
+	set - State to set the slot to.
+	size - Size of array.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Bit_Set(Bit:array[], slot, set, size)
+{
+	if (slot / cellbits >= size) return;
+	if (set) Bit_Let(array, slot);
+	else Bit_Vet(array, slot);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Bit_SetAll
+Params:
+	Bit:array[] - Array to set all values of.
+	set - Wether to set them all 0 or 1.
+	size - Size of array.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Bit_SetAll(Bit:array[], set, size)
+{
+	new
+		Bit:val = (set) ? (Bit:0xFFFFFFFF) : (Bit:0);
+	for (new i = 0; i < size; i++) array[i] = val;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Bit_GetCount
+Params:
+	Bit:array[] - Array to count.
+	size - Size of array.
+Return:
+	Number of 1s in the array.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Bit_GetCount(Bit:array[], size = sizeof (array))
+{
+	new
+		count;
+	for (new i = 0; i < size; i++) for (new j = 1; j; j <<= 1) if (array[i] & Bit:j) count++;
+	return count;
+}

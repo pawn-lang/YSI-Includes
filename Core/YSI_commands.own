@@ -1,0 +1,1364 @@
+/*----------------------------------------------------------------------------*-
+					================================
+					Y Sever Includes - Commands Core
+					================================
+Description:
+	Runs commands registered with the system and calls the required functions.
+	Also handles alternate names and prefixes.  Theory based very loosely on dcmd.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1.4
+Changelog:
+	12/08/07:
+		Added master support.
+	24/06/07:
+		Modifed a few functions to use Bit_GetBit for speed.
+	04/05/07:
+		Completed command use support.
+		Added invalid character protection.
+	02/05/07:
+		Added YSI_ prefix to all globals.
+	14/04/07:
+		Updated header documentation with more than changelog/functions.
+		Added function name requesting.
+	13/04/07:
+		Added function documentation.
+		Added wrapped functions for e_COMM_FLAG values missing them.
+		Added header function list.
+	12/04/07:
+		Added command removal.
+	11/04/07:
+		Changed system slightly to handle names and alt names separately.  Still need
+		a better way of ignoring names when alt names are used.
+	10/04/07:
+		First version.
+Functions:
+	Public:
+		Command_Add - Adds a command to the array for processing.
+		Command_Remove - Removes a command.
+		Command_Name - Gets the name of a command in a property.
+	Core:
+		Command_Process - Called from OnPlayerCommandText to process entered commands.
+		Command_Parse - Sorts added commands into a binary tree.
+		Command_FindFunc - Finds a function by binary search of function name.
+		Command_FindAlt - Finds a function by binary search of alternate name.
+		Command_Hash - Hashes a word for command hashing.
+	Stock:
+		Command_SetDisconnectReturn - Sets the return value for unconnected players.
+		Command_UseShortCuts - Toggles use of per-player command shortcuts.
+		Command_SetDeniedReturn - Sets the return value for denied use commands.
+		Command_UseDeniedMessage - Toggles the use of an error message for denied.
+		Command_SetIllegalReturn - Sets the return value for illegal characters.
+		Command_UseAltNames - Toggles the use of ini defined alternate names.
+		Command_UsePrefix - Toggles the use of a global prefix.
+		Command_UseSpace - Toggles the use of a space between prefix and command.
+		Command_SetAltName - Sets the alternate name of a function.
+		Command_SetPrefix - Sets the pfexix to be typed.
+		Comamnd_SetPlayerUse - Sets wether or not a player can use a command.
+		Comamnd_SetPlayerUseByID - Sets wether or not a player can use a command.
+	Static:
+		Command_SetSorted - Marks the binary tree as sorted.
+		Command_FindSlow - Finds a function by linear search of function name.
+		Command_Find - Finds a function from entered text.
+		Command_Prefix - Checks the entered prefix.
+		Command_ReturnName - Returns the name of a function.
+		Command_GetPlayerCount - Gets the number of commands a player can use.
+	Inline:
+		Command_Command - Not used, constructor.
+		Command_IsCleared - Checks a player is cleared to use a command.
+		Command_DisconnectReturn - Gets the return value for disconnected players.
+		Command_UsingShortCuts - Checks if short cuts are being used.
+		Command_DeniedReturn - Gets the return value for prohibited commands.
+		Command_IllegalReturn - Gets the return value for invalid characters.
+		Command_DeniedMessage - Checks if a level error message should be sent.
+		Command_IsSorted - Checks if the binary tree has been initialised.
+		Command_UsingAltNames - Checks if alt names are being used.
+		Command_UsingPrefix - Checks if the prefix is being used.
+		Command_UsingSpace - Checks if the space option is being used.
+		Command_CallFunction - Calls the required function.
+		ycmd - Adds a command to the system.
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+7	MAX_COMMAND_LENGTH - The maximum length of a command string.
+	COMMAND_NOT_FOUND - Indicates that a searched for string is not a function.
+Enums:
+	e_COMM_FLAG - Bit mappings for command options.
+	E_COMMANDS - Structure of the array holding the string data.
+Macros:
+	Command_(%1) - Forwards and declares a standard command for calling.
+	ycmd(%1) - Adds a command to the array (wrapper for Command_Add).
+Tags:
+	e_COMM_FLAG - Flag type.
+Variables:
+	Global:
+		-
+	Static:
+		YSI_g_sCommands - Holds all the textual data of the commands.
+		YSI_g_sSearchTree - Tree of hashes for function names.
+		YSI_g_sAltTree - Tree of hashes for alternate names.
+		YSI_g_sPrefix - The command prefix.
+		YSI_g_sPrefixLength - Length of the prefix.
+		YSI_g_sCommandIndex - Pointer to the next free index in the function array.
+		YSI_g_sAltCount - The number of commands with altnames.
+		YSI_g_sCommandFlags - Bit array of command options.
+Commands:
+	commands - Lists all commands available to you.
+Compile options:
+	_COMMANDS_SMALL - Calculates function names at call not creation (default).
+	_COMMANDS_FAST - Opposite of _COMMANDS_SMALL.
+-*----------------------------------------------------------------------------*/
+
+#define COMMAND_NOT_FOUND	-1
+
+#if !defined FORMAT_COMMAND
+	#define FORMAT_COMMAND 179176128
+#endif
+
+#if !defined _COMMANDS_FAST
+	#if !defined _COMMANDS_SMALL
+		#define _COMMANDS_SMALL
+	#endif
+#else
+	#if defined _COMMANDS_SMALL
+		#undef _COMMANDS_FAST
+	#endif
+#endif
+
+enum e_COMM_FLAG (<<= 1)
+{
+	e_COMM_FLAG_SORTED = 1,
+	e_COMM_FLAG_PERMISSION_WARN,
+	e_COMM_FLAG_USE_ALTNAMES,
+	e_COMM_FLAG_PERMISSION_RET,
+	e_COMM_FLAG_USE_PREFIX,
+	e_COMM_FLAG_USE_SPACE,
+	e_COMM_FLAG_USE_SHORTCUTS,
+	e_COMM_FLAG_DISCONNECT,
+	e_COMM_FLAG_ILLEGAL
+}
+
+enum
+{
+	COMMAND_PARAMETER_ALTNAME,
+	COMMAND_PARAMETER_PLAYERUSE,
+	COMMAND_PARAMETER_USEALT
+}
+
+enum E_COMMANDS
+{
+	#if !defined _COMMANDS_SMALL
+		E_COMMANDS_FUNCNAME[MAX_COMMAND_LENGTH + 5],
+	#endif
+	E_COMMANDS_FUNCTION[MAX_COMMAND_LENGTH],
+	E_COMMANDS_ALTNAME[MAX_COMMAND_LENGTH],
+	#if defined _YSI_SETUP_MASTER
+		E_COMMANDS_MASTER,
+	#endif
+	Bit:E_COMMANDS_PLAYERS[PLAYER_BIT_ARRAY]
+}
+
+#if defined _YSI_SETUP_MASTER
+	forward Command_Add(funcname[], master);
+	forward Command_Remove(funcname[]);
+	forward Comamnd_SetPlayerUseRemote(funcname[], playerid, set);
+	forward Command_SetStringOption(option, string[]);
+#endif
+forward Command_SetPlayerUsage(command, playerid, set);
+forward Command_SetStringParameter(parameter, funcname[], string[]);
+forward Command_Name(funcname[]);
+forward Command_Parse();
+forward ycmd_commands(playerid, params[], help);
+forward Command_ModifyOptions(option);
+
+static stock
+	YSI_g_sCommands[MAX_COMMANDS][E_COMMANDS],
+	Bintree:YSI_g_sSearchTree[MAX_COMMANDS][E_BINTREE_TREE],
+	Bintree:YSI_g_sAltTree[MAX_COMMANDS][E_BINTREE_TREE],
+	YSI_g_sPrefix[MAX_COMMAND_LENGTH],
+	YSI_g_sPrefixLength,
+	YSI_g_sCommandIndex,
+	YSI_g_sAltCount,
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sIsMaster,
+	#endif
+	e_COMM_FLAG:YSI_g_sCommandFlags;
+
+Text_RegisterTag(ysi_commands);
+
+#define Command_(%1) \
+	forward ycmd_%1(playerid, params[], help); \
+	public ycmd_%1(playerid, params[], help)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	ycmd
+Params:
+	command[] - Command to register.
+Return:
+	-
+Notes:
+	Adds a command to the system for processing.
+-*----------------------------------------------------------------------------*/
+
+#if defined _YSI_SETUP_MASTER
+	#define ycmd(%1) \
+		CallRemoteFunction("Command_Add", "si", #%1, YSI_gMasterID)
+#else
+	#define ycmd(%1) \
+		Command_Add(#%1)
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_Command
+Params:
+	-
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+Command_Command()
+{
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sIsMaster = Master_Add("YSIM_Commands");
+	#endif
+	ycmd("commands");
+	YSI_g_sAltTree[0][E_BINTREE_TREE_LEFT] = BINTREE_NO_BRANCH;
+	YSI_g_sAltTree[0][E_BINTREE_TREE_RIGHT] = BINTREE_NO_BRANCH;
+	return 1;
+}
+
+#if defined _YSI_SETUP_MASTER
+	forward YSIM_Commands(command);
+	public YSIM_Commands(command)
+	{
+		switch (command & 0xFF000000)
+		{
+			case E_MASTER_SET_MASTER:
+			{
+				YSI_g_sIsMaster = 1;
+			}
+			case E_MASTER_RELINQUISH:
+			{
+				new
+					master = (command & 0x00FFFFFF),
+					mastermask = ~(1 << master);
+				if (master == YSI_gMasterID)
+				{
+					for (new i = 0; i < YSI_g_sCommandIndex; i++)
+					{
+						new
+							allmaster = YSI_g_sCommands[i][E_COMMANDS_MASTER] & mastermask;
+						if (allmaster)
+						{
+							if (YSI_g_sCommands[i][E_COMMANDS_ALTNAME][0]) CallRemoteFunction("Command_Broadcast", "ssiai", YSI_g_sCommands[i][E_COMMANDS_FUNCTION], YSI_g_sCommands[i][E_COMMANDS_ALTNAME], allmaster, _:YSI_g_sCommands[i][E_COMMANDS_PLAYERS], PLAYER_BIT_ARRAY);
+							else CallRemoteFunction("Command_Broadcast", "ssiai", YSI_g_sCommands[i][E_COMMANDS_FUNCTION], NULL, allmaster, _:YSI_g_sCommands[i][E_COMMANDS_PLAYERS], PLAYER_BIT_ARRAY);
+						}
+					}
+					CallRemoteFunction("Command_Parse", "");
+				}
+				else
+				{
+					for (new i = 0; i < YSI_g_sCommandIndex; i++)
+					{
+						new
+							allmaster = YSI_g_sCommands[i][E_COMMANDS_MASTER] & mastermask;
+						if (!allmaster)
+						{
+							Command_Remove(YSI_g_sCommands[i--][E_COMMANDS_FUNCTION]);
+						}
+					}
+				}
+			}
+			case E_MASTER_NOT_MASTER:
+			{
+				YSI_g_sIsMaster = 0;
+			}
+		}
+	}
+
+	forward Command_Broadcast(funcname[], altname[], master, Bit:players[], playercount);
+	public Command_Broadcast(funcname[], altname[], master, Bit:players[], playercount)
+	{
+		if (!YSI_g_sIsMaster) return 0;
+		if (YSI_g_sCommandIndex >= MAX_COMMANDS) return 0;
+		strcpy(YSI_g_sCommands[YSI_g_sCommandIndex][E_COMMANDS_FUNCTION], strtolower(funcname), MAX_COMMAND_LENGTH);
+		if (altname[0] != 1) strcpy(YSI_g_sCommands[YSI_g_sCommandIndex][E_COMMANDS_ALTNAME], strtolower(altname), MAX_COMMAND_LENGTH);
+		#if !defined _COMMANDS_SMALL
+			strcpy(YSI_g_sCommands[YSI_g_sCommandIndex][E_COMMANDS_FUNCNAME], strconcat("ycmd_", funcname), MAX_COMMAND_LENGTH + 5);
+		#endif
+		for (new i = 0; i < playercount; i++)
+		{
+			YSI_g_sCommands[YSI_g_sCommandIndex][E_COMMANDS_PLAYERS][i] = players[i];
+		}
+		YSI_g_sCommands[YSI_g_sCommandIndex][E_COMMANDS_MASTER] = master;
+		YSI_g_sCommandIndex++;
+		return 1;
+	}
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_IsCleared
+Params:
+	playerid - Player to check for.
+	command - Command to check for.
+Return:
+	TRUE
+Notes:
+	Not implemented yet.
+-*----------------------------------------------------------------------------*/
+
+#define Command_IsCleared(%1,%2) \
+	(Bit_GetBit(YSI_g_sCommands[(%2)][E_COMMANDS_PLAYERS], (%1)))
+
+#if !defined _YSI_SETUP_MASTER
+	#define Command_SetOption(%1,%2) \
+		if ((%2)) YSI_g_sCommandFlags |= (%1); \
+		else YSI_g_sCommandFlags &= ~(%1)
+#else
+	#if defined SLAVE_MODULE
+		#define Command_SetOption(%1,%2) \
+			if ((%2)) CallRemoteFunction("Command_ModifyOptions", "i", _:(%1)); \
+			else CallRemoteFunction("Command_ModifyOptions", "i", _:~(%1))
+	#else
+		#define Command_SetOption(%1,%2) \
+			if (YSI_g_sIsMaster) \
+			{ \
+				if ((%2)) YSI_g_sCommandFlags |= (%1); \
+				else YSI_g_sCommandFlags &= ~(%1); \
+			} \
+			else if ((%2)) CallRemoteFunction("Command_ModifyOptions", "i", _:(%1)); \
+			else CallRemoteFunction("Command_ModifyOptions", "i", _:~(%1))
+	#endif
+
+	public Command_ModifyOptions(option)
+	{
+		if (option == 1 || option == 2 || ((option / 2) * 2) == option)
+		{
+			YSI_g_sCommandFlags |= e_COMM_FLAG:option;
+		}
+		else
+		{
+			YSI_g_sCommandFlags &= e_COMM_FLAG:option;
+		}
+	}
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_IsSorted
+Params:
+	-
+Return:
+	e_COMM_FLAG_SORTED
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Command_IsSorted() \
+	(YSI_g_sCommandFlags & e_COMM_FLAG_SORTED)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_DisconnectReturn
+Params:
+	-
+Return:
+	e_COMM_FLAG_DISCONNECT
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Command_DisconnectReturn() \
+	(YSI_g_sCommandFlags & e_COMM_FLAG_DISCONNECT)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_SetDisconnectReturn
+Params:
+	set - 1/0.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Command_SetDisconnectReturn(set)
+{
+	Command_SetOption(e_COMM_FLAG_DISCONNECT, set);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_IllegalReturn
+Params:
+	-
+Return:
+	e_COMM_FLAG_ILLEGAL
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Command_IllegalReturn() \
+	(YSI_g_sCommandFlags & e_COMM_FLAG_ILLEGAL)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_SetIllegalReturn
+Params:
+	set - 1/0.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Command_SetIllegalReturn(set)
+{
+	Command_SetOption(e_COMM_FLAG_USE_ILLEGAL, set);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_SetPlayerUse
+Params:
+	funcname[] - Command to set for.
+	playerid - Player to set.
+	set - Wether or not this player can use this command.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Comamnd_SetPlayerUse(funcname[], playerid, set)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster)
+		{
+			CallRemoteFunction("Command_SetPlayerUseRemote", "sii", funcname, playerid, set);
+		}
+		else
+		{
+			Command_SetPlayerUseRemote(funcname, playerid, set);
+		}
+}
+
+public Comamnd_SetPlayerUseRemote(funcname[], playerid, set)
+{
+		if (!YSI_g_sIsMaster) return 0;
+	#endif
+	new
+		pointer;
+	if (!Command_IsSorted())
+	{
+		if ((pointer = Command_FindSlow(funcname)) == COMMAND_NOT_FOUND) return 0;
+	}
+	else
+	{
+		new
+			index;
+		if ((pointer = Command_FindFunc(funcname, Command_Hash(funcname, index), index)) == COMMAND_NOT_FOUND) return 0;
+	}
+	Bit_Set(YSI_g_sCommands[pointer][E_COMMANDS_PLAYERS], playerid, set, PLAYER_BIT_ARRAY);
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_SetPlayerUseByID
+Params:
+	command - Command to set for.
+	playerid - Player to set.
+	set - Wether or not this player can use this command.
+Return:
+	-
+Notes:
+	Like Command_SetPlayerUse but for a set ID.
+-*----------------------------------------------------------------------------*/
+
+stock Command_SetPlayerUseByID(command, playerid, set)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster)
+		{
+			CallRemoteFunction("Command_SetPlayerUsage", "iii", command, playerid, set);
+		}
+		else
+		{
+			Command_SetPlayerUsage(command, playerid, set);
+		}
+}
+
+public Command_SetPlayerUsage(command, playerid, set)
+{
+		if (!YSI_g_sIsMaster) return;
+	#endif
+	if (command < 0 || command >= MAX_COMMANDS) return;
+	Bit_Set(YSI_g_sCommands[command][E_COMMANDS_PLAYERS], playerid, set, PLAYER_BIT_ARRAY);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_UsingShortCuts
+Params:
+	-
+Return:
+	e_COMM_FLAG_USE_SHORTCUTS
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Command_UsingShortCuts() \
+	(YSI_g_sCommandFlags & e_COMM_FLAG_USE_SHORTCUTS)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_UseShortCuts
+Params:
+	set - true/false.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Command_UseShortCuts(set)
+{
+	Command_SetOption(e_COMM_FLAG_USE_SHORTCUTS, set);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_DeniedReturn
+Params:
+	-
+Return:
+	e_COMM_FLAG_PERMISSION_RET
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Command_DeniedReturn() \
+	(YSI_g_sCommandFlags & e_COMM_FLAG_PERMISSION_RET)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_SetDeniedReturn
+Params:
+	set - 1/0.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Command_SetDeniedReturn(set)
+{
+	Command_SetOption(e_COMM_FLAG_USE_PERMISSION_RET, set);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_DeniedMessage
+Params:
+	-
+Return:
+	e_COMM_FLAG_PERMISSION_WARN
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Command_DeniedMessage() \
+	(YSI_g_sCommandFlags & e_COMM_FLAG_PERMISSION_WARN)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_UseDeniedMessage
+Params:
+	set - true/false.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Command_UseDeniedMessage(set)
+{
+	Command_SetOption(e_COMM_FLAG_PERMISSION_WARN, set);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_SetSorted
+Params:
+	set - true/false.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Command_SetSorted(set)
+{
+	Command_SetOption(e_COMM_FLAG_SORTED, set);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_UsingAltNames
+Params:
+	-
+Return:
+	e_COMM_FLAG_USE_ALTNAMES
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Command_UsingAltNames() \
+	(YSI_g_sCommandFlags & e_COMM_FLAG_USE_ALTNAMES)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_UseAltNames
+Params:
+	set - true/false.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Command_UseAltNames(set)
+{
+	Command_SetOption(e_COMM_FLAG_USE_ALTNAMES, set);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_UsingPrefix
+Params:
+	-
+Return:
+	e_COMM_FLAG_USE_PREFIX
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Command_UsingPrefix() \
+	(YSI_g_sCommandFlags & e_COMM_FLAG_USE_PREFIX)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_UsePrefix
+Params:
+	set - true/false.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Command_UsePrefix(set)
+{
+	Command_SetOption(e_COMM_FLAG_USE_PREFIX, set);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_UsingSpace
+Params:
+	-
+Return:
+	e_COMM_FLAG_USE_SPACE
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Command_UsingSpace() \
+	(YSI_g_sCommandFlags & e_COMM_FLAG_USE_SPACE)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_UseSpace
+Params:
+	set - true/false.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Command_UseSpace(set)
+{
+	Command_SetOption(e_COMM_FLAG_USE_SPACE, set);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_CallFunction
+Params:
+	command - Function index to call.
+	playerid - playeris parameter.
+	params[] - params[] parameter.
+	help - help parameter.
+Return:
+	CallRemoteFunction
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#if !defined _COMMANDS_SMALL
+	#define Command_CallFunction(%1,%2,%3,%4) \
+		CallRemoteFunction(YSI_g_sCommands[(%1)][E_COMMANDS_FUNCNAME], "isi", (%2), (%3), (%4))
+#else
+	#define Command_CallFunction(%1,%2,%3,%4) \
+		CallRemoteFunction(strconcat("ycmd_", YSI_g_sCommands[(%1)][E_COMMANDS_FUNCTION]), "isi", (%2), (%3), (%4))
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_Add
+Params:
+	funcname[] - The function to add to the array.
+	master - The owner of the function.
+Return:
+	-
+Notes:
+	If the list of commands have already been sorted into the binary tree the
+	new commands will be appended, otherwise they will just be added to the
+	array.
+-*----------------------------------------------------------------------------*/
+
+#if defined _YSI_SETUP_MASTER
+	public Command_Add(funcname[], master)
+#else
+	Command_Add(funcname[])
+#endif
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 0;
+	#endif
+	new
+		index,
+		hash = Command_Hash(funcname, index),
+		pos;
+	#pragma unused pos
+	if (Command_IsSorted())
+	{
+		if ((pos = Command_FindFunc(funcname, hash, index)) != COMMAND_NOT_FOUND)
+		{
+			#if defined _YSI_SETUP_MASTER
+				YSI_g_sCommands[pos][E_COMMANDS_MASTER] |= 1 << master;
+			#endif
+			return 0;
+		}
+	}
+	else
+	{
+		if ((pos = Command_FindSlow(funcname)) != COMMAND_NOT_FOUND)
+		{
+			#if defined _YSI_SETUP_MASTER
+				YSI_g_sCommands[pos][E_COMMANDS_MASTER] |= 1 << master;
+			#endif
+			return 0;
+		}
+	}
+	if (YSI_g_sCommandIndex >= MAX_COMMANDS) return 0;
+	strcpy(YSI_g_sCommands[YSI_g_sCommandIndex][E_COMMANDS_FUNCTION], strtolower(funcname), MAX_COMMAND_LENGTH);
+	#if !defined _COMMANDS_SMALL
+		strcpy(YSI_g_sCommands[YSI_g_sCommandIndex][E_COMMANDS_FUNCNAME], strconcat("ycmd_", funcname), MAX_COMMAND_LENGTH + 5);
+	#endif
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sCommands[YSI_g_sCommandIndex][E_COMMANDS_MASTER] = 1 << master;
+	#endif
+	YSI_g_sCommands[YSI_g_sCommandIndex][E_COMMANDS_ALTNAME][0] = '\0';
+	if (Command_IsSorted())
+	{
+		new
+			data[E_BINTREE_INPUT];
+		data[E_BINTREE_INPUT_VALUE] = hash;
+		data[E_BINTREE_INPUT_POINTER] = YSI_g_sCommandIndex;
+		Bintree_Add(YSI_g_sSearchTree, data, YSI_g_sCommandIndex, sizeof (YSI_g_sSearchTree));
+	}
+	YSI_g_sCommandIndex++;
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_Parse
+Params:
+	-
+Return:
+	-
+Notes:
+	Sorts the commands into the binary tree.
+-*----------------------------------------------------------------------------*/
+
+public Command_Parse()
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 0;
+	#endif
+	if (Command_IsSorted()) return 0;
+	new
+		funcData[MAX_COMMANDS][E_BINTREE_INPUT];
+	for (new i = 0; i < YSI_g_sCommandIndex; i++)
+	{
+		funcData[i][E_BINTREE_INPUT_VALUE] = bernstein(YSI_g_sCommands[i][E_COMMANDS_FUNCTION]);
+		funcData[i][E_BINTREE_INPUT_POINTER] = i;
+	}
+	Bintree_Generate(YSI_g_sSearchTree, funcData, YSI_g_sCommandIndex);
+	Command_SetSorted(1);
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_FindSlow
+Params:
+	funcname[] - Function to find.
+Return:
+	-
+Notes:
+	Searches through the array for function linearly - used to set altnames
+	before the data has been sorted.
+-*----------------------------------------------------------------------------*/
+
+static stock Command_FindSlow(funcname[])
+{
+	for (new i = 0; i < YSI_g_sCommandIndex; i++)
+	{
+		if (!strcmp(YSI_g_sCommands[i][E_COMMANDS_FUNCTION], funcname, true)) return i;
+	}
+	return COMMAND_NOT_FOUND;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_SetAltName
+Params:
+	funcname[] - Function to set the alternate name for.
+	altname[] - The new name.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Command_SetAltName(funcname[], string[])
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster)
+		{
+			CallRemoteFunction("Command_SetStringParameter", "iss", COMMAND_PARAMETER_ALTNAME, funcname, string);
+		}
+		else
+		{
+			Command_SetStringParameter(COMMAND_PARAMETER_ALTNAME, funcname, string);
+		}
+}
+
+public Command_SetStringParameter(parameter, funcname[], string[])
+{
+		if (!YSI_g_sIsMaster) return;
+		if (parameter == COMMAND_PARAMETER_ALTNAME)
+	#endif
+	{
+		new
+			pointer,
+			index;
+		if (!Command_IsSorted())
+		{
+			if ((pointer = Command_FindSlow(funcname)) == COMMAND_NOT_FOUND) return;
+		}
+		else
+		{
+			if ((pointer = Command_FindFunc(funcname, Command_Hash(funcname, index), index)) == COMMAND_NOT_FOUND) return;
+		}
+		if (YSI_g_sCommands[pointer][E_COMMANDS_ALTNAME][0])
+		{
+			index = 0;
+			new
+				pointer2 = Command_FindAlt(YSI_g_sCommands[pointer][E_COMMANDS_ALTNAME], Command_Hash(YSI_g_sCommands[pointer][E_COMMANDS_ALTNAME], index), index);
+			if (pointer2 != BINTREE_NOT_FOUND)
+			{
+				YSI_g_sAltCount = Bintree_Delete(YSI_g_sAltTree, pointer2, YSI_g_sAltCount);
+			}
+		}
+		index = 0;
+		new
+			data[E_BINTREE_INPUT];
+		data[E_BINTREE_INPUT_VALUE] = Command_Hash(string, index);
+		printf("hash: %d", data[E_BINTREE_INPUT_VALUE]);
+		data[E_BINTREE_INPUT_POINTER] = pointer;
+		YSI_g_sAltCount = Bintree_Add(YSI_g_sAltTree, data, YSI_g_sAltCount, sizeof (YSI_g_sAltTree));
+		strcpy(YSI_g_sCommands[pointer][E_COMMANDS_ALTNAME], strtolower(string), MAX_COMMAND_LENGTH);
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_SetPrefix
+Params:
+	prefix[] - The new prefix.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Command_SetPrefix(prefix[])
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster)
+		{
+			CallRemoteFunction("Command_SetStringOption", "is", 0, prefix);
+		}
+		else
+	#endif
+	{
+		strcpy(YSI_g_sPrefix, prefix, MAX_COMMAND_LENGTH);
+		YSI_g_sPrefixLength = strlen(prefix);
+	}
+}
+
+#if defined _YSI_SETUP_MASTER
+	public Command_SetStringOption(option, string[])
+	{
+		switch (option)
+		{
+			case 0:
+			{
+				strcpy(YSI_g_sPrefix, string, MAX_COMMAND_LENGTH);
+				YSI_g_sPrefixLength = strlen(string);
+			}
+		}
+	}
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_FindFunc
+Params:
+	data[] - Function name to find.
+	value - Hash of function name.
+	length - Length of name.
+	&ret - Variable to store leaf to.
+Return:
+	Position in functions array or COMMAND_NOT_FOUND.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+Command_FindFunc(data[], value, length, &ret = 0)
+{
+	new
+		leaf,
+		pointer;
+	while ((pointer = Bintree_FindValue(YSI_g_sSearchTree, value, leaf, ret)) != BINTREE_NOT_FOUND)
+	{
+		if (!strcmp(YSI_g_sCommands[pointer][E_COMMANDS_FUNCTION], data, true, length)) return pointer;
+	}
+	return COMMAND_NOT_FOUND;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_FindAlt
+Params:
+	data[] - Altname to find.
+	value - Hash of altname.
+	length - Length of name.
+	&ret - Variable to store leaf to.
+	&index - Variable to modify with real length.
+Return:
+	Position in functions array or COMMAND_NOT_FOUND.
+Notes:
+	Updated for alt names with spaces in.
+-*----------------------------------------------------------------------------*/
+
+Command_FindAlt(data[], value, length, &ret = 0, &index = 0)
+{
+	new
+		leaf,
+		pointer;
+	while ((pointer = Bintree_FindValue(YSI_g_sAltTree, value, leaf, ret)) != BINTREE_NOT_FOUND)
+	{
+		new
+			len = strlen(YSI_g_sCommands[pointer][E_COMMANDS_ALTNAME]);
+		if (!strcmp(YSI_g_sCommands[pointer][E_COMMANDS_ALTNAME], data, true, length) && !strcmp(YSI_g_sCommands[pointer][E_COMMANDS_ALTNAME], data, true, len))
+		{
+			index += len - length;
+			return pointer;
+		}
+	}
+	return COMMAND_NOT_FOUND;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_Find
+Params:
+	data[] - string from OnPlayerCommandText to search for.
+	&index - Variable to store end of 
+Return:
+	Command index or COMMAND_NOT_FOUND.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+static Command_Find(data[], &index)
+{
+	new
+		pointer,
+		start = index,
+		length,
+		value = Command_Hash(data, index, length);
+	length--;
+	if (Command_UsingAltNames() && (pointer = Command_FindAlt(data[start], value, length, .index = index)) != COMMAND_NOT_FOUND) return pointer;
+	if ((pointer = Command_FindFunc(data[start], value, length)) != COMMAND_NOT_FOUND && (!Command_UsingAltNames() || !YSI_g_sCommands[pointer][E_COMMANDS_ALTNAME][0])) return pointer;
+	return COMMAND_NOT_FOUND;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_Remove
+Params:
+	funcname[] - Function to remove
+Return:
+	-
+Notes:
+	Don't use before the bintree has been sorted or the function will fail.
+-*----------------------------------------------------------------------------*/
+
+#if defined _YSI_SETUP_MASTER
+	public Command_Remove(funcname[])
+#else
+	stock Command_Remove(funcname[])
+#endif
+{
+	#if defined _YSI_SETUP_MASTER
+		static
+			sCalled;
+		if (!YSI_g_sIsMaster)
+		{
+			if (!sCalled)
+			{
+				sCalled = 1;
+				CallRemoteFunction("Command_Remove", "s", funcname);
+			}
+		}
+		else
+		{
+	#endif
+		new
+			pointer,
+			leaf;
+		if ((pointer = Command_FindFunc(funcname, Command_Hash(funcname), strlen(funcname), leaf)) == COMMAND_NOT_FOUND) return;
+		YSI_g_sCommandIndex = Bintree_Delete(YSI_g_sSearchTree, leaf, YSI_g_sCommandIndex);
+		Bintree_UpdatePointers(YSI_g_sSearchTree, pointer, YSI_g_sCommandIndex);
+		new
+			pointer2,
+			altname[MAX_COMMAND_LENGTH];
+		strcpy(altname, YSI_g_sCommands[pointer][E_COMMANDS_ALTNAME], MAX_COMMAND_LENGTH);
+		while ((pointer2 = pointer + 1) <= YSI_g_sCommandIndex)
+		{
+			strcpy(YSI_g_sCommands[pointer][E_COMMANDS_FUNCTION], YSI_g_sCommands[pointer2][E_COMMANDS_FUNCTION], MAX_COMMAND_LENGTH);
+			strcpy(YSI_g_sCommands[pointer][E_COMMANDS_ALTNAME], YSI_g_sCommands[pointer2][E_COMMANDS_ALTNAME], MAX_COMMAND_LENGTH);
+			#if !defined _COMMANDS_SMALL
+				strcpy(YSI_g_sCommands[pointer][E_COMMANDS_FUNCNAME], YSI_g_sCommands[pointer2][E_COMMANDS_FUNCNAME]);
+			#endif
+			pointer++;
+		}
+		YSI_g_sCommands[pointer][E_COMMANDS_ALTNAME][0] = '\0';
+		YSI_g_sCommands[pointer][E_COMMANDS_FUNCTION][0] = '\0';
+		#if !defined _COMMANDS_SMALL
+			YSI_g_sCommands[pointer][E_COMMANDS_FUNCNAME][0] = '\0';
+		#endif
+		if (altname[0])
+		{
+			leaf = 0;
+			if ((pointer = Command_FindAlt(altname, Command_Hash(altname), strlen(altname), leaf)) == COMMAND_NOT_FOUND) return;
+			YSI_g_sAltCount = Bintree_Delete(YSI_g_sAltTree, leaf, YSI_g_sAltCount);
+			Bintree_UpdatePointers(YSI_g_sAltTree, pointer, YSI_g_sAltCount);
+		}
+	#if defined _YSI_SETUP_MASTER
+		}
+		sCalled = 0;
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_Prefix
+Params:
+	cmdtext[] - Text from OnPlayerCommandText.
+	&index - Variable to store end of prefix to.
+Return:
+	true/false.
+Notes:
+	Checks the player has entered the required command prefix with optional
+	trailing space.
+-*----------------------------------------------------------------------------*/
+
+static Command_Prefix(cmdtext[], &index)
+{
+	if (Command_UsingPrefix())
+	{
+		if (strcmp(cmdtext[index], YSI_g_sPrefix, true, YSI_g_sPrefixLength)) return 0;
+		index += YSI_g_sPrefixLength;
+		if (Command_UsingSpace())
+		{
+			new
+				ret;
+			while (cmdtext[index] && cmdtext[index] == ' ')
+			{
+				ret = 1;
+				index++;
+			}
+			return ret;
+		}
+	}
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_Process
+Params:
+	playerid - Player who entered the command.
+	cmdtext[] - Text entered.
+	help - Called from the help commmand or OnPlayerCommandText.
+Return:
+	true - success or hidden fail, false - fail.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+Command_Process(playerid, cmdtext[], help = 0)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 0;
+	#endif
+	if (!IsPlayerConnected(playerid)) return Command_DisconnectReturn();
+    new
+        i,
+        c;
+    while ((c = cmdtext[i++])) if (c < ' ' || c > '~') return Command_IllegalReturn();
+	#if defined _YSI_CORE_PLAYER
+		if (!help && Command_UsingShortCuts() && (!cmdtext[2] || cmdtext[2] == ' '))
+		{
+			new
+				cmdname[MAX_COMMAND_LENGTH];
+			Player_FindShortCut(playerid, cmdtext[1], cmdname);
+			if (cmdname[0])
+			{
+				return CallRemoteFunction("OnPlayerCommandText", "is", playerid, strconcat(cmdname, cmdtext[2]));
+			}
+		}
+	#endif
+	new
+		index = 1,
+		command = Command_Find(cmdtext, index);
+	if (!help && !Command_Prefix(cmdtext, index)) return 0;
+	if (command == COMMAND_NOT_FOUND) return 0;
+	if (Command_IsCleared(playerid, command))
+	{
+		if (index < strlen(cmdtext)) Command_CallFunction(command, playerid, cmdtext[index], help);
+		else Command_CallFunction(command, playerid, NULL, help);
+		return 1;
+	}
+	if (Command_DeniedMessage()) Text_Send(playerid, "YSI_COMM_BLEVEL");
+	return Command_DeniedReturn();
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_Hash
+Params:
+	command[] - Command text to hash.
+	&index - Start point and variable to store end point to.
+Return:
+	hash value.
+Notes:
+	Based on the bernstein function but only hashes one word, space delimited.
+-*----------------------------------------------------------------------------*/
+
+Command_Hash(command[], &index = 0, &word = 0)
+{
+	new
+		hash = -1,
+		j;
+	while ((j = command[index++]) && j != ' ') hash = hash * 33 + chrtolower(j);
+	word = index - 1;
+	while (j == ' ') j = command[index++]; index--;
+	return hash;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_ReturnName
+Params:
+	pointer - Index of the command to be got
+Return:
+	Full name of the command.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+static Command_ReturnName(pointer)
+{
+	new
+		str[(MAX_COMMAND_LENGTH * 2) + 2],
+		i,
+		j;
+	if (Command_UsingPrefix()) while (j < YSI_g_sPrefixLength && i < sizeof (str)) str[i++] = YSI_g_sPrefix[j++];
+	j = 0;
+	if (Command_UsingAltNames() && YSI_g_sCommands[pointer][E_COMMANDS_ALTNAME][0])
+	{
+		new
+			k = strlen(YSI_g_sCommands[pointer][E_COMMANDS_ALTNAME]);
+		while (j < k && i < sizeof (str)) str[i++] = YSI_g_sCommands[pointer][E_COMMANDS_ALTNAME][j++];
+	}
+	else
+	{
+		new
+			k = strlen(YSI_g_sCommands[pointer][E_COMMANDS_FUNCTION]);
+		while (j < k && i < sizeof (str)) str[i++] = YSI_g_sCommands[pointer][E_COMMANDS_FUNCTION][j++];
+	}
+	str[i] = '\0';
+	return str;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_Name
+Params:
+	funcname[] - Command to get the real name of.
+Return:
+	-
+Notes:
+	Puts a function's custom name into a property.
+-*----------------------------------------------------------------------------*/
+
+public Command_Name(funcname[])
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 1;
+	#endif
+	new
+		pointer = Command_FindFunc(funcname, Command_Hash(funcname), strlen(funcname));
+	if (pointer == COMMAND_NOT_FOUND) setproperty(0, "", FORMAT_COMMAND, "NONE");
+	else setproperty(0, "", FORMAT_COMMAND, Command_ReturnName(pointer));
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Command_GetPlayerCount
+Params:
+	playerid - Player to count for
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+static Command_GetPlayerCount(playerid)
+{
+	new
+		count;
+	for (new i = 0; i < YSI_g_sCommandIndex; i++) if (Command_IsCleared(playerid, i)) count++;
+	return count;
+}
+
+/*----------------------------------------------------------------------------*-
+Command:
+	commands
+Parameters:
+	<page> - Pags of commands to view (optional).
+Notes:
+	Prints a list of commands a player can use.  There is no option for no
+	commands becuase if you are using this command there must be at least one
+	command (this one).
+-*----------------------------------------------------------------------------*/
+
+public ycmd_commands(playerid, params[], help)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 0;
+	#endif
+	if (help)
+	{
+		Text_Send(playerid, "YSI_COMM_HELP_1");
+		Text_Send(playerid, "YSI_COMM_HELP_2");
+		Text_Send(playerid, "YSI_COMM_HELP_3");
+		return 1;
+	}
+	new
+		props = Command_GetPlayerCount(playerid),
+		pages = (props + 7) / 8,
+		page = strval(params);
+	if (props > 8)
+	{
+		if (page)
+		{
+			if (page <= pages)
+			{
+				for (new i = 0, j = 0, k = (page - 1) * 8, n = k + 8; i < YSI_g_sCommandIndex && j < n; i++)
+				{
+					if (Command_IsCleared(playerid, i))
+					{
+						if (j >= k)
+						{
+							Text_SendFormat(playerid, "YSI_COMM_LIST", Command_ReturnName(i));
+						}
+						j++;
+					}
+				}
+			}
+			else Text_SendFormat(playerid, "YSI_LIST_PAGES", "commands", pages);
+		}
+		else
+		{
+			Text_Send(playerid, "YSI_COMM_MORE");
+			Text_SendFormat(playerid, "YSI_COMM_PAGES", "commands", pages);
+		}
+	}
+	else
+	{
+		for (new j = 0, i = 0; i < props && j < YSI_g_sCommandIndex; j++)
+		{
+			if (Command_IsCleared(playerid, j))
+			{
+				Text_SendFormat(playerid, "YSI_COMM_LIST", Command_ReturnName(j));
+				i++;
+			}
+		}
+	}
+	return 1;
+}

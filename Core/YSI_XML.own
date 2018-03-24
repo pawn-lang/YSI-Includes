@@ -1,0 +1,861 @@
+/*----------------------------------------------------------------------------*-
+					===========================
+					Y Sever Includes - XML Core
+					===========================
+Description:
+	Parses XML files according to a set of defined rules.  A rule is a custom
+	function called on a tag when all the data for that tag has been collected.
+	The data for a tag could consist of simple bla="bla" pairs, <tag>data</tag>
+	pairs or cominations of the two, including subtags, each with their own
+	possible custom handlers.
+	
+	Data for the tag is retrieved from a custom function using only:
+	
+	while (XML_GetKeyValue(ident, data)) {}
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1
+Changelog:
+	10/09/07:
+		Added documentation.
+	31/08/07:
+		First version.
+Functions:
+	Public:
+		-
+	Core:
+		-
+	Stock:
+		XML_New - Creates a new rule set.
+		XML_Destroy - Removes a rules set.
+		XML_Parse - Parses a file according to a rule.
+		XML_Push - Puses data to the stack.
+		XML_GetParameter - Gets a key="par" parameter.
+		XML_GetValue - Gets a <key>par</key> parameter.
+		XML_GetName - Gets an identifier name.
+		XML_ParseTag - Parses a full tag.
+		XML_GetKeyValue - Gets a key/data pair for a callback.
+		XML_AddHandler - Adds a handler to a rule set.
+		XML_RemoveHandler - Removes a handler from a rule set.
+		XML_AddItem - Creates a new item for writing.
+		XML_AddParameter - Adds a parameter to the data being written.
+		XML_WriteItem - Writes data to a file.
+		XML_RemoveItem - Removes a tag from a file.
+		XML_ReplaceItem - Replaces an item in a file.
+	Static:
+		XML_WriteItemData - Recursively writes a tag to a file.
+	Inline:
+		XML_IsValid - Checks a file is valid.
+		XML_IsChar - Checks a cell is an identifier character.
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	MAX_XML_FILES - Max number of rule sets.
+	XML_MAX_XML_FILES - Max rule sets with XML: tag.
+	NO_XML_FILE - Fail return.
+	MAX_XML_ENTRY_NAME - Max length of an identifier (same as INI by default).
+	MAX_XML_ENTRY_TEXT - Max length of an entry (same as INI by default).
+	MAX_XML_FUNCTION - Max length of a callback function (same as commands by default).
+	XML_BUFFER_SIZE - Stack size.
+	MAX_XML_HANDLERS - Number of tag handlers per rule set.
+	XML_WRITE_BUFFER_SIZE - Amount of data storeable for writing.
+Enums:
+	E_XML_PARA - Stack data, stores identifier, data and depth.
+	E_XML_HANDLER - Data for handlers, stores trigger and function.
+	E_XML_WRITE - Structure of data to be written to a file.
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		YSI_g_sParameters - Stack.
+		YSI_g_sHandlers - Rule data.
+		YSI_g_sCurHandler - Pointer to add handlers to rulesets.
+		YSI_g_sCurBuffer - Rule set in use for parsing.
+		YSI_g_sEndTag - Current tree depth.
+		YSI_g_sXMLWriteBuffer - Data to be written to a file.
+		YSI_g_sXMLWritePointer - Pointer to next free slot for writing data.
+
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#if !defined MAX_XML_FILES
+	#define MAX_XML_FILES 5
+#endif
+
+#define XML_MAX_XML_FILES (XML:MAX_XML_FILES)
+
+#define NO_XML_FILE (XML:-1)
+
+#define MAX_XML_ENTRY_NAME 32
+#define MAX_XML_ENTRY_TEXT 80
+#define MAX_XML_FUNCTION 32
+
+#define XML_BUFFER_SIZE 64
+
+#define MAX_XML_HANDLERS 16
+
+#define XML_WRITE_BUFFER_SIZE 170
+
+enum E_XML_PARA
+{
+	E_XML_PARA_NAME[MAX_XML_ENTRY_NAME],
+	E_XML_PARA_VALUE[MAX_XML_ENTRY_TEXT],
+	E_XML_PARA_LEVEL
+}
+
+enum E_XML_HANDLER
+{
+	E_XML_HANDLER_TRIGGER[MAX_XML_ENTRY_NAME],
+	E_XML_HANDLER_FUNCTION[MAX_XML_FUNCTION]
+}
+
+enum E_XML_WRITE
+{
+	E_XML_WRITE_TAG[MAX_XML_ENTRY_NAME],
+	E_XML_WRITE_VALUE[MAX_XML_ENTRY_TEXT],
+	E_XML_WRITE_CHILDREN,
+	E_XML_WRITE_SIBLINGS
+}
+
+static stock
+	YSI_g_sXMLWriteBuffer[XML_WRITE_BUFFER_SIZE][E_XML_WRITE],
+	YSI_g_sXMLWritePointer,
+	YSI_g_sParameters[XML_BUFFER_SIZE][E_XML_PARA],
+	YSI_g_sHandlers[XML_MAX_XML_FILES][MAX_XML_HANDLERS][E_XML_HANDLER],
+	YSI_g_sCurHandler[XML_MAX_XML_FILES] = {-1, ...},
+	YSI_g_sCurBuffer = -1,
+	YSI_g_sEndTag = 0;
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_IsValid
+Params:
+	XML:file - File to check validity of.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define XML_IsValid(%1) \
+	((%1) >= XML:0 && (%1) < XML_MAX_XML_FILES && YSI_g_sCurHandler[(%1)] != -1)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_IsChar
+Params:
+	char - Checks if a cell is a valid identifier character.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define XML_IsChar(%1) \
+	(((%1) >= 'a' && (%1) <= 'z') || ((%1) >= 'A' && (%1) <= 'Z') || ((%1) >= '0' && (%1) <= '9') || (%1 == '_'))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_New
+Params:
+	-
+Return:
+	XML
+Notes:
+	Creates a new set of rules for parsing XML files.
+-*----------------------------------------------------------------------------*/
+
+stock XML:XML_New()
+{
+	new
+		XML:i;
+	while (i < XML_MAX_XML_FILES) if (YSI_g_sCurHandler[i] == -1) break;
+	if (i == XML_MAX_XML_FILES) return NO_XML_FILE;
+	YSI_g_sCurHandler[i] = 0;
+	YSI_g_sCurBuffer = 0;
+	return i;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_Destroy
+Params:
+	XML:rule - Removes a set of rules from the system
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock XML_Destroy(XML:rule)
+{
+	if (!XML_IsValid(rule)) return 0;
+	YSI_g_sCurBuffer = -1;
+	YSI_g_sCurHandler[rule] = -1;
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_Parse
+Params:
+	XML:rule - Set of XML rules to parse against.
+	filename[] - XML file to parse.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock XML_Parse(XML:rule, filename[])
+{
+	if (!XML_IsValid(rule)) return 0;
+	new
+		File:xFile = fopen(filename);
+	if (xFile)
+	{
+		new
+			line[MAX_STRING],
+			tagCount,
+			gotLastValue,
+			inClose,
+			inOpen,
+			value[MAX_XML_ENTRY_TEXT],
+			name[MAX_XML_ENTRY_NAME],
+			inPar;
+		while (fread(xFile, line))
+		{
+			new
+				pos,
+				ch;
+			while ((ch = line[pos]) && ch <= ' ') pos++;
+			while (ch)
+			{
+				if (ch <= ' ') pos++;
+				else if (ch == '<')
+				{
+					if (line[++pos] == '/')
+					{
+						pos++;
+						tagCount--;
+						if (gotLastValue)
+						{
+							XML_Push(XML_GetName(line, pos), value, tagCount);
+						}
+						else
+						{
+							name = XML_GetName(line, pos);
+							value = XML_ParseTag(rule, name, tagCount);
+							if (value[0] && tagCount > 1)
+							{
+								XML_Push(name, value, tagCount);
+							}
+						}
+						inClose = 1;
+					}
+					else
+					{
+						inOpen = 1;
+						tagCount++;
+						while ((ch = line[pos]) && XML_IsChar(ch)) pos++;
+					}
+					gotLastValue = 0;
+					inPar = 0;
+				}
+				else if (ch == '>')
+				{
+					inPar = inClose ? 0 : 1;
+					inOpen = 0;
+					inClose = 0;
+					pos++;
+				}
+				else if (inPar)
+				{
+					value = XML_GetValue(line, pos);
+					gotLastValue = 1;
+				}
+				else if (inOpen)
+				{
+					name = XML_GetName(line, pos);
+					value = XML_GetParameter(line, pos);
+					XML_Push(name, value, tagCount);
+				}
+				else pos++;
+				ch = line[pos];
+			}
+		}
+		fclose(xFile);
+		return 1;
+	}
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_Push
+Params:
+	name[] - Identifer of data.
+	text[] - Data.
+	depth - Current XML tree depth.
+Return:
+	-
+Notes:
+	Pushes an identifier and it's value (either explicitaly stated or returned
+	from another function) to the stack with basic parent info.
+-*----------------------------------------------------------------------------*/
+
+stock XML_Push(name[], text[], depth)
+{
+	if (YSI_g_sCurBuffer < XML_BUFFER_SIZE && YSI_g_sCurBuffer >= 0)
+	{
+		strcpy(YSI_g_sParameters[YSI_g_sCurBuffer][E_XML_PARA_NAME], name, MAX_XML_ENTRY_NAME);
+		strcpy(YSI_g_sParameters[YSI_g_sCurBuffer][E_XML_PARA_VALUE], text, MAX_XML_ENTRY_TEXT);
+		YSI_g_sParameters[YSI_g_sCurBuffer][E_XML_PARA_LEVEL] = depth;
+		YSI_g_sCurBuffer++;
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_GetParameter
+Params:
+	line[] - Data to extract from.
+	&pos - Start/end point of the text.
+Return:
+	-
+Notes:
+	Gets the data from inside ""s in an identifier.
+-*----------------------------------------------------------------------------*/
+
+stock XML_GetParameter(line[], &pos)
+{
+	new
+		ch,
+		ret[MAX_XML_ENTRY_TEXT],
+		i;
+	while ((ch = line[pos++]) && ch != '"') {}
+	if (ch) while ((ch = line[pos++]) && ch != '"' && i < (sizeof (ret) - 1)) ret[i++] = ch;
+	if (i == (sizeof (ret) - 1))
+	{
+		while ((ch = line[pos++]) && ch != '"') {}
+	}
+	ret[i] = '\0';
+	return ret;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_GetValue
+Params:
+	line[] - Line to get data from.
+	&pos - Start and end position of the data.
+Return:
+	-
+Notes:
+	Gets the text between tags.
+-*----------------------------------------------------------------------------*/
+
+stock XML_GetValue(line[], &pos)
+{
+	new
+		ch,
+		ret[MAX_XML_ENTRY_TEXT],
+		i;
+	while (((ch = line[pos++]) >= ' ' || ch == '\t') && (ch != '<') && i < (sizeof (ret) - 1)) ret[i++] = ch;
+	pos--;
+	if (i == (sizeof (ret) - 1))
+	{
+		while (((ch = line[pos]) >= ' ' || ch == '\t') && (ch != '<')) pos++;
+	}
+	ret[i] = '\0';
+	return ret;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_GetName
+Params:
+	line[] - Line to get data from.
+	&pos - Start and end position of text.
+Return:
+	-
+Notes:
+	Gets the identifier of a piece of data.
+-*----------------------------------------------------------------------------*/
+
+stock XML_GetName(line[], &pos)
+{
+	new
+		ch,
+		ret[MAX_XML_ENTRY_NAME],
+		i;
+	while ((ch = line[pos++]) && XML_IsChar(ch) && i < (sizeof (ret) - 1)) ret[i++] = ch;
+	pos--;
+	if (i == (sizeof (ret) - 1))
+	{
+		while ((ch = line[pos]) >= ' ' && XML_IsChar(ch)) pos++;
+	}
+	ret[i] = '\0';
+	return ret;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_ParseTag
+Params:
+	XML:rule - Rule set to parse according to.
+	name[] - Name if identifier.
+	tagCount - New tree depth.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock XML_ParseTag(XML:rule, name[], tagCount)
+{
+	new
+		i,
+		j = YSI_g_sCurHandler[rule],
+		ret[MAX_XML_ENTRY_TEXT] = "\1";
+	YSI_g_sEndTag = tagCount;
+	while (i < j)
+	{
+		if (!strcmp(YSI_g_sHandlers[rule][i][E_XML_HANDLER_TRIGGER], name, true))
+		{
+			break;
+		}
+		i++;
+	}
+	if (i != j)
+	{
+		format(ret, sizeof (ret), "%d", CallLocalFunction(YSI_g_sHandlers[rule][i][E_XML_HANDLER_FUNCTION], ""));
+	}
+	while (YSI_g_sCurBuffer)
+	{
+		if (YSI_g_sParameters[--YSI_g_sCurBuffer][E_XML_PARA_LEVEL] <= tagCount) break;
+	}
+	return ret;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_GetKeyValue
+Params:
+	key[] - Variable to return identifier in.
+	value[] - Variable to return value in.
+Return:
+	Data found.
+Notes:
+	Pops items off the stack for use in custom functions.
+-*----------------------------------------------------------------------------*/
+
+stock XML_GetKeyValue(key[], value[])
+{
+	key[0] = 1;
+	key[1] = 0;
+	value[0] = 1;
+	value[1] = 0;
+	if (YSI_g_sCurBuffer)
+	{
+		YSI_g_sCurBuffer--;
+		if (YSI_g_sParameters[YSI_g_sCurBuffer][E_XML_PARA_LEVEL] <= YSI_g_sEndTag) return 0;
+		strcpy(key, YSI_g_sParameters[YSI_g_sCurBuffer][E_XML_PARA_NAME], MAX_XML_ENTRY_NAME);
+		strcpy(value, YSI_g_sParameters[YSI_g_sCurBuffer][E_XML_PARA_VALUE], MAX_XML_ENTRY_TEXT);
+		return 1;
+	}
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_AddHandler
+Params:
+	XML:ruls - Rule set to add data to.
+	trigger[] - Identifier which calls it.
+	function[] - Function to parse identifier in.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock XML_AddHandler(XML:rule, trigger[], function[])
+{
+	new
+		handle;
+	if (!XML_IsValid(rule) || (handle = YSI_g_sCurHandler[rule]) >= MAX_XML_HANDLERS && handle >= 0) return 0;
+	strcpy(YSI_g_sHandlers[rule][handle][E_XML_HANDLER_TRIGGER], trigger, MAX_XML_ENTRY_NAME);
+	strcpy(YSI_g_sHandlers[rule][handle][E_XML_HANDLER_FUNCTION], function, MAX_XML_FUNCTION);
+	YSI_g_sCurHandler[rule]++;
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_RemoveHandler
+Params:
+	XML:rule - Set to remove handler from.
+	trigger[] - Handler name to remove.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock XML_RemoveHandler(XML:rule, trigger[])
+{
+	if (XML_IsValid(rule))
+	{
+		for (new i = 0, j = YSI_g_sCurHandler[rule]; i < j; i++)
+		{
+			if (!strcmp(YSI_g_sHandlers[rule][i][E_XML_HANDLER_TRIGGER], trigger, true))
+			{
+				new
+					last = --YSI_g_sCurHandler[rule];
+				if (last)
+				{
+					strcpy(YSI_g_sHandlers[rule][i][E_XML_HANDLER_TRIGGER], YSI_g_sHandlers[rule][last][E_XML_HANDLER_TRIGGER], MAX_XML_ENTRY_NAME);
+					strcpy(YSI_g_sHandlers[rule][i][E_XML_HANDLER_FUNCTION], YSI_g_sHandlers[rule][last][E_XML_HANDLER_FUNCTION], MAX_XML_FUNCTION);
+				}
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_AddItem
+Params:
+	tag[] - Type of data being added.
+	name[] - The optional name parameter for identifying tags.
+Return:
+	-
+Notes:
+	Starts the creation of a new tag to be written to a file, the structure
+	has to be manually created them written.  There is no buffering of multiple
+	tags before writing as a single tag can have quite a bit of data.
+-*----------------------------------------------------------------------------*/
+
+stock XML_AddItem(tag[], name[] = "")
+{
+	if (YSI_g_sXMLWritePointer < XML_WRITE_BUFFER_SIZE)
+	{
+		strcpy(YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_TAG], tag, MAX_XML_ENTRY_NAME);
+		strcpy(YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_VALUE], name, MAX_XML_ENTRY_TEXT);
+		YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_CHILDREN] = -1;
+		YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_SIBLINGS] = -1;
+		return YSI_g_sXMLWritePointer++;
+	}
+	return cellmax;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_AddParameter
+Params:
+	parent - Tag this is a parameter of.
+	tag[] - Name of this data.
+	value[] - Value of this data, if this is blank there is sub parameters.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock XML_AddParameter(parent, tag[], value[] = "")
+{
+	if (YSI_g_sXMLWritePointer < XML_WRITE_BUFFER_SIZE && parent < YSI_g_sXMLWritePointer)
+	{
+		strcpy(YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_TAG], tag, MAX_XML_ENTRY_NAME);
+		strcpy(YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_VALUE], value, MAX_XML_ENTRY_TEXT);
+		YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_CHILDREN] = -1;
+		YSI_g_sXMLWriteBuffer[YSI_g_sXMLWritePointer][E_XML_WRITE_SIBLINGS] = YSI_g_sXMLWriteBuffer[parent][E_XML_WRITE_CHILDREN];
+		YSI_g_sXMLWriteBuffer[parent][E_XML_WRITE_CHILDREN] = YSI_g_sXMLWritePointer;
+		return YSI_g_sXMLWritePointer++;
+	}
+	return cellmax;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_WriteItem
+Params:
+	filename[] - File to write to.
+	item - Handle to the tag to write.
+Return:
+	-
+Notes:
+	Writea the data for a tag to a file.
+-*----------------------------------------------------------------------------*/
+
+stock XML_WriteItem(filename[], item)
+{
+	if (item < YSI_g_sXMLWritePointer)
+	{
+		new
+			data;
+		if (fexist(filename))
+		{
+			new
+				File:fHnd = fopen(filename, io_read),
+				File:fTemp = fopen("_temp_ysi_user_file_.ysi", io_write);
+			if (fHnd && fTemp)
+			{
+				new
+					str[MAX_STRING];
+				while (fread(fHnd, str))
+				{
+					fwrite(fTemp, str);
+					if (!data)
+					{
+						new
+							i,
+							ch;
+						while ((ch = str[i++]) && ch <= ' ') {}
+						if (ch == '<')
+						{
+							XML_WriteItemData(item, fTemp, 2);
+							data = 1;
+						}
+					}
+				}
+				fclose(fHnd);
+				fclose(fTemp);
+				fremove(filename);
+				if (data)
+				{
+					fHnd = fopen(filename, io_write);
+					fTemp = fopen("_temp_ysi_user_file_.ysi", io_read);
+					if (fHnd && fTemp)
+					{
+						while (fread(fTemp, str)) fwrite(fHnd, str);
+						fclose(fHnd);
+						fclose(fTemp);
+						fremove("_temp_ysi_user_file_.ysi");
+						YSI_g_sXMLWritePointer = item;
+						return 1;
+					}
+				}
+			}
+			if (fHnd) fclose(fHnd);
+			if (fTemp)
+			{
+				fclose(fTemp);
+				fremove("_temp_ysi_user_file_.ysi");
+			}
+		}
+		if (!data)
+		{
+			new
+				File:fHnd = fopen(filename, io_write);
+			if (fHnd)
+			{
+				fwrite(fHnd, "<XML>\r\n");
+				XML_WriteItemData(item, fHnd, 2);
+				fwrite(fHnd, "</XML>");
+				fclose(fHnd);
+				YSI_g_sXMLWritePointer = item;
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_WriteItemData
+Params:
+	item - Item to write data for.
+	File:fHnd - File to write to.
+	depth - Current indentation.
+Return:
+	-
+Notes:
+	Recursive function to write a tag and it's children to a file.
+-*----------------------------------------------------------------------------*/
+
+static stock XML_WriteItemData(item, File:fHnd, depth)
+{
+	new
+		str[MAX_STRING],
+		i = YSI_g_sXMLWriteBuffer[item][E_XML_WRITE_CHILDREN];
+	if (i == -1)
+	{
+		format(str, sizeof (str), "%*s<%s>%s</%s>\n", depth, "", YSI_g_sXMLWriteBuffer[item][E_XML_WRITE_TAG], YSI_g_sXMLWriteBuffer[item][E_XML_WRITE_VALUE], YSI_g_sXMLWriteBuffer[item][E_XML_WRITE_TAG]);
+		fwrite(fHnd, str);
+	}
+	else
+	{
+		if (YSI_g_sXMLWriteBuffer[item][E_XML_WRITE_VALUE][0]) format(str, sizeof (str), "%*s<%s name=\"%s\">\n", depth, "", YSI_g_sXMLWriteBuffer[item][E_XML_WRITE_TAG], YSI_g_sXMLWriteBuffer[item][E_XML_WRITE_VALUE]);
+		else format(str, sizeof (str), "%*s<%s>\n", depth, "", YSI_g_sXMLWriteBuffer[item][E_XML_WRITE_TAG]);
+		fwrite(fHnd, str);
+		depth += 2;
+		while (i != -1)
+		{
+			XML_WriteItemData(i, fHnd, depth);
+			i = YSI_g_sXMLWriteBuffer[i][E_XML_WRITE_SIBLINGS];
+		}
+		depth -= 2;
+		format(str, sizeof (str), "%*s</%s>\n", depth, "", YSI_g_sXMLWriteBuffer[item][E_XML_WRITE_TAG]);
+		fwrite(fHnd, str);
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_RemoveItem
+Params:
+	file[] - File to remove the tag from.
+	tag[] - Type of tag to remove.
+	name[] - Name of the tag to remove.
+Return:
+	-
+Notes:
+	Does a replace on data in a file with no new data.
+-*----------------------------------------------------------------------------*/
+
+stock XML_RemoveItem(file[], tag[], name[])
+{
+	return XML_ReplaceItem(file, tag, name, -1);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	XML_ReplaceItem
+Params:
+	file[] - File to replace an item in.
+	tag[] - Tag type of data to replace.
+	name[] - Name of data to replace.
+	replacement - Handle to the replacement data.
+Return:
+	-
+Notes:
+	Replaces a tag's data with new data, basically changes a tag's value.
+-*----------------------------------------------------------------------------*/
+
+stock XML_ReplaceItem(file[], tag[], name[], replacement)
+{
+	if (fexist(file))
+	{
+		new
+			File:fHnd = fopen(file, io_read),
+			File:fTemp = fopen("_temp_ysi_user_file_.ysi", io_write);
+		if (fHnd && fTemp)
+		{
+			new
+				tagCount,
+				line[MAX_STRING],
+				inTag,
+				atStart;
+			while (fread(fHnd, line))
+			{
+				new
+					pos,
+					ch;
+				while ((ch = line[pos]) && ch <= ' ') pos++;
+				while (ch)
+				{
+					if (ch <= ' ') pos++;
+					else if (ch == '<')
+					{
+						if (line[++pos] == '/')
+						{
+							pos++;
+							tagCount--;
+							if (inTag && tagCount <= atStart) inTag = 3;
+						}
+						else
+						{
+							tagCount++;
+							if (!inTag)
+							{
+								if (!strcmp(XML_GetName(line, pos), tag)) inTag = 1;
+							}
+							else while ((ch = line[pos]) && XML_IsChar(ch)) pos++;
+						}
+					}
+					else if (ch == '>')
+					{
+						if (inTag == 1) inTag = 0;
+						pos++;
+					}
+					else if (inTag == 1)
+					{
+						if (!strcmp(XML_GetName(line, pos), "name"))
+						{
+							if (!(strcmp(XML_GetParameter(line, pos), name)))
+							{
+								inTag = 2;
+								atStart = tagCount - 1;
+								if (replacement != -1)
+								{
+									if (replacement >= YSI_g_sXMLWritePointer) replacement = -1;
+									else XML_WriteItemData(replacement, fTemp, (tagCount - 1) * 2);
+								}
+							}
+						}
+						else XML_GetParameter(line, pos);
+					}
+					else pos++;
+					ch = line[pos];
+				}
+				if (!inTag) fwrite(fTemp, line);
+				if (inTag == 3) inTag = 0;
+			}
+			fclose(fHnd);
+			fclose(fTemp);
+			fremove(file);
+			fHnd = fopen(file, io_write);
+			fTemp = fopen("_temp_ysi_user_file_.ysi", io_read);
+			if (fHnd && fTemp)
+			{
+				while (fread(fTemp, line)) fwrite(fHnd, line);
+				fclose(fHnd);
+				fclose(fTemp);
+				fremove("_temp_ysi_user_file_.ysi");
+				if (replacement != -1) YSI_g_sXMLWritePointer = replacement;
+				return 1;
+			}
+		}
+		if (fHnd) fclose(fHnd);
+		if (fTemp)
+		{
+			fclose(fTemp);
+			fremove("_temp_ysi_user_file_.ysi");
+		}
+		return 0;
+	}
+	return 1;
+}
+

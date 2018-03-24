@@ -1,0 +1,647 @@
+/*----------------------------------------------------------------------------*-
+					============================
+					Y Sever Includes - Live Core
+					============================
+Description:
+	-
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1
+Changelog:
+	03/08/07:
+		Updated timer system.
+	31/07/07:
+		Added YSI stats.
+	29/07/07:
+		First version.
+Functions:
+	Public:
+		-
+	Core:
+		-
+	Stock:
+		-
+	Static:
+		-
+	Inline:
+		-
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	-
+Enums:
+	-
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		-
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#if !defined LIVE_LOOP_GRANULARITY
+	#define LIVE_LOOP_GRANULARITY 2
+#endif
+
+enum E_LIVE_DATA
+{
+	#if !defined LIVE_NO_HEALTH
+		Float:E_LIVE_DATA_HEALTH,
+	#endif
+	#if !defined LIVE_NO_ARMOUR
+		Float:E_LIVE_DATA_ARMOUR,
+	#endif
+	#if !defined LIVE_NO_POSITION
+		Float:E_LIVE_DATA_X,
+		Float:E_LIVE_DATA_Y,
+		Float:E_LIVE_DATA_Z,
+		Float:E_LIVE_DATA_A,
+		E_LIVE_DATA_INTERIOR,
+	#endif
+	#if !defined LIVE_NO_CUR_WEAP
+		E_LIVE_DATA_WEAPON,
+		E_LIVE_DATA_AMMO,
+	#endif
+	#if !defined LIVE_NO_SCORE
+		E_LIVE_DATA_SCORE,
+	#endif
+	#if !defined LIVE_NO_WANTED
+		E_LIVE_DATA_WANTED,
+	#endif
+	#if !defined LIVE_NO_COLOR
+		E_LIVE_DATA_COLOR,
+	#endif
+	#if !defined LIVE_NO_SKIN
+		E_LIVE_DATA_SKIN,
+	#endif
+	#if !defined LIVE_NO_MONEY
+		E_LIVE_DATA_MONEY,
+	#endif
+	#if !defined LIVE_NO_PING
+		E_LIVE_DATA_PING,
+	#endif
+	#if !defined LIVE_NO_WORLD
+		E_LIVE_DATA_WORLD,
+	#endif
+	#if !defined LIVE_NO_VEHICLE
+		E_LIVE_DATA_VEHICLE,
+	#endif
+	#if !defined LIVE_NO_MODEL
+		E_LIVE_DATA_MODEL,
+	#endif
+	#if !defined LIVE_NO_DEATHS
+		E_LIVE_DATA_DEATHS,
+	#endif
+	#if !defined LIVE_NO_KILLS
+		E_LIVE_DATA_KILLS,
+	#endif
+	#if !defined LIVE_NO_WEAPONS
+		E_LIVE_DATA_WEAPONS[13],
+	#endif
+	#if !defined LIVE_NO_YSI
+		#if defined _YSI_VISUAL_ZONES
+			E_LIVE_DATA_GANG_ZONE,
+		#endif
+		#if defined _YSI_VISUAL_AREAS
+			E_LIVE_DATA_AREA,
+		#endif
+		#if defined _YSI_GAMEMODE_PROPERTIES
+			E_LIVE_DATA_BANK,
+			E_LIVE_DATA_SPAWN_WEAPONS[13],
+			Bit:E_LIVE_DATA_PROPERTIES[Bit_Bits(MAX_PROPERTIES)],
+		#endif
+		#if defined _YSI_VISUAL_RACE
+			E_LIVE_DATA_RACE,
+		#endif
+	#endif
+	E_LIVE_DATA_YID
+}
+
+static
+	Bit:YSI_g_sRecordOptions[Bit_Bits(_:E_LIVE_DATA)],
+	YSI_g_sLiveData[MAX_PLAYERS][E_LIVE_DATA],
+	YSI_g_sPlayerDeathStats[MAX_PLAYERS][2],
+	Bit:YSI_g_sReset[PLAYER_BIT_ARRAY];
+
+forward Live_Loop();
+
+#define Live_Record(%1,%2) \
+	stock Live_Record%1(record) (YSI_g_sRecordOptions, _:E_LIVE_DATA_%2, record, sizeof (YSI_g_sRecordOptions))
+
+#define Live_CheckPlayerFloat(%1,%2) \
+	if ((%2) != YSI_g_sLiveData[playerid][E_LIVE_DATA_%1] || reset) \
+		Live_OutputFloat(iniWrite, playerid, (YSI_g_sLiveData[playerid][E_LIVE_DATA_%1] = (%2)), #%2 "_")
+
+#define Live_CheckPlayerInt(%1,%2) \
+	if ((%2) != YSI_g_sLiveData[playerid][E_LIVE_DATA_%1] || reset) \
+		Live_OutputInt(iniWrite, playerid, (YSI_g_sLiveData[playerid][E_LIVE_DATA_%1] = (%2)), #%2 "_")
+
+#define Live_CheckVehicleFloat(%1,%2) \
+	if ((%1) != YSI_g_sLiveData[playerid][E_LIVE_DATA_%2]) \
+		Live_OutputFloat(iniWrite, vehicleid, (YSI_g_sLiveVehicle[vehicleid][E_LIVE_DATA_%2] = (%1)), #%1 "_")
+
+#define Live_CheckVehicleInt(%1,%2) \
+	if ((%1) != YSI_g_sLiveData[playerid][E_LIVE_DATA_%2]) \
+		Live_OutputInt(iniWrite, vehicleid, (YSI_g_sLiveVehicle[vehicleid][E_LIVE_DATA_%2] = (%1)), #%1 "_")
+
+#define Live_Check(%1) \
+	if (Bit_Get(YSI_g_sRecordOptions, _:E_LIVE_DATA_%1))
+
+#if !defined LIVE_NO_HEALTH
+	stock Live_RecordHealth(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_HEALTH, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+#if !defined LIVE_NO_ARMOUR
+	stock Live_RecordArmour(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_ARMOUR, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+#if !defined LIVE_NO_POSITION
+	stock Live_RecordPosition(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_X, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+#if !defined LIVE_NO_CUR_WEAP
+	stock Live_RecordWeapon(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_WEAPON, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+#if !defined LIVE_NO_WEAPONS
+	stock Live_RecordSlots(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_WEAPONS, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+#if !defined LIVE_NO_SCORE
+	stock Live_RecordScore(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_SCORE, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+#if !defined LIVE_NO_WANTED
+	stock Live_RecordWanted(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_WANTED, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+#if !defined LIVE_NO_COLOR
+	stock Live_RecordColor(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_COLOR, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+#if !defined LIVE_NO_SKIN
+	stock Live_RecordSkin(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_SKIN, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+#if !defined LIVE_NO_MONEY
+	stock Live_RecordMoney(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_MONEY, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+#if !defined LIVE_NO_PING
+	stock Live_RecordPing(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_PING, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+#if !defined LIVE_NO_WORLD
+	stock Live_RecordWorld(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_WORLD, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+#if !defined LIVE_NO_VEHICLE
+	stock Live_RecordVehicle(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_VEHICLE, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+#if !defined LIVE_NO_MODEL
+	stock Live_RecordVehicleModel(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_MODEL, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+#if !defined LIVE_NO_DEATHS
+	stock Live_RecordDeaths(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_DEATHS, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+#if !defined LIVE_NO_KILLS
+	stock Live_RecordKills(record)
+	{
+		Bit_Set(YSI_g_sRecordOptions, _:E_LIVE_DATA_KILLS, record, sizeof (YSI_g_sRecordOptions));
+	}
+#endif
+
+Live_Live()
+{
+	static
+		timer;
+	if (!timer)
+	{
+		for (new i = 0; i < sizeof (YSI_g_sRecordOptions); i++)
+		{
+			YSI_g_sRecordOptions[i] = Bit:-1;
+		}
+		timer = Timer_Add("Live_Loop", LIVE_LOOP_GRANULARITY);
+	}
+	return 1;
+}
+
+public Live_Loop()
+{
+	new
+		INI:iniWrite = INI_Open("YSI/_temp_ysi_live_file_.ysi");
+	if (iniWrite != INI_NO_FILE)
+	{
+		INI_SetTag(iniWrite, "player_data");
+		foreach (Player, playerid)
+		{
+			new
+				reset = _:Bit_GetBit(YSI_g_sReset, playerid);
+			#if !defined LIVE_NO_HEALTH
+				Live_Check(HEALTH)
+				{
+					new
+						Float:health;
+					GetPlayerHealth(playerid, health);
+					Live_CheckPlayerFloat(HEALTH, health);
+				}
+			#endif
+			#if !defined LIVE_NO_ARMOUR
+				Live_Check(ARMOUR)
+				{
+					new
+						Float:armour;
+					GetPlayerArmour(playerid, armour);
+					Live_CheckPlayerFloat(ARMOUR, armour);
+				}
+			#endif
+			#if !defined LIVE_NO_POSITION
+				Live_Check(X)
+				{
+					new
+						Float:x,
+						Float:y,
+						Float:z,
+						Float:a,
+						interior = GetPlayerInterior(playerid),
+						vehicleid = GetPlayerVehicleID(playerid);
+					GetPlayerPos(playerid, x, y, z);
+					if (vehicleid) GetVehicleZAngle(vehicleid, a);
+					else GetPlayerFacingAngle(playerid, a);
+					Live_CheckPlayerFloat(X, x);
+					Live_CheckPlayerFloat(Y, y);
+					Live_CheckPlayerFloat(Z, z);
+					Live_CheckPlayerFloat(A, a);
+					Live_CheckPlayerInt(INTERIOR, interior);
+				}
+			#endif
+			#if !defined LIVE_NO_CUR_WEAP
+				Live_Check(WEAPON)
+				{
+					new
+						weapon = GetPlayerWeapon(playerid),
+						ammo = GetPlayerAmmo(playerid);
+					Live_CheckPlayerInt(WEAPON, weapon);
+					Live_CheckPlayerInt(AMMO, ammo);
+				}
+			#endif
+			#if !defined LIVE_NO_WEAPONS
+				Live_Check(WEAPONS)
+				{
+					new
+						weapon,
+						ammo;
+					for (new slot = 0; slot < 13; slot++)
+					{
+						GetPlayerWeaponData(playerid, slot, weapon, ammo);
+						new
+							data = YSI_g_sLiveData[playerid][E_LIVE_DATA_WEAPONS][slot];
+						if (weapon != data >> 24 || reset)
+						{
+							new
+								str[10] = "weapon___";
+							str[6] = (slot / 10) + '0';
+							str[7] = (slot % 10) + '0';
+							Live_OutputInt(iniWrite, playerid, weapon, str);
+							data = (data & 0x00FFFFFF) | (weapon << 24);
+						}
+						if (ammo != data & 0x00FFFFFF || reset)
+						{
+							new
+								str[8] = "ammo___";
+							str[4] = (slot / 10) + '0';
+							str[5] = (slot % 10) + '0';
+							Live_OutputInt(iniWrite, playerid, ammo, str);
+							data = (data & 0xFF000000) | (ammo & 0x00FFFFFF);
+						}
+						YSI_g_sLiveData[playerid][E_LIVE_DATA_WEAPONS][slot] = data;
+					}
+				}
+			#endif
+			#if !defined LIVE_NO_SCORE
+				Live_Check(SCORE)
+				{
+					new
+						score = GetPlayerScore(playerid);
+					Live_CheckPlayerInt(SCORE, score);
+				}
+			#endif
+			#if !defined LIVE_NO_WANTED
+				Live_Check(WANTED)
+				{
+					new
+						wanted = GetPlayerWantedLevel(playerid);
+					Live_CheckPlayerInt(WANTED, wanted);
+				}
+			#endif
+			#if !defined LIVE_NO_COLOR
+				Live_Check(COLOR)
+				{
+					new
+						color = GetPlayerColor(playerid);
+					Live_CheckPlayerInt(COLOR, color);
+				}
+			#endif
+			#if !defined LIVE_NO_SKIN
+				Live_Check(SKIN)
+				{
+					new
+						skin = GetPlayerSkin(playerid);
+					Live_CheckPlayerInt(SKIN, skin);
+				}
+			#endif
+			#if !defined LIVE_NO_MONEY
+				Live_Check(MONEY)
+				{
+					new
+						money = GetPlayerMoney(playerid);
+					Live_CheckPlayerInt(MONEY, money);
+				}
+			#endif
+			#if !defined LIVE_NO_PING
+				Live_Check(PING)
+				{
+					new
+						ping = GetPlayerPing(playerid);
+					Live_CheckPlayerInt(PING, ping);
+				}
+			#endif
+			#if !defined LIVE_NO_WORLD
+				Live_Check(WORLD)
+				{
+					new
+						world = GetPlayerVirtualWorld(playerid);
+					Live_CheckPlayerInt(WORLD, world);
+				}
+			#endif
+			#if !defined LIVE_NO_VEHICLE
+				Live_Check(VEHICLE)
+				{
+					new
+						vehicle = GetPlayerVehicleID(playerid);
+					Live_CheckPlayerInt(VEHICLE, vehicle);
+				}
+			#endif
+			#if !defined LIVE_NO_MODEL
+				Live_Check(MODEL)
+				{
+					new
+						vehicle = GetPlayerVehicleID(playerid),
+						model;
+					if (vehicle) model = GetVehicleModel(vehicle);
+					Live_CheckPlayerInt(MODEL, model);
+				}
+			#endif
+			#if !defined LIVE_NO_DEATHS
+				Live_Check(DEATHS)
+				{
+					new
+						deaths = YSI_g_sPlayerDeathStats[playerid][0];
+					Live_CheckPlayerInt(DEATHS, deaths);
+				}
+			#endif
+			#if !defined LIVE_NO_KILLS
+				Live_Check(KILLS)
+				{
+					new
+						kills = YSI_g_sPlayerDeathStats[playerid][1];
+					Live_CheckPlayerInt(KILLS, kills);
+				}
+			#endif
+			#if !defined LIVE_NO_YSI
+				#if defined _YSI_VISUAL_ZONES
+					Live_Check(GANG_ZONE)
+					{
+						new
+							zone = Zone_GetPlayerZone(playerid);
+						Live_CheckPlayerInt(GANG_ZONE, zone);
+					}
+				#endif
+				#if defined _YSI_VISUAL_AREAS
+					Live_Check(AREA)
+					{
+						new
+							area = Area_GetPlayerArea(playerid);
+						Live_CheckPlayerInt(AREA, area);
+					}
+				#endif
+				#if defined _YSI_GAMEMODE_PROPERTIES
+					Live_Check(BANK)
+					{
+						new
+							bankmoney = Property_GetBank(playerid);
+						Live_CheckPlayerInt(BANK, bankmoney);
+					}
+					Live_Check(SPAWN_WEAPONS)
+					{
+						new
+							weapon,
+							ammo;
+						for (new slot = 0; slot < 13; slot++)
+						{
+							Property_GetSlotWeapon(playerid, slot, weapon, ammo);
+							new
+								data = YSI_g_sLiveData[playerid][E_LIVE_DATA_SPAWN_WEAPONS][slot];
+							if (weapon != data >> 24 || reset)
+							{
+								new
+									str[9] = "sweap___";
+								str[5] = (slot / 10) + '0';
+								str[6] = (slot % 10) + '0';
+								Live_OutputInt(iniWrite, playerid, weapon, str);
+								data = (data & 0x00FFFFFF) | (weapon << 24);
+							}
+							if (ammo != data & 0x00FFFFFF || reset)
+							{
+								new
+									str[9] = "sammo___";
+								str[5] = (slot / 10) + '0';
+								str[6] = (slot % 10) + '0';
+								Live_OutputInt(iniWrite, playerid, ammo, str);
+								data = (data & 0xFF000000) | (ammo & 0x00FFFFFF);
+							}
+							YSI_g_sLiveData[playerid][E_LIVE_DATA_SPAWN_WEAPONS][slot] = data;
+						}
+					}
+					Live_Check(PROPERTIES)
+					{
+						new
+							Bit:properties[Bit_Bits(MAX_PROPERTIES)];
+						Property_GetPropertyBits(playerid, properties);
+						for (new row = 0; row < Bit_Bits(MAX_PROPERTIES); row++)
+						{
+							new
+								props1 = _:properties[row],
+								props2 = _:YSI_g_sLiveData[playerid][E_LIVE_DATA_PROPERTIES][row];
+							if (props1 != props2 || reset)
+							{
+								for (new i = 0; i < 32; i++)
+								{
+									new
+										own = (props1 >> i) & 0x01;
+									if (own != (props2 >> i) & 0x01 || reset)
+									{
+										new
+											str[9] = "prop____",
+											prop = (row * 32) + i;
+										str[4] = (prop / 100) + '0';
+										str[5] = ((prop / 10) - ((prop / 100) * 10)) + '0';
+										str[6] = (prop % 10) + '0';
+										Live_OutputInt(iniWrite, playerid, own, str);
+									}
+								}
+								YSI_g_sLiveData[playerid][E_LIVE_DATA_PROPERTIES][row] = Bit:props1;
+							}
+						}
+					}
+				#endif
+				#if defined _YSI_VISUAL_RACE
+					Live_Check(RACE)
+					{
+						new
+							race = Race_GetPlayerRace(playerid);
+						Live_CheckPlayerInt(RACE, race);
+					}
+				#endif
+			#endif
+			if (reset) Bit_Set(YSI_g_sReset, playerid, 0, PLAYER_BIT_ARRAY);
+		}
+		INI_Close(iniWrite);
+	}
+}
+
+Live_OutputInt(INI:target, id, value, name[])
+{
+	new
+		str[16];
+	format(str, sizeof (str), "%s%d", name, id);
+	INI_WriteInt(target, str, value);
+}
+
+Live_OutputFloat(INI:target, id, Float:value, name[])
+{
+	new
+		str[16];
+	format(str, sizeof (str), "%s%d", name, id);
+	INI_WriteFloat(target, str, value, 2);
+}
+
+Live_OnPlayerConnect(playerid)
+{
+	Bit_Set(YSI_g_sReset, playerid, 1, PLAYER_BIT_ARRAY);
+	new
+		INI:iniWrite = INI_Open("YSI/_temp_ysi_live_file_.ysi");
+	if (iniWrite != INI_NO_FILE)
+	{
+		INI_SetTag(iniWrite, "connections");
+		new
+			str[9] = "name_";
+		valstr(str[5], playerid);
+		INI_WriteString(iniWrite, str, ReturnPlayerName(playerid));
+		str[0] = 'c', str[1] = 'o', str[2] = 'n', str[3] = 'n';
+		INI_WriteInt(iniWrite, str, GetTickCount());
+		INI_Close(iniWrite);
+	}
+	return 1;
+}
+
+Live_OnPlayerDisconnect(playerid, reason)
+{
+	new
+		INI:iniWrite = INI_Open("YSI/_temp_ysi_live_file_.ysi");
+	if (iniWrite != INI_NO_FILE)
+	{
+		INI_SetTag(iniWrite, "disconnections");
+		new
+			str[8] = "res_";
+		valstr(str[4], playerid);
+		INI_WriteInt(iniWrite, str, reason);
+		str[0] = 'd', str[1] = 'i', str[2] = 's';
+		INI_WriteInt(iniWrite, str, GetTickCount());
+		INI_Close(iniWrite);
+	}
+	return 1;
+}
+
+Live_OnPlayerDeath(playerid, killerid, reason)
+{
+	if (killerid != INVALID_PLAYER_ID) YSI_g_sPlayerDeathStats[killerid][1]++;
+	YSI_g_sPlayerDeathStats[playerid][0]++;
+	return 1;
+	#pragma unused reason
+}

@@ -1,0 +1,405 @@
+/*----------------------------------------------------------------------------*-
+					==================================
+					Y Sever Includes - Timer Functions
+					==================================
+Description:
+	Sets up timers to use offset starts to spread server load.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1
+Changelog:
+	11/08/07:
+		Removed millions of defines to reduce pre-processing.
+		Added pickups.
+	03/08/07:
+		First version.
+Functions:
+	Public
+		Timer_Start - Called to start individual timers after times.
+	Core:
+		Timer_Timer - Starts all the timers in order.
+	Stock:
+		Timer_Add - Adds a timer to the system.
+		Timer_Kill - Kills a system timer.
+	Static:
+		-
+	Inline:
+		-
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	MAX_TIMER_FUNCTION - Longest function name for timers.
+	MAX_YSI_TIMERS - Number of timers called.
+Enums:
+	E_TIMERS - Data for timers.
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		YSI_g_sTimers - Stores data for timers.
+		YSI_g_sMaxGranularity - Most number of ittereations of any function.
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define MAX_TIMER_FUNCTION 32
+
+#define MAX_YSI_TIMERS 0
+
+#if defined _YSI_GAMEMODE_PROPERTIES
+	#undef MAX_YSI_TIMERS
+	#define MAX_YSI_TIMERS 1
+#endif
+
+#if defined _YSI_TRACKING_LIVE
+	#if MAX_YSI_TIMERS == 1
+		#undef MAX_YSI_TIMERS
+		#define MAX_YSI_TIMERS 2
+	#else
+		#undef MAX_YSI_TIMERS
+		#define MAX_YSI_TIMERS 1
+	#endif
+#endif
+
+#if defined _YSI_VISUAL_AREAS
+	#if MAX_YSI_TIMERS == 2
+		#undef MAX_YSI_TIMERS
+		#define MAX_YSI_TIMERS 3
+	#else
+		#if MAX_YSI_TIMERS == 1
+			#undef MAX_YSI_TIMERS
+			#define MAX_YSI_TIMERS 2
+		#else
+			#undef MAX_YSI_TIMERS
+			#define MAX_YSI_TIMERS 1
+		#endif
+	#endif
+#endif
+
+#if defined _YSI_VISUAL_CHECKPOINTS
+	#if MAX_YSI_TIMERS == 3
+		#undef MAX_YSI_TIMERS
+		#define MAX_YSI_TIMERS 4
+	#else
+		#if MAX_YSI_TIMERS == 2
+			#undef MAX_YSI_TIMERS
+			#define MAX_YSI_TIMERS 3
+		#else
+			#if MAX_YSI_TIMERS == 1
+				#undef MAX_YSI_TIMERS
+				#define MAX_YSI_TIMERS 2
+			#else
+				#undef MAX_YSI_TIMERS
+				#define MAX_YSI_TIMERS 1
+			#endif
+		#endif
+	#endif
+#endif
+
+#if defined _YSI_VISUAL_OBJECTS
+	#if MAX_YSI_TIMERS == 4
+		#undef MAX_YSI_TIMERS
+		#define MAX_YSI_TIMERS 5
+	#else
+		#if MAX_YSI_TIMERS == 3
+			#undef MAX_YSI_TIMERS
+			#define MAX_YSI_TIMERS 4
+		#else
+			#if MAX_YSI_TIMERS == 2
+				#undef MAX_YSI_TIMERS
+				#define MAX_YSI_TIMERS 3
+			#else
+				#if MAX_YSI_TIMERS == 1
+					#undef MAX_YSI_TIMERS
+					#define MAX_YSI_TIMERS 2
+				#else
+					#undef MAX_YSI_TIMERS
+					#define MAX_YSI_TIMERS 1
+				#endif
+			#endif
+		#endif
+	#endif
+#endif
+
+#if defined _YSI_VISUAL_RACE
+	#if defined RACE_POSITION
+		#if MAX_YSI_TIMERS == 5
+			#undef MAX_YSI_TIMERS
+			#define MAX_YSI_TIMERS 6
+		#else
+			#if MAX_YSI_TIMERS == 4
+				#undef MAX_YSI_TIMERS
+				#define MAX_YSI_TIMERS 5
+			#else
+				#if MAX_YSI_TIMERS == 3
+					#undef MAX_YSI_TIMERS
+					#define MAX_YSI_TIMERS 4
+				#else
+					#if MAX_YSI_TIMERS == 2
+						#undef MAX_YSI_TIMERS
+						#define MAX_YSI_TIMERS 3
+					#else
+						#if MAX_YSI_TIMERS == 1
+							#undef MAX_YSI_TIMERS
+							#define MAX_YSI_TIMERS 2
+						#else
+							#undef MAX_YSI_TIMERS
+							#define MAX_YSI_TIMERS 1
+						#endif
+					#endif
+				#endif
+			#endif
+		#endif
+	#endif
+#endif
+
+#if defined _YSI_VISUAL_ZONES
+	#if MAX_YSI_TIMERS == 6
+		#undef MAX_YSI_TIMERS
+		#define MAX_YSI_TIMERS 7
+	#else
+		#if MAX_YSI_TIMERS == 5
+			#undef MAX_YSI_TIMERS
+			#define MAX_YSI_TIMERS 6
+		#else
+			#if MAX_YSI_TIMERS == 4
+				#undef MAX_YSI_TIMERS
+				#define MAX_YSI_TIMERS 5
+			#else
+				#if MAX_YSI_TIMERS == 3
+					#undef MAX_YSI_TIMERS
+					#define MAX_YSI_TIMERS 4
+				#else
+					#if MAX_YSI_TIMERS == 2
+						#undef MAX_YSI_TIMERS
+						#define MAX_YSI_TIMERS 3
+					#else
+						#if MAX_YSI_TIMERS == 1
+							#undef MAX_YSI_TIMERS
+							#define MAX_YSI_TIMERS 2
+						#else
+							#undef MAX_YSI_TIMERS
+							#define MAX_YSI_TIMERS 1
+						#endif
+					#endif
+				#endif
+			#endif
+		#endif
+	#endif
+#endif
+
+#if defined _YSI_VISUAL_PICKUPS
+	#if MAX_YSI_TIMERS == 7
+		#undef MAX_YSI_TIMERS
+		#define MAX_YSI_TIMERS 8
+	#else
+		#if MAX_YSI_TIMERS == 6
+			#undef MAX_YSI_TIMERS
+			#define MAX_YSI_TIMERS 7
+		#else
+			#if MAX_YSI_TIMERS == 5
+				#undef MAX_YSI_TIMERS
+				#define MAX_YSI_TIMERS 6
+			#else
+				#if MAX_YSI_TIMERS == 4
+					#undef MAX_YSI_TIMERS
+					#define MAX_YSI_TIMERS 5
+				#else
+					#if MAX_YSI_TIMERS == 3
+						#undef MAX_YSI_TIMERS
+						#define MAX_YSI_TIMERS 4
+					#else
+						#if MAX_YSI_TIMERS == 2
+							#undef MAX_YSI_TIMERS
+							#define MAX_YSI_TIMERS 3
+						#else
+							#if MAX_YSI_TIMERS == 1
+								#undef MAX_YSI_TIMERS
+								#define MAX_YSI_TIMERS 2
+							#else
+								#undef MAX_YSI_TIMERS
+								#define MAX_YSI_TIMERS 1
+							#endif
+						#endif
+					#endif
+				#endif
+			#endif
+		#endif
+	#endif
+#endif
+
+#if MAX_YSI_TIMERS > 1
+	enum E_TIMERS
+	{
+		E_TIMERS_FUNCTION[MAX_TIMER_FUNCTION],
+		E_TIMERS_GRANULARITY,
+		E_TIMERS_TIMER
+	}
+
+	static
+		YSI_g_sTimers[MAX_YSI_TIMERS][E_TIMERS],
+		YSI_g_sMaxGranularity;
+
+	forward Timer_Start(timer, delay);
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Timers_Timers
+Params:
+	-
+Return:
+	-
+Notes:
+	Decides when timers should be called if there's more than one based on
+	their intervals and numbers of other timers.  If there's only one timer
+	does nothing.
+-*----------------------------------------------------------------------------*/
+
+Timers_Timers()
+{
+	#if MAX_YSI_TIMERS > 1
+		new
+			granularity = 1,
+			active;
+		for (new i = 0; i < MAX_YSI_TIMERS; i++)
+		{
+			if (YSI_g_sTimers[i][E_TIMERS_GRANULARITY]) active++;
+		}
+		while (granularity <= YSI_g_sMaxGranularity && active)
+		{
+			new
+				count;
+			for (new i = 0; i < MAX_YSI_TIMERS; i++)
+			{
+				if (YSI_g_sTimers[i][E_TIMERS_GRANULARITY] == granularity) count++;
+			}
+			if (count)
+			{
+				new
+					separation = 1000 / granularity,
+					offset = separation / count;
+				for (new i = 0, j = 0; i < MAX_YSI_TIMERS; i++)
+				{
+					if (YSI_g_sTimers[i][E_TIMERS_GRANULARITY] == granularity)
+					{
+						SetTimerEx("Timer_Start", (offset * j++) + (random(4) - 2), 0, "ii", i, separation);
+						YSI_g_sTimers[i][E_TIMERS_GRANULARITY] = 0;
+						active--;
+					}
+				}
+			}
+			granularity++;
+		}
+	#endif
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Timer_Start
+Params:
+	timer - Slot to start.
+	delay - how often it's called as delay data is destroyed.
+Return:
+	-
+Notes:
+	Only needed for more than one timer.  Offsets calls from each other for
+	better server load distribution.
+-*----------------------------------------------------------------------------*/
+
+#if MAX_YSI_TIMERS > 1
+	public Timer_Start(timer, delay)
+	{
+		YSI_g_sTimers[timer][E_TIMERS_TIMER] = SetTimer(YSI_g_sTimers[timer][E_TIMERS_FUNCTION], delay, 1);
+	}
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Timer_Add
+Params:
+	function[] - Function to be called.
+	granularity - Number of times a second to call the function.
+Return:
+	-
+Notes:
+	If there's only one timer this starts it instantly, otherwise it adds them
+	to the data for Timer_Timer to sort out.
+-*----------------------------------------------------------------------------*/
+
+stock Timer_Add(function[], granularity)
+{
+	#if MAX_YSI_TIMERS > 1
+		for (new i = 0; i < MAX_YSI_TIMERS; i++)
+		{
+			if (!YSI_g_sTimers[i][E_TIMERS_FUNCTION][0])
+			{
+				strcpy(YSI_g_sTimers[i][E_TIMERS_FUNCTION], function, MAX_TIMER_FUNCTION);
+				YSI_g_sTimers[i][E_TIMERS_GRANULARITY] = granularity;
+				if (granularity > YSI_g_sMaxGranularity) YSI_g_sMaxGranularity = granularity;
+				return i + 1;
+			}
+		}
+		return 0;
+	#else
+		#if MAX_YSI_TIMERS > 0
+			return SetTimer(function, 1000 / granularity, 1);
+		#else
+			return 0;
+		#endif
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Timer_Kill
+Params:
+	timer - Slot to kill.
+Return:
+	-
+Notes:
+	If there's only one timer the variable is taken as the reference, otherwise
+	the reference is looked up.
+-*----------------------------------------------------------------------------*/
+
+stock Timer_Kill(timer)
+{
+	#if MAX_YSI_TIMERS > 1
+		if (timer > 0 && timer <= MAX_YSI_TIMERS && YSI_g_sTimers[--timer][E_TIMERS_TIMER])
+		{
+			KillTimer(YSI_g_sTimers[timer][E_TIMERS_TIMER]);
+			YSI_g_sTimers[timer][E_TIMERS_FUNCTION][0] = '\0';
+		}
+	#else
+		#if MAX_YSI_TIMERS > 0
+			KillTimer(timer);
+		#endif
+	#endif
+}

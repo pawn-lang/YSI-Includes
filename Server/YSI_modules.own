@@ -1,0 +1,424 @@
+/*----------------------------------------------------------------------------*-
+					===============================
+					Y Sever Includes - Modules Core
+					===============================
+Description:
+	Opens and closes remote modules and processes module registration.  Module
+	0 is the script itself.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1.1
+Changelog:
+	17/05/07:
+		Updated constructor.
+	02/05/07:
+		Added YSI_ prefix to all globals.
+	14/04/07:
+		Updated header documentation with more than changelog.
+	23/03/07:
+		First version.
+Functions:
+	Public:
+		Modules_Close - Closes a module.
+		Modules_Register - Called when a module loads to store module data.
+	Core:
+		Modules_LoadAll - Loads all modules.
+		Modules_CloseAll - Closes all modules.
+		Modules_Modules - Constructor, calls Modules_LoadAll.
+	Stock:
+		Modules_CloseID - Closes one module.
+		Modules_GetModuleCount - Returns the number of modules.
+		Modules_GetVisibleCount - Returns the number of public modules.
+		Modules_GetHiddenCount - Returns the number of private modules.
+	Static:
+		Modules_Open - Opens a module.
+		Modules_SetVisibility - Sets a modules privacy level.
+		Modules_UpdateCounts - Sets the number of module types.
+	Inline:
+		Modules_IsActive - Checks if a module slot is in use.
+		Modules_IsPrivate - Checks if a module is private.
+		Modules_CloseDelay - Wrapper for Modules_Close to close active modules.
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	MAX_MODULE_PATH - Maximum length of the path to a module.
+	MAX_MODULE_NAME - Maximum length of a module name.
+	MAX_MODULE_TAG - Maximum length of a module description.
+	MAX_MODULE_FILENAME - Maximum length of a module filename.
+	MODULE_LOAD_FILE - List of modules.
+	MODULE_LOAD_PATH - Location of modules.
+	MODULE_START - First module in array to work with.
+Enums:
+	e_MOD_FLAG - Flags for modules.
+	E_MODULES - Structure for module data.
+Macros:
+	-
+Tags:
+	Module - Module type.
+	e_MOD_FLAG - Flag type.
+Variables:
+	Global:
+		-
+	Static:
+		YSI_g_sVisibleCount - Number of public modules.
+		YSI_g_sHiddenCount - Number of private modules.
+		YSI_g_sModuleCount - Number of loaded modules.
+		YSI_g_sModuleData - Data stored on each module.
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define MAX_MODULE_PATH		16
+#define MAX_MODULE_NAME		16
+#define MAX_MODULE_TAG		64
+#define MAX_MODULE_FILENAME	(MAX_MODULE_PATH + MAX_MODULE_NAME + 4)
+#define MODULE_LOAD_FILE	"YSS/modules.txt"
+#define MODULE_LOAD_PATH	"YSS/modules/"
+#define MODULE_START		Module:1
+
+forward Modules_Close(name[]);
+forward Module:Modules_Register(name[], tag[], hidden);
+
+enum e_MOD_FLAG (<<= 1)
+{
+	e_MOD_FLAG_NONE,
+	e_MOD_FLAG_PRIVATE = 1,
+	e_MOD_FLAG_ACTIVE
+}
+
+enum E_MODULES
+{
+	E_MODULES_NAME[MAX_MODULE_NAME],
+	E_MODULES_TAG[MAX_MODULE_TAG],
+	e_MOD_FLAG:E_MODULES_FLAGS
+}
+
+static
+	YSI_g_sModuleData[MAX_MODULES][E_MODULES],
+	YSI_g_sModuleCount = 0,
+	YSI_g_sHiddenCount = 0,
+	YSI_g_sVisibleCount = 0;
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Modules_Modules
+Params:
+	-
+Return:
+	Modules_LoadAll().
+Notes:
+	Constructor.
+-*----------------------------------------------------------------------------*/
+
+Modules_Modules()
+{
+	if (Modules_GetModuleCount() > 0) Modules_CloseAll();
+	return Modules_LoadAll();
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Modules_IsActive
+Params:
+	Module:moduleID - The module index you want to check the state of.
+Return:
+	e_MOD_FLAG_ACTIVE state.
+Notes:
+	Tries to be an inline function.
+-*----------------------------------------------------------------------------*/
+
+#define Modules_IsActive(%1) \
+	(YSI_g_sModuleData[(%1)][E_MODULES_FLAGS] & e_MOD_FLAG_ACTIVE)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Modules_IsPrivate
+Params:
+	Module:moduleID - The module index you want to check the state of.
+Return:
+	e_MOD_FLAG_PRIVATE state.
+Notes:
+	Tries to be an inline function.
+-*----------------------------------------------------------------------------*/
+
+#define Modules_IsPrivate(%1) \
+	(YSI_g_sModuleData[(%1)][E_MODULES_FLAGS] & e_MOD_FLAG_PRIVATE)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Modules_LoadAll
+Params:
+	-
+Return:
+	Module list load success.
+Notes:
+	Reads the list of modules and calls the loader code.
+-*----------------------------------------------------------------------------*/
+
+Modules_LoadAll()
+{
+	new
+		File:f;
+	if (!(f = fopen(MODULE_LOAD_FILE, io_read))) return 0;
+	new
+		line[MAX_STRING];
+	while (fread(f, line))
+	{
+		if (line[0] > ' ') Modules_Open(line);
+	}
+	fclose(f);
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Modules_CloseAll
+Params:
+	-
+Return:
+	-
+Notes:
+	Goes through the modules array and closes all the EXTERNAL modules.
+-*----------------------------------------------------------------------------*/
+
+Modules_CloseAll()
+{
+	for (new Module:i = MODULE_START; i < MAX_MODULES; i++)
+	{
+		Modules_CloseID(i);
+	}
+	YSI_g_sModuleCount = 0;
+	YSI_g_sHiddenCount = 0;
+	YSI_g_sVisibleCount = 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Modules_Open
+Params:
+	name[] - The module name for the file to load.
+Return:
+	-
+Notes:
+	Formats and calls the RCON command to load a filterscript for a module.
+-*----------------------------------------------------------------------------*/
+
+static Modules_Open(name[])
+{
+	new
+		command[MAX_MODULE_FILENAME + 8];
+	format(command, sizeof (command), "loadfs %sYSS_%s", MODULE_LOAD_PATH, name);
+	SendRconCommand(command);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Modules_Close
+Params:
+	name[] - The module name for the file to close.
+Return:
+	-
+Notes:
+	Formats and calls the RCON command to unload a module filterscript.
+-*----------------------------------------------------------------------------*/
+
+public Modules_Close(name[])
+{
+	new
+		command[MAX_MODULE_FILENAME + 10];
+	format(command, sizeof (command), "unloadfs %sYSS_%s", MODULE_LOAD_PATH, name);
+	SendRconCommand(command);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Modules_CloseID
+Params:
+	Module:id - The module id you want to get the name of to close.
+Return:
+	-
+Notes:
+	Resolves an id into a name and calls Modules_Close for that name.  Also
+	handles updates of loaded module information.
+-*----------------------------------------------------------------------------*/
+
+stock Modules_CloseID(Module:id)
+{
+	if (!Modules_IsActive(id)) return;
+	Modules_Close(YSI_g_sModuleData[id][E_MODULES_NAME]);
+	if (Modules_IsPrivate(id))
+	{
+		YSI_g_sHiddenCount--;
+	}
+	else
+	{
+		YSI_g_sVisibleCount--;
+	}
+	YSI_g_sModuleData[id][E_MODULES_FLAGS] = e_MOD_FLAG_NONE;
+	YSI_g_sModuleCount--;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Modules_CloseDelay
+Params:
+	name[] - The module name to pass to be closed.
+Return:
+	-
+Notes:
+	Sets a timer to call the unload code after the filterscript is loaded.
+-*----------------------------------------------------------------------------*/
+
+#define Modules_CloseDelay(%1) \
+	SetTimerEx("Modules_Close", 100, 0, "s", (%1)) // 1/10th of a second should more than do!
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Modules_Register
+Params:
+	name[] - The module's name (same as the filename part).
+	tag[] - The module's textual description for information display.
+	hidden - Wether or not all players can see this module listed.
+Return:
+	Module: Fail - 0, Success - index.
+Notes:
+	The public function called by module filterscripts once they're loaded.
+	Allows the script to know that everything is loaded and ready to go.
+-*----------------------------------------------------------------------------*/
+
+public Module:Modules_Register(name[], tag[], hidden)
+{
+	new
+		Module:i = MODULE_START;
+	while (i < MAX_MODULES)
+	{
+		if (!Modules_IsActive(i)) break;
+		i++;
+	}
+	if (i == MAX_MODULES)
+	{
+		Modules_CloseDelay(name);
+		return Module:0;
+	}	
+	YSI_g_sModuleData[i][E_MODULES_FLAGS] = e_MOD_FLAG_ACTIVE;
+	Modules_SetVisibility(i, hidden);
+	strcpy(YSI_g_sModuleData[i][E_MODULES_NAME], name, MAX_MODULE_NAME);
+	strcpy(YSI_g_sModuleData[i][E_MODULES_TAG], tag, MAX_MODULE_TAG);
+	YSI_g_sModuleCount++;
+	return i;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Modules_SetVisibility
+Params:
+	Module:id - The module id you want to modify.
+	hide - Wether or not it's to be displayed to all.
+Return:
+	-
+Notes:
+	Sets wether or not the module is listed to regular people module lists.
+-*----------------------------------------------------------------------------*/
+
+static Modules_SetVisibility(Module:id, hide)
+{
+	YSI_g_sModuleData[id][E_MODULES_FLAGS] = (YSI_g_sModuleData[id][E_MODULES_FLAGS] & ~e_MOD_FLAG_PRIVATE) | (hide ? e_MOD_FLAG_PRIVATE : e_MOD_FLAG_NONE);
+	Modules_UpdateCounts();
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Modules_UpdateCounts
+Params:
+	-
+Return:
+	-
+Notes:
+	When a module is loaded/unloaded this ensures the counts of visible and
+	hidden modules is accurate as running variable totals can be innacurate.
+-*----------------------------------------------------------------------------*/
+
+static Modules_UpdateCounts()
+{
+	YSI_g_sHiddenCount = 0;
+	YSI_g_sVisibleCount = 0;
+	for (new Module:i = MODULE_START; i < MAX_MODULES; i++)
+	{
+		if (Modules_IsActive(i))
+		{
+			if (Modules_IsPrivate(i)) YSI_g_sHiddenCount++;
+			else YSI_g_sVisibleCount++;
+		}
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	GetModuleCount
+Params:
+	-
+Return:
+	YSI_g_sModuleCount.
+Notes:
+	Not inline as the varibale is static to this file.  Returns the number of
+	active modules excluding core.
+-*----------------------------------------------------------------------------*/
+
+stock Modules_GetModuleCount()
+{
+	return YSI_g_sModuleCount;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	GetVisibleCount
+Params:
+	-
+Return:
+	YSI_g_sVisibleCount.
+Notes:
+	Like GetModuleCount only only returns the number of visible modules.
+-*----------------------------------------------------------------------------*/
+
+stock Modules_GetVisibleCount()
+{
+	return YSI_g_sVisibleCount;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	GetHiddenCount
+Params:
+	-
+Return:
+	YSI_g_sHiddenCount.
+Notes:
+	Again like GetModuleCount only returns the number of hidden modules.
+-*----------------------------------------------------------------------------*/
+
+stock Modules_GetHiddenCount()
+{
+	return YSI_g_sHiddenCount;
+}

@@ -1,0 +1,227 @@
+/*----------------------------------------------------------------------------*-
+					=================================
+					Y Sever Includes - Callbacks Core
+					=================================
+Description:
+	Extra callbacks for improved script control.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1
+Changelog:
+	19/08/07:
+		Fixed vehicle code.
+		Altered variable scope.
+	04/08/07:
+		First version.
+	11/10/07:
+		Added keypress detection.
+Functions:
+	Public:
+		Callbacks_Loop - Main loop.
+	Core:
+		Callbacks_Callbacks - Sets up the loop.
+		Callbacks_OnPlayerConnect - Resets variables.
+		Callbacks_OnKeyStateChange - Detects key presses.
+	Stock:
+		-
+	Static:
+		-
+	Inline:
+		-
+	API:
+		-
+Callbacks:
+	OnPlayerHealthChange - Called when a player's health changes.
+	OnPlayerArmourChange - Called when a player's armour changes.
+	OnPlayerMoneyChange - Called when a player's money changes.
+	OnVehicleDamage - Called when a vehicle damages.
+	OnPlayerKeyRelease - Called when a player releases a key.
+	OnPlayerKeyPress - Called when a player preses a key.
+Definitions:
+	CALLBACKS_LOOP_GRANULARITY - Number of itterations per second for the loop.
+Enums:
+	E_CALLBACKS - Data to be stored for future comparisions.
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		YSI_g_sLastValues - Stored player data.
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#if !defined CALLBACKS_LOOP_GRANULARITY
+	#define CALLBACKS_LOOP_GRANULARITY 2
+#endif
+
+enum E_CALLBACKS
+{
+	E_CALLBACKS_MONEY,
+	Float:E_CALLBACKS_HEALTH,
+	Float:E_CALLBACKS_ARMOUR
+}
+
+forward Callbacks_Loop();
+
+static
+	YSI_g_sLastValues[MAX_PLAYERS][E_CALLBACKS],
+	Float:YSI_g_sVehValues[MAX_VEHICLES];
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Callbacks_Callbacks
+Params:
+	-
+Return:
+	-
+Notes:
+	The "constructor" for all this.  Starts the timer.
+-*----------------------------------------------------------------------------*/
+
+Callbacks_Callbacks()
+{
+	static
+		sTimer;
+	if (!sTimer)
+	{
+		sTimer = SetTimer("Callbacks_Loop", 1000 / CALLBACKS_LOOP_GRANULARITY, 1);
+	}
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Callbacks_OnPlayerConnect
+Params:
+	playerid - Player who connected.
+Return:
+	-
+Notes:
+	Called when a player connects to reset their data.
+-*----------------------------------------------------------------------------*/
+
+Callbacks_OnPlayerConnect(playerid)
+{
+	YSI_g_sLastValues[playerid][E_CALLBACKS_HEALTH] = 0.0;
+	YSI_g_sLastValues[playerid][E_CALLBACKS_ARMOUR] = 0.0;
+	YSI_g_sLastValues[playerid][E_CALLBACKS_MONEY] = 0;
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Callbacks_OnVehicleSpawn
+Params:
+	vehicleid - vehicleid that spawned/respawned.
+Return:
+	-
+Notes:
+	Called when a vehicle spawns to reset it's data.
+-*----------------------------------------------------------------------------*/
+
+Callbacks_OnVehicleSpawn(vehicleid)
+{
+	YSI_g_sVehValues[vehicleid] = 1000.0;
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Callbacks_OnKeyStateChange
+Params:
+	playerid - Player who pressed keys.
+	oldkeys - Keys held before.
+	newkeys - Keys held now.
+Return:
+	-
+Notes:
+	Detects key presses and releases.  Truncated from
+	Callbacks_OnPlayerKeyStateChange.
+-*----------------------------------------------------------------------------*/
+
+Callbacks_OnKeyStateChange(playerid, newkeys, oldkeys)
+{
+	if (newkeys < oldkeys) CallRemoteFunction("OnPlayerKeyRelease", "ii", playerid, oldkeys - newkeys);
+	else CallRemoteFunction("OnPlayerKeyPress", "ii", playerid, newkeys - oldkeys);
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Callbacks_Loop
+Params:
+	-
+Return:
+	-
+Notes:
+	Does the main processing for the system.
+-*----------------------------------------------------------------------------*/
+
+public Callbacks_Loop()
+{
+	{
+		new
+			Float:health,
+			Float:armour,
+			money;
+		foreach (Player, playerid)
+		{
+			GetPlayerHealth(playerid, health);
+			if ((health -= YSI_g_sLastValues[playerid][E_CALLBACKS_HEALTH]))
+			{
+				CallRemoteFunction("OnPlayerHealthChange", "df", playerid, health);
+				YSI_g_sLastValues[playerid][E_CALLBACKS_HEALTH] += health;
+			}
+			GetPlayerArmour(playerid, armour);
+			if ((armour -= YSI_g_sLastValues[playerid][E_CALLBACKS_ARMOUR]))
+			{
+				CallRemoteFunction("OnPlayerArmourChange", "df", playerid, armour);
+				YSI_g_sLastValues[playerid][E_CALLBACKS_ARMOUR] += armour;
+			}
+			money = GetPlayerMoney(playerid);
+			if ((money -= YSI_g_sLastValues[playerid][E_CALLBACKS_MONEY]))
+			{
+				CallRemoteFunction("OnPlayerMoneyChange", "dd", playerid, money);
+				YSI_g_sLastValues[playerid][E_CALLBACKS_MONEY] += money;
+			}
+		}
+	}
+	{
+		new Float:vehiclehp;
+		for(new vehicleid = 0; vehicleid < MAX_VEHICLES; vehicleid++)
+		{
+			if (GetVehicleHealth(vehicleid, vehiclehp))
+			{
+				if ((vehiclehp -= YSI_g_sVehValues[vehicleid]))
+				{
+					CallRemoteFunction("OnVehicleDamage", "dd", vehicleid, vehiclehp);
+					YSI_g_sVehValues[vehicleid] += vehiclehp;
+		 		}
+			}
+		}
+	}
+}

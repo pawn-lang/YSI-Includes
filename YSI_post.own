@@ -1,0 +1,320 @@
+/*----------------------------------------------------------------------------*-
+					============================
+					Y Sever Includes - Post Core
+					============================
+Description:
+	Surpresses warninga and errors generated internally due to library exclusion.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1
+Changelog:
+	24/06/07:
+		Modified a few functions to use Bit_GetBit for speed/
+	18/06/07:
+		First version.
+Functions:
+	Public:
+		-
+	Core:
+		-
+	Stock:
+		Text_Send - Sends a message to a player.
+		Text_SendToAll - Sends a message to all players.
+		Text_SendToGroup - Sends a message to a defined group.
+		Text_SendToPlayers - Sends a message to a passed group.
+		Text_SendFormat - Sends a formatted message to a player.
+		Text_SendToAllFormat - Sends a formatted message to all players.
+		Text_SendToGroupFormat - Sends a formatted message to a defined group.
+		Text_SendToPlayersFormat - Sends a formatted message to a passed group.
+	Static:
+		-
+	Inline:
+		-
+	API:
+		-
+Definitions:
+	-
+Enums:
+	-
+Macros:
+	Text_RegisterTag - Surpresses this error.
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		-
+Commands:
+	-
+Compile options:
+	POST_NO_SURPRESSION - Allows all errors and warnings.
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#if !defined POST_NO_SURPRESSION
+
+	#if !defined _YSI_CORE_TEXT
+		
+		#pragma unused INI_GetEntryName, INI_GetEntryText, INI_ParseFile
+		
+		/*----------------------------------------------------------------------------*-
+		Function:
+			Text_Send
+		Params:
+			playerid - Player to send message to.
+			identifier[] - Identifier of text to send.
+		Return:
+			-
+		Notes:
+			Allows the script to compile and issues an internal error if used.
+		-*----------------------------------------------------------------------------*/
+		
+		stock Text_Send(playerid, identifier[])
+		{
+			SendClientMessage(playerid, 0xFF0000AA, "*** Internal Error! Text_Send called disabled");
+			printf("Text_Send called (\"%s\")", identifier);
+			return 1;
+		}
+		
+		/*----------------------------------------------------------------------------*-
+		Function:
+			Text_SendFormat
+		Params:
+			playerid - Player to send message to.
+			identifier[] - Identifier of text to send.
+			{Float,_}:...
+		Return:
+			-
+		Notes:
+			Allows the script to compile and issues an internal error if used.
+		-*----------------------------------------------------------------------------*/
+		
+		stock Text_SendFormat(playerid, identifier[], {Float,_}:...)
+		{
+			SendClientMessage(playerid, 0xFF0000AA, "*** Internal Error! Text_SendFormat called");
+			printf("Text_SendFormat called (\"%s\")", identifier);
+			return 1;
+		}
+		
+		/*----------------------------------------------------------------------------*-
+		Function:
+			Text_SendToAll
+		Params:
+			identifier[] - Identifier of text to send.
+		Return:
+			-
+		Notes:
+			Allows the script to compile and issues an internal error if used.
+		-*----------------------------------------------------------------------------*/
+		
+		stock Text_SendToAll(identifier[])
+		{
+			SendClientMessageToAll(0xFF0000AA, "*** Internal Error! Text_SendToAll called");
+			printf("Text_SendToAll called (\"%s\")", identifier);
+			return 1;
+		}
+		
+		/*----------------------------------------------------------------------------*-
+		Function:
+			Text_SendToAllFormat
+		Params:
+			identifier[] - Identifier of text to send.
+			{Float,_}:...
+		Return:
+			-
+		Notes:
+			Allows the script to compile and issues an internal error if used.
+		-*----------------------------------------------------------------------------*/
+		
+		stock Text_SendToAllFormat(identifier[], {Float,_}:...)
+		{
+			SendClientMessageToAll(0xFF0000AA, "*** Internal Error! Text_SendToAllFormat called");
+			printf("Text_SendToAllFormat called (\"%s\")", identifier);
+			return 1;
+		}
+		
+		/*----------------------------------------------------------------------------*-
+		Function:
+			Text_SendToPlayers
+		Params:
+			Bit:players[] - Bit array of players to send to.
+			identifier[] - Identifier of text to send.
+		Return:
+			-
+		Notes:
+			Allows the script to compile and issues an internal error if used.
+		-*----------------------------------------------------------------------------*/
+		
+		stock Text_SendToPlayers(Bit:players[], identifier[])
+		{
+			for (new i = 0; i < MAX_PLAYERS; i++)
+			{
+				if (Bit_Get(players, i, PLAYER_BIT_ARRAY))
+				{
+					SendClientMessage(i, 0xFF0000AA, "*** Internal Error! Text_SendToPlayers called");
+				}
+			}
+			printf("Text_SendToPlayers called (\"%s\")", identifier);
+			return 1;
+		}
+		
+		/*----------------------------------------------------------------------------*-
+		Function:
+			Text_SendToPlayersFormat
+		Params:
+			Bit:players[] - Bit array of players to send to.
+			identifier[] - Identifier of text to send.
+			{Float,_}:...
+		Return:
+			-
+		Notes:
+			Allows the script to compile and issues an internal error if used.
+		-*----------------------------------------------------------------------------*/
+		
+		stock Text_SendToPlayersFormat(Bit:players[], identifier[], {Float,_}:...)
+		{
+			for (new i = 0; i < MAX_PLAYERS; i++)
+			{
+				if (Bit_Get(players, i, PLAYER_BIT_ARRAY))
+				{
+					SendClientMessage(i, 0xFF0000AA, "*** Internal Error! Text_SendToPlayersFormat called");
+				}
+			}
+			printf("Text_SendToPlayersFormat called (\"%s\")", identifier);
+			return 1;
+		}
+		
+		/*----------------------------------------------------------------------------*-
+		Function:
+			Text_SendToGroup
+		Params:
+			group - Group to send to.
+			identifier[] - Identifier of text to send.
+		Return:
+			-
+		Notes:
+			Allows the script to compile and issues an internal error if used.
+		-*----------------------------------------------------------------------------*/
+		
+		stock Text_SendToGroup(group, identifier[])
+		{
+			#if defined YSI_NO_GROUPS
+				SendClientMessageToAll(0xFF0000AA, "*** Internal Error! Text_SendToGroup called with YSI_groups disabled");
+				#pragma unused group
+			#else
+				new
+					Bit:players[PLAYER_BIT_ARRAY] = Group_GetGroupMembers(group);
+				for (new i = 0; i < MAX_PLAYERS; i++)
+				{
+					if (Bit_GetBit(players, i))
+					{
+						SendClientMessage(i, 0xFF0000AA, "*** Internal Error! Text_SendToGroup called");
+					}
+				}
+			#endif
+			printf("Text_SendToGroup called (\"%s\")", identifier);
+			return 1;
+		}
+		
+		/*----------------------------------------------------------------------------*-
+		Function:
+			Text_SendToGroupFormat
+		Params:
+			group - Group to send to.
+			identifier[] - Identifier of text to send.
+			{Float,_}:...
+		Return:
+			-
+		Notes:
+			Allows the script to compile and issues an internal error if used.
+		-*----------------------------------------------------------------------------*/
+		
+		stock Text_SendToGroupFormat(group, identifier[], {Float,_}:...)
+		{
+			#if defined YSI_NO_GROUPS
+				SendClientMessageToAll(0xFF0000AA, "*** Internal Error! Text_SendToGroupFormat called with YSI_groups disabled");
+				#pragma unused group
+			#else
+				new
+					Bit:players[PLAYER_BIT_ARRAY] = Group_GetGroupMembers(group);
+				for (new i = 0; i < MAX_PLAYERS; i++)
+				{
+					if (Bit_GetBit(players, i))
+					{
+						SendClientMessage(i, 0xFF0000AA, "*** Internal Error! Text_SendToGroupFormat called");
+					}
+				}
+			#endif
+			printf("Text_SendToGroupFormat called (\"%s\")", identifier);
+			return 1;
+		}
+		
+	#endif
+	
+	#if !defined _YSI_SYSTEM_GROUPS
+		
+		/*----------------------------------------------------------------------------*-
+		Function:
+			Group_GetGroupMembers
+		Params:
+			group - Group to get members of.
+		Return:
+			-
+		Notes:
+			Allows the script to compile and issues an internal error if used.
+		-*----------------------------------------------------------------------------*/
+		
+		stock Bit:Group_GetGroupMembers(group)
+		{
+			static
+				Bit:bitAllPlayers[PLAYER_BIT_ARRAY],
+				setup;
+			if (!setup)
+			{
+				Bit_SetAll(bitAllPlayers, 1);
+				setup = 1;
+			}
+			return bitAllPlayers;
+			#pragma unused group
+		}
+		
+	#endif
+	
+	#if !defined _YSI_CORE_LANGUAGES
+	
+		#define Langs_AddLanguage(%1,%2);
+		#define Langs_AddFile(%1,%2);
+	
+	#endif
+	
+	#if !defined _YSI_GAMEMODE_CLASSES
+	
+		stock Class_Add(model, Float:x, Float:y, Float:z, Float:a, w0, a0, w1, a1, w2, a2)
+		{
+			AddPlayerClass(model, x, y, z, a, w0, a0, w1, a1, w2, a2);
+		}
+	
+		#define Class_Add(%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11) \
+			AddPlayerClass(%1, %2, %3, %4, %5, %6, %7, %8, %9, %10, %11)
+	
+	#endif
+
+#endif

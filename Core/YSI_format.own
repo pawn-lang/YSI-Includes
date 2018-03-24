@@ -1,0 +1,1056 @@
+/*----------------------------------------------------------------------------*-
+					==============================
+					Y Sever Includes - Format Core
+					==============================
+Description:
+	Based on the AMXMODX format function, used in SA:MP, modified by me for 0.2
+	Extends the Text core and is required by the Message2Format functions.
+Legal:
+	Based on format() by the AMXModX team.  Original header:
+		//Adapted from Quake3's vsprintf
+		// thanks to cybermind for linking me to this :)
+		//I made the following changes:
+		// - Fixed spacing to be AMX Mod X standard
+		// - Added 'n' support, no buffer overflows
+		// - Templatized input/output buffers
+
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1.2
+Changelog:
+	20/10/07:
+		Changed AddNum code for faster defaults.
+		Added %u for unsigned variable base.
+		Added %t for signed variable base.
+		Added formatex and printfex.
+	17/10/07:
+		Altered AddNum code for optional signage of numbers.
+	19/06/07:
+		Added support for blank INI strings to ignore text.
+	13/06/07:
+		Added better error handling.
+	07/06/07:
+		Added %% support.
+		Added protection against insufficient parameters.
+	30/04/07:
+		Added postfix (suffix) option (%p).
+	26/04/07:
+		Added * width and prec options.
+	15/04/07:
+		Added %o - Octal radix.
+		Made Format_AddNum more generic.
+	14/04/07:
+		Updated header documentation with more than changelog.
+		Added %n - Command from INI name.
+	31/03/07:
+		First version.
+Functions:
+	Public:
+		-
+	Core:
+		formatex - New format with additional identifiers.
+		printfex - New printf with additional identifiers.
+	Stock:
+		Format_SendFormattedText - Sends a formatted message to a player.
+	Static:
+		Format_AddNum - Adds a number to the output string.
+		Format_AddFloat - Adds a float to the output string.
+		Format_AddString - Adds a string to the output string.
+		Format_AddCommand - Adds a command to the output string.
+		Format_IsDigit - Checks a character is a number.
+		Format_AddSuffix = Add a suffix for a number.
+	Inline:
+		Format_AddBin - Base 2 wrapper for Format_AddNum.
+		Format_AddInt- Base 10 wrapper for Format_AddNum.
+		Format_AddHex - Base 16 wrapper for Format_AddNum.
+		Format_AddOct - Base 8 wrapper for Format_AddNum.
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	FORMAT_LADJUST - Flag for padding left instead of right.
+	FORMAT_ZEROPAD - Flag for padding with 0's instead of spaces.
+	FORMAT_COMMAND - Adler32 of "Command" for properties.
+Enums:
+	-
+Macros:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		-
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define FORMAT_LADJUST 1
+#define FORMAT_ZEROPAD 2
+#define FORMAT_COMMAND 179176128
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Format_AddBin
+Params:
+	output[] - The string to write the data to.
+	&maxlen - The maximum number of characters to write.
+	val - The number to write.
+	width - The minimum length of string to write.
+	flags - FORMAT_LADJUST - pad left, FORMAT_ZEROPAD - pad with 0's.
+Return:
+	Format_AddNum
+Notes:
+	Wrapper for Format_AddNum in base 2.  See Format_AddNum.
+-*----------------------------------------------------------------------------*/
+
+#define Format_AddBin(%1,%2,%3,%4,%5) Format_AddNum((%1), (%2), (%3), (%4), (%5), 0b10, false)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Format_AddInt
+Params:
+	output[] - The string to write the data to.
+	&maxlen - The maximum number of characters to write.
+	val - The number to write.
+	width - The minimum length of string to write.
+	flags - FORMAT_LADJUST - pad left, FORMAT_ZEROPAD - pad with 0's.
+Return:
+	Format_AddNum
+Notes:
+	Wrapper for Format_AddNum in base 10.  See Format_AddNum.
+-*----------------------------------------------------------------------------*/
+
+#define Format_AddInt(%1,%2,%3,%4,%5) Format_AddNum((%1), (%2), (%3), (%4), (%5),   10, true)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Format_AddBin
+Params:
+	output[] - The string to write the data to.
+	&maxlen - The maximum number of characters to write.
+	val - The number to write.
+	width - The minimum length of string to write.
+	flags - FORMAT_LADJUST - pad left, FORMAT_ZEROPAD - pad with 0's.
+Return:
+	Format_AddNum
+Notes:
+	Wrapper for Format_AddNum in base 16.  See Format_AddNum.
+-*----------------------------------------------------------------------------*/
+
+#define Format_AddHex(%1,%2,%3,%4,%5) Format_AddNum((%1), (%2), (%3), (%4), (%5), 0x10, false)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Format_AddOct
+Params:
+	output[] - The string to write the data to.
+	&maxlen - The maximum number of characters to write.
+	val - The number to write.
+	width - The minimum length of string to write.
+	flags - FORMAT_LADJUST - pad left, FORMAT_ZEROPAD - pad with 0's.
+Return:
+	Format_AddNum
+Notes:
+	Wrapper for Format_AddNum in base 8.  See Format_AddNum.
+-*----------------------------------------------------------------------------*/
+
+#define Format_AddOct(%1,%2,%3,%4,%5) Format_AddNum((%1), (%2), (%3), (%4), (%5),   8, false)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Format_AddNum
+Params:
+	output[] - The string to write the data to.
+	&maxlen - The maximum number of characters to write.
+	val - The number to write.
+	width - The minimum length of string to write.
+	flags - FORMAT_LADJUST - pad left, FORMAT_ZEROPAD - pad with 0's.
+	base - The base to display the number in.
+	sign - Wether or not sign should be shown.
+Return:
+	Length of the string added.
+Notes:
+	Adds a number to the output string according to the passed parameters. The
+	original had separate, almost identical functions for each base, this
+	combines them all into one.
+-*----------------------------------------------------------------------------*/
+
+static Format_AddNum(output[], &maxlen, val, width, flags, base, sign)
+{
+	new
+		text[33],
+		digits,
+		pos;
+	if (sign)
+	{
+		new
+			signedVal = val,
+			num;
+		if (val < 0) val = -val;
+		do
+		{
+			num = '0' + (val % base);
+			if (num > '9') num += 7;
+			text[digits++] = num;
+			val /= base;
+		}
+		while (val);
+		if (signedVal & 0x80000000)
+		{
+			if (flags & FORMAT_ZEROPAD) output[pos++] = '-';
+			else text[digits++] = '-';
+		}
+	}
+	else
+	{
+		switch (base)
+		{
+			case 2:
+			{
+				do
+				{
+					text[digits++] = '0' + (val & 1);
+					val >>>= 1;
+				}
+				while (val);
+			}
+			case 8:
+			{
+				do
+				{
+					text[digits++] = '0' + (val & 7);
+					val >>>= 3;
+				}
+				while (val);
+			}
+			case 16:
+			{
+				new
+					num;
+				do
+				{
+					num = '0' + (val & 15);
+					if (num > '9') num += 7;
+					text[digits++] = num;
+					val >>>= 4;
+				}
+				while (val);
+			}
+			default:
+			{
+				new
+					num;
+				do
+				{
+					if (val & 0x80000000)
+					{
+						num = '0' + ((((((val >>> 1) % base) << 1) % base) + (val & 1)) % base);
+						if (num > '9') num += 7;
+						text[digits++] = num;
+						val = (val >>> 1) / (base >>> 1);
+					}
+					else
+					{
+						num = '0' + (val % base);
+						if (num > '9') num += 7;
+						text[digits++] = num;
+						val /= base;
+					}
+				}
+				while (val);
+			}
+		}
+	}
+	if(!(flags & FORMAT_LADJUST))
+	{
+		while (digits < width && maxlen)
+		{
+			output[pos++] = (flags & FORMAT_ZEROPAD) ? '0' : ' ';
+			width--;
+			maxlen--;
+		}
+	}
+	while (digits-- && maxlen)
+	{
+		output[pos++] = text[digits];
+		width--;
+		maxlen--;
+	}
+	if (flags & FORMAT_LADJUST)
+	{
+		while (width-- && maxlen)
+		{
+			output[pos++] = (flags & FORMAT_ZEROPAD) ? '0' : ' ';
+			maxlen--;
+		}
+	}
+	return pos;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Format_AddFloat
+Params:
+	output[] - String to add to.
+	&maxlen - Length of string remaining.
+	Float:fval - value to add.
+	width - Minimum length.
+	prec - Number of DP.
+Return:
+	Length of the string added.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+static Format_AddFloat(output[], &maxlen, Float:fval, width, prec)
+{
+	new
+		text[32],
+		digits,
+		pos,
+		Float:signedVal = fval,
+		val;
+	if (fval < 0) fval = -fval;
+	digits = 0;
+	val = floatround(fval, floatround_floor);
+	do
+	{
+		text[digits++] = '0' + val % 10;
+		val /= 10;
+	}
+	while (val);
+	if (signedVal < 0.0) text[digits++] = '-';
+	while (digits < width && maxlen)
+	{
+		output[pos++] = ' ';
+		width--;
+		maxlen--;
+	}
+
+	while (digits-- && maxlen)
+	{
+		output[pos++] = text[digits];
+		maxlen--;
+	}
+	if (prec < 0) prec = 6;
+	digits = 0;
+	while (digits < prec)
+	{
+		fval = (fval - val) * 10.0;
+		val = floatround(fval, floatround_floor);
+		text[digits++] = '0' + val % 10;
+	}
+
+	if (digits > 0 && maxlen)
+	{
+		output[pos++] = '.';
+		maxlen--;
+		for (prec = 0; maxlen && prec < digits; prec++)
+		{
+			output[pos++] = text[prec];
+			maxlen--;
+		}
+	}
+	return pos;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Format_AddString
+Params:
+	output[] - String to add to.
+	&maxlen - Length of string remaining.
+	string[] - String to add.
+	width - Minimum length.
+	prec - Maximum length.
+Return:
+	Length of the string added.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+static Format_AddString(output[], &maxlen, string[], width, prec)
+{
+	new
+		size,
+		pos,
+		pos2;
+	if (!string[0])
+	{
+		prec = -1;
+	}
+	if (prec >= 0)
+	{
+		for (size = 0; size < prec; size++) 
+		{
+			if (string[size] == '\0') break;
+		}
+	}
+	else
+	{
+		while (string[size]) size++;
+	}
+	if (size > maxlen) size = maxlen;
+	maxlen -= size;
+	width -= size;
+	while (size--)
+	{
+		output[pos++] = string[pos2++];
+	}
+	while (width-- > 0 && maxlen)
+	{
+		output[pos++] = ' ';
+		maxlen--;
+	}
+	return pos;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Format_AddCommand
+Params:
+	output[] - String to add to.
+	&maxlen - Length of string remaining.
+	str[] - Function name to find.
+	width - Minimum length.
+	prec - Maximum length.
+Return:
+	Length of the string added.
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+static Format_AddCommand(output[], &maxlen, str[], width, prec)
+{
+	new
+		size,
+		pos,
+		pos2,
+		string[MAX_STRING] = "FAIL";
+	if (str[0] && CallRemoteFunction("Command_Name", "s", str))
+	{
+		getproperty(0, "", FORMAT_COMMAND, string);
+		strunpack(string, string);
+	}
+	if (!string[0])
+	{
+		prec = -1;
+	}
+	if (prec >= 0)
+	{
+		for (size = 0; size < prec; size++) 
+		{
+			if (string[size] == '\0') break;
+		}
+	}
+	else
+	{
+		while (string[size]) size++;
+	}
+	if (size > maxlen) size = maxlen;
+	maxlen -= size;
+	width -= size;
+	while (size--)
+	{
+		output[pos++] = string[pos2++];
+	}
+	while (width-- > 0 && maxlen)
+	{
+		output[pos++] = ' ';
+		maxlen--;
+	}
+	return pos;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Format_AddSuffix
+Params:
+	output[] - String to add to.
+	&maxlen - Length of string remaining.
+	number - Number to add suffix of.
+Return:
+	-
+Notes:
+	Adds the ordinal suffix of a given number.  Does not support multiple
+	languages atm.
+-*----------------------------------------------------------------------------*/
+
+static Format_AddSuffix(output[], &maxlen, number)
+{
+	if (number < 0) number = 0 - number;
+	new
+		suffix[3],
+		pos,
+		digits,
+		len;
+	if (number > 3 && number <= 20) suffix = "th";
+	else switch (number % 10)
+	{
+		case 1: suffix = "st";
+		case 2: suffix = "nd";
+		case 3: suffix = "rd";
+		default: suffix = "th";
+	}
+	len = strlen(suffix);
+	while (digits < len && maxlen)
+	{
+		output[pos++] = suffix[digits++];
+		maxlen--;
+	}
+	return pos;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Format_IsDigit
+Params:
+	n - The digit to test.
+Return:
+	bool: Is n a digit?
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+static bool:Format_IsDigit(n) return (n <= '9' && n >= '0');
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Format_SendFormattedText
+Params:
+	playerid - The player to send it to or INVALID_PLAYER_ID for all players.
+	identifier[] - The string identifier of the text to output.
+	...
+Return:
+	-
+Notes:
+	This is a rewritten version of the SA:MP format function (taken from the 
+	HL AMXMODX mod).  It is based on the 0.2 version including %b, %h and %x.
+	The code is an almost direct port with minor fixes and changes due to the
+	use of more generalised template code used in the original.
+	
+	This function is also designed to be as efficient as possible with
+	multiple languages, ensuring each one is parsed only once if required then
+	saved for later users of the same language.
+	
+	If playerid is INVALID_PLAYER_ID the function will loop through all
+	players and format the message for them in their own language where
+	available, otherwise it will format it for the required playerid and send
+	it.
+	
+	This is also streamlined by only aquiring string parameters once and saving
+	them for later use, unless more than 8 are used in which case the last
+	array slot is used as a buffer, but this should rarely be the case.
+-*----------------------------------------------------------------------------*/
+
+stock Format_SendFormattedText(Bit:players[], identifier[], {Float,_}:...)
+{
+	new
+		messageid = Text_FindTextPointers(identifier),
+		numa = numargs(),
+		output[MAX_LANGUAGES][MAX_STRING],
+		style = Text_GetTextStyle(messageid),
+		colour;
+	if (style) colour = Text_GetTextTime(messageid);
+	else colour = Text_GetTextColour(messageid);
+	for (new j = 0; j < PLAYER_BIT_ARRAY; j++)
+	{
+		if (!players[j]) continue;
+		for (new i = 0; i < cellbits; i++)
+		{
+			if (!(players[j] & Bit:(1 << i))) continue;
+			new playerid = j * 32 + i;
+			if (IsPlayerConnected(playerid))
+			{
+				new
+					Language:playerLanguage = Text_GetPlayerLanguage(playerid);
+				if (output[playerLanguage][0]) goto display;
+				new
+					pos,
+					p,
+					arg = 2,
+					tempString[MAX_STRING],
+					ch,
+					llen = MAX_STRING,
+					stringCount;
+				tempString = Text_GetTextFromIndex(messageid, playerLanguage, identifier);
+				while (TRUE)
+				{
+					while (llen-- && (ch = tempString[pos++]) != '\0' && ch != '%') output[playerLanguage][p++] = ch;
+					if (ch == '\0' || llen <= 0) goto done;
+					new
+						argStrings[8][MAX_STRING],
+						flags,
+						width,
+						prec = -1,
+						stringPos,
+						n;
+					rflag:
+					ch = tempString[pos++];
+					if (arg >= numa) continue;
+					reswitch:
+					switch (ch)
+					{
+						case '-':
+						{
+							flags |= FORMAT_LADJUST;
+							goto rflag;
+						}
+						case '.':
+						{
+							if ((ch = tempString[pos]) == '*')
+							{
+								pos++;
+								prec = getarg(arg++);
+								goto rflag;
+							}
+							else
+							{
+								n = 0;
+								while (Format_IsDigit((ch = tempString[pos++]))) n = 10 * n + (ch - '0');
+								prec = n < 0 ? -1 : n;
+								goto reswitch;
+							}
+						}
+						case '0':
+						{
+							flags |= FORMAT_ZEROPAD;
+							goto rflag;
+						}
+						case '1', '2', '3', '4', '5', '6', '7', '8', '9':
+						{
+							do
+							{
+								n = 10 * n + (ch - '0');
+							}
+							while (Format_IsDigit((ch = tempString[pos++])));
+							width = n;
+							goto reswitch;
+						}
+						case '*':
+						{
+							width = getarg(arg++);
+							goto rflag;
+						}
+						case 'b':
+						{
+							p += Format_AddBin(output[playerLanguage][p], llen, getarg(arg++), width, flags);
+						}
+						case 'c':
+						{
+							output[playerLanguage][p++] = getarg(arg++);
+							if (!llen--) goto done;
+						}
+						case 'd', 'i':
+						{
+							p += Format_AddInt(output[playerLanguage][p], llen, getarg(arg++), width, flags);
+						}
+						case 'f':
+						{
+							p += Format_AddFloat(output[playerLanguage][p], llen, Float:getarg(arg++), width, prec);
+						}
+						case 's':
+						{
+							if (stringCount < pos)
+							{
+								for (new k = 0; k < MAX_STRING; k++)
+								{
+									if (!(argStrings[stringPos][k] = getarg(arg, k))) break;
+								}
+							}
+							p += Format_AddString(output[playerLanguage][p], llen, argStrings[stringPos], width, prec);
+							stringPos++;
+							arg++;
+							stringCount = pos;
+							if (stringPos == sizeof (argStrings))
+							{
+								stringCount--;
+								stringPos--;
+							}
+						}
+						case 'h', 'x':
+						{
+							p += Format_AddHex(output[playerLanguage][p], llen, getarg(arg++), width, flags);
+						}
+						case 'o':
+						{
+							p += Format_AddOct(output[playerLanguage][p], llen, getarg(arg++), width, flags);
+						}
+						case 'n':
+						{
+							if (stringCount < pos)
+							{
+								for (new k = 0; k < MAX_STRING; k++)
+								{
+									if (!(argStrings[stringPos][k] = getarg(arg, k))) break;
+								}
+							}
+							p += Format_AddCommand(output[playerLanguage][p], llen, argStrings[stringPos], width, prec);
+							stringPos++;
+							arg++;
+							stringCount = pos;
+							if (stringPos == sizeof (argStrings))
+							{
+								stringCount--;
+								stringPos--;
+							}
+						}
+						case 'p':
+						{
+							p += Format_AddSuffix(output[playerLanguage][p], llen, getarg(arg++));
+						}
+						case 'u':
+						{
+							if (prec < 0) prec = 10;
+							p += Format_AddNum(output[playerLanguage][p], llen, getarg(arg++), width, flags, prec, false);
+						}
+						case 't':
+						{
+							if (prec < 0) prec = 10;
+							p += Format_AddNum(output[playerLanguage][p], llen, getarg(arg++), width, flags, prec, true);
+						}
+						case '\0', '%':
+						{
+							output[playerLanguage][p++] = '%';
+							if (!llen--) goto done;
+						}
+						default:
+						{
+							output[playerLanguage][p++] = ch;
+							if (!llen--) goto done;
+						}
+					}
+				}
+				done:
+				output[playerLanguage][p] = '\0';
+				display:
+				if (!output[playerLanguage][0]) continue;
+				if (style) GameTextForPlayer(playerid, output[playerLanguage], colour, style);
+				else SendClientMessage(playerid, colour, output[playerLanguage]);
+			}
+		}
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	formatex
+Params:
+	output[] - The output target.
+	len - Length of the output.
+	const format[] - The format string.
+	...
+Return:
+	-
+Notes:
+	Rewrite of format to support additional identifiers.
+-*----------------------------------------------------------------------------*/
+
+stock formatex(output[], len, const format[], {Float,_}:...)
+{
+	new
+		numa = numargs(),
+		pos,
+		p,
+		n,
+		arg = 3,
+		ch,
+		argStrings[MAX_STRING];
+	while (TRUE)
+	{
+		while (len-- && (ch = format[pos++]) != '\0' && ch != '%') output[p++] = ch;
+		if (ch == '\0' || len <= 0) break;
+		new
+			flags,
+			width,
+			prec = -1;
+		rflag:
+		ch = format[pos++];
+		if (arg >= numa) continue;
+		reswitch:
+		switch (ch)
+		{
+			case '-':
+			{
+				flags |= FORMAT_LADJUST;
+				goto rflag;
+			}
+			case '.':
+			{
+				if ((ch = format[pos]) == '*')
+				{
+					pos++;
+					prec = getarg(arg++);
+					goto rflag;
+				}
+				else
+				{
+					n = 0;
+					while (Format_IsDigit((ch = format[pos++]))) n = 10 * n + (ch - '0');
+					prec = n < 0 ? -1 : n;
+					goto reswitch;
+				}
+			}
+			case '0':
+			{
+				flags |= FORMAT_ZEROPAD;
+				goto rflag;
+			}
+			case '1', '2', '3', '4', '5', '6', '7', '8', '9':
+			{
+				do
+				{
+					n = 10 * n + (ch - '0');
+				}
+				while (Format_IsDigit((ch = format[pos++])));
+				width = n;
+				goto reswitch;
+			}
+			case '*':
+			{
+				width = getarg(arg++);
+				goto rflag;
+			}
+			case 'b':
+			{
+				p += Format_AddBin(output[p], len, getarg(arg++), width, flags);
+			}
+			case 'c':
+			{
+				output[p++] = getarg(arg++);
+				if (!len--) break;
+			}
+			case 'd', 'i':
+			{
+				p += Format_AddInt(output[p], len, getarg(arg++), width, flags);
+			}
+			case 'f':
+			{
+				p += Format_AddFloat(output[p], len, Float:getarg(arg++), width, prec);
+			}
+			case 's':
+			{
+				for (new k = 0; k < MAX_STRING; k++)
+				{
+					if (!(argStrings[k] = getarg(arg, k))) break;
+				}
+				p += Format_AddString(output[p], len, argStrings, width, prec);
+				arg++;
+			}
+			case 'h', 'x':
+			{
+				p += Format_AddHex(output[p], len, getarg(arg++), width, flags);
+			}
+			case 'o':
+			{
+				p += Format_AddOct(output[p], len, getarg(arg++), width, flags);
+			}
+			case 'n':
+			{
+				for (new k = 0; k < MAX_STRING; k++)
+				{
+					if (!(argStrings[k] = getarg(arg, k))) break;
+				}
+				p += Format_AddCommand(output[p], len, argStrings, width, prec);
+				arg++;
+			}
+			case 'p':
+			{
+				p += Format_AddSuffix(output[p], len, getarg(arg++));
+			}
+			case 'u':
+			{
+				if (prec < 0) prec = 10;
+				p += Format_AddNum(output[p], len, getarg(arg++), width, flags, prec, false);
+			}
+			case 't':
+			{
+				if (prec < 0) prec = 10;
+				p += Format_AddNum(output[p], len, getarg(arg++), width, flags, prec, true);
+			}
+			case '\0', '%':
+			{
+				output[p++] = '%';
+				if (!len--) break;
+			}
+			default:
+			{
+				output[p++] = ch;
+				if (!len--) break;
+			}
+		}
+	}
+	output[p - (len ? 0 : 1)] = '\0';
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	printfex
+Params:
+	const format[] - The format string.
+	...
+Return:
+	-
+Notes:
+	Rewrite of printf to support additional identifiers.
+-*----------------------------------------------------------------------------*/
+
+stock printfex(const format[], {Float,_}:...)
+{
+	new
+		numa = numargs(),
+		pos,
+		p,
+		n,
+		arg = 1,
+		ch,
+		argStrings[MAX_STRING],
+		output[MAX_STRING],
+		len = MAX_STRING;
+	while (TRUE)
+	{
+		while (len-- && (ch = format[pos++]) != '\0' && ch != '%') output[p++] = ch;
+		if (ch == '\0' || len <= 0) break;
+		new
+			flags,
+			width,
+			prec = -1;
+		rflag:
+		ch = format[pos++];
+		if (arg >= numa) continue;
+		reswitch:
+		switch (ch)
+		{
+			case '-':
+			{
+				flags |= FORMAT_LADJUST;
+				goto rflag;
+			}
+			case '.':
+			{
+				if ((ch = format[pos]) == '*')
+				{
+					pos++;
+					prec = getarg(arg++);
+					goto rflag;
+				}
+				else
+				{
+					n = 0;
+					while (Format_IsDigit((ch = format[pos++]))) n = 10 * n + (ch - '0');
+					prec = n < 0 ? -1 : n;
+					goto reswitch;
+				}
+			}
+			case '0':
+			{
+				flags |= FORMAT_ZEROPAD;
+				goto rflag;
+			}
+			case '1', '2', '3', '4', '5', '6', '7', '8', '9':
+			{
+				do
+				{
+					n = 10 * n + (ch - '0');
+				}
+				while (Format_IsDigit((ch = format[pos++])));
+				width = n;
+				goto reswitch;
+			}
+			case '*':
+			{
+				width = getarg(arg++);
+				goto rflag;
+			}
+			case 'b':
+			{
+				p += Format_AddBin(output[p], len, getarg(arg++), width, flags);
+			}
+			case 'c':
+			{
+				output[p++] = getarg(arg++);
+				if (!len--) break;
+			}
+			case 'd', 'i':
+			{
+				p += Format_AddInt(output[p], len, getarg(arg++), width, flags);
+			}
+			case 'f':
+			{
+				p += Format_AddFloat(output[p], len, Float:getarg(arg++), width, prec);
+			}
+			case 's':
+			{
+				for (new k = 0; k < MAX_STRING; k++)
+				{
+					if (!(argStrings[k] = getarg(arg, k))) break;
+				}
+				p += Format_AddString(output[p], len, argStrings, width, prec);
+				arg++;
+			}
+			case 'h', 'x':
+			{
+				p += Format_AddHex(output[p], len, getarg(arg++), width, flags);
+			}
+			case 'o':
+			{
+				p += Format_AddOct(output[p], len, getarg(arg++), width, flags);
+			}
+			case 'n':
+			{
+				for (new k = 0; k < MAX_STRING; k++)
+				{
+					if (!(argStrings[k] = getarg(arg, k))) break;
+				}
+				p += Format_AddCommand(output[p], len, argStrings, width, prec);
+				arg++;
+			}
+			case 'p':
+			{
+				p += Format_AddSuffix(output[p], len, getarg(arg++));
+			}
+			case 'u':
+			{
+				if (prec < 0) prec = 10;
+				p += Format_AddNum(output[p], len, getarg(arg++), width, flags, prec, false);
+			}
+			case 't':
+			{
+				if (prec < 0) prec = 10;
+				p += Format_AddNum(output[p], len, getarg(arg++), width, flags, prec, true);
+			}
+			case '\0', '%':
+			{
+				output[p++] = '%';
+				if (!len--) break;
+			}
+			default:
+			{
+				output[p++] = ch;
+				if (!len--) break;
+			}
+		}
+	}
+	output[p - (len ? 0 : 1)] = '\0';
+	print(output);
+}

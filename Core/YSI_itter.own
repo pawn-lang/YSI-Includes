@@ -1,0 +1,157 @@
+/*----------------------------------------------------------------------------*-
+					=================================
+					Y Sever Includes - Itterator Core
+					=================================
+Description:
+	Provides functionality to loop efficiently through all connected players.
+	Removes reliance on both modification of MAX_PLAYERS for more efficient
+	processing on small servers (although still recommended) and 
+	IsPlayerConnected.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1.3
+Changelog:
+	08/08/07:
+		First version.
+Functions:
+	Public:
+		-
+	Core:
+		OnPlayerDisconnect - Called when a player leaves to remove them.
+		OnPlayerConnect - Called when a player connects to add them.
+	Stock:
+		-
+	Static:
+		-
+	Inline:
+		-
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	-
+Enums:
+	-
+Macros:
+	foreach - Command to loop through all connected players efficiently.
+	foreachex - Like foreach but without a new variable.
+Tags:
+	-
+Variables:
+	Global:
+		YSI_gPlayerS - Start index of connected players.
+		YSI_gPlayerA - List of connected players.
+	Static:
+		-
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+new
+	YSI_gPlayerS = -1,
+	YSI_gPlayerA[MAX_PLAYERS] = {-1, ...};
+
+/*----------------------------------------------------------------------------*-
+Function:
+	foreach
+Params:
+	data - Data to itterate through.
+	as - Variable to set value to.
+Return:
+	-
+Notes:
+	Not exactly the same as PHP foreach, just itterates through a list and
+	returns the value of the current slot but uses that slot as the next index
+	too.  Variables must be in the form YSI_g<name>S for the start index and
+	YSI_g<name>A for the data array where <name> is what's entered in data.
+-*----------------------------------------------------------------------------*/
+
+#define foreach(%1,%2) \
+	for (new %2 = YSI_g%1S; %2 != -1; %2 = YSI_g%1A[%2])
+
+/*----------------------------------------------------------------------------*-
+Function:
+	foreachex
+Params:
+	data - Data to itterate through.
+	as - Variable to set value to.
+Return:
+	-
+Notes:
+	Similar to foreach but doesn't declare a new variable for the itterator.
+-*----------------------------------------------------------------------------*/
+
+#define foreachex(%1,%2) \
+	for (%2 = YSI_g%1S; %2 != -1; %2 = YSI_g%1A[%2])
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Itter_OnPlayerConnect
+Params:
+	playerid - Player who joined.
+Return:
+	-
+Notes:
+	Adds a player to the loop data.
+-*----------------------------------------------------------------------------*/
+
+Itter_OnPlayerConnect(playerid)
+{
+	if (YSI_gPlayerA[playerid] != -1) return 0;
+	YSI_gPlayerA[playerid] = YSI_gPlayerS;
+	YSI_gPlayerS = playerid;
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Itter_OnPlayerDisconnect
+Params:
+	playerid - Player who left.
+Return:
+	-
+Notes:
+	Removes a player from the loop data.
+-*----------------------------------------------------------------------------*/
+
+Itter_OnPlayerDisconnect(playerid)
+{
+	if (YSI_gPlayerS == playerid)
+	{
+		YSI_gPlayerS = YSI_gPlayerA[playerid];
+	}
+	else
+	{
+		new
+			i;
+		for (i = 0; i < MAX_PLAYERS; i++)
+		{
+			if (YSI_gPlayerA[i] == playerid) break;
+		}
+		if (i == MAX_PLAYERS) return 0;
+		YSI_gPlayerA[i] = YSI_gPlayerA[playerid];
+	}
+	YSI_gPlayerA[playerid] = -1;
+	return 1;
+}

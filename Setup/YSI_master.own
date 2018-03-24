@@ -1,0 +1,317 @@
+/*----------------------------------------------------------------------------*-
+					===============================
+					Y Sever Includes - Master Core
+					===============================
+Description:
+	Handles distribution of control of code segments across all running scripts
+	with YSI to avoid conflicts of checkpoint streamers etc and allow features
+	like /commands displaying all commands on the server.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Version:
+	0.1
+Changelog:
+	17/11/07:
+		Added code for a script to remove itself from the global list.
+	11/10/07:
+		Not first version but added documentation months late.
+Functions:
+	Public:
+		Master_Refresh - Updates properties on GMX.
+		Master_RelLo - Claims master in low priority scripts.
+		Master_RelHi - Claims master in high priority scripts.
+	Core:
+		Master_Add - Adds code to the system for control.
+		Master_Master - Sets up the script.
+		Master_@Master - Sets down the script (gives up control on end).
+	Stock:
+		-
+	Static:
+		-
+	Inline:
+		Master_CheckProp - Checks if a script section is owned.
+		Master_SetMaster - Asserts ownership on a script section.
+	API:
+		-
+Callbacks:
+	-
+Definitions:
+	MASTER_LEVEL - High or low priority script.
+	MAX_MASTERS - Number of code sections controllable.
+	MAX_MASTER_NAME - Max length of a section name.
+	YSIM_MASTER - Name of the masterid property.
+Enums:
+	<unnamed> - Master commands.
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		YSI_gMasterID - ID of this script.
+	Static:
+		YSI_g_sMasterCount - Number of sections registered.
+		YSI_g_sMasters - Psudo-bit array of sections controlled.
+		YSI_g_sMasterData - Section registration data.
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+#if !defined MAX_MASTERS
+	#define MAX_MASTERS 7
+#else
+	#if MAX_MASTERS > 32
+		#undef MAX_MASTERS
+		#define MAX_MASTERS 32
+	#endif
+#endif
+
+#define MAX_MASTER_NAME 16
+
+#define YSIM_MASTER "YSIM_Master"
+
+#if !defined MASTER_LEVEL
+	#define MASTER_LEVEL 0
+#endif
+
+enum (+= 0x01000000)
+{
+	E_MASTER_RELINQUISH = 0x01000000,
+	E_MASTER_SET_MASTER,
+	E_MASTER_NOT_MASTER
+}
+
+#if MASTER_LEVEL != 0
+	forward Master_RelHi(master);
+#else
+	forward Master_RelLo(master);
+#endif
+forward Master_Refresh();
+
+static
+	YSI_g_sMasterCount,
+	YSI_g_sMasters,
+	YSI_g_sMasterData[MAX_MASTERS][MAX_MASTER_NAME];
+
+new
+	YSI_gMasterID = -1;
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Master_CheckProp
+Params:
+	name[] - Section to check control of.
+Return:
+	-
+Notes:
+	Checks if a named code section is currently controlled.
+-*----------------------------------------------------------------------------*/
+
+#define Master_CheckProp(%1) \
+	(existproperty(0, (%1)) && getproperty(0, (%1)) != -1)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Master_SetMaster
+Params:
+	name[] - Section to assert control over.
+Return:
+	-
+Notes:
+	Sets this script as the master of a certain named code section.
+-*----------------------------------------------------------------------------*/
+
+#define Master_SetMaster(%1) \
+	setproperty(0, (%1), YSI_gMasterID); \
+	CallLocalFunction((%1), "i", E_MASTER_SET_MASTER)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Master_Master
+Params:
+	-
+Return:
+	-
+Notes:
+	Constructor.  Gets the script a master ID.
+-*----------------------------------------------------------------------------*/
+
+Master_Master()
+{
+	if (!existproperty(0, YSIM_MASTER))
+	{
+		YSI_gMasterID = 0;
+		setproperty(0, YSIM_MASTER, 1);
+	}
+	else
+	{
+		new
+			masters = getproperty(0, YSIM_MASTER);
+		for (new i = 0; i < 32; i++)
+		{
+			if (!(masters & (1 << i)))
+			{
+				YSI_gMasterID = i;
+				masters |= 1 << i;
+				break;
+			}
+		}
+		setproperty(0, YSIM_MASTER, masters);
+	}
+	if (YSI_gMasterID == -1) printf("*** Internal Error! MasterID not assigned");
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Master_@Master
+Params:
+	-
+Return:
+	-
+Notes:
+	Destructor.  Hands over processing of things to another script.
+-*----------------------------------------------------------------------------*/
+
+Master_@Master()
+{
+	if (YSI_gMasterID == -1) return 0;
+	for (new i = 0; i < YSI_g_sMasterCount; i++)
+	{
+		if (YSI_g_sMasters & (1 << i))
+		{
+			setproperty(0, YSI_g_sMasterData[i], -1);
+			CallLocalFunction(YSI_g_sMasterData[i], "i", E_MASTER_NOT_MASTER);
+		}
+	}
+	CallRemoteFunction("Master_RelHi", "i", YSI_gMasterID);
+	CallRemoteFunction("Master_RelLo", "i", YSI_gMasterID);
+	for (new i = 0; i < YSI_g_sMasterCount; i++)
+	{
+		if (YSI_g_sMasters & (1 << i))
+		{
+			CallLocalFunction(YSI_g_sMasterData[i], "i", E_MASTER_RELINQUISH | YSI_gMasterID);
+		}
+		else
+		{
+			CallRemoteFunction(YSI_g_sMasterData[i], "i", E_MASTER_RELINQUISH | YSI_gMasterID);
+		}
+	}
+	setproperty(0, YSIM_MASTER, getproperty(0, YSIM_MASTER) & (~(1 << YSI_gMasterID)));
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Master_Add
+Params:
+	name[] - Name of the property, script and function for global reference.
+Return:
+	-
+Notes:
+	Adds a section of the code to the master processor for globalisation and
+	possible local handling.
+	
+	Current offical tags:
+		YSIM_Checkpoints
+		YSIM_Commands
+		YSIM_Player
+		YSIM_Areas
+		YSIM_Objects
+		YSIM_Properties
+		YSIM_Groups
+	
+	Need to make:
+		YSIM_Race
+		YSIM_Zones
+		YSIM_Pickups
+		YSIM_Live
+		YSIM_Callbacks
+-*----------------------------------------------------------------------------*/
+
+Master_Add(name[])
+{
+	if (YSI_g_sMasterCount >= MAX_MASTERS) return -1;
+	strcpy(YSI_g_sMasterData[YSI_g_sMasterCount], name, MAX_MASTER_NAME);
+	new
+		ret;
+	if (!Master_CheckProp(name))
+	{
+		setproperty(0, name, YSI_gMasterID);
+		YSI_g_sMasters |= 1 << YSI_g_sMasterCount;
+		ret = 1;
+	}
+	YSI_g_sMasterCount++;
+	return ret;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Master_RelHi
+	Master_RelLo
+Params:
+	master - Master relinquishing control.
+Return:
+	-
+Notes:
+	Asserts an alternate script as controlling certain aspects.  Two functions
+	so some scripts can be set as more likely that others to get control, RelHi
+	is called before RelLo so RelHi scripts will get control before RelLo
+	scripts get a chance.
+-*----------------------------------------------------------------------------*/
+
+#if MASTER_LEVEL != 0
+	public Master_RelHi(master)
+#else
+	public Master_RelLo(master)
+#endif
+{
+	if (master == YSI_gMasterID) return;
+	for (new i = 0; i < YSI_g_sMasterCount; i++)
+	{
+		if (!Master_CheckProp(YSI_g_sMasterData[i]))
+		{
+			Master_SetMaster(YSI_g_sMasterData[i]);
+			YSI_g_sMasters |= 1 << i;
+		}
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Master_Refreash
+Params:
+	-
+Return:
+	-
+Notes:
+	Resets properties relevant to this script on a gamemode change.
+-*----------------------------------------------------------------------------*/
+
+public Master_Refresh()
+{
+	if (YSI_gMasterID != -1) setproperty(0, YSIM_MASTER, getproperty(0, YSIM_MASTER) | (1 << YSI_gMasterID));
+	for (new i = 0; i < YSI_g_sMasterCount; i++)
+	{
+		if (YSI_g_sMasters & (1 << i)) Master_SetMaster(YSI_g_sMasterData[i]);
+	}
+}
