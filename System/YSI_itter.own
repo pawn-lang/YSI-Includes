@@ -27,8 +27,10 @@ Legal:
 Version:
 	0.1.2
 Changelog:
+	06/01/08:
+		Added debug information.
 	09/10/07:
-		Moved to setup.
+		Moved to system.
 	16/09/07:
 		Added list sorting.
 		Made this part of Y SeRver Includes, not Y Sever Includes.
@@ -40,14 +42,18 @@ Functions:
 	Public:
 		-
 	Core:
-		OnPlayerDisconnect - Called when a player leaves to remove them.
-		OnPlayerConnect - Called when a player connects to add them.
+		Itter_OnPlayerDisconnect - Called when a player leaves to remove them.
+		Itter_OnPlayerConnect - Called when a player connects to add them.
 	Stock:
-		-
+		Itter_ShowArray - Displays the contents of the array.
+		Itter_AddInternal - Add a value to an itterator.
+		Itter_RemoveInternal - Remove a value from an itterator.
 	Static:
 		-
 	Inline:
-		-
+		Itter_Create - Create a new itterator value set.
+		Itter_Add - Wraps Itter_AddInternal.
+		Itter_Remove - Wraps Itter_RemoveInternal.
 	API:
 		-
 Callbacks:
@@ -75,9 +81,57 @@ Operators:
 	-
 -*----------------------------------------------------------------------------*/
 
-new
-	YSI_gPlayerS = -1,
-	YSI_gPlayerA[MAX_PLAYERS] = {-1, ...};
+/*----------------------------------------------------------------------------*-
+Function:
+	Itter_Create
+Params:
+	name - Itterator identifier.
+	size - Number of values.
+Return:
+	-
+Notes:
+	Creates a new itterator start/array pair.
+-*----------------------------------------------------------------------------*/
+
+#define Iter_Create Itter_Create
+#define Itter_Create(%1,%2) \
+	new \
+		YSI_g%1S = -1, \
+		YSI_g%1A[%2] = {-1, ...}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Itter_Add
+Params:
+	itter - Name of the itterator to add the data to.
+	value - Value to add to the itterator.
+Return:
+	-
+Notes:
+	Wrapper for Itter_AddInternal
+-*----------------------------------------------------------------------------*/
+
+#define Iter_Add Itter_Add
+#define Itter_Add(%1,%2) \
+	Itter_AddInternal(YSI_g%1S, YSI_g%1A, %2)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Itter_Remove
+Params:
+	itter - Name of the itterator to remove data from.
+	value - Data to remove.
+Return:
+	-
+Notes:
+	Wrapper for Itter_RemoveInternal
+-*----------------------------------------------------------------------------*/
+
+#define Iter_Remove Itter_Remove
+#define Itter_Remove(%1,%2) \
+	Itter_RemoveInternal(YSI_g%1S, YSI_g%1A, %2)
+
+Itter_Create(Player, MAX_PLAYERS);
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -125,27 +179,11 @@ Notes:
 
 Itter_OnPlayerConnect(playerid)
 {
-	if (YSI_gPlayerA[playerid] != -1) return 0;
-	#if defined YSI_ITTER_NO_SORT
-		YSI_gPlayerA[playerid] = YSI_gPlayerS;
-		YSI_gPlayerS = playerid;
-	#else
-		new
-			i = YSI_gPlayerS;
-		if (i == -1 || i > playerid)
-		{
-			YSI_gPlayerS = playerid;
-			YSI_gPlayerA[playerid] = i;
-		}
-		else
-		{
-			new
-				j;
-			while ((j = YSI_gPlayerA[i]) < playerid && j != -1) i = j;
-			YSI_gPlayerA[i] = playerid;
-			YSI_gPlayerA[playerid] = j;
-		}
-	#endif
+	DBGP2("Itter_OnPlayerConnect() start");
+	DBGC5(Itter_ShowArray(YSI_gPlayerS, YSI_gPlayerA, MAX_PLAYERS););
+	Itter_Add(Player, playerid);
+	DBGC5(Itter_ShowArray(YSI_gPlayerS, YSI_gPlayerA, MAX_PLAYERS););
+	DBGP2("Itter_OnPlayerConnect() end");
 	return 1;
 }
 
@@ -160,22 +198,146 @@ Notes:
 	Removes a player from the loop data.
 -*----------------------------------------------------------------------------*/
 
-Itter_OnPlayerDisconnect(playerid)
+Itter_OnPlayerDisconnect(playerid, reason)
 {
-	if (YSI_gPlayerS == playerid)
+	DBGP2("Itter_OnPlayerDisconnect() start");
+	DBGC5(Itter_ShowArray(YSI_gPlayerS, YSI_gPlayerA, MAX_PLAYERS););
+	Itter_Remove(Player, playerid);
+	DBGC5(Itter_ShowArray(YSI_gPlayerS, YSI_gPlayerA, MAX_PLAYERS););
+	DBGP2("Itter_OnPlayerDisconnect() end");
+	#pragma unused reason
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Itter_ShowArray
+Params:
+	start - Itterator start point.
+	members[] - Itterator contents.
+	size - Number of itterator values
+Return:
+	-
+Notes:
+	Pure debug function.  Has regular prints not debug prints
+	as it's only called when debug is on.
+-*----------------------------------------------------------------------------*/
+
+stock Itter_ShowArray(start, members[], size)
+{
+	static
+		sString[61];
+	new
+		i,
+		j = 10;
+	DBGP2("Itter_ShowArray() start");
+	printf("Start: %d", start);
+	while (i < size)
 	{
-		YSI_gPlayerS = YSI_gPlayerA[playerid];
+		sString[0] = '\0';
+		while (i < j && i < size)
+		{
+			format(sString, sizeof (sString), "%s, %d", sString, members[i]);
+			i++;
+		}
+		printf("Array (%d): %s", j, sString);
+		j += 10;
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Itter_AddInternal
+Params:
+	&start - Array start index.
+	array[] - Itterator data.
+	value - Item to add.
+Return:
+	-
+Notes:
+	Adds a value to a given itterator set.
+-*----------------------------------------------------------------------------*/
+
+stock Itter_AddInternal(&start, array[], value)
+{
+	if (array[value] != -1)
+	{
+		DBGP1("Itter_Add() Value error.");
+		return 0;
+	}
+	#if defined YSI_ITTER_NO_SORT
+		array[value] = start;
+		start = value;
+	#else
+		if (start == -1)
+		{
+			start = value;
+		}
+		else if (start > value)
+		{
+			array[value] = start;
+			start = value;
+		}
+		else
+		{
+			new
+				cur = start,
+				last;
+			do
+			{
+				last = cur;
+				cur = array[cur];
+				if (cur > value)
+				{
+					array[value] = cur;
+					array[last] = value;
+					return 1;
+				}
+			}
+			while (cur != -1);
+			array[last] = value;
+		}
+	#endif
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Itter_AddInternal
+Params:
+	&start - Array start index.
+	array[] - Itterator data.
+	value - Item to remove.
+Return:
+	-
+Notes:
+	Removes a value from an itterator.
+-*----------------------------------------------------------------------------*/
+
+stock Itter_RemoveInternal(&start, array[], value)
+{
+	if (start == -1)
+	{
+		return 0;
+	}
+	if (start == value)
+	{
+		start = array[value];
 	}
 	else
 	{
 		new
-			i;
-		for (i = 0; i < MAX_PLAYERS; i++)
+			cur = start;
+		while (array[cur] != value)
 		{
-			if (YSI_gPlayerA[i] == playerid) break;
+			cur = array[cur];
+			if (cur == -1)
+			{
+				return 0;
+			}
 		}
-		if (i == MAX_PLAYERS) return 0;
-		YSI_gPlayerA[i] = YSI_gPlayerA[playerid];
+		array[cur] = array[value];
 	}
+	array[value] = -1;
 	return 1;
 }

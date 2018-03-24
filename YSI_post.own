@@ -289,7 +289,7 @@ Operators:
 				setup;
 			if (!setup)
 			{
-				Bit_SetAll(bitAllPlayers, 1);
+				Bit_SetAll(bitAllPlayers, 1, PLAYER_BIT_ARRAY);
 				setup = 1;
 			}
 			return bitAllPlayers;

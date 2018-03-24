@@ -24,6 +24,8 @@ Legal:
 Version:
 	0.1.1
 Changelog:
+	09/01/08:
+		Added a fix for IsPlayerInCheckpoint.
 	26/08/07:
 		Made master compatible.
 	03/08/07:
@@ -778,7 +780,7 @@ Notes:
 
 static stock Float:Checkpoint_GetDifference(Float:x, Float:y, Float:z)
 {
-	return ((x * x) + (y * y) + (z * z));
+	return floatsqroot((x * x) + (y * y) + (z * z));
 }
 
 /*----------------------------------------------------------------------------*-
@@ -968,7 +970,7 @@ Notes:
 						}
 					}
 				}
-				else
+				else if (YSI_g_sIsMaster)
 				{
 					for (new i = 0; i < MAX_CHECKPOINTS; i++)
 					{
@@ -1038,12 +1040,16 @@ Params:
 Return:
 	-
 Notes:
-	-
+	Hides their checkpoint to initialise the variable for
+	IsPlayerInCheckpoint to call properly.  Returns an uninitialised
+	variable if it's called before any other checkpoint functions
+	are.
 -*----------------------------------------------------------------------------*/
 
 Checkpoint_OnPlayerConnect(playerid)
 {
 	YSI_g_sPlayerCP[playerid] = NO_CHECKPOINT;
+	DisablePlayerCheckpoint(playerid);
 	return 1;
 }
 
@@ -1063,13 +1069,15 @@ public Checkpoint_Loop()
 {
 	#if defined _YSI_SETUP_MASTER
 		if (!YSI_g_sIsMaster) return;
+		DBGP4("Checkpoint_Loop() master %d", YSI_gMasterID);
+	#else
+		DBGP4("Checkpoint_Loop()");
 	#endif
 	foreach (Player, j)
 	{
 		new
 			i,
-			Float:distance = ((CHECKPOINT_VIEW_DISTANCE) * (CHECKPOINT_VIEW_DISTANCE)),
-			Float:temp,
+			Float:distance = CHECKPOINT_VIEW_DISTANCE,
 			dis = NO_CHECKPOINT,
 			Float:x,
 			Float:y,
@@ -1077,11 +1085,13 @@ public Checkpoint_Loop()
 		GetPlayerPos(j, x, y, z);
 		for (; i < MAX_CHECKPOINTS; i++)
 		{
+			DBGP5("Checkpoint_Loop() checkpoint %d", i);
 			if (!Checkpoint_IsActive(i) || !Checkpoint_HasPlayer(i, j)) continue;
-			temp = Checkpoint_GetDifference(x - YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_X], y - YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Y], z - YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Z]);
-			if (temp < distance)
+			DBGP5("Checkpoint_Loop() has %d %.2f %.2f %.2f %.2f", i, distance, YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_X], YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Y], YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Z]);
+			if (IsPlayerInRangeOfPoint(j, distance, YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_X], YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Y], YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Z]))
 			{
-				distance = temp;
+				DBGP5("Checkpoint_Loop() range");
+				distance = Checkpoint_GetDifference(x - YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_X], y - YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Y], z - YSI_g_sCheckpointPoints[i][E_CHECKPOINTS_Z]);
 				dis = i;
 			}
 		}

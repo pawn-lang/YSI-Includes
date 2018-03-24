@@ -25,6 +25,12 @@ Legal:
 Version:
 	0.1
 Changelog:
+	09/01/08:
+		Optimised Pickup_OnPlayerPickUpPickup for type 23.
+		Added properties callback.
+	08/01/08:
+		Added Pickup_OnPlayerConnect as extra id protection.
+		Changed pickup type to 23.
 	11/08/07:
 		Wrote documentation.
 	10/08/07:
@@ -32,12 +38,19 @@ Changelog:
 Functions:
 	Public
 		Pickup_Loop - Main streaming loop.
+		YSIM_Pickup - Master callback.
+		Pickup_AddRemote - Remote wrapper for Pickup_Add.
+		Pickup_Broadcast - Saves data on master mode end.
 	Core:
 		Pickup_Pickup - Sets up the system.
 		Pickup_OnPlayerPickUpPickup - Called when a player picks up a pickup.
+		Pickup_OnPlayerConnect - Called when a player joins the server.
 	Stock:
 		Pickup_Add - Adds a pickup to the streamer.
 		Pickup_Remove - Removes a pickup from the system.
+		Pickup_Show - Shows/hides a pickup.
+		Pickup_IsPlayerOnAnyPickup - Checks if a person is on any pickup.
+		Pickup_IsPlayerOnPickup - Checks if a person is on a pickup.
 	Static:
 		-
 	Inline:
@@ -50,6 +63,7 @@ Definitions:
 	PICKUP_VIEW - Range people can see pickups from.
 	MAX_DYN_PICKUPS - Max pickups held by the system.
 	MAX_PICKUPS - Max pickups displayable by SA.
+	PICKUP_TRIGGER_DISTANCE - Distance you have to be from a pickup to trigger it.
 	PICKUP_LOOP_GRANULARITY - Number of streamer itterations a second.
 Enums:
 	e_PICKUP_FLAGS - Basic pickup data.
@@ -73,7 +87,7 @@ Operators:
 -*----------------------------------------------------------------------------*/
 
 #if !defined PICKUP_LOOP_GRANULARITY
-	#define PICKUP_LOOP_GRANULARITY 1
+	#define PICKUP_LOOP_GRANULARITY 2
 #endif
 
 #if !defined MAX_DYN_PICKUPS
@@ -88,12 +102,19 @@ Operators:
 	#define MAX_PICKUPS 400
 #endif
 
+#define NO_PICKUP -1
+
+#define PICKUP_TRIGGER_DISTANCE (2.5)
+
 enum e_PICKUP_FLAGS (<<= 1)
 {
 	e_PICKUP_FLAGS_VALID = 1,
 	e_PICKUP_FLAGS_VISIBLE,
 	e_PICKUP_FLAGS_RESPAWN,
-	e_PICKUP_FLAGS_REMOVE
+	e_PICKUP_FLAGS_REMOVE,
+	e_PICKUP_FLAGS_SHOW,
+	e_PICKUP_FLAGS_FOOT,
+	e_PICKUP_FLAGS_VEHICLE
 }
 
 enum E_PICKUP
@@ -106,13 +127,34 @@ enum E_PICKUP
 	Float:E_PICKUP_X,
 	Float:E_PICKUP_Y,
 	Float:E_PICKUP_Z,
+	#if defined _YSI_SETUP_MASTER
+		E_PICKUP_MASTER,
+	#endif
 	e_PICKUP_FLAGS:E_PICKUP_FLAGS
 }
 
+enum
+{
+	E_PICKUP_REMOTE_DESTROY,
+	E_PICKUP_REMOTE_SHOW,
+	E_PICKUP_REMOTE_CHECK
+}
+
 static
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sIsMaster,
+	#endif
 	YSI_g_sPickupData[MAX_DYN_PICKUPS][E_PICKUP],
+	Float:YSI_g_sPlayerLastPos[MAX_PLAYERS][3],
+	YSI_s_gCurrentPickup[MAX_PLAYERS] = {-1, ...},
 	YSI_g_sPickupLookup[MAX_PICKUPS];
 
+#if defined _YSI_SETUP_MASTER
+	forward Pickup_AddRemote(master, model, Float:x, Float:y, Float:z, respawn, destroy, types);
+	forward YSIM_Pickups(command);
+	forward Pickup_Remote(ident, info, instruction);
+	forward Pickup_Broadcast(id, model, respawn, remove, time, Float:x, Float:y, Float:z, master, e_PICKUP_FLAGS:flags);
+#endif
 forward Pickup_Loop();
 
 /*----------------------------------------------------------------------------*-
@@ -132,10 +174,126 @@ Pickup_Pickup()
 		sTimer;
 	if (!sTimer)
 	{
+		#if defined _YSI_SETUP_MASTER
+			YSI_g_sIsMaster = Master_Add("YSIM_Pickups");
+			DBGP4("Pickup_Pickup() master: %d %d", YSI_gMasterID, YSI_g_sIsMaster);
+		#endif
 		sTimer = Timer_Add("Pickup_Loop", PICKUP_LOOP_GRANULARITY);
 	}
 	return 1;
 }
+
+#if defined _YSI_SETUP_MASTER
+
+	/*----------------------------------------------------------------------------*-
+	Function:
+		YSIM_Pickups
+	Params:
+		command - Instruction from the master system.
+	Return:
+		-
+	Notes:
+		-
+	-*----------------------------------------------------------------------------*/
+
+	public YSIM_Pickups(command)
+	{
+		switch (command & 0xFF000000)
+		{
+			case E_MASTER_SET_MASTER:
+			{
+				YSI_g_sIsMaster = 1;
+			}
+			case E_MASTER_RELINQUISH:
+			{
+				new
+					master = (command & 0x00FFFFFF);
+				if (master == YSI_gMasterID)
+				{
+					for (new i = 0; i < MAX_DYN_PICKUPS; i++)
+					{
+						if (YSI_g_sPickupData[i][E_PICKUP_FLAGS] & e_PICKUP_FLAGS_VALID)
+						{
+							if (YSI_g_sPickupData[i][E_PICKUP_MASTER] != master)
+							{
+								CallRemoteFunction("Pickup_Broadcast", "iiiiifffii", i,
+									YSI_g_sPickupData[i][E_PICKUP_MODEL],
+									YSI_g_sPickupData[i][E_PICKUP_RESPAWN],
+									YSI_g_sPickupData[i][E_PICKUP_REMOVE],
+									YSI_g_sPickupData[i][E_PICKUP_TIME],
+									YSI_g_sPickupData[i][E_PICKUP_X],
+									YSI_g_sPickupData[i][E_PICKUP_Y],
+									YSI_g_sPickupData[i][E_PICKUP_Z],
+									YSI_g_sPickupData[i][E_PICKUP_MASTER],
+									_:YSI_g_sPickupData[i][E_PICKUP_FLAGS]
+								);
+							}
+						}
+					}
+				}
+				else
+				{
+					for (new i = 0; i < MAX_DYN_PICKUPS; i++)
+					{
+						if (YSI_g_sPickupData[i][E_PICKUP_FLAGS] & e_PICKUP_FLAGS_VALID)
+						{
+							if (YSI_g_sPickupData[i][E_PICKUP_MASTER] == master)
+							{
+								YSI_g_sPickupData[i][E_PICKUP_TIME] = 0;
+								YSI_g_sPickupData[i][E_PICKUP_FLAGS] |= e_PICKUP_FLAGS_REMOVE;
+							}
+						}
+					}
+				}
+				for (new pickup = 0; pickup < MAX_PICKUPS; pickup++)
+				{
+					DestroyPickup(pickup);
+				}
+			}
+			case E_MASTER_NOT_MASTER:
+			{
+				YSI_g_sIsMaster = 0;
+			}
+		}
+	}
+
+	/*----------------------------------------------------------------------------*-
+	Function:
+		Pickup_Broadcast
+	Params:
+		id - Slot ID.
+		model - Model appearence of the pickup.
+		respawn - Time after pickup before it reappears.
+		destroy - Time after creation till the pickup is destroyed.
+		time - Time the pickup has existed for.
+		Float:x - X position.
+		Float:y - Y position.
+		Float:z - Z position.
+		master - Script which owns the pickup.
+		e_PICKUP_FLAGS:flags - Pickup flags.
+	Return:
+		-
+	Notes:
+		Checks the pickup can be stored locally then saves it.  Marks
+		all pickups as invisible for recreation in the new system.
+	-*----------------------------------------------------------------------------*/
+		
+	public Pickup_Broadcast(id, model, respawn, remove, time, Float:x, Float:y, Float:z, master, e_PICKUP_FLAGS:flags)
+	{
+		if (!YSI_g_sIsMaster || id >= MAX_DYN_PICKUPS) return;
+		YSI_g_sPickupData[id][E_PICKUP_MODEL] = model;
+		YSI_g_sPickupData[id][E_PICKUP_ID] = 0;
+		YSI_g_sPickupData[id][E_PICKUP_RESPAWN] = respawn;
+		YSI_g_sPickupData[id][E_PICKUP_REMOVE] = remove;
+		YSI_g_sPickupData[id][E_PICKUP_TIME] = time;
+		YSI_g_sPickupData[id][E_PICKUP_X] = x;
+		YSI_g_sPickupData[id][E_PICKUP_Y] = y;
+		YSI_g_sPickupData[id][E_PICKUP_Z] = z;
+		YSI_g_sPickupData[id][E_PICKUP_MASTER] = master;
+		YSI_g_sPickupData[id][E_PICKUP_FLAGS] = flags & ~e_PICKUP_FLAGS_VISIBLE;
+	}
+	
+#endif
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -156,8 +314,50 @@ Notes:
 	world.
 -*----------------------------------------------------------------------------*/
 
-stock Pickup_Add(model, Float:x, Float:y, Float:z, respawn = 60000, destroy = -1)
+stock Pickup_Add(model, Float:x, Float:y, Float:z, respawn = 60000, destroy = -1, foot = 1, vehicle = 0)
 {
+	DBGP2("Pickup_Add() start");
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+			return Pickup_AddRemote(YSI_gMasterID, model, x, y, z, respawn, destroy, (foot ? 1 : 0) | (vehicle ? 2 : 0));
+		}
+		else
+		{
+			DBGP4("Pickup_Add() Before call remote");
+			CallRemoteFunction("Pickup_AddRemote", "iifffiiii", YSI_gMasterID, model, x, y, z, respawn, destroy, (foot ? 1 : 0) | (vehicle ? 2 : 0));
+			DBGP4("Pickup_Add() After call remote");
+			return getproperty(0, "YSIReq");
+		}
+	}
+
+	/*----------------------------------------------------------------------------*-
+	Function:
+		Pickup_AddRemote
+	Params:
+		master - System which owns the pickup.
+		model - Model appearence of the pickup.
+		Float:x - X position.
+		Float:y - Y position.
+		Float:z - Z position.
+		respawn - Time after pickup before it reappears.
+		destroy - Time after creation till the pickup is destroyed.
+		foot - People on foot can pick this up.
+		vehicle - People in a vehicle can pick this up.
+	Return:
+		-
+	Notes:
+		Master system remote wraper for Pickup_Add
+	-*----------------------------------------------------------------------------*/
+
+	public Pickup_AddRemote(master, model, Float:x, Float:y, Float:z, respawn, destroy, types)
+	{
+		DBGP2("Pickup_AddRemote() start: %d %d", YSI_gMasterID, YSI_g_sIsMaster);
+		if (!YSI_g_sIsMaster) return NO_PICKUP;
+		DBGP4("Pickup_AddRemote() 1");
+		setproperty(0, "YSIReq", NO_PICKUP);
+		DBGP4("Pickup_AddRemote() 2");
+	#endif
 	new
 		pickupid = random(MAX_DYN_PICKUPS),
 		looped;
@@ -168,7 +368,7 @@ stock Pickup_Add(model, Float:x, Float:y, Float:z, respawn = 60000, destroy = -1
 		pickupid++;
 		if (pickupid == MAX_DYN_PICKUPS) pickupid = 0;
 	}
-	if (looped == MAX_DYN_PICKUPS) return -1;
+	if (looped == MAX_DYN_PICKUPS) return NO_PICKUP;
 	YSI_g_sPickupData[pickupid][E_PICKUP_X] = x;
 	YSI_g_sPickupData[pickupid][E_PICKUP_Y] = y;
 	YSI_g_sPickupData[pickupid][E_PICKUP_Z] = z;
@@ -176,7 +376,14 @@ stock Pickup_Add(model, Float:x, Float:y, Float:z, respawn = 60000, destroy = -1
 	YSI_g_sPickupData[pickupid][E_PICKUP_RESPAWN] = respawn;
 	YSI_g_sPickupData[pickupid][E_PICKUP_REMOVE] = destroy;
 	YSI_g_sPickupData[pickupid][E_PICKUP_TIME] = destroy;
-	YSI_g_sPickupData[pickupid][E_PICKUP_FLAGS] = e_PICKUP_FLAGS_VALID | ((destroy != -1) ? (e_PICKUP_FLAGS_REMOVE) : (e_PICKUP_FLAGS:0));
+	#if defined _YSI_SETUP_MASTER
+	YSI_g_sPickupData[pickupid][E_PICKUP_FLAGS] = e_PICKUP_FLAGS_VALID | e_PICKUP_FLAGS_SHOW | ((destroy != -1) ? (e_PICKUP_FLAGS_REMOVE) : (e_PICKUP_FLAGS:0)) | ((types & 2) ? (e_PICKUP_FLAGS_VEHICLE) : (e_PICKUP_FLAGS:0)) | ((types & 1) ? (e_PICKUP_FLAGS_FOOT) : (e_PICKUP_FLAGS:0));
+		YSI_g_sPickupData[pickupid][E_PICKUP_MASTER] = master;
+		setproperty(0, "YSIReq", pickupid);
+		DBGP2("Pickup_AddRemote() end");
+	#else
+	YSI_g_sPickupData[pickupid][E_PICKUP_FLAGS] = e_PICKUP_FLAGS_VALID | e_PICKUP_FLAGS_SHOW | ((destroy != -1) ? (e_PICKUP_FLAGS_REMOVE) : (e_PICKUP_FLAGS:0)) | (vehicle ? (e_PICKUP_FLAGS_VEHICLE) : (e_PICKUP_FLAGS:0)) | (foot ? (e_PICKUP_FLAGS_FOOT) : (e_PICKUP_FLAGS:0));
+	#endif
 	return pickupid;
 }
 
@@ -193,6 +400,12 @@ Notes:
 
 stock Pickup_Remove(pickupid)
 {
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster)
+		{
+			return CallRemoteFunction("Pickup_Remote", "iii", pickupid, 0, E_PICKUP_REMOTE_DESTROY);
+		}
+	#endif
 	if (pickupid >= 0 && pickupid < MAX_DYN_PICKUPS && (YSI_g_sPickupData[pickupid][E_PICKUP_FLAGS] & e_PICKUP_FLAGS_VALID))
 	{
 		YSI_g_sPickupData[pickupid][E_PICKUP_TIME] = 0;
@@ -201,6 +414,101 @@ stock Pickup_Remove(pickupid)
 	}
 	return 0;
 }
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Pickup_Show
+Params:
+	pickupid - Pickup to show.
+	show - Wether or not to show it.
+Return:
+	-
+Notes:
+	Similar to Pickup_Remove but maintains the data.
+-*----------------------------------------------------------------------------*/
+
+stock Pickup_Show(pickupid, show)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster)
+		{
+			return CallRemoteFunction("Pickup_Remote", "iii", pickupid, show, E_PICKUP_REMOTE_SHOW);
+		}
+	#endif
+	if (pickupid >= 0 && pickupid < MAX_DYN_PICKUPS && (YSI_g_sPickupData[pickupid][E_PICKUP_FLAGS] & e_PICKUP_FLAGS_VALID))
+	{
+		if (show)
+		{
+			YSI_g_sPickupData[pickupid][E_PICKUP_FLAGS] |= e_PICKUP_FLAGS_SHOW;
+		}
+		else
+		{
+			YSI_g_sPickupData[pickupid][E_PICKUP_FLAGS] &= ~e_PICKUP_FLAGS_SHOW;
+		}
+		return 1;
+	}
+	return 0;
+}
+
+#if defined _YSI_SETUP_MASTER
+/*----------------------------------------------------------------------------*-
+Function:
+	Pickup_Remote
+Params:
+	ident - Item to do instruction on.
+	info - Data to work with.
+	instruction - What to do.
+Return:
+	-
+Notes:
+	Does pickup system instructions remotely.
+-*----------------------------------------------------------------------------*/
+
+	public Pickup_Remote(ident, info, instruction)
+	{
+		if (!YSI_g_sIsMaster) return;
+		if (ident >= 0 && ident < MAX_DYN_PICKUPS && (YSI_g_sPickupData[ident][E_PICKUP_FLAGS] & e_PICKUP_FLAGS_VALID))
+		{
+			switch (instruction)
+			{
+				case E_PICKUP_REMOTE_DESTROY:
+				{
+					YSI_g_sPickupData[ident][E_PICKUP_TIME] = 0;
+					YSI_g_sPickupData[ident][E_PICKUP_FLAGS] |= e_PICKUP_FLAGS_REMOVE;
+				}
+				case E_PICKUP_REMOTE_SHOW:
+				{
+					if (info)
+					{
+						YSI_g_sPickupData[ident][E_PICKUP_FLAGS] |= e_PICKUP_FLAGS_SHOW;
+					}
+					else
+					{
+						YSI_g_sPickupData[ident][E_PICKUP_FLAGS] &= ~e_PICKUP_FLAGS_SHOW;
+					}
+				}
+				case E_PICKUP_REMOTE_CHECK:
+				{
+					if (info == NO_PICKUP)
+					{
+						info = YSI_s_gCurrentPickup[ident];
+					}
+					if (info >= 0 && info < MAX_DYN_PICKUPS && (YSI_g_sPickupData[info][E_PICKUP_FLAGS] & e_PICKUP_FLAGS_VISIBLE))
+					{
+						if (IsPlayerInRangeOfPoint(ident, PICKUP_TRIGGER_DISTANCE, YSI_g_sPickupData[info][E_PICKUP_X], YSI_g_sPickupData[info][E_PICKUP_Y], YSI_g_sPickupData[info][E_PICKUP_Z]))
+						{
+							setproperty(0, "YSIReq", 1);
+							return;
+						}
+						YSI_s_gCurrentPickup[ident] = -1;
+					}
+					setproperty(0, "YSIReq", 0);
+				}
+			}
+		}
+	}
+
+#endif
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -219,10 +527,15 @@ Notes:
 	all players and if someone can see it it's spawned.  If it already exists
 	it is just not destroyed however unlike other streaming systems existence
 	is not a guarantee that it will remain existant while visible.
+	
+	Now handles vehicle checkpoint detection.
 -*----------------------------------------------------------------------------*/
 
 public Pickup_Loop()
 {
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return;
+	#endif
 	static
 		sLastCall;
 	new
@@ -230,15 +543,12 @@ public Pickup_Loop()
 	if (sLastCall)
 	{
 		new
-			Float:x,
-			Float:y,
-			Float:z,
-			Float:px,
-			Float:py,
-			Float:pz,
-			ok,
+			Float:xo,
+			Float:yo,
+			Float:zo,
 			e_PICKUP_FLAGS:flags,
 			active,
+			pid,
 			elapsed = tick - sLastCall;
 		for (new pickup = 0; pickup < MAX_DYN_PICKUPS; pickup++)
 		{
@@ -263,13 +573,13 @@ public Pickup_Loop()
 				}
 				if (active >= MAX_PICKUPS)
 				{
-					if ((flags & e_PICKUP_FLAGS_VISIBLE) || (flags & e_PICKUP_FLAGS_RESPAWN))
+					if (flags & e_PICKUP_FLAGS_VISIBLE)
 					{
 						DestroyPickup(YSI_g_sPickupData[pickup][E_PICKUP_ID]);
 						flags &= ~e_PICKUP_FLAGS_VISIBLE;
 					}
 				}
-				else if (flags & e_PICKUP_FLAGS_RESPAWN)
+				else if ((flags & e_PICKUP_FLAGS_RESPAWN) || !(flags & e_PICKUP_FLAGS_SHOW))
 				{
 					if (flags & e_PICKUP_FLAGS_VISIBLE)
 					{
@@ -278,41 +588,74 @@ public Pickup_Loop()
 				}
 				else
 				{
-					px = YSI_g_sPickupData[pickup][E_PICKUP_X];
-					py = YSI_g_sPickupData[pickup][E_PICKUP_Y];
-					pz = YSI_g_sPickupData[pickup][E_PICKUP_Z];
-					ok = 0;
+					new
+						call = INVALID_PLAYER_ID,
+						Float:px = YSI_g_sPickupData[pickup][E_PICKUP_X],
+						Float:py = YSI_g_sPickupData[pickup][E_PICKUP_Y],
+						Float:pz = YSI_g_sPickupData[pickup][E_PICKUP_Z],
+						ok;
 					foreach (Player, playerid)
 					{
-						if (GetPlayerPos(playerid, x, y, z))
+						if (IsPlayerInRangeOfPoint(playerid, PICKUP_VIEW, px, py, pz))
 						{
-							if ((((x - px) * (x - px)) + ((y - py) * (y - py)) + ((z - pz) * (z - pz))) < (PICKUP_VIEW * PICKUP_VIEW))
+							ok = 1;
+							if ((call == INVALID_PLAYER_ID) && (flags & e_PICKUP_FLAGS_VEHICLE) && (GetPlayerState(playerid) == PLAYER_STATE_DRIVER))
 							{
-								ok = 1;
-								break;
+								if (IsPlayerInRangeOfPoint(playerid, PICKUP_TRIGGER_DISTANCE * 10, px, py, pz))
+								{
+									xo = (YSI_g_sPlayerLastPos[playerid][0] - xo) / 6.0;
+									yo = (YSI_g_sPlayerLastPos[playerid][1] - yo) / 6.0;
+									zo = (YSI_g_sPlayerLastPos[playerid][2] - zo) / 6.0;
+									GetPlayerPos(playerid, xo, yo, zo);
+									new
+										i,
+										Float:x = xo - px,
+										Float:y = yo - py,
+										Float:z = zo - pz;
+									while ((((x * x) + (y * y) + (z * z)) > (PICKUP_TRIGGER_DISTANCE * PICKUP_TRIGGER_DISTANCE) && (++i < 6)))
+									{
+										x += xo;
+										y += yo;
+										z += zo;
+									}
+									if (i != 6)
+									{
+										call = playerid;
+									}
+								}
 							}
 						}
 					}
 					if (flags & e_PICKUP_FLAGS_VISIBLE)
 					{
-						if (!ok)
+						if (ok)
+						{
+							active++;
+							pid = YSI_g_sPickupData[pickup][E_PICKUP_ID];
+						}
+						else
 						{
 							DestroyPickup(YSI_g_sPickupData[pickup][E_PICKUP_ID]);
 							flags &= ~e_PICKUP_FLAGS_VISIBLE;
 						}
-						else active++;
 					}
 					else
 					{
 						if (ok)
 						{
-							new
-								pid = CreatePickup(YSI_g_sPickupData[pickup][E_PICKUP_MODEL], 3, px, py, pz);
+							pid = CreatePickup(YSI_g_sPickupData[pickup][E_PICKUP_MODEL], 23, px, py, pz);
 							YSI_g_sPickupLookup[pid] = pickup;
 							YSI_g_sPickupData[pickup][E_PICKUP_ID] = pid;
 							flags |= e_PICKUP_FLAGS_VISIBLE;
 							active++;
 						}
+					}
+					if (call != INVALID_PLAYER_ID)
+					{
+						DBGP4("Pickup_Loop() Called");
+						YSI_g_sPickupData[pickup][E_PICKUP_FLAGS] = flags;
+						Pickup_OnPlayerPickUpPickup(call, pid, 1);
+						continue;
 					}
 				}
 			}
@@ -320,6 +663,10 @@ public Pickup_Loop()
 		}
 	}
 	sLastCall = tick;
+	foreach (Player, playerid)
+	{
+		GetPlayerPos(playerid, YSI_g_sPlayerLastPos[playerid][0], YSI_g_sPlayerLastPos[playerid][1], YSI_g_sPlayerLastPos[playerid][2]);
+	}
 }
 
 /*----------------------------------------------------------------------------*-
@@ -328,6 +675,7 @@ Function:
 Params:
 	playerid - Player who picked up a pickup.
 	pickupid - Pickup they picked up.
+	vehicle - Is the player picking this up in a vehicle.
 Return:
 	-
 Notes:
@@ -337,25 +685,143 @@ Notes:
 	still go through the respawn timeing.
 -*----------------------------------------------------------------------------*/
 
-Pickup_OnPlayerPickUpPickup(playerid, pickupid)
+Pickup_OnPlayerPickUpPickup(playerid, pickupid, vehicle = 0)
 {
-	DestroyPickup(pickupid);
+	DBGP2("Pickup_OnPlayerPickUpPickup() start");
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 1;
+	#endif
 	new
 		pid = YSI_g_sPickupLookup[pickupid],
-		time = YSI_g_sPickupData[pid][E_PICKUP_RESPAWN];
-	if (time == -1) YSI_g_sPickupData[pid][E_PICKUP_FLAGS] = e_PICKUP_FLAGS:0;
-	else if (!time)
+		ret,
+		time = YSI_g_sPickupData[pid][E_PICKUP_RESPAWN],
+		e_PICKUP_FLAGS:flags = YSI_g_sPickupData[pid][E_PICKUP_FLAGS];
+	if ((vehicle) ? (flags & e_PICKUP_FLAGS_VEHICLE) : (flags & e_PICKUP_FLAGS_FOOT))
 	{
-		pickupid = CreatePickup(YSI_g_sPickupData[pid][E_PICKUP_MODEL], 3, YSI_g_sPickupData[pid][E_PICKUP_X], YSI_g_sPickupData[pid][E_PICKUP_Y], YSI_g_sPickupData[pid][E_PICKUP_Z]);
-		YSI_g_sPickupData[pid][E_PICKUP_ID] = pickupid;
-		YSI_g_sPickupLookup[pickupid] = pid;
+		if (!(flags & e_PICKUP_FLAGS_REMOVE) && (flags & e_PICKUP_FLAGS_SHOW))
+		{
+			DBGP4("Pickup_OnPlayerPickUpPickup() Active");
+			if (time)
+			{
+				DBGP4("Pickup_OnPlayerPickUpPickup() Time");
+				DestroyPickup(pickupid);
+				if (time == -1)
+				{
+					YSI_g_sPickupData[pid][E_PICKUP_FLAGS] = e_PICKUP_FLAGS:0;
+				}
+				else
+				{
+					YSI_g_sPickupData[pid][E_PICKUP_FLAGS] = (YSI_g_sPickupData[pid][E_PICKUP_FLAGS] | e_PICKUP_FLAGS_RESPAWN) & (~e_PICKUP_FLAGS_VISIBLE);
+					YSI_g_sPickupData[pid][E_PICKUP_TIME] = time;
+				}
+				YSI_s_gCurrentPickup[playerid] = -1;
+			}
+			else
+			{
+				YSI_s_gCurrentPickup[playerid] = pid;
+			}
+			DBGP4("Pickup_OnPlayerPickUpPickup() Property");
+			#if defined _YSI_GAMEMODE_PROPERTIES
+				if (!vehicle)
+				{
+					#if defined _YSI_SETUP_MASTER
+						CallRemoteFunction("Property_OnPlayerPickUpPickup", "ii", playerid, pid);
+						ret = getproperty(0, "YSIReq");
+					#else
+						ret = Property_OnPlayerPickUpPickup(playerid, pid);
+					#endif
+				}
+			#endif
+			ret = CallRemoteFunction("OnPlayerPickUpPickupEx", "ii", playerid, pid);
+		}
 	}
-	else
+	DBGP2("Pickup_OnPlayerPickUpPickup() end");
+	return ret;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Pickup_IsPlayerOnAnyPickup
+Params:
+	playerid - Player to check.
+Return:
+	-
+Notes:
+	Checks if a player is standing on any pickup.
+-*----------------------------------------------------------------------------*/
+
+stock Pickup_IsPlayerOnAnyPickup(playerid)
+{
+	if (playerid < 0 || playerid >= MAX_PLAYERS) return 0;
+	return IsPlayerOnPickup(playerid, YSI_s_gCurrentPickup[playerid]);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Pickup_IsPlayerOnPickup
+Params:
+	playerid - Player to check.
+	pickupid - Pickup to check.
+Return:
+	-
+Notes:
+	Checks if the given player is standing on the given pickup.
+-*----------------------------------------------------------------------------*/
+
+stock Pickup_IsPlayerOnPickup(playerid, pickupid)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster)
+		{
+			CallRemoteFunction("Pickup_Remote", "iii", pickupid, playerid, E_PICKUP_REMOTE_CHECK);
+			return getproperty(0, "YSIReq");
+		}
+	#endif
+	if (pickupid >= 0 && pickupid < MAX_DYN_PICKUPS && (YSI_g_sPickupData[pickupid][E_PICKUP_FLAGS] & e_PICKUP_FLAGS_VISIBLE))
 	{
-		YSI_g_sPickupData[pid][E_PICKUP_FLAGS] = (YSI_g_sPickupData[pid][E_PICKUP_FLAGS] | e_PICKUP_FLAGS_RESPAWN) & (~e_PICKUP_FLAGS_VISIBLE);
-		YSI_g_sPickupData[pid][E_PICKUP_TIME] = time;
-		
+		if (IsPlayerInRangeOfPoint(playerid, PICKUP_TRIGGER_DISTANCE, YSI_g_sPickupData[pickupid][E_PICKUP_X], YSI_g_sPickupData[pickupid][E_PICKUP_Y], YSI_g_sPickupData[pickupid][E_PICKUP_Z]))
+		{
+			return 1;
+		}
+		YSI_s_gCurrentPickup[playerid] = -1;
 	}
-	CallRemoteFunction("OnPlayerPickUpPickupEx", "ii", playerid, pid);
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Pickup_OnPlayerConnect
+Params:
+	playerid - Player who connected.
+Return:
+	-
+Notes:
+	Recreates all pickups to maintain IDs, unused and untested.
+	SA:MP internal checks may prevent this working if IDs are
+	wrong as pickups which shouldn't exist won't be hidden.
+-*----------------------------------------------------------------------------*/
+
+Pickup_OnPlayerConnect(playerid)
+{
+	YSI_s_gCurrentPickup[playerid] = -1;
+	#if defined YSI_PICKUP_CONNECT_PROTECT
+		#if defined _YSI_SETUP_MASTER
+			if (!YSI_g_sIsMaster) return 1;
+		#endif
+		for (new pickup = 0; pickup < MAX_PICKUPS; pickup++)
+		{
+			DestroyPickup(pickup);
+		}
+		for (new pickup = 0; pickup < MAX_DYN_PICKUPS; pickup++)
+		{
+			if (YSI_g_sPickupData[pickup][E_PICKUP_FLAGS] & e_PICKUP_FLAGS_VISIBLE)
+			{
+				new
+					pid = CreatePickup(YSI_g_sPickupData[pickup][E_PICKUP_MODEL], 23, YSI_g_sPickupData[pickup][E_PICKUP_X], YSI_g_sPickupData[pickup][E_PICKUP_Y], YSI_g_sPickupData[pickup][E_PICKUP_Z]);
+				YSI_g_sPickupLookup[pid] = pickup;
+				YSI_g_sPickupData[pickup][E_PICKUP_ID] = pid;
+			}
+		}
+	#endif
 	return 1;
 }

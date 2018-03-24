@@ -50,6 +50,9 @@ Legal:
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 	MA 02110-1301, USA.
 Changelog:
+	06/01/08:
+		Finally removed the obsolete properties code.
+		Rewrote Group_CreateTemp as a wrapper for Group_Create.
 	18/11/07:
 		Added load balancing for large numbers of items so things don't hang.
 	04/08/07:
@@ -65,7 +68,11 @@ Changelog:
 		First version.
 Functions:
 	Public:
-		-
+		LoginDat_ysi_groups - Callback for loading groups.
+		Group_CreateRemote - Synchronises real groups.
+		Group_Populate - Sends out groups to new scripts.
+		Group_StoredRemote - Synchronises group hashes.
+		Group_PlayersRemote - Synchronises player groups.
 	Core:
 		-
 	Stock:
@@ -87,8 +94,6 @@ Functions:
 		Group_SetArea - Sets whether or not a group can use an area.
 		Group_SetDefaultArea - Sets whether or not the default group can use an area.
 		Group_UpdatePlayerArea - Updates a player's use or an area.
-		Group_SetProperty - Sets whether or not a group can see a property.
-		Group_UpdatePlayerProperty - Updates a player's sight of a property.
 		Group_AddPlayer - Adds a player to a group.
 		Group_RemovePlayer - Removes a player from a group.
 		Group_HasPlayer - Checks if a player is in a group.
@@ -99,6 +104,8 @@ Functions:
 		Group_SetGang - Sets a group to be able to take zones.
 		Group_SetColour - Sets a group's colour.
 		Group_GetColour - Gets a group's colour.
+		Group_SavePlayer - Saves a player's groups.
+		Group_Create - Creates a group.
 	Static:
 		-
 	Inline:
@@ -106,13 +113,13 @@ Functions:
 		Group_GetColor - Wrapper for Group_GetColour.
 		Group_IsValid - Checks a given ID is valid.
 		Group_IsGang - Checks if a group has gang capabilities.
+		Group_CreateTemp - Reverse compatability wrapper.
 	API:
 		-
 Definitions:
 	GROUP_CHECKPOINT_BITS - Number of bytes required to hold all checkpoints.
 	GROUP_COMMAND_BITS - Number of bytes required to hold all commands.
 	GROUP_AREA_BITS - Number of bytes required to hold all areas.
-	GROUP_PROPERTY_BITS - Number of bytes required to hold all properties.
 	GROUP_OBJECT_BITS - Number of bytes required to hold all objects.
 	GROUP_COUNT_BITS - Number of bytes required to hold all groups.
 	MAX_GROUPS - Number of groups.
@@ -131,7 +138,7 @@ Variables:
 		YSI_g_sGroupData - Data for all groups.
 		YSI_g_sPlayerGroups - Which groups a player is in.
 Commands:
-	-
+	controlgroup - List and assign groups by RCON admins.
 Compile options:
 	GROUP_NAME_GROUPS - Use group names.
 Operators:
@@ -162,16 +169,6 @@ Operators:
 	#endif
 #endif
 
-#if defined _YSI_VISUAL_PROPERTIES
-	#if !defined GROUP_PROPERTY_BITS
-		#if MAX_PROPERTIES <= 32
-			#define GROUP_PROPERTY_BITS 2
-		#else
-			#define GROUP_PROPERTY_BITS Bit_Bits(MAX_PROPERTIES)
-		#endif
-	#endif
-#endif
-
 #if defined _YSI_VISUAL_OBJECTS
 	#if MAX_DYN_OBJECTS <= 32
 		#define GROUP_OBJECT_BITS 2
@@ -181,6 +178,12 @@ Operators:
 #endif
 
 #if defined _YSI_GAMEMODE_CLASSES
+	#if !defined FILTERSCRIPT
+		#define GROUP_CONTROL_CLASS
+	#endif
+#endif
+
+#if defined GROUP_CONTROL_CLASS
 	#if MAX_CLASSES <= 32
 		#define GROUP_CLASS_BITS 2
 	#else
@@ -189,7 +192,10 @@ Operators:
 #endif
 
 #define MAX_GROUP_NAME 64
-#define GROUP_NAME_GROUPS
+
+#if !defined NO_GROUP_NAMES
+	#define GROUP_NAME_GROUPS
+#endif
 
 #if !defined MAX_GROUPS
 	#define MAX_GROUPS 32
@@ -201,11 +207,13 @@ Operators:
 	#define GROUP_COUNT_BITS Bit_Bits(MAX_GROUPS)
 #endif
 
-#if !defined GROUP_NAME_GROUPS
+#if !defined NO_GROUP_NAMES
 	#define GROUP_NAME_GROUPS
 #endif
 
 #define GROUP_INITIALISE_PART 5000
+
+#define MAX_STORED_GROUPS (MAX_GROUPS * 5)
 
 enum e_GROUP_FLAGS (<<= 1)
 {
@@ -218,6 +226,7 @@ enum E_GROUP_DATA
 {
 	#if defined GROUP_NAME_GROUPS
 		E_GROUP_DATA_NAME[MAX_GROUP_NAME],
+		E_GROUP_DATA_HASH,
 	#endif
 	#if defined _YSI_VISUAL_CHECKPOINTS
 		Bit:E_GROUP_DATA_CHECKPOINTS[GROUP_CHECKPOINT_BITS],
@@ -228,31 +237,83 @@ enum E_GROUP_DATA
 	#if defined _YSI_VISUAL_AREAS
 		Bit:E_GROUP_DATA_AREAS[GROUP_AREA_BITS],
 	#endif
-	#if defined _YSI_VISUAL_PROPERTIES
-		Bit:E_GROUP_DATA_PROPERTIES[GROUP_PROPERTY_BITS],
-	#endif
 	#if defined _YSI_VISUAL_OBJECTS
 		Bit:E_GROUP_DATA_OBJECTS[GROUP_OBJECT_BITS],
 	#endif
-	#if defined _YSI_GAMEMODE_CLASSES
+	#if defined GROUP_CONTROL_CLASS
 		Bit:E_GROUP_DATA_CLASSES[GROUP_CLASS_BITS],
 	#endif
 	Bit:E_GROUP_DATA_PLAYERS[PLAYER_BIT_ARRAY],
 	e_GROUP_FLAGS:E_GROUP_DATA_FLAGS,
 	E_GROUP_DATA_COLOUR
 }
+	
+enum
+{
+	E_GROUP_REMOTE_COLOUR,
+	E_GROUP_REMOTE_SET_CLASS,
+	E_GROUP_REMOTE_UNSET_CLASS,
+	E_GROUP_REMOTE_SET_COMMAND,
+	E_GROUP_REMOTE_UNSET_COMMAND,
+	E_GROUP_REMOTE_SET_CHECKPOINT,
+	E_GROUP_REMOTE_UNSET_CHECKPOINT,
+	E_GROUP_REMOTE_SET_OBJECT,
+	E_GROUP_REMOTE_UNSET_OBJECT,
+	E_GROUP_REMOTE_SET_AREA,
+	E_GROUP_REMOTE_UNSET_AREA,
+	E_GROUP_REMOTE_SET_GANG,
+	E_GROUP_REMOTE_UNSET_GANG,
+	E_GROUP_REMOTE_ADD_PLAYER,
+	E_GROUP_REMOTE_REM_PLAYER,
+	E_GROUP_REMOTE_REM_PALL,
+	E_GROUP_REMOTE_GGM,
+	E_GROUP_REMOTE_GGS,
+	E_GROUP_REMOTE_GGG,
+	E_GROUP_REMOTE_HAS_PLAYER
+}
 
+#if defined _YSI_SETUP_MASTER
+	forward Group_Remote(ident, info, instruction);
+#endif
 forward Group_InitialiseGroups(playerid, start, end, group);
 
 static
 	#if defined _YSI_SETUP_MASTER
-		YSI_g_sIsMaster,
+		#if defined _YSI_VISUAL_CHECKPOINTS
+			YSI_g_sIsCheckpointMaster,
+		#endif
+		#if defined _YSI_CORE_COMMANDS
+			YSI_g_sIsCommandMaster,
+		#endif
+		#if defined _YSI_VISUAL_AREAS
+			YSI_g_sIsAreaMaster,
+		#endif
+		#if defined _YSI_VISUAL_OBJECTS
+			YSI_g_sIsObjectMaster,
+		#endif
 	#endif
 	YSI_g_sGroupData[MAX_GROUPS][E_GROUP_DATA],
 	Bit:YSI_g_sPlayerGroups[MAX_PLAYERS][GROUP_COUNT_BITS],
+	YSI_g_sGroupCount,
+	#if defined GROUP_NAME_GROUPS
+		Bit:YSI_g_sPlayerStoredGroups[MAX_PLAYERS][Bit_Bits(MAX_STORED_GROUPS)],
+		YSI_g_sStoredGroupHashes[MAX_STORED_GROUPS],
+	#endif
 	YSI_g_sDefaultGroup[E_GROUP_DATA];
 
+#if defined _YSI_SETUP_MASTER
+	forward YSIM_Groups(command);
+	forward Group_CreateRemote(id, name[], bool:broadcast, master);
+	forward Group_Populate(master);
+	#if defined GROUP_NAME_GROUPS
+		forward Group_StoredRemote(master, id, hash);
+		forward Group_PlayersRemote(master, id, Bit:playerData[], size);
+		forward Group_NameGroupInt(group, name[]);
+	#endif
+#endif
+
 #if defined GROUP_NAME_GROUPS
+	forward LoginDat_ysi_groups(playerid, identifier[], text[]);
 	#if (_:E_GROUP_DATA) <= (PLAYER_BIT_ARRAY + MAX_GROUP_NAME)
 		#error No group data used (named)!
 	#endif
@@ -261,6 +322,12 @@ static
 		#error No group data used!
 	#endif
 #endif
+
+#if defined _YSI_CORE_COMMANDS
+	forward ycmd_controlgroup(playerid, params[], help);
+#endif
+
+Text_RegisterTag(ysi_groups);
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -276,6 +343,448 @@ Notes:
 #define Group_IsValid(%1) \
 	(((%1) >= 0) && ((%1) < MAX_GROUPS) && (YSI_g_sGroupData[(%1)][E_GROUP_DATA_FLAGS] & e_GROUP_FLAGS_ACTIVE))
 
+#if defined _YSI_SETUP_MASTER
+	/*----------------------------------------------------------------------------*-
+	Function:
+		YSIM_Groups
+	Params:
+		command - Instruction from the master system.
+	Return:
+		-
+	Notes:
+		Updates multiple masters to control group data for script
+		parts this module actually controls.
+	-*----------------------------------------------------------------------------*/
+
+	public YSIM_Groups(command)
+	{
+		switch (command & 0xFF000000)
+		{
+			case E_MASTER_SET_MASTER:
+			{
+				#if defined _YSI_VISUAL_CHECKPOINTS
+					if (getproperty(0, "YSIM_Checkpoints") == YSI_gMasterID)
+					{
+						YSI_g_sIsCheckpointMaster = 1;
+					}
+					else
+					{
+						Bit_SetAll(YSI_g_sDefaultGroup[E_GROUP_DATA_CHECKPOINTS], 0, GROUP_CHECKPOINT_BITS);
+					}
+				#endif
+				#if defined _YSI_CORE_COMMANDS
+					if (getproperty(0, "YSIM_Commands") == YSI_gMasterID)
+					{
+						YSI_g_sIsCommandMaster = 1;
+					}
+					else
+					{
+						Bit_SetAll(YSI_g_sDefaultGroup[E_GROUP_DATA_COMMANDS], 0, GROUP_COMMAND_BITS);
+					}
+				#endif
+				#if defined _YSI_VISUAL_AREAS
+					if (getproperty(0, "YSIM_Areas") == YSI_gMasterID)
+					{
+						YSI_g_sIsAreaMaster = 1;
+					}
+					else
+					{
+						Bit_SetAll(YSI_g_sDefaultGroup[E_GROUP_DATA_AREAS], 0, GROUP_AREA_BITS);
+					}
+				#endif
+				#if defined _YSI_VISUAL_OBJECTS
+					if (getproperty(0, "YSIM_Objects") == YSI_gMasterID)
+					{
+						YSI_g_sIsObjectMaster = 1;
+					}
+					else
+					{
+						Bit_SetAll(YSI_g_sDefaultGroup[E_GROUP_DATA_OBJECTS], 0, GROUP_OBJECT_BITS);
+					}
+				#endif
+				setproperty(0, "YSIM_Groups", -1);
+			}
+		}
+	}
+	
+	public Group_Remote(ident, info, instruction)
+	{
+		switch (instruction)
+		{
+			case E_GROUP_REMOTE_COLOUR:
+			{
+				if (Group_IsValid(ident)) YSI_g_sGroupData[ident][E_GROUP_DATA_COLOUR] = info;
+			}
+			#if defined GROUP_CONTROL_CLASS
+				case E_GROUP_REMOTE_SET_CLASS:
+				{
+					if (info >= 0 && info < MAX_CLASSES)
+					{
+						if (ident == -1)
+						{
+							Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_CLASSES], info, 1, GROUP_CLASS_BITS);
+							foreach (Player, i)
+							{
+								Class_SetPlayer(info, i, 1);
+							}
+						}
+						else if (Group_IsValid(ident))
+						{
+							Bit_Set(YSI_g_sGroupData[ident][E_GROUP_DATA_CLASSES], info, 1, GROUP_CLASS_BITS);
+							foreach (Player, i)
+							{
+								if (Bit_Get(YSI_g_sGroupData[ident][E_GROUP_DATA_PLAYERS], i))
+								{
+									Class_SetPlayer(info, i, 1);
+								}
+							}
+						}
+					}
+				}
+				case E_GROUP_REMOTE_UNSET_CLASS:
+				{
+					if (info >= 0 && info < MAX_CLASSES)
+					{
+						if (ident == -1)
+						{
+							Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_CLASSES], info, 0, GROUP_CLASS_BITS);
+							foreach (Player, i)
+							{
+								Group_UpdatePlayerClass(info, i);
+							}
+						}
+						else if (Group_IsValid(ident))
+						{
+							Bit_Set(YSI_g_sGroupData[ident][E_GROUP_DATA_CLASSES], info, 0, GROUP_CLASS_BITS);
+							foreach (Player, i)
+							{
+								if (Bit_Get(YSI_g_sGroupData[ident][E_GROUP_DATA_PLAYERS], i))
+								{
+									Group_UpdatePlayerClass(info, i);
+								}
+							}
+						}
+					}
+				}
+			#endif
+			#if defined _YSI_CORE_COMMANDS
+				case E_GROUP_REMOTE_SET_COMMAND:
+				{
+					if (YSI_g_sIsCommandMaster)
+					{
+						if (info >= 0 && info < MAX_COMMANDS)
+						{
+							if (ident == -1)
+							{
+								Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_COMMANDS], info, 1, GROUP_COMMAND_BITS);
+								foreach (Player, i)
+								{
+									Command_SetPlayerUseByID(info, i, 1);
+								}
+							}
+							else if (Group_IsValid(ident))
+							{
+								Bit_Set(YSI_g_sGroupData[ident][E_GROUP_DATA_COMMANDS], info, 1, GROUP_COMMAND_BITS);
+								foreach (Player, i)
+								{
+									if (Bit_Get(YSI_g_sGroupData[ident][E_GROUP_DATA_PLAYERS], i))
+									{
+										Command_SetPlayerUseByID(info, i, 1);
+									}
+								}
+							}
+						}
+					}
+				}
+				case E_GROUP_REMOTE_UNSET_COMMAND:
+				{
+					if (YSI_g_sIsCommandMaster)
+					{
+						if (info >= 0 && info < MAX_COMMANDS)
+						{
+							if (ident == -1)
+							{
+								Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_COMMANDS], info, 0, GROUP_COMMAND_BITS);
+								foreach (Player, i)
+								{
+									Group_UpdatePlayerCommand(info, i);
+								}
+							}
+							else if (Group_IsValid(ident))
+							{
+								Bit_Set(YSI_g_sGroupData[ident][E_GROUP_DATA_COMMANDS], info, 0, GROUP_COMMAND_BITS);
+								foreach (Player, i)
+								{
+									if (Bit_Get(YSI_g_sGroupData[ident][E_GROUP_DATA_PLAYERS], i))
+									{
+										Group_UpdatePlayerCommand(info, i);
+									}
+								}
+							}
+						}
+					}
+				}
+			#endif
+			#if defined _YSI_VISUAL_CHECKPOINTS
+				case E_GROUP_REMOTE_SET_CHECKPOINT:
+				{
+					if (YSI_g_sIsCheckpointMaster)
+					{
+						if (info >= 0 && info < MAX_CHECKPOINTS)
+						{
+							if (ident == -1)
+							{
+								Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_CHECKPOINTS], info, 1, GROUP_CHECKPOINT_BITS);
+								foreach (Player, i)
+								{
+									Checkpoint_AddPlayer(info, i);
+								}
+							}
+							else if (Group_IsValid(ident))
+							{
+								Bit_Set(YSI_g_sGroupData[ident][E_GROUP_DATA_CHECKPOINTS], info, 1, GROUP_CHECKPOINT_BITS);
+								foreach (Player, i)
+								{
+									if (Bit_Get(YSI_g_sGroupData[ident][E_GROUP_DATA_PLAYERS], i))
+									{
+										Checkpoint_AddPlayer(info, i);
+									}
+								}
+							}
+						}
+					}
+				}
+				case E_GROUP_REMOTE_UNSET_CHECKPOINT:
+				{
+					if (YSI_g_sIsCheckpointMaster)
+					{
+						if (info >= 0 && info < MAX_CHECKPOINTS)
+						{
+							if (ident == -1)
+							{
+								Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_CHECKPOINTS], info, 0, GROUP_CHECKPOINT_BITS);
+								foreach (Player, i)
+								{
+									Group_UpdatePlayerCheckpoint(info, i);
+								}
+							}
+							else if (Group_IsValid(ident))
+							{
+								Bit_Set(YSI_g_sGroupData[ident][E_GROUP_DATA_CHECKPOINTS], info, 0, GROUP_CHECKPOINT_BITS);
+								foreach (Player, i)
+								{
+									if (Bit_Get(YSI_g_sGroupData[ident][E_GROUP_DATA_PLAYERS], i))
+									{
+										Group_UpdatePlayerCheckpoint(info, i);
+									}
+								}
+							}
+						}
+					}
+				}
+			#endif
+			#if defined _YSI_VISUAL_OBJECTS
+				case E_GROUP_REMOTE_SET_OBJECT:
+				{
+					if (YSI_g_sIsObjectMaster)
+					{
+						if (info >= 0 && info < MAX_DYN_OBJECTS)
+						{
+							if (ident == -1)
+							{
+								Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_OBJECTS], info, 1, GROUP_OBJECT_BITS);
+								foreach (Player, i)
+								{
+									Object_AddToPlayer(info, i);
+								}
+							}
+							else if (Group_IsValid(ident))
+							{
+								Bit_Set(YSI_g_sGroupData[ident][E_GROUP_DATA_OBJECTS], info, 1, GROUP_OBJECT_BITS);
+								foreach (Player, i)
+								{
+									if (Bit_Get(YSI_g_sGroupData[ident][E_GROUP_DATA_PLAYERS], i))
+									{
+										Object_AddToPlayer(info, i);
+									}
+								}
+							}
+						}
+					}
+				}
+				case E_GROUP_REMOTE_UNSET_OBJECT:
+				{
+					if (YSI_g_sIsObjectMaster)
+					{
+						if (info >= 0 && info < MAX_DYN_OBJECTS)
+						{
+							if (ident == -1)
+							{
+								Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_OBJECTS], info, 0, GROUP_OBJECT_BITS);
+								foreach (Player, i)
+								{
+									Group_UpdatePlayerObject(info, i);
+								}
+							}
+							else if (Group_IsValid(ident))
+							{
+								Bit_Set(YSI_g_sGroupData[ident][E_GROUP_DATA_OBJECTS], info, 0, GROUP_OBJECT_BITS);
+								foreach (Player, i)
+								{
+									if (Bit_Get(YSI_g_sGroupData[ident][E_GROUP_DATA_PLAYERS], i))
+									{
+										Group_UpdatePlayerObject(info, i);
+									}
+								}
+							}
+						}
+					}
+				}
+			#endif
+			#if defined _YSI_VISUAL_AREAS
+				case E_GROUP_REMOTE_SET_AREA:
+				{
+					if (YSI_g_sIsAreaMaster)
+					{
+						if (info >= 0 && info < MAX_AREAS)
+						{
+							if (ident == -1)
+							{
+								Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_AREAS], info, 1, GROUP_AREA_BITS);
+								foreach (Player, i)
+								{
+									Area_SetPlayer(info, i, 1);
+								}
+							}
+							else if (Group_IsValid(ident))
+							{
+								Bit_Set(YSI_g_sGroupData[ident][E_GROUP_DATA_AREAS], info, 1, GROUP_AREA_BITS);
+								foreach (Player, i)
+								{
+									if (Bit_Get(YSI_g_sGroupData[ident][E_GROUP_DATA_PLAYERS], i))
+									{
+										Area_SetPlayer(info, i, 1);
+									}
+								}
+							}
+						}
+					}
+				}
+				case E_GROUP_REMOTE_UNSET_AREA:
+				{
+					if (YSI_g_sIsAreaMaster)
+					{
+						if (info >= 0 && info < MAX_AREAS)
+						{
+							if (ident == -1)
+							{
+								Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_AREAS], info, 0, GROUP_AREA_BITS);
+								foreach (Player, i)
+								{
+									Group_UpdatePlayerArea(info, i);
+								}
+							}
+							else if (Group_IsValid(ident))
+							{
+								Bit_Set(YSI_g_sGroupData[ident][E_GROUP_DATA_AREAS], info, 0, GROUP_AREA_BITS);
+								foreach (Player, i)
+								{
+									if (Bit_Get(YSI_g_sGroupData[ident][E_GROUP_DATA_PLAYERS], i))
+									{
+										Group_UpdatePlayerArea(info, i);
+									}
+								}
+							}
+						}
+					}
+				}
+			#endif
+			#if defined _YSI_VISUAL_ZONES
+				case E_GROUP_REMOTE_SET_GANG:
+				{
+					foreach (Player, i)
+					{
+						if (Bit_Get(YSI_g_sGroupData[ident][E_GROUP_DATA_PLAYERS], i))
+						{
+							Zone_OnPlayerJoinGroup(i, ident);
+						}
+					}
+					YSI_g_sGroupData[ident][E_GROUP_DATA_FLAGS] |= e_GROUP_FLAGS_GANG;
+				}
+				case E_GROUP_REMOTE_UNSET_GANG:
+				{
+					foreach (Player, i)
+					{
+						if (Bit_Get(YSI_g_sGroupData[ident][E_GROUP_DATA_PLAYERS], i))
+						{
+							Zone_OnPlayerLeaveGroup(i, ident);
+						}
+					}
+					YSI_g_sGroupData[ident][E_GROUP_DATA_FLAGS] &= ~e_GROUP_FLAGS_GANG;
+				}
+			#endif
+			case E_GROUP_REMOTE_ADD_PLAYER:
+			{
+				DBGP3("Group_Remote() Add Player %d", YSI_gMasterID);
+				if (!Group_IsValid(ident)) return;
+				DBGP3("Group_Remote() Add Player OK");
+				Bit_Set(YSI_g_sPlayerGroups[info], ident, 1, GROUP_COUNT_BITS);
+				Bit_Set(YSI_g_sGroupData[ident][E_GROUP_DATA_PLAYERS], info, 1, PLAYER_BIT_ARRAY);
+				if (YSI_g_sGroupData[ident][E_GROUP_DATA_COLOUR] != 0x000000AA) SetPlayerColor(info, YSI_g_sGroupData[ident][E_GROUP_DATA_COLOUR]);
+				#if defined _YSI_VISUAL_ZONES
+					Zone_OnPlayerJoinGroup(info, ident);
+				#endif
+				DBGP3("Group_Remote() Add Player group: %d, player: %d", ident, info);
+				#if defined GROUP_NAME_GROUPS
+					DBGP3("Group_Remote() Add Player name: %s", YSI_g_sGroupData[ident][E_GROUP_DATA_NAME]);
+					new
+						hash = YSI_g_sGroupData[ident][E_GROUP_DATA_HASH];
+					if (hash != -1)
+					{
+						Bit_Let(YSI_g_sPlayerStoredGroups[info], ident);
+					}
+				#endif
+				Group_InitialiseGroups(info, 0, GROUP_INITIALISE_PART, ident);
+			}
+			case E_GROUP_REMOTE_REM_PLAYER:
+			{
+				if (!Group_IsValid(ident)) return;
+				if (!Bit_Get(YSI_g_sPlayerGroups[info], ident)) return;
+				#if defined _YSI_VISUAL_ZONES
+					Zone_OnPlayerLeaveGroup(info, ident);
+				#endif
+				Bit_Set(YSI_g_sPlayerGroups[info], ident, 0, GROUP_COUNT_BITS);
+				Bit_Set(YSI_g_sGroupData[ident][E_GROUP_DATA_PLAYERS], info, 0, PLAYER_BIT_ARRAY);
+				#if defined GROUP_NAME_GROUPS
+					new
+						hash = YSI_g_sGroupData[ident][E_GROUP_DATA_HASH];
+					if (hash != -1)
+					{
+						Bit_Vet(YSI_g_sPlayerStoredGroups[info], hash);
+					}
+				#endif
+				Group_InitialiseGroups(info, 0, GROUP_INITIALISE_PART, -2);
+			}
+			case E_GROUP_REMOTE_REM_PALL:
+			{
+			}
+			case E_GROUP_REMOTE_GGM:
+			{
+			}
+			case E_GROUP_REMOTE_GGS:
+			{
+			}
+			case E_GROUP_REMOTE_GGG:
+			{
+			}
+			case E_GROUP_REMOTE_HAS_PLAYER:
+			{
+			}
+		}
+	}
+	
+#endif
+
 /*----------------------------------------------------------------------------*-
 Function:
 	Group_Create
@@ -287,7 +796,7 @@ Notes:
 	Creates a new group.
 -*----------------------------------------------------------------------------*/
 
-stock Group_Create(name[])
+stock Group_Create(name[] = "")
 {
 	new
 		i;
@@ -297,6 +806,7 @@ stock Group_Create(name[])
 		i++;
 	}
 	if (i == MAX_GROUPS) return -1;
+	YSI_g_sGroupCount++;
 	YSI_g_sGroupData[i][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS_ACTIVE;
 	#if defined _YSI_VISUAL_CHECKPOINTS
 		Bit_SetAll(YSI_g_sGroupData[i][E_GROUP_DATA_CHECKPOINTS], 0, GROUP_CHECKPOINT_BITS);
@@ -307,20 +817,122 @@ stock Group_Create(name[])
 	#if defined _YSI_VISUAL_AREAS
 		Bit_SetAll(YSI_g_sGroupData[i][E_GROUP_DATA_AREAS], 0, GROUP_AREA_BITS);
 	#endif
-	#if defined _YSI_VISUAL_PROPERTIES
-		Bit_SetAll(YSI_g_sGroupData[i][E_GROUP_DATA_PROPERTIES], 0, GROUP_PROPERTY_BITS);
-	#endif
 	#if defined _YSI_VISUAL_OBJECTS
 		Bit_SetAll(YSI_g_sGroupData[i][E_GROUP_DATA_OBJECTS], 0, GROUP_OBJECT_BITS);
 	#endif
-	#if defined _YSI_GAMEMODE_CLASSES
+	#if defined GROUP_CONTROL_CLASS
 		Bit_SetAll(YSI_g_sGroupData[i][E_GROUP_DATA_CLASSES], 0, GROUP_CLASS_BITS);
 	#endif
 	Bit_SetAll(YSI_g_sGroupData[i][E_GROUP_DATA_PLAYERS], 0, PLAYER_BIT_ARRAY);
 	YSI_g_sGroupData[i][E_GROUP_DATA_COLOUR] = 0x000000AA;
-	strcpy(YSI_g_sGroupData[i][E_GROUP_DATA_NAME], name, MAX_GROUP_NAME);
+	#if defined GROUP_NAME_GROUPS
+		YSI_g_sGroupData[i][E_GROUP_DATA_HASH] = -1;
+		Group_NameGroupInt(i, name);
+		#if defined _YSI_SETUP_MASTER
+			if (name[0] != '\0')
+			{
+				CallRemoteFunction("Group_CreateRemote", "isii", i, name, _:true, YSI_gMasterID);
+				return i;
+			}
+		#endif
+	#endif
+	#if defined _YSI_SETUP_MASTER
+		new
+			fake[2] = {1, 0};
+		CallRemoteFunction("Group_CreateRemote", "isii", i, fake, _:true, YSI_gMasterID);
+	#endif
 	return i;
 }
+
+#if defined _YSI_SETUP_MASTER
+	/*----------------------------------------------------------------------------*-
+	Function:
+		Group_CreateRemote
+	Params:
+		id - Slot to put the new group in.
+		name[] - Name of the group for saving.
+		bool:broadcast - Wether this is for one or all scripts.
+		master - Script which should (or shouldn't) save this data.
+	Return:
+		-
+	Notes:
+		Ensures all scripts are synced with groups.
+	-*----------------------------------------------------------------------------*/
+
+	public Group_CreateRemote(id, name[], bool:broadcast, master)
+	{
+		if ((master == YSI_gMasterID) == broadcast) return;
+		if (id >= MAX_GROUPS) return;
+		YSI_g_sGroupCount++;
+		YSI_g_sGroupData[id][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS_ACTIVE;
+		#if defined _YSI_VISUAL_CHECKPOINTS
+			Bit_SetAll(YSI_g_sGroupData[id][E_GROUP_DATA_CHECKPOINTS], 0, GROUP_CHECKPOINT_BITS);
+		#endif
+		#if defined _YSI_CORE_COMMANDS
+			Bit_SetAll(YSI_g_sGroupData[id][E_GROUP_DATA_COMMANDS], 0, GROUP_COMMAND_BITS);
+		#endif
+		#if defined _YSI_VISUAL_AREAS
+			Bit_SetAll(YSI_g_sGroupData[id][E_GROUP_DATA_AREAS], 0, GROUP_AREA_BITS);
+		#endif
+		#if defined _YSI_VISUAL_OBJECTS
+			Bit_SetAll(YSI_g_sGroupData[id][E_GROUP_DATA_OBJECTS], 0, GROUP_OBJECT_BITS);
+		#endif
+		#if defined GROUP_CONTROL_CLASS
+			Bit_SetAll(YSI_g_sGroupData[id][E_GROUP_DATA_CLASSES], 0, GROUP_CLASS_BITS);
+		#endif
+		Bit_SetAll(YSI_g_sGroupData[id][E_GROUP_DATA_PLAYERS], 0, PLAYER_BIT_ARRAY);
+		YSI_g_sGroupData[id][E_GROUP_DATA_COLOUR] = 0x000000AA;
+		#if defined GROUP_NAME_GROUPS
+			YSI_g_sGroupData[id][E_GROUP_DATA_HASH] = -1;
+			Group_NameGroupInt(id, name);
+		#endif
+	}
+
+	#if defined GROUP_NAME_GROUPS
+		/*----------------------------------------------------------------------------*-
+		Function:
+			Group_StoredRemote
+		Params:
+			master - Script which wants the data.
+			id - Stored hash slot.
+			hash - Hash.
+		Return:
+			-
+		Notes:
+			Synchronises stored group hashes.
+		-*----------------------------------------------------------------------------*/
+
+		public Group_StoredRemote(master, id, hash)
+		{
+			if (master != YSI_gMasterID || id >= MAX_STORED_GROUPS) return;
+			YSI_g_sStoredGroupHashes[id] = hash;
+		}
+		
+		/*----------------------------------------------------------------------------*-
+		Function:
+			Group_PlayersRemote
+		Params:
+			master - Script which wants the data.
+			id - Player to save groups of.
+			Bit:playerData[] - Named groups the player is in.
+			size - Size of the array.
+		Return:
+			-
+		Notes:
+			Synchronises stored group members.
+		-*----------------------------------------------------------------------------*/
+		
+		public Group_PlayersRemote(master, id, Bit:playerData[], size)
+		{
+			if (master != YSI_gMasterID || id >= MAX_PLAYERS) return;
+			for (new i = 0; i < size && i < Bit_Bits(MAX_STORED_GROUPS); i++)
+			{
+				YSI_g_sPlayerStoredGroups[id][i] = playerData[i];
+			}
+		}
+	#endif
+	
+#endif
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -330,42 +942,47 @@ Params:
 Return:
 	-
 Notes:
-	Creates a group not for saving.
+	Creates a group not for saving.  Now just a wrapper for
+	Group_Create.
 -*----------------------------------------------------------------------------*/
 
-stock Group_CreateTemp()
+#define Group_CreateTemp() \
+	Group_Create()
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Group_AddToStored
+Params:
+	hash - Hashed group name to add to the list.
+Return:
+	-
+Notes:
+	Adds a group to the global list of known groups, active or not.
+	Used to try maintain an authorative list of every group a player
+	is in in any mode, running or not to ease in saving their groups.
+-*----------------------------------------------------------------------------*/
+
+stock Group_AddToStored(hash)
 {
-	new
-		i;
-	while (i < MAX_GROUPS)
-	{
-		if (!(YSI_g_sGroupData[i][E_GROUP_DATA_FLAGS] & e_GROUP_FLAGS_ACTIVE)) break;
-		i++;
-	}
-	if (i == MAX_GROUPS) return -1;
-	YSI_g_sGroupData[i][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS_ACTIVE;
-	#if defined _YSI_VISUAL_CHECKPOINTS
-		Bit_SetAll(YSI_g_sGroupData[i][E_GROUP_DATA_CHECKPOINTS], 0, GROUP_CHECKPOINT_BITS);
+	#if defined GROUP_NAME_GROUPS
+		new
+			i = 0;
+		while (i < MAX_STORED_GROUPS)
+		{
+			if (hash == YSI_g_sStoredGroupHashes[i])
+			{
+				return i;
+			}
+			else if (!YSI_g_sStoredGroupHashes[i])
+			{
+				YSI_g_sStoredGroupHashes[i] = hash;
+				return i;
+			}
+			i++;
+		}
+		DBGC1(if (i == MAX_STORED_GROUPS) print("*** Internal Error: Master group list overflow"););
 	#endif
-	#if defined _YSI_CORE_COMMANDS
-		Bit_SetAll(YSI_g_sGroupData[i][E_GROUP_DATA_COMMANDS], 0, GROUP_COMMAND_BITS);
-	#endif
-	#if defined _YSI_VISUAL_AREAS
-		Bit_SetAll(YSI_g_sGroupData[i][E_GROUP_DATA_AREAS], 0, GROUP_AREA_BITS);
-	#endif
-	#if defined _YSI_VISUAL_PROPERTIES
-		Bit_SetAll(YSI_g_sGroupData[i][E_GROUP_DATA_PROPERTIES], 0, GROUP_PROPERTY_BITS);
-	#endif
-	#if defined _YSI_VISUAL_OBJECTS
-		Bit_SetAll(YSI_g_sGroupData[i][E_GROUP_DATA_OBJECTS], 0, GROUP_OBJECT_BITS);
-	#endif
-	#if defined _YSI_GAMEMODE_CLASSES
-		Bit_SetAll(YSI_g_sGroupData[i][E_GROUP_DATA_CLASSES], 0, GROUP_CLASS_BITS);
-	#endif
-	Bit_SetAll(YSI_g_sGroupData[i][E_GROUP_DATA_PLAYERS], 0, PLAYER_BIT_ARRAY);
-	YSI_g_sGroupData[i][E_GROUP_DATA_COLOUR] = 0x000000AA;
-	YSI_g_sGroupData[i][E_GROUP_DATA_NAME][0] = '\0';
-	return i;
+	return -1;
 }
 
 /*----------------------------------------------------------------------------*-
@@ -391,17 +1008,91 @@ Params:
 Return:
 	-
 Notes:
-	-
+	Alters the hash table value if renaming a group.  Updates player
+	groups too.
 -*----------------------------------------------------------------------------*/
 
 stock Group_NameGroup(group, name[])
 {
-	#if defined GROUP_NAME_GROUPS
-		if (Group_IsValid(group)) strcpy(YSI_g_sGroupData[group][E_GROUP_DATA_NAME], name, MAX_GROUP_NAME);
+	#if defined _YSI_SETUP_MASTER
+		if (name[0])
+		{
+			CallRemoteFunction("Group_NameGroupInt", "is", group, name);
+		}
+		else
+		{
+			static
+				sFake[2] = {1, 0};
+			CallRemoteFunction("Group_NameGroupInt", "is", group, sFake);
+		}
 	#else
-		#pragma unused group, name
+		#if defined GROUP_NAME_GROUPS
+			Group_NameGroupInt(group, name);
+		#else
+			#pragma unused group, name
+		#endif
 	#endif
 }
+
+#if defined GROUP_NAME_GROUPS
+	/*----------------------------------------------------------------------------*-
+	Function:
+		Group_NameGroupInt
+	Params:
+		group - Group to name.
+		name[] - Name of group.
+	Return:
+		-
+	Notes:
+		Remote wrapper for Group_NameGroup.
+	-*----------------------------------------------------------------------------*/
+	
+	#if defined _YSI_SETUP_MASTER
+		public
+	#else
+		stock
+	#endif
+		Group_NameGroupInt(group, name[])
+	{
+		if (Group_IsValid(group))
+		{
+			if (name[0] > 1)
+			{
+				strcpy(YSI_g_sGroupData[group][E_GROUP_DATA_NAME], name, MAX_GROUP_NAME);
+				new
+					slot = YSI_g_sGroupData[group][E_GROUP_DATA_HASH];
+				if (slot == -1)
+				{
+					slot = Group_AddToStored(bernstein(name));
+					YSI_g_sGroupData[group][E_GROUP_DATA_HASH] = slot;
+				}
+				else
+				{
+					YSI_g_sStoredGroupHashes[slot] = bernstein(name);
+				}
+				if (slot != -1)
+				{
+					foreach (Player, playerid)
+					{
+						if (Bit_Get(YSI_g_sPlayerStoredGroups[playerid], slot) && !Bit_Get(YSI_g_sPlayerGroups[playerid], group))
+						{
+							Group_AddPlayer(group, playerid);
+						}
+					}
+				}
+			}
+			else
+			{
+				if (YSI_g_sGroupData[group][E_GROUP_DATA_HASH] != -1)
+				{
+					YSI_g_sStoredGroupHashes[YSI_g_sGroupData[group][E_GROUP_DATA_HASH]] = 0;
+				}
+				YSI_g_sGroupData[group][E_GROUP_DATA_NAME][0] = '\0';
+				YSI_g_sGroupData[group][E_GROUP_DATA_HASH] = -1;
+			}
+		}
+	}
+#endif
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -419,7 +1110,11 @@ Notes:
 
 stock Group_SetColour(group, colour)
 {
-	if (Group_IsValid(group)) YSI_g_sGroupData[group][E_GROUP_DATA_COLOUR] = colour;
+	#if defined _YSI_SETUP_MASTER
+		CallRemoteFunction("Group_Remote", "iii", group, colour, E_GROUP_REMOTE_COLOUR);
+	#else
+		if (Group_IsValid(group)) YSI_g_sGroupData[group][E_GROUP_DATA_COLOUR] = colour;
+	#endif
 }
 
 /*----------------------------------------------------------------------------*-
@@ -456,7 +1151,7 @@ Notes:
 
 stock Group_SetClass(group, class, set)
 {
-	#if defined _YSI_GAMEMODE_CLASSES
+	#if defined GROUP_CONTROL_CLASS
 		if (Group_IsValid(group) && class >= 0 && class < MAX_CLASSES)
 		{
 			Bit_Set(YSI_g_sGroupData[group][E_GROUP_DATA_CLASSES], class, set, GROUP_CLASS_BITS);
@@ -488,7 +1183,7 @@ Notes:
 
 stock Group_SetDefaultClass(class, set)
 {
-	#if defined _YSI_GAMEMODE_CLASSES
+	#if defined GROUP_CONTROL_CLASS
 		if (class >= 0 && class < MAX_CLASSES)
 		{
 			Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_CLASSES], class, set, GROUP_CLASS_BITS);
@@ -516,9 +1211,9 @@ Notes:
 	given class and if not stops them using it.
 -*----------------------------------------------------------------------------*/
 
-stock Group_UpdatePlayerClass(class, playerid)
+static stock Group_UpdatePlayerClass(class, playerid)
 {
-	#if defined _YSI_GAMEMODE_CLASSES
+	#if defined GROUP_CONTROL_CLASS
 		if (Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_CLASSES], class))
 		{
 			Class_SetPlayer(class, playerid, 1);
@@ -557,7 +1252,7 @@ Notes:
 stock Group_SetCommand(group, command[], set)
 {
 	#if defined _YSI_CORE_COMMANDS
-		if (Group_IsValid(group)) Group_SetCommandByID(group, Command_FindFunc(command, Command_Hash(command), strlen(command)), set);
+		if (Group_IsValid(group)) Group_SetCommandByID(group, Command_FindByName(command), set);
 	#else
 		#pragma unused group, command, set
 	#endif
@@ -578,19 +1273,46 @@ Notes:
 
 stock Group_SetCommandByID(group, command, set)
 {
+	#if defined _YSI_SETUP_MASTER
+		DBGP2("Group_SetCommandByID() start: %d %d %d %d", group, command, set, YSI_g_sIsCommandMaster);
+	#else
+		DBGP2("Group_SetCommandByID() start: %d %d %d", group, command, set);
+	#endif
 	#if defined _YSI_CORE_COMMANDS
-		if (Group_IsValid(group) && command >= 0 && command < MAX_COMMANDS)
-		{
-			Bit_Set(YSI_g_sGroupData[group][E_GROUP_DATA_COMMANDS], command, set, GROUP_COMMAND_BITS);
-			foreach(Player, i)
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsCommandMaster)
 			{
-				if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], i))
+		#endif
+				DBGP3("Group_SetCommandByID() Master");
+				if (command >= 0 && command < MAX_COMMANDS)
 				{
-					if (set) Command_SetPlayerUseByID(command, i, 1);
-					else Group_UpdatePlayerCommand(command, i);
+					DBGP3("Group_SetCommandByID() Valid command");
+					if (Group_IsValid(group))
+					{
+						DBGP3("Group_SetCommandByID() Valid group");
+						Bit_Set(YSI_g_sGroupData[group][E_GROUP_DATA_COMMANDS], command, set, GROUP_COMMAND_BITS);
+						foreach(Player, i)
+						{
+							if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], i))
+							{
+								if (set) Command_SetPlayerUseByID(command, i, 1);
+								else Group_UpdatePlayerCommand(command, i);
+							}
+						}
+					}
+					else if (group == -1)
+					{
+						Group_SetDefaultCommandByID(command, set);
+					}
 				}
+		#if defined _YSI_SETUP_MASTER
 			}
-		}
+			else
+			{
+				if (set) CallRemoteFunction("Group_Remote", "iii", group, command, E_GROUP_REMOTE_SET_COMMAND);
+				else CallRemoteFunction("Group_Remote", "iii", group, command, E_GROUP_REMOTE_UNSET_COMMAND);
+			}
+		#endif
 	#else
 		#pragma unused group, command, set
 	#endif
@@ -610,8 +1332,9 @@ Notes:
 
 stock Group_SetDefaultCommand(command[], set)
 {
+	DBGP2("Group_SetDefaultCommand() start: %s %d", command, set);
 	#if defined _YSI_CORE_COMMANDS
-		Group_SetDefaultCommandByID(Command_FindFunc(command, Command_Hash(command), strlen(command)), set);
+		Group_SetDefaultCommandByID(Command_FindByName(command), set);
 	#else
 		#pragma unused command, set
 	#endif
@@ -631,16 +1354,31 @@ Notes:
 
 stock Group_SetDefaultCommandByID(command, set)
 {
+	#if defined _YSI_SETUP_MASTER
+		DBGP2("Group_SetDefaultCommandByID() start: %d %d %d", command, set, YSI_g_sIsCommandMaster);
+	#endif
 	#if defined _YSI_CORE_COMMANDS
-		if (command >= 0 && command < MAX_COMMANDS)
-		{
-			Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_COMMANDS], command, set, GROUP_COMMAND_BITS);
-			foreach (Player, i)
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsCommandMaster)
 			{
-				if (set) Command_SetPlayerUseByID(command, i, 1);
-				else Group_UpdatePlayerCommand(command, i);
+		#endif
+				if (command >= 0 && command < MAX_COMMANDS)
+				{
+					Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_COMMANDS], command, set, GROUP_COMMAND_BITS);
+					foreach (Player, i)
+					{
+						if (set) Command_SetPlayerUseByID(command, i, 1);
+						else Group_UpdatePlayerCommand(command, i);
+					}
+				}
+		#if defined _YSI_SETUP_MASTER
 			}
-		}
+			else
+			{
+				if (set) CallRemoteFunction("Group_Remote", "iii", -1, command, E_GROUP_REMOTE_SET_COMMAND);
+				else CallRemoteFunction("Group_Remote", "iii", -1, command, E_GROUP_REMOTE_UNSET_COMMAND);
+			}
+		#endif
 	#else
 		#pragma unused command, set
 	#endif
@@ -659,7 +1397,7 @@ Notes:
 	given command and if not stops them using it.
 -*----------------------------------------------------------------------------*/
 
-stock Group_UpdatePlayerCommand(command, playerid)
+static stock Group_UpdatePlayerCommand(command, playerid)
 {
 	#if defined _YSI_CORE_COMMANDS
 		if (Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_COMMANDS], command))
@@ -701,28 +1439,41 @@ stock Group_SetGang(group, set)
 	#if defined _YSI_VISUAL_ZONES
 		if (set)
 		{
-			foreach (Player, i)
-			{
-				if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], i))
+			#if defined _YSI_SETUP_MASTER
+				CallRemoteFunction("Group_Remote", "iii", group, 0, E_GROUP_REMOTE_SET_GANG);
+			#else
+				foreach (Player, i)
 				{
-					Zone_OnPlayerJoinGroup(i, group);
+					if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], i))
+					{
+						Zone_OnPlayerJoinGroup(i, group);
+					}
 				}
-			}
-			YSI_g_sGroupData[group][E_GROUP_DATA_FLAGS] |= e_GROUP_FLAGS_GANG;
+				YSI_g_sGroupData[group][E_GROUP_DATA_FLAGS] |= e_GROUP_FLAGS_GANG;
+			#endif
 		}
 		else
 		{
-			foreach (Player, i)
-			{
-				if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], i))
+			#if defined _YSI_SETUP_MASTER
+				CallRemoteFunction("Group_Remote", "iii", group, 0, E_GROUP_REMOTE_UNSET_GANG);
+			#else
+				foreach (Player, i)
 				{
-					Zone_OnPlayerLeaveGroup(i, group);
+					if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], i))
+					{
+						Zone_OnPlayerLeaveGroup(i, group);
+					}
 				}
-			}
-			YSI_g_sGroupData[group][E_GROUP_DATA_FLAGS] &= ~e_GROUP_FLAGS_GANG;
+				YSI_g_sGroupData[group][E_GROUP_DATA_FLAGS] &= ~e_GROUP_FLAGS_GANG;
+			#endif
 		}
 	#else
-		#pragma unused group, set
+		#if defined _YSI_SETUP_MASTER
+			if (set) CallRemoteFunction("Group_Remote", "iii", group, 0, E_GROUP_REMOTE_SET_GANG);
+			else CallRemoteFunction("Group_Remote", "iii", group, 0, E_GROUP_REMOTE_UNSET_GANG);
+		#else
+			#pragma unused group, set
+		#endif
 	#endif
 }
 
@@ -742,18 +1493,37 @@ Notes:
 stock Group_SetCheckpoint(group, checkpoint, set)
 {
 	#if defined _YSI_VISUAL_CHECKPOINTS
-		if (Group_IsValid(group) && checkpoint >= 0 && checkpoint < MAX_CHECKPOINTS)
-		{
-			Bit_Set(YSI_g_sGroupData[group][E_GROUP_DATA_CHECKPOINTS], checkpoint, set, GROUP_CHECKPOINT_BITS);
-			foreach (Player, i)
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsCheckpointMaster)
 			{
-				if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], i))
+		#endif
+				if (checkpoint >= 0 && checkpoint < MAX_CHECKPOINTS)
 				{
-					if (set) Checkpoint_AddPlayer(checkpoint, i);
-					else Group_UpdatePlayerCheckpoint(checkpoint, i);
+					if (Group_IsValid(group))
+					{
+						Bit_Set(YSI_g_sGroupData[group][E_GROUP_DATA_CHECKPOINTS], checkpoint, set, GROUP_CHECKPOINT_BITS);
+						foreach (Player, i)
+						{
+							if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], i))
+							{
+								if (set) Checkpoint_AddPlayer(checkpoint, i);
+								else Group_UpdatePlayerCheckpoint(checkpoint, i);
+							}
+						}
+					}
+					else if (group == -1)
+					{
+						Group_SetDefaultCheckpoint(checkpoint, set);
+					}
 				}
+		#if defined _YSI_SETUP_MASTER
 			}
-		}
+			else
+			{
+				if (set) CallRemoteFunction("Group_Remote", "iii", group, checkpoint, E_GROUP_REMOTE_SET_CHECKPOINT);
+				else CallRemoteFunction("Group_Remote", "iii", group, checkpoint, E_GROUP_REMOTE_UNSET_CHECKPOINT);
+			}
+		#endif
 	#else
 		#pragma unused group, checkpoint, set
 	#endif
@@ -774,15 +1544,27 @@ Notes:
 stock Group_SetDefaultCheckpoint(checkpoint, set)
 {
 	#if defined _YSI_VISUAL_CHECKPOINTS
-		if (checkpoint >= 0 && checkpoint < MAX_CHECKPOINTS)
-		{
-			Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_CHECKPOINTS], checkpoint, set, GROUP_CHECKPOINT_BITS);
-			foreach (Player, i)
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsCheckpointMaster)
 			{
-				if (set) Checkpoint_AddPlayer(checkpoint, i);
-				else Group_UpdatePlayerCheckpoint(checkpoint, i);
+		#endif
+				if (checkpoint >= 0 && checkpoint < MAX_CHECKPOINTS)
+				{
+					Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_CHECKPOINTS], checkpoint, set, GROUP_CHECKPOINT_BITS);
+					foreach (Player, i)
+					{
+						if (set) Checkpoint_AddPlayer(checkpoint, i);
+						else Group_UpdatePlayerCheckpoint(checkpoint, i);
+					}
+				}
+		#if defined _YSI_SETUP_MASTER
 			}
-		}
+			else
+			{
+				if (set) CallRemoteFunction("Group_Remote", "iii", group, checkpoint, E_GROUP_REMOTE_SET_CHECKPOINT);
+				else CallRemoteFunction("Group_Remote", "iii", group, checkpoint, E_GROUP_REMOTE_UNSET_CHECKPOINT);
+			}
+		#endif
 	#else
 		#pragma unused checkpoint, set
 	#endif
@@ -800,7 +1582,7 @@ Notes:
 	-
 -*----------------------------------------------------------------------------*/
 
-stock Group_UpdatePlayerCheckpoint(checkpoint, playerid)
+static stock Group_UpdatePlayerCheckpoint(checkpoint, playerid)
 {
 	#if defined _YSI_VISUAL_CHECKPOINTS
 		if (Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_CHECKPOINTS], checkpoint))
@@ -841,18 +1623,37 @@ Notes:
 stock Group_SetObject(group, object, set)
 {
 	#if defined _YSI_VISUAL_OBJECTS
-		if (Group_IsValid(group) && object >= 0 && object < MAX_DYN_OBJECTS)
-		{
-			Bit_Set(YSI_g_sGroupData[group][E_GROUP_DATA_OBJECTS], object, set, GROUP_OBJECT_BITS);
-			foreach (Player, i)
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsObjectMaster)
 			{
-				if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], i))
+		#endif
+				if (object >= 0 && object < MAX_DYN_OBJECTS)
 				{
-					if (set) Object_AddToPlayer(object, i);
-					else Group_UpdatePlayerObject(object, i);
+					if (Group_IsValid(group))
+					{
+						Bit_Set(YSI_g_sGroupData[group][E_GROUP_DATA_OBJECTS], object, set, GROUP_OBJECT_BITS);
+						foreach (Player, i)
+						{
+							if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], i))
+							{
+								if (set) Object_AddToPlayer(object, i);
+								else Group_UpdatePlayerObject(object, i);
+							}
+						}
+					}
+					else if (group == -1)
+					{
+						Group_SetDefaultObject(object, set);
+					}
 				}
+		#if defined _YSI_SETUP_MASTER
 			}
-		}
+			else
+			{
+				if (set) CallRemoteFunction("Group_Remote", "iii", group, object, E_GROUP_REMOTE_SET_OBJECT);
+				else CallRemoteFunction("Group_Remote", "iii", group, object, E_GROUP_REMOTE_UNSET_OBJECT);
+			}
+		#endif
 	#else
 		#pragma unused group, object, set
 	#endif
@@ -873,15 +1674,27 @@ Notes:
 stock Group_SetDefaultObject(object, set)
 {
 	#if defined _YSI_VISUAL_OBJECTS
-		if (object >= 0 && object < MAX_DYN_OBJECTS)
-		{
-			Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_OBJECTS], object, set, GROUP_OBJECT_BITS);
-			foreach (Player, i)
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsObjectMaster)
 			{
-				if (set) Object_AddToPlayer(object, i);
-				else Group_UpdatePlayerObject(object, i);
+		#endif
+				if (object >= 0 && object < MAX_DYN_OBJECTS)
+				{
+					Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_OBJECTS], object, set, GROUP_OBJECT_BITS);
+					foreach (Player, i)
+					{
+						if (set) Object_AddToPlayer(object, i);
+						else Group_UpdatePlayerObject(object, i);
+					}
+				}
+		#if defined _YSI_SETUP_MASTER
 			}
-		}
+			else
+			{
+				if (set) CallRemoteFunction("Group_Remote", "iii", -1, object, E_GROUP_REMOTE_SET_OBJECT);
+				else CallRemoteFunction("Group_Remote", "iii", -1, object, E_GROUP_REMOTE_UNSET_OBJECT);
+			}
+		#endif
 	#else
 		#pragma unused object, set
 	#endif
@@ -899,7 +1712,7 @@ Notes:
 	-
 -*----------------------------------------------------------------------------*/
 
-stock Group_UpdatePlayerObject(object, playerid)
+static stock Group_UpdatePlayerObject(object, playerid)
 {
 	#if defined _YSI_VISUAL_OBJECTS
 		if (Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_OBJECTS], object))
@@ -940,18 +1753,37 @@ Notes:
 stock Group_SetArea(group, area, set)
 {
 	#if defined _YSI_VISUAL_AREAS
-		if (Group_IsValid(group) && area >= 0 && area < MAX_AREAS)
-		{
-			Bit_Set(YSI_g_sGroupData[group][E_GROUP_DATA_AREAS], area, set, GROUP_AREA_BITS);
-			foreach (Player, i)
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsAreaMaster)
 			{
-				if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], i))
+		#endif
+				if (area >= 0 && area < MAX_AREAS)
 				{
-					if (set) Area_SetPlayer(area, i, 1);
-					else Group_UpdatePlayerArea(area, i);
+					if (Group_IsValid(group))
+					{
+						Bit_Set(YSI_g_sGroupData[group][E_GROUP_DATA_AREAS], area, set, GROUP_AREA_BITS);
+						foreach (Player, i)
+						{
+							if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], i))
+							{
+								if (set) Area_SetPlayer(area, i, 1);
+								else Group_UpdatePlayerArea(area, i);
+							}
+						}
+					}
+					else if (group == -1)
+					{
+						Group_SetDefaultArea(area, set);
+					}
 				}
+		#if defined _YSI_SETUP_MASTER
 			}
-		}
+			else
+			{
+				if (set) CallRemoteFunction("Group_Remote", "iii", group, area, E_GROUP_REMOTE_SET_AREA);
+				else CallRemoteFunction("Group_Remote", "iii", group, area, E_GROUP_REMOTE_UNSET_AREA);
+			}
+		#endif
 	#else
 		#pragma unused group, area, set
 	#endif
@@ -972,15 +1804,27 @@ Notes:
 stock Group_SetDefaultArea(area, set)
 {
 	#if defined _YSI_VISUAL_AREAS
-		if (area >= 0 && area < MAX_AREAS)
-		{
-			Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_AREAS], area, set, GROUP_AREA_BITS);
-			foreach (Player, i)
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsAreaMaster)
 			{
-				if (set) Area_SetPlayer(area, i, 1);
-				else Group_UpdatePlayerArea(area, i);
+		#endif
+				if (area >= 0 && area < MAX_AREAS)
+				{
+					Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_AREAS], area, set, GROUP_AREA_BITS);
+					foreach (Player, i)
+					{
+						if (set) Area_SetPlayer(area, i, 1);
+						else Group_UpdatePlayerArea(area, i);
+					}
+				}
+		#if defined _YSI_SETUP_MASTER
 			}
-		}
+			else
+			{
+				if (set) CallRemoteFunction("Group_Remote", "iii", -1, area, E_GROUP_REMOTE_SET_AREA);
+				else CallRemoteFunction("Group_Remote", "iii", -1, area, E_GROUP_REMOTE_UNSET_AREA);
+			}
+		#endif
 	#else
 		#pragma unused area, set
 	#endif
@@ -998,7 +1842,7 @@ Notes:
 	-
 -*----------------------------------------------------------------------------*/
 
-stock Group_UpdatePlayerArea(area, playerid)
+static stock Group_UpdatePlayerArea(area, playerid)
 {
 	#if defined _YSI_VISUAL_AREAS
 		if (Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_AREAS], area))
@@ -1025,105 +1869,6 @@ stock Group_UpdatePlayerArea(area, playerid)
 
 /*----------------------------------------------------------------------------*-
 Function:
-	Group_SetProperty
-Params:
-	group - Group to add property to.
-	property - Property to add to group.
-	set - 1/0 can be used.
-Return:
-	-
-Notes:
-	-
--*----------------------------------------------------------------------------*/
-
-stock Group_SetProperty(group, property, set)
-{
-	#if defined _YSI_VISUAL_PROPERTIES
-		if (Group_IsValid(group) && property >= 0 && property < MAX_PROPERTIES)
-		{
-			Bit_Set(YSI_g_sGroupData[group][E_GROUP_DATA_PROPERTIES], property, set, GROUP_PROPERTY_BITS);
-			foreach (Player, i)
-			{
-				if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], i))
-				{
-					if (set) Property_SetPlayer(property, i, 1);
-					else Group_UpdatePlayerProperty(property, i);
-				}
-			}
-		}
-	#else
-		#pragma unused group, property, set
-	#endif
-}
-
-/*----------------------------------------------------------------------------*-
-Function:
-	Group_SetDefaultProperty
-Params:
-	group - Group to add property to.
-	set - 1/0 can be used.
-Return:
-	-
-Notes:
-	Like Group_SetProperty but for the default group.
--*----------------------------------------------------------------------------*/
-
-stock Group_SetDefaultProperty(property, set)
-{
-	#if defined _YSI_VISUAL_PROPERTIES
-		if (property >= 0 && property < MAX_PROPERTIES)
-		{
-			Bit_Set(YSI_g_sDefaultGroup[E_GROUP_DATA_PROPERTIES], property, set, GROUP_PROPERTY_BITS);
-			foreach (Player, i)
-			{
-				if (set) Property_SetPlayer(property, i, 1);
-				else Group_UpdatePlayerProperty(property, i);
-			}
-		}
-	#else
-		#pragma unused property, set
-	#endif
-}
-
-/*----------------------------------------------------------------------------*-
-Function:
-	Group_UpdatePlayerProperty
-Params:
-	property - Property to update.
-	playerid - Player to update for.
-Return:
-	-
-Notes:
-	-
--*----------------------------------------------------------------------------*/
-
-stock Group_UpdatePlayerProperty(property, playerid)
-{
-	#if defined _YSI_VISUAL_PROPERTIES
-		if (Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_PROPERTIES], property))
-		{
-			Property_SetPlayer(property, playerid, 1);
-			return;
-		}
-		for (new i = 0; i < MAX_GROUPS; i++)
-		{
-			if (Bit_Get(YSI_g_sPlayerGroups[playerid], i))
-			{
-				if (Bit_Get(YSI_g_sGroupData[i][E_GROUP_DATA_PROPERTIES], property))
-				{
-					Property_SetPlayer(property, playerid, 1);
-					return;
-				}
-			}
-		}
-		Property_SetPlayer(property, playerid, 0);
-	#else
-		#pragma unused property, playerid
-	#endif
-}
-
-/*----------------------------------------------------------------------------*-
-Function:
 	Group_AddPlayer
 Params:
 	group - Group to add player to.
@@ -1136,14 +1881,26 @@ Notes:
 
 stock Group_AddPlayer(group, playerid)
 {
-	if (!Group_IsValid(group)) return;
-	Bit_Set(YSI_g_sPlayerGroups[playerid], group, 1, GROUP_COUNT_BITS);
-	Bit_Set(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], playerid, 1, PLAYER_BIT_ARRAY);
-	if (YSI_g_sGroupData[group][E_GROUP_DATA_COLOUR] != 0x000000AA) SetPlayerColor(playerid, YSI_g_sGroupData[group][E_GROUP_DATA_COLOUR]);
-	#if defined _YSI_VISUAL_ZONES
-		Zone_OnPlayerJoinGroup(playerid, group);
+	#if defined _YSI_SETUP_MASTER
+		CallRemoteFunction("Group_Remote", "iii", group, playerid, E_GROUP_REMOTE_ADD_PLAYER);
+	#else
+		if (!Group_IsValid(group)) return;
+		Bit_Set(YSI_g_sPlayerGroups[playerid], group, 1, GROUP_COUNT_BITS);
+		Bit_Set(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], playerid, 1, PLAYER_BIT_ARRAY);
+		if (YSI_g_sGroupData[group][E_GROUP_DATA_COLOUR] != 0x000000AA) SetPlayerColor(playerid, YSI_g_sGroupData[group][E_GROUP_DATA_COLOUR]);
+		#if defined _YSI_VISUAL_ZONES
+			Zone_OnPlayerJoinGroup(playerid, group);
+		#endif
+		#if defined GROUP_NAME_GROUPS
+			new
+				hash = YSI_g_sGroupData[group][E_GROUP_DATA_HASH];
+			if (hash != -1)
+			{
+				Bit_Let(YSI_g_sPlayerStoredGroups[playerid], hash);
+			}
+		#endif
+		Group_InitialiseGroups(playerid, 0, GROUP_INITIALISE_PART, group);
 	#endif
-	Group_InitialiseGroups(playerid, 0, GROUP_INITIALISE_PART, group);
 }
 
 /*----------------------------------------------------------------------------*-
@@ -1160,14 +1917,26 @@ Notes:
 
 stock Group_RemovePlayer(group, playerid)
 {
-	if (!Group_IsValid(group)) return;
-	if (!Bit_Get(YSI_g_sPlayerGroups[playerid], group)) return;
-	#if defined _YSI_VISUAL_ZONES
-		Zone_OnPlayerLeaveGroup(playerid, group);
+	#if defined _YSI_SETUP_MASTER
+		CallRemoteFunction("Group_Remote", "iii", group, playerid, E_GROUP_REMOTE_REM_PLAYER);
+	#else
+		if (!Group_IsValid(group)) return;
+		if (!Bit_Get(YSI_g_sPlayerGroups[playerid], group)) return;
+		#if defined _YSI_VISUAL_ZONES
+			Zone_OnPlayerLeaveGroup(playerid, group);
+		#endif
+		Bit_Set(YSI_g_sPlayerGroups[playerid], group, 0, GROUP_COUNT_BITS);
+		Bit_Set(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], playerid, 0, PLAYER_BIT_ARRAY);
+		#if defined GROUP_NAME_GROUPS
+			new
+				hash = YSI_g_sGroupData[group][E_GROUP_DATA_HASH];
+			if (hash != -1)
+			{
+				Bit_Vet(YSI_g_sPlayerStoredGroups[playerid], hash);
+			}
+		#endif
+		Group_InitialiseGroups(playerid, 0, GROUP_INITIALISE_PART, -2);
 	#endif
-	Bit_Set(YSI_g_sPlayerGroups[playerid], group, 0, GROUP_COUNT_BITS);
-	Bit_Set(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], playerid, 0, PLAYER_BIT_ARRAY);
-	Group_InitialiseGroups(playerid, 0, GROUP_INITIALISE_PART, -2);
 }
 
 /*----------------------------------------------------------------------------*-
@@ -1202,73 +1971,105 @@ Params:
 Return:
 	-
 Notes:
-	Sets up variable defaults.
+	Sets up variable defaults.  Overwrites master system
+	control.
 -*----------------------------------------------------------------------------*/
 
 Group_Group()
 {
 	#if defined _YSI_SETUP_MASTER
-		YSI_g_sIsMaster = Master_Add("YSIM_Groups");
+		Master_Add("YSIM_Groups");
+		YSIM_Groups(E_MASTER_SET_MASTER);
+		CallRemoteFunction("Group_Populate", "d", YSI_gMasterID);
 	#endif
 	#if defined _YSI_CORE_COMMANDS
 		Bit_SetAll(YSI_g_sDefaultGroup[E_GROUP_DATA_COMMANDS], 1, GROUP_COMMAND_BITS);
+		ycmd(controlgroup);
+		#if defined _YSI_SETUP_MASTER
+			DBGP3("Group_Group() Command master: %d %d", YSI_gMasterID, YSI_g_sIsCommandMaster);
+		#endif
 	#endif
 	#if defined _YSI_VISUAL_CHECKPOINTS
 		Bit_SetAll(YSI_g_sDefaultGroup[E_GROUP_DATA_CHECKPOINTS], 1, GROUP_CHECKPOINT_BITS);
+		#if defined _YSI_SETUP_MASTER
+			DBGP3("Group_Group() Checkpoint master: %d %d", YSI_gMasterID, YSI_g_sIsCheckpointMaster);
+		#endif
 	#endif
 	#if defined _YSI_VISUAL_AREAS
 		Bit_SetAll(YSI_g_sDefaultGroup[E_GROUP_DATA_AREAS], 1, GROUP_AREA_BITS);
 	#endif
-	#if defined _YSI_VISUAL_PROPERTIES
-		Bit_SetAll(YSI_g_sDefaultGroup[E_GROUP_DATA_PROPERTIES], 1, GROUP_PROPERTY_BITS);
-	#endif
 	#if defined _YSI_VISUAL_OBJECTS
 		Bit_SetAll(YSI_g_sDefaultGroup[E_GROUP_DATA_OBJECTS], 1, GROUP_OBJECT_BITS);
 	#endif
-	#if defined _YSI_GAMEMODE_CLASSES
+	#if defined GROUP_CONTROL_CLASS
 		Bit_SetAll(YSI_g_sDefaultGroup[E_GROUP_DATA_CLASSES], 1, GROUP_CLASS_BITS);
 	#endif
 	Bit_SetAll(YSI_g_sDefaultGroup[E_GROUP_DATA_PLAYERS], 1, PLAYER_BIT_ARRAY);
+	#if defined GROUP_NAME_GROUPS
+		for (new i = 0; i < MAX_GROUPS; i++)
+		{
+			YSI_g_sGroupData[i][E_GROUP_DATA_HASH] = -1;
+		}
+	#endif
+	#if defined _YSI_SETUP_MASTER
+		Master_Add("YSIM_Groups");
+		YSIM_Groups(E_MASTER_SET_MASTER);
+	#endif
 	return 1;
 }
 
 #if defined _YSI_SETUP_MASTER
-/*	public YSIM_Groups(command)
+	/*----------------------------------------------------------------------------*-
+	Function:
+		Group_Populate
+	Params:
+		master - Script which wants group data.
+	Return:
+		-
+	Notes:
+		Sends all current groups to a new script to catch it up.
+	-*----------------------------------------------------------------------------*/
+	
+	public Group_Populate(master)
 	{
-		#if OBJECT_WORLDS <= 0 || 
-			static
-				sFake[2] = {-1, -1};
-		#endif
-		switch (command & 0xFF000000)
+		if (master == YSI_gMasterID)
 		{
-			case E_MASTER_SET_MASTER:
+			return;
+		}
+		if (existproperty(0, YSIM_MASTER))
+		{
+			if (((getproperty(0, YSIM_MASTER) & ((1 << YSI_gMasterID) - 1)) & (~(1 << master))))
 			{
-				YSI_g_sIsMaster = 1;
-			}
-			case E_MASTER_RELINQUISH:
-			{
-				new
-					master = (command & 0x00FFFFFF);
-				if (master == YSI_gMasterID)
-				{
-				}
-				else
-				{
-					for (new i = 0; i < MAX_DYN_OBJECTS; i++)
-					{
-						if (YSI_g_sObjects[i][E_OBJECT_MODEL] & e_OBJ_FLAG_ACTIVE && YSI_g_sObjects[i][E_OBJECT_SCRIPT] == master)
-						{
-							Object_Destroy(i);
-						}
-					}
-				}
-			}
-			case E_MASTER_NOT_MASTER:
-			{
-				YSI_g_sIsMaster = 0;
+				return;
 			}
 		}
-	}*/
+		new
+			fake[2] = {1, 0};
+		#if defined GROUP_NAME_GROUPS
+			for (new i = 0; i < MAX_STORED_GROUPS; i++)
+			{
+				CallRemoteFunction("Group_StoredRemote", "iii", master, i, YSI_g_sStoredGroupHashes[i]);
+			}
+			for (new i = 0; i < MAX_PLAYERS; i++)
+			{
+				CallRemoteFunction("Group_PlayersRemote", "iiai", master, i, _:YSI_g_sPlayerStoredGroups[i], Bit_Bits(MAX_STORED_GROUPS));
+			}
+		#endif
+		for (new i = 0; i < MAX_GROUPS; i++)
+		{
+			if (YSI_g_sGroupData[i][E_GROUP_DATA_FLAGS] & e_GROUP_FLAGS_ACTIVE)
+			{
+				#if defined GROUP_NAME_GROUPS
+					if (YSI_g_sGroupData[i][E_GROUP_DATA_NAME][0])
+					{
+						CallRemoteFunction("Group_CreateRemote", "isii", i, YSI_g_sGroupData[i][E_GROUP_DATA_NAME], _:false, master);
+						continue;
+					}
+				#endif
+				CallRemoteFunction("Group_CreateRemote", "isii", i, fake, _:false, master);
+			}
+		}
+	}
 #endif
 
 /*----------------------------------------------------------------------------*-
@@ -1289,6 +2090,7 @@ Group_OnPlayerConnect(playerid)
 		Bit_Set(YSI_g_sGroupData[i][E_GROUP_DATA_PLAYERS], playerid, 0, PLAYER_BIT_ARRAY);
 	}
 	Bit_SetAll(YSI_g_sPlayerGroups[playerid], 0, GROUP_COUNT_BITS);
+	Bit_SetAll(YSI_g_sPlayerStoredGroups[playerid], 0, Bit_Bits(MAX_STORED_GROUPS));
 	Group_InitialiseGroups(playerid, 0, GROUP_INITIALISE_PART, -1);
 	return 1;
 }
@@ -1320,75 +2122,86 @@ public Group_InitialiseGroups(playerid, start, end, group)
 		i = start,
 		recall;
 	#if defined _YSI_CORE_COMMANDS
-		for (i = start; i < MAX_COMMANDS && i < end; i++)
-		{
-			if (group == -1) Command_SetPlayerUseByID(i, playerid, Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_COMMANDS], i) ? 1 : 0);
-			else if (group == -2) Group_UpdatePlayerCommand(i, playerid);
-			else if (group == -3) Command_SetPlayerUseByID(i, playerid, 0);
-			else if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_COMMANDS], i)) Command_SetPlayerUseByID(i, playerid, 1);
-		}
-		if (i < MAX_COMMANDS) recall = 1;
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsCommandMaster)
+			{
+		#endif
+				for (i = start; i < MAX_COMMANDS && i < end; i++)
+				{
+					if (group == -1) Command_SetPlayerUseByID(i, playerid, Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_COMMANDS], i) ? 1 : 0);
+					else if (group == -2) Group_UpdatePlayerCommand(i, playerid);
+					else if (group == -3) Command_SetPlayerUseByID(i, playerid, 0);
+					else if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_COMMANDS], i)) Command_SetPlayerUseByID(i, playerid, 1);
+				}
+				if (i < MAX_COMMANDS) recall = 1;
+		#if defined _YSI_SETUP_MASTER
+			}
+		#endif
 	#endif
 	#if defined _YSI_VISUAL_CHECKPOINTS
-		for (i = start; i < MAX_CHECKPOINTS && i < end; i++)
-		{
-			if ((group == -1))
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsCheckpointMaster)
 			{
-				if (Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_CHECKPOINTS], i))
+		#endif
+				for (i = start; i < MAX_CHECKPOINTS && i < end; i++)
 				{
-					
+					if ((group == -1))
+					{
+						if (!Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_CHECKPOINTS], i))
+						{
+							Checkpoint_RemovePlayer(i, playerid);
+						}
+					}
+					else if (group == -2) Group_UpdatePlayerCheckpoint(i, playerid);
+					else if (group == -3) Checkpoint_RemovePlayer(i, playerid);
+					else if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_CHECKPOINTS], i)) Checkpoint_AddPlayer(i, playerid);
 				}
-				else
-				{
-					Checkpoint_RemovePlayer(i, playerid);
-				}
+				if (i < MAX_CHECKPOINTS) recall = 1;
+		#if defined _YSI_SETUP_MASTER
 			}
-			else if (group == -2) Group_UpdatePlayerCheckpoint(i, playerid);
-			else if (group == -3) Checkpoint_RemovePlayer(i, playerid);
-			else if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_CHECKPOINTS], i)) Checkpoint_AddPlayer(i, playerid);
-		}
-		if (i < MAX_CHECKPOINTS) recall = 1;
+		#endif
 	#endif
 	#if defined _YSI_VISUAL_AREAS
-		for (i = start; i < MAX_AREAS && i < end; i++)
-		{
-			if (group == -1) Area_SetPlayer(i, playerid, Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_AREAS], i) ? 1 : 0);
-			else if (group == -2) Group_UpdatePlayerArea(i, playerid);
-			else if (group == -3) Area_SetPlayer(i, playerid, 0);
-			else if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_AREAS], i)) Area_SetPlayer(i, playerid, 1);
-		}
-		if (i < MAX_AREAS) recall = 1;
-	#endif
-	#if defined _YSI_VISUAL_PROPERTIES
-		for (i = start; i < MAX_PROPERTIES && i < end; i++)
-		{
-			if (group == -1) Property_SetPlayer(i, playerid, Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_PROPERTIES], i) ? 1 : 0);
-			else if (group == -2) Group_UpdatePlayerProperty(i, playerid);
-			else if (group == -3) Property_SetPlayer(i, playerid, 0);
-			else if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_PROPERTIES], i)) Property_SetPlayer(i, playerid, 1);
-		}
-		if (i < MAX_PROPERTIES) recall = 1;
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsAreaMaster)
+			{
+		#endif
+				for (i = start; i < MAX_AREAS && i < end; i++)
+				{
+					if (group == -1) Area_SetPlayer(i, playerid, Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_AREAS], i) ? 1 : 0);
+					else if (group == -2) Group_UpdatePlayerArea(i, playerid);
+					else if (group == -3) Area_SetPlayer(i, playerid, 0);
+					else if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_AREAS], i)) Area_SetPlayer(i, playerid, 1);
+				}
+				if (i < MAX_AREAS) recall = 1;
+		#if defined _YSI_SETUP_MASTER
+			}
+		#endif
 	#endif
 	#if defined _YSI_VISUAL_OBJECTS
-		for (i = start; i < MAX_DYN_OBJECTS && i < end; i++)
-		{
-			if (group == -1)
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsObjectMaster)
 			{
-				if (Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_OBJECTS], i))
+		#endif
+				for (i = start; i < MAX_DYN_OBJECTS && i < end; i++)
 				{
-					
+					if (group == -1)
+					{
+						if (!Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_OBJECTS], i))
+						{
+							Object_RemoveFromPlayer(i, playerid);
+						}
+					}
+					else if (group == -2) Group_UpdatePlayerObject(i, playerid);
+					else if (group == -3) Object_RemoveFromPlayer(i, playerid);
+					else if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_OBJECTS], i)) Object_AddToPlayer(i, playerid);
 				}
-				else
-				{
-					Object_RemoveFromPlayer(i, playerid);
-				}
+				if (i < MAX_DYN_OBJECTS) recall = 1;
+		#if defined _YSI_SETUP_MASTER
 			}
-			else if (group == -2) Group_UpdatePlayerObject(i, playerid);
-			else if (group == -3) Object_RemoveFromPlayer(i, playerid);
-			else if (Bit_Get(YSI_g_sGroupData[group][E_GROUP_DATA_OBJECTS], i)) Object_AddToPlayer(i, playerid);
-		}
+		#endif
 	#endif
-	#if defined _YSI_GAMEMODE_CLASSES
+	#if defined GROUP_CONTROL_CLASS
 		for (i = start; i < MAX_CLASSES && i < end; i++)
 		{
 			if (group == -1) Class_SetPlayer(i, playerid, Bit_Get(YSI_g_sDefaultGroup[E_GROUP_DATA_CLASSES], i) ? 1 : 0);
@@ -1415,8 +2228,23 @@ Notes:
 
 stock Bit:Group_GetGroupMembers(group)
 {
-	if (!Group_IsValid(group)) return YSI_g_sDefaultGroup[E_GROUP_DATA_PLAYERS];
-	else return YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS];
+	new
+		Bit:ret[GROUP_COUNT_BITS];
+	if (!Group_IsValid(group))
+	{
+		for (new i = 0; i < GROUP_COUNT_BITS; i++)
+		{
+			ret[i] = YSI_g_sDefaultGroup[E_GROUP_DATA_PLAYERS][i];
+		}
+	}
+	else
+	{
+		for (new i = 0; i < GROUP_COUNT_BITS; i++)
+		{
+			ret[i] = YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS][i];
+		}
+	}
+	return ret;
 }
 
 /*----------------------------------------------------------------------------*-
@@ -1490,3 +2318,284 @@ stock Group_HasPlayer(group, playerid)
 	if (Bit_GetBit(YSI_g_sGroupData[group][E_GROUP_DATA_PLAYERS], playerid)) return 1;
 	return 0;
 }
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Group_SavePlayer
+Params:
+	playerid - Player to save.
+Return:
+	0 - Passed off saving for another script.
+	1 - Saved the data.
+Notes:
+	Saves all the group data for a player.  Uses compression of the
+	hashes to store the data efficiently while still maintaining a
+	reference to the names of the groups to allow reloading on a non-
+	id basis.
+	
+	Saves from a gamemode if possible, else save from the lowest ID
+	filterscript.
+	
+	"Compresses" a 4 byte number into a 5 character string.  I say
+	compress because if it were stored in 4 bytes it would risk
+	putting NULL bytes and control characters into a text file or
+	database wheras in 5 bytes each byte can be ORed with 0x40 to
+	ensure they are in the range of safe characters (@ - ~) (except
+	the first and last which must be ORed with 0x80 to keep up the
+	bit count and also nicely delimit the strings (although as each one
+	is 5 characters they don't need delimiting).
+	
+	It is also a compression because it means the number doesn't need
+	to be stored in plaintext which would take up to 10 characters
+	per number and requires delimitation.
+-*----------------------------------------------------------------------------*/
+
+stock Group_SavePlayer(playerid)
+{
+	DBGP2("Group_SavePlayer() start");
+	#if defined GROUP_NAME_GROUPS
+		DBGP4("Group_SavePlayer() Name groups");
+		#if defined _YSI_SETUP_MASTER
+			DBGP4("Group_SavePlayer() Master");
+			#if defined FILTERSCRIPT
+				DBGP4("Group_SavePlayer() Filterscript");
+				if (existproperty(0, "YSIM_Gamemode"))
+				{
+					return 0;
+				}
+				if (existproperty(0, YSIM_MASTER))
+				{
+					if (getproperty(0, YSIM_MASTER) & ((1 << YSI_gMasterID) - 1))
+					{
+						return 0;
+					}
+				}
+			#endif
+		#endif
+		DBGP3("Group_SavePlayer() Is master");
+		Player_SetTag("ysi_groups");
+		new
+			line[MAX_INI_ENTRY_TEXT],
+			name[10] = "groups_00",
+			j = 0,
+			hash,
+			num1 = '0',
+			num2 = '0';
+		for (new i = 0; i < MAX_STORED_GROUPS; i++)
+		{
+			if (j >= (MAX_INI_ENTRY_TEXT - 5))
+			{
+				line[j] = '\0';
+				name[7] = num1;
+				name[8] = num2;
+				name[9] = '\0';
+				DBGP3("Group_SavePlayer() write: %s %s", name, line);
+				Player_WriteString(name, line);
+				j = 0;
+				num1++;
+				if (num1 == '9' + 1)
+				{
+					num1 = '0';
+					num2++;
+					DBGC1(if (num2 == '9' + 1) return print("*** Internal Error: Group write overflow"););
+				}
+			}
+			hash = YSI_g_sStoredGroupHashes[i];
+			if (hash && Bit_Get(YSI_g_sPlayerStoredGroups[playerid], i))
+			{
+				line[j++] = (hash >>> 25) | 0x80;
+				line[j++] = ((hash >>> 19) & 0x3F) | 0x40;
+				line[j++] = ((hash >>> 13) & 0x3F) | 0x40;
+				line[j++] = ((hash >>> 7) & 0x3F) | 0x40;
+				line[j++] = (hash & 0x7F) | 0x80;
+			}
+		}
+		if (j)
+		{
+			line[j] = '\0';
+			name[7] = num1;
+			name[8] = num2;
+			name[9] = '\0';
+			Player_WriteString(name, line);
+		}
+	#endif
+	DBGP2("Group_SavePlayer() end");
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	LoginDat_ysi_groups
+Params:
+	playerid - Player who logged in.
+	identifier[] - Name of a data entry.
+	text[] - Data value.
+Return:
+	-
+Notes:
+	Loads a player's stored named groups.
+-*----------------------------------------------------------------------------*/
+
+#if defined GROUP_NAME_GROUPS
+	public LoginDat_ysi_groups(playerid, identifier[], text[])
+	{
+		new
+			i = 0,
+			len = strlen(text) - 5,
+			hash,
+			slot,
+			group;
+		while (i <= len)
+		{
+			hash = text[i++] << 25;
+			hash |= (text[i++] & 0x3F) << 19;
+			hash |= (text[i++] & 0x3F) << 13;
+			hash |= (text[i++] & 0x3F) << 7;
+			hash |= text[i++] & 0x7F;
+			slot = Group_AddToStored(hash);
+			if (slot != -1)
+			{
+				Bit_Let(YSI_g_sPlayerStoredGroups[playerid], slot);
+				for (group = 0; group < MAX_GROUPS; group++)
+				{
+					if ((YSI_g_sGroupData[group][E_GROUP_DATA_FLAGS] & e_GROUP_FLAGS_ACTIVE) && YSI_g_sGroupData[group][E_GROUP_DATA_HASH] == slot)
+					{
+						Group_AddPlayer(group, playerid);
+						group = MAX_GROUPS;
+					}
+				}
+			}
+		}
+	}
+#endif
+
+/*----------------------------------------------------------------------------*-
+Command:
+	controlgroup
+Parameters:
+	<playerid> - Player to add to a group.
+	<group> - Group to add to.
+	<add> - Wether to add or remove them.
+	
+	OR:
+	
+	<page> - Page of groups to view.
+Notes:
+	Wraps RCON around the groups system so someone has control
+	over all groups and can add people to the admin groups.
+-*----------------------------------------------------------------------------*/
+
+#if defined _YSI_CORE_COMMANDS
+	public ycmd_controlgroup(playerid, params[], help)
+	{
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsCommandMaster)
+			{
+		#endif
+				if (IsPlayerAdmin(playerid))
+				{
+					if (help)
+					{
+						Text_SendFormat(playerid, "YSI_CONGRP_HELP_1", "controlgroup");
+						Text_SendFormat(playerid, "YSI_CONGRP_HELP_2", "controlgroup");
+						Text_Send(playerid, "YSI_CONGRP_HELP_3");
+						Text_Send(playerid, "YSI_CONGRP_HELP_4");
+						Text_Send(playerid, "YSI_CONGRP_HELP_5");
+						Text_Send(playerid, "YSI_CONGRP_HELP_6");
+					}
+					else
+					{
+						new
+							props,
+							pages,
+							page;
+						if (!sscanf(params, "iii", props, pages, page))
+						{
+							if (IsPlayerConnected(props) && Group_IsValid(pages))
+							{
+								if (page)
+								{
+									Group_AddPlayer(pages, props);
+								}
+								else
+								{
+									Group_RemovePlayer(pages, props);
+								}
+								Text_SendFormat(playerid, "YSI_CONGRP_ASSIGNED", props);
+							}
+							else
+							{
+								Text_Send(playerid, "YSI_CONGRP_INVALID");
+							}
+						}
+						else
+						{
+							props = YSI_g_sGroupCount;
+							pages = (props + 7) / 8;
+							page = strval(params);
+							if (props > 8)
+							{
+								if (page)
+								{
+									if (page <= pages)
+									{
+										for (new i = 0, j = 0, k = (page - 1) * 8, n = k + 8; i < MAX_GROUPS && j < n; i++)
+										{
+											if (YSI_g_sGroupData[i][E_GROUP_DATA_FLAGS] & e_GROUP_FLAGS_ACTIVE)
+											{
+												if (j >= k)
+												{
+													if (YSI_g_sGroupData[i][E_GROUP_DATA_NAME][0])
+													{
+														Text_SendFormat(playerid, "YSI_GROUP_LIST_NAME", i, YSI_g_sGroupData[i][E_GROUP_DATA_NAME]);
+													}
+													else
+													{
+														Text_SendFormat(playerid, "YSI_GROUP_LIST_TEMP", i);
+													}
+												}
+												j++;
+											}
+										}
+									}
+									else
+									{
+										Text_SendFormat(playerid, "YSI_GROUP_LIST_PAGES", "controlgroup", pages);
+										Text_SendFormat(playerid, "YSI_GROUP_LIST_ASS", "controlgroup");
+									}
+								}
+								else
+								{
+									Text_Send(playerid, "YSI_GROUP_LIST_MORE");
+									Text_SendFormat(playerid, "YSI_GROUP_LIST_PAGES", "controlgroup", pages);
+									Text_SendFormat(playerid, "YSI_GROUP_LIST_ASS", "controlgroup");
+								}
+							}
+							else
+							{
+								for (new j = 0, i = 0; i < props && j < MAX_GROUPS; j++)
+								{
+									if (YSI_g_sGroupData[j][E_GROUP_DATA_FLAGS] & e_GROUP_FLAGS_ACTIVE)
+									{
+										if (YSI_g_sGroupData[j][E_GROUP_DATA_NAME][0])
+										{
+											Text_SendFormat(playerid, "YSI_GROUP_LIST_NAME", j, YSI_g_sGroupData[j][E_GROUP_DATA_NAME]);
+										}
+										else
+										{
+											Text_SendFormat(playerid, "YSI_GROUP_LIST_TEMP", j);
+										}
+										i++;
+									}
+								}
+							}
+						}
+					}
+					return 1;
+				}
+		#if defined _YSI_SETUP_MASTER
+			}
+		#endif
+		return 0;
+	}
+#endif

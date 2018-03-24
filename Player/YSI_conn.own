@@ -1,0 +1,158 @@
+/*----------------------------------------------------------------------------*-
+					===================================
+					Y Sever Includes - Connections Core
+					===================================
+Description:
+	Allows a limited number of connections from a single IP.
+Legal:
+	Copyright (C) 2007 Alex "Y_Less" Cole
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+	MA 02110-1301, USA.
+Changelog:
+	11/03/08:
+		First version.
+Functions:
+	Public:
+		-
+	Core:
+		Conn_OnPlayerConnect - Called to check IPs.
+	Stock:
+		-
+	Static:
+		-
+	Inline:
+		-
+	API:
+		SetMaxConnections - Sets the max allowed connections from an IP.
+Callbacks:
+	-
+Definitions:
+	-
+Enums:
+	e_FLOOD_ACTION - What to do if too many connections form.
+Macros:
+	-
+Tags:
+	-
+Variables:
+	Global:
+		-
+	Static:
+		YSI_g_sPlayerIPs - People's stored IPs for speed.
+		YSI_g_sMaxConnections - Data for the script.
+Commands:
+	-
+Compile options:
+	-
+Operators:
+	-
+-*----------------------------------------------------------------------------*/
+
+enum e_FLOOD_ACTION (+= 0x00010000)
+{
+	e_FLOOD_ACTION_NOTHING,
+	e_FLOOD_ACTION_BLOCK = 0x00010000,
+	e_FLOOD_ACTION_KICK,
+	e_FLOOD_ACTION_BAN,
+	e_FLOOD_ACTION_ACTION = 0x000F0000,
+	e_FLOOD_ACTION_COUNT = 0x0000FFFF
+}
+
+static
+	YSI_g_sPlayerIPs[MAX_PLAYERS],
+	e_FLOOD_ACTION:YSI_g_sMaxConnections = e_FLOOD_ACTION_COUNT | e_FLOOD_ACTION_BLOCK;
+
+/*----------------------------------------------------------------------------*-
+Function:
+	SetMaxConnections
+Params:
+	max - Maximum number of connections allowed from the same IP.
+	e_FLOOD_ACTION:action - What to do if there's too many.
+Return:
+	-
+Notes:
+	Sets the maximum connections allowed from a single IP.
+-*----------------------------------------------------------------------------*/
+
+stock SetMaxConnections(max, e_FLOOD_ACTION:action = e_FLOOD_ACTION_BLOCK)
+{
+	YSI_g_sMaxConnections = (e_FLOOD_ACTION:max & e_FLOOD_ACTION_COUNT) | action;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Conn_OnPlayerConnect
+Params:
+	playerid - Player who joined.
+Return:
+	-
+Notes:
+	Checks for too many connections from the same IP address and acts
+	accordingly.
+	
+	Could be edited to only loop through players once but I'm not sure the
+	extra code required would be faster anyway, definately not easier.
+-*----------------------------------------------------------------------------*/
+
+Conn_OnPlayerConnect(playerid)
+{
+	if ((YSI_g_sMaxConnections & e_FLOOD_ACTION_COUNT) != e_FLOOD_ACTION_COUNT)
+	{
+		new
+			count = 0,
+			IP = GetIP(playerid);
+		YSI_g_sPlayerIPs[playerid] = IP;
+		foreach (Player, i)
+		{
+			if (YSI_g_sPlayerIPs[i] == IP)
+			{
+				count++;
+			}
+		}
+		if (count > _:(YSI_g_sMaxConnections & e_FLOOD_ACTION_COUNT))
+		{
+			DBGP1("*** Internal Alert: Max Connections exceeded");
+			switch (YSI_g_sMaxConnections & e_FLOOD_ACTION_ACTION)
+			{
+				case e_FLOOD_ACTION_BLOCK:
+				{
+					Kick(playerid);
+					return 0;
+				}
+				case e_FLOOD_ACTION_KICK:
+				{
+				}
+				case e_FLOOD_ACTION_BAN:
+				{
+					BanEx(playerid, "YSI Max Connections Auto-Ban");
+				}
+				default:
+				{
+					return 1;
+				}
+			}
+		}
+		foreach (Player, i)
+		{
+			if (YSI_g_sPlayerIPs[i] == IP)
+			{
+				Kick(i);
+			}
+		}
+		return 0;
+	}
+	return 1;
+}

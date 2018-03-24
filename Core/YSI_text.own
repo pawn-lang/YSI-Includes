@@ -24,8 +24,12 @@ Legal:
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 	MA 02110-1301, USA.
 Version:
-	0.1
+	0.1.1
 Changelog:
+	17/02/07:
+		Added saving of style parameter for text draws.
+	27/12/07:
+		Added text_draw support.
 	24/06/07:
 		Modified a few functions to use Bit_GetBit for speed.
 	19/06/07:
@@ -65,6 +69,7 @@ Functions:
 		Text_SendToAll - Sends a message to all players.
 		Text_SendToGroup - Sends a message to a defined group.
 		Text_SendToPlayers - Sends a message to a passed group.
+		Text_Display - Display an actual string to a player in a given style.
 	Static:
 		Text_AddText - Adds text to the tree after sorting.
 	Inline:
@@ -268,7 +273,7 @@ stock Text_AddToBuffer(identifier[], text[])
 	if (text[0] == 1) text[0] = '\0';
 	if (YSI_g_sTextCount >= MAX_TEXT)
 	{
-		printf("*** Internal Error: Text buffer full at %s (%s)", identifier, text);
+		DBGP1("*** Internal Error: Text buffer full at %s (%s)", identifier, text);
 		return;
 	}
 	new
@@ -375,6 +380,8 @@ Notes:
 	you should put the name of the text entry you wish to set data for first
 	and then have subsequent entries set the parameters.  Supports named and
 	hex colours (not integer though).
+	
+	Now saves style for text draws.
 -*----------------------------------------------------------------------------*/
 
 public Text_DataSave_data(identifier[], text[])
@@ -385,7 +392,7 @@ public Text_DataSave_data(identifier[], text[])
 	else if (!strcmp(identifier, "name", true)) current = Text_FindTextPointers(text);
 	else if (current != -1)
 	{
-		if (!strcmp(identifier, "type", true) || !strcmp(identifier, "style", true)) YSI_g_sNameTable[current][E_TEXT_POINTERS_STYLE] = strval(text);
+		if (!strcmp(identifier, "type", true)) YSI_g_sNameTable[current][E_TEXT_POINTERS_STYLE] = strval(text);
 		else if (!strcmp(identifier, "colour", true) || !strcmp(identifier, "color", true))
 		{
 			if (ishex(text)) YSI_g_sNameTable[current][E_TEXT_POINTERS_APPEAR] = hexstr(text);
@@ -395,8 +402,20 @@ public Text_DataSave_data(identifier[], text[])
 			}
 		}
 		else if (!strcmp(identifier, "time", true)) YSI_g_sNameTable[current][E_TEXT_POINTERS_APPEAR] = strval(text);
+		else if (!strcmp(identifier, "style", true)) YSI_g_sNameTable[current][E_TEXT_POINTERS_APPEAR] = bernstein(text);
 	}
 }
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Text_GetColour
+Params:
+	hash - Hash of the colour name to get the value of.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
 
 stock Text_GetColour(hash)
 {
@@ -409,6 +428,19 @@ stock Text_GetColour(hash)
 	}
 	return 0xFF0000AA;
 }
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Text_SetStyle
+Params:
+	identifier[] - Text name to set style of.
+	type - Type of style to use for the text.
+	info - Extra information for the style (colour/time/TD id).
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
 
 stock Text_SetStyle(identifier[], type, info)
 {
@@ -541,12 +573,12 @@ Notes:
 	Wrapper for the possibly remote Langs_ function.
 -*----------------------------------------------------------------------------*/
 
-#if defined _LOCAL
+#if defined _YSI_CORE_PLAYER
 	#define Text_GetPlayerLanguage(%1) \
 		Player_GetPlayerLanguage((%1))
 #else
 	#define Text_GetPlayerLanguage(%1) \
-		Language:CallRemoteFunction("Player_GetPlayerLanguage", "i", (%1))
+		Language:Language_GetPlayerLanguage((%1))
 #endif
 
 /*----------------------------------------------------------------------------*-
@@ -607,7 +639,7 @@ stock Text_GetTextFromIndex(index, Language:languageID, identifier[])
 	if (index == TEXT_NO_POINTERS)
 	{
 		format(str, sizeof (str), Text_GetErrorMessage(languageID), identifier);
-		printf("*** Internal Error! Text %s not found", identifier);
+		DBGP1("*** Internal Error! Text %s not found", identifier);
 		return str;
 	}
 	new
@@ -618,10 +650,10 @@ stock Text_GetTextFromIndex(index, Language:languageID, identifier[])
 		if (pointer == TEXT_NO_TEXT)
 		{
 			format(str, sizeof (str), Text_GetErrorMessage(languageID), identifier);
-			printf("*** Internal Error! Text %s not found", identifier);
+			DBGP1("*** Internal Error! Text %s not found", identifier);
 			return str;
 		}
-		printf("*** Internal Error! Text %s not found for language %d", identifier, _:languageID);
+		DBGP1("*** Internal Error! Text %s not found for language %d", identifier, _:languageID);
 		languageID = Language:0;
 	}
 	return YSI_g_sTextTable[languageID][pointer];
@@ -736,8 +768,8 @@ stock Text_Send(playerid, identifier[])
 		str[MAX_TEXT_ENTRY];
 	str = Text_GetTextFromIndex(pointer, Text_GetPlayerLanguage(playerid), identifier);
 	if (!str[0]) return 0;
-	if (!style) return SendClientMessage(playerid, Text_GetTextColour(pointer), str);
-	else return GameTextForPlayer(playerid, str, Text_GetTextColour(pointer), style);
+	if (style) return Text_Display(playerid, str, style, Text_GetTextTime(pointer));
+	else return Text_Display(playerid, str, style, Text_GetTextColour(pointer));
 }
 
 /*----------------------------------------------------------------------------*-
@@ -760,24 +792,64 @@ stock Text_SendToAll(identifier[])
 		str[MAX_LANGUAGES][MAX_TEXT_ENTRY];
 	if (!style)
 	{
+		new
+			colour = Text_GetTextColour(pointer);
 		foreach (Player, playerid)
 		{
 			new
 				Language:pl = Text_GetPlayerLanguage(playerid);
 			if (!str[pl][0]) str[pl] = Text_GetTextFromIndex(pointer, pl, identifier);
 			if (!str[pl][0]) continue;
-			ret = SendClientMessage(playerid, Text_GetTextColour(pointer), str[pl]) ? 1 : ret;
+			if (SendClientMessage(playerid, colour, str[pl]))
+			{
+				ret = 1;
+			}
+		}
+	}
+	else if (style < 0)
+	{
+		new
+			Text:td[MAX_LANGUAGES],
+			Style:tdStyle = TD_GetID(Text_GetTextColour(pointer));
+		for (new i = 0; i < MAX_LANGUAGES; i++)
+		{
+			td[i] = Text:INVALID_TEXT_DRAW;
+		}
+		if (tdStyle != MAX_TEXT_DRAW_STYLES)
+		{
+			foreach (Player, playerid)
+			{
+				new
+					Language:pl = Text_GetPlayerLanguage(playerid);
+				if (td[pl] == Text:INVALID_TEXT_DRAW)
+				{
+					if (!str[pl][0]) str[pl] = Text_GetTextFromIndex(pointer, pl, identifier);
+					if (!str[pl][0]) continue;
+					td[pl] = TD_Display(str[pl], tdStyle);
+					if (td[pl] != Text:INVALID_TEXT_DRAW)
+					{
+						ret = 1;
+					}
+				}
+				TD_ShowForPlayer(playerid, td[pl]);
+				TD_Garbage(td[pl]);
+			}
 		}
 	}
 	else
 	{
+		new
+			time = Text_GetTextTime(pointer);
 		foreach (Player, playerid)
 		{
 			new
 				Language:pl = Text_GetPlayerLanguage(playerid);
 			if (!str[pl][0]) str[pl] = Text_GetTextFromIndex(pointer, pl, identifier);
 			if (!str[pl][0]) continue;
-			ret = GameTextForPlayer(playerid, str[pl], Text_GetTextColour(pointer), style) ? 1: ret;
+			if (GameTextForPlayer(playerid, str[pl], time, style))
+			{
+				ret = 1;
+			}
 		}
 	}
 	return ret;
@@ -798,40 +870,8 @@ Notes:
 stock Text_SendToGroup(group, identifier[])
 {
 	new
-		pointer = Text_FindTextPointers(identifier),
-		style = Text_GetTextStyle(pointer),
-		ret,
-		Bit:players[PLAYER_BIT_ARRAY] = Group_GetGroupMembers(group),
-		str[MAX_LANGUAGES][MAX_TEXT_ENTRY];
-	if (!style)
-	{
-		foreach (Player, playerid)
-		{
-			if (Bit_GetBit(players, playerid))
-			{
-				new
-					Language:pl = Text_GetPlayerLanguage(playerid);
-				if (!str[pl][0]) str[pl] = Text_GetTextFromIndex(pointer, pl, identifier);
-				if (!str[pl][0]) continue;
-				ret = SendClientMessage(playerid, Text_GetTextColour(pointer), str[pl]) ? 1 : ret;
-			}
-		}
-	}
-	else
-	{
-		foreach (Player, playerid)
-		{
-			if (Bit_GetBit(players, playerid))
-			{
-				new
-					Language:pl = Text_GetPlayerLanguage(playerid);
-				if (!str[pl][0]) str[pl] = Text_GetTextFromIndex(pointer, pl, identifier);
-				if (!str[pl][0]) continue;
-				ret = GameTextForPlayer(playerid, str[pl], Text_GetTextColour(pointer), style) ? 1: ret;
-			}
-		}
-	}
-	return ret;
+		Bit:players[PLAYER_BIT_ARRAY] = Group_GetGroupMembers(group);
+	return Text_SendToPlayers(players, identifier);
 }
 
 /*----------------------------------------------------------------------------*-
@@ -857,13 +897,45 @@ stock Text_SendToPlayers(Bit:players[], identifier[])
 	{
 		foreach (Player, playerid)
 		{
-			if (Bit_Get(players, playerid, PLAYER_BIT_ARRAY))
+			if (Bit_GetBit(players, playerid))
 			{
 				new
 					Language:pl = Text_GetPlayerLanguage(playerid);
 				if (!str[pl][0]) str[pl] = Text_GetTextFromIndex(pointer, pl, identifier);
 				if (!str[pl][0]) continue;
-				ret = SendClientMessage(playerid, Text_GetTextColour(pointer), str[pl]) ? 1 : ret;
+				if (SendClientMessage(playerid, Text_GetTextColour(pointer), str[pl]))
+				{
+					ret = 1;
+				}
+			}
+		}
+	}
+	else if (style < 0)
+	{
+		new
+			Text:td[MAX_LANGUAGES] = {Text:INVALID_TEXT_DRAW, ...},
+			Style:tdStyle = TD_GetID(Text_GetTextColour(pointer));
+		if (tdStyle != MAX_TEXT_DRAW_STYLES)
+		{
+			foreach (Player, playerid)
+			{
+				if (Bit_GetBit(players, playerid))
+				{
+					new
+						Language:pl = Text_GetPlayerLanguage(playerid);
+					if (td[pl] == Text:INVALID_TEXT_DRAW)
+					{
+						if (!str[pl][0]) str[pl] = Text_GetTextFromIndex(pointer, pl, identifier);
+						if (!str[pl][0]) continue;
+						td[pl] = TD_Display(str[pl], tdStyle);
+						if (td[pl] != Text:INVALID_TEXT_DRAW)
+						{
+							ret = 1;
+						}
+					}
+					TD_ShowForPlayer(playerid, td[pl]);
+					TD_Garbage(td[pl]);
+				}
 			}
 		}
 	}
@@ -871,13 +943,16 @@ stock Text_SendToPlayers(Bit:players[], identifier[])
 	{
 		foreach (Player, playerid)
 		{
-			if (Bit_Get(players, playerid, PLAYER_BIT_ARRAY))
+			if (Bit_GetBit(players, playerid))
 			{
 				new
 					Language:pl = Text_GetPlayerLanguage(playerid);
 				if (!str[pl][0]) str[pl] = Text_GetTextFromIndex(pointer, pl, identifier);
 				if (!str[pl][0]) continue;
-				ret = GameTextForPlayer(playerid, str[pl], Text_GetTextTime(pointer), style) ? 1: ret;
+				if (GameTextForPlayer(playerid, str[pl], Text_GetTextTime(pointer), style))
+				{
+					ret = 1;
+				}
 			}
 		}
 	}
@@ -953,3 +1028,37 @@ Notes:
 
 #define Text_SendToPlayersFormat(%1,%2,%3) \
 	Format_SendFormattedText((%1), (%2), %3)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Text_Display
+Params:
+	playerid - Player to display text to.
+	text[] - Text to display.
+	style - How to display the text.
+	format - Specific style information.
+Return:
+	-
+Notes:
+	Takes a real string, not an identifier.
+-*----------------------------------------------------------------------------*/
+
+stock Text_Display(playerid, text[], style, format)
+{
+	if (style < 0)
+	{
+		new
+			Text:textDraw = TD_DisplayHashed(text, format);
+		TD_ShowForPlayer(playerid, textDraw);
+		TD_Garbage(textDraw);
+		return _:textDraw;
+	}
+	else if (style)
+	{
+		return GameTextForPlayer(playerid, text, format, style);
+	}
+	else
+	{
+		return SendClientMessage(playerid, format, text);
+	}
+}

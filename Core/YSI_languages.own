@@ -89,6 +89,7 @@ Variables:
 	Static:
 		YSI_g_sLoaded - Set when the first language has been loaded for sorting.
 		YSI_g_sLanguages - Array of language names and identifiers.
+		YSI_g_sPlayerLang - Player languages.
 Commands:
 	language - List languages or sets your language.
 Compile options:
@@ -125,6 +126,9 @@ enum E_LANGUAGES
 }
 
 static
+	#if !defined _YSI_CORE_PLAYER
+		YSI_g_sPlayerLang[MAX_PLAYERS],
+	#endif
 	YSI_g_sLoaded,
 	YSI_g_sFiles,
 	YSI_g_sFileDataLoaded,
@@ -542,11 +546,33 @@ public ycmd_language(playerid, params[], help)
 				Language:lang = Language:strval(params);
 			if (Langs_IsValid(lang))
 			{
-				Player_SetPlayerLanguage(playerid, lang);
+				#if defined _YSI_CORE_PLAYER
+					Player_SetPlayerLanguage(playerid, lang);
+				#else
+					YSI_g_sPlayerLang[playerid] = _:lang;
+				#endif
 				Text_SendFormat(playerid, "YSI_LANGS_DONE", _:lang, YSI_g_sLanguages[lang][E_LANGUAGES_NAME]);
 			}
-			else Text_Send(playerid, "YSI_LANGS_INV"); 
+			else Text_Send(playerid, "YSI_LANGS_INV");
 		}
 	}
 	return 1;
 }
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Language_GetPlayerLanguage
+Params:
+	playerid
+Return:
+	-
+Notes:
+	Gets a player's language when the player core is missing.
+-*----------------------------------------------------------------------------*/
+
+#if !defined _YSI_CORE_PLAYER
+	stock Language_GetPlayerLanguage(playerid)
+	{
+		return YSI_g_sPlayerLang[playerid];
+	}
+#endif

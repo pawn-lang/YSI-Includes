@@ -62,6 +62,7 @@ Definitions:
 	_YSI_CORE_LANGUAGES - Use YSI/Core/YSI_languages.own.
 	_YSI_CORE_COMMANDS - Use YSI/Core/YSI_commands.own.
 	_YSI_CORE_PLAYER - Use YSI/Core/YSI_player.own.
+	_YSI_CODE_MD5 - Use YSI/Core/YSI_MD5.own.
 	_YSI_SERVER_MODULES - Use YSI/Server/YSI_modules.own.
 	_YSI_VISUAL_OBJECTS - Use YSI/Visual/YSI_objects.own
 	_YSI_VISUAL_CHECKPOINTS - Use YSI/Visual/YSI_checkpoints.own.
@@ -113,12 +114,18 @@ Operators:
 #define _YSI_POST
 #define _YSI_SETUP_TIMERS
 #define _YSI_SYSTEM_ITTER
+#define _YSI_CODE_MD5
+
+#if !defined YSI_NO_CONNECTIONS
+	#define _YSI_PLAYER_CONN
+#endif
 
 #if !defined YSI_NO_USERS
 	#define _YSI_CORE_PLAYER
 #endif
 
 #if !defined YSI_NO_TEXT
+	#define _YSI_CORE_TD
 	#define _YSI_CORE_TEXT
 	#define _YSI_CORE_FORMAT
 	#define _YSI_CORE_LANGUAGES
@@ -126,6 +133,7 @@ Operators:
 
 #if !defined YSI_NO_COMMANDS
 	#define _YSI_CORE_COMMANDS
+	#define _YSI_CORE_HELP
 #endif
 
 #if !defined YSI_NO_MODULES
@@ -165,7 +173,7 @@ Operators:
 		#define _YSI_SYSTEM_CALLBACKS
 	#endif
 	
-	#if !defined YSI_NO_MASTER
+	#if defined YSI_USE_MASTER
 		#define _YSI_SETUP_MASTER
 	#endif
 	

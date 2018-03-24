@@ -33,6 +33,10 @@ Legal:
 Version:
 	0.1.2
 Changelog:
+	27/12/07:
+		Rewrote text draw support for better optimisation.
+	26/12/07:
+		Added text draw support.
 	20/10/07:
 		Changed AddNum code for faster defaults.
 		Added %u for unsigned variable base.
@@ -532,7 +536,10 @@ Notes:
 	-
 -*----------------------------------------------------------------------------*/
 
-static bool:Format_IsDigit(n) return (n <= '9' && n >= '0');
+static bool:Format_IsDigit(n)
+{
+	return (n <= '9' && n >= '0');
+}
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -565,191 +572,213 @@ Notes:
 
 stock Format_SendFormattedText(Bit:players[], identifier[], {Float,_}:...)
 {
+	DBGP2("Format_SendFormattedText call");
 	new
 		messageid = Text_FindTextPointers(identifier),
 		numa = numargs(),
 		output[MAX_LANGUAGES][MAX_STRING],
 		style = Text_GetTextStyle(messageid),
-		colour;
-	if (style) colour = Text_GetTextTime(messageid);
-	else colour = Text_GetTextColour(messageid);
-	for (new j = 0; j < PLAYER_BIT_ARRAY; j++)
+		colour,
+		Text:td[MAX_LANGUAGES] = {Text:INVALID_TEXT_DRAW, ...};
+	if (style < 0)
 	{
-		if (!players[j]) continue;
-		for (new i = 0; i < cellbits; i++)
+		colour = _:TD_GetID(Text_GetTextColour(messageid));
+		if (colour == _:MAX_TEXT_DRAW_STYLES) return;
+	}
+	else if (style)
+	{
+		colour = Text_GetTextTime(messageid);
+	}
+	else
+	{
+		colour = Text_GetTextColour(messageid);
+	}
+	DBGP3("Format_SendFormattedText start loop");
+	foreach (Player, playerid)
+	{
+		if (!Bit_Get(players, playerid)) continue;
+		new
+			Language:playerLanguage = Text_GetPlayerLanguage(playerid);
+		if (output[playerLanguage][0]) goto display;
+		new
+			pos,
+			p,
+			arg = 2,
+			tempString[MAX_STRING],
+			ch,
+			llen = MAX_STRING,
+			stringCount;
+		tempString = Text_GetTextFromIndex(messageid, playerLanguage, identifier);
+		while (TRUE)
 		{
-			if (!(players[j] & Bit:(1 << i))) continue;
-			new playerid = j * 32 + i;
-			if (IsPlayerConnected(playerid))
+			while (llen-- && (ch = tempString[pos++]) != '\0' && ch != '%') output[playerLanguage][p++] = ch;
+			if (ch == '\0' || llen <= 0) goto done;
+			new
+				argStrings[8][MAX_STRING],
+				flags,
+				width,
+				prec = -1,
+				stringPos,
+				n;
+			rflag:
+			ch = tempString[pos++];
+			if (arg >= numa) continue;
+			reswitch:
+			switch (ch)
 			{
-				new
-					Language:playerLanguage = Text_GetPlayerLanguage(playerid);
-				if (output[playerLanguage][0]) goto display;
-				new
-					pos,
-					p,
-					arg = 2,
-					tempString[MAX_STRING],
-					ch,
-					llen = MAX_STRING,
-					stringCount;
-				tempString = Text_GetTextFromIndex(messageid, playerLanguage, identifier);
-				while (TRUE)
+				case '-':
 				{
-					while (llen-- && (ch = tempString[pos++]) != '\0' && ch != '%') output[playerLanguage][p++] = ch;
-					if (ch == '\0' || llen <= 0) goto done;
-					new
-						argStrings[8][MAX_STRING],
-						flags,
-						width,
-						prec = -1,
-						stringPos,
-						n;
-					rflag:
-					ch = tempString[pos++];
-					if (arg >= numa) continue;
-					reswitch:
-					switch (ch)
+					flags |= FORMAT_LADJUST;
+					goto rflag;
+				}
+				case '.':
+				{
+					if ((ch = tempString[pos]) == '*')
 					{
-						case '-':
-						{
-							flags |= FORMAT_LADJUST;
-							goto rflag;
-						}
-						case '.':
-						{
-							if ((ch = tempString[pos]) == '*')
-							{
-								pos++;
-								prec = getarg(arg++);
-								goto rflag;
-							}
-							else
-							{
-								n = 0;
-								while (Format_IsDigit((ch = tempString[pos++]))) n = 10 * n + (ch - '0');
-								prec = n < 0 ? -1 : n;
-								goto reswitch;
-							}
-						}
-						case '0':
-						{
-							flags |= FORMAT_ZEROPAD;
-							goto rflag;
-						}
-						case '1', '2', '3', '4', '5', '6', '7', '8', '9':
-						{
-							do
-							{
-								n = 10 * n + (ch - '0');
-							}
-							while (Format_IsDigit((ch = tempString[pos++])));
-							width = n;
-							goto reswitch;
-						}
-						case '*':
-						{
-							width = getarg(arg++);
-							goto rflag;
-						}
-						case 'b':
-						{
-							p += Format_AddBin(output[playerLanguage][p], llen, getarg(arg++), width, flags);
-						}
-						case 'c':
-						{
-							output[playerLanguage][p++] = getarg(arg++);
-							if (!llen--) goto done;
-						}
-						case 'd', 'i':
-						{
-							p += Format_AddInt(output[playerLanguage][p], llen, getarg(arg++), width, flags);
-						}
-						case 'f':
-						{
-							p += Format_AddFloat(output[playerLanguage][p], llen, Float:getarg(arg++), width, prec);
-						}
-						case 's':
-						{
-							if (stringCount < pos)
-							{
-								for (new k = 0; k < MAX_STRING; k++)
-								{
-									if (!(argStrings[stringPos][k] = getarg(arg, k))) break;
-								}
-							}
-							p += Format_AddString(output[playerLanguage][p], llen, argStrings[stringPos], width, prec);
-							stringPos++;
-							arg++;
-							stringCount = pos;
-							if (stringPos == sizeof (argStrings))
-							{
-								stringCount--;
-								stringPos--;
-							}
-						}
-						case 'h', 'x':
-						{
-							p += Format_AddHex(output[playerLanguage][p], llen, getarg(arg++), width, flags);
-						}
-						case 'o':
-						{
-							p += Format_AddOct(output[playerLanguage][p], llen, getarg(arg++), width, flags);
-						}
-						case 'n':
-						{
-							if (stringCount < pos)
-							{
-								for (new k = 0; k < MAX_STRING; k++)
-								{
-									if (!(argStrings[stringPos][k] = getarg(arg, k))) break;
-								}
-							}
-							p += Format_AddCommand(output[playerLanguage][p], llen, argStrings[stringPos], width, prec);
-							stringPos++;
-							arg++;
-							stringCount = pos;
-							if (stringPos == sizeof (argStrings))
-							{
-								stringCount--;
-								stringPos--;
-							}
-						}
-						case 'p':
-						{
-							p += Format_AddSuffix(output[playerLanguage][p], llen, getarg(arg++));
-						}
-						case 'u':
-						{
-							if (prec < 0) prec = 10;
-							p += Format_AddNum(output[playerLanguage][p], llen, getarg(arg++), width, flags, prec, false);
-						}
-						case 't':
-						{
-							if (prec < 0) prec = 10;
-							p += Format_AddNum(output[playerLanguage][p], llen, getarg(arg++), width, flags, prec, true);
-						}
-						case '\0', '%':
-						{
-							output[playerLanguage][p++] = '%';
-							if (!llen--) goto done;
-						}
-						default:
-						{
-							output[playerLanguage][p++] = ch;
-							if (!llen--) goto done;
-						}
+						pos++;
+						prec = getarg(arg++);
+						goto rflag;
+					}
+					else
+					{
+						n = 0;
+						while (Format_IsDigit((ch = tempString[pos++]))) n = 10 * n + (ch - '0');
+						prec = n < 0 ? -1 : n;
+						goto reswitch;
 					}
 				}
-				done:
-				output[playerLanguage][p] = '\0';
-				display:
-				if (!output[playerLanguage][0]) continue;
-				if (style) GameTextForPlayer(playerid, output[playerLanguage], colour, style);
-				else SendClientMessage(playerid, colour, output[playerLanguage]);
+				case '0':
+				{
+					flags |= FORMAT_ZEROPAD;
+					goto rflag;
+				}
+				case '1', '2', '3', '4', '5', '6', '7', '8', '9':
+				{
+					do
+					{
+						n = 10 * n + (ch - '0');
+					}
+					while (Format_IsDigit((ch = tempString[pos++])));
+					width = n;
+					goto reswitch;
+				}
+				case '*':
+				{
+					width = getarg(arg++);
+					goto rflag;
+				}
+				case 'b':
+				{
+					p += Format_AddBin(output[playerLanguage][p], llen, getarg(arg++), width, flags);
+				}
+				case 'c':
+				{
+					output[playerLanguage][p++] = getarg(arg++);
+					if (!llen--) goto done;
+				}
+				case 'd', 'i':
+				{
+					p += Format_AddInt(output[playerLanguage][p], llen, getarg(arg++), width, flags);
+				}
+				case 'f':
+				{
+					p += Format_AddFloat(output[playerLanguage][p], llen, Float:getarg(arg++), width, prec);
+				}
+				case 's':
+				{
+					if (stringCount < pos)
+					{
+						for (new k = 0; k < MAX_STRING; k++)
+						{
+							if (!(argStrings[stringPos][k] = getarg(arg, k))) break;
+						}
+					}
+					p += Format_AddString(output[playerLanguage][p], llen, argStrings[stringPos], width, prec);
+					stringPos++;
+					arg++;
+					stringCount = pos;
+					if (stringPos == sizeof (argStrings))
+					{
+						stringCount--;
+						stringPos--;
+					}
+				}
+				case 'h', 'x':
+				{
+					p += Format_AddHex(output[playerLanguage][p], llen, getarg(arg++), width, flags);
+				}
+				case 'o':
+				{
+					p += Format_AddOct(output[playerLanguage][p], llen, getarg(arg++), width, flags);
+				}
+				case 'n':
+				{
+					if (stringCount < pos)
+					{
+						for (new k = 0; k < MAX_STRING; k++)
+						{
+							if (!(argStrings[stringPos][k] = getarg(arg, k))) break;
+						}
+					}
+					p += Format_AddCommand(output[playerLanguage][p], llen, argStrings[stringPos], width, prec);
+					stringPos++;
+					arg++;
+					stringCount = pos;
+					if (stringPos == sizeof (argStrings))
+					{
+						stringCount--;
+						stringPos--;
+					}
+				}
+				case 'p':
+				{
+					p += Format_AddSuffix(output[playerLanguage][p], llen, getarg(arg++));
+				}
+				case 'u':
+				{
+					if (prec < 0) prec = 10;
+					p += Format_AddNum(output[playerLanguage][p], llen, getarg(arg++), width, flags, prec, false);
+				}
+				case 't':
+				{
+					if (prec < 0) prec = 10;
+					p += Format_AddNum(output[playerLanguage][p], llen, getarg(arg++), width, flags, prec, true);
+				}
+				case '\0', '%':
+				{
+					output[playerLanguage][p++] = '%';
+					if (!llen--) goto done;
+				}
+				default:
+				{
+					output[playerLanguage][p++] = ch;
+					if (!llen--) goto done;
+				}
 			}
 		}
+		done:
+		output[playerLanguage][p] = '\0';
+		if (!output[playerLanguage][0]) continue;
+		display:
+		if (style < 0)
+		{
+			if (td[playerLanguage] == Text:INVALID_TEXT_DRAW)
+			{
+				td[playerLanguage] = TD_Display(output[playerLanguage], Style:colour);
+			}
+			TD_ShowForPlayer(playerid, td[playerLanguage]);
+			TD_Garbage(td[playerLanguage]);
+		}
+		else if (style)
+		{
+			GameTextForPlayer(playerid, output[playerLanguage], colour, style);
+		}
+		else
+		{
+			SendClientMessage(playerid, colour, output[playerLanguage]);
+		}
 	}
+	DBGP3("Format_SendFormattedText end loop");
 }
 
 /*----------------------------------------------------------------------------*-

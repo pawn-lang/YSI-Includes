@@ -26,8 +26,10 @@ Legal:
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 	MA 02110-1301, USA.
 Version:
-	0.2.6
+	0.2.7
 Changelog:
+	27/12/07:
+		Fixed a bug in the moved object list system.
 	26/11/07:
 		Finished up master system.
 		Fixed DestroyDynamicObject not removing client objects.
@@ -132,10 +134,11 @@ Functions:
 		Object_AttachToPlayer - Attaches objects to a player recursively.
 		Object_CheckDescendant - Recursive call for Object_IsDescendant.
 		Object_Destroy - Delete an object with no checks.
+		Object_AddToUpdate - Safely adds an object to the moved update list.
 	Inline:
 		Object_IsValid - Internal validity check.
 		Object_GetAttach - Get player an object's attached to.
-		Object_SetAttach - Set player an object's attached to.
+		Object_SetAttach - objSet player an object's attached to.
 		Object_HasPlayer - Checks if a player can see an object.
 	API:
 		MoveDynamicObject - Wrapper for MoveObject.
@@ -204,6 +207,8 @@ Operators:
 	-
 -*----------------------------------------------------------------------------*/
 
+#define NO_PERSONAL_OBJECTS
+
 #if !defined OBJECT_BOUNDS_MINX
 	#if defined OBJECT_BOUNDS
 		#define OBJECT_BOUNDS_MINX (-OBJECT_BOUNDS)
@@ -240,7 +245,7 @@ Operators:
 #define OBJECT_BOUNDS_Y_SIZE (OBJECT_BOUNDS_MAXY - OBJECT_BOUNDS_MINY)
 
 #if !defined MAX_DYN_OBJECTS
-	#define MAX_DYN_OBJECTS (10000)
+	#define MAX_DYN_OBJECTS (5000)
 #endif
 
 #define AVERAGE_OBJECTS_PER_SECTOR (500)
@@ -317,7 +322,7 @@ Operators:
 	#if defined OBJECT_VIEW_DISTANCE
 		#define DEFAULT_OBJECT_VIEW (OBJECT_VIEW_DISTANCE)
 	#else
-		#define DEFAULT_OBJECT_VIEW (200)
+		#define DEFAULT_OBJECT_VIEW (275)
 	#endif
 #endif
 
@@ -342,7 +347,7 @@ Operators:
 #define SECTOR_CHECK_TIME (1000)
 #define SECTOR_CHECK_FREQUENCY ceildiv(SECTOR_CHECK_TIME, (1000 / OBJECT_LOOP_GRANULARITY))
 
-#define MAY_OBJECTS (150)
+#define MAY_OBJECTS (240)
 
 #if !defined OBJECT_WORLDS
 	#define OBJECT_WORLDS MAX_WORLDS
@@ -459,7 +464,8 @@ enum
 	E_OBJECT_REMOTE_MOVETO,
 	E_OBJECT_REMOTE_CHECKDESC,
 	E_OBJECT_REMOTE_GET_AREA,
-	E_OBJECT_REMOTE_GATE = 0x40000000
+	E_OBJECT_REMOTE_GATE_POS,
+	E_OBJECT_REMOTE_GATE
 }
 
 enum E_GATE_INFO
@@ -552,7 +558,7 @@ Params:
 Return:
 	Player the object is attached to.
 Notes:
-	Actually checks a set of passed flags, not a passed object.
+	Actually checks a objSet of passed flags, not a passed object.
 -*----------------------------------------------------------------------------*/
 
 #define Object_GetAttach(%1) \
@@ -566,11 +572,34 @@ Params:
 Return:
 	If the object is attached to a player.
 Notes:
-	Actually checks a set of passed flags, not a passed object.
+	Actually checks a objSet of passed flags, not a passed object.
 -*----------------------------------------------------------------------------*/
 
 #define Object_IsAttached(%1) \
 	(Object_GetAttach(%1) != NO_ATTACH_PLAYER)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Object_SetGateTarget
+Params:
+	gate - Gate to objSet target for.
+	Float:tx - X point to open to.
+	Float:ty - Y point to open to.
+	Float:tz - Z point to open to.
+	Float:ts - Speed to open at.
+Return:
+	-
+Notes:
+	Stores a location into the two variables provided for targets.  Uses
+	complex bit shifting to fit the floats nicely into 2 cells.  Assumes a max
+	of +/-13107.2 for x, y and z and a max of 102.4 for the speed to compress.
+-*----------------------------------------------------------------------------*/
+
+#define Object_SetGateTarget(%1,%2,%3,%4,%5) \
+	new \
+		_o_sgt_y = floatround((%3) * 10); \
+	YSI_g_sGateInfo[(%1)][E_GATE_INFO_XY] = ((floatround((%2) * 10) & 0x3FFFF) << 14) | (_o_sgt_y & 0x3FFF); \
+	YSI_g_sGateInfo[(%1)][E_GATE_INFO_ZA] = ((_o_sgt_y & 0x3C000) << 14) | ((floatround((%4) * 10) & 0x3FFFF) << 10) | (floatround((%5) * 10) & 0x3FF)
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -580,7 +609,7 @@ Params:
 Return:
 	-
 Notes:
-	Actually checks a set of passed flags, not a passed object.
+	Actually checks a objSet of passed flags, not a passed object.
 -*----------------------------------------------------------------------------*/
 
 #define Object_SetAttach(%1) \
@@ -605,7 +634,7 @@ Notes:
 	{
 		setproperty(0, "YSIReq", 0);
 		if (!YSI_g_sIsMaster) return 0;
-		switch (instruction)
+		switch (instruction & 0x0FFF)
 		{
 			case E_OBJECT_REMOTE_VIEW:
 			{
@@ -718,6 +747,42 @@ Notes:
 				{
 					setproperty(0, "YSIReq", YSI_g_sGateInfo[ident][E_GATE_INFO_TRIGGER]);
 				}
+			}
+			case E_OBJECT_REMOTE_GATE:
+			{
+				setproperty(0, "YSIReq", NO_GATE);
+				#if !defined NO_OBJECTS_MOVE
+					#if defined _YSI_VISUAL_AREAS
+						if (Object_IsValid(ident) && !Object_IsAttached(YSI_g_sObjects[ident][E_OBJECT_MODEL]) && Area_IsValid(info))
+						{
+							new
+								gate;
+							while (gate < MAX_GATE_OBJECTS)
+							{
+								if (!YSI_g_sGateInfo[gate][E_GATE_INFO_OBJECT]) break;
+								gate++;
+							}
+							if (gate == MAX_GATE_OBJECTS) return NO_GATE;
+							
+							DBGP4("Object_Remote() Gates: %d %d %d %d", gate, ident, instruction >>> 12, info);
+							YSI_g_sGateInfo[gate][E_GATE_INFO_OBJECT] = ident | GATE_AREA_TRIGGER;
+							YSI_g_sGateInfo[gate][E_GATE_INFO_TIME] = instruction >>> 12;
+							YSI_g_sGateInfo[gate][E_GATE_INFO_TRIGGER] = info;
+							YSI_g_sObjects[ident][E_OBJECT_MODEL] |= e_OBJ_FLAG_GATE;
+							DBGP4("Object_Remote() Gate ID: %d", gate);
+							#if !defined NO_GATE_AREA_LOOKUP
+								new
+									slot = info / 2,
+									shift = (info % 2) * 16;
+								YSI_g_sGateAreas[slot] = (YSI_g_sGateAreas[slot] & (0xFFFF0000 >>> shift)) | (gate << shift);
+								DBGP4("Object_Remote() Lookup: %d %d %d", slot, shift, YSI_g_sGateAreas[slot]);
+							#endif
+							setproperty(0, "YSIReq", gate);
+							DBGP4("Object_Remote() Return");
+							return 1;
+						}
+					#endif
+				#endif
 			}
 		}
 		return 1;
@@ -1003,8 +1068,7 @@ Notes:
 		#else
 			#pragma unused players, pCount
 		#endif
-		YSI_g_sObjects[id][E_OBJECT_UPDATES] = YSI_g_sSomethingMoved;
-		YSI_g_sSomethingMoved = id;
+		Object_AddToUpdate(id);
 		Object_AddToSector(Object_FindSector(x, y, z), id, view);
 		return 1;
 	}
@@ -1055,8 +1119,7 @@ Notes:
 				YSI_g_sObjects[ident][E_OBJECT_RY] = f2;
 				YSI_g_sObjects[ident][E_OBJECT_RZ] = f3;
 				YSI_g_sObjects[ident][E_OBJECT_MODEL] |= e_OBJ_FLAG_ROTATED;
-				YSI_g_sObjects[ident][E_OBJECT_UPDATES] = YSI_g_sSomethingMoved;
-				YSI_g_sSomethingMoved = ident;
+				Object_AddToUpdate(ident);
 				setproperty(0, "YSIReq", 1);
 				return 1;
 			}
@@ -1073,11 +1136,14 @@ Notes:
 				if (Object_IsValid(ident))
 				{
 					Object_Move(ident, f1, f2, f3, f4);
-					YSI_g_sObjects[ident][E_OBJECT_UPDATES] = YSI_g_sSomethingMoved;
-					YSI_g_sSomethingMoved = ident;
+					Object_AddToUpdate(ident);
 					setproperty(0, "YSIReq", 1);
 					return 1;
 				}
+			}
+			case E_OBJECT_REMOTE_GATE_POS:
+			{
+				Object_SetGateTarget(ident, f1, f2, f3, f4);
 			}
 		}
 		return 0;
@@ -1088,7 +1154,7 @@ Notes:
 Function:
 	Object_SetViewDistance
 Params:
-	objectid - Object to set custom view distance for.
+	objectid - Object to objSet custom view distance for.
 	Float:view - Distance the object can be seen from.
 Return:
 	-
@@ -1139,6 +1205,26 @@ stock Object_SetViewDistance(objectid, Float:view)
 
 /*----------------------------------------------------------------------------*-
 Function:
+	Object_AddToUpdate
+Params:
+	objectid - Object to add to the update list.
+Return:
+	-
+Notes:
+	Safely adds an object to the moved update list.
+-*----------------------------------------------------------------------------*/
+
+static stock Object_AddToUpdate(objectid)
+{
+	if (YSI_g_sObjects[objectid][E_OBJECT_UPDATES] == NO_OBJECT)
+	{
+		YSI_g_sObjects[objectid][E_OBJECT_UPDATES] = YSI_g_sSomethingMoved;
+		YSI_g_sSomethingMoved = objectid;
+	}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
 	Object_Object
 Params:
 	-
@@ -1160,8 +1246,11 @@ Object_Object()
 		YSI_g_sNoObjects = 0;
 		new
 			i;
-		
-		while (i < MAX_DYN_OBJECTS) YSI_g_sObjects[i++][E_OBJECT_NEXT] = i;
+		while (i < MAX_DYN_OBJECTS)
+		{
+			YSI_g_sObjects[i][E_OBJECT_UPDATES] = NO_OBJECT;
+			YSI_g_sObjects[i++][E_OBJECT_NEXT] = i;
+		}
 		YSI_g_sObjects[MAX_DYN_OBJECTS - 1][E_OBJECT_NEXT] = NO_OBJECT;
 		
 		for (i = 0; i < OBJECT_SECTOR_ARRAY; i++)
@@ -1415,7 +1504,9 @@ Notes:
 
 	public Object_AddRem(master, model, Float:x, Float:y, Float:z, Float:rx, Float:ry, Float:rz)
 	{
+		DBGP3("Object_AddRem() start %d", YSI_gMasterID);
 		if (!YSI_g_sIsMaster) return NO_OBJECT;
+		DBGP3("Object_AddRem() Master");
 		setproperty(0, "YSIReq", NO_OBJECT);
 #endif
 	model &= _:e_OBJ_FLAG_MODEL;
@@ -1442,8 +1533,7 @@ Notes:
 		YSI_g_sObjects[pointer][E_OBJECT_SIBLINGS] = NO_OBJECT;
 		YSI_g_sObjects[pointer][E_OBJECT_CHILDREN] = NO_OBJECT;
 	#endif
-	YSI_g_sObjects[pointer][E_OBJECT_UPDATES] = YSI_g_sSomethingMoved;
-	YSI_g_sSomethingMoved = pointer;
+	Object_AddToUpdate(pointer);
 	Object_AddToSector(Object_FindSector(x, y, z), pointer, OBJECT_SIGHT);
 #if defined _YSI_SETUP_MASTER
 		setproperty(0, "YSIReq", pointer);
@@ -1806,7 +1896,7 @@ static stock Object_RemoveFromSector(sector, objectid)
 Function:
 	SetDynamicObjectPos
 Params:
-	objectid - Object to set new position of.
+	objectid - Object to objSet new position of.
 	Float:x - X co-ordinate.
 	Float:y - Y co-ordintae.
 	Float:z - Z co-ordinate.
@@ -1841,7 +1931,7 @@ stock SetDynamicObjectPos(objectid, Float:x, Float:y, Float:z)
 Function:
 	Object_SetPos
 Params:
-	objectid - Object to set new position of.
+	objectid - Object to objSet new position of.
 	Float:x - X co-ordinate.
 	Float:y - Y co-ordintae.
 	Float:z - Z co-ordinate.
@@ -1885,8 +1975,7 @@ static stock Object_SetPos(objectid, Float:x, Float:y, Float:z)
 		}
 	#endif
 	YSI_g_sObjects[objectid][E_OBJECT_MODEL] |= e_OBJ_FLAG_JUMPED;
-	YSI_g_sObjects[objectid][E_OBJECT_UPDATES] = YSI_g_sSomethingMoved;
-	YSI_g_sSomethingMoved = objectid;
+	Object_AddToUpdate(objectid);
 	return 1;
 }
 
@@ -1940,7 +2029,7 @@ static stock Object_UpdateChildSectors(objectid, Float:x, Float:y, Float:z)
 Function:
 	SetDynamicObjectRot
 Params:
-	objectid - Object to set new rotation of.
+	objectid - Object to objSet new rotation of.
 	Float:x - X rotation.
 	Float:y - Y rotation.
 	Float:z - Z rotation.
@@ -1961,8 +2050,7 @@ stock SetDynamicObjectRot(objectid, Float:x, Float:y, Float:z)
 			YSI_g_sObjects[objectid][E_OBJECT_RY] = y;
 			YSI_g_sObjects[objectid][E_OBJECT_RZ] = z;
 			YSI_g_sObjects[objectid][E_OBJECT_MODEL] |= e_OBJ_FLAG_ROTATED;
-			YSI_g_sObjects[objectid][E_OBJECT_UPDATES] = YSI_g_sSomethingMoved;
-			YSI_g_sSomethingMoved = objectid;
+			Object_AddToUpdate(objectid);
 			return 1;
 	#if defined _YSI_SETUP_MASTER
 		}
@@ -1978,7 +2066,7 @@ stock SetDynamicObjectRot(objectid, Float:x, Float:y, Float:z)
 Function:
 	GetDynamicObjectRot
 Params:
-	objectid - Object to set new rotation of.
+	objectid - Object to objSet new rotation of.
 	&Float:x - X rotation store.
 	&Float:y - Y rotation store.
 	&Float:z - Z rotation store.
@@ -2520,8 +2608,7 @@ stock AttachDynamicObjectToPlayer(objectid, playerid, Float:X, Float:Y, Float:Z,
 		Object_RemoveFromSector(YSI_g_sObjects[objectid][E_OBJECT_SECTOR], objectid);
 		Object_AddToMovingList(objectid);
 		YSI_g_sObjects[objectid][E_OBJECT_MODEL] = (YSI_g_sObjects[objectid][E_OBJECT_MODEL] & ~e_OBJ_FLAG_ATTACH) | Object_SetAttach(playerid);
-		YSI_g_sObjects[objectid][E_OBJECT_UPDATES] = YSI_g_sSomethingMoved;
-		YSI_g_sSomethingMoved = objectid;
+		Object_AddToUpdate(objectid);
 		#if !defined NO_OBJECT_ATTACH
 			new
 				child = YSI_g_sObjects[objectid][E_OBJECT_CHILDREN];
@@ -2573,8 +2660,7 @@ stock DetachDynamicObjectFromPlayer(objectid)
 						Object_UpdateAttach(YSI_g_sObjects[objectid][E_OBJECT_CHILDREN], nx, ny, nz, x + nx, y + ny, z + nz, false);
 					#endif
 					YSI_g_sObjects[objectid][E_OBJECT_MODEL] |= e_OBJ_FLAG_ATTACHED | e_OBJ_FLAG_ATTACH | e_OBJ_FLAG_RECREATED;
-					YSI_g_sObjects[objectid][E_OBJECT_UPDATES] = YSI_g_sSomethingMoved;
-					YSI_g_sSomethingMoved = objectid;
+					Object_AddToUpdate(objectid);
 				}
 				return;
 		#if defined _YSI_SETUP_MASTER
@@ -2664,8 +2750,7 @@ stock MoveDynamicObject(objectid, Float:X, Float:Y, Float:Z, Float:S)
 				if (Object_IsValid(objectid))
 				{
 					Object_Move(objectid, X, Y, Z, S);
-					YSI_g_sObjects[objectid][E_OBJECT_UPDATES] = YSI_g_sSomethingMoved;
-					YSI_g_sSomethingMoved = objectid;
+					Object_AddToUpdate(objectid);
 					return 1;
 				}
 		#if defined _YSI_SETUP_MASTER
@@ -2974,8 +3059,7 @@ stock StopDynamicObject(objectid)
 				Object_GetPos(objectid, x, y, z);
 				Object_AddToSector(Object_FindSector(x, y, z), objectid, YSI_g_sObjects[objectid][E_OBJECT_VIEW]);
 				YSI_g_sObjects[objectid][E_OBJECT_MODEL] = (YSI_g_sObjects[objectid][E_OBJECT_MODEL] & ~(e_OBJ_FLAG_MOVED)) | e_OBJ_FLAG_RECREATED;
-				YSI_g_sObjects[objectid][E_OBJECT_UPDATES] = YSI_g_sSomethingMoved;
-				YSI_g_sSomethingMoved = objectid;
+				Object_AddToUpdate(objectid);
 				#if !defined NO_OBJECT_ATTACH
 					Object_UpdateAttach(YSI_g_sObjects[objectid][E_OBJECT_CHILDREN], x, y, z, x, y, z);
 				#endif
@@ -3013,8 +3097,12 @@ static Object_Update(objectid, Float:elapsedTime)
 		Float:mx = YSI_g_sObjects[objectid][E_OBJECT_MX],
 		Float:my = YSI_g_sObjects[objectid][E_OBJECT_MY],
 		Float:mz = YSI_g_sObjects[objectid][E_OBJECT_MZ],
-		Float:distance = elapsedTime * YSI_g_sObjects[objectid][E_OBJECT_MS],
-		Float:remaining = floatsqroot(((x - mx) * (x - mx)) + ((y - my) * (y - my)) + ((z - mz) * (z - mz)));
+		Float:distance = elapsedTime * YSI_g_sObjects[objectid][E_OBJECT_MS];
+	x -= mx;
+	y -= my;
+	z -= mz;
+	new
+		Float:remaining = floatsqroot((x * x) + (y * y) + (z * z));
 	if (distance >= remaining)
 	{
 		YSI_g_sObjects[objectid][E_OBJECT_X] = mx;
@@ -3032,9 +3120,9 @@ static Object_Update(objectid, Float:elapsedTime)
 	else
 	{
 		remaining /= distance;
-		YSI_g_sObjects[objectid][E_OBJECT_X] += (mx - x) / remaining;
-		YSI_g_sObjects[objectid][E_OBJECT_Y] += (my - y) / remaining;
-		YSI_g_sObjects[objectid][E_OBJECT_Z] += (mz - z) / remaining;
+		YSI_g_sObjects[objectid][E_OBJECT_X] += (0.0 - x) / remaining;
+		YSI_g_sObjects[objectid][E_OBJECT_Y] += (0.0 - y) / remaining;
+		YSI_g_sObjects[objectid][E_OBJECT_Z] += (0.0 - z) / remaining;
 	}
 	return 0;
 }
@@ -3190,20 +3278,25 @@ public Object_Loop()
 		for (i = objStart; i != -1; i = sObjList[i][E_OBJECT_ITTER_NEXT])
 		{
 			new
-				set = sObjList[i][E_OBJECT_ITTER_OBJ];
-			if (Bit_Get(objects, set))
+				objSet = sObjList[i][E_OBJECT_ITTER_OBJ],
+				e_OBJ_FLAG:flag = YSI_g_sObjects[objSet][E_OBJECT_MODEL];
+			if (Bit_Get(objects, objSet))
 			{
 				new
-					obj = CreatePlayerObject(playerid, YSI_g_sObjects[set][E_OBJECT_MODEL] & e_OBJ_FLAG_MODEL, sObjList[i][E_OBJECT_ITTER_X], sObjList[i][E_OBJECT_ITTER_Y], sObjList[i][E_OBJECT_ITTER_Z], YSI_g_sObjects[set][E_OBJECT_RX], YSI_g_sObjects[set][E_OBJECT_RY], YSI_g_sObjects[set][E_OBJECT_RZ]);
+					obj = CreatePlayerObject(playerid, flag & e_OBJ_FLAG_MODEL, sObjList[i][E_OBJECT_ITTER_X], sObjList[i][E_OBJECT_ITTER_Y], sObjList[i][E_OBJECT_ITTER_Z], YSI_g_sObjects[objSet][E_OBJECT_RX], YSI_g_sObjects[objSet][E_OBJECT_RY], YSI_g_sObjects[objSet][E_OBJECT_RZ]);
 				if (obj != 0xFF)
 				{
-					YSI_g_sPlayerObjects[playerid][obj - 1] = set;
-					Bit_Set(objects, set, 0, OBJECT_BITS);
+					YSI_g_sPlayerObjects[playerid][obj - 1] = objSet;
+					Bit_Set(objects, objSet, 0, OBJECT_BITS);
 					#if !defined NO_OBJECTS_MOVE
-						if  (YSI_g_sObjects[set][E_OBJECT_MODEL] & e_OBJ_FLAG_MOVED)
+						if  (flag & e_OBJ_FLAG_MOVED)
 						{
-							MovePlayerObject(playerid, obj, YSI_g_sObjects[set][E_OBJECT_MX], YSI_g_sObjects[set][E_OBJECT_MY], YSI_g_sObjects[set][E_OBJECT_MZ], YSI_g_sObjects[set][E_OBJECT_MS]);
-							YSI_g_sPlayerObjects[playerid][obj - 1] |= _:(YSI_g_sObjects[set][E_OBJECT_MODEL] & e_OBJ_FLAG_MOVED);
+							MovePlayerObject(playerid, obj, YSI_g_sObjects[objSet][E_OBJECT_MX], YSI_g_sObjects[objSet][E_OBJECT_MY], YSI_g_sObjects[objSet][E_OBJECT_MZ], YSI_g_sObjects[objSet][E_OBJECT_MS]);
+							YSI_g_sPlayerObjects[playerid][obj - 1] |= _:(flag & e_OBJ_FLAG_MOVED);
+						}
+						if  (flag & e_OBJ_FLAG_ATTACHED)
+						{
+							AttachPlayerObjectToPlayer(playerid, obj, Object_GetAttach(objSet), YSI_g_sObjects[objSet][E_OBJECT_X], YSI_g_sObjects[objSet][E_OBJECT_Y], YSI_g_sObjects[objSet][E_OBJECT_Z], YSI_g_sObjects[objSet][E_OBJECT_RX], YSI_g_sObjects[objSet][E_OBJECT_RY], YSI_g_sObjects[objSet][E_OBJECT_RZ]);
 						}
 					#endif
 				}
@@ -3212,7 +3305,11 @@ public Object_Loop()
 	}
 	if (YSI_g_sSomethingMoved != NO_OBJECT)
 	{
-		for (new objectid = YSI_g_sSomethingMoved; objectid != NO_OBJECT; objectid = YSI_g_sObjects[objectid][E_OBJECT_UPDATES]) YSI_g_sObjects[objectid][E_OBJECT_MODEL] &= ~(e_OBJ_FLAG_ATTACHED | e_OBJ_FLAG_JUMPED | e_OBJ_FLAG_ROTATED | e_OBJ_FLAG_RECREATED);
+		for (new objectid = YSI_g_sSomethingMoved; objectid != NO_OBJECT; objectid = YSI_g_sObjects[objectid][E_OBJECT_UPDATES])
+		{
+			YSI_g_sObjects[objectid][E_OBJECT_MODEL] &= ~(e_OBJ_FLAG_ATTACHED | e_OBJ_FLAG_JUMPED | e_OBJ_FLAG_ROTATED | e_OBJ_FLAG_RECREATED);
+			YSI_g_sObjects[objectid][E_OBJECT_UPDATES] = NO_OBJECT;
+		}
 		YSI_g_sSomethingMoved = NO_OBJECT;
 	}
 }
@@ -3222,7 +3319,7 @@ Function:
 	Object_ParseSet
 Params:
 	playerid - Player to check for.
-	set - Pointer to first object in the list.
+	objSet - Pointer to first object in the list.
 	Float:x - Player's x position.
 	Float:y - Player's y position.
 	Float:z - Player's z position.
@@ -3231,7 +3328,7 @@ Params:
 	&objStart - Entrypoint to list.
 	&objEnd - Last object in list.
 	&objCount - Number of objects in list.
-	bool:dynam - Is this the dynamic set.
+	bool:dynam - Is this the dynamic objSet.
 Return:
 	-
 Notes:
@@ -3239,14 +3336,15 @@ Notes:
 	their real location relative to the player, if in range displays them.
 -*----------------------------------------------------------------------------*/
 
-static Object_ParseSet(playerid, set, Float:x, Float:y, Float:z, world, objList[][E_OBJECT_ITTER], &objStart, &objEnd, &objCount, bool:dynam)
+static Object_ParseSet(playerid, objSet, Float:x, Float:y, Float:z, world, objList[][E_OBJECT_ITTER], &objStart, &objEnd, &objCount, bool:dynam)
 {
-	if (set == NO_OBJECT) return;
+	#pragma unused playerid
+	if (objSet == NO_OBJECT) return;
 	new
 		#if !defined NO_OBJECTS_MOVE && defined NO_OBJECT_ATTACH
 			attach,
 		#endif
-		start = set,
+		start = objSet,
 		Float:px,
 		Float:py,
 		Float:pz,
@@ -3254,30 +3352,30 @@ static Object_ParseSet(playerid, set, Float:x, Float:y, Float:z, world, objList[
 	do
 	{
 		new
-			e_OBJ_FLAG:flag = YSI_g_sObjects[set][E_OBJECT_MODEL];
+			e_OBJ_FLAG:flag = YSI_g_sObjects[objSet][E_OBJECT_MODEL];
 		if (flag & e_OBJ_FLAG_ACTIVE)
 		{
-			if (Object_HasPlayer(set, playerid, world))
+			if (Object_HasPlayer(objSet, playerid, world))
 			{
 				#if !defined NO_OBJECT_ATTACH
-					Object_GetPos(set, px, py, pz);
+					Object_GetPos(objSet, px, py, pz);
 					#pragma unused dynam
 				#else
 					#if !defined NO_OBJECTS_MOVE
-						if (!dynam || (attach = Object_GetAttach(YSI_g_sObjects[set][E_OBJECT_MODEL])) == NO_ATTACH_PLAYER || !IsPlayerConnected(attach))
+						if (!dynam || (attach = Object_GetAttach(YSI_g_sObjects[objSet][E_OBJECT_MODEL])) == NO_ATTACH_PLAYER || !IsPlayerConnected(attach))
 						{
 					#endif
-							px = YSI_g_sObjects[set][E_OBJECT_X];
-							py = YSI_g_sObjects[set][E_OBJECT_Y];
-							pz = YSI_g_sObjects[set][E_OBJECT_Z];
+							px = YSI_g_sObjects[objSet][E_OBJECT_X];
+							py = YSI_g_sObjects[objSet][E_OBJECT_Y];
+							pz = YSI_g_sObjects[objSet][E_OBJECT_Z];
 					#if !defined NO_OBJECTS_MOVE
 						}
 						else
 						{
 							GetPlayerPos(attach, px, py, pz);
-							px += YSI_g_sObjects[set][E_OBJECT_X];
-							py += YSI_g_sObjects[set][E_OBJECT_Y];
-							pz += YSI_g_sObjects[set][E_OBJECT_Z];
+							px += YSI_g_sObjects[objSet][E_OBJECT_X];
+							py += YSI_g_sObjects[objSet][E_OBJECT_Y];
+							pz += YSI_g_sObjects[objSet][E_OBJECT_Z];
 						}
 					#else
 						#pragma unused dynam
@@ -3287,14 +3385,14 @@ static Object_ParseSet(playerid, set, Float:x, Float:y, Float:z, world, objList[
 					Float:ox = px - x,
 					Float:oy = py - y,
 					Float:oz = pz - z;
-				diff = ((ox * ox) + (oy * oy) + (oz * oz)) / YSI_g_sObjects[set][E_OBJECT_VIEW];
+				diff = ((ox * ox) + (oy * oy) + (oz * oz)) / YSI_g_sObjects[objSet][E_OBJECT_VIEW];
 				if (diff < 1.0)
 				{
 					if (objStart == -1)
 					{
 						objList[0][E_OBJECT_ITTER_NEXT] = -1;
 						objList[0][E_OBJECT_ITTER_LAST] = -1;
-						objList[0][E_OBJECT_ITTER_OBJ] = set;
+						objList[0][E_OBJECT_ITTER_OBJ] = objSet;
 						objList[0][E_OBJECT_ITTER_DISTANCE] = diff;
 						objList[0][E_OBJECT_ITTER_X] = px;
 						objList[0][E_OBJECT_ITTER_Y] = py;
@@ -3305,7 +3403,7 @@ static Object_ParseSet(playerid, set, Float:x, Float:y, Float:z, world, objList[
 					}
 					else if (objCount < MAY_OBJECTS)
 					{
-						objList[objCount][E_OBJECT_ITTER_OBJ] = set;
+						objList[objCount][E_OBJECT_ITTER_OBJ] = objSet;
 						objList[objCount][E_OBJECT_ITTER_DISTANCE] = diff;
 						objList[objCount][E_OBJECT_ITTER_X] = px;
 						objList[objCount][E_OBJECT_ITTER_Y] = py;
@@ -3337,7 +3435,7 @@ static Object_ParseSet(playerid, set, Float:x, Float:y, Float:z, world, objList[
 							j = -1,
 							newend = objList[objEnd][E_OBJECT_ITTER_LAST];
 						while (objList[i][E_OBJECT_ITTER_DISTANCE] < diff) i = objList[(j = i)][E_OBJECT_ITTER_NEXT];
-						objList[objEnd][E_OBJECT_ITTER_OBJ] = set;
+						objList[objEnd][E_OBJECT_ITTER_OBJ] = objSet;
 						objList[objEnd][E_OBJECT_ITTER_DISTANCE] = diff;
 						objList[objEnd][E_OBJECT_ITTER_X] = px;
 						objList[objEnd][E_OBJECT_ITTER_Y] = py;
@@ -3356,9 +3454,9 @@ static Object_ParseSet(playerid, set, Float:x, Float:y, Float:z, world, objList[
 				}
 			}
 		}
-		set = YSI_g_sObjects[set][E_OBJECT_NEXT];
+		objSet = YSI_g_sObjects[objSet][E_OBJECT_NEXT];
 	}
-	while (set != start);
+	while (objSet != start);
 }
 
 /*----------------------------------------------------------------------------*-
@@ -3681,29 +3779,6 @@ Object_OnPlayerDisconnect(playerid, reason)
 
 /*----------------------------------------------------------------------------*-
 Function:
-	Object_SetGateTarget
-Params:
-	gate - Gate to set target for.
-	Float:tx - X point to open to.
-	Float:ty - Y point to open to.
-	Float:tz - Z point to open to.
-	Float:ts - Speed to open at.
-Return:
-	-
-Notes:
-	Stores a location into the two variables provided for targets.  Uses
-	complex bit shifting to fit the floats nicely into 2 cells.  Assumes a max
-	of +/-13107.2 for x, y and z and a max of 102.4 for the speed to compress.
--*----------------------------------------------------------------------------*/
-
-#define Object_SetGateTarget(%1,%2,%3,%4,%5) \
-	new \
-		_o_sgt_y = floatround((%3) * 10); \
-	YSI_g_sGateInfo[(%1)][E_GATE_INFO_XY] = ((floatround((%2) * 10) & 0x3FFFF) << 14) | (_o_sgt_y & 0x3FFF); \
-	YSI_g_sGateInfo[(%1)][E_GATE_INFO_ZA] = ((_o_sgt_y & 0x3C000) << 14) | ((floatround((%4) * 10) & 0x3FFFF) << 10) | (floatround((%5) * 10) & 0x3FF)
-
-/*----------------------------------------------------------------------------*-
-Function:
 	Object_SetAreaGate
 Params:
 	objectid - Object to make into a gate.
@@ -3746,7 +3821,7 @@ stock Object_SetAreaGate(objectid, areaid, Float:tx, Float:ty, Float:tz, Float:t
 							new
 								slot = areaid / 2,
 								shift = (areaid % 2) * 16;
-							YSI_g_sGateAreas[slot] = (YSI_g_sGateAreas[slot] & (0xFFFF0000 >> shift)) | (gate << shift);
+							YSI_g_sGateAreas[slot] = (YSI_g_sGateAreas[slot] & (0xFFFF0000 >>> shift)) | (gate << shift);
 						#endif
 						return gate;
 					}
@@ -3757,8 +3832,17 @@ stock Object_SetAreaGate(objectid, areaid, Float:tx, Float:ty, Float:tz, Float:t
 		}
 		else
 		{
-			CallRemoteFunction("Object_Remote", "iii", objectid, 0, E_OBJECT_REMOTE_GATE | areaid);
-			return getproperty(0, "YSIReq");
+			DBGP4("Object_SetAreaGate() else: %d %d %d", objectid, areaid, time);
+			CallRemoteFunction("Object_Remote", "iii", objectid, areaid, E_OBJECT_REMOTE_GATE | (time << 12));
+			new
+				gate = getproperty(0, "YSIReq");
+			DBGP4("Object_SetAreaGate() gate: %d %d", gate, NO_GATE);
+			if (gate != NO_GATE)
+			{
+				DBGP3("Object_SetAreaGate() ok: %.2f %.2f %.2f %.2f", tx, ty, tz, ts);
+				CallRemoteFunction("Object_CoOrdRemote", "iiffff", gate, E_OBJECT_REMOTE_GATE_POS, tx, ty, tz, ts);
+			}
+			return gate;
 		}
 	#endif
 }
@@ -3784,8 +3868,11 @@ Notes:
 	Object_OnPlayerEnterArea(playerid, areaid)
 #endif
 {
+	DBGP2("Object_OnPlayerEnterArea() start");
 	#if defined _YSI_SETUP_MASTER
 		setproperty(0, "YSIReq", 0);
+	#else
+		#pragma unused playerid
 	#endif
 	#if defined NO_OBJECTS_MOVE
 		return 0;
@@ -3793,23 +3880,28 @@ Notes:
 		new
 			gate;
 		#if defined NO_GATE_AREA_LOOKUP
+			DBGP3("Object_OnPlayerEnterArea() Lookup");
 			while (gate < MAX_GATE_OBJECTS)
 			{
 				if (YSI_g_sGateInfo[gate][E_GATE_INFO_OBJECT] & GATE_AREA_TRIGGER && YSI_g_sGateInfo[gate][E_GATE_INFO_TRIGGER] == areaid) break;
 			}
 			if (gate == MAX_GATE_OBJECTS) return 0;
 		#else
-			gate = (YSI_g_sGateAreas[areaid / 2] >> ((areaid % 2) * 16)) & 0xFFFF;
+			gate = (YSI_g_sGateAreas[areaid / 2] >>> ((areaid % 2) * 16)) & 0xFFFF;
+			DBGP3("Object_OnPlayerEnterArea() Known %d %d %d", areaid, gate, YSI_g_sGateAreas[areaid / 2]);
 			if (gate == 0xFFFF) return 0;
 		#endif
 		#if defined _YSI_SETUP_MASTER
 			setproperty(0, "YSIReq", 1);
 		#endif
+		DBGP3("Object_OnPlayerEnterArea() Get");
 		new
 			objectid = YSI_g_sGateInfo[gate][E_GATE_INFO_OBJECT] & (~(GATE_AREA_TRIGGER | GATE_OPENING));
 		if (Object_IsValid(objectid))
 		{
+			DBGP3("Object_OnPlayerEnterArea() Valid");
 			if (YSI_g_sObjects[objectid][E_OBJECT_MODEL] & e_OBJ_FLAG_MOVED || YSI_g_sGateInfo[gate][E_GATE_INFO_OBJECT] & GATE_OPENING) return 1;
+			DBGP3("Object_OnPlayerEnterArea() Static");
 			new
 				Float:x,
 				Float:y,
@@ -3822,8 +3914,8 @@ Notes:
 			YSI_g_sGateInfo[gate][E_GATE_INFO_OBJECT] |= GATE_OPENING;
 			Object_SetGateTarget(gate, x, y, z, s);
 			Object_Move(objectid, tx, ty, tz, s);
-			YSI_g_sObjects[objectid][E_OBJECT_UPDATES] = YSI_g_sSomethingMoved;
-			YSI_g_sSomethingMoved = objectid;
+			Object_AddToUpdate(objectid);
+			DBGP3("Object_OnPlayerEnterArea() Moved");
 		}
 		else
 		{
@@ -3833,6 +3925,7 @@ Notes:
 			#endif
 			Area_Delete(areaid);
 		}
+		DBGP3("Object_OnPlayerEnterArea() end");
 		return 1;
 	#endif
 }
@@ -3869,7 +3962,7 @@ static stock Object_GateMoved(objectid)
 			}
 			if (YSI_g_sGateInfo[gate][E_GATE_INFO_OBJECT] & (GATE_AREA_TRIGGER | GATE_OPENING) == (GATE_AREA_TRIGGER | GATE_OPENING))
 			{
-				SetTimerEx("Object_GateClose", 5000, 0, "i", gate);
+				SetTimerEx("Object_GateClose", 500000, 0, "i", gate);
 			}
 			return 1;
 		}
@@ -3911,8 +4004,7 @@ public Object_GateClose(gate)
 			Object_GetPos(objectid, x, y, z);
 			Object_SetGateTarget(gate, x, y, z, s);
 			Object_Move(objectid, tx, ty, tz, s);
-			YSI_g_sObjects[objectid][E_OBJECT_UPDATES] = YSI_g_sSomethingMoved;
-			YSI_g_sSomethingMoved = objectid;
+			Object_AddToUpdate(objectid);
 		}
 		else
 		{
@@ -3962,7 +4054,7 @@ stock CreateGate(modelid, Float:x, Float:y, Float:z, Float:tx, Float:ty, Float:t
 		new
 			Float:xx = floatabs(x - tx),
 			Float:yy = floatabs(y - ty),
-			area = Area_AddCircle(x, y, (yy > xx) ? (yy) : (xx), z + 20.0);
+			area = Area_AddCircle(x, y, ((yy > xx) ? (yy) : (xx)) * 2.0, z + 20.0);
 		if (area == NO_AREA)
 		{
 			DestroyDynamicObject(obj);

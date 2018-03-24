@@ -55,11 +55,13 @@ Functions:
 		Property_Remote - Remote wrapper for most minor functions.
 		YSIM_Properties - Master system callback.
 		Property_Broadcast - Called to save properties on master shutdown.
+		Property_PickupTimeCheck - Checks if a player is still stood on a pickup.
 	Core:
 		Property_OnPlayerSelectedMenuRow - Called when someone selects something.
 		Property_OnPlayerExitedMenu - Called when someone exits a menu.
 		Property_OnPlayerEnterCheckpointEx - Called when someone enters a checkpoint (public).
 		Property_OnPlayerLeaveCheckpointEx - Called when someone leaves a checkpoint (public).
+		Property_OnPlayerPickUpPickup - Called when someone picks up a pickup (public).
 		Property_OnPlayerSpawn - Called when someone spawns.
 		Property_OnPlayerConnect - Called when comaone connects.
 		Property_OnPlayerLeaveArea - Called when someone leaves an area (public).
@@ -78,6 +80,7 @@ Functions:
 		Property_GetBank - Gets a player's banked money.
 		Property_GetSlotWeapon - Gets a player's spawn weapons.
 		Property_GetPropertyBits - Gets a player's owned properties.
+		Property_SetRebuyDelay - Set a delay on rebuying properties.
 	Static:
 		Property_GetWeapon - Gets weapon data for a slotid slot.
 		Property_WeaponName - Gets a weapon name for a slotid.
@@ -206,7 +209,8 @@ enum e_PROP_FLAGS (+= 0x10000)
 	e_PROP_FLAGS_TYPE_TELS,
 	e_PROP_FLAGS_TYPE_TELT,
 	e_PROP_FLAGS_TYPE_MONP,
-	e_PROP_FLAGS_TYPE_MONA,
+	e_PROP_FLAGS_TYPE_HOUS,
+	e_PROP_FLAGS_TYPE_MONA	= 0x00100000,
 	e_PROP_FLAGS_TYPE_RSRC,
 	e_PROP_FLAGS_FLAGS		= 0xFF000000,
 	e_PROP_FLAGS_CUST_1		= 0x01000000,
@@ -249,22 +253,37 @@ enum
 	E_PROP_REMOTE_SAVEWEAP,
 	E_PROP_REMOTE_DELETE,
 	E_PROP_REMOTE_TYPE,
-	E_PROP_REMOTE_VALID
+	E_PROP_REMOTE_VALID,
+	E_PROP_REMOTE_SET_MAX,
+	E_PROP_REMOTE_SET_HMX,
+	E_PROP_REMOTE_REBUY
 }
 
 static
 	YSI_g_sProperties[MAX_PROPERTIES][E_PROP_DATA],
 	YSI_g_sMoney[MAX_PLAYERS],
+	YSI_g_sPropCount[MAX_PLAYERS],
+	YSI_g_sHouseCount[MAX_PLAYERS],
 	Bit:YSI_g_sPlayerProperties[MAX_PLAYERS][GROUP_PROPERTY_BITS],
 	YSI_g_sSpawnWeapons[MAX_PLAYERS][13],
 	YSI_g_sShopMenu[MAX_PLAYERS][E_PROP_AMMU],
+	YSI_g_sRebuyDelay,
 	#if defined _YSI_SETUP_MASTER
 		YSI_g_sTempPropReq,
 		Bit:YSI_g_sTempProp[GROUP_PROPERTY_BITS],
 		YSI_g_sIsMaster,
 	#endif
+	#if defined _YSI_VISUAL_PICKUPS
+		YSI_g_sPickupPointers[MAX_DYN_PICKUPS],
+		YSI_g_sPickupProps,
+		YSI_g_sPickupTimer[MAX_PLAYERS] = {-1, ...},
+		YSI_g_sPlayerPickup[MAX_PLAYERS] = {NO_PICKUP, ...},
+	#endif
 	YSI_g_sAreaPointers[MAX_AREAS],
-	YSI_g_sCheckpointPointers[MAX_CHECKPOINTS];
+	YSI_g_sCheckpointPointers[MAX_CHECKPOINTS],
+	YSI_g_sMaxPlayerHouses = cellmax,
+	YSI_g_sMaxPlayerProps = cellmax,
+	YSI_g_sCurrentHouse[MAX_PLAYERS] = {-1, ...};
 
 forward Property_Loop();
 forward ycmd_sell(playerid, params[], help);
@@ -273,9 +292,17 @@ forward ycmd_balance(playerid, params[], help);
 forward ycmd_buy(playerid, params[], help);
 forward ycmd_withdraw(playerid, params[], help);
 forward ycmd_properties(playerid, params[], help);
+forward Property_ResetRebuy(prop);
+forward ycmd_exit(playerid, params[], help);
+forward ycmd_enter(playerid, params[], help);
+
+#if defined _YSI_VISUAL_PICKUPS
+	forward Property_PickupTimeCheck(playerid, pickupid);
+#endif
 
 #if defined _YSI_SETUP_MASTER
-	forward Property_AddPropRemote(master, name[], Float:x, Float:y, Float:z, price, reward, interval, sell, multi, reduce, increase);
+	forward Property_AddHouseRemote(master, Float:extX, Float:extY, Float:extZ, Float:intX, Float:intY, Float:intZ, interior, world, price, checkpoint);
+	forward Property_AddPropRemote(master, name[], Float:x, Float:y, Float:z, price, reward, interval, sell, multi, reduce, increase, pickup);
 	forward Property_AddBankRemote(master, Float:x, Float:y, Float:z, name[]);
 	forward Property_AddAmmuRemote(master, Float:x, Float:y, Float:z, spawn, instant, dat[], num);
 	forward Property_AddMARemote(master, area, money, interval);
@@ -284,6 +311,9 @@ forward ycmd_properties(playerid, params[], help);
 	forward Property_AddFobRemote(master, area, kick, health, invert, name[]);
 	forward Property_OnPlayerEnterCheckpointEx(playerid, cpid);
 	forward Property_OnPlayerLeaveCheckpointEx(playerid, cpid);
+	#if defined _YSI_VISUAL_PICKUPS
+		forward Property_OnPlayerPickUpPickup(playerid, pickupid, Float:x, Float:y, Float:z);
+	#endif
 	forward Property_OnPlayerLeaveArea(playerid, area);
 	forward Property_OnPlayerEnterArea(playerid, area);
 	forward Property_GetPropertyBitsReceive(playerid, Bit:properties[], count);
@@ -307,6 +337,21 @@ Notes:
 
 #define Property_IsActive(%1) \
 	((%1) < MAX_PROPERTIES && (%1) >= 0 && YSI_g_sProperties[(%1)][E_PROP_DATA_FLAGS] & e_PROP_FLAGS_ACTIVE)
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_ResetMaxProperties
+Params:
+	-
+Return:
+	-
+Notes:
+	Allows people to own as many properties as they like at
+	once.
+-*----------------------------------------------------------------------------*/
+
+#define Property_ResetMaxProperties() \
+	Property_SetMaxProperties(cellmax)
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -356,6 +401,33 @@ Notes:
 
 /*----------------------------------------------------------------------------*-
 Function:
+	Property_SetRebuyDelay
+Params:
+	delay - Time till a property can be bought again.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+stock Property_SetRebuyDelay(delay)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			YSI_g_sRebuyDelay = delay;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Property_Remote", "iii", 0, delay, E_PROP_REMOTE_REBUY);
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
 	Property_IsValid
 Params:
 	property - Property to check.
@@ -376,8 +448,78 @@ stock Property_IsValid(property)
 		}
 		else
 		{
-			CallRemoteFunction("Property_Remote", "iii", property, 0, E_PROP_REMOTE_VALID);
+			CallRemoteFunction("Property_Remote", "iii", 0, property, E_PROP_REMOTE_VALID);
 			return getproperty(0, "YSIReq");
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_IsOwner
+Params:
+	playerid - Player to check.
+	prop - Property to check.
+	flags - Property flags for ownership type.
+Return:
+	-
+Notes:
+	-
+-*----------------------------------------------------------------------------*/
+
+#define Property_IsOwner(%1,%2,%3) \
+	((Property_GetOption(2, (%3))) ? (!Bit_GetBit(YSI_g_sProperties[(%2)][E_PROP_DATA_PLAYERS], (%1))) : (!(_:YSI_g_sProperties[(%2)][E_PROP_DATA_PLAYERS][0] == (%1))))
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_SetMaxProperties
+Params:
+	count - Number of ownable properties.
+Return:
+	-
+Notes:
+	Sets the number of properties a player can own at once.
+-*----------------------------------------------------------------------------*/
+
+stock Property_SetMaxProperties(count)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			YSI_g_sMaxPlayerProps = count;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Property_Remote", "iii", count, 0, E_PROP_REMOTE_SET_MAX);
+		}
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_SetMaxHouses
+Params:
+	count - Number of ownable houses.
+Return:
+	-
+Notes:
+	Sets the number of houses a player can own at once.
+-*----------------------------------------------------------------------------*/
+
+stock Property_SetMaxHouses(count)
+{
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+	#endif
+			YSI_g_sMaxPlayerHouses = count;
+	#if defined _YSI_SETUP_MASTER
+		}
+		else
+		{
+			CallRemoteFunction("Property_Remote", "iii", count, 0, E_PROP_REMOTE_SET_HMX);
 		}
 	#endif
 }
@@ -424,10 +566,13 @@ Notes:
 
 Property_Property()
 {
+	DBGP2("Property_Property() start");
 	#if defined _YSI_SETUP_MASTER
 		YSI_g_sIsMaster = Master_Add("YSIM_Properties");
 	#endif
+	DBGP5("Property_Property() 0");
 	Timer_Add("Property_Loop", PROPERTY_LOOP_GRANULARITY);
+	DBGP5("Property_Property() 1");
 	#if defined _YSI_CORE_COMMANDS
 		ycmd("buy");
 		ycmd("bank");
@@ -435,9 +580,18 @@ Property_Property()
 		ycmd("balance");
 		ycmd("withdraw");
 		ycmd("sell");
+		ycmd("enter");
+		ycmd("exit");
 	#endif
+	DBGP5("Property_Property() 2");
 	for (new i = 0; i < MAX_AREAS; i++) YSI_g_sAreaPointers[i] = NO_PROPERTY;
+	DBGP5("Property_Property() 3");
 	for (new i = 0; i < MAX_CHECKPOINTS; i++) YSI_g_sCheckpointPointers[i] = NO_PROPERTY;
+	#if defined _YSI_VISUAL_PICKUPS
+		DBGP4("Property_Property() 4 " #MAX_DYN_PICKUPS);
+		for (new i = 0; i < MAX_DYN_PICKUPS; i++) YSI_g_sPickupPointers[i] = NO_PROPERTY;
+	#endif
+	DBGP2("Property_Property() end");
 	return 1;
 }
 
@@ -497,7 +651,7 @@ Notes:
 								new
 									e_PROP_FLAGS:flags = YSI_g_sProperties[i][E_PROP_DATA_FLAGS];
 								YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS:0;
-								if (flags & e_PROP_FLAGS_TYPES > e_PROP_FLAGS_TYPE_MONP)
+								if (flags & e_PROP_FLAGS_TYPES >= e_PROP_FLAGS_TYPE_MONA)
 								{
 									YSI_g_sAreaPointers[_:(flags & e_PROP_FLAGS_LINK)] = NO_PROPERTY;
 									Area_Delete(_:(flags & e_PROP_FLAGS_LINK));
@@ -566,6 +720,7 @@ Notes:
 					if (Bit_Get(players, i, plength))
 					{
 						Bit_Set(YSI_g_sPlayerProperties[i], id, 1, GROUP_PROPERTY_BITS);
+						YSI_g_sPropCount[i]++;
 					}
 				}
 			}
@@ -574,7 +729,16 @@ Notes:
 				if (IsPlayerConnected(_:players[0]))
 				{
 					Bit_Set(YSI_g_sPlayerProperties[_:players[0]], id, 1, GROUP_PROPERTY_BITS);
+					YSI_g_sPropCount[_:players[0]]++;
 				}
+			}
+		}
+		if (flags & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_HOUS)
+		{
+			if (IsPlayerConnected(_:players[0]))
+			{
+				Bit_Set(YSI_g_sPlayerProperties[_:players[0]], id, 1, GROUP_PROPERTY_BITS);
+				YSI_g_sHouseCount[_:players[0]]++;
 			}
 		}
 		if (flags & e_PROP_FLAGS_TYPES >= e_PROP_FLAGS_TYPE_MONA)
@@ -609,15 +773,25 @@ stock DestroyProperty(property)
 			new
 				e_PROP_FLAGS:flags = YSI_g_sProperties[property][E_PROP_DATA_FLAGS];
 			YSI_g_sProperties[property][E_PROP_DATA_FLAGS] = e_PROP_FLAGS:0;
-			if (flags & e_PROP_FLAGS_TYPES > e_PROP_FLAGS_TYPE_MONP)
+			if (flags & e_PROP_FLAGS_TYPES >= e_PROP_FLAGS_TYPE_MONA)
 			{
 				YSI_g_sAreaPointers[_:(flags & e_PROP_FLAGS_LINK)] = NO_PROPERTY;
 				Area_Delete(_:(flags & e_PROP_FLAGS_LINK));
 			}
 			else
 			{
-				YSI_g_sCheckpointPointers[_:(flags & e_PROP_FLAGS_LINK)] = NO_PROPERTY;
-				DestroyCheckpoint(_:(flags & e_PROP_FLAGS_LINK));
+				#if defined _YSI_VISUAL_PICKUPS
+					if ((flags & e_PROP_FLAGS_TYPES > e_PROP_FLAGS_TYPE_PROP) && Property_GetOption(5, flags))
+					{
+						Pickup_Remove(_:(flags & e_PROP_FLAGS_LINK));
+						YSI_g_sPickupPointers[_:(flags & e_PROP_FLAGS_LINK)] = NO_PROPERTY;
+					}
+					else
+				#endif
+				{
+					YSI_g_sCheckpointPointers[_:(flags & e_PROP_FLAGS_LINK)] = NO_PROPERTY;
+					DestroyCheckpoint(_:(flags & e_PROP_FLAGS_LINK));
+				}
 			}
 			for (new i = 0; i < MAX_PLAYERS; i++) Bit_Set(YSI_g_sPlayerProperties[i], property, 0, GROUP_PROPERTY_BITS);
 	#if defined _YSI_SETUP_MASTER
@@ -628,6 +802,124 @@ stock DestroyProperty(property)
 		}
 	#endif
 	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	CreateHouse
+Params:
+	Float:extX - X position of the external marker.
+	Float:extY - Y position of the external marker.
+	Float:extZ - Z position of the external marker.
+	Float:intX - X position of the internal marker.
+	Float:intY - Y position of the internal marker.
+	Float:intZ - Z position of the internal marker.
+	interior - Interior ID of the house.
+	world - Virtual world of the house.
+	price - Price of the house.
+	checkpoint - Use a checkpoint instead of a pickup.
+Return:
+	-
+Notes:
+	Creates a buyable property (business).
+-*----------------------------------------------------------------------------*/
+
+stock CreateHouse(Float:extX, Float:extY, Float:extZ, Float:intX, Float:intY, Float:intZ, interior, world, price, checkpoint = 0)
+{
+	DBGP2("CreateHouse() start 1");
+	#if defined _YSI_SETUP_MASTER
+		if (YSI_g_sIsMaster)
+		{
+			return Property_AddHouseRemote(YSI_gMasterID, extX, extY, extZ, intX, intY, intZ, interior, world, price, checkpoint);
+		}
+		else
+		{
+			CallRemoteFunction("Property_AddHouseRemote", "iffffffiiii", YSI_gMasterID, extX, extY, extZ, intX, intY, intZ, interior, world, price, checkpoint);
+			return getproperty(0, "YSIReq");
+		}
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_AddRemote
+Params:
+	master - Which script owns the property.
+	Float:extX - X position of the external marker.
+	Float:extY - Y position of the external marker.
+	Float:extZ - Z position of the external marker.
+	Float:intX - X position of the internal marker.
+	Float:intY - Y position of the internal marker.
+	Float:intZ - Z position of the internal marker.
+	interior - Interior ID of the house.
+	world - Virtual world of the house.
+	price - Price of the house.
+	checkpoint - Use a checkpoint instead of a pickup.
+Return:
+	-
+Notes:
+	Remote wrapper for CreateProperty.
+-*----------------------------------------------------------------------------*/
+
+public Property_AddHouseRemote(master, Float:extX, Float:extY, Float:extZ, Float:intX, Float:intY, Float:intZ, interior, world, price, checkpoint)
+{
+	if (!YSI_g_sIsMaster) return NO_PROPERTY;
+	setproperty(0, "YSIReq", NO_PROPERTY);
+#endif
+	DBGP2("CreateHouse() start 2");
+	new
+		i;
+	while (i < MAX_PROPERTIES && Property_IsActive(i))
+	{
+		i++;
+	}
+	if (i == MAX_PROPERTIES) return NO_PROPERTY;
+	new
+		cp;
+	DBGP4("CreateHouse() Make");
+	#if defined _YSI_VISUAL_PICKUPS
+		if (!checkpoint)
+		{
+			if ((cp = Pickup_Add(1273, extX, extY, extZ, 0, -1)) == NO_PICKUP) return NO_PROPERTY;
+			YSI_g_sPickupProps++;
+		}
+		else
+	#else
+		checkpoint = 1;
+	#endif
+	#pragma tabsize 4
+			if ((cp = CreateCheckpoint(extX, extY, extZ, 3.0)) == NO_CHECKPOINT) return NO_PROPERTY;
+	#pragma tabsize 4
+	DBGP4("CreateHouse() Made");
+	YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS_TYPE_HOUS | e_PROP_FLAGS_ACTIVE | e_PROP_FLAGS:cp | Property_SetOption(1, checkpoint);
+	YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][0] = Bit:INVALID_PLAYER_ID;
+	YSI_g_sProperties[i][E_PROP_DATA_DATA_1] = interior;
+	YSI_g_sProperties[i][E_PROP_DATA_DATA_2] = world;
+	
+	DBGP4("CreateHouse() Save pos");
+	YSI_g_sProperties[i][E_PROP_DATA_NAME][0] = _:extX;
+	YSI_g_sProperties[i][E_PROP_DATA_NAME][1] = _:extY;
+	YSI_g_sProperties[i][E_PROP_DATA_NAME][2] = _:extZ;
+	YSI_g_sProperties[i][E_PROP_DATA_NAME][3] = _:intX;
+	YSI_g_sProperties[i][E_PROP_DATA_NAME][4] = _:intY;
+	YSI_g_sProperties[i][E_PROP_DATA_NAME][5] = _:intZ;
+	YSI_g_sProperties[i][E_PROP_DATA_NAME][6] = price;
+
+	DBGP4("CreateHouse() Save ID");
+	#if defined _YSI_VISUAL_PICKUPS
+		if (!checkpoint)
+		{
+			YSI_g_sPickupPointers[cp] = i;
+		}
+		else
+	#endif
+	#pragma tabsize 4
+			YSI_g_sCheckpointPointers[cp] = i;
+	#pragma tabsize 4
+	#if defined _YSI_SETUP_MASTER
+		YSI_g_sProperties[i][E_PROP_DATA_MASTER] = master;
+		setproperty(0, "YSIReq", i);
+	#endif
+	return i;
 }
 
 /*----------------------------------------------------------------------------*-
@@ -645,23 +937,24 @@ Params:
 	multi - Wether more than one person can own this property at once.
 	reduce - Wether selling this property gets you less then you paid for it.
 	increase - Wether buying this property will put the price up for the future.
+	property - Wether this property uses a pickup instead of a checkpoint.
 Return:
 	-
 Notes:
 	Creates a buyable property (business).
 -*----------------------------------------------------------------------------*/
 
-stock CreateProperty(name[], Float:x, Float:y, Float:z, price, reward, interval = 60000, sell = 0, multi = 0, reduce = 0, increase = 0)
+stock CreateProperty(name[], Float:x, Float:y, Float:z, price, reward, interval = 60000, sell = 0, multi = 0, reduce = 0, increase = 0, pickup = 0)
 {
 	#if defined _YSI_SETUP_MASTER
 		if (YSI_g_sIsMaster)
 		{
-			return Property_AddPropRemote(YSI_gMasterID, name, x, y, z, price, reward, interval, sell, multi, reduce, increase);
+			return Property_AddPropRemote(YSI_gMasterID, name, x, y, z, price, reward, interval, sell, multi, reduce, increase, pickup);
 		}
 		else
 		{
-			if (name[0]) CallRemoteFunction("Property_AddPropRemote", "isfffiiiiiii", YSI_gMasterID, name, x, y, z, price, reward, interval, sell, multi, reduce, increase);
-			else CallRemoteFunction("Property_AddPropRemote", "isfffiiiiiii", YSI_gMasterID, NULL, x, y, z, price, reward, interval, sell, multi, reduce, increase);
+			if (name[0]) CallRemoteFunction("Property_AddPropRemote", "isfffiiiiiii", YSI_gMasterID, name, x, y, z, price, reward, interval, sell, multi, reduce, increase, pickup);
+			else CallRemoteFunction("Property_AddPropRemote", "isfffiiiiiii", YSI_gMasterID, NULL, x, y, z, price, reward, interval, sell, multi, reduce, increase, pickup);
 			return getproperty(0, "YSIReq");
 		}
 }
@@ -688,23 +981,32 @@ Notes:
 	Remote wrapper for CreateProperty.
 -*----------------------------------------------------------------------------*/
 
-public Property_AddPropRemote(master, name[], Float:x, Float:y, Float:z, price, reward, interval, sell, multi, reduce, increase)
+public Property_AddPropRemote(master, name[], Float:x, Float:y, Float:z, price, reward, interval, sell, multi, reduce, increase, pickup)
 {
 	if (!YSI_g_sIsMaster) return NO_PROPERTY;
 	setproperty(0, "YSIReq", NO_PROPERTY);
 #endif
 	new
 		i;
-	while (i < MAX_PROPERTIES)
+	while (i < MAX_PROPERTIES && Property_IsActive(i))
 	{
-		if (!Property_IsActive(i)) break;
 		i++;
 	}
 	if (i == MAX_PROPERTIES) return NO_PROPERTY;
 	new
-		cp = CreateCheckpoint(x, y, z, 3.0);
-	if (cp == NO_CHECKPOINT) return NO_PROPERTY;
-	YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS_TYPE_PROP | e_PROP_FLAGS_ACTIVE | e_PROP_FLAGS:cp | Property_SetOption(1, sell) | Property_SetOption(2, multi) | Property_SetOption(3, reduce) | Property_SetOption(4, increase);
+		cp;
+	#if defined _YSI_VISUAL_PICKUPS
+		if (pickup)
+		{
+			if ((cp = Pickup_Add(1273, x, y, z, 0, -1)) == NO_PICKUP) return NO_PROPERTY;
+			YSI_g_sPickupProps++;
+		}
+		else
+	#endif
+	#pragma tabsize 4
+			if ((cp = CreateCheckpoint(x, y, z, 3.0)) == NO_CHECKPOINT) return NO_PROPERTY;
+	#pragma tabsize 4
+	YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS_TYPE_PROP | e_PROP_FLAGS_ACTIVE | e_PROP_FLAGS:cp | Property_SetOption(1, sell) | Property_SetOption(2, multi) | Property_SetOption(3, reduce) | Property_SetOption(4, increase) | Property_SetOption(5, pickup);
 	if (multi) Bit_SetAll(YSI_g_sProperties[i][E_PROP_DATA_PLAYERS], 0, PLAYER_BIT_ARRAY);
 	else YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][0] = Bit:INVALID_PLAYER_ID;
 	YSI_g_sProperties[i][E_PROP_DATA_NAME][MAX_PROP_NAME - 1] = interval & 0xFFFFF;
@@ -712,7 +1014,16 @@ public Property_AddPropRemote(master, name[], Float:x, Float:y, Float:z, price, 
 	YSI_g_sProperties[i][E_PROP_DATA_DATA_2] = (reward & 0x3FFFF) | ((price & 0x03FFF000) << 6);
 	if (!isnull(name)) strcpy(YSI_g_sProperties[i][E_PROP_DATA_NAME], name, MAX_PROP_NAME - 1);
 	else YSI_g_sProperties[i][E_PROP_DATA_NAME][0] = '\0';
-	YSI_g_sCheckpointPointers[cp] = i;
+	#if defined _YSI_VISUAL_PICKUPS
+		if (pickup)
+		{
+			YSI_g_sPickupPointers[cp] = i;
+		}
+		else
+	#endif
+	#pragma tabsize 4
+			YSI_g_sCheckpointPointers[cp] = i;
+	#pragma tabsize 4
 	#if defined _YSI_SETUP_MASTER
 		YSI_g_sProperties[i][E_PROP_DATA_MASTER] = master;
 		setproperty(0, "YSIReq", i);
@@ -880,23 +1191,59 @@ stock CreateAmmunation(Float:x, Float:y, Float:z, spawn, instant, ...)
 							YSI_g_sProperties[i][E_PROP_DATA_NAME][4 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
 						#endif
 					case WEAPON_DILDO:
-						YSI_g_sProperties[i][E_PROP_DATA_NAME][5 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#if PLAYER_BIT_ARRAY > 7
+							YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][7] = Bit:WEAPON_DATA;
+						#else
+							YSI_g_sProperties[i][E_PROP_DATA_NAME][5 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#endif
 					case WEAPON_DILDO2:
-						YSI_g_sProperties[i][E_PROP_DATA_NAME][6 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#if PLAYER_BIT_ARRAY > 8
+							YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][8] = Bit:WEAPON_DATA;
+						#else
+							YSI_g_sProperties[i][E_PROP_DATA_NAME][6 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#endif
 					case WEAPON_VIBRATOR:
-						YSI_g_sProperties[i][E_PROP_DATA_NAME][7 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#if PLAYER_BIT_ARRAY > 9
+							YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][9] = Bit:WEAPON_DATA;
+						#else
+							YSI_g_sProperties[i][E_PROP_DATA_NAME][7 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#endif
 					case WEAPON_VIBRATOR2:
-						YSI_g_sProperties[i][E_PROP_DATA_NAME][8 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#if PLAYER_BIT_ARRAY > 10
+							YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][10] = Bit:WEAPON_DATA;
+						#else
+							YSI_g_sProperties[i][E_PROP_DATA_NAME][8 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#endif
 					case WEAPON_FLOWER:
-						YSI_g_sProperties[i][E_PROP_DATA_NAME][9 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#if PLAYER_BIT_ARRAY > 11
+							YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][11] = Bit:WEAPON_DATA;
+						#else
+							YSI_g_sProperties[i][E_PROP_DATA_NAME][9 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#endif
 					case WEAPON_CANE:
-						YSI_g_sProperties[i][E_PROP_DATA_NAME][10 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#if PLAYER_BIT_ARRAY > 12
+							YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][12] = Bit:WEAPON_DATA;
+						#else
+							YSI_g_sProperties[i][E_PROP_DATA_NAME][10 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#endif
 					case WEAPON_GRENADE:
-						YSI_g_sProperties[i][E_PROP_DATA_NAME][11 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#if PLAYER_BIT_ARRAY > 13
+							YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][13] = Bit:WEAPON_DATA;
+						#else
+							YSI_g_sProperties[i][E_PROP_DATA_NAME][11 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#endif
 					case WEAPON_TEARGAS:
-						YSI_g_sProperties[i][E_PROP_DATA_NAME][12 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#if PLAYER_BIT_ARRAY > 14
+							YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][14] = Bit:WEAPON_DATA;
+						#else
+							YSI_g_sProperties[i][E_PROP_DATA_NAME][12 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#endif
 					case WEAPON_MOLTOV:
-						YSI_g_sProperties[i][E_PROP_DATA_NAME][13 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#if PLAYER_BIT_ARRAY > 15
+							YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][15] = Bit:WEAPON_DATA;
+						#else
+							YSI_g_sProperties[i][E_PROP_DATA_NAME][13 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
+						#endif
 					case WEAPON_COLT45:
 						YSI_g_sProperties[i][E_PROP_DATA_NAME][14 - WEAPON_DATA_OFFSET] = WEAPON_DATA;
 					case WEAPON_SILENCED:
@@ -1055,23 +1402,59 @@ public Property_AddAmmuRemote(master, Float:x, Float:y, Float:z, spawn, instant,
 					YSI_g_sProperties[i][E_PROP_DATA_NAME][4 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
 				#endif
 			case WEAPON_DILDO:
-				YSI_g_sProperties[i][E_PROP_DATA_NAME][5 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#if PLAYER_BIT_ARRAY > 7
+					YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][7] = Bit:WEAPON_DATA_REM;
+				#else
+					YSI_g_sProperties[i][E_PROP_DATA_NAME][5 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#endif
 			case WEAPON_DILDO2:
-				YSI_g_sProperties[i][E_PROP_DATA_NAME][6 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#if PLAYER_BIT_ARRAY > 8
+					YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][8] = Bit:WEAPON_DATA_REM;
+				#else
+					YSI_g_sProperties[i][E_PROP_DATA_NAME][6 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#endif
 			case WEAPON_VIBRATOR:
-				YSI_g_sProperties[i][E_PROP_DATA_NAME][7 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#if PLAYER_BIT_ARRAY > 9
+					YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][9] = Bit:WEAPON_DATA_REM;
+				#else
+					YSI_g_sProperties[i][E_PROP_DATA_NAME][7 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#endif
 			case WEAPON_VIBRATOR2:
-				YSI_g_sProperties[i][E_PROP_DATA_NAME][8 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#if PLAYER_BIT_ARRAY > 10
+					YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][10] = Bit:WEAPON_DATA_REM;
+				#else
+					YSI_g_sProperties[i][E_PROP_DATA_NAME][8 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#endif
 			case WEAPON_FLOWER:
-				YSI_g_sProperties[i][E_PROP_DATA_NAME][9 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#if PLAYER_BIT_ARRAY > 11
+					YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][11] = Bit:WEAPON_DATA_REM;
+				#else
+					YSI_g_sProperties[i][E_PROP_DATA_NAME][9 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#endif
 			case WEAPON_CANE:
-				YSI_g_sProperties[i][E_PROP_DATA_NAME][10 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#if PLAYER_BIT_ARRAY > 12
+					YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][12] = Bit:WEAPON_DATA_REM;
+				#else
+					YSI_g_sProperties[i][E_PROP_DATA_NAME][10 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#endif
 			case WEAPON_GRENADE:
-				YSI_g_sProperties[i][E_PROP_DATA_NAME][11 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#if PLAYER_BIT_ARRAY > 13
+					YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][13] = Bit:WEAPON_DATA_REM;
+				#else
+					YSI_g_sProperties[i][E_PROP_DATA_NAME][11 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#endif
 			case WEAPON_TEARGAS:
-				YSI_g_sProperties[i][E_PROP_DATA_NAME][12 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#if PLAYER_BIT_ARRAY > 14
+					YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][14] = Bit:WEAPON_DATA_REM;
+				#else
+					YSI_g_sProperties[i][E_PROP_DATA_NAME][12 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#endif
 			case WEAPON_MOLTOV:
-				YSI_g_sProperties[i][E_PROP_DATA_NAME][13 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#if PLAYER_BIT_ARRAY > 15
+					YSI_g_sProperties[i][E_PROP_DATA_PLAYERS][15] = Bit:WEAPON_DATA_REM;
+				#else
+					YSI_g_sProperties[i][E_PROP_DATA_NAME][13 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
+				#endif
 			case WEAPON_COLT45:
 				YSI_g_sProperties[i][E_PROP_DATA_NAME][14 - WEAPON_DATA_OFFSET] = WEAPON_DATA_REM;
 			case WEAPON_SILENCED:
@@ -1538,6 +1921,83 @@ Property_OnPlayerConnect(playerid)
 
 /*----------------------------------------------------------------------------*-
 Function:
+	Property_OnPlayerConnect
+Params:
+	playerid - Player who connected.
+Return:
+	-
+Notes:
+	Internal callback.
+-*----------------------------------------------------------------------------*/
+
+Property_OnPlayerDisconnect(playerid, reason)
+{
+	for (new j = 0; j < GROUP_PROPERTY_BITS; j++)
+	{
+		new
+			props = _:YSI_g_sPlayerProperties[playerid][j],
+			slot = 1,
+			bit;
+		while (props)
+		{
+			if (props & slot)
+			{
+				new
+					prop = (j * 32) + bit,
+					e_PROP_FLAGS:flags = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
+				if (flags & e_PROP_FLAGS_ACTIVE)
+				{
+					if ((flags & e_PROP_FLAGS_TYPES) == e_PROP_FLAGS_TYPE_PROP)
+					{
+						if (Property_GetOption(2, flags))
+						{
+							if (_:Bit_GetBit(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS], playerid))
+							{
+								Bit_Set(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS], playerid, 0, PLAYER_BIT_ARRAY);
+							}
+						}
+						else
+						{
+							if (_:(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] == Bit:playerid))
+							{
+								YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] = Bit:INVALID_PLAYER_ID;
+							}
+						}
+						#pragma tabsize 4
+						#if defined _YSI_VISUAL_PICKUPS
+							if (Property_GetOption(5, flags))
+								Pickup_Show(_:(flags & e_PROP_FLAGS_LINK), 1);
+							else
+						#endif
+								Checkpoint_SetVisible(_:(flags & e_PROP_FLAGS_LINK), 1);
+						#pragma tabsize 4
+					}
+					else if ((flags & e_PROP_FLAGS_TYPES) == e_PROP_FLAGS_TYPE_HOUS)
+					{
+						if (_:(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] == Bit:playerid))
+						{
+							YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] = Bit:INVALID_PLAYER_ID;
+						}
+					}
+				}
+				props ^= slot;
+			}
+			slot <<= 1;
+			bit++;
+		}
+		YSI_g_sPlayerProperties[playerid][j] = Bit:0;
+	}
+	YSI_g_sPropCount[playerid] = 0;
+	YSI_g_sHouseCount[playerid] = 0;
+	YSI_g_sCurrentHouse[playerid] = -1;
+	YSI_g_sPickupTimer[playerid] = -1;
+	YSI_g_sPlayerPickup[playerid] = NO_PICKUP;
+	#pragma unused reason
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
 	Property_OnPlayerSpawn
 Params:
 	playerid - Player who spawned.
@@ -1573,24 +2033,146 @@ Notes:
 #else
 	Property_OnPlayerLeaveCheckpointEx(playerid, cpid)
 #endif
-{
-	new
-		cp = YSI_g_sCheckpointPointers[cpid];
-	if (cp == NO_CHECKPOINT)
 	{
+		new
+			cp = YSI_g_sCheckpointPointers[cpid];
+		if (cp == NO_CHECKPOINT)
+		{
+			#if defined _YSI_SETUP_MASTER
+				setproperty(0, "YSIReq", 0);
+			#endif
+			return 0;
+		}
+		new
+			flags = YSI_g_sProperties[cp][E_PROP_DATA_FLAGS],
+			type = _:(_:flags & _:e_PROP_FLAGS_TYPES);
+		if ((type != _:e_PROP_FLAGS_TYPE_HOUS || YSI_g_sProperties[cp][E_PROP_DATA_PLAYERS][0] != Bit:playerid) && (type != _:e_PROP_FLAGS_TYPE_PROP || !Property_IsOwner(playerid, cp, flags)))
+		{
+			Bit_Set(YSI_g_sPlayerProperties[playerid], cp, 0, GROUP_PROPERTY_BITS);
+		}
 		#if defined _YSI_SETUP_MASTER
-			setproperty(0, "YSIReq", 0);
+			setproperty(0, "YSIReq", 1);
 		#endif
-		return 0;
+		return 1;
 	}
-	new
-		flags = YSI_g_sProperties[cp][E_PROP_DATA_FLAGS];
-	if (((_:flags & _:e_PROP_FLAGS_TYPES) != _:e_PROP_FLAGS_TYPE_PROP || Property_GetOption(2, flags)) ? (!Bit_GetBit(YSI_g_sProperties[cp][E_PROP_DATA_PLAYERS], playerid)) : (!(_:YSI_g_sProperties[cp][E_PROP_DATA_PLAYERS][0] == playerid))) Bit_Set(YSI_g_sPlayerProperties[playerid], cp, 0, GROUP_PROPERTY_BITS);
+
+#if defined _YSI_VISUAL_PICKUPS
+
+	/*----------------------------------------------------------------------------*-
+	Function:
+		Property_OnPlayerPickUpPickup
+	Params:
+		playerid - Player who picked up a pickup.
+		pickupid - Pickup they picked up.
+	Return:
+		-
+	Notes:
+		Internal callback from YSI_pickups.
+	-*----------------------------------------------------------------------------*/
+
 	#if defined _YSI_SETUP_MASTER
-		setproperty(0, "YSIReq", 1);
+		public Property_OnPlayerPickUpPickup(playerid, pickupid)
+		if (!YSI_g_sIsMaster) return 0;
+		else
+	#else
+		Property_OnPlayerPickUpPickup(playerid, pickupid)
 	#endif
-	return 1;
-}
+		{
+			DBGP2("Property_OnPlayerPickUpPickup() start");
+			if (YSI_g_sPickupTimer[playerid] == -1)
+			{
+				DBGP4("Property_OnPlayerPickUpPickup() No timer");
+				#if defined _YSI_SETUP_MASTER
+					setproperty(0, "YSIReq", 0);
+				#endif
+				if (pickupid >= MAX_DYN_PICKUPS)
+				{
+					return 0;
+				}
+				DBGP4("Property_OnPlayerPickUpPickup() Valid pickup");
+				new
+					prop = YSI_g_sPickupPointers[pickupid];
+				if (prop == NO_PROPERTY)
+				{
+					return 0;
+				}
+				DBGP4("Property_OnPlayerPickUpPickup() Valid property");
+				YSI_g_sPlayerPickup[playerid] = pickupid;
+				Bit_Set(YSI_g_sPlayerProperties[playerid], prop, 1, GROUP_PROPERTY_BITS);
+				switch (_:(YSI_g_sProperties[prop][E_PROP_DATA_FLAGS] & e_PROP_FLAGS_TYPES))
+				{
+					case e_PROP_FLAGS_TYPE_PROP:
+					{
+						new
+							data1 = YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] & 0x3FFFF,
+							data2 = ((YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] >>> 6) & 0x03FFF000) | ((YSI_g_sProperties[prop][E_PROP_DATA_DATA_1] >>> 20) & 0x00000FFF);
+						Text_SendFormat(playerid, "YSI_PROP_NAME", YSI_g_sProperties[prop][E_PROP_DATA_NAME], data1, data2);
+						if (Property_GetOption(2, YSI_g_sProperties[prop][E_PROP_DATA_FLAGS]))
+						{
+							if (Bit_GetBit(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS], playerid)) Text_Send(playerid, "YSI_PROP_YOURS");
+							else Text_SendFormat(playerid, "YSI_PROP_BUY", "buy");
+						}
+						else
+						{
+							new
+								owner = _:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0];
+							if (owner == playerid) Text_Send(playerid, "YSI_PROP_YOURS");
+							else if (IsPlayerConnected(owner)) Text_SendFormat(playerid, "YSI_PROP_OWNER", ReturnPlayerName(owner), owner);
+							if (owner != playerid) Text_SendFormat(playerid, "YSI_PROP_BUY", "buy");
+						}
+					}
+					case e_PROP_FLAGS_TYPE_HOUS:
+					{
+						new
+							owner = _:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0];
+						if (owner == INVALID_PLAYER_ID) Text_SendFormat(playerid, "YSI_PROP_BUY_HOUSE", "buy", YSI_g_sProperties[prop][E_PROP_DATA_NAME][6]);
+						else if (owner == playerid) Text_SendFormat(playerid, "YSI_PROP_ENTER", "enter", "exit");
+						else Text_SendFormat(playerid, "YSI_PROP_HOUSE_OWNED", ReturnPlayerName(owner));
+					}
+				}
+				YSI_g_sPickupTimer[playerid] = SetTimerEx("Property_PickupTimeCheck", 500, 1, "ii", playerid, pickupid);
+			}
+			#if defined _YSI_SETUP_MASTER
+				setproperty(0, "YSIReq", 1);
+			#endif
+			DBGP2("Property_OnPlayerPickUpPickup() end");
+			return 1;
+		}
+
+	/*----------------------------------------------------------------------------*-
+	Function:
+		Property_PickupTimeCheck
+	Params:
+		playerid - Player who is on a pickup.
+		pickupid - Pickup to check.
+	Return:
+		-
+	Notes:
+		Checks if a player has moved away from a pickup.
+	-*----------------------------------------------------------------------------*/
+
+	public Property_PickupTimeCheck(playerid, pickupid)
+	{
+		if (!Pickup_IsPlayerOnPickup(playerid, pickupid))
+		{
+			KillTimer(YSI_g_sPickupTimer[playerid]);
+			YSI_g_sPickupTimer[playerid] = -1;
+			YSI_g_sPlayerPickup[playerid] = NO_PICKUP;
+			new
+				prop = YSI_g_sPickupPointers[pickupid];
+			if (prop != NO_PROPERTY)
+			{
+				new
+					flags = _:YSI_g_sProperties[prop][E_PROP_DATA_FLAGS],
+					type = flags & _:e_PROP_FLAGS_TYPES;
+				if ((type != _:e_PROP_FLAGS_TYPE_HOUS || YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] != Bit:playerid) && (type != _:e_PROP_FLAGS_TYPE_PROP || !Property_IsOwner(playerid, prop, flags)))
+				{
+					Bit_Set(YSI_g_sPlayerProperties[playerid], prop, 0, GROUP_PROPERTY_BITS);
+				}
+			}
+		}
+	}
+#endif
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -1611,85 +2193,93 @@ Notes:
 #else
 	Property_OnPlayerEnterCheckpointEx(playerid, cpid)
 #endif
-{
-	printf("eee");
-	new
-		prop = YSI_g_sCheckpointPointers[cpid];
-	if (prop == NO_PROPERTY)
 	{
-		printf("no!?");
 		#if defined _YSI_SETUP_MASTER
 			setproperty(0, "YSIReq", 0);
 		#endif
-		return 0;
-	}
-	printf("in");
-	new
-		e_PROP_FLAGS:flag = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
-	switch (flag & e_PROP_FLAGS_TYPES)
-	{
-		case e_PROP_FLAGS_TYPE_PROP:
+		if (cpid >= MAX_CHECKPOINTS)
 		{
-			Text_SendFormat(playerid, "YSI_PROP_NAME", YSI_g_sProperties[prop][E_PROP_DATA_NAME], ((YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] >>> 6) & 0x03FFF000) | ((YSI_g_sProperties[prop][E_PROP_DATA_DATA_1] >>> 20) & 0x00000FFF), YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] & 0x3FFFF);
-			if (Property_GetOption(2, flag))
+			return 0;
+		}
+		new
+			prop = YSI_g_sCheckpointPointers[cpid];
+		if (prop == NO_PROPERTY)
+		{
+			return 0;
+		}
+		new
+			e_PROP_FLAGS:flag = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
+		switch (flag & e_PROP_FLAGS_TYPES)
+		{
+			case e_PROP_FLAGS_TYPE_PROP:
 			{
-				if (Bit_GetBit(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS], playerid)) Text_Send(playerid, "YSI_PROP_YOURS");
-				else Text_SendFormat(playerid, "YSI_PROP_BUY", "buy");
+				Text_SendFormat(playerid, "YSI_PROP_NAME", YSI_g_sProperties[prop][E_PROP_DATA_NAME], ((YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] >>> 6) & 0x03FFF000) | ((YSI_g_sProperties[prop][E_PROP_DATA_DATA_1] >>> 20) & 0x00000FFF), YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] & 0x3FFFF);
+				if (Property_GetOption(2, flag))
+				{
+					if (Bit_GetBit(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS], playerid)) Text_Send(playerid, "YSI_PROP_YOURS");
+					else Text_SendFormat(playerid, "YSI_PROP_BUY", "buy");
+				}
+				else
+				{
+					new
+						owner = _:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0];
+					if (owner == playerid) Text_Send(playerid, "YSI_PROP_YOURS");
+					else if (IsPlayerConnected(owner)) Text_SendFormat(playerid, "YSI_PROP_OWNER", ReturnPlayerName(owner), owner);
+					if (owner != playerid) Text_SendFormat(playerid, "YSI_PROP_BUY", "buy");
+				}
 			}
-			else
+			case e_PROP_FLAGS_TYPE_HOUS:
 			{
 				new
 					owner = _:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0];
-				if (owner == playerid) Text_Send(playerid, "YSI_PROP_YOURS");
-				else if (IsPlayerConnected(owner)) Text_SendFormat(playerid, "YSI_PROP_OWNER", ReturnPlayerName(owner), owner);
-				if (owner != playerid) Text_SendFormat(playerid, "YSI_PROP_BUY", "buy");
+				if (owner == INVALID_PLAYER_ID) Text_SendFormat(playerid, "YSI_PROP_BUY_HOUSE", "buy", YSI_g_sProperties[prop][E_PROP_DATA_NAME][6]);
+				else if (owner == playerid) Text_SendFormat(playerid, "YSI_PROP_ENTER", "enter", "exit");
+				else Text_SendFormat(playerid, "YSI_PROP_HOUSE_OWNED", ReturnPlayerName(owner));
 			}
-		}
-		case e_PROP_FLAGS_TYPE_AMMU:
-		{
-			printf("ammu");
-			Property_GenerateAmmuMenu(playerid, prop, 0, 0);
-			TogglePlayerControllable(playerid, 0);
-		}
-		case e_PROP_FLAGS_TYPE_BANK:
-		{
-			if (YSI_g_sProperties[prop][E_PROP_DATA_NAME][0]) Text_SendFormat(playerid, "YSI_BANK_NAME", YSI_g_sProperties[prop][E_PROP_DATA_NAME]);
-			else Text_Send(playerid, "YSI_BANK_WELCOME");
-			Text_SendFormat(playerid, "YSI_BANK_HELP1", "bank");
-			Text_SendFormat(playerid, "YSI_BANK_HELP2", "withdraw");
-			Text_SendFormat(playerid, "YSI_BANK_HELP3", "balance");
-			Text_SendFormat(playerid, "YSI_BANK_BALANCE", YSI_g_sMoney[playerid]);
-		}
-		case e_PROP_FLAGS_TYPE_TELS:
-		{
-			if (GetPlayerMoney(playerid) >= YSI_g_sProperties[prop][E_PROP_DATA_DATA_1])
+			case e_PROP_FLAGS_TYPE_AMMU:
 			{
-				GivePlayerMoney(playerid, -YSI_g_sProperties[prop][E_PROP_DATA_DATA_1]);
-				SetPlayerPos(playerid, Float:YSI_g_sProperties[prop][E_PROP_DATA_DATA_2], Float:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0], Float:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][1]);
-				if (YSI_g_sProperties[prop][E_PROP_DATA_NAME][0]) Text_SendFormat(playerid, "YSI_TELS_NAME", YSI_g_sProperties[prop][E_PROP_DATA_NAME]);
-				else Text_Send(playerid, "YSI_TELS_TELE");
+				Property_GenerateAmmuMenu(playerid, prop, 0, 0);
+				TogglePlayerControllable(playerid, 0);
 			}
-			else Text_SendFormat(playerid, "YSI_TELS_MONEY", YSI_g_sProperties[prop][E_PROP_DATA_DATA_1]);
-			#if defined _YSI_SETUP_MASTER
-				setproperty(0, "YSIReq", 1);
-			#endif
-			return 1;
+			case e_PROP_FLAGS_TYPE_BANK:
+			{
+				if (YSI_g_sProperties[prop][E_PROP_DATA_NAME][0]) Text_SendFormat(playerid, "YSI_BANK_NAME", YSI_g_sProperties[prop][E_PROP_DATA_NAME]);
+				else Text_Send(playerid, "YSI_BANK_WELCOME");
+				Text_SendFormat(playerid, "YSI_BANK_HELP1", "bank");
+				Text_SendFormat(playerid, "YSI_BANK_HELP2", "withdraw");
+				Text_SendFormat(playerid, "YSI_BANK_HELP3", "balance");
+				Text_SendFormat(playerid, "YSI_BANK_BALANCE", YSI_g_sMoney[playerid]);
+			}
+			case e_PROP_FLAGS_TYPE_TELS:
+			{
+				if (GetPlayerMoney(playerid) >= YSI_g_sProperties[prop][E_PROP_DATA_DATA_1])
+				{
+					GivePlayerMoney(playerid, -YSI_g_sProperties[prop][E_PROP_DATA_DATA_1]);
+					SetPlayerPos(playerid, Float:YSI_g_sProperties[prop][E_PROP_DATA_DATA_2], Float:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0], Float:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][1]);
+					if (YSI_g_sProperties[prop][E_PROP_DATA_NAME][0]) Text_SendFormat(playerid, "YSI_TELS_NAME", YSI_g_sProperties[prop][E_PROP_DATA_NAME]);
+					else Text_Send(playerid, "YSI_TELS_TELE");
+				}
+				else Text_SendFormat(playerid, "YSI_TELS_MONEY", YSI_g_sProperties[prop][E_PROP_DATA_DATA_1]);
+				#if defined _YSI_SETUP_MASTER
+					setproperty(0, "YSIReq", 1);
+				#endif
+				return 1;
+			}
+			case e_PROP_FLAGS_TYPE_MONP: {}
+			default:
+			{
+				#if defined _YSI_SETUP_MASTER
+					setproperty(0, "YSIReq", 0);
+				#endif
+				return 0;
+			}
 		}
-		case e_PROP_FLAGS_TYPE_MONP: {}
-		default:
-		{
-			#if defined _YSI_SETUP_MASTER
-				setproperty(0, "YSIReq", 0);
-			#endif
-			return 0;
-		}
+		Bit_Set(YSI_g_sPlayerProperties[playerid], prop, 1, GROUP_PROPERTY_BITS);
+		#if defined _YSI_SETUP_MASTER
+			setproperty(0, "YSIReq", 1);
+		#endif
+		return 1;
 	}
-	Bit_Set(YSI_g_sPlayerProperties[playerid], prop, 1, GROUP_PROPERTY_BITS);
-	#if defined _YSI_SETUP_MASTER
-		setproperty(0, "YSIReq", 1);
-	#endif
-	return 1;
-}
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -1838,7 +2428,7 @@ Function:
 Params:
 	slot - Data slot to translate.
 Return:
-	weaponid represented byt that slot.
+	weaponid represented by that slot.
 Notes:
 	-
 -*----------------------------------------------------------------------------*/
@@ -2291,6 +2881,7 @@ Notes:
 
 public ycmd_sell(playerid, params[], help)
 {
+	DBGP2("ycmd_sell() start");
 	#if defined _YSI_SETUP_MASTER
 		if (!YSI_g_sIsMaster) return 1;
 	#endif
@@ -2303,8 +2894,10 @@ public ycmd_sell(playerid, params[], help)
 	}
 	else
 	{
+		DBGP3("ycmd_sell() not help %d", params[0]);
 		if (params[0] >= '0' && params[0] <= '9')
 		{
+			DBGP5("ycmd_sell() params OK");
 			new
 				prop = strval(params);
 			if (Property_IsActive(prop))
@@ -2328,9 +2921,32 @@ public ycmd_sell(playerid, params[], help)
 						new
 							cost = ((((YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] >>> 6) & 0x03FFF000) | ((YSI_g_sProperties[prop][E_PROP_DATA_DATA_1] >>> 20) & 0x00000FFF)) * ((Property_GetOption(3, flag)) ? PROPERTY_SELL_PERCENT : 100)) / 100;
 						Text_SendFormat(playerid, "YSI_SELL_SOLD", cost);
-						Checkpoint_SetVisible(_:(flag & e_PROP_FLAGS_LINK), 1);
+						#pragma tabsize 4
+						#if defined _YSI_VISUAL_PICKUPS
+							if (Property_GetOption(5, flag))
+								Pickup_Show(_:(flag & e_PROP_FLAGS_LINK), 1);
+							else
+						#endif
+								Checkpoint_SetVisible(_:(flag & e_PROP_FLAGS_LINK), 1);
+						#pragma tabsize 4
 						GivePlayerMoney(playerid, cost);
+						YSI_g_sPropCount[playerid]--;
 						Bit_Set(YSI_g_sPlayerProperties[playerid], prop, 0, GROUP_PROPERTY_BITS);
+					}
+					else Text_Send(playerid, "YSI_SELL_CANT");
+					return 1;
+				}
+				else if ((flag & e_PROP_FLAGS_TYPES) == e_PROP_FLAGS_TYPE_PROP)
+				{
+					if (_:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] == playerid)
+					{
+						new
+							cost = YSI_g_sProperties[prop][E_PROP_DATA_NAME][0];
+						Text_SendFormat(playerid, "YSI_SELL_SOLD", cost);
+						GivePlayerMoney(playerid, cost);
+						YSI_g_sHouseCount[playerid]--;
+						Bit_Set(YSI_g_sPlayerProperties[playerid], prop, 0, GROUP_PROPERTY_BITS);
+						YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] = Bit:INVALID_PLAYER_ID;
 					}
 					else Text_Send(playerid, "YSI_SELL_CANT");
 					return 1;
@@ -2487,6 +3103,7 @@ Notes:
 
 public ycmd_buy(playerid, params[], help)
 {
+	DBGP2("ycmd_buy() start");
 	#if defined _YSI_SETUP_MASTER
 		if (!YSI_g_sIsMaster) return 1;
 	#endif
@@ -2499,16 +3116,46 @@ public ycmd_buy(playerid, params[], help)
 	}
 	else
 	{
+		DBGP3("ycmd_buy() Not help");
+		new
+			cpid,
+			prop = NO_PROPERTY;
 		if (IsPlayerInCheckpoint(playerid))
 		{
-			new
-				cpid = Checkpoint_Get(playerid),
-				prop = YSI_g_sCheckpointPointers[cpid];
-			if (prop != NO_PROPERTY)
+			DBGP4("ycmd_buy() Checkpoint");
+			cpid = Checkpoint_Get(playerid);
+			if (cpid != NO_CHECKPOINT)
 			{
-				new
-					e_PROP_FLAGS:flag = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
-				if (flag & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_PROP)
+				prop = YSI_g_sCheckpointPointers[cpid];
+			}
+		}
+		#if defined _YSI_VISUAL_PICKUPS
+		#pragma tabsize 4
+		else if (YSI_g_sPickupTimer[playerid] != -1)
+		{
+				cpid = YSI_g_sPlayerPickup[playerid];
+				if (cpid != NO_PICKUP)
+				{
+					prop = YSI_g_sPickupPointers[cpid];
+				}
+				DBGP4("ycmd_buy() Pickup %d", cpid);
+		}
+		#pragma tabsize 4
+		#endif
+		else
+		{
+			DBGP4("ycmd_buy() Not in a checkpoint");
+			Text_Send(playerid, "YSI_PROP_CP");
+			return 1;
+		}
+		DBGP4("ycmd_buy() Prop %d", prop);
+		if (prop != NO_PROPERTY)
+		{
+			new
+				e_PROP_FLAGS:flag = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
+			if (flag & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_PROP)
+			{
+				if (YSI_g_sPropCount[playerid] < YSI_g_sMaxPlayerProps)
 				{
 					new
 						price = ((YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] >>> 6) & 0x03FFF000) | ((YSI_g_sProperties[prop][E_PROP_DATA_DATA_1] >>> 20) & 0x00000FFF);
@@ -2538,10 +3185,30 @@ public ycmd_buy(playerid, params[], help)
 								Text_SendFormat(owner, "YSI_PROP_OUT", YSI_g_sProperties[prop][E_PROP_DATA_NAME], ReturnPlayerName(playerid), playerid);
 							}
 							YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] = Bit:playerid;
-							if (Property_GetOption(1, flag)) Checkpoint_SetVisible(cpid, 0);
+							if (Property_GetOption(1, flag))
+							{
+								#if defined _YSI_VISUAL_PICKUPS
+									if (Property_GetOption(5, flag))
+										Pickup_Show(cpid, 0);
+									else
+								#endif
+										Checkpoint_SetVisible(cpid, 0);
+							}
+							else if (YSI_g_sRebuyDelay)
+							{
+								SetTimerEx("Property_ResetRebuy", YSI_g_sRebuyDelay, 0, "i", prop);
+								#if defined _YSI_VISUAL_PICKUPS
+									if (Property_GetOption(5, flag))
+										Pickup_Show(cpid, 0);
+									else
+								#endif
+										Checkpoint_SetVisible(cpid, 0);
+							}
 						}
+						YSI_g_sPropCount[playerid]++;
 						GivePlayerMoney(playerid, -price);
 						Text_SendFormat(playerid, "YSI_PROP_BOUGHT", YSI_g_sProperties[prop][E_PROP_DATA_NAME], price);
+						Text_SendToAllFormat("YSI_PROP_ANN", ReturnPlayerName(playerid), YSI_g_sProperties[prop][E_PROP_DATA_NAME]);
 						if (Property_GetOption(4, flag))
 						{
 							price = (price * PROPERTY_INCREASE_PERCENT) / 100;
@@ -2552,14 +3219,70 @@ public ycmd_buy(playerid, params[], help)
 					}
 					else Text_Send(playerid, "YSI_PROP_AFFORD");
 				}
-				else Text_Send(playerid, "YSI_PROP_NOT");
+				else Text_Send(playerid, "YSI_PROP_MAX");
+			}
+			else if (flag & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_HOUS)
+			{
+				if (YSI_g_sHouseCount[playerid] < YSI_g_sMaxPlayerHouses)
+				{
+					new
+						owner = _:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0];
+					if (owner == INVALID_PLAYER_ID)
+					{
+						new
+							price = YSI_g_sProperties[prop][E_PROP_DATA_NAME][6];
+						if (GetPlayerMoney(playerid) >= price)
+						{
+							YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] = Bit:playerid;
+							YSI_g_sHouseCount[playerid]++;
+							GivePlayerMoney(playerid, -price);
+							Text_SendFormat(playerid, "YSI_PROP_BOUGHT_HOUSE", price);
+							Text_SendFormat(playerid, "YSI_PROP_SELL", "sell", prop, price);
+						}
+						else Text_Send(playerid, "YSI_PROP_AFFORD");
+					}
+					else if (owner == playerid) Text_Send(playerid, "YSI_PROP_YOURS");
+					else Text_SendFormat(playerid, "YSI_PROP_HOUSE_OWNED", ReturnPlayerName(owner));
+				}
+				else Text_Send(playerid, "YSI_PROP_MAX_HOUSE");
 			}
 			else Text_Send(playerid, "YSI_PROP_NOT");
 		}
-		else Text_Send(playerid, "YSI_PROP_CP");
+		else Text_Send(playerid, "YSI_PROP_NOT");
 	}
 	return 1;
 	#pragma unused params
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Property_ResetRebuy
+Params:
+	prop - Property to make available.
+Return:
+	-
+Notes:
+	Makes a property available for purchase after a delay.
+-*----------------------------------------------------------------------------*/
+
+public Property_ResetRebuy(prop)
+{
+	if (Property_IsActive(prop))
+	{
+		new
+			e_PROP_FLAGS:flag = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
+		if ((flag & e_PROP_FLAGS_TYPES) == e_PROP_FLAGS_TYPE_PROP)
+		{
+			#pragma tabsize 4
+			#if defined _YSI_VISUAL_PICKUPS
+				if (Property_GetOption(5, flag))
+					Pickup_Show(_:(flag & e_PROP_FLAGS_LINK), 1);
+				else
+			#endif
+					Checkpoint_SetVisible(_:(flag & e_PROP_FLAGS_LINK), 1);
+			#pragma tabsize 4
+		}
+	}
 }
 
 /*----------------------------------------------------------------------------*-
@@ -2616,6 +3339,7 @@ public Property_Loop()
 	}
 	foreach (Player, i)
 	{
+		DBGP3("Property_Loop() foreach start");
 		new
 			money,
 			bad;
@@ -2670,6 +3394,7 @@ public Property_Loop()
 			GivePlayerMoney(i, money);
 		}
 		if (!bad) GetPlayerPos(i, s_fLastGoodPos[i][0], s_fLastGoodPos[i][1], s_fLastGoodPos[i][2]);
+		DBGP3("Property_Loop() foreach end");
 	}
 	sLastTick = currentTick;
 }
@@ -2903,6 +3628,7 @@ Notes:
 
 	public Property_Remote(ident, info, instruction)
 	{
+		if (!YSI_g_sIsMaster) return;
 		switch (instruction)
 		{
 			case E_PROP_REMOTE_LINK:
@@ -3011,7 +3737,7 @@ Notes:
 				new
 					e_PROP_FLAGS:flags = YSI_g_sProperties[ident][E_PROP_DATA_FLAGS];
 				YSI_g_sProperties[ident][E_PROP_DATA_FLAGS] = e_PROP_FLAGS:0;
-				if (flags & e_PROP_FLAGS_TYPES > e_PROP_FLAGS_TYPE_MONP)
+				if (flags & e_PROP_FLAGS_TYPES >= e_PROP_FLAGS_TYPE_MONA)
 				{
 					YSI_g_sAreaPointers[_:(flags & e_PROP_FLAGS_LINK)] = NO_PROPERTY;
 					Area_Delete(_:(flags & e_PROP_FLAGS_LINK));
@@ -3032,6 +3758,129 @@ Notes:
 			{
 				setproperty(0, "YSIReq", Property_IsActive(ident));
 			}
+			case E_PROP_REMOTE_SET_MAX:
+			{
+				YSI_g_sMaxPlayerProps = info;
+			}
+			case E_PROP_REMOTE_SET_HMX:
+			{
+				YSI_g_sMaxPlayerHouses = info;
+			}
+			case E_PROP_REMOTE_REBUY:
+			{
+				YSI_g_sRebuyDelay = info;
+			}
 		}
 	}
 #endif
+
+/*----------------------------------------------------------------------------*-
+Command:
+	enter
+Parameters:
+	-
+Notes:
+	Allows you to enter a house you own.
+-*----------------------------------------------------------------------------*/
+
+public ycmd_enter(playerid, params[], help)
+{
+	DBGP2("ycmd_enter() start");
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 1;
+	#endif
+	if (help)
+	{
+		Text_Send(playerid, "YSI_ENTER_HELP_1");
+		Text_Send(playerid, "YSI_ENTER_HELP_2");
+	}
+	else
+	{
+		DBGP3("ycmd_enter() Not help");
+		new
+			cpid,
+			prop = NO_PROPERTY;
+		if (IsPlayerInCheckpoint(playerid))
+		{
+			DBGP4("ycmd_enter() Checkpoint");
+			cpid = Checkpoint_Get(playerid);
+			if (cpid != NO_CHECKPOINT)
+			{
+				prop = YSI_g_sCheckpointPointers[cpid];
+			}
+		}
+		#if defined _YSI_VISUAL_PICKUPS
+			#pragma tabsize 0
+			else if (YSI_g_sPickupTimer[playerid] != -1)
+			{
+				cpid = YSI_g_sPlayerPickup[playerid];
+				if (cpid != NO_PICKUP)
+				{
+					prop = YSI_g_sPickupPointers[cpid];
+				}
+				DBGP4("ycmd_enter() Pickup %d", cpid);
+			}
+		#endif
+		#pragma tabsize 4
+		DBGP4("ycmd_enter() Prop %d", prop);
+		if (prop != NO_PROPERTY)
+		{
+			new
+				e_PROP_FLAGS:flag = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
+			if (flag & e_PROP_FLAGS_TYPES == e_PROP_FLAGS_TYPE_HOUS)
+			{
+				if (_:YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] == playerid)
+				{
+					SetPlayerInterior(playerid, YSI_g_sProperties[prop][E_PROP_DATA_DATA_1]);
+					SetPlayerVirtualWorld(playerid, YSI_g_sProperties[prop][E_PROP_DATA_DATA_2]);
+					SetPlayerPos(playerid, Float:YSI_g_sProperties[prop][E_PROP_DATA_NAME][3], Float:YSI_g_sProperties[prop][E_PROP_DATA_NAME][4], Float:YSI_g_sProperties[prop][E_PROP_DATA_NAME][5]);
+					YSI_g_sCurrentHouse[playerid] = prop;
+				}
+				else Text_Send(playerid, "YSI_ENTER_NOT_YOURS");
+			}
+			else Text_Send(playerid, "YSI_ENTER_NO_HOUSE");
+		}
+		else Text_Send(playerid, "YSI_ENTER_NO_HOUSE");
+	}
+	return 1;
+	#pragma unused params
+}
+
+/*----------------------------------------------------------------------------*-
+Command:
+	exit
+Parameters:
+	-
+Notes:
+	Allows you to exit a house you own.
+-*----------------------------------------------------------------------------*/
+
+public ycmd_exit(playerid, params[], help)
+{
+	DBGP2("ycmd_enter() start");
+	#if defined _YSI_SETUP_MASTER
+		if (!YSI_g_sIsMaster) return 1;
+	#endif
+	if (help)
+	{
+		Text_Send(playerid, "YSI_EXIT_HELP_1");
+	}
+	else
+	{
+		new
+			prop = YSI_g_sCurrentHouse[playerid];
+		if (prop != -1)
+		{
+			if (IsPlayerInRangeOfPoint(playerid, 3.0, Float:YSI_g_sProperties[prop][E_PROP_DATA_NAME][3], Float:YSI_g_sProperties[prop][E_PROP_DATA_NAME][4], Float:YSI_g_sProperties[prop][E_PROP_DATA_NAME][5]))
+			{
+				YSI_g_sCurrentHouse[playerid] = -1;
+				SetPlayerInterior(playerid, 0);
+				SetPlayerVirtualWorld(playerid, 0);
+				SetPlayerPos(playerid, Float:YSI_g_sProperties[prop][E_PROP_DATA_NAME][0], Float:YSI_g_sProperties[prop][E_PROP_DATA_NAME][1], Float:YSI_g_sProperties[prop][E_PROP_DATA_NAME][2]);
+			}
+			else Text_Send(playerid, "YSI_EXIT_NEAR");
+		}
+		else Text_Send(playerid, "YSI_EXIT_NOT_IN");
+	}
+	return 1;
+}

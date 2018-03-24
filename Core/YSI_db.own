@@ -1,0 +1,184 @@
+static stock
+	YSI_g_sDBCurrentTag[MAX_INI_TAG],
+	YSI_g_sCurrentRow,
+	YSI_g_sQueryString[256];
+
+stock DB:DB_Open(name[])
+{
+	new
+		DB:dbHnd = db_open(name);
+	return dbHnd;
+}
+
+stock DB_Close(DB:dbHnd)
+{
+	if (dbHnd)
+	{
+		db_close(dbHnd);
+		return 1;
+	}
+	return 0;
+}
+
+#define DB_SetTag DB_SetTable
+stock DB_SetTable(DB:dbHnd, table[])
+{
+	if (dbHnd)
+	{
+		format(YSI_g_sQueryString, sizeof (YSI_g_sQueryString), "CREATE TABLE IF NOT EXISTS `%s`(`_KEY_` integer NOT NULL PRIMARY KEY AUTOINCREMENT);", table);
+		strcpy(YSI_g_sDBCurrentTag, table, sizeof (YSI_g_sDBCurrentTag));
+		DBGP3("DB_SetTable() \"%s\"", YSI_g_sQueryString);
+		db_query(dbHnd, YSI_g_sQueryString);
+		return 1;
+	}
+	return 0;
+}
+
+stock DB_SetRow(DB:dbHnd, whereRow[] = "", whereValue = 0, row = 0)
+{
+	YSI_g_sCurrentRow = 0;
+	DBGP2("DB_SetRow() start");
+	if (dbHnd)
+	{
+		new
+			DBResult:dbResult;
+		if (row)
+		{
+			YSI_g_sCurrentRow = row;
+		}
+		else
+		{
+			if (whereRow[0])
+			{
+				if (DB_AddColumn(dbHnd, whereRow, "integer"))
+				{
+					format(YSI_g_sQueryString, sizeof (YSI_g_sQueryString), "SELECT `_ROWID_` FROM `%s` where `%s` = '%d';", YSI_g_sDBCurrentTag, whereRow, whereValue);
+					dbResult = db_query(dbHnd, YSI_g_sQueryString);
+					if (dbResult)
+					{
+						if (db_num_rows(dbResult))
+						{
+							db_get_field(dbResult, 1, YSI_g_sQueryString, sizeof (YSI_g_sQueryString));
+							db_free_result(dbResult);
+							YSI_g_sCurrentRow = strval(YSI_g_sQueryString);
+							return YSI_g_sCurrentRow;
+						}
+					}
+				}
+				format(YSI_g_sQueryString, sizeof (YSI_g_sQueryString), "INSERT INTO `%s` (`%s`) VALUES ('%d'); SELECT `_ROWID_` FROM `%s` WHERE `_ROWID_` = last_insert_rowid();", YSI_g_sDBCurrentTag, whereRow, whereValue, YSI_g_sDBCurrentTag);
+				dbResult = db_query(dbHnd, YSI_g_sQueryString);
+			}
+			else
+			{
+//				format(YSI_g_sQueryString, sizeof (YSI_g_sQueryString), "INSERT INTO `%s` (`_ROWID_`) VALUES (CASE (SELECT COUNT(*) FROM `%s`) WHEN 0 THEN 1 ELSE ((SELECT `_ROWID_` FROM `%s` ORDER BY 1 DESC LIMIT 1) + 1) END);", YSI_g_sDBCurrentTag, YSI_g_sDBCurrentTag, YSI_g_sDBCurrentTag);
+				format(YSI_g_sQueryString, sizeof (YSI_g_sQueryString), "INSERT INTO `%s` (`_ROWID_`) VALUES ((SELECT `_ROWID_` FROM `%s` ORDER BY 1 DESC LIMIT 1) + 1); SELECT `_ROWID_` FROM `%s` WHERE `_ROWID_` = last_insert_rowid();", YSI_g_sDBCurrentTag, YSI_g_sDBCurrentTag, YSI_g_sDBCurrentTag);
+				dbResult = db_query(dbHnd, YSI_g_sQueryString);
+				DBGP3("DB_SetRow() \"%s\"", YSI_g_sQueryString);
+			}
+			if (dbResult)
+			{
+				DBGP3("DB_SetRow() result");
+				if (db_num_rows(dbResult))
+				{
+					DBGP3("DB_SetRow() rows");
+					db_get_field(dbResult, 0, YSI_g_sQueryString, sizeof (YSI_g_sQueryString));
+					db_free_result(dbResult);
+					YSI_g_sCurrentRow = strval(YSI_g_sQueryString);
+					DBGP3("DB_SetRow() cur = %d", YSI_g_sCurrentRow);
+				}
+			}
+		}
+	}
+	return YSI_g_sCurrentRow;
+}
+
+stock DB_WriteString(DB:dbHnd, name[], data[])
+{
+	if (dbHnd && YSI_g_sCurrentRow)
+	{
+		DB_AddColumn(dbHnd, name, "varchar(" #MAX_INI_ENTRY_TEXT ")");
+		format(YSI_g_sQueryString, sizeof (YSI_g_sQueryString), "UPDATE `%s` SET `%s` = '%s' WHERE `_ROWID_` = %d;", YSI_g_sDBCurrentTag, name, DB_Escape(data), YSI_g_sCurrentRow);
+		db_query(dbHnd, YSI_g_sQueryString);
+		return 1;
+	}
+	return 0;
+}
+
+stock DB_Escape(text[])
+{
+	new
+		ret[MAX_INI_ENTRY_TEXT * 2],
+		ch,
+		i,
+		j;
+	while ((ch = text[i++]) && j < sizeof (ret))
+	{
+		if (ch == '\'')
+		{
+			if (j < sizeof (ret) - 2)
+			{
+				ret[j++] = '\'';
+				ret[j++] = '\'';
+			}
+		}
+		else if (j < sizeof (ret))
+		{
+			ret[j++] = ch;
+		}
+		else
+		{
+			j++;
+		}
+	}
+	ret[sizeof (ret) - 1] = '\0';
+	return ret;
+}
+
+stock DB_WriteInt(DB:dbHnd, name[], data)
+{
+	if (dbHnd && YSI_g_sCurrentRow)
+	{
+		DB_AddColumn(dbHnd, name, "integer");
+		format(YSI_g_sQueryString, sizeof (YSI_g_sQueryString), "UPDATE `%s` SET `%s` = %d WHERE `_ROWID_` = %d;", YSI_g_sDBCurrentTag, name, data, YSI_g_sCurrentRow);
+		db_query(dbHnd, YSI_g_sQueryString);
+		return 1;
+	}
+	return 0;
+}
+
+stock DB_WriteFloat(DB:dbHnd, name[], Float:data)
+{
+	if (dbHnd && YSI_g_sCurrentRow)
+	{
+		DB_AddColumn(dbHnd, name, "real");
+		format(YSI_g_sQueryString, sizeof (YSI_g_sQueryString), "UPDATE `%s` SET `%s` = %f WHERE `_ROWID_` = %d;", YSI_g_sDBCurrentTag, name, data, YSI_g_sCurrentRow);
+		db_query(dbHnd, YSI_g_sQueryString);
+		return 1;
+	}
+	return 0;
+}
+
+stock DB_AddColumn(DB:dbHnd, name[], type[])
+{
+	DBGP2("DB_AddColumn() start");
+	format(YSI_g_sQueryString, sizeof (YSI_g_sQueryString), "SELECT `sql` FROM `sqlite_master` WHERE `tbl_name` = '%s';", YSI_g_sDBCurrentTag);
+	DBGP3("DB_AddColumn() query 1 = \"%s\"", YSI_g_sQueryString);
+	new
+		DBResult:dbResult = db_query(dbHnd, YSI_g_sQueryString);
+	if (dbResult)
+	{
+		DBGP3("DB_AddColumn() result");
+		db_get_field(dbResult, 0, YSI_g_sQueryString, sizeof (YSI_g_sQueryString));
+		DBGP3("DB_AddColumn() text: \"%s\"", YSI_g_sQueryString);
+		db_free_result(dbResult);
+		if (wordfind(name, YSI_g_sQueryString, chrfind('(', YSI_g_sQueryString)) != -1)
+		{
+			DBGP3("DB_AddColumn() found");
+			return 1;
+		}
+	}
+	format(YSI_g_sQueryString, sizeof (YSI_g_sQueryString), "ALTER TABLE `%s` ADD COLUMN `%s` %s; VACUUM;", YSI_g_sDBCurrentTag, name, type);
+	DBGP3("DB_AddColumn() query 2 = \"%s\"", YSI_g_sQueryString);
+	db_query(dbHnd, YSI_g_sQueryString);
+	return 0;
+}

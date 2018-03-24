@@ -30,8 +30,10 @@ Legal:
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 	MA 02110-1301, USA.
 Version:
-	0.1
+	0.1.1
 Changelog:
+	28/12/07:
+		Added support for escape characters in parameters.
 	10/09/07:
 		Added documentation.
 	31/08/07:
@@ -196,7 +198,7 @@ stock XML:XML_New()
 {
 	new
 		XML:i;
-	while (i < XML_MAX_XML_FILES) if (YSI_g_sCurHandler[i] == -1) break;
+	while (i < XML_MAX_XML_FILES && YSI_g_sCurHandler[i] != -1) i++;
 	if (i == XML_MAX_XML_FILES) return NO_XML_FILE;
 	YSI_g_sCurHandler[i] = 0;
 	YSI_g_sCurBuffer = 0;
@@ -252,6 +254,7 @@ stock XML_Parse(XML:rule, filename[])
 			inPar;
 		while (fread(xFile, line))
 		{
+			DBGP5("XML_Parse() line: %s", line);
 			new
 				pos,
 				ch;
@@ -351,7 +354,8 @@ Params:
 Return:
 	-
 Notes:
-	Gets the data from inside ""s in an identifier.
+	Gets the data from inside ""s in an identifier.  Now supports
+	\ for escape characters.
 -*----------------------------------------------------------------------------*/
 
 stock XML_GetParameter(line[], &pos)
@@ -361,10 +365,58 @@ stock XML_GetParameter(line[], &pos)
 		ret[MAX_XML_ENTRY_TEXT],
 		i;
 	while ((ch = line[pos++]) && ch != '"') {}
-	if (ch) while ((ch = line[pos++]) && ch != '"' && i < (sizeof (ret) - 1)) ret[i++] = ch;
+	if (ch)
+	{
+		while ((ch = line[pos++]) && i < (sizeof (ret) - 1))
+		{
+			if (ch == '\\')
+			{
+				switch (line[pos++])
+				{
+					case '"':
+					{
+						ch = '"';
+					}
+					case 'n':
+					{
+						ch = '\n';
+					}
+					case 'r':
+					{
+						ch = '\r';
+					}
+					case '\\': {}
+					default:
+					{
+						pos--;
+						continue;
+					}
+				}
+			}
+			else if (ch == '"')
+			{
+				break;
+			}
+			ret[i++] = ch;
+		}
+	}
 	if (i == (sizeof (ret) - 1))
 	{
-		while ((ch = line[pos++]) && ch != '"') {}
+		while ((ch = line[pos++]))
+		{
+			if (ch == '\\')
+			{
+				switch (line[pos++])
+				{
+					case '\\', '"', 'n', 'r': {}
+					default:
+					{
+						pos--;
+					}
+				}
+			}
+			else if (ch == '"') break;
+		}
 	}
 	ret[i] = '\0';
 	return ret;
@@ -858,4 +910,3 @@ stock XML_ReplaceItem(file[], tag[], name[], replacement)
 	}
 	return 1;
 }
-

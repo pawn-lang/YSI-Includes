@@ -4,6 +4,15 @@
 					==============================
 Description:
 	Ensures debug levels are set and defines debug functions.
+	
+	General debug levels:
+	
+	0 - No debug information.
+	1 - Callbacks start and finish.
+	2 - Major functions called.
+	3 - Major control flow.
+	4 - Minor control flow/functions.
+	5 - Code steps.
 Legal:
 	Copyright (C) 2007 Alex "Y_Less" Cole
 
@@ -43,7 +52,8 @@ Functions:
 Callbacks:
 	-
 Definitions:
-	_DEBUG %n - Activate debugging at given level
+	DBGP - Simple Debug_Print_ wrapper.
+	DBGC - Simple Debug_Code_ wrapper.
 Enums:
 	-
 Macros:
@@ -58,7 +68,7 @@ Variables:
 Commands:
 	-
 Compile options:
-	-
+	_DEBUG - Debugging level to use.
 Operators:
 	-
 -*----------------------------------------------------------------------------*/
@@ -83,6 +93,12 @@ Notes:
 	The code must all be on one line to avoid errors.
 	This isn't really a function as the first parameter is part of the name.
 -*----------------------------------------------------------------------------*/
+
+#define DBGC1 Debug_Code_1
+#define DBGC2 Debug_Code_2
+#define DBGC3 Debug_Code_3
+#define DBGC4 Debug_Code_4
+#define DBGC5 Debug_Code_5
 
 #if _DEBUG >= 1
 	#define Debug_Code_1(%1); \
@@ -133,6 +149,12 @@ Notes:
 	
 	Debug_Print_4("variables: %d, %d", i, j);
 -*----------------------------------------------------------------------------*/
+
+#define DBGP1 Debug_Print_1
+#define DBGP2 Debug_Print_2
+#define DBGP3 Debug_Print_3
+#define DBGP4 Debug_Print_4
+#define DBGP5 Debug_Print_5
 
 #if _DEBUG >= 1
 	#define Debug_Print_1(%1); \

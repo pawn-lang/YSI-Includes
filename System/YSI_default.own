@@ -24,6 +24,8 @@ Legal:
 Version:
 	0.1
 Changelog:
+	06/01/08:
+		Renamed LoadScript to Default_LoadScript.
 	17/05/07:
 		Added all standard calls.
 		Updated multiple call code to return 1 if any calls are 1.
@@ -34,7 +36,7 @@ Functions:
 		-
 	Core:
 		Default_Setup - Sets up some core systems if required.
-		LoadScript - Sets up more core systems after init functions.
+		Default_LoadScript - Sets up more core systems after init functions.
 		Default_OnFilterScriptInit - Calls standard functions.
 		Default_OnFilterScriptExit - Calls standard functions.
 		Default_OnGameModeInit - Calls standard functions.
@@ -114,10 +116,14 @@ Notes:
 	is not a filterscript then it's possible a filterscript is already the
 	master of some section so this calls that to check as properties are lost
 	between gamemode changes due to a bug in the server.
+	
+	Note that Group_Group MUST be called last for the group
+	master system to work.
 -*----------------------------------------------------------------------------*/
 
 Default_Setup()
 {
+	DBGP2("Default_Setup() start");
 	#if !defined FILTERSCRIPT
 		#if defined _YSI_SETUP_MASTER
 			CallRemoteFunction("Master_Refresh", "");
@@ -126,64 +132,86 @@ Default_Setup()
 	new
 		ret;
 	#if defined _YSI_SETUP_MASTER
+		DBGP3("Call Master_Master()");
 		if (Master_Master()) ret = 1;
 	#endif
 	#if defined _YSI_CORE_COMMANDS
+		DBGP3("Call Command_Command()");
 		if (Command_Command()) ret = 1;
 	#endif
 	#if defined _YSI_VISUAL_OBJECTS
+		DBGP3("Call Object_Object()");
 		if (Object_Object()) ret = 1;
 	#endif
 	#if defined _YSI_VISUAL_CHECKPOINTS
+		DBGP3("Call Checkpoint_Checkpoint()");
 		if (Checkpoint_Checkpoint()) ret = 1;
 	#endif
 	#if defined _YSI_VISUAL_AREAS
+		DBGP3("Call Area_Area()");
 		if (Area_Area()) ret = 1;
 	#endif
 	#if defined _YSI_SERVER_MODULES
+		DBGP3("Call Modules_Modules()");
 		if (Modules_Modules()) ret = 1;
 	#endif
 	#if defined _YSI_VISUAL_RACE
+		DBGP3("Call Race_Race()");
 		if (Race_Race()) ret = 1;
 	#endif
 	#if defined _YSI_VISUAL_ZONES
+		DBGP3("Call Zone_Zone()");
 		if (Zone_Zone()) ret = 1;
 	#endif
 	#if defined _YSI_VISUAL_PICKUPS
+		DBGP3("Call Pickup_Pickup()");
 		if (Pickup_Pickup()) ret = 1;
 	#endif
-	#if defined _YSI_SYSTEM_GROUPS
-		if (Group_Group()) ret = 1;
-	#endif
 	#if defined _YSI_SYSTEM_CALLBACKS
+		DBGP3("Call Callbacks_Callbacks()");
 		if (Callbacks_Callbacks()) ret = 1;
 	#endif
 	#if defined _YSI_GAMEMODE_PROPERTIES
+		DBGP3("Call Property_Property()");
 		if (Property_Property()) ret = 1;
 	#endif
 	#if !defined FILTERSCRIPT
 		#if defined _YSI_GAMEMODE_CLASSES	
+			DBGP3("Call Class_Class()");
 			if (Class_Class()) ret = 1;
 		#endif
 	#endif
 	#if defined _YSI_CORE_PLAYER
+		DBGP3("Call Player_Player()");
 		if (Player_Player()) ret = 1;
 	#endif
 	#if defined _YSI_CORE_HELP	
+		DBGP3("Call Help_Help()");
 		if (Help_Help()) ret = 1;
 	#endif
 	#if defined _YSI_TRACKING_LIVE
+		DBGP3("Call Live_Live()");
 		if (Live_Live()) ret = 1;
 	#endif
 	#if defined _YSI_GAMEMODE_LOADER
+		DBGP3("Call Loader_Loader()");
 		if (Loader_Loader()) ret = 1;
 	#endif
+	#if defined _YSI_CORE_TD
+		DBGP3("Call TD_TD()");
+		if (TD_TD()) ret = 1;
+	#endif
+	#if defined _YSI_SYSTEM_GROUPS
+		DBGP3("Call Group_Group()");
+		if (Group_Group()) ret = 1;
+	#endif
+	DBGP2("Default_Setup() end");
 	return ret;
 }
 
 /*----------------------------------------------------------------------------*-
 Function:
-	LoadScript
+	Default_LoadScript
 Params:
 	-
 Return:
@@ -192,7 +220,7 @@ Notes:
 	Loads things needed AFTER one of the init functions;
 -*----------------------------------------------------------------------------*/
 
-LoadScript()
+Default_LoadScript()
 {
 	new ret;
 	#if defined _YSI_CORE_TEXT
@@ -231,6 +259,11 @@ stock Default_OnGameModeInit()
 		#endif
 	#else
 		if (Default_Setup()) ret = 1;
+		#if defined _YSI_SETUP_MASTER
+			setproperty(0, "YSIM_Gamemode", YSI_gMasterID);
+		#else
+			setproperty(0, "YSIM_Gamemode", -1);
+		#endif
 	#endif
 	return ret;
 }
@@ -248,10 +281,15 @@ Notes:
 
 stock Default_OnGameModeExit()
 {
-	#if defined FILTERSCRIPT || !defined _YSI_SETUP_MASTER
+	#if defined FILTERSCRIPT
 		return 0;
 	#else
-		return Master_@Master();
+		deleteproperty(0, "YSIM_Gamemode");
+		#if !defined _YSI_SETUP_MASTER
+			return 0;
+		#else
+			return Master_@Master();
+		#endif
 	#endif
 }
 
@@ -306,6 +344,10 @@ stock Default_OnPlayerConnect(playerid)
 {
 	new
 		ret;
+	#if defined _YSI_PLAYER_CONN
+		if (Conn_OnPlayerConnect(playerid)) ret = 1;
+		else return 0;
+	#endif
 	#if defined _YSI_SYSTEM_ITTER
 		if (Itter_OnPlayerConnect(playerid)) ret = 1;
 	#endif
@@ -335,6 +377,12 @@ stock Default_OnPlayerConnect(playerid)
 	#endif
 	#if defined _YSI_GAMEMODE_CLASSES	
 		if (Class_OnPlayerConnect(playerid)) ret = 1;
+	#endif
+	#if defined _YSI_VISUAL_PICKUPS
+		if (Pickup_OnPlayerConnect(playerid)) ret = 1;
+	#endif
+	#if defined _YSI_VISUAL_RACE
+		if (Race_OnPlayerConnect(playerid)) ret = 1;
 	#endif
 	return ret;
 	#pragma unused playerid
@@ -371,6 +419,12 @@ stock Default_OnPlayerDisconnect(playerid, reason)
 	#if defined _YSI_TRACKING_LIVE
 		if (Live_OnPlayerDisconnect(playerid, reason)) ret = 1;
 	#endif
+	#if defined _YSI_CORE_TD
+		if (TD_OnPlayerDisconnect(playerid, reason)) ret = 1;
+	#endif
+	#if defined _YSI_GAMEMODE_PROPERTIES
+		if (Property_OnPlayerDisconnect(playerid, reason)) ret = 1;
+	#endif
 	#pragma unused playerid, reason
 	return ret;
 }
@@ -383,7 +437,9 @@ Params:
 Return:
 	-
 Notes:
-	Calls standard functions.
+	Calls standard functions.  This is the only place where the
+	order actually matters - default spawn weapons need to be
+	given BEFORE bought weapons.
 -*----------------------------------------------------------------------------*/
 
 stock Default_OnPlayerSpawn(playerid)
@@ -541,7 +597,11 @@ stock Default_OnPlayerRequestClass(playerid, classid)
 	#if defined _YSI_GAMEMODE_CLASSES	
 		return Class_OnPlayerRequestClass(playerid, classid);
 	#else
-		return OnPlayerRequestClassEx(playerid, classid);
+		#if defined FILTERSCRIPT
+			return OnPlayerRequestClassExFS(playerid, classid);
+		#else
+			return OnPlayerRequestClassExGM(playerid, classid);
+		#endif
 	#endif
 }
 
@@ -744,7 +804,11 @@ stock Default_OnPlayerRequestSpawn(playerid)
 		return Class_OnPlayerRequestSpawn(playerid);
 	#else
 		#if YSI_VERSION > 2
-			return OnPlayerRequestSpawnEx(playerid, -1);
+			#if defined FILTERSCRIPT
+				return OnPlayerRequestSpawnExFS(playerid, -1);
+			#else
+				return OnPlayerRequestSpawnExGM(playerid, -1);
+			#endif
 		#else
 			return 1;
 			#pragma unused playerid

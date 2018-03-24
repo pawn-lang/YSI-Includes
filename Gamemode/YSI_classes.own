@@ -25,6 +25,8 @@ Legal:
 Version:
 	0.1
 Changelog:
+	02/01/08:
+		First '08 edit - Fixed minus numbers in spawn points.
 	18/11/07:
 		Improved location compression to allow larger areas.
 		Moved position code to Class_OnPlayerSpawn to reduce overhead.
@@ -52,9 +54,15 @@ Functions:
 		Class_Enable - Enables a disabled class.
 		Class_AddForGroup - Adds a class to the system for only one group.
 		Class_Add - Adds a class to the system.
+		Class_AddEx - Adds a class to the system with group selection and setting.
 		Class_AddWithGroupSet - Adds a class and sets their group on selection.
+		Class_AllowReselection - Allows or disallows people to return to reselect a class.
+		Class_RequireSpawnLogin - Require people to login before spawning.
+		Class_RequireSelectionLogin - Require people to login before selecting.
+		Class_RequireSelectionReg - Require people to register before selecting.
+		Class_RequireSpawnReg - Require people to register before spawning.
 	Static:
-		-
+		Class_AddClass - Adds a class, wrapped by API and remote functions.
 	Inline:
 		Class_IsActive - Checks a class is active.
 		Class_Enabled - Checks a class is enabled.
@@ -102,6 +110,14 @@ Operators:
 	#define MAX_CLASSES 256
 #endif
 
+#if !defined MAX_CLASS_SPAWN_WEAPONS
+	#define MAX_CLASS_SPAWN_WEAPONS (13)
+#endif
+
+#if !defined WEAPON_ARMOUR
+	#define WEAPON_ARMOUR (100)
+#endif
+
 enum e_CLASS_FLAGS (<<= 1)
 {
 	e_CLASS_FLAGS_SKIN   = 0x0000FFFF,
@@ -113,11 +129,26 @@ enum e_CLASS_FLAGS (<<= 1)
 enum E_CLASS
 {
 	e_CLASS_FLAGS:E_CLASS_FLAGS,
-	E_CLASS_XY,
-	E_CLASS_ZA,
-	E_CLASS_WEAPONS[3],
-	Bit:E_CLASS_PLAYERS[PLAYER_BIT_ARRAY],
-	E_CLASS_GROUP
+	Float:E_CLASS_X,
+	Float:E_CLASS_Y,
+	Float:E_CLASS_Z,
+	Float:E_CLASS_A,
+	E_CLASS_WEAPONS[13],
+	#if defined _YSI_SYSTEM_GROUPS
+		E_CLASS_GROUP,
+	#endif
+	Bit:E_CLASS_PLAYERS[PLAYER_BIT_ARRAY]
+}
+
+enum e_CLASS_OPTION (<<= 1)
+{
+	e_CLASS_OPTION_NORE = 1,
+	e_CLASS_OPTION_LOGIN_SELECT,
+	e_CLASS_OPTION_LOGIN_SPAWN,
+	e_CLASS_OPTION_REG_SELECT,
+	e_CLASS_OPTION_REG_SPAWN,
+	e_CLASS_OPTION_HAS_RC_CALLBACK,
+	e_CLASS_OPTION_HAS_RS_CALLBACK
 }
 
 enum
@@ -126,7 +157,13 @@ enum
 	E_CLASS_INS_SET_FLAG,
 	E_CLASS_INS_DELETE,
 	E_CLASS_INS_ADD_PLAYER,
-	E_CLASS_INS_REMOVE_PLAYER
+	E_CLASS_INS_REMOVE_PLAYER,
+	E_CLASS_INS_ALLOW_RESELECT,
+	E_CLASS_INS_LSE,
+	E_CLASS_INS_LSP,
+	E_CLASS_INS_RSE,
+	E_CLASS_INS_RSP,
+	E_CLASS_INT_SET_CLASS
 }
 
 #define CLASS_LEFT 0x40000000
@@ -146,14 +183,14 @@ enum
 #if !defined YSI_SLAVE_CLASS
 	static
 		YSI_g_sClasses[MAX_CLASSES][E_CLASS],
-		YSI_g_sPlayerGroup[MAX_PLAYERS],
 		YSI_g_sPlayerClass[MAX_PLAYERS],
 		YSI_g_sLeft,
 		YSI_g_sMiddle,
 		YSI_g_sRight,
-		YSI_g_sClassCount;
+		YSI_g_sClassCount,
+		e_CLASS_OPTION:YSI_g_sClassOptions;
 		
-	forward Class_AddRemote(skin, Float:x, Float:y, Float:z, Float:a, weapon1, ammo1, weapon2, ammo2, weapon3, ammo3, forgroup, asgroup);
+	forward Class_AddRemote(skin, Float:x, Float:y, Float:z, Float:a, weapons[], count, forgroup, asgroup);
 	forward Class_Remote(ident, info, instruction);
 #endif
 
@@ -211,7 +248,8 @@ Notes:
 -*----------------------------------------------------------------------------*/
 
 #define Class_X(%1) \
-	(float(YSI_g_sClasses[(%1)][E_CLASS_XY] >> 16) / 10.0)
+	YSI_g_sClasses[(%1)][E_CLASS_X]
+	//(float(YSI_g_sClasses[(%1)][E_CLASS_XY] >> 16) / 10.0)
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -225,7 +263,8 @@ Notes:
 -*----------------------------------------------------------------------------*/
 
 #define Class_Y(%1) \
-	(float((YSI_g_sClasses[(%1)][E_CLASS_XY] & 0x7FFF) | ((YSI_g_sClasses[(%1)][E_CLASS_XY] & 0x8000) ? (0xFFFF8000) : (0))) / 10.0)
+	YSI_g_sClasses[(%1)][E_CLASS_Y]
+	//(float((YSI_g_sClasses[(%1)][E_CLASS_XY] & 0x7FFF) | ((YSI_g_sClasses[(%1)][E_CLASS_XY] & 0x8000) ? (0xFFFF8000) : (0))) / 10.0)
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -239,7 +278,8 @@ Notes:
 -*----------------------------------------------------------------------------*/
 
 #define Class_Z(%1) \
-	(float(YSI_g_sClasses[(%1)][E_CLASS_ZA] >> 16) / 10.0)
+	YSI_g_sClasses[(%1)][E_CLASS_Z]
+	//(float(YSI_g_sClasses[(%1)][E_CLASS_ZA] >> 16) / 10.0)
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -253,7 +293,8 @@ Notes:
 -*----------------------------------------------------------------------------*/
 
 #define Class_A(%1) \
-	(float((YSI_g_sClasses[(%1)][E_CLASS_ZA] & 0x7FFF) | (YSI_g_sClasses[(%1)][E_CLASS_ZA] & 0x8000) ? (0xFFFF8000) : (0)) / 10.0)
+	YSI_g_sClasses[(%1)][E_CLASS_A]
+	//(float((YSI_g_sClasses[(%1)][E_CLASS_ZA] & 0x7FFF) | (YSI_g_sClasses[(%1)][E_CLASS_ZA] & 0x8000) ? (0xFFFF8000) : (0)) / 10.0)
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -284,9 +325,10 @@ Notes:
 #if !defined YSI_SLAVE_CLASS
 	Class_Class()
 	{
-		YSI_g_sLeft = AddPlayerClass(0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0);
-		YSI_g_sMiddle = AddPlayerClass(0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0);
-		YSI_g_sRight = AddPlayerClass(0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0);
+		YSI_g_sLeft = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0);
+		YSI_g_sMiddle = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0);
+		YSI_g_sRight = AddPlayerClass(0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0);
+		YSI_g_sClassOptions = ((funcidx("OnPlayerRequestClassExGM") == -1) ? (e_CLASS_OPTION:0) : (e_CLASS_OPTION_HAS_RC_CALLBACK)) | ((funcidx("OnPlayerRequestSpawnExGM") == -1) ? (e_CLASS_OPTION:0) : (e_CLASS_OPTION_HAS_RS_CALLBACK));
 		return 1;
 	}
 #endif
@@ -311,24 +353,52 @@ Notes:
 #if !defined YSI_SLAVE_CLASS
 	Class_OnPlayerRequestClass(playerid, class)
 	{
+		DBGP2("Class_OnPlayerRequestClass() start");
 		new
 			playerclass = YSI_g_sPlayerClass[playerid],
 			dir = 1;
+		if ((YSI_g_sClassOptions & e_CLASS_OPTION_NORE) && (playerclass & 0x08000000))
+		{
+			SpawnPlayer(playerid);
+			return 0;
+		}
 		switch (playerclass & 0xF0000000)
 		{
 			case CLASS_RIGHT:
-				if (class == YSI_g_sMiddle) dir = -1;
+			{
+				if (class == YSI_g_sMiddle)
+				{
+					dir = -1;
+				}
+			}
 			case CLASS_MIDDLE:
-				if (class == YSI_g_sLeft) dir = -1;
+			{
+				if (class == YSI_g_sLeft)
+				{
+					dir = -1;
+				}
+			}
 			default:
-				if (class == YSI_g_sRight) dir = -1;
+			{
+				if (class == YSI_g_sRight)
+				{
+					dir = -1;
+				}
+			}
 		}
-		playerclass &= 0x0FFFFFFF;
+		if (playerclass & 0x04000000)
+		{
+			playerclass = 0x00FFFFFF;
+		}
+		else
+		{
+			playerclass &= 0x00FFFFFF;
+		}
 		if (!YSI_g_sClassCount)
 		{
-			SetSpawnInfo(playerid, NO_TEAM, 0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0, 0, 0, 0);
+			SetSpawnInfo(playerid, NO_TEAM, 0, 1958.0, 1343.0, 15.0, 269.0, 0, 0, 0, 0, 0, 0);
 			SetPlayerSkin(playerid, 0);
-			printf("*** Internal Error! No YSI classes found");
+			DBGP1("*** Internal Error! No YSI classes found");
 		}
 		else
 		{
@@ -337,22 +407,33 @@ Notes:
 			do
 			{
 				playerclass += dir;
+				DBGP4("Class_OnPlayerRequestClass() playerclass: %d", playerclass);
 				if (playerclass < 0) playerclass = YSI_g_sClassCount - 1;
 				if (playerclass >= YSI_g_sClassCount) playerclass = 0;
 			}
 			while (playerclass != old && (!Class_Enabled(playerclass) || !Bit_Get(YSI_g_sClasses[playerclass][E_CLASS_PLAYERS], playerid)));
+			DBGP4("Class_OnPlayerRequestClass() selected: %d", playerclass);
 			new
 				weapon1 = YSI_g_sClasses[playerclass][E_CLASS_WEAPONS][0],
 				weapon2 = YSI_g_sClasses[playerclass][E_CLASS_WEAPONS][1],
 				weapon3 = YSI_g_sClasses[playerclass][E_CLASS_WEAPONS][2];
-			SetSpawnInfo(playerid, NO_TEAM, Class_Skin(playerclass), 0.0, 0.0, 0.0, 0.0, weapon1 & 0xFF, weapon1 >> 8, weapon2 & 0xFF, weapon2 >> 8, weapon3 & 0xFF, weapon3 >> 8);
+			SetSpawnInfo(playerid, NO_TEAM, 0, 1958.0, 1343.0, 15.0, 269.0, weapon1 & 0xFF, weapon1 >> 8, weapon2 & 0xFF, weapon2 >> 8, weapon3 & 0xFF, weapon3 >> 8);
 			SetPlayerSkin(playerid, Class_Skin(playerclass));
 			YSI_g_sPlayerClass[playerid] = playerclass;
 			if (class == YSI_g_sMiddle) YSI_g_sPlayerClass[playerid] |= CLASS_MIDDLE;
 			if (class == YSI_g_sLeft) YSI_g_sPlayerClass[playerid] |= CLASS_LEFT;
 			if (class == YSI_g_sRight) YSI_g_sPlayerClass[playerid] |= CLASS_RIGHT;
 		}
-		return CallRemoteFunction("OnPlayerRequestClassEx", "ii", playerid, playerclass);
+		DBGP2("Class_OnPlayerRequestClass() end");
+		CallRemoteFunction("OnPlayerRequestClassExFS", "ii", playerid, playerclass);
+		if (YSI_g_sClassOptions & e_CLASS_OPTION_HAS_RC_CALLBACK)
+		{
+			return CallRemoteFunction("OnPlayerRequestClassExGM", "ii", playerid, playerclass);
+		}
+		else
+		{
+			return 1;
+		}
 	}
 #endif
 
@@ -370,8 +451,7 @@ Notes:
 #if !defined YSI_SLAVE_CLASS
 	Class_OnPlayerConnect(playerid)
 	{
-		YSI_g_sPlayerClass[playerid] = 0;
-		YSI_g_sPlayerGroup[playerid] = -1;
+		YSI_g_sPlayerClass[playerid] = 0x00FFFFFF;
 		return 1;
 	}
 #endif
@@ -398,39 +478,47 @@ Notes:
 			static
 				sLastRefuse[MAX_PLAYERS];
 			new
-				playerclass = YSI_g_sPlayerClass[playerid] & 0x0FFFFFFF;
+				playerclass = YSI_g_sPlayerClass[playerid] & 0x00FFFFFF;
 			if (!Class_Enabled(playerclass) || !Bit_Get(YSI_g_sClasses[playerclass][E_CLASS_PLAYERS], playerid)) return 0;
+			SetSpawnInfo(playerid, NO_TEAM, Class_Skin(playerclass), Class_X(playerclass), Class_Y(playerclass), Class_Z(playerclass), Class_A(playerclass), 0, 0, 0, 0, 0, 0);
 			new
-				weapon1 = YSI_g_sClasses[playerclass][E_CLASS_WEAPONS][0],
-				weapon2 = YSI_g_sClasses[playerclass][E_CLASS_WEAPONS][1],
-				weapon3 = YSI_g_sClasses[playerclass][E_CLASS_WEAPONS][2],
-				time = GetTickCount();
-			SetSpawnInfo(playerid, NO_TEAM, Class_Skin(playerclass), 0.0, 0.0, 0.0, 0.0, weapon1 & 0xFF, weapon1 >> 8, weapon2 & 0xFF, weapon2 >> 8, weapon3 & 0xFF, weapon3 >> 8);
-			new
+				time = GetTickCount(),
 				ret;
-			if ((time - sLastRefuse[playerid]) >= 1000) ret = CallRemoteFunction("OnPlayerRequestSpawnEx", "ii", playerid, playerclass);
-			if (!ret)
+			if ((time - sLastRefuse[playerid]) >= 1000)
 			{
-				sLastRefuse[playerid] = time;
-			}
-			#if defined _YSI_SYSTEM_GROUPS
+				CallRemoteFunction("OnPlayerRequestSpawnExFS", "ii", playerid, playerclass);
+				if (YSI_g_sClassOptions & e_CLASS_OPTION_HAS_RS_CALLBACK)
+				{
+					ret = CallLocalFunction("OnPlayerRequestSpawnExGM", "ii", playerid, playerclass);
+				}
 				else
 				{
-					new
-						newgroup = YSI_g_sClasses[playerclass][E_CLASS_GROUP],
-						oldgroup = YSI_g_sPlayerGroup[playerid];
-					if (oldgroup != newgroup)
-					{
-						if (oldgroup != -1) Group_RemovePlayer(oldgroup, playerid);
-						if (newgroup != -1) Group_AddPlayer(newgroup, playerid);
-						YSI_g_sPlayerGroup[playerid] = newgroup;
-					}
+					ret = 1;
 				}
-			#endif
-			if (ret) SpawnPlayer(playerid);
-			return ret;
+			}
+			DBGP4("Class_OnPlayerRequestSpawn() return: %d", ret);
+			if (ret)
+			{
+				#if defined _YSI_SYSTEM_GROUPS
+					new
+						newgroup = YSI_g_sClasses[playerclass][E_CLASS_GROUP];
+					DBGP4("Class_OnPlayerRequestSpawn() newgroup: %d", newgroup);
+					if (newgroup != -1) Group_AddPlayer(newgroup, playerid);
+				#endif
+				if (ret == 1)
+				{
+					return 1;
+				}
+				else if(ret == -1)
+				{
+					YSI_g_sPlayerClass[playerid] |= 0x00FFFFFF;
+					Class_OnPlayerRequestClass(playerid, YSI_g_sLeft);
+				}
+			}
+			sLastRefuse[playerid] = time;
+			return 0;
 		}
-		else return 1;
+		return 1;
 	}
 #endif
 
@@ -448,14 +536,16 @@ Notes:
 #if !defined YSI_SLAVE_CLASS
 	Class_OnPlayerSpawn(playerid)
 	{
+		YSI_g_sPlayerClass[playerid] |= 0x0C000000;
 		new
-			playerclass = YSI_g_sPlayerClass[playerid] & 0x0FFFFFFF,
-			Float:x = (float((YSI_g_sClasses[playerclass][E_CLASS_XY] >> 14) & 0x1FFFF) * ((YSI_g_sClasses[playerclass][E_CLASS_XY] & 0x80000000) ? (-0.1) : (0.1))),
-			Float:y = (float((YSI_g_sClasses[playerclass][E_CLASS_XY] & 0x03FFF) | ((YSI_g_sClasses[playerclass][E_CLASS_ZA] >> 14) & 0x1C000)) * ((YSI_g_sClasses[playerclass][E_CLASS_ZA] & 0x80000000) ? (-0.1) : (0.1))),
-			Float:z = (float((YSI_g_sClasses[playerclass][E_CLASS_ZA] >> 10) & 0x1FFFF) * ((YSI_g_sClasses[playerclass][E_CLASS_ZA] & 0x08000000) ? (-0.1) : (0.1))),
-			Float:a = (float(YSI_g_sClasses[playerclass][E_CLASS_ZA] & 0x3FF) / 2.0);
-		SetPlayerPos(playerid, x, y, z);
-		SetPlayerFacingAngle(playerid, a);
+			playerclass = YSI_g_sPlayerClass[playerid] & 0x00FFFFFF;
+		for (new i = 12; i >= 0; i--)
+		{
+			new
+				weapon = YSI_g_sClasses[playerclass][E_CLASS_WEAPONS][i];
+			if ((weapon & 0xFF) == WEAPON_ARMOUR) SetPlayerArmour(playerid, 100.0);
+			else if (weapon) GivePlayerWeapon(playerid, weapon & 0xFF, weapon >> 8);
+		}
 		return 0;
 	}
 #endif
@@ -469,21 +559,95 @@ Params:
 	Float:y - Y spawn location.
 	Float:z - Z spawn location.
 	Float:a - A spawn location.
-	weapon1 - First weapon to give the class.
-	ammo1 - Amount of ammo for first weapon.
-	weapon2 - Second weapon to give the class.
-	ammo2 - Amount of ammo for second weapon.
-	weapon3 - Third weapon to give the class.
-	ammo3 - Amount of ammo for third weapon.
+	... - Spawn weapons and ammo (weapon then ammo)
 Return:
 	-
 Notes:
 	Pretty much AddPlayerClass but allows greater control over the classes.
+	Now has infinate (13) spawn weapons.
 -*----------------------------------------------------------------------------*/
 
-stock Class_Add(skin, Float:x, Float:y, Float:z, Float:a, weapon1, ammo1, weapon2, ammo2, weapon3, ammo3)
+stock Class_Add(skin, Float:x, Float:y, Float:z, Float:a, ...)
 {
+	new
+		num = numargs(),
+		weap = 5,
+		slot,
+		weapons[13];
+	if (!(num & 0x01)) num--;
+	while (weap < num && slot < 13)
+	{
+		weapons[slot++] = (getarg(weap++) & 0xFF) | (getarg(weap++) << 8);
+	}
 	#if !defined YSI_SLAVE_CLASS
+		return Class_AddClass(skin, x, y, z, a, weapons, slot, -1, -1);
+	#else
+		CallRemoteFunction("Class_AddRemote", "iffffaiii", skin, x, y, z, a, weapons, slot, -1, -1);
+		return getproperty(0, "LReqClass");
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Class_AddEx
+Params:
+	forgroup - Group that can use the skin.
+	setgroup - Group to add the player to on selection.
+	skin - Skin of the class.
+	Float:x - X spawn location.
+	Float:y - Y spawn location.
+	Float:z - Z spawn location.
+	Float:a - A spawn location.
+	... - Spawn weapons and ammo (weapon then ammo)
+Return:
+	-
+Notes:
+	Pretty much AddPlayerClass but allows greater control over the classes.
+	Now has infinate (13) spawn weapons.
+-*----------------------------------------------------------------------------*/
+
+stock Class_AddEx(forgroup, setgroup, skin, Float:x, Float:y, Float:z, Float:a, ...)
+{
+	new
+		num = numargs(),
+		weap = 7,
+		slot,
+		weapons[13];
+	if (!(num & 0x01)) num--;
+	while (weap < num && slot < 13)
+	{
+		weapons[slot++] = (getarg(weap++) & 0xFF) | (getarg(weap++) << 8);
+	}
+	#if !defined YSI_SLAVE_CLASS
+		return Class_AddClass(skin, x, y, z, a, weapons, slot, forgroup, setgroup);
+	#else
+		CallRemoteFunction("Class_AddRemote", "iffffaiii", skin, x, y, z, a, weapons, slot, forgroup, setgroup);
+		return getproperty(0, "LReqClass");
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Class_AddClass
+Params:
+	skin - Skin of the class.
+	Float:x - X spawn location.
+	Float:y - Y spawn location.
+	Float:z - Z spawn location.
+	Float:a - A spawn location.
+	weapons[] - Array of spawn weapon data.
+	count - Number of weapons added.
+	forgroup - Group that can use the class.
+	asgroup - Group to assign people to with this class.
+Return:
+	-
+Notes:
+	Does the hard work.
+-*----------------------------------------------------------------------------*/
+
+#if !defined YSI_SLAVE_CLASS
+	stock Class_AddClass(skin, Float:x, Float:y, Float:z, Float:a, weapons[], count, forgroup, asgroup)
+	{
 		new
 			i;
 		while (i < MAX_CLASSES)
@@ -493,24 +657,41 @@ stock Class_Add(skin, Float:x, Float:y, Float:z, Float:a, weapon1, ammo1, weapon
 		}
 		if (i == MAX_CLASSES) return -1;
 		YSI_g_sClasses[i][E_CLASS_FLAGS] = 	e_CLASS_FLAGS_ACTIVE | e_CLASS_FLAGS:skin | e_CLASS_FLAGS_ENABLED;
+		YSI_g_sClasses[i][E_CLASS_X] = x;
+		YSI_g_sClasses[i][E_CLASS_Y] = y;
+		YSI_g_sClasses[i][E_CLASS_Z] = z;
+		YSI_g_sClasses[i][E_CLASS_A] = a;
 		new
-			ry = floatround((y) * 10);
-		YSI_g_sClasses[i][E_CLASS_XY] = ((floatround(x * 10) & 0x3FFFF) << 14) | (ry & 0x3FFF);
-		YSI_g_sClasses[i][E_CLASS_ZA] = ((ry & 0x3C000) << 14) | ((floatround(z * 10) & 0x3FFFF) << 10) | (floatround(a * 2) & 0x3FF);
-		YSI_g_sClasses[i][E_CLASS_WEAPONS][0] = weapon1 | (ammo1 << 8);
-		YSI_g_sClasses[i][E_CLASS_WEAPONS][1] = weapon2 | (ammo2 << 8);
-		YSI_g_sClasses[i][E_CLASS_WEAPONS][2] = weapon3 | (ammo3 << 8);
-		YSI_g_sClasses[i][E_CLASS_GROUP] = -1;
+			j;
+		while (j < count)
+		{
+			YSI_g_sClasses[i][E_CLASS_WEAPONS][j] = weapons[j];
+			j++;
+		}
+		while (j < 13)
+		{
+			YSI_g_sClasses[i][E_CLASS_WEAPONS][j] = 0;
+			j++;
+		}
 		#if defined _YSI_SYSTEM_GROUPS
-			Group_SetDefaultClass(i, 1);
+			YSI_g_sClasses[i][E_CLASS_GROUP] = asgroup;
+			if (forgroup == -1)
+			{
+				Group_SetDefaultClass(i, 1);
+			}
+			else
+			{
+				Group_SetDefaultClass(i, 0);
+				Group_SetClass(forgroup, i, 1);
+			}
+		#else
+			#pragma unused forgroup, asgroup
 		#endif
 		YSI_g_sClassCount++;
+		setproperty(0, "LReqClass", i);
 		return i;
-	#else
-		CallRemoteFunction("Class_AddRemote", "iffffiiiiiiii", skin, x, y, z, a, weapon1, ammo1, weapon2, ammo2, weapon3, ammo3, -1, -1);
-		return getproperty(0, "LReqClass");
-	#endif
-}
+	}
+#endif
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -521,12 +702,8 @@ Params:
 	Float:y - Y spawn location.
 	Float:z - Z spawn location.
 	Float:a - A spawn location.
-	weapon1 - First weapon to give the class.
-	ammo1 - Amount of ammo for first weapon.
-	weapon2 - Second weapon to give the class.
-	ammo2 - Amount of ammo for second weapon.
-	weapon3 - Third weapon to give the class.
-	ammo3 - Amount of ammo for third weapon.
+	weapons - Weapon and ammo data.
+	count - Number of weapons.
 	forgroup - Group that can use the class.
 	asgroup - Group to assign people to with this class.
 Return:
@@ -536,42 +713,9 @@ Notes:
 -*----------------------------------------------------------------------------*/
 
 #if !defined YSI_SLAVE_CLASS
-	public Class_AddRemote(skin, Float:x, Float:y, Float:z, Float:a, weapon1, ammo1, weapon2, ammo2, weapon3, ammo3, forgroup, asgroup)
+	public Class_AddRemote(skin, Float:x, Float:y, Float:z, Float:a, weapons[], count, forgroup, asgroup)
 	{
-		new
-			i;
-		while (i < MAX_CLASSES)
-		{
-			if (!Class_IsActive(i)) break;
-			i++;
-		}
-		if (i == MAX_CLASSES)
-		{
-			setproperty(0, "LReqClass", -1);
-			return;
-		}
-		YSI_g_sClasses[i][E_CLASS_FLAGS] = 	e_CLASS_FLAGS_ACTIVE | e_CLASS_FLAGS:skin | e_CLASS_FLAGS_ENABLED;
-		new
-			ry = floatround((y) * 10);
-		YSI_g_sClasses[i][E_CLASS_XY] = ((floatround(x * 10) & 0x3FFFF) << 14) | (ry & 0x3FFF);
-		YSI_g_sClasses[i][E_CLASS_ZA] = ((ry & 0x3C000) << 14) | ((floatround(z * 10) & 0x3FFFF) << 10) | (floatround(a * 2) & 0x3FF);
-		YSI_g_sClasses[i][E_CLASS_WEAPONS][0] = weapon1 | (ammo1 << 8);
-		YSI_g_sClasses[i][E_CLASS_WEAPONS][1] = weapon2 | (ammo2 << 8);
-		YSI_g_sClasses[i][E_CLASS_WEAPONS][2] = weapon3 | (ammo3 << 8);
-		YSI_g_sClasses[i][E_CLASS_GROUP] = asgroup;
-		#if defined _YSI_SYSTEM_GROUPS
-			if (forgroup == -1)
-			{
-				Group_SetDefaultClass(i, 1);
-			}
-			else
-			{
-				Group_SetDefaultClass(i, 0);
-				Group_SetClass(forgroup, i, 1);
-			}
-		#endif
-		YSI_g_sClassCount++;
-		setproperty(0, "LReqClass", i);
+		return Class_AddClass(skin, x, y, z, a, weapons, count, forgroup, asgroup);
 	}
 #endif
 
@@ -585,12 +729,7 @@ Params:
 	Float:y - Y spawn location.
 	Float:z - Z spawn location.
 	Float:a - A spawn location.
-	weapon1 - First weapon to give the class.
-	ammo1 - Amount of ammo for first weapon.
-	weapon2 - Second weapon to give the class.
-	ammo2 - Amount of ammo for second weapon.
-	weapon3 - Third weapon to give the class.
-	ammo3 - Amount of ammo for third weapon.
+	... - Weapon data.
 Return:
 	-
 Notes:
@@ -598,17 +737,22 @@ Notes:
 -*----------------------------------------------------------------------------*/
 
 #if defined _YSI_SYSTEM_GROUPS
-	stock Class_AddForGroup(group, skin, Float:x, Float:y, Float:z, Float:a, weapon1, ammo1, weapon2, ammo2, weapon3, ammo3)
+	stock Class_AddForGroup(group, skin, Float:x, Float:y, Float:z, Float:a, ...)
 	{
+		new
+			num = numargs(),
+			weap = 6,
+			slot,
+			weapons[13];
+		if (num & 0x01) num--;
+		while (weap < num && slot < 13)
+		{
+			weapons[slot++] = (getarg(weap++) & 0xFF) | (getarg(weap++) << 8);
+		}
 		#if !defined YSI_SLAVE_CLASS
-			new
-				classid = Class_Add(skin, x, y, z, a, weapon1, ammo1, weapon2, ammo2, weapon3, ammo3);
-			if (classid == -1) return -1;
-			Group_SetDefaultClass(classid, 0);
-			Group_SetClass(group, classid, 1);
-			return classid;
+			return Class_AddClass(skin, x, y, z, a, weapons, slot, group, -1);
 		#else
-			CallRemoteFunction("Class_AddRemote", "iffffiiiiiiii", skin, x, y, z, a, weapon1, ammo1, weapon2, ammo2, weapon3, ammo3, group, -1);
+			CallRemoteFunction("Class_AddRemote", "iffffaiii", skin, x, y, z, a, weapons, slot, group, -1);
 			return getproperty(0, "LReqClass");
 		#endif
 	}
@@ -627,12 +771,7 @@ Params:
 	Float:y - Y spawn location.
 	Float:z - Z spawn location.
 	Float:a - A spawn location.
-	weapon1 - First weapon to give the class.
-	ammo1 - Amount of ammo for first weapon.
-	weapon2 - Second weapon to give the class.
-	ammo2 - Amount of ammo for second weapon.
-	weapon3 - Third weapon to give the class.
-	ammo3 - Amount of ammo for third weapon.
+	... - Spawn weapons.
 Return:
 	-
 Notes:
@@ -640,16 +779,22 @@ Notes:
 -*----------------------------------------------------------------------------*/
 
 #if defined _YSI_SYSTEM_GROUPS
-	stock Class_AddWithGroupSet(group, skin, Float:x, Float:y, Float:z, Float:a, weapon1, ammo1, weapon2, ammo2, weapon3, ammo3)
+	stock Class_AddWithGroupSet(group, skin, Float:x, Float:y, Float:z, Float:a, ...)
 	{
+		new
+			num = numargs(),
+			weap = 6,
+			slot,
+			weapons[13];
+		if (num & 0x01) num--;
+		while (weap < num && slot < 13)
+		{
+			weapons[slot++] = (getarg(weap++) & 0xFF) | (getarg(weap++) << 8);
+		}
 		#if !defined YSI_SLAVE_CLASS
-			new
-				classid = Class_Add(skin, x, y, z, a, weapon1, ammo1, weapon2, ammo2, weapon3, ammo3);
-			if (classid == -1) return -1;
-			YSI_g_sClasses[classid][E_CLASS_GROUP] = group;
-			return classid;
+			return Class_AddClass(skin, x, y, z, a, weapons, slot, -1, group);
 		#else
-			CallRemoteFunction("Class_AddRemote", "iffffiiiiiiii", skin, x, y, z, a, weapon1, ammo1, weapon2, ammo2, weapon3, ammo3, -1, group);
+			CallRemoteFunction("Class_AddRemote", "iffffaiii", skin, x, y, z, a, weapons, slot, -1, group);
 			return getproperty(0, "LReqClass");
 		#endif
 	}
@@ -702,6 +847,27 @@ stock Class_Disable(classid)
 Function:
 	Class_Remote
 Params:
+	allow - Wether or not to allow changing class.
+Return:
+	-
+Notes:
+	Sets wether or not people can change class after first spawning.
+-*----------------------------------------------------------------------------*/
+
+stock Class_AllowReselection(allow)
+{
+	#if !defined YSI_SLAVE_CLASS
+		if (allow) YSI_g_sClassOptions &= ~e_CLASS_OPTION_NORE;
+		else YSI_g_sClassOptions |= e_CLASS_OPTION_NORE;
+	#else
+		CallRemoteFunction("Class_Remote", "iii", allow, 0, E_CLASS_INS_ALLOW_RESELECT);
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Class_Remote
+Params:
 	ident - Item to perform action on.
 	info - Data for action.
 	instruction - Action to perform.
@@ -735,6 +901,31 @@ Notes:
 			case E_CLASS_INS_REMOVE_PLAYER:
 			{
 				if (Class_IsValid(ident) && info >= 0 && info < MAX_PLAYERS) Bit_Set(YSI_g_sClasses[ident][E_CLASS_PLAYERS], info, 0, PLAYER_BIT_ARRAY);
+			}
+			case E_CLASS_INS_ALLOW_RESELECT:
+			{
+				if (ident) YSI_g_sClassOptions &= ~e_CLASS_OPTION_NORE;
+				else YSI_g_sClassOptions |= e_CLASS_OPTION_NORE;
+			}
+			case E_CLASS_INS_LSE:
+			{
+				if (ident) YSI_g_sClassOptions |= e_CLASS_OPTION_LOGIN_SELECT;
+				else YSI_g_sClassOptions &= ~e_CLASS_OPTION_LOGIN_SELECT;
+			}
+			case E_CLASS_INS_LSP:
+			{
+				if (ident) YSI_g_sClassOptions |= e_CLASS_OPTION_LOGIN_SPAWN;
+				else YSI_g_sClassOptions &= ~e_CLASS_OPTION_LOGIN_SPAWN;
+			}
+			case E_CLASS_INS_RSE:
+			{
+				if (ident) YSI_g_sClassOptions |= e_CLASS_OPTION_REG_SELECT;
+				else YSI_g_sClassOptions &= ~e_CLASS_OPTION_REG_SELECT;
+			}
+			case E_CLASS_INS_RSP:
+			{
+				if (ident) YSI_g_sClassOptions |= e_CLASS_OPTION_REG_SPAWN;
+				else YSI_g_sClassOptions &= ~e_CLASS_OPTION_REG_SPAWN;
 			}
 		}
 	}
@@ -780,5 +971,89 @@ stock Class_SetPlayer(classid, playerid, set)
 	#else
 		if (set) CallRemoteFunction("Class_Remote", "iii", classid, playerid, E_CLASS_INS_ADD_PLAYER);
 		else CallRemoteFunction("Class_Remote", "iii", classid, playerid, E_CLASS_INS_REMOVE_PLAYER);
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Class_RequireSelectionLogin
+Params:
+	allow - Wether or not people must login.
+Return:
+	-
+Notes:
+	Don't let registered people select a class till they log in.
+-*----------------------------------------------------------------------------*/
+
+stock Class_RequireSelectionLogin(allow)
+{
+	#if !defined YSI_SLAVE_CLASS
+		if (allow) YSI_g_sClassOptions |= e_CLASS_OPTION_LOGIN_SELECT;
+		else YSI_g_sClassOptions &= ~e_CLASS_OPTION_LOGIN_SELECT;
+	#else
+		CallRemoteFunction("Class_Remote", "iii", allow, 0, E_CLASS_INS_LSE);
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Class_RequireSpawnLogin
+Params:
+	allow - Wether or not people must login.
+Return:
+	-
+Notes:
+	Don't let registered people spawn till they log in.
+-*----------------------------------------------------------------------------*/
+
+stock Class_RequireSpawnLogin(allow)
+{
+	#if !defined YSI_SLAVE_CLASS
+		if (allow) YSI_g_sClassOptions |= e_CLASS_OPTION_LOGIN_SPAWN;
+		else YSI_g_sClassOptions &= ~e_CLASS_OPTION_LOGIN_SPAWN;
+	#else
+		CallRemoteFunction("Class_Remote", "iii", allow, 0, E_CLASS_INS_LSP);
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Class_RequireSelectionReg
+Params:
+	allow - Wether or not people must register.
+Return:
+	-
+Notes:
+	Don't let people select a class till they register.
+-*----------------------------------------------------------------------------*/
+
+stock Class_RequireSelectionReg(allow)
+{
+	#if !defined YSI_SLAVE_CLASS
+		if (allow) YSI_g_sClassOptions |= e_CLASS_OPTION_REG_SELECT;
+		else YSI_g_sClassOptions &= ~e_CLASS_OPTION_REG_SELECT;
+	#else
+		CallRemoteFunction("Class_Remote", "iii", allow, 0, E_CLASS_INS_RSE);
+	#endif
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Class_RequireSpawnReg
+Params:
+	allow - Wether or not people must register.
+Return:
+	-
+Notes:
+	Don't let people spawn till they register.
+-*----------------------------------------------------------------------------*/
+
+stock Class_RequireSpawnReg(allow)
+{
+	#if !defined YSI_SLAVE_CLASS
+		if (allow) YSI_g_sClassOptions |= e_CLASS_OPTION_REG_SPAWN;
+		else YSI_g_sClassOptions &= ~e_CLASS_OPTION_REG_SPAWN;
+	#else
+		CallRemoteFunction("Class_Remote", "iii", allow, 0, E_CLASS_INS_RSP);
 	#endif
 }

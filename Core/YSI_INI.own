@@ -25,6 +25,8 @@ Legal:
 Version:
 	0.2
 Changelog:
+	20/02/08:
+		Added INI_RemoveEntry.
 	18/08/07:
 		Fixed bug reading identifiers starting with a tag (i.e. names).
 		Added local file reading for non-serverwide broadcasting.
@@ -71,6 +73,7 @@ Functions:
 		INI_WriteString - Writes a string to an INI.
 		INI_WriteInt - Writes an int to an INI.
 		INI_WriteFloat - Writes a float to an INI.
+		INI_RemoveEntry - Remove an entry from a file.
 	Static:
 		INI_WriteBuffer - Writes an INI's buffer to the file.
 		INI_AddToBuffer - Adds a string to an INI buffer.
@@ -615,6 +618,25 @@ static stock INI_AddToBuffer(INI:file, name[], data[])
 
 /*----------------------------------------------------------------------------*-
 Function:
+	INI_RemoveEntry
+Params:
+	INI:file - File to write to.
+	name[] - Item to remove.
+Return:
+	-
+Notes:
+	Wrapper for INI_AddToBuffer for removing data.
+-*----------------------------------------------------------------------------*/
+
+stock INI_RemoveEntry(INI:file, name[])
+{
+	static
+		sData[2] = {-1, 0};
+	INI_AddToBuffer(file, name, sData);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
 	INI_WriteString
 Params:
 	INI:file - File to write to.
@@ -666,30 +688,6 @@ Notes:
 
 stock INI_WriteFloat(INI:file, name[], Float:data, accuracy = 6)
 {
-/*	new
-		ref = 1,
-		digit,
-		pos,
-		str[32];
-	while (data > ref) ref *= 10;
-	while (ref)
-	{
-		digit = data / ref;
-		str[pos++] = digit + '0';
-		data -= digit * ref;
-		ref /= 10;
-	}
-	if (accuracy) str[pos++] = '.';
-	digit = 0;
-	while (accuracy--)
-	{
-		digit *= 10;
-		data *= 10.0;
-		data -= digit;
-		digit = data;
-		str[pos++] = digit + '0';
-	}
-	str[pos] = '\0';*/
 	new
 		str[32];
 	format(str, sizeof (str), "%.*f", accuracy, data);
@@ -744,7 +742,7 @@ static stock INI_WriteBuffer(INI:file)
 					pos = 1;
 				for (new i = 0; line[i]; i++)
 				{
-					if (line[i] == ';') goto INI_WriteBuffer_cont2;
+					if (line[i] == ';') goto INI_WriteBuffer_cont1;
 					else if (line[i] > ' ')
 					{
 						pos = 0;
@@ -766,9 +764,12 @@ static stock INI_WriteBuffer(INI:file)
 					{
 						if (!Bit_GetBit(read, start))
 						{
-							format(form, sizeof (form), "%s = %s" INI_NEW_LINE, YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_NAME], YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT]);
+							if (YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT][0] != -1)
+							{
+								format(form, sizeof (form), "%s = %s" INI_NEW_LINE, YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_NAME], YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT]);
+								fwrite(buffer, form);
+							}
 							Bit_Set(read, start, 1, INI_BUFFER_BITS);
-							fwrite(buffer, form);
 						}
 						start = YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_NEXT];
 					}
@@ -797,21 +798,33 @@ static stock INI_WriteBuffer(INI:file)
 					blank = 0;
 					while (start != -1)
 					{
-						if (!Bit_GetBit(read, start))
+						if (!Bit_GetBit(read, start) && !strcmp(name, YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_NAME]))
 						{
-							if (strcmp(name, YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_NAME])) goto INI_WriteBuffer_cont1;
-							if (pos != -1) format(line, sizeof (line), "%s = %s %s", name, YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT], line[pos]);
-							else format(line, sizeof (line), "%s = %s" INI_NEW_LINE, name, YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT]);
 							Bit_Set(read, start, 1, INI_BUFFER_BITS);
-							break;
+							if (YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT][0] == -1)
+							{
+								goto INI_WriteBuffer_cont2;
+							}
+							if (pos != -1)
+							{
+								format(line, sizeof (line), "%s = %s %s", name, YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT], line[pos]);
+							}
+							else
+							{
+								format(line, sizeof (line), "%s = %s" INI_NEW_LINE, name, YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT]);
+							}
+							start = -1;
 						}
-						INI_WriteBuffer_cont1:
-						start = YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_NEXT];
+						else
+						{
+							start = YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_NEXT];
+						}
 					}
 					start = liststart;
 				}
-				INI_WriteBuffer_cont2:
+				INI_WriteBuffer_cont1:
 				fwrite(buffer, line);
+				INI_WriteBuffer_cont2:
 			}
 			while (start != -1)
 			{
@@ -833,8 +846,11 @@ static stock INI_WriteBuffer(INI:file)
 				fwrite(buffer, line);
 				while (start != -1)
 				{
-					format(line, sizeof (line), "%s = %s" INI_NEW_LINE, YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_NAME], YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT]);
-					fwrite(buffer, line);
+					if (YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT][0] != -1)
+					{
+						format(line, sizeof (line), "%s = %s" INI_NEW_LINE, YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_NAME], YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_TEXT]);
+						fwrite(buffer, line);
+					}
 					start = YSI_g_sINIWriteBuffer[_:file][start][E_INI_WRITE_NEXT];
 				}
 			}

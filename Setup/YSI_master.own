@@ -26,6 +26,8 @@ Legal:
 Version:
 	0.1
 Changelog:
+	06/01/08:
+		Added code to not pass data if no other script exists.
 	17/11/07:
 		Added code for a script to remove itself from the global list.
 	11/10/07:
@@ -177,7 +179,7 @@ Master_Master()
 		}
 		setproperty(0, YSIM_MASTER, masters);
 	}
-	if (YSI_gMasterID == -1) printf("*** Internal Error! MasterID not assigned");
+	DBGC1(if (YSI_gMasterID == -1) printf("*** Internal Error! MasterID not assigned"););
 	return 1;
 }
 
@@ -190,6 +192,7 @@ Return:
 	-
 Notes:
 	Destructor.  Hands over processing of things to another script.
+	Now only passes over if another master exists.
 -*----------------------------------------------------------------------------*/
 
 Master_@Master()
@@ -209,7 +212,10 @@ Master_@Master()
 	{
 		if (YSI_g_sMasters & (1 << i))
 		{
-			CallLocalFunction(YSI_g_sMasterData[i], "i", E_MASTER_RELINQUISH | YSI_gMasterID);
+			if (Master_CheckProp(YSI_g_sMasterData[i]))
+			{
+				CallLocalFunction(YSI_g_sMasterData[i], "i", E_MASTER_RELINQUISH | YSI_gMasterID);
+			}
 		}
 		else
 		{
@@ -239,11 +245,11 @@ Notes:
 		YSIM_Objects
 		YSIM_Properties
 		YSIM_Groups
+		YSIM_Pickups
 	
 	Need to make:
 		YSIM_Race
 		YSIM_Zones
-		YSIM_Pickups
 		YSIM_Live
 		YSIM_Callbacks
 -*----------------------------------------------------------------------------*/
@@ -274,7 +280,7 @@ Return:
 	-
 Notes:
 	Asserts an alternate script as controlling certain aspects.  Two functions
-	so some scripts can be set as more likely that others to get control, RelHi
+	so some scripts can be set as more likely than others to get control, RelHi
 	is called before RelLo so RelHi scripts will get control before RelLo
 	scripts get a chance.
 -*----------------------------------------------------------------------------*/

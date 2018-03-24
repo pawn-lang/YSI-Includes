@@ -25,8 +25,10 @@ Legal:
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 	MA 02110-1301, USA.
 Version:
-	0.1
+	0.2
 Changelog:
+	01/12/08:
+		Rewrote most of the code to use shifts and ands not divs and mods.
 	24/06/07:
 		Added Bit_GetBit
 	18/06/07:
@@ -57,7 +59,7 @@ Functions:
 Callbacks:
 	-
 Definitions:
-	-
+	CELLSHIFT - Number of bits that can hold "cellbits"
 Enums:
 	-
 Macros:
@@ -74,6 +76,20 @@ Commands:
 Compile options:
 	-
 -*----------------------------------------------------------------------------*/
+
+#if cellbits == 32
+	#define CELLSHIFT (5)
+#else
+	#if cellbits == 64
+		#define CELLSHIFT (6)
+	#else
+		#if cellbits == 16
+			#define CELLSHIFT (4)
+		#else
+			#error Unkown cell size
+		#endif
+	#endif
+#endif
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -102,7 +118,7 @@ Notes:
 -*----------------------------------------------------------------------------*/
 
 #define Bit_GetBit(%1,%2) \
-	((%1[(%2) / cellbits]) & Bit:(1 << ((%2) % cellbits)))
+	((%1[(%2) >>> CELLSHIFT]) & Bit:(1 << ((%2) & (cellbits - 1))))
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -119,11 +135,6 @@ Notes:
 
 #define Bit_Get(%1,%2) \
 	_:Bit_GetBit(Bit:%1, _:%2)
-/*stock Bit_Get(Bit:array[], slot, size = sizeof (array))
-{
-	if (slot / cellbits >= size) return 0;
-	return (Bit_GetBit(array, slot) ? (1) : (0));
-}*/
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -138,7 +149,7 @@ Notes:
 -*----------------------------------------------------------------------------*/
 
 #define Bit_Let(%1,%2) \
-	%1[(%2) / cellbits] |= Bit:(1 << ((%2) % cellbits))
+	%1[(%2) >>> CELLSHIFT] |= Bit:(1 << ((%2) & (cellbits - 1)))
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -153,7 +164,7 @@ Notes:
 -*----------------------------------------------------------------------------*/
 
 #define Bit_Vet(%1,%2) \
-	%1[(%2) / cellbits] &= Bit:~(1 << ((%2) % cellbits))
+	%1[(%2) >>> CELLSHIFT] &= Bit:~(1 << ((%2) & (cellbits - 1)))
 
 /*----------------------------------------------------------------------------*-
 Function:
@@ -171,7 +182,7 @@ Notes:
 
 stock Bit_Set(Bit:array[], slot, set, size)
 {
-	if (slot / cellbits >= size) return;
+	if (slot >>> CELLSHIFT >= size) return;
 	if (set) Bit_Let(array, slot);
 	else Bit_Vet(array, slot);
 }

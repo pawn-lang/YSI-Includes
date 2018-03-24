@@ -1,0 +1,481 @@
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Player_OnPlayerDisconnect
+Params:
+	playerid - Player who disconnected.
+	reason - Why they left.
+Return:
+	-
+Notes:
+	Called last to save a player's stats.
+-*----------------------------------------------------------------------------*/
+
+Player_OnPlayerDisconnect(playerid, reason)
+{
+	if (YSI_g_sPlayerData[playerid][E_PLAYER_GD_FLAGS] & e_PLAYER_GD_FLAGS_LOGIN)
+	{
+		new
+			filename[128],
+			yid = YSI_g_sPlayerData[playerid][E_PLAYER_GD_YID];
+		#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsMaster)
+			{
+				new
+					INI:logins = INI_Open(USER_FILE_PATH "logins.ysi");
+				if (logins != INI_NO_FILE)
+				{
+					format(filename, sizeof (filename), "logged_in_%d", playerid);
+					INI_SetTag(logins, filename);
+					new
+						ip = GetIP(playerid);
+					INI_WriteInt(logins, "IP", ip);
+					INI_WriteString(logins, "name", ReturnPlayerName(playerid));
+					INI_WriteInt(logins, "time", timestamp());
+					INI_WriteInt(logins, "yid", yid);
+					INI_Close(logins);
+				}
+			}
+		#endif
+		format(filename, sizeof (filename), USER_FILE_PATH "%0" #MAX_INDEX_LENGTH "d.INI", yid);
+		YSI_g_sLogoutFile = INI_Open(filename);
+		if (YSI_g_sLogoutFile != INI_NO_FILE)
+		{
+			#if defined _YSI_SETUP_MASTER
+			if (YSI_g_sIsMaster)
+			#endif
+			{
+				INI_SetTag(YSI_g_sLogoutFile, "ysi_core");
+				#if defined _YSI_CORE_LANGUAGES
+					INI_WriteInt(YSI_g_sLogoutFile, "language", _:YSI_g_sPlayerData[playerid][E_PLAYER_GD_LANGUAGE]);
+				#endif
+				#if defined _YSI_CORE_COMMANDS
+					for (new i = 0; i < MAX_PLAYER_SHORTCUTS; i++)
+					{
+						if (YSI_g_sPlayerShortcuts[playerid][i][0])
+						{
+							new
+								name[10];
+							format(name, sizeof (name), "command_%c", 'a' + i);
+							INI_WriteString(YSI_g_sLogoutFile, name, YSI_g_sPlayerShortcuts[playerid][i]);
+						}
+					}
+				#endif
+				INI_SetTag(YSI_g_sLogoutFile, "ysi_names");
+				INI_WriteString(YSI_g_sLogoutFile, ReturnPlayerName(playerid), "name");
+			}
+			CallLocalFunction("OnPlayerLogout", "ii", playerid, yid);
+			#if defined _YSI_SYSTEM_GROUPS
+				Group_SavePlayer(playerid);
+			#endif
+			INI_Close(YSI_g_sLogoutFile);
+		}
+	}
+	YSI_g_sLogoutFile = INI_NO_FILE;
+	YSI_g_sPlayerData[playerid][E_PLAYER_GD_FLAGS] = e_PLAYER_GD_FLAGS:0;
+	#if defined _YSI_CORE_LANGUAGES
+		YSI_g_sPlayerData[playerid][E_PLAYER_GD_LANGUAGE] = Language:0;
+	#endif
+	YSI_g_sPlayerData[playerid][E_PLAYER_GD_YID] = -1;
+	for (new i = 0; i < MAX_PLAYER_SHORTCUTS; i++)
+	{
+		YSI_g_sPlayerShortcuts[playerid][i][0] = '\0';
+	}
+	return 1;
+	#pragma unused reason
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Player_WriteString
+Params:
+	name[] - Data name.
+	data[] - String data.
+Return:
+	-
+Notes:
+	Wrapper for INI_WriteString.  Uses the internal ini pointer, designed for
+	future seamless database migration.
+-*----------------------------------------------------------------------------*/
+
+stock Player_WriteString(name[], data[])
+{
+	INI_WriteString(YSI_g_sLogoutFile, name, data);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Player_WriteInt
+Params:
+	name[] - Data name.
+	data - Integer data.
+Return:
+	-
+Notes:
+	Wrapper for INI_WriteInt.  Uses the internal ini pointer, designed for
+	future seamless database migration.
+-*----------------------------------------------------------------------------*/
+
+stock Player_WriteInt(name[], data)
+{
+	INI_WriteInt(YSI_g_sLogoutFile, name, data);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Player_WriteFloat
+Params:
+	name[] - Data name.
+	Float:data - Float data.
+	accuracy - number of decimal places to write.
+Return:
+	-
+Notes:
+	Wrapper for INI_WriteFloat.  Uses the internal ini pointer, designed for
+	future seamless database migration.
+-*----------------------------------------------------------------------------*/
+
+stock Player_WriteFloat(name[], Float:data, accuracy = 6)
+{
+	INI_WriteFloat(YSI_g_sLogoutFile, name, data, accuracy);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Player_SetTag
+Params:
+	tag[] - Tag to add subsequent data to.
+Return:
+	-
+Notes:
+	Wrapper for INI_SetTag.  Uses the internal ini pointer, designed for
+	future seamless database migration.
+-*----------------------------------------------------------------------------*/
+
+stock Player_SetTag(tag[])
+{
+	INI_SetTag(YSI_g_sLogoutFile, tag);
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Player_AddToGroup
+Params:
+	playerid - Player to add.
+	password[] - Entered password.
+	group[] - Group to add the player to.
+	reg - Registering for the first time.
+Return:
+	-
+Notes:
+	Adds a player to a registed nick group (like "ns group" on IRC), not to an
+	internal group.  If reg is 1 then they are trying to register a new group.
+	
+	Verifies that the data is valid for the required action.  Uses multiple
+	index files (one master for current user count and 28 others for grouping
+	nicknames by start letter) for fast searching of usernames.
+-*----------------------------------------------------------------------------*/
+
+static stock Player_AddToGroup(playerid, password[], group[] = "", reg = 1)
+{
+	new
+		name[MAX_PLAYER_NAME];
+	GetPlayerName(playerid, name, sizeof (name));
+	new
+		namelen = strlen(name),
+		grouplen = strlen(group),
+		filename[] = USER_FILE_PATH "ind_X.YSI",
+		File:fIndex,
+		ch = group[0],
+		uid = -1;
+	if (!ch) ch = name[0];
+	filename[sizeof (filename) - 6] = ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) ? (ch | 0x20) : ((ch >= '0' && ch <= '9') ? ('0') : ('_'));
+	fIndex = fopen(filename, io_read);
+	if (fIndex)
+	{
+		new
+			line[53];
+		while (fread(fIndex, line))
+		{
+			new
+				len = strlen(line);
+			if (len != INDEX_DATA_LINE_LENGTH && len != INDEX_DATA_LINE_LENGTH + 1) continue;
+			if (!strcmp(line[MAX_INDEX_LENGTH + 1], name, false, namelen) && line[MAX_INDEX_LENGTH + 1 + namelen] == ' ')
+			{
+				Text_Send(playerid, "YSI_REG_TAKEN");
+				fclose(fIndex);
+				return 0;
+			}
+			else if (!reg && !strcmp(line[MAX_INDEX_LENGTH + 1], group, false, grouplen) && line[MAX_INDEX_LENGTH + 1 + namelen] == ' ')
+			{
+				new
+					ret;
+				if (!strcmp(line[MAX_INDEX_LENGTH + 1 + MAX_PLAYER_NAME + 1], password, false, MAX_PASSWORD_LENGTH))
+				{
+					line[MAX_INDEX_LENGTH] = '\0';
+					uid = strval(line);
+					if (Player_AddUser(playerid, name, password, uid)) ret = Player_LoginCall(playerid, uid);
+				}
+				else Text_Send(playerid, "YSI_LOGIN_WRONG");
+				fclose(fIndex);
+				return ret;
+			}
+		}
+		fclose(fIndex);
+		if (Player_AddUser(playerid, name, password, uid)) return Player_LoginCall(playerid, uid);
+	}
+	else if (fexist(filename)) Text_Send(playerid, "YSI_LOGIN_INDERR");
+	else if (Player_AddUser(playerid, name, password, uid)) return Player_LoginCall(playerid, uid);
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Player_IsRegistered
+Params:
+	playerid - Player to check.
+	&yid - Return for their ID.
+Return:
+	-
+Notes:
+	Check if a player's name is registered.
+-*----------------------------------------------------------------------------*/
+
+stock Player_IsRegistered(playerid, &yid = -1)
+{
+	new
+		name[MAX_PLAYER_NAME];
+	GetPlayerName(playerid, name, sizeof (name));
+	new
+		namelen = strlen(name),
+		filename[] = USER_FILE_PATH "ind_X.YSI",
+		File:fIndex,
+		uid = -1,
+		ch = name[0];
+	filename[sizeof (filename) - 6] = ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) ? (ch | 0x20) : ((ch >= '0' && ch <= '9') ? ('0') : ('_'));
+	fIndex = fopen(filename, io_read);
+	if (fIndex)
+	{
+		new
+			line[53];
+		while (fread(fIndex, line))
+		{
+			new
+				len = strlen(line);
+			if (len != INDEX_DATA_LINE_LENGTH && len != INDEX_DATA_LINE_LENGTH + 1) continue;
+			if (!strcmp(line[MAX_INDEX_LENGTH + 1], name, false, namelen) && line[MAX_INDEX_LENGTH + 1 + namelen] == ' ')
+			{
+				yid = strval(line);
+				fclose(fIndex);
+				return 1;
+			}
+		}
+		fclose(fIndex);
+	}
+	yid = -1;
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Player_LoginCall
+Params:
+	playerid - Player who's logged in.
+	uid - Unique identifier for this player.
+	text - Wether to display the messages (for invisible relogins).
+Return:
+	-
+Notes:
+	Calls OnPlayerLogin and parses data if required.  If the password is wrong
+	their data is never even loaded.
+-*----------------------------------------------------------------------------*/
+
+static stock Player_LoginCall(playerid, uid, text = 1)
+{
+	if (CallRemoteFunction("OnPlayerLogin", "ii", playerid, uid))
+	{
+		new
+			line[128];
+		format(line, sizeof (line), USER_FILE_PATH "%0" #MAX_INDEX_LENGTH "d.INI", uid);
+		if (INI_ParseFile(line, "LoginDat_%s", false, true, playerid))
+		{
+			if (text) Text_Send(playerid, "YSI_LOGIN_LOGIN");
+			return 1;
+		}
+		else if (text) Text_Send(playerid, "YSI_LOGIN_NOLOAD");
+	}
+	else if (text) Text_Send(playerid, "YSI_LOGIN_FAILED");
+	return 0;
+}
+
+#if defined _YSI_SETUP_MASTER
+	/*----------------------------------------------------------------------------*-
+	Function:
+		Player_ReloginCall
+	Params:
+		playerid - Player who's logged in.
+		uid - Unique identifier for this player.
+	Return:
+		-
+	Notes:
+		Called to log a player back in on GMX.
+	-*----------------------------------------------------------------------------*/
+
+	public Player_ReloginCall(playerid, uid)
+	{
+		if (!(YSI_g_sPlayerData[playerid][E_PLAYER_GD_FLAGS] & e_PLAYER_GD_FLAGS_LOGIN))
+		{
+			if (CallLocalFunction("OnPlayerLogin", "ii", playerid, uid))
+			{
+				new
+					line[128];
+				format(line, sizeof (line), USER_FILE_PATH "%0" #MAX_INDEX_LENGTH "d.INI", uid);
+				if (INI_ParseFile(line, "LoginDat_%s", false, true, playerid, true))
+				{
+					return 1;
+				}
+			}
+		}
+		return 0;
+	}
+#endif
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Player_AddUser
+Params:
+	playerid - Player who is adding a user.
+	name[] - Name of the user being added.
+	password[] - Password of the user.
+	&uid - Unique identifer.
+Return:
+	-
+Notes:
+	Creates the files for a registerd user.  If uid is -1 a new set of data
+	is created and the new uid returned.  Otherwise the data is added to the
+	specified uid group.
+-*----------------------------------------------------------------------------*/
+
+static stock Player_AddUser(playerid, name[], password[], &uid)
+{
+	DBGP2("Player_AddUser() start %d", uid);
+	new
+		File:index = fopen(USER_FILE_PATH "index.YSI", io_read),
+		w = 0;
+	if (uid == -1)
+	{
+		w = 1;
+		if (index)
+		{
+			new
+				line[54];
+			fread(index, line);
+			if (line[0]) uid = strval(line);
+			fclose(index);
+		}
+		else if (fexist(USER_FILE_PATH "index.YSI"))
+		{
+			Text_Send(playerid, "YSI_ADDU_INDER1");
+			return 0;
+		}
+		else
+		{
+			uid = 0;
+		}
+	}
+	DBGP4("Player_AddUser() uid %d %d", uid, w);
+	new
+		filename[] = USER_FILE_PATH "ind_X.YSI",
+		ch = name[0];
+	filename[sizeof (filename) - 6] = ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) ? (ch | 0x20) : ((ch >= '0' && ch <= '9') ? ('0') : ('_'));
+	index = fopen(filename, io_append);
+	DBGP4("Player_AddUser() file: \"%s\"", filename);
+	if (!index)
+	{
+		Text_Send(playerid, "YSI_ADDU_INDER2");
+		return 0;
+	}
+	else
+	{
+		DBGP4("Player_AddUser() opened");
+		new
+			line[INDEX_DATA_LINE_LENGTH + 3];
+		format(line, sizeof (line), "%0" #MAX_INDEX_LENGTH "d %" #MAX_PLAYER_NAME "s %" #MAX_PASSWORD_LENGTH "s" INI_NEW_LINE, uid, name, password);
+		fwrite(index, line);
+		fclose(index);
+		format(line, sizeof (line), USER_FILE_PATH "%0" #MAX_INDEX_LENGTH "d.ini", uid);
+		index = fopen(filename, io_append);
+		if (index) fclose(index);
+	}
+	DBGP4("Player_AddUser() closed %d", w);
+	if (w)
+	{
+		DBGP4("Player_AddUser() write");
+		fremove(USER_FILE_PATH "index.YSI");
+		index = fopen(USER_FILE_PATH "index.YSI", io_write);
+		if (index)
+		{
+			new
+				count[MAX_INDEX_LENGTH + 3];
+			format(count, sizeof (count), "%d", uid + 1);
+			fwrite(index, count);
+			fclose(index);
+		}
+	}
+	Text_Send(playerid, "YSI_ADDU_SUCC");
+	return 1;
+}
+
+/*----------------------------------------------------------------------------*-
+Function:
+	Player_Login
+Params:
+	playerid - Player who is logging in.
+	password[] - Hashed password they entered.
+Return:
+	-
+Notes:
+	Checks a player's login data is valid and logs them in if so.
+-*----------------------------------------------------------------------------*/
+
+static stock Player_Login(playerid, password[])
+{
+	new
+		name[MAX_PLAYER_NAME];
+	GetPlayerName(playerid, name, sizeof (name));
+	new
+		namelen = strlen(name),
+		filename[] = USER_FILE_PATH "ind_X.YSI",
+		File:fIndex,
+		ch = name[0];
+	filename[sizeof (filename) - 6] = ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) ? (ch | 0x20) : ((ch >= '0' && ch <= '9') ? ('0') : ('_'));
+	fIndex = fopen(filename, io_read);
+	if (fIndex)
+	{
+		new
+			line[54];
+		while (fread(fIndex, line))
+		{
+			new
+				len = strlen(line);
+			if (len != INDEX_DATA_LINE_LENGTH && len != INDEX_DATA_LINE_LENGTH + 1) continue;
+			if (!strcmp(line[MAX_INDEX_LENGTH + 1], name, false, namelen) && line[MAX_INDEX_LENGTH + 1 + namelen] == ' ')
+			{
+				new
+					ret;
+				if (!strcmp(line[MAX_INDEX_LENGTH + 1 + MAX_PLAYER_NAME + 1], password, false, MAX_PASSWORD_LENGTH))
+				{
+					line[MAX_INDEX_LENGTH] = '\0';
+					ret = Player_LoginCall(playerid, strval(line));
+				}
+				else Text_Send(playerid, "YSI_LOGIN_WRONG");
+				fclose(fIndex);
+				return ret;
+			}
+		}
+		Text_Send(playerid, "YSI_LOGIN_NOTF");
+		fclose(fIndex);
+	}
+	else Text_Send(playerid, "YSI_LOGIN_INDERR");
+	return 0;
+}

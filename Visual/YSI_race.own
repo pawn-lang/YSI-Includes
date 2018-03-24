@@ -26,6 +26,8 @@ Legal:
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 	MA 02110-1301, USA.
 Changelog:
+	09/01/08:
+		Added a fix for IsPlayerInRaceCheckpoint.
 	11/10/07:
 		Added race start count option.
 	03/08/07:
@@ -50,6 +52,7 @@ Functions:
 		Race_OnPlayerEnterRaceCP - Called to process next checkpoints.
 		Race_OnPlayerStateChange - Called to process dropouts.
 		Race_OnPlayerDisconnect - Called to process dropouts.
+		Race_OnPlayerConnect - Called to initialise a server variable.
 	Stock:
 		Race_Create - Creates a new race.
 		Race_AddCheckpoint - Adds a checkpoint to a race.
@@ -1087,6 +1090,23 @@ Race_OnPlayerDisconnect(playerid, reason)
 	#pragma unused reason
 }
 
+/*----------------------------------------------------------------------------*-
+Function:
+	Race_OnPlayerConnect
+Params:
+	playerid - Player who joined.
+Return:
+	-
+Notes:
+	Just a fix for IsPlayerInRaceCheckpoint.
+-*----------------------------------------------------------------------------*/
+
+Race_OnPlayerConnect(playerid)
+{
+	DisablePlayerRaceCheckpoint(playerid);
+	return 1;
+}
+
 #if defined RACE_POSITION
 
 /*----------------------------------------------------------------------------*-
@@ -1122,13 +1142,13 @@ public Race_Loop()
 			Float:x,
 			Float:y,
 			Float:z,
-			Float:cpx = YSI_g_sRaceCheckpoints[race][cp][0],
-			Float:cpy = YSI_g_sRaceCheckpoints[race][cp][0],
-			Float:cpz = YSI_g_sRaceCheckpoints[race][cp][0],
 			Float:togo,
 			pos;
 		GetPlayerPos(playerid, x, y, z);
-		togo = floatsqroot(((x - cpx) * (x - cpx)) + ((y - cpy) * (y - cpy)) + ((z - cpz) * (z - cpz)));
+		x -= YSI_g_sRaceCheckpoints[race][cp][0];
+		y -= YSI_g_sRaceCheckpoints[race][cp][1];
+		z -= YSI_g_sRaceCheckpoints[race][cp][2];
+		togo = floatsqroot((x * x) + (y * y) + (z * z));
 		racePos[playerid][E_RACE_POS_RACE] = race | RACE_POS_DONE;
 		racePos[playerid][E_RACE_POS_LAP] = lap;
 		racePos[playerid][E_RACE_POS_CP] = cp;

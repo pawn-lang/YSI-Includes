@@ -6,17 +6,17 @@ Description:
 	Handles area checks for player location based code not involving CPs.
 Legal:
 	Copyright (C) 2007 Alex "Y_Less" Cole
-
+	
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public License
 	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
-
+	
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
-
+	
 	You should have received a copy of the GNU General Public License
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
@@ -379,6 +379,10 @@ stock Area_Delete(area)
 					}
 					setproperty(0, "YSIReq", 1);
 				}
+				case E_AREA_REMOTE_GET_AREA:
+				{
+					setproperty(0, "YSIReq", YSI_g_sPlayerArea[ident]);
+				}
 			}
 		}
 	}
@@ -622,6 +626,14 @@ Notes:
 
 stock Area_AddBox(Float:minx, Float:miny, Float:maxx, Float:maxy)
 {
+	if (minx > maxx)
+	{
+		swap(minx, maxx);
+	}
+	if (miny > maxy)
+	{
+		swap(miny, maxy);
+	}
 	#if defined _YSI_SETUP_MASTER
 		if (YSI_g_sIsMaster)
 		{
@@ -850,21 +862,18 @@ stock Area_AddPoly(Float:x1, Float:y1, Float:x2, Float:y2, Float:x3, Float:y3, F
 		{
 			new
 				count = numargs();
-			if (count > 255) return NO_AREA;
+			if (count > 64) return NO_AREA;
 			new
-				bounds[256];
-			for (new i = 0; i < count; i++)
+				Float:bounds[64];
+			bounds[0] = x1;
+			bounds[1] = y1;
+			bounds[2] = x2;
+			bounds[3] = y2;
+			bounds[4] = x3;
+			bounds[5] = y3;
+			for (new i = 6; i < count; i++)
 			{
-				switch (i)
-				{
-					case 0: bounds[0] = x1;
-					case 1: bounds[1] = y1;
-					case 2: bounds[2] = x2;
-					case 3: bounds[3] = y2;
-					case 4: bounds[4] = x3;
-					case 5: bounds[5] = y3;
-					default: bounds[i] = Float:getarg(i);
-				}
+				bounds[i] = Float:getarg(i);
 			}
 			CallRemoteFunction("Area_AddRemote", "iaii", _:e_AREA_FLAGS_POLY, bounds, count, YSI_gMasterID);
 			return getproperty(0, "YSIReq");
@@ -985,7 +994,7 @@ Area_Area()
 					}
 					CallRemoteFunction("Area_UpdateEmpty", "");
 				}
-				else
+				else if (YSI_g_sIsMaster)
 				{
 					for (new i = 0; i < MAX_AREAS; i++)
 					{
@@ -1194,7 +1203,7 @@ Area_CheckArea(playerid, world, area, Float:x, Float:y, Float:z)
 			}
 			case e_AREA_FLAGS_SPHERE:
 			{
-				if (Area_IsInSphere(x, y, z, YSI_g_sAreas[area][E_AREA_POS])) return 1;
+				if (IsPlayerInRangeOfPoint(playerid, YSI_g_sAreas[area][E_AREA_POS][3], YSI_g_sAreas[area][E_AREA_POS][0], YSI_g_sAreas[area][E_AREA_POS][1], YSI_g_sAreas[area][E_AREA_POS][2])) return 1;
 			}
 			case e_AREA_FLAGS_POLY:
 			{
@@ -1248,7 +1257,7 @@ Notes:
 	Checks if a point is in a given sphere.
 -*----------------------------------------------------------------------------*/
 
-static Area_IsInSphere(Float:x, Float:y, Float:z, Float:bounds[])
+static stock Area_IsInSphere(Float:x, Float:y, Float:z, Float:bounds[])
 {
 	x -= bounds[0];
 	y -= bounds[1];

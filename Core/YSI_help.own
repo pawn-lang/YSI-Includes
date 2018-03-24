@@ -99,14 +99,7 @@ public ycmd_help(playerid, params[], help)
 	}
 	else
 	{
-		if (params[0])
-		{
-			if (!Command_Process(playerid, params, 1))
-			{
-				Text_Send(playerid, "YSI_HELP_NOTF");
-			}
-		}
-		else
+		if (isnull(params))
 		{
 			Text_Send(playerid, "YSI_HELP_1");
 			Text_Send(playerid, "YSI_HELP_2");
@@ -118,6 +111,13 @@ public ycmd_help(playerid, params[], help)
 			Text_Send(playerid, "YSI_HELP_8");
 			Text_SendFormat(playerid, "YSI_HELP_9", "commands", "help");
 			Text_Send(playerid, "YSI_HELP_10");
+		}
+		else
+		{
+			if (!Command_Process(playerid, params, 1))
+			{
+				Text_Send(playerid, "YSI_HELP_NOTF");
+			}
 		}
 	}
 	return 1;
