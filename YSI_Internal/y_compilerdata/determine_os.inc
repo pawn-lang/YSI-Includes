@@ -1,0 +1,2 @@
+#define __COMPILER_OS __COMPILER_WINDOWS
+

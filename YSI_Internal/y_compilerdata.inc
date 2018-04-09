@@ -200,6 +200,12 @@ Optional plugins:
 #define __COMPILER_FIRST_PASS  __COMPILER_1ST_PASS
 #define __COMPILER_SECOND_PASS __COMPILER_2ND_PASS
 
+// This will define a symbol - `__COMPILER_OS` equal to either `__COMPILER_UNIX` or
+// `__COMPILER_WINDOWS` depending on where the code is being built.
+#define __COMPILER_UNIX (0)
+#define __COMPILER_WINDOWS (1)
+#include "y_compilerdata\determine_os_entry/determine_os_entry"
+
 /*-------------------------------------------------------------------------*//*+
  * <remarks>
  *  Exists purely to be detected before it is used.  If that check succeedes,
