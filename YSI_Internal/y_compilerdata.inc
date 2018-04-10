@@ -261,6 +261,21 @@ static stock __CompilerSecondPass() {}
 #define Debug_PrintD_OPEN (
 #define Debug_PrintD_CLOSE )
 
+enum __E_COMPILER_ENUM
+{
+	__E_COMPILER_ENUM_ENTRY[3],
+	__E_COMPILER_ENUM_AFTER
+}
+
+static stock const
+	__YSI_gsCompilerEnum[__E_COMPILER_ENUM];
+
+#if sizeof (__YSI_gsCompilerEnum[__E_COMPILER_ENUM_ENTRY]) == 3
+	#define __COMPILER_SIZEOF_ENUM (1)
+#else
+	#define __COMPILER_SIZEOF_ENUM (0)
+#endif
+
 #if __COMPILER_MODIFIED
 	#if 0
 		// TODO: Check for a minor version that might have this.
