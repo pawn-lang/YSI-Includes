@@ -204,7 +204,8 @@ Optional plugins:
 // `__COMPILER_WINDOWS` depending on where the code is being built.
 #define __COMPILER_UNIX (0)
 #define __COMPILER_WINDOWS (1)
-#include "y_compilerdata\determine_os_entry/determine_os_entry"
+#define __COMPILER_OS __COMPILER_UNIX
+#tryinclude "y_compilerdata/dEtErMiNe_Os"
 
 /*-------------------------------------------------------------------------*//*+
  * <remarks>
