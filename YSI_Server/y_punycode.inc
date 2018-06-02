@@ -107,10 +107,8 @@ Optional plugins:
 	#undef _inc_y_punycode
 #endif
 
-#if !defined _INC_y_punycode
-	#tryinclude "y_punycode\y_punycode_entry"
-	#tryinclude "YSI_Server\y_punycode\y_punycode_entry"
-	#tryinclude "YSI\YSI_Server\y_punycode\y_punycode_entry"
-	#tryinclude <YSI_Server\y_punycode\y_punycode_entry>
-	#tryinclude <YSI\YSI_Server\y_punycode\y_punycode_entry>
-#endif
+#tryinclude "y_punycode\y_punycode_entry"
+#tryinclude "YSI_Server\y_punycode\y_punycode_entry"
+#tryinclude "YSI\YSI_Server\y_punycode\y_punycode_entry"
+#tryinclude <YSI_Server\y_punycode\y_punycode_entry>
+#tryinclude <YSI\YSI_Server\y_punycode\y_punycode_entry>

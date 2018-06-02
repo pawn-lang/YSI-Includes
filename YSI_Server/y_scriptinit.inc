@@ -99,11 +99,9 @@ Optional plugins:
 	#undef _inc_y_scriptinit
 #endif
 
-#if !defined _INC_y_scriptinit
-	#tryinclude "y_scriptinit\y_scriptinit_entry"
-	#tryinclude "YSI_Server\y_scriptinit\y_scriptinit_entry"
-	#tryinclude "YSI\YSI_Server\y_scriptinit\y_scriptinit_entry"
-	#tryinclude <YSI_Server\y_scriptinit\y_scriptinit_entry>
-	#tryinclude <YSI\YSI_Server\y_scriptinit\y_scriptinit_entry>
-#endif
+#tryinclude "y_scriptinit\y_scriptinit_entry"
+#tryinclude "YSI_Server\y_scriptinit\y_scriptinit_entry"
+#tryinclude "YSI\YSI_Server\y_scriptinit\y_scriptinit_entry"
+#tryinclude <YSI_Server\y_scriptinit\y_scriptinit_entry>
+#tryinclude <YSI\YSI_Server\y_scriptinit\y_scriptinit_entry>
 

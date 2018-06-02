@@ -91,11 +91,9 @@ Optional plugins:
 	#undef _inc_y_incognitostreamer
 #endif
 
-#if !defined _INC_y_incognitostreamer
-	#tryinclude "y_incognitostreamer\y_incognitostreamer_entry"
-	#tryinclude "YSI_Internal\y_incognitostreamer\y_incognitostreamer_entry"
-	#tryinclude "YSI\YSI_Internal\y_incognitostreamer\y_incognitostreamer_entry"
-	#tryinclude <YSI_Internal\y_incognitostreamer\y_incognitostreamer_entry>
-	#tryinclude <YSI\YSI_Internal\y_incognitostreamer\y_incognitostreamer_entry>
-#endif
+#tryinclude "y_incognitostreamer\y_incognitostreamer_entry"
+#tryinclude "YSI_Internal\y_incognitostreamer\y_incognitostreamer_entry"
+#tryinclude "YSI\YSI_Internal\y_incognitostreamer\y_incognitostreamer_entry"
+#tryinclude <YSI_Internal\y_incognitostreamer\y_incognitostreamer_entry>
+#tryinclude <YSI\YSI_Internal\y_incognitostreamer\y_incognitostreamer_entry>
 

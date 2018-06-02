@@ -1,6 +1,8 @@
-#if defined _inc_y_text
-	#undef _inc_y_text
+#if defined _inc_y_text_entry
+	#undef _inc_y_text_entry
 #endif
+
+#define _Y_TEXT_INCLUDED
 
 // Multiple includes!
 #include "..\..\YSI_Internal\y_unique"

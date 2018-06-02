@@ -90,11 +90,9 @@ Optional plugins:
 	#undef _inc_y_mock
 #endif
 
-#if !defined _INC_y_mock
-	#tryinclude "y_mock\y_mock_entry"
-	#tryinclude "YSI_Internal\y_mock\y_mock_entry"
-	#tryinclude "YSI\YSI_Internal\y_mock\y_mock_entry"
-	#tryinclude <YSI_Internal\y_mock\y_mock_entry>
-	#tryinclude <YSI\YSI_Internal\y_mock\y_mock_entry>
-#endif
+#tryinclude "y_mock\y_mock_entry"
+#tryinclude "YSI_Internal\y_mock\y_mock_entry"
+#tryinclude "YSI\YSI_Internal\y_mock\y_mock_entry"
+#tryinclude <YSI_Internal\y_mock\y_mock_entry>
+#tryinclude <YSI\YSI_Internal\y_mock\y_mock_entry>
 

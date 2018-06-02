@@ -91,11 +91,9 @@ Optional plugins:
 	#undef _inc_y_dialog
 #endif
 
-#if !defined _INC_y_dialog
-	#tryinclude "y_dialog\y_dialog_entry"
-	#tryinclude "YSI_Visual\y_dialog\y_dialog_entry"
-	#tryinclude "YSI\YSI_Visual\y_dialog\y_dialog_entry"
-	#tryinclude <YSI_Visual\y_dialog\y_dialog_entry>
-	#tryinclude <YSI\YSI_Visual\y_dialog\y_dialog_entry>
-#endif
+#tryinclude "y_dialog\y_dialog_entry"
+#tryinclude "YSI_Visual\y_dialog\y_dialog_entry"
+#tryinclude "YSI\YSI_Visual\y_dialog\y_dialog_entry"
+#tryinclude <YSI_Visual\y_dialog\y_dialog_entry>
+#tryinclude <YSI\YSI_Visual\y_dialog\y_dialog_entry>
 

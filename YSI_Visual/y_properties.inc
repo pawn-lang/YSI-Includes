@@ -224,11 +224,9 @@ Optional plugins:
 	#undef _inc_y_properties
 #endif
 
-#if !defined _INC_y_properties
-	#tryinclude "y_properties\y_properties_entry"
-	#tryinclude "YSI_Visual\y_properties\y_properties_entry"
-	#tryinclude "YSI\YSI_Visual\y_properties\y_properties_entry"
-	#tryinclude <YSI_Visual\y_properties\y_properties_entry>
-	#tryinclude <YSI\YSI_Visual\y_properties\y_properties_entry>
-#endif
+#tryinclude "y_properties\y_properties_entry"
+#tryinclude "YSI_Visual\y_properties\y_properties_entry"
+#tryinclude "YSI\YSI_Visual\y_properties\y_properties_entry"
+#tryinclude <YSI_Visual\y_properties\y_properties_entry>
+#tryinclude <YSI\YSI_Visual\y_properties\y_properties_entry>
 

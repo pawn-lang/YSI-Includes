@@ -165,11 +165,9 @@ Optional plugins:
 	#undef _inc_y_commands
 #endif
 
-#if !defined _INC_y_commands
-	#tryinclude "y_commands\y_commands_entry"
-	#tryinclude "YSI_Visual\y_commands\y_commands_entry"
-	#tryinclude "YSI\YSI_Visual\y_commands\y_commands_entry"
-	#tryinclude <YSI_Visual\y_commands\y_commands_entry>
-	#tryinclude <YSI\YSI_Visual\y_commands\y_commands_entry>
-#endif
+#tryinclude "y_commands\y_commands_entry"
+#tryinclude "YSI_Visual\y_commands\y_commands_entry"
+#tryinclude "YSI\YSI_Visual\y_commands\y_commands_entry"
+#tryinclude <YSI_Visual\y_commands\y_commands_entry>
+#tryinclude <YSI\YSI_Visual\y_commands\y_commands_entry>
 

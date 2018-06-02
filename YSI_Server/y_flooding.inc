@@ -111,11 +111,9 @@ Optional plugins:
 	#undef _inc_y_flooding
 #endif
 
-#if !defined _INC_y_flooding
-	#tryinclude "y_flooding\y_flooding_entry"
-	#tryinclude "YSI_Server\y_flooding\y_flooding_entry"
-	#tryinclude "YSI\YSI_Server\y_flooding\y_flooding_entry"
-	#tryinclude <YSI_Server\y_flooding\y_flooding_entry>
-	#tryinclude <YSI\YSI_Server\y_flooding\y_flooding_entry>
-#endif
+#tryinclude "y_flooding\y_flooding_entry"
+#tryinclude "YSI_Server\y_flooding\y_flooding_entry"
+#tryinclude "YSI\YSI_Server\y_flooding\y_flooding_entry"
+#tryinclude <YSI_Server\y_flooding\y_flooding_entry>
+#tryinclude <YSI\YSI_Server\y_flooding\y_flooding_entry>
 

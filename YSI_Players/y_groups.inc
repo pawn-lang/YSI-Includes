@@ -93,13 +93,11 @@ Optional plugins:
 	#undef _inc_y_groups
 #endif
 
-#if !defined _INC_y_groups
-	#tryinclude "y_groups\y_groups_entry"
-	#tryinclude "YSI_Players\y_groups\y_groups_entry"
-	#tryinclude "YSI\YSI_Players\y_groups\y_groups_entry"
-	#tryinclude <YSI_Players\y_groups\y_groups_entry>
-	#tryinclude <YSI\YSI_Players\y_groups\y_groups_entry>
-#endif
+#tryinclude "y_groups\y_groups_entry"
+#tryinclude "YSI_Players\y_groups\y_groups_entry"
+#tryinclude "YSI\YSI_Players\y_groups\y_groups_entry"
+#tryinclude <YSI_Players\y_groups\y_groups_entry>
+#tryinclude <YSI\YSI_Players\y_groups\y_groups_entry>
 
 /**
  * <library name="y_groups">

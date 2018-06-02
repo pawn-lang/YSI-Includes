@@ -90,11 +90,9 @@ Optional plugins:
 	#undef _inc_y_files
 #endif
 
-#if !defined _INC_y_files
-	#tryinclude "y_files\y_files_entry"
-	#tryinclude "YSI_Extra\y_files\y_files_entry"
-	#tryinclude "YSI\YSI_Extra\y_files\y_files_entry"
-	#tryinclude <YSI_Extra\y_files\y_files_entry>
-	#tryinclude <YSI\YSI_Extra\y_files\y_files_entry>
-#endif
+#tryinclude "y_files\y_files_entry"
+#tryinclude "YSI_Extra\y_files\y_files_entry"
+#tryinclude "YSI\YSI_Extra\y_files\y_files_entry"
+#tryinclude <YSI_Extra\y_files\y_files_entry>
+#tryinclude <YSI\YSI_Extra\y_files\y_files_entry>
 

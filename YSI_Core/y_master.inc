@@ -93,13 +93,11 @@ Optional plugins:
 	#undef _inc_y_master
 #endif
 
-#if !defined _INC_y_master
-	#tryinclude "y_master\y_master_entry"
-	#tryinclude "YSI_Core\y_master\y_master_entry"
-	#tryinclude "YSI\YSI_Core\y_master\y_master_entry"
-	#tryinclude <YSI_Core\y_master\y_master_entry>
-	#tryinclude <YSI\YSI_Core\y_master\y_master_entry>
-#endif
+#tryinclude "y_master\y_master_entry"
+#tryinclude "YSI_Core\y_master\y_master_entry"
+#tryinclude "YSI\YSI_Core\y_master\y_master_entry"
+#tryinclude <YSI_Core\y_master\y_master_entry>
+#tryinclude <YSI\YSI_Core\y_master\y_master_entry>
 
 
 /**

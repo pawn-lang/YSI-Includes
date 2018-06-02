@@ -93,13 +93,11 @@ Optional plugins:
 	#undef _inc_y_iterate
 #endif
 
-#if !defined _INC_y_iterate
-	#tryinclude "y_iterate\y_iterate_entry"
-	#tryinclude "YSI_Data\y_iterate\y_iterate_entry"
-	#tryinclude "YSI\YSI_Data\y_iterate\y_iterate_entry"
-	#tryinclude <YSI_Data\y_iterate\y_iterate_entry>
-	#tryinclude <YSI\YSI_Data\y_iterate\y_iterate_entry>
-#endif
+#tryinclude "y_iterate\y_iterate_entry"
+#tryinclude "YSI_Data\y_iterate\y_iterate_entry"
+#tryinclude "YSI\YSI_Data\y_iterate\y_iterate_entry"
+#tryinclude <YSI_Data\y_iterate\y_iterate_entry>
+#tryinclude <YSI\YSI_Data\y_iterate\y_iterate_entry>
 
 /**
  * <library name="y_iterate">

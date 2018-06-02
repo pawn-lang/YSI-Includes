@@ -98,11 +98,9 @@ Optional plugins:
 	#undef _inc_y_shortfunc
 #endif
 
-#if !defined _INC_y_shortfunc
-	#tryinclude "y_shortfunc\y_shortfunc_entry"
-	#tryinclude "YSI_Internal\y_shortfunc\y_shortfunc_entry"
-	#tryinclude "YSI\YSI_Internal\y_shortfunc\y_shortfunc_entry"
-	#tryinclude <YSI_Internal\y_shortfunc\y_shortfunc_entry>
-	#tryinclude <YSI\YSI_Internal\y_shortfunc\y_shortfunc_entry>
-#endif
+#tryinclude "y_shortfunc\y_shortfunc_entry"
+#tryinclude "YSI_Internal\y_shortfunc\y_shortfunc_entry"
+#tryinclude "YSI\YSI_Internal\y_shortfunc\y_shortfunc_entry"
+#tryinclude <YSI_Internal\y_shortfunc\y_shortfunc_entry>
+#tryinclude <YSI\YSI_Internal\y_shortfunc\y_shortfunc_entry>
 

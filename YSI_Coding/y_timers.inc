@@ -93,11 +93,9 @@ Optional plugins:
 	#undef _inc_y_timers
 #endif
 
-#if !defined _INC_y_timers
-	#tryinclude "y_timers\y_timers_entry"
-	#tryinclude "YSI_Coding\y_timers\y_timers_entry"
-	#tryinclude "YSI\YSI_Coding\y_timers\y_timers_entry"
-	#tryinclude <YSI_Coding\y_timers\y_timers_entry>
-	#tryinclude <YSI\YSI_Coding\y_timers\y_timers_entry>
-#endif
+#tryinclude "y_timers\y_timers_entry"
+#tryinclude "YSI_Coding\y_timers\y_timers_entry"
+#tryinclude "YSI\YSI_Coding\y_timers\y_timers_entry"
+#tryinclude <YSI_Coding\y_timers\y_timers_entry>
+#tryinclude <YSI\YSI_Coding\y_timers\y_timers_entry>
 

@@ -161,11 +161,9 @@ Optional plugins:
 	#undef _inc_y_ini
 #endif
 
-#if !defined _INC_y_ini
-	#tryinclude "y_ini\y_ini_entry"
-	#tryinclude "YSI_Storage\y_ini\y_ini_entry"
-	#tryinclude "YSI\YSI_Storage\y_ini\y_ini_entry"
-	#tryinclude <YSI_Storage\y_ini\y_ini_entry>
-	#tryinclude <YSI\YSI_Storage\y_ini\y_ini_entry>
-#endif
+#tryinclude "y_ini\y_ini_entry"
+#tryinclude "YSI_Storage\y_ini\y_ini_entry"
+#tryinclude "YSI\YSI_Storage\y_ini\y_ini_entry"
+#tryinclude <YSI_Storage\y_ini\y_ini_entry>
+#tryinclude <YSI\YSI_Storage\y_ini\y_ini_entry>
 

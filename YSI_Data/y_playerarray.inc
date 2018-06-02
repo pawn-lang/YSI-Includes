@@ -92,11 +92,9 @@ Optional plugins:
 	#undef _inc_y_playerarray
 #endif
 
-#if !defined _INC_y_playerarray
-	#tryinclude "y_playerarray\y_playerarray_entry"
-	#tryinclude "YSI_Data\y_playerarray\y_playerarray_entry"
-	#tryinclude "YSI\YSI_Data\y_playerarray\y_playerarray_entry"
-	#tryinclude <YSI_Data\y_playerarray\y_playerarray_entry>
-	#tryinclude <YSI\YSI_Data\y_playerarray\y_playerarray_entry>
-#endif
+#tryinclude "y_playerarray\y_playerarray_entry"
+#tryinclude "YSI_Data\y_playerarray\y_playerarray_entry"
+#tryinclude "YSI\YSI_Data\y_playerarray\y_playerarray_entry"
+#tryinclude <YSI_Data\y_playerarray\y_playerarray_entry>
+#tryinclude <YSI\YSI_Data\y_playerarray\y_playerarray_entry>
 

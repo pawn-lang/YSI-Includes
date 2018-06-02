@@ -90,11 +90,9 @@ Optional plugins:
 	#undef _inc_y_natives
 #endif
 
-#if !defined _INC_y_natives
-	#tryinclude "y_natives\y_natives_entry"
-	#tryinclude "YSI_Internal\y_natives\y_natives_entry"
-	#tryinclude "YSI\YSI_Internal\y_natives\y_natives_entry"
-	#tryinclude <YSI_Internal\y_natives\y_natives_entry>
-	#tryinclude <YSI\YSI_Internal\y_natives\y_natives_entry>
-#endif
+#tryinclude "y_natives\y_natives_entry"
+#tryinclude "YSI_Internal\y_natives\y_natives_entry"
+#tryinclude "YSI\YSI_Internal\y_natives\y_natives_entry"
+#tryinclude <YSI_Internal\y_natives\y_natives_entry>
+#tryinclude <YSI\YSI_Internal\y_natives\y_natives_entry>
 

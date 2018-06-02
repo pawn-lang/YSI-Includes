@@ -94,11 +94,9 @@ Optional plugins:
 	#undef _inc_y_colours
 #endif
 
-#if !defined _INC_y_colours
-	#tryinclude "y_colours\y_colours_entry"
-	#tryinclude "YSI_Server\y_colours\y_colours_entry"
-	#tryinclude "YSI\YSI_Server\y_colours\y_colours_entry"
-	#tryinclude <YSI_Server\y_colours\y_colours_entry>
-	#tryinclude <YSI\YSI_Server\y_colours\y_colours_entry>
-#endif
+#tryinclude "y_colours\y_colours_entry"
+#tryinclude "YSI_Server\y_colours\y_colours_entry"
+#tryinclude "YSI\YSI_Server\y_colours\y_colours_entry"
+#tryinclude <YSI_Server\y_colours\y_colours_entry>
+#tryinclude <YSI\YSI_Server\y_colours\y_colours_entry>
 

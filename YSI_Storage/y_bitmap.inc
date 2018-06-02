@@ -92,11 +92,9 @@ Optional plugins:
 	#undef _inc_y_bitmap
 #endif
 
-#if !defined _INC_y_bitmap
-	#tryinclude "y_bitmap\y_bitmap_entry"
-	#tryinclude "YSI_Storage\y_bitmap\y_bitmap_entry"
-	#tryinclude "YSI\YSI_Storage\y_bitmap\y_bitmap_entry"
-	#tryinclude <YSI_Storage\y_bitmap\y_bitmap_entry>
-	#tryinclude <YSI\YSI_Storage\y_bitmap\y_bitmap_entry>
-#endif
+#tryinclude "y_bitmap\y_bitmap_entry"
+#tryinclude "YSI_Storage\y_bitmap\y_bitmap_entry"
+#tryinclude "YSI\YSI_Storage\y_bitmap\y_bitmap_entry"
+#tryinclude <YSI_Storage\y_bitmap\y_bitmap_entry>
+#tryinclude <YSI\YSI_Storage\y_bitmap\y_bitmap_entry>
 

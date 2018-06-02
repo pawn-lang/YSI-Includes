@@ -91,11 +91,9 @@ Optional plugins:
 	#undef _inc_y_cgen
 #endif
 
-#if !defined _INC_y_cgen
-	#tryinclude "y_cgen\y_cgen_entry"
-	#tryinclude "YSI_Internal\y_cgen\y_cgen_entry"
-	#tryinclude "YSI\YSI_Internal\y_cgen\y_cgen_entry"
-	#tryinclude <YSI_Internal\y_cgen\y_cgen_entry>
-	#tryinclude <YSI\YSI_Internal\y_cgen\y_cgen_entry>
-#endif
+#tryinclude "y_cgen\y_cgen_entry"
+#tryinclude "YSI_Internal\y_cgen\y_cgen_entry"
+#tryinclude "YSI\YSI_Internal\y_cgen\y_cgen_entry"
+#tryinclude <YSI_Internal\y_cgen\y_cgen_entry>
+#tryinclude <YSI\YSI_Internal\y_cgen\y_cgen_entry>
 

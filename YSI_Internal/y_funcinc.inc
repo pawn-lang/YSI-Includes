@@ -93,11 +93,9 @@ Optional plugins:
 	#undef _inc_y_funcinc
 #endif
 
-#if !defined _INC_y_funcinc
-	#tryinclude "y_funcinc\y_funcinc_entry"
-	#tryinclude "YSI_Internal\y_funcinc\y_funcinc_entry"
-	#tryinclude "YSI\YSI_Internal\y_funcinc\y_funcinc_entry"
-	#tryinclude <YSI_Internal\y_funcinc\y_funcinc_entry>
-	#tryinclude <YSI\YSI_Internal\y_funcinc\y_funcinc_entry>
-#endif
+#tryinclude "y_funcinc\y_funcinc_entry"
+#tryinclude "YSI_Internal\y_funcinc\y_funcinc_entry"
+#tryinclude "YSI\YSI_Internal\y_funcinc\y_funcinc_entry"
+#tryinclude <YSI_Internal\y_funcinc\y_funcinc_entry>
+#tryinclude <YSI\YSI_Internal\y_funcinc\y_funcinc_entry>
 

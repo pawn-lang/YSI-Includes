@@ -100,11 +100,9 @@ Optional plugins:
 	#undef _inc_y_remote
 #endif
 
-#if !defined _INC_y_remote
-	#tryinclude "y_remote\y_remote_entry"
-	#tryinclude "YSI_Coding\y_remote\y_remote_entry"
-	#tryinclude "YSI\YSI_Coding\y_remote\y_remote_entry"
-	#tryinclude <YSI_Coding\y_remote\y_remote_entry>
-	#tryinclude <YSI\YSI_Coding\y_remote\y_remote_entry>
-#endif
+#tryinclude "y_remote\y_remote_entry"
+#tryinclude "YSI_Coding\y_remote\y_remote_entry"
+#tryinclude "YSI\YSI_Coding\y_remote\y_remote_entry"
+#tryinclude <YSI_Coding\y_remote\y_remote_entry>
+#tryinclude <YSI\YSI_Coding\y_remote\y_remote_entry>
 

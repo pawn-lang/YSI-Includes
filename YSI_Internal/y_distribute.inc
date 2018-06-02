@@ -91,11 +91,9 @@ Optional plugins:
 	#undef _inc_y_distribute
 #endif
 
-#if !defined _INC_y_distribute
-	#tryinclude "y_distribute\y_distribute_entry"
-	#tryinclude "YSI_Internal\y_distribute\y_distribute_entry"
-	#tryinclude "YSI\YSI_Internal\y_distribute\y_distribute_entry"
-	#tryinclude <YSI_Internal\y_distribute\y_distribute_entry>
-	#tryinclude <YSI\YSI_Internal\y_distribute\y_distribute_entry>
-#endif
+#tryinclude "y_distribute\y_distribute_entry"
+#tryinclude "YSI_Internal\y_distribute\y_distribute_entry"
+#tryinclude "YSI\YSI_Internal\y_distribute\y_distribute_entry"
+#tryinclude <YSI_Internal\y_distribute\y_distribute_entry>
+#tryinclude <YSI\YSI_Internal\y_distribute\y_distribute_entry>
 

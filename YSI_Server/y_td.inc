@@ -1,3 +1,8 @@
+#if defined _INC_y_td
+	#endinput
+#endif
+#define _INC_y_td
+
 /**
  * <library name="y_td">
  * <section>
@@ -88,11 +93,9 @@ Optional plugins:
 	#undef _inc_y_td
 #endif
 
-#if !defined _INC_y_td
-	#tryinclude "y_td\y_td_entry"
-	#tryinclude "YSI_Server\y_td\y_td_entry"
-	#tryinclude "YSI\YSI_Server\y_td\y_td_entry"
-	#tryinclude <YSI_Server\y_td\y_td_entry>
-	#tryinclude <YSI\YSI_Server\y_td\y_td_entry>
-#endif
+#tryinclude "y_td\y_td_entry"
+#tryinclude "YSI_Server\y_td\y_td_entry"
+#tryinclude "YSI\YSI_Server\y_td\y_td_entry"
+#tryinclude <YSI_Server\y_td\y_td_entry>
+#tryinclude <YSI\YSI_Server\y_td\y_td_entry>
 

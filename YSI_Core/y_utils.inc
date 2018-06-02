@@ -158,11 +158,9 @@ Optional plugins:
 	#undef _inc_y_utils
 #endif
 
-#if !defined _INC_y_utils
-	#tryinclude "y_utils\y_utils_entry"
-	#tryinclude "YSI_Core\y_utils\y_utils_entry"
-	#tryinclude "YSI\YSI_Core\y_utils\y_utils_entry"
-	#tryinclude <YSI_Core\y_utils\y_utils_entry>
-	#tryinclude <YSI\YSI_Core\y_utils\y_utils_entry>
-#endif
+#tryinclude "y_utils\y_utils_entry"
+#tryinclude "YSI_Core\y_utils\y_utils_entry"
+#tryinclude "YSI\YSI_Core\y_utils\y_utils_entry"
+#tryinclude <YSI_Core\y_utils\y_utils_entry>
+#tryinclude <YSI\YSI_Core\y_utils\y_utils_entry>
 

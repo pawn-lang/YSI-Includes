@@ -122,11 +122,9 @@ Optional plugins:
 	#undef _inc_y_bit
 #endif
 
-#if !defined _INC_y_bit
-	#tryinclude "y_bit\y_bit_entry"
-	#tryinclude "YSI_Data\y_bit\y_bit_entry"
-	#tryinclude "YSI\YSI_Data\y_bit\y_bit_entry"
-	#tryinclude <YSI_Data\y_bit\y_bit_entry>
-	#tryinclude <YSI\YSI_Data\y_bit\y_bit_entry>
-#endif
+#tryinclude "y_bit\y_bit_entry"
+#tryinclude "YSI_Data\y_bit\y_bit_entry"
+#tryinclude "YSI\YSI_Data\y_bit\y_bit_entry"
+#tryinclude <YSI_Data\y_bit\y_bit_entry>
+#tryinclude <YSI\YSI_Data\y_bit\y_bit_entry>
 

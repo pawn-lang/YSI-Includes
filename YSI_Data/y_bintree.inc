@@ -135,11 +135,9 @@ Optional plugins:
 	#undef _inc_y_bintree
 #endif
 
-#if !defined _INC_y_bintree
-	#tryinclude "y_bintree\y_bintree_entry"
-	#tryinclude "YSI_Data\y_bintree\y_bintree_entry"
-	#tryinclude "YSI\YSI_Data\y_bintree\y_bintree_entry"
-	#tryinclude <YSI_Data\y_bintree\y_bintree_entry>
-	#tryinclude <YSI\YSI_Data\y_bintree\y_bintree_entry>
-#endif
+#tryinclude "y_bintree\y_bintree_entry"
+#tryinclude "YSI_Data\y_bintree\y_bintree_entry"
+#tryinclude "YSI\YSI_Data\y_bintree\y_bintree_entry"
+#tryinclude <YSI_Data\y_bintree\y_bintree_entry>
+#tryinclude <YSI\YSI_Data\y_bintree\y_bintree_entry>
 

@@ -96,11 +96,9 @@ Optional plugins:
 	#undef _inc_y_inline
 #endif
 
-#if !defined _INC_y_inline
-	#tryinclude "y_inline\y_inline_entry"
-	#tryinclude "YSI_Coding\y_inline\y_inline_entry"
-	#tryinclude "YSI\YSI_Coding\y_inline\y_inline_entry"
-	#tryinclude <YSI_Coding\y_inline\y_inline_entry>
-	#tryinclude <YSI\YSI_Coding\y_inline\y_inline_entry>
-#endif
+#tryinclude "y_inline\y_inline_entry"
+#tryinclude "YSI_Coding\y_inline\y_inline_entry"
+#tryinclude "YSI\YSI_Coding\y_inline\y_inline_entry"
+#tryinclude <YSI_Coding\y_inline\y_inline_entry>
+#tryinclude <YSI\YSI_Coding\y_inline\y_inline_entry>
 

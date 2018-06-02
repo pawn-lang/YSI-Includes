@@ -169,11 +169,9 @@ Optional plugins:
 	#undef _inc_y_areas
 #endif
 
-#if !defined _INC_y_areas
-	#tryinclude "y_areas\y_areas_entry"
-	#tryinclude "YSI_Visual\y_areas\y_areas_entry"
-	#tryinclude "YSI\YSI_Visual\y_areas\y_areas_entry"
-	#tryinclude <YSI_Visual\y_areas\y_areas_entry>
-	#tryinclude <YSI\YSI_Visual\y_areas\y_areas_entry>
-#endif
+#tryinclude "y_areas\y_areas_entry"
+#tryinclude "YSI_Visual\y_areas\y_areas_entry"
+#tryinclude "YSI\YSI_Visual\y_areas\y_areas_entry"
+#tryinclude <YSI_Visual\y_areas\y_areas_entry>
+#tryinclude <YSI\YSI_Visual\y_areas\y_areas_entry>
 

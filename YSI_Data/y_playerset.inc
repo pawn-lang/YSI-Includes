@@ -93,11 +93,9 @@ Optional plugins:
 	#undef _inc_y_playerset
 #endif
 
-#if !defined _INC_y_playerset
-	#tryinclude "y_playerset\y_playerset_entry"
-	#tryinclude "YSI_Data\y_playerset\y_playerset_entry"
-	#tryinclude "YSI\YSI_Data\y_playerset\y_playerset_entry"
-	#tryinclude <YSI_Data\y_playerset\y_playerset_entry>
-	#tryinclude <YSI\YSI_Data\y_playerset\y_playerset_entry>
-#endif
+#tryinclude "y_playerset\y_playerset_entry"
+#tryinclude "YSI_Data\y_playerset\y_playerset_entry"
+#tryinclude "YSI\YSI_Data\y_playerset\y_playerset_entry"
+#tryinclude <YSI_Data\y_playerset\y_playerset_entry>
+#tryinclude <YSI\YSI_Data\y_playerset\y_playerset_entry>
 

@@ -91,11 +91,9 @@ Optional plugins:
 	#undef _inc_y_cell
 #endif
 
-#if !defined _INC_y_cell
-	#tryinclude "y_cell\y_cell_entry"
-	#tryinclude "YSI_Core\y_cell\y_cell_entry"
-	#tryinclude "YSI\YSI_Core\y_cell\y_cell_entry"
-	#tryinclude <YSI_Core\y_cell\y_cell_entry>
-	#tryinclude <YSI\YSI_Core\y_cell\y_cell_entry>
-#endif
+#tryinclude "y_cell\y_cell_entry"
+#tryinclude "YSI_Core\y_cell\y_cell_entry"
+#tryinclude "YSI\YSI_Core\y_cell\y_cell_entry"
+#tryinclude <YSI_Core\y_cell\y_cell_entry>
+#tryinclude <YSI\YSI_Core\y_cell\y_cell_entry>
 

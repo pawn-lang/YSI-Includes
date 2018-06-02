@@ -90,11 +90,9 @@ Optional plugins:
 	#undef _inc_y_jaggedarray
 #endif
 
-#if !defined _INC_y_jaggedarray
-	#tryinclude "y_jaggedarray\y_jaggedarray_entry"
-	#tryinclude "YSI_Data\y_jaggedarray\y_jaggedarray_entry"
-	#tryinclude "YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry"
-	#tryinclude <YSI_Data\y_jaggedarray\y_jaggedarray_entry>
-	#tryinclude <YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry>
-#endif
+#tryinclude "y_jaggedarray\y_jaggedarray_entry"
+#tryinclude "YSI_Data\y_jaggedarray\y_jaggedarray_entry"
+#tryinclude "YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry"
+#tryinclude <YSI_Data\y_jaggedarray\y_jaggedarray_entry>
+#tryinclude <YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry>
 

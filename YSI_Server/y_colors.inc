@@ -1,7 +1,7 @@
-#if defined _INC_y_colors
+#if defined _INC_y_colours
 	#endinput
 #endif
-#define _INC_y_colors
+#define _INC_y_colours
 
 /*
 Legal:
@@ -79,11 +79,9 @@ Optional plugins:
 	#undef _inc_y_colors
 #endif
 
-#if !defined _INC_y_colours
-	#tryinclude "y_colours\y_colours_entry"
-	#tryinclude "YSI_Server\y_colours\y_colours_entry"
-	#tryinclude "YSI\YSI_Server\y_colours\y_colours_entry"
-	#tryinclude <YSI_Server\y_colours\y_colours_entry>
-	#tryinclude <YSI\YSI_Server\y_colours\y_colours_entry>
-#endif
+#tryinclude "y_colours\y_colours_entry"
+#tryinclude "YSI_Server\y_colours\y_colours_entry"
+#tryinclude "YSI\YSI_Server\y_colours\y_colours_entry"
+#tryinclude <YSI_Server\y_colours\y_colours_entry>
+#tryinclude <YSI\YSI_Server\y_colours\y_colours_entry>
 

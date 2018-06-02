@@ -90,11 +90,9 @@ Optional plugins:
 	#undef _inc_y_svar
 #endif
 
-#if !defined _INC_y_svar
-	#tryinclude "y_svar\y_svar_entry"
-	#tryinclude "YSI_Storage\y_svar\y_svar_entry"
-	#tryinclude "YSI\YSI_Storage\y_svar\y_svar_entry"
-	#tryinclude <YSI_Storage\y_svar\y_svar_entry>
-	#tryinclude <YSI\YSI_Storage\y_svar\y_svar_entry>
-#endif
+#tryinclude "y_svar\y_svar_entry"
+#tryinclude "YSI_Storage\y_svar\y_svar_entry"
+#tryinclude "YSI\YSI_Storage\y_svar\y_svar_entry"
+#tryinclude <YSI_Storage\y_svar\y_svar_entry>
+#tryinclude <YSI\YSI_Storage\y_svar\y_svar_entry>
 

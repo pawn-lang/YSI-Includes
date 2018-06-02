@@ -95,11 +95,9 @@ Optional plugins:
 	#undef _inc_y_version
 #endif
 
-#if !defined _INC_y_version
-	#tryinclude "y_version\y_version_entry"
-	#tryinclude "YSI_Internal\y_version\y_version_entry"
-	#tryinclude "YSI\YSI_Internal\y_version\y_version_entry"
-	#tryinclude <YSI_Internal\y_version\y_version_entry>
-	#tryinclude <YSI\YSI_Internal\y_version\y_version_entry>
-#endif
+#tryinclude "y_version\y_version_entry"
+#tryinclude "YSI_Internal\y_version\y_version_entry"
+#tryinclude "YSI\YSI_Internal\y_version\y_version_entry"
+#tryinclude <YSI_Internal\y_version\y_version_entry>
+#tryinclude <YSI\YSI_Internal\y_version\y_version_entry>
 

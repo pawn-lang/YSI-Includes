@@ -158,11 +158,9 @@ Optional plugins:
 	#undef _inc_y_malloc
 #endif
 
-#if !defined _INC_y_malloc
-	#tryinclude "y_malloc\y_malloc_entry"
-	#tryinclude "YSI_Coding\y_malloc\y_malloc_entry"
-	#tryinclude "YSI\YSI_Coding\y_malloc\y_malloc_entry"
-	#tryinclude <YSI_Coding\y_malloc\y_malloc_entry>
-	#tryinclude <YSI\YSI_Coding\y_malloc\y_malloc_entry>
-#endif
+#tryinclude "y_malloc\y_malloc_entry"
+#tryinclude "YSI_Coding\y_malloc\y_malloc_entry"
+#tryinclude "YSI\YSI_Coding\y_malloc\y_malloc_entry"
+#tryinclude <YSI_Coding\y_malloc\y_malloc_entry>
+#tryinclude <YSI\YSI_Coding\y_malloc\y_malloc_entry>
 

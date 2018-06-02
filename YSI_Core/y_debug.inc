@@ -133,11 +133,9 @@ Optional plugins:
 	#undef _inc_y_debug
 #endif
 
-#if !defined _INC_y_debug
-	#tryinclude "y_debug\y_debug_entry"
-	#tryinclude "YSI_Core\y_debug\y_debug_entry"
-	#tryinclude "YSI\YSI_Core\y_debug\y_debug_entry"
-	#tryinclude <YSI_Core\y_debug\y_debug_entry>
-	#tryinclude <YSI\YSI_Core\y_debug\y_debug_entry>
-#endif
+#tryinclude "y_debug\y_debug_entry"
+#tryinclude "YSI_Core\y_debug\y_debug_entry"
+#tryinclude "YSI\YSI_Core\y_debug\y_debug_entry"
+#tryinclude <YSI_Core\y_debug\y_debug_entry>
+#tryinclude <YSI\YSI_Core\y_debug\y_debug_entry>
 
