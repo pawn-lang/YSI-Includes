@@ -131,11 +131,11 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_compilerdata"
-#include "..\YSI_Internal\y_version"
+#include "..\..\YSI_Internal\y_compilerdata"
+#include "..\..\YSI_Internal\y_version"
 
-#include "..\YSI_Core\y_debug"
-#include "..\YSI_Core\y_utils"
+#include "..\..\YSI_Core\y_debug"
+#include "..\..\YSI_Core\y_utils"
 
 #define BINTREE_NO_BRANCH -1
 #define BINTREE_NOT_FOUND -1
@@ -162,8 +162,8 @@ enum E_BINTREE_INPUT
 #define BinaryInput:%1<%2> %1[%2][E_BINTREE_INPUT]
 
 #if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_bintree/tests"
+	#include "..\..\YSI_Core\y_testing"
+	#include "y_bintree_tests"
 #endif
 
 // Update at a later date...

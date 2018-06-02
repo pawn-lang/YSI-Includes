@@ -96,13 +96,13 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Internal\y_shortfunc"
-#include "..\YSI_Internal\y_thirdpartyinclude"
+#include "..\..\YSI_Internal\y_version"
+#include "..\..\YSI_Internal\y_shortfunc"
+#include "..\..\YSI_Internal\y_thirdpartyinclude"
 
 // This supports "targetfunc<master> func()" and "targetfunc func<master>()".
-#include "..\YSI_Core\y_utils"
-#include "y_remote/macros"
+#include "..\..\YSI_Core\y_utils"
+#include "y_remote_macros"
 
 // This VERY LOOSELY uses the master system to figure out if it should even
 // bother with complex remote calls.  However, it isn't fully bound by the
@@ -120,7 +120,7 @@ Optional plugins:
 #endif
 
 #if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_remote/tests"
+	#include "..\..\YSI_Core\y_testing"
+	#include "y_remote_tests"
 #endif
 

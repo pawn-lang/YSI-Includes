@@ -165,22 +165,22 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_compilerdata"
-#include "..\YSI_Internal\y_version"
+#include "..\..\YSI_Internal\y_compilerdata"
+#include "..\..\YSI_Internal\y_version"
 
-#include "..\YSI_Data\y_bit"
-#include "..\YSI_Data\y_playerarray"
+#include "..\..\YSI_Data\y_bit"
+#include "..\..\YSI_Data\y_playerarray"
 
-#include "..\YSI_Data\y_iterate"
-#include "..\YSI_Core\y_debug"
+#include "..\..\YSI_Data\y_iterate"
+#include "..\..\YSI_Core\y_debug"
 
-#include "..\YSI_Coding\y_inline"
-#include "..\YSI_Coding\y_remote"
+#include "..\..\YSI_Coding\y_inline"
+#include "..\..\YSI_Coding\y_remote"
 
 #if defined AREAS_USE_TIMER
-	#include "..\YSI_Coding\y_timers"
+	#include "..\..\YSI_Coding\y_timers"
 #endif
-#include "..\YSI_Internal\y_natives"
+#include "..\..\YSI_Internal\y_natives"
 
 #if !defined MAX_AREAS
 	#define MAX_AREAS (1024)
@@ -192,13 +192,13 @@ Optional plugins:
 // Set commands as master 50.
 #define YSIM_U_DISABLE
 #define MASTER 50
-#include "..\YSI_Core\y_master"
+#include "..\..\YSI_Core\y_master"
 
 #define _GROUP_MAKE_NAME<%0...%1> %0Area%1
 #define _GROUP_MAKE_LIMIT         MAX_AREAS
-#include "..\YSI_Players\y_groups\_funcs"
+#include "..\..\YSI_Players\y_groups\_funcs"
 
-#include "..\YSI_Coding\y_hooks"
+#include "..\..\YSI_Coding\y_hooks"
 
 stock _YSI_HAS_y_areas(_do_not_call_me_ever_, _like_never_)
 {
@@ -2691,5 +2691,5 @@ forward OnPlayerLeaveArea(playerid, areaid);
 #undef _GROUP_MAKE_LIMIT
 #undef _GROUP_MAKE_NAME
 
-#include "..\YSI_Core\y_master"
+#include "..\..\YSI_Core\y_master"
 

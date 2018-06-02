@@ -305,7 +305,7 @@ static stock const
 	#define __COMPILER_BUGGED_STRING_RETURN (1)
 	#define __COMPILER_BUGGED_SYSREQ (1)
 	
-	#include "y_funcinc"
+	#include "..\y_funcinc"
 	
 	/*---------------------------------------------------------------------*//*+
 	 * <param name="str">String to return.</param>

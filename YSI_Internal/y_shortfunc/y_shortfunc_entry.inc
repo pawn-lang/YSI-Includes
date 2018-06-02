@@ -103,12 +103,12 @@ Optional plugins:
 	#define void:
 #endif
 
-#include "..\YSI_Core\y_utils"
-#include "..\YSI_Coding\y_va"
-#include "y_globaltags"
-#include "y_funcinc"
-#include "y_shortvar"
-#include "..\YSI_Core\y_debug"
+#include "..\..\YSI_Core\y_utils"
+#include "..\..\YSI_Coding\y_va"
+#include "..\y_globaltags"
+#include "..\y_funcinc"
+#include "..\y_shortvar"
+#include "..\..\YSI_Core\y_debug"
 
 // 
 // A@ - PARSER_DROP()
@@ -513,7 +513,7 @@ stock G@(GLOBAL_TAG_TYPES:...)
 #define _:%0,) _:%0)
 
 #if defined YSI_LOCK_MODE
-	#include "..\YSI_Internal\y_unique"
+	#include "..\..\YSI_Internal\y_unique"
 	
 	forward UNIQUE_FUNCTION<@yH_OnScriptInit@...>();
 	

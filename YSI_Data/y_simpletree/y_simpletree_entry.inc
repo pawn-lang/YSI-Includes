@@ -131,16 +131,16 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_version"
+#include "..\..\YSI_Internal\y_version"
 
-#include "..\YSI_Core\y_debug"
-#include "..\YSI_Core\y_utils"
+#include "..\..\YSI_Core\y_debug"
+#include "..\..\YSI_Core\y_utils"
 
-#include "y_binarytree"
-#include "y_simpletree/impl"
+#include "..\y_binarytree"
+#include "y_simpletree_impl"
 
 #if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_simpletree/tests"
+	#include "..\..\YSI_Core\y_testing"
+	#include "y_simpletree_tests"
 #endif
 

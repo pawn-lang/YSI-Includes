@@ -81,7 +81,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "y_compilerdata"
+#include "..\y_compilerdata"
 
 #if defined _inc_y_unique
 	#undef _inc_y_unique
@@ -157,7 +157,7 @@ Optional plugins:
 			#endif
 		}
 		
-		#include "y_unique"
+		#include "..\y_unique"
 	#endif
 #endif
 

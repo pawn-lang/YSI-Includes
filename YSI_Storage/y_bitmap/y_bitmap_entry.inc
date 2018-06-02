@@ -88,27 +88,27 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Data\y_bit"
-#include "..\YSI_Core\y_utils"
-#include "..\YSI_Coding\y_malloc"
+#include "..\..\YSI_Internal\y_version"
+#include "..\..\YSI_Data\y_bit"
+#include "..\..\YSI_Core\y_utils"
+#include "..\..\YSI_Coding\y_malloc"
 // Because having colours is always good...
-#include "..\YSI_Server\y_colours"
+#include "..\..\YSI_Server\y_colours"
 
 #if defined YSI_MALLOC_SECURE
 	#error y_bitmap does not (well) work with YSI_MALLOC_SECURE.
 #endif
 
-#include "y_bitmap/impl"
-#include "y_bitmap/fonts"
-#include "y_bitmap/blending"
-#include "y_bitmap/subpixel"
-#include "y_bitmap/patterns"
-#include "y_bitmap/shapes"
+#include "y_bitmap_impl"
+#include "y_bitmap_fonts"
+#include "y_bitmap_blending"
+#include "y_bitmap_subpixel"
+#include "y_bitmap_patterns"
+#include "y_bitmap_shapes"
 
-#include "y_bitmap/write"
+#include "y_bitmap_write"
 
 #if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_bitmap/tests"
+	#include "..\..\YSI_Core\y_testing"
+	#include "y_bitmap_tests"
 #endif

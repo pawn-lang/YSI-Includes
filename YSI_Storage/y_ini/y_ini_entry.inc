@@ -157,7 +157,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_compilerdata"
+#include "..\..\YSI_Internal\y_compilerdata"
 
 #define MAX_INI_LINE                    (MAX_INI_ENTRY_NAME + MAX_INI_ENTRY_TEXT + 32)
 
@@ -198,13 +198,13 @@ stock const
 
 #define INI_NO_FILE (INI:-1)
 
-#include "..\YSI_Internal\y_thirdpartyinclude"
-#include "..\YSI_Internal\y_version"
+#include "..\..\YSI_Internal\y_thirdpartyinclude"
+#include "..\..\YSI_Internal\y_version"
 
-#include "..\YSI_Core\y_utils"
-#include "..\YSI_Coding\y_malloc"
-#include "..\YSI_Coding\y_inline"
-#include "..\YSI_Coding\y_stringhash"
+#include "..\..\YSI_Core\y_utils"
+#include "..\..\YSI_Coding\y_malloc"
+#include "..\..\YSI_Coding\y_inline"
+#include "..\..\YSI_Coding\y_stringhash"
 
 #if defined YSI_TESTS
 	#define _Y_INI_STATIC
@@ -213,19 +213,19 @@ stock const
 #endif
 
 #if defined YSI_TESTS && defined YSI_MOCK_READER
-	#include "..\YSI_Internal\y_mock"
+	#include "..\..\YSI_Internal\y_mock"
 #endif
 
-#include "..\YSI_Coding\y_hooks"
+#include "..\..\YSI_Coding\y_hooks"
 
 forward e_INI_LINE_TYPE:
 	INI_IdentifyLineType(str[MAX_INI_LINE], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e);
 
-#include "y_ini/reading"
-#include "y_ini/writing"
+#include "y_ini_reading"
+#include "y_ini_writing"
 
 #if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_ini/tests"
+	#include "..\..\YSI_Core\y_testing"
+	#include "y_ini_tests"
 #endif
 

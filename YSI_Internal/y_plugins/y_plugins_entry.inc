@@ -130,7 +130,7 @@ Optional plugins:
 	// This plugin was included later on in the script and found first time,
 	// include it here in the second compile pass.
 	#include <RouteConnector>
-	#include "y_gamerzps"
+	#include "..\y_gamerzps"
 #endif
 
 #if defined SetTimerEx_

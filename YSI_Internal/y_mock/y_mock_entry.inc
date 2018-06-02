@@ -86,7 +86,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Coding\y_hooks"
+#include "..\..\YSI_Coding\y_hooks"
 
 static stock
 	YSI_g_sMockFile[2024];

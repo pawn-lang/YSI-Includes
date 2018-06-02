@@ -12,13 +12,13 @@
  *
  */
 
-#include "..\YSI_Players\y_text"
-#include "..\YSI_Visual\y_areas"
+#include "..\..\YSI_Players\y_text"
+#include "..\..\YSI_Visual\y_areas"
 
 #define YSIM_U_DISABLE
 #define MASTER 52
-#include "..\YSI_Core\y_master"
-#include "..\YSI_Coding\y_hooks"
+#include "..\..\YSI_Core\y_master"
+#include "..\..\YSI_Coding\y_hooks"
 
 loadtext core[ysi_zonenames];
 
@@ -953,5 +953,5 @@ mhook OnScriptInit()
 	return 1;
 }
 
-#include "..\YSI_Core\y_master"
+#include "..\..\YSI_Core\y_master"
 

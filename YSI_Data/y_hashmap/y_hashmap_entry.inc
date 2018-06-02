@@ -104,20 +104,20 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_compilerdata"
-#include "..\YSI_Internal\y_thirdpartyinclude"
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Core\y_utils"
-#include "..\YSI_Storage\y_amx"
-#include "..\YSI_Coding\y_stringhash"
-#include "..\YSI_Internal\y_shortfunc"
-#include "..\YSI_Internal\y_stripnumbers"
+#include "..\..\YSI_Internal\y_compilerdata"
+#include "..\..\YSI_Internal\y_thirdpartyinclude"
+#include "..\..\YSI_Internal\y_version"
+#include "..\..\YSI_Core\y_utils"
+#include "..\..\YSI_Storage\y_amx"
+#include "..\..\YSI_Coding\y_stringhash"
+#include "..\..\YSI_Internal\y_shortfunc"
+#include "..\..\YSI_Internal\y_stripnumbers"
 
-#include "y_hashmap/impl"
+#include "y_hashmap_impl"
 
 // The hashmap tests are vast.  Only include them when explicitly requested.
 #if defined YSI_TESTS && defined YSI_HASHMAP_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_hashmap/tests"
+	#include "..\..\YSI_Core\y_testing"
+	#include "y_hashmap_tests"
 #endif
 

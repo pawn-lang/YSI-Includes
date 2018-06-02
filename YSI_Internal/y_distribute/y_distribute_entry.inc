@@ -87,7 +87,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "y_globaltags"
+#include "..\y_globaltags"
 
 /*
 

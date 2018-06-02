@@ -3,7 +3,7 @@
 #endif
 
 // Multiple includes!
-#include "..\YSI_Internal\y_unique"
+#include "..\..\YSI_Internal\y_unique"
 
 // Need an include guard here.
 #if defined _INC_y_text
@@ -181,10 +181,10 @@ Optional plugins:
 	#define _YSI_SPECIAL_DEBUG
 #endif
 
-#include "..\YSI_Internal\y_version"
+#include "..\..\YSI_Internal\y_version"
 
 // Make sure this is included early.
-#include "..\YSI_Data\y_playerset"
+#include "..\..\YSI_Data\y_playerset"
 
 // Apparently I'd already written the internal code to support this and forgot!
 #define Y_TEXT_UNIQUE
@@ -201,7 +201,7 @@ Optional plugins:
 	#define MAX_TEXT_ENTRIES (Y_TEXT_PER_SET * Y_TEXT_MAX_SETS)
 #endif
 
-#include "..\YSI_Core\y_utils"
+#include "..\..\YSI_Core\y_utils"
 
 #if defined YSI_TESTS
 	#define MAX_Y_TEXT_TEST_LINES (10)
@@ -263,15 +263,15 @@ Optional plugins:
 	// TODO: TextDraw hooks.
 #endif
 
-#include "..\YSI_Storage\y_xml"
-#include "..\YSI_Server\y_td"
-#include "..\YSI_Server\y_colours"
+#include "..\..\YSI_Storage\y_xml"
+#include "..\..\YSI_Server\y_td"
+#include "..\..\YSI_Server\y_colours"
 
 //#include "..\y_hooks"
 
-#include "..\YSI_Internal\y_natives"
+#include "..\..\YSI_Internal\y_natives"
 
-#include "y_text/styles"
+#include "y_text_styles"
 
 // This is a horribly eclectic collection of libraries from all over the place
 // and written at different times with different aims - frankly I'll be AMAZED
@@ -280,29 +280,29 @@ Optional plugins:
 // 2017: I'm still amazed it works!
 
 #include <a_samp>
-#include "..\YSI_Core\y_debug"
-#include "..\YSI_Server\y_colours"
-#include "..\YSI_Data\y_hashmap"
-#include "..\YSI_Data\y_jaggedarray"
+#include "..\..\YSI_Core\y_debug"
+#include "..\..\YSI_Server\y_colours"
+#include "..\..\YSI_Data\y_hashmap"
+#include "..\..\YSI_Data\y_jaggedarray"
 
-#include "y_text/load"
+#include "y_text_load"
 
-#include "..\YSI_Internal\y_shortfunc"
-#include "..\YSI_Internal\y_natives"
-#include "..\YSI_Coding\y_va"
+#include "..\..\YSI_Internal\y_shortfunc"
+#include "..\..\YSI_Internal\y_natives"
+#include "..\..\YSI_Coding\y_va"
 
-#include "y_text/render"
+#include "y_text_render"
 
-#include "..\YSI_Storage\y_amx"
-#include "..\YSI_Storage\y_ini"
-#include "..\YSI_Data\y_iterate"
-#include "..\YSI_Server\y_scriptinit"
-#include "..\YSI_Players\y_languages"
-#include "..\YSI_Visual\y_dialog"
-#include "..\YSI_Coding\y_inline"
-#include "..\YSI_Coding\y_hooks"
+#include "..\..\YSI_Storage\y_amx"
+#include "..\..\YSI_Storage\y_ini"
+#include "..\..\YSI_Data\y_iterate"
+#include "..\..\YSI_Server\y_scriptinit"
+#include "..\..\YSI_Players\y_languages"
+#include "..\..\YSI_Visual\y_dialog"
+#include "..\..\YSI_Coding\y_inline"
+#include "..\..\YSI_Coding\y_hooks"
 
-#include "y_text/impl"
+#include "y_text_impl"
 
 #define UNDO_MOVE|||
 #define DO_MOVE|||%0``` %0DO_MOVE|||
@@ -366,8 +366,8 @@ stock Text_PrintFEx(const format[], GLOBAL_TAG_TYPES:...)
 }
 
 #if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_text/tests"
+	#include "..\..\YSI_Core\y_testing"
+	#include "y_text_tests"
 #endif
 
 #if !defined formatex

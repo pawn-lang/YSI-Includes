@@ -95,7 +95,7 @@ Optional plugins:
 #if !defined HTTP
 	#tryinclude <a_http>
 #endif
-#include "y_natives"
+#include "..\y_natives"
 
 #if MAX_PLAYER_NAME != (24)
 	#error Unknown MAX_PLAYER_NAME size.
@@ -105,8 +105,8 @@ Optional plugins:
 	#define MAX_PLAYER_NAME 24
 #endif
 
-#include "..\YSI_Server\y_scriptinit"
-#include "y_prehook"
+#include "..\..\YSI_Server\y_scriptinit"
+#include "..\y_prehook"
 
 #if !defined CHAIN_ORDER
 	#define CHAIN_ORDER() 0

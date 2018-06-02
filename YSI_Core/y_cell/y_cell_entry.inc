@@ -87,9 +87,9 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Internal\y_globaltags"
-#include "..\YSI_Internal\y_funcinc"
+#include "..\..\YSI_Internal\y_version"
+#include "..\..\YSI_Internal\y_globaltags"
+#include "..\..\YSI_Internal\y_funcinc"
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
@@ -791,7 +791,7 @@ stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 }
 
 #if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_cell/tests"
+	#include "..\..\YSI_Core\y_testing"
+	#include "y_cell_tests"
 #endif
 

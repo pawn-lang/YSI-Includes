@@ -3,7 +3,7 @@
 #endif
 
 // Multiple includes!
-#include "..\YSI_Internal\y_unique"
+#include "..\..\YSI_Internal\y_unique"
 
 #define _Y_HOOKS_INCLUDED
 
@@ -101,28 +101,28 @@ Optional plugins:
 	#define _Y_HOOKS_STATIC static
 #endif
 
-#include "y_hooks/macros"
+#include "y_hooks_macros"
 
 // Actually now an important include - ensures that "OnScriptInit" is hooked
 // correctly despite not being called correctly.
-#include "..\YSI_Core\y_debug"
-#include "..\YSI_Core\y_cell"
-#include "..\YSI_Core\y_utils"
-#include "..\YSI_Storage\y_amx"
-#include "..\YSI_Core\y_als"
+#include "..\..\YSI_Core\y_debug"
+#include "..\..\YSI_Core\y_cell"
+#include "..\..\YSI_Core\y_utils"
+#include "..\..\YSI_Storage\y_amx"
+#include "..\..\YSI_Core\y_als"
 
-#include "..\YSI_Internal\y_cgen"
-#include "..\YSI_Internal\y_prehook"
+#include "..\..\YSI_Internal\y_cgen"
+#include "..\..\YSI_Internal\y_prehook"
 
-#include "..\YSI_Internal\y_thirdpartyinclude"
+#include "..\..\YSI_Internal\y_thirdpartyinclude"
 //asm"
 
-#include "y_hooks/impl"
+#include "y_hooks_impl"
 
 #if defined YSI_TESTS
 	// Get a new unique ID for the test hooks.
-	#include "..\YSI_Internal\y_unique"
-	#include "..\YSI_Core\y_testing"
-	#include "y_hooks/tests"
+	#include "..\..\YSI_Internal\y_unique"
+	#include "..\..\YSI_Core\y_testing"
+	#include "y_hooks_tests"
 #endif
 

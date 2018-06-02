@@ -129,12 +129,12 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 *//*-------------------------------------------------------------------------**/
 
-#include "..\YSI_Internal\y_compilerdata"
-#include "..\YSI_Internal\y_globaltags"
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Internal\y_funcinc"
-#include "..\YSI_Server\y_scriptinit"
-#include "..\YSI_Internal\y_prehook"
+#include "..\..\YSI_Internal\y_compilerdata"
+#include "..\..\YSI_Internal\y_globaltags"
+#include "..\..\YSI_Internal\y_version"
+#include "..\..\YSI_Internal\y_funcinc"
+#include "..\..\YSI_Server\y_scriptinit"
+#include "..\..\YSI_Internal\y_prehook"
 
 #if !defined _DEBUG
 	#define _DEBUG 0

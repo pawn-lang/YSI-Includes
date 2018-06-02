@@ -90,11 +90,11 @@ Optional plugins:
 	#include <a_http>
 #endif
 
-#include "..\YSI_Core\y_utils"
-#include "..\YSI_Internal\y_funcinc"
-#include "..\YSI_Core\y_debug"
-#include "..\YSI_Coding\y_timers"
-#include "..\YSI_Coding\y_hooks"
+#include "..\..\YSI_Core\y_utils"
+#include "..\..\YSI_Internal\y_funcinc"
+#include "..\..\YSI_Core\y_debug"
+#include "..\..\YSI_Coding\y_timers"
+#include "..\..\YSI_Coding\y_hooks"
 
 #if !defined PHP_RECEIVE || !defined PHP_SEND
 	#error You must define PHP_RECEIVE and PHP_SEND before including y_php.
@@ -539,5 +539,5 @@ public _PHP_Result(index, response, data[])
 #define @_yP%0\32; @_yP
 #define @_Py%0\32; @_Py
 
-//#include "..\YSI_Core\y_master"
+//#include "..\..\YSI_Core\y_master"
 

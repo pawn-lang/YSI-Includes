@@ -86,8 +86,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "y_compilerdata"
-#include "y_globaltags"
+#include "..\y_compilerdata"
+#include "..\y_globaltags"
 
 /*#if defined _YSI_MINI_MODE
 	// Remove all of "file" now.

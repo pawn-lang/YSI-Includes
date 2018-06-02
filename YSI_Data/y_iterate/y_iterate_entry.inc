@@ -104,7 +104,7 @@ Optional plugins:
     
 */
 
-#include "..\YSI_Internal\y_compilerdata"
+#include "..\..\YSI_Internal\y_compilerdata"
 
 // "y_iterate" is always higher than "foreach".
 #define _Y_ITERATE_LOCAL_VERSION        43
@@ -456,28 +456,28 @@ Optional plugins:
 	forward Iter_OPDCInternal(playerid);
 #endif
 
-#include "y_foreach/macros"
+#include "y_foreach_macros"
 
-#include "..\YSI_Internal\y_natives"
-#include "..\YSI_Internal\y_shortfunc"
-#include "..\YSI_Internal\y_funcinc"
-#include "..\YSI_Core\y_debug"
-//#include "..\YSI_Coding\y_malloc"
+#include "..\..\YSI_Internal\y_natives"
+#include "..\..\YSI_Internal\y_shortfunc"
+#include "..\..\YSI_Internal\y_funcinc"
+#include "..\..\YSI_Core\y_debug"
+//#include "..\..\YSI_Coding\y_malloc"
 
-#include "y_foreach/impl"
-#include "..\YSI_Coding\y_hooks"
-#include "y_foreach/yield"
+#include "y_foreach_impl"
+#include "..\..\YSI_Coding\y_hooks"
+#include "y_foreach_yield"
 
 #if _FOREACH_CHARACTERS || _FOREACH_VEHICLES || _FOREACH_ACTORS
-	#include "..\YSI_Coding\y_hooks"
+	#include "..\..\YSI_Coding\y_hooks"
 #endif
 #if _FOREACH_VEHICLES || _FOREACH_ACTORS
-	#include "..\YSI_Coding\y_remote"
+	#include "..\..\YSI_Coding\y_remote"
 #endif
-#include "y_foreach/iterators"
+#include "y_foreach_iterators"
 
 #if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_foreach/tests"
+	#include "..\..\YSI_Core\y_testing"
+	#include "y_foreach_tests"
 #endif
 

@@ -87,8 +87,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Storage\y_amx"
-#include "..\YSI_Internal\y_thirdpartyinclude"
+#include "..\..\YSI_Storage\y_amx"
+#include "..\..\YSI_Internal\y_thirdpartyinclude"
 
 CHAIN_HOOK(CGen)
 #undef CHAIN_ORDER

@@ -89,7 +89,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "y_compilerdata"
+#include "..\y_compilerdata"
 
 #if __COMPILER_BUGGED_SYSREQ
 	forward _@_y_funcinc_@_();

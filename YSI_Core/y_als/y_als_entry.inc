@@ -91,19 +91,19 @@ Optional plugins:
 
 #if !defined _INC_y_als
 	#define _INC_y_als
-	#include "..\YSI_Internal\y_version"
-	#include "y_utils"
-	#include "..\YSI_Server\y_scriptinit"
-	#include "..\YSI_Data\y_bit"
-	#include "..\YSI_Internal\y_shortfunc"
+	#include "..\..\YSI_Internal\y_version"
+	#include "..\y_utils"
+	#include "..\..\YSI_Server\y_scriptinit"
+	#include "..\..\YSI_Data\y_bit"
+	#include "..\..\YSI_Internal\y_shortfunc"
 	
-	#include "y_als/impl"
+	#include "y_als_impl"
 	
 	#if defined YSI_TESTS
-		#include "..\YSI_Coding\y_va"
+		#include "..\..\YSI_Coding\y_va"
 		
-		#include "y_testing"
-		#include "y_als/tests"
+		#include "..\y_testing"
+		#include "y_als_tests"
 	#endif
 #endif
 

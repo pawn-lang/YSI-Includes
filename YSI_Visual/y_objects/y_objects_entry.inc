@@ -223,7 +223,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_compilerdata"
+#include "..\..\YSI_Internal\y_compilerdata"
 
 #if !defined OBJECT_BOUNDS_MINX
 	#if defined OBJECT_BOUNDS

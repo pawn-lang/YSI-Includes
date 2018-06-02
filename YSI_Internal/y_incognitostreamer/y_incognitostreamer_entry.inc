@@ -87,7 +87,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "y_plugins"
+#include "..\y_plugins"
 
 static stock const
 	YSI_gscEmpty[2] = {-1, -1};
@@ -98,8 +98,8 @@ static stock const
 	#define _GROUP_MAKE_NAME<%0...%1> %0SObject%1
 	#define _GROUP_MAKE_LIMIT IPS_MAX_OBJECTS
 	// Include the second half of the file for the methods.
-	#include "y_groupsingle"
-	#include "y_groupsecond"
+	#include "..\y_groupsingle"
+	#include "..\y_groupsecond"
 	
 	/*---------------------------------------------------------------------*//*+
 	 *
@@ -171,8 +171,8 @@ static stock const
 	#define _GROUP_MAKE_NAME<%0...%1> %0SPickup%1
 	#define _GROUP_MAKE_LIMIT IPS_MAX_PICKUPS
 	// Include the second half of the file for the methods.
-	#include "y_groupsingle"
-	#include "y_groupsecond"
+	#include "..\y_groupsingle"
+	#include "..\y_groupsecond"
 	
 	foreign void:SPickup_SetPlayer(o,p,bool:s);
 	
@@ -224,8 +224,8 @@ static stock const
 	#define _GROUP_MAKE_NAME<%0...%1> %0SCP%1
 	#define _GROUP_MAKE_LIMIT IPS_MAX_CPS
 	// Include the second half of the file for the methods.
-	#include "y_groupsingle"
-	#include "y_groupsecond"
+	#include "..\y_groupsingle"
+	#include "..\y_groupsecond"
 	
 	foreign void:SCP_SetPlayer(o,p,bool:s);
 	
@@ -277,8 +277,8 @@ static stock const
 	#define _GROUP_MAKE_NAME<%0...%1> %0SRaceCP%1
 	#define _GROUP_MAKE_LIMIT IPS_MAX_RACE_CPS
 	// Include the second half of the file for the methods.
-	#include "y_groupsingle"
-	#include "y_groupsecond"
+	#include "..\y_groupsingle"
+	#include "..\y_groupsecond"
 	
 	foreign void:SRaceCP_SetPlayer(o,p,bool:s);
 	
@@ -330,8 +330,8 @@ static stock const
 	#define _GROUP_MAKE_NAME<%0...%1> %0SMapIcon%1
 	#define _GROUP_MAKE_LIMIT IPS_MAX_MAP_ICONS
 	// Include the second half of the file for the methods.
-	#include "y_groupsingle"
-	#include "y_groupsecond"
+	#include "..\y_groupsingle"
+	#include "..\y_groupsecond"
 	
 	foreign void:SMapIcon_SetPlayer(o,p,bool:s);
 	
@@ -384,9 +384,9 @@ static stock const
 	#define _GROUP_MAKE_LIMIT IPS_MAX_3D_TEXT_LABELS
 	#define _GROUP_MAKE_TAG         Text3D
 	// Include the second half of the file for the methods.
-	#include "y_groupsingle"
+	#include "..\y_groupsingle"
 	#define _GROUP_MAKE_TAG         Text3D
-	#include "y_groupsecond"
+	#include "..\y_groupsecond"
 	//#undef _GROUP_MAKE_TAG
 	
 	foreign void:SText3D_SetPlayer(Text3D:o,p,bool:s);
@@ -439,8 +439,8 @@ static stock const
 	#define _GROUP_MAKE_NAME<%0...%1> %0SArea%1
 	#define _GROUP_MAKE_LIMIT IPS_MAX_AREAS
 	// Include the second half of the file for the methods.
-	#include "y_groupsingle"
-	#include "y_groupsecond"
+	#include "..\y_groupsingle"
+	#include "..\y_groupsecond"
 	
 	foreign void:SArea_SetPlayer(o,p,bool:s);
 	

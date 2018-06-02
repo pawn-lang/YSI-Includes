@@ -94,28 +94,28 @@ Optional plugins:
 
 #if defined SVAR_USE_MYSQL
 	#if _YSI_PLUGINS_MYSQL == 7
-		#include "y_svar/blueg7"
+		#include "y_svar_blueg7"
 	#elseif _YSI_PLUGINS_MYSQL == 6
-		#include "y_svar/blueg6"
+		#include "y_svar_blueg6"
 	#elseif _YSI_PLUGINS_MYSQL == 7
-		#include "y_svar/stricken"
+		#include "y_svar_stricken"
 	#else
 		#error No MySQL plugin found.
 	#endif
 #elseif defined SVAR_USE_SQLITE
-	#include "y_svar/sqlite"
+	#include "y_svar_sqlite"
 #else
-	#include "..\YSI_Internal\y_version"
-	#include "..\YSI_Storage\y_amx"
-	#include "..\YSI_Core\y_debug"
-	#include "..\YSI_Core\y_utils"
-	#include "..\YSI_Storage\y_ini"
-	#include "..\YSI_Coding\y_hooks"
-	#include "..\YSI_Internal\y_stripnumbers"
+	#include "..\..\YSI_Internal\y_version"
+	#include "..\..\YSI_Storage\y_amx"
+	#include "..\..\YSI_Core\y_debug"
+	#include "..\..\YSI_Core\y_utils"
+	#include "..\..\YSI_Storage\y_ini"
+	#include "..\..\YSI_Coding\y_hooks"
+	#include "..\..\YSI_Internal\y_stripnumbers"
 	
-	#include "y_svar/ini"
+	#include "y_svar_ini"
 #endif
 #if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_svar/tests"
+	#include "..\..\YSI_Core\y_testing"
+	#include "y_svar_tests"
 #endif

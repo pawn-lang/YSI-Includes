@@ -154,18 +154,18 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_compilerdata"
-#include "..\YSI_Internal\y_shortvar"
-#include "..\YSI_Internal\y_version"
+#include "..\..\YSI_Internal\y_compilerdata"
+#include "..\..\YSI_Internal\y_shortvar"
+#include "..\..\YSI_Internal\y_version"
 
-#include "..\YSI_Core\y_debug"
-#include "..\YSI_Storage\y_amx"
+#include "..\..\YSI_Core\y_debug"
+#include "..\..\YSI_Storage\y_amx"
 //#tryinclude <sscanf>
 
-#include "..\YSI_Internal\y_thirdpartyinclude"
-#include "..\YSI_Internal\y_funcinc"
+#include "..\..\YSI_Internal\y_thirdpartyinclude"
+#include "..\..\YSI_Internal\y_funcinc"
 // Add new tags to the START of this list.
-#include "..\YSI_Internal\y_globaltags"
+#include "..\..\YSI_Internal\y_globaltags"
 
 #define FUNCTION_LENGTH                 (32)
 
@@ -1931,11 +1931,11 @@ stock Range(arr[], num = sizeof (arr))
 	return max2 - min2;
 }
 
-#include "..\YSI_Coding\y_va"
-#include "..\YSI_Internal\y_shortfunc"
+#include "..\..\YSI_Coding\y_va"
+#include "..\..\YSI_Internal\y_shortfunc"
 
 #if defined YSI_TESTS
-	#include "y_testing"
-	#include "y_utils/tests"
+	#include "..\y_testing"
+	#include "y_utils_tests"
 #endif
 

@@ -122,7 +122,7 @@ Optional plugins:
 #define ___8 ___(8)
 #define ___9 ___(9)
 
-#include "..\YSI_Internal\y_globaltags"
+#include "..\..\YSI_Internal\y_globaltags"
 
 #define va_args<%0> GLOBAL_TAG_TYPES:...
 #define va_start<%0> ___(%0)
@@ -141,14 +141,14 @@ native va_CallLocalFunction (const function[], const format[], GLOBAL_TAG_TYPES:
 native va_SetTimerEx        (const function[], interval, repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
 native va_format            (output[], len, const format[], GLOBAL_TAG_TYPES:...)                         = format;
 
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Internal\y_funcinc"
-#include "..\YSI_Core\y_utils"
+#include "..\..\YSI_Internal\y_version"
+#include "..\..\YSI_Internal\y_funcinc"
+#include "..\..\YSI_Core\y_utils"
 
-#include "y_va/impl"
+#include "y_va_impl"
 
 #if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_va/tests"
+	#include "..\..\YSI_Core\y_testing"
+	#include "y_va_tests"
 #endif
 

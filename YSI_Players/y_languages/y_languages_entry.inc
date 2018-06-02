@@ -86,13 +86,13 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_version"
+#include "..\..\YSI_Internal\y_version"
 
 #define YSIM_U_DISABLE
 #define MASTER 56
-#include "..\YSI_Core\y_master"
+#include "..\..\YSI_Core\y_master"
 
-#include "..\YSI_Coding\y_hooks"
+#include "..\..\YSI_Coding\y_hooks"
 
 #if !defined MAX_LANGUAGES
 	#define MAX_LANGUAGES (4)
@@ -435,5 +435,5 @@ mhook OnPlayerConnect(playerid)
 	return 0;
 }
 
-#include "..\YSI_Core\y_master"
+#include "..\..\YSI_Core\y_master"
 

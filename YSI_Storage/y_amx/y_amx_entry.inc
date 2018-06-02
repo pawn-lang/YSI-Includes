@@ -94,13 +94,13 @@ Optional plugins:
 // the two systems do things.  I fully admit that his is FAR more general but
 // there are legacy libraries to consider.
 
-#include "..\YSI_Internal\y_version"
+#include "..\..\YSI_Internal\y_version"
 
-#include "..\YSI_Server\y_scriptinit"
-#include "..\YSI_Core\y_debug"
-#include "..\YSI_Internal\y_natives"
+#include "..\..\YSI_Server\y_scriptinit"
+#include "..\..\YSI_Core\y_debug"
+#include "..\..\YSI_Internal\y_natives"
 
-#include "..\YSI_Internal\y_thirdpartyinclude"
+#include "..\..\YSI_Internal\y_thirdpartyinclude"
 
 #define AMX_FastString(%1,%2,%3,%4) \
 	(((%1) << 0) | ((%2) << 8) | ((%3) << 16) | ((%4) << 24))

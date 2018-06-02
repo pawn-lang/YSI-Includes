@@ -90,9 +90,9 @@ Optional plugins:
 */
 
 #include <a_samp>
-#include "..\YSI_Data\y_iterate"
-#include "..\YSI_Data\y_playerarray"
-#include "..\YSI_Core\y_debug"
+#include "..\..\YSI_Data\y_iterate"
+#include "..\..\YSI_Data\y_playerarray"
+#include "..\..\YSI_Core\y_debug"
 
 #if !defined MAX_PLAYER_SET_STACK
     #define MAX_PLAYER_SET_STACK (3)

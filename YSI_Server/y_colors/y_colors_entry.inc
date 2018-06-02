@@ -90,4 +90,4 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Server\y_colours"
+#include "..\..\YSI_Server\y_colours"
