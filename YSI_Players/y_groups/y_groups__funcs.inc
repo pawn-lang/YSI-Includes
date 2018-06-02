@@ -842,7 +842,7 @@ _gchain _yGU(&pid, Bit:p[], Bit:c[])
 		#endif
 	}
 	
-	#include "_unique"
+	#include "y_groups__unique"
 	
 	stock _GROUP_UNIQUE_FUNCTION()
 	{

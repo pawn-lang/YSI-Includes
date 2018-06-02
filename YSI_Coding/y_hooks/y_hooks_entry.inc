@@ -1,17 +1,3 @@
-#if defined _inc_y_hooks_entry
-	#undef _inc_y_hooks_entry
-#endif
-
-#define _Y_HOOKS_INCLUDED
-
-// Multiple includes!
-#include "..\..\YSI_Internal\y_unique"
-
-#if defined _INC_y_hooks
-	#endinput
-#endif
-#define _INC_y_hooks
-
 /*
 Legal:
 	Version: MPL 1.1
@@ -83,6 +69,20 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
+#define _Y_HOOKS_INCLUDED
+
+#if defined _inc_y_hooks_entry
+	#undef _inc_y_hooks_entry
+#endif
+
+// Multiple includes!
+#include "..\..\YSI_Internal\y_unique"
+
+#if defined _INC_y_hooks
+	#endinput
+#endif
+#define _INC_y_hooks
 
 #if defined YSI_TESTS
 	#define _Y_HOOKS_STATIC

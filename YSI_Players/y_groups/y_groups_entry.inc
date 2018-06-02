@@ -89,10 +89,12 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#define _Y_GROUPS_INCLUDED
+
 #include "..\..\YSI_Internal\y_version"
 
-#if defined _inc_y_groups
-	#undef _inc_y_groups
+#if defined _inc_y_groups_entry
+	#undef _inc_y_groups_entry
 #endif
 
 #if !defined _INC_y_groups
@@ -144,7 +146,7 @@ Optional plugins:
 		#else
 			#define _GROUP_MAKE_TAG _
 		#endif
-		#include "y_groups\_funcs"
+		#include "y_groups__funcs"
 		// Now remove the defines.
 		#if defined GROUP_LIBRARY_TAGS
 			#undef GROUP_LIBRARY_TAGS

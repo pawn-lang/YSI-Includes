@@ -93,12 +93,26 @@ Optional plugins:
 	#undef _inc_y_master
 #endif
 
-#tryinclude "y_master\y_master_entry"
-#tryinclude "YSI_Core\y_master\y_master_entry"
-#tryinclude "YSI\YSI_Core\y_master\y_master_entry"
-#tryinclude <YSI_Core\y_master\y_master_entry>
-#tryinclude <YSI\YSI_Core\y_master\y_master_entry>
-
+#if !defined _Y_MASTER_INCLUDED
+	#tryinclude "y_master\y_master_entry"
+#endif
+#if !defined _Y_MASTER_INCLUDED
+	#tryinclude "YSI_Core\y_master\y_master_entry"
+#endif
+#if !defined _Y_MASTER_INCLUDED
+	#tryinclude "YSI\YSI_Core\y_master\y_master_entry"
+#endif
+#if !defined _Y_MASTER_INCLUDED
+	#tryinclude <YSI_Core\y_master\y_master_entry>
+#endif
+#if !defined _Y_MASTER_INCLUDED
+	#tryinclude <YSI\YSI_Core\y_master\y_master_entry>
+#endif
+#if defined _Y_MASTER_INCLUDED
+	#undef _Y_MASTER_INCLUDED
+#else
+	#error Did you use `YSI/y_master` instead of `YSI\y_master`?
+#endif
 
 /**
  * <library name="y_master">

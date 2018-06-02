@@ -1,18 +1,3 @@
-#if defined _inc_y_text_entry
-	#undef _inc_y_text_entry
-#endif
-
-#define _Y_TEXT_INCLUDED
-
-// Multiple includes!
-#include "..\..\YSI_Internal\y_unique"
-
-// Need an include guard here.
-#if defined _INC_y_text
-	#endinput
-#endif
-#define _INC_y_text
-
 /*
 Legal:
 	Version: MPL 1.1
@@ -84,6 +69,21 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
+#define _Y_TEXT_INCLUDED
+
+#if defined _inc_y_text_entry
+	#undef _inc_y_text_entry
+#endif
+
+// Multiple includes!
+#include "..\..\YSI_Internal\y_unique"
+
+// Need an include guard here.
+#if defined _INC_y_text
+	#endinput
+#endif
+#define _INC_y_text
 
 #include <a_samp>
 

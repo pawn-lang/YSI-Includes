@@ -93,11 +93,26 @@ Optional plugins:
 	#undef _inc_y_groups
 #endif
 
-#tryinclude "y_groups\y_groups_entry"
-#tryinclude "YSI_Players\y_groups\y_groups_entry"
-#tryinclude "YSI\YSI_Players\y_groups\y_groups_entry"
-#tryinclude <YSI_Players\y_groups\y_groups_entry>
-#tryinclude <YSI\YSI_Players\y_groups\y_groups_entry>
+#if !defined _Y_GROUPS_INCLUDED
+	#tryinclude "y_groups\y_groups_entry"
+#endif
+#if !defined _Y_GROUPS_INCLUDED
+	#tryinclude "YSI_Players\y_groups\y_groups_entry"
+#endif
+#if !defined _Y_GROUPS_INCLUDED
+	#tryinclude "YSI\YSI_Players\y_groups\y_groups_entry"
+#endif
+#if !defined _Y_GROUPS_INCLUDED
+	#tryinclude <YSI_Players\y_groups\y_groups_entry>
+#endif
+#if !defined _Y_GROUPS_INCLUDED
+	#tryinclude <YSI\YSI_Players\y_groups\y_groups_entry>
+#endif
+#if defined _Y_GROUPS_INCLUDED
+	#undef _Y_GROUPS_INCLUDED
+#else
+	#error Did you use `YSI/y_groups` instead of `YSI\y_groups`?
+#endif
 
 /**
  * <library name="y_groups">

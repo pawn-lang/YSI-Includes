@@ -88,6 +88,9 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
+#define _Y_MASTER_INCLUDED
+
 #if !defined _INC_y_master
 	#include "..\..\YSI_Internal\y_version"
 	#include "..\y_debug"
@@ -106,8 +109,8 @@ Optional plugins:
 
 // ALWAYS!  The compiler defines this automatically, don't use it as this is
 // included multiple times to handle multiple master systems.
-#if defined _inc_y_master
-	#undef _inc_y_master
+#if defined _inc_y_master_entry
+	#undef _inc_y_master_entry
 #endif
 
 #if defined MASTER
@@ -153,8 +156,6 @@ Optional plugins:
 	#endinput
 #endif
 #define _INC_y_master
-
-
 
 // Only include this lot once.
 #if defined YSI_TESTS

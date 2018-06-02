@@ -1,5 +1,3 @@
-#define _Y_UNIQUE_INCLUDED
-
 /*+
  * <library name="y_unique">
  * <section>
@@ -82,6 +80,8 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
+#define _Y_UNIQUE_INCLUDED
 
 #if defined _inc_y_unique_entry
 	#undef _inc_y_unique_entry

@@ -74,11 +74,24 @@ Optional plugins:
 	#undef _inc_y_master
 #endif
 
-#if !defined _INC_y_master
+#if !defined _Y_MASTER_INCLUDED
 	#tryinclude "..\YSI_Core\y_master\y_master_entry"
+#endif
+#if !defined _Y_MASTER_INCLUDED
 	#tryinclude "YSI_Core\y_master\y_master_entry"
+#endif
+#if !defined _Y_MASTER_INCLUDED
 	#tryinclude "YSI\YSI_Core\y_master\y_master_entry"
+#endif
+#if !defined _Y_MASTER_INCLUDED
 	#tryinclude <YSI_Core\y_master\y_master_entry>
+#endif
+#if !defined _Y_MASTER_INCLUDED
 	#tryinclude <YSI\YSI_Core\y_master\y_master_entry>
+#endif
+#if defined _Y_MASTER_INCLUDED
+	#undef _Y_MASTER_INCLUDED
+#else
+	#error Did you use `YSI/y_master` instead of `YSI\y_master`?
 #endif
 
