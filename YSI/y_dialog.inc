@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_dialog
-	#tryinclude "..\YSI_Visual\y_dialog"
-	#tryinclude "YSI_Visual\y_dialog"
-	#tryinclude "YSI\YSI_Visual\y_dialog"
-	#tryinclude <YSI_Visual\y_dialog>
-	#tryinclude <YSI\YSI_Visual\y_dialog>
+	#tryinclude "..\YSI_Visual\y_dialog\y_dialog_entry"
+	#tryinclude "YSI_Visual\y_dialog\y_dialog_entry"
+	#tryinclude "YSI\YSI_Visual\y_dialog\y_dialog_entry"
+	#tryinclude <YSI_Visual\y_dialog\y_dialog_entry>
+	#tryinclude <YSI\YSI_Visual\y_dialog\y_dialog_entry>
 #endif
 

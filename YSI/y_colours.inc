@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_colours
-	#tryinclude "..\YSI_Server\y_colours"
-	#tryinclude "YSI_Server\y_colours"
-	#tryinclude "YSI\YSI_Server\y_colours"
-	#tryinclude <YSI_Server\y_colours>
-	#tryinclude <YSI\YSI_Server\y_colours>
+	#tryinclude "..\YSI_Server\y_colours\y_colours_entry"
+	#tryinclude "YSI_Server\y_colours\y_colours_entry"
+	#tryinclude "YSI\YSI_Server\y_colours\y_colours_entry"
+	#tryinclude <YSI_Server\y_colours\y_colours_entry>
+	#tryinclude <YSI\YSI_Server\y_colours\y_colours_entry>
 #endif
 

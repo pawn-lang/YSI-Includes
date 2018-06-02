@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_playerset
-	#tryinclude "..\YSI_Data\y_playerset"
-	#tryinclude "YSI_Data\y_playerset"
-	#tryinclude "YSI\YSI_Data\y_playerset"
-	#tryinclude <YSI_Data\y_playerset>
-	#tryinclude <YSI\YSI_Data\y_playerset>
+	#tryinclude "..\YSI_Data\y_playerset\y_playerset_entry"
+	#tryinclude "YSI_Data\y_playerset\y_playerset_entry"
+	#tryinclude "YSI\YSI_Data\y_playerset\y_playerset_entry"
+	#tryinclude <YSI_Data\y_playerset\y_playerset_entry>
+	#tryinclude <YSI\YSI_Data\y_playerset\y_playerset_entry>
 #endif
 

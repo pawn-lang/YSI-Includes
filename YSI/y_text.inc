@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_text
-	#tryinclude "..\YSI_Players\y_text"
-	#tryinclude "YSI_Players\y_text"
-	#tryinclude "YSI\YSI_Players\y_text"
-	#tryinclude <YSI_Players\y_text>
-	#tryinclude <YSI\YSI_Players\y_text>
+	#tryinclude "..\YSI_Players\y_text\y_text_entry"
+	#tryinclude "YSI_Players\y_text\y_text_entry"
+	#tryinclude "YSI\YSI_Players\y_text\y_text_entry"
+	#tryinclude <YSI_Players\y_text\y_text_entry>
+	#tryinclude <YSI\YSI_Players\y_text\y_text_entry>
 #endif
 

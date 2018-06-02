@@ -75,9 +75,9 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_punycode
-	#tryinclude "..\YSI_Server\y_punycode"
-	#tryinclude "YSI_Server\y_punycode"
-	#tryinclude "YSI\YSI_Server\y_punycode"
-	#tryinclude <YSI_Server\y_punycode>
-	#tryinclude <YSI\YSI_Server\y_punycode>
+	#tryinclude "..\YSI_Server\y_punycode\y_punycode_entry"
+	#tryinclude "YSI_Server\y_punycode\y_punycode_entry"
+	#tryinclude "YSI\YSI_Server\y_punycode\y_punycode_entry"
+	#tryinclude <YSI_Server\y_punycode\y_punycode_entry>
+	#tryinclude <YSI\YSI_Server\y_punycode\y_punycode_entry>
 #endif

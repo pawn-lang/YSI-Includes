@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_master
-	#tryinclude "..\YSI_Core\y_master"
-	#tryinclude "YSI_Core\y_master"
-	#tryinclude "YSI\YSI_Core\y_master"
-	#tryinclude <YSI_Core\y_master>
-	#tryinclude <YSI\YSI_Core\y_master>
+	#tryinclude "..\YSI_Core\y_master\y_master_entry"
+	#tryinclude "YSI_Core\y_master\y_master_entry"
+	#tryinclude "YSI\YSI_Core\y_master\y_master_entry"
+	#tryinclude <YSI_Core\y_master\y_master_entry>
+	#tryinclude <YSI\YSI_Core\y_master\y_master_entry>
 #endif
 

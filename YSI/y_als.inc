@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_als
-	#tryinclude "..\YSI_Core\y_als"
-	#tryinclude "YSI_Core\y_als"
-	#tryinclude "YSI\YSI_Core\y_als"
-	#tryinclude <YSI_Core\y_als>
-	#tryinclude <YSI\YSI_Core\y_als>
+	#tryinclude "..\YSI_Core\y_als\y_als_entry"
+	#tryinclude "YSI_Core\y_als\y_als_entry"
+	#tryinclude "YSI\YSI_Core\y_als\y_als_entry"
+	#tryinclude <YSI_Core\y_als\y_als_entry>
+	#tryinclude <YSI\YSI_Core\y_als\y_als_entry>
 #endif
 

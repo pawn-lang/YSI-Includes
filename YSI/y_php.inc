@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_php
-	#tryinclude "..\YSI_Storage\y_php"
-	#tryinclude "YSI_Storage\y_php"
-	#tryinclude "YSI\YSI_Storage\y_php"
-	#tryinclude <YSI_Storage\y_php>
-	#tryinclude <YSI\YSI_Storage\y_php>
+	#tryinclude "..\YSI_Storage\y_php\y_php_entry"
+	#tryinclude "YSI_Storage\y_php\y_php_entry"
+	#tryinclude "YSI\YSI_Storage\y_php\y_php_entry"
+	#tryinclude <YSI_Storage\y_php\y_php_entry>
+	#tryinclude <YSI\YSI_Storage\y_php\y_php_entry>
 #endif
 

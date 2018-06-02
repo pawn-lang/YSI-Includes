@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_stringhash
-	#tryinclude "..\YSI_Coding\y_stringhash"
-	#tryinclude "YSI_Coding\y_stringhash"
-	#tryinclude "YSI\YSI_Coding\y_stringhash"
-	#tryinclude <YSI_Coding\y_stringhash>
-	#tryinclude <YSI\YSI_Coding\y_stringhash>
+	#tryinclude "..\YSI_Coding\y_stringhash\y_stringhash_entry"
+	#tryinclude "YSI_Coding\y_stringhash\y_stringhash_entry"
+	#tryinclude "YSI\YSI_Coding\y_stringhash\y_stringhash_entry"
+	#tryinclude <YSI_Coding\y_stringhash\y_stringhash_entry>
+	#tryinclude <YSI\YSI_Coding\y_stringhash\y_stringhash_entry>
 #endif
 

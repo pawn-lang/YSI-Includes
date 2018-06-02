@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_va
-	#tryinclude "..\YSI_Coding\y_va"
-	#tryinclude "YSI_Coding\y_va"
-	#tryinclude "YSI\YSI_Coding\y_va"
-	#tryinclude <YSI_Coding\y_va>
-	#tryinclude <YSI\YSI_Coding\y_va>
+	#tryinclude "..\YSI_Coding\y_va\y_va_entry"
+	#tryinclude "YSI_Coding\y_va\y_va_entry"
+	#tryinclude "YSI\YSI_Coding\y_va\y_va_entry"
+	#tryinclude <YSI_Coding\y_va\y_va_entry>
+	#tryinclude <YSI\YSI_Coding\y_va\y_va_entry>
 #endif
 

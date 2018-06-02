@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_languages
-	#tryinclude "..\YSI_Players\y_languages"
-	#tryinclude "YSI_Players\y_languages"
-	#tryinclude "YSI\YSI_Players\y_languages"
-	#tryinclude <YSI_Players\y_languages>
-	#tryinclude <YSI\YSI_Players\y_languages>
+	#tryinclude "..\YSI_Players\y_languages\y_languages_entry"
+	#tryinclude "YSI_Players\y_languages\y_languages_entry"
+	#tryinclude "YSI\YSI_Players\y_languages\y_languages_entry"
+	#tryinclude <YSI_Players\y_languages\y_languages_entry>
+	#tryinclude <YSI\YSI_Players\y_languages\y_languages_entry>
 #endif
 

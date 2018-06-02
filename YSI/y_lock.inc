@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_lock
-	#tryinclude "..\YSI_Server\y_lock"
-	#tryinclude "YSI_Server\y_lock"
-	#tryinclude "YSI\YSI_Server\y_lock"
-	#tryinclude <YSI_Server\y_lock>
-	#tryinclude <YSI\YSI_Server\y_lock>
+	#tryinclude "..\YSI_Server\y_lock\y_lock_entry"
+	#tryinclude "YSI_Server\y_lock\y_lock_entry"
+	#tryinclude "YSI\YSI_Server\y_lock\y_lock_entry"
+	#tryinclude <YSI_Server\y_lock\y_lock_entry>
+	#tryinclude <YSI\YSI_Server\y_lock\y_lock_entry>
 #endif
 

@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_races
-	#tryinclude "..\YSI_Visual\y_races"
-	#tryinclude "YSI_Visual\y_races"
-	#tryinclude "YSI\YSI_Visual\y_races"
-	#tryinclude <YSI_Visual\y_races>
-	#tryinclude <YSI\YSI_Visual\y_races>
+	#tryinclude "..\YSI_Visual\y_races\y_races_entry"
+	#tryinclude "YSI_Visual\y_races\y_races_entry"
+	#tryinclude "YSI\YSI_Visual\y_races\y_races_entry"
+	#tryinclude <YSI_Visual\y_races\y_races_entry>
+	#tryinclude <YSI\YSI_Visual\y_races\y_races_entry>
 #endif
 

@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_amx
-	#tryinclude "..\YSI_Storage\y_amx"
-	#tryinclude "YSI_Storage\y_amx"
-	#tryinclude "YSI\YSI_Storage\y_amx"
-	#tryinclude <YSI_Storage\y_amx>
-	#tryinclude <YSI\YSI_Storage\y_amx>
+	#tryinclude "..\YSI_Storage\y_amx\y_amx_entry"
+	#tryinclude "YSI_Storage\y_amx\y_amx_entry"
+	#tryinclude "YSI\YSI_Storage\y_amx\y_amx_entry"
+	#tryinclude <YSI_Storage\y_amx\y_amx_entry>
+	#tryinclude <YSI\YSI_Storage\y_amx\y_amx_entry>
 #endif
 

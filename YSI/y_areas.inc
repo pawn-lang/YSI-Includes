@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_areas
-	#tryinclude "..\YSI_Visual\y_areas"
-	#tryinclude "YSI_Visual\y_areas"
-	#tryinclude "YSI\YSI_Visual\y_areas"
-	#tryinclude <YSI_Visual\y_areas>
-	#tryinclude <YSI\YSI_Visual\y_areas>
+	#tryinclude "..\YSI_Visual\y_areas\y_areas_entry"
+	#tryinclude "YSI_Visual\y_areas\y_areas_entry"
+	#tryinclude "YSI\YSI_Visual\y_areas\y_areas_entry"
+	#tryinclude <YSI_Visual\y_areas\y_areas_entry>
+	#tryinclude <YSI\YSI_Visual\y_areas\y_areas_entry>
 #endif
 

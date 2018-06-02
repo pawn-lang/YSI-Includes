@@ -86,11 +86,11 @@ Optional plugins:
 #include "..\..\YSI_Visual\y_commands"
 #include "..\..\YSI_Players\y_text"
 
-#if defined _inc_y_users
-	#include "extra\y_extra_users"
+#if defined _INC_y_users
+	#include "..\y_extra_users\y_extra_users_entry"
 #endif
 
 // Don't need to check for y_languages being included as it's done by y_text.
-#include "extra\y_extra_languages"
+#include "..\y_extra_languages\y_extra_languages_entry"
 
-#include "extra\y_extra_other"
+#include "..\y_extra_other\y_extra_other_entry"

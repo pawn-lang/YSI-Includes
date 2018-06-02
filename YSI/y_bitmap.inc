@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_bitmap
-	#tryinclude "..\YSI_Storage\y_bitmap"
-	#tryinclude "YSI_Storage\y_bitmap"
-	#tryinclude "YSI\YSI_Storage\y_bitmap"
-	#tryinclude <YSI_Storage\y_bitmap>
-	#tryinclude <YSI\YSI_Storage\y_bitmap>
+	#tryinclude "..\YSI_Storage\y_bitmap\y_bitmap_entry"
+	#tryinclude "YSI_Storage\y_bitmap\y_bitmap_entry"
+	#tryinclude "YSI\YSI_Storage\y_bitmap\y_bitmap_entry"
+	#tryinclude <YSI_Storage\y_bitmap\y_bitmap_entry>
+	#tryinclude <YSI\YSI_Storage\y_bitmap\y_bitmap_entry>
 #endif
 

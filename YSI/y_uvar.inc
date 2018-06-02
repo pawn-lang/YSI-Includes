@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_uvar
-	#tryinclude "..\YSI_Storage\y_uvar"
-	#tryinclude "YSI_Storage\y_uvar"
-	#tryinclude "YSI\YSI_Storage\y_uvar"
-	#tryinclude <YSI_Storage\y_uvar>
-	#tryinclude <YSI\YSI_Storage\y_uvar>
+	#tryinclude "..\YSI_Storage\y_uvar\y_uvar_entry"
+	#tryinclude "YSI_Storage\y_uvar\y_uvar_entry"
+	#tryinclude "YSI\YSI_Storage\y_uvar\y_uvar_entry"
+	#tryinclude <YSI_Storage\y_uvar\y_uvar_entry>
+	#tryinclude <YSI\YSI_Storage\y_uvar\y_uvar_entry>
 #endif
 

@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_td
-	#tryinclude "..\YSI_Server\y_td"
-	#tryinclude "YSI_Server\y_td"
-	#tryinclude "YSI\YSI_Server\y_td"
-	#tryinclude <YSI_Server\y_td>
-	#tryinclude <YSI\YSI_Server\y_td>
+	#tryinclude "..\YSI_Server\y_td\y_td_entry"
+	#tryinclude "YSI_Server\y_td\y_td_entry"
+	#tryinclude "YSI\YSI_Server\y_td\y_td_entry"
+	#tryinclude <YSI_Server\y_td\y_td_entry>
+	#tryinclude <YSI\YSI_Server\y_td\y_td_entry>
 #endif
 

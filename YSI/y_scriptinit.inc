@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_scriptinit
-	#tryinclude "..\YSI_Server\y_scriptinit"
-	#tryinclude "YSI_Server\y_scriptinit"
-	#tryinclude "YSI\YSI_Server\y_scriptinit"
-	#tryinclude <YSI_Server\y_scriptinit>
-	#tryinclude <YSI\YSI_Server\y_scriptinit>
+	#tryinclude "..\YSI_Server\y_scriptinit\y_scriptinit_entry"
+	#tryinclude "YSI_Server\y_scriptinit\y_scriptinit_entry"
+	#tryinclude "YSI\YSI_Server\y_scriptinit\y_scriptinit_entry"
+	#tryinclude <YSI_Server\y_scriptinit\y_scriptinit_entry>
+	#tryinclude <YSI\YSI_Server\y_scriptinit\y_scriptinit_entry>
 #endif
 

@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_zonenames
-	#tryinclude "..\YSI_Visual\y_zonenames"
-	#tryinclude "YSI_Visual\y_zonenames"
-	#tryinclude "YSI\YSI_Visual\y_zonenames"
-	#tryinclude <YSI_Visual\y_zonenames>
-	#tryinclude <YSI\YSI_Visual\y_zonenames>
+	#tryinclude "..\YSI_Visual\y_zonenames\y_zonenames_entry"
+	#tryinclude "YSI_Visual\y_zonenames\y_zonenames_entry"
+	#tryinclude "YSI\YSI_Visual\y_zonenames\y_zonenames_entry"
+	#tryinclude <YSI_Visual\y_zonenames\y_zonenames_entry>
+	#tryinclude <YSI\YSI_Visual\y_zonenames\y_zonenames_entry>
 #endif
 

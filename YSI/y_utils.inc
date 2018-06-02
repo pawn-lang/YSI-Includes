@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_utils
-	#tryinclude "..\YSI_Core\y_utils"
-	#tryinclude "YSI_Core\y_utils"
-	#tryinclude "YSI\YSI_Core\y_utils"
-	#tryinclude <YSI_Core\y_utils>
-	#tryinclude <YSI\YSI_Core\y_utils>
+	#tryinclude "..\YSI_Core\y_utils\y_utils_entry"
+	#tryinclude "YSI_Core\y_utils\y_utils_entry"
+	#tryinclude "YSI\YSI_Core\y_utils\y_utils_entry"
+	#tryinclude <YSI_Core\y_utils\y_utils_entry>
+	#tryinclude <YSI\YSI_Core\y_utils\y_utils_entry>
 #endif
 

@@ -78,19 +78,19 @@ Optional plugins:
 // the other files in `YSI\` because we want to be able to include `y_hooks` multiple times, but NOT
 // include it multiple times from this one file.
 #if !defined _Y_HOOKS_INCLUDED
-	#tryinclude "..\YSI_Coding\y_hooks"
+	#tryinclude "..\YSI_Coding\y_hooks\y_hooks_entry"
 #endif
 #if !defined _Y_HOOKS_INCLUDED
-	#tryinclude "YSI_Coding\y_hooks"
+	#tryinclude "YSI_Coding\y_hooks\y_hooks_entry"
 #endif
 #if !defined _Y_HOOKS_INCLUDED
-	#tryinclude "YSI\YSI_Coding\y_hooks"
+	#tryinclude "YSI\YSI_Coding\y_hooks\y_hooks_entry"
 #endif
 #if !defined _Y_HOOKS_INCLUDED
-	#tryinclude <YSI_Coding\y_hooks>
+	#tryinclude <YSI_Coding\y_hooks\y_hooks_entry>
 #endif
 #if !defined _Y_HOOKS_INCLUDED
-	#tryinclude <YSI\YSI_Coding\y_hooks>
+	#tryinclude <YSI\YSI_Coding\y_hooks\y_hooks_entry>
 #endif
 #if defined _Y_HOOKS_INCLUDED
 	#undef _Y_HOOKS_INCLUDED

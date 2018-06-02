@@ -75,10 +75,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_iterate
-	#tryinclude "..\YSI_Data\y_iterate"
-	#tryinclude "YSI_Data\y_iterate"
-	#tryinclude "YSI\YSI_Data\y_iterate"
-	#tryinclude <YSI_Data\y_iterate>
-	#tryinclude <YSI\YSI_Data\y_iterate>
+	#tryinclude "..\YSI_Data\y_iterate\y_iterate_entry"
+	#tryinclude "YSI_Data\y_iterate\y_iterate_entry"
+	#tryinclude "YSI\YSI_Data\y_iterate\y_iterate_entry"
+	#tryinclude <YSI_Data\y_iterate\y_iterate_entry>
+	#tryinclude <YSI\YSI_Data\y_iterate\y_iterate_entry>
 #endif
 
