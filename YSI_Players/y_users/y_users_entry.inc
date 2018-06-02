@@ -3,18 +3,7 @@
 #endif
 #define _INC_y_users
 
-/**
- * <library name="y_users">
- * <section>
- *  Description
- * </section>
- *  Provides access to a user system for registering and saving users.
- * <section>
- *  Version
- * </section>
- *  2.2
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

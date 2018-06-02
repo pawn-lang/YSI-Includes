@@ -3,18 +3,7 @@
 #endif
 #define _INC_y_php
 
-/**
- * <library name="y_php">
- * <section>
- *  Description
- * </section>
- *  Sends and receives data from a PHP server with shmop installed.
- * <section>
- *  Version
- * </section>
- *  0.1
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

@@ -3,20 +3,7 @@
 #endif
 #define _INC_y_playerarray
 
-/**
- * <library name="y_playerarray">
- * <section>
- *  Description
- * </section>
- *  This code provides arrays of players who can do things.  This is for support
- *  of the text system which can take arrays of player ids, bit arrays or just a
- *  single ID.
- * <section>
- *  Version
- * </section>
- *  1.0
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

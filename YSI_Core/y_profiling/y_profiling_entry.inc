@@ -3,18 +3,7 @@
 #endif
 #define _INC_y_profiling
 
-/**
- * <library name="y_profiling">
- * <section>
- *  Description
- * </section>
- *  Runs any functions named as profilings when the Profiling_Run function is called.
- * <section>
- *  Version
- * </section>
- *  1.0
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

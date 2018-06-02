@@ -3,19 +3,7 @@
 #endif
 #define _INC_y_cell
 
-/**
- * <library name="y_cell">
- * <section>
- *  Description
- * </section>
- *  Provides a few functions for manipulating the bits in single cells.  Note
- *  that this is distinct from the y_bit library.
- * <section>
- *  Version
- * </section>
- *  0.2
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

@@ -3,35 +3,7 @@
 #endif
 #define _INC_y_punycode
 
-/**
- * <library name="y_punycode">
- * <section>
- *  Description
- * </section>
- *  Functions for converting unicode strings to and from punycode, to be
- *  represented in just ASCII characters.  Based on several public
- *  implementations and the RFC, adapted for PAWN.  For more information see:
- *
- *  <a href="https://en.wikipedia.org/wiki/Punycode" />
- *
- *  Also includes a function that hooks the "HTTP" function to allow for
- *  internationalised domain names with that function.
- * <section>
- *  Version
- * </section>
- *  0.1
- * <section>
- *  Functions
- * </section>
- * <subsection>
- * Stock
- * </subsection><ul>
- *  <symbol name="Puny_Encode">Convert a Unicode string to Punycode.</symbol>
- *  <symbol name="Puny_Decode">Convert a Punycode string to Unicode.</symbol>
- *  <symbol name="Puny_HTTP">Wrapper for "HTTP" to encode domain names.</symbol>
- * </ul>
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

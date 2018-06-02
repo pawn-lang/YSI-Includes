@@ -3,18 +3,7 @@
 #endif
 #define _INC_y_languages
 
-/**
- * <library name="y_languages">
- * <section>
- *  Description
- * </section>
- *  Handles language features - loading, listing and which one a player is.
- * <section>
- *  Version
- * </section>
- *  1.0
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

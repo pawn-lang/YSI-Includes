@@ -3,63 +3,7 @@
 #endif
 #define _INC_y_bintree
 
-/**
- * <library name="y_bintree">
- * <section>
- *  Description
- * </section>
- *  Provides functions to generate balanced binary search trees for efficient
- *  searching of large arrays by value.  Left branch is less than, right branch
- *  is greater than or equal to for multiple matching values.
- * <section>
- *  Version
- * </section>
- *  0.1.3
- * <section>
- *  Functions
- * </section>
- * <subsection>
- * Core
- * </subsection><ul>
- *  <symbol name="Bintree_QSort">Custom implementaion of QSort to keep pointers.</symbol>
- *  <symbol name="Bintree_SortHalf">Itteratively balances halves of an array.</symbol>
- * </ul><subsection>
- * Stock
- * </subsection><ul>
- *  <symbol name="Bintree_Generate">Generates a balanced binary tree from given input.</symbol>
- *  <symbol name="Bintree_Reset">Resets a position in a tree.</symbol>
- *  <symbol name="Bintree_FindValue">Finds the pointer for a value in the tree.</symbol>
- *  <symbol name="Bintree_Add">Adds an item to a generated tree.</symbol>
- *  <symbol name="Bintree_Delete">Removes an item from a tree.</symbol>
- *  <symbol name="Bintree_UpdatePointers">Updates the pointers after a target change.</symbol>
- * </ul><subsection>
- * Static
- * </subsection><ul>
- *  <symbol name="Bintree_Compress">Removes space from an altered tree.</symbol>
- *  <symbol name="Bintree_FindMin">Finds the smallest value on a branch.</symbol>
- *  <symbol name="Bintree_FindMax">Finds the largest value on a branch.</symbol>
- * </ul><subsection>
- * Inline
- * </subsection><ul>
- *  <symbol name="Bintree_Sort">Entry point for Bintree_QSort.</symbol>
- *  <symbol name="Bintree_Fill">Entry point for Bintree_SortHalf.</symbol>
- * </ul><section>
- *  Definitions
- * </section><ul>
- *  <symbol name="BINTREE_NO_BRANCH">Nowhere to go from the number in required direction.</symbol>
- *  <symbol name="BINTREE_NOT_FOUND">Failure return.</symbol>
- * </ul><section>
- *  Enums
- * </section><ul>
- *  <symbol name="E_BINTREE_TREE">Structure of a leaf of a binary tree.</symbol>
- *  <symbol name="E_BINTREE_INPUT">Structure of an array of data to be added to a tree.</symbol>
- * </ul><section>
- *  Tags
- * </section><ul>
- *  <symbol name="Bintree">Binary tree type.</symbol>
- * </ul>
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

@@ -1,5 +1,5 @@
-#if defined _inc_y_hooks
-	#undef _inc_y_hooks
+#if defined _inc_y_hooks_entry
+	#undef _inc_y_hooks_entry
 #endif
 
 #define _Y_HOOKS_INCLUDED
@@ -12,18 +12,7 @@
 #endif
 #define _INC_y_hooks
 
-/**
- * <library name="y_hooks">
- * <section>
- *  Description
- * </section>
- *  Automatically hooks any callbacks with a very simple syntax.
- * <section>
- *  Version
- * </section>
- *  2.0
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

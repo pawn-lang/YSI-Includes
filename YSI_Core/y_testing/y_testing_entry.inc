@@ -3,18 +3,7 @@
 #endif
 #define _INC_y_testing
 
-/**
- * <library name="y_testing">
- * <section>
- *  Description
- * </section>
- *  Runs any functions named as tests when the Testing_Run function is called.
- * <section>
- *  Version
- * </section>
- *  1.0
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

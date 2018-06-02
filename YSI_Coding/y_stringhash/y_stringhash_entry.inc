@@ -3,31 +3,7 @@
 #endif
 #define _INC_y_stringhash
 
-/**
- * <library name="y_stringhash">
- * <section>
- *  Description
- * </section>
- *  Allows you to hash strings at compile time to use them in a switch.
- * <section>
- *  Version
- * </section>
- *  2.0
- * <section>
- *  Functions
- * </section>
- * <subsection>
- * Stock
- * </subsection><ul>
- *  <symbol name="YHash">Generate a string hash at run time.</symbol>
- * </ul><section>
- *  Definitions
- * </section><ul>
- *  <symbol name="_H">Generate a string hash at compile time.</symbol>
- *  <symbol name="_I">Generate a case insensitive string hash at compile time.</symbol>
- * </ul>
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

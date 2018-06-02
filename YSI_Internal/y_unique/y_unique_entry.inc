@@ -83,8 +83,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_unique
-	#undef _inc_y_unique
+#if defined _inc_y_unique_entry
+	#undef _inc_y_unique_entry
 #endif
 
 #include "..\y_compilerdata"

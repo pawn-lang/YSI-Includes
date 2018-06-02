@@ -3,18 +3,7 @@
 #endif
 #define _INC_y_races
 
-/**
- * <library name="y_races">
- * <section>
- *  Description
- * </section>
- *  Create, manage, and run races.
- * <section>
- *  Version
- * </section>
- *  2.0
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

@@ -3,18 +3,7 @@
 #endif
 #define _INC_y_lock
 
-/**
- * <library name="y_lock">
- * <section>
- *  Description
- * </section>
- *  Ensures that the server is running on the IP specified by "bind".
- * <section>
- *  Version
- * </section>
- *  0.1
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

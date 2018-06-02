@@ -3,19 +3,7 @@
 #endif
 #define _INC_y_dialog
 
-/**
- * <library name="y_dialog">
- * <section>
- *  Description
- * </section>
- *  Provides functions for dealing with dialogs, without needing to worry about
- *  IDs or huge "OnDialogResponse" callbacks.
- * <section>
- *  Version
- * </section>
- *  0.1
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

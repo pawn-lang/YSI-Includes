@@ -3,61 +3,7 @@
 #endif
 #define _INC_y_debug
 
-/**
- * <library name="y_debug">
- * <section>
- *  Description
- * </section>
- *  <p>Ensures debug levels are set and defines debug functions.</p>
- *
- *  <p>General debug levels:</p>
- *
- *  <ul>
- *  <li>-1 - Run-time selected debug level.</li>
- *  <li>0 - No debug information.</li>
- *  <li>1 - Callbacks and timers.</li>
- *  <li>2 - Remote functions.</li>
- *  <li>3 - Stock functions.</li>
- *  <li>4 - Static functions.</li>
- *  <li>5 - Code.</li>
- *  <li>6 - Loops.</li>
- *  <li>7 - Extra loop code.</li>
- *  </ul>
- *
- *  <p>If you use <c>P:0</c> you get an optional debug print controlled by the
- *  global state <c>ysi_debug</c> - which is either on or off.</p>
- * <section>
- *  Version
- * </section>
- *  1.0
- * <section>
- *  Functions
- * </section>
- * <subsection>
- * Inline
- * </subsection><ul>
- *  <symbol name="Debug_Code">Runs defined code if a certain level is active.</symbol>
- *  <symbol name="Debug_Print">Prints the formatted string provided at the given level.</symbol>
- * </ul><subsection>
- * Stock
- * </subsection><ul>
- *  <symbol name="Debug_PrintArray">Print several items from an array for debugging purposes.</symbol>
- *  <symbol name="Debug_Enable">Turn on level 0 prints.</symbol>
- *  <symbol name="Debug_Disable">Turn off level 0 prints.</symbol>
- *  <symbol name="Debug_Level">Set the debug level when the code is compiled with
- *  <c>_DEBUG=-1</c>, which means full run-time selection.</symbol>
- * </ul><section>
- *  Definitions
- * </section><ul>
- *  <symbol name="P:&lt;0-6&gt;">Print a message.</symbol>
- *  <symbol name="P:C">Run debug code.</symbol>
- *  <symbol name="P:E">Print an error message.</symbol>
- *  <symbol name="P:W">Print a warning message.</symbol>
- * </ul><section>Compile options</section><ul>
- *  <symbol name="_DEBUG">Debugging level to use.</symbol>
- * </ul>
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

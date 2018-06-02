@@ -3,21 +3,7 @@
 #endif
 #define _INC_y_playerset
 
-/**
- * <library name="y_playerset">
- * <section>
- *  Description
- * </section>
- *  This code is a huge abstraction of collections of players.  It allows you to
- *  define functions which take one or more players, specified in a number of
- *  formats, and perform the code for all those player.  Essentially it is an
- *  abstraction of loops over players.
- * <section>
- *  Version
- * </section>
- *  1.0
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

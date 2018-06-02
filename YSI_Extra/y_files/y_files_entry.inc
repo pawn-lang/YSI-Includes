@@ -3,18 +3,7 @@
 #endif
 #define _INC_y_files
 
-/**
- * <library name="y_files">
- * <section>
- *  Description
- * </section>
- *  Provides native declarations for YSF functions.
- * <section>
- *  Version
- * </section>
- *  0.1
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

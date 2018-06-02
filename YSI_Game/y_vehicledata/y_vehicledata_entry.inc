@@ -3,40 +3,7 @@
 #endif
 #define _INC_y_vehicledata
 
-/**
- * <library name="y_vehicledata">
- * <section>
- *  Description
- * </section>
- *  Basic functions for gathering data on various vehicle models.  Things like
- *  what sort of vehicle they are and what organisation they belong to.
- * <section>
- *  Version
- * </section>
- *  0.2
- * <section>
- *  Functions
- * </section>
- * <subsection>
- * Stock
- * </subsection><ul>
- *  <symbol name="Vehicle_Speed">Get current vehicle speed in KMH.</symbol>
- * </ul><section>
- *  Tags
- * </section><ul>
- *  <symbol name="VIM">Vehicle Internal Modelid.</symbol>
- * </ul><section>
- *  Variables
- * </section>
- * <subsection>
- * Global
- * </subsection><ul>
- *  <symbol name="YSI_gVehicleFlags">Data on vehicles.</symbol>
- *  <symbol name="YSI_gVehicleNames">Names of vehicles.</symbol>
- *  <symbol name="YSI_gVehicleTopSpeed">Top speed of vehicles.</symbol>
- * </ul>
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

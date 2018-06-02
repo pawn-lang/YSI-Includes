@@ -3,18 +3,7 @@
 #endif
 #define _INC_y_svar
 
-/**
- * <library name="y_svar">
- * <section>
- *  Description
- * </section>
- *  Declares data to be automatically saved and loaded for the whole server.
- * <section>
- *  Version
- * </section>
- *  0.1
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

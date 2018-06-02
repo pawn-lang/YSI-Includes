@@ -3,21 +3,7 @@
 #endif
 #define _INC_y_timers
 
-/**
- * <library name="y_timers">
- * <section>
- *  Description
- * </section>
- *  Sets up repeating timers without requiring any SetTimers and arranges them
- *  so that they will be very unlikely to meet (at least for a long time) using
- *  scheduling algorithms to get timers with the same period to be offset.  Also
- *  fixes arrays and strings in timers so they can be passed properly.
- * <section>
- *  Version
- * </section>
- *  2.0
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	

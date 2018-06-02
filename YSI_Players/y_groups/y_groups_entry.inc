@@ -172,19 +172,7 @@ Optional plugins:
 	#include "..\..\YSI_Visual\y_classes/classgroups"
 #endif
 
-/**
- * <library name="y_groups">
- * <section>
- *  Description
- * </section>
- *  Admin levels, gangs, teams etc - they're all "groups" of people, this
- *  provides an abstraction for all of these collections.
- * <section>
- *  Version
- * </section>
- *  1.0
- * </library>
- *//** */
+
 
 stock _YSI_HAS_y_groups(_do_not_call_me_ever_, _like_never_)
 {

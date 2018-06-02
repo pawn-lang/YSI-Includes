@@ -120,17 +120,5 @@ Optional plugins:
 	#define ALS_MAKE<%0...%1> %0Mode_%1
 #endif
 
-/**
- * <library name="y_als">
- * <section>
- *  Description
- * </section>
- *  Provides a number of macros for making ALS (Advanced Library System)
- *  callback hooking simpler.
- * <section>
- *  Version
- * </section>
- *  1.0
- * </library>
- *//** */
+
 

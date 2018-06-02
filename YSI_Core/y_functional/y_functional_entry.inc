@@ -3,18 +3,7 @@
 #endif
 #define _INC_y_functional
 
-/**
- * <library name="y_functional">
- * <section>
- *  Description
- * </section>
- *  Lambda functions and functional program functions - map, fold, etc.
- * <section>
- *  Version
- * </section>
- *  1.0
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	
