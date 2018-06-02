@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_xml
 	#undef _inc_y_xml
 #endif
 
-#include "..\YSI_Storage\y_xml"
+#if !defined _INC_y_xml
+	#tryinclude "..\YSI_Storage\y_xml"
+	#tryinclude "YSI_Storage\y_xml"
+	#tryinclude "YSI\YSI_Storage\y_xml"
+	#tryinclude <YSI_Storage\y_xml>
+	#tryinclude <YSI\YSI_Storage\y_xml>
+#endif
+

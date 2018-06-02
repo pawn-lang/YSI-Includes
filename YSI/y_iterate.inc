@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_iterate
 	#undef _inc_y_iterate
 #endif
 
-#include "..\YSI_Data\y_iterate"
+#if !defined _INC_y_iterate
+	#tryinclude "..\YSI_Data\y_iterate"
+	#tryinclude "YSI_Data\y_iterate"
+	#tryinclude "YSI\YSI_Data\y_iterate"
+	#tryinclude <YSI_Data\y_iterate>
+	#tryinclude <YSI\YSI_Data\y_iterate>
+#endif
+

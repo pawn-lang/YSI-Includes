@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_groups
 	#undef _inc_y_groups
 #endif
 
-#include "..\YSI_Players\y_groups"
+#if !defined _INC_y_groups
+	#tryinclude "..\YSI_Players\y_groups"
+	#tryinclude "YSI_Players\y_groups"
+	#tryinclude "YSI\YSI_Players\y_groups"
+	#tryinclude <YSI_Players\y_groups>
+	#tryinclude <YSI\YSI_Players\y_groups>
+#endif
+

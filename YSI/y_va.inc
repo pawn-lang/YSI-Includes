@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_va
 	#undef _inc_y_va
 #endif
 
-#include "..\YSI_Coding\y_va"
+#if !defined _INC_y_va
+	#tryinclude "..\YSI_Coding\y_va"
+	#tryinclude "YSI_Coding\y_va"
+	#tryinclude "YSI\YSI_Coding\y_va"
+	#tryinclude <YSI_Coding\y_va>
+	#tryinclude <YSI\YSI_Coding\y_va>
+#endif
+

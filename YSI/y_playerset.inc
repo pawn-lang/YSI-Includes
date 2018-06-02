@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_playerset
 	#undef _inc_y_playerset
 #endif
 
-#include "..\YSI_Data\y_playerset"
+#if !defined _INC_y_playerset
+	#tryinclude "..\YSI_Data\y_playerset"
+	#tryinclude "YSI_Data\y_playerset"
+	#tryinclude "YSI\YSI_Data\y_playerset"
+	#tryinclude <YSI_Data\y_playerset>
+	#tryinclude <YSI\YSI_Data\y_playerset>
+#endif
+

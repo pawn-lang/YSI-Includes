@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_svar
 	#undef _inc_y_svar
 #endif
 
-#include "..\YSI_Storage\y_svar"
+#if !defined _INC_y_svar
+	#tryinclude "..\YSI_Storage\y_svar"
+	#tryinclude "YSI_Storage\y_svar"
+	#tryinclude "YSI\YSI_Storage\y_svar"
+	#tryinclude <YSI_Storage\y_svar>
+	#tryinclude <YSI\YSI_Storage\y_svar>
+#endif
+

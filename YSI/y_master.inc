@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_master
 	#undef _inc_y_master
 #endif
 
-#include "..\YSI_Core\y_master"
+#if !defined _INC_y_master
+	#tryinclude "..\YSI_Core\y_master"
+	#tryinclude "YSI_Core\y_master"
+	#tryinclude "YSI\YSI_Core\y_master"
+	#tryinclude <YSI_Core\y_master>
+	#tryinclude <YSI\YSI_Core\y_master>
+#endif
+

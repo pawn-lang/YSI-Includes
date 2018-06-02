@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_uvar
 	#undef _inc_y_uvar
 #endif
 
-#include "..\YSI_Storage\y_uvar"
+#if !defined _INC_y_uvar
+	#tryinclude "..\YSI_Storage\y_uvar"
+	#tryinclude "YSI_Storage\y_uvar"
+	#tryinclude "YSI\YSI_Storage\y_uvar"
+	#tryinclude <YSI_Storage\y_uvar>
+	#tryinclude <YSI\YSI_Storage\y_uvar>
+#endif
+

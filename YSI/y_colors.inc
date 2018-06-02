@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_colors
 	#undef _inc_y_colors
 #endif
 
-#include "..\YSI_Server\y_colors"
+#if !defined _INC_y_colors
+	#tryinclude "..\YSI_Server\y_colors"
+	#tryinclude "YSI_Server\y_colors"
+	#tryinclude "YSI\YSI_Server\y_colors"
+	#tryinclude <YSI_Server\y_colors>
+	#tryinclude <YSI\YSI_Server\y_colors>
+#endif
+

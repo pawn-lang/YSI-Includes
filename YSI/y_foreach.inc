@@ -70,15 +70,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_php
-	#undef _inc_y_php
+#if defined _inc_y_foreach
+	#undef _inc_y_foreach
 #endif
 
-#if !defined _INC_y_php
-	#tryinclude "..\YSI_Storage\y_php"
-	#tryinclude "YSI_Storage\y_php"
-	#tryinclude "YSI\YSI_Storage\y_php"
-	#tryinclude <YSI_Storage\y_php>
-	#tryinclude <YSI\YSI_Storage\y_php>
+#if !defined _INC_y_iterate
+	#tryinclude "..\YSI_Data\y_iterate"
+	#tryinclude "YSI_Data\y_iterate"
+	#tryinclude "YSI\YSI_Data\y_iterate"
+	#tryinclude <YSI_Data\y_iterate>
+	#tryinclude <YSI\YSI_Data\y_iterate>
 #endif
 

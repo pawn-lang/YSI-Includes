@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_races
 	#undef _inc_y_races
 #endif
 
-#include "..\YSI_Visual\y_races"
+#if !defined _INC_y_races
+	#tryinclude "..\YSI_Visual\y_races"
+	#tryinclude "YSI_Visual\y_races"
+	#tryinclude "YSI\YSI_Visual\y_races"
+	#tryinclude <YSI_Visual\y_races>
+	#tryinclude <YSI\YSI_Visual\y_races>
+#endif
+

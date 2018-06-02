@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_remote
 	#undef _inc_y_remote
 #endif
 
-#include "..\YSI_Coding\y_remote"
+#if !defined _INC_y_remote
+	#tryinclude "..\YSI_Coding\y_remote"
+	#tryinclude "YSI_Coding\y_remote"
+	#tryinclude "YSI\YSI_Coding\y_remote"
+	#tryinclude <YSI_Coding\y_remote>
+	#tryinclude <YSI\YSI_Coding\y_remote>
+#endif
+

@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_areas
 	#undef _inc_y_areas
 #endif
 
-#include "..\YSI_Visual\y_areas"
+#if !defined _INC_y_areas
+	#tryinclude "..\YSI_Visual\y_areas"
+	#tryinclude "YSI_Visual\y_areas"
+	#tryinclude "YSI\YSI_Visual\y_areas"
+	#tryinclude <YSI_Visual\y_areas>
+	#tryinclude <YSI\YSI_Visual\y_areas>
+#endif
+

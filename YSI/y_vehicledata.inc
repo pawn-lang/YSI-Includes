@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_vehicledata
 	#undef _inc_y_vehicledata
 #endif
 
-#include "..\YSI_Game\y_vehicledata"
+#if !defined _INC_y_vehicledata
+	#tryinclude "..\YSI_Game\y_vehicledata"
+	#tryinclude "YSI_Game\y_vehicledata"
+	#tryinclude "YSI\YSI_Game\y_vehicledata"
+	#tryinclude <YSI_Game\y_vehicledata>
+	#tryinclude <YSI\YSI_Game\y_vehicledata>
+#endif
+

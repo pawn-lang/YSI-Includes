@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_amx
 	#undef _inc_y_amx
 #endif
 
-#include "..\YSI_Storage\y_amx"
+#if !defined _INC_y_amx
+	#tryinclude "..\YSI_Storage\y_amx"
+	#tryinclude "YSI_Storage\y_amx"
+	#tryinclude "YSI\YSI_Storage\y_amx"
+	#tryinclude <YSI_Storage\y_amx>
+	#tryinclude <YSI\YSI_Storage\y_amx>
+#endif
+

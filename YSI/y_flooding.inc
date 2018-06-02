@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_flooding
 	#undef _inc_y_flooding
 #endif
 
-#include "..\YSI_Server\y_flooding"
+#if !defined _INC_y_flooding
+	#tryinclude "..\YSI_Server\y_flooding"
+	#tryinclude "YSI_Server\y_flooding"
+	#tryinclude "YSI\YSI_Server\y_flooding"
+	#tryinclude <YSI_Server\y_flooding>
+	#tryinclude <YSI\YSI_Server\y_flooding>
+#endif
+

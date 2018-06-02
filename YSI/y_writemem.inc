@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_writemem
 	#undef _inc_y_writemem
 #endif
 
-#include "..\YSI_Internal\y_writemem"
+#if !defined _INC_y_writemem
+	#tryinclude "..\YSI_Internal\y_writemem"
+	#tryinclude "YSI_Internal\y_writemem"
+	#tryinclude "YSI\YSI_Internal\y_writemem"
+	#tryinclude <YSI_Internal\y_writemem>
+	#tryinclude <YSI\YSI_Internal\y_writemem>
+#endif
+

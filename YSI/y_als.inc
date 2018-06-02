@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_als
 	#undef _inc_y_als
 #endif
 
-#include "..\YSI_Core\y_als"
+#if !defined _INC_y_als
+	#tryinclude "..\YSI_Core\y_als"
+	#tryinclude "YSI_Core\y_als"
+	#tryinclude "YSI\YSI_Core\y_als"
+	#tryinclude <YSI_Core\y_als>
+	#tryinclude <YSI\YSI_Core\y_als>
+#endif
+

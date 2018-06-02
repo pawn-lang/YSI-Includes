@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_stringhash
 	#undef _inc_y_stringhash
 #endif
 
-#include "..\YSI_Coding\y_stringhash"
+#if !defined _INC_y_stringhash
+	#tryinclude "..\YSI_Coding\y_stringhash"
+	#tryinclude "YSI_Coding\y_stringhash"
+	#tryinclude "YSI\YSI_Coding\y_stringhash"
+	#tryinclude <YSI_Coding\y_stringhash>
+	#tryinclude <YSI\YSI_Coding\y_stringhash>
+#endif
+

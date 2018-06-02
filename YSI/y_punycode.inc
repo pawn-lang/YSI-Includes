@@ -69,8 +69,15 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_punycode
 	#undef _inc_y_punycode
 #endif
 
-#include "..\YSI_Server\y_punycode"
+#if !defined _INC_y_punycode
+	#tryinclude "..\YSI_Server\y_punycode"
+	#tryinclude "YSI_Server\y_punycode"
+	#tryinclude "YSI\YSI_Server\y_punycode"
+	#tryinclude <YSI_Server\y_punycode>
+	#tryinclude <YSI\YSI_Server\y_punycode>
+#endif

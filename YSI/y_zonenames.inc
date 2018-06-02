@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_zonenames
 	#undef _inc_y_zonenames
 #endif
 
-#include "..\YSI_Visual\y_zonenames"
+#if !defined _INC_y_zonenames
+	#tryinclude "..\YSI_Visual\y_zonenames"
+	#tryinclude "YSI_Visual\y_zonenames"
+	#tryinclude "YSI\YSI_Visual\y_zonenames"
+	#tryinclude <YSI_Visual\y_zonenames>
+	#tryinclude <YSI\YSI_Visual\y_zonenames>
+#endif
+

@@ -69,8 +69,16 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
+
 #if defined _inc_y_commands
 	#undef _inc_y_commands
 #endif
 
-#include "..\YSI_Visual\y_commands"
+#if !defined _INC_y_commands
+	#tryinclude "..\YSI_Visual\y_commands"
+	#tryinclude "YSI_Visual\y_commands"
+	#tryinclude "YSI\YSI_Visual\y_commands"
+	#tryinclude <YSI_Visual\y_commands>
+	#tryinclude <YSI\YSI_Visual\y_commands>
+#endif
+
