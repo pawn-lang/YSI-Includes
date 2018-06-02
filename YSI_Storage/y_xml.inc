@@ -1,8 +1,3 @@
-#if defined _INC_y_xml
-	#endinput
-#endif
-#define _INC_y_xml
-
 /**
  * <library name="y_xml">
  * <section>
@@ -98,9 +93,11 @@ Optional plugins:
 	#undef _inc_y_xml
 #endif
 
-#tryinclude "y_xml\y_xml_entry"
-#tryinclude "YSI_Storage\y_xml\y_xml_entry"
-#tryinclude "YSI\YSI_Storage\y_xml\y_xml_entry"
-#tryinclude <YSI_Storage\y_xml\y_xml_entry>
-#tryinclude <YSI\YSI_Storage\y_xml\y_xml_entry>
+#if !defined _INC_y_xml
+	#tryinclude "y_xml\y_xml_entry"
+	#tryinclude "YSI_Storage\y_xml\y_xml_entry"
+	#tryinclude "YSI\YSI_Storage\y_xml\y_xml_entry"
+	#tryinclude <YSI_Storage\y_xml\y_xml_entry>
+	#tryinclude <YSI\YSI_Storage\y_xml\y_xml_entry>
+#endif
 

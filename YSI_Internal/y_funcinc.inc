@@ -1,8 +1,3 @@
-#if defined _INC_y_funcinc
-	#endinput
-#endif
-#define _INC_y_funcinc
-
 /*+
  * <library name="y_funcinc">
  * <section>
@@ -93,9 +88,11 @@ Optional plugins:
 	#undef _inc_y_funcinc
 #endif
 
-#tryinclude "y_funcinc\y_funcinc_entry"
-#tryinclude "YSI_Internal\y_funcinc\y_funcinc_entry"
-#tryinclude "YSI\YSI_Internal\y_funcinc\y_funcinc_entry"
-#tryinclude <YSI_Internal\y_funcinc\y_funcinc_entry>
-#tryinclude <YSI\YSI_Internal\y_funcinc\y_funcinc_entry>
+#if !defined _INC_y_funcinc
+	#tryinclude "y_funcinc\y_funcinc_entry"
+	#tryinclude "YSI_Internal\y_funcinc\y_funcinc_entry"
+	#tryinclude "YSI\YSI_Internal\y_funcinc\y_funcinc_entry"
+	#tryinclude <YSI_Internal\y_funcinc\y_funcinc_entry>
+	#tryinclude <YSI\YSI_Internal\y_funcinc\y_funcinc_entry>
+#endif
 

@@ -1,8 +1,3 @@
-#if defined _INC_y_version
-	#endinput
-#endif
-#define _INC_y_version
-
 /*+
  * <library name="y_version">
  * <section>
@@ -95,9 +90,11 @@ Optional plugins:
 	#undef _inc_y_version
 #endif
 
-#tryinclude "y_version\y_version_entry"
-#tryinclude "YSI_Internal\y_version\y_version_entry"
-#tryinclude "YSI\YSI_Internal\y_version\y_version_entry"
-#tryinclude <YSI_Internal\y_version\y_version_entry>
-#tryinclude <YSI\YSI_Internal\y_version\y_version_entry>
+#if !defined _INC_y_version
+	#tryinclude "y_version\y_version_entry"
+	#tryinclude "YSI_Internal\y_version\y_version_entry"
+	#tryinclude "YSI\YSI_Internal\y_version\y_version_entry"
+	#tryinclude <YSI_Internal\y_version\y_version_entry>
+	#tryinclude <YSI\YSI_Internal\y_version\y_version_entry>
+#endif
 

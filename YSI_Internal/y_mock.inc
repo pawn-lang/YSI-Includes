@@ -1,8 +1,3 @@
-#if defined _INC_y_mock
-	#endinput
-#endif
-#define _INC_y_mock
-
 /*+
  * <library name="y_mock">
  * <section>
@@ -90,9 +85,11 @@ Optional plugins:
 	#undef _inc_y_mock
 #endif
 
-#tryinclude "y_mock\y_mock_entry"
-#tryinclude "YSI_Internal\y_mock\y_mock_entry"
-#tryinclude "YSI\YSI_Internal\y_mock\y_mock_entry"
-#tryinclude <YSI_Internal\y_mock\y_mock_entry>
-#tryinclude <YSI\YSI_Internal\y_mock\y_mock_entry>
+#if !defined _INC_y_mock
+	#tryinclude "y_mock\y_mock_entry"
+	#tryinclude "YSI_Internal\y_mock\y_mock_entry"
+	#tryinclude "YSI\YSI_Internal\y_mock\y_mock_entry"
+	#tryinclude <YSI_Internal\y_mock\y_mock_entry>
+	#tryinclude <YSI\YSI_Internal\y_mock\y_mock_entry>
+#endif
 

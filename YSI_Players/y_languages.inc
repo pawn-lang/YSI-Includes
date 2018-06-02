@@ -1,8 +1,3 @@
-#if defined _INC_y_languages
-	#endinput
-#endif
-#define _INC_y_languages
-
 /**
  * <library name="y_languages">
  * <section>
@@ -90,9 +85,11 @@ Optional plugins:
 	#undef _inc_y_languages
 #endif
 
-#tryinclude "y_languages\y_languages_entry"
-#tryinclude "YSI_Players\y_languages\y_languages_entry"
-#tryinclude "YSI\YSI_Players\y_languages\y_languages_entry"
-#tryinclude <YSI_Players\y_languages\y_languages_entry>
-#tryinclude <YSI\YSI_Players\y_languages\y_languages_entry>
+#if !defined _INC_y_languages
+	#tryinclude "y_languages\y_languages_entry"
+	#tryinclude "YSI_Players\y_languages\y_languages_entry"
+	#tryinclude "YSI\YSI_Players\y_languages\y_languages_entry"
+	#tryinclude <YSI_Players\y_languages\y_languages_entry>
+	#tryinclude <YSI\YSI_Players\y_languages\y_languages_entry>
+#endif
 

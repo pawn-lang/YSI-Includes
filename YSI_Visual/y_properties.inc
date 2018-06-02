@@ -1,8 +1,3 @@
-#if defined _INC_y_properties
-	#endinput
-#endif
-#define _INC_y_properties
-
 /**
  * <library name="y_properties">
  * <section>
@@ -224,9 +219,11 @@ Optional plugins:
 	#undef _inc_y_properties
 #endif
 
-#tryinclude "y_properties\y_properties_entry"
-#tryinclude "YSI_Visual\y_properties\y_properties_entry"
-#tryinclude "YSI\YSI_Visual\y_properties\y_properties_entry"
-#tryinclude <YSI_Visual\y_properties\y_properties_entry>
-#tryinclude <YSI\YSI_Visual\y_properties\y_properties_entry>
+#if !defined _INC_y_properties
+	#tryinclude "y_properties\y_properties_entry"
+	#tryinclude "YSI_Visual\y_properties\y_properties_entry"
+	#tryinclude "YSI\YSI_Visual\y_properties\y_properties_entry"
+	#tryinclude <YSI_Visual\y_properties\y_properties_entry>
+	#tryinclude <YSI\YSI_Visual\y_properties\y_properties_entry>
+#endif
 

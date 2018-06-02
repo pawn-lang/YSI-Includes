@@ -1,8 +1,3 @@
-#if defined _INC_y_inline
-	#endinput
-#endif
-#define _INC_y_inline
-
 /**
  * <library name="y_inline">
  * <section>
@@ -96,9 +91,11 @@ Optional plugins:
 	#undef _inc_y_inline
 #endif
 
-#tryinclude "y_inline\y_inline_entry"
-#tryinclude "YSI_Coding\y_inline\y_inline_entry"
-#tryinclude "YSI\YSI_Coding\y_inline\y_inline_entry"
-#tryinclude <YSI_Coding\y_inline\y_inline_entry>
-#tryinclude <YSI\YSI_Coding\y_inline\y_inline_entry>
+#if !defined _INC_y_inline
+	#tryinclude "y_inline\y_inline_entry"
+	#tryinclude "YSI_Coding\y_inline\y_inline_entry"
+	#tryinclude "YSI\YSI_Coding\y_inline\y_inline_entry"
+	#tryinclude <YSI_Coding\y_inline\y_inline_entry>
+	#tryinclude <YSI\YSI_Coding\y_inline\y_inline_entry>
+#endif
 

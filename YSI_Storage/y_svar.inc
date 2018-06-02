@@ -1,8 +1,3 @@
-#if defined _INC_y_svar
-	#endinput
-#endif
-#define _INC_y_svar
-
 /**
  * <library name="y_svar">
  * <section>
@@ -90,9 +85,11 @@ Optional plugins:
 	#undef _inc_y_svar
 #endif
 
-#tryinclude "y_svar\y_svar_entry"
-#tryinclude "YSI_Storage\y_svar\y_svar_entry"
-#tryinclude "YSI\YSI_Storage\y_svar\y_svar_entry"
-#tryinclude <YSI_Storage\y_svar\y_svar_entry>
-#tryinclude <YSI\YSI_Storage\y_svar\y_svar_entry>
+#if !defined _INC_y_svar
+	#tryinclude "y_svar\y_svar_entry"
+	#tryinclude "YSI_Storage\y_svar\y_svar_entry"
+	#tryinclude "YSI\YSI_Storage\y_svar\y_svar_entry"
+	#tryinclude <YSI_Storage\y_svar\y_svar_entry>
+	#tryinclude <YSI\YSI_Storage\y_svar\y_svar_entry>
+#endif
 

@@ -1,8 +1,3 @@
-#if defined _INC_y_timers
-	#endinput
-#endif
-#define _INC_y_timers
-
 /**
  * <library name="y_timers">
  * <section>
@@ -93,9 +88,11 @@ Optional plugins:
 	#undef _inc_y_timers
 #endif
 
-#tryinclude "y_timers\y_timers_entry"
-#tryinclude "YSI_Coding\y_timers\y_timers_entry"
-#tryinclude "YSI\YSI_Coding\y_timers\y_timers_entry"
-#tryinclude <YSI_Coding\y_timers\y_timers_entry>
-#tryinclude <YSI\YSI_Coding\y_timers\y_timers_entry>
+#if !defined _INC_y_timers
+	#tryinclude "y_timers\y_timers_entry"
+	#tryinclude "YSI_Coding\y_timers\y_timers_entry"
+	#tryinclude "YSI\YSI_Coding\y_timers\y_timers_entry"
+	#tryinclude <YSI_Coding\y_timers\y_timers_entry>
+	#tryinclude <YSI\YSI_Coding\y_timers\y_timers_entry>
+#endif
 

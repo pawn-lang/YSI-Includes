@@ -1,8 +1,3 @@
-#if defined _INC_y_playerset
-	#endinput
-#endif
-#define _INC_y_playerset
-
 /**
  * <library name="y_playerset">
  * <section>
@@ -93,9 +88,11 @@ Optional plugins:
 	#undef _inc_y_playerset
 #endif
 
-#tryinclude "y_playerset\y_playerset_entry"
-#tryinclude "YSI_Data\y_playerset\y_playerset_entry"
-#tryinclude "YSI\YSI_Data\y_playerset\y_playerset_entry"
-#tryinclude <YSI_Data\y_playerset\y_playerset_entry>
-#tryinclude <YSI\YSI_Data\y_playerset\y_playerset_entry>
+#if !defined _INC_y_playerset
+	#tryinclude "y_playerset\y_playerset_entry"
+	#tryinclude "YSI_Data\y_playerset\y_playerset_entry"
+	#tryinclude "YSI\YSI_Data\y_playerset\y_playerset_entry"
+	#tryinclude <YSI_Data\y_playerset\y_playerset_entry>
+	#tryinclude <YSI\YSI_Data\y_playerset\y_playerset_entry>
+#endif
 

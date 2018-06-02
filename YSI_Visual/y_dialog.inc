@@ -1,8 +1,3 @@
-#if defined _INC_y_dialog
-	#endinput
-#endif
-#define _INC_y_dialog
-
 /**
  * <library name="y_dialog">
  * <section>
@@ -91,9 +86,11 @@ Optional plugins:
 	#undef _inc_y_dialog
 #endif
 
-#tryinclude "y_dialog\y_dialog_entry"
-#tryinclude "YSI_Visual\y_dialog\y_dialog_entry"
-#tryinclude "YSI\YSI_Visual\y_dialog\y_dialog_entry"
-#tryinclude <YSI_Visual\y_dialog\y_dialog_entry>
-#tryinclude <YSI\YSI_Visual\y_dialog\y_dialog_entry>
+#if !defined _INC_y_dialog
+	#tryinclude "y_dialog\y_dialog_entry"
+	#tryinclude "YSI_Visual\y_dialog\y_dialog_entry"
+	#tryinclude "YSI\YSI_Visual\y_dialog\y_dialog_entry"
+	#tryinclude <YSI_Visual\y_dialog\y_dialog_entry>
+	#tryinclude <YSI\YSI_Visual\y_dialog\y_dialog_entry>
+#endif
 

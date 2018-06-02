@@ -1,8 +1,3 @@
-#if defined _INC_y_va
-	#endinput
-#endif
-#define _INC_y_va
-
 /**
  * <library name="y_va">
  * <section>
@@ -95,9 +90,11 @@ Optional plugins:
 	#undef _inc_y_va
 #endif
 
-#tryinclude "y_va\y_va_entry"
-#tryinclude "YSI_Coding\y_va\y_va_entry"
-#tryinclude "YSI\YSI_Coding\y_va\y_va_entry"
-#tryinclude <YSI_Coding\y_va\y_va_entry>
-#tryinclude <YSI\YSI_Coding\y_va\y_va_entry>
+#if !defined _INC_y_va
+	#tryinclude "y_va\y_va_entry"
+	#tryinclude "YSI_Coding\y_va\y_va_entry"
+	#tryinclude "YSI\YSI_Coding\y_va\y_va_entry"
+	#tryinclude <YSI_Coding\y_va\y_va_entry>
+	#tryinclude <YSI\YSI_Coding\y_va\y_va_entry>
+#endif
 

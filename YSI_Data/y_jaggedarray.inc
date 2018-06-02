@@ -1,8 +1,3 @@
-#if defined _INC_y_jaggedarray
-	#endinput
-#endif
-#define _INC_y_jaggedarray
-
 /**
  * <library name="y_jaggedarray">
  * <section>
@@ -90,9 +85,11 @@ Optional plugins:
 	#undef _inc_y_jaggedarray
 #endif
 
-#tryinclude "y_jaggedarray\y_jaggedarray_entry"
-#tryinclude "YSI_Data\y_jaggedarray\y_jaggedarray_entry"
-#tryinclude "YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry"
-#tryinclude <YSI_Data\y_jaggedarray\y_jaggedarray_entry>
-#tryinclude <YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry>
+#if !defined _INC_y_jaggedarray
+	#tryinclude "y_jaggedarray\y_jaggedarray_entry"
+	#tryinclude "YSI_Data\y_jaggedarray\y_jaggedarray_entry"
+	#tryinclude "YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry"
+	#tryinclude <YSI_Data\y_jaggedarray\y_jaggedarray_entry>
+	#tryinclude <YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry>
+#endif
 

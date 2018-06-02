@@ -1,8 +1,3 @@
-#if defined _INC_y_flooding
-	#endinput
-#endif
-#define _INC_y_flooding
-
 /**
  * <library name="y_flooding">
  * <section>
@@ -111,9 +106,11 @@ Optional plugins:
 	#undef _inc_y_flooding
 #endif
 
-#tryinclude "y_flooding\y_flooding_entry"
-#tryinclude "YSI_Server\y_flooding\y_flooding_entry"
-#tryinclude "YSI\YSI_Server\y_flooding\y_flooding_entry"
-#tryinclude <YSI_Server\y_flooding\y_flooding_entry>
-#tryinclude <YSI\YSI_Server\y_flooding\y_flooding_entry>
+#if !defined _INC_y_flooding
+	#tryinclude "y_flooding\y_flooding_entry"
+	#tryinclude "YSI_Server\y_flooding\y_flooding_entry"
+	#tryinclude "YSI\YSI_Server\y_flooding\y_flooding_entry"
+	#tryinclude <YSI_Server\y_flooding\y_flooding_entry>
+	#tryinclude <YSI\YSI_Server\y_flooding\y_flooding_entry>
+#endif
 

@@ -1,8 +1,3 @@
-#if defined _INC_y_scriptinit
-	#endinput
-#endif
-#define _INC_y_scriptinit
-
 /**
  * <library name="y_scriptinit">
  * <section>
@@ -99,9 +94,11 @@ Optional plugins:
 	#undef _inc_y_scriptinit
 #endif
 
-#tryinclude "y_scriptinit\y_scriptinit_entry"
-#tryinclude "YSI_Server\y_scriptinit\y_scriptinit_entry"
-#tryinclude "YSI\YSI_Server\y_scriptinit\y_scriptinit_entry"
-#tryinclude <YSI_Server\y_scriptinit\y_scriptinit_entry>
-#tryinclude <YSI\YSI_Server\y_scriptinit\y_scriptinit_entry>
+#if !defined _INC_y_scriptinit
+	#tryinclude "y_scriptinit\y_scriptinit_entry"
+	#tryinclude "YSI_Server\y_scriptinit\y_scriptinit_entry"
+	#tryinclude "YSI\YSI_Server\y_scriptinit\y_scriptinit_entry"
+	#tryinclude <YSI_Server\y_scriptinit\y_scriptinit_entry>
+	#tryinclude <YSI\YSI_Server\y_scriptinit\y_scriptinit_entry>
+#endif
 

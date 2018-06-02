@@ -1,8 +1,3 @@
-#if defined _INC_y_areas
-	#endinput
-#endif
-#define _INC_y_areas
-
 /**
  * <library name="y_areas">
  * <section>
@@ -169,9 +164,11 @@ Optional plugins:
 	#undef _inc_y_areas
 #endif
 
-#tryinclude "y_areas\y_areas_entry"
-#tryinclude "YSI_Visual\y_areas\y_areas_entry"
-#tryinclude "YSI\YSI_Visual\y_areas\y_areas_entry"
-#tryinclude <YSI_Visual\y_areas\y_areas_entry>
-#tryinclude <YSI\YSI_Visual\y_areas\y_areas_entry>
+#if !defined _INC_y_areas
+	#tryinclude "y_areas\y_areas_entry"
+	#tryinclude "YSI_Visual\y_areas\y_areas_entry"
+	#tryinclude "YSI\YSI_Visual\y_areas\y_areas_entry"
+	#tryinclude <YSI_Visual\y_areas\y_areas_entry>
+	#tryinclude <YSI\YSI_Visual\y_areas\y_areas_entry>
+#endif
 

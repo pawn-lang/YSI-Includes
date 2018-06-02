@@ -1,8 +1,3 @@
-#if defined _INC_y_amx
-	#endinput
-#endif
-#define _INC_y_amx
-
 /**
  * <library name="y_amx">
  * <section>
@@ -92,9 +87,11 @@ Optional plugins:
 	#undef _inc_y_amx
 #endif
 
-#tryinclude "y_amx\y_amx_entry"
-#tryinclude "YSI_Storage\y_amx\y_amx_entry"
-#tryinclude "YSI\YSI_Storage\y_amx\y_amx_entry"
-#tryinclude <YSI_Storage\y_amx\y_amx_entry>
-#tryinclude <YSI\YSI_Storage\y_amx\y_amx_entry>
+#if !defined _INC_y_amx
+	#tryinclude "y_amx\y_amx_entry"
+	#tryinclude "YSI_Storage\y_amx\y_amx_entry"
+	#tryinclude "YSI\YSI_Storage\y_amx\y_amx_entry"
+	#tryinclude <YSI_Storage\y_amx\y_amx_entry>
+	#tryinclude <YSI\YSI_Storage\y_amx\y_amx_entry>
+#endif
 

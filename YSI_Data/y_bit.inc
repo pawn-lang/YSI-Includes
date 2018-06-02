@@ -1,8 +1,3 @@
-#if defined _INC_y_bit
-	#endinput
-#endif
-#define _INC_y_bit
-
 /**
  * <library name="y_bit">
  * <section>
@@ -122,9 +117,11 @@ Optional plugins:
 	#undef _inc_y_bit
 #endif
 
-#tryinclude "y_bit\y_bit_entry"
-#tryinclude "YSI_Data\y_bit\y_bit_entry"
-#tryinclude "YSI\YSI_Data\y_bit\y_bit_entry"
-#tryinclude <YSI_Data\y_bit\y_bit_entry>
-#tryinclude <YSI\YSI_Data\y_bit\y_bit_entry>
+#if !defined _INC_y_bit
+	#tryinclude "y_bit\y_bit_entry"
+	#tryinclude "YSI_Data\y_bit\y_bit_entry"
+	#tryinclude "YSI\YSI_Data\y_bit\y_bit_entry"
+	#tryinclude <YSI_Data\y_bit\y_bit_entry>
+	#tryinclude <YSI\YSI_Data\y_bit\y_bit_entry>
+#endif
 

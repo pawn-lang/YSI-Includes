@@ -1,8 +1,3 @@
-#if defined _INC_y_colours
-	#endinput
-#endif
-#define _INC_y_colours
-
 /**
  * <library name="y_colours">
  * <section>
@@ -94,9 +89,11 @@ Optional plugins:
 	#undef _inc_y_colours
 #endif
 
-#tryinclude "y_colours\y_colours_entry"
-#tryinclude "YSI_Server\y_colours\y_colours_entry"
-#tryinclude "YSI\YSI_Server\y_colours\y_colours_entry"
-#tryinclude <YSI_Server\y_colours\y_colours_entry>
-#tryinclude <YSI\YSI_Server\y_colours\y_colours_entry>
+#if !defined _INC_y_colours
+	#tryinclude "y_colours\y_colours_entry"
+	#tryinclude "YSI_Server\y_colours\y_colours_entry"
+	#tryinclude "YSI\YSI_Server\y_colours\y_colours_entry"
+	#tryinclude <YSI_Server\y_colours\y_colours_entry>
+	#tryinclude <YSI\YSI_Server\y_colours\y_colours_entry>
+#endif
 

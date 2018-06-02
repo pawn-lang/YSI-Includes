@@ -1,8 +1,3 @@
-#if defined _INC_y_cgen
-	#endinput
-#endif
-#define _INC_y_cgen
-
 /*+
  * <library name="y_cgen">
  * <section>
@@ -91,9 +86,11 @@ Optional plugins:
 	#undef _inc_y_cgen
 #endif
 
-#tryinclude "y_cgen\y_cgen_entry"
-#tryinclude "YSI_Internal\y_cgen\y_cgen_entry"
-#tryinclude "YSI\YSI_Internal\y_cgen\y_cgen_entry"
-#tryinclude <YSI_Internal\y_cgen\y_cgen_entry>
-#tryinclude <YSI\YSI_Internal\y_cgen\y_cgen_entry>
+#if !defined _INC_y_cgen
+	#tryinclude "y_cgen\y_cgen_entry"
+	#tryinclude "YSI_Internal\y_cgen\y_cgen_entry"
+	#tryinclude "YSI\YSI_Internal\y_cgen\y_cgen_entry"
+	#tryinclude <YSI_Internal\y_cgen\y_cgen_entry>
+	#tryinclude <YSI\YSI_Internal\y_cgen\y_cgen_entry>
+#endif
 

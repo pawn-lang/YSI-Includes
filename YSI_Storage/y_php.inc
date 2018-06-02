@@ -1,8 +1,3 @@
-#if defined _INC_y_php
-	#endinput
-#endif
-#define _INC_y_php
-
 /**
  * <library name="y_php">
  * <section>
@@ -90,9 +85,11 @@ Optional plugins:
 	#undef _inc_y_php
 #endif
 
-#tryinclude "y_php\y_php_entry"
-#tryinclude "YSI_Storage\y_php\y_php_entry"
-#tryinclude "YSI\YSI_Storage\y_php\y_php_entry"
-#tryinclude <YSI_Storage\y_php\y_php_entry>
-#tryinclude <YSI\YSI_Storage\y_php\y_php_entry>
+#if !defined _INC_y_php
+	#tryinclude "y_php\y_php_entry"
+	#tryinclude "YSI_Storage\y_php\y_php_entry"
+	#tryinclude "YSI\YSI_Storage\y_php\y_php_entry"
+	#tryinclude <YSI_Storage\y_php\y_php_entry>
+	#tryinclude <YSI\YSI_Storage\y_php\y_php_entry>
+#endif
 

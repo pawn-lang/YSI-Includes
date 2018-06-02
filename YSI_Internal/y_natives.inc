@@ -1,8 +1,3 @@
-#if defined _INC_y_natives
-	#endinput
-#endif
-#define _INC_y_natives
-
 /*+
  * <library name="y_natives">
  * <section>
@@ -90,9 +85,11 @@ Optional plugins:
 	#undef _inc_y_natives
 #endif
 
-#tryinclude "y_natives\y_natives_entry"
-#tryinclude "YSI_Internal\y_natives\y_natives_entry"
-#tryinclude "YSI\YSI_Internal\y_natives\y_natives_entry"
-#tryinclude <YSI_Internal\y_natives\y_natives_entry>
-#tryinclude <YSI\YSI_Internal\y_natives\y_natives_entry>
+#if !defined _INC_y_natives
+	#tryinclude "y_natives\y_natives_entry"
+	#tryinclude "YSI_Internal\y_natives\y_natives_entry"
+	#tryinclude "YSI\YSI_Internal\y_natives\y_natives_entry"
+	#tryinclude <YSI_Internal\y_natives\y_natives_entry>
+	#tryinclude <YSI\YSI_Internal\y_natives\y_natives_entry>
+#endif
 

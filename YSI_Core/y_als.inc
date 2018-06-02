@@ -93,11 +93,13 @@ Optional plugins:
 	#undef _inc_y_als
 #endif
 
-#tryinclude "y_als\y_als_entry"
-#tryinclude "YSI_Core\y_als\y_als_entry"
-#tryinclude "YSI\YSI_Core\y_als\y_als_entry"
-#tryinclude <YSI_Core\y_als\y_als_entry>
-#tryinclude <YSI\YSI_Core\y_als\y_als_entry>
+#if !defined _INC_y_als
+	#tryinclude "y_als\y_als_entry"
+	#tryinclude "YSI_Core\y_als\y_als_entry"
+	#tryinclude "YSI\YSI_Core\y_als\y_als_entry"
+	#tryinclude <YSI_Core\y_als\y_als_entry>
+	#tryinclude <YSI\YSI_Core\y_als\y_als_entry>
+#endif
 
 /**
  * <library name="y_als">

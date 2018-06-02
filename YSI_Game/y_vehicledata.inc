@@ -1,8 +1,3 @@
-#if defined _INC_y_vehicledata
-	#endinput
-#endif
-#define _INC_y_vehicledata
-
 /**
  * <library name="y_vehicledata">
  * <section>
@@ -112,9 +107,11 @@ Optional plugins:
 	#undef _inc_y_vehicledata
 #endif
 
-#tryinclude "y_vehicledata\y_vehicledata_entry"
-#tryinclude "YSI_Game\y_vehicledata\y_vehicledata_entry"
-#tryinclude "YSI\YSI_Game\y_vehicledata\y_vehicledata_entry"
-#tryinclude <YSI_Game\y_vehicledata\y_vehicledata_entry>
-#tryinclude <YSI\YSI_Game\y_vehicledata\y_vehicledata_entry>
+#if !defined _INC_y_vehicledata
+	#tryinclude "y_vehicledata\y_vehicledata_entry"
+	#tryinclude "YSI_Game\y_vehicledata\y_vehicledata_entry"
+	#tryinclude "YSI\YSI_Game\y_vehicledata\y_vehicledata_entry"
+	#tryinclude <YSI_Game\y_vehicledata\y_vehicledata_entry>
+	#tryinclude <YSI\YSI_Game\y_vehicledata\y_vehicledata_entry>
+#endif
 

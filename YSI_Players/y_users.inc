@@ -1,8 +1,3 @@
-#if defined _INC_y_users
-	#endinput
-#endif
-#define _INC_y_users
-
 /**
  * <library name="y_users">
  * <section>
@@ -90,9 +85,11 @@ Optional plugins:
 	#undef _inc_y_users
 #endif
 
-#tryinclude "y_users\y_users_entry"
-#tryinclude "YSI_Players\y_users\y_users_entry"
-#tryinclude "YSI\YSI_Players\y_users\y_users_entry"
-#tryinclude <YSI_Players\y_users\y_users_entry>
-#tryinclude <YSI\YSI_Players\y_users\y_users_entry>
+#if !defined _INC_y_users
+	#tryinclude "y_users\y_users_entry"
+	#tryinclude "YSI_Players\y_users\y_users_entry"
+	#tryinclude "YSI\YSI_Players\y_users\y_users_entry"
+	#tryinclude <YSI_Players\y_users\y_users_entry>
+	#tryinclude <YSI\YSI_Players\y_users\y_users_entry>
+#endif
 

@@ -1,8 +1,3 @@
-#if defined _INC_y_classes
-	#endinput
-#endif
-#define _INC_y_classes
-
 /**
  * <library name="y_classes">
  * <section>
@@ -162,9 +157,11 @@ Optional plugins:
 	#undef _inc_y_classes
 #endif
 
-#tryinclude "y_classes\y_classes_entry"
-#tryinclude "YSI_Visual\y_classes\y_classes_entry"
-#tryinclude "YSI\YSI_Visual\y_classes\y_classes_entry"
-#tryinclude <YSI_Visual\y_classes\y_classes_entry>
-#tryinclude <YSI\YSI_Visual\y_classes\y_classes_entry>
+#if !defined _INC_y_classes
+	#tryinclude "y_classes\y_classes_entry"
+	#tryinclude "YSI_Visual\y_classes\y_classes_entry"
+	#tryinclude "YSI\YSI_Visual\y_classes\y_classes_entry"
+	#tryinclude <YSI_Visual\y_classes\y_classes_entry>
+	#tryinclude <YSI\YSI_Visual\y_classes\y_classes_entry>
+#endif
 

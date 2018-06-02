@@ -1,8 +1,3 @@
-#if defined _INC_y_races
-	#endinput
-#endif
-#define _INC_y_races
-
 /**
  * <library name="y_races">
  * <section>
@@ -90,9 +85,11 @@ Optional plugins:
 	#undef _inc_y_races
 #endif
 
-#tryinclude "y_races\y_races_entry"
-#tryinclude "YSI_Visual\y_races\y_races_entry"
-#tryinclude "YSI\YSI_Visual\y_races\y_races_entry"
-#tryinclude <YSI_Visual\y_races\y_races_entry>
-#tryinclude <YSI\YSI_Visual\y_races\y_races_entry>
+#if !defined _INC_y_races
+	#tryinclude "y_races\y_races_entry"
+	#tryinclude "YSI_Visual\y_races\y_races_entry"
+	#tryinclude "YSI\YSI_Visual\y_races\y_races_entry"
+	#tryinclude <YSI_Visual\y_races\y_races_entry>
+	#tryinclude <YSI\YSI_Visual\y_races\y_races_entry>
+#endif
 

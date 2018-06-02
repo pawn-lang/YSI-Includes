@@ -1,8 +1,3 @@
-#if defined _INC_y_bitmap
-	#endinput
-#endif
-#define _INC_y_bitmap
-
 /**
  * <library name="y_bitmap">
  * <section>
@@ -92,9 +87,11 @@ Optional plugins:
 	#undef _inc_y_bitmap
 #endif
 
-#tryinclude "y_bitmap\y_bitmap_entry"
-#tryinclude "YSI_Storage\y_bitmap\y_bitmap_entry"
-#tryinclude "YSI\YSI_Storage\y_bitmap\y_bitmap_entry"
-#tryinclude <YSI_Storage\y_bitmap\y_bitmap_entry>
-#tryinclude <YSI\YSI_Storage\y_bitmap\y_bitmap_entry>
+#if !defined _INC_y_bitmap
+	#tryinclude "y_bitmap\y_bitmap_entry"
+	#tryinclude "YSI_Storage\y_bitmap\y_bitmap_entry"
+	#tryinclude "YSI\YSI_Storage\y_bitmap\y_bitmap_entry"
+	#tryinclude <YSI_Storage\y_bitmap\y_bitmap_entry>
+	#tryinclude <YSI\YSI_Storage\y_bitmap\y_bitmap_entry>
+#endif
 

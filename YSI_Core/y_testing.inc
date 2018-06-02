@@ -1,8 +1,3 @@
-#if defined _INC_y_testing
-	#endinput
-#endif
-#define _INC_y_testing
-
 /**
  * <library name="y_testing">
  * <section>
@@ -90,9 +85,11 @@ Optional plugins:
 	#undef _inc_y_testing
 #endif
 
-#tryinclude "y_testing\y_testing_entry"
-#tryinclude "YSI_Core\y_testing\y_testing_entry"
-#tryinclude "YSI\YSI_Core\y_testing\y_testing_entry"
-#tryinclude <YSI_Core\y_testing\y_testing_entry>
-#tryinclude <YSI\YSI_Core\y_testing\y_testing_entry>
+#if !defined _INC_y_testing
+	#tryinclude "y_testing\y_testing_entry"
+	#tryinclude "YSI_Core\y_testing\y_testing_entry"
+	#tryinclude "YSI\YSI_Core\y_testing\y_testing_entry"
+	#tryinclude <YSI_Core\y_testing\y_testing_entry>
+	#tryinclude <YSI\YSI_Core\y_testing\y_testing_entry>
+#endif
 

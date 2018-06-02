@@ -1,8 +1,3 @@
-#if defined _INC_y_shortfunc
-	#endinput
-#endif
-#define _INC_y_shortfunc
-
 /*+
  * <library name="y_shortfunc">
  * <section>
@@ -98,9 +93,11 @@ Optional plugins:
 	#undef _inc_y_shortfunc
 #endif
 
-#tryinclude "y_shortfunc\y_shortfunc_entry"
-#tryinclude "YSI_Internal\y_shortfunc\y_shortfunc_entry"
-#tryinclude "YSI\YSI_Internal\y_shortfunc\y_shortfunc_entry"
-#tryinclude <YSI_Internal\y_shortfunc\y_shortfunc_entry>
-#tryinclude <YSI\YSI_Internal\y_shortfunc\y_shortfunc_entry>
+#if !defined _INC_y_shortfunc
+	#tryinclude "y_shortfunc\y_shortfunc_entry"
+	#tryinclude "YSI_Internal\y_shortfunc\y_shortfunc_entry"
+	#tryinclude "YSI\YSI_Internal\y_shortfunc\y_shortfunc_entry"
+	#tryinclude <YSI_Internal\y_shortfunc\y_shortfunc_entry>
+	#tryinclude <YSI\YSI_Internal\y_shortfunc\y_shortfunc_entry>
+#endif
 

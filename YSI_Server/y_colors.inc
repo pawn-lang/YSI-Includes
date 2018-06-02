@@ -1,8 +1,3 @@
-#if defined _INC_y_colours
-	#endinput
-#endif
-#define _INC_y_colours
-
 /*
 Legal:
 	Version: MPL 1.1
@@ -79,9 +74,11 @@ Optional plugins:
 	#undef _inc_y_colors
 #endif
 
-#tryinclude "y_colours\y_colours_entry"
-#tryinclude "YSI_Server\y_colours\y_colours_entry"
-#tryinclude "YSI\YSI_Server\y_colours\y_colours_entry"
-#tryinclude <YSI_Server\y_colours\y_colours_entry>
-#tryinclude <YSI\YSI_Server\y_colours\y_colours_entry>
+#if !defined _INC_y_colours
+	#tryinclude "y_colours\y_colours_entry"
+	#tryinclude "YSI_Server\y_colours\y_colours_entry"
+	#tryinclude "YSI\YSI_Server\y_colours\y_colours_entry"
+	#tryinclude <YSI_Server\y_colours\y_colours_entry>
+	#tryinclude <YSI\YSI_Server\y_colours\y_colours_entry>
+#endif
 

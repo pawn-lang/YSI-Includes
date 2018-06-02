@@ -1,8 +1,3 @@
-#if defined _INC_y_ini
-	#endinput
-#endif
-#define _INC_y_ini
-
 /**
  * <library name="y_ini">
  * <section>
@@ -161,9 +156,11 @@ Optional plugins:
 	#undef _inc_y_ini
 #endif
 
-#tryinclude "y_ini\y_ini_entry"
-#tryinclude "YSI_Storage\y_ini\y_ini_entry"
-#tryinclude "YSI\YSI_Storage\y_ini\y_ini_entry"
-#tryinclude <YSI_Storage\y_ini\y_ini_entry>
-#tryinclude <YSI\YSI_Storage\y_ini\y_ini_entry>
+#if !defined _INC_y_ini
+	#tryinclude "y_ini\y_ini_entry"
+	#tryinclude "YSI_Storage\y_ini\y_ini_entry"
+	#tryinclude "YSI\YSI_Storage\y_ini\y_ini_entry"
+	#tryinclude <YSI_Storage\y_ini\y_ini_entry>
+	#tryinclude <YSI\YSI_Storage\y_ini\y_ini_entry>
+#endif
 

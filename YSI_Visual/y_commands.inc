@@ -1,8 +1,3 @@
-#if defined _INC_y_commands
-	#endinput
-#endif
-#define _INC_y_commands
-
 /**
  * <library name="y_commands">
  * <section>
@@ -165,9 +160,11 @@ Optional plugins:
 	#undef _inc_y_commands
 #endif
 
-#tryinclude "y_commands\y_commands_entry"
-#tryinclude "YSI_Visual\y_commands\y_commands_entry"
-#tryinclude "YSI\YSI_Visual\y_commands\y_commands_entry"
-#tryinclude <YSI_Visual\y_commands\y_commands_entry>
-#tryinclude <YSI\YSI_Visual\y_commands\y_commands_entry>
+#if !defined _INC_y_commands
+	#tryinclude "y_commands\y_commands_entry"
+	#tryinclude "YSI_Visual\y_commands\y_commands_entry"
+	#tryinclude "YSI\YSI_Visual\y_commands\y_commands_entry"
+	#tryinclude <YSI_Visual\y_commands\y_commands_entry>
+	#tryinclude <YSI\YSI_Visual\y_commands\y_commands_entry>
+#endif
 

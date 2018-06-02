@@ -1,8 +1,3 @@
-#if defined _INC_y_utils
-	#endinput
-#endif
-#define _INC_y_utils
-
 /**
  * <library name="y_utils">
  * <section>
@@ -158,9 +153,11 @@ Optional plugins:
 	#undef _inc_y_utils
 #endif
 
-#tryinclude "y_utils\y_utils_entry"
-#tryinclude "YSI_Core\y_utils\y_utils_entry"
-#tryinclude "YSI\YSI_Core\y_utils\y_utils_entry"
-#tryinclude <YSI_Core\y_utils\y_utils_entry>
-#tryinclude <YSI\YSI_Core\y_utils\y_utils_entry>
+#if !defined _INC_y_utils
+	#tryinclude "y_utils\y_utils_entry"
+	#tryinclude "YSI_Core\y_utils\y_utils_entry"
+	#tryinclude "YSI\YSI_Core\y_utils\y_utils_entry"
+	#tryinclude <YSI_Core\y_utils\y_utils_entry>
+	#tryinclude <YSI\YSI_Core\y_utils\y_utils_entry>
+#endif
 

@@ -1,8 +1,3 @@
-#if defined _INC_y_stringhash
-	#endinput
-#endif
-#define _INC_y_stringhash
-
 /**
  * <library name="y_stringhash">
  * <section>
@@ -103,9 +98,11 @@ Optional plugins:
 	#undef _inc_y_stringhash
 #endif
 
-#tryinclude "y_stringhash\y_stringhash_entry"
-#tryinclude "YSI_Coding\y_stringhash\y_stringhash_entry"
-#tryinclude "YSI\YSI_Coding\y_stringhash\y_stringhash_entry"
-#tryinclude <YSI_Coding\y_stringhash\y_stringhash_entry>
-#tryinclude <YSI\YSI_Coding\y_stringhash\y_stringhash_entry>
+#if !defined _INC_y_stringhash
+	#tryinclude "y_stringhash\y_stringhash_entry"
+	#tryinclude "YSI_Coding\y_stringhash\y_stringhash_entry"
+	#tryinclude "YSI\YSI_Coding\y_stringhash\y_stringhash_entry"
+	#tryinclude <YSI_Coding\y_stringhash\y_stringhash_entry>
+	#tryinclude <YSI\YSI_Coding\y_stringhash\y_stringhash_entry>
+#endif
 

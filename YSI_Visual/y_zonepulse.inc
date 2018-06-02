@@ -1,8 +1,3 @@
-#if defined _INC_y_zonepulse
-	#endinput
-#endif
-#define _INC_y_zonepulse
-
 /**
  * <library name="y_zonepulse">
  * <section>
@@ -109,9 +104,11 @@ Optional plugins:
 	#undef _inc_y_zonepulse
 #endif
 
-#tryinclude "y_zonepulse\y_zonepulse_entry"
-#tryinclude "YSI_Visual\y_zonepulse\y_zonepulse_entry"
-#tryinclude "YSI\YSI_Visual\y_zonepulse\y_zonepulse_entry"
-#tryinclude <YSI_Visual\y_zonepulse\y_zonepulse_entry>
-#tryinclude <YSI\YSI_Visual\y_zonepulse\y_zonepulse_entry>
+#if !defined _INC_y_zonepulse
+	#tryinclude "y_zonepulse\y_zonepulse_entry"
+	#tryinclude "YSI_Visual\y_zonepulse\y_zonepulse_entry"
+	#tryinclude "YSI\YSI_Visual\y_zonepulse\y_zonepulse_entry"
+	#tryinclude <YSI_Visual\y_zonepulse\y_zonepulse_entry>
+	#tryinclude <YSI\YSI_Visual\y_zonepulse\y_zonepulse_entry>
+#endif
 

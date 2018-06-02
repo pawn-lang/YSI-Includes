@@ -1,8 +1,3 @@
-#if defined _INC_y_uvar
-	#endinput
-#endif
-#define _INC_y_uvar
-
 /**
  * <library name="y_uvar">
  * <section>
@@ -90,9 +85,11 @@ Optional plugins:
 	#undef _inc_y_uvar
 #endif
 
-#tryinclude "y_uvar\y_uvar_entry"
-#tryinclude "YSI_Storage\y_uvar\y_uvar_entry"
-#tryinclude "YSI\YSI_Storage\y_uvar\y_uvar_entry"
-#tryinclude <YSI_Storage\y_uvar\y_uvar_entry>
-#tryinclude <YSI\YSI_Storage\y_uvar\y_uvar_entry>
+#if !defined _INC_y_uvar
+	#tryinclude "y_uvar\y_uvar_entry"
+	#tryinclude "YSI_Storage\y_uvar\y_uvar_entry"
+	#tryinclude "YSI\YSI_Storage\y_uvar\y_uvar_entry"
+	#tryinclude <YSI_Storage\y_uvar\y_uvar_entry>
+	#tryinclude <YSI\YSI_Storage\y_uvar\y_uvar_entry>
+#endif
 
