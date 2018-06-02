@@ -81,83 +81,28 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "y_compilerdata"
-
 #if defined _inc_y_unique
 	#undef _inc_y_unique
 #endif
 
-#if defined UNIQUE_FUNCTION
-	#undef UNIQUE_FUNCTION
+#if !defined _Y_UNIQUE_INCLUDED
+	#tryinclude "y_unique\y_unique_entry"
 #endif
-
-// The "static stock const" values are used for debugging, since they will show
-// up in preprocessed dumps ("-l") with the value of "UNIQUE_SYMBOL" at that
-// moment, instead of its final value.
-#if defined UNIQUE_SYMBOL
-	#if UNIQUE_SYMBOL < 0 || UNIQUE_SYMBOL >= 1000
-		static stock const UNIQUE_SYMBOL_TOO_LARGE = UNIQUE_SYMBOL;
-		#error UNIQUE_SYMBOL out of range.
-	#endif
-	#if UNIQUE_SYMBOL < 100
-		static stock const UNIQUE_SYMBOL_LESS_THAN_100 = UNIQUE_SYMBOL;
-		#include "y_unique\_000_to_099"
-	#elseif UNIQUE_SYMBOL < 200
-		static stock const UNIQUE_SYMBOL_LESS_THAN_200 = UNIQUE_SYMBOL;
-		#include "y_unique\_100_to_199"
-	#elseif UNIQUE_SYMBOL < 300
-		static stock const UNIQUE_SYMBOL_LESS_THAN_300 = UNIQUE_SYMBOL;
-		#include "y_unique\_200_to_299"
-	#elseif UNIQUE_SYMBOL < 400
-		static stock const UNIQUE_SYMBOL_LESS_THAN_400 = UNIQUE_SYMBOL;
-		#include "y_unique\_300_to_399"
-	#elseif UNIQUE_SYMBOL < 500
-		static stock const UNIQUE_SYMBOL_LESS_THAN_500 = UNIQUE_SYMBOL;
-		#include "y_unique\_400_to_499"
-	#elseif UNIQUE_SYMBOL < 600
-		static stock const UNIQUE_SYMBOL_LESS_THAN_600 = UNIQUE_SYMBOL;
-		#include "y_unique\_500_to_599"
-	#elseif UNIQUE_SYMBOL < 700
-		static stock const UNIQUE_SYMBOL_LESS_THAN_700 = UNIQUE_SYMBOL;
-		#include "y_unique\_600_to_699"
-	#elseif UNIQUE_SYMBOL < 800
-		static stock const UNIQUE_SYMBOL_LESS_THAN_800 = UNIQUE_SYMBOL;
-		#include "y_unique\_700_to_799"
-	#elseif UNIQUE_SYMBOL < 900
-		static stock const UNIQUE_SYMBOL_LESS_THAN_900 = UNIQUE_SYMBOL;
-		#include "y_unique\_800_to_899"
-	#else
-		static stock const UNIQUE_SYMBOL_OTHER_VALUE;
-		#include "y_unique\_900_to_999"
-	#endif
+#if !defined _Y_UNIQUE_INCLUDED
+	#tryinclude "YSI_Internal\y_unique\y_unique_entry"
+#endif
+#if !defined _Y_UNIQUE_INCLUDED
+	#tryinclude "YSI\YSI_Internal\y_unique\y_unique_entry"
+#endif
+#if !defined _Y_UNIQUE_INCLUDED
+	#tryinclude <YSI_Internal\y_unique\y_unique_entry>
+#endif
+#if !defined _Y_UNIQUE_INCLUDED
+	#tryinclude <YSI\YSI_Internal\y_unique\y_unique_entry>
+#endif
+#if defined _Y_UNIQUE_INCLUDED
+	#undef _Y_UNIQUE_INCLUDED
 #else
-	static stock const UNIQUE_SYMBOL_DOESNT_EXIST;
-	#define UNIQUE_SYMBOL (0)
-	#define UNIQUE_FUNCTION<%0...%1> %0000%1
-#endif
-
-#if !defined Y_UNIQUE_LOCK_CONTRIBUTION
-	#define Y_UNIQUE_LOCK_CONTRIBUTION 0
-#endif
-
-#if defined YSI_LOCK_MODE
-	#if Y_UNIQUE_LOCK_CONTRIBUTION < 2
-		forward UNIQUE_FUNCTION<@yH_OnScriptInit@...>();
-		
-		public UNIQUE_FUNCTION<@yH_OnScriptInit@...>()
-		{
-			#if Y_UNIQUE_LOCK_CONTRIBUTION == 0
-				#undef Y_UNIQUE_LOCK_CONTRIBUTION
-				#define Y_UNIQUE_LOCK_CONTRIBUTION 1
-				YSI_gLockData[1] -= 'i' - '.';
-			#else
-				#undef Y_UNIQUE_LOCK_CONTRIBUTION
-				#define Y_UNIQUE_LOCK_CONTRIBUTION 2
-				YSI_gLockData{11} = 0;
-			#endif
-		}
-		
-		#include "y_unique"
-	#endif
+	#error Did you use `YSI/y_unique` instead of `YSI\y_unique`?
 #endif
 

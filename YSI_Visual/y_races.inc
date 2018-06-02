@@ -86,80 +86,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_compilerdata"
-
-#if !defined YSI_NO_RACE_POSITION && !defined RACE_POSITION
-	#define RACE_POSITION
+#if defined _inc_y_races
+	#undef _inc_y_races
 #endif
 
-#if defined YSI_TESTS
-	#define _Y_RACES_STATIC
-#else
-	#define _Y_RACES_STATIC static
+#if !defined _INC_y_races
+	#tryinclude "y_races\y_races_entry"
+	#tryinclude "YSI_Visual\y_races\y_races_entry"
+	#tryinclude "YSI\YSI_Visual\y_races\y_races_entry"
+	#tryinclude <YSI_Visual\y_races\y_races_entry>
+	#tryinclude <YSI\YSI_Visual\y_races\y_races_entry>
 #endif
-
-#include "..\YSI_Players\y_text"
-#include "..\YSI_Data\y_bit"
-#include "..\YSI_Data\y_iterate"
-#include "..\YSI_Data\y_playerarray"
-#if defined RACE_POSITION
-	#include "..\YSI_Coding\y_timers"
-#endif
-
-#if !defined MAX_RACES
-	#define MAX_RACES 16
-#endif
-
-#define YSIM_U_DISABLE
-#define MASTER 53
-#include "..\YSI_Core\y_master"
-
-#define _GROUP_MAKE_NAME<%0...%1> %0Race%1
-#define _GROUP_MAKE_LIMIT         MAX_RACES
-#include "..\YSI_Players\y_groups\_funcs"
-
-#include "..\YSI_Coding\y_hooks"
-
-stock _YSI_HAS_y_races(_do_not_call_me_ever_, _like_never_)
-{
-	P:E("You called _YSI_HAS_y_races!  Bad, don't do that!", _do_not_call_me_ever_, _like_never_);
-	assert(false);
-	return 0;
-}
-
-forward Race_Create(laps = 0, entry = 0, countdown = 3, bool:arial = false, bool:fixedPrize = true, exitTime = 0, interior = 0, world = 0, bool:restart = false);
-forward Race_Destroy(slot, bool:refund = false);
-foreign Race_AddCheckpoint(raceid, Float:x, Float:y, Float:z);
-foreign Race_AddStart(raceid, Float:x, Float:y, Float:z, Float:a);
-foreign void:Race_SetFixedWin(raceid, set);
-foreign void:Race_SetRestart(raceid, set);
-foreign void:Race_SetArial(raceid, set);
-foreign void:Race_SetCountdown(raceid, countdown);
-foreign void:Race_SetInterior(raceid, interior);
-foreign void:Race_SetWorld(raceid, world);
-foreign void:Race_SetPrize(raceid, position, amount);
-foreign void:Race_SetExitTime(raceid, time);
-foreign Race_IsActive(raceid);
-foreign void:Race_SetLaps(raceid, laps);
-foreign void:Race_SetEntry(raceid, cost);
-foreign Race_GetPlayerExitedTime(playerid);
-foreign Race_PlayerJoin(playerid, race);
-forward Race_PlayerLeave(playerid, bool:refund = false);
-foreign Race_Start(race);
-foreign Race_GetPlayerPosition(playerid);
-foreign Race_GetPlayerRaceTime(playerid);
-foreign Race_GetPlayerRace(playerid);
-foreign Race_SetPlayer(race, playerid, bool:set);
-
-#include "y_races/impl"
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_races/tests"
-	// Get some new IDs.
-#endif
-
-#undef _GROUP_MAKE_LIMIT
-#undef _GROUP_MAKE_NAME
-
-#include "..\YSI_Core\y_master"
 

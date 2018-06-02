@@ -92,30 +92,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_compilerdata"
-
-#if !defined YSI_MAX_INLINE_STRING
-	#define YSI_MAX_INLINE_STRING YSI_MAX_STRING
+#if defined _inc_y_inline
+	#undef _inc_y_inline
 #endif
 
-#include "..\YSI_Internal\y_thirdpartyinclude"
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Storage\y_amx"
-#include "..\YSI_Internal\y_shortfunc"
-#include "..\YSI_Core\y_debug"
-#include "..\YSI_Core\y_utils"
-#include "..\YSI_Data\y_bit"
-#include "y_malloc"
-
-
-#include "y_inline/macros"
-#include "..\YSI_Internal\y_cgen"
-
-#include "y_inline/impl"
-
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_hooks"
-	#include "y_inline/tests"
+#if !defined _INC_y_inline
+	#tryinclude "y_inline\y_inline_entry"
+	#tryinclude "YSI_Coding\y_inline\y_inline_entry"
+	#tryinclude "YSI\YSI_Coding\y_inline\y_inline_entry"
+	#tryinclude <YSI_Coding\y_inline\y_inline_entry>
+	#tryinclude <YSI\YSI_Coding\y_inline\y_inline_entry>
 #endif
 

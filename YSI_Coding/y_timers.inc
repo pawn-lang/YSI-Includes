@@ -89,34 +89,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-// y_uvars
-
-#if defined USE_Y_TIMERS_V1
-	#error y_timers version 1 has not worked in years!
-	#include "y_timers/v1"
-	#endinput
+#if defined _inc_y_timers
+	#undef _inc_y_timers
 #endif
 
-#include "..\YSI_Internal\y_plugins"
-
-#include "..\YSI_Internal\y_version"
-
-#include "..\YSI_Storage\y_amx"
-#include "..\YSI_Internal\y_shortfunc"
-#include "..\YSI_Coding\y_malloc"
-#include "..\YSI_Data\y_iterate"
-#include "..\YSI_Coding\y_hooks"
-#include "..\YSI_Core\y_debug"
-
-#include "y_timers/impl"
-#if defined _YSI_PLUGINS_FIXES_2
-	//#error V3
-	#include "y_timers/v3"
-#else
-	#include "y_timers/v2"
+#if !defined _INC_y_timers
+	#tryinclude "y_timers\y_timers_entry"
+	#tryinclude "YSI_Coding\y_timers\y_timers_entry"
+	#tryinclude "YSI\YSI_Coding\y_timers\y_timers_entry"
+	#tryinclude <YSI_Coding\y_timers\y_timers_entry>
+	#tryinclude <YSI\YSI_Coding\y_timers\y_timers_entry>
 #endif
 
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_timers/tests"
-#endif

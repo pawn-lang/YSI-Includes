@@ -1,4 +1,4 @@
-/*                                                                                              *
+/*                                                                                             *
  *                                                                                             *
  *     _____ ______ ______   ____  ______ _      ______          __  ______ ____  _____        *
  *    / ____|  ____|  ____| |  _ \|  ____| |    / __ \ \        / / |  ____/ __ \|  __ \       *
@@ -88,71 +88,19 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-#if !defined _INC_y_master
-	#include "..\YSI_Internal\y_version"
-	#include "y_debug"
-	#include "..\YSI_Coding\y_hooks"
-	#include "..\YSI_Internal\y_shortfunc"
-	
-	#include "..\YSI_Internal\y_natives"
-	#include "..\YSI_Internal\y_prehook"
-	
-	CHAIN_HOOK(Master)
-	#undef CHAIN_ORDER
-	#define CHAIN_ORDER CHAIN_NEXT(Master)
-	
-	#include "y_master/once"
-#endif
 
-// ALWAYS!  The compiler defines this automatically, don't use it as this is
-// included multiple times to handle multiple master systems.
 #if defined _inc_y_master
 	#undef _inc_y_master
 #endif
 
-#if defined MASTER
-	#if defined _MASTER
-		// Store the last master.
-		#include "y_master\_push_master"
-	#endif
-#else
-	// Get the previous master (or 0 by default).
-	#include "y_master\_pop_master"
-	
-	// Useful debug information (isn't compiled, but shows up with "-l").
-	P:C(static stock const _POPPED_MASTER = MASTER;);
+#if !defined _INC_y_master
+	#tryinclude "y_master\y_master_entry"
+	#tryinclude "YSI_Core\y_master\y_master_entry"
+	#tryinclude "YSI\YSI_Core\y_master\y_master_entry"
+	#tryinclude <YSI_Core\y_master\y_master_entry>
+	#tryinclude <YSI\YSI_Core\y_master\y_master_entry>
 #endif
 
-#if MASTER < 0 || MASTER >= MAX_MASTERS
-	#error Invalid MASTER ID.
-#endif
-
-#if defined _INC_y_master
-	// Run at least once - clear previous data.
-	#include "y_master\_cleanup"
-#endif
-
-// Initialise the current master if it hasn't already been done.  This is split
-// in to 5 parts to reduce compilation times in the common case of not that many
-// master systems.
-#if     MASTER < 16
-	#include "y_master\_setup_master_A"
-#elseif MASTER < 32
-	#include "y_master\_setup_master_B"
-#elseif MASTER < 48
-	#include "y_master\_setup_master_C"
-#else
-	#include "y_master\_setup_master_D"
-#endif
-#undef MASTER
-
-// Include all the correct macro versions for the settings we have just found.
-#include "y_master\_impl"
-
-#if defined _INC_y_master
-	#endinput
-#endif
-#define _INC_y_master
 
 /**
  * <library name="y_master">
@@ -205,16 +153,4 @@ Optional plugins:
  * </ul>
  * </library>
  *//** */
-
-// Only include this lot once.
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	// Get the new master.
-	#define MASTER 58
-	#include "y_master"
-	// Include the tests.
-	#include "y_master/tests"
-	// Pop the master.
-	#include "y_master"
-#endif
 

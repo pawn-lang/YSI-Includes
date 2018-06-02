@@ -1,3 +1,5 @@
+#define _Y_UNIQUE_INCLUDED
+
 /*+
  * <library name="y_unique">
  * <section>
@@ -81,11 +83,11 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\y_compilerdata"
-
 #if defined _inc_y_unique
 	#undef _inc_y_unique
 #endif
+
+#include "..\y_compilerdata"
 
 #if defined UNIQUE_FUNCTION
 	#undef UNIQUE_FUNCTION
@@ -101,34 +103,34 @@ Optional plugins:
 	#endif
 	#if UNIQUE_SYMBOL < 100
 		static stock const UNIQUE_SYMBOL_LESS_THAN_100 = UNIQUE_SYMBOL;
-		#include "y_unique\_000_to_099"
+		#include "y_unique__000_to_099"
 	#elseif UNIQUE_SYMBOL < 200
 		static stock const UNIQUE_SYMBOL_LESS_THAN_200 = UNIQUE_SYMBOL;
-		#include "y_unique\_100_to_199"
+		#include "y_unique__100_to_199"
 	#elseif UNIQUE_SYMBOL < 300
 		static stock const UNIQUE_SYMBOL_LESS_THAN_300 = UNIQUE_SYMBOL;
-		#include "y_unique\_200_to_299"
+		#include "y_unique__200_to_299"
 	#elseif UNIQUE_SYMBOL < 400
 		static stock const UNIQUE_SYMBOL_LESS_THAN_400 = UNIQUE_SYMBOL;
-		#include "y_unique\_300_to_399"
+		#include "y_unique__300_to_399"
 	#elseif UNIQUE_SYMBOL < 500
 		static stock const UNIQUE_SYMBOL_LESS_THAN_500 = UNIQUE_SYMBOL;
-		#include "y_unique\_400_to_499"
+		#include "y_unique__400_to_499"
 	#elseif UNIQUE_SYMBOL < 600
 		static stock const UNIQUE_SYMBOL_LESS_THAN_600 = UNIQUE_SYMBOL;
-		#include "y_unique\_500_to_599"
+		#include "y_unique__500_to_599"
 	#elseif UNIQUE_SYMBOL < 700
 		static stock const UNIQUE_SYMBOL_LESS_THAN_700 = UNIQUE_SYMBOL;
-		#include "y_unique\_600_to_699"
+		#include "y_unique__600_to_699"
 	#elseif UNIQUE_SYMBOL < 800
 		static stock const UNIQUE_SYMBOL_LESS_THAN_800 = UNIQUE_SYMBOL;
-		#include "y_unique\_700_to_799"
+		#include "y_unique__700_to_799"
 	#elseif UNIQUE_SYMBOL < 900
 		static stock const UNIQUE_SYMBOL_LESS_THAN_900 = UNIQUE_SYMBOL;
-		#include "y_unique\_800_to_899"
+		#include "y_unique__800_to_899"
 	#else
 		static stock const UNIQUE_SYMBOL_OTHER_VALUE;
-		#include "y_unique\_900_to_999"
+		#include "y_unique__900_to_999"
 	#endif
 #else
 	static stock const UNIQUE_SYMBOL_DOESNT_EXIST;
@@ -157,7 +159,7 @@ Optional plugins:
 			#endif
 		}
 		
-		#include "..\y_unique"
+		#include "y_unique_entry"
 	#endif
 #endif
 

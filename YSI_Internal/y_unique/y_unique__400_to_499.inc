@@ -72,8 +72,8 @@ Optional plugins:
 
 static stock const Y_UNIQUE_400_to_499_CALLED;
 
-#if defined _inc__400_to_499
-	#undef _inc__400_to_499
+#if defined _inc_y_unique__400_to_499
+	#undef _inc_y_unique__400_to_499
 #endif
 
 #if UNIQUE_SYMBOL < 410

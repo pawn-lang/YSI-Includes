@@ -96,31 +96,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Internal\y_shortfunc"
-#include "..\YSI_Internal\y_thirdpartyinclude"
-
-// This supports "targetfunc<master> func()" and "targetfunc func<master>()".
-#include "..\YSI_Core\y_utils"
-#include "y_remote/macros"
-
-// This VERY LOOSELY uses the master system to figure out if it should even
-// bother with complex remote calls.  However, it isn't fully bound by the
-// whole system because it's rules are different (and will work regardless).
-#if defined YSI_NO_MASTER
-	#define remotefunc stock
-	#define localfunc%0(%1) (%0(%1))
-	#define broadcastfunc%0(%1) (%0(%1))
-	#define targetfunc%3<%2>%0(%1) (%3%0(%1))
-#else	
-	#define remotefunc Y_REMOTE_FUNC
-	#define localfunc%0(%1) (J@=0,I@=-1,_@%0(%1))
-	#define broadcastfunc%0(%1) (J@=1,I@=-1,_@%0(%1))
-	#define targetfunc%0<%2>%9(%1) (J@=1,I@=(%2),_@%0(%1))
+#if defined _inc_y_remote
+	#undef _inc_y_remote
 #endif
 
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_remote/tests"
+#if !defined _INC_y_remote
+	#tryinclude "y_remote\y_remote_entry"
+	#tryinclude "YSI_Coding\y_remote\y_remote_entry"
+	#tryinclude "YSI\YSI_Coding\y_remote\y_remote_entry"
+	#tryinclude <YSI_Coding\y_remote\y_remote_entry>
+	#tryinclude <YSI\YSI_Coding\y_remote\y_remote_entry>
 #endif
 

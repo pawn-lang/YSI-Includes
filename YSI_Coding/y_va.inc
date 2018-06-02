@@ -91,64 +91,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if 0
-
-	// Example:
-	stock MyPrintf(const format[], {Float, File, _}:...)
-	{
-		// The triple underscore is used to mirror the triple dots in the
-		// function definition.  You can't easily tell it is three from a
-		// glance, but it is.
-		printf(format, ___1); // Or `___(1)`.
-		print("Printed many things");
-		return 42;
-	}
-
+#if defined _inc_y_va
+	#undef _inc_y_va
 #endif
 
-#define ___ YVA2_DummyPush()
-// For optional parameter skips.
-#define YVA2_DummyPush()(%1) YVA2_DummyPush((%1) * 4)
-
-// Shortcuts.
-#define ___0 ___(0)
-#define ___1 ___(1)
-#define ___2 ___(2)
-#define ___3 ___(3)
-#define ___4 ___(4)
-#define ___5 ___(5)
-#define ___6 ___(6)
-#define ___7 ___(7)
-#define ___8 ___(8)
-#define ___9 ___(9)
-
-#include "..\YSI_Internal\y_globaltags"
-
-#define va_args<%0> GLOBAL_TAG_TYPES:...
-#define va_start<%0> ___(%0)
-
-// Detect Slice's va_formatex function, which now doesn't need to exist.  This
-// is my first ever use of `#pragma deprecated`!  Actually quite happy about
-// that - it's one of the few language features I've never used in earnest, so
-// its almost an occassion when that happens.
-#pragma deprecated Use formatex instead
-forward va_formatex(output[], size = sizeof(output), const fmat[], va_:STATIC_ARGS);
-
-// Backwards compatability.
-native va_printf            (const format[], GLOBAL_TAG_TYPES:...)                                        = printf;
-native va_CallRemoteFunction(const function[], const format[], GLOBAL_TAG_TYPES:...)                      = CallRemoteFunction;
-native va_CallLocalFunction (const function[], const format[], GLOBAL_TAG_TYPES:...)                      = CallLocalFunction;
-native va_SetTimerEx        (const function[], interval, repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
-native va_format            (output[], len, const format[], GLOBAL_TAG_TYPES:...)                         = format;
-
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Internal\y_funcinc"
-#include "..\YSI_Core\y_utils"
-
-#include "y_va/impl"
-
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_va/tests"
+#if !defined _INC_y_va
+	#tryinclude "y_va\y_va_entry"
+	#tryinclude "YSI_Coding\y_va\y_va_entry"
+	#tryinclude "YSI\YSI_Coding\y_va\y_va_entry"
+	#tryinclude <YSI_Coding\y_va\y_va_entry>
+	#tryinclude <YSI\YSI_Coding\y_va\y_va_entry>
 #endif
 

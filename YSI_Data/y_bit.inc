@@ -118,17 +118,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_compilerdata"
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Core\y_debug"
-#include "..\YSI_Core\y_utils"
-#include "..\YSI_Core\y_cell"
-#include "y_bit/impl"
+#if defined _inc_y_bit
+	#undef _inc_y_bit
+#endif
 
-#if defined YSI_TESTS
-	#include "..\YSI_Data\y_iterate"
-	#include "..\YSI_Core\y_testing"
-	#include "..\YSI_Data\y_iterate"
-	#include "y_bit/tests"
+#if !defined _INC_y_bit
+	#tryinclude "y_bit\y_bit_entry"
+	#tryinclude "YSI_Data\y_bit\y_bit_entry"
+	#tryinclude "YSI\YSI_Data\y_bit\y_bit_entry"
+	#tryinclude <YSI_Data\y_bit\y_bit_entry>
+	#tryinclude <YSI\YSI_Data\y_bit\y_bit_entry>
 #endif
 

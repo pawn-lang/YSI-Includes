@@ -70,8 +70,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc__unique
-	#undef _inc__unique
+#if defined _inc_y_groups__unique
+	#undef _inc_y_groups__unique
 #endif
 
 #if _GROUP_UNIQUE_SYMBOL == 0

@@ -113,11 +113,11 @@ Optional plugins:
 #if defined MASTER
 	#if defined _MASTER
 		// Store the last master.
-		#include "y_master\_push_master"
+		#include "y_master__push_master"
 	#endif
 #else
 	// Get the previous master (or 0 by default).
-	#include "y_master\_pop_master"
+	#include "y_master__pop_master"
 	
 	// Useful debug information (isn't compiled, but shows up with "-l").
 	P:C(static stock const _POPPED_MASTER = MASTER;);
@@ -129,25 +129,25 @@ Optional plugins:
 
 #if defined _INC_y_master
 	// Run at least once - clear previous data.
-	#include "y_master\_cleanup"
+	#include "y_master__cleanup"
 #endif
 
 // Initialise the current master if it hasn't already been done.  This is split
 // in to 5 parts to reduce compilation times in the common case of not that many
 // master systems.
 #if     MASTER < 16
-	#include "y_master\_setup_master_A"
+	#include "y_master__setup_master_A"
 #elseif MASTER < 32
-	#include "y_master\_setup_master_B"
+	#include "y_master__setup_master_B"
 #elseif MASTER < 48
-	#include "y_master\_setup_master_C"
+	#include "y_master__setup_master_C"
 #else
-	#include "y_master\_setup_master_D"
+	#include "y_master__setup_master_D"
 #endif
 #undef MASTER
 
 // Include all the correct macro versions for the settings we have just found.
-#include "y_master\_impl"
+#include "y_master__impl"
 
 #if defined _INC_y_master
 	#endinput
@@ -211,10 +211,10 @@ Optional plugins:
 	#include "..\..\YSI_Core\y_testing"
 	// Get the new master.
 	#define MASTER 58
-	#include "..\y_master"
+	#include "y_master_entry"
 	// Include the tests.
 	#include "y_master_tests"
 	// Pop the master.
-	#include "..\y_master"
+	#include "y_master_entry"
 #endif
 

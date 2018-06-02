@@ -86,14 +86,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Core\y_utils"
-#include "..\YSI_Core\y_debug"
+#if defined _inc_y_jaggedarray
+	#undef _inc_y_jaggedarray
+#endif
 
-#include "y_jaggedarray/impl"
-
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_jaggedarray/tests"
+#if !defined _INC_y_jaggedarray
+	#tryinclude "y_jaggedarray\y_jaggedarray_entry"
+	#tryinclude "YSI_Data\y_jaggedarray\y_jaggedarray_entry"
+	#tryinclude "YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry"
+	#tryinclude <YSI_Data\y_jaggedarray\y_jaggedarray_entry>
+	#tryinclude <YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry>
 #endif
 

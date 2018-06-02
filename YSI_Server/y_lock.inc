@@ -86,80 +86,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_version
-	#error YSI\y_lock must be the first include if you want to use it.
-#endif
-#if defined _DEBUG
-	#if _DEBUG >= 1
-		#define y_lock%0; _DoYLock(%0);
-	#else
-		#define y_lock%0; _DoYLock();
-	#endif
-#else
-	#define y_lock%0; _DoYLock();
+#if defined _inc_y_lock
+	#undef _inc_y_lock
 #endif
 
-#if !defined BIND_IP
-	#if defined Y_LOCK_IP
-		#define BIND_IP MAKE_LOCK_IP(Y_LOCK_IP)
-	#else
-		#define BIND_IP MAKE_LOCK_IP(127.0.0.1)
-	#endif
+#if !defined _INC_y_lock
+	#tryinclude "y_lock\y_lock_entry"
+	#tryinclude "YSI_Server\y_lock\y_lock_entry"
+	#tryinclude "YSI\YSI_Server\y_lock\y_lock_entry"
+	#tryinclude <YSI_Server\y_lock\y_lock_entry>
+	#tryinclude <YSI\YSI_Server\y_lock\y_lock_entry>
 #endif
-
-// MASSIVE reliance on operator precedence here!
-#define MAKE_LOCK_IP(%0.%1.%2.%3) ((%0&0xFF)<<24|(%1&0xFF)<<16|(%2&0xFF)<<8|%3&0xFF)
-
-#define _LOCK_IP_0 (BIND_IP>>>24)
-#define _LOCK_IP_1 (BIND_IP>>>16&0xFF)
-#define _LOCK_IP_2 (BIND_IP>>>8&0xFF)
-#define _LOCK_IP_3 (BIND_IP&0xFF)
-
-#define UNHOOK for(from=AMX_HEADER_PUBLICS;from!=AMX_HEADER_NATIVES;from+= 8)AMX_Write(from,-1);
-
-#if _LOCK_IP_0 == 0
-	#define _LOCK_LEN_0 1
-#else
-	#define _LOCK_LEN_0 _LOCK_IP_0
-#endif
-
-#if _LOCK_IP_1 == 0
-	#define _LOCK_LEN_1 1
-#else
-	#define _LOCK_LEN_1 _LOCK_IP_1
-#endif
-
-#if _LOCK_IP_2 == 0
-	#define _LOCK_LEN_2 1
-#else
-	#define _LOCK_LEN_2 _LOCK_IP_2
-#endif
-
-#if _LOCK_IP_3 == 0
-	#define _LOCK_LEN_3 1
-#else
-	#define _LOCK_LEN_3 _LOCK_IP_3
-#endif
-
-#define YSI_LOCK_MODE
-#include "..\YSI_Internal\y_version"
-
-#include "..\YSI_Storage\y_amx"
-#include "..\YSI_Coding\y_hooks"
-
-_DoYLock(P:C(from);)
-{
-	new
-		arr[][] =
-			{
-				";23#w",
-				"32g2"
-			};
-	P:1("%d", from);
-	#pragma unused arr
-	#if !defined _DEBUG || _DEBUG < 1
-		new from;
-	#endif
-	UNHOOK
-}
 

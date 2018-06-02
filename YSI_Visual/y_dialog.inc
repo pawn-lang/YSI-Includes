@@ -87,17 +87,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_version"
-#include "..\YSI_Data\y_bit"
+#if defined _inc_y_dialog
+	#undef _inc_y_dialog
+#endif
 
-#include "..\YSI_Coding\y_remote"
-#include "..\YSI_Coding\y_inline"
-#include "..\YSI_Coding\y_hooks"
-#include "..\YSI_Storage\y_amx"
-#include "y_dialog/impl"
-
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_dialog/tests"
+#if !defined _INC_y_dialog
+	#tryinclude "y_dialog\y_dialog_entry"
+	#tryinclude "YSI_Visual\y_dialog\y_dialog_entry"
+	#tryinclude "YSI\YSI_Visual\y_dialog\y_dialog_entry"
+	#tryinclude <YSI_Visual\y_dialog\y_dialog_entry>
+	#tryinclude <YSI\YSI_Visual\y_dialog\y_dialog_entry>
 #endif
 

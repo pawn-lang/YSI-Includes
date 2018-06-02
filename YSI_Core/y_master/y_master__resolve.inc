@@ -70,8 +70,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc__resolve
-	#undef _inc__resolve
+#if defined _inc_y_master__resolve
+	#undef _inc_y_master__resolve
 #endif
 
 #if defined YSI_NO_MASTER && defined YSI_IS_SERVER

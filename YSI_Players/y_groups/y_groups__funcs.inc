@@ -86,8 +86,8 @@ Optional plugins:
 */
 
 #include "..\..\YSI_Internal\y_compilerdata"
-#if defined _inc__funcs
-	#undef _inc__funcs
+#if defined _inc_y_groups__funcs
+	#undef _inc_y_groups__funcs
 #endif
 #if !defined _INC_y_groups__funcs
 	#define _INC_y_groups__funcs

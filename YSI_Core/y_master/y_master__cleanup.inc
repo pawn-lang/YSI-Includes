@@ -70,8 +70,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc__cleanup
-	#undef _inc__cleanup
+#if defined _inc_y_master__cleanup
+	#undef _inc_y_master__cleanup
 #endif
 
 #undef Master_Caller

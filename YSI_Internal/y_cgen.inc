@@ -87,144 +87,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Storage\y_amx"
-#include "..\YSI_Internal\y_thirdpartyinclude"
-
-CHAIN_HOOK(CGen)
-#undef CHAIN_ORDER
-#define CHAIN_ORDER CHAIN_NEXT(CGen)
-
-#if !defined CGEN_MEMORY
-	#define CGEN_MEMORY (10000)
+#if defined _inc_y_cgen
+	#undef _inc_y_cgen
 #endif
 
-static stock
-	YSI_g_sCodeSpace = -1,
-	YSI_g_sCodeEnd = -1;
-
-static stock CGEN(&a = 1, &b = 1, &c = 1, &d = 1, &e = 1, &f = 1, &g = 1, &h = 1, &i = 1, &j = 1, &k = 1, &l = 1, &m = 1, &n = 1, &o = 1, &p = 1, &q = 1, &r = 1, &s = 1, &t = 1, &u = 1, &v = 1, &w = 1, &x = 1, &y = 1, &z = 1)
-{
-	// We use `= 1` instead of `= 0` because that takes slightly more code - it
-	// is a `CONST.pri 1` not `ZERO.pri`.
-	#pragma unused a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
-}
-
-forward _@_y_cgen_@_0();
-
-public _@_y_cgen_@_0()
-{
-	// Reserve a huge area of "COD" for our own use!
-	// This is currently many calls to `CGEN()`, which takes up huge amounts of
-	// space because of all the default parameters, which means we get to pass
-	// loads without having them in code limiting the line lengths.  This gives:
-	//   
-	//   bytes_per_call = ((6 * 4 * 26) + 6)
-	//   bytes_per_call = 630
-	//   bytes_per_line = bytes_per_call * 16
-	//   bytes_per_line = 10080 (~10KiB)
-	//   N = 16.25
-	//   
-	#if CGEN_MEMORY >= 10000
-		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
-	#endif
-	#if CGEN_MEMORY >= 20000
-		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
-	#endif
-	#if CGEN_MEMORY >= 30000
-		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
-	#endif
-	#if CGEN_MEMORY >= 40000
-		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
-	#endif
-	#if CGEN_MEMORY >= 50000
-		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
-	#endif
-	#if CGEN_MEMORY >= 60000
-		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
-	#endif
-	#if CGEN_MEMORY >= 70000
-		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
-	#endif
-	#if CGEN_MEMORY >= 80000
-		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
-	#endif
-	#if CGEN_MEMORY >= 90000
-		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
-	#endif
-	#if CGEN_MEMORY >= 100000
-		#error Too much codespace requested, please edit YSI_Internal\y_cgen
-	#endif
-}
-
-forward _@_y_cgen_@_1();
-
-public _@_y_cgen_@_1()
-{
-	// This function SHOULD come straight after "_@_y_hooks_@_0" in both the
-	// public functions table and code segment if the compiler is true to form.
-}
-
-static stock CGen_GetAddr(const func[])
-{
-	return AMX_Read(funcidx(func) * 8 + AMX_HEADER_PUBLICS) + AMX_HEADER_COD;
-}
-
-static stock CGen_SetupCodeSpace()
-{
-	if (YSI_g_sCodeSpace != -1) return;
-	YSI_g_sCodeSpace = CGen_GetAddr("_@_y_cgen_@_0"),
-	YSI_g_sCodeEnd   = CGen_GetAddr("_@_y_cgen_@_1"),
-	// Rewrite "_@_y_cgen_@_0" to just "return 0;".
-	AMX_Write(YSI_g_sCodeSpace, _:RelocateOpcode(OP_PROC)),
-	AMX_Write(YSI_g_sCodeSpace + 4, _:RelocateOpcode(OP_ZERO_PRI)),
-	AMX_Write(YSI_g_sCodeSpace + 8, _:RelocateOpcode(OP_RETN)),
-	YSI_g_sCodeSpace += 12;
-}
-
-public OnCodeInit()
-{
-	CGen_SetupCodeSpace();
-	CGen_OnCodeInit();
-	// Check that the code at this point is valid.  An OpCode is at most two
-	// bytes (except "OP_SWITCH", but there are none of them in this area of
-	// code because there are no "switch"es).  If the code here fails to
-	// decompile, it is probably out of alignment - add a single "NOP" to bring
-	// it back in to alignment.
-	new
-		ctx[DisasmContext];
-	DisasmInit(ctx, YSI_g_sCodeSpace - AMX_HEADER_COD);
-	for (new i = 0; i != 10; ++i)
-	{
-		if (DisasmNextInsn(ctx) == OP_NONE)
-		{
-			AMX_Write(YSI_g_sCodeSpace, _:RelocateOpcode(OP_NOP));
-			return 1;
-		}
-	}
-	return 1;
-}
-
-CHAIN_FORWARD:CGen_OnCodeInit() = 1;
-#if defined _ALS_OnCodeInit
-	#undef OnCodeInit
-#else
-	#define _ALS_OnCodeInit
+#if !defined _INC_y_cgen
+	#tryinclude "y_cgen\y_cgen_entry"
+	#tryinclude "YSI_Internal\y_cgen\y_cgen_entry"
+	#tryinclude "YSI\YSI_Internal\y_cgen\y_cgen_entry"
+	#tryinclude <YSI_Internal\y_cgen\y_cgen_entry>
+	#tryinclude <YSI\YSI_Internal\y_cgen\y_cgen_entry>
 #endif
-#define OnCodeInit(%0) CHAIN_PUBLIC:CGen_OnCodeInit(%0)
-
-stock CGen_UseCodeSpace(ctx[AsmContext])
-{
-	AsmInitPtr(ctx, YSI_g_sCodeSpace, YSI_g_sCodeEnd - YSI_g_sCodeSpace);
-}
-
-stock CGen_GetCodeSpace()
-{
-	return YSI_g_sCodeSpace;
-}
-
-stock CGen_AddCodeSpace(num)
-{
-	if (YSI_g_sCodeSpace == -1) P:E("YSI_g_sCodeSpace is -1 in \"CGen_AddCodeSpace\"");
-	else YSI_g_sCodeSpace += num;
-}
 

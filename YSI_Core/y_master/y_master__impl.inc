@@ -70,8 +70,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc__impl
-	#undef _inc__impl
+#if defined _inc_y_master__impl
+	#undef _inc_y_master__impl
 #endif
 
 // Get the settings, regardless of where they came from.

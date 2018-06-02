@@ -364,6 +364,6 @@ Optional plugins:
 	#error Please update "https://github.com/Y-Less/indirection" to the latest version.
 #endif
 
-// "y_thirdpartyinclude\tests" is NOT included here when tests are active, because it complicates
+// "y_thirdpartyinclude_tests" is NOT included here when tests are active, because it complicates
 // dependency orders massively!
 

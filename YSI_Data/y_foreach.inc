@@ -88,5 +88,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "y_iterate"
+#if defined _inc_y_foreach
+	#undef _inc_y_foreach
+#endif
+
+#if !defined _INC_y_iterate
+	#tryinclude "y_iterate\y_iterate_entry"
+	#tryinclude "YSI_Data\y_iterate\y_iterate_entry"
+	#tryinclude "YSI\YSI_Data\y_iterate\y_iterate_entry"
+	#tryinclude <YSI_Data\y_iterate\y_iterate_entry>
+	#tryinclude <YSI\YSI_Data\y_iterate\y_iterate_entry>
+#endif
 

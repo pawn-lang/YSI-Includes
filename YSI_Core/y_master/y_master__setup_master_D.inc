@@ -70,8 +70,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc__setup_master_D
-	#undef _inc__setup_master_D
+#if defined _inc_y_master__setup_master_D
+	#undef _inc_y_master__setup_master_D
 #endif
 
 #if MASTER == 48

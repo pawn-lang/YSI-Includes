@@ -86,17 +86,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-/*-------------------------------------------------------------------------*//**<to_comment/>
-*					=================
-*					 y_ini Libraries
-*					=================
-*//*-------------------------------------------------------------------------**/
+#if defined _inc_y_files
+	#undef _inc_y_files
+#endif
 
-// File functions
-native ffind(const pattern[], filename[], len, &idx);
-native frename(const oldname[], const newname[]);
+#if !defined _INC_y_files
+	#tryinclude "y_files\y_files_entry"
+	#tryinclude "YSI_Extra\y_files\y_files_entry"
+	#tryinclude "YSI\YSI_Extra\y_files\y_files_entry"
+	#tryinclude <YSI_Extra\y_files\y_files_entry>
+	#tryinclude <YSI\YSI_Extra\y_files\y_files_entry>
+#endif
 
-// Directory functions
-native dfind(const pattern[], filename[], len, &idx);
-native dcreate(const name[]);
-native drename(const oldname[], const newname[]);

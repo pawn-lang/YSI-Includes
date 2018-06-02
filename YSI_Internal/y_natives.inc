@@ -86,54 +86,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "y_compilerdata"
-#include "y_globaltags"
+#if defined _inc_y_natives
+	#undef _inc_y_natives
+#endif
 
-/*#if defined _YSI_MINI_MODE
-	// Remove all of "file" now.
-	#undef fopen
-	#undef fclose
-	#undef ftemp
-	#undef fremove
-	#undef fwrite
-	#undef fread
-	#undef fseek
-	#undef fexist
-
-	// Remove dynamic call functions.
-	#undef CallRemoteFunction
-	#undef CallLocalFunction
-#endif*/
-
-/*native File:fopen(const name[], filemode: mode = io_readwrite) = fopen;
-native bool:fclose(File: handle) = fclose;
-native File:ftemp() = ftemp;
-native bool:fremove(const name[]) = fremove;
-native fwrite(File: handle, const string[]) = fwrite;
-native fread(File: handle, string[], size = sizeof string, bool: pack = false) = fread;
-native fseek(File: handle, position = 0, seek_whence: whence = seek_start) = fseek;
-native fexist(const pattern[]) = fexist;
-native CallRemoteFunction(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallRemoteFunction;
-native CallLocalFunction(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallLocalFunction;*/
-
-/*#if defined _YSI_MINI_MODE
-	// Remove all of "file" now.
-	#define fopen       _MMD(fopen)
-	#define fclose      _MMD(fclose)
-	#define ftemp       _MMD(ftemp)
-	#define fremove     _MMD(fremove)
-	#define fwrite      _MMD(fwrite)
-	#define fread       _MMD(fread)
-	#define fseek       _MMD(fseek)
-	#define fexist      _MMD(fexist)
-
-	// Remove dynamic call functions.
-	#define CallRemoteFunction _MMD(CallRemoteFunction)
-	#define CallLocalFunction  _MMD(CallLocalFunction)
-#endif*/
-
-#if defined YSI_LOCK_MODE
-	new
-		YSI_gLockData[21];
+#if !defined _INC_y_natives
+	#tryinclude "y_natives\y_natives_entry"
+	#tryinclude "YSI_Internal\y_natives\y_natives_entry"
+	#tryinclude "YSI\YSI_Internal\y_natives\y_natives_entry"
+	#tryinclude <YSI_Internal\y_natives\y_natives_entry>
+	#tryinclude <YSI\YSI_Internal\y_natives\y_natives_entry>
 #endif
 

@@ -157,75 +157,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\YSI_Internal\y_compilerdata"
-
-#define MAX_INI_LINE                    (MAX_INI_ENTRY_NAME + MAX_INI_ENTRY_TEXT + 32)
-
-#if !defined INI_NEW_LINE
-	#define INI_NEW_LINE                "\r\n"
+#if defined _inc_y_ini
+	#undef _inc_y_ini
 #endif
 
-#if !defined MAX_INI_TAG
-	#define MAX_INI_TAG                 (32)
-#endif
-
-#if !defined MAX_INI_ENTRY_NAME
-	#define MAX_INI_ENTRY_NAME          (32)
-#endif
-
-#if !defined MAX_INI_ENTRY_TEXT
-	#define MAX_INI_ENTRY_TEXT          YSI_MAX_INLINE_STRING
-#endif
-
-#if !defined INI_MAX_WRITES
-	#define INI_MAX_WRITES              (4)
-#endif
-
-#if !defined INI_BUFFER_SIZE
-	#define INI_BUFFER_SIZE             (128)
-#endif
-
-#if !defined MAX_INI_TAGS
-	#define MAX_INI_TAGS                (8)
-#endif
-
-#define MAX_INI_STRING                  FUNCTION_LENGTH
-
-#define Y_INI_WRITE_ARRAY_SIZE ((MAX_INI_ENTRY_TEXT - 1) / 16 * 16)
-
-stock const
-	INI_NO_TAG[] = "\1"; // NULL
-
-#define INI_NO_FILE (INI:-1)
-
-#include "..\YSI_Internal\y_thirdpartyinclude"
-#include "..\YSI_Internal\y_version"
-
-#include "..\YSI_Core\y_utils"
-#include "..\YSI_Coding\y_malloc"
-#include "..\YSI_Coding\y_inline"
-#include "..\YSI_Coding\y_stringhash"
-
-#if defined YSI_TESTS
-	#define _Y_INI_STATIC
-#else
-	#define _Y_INI_STATIC static
-#endif
-
-#if defined YSI_TESTS && defined YSI_MOCK_READER
-	#include "..\YSI_Internal\y_mock"
-#endif
-
-#include "..\YSI_Coding\y_hooks"
-
-forward e_INI_LINE_TYPE:
-	INI_IdentifyLineType(str[MAX_INI_LINE], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e);
-
-#include "y_ini/reading"
-#include "y_ini/writing"
-
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_ini/tests"
+#if !defined _INC_y_ini
+	#tryinclude "y_ini\y_ini_entry"
+	#tryinclude "YSI_Storage\y_ini\y_ini_entry"
+	#tryinclude "YSI\YSI_Storage\y_ini\y_ini_entry"
+	#tryinclude <YSI_Storage\y_ini\y_ini_entry>
+	#tryinclude <YSI\YSI_Storage\y_ini\y_ini_entry>
 #endif
 

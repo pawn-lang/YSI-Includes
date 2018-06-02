@@ -72,8 +72,8 @@ Optional plugins:
 
 static stock const Y_UNIQUE_000_to_099_CALLED;
 
-#if defined _inc__000_to_099
-	#undef _inc__000_to_099
+#if defined _inc_y_unique__000_to_099
+	#undef _inc_y_unique__000_to_099
 #endif
 
 #if UNIQUE_SYMBOL < 10

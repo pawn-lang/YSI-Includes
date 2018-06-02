@@ -2,10 +2,10 @@
 	#undef _inc_y_hooks
 #endif
 
+#define _Y_HOOKS_INCLUDED
+
 // Multiple includes!
 #include "..\..\YSI_Internal\y_unique"
-
-#define _Y_HOOKS_INCLUDED
 
 #if defined _INC_y_hooks
 	#endinput

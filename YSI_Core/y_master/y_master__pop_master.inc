@@ -70,8 +70,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc__pop_master
-	#undef _inc__pop_master
+#if defined _inc_y_master__pop_master
+	#undef _inc_y_master__pop_master
 #endif
 
 #if _YSIM_PUSH_INDEX < 1
