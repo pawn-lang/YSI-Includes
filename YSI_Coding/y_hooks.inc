@@ -5,6 +5,8 @@
 // Multiple includes!
 #include "..\YSI_Internal\y_unique"
 
+#define _Y_HOOKS_INCLUDED
+
 #if defined _INC_y_hooks
 	#endinput
 #endif
