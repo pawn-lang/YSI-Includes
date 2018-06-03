@@ -169,16 +169,16 @@ stock const
 #define callback_tag:callback_check:%0,%1$$$ callback_tag:%0[],%1)
 #define callback_check:%0$$$ %0[])
 
-#define using%0\10;%1 callback_tag:@Ik:@Il:%0
+#define using%9\32;%0\10;%1 callback_tag:@Ik:@Il:%0
 
 // Get ONLY this ONE parameter (this is a VERY important stage)!
 #define @Ik:@Il:%0, @Ip:@Iq:@Io:@Iu:@Iw:|||%0|||,
 #define @Il:%0) @Ip:@Iq:@Io:@Iu:@Iw:|||%0|||)
 
-#define @Ip:%9|||%0callback%1||| @Ir:@Is:"\03;"#%1||||
-#define @Iq:%9|||%0public%1||| @Ir:@Is:"\03;"#%1||||
-#define @Io:%9|||%0inline%1||| @In:@It:%0%1||||
-#define @Iu:%9|||%0resolved%1||| @In:@It:%1[E_CALLBACK_DATA:0]||||
+#define @Ip:%9|||callback%1||| @Ir:@Is:"\03;"#%1||||
+#define @Iq:%9|||public%1||| @Ir:@Is:"\03;"#%1||||
+#define @Io:%9|||inline%1||| @In:@It:%1||||
+#define @Iu:%9|||resolved%1||| @In:@It:%1[E_CALLBACK_DATA:0]||||
 #define @Iw:|||%1||| @In:@It:#%1||||
 
 // Callbacks with "On" in the name (often overidden by y_hooks and ALS).
