@@ -73,8 +73,9 @@ Optional plugins:
 static stock
 	YSI_g_sNextJumpPoint;
 
-stock LAM@1()
+stock LAM@1(idx = 0)
 {
+	#pragma unused idx
 	//printf("LAM@1");
 	static
 		addrLAM@1 = 0;
@@ -165,8 +166,9 @@ stock LAM@2(par)
 	return par;
 }
 
-stock LAM@0()
+stock LAM@0(idx = 0)
 {
+	#pragma unused idx
 	static
 		addrLAM@0 = 0,
 		addrLAM@1 = 0;
