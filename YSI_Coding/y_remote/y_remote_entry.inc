@@ -87,7 +87,7 @@ Optional plugins:
 // bother with complex remote calls.  However, it isn't fully bound by the
 // whole system because it's rules are different (and will work regardless).
 #if defined YSI_NO_MASTER
-	#define remotefunc stock
+	#define remotefunc
 	#define localfunc%0(%1) (%0(%1))
 	#define broadcastfunc%0(%1) (%0(%1))
 	#define targetfunc%3<%2>%0(%1) (%3%0(%1))

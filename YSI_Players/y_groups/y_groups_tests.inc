@@ -662,14 +662,12 @@ Test:y_groups_SetBalancedInvalid()
 }
 
 #define MASTER 60
-#tryinclude "..\YSI_Core\y_master"
-#tryinclude "..\..\YSI_Core\y_master"
+#include "..\..\YSI_Core\y_master"
 
 #define _GROUP_MAKE_NAME<%0...%1> %0Test%1
 #define _GROUP_MAKE_LIMIT 123
 
-#tryinclude "y_groups\_funcs"
-#tryinclude "_funcs"
+#include "y_groups__funcs"
 
 static
 	gPl,
