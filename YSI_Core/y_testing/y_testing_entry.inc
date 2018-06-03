@@ -811,6 +811,6 @@ TestClose:y_testing_1()
 #if defined YSI_TESTS
 	// Why did I move this here, and why is it not included from the normal place in
 	// `y_thirdpartyinclude.inc` itself?  Simple - resolving circular dependencies.
-	#include "..\..\YSI_Internal\y_thirdpartyinclude\tests"
+	#include "..\..\YSI_Internal\y_thirdpartyinclude\y_thirdpartyinclude_tests"
 #endif
 

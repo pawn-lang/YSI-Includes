@@ -93,10 +93,10 @@ Optional plugins:
 #endif
 
 #if !defined _INC_y_iterate
-	#tryinclude "y_iterate\y_iterate_entry"
-	#tryinclude "YSI_Data\y_iterate\y_iterate_entry"
-	#tryinclude "YSI\YSI_Data\y_iterate\y_iterate_entry"
-	#tryinclude <YSI_Data\y_iterate\y_iterate_entry>
-	#tryinclude <YSI\YSI_Data\y_iterate\y_iterate_entry>
+	#tryinclude "y_foreach\y_foreach_entry"
+	#tryinclude "YSI_Data\y_foreach\y_foreach_entry"
+	#tryinclude "YSI\YSI_Data\y_foreach\y_foreach_entry"
+	#tryinclude <YSI_Data\y_foreach\y_foreach_entry>
+	#tryinclude <YSI\YSI_Data\y_foreach\y_foreach_entry>
 #endif
 

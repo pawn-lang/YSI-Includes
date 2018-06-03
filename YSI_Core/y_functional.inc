@@ -1,8 +1,3 @@
-#if defined _INC_y_functional
-	#endinput
-#endif
-#define _INC_y_functional
-
 /**
  * <library name="y_functional">
  * <section>
@@ -86,17 +81,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "y_utils"
-#include y_debug
-#include "..\YSI_Storage\y_amx"
-#include "..\YSI_Coding\y_inline"
+#if defined _inc_y_functional
+	#undef _inc_y_functional
+#endif
 
-#include "..\YSI_Internal\y_thirdpartyinclude"
-#include "y_functional/impl"
-#include "y_functional/rewrite"
-
-#if defined YSI_TESTS
-	#include "..\YSI_Core\y_testing"
-	#include "y_functional/tests"
+#if !defined _INC_y_functional
+	#tryinclude "y_functional\y_functional_entry"
+	#tryinclude "YSI_Core\y_functional\y_functional_entry"
+	#tryinclude "YSI\YSI_Core\y_functional\y_functional_entry"
+	#tryinclude <YSI_Core\y_functional\y_functional_entry>
+	#tryinclude <YSI\YSI_Core\y_functional\y_functional_entry>
 #endif
 

@@ -105,7 +105,7 @@ Optional plugins:
 
 #define _GROUP_MAKE_NAME<%0...%1> %0Race%1
 #define _GROUP_MAKE_LIMIT         MAX_RACES
-#include "..\..\YSI_Players\y_groups\_funcs"
+#include "..\..\YSI_Players\y_groups\y_groups__funcs"
 
 #include "..\..\YSI_Coding\y_hooks"
 

@@ -76,7 +76,7 @@ Optional plugins:
 */
 
 #include "..\y_utils"
-#include y_debug
+#include "..\y_debug"
 #include "..\..\YSI_Storage\y_amx"
 #include "..\..\YSI_Coding\y_inline"
 

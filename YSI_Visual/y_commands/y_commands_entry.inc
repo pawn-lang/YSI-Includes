@@ -103,7 +103,7 @@ Optional plugins:
 // Include the group functions (maybe).
 #define _GROUP_MAKE_NAME<%0...%1> %0Command%1
 #define _GROUP_MAKE_LIMIT         MAX_COMMANDS
-#include "..\..\YSI_Players\y_groups\_funcs"
+#include "..\..\YSI_Players\y_groups\y_groups__funcs"
 
 #if defined YSI_TESTS
 	#if !defined Y_COMMANDS_NO_IPC
