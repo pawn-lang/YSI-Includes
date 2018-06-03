@@ -72,7 +72,8 @@ Optional plugins:
 
 static stock
 	YSI_g_sFunctionalStartPos,
-	YSI_g_sFunctionalEndPos;
+	YSI_g_sFunctionalEndPos,
+	YSI_g_sFunctionalAfterPos;
 
 stock LAM@1(idx = 0)
 {
@@ -93,11 +94,22 @@ stock LAM@0(idx = 0)
 }
 #define CALL@LAM@0 LAM@0(1)
 
+stock LAM@5(idx = 0)
+{
+	#pragma unused idx
+	return 0;
+}
+#define CALL@LAM@5 LAM@5(1)
+
 static stock Functional_FoundStart(scanner[CodeScanner])
 {
+	if (YSI_g_sFunctionalStartPos != 0)
+		return -1;
+	P:4("Functional_FoundStart called");
 	YSI_g_sFunctionalStartPos = CodeScanGetMatchAddressData(scanner);
 	// NOP the call out.
 	CodeScanNOPMatch(scanner);
+	P:5("Functional_FoundStart done");
 	return 0;
 }
 
@@ -107,9 +119,24 @@ static stock Functional_FoundEnd(scanner[CodeScanner])
 	// correct one yet, don't do anything.
 	if (YSI_g_sFunctionalStartPos == 0)
 		return -1;
+	if (YSI_g_sFunctionalEndPos != 0)
+		return -1;
+	P:4("Functional_FoundEnd called");
 	YSI_g_sFunctionalEndPos = CodeScanGetMatchAddressData(scanner);
-	// Immediately end the scanner.
 	CodeScanNOPMatch(scanner);
+	P:5("Functional_FoundEnd done");
+	return 0;
+}
+
+static stock Functional_FoundAfter(scanner[CodeScanner])
+{
+	if (YSI_g_sFunctionalAfterPos != 0)
+		return -1;
+	P:4("Functional_FoundAfter called");
+	YSI_g_sFunctionalAfterPos = CodeScanGetMatchAddressData(scanner);
+	CodeScanNOPMatch(scanner);
+	P:5("Functional_FoundAfter done");
+	// Immediately end the scanner.
 	return cellmin;
 }
 
@@ -117,13 +144,14 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 {
 	new
 		nestingLevel = CodeScanGetMatchHole(scanner, 0);
+	P:4("Functional_FoundCall called: %d", nestingLevel);
 	// Found the code scanner itself - ignore this one.
 	if (nestingLevel > 0)
 		return -1;
 	
 	// Start a new scanner at the point this scanner ended.
 	new
-		second[CodeScanner]
+		second[CodeScanner];
 	CodeScanClone(second, scanner);
 	
 	new lambdaStart0[CodeScanMatcher];
@@ -145,6 +173,19 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 	);
 	CodeScanAddMatcher(second, lambdaStart1);
 	
+	// Needs to stay in scope.
+	new lambdaStart2[CodeScanMatcher];
+	if (nestingLevel == 0) {
+		CodeScanMatcherInit(lambdaStart2, &Functional_FoundStart);
+		CodeScanMatcherPattern(lambdaStart2,
+			OP(ZERO_PRI)
+			OP(PUSH_PRI)
+			OP(PUSH_C,             4)
+			OP(CALL,               &LAM@1)
+		);
+		CodeScanAddMatcher(second, lambdaStart2);
+	}
+	
 	new lambdaEnd[CodeScanMatcher];
 	CodeScanMatcherInit(lambdaEnd, &Functional_FoundEnd);
 	CodeScanMatcherPattern(lambdaEnd,
@@ -154,8 +195,40 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 	);
 	CodeScanAddMatcher(second, lambdaEnd);
 	
+	new lambdaAfter0[CodeScanMatcher];
+	CodeScanMatcherInit(lambdaAfter0, &Functional_FoundAfter);
+	CodeScanMatcherPattern(lambdaAfter0,
+		OP(PUSH_C,             nestingLevel)
+		OP(PUSH_C,             4)
+		OP(CALL,               &LAM@5)
+	);
+	CodeScanAddMatcher(second, lambdaAfter0);
+	
+	new lambdaAfter1[CodeScanMatcher];
+	CodeScanMatcherInit(lambdaAfter1, &Functional_FoundAfter);
+	CodeScanMatcherPattern(lambdaAfter1,
+		OP(CONST_PRI,          nestingLevel)
+		OP(PUSH_PRI)
+		OP(PUSH_C,             4)
+		OP(CALL,               &LAM@5)
+	);
+	CodeScanAddMatcher(second, lambdaAfter1);
+	
+	new lambdaAfter2[CodeScanMatcher];
+	if (nestingLevel == 0) {
+		CodeScanMatcherInit(lambdaAfter2, &Functional_FoundAfter);
+		CodeScanMatcherPattern(lambdaAfter2,
+			OP(ZERO_PRI)
+			OP(PUSH_PRI)
+			OP(PUSH_C,             4)
+			OP(CALL,               &LAM@5)
+		);
+		CodeScanAddMatcher(second, lambdaAfter2);
+	}
+	
 	YSI_g_sFunctionalStartPos = 0;
 	YSI_g_sFunctionalEndPos = 0;
+	YSI_g_sFunctionalAfterPos = 0;
 	CodeScanRun(second);
 	
 	new
@@ -163,14 +236,28 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 	CodeScanNOPMatch(scanner);
 	// We now have three bits of data - the call position (`callPos`), the start of the lambda code
 	// (`YSI_g_sFunctionalStartPos`), and the end of the lambda code (`YSI_g_sFunctionalEndPos`).
-	// Turn `callPos` in to a jump to `YSI_g_sFunctionalStartPos`, and `YSI_g_sFunctionalEndPos`
-	// in to a jump back to `callPos + 8`.
+	// Turn `callPos` in to a jump to `YSI_g_sFunctionalStartPos + 8`, `YSI_g_sFunctionalEndPos` in
+	// to a jump back to `callPos + 8`, and `YSI_g_sFunctionalStartPos` in to a jump to
+	// `YSI_g_sFunctionalAfterPos`.
 	
+	P:5("Functional_FoundCall: generating %d %d %d %d", callPos, YSI_g_sFunctionalStartPos, YSI_g_sFunctionalEndPos, YSI_g_sFunctionalAfterPos);
+	new
+		ctx[AsmContext];
+	AsmInitPtr(ctx, callPos, 8);
+	@emit JUMP.rel         (YSI_g_sFunctionalStartPos + 8 - callPos)
+	AsmInitPtr(ctx, YSI_g_sFunctionalEndPos, 8);
+	@emit STOR.pri         ref(I@)
+	AsmInitPtr(ctx, YSI_g_sFunctionalStartPos, 8);
+	@emit JUMP.rel         (YSI_g_sFunctionalAfterPos + 16 - YSI_g_sFunctionalStartPos)
+	AsmInitPtr(ctx, YSI_g_sFunctionalAfterPos, 16);
+	@emit LOAD.pri         ref(I@)
+	@emit JUMP.rel         (callPos + 8 - YSI_g_sFunctionalAfterPos)
 	return 0;
 }
 
 hook OnCodeInit()
 {
+	P:2("Functional_OnCodeInit called");
 	// Look for any calls to `LAM@0`, then find the next call to `LAM@1` with a matching parameter
 	// number (the exact value is unimportant; however, for now we know that it is always `<= 0`, so
 	// if the parameter is `> 0` ignore it - it's the code scanner itself).  Get rid of all the

@@ -732,7 +732,7 @@ public OnCodeInit()
 #define LAMBDA_iiii<%9>{%0}(%1)%8; _DO_LAMBDA|||iiii|||new _0,_1,_2,_3|||0,0,0,0,|||<%9>{%0}(%1)%8;
 #define LAMBDA_iiiii<%9>{%0}(%1)%8; _DO_LAMBDA|||iiiii|||new _0,_1,_2,_3,_4|||0,0,0,0,0,|||<%9>{%0}(%1)%8;
 
-#define _DO_LAMBDA|||%4|||%6|||%5|||<%9>{%0}(%1)%8; LAM@0()%8;{{LAM@1();new _@YSII=I@T(~~"...YSII"),F@_@%4:YSII=F@_@%4:_@YSII;for(%6;I@F();)while(I@L(%5I@K(1)))Callback_Return_(_:(%0));LAM@2(%9((Inline_UI_(_:YSII),YSII)%1));}}LAM@4```()
+#define _DO_LAMBDA|||%4|||%6|||%5|||<%9>{%0}(%1)%8; LAM@0()%8;{{LAM@1();new _@YSII=I@T(~~"...YSII"),F@_@%4:YSII=F@_@%4:_@YSII;for(%6;I@F();)while(I@L(%5I@K(1)))Callback_Return_(_:(%0));LAM@2(%9((Inline_UI_(_:YSII),YSII)%1));|||}}LAM@4```()
 
 #if 0
 
@@ -751,13 +751,13 @@ LAM@4```()
 
 #endif
 
-#define LAM@0()%8;{{LAM@1();%1```()%3```(%4) LAM@0(%4-1)%8;{{LAM@1(%4-1);%1()%3```(%4-1)
+#define LAM@0()%8;{{LAM@1();%1|||%5```()%3```(%4) LAM@0(%4-1)%8;{{LAM@1(%4-1);%1|||%4-1%5(%4-1)%3```(%4-1)
 
 #define LAM@4%1(%0)
 
 // Remove the closing brace for temporary processing.
-#define LAM@2(%0);}} LAM@2(%0)LAM@5;}
-#define LAM@5; ;}
+#define LAM@2(%0);|||%5}} LAM@2(%0)LAM@5:%5;}
+#define LAM@5:%4; ;}LAM@5(%4);
 
 /*
 
