@@ -726,34 +726,34 @@ public OnCodeInit()
 	forward Inline_OnCodeInit();
 #endif
 
-#define LAMBDA_i<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0|||0,|||<%9>{%0}(%1)%8;
-#define LAMBDA_ii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1|||0,0,|||<%9>{%0}(%1)%8;
-#define LAMBDA_iii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2|||0,0,0,|||<%9>{%0}(%1)%8;
-#define LAMBDA_iiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3|||0,0,0,0,|||<%9>{%0}(%1)%8;
-#define LAMBDA_iiiii<%9>{%0}(%1)%8; _DO_LAMBDA|||new _0,_1,_2,_3,_4|||0,0,0,0,0,|||<%9>{%0}(%1)%8;
+#define LAMBDA_i<%9>{%0}(%1)%8; _DO_LAMBDA|||i|||new _0|||0,|||<%9>{%0}(%1)%8;
+#define LAMBDA_ii<%9>{%0}(%1)%8; _DO_LAMBDA|||ii|||new _0,_1|||0,0,|||<%9>{%0}(%1)%8;
+#define LAMBDA_iii<%9>{%0}(%1)%8; _DO_LAMBDA|||iii|||new _0,_1,_2|||0,0,0,|||<%9>{%0}(%1)%8;
+#define LAMBDA_iiii<%9>{%0}(%1)%8; _DO_LAMBDA|||iiii|||new _0,_1,_2,_3|||0,0,0,0,|||<%9>{%0}(%1)%8;
+#define LAMBDA_iiiii<%9>{%0}(%1)%8; _DO_LAMBDA|||iiiii|||new _0,_1,_2,_3,_4|||0,0,0,0,0,|||<%9>{%0}(%1)%8;
 
-#define _DO_LAMBDA|||%6|||%5|||<%9>{%0}(%1)%8; LAM@0()%8;{LAM@1();new _@YSII=I@T(~~"...YSII"),F@_@%9:YSII=F@_@%9:_@YSII;for(%6;I@F();)while(I@L(%5I@K()))Callback_Return_(_:(%0));LAM@2(%9((Inline_UI_(_:YSII),YSII)%1));}LAM@4```()
+#define _DO_LAMBDA|||%4|||%6|||%5|||<%9>{%0}(%1)%8; LAM@0()%8;{{LAM@1();new _@YSII=I@T(~~"...YSII"),F@_@%4:YSII=F@_@%4:_@YSII;for(%6;I@F();)while(I@L(%5I@K()))Callback_Return_(_:(%0));LAM@2(%9((Inline_UI_(_:YSII),YSII)%1))LAM@5;}LAM@4```()
 
 #if 0
 
 LAM@0()%8;
 {
-	LAM@1();
-	new _@YSII=I@T(~~"...YSII"),F@_@%9:YSII=F@_@%9:_@YSII;
-	for(%6;I@F();)
-		while(I@L(%5I@K()))
-		{
-			{Callback_Return_(_:(%0));continue;}
-		}
-	LAM@2(%9((Inline_UI_(_:YSII),YSII)%1));
+	{
+		LAM@1();
+		new _@YSII=I@T(~~"...YSII"),F@_@%4:YSII=F@_@%4:_@YSII;
+		for(%6;I@F();)
+			while(I@L(%5I@K()))
+				Callback_Return_(_:(%0));
+		LAM@2(%9((Inline_UI_(_:YSII),YSII)%1))LAM@5; // Becomes a closing brace.
 }
 LAM@4```()
 
 #endif
 
-#define LAM@0()%8;{LAM@1();%1```()%3```(%4) LAM@0(%4+1)%8;do{LAM@1(%4+1);%1()%3```(%4+1)
+#define LAM@0()%8;{{LAM@1();%1```()%3```(%4) LAM@0(%4+1)%8;{{LAM@1(%4+1);%1()%3```(%4+1)
 
 #define LAM@4%1(%0)
+#define LAM@5; ;}
 
 /*
 
