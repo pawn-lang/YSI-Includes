@@ -71,176 +71,134 @@ Optional plugins:
 */
 
 static stock
-	YSI_g_sNextJumpPoint;
+	YSI_g_sFunctionalStartPos,
+	YSI_g_sFunctionalEndPos;
 
 stock LAM@1(idx = 0)
 {
 	#pragma unused idx
-	//printf("LAM@1");
-	static
-		addrLAM@1 = 0;
-	if (!addrLAM@1)
-	{
-		#emit CONST.pri  LAM@1
-		#emit STOR.pri   addrLAM@1
-		addrLAM@1 += AMX_REAL_DATA + AMX_HEADER_COD;
-		P:5("LAM@1: LAM@1 addresses = %d %d %d %d", GetAmxBaseAddress(), addrLAM@1 - (AMX_REAL_DATA + AMX_HEADER_COD), AMX_REAL_DATA + AMX_HEADER_COD, addrLAM@1);
-		//printf("LAM@0: LAM@1 addresses = %d %d %d %d", GetAmxBaseAddress(), addrLAM@1 - (AMX_REAL_DATA + AMX_HEADER_COD), AMX_REAL_DATA + AMX_HEADER_COD, addrLAM@1);
-	}
-	// Rewrite our call code to jump to "YSI_g_sNextJumpPoint".  Then adjust
-	// that to our return point, and jump to the new code.
-	new
-		addrRet = GetCurrentFrameReturn(),
-		addrNext = YSI_g_sNextJumpPoint;
-	SetCurrentFrameReturn(addrNext);
-	YSI_g_sNextJumpPoint = addrRet,
-	addrRet -= 16;
-	{
-		new
-			dis[DisasmContext];
-		DisasmInit(dis, addrRet);
-		if (DisasmNextInsn(dis) != OP_PUSH_C || DisasmGetOperand(dis) != 0 ||
-		    DisasmNextInsn(dis) != OP_CALL   || DisasmGetOperand(dis) != addrLAM@1)
-		{
-			P:E("Unknown call of LAM@1");
-			return 0;
-		}
-	}
-	{
-		new
-			ctx[AsmContext];
-		AsmInitPtr(ctx, addrRet + AMX_HEADER_COD, 16);
-		// Replace with a jump to a point after "@LAM@1".
-		@emit JUMP  (addrNext + AMX_REAL_DATA + AMX_HEADER_COD)
-		// Code to POP the result.
-		@emit NOP
-		@emit NOP
-	}
-	return 1;
 }
+#define CALL@LAM@1 LAM@1(1)
 
 stock LAM@2(par)
 {
-	//printf("LAM@2");
 	#pragma unused par
-	static
-		addrLAM@2 = 0;
-	if (!addrLAM@2)
-	{
-		#emit CONST.pri  LAM@2
-		#emit STOR.pri   addrLAM@2
-		addrLAM@2 += AMX_REAL_DATA + AMX_HEADER_COD;
-		P:5("LAM@2: LAM@2 addresses = %d %d %d %d", GetAmxBaseAddress(), addrLAM@2 - (AMX_REAL_DATA + AMX_HEADER_COD), AMX_REAL_DATA + AMX_HEADER_COD, addrLAM@2);
-		//printf("LAM@0: LAM@1 addresses = %d %d %d %d", GetAmxBaseAddress(), addrLAM@2 - (AMX_REAL_DATA + AMX_HEADER_COD), AMX_REAL_DATA + AMX_HEADER_COD, addrLAM@2);
-	}
-	// Rewrite our call code to jump to "YSI_g_sNextJumpPoint".  Then adjust
-	// that to our return point, and jump to the new code.
-	new
-		addrRet = GetCurrentFrameReturn(),
-		addrNext = YSI_g_sNextJumpPoint;
-	SetCurrentFrameReturn(addrNext);
-	YSI_g_sNextJumpPoint = addrRet,
-	addrRet -= 16;
-	{
-		new
-			dis[DisasmContext];
-		
-		DisasmInit(dis, addrRet);
-		if (DisasmNextInsn(dis) != OP_PUSH_C || DisasmGetOperand(dis) != 4 ||
-		    DisasmNextInsn(dis) != OP_CALL   || DisasmGetOperand(dis) != addrLAM@2)
-		{
-			P:E("Unknown call of LAM@2");
-			return 0;
-		}
-	}
-	{
-		new
-			ctx[AsmContext];
-		AsmInitPtr(ctx, addrRet + AMX_HEADER_COD, 16);
-		// Replace with a jump to a point after "LAM@0".
-		@emit JUMP  (addrNext - 4 + AMX_REAL_DATA + AMX_HEADER_COD)
-		// Code to POP the result.
-		@emit NOP
-		@emit NOP
-	}
-	return par;
 }
+#define CALL@LAM@2 LAM@2(1)
 
 stock LAM@0(idx = 0)
 {
 	#pragma unused idx
-	static
-		addrLAM@0 = 0,
-		addrLAM@1 = 0;
-	if (!addrLAM@1)
-	{
-		#emit CONST.pri  LAM@0
-		#emit STOR.pri   addrLAM@0
-		addrLAM@0 += AMX_REAL_DATA + AMX_HEADER_COD;
-		P:5("LAM@0: LAM@0 addresses = %d %d %d %d", GetAmxBaseAddress(), addrLAM@0 - (AMX_REAL_DATA + AMX_HEADER_COD), AMX_REAL_DATA + AMX_HEADER_COD, addrLAM@0);
-		//printf("LAM@0: LAM@0 addresses = %d %d %d %d", GetAmxBaseAddress(), addrLAM@0 - (AMX_REAL_DATA + AMX_HEADER_COD), AMX_REAL_DATA + AMX_HEADER_COD, addrLAM@0);
-		#emit CONST.pri  LAM@1
-		#emit STOR.pri   addrLAM@1
-		addrLAM@1 += AMX_REAL_DATA + AMX_HEADER_COD;
-		P:5("LAM@0: LAM@1 addresses = %d %d %d %d", GetAmxBaseAddress(), addrLAM@1 - (AMX_REAL_DATA + AMX_HEADER_COD), AMX_REAL_DATA + AMX_HEADER_COD, addrLAM@1);
-		//printf("LAM@0: LAM@1 addresses = %d %d %d %d", GetAmxBaseAddress(), addrLAM@1 - (AMX_REAL_DATA + AMX_HEADER_COD), AMX_REAL_DATA + AMX_HEADER_COD, addrLAM@1);
-	}
-	// Get the return address.
+	return 0;
+}
+#define CALL@LAM@0 LAM@0(1)
+
+static stock Functional_FoundStart(scanner[CodeScanner])
+{
+	YSI_g_sFunctionalStartPos = CodeScanGetMatchAddressData(scanner);
+	// NOP the call out.
+	CodeScanNOPMatch(scanner);
+	return 0;
+}
+
+static stock Functional_FoundEnd(scanner[CodeScanner])
+{
+	// This must always immediately follow the corresponding `LAM@1`, so if we haven't seen the
+	// correct one yet, don't do anything.
+	if (YSI_g_sFunctionalStartPos == 0)
+		return -1;
+	YSI_g_sFunctionalEndPos = CodeScanGetMatchAddressData(scanner);
+	// Immediately end the scanner.
+	CodeScanNOPMatch(scanner);
+	return cellmin;
+}
+
+static stock Functional_FoundCall(scanner[CodeScanner])
+{
 	new
-		addrRet = GetCurrentFrameReturn(),
-		addrNext;
+		nestingLevel = CodeScanGetMatchHole(scanner, 0);
+	// Found the code scanner itself - ignore this one.
+	if (nestingLevel > 0)
+		return -1;
 	
-	YSI_g_sNextJumpPoint = addrRet,
-	addrRet -= 16,
-	SetCurrentFrameReturn(addrRet);
-	{
-		new
-			dis[DisasmContext];
-		// Move on until we find the next call to "@LAM@1".
-		DisasmInit(dis, YSI_g_sNextJumpPoint);
-		new
-			Opcode:nxt = DisasmNextInsn(dis),
-			i = 0;
-		while (i != 100)
-		{
-			if (nxt == OP_PUSH_C && DisasmGetOperand(dis) == 0)
-			{
-				nxt = DisasmNextInsn(dis);
-				if (nxt == OP_CALL && DisasmGetOperand(dis) == addrLAM@1)
-				{
-					P:6("LAM@0: Found %d", DisasmGetOperand(dis));
-					break;
-				}
-			}
-			else nxt = DisasmNextInsn(dis);
-			++i;
-		}
-		if (i == 10)
-		{
-			P:E("Unable to find LAM@1");
-			return 0;
-		}
-		addrNext = DisasmGetNextIp(dis) + AMX_REAL_DATA; // - AMX_HEADER_COD; //(AMX_REAL_DATA + AMX_HEADER_COD);
-		// Go backwards to before this function was called.
-		DisasmInit(dis, addrRet);
-		if (DisasmNextInsn(dis) != OP_PUSH_C || DisasmGetOperand(dis) != 0 ||
-		    DisasmNextInsn(dis) != OP_CALL   || DisasmGetOperand(dis) != addrLAM@0)
-		{
-			P:E("Unknown call of LAM@0");
-			return 0;
-		}
-	}
-	{
-		new
-			ctx[AsmContext];
-		AsmInitPtr(ctx, addrRet + AMX_HEADER_COD, 16);
-		// Replace with a jump to a point after "@LAM@1".
-		@emit JUMP  addrNext
-		// Code to POP the result.
-		@emit NOP
-		@emit POP.pri
-	}
-	return 1;
+	// Start a new scanner at the point this scanner ended.
+	new
+		second[CodeScanner]
+	CodeScanClone(second, scanner);
+	
+	new lambdaStart0[CodeScanMatcher];
+	CodeScanMatcherInit(lambdaStart0, &Functional_FoundStart);
+	CodeScanMatcherPattern(lambdaStart0,
+		OP(PUSH_C,             nestingLevel)
+		OP(PUSH_C,             4)
+		OP(CALL,               &LAM@1)
+	);
+	CodeScanAddMatcher(second, lambdaStart0);
+	
+	new lambdaStart1[CodeScanMatcher];
+	CodeScanMatcherInit(lambdaStart1, &Functional_FoundStart);
+	CodeScanMatcherPattern(lambdaStart1,
+		OP(CONST_PRI,          nestingLevel)
+		OP(PUSH_PRI)
+		OP(PUSH_C,             4)
+		OP(CALL,               &LAM@1)
+	);
+	CodeScanAddMatcher(second, lambdaStart1);
+	
+	new lambdaEnd[CodeScanMatcher];
+	CodeScanMatcherInit(lambdaEnd, &Functional_FoundEnd);
+	CodeScanMatcherPattern(lambdaEnd,
+		OP(PUSH_PRI)
+		OP(PUSH_C,             4)
+		OP(CALL,               &LAM@2)
+	);
+	CodeScanAddMatcher(second, lambdaEnd);
+	
+	YSI_g_sFunctionalStartPos = 0;
+	YSI_g_sFunctionalEndPos = 0;
+	CodeScanRun(second);
+	
+	new
+		callPos = CodeScanGetMatchAddressData(scanner);
+	CodeScanNOPMatch(scanner);
+	// We now have three bits of data - the call position (`callPos`), the start of the lambda code
+	// (`YSI_g_sFunctionalStartPos`), and the end of the lambda code (`YSI_g_sFunctionalEndPos`).
+	// Turn `callPos` in to a jump to `YSI_g_sFunctionalStartPos`, and `YSI_g_sFunctionalEndPos`
+	// in to a jump back to `callPos + 8`.
+	
+	return 0;
+}
+
+hook OnCodeInit()
+{
+	// Look for any calls to `LAM@0`, then find the next call to `LAM@1` with a matching parameter
+	// number (the exact value is unimportant; however, for now we know that it is always `<= 0`, so
+	// if the parameter is `> 0` ignore it - it's the code scanner itself).  Get rid of all the
+	// calls and change them in to jumps to each other.
+	
+	new scanner[CodeScanner];
+	CodeScanInit(scanner);
+	
+	new lambdaCall0[CodeScanMatcher];
+	CodeScanMatcherInit(lambdaCall0, &Functional_FoundCall);
+	CodeScanMatcherPattern(lambdaCall0,
+		OP(PUSH_C,             ???)
+		OP(PUSH_C,             4)
+		OP(CALL,               &LAM@0)
+	);
+	CodeScanAddMatcher(scanner, lambdaCall0);
+	
+	new lambdaCall1[CodeScanMatcher];
+	CodeScanMatcherInit(lambdaCall1, &Functional_FoundCall);
+	CodeScanMatcherPattern(lambdaCall1,
+		OP(CONST_PRI,          ???)
+		OP(PUSH_PRI)
+		OP(PUSH_C,             4)
+		OP(CALL,               &LAM@0)
+	);
+	CodeScanAddMatcher(scanner, lambdaCall1);
+	
+	CodeScanRun(scanner);
 }
 
 /*
@@ -252,9 +210,11 @@ myVar = FoldR({ _0 + _1 }, arr, 0);
 - The compiled code generated is:
 
 myVar = @LAM0();
-@LAM1();
-inline Func(_0, _1) YSI_gInlineRet += _0 + _1;
-@LAM2(FoldR("Func", arr, 0));
+{
+	@LAM1();
+	inline Func(_0, _1) @return _0 + _1;
+	@LAM2(FoldR("Func", arr, 0));
+}
 
 - The rewritten code is:
 
@@ -264,12 +224,16 @@ goto Func:
 myVar = I@;
 goto Cont;
 
-:Func
-// Inline code.
-I@ = FoldR("Func", arr, 0);
-goto Write;
+{
+	:Func
+	inline Func(_0, _1) @return _0 + _1;
+	I@ = FoldR("Func", arr, 0);
+	goto Write;
+}
 
 :Cont
+
+This jumping about is done so that lambdas may be used in the middle of expressions.
 
 */
 
