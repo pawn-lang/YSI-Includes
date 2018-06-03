@@ -91,10 +91,9 @@ Optional plugins:
 #include "..\y_malloc"
 
 
-#include "y_inline_macros"
 #include "..\..\YSI_Internal\y_cgen"
 
-#include "y_inline_impl"
+#include "y_inline_impl2"
 
 #if defined YSI_TESTS
 	#include "..\..\YSI_Core\y_testing"
