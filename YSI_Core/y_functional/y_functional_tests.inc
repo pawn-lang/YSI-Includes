@@ -214,28 +214,28 @@ Test:FUNC_FoldL1()
 	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11);
 }
 
-Test:FUNC_FoldL_multiple()
-{
-	new
-		a0[10] = { 1,  2,  3, ...},
-		ret;
-	ret = FoldL({_0 * _1}, 11, a0) + FoldL({_0 + _1}, 11, a0);
-	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11);
-}
-
-static FUNC_FoldL_nested_Add(a, b)
-{
-	return a + b;
-}
-
-Test:FUNC_FoldL_params()
-{
-	new
-		a0[10] = { 1,  2,  3, ...},
-		ret;
-	ret = FUNC_FoldL_nested_Add(FoldL({printf("%d * %d", _0, _1), _0 * _1}, 11, a0), FoldL({_0 + _1}, 11, a0));
-	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11);
-}
+//Test:FUNC_FoldL_multiple()
+//{
+//	new
+//		a0[10] = { 1,  2,  3, ...},
+//		ret;
+//	ret = FoldL({_0 * _1}, 11, a0) + FoldL({_0 + _1}, 11, a0);
+//	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11);
+//}
+//
+//static FUNC_FoldL_nested_Add(a, b)
+//{
+//	return a + b;
+//}
+//
+//Test:FUNC_FoldL_params()
+//{
+//	new
+//		a0[10] = { 1,  2,  3, ...},
+//		ret;
+//	ret = FUNC_FoldL_nested_Add(FoldL({printf("%d * %d", _0, _1), _0 * _1}, 11, a0), FoldL({_0 + _1}, 11, a0));
+//	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11);
+//}
 
 Test:FUNC_FoldL_nested()
 {

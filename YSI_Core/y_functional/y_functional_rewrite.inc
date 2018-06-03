@@ -71,13 +71,37 @@ Optional plugins:
 */
 
 static stock
+	YSI_g_sFunctionalLastEnd = cellmin,
+	YSI_g_sFunctionalExpectedDepth,
 	YSI_g_sFunctionalStartPos,
 	YSI_g_sFunctionalEndPos,
 	YSI_g_sFunctionalAfterPos;
 
-stock LAM@1(idx = 0)
+//static stock Functional_AddToStack()
+//{
+//	// Is this the first of a nested set of lambda calls?
+//	// Get the desired stack size.  This is passed as the parameter count, not as a real parameter,
+//	// to save instruction space.  So extract that.
+//	new
+//		size;
+//		
+//	#emit LOAD.S.pri       8
+//	#emit STOR.S.pri       size
+//	
+//	
+//	// Now when we return, we want to remove a lot of stuff from the stack - all the extra data that
+//	// we just backed up to the heap.  To do this, we increase the parameter count to match the size
+//	// of the data to drop, then return.
+//	#emit ZERO.pri
+//	#emit STOR.S.pri       8
+//	
+//	#emit RETN
+//	return 0;
+//}
+
+stock LAM@1(idx = 0, pattern0 = 1, pattern1 = 1)
 {
-	#pragma unused idx
+	#pragma unused idx, pattern0, pattern1
 }
 #define CALL@LAM@1 LAM@1(1)
 
@@ -94,9 +118,9 @@ stock LAM@0(idx = 0)
 }
 #define CALL@LAM@0 LAM@0(1)
 
-stock LAM@5(idx = 0)
+stock LAM@5(idx = 0, pattern0 = 1, pattern1 = 1, pattern2 = 1, pattern3 = 1)
 {
-	#pragma unused idx
+	#pragma unused idx, pattern0, pattern1, pattern2, pattern3
 	return 0;
 }
 #define CALL@LAM@5 LAM@5(1)
@@ -110,6 +134,11 @@ static stock Functional_FoundStart(scanner[CodeScanner])
 	// NOP the call out.
 	CodeScanNOPMatch(scanner);
 	P:5("Functional_FoundStart done");
+	if (YSI_g_sFunctionalExpectedDepth < 0)
+	{
+		YSI_g_sFunctionalExpectedDepth = CodeScanGetMatchStack(scanner);
+		printf("Expected depth: %d", YSI_g_sFunctionalExpectedDepth);
+	}
 	return 0;
 }
 
@@ -137,6 +166,8 @@ static stock Functional_FoundAfter(scanner[CodeScanner])
 	CodeScanNOPMatch(scanner);
 	P:5("Functional_FoundAfter done");
 	// Immediately end the scanner.
+	if (YSI_g_sFunctionalAfterPos > YSI_g_sFunctionalLastEnd)
+		YSI_g_sFunctionalLastEnd = YSI_g_sFunctionalAfterPos;
 	return cellmin;
 }
 
@@ -145,9 +176,20 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 	new
 		nestingLevel = CodeScanGetMatchHole(scanner, 0);
 	P:4("Functional_FoundCall called: %d", nestingLevel);
+	
 	// Found the code scanner itself - ignore this one.
 	if (nestingLevel > 0)
 		return -1;
+	
+	new
+		callPos = CodeScanGetMatchAddressData(scanner);
+	CodeScanNOPMatch(scanner);
+	if (callPos > YSI_g_sFunctionalLastEnd)
+	{
+		YSI_g_sFunctionalExpectedDepth = -1;
+		printf("new start");
+	}
+	printf("CodeScanGetMatchStack: %d", CodeScanGetMatchStack(scanner));
 	
 	// Start a new scanner at the point this scanner ended.
 	new
@@ -157,8 +199,10 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 	new lambdaStart0[CodeScanMatcher];
 	CodeScanMatcherInit(lambdaStart0, &Functional_FoundStart);
 	CodeScanMatcherPattern(lambdaStart0,
+		OP(PUSH_C,             1)
+		OP(PUSH_C,             1)
 		OP(PUSH_C,             nestingLevel)
-		OP(PUSH_C,             4)
+		OP(PUSH_C,             12)
 		OP(CALL,               &LAM@1)
 	);
 	CodeScanAddMatcher(second, lambdaStart0);
@@ -166,9 +210,13 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 	new lambdaStart1[CodeScanMatcher];
 	CodeScanMatcherInit(lambdaStart1, &Functional_FoundStart);
 	CodeScanMatcherPattern(lambdaStart1,
+		OP(CONST_PRI,          1)
+		OP(PUSH_PRI)
+		OP(CONST_PRI,          1)
+		OP(PUSH_PRI)
 		OP(CONST_PRI,          nestingLevel)
 		OP(PUSH_PRI)
-		OP(PUSH_C,             4)
+		OP(PUSH_C,             12)
 		OP(CALL,               &LAM@1)
 	);
 	CodeScanAddMatcher(second, lambdaStart1);
@@ -178,9 +226,13 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 	if (nestingLevel == 0) {
 		CodeScanMatcherInit(lambdaStart2, &Functional_FoundStart);
 		CodeScanMatcherPattern(lambdaStart2,
+			OP(CONST_PRI,          1)
+			OP(PUSH_PRI)
+			OP(CONST_PRI,          1)
+			OP(PUSH_PRI)
 			OP(ZERO_PRI)
 			OP(PUSH_PRI)
-			OP(PUSH_C,             4)
+			OP(PUSH_C,             12)
 			OP(CALL,               &LAM@1)
 		);
 		CodeScanAddMatcher(second, lambdaStart2);
@@ -198,8 +250,12 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 	new lambdaAfter0[CodeScanMatcher];
 	CodeScanMatcherInit(lambdaAfter0, &Functional_FoundAfter);
 	CodeScanMatcherPattern(lambdaAfter0,
+		OP(PUSH_C,             1)
+		OP(PUSH_C,             1)
+		OP(PUSH_C,             1)
+		OP(PUSH_C,             1)
 		OP(PUSH_C,             nestingLevel)
-		OP(PUSH_C,             4)
+		OP(PUSH_C,             20)
 		OP(CALL,               &LAM@5)
 	);
 	CodeScanAddMatcher(second, lambdaAfter0);
@@ -207,9 +263,17 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 	new lambdaAfter1[CodeScanMatcher];
 	CodeScanMatcherInit(lambdaAfter1, &Functional_FoundAfter);
 	CodeScanMatcherPattern(lambdaAfter1,
+		OP(CONST_PRI,          1)
+		OP(PUSH_PRI)
+		OP(CONST_PRI,          1)
+		OP(PUSH_PRI)
+		OP(CONST_PRI,          1)
+		OP(PUSH_PRI)
+		OP(CONST_PRI,          1)
+		OP(PUSH_PRI)
 		OP(CONST_PRI,          nestingLevel)
 		OP(PUSH_PRI)
-		OP(PUSH_C,             4)
+		OP(PUSH_C,             20)
 		OP(CALL,               &LAM@5)
 	);
 	CodeScanAddMatcher(second, lambdaAfter1);
@@ -218,9 +282,17 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 	if (nestingLevel == 0) {
 		CodeScanMatcherInit(lambdaAfter2, &Functional_FoundAfter);
 		CodeScanMatcherPattern(lambdaAfter2,
+			OP(CONST_PRI,          1)
+			OP(PUSH_PRI)
+			OP(CONST_PRI,          1)
+			OP(PUSH_PRI)
+			OP(CONST_PRI,          1)
+			OP(PUSH_PRI)
+			OP(CONST_PRI,          1)
+			OP(PUSH_PRI)
 			OP(ZERO_PRI)
 			OP(PUSH_PRI)
-			OP(PUSH_C,             4)
+			OP(PUSH_C,             20)
 			OP(CALL,               &LAM@5)
 		);
 		CodeScanAddMatcher(second, lambdaAfter2);
@@ -231,9 +303,6 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 	YSI_g_sFunctionalAfterPos = 0;
 	CodeScanRun(second);
 	
-	new
-		callPos = CodeScanGetMatchAddressData(scanner);
-	CodeScanNOPMatch(scanner);
 	// We now have three bits of data - the call position (`callPos`), the start of the lambda code
 	// (`YSI_g_sFunctionalStartPos`), and the end of the lambda code (`YSI_g_sFunctionalEndPos`).
 	// Turn `callPos` in to a jump to `YSI_g_sFunctionalStartPos + 8`, `YSI_g_sFunctionalEndPos` in
@@ -242,17 +311,56 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 	
 	P:5("Functional_FoundCall: generating %d %d %d %d", callPos, YSI_g_sFunctionalStartPos, YSI_g_sFunctionalEndPos, YSI_g_sFunctionalAfterPos);
 	new
-		ctx[AsmContext];
-	AsmInitPtr(ctx, callPos, 8);
-	@emit JUMP.rel         (YSI_g_sFunctionalStartPos + 8 - callPos)
+		ctx[AsmContext],
+		excess = CodeScanGetMatchStack(scanner) - YSI_g_sFunctionalExpectedDepth;
+	AsmInitPtr(ctx, callPos, 16);
+	// The relative jumps are all `+ 8` internally, since they add on the size of the `JUMP` OP.
+	@emit JUMP.rel         (YSI_g_sFunctionalStartPos - callPos)
+	@emit LOAD.pri         ref(I@)
+	//@emit PUSH.C           -YSI_g_sFunctionalExpectedDepth
+	//@emit CALL             0
+	
 	AsmInitPtr(ctx, YSI_g_sFunctionalEndPos, 8);
 	@emit STOR.pri         ref(I@)
-	AsmInitPtr(ctx, YSI_g_sFunctionalStartPos, 8);
-	@emit JUMP.rel         (YSI_g_sFunctionalAfterPos + 16 - YSI_g_sFunctionalStartPos)
-	AsmInitPtr(ctx, YSI_g_sFunctionalAfterPos, 16);
-	@emit LOAD.pri         ref(I@)
-	@emit JUMP.rel         (callPos + 8 - YSI_g_sFunctionalAfterPos)
-	return 0;
+	
+	AsmInitPtr(ctx, YSI_g_sFunctionalStartPos, 40);
+	if (excess)
+	{
+		@emit JUMP.rel         (YSI_g_sFunctionalAfterPos + 48 - YSI_g_sFunctionalStartPos)
+		
+		// Dump this bit of excess stack to the heap.
+		@emit HEAP             excess
+		@emit LCTRL            4
+		@emit MOVS             excess
+		@emit STACK            excess
+	}
+	else
+	{
+		@emit JUMP.rel         (YSI_g_sFunctionalAfterPos - YSI_g_sFunctionalStartPos)
+	}
+	//@emit PUSH.C           YSI_g_sFunctionalExpectedDepth
+	//@emit CALL             0
+	
+	AsmInitPtr(ctx, YSI_g_sFunctionalAfterPos, 56);
+	if (excess)
+	{
+		// Dump this bit of excess stack to the heap.
+		@emit STACK            -excess
+		@emit STACK            0
+		@emit LCTRL            2
+		@emit ADD.C            -excess
+		@emit MOVS             excess
+		@emit SCTRL            2
+		
+		@emit JUMP.rel         (callPos - YSI_g_sFunctionalAfterPos - 48)
+	}
+	else
+	{
+		@emit JUMP.rel         (callPos - YSI_g_sFunctionalAfterPos)
+	}
+	
+	// We mess with the stack a lot, so don't rescan.
+	return -1;
 }
 
 hook OnCodeInit()
