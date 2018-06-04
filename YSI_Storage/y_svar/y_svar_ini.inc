@@ -341,7 +341,7 @@ Svar_Save()
 	INI_Close(__fwrite);
 }
 
-hook OnCodeInit()
+public OnCodeInit()
 {
 	P:1("hook Svar_OnScriptInit called");
 	// List them all.
@@ -365,4 +365,16 @@ hook OnCodeInit()
 		#define _YSI_ONLY_ONE_CONFIG_LOAD
 		INI_ParseFile("YSI/" #MODE_NAME "_config.ini", "_Config_Load_%s");
 	#endif
+	
+	#if defined SVar_OnCodeInit
+		SVar_OnCodeInit();
+	#endif
+	return 1;
 }
+
+#undef OnCodeInit
+#define OnCodeInit SVar_OnCodeInit
+#if defined SVar_OnCodeInit
+	forward SVar_OnCodeInit();
+#endif
+

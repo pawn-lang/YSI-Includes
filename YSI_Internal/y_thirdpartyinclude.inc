@@ -86,6 +86,11 @@ Optional plugins:
 // internal include guards (or the compiler's one) will prevent their multiple
 // inclusions.  I don't know why I ever made YSI use its own internal version...
 
+#if defined _INC_y_thirdpartyinclude
+	#endinput
+#endif
+#define _INC_y_thirdpartyinclude
+
 #if defined CODE_SCAN_MAX_PATTERN
 	#if CODE_SCAN_MAX_PATTERN < (32)
 		#if defined CODESCAN_INC

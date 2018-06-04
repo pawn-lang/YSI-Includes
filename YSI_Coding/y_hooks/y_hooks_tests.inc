@@ -145,10 +145,21 @@ Test:OnScriptInit()
 static
 	bool:y_hooks_OnCodeInit_called = false;
 
-hook OnCodeInit()
+public OnCodeInit()
 {
 	y_hooks_OnCodeInit_called = true;
+	
+	#if defined HooksTest_OnCodeInit
+		HooksTest_OnCodeInit();
+	#endif
+	return 1;
 }
+
+#undef OnCodeInit
+#define OnCodeInit HooksTest_OnCodeInit
+#if defined HooksTest_OnCodeInit
+	forward HooksTest_OnCodeInit();
+#endif
 
 Test:OnCodeInit()
 {

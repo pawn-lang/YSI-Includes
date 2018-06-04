@@ -77,7 +77,7 @@ static stock
 	Alloc:YSI_g_sFirstSlot = NO_ALLOC,
 	YSI_g_sPlayerTimers = -1;
 
-hook OnCodeInit()
+public OnCodeInit()
 {
 	P:1("hook Timers_OnScriptInit called");
 	new
@@ -158,8 +158,18 @@ hook OnCodeInit()
 		}
 	}
 	P:1("hook Timers_OnScriptInit ended");
+	
+	#if defined Timers_OnCodeInit
+		Timers_OnCodeInit();
+	#endif
 	return 1;
 }
+
+#undef OnCodeInit
+#define OnCodeInit Timers_OnCodeInit
+#if defined Timers_OnCodeInit
+	forward Timers_OnCodeInit();
+#endif
 
 hook OnPlayerConnect(playerid)
 {

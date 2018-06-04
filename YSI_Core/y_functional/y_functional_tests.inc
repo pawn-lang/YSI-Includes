@@ -242,7 +242,7 @@ Test:FUNC_FoldL_nested()
 	new
 		a0[10] = { 1,  2,  3, ...},
 		ret;
-	ret = FoldL({printf("%d * %d", _0, _1), _0 * _1}, FoldL({printf("%d + %d", _0, _1), _0 + _1}, 11, a0), a0);
+	ret = FoldL({ printf("%d: %d * %d", GetCurrentFrameLocalSize(), _0, _1), printf("%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", GetCurrentFrameLocal(0), GetCurrentFrameLocal(1), GetCurrentFrameLocal(2), GetCurrentFrameLocal(3), GetCurrentFrameLocal(4), GetCurrentFrameLocal(5), GetCurrentFrameLocal(6), GetCurrentFrameLocal(7), GetCurrentFrameLocal(8), GetCurrentFrameLocal(9), GetCurrentFrameLocal(10), GetCurrentFrameLocal(11), GetCurrentFrameLocal(12), GetCurrentFrameLocal(13), GetCurrentFrameLocal(14), GetCurrentFrameLocal(15), GetCurrentFrameLocal(16), GetCurrentFrameLocal(17), GetCurrentFrameLocal(18)), _0 * _1}, FoldL({printf("%d: %d + %d", GetCurrentFrameLocalSize(), _0, _1), printf("%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", GetCurrentFrameLocal(0), GetCurrentFrameLocal(1), GetCurrentFrameLocal(2), GetCurrentFrameLocal(3), GetCurrentFrameLocal(4), GetCurrentFrameLocal(5), GetCurrentFrameLocal(6), GetCurrentFrameLocal(7), GetCurrentFrameLocal(8), GetCurrentFrameLocal(9), GetCurrentFrameLocal(10), GetCurrentFrameLocal(11), GetCurrentFrameLocal(12), GetCurrentFrameLocal(13), GetCurrentFrameLocal(14), GetCurrentFrameLocal(15), GetCurrentFrameLocal(16), GetCurrentFrameLocal(17), GetCurrentFrameLocal(18)), _0 + _1}, 11, a0), a0);
 	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11));
 }
 

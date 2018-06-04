@@ -316,7 +316,7 @@ stock N@(volatile const vardata[], playerCount, dataSize, &pointer)
 	P:5("N@: %d", YSI_g_sFirstUVarData);
 }
 
-hook OnCodeInit()
+public OnCodeInit()
 {
 	// List them all.
 	YSI_g_sFirstUVarData = -1;
@@ -334,7 +334,18 @@ hook OnCodeInit()
 		#emit LOAD.S.pri buffer
 		#emit SCTRL      6
 	}
+	
+	#if defined UVar_OnCodeInit
+		UVar_OnCodeInit();
+	#endif
+	return 1;
 }
+
+#undef OnCodeInit
+#define OnCodeInit UVar_OnCodeInit
+#if defined UVar_OnCodeInit
+	forward UVar_OnCodeInit();
+#endif
 
 /*public OnPlayerLogout(playerid, uid)
 {

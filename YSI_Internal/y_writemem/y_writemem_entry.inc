@@ -223,7 +223,7 @@ static WM_Shift(from, to, data[], len = sizeof (data))
 	}
 }
 
-hook OnCodeInit()
+public OnCodeInit()
 {
 	// 00 4A 61 98
 	new
@@ -264,6 +264,16 @@ hook OnCodeInit()
 		}
 	}
 	YSI_g_iWriteMemAddr = addr;
+	
+	#if defined WriteMem_OnCodeInit
+		WriteMem_OnCodeInit();
+	#endif
 	return 1;
 }
+
+#undef OnCodeInit
+#define OnCodeInit WriteMem_OnCodeInit
+#if defined WriteMem_OnCodeInit
+	forward WriteMem_OnCodeInit();
+#endif
 

@@ -232,6 +232,7 @@ static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	if (data[E_INLINE_DATA_STATE] != 0)
 		return 0;
 	P:5("Inline_FoundStart OK");
+	printf("%d", CodeScanGetMatchStack(scanner));
 	data[E_INLINE_DATA_LOCALS] = CodeScanGetMatchStack(scanner);
 	data[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
 	data[E_INLINE_DATA_NAME] = CodeScanGetMatchHole(scanner, 0);
@@ -335,7 +336,12 @@ static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	Inline_StoreData(data);
 	// Restart scanning for the next inline.
 	data[E_INLINE_DATA_STATE] = 0;
-	return 0;
+	// HACK HACK HACK.  We play with the stack so much that we really upset the code scanner - it
+	// doesn't see all the inline locals being removed (because they aren't any more).
+	printf("%d %d", data[E_INLINE_DATA_STACK], data[E_INLINE_DATA_LOCALS]);
+	//scanner[CodeScanMatch_stack] -= (data[E_INLINE_DATA_STACK] - data[E_INLINE_DATA_LOCALS]);
+	//scanner[CodeScanMatch_stack] = data[E_INLINE_DATA_LOCALS];
+	return 1;
 }
 
 static stock Inline_StoreData(data[E_INLINE_DATA])
@@ -465,6 +471,7 @@ public OnRuntimeError(code, &bool:suppress)
 
 public OnCodeInit()
 {
+	P:2("Inline_OnCodeInit called");
 	new
 		hdr[AMX_HDR];
 	GetAmxHeader(hdr);
