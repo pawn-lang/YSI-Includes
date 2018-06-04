@@ -186,7 +186,8 @@ enum E_INLINE_DATA
 	E_INLINE_DATA_STACK,   // Count of all locals.
 	E_INLINE_DATA_POINTER, // The struct to store the inline data in.
 	E_INLINE_DATA_START,   // The start of the writable code space.
-	E_INLINE_DATA_USER     // The location of the user code.
+	E_INLINE_DATA_USER,    // The location of the user code.
+	E_INLINE_DATA_CLEANUP  // The final address at which all inline local cleanup is done.
 }
 
 static stock
@@ -232,7 +233,6 @@ static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	if (data[E_INLINE_DATA_STATE] != 0)
 		return 0;
 	P:5("Inline_FoundStart OK");
-	printf("%d", CodeScanGetMatchStack(scanner));
 	data[E_INLINE_DATA_LOCALS] = CodeScanGetMatchStack(scanner);
 	data[E_INLINE_DATA_START] = CodeScanGetMatchAddress(scanner);
 	data[E_INLINE_DATA_NAME] = CodeScanGetMatchHole(scanner, 0);
@@ -249,6 +249,7 @@ static stock Inline_FoundMid(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	P:5("Inline_FoundMid OK");
 	data[E_INLINE_DATA_STACK] = CodeScanGetMatchStack(scanner);
 	data[E_INLINE_DATA_STATE] = 2;
+	data[E_INLINE_DATA_CLEANUP] = CodeScanGetMatchHole(scanner, 0) + AMX_HEADER_COD;
 	return 0;
 }
 
@@ -336,12 +337,18 @@ static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	Inline_StoreData(data);
 	// Restart scanning for the next inline.
 	data[E_INLINE_DATA_STATE] = 0;
-	// HACK HACK HACK.  We play with the stack so much that we really upset the code scanner - it
-	// doesn't see all the inline locals being removed (because they aren't any more).
-	printf("%d %d", data[E_INLINE_DATA_STACK], data[E_INLINE_DATA_LOCALS]);
-	//scanner[CodeScanMatch_stack] -= (data[E_INLINE_DATA_STACK] - data[E_INLINE_DATA_LOCALS]);
-	//scanner[CodeScanMatch_stack] = data[E_INLINE_DATA_LOCALS];
-	return 1;
+	Inline_MakeScannerHappy(data);
+	return 0;
+}
+
+static stock Inline_MakeScannerHappy(data[E_INLINE_DATA])
+{
+	// This inserts an extra `stack` OP for no reason other than to make "codescan" happy, so it
+	// thinks the correct number of cells have been pushed and pulled.
+	new
+		ctx[AsmContext];
+	AsmInitPtr(ctx, data[E_INLINE_DATA_CLEANUP], 8);
+	@emit STACK            (data[E_INLINE_DATA_STACK] - data[E_INLINE_DATA_LOCALS])
 }
 
 static stock Inline_StoreData(data[E_INLINE_DATA])
