@@ -81,7 +81,7 @@ Optional plugins:
 #include "..\..\YSI_Coding\y_inline"
 
 #include "..\..\YSI_Internal\y_thirdpartyinclude"
-#include "y_functional_impl"
+#include "y_functional_funcs"
 #include "y_functional_rewrite"
 
 #if defined YSI_TESTS

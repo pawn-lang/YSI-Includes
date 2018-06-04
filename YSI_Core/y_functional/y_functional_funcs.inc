@@ -264,6 +264,7 @@ stock FoldL(Func:cb<ii>, n, const arr[], len = sizeof (arr))
 {
 	new
 		cur = n;
+	printf("%d, %d[%d]", n, ref(arr), len);
 	for (new i = 0; i != len; ++i)
 	{
 		cur = @.cb(cur, arr[i]);
