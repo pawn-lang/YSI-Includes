@@ -137,7 +137,6 @@ static stock Functional_FoundStart(scanner[CodeScanner])
 	if (YSI_g_sFunctionalExpectedDepth < 0)
 	{
 		YSI_g_sFunctionalExpectedDepth = CodeScanGetMatchStack(scanner);
-		printf("Expected depth: %d", YSI_g_sFunctionalExpectedDepth);
 	}
 	return 0;
 }
@@ -187,9 +186,7 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 	if (callPos > YSI_g_sFunctionalLastEnd)
 	{
 		YSI_g_sFunctionalExpectedDepth = -1;
-		printf("new start");
 	}
-	printf("CodeScanGetMatchStack: %d", CodeScanGetMatchStack(scanner));
 	
 	// Start a new scanner at the point this scanner ended.
 	new
@@ -223,7 +220,8 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 	
 	// Needs to stay in scope.
 	new lambdaStart2[CodeScanMatcher];
-	if (nestingLevel == 0) {
+	if (nestingLevel == 0)
+	{
 		CodeScanMatcherInit(lambdaStart2, &Functional_FoundStart);
 		CodeScanMatcherPattern(lambdaStart2,
 			OP(CONST_PRI,          1)
@@ -279,7 +277,8 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 	CodeScanAddMatcher(second, lambdaAfter1);
 	
 	new lambdaAfter2[CodeScanMatcher];
-	if (nestingLevel == 0) {
+	if (nestingLevel == 0)
+	{
 		CodeScanMatcherInit(lambdaAfter2, &Functional_FoundAfter);
 		CodeScanMatcherPattern(lambdaAfter2,
 			OP(CONST_PRI,          1)
