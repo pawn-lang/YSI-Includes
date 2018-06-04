@@ -70,162 +70,129 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-
-#define CB_GET(%0)  new _cb[E_CALLBACK_DATA]; Callback_Get(cb, _cb, (%0))
-#define CB_CALL(%0) Callback_Call(_cb,%0)
-#define CB_REL()    Callback_Release(_cb)
-
-stock Map(callback:cb, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
+stock Map(Func:cb<i>, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
 {
-	CB_GET("i");
 	for (new len = min(al, dl), i; i != len; ++i)
 	{
-		dest[i] = CB_CALL(arr[i]);
+		dest[i] = @.cb(arr[i]);
 	}
-	return CB_REL();
 }
 #define Map({%0}%1)%8; LAMBDA_i<Map>{%0}(%1)%8;
 
-stock Map_(callback:cb, const arr[], len = sizeof (arr))
+stock Map_(Func:cb<i>, const arr[], len = sizeof (arr))
 {
-	CB_GET("i");
 	for (new i; i != len; ++i)
 	{
-		CB_CALL(arr[i]);
+		@.cb(arr[i]);
 	}
-	return CB_REL();
 }
 #define Map_({%0}%1)%8; LAMBDA_i<Map_>{%0}(%1)%8;
 
-stock MapIdx(callback:cb, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
+stock MapIdx(Func:cb<ii>, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
 {
-	CB_GET("ii");
 	for (new len = min(al, dl), i; i != len; ++i)
 	{
-		dest[i] = CB_CALL(i, arr[i]);
+		dest[i] = @.cb(i, arr[i]);
 	}
-	return CB_REL();
 }
 #define MapIdx({%0}%1)%8; LAMBDA_ii<IdxMap>{%0}(%1)%8;
 
-stock MapIdx_(callback:cb, const arr[], len = sizeof (arr))
+stock MapIdx_(Func:cb<ii>, const arr[], len = sizeof (arr))
 {
-	CB_GET("ii");
 	for (new i; i != len; ++i)
 	{
-		CB_CALL(i, arr[i]);
+		@.cb(i, arr[i]);
 	}
-	return CB_REL();
 }
 #define MapIdx_({%0}%1)%8; LAMBDA_ii<IdxMap_>{%0}(%1)%8;
 
-stock ZipWith(callback:cb, const l[], const r[], dest[], ls = sizeof (l), rs = sizeof (r), ds = sizeof (dest))
+stock ZipWith(Func:cb<ii>, const l[], const r[], dest[], ls = sizeof (l), rs = sizeof (r), ds = sizeof (dest))
 {
-	CB_GET("ii");
 	for (new len = min(ds, min(ls, rs)), i; i != len; ++i)
 	{
-		dest[i] = CB_CALL(l[i], r[i]);
+		dest[i] = @.cb(l[i], r[i]);
 	}
-	return CB_REL();
 }
 #define ZipWith({%0}%1)%8; LAMBDA_ii<ZipWith>{%0}(%1)%8;
 
-stock ZipWith_(callback:cb, const l[], const r[], ls = sizeof (l), rs = sizeof (r))
+stock ZipWith_(Func:cb<ii>, const l[], const r[], ls = sizeof (l), rs = sizeof (r))
 {
-	CB_GET("ii");
 	for (new len = min(ls, rs), i; i != len; ++i)
 	{
-		CB_CALL(l[i], r[i]);
+		@.cb(l[i], r[i]);
 	}
-	return CB_REL();
 }
 #define ZipWith_({%0}%1)%8; LAMBDA_ii<ZipWith_>{%0}(%1)%8;
 
-stock ZipWith3(callback:cb, const l[], const m[], const r[], dest[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r), ds = sizeof (dest))
+stock ZipWith3(Func:cb<iii>, const l[], const m[], const r[], dest[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r), ds = sizeof (dest))
 {
-	CB_GET("iii");
 	for (new len = min(min(ms, ds), min(ls, rs)), i; i != len; ++i)
 	{
-		dest[i] = CB_CALL(l[i], m[i], r[i]);
+		dest[i] = @.cb(l[i], m[i], r[i]);
 	}
-	return CB_REL();
 }
 #define ZipWith3({%0}%1)%8; LAMBDA_iii<ZipWith3>{%0}(%1)%8;
 
-stock ZipWith3_(callback:cb, const l[], const m[], const r[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r))
+stock ZipWith3_(Func:cb<iii>, const l[], const m[], const r[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r))
 {
-	CB_GET("iii");
 	for (new len = min(ms, min(ls, rs)), i; i != len; ++i)
 	{
-		CB_CALL(l[i], m[i], r[i]);
+		@.cb(l[i], m[i], r[i]);
 	}
-	return CB_REL();
 }
 #define ZipWith3_({%0}%1)%8; LAMBDA_iii<ZipWith3_>{%0}(%1)%8;
 
-stock ZipWithIdx(callback:cb, const l[], const r[], dest[], ls = sizeof (l), rs = sizeof (r), ds = sizeof (dest))
+stock ZipWithIdx(Func:cb<iii>, const l[], const r[], dest[], ls = sizeof (l), rs = sizeof (r), ds = sizeof (dest))
 {
-	CB_GET("iii");
 	for (new len = min(ds, min(ls, rs)), i; i != len; ++i)
 	{
-		dest[i] = CB_CALL(i, l[i], r[i]);
+		dest[i] = @.cb(i, l[i], r[i]);
 	}
-	return CB_REL();
 }
 #define ZipWithIdx({%0}%1)%8; LAMBDA_ii<ZipWith>{%0}(%1)%8;
 
-stock ZipWithIdx_(callback:cb, const l[], const r[], ls = sizeof (l), rs = sizeof (r))
+stock ZipWithIdx_(Func:cb<iii>, const l[], const r[], ls = sizeof (l), rs = sizeof (r))
 {
-	CB_GET("iii");
 	for (new len = min(ls, rs), i; i != len; ++i)
 	{
-		CB_CALL(i, l[i], r[i]);
+		@.cb(i, l[i], r[i]);
 	}
-	return CB_REL();
 }
 #define ZipWithIdx_({%0}%1)%8; LAMBDA_ii<ZipWith_>{%0}(%1)%8;
 
-stock ZipWith3Idx(callback:cb, const l[], const m[], const r[], dest[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r), ds = sizeof (dest))
+stock ZipWith3Idx(Func:cb<iiii>, const l[], const m[], const r[], dest[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r), ds = sizeof (dest))
 {
-	CB_GET("iiii");
 	for (new len = min(min(ms, ds), min(ls, rs)), i; i != len; ++i)
 	{
-		dest[i] = CB_CALL(i, l[i], m[i], r[i]);
+		dest[i] = @.cb(i, l[i], m[i], r[i]);
 	}
-	return CB_REL();
 }
 #define ZipWith3Idx({%0}%1)%8; LAMBDA_iii<ZipWith3>{%0}(%1)%8;
 
-stock ZipWith3Idx_(callback:cb, const l[], const m[], const r[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r))
+stock ZipWith3Idx_(Func:cb<iiii>, const l[], const m[], const r[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r))
 {
-	CB_GET("iiii");
 	for (new len = min(ms, min(ls, rs)), i; i != len; ++i)
 	{
-		CB_CALL(i, l[i], m[i], r[i]);
+		@.cb(i, l[i], m[i], r[i]);
 	}
-	return CB_REL();
 }
 #define ZipWith3Idx_({%0}%1)%8; LAMBDA_iii<ZipWith3_>{%0}(%1)%8;
 
-stock FoldLIdx(callback:cb, n, const arr[], len = sizeof (arr))
+stock FoldLIdx(Func:cb<iii>, n, const arr[], len = sizeof (arr))
 {
-	CB_GET("iii");
 	new
 		cur = n;
 	for (new i = 0; i != len; ++i)
 	{
-		cur = CB_CALL(i, cur, arr[i]);
+		cur = @.cb(i, cur, arr[i]);
 	}
-	return
-		CB_REL(),
-		cur;
+	return cur;
 }
 #define FoldLIdx({%0}%1)%8; LAMBDA_ii<FoldL>{%0}(%1)%8;
 
-stock ScanLIdx(callback:cb, n, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
+stock ScanLIdx(Func:cb<iii>, n, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
 {
 	if (!dl) return 0;
-	CB_GET("iii");
 	new
 		len = min(al, dl - 1),
 		i = -1,
@@ -233,99 +200,81 @@ stock ScanLIdx(callback:cb, n, const arr[], dest[], al = sizeof (arr), dl = size
 	while (++i != len)
 	{
 		dest[i] = cur,
-		cur = CB_CALL(i, cur, arr[i]);
+		cur = @.cb(i, cur, arr[i]);
 	}
 	dest[i] = cur;
-	return
-		CB_REL(),
-		1;
+	return 1;
 }
 #define ScanLIdx({%0}%1)%8; LAMBDA_ii<ScanL>{%0}(%1)%8;
 
-stock FoldRIdx(callback:cb, const arr[], n, len = sizeof (arr))
+stock FoldRIdx(Func:cb<iii>, const arr[], n, len = sizeof (arr))
 {
-	CB_GET("iii");
 	new
 		cur = n;
 	while (len--)
 	{
-		cur = CB_CALL(i, arr[len], cur);
+		cur = @.cb(i, arr[len], cur);
 	}
-	return
-		CB_REL(),
-		cur;
+	return cur;
 }
 #define FoldRIdx({%0}%1)%8; LAMBDA_ii<FoldR>{%0}(%1)%8;
 
-stock ScanRIdx(callback:cb, n, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
+stock ScanRIdx(Func:cb<iii>, n, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
 {
 	if (!dl) return 0;
-	CB_GET("iii");
 	new
 		len = min(al, dl - 1),
 		cur = n;
 	dest[len] = cur;
 	while (len--)
 	{
-		dest[len] = cur = CB_CALL(i, arr[len], cur);
+		dest[len] = cur = @.cb(i, arr[len], cur);
 	}
-	return
-		CB_REL(),
-		1;
+	return 1;
 }
 #define ScanRIdx({%0}%1)%8; LAMBDA_ii<ScanR>{%0}(%1)%8;
 
-stock FoldL1Idx(callback:cb, const arr[], len = sizeof (arr))
+stock FoldL1Idx(Func:cb<iii>, const arr[], len = sizeof (arr))
 {
 	assert(len > 0);
-	CB_GET("iii");
 	new
 		cur = arr[0];
 	for (new i = 1; i != len; ++i)
 	{
-		cur = CB_CALL(i, cur, arr[i]);
+		cur = @.cb(i, cur, arr[i]);
 	}
-	return
-		CB_REL(),
-		cur;
+	return cur;
 }
 #define FoldL1Idx({%0}%1)%8; LAMBDA_ii<FoldL1>{%0}(%1)%8;
 
-stock FoldR1Idx(callback:cb, const arr[], len = sizeof (arr))
+stock FoldR1Idx(Func:cb<iii>, const arr[], len = sizeof (arr))
 {
 	assert(len > 0);
-	CB_GET("iii");
 	new
 		cur = arr[--len];
 	while (len--)
 	{
-		cur = CB_CALL(i, arr[len], cur);
+		cur = @.cb(i, arr[len], cur);
 	}
-	return
-		CB_REL(),
-		cur;
+	return cur;
 }
 #define FoldR1Idx({%0}%1)%8; LAMBDA_ii<FoldR1>{%0}(%1)%8;
 
-stock FoldL(callback:cb, n, const arr[], len = sizeof (arr))
+stock FoldL(Func:cb<ii>, n, const arr[], len = sizeof (arr))
 {
-	CB_GET("ii");
 	new
 		cur = n;
 	for (new i = 0; i != len; ++i)
 	{
-		cur = CB_CALL(cur, arr[i]);
+		cur = @.cb(cur, arr[i]);
 	}
-	return
-		CB_REL(),
-		cur;
+	return cur;
 }
 #define FoldL({%0}%1)%8; LAMBDA_ii<FoldL>{%0}(%1)%8;
 
-stock ScanL(callback:cb, n, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
+stock ScanL(Func:cb<ii>, n, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
 {
 	if (!dl) return 0;
-	CB_GET("ii");
 	new
 		len = min(al, dl - 1),
 		i = -1,
@@ -333,77 +282,63 @@ stock ScanL(callback:cb, n, const arr[], dest[], al = sizeof (arr), dl = sizeof 
 	while (++i != len)
 	{
 		dest[i] = cur,
-		cur = CB_CALL(cur, arr[i]);
+		cur = @.cb(cur, arr[i]);
 	}
 	dest[i] = cur;
-	return
-		CB_REL(),
-		1;
+	return 1;
 }
 #define ScanL({%0}%1)%8; LAMBDA_ii<ScanL>{%0}(%1)%8;
 
-stock FoldR(callback:cb, const arr[], n, len = sizeof (arr))
+stock FoldR(Func:cb<ii>, const arr[], n, len = sizeof (arr))
 {
-	CB_GET("ii");
 	new
 		cur = n;
 	while (len--)
 	{
-		cur = CB_CALL(arr[len], cur);
+		cur = @.cb(arr[len], cur);
 	}
-	return
-		CB_REL(),
-		cur;
+	return cur;
 }
 #define FoldR({%0}%1)%8; LAMBDA_ii<FoldR>{%0}(%1)%8;
 
-stock ScanR(callback:cb, n, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
+stock ScanR(Func:cb<ii>, n, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
 {
 	if (!dl) return 0;
-	CB_GET("ii");
 	new
 		len = min(al, dl - 1),
 		cur = n;
 	dest[len] = cur;
 	while (len--)
 	{
-		dest[len] = cur = CB_CALL(arr[len], cur);
+		dest[len] = cur = @.cb(arr[len], cur);
 	}
-	return
-		CB_REL(),
-		1;
+	return 1;
 }
 #define ScanR({%0}%1)%8; LAMBDA_ii<ScanR>{%0}(%1)%8;
 
-stock FoldL1(callback:cb, const arr[], len = sizeof (arr))
+stock FoldL1(Func:cb<ii>, const arr[], len = sizeof (arr))
 {
 	assert(len > 0);
-	CB_GET("ii");
 	new
 		cur = arr[0];
 	for (new i = 1; i != len; ++i)
 	{
-		cur = CB_CALL(cur, arr[i]);
+		cur = @.cb(cur, arr[i]);
 	}
-	return
-		CB_REL(),
-		cur;
+	return cur;
 }
 #define FoldL1({%0}%1)%8; LAMBDA_ii<FoldL1>{%0}(%1)%8;
 
-stock FoldR1(callback:cb, const arr[], len = sizeof (arr))
+stock FoldR1(Func:cb<ii>, const arr[], len = sizeof (arr))
 {
 	assert(len > 0);
-	CB_GET("ii");
 	new
 		cur = arr[--len];
 	while (len--)
 	{
-		cur = CB_CALL(arr[len], cur);
+		cur = @.cb(arr[len], cur);
 	}
-	return
-		CB_REL(),
-		cur;
+	return cur;
 }
 #define FoldR1({%0}%1)%8; LAMBDA_ii<FoldR1>{%0}(%1)%8;
 
@@ -425,55 +360,43 @@ stock bool:Or(bool:arr[], len = sizeof (arr))
 	return false;
 }
 
-stock bool:All(callback:cb, const arr[], len = sizeof (arr))
+stock bool:All(Func:cb<i>, const arr[], len = sizeof (arr))
 {
-	CB_GET("i");
 	for (new i; i != len; ++i)
 	{
-		if (!CB_CALL(arr[i])) return CB_REL(), false;
+		if (!@.cb(arr[i])) return , false;
 	}
-	return
-		CB_REL(),
-		true;
+	return true;
 }
 #define All({%0}%1)%8; LAMBDA_i<All>{%0}(%1)%8;
 
-stock bool:Any(callback:cb, const arr[], len = sizeof (arr))
+stock bool:Any(Func:cb<i>, const arr[], len = sizeof (arr))
 {
-	CB_GET("i");
 	for (new i; i != len; ++i)
 	{
-		if (CB_CALL(arr[i])) return CB_REL(), true;
+		if (@.cb(arr[i])) return , true;
 	}
-	return
-		CB_REL(),
-		false;
+	return false;
 }
 #define Any({%0}%1)%8; LAMBDA_i<Any>{%0}(%1)%8;
 
-stock bool:AllIdx(callback:cb, const arr[], len = sizeof (arr))
+stock bool:AllIdx(Func:cb<ii>, const arr[], len = sizeof (arr))
 {
-	CB_GET("ii");
 	for (new i; i != len; ++i)
 	{
-		if (!CB_CALL(i, arr[i])) return CB_REL(), false;
+		if (!@.cb(i, arr[i])) return , false;
 	}
-	return
-		CB_REL(),
-		true;
+	return true;
 }
 #define AllIdx({%0}%1)%8; LAMBDA_i<All>{%0}(%1)%8;
 
-stock bool:AnyIdx(callback:cb, const arr[], len = sizeof (arr))
+stock bool:AnyIdx(Func:cb<ii>, const arr[], len = sizeof (arr))
 {
-	CB_GET("ii");
 	for (new i; i != len; ++i)
 	{
-		if (CB_CALL(i, arr[i])) return CB_REL(), true;
+		if (@.cb(i, arr[i])) return , true;
 	}
-	return
-		CB_REL(),
-		false;
+	return false;
 }
 #define AnyIdx({%0}%1)%8; LAMBDA_i<Any>{%0}(%1)%8;
 
@@ -507,11 +430,6 @@ stock bool:NotElem(n, const arr[], len = sizeof (arr))
 	}
 	return true;
 }
-
-#undef CB_GET
-#undef CB_CALL
-#undef CB_REL
-
 
 #define Just(%0) (YSI_gJust=_:%0,1)
 #define Nothing  (0)
