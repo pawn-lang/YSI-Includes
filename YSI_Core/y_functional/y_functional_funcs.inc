@@ -364,7 +364,7 @@ stock bool:All(Func:cb<i>, const arr[], len = sizeof (arr))
 {
 	for (new i; i != len; ++i)
 	{
-		if (!@.cb(arr[i])) return , false;
+		if (!@.cb(arr[i])) return false;
 	}
 	return true;
 }
@@ -374,7 +374,7 @@ stock bool:Any(Func:cb<i>, const arr[], len = sizeof (arr))
 {
 	for (new i; i != len; ++i)
 	{
-		if (@.cb(arr[i])) return , true;
+		if (@.cb(arr[i])) return true;
 	}
 	return false;
 }
@@ -384,7 +384,7 @@ stock bool:AllIdx(Func:cb<ii>, const arr[], len = sizeof (arr))
 {
 	for (new i; i != len; ++i)
 	{
-		if (!@.cb(i, arr[i])) return , false;
+		if (!@.cb(i, arr[i])) return false;
 	}
 	return true;
 }
@@ -394,7 +394,7 @@ stock bool:AnyIdx(Func:cb<ii>, const arr[], len = sizeof (arr))
 {
 	for (new i; i != len; ++i)
 	{
-		if (@.cb(i, arr[i])) return , true;
+		if (@.cb(i, arr[i])) return true;
 	}
 	return false;
 }
