@@ -249,7 +249,7 @@ static stock Inline_FoundMid(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	P:5("Inline_FoundMid OK");
 	data[E_INLINE_DATA_STACK] = CodeScanGetMatchStack(scanner);
 	data[E_INLINE_DATA_STATE] = 2;
-	data[E_INLINE_DATA_CLEANUP] = CodeScanGetMatchHole(scanner, 0) + AMX_HEADER_COD;
+	data[E_INLINE_DATA_CLEANUP] = CodeScanGetMatchHole(scanner, 0);
 	return 0;
 }
 
@@ -345,10 +345,24 @@ static stock Inline_MakeScannerHappy(data[E_INLINE_DATA])
 {
 	// This inserts an extra `stack` OP for no reason other than to make "codescan" happy, so it
 	// thinks the correct number of cells have been pushed and pulled.
+	if (data[E_INLINE_DATA_STACK] == data[E_INLINE_DATA_LOCALS])
+	{
+		return;
+	}
 	new
-		ctx[AsmContext];
-	AsmInitPtr(ctx, data[E_INLINE_DATA_CLEANUP], 8);
-	@emit STACK            (data[E_INLINE_DATA_STACK] - data[E_INLINE_DATA_LOCALS])
+		dctx[DisasmContext];
+	DisasmInit(dctx, data[E_INLINE_DATA_CLEANUP]);
+	if (DisasmNextInsn(dctx) == OP_NOP && DisasmNextInsn(dctx) == OP_NOP)
+	{
+		new
+			ctx[AsmContext];
+		AsmInitPtr(ctx, data[E_INLINE_DATA_CLEANUP] + AMX_HEADER_COD, 8);
+		@emit STACK            (data[E_INLINE_DATA_STACK] - data[E_INLINE_DATA_LOCALS])
+	}
+	else
+	{
+		P:E("Inline_MakeScannerHappy: Out of cleanup space at %08x.", data[E_INLINE_DATA_CLEANUP]);
+	}
 }
 
 static stock Inline_StoreData(data[E_INLINE_DATA])
