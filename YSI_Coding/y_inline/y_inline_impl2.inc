@@ -1627,7 +1627,8 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 			@emit SCTRL            4
 			// We will remove everything from the stack later, as well as the
 			// two values on the stack for `memcpy` restoration.
-			@emit ADD.C            8
+			@emit CONST.pri        8
+			@emit ADD
 			accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
 			// Restore the return value.
 			@emit SCTRL            4
@@ -1854,7 +1855,12 @@ stock Callback_Restore_(...)
 	assert(numargs() == 1);
 	// Maintain the frame header.
 	new
-		closure = Indirect_DePtr(getarg(0));
+		closure = getarg(0);
+	if (closure < 128)
+		return false;
+	closure = Indirect_DePtr(closure);
+	if (closure < 0 || AMX_Read(closure))
+		return true;
 	// Called via a timer, or is const, or wasn't actually called, or is a public.
 	if (AMX_Read(closure + _:E_INLINE_CALL_FLAGS * cellbytes) || !AMX_Read(closure + _:E_INLINE_CALL_TIMER * cellbytes))
 	{
