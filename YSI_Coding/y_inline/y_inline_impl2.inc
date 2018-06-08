@@ -168,6 +168,8 @@ const INLINE_PATTERN_3 = _C<ess_>;
 const INLINE_PATTERN_4 = _C<Cole>;
 
 forward Callback_Release_(ResolvedAlloc:a);
+forward Inline_MaybeFree_(Alloc:slot);
+forward Inline_MaybeConst_(ResolvedAlloc:slot);
 
 #define CALL@I@F I@F()
 #define CALL@I@L I@L()
@@ -240,6 +242,21 @@ stock operator~(I@T:inlines[], size)
 	#emit LREF.S.pri       size
 	#emit STOR.S.pri       size
 	YSI_g_sInlineLinkedList = DisasmReloc(size);
+}
+
+public Inline_MaybeFree_(Alloc:slot)
+{
+	// If this function is called, the given inline left the call stack without
+	// being claimed.
+	free(slot);
+}
+
+public Inline_MaybeConst_(ResolvedAlloc:slot)
+{
+	// If this function is called, the given inline has been claimed, but has
+	// left the current scope, so can't have its closure written back to.
+	KillTimer(AMX_Read(_:slot + _:E_INLINE_CALL_TIMER * cellbytes));
+	AMX_Write(_:slot + _:E_INLINE_CALL_TIMER * cellbytes, 0);
 }
 
 static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
@@ -949,7 +966,7 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_RemoteHandler_<x>));
 	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_<a>));
 	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, 0);
+	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
@@ -987,7 +1004,7 @@ stock Function:GetLocalFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_LocalHandler_<x>));
 	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_<a>));
 	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, 0);
+	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
@@ -1283,7 +1300,7 @@ stock Callback_Release(input[E_CALLBACK_DATA])
 static stock Callback_Claim_(func[E_INLINE_CALL])
 {
 	KillTimer(func[E_INLINE_CALL_TIMER]);
-	func[E_INLINE_CALL_TIMER] = 0;
+	func[E_INLINE_CALL_TIMER] = SetTimerEx("Inline_MaybeConst_", 0, 0, "i", ref(func));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1784,7 +1801,7 @@ static stock Inline_DoCodeGen(scanner[CodeScanner], data[E_INLINE_DATA])
 
 public Callback_Release_(ResolvedAlloc:a)
 {
-	// `Callback_Get` kills the timer (maybe repeatedly, but that's fine).
+	KillTimer(AMX_Read(_:a + _:E_INLINE_CALL_TIMER * cellbytes));
 	free(Malloc_Reconcile(a));
 }
 
