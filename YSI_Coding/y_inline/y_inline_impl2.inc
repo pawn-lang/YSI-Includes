@@ -1219,7 +1219,7 @@ stock bool:Callback_Get(...)
 		if (numArgs == 4)
 			remote = bool:getarg(3);
 	}
-	P:2("Callback_Get called: %d %s", numArgs, name);
+	P:2("Callback_Get called: %d %s %s", numArgs, name, expect);
 	// Check that the assumption made here is valid.  I can't imagine a case,
 	// given the number of libraries in use here, where it couldn't be!  We
 	// check this since any inline data pointer will point in to the `DAT`
@@ -1342,9 +1342,10 @@ static stock Callback_CallHandler_(...)
 	#emit PUSH.C           20                  // 52
 	#emit SYSREQ.C         memcpy              // 54
 	
-	// At this point, we've written the closure back to the structure.  Indicate to the original
-	// user that this is the case by clearing `e_INLINE_FLAG_CONST` from the flags (actually clears
-	// all the flags, since `e_INLINE_FLAG_PUBLIC` isn't set here either).
+	// At this point, we've written the closure back to the structure.
+	// Indicate to the original user that this is the case by clearing
+	// `e_INLINE_FLAG_CONST` from the flags (actually clears all the flags,
+	// since `e_INLINE_FLAG_PUBLIC` isn't set here either).
 	#emit LOAD.S.pri       0xFFFFFFFC          // 56
 	#emit ADD.C            0xFFFFFFF0          // 58 , E_INLINE_CALL_FLAGS - E_INLINE_CALL_PARAMS
 	#emit MOVE.alt                             // 59
@@ -1375,27 +1376,29 @@ static stock Callback_RemoteHandler_(...)
 	#emit LCTRL            4
 	#emit SUB
 	#emit SCTRL            4
+	
 	// Call `memcpy` to make a new copy of the parameters for
 	// `CallRemoteFunction`.
 	#emit PUSH.alt
 	#emit PUSH.alt
 	#emit PUSH.C           0
-	#emit ADDR.alt         12
-	#emit PUSH.alt
+	#emit PUSH.adr         12
 	#emit PUSH.pri
 	#emit PUSH.C           20
 	#emit SYSREQ.C         memcpy
 	#emit STACK 24
+	
 	// Push the specifier and function name.
 	#emit LOAD.pri         INDIRECTION_DATA
 	#emit ADD.C            24  // E_PUBLIC_CALL_SPECIFIER * cellbytes
 	#emit PUSH.pri
-	#emit ADD.C            132 // E_PUBLIC_CALL_FUNCTION * cellbytes
+	#emit ADD.C            128 // (E_PUBLIC_CALL_FUNCTION - E_PUBLIC_CALL_SPECIFIER) * cellbytes
 	#emit PUSH.pri
 	#emit LOAD.S.pri       8
 	#emit ADD.C            8
 	#emit PUSH.pri
 	#emit SYSREQ.C         CallRemoteFunction
+	
 	// Store the return, then do the return.
 	#emit MOVE.alt
 	#emit LCTRL            5
@@ -1421,6 +1424,7 @@ static stock Callback_LocalHandler_(...)
 	#emit LCTRL            4
 	#emit SUB
 	#emit SCTRL            4
+	
 	// Call `memcpy` to make a new copy of the parameters for
 	// `CallLocalFunction`.
 	#emit PUSH.alt
@@ -1431,16 +1435,18 @@ static stock Callback_LocalHandler_(...)
 	#emit PUSH.C           20
 	#emit SYSREQ.C         memcpy
 	#emit STACK 24
+	
 	// Push the specifier and function name.
 	#emit LOAD.pri         INDIRECTION_DATA
 	#emit ADD.C            24  // E_PUBLIC_CALL_SPECIFIER * cellbytes
 	#emit PUSH.pri
-	#emit ADD.C            132 // E_PUBLIC_CALL_FUNCTION * cellbytes
+	#emit ADD.C            128 // (E_PUBLIC_CALL_FUNCTION - E_PUBLIC_CALL_SPECIFIER) * cellbytes
 	#emit PUSH.pri
 	#emit LOAD.S.pri       8
 	#emit ADD.C            8
 	#emit PUSH.pri
 	#emit SYSREQ.C         CallLocalFunction
+	
 	// Store the return, then do the return.
 	#emit MOVE.alt
 	#emit LCTRL            5
