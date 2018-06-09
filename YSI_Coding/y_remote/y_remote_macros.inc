@@ -28,7 +28,7 @@
 #define YREMOTE_END:%0);@@%1(%2)(%3)(%4)(%6) %0);I@R:@@%1(%2);I@R:@@%1(%2)if(__m&@_)L@(%1(%3)%4);%1(%6)
 #define YREMOTE_STR:%0);@@%1(%2)(%3)(%4)(%6) %0);I@R:@@%1(%2);I@R:@@%1(%2)if(__m&@_)T@(%1(%3)%4);%1(%6)
 #define YREMOTE_VOD:%0);@@%1(%2)(%3)(%4)(%6) %0);I@R:@@%1(%2);I@R:@@%1(%2){%1(%3);if(__m&@_)L@(0%4);}%1(%6)
-#define YREMOTE_TAG:%0);@@%1(%2)(%3)(%4)(%6)%5: %0);%5:%1(%6);I@R:@@%1(%2);I@R:@@%1(%2)if(__m&@_)L@(%1(%3)%4);%5:%1(%6)
+#define YREMOTE_TAG:%0);@@%1(%2)(%3)(%4)(%6)%5: %0);I@P:@@%1(%2);%5:%1(%6);I@P:@@%1(%2)if(__m&@_)L@(%1(%3)%4);%5:%1(%6)
 
 // If someone does:
 //   
@@ -37,4 +37,5 @@
 // Assume that this is purely a forwarding declaration.  Make the function
 // uncallable.
 #define I@R:%9;%9;%9; static stock %9{}
+#define I@P:%9;%9;%9;%9; static stock %9{}
 

@@ -57,21 +57,17 @@ Test:y_remote_1()
 	
 }
 
-#if !defined YSI_NO_MASTER
-	// Can't have a stub remote with no master (to indicate other scripts exist).
-	
-	TODO(244, "Allocates too much heap with `len`.");
-	remotefunc static stock yrt_2(const hi, string:you[], there[], &other, &len = 7);
-	remotefunc static stock string:yrt_2b(const hi, string:you[], there[], &other, &len = 7);
+TODO(244, "Allocates too much heap with `len`.");
+remotefunc static stock yrt_2(const hi, string:you[], there[], &other, &len = 7);
+remotefunc static stock string:yrt_2b(const hi, string:you[], there[], &other, &len = 7);
 
-	Test:y_remote_2()
-	{
-		new arr[89], oo = sizeof (arr);
-		ASSERT(broadcastfunc yrt_2(789, "string", arr, oo) == 0);
-		ASSERT(strlen(broadcastfunc yrt_2b(789, "string", arr, oo)) == 0);
-		ASSERT(oo == sizeof (arr));
-	}
-#endif
+Test:y_remote_2()
+{
+	new arr[89], oo = sizeof (arr);
+	ASSERT(broadcastfunc yrt_2(789, "string", arr, oo) == 0);
+	ASSERT(strlen(broadcastfunc yrt_2b(789, "string", arr, oo)) == 0);
+	ASSERT(oo == sizeof (arr));
+}
 
 Test:y_remote_3()
 {
@@ -123,15 +119,11 @@ Test:y_remote_8()
 	
 }
 
-#if !defined YSI_NO_MASTER
-	// Can't have a stub remote with no master (to indicate other scripts exist).
-	remotefunc Float:yrt_9();
+remotefunc Float:yrt_9();
 
-	Test:y_remote_9()
-	{
-		X@(_:(55.8));
-		ASSERT(broadcastfunc yrt_9() == 0.0);
-	}
-
-#endif
+Test:y_remote_9()
+{
+	X@(_:(55.8));
+	ASSERT(broadcastfunc yrt_9() == 0.0);
+}
 
