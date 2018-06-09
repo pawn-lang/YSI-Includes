@@ -84,6 +84,7 @@ Optional plugins:
 #include "..\..\YSI_Internal\y_thirdpartyinclude"
 #include "..\..\YSI_Internal\y_version"
 #include "..\..\YSI_Storage\y_amx"
+#include "..\..\YSI_Internal\y_funcinc"
 #include "..\..\YSI_Internal\y_shortfunc"
 #include "..\..\YSI_Core\y_debug"
 #include "..\..\YSI_Core\y_utils"
