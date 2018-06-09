@@ -83,20 +83,10 @@ Optional plugins:
 #include "..\..\YSI_Core\y_utils"
 #include "y_remote_macros"
 
-// This VERY LOOSELY uses the master system to figure out if it should even
-// bother with complex remote calls.  However, it isn't fully bound by the
-// whole system because it's rules are different (and will work regardless).
-#if defined YSI_NO_MASTER
-	#define remotefunc
-	#define localfunc%0(%1) (%0(%1))
-	#define broadcastfunc%0(%1) (%0(%1))
-	#define targetfunc%3<%2>%0(%1) (%3%0(%1))
-#else	
-	#define remotefunc Y_REMOTE_FUNC
-	#define localfunc%0(%1) (J@=0,I@=-1,_@%0(%1))
-	#define broadcastfunc%0(%1) (J@=1,I@=-1,_@%0(%1))
-	#define targetfunc%0<%2>%9(%1) (J@=1,I@=(%2),_@%0(%1))
-#endif
+#define remotefunc Y_REMOTE_FUNC
+#define localfunc%0(%1) (J@=0,I@=-1,_@%0(%1))
+#define broadcastfunc%0(%1) (J@=1,I@=-1,_@%0(%1))
+#define targetfunc%0<%2>%9(%1) (J@=1,I@=(%2),_@%0(%1))
 
 #if defined YSI_TESTS
 	#include "..\..\YSI_Core\y_testing"
