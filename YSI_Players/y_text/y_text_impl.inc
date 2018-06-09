@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-enum e_TEXT_DISPLAY_TYPE
+enum e_TEXT_DISPLAY_TYPE:(+= 1)
 {
 	text_type_print    = cellmin,
 	text_type_3d       = -4,

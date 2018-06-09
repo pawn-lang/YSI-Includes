@@ -98,7 +98,7 @@ Optional plugins:
 #define FORMAT:%0(%1) FormatSpecifier<'%0'>(%1)
 
 // Enumeration for the possible keys they can want.
-enum e_GAME_TEXT_KEYS
+enum e_GAME_TEXT_KEYS:(+= 1)
 {
 	e_NO_KEY_SELECTED,
 	e_PED_ANSWER_PHONE,
@@ -137,7 +137,7 @@ enum e_GAME_TEXT_KEYS
 
 // Can support up to 16 specifier types, more requires a rewrite, unfortunately
 // there are currently 15, though I can't think of any more...
-enum e_COMPRESS_FORMAT_DATA (+= 0x10000000)
+enum e_COMPRESS_FORMAT_DATA:(+= 0x10000000)
 {
 	e_COMPRESS_FORMAT_DATA_WIDTH = 0x00000FFF, // 0x800 = *, 0 = none,
 	e_COMPRESS_FORMAT_DATA_PREC  = 0x00FFF000, // 0xFFF = default

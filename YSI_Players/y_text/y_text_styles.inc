@@ -74,7 +74,7 @@ Optional plugins:
 // over to XML as there are just too many options now to make INI files worth
 // the effort.
 
-enum e_STYLE_TYPE (+= 0x10000000)   // ALWAYS ADD!
+enum e_STYLE_TYPE:(+= 0x10000000)   // ALWAYS ADD!
 {
 	e_STYLE_TYPE_GT_0 = 0x10000000, // ALWAYS FIRST!
 	e_STYLE_TYPE_GT_1,

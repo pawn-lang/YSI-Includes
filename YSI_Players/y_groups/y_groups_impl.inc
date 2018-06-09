@@ -110,7 +110,7 @@ else
 }
 */
 
-enum e_GROUP_FLAGS (<<= 1)
+enum e_GROUP_FLAGS:(<<= 1)
 {
 	e_GROUP_FLAGS_NONE = 0,
 	e_GROUP_FLAGS_GANG = 1,

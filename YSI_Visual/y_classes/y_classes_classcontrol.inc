@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-enum e_SPAWN_FLAGS (<<= 1)
+enum e_SPAWN_FLAGS:(<<= 1)
 {
 	e_SPAWN_FLAGS_NONE  = 0,
 	// Control flags.

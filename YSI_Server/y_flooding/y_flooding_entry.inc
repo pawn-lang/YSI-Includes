@@ -81,7 +81,7 @@ Optional plugins:
 #include "..\..\YSI_Core\y_utils"
 #include "..\..\YSI_Coding\y_hooks"
 
-enum e_FLOOD_ACTION (+= 0x00010000)
+enum e_FLOOD_ACTION:(+= 0x00010000)
 {
 	e_FLOOD_ACTION_COUNT = 0x0000FFFF,
 	e_FLOOD_ACTION_ACTION = 0x000F0000,

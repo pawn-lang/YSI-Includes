@@ -243,7 +243,7 @@ Optional plugins:
 
 */
 
-enum e_VEHICLE_FLAGS (<<= 1)
+enum e_VEHICLE_FLAGS:(<<= 1)
 {
 	// There are 15 categories.
 	e_VEHICLE_FLAGS_NONE            = 0,

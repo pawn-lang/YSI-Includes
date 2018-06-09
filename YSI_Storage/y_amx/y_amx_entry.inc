@@ -819,7 +819,7 @@ stock AMX_GetValueSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	return idx;
 }
 
-/*enum e_AMX_HEADER_TYPE (<<= 1)
+/*enum e_AMX_HEADER_TYPE:(<<= 1)
 {
 	e_AMX_HEADER_TYPE_NONE = 0,
 	e_AMX_HEADER_TYPE_PUBLIC = 1,

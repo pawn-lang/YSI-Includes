@@ -118,7 +118,7 @@ Optional plugins:
 #define Property_OnPlayerLeaveCheckpointEx Property_OnPlayerLeaveCP
 #define Property_OnPlayerEnterCheckpointEx Property_OnPlayerEnterCP
 
-enum e_PROP_FLAGS (+= 0x10000)
+enum e_PROP_FLAGS:(+= 0x10000)
 {
 	e_PROP_FLAGS_LINK		= 0x0000FFFF,
 	e_PROP_FLAGS_TYPES		= 0x00FF0000,

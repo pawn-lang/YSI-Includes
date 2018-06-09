@@ -105,7 +105,7 @@ enum E_COMMAND
 	E_COMMAND_POINTER
 }
 
-enum e_COMMAND_ERRORS
+enum e_COMMAND_ERRORS:(+= 1)
 {
 	// The majority of these are even - odd numbers return "1" not "0".
 	COMMAND_ZERO_RET      = 0 , // The command returned 0.
@@ -119,7 +119,7 @@ enum e_COMMAND_ERRORS
 	COMMAND_INVALID_INPUT = 10, // Didn't type "/something".
 }
 
-enum e_COMMAND_FLAGS (<<= 1)
+enum e_COMMAND_FLAGS:(<<= 1)
 {
 	e_COMMAND_FLAGS_ZERO_RET = 1,  // The command returned 0.
 	e_COMMAND_FLAGS_OK,            // Called corectly.

@@ -282,7 +282,7 @@ Optional plugins:
 //  Other code 
 // ============
 
-enum e_HASH_TYPE
+enum e_HASH_TYPE:(+= 1)
 {
 	hash_bernstein,
 	hash_fnv1,

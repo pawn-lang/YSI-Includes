@@ -96,7 +96,7 @@ enum e_PLAYER_SET_HACK
 	e_PLAYER_SET_HACK_EXCESS[MAX_PLAYERS - (bits<MAX_PLAYERS> + 1)]
 }
 
-enum e_PLAYER_SET_TYPE
+enum e_PLAYER_SET_TYPE:(+= 1)
 {
 	e_PLAYER_SET_TYPE_NONE = 0,
 	// "GROUP" is a YSI group.

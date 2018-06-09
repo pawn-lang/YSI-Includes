@@ -85,7 +85,7 @@ Optional plugins:
     
 */
 
-enum e_INI_LINE_TYPE
+enum e_INI_LINE_TYPE:(+= 1)
 {
 	e_INI_LINE_TYPE_INVALID,
 	e_INI_LINE_TYPE_DATALESS,

@@ -118,7 +118,7 @@ enum td_align
 	td_align_right
 }
 
-enum e_TD_BITS (<<= 1)
+enum e_TD_BITS:(<<= 1)
 {
 	e_TD_BITS_SHADOW = 0x000000FF,
 	e_TD_BITS_OUTLINE = 0x0000FF00,

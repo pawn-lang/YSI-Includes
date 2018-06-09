@@ -177,7 +177,7 @@ while (sCur != AREA_NO_NEXT)
 
 #define _AREAS_DO_REMOVE(%0,%1,%2) new __z=-1,__y=%0;while(__y!=%1)__z=__y,__y=_:(YSI_g_sAreas[__z][E_AREA_FLAGS] & e_AREA_FLAGS_NEXT);return ((__z==-1)?(%0=%2):(_:(YSI_g_sAreas[__z][E_AREA_FLAGS]=YSI_g_sAreas[__z][E_AREA_FLAGS]&e_AREA_FLAGS_I_NEXT|(e_AREA_FLAGS:%2&e_AREA_FLAGS_NEXT))))
 
-enum e_AREA_FLAGS
+enum e_AREA_FLAGS:(+= 1)
 {
 	// These aren't used any more either, they get encoded in the "POS" array
 	// (sort of) with polys.

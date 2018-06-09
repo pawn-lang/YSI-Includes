@@ -72,7 +72,7 @@ Optional plugins:
 
 forward Class_ResolveGroups(class, Group:forgroup, bool:cp);
 
-enum e_CLASS_FLAGS (<<= 1)
+enum e_CLASS_FLAGS:(<<= 1)
 {
 	e_CLASS_FLAGS_SKIN    = 0x0000FFFF,
 	e_CLASS_FLAGS_ENABLED = 0x00010000,

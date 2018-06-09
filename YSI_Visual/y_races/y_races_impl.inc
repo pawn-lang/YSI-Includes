@@ -85,7 +85,7 @@ Optional plugins:
 #define RACE_LOOP_GRANULARITY 5
 #define RACE_PLAYER_OUT 0x80000000
 
-enum e_RACE_FLAGS (<<= 1)
+enum e_RACE_FLAGS:(<<= 1)
 {
 	e_RACE_FLAGS_NONE = 0,
 	e_RACE_FLAGS_EXIT_TIME = 0xFFFF,
