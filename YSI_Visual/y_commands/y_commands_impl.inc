@@ -105,7 +105,7 @@ enum E_COMMAND
 	E_COMMAND_POINTER
 }
 
-enum e_COMMAND_ERRORS:(+= 1)
+enum e_COMMAND_ERRORS:
 {
 	// The majority of these are even - odd numbers return "1" not "0".
 	COMMAND_ZERO_RET      = 0 , // The command returned 0.

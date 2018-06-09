@@ -98,7 +98,7 @@ Optional plugins:
 #define FORMAT:%0(%1) FormatSpecifier<'%0'>(%1)
 
 // Enumeration for the possible keys they can want.
-enum e_GAME_TEXT_KEYS:(+= 1)
+enum e_GAME_TEXT_KEYS:
 {
 	e_NO_KEY_SELECTED,
 	e_PED_ANSWER_PHONE,
