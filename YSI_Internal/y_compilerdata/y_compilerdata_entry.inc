@@ -129,7 +129,7 @@ Optional plugins:
 #define __COMPILER_UNIX (0)
 #define __COMPILER_WINDOWS (1)
 #define __COMPILER_OS __COMPILER_UNIX
-#tryinclude "y_compilerdata/dEtErMiNe_Os"
+#tryinclude "dEtErMiNe_Os"
 
 /*-------------------------------------------------------------------------*//*+
  * <remarks>
