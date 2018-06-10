@@ -90,22 +90,22 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_scriptinit
-	#tryinclude "y_scriptinit\y_scriptinit_entry"
+#if !defined _INC_y_core
+	#tryinclude "..\YSI_Core\y_core\y_core_entry"
 #endif
-#if !defined _INC_y_scriptinit
-	#tryinclude "YSI_Server\y_scriptinit\y_scriptinit_entry"
+#if !defined _INC_y_core
+	#tryinclude "YSI_Core\y_core\y_core_entry"
 #endif
-#if !defined _INC_y_scriptinit
-	#tryinclude "YSI\YSI_Server\y_scriptinit\y_scriptinit_entry"
+#if !defined _INC_y_core
+	#tryinclude "YSI\YSI_Core\y_core\y_core_entry"
 #endif
-#if !defined _INC_y_scriptinit
-	#tryinclude <YSI_Server\y_scriptinit\y_scriptinit_entry>
+#if !defined _INC_y_core
+	#tryinclude <YSI_Core\y_core\y_core_entry>
 #endif
-#if !defined _INC_y_scriptinit
-	#tryinclude <YSI\YSI_Server\y_scriptinit\y_scriptinit_entry>
+#if !defined _INC_y_core
+	#tryinclude <YSI\YSI_Core\y_core\y_core_entry>
 #endif
-#if !defined _INC_y_scriptinit
+#if !defined _INC_y_core
 	#error Could not find y_scriptinit
 #endif
 

@@ -89,23 +89,23 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_als
-	#tryinclude "y_als\y_als_entry"
+#if !defined _INC_y_utils
+	#tryinclude "y_core\y_core_entry"
 #endif
-#if !defined _INC_y_als
-	#tryinclude "YSI_Core\y_als\y_als_entry"
+#if !defined _INC_y_core
+	#tryinclude "YSI_Core\y_core\y_core_entry"
 #endif
-#if !defined _INC_y_als
-	#tryinclude "YSI\YSI_Core\y_als\y_als_entry"
+#if !defined _INC_y_core
+	#tryinclude "YSI\YSI_Core\y_core\y_core_entry"
 #endif
-#if !defined _INC_y_als
-	#tryinclude <YSI_Core\y_als\y_als_entry>
+#if !defined _INC_y_core
+	#tryinclude <YSI_Core\y_core\y_core_entry>
 #endif
-#if !defined _INC_y_als
-	#tryinclude <YSI\YSI_Core\y_als\y_als_entry>
+#if !defined _INC_y_core
+	#tryinclude <YSI\YSI_Core\y_core\y_core_entry>
 #endif
-#if !defined _INC_y_als
-	#error Could not find y_als
+#if !defined _INC_y_core
+	#error Could not find y_utils
 #endif
 
 /**
@@ -121,4 +121,17 @@ Optional plugins:
  *  1.0
  * </library>
  *//** */
+
+// Allow multiple inclusions.
+#if defined _inc_y_als
+	#undef _inc_y_als
+#endif
+
+#if !defined ALS_MAKE
+	#if defined ALS_PREFIX
+		#error Use ALS_MAKE not ALS_PREFIX
+	#endif
+	//&&&
+	#define ALS_MAKE<%0...%1> %0Mode_%1
+#endif
 

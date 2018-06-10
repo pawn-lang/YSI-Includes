@@ -1,8 +1,3 @@
-#if defined _INC_y_amx
-	#endinput
-#endif
-#define _INC_y_amx
-
 /*
 Legal:
 	Version: MPL 1.1
@@ -80,13 +75,6 @@ Optional plugins:
 // the code that uses this file still operates corectly given how differently
 // the two systems do things.  I fully admit that his is FAR more general but
 // there are legacy libraries to consider.
-
-#include "..\..\YSI_Internal\y_version"
-
-#include "..\..\YSI_Server\y_scriptinit"
-#include "..\..\YSI_Core\y_debug"
-
-#include "..\..\YSI_Internal\y_thirdpartyinclude"
 
 #define AMX_FastString(%1,%2,%3,%4) \
 	(((%1) << 0) | ((%2) << 8) | ((%3) << 16) | ((%4) << 24))
@@ -1464,3 +1452,4 @@ stock AMX_DumpHeader()
 #define H_Nc7(%0,%3) @C8:H_Sc(%0,8,%3)
 #define H_Nc8(%0,%3) @C9:H_Sc(%0,9,%3)
 #define H_Nc9(%0,%3) ()
+

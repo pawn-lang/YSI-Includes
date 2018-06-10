@@ -124,22 +124,22 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_debug
-	#tryinclude "y_debug\y_debug_entry"
+#if !defined _INC_y_utils
+	#tryinclude "y_core\y_core_entry"
 #endif
-#if !defined _INC_y_debug
-	#tryinclude "YSI_Core\y_debug\y_debug_entry"
+#if !defined _INC_y_core
+	#tryinclude "YSI_Core\y_core\y_core_entry"
 #endif
-#if !defined _INC_y_debug
-	#tryinclude "YSI\YSI_Core\y_debug\y_debug_entry"
+#if !defined _INC_y_core
+	#tryinclude "YSI\YSI_Core\y_core\y_core_entry"
 #endif
-#if !defined _INC_y_debug
-	#tryinclude <YSI_Core\y_debug\y_debug_entry>
+#if !defined _INC_y_core
+	#tryinclude <YSI_Core\y_core\y_core_entry>
 #endif
-#if !defined _INC_y_debug
-	#tryinclude <YSI\YSI_Core\y_debug\y_debug_entry>
+#if !defined _INC_y_core
+	#tryinclude <YSI\YSI_Core\y_core\y_core_entry>
 #endif
-#if !defined _INC_y_debug
+#if !defined _INC_y_core
 	#error Could not find y_debug
 #endif
 

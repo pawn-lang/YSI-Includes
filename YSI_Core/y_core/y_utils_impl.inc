@@ -640,8 +640,6 @@ stock bernstein(string[] /* 12 */)
 	#pragma unused string
 }
 
-forward OnCodeInit();
-
 public OnCodeInit()
 {
 	new
@@ -679,21 +677,21 @@ public OnCodeInit()
 	@emit RETN
 	if (FALSE)
 		bernstein("");
-	#if defined Utils_OnCodeInit
-		Utils_OnCodeInit();
+	#if defined _y_utils_OnCodeInit
+		_y_utils_OnCodeInit();
 	#endif
 	__COMPILER_NAKED
 }
 
-#if defined Utils_OnCodeInit
-	forward Utils_OnCodeInit();
+#if defined _y_utils_OnCodeInit
+	forward _y_utils_OnCodeInit();
 #endif
 #if defined _ALS_OnCodeInit
 	#undef OnCodeInit
 #else
 	#define _ALS_OnCodeInit
 #endif
-#define OnCodeInit Utils_OnCodeInit
+#define OnCodeInit _y_utils_OnCodeInit
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to check.</param>

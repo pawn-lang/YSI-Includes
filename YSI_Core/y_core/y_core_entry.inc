@@ -99,6 +99,7 @@ Optional plugins:
 #include "y_prehook"
 #include "y_stripnumbers"
 #include "y_shortvar"
+#include "y_als_impl"
 
 // A few nicely named short strings used for properties.
 #define YSIM_MASTER #M
@@ -116,16 +117,18 @@ Optional plugins:
 
 // New create the `OnScriptInit` and `OnCodeInit` callbacks, which many YSI
 // includes use to start themselves.
-#include "y_scriptinit_entry"
+#include "y_scriptinit_impl"
+#include "y_va_header"
 
 // The ever loved `y_version`.
 #include "y_version"
 
 // More common utilities and user-facing functions.
-#include "y_debug_entry"
+#include "y_debug_impl"
+#include "y_amx_impl"
 #include "y_shortfunc"
-#include "y_utils_entry"
-#include "y_va_entry"
+#include "y_utils_impl"
+#include "y_va_impl"
 
 // These are conditional, and use most of the preceeding code.
 #if defined YSI_TESTS
@@ -135,5 +138,6 @@ Optional plugins:
 #if defined YSI_TESTS
 	#include "y_utils_tests"
 	#include "y_va_tests"
+	#include "y_als_tests"
 #endif
 

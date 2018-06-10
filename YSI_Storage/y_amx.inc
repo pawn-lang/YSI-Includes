@@ -83,22 +83,22 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_amx
-	#tryinclude "y_amx\y_amx_entry"
+#if !defined _INC_y_core
+	#tryinclude "..\YSI_Core\y_core\y_core_entry"
 #endif
-#if !defined _INC_y_amx
-	#tryinclude "YSI_Storage\y_amx\y_amx_entry"
+#if !defined _INC_y_core
+	#tryinclude "YSI_Core\y_core\y_core_entry"
 #endif
-#if !defined _INC_y_amx
-	#tryinclude "YSI\YSI_Storage\y_amx\y_amx_entry"
+#if !defined _INC_y_core
+	#tryinclude "YSI\YSI_Core\y_core\y_core_entry"
 #endif
-#if !defined _INC_y_amx
-	#tryinclude <YSI_Storage\y_amx\y_amx_entry>
+#if !defined _INC_y_core
+	#tryinclude <YSI_Core\y_core\y_core_entry>
 #endif
-#if !defined _INC_y_amx
-	#tryinclude <YSI\YSI_Storage\y_amx\y_amx_entry>
+#if !defined _INC_y_core
+	#tryinclude <YSI\YSI_Core\y_core\y_core_entry>
 #endif
-#if !defined _INC_y_amx
+#if !defined _INC_y_core
 	#error Could not find y_amx
 #endif
 
