@@ -104,6 +104,9 @@ Optional plugins:
 #if !defined _INC_y_iterate
 	#tryinclude <YSI\YSI_Data\y_foreach\y_foreach_entry>
 #endif
+#if !defined _INC_y_iterate
+	#error Could not find y_iterate
+#endif
 
 /**
  * <library name="y_iterate">

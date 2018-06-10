@@ -101,4 +101,7 @@ Optional plugins:
 #if !defined _INC_y_version
 	#tryinclude <YSI\YSI_Internal\y_version\y_version_entry>
 #endif
+#if !defined _INC_y_version
+	#error Could not find y_version
+#endif
 

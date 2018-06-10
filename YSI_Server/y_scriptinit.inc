@@ -105,4 +105,7 @@ Optional plugins:
 #if !defined _INC_y_scriptinit
 	#tryinclude <YSI\YSI_Server\y_scriptinit\y_scriptinit_entry>
 #endif
+#if !defined _INC_y_scriptinit
+	#error Could not find y_scriptinit
+#endif
 

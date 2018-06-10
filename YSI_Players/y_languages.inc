@@ -96,4 +96,7 @@ Optional plugins:
 #if !defined _INC_y_languages
 	#tryinclude <YSI\YSI_Players\y_languages\y_languages_entry>
 #endif
+#if !defined _INC_y_languages
+	#error Could not find y_languages
+#endif
 

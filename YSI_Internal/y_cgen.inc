@@ -97,4 +97,7 @@ Optional plugins:
 #if !defined _INC_y_cgen
 	#tryinclude <YSI\YSI_Internal\y_cgen\y_cgen_entry>
 #endif
+#if !defined _INC_y_cgen
+	#error Could not find y_cgen
+#endif
 

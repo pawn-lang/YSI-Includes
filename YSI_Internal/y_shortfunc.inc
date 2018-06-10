@@ -104,4 +104,7 @@ Optional plugins:
 #if !defined _INC_y_shortfunc
 	#tryinclude <YSI\YSI_Internal\y_shortfunc\y_shortfunc_entry>
 #endif
+#if !defined _INC_y_shortfunc
+	#error Could not find y_shortfunc
+#endif
 

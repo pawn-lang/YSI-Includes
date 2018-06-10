@@ -99,4 +99,7 @@ Optional plugins:
 #if !defined _INC_y_funcinc
 	#tryinclude <YSI\YSI_Internal\y_funcinc\y_funcinc_entry>
 #endif
+#if !defined _INC_y_funcinc
+	#error Could not find y_funcinc
+#endif
 

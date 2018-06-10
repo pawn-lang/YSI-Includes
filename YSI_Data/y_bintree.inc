@@ -141,4 +141,7 @@ Optional plugins:
 #if !defined _INC_y_bintree
 	#tryinclude <YSI\YSI_Data\y_bintree\y_bintree_entry>
 #endif
+#if !defined _INC_y_bintree
+	#error Could not find y_bintree
+#endif
 

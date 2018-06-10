@@ -85,4 +85,7 @@ Optional plugins:
 #if !defined _INC_y_dialog
 	#tryinclude <YSI\YSI_Visual\y_dialog\y_dialog_entry>
 #endif
+#if !defined _INC_y_dialog
+	#error Could not find y_dialog
+#endif
 

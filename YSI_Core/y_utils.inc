@@ -164,4 +164,7 @@ Optional plugins:
 #if !defined _INC_y_utils
 	#tryinclude <YSI\YSI_Core\y_utils\y_utils_entry>
 #endif
+#if !defined _INC_y_utils
+	#error Could not find y_utils
+#endif
 

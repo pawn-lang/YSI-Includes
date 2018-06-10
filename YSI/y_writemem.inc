@@ -85,4 +85,7 @@ Optional plugins:
 #if !defined _INC_y_writemem
 	#tryinclude <YSI\YSI_Internal\y_writemem\y_writemem_entry>
 #endif
+#if !defined _INC_y_writemem
+	#error Could not find y_writemem
+#endif
 

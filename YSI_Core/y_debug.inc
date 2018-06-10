@@ -139,4 +139,7 @@ Optional plugins:
 #if !defined _INC_y_debug
 	#tryinclude <YSI\YSI_Core\y_debug\y_debug_entry>
 #endif
+#if !defined _INC_y_debug
+	#error Could not find y_debug
+#endif
 

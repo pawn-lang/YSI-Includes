@@ -97,4 +97,7 @@ Optional plugins:
 #if !defined _INC_y_cell
 	#tryinclude <YSI\YSI_Core\y_cell\y_cell_entry>
 #endif
+#if !defined _INC_y_cell
+	#error Could not find y_cell
+#endif
 

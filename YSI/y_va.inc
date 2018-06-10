@@ -85,4 +85,7 @@ Optional plugins:
 #if !defined _INC_y_va
 	#tryinclude <YSI\YSI_Coding\y_va\y_va_entry>
 #endif
+#if !defined _INC_y_va
+	#error Could not find y_va
+#endif
 

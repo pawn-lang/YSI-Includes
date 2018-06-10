@@ -171,4 +171,7 @@ Optional plugins:
 #if !defined _INC_y_commands
 	#tryinclude <YSI\YSI_Visual\y_commands\y_commands_entry>
 #endif
+#if !defined _INC_y_commands
+	#error Could not find y_commands
+#endif
 

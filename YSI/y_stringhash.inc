@@ -85,4 +85,7 @@ Optional plugins:
 #if !defined _INC_y_stringhash
 	#tryinclude <YSI\YSI_Coding\y_stringhash\y_stringhash_entry>
 #endif
+#if !defined _INC_y_stringhash
+	#error Could not find y_stringhash
+#endif
 

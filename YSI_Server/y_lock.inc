@@ -96,4 +96,7 @@ Optional plugins:
 #if !defined _INC_y_lock
 	#tryinclude <YSI\YSI_Server\y_lock\y_lock_entry>
 #endif
+#if !defined _INC_y_lock
+	#error Could not find y_lock
+#endif
 

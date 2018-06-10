@@ -85,4 +85,7 @@ Optional plugins:
 #if !defined _INC_y_timers
 	#tryinclude <YSI\YSI_Coding\y_timers\y_timers_entry>
 #endif
+#if !defined _INC_y_timers
+	#error Could not find y_timers
+#endif
 

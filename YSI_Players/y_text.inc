@@ -201,4 +201,7 @@ Optional plugins:
 #if !defined _INC_y_text
 	#tryinclude <YSI\YSI_Players\y_text\y_text_entry>
 #endif
+#if !defined _INC_y_text
+	#error Could not find y_text
+#endif
 

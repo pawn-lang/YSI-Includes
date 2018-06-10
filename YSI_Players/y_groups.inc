@@ -129,6 +129,9 @@ Optional plugins:
 #if !defined _INC_y_groups
 	#tryinclude <YSI\YSI_Players\y_groups\y_groups_entry>
 #endif
+#if !defined _INC_y_groups
+	#error Could not find y_groups
+#endif
 
 /**
  * <library name="y_groups">

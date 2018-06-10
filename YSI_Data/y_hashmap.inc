@@ -114,4 +114,7 @@ Optional plugins:
 #if !defined _INC_y_hashmap
 	#tryinclude <YSI\YSI_Core\y_hashmap\y_hashmap_entry>
 #endif
+#if !defined _INC_y_hashmap
+	#error Could not find y_hashmap
+#endif
 

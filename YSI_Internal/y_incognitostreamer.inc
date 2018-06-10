@@ -97,4 +97,7 @@ Optional plugins:
 #if !defined _INC_y_incognitostreamer
 	#tryinclude <YSI\YSI_Internal\y_incognitostreamer\y_incognitostreamer_entry>
 #endif
+#if !defined _INC_y_incognitostreamer
+	#error Could not find y_incognitostreamer
+#endif
 

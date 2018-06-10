@@ -96,4 +96,7 @@ Optional plugins:
 #if !defined _INC_y_mock
 	#tryinclude <YSI\YSI_Internal\y_mock\y_mock_entry>
 #endif
+#if !defined _INC_y_mock
+	#error Could not find y_mock
+#endif
 

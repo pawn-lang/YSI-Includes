@@ -97,4 +97,7 @@ Optional plugins:
 #if !defined _INC_y_distribute
 	#tryinclude <YSI\YSI_Internal\y_distribute\y_distribute_entry>
 #endif
+#if !defined _INC_y_distribute
+	#error Could not find y_distribute
+#endif
 

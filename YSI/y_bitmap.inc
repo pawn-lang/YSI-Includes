@@ -85,4 +85,7 @@ Optional plugins:
 #if !defined _INC_y_bitmap
 	#tryinclude <YSI\YSI_Storage\y_bitmap\y_bitmap_entry>
 #endif
+#if !defined _INC_y_bitmap
+	#error Could not find y_bitmap
+#endif
 

@@ -129,6 +129,9 @@ Optional plugins:
 #if !defined _INC_y_master
 	#tryinclude <YSI\YSI_Core\y_master\y_master_entry>
 #endif
+#if !defined _INC_y_master
+	#error Could not find y_master
+#endif
 
 /**
  * <library name="y_master">

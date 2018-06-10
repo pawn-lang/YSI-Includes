@@ -85,4 +85,7 @@ Optional plugins:
 #if !defined _INC_y_properties
 	#tryinclude <YSI\YSI_Visual\y_properties\y_properties_entry>
 #endif
+#if !defined _INC_y_properties
+	#error Could not find y_properties
+#endif
 

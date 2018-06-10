@@ -121,4 +121,7 @@ Optional plugins:
 #if !defined _INC_y_hooks
 	#tryinclude <YSI\YSI_Coding\y_hooks\y_hooks_entry>
 #endif
+#if !defined _INC_y_hooks
+	#error Could not find y_hooks
+#endif
 
