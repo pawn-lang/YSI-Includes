@@ -82,15 +82,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_cgen
-	#undef _inc_y_cgen
-#endif
-
 #if !defined _INC_y_cgen
 	#tryinclude "y_cgen\y_cgen_entry"
+#endif
+#if !defined _INC_y_cgen
 	#tryinclude "YSI_Internal\y_cgen\y_cgen_entry"
+#endif
+#if !defined _INC_y_cgen
 	#tryinclude "YSI\YSI_Internal\y_cgen\y_cgen_entry"
+#endif
+#if !defined _INC_y_cgen
 	#tryinclude <YSI_Internal\y_cgen\y_cgen_entry>
+#endif
+#if !defined _INC_y_cgen
 	#tryinclude <YSI\YSI_Internal\y_cgen\y_cgen_entry>
 #endif
 

@@ -84,15 +84,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_funcinc
-	#undef _inc_y_funcinc
-#endif
-
 #if !defined _INC_y_funcinc
 	#tryinclude "y_funcinc\y_funcinc_entry"
+#endif
+#if !defined _INC_y_funcinc
 	#tryinclude "YSI_Internal\y_funcinc\y_funcinc_entry"
+#endif
+#if !defined _INC_y_funcinc
 	#tryinclude "YSI\YSI_Internal\y_funcinc\y_funcinc_entry"
+#endif
+#if !defined _INC_y_funcinc
 	#tryinclude <YSI_Internal\y_funcinc\y_funcinc_entry>
+#endif
+#if !defined _INC_y_funcinc
 	#tryinclude <YSI\YSI_Internal\y_funcinc\y_funcinc_entry>
 #endif
 

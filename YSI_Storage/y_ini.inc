@@ -152,15 +152,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_ini
-	#undef _inc_y_ini
-#endif
-
 #if !defined _INC_y_ini
 	#tryinclude "y_ini\y_ini_entry"
+#endif
+#if !defined _INC_y_ini
 	#tryinclude "YSI_Storage\y_ini\y_ini_entry"
+#endif
+#if !defined _INC_y_ini
 	#tryinclude "YSI\YSI_Storage\y_ini\y_ini_entry"
+#endif
+#if !defined _INC_y_ini
 	#tryinclude <YSI_Storage\y_ini\y_ini_entry>
+#endif
+#if !defined _INC_y_ini
 	#tryinclude <YSI\YSI_Storage\y_ini\y_ini_entry>
 #endif
 

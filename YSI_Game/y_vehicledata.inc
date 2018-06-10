@@ -103,15 +103,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_vehicledata
-	#undef _inc_y_vehicledata
-#endif
-
 #if !defined _INC_y_vehicledata
 	#tryinclude "y_vehicledata\y_vehicledata_entry"
+#endif
+#if !defined _INC_y_vehicledata
 	#tryinclude "YSI_Game\y_vehicledata\y_vehicledata_entry"
+#endif
+#if !defined _INC_y_vehicledata
 	#tryinclude "YSI\YSI_Game\y_vehicledata\y_vehicledata_entry"
+#endif
+#if !defined _INC_y_vehicledata
 	#tryinclude <YSI_Game\y_vehicledata\y_vehicledata_entry>
+#endif
+#if !defined _INC_y_vehicledata
 	#tryinclude <YSI\YSI_Game\y_vehicledata\y_vehicledata_entry>
 #endif
 

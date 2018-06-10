@@ -81,15 +81,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_users
-	#undef _inc_y_users
-#endif
-
 #if !defined _INC_y_users
 	#tryinclude "y_users\y_users_entry"
+#endif
+#if !defined _INC_y_users
 	#tryinclude "YSI_Players\y_users\y_users_entry"
+#endif
+#if !defined _INC_y_users
 	#tryinclude "YSI\YSI_Players\y_users\y_users_entry"
+#endif
+#if !defined _INC_y_users
 	#tryinclude <YSI_Players\y_users\y_users_entry>
+#endif
+#if !defined _INC_y_users
 	#tryinclude <YSI\YSI_Players\y_users\y_users_entry>
 #endif
 

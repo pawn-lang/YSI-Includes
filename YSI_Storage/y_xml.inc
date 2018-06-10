@@ -89,15 +89,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_xml
-	#undef _inc_y_xml
-#endif
-
 #if !defined _INC_y_xml
 	#tryinclude "y_xml\y_xml_entry"
+#endif
+#if !defined _INC_y_xml
 	#tryinclude "YSI_Storage\y_xml\y_xml_entry"
+#endif
+#if !defined _INC_y_xml
 	#tryinclude "YSI\YSI_Storage\y_xml\y_xml_entry"
+#endif
+#if !defined _INC_y_xml
 	#tryinclude <YSI_Storage\y_xml\y_xml_entry>
+#endif
+#if !defined _INC_y_xml
 	#tryinclude <YSI\YSI_Storage\y_xml\y_xml_entry>
 #endif
 

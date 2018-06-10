@@ -81,15 +81,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_testing
-	#undef _inc_y_testing
-#endif
-
 #if !defined _INC_y_testing
 	#tryinclude "y_testing\y_testing_entry"
+#endif
+#if !defined _INC_y_testing
 	#tryinclude "YSI_Core\y_testing\y_testing_entry"
+#endif
+#if !defined _INC_y_testing
 	#tryinclude "YSI\YSI_Core\y_testing\y_testing_entry"
+#endif
+#if !defined _INC_y_testing
 	#tryinclude <YSI_Core\y_testing\y_testing_entry>
+#endif
+#if !defined _INC_y_testing
 	#tryinclude <YSI\YSI_Core\y_testing\y_testing_entry>
 #endif
 

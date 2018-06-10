@@ -83,15 +83,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_amx
-	#undef _inc_y_amx
-#endif
-
 #if !defined _INC_y_amx
 	#tryinclude "y_amx\y_amx_entry"
+#endif
+#if !defined _INC_y_amx
 	#tryinclude "YSI_Storage\y_amx\y_amx_entry"
+#endif
+#if !defined _INC_y_amx
 	#tryinclude "YSI\YSI_Storage\y_amx\y_amx_entry"
+#endif
+#if !defined _INC_y_amx
 	#tryinclude <YSI_Storage\y_amx\y_amx_entry>
+#endif
+#if !defined _INC_y_amx
 	#tryinclude <YSI\YSI_Storage\y_amx\y_amx_entry>
 #endif
 

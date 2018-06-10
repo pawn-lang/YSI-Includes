@@ -94,9 +94,17 @@ Optional plugins:
 
 #if !defined _INC_y_iterate
 	#tryinclude "y_foreach\y_foreach_entry"
+#endif
+#if !defined _INC_y_iterate
 	#tryinclude "YSI_Data\y_foreach\y_foreach_entry"
+#endif
+#if !defined _INC_y_iterate
 	#tryinclude "YSI\YSI_Data\y_foreach\y_foreach_entry"
+#endif
+#if !defined _INC_y_iterate
 	#tryinclude <YSI_Data\y_foreach\y_foreach_entry>
+#endif
+#if !defined _INC_y_iterate
 	#tryinclude <YSI\YSI_Data\y_foreach\y_foreach_entry>
 #endif
 

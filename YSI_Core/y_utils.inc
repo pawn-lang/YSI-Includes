@@ -149,15 +149,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_utils
-	#undef _inc_y_utils
-#endif
-
 #if !defined _INC_y_utils
 	#tryinclude "y_utils\y_utils_entry"
+#endif
+#if !defined _INC_y_utils
 	#tryinclude "YSI_Core\y_utils\y_utils_entry"
+#endif
+#if !defined _INC_y_utils
 	#tryinclude "YSI\YSI_Core\y_utils\y_utils_entry"
+#endif
+#if !defined _INC_y_utils
 	#tryinclude <YSI_Core\y_utils\y_utils_entry>
+#endif
+#if !defined _INC_y_utils
 	#tryinclude <YSI\YSI_Core\y_utils\y_utils_entry>
 #endif
 

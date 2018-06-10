@@ -91,15 +91,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_remote
-	#undef _inc_y_remote
-#endif
-
 #if !defined _INC_y_remote
 	#tryinclude "y_remote\y_remote_entry"
+#endif
+#if !defined _INC_y_remote
 	#tryinclude "YSI_Coding\y_remote\y_remote_entry"
+#endif
+#if !defined _INC_y_remote
 	#tryinclude "YSI\YSI_Coding\y_remote\y_remote_entry"
+#endif
+#if !defined _INC_y_remote
 	#tryinclude <YSI_Coding\y_remote\y_remote_entry>
+#endif
+#if !defined _INC_y_remote
 	#tryinclude <YSI\YSI_Coding\y_remote\y_remote_entry>
 #endif
 

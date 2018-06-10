@@ -165,24 +165,40 @@ Optional plugins:
 	#undef _inc_y_text
 #endif
 
-#if !defined _Y_TEXT_INCLUDED
-	#tryinclude "y_text\y_text_entry"
+#if !defined _Y_UNIQUE_INCLUDED
+	#tryinclude "..\YSI_Internal\y_unique\y_unique_entry"
 #endif
-#if !defined _Y_TEXT_INCLUDED
-	#tryinclude "YSI_Players\y_text\y_text_entry"
+#if !defined _Y_UNIQUE_INCLUDED
+	#tryinclude "YSI_Internal\y_unique\y_unique_entry"
 #endif
-#if !defined _Y_TEXT_INCLUDED
-	#tryinclude "YSI\YSI_Players\y_text\y_text_entry"
+#if !defined _Y_UNIQUE_INCLUDED
+	#tryinclude "YSI\YSI_Internal\y_unique\y_unique_entry"
 #endif
-#if !defined _Y_TEXT_INCLUDED
-	#tryinclude <YSI_Players\y_text\y_text_entry>
+#if !defined _Y_UNIQUE_INCLUDED
+	#tryinclude <YSI_Internal\y_unique\y_unique_entry>
 #endif
-#if !defined _Y_TEXT_INCLUDED
-	#tryinclude <YSI\YSI_Players\y_text\y_text_entry>
+#if !defined _Y_UNIQUE_INCLUDED
+	#tryinclude <YSI\YSI_Internal\y_unique\y_unique_entry>
 #endif
-#if defined _Y_TEXT_INCLUDED
-	#undef _Y_TEXT_INCLUDED
+#if defined _Y_UNIQUE_INCLUDED
+	#undef _Y_UNIQUE_INCLUDED
 #else
 	#error Did you use `YSI/y_text` instead of `YSI\y_text`?
+#endif
+
+#if !defined _INC_y_text
+	#tryinclude "y_text\y_text_entry"
+#endif
+#if !defined _INC_y_text
+	#tryinclude "YSI_Players\y_text\y_text_entry"
+#endif
+#if !defined _INC_y_text
+	#tryinclude "YSI\YSI_Players\y_text\y_text_entry"
+#endif
+#if !defined _INC_y_text
+	#tryinclude <YSI_Players\y_text\y_text_entry>
+#endif
+#if !defined _INC_y_text
+	#tryinclude <YSI\YSI_Players\y_text\y_text_entry>
 #endif
 

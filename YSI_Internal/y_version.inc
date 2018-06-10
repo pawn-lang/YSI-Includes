@@ -86,15 +86,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_version
-	#undef _inc_y_version
-#endif
-
 #if !defined _INC_y_version
 	#tryinclude "y_version\y_version_entry"
+#endif
+#if !defined _INC_y_version
 	#tryinclude "YSI_Internal\y_version\y_version_entry"
+#endif
+#if !defined _INC_y_version
 	#tryinclude "YSI\YSI_Internal\y_version\y_version_entry"
+#endif
+#if !defined _INC_y_version
 	#tryinclude <YSI_Internal\y_version\y_version_entry>
+#endif
+#if !defined _INC_y_version
 	#tryinclude <YSI\YSI_Internal\y_version\y_version_entry>
 #endif
 

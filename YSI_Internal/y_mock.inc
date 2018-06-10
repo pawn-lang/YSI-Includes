@@ -81,15 +81,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_mock
-	#undef _inc_y_mock
-#endif
-
 #if !defined _INC_y_mock
 	#tryinclude "y_mock\y_mock_entry"
+#endif
+#if !defined _INC_y_mock
 	#tryinclude "YSI_Internal\y_mock\y_mock_entry"
+#endif
+#if !defined _INC_y_mock
 	#tryinclude "YSI\YSI_Internal\y_mock\y_mock_entry"
+#endif
+#if !defined _INC_y_mock
 	#tryinclude <YSI_Internal\y_mock\y_mock_entry>
+#endif
+#if !defined _INC_y_mock
 	#tryinclude <YSI\YSI_Internal\y_mock\y_mock_entry>
 #endif
 

@@ -89,15 +89,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_shortfunc
-	#undef _inc_y_shortfunc
-#endif
-
 #if !defined _INC_y_shortfunc
 	#tryinclude "y_shortfunc\y_shortfunc_entry"
+#endif
+#if !defined _INC_y_shortfunc
 	#tryinclude "YSI_Internal\y_shortfunc\y_shortfunc_entry"
+#endif
+#if !defined _INC_y_shortfunc
 	#tryinclude "YSI\YSI_Internal\y_shortfunc\y_shortfunc_entry"
+#endif
+#if !defined _INC_y_shortfunc
 	#tryinclude <YSI_Internal\y_shortfunc\y_shortfunc_entry>
+#endif
+#if !defined _INC_y_shortfunc
 	#tryinclude <YSI\YSI_Internal\y_shortfunc\y_shortfunc_entry>
 #endif
 

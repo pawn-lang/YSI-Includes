@@ -70,15 +70,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_dialog
-	#undef _inc_y_dialog
-#endif
-
 #if !defined _INC_y_dialog
 	#tryinclude "..\YSI_Visual\y_dialog\y_dialog_entry"
+#endif
+#if !defined _INC_y_dialog
 	#tryinclude "YSI_Visual\y_dialog\y_dialog_entry"
+#endif
+#if !defined _INC_y_dialog
 	#tryinclude "YSI\YSI_Visual\y_dialog\y_dialog_entry"
+#endif
+#if !defined _INC_y_dialog
 	#tryinclude <YSI_Visual\y_dialog\y_dialog_entry>
+#endif
+#if !defined _INC_y_dialog
 	#tryinclude <YSI\YSI_Visual\y_dialog\y_dialog_entry>
 #endif
 

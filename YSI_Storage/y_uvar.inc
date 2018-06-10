@@ -81,15 +81,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_uvar
-	#undef _inc_y_uvar
-#endif
-
 #if !defined _INC_y_uvar
 	#tryinclude "y_uvar\y_uvar_entry"
+#endif
+#if !defined _INC_y_uvar
 	#tryinclude "YSI_Storage\y_uvar\y_uvar_entry"
+#endif
+#if !defined _INC_y_uvar
 	#tryinclude "YSI\YSI_Storage\y_uvar\y_uvar_entry"
+#endif
+#if !defined _INC_y_uvar
 	#tryinclude <YSI_Storage\y_uvar\y_uvar_entry>
+#endif
+#if !defined _INC_y_uvar
 	#tryinclude <YSI\YSI_Storage\y_uvar\y_uvar_entry>
 #endif
 

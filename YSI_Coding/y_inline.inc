@@ -87,15 +87,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_inline
-	#undef _inc_y_inline
-#endif
-
 #if !defined _INC_y_inline
 	#tryinclude "y_inline\y_inline_entry"
+#endif
+#if !defined _INC_y_inline
 	#tryinclude "YSI_Coding\y_inline\y_inline_entry"
+#endif
+#if !defined _INC_y_inline
 	#tryinclude "YSI\YSI_Coding\y_inline\y_inline_entry"
+#endif
+#if !defined _INC_y_inline
 	#tryinclude <YSI_Coding\y_inline\y_inline_entry>
+#endif
+#if !defined _INC_y_inline
 	#tryinclude <YSI\YSI_Coding\y_inline\y_inline_entry>
 #endif
 

@@ -153,15 +153,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_classes
-	#undef _inc_y_classes
-#endif
-
 #if !defined _INC_y_classes
 	#tryinclude "y_classes\y_classes_entry"
+#endif
+#if !defined _INC_y_classes
 	#tryinclude "YSI_Visual\y_classes\y_classes_entry"
+#endif
+#if !defined _INC_y_classes
 	#tryinclude "YSI\YSI_Visual\y_classes\y_classes_entry"
+#endif
+#if !defined _INC_y_classes
 	#tryinclude <YSI_Visual\y_classes\y_classes_entry>
+#endif
+#if !defined _INC_y_classes
 	#tryinclude <YSI\YSI_Visual\y_classes\y_classes_entry>
 #endif
 

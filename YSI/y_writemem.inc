@@ -70,15 +70,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_writemem
-	#undef _inc_y_writemem
-#endif
-
 #if !defined _INC_y_writemem
 	#tryinclude "..\YSI_Internal\y_writemem\y_writemem_entry"
+#endif
+#if !defined _INC_y_writemem
 	#tryinclude "YSI_Internal\y_writemem\y_writemem_entry"
+#endif
+#if !defined _INC_y_writemem
 	#tryinclude "YSI\YSI_Internal\y_writemem\y_writemem_entry"
+#endif
+#if !defined _INC_y_writemem
 	#tryinclude <YSI_Internal\y_writemem\y_writemem_entry>
+#endif
+#if !defined _INC_y_writemem
 	#tryinclude <YSI\YSI_Internal\y_writemem\y_writemem_entry>
 #endif
 

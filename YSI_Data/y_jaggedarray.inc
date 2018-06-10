@@ -81,15 +81,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_jaggedarray
-	#undef _inc_y_jaggedarray
-#endif
-
 #if !defined _INC_y_jaggedarray
 	#tryinclude "y_jaggedarray\y_jaggedarray_entry"
+#endif
+#if !defined _INC_y_jaggedarray
 	#tryinclude "YSI_Data\y_jaggedarray\y_jaggedarray_entry"
+#endif
+#if !defined _INC_y_jaggedarray
 	#tryinclude "YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry"
+#endif
+#if !defined _INC_y_jaggedarray
 	#tryinclude <YSI_Data\y_jaggedarray\y_jaggedarray_entry>
+#endif
+#if !defined _INC_y_jaggedarray
 	#tryinclude <YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry>
 #endif
 

@@ -126,15 +126,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_bintree
-	#undef _inc_y_bintree
-#endif
-
 #if !defined _INC_y_bintree
 	#tryinclude "y_bintree\y_bintree_entry"
+#endif
+#if !defined _INC_y_bintree
 	#tryinclude "YSI_Data\y_bintree\y_bintree_entry"
+#endif
+#if !defined _INC_y_bintree
 	#tryinclude "YSI\YSI_Data\y_bintree\y_bintree_entry"
+#endif
+#if !defined _INC_y_bintree
 	#tryinclude <YSI_Data\y_bintree\y_bintree_entry>
+#endif
+#if !defined _INC_y_bintree
 	#tryinclude <YSI\YSI_Data\y_bintree\y_bintree_entry>
 #endif
 

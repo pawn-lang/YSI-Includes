@@ -70,15 +70,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_playerarray
-	#undef _inc_y_playerarray
-#endif
-
 #if !defined _INC_y_playerarray
 	#tryinclude "..\YSI_Data\y_playerarray\y_playerarray_entry"
+#endif
+#if !defined _INC_y_playerarray
 	#tryinclude "YSI_Data\y_playerarray\y_playerarray_entry"
+#endif
+#if !defined _INC_y_playerarray
 	#tryinclude "YSI\YSI_Data\y_playerarray\y_playerarray_entry"
+#endif
+#if !defined _INC_y_playerarray
 	#tryinclude <YSI_Data\y_playerarray\y_playerarray_entry>
+#endif
+#if !defined _INC_y_playerarray
 	#tryinclude <YSI\YSI_Data\y_playerarray\y_playerarray_entry>
 #endif
 

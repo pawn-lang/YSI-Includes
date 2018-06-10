@@ -85,27 +85,40 @@ Optional plugins:
 	#undef _inc_y_hooks
 #endif
 
-// This uses `_Y_HOOKS_INCLUDED` instead of `_INC_y_hooks` and a totally different structure to all
-// the other files in `YSI\` because we want to be able to include `y_hooks` multiple times, but NOT
-// include it multiple times from this one file.
-#if !defined _Y_HOOKS_INCLUDED
-	#tryinclude "y_hooks\y_hooks_entry"
+#if !defined _Y_UNIQUE_INCLUDED
+	#tryinclude "..\YSI_Internal\y_unique\y_unique_entry"
 #endif
-#if !defined _Y_HOOKS_INCLUDED
-	#tryinclude "YSI_Coding\y_hooks\y_hooks_entry"
+#if !defined _Y_UNIQUE_INCLUDED
+	#tryinclude "YSI_Internal\y_unique\y_unique_entry"
 #endif
-#if !defined _Y_HOOKS_INCLUDED
-	#tryinclude "YSI\YSI_Coding\y_hooks\y_hooks_entry"
+#if !defined _Y_UNIQUE_INCLUDED
+	#tryinclude "YSI\YSI_Internal\y_unique\y_unique_entry"
 #endif
-#if !defined _Y_HOOKS_INCLUDED
-	#tryinclude <YSI_Coding\y_hooks\y_hooks_entry>
+#if !defined _Y_UNIQUE_INCLUDED
+	#tryinclude <YSI_Internal\y_unique\y_unique_entry>
 #endif
-#if !defined _Y_HOOKS_INCLUDED
-	#tryinclude <YSI\YSI_Coding\y_hooks\y_hooks_entry>
+#if !defined _Y_UNIQUE_INCLUDED
+	#tryinclude <YSI\YSI_Internal\y_unique\y_unique_entry>
 #endif
-#if defined _Y_HOOKS_INCLUDED
-	#undef _Y_HOOKS_INCLUDED
+#if defined _Y_UNIQUE_INCLUDED
+	#undef _Y_UNIQUE_INCLUDED
 #else
 	#error Did you use `YSI/y_hooks` instead of `YSI\y_hooks`?
+#endif
+
+#if !defined _INC_y_hooks
+	#tryinclude "y_hooks\y_hooks_entry"
+#endif
+#if !defined _INC_y_hooks
+	#tryinclude "YSI_Coding\y_hooks\y_hooks_entry"
+#endif
+#if !defined _INC_y_hooks
+	#tryinclude "YSI\YSI_Coding\y_hooks\y_hooks_entry"
+#endif
+#if !defined _INC_y_hooks
+	#tryinclude <YSI_Coding\y_hooks\y_hooks_entry>
+#endif
+#if !defined _INC_y_hooks
+	#tryinclude <YSI\YSI_Coding\y_hooks\y_hooks_entry>
 #endif
 

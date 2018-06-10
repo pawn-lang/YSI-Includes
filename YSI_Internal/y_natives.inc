@@ -81,15 +81,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_natives
-	#undef _inc_y_natives
-#endif
-
 #if !defined _INC_y_natives
 	#tryinclude "y_natives\y_natives_entry"
+#endif
+#if !defined _INC_y_natives
 	#tryinclude "YSI_Internal\y_natives\y_natives_entry"
+#endif
+#if !defined _INC_y_natives
 	#tryinclude "YSI\YSI_Internal\y_natives\y_natives_entry"
+#endif
+#if !defined _INC_y_natives
 	#tryinclude <YSI_Internal\y_natives\y_natives_entry>
+#endif
+#if !defined _INC_y_natives
 	#tryinclude <YSI\YSI_Internal\y_natives\y_natives_entry>
 #endif
 

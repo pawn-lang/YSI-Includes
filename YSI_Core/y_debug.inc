@@ -124,15 +124,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_debug
-	#undef _inc_y_debug
-#endif
-
 #if !defined _INC_y_debug
 	#tryinclude "y_debug\y_debug_entry"
+#endif
+#if !defined _INC_y_debug
 	#tryinclude "YSI_Core\y_debug\y_debug_entry"
+#endif
+#if !defined _INC_y_debug
 	#tryinclude "YSI\YSI_Core\y_debug\y_debug_entry"
+#endif
+#if !defined _INC_y_debug
 	#tryinclude <YSI_Core\y_debug\y_debug_entry>
+#endif
+#if !defined _INC_y_debug
 	#tryinclude <YSI\YSI_Core\y_debug\y_debug_entry>
 #endif
 

@@ -78,15 +78,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_zonenames
-	#undef _inc_y_zonenames
-#endif
-
 #if !defined _INC_y_zonenames
 	#tryinclude "y_zonenames\y_zonenames_entry"
+#endif
+#if !defined _INC_y_zonenames
 	#tryinclude "YSI_Visual\y_zonenames\y_zonenames_entry"
+#endif
+#if !defined _INC_y_zonenames
 	#tryinclude "YSI\YSI_Visual\y_zonenames\y_zonenames_entry"
+#endif
+#if !defined _INC_y_zonenames
 	#tryinclude <YSI_Visual\y_zonenames\y_zonenames_entry>
+#endif
+#if !defined _INC_y_zonenames
 	#tryinclude <YSI\YSI_Visual\y_zonenames\y_zonenames_entry>
 #endif
 

@@ -75,15 +75,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_extra
-	#undef _inc_y_extra
-#endif
-
 #if !defined _INC_y_extra
 	#tryinclude "y_extra\y_extra_entry"
+#endif
+#if !defined _INC_y_extra
 	#tryinclude "YSI_Extra\y_extra\y_extra_entry"
+#endif
+#if !defined _INC_y_extra
 	#tryinclude "YSI\YSI_Extra\y_extra\y_extra_entry"
+#endif
+#if !defined _INC_y_extra
 	#tryinclude <YSI_Extra\y_extra\y_extra_entry>
+#endif
+#if !defined _INC_y_extra
 	#tryinclude <YSI\YSI_Extra\y_extra\y_extra_entry>
 #endif
 

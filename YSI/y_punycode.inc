@@ -70,14 +70,18 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_punycode
-	#undef _inc_y_punycode
-#endif
-
 #if !defined _INC_y_punycode
 	#tryinclude "..\YSI_Server\y_punycode\y_punycode_entry"
+#endif
+#if !defined _INC_y_punycode
 	#tryinclude "YSI_Server\y_punycode\y_punycode_entry"
+#endif
+#if !defined _INC_y_punycode
 	#tryinclude "YSI\YSI_Server\y_punycode\y_punycode_entry"
+#endif
+#if !defined _INC_y_punycode
 	#tryinclude <YSI_Server\y_punycode\y_punycode_entry>
+#endif
+#if !defined _INC_y_punycode
 	#tryinclude <YSI\YSI_Server\y_punycode\y_punycode_entry>
 #endif

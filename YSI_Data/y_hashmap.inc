@@ -99,15 +99,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_hashmap
-	#undef _inc_y_hashmap
-#endif
-
 #if !defined _INC_y_hashmap
 	#tryinclude "y_hashmap\y_hashmap_entry"
+#endif
+#if !defined _INC_y_hashmap
 	#tryinclude "YSI_Core\y_hashmap\y_hashmap_entry"
+#endif
+#if !defined _INC_y_hashmap
 	#tryinclude "YSI\YSI_Core\y_hashmap\y_hashmap_entry"
+#endif
+#if !defined _INC_y_hashmap
 	#tryinclude <YSI_Core\y_hashmap\y_hashmap_entry>
+#endif
+#if !defined _INC_y_hashmap
 	#tryinclude <YSI\YSI_Core\y_hashmap\y_hashmap_entry>
 #endif
 

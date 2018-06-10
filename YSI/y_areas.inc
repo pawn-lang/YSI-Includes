@@ -70,15 +70,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_areas
-	#undef _inc_y_areas
-#endif
-
 #if !defined _INC_y_areas
 	#tryinclude "..\YSI_Visual\y_areas\y_areas_entry"
+#endif
+#if !defined _INC_y_areas
 	#tryinclude "YSI_Visual\y_areas\y_areas_entry"
+#endif
+#if !defined _INC_y_areas
 	#tryinclude "YSI\YSI_Visual\y_areas\y_areas_entry"
+#endif
+#if !defined _INC_y_areas
 	#tryinclude <YSI_Visual\y_areas\y_areas_entry>
+#endif
+#if !defined _INC_y_areas
 	#tryinclude <YSI\YSI_Visual\y_areas\y_areas_entry>
 #endif
 

@@ -70,15 +70,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_td
-	#undef _inc_y_td
-#endif
-
 #if !defined _INC_y_td
 	#tryinclude "..\YSI_Server\y_td\y_td_entry"
+#endif
+#if !defined _INC_y_td
 	#tryinclude "YSI_Server\y_td\y_td_entry"
+#endif
+#if !defined _INC_y_td
 	#tryinclude "YSI\YSI_Server\y_td\y_td_entry"
+#endif
+#if !defined _INC_y_td
 	#tryinclude <YSI_Server\y_td\y_td_entry>
+#endif
+#if !defined _INC_y_td
 	#tryinclude <YSI\YSI_Server\y_td\y_td_entry>
 #endif
 

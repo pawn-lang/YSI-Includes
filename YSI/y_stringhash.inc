@@ -70,15 +70,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_stringhash
-	#undef _inc_y_stringhash
-#endif
-
 #if !defined _INC_y_stringhash
 	#tryinclude "..\YSI_Coding\y_stringhash\y_stringhash_entry"
+#endif
+#if !defined _INC_y_stringhash
 	#tryinclude "YSI_Coding\y_stringhash\y_stringhash_entry"
+#endif
+#if !defined _INC_y_stringhash
 	#tryinclude "YSI\YSI_Coding\y_stringhash\y_stringhash_entry"
+#endif
+#if !defined _INC_y_stringhash
 	#tryinclude <YSI_Coding\y_stringhash\y_stringhash_entry>
+#endif
+#if !defined _INC_y_stringhash
 	#tryinclude <YSI\YSI_Coding\y_stringhash\y_stringhash_entry>
 #endif
 

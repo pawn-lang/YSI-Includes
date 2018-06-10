@@ -70,15 +70,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_colors
-	#undef _inc_y_colors
+#if !defined _INC_y_colours
+	#tryinclude "..\YSI_Server\y_colours\y_colours_entry"
 #endif
-
-#if !defined _INC_y_colors
-	#tryinclude "..\YSI_Server\y_colors\y_colors_entry"
-	#tryinclude "YSI_Server\y_colors\y_colors_entry"
-	#tryinclude "YSI\YSI_Server\y_colors\y_colors_entry"
-	#tryinclude <YSI_Server\y_colors\y_colors_entry>
-	#tryinclude <YSI\YSI_Server\y_colors\y_colors_entry>
+#if !defined _INC_y_colours
+	#tryinclude "YSI_Server\y_colours\y_colours_entry"
+#endif
+#if !defined _INC_y_colours
+	#tryinclude "YSI\YSI_Server\y_colours\y_colours_entry"
+#endif
+#if !defined _INC_y_colours
+	#tryinclude <YSI_Server\y_colours\y_colours_entry>
+#endif
+#if !defined _INC_y_colours
+	#tryinclude <YSI\YSI_Server\y_colours\y_colours_entry>
 #endif
 

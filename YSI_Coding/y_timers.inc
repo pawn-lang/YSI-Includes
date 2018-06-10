@@ -84,15 +84,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_timers
-	#undef _inc_y_timers
-#endif
-
 #if !defined _INC_y_timers
 	#tryinclude "y_timers\y_timers_entry"
+#endif
+#if !defined _INC_y_timers
 	#tryinclude "YSI_Coding\y_timers\y_timers_entry"
+#endif
+#if !defined _INC_y_timers
 	#tryinclude "YSI\YSI_Coding\y_timers\y_timers_entry"
+#endif
+#if !defined _INC_y_timers
 	#tryinclude <YSI_Coding\y_timers\y_timers_entry>
+#endif
+#if !defined _INC_y_timers
 	#tryinclude <YSI\YSI_Coding\y_timers\y_timers_entry>
 #endif
 

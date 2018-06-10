@@ -81,15 +81,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_races
-	#undef _inc_y_races
-#endif
-
 #if !defined _INC_y_races
 	#tryinclude "y_races\y_races_entry"
+#endif
+#if !defined _INC_y_races
 	#tryinclude "YSI_Visual\y_races\y_races_entry"
+#endif
+#if !defined _INC_y_races
 	#tryinclude "YSI\YSI_Visual\y_races\y_races_entry"
+#endif
+#if !defined _INC_y_races
 	#tryinclude <YSI_Visual\y_races\y_races_entry>
+#endif
+#if !defined _INC_y_races
 	#tryinclude <YSI\YSI_Visual\y_races\y_races_entry>
 #endif
 

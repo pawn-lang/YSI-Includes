@@ -81,15 +81,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_php
-	#undef _inc_y_php
-#endif
-
 #if !defined _INC_y_php
 	#tryinclude "y_php\y_php_entry"
+#endif
+#if !defined _INC_y_php
 	#tryinclude "YSI_Storage\y_php\y_php_entry"
+#endif
+#if !defined _INC_y_php
 	#tryinclude "YSI\YSI_Storage\y_php\y_php_entry"
+#endif
+#if !defined _INC_y_php
 	#tryinclude <YSI_Storage\y_php\y_php_entry>
+#endif
+#if !defined _INC_y_php
 	#tryinclude <YSI\YSI_Storage\y_php\y_php_entry>
 #endif
 

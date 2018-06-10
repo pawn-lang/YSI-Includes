@@ -70,15 +70,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_bitmap
-	#undef _inc_y_bitmap
-#endif
-
 #if !defined _INC_y_bitmap
 	#tryinclude "..\YSI_Storage\y_bitmap\y_bitmap_entry"
+#endif
+#if !defined _INC_y_bitmap
 	#tryinclude "YSI_Storage\y_bitmap\y_bitmap_entry"
+#endif
+#if !defined _INC_y_bitmap
 	#tryinclude "YSI\YSI_Storage\y_bitmap\y_bitmap_entry"
+#endif
+#if !defined _INC_y_bitmap
 	#tryinclude <YSI_Storage\y_bitmap\y_bitmap_entry>
+#endif
+#if !defined _INC_y_bitmap
 	#tryinclude <YSI\YSI_Storage\y_bitmap\y_bitmap_entry>
 #endif
 

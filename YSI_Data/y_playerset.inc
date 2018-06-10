@@ -84,15 +84,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_playerset
-	#undef _inc_y_playerset
-#endif
-
 #if !defined _INC_y_playerset
 	#tryinclude "y_playerset\y_playerset_entry"
+#endif
+#if !defined _INC_y_playerset
 	#tryinclude "YSI_Data\y_playerset\y_playerset_entry"
+#endif
+#if !defined _INC_y_playerset
 	#tryinclude "YSI\YSI_Data\y_playerset\y_playerset_entry"
+#endif
+#if !defined _INC_y_playerset
 	#tryinclude <YSI_Data\y_playerset\y_playerset_entry>
+#endif
+#if !defined _INC_y_playerset
 	#tryinclude <YSI\YSI_Data\y_playerset\y_playerset_entry>
 #endif
 

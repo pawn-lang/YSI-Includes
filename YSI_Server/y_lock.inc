@@ -81,15 +81,19 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_lock
-	#undef _inc_y_lock
-#endif
-
 #if !defined _INC_y_lock
 	#tryinclude "y_lock\y_lock_entry"
+#endif
+#if !defined _INC_y_lock
 	#tryinclude "YSI_Server\y_lock\y_lock_entry"
+#endif
+#if !defined _INC_y_lock
 	#tryinclude "YSI\YSI_Server\y_lock\y_lock_entry"
+#endif
+#if !defined _INC_y_lock
 	#tryinclude <YSI_Server\y_lock\y_lock_entry>
+#endif
+#if !defined _INC_y_lock
 	#tryinclude <YSI\YSI_Server\y_lock\y_lock_entry>
 #endif
 
