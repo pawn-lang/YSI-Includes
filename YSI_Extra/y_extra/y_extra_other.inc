@@ -1,7 +1,7 @@
-#if defined _INC_y_extra_languages
+#if defined _INC_y_extra_other
 	#endinput
 #endif
-#define _INC_y_extra_languages
+#define _INC_y_extra_other
 
 /*
 Legal:
@@ -77,46 +77,43 @@ Optional plugins:
 
 // Include pretty much 90% of YSI in one fell swoop!
 
-loadtext core[ysi_langs];
+loadtext core[ysi_commands], core[ysi_help];
 
-YCMD:language(playerid, params[], help)
+YCMD:commands(playerid, params[], help)
 {
-	if (help)
-	{
-		Text_Send(playerid, $YSI_LANGS_HELP);
-	}
-	else
-	{
-		new
-			lang;
-		if (sscanf(params, "i", lang))
-		{
-			new
-				c = _:Langs_GetLanguageCount(),
-				Language:i = Language:0;
-			while (c)
-			{
-				new
-					code[3];
-				strcpy(code, Langs_GetCode(i));
-				if (!isnull(code))
-				{
-					// They may not be in order.
-					Text_Send(playerid, $YSI_LANGS_DISP, _:i, Langs_GetName(i), code);
-					--c;
-				}
-				++i;
-			}
-			Text_Send(playerid, $YSI_LANGS_SET, YCMD:language);
-		}
-		else if (Langs_SetPlayerLanguage(playerid, Language:lang) == NO_LANGUAGE)
-		{
-			Text_Send(playerid, $YSI_LANGS_INV);
-		}
-		else
-		{
-			Text_Send(playerid, $YSI_LANGS_DONE, lang, Langs_GetName(Language:lang));
-		}
-	}
-	return 1;
+    if (help)
+    {
+        Text_Send(playerid, $YSI_COMM_HELP);
+    }
+    else
+    {
+        new
+            count = Command_GetPlayerCommandCount(playerid);
+        for (new i = 0; i != count; ++i)
+        {
+            Text_Send(playerid, $YSI_COMM_LIST, Command_GetNext(i, playerid));
+        }
+    }
+    return 1;
 }
+
+YCMD:help(playerid, params[], help)
+{
+    if (help)
+    {
+        Text_Send(playerid, $YSI_HELP);
+    }
+    else
+    {
+        if (isnull(params))
+        {
+            Text_Send(playerid, $YSI_HELP);
+        }
+        else
+        {
+            Command_ReProcess(playerid, params, true);
+        }
+    }
+    return 1;
+}
+
