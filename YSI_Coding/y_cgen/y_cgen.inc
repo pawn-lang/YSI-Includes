@@ -87,9 +87,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Storage\y_amx"
-#include "..\..\YSI_Internal\y_thirdpartyinclude"
-
 CHAIN_HOOK(CGen)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER CHAIN_NEXT(CGen)
@@ -152,7 +149,7 @@ public _@_y_cgen_@_0()
 		CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();CGEN();
 	#endif
 	#if CGEN_MEMORY >= 100000
-		#error Too much codespace requested, please edit YSI_Internal\y_cgen
+		#error Too much codespace requested, please edit YSI_Coding\y_cgen\y_cgen
 	#endif
 }
 
