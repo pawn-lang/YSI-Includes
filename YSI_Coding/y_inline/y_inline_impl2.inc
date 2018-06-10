@@ -62,6 +62,7 @@
 
 #define inline_return%0; {Callback_Return_(_:(%0));continue;}
 #define @return inline_return
+#define callback: F@_@:
 
 #define _F<%0> (#%0)
 
