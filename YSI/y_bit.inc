@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_bit
-	#tryinclude "..\YSI_Data\y_bit\y_bit_entry"
-#endif
-#if !defined _INC_y_bit
-	#tryinclude "YSI_Data\y_bit\y_bit_entry"
-#endif
-#if !defined _INC_y_bit
-	#tryinclude "YSI\YSI_Data\y_bit\y_bit_entry"
-#endif
-#if !defined _INC_y_bit
-	#tryinclude <YSI_Data\y_bit\y_bit_entry>
-#endif
-#if !defined _INC_y_bit
-	#tryinclude <YSI\YSI_Data\y_bit\y_bit_entry>
-#endif
-#if !defined _INC_y_bit
-	#error Could not find y_bit
-#endif
+#error Please use <YSI_Data\y_bit>
 

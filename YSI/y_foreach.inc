@@ -70,26 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_foreach
-	#undef _inc_y_foreach
-#endif
-
-#if !defined _INC_y_iterate
-	#tryinclude "..\YSI_Data\y_foreach\y_foreach_entry"
-#endif
-#if !defined _INC_y_iterate
-	#tryinclude "YSI_Data\y_foreach\y_foreach_entry"
-#endif
-#if !defined _INC_y_iterate
-	#tryinclude "YSI\YSI_Data\y_foreach\y_foreach_entry"
-#endif
-#if !defined _INC_y_iterate
-	#tryinclude <YSI_Data\y_foreach\y_foreach_entry>
-#endif
-#if !defined _INC_y_iterate
-	#tryinclude <YSI\YSI_Data\y_foreach\y_foreach_entry>
-#endif
-#if !defined _INC_y_iterate
-	#error Could not find y_iterate
-#endif
+#error Please use <YSI_Data\y_iterate>
 

@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_ini
-	#tryinclude "..\YSI_Storage\y_ini\y_ini_entry"
-#endif
-#if !defined _INC_y_ini
-	#tryinclude "YSI_Storage\y_ini\y_ini_entry"
-#endif
-#if !defined _INC_y_ini
-	#tryinclude "YSI\YSI_Storage\y_ini\y_ini_entry"
-#endif
-#if !defined _INC_y_ini
-	#tryinclude <YSI_Storage\y_ini\y_ini_entry>
-#endif
-#if !defined _INC_y_ini
-	#tryinclude <YSI\YSI_Storage\y_ini\y_ini_entry>
-#endif
-#if !defined _INC_y_ini
-	#error Could not find y_ini
-#endif
+#error Please use <YSI_Storage\y_ini>
 

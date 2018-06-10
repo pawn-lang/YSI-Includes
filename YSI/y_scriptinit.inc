@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_scriptinit
-	#tryinclude "..\YSI_Server\y_scriptinit\y_scriptinit_entry"
-#endif
-#if !defined _INC_y_scriptinit
-	#tryinclude "YSI_Server\y_scriptinit\y_scriptinit_entry"
-#endif
-#if !defined _INC_y_scriptinit
-	#tryinclude "YSI\YSI_Server\y_scriptinit\y_scriptinit_entry"
-#endif
-#if !defined _INC_y_scriptinit
-	#tryinclude <YSI_Server\y_scriptinit\y_scriptinit_entry>
-#endif
-#if !defined _INC_y_scriptinit
-	#tryinclude <YSI\YSI_Server\y_scriptinit\y_scriptinit_entry>
-#endif
-#if !defined _INC_y_scriptinit
-	#error Could not find y_scriptinit
-#endif
+#error Please use <YSI_Server\y_scriptinit>
 

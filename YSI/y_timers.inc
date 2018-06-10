@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_timers
-	#tryinclude "..\YSI_Coding\y_timers\y_timers_entry"
-#endif
-#if !defined _INC_y_timers
-	#tryinclude "YSI_Coding\y_timers\y_timers_entry"
-#endif
-#if !defined _INC_y_timers
-	#tryinclude "YSI\YSI_Coding\y_timers\y_timers_entry"
-#endif
-#if !defined _INC_y_timers
-	#tryinclude <YSI_Coding\y_timers\y_timers_entry>
-#endif
-#if !defined _INC_y_timers
-	#tryinclude <YSI\YSI_Coding\y_timers\y_timers_entry>
-#endif
-#if !defined _INC_y_timers
-	#error Could not find y_timers
-#endif
+#error Please use <YSI_Coding\y_timers>
 

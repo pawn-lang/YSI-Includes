@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_jaggedarray
-	#tryinclude "..\YSI_Data\y_jaggedarray\y_jaggedarray_entry"
-#endif
-#if !defined _INC_y_jaggedarray
-	#tryinclude "YSI_Data\y_jaggedarray\y_jaggedarray_entry"
-#endif
-#if !defined _INC_y_jaggedarray
-	#tryinclude "YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry"
-#endif
-#if !defined _INC_y_jaggedarray
-	#tryinclude <YSI_Data\y_jaggedarray\y_jaggedarray_entry>
-#endif
-#if !defined _INC_y_jaggedarray
-	#tryinclude <YSI\YSI_Data\y_jaggedarray\y_jaggedarray_entry>
-#endif
-#if !defined _INC_y_jaggedarray
-	#error Could not find y_jaggedarray
-#endif
+#error Please use <YSI_Data\y_jaggedarray>
 

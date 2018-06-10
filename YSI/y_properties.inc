@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_properties
-	#tryinclude "..\YSI_Visual\y_properties\y_properties_entry"
-#endif
-#if !defined _INC_y_properties
-	#tryinclude "YSI_Visual\y_properties\y_properties_entry"
-#endif
-#if !defined _INC_y_properties
-	#tryinclude "YSI\YSI_Visual\y_properties\y_properties_entry"
-#endif
-#if !defined _INC_y_properties
-	#tryinclude <YSI_Visual\y_properties\y_properties_entry>
-#endif
-#if !defined _INC_y_properties
-	#tryinclude <YSI\YSI_Visual\y_properties\y_properties_entry>
-#endif
-#if !defined _INC_y_properties
-	#error Could not find y_properties
-#endif
+#error Please use <YSI_Visual\y_properties>
 

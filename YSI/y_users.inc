@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_users
-	#tryinclude "..\YSI_Players\y_users\y_users_entry"
-#endif
-#if !defined _INC_y_users
-	#tryinclude "YSI_Players\y_users\y_users_entry"
-#endif
-#if !defined _INC_y_users
-	#tryinclude "YSI\YSI_Players\y_users\y_users_entry"
-#endif
-#if !defined _INC_y_users
-	#tryinclude <YSI_Players\y_users\y_users_entry>
-#endif
-#if !defined _INC_y_users
-	#tryinclude <YSI\YSI_Players\y_users\y_users_entry>
-#endif
-#if !defined _INC_y_users
-	#error Could not find y_users
-#endif
+#error Please use <YSI_Players\y_users>
 

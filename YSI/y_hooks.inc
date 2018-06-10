@@ -70,31 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_hooks
-	#undef _inc_y_hooks
-#endif
-
-// This uses `_Y_HOOKS_INCLUDED` instead of `_INC_y_hooks` and a totally different structure to all
-// the other files in `YSI\` because we want to be able to include `y_hooks` multiple times, but NOT
-// include it multiple times from this one file.
-#if !defined _Y_HOOKS_INCLUDED
-	#tryinclude "..\YSI_Coding\y_hooks\y_hooks_entry"
-#endif
-#if !defined _Y_HOOKS_INCLUDED
-	#tryinclude "YSI_Coding\y_hooks\y_hooks_entry"
-#endif
-#if !defined _Y_HOOKS_INCLUDED
-	#tryinclude "YSI\YSI_Coding\y_hooks\y_hooks_entry"
-#endif
-#if !defined _Y_HOOKS_INCLUDED
-	#tryinclude <YSI_Coding\y_hooks\y_hooks_entry>
-#endif
-#if !defined _Y_HOOKS_INCLUDED
-	#tryinclude <YSI\YSI_Coding\y_hooks\y_hooks_entry>
-#endif
-#if defined _Y_HOOKS_INCLUDED
-	#undef _Y_HOOKS_INCLUDED
-#else
-	#error Did you use `YSI/y_hooks` instead of `YSI\y_hooks`?
-#endif
+#error Please use <YSI_Coding\y_hooks>
 

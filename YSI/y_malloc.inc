@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_malloc
-	#tryinclude "..\YSI_Coding\y_malloc\y_malloc_entry"
-#endif
-#if !defined _INC_y_malloc
-	#tryinclude "YSI_Coding\y_malloc\y_malloc_entry"
-#endif
-#if !defined _INC_y_malloc
-	#tryinclude "YSI\YSI_Coding\y_malloc\y_malloc_entry"
-#endif
-#if !defined _INC_y_malloc
-	#tryinclude <YSI_Coding\y_malloc\y_malloc_entry>
-#endif
-#if !defined _INC_y_malloc
-	#tryinclude <YSI\YSI_Coding\y_malloc\y_malloc_entry>
-#endif
-#if !defined _INC_y_malloc
-	#error Could not find y_malloc
-#endif
+#error Please use <YSI_Coding\y_malloc>
 

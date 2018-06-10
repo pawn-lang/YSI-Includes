@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_flooding
-	#tryinclude "..\YSI_Server\y_flooding\y_flooding_entry"
-#endif
-#if !defined _INC_y_flooding
-	#tryinclude "YSI_Server\y_flooding\y_flooding_entry"
-#endif
-#if !defined _INC_y_flooding
-	#tryinclude "YSI\YSI_Server\y_flooding\y_flooding_entry"
-#endif
-#if !defined _INC_y_flooding
-	#tryinclude <YSI_Server\y_flooding\y_flooding_entry>
-#endif
-#if !defined _INC_y_flooding
-	#tryinclude <YSI\YSI_Server\y_flooding\y_flooding_entry>
-#endif
-#if !defined _INC_y_flooding
-	#error Could not find y_flooding
-#endif
+#error Please use <YSI_Server\y_flooding>
 

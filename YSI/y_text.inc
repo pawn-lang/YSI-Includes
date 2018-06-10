@@ -70,28 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_text
-	#undef _inc_y_text
-#endif
-
-#if !defined _Y_TEXT_INCLUDED
-	#tryinclude "..\YSI_Players\y_text\y_text_entry"
-#endif
-#if !defined _Y_TEXT_INCLUDED
-	#tryinclude "YSI_Players\y_text\y_text_entry"
-#endif
-#if !defined _Y_TEXT_INCLUDED
-	#tryinclude "YSI\YSI_Players\y_text\y_text_entry"
-#endif
-#if !defined _Y_TEXT_INCLUDED
-	#tryinclude <YSI_Players\y_text\y_text_entry>
-#endif
-#if !defined _Y_TEXT_INCLUDED
-	#tryinclude <YSI\YSI_Players\y_text\y_text_entry>
-#endif
-#if defined _Y_TEXT_INCLUDED
-	#undef _Y_TEXT_INCLUDED
-#else
-	#error Did you use `YSI/y_text` instead of `YSI\y_text`?
-#endif
+#error Please use <YSI_Players\y_text>
 
