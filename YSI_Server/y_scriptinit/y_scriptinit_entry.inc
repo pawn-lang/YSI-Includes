@@ -133,9 +133,14 @@ stock bool:JIT_Complete()
 	return YSI_g_sCodeJITed;
 }
 
+#if !defined _ALS_OnJITCompile
+	forward OnJITCompile();
+#endif
+
 public OnJITCompile()
 {
 	DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
+	state _ALS : _ALS_go;
 	state _script_init_fix_state : false;
 	// Got it being called twice for some reason.  I think it was a file glitch,
 	// but just make sure.
@@ -186,12 +191,14 @@ public OnRuntimeError(code, &bool:suppress)
 
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="_script_init_fix_state : true"/>
+ * <transition keep="true" target="_ALS : _ALS_go"/>
  *//*------------------------------------------------------------------------**/
 
 public OnFilterScriptInit()
 {
 	YSI_FILTERSCRIPT = true;
 	state _script_init_fix_state : true;
+	state _ALS : _ALS_go;
 	// Dump the final assembly of this script so we can inspect it.
 	DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 	if (!YSI_g_sCodeJITing)
@@ -232,10 +239,12 @@ public OnFilterScriptInit()
 
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="_script_init_fix_state : false"/>
+ * <transition keep="true" target="_ALS : _ALS_go"/>
  *//*------------------------------------------------------------------------**/
 
 public OnGameModeInit()
 {
+	state _ALS : _ALS_go;
 	if (!YSI_FILTERSCRIPT)
 	{
 		state _script_init_fix_state : false;
