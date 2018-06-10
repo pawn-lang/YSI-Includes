@@ -1,8 +1,3 @@
-#if defined _INC_y_shortfunc
-	#endinput
-#endif
-#define _INC_y_shortfunc
-
 /*+
  * <library name="y_shortfunc">
  * <section>
@@ -93,22 +88,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-// Used to get rid of the "string:" tag once it has been used.
-#if !defined string
-	#define string:
-#endif
-
-#if !defined void
-	#define void:
-#endif
-
-#include "..\..\YSI_Core\y_utils"
-#include "..\..\YSI_Coding\y_va"
-#include "..\y_globaltags"
-#include "..\y_funcinc"
-#include "..\y_shortvar"
-#include "..\..\YSI_Core\y_debug"
 
 // 
 // A@ - PARSER_DROP()
@@ -511,23 +490,4 @@ stock G@(GLOBAL_TAG_TYPES:...)
 
 // This is for getting excess parameters on non-strings.  Now safely recursive.
 #define _:%0,) _:%0)
-
-#if defined YSI_LOCK_MODE
-	#include "..\..\YSI_Internal\y_unique"
-	
-	forward UNIQUE_FUNCTION<@yH_OnScriptInit@...>();
-	
-	public UNIQUE_FUNCTION<@yH_OnScriptInit@...>()
-	{
-		new
-			find = strfind(YSI_gLockData[5], YSI_gLockData[1]) + 6;
-		find = strfind(YSI_gLockData[5], YSI_gLockData[1], _, find - 5) + 6;
-		new
-			found = strfind(YSI_gLockData[5], YSI_gLockData[1], _, find - 5) + 6;
-		if (strval(YSI_gLockData[found]) ^ UNIQUE_SYMBOL != _LOCK_IP_3 ^ UNIQUE_SYMBOL || strval(YSI_gLockData[find]) - _LOCK_IP_3 != _LOCK_IP_2 - _LOCK_IP_3)
-		{
-			y_lock 1;
-		}
-	}
-#endif
 

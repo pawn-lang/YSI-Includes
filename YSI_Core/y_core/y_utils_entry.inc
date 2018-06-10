@@ -1,8 +1,3 @@
-#if defined _INC_y_utils
-	#endinput
-#endif
-#define _INC_y_utils
-
 /*
 Legal:
 	Version: MPL 1.1
@@ -75,19 +70,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_compilerdata"
-#include "..\..\YSI_Internal\y_shortvar"
-#include "..\..\YSI_Internal\y_version"
-
-#include "..\..\YSI_Core\y_debug"
-#include "..\..\YSI_Storage\y_amx"
-//#tryinclude <sscanf>
-
-#include "..\..\YSI_Internal\y_thirdpartyinclude"
-#include "..\..\YSI_Internal\y_funcinc"
-// Add new tags to the START of this list.
-#include "..\..\YSI_Internal\y_globaltags"
-
 #define FUNCTION_LENGTH                 (32)
 
 // Better handling of operator precedences and floating point numbers.  This
@@ -110,29 +92,7 @@ new stock
 	NULL[2] = "\1";
 #endif
 
-#if !defined cellbytes
-	#define cellbytes (cellbits / 8)
-#endif
-
 #define UNSIGNED(%0) ((%0) - cellmin)
-
-// Define "volatile" as nothing.
-#if !defined volatile
-	#define volatile
-#endif
-
-#define YSIM_MASTER #M
-#define YSIM_RETURN #R
-#define YSIM_CALLER #C
-#define YSIM_TEXT_D #T
-#define YSIM_TXTFND #X
-#define YSIM_TXTIND #I
-#define YSIM_LOG_IN #U
-#define YSIM_VARARG #V
-
-#if !defined YSIM_STRING
-	#define YSIM_STRING (1000)
-#endif
 
 #define FLOAT_INFINITY                  (Float:0x7F800000)
 #define FLOAT_NEG_INFINITY              (Float:0xFF800000)
@@ -247,6 +207,36 @@ public OnPlayerDisconnect(playerid, reason)
 
 #if defined _y_utils_OnPlayerDisconnect
 	forward _y_utils_OnPlayerDisconnect(playerid, reason);
+#endif
+
+#if defined YSI_LOCK_MODE
+	public OnScriptInit()
+	{
+		new
+			find = strfind(YSI_gLockData[5], YSI_gLockData[1]) + 6;
+		find = strfind(YSI_gLockData[5], YSI_gLockData[1], _, find - 5) + 6;
+		new
+			found = strfind(YSI_gLockData[5], YSI_gLockData[1], _, find - 5) + 6;
+		if (strval(YSI_gLockData[found]) ^ UNIQUE_SYMBOL != _LOCK_IP_3 ^ UNIQUE_SYMBOL || strval(YSI_gLockData[find]) - _LOCK_IP_3 != _LOCK_IP_2 - _LOCK_IP_3)
+		{
+			y_lock 1;
+		}
+		#if defined _y_utils_OnScriptInit
+			_y_utils_OnScriptInit();
+		#endif
+		return 1;
+	}
+
+	#if defined _ALS_OnScriptInit
+		#undef OnScriptInit
+	#else
+		#define _ALS_OnScriptInit
+	#endif
+	#define OnScriptInit _y_utils_OnScriptInit
+
+	#if defined _y_utils_OnScriptInit
+		forward _y_utils_OnScriptInit();
+	#endif
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -1851,12 +1841,4 @@ stock Range(arr[], num = sizeof (arr))
 	}
 	return max2 - min2;
 }
-
-#include "..\..\YSI_Coding\y_va"
-#include "..\..\YSI_Internal\y_shortfunc"
-
-#if defined YSI_TESTS
-	#include "..\y_testing"
-	#include "y_utils_tests"
-#endif
 

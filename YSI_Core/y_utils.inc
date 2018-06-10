@@ -150,21 +150,21 @@ Optional plugins:
 */
 
 #if !defined _INC_y_utils
-	#tryinclude "y_utils\y_utils_entry"
+	#tryinclude "y_core\y_core_entry"
 #endif
-#if !defined _INC_y_utils
-	#tryinclude "YSI_Core\y_utils\y_utils_entry"
+#if !defined _INC_y_core
+	#tryinclude "YSI_Core\y_core\y_core_entry"
 #endif
-#if !defined _INC_y_utils
-	#tryinclude "YSI\YSI_Core\y_utils\y_utils_entry"
+#if !defined _INC_y_core
+	#tryinclude "YSI\YSI_Core\y_core\y_core_entry"
 #endif
-#if !defined _INC_y_utils
-	#tryinclude <YSI_Core\y_utils\y_utils_entry>
+#if !defined _INC_y_core
+	#tryinclude <YSI_Core\y_core\y_core_entry>
 #endif
-#if !defined _INC_y_utils
-	#tryinclude <YSI\YSI_Core\y_utils\y_utils_entry>
+#if !defined _INC_y_core
+	#tryinclude <YSI\YSI_Core\y_core\y_core_entry>
 #endif
-#if !defined _INC_y_utils
+#if !defined _INC_y_core
 	#error Could not find y_utils
 #endif
 

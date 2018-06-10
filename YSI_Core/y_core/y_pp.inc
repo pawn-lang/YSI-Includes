@@ -1,8 +1,3 @@
-#if defined _INC_y_pp
-	#endinput
-#endif
-#define _INC_y_pp
-
 /*+
  * <library name="y_pp">
  * <section>
@@ -225,4 +220,14 @@ Optional plugins:
 #define PP_LOOP@126(%0)(%1) PP_LOOP@64(%0)(%1)%1PP_LOOP@62(%0)(%1)
 #define PP_LOOP@127(%0)(%1) PP_LOOP@64(%0)(%1)%0PP_LOOP@63(%0)(%1)
 #define PP_LOOP@128(%0)(%1) PP_LOOP@64(%0)(%1)%1PP_LOOP@64(%0)(%1)
+
+#define PP_LEFT_BRACKET<> (
+#define PP_RIGHT_BRACKET<> )
+#define PP_LEFT_BRACE<> {
+#define PP_RIGHT_BRACE<> }
+#define PP_LEFT_SQUARE_BRACKET<> [
+#define PP_RIGHT_SQUARE_BRACKET<> ]
+#define PP_LEFT_ANGLE_BRACKET<> <
+#define PP_RIGHT_ANGLE_BRACKET<> >
+#define PP_NULL<>
 

@@ -1,8 +1,3 @@
-#if defined _INC_y_debug
-	#endinput
-#endif
-#define _INC_y_debug
-
 /*
 Legal:
 	Version: MPL 1.1
@@ -75,13 +70,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 *//*-------------------------------------------------------------------------**/
 
-#include "..\..\YSI_Internal\y_compilerdata"
-#include "..\..\YSI_Internal\y_globaltags"
-#include "..\..\YSI_Internal\y_version"
-#include "..\..\YSI_Internal\y_funcinc"
-#include "..\..\YSI_Server\y_scriptinit"
-#include "..\..\YSI_Internal\y_prehook"
-
 #if !defined _DEBUG
 	#define _DEBUG 0
 #endif
@@ -98,9 +86,6 @@ CHAIN_HOOK(Debug)
 #define CHAIN_ORDER CHAIN_NEXT(Debug)
 
 stock YSI_gDebugLevel = 0;
-
-#define P:%1(%2); Debug_Print%1(%2);
-#define C:%1(%2); Debug_Code%1(%2);
 
 /*-------------------------------------------------------------------------*//**
  * <param name="code">Code to run.</param>
@@ -679,6 +664,10 @@ public OnCodeInit()
 	return 1;
 }
 
+CHAIN_FORWARD:Debug_OnCodeInit() = 1;
+#undef OnCodeInit
+#define OnCodeInit(%0) CHAIN_PUBLIC:Debug_OnCodeInit(%0)
+
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="ysi_debug : on" source="ysi_debug : "/>
  * <remarks>
@@ -695,9 +684,6 @@ static stock Debug_SetState() <>
 	state ysi_debug : on;
 }
 
-CHAIN_FORWARD:Debug_OnCodeInit() = 1;
-#undef OnCodeInit
-#define OnCodeInit(%0) CHAIN_PUBLIC:Debug_OnCodeInit(%0)
 /*-------------------------------------------------------------------------*//**
  * <remarks>
  *  Turn on level 0 prints.

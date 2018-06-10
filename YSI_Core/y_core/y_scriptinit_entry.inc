@@ -1,8 +1,3 @@
-#if defined _INC_y_scriptinit
-	#endinput
-#endif
-#define _INC_y_scriptinit
-
 /*
 	
 	Now also provides OnCodeInit, which comes before OnScriptInit and should
@@ -93,11 +88,6 @@ Optional plugins:
                                                88           
 
 */
-
-#include <a_samp>
-
-#include "..\..\YSI_Internal\y_prehook"
-#include "..\..\YSI_Internal\y_thirdpartyinclude"
 
 forward _ScriptInit_FixState();
 

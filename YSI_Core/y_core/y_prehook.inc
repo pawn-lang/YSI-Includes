@@ -104,6 +104,11 @@ static stock _PreHook_IncludeStates() <_ALS : _ALS_go>
 
 #define CHAIN_PUBLIC:%0(%1) %0(%1) <_ALS : _ALS_go>
 
+#if defined YSI_LOCK_MODE
+	new
+		YSI_gLockData[21];
+#endif
+
 #endinput
 
 //                                                                                           

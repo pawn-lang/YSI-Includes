@@ -1,8 +1,3 @@
-#if defined _INC_y_globaltags
-	#endinput
-#endif
-#define _INC_y_globaltags
-
 /*+
  * <library name="y_globaltags">
  * <section>
@@ -95,8 +90,12 @@ Optional plugins:
 // Add new global tags to the START of this list.
 #define GLOBAL_TAG_TYPES {_,Language,Bit,Text,Menu,Style,XML,Bintree,Group,Timer,File,Float,}
 
-#if defined YSI_LOCK_MODE
-	new
-		YSI_gLockData[21];
+// Used to get rid of the "string:" tag once it has been used.
+#if !defined string
+	#define string:
+#endif
+
+#if !defined void
+	#define void:
 #endif
 

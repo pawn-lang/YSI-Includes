@@ -1,8 +1,3 @@
-#if defined _INC_y_funcinc
-	#endinput
-#endif
-#define _INC_y_funcinc
-
 /*+
  * <library name="y_funcinc">
  * <section>
@@ -89,31 +84,27 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\y_compilerdata"
+forward _@_y_funcinc_@_();
 
-#if __COMPILER_BUGGED_SYSREQ
-	forward _@_y_funcinc_@_();
-	
-	public _@_y_funcinc_@_()
-	{
-		new _funcinc_a[1 char];
-		// This function calls any functions used in assembly code in YSI to ensure
-		// that they are included in the native function table.
-		printf("");
-		strunpack(_funcinc_a, "");
-		memcpy("", "", 0, 0, 0);
-		format("", 0, "");
-		strfind("", "", false, 0);
-		strcat(_funcinc_a, "", 0);
-		strlen("");
-		CallRemoteFunction("", "");
-		CallLocalFunction("", "");
-		SetTimerEx("", 0, 0, "");
-		heapspace();
-		setproperty(0, "", 0, "");
-		getproperty(0, "", 0, _funcinc_a);
-		swapchars(0);
-		strcmp("", "");
-	}
-#endif
+public _@_y_funcinc_@_()
+{
+	new _funcinc_a[1 char];
+	// This function calls any functions used in assembly code in YSI to ensure
+	// that they are included in the native function table.
+	printf("");
+	strunpack(_funcinc_a, "");
+	memcpy("", "", 0, 0, 0);
+	format("", 0, "");
+	strfind("", "", false, 0);
+	strcat(_funcinc_a, "", 0);
+	strlen("");
+	CallRemoteFunction("", "");
+	CallLocalFunction("", "");
+	SetTimerEx("", 0, 0, "");
+	heapspace();
+	setproperty(0, "", 0, "");
+	getproperty(0, "", 0, _funcinc_a);
+	swapchars(0);
+	strcmp("", "");
+}
 

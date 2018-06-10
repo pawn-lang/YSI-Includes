@@ -1,8 +1,3 @@
-#if defined _INC_y_stripnumbers
-	#endinput
-#endif
-#define _INC_y_stripnumbers
-
 /*+
  * <library name="y_stripnumbers">
  * <section>

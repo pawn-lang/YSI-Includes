@@ -1,8 +1,3 @@
-#if defined _INC_y_compilerdata
-	#endinput
-#endif
-#define _INC_y_compilerdata
-
 /*
 Legal:
 	Version: MPL 1.1
@@ -124,12 +119,12 @@ Optional plugins:
 #define __COMPILER_FIRST_PASS  __COMPILER_1ST_PASS
 #define __COMPILER_SECOND_PASS __COMPILER_2ND_PASS
 
-// This will define a symbol - `__COMPILER_OS` equal to either `__COMPILER_UNIX` or
-// `__COMPILER_WINDOWS` depending on where the code is being built.
+// This will define a symbol - `__COMPILER_OS` equal to either `__COMPILER_UNIX`
+// or `__COMPILER_WINDOWS` depending on where the code is being built.
 #define __COMPILER_UNIX (0)
 #define __COMPILER_WINDOWS (1)
 #define __COMPILER_OS __COMPILER_UNIX
-#tryinclude "dEtErMiNe_Os"
+#tryinclude "Y_dEtErMiNe_Os"
 
 /*-------------------------------------------------------------------------*//*+
  * <remarks>
@@ -229,7 +224,7 @@ static stock const
 	#define __COMPILER_BUGGED_STRING_RETURN (1)
 	#define __COMPILER_BUGGED_SYSREQ (1)
 	
-	#include "..\y_funcinc"
+	#include "y_funcinc"
 	
 	/*---------------------------------------------------------------------*//*+
 	 * <param name="str">String to return.</param>

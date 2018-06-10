@@ -87,8 +87,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\y_globaltags"
-
 /*
 
 THIS:
@@ -109,16 +107,6 @@ public YSI_g_sSomeThing@Dist(a[], s)<_YCM:y> Distribute_To(a, s, DIST_SIZE1:YSI_
 */
 
 #define __declspec(%0) __declspec_%0
-
-forward _@_y_distribute_@_();
-
-public _@_y_distribute_@_()
-{
-	new
-		a[1 char];
-	CallRemoteFunction("", "");
-	memcpy(a, "", 0, 0);
-}
 
 #define DISTRIBUTE(%0) %0_Dist()
 

@@ -1,20 +1,4 @@
-#if defined _INC_y_shortvar
-	#endinput
-#endif
-#define _INC_y_shortvar
-
-/*+
- * <library name="y_shortvar">
- * <section>
- *  Description
- * </section>
- *  Declares a few variables with very short names, used all over YSI.
- * <section>
- *  Version
- * </section>
- *  0.2
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	
@@ -86,22 +70,51 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-// VERY VERY VERY IMPORTANT!!! y_text uses "144" explicitly.  Change it too.
-#define YSI_MAX_STRING (144)
-#if YSI_MAX_STRING != 144
-	#error Please update all explicit YSI_MAX_STRING uses.
+#if 0
+
+	// Example:
+	stock MyPrintf(const format[], {Float, File, _}:...)
+	{
+		// The triple underscore is used to mirror the triple dots in the
+		// function definition.  You can't easily tell it is three from a
+		// glance, but it is.
+		printf(format, ___1); // Or `___(1)`.
+		print("Printed many things");
+		return 42;
+	}
+
 #endif
 
-// Public variable.
-public
-	@_ = 0;
+#define ___ YVA2_DummyPush()
+// For optional parameter skips.
+#define YVA2_DummyPush()(%1) YVA2_DummyPush((%1) * 4)
 
-// J@ is a "nul" target - send things there if they need ignoring or if a
-// parameter needs using.  I@ is too now.
-stock
-	I@,
-	J@;
+// Shortcuts.
+#define ___0 ___(0)
+#define ___1 ___(1)
+#define ___2 ___(2)
+#define ___3 ___(3)
+#define ___4 ___(4)
+#define ___5 ___(5)
+#define ___6 ___(6)
+#define ___7 ___(7)
+#define ___8 ___(8)
+#define ___9 ___(9)
 
-new
-	Q@[YSI_MAX_STRING];
+#define va_args<%0> GLOBAL_TAG_TYPES:...
+#define va_start<%0> ___(%0)
+
+// Detect Slice's va_formatex function, which now doesn't need to exist.  This
+// is my first ever use of `#pragma deprecated`!  Actually quite happy about
+// that - it's one of the few language features I've never used in earnest, so
+// its almost an occassion when that happens.
+#pragma deprecated Use formatex instead
+forward va_formatex(output[], size = sizeof(output), const fmat[], va_:STATIC_ARGS);
+
+// Backwards compatability.
+native va_printf            (const format[], GLOBAL_TAG_TYPES:...)                                        = printf;
+native va_CallRemoteFunction(const function[], const format[], GLOBAL_TAG_TYPES:...)                      = CallRemoteFunction;
+native va_CallLocalFunction (const function[], const format[], GLOBAL_TAG_TYPES:...)                      = CallLocalFunction;
+native va_SetTimerEx        (const function[], interval, repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
+native va_format            (output[], len, const format[], GLOBAL_TAG_TYPES:...)                         = format;
 
