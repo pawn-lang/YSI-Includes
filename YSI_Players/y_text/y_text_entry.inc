@@ -180,7 +180,6 @@ Optional plugins:
 
 //#include "..\y_hooks"
 
-#include "..\..\YSI_Internal\y_natives"
 
 #include "y_text_styles"
 
@@ -199,7 +198,6 @@ Optional plugins:
 #include "y_text_load"
 
 #include "..\..\YSI_Internal\y_shortfunc"
-#include "..\..\YSI_Internal\y_natives"
 #include "..\..\YSI_Coding\y_va"
 
 #include "y_text_render"

@@ -96,7 +96,6 @@ Optional plugins:
 
 #include <a_samp>
 
-#include "..\..\YSI_Internal\y_natives"
 #include "..\..\YSI_Internal\y_prehook"
 #include "..\..\YSI_Internal\y_thirdpartyinclude"
 

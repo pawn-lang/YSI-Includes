@@ -243,7 +243,6 @@ stock
 #include "..\..\YSI_Internal\y_shortfunc"
 #include "..\y_debug"
 
-#include "..\..\YSI_Internal\y_natives"
 
 #include "..\..\YSI_Coding\y_va"
 

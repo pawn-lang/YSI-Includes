@@ -97,7 +97,6 @@ Optional plugins:
 	#include "..\..\YSI_Coding\y_hooks"
 	#include "..\..\YSI_Internal\y_shortfunc"
 	
-	#include "..\..\YSI_Internal\y_natives"
 	#include "..\..\YSI_Internal\y_prehook"
 	
 	CHAIN_HOOK(Master)

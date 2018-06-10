@@ -305,7 +305,6 @@ Optional plugins:
 
 #include "y_foreach_macros"
 
-#include "..\..\YSI_Internal\y_natives"
 #include "..\..\YSI_Internal\y_shortfunc"
 #include "..\..\YSI_Internal\y_funcinc"
 #include "..\..\YSI_Core\y_debug"

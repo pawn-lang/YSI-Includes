@@ -90,7 +90,6 @@ Optional plugins:
 #if defined AREAS_USE_TIMER
 	#include "..\..\YSI_Coding\y_timers"
 #endif
-#include "..\..\YSI_Internal\y_natives"
 
 #if !defined MAX_AREAS
 	#define MAX_AREAS (1024)

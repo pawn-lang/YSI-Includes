@@ -85,7 +85,6 @@ Optional plugins:
 
 #include "..\..\YSI_Server\y_scriptinit"
 #include "..\..\YSI_Core\y_debug"
-#include "..\..\YSI_Internal\y_natives"
 
 #include "..\..\YSI_Internal\y_thirdpartyinclude"
 

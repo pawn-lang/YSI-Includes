@@ -95,7 +95,6 @@ Optional plugins:
 #if !defined HTTP
 	#tryinclude <a_http>
 #endif
-#include "..\y_natives"
 
 #if MAX_PLAYER_NAME != (24)
 	#error Unknown MAX_PLAYER_NAME size.

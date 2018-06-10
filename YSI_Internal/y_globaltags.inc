@@ -95,3 +95,8 @@ Optional plugins:
 // Add new global tags to the START of this list.
 #define GLOBAL_TAG_TYPES {_,Language,Bit,Text,Menu,Style,XML,Bintree,Group,Timer,File,Float,}
 
+#if defined YSI_LOCK_MODE
+	new
+		YSI_gLockData[21];
+#endif
+

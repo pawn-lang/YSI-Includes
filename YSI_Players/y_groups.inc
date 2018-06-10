@@ -92,45 +92,25 @@ Optional plugins:
 #if defined _inc_y_groups
 	#undef _inc_y_groups
 #endif
-
-#if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude "..\YSI_Internal\y_unique\y_unique_entry"
-#endif
-#if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude "YSI_Internal\y_unique\y_unique_entry"
-#endif
-#if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude "YSI\YSI_Internal\y_unique\y_unique_entry"
-#endif
-#if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude <YSI_Internal\y_unique\y_unique_entry>
-#endif
-#if !defined _Y_UNIQUE_INCLUDED
-	#tryinclude <YSI\YSI_Internal\y_unique\y_unique_entry>
-#endif
-#if defined _Y_UNIQUE_INCLUDED
-	#undef _Y_UNIQUE_INCLUDED
-#else
-	#error Did you use `YSI/y_groups` instead of `YSI\y_groups`?
-#endif
-
-#if !defined _INC_y_groups
+#if !defined _Y_GROUPS_INCLUDED
 	#tryinclude "y_groups\y_groups_entry"
 #endif
-#if !defined _INC_y_groups
+#if !defined _Y_GROUPS_INCLUDED
 	#tryinclude "YSI_Players\y_groups\y_groups_entry"
 #endif
-#if !defined _INC_y_groups
+#if !defined _Y_GROUPS_INCLUDED
 	#tryinclude "YSI\YSI_Players\y_groups\y_groups_entry"
 #endif
-#if !defined _INC_y_groups
+#if !defined _Y_GROUPS_INCLUDED
 	#tryinclude <YSI_Players\y_groups\y_groups_entry>
 #endif
-#if !defined _INC_y_groups
+#if !defined _Y_GROUPS_INCLUDED
 	#tryinclude <YSI\YSI_Players\y_groups\y_groups_entry>
 #endif
-#if !defined _INC_y_groups
-	#error Could not find y_groups
+#if defined _Y_GROUPS_INCLUDED
+	#undef _Y_GROUPS_INCLUDED
+#else
+	#error Did you use `YSI/y_groups` instead of `YSI\y_groups`?
 #endif
 
 /**

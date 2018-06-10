@@ -135,7 +135,6 @@ Optional plugins:
 #include "..\y_debug"
 #include "..\y_utils"
 
-#include "..\..\YSI_Internal\y_natives"
 
 #include "..\..\YSI_Coding\y_va"
 

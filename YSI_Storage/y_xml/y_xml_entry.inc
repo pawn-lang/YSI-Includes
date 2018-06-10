@@ -83,7 +83,6 @@ Optional plugins:
 #include "..\..\YSI_Core\y_debug"
 #include "..\..\YSI_Core\y_utils"
 
-#include "..\..\YSI_Internal\y_natives"
 
 #if !defined MAX_XML_FILES
 	#define MAX_XML_FILES               (5)

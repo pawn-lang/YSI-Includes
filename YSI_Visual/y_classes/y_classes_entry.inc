@@ -109,7 +109,6 @@ stock _YSI_HAS_y_classes(_do_not_call_me_ever_, _like_never_)
 #include "..\..\YSI_Data\y_iterate"
 #include "..\..\YSI_Data\y_playerarray"
 #include "..\..\YSI_Data\y_iterate"
-#include "..\..\YSI_Internal\y_natives"
 #include "..\..\YSI_Internal\y_prehook"
 
 #define _GROUP_MAKE_NAME<%0...%1> %0Class%1
