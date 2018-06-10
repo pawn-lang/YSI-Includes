@@ -100,9 +100,6 @@ Optional plugins:
 #if !defined _INC_y_groups
 	#include <a_samp>
 	
-	// Get basic defines.
-	#include "..\..\YSI_Internal\y_plugins"
-	
 	#include "..\..\YSI_Internal\y_compilerdata"
 	#include "..\..\YSI_Data\y_bit"
 	

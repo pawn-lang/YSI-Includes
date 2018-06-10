@@ -83,8 +83,6 @@ Optional plugins:
 	#endinput
 #endif
 
-#include "..\..\YSI_Internal\y_plugins"
-
 #include "..\..\YSI_Internal\y_version"
 
 #include "..\..\YSI_Storage\y_amx"

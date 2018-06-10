@@ -107,8 +107,6 @@ forward OnPlayerSaved(playerid, uid);
 
 #define MAX_INDEX_LENGTH                8
 
-#include "..\..\YSI_Internal\y_plugins"
-
 #include "..\..\YSI_Coding\y_hooks"
 
 #if defined PP_ADLER32
