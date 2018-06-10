@@ -82,22 +82,22 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_cell
-	#tryinclude "y_cell\y_cell_entry"
+#if !defined _INC_y_utils
+	#tryinclude "y_core\y_core_entry"
 #endif
-#if !defined _INC_y_cell
-	#tryinclude "YSI_Core\y_cell\y_cell_entry"
+#if !defined _INC_y_core
+	#tryinclude "YSI_Core\y_core\y_core_entry"
 #endif
-#if !defined _INC_y_cell
-	#tryinclude "YSI\YSI_Core\y_cell\y_cell_entry"
+#if !defined _INC_y_core
+	#tryinclude "YSI\YSI_Core\y_core\y_core_entry"
 #endif
-#if !defined _INC_y_cell
-	#tryinclude <YSI_Core\y_cell\y_cell_entry>
+#if !defined _INC_y_core
+	#tryinclude <YSI_Core\y_core\y_core_entry>
 #endif
-#if !defined _INC_y_cell
-	#tryinclude <YSI\YSI_Core\y_cell\y_cell_entry>
+#if !defined _INC_y_core
+	#tryinclude <YSI\YSI_Core\y_core\y_core_entry>
 #endif
-#if !defined _INC_y_cell
+#if !defined _INC_y_core
 	#error Could not find y_cell
 #endif
 

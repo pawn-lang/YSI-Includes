@@ -131,6 +131,7 @@ Optional plugins:
 #include "y_debug_impl"
 #include "y_amx_impl"
 #include "y_shortfunc"
+#include "y_cell_impl"
 #include "y_utils_impl"
 #include "y_va_impl"
 
@@ -143,5 +144,6 @@ Optional plugins:
 	#include "y_utils_tests"
 	#include "y_va_tests"
 	#include "y_als_tests"
+	#include "y_cell_tests"
 #endif
 

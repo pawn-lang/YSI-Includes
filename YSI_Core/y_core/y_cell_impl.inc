@@ -1,8 +1,3 @@
-#if defined _INC_y_cell
-	#endinput
-#endif
-#define _INC_y_cell
-
 /*
 Legal:
 	Version: MPL 1.1
@@ -74,10 +69,6 @@ Optional plugins:
 	Incognito - Streamer.
 	Me - sscanf2, fixes2, Whirlpool.
 */
-
-#include "..\..\YSI_Internal\y_version"
-#include "..\..\YSI_Internal\y_globaltags"
-#include "..\..\YSI_Internal\y_funcinc"
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
@@ -777,9 +768,4 @@ stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 	// 
 	return Cell_ExpandLeftPrecomputed(x, m, Cell_PrecomputeMaskPermutation(m));
 }
-
-#if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
-	#include "y_cell_tests"
-#endif
 
