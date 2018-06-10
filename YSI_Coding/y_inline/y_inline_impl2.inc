@@ -530,6 +530,8 @@ public OnCodeInit()
 		hdr[AMX_HDR];
 	GetAmxHeader(hdr);
 	YSI_g_sJumpOffset = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
+	if (FALSE)
+		Callback_CallHandler_();
 	#emit CONST.pri        Callback_CallHandler_
 	#emit STOR.pri         YSI_g_sCallbackCallAddress
 	YSI_g_sCallbackCallAddress += YSI_g_sJumpOffset;
@@ -1315,7 +1317,7 @@ static stock Callback_Claim_(func[E_INLINE_CALL])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Callback_CallHandler_(...)
+static Callback_CallHandler_(...)
 {
 	// This is called by `@`, and given the above enum in `INDIRECTION_DATA`.
 	// Get the size, and update `INDIRECTION_DATA` to point to the data.
