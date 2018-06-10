@@ -1,4 +1,15 @@
-/*
+/**
+ * <library name="y_functional">
+ * <section>
+ *  Description
+ * </section>
+ *  Lambda functions and functional program functions - map, fold, etc.
+ * <section>
+ *  Version
+ * </section>
+ *  1.0
+ * </library>
+ *//** *//*
 Legal:
 	Version: MPL 1.1
 	
@@ -70,5 +81,22 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#error Please use <YSI_Coding\y_functional>
+#if !defined _INC_y_functional
+	#tryinclude "y_functional\y_functional_entry"
+#endif
+#if !defined _INC_y_functional
+	#tryinclude "YSI_Core\y_functional\y_functional_entry"
+#endif
+#if !defined _INC_y_functional
+	#tryinclude "YSI\YSI_Core\y_functional\y_functional_entry"
+#endif
+#if !defined _INC_y_functional
+	#tryinclude <YSI_Core\y_functional\y_functional_entry>
+#endif
+#if !defined _INC_y_functional
+	#tryinclude <YSI\YSI_Core\y_functional\y_functional_entry>
+#endif
+#if !defined _INC_y_functional
+	#error Could not find y_functional
+#endif
 
