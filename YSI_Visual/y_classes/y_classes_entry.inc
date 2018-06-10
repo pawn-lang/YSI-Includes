@@ -75,7 +75,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_compilerdata"
+#include "..\..\YSI_Core\y_utils"
 
 stock _YSI_HAS_y_classes(_do_not_call_me_ever_, _like_never_)
 {
@@ -83,8 +83,6 @@ stock _YSI_HAS_y_classes(_do_not_call_me_ever_, _like_never_)
 	assert(false);
 	return 0;
 }
-
-#include "..\..\YSI_Internal\y_version"
 
 #if !defined MAX_CLASSES
 	#define MAX_CLASSES                 (512)
@@ -105,16 +103,13 @@ stock _YSI_HAS_y_classes(_do_not_call_me_ever_, _like_never_)
 #include "..\..\YSI_Core\y_master"
 
 #include "..\..\YSI_Data\y_bit"
-#include "..\..\YSI_Core\y_debug"
 #include "..\..\YSI_Data\y_iterate"
 #include "..\..\YSI_Data\y_playerarray"
 #include "..\..\YSI_Data\y_iterate"
-#include "..\..\YSI_Internal\y_prehook"
 
 #define _GROUP_MAKE_NAME<%0...%1> %0Class%1
 #define _GROUP_MAKE_LIMIT         MAX_CLASSES
 #include "..\..\YSI_Players\y_groups\y_groups__funcs"
-//#include "..\..\YSI_Players\y_groups\y_classes"
 
 CHAIN_HOOK(Class)
 #undef CHAIN_ORDER
@@ -126,7 +121,6 @@ CHAIN_HOOK(Class)
 #include "y_classes_multiclass"
 
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_classes_tests"
 #endif
 

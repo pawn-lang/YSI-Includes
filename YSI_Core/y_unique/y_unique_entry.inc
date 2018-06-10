@@ -87,8 +87,6 @@ Optional plugins:
 	#undef _inc_y_unique_entry
 #endif
 
-#include "..\y_compilerdata"
-
 #if defined UNIQUE_FUNCTION
 	#undef UNIQUE_FUNCTION
 #endif

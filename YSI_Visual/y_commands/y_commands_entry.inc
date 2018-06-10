@@ -75,8 +75,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_compilerdata"
-#include "..\..\YSI_Internal\y_version"
+#include "..\..\YSI_Core\y_utils"
 
 #define MAX_COMMAND_LENGTH              (32)
 
@@ -92,13 +91,11 @@ Optional plugins:
 #include "..\..\YSI_Core\y_master"
 
 // Misc includes.
-#include "..\..\YSI_Storage\y_amx"
 #include "..\..\YSI_Data\y_hashmap"
 #include "..\..\YSI_Data\y_iterate"
 #include "..\..\YSI_Coding\y_hooks"
 #include "..\..\YSI_Data\y_playerarray"
 #include "..\..\YSI_Server\y_punycode"
-#include "..\..\YSI_Internal\y_distribute"
 
 // Include the group functions (maybe).
 #define _GROUP_MAKE_NAME<%0...%1> %0Command%1
@@ -115,7 +112,6 @@ Optional plugins:
 #include "y_commands_impl"
 
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_commands_tests"
 #endif
 

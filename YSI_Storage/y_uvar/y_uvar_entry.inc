@@ -77,18 +77,12 @@ Optional plugins:
 
 // y_uvars
 
-#include "..\..\YSI_Internal\y_version"
-
-#include "..\..\YSI_Storage\y_amx"
-#include "..\..\YSI_Core\y_debug"
 #include "..\..\YSI_Core\y_utils"
 
 #include "..\..\YSI_Players\y_users"
-#include "..\..\YSI_Storage\y_ini"
+#include "..\y_ini"
 
 #include "..\..\YSI_Coding\y_hooks"
-
-#include "..\..\YSI_Internal\y_stripnumbers"
 
 // Third "uvar" version.
 #define _YU@LE@E%0>
@@ -506,3 +500,4 @@ hook OnPlayerConnect(playerid)
 		}
 	}
 }
+

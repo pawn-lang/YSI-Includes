@@ -363,6 +363,34 @@ This comment can be collapsed - it pushes line numbers down to match models.
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 */
 
 stock
@@ -1041,3 +1069,9 @@ stock Vehicle_Speed(vehicleid)
 #undef _VEHICLE_FLAGS
 #undef e_VEHICLE_FLAGS_NONE
 #undef e_VEHICLE_FLAGS_END
+
+#if defined YSI_TESTS
+	#include "..\..\YSI_Core\y_utils"
+	#include "y_vehicledata_tests"
+#endif
+

@@ -75,10 +75,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <a_samp>
-#include "..\..\YSI_Data\y_iterate"
-#include "..\..\YSI_Data\y_playerarray"
-#include "..\..\YSI_Core\y_debug"
+#include "..\..\YSI_Core\y_utils"
+#include "..\y_iterate"
 
 #if !defined MAX_PLAYER_SET_STACK
     #define MAX_PLAYER_SET_STACK (3)

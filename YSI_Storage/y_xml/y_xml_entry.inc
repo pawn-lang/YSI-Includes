@@ -75,14 +75,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_compilerdata"
-#include "..\..\YSI_Internal\y_version"
-
-#include <a_samp>
-
-#include "..\..\YSI_Core\y_debug"
 #include "..\..\YSI_Core\y_utils"
-
 
 #if !defined MAX_XML_FILES
 	#define MAX_XML_FILES               (5)
@@ -1075,3 +1068,4 @@ stock XML_ReplaceItem(file[], tag[], name[], replacement)
 	}
 	return 1;
 }
+

@@ -77,12 +77,7 @@ Optional plugins:
 
 forward bool:_Testing_End();
 
-#include <a_samp>
-#include "..\y_debug"
-#include "..\..\YSI_Storage\y_amx"
-#include "..\..\YSI_Internal\y_thirdpartyinclude"
-
-#include "..\..\YSI_Internal\y_shortvar"
+#include "..\y_utils"
 
 #if defined YSI_TESTS
 	#if defined INCLUDE_TESTS
@@ -235,16 +230,6 @@ stock
 //#define Q_@y%0\32; Q_@y
 //#define _Q@y%0\32; _Q@y
 //#define _y@Q%0\32; _y@Q
-
-// These all need to come AFTER the types are defined in case the have tests.
-#include "..\..\YSI_Internal\y_version"
-
-#include "..\..\YSI_Storage\y_amx"
-#include "..\..\YSI_Internal\y_shortfunc"
-#include "..\y_debug"
-
-
-#include "..\..\YSI_Coding\y_va"
 
 /*-------------------------------------------------------------------------*//**
  * <param name="name">Name of the current function.</param>
@@ -805,11 +790,10 @@ TestClose:y_testing_1()
 
 #endif
 
-#include "..\..\YSI_Internal\y_shortfunc"
-
 #if defined YSI_TESTS
-	// Why did I move this here, and why is it not included from the normal place in
-	// `y_thirdpartyinclude.inc` itself?  Simple - resolving circular dependencies.
-	#include "..\..\YSI_Internal\y_thirdpartyinclude\y_thirdpartyinclude_tests"
+	#include "..\y_core\y_utils_tests"
+	#include "..\y_core\y_va_tests"
+	#include "..\y_core\y_als_tests"
+	#include "..\y_core\y_cell_tests"
 #endif
 

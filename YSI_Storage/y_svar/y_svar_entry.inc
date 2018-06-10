@@ -81,6 +81,8 @@ Optional plugins:
 	#error Please define "MODE_NAME" before including y_svar.
 #endif
 
+#include "..\..\YSI_Core\y_utils"
+
 #if defined SVAR_USE_MYSQL
 	#if _YSI_PLUGINS_MYSQL == 7
 		#include "y_svar_blueg7"
@@ -94,17 +96,11 @@ Optional plugins:
 #elseif defined SVAR_USE_SQLITE
 	#include "y_svar_sqlite"
 #else
-	#include "..\..\YSI_Internal\y_version"
-	#include "..\..\YSI_Storage\y_amx"
-	#include "..\..\YSI_Core\y_debug"
-	#include "..\..\YSI_Core\y_utils"
-	#include "..\..\YSI_Storage\y_ini"
+	#include "..\y_ini"
 	#include "..\..\YSI_Coding\y_hooks"
-	#include "..\..\YSI_Internal\y_stripnumbers"
 	
 	#include "y_svar_ini"
 #endif
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_svar_tests"
 #endif

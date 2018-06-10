@@ -75,17 +75,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_version"
+#include "..\..\YSI_Core\y_utils"
 #include "..\..\YSI_Data\y_bit"
 
 #include "..\..\YSI_Coding\y_remote"
 #include "..\..\YSI_Coding\y_inline"
 #include "..\..\YSI_Coding\y_hooks"
-#include "..\..\YSI_Storage\y_amx"
 #include "y_dialog_impl"
 
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_dialog_tests"
 #endif
 

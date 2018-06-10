@@ -75,8 +75,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_version"
-#include "..\..\YSI_Data\y_bit"
 #include "..\..\YSI_Core\y_utils"
 #include "..\..\YSI_Coding\y_malloc"
 // Because having colours is always good...
@@ -96,6 +94,5 @@ Optional plugins:
 #include "y_bitmap_write"
 
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_bitmap_tests"
 #endif

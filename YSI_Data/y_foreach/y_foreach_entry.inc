@@ -104,7 +104,7 @@ Optional plugins:
     
 */
 
-#include "..\..\YSI_Internal\y_compilerdata"
+#include "..\..\YSI_Core\y_utils"
 
 // "y_iterate" is always higher than "foreach".
 #define _Y_ITERATE_LOCAL_VERSION        43
@@ -305,11 +305,6 @@ Optional plugins:
 
 #include "y_foreach_macros"
 
-#include "..\..\YSI_Internal\y_shortfunc"
-#include "..\..\YSI_Internal\y_funcinc"
-#include "..\..\YSI_Core\y_debug"
-//#include "..\..\YSI_Coding\y_malloc"
-
 #include "y_foreach_impl"
 #include "..\..\YSI_Coding\y_hooks"
 #include "y_foreach_yield"
@@ -323,7 +318,6 @@ Optional plugins:
 #include "y_foreach_iterators"
 
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_foreach_tests"
 #endif
 

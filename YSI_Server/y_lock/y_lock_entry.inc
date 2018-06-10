@@ -75,7 +75,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_version
+#if defined _INC_y_utils
 	#error YSI\y_lock must be the first include if you want to use it.
 #endif
 #if defined _DEBUG
@@ -131,9 +131,7 @@ Optional plugins:
 #endif
 
 #define YSI_LOCK_MODE
-#include "..\..\YSI_Internal\y_version"
-
-#include "..\..\YSI_Storage\y_amx"
+#include "..\..\YSI_Core\y_utils"
 #include "..\..\YSI_Coding\y_hooks"
 
 _DoYLock(P:C(from);)

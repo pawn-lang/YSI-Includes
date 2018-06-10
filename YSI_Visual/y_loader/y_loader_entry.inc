@@ -70,6 +70,9 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#include "..\..\YSI_Core\y_utils"
+#include "..\..\YSI_Storage\y_xml"
+
 static stock
 	XML:YSI_g_sXMLRules = NO_XML_FILE,
 	#if defined _YSI_VISUAL_OBJECTS

@@ -75,13 +75,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined HTTP
-	#include <a_http>
-#endif
-
 #include "..\..\YSI_Core\y_utils"
-#include "..\..\YSI_Internal\y_funcinc"
-#include "..\..\YSI_Core\y_debug"
 #include "..\..\YSI_Coding\y_timers"
 #include "..\..\YSI_Coding\y_hooks"
 
@@ -527,6 +521,4 @@ public _PHP_Result(index, response, data[])
 
 #define @_yP%0\32; @_yP
 #define @_Py%0\32; @_Py
-
-//#include "..\..\YSI_Core\y_master"
 

@@ -75,7 +75,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\y_debug"
+#include "..\y_utils"
 
 #if defined YSI_PROFILINGS
 	#if defined INCLUDE_PROFILINGS
@@ -126,17 +126,6 @@ Optional plugins:
 #define yP_@%0\32; yP_@
 #define y_P@%0\32; y_P@
 #define P_y@%0\32; P_y@
-
-// These all need to come AFTER the types are defined in case the have profilings.
-#include "..\..\YSI_Internal\y_version"
-
-#include "..\..\YSI_Storage\y_amx"
-#include "..\..\YSI_Internal\y_shortfunc"
-#include "..\y_debug"
-#include "..\y_utils"
-
-
-#include "..\..\YSI_Coding\y_va"
 
 #define Y_PROFILING_PROFILE_SEARCH _A<@y_P>
 #define Y_PROFILING_INIT _C<@yP_>
@@ -287,6 +276,4 @@ stock Profiling_RunAll()
 		SendRconCommand("exit");
 	#endif
 }
-
-#include "..\..\YSI_Internal\y_shortfunc"
 

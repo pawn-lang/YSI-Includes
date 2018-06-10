@@ -1,8 +1,3 @@
-#if defined _INC_y_distribute
-	#endinput
-#endif
-#define _INC_y_distribute
-
 /*+
  * <library name="y_distribute">
  * <section>

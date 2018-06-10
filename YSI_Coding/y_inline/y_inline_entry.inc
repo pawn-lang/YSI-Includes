@@ -84,7 +84,6 @@ Optional plugins:
 
 #include "..\y_malloc"
 
-
 #include "y_inline_impl2"
 
 #if defined YSI_TESTS

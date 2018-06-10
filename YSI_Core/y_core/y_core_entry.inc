@@ -140,10 +140,3 @@ Optional plugins:
 	#include "..\y_testing"
 #endif
 
-#if defined YSI_TESTS
-	#include "y_utils_tests"
-	#include "y_va_tests"
-	#include "y_als_tests"
-	#include "y_cell_tests"
-#endif
-

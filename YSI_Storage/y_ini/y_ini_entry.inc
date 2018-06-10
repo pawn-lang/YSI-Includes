@@ -75,7 +75,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_compilerdata"
+#include "..\..\YSI_Core\y_utils"
 
 #define MAX_INI_LINE                    (MAX_INI_ENTRY_NAME + MAX_INI_ENTRY_TEXT + 32)
 
@@ -116,10 +116,6 @@ stock const
 
 #define INI_NO_FILE (INI:-1)
 
-#include "..\..\YSI_Internal\y_thirdpartyinclude"
-#include "..\..\YSI_Internal\y_version"
-
-#include "..\..\YSI_Core\y_utils"
 #include "..\..\YSI_Coding\y_malloc"
 #include "..\..\YSI_Coding\y_inline"
 #include "..\..\YSI_Coding\y_stringhash"
@@ -139,7 +135,6 @@ forward e_INI_LINE_TYPE:
 #include "y_ini_writing"
 
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_ini_tests"
 #endif
 

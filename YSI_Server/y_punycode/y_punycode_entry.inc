@@ -75,16 +75,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_compilerdata"
-#include "..\..\YSI_Internal\y_version"
-#include "..\..\YSI_Internal\y_pp"
-#include "..\..\YSI_Core\y_debug"
-
-#if !defined HTTP
-	#include <a_http>
-#endif
-
-#define string:
+#include "..\..\YSI_Core\y_utils"
 
 #define PUNY_BASE (36)
 #define PUNY_CHAR ('-')
@@ -563,7 +554,6 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 #undef PUNY_CHAR
 
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_punycode_tests"
 #endif
 

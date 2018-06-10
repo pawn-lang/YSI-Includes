@@ -75,14 +75,11 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_version"
 #include "..\..\YSI_Core\y_utils"
-#include "..\..\YSI_Core\y_debug"
 
 #include "y_jaggedarray_impl"
 
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_jaggedarray_tests"
 #endif
 

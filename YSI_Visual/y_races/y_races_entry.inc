@@ -75,7 +75,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_compilerdata"
+#include "..\..\YSI_Core\y_utils"
 
 #if !defined YSI_NO_RACE_POSITION && !defined RACE_POSITION
 	#define RACE_POSITION
@@ -142,7 +142,6 @@ foreign Race_SetPlayer(race, playerid, bool:set);
 
 #include "y_races_impl"
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_races_tests"
 	// Get some new IDs.
 #endif

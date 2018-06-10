@@ -75,7 +75,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_version"
+#include "..\..\YSI_Core\y_utils"
 
 #define YSIM_U_DISABLE
 #define MASTER 56

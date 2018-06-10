@@ -79,26 +79,18 @@ Optional plugins:
 	#error Please define "MODE_NAME" before including y_users.
 #endif
 
-#include <a_samp>
-
 forward OnPlayerLogin(playerid, uid);
 
 forward OnPlayerLogout(playerid, uid);
 
 forward OnPlayerSaved(playerid, uid);
 
-//#if !defined HAS_USER_CALLBACKS
-//	#define HAS_USER_CALLBACKS
-//#endif
-
-#include "..\..\YSI_Internal\y_version"
+#include "..\..\YSI_Core\y_utils"
 
 #include "..\..\YSI_Players\y_text"
 
 #include "..\..\YSI_Coding\y_remote"
-#include "..\..\YSI_Core\y_debug"
 #include "..\..\YSI_Storage\y_ini"
-#include "..\..\YSI_Core\y_utils"
 #include "..\..\YSI_Coding\y_timers"
 
 #define YSIM_U_DISABLE
@@ -204,7 +196,6 @@ foreign Player_ChangeLanguage(playerid, string:code[]);
 	#include "y_users_ini"
 #endif
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_users_tests"
 #endif
 

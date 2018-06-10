@@ -75,7 +75,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_compilerdata"
+#include "..\..\YSI_Core\y_utils"
 
 #if defined MAX_PROP_NAME
 	#if MAX_PROP_NAME < (39 - PLAYER_BIT_ARRAY)

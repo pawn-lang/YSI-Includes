@@ -12,6 +12,7 @@
  *
  */
 
+#include "..\..\YSI_Core\y_utils"
 #include "..\..\YSI_Players\y_text"
 #include "..\..\YSI_Visual\y_areas"
 

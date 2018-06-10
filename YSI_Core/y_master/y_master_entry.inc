@@ -92,18 +92,15 @@ Optional plugins:
 #define _Y_MASTER_INCLUDED
 
 #if !defined _INC_y_master
-	#include "..\..\YSI_Internal\y_version"
-	#include "..\y_debug"
+	#include "..\..\YSI_Core\y_utils"
 	#include "..\..\YSI_Coding\y_hooks"
-	#include "..\..\YSI_Internal\y_shortfunc"
-	
-	#include "..\..\YSI_Internal\y_prehook"
 	
 	CHAIN_HOOK(Master)
 	#undef CHAIN_ORDER
 	#define CHAIN_ORDER CHAIN_NEXT(Master)
 	
 	#include "y_master_once"
+	#include "y_distribute"
 #endif
 
 // ALWAYS!  The compiler defines this automatically, don't use it as this is
@@ -158,7 +155,6 @@ Optional plugins:
 
 // Only include this lot once.
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	// Get the new master.
 	#define MASTER 58
 	#include "y_master_entry"

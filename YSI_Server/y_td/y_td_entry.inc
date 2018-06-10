@@ -75,15 +75,10 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_compilerdata"
-#include "..\..\YSI_Internal\y_version"
-
-#include "..\..\YSI_Core\y_debug"
-#include "..\..\YSI_Data\y_bit"
+#include "..\..\YSI_Core\y_utils"
 
 #include "..\..\YSI_Storage\y_xml"
 
-#include "..\..\YSI_Core\y_utils"
 #include "..\..\YSI_Server\y_colours"
 #include "..\..\YSI_Coding\y_stringhash"
 
@@ -91,10 +86,6 @@ Optional plugins:
 
 #include "..\..\YSI_Data\y_iterate"
 #include "..\..\YSI_Coding\y_hooks"
-
-//#include "..\y_timer"
-
-#include <a_samp>
 
 #if !defined MAX_TEXT_DRAW_STYLES
 	#define MAX_TEXT_DRAW_STYLES        (Style:32)
@@ -2053,3 +2044,4 @@ public TD_MorphTDInternal(Text:td, Style:from, Style:to, speed, pos, revision)
 
 #undef TDL_START
 #undef TDL_END
+

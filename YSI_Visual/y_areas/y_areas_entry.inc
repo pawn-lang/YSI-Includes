@@ -75,14 +75,12 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_compilerdata"
-#include "..\..\YSI_Internal\y_version"
+#include "..\..\YSI_Core\y_utils"
 
 #include "..\..\YSI_Data\y_bit"
 #include "..\..\YSI_Data\y_playerarray"
 
 #include "..\..\YSI_Data\y_iterate"
-#include "..\..\YSI_Core\y_debug"
 
 #include "..\..\YSI_Coding\y_inline"
 #include "..\..\YSI_Coding\y_remote"

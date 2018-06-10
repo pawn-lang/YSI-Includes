@@ -91,30 +91,24 @@ Optional plugins:
 
 #define _Y_GROUPS_INCLUDED
 
-#include "..\..\YSI_Internal\y_version"
 
 #if defined _inc_y_groups_entry
 	#undef _inc_y_groups_entry
 #endif
 
 #if !defined _INC_y_groups
-	#include <a_samp>
-	
-	#include "..\..\YSI_Internal\y_compilerdata"
+	#include "..\..\YSI_Core\y_utils"
 	#include "..\..\YSI_Data\y_bit"
 	
 	#if !defined _INC_y_groups__funcs
 		#define _INC_y_groups__funcs
 		#include "y_groups_setup"
-		#include "..\..\YSI_Internal\y_shortfunc"
 		#include "..\..\YSI_Data\y_iterate"
 	#endif
 	
-	#include "..\..\YSI_Server\y_scriptinit"
 	#include "..\..\YSI_Data\y_playerarray"
 	
 	#include "..\..\YSI_Coding\y_stringhash"
-	#include "..\..\YSI_Core\y_debug"
 	#include "..\..\YSI_Coding\y_remote"
 	
 	#include "..\..\YSI_Storage\y_amx"
@@ -123,7 +117,6 @@ Optional plugins:
 	#define YSIM_U_DISABLE
 	#define MASTER 59
 	#include "..\..\YSI_Core\y_master"
-	#include "..\..\YSI_Internal\y_distribute"
 	
 	#include "..\..\YSI_Coding\y_hooks"
 	
@@ -168,10 +161,8 @@ Optional plugins:
 #define _INC_y_groups
 
 #if defined _INC_y_classes
-	#include "..\..\YSI_Visual\y_classes/classgroups"
+	#include "..\..\YSI_Visual\y_classes\y_classes_classgroups"
 #endif
-
-
 
 stock _YSI_HAS_y_groups(_do_not_call_me_ever_, _like_never_)
 {
@@ -181,7 +172,6 @@ stock _YSI_HAS_y_groups(_do_not_call_me_ever_, _like_never_)
 }
 
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_groups_tests"
 #endif
 

@@ -75,13 +75,10 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_version"
+#include "..\..\YSI_Core\y_utils"
 
 #include "..\..\YSI_Coding\y_stringhash"
-#include "..\..\YSI_Core\y_debug"
 #include "..\..\YSI_Coding\y_remote"
-
-#include "..\..\YSI_Core\y_utils"
 
 #if !defined MAX_TEXT_COLOURS
 	#if defined MAX_TEXT_COLORS
@@ -336,8 +333,6 @@ stock GetColourHash(hash, alpha = 0xAA)
 		return -1;
 	}
 #endif
-
-
 
 #define _COLOUR_GT_SPACE_DEF_0(%0)      SAMP_GAME_TEXT_%0
 #define _COLOUR_GT_SPACE_DEF_1(%0)      SAMP_GAME_TEXT_%0H
