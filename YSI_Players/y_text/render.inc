@@ -90,7 +90,7 @@ Optional plugins:
 
 // This makes hex and binary format specifiers display correctly with negative
 // numbers in all cases (e.g. %5x etc).
-#define Y_RENDER_FIX_NEGATIVE(%0:%1) if(width>%1)arg=(ch&_:e_COMPRESS_FORMAT_DATA_LEFT)?((ch&_:e_COMPRESS_FORMAT_DATA_ZERO)?format(ts,130,"%"#%0"%0-*"#%0,arg>>>32/%1,width-(%1-1),arg&(1<<32/%1)-1):format(ts,130,"%"#%0"%-*"#%0,arg>>>32/%1,width-(%1-1),arg&(1<<32/%1)-1)):(ch&_:e_COMPRESS_FORMAT_DATA_ZERO)?format(ts,130,"%0*"#%0"%"#%0,width-1,arg>>>32/%1,arg&(1<<32/%1)-1):format(ts,130,"%*"#%0"%"#%0,width-1,arg>>>32/%1,arg&(1<<32/%1)-1);else format(ts,130,"%"#%0"%"#%0,arg>>>32/%1,arg&(1<<32/%1)-1)
+#define Y_RENDER_FIX_NEGATIVE(%0:%1) if(width>%1)arg=(ch&_:e_COMPRESS_FORMAT_DATA_LEFT)?((ch&_:e_COMPRESS_FORMAT_DATA_ZERO)?format(ts,144,"%"#%0"%0-*"#%0,arg>>>32/%1,width-(%1-1),arg&(1<<32/%1)-1):format(ts,144,"%"#%0"%-*"#%0,arg>>>32/%1,width-(%1-1),arg&(1<<32/%1)-1)):(ch&_:e_COMPRESS_FORMAT_DATA_ZERO)?format(ts,144,"%0*"#%0"%"#%0,width-1,arg>>>32/%1,arg&(1<<32/%1)-1):format(ts,144,"%*"#%0"%"#%0,width-1,arg>>>32/%1,arg&(1<<32/%1)-1);else format(ts,144,"%"#%0"%"#%0,arg>>>32/%1,arg&(1<<32/%1)-1)
 
 // Try add a string to the current output.  This needs modifying to reset the
 // whole function after a string is displayed.  "onlyOne" is set in the case
@@ -888,7 +888,7 @@ Format_Render_start:
 		scSpecifier[8],
 		// =====================================================================
 		//  UPDATE Y_RENDER_FIX_NEGATIVE MACRO ON CHANGE!!!!!!!
-		ts[130],
+		ts[144],
 		//  Max handleable input string length is 128 (hopefully sufficient).
 		// =====================================================================
 		func[32],

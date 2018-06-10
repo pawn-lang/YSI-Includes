@@ -79,7 +79,7 @@ Optional plugins:
 #endif
 // =====================================================================
 //  UPDATE Y_RENDER_FIX_NEGATIVE MACRO ON CHANGE!!!!!!!
-#define FORMAT_CUSTOM_SPEC_BUFFER_SIZE  130
+#define FORMAT_CUSTOM_SPEC_BUFFER_SIZE  144
 //  Also "ts" in y_textrender.
 // =====================================================================
 
