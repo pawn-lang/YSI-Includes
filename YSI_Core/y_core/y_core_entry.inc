@@ -1,3 +1,8 @@
+#if defined _INC_y_core
+	#endinput
+#endif
+#define _INC_y_core
+
 /*
 Legal:
 	Version: MPL 1.1
@@ -72,7 +77,6 @@ Optional plugins:
 
 // These includes are in quite a strict order, since there's a lot of inter-
 // dependencies.  That's why they're all together in here.
-#define _INC_y_core
 
 // Define `cellbytes` as a symbol that really should exist already!
 #if !defined cellbytes

@@ -77,20 +77,17 @@ Optional plugins:
 
 // y_uvars
 
+#include "..\..\YSI_Core\y_utils"
+
 #if defined USE_Y_TIMERS_V1
 	#error y_timers version 1 has not worked in years!
 	#include "y_timers_v1"
 	#endinput
 #endif
 
-#include "..\..\YSI_Internal\y_version"
-
-#include "..\..\YSI_Storage\y_amx"
-#include "..\..\YSI_Internal\y_shortfunc"
-#include "..\..\YSI_Coding\y_malloc"
+#include "..\y_malloc"
+#include "..\y_hooks"
 #include "..\..\YSI_Data\y_iterate"
-#include "..\..\YSI_Coding\y_hooks"
-#include "..\..\YSI_Core\y_debug"
 
 #include "y_timers_impl"
 #if defined _YSI_PLUGINS_FIXES_2
@@ -101,6 +98,5 @@ Optional plugins:
 #endif
 
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_timers_tests"
 #endif

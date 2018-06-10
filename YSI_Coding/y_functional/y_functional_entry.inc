@@ -75,17 +75,13 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\y_utils"
-#include "..\y_debug"
-#include "..\..\YSI_Storage\y_amx"
-#include "..\..\YSI_Coding\y_inline"
+#include "..\..\YSI_Core\y_utils"
+#include "..\y_inline"
 
-#include "..\..\YSI_Internal\y_thirdpartyinclude"
 #include "y_functional_funcs"
 #include "y_functional_rewrite"
 
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_functional_tests"
 #endif
 

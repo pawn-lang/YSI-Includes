@@ -75,11 +75,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_version"
-#include "..\..\YSI_Internal\y_shortfunc"
-#include "..\..\YSI_Internal\y_thirdpartyinclude"
-
-// This supports "targetfunc<master> func()" and "targetfunc func<master>()".
 #include "..\..\YSI_Core\y_utils"
 #include "y_remote_macros"
 
@@ -89,7 +84,6 @@ Optional plugins:
 #define targetfunc%0<%2>%9(%1) (J@=1,I@=(%2),_@%0(%1))
 
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_remote_tests"
 #endif
 

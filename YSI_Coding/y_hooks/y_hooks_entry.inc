@@ -1,3 +1,8 @@
+#if defined _INC_y_hooks
+	#endinput
+#endif
+#define _INC_y_hooks
+
 /*
 Legal:
 	Version: MPL 1.1
@@ -70,19 +75,8 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#define _Y_HOOKS_INCLUDED
-
-#if defined _inc_y_hooks_entry
-	#undef _inc_y_hooks_entry
-#endif
-
-// Multiple includes!
-#include "..\..\YSI_Internal\y_unique"
-
-#if defined _INC_y_hooks
-	#endinput
-#endif
-#define _INC_y_hooks
+#include "..\..\YSI_Core\y_utils"
+#include "..\y_cgen\y_cgen"
 
 #if defined YSI_TESTS
 	#define _Y_HOOKS_STATIC
@@ -91,27 +85,11 @@ Optional plugins:
 #endif
 
 #include "y_hooks_macros"
-
-// Actually now an important include - ensures that "OnScriptInit" is hooked
-// correctly despite not being called correctly.
-#include "..\..\YSI_Core\y_debug"
-#include "..\..\YSI_Core\y_cell"
-#include "..\..\YSI_Core\y_utils"
-#include "..\..\YSI_Storage\y_amx"
-#include "..\..\YSI_Core\y_als"
-
-#include "..\..\YSI_Internal\y_cgen"
-#include "..\..\YSI_Internal\y_prehook"
-
-#include "..\..\YSI_Internal\y_thirdpartyinclude"
-//asm"
-
 #include "y_hooks_impl"
 
 #if defined YSI_TESTS
 	// Get a new unique ID for the test hooks.
-	#include "..\..\YSI_Internal\y_unique"
-	#include "..\..\YSI_Core\y_testing"
+	#include "..\..\YSI_Core\y_unique\y_unique_entry"
 	#include "y_hooks_tests"
 #endif
 

@@ -75,8 +75,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\..\YSI_Internal\y_version"
-#include "..\..\YSI_Core\y_debug"
 #include "..\..\YSI_Core\y_utils"
 
 // Note: H_a, H_b, H_c, H_d, H_f and H_g are defined here, H_e in y_amx, H_z in
@@ -458,7 +456,6 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 #include "y_stringhash_fnv1"
 
 #if defined YSI_TESTS
-	#include "..\..\YSI_Core\y_testing"
 	#include "y_stringhash_tests"
 #endif
 
