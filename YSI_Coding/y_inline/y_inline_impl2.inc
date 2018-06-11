@@ -1025,7 +1025,7 @@ stock Function:GetLocalFunction(const func[], const spec[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#pragma deprecated
+#pragma deprecated Use `@.func(params);`.
 stock CallStoredFunction(Function:func, GLOBAL_TAG_TYPES:...)
 {
 	return Indirect_Call(_:func, 0, ___(1));
@@ -1169,7 +1169,7 @@ stock bool:Callback_Find_(const name[], &dest, bool:remote = false, tag = 0)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#pragma deprecated
+#pragma deprecated Use `@.func(params);`.
 stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
 {
 	return Indirect_Call(func[E_CALLBACK_DATA_ALLOC], 0, ___(1));
@@ -1191,13 +1191,13 @@ stock Callback_Call(const func[E_CALLBACK_DATA], GLOBAL_TAG_TYPES:...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#pragma deprecated
+#pragma deprecated Use `Indirect_Array(_:func, tagof (func), params);`.
 stock Callback_Array(const func[E_CALLBACK_DATA], const params[], num = sizeof (params))
 {
 	return Indirect_Array(func[E_CALLBACK_DATA_ALLOC], 0, params, num);
 }
 
-#pragma deprecated
+#pragma deprecated No longer required.
 stock Inline_Reset(callback[E_CALLBACK_DATA])
 {
 	return (callback[E_CALLBACK_DATA_ALLOC] = 0);
@@ -1218,7 +1218,7 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#pragma deprecated
+#pragma deprecated Remove or use `Indirect_Claim(func);`.
 //stock bool:Callback_Get(name[], ret[E_CALLBACK_DATA], expect[] = "", bool:remote = false)
 stock bool:Callback_Get(...)
 {
@@ -1293,7 +1293,7 @@ stock bool:Callback_Get(...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#pragma deprecated
+#pragma deprecated Remove or use `Indirect_Release(func);`.
 stock Callback_Release(input[E_CALLBACK_DATA])
 {
 	Indirect_Release(input[E_CALLBACK_DATA_ALLOC]);
