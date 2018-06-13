@@ -140,12 +140,18 @@ static stock __CompilerSecondPass() {}
 	#error YSI does not yet support PAWN 2.0/1.0
 #endif
 
+#define __COMPILER_BUG_317 (1)
+
 #if ((__Pawn & 0x0F) >= 0x0A) || ((__Pawn & 0xF0) >= 0xA0)
 	#define __COMPILER_MODIFIED (1)
 	#define __COMPILER_OFFICIAL (0)
 	#if defined __PawnBuild
 		#if __PawnBuild >= 4
 			#pragma option -(+
+		#endif
+		#if __PawnBuild >= 400
+			#undef __COMPILER_BUG_317
+			#define __COMPILER_BUG_317 (0)
 		#endif
 	#endif
 #else

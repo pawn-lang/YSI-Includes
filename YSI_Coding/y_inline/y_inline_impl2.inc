@@ -226,6 +226,7 @@ stock I@T:I@T(const str[])
 
 stock operator~(I@T:inlines[], size)
 {
+	{}
 	// This destructor is actually only ever called once, even though it might
 	// exist many times in the compiled code; the rest are replaced at init time
 	// using information gathered here.
@@ -242,7 +243,21 @@ stock operator~(I@T:inlines[], size)
 	#emit STOR.S.pri       size
 	#emit LREF.S.pri       size
 	#emit STOR.S.pri       size
-	YSI_g_sInlineLinkedList = DisasmReloc(size);
+	{}
+	// This code:
+	//   
+	//   YSI_g_sInlineLinkedList = DisasmReloc(size);
+	//   
+	// For some reason crashes with:
+	//   
+	//   https://github.com/pawn-lang/compiler/issues/318
+	//   
+	// Interestingly, it turns out the variable `YSI_g_sJumpOffset` already
+	// existed locally with exactly the same value as the one used in
+	// `DisasmReloc`, so the fix ends up actually being faster than the
+	// original code (but less explicit).  For reference - it gets the previous
+	// in-scope inline from the linked list, as a data segment address.
+	YSI_g_sInlineLinkedList = size - YSI_g_sJumpOffset;
 }
 
 public Inline_MaybeFree_(Alloc:slot)
@@ -1219,72 +1234,78 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
  *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Remove or use `Indirect_Claim(func);`.
-//stock bool:Callback_Get(name[], ret[E_CALLBACK_DATA], expect[] = "", bool:remote = false)
-stock bool:Callback_Get(...)
-{
-	// Construct the old API arguments from the new prototype.  The new
-	// prototype can take both old-style strings and new-style resolved
-	// callbacks from `using inline`.
-	new
-		name[32],
-		numArgs = numargs(),
-		ret,
-		expect[32] = "F@_@",
-		bool:remote = false;
-	assert(2 <= numArgs <= 4);
-	getstringarg(name, 0);
-	if (numArgs >= 3)
+#if __COMPILER_BUG_317
+	stock bool:Callback_Get_(__DUMMY_COMPILER_BUG_317_FIX__, ...)
 	{
-		getstringarg(expect[4], 2, sizeof (expect) - 4);
-		if (numArgs == 4)
-			remote = bool:getarg(3);
-	}
-	P:2("Callback_Get called: %d %s %s", numArgs, name, expect);
-	// Check that the assumption made here is valid.  I can't imagine a case,
-	// given the number of libraries in use here, where it couldn't be!  We
-	// check this since any inline data pointer will point in to the `DAT`
-	// segment relative to the start of `COD`.  Any bare string will just be a
-	// normal string starting with an ASCII letter.  This is different to in the
-	// indirection include which knows to resolve the pointer before checking
-	// this, unlike here were we don't know the type.
-	assert(AMX_HEADER_DAT - AMX_HEADER_COD > 128);
-	ret = getarg(0);
-	if (ret == 0)
-		return false;
-	if (!(0 < ret < 128))
+		#pragma unused __DUMMY_COMPILER_BUG_317_FIX__
+#else
+	stock bool:Callback_Get(...)
 	{
-		// Resolved inline.
-		P:3("Callback_Get: Found resolved callback: %08x", ret);
-		setarg(1, 0, ret);
-		// Direct function pointer.
-		Indirect_Claim(ret);
-		ret = Indirect_DePtr_(ret);
-		if (ret < 0 || AMX_Read(ret))
-			return true;
-		// Check the format, since we might have a new one to use here.
-		numArgs = AMX_Read(ret + _:E_PUBLIC_CALL_HANDLER * cellbytes);
-		if (numArgs == _:addressof (Callback_LocalHandler_<x>) || numArgs == _:addressof (Callback_RemoteHandler_<x>))
+#endif
+		// Construct the old API arguments from the new prototype.  The new
+		// prototype can take both old-style strings and new-style resolved
+		// callbacks from `using inline`.
+		new
+			name[32],
+			numArgs = numargs(),
+			ret,
+			expect[32] = "F@_@",
+			bool:remote = false;
+		assert(2 + __COMPILER_BUG_317 <= numArgs <= 4 + __COMPILER_BUG_317);
+		getstringarg(name, 0 + __COMPILER_BUG_317);
+		if (numArgs >= 3 + __COMPILER_BUG_317)
 		{
-			if (expect[4] && AMX_Read(ret + _:E_PUBLIC_CALL_SPECIFIER * cellbytes) == '\0')
-			{
-				// Given an explicit specifier here, not before.
-				Callback_Strcat_(ret + _:E_PUBLIC_CALL_SPECIFIER * cellbytes, expect[4], 32);
-			}
+			getstringarg(expect[4], 2 + __COMPILER_BUG_317, sizeof (expect) - 4);
+			if (numArgs == 4 + __COMPILER_BUG_317)
+				remote = bool:getarg(3 + __COMPILER_BUG_317);
 		}
-		return true;
+		P:2("Callback_Get called: %d %s %s", numArgs, name, expect);
+		// Check that the assumption made here is valid.  I can't imagine a case,
+		// given the number of libraries in use here, where it couldn't be!  We
+		// check this since any inline data pointer will point in to the `DAT`
+		// segment relative to the start of `COD`.  Any bare string will just be a
+		// normal string starting with an ASCII letter.  This is different to in the
+		// indirection include which knows to resolve the pointer before checking
+		// this, unlike here were we don't know the type.
+		assert(AMX_HEADER_DAT - AMX_HEADER_COD > 128);
+		ret = getarg(0 + __COMPILER_BUG_317);
+		if (ret == 0)
+			return false;
+		if (!(0 < ret < 128))
+		{
+			// Resolved inline.
+			P:3("Callback_Get: Found resolved callback: %08x", ret);
+			setarg(1 + __COMPILER_BUG_317, 0, ret);
+			// Direct function pointer.
+			Indirect_Claim(ret);
+			ret = Indirect_DePtr_(ret);
+			if (ret < 0 || AMX_Read(ret))
+				return true;
+			// Check the format, since we might have a new one to use here.
+			numArgs = AMX_Read(ret + _:E_PUBLIC_CALL_HANDLER * cellbytes);
+			if (numArgs == _:addressof (Callback_LocalHandler_<x>) || numArgs == _:addressof (Callback_RemoteHandler_<x>))
+			{
+				if (expect[4] && AMX_Read(ret + _:E_PUBLIC_CALL_SPECIFIER * cellbytes) == '\0')
+				{
+					// Given an explicit specifier here, not before.
+					Callback_Strcat_(ret + _:E_PUBLIC_CALL_SPECIFIER * cellbytes, expect[4], 32);
+				}
+			}
+			return true;
+		}
+		getstringarg(name, 0 + __COMPILER_BUG_317);
+		// Wrap the new string-find API.
+		if (Callback_Find_(name, ret, remote, GetTagIDFromName(expect)))
+		{
+			setarg(1 + __COMPILER_BUG_317, 0, ret);
+			Indirect_Claim(ret);
+			return true;
+		}
+		return false;
 	}
-//	new
-//		name[32];
-	getstringarg(name, 0);
-	// Wrap the new string-find API.
-	if (Callback_Find_(name, ret, remote, GetTagIDFromName(expect)))
-	{
-		setarg(1, 0, ret);
-		Indirect_Claim(ret);
-		return true;
-	}
-	return false;
-}
+#if __COMPILER_BUG_317
+	#define Callback_Get(%0) Callback_Get_(0,%0)
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <param name="input">Callback to release.</param>
