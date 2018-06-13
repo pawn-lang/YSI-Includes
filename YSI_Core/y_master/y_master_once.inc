@@ -367,37 +367,6 @@ enum _E_YCM
 #define _YCM@p (_YCM@==_E_YCM@p)
 #define _YCM@u (_YCM@==_E_YCM@u)
 
-#if defined YSI_NO_MASTER
-	#endinput
-#endif
-
-static
-	YSI_g_sMasterCount,
-	YSI_g_sMasterData[MAX_MASTERS];
-
-/*-------------------------------------------------------------------------*//**
- * <returns>
- *  Next master ID to be assigned.
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-stock Master_GetNext()
-{
-	P:3("Master_GetNext called");
-	new
-		masters = getproperty(8, YSIM_MASTER),
-		i = 0;
-	while (i != 32)
-	{
-		if (!(masters & (1 << i)))
-		{
-			return i;
-		}
-		++i;
-	}
-	return -1;
-}
-
 /*-------------------------------------------------------------------------*//**
  * <returns>
  *  OnScriptInit
@@ -436,6 +405,14 @@ CHAIN_FORWARD:Master_OnScriptInit() = 1;
 #define OnScriptInit(%0) CHAIN_PUBLIC:Master_OnScriptInit(%0)
 
 forward OnMasterSystemInit(id);
+
+#if defined YSI_NO_MASTER
+	#endinput
+#endif
+
+static
+	YSI_g_sMasterCount,
+	YSI_g_sMasterData[MAX_MASTERS];
 
 /*-------------------------------------------------------------------------*//**
  * <returns>

@@ -48,9 +48,11 @@ Test:y_master_IntReturn()
 	ASSERT(y_master_test_4(a, e, b1, sizeof (b1), "hi") == 0);
 	ASSERT(a == 9);
 	ASSERT(e == 4);
-	ASSERT(y_master_test_2(a, e, "yeah", b2) == 43);
-	ASSERT(a == 35);
-	ASSERT(e == 4);
+	#if !defined YSI_NO_MASTER
+		ASSERT(y_master_test_2(a, e, "yeah", b2) == 43);
+		ASSERT(a == 35);
+		ASSERT(e == 4);
+	#endif
 	ASSERT(y_master_test_3(a, e, b2, sizeof (b2)) == 44);
 	ASSERT(a == 90);
 	ASSERT(e == 4);
@@ -264,6 +266,7 @@ hook OnMasterSystemInit(id)
 Test:y_master_Init()
 {
 	ASSERT(YSI_g_sTestVar == 6);
+	ASSERT(Master_ID() != 0);
 	ASSERT(_YCM_g@6 == _E_YCM@y);
 	ASSERT(!strcmp(#_YCM, "@6"));
 }
