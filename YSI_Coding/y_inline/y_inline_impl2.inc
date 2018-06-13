@@ -547,6 +547,7 @@ public OnCodeInit()
 	YSI_g_sJumpOffset = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
 	if (FALSE)
 		Callback_CallHandler_();
+	{}
 	#emit CONST.pri        Callback_CallHandler_
 	#emit STOR.pri         YSI_g_sCallbackCallAddress
 	YSI_g_sCallbackCallAddress += YSI_g_sJumpOffset;
@@ -1858,7 +1859,7 @@ stock Inline_UI_(const &header)
 		args = Inline_NumArgs(frm),
 		size = frm - ptr + 12 + args,
 		Alloc:closure = malloc(size / cellbytes + _:E_INLINE_CALL - 1);
-	P:5("Inline_UI_: %d %d %d %d", ptr, frm, size, _:closure);
+	P:5("Inline_UI_: %d %d %d %d %d", ptr, frm, size, _:closure, AMX_Read(header));
 	if (!closure)
 		return 0;
 	mset(closure, _:E_INLINE_CALL_NULL, 0);

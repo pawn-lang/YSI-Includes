@@ -88,7 +88,6 @@ Test:y_inline1()
 	{
 		@return 42;
 	}
-	//printf("%d %d %d %d %d", func[0], func[1], func[2], func[3], func[4]);
 	y_inline_Get(using inline func, cc);
 	ASSERT(Callback_Call(cc) == 42);
 	Callback_Release(cc);
@@ -251,8 +250,6 @@ forward y_inline10(a, b[]);
 
 public y_inline10(a, b[])
 {
-	//printf("y_inline10 %d", numargs());
-	//printf("y_inline10 %d %s", a, b);
 	return 12345 + a + b[0];
 }
 
@@ -330,18 +327,13 @@ Test:Callback_AA()
 		cc[E_CALLBACK_DATA];
 	inline func(&a)
 	{
-		// printf("a2 = %d", a);
 		a = 7;
-		// printf("a3 = %d", a);
 		#pragma unused a
 	}
 	y_inline_Get(using inline func, cc);
 	new
 		a = 0;
-	// printf("%x", cc[E_CALLBACK_DATA_POINTER]);
-	// printf("a1 = %d", a);
 	Callback_Call(cc, a);
-	// printf("a4 = %d", a);
 	ASSERT(a == 7);
 }
 
@@ -351,21 +343,15 @@ Test:Callback_Arr1()
 		cc[E_CALLBACK_DATA];
 	inline const func(&a)
 	{
-		// printf("a2 = %d", a);
 		ASSERT(a == 0);
 		a = 7;
 		ASSERT(a == 7);
-		// printf("a3 = %d", a);
-		//#pragma unused a
 	}
 	y_inline_Get(using inline func, cc);
 	new
 		a = 0;
-	// printf("%x", cc[E_CALLBACK_DATA_POINTER]);
-	// printf("a1 = %d", a);
 	ASSERT(a == 0);
 	Callback_Call(cc, a);
-	// printf("a4 = %d", a);
 	ASSERT(a == 7);
 }
 
@@ -430,7 +416,6 @@ Test:Callback_Array1()
 		cc[E_CALLBACK_DATA];
 	inline const func(&a, string:b[], c)
 	{
-		//printf("%d %s", c, b);
 		ASSERT(c == 6);
 		ASSERT(!strcmp(b, "hey"));
 		a = 7;
@@ -462,12 +447,10 @@ Test:Callback_Array1()
 
 Test:y_inline_Remote0()
 {
-	//printf("%08x %08x", 42, 43);
 	new
 		Function:f0 = GetRemoteFunction("MyTesterFunc", "m"),
 		Function:f1 = GetRemoteFunction("MyTesterFunc", "m");
 //	ASSERT(f0 == f1);
-	//printf("%08x %08x", f0, f1);
 	ASSERT(GetRemoteFunction("MyTesterFunc", "m") != GetRemoteFunction("MyTesterFunc", "n"));
 }
 
@@ -560,47 +543,12 @@ hook y_inline_InHook0@0()
 		r = 100;
 	inline func(&r2)
 	{
-		//printf("2");
 		#pragma unused r2
 		YSI_g_sInlineTestVar0 += 1;
 		r2 = 94;
-		/*new
-			x;
-		#emit LOAD.S.pri 0xFFFFFFE8
-		#emit STOR.S.pri x
-		printf("-24 = %d", x);
-		#emit LOAD.S.pri 0xFFFFFFEC
-		#emit STOR.S.pri x
-		printf("-20 = %d", x);
-		#emit LOAD.S.pri 0xFFFFFFF0
-		#emit STOR.S.pri x
-		printf("-16 = %d", x);
-		#emit LOAD.S.pri 0xFFFFFFF4
-		#emit STOR.S.pri x
-		printf("-12 = %d", x);
-		#emit LOAD.S.pri 0xFFFFFFF8
-		#emit STOR.S.pri x
-		printf("-8 = %d", x);
-		#emit LOAD.S.pri 0xFFFFFFFC
-		#emit STOR.S.pri x
-		printf("-4 = %d", x);
-		#emit LOAD.S.pri 0
-		#emit STOR.S.pri x
-		printf("0 = %d", x);
-		#emit LOAD.S.pri 4
-		#emit STOR.S.pri x
-		printf("4 = %d", x);
-		#emit LOAD.S.pri 8
-		#emit STOR.S.pri x
-		printf("8 = %d", x);
-		printf("3 %d %d %x", GetCurrentFrameParameterCount(), GetCurrentFrameLocalCount(), GetCurrentFrameReturn());*/
 	}
-	//printf("0");
 	y_inline_Get(using inline func, cc);
-	//printf("1");
-	//DisasmDump("YSI_TEST_inline.asm");
 	Callback_Call(cc, r);
-	//printf("4");
 	ASSERT(r == 94);
 	Callback_Release(cc);
 }
