@@ -249,6 +249,7 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 		stock
 			_E_YCM:_YCM@ = _E_YCM@y;
 	#endif
+	// THERES A `#endinput` HERE, because we don't need to co-ordinate.
 	#endinput
 #endif
 

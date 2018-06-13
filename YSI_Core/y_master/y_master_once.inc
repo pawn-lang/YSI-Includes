@@ -406,13 +406,11 @@ CHAIN_FORWARD:Master_OnScriptInit() = 1;
 
 forward OnMasterSystemInit(id);
 
-#if defined YSI_NO_MASTER
-	#endinput
+#if !defined YSI_NO_MASTER
+	static
+		YSI_g_sMasterCount,
+		YSI_g_sMasterData[MAX_MASTERS];
 #endif
-
-static
-	YSI_g_sMasterCount,
-	YSI_g_sMasterData[MAX_MASTERS];
 
 /*-------------------------------------------------------------------------*//**
  * <returns>
@@ -426,23 +424,25 @@ static
 public OnScriptExit()
 {
 	P:1("MasterOnce_OnScriptExit called");
-	// Loop through everything this script is master for and call the remote
-	// function for it.  EXCEPT for this script itself!
-	new
-		func[4];
-	for (new i = 0, j = YSI_g_sMasterCount; i != j; ++i)
-	{
-		// This is slightly slower for ending and starting scripts, but uses far
-		// less heap space, and these values are rarely used, so may as well
-		// pack them (which is what has happened here).
-		func[0] = YSI_g_sMasterData[i] & 0xFF,
-		func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF,
-		func[2] = YSI_g_sMasterData[i] >> 16,
-		CallLocalFunction(func, "");
-		P:5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
-		// The properties currently clear instantly, but that may not always be
-		// the case.
-	}
+	#if !defined YSI_NO_MASTER
+		// Loop through everything this script is master for and call the remote
+		// function for it.  EXCEPT for this script itself!
+		new
+			func[4];
+		for (new i = 0, j = YSI_g_sMasterCount; i != j; ++i)
+		{
+			// This is slightly slower for ending and starting scripts, but uses far
+			// less heap space, and these values are rarely used, so may as well
+			// pack them (which is what has happened here).
+			func[0] = YSI_g_sMasterData[i] & 0xFF,
+			func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF,
+			func[2] = YSI_g_sMasterData[i] >> 16,
+			CallLocalFunction(func, "");
+			P:5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
+			// The properties currently clear instantly, but that may not always be
+			// the case.
+		}
+	#endif
 	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~Master_ID()),
 	Master_OnScriptExit(),
 	CallRemoteFunction("OnMasterSystemClose", "i", Master_ID());
@@ -472,21 +472,27 @@ public Master_Reassert()
 	{
 		// Read this script's master value.
 		setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) | Master_ID());
-		// Readd this script's owned scripts.
-		new
-			func[4];
-		for (new i = 0; i != YSI_g_sMasterCount; ++i)
-		{
-			// This is slightly slower for ending and starting scripts, but uses far
-			// less heap space, and these values are rarely used, so may as well
-			// pack them (which is what has happened here).
-			func[0] = YSI_g_sMasterData[i] & 0xFF;
-			func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF;
-			func[2] = YSI_g_sMasterData[i] >> 16;
-			setproperty(9, func, Master_ID());
-		}
+		#if !defined YSI_NO_MASTER
+			// Readd this script's owned scripts.
+			new
+				func[4];
+			for (new i = 0; i != YSI_g_sMasterCount; ++i)
+			{
+				// This is slightly slower for ending and starting scripts, but uses far
+				// less heap space, and these values are rarely used, so may as well
+				// pack them (which is what has happened here).
+				func[0] = YSI_g_sMasterData[i] & 0xFF;
+				func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF;
+				func[2] = YSI_g_sMasterData[i] >> 16;
+				setproperty(9, func, Master_ID());
+			}
+		#endif
 	}
 }
+
+#if defined YSI_NO_MASTER
+	#endinput
+#endif
 
 stock _Master_Relinquish(library[])
 {
