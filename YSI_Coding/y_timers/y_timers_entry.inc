@@ -86,8 +86,8 @@ Optional plugins:
 #endif
 
 #include "..\y_malloc"
-#include "..\y_hooks"
 #include "..\..\YSI_Data\y_iterate"
+#include "..\y_hooks"
 
 #include "y_timers_impl"
 #if defined _YSI_PLUGINS_FIXES_2
