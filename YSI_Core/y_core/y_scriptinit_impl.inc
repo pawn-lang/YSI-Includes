@@ -129,13 +129,13 @@ stock bool:JIT_Complete()
 
 public OnJITCompile()
 {
-	DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 	state _ALS : _ALS_go;
 	state _script_init_fix_state : false;
 	// Got it being called twice for some reason.  I think it was a file glitch,
 	// but just make sure.
 	if (YSI_g_sCodeJITing)
 		return 0;
+	DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 	YSI_g_sCodeJITing = true;
 	AddressofResolve();
 	ScriptInit_OnCodeInit();
@@ -190,17 +190,20 @@ public OnFilterScriptInit()
 	state _script_init_fix_state : true;
 	state _ALS : _ALS_go;
 	// Dump the final assembly of this script so we can inspect it.
-	DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 	if (!YSI_g_sCodeJITing)
 	{
+		DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 		AddressofResolve();
 		ScriptInit_OnCodeInit();
 	}
 	#if defined ScriptInit_OnScriptInit
 		ScriptInit_OnScriptInit();
 	#endif
-	// Dump the final assembly of this script so we can inspect it.
-	DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
+	if (!YSI_g_sCodeJITing)
+	{
+		// Dump the final assembly of this script so we can inspect it.
+		DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
+	}
 	#if defined YSI_LOCK_MODE
 		#if defined FILTERSCRIPT
 			if (strlen(YSI_gLockData[5]) !=
@@ -239,17 +242,20 @@ public OnGameModeInit()
 	{
 		state _script_init_fix_state : false;
 		// Dump the final assembly of this script so we can inspect it.
-		DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 		if (!YSI_g_sCodeJITing)
 		{
+			DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 			AddressofResolve();
 			ScriptInit_OnCodeInit();
 		}
 		#if defined ScriptInit_OnScriptInit
 			ScriptInit_OnScriptInit();
 		#endif
-		// Dump the final assembly of this script so we can inspect it.
-		DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
+		if (!YSI_g_sCodeJITing)
+		{
+			// Dump the final assembly of this script so we can inspect it.
+			DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
+		}
 		#if defined YSI_LOCK_MODE
 			if (YSI_gLockData[
 				floatround(floatlog(_LOCK_LEN_0 + 1), floatround_ceil) + 1 +

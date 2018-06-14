@@ -301,6 +301,9 @@ Test:y_inline12()
 	Callback_Release(cc);
 }
 
+static stock
+	YSI_g_sRemoteTestVar;
+
 Test:y_inline13()
 {
 	new
@@ -310,14 +313,17 @@ Test:y_inline13()
 	{
 		ASSERT(g == 5);
 		++g;
+		YSI_g_sRemoteTestVar = g;
 	}
 	y_inline_Get(using inline func, cc);
 	Callback_Call(cc);
 	Callback_Call(cc);
 	Callback_Call(cc);
+	YSI_g_sRemoteTestVar = 0;
 	Callback_Call(cc);
 	y_inline_Restore(cc);
 	ASSERT(g == 5);
+	ASSERT(YSI_g_sRemoteTestVar == 6);
 	Callback_Release(cc);
 }
 
@@ -453,9 +459,6 @@ Test:y_inline_Remote0()
 //	ASSERT(f0 == f1);
 	ASSERT(GetRemoteFunction("MyTesterFunc", "m") != GetRemoteFunction("MyTesterFunc", "n"));
 }
-
-static stock
-	YSI_g_sRemoteTestVar;
 
 forward y_inline_Remote1(v);
 

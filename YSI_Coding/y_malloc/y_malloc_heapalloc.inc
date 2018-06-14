@@ -224,7 +224,7 @@ static Malloc_TrySetup()
 	// Blank the whole memory.  Maybe required if the heap has been used
 	// already (better to be safe than sorry).
 	memset(YSI_gMallocMemory[YSI_g_sHeapStart + 1], 0, MALLOC_MEMORY - 1);
-	#if _DEBUG > 3
+	#if _DEBUG > 4
 		// The "#if" is actually ignored by these "#emit" codes, as always.
 		#emit CONST.alt     YSI_gMallocMemory
 		#emit STOR.S.alt    temp

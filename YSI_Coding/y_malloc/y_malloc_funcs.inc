@@ -722,7 +722,7 @@ stock Alloc:realloc(Alloc:slot, size, const bool:clear = true)
 				p = YSI_g_sHeapStart, // Was "0", now an offset to the heap.
 				cs,
 				nextSlot = 0;
-			#if _DEBUG > 3
+			#if _DEBUG > 4
 				#emit LCTRL         2
 				#emit STOR.S.alt    cs
 				printf("Malloc_Allocate: heap = %d", cs);

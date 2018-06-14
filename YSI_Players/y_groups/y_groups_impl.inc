@@ -338,6 +338,15 @@ hook OnScriptInit()
 	//printf("Group_OnScriptInit: %d, %d, %d", ni, na, nu);
 	P:4("Group_OnScriptInit: %d, %d, %d", ni, na, nu);
 	P:4("Group_OnScriptInit: %d, %d, %d", AMX_HEADER_COD - AMX_BASE_ADDRESS, YSI_g_sNextInitFunc, AMX_HEADER_DAT - AMX_BASE_ADDRESS);
+	// So just below the call to `GROUP_CHAIN` is this code:
+	//   
+	//   heapspace(); // I'm sure there's a reason this is here.  But I forgot it!
+	//   
+	// I just spent another long debugging session tracking down another bug
+	// where the solution, in another totally unrelated file entirely, was
+	// adding this line here:
+	format(Q@, sizeof (Q@), "", AMX_HEADER_COD - AMX_BASE_ADDRESS);
+	// WHY!?
 	GROUP_CHAIN?<YSI_g_sNextInitFunc>(ni, na, nu);
 	//CallLocalFunction("_Group_SpecialInit", "");
 	heapspace(); // I'm sure there's a reason this is here.  But I forgot it!
