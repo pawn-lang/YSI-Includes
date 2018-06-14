@@ -1370,13 +1370,9 @@ static Callback_CallHandler_(...)
 	#emit SCTRL            6                   // 37
 	
 //Callback_Call_restore_stack:
-	// The stack hasn't been restored yet, and we need it.  The two `INVERT`s
-	// are `NOP`s for padding (since they are immediately followed by a `pri`
-	// loading op), but they are not elided by the JIT.
-	//#emit NOP                                  // 38
-	//#emit NOP                                  // 39
-	#emit INVERT                               // 38
-	#emit INVERT                               // 39
+	// The stack hasn't been restored yet, and we need it.
+	#emit NOP                                  // 38
+	#emit NOP                                  // 39
 	// Padding to account for debug builds.
 	// If the code decides to jump back to here, save the stack out again.
 	#emit LCTRL            4                   // 41
