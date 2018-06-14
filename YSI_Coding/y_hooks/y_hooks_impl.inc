@@ -816,10 +816,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	// Copy the stack to itself (MOVS).
 	// Allocate space.
 	@emit LOAD.S.pri    8               // 5
-	if (Server_JITExists())
-		@emit JZER.rel  ((31 - 7) * 4)  // 7
-	else
-		@emit JZER.rel  ((22 - 7) * 4)  // 7
+	@emit JZER.label    Hooks_NoStackCopy
 	@emit MOVE.alt                      // 8
 	@emit LCTRL         4               // 10
 	@emit SUB                           // 11
@@ -854,6 +851,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		// This is the instruction we want to modify...
 		@emit MOVS          0           // 22 (- 1)
 	}
+	@emit Hooks_NoStackCopy:
 	
 	// Push the (fake) number of parameters.
 	@emit PUSH.C        -4
@@ -875,7 +873,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 				//  else ret = ret & func();
 				//  
 				@emit ZERO.alt      // 3
-				@emit JSLESS.rel    ((size - i) * (10 * 4) - (5 * 4)) // 5
+				@emit JSLESS.label  Hooks_EndCall // 5
 				// =========================
 				//  JUMP OVER THIS SECTION. 
 				// =========================
@@ -889,9 +887,10 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		}
 		if (skipable)
 		{
-			@emit JUMP.rel      4    // 10
+			@emit JUMP.label    Hooks_SkipInvert    // 10
 			// This is the point the large "JSLESS" above goes to.
 			// -1 = 0, -2 = 1
+			@emit Hooks_EndCall:
 			@emit INVERT
 		}
 	}
@@ -901,7 +900,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		// but we still need to correctly process -1 or -2.
 		@emit CALL          (AMX_Read(pointers[0]) + base)
 		@emit ZERO.alt
-		@emit JSGEQ.rel     4
+		@emit JSGEQ.label   Hooks_SkipInvert
 		@emit INVERT
 	}
 	else
@@ -910,6 +909,8 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		// just discard everything we've written so far (reclaims the memory).
 		return 0;
 	}
+	
+	@emit Hooks_SkipInvert:
 	
 	// This is the point the small "JUMP" above goes to.
 	@emit MOVE.alt
