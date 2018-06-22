@@ -78,6 +78,8 @@ Optional plugins:
 forward bool:_Testing_End();
 
 #include "..\y_utils"
+#include "..\..\YSI_Coding\y_va_header"
+#include "..\..\YSI_Coding\y_va"
 
 #if defined YSI_TESTS
 	#if defined INCLUDE_TESTS
@@ -781,8 +783,8 @@ TestClose:y_testing_1()
 
 #if defined YSI_TESTS
 	#include "..\y_core\y_utils_tests"
-	#include "..\y_core\y_va_tests"
 	#include "..\y_core\y_als_tests"
 	#include "..\y_core\y_cell_tests"
+	#include "..\YSI_Coding\y_va\y_va_tests"
 #endif
 

@@ -117,12 +117,11 @@ Optional plugins:
 
 // Now all third-party includes, that shouldn't depend on YSI (if they do,
 // that's an interesting issue I'll solve if/when it happens).
-#include "y_thirdpartyinclude"
+//#include "y_thirdpartyinclude"
 
 // New create the `OnScriptInit` and `OnCodeInit` callbacks, which many YSI
 // includes use to start themselves.
 #include "y_scriptinit_impl"
-#include "y_va_header"
 
 // The ever loved `y_version`.
 #include "y_version"

@@ -1,3 +1,8 @@
+#if defined _INC_y_thirdpartyinclude
+	#endinput
+#endif
+#define _INC_y_thirdpartyinclude
+
 /*+
  * <library name="y_thirdpartyinclude">
  * <section>
@@ -362,4 +367,20 @@ Optional plugins:
 
 // "y_thirdpartyinclude_tests" is NOT included here when tests are active, because it complicates
 // dependency orders massively!
+
+public OnCodeInit()
+{
+	AddressofResolve();
+	#if defined ThirdParty_OnCodeInit
+		return ThirdParty_OnCodeInit();
+	#else
+		return 1;
+	#endif
+}
+
+#undef OnCodeInit
+#define OnCodeInit ThirdParty_OnCodeInit
+#if defined ThirdParty_OnCodeInit
+	forward ThirdParty_OnCodeInit();
+#endif
 

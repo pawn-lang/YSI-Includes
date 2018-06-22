@@ -604,94 +604,16 @@ stock IPToInt(const ip[])
  *  strings for the updated text system involving file based styling and this
  *  is not checked for collisions as it's unimportant.  But this doesn't affect
  *  the function at all, I just mentioned it here for "interest".
- *
- *  Rewritten in self-generating assembly.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
 stock bernstein(const string[] /* 12 */)
 {
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	#emit NOP
-	__COMPILER_NAKED
-	#pragma unused string
+	new h = -1, i, j;
+	while ((j = string[i++]))
+		h = h * 33 + j;
+	return h;
 }
-
-public OnCodeInit()
-{
-	new
-		base,
-		ctx[AsmContext];
-	// Get the function.
-	#emit CONST.pri  bernstein
-	#emit LOAD.alt   AMX_HEADER_COD
-	#emit ADD
-	#emit STOR.S.pri base
-	P:7("bernstein: base = %d, %d", AMX_HEADER_COD, base);
-	AsmInitPtr(ctx, base, 25 * 4), // Don't need any more than that.
-	AsmSetErrorHandlerName(ctx, "Debug_ErrorHandler");
-	// Setup.
-	@emit PROC
-	@emit CONST.alt   -1
-	@emit PUSH.S      12 // string
-	@emit LREF.S.pri  12 // string
-	@emit JZER.rel    12 * 4 // bernstein_end
-// bernstein_loop:
-	@emit XCHG
-	@emit SMUL.C      33
-	@emit ADD
-	@emit MOVE.alt
-	// Update the next pointer.
-	@emit POP.pri
-	@emit ADD.C       4
-	@emit PUSH.pri
-	// Load the data for the current pointer.
-	@emit LOAD.I
-	@emit JNZ.rel     -(12 * 4) // bernstein_loop
-// bernstein_end:
-	@emit MOVE.pri
-	@emit STACK       4
-	@emit RETN
-	if (FALSE)
-		bernstein("");
-	#if defined _y_utils_OnCodeInit
-		_y_utils_OnCodeInit();
-	#endif
-	__COMPILER_NAKED
-}
-
-#if defined _y_utils_OnCodeInit
-	forward _y_utils_OnCodeInit();
-#endif
-#if defined _ALS_OnCodeInit
-	#undef OnCodeInit
-#else
-	#define _ALS_OnCodeInit
-#endif
-#define OnCodeInit _y_utils_OnCodeInit
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to check.</param>
