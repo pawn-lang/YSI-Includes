@@ -77,6 +77,7 @@ Optional plugins:
 
 static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
+	#pragma unused fmat
 	// This function formats the incoming data and compares it to the reference.
 	new
 		msg[512],
@@ -86,14 +87,15 @@ static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit ADDR.pri         16
 	#emit STOR.S.pri       end
 	// Get the stack position after everything.
-	#emit ADDR.pri         8 // 12 - 4
+	#emit ADDR.pri         12
 	#emit LOAD.S.alt       8
 	#emit ADD
 	#emit STOR.S.pri       i
-	while (i >= end) {
+	while (i > end)
+	{
+		i -= 4;
 		#emit LREF.S.pri       i
 		#emit PUSH.pri
-		i -= 4;
 	}
 	{}
 	#emit PUSH.C           512
@@ -103,8 +105,7 @@ static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit PUSH.pri
 	#emit SYSREQ.C         format
 	// Remove the data from the stack.
-	#emit POP.pri
-	#emit LOAD.S.alt       8
+	#emit POP.alt
 	#emit LCTRL            4
 	#emit ADD
 	#emit SCTRL            4

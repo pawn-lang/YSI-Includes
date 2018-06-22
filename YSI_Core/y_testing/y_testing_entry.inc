@@ -262,6 +262,7 @@ stock _Testing_Start(const name[])
 
 stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
+	#pragma unused str
 	new
 		i,
 		end; // 12 + 4 + 4.
@@ -269,14 +270,15 @@ stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
 	#emit ADDR.pri         16
 	#emit STOR.S.pri       end
 	// Get the stack position after everything.
-	#emit ADDR.pri         8 // 12 - 4
+	#emit ADDR.pri         12
 	#emit LOAD.S.alt       8
 	#emit ADD
 	#emit STOR.S.pri       i
-	while (i >= end) {
+	while (i > end)
+	{
+		i -= 4;
 		#emit LREF.S.pri       i
 		#emit PUSH.pri
-		i -= 4;
 	}
 	{}
 	#emit PUSH.C           512
@@ -286,8 +288,7 @@ stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
 	#emit PUSH.pri
 	#emit SYSREQ.C         format
 	// Remove the data from the stack.
-	#emit POP.pri
-	#emit LOAD.S.alt       8
+	#emit POP.alt
 	#emit LCTRL            4
 	#emit ADD
 	#emit SCTRL            4
@@ -298,17 +299,18 @@ stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
 
 stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
+	#pragma unused str
 	P:3("Testing_Test called: %i, \"%s\"", x, str);
 	++YSI_g_sTests;
 	static
-		msg[6],
-		FRM,
-		RET;
+		Testing_Test_msg[6],
+		Testing_Test_FRM,
+		Testing_Test_RET;
 	if (!x)
 	{
 		++YSI_g_sFails;
 #if defined INCLUDE_TESTS || defined RUN_TESTS
-		msg = TEST_FAILED;
+		Testing_Test_msg = TEST_FAILED;
 #else
 		// Awkward way to avoid `#emit` in `#if` bug, without an unreachable
 		// code warning.
@@ -318,7 +320,7 @@ stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 	else
 	{
 #if defined TEST_SHOW_PASSES && (defined INCLUDE_TESTS || defined RUN_TESTS)
-		msg = TEST_PASSED;
+		Testing_Test_msg = TEST_PASSED;
 #else
 		return;
 #endif
@@ -330,15 +332,15 @@ stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 	//  
 	#emit LOAD.S.pri       16
 	#emit STOR.S.pri       12
-	#emit CONST.pri        msg
+	#emit CONST.pri        Testing_Test_msg
 	#emit STOR.S.pri       16
 	#emit POP.pri
-	#emit STOR.pri         FRM
+	#emit STOR.pri         Testing_Test_FRM
 	#emit POP.pri
-	#emit STOR.pri         RET
+	#emit STOR.pri         Testing_Test_RET
 	#emit SYSREQ.C         printf
-	#emit PUSH             RET
-	#emit PUSH             FRM
+	#emit PUSH             Testing_Test_RET
+	#emit PUSH             Testing_Test_FRM
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -353,7 +355,14 @@ stock bool:_Testing_End()
 	YSI_gTestComplete = true;
 	new
 		space = heapspace();
-	Testing_Test(YSI_g_sCurHeap == space, TEST_FAILED " Heap allocation leak - was: %d, now: %d", YSI_g_sCurHeap, space);
+	++YSI_g_sTests;
+	if (YSI_g_sCurHeap != space)
+	{
+#if defined INCLUDE_TESTS || defined RUN_TESTS
+		++YSI_g_sFails;
+		printf(TEST_FAILED " Heap allocation leak - was: %d, now: %d", YSI_g_sCurHeap, space);
+#endif
+	}
 	TEST_REPORT(" ");
 	return false;
 }
@@ -411,7 +420,14 @@ Testing_Run_before_fail:
 		YSI_g_sInTest = true,
 		CallLocalFunction(buffer, ""),
 		YSI_g_sInTest = false;
-		Testing_Test(YSI_gTestComplete, "Test did not complete (possible crash).\n");
+		++YSI_g_sTests;
+		if (!YSI_gTestComplete)
+		{
+#if defined INCLUDE_TESTS || defined RUN_TESTS
+			++YSI_g_sFails;
+			printf("Test did not complete (possible crash).\n");
+#endif
+		}
 		if (YSI_g_sFails != fails)
 		{
 			WriteAmxMemory(YSI_g_sCurTest, YSI_g_sFailTests),
