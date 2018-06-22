@@ -55,9 +55,9 @@ TestCompile:y_utils()
 static stock
 	gCalls_y_utils_va_return;
 
-forward y_utils_va_return(str[]);
+forward y_utils_va_return(const str[]);
 
-public y_utils_va_return(str[])
+public y_utils_va_return(const str[])
 {
 	ASSERT(!strcmp(str, "Hello World 42 9.455"));
 	++gCalls_y_utils_va_return;
@@ -73,7 +73,7 @@ Test:y_utils_va_return()
 	ASSERT(gCalls_y_utils_va_return == 4);
 }
 
-static stock va_return_Pass(message[], va_args<>)
+static stock va_return_Pass(const message[], va_args<>)
 {
 	new
 		str[64];

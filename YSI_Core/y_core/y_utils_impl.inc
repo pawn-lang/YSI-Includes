@@ -506,7 +506,7 @@ stock Strip(str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock endofline(line[], pos)
+stock endofline(const line[], pos)
 {
 	P:7("endofline called: \"%s\", %i", line, pos);
 	if (NOT_IN_RANGE(pos, 0, strlen(line))) return 0;
@@ -524,7 +524,7 @@ stock endofline(line[], pos)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock chrfind(needle, haystack[], start = 0)
+stock chrfind(needle, const haystack[], start = 0)
 {
 	P:7("chrfind called: %c, \"%s\", %i", needle, haystack, start);
 	if (start < 0)
@@ -549,7 +549,7 @@ stock chrfind(needle, haystack[], start = 0)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock chrfindp(needle, haystack[], start = 0)
+stock chrfindp(needle, const haystack[], start = 0)
 {
 	P:7("chrfind called: %c, \"%s\", %i", needle, haystack, start);
 	if (start < 0)
@@ -564,7 +564,7 @@ stock chrfindp(needle, haystack[], start = 0)
  * <param name="ip">Dot notation IP to convert to an integer.</param>
  *//*------------------------------------------------------------------------**/
 
-stock IPToInt(ip[])
+stock IPToInt(const ip[])
 {
 	new
 		ipv = strval(ip) << 24,
@@ -609,7 +609,7 @@ stock IPToInt(ip[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bernstein(string[] /* 12 */)
+stock bernstein(const string[] /* 12 */)
 {
 	#emit NOP
 	#emit NOP
@@ -700,7 +700,7 @@ public OnCodeInit()
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock ishex(str[])
+stock ishex(const str[])
 {
 	P:7("ishex called: \"%s\"", str);
 	new
@@ -876,7 +876,7 @@ stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock isnumeric(str[])
+stock isnumeric(const str[])
 {
 	P:7("isnumeric called: \"%s\"", str);
 	new
@@ -898,7 +898,7 @@ stock isnumeric(str[])
 	 * </remarks>
 	 *//*--------------------------------------------------------------------**/
 	
-	stock hexstr(string[])
+	stock hexstr(const string[])
 	{
 		new
 			ret,
@@ -941,7 +941,7 @@ stock isnumeric(str[])
 	 * </remarks>
 	 *//*--------------------------------------------------------------------**/
 	
-	stock bool:boolstr(string[])
+	stock bool:boolstr(const string[])
 	{
 		// Hooray for De Morgan's rules!
 		return string[0] && string[0] != '0' && strcmp(string, "false", true);
@@ -959,7 +959,7 @@ stock isnumeric(str[])
 	 * </remarks>
 	 *//*--------------------------------------------------------------------**/
 	
-	stock binstr(string[])
+	stock binstr(const string[])
 	{
 		new
 			pos = 0;
@@ -1823,7 +1823,7 @@ stock Median(arr[], num = sizeof (arr))
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock Range(arr[], num = sizeof (arr))
+stock Range(const arr[], num = sizeof (arr))
 {
 	new
 		min2 = cellmax,

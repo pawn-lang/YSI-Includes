@@ -75,7 +75,7 @@ Optional plugins:
 	#define __ALS_MAKE_DEFINED
 #endif
 
-static stock y_als_Print(result[], fmat[], va_args<>)
+static stock y_als_Print(const result[], const fmat[], va_args<>)
 {
 	// This function formats the incoming data and compares it to the reference.
 	new

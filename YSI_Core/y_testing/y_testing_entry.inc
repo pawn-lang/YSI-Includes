@@ -90,10 +90,10 @@ forward bool:_Testing_End();
 
 #if defined INCLUDE_TESTS
 	#define RUN_TESTS
-	#define Debug_PrintT va_printf
+	#define Debug_PrintT printf
 #elseif defined RUN_TESTS
 	#define _AUTO_RUN_TESTS
-	#define Debug_PrintT va_printf
+	#define Debug_PrintT printf
 #else
 	#define Debug_PrintT(%0);
 #endif
@@ -117,7 +117,7 @@ forward bool:_Testing_End();
 #define TEST_NULL_EX(%0,%2)  Testing_Test((%0) == 0, (%2))
 #define TEST_N_EX(%0,%1,%2)  Testing_Test((%0) == (%1), (%2))
 
-#define TEST_MSG "\2\2\2\2\2"
+//#define TEST_MSG "\2\2\2\2\2"
 #define TEST_FAILED "FAIL:"
 #define TEST_PASSED "PASS!"
 
@@ -126,7 +126,7 @@ forward bool:_Testing_End();
 #define _Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0)%1) _Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0\x29;%1)
 #define _Y_TESTOB:_Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0(%1) _Y_TESTOB:_Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0\x28;%1)
 
-#define ASSERT(%0) Testing_Test(%0,TEST_MSG" %s", _Y_TESTOB:_Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0)
+#define ASSERT(%0) Testing_Test(%0, "%s %s", _Y_TESTOB:_Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0)
 #define ASSERT_TRUE(%0) ASSERT(!!%0)
 #define ASSERT_FALSE(%0) ASSERT(!%0)
 #define ASSERT_NULL(%0) ASSERT(0 == %0)
@@ -238,12 +238,13 @@ stock
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock _Testing_Start(name[])
+stock _Testing_Start(const name[])
 {
 	YSI_gTestComplete = false;
 	// Gets a reference to the name string, which is also an intrusive linked
 	// list of failures.
-	name[0] = name[1] = 0,
+	setarg(0, 0, 0); // Bypass `const`.
+	setarg(0, 1, 0); //name[0] = name[1] = 0,
 	YSI_g_sCurTest = ref(name);
 	// My very first legitimate usage of `heapspace()` for something other than
 	// as a dummy no-op function call!  I'm actually quite happy I found a use
@@ -263,38 +264,26 @@ stock _Testing_Start(name[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Testing_Ask(playerid, str[] = "", va_args<>)
+stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
-	va_format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, va_start<2>);
+	format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, ___(2));
 	ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
 	YSI_g_sAsked = true;
 }
 
-stock Testing_Test(bool:x, str[] = "", va_args<>)
+stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
 		P:3("Testing_Test called: %i, \"%s\"", x, str);
 		++YSI_g_sTests;
 		if (!x)
 		{
+			P:T(str, TEST_FAILED, ___(2));
 			++YSI_g_sFails;
-			if (numargs() == 2)
-			{
-				P:T(TEST_FAILED " %s", str);
-			}
-			else
-			{
-				if (str[0] == '\2')
-				{
-					strunpack(str, !TEST_FAILED, 6);
-					str[5] = ' ';
-				}
-				P:T(str, va_start<2>);
-			}
 		}
 	#if defined TEST_SHOW_PASSES
 		else
 		{
-			P:T(TEST_PASSED, va_start<2>);
+			P:T(str, TEST_PASSED, ___(2));
 		}
 	#endif
 }
@@ -331,7 +320,7 @@ stock bool:_Testing_End()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:Testing_Run(&tests, &fails, lastfail[33] = "", bool:p = false)
+stock bool:Testing_Run(&tests, &fails, const lastfail[33] = "", bool:p = false)
 {
 	P:3("bool:Testing_Run called: %i, %i, \"%s\", %i", tests, fails, lastfail, p);
 	#pragma unused p, lastfail
@@ -423,7 +412,7 @@ Testing_Run_after_fail:
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:Testing_Player(playerid, &idx, &tests, &fails, lastfail[33] = "", bool:p = false)
+stock bool:Testing_Player(playerid, &idx, &tests, &fails, const lastfail[33] = "", bool:p = false)
 {
 	P:3("bool:Testing_Player called: %i, %i, %i, %i, \"%s\", %i", playerid, idx, tests, fails, lastfail, p);
 	#pragma unused p
@@ -726,11 +715,11 @@ stock Testing_RunAll()
 
 // Meta tests.
 
-stock Testing_TestRedirect(bool:x, str[] = "", va_args<>)
+stock Testing_TestRedirect(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
 	ASSERT(x == bool:YSI_g_sTestResult);
 	ASSERT(str[0] != '\0');
-	ASSERT(!strcmp(str, "\2\2\2\2\2", false, 5));
+	ASSERT(!strcmp(str, "%s %s", false, 5));
 }
 
 Test:y_testing_2()

@@ -326,7 +326,7 @@ static stock YVA2_CodeGenPushVariable(ctx[AsmContext], stack)
 	@emit PUSH.S       stack
 }
 
-static stock YVA2_FoundCall(m[CodeScanner])
+static stock YVA2_FoundCall(const m[CodeScanner])
 {
 	if (YSI_g_sPassthroughNestings)
 	{
@@ -419,7 +419,7 @@ static stock YVA2_FoundCall(m[CodeScanner])
 	return -1;
 }
 
-static stock YVA2_FoundPush(m[CodeScanner])
+static stock YVA2_FoundPush(const m[CodeScanner])
 {
 	new
 		addr = CodeScanGetMatchAddress(m);
@@ -693,12 +693,12 @@ stock va_getstring(dest[], arg, len = sizeof (dest))
 	#emit STACK      16
 }
 
-stock PlayerText:va_CreatePlayerTextDraw(playerid, Float:x, Float:y, fmat[], va_args<>)
+stock PlayerText:va_CreatePlayerTextDraw(playerid, Float:x, Float:y, const fmat[], va_args<>)
 {
 	return CreatePlayerTextDraw(playerid, x, y, va_return(fmat, va_start<4>));
 }
 
-stock Text:va_TextDrawCreate(Float:x, Float:y, fmat[], va_args<>)
+stock Text:va_TextDrawCreate(Float:x, Float:y, const fmat[], va_args<>)
 {
 	return TextDrawCreate(x, y, va_return(fmat, va_start<3>));
 }

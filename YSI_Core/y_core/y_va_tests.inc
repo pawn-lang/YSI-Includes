@@ -17,7 +17,7 @@ static stock y_va_CallLocalFunction(va_args<>)
 	return local1 * local2 + local3 - local4;
 }
 
-static stock y_va_CallLocalFunction_X(func[], va_args<>)
+static stock y_va_CallLocalFunction_X(const func[], va_args<>)
 {
 	new
 		local1 = 61,
@@ -28,7 +28,7 @@ static stock y_va_CallLocalFunction_X(func[], va_args<>)
 	return local1 * local2 + local3 - local4;
 }
 
-static stock y_va_CallRemoteFunction_X(func[], va_args<>)
+static stock y_va_CallRemoteFunction_X(const func[], va_args<>)
 {
 	va_CallRemoteFunction(func, "si", va_start<1>);
 }
@@ -52,17 +52,17 @@ public y_va_PublicTestFunction(vara, varb)
 	vara = clamp(varb, varc, vard);
 }
 
-forward y_va_PublicRecurseFunction(func[], vara);
+forward y_va_PublicRecurseFunction(const func[], vara);
 
-public y_va_PublicRecurseFunction(func[], vara)
+public y_va_PublicRecurseFunction(const func[], vara)
 {
 	// "" Passed to "CallLocalFunction" crashes it.
 	ASSERT(123 == y_va_CallLocalFunction_X(func, "\1", vara));
 }
 
-forward y_va_PublicCallFunction(func[], vara);
+forward y_va_PublicCallFunction(const func[], vara);
 
-public y_va_PublicCallFunction(func[], vara)
+public y_va_PublicCallFunction(const func[], vara)
 {
 	y_va_PublicTestFunction(vara, 123456);
 }
@@ -93,7 +93,7 @@ static stock y_va_printf_2(num, other, va_args<>)
 	va_printf("", va_start<2>);
 }
 
-static stock y_va_printf_3(num, other, str[], va_args<>)
+static stock y_va_printf_3(num, other, const str[], va_args<>)
 {
 	#pragma unused num, other, str
 	va_printf("", va_start<3>);
@@ -144,7 +144,7 @@ Test:y_va_SetTimerEx()
 	ASSERT(y_va_SetTimerEx(5, 6, 7) != 0);
 }
 
-static stock y_va_format(dest[], size, fmat[], va_args<>)
+static stock y_va_format(dest[], size, const fmat[], va_args<>)
 {
 	va_format(dest, size, fmat, va_start<3>);
 }
@@ -157,7 +157,7 @@ Test:y_va_format()
 	ASSERT(!strcmp(str, "Hello 99 001F woop"));
 }
 
-static stock y_va_return(dest[], size, fmat[], va_args<>)
+static stock y_va_return(dest[], size, const fmat[], va_args<>)
 {
 	strcpy(dest, va_return(fmat, va_start<3>), size);
 }
@@ -170,7 +170,7 @@ Test:y_va_return()
 	ASSERT(!strcmp(str, "Hi 5.500 this is  short   "));
 }
 
-static stock y_va_DoubleIndirection(dest[YSI_MAX_STRING], fmat[], var0, var1, var2, va_args<>) //var3, var4, size = sizeof (dest))
+static stock y_va_DoubleIndirection(dest[YSI_MAX_STRING], const fmat[], var0, var1, var2, va_args<>) //var3, var4, size = sizeof (dest))
 {
 	#pragma unused var0, var1, var2
 	// va_format(dest, 32, fmat, va_start<5>);
@@ -197,7 +197,7 @@ Test:y_va_DoubleIndirection()
 	ASSERT(!strcmp(dest, "77 88"));
 }
 
-static stock bool:y_va_Locals(real[], fmat[], va_args<>)
+static stock bool:y_va_Locals(const real[], const fmat[], va_args<>)
 {
 	new
 		dest[128];
@@ -230,7 +230,7 @@ static stock y_va2_printf_2(num, other, GLOBAL_TAG_TYPES:...)
 	printf("", ___2);
 }
 
-static stock y_va2_printf_3(num, other, str[], GLOBAL_TAG_TYPES:...)
+static stock y_va2_printf_3(num, other, const str[], GLOBAL_TAG_TYPES:...)
 {
 	#pragma unused num, other, str
 	printf("", ___(3));
@@ -257,7 +257,7 @@ static stock y_va2_Three(...)
 	return 3;
 }
 
-static stock y_va2_Nest2(fmat[YSI_MAX_STRING], ...)
+static stock y_va2_Nest2(const fmat[YSI_MAX_STRING], ...)
 {
 	new
 		dest[YSI_MAX_STRING];
@@ -275,7 +275,7 @@ Test:y_va2_Nesting()
 	y_va2_Nest1("final param", "%s %s %s", "third param", "second param");
 }
 
-static stock y_va2_format(dest[], size, fmat[], GLOBAL_TAG_TYPES:...)
+static stock y_va2_format(dest[], size, const fmat[], GLOBAL_TAG_TYPES:...)
 {
 	format(dest, size, fmat, ___(3));
 }
@@ -288,7 +288,7 @@ Test:y_va2_format()
 	ASSERT(!strcmp(str, "Hello 99 001F woop"));
 }
 
-static stock y_va2_return(dest[], size, fmat[], GLOBAL_TAG_TYPES:...)
+static stock y_va2_return(dest[], size, const fmat[], GLOBAL_TAG_TYPES:...)
 {
 	format(dest, size, fmat, ___(3));
 }
@@ -301,7 +301,7 @@ Test:y_va2_return()
 	ASSERT(!strcmp(str, "Hi 5.500 this is  short   "));
 }
 
-static stock y_va2_DoubleIndirection(dest[1040], fmat[], var0, var1, var2, GLOBAL_TAG_TYPES:...) //var3, var4, size = sizeof (dest))
+static stock y_va2_DoubleIndirection(dest[1040], const fmat[], var0, var1, var2, GLOBAL_TAG_TYPES:...) //var3, var4, size = sizeof (dest))
 {
 	#pragma unused var0, var1, var2
 	// va_format(dest, 32, fmat, ___(5));
@@ -326,19 +326,19 @@ Test:y_va2_DoubleIndirection()
 	ASSERT(!strcmp(dest, "77 88"));
 }
 
-static stock y_va2_TripleIndirectionC(dest[1040], fmat[], var0, var1, var2, GLOBAL_TAG_TYPES:...)
+static stock y_va2_TripleIndirectionC(dest[1040], const fmat[], var0, var1, var2, GLOBAL_TAG_TYPES:...)
 {
 	#pragma unused var0, var1, var2
 	format(dest, sizeof (dest), fmat, ___(5));
 	setarg(5, 0, 101);
 }
 
-static stock y_va2_TripleIndirectionB(dest[1040], fmat[], var0, var1, var2, GLOBAL_TAG_TYPES:...)
+static stock y_va2_TripleIndirectionB(dest[1040], const fmat[], var0, var1, var2, GLOBAL_TAG_TYPES:...)
 {
 	y_va2_TripleIndirectionC(dest, fmat, var0, var1, var2, ___(5));
 }
 
-static stock y_va2_TripleIndirectionA(dest[1040], fmat[], var0, var1, var2, GLOBAL_TAG_TYPES:...)
+static stock y_va2_TripleIndirectionA(dest[1040], const fmat[], var0, var1, var2, GLOBAL_TAG_TYPES:...)
 {
 	y_va2_TripleIndirectionB(dest, fmat, var0, var1, var2, ___(5));
 }
@@ -361,7 +361,7 @@ Test:y_va2_TripleIndirection()
 	ASSERT(!strcmp(dest, "77 88"));
 }
 
-static stock bool:y_va2_Locals(real[], fmat[], GLOBAL_TAG_TYPES:...)
+static stock bool:y_va2_Locals(const real[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
 	new
 		dest[128];

@@ -275,7 +275,7 @@ public Inline_MaybeConst_(ResolvedAlloc:slot)
 	AMX_Write(_:slot + _:E_INLINE_CALL_TIMER * cellbytes, 0);
 }
 
-static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
+static stock Inline_FoundStart(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
 	P:4("Inline_FoundStart called");
 	if (data[E_INLINE_DATA_STATE] != 0)
@@ -289,7 +289,7 @@ static stock Inline_FoundStart(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	return 0;
 }
 
-static stock Inline_FoundMid(scanner[CodeScanner], data[E_INLINE_DATA] = "")
+static stock Inline_FoundMid(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
 	P:4("Inline_FoundMid called");
 	if (data[E_INLINE_DATA_STATE] != 1)
@@ -329,7 +329,7 @@ static stock Inline_FoundDescriptor(size, data[E_INLINE_DATA])
 	}
 }
 
-static stock Inline_FoundConst(scanner[CodeScanner], data[E_INLINE_DATA] = "")
+static stock Inline_FoundConst(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
 	P:4("Inline_FoundConst called");
 	if (data[E_INLINE_DATA_STATE] != 2)
@@ -339,7 +339,7 @@ static stock Inline_FoundConst(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	return 0;
 }
 
-static stock Inline_FoundConst2(scanner[CodeScanner], data[E_INLINE_DATA] = "")
+static stock Inline_FoundConst2(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
 	P:4("Inline_FoundConst2 called");
 	#pragma unused scanner
@@ -352,7 +352,7 @@ static stock Inline_FoundConst2(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	return 0;
 }
 
-static stock Inline_FoundVar(scanner[CodeScanner], data[E_INLINE_DATA] = "")
+static stock Inline_FoundVar(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
 	P:4("Inline_FoundVar called");
 	#pragma unused scanner
@@ -363,7 +363,7 @@ static stock Inline_FoundVar(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	return 0;
 }
 
-static stock Inline_FoundRef(scanner[CodeScanner], data[E_INLINE_DATA] = "")
+static stock Inline_FoundRef(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
 	P:4("Inline_FoundRef called");
 	if (data[E_INLINE_DATA_STATE] < 3)
@@ -373,7 +373,7 @@ static stock Inline_FoundRef(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	return 0;
 }
 
-static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
+static stock Inline_FoundEnd(const scanner[CodeScanner], data[E_INLINE_DATA] = "")
 {
 	P:4("Inline_FoundEnd called");
 	if (data[E_INLINE_DATA_STATE] < 3)
@@ -389,7 +389,7 @@ static stock Inline_FoundEnd(scanner[CodeScanner], data[E_INLINE_DATA] = "")
 	return 0;
 }
 
-static stock Inline_MakeScannerHappy(data[E_INLINE_DATA])
+static stock Inline_MakeScannerHappy(const data[E_INLINE_DATA])
 {
 	// This inserts an extra `stack` OP for no reason other than to make "codescan" happy, so it
 	// thinks the correct number of cells have been pushed and pulled.
@@ -413,7 +413,7 @@ static stock Inline_MakeScannerHappy(data[E_INLINE_DATA])
 	}
 }
 
-static stock Inline_StoreData(data[E_INLINE_DATA])
+static stock Inline_StoreData(const data[E_INLINE_DATA])
 {
 	// `data[E_INLINE_DATA_NAME]` stores the address of a string with the inline function's name,
 	// followed by extra space for storing: a pointer to the name, a pointer to the function, a
@@ -444,7 +444,7 @@ static stock Inline_StoreData(data[E_INLINE_DATA])
 	AMX_Write(header + 2 * cellbytes, GetTagIDFromName(tag));
 }
 
-static stock Inline_FoundUsingInline(scanner[CodeScanner])
+static stock Inline_FoundUsingInline(const scanner[CodeScanner])
 {
 	// Found a call to `using inline`.  Change it from (the equivalent of)
 	// `(a = Inline_UI_(a), a)` to `Inline_UI_(a)`.  First, check that the two
@@ -471,7 +471,7 @@ static stock Inline_FoundUsingInline(scanner[CodeScanner])
 	return 0;
 }
 
-static stock Inline_FoundDestructor(scanner[CodeScanner])
+static stock Inline_FoundDestructor(const scanner[CodeScanner])
 {
 	// Found a call to `operator~(I@T:inlines[], size)`.  Get the offset of the
 	// variable we store the linked list in.  Note that the linked list doesn't
@@ -504,7 +504,7 @@ static stock Inline_FoundDestructor(scanner[CodeScanner])
 	return 0;
 }
 
-static stock Inline_Found@return(scanner[CodeScanner])
+static stock Inline_Found@return(const scanner[CodeScanner])
 {
 	new
 		ctx[AsmContext];
@@ -1515,7 +1515,7 @@ static stock Callback_LocalHandler_(...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Inline_GenerateLocalsCopy(ctx[AsmContext], parameters[], count)
+static stock Inline_GenerateLocalsCopy(ctx[AsmContext], const parameters[], count)
 {
 	new
 		input = 12;
@@ -1589,7 +1589,7 @@ static stock Inline_GenerateLocalsCopy(ctx[AsmContext], parameters[], count)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Inline_GenerateLocalsStore(ctx[AsmContext], parameters[], count)
+static stock Inline_GenerateLocalsStore(ctx[AsmContext], const parameters[], count)
 {
 	new
 		accumulate = 0;
@@ -1636,7 +1636,7 @@ static stock Inline_GeneratePreamble(ctx[AsmContext], locals)
 	@emit STOR.S.pri       4
 }
 
-static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count, bool:isConst, locals, inlineParams)
+static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const count, bool:isConst, locals, inlineParams)
 {
 	new
 		bool:needStore = false,
@@ -1721,7 +1721,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], parameters[], const count
 	}
 }
 
-static stock Inline_DoRetnGen(ctx[AsmContext], scanner[CodeScanner], data[E_INLINE_DATA])
+static stock Inline_DoRetnGen(ctx[AsmContext], const scanner[CodeScanner], const data[E_INLINE_DATA])
 {
 	// Remove the return for the inner loop, since it may now point to an
 	// invalid address (in the middle of an OpCode we just wrote out).
@@ -1811,7 +1811,7 @@ static stock Inline_OnAsmError(ctx[AsmContext], AsmError:error)
 	// TODO: Abort codegen.
 }
 
-static stock Inline_DoCodeGen(scanner[CodeScanner], data[E_INLINE_DATA])
+static stock Inline_DoCodeGen(const scanner[CodeScanner], const data[E_INLINE_DATA])
 {
 	new
 		ctx[AsmContext];

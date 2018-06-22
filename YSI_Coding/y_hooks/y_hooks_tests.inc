@@ -536,7 +536,7 @@ Test:y_hooks_Ony_hooksTest5()
 	YSI_g_sValue = 0;
 }
 
-static stock y_hooks_funcidx2(str[])
+static stock y_hooks_funcidx2(const str[])
 {
 	new
 		func[32],
