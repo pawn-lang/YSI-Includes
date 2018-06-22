@@ -78,7 +78,7 @@ Optional plugins:
 forward bool:_Testing_End();
 
 #include "..\y_utils"
-#include "..\..\YSI_Coding\y_va_header"
+#include "..\..\YSI_Coding\y_va\y_va_header"
 #include "..\..\YSI_Coding\y_va"
 
 #if defined YSI_TESTS
