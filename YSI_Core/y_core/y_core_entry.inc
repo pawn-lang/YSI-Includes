@@ -132,7 +132,6 @@ Optional plugins:
 #include "y_shortfunc"
 #include "y_cell_impl"
 #include "y_utils_impl"
-#include "y_va_impl"
 
 // These are conditional, and use most of the preceeding code.
 #if defined YSI_TESTS
