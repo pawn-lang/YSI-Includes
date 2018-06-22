@@ -75,12 +75,40 @@ Optional plugins:
 	#define __ALS_MAKE_DEFINED
 #endif
 
-static stock y_als_Print(const result[], const fmat[], va_args<>)
+static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
 	// This function formats the incoming data and compares it to the reference.
 	new
-		msg[512];
-	format(msg, sizeof (msg), fmat, ___2);
+		msg[512],
+		i,
+		end; // 12 + 4 + 4.
+	// Get the stack position after `result`.
+	#emit ADDR.pri         16
+	#emit STOR.S.pri       end
+	// Get the stack position after everything.
+	#emit ADDR.pri         8 // 12 - 4
+	#emit LOAD.S.alt       8
+	#emit ADD
+	#emit STOR.S.pri       i
+	while (i >= end) {
+		#emit LREF.S.pri       i
+		#emit PUSH.pri
+		i -= 4;
+	}
+	{}
+	#emit PUSH.C           512
+	#emit PUSH.ADR         msg
+	#emit LOAD.S.pri       8
+	#emit ADD.C            4
+	#emit PUSH.pri
+	#emit SYSREQ.C         format
+	// Remove the data from the stack.
+	#emit POP.pri
+	#emit LOAD.S.alt       8
+	#emit LCTRL            4
+	#emit ADD
+	#emit SCTRL            4
+	//format(msg, sizeof (msg), fmat, ___2);
 	new
 		bool:cmp = !strcmp(result, msg);
 	format(msg, sizeof (msg), "\"%s\" != \"%s\" (%d)", result, msg, cmp);

@@ -80,3 +80,7 @@ Optional plugins:
 #include "y_va_header"
 #include "y_va_impl"
 
+#if defined YSI_TESTS
+	#include "y_va_tests"
+#endif
+

@@ -73,21 +73,3 @@ Test:y_utils_va_return()
 	ASSERT(gCalls_y_utils_va_return == 4);
 }
 
-static stock va_return_Pass(const message[], va_args<>)
-{
-	new
-		str[64];
-	format(str, sizeof (str), "<prefix> %s", va_return(message, va_start<1>));
-	return str;
-}
-
-Test:va_return_PassParameters()
-{
-	new
-		str[64];
-	str = va_return_Pass("Something");
-	ASSERT(!strcmp(str, "<prefix> Something"));
-	str = va_return_Pass("Something, %i", 5);
-	ASSERT(!strcmp(str, "<prefix> Something, 5"));
-}
-

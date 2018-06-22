@@ -78,8 +78,6 @@ Optional plugins:
 forward bool:_Testing_End();
 
 #include "..\y_utils"
-#include "..\..\YSI_Coding\y_va\y_va_header"
-#include "..\..\YSI_Coding\y_va"
 
 #if defined YSI_TESTS
 	#if defined INCLUDE_TESTS
@@ -92,12 +90,8 @@ forward bool:_Testing_End();
 
 #if defined INCLUDE_TESTS
 	#define RUN_TESTS
-	#define Debug_PrintT printf
 #elseif defined RUN_TESTS
 	#define _AUTO_RUN_TESTS
-	#define Debug_PrintT printf
-#else
-	#define Debug_PrintT(%0);
 #endif
 
 #if defined LIGHT_TEST_REPORT
@@ -268,26 +262,83 @@ stock _Testing_Start(const name[])
 
 stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
-	format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, ___(2));
+	new
+		i,
+		end; // 12 + 4 + 4.
+	// Get the stack position after `playerid`.
+	#emit ADDR.pri         16
+	#emit STOR.S.pri       end
+	// Get the stack position after everything.
+	#emit ADDR.pri         8 // 12 - 4
+	#emit LOAD.S.alt       8
+	#emit ADD
+	#emit STOR.S.pri       i
+	while (i >= end) {
+		#emit LREF.S.pri       i
+		#emit PUSH.pri
+		i -= 4;
+	}
+	{}
+	#emit PUSH.C           512
+	#emit PUSH.C           YSI_g_sFailMessage
+	#emit LOAD.S.pri       8
+	#emit ADD.C            4
+	#emit PUSH.pri
+	#emit SYSREQ.C         format
+	// Remove the data from the stack.
+	#emit POP.pri
+	#emit LOAD.S.alt       8
+	#emit LCTRL            4
+	#emit ADD
+	#emit SCTRL            4
+	//format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, ___(2));
 	ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
 	YSI_g_sAsked = true;
 }
 
 stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
-		P:3("Testing_Test called: %i, \"%s\"", x, str);
-		++YSI_g_sTests;
-		if (!x)
-		{
-			P:T(str, TEST_FAILED, ___(2));
-			++YSI_g_sFails;
-		}
-	#if defined TEST_SHOW_PASSES
-		else
-		{
-			P:T(str, TEST_PASSED, ___(2));
-		}
-	#endif
+	P:3("Testing_Test called: %i, \"%s\"", x, str);
+	++YSI_g_sTests;
+	static
+		msg[6],
+		FRM,
+		RET;
+	if (!x)
+	{
+		++YSI_g_sFails;
+#if defined INCLUDE_TESTS || defined RUN_TESTS
+		msg = TEST_FAILED;
+#else
+		// Awkward way to avoid `#emit` in `#if` bug, without an unreachable
+		// code warning.
+		if (TRUE) return;
+#endif
+	}
+	else
+	{
+#if defined TEST_SHOW_PASSES && (defined INCLUDE_TESTS || defined RUN_TESTS)
+		msg = TEST_PASSED;
+#else
+		return;
+#endif
+	}
+	{}
+	// Modify the first two parameters to match the following call:
+	//  
+	//  P:T(str, msg, ___(2));
+	//  
+	#emit LOAD.S.pri       16
+	#emit STOR.S.pri       12
+	#emit CONST.pri        msg
+	#emit STOR.S.pri       16
+	#emit POP.pri
+	#emit STOR.pri         FRM
+	#emit POP.pri
+	#emit STOR.pri         RET
+	#emit SYSREQ.C         printf
+	#emit PUSH             RET
+	#emit PUSH             FRM
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -785,6 +836,5 @@ TestClose:y_testing_1()
 	#include "..\y_core\y_utils_tests"
 	#include "..\y_core\y_als_tests"
 	#include "..\y_core\y_cell_tests"
-	#include "..\YSI_Coding\y_va\y_va_tests"
 #endif
 
