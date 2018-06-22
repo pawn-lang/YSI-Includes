@@ -117,9 +117,29 @@ Optional plugins:
 forward va_formatex(output[], size = sizeof(output), const fmat[], va_:STATIC_ARGS);
 
 // Backwards compatability.
-native va_printf            (const format[], GLOBAL_TAG_TYPES:...)                                        = printf;
-native va_CallRemoteFunction(const function[], const format[], GLOBAL_TAG_TYPES:...)                      = CallRemoteFunction;
-native va_CallLocalFunction (const function[], const format[], GLOBAL_TAG_TYPES:...)                      = CallLocalFunction;
-native va_SetTimerEx        (const function[], interval, repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
-native va_format            (output[], len, const format[], GLOBAL_TAG_TYPES:...)                         = format;
+#if defined BAD_printf
+	native va_printf            (const format[], GLOBAL_TAG_TYPES:...)                                        = BAD_printf;
+#else
+	native va_printf            (const format[], GLOBAL_TAG_TYPES:...)                                        = printf;
+#endif
+#if defined BAD_CallRemoteFunction
+	native va_CallRemoteFunction(const function[], const format[], GLOBAL_TAG_TYPES:...)                      = BAD_CallRemoteFunction;
+#else
+	native va_CallRemoteFunction(const function[], const format[], GLOBAL_TAG_TYPES:...)                      = CallRemoteFunction;
+#endif
+#if defined BAD_CallLocalFunction
+	native va_CallLocalFunction (const function[], const format[], GLOBAL_TAG_TYPES:...)                      = BAD_CallLocalFunction;
+#else
+	native va_CallLocalFunction (const function[], const format[], GLOBAL_TAG_TYPES:...)                      = CallLocalFunction;
+#endif
+#if defined BAD_SetTimerEx
+	native va_SetTimerEx        (const function[], interval, repeating, const format[], GLOBAL_TAG_TYPES:...) = BAD_SetTimerEx;
+#else
+	native va_SetTimerEx        (const function[], interval, repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
+#endif
+#if defined BAD_format
+	native va_format            (output[], len, const format[], GLOBAL_TAG_TYPES:...)                         = BAD_format;
+#else
+	native va_format            (output[], len, const format[], GLOBAL_TAG_TYPES:...)                         = format;
+#endif
 
