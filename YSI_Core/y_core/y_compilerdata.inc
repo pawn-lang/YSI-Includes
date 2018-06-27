@@ -225,6 +225,7 @@ static stock const
 	#pragma warning disable 207
 	#pragma disablerecursion
 	#pragma warning pop
+	#pragma warning disable 238
 #else
 	#define __COMPILER_NAKED return 0;
 	#define __COMPILER_NESTED_ELLIPSIS (0)
