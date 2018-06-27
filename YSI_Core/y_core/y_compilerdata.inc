@@ -142,10 +142,16 @@ static stock __CompilerSecondPass() {}
 
 #define __COMPILER_BUG_317 (1)
 
+#define __COMPILER_STATIC_ENUM enum
+
 #if ((__Pawn & 0x0F) >= 0x0A) || ((__Pawn & 0xF0) >= 0xA0)
 	#define __COMPILER_MODIFIED (1)
 	#define __COMPILER_OFFICIAL (0)
 	#if defined __PawnBuild
+		#if __PawnBuild >= 2
+			#undef __COMPILER_STATIC_ENUM
+			#define __COMPILER_STATIC_ENUM static enum
+		#endif
 		#if __PawnBuild >= 4
 			#pragma option -(+
 		#endif
@@ -208,7 +214,6 @@ static stock const
 	#else
 		#define __COMPILER_NAKED return 0;
 	#endif
-	#define __COMPILER_STATIC_ENUM static enum
 	#define __COMPILER_NESTED_ELLIPSIS (1)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) return __compiler_one_string_parameter:(%0)
@@ -222,7 +227,6 @@ static stock const
 	#pragma warning pop
 #else
 	#define __COMPILER_NAKED return 0;
-	#define __COMPILER_STATIC_ENUM enum
 	#define __COMPILER_NESTED_ELLIPSIS (0)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) __CompilerStringReturn(%0);return (__compiler_one_string_parameter:(%0))
