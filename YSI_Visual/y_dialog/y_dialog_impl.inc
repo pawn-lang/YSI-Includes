@@ -75,7 +75,7 @@ Optional plugins:
 static stock
 	YSI_g_sPlayerDialog[MAX_PLAYERS] = {-1, ...},
 	bool:YSI_g_sPlayerMaster[MAX_PLAYERS] = {false, ...},
-	YSI_g_sPlayerCallback[MAX_PLAYERS][E_CALLBACK_DATA];
+	Func:YSI_g_sPlayerCallback[MAX_PLAYERS]<iiiis>;
 
 stock Dialog_Get(playerid)
 {
@@ -89,28 +89,29 @@ remotefunc void:Dialog_Set(playerid, dialogid)
 	YSI_g_sPlayerDialog[playerid] = dialogid;
 	if (YSI_g_sPlayerMaster[playerid])
 	{
-		Callback_Release(YSI_g_sPlayerCallback[playerid]),
+		Indirect_Release(YSI_g_sPlayerCallback[playerid]),
 		YSI_g_sPlayerMaster[playerid] = false;
 	}
 }
 
-stock Dialog_ShowCallback(playerid, callback:callback, style, string:title[], string:caption[], string:button1[], string:button2[] = "", dialog = -1)
+stock Dialog_ShowCallback(playerid, Func:callback<iiiis>, style, string:title[], string:caption[], string:button1[], string:button2[] = "", dialog = -1)
 {
 	#pragma unused dialog
 	new
-		ret = Dialog_Show(playerid, style, title, caption, button1, button2),
-		data[E_CALLBACK_DATA];
-	if (Callback_Get(callback, data, _F<iiiis>))
-		YSI_g_sPlayerCallback[playerid] = data;
+		ret = Dialog_Show(playerid, style, title, caption, button1, button2);
+	Indirect_Claim(callback);
+	YSI_g_sPlayerCallback[playerid] = callback;
 	return ret;
 }
 
+#pragma deprecated Use Dialog_ShowCallback
 stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, string:title[], string:caption[], string:button1[], string:button2[] = "", dialog = -1)
 {
 	#pragma unused dialog
 	new
 		ret = Dialog_Show(playerid, style, title, caption, button1, button2);
-	YSI_g_sPlayerCallback[playerid] = callback;
+	Indirect_Claim(callback[0]);
+	YSI_g_sPlayerCallback[playerid] = F@_@iiiis:callback[0];
 	return ret;
 }
 
@@ -152,20 +153,17 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	{
 		if (YSI_g_sPlayerMaster[playerid])
 		{
-			static
-				reset[E_CALLBACK_DATA];
 			new
-				callback[E_CALLBACK_DATA];
-			callback = YSI_g_sPlayerCallback[playerid];
+				Func:callback<iiiis> = YSI_g_sPlayerCallback[playerid];
+			YSI_g_sPlayerCallback[playerid] = Func:0<iiiis>;
 			// Totally blank the stored dialog information, after making a local
 			// copy of it for the sake of calling the callback.  This is so that
 			// we don't free the memory for the callback prematurely.
-			YSI_g_sPlayerCallback[playerid] = reset;
 			broadcastfunc Dialog_Set(playerid, -1);
 			// Call the callback.
-			Callback_Call(callback, playerid, YSI_DIALOG_ID, response, listitem, inputtext);
+			@.callback(playerid, YSI_DIALOG_ID, response, listitem, inputtext);
 			// Free the data.
-			Callback_Release(callback);
+			Indirect_Release(callback);
 			return Y_HOOKS_BREAK_RETURN_1;
 		}
 		return Y_HOOKS_BREAK_RETURN_0;
