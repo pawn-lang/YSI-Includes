@@ -1,6 +1,6 @@
 # y_php
 
-
+Provides interaction with a PHP CLI app, to pass information back and forth between the two systems.
 
 ## YSI
 

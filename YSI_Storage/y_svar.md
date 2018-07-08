@@ -1,6 +1,6 @@
 # y_svar
 
-
+`svar` = `server variable`.  This include provides automated saving and loading of global variables simply by declaring them with `svar` instead of `new` (or `static`).
 
 ## YSI
 

@@ -1,6 +1,6 @@
 # y_amx
 
-
+Provides introspection facilities to obtain information about the current executing script.
 
 ## YSI
 

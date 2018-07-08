@@ -1,6 +1,6 @@
 # y_ini
 
-
+Load and save INI files.  Provides multiple features including sections (aka tags, `[tag_name]`), inheritance (`[tag_name] : parent_name`), comments (`; comment`) and more.
 
 ## YSI
 

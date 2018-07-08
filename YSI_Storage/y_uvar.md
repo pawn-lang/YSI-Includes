@@ -1,6 +1,6 @@
 # y_uvar
 
-
+`uvar` = `user variable`.  This include provides automated saving and loading of global variables at a per-player level, simply by declaring them with `uvar` instead of `new` (or `static`).
 
 ## YSI
 

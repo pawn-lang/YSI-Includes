@@ -1,6 +1,6 @@
 # y_bitmap
 
-
+Provides code to algorithmically generate and save bitmaps.  This is only for providing a visual representation of the game state, thus it does not load existing images.
 
 ## YSI
 
