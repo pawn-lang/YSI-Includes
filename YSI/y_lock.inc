@@ -70,5 +70,12 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#error Please use <YSI_Server\y_lock>
+#include <YSI_Server\y_lock>
+
+#if !defined __PawnBuild
+	static USE@YSI_Server@y_lock;
+	#endinput
+#endif
+
+#warning Please use `#include <YSI_Server\y_lock>`
 

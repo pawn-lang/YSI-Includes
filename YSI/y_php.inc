@@ -70,5 +70,12 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#error Please use <YSI_Storage\y_php>
+#include <YSI_Storage\y_php>
+
+#if !defined __PawnBuild
+	static USE@YSI_Storage@y_php;
+	#endinput
+#endif
+
+#warning Please use `#include <YSI_Storage\y_php>`
 

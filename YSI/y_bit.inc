@@ -70,5 +70,12 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#error Please use <YSI_Data\y_bit>
+#include <YSI_Data\y_bit>
+
+#if !defined __PawnBuild
+	static USE@YSI_Data@y_bit;
+	#endinput
+#endif
+
+#warning Please use `#include <YSI_Data\y_bit>`
 

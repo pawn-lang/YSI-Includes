@@ -70,5 +70,12 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#error Please use <YSI_Core\y_master>
+#include <YSI_Core\y_master>
+
+#if !defined __PawnBuild
+	static USE@YSI_Core@y_master;
+	#endinput
+#endif
+
+#warning Please use `#include <YSI_Core\y_master>`
 

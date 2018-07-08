@@ -70,5 +70,12 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#error Please use <YSI_Server\y_flooding>
+#include <YSI_Server\y_flooding>
+
+#if !defined __PawnBuild
+	static USE@YSI_Server@y_flooding;
+	#endinput
+#endif
+
+#warning Please use `#include <YSI_Server\y_flooding>`
 

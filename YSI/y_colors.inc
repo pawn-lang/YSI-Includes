@@ -70,5 +70,12 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#error Please use <YSI_Server\y_colours>
+#include <YSI_Server\y_colours>
+
+#if !defined __PawnBuild
+	static USE@YSI_Server@y_colours;
+	#endinput
+#endif
+
+#warning Please use `#include <YSI_Server\y_colours>`
 

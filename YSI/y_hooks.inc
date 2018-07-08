@@ -70,5 +70,12 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#error Please use <YSI_Coding\y_hooks>
+#include <YSI_Coding\y_hooks>
+
+#if !defined __PawnBuild
+	static USE@YSI_Coding@y_hooks;
+	#endinput
+#endif
+
+#warning Please use `#include <YSI_Coding\y_hooks>`
 

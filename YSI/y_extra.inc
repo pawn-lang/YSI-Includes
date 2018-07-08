@@ -70,5 +70,12 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#error Please use <YSI_Extra\y_extra>
+#include <YSI_Extra\y_extra>
+
+#if !defined __PawnBuild
+	static USE@YSI_Extra@y_extra;
+	#endinput
+#endif
+
+#warning Please use `#include <YSI_Extra\y_extra>`
 

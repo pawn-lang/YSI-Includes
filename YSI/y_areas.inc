@@ -70,5 +70,12 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#error Please use <YSI_Visual\y_areas>
+#include <YSI_Visual\y_areas>
+
+#if !defined __PawnBuild
+	static USE@YSI_Visual@y_areas;
+	#endinput
+#endif
+
+#warning Please use `#include <YSI_Visual\y_areas>`
 
