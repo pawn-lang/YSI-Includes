@@ -1,6 +1,6 @@
 # y_properties
 
-
+A complete buyable properties system, including banks, houses, shops, and more.
 
 ## YSI
 

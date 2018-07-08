@@ -1,6 +1,6 @@
 # y_dialog
 
-
+Provides an abstraction of dialogs, doing away with IDs and allowing you to use individual public or inline functions per dialog.  This keeps the code processing the response with the code showing the dialog.
 
 ## YSI
 

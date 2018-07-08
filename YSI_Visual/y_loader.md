@@ -1,6 +1,6 @@
 # y_loader
 
-
+Loads MTA Race maps as [y_races](y_races.md) maps.
 
 ## YSI
 

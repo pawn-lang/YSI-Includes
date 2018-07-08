@@ -1,6 +1,6 @@
 # y_zonenames
 
-
+Displays the original area names from San Andreas when a player enters them.
 
 ## YSI
 

@@ -1,6 +1,6 @@
 # y_races
 
-
+Provides facilities for running multiple races at once - tracking positions, checkpoints, and times.
 
 ## YSI
 

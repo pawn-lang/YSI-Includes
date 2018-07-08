@@ -1,6 +1,6 @@
 # y_areas
 
-
+Provides dynamic areas, with a callback on entering an area.
 
 ## YSI
 

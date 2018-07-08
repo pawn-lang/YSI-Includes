@@ -1,6 +1,13 @@
 # y_classes
 
+Provides enhanced class selection facilites, including:
 
+* Add and remove classes at any time.
+* Hide skins entirely from certain players.
+* y_groups support to extend skin hiding to teams etc.
+* As many default weapons as you like.
+* Multi-level skin selection, e.g. select a team first, then a skin within that team.
+* Disable, skip, reenable, and force return to class selection.
 
 ## YSI
 

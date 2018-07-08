@@ -1,6 +1,6 @@
 # y_zonepulse
 
-
+Flashes the colour of a gang zone using a user-provided pattern.
 
 ## YSI
 
