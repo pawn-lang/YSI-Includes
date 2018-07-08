@@ -1,6 +1,6 @@
 # y_td
 
-
+Provides additional text draw functions for manipulating positions and other attributes.  Also provides "styles", where a design can be applied to multiple text draws.
 
 ## YSI
 

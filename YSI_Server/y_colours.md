@@ -1,6 +1,6 @@
 # y_colours
 
-
+Provides many functions for manipulating colours, as well as several thousand pre-defined named colours - including all SA and SA:MP colours, as well as the full X11 colour set.
 
 ## YSI
 

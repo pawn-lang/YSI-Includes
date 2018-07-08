@@ -1,6 +1,6 @@
 # y_lock
 
-
+Locks the script to only run when bound to localhost (`bind 127.0.0.1` in `server.cfg`).  This is good for giving the script to strangers for testing, without them being able to steal it.  Uses extremely obfuscated code to stop reverse engineering.
 
 ## YSI
 

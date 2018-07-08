@@ -1,6 +1,6 @@
 # y_flooding
 
-
+Provides a number of ways of dealing with multiple connections from the same IP, including banning the IP, rejecting too many connections, and more.
 
 ## YSI
 

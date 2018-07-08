@@ -1,6 +1,18 @@
 # y_scriptinit
 
+Provides several new initialisation callbacks to avoid knowing what the current script type is.  The full initialisation order is:
 
+* `OnCodeInit` - Called first to generate code.  No advanced YSI features are available here (including hooking this callback).
+* `OnJITCompile` - If this is running in the JIT.
+* `OnScriptInit` - Called when this script starts.  This is the most important callback as it is called once first, regardless of the script type, and all YSI features are now available.
+* `OnFilterScriptInit` - If this is a filterscript.
+* `OnGameModeInit` - Once in a gamemode, possibly multiple times in a filterscript.
+
+The shutdown order is:
+
+* `OnGameModeExit` - Once in a gamemode, possibly multiple times in a filterscript.
+* `OnFilterScriptExit` - If this is a filterscript.
+* `OnScriptExit` - Called when this script ends, regardless of the type.
 
 ## YSI
 

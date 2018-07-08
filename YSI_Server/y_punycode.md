@@ -1,6 +1,6 @@
 # y_punycode
 
-
+Encodes unicode using punycode, so that international strings can be used as function names (for commands etc).
 
 ## YSI
 
