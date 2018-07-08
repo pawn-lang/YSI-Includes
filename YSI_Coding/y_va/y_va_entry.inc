@@ -1,3 +1,8 @@
+#if defined _INC_y_va
+	#endinput
+#endif
+#define _INC_y_va
+
 /*
 Legal:
 	Version: MPL 1.1

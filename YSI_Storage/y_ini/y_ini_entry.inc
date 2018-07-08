@@ -116,7 +116,6 @@ stock const
 
 #define INI_NO_FILE (INI:-1)
 
-#include "..\..\YSI_Coding\y_malloc"
 #include "..\..\YSI_Coding\y_inline"
 #include "..\..\YSI_Coding\y_stringhash"
 

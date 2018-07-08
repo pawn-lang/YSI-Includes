@@ -76,6 +76,7 @@ Optional plugins:
 */
 
 #include "..\..\YSI_Core\y_utils"
+#include "..\..\YSI_Core\y_core\y_thirdpartyinclude"
 
 #if defined YSI_MALLOC_SECURE
 	#error YSI_MALLOC_SECURE has been removed.

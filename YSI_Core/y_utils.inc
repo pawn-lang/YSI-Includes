@@ -149,7 +149,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_utils
+#if !defined _INC_y_core
 	#tryinclude "y_core\y_core_entry"
 #endif
 #if !defined _INC_y_core
