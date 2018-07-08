@@ -94,9 +94,8 @@ remotefunc void:Dialog_Set(playerid, dialogid)
 	}
 }
 
-stock Dialog_ShowCallback(playerid, Func:callback<iiiis>, style, string:title[], string:caption[], string:button1[], string:button2[] = "", dialog = -1)
+stock Dialog_ShowCallback(playerid, Func:callback<iiiis>, style, string:title[], string:caption[], string:button1[], string:button2[] = "")
 {
-	#pragma unused dialog
 	new
 		ret = Dialog_Show(playerid, style, title, caption, button1, button2);
 	Indirect_Claim(callback);
@@ -105,9 +104,8 @@ stock Dialog_ShowCallback(playerid, Func:callback<iiiis>, style, string:title[],
 }
 
 #pragma deprecated Use Dialog_ShowCallback
-stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, string:title[], string:caption[], string:button1[], string:button2[] = "", dialog = -1)
+stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, string:title[], string:caption[], string:button1[], string:button2[] = "")
 {
-	#pragma unused dialog
 	new
 		ret = Dialog_Show(playerid, style, title, caption, button1, button2);
 	Indirect_Claim(callback[0]);
@@ -115,9 +113,8 @@ stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, string
 	return ret;
 }
 
-stock Dialog_Show(playerid, style, string:title[], string:caption[], string:button1[], string:button2[] = "", dialog = -1)
+stock Dialog_Show(playerid, style, string:title[], string:caption[], string:button1[], string:button2[] = "")
 {
-	#pragma unused dialog
 	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID);
 	YSI_g_sPlayerMaster[playerid] = true;
 	return ShowPlayerDialog(playerid, YSI_DIALOG_ID, style, title, caption, button1, button2);
