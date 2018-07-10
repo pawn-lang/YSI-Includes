@@ -279,3 +279,31 @@ static stock const
 	
 #endif
 
+// Consistent naming of compiler defined values. 
+#define __Line __line
+#define __File __file
+#define __Date __date
+#define __Time __time
+#define __Compat __compat
+#define __Emit __emit
+#define __CellBytes cellbytes
+#define __CellBits cellbits
+
+// And the other way
+#define __cellbytes cellbytes
+#define __cellbits cellbits
+#define __cell_bytes cellbytes
+#define __cell_bits cellbits
+#define __pawn __Pawn
+
+// Don't define `__PawnBuild` if it doesn't exist, but do create an alternate
+// symbol (with a consistent naming scheme) that always exists.
+#if defined __PawnBuild
+	#define __pawn_build __PawnBuild
+#else
+	#define __pawn_build 0
+#endif
+
+// Should be an inbuilt constant!
+#define cellbytes (cellbits / 8)
+
