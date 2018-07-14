@@ -81,15 +81,15 @@ public Inline_FromCallback(Func:cb<>)
 stock MySQL_PQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPES:...)
 {
 	Indirect_Claim(cb);
-	mysql_format(handle, YSI_gHugeString, sizeof (YSI_gHugeString), query, ___(3));
-	mysql_pquery(handle, YSI_gHugeString, Inline_FromCallback, "i", _:cb);
+	mysql_format(handle, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, query, ___(3));
+	mysql_pquery(handle, YSI_UNSAFE_HUGE_STRING, Inline_FromCallback, "i", _:cb);
 }
 
 stock MySQL_TQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPES:...)
 {
 	Indirect_Claim(cb);
-	mysql_format(handle, YSI_gHugeString, sizeof (YSI_gHugeString), query, ___(3));
-	mysql_tquery(handle, YSI_gHugeString, Inline_FromCallback, "i", _:cb);
+	mysql_format(handle, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, query, ___(3));
+	mysql_tquery(handle, YSI_UNSAFE_HUGE_STRING, Inline_FromCallback, "i", _:cb);
 }
 
 stock BCrypt_CheckInline(text[], hash[], Func:cb<>)

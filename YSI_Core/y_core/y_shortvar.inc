@@ -105,3 +105,13 @@ stock
 new
 	Q@[YSI_MAX_STRING];
 
+#if !defined MAX_LANGUAGES
+	#define MAX_LANGUAGES (4)
+#endif
+
+stock
+	YSI_gUnsafeHugeString[MAX_LANGUAGES][2048];
+
+#define YSI_UNSAFE_HUGE_STRING (YSI_gUnsafeHugeString[0])
+#define YSI_UNSAFE_HUGE_LENGTH (MAX_LANGUAGES * sizeof (YSI_gUnsafeHugeString[]))
+
