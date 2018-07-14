@@ -1762,3 +1762,23 @@ stock Range(const arr[], num = sizeof (arr))
 	return max2 - min2;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="arr1">First array to compare.</param>
+ * <param name="arr2">Second array to compare.</param>
+ * <param name="count">How many cells to compare.</param>
+ * <returns>
+ *  The difference (0 if the same).
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock memcmp(arr1[], arr2[], count)
+{
+	for (new diff, i = 0; i != count; ++i)
+	{
+		diff = arr1[i] - arr2[i];
+		if (diff)
+			return diff;
+	}
+	return 0;
+}
+
