@@ -1,6 +1,6 @@
 # y_jaggedarray
 
-
+Allows for resising 2D array slots, such that each slot can be different.  Also functions to retrieve the sizes.
 
 ## YSI
 

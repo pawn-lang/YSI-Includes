@@ -1,6 +1,6 @@
 # y_extra
 
-
+Extra features that some people do not want included by default for compatibility reasons such as the commands `/help` and `/commands`.
 
 ## YSI
 

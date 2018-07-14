@@ -1,6 +1,6 @@
 # y_utils
 
-
+General useful functions used throughout YSI.
 
 ## YSI
 

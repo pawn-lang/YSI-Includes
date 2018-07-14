@@ -1,6 +1,6 @@
 # y_users
 
-
+A complete user system with login/registration handling, callbacks, and automatic saving of variables.
 
 ## YSI
 

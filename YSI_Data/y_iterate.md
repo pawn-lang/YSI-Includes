@@ -1,6 +1,6 @@
 # y_iterate
 
-
+The latest version of `foreach` with many extras for iterators and special iterators (iterator functions).
 
 ## YSI
 

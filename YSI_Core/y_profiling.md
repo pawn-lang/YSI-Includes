@@ -1,6 +1,6 @@
 # y_profiling
 
-
+Provides the `Profile:` macro for defining functions to profile and automatically running them when compiled with `RUN_PROFILINGS` defined.
 
 ## YSI
 

@@ -1,6 +1,6 @@
 # y_playerarray
 
-
+Provides a bit array specialised for using with players.  Allows the bit array to be passed to `PSF:` functions.
 
 ## YSI
 

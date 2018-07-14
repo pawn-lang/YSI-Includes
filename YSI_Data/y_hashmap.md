@@ -1,6 +1,6 @@
 # y_hashmap
 
-
+Maps from strings to data.  Similar to indexing an array by string instead of integer.
 
 ## YSI
 

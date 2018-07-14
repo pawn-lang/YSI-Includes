@@ -1,6 +1,6 @@
 # y_functional
 
-
+Lambda functions and high-level (functional) array operations such as `map`, `fold`, `sum`, etc.
 
 ## YSI
 

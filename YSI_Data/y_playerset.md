@@ -1,6 +1,6 @@
 # y_playerset
 
-
+Provdides the `PS` iterator and `PSF:` macro to define a single function that takes a single playerid, a list of players, a group, or an interator.
 
 ## YSI
 

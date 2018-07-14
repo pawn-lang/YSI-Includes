@@ -1,6 +1,6 @@
 # y_bit
 
-
+Bit arrays and functions to manipulate and loop over them.
 
 ## YSI
 

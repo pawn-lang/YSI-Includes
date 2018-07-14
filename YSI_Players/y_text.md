@@ -1,6 +1,6 @@
 # y_text
 
-
+Multi-language text system, with text and style information loaded from files.
 
 ## YSI
 

@@ -1,6 +1,6 @@
 # y_groups
 
-
+Provides an abstraction for various collections of players; including factions, teams, admin levels, and more.  Allows for a single consistent interface, with support in many other YSI libraries allowing for permissions to be set on a per-group level for most features.
 
 ## YSI
 

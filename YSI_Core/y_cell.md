@@ -1,6 +1,6 @@
 # y_cell
 
-
+Generic cell manipulation functions for counting/permuting/etc. the bits in a single cell.
 
 ## YSI
 

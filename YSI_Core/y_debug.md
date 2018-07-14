@@ -1,6 +1,6 @@
 # y_debug
 
-
+Provides macros for outputting debug information only when the mode is compiled with the correct settings (`_DEBUG`).
 
 ## YSI
 

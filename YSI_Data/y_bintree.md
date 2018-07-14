@@ -1,6 +1,6 @@
 # y_bintree
 
-
+Binary search tree code.
 
 ## YSI
 

@@ -1,6 +1,6 @@
 # y_als
 
-
+Obsolete macros for defining per-callback code.
 
 ## YSI
 
