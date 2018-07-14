@@ -24,8 +24,18 @@ ShowLogin(MySQL:handle, playerid)
 		// Called when the data is fully loaded from the database.
 		inline const Loaded()
 		{
+			new
+				count;
+			if (!cache_get_row_count(count))
+			{
+				// There was an error loading the data.  Try again.
+				SendClientMessage(playerid, COLOUR_ERROR, "Login failed - please try again.");
+				ShowLogin(handle, playerid);
+				return;
+			}
+			
 			// Was the user found?
-			if (cache_get_row_count() != 1)
+			if (count != 1)
 			{
 				// Try again.
 				SendClientMessage(playerid, COLOUR_ERROR, "Login failed - unknown username or password.");
@@ -37,7 +47,7 @@ ShowLogin(MySQL:handle, playerid)
 			new
 				uid,
 				hash[BCRYPT_HASH_LENGTH];
-			if (!cache_get_row(0, 0, hash) || !cache_get_row_int(0, 1, uid))
+			if (!cache_get_value_index(0, 0, hash) || !cache_get_value_index_int(0, 1, uid))
 			{
 				// There was an error loading the data.  Try again.
 				SendClientMessage(playerid, COLOUR_ERROR, "Login failed - please try again.");
@@ -79,7 +89,7 @@ ShowLogin(MySQL:handle, playerid)
 		// Request data from the DB on this player.  Search by name.
 		new name[MAX_PLAYER_NAME];
 		GetPlayerName(playerid, name, sizeof (name));
-		MySQL_QueryInline(handle, using inline Loaded, "SELECT `password_hash`, `uid` FROM `users` WHERE `username` = '%e'", name);
+		MySQL_PQueryInline(handle, using inline Loaded, "SELECT `password_hash`, `uid` FROM `users` WHERE `username` = '%e'", name);
 	}
 	
 	// Show the login dialog box.  When it is responded to, the inline function

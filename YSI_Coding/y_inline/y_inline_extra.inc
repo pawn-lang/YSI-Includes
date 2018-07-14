@@ -1,8 +1,3 @@
-#if defined _INC_y_inline
-	#endinput
-#endif
-#define _INC_y_inline
-
 /*
 Legal:
 	Version: MPL 1.1
@@ -75,20 +70,37 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include "..\y_va"
-#include "..\y_cgen\y_cgen"
+forward Inline_FromCallback(Func:cb<>);
 
-#if !defined YSI_MAX_INLINE_STRING
-	#define YSI_MAX_INLINE_STRING YSI_MAX_STRING
-#endif
+public Inline_FromCallback(Func:cb<>)
+{
+	@.cb();
+	Indirect_Release(cb);
+}
 
-#include "..\y_malloc"
+stock MySQL_PQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPES:...)
+{
+	Indirect_Claim(cb);
+	mysql_format(handle, YSI_gHugeString, sizeof (YSI_gHugeString), query, ___(3));
+	mysql_pquery(handle, YSI_gHugeString, Inline_FromCallback, "i", _:cb);
+}
 
-#include "y_inline_impl2"
-#include "y_inline_extra"
+stock MySQL_TQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPES:...)
+{
+	Indirect_Claim(cb);
+	mysql_format(handle, YSI_gHugeString, sizeof (YSI_gHugeString), query, ___(3));
+	mysql_tquery(handle, YSI_gHugeString, Inline_FromCallback, "i", _:cb);
+}
 
-#if defined YSI_TESTS
-	#include "..\y_hooks"
-	#include "y_inline_tests"
-#endif
+stock BCrypt_CheckInline(text[], hash[], Func:cb<>)
+{
+	Indirect_Claim(cb);
+	bcrypt_check(text, hash, Inline_FromCallback, "i", _:cb);
+}
+
+stock BCrypt_HashInline(text[], cost, Func:cb<>)
+{
+	Indirect_Claim(cb);
+	bcrypt_hash(text, cost, Inline_FromCallback, "i", _:cb);
+}
 
