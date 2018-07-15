@@ -190,7 +190,7 @@ hook OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid)
 //	
 //}
 
-hook OnPlayerPickUpDynamicPickup(playerid, CB_STREAMER_TAG_PICKUP:pickupid)
+hook OnPlayerPickUpDynPickup(playerid, CB_STREAMER_TAG_PICKUP:pickupid)
 {
 	new
 		Func:cb<ii>;
@@ -215,7 +215,7 @@ hook OnPlayerEnterDynamicCP(playerid, CB_STREAMER_TAG_CP:checkpointid)
 //	
 //}
 
-hook OnPlayerEnterDynamicRaceCP(playerid, CB_STREAMER_TAG_RACE_CP:checkpointid)
+hook OnPlayerEnterDynRaceCP(playerid, CB_STREAMER_TAG_RACE_CP:checkpointid)
 {
 	new
 		Func:cb<ii>;
@@ -230,7 +230,7 @@ hook OnPlayerEnterDynamicRaceCP(playerid, CB_STREAMER_TAG_RACE_CP:checkpointid)
 //	
 //}
 
-hook OnPlayerEnterDynamicArea(playerid, CB_STREAMER_TAG_AREA:areaid)
+hook OnPlayerEnterDynArea(playerid, CB_STREAMER_TAG_AREA:areaid)
 {
 	new
 		Func:cb<ii>;
