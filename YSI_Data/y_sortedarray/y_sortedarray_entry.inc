@@ -85,6 +85,15 @@ Optional plugins:
 #define SORTED_FUNC_0<%8>(%0) _%8(SortedData_%0,SortedSize_%0)
 #define SORTED_FUNC_N<%8>(%0,%2) _%8(SortedData_%0,SortedSize_%0,%2)
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="arr">The sorted array.</param>
+ * <param name="last">The number of elements in the sorted array.</param>
+ * <param name="value">The value to find.</param>
+ * <returns>
+ *  Does the array contain this value?
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock bool:_Sorted_Contains(arr[], last, value)
 {
 	new
@@ -110,6 +119,15 @@ stock bool:_Sorted_Contains(arr[], last, value)
 }
 #define Sorted_Contains SORTED_FUNC_N<Sorted_Contains>
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="arr">The sorted array.</param>
+ * <param name="last">The number of elements in the sorted array.</param>
+ * <param name="value">The value to find.</param>
+ * <returns>
+ *  The index at which the new value should be inserted.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
 stock _Sorted_FindInsert(arr[], last, value)
 {
 	new
@@ -134,6 +152,50 @@ stock _Sorted_FindInsert(arr[], last, value)
 	return last;
 }
 #define Sorted_FindInsert SORTED_FUNC_N<Sorted_FindInsert>
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="arr">The sorted array.</param>
+ * <param name="last">The number of elements in the sorted array.</param>
+ * <param name="value">The value to find.</param>
+ * <returns>
+ *  The index of the value, or <c>-1</c> if it doesn't exist.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock _Sorted_Find(arr[], last, value)
+{
+	new
+		first = 0,
+		mid;
+	while (first < last)
+	{
+		mid = (first + last - 1) / 2;
+		if (arr[mid] < value)
+		{
+			first = mid + 1;
+		}
+		else if (arr[mid] > value)
+		{
+			last = mid;
+		}
+		else
+		{
+			return mid;
+		}
+	}
+	return -1;
+}
+#define _Sorted_Find SORTED_FUNC_N<_Sorted_Find>
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="arr">The sorted array.</param>
+ * <param name="size">The number of elements in the sorted array.</param>
+ * <param name="value">The value to add.</param>
+ * <param name="max">The total size of the array.</param>
+ * <remarks>
+ *  Adds a value to the sorted array.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
 
 stock bool:_Sorted_Add(arr[], &size, value, max = sizeof (arr))
 {
@@ -165,6 +227,36 @@ stock bool:_Sorted_Add(arr[], &size, value, max = sizeof (arr))
 	return true;
 }
 #define Sorted_Add SORTED_FUNC_N<Sorted_Add>
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="arr">The sorted array.</param>
+ * <param name="size">The number of elements in the sorted array.</param>
+ * <param name="value">The value to add.</param>
+ * <remarks>
+ *  Removes a value from the sorted array.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:_Sorted_Remove(arr[], &size, value)
+{
+	if (size == 0)
+		return false;
+	new
+		idx = _Sorted_Find(arr, size, value);
+	if (idx == -1)
+	{
+		return false;
+	}
+	--size;
+	if (arr[size] == value)
+	{
+		return true;
+	}
+	// We are shrinking the array, so the destination size doesn't matter.
+	memcpy(arr[idx], arr[idx + 1], 0, (size - idx) * cellbytes, cellmax);
+	return true;
+}
+#define Sorted_Remove SORTED_FUNC_N<Sorted_Remove>
 
 #if defined YSI_TESTS
 	#include "y_sortedarray_tests"
