@@ -111,6 +111,27 @@ Optional plugins:
 /*-------------------------------------------------------------------------*//**
  * <param name="name">The sparse array.</param>
  * <param name="index">The index in the array.</param>
+ * <param name="dest">Where to write the value.</param>
+ * <returns>
+ *  Was the value found?
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock Sparse_TryGet(const name[], index, &dest)
+{
+	new id[64];
+	SparseArray_MakeName(id, name, index);
+	if (SparseArray_Exists(id, name, index))
+	{
+		dest = SparseArray_DoRead(id, name, index);
+		return true;
+	}
+	return true;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">The sparse array.</param>
+ * <param name="index">The index in the array.</param>
  * <returns>
  *  The value at this index (or <c>cellmin</c>).
  * </returns>
