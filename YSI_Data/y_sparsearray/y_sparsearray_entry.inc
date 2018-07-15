@@ -175,6 +175,7 @@ stock Sparse_Set(const name[], index, value)
  * <param name="name">The sparse array.</param>
  * <param name="index">The index in the array.</param>
  * <param name="value">The destination variable.</param>
+ * <param name="nv">The new value.</param>
  * <returns>
  *  Did the value exist?
  * </returns>
@@ -183,14 +184,17 @@ stock Sparse_Set(const name[], index, value)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:Sparse_Exchange(const name[], index, &value)
+stock bool:Sparse_Exchange(const name[], index, &value, nv = cellmin)
 {
 	new id[64];
 	SparseArray_MakeName(id, name, index);
 	if (SparseArray_Exists(id, name, index))
 	{
 		value = SparseArray_DoRead(id, name, index);
-		SparseArray_DoDelete(id, name, index);
+		if (nv == cellmin)
+			SparseArray_DoDelete(id, name, index);
+		else
+			SparseArray_DoWrite(id, name, index, nv);
 		return true;
 	}
 	return false;
