@@ -197,7 +197,7 @@ stock bool:Sparse_Exchange(const name[], index, &value, nv = cellmin)
 			SparseArray_DoWrite(id, name, index, nv);
 		return true;
 	}
-	else if (cb != cellmin)
+	else if (nv != cellmin)
 		SparseArray_DoWrite(id, name, index, nv);
 	return false;
 }
