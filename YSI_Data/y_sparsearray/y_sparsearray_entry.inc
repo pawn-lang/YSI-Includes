@@ -171,6 +171,31 @@ stock Sparse_Set(const name[], index, value)
 	SparseArray_DoWrite(id, name, index, value);
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">The sparse array.</param>
+ * <param name="index">The index in the array.</param>
+ * <param name="value">The destination variable.</param>
+ * <returns>
+ *  Did the value exist?
+ * </returns>
+ * <remarks>
+ *  Get the value and remove it from the array.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock bool:Sparse_Exchange(const name[], index, &value)
+{
+	new id[64];
+	SparseArray_MakeName(id, name, index);
+	if (SparseArray_Exists(id, name, index))
+	{
+		value = SparseArray_DoRead(id, name, index);
+		SparseArray_DoDelete(id, name, index);
+		return true;
+	}
+	return false;
+}
+
 #if defined YSI_TESTS
 	#include "..\y_iterate"
 	#include "..\y_bit"
