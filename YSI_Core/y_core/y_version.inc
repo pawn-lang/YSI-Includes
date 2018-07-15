@@ -86,14 +86,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if MAX_PLAYER_NAME != (24)
-	#error Unknown MAX_PLAYER_NAME size.
-#else
-	// Strip the brackets off.
-	#undef MAX_PLAYER_NAME
-	#define MAX_PLAYER_NAME 24
-#endif
-
 CHAIN_HOOK(YVers)
 #undef CHAIN_ORDER
 #define CHAIN_ORDER CHAIN_NEXT(YVers)
@@ -151,19 +143,19 @@ CHAIN_FORWARD:YVers_OnScriptInit() = 1;
 				YSI_gLockData[x / 3] = x * 10;
 				YSI_gLockData[1] = (YSI_gLockData[2] - YSI_gLockData[3]) / 2 + YSI_gLockData[3];
 			#endif
-			print(" ");
-			print(" ");
-			print(" ");
-			print(" ======================================= ");
-			print(" |                                     | ");
-			print(" |        YSI version " YSI_VERSION "        | ");
-			print(" |        By Alex \"Y_Less\" Cole        | ");
-			print(" |                                     | ");
-			print(" |   Unable to check the latest YSI    | ");
-			print(" |  version, please watch the forums.  | ");
-			print(" |                                     | ");
-			print(" ======================================= ");
-			print(" ");
+			YSIPrint(" ");
+			YSIPrint(" ");
+			YSIPrint(" ");
+			YSIPrint(" ======================================= ");
+			YSIPrint(" |                                     | ");
+			YSIPrint(" |        YSI version " YSI_VERSION "        | ");
+			YSIPrint(" |        By Alex \"Y_Less\" Cole        | ");
+			YSIPrint(" |                                     | ");
+			YSIPrint(" |   Unable to check the latest YSI    | ");
+			YSIPrint(" |  version, please watch the forums.  | ");
+			YSIPrint(" |                                     | ");
+			YSIPrint(" ======================================= ");
+			YSIPrint(" ");
 			YVers_OnScriptInit();
 			return 1;
 		}
@@ -191,18 +183,18 @@ CHAIN_FORWARD:YVers_OnScriptInit() = 1;
 			YSI_gLockData[0] -= 1;
 			YSI_gLockData[1] = YSI_gLockData[0] + 7;
 		#endif
-		print(" ");
-		print(" ");
-		print(" ");
-		print(" ======================================= ");
-		print(" |                                     | ");
-		print(" |        YSI version " YSI_VERSION "        | ");
-		print(" |        By Alex \"Y_Less\" Cole        | ");
-		//print(" |                                     | ");
-		//print(" |  Checking the latest YSI version..  | ");
-		print(" |                                     | ");
-		print(" ======================================= ");
-		print(" ");
+		YSIPrint(" ");
+		YSIPrint(" ");
+		YSIPrint(" ");
+		YSIPrint(" ======================================= ");
+		YSIPrint(" |                                     | ");
+		YSIPrint(" |        YSI version " YSI_VERSION "        | ");
+		YSIPrint(" |        By Alex \"Y_Less\" Cole        | ");
+		//YSIPrint(" |                                     | ");
+		//YSIPrint(" |  Checking the latest YSI version..  | ");
+		YSIPrint(" |                                     | ");
+		YSIPrint(" ======================================= ");
+		YSIPrint(" ");
 		// Call my server to check the current public YSI version.  v is the
 		// current version and c is the version of data response which this code
 		// can parse.  Note that the response data SHOULD be backward compatible
@@ -261,17 +253,17 @@ CHAIN_FORWARD:YVers_OnScriptInit() = 1;
 			if (strcmp(data[pos], YSI_VERSION, false, 9))
 			{
 				//data[pos + 9] = '\0';
-				print(" ");
-				print(" ========================================== ");
-				print(" |                                        | ");
-				printf(" |  A new version (v%.9s) of YSI is  | ", data[pos]);
-				print(" |            available from:             | ");
-				print(" |                                        | ");
-				print(" |     www.y-less.com/YSI/YSI_1.0.zip     | ");
+				YSIPrint(" ");
+				YSIPrint(" ========================================== ");
+				YSIPrint(" |                                        | ");
+				YSIPrintF(" |  A new version (v%.9s) of YSI is  | ", data[pos]);
+				YSIPrint(" |            available from:             | ");
+				YSIPrint(" |                                        | ");
+				YSIPrint(" |     www.y-less.com/YSI/YSI_1.0.zip     | ");
 				if (data[0] == '2')
 				{
-					print(" |                                        | ");
-					print(" | Changelog:                             | ");
+					YSIPrint(" |                                        | ");
+					YSIPrint(" | Changelog:                             | ");
 					// Print the changelog.
 					new
 						last = pos + 13;
@@ -285,15 +277,16 @@ CHAIN_FORWARD:YVers_OnScriptInit() = 1;
 						}
 						pos += last;
 						data[pos - 1] = '\0';
-						printf(" | %38s | ", data[last]);
+						YSIPrintF(" | %38s | ", data[last]);
 						last = pos + 1;
 					}
 				}
-				print(" |                                        | ");
-				print(" ========================================== ");
-				print(" ");
+				YSIPrint(" |                                        | ");
+				YSIPrint(" ========================================== ");
+				YSIPrint(" ");
 			}
 		}
 	}
 	
 #endif
+

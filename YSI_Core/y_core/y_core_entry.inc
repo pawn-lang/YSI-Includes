@@ -102,6 +102,14 @@ Optional plugins:
 #include "y_pp"
 #include "y_prehook"
 #include "y_stripnumbers"
+
+// These should pretty much always exist, but are defined in "a_samp" in SA:MP,
+// when they should really be "core" functions.
+// 
+// TODO: Detect new line requirements.
+native YSIPrint(const string[]) = print;
+native YSIPrintF(const format[], GLOBAL_TAG_TYPES:...) = printf;
+
 #include "y_shortvar"
 #include "y_als_impl"
 

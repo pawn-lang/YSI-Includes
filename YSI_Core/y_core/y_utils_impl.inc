@@ -163,50 +163,52 @@ stock __TU(t, iters)
 	for(;(__TS=GetTickCount(),__TC);__TA[--__TC]=GetTickCount()-__TS)\
 	for(new __TI;__TI!=__TE;++__TI)
 
-stock
-	YSI_gPlayerIP[MAX_PLAYERS + 1] = {-1, ...};
+#if defined _samp_included
+	stock
+		YSI_gPlayerIP[MAX_PLAYERS + 1] = {-1, ...};
 
-public OnPlayerConnect(playerid)
-{
-	new
-		ip[16];
-	GetPlayerIp(playerid, ip, sizeof (ip)),
-	YSI_gPlayerIP[playerid] = IPToInt(ip);
+	public OnPlayerConnect(playerid)
+	{
+		new
+			ip[16];
+		GetPlayerIp(playerid, ip, sizeof (ip)),
+		YSI_gPlayerIP[playerid] = IPToInt(ip);
+		#if defined _y_utils_OnPlayerConnect
+			_y_utils_OnPlayerConnect(playerid);
+		#endif
+		return 1;
+	}
+
+	#if defined _ALS_OnPlayerConnect
+		#undef OnPlayerConnect
+	#else
+		#define _ALS_OnPlayerConnect
+	#endif
+	#define OnPlayerConnect _y_utils_OnPlayerConnect
+
 	#if defined _y_utils_OnPlayerConnect
-		_y_utils_OnPlayerConnect(playerid);
+		forward _y_utils_OnPlayerConnect(playerid);
 	#endif
-	return 1;
-}
 
-#if defined _ALS_OnPlayerConnect
-	#undef OnPlayerConnect
-#else
-	#define _ALS_OnPlayerConnect
-#endif
-#define OnPlayerConnect _y_utils_OnPlayerConnect
+	public OnPlayerDisconnect(playerid, reason)
+	{
+		YSI_gPlayerIP[playerid] = -1;
+		#if defined _y_utils_OnPlayerDisconnect
+			_y_utils_OnPlayerDisconnect(playerid, reason);
+		#endif
+		return 1;
+	}
 
-#if defined _y_utils_OnPlayerConnect
-	forward _y_utils_OnPlayerConnect(playerid);
-#endif
+	#if defined _ALS_OnPlayerDisconnect
+		#undef OnPlayerDisconnect
+	#else
+		#define _ALS_OnPlayerDisconnect
+	#endif
+	#define OnPlayerDisconnect _y_utils_OnPlayerDisconnect
 
-public OnPlayerDisconnect(playerid, reason)
-{
-	YSI_gPlayerIP[playerid] = -1;
 	#if defined _y_utils_OnPlayerDisconnect
-		_y_utils_OnPlayerDisconnect(playerid, reason);
+		forward _y_utils_OnPlayerDisconnect(playerid, reason);
 	#endif
-	return 1;
-}
-
-#if defined _ALS_OnPlayerDisconnect
-	#undef OnPlayerDisconnect
-#else
-	#define _ALS_OnPlayerDisconnect
-#endif
-#define OnPlayerDisconnect _y_utils_OnPlayerDisconnect
-
-#if defined _y_utils_OnPlayerDisconnect
-	forward _y_utils_OnPlayerDisconnect(playerid, reason);
 #endif
 
 #if defined YSI_LOCK_MODE

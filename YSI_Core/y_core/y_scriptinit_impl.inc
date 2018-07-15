@@ -113,6 +113,22 @@ static
 	#define DEBUG_MAYBE_DUMP(%0);
 #endif
 
+#if !defined _ALS_OnFilterScriptInit
+	forward OnFilterScriptInit();
+#endif
+
+#if !defined _ALS_OnGameModeInit
+	forward OnGameModeInit();
+#endif
+
+#if !defined _ALS_OnFilterScriptExit
+	forward OnFilterScriptExit();
+#endif
+
+#if !defined _ALS_OnGameModeExit
+	forward OnGameModeExit();
+#endif
+
 stock bool:Server_JITExists()
 {
 	return YSI_g_sCodeJITing;
@@ -297,7 +313,7 @@ public OnFilterScriptExit()
 {
 	ScriptInit_OnFilterScriptExit();
 	if (YSI_FILTERSCRIPT)
-		CallLocalFunction("ScriptInit_OnScriptExit", "");
+		ScriptInit_OnScriptExit();
 	return 1;
 }
 
@@ -305,7 +321,7 @@ public OnGameModeExit()
 {
 	ScriptInit_OnGameModeExit();
 	if (!YSI_FILTERSCRIPT)
-		CallLocalFunction("ScriptInit_OnScriptExit", "");
+		ScriptInit_OnScriptExit();
 	return 1;
 }
 

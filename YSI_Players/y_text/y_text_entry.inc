@@ -173,7 +173,17 @@ Optional plugins:
 // 
 // 2018: Collating core includes, hopefully will still work.
 
-#include <a_samp>
+#if !defined MAX_PLAYER_NAME
+	#define MAX_PLAYER_NAME 24
+#elseif MAX_PLAYER_NAME != (24)
+	#error Unknown MAX_PLAYER_NAME size.
+#else
+	// Strip the brackets off.
+	#undef MAX_PLAYER_NAME
+	#define MAX_PLAYER_NAME 24
+#endif
+
+//#include <a_samp>
 #include "..\..\YSI_Server\y_colours"
 #include "..\..\YSI_Data\y_hashmap"
 #include "..\..\YSI_Data\y_jaggedarray"
