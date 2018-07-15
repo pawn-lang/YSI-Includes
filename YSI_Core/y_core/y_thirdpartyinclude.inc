@@ -86,6 +86,11 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning push
+	#pragma warning disable 231
+#endif
+
 // If the files only exist in one place, they will only be included once because
 // of using "#tryinclude".  If they happen to exist in two places, their own
 // internal include guards (or the compiler's one) will prevent their multiple
@@ -382,5 +387,9 @@ public OnCodeInit()
 #define OnCodeInit ThirdParty_OnCodeInit
 #if defined ThirdParty_OnCodeInit
 	forward ThirdParty_OnCodeInit();
+#endif
+
+#if __COMPILER_WARNING_SUPPRESSION
+	#pragma warning pop
 #endif
 

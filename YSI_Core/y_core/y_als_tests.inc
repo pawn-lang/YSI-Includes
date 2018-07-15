@@ -323,19 +323,19 @@ Test:y_als_Generation()
 		Float:amount = 1.2,
 		weaponid = 50,
 		bodypart = 2;
+	#pragma unused bodypart
 	#if defined GetPlayerLastShotVectors
 		__PRINT<PlayerGiveDamage, "OnPlayerGiveDamage(42, 45, 1.200000, 50, 2)">
 	#else
 		__PRINT<PlayerGiveDamage, "OnPlayerGiveDamage(42, 45, 1.200000, 50)">
-		#pragma unused bodypart
 	#endif
 	new
 		issuerid = 46;
+	#pragma unused issuerid
 	#if defined GetPlayerLastShotVectors
 		__PRINT<PlayerTakeDamage, "OnPlayerTakeDamage(42, 46, 1.200000, 50, 2)">
 	#else
 		__PRINT<PlayerTakeDamage, "OnPlayerTakeDamage(42, 46, 1.200000, 50)">
-		#pragma unused bodypart
 	#endif
 	new
 		Float:fX = 10.24,
@@ -349,11 +349,11 @@ Test:y_als_Generation()
 		Float:new_x = 3.3,
 		Float:new_y = 4.4,
 		Float:new_z = 5.5;
+	#pragma unused new_x, new_y, new_z
 	#if defined GetServerTickRate
 		__PRINT<UnoccupiedVehicleUpdate, "OnUnoccupiedVehicleUpdate(606, 42, 70, 3.299999, 4.400000, 5.500000)">
 	#else
 		__PRINT<UnoccupiedVehicleUpdate, "OnUnoccupiedVehicleUpdate(606, 42, 70)">
-		#pragma unused new_x, new_y, new_z
 	#endif
 	new
 		clickedid = 90;
