@@ -767,7 +767,7 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 #define F@n:%9$%1,%0<%2>$ F@s(Iterator@%0)-1-(%2));_:(%1=Iterator@%0 F@a$[_:%1])<(F@s(Iterator@%0)-F@s(Iter_Multi@%0));
 
 // Special iterator.
-#define iterstart(%1)%9;_:(%9=Iter%9@%0$[_:%2]%9; F@o))-1+(%1));_:(%1)!=_:F@u:F@l:(%2=Iter_Func@%0$(_:%2));
+#define iterstart(%1)%9;_:(%9=Iter%9@%0$[_:%2]%9; F@o))-1+(_:%1));_:(%1)!=_:F@u:F@l:(%2=Iter_Func@%0$(_:%2));
 #define iterstate iterstart
 
 // Special iterators without extra defines.  Default to -1 start value.  The
