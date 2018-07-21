@@ -1,9 +1,165 @@
+# Features
 
+## Using Callbacks
 
+"y_inline" doesn't actually have to accept `inline` functions:
+
+```pawn
+#include <YSI_Coding\y_inline>
+
+public Response(playerid, dialogid, response, listitem, string:inputtext[])
+{
+	#pragma unused dialogid, inputtext
+	
+	if (response)
+	{
+		va_SendClientMessage(playerid, COLOUR_MSG, "You picked: %d", listitem);
+	}
+	else
+	{
+		SendClientMessage(playerid, COLOUR_MSG, "You pressed cancel");
+	}
+}
+
+CMD:pick(playerid, params[])
+{
+	// Called when the player responds to the dialog.
+	Dialog_ShowCallback(playerid, using public Response<iiiis>, DIALOG_STYLE_LIST, "Pick a number", "0\n1\n2\n3\n4", "OK", "Cancel");
+	return 1;
+}
+```
+
+The major difference is in the type safety.  Here `Dialog_ShowCallback` takes a function with 4 integer parameters and one string parameter.  If `Response` were an inline, the compiler could determine that the parameters were correct automatically.  However, since this is a public, we must tell the compiler that this is correct.  Hence the `<iiiis>` after the function name.
+
+## Closures
+
+When you are in an inline, the variables from the enclosing function are available:
+
+```pawn
+#include <YSI_Coding\y_inline>
+
+CountFives(array[], size)
+{
+	new count = 0;
+	inline IsFive(value)
+	{
+		if (value == 5)
+			++count;
+	}
+	ForEach(array, using inline IsFive, size);
+	return count;
+}
+```
+
+Each time `IsFive` is called (once per array element), `count` has kept its value from the last call, so this will correctly increment.  When `ForEach` ends, the `count` value needs to be correctly written back to the calling function via `Callback_Restore()`:
+
+```pawn
+ForEach(array[], Func:callback<i>, size)
+{
+	for (new i = 0; i != size; ++i)
+	{
+		@.callback(array[i]);
+	}
+	Callback_Restore(callback);
+}
+```
+
+## `const`
+
+Modifying variables in closures, and keeping them updated for multiple calls, is a non-zero amount of code.  If you don't modify them ever, then you can skip the restoration with `inline const`:
+
+```pawn
+#include <YSI_Coding\y_inline>
+
+CountFives(array[], size)
+{
+	new count = 0;
+	inline const IsFive(value)
+	{
+		if (value == 5)
+			++count;
+	}
+	ForEach(array, using inline IsFive, size);
+	return count;
+}
+```
+
+Even if `ForEach` is not modified, this will ALWAYS return `0` - because `count` is modified inside `IsFive`, but the new value is instantly forgotten when the current call ends.
+
+## Type Safety
+
+Lets write a `Fold` function - this takes a current array element and a running total, and does something to them.  So the function that gets called (`inline`, `public`, or other) needs two integer parameters - `current` and `accumulated`.  So we specify that `Fold` takes a function that takes two parameters using `Func:name<ii>`:
+
+```pawn
+ForEach(array[], Func:callback<ii>, initial, size = sizeof (array))
+{
+	for (new i = 0; i != size; ++i)
+	{
+		initial = @.callback(array[i], initial);
+	}
+	Callback_Restore(callback);
+	return initial;
+}
+```
+
+The new `@.` syntax is used to call the function defined by `callback`.  `Fold` is called like so:
+
+```pawn
+#include <YSI_Coding\y_inline>
+
+CountFives(array[], size = sizeof (array))
+{
+	inline const IsFive(value, count)
+	{
+		if (value == 5)
+			return count + 1;
+		return count;
+	}
+	return Fold(array, using inline IsFive, 0, size);
+}
+```
+
+Here `IsFive` can safely be `const` because no closure variables are modified.
+
+## `inline_return`
+
+This is a work-around for a compiler limitation:
+
+```pawn
+#include <YSI_Coding\y_inline>
+
+CountFives(array[], &total, size = sizeof (array))
+{
+	inline const IsFive(value, count)
+	{
+		if (value == 5)
+			return count + 1;
+		return count;
+	}
+	total = Fold(array, using inline IsFive, 0, size);
+}
+```
+
+Here the `inline` function contains `return`, but the outer function doesn't.  Due to a known issue*, `inline` and outer functions must both return a number, or the `inline` function can return nothing.  If you want an `inline` function to return a number, but the outer function to return something else (say a string, or nothing), you need `inline_return` instead:
+
+```pawn
+#include <YSI_Coding\y_inline>
+
+CountFives(array[], &total, size = sizeof (array))
+{
+	inline const IsFive(value, count)
+	{
+		if (value == 5)
+			inline_return count + 1;
+		inline_return count;
+	}
+	total = Fold(array, using inline IsFive, 0, size);
+}
+```
 
 # Examples
 
-# Login Dialog
+## Login Dialog
 
 ```pawn
 #include <YSI_Coding\y_inline>
@@ -109,3 +265,4 @@ public OnPlayerConnect(playerid)
 }
 ```
 
+\* This is due to the way inlines are implemented with macros.  The compiler sees the outer function and any inline functions as one large function.  Thus, the compiler thinks that some parts of the large function has `return`s, while other parts don't.  This gives `warning 209: function "NAME" should return a value`.
