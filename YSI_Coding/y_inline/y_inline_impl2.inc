@@ -1241,11 +1241,11 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 
 #pragma deprecated Remove or use `Indirect_Claim(func);`.
 #if __COMPILER_BUG_317
-	stock bool:Callback_Get_(__DUMMY_COMPILER_BUG_317_FIX__, ...)
+	stock bool:Callback_Get_(__DUMMY_COMPILER_BUG_317_FIX__, {F@_@, _}:...)
 	{
 		#pragma unused __DUMMY_COMPILER_BUG_317_FIX__
 #else
-	stock bool:Callback_Get(...)
+	stock bool:Callback_Get({F@_@, _}:...)
 	{
 #endif
 		// Construct the old API arguments from the new prototype.  The new
