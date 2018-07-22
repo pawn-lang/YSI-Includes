@@ -93,12 +93,13 @@ __COMPILER_STATIC_ENUM E_INLINE_CALL
 	/*  1 */ E_INLINE_CALL_HANDLER,
 	/*  2 */ E_INLINE_CALL_CLAIM,
 	/*  3 */ E_INLINE_CALL_RELEASE,
-	/*  4 */ E_INLINE_CALL_TIMER, // To release unneeded inlines.
-	/*  5 */ E_INLINE_CALL_FLAGS,
-	/*  6 */ E_INLINE_CALL_SIZE,
-	/*  7 */ E_INLINE_CALL_SOURCE,
-	/*  8 */ E_INLINE_CALL_FUNCTION,
-	/*  9 */ ResolvedAlloc:E_INLINE_CALL_PARAMS // At least the frame header.
+	/*  4 */ E_INLINE_CALL_METADATA,
+	/*  5 */ E_INLINE_CALL_TIMER, // To release unneeded inlines.
+	/*  6 */ E_INLINE_CALL_FLAGS,
+	/*  7 */ E_INLINE_CALL_SIZE,
+	/*  8 */ E_INLINE_CALL_SOURCE,
+	/*  9 */ E_INLINE_CALL_FUNCTION,
+	/* 10 */ ResolvedAlloc:E_INLINE_CALL_PARAMS // At least the frame header.
 }
 
 __COMPILER_STATIC_ENUM E_PUBLIC_CALL
@@ -107,10 +108,11 @@ __COMPILER_STATIC_ENUM E_PUBLIC_CALL
 	/*  1 */ E_PUBLIC_CALL_HANDLER,
 	/*  2 */ E_PUBLIC_CALL_CLAIM,
 	/*  3 */ E_PUBLIC_CALL_RELEASE,
-	/*  4 */ E_PUBLIC_CALL_TIMER, // To release unneeded remotes.
-	/*  5 */ E_PUBLIC_CALL_FLAGS,
-	/*  6 */ E_PUBLIC_CALL_SPECIFIER[32],
-	/* 38 */ E_PUBLIC_CALL_FUNCTION[32]
+	/*  4 */ E_PUBLIC_CALL_METADATA,
+	/*  5 */ E_PUBLIC_CALL_TIMER, // To release unneeded remotes.
+	/*  6 */ E_PUBLIC_CALL_FLAGS,
+	/*  7 */ E_PUBLIC_CALL_SPECIFIER[32],
+	/* 39 */ E_PUBLIC_CALL_FUNCTION[32]
 }
 
 #if 0
@@ -987,6 +989,7 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
 	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
+	mset(closure, _:E_PUBLIC_CALL_METADATA, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
 	return Function:Indirect_Ptr(Malloc_Resolve(closure));
@@ -1025,6 +1028,7 @@ stock Function:GetLocalFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
 	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
+	mset(closure, _:E_PUBLIC_CALL_METADATA, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
 	msets(closure, _:E_PUBLIC_CALL_FUNCTION, func);
 	new tmp[32];
@@ -1120,6 +1124,7 @@ static stock Callback_InlineByName(const name[], tag)
 				mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
 				mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
 				mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
+				mset(closure, _:E_INLINE_CALL_METADATA, 0);
 				mset(closure, _:E_INLINE_CALL_SIZE, size);
 				mset(closure, _:E_INLINE_CALL_SOURCE, ptr);
 				mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(ret));
@@ -1345,9 +1350,9 @@ static Callback_CallHandler_(...)
 	// Get the size, and update `INDIRECTION_DATA` to point to the data.
 	#emit LOAD.alt         INDIRECTION_DATA    // 2
 	#emit MOVE.pri                             // 3
-	#emit ADD.C            36                  // 5, E_INLINE_CALL_PARAMS * cellbytes
+	#emit ADD.C            40                  // 5, E_INLINE_CALL_PARAMS * cellbytes
 	#emit PUSH.pri                             // 6
-	#emit CONST.pri        6                   // 8, E_INLINE_CALL_SIZE
+	#emit CONST.pri        7                   // 8, E_INLINE_CALL_SIZE
 	#emit LIDX                                 // 9
 	#emit PUSH.pri                             // 10
 	#emit STACK            0                   // 12
@@ -1432,7 +1437,7 @@ static stock Callback_RemoteHandler_(...)
 	
 	// Push the specifier and function name.
 	#emit LOAD.pri         INDIRECTION_DATA
-	#emit ADD.C            24  // E_PUBLIC_CALL_SPECIFIER * cellbytes
+	#emit ADD.C            28  // E_PUBLIC_CALL_SPECIFIER * cellbytes
 	#emit PUSH.pri
 	#emit ADD.C            128 // (E_PUBLIC_CALL_FUNCTION - E_PUBLIC_CALL_SPECIFIER) * cellbytes
 	#emit PUSH.pri
@@ -1480,7 +1485,7 @@ static stock Callback_LocalHandler_(...)
 	
 	// Push the specifier and function name.
 	#emit LOAD.pri         INDIRECTION_DATA
-	#emit ADD.C            24  // E_PUBLIC_CALL_SPECIFIER * cellbytes
+	#emit ADD.C            28  // E_PUBLIC_CALL_SPECIFIER * cellbytes
 	#emit PUSH.pri
 	#emit ADD.C            128 // (E_PUBLIC_CALL_FUNCTION - E_PUBLIC_CALL_SPECIFIER) * cellbytes
 	#emit PUSH.pri
@@ -1868,6 +1873,7 @@ stock Inline_UI_(const &header)
 	mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
 	mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
 	mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
+	mset(closure, _:E_INLINE_CALL_METADATA, 0);
 	mset(closure, _:E_INLINE_CALL_SIZE, size);
 	mset(closure, _:E_INLINE_CALL_SOURCE, ptr);
 	mset(closure, _:E_INLINE_CALL_FUNCTION, AMX_Read(header));

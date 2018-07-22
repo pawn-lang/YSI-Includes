@@ -91,7 +91,7 @@ Even if `ForEach` is not modified, this will ALWAYS return `0` - because `count`
 Lets write a `Fold` function - this takes a current array element and a running total, and does something to them.  So the function that gets called (`inline`, `public`, or other) needs two integer parameters - `current` and `accumulated`.  So we specify that `Fold` takes a function that takes two parameters using `Func:name<ii>`:
 
 ```pawn
-ForEach(array[], Func:callback<ii>, initial, size = sizeof (array))
+Fold(array[], Func:callback<ii>, initial, size = sizeof (array))
 {
 	for (new i = 0; i != size; ++i)
 	{
@@ -156,6 +156,158 @@ CountFives(array[], &total, size = sizeof (array))
 	total = Fold(array, using inline IsFive, 0, size);
 }
 ```
+
+## Deferred Calls
+
+Given the following code:
+
+```pawn
+#include <YSI_Coding\y_inline>
+
+CountFives(array[], size)
+{
+	new count = 0;
+	inline const IsFive(value)
+	{
+		if (value == 5)
+			++count;
+	}
+	ForEach(array, using inline IsFive, size);
+	return count;
+}
+```
+
+`CountFives` is the *caller* function, `ForEach` is the *callee* function, and `IsFive` is *called* function.  `CountFives` calls `ForEach`, `ForEach` calls `IsFive` (possibly multiple times).  All the calls to `IsFive` must happen before `ForEach` ends (i.e. before `return count;` is run).  But what about timers and callbacks?  For example:
+
+```pawn
+forward InlineTimerCall(Func:tt<>);
+
+public InlineTimerCall(Func:tt<>)
+{
+	@.tt();
+}
+
+SetInlineTimer(Func:tt<>, delay, bool:repeat)
+{
+	SetTimerEx("InlineTimerCall", delay, repeat, "i", _:tt);
+}
+
+PrintLater(a, b, c)
+{
+	inline const PrintNow()
+	{
+		printf("a = %d, b = %d, c = %d", a, b, c);
+	}
+	SetInlineTimer(using inline PrintNow, 1000, false);
+}
+```
+
+Here `PrintLater` is the caller, `SetInlineTimer` is the callee, and `PrintNow` is the called.  However, it is NOT called before `SetInlineTimer` returns, because we defer the call via `SetTimerEx`.  Therefore we need some extra code to tell y_inline not to clear memory (i.e. get rid of the closure containing `a`, `b`, and `c`):
+
+```pawn
+forward InlineTimerCall(Func:tt<>, bool:repeat);
+
+public InlineTimerCall(Func:tt<>, bool:repeat)
+{
+	@.tt();
+	if (!repeat)
+	{
+		Indirect_Release(tt);
+	}
+}
+
+SetInlineTimer(Func:tt<>, delay, bool:repeat)
+{
+	Indirect_Claim(tt);
+	SetTimerEx("InlineTimerCall", delay, repeat, "ii", _:tt, _:repeat);
+}
+```
+
+`PrintLater` doesn't need to change - all of this is transparent to the end-user of a library.  `Indirect_Claim` tells the memory to stay.  `Indirect_Release` tells it to go.
+
+## Metadata
+
+You can attach extra data to inline functions, for example, to write `KillInlineTimer`:
+
+```pawn
+SetInlineTimer(Func:tt<>, delay, bool:repeat)
+{
+	Indirect_Claim(tt);
+	new timer = SetTimerEx("InlineTimerCall", delay, repeat, "ii", _:tt, _:repeat);
+	Indirect_SetMeta(tt, timer);
+	return _:tt;
+}
+
+KillInlineTimer(tt)
+{
+	new timer = Indirect_GetMeta(tt);
+	KillTimer(timer);
+	Indirect_Release(tt);
+}
+```
+
+Here the true timer id is stored along-side the inline closure data, and the handle is disguised as a timer ID.
+
+## `Indirect_FromCallback`
+
+This is just a pre-defined public function:
+
+```pawn
+forward Indirect_FromCallback(Func:cb<>, bool:release);
+
+public Indirect_FromCallback(Func:cb<>, bool:release)
+{
+	@.cb();
+	if (release)
+		Indirect_Release(cb);
+}
+```
+
+You can use it any time you need to convert a public function to an inline (e.g. to wrap an existing API):
+
+```pawn
+stock BCrypt_HashInline(text[], cost, Func:cb<>)
+{
+	Indirect_Claim(cb);
+	bcrypt_hash(text, cost, "Indirect_FromCallback", "ii", _:cb, true);
+}
+```
+
+This is more common than you may think - closures mean that passing addition parameters to inline functions is rarely required.
+
+## String Inputs
+
+This doesn't work:
+
+```pawn
+PrintLater(string:str[])
+{
+	inline const PrintNow()
+	{
+		print(str);
+	}
+	SetInlineTimer(using inline PrintNow, 1000, false);
+}
+```
+
+Any pointers parameters (references, strings, and arrays) to the caller function are not stored in the closure**.  The closure copies all the local memory automatically, this remote memory must be copied manually:
+
+```pawn
+PrintLater(string:str[])
+{
+	new localString[32];
+	strcpy(localString, str);
+	inline const PrintNow()
+	{
+		print(localString);
+	}
+	SetInlineTimer(using inline PrintNow, 1000, false);
+}
+```
+
+## Backwards Compatibility
+
+The old y_inline API - `Callback_Get`, `Callback_Call`, `E_CALLBACK_DATA` etc. still work, but will now give deprecation and tag mismatch warnings.  The former is for the functions - all but `Callback_Restore` have been replaced by *indirection.inc*, the latter is for passing inlines since the old version didn't check that the given functions had the correct types.  Also, because `Callback_Get` is no longer required, inlines can be used anywhere in the callee stack, not just the first called function.
 
 # Examples
 
@@ -266,3 +418,6 @@ public OnPlayerConnect(playerid)
 ```
 
 \* This is due to the way inlines are implemented with macros.  The compiler sees the outer function and any inline functions as one large function.  Thus, the compiler thinks that some parts of the large function has `return`s, while other parts don't.  This gives `warning 209: function "NAME" should return a value`.
+
+\*\* More strictly, the parameter itself IS stored in the closure, but the memory it points to isn't.  There is no good way at run-time to determine pointer parameters, and so their destination memory isn't stored, thus the target could be no longer valid, or garbage.
+

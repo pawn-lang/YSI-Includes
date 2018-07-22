@@ -70,37 +70,29 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-forward Inline_FromCallback(Func:cb<>);
-
-public Inline_FromCallback(Func:cb<>)
-{
-	@.cb();
-	Indirect_Release(cb);
-}
-
 stock MySQL_PQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPES:...)
 {
 	Indirect_Claim(cb);
 	mysql_format(handle, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, query, ___(3));
-	mysql_pquery(handle, YSI_UNSAFE_HUGE_STRING, Inline_FromCallback, "i", _:cb);
+	mysql_pquery(handle, YSI_UNSAFE_HUGE_STRING, "Inline_FromCallback", "ii", _:cb, true);
 }
 
 stock MySQL_TQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPES:...)
 {
 	Indirect_Claim(cb);
 	mysql_format(handle, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, query, ___(3));
-	mysql_tquery(handle, YSI_UNSAFE_HUGE_STRING, Inline_FromCallback, "i", _:cb);
+	mysql_tquery(handle, YSI_UNSAFE_HUGE_STRING, "Inline_FromCallback", "ii", _:cb, true);
 }
 
 stock BCrypt_CheckInline(text[], hash[], Func:cb<>)
 {
 	Indirect_Claim(cb);
-	bcrypt_check(text, hash, Inline_FromCallback, "i", _:cb);
+	bcrypt_check(text, hash, "Inline_FromCallback", "ii", _:cb, true);
 }
 
 stock BCrypt_HashInline(text[], cost, Func:cb<>)
 {
 	Indirect_Claim(cb);
-	bcrypt_hash(text, cost, Inline_FromCallback, "i", _:cb);
+	bcrypt_hash(text, cost, "Inline_FromCallback", "ii", _:cb, true);
 }
 

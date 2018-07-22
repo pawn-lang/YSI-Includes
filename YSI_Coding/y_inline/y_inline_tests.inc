@@ -942,3 +942,80 @@ Test:y_inline_ParameterTypes_10()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
+y_inline_ForEach(array[], Func:callback<i>, size = sizeof (array))
+{
+	for (new i = 0; i != size; ++i)
+	{
+		@.callback(array[i]);
+	}
+	Callback_Restore(callback);
+}
+
+y_inline_Fold(array[], Func:callback<ii>, initial, size = sizeof (array))
+{
+	for (new i = 0; i != size; ++i)
+	{
+		initial = @.callback(array[i], initial);
+	}
+	Callback_Restore(callback);
+	return initial;
+}
+
+Test:y_inline_NewAPI1()
+{
+	new array[10] = { 0, 5, 1, 5, 2, 3, 4, 5, 5, 0 };
+	new count = 0;
+	inline IsFive(value)
+	{
+		if (value == 5)
+			++count;
+	}
+	y_inline_ForEach(array, using inline IsFive);
+	ASSERT(count == 4);
+}
+
+Test:y_inline_NewAPI2()
+{
+	new array[10] = { 0, 5, 1, 5, 2, 3, 4, 5, 5, 0 };
+	new count = 0;
+	inline const IsFive(value)
+	{
+		if (value == 5)
+			++count;
+	}
+	y_inline_ForEach(array, using inline IsFive);
+	ASSERT(count == 0);
+}
+
+Test:y_inline_NewAPI3()
+{
+	new array[10] = { 5, 5, 1, 5, 2, 3, 4, 5, 5, 5 };
+	inline const IsFive(value, count)
+	{
+		if (value == 5)
+			inline_return count + 1;
+		inline_return count;
+	}
+	new count = y_inline_Fold(array, using inline IsFive, 0);
+	ASSERT(count == 6);
+}
+
+y_inline_MetaData(Func:cb<iis>)
+{
+	ASSERT(Indirect_GetMeta(cb) == 0);
+	Indirect_SetMeta(cb, 42);
+	ASSERT(Indirect_GetMeta(cb) == 42);
+	return @.cb(4, 5, "The Dummy Call");
+}
+
+Test:y_inline_MetaData()
+{
+	inline Dummy(a, b, string:c[])
+	{
+		ASSERT(!strcmp(c, "The Dummy Call"));
+		inline_return a + b;
+	}
+	new ret = y_inline_MetaData(using inline Dummy);
+	ASSERT(ret == 9);
+}
+
