@@ -86,6 +86,41 @@ CountFives(array[], size)
 
 Even if `ForEach` is not modified, this will ALWAYS return `0` - because `count` is modified inside `IsFive`, but the new value is instantly forgotten when the current call ends.
 
+## Manipulation
+
+Function handlers are just variables.  They can be stored, passed, and more:
+
+```pawn
+new Func:g_cb<>;
+
+CalleeA(Func:cb<>)
+{
+	@.cb();
+}
+
+CalleeB()
+{
+	CalleeA(g_cb);
+}
+
+CalleeC(Func:cb<>)
+{
+	g_cb = cb;
+	CalleeB();
+}
+
+Caller()
+{
+	inline Called()
+	{
+		print("hi");
+	}
+	CalleeC(using inline Called);
+}
+```
+
+But don't forget closure rules - the data will be invalid after `CalleeC` ends (which in this example is after the other two callees end) unless you explicitly claim it.
+
 ## Type Safety
 
 Lets write a `Fold` function - this takes a current array element and a running total, and does something to them.  So the function that gets called (`inline`, `public`, or other) needs two integer parameters - `current` and `accumulated`.  So we specify that `Fold` takes a function that takes two parameters using `Func:name<ii>`:
