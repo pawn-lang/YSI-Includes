@@ -1,6 +1,6 @@
 # Errors
 
-## `warning 234: function is deprecated (symbol "CallStoredFunction") Use \`@.func(params);\`.`
+## ``warning 234: function is deprecated (symbol "CallStoredFunction") Use `@.func(params);`.``
 
 Old code:
 
@@ -18,7 +18,7 @@ new Func:f<iis> = GetLocalFunction(&Function<iis>);
 @.f(42, 43, "Hello World");
 ```
 
-## `warning 234: function is deprecated (symbol "Callback_Call") Use \`@.func(params);\`.`
+## ``warning 234: function is deprecated (symbol "Callback_Call") Use `@.func(params);`.``
 
 Old code:
 
@@ -32,7 +32,7 @@ New code:
 @.f(42, 43, "Hello World");
 ```
 
-## `warning 234: function is deprecated (symbol "Callback_Array") Use \`Indirect_Array(_:func, tagof (func), params);\`.`
+## ``warning 234: function is deprecated (symbol "Callback_Array") Use `Indirect_Array(_:func, tagof (func), params);`.``
 
 This is not quite as simple - there's no neat `@` wrapper for when you want to give the parameters all in a single array instead of as multiple real parameters.  But there is still a way:
 
@@ -52,7 +52,7 @@ Note that with `y_va` and closures this is likely rarely needed:
 @.f(___(0));
 ```
 
-## `warning 234: function is deprecated (symbol "Callback_Get_") Remove or use \`Indirect_Claim(func);\`.`
+## ``warning 234: function is deprecated (symbol "Callback_Get_") Remove or use `Indirect_Claim(func);`.``
 
 Old code:
 
@@ -88,7 +88,7 @@ Callee(Func:c<>)
 
 This isn't quite the same, but performs the same job in some cases.
 
-## `warning 234: function is deprecated (symbol "Callback_Release") Remove or use \`Indirect_Release(func);\`.`
+## ``warning 234: function is deprecated (symbol "Callback_Release") Remove or use `Indirect_Release(func);`.``
 
 Old code:
 
@@ -117,7 +117,7 @@ And if you do, once you're done with it, release it with:
 Indirect_Release(g_c);
 ```
 
-## `warning 213: tag mismatch: expected tag none ("_"), but found "F@_@<something>"`
+## ``warning 213: tag mismatch: expected tag none ("_"), but found "F@_@<something>"``
 
 This usually happens when you pass a function pointer to a normal function (such as as an optional parameter to `SetTimerEx`):
 
@@ -155,7 +155,7 @@ Caller(Func:callback<ii>)
 }
 ```
 
-## `warning 213: tag mismatch: expected tag "F@_@", but found "F@_@<something>"`
+## ``warning 213: tag mismatch: expected tag "F@_@", but found "F@_@<something>"``
 
 This indicates that you are passing an inline to an old-style function, one such as:
 
