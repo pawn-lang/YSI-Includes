@@ -100,7 +100,8 @@ public OnCodeInit()
 		#emit PUSH.C     0xFFFFFFFF
 		#emit PUSH.C     8
 		#emit LCTRL      6
-		#emit ADD.C      28
+		#emit ADD.C      36
+		#emit LCTRL      8
 		#emit PUSH.pri
 		#emit LOAD.S.pri pointer
 		#emit SCTRL      6
@@ -126,7 +127,8 @@ public OnCodeInit()
 				#emit PUSH.C     0xFFFFFFFF
 				#emit PUSH.C     8
 				#emit LCTRL      6
-				#emit ADD.C      28
+				#emit ADD.C      36
+				#emit LCTRL      8
 				#emit PUSH.pri
 				#emit LOAD.S.pri pointer2
 				#emit SCTRL      6
@@ -194,7 +196,8 @@ hook OnPlayerConnect(playerid)
 		// timer.  This involves getting the current "cip" address, modifying it
 		// to get the return address then modifying "cip" to call the function.
 		#emit LCTRL      6
-		#emit ADD.C      28
+		#emit ADD.C      36
+		#emit LCTRL      8
 		#emit PUSH.pri
 		#emit LOAD.S.pri data
 		#emit SCTRL      6
@@ -230,7 +233,8 @@ hook OnPlayerDisconnect(playerid, reason)
 		// timer.  This involves getting the current "cip" address, modifying it
 		// to get the return address then modifying "cip" to call the function.
 		#emit LCTRL      6
-		#emit ADD.C      28
+		#emit ADD.C      36
+		#emit LCTRL      8
 		#emit PUSH.pri
 		#emit LOAD.S.pri data
 		#emit SCTRL      6

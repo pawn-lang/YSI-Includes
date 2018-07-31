@@ -158,6 +158,8 @@ public OnJITCompile()
 	new ret = ScriptInit_OnJITCompile();
 	if (ret)
 		YSI_g_sCodeJITed = true;
+	else
+		Debug_Print0("\7*** YSI Warning: JIT disabled");
 	DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
 	return ret;
 }

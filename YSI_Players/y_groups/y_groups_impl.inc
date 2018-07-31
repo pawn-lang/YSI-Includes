@@ -1288,6 +1288,10 @@ global Group:Iter_Func@GroupChild(start, Group:parent)
  *  #emit PUSH.S     16
  *  #emit PUSH.C     <n * 4>
  *
+ * This code is now, of course, SERIOUSLY outdated - function pointers have
+ * advanced way beyond this (see indirection.inc), but this code works, and
+ * because we have one function for each number of parameters, it is actually
+ * very fast because it is so specialised.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -1295,7 +1299,8 @@ stock _Y_G@C_0(func)
 {
 	#emit PUSH.C     0
 	#emit LCTRL      6
-	#emit ADD.C      28
+	#emit ADD.C      36
+	#emit LCTRL      8
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
 	#emit SCTRL      6
@@ -1308,7 +1313,8 @@ stock _Y_G@C_1(func, GLOBAL_TAG_TYPES:...)
 	#emit PUSH.S     16
 	#emit PUSH.C     4
 	#emit LCTRL      6
-	#emit ADD.C      28
+	#emit ADD.C      36
+	#emit LCTRL      8
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
 	#emit SCTRL      6
@@ -1322,7 +1328,8 @@ stock _Y_G@C_2(func, GLOBAL_TAG_TYPES:...)
 	#emit PUSH.S     16
 	#emit PUSH.C     8
 	#emit LCTRL      6
-	#emit ADD.C      28
+	#emit ADD.C      36
+	#emit LCTRL      8
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
 	#emit SCTRL      6
@@ -1337,7 +1344,8 @@ stock _Y_G@C_3(func, GLOBAL_TAG_TYPES:...)
 	#emit PUSH.S     16
 	#emit PUSH.C     12
 	#emit LCTRL      6
-	#emit ADD.C      28
+	#emit ADD.C      36
+	#emit LCTRL      8
 	#emit PUSH.pri
 	#emit LOAD.S.pri func
 	#emit SCTRL      6
