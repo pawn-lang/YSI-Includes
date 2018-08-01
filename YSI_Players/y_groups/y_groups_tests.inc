@@ -1000,6 +1000,3 @@ Test:y_groups_Iterator0()
 #undef _GROUP_MAKE_LIMIT
 #undef _GROUP_MAKE_NAME
 
-#tryinclude "..\YSI_Core\y_master"
-#tryinclude "..\..\YSI_Core\y_master"
-

@@ -70,9 +70,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#tryinclude "y_hooks"
-#tryinclude "..\y_hooks"
-
 static stock
 	sgPlayerCounter[MAX_PLAYERS];
 
@@ -151,7 +148,4 @@ PTest:Timer3(playerid)
 	defer StopMessage1(playerid);
 	ASK("Is the green BIG MESSAGE stopping appearing after 4 seconds?");
 }
-
-#tryinclude "y_hooks"
-#tryinclude "..\y_hooks"
 

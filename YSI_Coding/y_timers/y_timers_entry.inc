@@ -98,5 +98,8 @@ Optional plugins:
 #endif
 
 #if defined YSI_TESTS
+	#include "..\y_hooks"
 	#include "y_timers_tests"
+	#include "..\y_hooks"
 #endif
+

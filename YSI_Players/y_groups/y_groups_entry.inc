@@ -173,5 +173,7 @@ stock _YSI_HAS_y_groups(_do_not_call_me_ever_, _like_never_)
 
 #if defined YSI_TESTS
 	#include "y_groups_tests"
+
+	#include "..\..\YSI_Core\y_master"
 #endif
 
