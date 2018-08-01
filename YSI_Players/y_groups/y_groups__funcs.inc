@@ -572,6 +572,38 @@ gglobal Group_GlobalExclusive...(_GROUP_MAKE_TAG:el)
 	return _GROUP_MAKE_NAME<Group_Exclusive...>(GROUP_GLOBAL, el);
 }
 
+#if defined GROUP_LIBRARY_TAGS
+	
+	stock Group:operator+(Group:g, GROUP_LIBRARY_TAGS:o)
+	{
+		_GROUP_MAKE_NAME<Group_Set...>(g, o, true);
+		return g;
+	}
+	
+	stock Group:operator-(Group:g, GROUP_LIBRARY_TAGS:o)
+	{
+		_GROUP_MAKE_NAME<Group_Set...>(g, o, false);
+		return g;
+	}
+	
+	stock Group:operator%(Group:g, GROUP_LIBRARY_TAGS:o)
+	{
+		_GROUP_MAKE_NAME<Group_Exclusive...>(g, o);
+		return g;
+	}
+	
+	stock bool:operator==(Group:g, GROUP_LIBRARY_TAGS:o)
+	{
+		return _GROUP_MAKE_NAME<Group_Get...>(g, o);
+	}
+	
+	stock bool:operator!=(Group:g, GROUP_LIBRARY_TAGS:o)
+	{
+		return !_GROUP_MAKE_NAME<Group_Get...>(g, o);
+	}
+	
+#endif
+
 /*
 
     88                                                                88  

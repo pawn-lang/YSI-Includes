@@ -677,6 +677,28 @@ global void:Group_SetPlayer(Group:g,p,bool:s)
 	//return 0;
 }
 
+stock Group:operator+(Group:g, o)
+{
+	Group_SetPlayer(g, o, true);
+	return g;
+}
+
+stock Group:operator-(Group:g, o)
+{
+	Group_SetPlayer(g, o, false);
+	return g;
+}
+
+stock bool:operator==(Group:g, o)
+{
+	return Group_GetPlayer(g, o);
+}
+
+stock bool:operator!=(Group:g, o)
+{
+	return !Group_GetPlayer(g, o);
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="p">Player to set.</param>
  * <param name="g">The player's new groups.</param>
@@ -1520,5 +1542,37 @@ global bool:Group_IsDescendant(Group:p, Group:c)
 		}
 	}
 	return false;
+}
+
+stock Group:operator+(Group:g, Group:o)
+{
+	Group_SetGroup(g, o, true);
+	return g;
+}
+
+stock Group:operator-(Group:g, Group:o)
+{
+	Group_SetGroup(g, o, false);
+	return g;
+}
+
+stock bool:operator>=(Group:g, Group:o)
+{
+	return Group_IsDescendant(g, o);
+}
+
+stock bool:operator>(Group:g, Group:o)
+{
+	return g != o && Group_IsDescendant(g, o);
+}
+
+stock bool:operator<=(Group:g, Group:o)
+{
+	return Group_IsDescendant(o, g);
+}
+
+stock bool:operator<(Group:g, Group:o)
+{
+	return g != o && Group_IsDescendant(o, g);
 }
 
