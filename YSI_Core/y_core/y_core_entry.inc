@@ -123,14 +123,6 @@ native YSIPrintF(const format[], GLOBAL_TAG_TYPES:...) = printf;
 #define YSIM_LOG_IN #U
 #define YSIM_VARARG #V
 
-// Now all third-party includes, that shouldn't depend on YSI (if they do,
-// that's an interesting issue I'll solve if/when it happens).
-#if defined _DEBUG
-	#if _DEBUG > 0
-		#include "y_thirdpartyreduced"
-	#endif
-#endif
-
 // New create the `OnScriptInit` and `OnCodeInit` callbacks, which many YSI
 // includes use to start themselves.
 #include "y_scriptinit_impl"

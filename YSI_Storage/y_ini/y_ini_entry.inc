@@ -134,6 +134,17 @@ forward e_INI_LINE_TYPE:
 #include "y_ini_writing"
 
 #if defined YSI_TESTS
+	#tryinclude "..\..\amx\os"
+	#tryinclude <amx_assembly\os>
+	#tryinclude "..\..\amx_assembly\os"
+	#tryinclude "..\..\..\amx_assembly\os"
+	#tryinclude "os"
+	#tryinclude <os>
+
+	#if !defined OS_INC
+		#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
+	#endif
+
 	#include "y_ini_tests"
 #endif
 

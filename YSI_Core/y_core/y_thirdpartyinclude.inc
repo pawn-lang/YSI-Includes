@@ -268,15 +268,15 @@ Optional plugins:
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#tryinclude "..\..\amx\os"
-#tryinclude <amx_assembly\os>
-#tryinclude "..\..\amx_assembly\os"
-#tryinclude "..\..\..\amx_assembly\os"
-#tryinclude "os"
-#tryinclude <os>
-#if !defined OS_INC
-	#define AMX_INCLUDING_FAILED
-#endif
+//#tryinclude "..\..\amx\os"
+//#tryinclude <amx_assembly\os>
+//#tryinclude "..\..\amx_assembly\os"
+//#tryinclude "..\..\..\amx_assembly\os"
+//#tryinclude "os"
+//#tryinclude <os>
+//#if !defined OS_INC
+//	#define AMX_INCLUDING_FAILED
+//#endif
 
 //#tryinclude "..\..\amx\phys_memory"
 //#tryinclude <amx_assembly\phys_memory>

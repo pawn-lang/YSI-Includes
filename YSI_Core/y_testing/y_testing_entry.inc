@@ -78,7 +78,17 @@ Optional plugins:
 forward bool:_Testing_End();
 
 #include "..\y_utils"
-#include "..\y_core\y_thirdpartyreduced"
+
+#tryinclude "..\..\amx\amx_memory"
+#tryinclude <amx_assembly\amx_memory>
+#tryinclude "..\..\amx_assembly\amx_memory"
+#tryinclude "..\..\..\amx_assembly\amx_memory"
+#tryinclude "amx_memory"
+#tryinclude <amx_memory>
+
+#if !defined AMX_MEMORY_INC
+	#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
+#endif
 
 #if defined YSI_TESTS
 	#if defined INCLUDE_TESTS
