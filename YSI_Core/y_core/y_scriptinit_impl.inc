@@ -434,7 +434,3 @@ public _ScriptInit_FixState() <_script_init_fix_state : false>
 {
 }
 
-#if defined _DEBUG
-	#include "y_thirdpartyinclude"
-#endif
-

@@ -78,7 +78,7 @@ Optional plugins:
 forward bool:_Testing_End();
 
 #include "..\y_utils"
-#include "..\y_core\y_thirdpartyinclude"
+#include "..\y_core\y_thirdpartyreduced"
 
 #if defined YSI_TESTS
 	#if defined INCLUDE_TESTS
