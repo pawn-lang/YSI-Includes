@@ -1,4 +1,4 @@
-# Errors
+# Issues
 
 ## ``warning 234: function is deprecated (symbol "CallStoredFunction") Use `@.func(params);`.``
 
