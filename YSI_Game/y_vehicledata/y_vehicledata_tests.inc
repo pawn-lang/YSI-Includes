@@ -75,7 +75,7 @@ static stock bool:VIM_LocalEmpty(str[])
 	return str[0] == '\0';
 }
 
-Test:VIM_SomeSettings()
+TEST__ VIM_SomeSettings()
 {
 	ASSERT(Model_IsCar(401));
 	ASSERT(Model_IsCar(457));
@@ -83,7 +83,7 @@ Test:VIM_SomeSettings()
 	ASSERT(!Model_IsCar(999));
 }
 
-Test:VIM_Clamps()
+TEST__ VIM_Clamps()
 {
 	ASSERT(Model_ToVIM(-3)  == VIM:(399 - 399));
 	ASSERT(Model_ToVIM(0)   == VIM:(399 - 399));
@@ -310,7 +310,7 @@ Test:VIM_Clamps()
 	ASSERT(Model_ToVIM(654684) == VIM:(612 - 399));
 }
 
-Test:VIM_IsValid()
+TEST__ VIM_IsValid()
 {
 	ASSERT(!Model_IsValid(-12));
 	ASSERT(!Model_IsValid(0));
@@ -537,7 +537,7 @@ Test:VIM_IsValid()
 	ASSERT(!Model_IsValid(654684));
 }
 
-Test:VIM_NamesRange()
+TEST__ VIM_NamesRange()
 {
 	ASSERT(VIM_LocalEmpty(Model_Name(-8)));
 	ASSERT(VIM_LocalEmpty(Model_Name(10)));

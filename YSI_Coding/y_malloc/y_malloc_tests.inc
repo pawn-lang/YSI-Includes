@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-Test:y_malloc_100()
+TEST__ y_malloc_100()
 {
 	new
 		Alloc:a = malloc(1000);
@@ -78,7 +78,7 @@ Test:y_malloc_100()
 	free(a);
 }
 
-Test:y_malloc_2_100()
+TEST__ y_malloc_2_100()
 {
 	new
 		Alloc:a = malloc(100);
@@ -91,7 +91,7 @@ Test:y_malloc_2_100()
 	ASSERT(a == b);
 }
 
-Test:y_malloc_2000()
+TEST__ y_malloc_2000()
 {
 	new
 		Alloc:a = malloc(2000);
@@ -99,7 +99,7 @@ Test:y_malloc_2000()
 	free(a);
 }
 
-Test:y_malloc_clear()
+TEST__ y_malloc_clear()
 {
 	new Alloc:mem[3];
 	mem[0] = malloc(2);
@@ -113,7 +113,7 @@ Test:y_malloc_clear()
 	free(mem[0]);
 }
 
-Test:y_malloc_Loads()
+TEST__ y_malloc_Loads()
 {
 	// Allocate slightly more memory than we have room for.
 	new
@@ -124,7 +124,7 @@ Test:y_malloc_Loads()
 
 #define MALLOC_TEST(%0) for (new Alloc:a = malloc(%0), __loop = 1; a && (__loop || !free(a)); --__loop)
 
-Test:y_malloc_mset()
+TEST__ y_malloc_mset()
 {
 	MALLOC_TEST(10)
 	{
@@ -134,7 +134,7 @@ Test:y_malloc_mset()
 	}
 }
 
-Test:y_malloc_mget()
+TEST__ y_malloc_mget()
 {
 	MALLOC_TEST(10)
 	{
@@ -146,7 +146,7 @@ Test:y_malloc_mget()
 	}
 }
 
-Test:y_malloc_SlotSize()
+TEST__ y_malloc_SlotSize()
 {
 	MALLOC_TEST(10)
 	{
@@ -166,7 +166,7 @@ Test:y_malloc_SlotSize()
 	}
 }
 
-Test:y_malloc_msets()
+TEST__ y_malloc_msets()
 {
 	static const
 		str0[] = "1111   ",
@@ -184,7 +184,7 @@ Test:y_malloc_msets()
 	}
 }
 
-Test:y_malloc_mgets()
+TEST__ y_malloc_mgets()
 {
 	static const
 		str0[] = "1111   ";
@@ -208,28 +208,28 @@ Test:y_malloc_mgets()
 }
 
 /*
-Test:y_malloc_()
+TEST__ y_malloc_()
 {
 	MALLOC_TEST(10)
 	{
 	}
 }
 
-Test:y_malloc_()
+TEST__ y_malloc_()
 {
 	MALLOC_TEST(10)
 	{
 	}
 }
 
-Test:y_malloc_()
+TEST__ y_malloc_()
 {
 	MALLOC_TEST(10)
 	{
 	}
 }
 
-Test:y_malloc_()
+TEST__ y_malloc_()
 {
 	MALLOC_TEST(10)
 	{
@@ -237,7 +237,7 @@ Test:y_malloc_()
 }
 */
 
-Test:y_malloc_NewS_0()
+TEST__ y_malloc_NewS_0()
 {
 	new
 		Alloc:a = Malloc_NewS("Hello There", false);
@@ -251,7 +251,7 @@ Test:y_malloc_NewS_0()
 	}
 }
 
-Test:y_malloc_NewS_1()
+TEST__ y_malloc_NewS_1()
 {
 	new
 		Alloc:a = Malloc_NewS("Hello There", true);

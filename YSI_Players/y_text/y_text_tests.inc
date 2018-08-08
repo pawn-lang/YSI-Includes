@@ -1,6 +1,6 @@
 loadtext test[ysi_test];
 
-Test:y_text_formatex_cellmin_d()
+TEST__ y_text_formatex_cellmin_d()
 {
 	static
 		result[] = "-2147483648";
@@ -10,7 +10,7 @@ Test:y_text_formatex_cellmin_d()
 	ASSERT(YSI_gTextTestOutput[0][0] && !strcmp(YSI_gTextTestOutput[0], result));
 }
 
-Test:y_text_formatex_cellmin_x()
+TEST__ y_text_formatex_cellmin_x()
 {
 	static
 		result[] = "80000000";
@@ -20,7 +20,7 @@ Test:y_text_formatex_cellmin_x()
 	ASSERT(YSI_gTextTestOutput[0][0] && !strcmp(YSI_gTextTestOutput[0], result));
 }
 
-Test:y_text_formatex_cellmin_b()
+TEST__ y_text_formatex_cellmin_b()
 {
 	static
 		result[] = "10000000000000000000000000000000";
@@ -30,7 +30,7 @@ Test:y_text_formatex_cellmin_b()
 	ASSERT(YSI_gTextTestOutput[0][0] && !strcmp(YSI_gTextTestOutput[0], result));
 }
 
-Test:y_text_Text_Send_1()
+TEST__ y_text_Text_Send_1()
 {
 	static
 		result[] = "Hello World";

@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-Test:y_punycode_1()
+TEST__ y_punycode_1()
 {
 	new
 		dst[32];

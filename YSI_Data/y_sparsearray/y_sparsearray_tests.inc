@@ -1,7 +1,7 @@
 // This is quite hard to test, since it can be implemented three different ways
 // depending on what exists when compiling.
 
-Test:SparseArray()
+TEST__ SparseArray()
 {
 	new
 		SparseArray:arr<>;

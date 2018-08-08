@@ -98,7 +98,7 @@ HOOK__ OnTestPrehook()
 	++YSI_g_sValue;
 }
 
-Test:y_hooksPrehook()
+TEST__ y_hooksPrehook()
 {
 	YSI_g_sValue = 91;
 	CallLocalFunction("OnTestPrehook", "");
@@ -122,7 +122,7 @@ HOOK__ OnTestCallback()
 	++YSI_g_sValue;
 }
 
-Test:y_hooksOrdering()
+TEST__ y_hooksOrdering()
 {
 	YSI_g_sValue = 91;
 	CallLocalFunction("OnTestCallback", "");
@@ -137,7 +137,7 @@ HOOK__ OnScriptInit()
 	y_hooks_OnScriptInit_called = true;
 }
 
-Test:OnScriptInit()
+TEST__ OnScriptInit()
 {
 	ASSERT(y_hooks_OnScriptInit_called);
 }
@@ -161,7 +161,7 @@ public OnCodeInit()
 	forward HooksTest_OnCodeInit();
 #endif
 
-Test:OnCodeInit()
+TEST__ OnCodeInit()
 {
 	ASSERT(y_hooks_OnCodeInit_called);
 }
@@ -205,7 +205,7 @@ Test:OnCodeInit()
 		YSI_g_sValue += 404;
 	}
 
-	Test:y_hooks_TooLongReplacements()
+	TEST__ y_hooks_TooLongReplacements()
 	{
 		YSI_g_sValue = 0;
 		CallLocalFunction("y_hooks_VeryLongTarget_0", "");
@@ -231,7 +231,7 @@ HOOK__ Ony_hooksShortUpd()
 	++YSI_g_sValue;
 }
 
-Test:Ony_hooksShortUpdate()
+TEST__ Ony_hooksShortUpdate()
 {
 	YSI_g_sValue = 0;
 	CallLocalFunction("Ony_hooksShortUpdate", "");
@@ -254,7 +254,7 @@ Test:Ony_hooksShortUpdate()
 		++YSI_g_sValue;
 	}
 
-	Test:y_hooksReplacement2()
+	TEST__ y_hooksReplacement2()
 	{
 		YSI_g_sValue = 0;
 		CallLocalFunction("Ony_hooksTTTTT_YYYYY", "");
@@ -271,7 +271,7 @@ Test:Ony_hooksShortUpdate()
 		++YSI_g_sValue;
 	}
 
-	Test:y_hooksReplacement3()
+	TEST__ y_hooksReplacement3()
 	{
 		YSI_g_sValue = 0;
 		CallLocalFunction("Ony_hooksTTTTT_YYYYY_WtExtras", "");
@@ -303,7 +303,7 @@ public Ony_hooksTest2(cmd[])
 	return 1;
 }
 
-Test:y_hooks_Ony_hooksTest2()
+TEST__ y_hooks_Ony_hooksTest2()
 {
 	// Check both hooks are called.
 	YSI_g_sValue = 0;
@@ -349,7 +349,7 @@ HOOK__ y_hooks_PassParams(i1, a0[], i2)
 	ASSERT(i2 == 101);
 }
 
-Test:y_hooks_PassParams()
+TEST__ y_hooks_PassParams()
 {
 	CallLocalFunction("y_hooks_PassParams", "isi", 42, "Hello world", 101);
 }
@@ -368,7 +368,7 @@ HOOK__ y_hooks_ReturnM2()
 	return -2;
 }
 
-Test:y_hooks_ReturnM2()
+TEST__ y_hooks_ReturnM2()
 {
 	YSI_g_sValue = 0;
 	ASSERT(CallLocalFunction("y_hooks_ReturnM2", "") == 1);
@@ -389,7 +389,7 @@ HOOK__ y_hooks_ReturnM1()
 	return -1;
 }
 
-Test:y_hooks_ReturnM1()
+TEST__ y_hooks_ReturnM1()
 {
 	YSI_g_sValue = 0;
 	ASSERT(CallLocalFunction("y_hooks_ReturnM1", "") == 0);
@@ -410,7 +410,7 @@ HOOK__ y_hooks_Return0()
 	return 0;
 }
 
-Test:y_hooks_Return0()
+TEST__ y_hooks_Return0()
 {
 	YSI_g_sValue = 0;
 	ASSERT(CallLocalFunction("y_hooks_Return0", "") == 0);
@@ -431,7 +431,7 @@ HOOK__ y_hooks_Return1()
 	return 1;
 }
 
-Test:y_hooks_Return1()
+TEST__ y_hooks_Return1()
 {
 	YSI_g_sValue = 0;
 	ASSERT(CallLocalFunction("y_hooks_Return1", "") == 1);
@@ -455,7 +455,7 @@ HOOK__ Ony_hooksTest3@001(cmd[])
 	return 1;
 }
 
-Test:y_hooks_Ony_hooksTest3()
+TEST__ y_hooks_Ony_hooksTest3()
 {
 	// Check both hooks are called.
 	YSI_g_sValue = 0;
@@ -479,7 +479,7 @@ HOOK__ Ony_hooksTest1@001(cmd[])
 	return 0;
 }
 
-Test:y_hooks_Ony_hooksTest1()
+TEST__ y_hooks_Ony_hooksTest1()
 {
 	// Check both hooks are called.
 	YSI_g_sValue = 0;
@@ -503,7 +503,7 @@ HOOK__ Ony_hooksTest4@001(cmd[])
 	return 0;
 }
 
-Test:y_hooks_Ony_hooksTest4()
+TEST__ y_hooks_Ony_hooksTest4()
 {
 	// Check only one hook is called.
 	YSI_g_sValue = 0;
@@ -527,7 +527,7 @@ HOOK__ Ony_hooksTest5@001(cmd[])
 	return 0;
 }
 
-Test:y_hooks_Ony_hooksTest5()
+TEST__ y_hooks_Ony_hooksTest5()
 {
 	// Check only one hook is called.
 	YSI_g_sValue = 0;
@@ -556,7 +556,7 @@ static stock y_hooks_funcidx2(const str[])
 forward y_hooks_Invalidate1();
 public y_hooks_Invalidate1() {}
 
-Test:y_hooks_Invalidate1()
+TEST__ y_hooks_Invalidate1()
 {
 	ASSERT(funcidx("y_hooks_Invalidate1") != -1);
 	Hooks_InvalidateName(y_hooks_funcidx2("y_hooks_Invalidate1"));
@@ -570,7 +570,7 @@ public y_hooks_Invalidate2() {}
 forward y_hooks_Invalidate3();
 public y_hooks_Invalidate3() {}
 
-Test:y_hooks_Invalidate23()
+TEST__ y_hooks_Invalidate23()
 {
 	new
 		base0,
@@ -591,7 +591,7 @@ Test:y_hooks_Invalidate23()
 	ASSERT(count1 < count0);
 }
 
-Test:y_hooks_IsolateName1()
+TEST__ y_hooks_IsolateName1()
 {
 	new
 		name[32];
@@ -609,7 +609,7 @@ Test:y_hooks_IsolateName1()
 	ASSERT_FALSE(strcmp(name, "Yes_Other"));
 }
 
-Test:y_hooks_IsolateName2()
+TEST__ y_hooks_IsolateName2()
 {
 	new
 		func[32];
@@ -627,7 +627,7 @@ Test:y_hooks_IsolateName2()
 
 static g_y_hooksVar;
 
-Test:y_hooks_Customs()
+TEST__ y_hooks_Customs()
 {
 	g_y_hooksVar = 0;
 	CallLocalFunction("y_hooks_MyFunc1", "ii", 4, 5);
@@ -693,14 +693,14 @@ public OnPlayerEnterDynamicArea(p, a) { g_y_hooksVar += 100; }
 
 HOOK__ OnPlayerEnterDynArea(p, a) { g_y_hooksVar += 10; }
 
-Test:y_hooks_SpecialCases()
+TEST__ y_hooks_SpecialCases()
 {
 	g_y_hooksVar = 0;
 	CallLocalFunction("OnPlayerEnterDynamicArea", "ii", 0, 0);
 	ASSERT(g_y_hooksVar == 110);
 }
 
-Test:Hooks_MakeLongName0()
+TEST__ Hooks_MakeLongName0()
 {
 	new
 		name[64];
@@ -715,7 +715,7 @@ Test:Hooks_MakeLongName0()
 	ASSERT(!strcmp(name, "OnUpda"));
 }
 
-Test:Hooks_MakeLongName1()
+TEST__ Hooks_MakeLongName1()
 {
 	new
 		name[64];
@@ -742,7 +742,7 @@ Test:Hooks_MakeLongName1()
 	ASSERT(!strcmp(name, "DynamicCP"));
 }
 
-Test:Hooks_MakeLongName2()
+TEST__ Hooks_MakeLongName2()
 {
 	new
 		name[64];
@@ -757,7 +757,7 @@ Test:Hooks_MakeLongName2()
 	ASSERT(!strcmp(name, "OnUpdateTextDrawCPObjectCommand"));
 }
 
-Test:Hooks_MakeShortName1()
+TEST__ Hooks_MakeShortName1()
 {
 	new
 		name[64];
@@ -781,7 +781,7 @@ Test:Hooks_MakeShortName1()
 	ASSERT(!strcmp(name, "BBBBBAAAAAAAAAAAAAAAAAAAUpdTD"));
 }
 
-Test:Hooks_MakeShortName2()
+TEST__ Hooks_MakeShortName2()
 {
 	new
 		name[64];
@@ -793,7 +793,7 @@ Test:Hooks_MakeShortName2()
 	ASSERT(!strcmp(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCmdCCCC"));
 }
 
-Test:Hooks_GetDefaultReturn()
+TEST__ Hooks_GetDefaultReturn()
 {
 	ASSERT(Hooks_GetDefaultReturn("OnHookRet\0\0\0\0\0\0\0\0") == 1);
 	ASSERT(Hooks_GetDefaultReturn("OnPlayerCommandText\0\0\0\0\0\0\0\0") == 0);
@@ -810,7 +810,7 @@ public OnPlayerCustomReplacement() { g_y_hooksVar += 500; }
 
 HOOK__ OnPlayerCustomRpl() { g_y_hooksVar += 55; }
 
-Test:y_hooks_CustomReplacement()
+TEST__ y_hooks_CustomReplacement()
 {
 	g_y_hooksVar = 0;
 	CallLocalFunction("OnPlayerCustomReplacement", "");
@@ -872,7 +872,7 @@ static OnTestNumArgs4(total, ...)
 	ASSERT(numargs() == total + 1);
 }
 
-Test:y_hooks_numargs()
+TEST__ y_hooks_numargs()
 {
 	CallLocalFunction("OnTestNumArgs0", "iiiiii", 0, 0, 0, 0, 0, 0);
 	CallLocalFunction("OnTestNumArgs1", "iiiii", 0, 0, 0, 0, 0);
@@ -906,7 +906,7 @@ HOOK__ public y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_4>
 	g_y_hooksVar = strval(c[5]);
 }
 
-Test:y_hooks_State1()
+TEST__ y_hooks_State1()
 {
 	state y_hooks_state : y_hooks_state_1;
 	CallLocalFunction("y_hooks_State1", "s", "1000 2000");

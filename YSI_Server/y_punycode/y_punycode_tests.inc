@@ -70,49 +70,49 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-Test:y_punycode_1()
+TEST__ y_punycode_1()
 {
 	new
 		dst[32];
 	Puny_Encode(dst, "bücher");
-	P:1("Test:y_punycode_1: dst = %s", dst);
+	P:1("TEST__ y_punycode_1: dst = %s", dst);
 	ASSERT(!strcmp(dst, "bcher-kva"));
 	Puny_Encode(dst, "büücher");
-	P:1("Test:y_punycode_1: dst = %s", dst);
+	P:1("TEST__ y_punycode_1: dst = %s", dst);
 	ASSERT(!strcmp(dst, "bcher-kvaa"));
 	Puny_Encode(dst, "bücüher");
-	P:1("Test:y_punycode_1: dst = %s", dst);
+	P:1("TEST__ y_punycode_1: dst = %s", dst);
 	ASSERT(!strcmp(dst, "bcher-kvab"));
 	Puny_Encode(dst, "bücherü");
-	P:1("Test:y_punycode_1: dst = %s", dst);
+	P:1("TEST__ y_punycode_1: dst = %s", dst);
 	ASSERT(!strcmp(dst, "bcher-kvae"));
 	Puny_Encode(dst, "ýbücher");
-	P:1("Test:y_punycode_1: dst = %s", dst);
+	P:1("TEST__ y_punycode_1: dst = %s", dst);
 	ASSERT(!strcmp(dst, "bcher-kvaf"));
 	Puny_Encode(dst, "übücher");
-	P:1("Test:y_punycode_1: dst = %s", dst);
+	P:1("TEST__ y_punycode_1: dst = %s", dst);
 	ASSERT(!strcmp(dst, "bcher-jvab"));
 }
 
-Test:y_punycode_2()
+TEST__ y_punycode_2()
 {
 	new
 		dst[32],
 		hash;
 	Puny_EncodeHash(dst, "bücher", hash);
-	P:1("Test:y_punycode_2: dst = %s", dst);
+	P:1("TEST__ y_punycode_2: dst = %s", dst);
 	ASSERT(!strcmp(dst, "bcher-kva"));
 	Puny_EncodeHash(dst, "büCHer", hash);
-	P:1("Test:y_punycode_2: dst = %s", dst);
+	P:1("TEST__ y_punycode_2: dst = %s", dst);
 	ASSERT(!strcmp(dst, "bcher-kva"));
 	Puny_EncodeHash(dst, "BücHeR", hash);
-	P:1("Test:y_punycode_2: dst = %s", dst);
+	P:1("TEST__ y_punycode_2: dst = %s", dst);
 	ASSERT(!strcmp(dst, "bcher-kva"));
 	Puny_EncodeHash(dst, "bücHER", hash);
-	P:1("Test:y_punycode_2: dst = %s", dst);
+	P:1("TEST__ y_punycode_2: dst = %s", dst);
 	ASSERT(!strcmp(dst, "bcher-kva"));
 	Puny_EncodeHash(dst, "bÜcher", hash);
-	P:1("Test:y_punycode_2: dst = %s", dst);
+	P:1("TEST__ y_punycode_2: dst = %s", dst);
 	ASSERT(!strcmp(dst, "bcher-kva"));
 }
 

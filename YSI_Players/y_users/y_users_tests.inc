@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-Test:Player_Existing()
+TEST__ Player_Existing()
 {
 	new
 		ret[E_USER_PRELOAD];
@@ -86,7 +86,7 @@ Test:Player_Existing()
 new
 	gBot = INVALID_PLAYER_ID;
 
-Test:Player_ChangeLanguage()
+TEST__ Player_ChangeLanguage()
 {
 	// Connect the bot here so that it is done way before the PTest is run.
 	ConnectNPC("TestPlayer", "npcidle");
@@ -115,13 +115,13 @@ public OnPlayerConnect(playerid)
 	forward Testing_OnPlayerConnect(playerid);
 #endif
 
-PTestInit:Player_ChangeLanguage(playerid)
+PTEST_INIT__ Player_ChangeLanguage(playerid)
 {
 	// So that their language can be changed.
 	Player_ForceLogin(gBot);
 }
 
-PTest:Player_ChangeLanguage(playerid)
+PTEST__ Player_ChangeLanguage(playerid)
 {
 	new
 		ret[E_USER_PRELOAD];
@@ -133,20 +133,20 @@ PTest:Player_ChangeLanguage(playerid)
 	ASSERT(Langs_GetLanguage("NL") == ret[E_USER_PRELOAD_LANG]);
 }
 
-PTestClose:Player_ChangeLanguage(playerid)
+PTEST_CLOSE__ Player_ChangeLanguage(playerid)
 {
 	// Reset the player.
 	Player_ChangeLanguage(gBot, "EN");
 	//Kick(gBot);
 }
 
-PTestInit:Player_ChangePassword(playerid)
+PTEST_INIT__ Player_ChangePassword(playerid)
 {
 	// So that their password can be changed.
 	Player_ForceLogin(gBot);
 }
 
-PTest:Player_ChangePassword(playerid)
+PTEST__ Player_ChangePassword(playerid)
 {
 	new
 		ret[E_USER_PRELOAD];
@@ -158,19 +158,19 @@ PTest:Player_ChangePassword(playerid)
 	ASSERT(!strcmp(ret[E_USER_PRELOAD_PASS], "B506FEEEDFB83EF44A5DC2E00BF1535E58E3B37A044730F2A6718497A224B5455A441F39F9EB91967B38607416A9B85E5DE3CBE3A48E7A77AB5808674EF33822"));
 }
 
-PTestClose:Player_ChangePassword(playerid)
+PTEST_CLOSE__ Player_ChangePassword(playerid)
 {
 	// Reset the player.
 	Player_ChangePassword(gBot, "thisisanOKpass");
 	//Kick(gBot);
 }
 
-PTestInit:Player_Preload(playerid)
+PTEST_INIT__ Player_Preload(playerid)
 {
 	Player_ForceLogin(gBot);
 }
 
-PTest:Player_Preload(playerid)
+PTEST__ Player_Preload(playerid)
 {
 	new
 		//name[MAX_PLAYER_NAME],
@@ -183,13 +183,13 @@ PTest:Player_Preload(playerid)
 	ASSERT(gettime() >= ret[E_USER_PRELOAD_DATE]);
 }
 
-PTestInit:Player_GetID(playerid)
+PTEST_INIT__ Player_GetID(playerid)
 {
 	// So that their password can be changed.
 	Player_ForceLogin(gBot);
 }
 
-PTest:Player_GetID(playerid)
+PTEST__ Player_GetID(playerid)
 {
 	ASSERT(Player_GetYID(gBot) == 0);
 	ASSERT(Player_GetYID(playerid) < 0);

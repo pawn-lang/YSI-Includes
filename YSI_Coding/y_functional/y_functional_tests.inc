@@ -72,7 +72,7 @@ Optional plugins:
 
 #define FUNC_CHECK_ARR(%0,%1) for (new __i, __j = min(sizeof (%0), sizeof (%1)); __i != __j; ++__i) ASSERT(%0[__i] == %1[__i])
 
-Test:FUNC_Map1()
+TEST__ FUNC_Map1()
 {
 	new
 		a0[10] = {0, 1, 2, ...},
@@ -85,7 +85,7 @@ Test:FUNC_Map1()
 	FUNC_CHECK_ARR(a0, a1);
 }
 
-Test:FUNC_Map2()
+TEST__ FUNC_Map2()
 {
 	new
 		a0[10] = {0, 1, 2, ...},
@@ -101,7 +101,7 @@ Test:FUNC_Map2()
 	FUNC_CHECK_ARR(a3, a1);
 }
 
-Test:FUNC_Map3()
+TEST__ FUNC_Map3()
 {
 	new
 		a0[10] = {0, 1, 2, ...},
@@ -113,7 +113,7 @@ Test:FUNC_Map3()
 	FUNC_CHECK_ARR(a3, a1);
 }
 
-Test:FUNC_Map_1()
+TEST__ FUNC_Map_1()
 {
 	new
 		a0[10] = {0, 1, 2, ...},
@@ -126,7 +126,7 @@ Test:FUNC_Map_1()
 	FUNC_CHECK_ARR(a0, a1);
 }
 
-Test:FUNC_Map_2()
+TEST__ FUNC_Map_2()
 {
 	new
 		a0[10] = {0, 1, 2, ...},
@@ -135,7 +135,7 @@ Test:FUNC_Map_2()
 	FUNC_CHECK_ARR(a0, a1);
 }
 
-Test:FUNC_MapIdx()
+TEST__ FUNC_MapIdx()
 {
 	new
 		a0[10] = {1, ...},
@@ -148,7 +148,7 @@ Test:FUNC_MapIdx()
 	FUNC_CHECK_ARR(a0, a1);
 }
 
-Test:FUNC_MapIdx_()
+TEST__ FUNC_MapIdx_()
 {
 	new
 		a0[10] = {0, 1, 2, ...},
@@ -162,7 +162,7 @@ Test:FUNC_MapIdx_()
 	FUNC_CHECK_ARR(a0, a1);
 }
 
-Test:FUNC_ZipWith()
+TEST__ FUNC_ZipWith()
 {
 	new
 		a0[10] = { 0,  1,  2, ...},
@@ -174,7 +174,7 @@ Test:FUNC_ZipWith()
 	FUNC_CHECK_ARR(a2, a3);
 }
 
-Test:FUNC_ZipWith3()
+TEST__ FUNC_ZipWith3()
 {
 	new
 		a0[10] = { 0,  1,  2, ...},
@@ -187,7 +187,7 @@ Test:FUNC_ZipWith3()
 	FUNC_CHECK_ARR(a2, a3);
 }
 
-Test:FUNC_FoldR1()
+TEST__ FUNC_FoldR1()
 {
 	new
 		a0[10] = { 0,  1,  2, ...},
@@ -196,7 +196,7 @@ Test:FUNC_FoldR1()
 	ASSERT(ret == 0);
 }
 
-Test:FUNC_FoldR2()
+TEST__ FUNC_FoldR2()
 {
 	new
 		a0[10] = { 1,  2,  3, ...},
@@ -205,7 +205,7 @@ Test:FUNC_FoldR2()
 	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 10);
 }
 
-Test:FUNC_FoldL1()
+TEST__ FUNC_FoldL1()
 {
 	new
 		a0[10] = { 1,  2,  3, ...},
@@ -214,7 +214,7 @@ Test:FUNC_FoldL1()
 	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11);
 }
 
-Test:FUNC_FoldL_multiple()
+TEST__ FUNC_FoldL_multiple()
 {
 	new
 		a0[10] = { 1,  2,  3, ...},
@@ -228,7 +228,7 @@ static FUNC_FoldL_nested_Add(a, b)
 	return a + b;
 }
 
-Test:FUNC_FoldL_params()
+TEST__ FUNC_FoldL_params()
 {
 	new
 		a0[10] = { 1,  2,  3, ...},
@@ -237,7 +237,7 @@ Test:FUNC_FoldL_params()
 	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11);
 }
 
-Test:FUNC_FoldL_nested()
+TEST__ FUNC_FoldL_nested()
 {
 	new
 		a0[10] = { 1,  2,  3, ...},
@@ -246,7 +246,7 @@ Test:FUNC_FoldL_nested()
 	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11));
 }
 
-Test:FUNC_FoldR3()
+TEST__ FUNC_FoldR3()
 {
 	new
 		a0[10] = { 1,  2,  3, ...},
@@ -255,7 +255,7 @@ Test:FUNC_FoldR3()
 	ASSERT(ret == 15);
 }
 
-Test:FUNC_FoldL2()
+TEST__ FUNC_FoldL2()
 {
 	new
 		a0[10] = { 1,  2,  3, ...},

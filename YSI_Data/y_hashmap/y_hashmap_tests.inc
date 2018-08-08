@@ -77,7 +77,7 @@ enum E_HASH_MAP_TEST
 	E_HASH_MAP_TEST_DATA[HASH_MAP_DATA]
 }
 
-Test:y_hashmap_Init()
+TEST__ y_hashmap_Init()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
@@ -93,7 +93,7 @@ Test:y_hashmap_Init()
 	ASSERT(data[99][E_HASH_MAP_TEST_DATA][2] == 0);
 }
 
-Test:rawMemcpy()
+TEST__ rawMemcpy()
 {
 	new src[100] = "Hello there", dst[100];
 	rawMemcpy(ref(dst), ref(src), 100 * 4);
@@ -101,7 +101,7 @@ Test:rawMemcpy()
 	ASSERT(!strcmp(dst, "Hello there"));
 }
 
-Test:y_hashmap_Add()
+TEST__ y_hashmap_Add()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
@@ -114,7 +114,7 @@ Test:y_hashmap_Add()
 	ASSERT(data[42][E_HASH_MAP_TEST_DATA][2] == 0);
 }
 
-Test:y_hashmap_Get1()
+TEST__ y_hashmap_Get1()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
@@ -123,7 +123,7 @@ Test:y_hashmap_Get1()
 	ASSERT(HashMap_Get(m, "Hello") == 42);
 }
 
-Test:y_hashmap_GetUnused1()
+TEST__ y_hashmap_GetUnused1()
 {
 	new HashMap:m<>;
 	new data[6][E_HASH_MAP_TEST];
@@ -146,7 +146,7 @@ Test:y_hashmap_GetUnused1()
 	ASSERT(m[260] == 0);
 }
 
-Test:y_hashmap_GetUnused2()
+TEST__ y_hashmap_GetUnused2()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
@@ -162,7 +162,7 @@ Test:y_hashmap_GetUnused2()
 	ASSERT(HashMap_GetUnused(m) == 4);
 }
 
-Test:y_hashmap_GetVarious()
+TEST__ y_hashmap_GetVarious()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
@@ -229,7 +229,7 @@ Test:y_hashmap_GetVarious()
 	ASSERT(HashMap_Get(m, "0123456789") == 9);
 }
 
-Test:y_hashmap_RemoveKey1()
+TEST__ y_hashmap_RemoveKey1()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
@@ -240,7 +240,7 @@ Test:y_hashmap_RemoveKey1()
 	ASSERT(HashMap_Get(m, "Hello") == -1);
 }
 
-Test:y_hashmap_Get100()
+TEST__ y_hashmap_Get100()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
@@ -257,7 +257,7 @@ Test:y_hashmap_Get100()
 	}
 }
 
-Test:y_hashmap_Get100Hash()
+TEST__ y_hashmap_Get100Hash()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
@@ -274,7 +274,7 @@ Test:y_hashmap_Get100Hash()
 	}
 }
 
-Test:y_hashmap_Remove50()
+TEST__ y_hashmap_Remove50()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
@@ -306,7 +306,7 @@ Test:y_hashmap_Remove50()
 	}
 }
 
-Test:y_hashmap_RemoveValues()
+TEST__ y_hashmap_RemoveValues()
 {
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
@@ -336,7 +336,7 @@ Test:y_hashmap_RemoveValues()
 	}
 }
 
-Test:y_hashmap_Get1000()
+TEST__ y_hashmap_Get1000()
 {
 	ASSERT(heapspace() >= 145000);
 	new HashMap:m<>;
@@ -354,7 +354,7 @@ Test:y_hashmap_Get1000()
 	}
 }
 
-Test:y_hashmap_Remove500()
+TEST__ y_hashmap_Remove500()
 {
 	ASSERT(heapspace() >= 145000);
 	new HashMap:m<>;
@@ -387,7 +387,7 @@ Test:y_hashmap_Remove500()
 	}
 }
 
-Test:y_hashmap_Set500()
+TEST__ y_hashmap_Set500()
 {
 	ASSERT(heapspace() >= 145000);
 	new HashMap:m<>;

@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-Test:y_bitmap_Fade1()
+TEST__ y_bitmap_Fade1()
 {
 	new
 		Bitmap:ctx;
@@ -86,7 +86,7 @@ Test:y_bitmap_Fade1()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Fade2()
+TEST__ y_bitmap_Fade2()
 {
 	new
 		Bitmap:ctx;
@@ -103,7 +103,7 @@ Test:y_bitmap_Fade2()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Rect1()
+TEST__ y_bitmap_Rect1()
 {
 	new
 		Bitmap:ctx;
@@ -113,7 +113,7 @@ Test:y_bitmap_Rect1()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Rect2()
+TEST__ y_bitmap_Rect2()
 {
 	new
 		Bitmap:ctx;
@@ -124,7 +124,7 @@ Test:y_bitmap_Rect2()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Rect3()
+TEST__ y_bitmap_Rect3()
 {
 	new
 		Bitmap:ctx;
@@ -135,7 +135,7 @@ Test:y_bitmap_Rect3()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_FadeRect1()
+TEST__ y_bitmap_FadeRect1()
 {
 	new
 		Bitmap:ctx;
@@ -153,7 +153,7 @@ Test:y_bitmap_FadeRect1()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Diagonal1()
+TEST__ y_bitmap_Diagonal1()
 {
 	new
 		Bitmap:ctx;
@@ -180,7 +180,7 @@ Test:y_bitmap_Diagonal1()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Diagonal2()
+TEST__ y_bitmap_Diagonal2()
 {
 	new
 		Bitmap:ctx;
@@ -197,7 +197,7 @@ Test:y_bitmap_Diagonal2()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Diagonal3()
+TEST__ y_bitmap_Diagonal3()
 {
 	new
 		Bitmap:ctx;
@@ -214,7 +214,7 @@ Test:y_bitmap_Diagonal3()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Diagonal4()
+TEST__ y_bitmap_Diagonal4()
 {
 	new
 		Bitmap:ctx;
@@ -231,7 +231,7 @@ Test:y_bitmap_Diagonal4()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Diagonal5()
+TEST__ y_bitmap_Diagonal5()
 {
 	new
 		Bitmap:ctx;
@@ -248,7 +248,7 @@ Test:y_bitmap_Diagonal5()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Diagonal6()
+TEST__ y_bitmap_Diagonal6()
 {
 	new
 		Bitmap:ctx;
@@ -265,7 +265,7 @@ Test:y_bitmap_Diagonal6()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Pattern1()
+TEST__ y_bitmap_Pattern1()
 {
 	new
 		Bitmap:ctx;
@@ -283,7 +283,7 @@ Test:y_bitmap_Pattern1()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Pattern2()
+TEST__ y_bitmap_Pattern2()
 {
 	new
 		Bitmap:ctx;
@@ -301,7 +301,7 @@ Test:y_bitmap_Pattern2()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Pattern3()
+TEST__ y_bitmap_Pattern3()
 {
 	new
 		Bitmap:ctx;
@@ -319,7 +319,7 @@ Test:y_bitmap_Pattern3()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Pattern4()
+TEST__ y_bitmap_Pattern4()
 {
 	new
 		Bitmap:ctx;
@@ -337,7 +337,7 @@ Test:y_bitmap_Pattern4()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Pattern5()
+TEST__ y_bitmap_Pattern5()
 {
 	new
 		Bitmap:ctx;
@@ -355,7 +355,7 @@ Test:y_bitmap_Pattern5()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Pattern6()
+TEST__ y_bitmap_Pattern6()
 {
 	new
 		Bitmap:ctx;
@@ -373,7 +373,7 @@ Test:y_bitmap_Pattern6()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Pattern7()
+TEST__ y_bitmap_Pattern7()
 {
 	new
 		Bitmap:ctx;
@@ -391,7 +391,7 @@ Test:y_bitmap_Pattern7()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Pattern8()
+TEST__ y_bitmap_Pattern8()
 {
 	new
 		Bitmap:ctx;
@@ -409,7 +409,7 @@ Test:y_bitmap_Pattern8()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Border1()
+TEST__ y_bitmap_Border1()
 {
 	new
 		Bitmap:ctx;
@@ -419,7 +419,7 @@ Test:y_bitmap_Border1()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Border2()
+TEST__ y_bitmap_Border2()
 {
 	new
 		Bitmap:ctx;
@@ -429,7 +429,7 @@ Test:y_bitmap_Border2()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Border3()
+TEST__ y_bitmap_Border3()
 {
 	new
 		Bitmap:ctx;
@@ -439,7 +439,7 @@ Test:y_bitmap_Border3()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Border4()
+TEST__ y_bitmap_Border4()
 {
 	new
 		Bitmap:ctx;
@@ -449,7 +449,7 @@ Test:y_bitmap_Border4()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Border5()
+TEST__ y_bitmap_Border5()
 {
 	new
 		Bitmap:ctx;
@@ -459,7 +459,7 @@ Test:y_bitmap_Border5()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Border6()
+TEST__ y_bitmap_Border6()
 {
 	new
 		Bitmap:ctx;
@@ -469,7 +469,7 @@ Test:y_bitmap_Border6()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Large1()
+TEST__ y_bitmap_Large1()
 {
 	new
 		Bitmap:ctx;
@@ -479,7 +479,7 @@ Test:y_bitmap_Large1()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Large2()
+TEST__ y_bitmap_Large2()
 {
 	new
 		Bitmap:ctx;
@@ -489,7 +489,7 @@ Test:y_bitmap_Large2()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Large3()
+TEST__ y_bitmap_Large3()
 {
 	new
 		Bitmap:ctx;
@@ -499,7 +499,7 @@ Test:y_bitmap_Large3()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Large4()
+TEST__ y_bitmap_Large4()
 {
 	new
 		Bitmap:ctx;
@@ -509,7 +509,7 @@ Test:y_bitmap_Large4()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_Large5()
+TEST__ y_bitmap_Large5()
 {
 	new
 		Bitmap:ctx;
@@ -519,7 +519,7 @@ Test:y_bitmap_Large5()
 	Bitmap_Destroy(ctx);
 }
 
-Test:y_bitmap_VLarge1()
+TEST__ y_bitmap_VLarge1()
 {
 	new
 		Bitmap:ctx;

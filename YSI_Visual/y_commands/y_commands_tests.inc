@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-Test:y_commands_Syntax()
+TEST__ y_commands_Syntax()
 {
 	new
 		id1 = YCMD:y_commands_1,
@@ -81,14 +81,14 @@ Test:y_commands_Syntax()
 	ASSERT(id3 != -1);
 }
 
-Test:y_commands_Valid()
+TEST__ y_commands_Valid()
 {
 	ASSERT(Command_IsValid(YCMD:y_commands_1));
 	ASSERT(Command_IsValid(Command_GetID("y_commands_1")));
 	// ASSERT(Command_IsValid(YCMD:y_commands_1));
 }
 
-Test:y_commands_YCMD()
+TEST__ y_commands_YCMD()
 {
 	ASSERT(Command_GetID("y_commands_1") == _:YCMD:y_commands_1);
 	ASSERT(Command_GetID("y_commands_1") != _:YCMD:y_commands_2);
@@ -96,7 +96,7 @@ Test:y_commands_YCMD()
 	ASSERT(Command_GetID("y_commands_DO_NOT_MAKE") == COMMAND_NOT_FOUND);
 }
 
-Test:y_commands_GetName()
+TEST__ y_commands_GetName()
 {
 	new
 		id = Command_GetID("y_commands_1");
@@ -104,7 +104,7 @@ Test:y_commands_GetName()
 	ASSERT(strlen(Command_GetName(-1)) == 0);
 }
 
-Test:y_commands_AddAlt()
+TEST__ y_commands_AddAlt()
 {
 	new
 		id1 = YCMD:y_commands_1,
@@ -115,7 +115,7 @@ Test:y_commands_AddAlt()
 	ASSERT(id2 == id3);
 }
 
-Test:y_commands_AddAlt2()
+TEST__ y_commands_AddAlt2()
 {
 	new
 		id1 = YCMD:y_commands_1,
@@ -126,7 +126,7 @@ Test:y_commands_AddAlt2()
 	ASSERT(id2 == id3);
 }
 
-Test:y_commands_Perms()
+TEST__ y_commands_Perms()
 {
 	new
 		id = (YCMD:y_commands_1);
@@ -138,7 +138,7 @@ Test:y_commands_Perms()
 	ASSERT(Command_GetPlayerNamed("y_commands_1", 101));
 }
 
-Test:y_commands_Perms2()
+TEST__ y_commands_Perms2()
 {
 	new
 		id = Command_Find("y_cómmańds_ąlt");
@@ -159,7 +159,7 @@ YCMD:y_commands_removable(playerid, params[], help)
 	return 1;
 }
 
-Test:y_commands_removable()
+TEST__ y_commands_removable()
 {
 	YSI_g_sRemovableRan = 0;
 	Command_SetPlayerNamed("y_commands_removable", 103, true);
@@ -188,7 +188,7 @@ YCMD:y_commands_removable2(playerid, params[], help)
 	return 1;
 }
 
-Test:y_commands_removable2()
+TEST__ y_commands_removable2()
 {
 	//printf("%d", YCMD:y_commands_removable2);
 	Command_SetPlayer(YCMD:y_commands_removable2, 103, true);
@@ -197,7 +197,7 @@ Test:y_commands_removable2()
 	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable2") == 0);
 }
 
-Test:y_commands_count()
+TEST__ y_commands_count()
 {
 	for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
@@ -208,7 +208,7 @@ Test:y_commands_count()
 	ASSERT(Command_GetPlayerCommandCount(22) != 0);
 }
 
-Test:y_commands_display1()
+TEST__ y_commands_display1()
 {
 	for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
@@ -220,7 +220,7 @@ Test:y_commands_display1()
 	ASSERT(!strcmp(Command_GetDisplayNamed("y_commands_1", 23), "y_commands_1"));
 }
 
-Test:y_commands_display2()
+TEST__ y_commands_display2()
 {
 	for (new i = 0; i != MAX_COMMANDS; ++i)
 	{
@@ -232,7 +232,7 @@ Test:y_commands_display2()
 	ASSERT(!strcmp(Command_GetDisplay(YCMD:y_commands_3, 23), "y_commands_3"));
 }
 
-Test:y_commands_display3()
+TEST__ y_commands_display3()
 {
 	Command_AddAlt(YCMD:y_commands_3, "y_commands_alt7");
 	Command_AddAlt(YCMD:y_commands_alt7, "y_commands_alt2");
@@ -256,7 +256,7 @@ Test:y_commands_display3()
 	ASSERT(!strcmp(Command_GetDisplay(YCMD:y_commands_alt2, 25), "y_commands_3"));
 }
 
-Test:y_commands_count3()
+TEST__ y_commands_count3()
 {
 	Command_AddAlt(YCMD:y_commands_1, "y_commands_alt4");
 	Command_AddAlt(YCMD:y_commands_alt4, "y_commands_alt5");
@@ -276,7 +276,7 @@ Test:y_commands_count3()
 	ASSERT(Command_GetPlayerCommandCount(26) == 4);
 }
 
-Test:y_commands_Hashing()
+TEST__ y_commands_Hashing()
 {
 	new
 		dst0[32],
@@ -314,7 +314,7 @@ YCMD:y_commands_1(playerid, cmdtext[], help)
 	return 1;
 }
 
-Test:y_commands_1()
+TEST__ y_commands_1()
 {
 	call OnPlayerConnect(142);
 	ASSERT(call OnPlayerCommandText(142, "/y_commands_1") != 0);
@@ -324,7 +324,7 @@ Test:y_commands_1()
 	ASSERT(call OnPlayerCommandText(142, "/y_Commands_1") != 0);
 }
 
-Test:y_commands_2()
+TEST__ y_commands_2()
 {
 	call OnPlayerConnect(143);
 	ASSERT(call OnPlayerCommandText(143, "/y_commands__NONONONO") == 0);
@@ -341,7 +341,7 @@ YCMD:y_commands_3(playerid, cmdtext[], help)
 	return 1;
 }
 
-Test:y_commands_3()
+TEST__ y_commands_3()
 {
 	call OnPlayerConnect(144);
 	gSomeVar = 42;
@@ -363,7 +363,7 @@ YCMD:y_commands_reprocess(playerid, params[], help)
 	return 1;
 }
 
-Test:y_commands_ReProcess()
+TEST__ y_commands_ReProcess()
 {
 	call OnPlayerConnect(33);
 	// 1.
@@ -421,7 +421,7 @@ Test:y_commands_ReProcess()
 	ASSERT(YSI_gsHelp == 1);
 }
 
-Test:y_commands_Parameters()
+TEST__ y_commands_Parameters()
 {
 	call OnPlayerConnect(34);
 	// 1.
@@ -509,7 +509,7 @@ YCMD:y_commands_t111111(playerid, params[], help)
 	return 1;
 }
 
-Test:y_commands_iterator0()
+TEST__ y_commands_iterator0()
 {
 	new
 		found,
@@ -530,7 +530,7 @@ Test:y_commands_iterator0()
 	ASSERT(found == 6);
 }
 
-Test:y_commands_iterator1()
+TEST__ y_commands_iterator1()
 {
 	new
 		found,
@@ -551,7 +551,7 @@ Test:y_commands_iterator1()
 	ASSERT(found == 6);
 }
 
-Test:y_commands_lengths()
+TEST__ y_commands_lengths()
 {
 	call OnPlayerConnect(88);
 	ASSERT(call OnPlayerCommandText(88, "/y_commands_t1") != 0);
@@ -569,7 +569,7 @@ Test:y_commands_lengths()
 		return 1;
 	}
 	
-	Test:y_commands_prefix1()
+	TEST__ y_commands_prefix1()
 	{
 		new
 			a = _C<@_yC>,

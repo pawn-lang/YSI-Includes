@@ -96,18 +96,18 @@ task y_timers_Counter[1000]()
 	va_SendClientMessageToAll(0x0000FFAA, "GLOBAL COUNTER: %d", sCounter++);
 }
 
-PTest:PCounter1(playerid)
+PTEST__ PCounter1(playerid)
 {
 	ASK("Is the red PLAYER COUNTER going up?");
 }
 
-PTest:PCounter2(playerid)
+PTEST__ PCounter2(playerid)
 {
 	pause y_timers_PCounter[playerid];
 	ASK("Has the red PLAYER COUNTER stopped?");
 }
 
-PTest:Counter(playerid)
+PTEST__ Counter(playerid)
 {
 	ASK("Is the blue GLOBAL COUNTER going up?");
 }
@@ -122,7 +122,7 @@ timer BigMessage2[4000](playerid)
 	SendClientMessage(playerid, 0x00FF00AA, "BIG MESSAGE appearing repeatedly.");
 }
 
-PTest:Timer1(playerid)
+PTEST__ Timer1(playerid)
 {
 	defer BigMessage1(playerid);
 	ASK("Is a green BIG MESSAGE appearing once after 4 seconds?");
@@ -131,7 +131,7 @@ PTest:Timer1(playerid)
 static
 	Timer:sgTimer;
 
-PTest:Timer2(playerid)
+PTEST__ Timer2(playerid)
 {
 	sgTimer = repeat BigMessage2(playerid);
 	ASK("Is a green BIG MESSAGE appearing every 4 seconds?");
@@ -143,7 +143,7 @@ timer StopMessage1[4000](playerid)
 	stop sgTimer;
 }
 
-PTest:Timer3(playerid)
+PTEST__ Timer3(playerid)
 {
 	defer StopMessage1(playerid);
 	ASK("Is the green BIG MESSAGE stopping appearing after 4 seconds?");

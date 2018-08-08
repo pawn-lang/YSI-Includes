@@ -90,8 +90,7 @@ Optional plugins:
 
 #define HOOK__%1(%2) forward UNIQUE_FUNCTION<@yH_%1@...>(%2);UNIQUE_FUNCTION<@yH_%1@...>(%2)
 #define REHOOK__ HOOK__
-//#define rehook hook
-//#define Hook:%0_%1(%2) forward public @yH_%1@%0(%2);@yH_%1@%0(%2)
+
 // Strip out extra spaces (nicely recursive)
 #define @yH_%0\32; @yH_
 
@@ -121,15 +120,12 @@ Optional plugins:
 #if defined YSI_COMPAT || defined KEYWORD_HOOK_RET
 	#define HOOK_RET:%0(%1) forward @y_H%0(); public @y_H%0()
 #endif
-
 #if defined YSI_COMPAT || defined KEYWORD_hook
 	#define hook HOOK__
 #endif
-
 #if defined YSI_COMPAT || defined KEYWORD_rehook
 	#define rehook HOOK__
 #endif
-
 #if defined YSI_COMPAT || defined KEYWORD_Hook
 	#define Hook:%0_%1(%2) forward public @yH_%1@%0(%2);@yH_%1@%0(%2)
 #endif

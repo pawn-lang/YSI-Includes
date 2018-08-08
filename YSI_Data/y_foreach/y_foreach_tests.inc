@@ -148,7 +148,7 @@ iterfunc stock TestState1_y_iter(&iterstate, cur)
 
 #define Iterator@TestState1_y_iter iterstate(-1, 800)
 
-Test:TestState1_y_iter()
+TEST__ TestState1_y_iter()
 {
 	new
 		count = 0;
@@ -171,7 +171,7 @@ iterfunc stock TestState2_y_iter(iterstate[2], cur)
 
 #define Iterator@TestState2_y_iter iterstate(-1, 500, 600)
 
-Test:TestState2_y_iter()
+TEST__ TestState2_y_iter()
 {
 	new
 		count = 0;
@@ -186,7 +186,7 @@ Test:TestState2_y_iter()
 	ASSERT(count == 2);
 }
 
-Test:y_iter_Range()
+TEST__ y_iter_Range()
 {
 	new
 		count;
@@ -238,7 +238,7 @@ Test:y_iter_Range()
 	ASSERT(count == 1);
 }
 
-Test:y_iter_Add1()
+TEST__ y_iter_Add1()
 {
 	// Check we can only add a number once, and that we don't mess up the order.
 	new
@@ -275,7 +275,7 @@ Test:y_iter_Add1()
 	ASSERT(count == 1);
 }
 
-Test:y_iter_Add2()
+TEST__ y_iter_Add2()
 {
 	// Check we can only add a number once, and that we don't mess up the order.
 	new
@@ -327,7 +327,7 @@ Test:y_iter_Add2()
 	ASSERT(count == 2);
 }
 
-Test:y_iter_Prev()
+TEST__ y_iter_Prev()
 {
 	// Check we can only add a number once, and that we don't mess up the order.
 	new
@@ -370,7 +370,7 @@ Test:y_iter_Prev()
 	ASSERT(Iter_Next(iter, 20) == 0);
 }
 
-Test:y_iter_Add3()
+TEST__ y_iter_Add3()
 {
 	// Check OOB numbers.
 	new
@@ -394,7 +394,7 @@ Test:y_iter_Add3()
 	ASSERT(count == 1);
 }
 
-Test:y_iter_Add4()
+TEST__ y_iter_Add4()
 {
 	// Check OOB numbers.
 	new
@@ -418,7 +418,7 @@ Test:y_iter_Add4()
 	ASSERT(count == 1);
 }
 
-Test:y_iter_Add5()
+TEST__ y_iter_Add5()
 {
 	// Add all numbers.
 	new
@@ -444,7 +444,7 @@ Test:y_iter_Add5()
 	ASSERT(count == 20);
 }
 
-Test:y_iter_MultiAdd1()
+TEST__ y_iter_MultiAdd1()
 {
 	// Add all numbers.
 	new
@@ -478,7 +478,7 @@ Test:y_iter_MultiAdd1()
 	ASSERT(count == 1);
 }
 
-Test:y_iter_Remove1()
+TEST__ y_iter_Remove1()
 {
 	new
 		Iterator:iter<50>,
@@ -528,7 +528,7 @@ Test:y_iter_Remove1()
 	ASSERT(count == 18);
 }
 
-Test:y_iter_Reverse1()
+TEST__ y_iter_Reverse1()
 {
 	new
 		count,
@@ -547,7 +547,7 @@ Test:y_iter_Reverse1()
 	ASSERT(count == 5);
 }
 
-Test:y_iter_RandomRemove1()
+TEST__ y_iter_RandomRemove1()
 {
 	new
 		Iterator:iter<10>;
@@ -559,7 +559,7 @@ Test:y_iter_RandomRemove1()
 	ASSERT(Iter_Count(iter) == 0);
 }
 
-Test:y_iter_RandomRemove2()
+TEST__ y_iter_RandomRemove2()
 {
 	new
 		Iterator:iter[3]<10>;
@@ -584,7 +584,7 @@ Test:y_iter_RandomRemove2()
 	ASSERT(Iter_Count(iter[1]) == 0);
 }
 
-Test:y_iter_RandomRemove3()
+TEST__ y_iter_RandomRemove3()
 {
 	new
 		Iterator:iter<2, 10>;
@@ -596,7 +596,7 @@ Test:y_iter_RandomRemove3()
 	ASSERT(Iter_Count(iter<1>) == 0);
 }
 
-Test:y_iter_RandomAdd1()
+TEST__ y_iter_RandomAdd1()
 {
 	new
 		Iterator:iter<10>;
@@ -616,7 +616,7 @@ Test:y_iter_RandomAdd1()
 	ASSERT(Iter_Count(iter) == 10);
 }
 
-Test:y_iter_RandomAdd2()
+TEST__ y_iter_RandomAdd2()
 {
 	new
 		Iterator:iter[3]<10>;
@@ -651,7 +651,7 @@ Test:y_iter_RandomAdd2()
 	ASSERT(Iter_Count(iter[1]) == 10);
 }
 
-Test:y_iter_RandomAdd3()
+TEST__ y_iter_RandomAdd3()
 {
 	new
 		Iterator:iter<2, 10>;
@@ -672,7 +672,7 @@ Test:y_iter_RandomAdd3()
 	ASSERT(Iter_Count(iter<1>) == 6);
 }
 
-Test:y_iter_RandomFree1()
+TEST__ y_iter_RandomFree1()
 {
 	new
 		Iterator:iter<10>,
@@ -706,7 +706,7 @@ Test:y_iter_RandomFree1()
 	ASSERT(Iter_RandomFree(iter) == cellmin);
 }
 
-Test:y_iter_RandomFree2()
+TEST__ y_iter_RandomFree2()
 {
 	new
 		Iterator:iter<2, 10>,
@@ -741,7 +741,7 @@ Test:y_iter_RandomFree2()
 	ASSERT(Iter_RandomFree(iter<1>) == cellmin);
 }
 
-Test:y_iter_RandomFree3()
+TEST__ y_iter_RandomFree3()
 {
 	new
 		Iterator:iter[2]<10>,
@@ -804,7 +804,7 @@ Test:y_iter_RandomFree3()
 	ASSERT(Iter_RandomFree(iter[1]) == cellmin);
 }
 
-Test:y_iter_Reverse2()
+TEST__ y_iter_Reverse2()
 {
 	new
 		count,
@@ -830,7 +830,7 @@ Test:y_iter_Reverse2()
 	ASSERT(count == 3);
 }
 
-Test:y_iter_Remove2()
+TEST__ y_iter_Remove2()
 {
 	new
 		Iterator:iter<5, 10>;
@@ -875,7 +875,7 @@ Test:y_iter_Remove2()
 	ASSERT(Iter_Count(iter<2>) == 2);
 }
 
-Test:y_iter_Tags()
+TEST__ y_iter_Tags()
 {
 	new
 		Iterator:iter[5]<4>,
@@ -886,7 +886,7 @@ Test:y_iter_Tags()
 	Iter_Clear(iter[_:gg]);
 }
 
-Test:y_iter_Iter_Init1()
+TEST__ y_iter_Iter_Init1()
 {
 	new
 		Iterator:iter[10]<20>;
@@ -900,7 +900,7 @@ Test:y_iter_Iter_Init1()
 	ASSERT(Iter_TrueArray(iter)[9][19] <= 19);
 }
 
-Test:y_iter_Iter_Init2()
+TEST__ y_iter_Iter_Init2()
 {
 	new
 		Iterator:iter[10]<5, 20>;
@@ -917,7 +917,7 @@ Test:y_iter_Iter_Init2()
 	ASSERT(Iter_TrueArray(iter)[8][19] <= 19);
 }
 
-Test:y_iter_Starting()
+TEST__ y_iter_Starting()
 {
 	new
 		Iterator:Test1_y_iter<100>,
@@ -948,7 +948,7 @@ Test:y_iter_Starting()
 	ASSERT(Iter_Contains(Test1_y_iter, j));
 }
 
-Test:y_iter_Iter_Contains1()
+TEST__ y_iter_Iter_Contains1()
 {
 	new
 		Iterator:iter1<60>;
@@ -967,7 +967,7 @@ Test:y_iter_Iter_Contains1()
 	ASSERT(Iter_Contains(iter2<4>, 5));
 }
 
-Test:y_iter_Iter_Contains2()
+TEST__ y_iter_Iter_Contains2()
 {
 	new
 		Iterator:iter1[4]<60>;
@@ -994,7 +994,7 @@ Test:y_iter_Iter_Contains2()
 	ASSERT(!Iter_Contains(iter2[5]<4>, 5));
 }
 
-Test:y_iter_Iter_Free()
+TEST__ y_iter_Iter_Free()
 {
 	new
 		Iterator:iter1<60>;
@@ -1012,7 +1012,7 @@ Test:y_iter_Iter_Free()
 	ASSERT(Iter_Free(iter2<3>) != 0);
 }
 
-Test:y_iter_Tag()
+TEST__ y_iter_Tag()
 {
 	new
 		Iterator:Group:iter1<60>;
@@ -1045,7 +1045,7 @@ Test:y_iter_Tag()
 	}
 }
 
-Test:y_iter_Iter_Alloc()
+TEST__ y_iter_Iter_Alloc()
 {
 	new
 		Iterator:iter1<60>;
@@ -1070,7 +1070,7 @@ Test:y_iter_Iter_Alloc()
 	ASSERT(Iter_Alloc(iter1) == 10);
 }
 
-Test:y_iter_Normal()
+TEST__ y_iter_Normal()
 {
 	new
 		Iterator: Test1_y_iter<100>;
@@ -1107,7 +1107,7 @@ Test:y_iter_Normal()
 	}
 }
 
-Test:y_iter_InfiniteLoop()
+TEST__ y_iter_InfiniteLoop()
 {
     new Iterator:iter<20>;
     Iter_Add(iter, 1);
@@ -1122,7 +1122,7 @@ Test:y_iter_InfiniteLoop()
 	ASSERT(true);
 }
 
-Test:y_iter_Syntax1()
+TEST__ y_iter_Syntax1()
 {
 	new
 		Iterator:Test1_y_iter <100>;
@@ -1204,7 +1204,7 @@ Test:y_iter_Syntax1()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax5a()
+TEST__ y_iter_Syntax5a()
 {
 	new
 		Iterator:Test5a_y_iter[4]< 20, 100>;
@@ -1287,7 +1287,7 @@ Test:y_iter_Syntax5a()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax5b()
+TEST__ y_iter_Syntax5b()
 {
 	new
 		Iterator:Test5b_y_iter[4]<20, 100 >;
@@ -1370,7 +1370,7 @@ Test:y_iter_Syntax5b()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax5c()
+TEST__ y_iter_Syntax5c()
 {
 	new
 		Iterator: Test5c_y_iter[4]< 20, 100>;
@@ -1453,7 +1453,7 @@ Test:y_iter_Syntax5c()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax5d()
+TEST__ y_iter_Syntax5d()
 {
 	new
 		Iterator: Test5d_y_iter [ 4 ] < 20, 100 >;
@@ -1536,7 +1536,7 @@ Test:y_iter_Syntax5d()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax4a()
+TEST__ y_iter_Syntax4a()
 {
 	new
 		Iterator:Test4a_y_iter[ 4 ] < 100 >;
@@ -1619,7 +1619,7 @@ Test:y_iter_Syntax4a()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax4b()
+TEST__ y_iter_Syntax4b()
 {
 	new
 		Iterator: Test4b_y_iter [4]<100>;
@@ -1702,7 +1702,7 @@ Test:y_iter_Syntax4b()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax4c()
+TEST__ y_iter_Syntax4c()
 {
 	new
 		Iterator: Test4c_y_iter[4 ]<100 >;
@@ -1785,7 +1785,7 @@ Test:y_iter_Syntax4c()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax4d()
+TEST__ y_iter_Syntax4d()
 {
 	new
 		Iterator: Test4d_y_iter[ 4]< 100>;
@@ -1868,7 +1868,7 @@ Test:y_iter_Syntax4d()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax3a()
+TEST__ y_iter_Syntax3a()
 {
 	new
 		Iterator: Test3a_y_iter <10, 100>;
@@ -1950,7 +1950,7 @@ Test:y_iter_Syntax3a()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax3b()
+TEST__ y_iter_Syntax3b()
 {
 	new
 		Iterator:Test3b_y_iter< 10, 100 >;
@@ -2032,7 +2032,7 @@ Test:y_iter_Syntax3b()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax3c()
+TEST__ y_iter_Syntax3c()
 {
 	new
 		Iterator: Test3c_y_iter <10, 100>;
@@ -2114,7 +2114,7 @@ Test:y_iter_Syntax3c()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax3d()
+TEST__ y_iter_Syntax3d()
 {
 	new
 		Iterator:Test3d_y_iter < 10, 100 >;
@@ -2204,7 +2204,7 @@ stock iterfunc y_iter_Syntax6(&iterstate, cur, inc)
 
 #define Iterator@y_iter_Syntax6 iterstate(0, 1024)
 
-Test:y_iter_Syntax6a()
+TEST__ y_iter_Syntax6a()
 {
 	new
 		count = 0;
@@ -2216,7 +2216,7 @@ Test:y_iter_Syntax6a()
 	ASSERT(count == 4095);
 }
 
-Test:y_iter_Syntax6b()
+TEST__ y_iter_Syntax6b()
 {
 	new
 		count = 0;
@@ -2291,7 +2291,7 @@ Test:y_iter_Syntax6b()
 //	ASSERT(count == 4095 * 2 * 32);
 }
 
-Test:y_iter_Syntax6c()
+TEST__ y_iter_Syntax6c()
 {
 	new
 		count = 0;
@@ -2366,7 +2366,7 @@ Test:y_iter_Syntax6c()
 //	ASSERT(count == 4095 * 2 * 32);
 }
 
-Test:y_iter_Syntax2a()
+TEST__ y_iter_Syntax2a()
 {
 	new
 		count = 0;
@@ -2439,7 +2439,7 @@ Test:y_iter_Syntax2a()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax2e()
+TEST__ y_iter_Syntax2e()
 {
 	new
 		count = 0;
@@ -2512,7 +2512,7 @@ Test:y_iter_Syntax2e()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax2b()
+TEST__ y_iter_Syntax2b()
 {
 	new
 		count = 0;
@@ -2585,7 +2585,7 @@ Test:y_iter_Syntax2b()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax2c()
+TEST__ y_iter_Syntax2c()
 {
 	new
 		count = 0;
@@ -2658,7 +2658,7 @@ Test:y_iter_Syntax2c()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Syntax2d()
+TEST__ y_iter_Syntax2d()
 {
 	new
 		count = 0;
@@ -2731,7 +2731,7 @@ Test:y_iter_Syntax2d()
 	ASSERT(count == 7 * 2 * 32);
 }
 
-Test:y_iter_Array()
+TEST__ y_iter_Array()
 {
 	new
 		Iterator:Test3[5]<20>;
@@ -2746,7 +2746,7 @@ Test:y_iter_Array()
 	ASSERT(count == 0);
 }
 
-Test:y_iter_Multi()
+TEST__ y_iter_Multi()
 {
 	new
 		Iterator: Test4<7, 11>;
@@ -2760,7 +2760,7 @@ Test:y_iter_Multi()
 	ASSERT(count == 0);
 }
 
-Test:y_iter_Clear()
+TEST__ y_iter_Clear()
 {
 	new
 		Iterator:a<30>,
@@ -2813,7 +2813,7 @@ Test:y_iter_Clear()
 	ASSERT(Iter_Count(c<4>) == 0);
 }
 
-Test:y_iter_ArrayMulti()
+TEST__ y_iter_ArrayMulti()
 {
 	new Iterator : Test5 [ 10 ] < 50, 25 >;
 	new
@@ -2896,7 +2896,7 @@ Test:y_iter_ArrayMulti()
 }
 
 #if _FOREACH_PLAYERS
-	Test:y_iter_Deprecate()
+	TEST__ y_iter_Deprecate()
 	{
 		#pragma tabsize 4
 		/* ================================================================== */
@@ -2912,7 +2912,7 @@ Test:y_iter_ArrayMulti()
 	}
 #endif
 
-Test:y_iter_Random()
+TEST__ y_iter_Random()
 {
 	new
 		c = 0;
@@ -2929,7 +2929,7 @@ Test:y_iter_Random()
 	ASSERT(c == 1010);
 }
 
-Test:y_iter_RandomNested()
+TEST__ y_iter_RandomNested()
 {
 	new
 		c = 0;
@@ -2945,7 +2945,7 @@ Test:y_iter_RandomNested()
 	ASSERT(c == 100);
 }
 
-Test:y_iter_Powers()
+TEST__ y_iter_Powers()
 {
 	new
 		c = 1;
@@ -2957,7 +2957,7 @@ Test:y_iter_Powers()
 	ASSERT(c == 0x40000000 * 2);
 }
 
-Test:y_iter_Fib()
+TEST__ y_iter_Fib()
 {
 	new
 		a = 0,
@@ -2970,7 +2970,7 @@ Test:y_iter_Fib()
 	}
 }
 
-Test:y_iter_Null()
+TEST__ y_iter_Null()
 {
 	new
 		c = 0,
@@ -2983,7 +2983,7 @@ Test:y_iter_Null()
 	ASSERT(c == 4);
 }
 
-Test:y_iter_Filter1()
+TEST__ y_iter_Filter1()
 {
 	new
 		c = 0,
@@ -2996,7 +2996,7 @@ Test:y_iter_Filter1()
 	ASSERT(c == 4);
 }
 
-Test:y_iter_Filter2()
+TEST__ y_iter_Filter2()
 {
 	new
 		c = 0,
@@ -3009,7 +3009,7 @@ Test:y_iter_Filter2()
 	ASSERT(c == 3);
 }
 
-Test:y_iter_NonNull()
+TEST__ y_iter_NonNull()
 {
 	new
 		c = 0,
@@ -3022,7 +3022,7 @@ Test:y_iter_NonNull()
 	ASSERT(c == 6);
 }
 
-Test:y_iter_Until()
+TEST__ y_iter_Until()
 {
 	new
 		c = 0,
@@ -3035,7 +3035,7 @@ Test:y_iter_Until()
 	ASSERT(c == 6);
 }
 
-Test:y_iter_All1()
+TEST__ y_iter_All1()
 {
 	new Iterator:a<10>;
 	Iter_Add(a, 3);
@@ -3051,7 +3051,7 @@ Test:y_iter_All1()
 	ASSERT(count == 4);
 }
 
-Test:y_iter_None1()
+TEST__ y_iter_None1()
 {
 	new Iterator:a<10>;
 	Iter_Add(a, 3);
@@ -3067,7 +3067,7 @@ Test:y_iter_None1()
 	ASSERT(count == 6);
 }
 
-Test:y_iter_All2()
+TEST__ y_iter_All2()
 {
 	new Iterator:a<3, 10>;
 	Iter_Add(a<0>, 3);
@@ -3083,7 +3083,7 @@ Test:y_iter_All2()
 	ASSERT(count == 4);
 }
 
-Test:y_iter_None2()
+TEST__ y_iter_None2()
 {
 	new Iterator:a<3, 10>;
 	Iter_Add(a<2>, 3);
@@ -3099,7 +3099,7 @@ Test:y_iter_None2()
 	ASSERT(count == 6);
 }
 
-Test:y_iter_Index1()
+TEST__ y_iter_Index1()
 {
 	new Iterator:a<20>;
 	Iter_Add(a, 6);
@@ -3144,7 +3144,7 @@ Test:y_iter_Index1()
 	ASSERT(Iter_Index(a, 130, true) == 17);
 }
 
-Test:y_iter_Index2()
+TEST__ y_iter_Index2()
 {
 	new Iterator:a<5, 20>;
 	Iter_Add(a<3>, 0);
@@ -3248,7 +3248,7 @@ static iterfunc stock y_iterDecl4X(cur) { return cur == 0 ? 5 : 0; }
 iterfunc stock static y_iterDecl6X(&iterstate, cur) { return cur == -1 ? iterstate : -1; }
 #define iterstart@y_iterDecl6X iterstate(-1, 5)
 
-Test:y_iter_MacroLess()
+TEST__ y_iter_MacroLess()
 {
 	new i;
 	foreach (i : y_iterDecl1()) { ASSERT(i == 5); }
@@ -3270,7 +3270,7 @@ iterfunc stock y_iter_yield0()
 }
 #define Iterator@y_iter_yield0 iteryield
 
-Test:y_iter_yield0a()
+TEST__ y_iter_yield0a()
 {
 	new
 		count;
@@ -3306,7 +3306,7 @@ iterfunc stock y_iter_yield1()
 }
 #define Iterator@y_iter_yield1 iteryield
 
-Test:y_iter_yield1a()
+TEST__ y_iter_yield1a()
 {
 	new
 		count;
@@ -3345,7 +3345,7 @@ iterfunc stock y_iter_yield2(step, target = 100)
 }
 #define Iterator@y_iter_yield2 iteryield
 
-Test:y_iter_yield2a()
+TEST__ y_iter_yield2a()
 {
 	new
 		count;
@@ -3386,7 +3386,7 @@ iterfunc stock y_iter_yield3(step, target = 100)
 }
 #define Iterator@y_iter_yield3 iteryield
 
-Test:y_iter_yield3a()
+TEST__ y_iter_yield3a()
 {
 	new
 		count;
@@ -3422,7 +3422,7 @@ iterfunc stock y_iter_yield4(arr[], size = sizeof (arr))
 }
 #define Iterator@y_iter_yield4 iteryield
 
-Test:y_iter_yield4a()
+TEST__ y_iter_yield4a()
 {
 	new
 		count = 0,
@@ -3453,7 +3453,7 @@ Test:y_iter_yield4a()
 	}
 	#define Iterator@y_iter_yield5 iteryield
 	
-	Test:y_iter_yield5a()
+	TEST__ y_iter_yield5a()
 	{
 		new
 			k = 0;
@@ -3497,7 +3497,7 @@ iterfunc stock y_iter_yield6()
 }
 #define Iterator@y_iter_yield6 iteryield
 
-Test:y_iter_yield6a()
+TEST__ y_iter_yield6a()
 {
 	new
 		answers[] = { 0, 1, 2, 10, 20, 501, 502, 503, 504 },
@@ -3544,7 +3544,7 @@ iterfunc stock y_iter_yield7a(x)
 }
 #define Iterator@y_iter_yield7a iteryield
 
-Test:y_iter_yield7a()
+TEST__ y_iter_yield7a()
 {
 	new
 		answers[] = {

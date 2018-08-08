@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-Test:INI_IdentifyLineType1()
+TEST__ INI_IdentifyLineType1()
 {
 	// Comment lines and blank lines may as well be treated as the same thing,
 	// except when rewriting the file.
@@ -90,7 +90,7 @@ Test:INI_IdentifyLineType1()
 	ASSERT(INI_IdentifyLineType("\r\n", p0s, p0e, p1s, p1e, p2s, p2e) == e_INI_LINE_TYPE_DATALESS);
 }
 
-Test:INI_IdentifyLineType2()
+TEST__ INI_IdentifyLineType2()
 {
 	new p0s, p0e, p1s, p1e, p2s, p2e;
 	// Invalid lines.
@@ -128,7 +128,7 @@ Test:INI_IdentifyLineType2()
 	ASSERT(result == e_INI_LINE_TYPE_INVALID);
 }
 
-Test:INI_IdentifyLineType3()
+TEST__ INI_IdentifyLineType3()
 {
 	new p0s, p0e, p1s, p1e, p2s, p2e;
 	// Entry lines.
@@ -154,7 +154,7 @@ Test:INI_IdentifyLineType3()
 	ASSERT(p0s == 1 && p0e == 4 && p1s == 8 && p1e == 13 && p2s == p2e);
 }
 
-Test:INI_IdentifyLineType4()
+TEST__ INI_IdentifyLineType4()
 {
 	new p0s, p0e, p1s, p1e, p2s, p2e;
 	// Tag lines.
@@ -176,7 +176,7 @@ Test:INI_IdentifyLineType4()
 	ASSERT(p0s == 4 && p0e == 9 && p1s == p1e && p2s == p2e);
 }
 
-Test:INI_IdentifyLineType5()
+TEST__ INI_IdentifyLineType5()
 {
 	new p0s, p0e, p1s, p1e, p2s, p2e;
 	// Inheritance.
@@ -207,7 +207,7 @@ Test:INI_IdentifyLineType5()
 	ASSERT(p0s == 3 && p0e == 8 && p1s == 15 && p1e == 26 && p2s == 31 && p2e == 46);
 }
 
-Test:INI_IdentifyLineType6()
+TEST__ INI_IdentifyLineType6()
 {
 	new p0s, p0e, p1s, p1e, p2s, p2e;
 	// Continuation.
@@ -259,7 +259,7 @@ Test:INI_IdentifyLineType6()
 	ASSERT(p1s == 5 && p1e == 10);
 }
 
-Test:INI_Continuation()
+TEST__ INI_Continuation()
 {
 	new p0s, p0e, p1s, p1e, p2s, p2e;
 	INI_IdentifyLineType("hi = hello \\\r\n", p0s, p0e, p1s, p1e, p2s, p2e);
@@ -270,7 +270,7 @@ Test:INI_Continuation()
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
 }
 
-Test:Trim1()
+TEST__ Trim1()
 {
 	new start, end;
 	start = 0, end = 9;
@@ -291,7 +291,7 @@ Test:Trim1()
 	ASSERT(end == 11);
 }
 
-Test:INI_SetupCallbackName0()
+TEST__ INI_SetupCallbackName0()
 {
 	new
 		dest[32];
@@ -327,7 +327,7 @@ Test:INI_SetupCallbackName0()
 	ASSERT(!strcmp(dest, "%sfname"));
 }
 
-Test:INI_SetupCallbackName1()
+TEST__ INI_SetupCallbackName1()
 {
 	new
 		dest[32];
@@ -345,7 +345,7 @@ Test:INI_SetupCallbackName1()
 	ASSERT(!strcmp(dest, "there%s"));
 }
 
-Test:INI_SetupCallbackName2()
+TEST__ INI_SetupCallbackName2()
 {
 	new
 		dest[32];
@@ -363,7 +363,7 @@ Test:INI_SetupCallbackName2()
 	ASSERT(!strcmp(dest, "there_you%s"));
 }
 
-Test:INI_SetupCallbackName3()
+TEST__ INI_SetupCallbackName3()
 {
 	new
 		dest[32];
@@ -384,7 +384,7 @@ public TestINI_Parse0_test1(key[], value[])
 	++YSI_g_sINI_Parse0;
 }
 
-Test:INI_Parse0()
+TEST__ INI_Parse0()
 {
 	YSI_g_sINI_Parse0 = 0;
 	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse0_%s", .bFileFirst = true);
@@ -428,7 +428,7 @@ public TestINI_Parse1_test1_(key[], value[])
 	++YSI_g_sINI_Parse0;
 }
 
-Test:INI_Parse1()
+TEST__ INI_Parse1()
 {
 	YSI_g_sINI_Parse0 = 0;
 	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse1_%s_%s", .bFileFirst = true);
@@ -449,7 +449,7 @@ public TestINI_Parse2_test1_tag2(key[], value[])
 	++YSI_g_sINI_Parse0;
 }
 
-Test:INI_Parse2()
+TEST__ INI_Parse2()
 {
 	YSI_g_sINI_Parse0 = 0;
 	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse2_%s_%s", .bFileFirst = true);
@@ -477,7 +477,7 @@ public TestINI_Parse3_tag2_test1(key[], value[])
 	++YSI_g_sINI_Parse0;
 }
 
-Test:INI_Parse3()
+TEST__ INI_Parse3()
 {
 	YSI_g_sINI_Parse0 = 0;
 	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse3_%s_%s", .bFileFirst = false);
@@ -496,7 +496,7 @@ Test:INI_Parse3()
 	ASSERT(YSI_g_sINI_Parse0 == 10 && 5);
 }
 
-Test:INI_Parse4()
+TEST__ INI_Parse4()
 {
 	YSI_g_sINI_Parse0 = 0;
 	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse3_%s_%s", .bFileFirst = false, .bLocal = false);
@@ -524,7 +524,7 @@ public TestINI_Parse5_test1(tag[], key[], value[])
 	if (isnull(tag)) ++YSI_g_sINI_Parse0;
 }
 
-Test:INI_Parse5()
+TEST__ INI_Parse5()
 {
 	YSI_g_sINI_Parse0 = 0;
 	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse5_%s", .bFileFirst = true, .bPassTag = true);
@@ -549,7 +549,7 @@ Test:INI_Parse5()
 	ASSERT(YSI_g_sINI_Parse0 == 5 && 5);
 }
 
-Test:INI_Parse6()
+TEST__ INI_Parse6()
 {
 	YSI_g_sINI_Parse0 = 0;
 	INI_ParseFile("YSI/test_ini/test1.ini", "TestINI_Parse5_%s", .bFileFirst = true, .bPassTag = true, .bLocal = false);
@@ -568,7 +568,7 @@ Test:INI_Parse6()
 	ASSERT(YSI_g_sINI_Parse0 == 5 && 5);
 }
 
-Test:INI_Parse7()
+TEST__ INI_Parse7()
 {
 	inline const F_test1(string:key[], string:value[])
 	{
@@ -580,7 +580,7 @@ Test:INI_Parse7()
 	ASSERT(YSI_g_sINI_Parse0 == 10 && 1);
 }
 
-Test:INI_Parse8()
+TEST__ INI_Parse8()
 {
 	inline F_test1(string:key[], string:value[])
 	{
@@ -592,7 +592,7 @@ Test:INI_Parse8()
 	ASSERT(YSI_g_sINI_Parse0 == 20 && 1);
 }
 
-Test:INI_Parse9()
+TEST__ INI_Parse9()
 {
 	inline const F_atag_test1(string:key[], string:value[])
 	{
@@ -604,7 +604,7 @@ Test:INI_Parse9()
 	ASSERT(YSI_g_sINI_Parse0 == 9 && 1);
 }
 
-Test:INI_Parse10()
+TEST__ INI_Parse10()
 {
 	inline const F_tag2_test1(string:key[], string:value[])
 	{
@@ -616,7 +616,7 @@ Test:INI_Parse10()
 	ASSERT(YSI_g_sINI_Parse0 == 8 && 1);
 }
 
-Test:INI_Parse11()
+TEST__ INI_Parse11()
 {
 	new
 		a;
@@ -630,7 +630,7 @@ Test:INI_Parse11()
 	ASSERT(a == 0 && 1);
 }
 
-Test:INI_Parse12()
+TEST__ INI_Parse12()
 {
 	static
 		a;
@@ -644,7 +644,7 @@ Test:INI_Parse12()
 	ASSERT(a == 8 && 1);
 }
 
-Test:INI_Parse13()
+TEST__ INI_Parse13()
 {
 	new
 		a;
@@ -658,7 +658,7 @@ Test:INI_Parse13()
 	ASSERT(a == 8 && 1);
 }
 
-Test:INI_ParseInline()
+TEST__ INI_ParseInline()
 {
 	new
 		num,
@@ -702,7 +702,7 @@ Test:INI_ParseInline()
 	ASSERT(ret == 42);
 }
 
-Test:INI_Int0()
+TEST__ INI_Int0()
 {
 	DoINI_Int0();
 }
@@ -732,7 +732,7 @@ static stock DoINI_Int0()
 	return 0;
 }
 
-Test:INI_Int2()
+TEST__ INI_Int2()
 {
 	DoINI_Int2();
 }
@@ -762,7 +762,7 @@ static stock DoINI_Int2()
 	return 0;
 }
 
-Test:INI_Int3()
+TEST__ INI_Int3()
 {
 	DoINI_Int3();
 }
@@ -847,7 +847,7 @@ public INI_PUB_Inl_(string:name[], string:value[])
 	return 0;
 }
 
-Test:INI_Int1()
+TEST__ INI_Int1()
 {
 	INI_ParseFile("YSI/test_ini/test1.ini", "INI_PUB_Inl_%s");
 	ASSERT(gs_K0 == 42);
@@ -871,7 +871,7 @@ public INI_Inher0_tag0(string:tag[], string:name[], string:value[])
 	return 0;
 }
 
-Test:INI_Inherit0()
+TEST__ INI_Inherit0()
 {
 	gs_K0 = 0;
 	gs_K1 = 0;
@@ -902,7 +902,7 @@ public INI_Inher1_tag1(string:tag[], string:name[], string:value[])
 	return 0;
 }
 
-Test:INI_Inherit1()
+TEST__ INI_Inherit1()
 {
 	gs_K0 = 0;
 	gs_K1 = 0;
@@ -933,7 +933,7 @@ public INI_Inher2_tag2(string:tag[], string:name[], string:value[])
 	return 0;
 }
 
-Test:INI_Inherit2()
+TEST__ INI_Inherit2()
 {
 	gs_K0 = 0;
 	gs_K1 = 0;
@@ -952,7 +952,7 @@ Test:INI_Inherit2()
 
 // Writing tests.
 
-Test:INI_AddToBuffer0()
+TEST__ INI_AddToBuffer0()
 {
 	new
 		INI:i = INI_Open("YSI/test_ini/test3.ini");
@@ -969,7 +969,7 @@ Test:INI_AddToBuffer0()
 	INI_Close(i);
 }
 
-Test:INI_AddToBuffer1()
+TEST__ INI_AddToBuffer1()
 {
 	new
 		INI:i = INI_Open("YSI/test_ini/test4.ini");
@@ -984,7 +984,7 @@ Test:INI_AddToBuffer1()
 	INI_Close(i);
 }
 
-Test:INI_VariousWriting0()
+TEST__ INI_VariousWriting0()
 {
 	new
 		INI:i = INI_Open("YSI/test_ini/test5.ini");
@@ -1007,7 +1007,7 @@ Test:INI_VariousWriting0()
 	INI_Close(i);
 }
 
-Test:INI_VariousWriting1()
+TEST__ INI_VariousWriting1()
 {
 	new
 		INI:f = INI_Open("YSI/test_ini/test5.ini"),
@@ -1066,7 +1066,7 @@ Test:INI_VariousWriting1()
 	INI_Close(f);
 }
 
-Test:INI_Write0()
+TEST__ INI_Write0()
 {
 	new
 		INI:f = INI_Open("YSI/test_ini/test6.ini"),
@@ -1091,7 +1091,7 @@ Test:INI_Write0()
 	INI_Close(f);
 }
 
-Test:INI_Write1()
+TEST__ INI_Write1()
 {
 	new
 		INI:f = INI_Open("YSI/test_ini/test6.ini"),
@@ -1116,7 +1116,7 @@ Test:INI_Write1()
 	INI_Close(f);
 }
 
-Test:INI_Write2()
+TEST__ INI_Write2()
 {
 	new
 		INI:f = INI_Open("YSI/test_ini/test6.ini");
@@ -1159,7 +1159,7 @@ public INI_Parents(extra, file[], tag[], name[], value[])
 	return 0;
 }
 
-Test:INI_Parents()
+TEST__ INI_Parents()
 {
 	INI_ParseFile(
 			"YSI/test_ini/test7.ini",
@@ -1214,7 +1214,7 @@ public INI_BinaryData(name[], value[])
 	return 0;
 }
 
-Test:INI_BinaryData()
+TEST__ INI_BinaryData()
 {
 	INI_ParseFile(
 			"YSI/test_ini/test8.ini",

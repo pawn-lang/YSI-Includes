@@ -52,7 +52,7 @@ remotefunc static void:yrt_7(&a, &b, c, &d)
 
 remotefunc stock string:yrt_8();
 
-Test:y_remote_1()
+TEST__ y_remote_1()
 {
 	
 }
@@ -61,7 +61,7 @@ TODO(244, "Allocates too much heap with `len`.");
 remotefunc static stock yrt_2(const hi, string:you[], there[], &other, &len = 7);
 remotefunc static stock string:yrt_2b(const hi, string:you[], there[], &other, &len = 7);
 
-Test:y_remote_2()
+TEST__ y_remote_2()
 {
 	new arr[89], oo = sizeof (arr);
 	ASSERT(broadcastfunc yrt_2(789, "string", arr, oo) == 0);
@@ -69,42 +69,42 @@ Test:y_remote_2()
 	ASSERT(oo == sizeof (arr));
 }
 
-Test:y_remote_3()
+TEST__ y_remote_3()
 {
 	// Impl...
 }
 
-Test:y_remote_335()
+TEST__ y_remote_335()
 {
 	// Impl...
 	new arr[3];
 	ASSERT(yrt_335(89, "the string passed", arr, sizeof (arr)) == 89.0);
 }
 
-Test:y_remote_4()
+TEST__ y_remote_4()
 {
 }
 
-Test:y_remote_5()
+TEST__ y_remote_5()
 {
 	new other = 42, arr[] = {5, 6, 7};
 	ASSERT(!strcmp("Hello World", yrt_5(10, "hi", arr, sizeof (arr), other)));
 	ASSERT(other == 47);
 }
 
-Test:y_remote_55()
+TEST__ y_remote_55()
 {
 	new other = 42, arr[] = {5, 6, 7};
 	ASSERT(yrt_55(10, "hi", arr, sizeof (arr), other) == 5.5);
 	ASSERT(other == 15);
 }
 
-Test:y_remote_6()
+TEST__ y_remote_6()
 {
 	
 }
 
-Test:y_remote_7()
+TEST__ y_remote_7()
 {
 	new a, b, c = 123, d = 456;
 	yrt_7(a, b, c, d);
@@ -114,14 +114,14 @@ Test:y_remote_7()
 	ASSERT(d == 452);
 }
 
-Test:y_remote_8()
+TEST__ y_remote_8()
 {
 	
 }
 
 remotefunc Float:yrt_9();
 
-Test:y_remote_9()
+TEST__ y_remote_9()
 {
 	X@(_:(55.8));
 	ASSERT(broadcastfunc yrt_9() == 0.0);

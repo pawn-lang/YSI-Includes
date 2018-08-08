@@ -146,7 +146,7 @@ static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 #define ALS_R_FakeCallback 708
 #define ALS_DO_FakeCallback<%0> %0<FakeCallback,isfi>(more:playerid,string:text[],Float:pos,end:last)
 
-Test:y_als_Fake()
+TEST__ y_als_Fake()
 {
 	// Test that the defines for our fake callback are set up correctly (and the
 	// print macro at the same time).
@@ -164,7 +164,7 @@ static stock y_als_DoCall(playerid, text[], Float:pos, last)
 	ALS_CALL<FakeCallback>
 }
 
-Test:y_als_Call()
+TEST__ y_als_Call()
 {
 	// Test the "ALS_CALL" macro.
 	ASSERT(y_als_DoCall(6000, "", 0.0, 0) == 6000);
@@ -178,7 +178,7 @@ static stock y_als_DoGet(playerid, text[], Float:pos, last)
 	//return ret;
 }
 
-Test:y_als_Get()
+TEST__ y_als_Get()
 {
 	// Test the "ALS_GET" macro.
 	y_als_DoGet(6003, "", 0.0, 0);
@@ -200,7 +200,7 @@ public OnFakeCallback(playerid, text[], Float:pos, last)
 	return playerid;
 }
 
-Test:y_als_call()
+TEST__ y_als_call()
 {
 	// Test that "call" calls the original one, not the latest one.
 	new
@@ -209,7 +209,7 @@ Test:y_als_call()
 	ASSERT(ret == 6011);
 }
 
-Test:y_als_Generation()
+TEST__ y_als_Generation()
 {
 	// Test all default callbacks.
 	new

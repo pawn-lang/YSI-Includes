@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-Test:y_bintree_1()
+TEST__ y_bintree_1()
 {
 	new BinaryInput:values<100>;
 	for (new i = 0; i != sizeof (values); ++i)

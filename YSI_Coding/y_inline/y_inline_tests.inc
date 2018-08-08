@@ -80,7 +80,7 @@ static stock bool:y_inline_Restore(ret[E_CALLBACK_DATA])
 	Callback_Restore(ret);
 }
 
-Test:y_inline1()
+TEST__ y_inline1()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -93,7 +93,7 @@ Test:y_inline1()
 	Callback_Release(cc);
 }
 
-Test:y_inline2()
+TEST__ y_inline2()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -106,7 +106,7 @@ Test:y_inline2()
 	Callback_Release(cc);
 }
 
-Test:y_inline3()
+TEST__ y_inline3()
 {
 	new
 		cc[E_CALLBACK_DATA],
@@ -122,7 +122,7 @@ Test:y_inline3()
 	Callback_Release(cc);
 }
 
-Test:y_inline4()
+TEST__ y_inline4()
 {
 	new
 		cc[E_CALLBACK_DATA],
@@ -138,7 +138,7 @@ Test:y_inline4()
 	Callback_Release(cc);
 }
 
-Test:y_inline5()
+TEST__ y_inline5()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -154,7 +154,7 @@ Test:y_inline5()
 	Callback_Release(cc);
 }
 
-Test:y_inline6()
+TEST__ y_inline6()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -179,7 +179,7 @@ public y_inline7a()
 	}
 }
 
-Test:y_inline7b()
+TEST__ y_inline7b()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -201,7 +201,7 @@ Test:y_inline7b()
 	Callback_Release(cc);
 }
 
-Test:y_inline8()
+TEST__ y_inline8()
 {
 	for (new i = 2; i--; )
 	{
@@ -237,7 +237,7 @@ public y_inline9(a)
 	return 12345 + a;
 }
 
-Test:y_inline9()
+TEST__ y_inline9()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -253,7 +253,7 @@ public y_inline10(a, b[])
 	return 12345 + a + b[0];
 }
 
-Test:y_inline10()
+TEST__ y_inline10()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -264,7 +264,7 @@ Test:y_inline10()
 	Callback_Release(cc);
 }
 
-Test:y_inline11()
+TEST__ y_inline11()
 {
 	new
 		g = 5,
@@ -282,7 +282,7 @@ Test:y_inline11()
 	Callback_Release(cc);
 }
 
-Test:y_inline12()
+TEST__ y_inline12()
 {
 	new
 		g = 5,
@@ -304,7 +304,7 @@ Test:y_inline12()
 static stock
 	YSI_g_sRemoteTestVar;
 
-Test:y_inline13()
+TEST__ y_inline13()
 {
 	new
 		g = 5,
@@ -327,7 +327,7 @@ Test:y_inline13()
 	Callback_Release(cc);
 }
 
-Test:Callback_AA()
+TEST__ Callback_AA()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -343,7 +343,7 @@ Test:Callback_AA()
 	ASSERT(a == 7);
 }
 
-Test:Callback_Arr1()
+TEST__ Callback_Arr1()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -361,7 +361,7 @@ Test:Callback_Arr1()
 	ASSERT(a == 7);
 }
 
-Test:Callback_Arr2()
+TEST__ Callback_Arr2()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -377,7 +377,7 @@ Test:Callback_Arr2()
 	Callback_Call(cc, "hello");
 }
 
-Test:Callback_Arr3()
+TEST__ Callback_Arr3()
 {
 	new
 		cc[E_CALLBACK_DATA];
@@ -395,7 +395,7 @@ Test:Callback_Arr3()
 	ASSERT(a == 0);
 }
 
-Test:Callback_Array0()
+TEST__ Callback_Array0()
 {
 	new
 		g = 5,
@@ -412,7 +412,7 @@ Test:Callback_Array0()
 	Callback_Array(cc, "", 0);
 }
 
-Test:Callback_Array1()
+TEST__ Callback_Array1()
 {
 	#emit LCTRL 6
 	#emit LCTRL 6
@@ -451,7 +451,7 @@ Test:Callback_Array1()
 	ASSERT(a == 7);
 }
 
-Test:y_inline_Remote0()
+TEST__ y_inline_Remote0()
 {
 	new
 		Function:f0 = GetRemoteFunction("MyTesterFunc", "m"),
@@ -468,7 +468,7 @@ public y_inline_Remote1(v)
 	return v - 10;
 }
 
-Test:y_inline_Remote1()
+TEST__ y_inline_Remote1()
 {
 	new
 		ret;
@@ -510,7 +510,7 @@ Test:y_inline_Remote1()
 	ASSERT(YSI_g_sRemoteTestVar == 77);
 }
 
-Test:y_inline_Remote2()
+TEST__ y_inline_Remote2()
 {
 	YSI_g_sRemoteTestVar = 5;
 	new
@@ -529,7 +529,7 @@ Test:y_inline_Remote2()
 	ASSERT(YSI_g_sRemoteTestVar == 9);
 }
 
-Test:CallStoredFunction0()
+TEST__ CallStoredFunction0()
 {
 	ASSERT(CallStoredFunction(Function:0) == 0);
 }
@@ -643,7 +643,7 @@ HOOK__ y_inline_InHook2@1(a, b)
 	Callback_Release(cc);
 }
 
-Test:y_inline_InHook0()
+TEST__ y_inline_InHook0()
 {
 	// DebugLevel(7);
 	YSI_g_sInlineTestVar0 = 0;
@@ -652,7 +652,7 @@ Test:y_inline_InHook0()
 	// DebugLevel(0);
 }
 
-Test:y_inline_InHook1()
+TEST__ y_inline_InHook1()
 {
 	YSI_g_sInlineTestVar0 = 0;
 	CallLocalFunction("y_inline_InHook1", "i", 4);
@@ -665,7 +665,7 @@ Test:y_inline_InHook1()
 	ASSERT(YSI_g_sInlineTestVar0 == 300);
 }
 
-Test:y_inline_InHook2()
+TEST__ y_inline_InHook2()
 {
 	YSI_g_sInlineTestVar0 = 0;
 	CallLocalFunction("y_inline_InHook2", "ii", 4, 5);
@@ -765,7 +765,7 @@ static stock y_inline_TestFunc_6(lvar)
 	return 7;
 }
 
-Test:y_inline_ParameterTypes_0()
+TEST__ y_inline_ParameterTypes_0()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -776,7 +776,7 @@ Test:y_inline_ParameterTypes_0()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-Test:y_inline_ParameterTypes_1()
+TEST__ y_inline_ParameterTypes_1()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -787,7 +787,7 @@ Test:y_inline_ParameterTypes_1()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-Test:y_inline_ParameterTypes_2()
+TEST__ y_inline_ParameterTypes_2()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -798,7 +798,7 @@ Test:y_inline_ParameterTypes_2()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-Test:y_inline_ParameterTypes_3()
+TEST__ y_inline_ParameterTypes_3()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -809,7 +809,7 @@ Test:y_inline_ParameterTypes_3()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-Test:y_inline_ParameterTypes_4()
+TEST__ y_inline_ParameterTypes_4()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -820,7 +820,7 @@ Test:y_inline_ParameterTypes_4()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-Test:y_inline_ParameterTypes_5()
+TEST__ y_inline_ParameterTypes_5()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -831,7 +831,7 @@ Test:y_inline_ParameterTypes_5()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-Test:y_inline_ParameterTypes_6()
+TEST__ y_inline_ParameterTypes_6()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -898,7 +898,7 @@ static stock y_inline_TestFunc_10(string:svar0[])
 	return strval(svar0b[6]);
 }
 
-Test:y_inline_ParameterTypes_7()
+TEST__ y_inline_ParameterTypes_7()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -909,7 +909,7 @@ Test:y_inline_ParameterTypes_7()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-Test:y_inline_ParameterTypes_8()
+TEST__ y_inline_ParameterTypes_8()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -920,7 +920,7 @@ Test:y_inline_ParameterTypes_8()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-Test:y_inline_ParameterTypes_9()
+TEST__ y_inline_ParameterTypes_9()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -931,7 +931,7 @@ Test:y_inline_ParameterTypes_9()
 	Callback_Release(YSI_g_sInlineTestCB);
 }
 
-Test:y_inline_ParameterTypes_10()
+TEST__ y_inline_ParameterTypes_10()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
@@ -961,7 +961,7 @@ y_inline_Fold(array[], Func:callback<ii>, initial, size = sizeof (array))
 	return initial;
 }
 
-Test:y_inline_NewAPI1()
+TEST__ y_inline_NewAPI1()
 {
 	new array[10] = { 0, 5, 1, 5, 2, 3, 4, 5, 5, 0 };
 	new count = 0;
@@ -974,7 +974,7 @@ Test:y_inline_NewAPI1()
 	ASSERT(count == 4);
 }
 
-Test:y_inline_NewAPI2()
+TEST__ y_inline_NewAPI2()
 {
 	new array[10] = { 0, 5, 1, 5, 2, 3, 4, 5, 5, 0 };
 	new count = 0;
@@ -987,7 +987,7 @@ Test:y_inline_NewAPI2()
 	ASSERT(count == 0);
 }
 
-Test:y_inline_NewAPI3()
+TEST__ y_inline_NewAPI3()
 {
 	new array[10] = { 5, 5, 1, 5, 2, 3, 4, 5, 5, 5 };
 	inline const IsFive(value, count)
@@ -1008,7 +1008,7 @@ y_inline_MetaData(Func:cb<iis>)
 	return @.cb(4, 5, "The Dummy Call");
 }
 
-Test:y_inline_MetaData()
+TEST__ y_inline_MetaData()
 {
 	inline Dummy(a, b, string:c[])
 	{

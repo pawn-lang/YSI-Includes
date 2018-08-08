@@ -72,7 +72,7 @@ Optional plugins:
 
 #assert MAX_PLAYERS >= 50
 
-Test:000_y_groups_Global()
+TEST__ 000_y_groups_Global()
 {
 	// Need a certain number just to run this code.
 	call OnPlayerConnect(42);
@@ -80,7 +80,7 @@ Test:000_y_groups_Global()
 	//call OnPlayerDisconnect(42, 0);
 }
 
-Test:y_groups_Valid()
+TEST__ y_groups_Valid()
 {
 	new
 		Group:g = Group_Create("Valid"),
@@ -92,7 +92,7 @@ Test:y_groups_Valid()
 	Group_Destroy(g);
 }
 
-Test:y_groups_Create0()
+TEST__ y_groups_Create0()
 {
 	new
 		Group:g = Group_Create();
@@ -100,7 +100,7 @@ Test:y_groups_Create0()
 	Group_Destroy(g);
 }
 
-Test:y_groups_Create0b()
+TEST__ y_groups_Create0b()
 {
 	new
 		Group:g0 = Group_Create("hello"),
@@ -112,7 +112,7 @@ Test:y_groups_Create0b()
 	Group_Destroy(g1);
 }
 
-Test:y_groups_Create1()
+TEST__ y_groups_Create1()
 {
 	new
 		Group:g = Group_Create("Group 1");
@@ -120,7 +120,7 @@ Test:y_groups_Create1()
 	Group_Destroy(g);
 }
 
-Test:y_groups_GetID()
+TEST__ y_groups_GetID()
 {
 	new
 		Group:g = Group_Create("Group 2");
@@ -129,7 +129,7 @@ Test:y_groups_GetID()
 	Group_Destroy(g);
 }
 
-Test:y_groups_GetGang0()
+TEST__ y_groups_GetGang0()
 {
 	new
 		Group:g = Group_Create("Group 3");
@@ -137,7 +137,7 @@ Test:y_groups_GetGang0()
 	Group_Destroy(g);
 }
 
-Test:y_groups_GetGang1()
+TEST__ y_groups_GetGang1()
 {
 	new
 		Group:g = Group_Create("Group 4");
@@ -146,7 +146,7 @@ Test:y_groups_GetGang1()
 	Group_Destroy(g);
 }
 
-Test:y_groups_GetGang2()
+TEST__ y_groups_GetGang2()
 {
 	new
 		Group:g = Group_Create("Group 5");
@@ -156,7 +156,7 @@ Test:y_groups_GetGang2()
 	Group_Destroy(g);
 }
 
-Test:y_groups_GetColour()
+TEST__ y_groups_GetColour()
 {
 	new
 		Group:g = Group_Create("Group 6");
@@ -169,7 +169,7 @@ Test:y_groups_GetColour()
 	Group_Destroy(g);
 }
 
-Test:y_groups_Set1()
+TEST__ y_groups_Set1()
 {
 	new
 		Group:g = Group_Create("Group 7");
@@ -188,7 +188,7 @@ Test:y_groups_Set1()
 	Group_Destroy(g);
 }
 
-Test:y_groups_Set2()
+TEST__ y_groups_Set2()
 {
 	new
 		Group:g = Group_Create("Group 8");
@@ -208,7 +208,7 @@ Test:y_groups_Set2()
 	Group_Destroy(g);
 }
 
-Test:y_groups_Set3()
+TEST__ y_groups_Set3()
 {
 	new
 		Group:g = Group_Create("Group 8");
@@ -218,7 +218,7 @@ Test:y_groups_Set3()
 	Group_Destroy(g);
 }
 
-Test:y_groups_SetBalanced0()
+TEST__ y_groups_SetBalanced0()
 {
 	new
 		Group:g1 = Group_Create("Group 1"),
@@ -237,7 +237,7 @@ Test:y_groups_SetBalanced0()
 	Group_Destroy(g2);
 }
 
-Test:y_groups_SetBalanced1()
+TEST__ y_groups_SetBalanced1()
 {
 	new
 		Group:g1 = Group_Create("Group 1"),
@@ -258,7 +258,7 @@ Test:y_groups_SetBalanced1()
 	Group_Destroy(g2);
 }
 
-Test:y_groups_SetBalanced2()
+TEST__ y_groups_SetBalanced2()
 {
 	new
 		Group:g1 = Group_Create("Group 1"),
@@ -293,7 +293,7 @@ Test:y_groups_SetBalanced2()
 	Group_Destroy(g3);
 }
 
-Test:y_groups_SetBalanced3()
+TEST__ y_groups_SetBalanced3()
 {
 	new
 		Group:g[3];
@@ -334,7 +334,7 @@ Test:y_groups_SetBalanced3()
 	Group_Destroy(g[2]);
 }
 
-Test:y_groups_SetBalancedIn1()
+TEST__ y_groups_SetBalancedIn1()
 {
 	new
 		Group:g[3];
@@ -376,7 +376,7 @@ Test:y_groups_SetBalancedIn1()
 	Group_Destroy(g[2]);
 }
 
-Test:y_groups_SetBalancedIn2()
+TEST__ y_groups_SetBalancedIn2()
 {
 	new
 		Group:g[3];
@@ -418,7 +418,7 @@ Test:y_groups_SetBalancedIn2()
 	Group_Destroy(g[2]);
 }
 
-Test:y_groups_SetBalancedIn3()
+TEST__ y_groups_SetBalancedIn3()
 {
 	new
 		Group:g[3];
@@ -460,7 +460,7 @@ Test:y_groups_SetBalancedIn3()
 	Group_Destroy(g[2]);
 }
 
-Test:y_groups_SetBalancedIn3a()
+TEST__ y_groups_SetBalancedIn3a()
 {
 	new
 		Group:g[3];
@@ -504,7 +504,7 @@ Test:y_groups_SetBalancedIn3a()
 	Group_Destroy(g[2]);
 }
 
-Test:y_groups_SetBalancedIn3b()
+TEST__ y_groups_SetBalancedIn3b()
 {
 	new
 		Group:g[3];
@@ -548,7 +548,7 @@ Test:y_groups_SetBalancedIn3b()
 	Group_Destroy(g[2]);
 }
 
-Test:y_groups_SetBalancedIn3c()
+TEST__ y_groups_SetBalancedIn3c()
 {
 	new
 		Group:g[3];
@@ -592,7 +592,7 @@ Test:y_groups_SetBalancedIn3c()
 	Group_Destroy(g[2]);
 }
 
-Test:y_groups_SetBalancedIn4()
+TEST__ y_groups_SetBalancedIn4()
 {
 	new
 		Group:g[3];
@@ -635,7 +635,7 @@ Test:y_groups_SetBalancedIn4()
 	Group_Destroy(g[2]);
 }
 
-Test:y_groups_SetBalancedSingle()
+TEST__ y_groups_SetBalancedSingle()
 {
 	new
 		Group:g1 = Group_Create("Group 1"),
@@ -649,7 +649,7 @@ Test:y_groups_SetBalancedSingle()
 	Group_Destroy(g1);
 }
 
-Test:y_groups_SetBalancedInvalid()
+TEST__ y_groups_SetBalancedInvalid()
 {
 	new
 		Group:result;
@@ -683,7 +683,7 @@ Test_SetPlayer(el, playerid, bool:s)
 	return 1;
 }
 
-Test:0_y_groups_Connect0()
+TEST__ 0_y_groups_Connect0()
 {
 	gPl = INVALID_PLAYER_ID;
 	gEl = 100;
@@ -702,7 +702,7 @@ Test:0_y_groups_Connect0()
 	call OnPlayerDisconnect(45, 0);
 }
 
-Test:0_y_groups_Connect1()
+TEST__ 0_y_groups_Connect1()
 {
 	gPl = INVALID_PLAYER_ID;
 	gEl = 100;
@@ -720,7 +720,7 @@ Test:0_y_groups_Connect1()
 	call OnPlayerDisconnect(43, 0);
 }
 
-Test:y_groups_Chains()
+TEST__ y_groups_Chains()
 {
 	new
 		Group:g = Group_Create();
@@ -731,7 +731,7 @@ Test:y_groups_Chains()
 	call OnPlayerDisconnect(44, 0);
 }
 
-Test:y_groups_Children0()
+TEST__ y_groups_Children0()
 {
 	new
 		Group:g0 = Group_Create();
@@ -739,7 +739,7 @@ Test:y_groups_Children0()
 	Group_Destroy(g0);
 }
 
-Test:y_groups_Children1()
+TEST__ y_groups_Children1()
 {
 	new
 		Group:g0 = Group_Create(),
@@ -769,7 +769,7 @@ Test:y_groups_Children1()
 	Group_Destroy(g2);
 }
 
-Test:y_groups_Children2()
+TEST__ y_groups_Children2()
 {
 	new
 		Group:g0 = Group_Create(),
@@ -799,7 +799,7 @@ Test:y_groups_Children2()
 	Group_Destroy(g2);
 }
 
-Test:y_groups_Children3()
+TEST__ y_groups_Children3()
 {
 	new
 		Group:g0 = Group_Create(),
@@ -818,7 +818,7 @@ Test:y_groups_Children3()
 	Group_Destroy(g2);
 }
 
-Test:y_groups_Children4()
+TEST__ y_groups_Children4()
 {
 	new
 		Group:g0 = Group_Create(),
@@ -839,7 +839,7 @@ Test:y_groups_Children4()
 	Group_Destroy(g2);
 }
 
-Test:y_groups_Children5()
+TEST__ y_groups_Children5()
 {
 	new
 		Group:g0 = Group_Create(),
@@ -866,7 +866,7 @@ Test:y_groups_Children5()
 	Group_Destroy(g4);
 }
 
-Test:y_groups_Children6()
+TEST__ y_groups_Children6()
 {
 	new
 		Group:g0 = Group_Create(),
@@ -886,7 +886,7 @@ Test:y_groups_Children6()
 	Group_Destroy(g2);
 }
 
-Test:y_groups_Children7()
+TEST__ y_groups_Children7()
 {
 	new
 		Group:g0 = Group_Create(),
@@ -905,7 +905,7 @@ Test:y_groups_Children7()
 	Group_Destroy(g2);
 }
 
-Test:y_groups_ChildIterator0()
+TEST__ y_groups_ChildIterator0()
 {
 	new
 		Group:g0 = Group_Create(),
@@ -925,7 +925,7 @@ Test:y_groups_ChildIterator0()
 	Group_Destroy(g2);
 }
 
-Test:y_groups_ChildIterator1()
+TEST__ y_groups_ChildIterator1()
 {
 	new
 		Group:g0 = Group_Create(),
@@ -947,7 +947,7 @@ Test:y_groups_ChildIterator1()
 	ASSERT(!Group_IsValid(g0));
 }
 
-Test:y_groups_ChildIterator2()
+TEST__ y_groups_ChildIterator2()
 {
 	new
 		Group:g0 = Group_Create(),
@@ -973,7 +973,7 @@ Test:y_groups_ChildIterator2()
 	ASSERT(!Group_IsValid(g0));
 }
 
-Test:y_groups_Iterator0()
+TEST__ y_groups_Iterator0()
 {
 	new
 		Group:g0 = Group_Create(),

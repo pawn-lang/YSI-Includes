@@ -199,29 +199,57 @@ stock
 // the static function "y_Q@<test>".
 
 #if defined RUN_TESTS
-	#define TestInit:%1() @y_Q%1();@y_Q%1()
-	#define Test:%1() bool:@yQ_%1();bool:@yQ_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())yQ_@%1();static yQ_@%1()
-	#define TestClose:%1() @Qy_%1();@Qy_%1()
-	#define TestBeforeEach:%1() forward y@Q_%1(); public y@Q_%1()
-	#define TestAfterEach:%1() forward y@_Q%1(); public y@_Q%1()
+	#define TEST_INIT__%1() @y_Q%1();@y_Q%1()
+	#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())yQ_@%1();static yQ_@%1()
+	#define TEST_CLOSE__%1() @Qy_%1();@Qy_%1()
+	#define TEST_BEFORE_EACH__%1() forward y@Q_%1(); public y@Q_%1()
+	#define TEST_AFTER_EACH__%1() forward y@_Q%1(); public y@_Q%1()
 	
-	#define PTestInit:%1(%2) @Q_y%1(%2);@Q_y%1(%2)
-	#define PTest:%1(%2) bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
-	#define PTestClose:%1(%2) @_yQ%1(%2);@_yQ%1(%2)
+	#define PTEST_INIT__%1(%2) @Q_y%1(%2);@Q_y%1(%2)
+	#define PTEST__%1(%2) bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+	#define PTEST_CLOSE__%1(%2) @_yQ%1(%2);@_yQ%1(%2)
 	
-	#define TestCompile:%1() forward Q@y_%1();public Q@y_%1(){if(FALSE)Q@_y%1();P:W("Compile test " #%1 " called.");}static stock Q@_y%1()
+	#define TEST_COMPILE__%1() forward Q@y_%1();public Q@y_%1(){if(FALSE)Q@_y%1();P:W("Compile test " #%1 " called.");}static stock Q@_y%1()
 #else
-	#define TestInit:%1() static stock y_Q@%1()
-	#define Test:%1() static stock bool:yQ_@%1()
-	#define TestClose:%1() static stock Qy_@%1()
-	#define TestBeforeEach:%1() stock y@Q_%1()
-	#define TestAfterEach:%1() stock y@_Q%1()
+	#define TEST_INIT__%1() static stock y_Q@%1()
+	#define TEST__%1() static stock bool:yQ_@%1()
+	#define TEST_CLOSE__%1() static stock Qy_@%1()
+	#define TEST_BEFORE_EACH__%1() stock y@Q_%1()
+	#define TEST_AFTER_EACH__%1() stock y@_Q%1()
 	
-	#define PTestInit:%1(%2) static stock Q_y@%1(%2)
-	#define PTest:%1(%2) static stock bool:_Qy@%1(%2)
-	#define PTestClose:%1(%2) static stock _yQ@%1(%2)
+	#define PTEST_INIT__%1(%2) static stock Q_y@%1(%2)
+	#define PTEST__%1(%2) static stock bool:_Qy@%1(%2)
+	#define PTEST_CLOSE__%1(%2) static stock _yQ@%1(%2)
 	
-	#define TestCompile:%1() static stock Q@_y%1()
+	#define TEST_COMPILE__%1() static stock Q@_y%1()
+#endif
+
+#if defined YSI_COMPAT || defined KEYWORD_TestInit
+	 #define TestInit:%1() TEST_INIT__ %1()
+#endif
+#if defined YSI_COMPAT || defined KEYWORD_Test
+	 #define Test:%1() TEST__ %1()
+#endif
+#if defined YSI_COMPAT || defined KEYWORD_TestClose
+	 #define TestClose:%1() TEST_CLOSE__ %1()
+#endif
+#if defined YSI_COMPAT || defined KEYWORD_TestBeforeEach
+	 #define TestBeforeEach:%1() TEST_BEFORE_EACH__ %1()
+#endif
+#if defined YSI_COMPAT || defined KEYWORD_TestAfterEach
+	 #define TestAfterEach:%1() TEST_AFTER_EACH__ %1()
+#endif
+#if defined YSI_COMPAT || defined KEYWORD_PTestInit
+	 #define PTestInit:%1(%2) PTEST_INIT__ %1(%2)
+#endif
+#if defined YSI_COMPAT || defined KEYWORD_PTest
+	 #define PTest:%1(%2) PTEST__ %1(%2)
+#endif
+#if defined YSI_COMPAT || defined KEYWORD_PTestClose
+	 #define PTestClose:%1(%2) PTEST_CLOSE__ %1(%2)
+#endif
+#if defined YSI_COMPAT || defined KEYWORD_TestCompile
+	 #define TestCompile:%1() TEST_COMPILE__ %1()
 #endif
 
 #define @y_Q%0\32; @y_Q
@@ -782,7 +810,7 @@ stock Testing_RunAll()
 			// that didn't pass.
 			while (YSI_g_sFailTests != 0)
 			{
-				printf("    - Test:%s (%d)", deref(YSI_g_sFailTests + 8), ReadAmxMemory(YSI_g_sFailTests + 4)),
+				printf("    - TEST__ %s (%d)", deref(YSI_g_sFailTests + 8), ReadAmxMemory(YSI_g_sFailTests + 4)),
 				YSI_g_sFailTests = ReadAmxMemory(YSI_g_sFailTests);
 			}
 		}
@@ -817,7 +845,7 @@ stock Testing_TestRedirect(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 	ASSERT(!strcmp(str, "%s %s", false, 5));
 }
 
-Test:y_testing_2()
+TEST__ y_testing_2()
 {
 	new
 		t = YSI_g_sTests,
@@ -839,12 +867,12 @@ Test:y_testing_2()
 	--YSI_g_sFails; // Reduce the failure count to not fail the whole suite.
 }
 
-TestInit:y_testing_1()
+TEST_INIT__ y_testing_1()
 {
 	YSI_g_sTestResult = 5;
 }
 
-Test:y_testing_1()
+TEST__ y_testing_1()
 {
 	new
 		x = YSI_g_sTestResult;
@@ -867,7 +895,7 @@ Test:y_testing_1()
 	ASSERT(YSI_g_sTestResult == 8);
 }
 
-TestClose:y_testing_1()
+TEST_CLOSE__ y_testing_1()
 {
 	++YSI_g_sTestResult;
 }
@@ -883,7 +911,7 @@ static stock y_testing_ReturnHello()
 	return ret;
 }
 
-Test:y_testing_Asserts()
+TEST__ y_testing_Asserts()
 {
 	ASSERT_EQ(7, y_testing_Return7());
 	ASSERT_NE(8, y_testing_Return7());

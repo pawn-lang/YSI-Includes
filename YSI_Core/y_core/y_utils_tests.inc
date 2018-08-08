@@ -2,7 +2,7 @@
 #define Y_UTILS_VALUE (42)
 #define Y_UTILS_INVALID (999999)
 
-TestCompile:y_utils()
+TEST_COMPILE__ y_utils()
 {
 	#assert NO_VALUE(Y_UTILS_NO_VALUE)
 	#assert !NO_VALUE(Y_UTILS_VALUE)
@@ -63,7 +63,7 @@ public y_utils_va_return(const str[])
 	++gCalls_y_utils_va_return;
 }
 
-Test:y_utils_va_return()
+TEST__ y_utils_va_return()
 {
 	gCalls_y_utils_va_return = 0;
 	y_utils_va_return(va_return("Hello %s %d %.3f", "World", 42, 9.4554));

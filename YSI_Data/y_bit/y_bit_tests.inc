@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-Test:Bit_Bits()
+TEST__ Bit_Bits()
 {
 	ASSERT(Bit_Bits(5) == 1);
 	ASSERT(Bit_Bits(32) == 1);
@@ -82,7 +82,7 @@ Test:Bit_Bits()
 	ASSERT(Bit_Bits(1025) == 33);
 }
 
-Test:Bit_Set()
+TEST__ Bit_Set()
 {
 	new
 		BitArray:bb<100>;
@@ -112,7 +112,7 @@ Test:Bit_Set()
 	ASSERT(_:bb[0] == 0);
 }
 
-Test:Bit_Get()
+TEST__ Bit_Get()
 {
 	new
 		BitArray:bb<32>;
@@ -131,7 +131,7 @@ Test:Bit_Get()
 	ASSERT(!Bit_Get(bb, 31));
 }
 
-Test:Bit_SetAll()
+TEST__ Bit_SetAll()
 {
 	new
 		BitArray:bb<50>;
@@ -153,7 +153,7 @@ Test:Bit_SetAll()
 	ASSERT(!Bit_Get(bb, 60));
 }
 
-Test:Bit_Count()
+TEST__ Bit_Count()
 {
 	new
 		BitArray:cc<70>;
@@ -174,7 +174,7 @@ Test:Bit_Count()
 	ASSERT(Bit_GetCount(cc) == 13);
 }
 
-Test:Bit_Iterators()
+TEST__ Bit_Iterators()
 {
 	new
 		BitArray:bitArray<32>;
