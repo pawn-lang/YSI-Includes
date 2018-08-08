@@ -124,16 +124,14 @@ forward bool:_Testing_End();
 #define TEST_NULL_EX(%0,%2)  Testing_Test((%0) == 0, (%2))
 #define TEST_N_EX(%0,%1,%2)  Testing_Test((%0) == (%1), (%2))
 
-//#define TEST_MSG "\2\2\2\2\2"
 #define TEST_FAILED "FAIL:"
 #define TEST_PASSED "PASS!"
 
-#define _Y_TESTEQ(%0) "\"%0\"")
-#define _Y_TESTDQ:_Y_TESTEQ(%0"%1"%2) _Y_TESTDQ:_Y_TESTEQ(%0\x22;%1\x22;%2)
-#define _Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0)%1) _Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0\x29;%1)
-#define _Y_TESTOB:_Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0(%1) _Y_TESTOB:_Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0\x28;%1)
+#define _Y_TESTEQ`%0` "`%0`"
+#define _Y_TESTDQ:%9`%0"%1"%2` _Y_TESTDQ:%9`%0\x22;%1\x22;%2`
+#define _Y_TESTOB:%9`%0(%1)%2` _Y_TESTOB:%9`%0\x28;%1\x29;%2`
 
-#define ASSERT(%0) Testing_Test(%0, "%s %s", _Y_TESTOB:_Y_TESTCB:_Y_TESTDQ:_Y_TESTEQ(%0)
+#define ASSERT(%0) Testing_Test(%0, "%s %s", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0`)
 #define ASSERT_TRUE(%0) ASSERT(!!%0)
 #define ASSERT_FALSE(%0) ASSERT(!%0)
 #define ASSERT_NULL(%0) ASSERT(0 == %0)
@@ -151,6 +149,22 @@ forward bool:_Testing_End();
 #define Y_TESTING_PSHUT _C<@_yQ>
 #define Y_TESTING_BEFORE _A<y@Q_>
 #define Y_TESTING_AFTER _A<y@_Q>
+
+// Numbers.
+#define ASSERT_EQ(%0,%1) Testing_Test((%0) == YSI_g_TestResult, "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 == %1`, (YSI_g_TestResult = (%1)))
+#define ASSERT_NE(%0,%1) Testing_Test((%0) != YSI_g_TestResult, "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 != %1`, (YSI_g_TestResult = (%1)))
+#define ASSERT_LE(%0,%1) Testing_Test((%0) <= YSI_g_TestResult, "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 <= %1`, (YSI_g_TestResult = (%1)))
+#define ASSERT_LT(%0,%1) Testing_Test((%0) <  YSI_g_TestResult, "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 <  %1`, (YSI_g_TestResult = (%1)))
+#define ASSERT_GE(%0,%1) Testing_Test((%0) >= YSI_g_TestResult, "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 >= %1`, (YSI_g_TestResult = (%1)))
+#define ASSERT_GT(%0,%1) Testing_Test((%0) >  YSI_g_TestResult, "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 >  %1`, (YSI_g_TestResult = (%1)))
+
+// Strings.
+#define ASSERT_SAME(%0,%1) Testing_Test(!strcmp(Q@, (%0)      ), "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 == %1`, (strunpack(Q@, (%1)), Q@))
+#define ASSERT_DIFF(%0,%1) Testing_Test( strcmp(Q@, (%0)      ), "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 != %1`, (strunpack(Q@, (%1)), Q@))
+#define ASSERT_NEAR(%0,%1) Testing_Test(!strcmp(Q@, (%0), true), "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 != %1`, (strunpack(Q@, (%1)), Q@))
+
+stock
+	YSI_g_TestResult;
 
 static stock
 	YSI_g_sCurTest = 0,
@@ -855,6 +869,32 @@ Test:y_testing_1()
 TestClose:y_testing_1()
 {
 	++YSI_g_sTestResult;
+}
+
+static stock y_testing_Return7()
+{
+	return 7;
+}
+
+static stock y_testing_ReturnHello()
+{
+	new ret[32] = "Hello";
+	return ret;
+}
+
+Test:y_testing_Asserts()
+{
+	ASSERT_EQ(7, y_testing_Return7());
+	ASSERT_NE(8, y_testing_Return7());
+	ASSERT_LE(7, y_testing_Return7());
+	ASSERT_LE(6, y_testing_Return7());
+	ASSERT_LT(6, y_testing_Return7());
+	ASSERT_GE(7, y_testing_Return7());
+	ASSERT_GE(9, y_testing_Return7());
+	ASSERT_GT(9, y_testing_Return7());
+	ASSERT_SAME("iHello", y_testing_ReturnHello());
+	ASSERT_DIFF("ihello", y_testing_ReturnHello());
+	ASSERT_NEAR("ihello", y_testing_ReturnHello());
 }
 
 #endif
