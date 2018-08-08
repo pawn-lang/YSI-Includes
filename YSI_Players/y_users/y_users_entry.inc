@@ -157,19 +157,19 @@ const
 #define OnUserData[%0](%1) @yU_%0(%1)
 #define PINI:%0(%1) forward OnUserData[%0](%1);public OnUserData[%0](%1)
 
-foreign Player_TryRegister(playerid, string:password[]);
+FOREIGN__ Player_TryRegister(playerid, string:password[]);
 
-foreign Player_TryLogin(playerid, string:password[]);
+FOREIGN__ Player_TryLogin(playerid, string:password[]);
 
-foreign Player_TryGroup(playerid, string:other[], string:password[]);
+FOREIGN__ Player_TryGroup(playerid, string:other[], string:password[]);
 
-foreign Player_ChangePassword(playerid, string:password[]);
+FOREIGN__ Player_ChangePassword(playerid, string:password[]);
 
-foreign Player_ForceGroup(playerid, string:other[]);
+FOREIGN__ Player_ForceGroup(playerid, string:other[]);
 
-foreign Player_ForceLogin(playerid);
+FOREIGN__ Player_ForceLogin(playerid);
 
-foreign Player_ChangeLanguage(playerid, string:code[]);
+FOREIGN__ Player_ChangeLanguage(playerid, string:code[]);
 
 #if defined USERS_USE_MYSQL
 	/*

@@ -110,9 +110,15 @@ Optional plugins:
 	#endif
 #endif
 
-#define mhook master_hook
-#define mtask master_task
-#define mptask master_ptask
+#if defined YSI_COMPAT || defined KEYWORD_mhook
+	 #define mhook MASTER_HOOK__
+#endif
+#if defined YSI_COMPAT || defined KEYWORD_mtask
+	 #define mtask MASTER_TASK__
+#endif
+#if defined YSI_COMPAT || defined KEYWORD_mptask
+	 #define mptask MASTER_PTASK__
+#endif
 
 // Because "Cloud" and "Client" start with the same letter, "YSIMC" would be
 // confusing.  "Cloud" and "Slave" would be just as confusing since "S" could be
@@ -338,8 +344,11 @@ Optional plugins:
 
 #define YSIM_NOT_CLIENT (!YSIM_HAS_MASTER || !_YSIM_IS_CLIENT)
 
-#define @global global
-#define @foreign foreign
+// These were used to optimise the case where the caller ID wasn't required, but
+// that is all done in assembly now and there's no need for the extra
+// complication.
+//#define @global global
+//#define @foreign foreign
 
 // Set up the master ID stack.
 #define _YSIM_PUSH_INDEX 0 // First position on the stack to push to.
@@ -348,7 +357,7 @@ Optional plugins:
 	#define MAX_MASTERS 64 // Default, old value.
 #endif
 
-#define HANDOFF(%9) master_func MAKE_YCM<HANDOFF_SOURCE...>()<p>
+#define HANDOFF(%9) MASTER_FUNC__ MAKE_YCM<HANDOFF_SOURCE...>()<p>
 
 forward Master_Reassert();
 

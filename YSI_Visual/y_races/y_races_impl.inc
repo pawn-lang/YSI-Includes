@@ -272,14 +272,14 @@ stock Races_SetupGroups() <>
  *  parameters are optional and can be set separately aswell.
  *//*------------------------------------------------------------------------**/
 
-foreign _Race_Create(l,e,c,a,f,x,i,w,r);
+FOREIGN__ _Race_Create(l,e,c,a,f,x,i,w,r);
 
 stock Race_Create(laps = 0, entry = 0, countdown = 3, bool:arial = false, bool:fixedPrize = true, exitTime = 0, interior = 0, world = 0, bool:restart = false)
 {
 	return _Race_Create(laps, entry, countdown, _:arial, _:fixedPrize, exitTime, interior, world, _:restart);
 }
 
-global _Race_Create(l,e,c,a,f,x,i,w,r)
+GLOBAL__ _Race_Create(l,e,c,a,f,x,i,w,r)
 {
 	new
 		raceid;
@@ -337,14 +337,14 @@ global _Race_Create(l,e,c,a,f,x,i,w,r)
  *  number of remaining racers and if none ends the race.
  *//*------------------------------------------------------------------------**/
 
-foreign void:_Race_Destroy(slot, refund);
+FOREIGN__ void:_Race_Destroy(slot, refund);
 
 stock Race_Destroy(slot, bool:refund = false)
 {
 	_Race_Destroy(slot, _:refund);
 }
 
-global void:_Race_Destroy(slot, refund)
+GLOBAL__ void:_Race_Destroy(slot, refund)
 {
 	if (Race_IsValid(slot))
 	{
@@ -387,7 +387,7 @@ global void:_Race_Destroy(slot, refund)
  * <returns>position or -1.</returns>
  *//*------------------------------------------------------------------------**/
 
-global Race_AddCheckpoint(raceid, Float:x, Float:y, Float:z)
+GLOBAL__ Race_AddCheckpoint(raceid, Float:x, Float:y, Float:z)
 {
 	if (!Race_IsValid(raceid)) return RACE_NO_CHECKPOINT;
 	new
@@ -409,7 +409,7 @@ global Race_AddCheckpoint(raceid, Float:x, Float:y, Float:z)
  *  number of racers for the race.
  *//*------------------------------------------------------------------------**/
 
-global Race_AddStart(raceid, Float:x, Float:y, Float:z, Float:a)
+GLOBAL__ Race_AddStart(raceid, Float:x, Float:y, Float:z, Float:a)
 {
 	if (!Race_IsValid(raceid)) return RACE_NO_CHECKPOINT;
 	new
@@ -432,7 +432,7 @@ global Race_AddStart(raceid, Float:x, Float:y, Float:z, Float:a)
  *  based on the number of entrants and the entry fee.
  *//*------------------------------------------------------------------------**/
 
-global void:Race_SetFixedWin(raceid, set)
+GLOBAL__ void:Race_SetFixedWin(raceid, set)
 {
 	if (!Race_IsValid(raceid)) return;
 	if (set) YSI_g_sRaceData[raceid][E_RACE_FLAGS] &= ~e_RACE_FLAGS_REL_WIN;
@@ -446,7 +446,7 @@ global void:Race_SetFixedWin(raceid, set)
  *  Sets wether or not a race is destroyed after completion.
  *//*------------------------------------------------------------------------**/
 
-global void:Race_SetRestart(raceid, set)
+GLOBAL__ void:Race_SetRestart(raceid, set)
 {
 	if (!Race_IsValid(raceid)) return;
 	if (set) YSI_g_sRaceData[raceid][E_RACE_FLAGS] |= e_RACE_FLAGS_RESTART;
@@ -460,7 +460,7 @@ global void:Race_SetRestart(raceid, set)
  *  Toggles the use of arial checkpoints.
  *//*------------------------------------------------------------------------**/
 
-global void:Race_SetArial(raceid, set)
+GLOBAL__ void:Race_SetArial(raceid, set)
 {
 	if (!Race_IsValid(raceid)) return;
 	if (set) YSI_g_sRaceData[raceid][E_RACE_FLAGS] |= e_RACE_FLAGS_ARIAL;
@@ -486,7 +486,7 @@ _Y_RACES_STATIC stock Race_SetActive(raceid, set)
  * <param name="countdown">Number to count down from.</param>
  *//*------------------------------------------------------------------------**/
 
-global void:Race_SetCountdown(raceid, countdown)
+GLOBAL__ void:Race_SetCountdown(raceid, countdown)
 {
 	if (!Race_IsValid(raceid)) return;
 	YSI_g_sRaceData[raceid][E_RACE_COUNTDOWN] = countdown;
@@ -500,7 +500,7 @@ global void:Race_SetCountdown(raceid, countdown)
  *  checkpoints must be located in the same interior.
  *//*------------------------------------------------------------------------**/
 
-global void:Race_SetInterior(raceid, interior)
+GLOBAL__ void:Race_SetInterior(raceid, interior)
 {
 	if (!Race_IsValid(raceid)) return;
 	YSI_g_sRaceData[raceid][E_RACE_INT] = interior;
@@ -511,7 +511,7 @@ global void:Race_SetInterior(raceid, interior)
  * <param name="world">World to run race in.</param>
  *//*------------------------------------------------------------------------**/
 
-global void:Race_SetWorld(raceid, world)
+GLOBAL__ void:Race_SetWorld(raceid, world)
 {
 	if (!Race_IsValid(raceid)) return;
 	YSI_g_sRaceData[raceid][E_RACE_VW] = world;
@@ -526,7 +526,7 @@ global void:Race_SetWorld(raceid, world)
  *  write prizes set by relative winnings.
  *//*------------------------------------------------------------------------**/
 
-global void:Race_SetPrize(raceid, position, amount)
+GLOBAL__ void:Race_SetPrize(raceid, position, amount)
 {
 	if (!Race_IsValid(raceid) || position >= MAX_RACE_WINNERS) return;
 	YSI_g_sRaceData[raceid][E_RACE_PRIZES][position - 1] = amount;
@@ -542,7 +542,7 @@ global void:Race_SetPrize(raceid, position, amount)
  *  Useful for long races where cars may well be destroyed.
  *//*------------------------------------------------------------------------**/
 
-global void:Race_SetExitTime(raceid, time)
+GLOBAL__ void:Race_SetExitTime(raceid, time)
 {
 	if (!Race_IsValid(raceid)) return;
 	YSI_g_sRaceData[raceid][E_RACE_FLAGS] = (YSI_g_sRaceData[raceid][E_RACE_FLAGS] & (~e_RACE_FLAGS_EXIT_TIME)) | (e_RACE_FLAGS:time & e_RACE_FLAGS_EXIT_TIME);
@@ -554,7 +554,7 @@ global void:Race_SetExitTime(raceid, time)
  *  Wrapper for Race_IsValid.
  *//*------------------------------------------------------------------------**/
 
-global Race_IsActive(raceid)
+GLOBAL__ Race_IsActive(raceid)
 {
 	return Race_IsValid(raceid);
 }
@@ -564,7 +564,7 @@ global Race_IsActive(raceid)
  * <param name="laps">Number of laps to set.</param>
  *//*------------------------------------------------------------------------**/
 
-global void:Race_SetLaps(raceid, laps)
+GLOBAL__ void:Race_SetLaps(raceid, laps)
 {
 	if (!Race_IsValid(raceid)) return;
 	YSI_g_sRaceData[raceid][E_RACE_LAPS] = laps;
@@ -575,7 +575,7 @@ global void:Race_SetLaps(raceid, laps)
  * <param name="cost">Cost of entry to the race.</param>
  *//*------------------------------------------------------------------------**/
 
-global void:Race_SetEntry(raceid, cost)
+GLOBAL__ void:Race_SetEntry(raceid, cost)
 {
 	if (!Race_IsValid(raceid)) return;
 	YSI_g_sRaceData[raceid][E_RACE_ENTRY] = cost;
@@ -720,7 +720,7 @@ _Y_RACES_STATIC Race_PlayerDone(playerid)
  * <returns>The time a player has been out a vehicle.</returns>
  *//*------------------------------------------------------------------------**/
 
-global Race_GetPlayerExitedTime(playerid)
+GLOBAL__ Race_GetPlayerExitedTime(playerid)
 {
 	return GetTickCount() - YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_TOUT];
 }
@@ -733,7 +733,7 @@ global Race_GetPlayerExitedTime(playerid)
  *  is valid to be joined to and if so adds them to it.
  *//*------------------------------------------------------------------------**/
 
-global Race_PlayerJoin(playerid, race)
+GLOBAL__ Race_PlayerJoin(playerid, race)
 {
 	if (YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE] != NO_RACE ||
 		!Race_IsValid(race)) return 0;
@@ -763,14 +763,14 @@ global Race_PlayerJoin(playerid, race)
  *  started.
  *//*------------------------------------------------------------------------**/
 
-foreign _Race_PlayerLeave(playerid, refund);
+FOREIGN__ _Race_PlayerLeave(playerid, refund);
 
 stock Race_PlayerLeave(playerid, bool:refund = false)
 {
 	return _Race_PlayerLeave(playerid, _:refund);
 }
 
-global _Race_PlayerLeave(playerid, refund)
+GLOBAL__ _Race_PlayerLeave(playerid, refund)
 {
 	new
 		race = YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE];
@@ -814,7 +814,7 @@ _Y_RACES_STATIC Race_Finish(playerid)
  *  fee.
  *//*------------------------------------------------------------------------**/
 
-global Race_Start(race)
+GLOBAL__ Race_Start(race)
 {
 	if (!Race_IsValid(race)) return 0;
 	new
@@ -1176,7 +1176,7 @@ mhook OnPlayerConnect(playerid)
  * <returns>Dynamic position in race.</returns>
  *//*------------------------------------------------------------------------**/
 
-global Race_GetPlayerPosition(playerid)
+GLOBAL__ Race_GetPlayerPosition(playerid)
 {
 	return YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_POSITION];
 }
@@ -1188,7 +1188,7 @@ global Race_GetPlayerPosition(playerid)
  * <returns>Time in race so far.</returns>
  *//*------------------------------------------------------------------------**/
 
-global Race_GetPlayerRaceTime(playerid)
+GLOBAL__ Race_GetPlayerRaceTime(playerid)
 {
 	return GetTickCount() - YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_TIME];
 }
@@ -1198,7 +1198,7 @@ global Race_GetPlayerRaceTime(playerid)
  * <returns>Player's race.</returns>
  *//*------------------------------------------------------------------------**/
 
-global Race_GetPlayerRace(playerid)
+GLOBAL__ Race_GetPlayerRace(playerid)
 {
 	if (VALID_PLAYERID(playerid)) return YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE];
 	return NO_RACE;
@@ -1210,7 +1210,7 @@ global Race_GetPlayerRace(playerid)
  * <param name="set">Add or remove them.</param>
  *//*------------------------------------------------------------------------**/
 
-global Race_SetPlayer(race, playerid, bool:set)
+GLOBAL__ Race_SetPlayer(race, playerid, bool:set)
 {
 	if (Race_IsValid(race))
 	{

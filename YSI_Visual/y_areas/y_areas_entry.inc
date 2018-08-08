@@ -462,9 +462,9 @@ P:D(bool:Area_IsActive(area));
  * <param name="area">Area to print information about.</param>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Area_Debug(area);
+FOREIGN__ void:Area_Debug(area);
 
-global void:Area_Debug(area)
+GLOBAL__ void:Area_Debug(area)
 {
 	new
 		e_AREA_FLAGS:flags = YSI_g_sAreas[area][E_AREA_FLAGS];
@@ -533,9 +533,9 @@ static stock Area_GetFreeSlot()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Area_Delete(area);
+FOREIGN__ void:Area_Delete(area);
 
-global void:Area_Delete(area)
+GLOBAL__ void:Area_Delete(area)
 {
 	if (!Area_IsActive(area))
 	{
@@ -1106,9 +1106,9 @@ static stock Area_DetermineZone(Float:minx, Float:miny, Float:maxx, Float:maxy, 
  * <param name="set">Wether or not this area is usable in all worlds.</param>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Area_SetAllWorlds(area, bool:set);
+FOREIGN__ void:Area_SetAllWorlds(area, bool:set);
 
-global void:Area_SetAllWorlds(area, bool:set)
+GLOBAL__ void:Area_SetAllWorlds(area, bool:set)
 {
 	#if AREA_WORLDS > 0
 		if (Area_IsActive(area))
@@ -1164,9 +1164,9 @@ P:D(Area_Add(type,Float:...));
 P:D(_AREA_MIN(&Float:minx,&Float:miny));
 #define _AREA_MIN(%0,%1) if (%1 < %0) %0 ^= %1, %1 ^= %0, %0 ^= %1
 
-@foreign Area_AddCuboid(Float:x0,Float:y0,Float:z0,Float:x1,Float:y1,Float:z1);
+FOREIGN__ Area_AddCuboid(Float:x0,Float:y0,Float:z0,Float:x1,Float:y1,Float:z1);
 
-@global Area_AddCuboid(Float:x0,Float:y0,Float:z0,Float:x1,Float:y1,Float:z1)
+GLOBAL__ Area_AddCuboid(Float:x0,Float:y0,Float:z0,Float:x1,Float:y1,Float:z1)
 {
 	new
 		slot = Area_GetFreeSlot();
@@ -1235,9 +1235,9 @@ stock Area_AddBox(Float:minx, Float:miny, Float:maxx, Float:maxy)
 }
 
 /*
-@foreign Area_AddBox(Float:minx, Float:miny, Float:maxx, Float:maxy);
+FOREIGN__ Area_AddBox(Float:minx, Float:miny, Float:maxx, Float:maxy);
 
-@global Area_AddBox(Float:minx, Float:miny, Float:maxx, Float:maxy)
+GLOBAL__ Area_AddBox(Float:minx, Float:miny, Float:maxx, Float:maxy)
 {
 	
 	new
@@ -1311,9 +1311,9 @@ stock Area_AddCircle(Float:x, Float:y, Float:r, Float:height = FLOAT_INFINITY)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-@foreign Area_AddOval(Float:x,Float:y,Float:rx,Float:ry,Float:h,Float:d);
+FOREIGN__ Area_AddOval(Float:x,Float:y,Float:rx,Float:ry,Float:h,Float:d);
 
-@global Area_AddOval(Float:x,Float:y,Float:rx,Float:ry,Float:h,Float:d)
+GLOBAL__ Area_AddOval(Float:x,Float:y,Float:rx,Float:ry,Float:h,Float:d)
 {
 	new
 		slot = Area_GetFreeSlot();
@@ -1396,9 +1396,9 @@ stock Area_AddSphere(Float:x, Float:y, Float:z, Float:r)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-@foreign Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz);
+FOREIGN__ Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz);
 
-@global Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz)
+GLOBAL__ Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz)
 {
 	new
 		slot = Area_GetFreeSlot();
@@ -2358,9 +2358,9 @@ static stock
 	return NO_AREA;
 }
 
-foreign Area_GetPlayerAreas(playerid, idx);
+FOREIGN__ Area_GetPlayerAreas(playerid, idx);
 
-global Area_GetPlayerAreas(playerid, idx)
+GLOBAL__ Area_GetPlayerAreas(playerid, idx)
 {
 	if (VALID_PLAYERID(playerid))
 	{
@@ -2378,9 +2378,9 @@ global Area_GetPlayerAreas(playerid, idx)
  * <param name="set">Wether or not the player can use the area.</param>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Area_SetPlayer(area, playerid, bool:set);
+FOREIGN__ void:Area_SetPlayer(area, playerid, bool:set);
 
-global void:Area_SetPlayer(area, playerid, bool:set)
+GLOBAL__ void:Area_SetPlayer(area, playerid, bool:set)
 {
 	if (Area_IsActive(area))
 	{
@@ -2398,9 +2398,9 @@ global void:Area_SetPlayer(area, playerid, bool:set)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Area_GetPlayer(area, playerid);
+FOREIGN__ bool:Area_GetPlayer(area, playerid);
 
-global bool:Area_GetPlayer(area, playerid)
+GLOBAL__ bool:Area_GetPlayer(area, playerid)
 {
 	if (Area_IsActive(area))
 	{
@@ -2415,9 +2415,9 @@ global bool:Area_GetPlayer(area, playerid)
  * <param name="set">Wether or not the area is active in this world.</param>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Area_SetWorld(area, world, bool:set);
+FOREIGN__ void:Area_SetWorld(area, world, bool:set);
 
-global void:Area_SetWorld(area, world, bool:set)
+GLOBAL__ void:Area_SetWorld(area, world, bool:set)
 {
 	#if AREA_WORLDS > 0
 		if (Area_IsActive(area))
@@ -2436,9 +2436,9 @@ global void:Area_SetWorld(area, world, bool:set)
  * <param name="world">World to set for.</param>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Area_GetWorld(area, world);
+FOREIGN__ bool:Area_GetWorld(area, world);
 
-global bool:Area_GetWorld(area, world)
+GLOBAL__ bool:Area_GetWorld(area, world)
 {
 	#if AREA_WORLDS > 0
 		if (Area_IsActive(area))
@@ -2457,9 +2457,9 @@ global bool:Area_GetWorld(area, world)
  * <param name="set">Wether or not all players can use this area.</param>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Area_SetAllPlayers(area, bool:set);
+FOREIGN__ void:Area_SetAllPlayers(area, bool:set);
 
-global void:Area_SetAllPlayers(area, bool:set)
+GLOBAL__ void:Area_SetAllPlayers(area, bool:set)
 {
 	if (Area_IsActive(area))
 	{
@@ -2476,9 +2476,9 @@ global void:Area_SetAllPlayers(area, bool:set)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Area_IsValid(area);
+FOREIGN__ bool:Area_IsValid(area);
 
-global bool:Area_IsValid(area)
+GLOBAL__ bool:Area_IsValid(area)
 {
 	return bool:Area_IsActive(area);
 }
@@ -2494,9 +2494,9 @@ global bool:Area_IsValid(area)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Area_IsEmpty(area);
+FOREIGN__ bool:Area_IsEmpty(area);
 
-global bool:Area_IsEmpty(area)
+GLOBAL__ bool:Area_IsEmpty(area)
 {
 	new
 		z;

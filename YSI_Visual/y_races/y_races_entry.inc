@@ -118,27 +118,27 @@ stock _YSI_HAS_y_races(_do_not_call_me_ever_, _like_never_)
 
 forward Race_Create(laps = 0, entry = 0, countdown = 3, bool:arial = false, bool:fixedPrize = true, exitTime = 0, interior = 0, world = 0, bool:restart = false);
 forward Race_Destroy(slot, bool:refund = false);
-foreign Race_AddCheckpoint(raceid, Float:x, Float:y, Float:z);
-foreign Race_AddStart(raceid, Float:x, Float:y, Float:z, Float:a);
-foreign void:Race_SetFixedWin(raceid, set);
-foreign void:Race_SetRestart(raceid, set);
-foreign void:Race_SetArial(raceid, set);
-foreign void:Race_SetCountdown(raceid, countdown);
-foreign void:Race_SetInterior(raceid, interior);
-foreign void:Race_SetWorld(raceid, world);
-foreign void:Race_SetPrize(raceid, position, amount);
-foreign void:Race_SetExitTime(raceid, time);
-foreign Race_IsActive(raceid);
-foreign void:Race_SetLaps(raceid, laps);
-foreign void:Race_SetEntry(raceid, cost);
-foreign Race_GetPlayerExitedTime(playerid);
-foreign Race_PlayerJoin(playerid, race);
+FOREIGN__ Race_AddCheckpoint(raceid, Float:x, Float:y, Float:z);
+FOREIGN__ Race_AddStart(raceid, Float:x, Float:y, Float:z, Float:a);
+FOREIGN__ void:Race_SetFixedWin(raceid, set);
+FOREIGN__ void:Race_SetRestart(raceid, set);
+FOREIGN__ void:Race_SetArial(raceid, set);
+FOREIGN__ void:Race_SetCountdown(raceid, countdown);
+FOREIGN__ void:Race_SetInterior(raceid, interior);
+FOREIGN__ void:Race_SetWorld(raceid, world);
+FOREIGN__ void:Race_SetPrize(raceid, position, amount);
+FOREIGN__ void:Race_SetExitTime(raceid, time);
+FOREIGN__ Race_IsActive(raceid);
+FOREIGN__ void:Race_SetLaps(raceid, laps);
+FOREIGN__ void:Race_SetEntry(raceid, cost);
+FOREIGN__ Race_GetPlayerExitedTime(playerid);
+FOREIGN__ Race_PlayerJoin(playerid, race);
 forward Race_PlayerLeave(playerid, bool:refund = false);
-foreign Race_Start(race);
-foreign Race_GetPlayerPosition(playerid);
-foreign Race_GetPlayerRaceTime(playerid);
-foreign Race_GetPlayerRace(playerid);
-foreign Race_SetPlayer(race, playerid, bool:set);
+FOREIGN__ Race_Start(race);
+FOREIGN__ Race_GetPlayerPosition(playerid);
+FOREIGN__ Race_GetPlayerRaceTime(playerid);
+FOREIGN__ Race_GetPlayerRace(playerid);
+FOREIGN__ Race_SetPlayer(race, playerid, bool:set);
 
 #include "y_races_impl"
 #if defined YSI_TESTS

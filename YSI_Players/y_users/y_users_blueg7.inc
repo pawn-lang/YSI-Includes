@@ -93,20 +93,20 @@ static stock
 
 //foreign Player_DoLogout(playerid, uid);
 
-foreign Player_TryRegister(playerid, string:password[]);
+FOREIGN__ Player_TryRegister(playerid, string:password[]);
 
-foreign Player_TryLogin(playerid, string:password[]);
+FOREIGN__ Player_TryLogin(playerid, string:password[]);
 
-foreign Player_TryGroup(playerid, string:other[], string:password[]);
+FOREIGN__ Player_TryGroup(playerid, string:other[], string:password[]);
 
 // No longer global because the YID is shared in all scripts.
 //foreign Player_GetYID(playerid);
 
-foreign Player_ChangePassword(playerid, string:password[]);
+FOREIGN__ Player_ChangePassword(playerid, string:password[]);
 
-foreign Player_ForceGroup(playerid, string:other[]);
+FOREIGN__ Player_ForceGroup(playerid, string:other[]);
 
-foreign Player_ForceLogin(playerid);
+FOREIGN__ Player_ForceLogin(playerid);
 
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who changed name.</param>
@@ -688,7 +688,7 @@ stock Player_GetYID(playerid)
 	//return _Player_TryLogin(playerid, password, f);
 //}
 
-global Player_TryLogin(playerid, string:password[])
+GLOBAL__ Player_TryLogin(playerid, string:password[])
 {
 	P:2("Player_TryLogin start");
 	if (Player_IsLoggedIn(playerid))
@@ -744,7 +744,7 @@ global Player_TryLogin(playerid, string:password[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-global Player_ForceLogin(playerid)
+GLOBAL__ Player_ForceLogin(playerid)
 {
 	P:2("Player_TryLogin start");
 	if (Player_IsLoggedIn(playerid))
@@ -1079,7 +1079,7 @@ stock Anything7()
  *//*------------------------------------------------------------------------**/
 
 //#endinput
-global Player_TryRegister(playerid, string:password[])
+GLOBAL__ Player_TryRegister(playerid, string:password[])
 {
 	P:2("Player_TryRegister called");
 	if (Player_IsLoggedIn(playerid))
@@ -1182,7 +1182,7 @@ global Player_TryRegister(playerid, string:password[])
 	}
 }
 
-global Player_ChangePassword(playerid, string:password[])
+GLOBAL__ Player_ChangePassword(playerid, string:password[])
 {
 	#pragma unused password
 	new
@@ -1303,7 +1303,7 @@ static stock Player_RewritePreload(playerid)
  *//*------------------------------------------------------------------------**/
 
 //#endinput
-global Player_TryGroup(playerid, string:other[], string:password[])
+GLOBAL__ Player_TryGroup(playerid, string:other[], string:password[])
 {
 	P:2("Player_TryGroup called");
 	if (Player_IsLoggedIn(playerid))
@@ -1413,7 +1413,7 @@ global Player_TryGroup(playerid, string:other[], string:password[])
 
 //#endinput
 
-global Player_ForceGroup(playerid, string:other[])
+GLOBAL__ Player_ForceGroup(playerid, string:other[])
 {
 	P:2("Player_ForceGroup called");
 	if (Player_IsLoggedIn(playerid))

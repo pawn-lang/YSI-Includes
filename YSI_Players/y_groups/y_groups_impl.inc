@@ -197,9 +197,9 @@ static stock
 //#define Group_IsActive(%0) 
 //	(YSI_gGroupData[_:GROUP_FIX(%0)][E_GROUP_DATA_FLAGS] & e_GROUP_FLAGS_ACTIVE)
 
-foreign void:_Group_ReInitPlayers();
+FOREIGN__ void:_Group_ReInitPlayers();
 
-global void:_Group_ReInitPlayers()
+GLOBAL__ void:_Group_ReInitPlayers()
 {
 	Iter_Init(GroupPlayers);
 	for (new i = 0; i != _MAX_GROUPS_G; ++i) if (_Group_IsActive(i))
@@ -279,9 +279,9 @@ remotefunc static void:_Group_FakePlayer(p,Bit:g[sizeof RG@],s)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Group_IsValid(Group:g);
+FOREIGN__ bool:Group_IsValid(Group:g);
 
-global bool:Group_IsValid(Group:g)
+GLOBAL__ bool:Group_IsValid(Group:g)
 {
 	//GROUP_FIX(g);
 	return _Group_IsValid(g);
@@ -424,9 +424,9 @@ remotefunc static void:_Group_Destroy(g, Iterator@gp[MAX_PLAYERS + 1], s)
 }
 
 // Added for the fun of it.
-foreign void:Group_Destroy(Group:group);
+FOREIGN__ void:Group_Destroy(Group:group);
 
-global void:Group_Destroy(Group:group)
+GLOBAL__ void:Group_Destroy(Group:group)
 {
 	P:2("Group_Destroy called: %i", _:group);
 	P:2("Group_Destroy called in %d", Master_ID());
@@ -458,9 +458,9 @@ global void:Group_Destroy(Group:group)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-@foreign void:_Group_TryRemove();
+FOREIGN__ void:_Group_TryRemove();
 
-@global void:_Group_TryRemove()
+GLOBAL__ void:_Group_TryRemove()
 {
 	for (new i = 0; i != _MAX_GROUPS; ++i) if (_Group_IsActive(i))
 	{
@@ -572,9 +572,9 @@ HOOK__ OnPlayerConnect@9(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:_Group_InitPlayer(p, master);
+FOREIGN__ void:_Group_InitPlayer(p, master);
 
-global void:_Group_InitPlayer(p, master)
+GLOBAL__ void:_Group_InitPlayer(p, master)
 {
 	targetfunc _Group_FakePlayer<master>(p, YSI_gGroupPlayers[p], bits<_MAX_GROUPS_G>);
 }
@@ -645,9 +645,9 @@ static stock Bit:_Group_SetSome(playerid, group)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Group_SetPlayer(Group:g,p,bool:s);
+FOREIGN__ void:Group_SetPlayer(Group:g,p,bool:s);
 
-global void:Group_SetPlayer(Group:g,p,bool:s)
+GLOBAL__ void:Group_SetPlayer(Group:g,p,bool:s)
 {
 	if (_Group_IsValid(g) && VALID_PLAYERID(p))
 	{
@@ -771,9 +771,9 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign Group:_Group_SetBalancedInternal(p,Group:gs[],c);
+FOREIGN__ Group:_Group_SetBalancedInternal(p,Group:gs[],c);
 
-global Group:_Group_SetBalancedInternal(p,Group:gs[],c)
+GLOBAL__ Group:_Group_SetBalancedInternal(p,Group:gs[],c)
 {
 	// Find which of the listed groups has the least players in.
 	new
@@ -870,9 +870,9 @@ stock Group:Group_SetBalanced(playerid, Group:g0, Group:g1, Group:...)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Group_GetPlayer(Group:g,p);
+FOREIGN__ bool:Group_GetPlayer(Group:g,p);
 
-global bool:Group_GetPlayer(Group:g,p)
+GLOBAL__ bool:Group_GetPlayer(Group:g,p)
 {
 	P:2("bool:Group_GetPlayer called: %i, %i", _:g, p);
 	if (_Group_IsValid(g) && VALID_PLAYERID(p))
@@ -893,9 +893,9 @@ global bool:Group_GetPlayer(Group:g,p)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Group_SetName(Group:g,string:n[]);
+FOREIGN__ void:Group_SetName(Group:g,string:n[]);
 
-global void:Group_SetName(Group:g,string:n[])
+GLOBAL__ void:Group_SetName(Group:g,string:n[])
 {
 	P:2("Group_SetName called: %i, \"%s\"", _:g, n);
 	if (_Group_IsValid(g))
@@ -925,9 +925,9 @@ global void:Group_SetName(Group:g,string:n[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign string:Group_GetName(Group:g);
+FOREIGN__ string:Group_GetName(Group:g);
 
-global string:Group_GetName(Group:g)
+GLOBAL__ string:Group_GetName(Group:g)
 {
 	//printf("Group_GetName called: %04x%04x", _:g >>> 16, _:g & 0xFFFF);
 	P:2("Group_GetName called: %04x%04x", _:g >>> 16, _:g & 0xFFFF);
@@ -951,9 +951,9 @@ global string:Group_GetName(Group:g)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-foreign Group:Group_GetID(string:name[]);
+FOREIGN__ Group:Group_GetID(string:name[]);
 
-global Group:Group_GetID(string:name[])
+GLOBAL__ Group:Group_GetID(string:name[])
 {
 	P:2("Group_GetID called: %s", name);
 	new
@@ -980,9 +980,9 @@ global Group:Group_GetID(string:name[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Group_SetGang(Group:g,bool:n);
+FOREIGN__ void:Group_SetGang(Group:g,bool:n);
 
-global void:Group_SetGang(Group:g,bool:n)
+GLOBAL__ void:Group_SetGang(Group:g,bool:n)
 {
 	P:2("Group_SetGang called: %i, %i", _:g, n);
 	if (_Group_IsValid(g))
@@ -1009,9 +1009,9 @@ global void:Group_SetGang(Group:g,bool:n)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Group_GetGang(Group:g);
+FOREIGN__ bool:Group_GetGang(Group:g);
 
-global bool:Group_GetGang(Group:g)
+GLOBAL__ bool:Group_GetGang(Group:g)
 {
 	P:2("bool:Group_GetGang called: %i", _:g);
 	if (_Group_IsValid(g))
@@ -1033,9 +1033,9 @@ global bool:Group_GetGang(Group:g)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Group_SetColour(Group:g,c);
+FOREIGN__ void:Group_SetColour(Group:g,c);
 
-global void:Group_SetColour(Group:g,c)
+GLOBAL__ void:Group_SetColour(Group:g,c)
 {
 	P:2("Group_SetColour called: %i, %i", _:g, c);
 	if (_Group_IsValid(g))
@@ -1060,9 +1060,9 @@ global void:Group_SetColour(Group:g,c)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign Group_GetColour(Group:g);
+FOREIGN__ Group_GetColour(Group:g);
 
-global Group_GetColour(Group:g)
+GLOBAL__ Group_GetColour(Group:g)
 {
 	P:2("Group_GetColour called: %i", _:g);
 	if (_Group_IsValid(g))
@@ -1083,9 +1083,9 @@ global Group_GetColour(Group:g)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-foreign Group_GetCount(Group:g);
+FOREIGN__ Group_GetCount(Group:g);
 
-global Group_GetCount(Group:g)
+GLOBAL__ Group_GetCount(Group:g)
 {
 	P:2("Group_GetCount called: %i", _:g);
 	if (_Group_IsValid(g))
@@ -1114,9 +1114,9 @@ remotefunc static void:_Group_CreateChain(Group:g)
 	GROUP_CHAIN?<YSI_g_sNextAddFunc>(g);
 }
 
-@foreign Group:_Group_Create(string:name[]);
+FOREIGN__ Group:_Group_Create(string:name[]);
 
-@global Group:_Group_Create(string:name[])
+GLOBAL__ Group:_Group_Create(string:name[])
 {
 	P:2("Group:Group_Create called: \"%s\"", name);
 	P:2("Group_Create called in %d", Master_ID());
@@ -1207,9 +1207,9 @@ stock Iter_Func@Group(start, Group:group)
 // adapt).
 #define Iterator@GroupElse_(%1)%9$%9))-1);_:(%9=Iterator@%0$[_:%2]%9; ))-1+(%1));_:(%1)!=_:F@k:F@l:(%2=Iter_Func@%0$(_:%2));
 
-foreign Iter_Func@GroupMember(start, Group:group);
+FOREIGN__ Iter_Func@GroupMember(start, Group:group);
 
-global Iter_Func@GroupMember(start, Group:group)
+GLOBAL__ Iter_Func@GroupMember(start, Group:group)
 {
 	GROUP_FIX(group);
 	if (start == -1)
@@ -1242,9 +1242,9 @@ global Iter_Func@GroupMember(start, Group:group)
  *//*------------------------------------------------------------------------**/
 
 // Bypass y_iterate restrictions.
-foreign Group:Iter_Func@CreatedGroup(group);
+FOREIGN__ Group:Iter_Func@CreatedGroup(group);
 
-global Group:Iter_Func@CreatedGroup(group)
+GLOBAL__ Group:Iter_Func@CreatedGroup(group)
 {
 	// In most iterators the inital value is implicitly handled by the first
 	// "++", but it isn't here because we need to correct for the "Group" flag.
@@ -1271,9 +1271,9 @@ global Group:Iter_Func@CreatedGroup(group)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign Group:Iter_Func@GroupChild(start, Group:parent);
+FOREIGN__ Group:Iter_Func@GroupChild(start, Group:parent);
 
-global Group:Iter_Func@GroupChild(start, Group:parent)
+GLOBAL__ Group:Iter_Func@GroupChild(start, Group:parent)
 {
 	if (!_Group_IsValid(parent)) return INVALID_GROUP;
 	// In most iterators the inital value is implicitly handled by the first
@@ -1295,7 +1295,7 @@ global Group:Iter_Func@GroupChild(start, Group:parent)
  * <param name="func">Function to call.</param>
  * <param name="">0, 1, 2, or 3 parameters.</param>
  * <returns>
- *  0 - ALWAYS zero to make "_gchain" work properly.
+ *  0 - ALWAYS zero to make "GCHAIN__" work properly.
  * </returns>
  * <remarks>
  *  Basically function indirection, call a function through a pointer and use
@@ -1386,9 +1386,9 @@ stock _Y_G@C_3(func, GLOBAL_TAG_TYPES:...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Group_SetGroup(Group:g,Group:el,bool:s);
+FOREIGN__ void:Group_SetGroup(Group:g,Group:el,bool:s);
 
-global void:Group_SetGroup(Group:g,Group:el,bool:s)
+GLOBAL__ void:Group_SetGroup(Group:g,Group:el,bool:s)
 {
 	P:2(#Group_SetGroup " called: %i, %i, %i", _:g, _:el, s);
 	// Set wether a group can use this item.
@@ -1434,9 +1434,9 @@ global void:Group_SetGroup(Group:g,Group:el,bool:s)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Group_SetGlobalGroup(Group:el,bool:s);
+FOREIGN__ void:Group_SetGlobalGroup(Group:el,bool:s);
 
-global void:Group_SetGlobalGroup(Group:el,bool:s)
+GLOBAL__ void:Group_SetGlobalGroup(Group:el,bool:s)
 {
 	P:2(#Group_SetGlobalGroup " called: %i, %i", _:el, s);
 	Group_SetGroup(GROUP_GLOBAL, el, s);
@@ -1456,9 +1456,9 @@ global void:Group_SetGlobalGroup(Group:el,bool:s)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Group_GetGroup(Group:g,Group:el);
+FOREIGN__ bool:Group_GetGroup(Group:g,Group:el);
 
-global bool:Group_GetGroup(Group:g,Group:el)
+GLOBAL__ bool:Group_GetGroup(Group:g,Group:el)
 {
 	P:2(#Group_GetGroup " called: %i, %i", _:g, _:el);
 	return (GROUP_MASK <= el <= GROUP_GLOBAL && GROUP_MASK <= g <= GROUP_GLOBAL && Bit_Get(YSI_g_sChildGroups[_:GROUP_TEMP_FIX(g)], _:GROUP_TEMP_FIX(el)));
@@ -1472,9 +1472,9 @@ global bool:Group_GetGroup(Group:g,Group:el)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-foreign Group_GetGlobalGroup(Group:el);
+FOREIGN__ Group_GetGlobalGroup(Group:el);
 
-global Group_GetGlobalGroup(Group:el)
+GLOBAL__ Group_GetGlobalGroup(Group:el)
 {
 	P:2(#Group_GetGlobalGroup " called: %i", _:el);
 	return Group_GetGroup(GROUP_GLOBAL, el);
@@ -1498,9 +1498,9 @@ global Group_GetGlobalGroup(Group:el)
 static stock
 	BitArray:YSI_g_sGroupDone<_MAX_GROUPS_G>;
 
-foreign bool:Group_IsDescendant(Group:p, Group:c);
+FOREIGN__ bool:Group_IsDescendant(Group:p, Group:c);
 
-global bool:Group_IsDescendant(Group:p, Group:c)
+GLOBAL__ bool:Group_IsDescendant(Group:p, Group:c)
 {
 	// Groups that don't exist CAN'T be related, even if they're the same group.
 	if (_Group_IsValid(p) && _Group_IsValid(c))

@@ -77,13 +77,36 @@ Optional plugins:
 #undef Master_Caller
 
 // New hooks
-#undef master_hook
-#undef master_task
-#undef master_ptask
-#undef master_func
-#undef group_hook
-#undef foreign
-#undef global
+#undef MASTER_HOOK__
+#undef MASTER_TASK__
+#undef MASTER_PTASK__
+#undef MASTER_FUNC__
+#undef GROUP_HOOK__
+#undef FOREIGN__
+#undef GLOBAL__
+
+#if defined master_hook
+	#undef master_hook
+#endif
+#if defined master_task
+	#undef master_task
+#endif
+#if defined master_ptask
+	#undef master_ptask
+#endif
+#if defined master_func
+	#undef master_func
+#endif
+#if defined group_hook
+	#undef group_hook
+#endif
+#if defined foreign
+	#undef foreign
+#endif
+#if defined global
+	#undef global
+#endif
+
 #undef YSIM_COMMAND
 
 // Clear any previous settings.

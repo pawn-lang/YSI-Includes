@@ -93,6 +93,7 @@ Optional plugins:
 #if !defined _INC_y_groups__funcs
 	#define _INC_y_groups__funcs
 	#include "..\..\YSI_Core\y_utils"
+	#include "..\..\YSI_Data\y_bit"
 	#include "y_groups_setup"
 	#include "..\..\YSI_Data\y_iterate"
 #endif
@@ -113,101 +114,114 @@ static stock
 
 // Define the callback chaining for the current 
 #if defined _YSI_HAS_y_groups
-	#define gforeign%1(%2); _GROUP_MAKE_NAME<foreign%1>(%2);
-	#define gglobal%1(%2) _GROUP_MAKE_NAME<global%1>(%2)
-	#define gpublic master_func
+	#define GFOREIGN__%1(%2); _GROUP_MAKE_NAME<FOREIGN__%1>(%2);
+	#define GGLOBAL__%1(%2) _GROUP_MAKE_NAME<GLOBAL__%1>(%2)
+	#define GPUBLIC__ MASTER_FUNC__
 	#if YSIM_HAS_MASTER
 		#if _YSIM_IS_CLIENT
-			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
+			#define GCHAIN__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
 			// Should never be needed.
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Client_Set>
 		#elseif _YSIM_IS_SERVER
-			#define _gchain%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
+			#define GCHAIN__%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#elseif _YSIM_IS_STUB
-			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
+			#define GCHAIN__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
 			// Because of the interaction between the various things that the
 			// groups and master systems this will NEVER be called in a stub
 			// script - and if it is we now get a nice compile-time error
 			// telling us so!  It may, however, prove difficult to trace!
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Stub_Set>
 		#else
-			#define _gchain%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);public _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
+			#define GCHAIN__%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);public _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#endif
 	#else
-		#define _gchain%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
+		#define GCHAIN__%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 		#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 	#endif
 #elseif __COMPILER_1ST_PASS
 	#if YSIM_HAS_MASTER
 		#if _YSIM_IS_CLIENT
-			#define gforeign%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);
-			#define gglobal%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1_>(%2)
-			#define gpublic static stock
-			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)
+			#define GFOREIGN__%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);
+			#define GGLOBAL__%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1_>(%2)
+			#define GPUBLIC__ static stock
+			#define GCHAIN__%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Client_Set>
 		#elseif _YSIM_IS_SERVER
-			#define gforeign%0...%1(%2); _GROUP_MAKE_NAME<%0...%1>(%2);_GROUP_MAKE_PUBLIC:_GROUP_MAKE_NAME<%0...%1>(%2);_GROUP_MAKE_PUBLIC:static stock _GROUP_MAKE_NAME<%0...%1>(%2)(_GROUP_MAKE_NAME<%0...%1>(%2));
-			#define gglobal%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1>(%2)
-			#define gpublic stock
-			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
+			#define GFOREIGN__%0...%1(%2); _GROUP_MAKE_NAME<%0...%1>(%2);_GROUP_MAKE_PUBLIC:_GROUP_MAKE_NAME<%0...%1>(%2);_GROUP_MAKE_PUBLIC:static stock _GROUP_MAKE_NAME<%0...%1>(%2)(_GROUP_MAKE_NAME<%0...%1>(%2));
+			#define GGLOBAL__%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1>(%2)
+			#define GPUBLIC__ stock
+			#define GCHAIN__%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#elseif _YSIM_IS_STUB
-			#define gforeign%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>;
-			#define gglobal%0...%1(%2)
-			#define gpublic static stock
-			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)
+			#define GFOREIGN__%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>;
+			#define GGLOBAL__%0...%1(%2)
+			#define GPUBLIC__ static stock
+			#define GCHAIN__%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Stub_Set>
 		#else
-			#define gforeign%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);_GROUP_MAKE_PUBLIC:_GROUP_MAKE_NAME<%0...%1>(%2);_GROUP_MAKE_PUBLIC:static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:y>(_GROUP_MAKE_NAME<%0...%1>(%2));
-			#define gglobal%0...%1(%2) _GROUP_MAKE_PUBLIC:static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>(_GROUP_MAKE_NAME<%0...%1>(%2)); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:y>
-			#define gpublic%0(%1)<%9> stock%0(%1)<>{}stock%0(%1)<_YCM:%9>
-			#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);stock _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
+			#define GFOREIGN__%0...%1(%2); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);_GROUP_MAKE_PUBLIC:_GROUP_MAKE_NAME<%0...%1>(%2);_GROUP_MAKE_PUBLIC:static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:y>(_GROUP_MAKE_NAME<%0...%1>(%2));
+			#define GGLOBAL__%0...%1(%2) _GROUP_MAKE_PUBLIC:static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>(_GROUP_MAKE_NAME<%0...%1>(%2)); stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:y>
+			#define GPUBLIC__%0(%1)<%9> stock%0(%1)<>{}stock%0(%1)<_YCM:%9>
+			#define GCHAIN__%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);stock _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#endif
 	#else
-		#define gforeign%0...%1(%2);
-		#define gglobal%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1>(%2)
-		#define gglobal%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1>(%2)
-		#define gpublic stock
-		#define _gchain%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
+		#define GFOREIGN__%0...%1(%2);
+		#define GGLOBAL__%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1>(%2)
+		#define GGLOBAL__%0...%1(%2) stock _GROUP_MAKE_NAME<%0...%1>(%2)
+		#define GPUBLIC__ stock
+		#define GCHAIN__%0(%2) stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 		#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 	#endif
 #else
 	#if YSIM_HAS_MASTER
 		#if _YSIM_IS_CLIENT
-			#define gforeign%0...%1(%2); static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);
-			#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1_>(%2)
-			#define gpublic static stock
-			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
+			#define GFOREIGN__%0...%1(%2); static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);
+			#define GGLOBAL__%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1_>(%2)
+			#define GPUBLIC__ static stock
+			#define GCHAIN__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Client_Set>
 		#elseif _YSIM_IS_SERVER
-			#define gforeign%0...%1(%2); _GROUP_MAKE_NAME<%0...%1>(%2);_GROUP_MAKE_PUBLIC:_GROUP_MAKE_NAME<%0...%1>(%2);_GROUP_MAKE_PUBLIC:static stock _GROUP_MAKE_NAME<%0...%1>(%2)(_GROUP_MAKE_NAME<%0...%1>(%2));
-			#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
-			#define gpublic static stock
-			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
+			#define GFOREIGN__%0...%1(%2); _GROUP_MAKE_NAME<%0...%1>(%2);_GROUP_MAKE_PUBLIC:_GROUP_MAKE_NAME<%0...%1>(%2);_GROUP_MAKE_PUBLIC:static stock _GROUP_MAKE_NAME<%0...%1>(%2)(_GROUP_MAKE_NAME<%0...%1>(%2));
+			#define GGLOBAL__%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
+			#define GPUBLIC__ static stock
+			#define GCHAIN__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#elseif _YSIM_IS_STUB
-			#define gforeign%0...%1(%2); static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>;
-			#define gglobal%0...%1(%2)
-			#define gpublic static stock
-			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
+			#define GFOREIGN__%0...%1(%2); static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>;
+			#define GGLOBAL__%0...%1(%2)
+			#define GPUBLIC__ static stock
+			#define GCHAIN__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Stub_Set>
 		#else
-			#define gforeign%0...%1(%2); static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);_GROUP_MAKE_PUBLIC:_GROUP_MAKE_NAME<%0...%1>(%2);_GROUP_MAKE_PUBLIC:static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:y>(_GROUP_MAKE_NAME<%0...%1>(%2));
-			#define gglobal%0...%1(%2) _GROUP_MAKE_PUBLIC:static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>(_GROUP_MAKE_NAME<%0...%1>(%2));static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:y>
-			#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);static stock _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
-			#define gpublic%0(%1)<%9> static stock%0(%1)<>{}static stock%0(%1)<_YCM:%9>
+			#define GFOREIGN__%0...%1(%2); static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:m>;static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>_UNUSED(%2);_GROUP_MAKE_PUBLIC:_GROUP_MAKE_NAME<%0...%1>(%2);_GROUP_MAKE_PUBLIC:static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:y>(_GROUP_MAKE_NAME<%0...%1>(%2));
+			#define GGLOBAL__%0...%1(%2) _GROUP_MAKE_PUBLIC:static stock _GROUP_MAKE_NAME<%0...%1>(%2)<>(_GROUP_MAKE_NAME<%0...%1>(%2));static stock _GROUP_MAKE_NAME<%0...%1>(%2)<_YCM:y>
+			#define GCHAIN__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);static stock _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
+			#define GPUBLIC__%0(%1)<%9> static stock%0(%1)<>{}static stock%0(%1)<_YCM:%9>
 			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 		#endif
 	#else
-		#define gforeign%0...%1(%2);
-		#define gglobal%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
-		#define gpublic static stock
-		#define _gchain%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
+		#define GFOREIGN__%0...%1(%2);
+		#define GGLOBAL__%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
+		#define GPUBLIC__ static stock
+		#define GCHAIN__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 		#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
 	#endif
+#endif
+
+#if defined YSI_COMPAT || defined KEYWORD_gforeign
+	 #define gforeign GFOREIGN__
+#endif
+#if defined YSI_COMPAT || defined KEYWORD_gglobal
+	 #define gglobal GGLOBAL__
+#endif
+#if defined YSI_COMPAT || defined KEYWORD_gpublic
+	 #define gpublic GPUBLIC__
+#endif
+#if defined YSI_COMPAT || defined KEYWORD__gchain
+	 #define _gchain GCHAIN__
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -271,9 +285,9 @@ stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIM
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-gforeign Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s);
+GFOREIGN__ Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s);
 
-gglobal Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
+GGLOBAL__ Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
 {
 	P:2(#_GROUP_MAKE_NAME<Group_Set...> " called: %i, %i, %i", _:g, _:el, s);
 	// Set wether a group can use this item.
@@ -329,9 +343,9 @@ gglobal Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-gforeign bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el);
+GFOREIGN__ bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el);
 
-gglobal bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el)
+GGLOBAL__ bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el)
 {
 	P:2(#_GROUP_MAKE_NAME<Group_Get...> " called: %i, %i", _:g, _:el);
 	return (0 <= _:el < _GROUP_MAKE_LIMIT && GROUP_MASK <= g <= GROUP_GLOBAL && Bit_Get(YSI_g_sElementMembership[_:el], _:GROUP_TEMP_FIX(g)));
@@ -348,9 +362,9 @@ gglobal bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-gforeign Group_Set...Default(Group:g,bool:s);
+GFOREIGN__ Group_Set...Default(Group:g,bool:s);
 
-gglobal Group_Set...Default(Group:g,bool:s)
+GGLOBAL__ Group_Set...Default(Group:g,bool:s)
 {
 	P:2(#_GROUP_MAKE_NAME<Group_Set...Default> " called: %i, %i", _:g, s);
 	if (GROUP_MASK <= g <= GROUP_GLOBAL)
@@ -428,9 +442,9 @@ gglobal Group_Set...Default(Group:g,bool:s)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-gforeign Group_Set...New(Group:g,bool:s);
+GFOREIGN__ Group_Set...New(Group:g,bool:s);
 
-gglobal Group_Set...New(Group:g,bool:s)
+GGLOBAL__ Group_Set...New(Group:g,bool:s)
 {
 	P:2(#_GROUP_MAKE_NAME<Group_Set...New> " called: %i, %i", _:g, s);
 	if (GROUP_MASK <= g <= GROUP_GLOBAL)
@@ -452,9 +466,9 @@ gglobal Group_Set...New(Group:g,bool:s)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-gforeign Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el);
+GFOREIGN__ Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el);
 
-gglobal Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
+GGLOBAL__ Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
 {
 	if (GROUP_MASK <= g <= GROUP_GLOBAL)
 	{
@@ -497,9 +511,9 @@ gglobal Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-gforeign Group_SetGlobal...(_GROUP_MAKE_TAG:el,bool:s);
+GFOREIGN__ Group_SetGlobal...(_GROUP_MAKE_TAG:el,bool:s);
 
-gglobal Group_SetGlobal...(_GROUP_MAKE_TAG:el,bool:s)
+GGLOBAL__ Group_SetGlobal...(_GROUP_MAKE_TAG:el,bool:s)
 {
 	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...> " called: %i, %i", _:el, s);
 	return _GROUP_MAKE_NAME<Group_Set...>(GROUP_GLOBAL, el, s);
@@ -513,9 +527,9 @@ gglobal Group_SetGlobal...(_GROUP_MAKE_TAG:el,bool:s)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-gforeign bool:Group_GetGlobal...(_GROUP_MAKE_TAG:el);
+GFOREIGN__ bool:Group_GetGlobal...(_GROUP_MAKE_TAG:el);
 
-gglobal bool:Group_GetGlobal...(_GROUP_MAKE_TAG:el)
+GGLOBAL__ bool:Group_GetGlobal...(_GROUP_MAKE_TAG:el)
 {
 	P:2(#_GROUP_MAKE_NAME<Group_GetGlobal...> " called: %i", _:el);
 	return _GROUP_MAKE_NAME<Group_Get...>(GROUP_GLOBAL, el);
@@ -531,9 +545,9 @@ gglobal bool:Group_GetGlobal...(_GROUP_MAKE_TAG:el)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-gforeign Group_SetGlobal...Default(bool:s);
+GFOREIGN__ Group_SetGlobal...Default(bool:s);
 
-gglobal Group_SetGlobal...Default(bool:s)
+GGLOBAL__ Group_SetGlobal...Default(bool:s)
 {
 	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...Default> " called: %i", s);
 	return _GROUP_MAKE_NAME<Group_Set...Default>(GROUP_GLOBAL, s);
@@ -547,9 +561,9 @@ gglobal Group_SetGlobal...Default(bool:s)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-gforeign Group_SetGlobal...New(bool:s);
+GFOREIGN__ Group_SetGlobal...New(bool:s);
 
-gglobal Group_SetGlobal...New(bool:s)
+GGLOBAL__ Group_SetGlobal...New(bool:s)
 {
 	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...New> " called: %i", s);
 	return _GROUP_MAKE_NAME<Group_Set...New>(GROUP_GLOBAL, s);
@@ -564,9 +578,9 @@ gglobal Group_SetGlobal...New(bool:s)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-gforeign Group_GlobalExclusive...(_GROUP_MAKE_TAG:el);
+GFOREIGN__ Group_GlobalExclusive...(_GROUP_MAKE_TAG:el);
 
-gglobal Group_GlobalExclusive...(_GROUP_MAKE_TAG:el)
+GGLOBAL__ Group_GlobalExclusive...(_GROUP_MAKE_TAG:el)
 {
 	P:2(#_GROUP_MAKE_NAME<Group_GlobalExclusive...> " called: %i", el);
 	return _GROUP_MAKE_NAME<Group_Exclusive...>(GROUP_GLOBAL, el);
@@ -630,7 +644,7 @@ static stock void:Group_Handoff(i,a[],s)
 	}
 }
 
-gpublic MAKE_YCM<HANDOFF_SOURCE...Group>()<p>
+GPUBLIC__ MAKE_YCM<HANDOFF_SOURCE...Group>()<p>
 {
 	// Pass data to the new group controller.
 	Group_Handoff(-1, _:YSI_g_sDefaultMembership, sizeof (YSI_g_sDefaultMembership));
@@ -735,7 +749,7 @@ static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
  * <remarks>
  *  This function is called when the group system first starts up to initialise
  *  the global group and all the various function pointers.  The way the
- *  "_gchain" macro works means that the fact that "ni" etc are references is
+ *  "GCHAIN__" macro works means that the fact that "ni" etc are references is
  *  irrelevant; however, it does make the code LOOK much nicer and like
  *  assigning to the variables does have some wider meaning.
  *
@@ -745,7 +759,7 @@ static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_gchain _yGI(&ni, &na, &nu)
+GCHAIN__ _yGI(&ni, &na, &nu)
 {
 	P:2(#_GROUP_MAKE_NAME<_yGI...> " called: %i, %i, %i", ni, na, nu);
 	if (ni == -1)
@@ -800,7 +814,7 @@ _gchain _yGI(&ni, &na, &nu)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_gchain _yGA(&group)
+GCHAIN__ _yGA(&group)
 {
 	P:4(#_GROUP_MAKE_NAME<_yGA...> " called: %i", _:group);
 	// Adding a new group is now a lot harder than it was before, but on the
@@ -830,7 +844,7 @@ _gchain _yGA(&group)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_gchain _yGU(&pid, Bit:p[], Bit:c[])
+GCHAIN__ _yGU(&pid, Bit:p[], Bit:c[])
 {
 	P:4(#_GROUP_MAKE_NAME<_yGU...> " called: %i, %s, %s", pid, Bit_Display(p, bits<_MAX_GROUPS_G>), Bit_Display(c, bits<_MAX_GROUPS_G>));
 	// This code loops over every "thing" controlled by this script.  For every
@@ -933,9 +947,9 @@ _gchain _yGU(&pid, Bit:p[], Bit:c[])
 #endif
 
 #undef _GROUP_MAKE_TAG
-#undef _gchain
+#undef GCHAIN__
 #undef _GROUP_SET_PLAYER
-#undef gforeign
-#undef gglobal
-#undef gpublic
+#undef GFOREIGN__
+#undef GGLOBAL__
+#undef GPUBLIC__
 

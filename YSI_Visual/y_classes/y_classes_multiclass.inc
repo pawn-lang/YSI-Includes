@@ -252,9 +252,9 @@ static stock Class_FindNew(playerid, playerclass, dir)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Class_Goto(playerid, playerclass);
+FOREIGN__ void:Class_Goto(playerid, playerclass);
 
-global void:Class_Goto(playerid, playerclass)
+GLOBAL__ void:Class_Goto(playerid, playerclass)
 {
 	P:2("Class_Goto called: %i, %i", playerid, playerclass);
 	// This now sets the REAL spawn information, including spawn location.
@@ -534,9 +534,9 @@ stock Class_AddWithGroupSet(Group:group, skin, Float:x, Float:y, Float:z, Float:
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,w[],c,Group:f,Group:g);
+FOREIGN__ Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,w[],c,Group:f,Group:g);
 
-global Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,w[],c,Group:f,Group:g)
+GLOBAL__ Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,w[],c,Group:f,Group:g)
 {
 	#pragma unused c
 	P:2("Class_AddClass called: %i, %f, %f, %f, %f, %s, %i, %i, %i", s, x, y, z, a, Debug_PrintArray(w, c), c, _:f, _:g);
@@ -569,9 +569,9 @@ global Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,w[],c,Group:f,Group:g)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-foreign Class_HasGroup(classid, Group:group);
+FOREIGN__ Class_HasGroup(classid, Group:group);
 
-global Class_HasGroup(classid, Group:group)
+GLOBAL__ Class_HasGroup(classid, Group:group)
 {
 	return YSI_g_sClasses[classid][E_CLASS_GROUP] == group;
 }
@@ -579,9 +579,9 @@ global Class_HasGroup(classid, Group:group)
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-foreign Class_Enable(classid, bool:toggle);
+FOREIGN__ Class_Enable(classid, bool:toggle);
 
-global Class_Enable(classid, bool:toggle)
+GLOBAL__ Class_Enable(classid, bool:toggle)
 {
 	if (_Class_IsValid(classid))
 	{
@@ -614,9 +614,9 @@ global Class_Enable(classid, bool:toggle)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Class_Delete(classid);
+FOREIGN__ void:Class_Delete(classid);
 
-global void:Class_Delete(classid)
+GLOBAL__ void:Class_Delete(classid)
 {
 	P:2("Class_Delete called: %i", classid);
 	if (Class_Enable(classid, false))
@@ -631,9 +631,9 @@ global void:Class_Delete(classid)
  * <param name="set">Whether or not they can use this class.</param>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Class_SetPlayer(cl, pid, bool:s);
+FOREIGN__ void:Class_SetPlayer(cl, pid, bool:s);
 
-global void:Class_SetPlayer(cl, pid, bool:s)
+GLOBAL__ void:Class_SetPlayer(cl, pid, bool:s)
 {
 	PA_Set(YSI_g_sClasses[cl][E_CLASS_PLAYERS], pid, s);
 }
@@ -643,9 +643,9 @@ global void:Class_SetPlayer(cl, pid, bool:s)
  * <param name="playerid">Player to set for.</param>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Class_GetPlayer(cl,pid);
+FOREIGN__ bool:Class_GetPlayer(cl,pid);
 
-global bool:Class_GetPlayer(cl,pid)
+GLOBAL__ bool:Class_GetPlayer(cl,pid)
 {
 	return PA_Get(YSI_g_sClasses[cl][E_CLASS_PLAYERS], pid);
 }
@@ -654,9 +654,9 @@ global bool:Class_GetPlayer(cl,pid)
  * <param name="playerid">Player to get the current class of.</param>
  *//*------------------------------------------------------------------------**/
 
-foreign Class_Get(playerid);
+FOREIGN__ Class_Get(playerid);
 
-global Class_Get(playerid)
+GLOBAL__ Class_Get(playerid)
 {
 	if (VALID_PLAYERID(playerid))
 	{

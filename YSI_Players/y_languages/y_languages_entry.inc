@@ -114,9 +114,9 @@ static stock
 #define Languages_Add Langs_AddLanguage
 #define Languages_AddLanguage Langs_AddLanguage
 
-foreign Language:_Langs_AddLanguage(string:code[], string:name[]);
+FOREIGN__ Language:_Langs_AddLanguage(string:code[], string:name[]);
 
-global Language:_Langs_AddLanguage(string:code[], string:name[])
+GLOBAL__ Language:_Langs_AddLanguage(string:code[], string:name[])
 {
 	// Get the 2 character language short code.
 	P:2("_Langs_AddLanguage called: %s %s", code, name);
@@ -219,9 +219,9 @@ global Language:_Langs_AddLanguage(string:code[], string:name[])
  * <summary>-</summary>
  *//*------------------------------------------------------------------------**/
 
-foreign Language:Langs_GetLanguageAt(id);
+FOREIGN__ Language:Langs_GetLanguageAt(id);
 
-global Language:Langs_GetLanguageAt(id)
+GLOBAL__ Language:Langs_GetLanguageAt(id)
 {
 	for (new Language:x = Language:0; x != YSI_MAX_LANGUAGES; ++x)
 	{
@@ -240,9 +240,9 @@ global Language:Langs_GetLanguageAt(id)
  * <summary>-</summary>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Langs_RemoveLanguage(Language:l);
+FOREIGN__ void:Langs_RemoveLanguage(Language:l);
 
-global void:Langs_RemoveLanguage(Language:l)
+GLOBAL__ void:Langs_RemoveLanguage(Language:l)
 {
 	if (Language_IsValid(l))
 	{
@@ -260,9 +260,9 @@ global void:Langs_RemoveLanguage(Language:l)
  * <summary>-</summary>
  *//*------------------------------------------------------------------------**/
 
-foreign Language:Langs_GetLanguage(string:identifier[]);
+FOREIGN__ Language:Langs_GetLanguage(string:identifier[]);
 
-global Language:Langs_GetLanguage(string:identifier[])
+GLOBAL__ Language:Langs_GetLanguage(string:identifier[])
 {
 	if (strlen(identifier) > 2)
 	{
@@ -292,9 +292,9 @@ global Language:Langs_GetLanguage(string:identifier[])
  * <summary>-</summary>
  *//*------------------------------------------------------------------------**/
 
-foreign Language:Langs_GetLanguageCount();
+FOREIGN__ Language:Langs_GetLanguageCount();
 
-global Language:Langs_GetLanguageCount()
+GLOBAL__ Language:Langs_GetLanguageCount()
 {
 	return YSI_g_sLanguageCount;
 }
@@ -303,9 +303,9 @@ global Language:Langs_GetLanguageCount()
  * <summary>-</summary>
  *//*------------------------------------------------------------------------**/
 
-foreign string:Langs_GetLanguageCodes();
+FOREIGN__ string:Langs_GetLanguageCodes();
 
-global string:Langs_GetLanguageCodes()
+GLOBAL__ string:Langs_GetLanguageCodes()
 {
 	// I don't quite know what this will do yet, as in how it will work...
 	return YSI_g_sLanguageCodes;
@@ -315,9 +315,9 @@ global string:Langs_GetLanguageCodes()
  * <summary>-</summary>
  *//*------------------------------------------------------------------------**/
 
-foreign string:Langs_GetName(Language:l);
+FOREIGN__ string:Langs_GetName(Language:l);
 
-global string:Langs_GetName(Language:l)
+GLOBAL__ string:Langs_GetName(Language:l)
 {
 	// I don't quite know what this will do yet, as in how it will work...
 	new
@@ -333,9 +333,9 @@ global string:Langs_GetName(Language:l)
  * <summary>-</summary>
  *//*------------------------------------------------------------------------**/
 
-foreign string:Langs_GetCode(Language:l);
+FOREIGN__ string:Langs_GetCode(Language:l);
 
-global string:Langs_GetCode(Language:l)
+GLOBAL__ string:Langs_GetCode(Language:l)
 {
 	new
 		ret[YSI_MAX_STRING];
@@ -350,9 +350,9 @@ global string:Langs_GetCode(Language:l)
  * <summary>-</summary>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Langs_IsValid(Language:l);
+FOREIGN__ bool:Langs_IsValid(Language:l);
 
-global bool:Langs_IsValid(Language:l)
+GLOBAL__ bool:Langs_IsValid(Language:l)
 {
 	return Language_IsValid(l);
 }
@@ -361,9 +361,9 @@ global bool:Langs_IsValid(Language:l)
  * <summary>-</summary>
  *//*------------------------------------------------------------------------**/
 
-foreign Language:Langs_GetPlayerLanguage(playerid);
+FOREIGN__ Language:Langs_GetPlayerLanguage(playerid);
 
-global Language:Langs_GetPlayerLanguage(playerid)
+GLOBAL__ Language:Langs_GetPlayerLanguage(playerid)
 {
 	#if defined _YSI_SPECIAL_DEBUG
 		#pragma unused playerid
@@ -377,9 +377,9 @@ global Language:Langs_GetPlayerLanguage(playerid)
  * <summary>-</summary>
  *//*------------------------------------------------------------------------**/
 
-foreign Language:Langs_SetPlayerLanguage(playerid, Language:l);
+FOREIGN__ Language:Langs_SetPlayerLanguage(playerid, Language:l);
 
-global Language:Langs_SetPlayerLanguage(playerid, Language:l)
+GLOBAL__ Language:Langs_SetPlayerLanguage(playerid, Language:l)
 {
 	if (Language_IsValid(l))
 	{
@@ -392,9 +392,9 @@ global Language:Langs_SetPlayerLanguage(playerid, Language:l)
  * <summary>-</summary>
  *//*------------------------------------------------------------------------**/
 
-foreign Language:Langs_SetPlayerCode(playerid, string:code[]);
+FOREIGN__ Language:Langs_SetPlayerCode(playerid, string:code[]);
 
-global Language:Langs_SetPlayerCode(playerid, string:code[])
+GLOBAL__ Language:Langs_SetPlayerCode(playerid, string:code[])
 {
 	return Langs_SetPlayerLanguage(playerid, Langs_GetLanguage(code));
 }

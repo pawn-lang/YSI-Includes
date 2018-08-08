@@ -442,7 +442,7 @@ stock Player_GetYID(playerid)
 	//return _Player_TryLogin(playerid, password, f);
 //}
 
-global Player_TryLogin(playerid, string:password[])
+GLOBAL__ Player_TryLogin(playerid, string:password[])
 {
 	P:2("Player_TryLogin start");
 	if (Player_IsLoggedIn(playerid))
@@ -498,7 +498,7 @@ global Player_TryLogin(playerid, string:password[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-global Player_ForceLogin(playerid)
+GLOBAL__ Player_ForceLogin(playerid)
 {
 	P:2("Player_TryLogin start");
 	if (Player_IsLoggedIn(playerid))
@@ -795,7 +795,7 @@ stock Anything7()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-global Player_TryRegister(playerid, string:password[])
+GLOBAL__ Player_TryRegister(playerid, string:password[])
 {
 	P:2("Player_TryRegister called");
 	if (Player_IsLoggedIn(playerid))
@@ -900,7 +900,7 @@ global Player_TryRegister(playerid, string:password[])
 	}
 }
 
-global Player_ChangePassword(playerid, string:password[])
+GLOBAL__ Player_ChangePassword(playerid, string:password[])
 {
 	#pragma unused password
 	new
@@ -922,7 +922,7 @@ global Player_ChangePassword(playerid, string:password[])
 	return 1;
 }
 
-global Player_ChangeLanguage(playerid, string:code[])
+GLOBAL__ Player_ChangeLanguage(playerid, string:code[])
 {
 	new
 		uid = Player_GetYID(playerid);
@@ -1048,7 +1048,7 @@ static stock Player_RewritePreload(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-global Player_TryGroup(playerid, string:other[], string:password[])
+GLOBAL__ Player_TryGroup(playerid, string:other[], string:password[])
 {
 	P:2("Player_TryGroup called");
 	if (Player_IsLoggedIn(playerid))
@@ -1156,7 +1156,7 @@ global Player_TryGroup(playerid, string:other[], string:password[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-global Player_ForceGroup(playerid, string:other[])
+GLOBAL__ Player_ForceGroup(playerid, string:other[])
 {
 	P:2("Player_ForceGroup called");
 	if (Player_IsLoggedIn(playerid))

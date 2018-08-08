@@ -96,9 +96,9 @@ static stock
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Player_InSelection(playerid);
+FOREIGN__ bool:Player_InSelection(playerid);
 
-global bool:Player_InSelection(playerid)
+GLOBAL__ bool:Player_InSelection(playerid)
 {
 	return bool:(YSI_g_sPlayerFlags[playerid] & e_SPAWN_FLAGS_INSELECT);
 }
@@ -110,9 +110,9 @@ global bool:Player_InSelection(playerid)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Player_HasSpawned(playerid);
+FOREIGN__ bool:Player_HasSpawned(playerid);
 
-global bool:Player_HasSpawned(playerid)
+GLOBAL__ bool:Player_HasSpawned(playerid)
 {
 	return bool:(YSI_g_sPlayerFlags[playerid] & e_SPAWN_FLAGS_HADFIRST);
 }
@@ -130,9 +130,9 @@ global bool:Player_HasSpawned(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Player_IsSpawned(playerid);
+FOREIGN__ bool:Player_IsSpawned(playerid);
 
-global bool:Player_IsSpawned(playerid)
+GLOBAL__ bool:Player_IsSpawned(playerid)
 {
 	return (YSI_g_sPlayerFlags[playerid] & (e_SPAWN_FLAGS_INSELECT | e_SPAWN_FLAGS_HADFIRST)) == e_SPAWN_FLAGS_HADFIRST;
 }
@@ -342,17 +342,17 @@ stock void:Class_EnableReselection(playerid)
 	Class_SetReselection(playerid, true);
 }
 
-foreign void:Class_SetReselection(playerid, bool:s);
+FOREIGN__ void:Class_SetReselection(playerid, bool:s);
 
-global void:Class_SetReselection(playerid, bool:s)
+GLOBAL__ void:Class_SetReselection(playerid, bool:s)
 {
 	if (s) YSI_g_sPlayerFlags[playerid] |= (e_SPAWN_FLAGS_RESELECT);
 	else YSI_g_sPlayerFlags[playerid] &= ~(e_SPAWN_FLAGS_RESELECT);
 }
 
-foreign void:Class_ForceReselection(playerid);
+FOREIGN__ void:Class_ForceReselection(playerid);
 
-global void:Class_ForceReselection(playerid)
+GLOBAL__ void:Class_ForceReselection(playerid)
 {
 	YSI_g_sPlayerFlags[playerid] |= e_SPAWN_FLAGS_FORCED;
 	ForceClassSelection(playerid);
@@ -368,9 +368,9 @@ stock void:Class_EnableSelection(playerid)
 	Class_SetSelection(playerid, true);
 }
 
-foreign void:Class_SetSelection(playerid, bool:s);
+FOREIGN__ void:Class_SetSelection(playerid, bool:s);
 
-global void:Class_SetSelection(playerid, bool:s)
+GLOBAL__ void:Class_SetSelection(playerid, bool:s)
 {
 	if (s)
 	{
@@ -392,9 +392,9 @@ global void:Class_SetSelection(playerid, bool:s)
 	//return 1;
 }
 
-foreign void:Class_ReturnToSelection(playerid);
+FOREIGN__ void:Class_ReturnToSelection(playerid);
 
-global void:Class_ReturnToSelection(playerid)
+GLOBAL__ void:Class_ReturnToSelection(playerid)
 {
 	YSI_g_sPlayerFlags[playerid] |= (e_SPAWN_FLAGS_INSTANT);
 	Class_ForceReselection(playerid);

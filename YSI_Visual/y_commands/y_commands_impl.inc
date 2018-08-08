@@ -344,9 +344,9 @@ P:D(Command_Name(f));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign Command_GetID(string:function[]);
+FOREIGN__ Command_GetID(string:function[]);
 
-global Command_GetID(string:function[])
+GLOBAL__ Command_GetID(string:function[])
 {
 	P:2("Command_GetID called: \"%s\"", function);
 	return Command_Find(function);
@@ -360,9 +360,9 @@ global Command_GetID(string:function[])
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-foreign Command_AddAlt(oidx, string:cmd[]);
+FOREIGN__ Command_AddAlt(oidx, string:cmd[]);
 
-global Command_AddAlt(oidx, string:cmd[])
+GLOBAL__ Command_AddAlt(oidx, string:cmd[])
 {
 	static
 		sCmd[64],
@@ -434,9 +434,9 @@ global Command_AddAlt(oidx, string:cmd[])
 //P:D(Command_ReProcess(playerid,cmdtext,help,force));
 #define Command_ReProcess(%0,%1,%2,%3) Command_ReProcess(%0,%1, _:(%2)|(_:(%3)<<1))
 
-foreign Command_ReProcess(p,string:c[],h);
+FOREIGN__ Command_ReProcess(p,string:c[],h);
 
-global Command_ReProcess(p,string:c[],h)
+GLOBAL__ Command_ReProcess(p,string:c[],h)
 {
 	static
 		sCmd[64] = "@yC_",
@@ -575,9 +575,9 @@ global Command_ReProcess(p,string:c[],h)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Command_SetPlayerDisabled(playerid, bool:set);
+FOREIGN__ void:Command_SetPlayerDisabled(playerid, bool:set);
 
-global void:Command_SetPlayerDisabled(playerid, bool:set)
+GLOBAL__ void:Command_SetPlayerDisabled(playerid, bool:set)
 {
 	PA_Set(YSI_g_sDisabledPlayers, playerid, set);
 }
@@ -589,9 +589,9 @@ global void:Command_SetPlayerDisabled(playerid, bool:set)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Command_GetPlayerDisabled(playerid);
+FOREIGN__ bool:Command_GetPlayerDisabled(playerid);
 
-global bool:Command_GetPlayerDisabled(playerid)
+GLOBAL__ bool:Command_GetPlayerDisabled(playerid)
 {
 	return PA_Get(YSI_g_sDisabledPlayers, playerid);
 }
@@ -609,9 +609,9 @@ global bool:Command_GetPlayerDisabled(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Command_GetPlayer(cmd, pid);
+FOREIGN__ bool:Command_GetPlayer(cmd, pid);
 
-global bool:Command_GetPlayer(cmd, pid)
+GLOBAL__ bool:Command_GetPlayer(cmd, pid)
 {
 	if (_Command_IsValid(cmd) && VALID_PLAYERID(pid)) return _Command_GetPlayer(cmd, pid);
 	return false;
@@ -628,9 +628,9 @@ global bool:Command_GetPlayer(cmd, pid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Command_GetPlayerNamed(string:func[], playerid);
+FOREIGN__ bool:Command_GetPlayerNamed(string:func[], playerid);
 
-global bool:Command_GetPlayerNamed(string:func[], playerid)
+GLOBAL__ bool:Command_GetPlayerNamed(string:func[], playerid)
 {
 	return Command_GetPlayer(Command_Find(func), playerid);
 }
@@ -646,9 +646,9 @@ global bool:Command_GetPlayerNamed(string:func[], playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Command_SetPlayer(c, p, bool:s);
+FOREIGN__ void:Command_SetPlayer(c, p, bool:s);
 
-global void:Command_SetPlayer(c, p, bool:s)
+GLOBAL__ void:Command_SetPlayer(c, p, bool:s)
 {
 	P:2("Command_SetPlayer called: %i, %i, %i", c, p, s);
 	if (_Command_IsValid(c) && VALID_PLAYERID(p)) PA_Set(YSI_g_sCommands[c][E_COMMAND_USERS], p, s);
@@ -666,9 +666,9 @@ global void:Command_SetPlayer(c, p, bool:s)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Command_SetPlayerNamed(string:f[],p,bool:s);
+FOREIGN__ void:Command_SetPlayerNamed(string:f[],p,bool:s);
 
-global void:Command_SetPlayerNamed(string:f[],p,bool:s)
+GLOBAL__ void:Command_SetPlayerNamed(string:f[],p,bool:s)
 {
 	Command_SetPlayer(Command_Find(f), p, s);
 }
@@ -681,9 +681,9 @@ global void:Command_SetPlayerNamed(string:f[],p,bool:s)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-foreign Command_Find(string:cmd[]);
+FOREIGN__ Command_Find(string:cmd[]);
 
-global Command_Find(string:cmd[])
+GLOBAL__ Command_Find(string:cmd[])
 {
 	static
 		sCmd[64] = "",
@@ -704,9 +704,9 @@ global Command_Find(string:cmd[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Command_TouchNamed(string:command[]);
+FOREIGN__ void:Command_TouchNamed(string:command[]);
 
-global void:Command_TouchNamed(string:command[])
+GLOBAL__ void:Command_TouchNamed(string:command[])
 {
 	new
 		id = Command_Find(command);
@@ -727,9 +727,9 @@ global void:Command_TouchNamed(string:command[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Command_Touch(command);
+FOREIGN__ void:Command_Touch(command);
 
-global void:Command_Touch(command)
+GLOBAL__ void:Command_Touch(command)
 {
 	if (_Command_IsValid(command))
 	{
@@ -743,9 +743,9 @@ global void:Command_Touch(command)
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-foreign void:Command_SetDeniedReturn(bool:set);
+FOREIGN__ void:Command_SetDeniedReturn(bool:set);
 
-global void:Command_SetDeniedReturn(bool:set)
+GLOBAL__ void:Command_SetDeniedReturn(bool:set)
 {
 	if (set)
 		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_DENIED;
@@ -756,9 +756,9 @@ global void:Command_SetDeniedReturn(bool:set)
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Command_GetDeniedReturn();
+FOREIGN__ bool:Command_GetDeniedReturn();
 
-global bool:Command_GetDeniedReturn()
+GLOBAL__ bool:Command_GetDeniedReturn()
 {
 	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_DENIED);
 }
@@ -766,9 +766,9 @@ global bool:Command_GetDeniedReturn()
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-foreign void:Command_SetIllegalReturn(bool:set);
+FOREIGN__ void:Command_SetIllegalReturn(bool:set);
 
-global void:Command_SetIllegalReturn(bool:set)
+GLOBAL__ void:Command_SetIllegalReturn(bool:set)
 {
 	if (set)
 		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_INVALID_INPUT;
@@ -779,9 +779,9 @@ global void:Command_SetIllegalReturn(bool:set)
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Command_GetIllegalReturn();
+FOREIGN__ bool:Command_GetIllegalReturn();
 
-global bool:Command_GetIllegalReturn()
+GLOBAL__ bool:Command_GetIllegalReturn()
 {
 	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_INVALID_INPUT);
 }
@@ -789,9 +789,9 @@ global bool:Command_GetIllegalReturn()
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-foreign void:Command_SetUnknownReturn(bool:set);
+FOREIGN__ void:Command_SetUnknownReturn(bool:set);
 
-global void:Command_SetUnknownReturn(bool:set)
+GLOBAL__ void:Command_SetUnknownReturn(bool:set)
 {
 	if (set)
 		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_NOT_FOUND;
@@ -802,9 +802,9 @@ global void:Command_SetUnknownReturn(bool:set)
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Command_GetUnknownReturn();
+FOREIGN__ bool:Command_GetUnknownReturn();
 
-global bool:Command_GetUnknownReturn()
+GLOBAL__ bool:Command_GetUnknownReturn()
 {
 	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_NOT_FOUND);
 }
@@ -812,9 +812,9 @@ global bool:Command_GetUnknownReturn()
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-foreign void:Command_SetDisconnectReturn(bool:set);
+FOREIGN__ void:Command_SetDisconnectReturn(bool:set);
 
-global void:Command_SetDisconnectReturn(bool:set)
+GLOBAL__ void:Command_SetDisconnectReturn(bool:set)
 {
 	if (set)
 		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_NO_PLAYER;
@@ -825,9 +825,9 @@ global void:Command_SetDisconnectReturn(bool:set)
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Command_GetDisconnectReturn();
+FOREIGN__ bool:Command_GetDisconnectReturn();
 
-global bool:Command_GetDisconnectReturn()
+GLOBAL__ bool:Command_GetDisconnectReturn()
 {
 	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_NO_PLAYER);
 }
@@ -856,9 +856,9 @@ global bool:Command_GetDisconnectReturn()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign Command_AddAltNamed(string:function[], string:altname[]);
+FOREIGN__ Command_AddAltNamed(string:function[], string:altname[]);
 
-global Command_AddAltNamed(string:function[], string:altname[])
+GLOBAL__ Command_AddAltNamed(string:function[], string:altname[])
 {
 	return Command_AddAlt(Command_Find(function), altname);
 }
@@ -872,9 +872,9 @@ global Command_AddAltNamed(string:function[], string:altname[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Command_Remove(func);
+FOREIGN__ void:Command_Remove(func);
 
-global void:Command_Remove(func)
+GLOBAL__ void:Command_Remove(func)
 {
 	// Annoyingly, this is actually better with "HashMap_RemoveKey", but then we
 	// don't have the ID for later use.
@@ -896,9 +896,9 @@ global void:Command_Remove(func)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Command_RemoveNamed(string:func[]);
+FOREIGN__ void:Command_RemoveNamed(string:func[]);
 
-global void:Command_RemoveNamed(string:func[])
+GLOBAL__ void:Command_RemoveNamed(string:func[])
 {
 	Command_Remove(Command_Find(func));
 }
@@ -910,9 +910,9 @@ global void:Command_RemoveNamed(string:func[])
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-foreign bool:Command_IsValid(cmd);
+FOREIGN__ bool:Command_IsValid(cmd);
 
-global bool:Command_IsValid(cmd)
+GLOBAL__ bool:Command_IsValid(cmd)
 {
 	return _Command_IsValid(cmd);
 }
@@ -923,9 +923,9 @@ global bool:Command_IsValid(cmd)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-foreign Command_GetCurrent();
+FOREIGN__ Command_GetCurrent();
 
-global Command_GetCurrent()
+GLOBAL__ Command_GetCurrent()
 {
 	return YSI_g_sCurrentID;
 }
@@ -940,9 +940,9 @@ global Command_GetCurrent()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign Command_GetPlayerCommandCount(playerid);
+FOREIGN__ Command_GetPlayerCommandCount(playerid);
 
-global Command_GetPlayerCommandCount(playerid)
+GLOBAL__ Command_GetPlayerCommandCount(playerid)
 {
 	P:2("Command_GetPlayerCommandCount called: %i", playerid);
 	new
@@ -981,9 +981,9 @@ global Command_GetPlayerCommandCount(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign string:Command_GetName(f);
+FOREIGN__ string:Command_GetName(f);
 
-global string:Command_GetName(f)
+GLOBAL__ string:Command_GetName(f)
 {
 	YSI_g_sReturnBuffer[0] = '\0';
 	if (_Command_IsValid(f)) strunpack(YSI_g_sReturnBuffer, Command_Name(f));
@@ -1005,9 +1005,9 @@ global string:Command_GetName(f)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign string:Command_GetDisplay(funcid, playerid);
+FOREIGN__ string:Command_GetDisplay(funcid, playerid);
 
-global string:Command_GetDisplay(funcid, playerid)
+GLOBAL__ string:Command_GetDisplay(funcid, playerid)
 {
 	return
 		_Command_GetDisplay(funcid, playerid),
@@ -1030,9 +1030,9 @@ global string:Command_GetDisplay(funcid, playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign string:Command_GetDisplayNamed(string:func[], playerid);
+FOREIGN__ string:Command_GetDisplayNamed(string:func[], playerid);
 
-global string:Command_GetDisplayNamed(string:func[], playerid)
+GLOBAL__ string:Command_GetDisplayNamed(string:func[], playerid)
 {
 	return
 		_Command_GetDisplay(Command_Find(func), playerid),
@@ -1053,9 +1053,9 @@ global string:Command_GetDisplayNamed(string:func[], playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign string:Command_GetNext(index, playerid);
+FOREIGN__ string:Command_GetNext(index, playerid);
 
-global string:Command_GetNext(index, playerid)
+GLOBAL__ string:Command_GetNext(index, playerid)
 {
 	P:2("Command_GetNext called: %i, %i", index, playerid);
 	YSI_g_sReturnBuffer[0] = '\0';
@@ -1111,9 +1111,9 @@ global string:Command_GetNext(index, playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign Iter_Func@Command(start);
+FOREIGN__ Iter_Func@Command(start);
 
-global Iter_Func@Command(start)
+GLOBAL__ Iter_Func@Command(start)
 {
 	for (new i = start + 1; i < YSI_g_sHighestID; ++i)
 	{
@@ -1139,9 +1139,9 @@ global Iter_Func@Command(start)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign Iter_Func@PlayerCommand(start, pid);
+FOREIGN__ Iter_Func@PlayerCommand(start, pid);
 
-global Iter_Func@PlayerCommand(start, pid)
+GLOBAL__ Iter_Func@PlayerCommand(start, pid)
 {
 	new
 		slot = PA_Slot(pid),
@@ -1176,17 +1176,17 @@ global Iter_Func@PlayerCommand(start, pid)
  *//*------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
-	foreign Command_GetPrefix(c);
+	FOREIGN__ Command_GetPrefix(c);
 	
-	global Command_GetPrefix(c)
+	GLOBAL__ Command_GetPrefix(c)
 	{
 		if (_Command_IsValid(c)) return _Command_GetPrefix(c);
 		return '/';
 	}
 	
-	foreign Command_GetPrefixNamed(string:c[]);
+	FOREIGN__ Command_GetPrefixNamed(string:c[]);
 	
-	global Command_GetPrefixNamed(string:c[])
+	GLOBAL__ Command_GetPrefixNamed(string:c[])
 	{
 		return Command_GetPrefix(Command_Find(c));
 	}
@@ -1223,9 +1223,9 @@ global Iter_Func@PlayerCommand(start, pid)
  *//*------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
-	foreign bool:Command_IsPrefixUsed(prefix);
+	FOREIGN__ bool:Command_IsPrefixUsed(prefix);
 	
-	global bool:Command_IsPrefixUsed(prefix)
+	GLOBAL__ bool:Command_IsPrefixUsed(prefix)
 	{
 		return Command_IsValidPrefix(prefix) && Bit_Get(YSI_g_sPrefixes, prefix);
 	}
@@ -1261,9 +1261,9 @@ global Iter_Func@PlayerCommand(start, pid)
  *//*------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
-	foreign bool:Command_SetPrefix(c, prefix);
+	FOREIGN__ bool:Command_SetPrefix(c, prefix);
 	
-	global bool:Command_SetPrefix(c, prefix)
+	GLOBAL__ bool:Command_SetPrefix(c, prefix)
 	{
 		if (Command_IsValidPrefix(prefix))
 		{
@@ -1292,9 +1292,9 @@ global Iter_Func@PlayerCommand(start, pid)
  *//*------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
-	foreign bool:Command_SetPrefixNamed(string:c[], prefix);
+	FOREIGN__ bool:Command_SetPrefixNamed(string:c[], prefix);
 	
-	global bool:Command_SetPrefixNamed(string:c[], prefix)
+	GLOBAL__ bool:Command_SetPrefixNamed(string:c[], prefix)
 	{
 		return Command_SetPrefix(Command_Find(c), prefix);
 	}
@@ -1504,9 +1504,9 @@ HOOK__ OnScriptExit()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:_Command_Rebuild();
+FOREIGN__ void:_Command_Rebuild();
 
-global void:_Command_Rebuild()
+GLOBAL__ void:_Command_Rebuild()
 {
 	new
 		cmdname[32 char] = {('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00), 0, 0, ...};
@@ -1537,33 +1537,33 @@ global void:_Command_Rebuild()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-foreign void:Command_IncOPCR();
+FOREIGN__ void:Command_IncOPCR();
 
-global void:Command_IncOPCR()
+GLOBAL__ void:Command_IncOPCR()
 {
 	P:2("Command_IncOPCR called");
 	YSI_g_sCommandFlags += e_COMM_FLAG_OPCR_ADD;
 }
 
-foreign void:Command_DecOPCR();
+FOREIGN__ void:Command_DecOPCR();
 
-global void:Command_DecOPCR()
+GLOBAL__ void:Command_DecOPCR()
 {
 	P:2("Command_DecOPCR called");
 	YSI_g_sCommandFlags -= e_COMM_FLAG_OPCR_ADD;
 }
 
-foreign void:Command_IncOPCP();
+FOREIGN__ void:Command_IncOPCP();
 
-global void:Command_IncOPCP()
+GLOBAL__ void:Command_IncOPCP()
 {
 	P:2("Command_IncOPCP called");
 	YSI_g_sCommandFlags += e_COMM_FLAG_OPCP_ADD;
 }
 
-foreign void:Command_DecOPCP();
+FOREIGN__ void:Command_DecOPCP();
 
-global void:Command_DecOPCP()
+GLOBAL__ void:Command_DecOPCP()
 {
 	P:2("Command_DecOPCP called");
 	YSI_g_sCommandFlags -= e_COMM_FLAG_OPCP_ADD;
@@ -1598,9 +1598,9 @@ static stock Command_GetEmptySlot()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-@foreign Command_Add(string:cmd[], ptr);
+FOREIGN__ Command_Add(string:cmd[], ptr);
 
-@global Command_Add(string:cmd[], ptr)
+GLOBAL__ Command_Add(string:cmd[], ptr)
 {
 	// The commands all need to be stored packed.
 	strpack(cmd, cmd, cellmax);
