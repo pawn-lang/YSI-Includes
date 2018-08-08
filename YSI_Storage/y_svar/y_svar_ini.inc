@@ -283,7 +283,7 @@ stock M@(volatile const vardata[], dataSize, &pointer, ds2 = 1)
 	P:5("M@: %d", YSI_g_sFirstUVarData);
 }
 
-hook OnScriptExit()
+HOOK__ OnScriptExit()
 {
 	Svar_Save();
 }

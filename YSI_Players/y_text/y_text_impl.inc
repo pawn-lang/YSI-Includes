@@ -243,7 +243,7 @@ public OnFilterScriptInit()
  * <transition keep="true" target="y_render_show : y_render_show_print" />
  *//*------------------------------------------------------------------------**/
 
-hook OnScriptInit()
+HOOK__ OnScriptInit()
 {
 	new
 		fakePtrs[YSI_MAX_LANGUAGES] = { -1, ... };

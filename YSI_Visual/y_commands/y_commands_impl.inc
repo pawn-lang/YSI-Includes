@@ -1370,7 +1370,7 @@ mhook OnPlayerCommandText(playerid, cmdtext[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-hook OnScriptInit()
+HOOK__ OnScriptInit()
 {
 	P:1("Command_OnScriptInit called");
 	YSI_g_sCommandFlags = e_COMMAND_FLAGS_OK;
@@ -1439,7 +1439,7 @@ HANDOFF()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-hook OnScriptExit()
+HOOK__ OnScriptExit()
 {
 	P:1("Commands_OnScriptExit <> called");
 	if (funcidx(YSI_gscOPCR) != -1) Command_DecOPCR();

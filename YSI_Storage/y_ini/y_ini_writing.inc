@@ -415,7 +415,7 @@ stock INI_WriteFloat(INI:file, name[], Float:data, accuracy = 6)
 
 */
 
-hook OnScriptInit()
+HOOK__ OnScriptInit()
 {
 	// Set up the linked list of free tag and K/V slots.
 	for (new i = 0; i != sizeof (YSI_g_sINITagBuffer) - 1; ++i)

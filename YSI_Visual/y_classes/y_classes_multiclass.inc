@@ -177,7 +177,7 @@ P:D(Class_Skin(classid));
  * <transition keep="true" target="_YCM : y"/>
  *//*------------------------------------------------------------------------**/
 
-hook OnScriptInit()
+HOOK__ OnScriptInit()
 {
 	#if !_YSIM_IS_CLIENT
 		if (!YSI_FILTERSCRIPT)

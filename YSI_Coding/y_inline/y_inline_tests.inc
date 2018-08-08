@@ -539,7 +539,7 @@ Test:CallStoredFunction0()
 static
 	YSI_g_sInlineTestVar0;
 
-hook y_inline_InHook0@0()
+HOOK__ y_inline_InHook0@0()
 {
 	new
 		cc[E_CALLBACK_DATA],
@@ -556,7 +556,7 @@ hook y_inline_InHook0@0()
 	Callback_Release(cc);
 }
 
-hook y_inline_InHook1@0(a)
+HOOK__ y_inline_InHook1@0(a)
 {
 	new
 		cc[E_CALLBACK_DATA],
@@ -573,7 +573,7 @@ hook y_inline_InHook1@0(a)
 	Callback_Release(cc);
 }
 
-hook y_inline_InHook2@0(a, b)
+HOOK__ y_inline_InHook2@0(a, b)
 {
 	new
 		cc[E_CALLBACK_DATA],
@@ -591,7 +591,7 @@ hook y_inline_InHook2@0(a, b)
 	Callback_Release(cc);
 }
 
-hook y_inline_InHook0@1()
+HOOK__ y_inline_InHook0@1()
 {
 	new
 		cc[E_CALLBACK_DATA],
@@ -609,7 +609,7 @@ hook y_inline_InHook0@1()
 	Callback_Release(cc);
 }
 
-hook y_inline_InHook1@1(a)
+HOOK__ y_inline_InHook1@1(a)
 {
 	new
 		cc[E_CALLBACK_DATA],
@@ -626,7 +626,7 @@ hook y_inline_InHook1@1(a)
 	Callback_Release(cc);
 }
 
-hook y_inline_InHook2@1(a, b)
+HOOK__ y_inline_InHook2@1(a, b)
 {
 	new
 		cc[E_CALLBACK_DATA],

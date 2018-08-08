@@ -160,9 +160,9 @@ forward bool:_Testing_End();
 #define ASSERT_GT(%0,%1) Testing_Test((%0) >  YSI_g_TestResult, "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 >  %1`, (YSI_g_TestResult = (%1)))
 
 // Strings.
-#define ASSERT_SAME(%0,%1) Testing_Test(!strcmp(Q@, (%0)      ), "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 == %1`, (strunpack(Q@, (%1)), Q@))
-#define ASSERT_DIFF(%0,%1) Testing_Test( strcmp(Q@, (%0)      ), "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 != %1`, (strunpack(Q@, (%1)), Q@))
-#define ASSERT_NEAR(%0,%1) Testing_Test(!strcmp(Q@, (%0), true), "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 != %1`, (strunpack(Q@, (%1)), Q@))
+#define ASSERT_SAME(%0,%1) Testing_Test(strcmp(Q@, (%0)      ) == 0, "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 == %1`, (strunpack(Q@, (%1)), Q@))
+#define ASSERT_DIFF(%0,%1) Testing_Test(strcmp(Q@, (%0)      ) != 0, "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 != %1`, (strunpack(Q@, (%1)), Q@))
+#define ASSERT_NEAR(%0,%1) Testing_Test(strcmp(Q@, (%0), true) == 0, "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0 != %1`, (strunpack(Q@, (%1)), Q@))
 
 stock
 	YSI_g_TestResult;

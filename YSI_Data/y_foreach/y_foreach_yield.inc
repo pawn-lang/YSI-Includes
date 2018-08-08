@@ -45,7 +45,7 @@ static
  * </remarks>
  */
 
-hook public OnCodeInit()
+HOOK__ public OnCodeInit()
 {
 	#emit CONST.pri    YSI_g_sStack
 	#emit STOR.pri     YSI_g_sStackPtr

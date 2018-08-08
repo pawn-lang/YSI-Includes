@@ -173,7 +173,7 @@ public OnCodeInit()
 	forward Timers_OnCodeInit();
 #endif
 
-hook OnPlayerConnect(playerid)
+HOOK__ OnPlayerConnect(playerid)
 {
 	P:1("hook Timers_OnPlayerConnect called: %d", playerid);
 	// Loop through all the per-player timers.  Correctly finds them all from a
@@ -210,7 +210,7 @@ hook OnPlayerConnect(playerid)
 	return 1;
 }
 
-hook OnPlayerDisconnect(playerid, reason)
+HOOK__ OnPlayerDisconnect(playerid, reason)
 {
 	P:1("hook Timers_OnPlayerDisconnect called: %d, %d, playerid, reason");
 	// Loop through all the per-player timers.  Correctly finds them all from a

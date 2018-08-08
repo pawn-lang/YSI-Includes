@@ -442,7 +442,7 @@ stock _Uvar_DoSavePlayer(playerid)
 	}
 }
 
-hook OnPlayerConnect(playerid)
+HOOK__ OnPlayerConnect(playerid)
 {
 	P:1("hook Users_OnPlayerConnect called: %i", playerid);
 	new

@@ -272,7 +272,7 @@ stock Player_IsRegistered(playerid)
 
 */
 
-hook OnScriptInit()
+HOOK__ OnScriptInit()
 {
 	switch (ftouch(USER_FILE_PATH "index.YSI"))
 	{
@@ -355,7 +355,7 @@ public OnFilterScriptInit()
 #endif
 #define OnFilterScriptInit(%0) Users_OnFilterScriptInit(%0)
 
-hook OnPlayerConnect(playerid)
+HOOK__ OnPlayerConnect(playerid)
 {
 	P:1("Users_OnPlayerConnect called: %d", playerid);
 	// -2 means unknown.
@@ -393,7 +393,7 @@ hook OnPlayerConnect(playerid)
 	YSI_g_sPlayerYID[playerid] = -1;
 }
 
-hook OnPlayerDisconnect(playerid, reason)
+HOOK__ OnPlayerDisconnect(playerid, reason)
 {
 	P:2("Users_OnPlayerDisconnect called: %d %d %d", playerid, reason, YSI_g_sPlayerYID[playerid]);
 	if (YSI_g_sPlayerYID[playerid] >= 0)

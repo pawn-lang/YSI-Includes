@@ -95,26 +95,20 @@ enum E_CHAIN_HOOK
 	E_CHAIN_HOOK_VALUE
 }
 
-HOOK_RET:OnPlayerCommandText()
-{
-	return 0;
-}
+DEFINE_HOOK_RETURN__(OnPlayerCommandText, 0);
 
-HOOK_RET:OnRconCommand()
-{
-	return 0;
-}
+DEFINE_HOOK_RETURN__(OnRconCommand, 0);
 
 // Create the default replacements.
-DEFINE_HOOK_REPLACEMENT(Checkpoint, CP );
-DEFINE_HOOK_REPLACEMENT(Container , Cnt);
-DEFINE_HOOK_REPLACEMENT(Inventory , Inv);
-DEFINE_HOOK_REPLACEMENT(Dynamic   , Dyn);
-DEFINE_HOOK_REPLACEMENT(TextDraw  , TD );
-DEFINE_HOOK_REPLACEMENT(Update    , Upd);
-DEFINE_HOOK_REPLACEMENT(Object    , Obj);
-DEFINE_HOOK_REPLACEMENT(Command   , Cmd);
-DEFINE_HOOK_REPLACEMENT(DynamicCP , DynamicCP);
+DEFINE_HOOK_REPLACEMENT__(Checkpoint, CP );
+DEFINE_HOOK_REPLACEMENT__(Container , Cnt);
+DEFINE_HOOK_REPLACEMENT__(Inventory , Inv);
+DEFINE_HOOK_REPLACEMENT__(Dynamic   , Dyn);
+DEFINE_HOOK_REPLACEMENT__(TextDraw  , TD );
+DEFINE_HOOK_REPLACEMENT__(Update    , Upd);
+DEFINE_HOOK_REPLACEMENT__(Object    , Obj);
+DEFINE_HOOK_REPLACEMENT__(Command   , Cmd);
+DEFINE_HOOK_REPLACEMENT__(DynamicCP , DynamicCP);
 
 enum E_HOOK_NAME_REPLACEMENT_DATA
 {
@@ -752,7 +746,7 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[64])
 {
 	P:4("Hooks_GetDefaultReturn called");
 	new
-		dest[64] = "@RET";
+		dest[64] = "@y_H";
 	strcat(dest, name);
 	Hooks_MakeShortName(dest);
 	new

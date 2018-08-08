@@ -399,7 +399,7 @@ mhook OnScriptInit()
 }
 
 #if !defined FILTERSCRIPT
-	hook OnGameModeInit()
+	HOOK__ OnGameModeInit()
 	{
 		if (!YSI_FILTERSCRIPT)
 		{
@@ -414,7 +414,7 @@ mhook OnScriptInit()
 	}
 #endif
 
-hook OnFilterScriptInit()
+HOOK__ OnFilterScriptInit()
 {
 	new
 		buffer;
@@ -1805,7 +1805,7 @@ mhook OnPlayerConnect(playerid)
 		}
 	}
 #else
-	hook OnPlayerUpdate(playerid)
+	HOOK__ OnPlayerUpdate(playerid)
 	{
 		static
 			// Another hard-coded limit (max areas we can actually be in, more

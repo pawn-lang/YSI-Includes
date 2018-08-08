@@ -344,7 +344,7 @@ stock Iter_All_Internal(array[], size, value)
  *//*------------------------------------------------------------------------**/
 
 #if _FOREACH_CHARACTERS || _FOREACH_VEHICLES || _FOREACH_ACTORS
-	hook OnScriptInit()
+	HOOK__ OnScriptInit()
 	{
 		#if _FOREACH_VEHICLES
 			Iter_Clear(Vehicle);
@@ -428,7 +428,7 @@ stock Iter_All_Internal(array[], size, value)
  *//*------------------------------------------------------------------------**/
 
 #if _FOREACH_CHARACTERS
-	hook OnPlayerConnect(playerid)
+	HOOK__ OnPlayerConnect(playerid)
 	{
 		P:1("Iter_OnPlayerConnect called: %d, %d", playerid, IsPlayerNPC(playerid));
 		#if _FOREACH_BOTS
@@ -459,7 +459,7 @@ stock Iter_All_Internal(array[], size, value)
 	 * </remarks>
 	 *//*--------------------------------------------------------------------**/
 	
-	hook OnPlayerDisconnect(playerid, reason)
+	HOOK__ OnPlayerDisconnect(playerid, reason)
 	{
 		SetTimerEx("Iter_OPDCInternal", 0, false, "i", playerid);
 		return 1;

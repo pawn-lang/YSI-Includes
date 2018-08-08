@@ -136,11 +136,11 @@ Optional plugins:
 #define YSIM_SERVER_FOREIGN        YSIM_PARSER(YSIM_MF)
 // The global is just the function implementation - doesn't need extra code.
 #define YSIM_SERVER_GLOBAL
-#define YSIM_SERVER_HOOK%0(%1)     hook%0(%1)
+#define YSIM_SERVER_HOOK%0(%1)     HOOK__%0(%1)
 #define YSIM_SERVER_TASK%0[%3](%1) task%0[%3](%1)
 #define YSIM_SERVER_PTSK%0[%3](%1) ptask%0[%3](%1)
 #define YSIM_SERVER_FUNC%0(%1)<%9> forward%0(%1);public%0(%1)
-#define YSIM_SERVER_GRUP%0(%1)     _GROUP_MAKE_NAME<hook%0...>(%1)
+#define YSIM_SERVER_GRUP%0(%1)     _GROUP_MAKE_NAME<HOOK__%0...>(%1)
 #define YSIM_SERVER_YCMD%0(%1)     @yC_%0(a,b[],c);@yC_%0(a,b[],c)U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 #define YSIM_SERVER_ZERO%0(%1)     @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==@_&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 
@@ -157,11 +157,11 @@ Optional plugins:
 
 #define YSIM_CLOUD_FOREIGN         YSIM_PARSER(YSIM_DF)
 #define YSIM_CLOUD_GLOBAL          YSIM_PARSER(YSIM_DG)
-#define YSIM_CLOUD_HOOK%0(%1)      hook%0(%1)<>return 0;rehook%0(%1)<_YCM:y>
+#define YSIM_CLOUD_HOOK%0(%1)      HOOK__%0(%1)<>return 0;HOOK__%0(%1)<_YCM:y>
 #define YSIM_CLOUD_TASK%0[%3](%1)  task%0[%3](%1)<>{}public%0(%1)<_YCM:y>
 #define YSIM_CLOUD_PTSK%0[%3](%1)  ptask%0[%3](%1)<>{}public%0(%1)<_YCM:y>
 #define YSIM_CLOUD_FUNC%0(%1)<%9>  %0(%1);public%0(%1)<>{}public%0(%1)<_YCM:%9>
-#define YSIM_CLOUD_GRUP%0(%1)      _GROUP_MAKE_NAME<hook%0...>(%1)<>{}_GROUP_MAKE_NAME<rehook%0...>(%1)<_YCM:y>
+#define YSIM_CLOUD_GRUP%0(%1)      _GROUP_MAKE_NAME<HOOK__%0...>(%1)<>{}_GROUP_MAKE_NAME<HOOK__%0...>(%1)<_YCM:y>
 #define YSIM_CLOUD_YCMD%0(%1)      @yC_%0(a,b[],c);@yC_%0(a,b[],c)<>{}@yC_%0(a,b[],c)<_YCM:y>U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 #define YSIM_CLOUD_ZERO%0(%1)      @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==@_&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 
@@ -183,11 +183,11 @@ Optional plugins:
 // If there is no master system, these are just forwards/declarations.
 #define YSIM_NONE_FOREIGN
 #define YSIM_NONE_GLOBAL
-#define YSIM_NONE_HOOK%0(%1)       hook%0(%1)
+#define YSIM_NONE_HOOK%0(%1)       HOOK__%0(%1)
 #define YSIM_NONE_TASK%0[%3](%1)   task%0[%3](%1)
 #define YSIM_NONE_PTSK%0[%3](%1)   ptask%0[%3](%1)
 #define YSIM_NONE_FUNC%0(%1)<%9>   forward%0(%1);public%0(%1)
-#define YSIM_NONE_GRUP%0(%1)       _GROUP_MAKE_NAME<hook%0...>(%1)
+#define YSIM_NONE_GRUP%0(%1)       _GROUP_MAKE_NAME<HOOK__%0...>(%1)
 #define YSIM_NONE_YCMD%0(%1)       @yC_%0(%1);@yC_%0(%1)
 #define YSIM_NONE_ZERO%0(%1)       @yC_%0(%1);@yC_%0(%1)
 

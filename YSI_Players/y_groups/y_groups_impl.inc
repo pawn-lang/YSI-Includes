@@ -309,7 +309,7 @@ static stock Group_DefineStates_() <YSI_has_groups : other>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-hook OnScriptInit()
+HOOK__ OnScriptInit()
 {
 	P:1("Group_OnScriptInit called");
 	state YSI_has_groups : y;
@@ -490,7 +490,7 @@ global void:Group_Destroy(Group:group)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-hook OnPlayerDisconnect(playerid, reason)
+HOOK__ OnPlayerDisconnect(playerid, reason)
 {
 	#pragma unused reason
 	P:2("hook OnPlayerDisconnect called: %d, %d", playerid, reason);
@@ -528,7 +528,7 @@ hook OnPlayerDisconnect(playerid, reason)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-hook OnPlayerConnect@9(playerid)
+HOOK__ OnPlayerConnect@9(playerid)
 {
 	P:1("Groups_OnPlayerConnect called: %d, %d", playerid, !(YSIM_HAS_MASTER && (_YSIM_IS_STUB || _YSIM_IS_CLIENT)));
 	#if !(YSIM_HAS_MASTER && (_YSIM_IS_STUB || _YSIM_IS_CLIENT))

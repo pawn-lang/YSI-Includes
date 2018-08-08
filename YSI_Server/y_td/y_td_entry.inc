@@ -200,7 +200,7 @@ P:D(bool:TD_IsValidStyle(Style:id));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-hook OnScriptInit()
+HOOK__ OnScriptInit()
 {
 	if (YSI_g_sXMLRules == NO_XML_FILE)
 	{
@@ -1825,7 +1825,7 @@ stock TD_HideForAll(Text:textDraw)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-hook OnPlayerDisconnect(playerid, reason)
+HOOK__ OnPlayerDisconnect(playerid, reason)
 {
 	for (new i = 0; i < bits<MAX_TEXT_DRAWS>; i++)
 	{

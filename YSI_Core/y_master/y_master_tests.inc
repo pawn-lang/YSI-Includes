@@ -258,7 +258,7 @@ YSIM_STUB_FOREIGN stock Float:y_master_test_5fn();
 static stock
 	YSI_g_sTestVar = 0;
 
-hook OnMasterSystemInit(id)
+HOOK__ OnMasterSystemInit(id)
 {
 	YSI_g_sTestVar = 6;
 }

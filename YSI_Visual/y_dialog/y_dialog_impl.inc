@@ -127,7 +127,7 @@ stock Dialog_Hide(playerid)
 	return ShowPlayerDialog(playerid, -1, 0, NULL, NULL, NULL, NULL);
 }
 
-hook OnPlayerDisconnect(playerid, reason)
+HOOK__ OnPlayerDisconnect(playerid, reason)
 {
 	#pragma unused reason
 	// If this is a filterscript that has the currently displayed dialog in it,
@@ -141,7 +141,7 @@ hook OnPlayerDisconnect(playerid, reason)
 	return 1;
 }
 
-hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 {
 	// Apparently there's a hack to alter this.
 	dialogid = YSI_g_sPlayerDialog[playerid];

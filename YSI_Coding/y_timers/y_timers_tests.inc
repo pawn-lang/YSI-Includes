@@ -73,7 +73,7 @@ Optional plugins:
 static stock
 	sgPlayerCounter[MAX_PLAYERS];
 
-hook OnPlayerConnect(playerid)
+HOOK__ OnPlayerConnect(playerid)
 {
 	sgPlayerCounter[playerid] = 0;
 }

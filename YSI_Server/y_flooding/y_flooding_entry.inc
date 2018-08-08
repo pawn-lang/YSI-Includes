@@ -153,7 +153,7 @@ public Flooding_UnbanIP(ip32)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-hook OnPlayerConnect(playerid)
+HOOK__ OnPlayerConnect(playerid)
 {
 	new
 		ret = 1;

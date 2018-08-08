@@ -304,7 +304,7 @@ stock Property_GetType(property)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-hook OnScriptInit()
+HOOK__ OnScriptInit()
 {
 	P:2("Property_Property() start");
 	P:5("Property_Property() 0");
@@ -904,7 +904,7 @@ Property_OnPlayerLeaveArea(playerid, area)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-hook OnPlayerConnect(playerid)
+HOOK__ OnPlayerConnect(playerid)
 {
 	YSI_g_sShopMenu[playerid][E_PROP_AMMU_MENU] = Menu:-1;
 	Bit_SetAll(YSI_g_sPlayerProperties[playerid], 0, GROUP_PROPERTY_BITS);
@@ -920,7 +920,7 @@ hook OnPlayerConnect(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-hook OnPlayerDisconnect(playerid, reason)
+HOOK__ OnPlayerDisconnect(playerid, reason)
 {
 	foreach (new prop : Bits(YSI_g_sPlayerProperties[playerid]))
 	{
@@ -979,7 +979,7 @@ hook OnPlayerDisconnect(playerid, reason)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-hook OnPlayerSpawn(playerid)
+HOOK__ OnPlayerSpawn(playerid)
 {
 	for (new i = 0; i < 12; i++) if (YSI_g_sSpawnWeapons[playerid][i]) GivePlayerWeapon(playerid, (YSI_g_sSpawnWeapons[playerid][i] >> 24) & 0xFF, YSI_g_sSpawnWeapons[playerid][i] & 0xFFFFFF);
 	if (YSI_g_sSpawnWeapons[playerid][12]) SetPlayerArmour(playerid, 100.0);
@@ -994,7 +994,7 @@ hook OnPlayerSpawn(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-hook OnPlayerLeaveCheckpointEx(playerid, cpid)
+HOOK__ OnPlayerLeaveCheckpointEx(playerid, cpid)
 {
 	new
 		cp = YSI_g_sCheckpointPointers[cpid];

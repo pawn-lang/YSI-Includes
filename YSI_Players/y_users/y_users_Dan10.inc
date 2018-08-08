@@ -296,7 +296,7 @@ stock Player_IsRegistered(playerid)
 	return YSI_g_sPreloadData[playerid][E_USER_PRELOAD_YID] > 0;
 }
 
-hook OnScriptInit()
+HOOK__ OnScriptInit()
 {
 	sql_debug(LOG_NONE, LOG_ALL);
 	#define SQL_CLEANUP(%0) if (sql_error((%0))){sql_error_string((%0),error),P:E("SQL Error: %s",error);return sql_free_result((%0)),sql_disconnect(mkH),0;}sql_free_result((%0))
@@ -409,7 +409,7 @@ hook OnScriptInit()
 	#undef SQL_CLEANUP
 }
 
-hook OnScriptExit()
+HOOK__ OnScriptExit()
 {
 	// Loop through all players.
 	foreach (new i : Player)
@@ -421,7 +421,7 @@ hook OnScriptExit()
 	sql_disconnect(YSI_g_sWriteHandle);
 }
 
-hook OnPlayerConnect(playerid)
+HOOK__ OnPlayerConnect(playerid)
 {
 	P:1("Users_OnPlayerConnect called: %d", playerid);
 	new
@@ -512,7 +512,7 @@ remotefunc static void:_Player_IsLoggedIn(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-hook OnPlayerDisconnect(playerid, reason)
+HOOK__ OnPlayerDisconnect(playerid, reason)
 {
 	Player_DoDisconnect(playerid);
 }

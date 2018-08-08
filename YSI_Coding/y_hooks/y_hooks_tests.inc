@@ -93,7 +93,7 @@ CHAIN_FORWARD:TestPrehook_OnTestPrehook() = 1;
 
 #define OnTestPrehook(%0) CHAIN_PUBLIC:TestPrehook_OnTestPrehook(%0)
 
-hook OnTestPrehook()
+HOOK__ OnTestPrehook()
 {
 	++YSI_g_sValue;
 }
@@ -117,7 +117,7 @@ CHAIN_FORWARD:TestPrehook_OnTestCallback() = 1;
 
 #define OnTestCallback(%0) CHAIN_PUBLIC:TestPrehook_OnTestCallback(%0)
 
-hook OnTestCallback()
+HOOK__ OnTestCallback()
 {
 	++YSI_g_sValue;
 }
@@ -132,7 +132,7 @@ Test:y_hooksOrdering()
 static
 	bool:y_hooks_OnScriptInit_called = false;
 
-hook OnScriptInit()
+HOOK__ OnScriptInit()
 {
 	y_hooks_OnScriptInit_called = true;
 }
@@ -168,9 +168,9 @@ Test:OnCodeInit()
 
 #if defined YSI_FAILING_TESTS
 
-	DEFINE_HOOK_REPLACEMENT(VeryLongTarget_, YyYy);
+	DEFINE_HOOK_REPLACEMENT__(VeryLongTarget_, YyYy);
 
-	hook y_hooks_YyYy0()
+	HOOK__ y_hooks_YyYy0()
 	{
 		// The length after replacement here will be longer than the hook name,
 		// even with prefix/suffixes.  This means you can't generate the
@@ -179,7 +179,7 @@ Test:OnCodeInit()
 		YSI_g_sValue = 101;
 	}
 
-	hook y_hooks_YyYy1()
+	HOOK__ y_hooks_YyYy1()
 	{
 		// The length after replacement here will be longer than the hook name,
 		// even with prefix/suffixes.  This means you can't generate the
@@ -188,7 +188,7 @@ Test:OnCodeInit()
 		YSI_g_sValue = 202;
 	}
 
-	hook y_hooks_YyYz1()
+	HOOK__ y_hooks_YyYz1()
 	{
 		// Will come very next in the header.
 		ASSERT(true);
@@ -221,12 +221,12 @@ Test:OnCodeInit()
 
 #endif
 
-hook Ony_hooksShortUpdate()
+HOOK__ Ony_hooksShortUpdate()
 {
 	++YSI_g_sValue;
 }
 
-hook Ony_hooksShortUpd()
+HOOK__ Ony_hooksShortUpd()
 {
 	++YSI_g_sValue;
 }
@@ -240,16 +240,16 @@ Test:Ony_hooksShortUpdate()
 
 #if defined YSI_FAILING_TESTS
 
-	DEFINE_HOOK_REPLACEMENT(TTTTT_YYYYY, YHook);
+	DEFINE_HOOK_REPLACEMENT__(TTTTT_YYYYY, YHook);
 
 	forward Ony_hooksTTTTT_YYYYY_WtExtras();
 
-	hook Ony_hooksYHook()
+	HOOK__ Ony_hooksYHook()
 	{
 		++YSI_g_sValue;
 	}
 
-	hook Ony_hooksTTTTT_YYYYY()
+	HOOK__ Ony_hooksTTTTT_YYYYY()
 	{
 		++YSI_g_sValue;
 	}
@@ -266,7 +266,7 @@ Test:Ony_hooksShortUpdate()
 		++YSI_g_sValue;
 	}
 
-	hook Ony_hooksYHook_WtExtras()
+	HOOK__ Ony_hooksYHook_WtExtras()
 	{
 		++YSI_g_sValue;
 	}
@@ -282,13 +282,13 @@ Test:Ony_hooksShortUpdate()
 
 forward Ony_hooksTest2(cmd[]);
 
-hook Ony_hooksTest2@000(cmd[])
+HOOK__ Ony_hooksTest2@000(cmd[])
 {
 	++YSI_g_sValue;
 	return 1;
 }
 
-hook Ony_hooksTest2@001(cmd[])
+HOOK__ Ony_hooksTest2@001(cmd[])
 {
 	// Called second due to forced orderings.
 	++YSI_g_sValue;
@@ -321,28 +321,28 @@ public y_hooks_PassParams(i1, a0[], i2)
 	ASSERT(i2 == 101);
 }
 
-hook y_hooks_PassParams@3(i1, a0[], i2)
+HOOK__ y_hooks_PassParams@3(i1, a0[], i2)
 {
 	ASSERT(i1 == 42);
 	ASSERT(!strcmp(a0, "Hello world"));
 	ASSERT(i2 == 101);
 }
 
-hook y_hooks_PassParams@2(i1, a0[], i2)
+HOOK__ y_hooks_PassParams@2(i1, a0[], i2)
 {
 	ASSERT(i1 == 42);
 	ASSERT(!strcmp(a0, "Hello world"));
 	ASSERT(i2 == 101);
 }
 
-hook y_hooks_PassParams@1(i1, a0[], i2)
+HOOK__ y_hooks_PassParams@1(i1, a0[], i2)
 {
 	ASSERT(i1 == 42);
 	ASSERT(!strcmp(a0, "Hello world"));
 	ASSERT(i2 == 101);
 }
 
-hook y_hooks_PassParams(i1, a0[], i2)
+HOOK__ y_hooks_PassParams(i1, a0[], i2)
 {
 	ASSERT(i1 == 42);
 	ASSERT(!strcmp(a0, "Hello world"));
@@ -362,7 +362,7 @@ public y_hooks_ReturnM2()
 	return -2;
 }
 
-hook y_hooks_ReturnM2()
+HOOK__ y_hooks_ReturnM2()
 {
 	YSI_g_sValue = 4;
 	return -2;
@@ -383,7 +383,7 @@ public y_hooks_ReturnM1()
 	return -1;
 }
 
-hook y_hooks_ReturnM1()
+HOOK__ y_hooks_ReturnM1()
 {
 	YSI_g_sValue = 4;
 	return -1;
@@ -404,7 +404,7 @@ public y_hooks_Return0()
 	return 0;
 }
 
-hook y_hooks_Return0()
+HOOK__ y_hooks_Return0()
 {
 	YSI_g_sValue = 4;
 	return 0;
@@ -425,7 +425,7 @@ public y_hooks_Return1()
 	return 1;
 }
 
-hook y_hooks_Return1()
+HOOK__ y_hooks_Return1()
 {
 	YSI_g_sValue = 4;
 	return 1;
@@ -440,14 +440,14 @@ Test:y_hooks_Return1()
 
 forward Ony_hooksTest3(cmd[]);
 
-hook Ony_hooksTest3@000(cmd[])
+HOOK__ Ony_hooksTest3@000(cmd[])
 {
 	++YSI_g_sValue;
 	//printf("a");
 	return 1;
 }
 
-hook Ony_hooksTest3@001(cmd[])
+HOOK__ Ony_hooksTest3@001(cmd[])
 {
 	// Called second due to forced orderings.
 	++YSI_g_sValue;
@@ -466,13 +466,13 @@ Test:y_hooks_Ony_hooksTest3()
 
 forward Ony_hooksTest1(cmd[]);
 
-hook Ony_hooksTest1@000(cmd[])
+HOOK__ Ony_hooksTest1@000(cmd[])
 {
 	++YSI_g_sValue;
 	return 1;
 }
 
-hook Ony_hooksTest1@001(cmd[])
+HOOK__ Ony_hooksTest1@001(cmd[])
 {
 	// Called second due to forced orderings.
 	++YSI_g_sValue;
@@ -490,13 +490,13 @@ Test:y_hooks_Ony_hooksTest1()
 
 forward Ony_hooksTest4(cmd[]);
 
-hook Ony_hooksTest4@000(cmd[])
+HOOK__ Ony_hooksTest4@000(cmd[])
 {
 	++YSI_g_sValue;
 	return -1;
 }
 
-hook Ony_hooksTest4@001(cmd[])
+HOOK__ Ony_hooksTest4@001(cmd[])
 {
 	// Called second due to forced orderings.
 	++YSI_g_sValue;
@@ -514,13 +514,13 @@ Test:y_hooks_Ony_hooksTest4()
 
 forward Ony_hooksTest5(cmd[]);
 
-hook Ony_hooksTest5@000(cmd[])
+HOOK__ Ony_hooksTest5@000(cmd[])
 {
 	++YSI_g_sValue;
 	return -2;
 }
 
-hook Ony_hooksTest5@001(cmd[])
+HOOK__ Ony_hooksTest5@001(cmd[])
 {
 	// Called second due to forced orderings.
 	++YSI_g_sValue;
@@ -645,7 +645,7 @@ public y_hooks_MyFunc1(a, b)
 #tryinclude "..\YSI_Coding\y_unique"
 #tryinclude "..\..\YSI_Coding\y_unique"
 
-hook y_hooks_MyFunc1(a, b)
+HOOK__ y_hooks_MyFunc1(a, b)
 {
 	// printf("Part 2 %d", a);
 	g_y_hooksVar += a + b;
@@ -654,7 +654,7 @@ hook y_hooks_MyFunc1(a, b)
 #tryinclude "..\YSI_Coding\y_unique"
 #tryinclude "..\..\YSI_Coding\y_unique"
 
-hook y_hooks_MyFunc1(a, b)
+HOOK__ y_hooks_MyFunc1(a, b)
 {
 	// printf("Part 3 %d", b);
 	g_y_hooksVar += a + b;
@@ -663,7 +663,7 @@ hook y_hooks_MyFunc1(a, b)
 #tryinclude "..\YSI_Coding\y_unique"
 #tryinclude "..\..\YSI_Coding\y_unique"
 
-hook y_hooks_MyFunc1(a, b)
+HOOK__ y_hooks_MyFunc1(a, b)
 {
 	// printf("Part 3 %d", b);
 	g_y_hooksVar += a + b;
@@ -672,7 +672,7 @@ hook y_hooks_MyFunc1(a, b)
 #tryinclude "..\YSI_Coding\y_unique"
 #tryinclude "..\..\YSI_Coding\y_unique"
 
-hook y_hooks_MyFunc1(a, b)
+HOOK__ y_hooks_MyFunc1(a, b)
 {
 	// printf("Part 3 %d", b);
 	g_y_hooksVar += a + b;
@@ -681,7 +681,7 @@ hook y_hooks_MyFunc1(a, b)
 #tryinclude "..\YSI_Coding\y_unique"
 #tryinclude "..\..\YSI_Coding\y_unique"
 
-hook y_hooks_MyFunc1(a, b)
+HOOK__ y_hooks_MyFunc1(a, b)
 {
 	// printf("Part 3 %d", b);
 	g_y_hooksVar += a + b;
@@ -691,7 +691,7 @@ forward OnPlayerEnterDynamicArea(p, a);
 
 public OnPlayerEnterDynamicArea(p, a) { g_y_hooksVar += 100; }
 
-hook OnPlayerEnterDynArea(p, a) { g_y_hooksVar += 10; }
+HOOK__ OnPlayerEnterDynArea(p, a) { g_y_hooksVar += 10; }
 
 Test:y_hooks_SpecialCases()
 {
@@ -801,14 +801,14 @@ Test:Hooks_GetDefaultReturn()
 	ASSERT(Hooks_GetDefaultReturn("OnPlayerConnect\0\0\0\0\0\0\0\0") == 1);
 }
 
-HOOK_RET:OnHookRet2() return 0;
+DEFINE_HOOK_RETURN__(OnHookRet2, 0);
 
-DEFINE_HOOK_REPLACEMENT(Replacement, Rpl);
+DEFINE_HOOK_REPLACEMENT__(Replacement, Rpl);
 
 forward OnPlayerCustomReplacement();
 public OnPlayerCustomReplacement() { g_y_hooksVar += 500; }
 
-hook OnPlayerCustomRpl() { g_y_hooksVar += 55; }
+HOOK__ OnPlayerCustomRpl() { g_y_hooksVar += 55; }
 
 Test:y_hooks_CustomReplacement()
 {
@@ -821,13 +821,13 @@ Test:y_hooks_CustomReplacement()
 	#error y_hooks tests require BAD_numargs
 #endif
 
-hook OnTestNumArgs0(a, b, c, d, e, f)
+HOOK__ OnTestNumArgs0(a, b, c, d, e, f)
 {
 	ASSERT(Hooks_NumArgs() == 6);
 	ASSERT(numargs() == 6);
 }
 
-hook OnTestNumArgs1(a, b, c, d, f)
+HOOK__ OnTestNumArgs1(a, b, c, d, f)
 {
 	ASSERT(Hooks_NumArgs() == 5);
 	ASSERT(BAD_numargs() != 5);
@@ -842,7 +842,7 @@ public OnTestNumArgs1(a, b, c, d, f)
 	ASSERT(numargs() == 5);
 }
 
-hook OnTestNumArgs2(a, b, c, f)
+HOOK__ OnTestNumArgs2(a, b, c, f)
 {
 	ASSERT(Hooks_NumArgs() == 4);
 	ASSERT(BAD_numargs() != 4);
@@ -852,7 +852,7 @@ hook OnTestNumArgs2(a, b, c, f)
 #tryinclude "..\YSI_Coding\y_unique"
 #tryinclude "..\..\YSI_Coding\y_unique"
 
-hook OnTestNumArgs2(a, b, c, f)
+HOOK__ OnTestNumArgs2(a, b, c, f)
 {
 	ASSERT(Hooks_NumArgs() == 4);
 	ASSERT(BAD_numargs() != 4);
@@ -886,22 +886,22 @@ Test:y_hooks_numargs()
 	OnTestNumArgs4(6, 1, 2, 3, 4, 5, 6);
 }
 
-hook y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_1>
+HOOK__ y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_1>
 {
 	g_y_hooksVar = strval(c[0]);
 }
 
-hook y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_2>
+HOOK__ y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_2>
 {
 	g_y_hooksVar = strval(c[5]);
 }
 
-rehook y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_3>
+REHOOK__ y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_3>
 {
 	g_y_hooksVar += strval(c[5]);
 }
 
-hook public y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_4>
+HOOK__ public y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_4>
 {
 	g_y_hooksVar = strval(c[5]);
 }

@@ -149,7 +149,7 @@ stock cb_MoveDynamicObject(Func:onMoved<i>, CB_STREAMER_TAG_OBJECT:objectid, Flo
 	return MoveDynamicObject(objectid, x, y, z, speed, rx, ry, rz);
 }
 
-hook OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid)
+HOOK__ OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid)
 {
 	new
 		Func:cb<i>;
@@ -175,7 +175,7 @@ hook OnDynamicObjectMoved(CB_STREAMER_TAG_OBJECT:objectid)
 //	
 //}
 
-hook OnPlayerPickUpDynPickup(playerid, CB_STREAMER_TAG_PICKUP:pickupid)
+HOOK__ OnPlayerPickUpDynPickup(playerid, CB_STREAMER_TAG_PICKUP:pickupid)
 {
 	new
 		Func:cb<ii>;
@@ -185,7 +185,7 @@ hook OnPlayerPickUpDynPickup(playerid, CB_STREAMER_TAG_PICKUP:pickupid)
 	}
 }
 
-hook OnPlayerEnterDynamicCP(playerid, CB_STREAMER_TAG_CP:checkpointid)
+HOOK__ OnPlayerEnterDynamicCP(playerid, CB_STREAMER_TAG_CP:checkpointid)
 {
 	new
 		Func:cb<ii>;
@@ -200,7 +200,7 @@ hook OnPlayerEnterDynamicCP(playerid, CB_STREAMER_TAG_CP:checkpointid)
 //	
 //}
 
-hook OnPlayerEnterDynRaceCP(playerid, CB_STREAMER_TAG_RACE_CP:checkpointid)
+HOOK__ OnPlayerEnterDynRaceCP(playerid, CB_STREAMER_TAG_RACE_CP:checkpointid)
 {
 	new
 		Func:cb<ii>;
@@ -215,7 +215,7 @@ hook OnPlayerEnterDynRaceCP(playerid, CB_STREAMER_TAG_RACE_CP:checkpointid)
 //	
 //}
 
-hook OnPlayerEnterDynArea(playerid, CB_STREAMER_TAG_AREA:areaid)
+HOOK__ OnPlayerEnterDynArea(playerid, CB_STREAMER_TAG_AREA:areaid)
 {
 	new
 		Func:cb<ii>;

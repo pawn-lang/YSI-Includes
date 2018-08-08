@@ -88,11 +88,12 @@ Optional plugins:
 #define @yH_public%0\32;%1(%2);%3(%4) @yH_%0%1(%2);@yH_%0%1(%2)
 #define @yH_native%0\32;%1(%2);%3(%4) @Hy_%0%1(%2);@Hy_%0%1(%2)
 
-#define hook%1(%2) forward UNIQUE_FUNCTION<@yH_%1@...>(%2);UNIQUE_FUNCTION<@yH_%1@...>(%2)
-#define rehook hook
-#define Hook:%0_%1(%2) forward public @yH_%1@%0(%2);@yH_%1@%0(%2)
+#define HOOK__%1(%2) forward UNIQUE_FUNCTION<@yH_%1@...>(%2);UNIQUE_FUNCTION<@yH_%1@...>(%2)
+#define REHOOK__ HOOK__
+//#define rehook hook
+//#define Hook:%0_%1(%2) forward public @yH_%1@%0(%2);@yH_%1@%0(%2)
 // Strip out extra spaces (nicely recursive)
-#define @yH_%0\32;%1(%2) @yH_%1(%2)
+#define @yH_%0\32; @yH_
 
 #define Y_HOOKS_CONTINUE_RETURN_1	(1)		// Continue the hook chain, return 1
 #define Y_HOOKS_CONTINUE_RETURN_0	(0)		// Continue the hook chain, return 0
@@ -105,10 +106,31 @@ Optional plugins:
 
 // Generate a function name using only ONE of the parts, so two replacements for
 // the same long name will collide at compile-time
-#define DEFINE_HOOK_REPLACEMENT(%0,%1); forward @_yH%0(); public @_yH%0() { _Hooks_AddReplacement(#%0, #%1); }
+#define DEFINE_HOOK_REPLACEMENT__(%0,%1); forward @_yH%0(); public @_yH%0() { _Hooks_AddReplacement(#%0, #%1); }
 
 // Strip spaces from the generated function name.
-#define @_yH%0\32;%1(%2) @_yH%0%1(%2)
+#define @_yH%0\32; @_yH
+#define @y_H%0\32; @y_H
 
-#define HOOK_RET:%0(%1) forward @RET%0(); public @RET%0()
+#define DEFINE_HOOK_RETURN__(%0,%1); forward @y_H%0(); public @y_H%0() { return (%1); }
+
+#if defined YSI_COMPAT || defined KEYWORD_DEFINE_HOOK_REPLACEMENT
+	#define DEFINE_HOOK_REPLACEMENT DEFINE_HOOK_REPLACEMENT__
+#endif
+
+#if defined YSI_COMPAT || defined KEYWORD_HOOK_RET
+	#define HOOK_RET:%0(%1) forward @y_H%0(); public @y_H%0()
+#endif
+
+#if defined YSI_COMPAT || defined KEYWORD_hook
+	#define hook HOOK__
+#endif
+
+#if defined YSI_COMPAT || defined KEYWORD_rehook
+	#define rehook HOOK__
+#endif
+
+#if defined YSI_COMPAT || defined KEYWORD_Hook
+	#define Hook:%0_%1(%2) forward public @yH_%1@%0(%2);@yH_%1@%0(%2)
+#endif
 
