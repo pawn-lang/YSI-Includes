@@ -124,10 +124,11 @@ forward bool:_Testing_End();
 #define TEST_NULL_EX(%0,%2)  Testing_Test((%0) == 0, (%2))
 #define TEST_N_EX(%0,%1,%2)  Testing_Test((%0) == (%1), (%2))
 
+//#define TEST_MSG "\2\2\2\2\2"
 #define TEST_FAILED "FAIL:"
 #define TEST_PASSED "PASS!"
 
-#define _Y_TESTEQ`%0` "`%0`"
+#define _Y_TESTEQ`%0` "\"%0\""
 #define _Y_TESTDQ:%9`%0"%1"%2` _Y_TESTDQ:%9`%0\x22;%1\x22;%2`
 #define _Y_TESTOB:%9`%0(%1)%2` _Y_TESTOB:%9`%0\x28;%1\x29;%2`
 
@@ -892,9 +893,9 @@ Test:y_testing_Asserts()
 	ASSERT_GE(7, y_testing_Return7());
 	ASSERT_GE(9, y_testing_Return7());
 	ASSERT_GT(9, y_testing_Return7());
-	ASSERT_SAME("iHello", y_testing_ReturnHello());
-	ASSERT_DIFF("ihello", y_testing_ReturnHello());
-	ASSERT_NEAR("ihello", y_testing_ReturnHello());
+	ASSERT_SAME("Hello", y_testing_ReturnHello());
+	ASSERT_DIFF("hello", y_testing_ReturnHello());
+	ASSERT_NEAR("hello", y_testing_ReturnHello());
 }
 
 #endif

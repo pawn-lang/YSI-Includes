@@ -81,7 +81,6 @@ Optional plugins:
 
 #if defined USE_Y_TIMERS_V1
 	#error y_timers version 1 has not worked in years!
-	#include "y_timers_v1"
 	#endinput
 #endif
 
@@ -98,6 +97,7 @@ Optional plugins:
 #endif
 
 #if defined YSI_TESTS
+	#include "..\..\YSI_Coding\y_va"
 	#include "..\y_hooks"
 	#include "y_timers_tests"
 	#include "..\y_hooks"
