@@ -82,15 +82,15 @@ TEST__ y_hashmap_Init()
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
-	ASSERT_NE(data[0][E_HASH_MAP_TEST_DATA][0], 0);
-	ASSERT_EQ(data[0][E_HASH_MAP_TEST_DATA][1], 0);
-	ASSERT_EQ(data[0][E_HASH_MAP_TEST_DATA][2], 0);
-	ASSERT_NE(data[88][E_HASH_MAP_TEST_DATA][0], 0);
-	ASSERT_EQ(data[88][E_HASH_MAP_TEST_DATA][1], 0);
-	ASSERT_EQ(data[88][E_HASH_MAP_TEST_DATA][2], 0);
-	ASSERT_EQ(data[99][E_HASH_MAP_TEST_DATA][0], 0);
-	ASSERT_EQ(data[99][E_HASH_MAP_TEST_DATA][1], 0);
-	ASSERT_EQ(data[99][E_HASH_MAP_TEST_DATA][2], 0);
+	ASSERT_NZ(data[0][E_HASH_MAP_TEST_DATA][0]);
+	ASSERT_ZE(data[0][E_HASH_MAP_TEST_DATA][1]);
+	ASSERT_ZE(data[0][E_HASH_MAP_TEST_DATA][2]);
+	ASSERT_NZ(data[88][E_HASH_MAP_TEST_DATA][0]);
+	ASSERT_ZE(data[88][E_HASH_MAP_TEST_DATA][1]);
+	ASSERT_ZE(data[88][E_HASH_MAP_TEST_DATA][2]);
+	ASSERT_ZE(data[99][E_HASH_MAP_TEST_DATA][0]);
+	ASSERT_ZE(data[99][E_HASH_MAP_TEST_DATA][1]);
+	ASSERT_ZE(data[99][E_HASH_MAP_TEST_DATA][2]);
 }
 
 TEST__ rawMemcpy()
@@ -98,7 +98,7 @@ TEST__ rawMemcpy()
 	new src[100] = "Hello there", dst[100];
 	rawMemcpy(ref(dst), ref(src), 100 * 4);
 	ASSERT(bool:dst[0]);
-	ASSERT(!strcmp(dst, "Hello there"));
+	ASSERT_SAME(dst, "Hello there");
 }
 
 TEST__ y_hashmap_Add()
@@ -108,10 +108,10 @@ TEST__ y_hashmap_Add()
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	HashMap_Add(m, "Hello", 42);
 	ASSERT(bool:data[42][E_HASH_MAP_TEST_NAME][0]);
-	ASSERT(!strcmp(data[42][E_HASH_MAP_TEST_NAME], "Hello"));
+	ASSERT_SAME(data[42][E_HASH_MAP_TEST_NAME], "Hello");
 	ASSERT_EQ(data[42][E_HASH_MAP_TEST_DATA][0], bernstein("Hello"));
-	ASSERT_EQ(data[42][E_HASH_MAP_TEST_DATA][1], 0);
-	ASSERT_EQ(data[42][E_HASH_MAP_TEST_DATA][2], 0);
+	ASSERT_ZE(data[42][E_HASH_MAP_TEST_DATA][1]);
+	ASSERT_ZE(data[42][E_HASH_MAP_TEST_DATA][2]);
 }
 
 TEST__ y_hashmap_Get1()
@@ -130,11 +130,11 @@ TEST__ y_hashmap_GetUnused1()
 	new prev;
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	prev = data[0][E_HASH_MAP_TEST_DATA][0];
-	ASSERT_NE(prev, 0);
-	ASSERT_EQ(HashMap_GetUnused(m), 0);
+	ASSERT_NZ(prev);
+	ASSERT_ZE(HashMap_GetUnused(m));
 	ASSERT_EQ(m[260], prev);
 	prev = data[1][E_HASH_MAP_TEST_DATA][0];
-	ASSERT_NE(prev, 0);
+	ASSERT_NZ(prev);
 	ASSERT_NE(prev, data[0][E_HASH_MAP_TEST_DATA][0]);
 	ASSERT_EQ(HashMap_GetUnused(m), 1);
 	ASSERT_EQ(m[260], prev);
@@ -143,7 +143,7 @@ TEST__ y_hashmap_GetUnused1()
 	ASSERT_EQ(HashMap_GetUnused(m), 4);
 	ASSERT_EQ(HashMap_GetUnused(m), 5);
 	ASSERT_EQ(HashMap_GetUnused(m), -1);
-	ASSERT_EQ(m[260], 0);
+	ASSERT_ZE(m[260]);
 }
 
 TEST__ y_hashmap_GetUnused2()
@@ -151,12 +151,12 @@ TEST__ y_hashmap_GetUnused2()
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
-	ASSERT_EQ(HashMap_GetUnused(m), 0);
+	ASSERT_ZE(HashMap_GetUnused(m));
 	ASSERT_EQ(HashMap_GetUnused(m), 1);
 	ASSERT_EQ(HashMap_GetUnused(m), 2);
 	HashMap_AddUnused(m, 2);
 	HashMap_AddUnused(m, 0);
-	ASSERT_EQ(HashMap_GetUnused(m), 0);
+	ASSERT_ZE(HashMap_GetUnused(m));
 	ASSERT_EQ(HashMap_GetUnused(m), 2);
 	ASSERT_EQ(HashMap_GetUnused(m), 3);
 	ASSERT_EQ(HashMap_GetUnused(m), 4);
@@ -217,7 +217,7 @@ TEST__ y_hashmap_GetVarious()
 	ASSERT_EQ(HashMap_Get(m, "012345678901234567"), 17);
 	ASSERT_EQ(HashMap_Get(m, "0123456789012345678"), 18);
 	ASSERT_EQ(HashMap_Get(m, "01234567890123456789"), 19);
-	ASSERT_EQ(HashMap_Get(m, "0"), 0);
+	ASSERT_ZE(HashMap_Get(m, "0"));
 	ASSERT_EQ(HashMap_Get(m, "01"), 1);
 	ASSERT_EQ(HashMap_Get(m, "012"), 2);
 	ASSERT_EQ(HashMap_Get(m, "0123"), 3);

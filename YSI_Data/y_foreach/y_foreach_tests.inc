@@ -223,7 +223,7 @@ TEST__ y_iter_Range()
 	{
 		++count;
 	}
-	ASSERT_EQ(count, 0);
+	ASSERT_ZE(count);
 	count = 0;
 	foreach (new i : Range(10, 5, -1))
 	{
@@ -367,7 +367,7 @@ TEST__ y_iter_Prev()
 	ASSERT_EQ(Iter_Next(iter, 4), 18);
 	Iter_Add(iter, 0);
 	ASSERT_EQ(Iter_Prev(iter, 0), 20);
-	ASSERT_EQ(Iter_Next(iter, 20), 0);
+	ASSERT_ZE(Iter_Next(iter, 20));
 }
 
 TEST__ y_iter_Add3()
@@ -412,7 +412,7 @@ TEST__ y_iter_Add4()
 	count = 0;
 	foreach (i : iter)
 	{
-		ASSERT_EQ(i, 0);
+		ASSERT_ZE(i);
 		++count;
 	}
 	ASSERT_EQ(count, 1);
@@ -425,7 +425,7 @@ TEST__ y_iter_Add5()
 		Iterator:iter<20>,
 		count,
 		i;
-	ASSERT_EQ(Iter_Count(iter), 0);
+	ASSERT_ZE(Iter_Count(iter));
 	for (i = 0; i != 20; ++i)
 	{
 		ASSERT_EQ(Iter_Add(iter, i), i);
@@ -451,17 +451,17 @@ TEST__ y_iter_MultiAdd1()
 		Iterator:iter<5, 15>,
 		count,
 		i = 6;
-	ASSERT_EQ(Iter_Add(iter<0>, 0), 0);
-	ASSERT_NE(Iter_Add(iter<0>, 0), 0);
+	ASSERT_ZE(Iter_Add(iter<0>, 0));
+	ASSERT_NZ(Iter_Add(iter<0>, 0));
 	ASSERT_EQ(Iter_Add(iter<0>, 1), 1);
 	// ASSERT_NE(Iter_Add(iter<i>, 2), 2);
 	ASSERT_EQ(Iter_Add(iter<2>, 2), 2);
 	ASSERT_NE(Iter_Add(iter<2>, 16), 16);
 	ASSERT_EQ(Iter_Count(iter<0>), 2);
-	ASSERT_EQ(Iter_Count(iter<1>), 0);
+	ASSERT_ZE(Iter_Count(iter<1>));
 	ASSERT_EQ(Iter_Count(iter<2>), 1);
-	ASSERT_EQ(Iter_Count(iter<3>), 0);
-	ASSERT_EQ(Iter_Count(iter<4>), 0);
+	ASSERT_ZE(Iter_Count(iter<3>));
+	ASSERT_ZE(Iter_Count(iter<4>));
 	count = 0;
 	foreach (i : iter<0>)
 	{
@@ -556,7 +556,7 @@ TEST__ y_iter_RandomRemove1()
 	ASSERT_EQ(Iter_RandomRemove(iter), cellmin);
 	ASSERT_EQ(Iter_RandomRemove(iter), cellmin);
 	ASSERT_EQ(Iter_RandomRemove(iter), cellmin);
-	ASSERT_EQ(Iter_Count(iter), 0);
+	ASSERT_ZE(Iter_Count(iter));
 }
 
 TEST__ y_iter_RandomRemove2()
@@ -580,8 +580,8 @@ TEST__ y_iter_RandomRemove2()
 	ASSERT_EQ(Iter_RandomRemove(iter[0]), cellmin);
 	ASSERT_EQ(Iter_RandomRemove(iter[0]), cellmin);
 	ASSERT_EQ(Iter_RandomRemove(iter[0]), cellmin);
-	ASSERT_EQ(Iter_Count(iter[0]), 0);
-	ASSERT_EQ(Iter_Count(iter[1]), 0);
+	ASSERT_ZE(Iter_Count(iter[0]));
+	ASSERT_ZE(Iter_Count(iter[1]));
 }
 
 TEST__ y_iter_RandomRemove3()
@@ -592,8 +592,8 @@ TEST__ y_iter_RandomRemove3()
 	ASSERT_NE(Iter_RandomRemove(iter<0>), cellmin);
 	ASSERT_EQ(Iter_RandomRemove(iter<1>), cellmin);
 	ASSERT_EQ(Iter_RandomRemove(iter<0>), cellmin);
-	ASSERT_EQ(Iter_Count(iter<0>), 0);
-	ASSERT_EQ(Iter_Count(iter<1>), 0);
+	ASSERT_ZE(Iter_Count(iter<0>));
+	ASSERT_ZE(Iter_Count(iter<1>));
 }
 
 TEST__ y_iter_RandomAdd1()
@@ -693,11 +693,11 @@ TEST__ y_iter_RandomFree1()
 		ASSERT_NE(v, 9);
 		++vals[v];
 	}
-	ASSERT_NE(vals[0], 0);
-	ASSERT_NE(vals[1], 0);
-	ASSERT_NE(vals[5], 0);
-	ASSERT_NE(vals[7], 0);
-	ASSERT_NE(vals[8], 0);
+	ASSERT_NZ(vals[0]);
+	ASSERT_NZ(vals[1]);
+	ASSERT_NZ(vals[5]);
+	ASSERT_NZ(vals[7]);
+	ASSERT_NZ(vals[8]);
 	Iter_Add(iter, 0);
 	Iter_Add(iter, 1);
 	Iter_Add(iter, 5);
@@ -727,11 +727,11 @@ TEST__ y_iter_RandomFree2()
 		ASSERT_NE(v, 9);
 		++vals[v];
 	}
-	ASSERT_NE(vals[0], 0);
-	ASSERT_NE(vals[1], 0);
-	ASSERT_NE(vals[5], 0);
-	ASSERT_NE(vals[7], 0);
-	ASSERT_NE(vals[8], 0);
+	ASSERT_NZ(vals[0]);
+	ASSERT_NZ(vals[1]);
+	ASSERT_NZ(vals[5]);
+	ASSERT_NZ(vals[7]);
+	ASSERT_NZ(vals[8]);
 	Iter_Add(iter<0>, 0);
 	Iter_Add(iter<0>, 1);
 	Iter_Add(iter<0>, 5);
@@ -766,20 +766,20 @@ TEST__ y_iter_RandomFree3()
 		ASSERT_NE(v, 9);
 		++vals[1][v];
 	}
-	ASSERT_NE(vals[0][0], 0);
-	ASSERT_NE(vals[0][1], 0);
-	ASSERT_NE(vals[0][3], 0);
-	ASSERT_NE(vals[0][5], 0);
-	ASSERT_NE(vals[0][7], 0);
-	ASSERT_NE(vals[0][8], 0);
-	ASSERT_NE(vals[0][9], 0);
-	ASSERT_NE(vals[1][0], 0);
-	ASSERT_NE(vals[1][1], 0);
-	ASSERT_NE(vals[1][2], 0);
-	ASSERT_NE(vals[1][4], 0);
-	ASSERT_NE(vals[1][5], 0);
-	ASSERT_NE(vals[1][7], 0);
-	ASSERT_NE(vals[1][8], 0);
+	ASSERT_NZ(vals[0][0]);
+	ASSERT_NZ(vals[0][1]);
+	ASSERT_NZ(vals[0][3]);
+	ASSERT_NZ(vals[0][5]);
+	ASSERT_NZ(vals[0][7]);
+	ASSERT_NZ(vals[0][8]);
+	ASSERT_NZ(vals[0][9]);
+	ASSERT_NZ(vals[1][0]);
+	ASSERT_NZ(vals[1][1]);
+	ASSERT_NZ(vals[1][2]);
+	ASSERT_NZ(vals[1][4]);
+	ASSERT_NZ(vals[1][5]);
+	ASSERT_NZ(vals[1][7]);
+	ASSERT_NZ(vals[1][8]);
 	Iter_Add(iter[0], 0);
 	Iter_Add(iter[0], 1);
 	Iter_Add(iter[0], 3);
@@ -842,23 +842,23 @@ TEST__ y_iter_Remove2()
 	Iter_Add(iter<2>, 6);
 	Iter_Add(iter<2>, 9);
 	ASSERT_EQ(Iter_First(iter<1>), 2);
-	ASSERT_EQ(Iter_First(iter<2>), 0);
+	ASSERT_ZE(Iter_First(iter<2>));
 	ASSERT_EQ(Iter_Next(iter<1>, 2), 4);
 	ASSERT_EQ(Iter_Next(iter<2>, 0), 3);
 	ASSERT_EQ(Iter_Next(iter<2>, 3), 9);
 	ASSERT_EQ(Iter_Prev(iter<1>, 4), 2);
-	ASSERT_EQ(Iter_Prev(iter<2>, 3), 0);
+	ASSERT_ZE(Iter_Prev(iter<2>, 3));
 	ASSERT_EQ(Iter_Prev(iter<2>, 9), 3);
 	ASSERT_EQ(Iter_Count(iter<1>), 3);
 	ASSERT_EQ(Iter_Count(iter<2>), 3);
 	Iter_Remove(iter<1>, 0);
 	ASSERT_EQ(Iter_First(iter<1>), 2);
-	ASSERT_EQ(Iter_First(iter<2>), 0);
+	ASSERT_ZE(Iter_First(iter<2>));
 	ASSERT_EQ(Iter_Next(iter<1>, 2), 4);
 	ASSERT_EQ(Iter_Next(iter<2>, 0), 3);
 	ASSERT_EQ(Iter_Next(iter<2>, 3), 9);
 	ASSERT_EQ(Iter_Prev(iter<1>, 4), 2);
-	ASSERT_EQ(Iter_Prev(iter<2>, 3), 0);
+	ASSERT_ZE(Iter_Prev(iter<2>, 3));
 	ASSERT_EQ(Iter_Prev(iter<2>, 9), 3);
 	ASSERT_EQ(Iter_Count(iter<1>), 3);
 	ASSERT_EQ(Iter_Count(iter<2>), 3);
@@ -998,18 +998,18 @@ TEST__ y_iter_Iter_Free()
 {
 	new
 		Iterator:iter1<60>;
-	ASSERT_EQ(Iter_Free(iter1), 0);
+	ASSERT_ZE(Iter_Free(iter1));
 	Iter_Add(iter1, 0);
 	ASSERT(Iter_Free(iter1), 0);
 	new
 		Iterator:iter2<5, 60>;
-	ASSERT_EQ(Iter_Free(iter2<>), 0);
-	ASSERT_EQ(Iter_Free(iter2<1>), 0);
-	ASSERT_EQ(Iter_Free(iter2<3>), 0);
+	ASSERT_ZE(Iter_Free(iter2<>));
+	ASSERT_ZE(Iter_Free(iter2<1>));
+	ASSERT_ZE(Iter_Free(iter2<3>));
 	Iter_Add(iter2<3>, 0);
-	ASSERT_NE(Iter_Free(iter2<>), 0);
-	ASSERT_NE(Iter_Free(iter2<1>), 0);
-	ASSERT_NE(Iter_Free(iter2<3>), 0);
+	ASSERT_NZ(Iter_Free(iter2<>));
+	ASSERT_NZ(Iter_Free(iter2<1>));
+	ASSERT_NZ(Iter_Free(iter2<3>));
 }
 
 TEST__ y_iter_Tag()
@@ -1049,7 +1049,7 @@ TEST__ y_iter_Iter_Alloc()
 {
 	new
 		Iterator:iter1<60>;
-	ASSERT_EQ(Iter_Alloc(iter1), 0);
+	ASSERT_ZE(Iter_Alloc(iter1));
 	ASSERT_EQ(Iter_Alloc(iter1), 1);
 	ASSERT_EQ(Iter_Alloc(iter1), 2);
 	ASSERT_EQ(Iter_Alloc(iter1), 3);
@@ -1090,17 +1090,17 @@ TEST__ y_iter_Normal()
 	{
 		if (i == 11 || i == 51 || i == 70 || i == 88)
 		{
-			ASSERT_NE(Test2_y_iter[i], 0);
+			ASSERT_NZ(Test2_y_iter[i]);
 		}
 		else
 		{
-			ASSERT_EQ(Test2_y_iter[i], 0);
+			ASSERT_ZE(Test2_y_iter[i]);
 		}
 	}
 	ASSERT_EQ(Iter_Count(Test1_y_iter), 4);
 	for (new i = 0; i != 50; ++i)
 	{
-		ASSERT_NE(Test2_y_iter[Iter_Random(Test1_y_iter)], 0);
+		ASSERT_NZ(Test2_y_iter[Iter_Random(Test1_y_iter)]);
 		new
 			j = Iter_Random(Test1_y_iter);
 		ASSERT(Iter_Contains(Test1_y_iter, j));
@@ -2210,7 +2210,7 @@ TEST__ y_iter_Syntax6a()
 		count = 0;
 	foreach (new i : y_iter_Syntax6(1024))
 	{
-		ASSERT_EQ(i % 1048576, 0);
+		ASSERT_ZE(i % 1048576);
 		++count;
 	}
 	ASSERT_EQ(count, 4095);
@@ -2743,7 +2743,7 @@ TEST__ y_iter_Array()
 	{
 		++count;
 	}
-	ASSERT_EQ(count, 0);
+	ASSERT_ZE(count);
 }
 
 TEST__ y_iter_Multi()
@@ -2757,7 +2757,7 @@ TEST__ y_iter_Multi()
 	{
 		++count;
 	}
-	ASSERT_EQ(count, 0);
+	ASSERT_ZE(count);
 }
 
 TEST__ y_iter_Clear()
@@ -2766,17 +2766,17 @@ TEST__ y_iter_Clear()
 		Iterator:a<30>,
 		Iterator:b<5, 30>,
 		Iterator:c<5, 30>;
-	ASSERT_EQ(Iter_Count(a), 0);
-	ASSERT_EQ(Iter_Count(b<0>), 0);
-	ASSERT_EQ(Iter_Count(b<1>), 0);
-	ASSERT_EQ(Iter_Count(b<2>), 0);
-	ASSERT_EQ(Iter_Count(b<3>), 0);
-	ASSERT_EQ(Iter_Count(b<4>), 0);
-	ASSERT_EQ(Iter_Count(c<0>), 0);
-	ASSERT_EQ(Iter_Count(c<1>), 0);
-	ASSERT_EQ(Iter_Count(c<2>), 0);
-	ASSERT_EQ(Iter_Count(c<3>), 0);
-	ASSERT_EQ(Iter_Count(c<4>), 0);
+	ASSERT_ZE(Iter_Count(a));
+	ASSERT_ZE(Iter_Count(b<0>));
+	ASSERT_ZE(Iter_Count(b<1>));
+	ASSERT_ZE(Iter_Count(b<2>));
+	ASSERT_ZE(Iter_Count(b<3>));
+	ASSERT_ZE(Iter_Count(b<4>));
+	ASSERT_ZE(Iter_Count(c<0>));
+	ASSERT_ZE(Iter_Count(c<1>));
+	ASSERT_ZE(Iter_Count(c<2>));
+	ASSERT_ZE(Iter_Count(c<3>));
+	ASSERT_ZE(Iter_Count(c<4>));
 	for (new i = 0; i != 10; ++i)
 	{
 		Iter_Add(a, i + 6);
@@ -2787,30 +2787,30 @@ TEST__ y_iter_Clear()
 	}
 	ASSERT_EQ(Iter_Count(a), 10);
 	ASSERT_EQ(Iter_Count(b<0>), 10);
-	ASSERT_EQ(Iter_Count(b<1>), 0);
-	ASSERT_EQ(Iter_Count(b<2>), 0);
+	ASSERT_ZE(Iter_Count(b<1>));
+	ASSERT_ZE(Iter_Count(b<2>));
 	ASSERT_EQ(Iter_Count(b<3>), 10);
-	ASSERT_EQ(Iter_Count(b<4>), 0);
-	ASSERT_EQ(Iter_Count(c<0>), 0);
+	ASSERT_ZE(Iter_Count(b<4>));
+	ASSERT_ZE(Iter_Count(c<0>));
 	ASSERT_EQ(Iter_Count(c<1>), 7);
-	ASSERT_EQ(Iter_Count(c<2>), 0);
-	ASSERT_EQ(Iter_Count(c<3>), 0);
+	ASSERT_ZE(Iter_Count(c<2>));
+	ASSERT_ZE(Iter_Count(c<3>));
 	ASSERT_EQ(Iter_Count(c<4>), 9);
 	Iter_Clear(a);
-	ASSERT_EQ(Iter_Count(a), 0);
+	ASSERT_ZE(Iter_Count(a));
 	Iter_Clear(b<0>);
-	ASSERT_EQ(Iter_Count(b<0>), 0);
-	ASSERT_EQ(Iter_Count(b<1>), 0);
-	ASSERT_EQ(Iter_Count(b<2>), 0);
+	ASSERT_ZE(Iter_Count(b<0>));
+	ASSERT_ZE(Iter_Count(b<1>));
+	ASSERT_ZE(Iter_Count(b<2>));
 	ASSERT_EQ(Iter_Count(b<3>), 10);
-	ASSERT_EQ(Iter_Count(b<4>), 0);
+	ASSERT_ZE(Iter_Count(b<4>));
 	Iter_Clear(c<>);
 	Iter_Clear(c< >);
-	ASSERT_EQ(Iter_Count(c<0>), 0);
-	ASSERT_EQ(Iter_Count(c<1>), 0);
-	ASSERT_EQ(Iter_Count(c<2>), 0);
-	ASSERT_EQ(Iter_Count(c<3>), 0);
-	ASSERT_EQ(Iter_Count(c<4>), 0);
+	ASSERT_ZE(Iter_Count(c<0>));
+	ASSERT_ZE(Iter_Count(c<1>));
+	ASSERT_ZE(Iter_Count(c<2>));
+	ASSERT_ZE(Iter_Count(c<3>));
+	ASSERT_ZE(Iter_Count(c<4>));
 }
 
 TEST__ y_iter_ArrayMulti()
@@ -2824,7 +2824,7 @@ TEST__ y_iter_ArrayMulti()
 	{
 		++count;
 	}
-	ASSERT_EQ(count, 0);
+	ASSERT_ZE(count);
 	count = 0;
 	// Check they are all added in the right place.
 	Iter_Add(Test5[7]<40>, 0);
@@ -2838,7 +2838,7 @@ TEST__ y_iter_ArrayMulti()
 	{
 		++count;
 	}
-	ASSERT_EQ(count, 0);
+	ASSERT_ZE(count);
 	count = 0;
 	foreach (new i : Test5[7]<40>)
 	{
@@ -2887,12 +2887,12 @@ TEST__ y_iter_ArrayMulti()
 	Iter_Remove(Test5[7]<42>, 5);
 	count = 0;
 	ASSERT_EQ(Iter_Count(Test5[7]<40>), 5);
-	ASSERT_EQ(Iter_Count(Test5[7]<42>), 0);
+	ASSERT_ZE(Iter_Count(Test5[7]<42>));
 	foreach (new i : Test5[7]<42>)
 	{
 		++count;
 	}
-	ASSERT_EQ(count, 0);
+	ASSERT_ZE(count);
 }
 
 #if _FOREACH_PLAYERS
@@ -3169,12 +3169,12 @@ TEST__ y_iter_Index2()
 	ASSERT_EQ(Iter_Index(a<2>, 10), cellmin);
 	ASSERT_EQ(Iter_Index(a<2>, 0, true), cellmin);
 	ASSERT_EQ(Iter_Index(a<2>, 10, true), cellmin);
-	ASSERT_EQ(Iter_Index(a<3>, 0), 0);
+	ASSERT_ZE(Iter_Index(a<3>, 0));
 	ASSERT_EQ(Iter_Index(a<3>, 1), 1);
 	ASSERT_EQ(Iter_Index(a<3>, 2), 2);
 	ASSERT_EQ(Iter_Index(a<3>, 3), 14);
 	ASSERT_EQ(Iter_Index(a<3>, 4), cellmin);
-	ASSERT_EQ(Iter_Index(a<3>, 4, true), 0);
+	ASSERT_ZE(Iter_Index(a<3>, 4, true));
 	ASSERT_EQ(Iter_Index(a<3>, 5), cellmin);
 	ASSERT_EQ(Iter_Index(a<3>, 5, true), 1);
 	ASSERT_EQ(Iter_Index(a<3>, 403), cellmin);
@@ -3254,15 +3254,15 @@ TEST__ y_iter_MacroLess()
 	foreach (i : y_iterDecl1()) { ASSERT_EQ(i, 5); }
 	ASSERT_EQ(i, cellmin);
 	foreach (i : y_iterDecl5()) { ASSERT_EQ(i, 5); }
-	ASSERT_EQ(i, 0);
+	ASSERT_ZE(i);
 	foreach (i : y_iterDecl3()) { ASSERT_EQ(i, 5); }
 	ASSERT_EQ(i, -1);
 	foreach (i : y_iterDecl2()) { ASSERT_EQ(i, 5); }
 	ASSERT_EQ(i, cellmin);
 	foreach (i : y_iterDecl4()) { ASSERT_EQ(i, 5); }
-	ASSERT_EQ(i, 0);
+	ASSERT_ZE(i);
 	foreach (new j : y_iterDecl6()) { ASSERT_EQ(j, 5); }
-	ASSERT_EQ(i, 0);
+	ASSERT_ZE(i);
 }
 
 iterfunc stock y_iter_yield0()
@@ -3280,21 +3280,21 @@ TEST__ y_iter_yield0a()
 		#pragma unused i
 		++count;
 	}
-	ASSERT_EQ(count, 0);
+	ASSERT_ZE(count);
 	count = 0;
 	foreach (new i : y_iter_yield0)
 	{
 		#pragma unused i
 		++count;
 	}
-	ASSERT_EQ(count, 0);
+	ASSERT_ZE(count);
 	count = 0;
 	foreach (new i : y_iter_yield0[])
 	{
 		#pragma unused i
 		++count;
 	}
-	ASSERT_EQ(count, 0);
+	ASSERT_ZE(count);
 }
 
 iterfunc stock y_iter_yield1()
@@ -3352,7 +3352,7 @@ TEST__ y_iter_yield2a()
 	count = 0;
 	foreach (new i : y_iter_yield2(10))
 	{
-		ASSERT_EQ(i % 10, 0);
+		ASSERT_ZE(i % 10);
 		++count;
 	}
 	ASSERT_EQ(count, 10);
@@ -3366,7 +3366,7 @@ TEST__ y_iter_yield2a()
 	count = 0;
 	foreach (new i : y_iter_yield2[5])
 	{
-		ASSERT_EQ(i % 5, 0);
+		ASSERT_ZE(i % 5);
 		++count;
 	}
 	ASSERT_EQ(count, 20);
@@ -3393,7 +3393,7 @@ TEST__ y_iter_yield3a()
 	count = 0;
 	foreach (new i : y_iter_yield3(10))
 	{
-		ASSERT_EQ(i % 10, 0);
+		ASSERT_ZE(i % 10);
 		++count;
 	}
 	ASSERT_EQ(count, 10);
@@ -3407,7 +3407,7 @@ TEST__ y_iter_yield3a()
 	count = 0;
 	foreach (new i : y_iter_yield3[5])
 	{
-		ASSERT_EQ(i % 5, 0);
+		ASSERT_ZE(i % 5);
 		++count;
 	}
 	ASSERT_EQ(count, 20);
@@ -3466,7 +3466,7 @@ TEST__ y_iter_yield4a()
 				++k;
 			}
 		}
-		ASSERT_EQ(k, 0); // Overflow.
+		ASSERT_ZE(k); // Overflow.
 		new
 			count = 0,
 			bool:ever = false;
@@ -3476,7 +3476,7 @@ TEST__ y_iter_yield4a()
 			++count;
 			ever = true;
 		}
-		ASSERT_EQ(count, 0); // Overflow.
+		ASSERT_ZE(count); // Overflow.
 		ASSERT(ever);
 	}
 

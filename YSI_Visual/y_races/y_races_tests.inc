@@ -76,17 +76,17 @@ new
 TEST__ y_races_Create()
 {
 	g_sRaceID = Race_Create();
-	ASSERT_EQ(g_sRaceID, 0);
+	ASSERT_ZE(g_sRaceID);
 	Race_Destroy(g_sRaceID);
 }
 
 TEST__ y_races_Destroy()
 {
 	g_sRaceID = Race_Create();
-	ASSERT_EQ(g_sRaceID, 0);
+	ASSERT_ZE(g_sRaceID);
 	Race_Destroy(g_sRaceID);
 	g_sRaceID = Race_Create();
-	ASSERT_EQ(g_sRaceID, 0);
+	ASSERT_ZE(g_sRaceID);
 	Race_Destroy(g_sRaceID);
 }
 

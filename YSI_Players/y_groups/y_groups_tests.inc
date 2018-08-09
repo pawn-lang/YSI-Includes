@@ -125,10 +125,10 @@ TEST__ y_groups_GetID()
 	new
 		Group:g = Group_Create("Group 2");
 	ASSERT_EQ(g, Group_GetID("Group 2"));
-	ASSERT(!strcmp("Group 2", Group_GetName(g)));
+	ASSERT_SAME(Group_GetName(g), "Group 2");
 	Group_Destroy(g);
 }
-
+ 
 TEST__ y_groups_GetGang0()
 {
 	new
@@ -173,7 +173,7 @@ TEST__ y_groups_Set1()
 {
 	new
 		Group:g = Group_Create("Group 7");
-	ASSERT_EQ(Group_GetCount(g), 0);
+	ASSERT_ZE(Group_GetCount(g));
 	Group_SetPlayer(g, 42, true);
 	ASSERT_TRUE(Group_GetPlayer(g, 42));
 	ASSERT_EQ(Group_GetCount(g), 1);
@@ -192,19 +192,19 @@ TEST__ y_groups_Set2()
 {
 	new
 		Group:g = Group_Create("Group 8");
-	ASSERT_EQ(Group_GetCount(g), 0);
+	ASSERT_ZE(Group_GetCount(g));
 	//new k = Group_SetPlayer(g, 42, true);
 	Group_SetPlayer(g, 42, true);
 	ASSERT_EQ(Group_GetCount(g), 1);
 	Group_SetPlayer(g, 42, false);
-	ASSERT_EQ(Group_GetCount(g), 0);
+	ASSERT_ZE(Group_GetCount(g));
 	new
 		c = 0;
 	foreach (new p : GroupMember(g))
 	{
 		++c;
 	}
-	ASSERT_EQ(c, 0);
+	ASSERT_ZE(c);
 	Group_Destroy(g);
 }
 
@@ -402,7 +402,7 @@ TEST__ y_groups_SetBalancedIn2()
 	Group_SetBalancedArray(0, g, sizeof(g));
 
 	ASSERT_EQ(Group_GetCount(g[0]), 3);
-	ASSERT_EQ(Group_GetCount(g[1]), 0);
+	ASSERT_ZE(Group_GetCount(g[1]));
 	ASSERT_EQ(Group_GetCount(g[2]), 3);
 
 	call OnPlayerDisconnect(0, 0);
@@ -444,7 +444,7 @@ TEST__ y_groups_SetBalancedIn3()
 	Group_SetBalancedArray(4, g, sizeof(g));
 
 	ASSERT_EQ(Group_GetCount(g[0]), 3);
-	ASSERT_EQ(Group_GetCount(g[1]), 0);
+	ASSERT_ZE(Group_GetCount(g[1]));
 	ASSERT_EQ(Group_GetCount(g[2]), 3);
 
 	call OnPlayerDisconnect(0, 0);

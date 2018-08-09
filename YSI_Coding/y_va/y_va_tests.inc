@@ -141,7 +141,7 @@ static stock y_va_SetTimerEx(va_args<>)
 
 TEST__ y_va_SetTimerEx()
 {
-	ASSERT_NE(y_va_SetTimerEx(5, 6, 7), 0);
+	ASSERT_NZ(y_va_SetTimerEx(5, 6, 7));
 }
 
 static stock y_va_format(dest[], size, const fmat[], va_args<>)
@@ -154,7 +154,7 @@ TEST__ y_va_format()
 	new
 		str[64];
 	y_va_format(str, sizeof (str), "Hello %d %04x %s", 99, 0x1F, "woop");
-	ASSERT(!strcmp(str, "Hello 99 001F woop"));
+	ASSERT_SAME(str, "Hello 99 001F woop");
 }
 
 static stock y_va_return(dest[], size, const fmat[], va_args<>)
@@ -167,7 +167,7 @@ TEST__ y_va_return()
 	new
 		str[YSI_MAX_STRING];
 	y_va_return(str, sizeof (str), "Hi %.3f %8.8s %8.8s", 5.5, "this is a very long string", "short");
-	ASSERT(!strcmp(str, "Hi 5.500 this is  short   "));
+	ASSERT_SAME(str, "Hi 5.500 this is  short   ");
 }
 
 static stock y_va_DoubleIndirection(dest[YSI_MAX_STRING], const fmat[], var0, var1, var2, va_args<>) //var3, var4, size = sizeof (dest))
@@ -194,7 +194,7 @@ TEST__ y_va_DoubleIndirection()
 	ASSERT_EQ(var2, 66);
 	ASSERT_EQ(var3, 77);
 	ASSERT_EQ(var4, 88);
-	ASSERT(!strcmp(dest, "77 88"));
+	ASSERT_SAME(dest, "77 88");
 }
 
 static stock bool:y_va_Locals(const real[], const fmat[], va_args<>)
@@ -262,7 +262,7 @@ static stock y_va2_Nest2(const fmat[YSI_MAX_STRING], ...)
 	new
 		dest[YSI_MAX_STRING];
 	format(dest, sizeof (dest), fmat, ___1);
-	ASSERT(!strcmp(dest, "second param second param final param"));
+	ASSERT_SAME(dest, "second param second param final param");
 }
 
 static stock y_va2_Nest1(...)
@@ -285,7 +285,7 @@ TEST__ y_va2_format()
 	new
 		str[64];
 	y_va2_format(str, sizeof (str), "Hello %d %04x %s", 99, 0x1F, "woop");
-	ASSERT(!strcmp(str, "Hello 99 001F woop"));
+	ASSERT_SAME(str, "Hello 99 001F woop");
 }
 
 static stock y_va2_return(dest[], size, const fmat[], GLOBAL_TAG_TYPES:...)
@@ -298,7 +298,7 @@ TEST__ y_va2_return()
 	new
 		str[YSI_MAX_STRING];
 	y_va2_return(str, sizeof (str), "Hi %.3f %8.8s %8.8s", 5.5, "this is a very long string", "short");
-	ASSERT(!strcmp(str, "Hi 5.500 this is  short   "));
+	ASSERT_SAME(str, "Hi 5.500 this is  short   ");
 }
 
 static stock y_va2_DoubleIndirection(dest[1040], const fmat[], var0, var1, var2, GLOBAL_TAG_TYPES:...) //var3, var4, size = sizeof (dest))
@@ -323,7 +323,7 @@ TEST__ y_va2_DoubleIndirection()
 	ASSERT_EQ(var2, 66);
 	ASSERT_EQ(var3, 77);
 	ASSERT_EQ(var4, 88);
-	ASSERT(!strcmp(dest, "77 88"));
+	ASSERT_SAME(dest, "77 88");
 }
 
 static stock y_va2_TripleIndirectionC(dest[1040], const fmat[], var0, var1, var2, GLOBAL_TAG_TYPES:...)
@@ -358,7 +358,7 @@ TEST__ y_va2_TripleIndirection()
 	ASSERT_EQ(var2, 66);
 	ASSERT_EQ(var3, 101);
 	ASSERT_EQ(var4, 88);
-	ASSERT(!strcmp(dest, "77 88"));
+	ASSERT_SAME(dest, "77 88");
 }
 
 static stock bool:y_va2_Locals(const real[], const fmat[], GLOBAL_TAG_TYPES:...)
@@ -396,17 +396,17 @@ static stock
 TEST__ y_va2_PassThree()
 {
 	y_va2_MyFunc1("Hello", "there", "world");
-	ASSERT(!strcmp(YSI_g_sDestString, "woo there world"));
+	ASSERT_SAME(YSI_g_sDestString, "woo there world");
 	y_va2_MyFunc1("In", "the", "world");
-	ASSERT(!strcmp(YSI_g_sDestString, "woo the world"));
+	ASSERT_SAME(YSI_g_sDestString, "woo the world");
 	y_va2_MyFunc1("Hello", "one", "world");
-	ASSERT(!strcmp(YSI_g_sDestString, "woo one world"));
+	ASSERT_SAME(YSI_g_sDestString, "woo one world");
 	y_va2_MyFunc1("Hello", "there", "yeah");
-	ASSERT(!strcmp(YSI_g_sDestString, "woo there yeah"));
+	ASSERT_SAME(YSI_g_sDestString, "woo there yeah");
 	y_va2_MyFunc1("Hello", "there", "5");
-	ASSERT(!strcmp(YSI_g_sDestString, "woo there 5"));
+	ASSERT_SAME(YSI_g_sDestString, "woo there 5");
 	y_va2_MyFunc1("Hello", "there", "C");
-	ASSERT(!strcmp(YSI_g_sDestString, "woo there C"));
+	ASSERT_SAME(YSI_g_sDestString, "woo there C");
 }
 
 static stock y_va2_MyFunc3(...)
@@ -458,16 +458,16 @@ TEST__ y_va_BlankFormat2()
 	new abc[32] = "WAT";
 	YSI_g_sString[0] = '\0';
 	y_va_BlankFormat2(abc);
-	ASSERT(!strcmp(YSI_g_sString, "WAT"));
+	ASSERT_SAME(YSI_g_sString, "WAT");
 	YSI_g_sString[0] = '\0';
 	y_va_BlankFormat2(abc);
-	ASSERT(!strcmp(YSI_g_sString, "WAT"));
+	ASSERT_SAME(YSI_g_sString, "WAT");
 	YSI_g_sString[0] = '\0';
 	y_va_BlankFormat2(abc);
-	ASSERT(!strcmp(YSI_g_sString, "WAT"));
+	ASSERT_SAME(YSI_g_sString, "WAT");
 	YSI_g_sString[0] = '\0';
 	y_va_BlankFormat2(abc);
-	ASSERT(!strcmp(YSI_g_sString, "WAT"));
+	ASSERT_SAME(YSI_g_sString, "WAT");
 }
 
 static stock va_return_Pass(const message[], va_args<>)
@@ -483,8 +483,8 @@ TEST__ va_return_PassParameters()
 	new
 		str[64];
 	str = va_return_Pass("Something");
-	ASSERT(!strcmp(str, "<prefix> Something"));
+	ASSERT_SAME(str, "<prefix> Something");
 	str = va_return_Pass("Something, %i", 5);
-	ASSERT(!strcmp(str, "<prefix> Something, 5"));
+	ASSERT_SAME(str, "<prefix> Something, 5");
 }
 

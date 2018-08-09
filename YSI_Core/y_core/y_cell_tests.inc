@@ -217,7 +217,7 @@ TEST__ y_cell_ReverseBits3()
 
 TEST__ y_cell_ReverseNibbles0()
 {
-	ASSERT_EQ(Cell_ReverseNibbles(0), 0);
+	ASSERT_ZE(Cell_ReverseNibbles(0));
 	ASSERT_EQ(Cell_ReverseNibbles(1), 0x10000000);
 	ASSERT_EQ(Cell_ReverseNibbles(2), 0x20000000);
 	ASSERT_EQ(Cell_ReverseNibbles(3), 0x30000000);
@@ -291,7 +291,7 @@ TEST__ y_cell_ReverseNibbles3()
 
 TEST__ y_cell_ReverseBytes0()
 {
-	ASSERT_EQ(Cell_ReverseBytes(0), 0);
+	ASSERT_ZE(Cell_ReverseBytes(0));
 	ASSERT_EQ(Cell_ReverseBytes(1), 0x01000000);
 	ASSERT_EQ(Cell_ReverseBytes(2), 0x02000000);
 	ASSERT_EQ(Cell_ReverseBytes(3), 0x03000000);
@@ -496,7 +496,7 @@ static stock y_cell_CountBits_v4(GLOBAL_TAG_TYPES:data)
 
 TEST__ y_cell_CountBits0()
 {
-	ASSERT_EQ(y_cell_CountBits_v4(0), 0);
+	ASSERT_ZE(y_cell_CountBits_v4(0));
 	ASSERT_EQ(y_cell_CountBits_v4(1), 1);
 	ASSERT_EQ(y_cell_CountBits_v4(2), 1);
 	ASSERT_EQ(y_cell_CountBits_v4(3), 2);
@@ -605,7 +605,7 @@ TEST__ y_cell_CountBits3()
 
 TEST__ y_cell_GetLowestComponent()
 {
-	ASSERT_EQ(Cell_GetLowestComponent(0), 0);
+	ASSERT_ZE(Cell_GetLowestComponent(0));
 	ASSERT_EQ(Cell_GetLowestComponent(1), 1);
 	ASSERT_EQ(Cell_GetLowestComponent(2), 2);
 	ASSERT_EQ(Cell_GetLowestComponent(6), 2);
@@ -627,10 +627,10 @@ TEST__ y_cell_GetLowestComponent()
 
 TEST__ y_cell_GetLowestBit()
 {
-	ASSERT_EQ(Cell_GetLowestBit(0), 0);
-	ASSERT_EQ(Cell_GetLowestBit(1), 0);
+	ASSERT_ZE(Cell_GetLowestBit(0));
+	ASSERT_ZE(Cell_GetLowestBit(1));
 	ASSERT_EQ(Cell_GetLowestBit(0x800), 11);
-	ASSERT_EQ(Cell_GetLowestBit(0x111), 0);
+	ASSERT_ZE(Cell_GetLowestBit(0x111));
 	ASSERT_EQ(Cell_GetLowestBit(6), 1);
 	for (new i = 0; i != 32; ++i)
 	{
@@ -648,7 +648,7 @@ TEST__ y_cell_GetLowestBit()
 
 TEST__ y_cell_GetLowestBitEx()
 {
-	ASSERT_EQ(Cell_GetLowestBitEx(0), 0);
+	ASSERT_ZE(Cell_GetLowestBitEx(0));
 	ASSERT_EQ(Cell_GetLowestBitEx(1), 1);
 	ASSERT_EQ(Cell_GetLowestBitEx(0x800), 12);
 	ASSERT_EQ(Cell_GetLowestBitEx(0x111), 1);

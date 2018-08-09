@@ -113,13 +113,13 @@ TEST__ Jagged_Rearrange_0()
 	array[0] = { 'h', 'i', '\0', 'h', 'o', 'w' };
 	array[1] = { 'a', 'r', 'e', ' ', 'y', 'o' };
 	array[2] = { 'u', '?', '\0', 'O', 'K', '\0' };
-	ASSERT(!strcmp(array[0], "hi"));
-	ASSERT(!strcmp(array[1], "are you?"));
-	ASSERT(!strcmp(array[2], "u?"));
+	ASSERT_SAME(array[0], "hi");
+	ASSERT_SAME(array[1], "are you?");
+	ASSERT_SAME(array[2], "u?");
 	Jagged_Resize(array, {0, 3}, {1, 12}, {2, 3});
-	ASSERT(!strcmp(array[0], "hi"));
-	ASSERT(!strcmp(array[1], "are yo"));
-	ASSERT(!strcmp(array[2], "u?"));
+	ASSERT_SAME(array[0], "hi");
+	ASSERT_SAME(array[1], "are yo");
+	ASSERT_SAME(array[2], "u?");
 }
 
 TEST__ Jagged_Rearrange_1()
@@ -128,13 +128,13 @@ TEST__ Jagged_Rearrange_1()
 	array[0] = { 'h', 'i', '\0', 'h', 'o', 'w' };
 	array[1] = { 'a', 'r', 'e', ' ', 'y', 'o' };
 	array[2] = { 'u', '?', '\0', 'O', 'K', '\0' };
-	ASSERT(!strcmp(array[0], "hi"));
-	ASSERT(!strcmp(array[1], "are you?"));
-	ASSERT(!strcmp(array[2], "u?"));
+	ASSERT_SAME(array[0], "hi");
+	ASSERT_SAME(array[1], "are you?");
+	ASSERT_SAME(array[2], "u?");
 	Jagged_Resize(array, {0, 3}, {1, 5}, {2, 3});
-	ASSERT(!strcmp(array[0], "hi"));
-	ASSERT(!strcmp(array[1], "are yu?"));
-	ASSERT(!strcmp(array[2], "u?"));
+	ASSERT_SAME(array[0], "hi");
+	ASSERT_SAME(array[1], "are yu?");
+	ASSERT_SAME(array[2], "u?");
 }
 
 TEST__ Jagged_Rearrange_2()
@@ -143,13 +143,13 @@ TEST__ Jagged_Rearrange_2()
 	array[0] = { 'h', 'i', '\0', 'h', 'o', 'w' };
 	array[1] = { 'a', 'r', 'e', ' ', 'y', 'o' };
 	array[2] = { 'u', '?', '\0', 'O', 'K', '\0' };
-	ASSERT(!strcmp(array[0], "hi"));
-	ASSERT(!strcmp(array[1], "are you?"));
-	ASSERT(!strcmp(array[2], "u?"));
+	ASSERT_SAME(array[0], "hi");
+	ASSERT_SAME(array[1], "are you?");
+	ASSERT_SAME(array[2], "u?");
 	Jagged_Resize(array, {0, 9}, {1, 6}, {2, 3});
-	ASSERT(!strcmp(array[0], "hi"));
-	ASSERT(!strcmp(array[1], "are you?"));
-	ASSERT(!strcmp(array[2], "u?"));
+	ASSERT_SAME(array[0], "hi");
+	ASSERT_SAME(array[1], "are you?");
+	ASSERT_SAME(array[2], "u?");
 }
 
 TEST__ Jagged_Rearrange_3()
@@ -158,13 +158,13 @@ TEST__ Jagged_Rearrange_3()
 	array[0] = { 'h', 'i', '\0', 'h', 'o', 'w' };
 	array[1] = { 'a', 'r', 'e', ' ', 'y', 'o' };
 	array[2] = { 'u', '?', '\0', 'O', 'K', '\0' };
-	ASSERT(!strcmp(array[0], "hi"));
-	ASSERT(!strcmp(array[1], "are you?"));
-	ASSERT(!strcmp(array[2], "u?"));
+	ASSERT_SAME(array[0], "hi");
+	ASSERT_SAME(array[1], "are you?");
+	ASSERT_SAME(array[2], "u?");
 	Jagged_Resize(array, {0, 9}, {2, 3});
-	ASSERT(!strcmp(array[0], "hi"));
-	ASSERT(!strcmp(array[1], "are you?"));
-	ASSERT(!strcmp(array[2], "u?"));
+	ASSERT_SAME(array[0], "hi");
+	ASSERT_SAME(array[1], "are you?");
+	ASSERT_SAME(array[2], "u?");
 }
 
 TEST__ Jagged_Rearrange_4()
@@ -173,12 +173,12 @@ TEST__ Jagged_Rearrange_4()
 	array[0] = { 'h', 'i', '\0', 'h', 'o', 'w' };
 	array[1] = { 'a', 'r', 'e', ' ', 'y', 'o' };
 	array[2] = { 'u', '?', '\0', 'O', 'K', '\0' };
-	ASSERT(!strcmp(array[0], "hi"));
-	ASSERT(!strcmp(array[1], "are you?"));
-	ASSERT(!strcmp(array[2], "u?"));
+	ASSERT_SAME(array[0], "hi");
+	ASSERT_SAME(array[1], "are you?");
+	ASSERT_SAME(array[2], "u?");
 	Jagged_Move(array, {0, 3}, {1, 12}, {2, 3});
-	ASSERT(!strcmp(array[0], "hi"));
-	ASSERT(!strcmp(array[1], "howare you?"));
-	ASSERT(!strcmp(array[2], "OK"));
+	ASSERT_SAME(array[0], "hi");
+	ASSERT_SAME(array[1], "howare you?");
+	ASSERT_SAME(array[2], "OK");
 }
 

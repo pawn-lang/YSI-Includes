@@ -46,7 +46,7 @@ TEST_COMPILE__ y_utils()
 	bernstein(str);
 	ishex(str);
 	unpack(str);
-	ASSERT_EQ(GetIP(0), 0);
+	ASSERT_ZE(GetIP(0));
 	returnstringarg(0);
 	va_return(str);
 	isnumeric(str);
@@ -59,7 +59,7 @@ forward y_utils_va_return(const str[]);
 
 public y_utils_va_return(const str[])
 {
-	ASSERT(!strcmp(str, "Hello World 42 9.455"));
+	ASSERT_SAME(str, "Hello World 42 9.455");
 	++gCalls_y_utils_va_return;
 }
 

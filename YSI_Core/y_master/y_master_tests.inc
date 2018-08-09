@@ -6,7 +6,7 @@ YSIM_NONE_GLOBAL  stock y_master_test_1(&a, &e, b[], c, string:d[])
 	#pragma unused a, e, b, c, d
 	a = c + 5;
 	e = c;
-	ASSERT(!strcmp(d, "hi"));
+	ASSERT_SAME(d, "hi");
 	return 42;
 }
 
@@ -22,7 +22,7 @@ YSIM_SERVER_FOREIGN stock y_master_test_3(&a, &e, b[], c, string:d[] = "yo");
 YSIM_SERVER_GLOBAL  stock y_master_test_3(&a, &e, b[], c, string:d[] = "yo")
 {
 	#pragma unused a, e, b, c, d
-	ASSERT(!strcmp(d, "yo"));
+	ASSERT_SAME(d, "yo");
 	a = 90;
 	return 44;
 }
@@ -45,7 +45,7 @@ TEST__ y_master_IntReturn()
 	ASSERT_EQ(y_master_test_1(a, e, b1, sizeof (b1), "hi"), 42);
 	ASSERT_EQ(a, 9);
 	ASSERT_EQ(e, 4);
-	ASSERT_EQ(y_master_test_4(a, e, b1, sizeof (b1), "hi"), 0);
+	ASSERT_ZE(y_master_test_4(a, e, b1, sizeof (b1), "hi"));
 	ASSERT_EQ(a, 9);
 	ASSERT_EQ(e, 4);
 	#if !defined YSI_NO_MASTER
@@ -56,7 +56,7 @@ TEST__ y_master_IntReturn()
 	ASSERT_EQ(y_master_test_3(a, e, b2, sizeof (b2)), 44);
 	ASSERT_EQ(a, 90);
 	ASSERT_EQ(e, 4);
-	ASSERT_EQ(y_master_test_5(a, e, b2), 0);
+	ASSERT_ZE(y_master_test_5(a, e, b2));
 	ASSERT_EQ(a, 90);
 	ASSERT_EQ(e, 4);
 }
@@ -266,8 +266,8 @@ HOOK__ OnMasterSystemInit(id)
 TEST__ y_master_Init()
 {
 	ASSERT_EQ(YSI_g_sTestVar, 6);
-	ASSERT_NE(Master_ID(), 0);
+	ASSERT_NZ(Master_ID());
 	ASSERT_EQ(_YCM_g@6, _E_YCM@y);
-	ASSERT(!strcmp(#_YCM, "@6"));
+	ASSERT_SAME(#_YCM, "@6");
 }
 

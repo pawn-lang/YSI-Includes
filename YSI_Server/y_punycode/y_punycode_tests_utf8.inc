@@ -75,17 +75,17 @@ TEST__ y_punycode_1()
 	new
 		dst[32];
 	Puny_Encode(dst, "bücher");
-	ASSERT(!strcmp(dst, "bcher-kva"));
+	ASSERT_SAME(dst, "bcher-kva");
 	Puny_Encode(dst, "büücher");
-	ASSERT(!strcmp(dst, "bcher-kvaa"));
+	ASSERT_SAME(dst, "bcher-kvaa");
 	Puny_Encode(dst, "bücüher");
-	ASSERT(!strcmp(dst, "bcher-kvab"));
+	ASSERT_SAME(dst, "bcher-kvab");
 	Puny_Encode(dst, "bücherü");
-	ASSERT(!strcmp(dst, "bcher-kvae"));
+	ASSERT_SAME(dst, "bcher-kvae");
 	Puny_Encode(dst, "ýbücher");
-	ASSERT(!strcmp(dst, "bcher-kvaf"));
+	ASSERT_SAME(dst, "bcher-kvaf");
 	Puny_Encode(dst, "übücher");
-	ASSERT(!strcmp(dst, "bcher-jvab"));
+	ASSERT_SAME(dst, "bcher-jvab");
 }
 
 /*

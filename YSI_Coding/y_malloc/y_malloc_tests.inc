@@ -128,7 +128,7 @@ TEST__ y_malloc_mset()
 {
 	MALLOC_TEST(10)
 	{
-		ASSERT_EQ(mget(a, 5), 0);
+		ASSERT_ZE(mget(a, 5));
 		mset(a, 5, 42);
 		ASSERT_EQ(mget(a, 5), 42);
 	}
@@ -141,8 +141,8 @@ TEST__ y_malloc_mget()
 		mset(a, 5, 11);
 		ASSERT_EQ(mget(a, 5), 11);
 		mset(a, 5, 42);
-		ASSERT_EQ(mget(a, 4), 0);
-		ASSERT_EQ(mget(a, 6), 0);
+		ASSERT_ZE(mget(a, 4));
+		ASSERT_ZE(mget(a, 6));
 	}
 }
 

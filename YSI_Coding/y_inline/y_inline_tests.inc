@@ -163,7 +163,7 @@ TEST__ y_inline6()
 		#if !(sizeof (g) == YSI_MAX_STRING))
 			#error sizeof (g) != YSI_MAX_STRING
 		#endif
-		ASSERT(!strcmp(g, "hello"));
+		ASSERT_SAME(g, "hello");
 	}
 	y_inline_Get(using inline func, cc);
 	Callback_Call(cc, "hello");
@@ -349,14 +349,14 @@ TEST__ Callback_Arr1()
 		cc[E_CALLBACK_DATA];
 	inline const func(&a)
 	{
-		ASSERT_EQ(a, 0);
+		ASSERT_ZE(a);
 		a = 7;
 		ASSERT_EQ(a, 7);
 	}
 	y_inline_Get(using inline func, cc);
 	new
 		a = 0;
-	ASSERT_EQ(a, 0);
+	ASSERT_ZE(a);
 	Callback_Call(cc, a);
 	ASSERT_EQ(a, 7);
 }
@@ -367,13 +367,13 @@ TEST__ Callback_Arr2()
 		cc[E_CALLBACK_DATA];
 	inline const func(string:str[])
 	{
-		ASSERT(!strcmp(str, "hello"));
+		ASSERT_SAME(str, "hello");
 	}
 	y_inline_Get(using inline func, cc);
 	new
 		str[YSI_MAX_STRING] = "hello";
 	Callback_Call(cc, str);
-	ASSERT(!strcmp(str, "hello"));
+	ASSERT_SAME(str, "hello");
 	Callback_Call(cc, "hello");
 }
 
@@ -383,16 +383,16 @@ TEST__ Callback_Arr3()
 		cc[E_CALLBACK_DATA];
 	inline const func(a)
 	{
-		ASSERT_EQ(a, 0);
+		ASSERT_ZE(a);
 		a = 7;
 		ASSERT_EQ(a, 7);
 	}
 	y_inline_Get(using inline func, cc);
 	new
 		a = 0;
-	ASSERT_EQ(a, 0);
+	ASSERT_ZE(a);
 	Callback_Call(cc, a);
-	ASSERT_EQ(a, 0);
+	ASSERT_ZE(a);
 }
 
 TEST__ Callback_Array0()
@@ -423,7 +423,7 @@ TEST__ Callback_Array1()
 	inline const func(&a, string:b[], c)
 	{
 		ASSERT_EQ(c, 6);
-		ASSERT(!strcmp(b, "hey"));
+		ASSERT_SAME(b, "hey");
 		a = 7;
 		#pragma unused a
 	}
@@ -531,7 +531,7 @@ TEST__ y_inline_Remote2()
 
 TEST__ CallStoredFunction0()
 {
-	ASSERT_EQ(CallStoredFunction(Function:0), 0);
+	ASSERT_ZE(CallStoredFunction(Function:0));
 }
 
 // Test inline functions inside hooks, in which the parameter counts are mangled
@@ -598,7 +598,7 @@ HOOK__ y_inline_InHook0@1()
 		r = 100;
 	inline func(&r2)
 	{
-		ASSERT_EQ(numargs(), 0);
+		ASSERT_ZE(numargs());
 		#pragma unused r2
 		YSI_g_sInlineTestVar0 += 1 * 2;
 		r2 = 98;
@@ -770,8 +770,8 @@ TEST__ y_inline_ParameterTypes_0()
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
 	y_inline_TestFunc_0();
-	ASSERT_EQ(Callback_Call(YSI_g_sInlineTestCB), 0);
-	ASSERT_EQ(YSI_g_sInlineTestVar2, 0);
+	ASSERT_ZE(Callback_Call(YSI_g_sInlineTestCB));
+	ASSERT_ZE(YSI_g_sInlineTestVar2);
 	ASSERT_EQ(YSI_g_sInlineTestVar3, 1);
 	Callback_Release(YSI_g_sInlineTestCB);
 }
@@ -781,8 +781,8 @@ TEST__ y_inline_ParameterTypes_1()
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
 	y_inline_TestFunc_1();
-	ASSERT_EQ(Callback_Call(YSI_g_sInlineTestCB), 0);
-	ASSERT_EQ(YSI_g_sInlineTestVar2, 0);
+	ASSERT_ZE(Callback_Call(YSI_g_sInlineTestCB));
+	ASSERT_ZE(YSI_g_sInlineTestVar2);
 	ASSERT_EQ(YSI_g_sInlineTestVar3, 1);
 	Callback_Release(YSI_g_sInlineTestCB);
 }
@@ -791,9 +791,9 @@ TEST__ y_inline_ParameterTypes_2()
 {
 	YSI_g_sInlineTestVar2 = 0;
 	YSI_g_sInlineTestVar3 = 0;
-	ASSERT_EQ(y_inline_TestFunc_2(), 0);
+	ASSERT_ZE(y_inline_TestFunc_2());
 	ASSERT_EQ(Callback_Call(YSI_g_sInlineTestCB), 1);
-	ASSERT_EQ(YSI_g_sInlineTestVar2, 0);
+	ASSERT_ZE(YSI_g_sInlineTestVar2);
 	ASSERT_EQ(YSI_g_sInlineTestVar3, 1);
 	Callback_Release(YSI_g_sInlineTestCB);
 }
@@ -804,7 +804,7 @@ TEST__ y_inline_ParameterTypes_3()
 	YSI_g_sInlineTestVar3 = 0;
 	ASSERT_EQ(y_inline_TestFunc_3(), 2);
 	ASSERT_EQ(Callback_Call(YSI_g_sInlineTestCB), 3);
-	ASSERT_EQ(YSI_g_sInlineTestVar2, 0);
+	ASSERT_ZE(YSI_g_sInlineTestVar2);
 	ASSERT_EQ(YSI_g_sInlineTestVar3, 1);
 	Callback_Release(YSI_g_sInlineTestCB);
 }
@@ -984,7 +984,7 @@ TEST__ y_inline_NewAPI2()
 			++count;
 	}
 	y_inline_ForEach(array, using inline IsFive);
-	ASSERT_EQ(count, 0);
+	ASSERT_ZE(count);
 }
 
 TEST__ y_inline_NewAPI3()
@@ -1002,7 +1002,7 @@ TEST__ y_inline_NewAPI3()
 
 y_inline_MetaData(Func:cb<iis>)
 {
-	ASSERT_EQ(Indirect_GetMeta(cb), 0);
+	ASSERT_ZE(Indirect_GetMeta(cb));
 	Indirect_SetMeta(cb, 42);
 	ASSERT_EQ(Indirect_GetMeta(cb), 42);
 	return @.cb(4, 5, "The Dummy Call");
@@ -1012,7 +1012,7 @@ TEST__ y_inline_MetaData()
 {
 	inline Dummy(a, b, string:c[])
 	{
-		ASSERT(!strcmp(c, "The Dummy Call"));
+		ASSERT_SAME(c, "The Dummy Call");
 		inline_return a + b;
 	}
 	new ret = y_inline_MetaData(using inline Dummy);

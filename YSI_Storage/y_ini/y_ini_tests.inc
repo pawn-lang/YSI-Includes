@@ -265,7 +265,7 @@ TEST__ INI_Continuation()
 	INI_IdentifyLineType("hi = hello \\\r\n", p0s, p0e, p1s, p1e, p2s, p2e);
 	INI_IdentifyLineType("world = the \\ ; Ignore me", p0s, p0e, p1s, p1e, p2s, p2e);
 	INI_IdentifyLineType("\\ whole string     ", p0s, p0e, p1s, p1e, p2s, p2e);
-	ASSERT(!strcmp(mget(YSI_g_sExtendedLine, 1), "hello world = the \\ whole string"));
+	ASSERT_SAME(mget(YSI_g_sExtendedLine, 1), "hello world = the \\ whole string");
 	// Cleanup.
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
 }
@@ -287,7 +287,7 @@ TEST__ Trim1()
 	ASSERT_EQ(end, 12);
 	start = 0, end = 13;
 	Trim("hello there ", start, end);
-	ASSERT_EQ(start, 0);
+	ASSERT_ZE(start);
 	ASSERT_EQ(end, 11);
 }
 
@@ -296,35 +296,35 @@ TEST__ INI_SetupCallbackName0()
 	new
 		dest[32];
 	INI_SetupCallbackName(dest, "%s", "", false);
-	ASSERT(!strcmp(dest, "%s"));
+	ASSERT_SAME(dest, "%s");
 	INI_SetupCallbackName(dest, "%s", "", true);
 	ASSERT_EQ(dest[0], '\0');
 	INI_SetupCallbackName(dest, "%s", "fname", true);
-	ASSERT(!strcmp(dest, "fname"));
+	ASSERT_SAME(dest, "fname");
 	INI_SetupCallbackName(dest, "hello%sthere", "", false);
-	ASSERT(!strcmp(dest, "hello%sthere"));
+	ASSERT_SAME(dest, "hello%sthere");
 	INI_SetupCallbackName(dest, "hello%sthere", "", true);
-	ASSERT(!strcmp(dest, "hellothere"));
+	ASSERT_SAME(dest, "hellothere");
 	INI_SetupCallbackName(dest, "how%sare%syou", "", false);
-	ASSERT(!strcmp(dest, "how%sareyou"));
+	ASSERT_SAME(dest, "how%sareyou");
 	INI_SetupCallbackName(dest, "how%sare%syou", "", true);
-	ASSERT(!strcmp(dest, "howare%syou"));
+	ASSERT_SAME(dest, "howare%syou");
 	INI_SetupCallbackName(dest, "hello%sthere", "fname", false);
-	ASSERT(!strcmp(dest, "hello%sthere"));
+	ASSERT_SAME(dest, "hello%sthere");
 	INI_SetupCallbackName(dest, "hello%sthere", "fname", true);
-	ASSERT(!strcmp(dest, "hellofnamethere"));
+	ASSERT_SAME(dest, "hellofnamethere");
 	INI_SetupCallbackName(dest, "how%sare%syou", "fname", false);
-	ASSERT(!strcmp(dest, "how%sarefnameyou"));
+	ASSERT_SAME(dest, "how%sarefnameyou");
 	INI_SetupCallbackName(dest, "how%sare%syou", "fname", true);
-	ASSERT(!strcmp(dest, "howfnameare%syou"));
+	ASSERT_SAME(dest, "howfnameare%syou");
 	INI_SetupCallbackName(dest, "foobar", "fname", true);
-	ASSERT(!strcmp(dest, "foobar"));
+	ASSERT_SAME(dest, "foobar");
 	INI_SetupCallbackName(dest, "foobar", "fname", false);
-	ASSERT(!strcmp(dest, "foobar"));
+	ASSERT_SAME(dest, "foobar");
 	INI_SetupCallbackName(dest, "%s%s", "fname", true);
-	ASSERT(!strcmp(dest, "fname%s"));
+	ASSERT_SAME(dest, "fname%s");
 	INI_SetupCallbackName(dest, "%s%s", "fname", false);
-	ASSERT(!strcmp(dest, "%sfname"));
+	ASSERT_SAME(dest, "%sfname");
 }
 
 TEST__ INI_SetupCallbackName1()
@@ -332,17 +332,17 @@ TEST__ INI_SetupCallbackName1()
 	new
 		dest[32];
 	INI_SetupCallbackName(dest, "%s", "there", false);
-	ASSERT(!strcmp(dest, "%s"));
+	ASSERT_SAME(dest, "%s");
 	INI_SetupCallbackName(dest, "%s", "there", true);
-	ASSERT(!strcmp(dest, "there"));
+	ASSERT_SAME(dest, "there");
 	INI_SetupCallbackName(dest, "%s%s", "there", false);
-	ASSERT(!strcmp(dest, "%sthere"));
+	ASSERT_SAME(dest, "%sthere");
 	INI_SetupCallbackName(dest, "%s%s", "there", false);
-	ASSERT(!strcmp(dest, "%sthere"));
+	ASSERT_SAME(dest, "%sthere");
 	INI_SetupCallbackName(dest, "%s%s", "there", true);
-	ASSERT(!strcmp(dest, "there%s"));
+	ASSERT_SAME(dest, "there%s");
 	INI_SetupCallbackName(dest, "%s%s", "there", true);
-	ASSERT(!strcmp(dest, "there%s"));
+	ASSERT_SAME(dest, "there%s");
 }
 
 TEST__ INI_SetupCallbackName2()
@@ -350,17 +350,17 @@ TEST__ INI_SetupCallbackName2()
 	new
 		dest[32];
 	INI_SetupCallbackName(dest, "%s", "there you", false);
-	ASSERT(!strcmp(dest, "%s"));
+	ASSERT_SAME(dest, "%s");
 	INI_SetupCallbackName(dest, "%s", "there you", true);
-	ASSERT(!strcmp(dest, "there_you"));
+	ASSERT_SAME(dest, "there_you");
 	INI_SetupCallbackName(dest, "%s%s", "there you", false);
-	ASSERT(!strcmp(dest, "%sthere_you"));
+	ASSERT_SAME(dest, "%sthere_you");
 	INI_SetupCallbackName(dest, "%s%s", "there you", false);
-	ASSERT(!strcmp(dest, "%sthere_you"));
+	ASSERT_SAME(dest, "%sthere_you");
 	INI_SetupCallbackName(dest, "%s%s", "there you", true);
-	ASSERT(!strcmp(dest, "there_you%s"));
+	ASSERT_SAME(dest, "there_you%s");
 	INI_SetupCallbackName(dest, "%s%s", "there you", true);
-	ASSERT(!strcmp(dest, "there_you%s"));
+	ASSERT_SAME(dest, "there_you%s");
 }
 
 TEST__ INI_SetupCallbackName3()
@@ -368,10 +368,10 @@ TEST__ INI_SetupCallbackName3()
 	new
 		dest[32];
 	INI_SetupCallbackName(dest, "%s%s", "hello_there you", false);
-	ASSERT(!strcmp(dest, "%shello_there_you"));
+	ASSERT_SAME(dest, "%shello_there_you");
 	INI_SetupCallbackName(dest, "%s%s", "four", false);
 	// My first conditional assertation.
-	ASSERT(!strcmp(dest, "%sfour"));
+	ASSERT_SAME(dest, "%sfour");
 }
 
 static stock
@@ -754,11 +754,11 @@ static stock DoINI_Int2()
 		INI_Int("key4", k4);
 	}
 	INI_ParseFile("YSI/test_ini/test1.ini", "Inl_%s");
-	ASSERT_EQ(k0, 0);
-	ASSERT_EQ(k1, 0);
-	ASSERT_EQ(k2, 0);
-	ASSERT_EQ(k3, 0);
-	ASSERT_EQ(k4, 0);
+	ASSERT_ZE(k0);
+	ASSERT_ZE(k1);
+	ASSERT_ZE(k2);
+	ASSERT_ZE(k3);
+	ASSERT_ZE(k4);
 	return 0;
 }
 
@@ -991,11 +991,11 @@ TEST__ INI_VariousWriting0()
 	new
 		s = INI_AddToBuffer(i, "writing", "written");
 	ASSERT_NE(s, -1);
-	ASSERT(!strcmp("writing", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("written", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "writing");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "written");
 	new
 		t = YSI_g_sINICurrentTag[i];
-	ASSERT(!strcmp("\1\0", YSI_g_sINITagBuffer[t][E_INI_TAGS_NAME], true));
+	ASSERT_NEAR(YSI_g_sINITagBuffer[t][E_INI_TAGS_NAME], "\1\0");
 	ASSERT_EQ(YSI_g_sINITagBuffer[t][E_INI_TAGS_START], s);
 	ASSERT_EQ(YSI_g_sINITagBuffer[t][E_INI_TAGS_NEXT], -1);
 	new
@@ -1014,55 +1014,55 @@ TEST__ INI_VariousWriting1()
 		s;
 	// String.
 	s = INI_WriteString(f, "vvv", "yyy");
-	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("yyy", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "vvv");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "yyy");
 	// Dec.
 	s = INI_WriteInt(f, "vvv", 57);
-	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("57", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "vvv");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "57");
 	s = INI_WriteInt(f, "vvv", cellmin);
-	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("-2147483648", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "vvv");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "-2147483648");
 	s = INI_WriteInt(f, "vvv", -99);
-	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("-99", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "vvv");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "-99");
 	// Hex.
 	s = INI_WriteHex(f, "vvv", 0x112233);
-	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("0x00112233", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "vvv");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "0x00112233");
 	s = INI_WriteHex(f, "vvv", cellmin);
-	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("0x80000000", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "vvv");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "0x80000000");
 	s = INI_WriteHex(f, "vvv", cellmax);
-	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("0x7FFFFFFF", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "vvv");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "0x7FFFFFFF");
 	// Bin.
 	s = INI_WriteBin(f, "vvv", 0);
-	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("0b0", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "vvv");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "0b0");
 	s = INI_WriteBin(f, "vvv", 1);
-	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("0b1", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "vvv");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "0b1");
 	s = INI_WriteBin(f, "vvv", -1);
-	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("0b11111111111111111111111111111111", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "vvv");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "0b11111111111111111111111111111111");
 	// Bool.
 	s = INI_WriteBool(f, "vvv", false);
-	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("false", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "vvv");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "false");
 	s = INI_WriteBool(f, "vvv", true);
-	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("true", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "vvv");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "true");
 	// Float.
 	s = INI_WriteFloat(f, "vvv", 0.0);
-	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("0.000000", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "vvv");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "0.000000");
 	s = INI_WriteFloat(f, "vvv", 0.2);
-	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("0.200000", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "vvv");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "0.200000");
 	s = INI_WriteFloat(f, "vvv", 0.2, 2);
-	ASSERT(!strcmp("vvv", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], true));
-	ASSERT(!strcmp("0.20", YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], true));
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_NAME], "vvv");
+	ASSERT_NEAR(YSI_g_sINIWriteBuffer[s][E_INI_KV_ENTRY_TEXT], "0.20");
 	INI_Close(f);
 }
 
@@ -1141,7 +1141,7 @@ forward INI_Parents(extra, file[], tag[], name[], value[]);
 
 public INI_Parents(extra, file[], tag[], name[], value[])
 {
-	ASSERT(!strcmp(file, "test7"));
+	ASSERT_SAME(file, "test7");
 	if (!strcmp(tag, "parent"))
 		extra = extra - 3;
 	else if (!strcmp(tag, "child"))
@@ -1169,22 +1169,22 @@ TEST__ INI_Parents()
 			.bPassTag  = true,
 			.bPassFile = true);
 	// Parent.
-	ASSERT(!strcmp(YSI_g_sTestParents[0][E_INI14_TEST_FIRST_KEY], "how are you?"));
-	ASSERT(!strcmp(YSI_g_sTestParents[0][E_INI14_TEST_FOURTH_KEY], "Some string...."));
+	ASSERT_SAME(YSI_g_sTestParents[0][E_INI14_TEST_FIRST_KEY], "how are you?");
+	ASSERT_SAME(YSI_g_sTestParents[0][E_INI14_TEST_FOURTH_KEY], "Some string....");
 	ASSERT_EQ(YSI_g_sTestParents[0][E_INI14_TEST_SECOND_KEY], 11);
 	ASSERT_EQ(YSI_g_sTestParents[0][E_INI14_TEST_C         ], 8);
 	ASSERT_EQ(YSI_g_sTestParents[0][E_INI14_TEST_THIRD_KEY ], 0.0);
 	ASSERT_EQ(YSI_g_sTestParents[0][E_INI14_TEST_FIFTH_KEY ], 99);
 	// Child.
-	ASSERT(!strcmp(YSI_g_sTestParents[1][E_INI14_TEST_FIRST_KEY], "how are you?"));
-	ASSERT(!strcmp(YSI_g_sTestParents[1][E_INI14_TEST_FOURTH_KEY], "Some other string...."));
+	ASSERT_SAME(YSI_g_sTestParents[1][E_INI14_TEST_FIRST_KEY], "how are you?");
+	ASSERT_SAME(YSI_g_sTestParents[1][E_INI14_TEST_FOURTH_KEY], "Some other string....");
 	ASSERT_EQ(YSI_g_sTestParents[1][E_INI14_TEST_SECOND_KEY], 11);
 	ASSERT_EQ(YSI_g_sTestParents[1][E_INI14_TEST_C         ], 9);
 	ASSERT_EQ(YSI_g_sTestParents[1][E_INI14_TEST_THIRD_KEY ], 6.6);
 	ASSERT_EQ(YSI_g_sTestParents[1][E_INI14_TEST_FIFTH_KEY ], 99);
 	// Grandchild.
-	ASSERT(!strcmp(YSI_g_sTestParents[2][E_INI14_TEST_FIRST_KEY], "how are you?"));
-	ASSERT(!strcmp(YSI_g_sTestParents[2][E_INI14_TEST_FOURTH_KEY], "Some other string...."));
+	ASSERT_SAME(YSI_g_sTestParents[2][E_INI14_TEST_FIRST_KEY], "how are you?");
+	ASSERT_SAME(YSI_g_sTestParents[2][E_INI14_TEST_FOURTH_KEY], "Some other string....");
 	ASSERT_EQ(YSI_g_sTestParents[2][E_INI14_TEST_SECOND_KEY], 12);
 	ASSERT_EQ(YSI_g_sTestParents[2][E_INI14_TEST_C         ], 10);
 	ASSERT_EQ(YSI_g_sTestParents[2][E_INI14_TEST_THIRD_KEY ], 6.6);
@@ -1192,10 +1192,10 @@ TEST__ INI_Parents()
 	// Overflow.
 	ASSERT(!YSI_g_sTestParents[3][E_INI14_TEST_FIRST_KEY][0]);
 	ASSERT(!YSI_g_sTestParents[3][E_INI14_TEST_FOURTH_KEY][0]);
-	ASSERT_EQ(YSI_g_sTestParents[3][E_INI14_TEST_SECOND_KEY], 0);
-	ASSERT_EQ(YSI_g_sTestParents[3][E_INI14_TEST_C         ], 0);
+	ASSERT_ZE(YSI_g_sTestParents[3][E_INI14_TEST_SECOND_KEY]);
+	ASSERT_ZE(YSI_g_sTestParents[3][E_INI14_TEST_C         ]);
 	ASSERT_EQ(YSI_g_sTestParents[3][E_INI14_TEST_THIRD_KEY ], 0.0);
-	ASSERT_EQ(YSI_g_sTestParents[3][E_INI14_TEST_FIFTH_KEY ], 0);
+	ASSERT_ZE(YSI_g_sTestParents[3][E_INI14_TEST_FIFTH_KEY ]);
 }
 
 static
@@ -1229,7 +1229,7 @@ TEST__ INI_BinaryData()
 			{ 0xFF0000AA, 0x67452301, 0x01234567, 0x48000000, 0x9CE0F932, 0xAD8193B8, 0xD7B99AE0, 0x10653129, 0x99999999, 0x99999999, 0x99999999, 0x99999999, 0x99999999, 0x004223BB, 0x00000000 }
 	};
 	ASSERT_EQ(YSI_g_sINI_Parse0, 888777);
-	ASSERT(!strcmp(YSI_g_sStringData, "Hello"));
+	ASSERT_SAME(YSI_g_sStringData, "Hello");
 	for (new i = 0; i != sizeof (YSI_g_sINIBinaryData[]); ++i)
 	{
 		ASSERT_EQ(YSI_g_sINIBinaryData[0][i], l_ResultData[0][i]);

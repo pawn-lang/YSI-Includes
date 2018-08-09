@@ -100,8 +100,8 @@ TEST__ y_commands_GetName()
 {
 	new
 		id = Command_GetID("y_commands_1");
-	ASSERT(!strcmp(Command_GetName(id), "y_commands_1"));
-	ASSERT_EQ(strlen(Command_GetName(-1)), 0);
+	ASSERT_SAME(Command_GetName(id), "y_commands_1");
+	ASSERT_ZE(strlen(Command_GetName(-1)));
 }
 
 TEST__ y_commands_AddAlt()
@@ -165,24 +165,24 @@ TEST__ y_commands_removable()
 {
 	YSI_g_sRemovableRan = 0;
 	Command_SetPlayerNamed("y_commands_removable", 103, true);
-	ASSERT_NE(call OnPlayerCommandText(103, "/y_commands_removable"), 0);
+	ASSERT_NZ(call OnPlayerCommandText(103, "/y_commands_removable"));
 	ASSERT_EQ(YSI_g_sRemovableRan, 1);
 	YSI_g_sRemovableRan = 0;
 	Command_SetPlayerNamed("y_commands_removable", 103, false);
 	Command_SetDeniedReturn(false);
-	ASSERT_EQ(call OnPlayerCommandText(103, "/y_commands_removable"), 0);
+	ASSERT_ZE(call OnPlayerCommandText(103, "/y_commands_removable"));
 	Command_SetDeniedReturn(true);
-	ASSERT_NE(call OnPlayerCommandText(103, "/y_commands_removable"), 0);
+	ASSERT_NZ(call OnPlayerCommandText(103, "/y_commands_removable"));
 	Command_SetDeniedReturn(false);
-	ASSERT_EQ(YSI_g_sRemovableRan, 0);
+	ASSERT_ZE(YSI_g_sRemovableRan);
 	YSI_g_sRemovableRan = 0;
 	Command_SetPlayerNamed("y_commands_removable", 103, true);
-	ASSERT_NE(call OnPlayerCommandText(103, "/y_commands_removable"), 0);
+	ASSERT_NZ(call OnPlayerCommandText(103, "/y_commands_removable"));
 	ASSERT_EQ(YSI_g_sRemovableRan, 1);
 	YSI_g_sRemovableRan = 0;
 	Command_RemoveNamed("y_commands_removable");
-	ASSERT_EQ(call OnPlayerCommandText(103, "/y_commands_removable"), 0);
-	ASSERT_EQ(YSI_g_sRemovableRan, 0);
+	ASSERT_ZE(call OnPlayerCommandText(103, "/y_commands_removable"));
+	ASSERT_ZE(YSI_g_sRemovableRan);
 }
 
 YCMD:y_commands_removable2(playerid, params[], help)
@@ -194,9 +194,9 @@ TEST__ y_commands_removable2()
 {
 	//printf("%d", YCMD:y_commands_removable2);
 	Command_SetPlayer(YCMD:y_commands_removable2, 103, true);
-	ASSERT_NE(call OnPlayerCommandText(103, "/y_commands_removable2"), 0);
+	ASSERT_NZ(call OnPlayerCommandText(103, "/y_commands_removable2"));
 	Command_Remove(YCMD:y_commands_removable2);
-	ASSERT_EQ(call OnPlayerCommandText(103, "/y_commands_removable2"), 0);
+	ASSERT_ZE(call OnPlayerCommandText(103, "/y_commands_removable2"));
 }
 
 TEST__ y_commands_count()
@@ -205,9 +205,9 @@ TEST__ y_commands_count()
 	{
 		Command_SetPlayer(i, 22, false);
 	}
-	ASSERT_EQ(Command_GetPlayerCommandCount(22), 0);
+	ASSERT_ZE(Command_GetPlayerCommandCount(22));
 	Command_SetPlayerNamed("y_commands_1", 22, true);
-	ASSERT_NE(Command_GetPlayerCommandCount(22), 0);
+	ASSERT_NZ(Command_GetPlayerCommandCount(22));
 }
 
 TEST__ y_commands_display1()
@@ -216,10 +216,10 @@ TEST__ y_commands_display1()
 	{
 		Command_SetPlayer(i, 23, false);
 	}
-	ASSERT_EQ(strlen(Command_GetDisplayNamed("y_commands_1", 23)), 0);
+	ASSERT_ZE(strlen(Command_GetDisplayNamed("y_commands_1", 23)));
 	Command_SetPlayerNamed("y_commands_1", 23, true);
-	ASSERT_NE(strlen(Command_GetDisplayNamed("y_commands_1", 23)), 0);
-	ASSERT(!strcmp(Command_GetDisplayNamed("y_commands_1", 23), "y_commands_1"));
+	ASSERT_NZ(strlen(Command_GetDisplayNamed("y_commands_1", 23)));
+	ASSERT_SAME(Command_GetDisplayNamed("y_commands_1", 23), "y_commands_1");
 }
 
 TEST__ y_commands_display2()
@@ -228,10 +228,10 @@ TEST__ y_commands_display2()
 	{
 		Command_SetPlayer(i, 23, false);
 	}
-	ASSERT_EQ(strlen(Command_GetDisplay(YCMD:y_commands_3, 23)), 0);
+	ASSERT_ZE(strlen(Command_GetDisplay(YCMD:y_commands_3, 23)));
 	Command_SetPlayer(YCMD:y_commands_3, 23, true);
-	ASSERT_NE(strlen(Command_GetDisplay(YCMD:y_commands_3, 23)), 0);
-	ASSERT(!strcmp(Command_GetDisplay(YCMD:y_commands_3, 23), "y_commands_3"));
+	ASSERT_NZ(strlen(Command_GetDisplay(YCMD:y_commands_3, 23)));
+	ASSERT_SAME(Command_GetDisplay(YCMD:y_commands_3, 23), "y_commands_3");
 }
 
 TEST__ y_commands_display3()
@@ -243,19 +243,19 @@ TEST__ y_commands_display3()
 	{
 		Command_SetPlayer(i, 25, false);
 	}
-	ASSERT_EQ(strlen(Command_GetDisplay(YCMD:y_commands_3, 25)), 0);
+	ASSERT_ZE(strlen(Command_GetDisplay(YCMD:y_commands_3, 25)));
 	// Get a name from the original.
 	Command_SetPlayer(YCMD:y_commands_alt3, 25, true);
-	ASSERT_NE(strlen(Command_GetDisplay(YCMD:y_commands_3, 25)), 0);
-	ASSERT(!strcmp(Command_GetDisplay(YCMD:y_commands_3, 25), "y_commands_alt3"));
+	ASSERT_NZ(strlen(Command_GetDisplay(YCMD:y_commands_3, 25)));
+	ASSERT_SAME(Command_GetDisplay(YCMD:y_commands_3, 25), "y_commands_alt3");
 	// Get an y_commands_alternate from a different y_commands_alternate.
 	Command_SetPlayer(YCMD:y_commands_alt7, 25, true);
-	ASSERT_NE(strlen(Command_GetDisplay(YCMD:y_commands_alt2, 25)), 0);
-	ASSERT(!strcmp(Command_GetDisplay(YCMD:y_commands_alt2, 25), "y_commands_alt7"));
+	ASSERT_NZ(strlen(Command_GetDisplay(YCMD:y_commands_alt2, 25)));
+	ASSERT_SAME(Command_GetDisplay(YCMD:y_commands_alt2, 25), "y_commands_alt7");
 	// Get the original from an y_commands_alternate.
 	Command_SetPlayer(YCMD:y_commands_3, 25, true);
-	ASSERT_NE(strlen(Command_GetDisplay(YCMD:y_commands_alt2, 25)), 0);
-	ASSERT(!strcmp(Command_GetDisplay(YCMD:y_commands_alt2, 25), "y_commands_3"));
+	ASSERT_NZ(strlen(Command_GetDisplay(YCMD:y_commands_alt2, 25)));
+	ASSERT_SAME(Command_GetDisplay(YCMD:y_commands_alt2, 25), "y_commands_3");
 }
 
 TEST__ y_commands_count3()
@@ -267,7 +267,7 @@ TEST__ y_commands_count3()
 	{
 		Command_SetPlayer(i, 26, false);
 	}
-	ASSERT_EQ(Command_GetPlayerCommandCount(26), 0);
+	ASSERT_ZE(Command_GetPlayerCommandCount(26));
 	Command_SetPlayer(YCMD:y_commands_1, 26, true);
 	ASSERT_EQ(Command_GetPlayerCommandCount(26), 1);
 	Command_SetPlayer(YCMD:y_commands_alt4, 26, true);
@@ -303,8 +303,8 @@ TEST__ y_commands_Hashing()
 	HashMap_Hash(dst0, hash0);
 	// V2.
 	len = Puny_EncodeHash(dst1, "Hello\x102;there you", hash1, .delimiter = '@');
-	ASSERT(!!strcmp(dst0, dst1));
-	ASSERT(hash0, hash1);
+	ASSERT_DIFF(dst0, dst1);
+	ASSERT_NE(hash0, hash1);
 	ASSERT_EQ(len, 11);
 }
 
@@ -319,22 +319,22 @@ YCMD:y_commands_1(playerid, cmdtext[], help)
 TEST__ y_commands_1()
 {
 	call OnPlayerConnect(142);
-	ASSERT_NE(call OnPlayerCommandText(142, "/y_commands_1"), 0);
-	ASSERT_NE(call OnPlayerCommandText(142, "/y_comMands_1"), 0);
-	ASSERT_NE(call OnPlayerCommandText(142, "/Y_COMMANDS_1"), 0);
-	ASSERT_NE(call OnPlayerCommandText(142, "/Y_commandS_1"), 0);
-	ASSERT_NE(call OnPlayerCommandText(142, "/y_Commands_1"), 0);
+	ASSERT_NZ(call OnPlayerCommandText(142, "/y_commands_1"));
+	ASSERT_NZ(call OnPlayerCommandText(142, "/y_comMands_1"));
+	ASSERT_NZ(call OnPlayerCommandText(142, "/Y_COMMANDS_1"));
+	ASSERT_NZ(call OnPlayerCommandText(142, "/Y_commandS_1"));
+	ASSERT_NZ(call OnPlayerCommandText(142, "/y_Commands_1"));
 }
 
 TEST__ y_commands_2()
 {
 	call OnPlayerConnect(143);
-	ASSERT_EQ(call OnPlayerCommandText(143, "/y_commands__NONONONO"), 0);
-	ASSERT_EQ(call OnPlayerCommandText(143, "/y_commands_0"), 0);
-	ASSERT_EQ(call OnPlayerCommandText(143, "/y_comMands_2"), 0);
-	ASSERT_EQ(call OnPlayerCommandText(143, "/Y_COMMANDS_2"), 0);
-	ASSERT_EQ(call OnPlayerCommandText(143, "/Y_commandS_I"), 0);
-	ASSERT_EQ(call OnPlayerCommandText(143, "/y_Commands_l"), 0);
+	ASSERT_ZE(call OnPlayerCommandText(143, "/y_commands__NONONONO"));
+	ASSERT_ZE(call OnPlayerCommandText(143, "/y_commands_0"));
+	ASSERT_ZE(call OnPlayerCommandText(143, "/y_comMands_2"));
+	ASSERT_ZE(call OnPlayerCommandText(143, "/Y_COMMANDS_2"));
+	ASSERT_ZE(call OnPlayerCommandText(143, "/Y_commandS_I"));
+	ASSERT_ZE(call OnPlayerCommandText(143, "/y_Commands_l"));
 }
 
 YCMD:y_commands_3(playerid, cmdtext[], help)
@@ -375,7 +375,7 @@ TEST__ y_commands_ReProcess()
 	Command_ReProcess(33, "y_commands_ReProcess", 0);
 	ASSERT_EQ(YSI_gsPlayerid, 33);
 	ASSERT_EQ(YSI_gsParams[0], '\0');
-	ASSERT_EQ(YSI_gsHelp, 0);
+	ASSERT_ZE(YSI_gsHelp);
 	// 2.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
@@ -383,7 +383,7 @@ TEST__ y_commands_ReProcess()
 	Command_ReProcess(33, "y_commands_ReProcess one", 1);
 	ASSERT_EQ(YSI_gsPlayerid, 33);
 	ASSERT_NE(YSI_gsParams[0], '\0');
-	ASSERT(!strcmp(YSI_gsParams, "one"));
+	ASSERT_SAME(YSI_gsParams, "one");
 	ASSERT_EQ(YSI_gsHelp, 1);
 	// 3.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
@@ -392,8 +392,8 @@ TEST__ y_commands_ReProcess()
 	Command_ReProcess(33, "y_commands_ReProcess two and three", 0);
 	ASSERT_EQ(YSI_gsPlayerid, 33);
 	ASSERT_NE(YSI_gsParams[0], '\0');
-	ASSERT(!strcmp(YSI_gsParams, "two and three"));
-	ASSERT_EQ(YSI_gsHelp, 0);
+	ASSERT_SAME(YSI_gsParams, "two and three");
+	ASSERT_ZE(YSI_gsHelp);
 	// 4.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
@@ -401,7 +401,7 @@ TEST__ y_commands_ReProcess()
 	Command_ReProcess(33, "y_commands_ReProcess 99", 1);
 	ASSERT_EQ(YSI_gsPlayerid, 33);
 	ASSERT_NE(YSI_gsParams[0], '\0');
-	ASSERT(!strcmp(YSI_gsParams, "99"));
+	ASSERT_SAME(YSI_gsParams, "99");
 	ASSERT_EQ(YSI_gsHelp, 1);
 	// 5.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
@@ -410,8 +410,8 @@ TEST__ y_commands_ReProcess()
 	Command_ReProcess(33, "y_commands_ReProcess yeah......", 0);
 	ASSERT_EQ(YSI_gsPlayerid, 33);
 	ASSERT_NE(YSI_gsParams[0], '\0');
-	ASSERT(!strcmp(YSI_gsParams, "yeah......"));
-	ASSERT_EQ(YSI_gsHelp, 0);
+	ASSERT_SAME(YSI_gsParams, "yeah......");
+	ASSERT_ZE(YSI_gsHelp);
 	// 6.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
@@ -419,7 +419,7 @@ TEST__ y_commands_ReProcess()
 	Command_ReProcess(33, "y_commands_ReProcess Hello World", 1);
 	ASSERT_EQ(YSI_gsPlayerid, 33);
 	ASSERT_NE(YSI_gsParams[0], '\0');
-	ASSERT(!strcmp(YSI_gsParams, "Hello World"));
+	ASSERT_SAME(YSI_gsParams, "Hello World");
 	ASSERT_EQ(YSI_gsHelp, 1);
 }
 
@@ -433,7 +433,7 @@ TEST__ y_commands_Parameters()
 	call OnPlayerCommandText(34, "/y_commands_ReProcess");
 	ASSERT_EQ(YSI_gsPlayerid, 34);
 	ASSERT_EQ(YSI_gsParams[0], '\0');
-	ASSERT_EQ(YSI_gsHelp, 0);
+	ASSERT_ZE(YSI_gsHelp);
 	// 2.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
@@ -441,8 +441,8 @@ TEST__ y_commands_Parameters()
 	call OnPlayerCommandText(34, "/y_commands_ReProcess one");
 	ASSERT_EQ(YSI_gsPlayerid, 34);
 	ASSERT_NE(YSI_gsParams[0], '\0');
-	ASSERT(!strcmp(YSI_gsParams, "one"));
-	ASSERT_EQ(YSI_gsHelp, 0);
+	ASSERT_SAME(YSI_gsParams, "one");
+	ASSERT_ZE(YSI_gsHelp);
 	// 3.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
@@ -450,8 +450,8 @@ TEST__ y_commands_Parameters()
 	call OnPlayerCommandText(34, "/y_commands_ReProcess two and three");
 	ASSERT_EQ(YSI_gsPlayerid, 34);
 	ASSERT_NE(YSI_gsParams[0], '\0');
-	ASSERT(!strcmp(YSI_gsParams, "two and three"));
-	ASSERT_EQ(YSI_gsHelp, 0);
+	ASSERT_SAME(YSI_gsParams, "two and three");
+	ASSERT_ZE(YSI_gsHelp);
 	// 4.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
@@ -459,8 +459,8 @@ TEST__ y_commands_Parameters()
 	call OnPlayerCommandText(34, "/y_commands_ReProcess 99");
 	ASSERT_EQ(YSI_gsPlayerid, 34);
 	ASSERT_NE(YSI_gsParams[0], '\0');
-	ASSERT(!strcmp(YSI_gsParams, "99"));
-	ASSERT_EQ(YSI_gsHelp, 0);
+	ASSERT_SAME(YSI_gsParams, "99");
+	ASSERT_ZE(YSI_gsHelp);
 	// 5.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
@@ -468,8 +468,8 @@ TEST__ y_commands_Parameters()
 	call OnPlayerCommandText(34, "/y_commands_ReProcess yeah......");
 	ASSERT_EQ(YSI_gsPlayerid, 34);
 	ASSERT_NE(YSI_gsParams[0], '\0');
-	ASSERT(!strcmp(YSI_gsParams, "yeah......"));
-	ASSERT_EQ(YSI_gsHelp, 0);
+	ASSERT_SAME(YSI_gsParams, "yeah......");
+	ASSERT_ZE(YSI_gsHelp);
 	// 6.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
@@ -477,8 +477,8 @@ TEST__ y_commands_Parameters()
 	call OnPlayerCommandText(34, "/y_commands_ReProcess Hello World");
 	ASSERT_EQ(YSI_gsPlayerid, 34);
 	ASSERT_NE(YSI_gsParams[0], '\0');
-	ASSERT(!strcmp(YSI_gsParams, "Hello World"));
-	ASSERT_EQ(YSI_gsHelp, 0);
+	ASSERT_SAME(YSI_gsParams, "Hello World");
+	ASSERT_ZE(YSI_gsHelp);
 }
 
 YCMD:y_commands_t1(playerid, params[], help)
@@ -528,7 +528,7 @@ TEST__ y_commands_iterator0()
 		else if (c == _:YCMD:y_commands_t111111) ++found;
 	}
 	// Very difficult to do much more.
-	ASSERT_NE(total, 0);
+	ASSERT_NZ(total);
 	ASSERT_EQ(found, 6);
 }
 
@@ -549,20 +549,20 @@ TEST__ y_commands_iterator1()
 		else if (c == _:YCMD:y_commands_t111111) ++found;
 	}
 	// Very difficult to do much more.
-	ASSERT_NE(total, 0);
+	ASSERT_NZ(total);
 	ASSERT_EQ(found, 6);
 }
 
 TEST__ y_commands_lengths()
 {
 	call OnPlayerConnect(88);
-	ASSERT_NE(call OnPlayerCommandText(88, "/y_commands_t1"), 0);
-	ASSERT_NE(call OnPlayerCommandText(88, "/y_commands_t11"), 0);
-	ASSERT_NE(call OnPlayerCommandText(88, "/y_commands_t111"), 0);
-	ASSERT_NE(call OnPlayerCommandText(88, "/y_commands_t1111"), 0);
-	ASSERT_NE(call OnPlayerCommandText(88, "/y_commands_t11111"), 0);
-	ASSERT_NE(call OnPlayerCommandText(88, "/y_commands_t111111"), 0);
-	ASSERT_EQ(call OnPlayerCommandText(88, "/y_commands_t1111111"), 0);
+	ASSERT_NZ(call OnPlayerCommandText(88, "/y_commands_t1"));
+	ASSERT_NZ(call OnPlayerCommandText(88, "/y_commands_t11"));
+	ASSERT_NZ(call OnPlayerCommandText(88, "/y_commands_t111"));
+	ASSERT_NZ(call OnPlayerCommandText(88, "/y_commands_t1111"));
+	ASSERT_NZ(call OnPlayerCommandText(88, "/y_commands_t11111"));
+	ASSERT_NZ(call OnPlayerCommandText(88, "/y_commands_t111111"));
+	ASSERT_ZE(call OnPlayerCommandText(88, "/y_commands_t1111111"));
 }
 
 #if defined Y_COMMANDS_USE_CHARS
@@ -578,12 +578,12 @@ TEST__ y_commands_lengths()
 			b = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00);
 		ASSERT_EQ(a, b);
 		call OnPlayerConnect(89);
-		ASSERT_NE(call OnPlayerCommandText(89, "/y_commands_prefix1"), 0);
-		ASSERT_NE(call OnPlayerText(89, "!y_commands_prefix1"), 0);
+		ASSERT_NZ(call OnPlayerCommandText(89, "/y_commands_prefix1"));
+		ASSERT_NZ(call OnPlayerText(89, "!y_commands_prefix1"));
 		ASSERT_EQ(Command_SetPrefix(YCMD:y_commands_prefix1, 'q'), false);
 		ASSERT_EQ(Command_SetPrefix(YCMD:y_commands_prefix1, '!'), true);
-		ASSERT_EQ(call OnPlayerCommandText(89, "/y_commands_prefix1"), 0);
-		ASSERT_EQ(call OnPlayerText(89, "!y_commands_prefix1"), 0);
+		ASSERT_ZE(call OnPlayerCommandText(89, "/y_commands_prefix1"));
+		ASSERT_ZE(call OnPlayerText(89, "!y_commands_prefix1"));
 		ASSERT_EQ(Command_GetPrefixNamed("y_commands_prefix1"), '!');
 		ASSERT(Command_IsValidPrefix('!'));
 		ASSERT(!Command_IsValidPrefix('a'));

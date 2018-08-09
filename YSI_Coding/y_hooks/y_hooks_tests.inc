@@ -299,7 +299,7 @@ public Ony_hooksTest2(cmd[])
 {
 	// Called second due to forced orderings.
 	//if (YSI_g_sValue) return YSI_g_sValue - 7;
-	ASSERT(!strcmp(cmd, "IGNORE_ME"));
+	ASSERT_SAME(cmd, "IGNORE_ME");
 	return 1;
 }
 
@@ -307,7 +307,7 @@ TEST__ y_hooks_Ony_hooksTest2()
 {
 	// Check both hooks are called.
 	YSI_g_sValue = 0;
-	ASSERT_NE(CallLocalFunction("Ony_hooksTest2", "s", "IGNORE_ME"), 0);
+	ASSERT_NZ(CallLocalFunction("Ony_hooksTest2", "s", "IGNORE_ME"));
 	ASSERT_EQ(YSI_g_sValue, 2);
 	YSI_g_sValue = 0;
 }
@@ -317,35 +317,35 @@ forward y_hooks_PassParams(i1, a0[], i2);
 public y_hooks_PassParams(i1, a0[], i2)
 {
 	ASSERT_EQ(i1, 42);
-	ASSERT(!strcmp(a0, "Hello world"));
+	ASSERT_SAME(a0, "Hello world");
 	ASSERT_EQ(i2, 101);
 }
 
 HOOK__ y_hooks_PassParams@3(i1, a0[], i2)
 {
 	ASSERT_EQ(i1, 42);
-	ASSERT(!strcmp(a0, "Hello world"));
+	ASSERT_SAME(a0, "Hello world");
 	ASSERT_EQ(i2, 101);
 }
 
 HOOK__ y_hooks_PassParams@2(i1, a0[], i2)
 {
 	ASSERT_EQ(i1, 42);
-	ASSERT(!strcmp(a0, "Hello world"));
+	ASSERT_SAME(a0, "Hello world");
 	ASSERT_EQ(i2, 101);
 }
 
 HOOK__ y_hooks_PassParams@1(i1, a0[], i2)
 {
 	ASSERT_EQ(i1, 42);
-	ASSERT(!strcmp(a0, "Hello world"));
+	ASSERT_SAME(a0, "Hello world");
 	ASSERT_EQ(i2, 101);
 }
 
 HOOK__ y_hooks_PassParams(i1, a0[], i2)
 {
 	ASSERT_EQ(i1, 42);
-	ASSERT(!strcmp(a0, "Hello world"));
+	ASSERT_SAME(a0, "Hello world");
 	ASSERT_EQ(i2, 101);
 }
 
@@ -392,7 +392,7 @@ HOOK__ y_hooks_ReturnM1()
 TEST__ y_hooks_ReturnM1()
 {
 	YSI_g_sValue = 0;
-	ASSERT_EQ(CallLocalFunction("y_hooks_ReturnM1", ""), 0);
+	ASSERT_ZE(CallLocalFunction("y_hooks_ReturnM1", ""));
 	ASSERT_EQ(YSI_g_sValue, 4);
 }
 
@@ -413,7 +413,7 @@ HOOK__ y_hooks_Return0()
 TEST__ y_hooks_Return0()
 {
 	YSI_g_sValue = 0;
-	ASSERT_EQ(CallLocalFunction("y_hooks_Return0", ""), 0);
+	ASSERT_ZE(CallLocalFunction("y_hooks_Return0", ""));
 	ASSERT_EQ(YSI_g_sValue, 8);
 }
 
@@ -459,7 +459,7 @@ TEST__ y_hooks_Ony_hooksTest3()
 {
 	// Check both hooks are called.
 	YSI_g_sValue = 0;
-	ASSERT_NE(CallLocalFunction("Ony_hooksTest3", "s", "IGNORE_ME"), 0);
+	ASSERT_NZ(CallLocalFunction("Ony_hooksTest3", "s", "IGNORE_ME"));
 	ASSERT_EQ(YSI_g_sValue, 2);
 	YSI_g_sValue = 0;
 }
@@ -483,7 +483,7 @@ TEST__ y_hooks_Ony_hooksTest1()
 {
 	// Check both hooks are called.
 	YSI_g_sValue = 0;
-	ASSERT_EQ(CallLocalFunction("Ony_hooksTest1", "s", "IGNORE_ME"), 0);
+	ASSERT_ZE(CallLocalFunction("Ony_hooksTest1", "s", "IGNORE_ME"));
 	ASSERT_EQ(YSI_g_sValue, 2);
 	YSI_g_sValue = 0;
 }
@@ -507,7 +507,7 @@ TEST__ y_hooks_Ony_hooksTest4()
 {
 	// Check only one hook is called.
 	YSI_g_sValue = 0;
-	ASSERT_EQ(CallLocalFunction("Ony_hooksTest4", "s", "IGNORE_ME"), 0);
+	ASSERT_ZE(CallLocalFunction("Ony_hooksTest4", "s", "IGNORE_ME"));
 	ASSERT_EQ(YSI_g_sValue, 1);
 	YSI_g_sValue = 0;
 }
@@ -613,7 +613,7 @@ TEST__ y_hooks_IsolateName2()
 {
 	new
 		func[32];
-	#define FUNC:%0; func = "_yH@"#%0"@";Hooks_IsolateName(func);ASSERT(!strcmp(#%0, func));
+	#define FUNC:%0; func = "_yH@"#%0"@";Hooks_IsolateName(func);ASSERT(!strcmp(func, #%0));
 	FUNC:A;
 	FUNC:AAA;
 	FUNC:AAB;
@@ -706,13 +706,13 @@ TEST__ Hooks_MakeLongName0()
 		name[64];
 	name = "OnUpd";
 	ASSERT_EQ(Hooks_MakeLongName(name), 8);
-	ASSERT(!strcmp(name, "OnUpdate"));
+	ASSERT_SAME(name, "OnUpdate");
 	name = "OnUpdD";
 	ASSERT_EQ(Hooks_MakeLongName(name), 9);
-	ASSERT(!strcmp(name, "OnUpdateD"));
+	ASSERT_SAME(name, "OnUpdateD");
 	name = "OnUpda";
 	ASSERT_EQ(Hooks_MakeLongName(name), 6);
-	ASSERT(!strcmp(name, "OnUpda"));
+	ASSERT_SAME(name, "OnUpda");
 }
 
 TEST__ Hooks_MakeLongName1()
@@ -721,25 +721,25 @@ TEST__ Hooks_MakeLongName1()
 		name[64];
 	name = "CP";
 	ASSERT_EQ(Hooks_MakeLongName(name), 10);
-	ASSERT(!strcmp(name, "Checkpoint"));
+	ASSERT_SAME(name, "Checkpoint");
 	name = "TD";
 	ASSERT_EQ(Hooks_MakeLongName(name), 8);
-	ASSERT(!strcmp(name, "TextDraw"));
+	ASSERT_SAME(name, "TextDraw");
 	name = "Upd";
 	ASSERT_EQ(Hooks_MakeLongName(name), 6);
-	ASSERT(!strcmp(name, "Update"));
+	ASSERT_SAME(name, "Update");
 	name = "Dyn";
 	ASSERT_EQ(Hooks_MakeLongName(name), 7);
-	ASSERT(!strcmp(name, "Dynamic"));
+	ASSERT_SAME(name, "Dynamic");
 	name = "Obj";
 	ASSERT_EQ(Hooks_MakeLongName(name), 6);
-	ASSERT(!strcmp(name, "Object"));
+	ASSERT_SAME(name, "Object");
 	name = "Cmd";
 	ASSERT_EQ(Hooks_MakeLongName(name), 7);
-	ASSERT(!strcmp(name, "Command"));
+	ASSERT_SAME(name, "Command");
 	name = "DynamicCP";
 	ASSERT_EQ(Hooks_MakeLongName(name), 9);
-	ASSERT(!strcmp(name, "DynamicCP"));
+	ASSERT_SAME(name, "DynamicCP");
 }
 
 TEST__ Hooks_MakeLongName2()
@@ -748,13 +748,13 @@ TEST__ Hooks_MakeLongName2()
 		name[64];
 	name = "OnUpdTDCP";
 	ASSERT_EQ(Hooks_MakeLongName(name), 26);
-	ASSERT(!strcmp(name, "OnUpdateTextDrawCheckpoint"));
+	ASSERT_SAME(name, "OnUpdateTextDrawCheckpoint");
 	name = "OnUpdTDObjCmd";
 	ASSERT_EQ(Hooks_MakeLongName(name), 29);
-	ASSERT(!strcmp(name, "OnUpdateTextDrawObjectCommand"));
+	ASSERT_SAME(name, "OnUpdateTextDrawObjectCommand");
 	name = "OnUpdTDCPObjCmd";
 	ASSERT_EQ(Hooks_MakeLongName(name), 31);
-	ASSERT(!strcmp(name, "OnUpdateTextDrawCPObjectCommand"));
+	ASSERT_SAME(name, "OnUpdateTextDrawCPObjectCommand");
 }
 
 TEST__ Hooks_MakeShortName1()
@@ -763,22 +763,22 @@ TEST__ Hooks_MakeShortName1()
 		name[64];
 	name = "OnPlayerEnterRaceCP";
 	ASSERT_EQ(Hooks_MakeShortName(name), 19);
-	ASSERT(!strcmp(name, "OnPlayerEnterRaceCP"));
+	ASSERT_SAME(name, "OnPlayerEnterRaceCP");
 	name = "OnPlayerEnterRaceCheckpoint";
 	ASSERT_EQ(Hooks_MakeShortName(name), 27);
-	ASSERT(!strcmp(name, "OnPlayerEnterRaceCheckpoint"));
+	ASSERT_SAME(name, "OnPlayerEnterRaceCheckpoint");
 	name = "OnPlayerEnterDynamicCP";
 	ASSERT_EQ(Hooks_MakeShortName(name), 22);
-	ASSERT(!strcmp(name, "OnPlayerEnterDynamicCP"));
+	ASSERT_SAME(name, "OnPlayerEnterDynamicCP");
 	name = "OnPlayerEnterDynamicRaceCheckpoint";
 	ASSERT_EQ(Hooks_MakeShortName(name), 26);
-	ASSERT(!strcmp(name, "OnPlayerEnterDynamicRaceCP"));
+	ASSERT_SAME(name, "OnPlayerEnterDynamicRaceCP");
 	name = "AAAAAAAAAAAAAAAAAAAUpdateTextDraw";
 	Hooks_MakeShortName(name);
-	ASSERT(!strcmp(name, "AAAAAAAAAAAAAAAAAAAUpdateTD"));
+	ASSERT_SAME(name, "AAAAAAAAAAAAAAAAAAAUpdateTD");
 	name = "BBBBBAAAAAAAAAAAAAAAAAAAUpdateTextDraw";
 	Hooks_MakeShortName(name);
-	ASSERT(!strcmp(name, "BBBBBAAAAAAAAAAAAAAAAAAAUpdTD"));
+	ASSERT_SAME(name, "BBBBBAAAAAAAAAAAAAAAAAAAUpdTD");
 }
 
 TEST__ Hooks_MakeShortName2()
@@ -787,17 +787,17 @@ TEST__ Hooks_MakeShortName2()
 		name[64];
 	name = "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC";
 	ASSERT_EQ(Hooks_MakeShortName(name), 43);
-	ASSERT(!strcmp(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC"));
+	ASSERT_SAME(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC");
 	name = "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCommandCCCC";
 	ASSERT_EQ(Hooks_MakeShortName(name), 45);
-	ASSERT(!strcmp(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCmdCCCC"));
+	ASSERT_SAME(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCmdCCCC");
 }
 
 TEST__ Hooks_GetDefaultReturn()
 {
 	ASSERT_EQ(Hooks_GetDefaultReturn("OnHookRet\0\0\0\0\0\0\0\0"), 1);
-	ASSERT_EQ(Hooks_GetDefaultReturn("OnPlayerCommandText\0\0\0\0\0\0\0\0"), 0);
-	ASSERT_EQ(Hooks_GetDefaultReturn("OnHookRet2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"), 0);
+	ASSERT_ZE(Hooks_GetDefaultReturn("OnPlayerCommandText\0\0\0\0\0\0\0\0"));
+	ASSERT_ZE(Hooks_GetDefaultReturn("OnHookRet2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"));
 	ASSERT_EQ(Hooks_GetDefaultReturn("OnPlayerConnect\0\0\0\0\0\0\0\0"), 1);
 }
 

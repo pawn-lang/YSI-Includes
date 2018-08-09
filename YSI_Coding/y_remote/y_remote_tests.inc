@@ -13,7 +13,7 @@ remotefunc Float:yrt_335(hi, string:you[], there[], len)
 {
 	#pragma unused hi, you, there, len
 	// Impl...
-	ASSERT(!strcmp(you, "the string passed"));
+	ASSERT_SAME(you, "the string passed");
 	return float(hi);
 }
 
@@ -64,8 +64,8 @@ remotefunc static stock string:yrt_2b(const hi, string:you[], there[], &other, &
 TEST__ y_remote_2()
 {
 	new arr[89], oo = sizeof (arr);
-	ASSERT_EQ(broadcastfunc yrt_2(789, "string", arr, oo), 0);
-	ASSERT_EQ(strlen(broadcastfunc yrt_2b(789, "string", arr, oo)), 0);
+	ASSERT_ZE(broadcastfunc yrt_2(789, "string", arr, oo));
+	ASSERT_ZE(strlen(broadcastfunc yrt_2b(789, "string", arr, oo)));
 	ASSERT_EQ(oo, sizeof (arr));
 }
 
@@ -88,7 +88,7 @@ TEST__ y_remote_4()
 TEST__ y_remote_5()
 {
 	new other = 42, arr[] = {5, 6, 7};
-	ASSERT(!strcmp("Hello World", yrt_5(10, "hi", arr, sizeof (arr), other)));
+	ASSERT_SAME(yrt_5(10, "hi", arr, sizeof (arr), other), "Hello World");
 	ASSERT_EQ(other, 47);
 }
 

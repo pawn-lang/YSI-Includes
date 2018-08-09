@@ -193,7 +193,7 @@ TEST__ FUNC_FoldR1()
 		a0[10] = { 0,  1,  2, ...},
 		ret;
 	ret = FoldR({_0 * _1}, a0, 10);
-	ASSERT_EQ(ret, 0);
+	ASSERT_ZE(ret);
 }
 
 TEST__ FUNC_FoldR2()

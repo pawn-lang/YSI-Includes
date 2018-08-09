@@ -104,7 +104,7 @@ TEST__ y_svar_1D()
 		if (y_svar_Test1D[i] != i) ++fails;
 		y_svar_Test1D[i] = i;
 	}
-	ASSERT_EQ(fails, 0);
+	ASSERT_ZE(fails);
 }
 
 TEST__ y_svar_2D()
@@ -120,7 +120,7 @@ TEST__ y_svar_2D()
 			y_svar_Test2D[i][j] = i * j;
 		}
 	}
-	ASSERT_EQ(fails, 0);
+	ASSERT_ZE(fails);
 }
 
 TEST__ y_svar_2DEnum()
@@ -137,7 +137,7 @@ TEST__ y_svar_2DEnum()
 		if (strcmp(y_svar_Test2DEnum[i][y_svar_E_TEST_C], "SOME STORED DATA") || !y_svar_Test2DEnum[i][y_svar_E_TEST_C][0]) ++fails;
 		strcpy(y_svar_Test2DEnum[i][y_svar_E_TEST_C], "SOME STORED DATA", 24);
 	}
-	ASSERT_EQ(fails, 0);
+	ASSERT_ZE(fails);
 }
 
 TEST__ y_svar_Enum2D()
@@ -150,5 +150,5 @@ TEST__ y_svar_Enum2D()
 		if (y_svar_TestEnum2D[y_svar_E_TEST_A][i] != i + 101) ++fails;
 		y_svar_TestEnum2D[y_svar_E_TEST_A][i] = i + 101;
 	}
-	ASSERT_EQ(fails, 0);
+	ASSERT_ZE(fails);
 }
