@@ -152,20 +152,17 @@ forward bool:_Testing_End();
 #define Y_TESTING_AFTER _A<y@_Q>
 
 // Numbers.
-#define ASSERT_EQ(%1,%0) Testing_Test(YSI_g_TestResult == (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 == %0`, (YSI_g_TestResult = (%1)))
-#define ASSERT_NE(%1,%0) Testing_Test(YSI_g_TestResult != (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 != %0`, (YSI_g_TestResult = (%1)))
-#define ASSERT_LE(%1,%0) Testing_Test(YSI_g_TestResult <= (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 <= %0`, (YSI_g_TestResult = (%1)))
-#define ASSERT_LT(%1,%0) Testing_Test(YSI_g_TestResult <  (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 <  %0`, (YSI_g_TestResult = (%1)))
-#define ASSERT_GE(%1,%0) Testing_Test(YSI_g_TestResult >= (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 >= %0`, (YSI_g_TestResult = (%1)))
-#define ASSERT_GT(%1,%0) Testing_Test(YSI_g_TestResult >  (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 >  %0`, (YSI_g_TestResult = (%1)))
+#define ASSERT_EQ(%1,%0) Testing_Test(J@ == (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 == %0`, (J@ = (%1)))
+#define ASSERT_NE(%1,%0) Testing_Test(J@ != (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 != %0`, (J@ = (%1)))
+#define ASSERT_LE(%1,%0) Testing_Test(J@ <= (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 <= %0`, (J@ = (%1)))
+#define ASSERT_LT(%1,%0) Testing_Test(J@ <  (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 <  %0`, (J@ = (%1)))
+#define ASSERT_GE(%1,%0) Testing_Test(J@ >= (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 >= %0`, (J@ = (%1)))
+#define ASSERT_GT(%1,%0) Testing_Test(J@ >  (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 >  %0`, (J@ = (%1)))
 
 // Strings.
 #define ASSERT_SAME(%1,%0) Testing_Test(strcmp(Q@, (%0)      ) == 0, "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 == %0`, (strunpack(Q@, (%1)), Q@))
 #define ASSERT_DIFF(%1,%0) Testing_Test(strcmp(Q@, (%0)      ) != 0, "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 != %0`, (strunpack(Q@, (%1)), Q@))
 #define ASSERT_NEAR(%1,%0) Testing_Test(strcmp(Q@, (%0), true) == 0, "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 != %0`, (strunpack(Q@, (%1)), Q@))
-
-stock
-	YSI_g_TestResult;
 
 static stock
 	YSI_g_sCurTest = 0,
