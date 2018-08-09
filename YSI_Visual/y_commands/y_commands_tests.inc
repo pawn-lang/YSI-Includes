@@ -134,6 +134,8 @@ TEST__ y_commands_Perms()
 	ASSERT(!Command_GetPlayer(id, 101));
 	ASSERT(!Command_GetPlayerNamed("y_commands_1", 101));
 	Command_SetPlayerNamed("y_commands_1", 101, true);
+	printf("%d", Command_Find("y_commands_1"));
+	printf("%d", id);
 	ASSERT(Command_GetPlayer(id, 101));
 	ASSERT(Command_GetPlayerNamed("y_commands_1", 101));
 }
