@@ -164,9 +164,9 @@ forward bool:_Testing_End();
 #define ASSERT_NZ(%1) Testing_Test(J@ != 0, "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 != 0`, (J@ = (%1)))
 
 // Strings.
-#define ASSERT_SAME(%1,%0) Testing_Test(strcmp(Q@, (%0)      ) == 0, "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 == %0`, (strunpack(Q@, (%1)), Q@))
-#define ASSERT_DIFF(%1,%0) Testing_Test(strcmp(Q@, (%0)      ) != 0, "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 != %0`, (strunpack(Q@, (%1)), Q@))
-#define ASSERT_NEAR(%1,%0) Testing_Test(strcmp(Q@, (%0), true) == 0, "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 ~= %0`, (strunpack(Q@, (%1)), Q@))
+#define ASSERT_SAME(%1,%0) Testing_Test(Q@[0] != '\0' && strcmp(Q@, (%0)      ) == 0, "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 == %0`, (strunpack(Q@, (%1)), Q@))
+#define ASSERT_DIFF(%1,%0) Testing_Test(Q@[0] == '\0' || strcmp(Q@, (%0)      ) != 0, "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 != %0`, (strunpack(Q@, (%1)), Q@))
+#define ASSERT_NEAR(%1,%0) Testing_Test(Q@[0] != '\0' && strcmp(Q@, (%0), true) == 0, "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 ~= %0`, (strunpack(Q@, (%1)), Q@))
 
 static stock
 	YSI_g_sCurTest = 0,
@@ -841,9 +841,9 @@ stock Testing_RunAll()
 
 stock Testing_TestRedirect(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
-	ASSERT_EQ(x, bool:YSI_g_sTestResult);
-	ASSERT_NE(str[0], '\0');
-	ASSERT(! strcmp(str, "%s %s", false, 5));
+	ASSERT(x == bool:YSI_g_sTestResult);
+	ASSERT(str[0] != '\0');
+	ASSERT(!strcmp(str, "%s %s", false, 5));
 }
 
 TEST__ y_testing_2()
