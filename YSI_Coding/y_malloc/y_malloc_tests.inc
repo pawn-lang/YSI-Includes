@@ -88,7 +88,7 @@ TEST__ y_malloc_2_100()
 		Alloc:b = malloc(100);
 	ASSERT(bool:b);
 	free(a);
-	ASSERT(a == b);
+	ASSERT_EQ(a, b);
 }
 
 TEST__ y_malloc_2000()
@@ -118,7 +118,7 @@ TEST__ y_malloc_Loads()
 	// Allocate slightly more memory than we have room for.
 	new
 		Alloc:a = malloc(MALLOC_MEMORY + 1);
-	ASSERT(a == NO_ALLOC);
+	ASSERT_EQ(a, NO_ALLOC);
 	ASSERT(!free(a));
 }
 
@@ -128,9 +128,9 @@ TEST__ y_malloc_mset()
 {
 	MALLOC_TEST(10)
 	{
-		ASSERT(mget(a, 5) == 0);
+		ASSERT_EQ(mget(a, 5), 0);
 		mset(a, 5, 42);
-		ASSERT(mget(a, 5) == 42);
+		ASSERT_EQ(mget(a, 5), 42);
 	}
 }
 
@@ -139,10 +139,10 @@ TEST__ y_malloc_mget()
 	MALLOC_TEST(10)
 	{
 		mset(a, 5, 11);
-		ASSERT(mget(a, 5) == 11);
+		ASSERT_EQ(mget(a, 5), 11);
 		mset(a, 5, 42);
-		ASSERT(mget(a, 4) == 0);
-		ASSERT(mget(a, 6) == 0);
+		ASSERT_EQ(mget(a, 4), 0);
+		ASSERT_EQ(mget(a, 6), 0);
 	}
 }
 
@@ -150,19 +150,19 @@ TEST__ y_malloc_SlotSize()
 {
 	MALLOC_TEST(10)
 	{
-		ASSERT(Malloc_SlotSize(a) == 10);
+		ASSERT_EQ(Malloc_SlotSize(a), 10);
 	}
 	MALLOC_TEST(100)
 	{
-		ASSERT(Malloc_SlotSize(a) == 100);
+		ASSERT_EQ(Malloc_SlotSize(a), 100);
 	}
 	MALLOC_TEST(1000)
 	{
-		ASSERT(Malloc_SlotSize(a) == 1000);
+		ASSERT_EQ(Malloc_SlotSize(a), 1000);
 	}
 	MALLOC_TEST(1)
 	{
-		ASSERT(Malloc_SlotSize(a) == 1);
+		ASSERT_EQ(Malloc_SlotSize(a), 1);
 	}
 }
 
@@ -173,14 +173,14 @@ TEST__ y_malloc_msets()
 		str1[] = !"2222   ";
 	MALLOC_TEST(10)
 	{
-		ASSERT(msets(a, 0, str0, false) == 8);
-		ASSERT(mget(a, 0) == str0[0]);
-		ASSERT(msets(a, 0, str1, false) == 8);
-		ASSERT(mget(a, 0) == str1{0});
-		ASSERT(msets(a, 0, str0, true) == 8 char);
-		ASSERT(mget(a, 0) == ('1' << 24) | ('1' << 16) | ('1' << 08) | ('1' << 00));
-		ASSERT(msets(a, 0, str1, true) == 8 char);
-		ASSERT(mget(a, 0) == str1[0]);
+		ASSERT_EQ(msets(a, 0, str0, false), 8);
+		ASSERT_EQ(mget(a, 0), str0[0]);
+		ASSERT_EQ(msets(a, 0, str1, false), 8);
+		ASSERT_EQ(mget(a, 0), str1{0});
+		ASSERT_EQ(msets(a, 0, str0, true), 8 char);
+		ASSERT_EQ(mget(a, 0), ('1' << 24) | ('1' << 16) | ('1' << 08) | ('1' << 00));
+		ASSERT_EQ(msets(a, 0, str1, true), 8 char);
+		ASSERT_EQ(mget(a, 0), str1[0]);
 	}
 }
 
@@ -194,16 +194,16 @@ TEST__ y_malloc_mgets()
 	{
 		msets(a, 0, str0, false);
 		mgets(str2, sizeof (str2), a, 0, false);
-		ASSERT(str2[0] == '1');
+		ASSERT_EQ(str2[0], '1');
 		msets(a, 0, str0, false);
 		mgets(str2, sizeof (str2), a, 0, true);
-		ASSERT(str2{0} == '1');
+		ASSERT_EQ(str2{0}, '1');
 		msets(a, 0, str0, true);
 		mgets(str2, sizeof (str2), a, 0, false);
-		ASSERT(str2[0] == '1');
+		ASSERT_EQ(str2[0], '1');
 		msets(a, 0, str0, true);
 		mgets(str2, sizeof (str2), a, 0, true);
-		ASSERT(str2{0} == '1');
+		ASSERT_EQ(str2{0}, '1');
 	}
 }
 
@@ -244,9 +244,9 @@ TEST__ y_malloc_NewS_0()
 	ASSERT(bool:a);
 	if (a)
 	{
-		ASSERT(mget(a, 0) == 'H');
-		ASSERT(mget(a, 5) == ' ');
-		ASSERT(mget(a, 11) == '\0');
+		ASSERT_EQ(mget(a, 0), 'H');
+		ASSERT_EQ(mget(a, 5), ' ');
+		ASSERT_EQ(mget(a, 11), '\0');
 		free(a);
 	}
 }
@@ -260,9 +260,9 @@ TEST__ y_malloc_NewS_1()
 	{
 		static const
 			b[12 char] = !"Hello There";
-		ASSERT(mget(a, 0) == b[0]);
-		ASSERT(mget(a, 1) == b[1]);
-		ASSERT(mget(a, 2) == b[2]);
+		ASSERT_EQ(mget(a, 0), b[0]);
+		ASSERT_EQ(mget(a, 1), b[1]);
+		ASSERT_EQ(mget(a, 2), b[2]);
 		free(a);
 	}
 }

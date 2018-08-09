@@ -82,15 +82,15 @@ TEST__ y_hashmap_Init()
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
-	ASSERT(data[0][E_HASH_MAP_TEST_DATA][0] != 0);
-	ASSERT(data[0][E_HASH_MAP_TEST_DATA][1] == 0);
-	ASSERT(data[0][E_HASH_MAP_TEST_DATA][2] == 0);
-	ASSERT(data[88][E_HASH_MAP_TEST_DATA][0] != 0);
-	ASSERT(data[88][E_HASH_MAP_TEST_DATA][1] == 0);
-	ASSERT(data[88][E_HASH_MAP_TEST_DATA][2] == 0);
-	ASSERT(data[99][E_HASH_MAP_TEST_DATA][0] == 0);
-	ASSERT(data[99][E_HASH_MAP_TEST_DATA][1] == 0);
-	ASSERT(data[99][E_HASH_MAP_TEST_DATA][2] == 0);
+	ASSERT_NE(data[0][E_HASH_MAP_TEST_DATA][0], 0);
+	ASSERT_EQ(data[0][E_HASH_MAP_TEST_DATA][1], 0);
+	ASSERT_EQ(data[0][E_HASH_MAP_TEST_DATA][2], 0);
+	ASSERT_NE(data[88][E_HASH_MAP_TEST_DATA][0], 0);
+	ASSERT_EQ(data[88][E_HASH_MAP_TEST_DATA][1], 0);
+	ASSERT_EQ(data[88][E_HASH_MAP_TEST_DATA][2], 0);
+	ASSERT_EQ(data[99][E_HASH_MAP_TEST_DATA][0], 0);
+	ASSERT_EQ(data[99][E_HASH_MAP_TEST_DATA][1], 0);
+	ASSERT_EQ(data[99][E_HASH_MAP_TEST_DATA][2], 0);
 }
 
 TEST__ rawMemcpy()
@@ -109,9 +109,9 @@ TEST__ y_hashmap_Add()
 	HashMap_Add(m, "Hello", 42);
 	ASSERT(bool:data[42][E_HASH_MAP_TEST_NAME][0]);
 	ASSERT(!strcmp(data[42][E_HASH_MAP_TEST_NAME], "Hello"));
-	ASSERT(data[42][E_HASH_MAP_TEST_DATA][0] == bernstein("Hello"));
-	ASSERT(data[42][E_HASH_MAP_TEST_DATA][1] == 0);
-	ASSERT(data[42][E_HASH_MAP_TEST_DATA][2] == 0);
+	ASSERT_EQ(data[42][E_HASH_MAP_TEST_DATA][0], bernstein("Hello"));
+	ASSERT_EQ(data[42][E_HASH_MAP_TEST_DATA][1], 0);
+	ASSERT_EQ(data[42][E_HASH_MAP_TEST_DATA][2], 0);
 }
 
 TEST__ y_hashmap_Get1()
@@ -120,7 +120,7 @@ TEST__ y_hashmap_Get1()
 	new data[100][E_HASH_MAP_TEST];
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	HashMap_Add(m, "Hello", 42);
-	ASSERT(HashMap_Get(m, "Hello") == 42);
+	ASSERT_EQ(HashMap_Get(m, "Hello"), 42);
 }
 
 TEST__ y_hashmap_GetUnused1()
@@ -130,20 +130,20 @@ TEST__ y_hashmap_GetUnused1()
 	new prev;
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	prev = data[0][E_HASH_MAP_TEST_DATA][0];
-	ASSERT(prev != 0);
-	ASSERT(HashMap_GetUnused(m) == 0);
-	ASSERT(m[260] == prev);
+	ASSERT_NE(prev, 0);
+	ASSERT_EQ(HashMap_GetUnused(m), 0);
+	ASSERT_EQ(m[260], prev);
 	prev = data[1][E_HASH_MAP_TEST_DATA][0];
-	ASSERT(prev != 0);
-	ASSERT(prev != data[0][E_HASH_MAP_TEST_DATA][0]);
-	ASSERT(HashMap_GetUnused(m) == 1);
-	ASSERT(m[260] == prev);
-	ASSERT(HashMap_GetUnused(m) == 2);
-	ASSERT(HashMap_GetUnused(m) == 3);
-	ASSERT(HashMap_GetUnused(m) == 4);
-	ASSERT(HashMap_GetUnused(m) == 5);
-	ASSERT(HashMap_GetUnused(m) == -1);
-	ASSERT(m[260] == 0);
+	ASSERT_NE(prev, 0);
+	ASSERT_NE(prev, data[0][E_HASH_MAP_TEST_DATA][0]);
+	ASSERT_EQ(HashMap_GetUnused(m), 1);
+	ASSERT_EQ(m[260], prev);
+	ASSERT_EQ(HashMap_GetUnused(m), 2);
+	ASSERT_EQ(HashMap_GetUnused(m), 3);
+	ASSERT_EQ(HashMap_GetUnused(m), 4);
+	ASSERT_EQ(HashMap_GetUnused(m), 5);
+	ASSERT_EQ(HashMap_GetUnused(m), -1);
+	ASSERT_EQ(m[260], 0);
 }
 
 TEST__ y_hashmap_GetUnused2()
@@ -151,15 +151,15 @@ TEST__ y_hashmap_GetUnused2()
 	new HashMap:m<>;
 	new data[100][E_HASH_MAP_TEST];
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
-	ASSERT(HashMap_GetUnused(m) == 0);
-	ASSERT(HashMap_GetUnused(m) == 1);
-	ASSERT(HashMap_GetUnused(m) == 2);
+	ASSERT_EQ(HashMap_GetUnused(m), 0);
+	ASSERT_EQ(HashMap_GetUnused(m), 1);
+	ASSERT_EQ(HashMap_GetUnused(m), 2);
 	HashMap_AddUnused(m, 2);
 	HashMap_AddUnused(m, 0);
-	ASSERT(HashMap_GetUnused(m) == 0);
-	ASSERT(HashMap_GetUnused(m) == 2);
-	ASSERT(HashMap_GetUnused(m) == 3);
-	ASSERT(HashMap_GetUnused(m) == 4);
+	ASSERT_EQ(HashMap_GetUnused(m), 0);
+	ASSERT_EQ(HashMap_GetUnused(m), 2);
+	ASSERT_EQ(HashMap_GetUnused(m), 3);
+	ASSERT_EQ(HashMap_GetUnused(m), 4);
 }
 
 TEST__ y_hashmap_GetVarious()
@@ -197,36 +197,36 @@ TEST__ y_hashmap_GetVarious()
 	HashMap_Add(m, "0123456789012345678901234567", 27);
 	HashMap_Add(m, "01234567890123456789012345678", 28);
 	HashMap_Add(m, "012345678901234567890123456789", 29);
-	ASSERT(HashMap_Get(m, "012345678901234567890") == 20);
-	ASSERT(HashMap_Get(m, "0123456789012345678901") == 21);
-	ASSERT(HashMap_Get(m, "01234567890123456789012") == 22);
-	ASSERT(HashMap_Get(m, "012345678901234567890123") == 23);
-	ASSERT(HashMap_Get(m, "0123456789012345678901234") == 24);
-	ASSERT(HashMap_Get(m, "01234567890123456789012345") == 25);
-	ASSERT(HashMap_Get(m, "012345678901234567890123456") == 26);
-	ASSERT(HashMap_Get(m, "0123456789012345678901234567") == 27);
-	ASSERT(HashMap_Get(m, "01234567890123456789012345678") == 28);
-	ASSERT(HashMap_Get(m, "012345678901234567890123456789") == 29);
-	ASSERT(HashMap_Get(m, "01234567890") == 10);
-	ASSERT(HashMap_Get(m, "012345678901") == 11);
-	ASSERT(HashMap_Get(m, "0123456789012") == 12);
-	ASSERT(HashMap_Get(m, "01234567890123") == 13);
-	ASSERT(HashMap_Get(m, "012345678901234") == 14);
-	ASSERT(HashMap_Get(m, "0123456789012345") == 15);
-	ASSERT(HashMap_Get(m, "01234567890123456") == 16);
-	ASSERT(HashMap_Get(m, "012345678901234567") == 17);
-	ASSERT(HashMap_Get(m, "0123456789012345678") == 18);
-	ASSERT(HashMap_Get(m, "01234567890123456789") == 19);
-	ASSERT(HashMap_Get(m, "0") == 0);
-	ASSERT(HashMap_Get(m, "01") == 1);
-	ASSERT(HashMap_Get(m, "012") == 2);
-	ASSERT(HashMap_Get(m, "0123") == 3);
-	ASSERT(HashMap_Get(m, "01234") == 4);
-	ASSERT(HashMap_Get(m, "012345") == 5);
-	ASSERT(HashMap_Get(m, "0123456") == 6);
-	ASSERT(HashMap_Get(m, "01234567") == 7);
-	ASSERT(HashMap_Get(m, "012345678") == 8);
-	ASSERT(HashMap_Get(m, "0123456789") == 9);
+	ASSERT_EQ(HashMap_Get(m, "012345678901234567890"), 20);
+	ASSERT_EQ(HashMap_Get(m, "0123456789012345678901"), 21);
+	ASSERT_EQ(HashMap_Get(m, "01234567890123456789012"), 22);
+	ASSERT_EQ(HashMap_Get(m, "012345678901234567890123"), 23);
+	ASSERT_EQ(HashMap_Get(m, "0123456789012345678901234"), 24);
+	ASSERT_EQ(HashMap_Get(m, "01234567890123456789012345"), 25);
+	ASSERT_EQ(HashMap_Get(m, "012345678901234567890123456"), 26);
+	ASSERT_EQ(HashMap_Get(m, "0123456789012345678901234567"), 27);
+	ASSERT_EQ(HashMap_Get(m, "01234567890123456789012345678"), 28);
+	ASSERT_EQ(HashMap_Get(m, "012345678901234567890123456789"), 29);
+	ASSERT_EQ(HashMap_Get(m, "01234567890"), 10);
+	ASSERT_EQ(HashMap_Get(m, "012345678901"), 11);
+	ASSERT_EQ(HashMap_Get(m, "0123456789012"), 12);
+	ASSERT_EQ(HashMap_Get(m, "01234567890123"), 13);
+	ASSERT_EQ(HashMap_Get(m, "012345678901234"), 14);
+	ASSERT_EQ(HashMap_Get(m, "0123456789012345"), 15);
+	ASSERT_EQ(HashMap_Get(m, "01234567890123456"), 16);
+	ASSERT_EQ(HashMap_Get(m, "012345678901234567"), 17);
+	ASSERT_EQ(HashMap_Get(m, "0123456789012345678"), 18);
+	ASSERT_EQ(HashMap_Get(m, "01234567890123456789"), 19);
+	ASSERT_EQ(HashMap_Get(m, "0"), 0);
+	ASSERT_EQ(HashMap_Get(m, "01"), 1);
+	ASSERT_EQ(HashMap_Get(m, "012"), 2);
+	ASSERT_EQ(HashMap_Get(m, "0123"), 3);
+	ASSERT_EQ(HashMap_Get(m, "01234"), 4);
+	ASSERT_EQ(HashMap_Get(m, "012345"), 5);
+	ASSERT_EQ(HashMap_Get(m, "0123456"), 6);
+	ASSERT_EQ(HashMap_Get(m, "01234567"), 7);
+	ASSERT_EQ(HashMap_Get(m, "012345678"), 8);
+	ASSERT_EQ(HashMap_Get(m, "0123456789"), 9);
 }
 
 TEST__ y_hashmap_RemoveKey1()
@@ -235,9 +235,9 @@ TEST__ y_hashmap_RemoveKey1()
 	new data[100][E_HASH_MAP_TEST];
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	HashMap_Add(m, "Hello", 42);
-	ASSERT(HashMap_Get(m, "Hello") == 42);
+	ASSERT_EQ(HashMap_Get(m, "Hello"), 42);
 	HashMap_RemoveKey(m, "Hello");
-	ASSERT(HashMap_Get(m, "Hello") == -1);
+	ASSERT_EQ(HashMap_Get(m, "Hello"), -1);
 }
 
 TEST__ y_hashmap_Get100()
@@ -253,7 +253,7 @@ TEST__ y_hashmap_Get100()
 	for (new i = 0, str[6]; i != 100; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
-		ASSERT(HashMap_Get(m, str) == i);
+		ASSERT_EQ(HashMap_Get(m, str), i);
 	}
 }
 
@@ -270,7 +270,7 @@ TEST__ y_hashmap_Get100Hash()
 	for (new i = 0, str[6]; i != 100; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
-		ASSERT(HashMap_Get(m, str) == i);
+		ASSERT_EQ(HashMap_Get(m, str), i);
 	}
 }
 
@@ -289,7 +289,7 @@ TEST__ y_hashmap_Remove50()
 	for (new i = 0, str[6]; i != 100; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
-		ASSERT(HashMap_Get(m, str) == i);
+		ASSERT_EQ(HashMap_Get(m, str), i);
 	}
 	// Remove half.
 	for (new i = 1, str[6]; i != 101; i += 2)
@@ -301,8 +301,8 @@ TEST__ y_hashmap_Remove50()
 	for (new i = 0, str[6]; i != 100; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
-		if (i & 1) ASSERT(HashMap_Get(m, str) == -1);
-		else ASSERT(HashMap_Get(m, str) == i);
+		if (i & 1) ASSERT_EQ(HashMap_Get(m, str), -1);
+		else ASSERT_EQ(HashMap_Get(m, str), i);
 	}
 }
 
@@ -321,7 +321,7 @@ TEST__ y_hashmap_RemoveValues()
 	for (new i = 0, str[6]; i != 100; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
-		ASSERT(HashMap_Get(m, str) == i);
+		ASSERT_EQ(HashMap_Get(m, str), i);
 	}
 	// Remove half.
 	for (new i = 0; i != 100; ++i)
@@ -332,7 +332,7 @@ TEST__ y_hashmap_RemoveValues()
 	for (new i = 0, str[6]; i != 100; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
-		ASSERT(HashMap_Get(m, str) == -1);
+		ASSERT_EQ(HashMap_Get(m, str), -1);
 	}
 }
 
@@ -350,7 +350,7 @@ TEST__ y_hashmap_Get1000()
 	for (new i = 0, str[6]; i != 1000; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
-		ASSERT(HashMap_Get(m, str) == i);
+		ASSERT_EQ(HashMap_Get(m, str), i);
 	}
 }
 
@@ -370,7 +370,7 @@ TEST__ y_hashmap_Remove500()
 	for (new i = 0, str[6]; i != 1000; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
-		ASSERT(HashMap_Get(m, str) == i);
+		ASSERT_EQ(HashMap_Get(m, str), i);
 	}
 	// Remove half.
 	for (new i = 1, str[6]; i != 1001; i += 2)
@@ -382,8 +382,8 @@ TEST__ y_hashmap_Remove500()
 	for (new i = 0, str[6]; i != 1000; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
-		if (i & 1) ASSERT(HashMap_Get(m, str) == -1);
-		else ASSERT(HashMap_Get(m, str) == i);
+		if (i & 1) ASSERT_EQ(HashMap_Get(m, str), -1);
+		else ASSERT_EQ(HashMap_Get(m, str), i);
 	}
 }
 
@@ -403,7 +403,7 @@ TEST__ y_hashmap_Set500()
 	for (new i = 0, str[6]; i != 500; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
-		ASSERT(HashMap_Get(m, str) == i);
+		ASSERT_EQ(HashMap_Get(m, str), i);
 	}
 	// Remove half.
 	for (new i = 1, str[6]; i != 501; i += 2)
@@ -415,13 +415,13 @@ TEST__ y_hashmap_Set500()
 	for (new i = 0, str[6]; i != 500; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
-		if (i & 1) ASSERT(HashMap_Get(m, str) == i + 500);
-		else ASSERT(HashMap_Get(m, str) == i);
+		if (i & 1) ASSERT_EQ(HashMap_Get(m, str), i + 500);
+		else ASSERT_EQ(HashMap_Get(m, str), i);
 	}
 	for (new i = 500, str[6]; i != 1000; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
-		ASSERT(HashMap_Get(m, str) == -1);
+		ASSERT_EQ(HashMap_Get(m, str), -1);
 	}
 }
 

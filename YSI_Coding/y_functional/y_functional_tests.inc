@@ -193,7 +193,7 @@ TEST__ FUNC_FoldR1()
 		a0[10] = { 0,  1,  2, ...},
 		ret;
 	ret = FoldR({_0 * _1}, a0, 10);
-	ASSERT(ret == 0);
+	ASSERT_EQ(ret, 0);
 }
 
 TEST__ FUNC_FoldR2()
@@ -202,7 +202,7 @@ TEST__ FUNC_FoldR2()
 		a0[10] = { 1,  2,  3, ...},
 		ret;
 	ret = FoldR({_0 * _1}, a0, 10);
-	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 10);
+	ASSERT_EQ(ret, 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 10);
 }
 
 TEST__ FUNC_FoldL1()
@@ -211,7 +211,7 @@ TEST__ FUNC_FoldL1()
 		a0[10] = { 1,  2,  3, ...},
 		ret;
 	ret = FoldL({_0 * _1}, 11, a0);
-	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11);
+	ASSERT_EQ(ret, 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11);
 }
 
 TEST__ FUNC_FoldL_multiple()
@@ -220,7 +220,7 @@ TEST__ FUNC_FoldL_multiple()
 		a0[10] = { 1,  2,  3, ...},
 		ret;
 	ret = FoldL({ _0 * _1 }, 11, a0) + FoldL({ _0 + _1 }, 11, a0);
-	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11);
+	ASSERT_EQ(ret, 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11);
 }
 
 static FUNC_FoldL_nested_Add(a, b)
@@ -234,7 +234,7 @@ TEST__ FUNC_FoldL_params()
 		a0[10] = { 1,  2,  3, ...},
 		ret;
 	ret = FUNC_FoldL_nested_Add(FoldL({ _0 * _1 }, 11, a0), FoldL({ _0 + _1 }, 11, a0));
-	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11);
+	ASSERT_EQ(ret, 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * 11 + 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11);
 }
 
 TEST__ FUNC_FoldL_nested()
@@ -243,7 +243,7 @@ TEST__ FUNC_FoldL_nested()
 		a0[10] = { 1,  2,  3, ...},
 		ret;
 	ret = FoldL({ _0 * _1 }, FoldL({ _0 + _1 }, 11, a0), a0);
-	ASSERT(ret == 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11));
+	ASSERT_EQ(ret, 1 * 2 * 3 * 4 * 5 * 6 * 7 * 8 * 9 * 10 * (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10 + 11));
 }
 
 TEST__ FUNC_FoldR3()
@@ -252,7 +252,7 @@ TEST__ FUNC_FoldR3()
 		a0[10] = { 1,  2,  3, ...},
 		ret;
 	ret = FoldR({_0 * _1}, a0, 15, 0);
-	ASSERT(ret == 15);
+	ASSERT_EQ(ret, 15);
 }
 
 TEST__ FUNC_FoldL2()
@@ -261,7 +261,7 @@ TEST__ FUNC_FoldL2()
 		a0[10] = { 1,  2,  3, ...},
 		ret;
 	ret = FoldL({_0 * _1}, 99, a0, 0);
-	ASSERT(ret == 99);
+	ASSERT_EQ(ret, 99);
 }
 
 #undef FUNC_CHECK_ARR

@@ -57,7 +57,7 @@ forward y_va_PublicRecurseFunction(const func[], vara);
 public y_va_PublicRecurseFunction(const func[], vara)
 {
 	// "" Passed to "CallLocalFunction" crashes it.
-	ASSERT(123 == y_va_CallLocalFunction_X(func, "\1", vara));
+	ASSERT_EQ(123, y_va_CallLocalFunction_X(func, "\1", vara));
 }
 
 forward y_va_PublicCallFunction(const func[], vara);
@@ -71,9 +71,9 @@ TEST__ y_va_CallRemoteFunction()
 {
 	YSI_g_sVariable = 5;
 	y_va_CallRemoteFunction(0, 11);
-	ASSERT(YSI_g_sVariable == 6);
+	ASSERT_EQ(YSI_g_sVariable, 6);
 	y_va_CallRemoteFunction(1, 11);
-	ASSERT(YSI_g_sVariable == 11);
+	ASSERT_EQ(YSI_g_sVariable, 11);
 }
 
 static stock y_va_printf_0(va_args<>)
@@ -111,27 +111,27 @@ TEST__ y_va_recurse_local()
 {
 	YSI_g_sVariable = 0;
 	y_va_CallLocalFunction_X("y_va_PublicRecurseFunction", "y_va_PublicCallFunction", true);
-	ASSERT(YSI_g_sVariable == 123456);
+	ASSERT_EQ(YSI_g_sVariable, 123456);
 	y_va_CallLocalFunction_X("y_va_PublicRecurseFunction", "y_va_PublicCallFunction", false);
-	ASSERT(YSI_g_sVariable == 123457);
+	ASSERT_EQ(YSI_g_sVariable, 123457);
 }
 
 TEST__ y_va_recurse_remote()
 {
 	YSI_g_sVariable = 0;
 	y_va_CallRemoteFunction_X("y_va_PublicRecurseFunction", "y_va_PublicCallFunction", true);
-	ASSERT(YSI_g_sVariable == 123456);
+	ASSERT_EQ(YSI_g_sVariable, 123456);
 	y_va_CallRemoteFunction_X("y_va_PublicRecurseFunction", "y_va_PublicCallFunction", false);
-	ASSERT(YSI_g_sVariable == 123457);
+	ASSERT_EQ(YSI_g_sVariable, 123457);
 }
 
 TEST__ y_va_CallLocalFunction()
 {
 	YSI_g_sVariable = 8;
 	y_va_CallLocalFunction(0, 45);
-	ASSERT(YSI_g_sVariable == 9);
-	ASSERT(123 == y_va_CallLocalFunction(1, 45));
-	ASSERT(YSI_g_sVariable == 45);
+	ASSERT_EQ(YSI_g_sVariable, 9);
+	ASSERT_EQ(123, y_va_CallLocalFunction(1, 45));
+	ASSERT_EQ(YSI_g_sVariable, 45);
 }
 
 static stock y_va_SetTimerEx(va_args<>)
@@ -141,7 +141,7 @@ static stock y_va_SetTimerEx(va_args<>)
 
 TEST__ y_va_SetTimerEx()
 {
-	ASSERT(y_va_SetTimerEx(5, 6, 7) != 0);
+	ASSERT_NE(y_va_SetTimerEx(5, 6, 7), 0);
 }
 
 static stock y_va_format(dest[], size, const fmat[], va_args<>)
@@ -189,11 +189,11 @@ TEST__ y_va_DoubleIndirection()
 		var3 = 77,
 		var4 = 88;
 	y_va_DoubleIndirection(dest, "%d %d", var0, var1, var2, var3, var4);
-	ASSERT(var0 == 44);
-	ASSERT(var1 == 55);
-	ASSERT(var2 == 66);
-	ASSERT(var3 == 77);
-	ASSERT(var4 == 88);
+	ASSERT_EQ(var0, 44);
+	ASSERT_EQ(var1, 55);
+	ASSERT_EQ(var2, 66);
+	ASSERT_EQ(var3, 77);
+	ASSERT_EQ(var4, 88);
 	ASSERT(!strcmp(dest, "77 88"));
 }
 
@@ -318,11 +318,11 @@ TEST__ y_va2_DoubleIndirection()
 		var3 = 77,
 		var4 = 88;
 	y_va2_DoubleIndirection(dest, "%d %d", var0, var1, var2, var3, var4);
-	ASSERT(var0 == 44);
-	ASSERT(var1 == 55);
-	ASSERT(var2 == 66);
-	ASSERT(var3 == 77);
-	ASSERT(var4 == 88);
+	ASSERT_EQ(var0, 44);
+	ASSERT_EQ(var1, 55);
+	ASSERT_EQ(var2, 66);
+	ASSERT_EQ(var3, 77);
+	ASSERT_EQ(var4, 88);
 	ASSERT(!strcmp(dest, "77 88"));
 }
 
@@ -353,11 +353,11 @@ TEST__ y_va2_TripleIndirection()
 		var3 = 77,
 		var4 = 88;
 	y_va2_TripleIndirectionA(dest, "%d %d", var0, var1, var2, var3, var4);
-	ASSERT(var0 == 44);
-	ASSERT(var1 == 55);
-	ASSERT(var2 == 66);
-	ASSERT(var3 == 101);
-	ASSERT(var4 == 88);
+	ASSERT_EQ(var0, 44);
+	ASSERT_EQ(var1, 55);
+	ASSERT_EQ(var2, 66);
+	ASSERT_EQ(var3, 101);
+	ASSERT_EQ(var4, 88);
 	ASSERT(!strcmp(dest, "77 88"));
 }
 

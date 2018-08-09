@@ -167,14 +167,14 @@ static stock y_als_DoCall(playerid, text[], Float:pos, last)
 TEST__ y_als_Call()
 {
 	// Test the "ALS_CALL" macro.
-	ASSERT(y_als_DoCall(6000, "", 0.0, 0) == 6000);
+	ASSERT_EQ(y_als_DoCall(6000, "", 0.0, 0), 6000);
 }
 
 static stock y_als_DoGet(playerid, text[], Float:pos, last)
 {
 	new
 		ret = ALS_GET<FakeCallback>
-	ASSERT(ret == playerid);
+	ASSERT_EQ(ret, playerid);
 	//return ret;
 }
 
@@ -206,7 +206,7 @@ TEST__ y_als_call()
 	new
 		ret;
 	ret = call OnFakeCallback(6010, NULL, 0.0, 6011);
-	ASSERT(ret == 6011);
+	ASSERT_EQ(ret, 6011);
 }
 
 TEST__ y_als_Generation()
@@ -227,7 +227,7 @@ TEST__ y_als_Generation()
 	__PRINT<PlayerSpawn, "OnPlayerSpawn(42)">
 	new
 		killerid = INVALID_PLAYER_ID;
-	ASSERT(INVALID_PLAYER_ID == 65535);
+	ASSERT_EQ(INVALID_PLAYER_ID, 65535);
 	__PRINT<PlayerDeath, "OnPlayerDeath(42, 65535, 11)">
 	new
 		vehicleid = 606;

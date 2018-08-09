@@ -64,9 +64,9 @@ remotefunc static stock string:yrt_2b(const hi, string:you[], there[], &other, &
 TEST__ y_remote_2()
 {
 	new arr[89], oo = sizeof (arr);
-	ASSERT(broadcastfunc yrt_2(789, "string", arr, oo) == 0);
-	ASSERT(strlen(broadcastfunc yrt_2b(789, "string", arr, oo)) == 0);
-	ASSERT(oo == sizeof (arr));
+	ASSERT_EQ(broadcastfunc yrt_2(789, "string", arr, oo), 0);
+	ASSERT_EQ(strlen(broadcastfunc yrt_2b(789, "string", arr, oo)), 0);
+	ASSERT_EQ(oo, sizeof (arr));
 }
 
 TEST__ y_remote_3()
@@ -78,7 +78,7 @@ TEST__ y_remote_335()
 {
 	// Impl...
 	new arr[3];
-	ASSERT(yrt_335(89, "the string passed", arr, sizeof (arr)) == 89.0);
+	ASSERT_EQ(yrt_335(89, "the string passed", arr, sizeof (arr)), 89.0);
 }
 
 TEST__ y_remote_4()
@@ -89,14 +89,14 @@ TEST__ y_remote_5()
 {
 	new other = 42, arr[] = {5, 6, 7};
 	ASSERT(!strcmp("Hello World", yrt_5(10, "hi", arr, sizeof (arr), other)));
-	ASSERT(other == 47);
+	ASSERT_EQ(other, 47);
 }
 
 TEST__ y_remote_55()
 {
 	new other = 42, arr[] = {5, 6, 7};
-	ASSERT(yrt_55(10, "hi", arr, sizeof (arr), other) == 5.5);
-	ASSERT(other == 15);
+	ASSERT_EQ(yrt_55(10, "hi", arr, sizeof (arr), other), 5.5);
+	ASSERT_EQ(other, 15);
 }
 
 TEST__ y_remote_6()
@@ -108,10 +108,10 @@ TEST__ y_remote_7()
 {
 	new a, b, c = 123, d = 456;
 	yrt_7(a, b, c, d);
-	ASSERT(a == 8);
-	ASSERT(b == 8);
-	ASSERT(c == 123);
-	ASSERT(d == 452);
+	ASSERT_EQ(a, 8);
+	ASSERT_EQ(b, 8);
+	ASSERT_EQ(c, 123);
+	ASSERT_EQ(d, 452);
 }
 
 TEST__ y_remote_8()
@@ -124,6 +124,6 @@ remotefunc Float:yrt_9();
 TEST__ y_remote_9()
 {
 	X@(_:(55.8));
-	ASSERT(broadcastfunc yrt_9() == 0.0);
+	ASSERT_EQ(broadcastfunc yrt_9(), 0.0);
 }
 

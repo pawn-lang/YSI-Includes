@@ -72,14 +72,14 @@ Optional plugins:
 
 TEST__ Bit_Bits()
 {
-	ASSERT(Bit_Bits(5) == 1);
-	ASSERT(Bit_Bits(32) == 1);
-	ASSERT(Bit_Bits(33) == 2);
-	ASSERT(Bit_Bits(63) == 2);
-	ASSERT(Bit_Bits(64) == 2);
-	ASSERT(Bit_Bits(65) == 3);
-	ASSERT(Bit_Bits(1024) == 32);
-	ASSERT(Bit_Bits(1025) == 33);
+	ASSERT_EQ(Bit_Bits(5), 1);
+	ASSERT_EQ(Bit_Bits(32), 1);
+	ASSERT_EQ(Bit_Bits(33), 2);
+	ASSERT_EQ(Bit_Bits(63), 2);
+	ASSERT_EQ(Bit_Bits(64), 2);
+	ASSERT_EQ(Bit_Bits(65), 3);
+	ASSERT_EQ(Bit_Bits(1024), 32);
+	ASSERT_EQ(Bit_Bits(1025), 33);
 }
 
 TEST__ Bit_Set()
@@ -87,29 +87,29 @@ TEST__ Bit_Set()
 	new
 		BitArray:bb<100>;
 	Bit_Set(bb, 10, true);
-	ASSERT(_:bb[0] == 1 << 10);
-	ASSERT(_:bb[1] == 0);
+	ASSERT_EQ(_:bb[0], 1 << 10);
+	ASSERT_EQ(_:bb[1], 0);
 	Bit_Set(bb, 32, true);
-	ASSERT(_:bb[0] == 1 << 10);
-	ASSERT(_:bb[1] == 1);
+	ASSERT_EQ(_:bb[0], 1 << 10);
+	ASSERT_EQ(_:bb[1], 1);
 	Bit_Let(bb, 99);
-	ASSERT(_:bb[0] == 1 << 10);
-	ASSERT(_:bb[1] == 1);
-	ASSERT(_:bb[3] == 8);
+	ASSERT_EQ(_:bb[0], 1 << 10);
+	ASSERT_EQ(_:bb[1], 1);
+	ASSERT_EQ(_:bb[3], 8);
 	Bit_Vet(bb, 99);
-	ASSERT(_:bb[0] == 1 << 10);
-	ASSERT(_:bb[1] == 1);
-	ASSERT(_:bb[3] == 0);
+	ASSERT_EQ(_:bb[0], 1 << 10);
+	ASSERT_EQ(_:bb[1], 1);
+	ASSERT_EQ(_:bb[3], 0);
 	Bit_Let(bb, 11);
-	ASSERT(_:bb[0] == 3 << 10);
-	ASSERT(_:bb[1] == 1);
-	ASSERT(_:bb[3] == 0);
+	ASSERT_EQ(_:bb[0], 3 << 10);
+	ASSERT_EQ(_:bb[1], 1);
+	ASSERT_EQ(_:bb[3], 0);
 	Bit_Vet(bb, 10);
-	ASSERT(_:bb[0] == 2 << 10);
-	ASSERT(_:bb[1] == 1);
-	ASSERT(_:bb[3] == 0);
+	ASSERT_EQ(_:bb[0], 2 << 10);
+	ASSERT_EQ(_:bb[1], 1);
+	ASSERT_EQ(_:bb[3], 0);
 	Bit_Vet(bb, 11);
-	ASSERT(_:bb[0] == 0);
+	ASSERT_EQ(_:bb[0], 0);
 }
 
 TEST__ Bit_Get()
@@ -168,10 +168,10 @@ TEST__ Bit_Count()
 	Bit_Set(cc, 8, true);
 	Bit_Set(cc, 9, true);
 	Bit_Set(cc, 50, true);
-	ASSERT(Bit_Count(cc) == 11);
+	ASSERT_EQ(Bit_Count(cc), 11);
 	Bit_Set(cc, 51, true);
 	Bit_Set(cc, 52, true);
-	ASSERT(Bit_GetCount(cc) == 13);
+	ASSERT_EQ(Bit_GetCount(cc), 13);
 }
 
 TEST__ Bit_Iterators()
@@ -188,7 +188,7 @@ TEST__ Bit_Iterators()
 	{
 		++called;
 	}
-	ASSERT(called == 32);
+	ASSERT_EQ(called, 32);
 	Bit_Set(bitArray, 5, true);
 	Bit_Set(bitArray, 7, true);
 	Bit_Set(bitArray, 9, true);

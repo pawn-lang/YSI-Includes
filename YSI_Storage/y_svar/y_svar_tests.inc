@@ -86,9 +86,9 @@ svar y_svar_TestEnum2D[y_svar_E_TEST][200];
 TEST__ y_svar_Enum()
 {
 	// Should fail first time ever, but then not again.
-	ASSERT(y_svar_TestEnum[y_svar_E_TEST_A] == 42);
+	ASSERT_EQ(y_svar_TestEnum[y_svar_E_TEST_A], 42);
 	y_svar_TestEnum[y_svar_E_TEST_A] = 42;
-	ASSERT(y_svar_TestEnum[y_svar_E_TEST_B] == 55.44);
+	ASSERT_EQ(y_svar_TestEnum[y_svar_E_TEST_B], 55.44);
 	y_svar_TestEnum[y_svar_E_TEST_B] = 55.44;
 	ASSERT(!strcmp(y_svar_TestEnum[y_svar_E_TEST_C], "SOME STORED DATA") && y_svar_TestEnum[y_svar_E_TEST_C][0]);
 	strcpy(y_svar_TestEnum[y_svar_E_TEST_C], "SOME STORED DATA", 24);
@@ -104,7 +104,7 @@ TEST__ y_svar_1D()
 		if (y_svar_Test1D[i] != i) ++fails;
 		y_svar_Test1D[i] = i;
 	}
-	ASSERT(fails == 0);
+	ASSERT_EQ(fails, 0);
 }
 
 TEST__ y_svar_2D()
@@ -120,7 +120,7 @@ TEST__ y_svar_2D()
 			y_svar_Test2D[i][j] = i * j;
 		}
 	}
-	ASSERT(fails == 0);
+	ASSERT_EQ(fails, 0);
 }
 
 TEST__ y_svar_2DEnum()
@@ -137,7 +137,7 @@ TEST__ y_svar_2DEnum()
 		if (strcmp(y_svar_Test2DEnum[i][y_svar_E_TEST_C], "SOME STORED DATA") || !y_svar_Test2DEnum[i][y_svar_E_TEST_C][0]) ++fails;
 		strcpy(y_svar_Test2DEnum[i][y_svar_E_TEST_C], "SOME STORED DATA", 24);
 	}
-	ASSERT(fails == 0);
+	ASSERT_EQ(fails, 0);
 }
 
 TEST__ y_svar_Enum2D()
@@ -150,5 +150,5 @@ TEST__ y_svar_Enum2D()
 		if (y_svar_TestEnum2D[y_svar_E_TEST_A][i] != i + 101) ++fails;
 		y_svar_TestEnum2D[y_svar_E_TEST_A][i] = i + 101;
 	}
-	ASSERT(fails == 0);
+	ASSERT_EQ(fails, 0);
 }

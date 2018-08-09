@@ -93,13 +93,13 @@ TEST_COMPILE__ y_cell()
 
 TEST__ y_cell_ReverseBits0()
 {
-	ASSERT(Cell_ReverseBits(0) == 0x00000000);
-	ASSERT(Cell_ReverseBits(1) == 0x80000000);
-	ASSERT(Cell_ReverseBits(2) == 0x40000000);
-	ASSERT(Cell_ReverseBits(3) == 0xC0000000);
-	ASSERT(Cell_ReverseBits(4) == 0x20000000);
-	ASSERT(Cell_ReverseBits(0b01010101010) == 0b01010101010000000000000000000000);
-	ASSERT(Cell_ReverseBits(0b1111000001111000011) == 0b11000011110000011110000000000000);
+	ASSERT_EQ(Cell_ReverseBits(0), 0x00000000);
+	ASSERT_EQ(Cell_ReverseBits(1), 0x80000000);
+	ASSERT_EQ(Cell_ReverseBits(2), 0x40000000);
+	ASSERT_EQ(Cell_ReverseBits(3), 0xC0000000);
+	ASSERT_EQ(Cell_ReverseBits(4), 0x20000000);
+	ASSERT_EQ(Cell_ReverseBits(0b01010101010), 0b01010101010000000000000000000000);
+	ASSERT_EQ(Cell_ReverseBits(0b1111000001111000011), 0b11000011110000011110000000000000);
 }
 
 TEST__ y_cell_ExpandCompress()
@@ -111,8 +111,8 @@ TEST__ y_cell_ExpandCompress()
 	//PRINT(x);
 	x = Cell_CompressRight(o, m);
 	n = Cell_ExpandLeft(x, m);
-	ASSERT(o & m == n);
-	ASSERT(x == 0b00000000000000000000000000000011);
+	ASSERT_EQ(o & m, n);
+	ASSERT_EQ(x, 0b00000000000000000000000000000011);
 	//PRINT(n);
 	//printf("2");
 	o = 0b11110000101001011100001100001111;
@@ -120,8 +120,8 @@ TEST__ y_cell_ExpandCompress()
 	//PRINT(x);
 	x = Cell_CompressRight(o, m);
 	n = Cell_ExpandLeft(x, m);
-	ASSERT(o & m == n);
-	ASSERT(x == 0b00000000000000000000000000110000);
+	ASSERT_EQ(o & m, n);
+	ASSERT_EQ(x, 0b00000000000000000000000000110000);
 	//PRINT(n);
 	//printf("3");
 	o = 0b11110000101001011100001100001111;
@@ -129,8 +129,8 @@ TEST__ y_cell_ExpandCompress()
 	//PRINT(x);
 	x = Cell_CompressRight(o, m);
 	n = Cell_ExpandLeft(x, m);
-	ASSERT(o & m == n);
-	ASSERT(x == 0b00000000000000000000000000001100);
+	ASSERT_EQ(o & m, n);
+	ASSERT_EQ(x, 0b00000000000000000000000000001100);
 	//PRINT(n);
 	//printf("4");
 	o = 0b11110000101001011100001100001111;
@@ -138,8 +138,8 @@ TEST__ y_cell_ExpandCompress()
 	//PRINT(x);
 	x = Cell_CompressRight(o, m);
 	n = Cell_ExpandLeft(x, m);
-	ASSERT(o & m == n);
-	ASSERT(x == 0b00000000000000000000001100001111);
+	ASSERT_EQ(o & m, n);
+	ASSERT_EQ(x, 0b00000000000000000000001100001111);
 	//PRINT(n);
 	//printf("5");
 	o = 0b11110000101001011100001100001111;
@@ -147,8 +147,8 @@ TEST__ y_cell_ExpandCompress()
 	//PRINT(x);
 	x = Cell_CompressRight(o, m);
 	n = Cell_ExpandLeft(x, m);
-	ASSERT(o & m == n);
-	ASSERT(x == 0b00000000000000000000000000001100);
+	ASSERT_EQ(o & m, n);
+	ASSERT_EQ(x, 0b00000000000000000000000000001100);
 	//PRINT(n);
 	//printf("6");
 	o = 0b11110000101001011100001100001111;
@@ -156,8 +156,8 @@ TEST__ y_cell_ExpandCompress()
 	//PRINT(x);
 	x = Cell_CompressRight(o, m);
 	n = Cell_ExpandLeft(x, m);
-	ASSERT(o & m == n);
-	ASSERT(x == 0b00000000000000000000000000000000);
+	ASSERT_EQ(o & m, n);
+	ASSERT_EQ(x, 0b00000000000000000000000000000000);
 	//PRINT(n);
 }
 
@@ -173,7 +173,7 @@ TEST__ y_cell_ReverseBits1()
 		}
 		if (Cell_ReverseBits(i) != count)
 		{
-			ASSERT(Cell_ReverseBits(i) == count);
+			ASSERT_EQ(Cell_ReverseBits(i), count);
 			break;
 		}
 	}
@@ -191,7 +191,7 @@ TEST__ y_cell_ReverseBits2()
 		}
 		if (Cell_ReverseBits(i) != count)
 		{
-			ASSERT(Cell_ReverseBits(i) == count);
+			ASSERT_EQ(Cell_ReverseBits(i), count);
 			break;
 		}
 	}
@@ -209,7 +209,7 @@ TEST__ y_cell_ReverseBits3()
 		}
 		if (Cell_ReverseBits(i) != count)
 		{
-			ASSERT(Cell_ReverseBits(i) == count);
+			ASSERT_EQ(Cell_ReverseBits(i), count);
 			break;
 		}
 	}
@@ -217,13 +217,13 @@ TEST__ y_cell_ReverseBits3()
 
 TEST__ y_cell_ReverseNibbles0()
 {
-	ASSERT(Cell_ReverseNibbles(0) == 0);
-	ASSERT(Cell_ReverseNibbles(1) == 0x10000000);
-	ASSERT(Cell_ReverseNibbles(2) == 0x20000000);
-	ASSERT(Cell_ReverseNibbles(3) == 0x30000000);
-	ASSERT(Cell_ReverseNibbles(4) == 0x40000000);
-	ASSERT(Cell_ReverseNibbles(0b1010101010) == 0b10101010001000000000000000000000);
-	ASSERT(Cell_ReverseNibbles(0b1111000001111000011) == 0b00111100001110000111000000000000);
+	ASSERT_EQ(Cell_ReverseNibbles(0), 0);
+	ASSERT_EQ(Cell_ReverseNibbles(1), 0x10000000);
+	ASSERT_EQ(Cell_ReverseNibbles(2), 0x20000000);
+	ASSERT_EQ(Cell_ReverseNibbles(3), 0x30000000);
+	ASSERT_EQ(Cell_ReverseNibbles(4), 0x40000000);
+	ASSERT_EQ(Cell_ReverseNibbles(0b1010101010), 0b10101010001000000000000000000000);
+	ASSERT_EQ(Cell_ReverseNibbles(0b1111000001111000011), 0b00111100001110000111000000000000);
 }
 
 TEST__ y_cell_ReverseNibbles1()
@@ -241,7 +241,7 @@ TEST__ y_cell_ReverseNibbles1()
 		}
 		if (Cell_ReverseNibbles(i) != count)
 		{
-			ASSERT(Cell_ReverseNibbles(i) == count);
+			ASSERT_EQ(Cell_ReverseNibbles(i), count);
 			break;
 		}
 	}
@@ -262,7 +262,7 @@ TEST__ y_cell_ReverseNibbles2()
 		}
 		if (Cell_ReverseNibbles(i) != count)
 		{
-			ASSERT(Cell_ReverseNibbles(i) == count);
+			ASSERT_EQ(Cell_ReverseNibbles(i), count);
 			break;
 		}
 	}
@@ -283,7 +283,7 @@ TEST__ y_cell_ReverseNibbles3()
 		}
 		if (Cell_ReverseNibbles(i) != count)
 		{
-			ASSERT(Cell_ReverseNibbles(i) == count);
+			ASSERT_EQ(Cell_ReverseNibbles(i), count);
 			break;
 		}
 	}
@@ -291,13 +291,13 @@ TEST__ y_cell_ReverseNibbles3()
 
 TEST__ y_cell_ReverseBytes0()
 {
-	ASSERT(Cell_ReverseBytes(0) == 0);
-	ASSERT(Cell_ReverseBytes(1) == 0x01000000);
-	ASSERT(Cell_ReverseBytes(2) == 0x02000000);
-	ASSERT(Cell_ReverseBytes(3) == 0x03000000);
-	ASSERT(Cell_ReverseBytes(4) == 0x04000000);
-	ASSERT(Cell_ReverseBytes(0b1010101010) == 0b10101010000000100000000000000000);
-	ASSERT(Cell_ReverseBytes(0b1111000001111000011) == 0b11000011100000110000011100000000);
+	ASSERT_EQ(Cell_ReverseBytes(0), 0);
+	ASSERT_EQ(Cell_ReverseBytes(1), 0x01000000);
+	ASSERT_EQ(Cell_ReverseBytes(2), 0x02000000);
+	ASSERT_EQ(Cell_ReverseBytes(3), 0x03000000);
+	ASSERT_EQ(Cell_ReverseBytes(4), 0x04000000);
+	ASSERT_EQ(Cell_ReverseBytes(0b1010101010), 0b10101010000000100000000000000000);
+	ASSERT_EQ(Cell_ReverseBytes(0b1111000001111000011), 0b11000011100000110000011100000000);
 }
 
 TEST__ y_cell_ReverseBytes1()
@@ -315,7 +315,7 @@ TEST__ y_cell_ReverseBytes1()
 		}
 		if (Cell_ReverseBytes(i) != count)
 		{
-			ASSERT(Cell_ReverseBytes(i) == count);
+			ASSERT_EQ(Cell_ReverseBytes(i), count);
 			break;
 		}
 	}
@@ -336,7 +336,7 @@ TEST__ y_cell_ReverseBytes2()
 		}
 		if (Cell_ReverseBytes(i) != count)
 		{
-			ASSERT(Cell_ReverseBytes(i) == count);
+			ASSERT_EQ(Cell_ReverseBytes(i), count);
 			break;
 		}
 	}
@@ -357,7 +357,7 @@ TEST__ y_cell_ReverseBytes3()
 		}
 		if (Cell_ReverseBytes(i) != count)
 		{
-			ASSERT(Cell_ReverseBytes(i) == count);
+			ASSERT_EQ(Cell_ReverseBytes(i), count);
 			break;
 		}
 	}
@@ -496,13 +496,13 @@ static stock y_cell_CountBits_v4(GLOBAL_TAG_TYPES:data)
 
 TEST__ y_cell_CountBits0()
 {
-	ASSERT(y_cell_CountBits_v4(0) == 0);
-	ASSERT(y_cell_CountBits_v4(1) == 1);
-	ASSERT(y_cell_CountBits_v4(2) == 1);
-	ASSERT(y_cell_CountBits_v4(3) == 2);
-	ASSERT(y_cell_CountBits_v4(4) == 1);
-	ASSERT(y_cell_CountBits_v4(0b1010101010) == 5);
-	ASSERT(y_cell_CountBits_v4(0b1111000001111000011) == 10);
+	ASSERT_EQ(y_cell_CountBits_v4(0), 0);
+	ASSERT_EQ(y_cell_CountBits_v4(1), 1);
+	ASSERT_EQ(y_cell_CountBits_v4(2), 1);
+	ASSERT_EQ(y_cell_CountBits_v4(3), 2);
+	ASSERT_EQ(y_cell_CountBits_v4(4), 1);
+	ASSERT_EQ(y_cell_CountBits_v4(0b1010101010), 5);
+	ASSERT_EQ(y_cell_CountBits_v4(0b1111000001111000011), 10);
 #if 0
 	new
 		t0, t1, t2, t3, t4;
@@ -561,7 +561,7 @@ TEST__ y_cell_CountBits1()
 		}
 		if (y_cell_CountBits_v4(i) != count)
 		{
-			ASSERT(y_cell_CountBits_v4(i) == count);
+			ASSERT_EQ(y_cell_CountBits_v4(i), count);
 			break;
 		}
 	}
@@ -579,7 +579,7 @@ TEST__ y_cell_CountBits2()
 		}
 		if (y_cell_CountBits_v4(i) != count)
 		{
-			ASSERT(y_cell_CountBits_v4(i) == count);
+			ASSERT_EQ(y_cell_CountBits_v4(i), count);
 			break;
 		}
 	}
@@ -597,7 +597,7 @@ TEST__ y_cell_CountBits3()
 		}
 		if (y_cell_CountBits_v4(i) != count)
 		{
-			ASSERT(y_cell_CountBits_v4(i) == count);
+			ASSERT_EQ(y_cell_CountBits_v4(i), count);
 			break;
 		}
 	}
@@ -605,65 +605,65 @@ TEST__ y_cell_CountBits3()
 
 TEST__ y_cell_GetLowestComponent()
 {
-	ASSERT(Cell_GetLowestComponent(0) == 0);
-	ASSERT(Cell_GetLowestComponent(1) == 1);
-	ASSERT(Cell_GetLowestComponent(2) == 2);
-	ASSERT(Cell_GetLowestComponent(6) == 2);
-	ASSERT(Cell_GetLowestComponent(0x110) == 0x10);
+	ASSERT_EQ(Cell_GetLowestComponent(0), 0);
+	ASSERT_EQ(Cell_GetLowestComponent(1), 1);
+	ASSERT_EQ(Cell_GetLowestComponent(2), 2);
+	ASSERT_EQ(Cell_GetLowestComponent(6), 2);
+	ASSERT_EQ(Cell_GetLowestComponent(0x110), 0x10);
 	for (new i = 0; i != 32; ++i)
 	{
 		new
 			k = 1 << i,
 			l = k;
-		ASSERT(Cell_GetLowestComponent(l) == k);
+		ASSERT_EQ(Cell_GetLowestComponent(l), k);
 		l |= 2 << i;
-		ASSERT(Cell_GetLowestComponent(l) == k);
+		ASSERT_EQ(Cell_GetLowestComponent(l), k);
 		l |= 4 << i;
-		ASSERT(Cell_GetLowestComponent(l) == k);
+		ASSERT_EQ(Cell_GetLowestComponent(l), k);
 		l |= 8 << i;
-		ASSERT(Cell_GetLowestComponent(l) == k);
+		ASSERT_EQ(Cell_GetLowestComponent(l), k);
 	}
 }
 
 TEST__ y_cell_GetLowestBit()
 {
-	ASSERT(Cell_GetLowestBit(0) == 0);
-	ASSERT(Cell_GetLowestBit(1) == 0);
-	ASSERT(Cell_GetLowestBit(0x800) == 11);
-	ASSERT(Cell_GetLowestBit(0x111) == 0);
-	ASSERT(Cell_GetLowestBit(6) == 1);
+	ASSERT_EQ(Cell_GetLowestBit(0), 0);
+	ASSERT_EQ(Cell_GetLowestBit(1), 0);
+	ASSERT_EQ(Cell_GetLowestBit(0x800), 11);
+	ASSERT_EQ(Cell_GetLowestBit(0x111), 0);
+	ASSERT_EQ(Cell_GetLowestBit(6), 1);
 	for (new i = 0; i != 32; ++i)
 	{
 		new
 			k = 1 << i;
-		ASSERT(Cell_GetLowestBit(k) == i);
+		ASSERT_EQ(Cell_GetLowestBit(k), i);
 		k |= 2 << i;
-		ASSERT(Cell_GetLowestBit(k) == i);
+		ASSERT_EQ(Cell_GetLowestBit(k), i);
 		k |= 4 << i;
-		ASSERT(Cell_GetLowestBit(k) == i);
+		ASSERT_EQ(Cell_GetLowestBit(k), i);
 		k |= 8 << i;
-		ASSERT(Cell_GetLowestBit(k) == i);
+		ASSERT_EQ(Cell_GetLowestBit(k), i);
 	}
 }
 
 TEST__ y_cell_GetLowestBitEx()
 {
-	ASSERT(Cell_GetLowestBitEx(0) == 0);
-	ASSERT(Cell_GetLowestBitEx(1) == 1);
-	ASSERT(Cell_GetLowestBitEx(0x800) == 12);
-	ASSERT(Cell_GetLowestBitEx(0x111) == 1);
-	ASSERT(Cell_GetLowestBitEx(6) == 2);
+	ASSERT_EQ(Cell_GetLowestBitEx(0), 0);
+	ASSERT_EQ(Cell_GetLowestBitEx(1), 1);
+	ASSERT_EQ(Cell_GetLowestBitEx(0x800), 12);
+	ASSERT_EQ(Cell_GetLowestBitEx(0x111), 1);
+	ASSERT_EQ(Cell_GetLowestBitEx(6), 2);
 	for (new i = 0; i != 32; ++i)
 	{
 		new
 			k = 1 << i;
-		ASSERT(Cell_GetLowestBitEx(k) == i + 1);
+		ASSERT_EQ(Cell_GetLowestBitEx(k), i + 1);
 		k |= 2 << i;
-		ASSERT(Cell_GetLowestBitEx(k) == i + 1);
+		ASSERT_EQ(Cell_GetLowestBitEx(k), i + 1);
 		k |= 4 << i;
-		ASSERT(Cell_GetLowestBitEx(k) == i + 1);
+		ASSERT_EQ(Cell_GetLowestBitEx(k), i + 1);
 		k |= 8 << i;
-		ASSERT(Cell_GetLowestBitEx(k) == i + 1);
+		ASSERT_EQ(Cell_GetLowestBitEx(k), i + 1);
 	}
 }
 

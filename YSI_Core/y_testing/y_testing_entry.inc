@@ -837,8 +837,8 @@ stock Testing_RunAll()
 
 stock Testing_TestRedirect(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
-	ASSERT(x == bool:YSI_g_sTestResult);
-	ASSERT(str[0] != '\0');
+	ASSERT_EQ(x, bool:YSI_g_sTestResult);
+	ASSERT_NE(str[0], '\0');
 	ASSERT(!strcmp(str, "%s %s", false, 5));
 }
 
@@ -873,9 +873,9 @@ TEST__ y_testing_1()
 {
 	new
 		x = YSI_g_sTestResult;
-	ASSERT(FALSE == false);
-	ASSERT(TRUE == true);
-	ASSERT(true != false);
+	ASSERT_EQ(FALSE, false);
+	ASSERT_EQ(TRUE, true);
+	ASSERT_NE(true, false);
 	ASSERT(isnull(NULL));
 	ASSERT_TRUE(true);
 	ASSERT_TRUE(!false);
@@ -889,7 +889,7 @@ TEST__ y_testing_1()
 	ASSERT(true);
 	#undef Testing_Test
 	YSI_g_sTestResult = x + 3;
-	ASSERT(YSI_g_sTestResult == 8);
+	ASSERT_EQ(YSI_g_sTestResult, 8);
 }
 
 TEST_CLOSE__ y_testing_1()

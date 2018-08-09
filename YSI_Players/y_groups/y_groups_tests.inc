@@ -96,7 +96,7 @@ TEST__ y_groups_Create0()
 {
 	new
 		Group:g = Group_Create();
-	ASSERT(g != INVALID_GROUP);
+	ASSERT_NE(g, INVALID_GROUP);
 	Group_Destroy(g);
 }
 
@@ -105,9 +105,9 @@ TEST__ y_groups_Create0b()
 	new
 		Group:g0 = Group_Create("hello"),
 		Group:g1 = Group_Create("there");
-	ASSERT(g0 != INVALID_GROUP);
-	ASSERT(g1 != INVALID_GROUP);
-	ASSERT(g0 != g1);
+	ASSERT_NE(g0, INVALID_GROUP);
+	ASSERT_NE(g1, INVALID_GROUP);
+	ASSERT_NE(g0, g1);
 	Group_Destroy(g0);
 	Group_Destroy(g1);
 }
@@ -116,7 +116,7 @@ TEST__ y_groups_Create1()
 {
 	new
 		Group:g = Group_Create("Group 1");
-	ASSERT(g != INVALID_GROUP);
+	ASSERT_NE(g, INVALID_GROUP);
 	Group_Destroy(g);
 }
 
@@ -124,7 +124,7 @@ TEST__ y_groups_GetID()
 {
 	new
 		Group:g = Group_Create("Group 2");
-	ASSERT(g == Group_GetID("Group 2"));
+	ASSERT_EQ(g, Group_GetID("Group 2"));
 	ASSERT(!strcmp("Group 2", Group_GetName(g)));
 	Group_Destroy(g);
 }
@@ -161,11 +161,11 @@ TEST__ y_groups_GetColour()
 	new
 		Group:g = Group_Create("Group 6");
 	Group_SetColour(g, 0x11227654);
-	ASSERT(Group_GetColor(g) == 0x112276AA);
+	ASSERT_EQ(Group_GetColor(g), 0x112276AA);
 	Group_SetColour(g, 0x76541122);
-	ASSERT(Group_GetColor(g) == 0x765411AA);
+	ASSERT_EQ(Group_GetColor(g), 0x765411AA);
 	Group_SetColour(g, 0x65127412);
-	ASSERT(Group_GetColor(g) == 0x651274AA);
+	ASSERT_EQ(Group_GetColor(g), 0x651274AA);
 	Group_Destroy(g);
 }
 
@@ -173,18 +173,18 @@ TEST__ y_groups_Set1()
 {
 	new
 		Group:g = Group_Create("Group 7");
-	ASSERT(Group_GetCount(g) == 0);
+	ASSERT_EQ(Group_GetCount(g), 0);
 	Group_SetPlayer(g, 42, true);
 	ASSERT_TRUE(Group_GetPlayer(g, 42));
-	ASSERT(Group_GetCount(g) == 1);
+	ASSERT_EQ(Group_GetCount(g), 1);
 	new
 		c = 0;
 	foreach (new p : GroupMember[g])
 	{
-		ASSERT(p == 42);
+		ASSERT_EQ(p, 42);
 		++c;
 	}
-	ASSERT(c == 1);
+	ASSERT_EQ(c, 1);
 	Group_Destroy(g);
 }
 
@@ -192,19 +192,19 @@ TEST__ y_groups_Set2()
 {
 	new
 		Group:g = Group_Create("Group 8");
-	ASSERT(Group_GetCount(g) == 0);
+	ASSERT_EQ(Group_GetCount(g), 0);
 	//new k = Group_SetPlayer(g, 42, true);
 	Group_SetPlayer(g, 42, true);
-	ASSERT(Group_GetCount(g) == 1);
+	ASSERT_EQ(Group_GetCount(g), 1);
 	Group_SetPlayer(g, 42, false);
-	ASSERT(Group_GetCount(g) == 0);
+	ASSERT_EQ(Group_GetCount(g), 0);
 	new
 		c = 0;
 	foreach (new p : GroupMember(g))
 	{
 		++c;
 	}
-	ASSERT(c == 0);
+	ASSERT_EQ(c, 0);
 	Group_Destroy(g);
 }
 
@@ -213,7 +213,7 @@ TEST__ y_groups_Set3()
 	new
 		Group:g = Group_Create("Group 8");
 	Group_SetPlayer(g, 42, true);
-	ASSERT(Group_GetCount(g) == 1);
+	ASSERT_EQ(Group_GetCount(g), 1);
 	call OnPlayerDisconnect(42, 0);
 	Group_Destroy(g);
 }
@@ -317,9 +317,9 @@ TEST__ y_groups_SetBalanced3()
 	Group_SetBalancedArray(5, g, sizeof(g));
 	Group_SetBalancedArray(6, g, sizeof(g));
 
-	ASSERT(Group_GetCount(g[0]) == 3);
-	ASSERT(Group_GetCount(g[1]) == 2);
-	ASSERT(Group_GetCount(g[2]) == 2);
+	ASSERT_EQ(Group_GetCount(g[0]), 3);
+	ASSERT_EQ(Group_GetCount(g[1]), 2);
+	ASSERT_EQ(Group_GetCount(g[2]), 2);
 
 	call OnPlayerDisconnect(0, 0);
 	call OnPlayerDisconnect(1, 0);
@@ -359,9 +359,9 @@ TEST__ y_groups_SetBalancedIn1()
 
 	Group_SetBalancedArray(6, g, sizeof(g));
 
-	ASSERT(Group_GetCount(g[0]) == 3);
-	ASSERT(Group_GetCount(g[1]) == 1);
-	ASSERT(Group_GetCount(g[2]) == 3);
+	ASSERT_EQ(Group_GetCount(g[0]), 3);
+	ASSERT_EQ(Group_GetCount(g[1]), 1);
+	ASSERT_EQ(Group_GetCount(g[2]), 3);
 
 	call OnPlayerDisconnect(0, 0);
 	call OnPlayerDisconnect(1, 0);
@@ -401,9 +401,9 @@ TEST__ y_groups_SetBalancedIn2()
 
 	Group_SetBalancedArray(0, g, sizeof(g));
 
-	ASSERT(Group_GetCount(g[0]) == 3);
-	ASSERT(Group_GetCount(g[1]) == 0);
-	ASSERT(Group_GetCount(g[2]) == 3);
+	ASSERT_EQ(Group_GetCount(g[0]), 3);
+	ASSERT_EQ(Group_GetCount(g[1]), 0);
+	ASSERT_EQ(Group_GetCount(g[2]), 3);
 
 	call OnPlayerDisconnect(0, 0);
 	call OnPlayerDisconnect(1, 0);
@@ -443,9 +443,9 @@ TEST__ y_groups_SetBalancedIn3()
 
 	Group_SetBalancedArray(4, g, sizeof(g));
 
-	ASSERT(Group_GetCount(g[0]) == 3);
-	ASSERT(Group_GetCount(g[1]) == 0);
-	ASSERT(Group_GetCount(g[2]) == 3);
+	ASSERT_EQ(Group_GetCount(g[0]), 3);
+	ASSERT_EQ(Group_GetCount(g[1]), 0);
+	ASSERT_EQ(Group_GetCount(g[2]), 3);
 
 	call OnPlayerDisconnect(0, 0);
 	call OnPlayerDisconnect(1, 0);
@@ -487,9 +487,9 @@ TEST__ y_groups_SetBalancedIn3a()
 
 	Group_SetBalancedArray(0, g, sizeof(g));
 
-	ASSERT(Group_GetCount(g[0]) == 3);
-	ASSERT(Group_GetCount(g[1]) == 2);
-	ASSERT(Group_GetCount(g[2]) == 2);
+	ASSERT_EQ(Group_GetCount(g[0]), 3);
+	ASSERT_EQ(Group_GetCount(g[1]), 2);
+	ASSERT_EQ(Group_GetCount(g[2]), 2);
 
 	call OnPlayerDisconnect(0, 0);
 	call OnPlayerDisconnect(1, 0);
@@ -531,9 +531,9 @@ TEST__ y_groups_SetBalancedIn3b()
 
 	Group_SetBalancedArray(0, g, sizeof(g));
 
-	ASSERT(Group_GetCount(g[0]) == 2);
-	ASSERT(Group_GetCount(g[1]) == 3);
-	ASSERT(Group_GetCount(g[2]) == 2);
+	ASSERT_EQ(Group_GetCount(g[0]), 2);
+	ASSERT_EQ(Group_GetCount(g[1]), 3);
+	ASSERT_EQ(Group_GetCount(g[2]), 2);
 
 	call OnPlayerDisconnect(0, 0);
 	call OnPlayerDisconnect(1, 0);
@@ -575,9 +575,9 @@ TEST__ y_groups_SetBalancedIn3c()
 
 	Group_SetBalancedArray(0, g, sizeof(g));
 
-	ASSERT(Group_GetCount(g[0]) == 2);
-	ASSERT(Group_GetCount(g[1]) == 2);
-	ASSERT(Group_GetCount(g[2]) == 3);
+	ASSERT_EQ(Group_GetCount(g[0]), 2);
+	ASSERT_EQ(Group_GetCount(g[1]), 2);
+	ASSERT_EQ(Group_GetCount(g[2]), 3);
 
 	call OnPlayerDisconnect(0, 0);
 	call OnPlayerDisconnect(1, 0);
@@ -618,9 +618,9 @@ TEST__ y_groups_SetBalancedIn4()
 
 	Group_SetBalancedArray(2, g, sizeof(g));
 
-	ASSERT(Group_GetCount(g[0]) == 2);
-	ASSERT(Group_GetCount(g[1]) == 3);
-	ASSERT(Group_GetCount(g[2]) == 1);
+	ASSERT_EQ(Group_GetCount(g[0]), 2);
+	ASSERT_EQ(Group_GetCount(g[1]), 3);
+	ASSERT_EQ(Group_GetCount(g[2]), 1);
 
 	call OnPlayerDisconnect(0, 0);
 	call OnPlayerDisconnect(1, 0);
@@ -643,7 +643,7 @@ TEST__ y_groups_SetBalancedSingle()
 	call OnPlayerConnect(0);
 	
 	result = Group_SetBalanced(0, g1, Group:11);
-	ASSERT(result == g1);
+	ASSERT_EQ(result, g1);
 	
 	call OnPlayerDisconnect(0, 0);
 	Group_Destroy(g1);
@@ -656,7 +656,7 @@ TEST__ y_groups_SetBalancedInvalid()
 	call OnPlayerConnect(0);
 	
 	result = Group_SetBalanced(0, Group:99, Group:88);
-	ASSERT(result == INVALID_GROUP);
+	ASSERT_EQ(result, INVALID_GROUP);
 	
 	call OnPlayerDisconnect(0, 0);
 }
@@ -691,14 +691,14 @@ TEST__ 0_y_groups_Connect0()
 	//new
 	//	Group:g = Group_Create();
 	call OnPlayerConnect(45);
-	ASSERT(gPl == INVALID_PLAYER_ID);
-	ASSERT(gEl == 100);
-	ASSERT(gS == false);
+	ASSERT_EQ(gPl, INVALID_PLAYER_ID);
+	ASSERT_EQ(gEl, 100);
+	ASSERT_EQ(gS, false);
 	//printf("%d %d %d", gPl, gEl, gS);
 	Test_InitialiseFromGroups(7);
-	ASSERT(gPl == 45);
-	ASSERT(gEl == 7);
-	ASSERT(gS == true);
+	ASSERT_EQ(gPl, 45);
+	ASSERT_EQ(gEl, 7);
+	ASSERT_EQ(gS, true);
 	call OnPlayerDisconnect(45, 0);
 }
 
@@ -710,13 +710,13 @@ TEST__ 0_y_groups_Connect1()
 	//new
 	//	Group:g = Group_Create();
 	Test_InitialiseFromGroups(8);
-	ASSERT(gPl != INVALID_PLAYER_ID);
-	ASSERT(gEl != 100);
-	ASSERT(gS != false);
+	ASSERT_NE(gPl, INVALID_PLAYER_ID);
+	ASSERT_NE(gEl, 100);
+	ASSERT_NE(gS, false);
 	call OnPlayerConnect(43);
-	ASSERT(gPl == 43);
-	ASSERT(gEl == 8);
-	ASSERT(gS == true);
+	ASSERT_EQ(gPl, 43);
+	ASSERT_EQ(gEl, 8);
+	ASSERT_EQ(gS, true);
 	call OnPlayerDisconnect(43, 0);
 }
 
@@ -919,7 +919,7 @@ TEST__ y_groups_ChildIterator0()
 	{
 		++total;
 	}
-	ASSERT(total == 2);
+	ASSERT_EQ(total, 2);
 	Group_Destroy(g0),
 	Group_Destroy(g1),
 	Group_Destroy(g2);
@@ -965,7 +965,7 @@ TEST__ y_groups_ChildIterator2()
 		Group_Destroy(g);
 		++total;
 	}
-	ASSERT(total == 2);
+	ASSERT_EQ(total, 2);
 	ASSERT(Group_IsValid(g0));
 	ASSERT(!Group_IsValid(g1));
 	ASSERT(!Group_IsValid(g2));

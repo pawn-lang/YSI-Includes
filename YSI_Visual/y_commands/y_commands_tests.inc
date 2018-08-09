@@ -76,9 +76,9 @@ TEST__ y_commands_Syntax()
 		id1 = YCMD:y_commands_1,
 		id2 = (YCMD:y_commands_2),
 		id3 = YCMD:y_commands_3;
-	ASSERT(id1 != -1);
-	ASSERT(id2 == -1);
-	ASSERT(id3 != -1);
+	ASSERT_NE(id1, -1);
+	ASSERT_EQ(id2, -1);
+	ASSERT_NE(id3, -1);
 }
 
 TEST__ y_commands_Valid()
@@ -90,10 +90,10 @@ TEST__ y_commands_Valid()
 
 TEST__ y_commands_YCMD()
 {
-	ASSERT(Command_GetID("y_commands_1") == _:YCMD:y_commands_1);
-	ASSERT(Command_GetID("y_commands_1") != _:YCMD:y_commands_2);
-	ASSERT(Command_GetID("y_commands_1") != _:YCMD:y_commands_3);
-	ASSERT(Command_GetID("y_commands_DO_NOT_MAKE") == COMMAND_NOT_FOUND);
+	ASSERT_EQ(Command_GetID("y_commands_1"), _:YCMD:y_commands_1);
+	ASSERT_NE(Command_GetID("y_commands_1"), _:YCMD:y_commands_2);
+	ASSERT_NE(Command_GetID("y_commands_1"), _:YCMD:y_commands_3);
+	ASSERT_EQ(Command_GetID("y_commands_DO_NOT_MAKE"), COMMAND_NOT_FOUND);
 }
 
 TEST__ y_commands_GetName()
@@ -101,7 +101,7 @@ TEST__ y_commands_GetName()
 	new
 		id = Command_GetID("y_commands_1");
 	ASSERT(!strcmp(Command_GetName(id), "y_commands_1"));
-	ASSERT(strlen(Command_GetName(-1)) == 0);
+	ASSERT_EQ(strlen(Command_GetName(-1)), 0);
 }
 
 TEST__ y_commands_AddAlt()
@@ -110,9 +110,9 @@ TEST__ y_commands_AddAlt()
 		id1 = YCMD:y_commands_1,
 		id2 = Command_AddAlt(id1, "y_commands_alt1"),
 		id3 = Command_AddAltNamed("y_commands_1", "y_commands_alt1");
-	ASSERT(id1 != id2);
-	ASSERT(id2 != COMMAND_NOT_FOUND);
-	ASSERT(id2 == id3);
+	ASSERT_NE(id1, id2);
+	ASSERT_NE(id2, COMMAND_NOT_FOUND);
+	ASSERT_EQ(id2, id3);
 }
 
 TEST__ y_commands_AddAlt2()
@@ -121,9 +121,9 @@ TEST__ y_commands_AddAlt2()
 		id1 = YCMD:y_commands_1,
 		id2 = Command_AddAlt(id1, "y_cómmańds_ąlt"),
 		id3 = Command_AddAltNamed("y_commands_1", "y_cómmańds_ąlt");
-	ASSERT(id1 != id2);
-	ASSERT(id2 != COMMAND_NOT_FOUND);
-	ASSERT(id2 == id3);
+	ASSERT_NE(id1, id2);
+	ASSERT_NE(id2, COMMAND_NOT_FOUND);
+	ASSERT_EQ(id2, id3);
 }
 
 TEST__ y_commands_Perms()
@@ -165,24 +165,24 @@ TEST__ y_commands_removable()
 {
 	YSI_g_sRemovableRan = 0;
 	Command_SetPlayerNamed("y_commands_removable", 103, true);
-	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") != 0);
-	ASSERT(YSI_g_sRemovableRan == 1);
+	ASSERT_NE(call OnPlayerCommandText(103, "/y_commands_removable"), 0);
+	ASSERT_EQ(YSI_g_sRemovableRan, 1);
 	YSI_g_sRemovableRan = 0;
 	Command_SetPlayerNamed("y_commands_removable", 103, false);
 	Command_SetDeniedReturn(false);
-	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") == 0);
+	ASSERT_EQ(call OnPlayerCommandText(103, "/y_commands_removable"), 0);
 	Command_SetDeniedReturn(true);
-	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") != 0);
+	ASSERT_NE(call OnPlayerCommandText(103, "/y_commands_removable"), 0);
 	Command_SetDeniedReturn(false);
-	ASSERT(YSI_g_sRemovableRan == 0);
+	ASSERT_EQ(YSI_g_sRemovableRan, 0);
 	YSI_g_sRemovableRan = 0;
 	Command_SetPlayerNamed("y_commands_removable", 103, true);
-	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") != 0);
-	ASSERT(YSI_g_sRemovableRan == 1);
+	ASSERT_NE(call OnPlayerCommandText(103, "/y_commands_removable"), 0);
+	ASSERT_EQ(YSI_g_sRemovableRan, 1);
 	YSI_g_sRemovableRan = 0;
 	Command_RemoveNamed("y_commands_removable");
-	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable") == 0);
-	ASSERT(YSI_g_sRemovableRan == 0);
+	ASSERT_EQ(call OnPlayerCommandText(103, "/y_commands_removable"), 0);
+	ASSERT_EQ(YSI_g_sRemovableRan, 0);
 }
 
 YCMD:y_commands_removable2(playerid, params[], help)
@@ -194,9 +194,9 @@ TEST__ y_commands_removable2()
 {
 	//printf("%d", YCMD:y_commands_removable2);
 	Command_SetPlayer(YCMD:y_commands_removable2, 103, true);
-	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable2") != 0);
+	ASSERT_NE(call OnPlayerCommandText(103, "/y_commands_removable2"), 0);
 	Command_Remove(YCMD:y_commands_removable2);
-	ASSERT(call OnPlayerCommandText(103, "/y_commands_removable2") == 0);
+	ASSERT_EQ(call OnPlayerCommandText(103, "/y_commands_removable2"), 0);
 }
 
 TEST__ y_commands_count()
@@ -205,9 +205,9 @@ TEST__ y_commands_count()
 	{
 		Command_SetPlayer(i, 22, false);
 	}
-	ASSERT(Command_GetPlayerCommandCount(22) == 0);
+	ASSERT_EQ(Command_GetPlayerCommandCount(22), 0);
 	Command_SetPlayerNamed("y_commands_1", 22, true);
-	ASSERT(Command_GetPlayerCommandCount(22) != 0);
+	ASSERT_NE(Command_GetPlayerCommandCount(22), 0);
 }
 
 TEST__ y_commands_display1()
@@ -216,9 +216,9 @@ TEST__ y_commands_display1()
 	{
 		Command_SetPlayer(i, 23, false);
 	}
-	ASSERT(strlen(Command_GetDisplayNamed("y_commands_1", 23)) == 0);
+	ASSERT_EQ(strlen(Command_GetDisplayNamed("y_commands_1", 23)), 0);
 	Command_SetPlayerNamed("y_commands_1", 23, true);
-	ASSERT(strlen(Command_GetDisplayNamed("y_commands_1", 23)) != 0);
+	ASSERT_NE(strlen(Command_GetDisplayNamed("y_commands_1", 23)), 0);
 	ASSERT(!strcmp(Command_GetDisplayNamed("y_commands_1", 23), "y_commands_1"));
 }
 
@@ -228,9 +228,9 @@ TEST__ y_commands_display2()
 	{
 		Command_SetPlayer(i, 23, false);
 	}
-	ASSERT(strlen(Command_GetDisplay(YCMD:y_commands_3, 23)) == 0);
+	ASSERT_EQ(strlen(Command_GetDisplay(YCMD:y_commands_3, 23)), 0);
 	Command_SetPlayer(YCMD:y_commands_3, 23, true);
-	ASSERT(strlen(Command_GetDisplay(YCMD:y_commands_3, 23)) != 0);
+	ASSERT_NE(strlen(Command_GetDisplay(YCMD:y_commands_3, 23)), 0);
 	ASSERT(!strcmp(Command_GetDisplay(YCMD:y_commands_3, 23), "y_commands_3"));
 }
 
@@ -243,18 +243,18 @@ TEST__ y_commands_display3()
 	{
 		Command_SetPlayer(i, 25, false);
 	}
-	ASSERT(strlen(Command_GetDisplay(YCMD:y_commands_3, 25)) == 0);
+	ASSERT_EQ(strlen(Command_GetDisplay(YCMD:y_commands_3, 25)), 0);
 	// Get a name from the original.
 	Command_SetPlayer(YCMD:y_commands_alt3, 25, true);
-	ASSERT(strlen(Command_GetDisplay(YCMD:y_commands_3, 25)) != 0);
+	ASSERT_NE(strlen(Command_GetDisplay(YCMD:y_commands_3, 25)), 0);
 	ASSERT(!strcmp(Command_GetDisplay(YCMD:y_commands_3, 25), "y_commands_alt3"));
 	// Get an y_commands_alternate from a different y_commands_alternate.
 	Command_SetPlayer(YCMD:y_commands_alt7, 25, true);
-	ASSERT(strlen(Command_GetDisplay(YCMD:y_commands_alt2, 25)) != 0);
+	ASSERT_NE(strlen(Command_GetDisplay(YCMD:y_commands_alt2, 25)), 0);
 	ASSERT(!strcmp(Command_GetDisplay(YCMD:y_commands_alt2, 25), "y_commands_alt7"));
 	// Get the original from an y_commands_alternate.
 	Command_SetPlayer(YCMD:y_commands_3, 25, true);
-	ASSERT(strlen(Command_GetDisplay(YCMD:y_commands_alt2, 25)) != 0);
+	ASSERT_NE(strlen(Command_GetDisplay(YCMD:y_commands_alt2, 25)), 0);
 	ASSERT(!strcmp(Command_GetDisplay(YCMD:y_commands_alt2, 25), "y_commands_3"));
 }
 
@@ -267,15 +267,15 @@ TEST__ y_commands_count3()
 	{
 		Command_SetPlayer(i, 26, false);
 	}
-	ASSERT(Command_GetPlayerCommandCount(26) == 0);
+	ASSERT_EQ(Command_GetPlayerCommandCount(26), 0);
 	Command_SetPlayer(YCMD:y_commands_1, 26, true);
-	ASSERT(Command_GetPlayerCommandCount(26) == 1);
+	ASSERT_EQ(Command_GetPlayerCommandCount(26), 1);
 	Command_SetPlayer(YCMD:y_commands_alt4, 26, true);
-	ASSERT(Command_GetPlayerCommandCount(26) == 2);
+	ASSERT_EQ(Command_GetPlayerCommandCount(26), 2);
 	Command_SetPlayer(YCMD:y_commands_alt5, 26, true);
-	ASSERT(Command_GetPlayerCommandCount(26) == 3);
+	ASSERT_EQ(Command_GetPlayerCommandCount(26), 3);
 	Command_SetPlayer(YCMD:y_commands_alt6, 26, true);
-	ASSERT(Command_GetPlayerCommandCount(26) == 4);
+	ASSERT_EQ(Command_GetPlayerCommandCount(26), 4);
 }
 
 TEST__ y_commands_Hashing()
@@ -295,17 +295,17 @@ TEST__ y_commands_Hashing()
 	// Same.
 	//printf("%s %s", dst0, dst1);
 	ASSERT(!strcmp(dst0, dst1));
-	ASSERT(hash0 == hash1);
-	//ASSERT(len == strlen(dst1));
-	ASSERT(len == 9);
+	ASSERT_EQ(hash0, hash1);
+	//ASSERT_EQ(len, strlen(dst1));
+	ASSERT_EQ(len, 9);
 	// CASE SENSITIVE.
 	Puny_Encode(dst0, "Hello\x102;there", .delimiter = '@');
 	HashMap_Hash(dst0, hash0);
 	// V2.
 	len = Puny_EncodeHash(dst1, "Hello\x102;there you", hash1, .delimiter = '@');
 	ASSERT(!!strcmp(dst0, dst1));
-	ASSERT(hash0 != hash1);
-	ASSERT(len == 11);
+	ASSERT(hash0, hash1);
+	ASSERT_EQ(len, 11);
 }
 
 static
@@ -319,22 +319,22 @@ YCMD:y_commands_1(playerid, cmdtext[], help)
 TEST__ y_commands_1()
 {
 	call OnPlayerConnect(142);
-	ASSERT(call OnPlayerCommandText(142, "/y_commands_1") != 0);
-	ASSERT(call OnPlayerCommandText(142, "/y_comMands_1") != 0);
-	ASSERT(call OnPlayerCommandText(142, "/Y_COMMANDS_1") != 0);
-	ASSERT(call OnPlayerCommandText(142, "/Y_commandS_1") != 0);
-	ASSERT(call OnPlayerCommandText(142, "/y_Commands_1") != 0);
+	ASSERT_NE(call OnPlayerCommandText(142, "/y_commands_1"), 0);
+	ASSERT_NE(call OnPlayerCommandText(142, "/y_comMands_1"), 0);
+	ASSERT_NE(call OnPlayerCommandText(142, "/Y_COMMANDS_1"), 0);
+	ASSERT_NE(call OnPlayerCommandText(142, "/Y_commandS_1"), 0);
+	ASSERT_NE(call OnPlayerCommandText(142, "/y_Commands_1"), 0);
 }
 
 TEST__ y_commands_2()
 {
 	call OnPlayerConnect(143);
-	ASSERT(call OnPlayerCommandText(143, "/y_commands__NONONONO") == 0);
-	ASSERT(call OnPlayerCommandText(143, "/y_commands_0") == 0);
-	ASSERT(call OnPlayerCommandText(143, "/y_comMands_2") == 0);
-	ASSERT(call OnPlayerCommandText(143, "/Y_COMMANDS_2") == 0);
-	ASSERT(call OnPlayerCommandText(143, "/Y_commandS_I") == 0);
-	ASSERT(call OnPlayerCommandText(143, "/y_Commands_l") == 0);
+	ASSERT_EQ(call OnPlayerCommandText(143, "/y_commands__NONONONO"), 0);
+	ASSERT_EQ(call OnPlayerCommandText(143, "/y_commands_0"), 0);
+	ASSERT_EQ(call OnPlayerCommandText(143, "/y_comMands_2"), 0);
+	ASSERT_EQ(call OnPlayerCommandText(143, "/Y_COMMANDS_2"), 0);
+	ASSERT_EQ(call OnPlayerCommandText(143, "/Y_commandS_I"), 0);
+	ASSERT_EQ(call OnPlayerCommandText(143, "/y_Commands_l"), 0);
 }
 
 YCMD:y_commands_3(playerid, cmdtext[], help)
@@ -348,7 +348,7 @@ TEST__ y_commands_3()
 	call OnPlayerConnect(144);
 	gSomeVar = 42;
 	call OnPlayerCommandText(144, "/y_commands_3");
-	ASSERT(gSomeVar == 52);
+	ASSERT_EQ(gSomeVar, 52);
 }
 
 static stock
@@ -373,54 +373,54 @@ TEST__ y_commands_ReProcess()
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
 	Command_ReProcess(33, "y_commands_ReProcess", 0);
-	ASSERT(YSI_gsPlayerid == 33);
-	ASSERT(YSI_gsParams[0] == '\0');
-	ASSERT(YSI_gsHelp == 0);
+	ASSERT_EQ(YSI_gsPlayerid, 33);
+	ASSERT_EQ(YSI_gsParams[0], '\0');
+	ASSERT_EQ(YSI_gsHelp, 0);
 	// 2.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
 	Command_ReProcess(33, "y_commands_ReProcess one", 1);
-	ASSERT(YSI_gsPlayerid == 33);
-	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT_EQ(YSI_gsPlayerid, 33);
+	ASSERT_NE(YSI_gsParams[0], '\0');
 	ASSERT(!strcmp(YSI_gsParams, "one"));
-	ASSERT(YSI_gsHelp == 1);
+	ASSERT_EQ(YSI_gsHelp, 1);
 	// 3.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
 	Command_ReProcess(33, "y_commands_ReProcess two and three", 0);
-	ASSERT(YSI_gsPlayerid == 33);
-	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT_EQ(YSI_gsPlayerid, 33);
+	ASSERT_NE(YSI_gsParams[0], '\0');
 	ASSERT(!strcmp(YSI_gsParams, "two and three"));
-	ASSERT(YSI_gsHelp == 0);
+	ASSERT_EQ(YSI_gsHelp, 0);
 	// 4.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
 	Command_ReProcess(33, "y_commands_ReProcess 99", 1);
-	ASSERT(YSI_gsPlayerid == 33);
-	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT_EQ(YSI_gsPlayerid, 33);
+	ASSERT_NE(YSI_gsParams[0], '\0');
 	ASSERT(!strcmp(YSI_gsParams, "99"));
-	ASSERT(YSI_gsHelp == 1);
+	ASSERT_EQ(YSI_gsHelp, 1);
 	// 5.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
 	Command_ReProcess(33, "y_commands_ReProcess yeah......", 0);
-	ASSERT(YSI_gsPlayerid == 33);
-	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT_EQ(YSI_gsPlayerid, 33);
+	ASSERT_NE(YSI_gsParams[0], '\0');
 	ASSERT(!strcmp(YSI_gsParams, "yeah......"));
-	ASSERT(YSI_gsHelp == 0);
+	ASSERT_EQ(YSI_gsHelp, 0);
 	// 6.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
 	Command_ReProcess(33, "y_commands_ReProcess Hello World", 1);
-	ASSERT(YSI_gsPlayerid == 33);
-	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT_EQ(YSI_gsPlayerid, 33);
+	ASSERT_NE(YSI_gsParams[0], '\0');
 	ASSERT(!strcmp(YSI_gsParams, "Hello World"));
-	ASSERT(YSI_gsHelp == 1);
+	ASSERT_EQ(YSI_gsHelp, 1);
 }
 
 TEST__ y_commands_Parameters()
@@ -431,54 +431,54 @@ TEST__ y_commands_Parameters()
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
 	call OnPlayerCommandText(34, "/y_commands_ReProcess");
-	ASSERT(YSI_gsPlayerid == 34);
-	ASSERT(YSI_gsParams[0] == '\0');
-	ASSERT(YSI_gsHelp == 0);
+	ASSERT_EQ(YSI_gsPlayerid, 34);
+	ASSERT_EQ(YSI_gsParams[0], '\0');
+	ASSERT_EQ(YSI_gsHelp, 0);
 	// 2.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
 	call OnPlayerCommandText(34, "/y_commands_ReProcess one");
-	ASSERT(YSI_gsPlayerid == 34);
-	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT_EQ(YSI_gsPlayerid, 34);
+	ASSERT_NE(YSI_gsParams[0], '\0');
 	ASSERT(!strcmp(YSI_gsParams, "one"));
-	ASSERT(YSI_gsHelp == 0);
+	ASSERT_EQ(YSI_gsHelp, 0);
 	// 3.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
 	call OnPlayerCommandText(34, "/y_commands_ReProcess two and three");
-	ASSERT(YSI_gsPlayerid == 34);
-	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT_EQ(YSI_gsPlayerid, 34);
+	ASSERT_NE(YSI_gsParams[0], '\0');
 	ASSERT(!strcmp(YSI_gsParams, "two and three"));
-	ASSERT(YSI_gsHelp == 0);
+	ASSERT_EQ(YSI_gsHelp, 0);
 	// 4.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
 	call OnPlayerCommandText(34, "/y_commands_ReProcess 99");
-	ASSERT(YSI_gsPlayerid == 34);
-	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT_EQ(YSI_gsPlayerid, 34);
+	ASSERT_NE(YSI_gsParams[0], '\0');
 	ASSERT(!strcmp(YSI_gsParams, "99"));
-	ASSERT(YSI_gsHelp == 0);
+	ASSERT_EQ(YSI_gsHelp, 0);
 	// 5.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
 	call OnPlayerCommandText(34, "/y_commands_ReProcess yeah......");
-	ASSERT(YSI_gsPlayerid == 34);
-	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT_EQ(YSI_gsPlayerid, 34);
+	ASSERT_NE(YSI_gsParams[0], '\0');
 	ASSERT(!strcmp(YSI_gsParams, "yeah......"));
-	ASSERT(YSI_gsHelp == 0);
+	ASSERT_EQ(YSI_gsHelp, 0);
 	// 6.
 	YSI_gsPlayerid = INVALID_PLAYER_ID;
 	YSI_gsParams[0] = '\0';
 	YSI_gsHelp = -1;
 	call OnPlayerCommandText(34, "/y_commands_ReProcess Hello World");
-	ASSERT(YSI_gsPlayerid == 34);
-	ASSERT(YSI_gsParams[0] != '\0');
+	ASSERT_EQ(YSI_gsPlayerid, 34);
+	ASSERT_NE(YSI_gsParams[0], '\0');
 	ASSERT(!strcmp(YSI_gsParams, "Hello World"));
-	ASSERT(YSI_gsHelp == 0);
+	ASSERT_EQ(YSI_gsHelp, 0);
 }
 
 YCMD:y_commands_t1(playerid, params[], help)
@@ -528,8 +528,8 @@ TEST__ y_commands_iterator0()
 		else if (c == _:YCMD:y_commands_t111111) ++found;
 	}
 	// Very difficult to do much more.
-	ASSERT(total != 0);
-	ASSERT(found == 6);
+	ASSERT_NE(total, 0);
+	ASSERT_EQ(found, 6);
 }
 
 TEST__ y_commands_iterator1()
@@ -549,20 +549,20 @@ TEST__ y_commands_iterator1()
 		else if (c == _:YCMD:y_commands_t111111) ++found;
 	}
 	// Very difficult to do much more.
-	ASSERT(total != 0);
-	ASSERT(found == 6);
+	ASSERT_NE(total, 0);
+	ASSERT_EQ(found, 6);
 }
 
 TEST__ y_commands_lengths()
 {
 	call OnPlayerConnect(88);
-	ASSERT(call OnPlayerCommandText(88, "/y_commands_t1") != 0);
-	ASSERT(call OnPlayerCommandText(88, "/y_commands_t11") != 0);
-	ASSERT(call OnPlayerCommandText(88, "/y_commands_t111") != 0);
-	ASSERT(call OnPlayerCommandText(88, "/y_commands_t1111") != 0);
-	ASSERT(call OnPlayerCommandText(88, "/y_commands_t11111") != 0);
-	ASSERT(call OnPlayerCommandText(88, "/y_commands_t111111") != 0);
-	ASSERT(call OnPlayerCommandText(88, "/y_commands_t1111111") == 0);
+	ASSERT_NE(call OnPlayerCommandText(88, "/y_commands_t1"), 0);
+	ASSERT_NE(call OnPlayerCommandText(88, "/y_commands_t11"), 0);
+	ASSERT_NE(call OnPlayerCommandText(88, "/y_commands_t111"), 0);
+	ASSERT_NE(call OnPlayerCommandText(88, "/y_commands_t1111"), 0);
+	ASSERT_NE(call OnPlayerCommandText(88, "/y_commands_t11111"), 0);
+	ASSERT_NE(call OnPlayerCommandText(88, "/y_commands_t111111"), 0);
+	ASSERT_EQ(call OnPlayerCommandText(88, "/y_commands_t1111111"), 0);
 }
 
 #if defined Y_COMMANDS_USE_CHARS
@@ -576,21 +576,21 @@ TEST__ y_commands_lengths()
 		new
 			a = _C<@_yC>,
 			b = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00);
-		ASSERT(a == b);
+		ASSERT_EQ(a, b);
 		call OnPlayerConnect(89);
-		ASSERT(call OnPlayerCommandText(89, "/y_commands_prefix1") != 0);
-		ASSERT(call OnPlayerText(89, "!y_commands_prefix1") != 0);
-		ASSERT(Command_SetPrefix(YCMD:y_commands_prefix1, 'q') == false);
-		ASSERT(Command_SetPrefix(YCMD:y_commands_prefix1, '!') == true);
-		ASSERT(call OnPlayerCommandText(89, "/y_commands_prefix1") == 0);
-		ASSERT(call OnPlayerText(89, "!y_commands_prefix1") == 0);
-		ASSERT(Command_GetPrefixNamed("y_commands_prefix1") == '!');
+		ASSERT_NE(call OnPlayerCommandText(89, "/y_commands_prefix1"), 0);
+		ASSERT_NE(call OnPlayerText(89, "!y_commands_prefix1"), 0);
+		ASSERT_EQ(Command_SetPrefix(YCMD:y_commands_prefix1, 'q'), false);
+		ASSERT_EQ(Command_SetPrefix(YCMD:y_commands_prefix1, '!'), true);
+		ASSERT_EQ(call OnPlayerCommandText(89, "/y_commands_prefix1"), 0);
+		ASSERT_EQ(call OnPlayerText(89, "!y_commands_prefix1"), 0);
+		ASSERT_EQ(Command_GetPrefixNamed("y_commands_prefix1"), '!');
 		ASSERT(Command_IsValidPrefix('!'));
 		ASSERT(!Command_IsValidPrefix('a'));
 		ASSERT(Command_IsPrefixUsed('!'));
 		ASSERT(!Command_IsPrefixUsed('_'));
 		ASSERT(!Command_IsPrefixUsed('a'));
-		ASSERT(Command_SetPrefix(YCMD:y_commands_prefix1, '~') == true);
+		ASSERT_EQ(Command_SetPrefix(YCMD:y_commands_prefix1, '~'), true);
 		ASSERT(!Command_IsPrefixUsed('!'));
 	}
 #endif

@@ -42,23 +42,23 @@ TEST__ y_master_IntReturn()
 {
 	new b1[4], b2[70];
 	new a = 6, e = 11;
-	ASSERT(y_master_test_1(a, e, b1, sizeof (b1), "hi") == 42);
-	ASSERT(a == 9);
-	ASSERT(e == 4);
-	ASSERT(y_master_test_4(a, e, b1, sizeof (b1), "hi") == 0);
-	ASSERT(a == 9);
-	ASSERT(e == 4);
+	ASSERT_EQ(y_master_test_1(a, e, b1, sizeof (b1), "hi"), 42);
+	ASSERT_EQ(a, 9);
+	ASSERT_EQ(e, 4);
+	ASSERT_EQ(y_master_test_4(a, e, b1, sizeof (b1), "hi"), 0);
+	ASSERT_EQ(a, 9);
+	ASSERT_EQ(e, 4);
 	#if !defined YSI_NO_MASTER
-		ASSERT(y_master_test_2(a, e, "yeah", b2) == 43);
-		ASSERT(a == 35);
-		ASSERT(e == 4);
+		ASSERT_EQ(y_master_test_2(a, e, "yeah", b2), 43);
+		ASSERT_EQ(a, 35);
+		ASSERT_EQ(e, 4);
 	#endif
-	ASSERT(y_master_test_3(a, e, b2, sizeof (b2)) == 44);
-	ASSERT(a == 90);
-	ASSERT(e == 4);
-	ASSERT(y_master_test_5(a, e, b2) == 0);
-	ASSERT(a == 90);
-	ASSERT(e == 4);
+	ASSERT_EQ(y_master_test_3(a, e, b2, sizeof (b2)), 44);
+	ASSERT_EQ(a, 90);
+	ASSERT_EQ(e, 4);
+	ASSERT_EQ(y_master_test_5(a, e, b2), 0);
+	ASSERT_EQ(a, 90);
+	ASSERT_EQ(e, 4);
 }
 
 YSIM_NONE_FOREIGN stock string:y_master_test_1s(&a, &e, b[], c, string:d[]);
@@ -265,9 +265,9 @@ HOOK__ OnMasterSystemInit(id)
 
 TEST__ y_master_Init()
 {
-	ASSERT(YSI_g_sTestVar == 6);
-	ASSERT(Master_ID() != 0);
-	ASSERT(_YCM_g@6 == _E_YCM@y);
+	ASSERT_EQ(YSI_g_sTestVar, 6);
+	ASSERT_NE(Master_ID(), 0);
+	ASSERT_EQ(_YCM_g@6, _E_YCM@y);
 	ASSERT(!strcmp(#_YCM, "@6"));
 }
 

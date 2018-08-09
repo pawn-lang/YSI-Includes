@@ -102,7 +102,7 @@ TEST__ y_hooksPrehook()
 {
 	YSI_g_sValue = 91;
 	CallLocalFunction("OnTestPrehook", "");
-	ASSERT(YSI_g_sValue == 90);
+	ASSERT_EQ(YSI_g_sValue, 90);
 }
 
 forward OnTestCallback();
@@ -126,7 +126,7 @@ TEST__ y_hooksOrdering()
 {
 	YSI_g_sValue = 91;
 	CallLocalFunction("OnTestCallback", "");
-	ASSERT(YSI_g_sValue == 89);
+	ASSERT_EQ(YSI_g_sValue, 89);
 }
 
 static
@@ -201,7 +201,7 @@ TEST__ OnCodeInit()
 	{
 		// This one should work, because we have the original function to use
 		// for a pointer, not a newly generated version.
-		ASSERT(YSI_g_sValue == 101);
+		ASSERT_EQ(YSI_g_sValue, 101);
 		YSI_g_sValue += 404;
 	}
 
@@ -209,14 +209,14 @@ TEST__ OnCodeInit()
 	{
 		YSI_g_sValue = 0;
 		CallLocalFunction("y_hooks_VeryLongTarget_0", "");
-		ASSERT(YSI_g_sValue == 505);
+		ASSERT_EQ(YSI_g_sValue, 505);
 		YSI_g_sValue = 0;
 		CallLocalFunction("y_hooks_YyYz1", "");
-		ASSERT(YSI_g_sValue == 303);
+		ASSERT_EQ(YSI_g_sValue, 303);
 		YSI_g_sValue = 0;
 		// Currently fails.
 		CallLocalFunction("y_hooks_VeryLongTarget_1", "");
-		ASSERT(YSI_g_sValue == 202);
+		ASSERT_EQ(YSI_g_sValue, 202);
 	}
 
 #endif
@@ -235,7 +235,7 @@ TEST__ Ony_hooksShortUpdate()
 {
 	YSI_g_sValue = 0;
 	CallLocalFunction("Ony_hooksShortUpdate", "");
-	ASSERT(YSI_g_sValue == 2);
+	ASSERT_EQ(YSI_g_sValue, 2);
 }
 
 #if defined YSI_FAILING_TESTS
@@ -258,7 +258,7 @@ TEST__ Ony_hooksShortUpdate()
 	{
 		YSI_g_sValue = 0;
 		CallLocalFunction("Ony_hooksTTTTT_YYYYY", "");
-		ASSERT(YSI_g_sValue == 2);
+		ASSERT_EQ(YSI_g_sValue, 2);
 	}
 
 	public Ony_hooksTTTTT_YYYYY_WtExtras()
@@ -275,7 +275,7 @@ TEST__ Ony_hooksShortUpdate()
 	{
 		YSI_g_sValue = 0;
 		CallLocalFunction("Ony_hooksTTTTT_YYYYY_WtExtras", "");
-		ASSERT(YSI_g_sValue == 2);
+		ASSERT_EQ(YSI_g_sValue, 2);
 	}
 
 #endif
@@ -307,8 +307,8 @@ TEST__ y_hooks_Ony_hooksTest2()
 {
 	// Check both hooks are called.
 	YSI_g_sValue = 0;
-	ASSERT(CallLocalFunction("Ony_hooksTest2", "s", "IGNORE_ME") != 0);
-	ASSERT(YSI_g_sValue == 2);
+	ASSERT_NE(CallLocalFunction("Ony_hooksTest2", "s", "IGNORE_ME"), 0);
+	ASSERT_EQ(YSI_g_sValue, 2);
 	YSI_g_sValue = 0;
 }
 
@@ -316,37 +316,37 @@ forward y_hooks_PassParams(i1, a0[], i2);
 
 public y_hooks_PassParams(i1, a0[], i2)
 {
-	ASSERT(i1 == 42);
+	ASSERT_EQ(i1, 42);
 	ASSERT(!strcmp(a0, "Hello world"));
-	ASSERT(i2 == 101);
+	ASSERT_EQ(i2, 101);
 }
 
 HOOK__ y_hooks_PassParams@3(i1, a0[], i2)
 {
-	ASSERT(i1 == 42);
+	ASSERT_EQ(i1, 42);
 	ASSERT(!strcmp(a0, "Hello world"));
-	ASSERT(i2 == 101);
+	ASSERT_EQ(i2, 101);
 }
 
 HOOK__ y_hooks_PassParams@2(i1, a0[], i2)
 {
-	ASSERT(i1 == 42);
+	ASSERT_EQ(i1, 42);
 	ASSERT(!strcmp(a0, "Hello world"));
-	ASSERT(i2 == 101);
+	ASSERT_EQ(i2, 101);
 }
 
 HOOK__ y_hooks_PassParams@1(i1, a0[], i2)
 {
-	ASSERT(i1 == 42);
+	ASSERT_EQ(i1, 42);
 	ASSERT(!strcmp(a0, "Hello world"));
-	ASSERT(i2 == 101);
+	ASSERT_EQ(i2, 101);
 }
 
 HOOK__ y_hooks_PassParams(i1, a0[], i2)
 {
-	ASSERT(i1 == 42);
+	ASSERT_EQ(i1, 42);
 	ASSERT(!strcmp(a0, "Hello world"));
-	ASSERT(i2 == 101);
+	ASSERT_EQ(i2, 101);
 }
 
 TEST__ y_hooks_PassParams()
@@ -371,8 +371,8 @@ HOOK__ y_hooks_ReturnM2()
 TEST__ y_hooks_ReturnM2()
 {
 	YSI_g_sValue = 0;
-	ASSERT(CallLocalFunction("y_hooks_ReturnM2", "") == 1);
-	ASSERT(YSI_g_sValue == 4);
+	ASSERT_EQ(CallLocalFunction("y_hooks_ReturnM2", ""), 1);
+	ASSERT_EQ(YSI_g_sValue, 4);
 }
 
 forward y_hooks_ReturnM1();
@@ -392,8 +392,8 @@ HOOK__ y_hooks_ReturnM1()
 TEST__ y_hooks_ReturnM1()
 {
 	YSI_g_sValue = 0;
-	ASSERT(CallLocalFunction("y_hooks_ReturnM1", "") == 0);
-	ASSERT(YSI_g_sValue == 4);
+	ASSERT_EQ(CallLocalFunction("y_hooks_ReturnM1", ""), 0);
+	ASSERT_EQ(YSI_g_sValue, 4);
 }
 
 forward y_hooks_Return0();
@@ -413,8 +413,8 @@ HOOK__ y_hooks_Return0()
 TEST__ y_hooks_Return0()
 {
 	YSI_g_sValue = 0;
-	ASSERT(CallLocalFunction("y_hooks_Return0", "") == 0);
-	ASSERT(YSI_g_sValue == 8);
+	ASSERT_EQ(CallLocalFunction("y_hooks_Return0", ""), 0);
+	ASSERT_EQ(YSI_g_sValue, 8);
 }
 
 forward y_hooks_Return1();
@@ -434,8 +434,8 @@ HOOK__ y_hooks_Return1()
 TEST__ y_hooks_Return1()
 {
 	YSI_g_sValue = 0;
-	ASSERT(CallLocalFunction("y_hooks_Return1", "") == 1);
-	ASSERT(YSI_g_sValue == 8);
+	ASSERT_EQ(CallLocalFunction("y_hooks_Return1", ""), 1);
+	ASSERT_EQ(YSI_g_sValue, 8);
 }
 
 forward Ony_hooksTest3(cmd[]);
@@ -459,8 +459,8 @@ TEST__ y_hooks_Ony_hooksTest3()
 {
 	// Check both hooks are called.
 	YSI_g_sValue = 0;
-	ASSERT(CallLocalFunction("Ony_hooksTest3", "s", "IGNORE_ME") != 0);
-	ASSERT(YSI_g_sValue == 2);
+	ASSERT_NE(CallLocalFunction("Ony_hooksTest3", "s", "IGNORE_ME"), 0);
+	ASSERT_EQ(YSI_g_sValue, 2);
 	YSI_g_sValue = 0;
 }
 
@@ -483,8 +483,8 @@ TEST__ y_hooks_Ony_hooksTest1()
 {
 	// Check both hooks are called.
 	YSI_g_sValue = 0;
-	ASSERT(CallLocalFunction("Ony_hooksTest1", "s", "IGNORE_ME") == 0);
-	ASSERT(YSI_g_sValue == 2);
+	ASSERT_EQ(CallLocalFunction("Ony_hooksTest1", "s", "IGNORE_ME"), 0);
+	ASSERT_EQ(YSI_g_sValue, 2);
 	YSI_g_sValue = 0;
 }
 
@@ -507,8 +507,8 @@ TEST__ y_hooks_Ony_hooksTest4()
 {
 	// Check only one hook is called.
 	YSI_g_sValue = 0;
-	ASSERT(CallLocalFunction("Ony_hooksTest4", "s", "IGNORE_ME") == 0);
-	ASSERT(YSI_g_sValue == 1);
+	ASSERT_EQ(CallLocalFunction("Ony_hooksTest4", "s", "IGNORE_ME"), 0);
+	ASSERT_EQ(YSI_g_sValue, 1);
 	YSI_g_sValue = 0;
 }
 
@@ -531,8 +531,8 @@ TEST__ y_hooks_Ony_hooksTest5()
 {
 	// Check only one hook is called.
 	YSI_g_sValue = 0;
-	ASSERT(CallLocalFunction("Ony_hooksTest5", "s", "IGNORE_ME") == 1);
-	ASSERT(YSI_g_sValue == 1);
+	ASSERT_EQ(CallLocalFunction("Ony_hooksTest5", "s", "IGNORE_ME"), 1);
+	ASSERT_EQ(YSI_g_sValue, 1);
 	YSI_g_sValue = 0;
 }
 
@@ -558,10 +558,10 @@ public y_hooks_Invalidate1() {}
 
 TEST__ y_hooks_Invalidate1()
 {
-	ASSERT(funcidx("y_hooks_Invalidate1") != -1);
+	ASSERT_NE(funcidx("y_hooks_Invalidate1"), -1);
 	Hooks_InvalidateName(y_hooks_funcidx2("y_hooks_Invalidate1"));
 	Hooks_SortPublics();
-	ASSERT(funcidx("y_hooks_Invalidate1") == -1);
+	ASSERT_EQ(funcidx("y_hooks_Invalidate1"), -1);
 }
 
 forward y_hooks_Invalidate2();
@@ -576,13 +576,13 @@ TEST__ y_hooks_Invalidate23()
 		base0,
 		count0;
 	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base0, count0);
-	ASSERT(funcidx("y_hooks_Invalidate2") != -1);
-	ASSERT(funcidx("y_hooks_Invalidate3") != -1);
+	ASSERT_NE(funcidx("y_hooks_Invalidate2"), -1);
+	ASSERT_NE(funcidx("y_hooks_Invalidate3"), -1);
 	Hooks_InvalidateName(y_hooks_funcidx2("y_hooks_Invalidate2"));
 	Hooks_InvalidateName(y_hooks_funcidx2("y_hooks_Invalidate3"));
 	Hooks_SortPublics();
-	ASSERT(funcidx("y_hooks_Invalidate2") == -1);
-	ASSERT(funcidx("y_hooks_Invalidate3") == -1);
+	ASSERT_EQ(funcidx("y_hooks_Invalidate2"), -1);
+	ASSERT_EQ(funcidx("y_hooks_Invalidate3"), -1);
 	new
 		base1,
 		count1;
@@ -631,7 +631,7 @@ TEST__ y_hooks_Customs()
 {
 	g_y_hooksVar = 0;
 	CallLocalFunction("y_hooks_MyFunc1", "ii", 4, 5);
-	ASSERT(g_y_hooksVar == (4 + 5) * 6);
+	ASSERT_EQ(g_y_hooksVar, (4 + 5) * 6);
 }
 
 forward y_hooks_MyFunc1(a, b);
@@ -697,7 +697,7 @@ TEST__ y_hooks_SpecialCases()
 {
 	g_y_hooksVar = 0;
 	CallLocalFunction("OnPlayerEnterDynamicArea", "ii", 0, 0);
-	ASSERT(g_y_hooksVar == 110);
+	ASSERT_EQ(g_y_hooksVar, 110);
 }
 
 TEST__ Hooks_MakeLongName0()
@@ -705,13 +705,13 @@ TEST__ Hooks_MakeLongName0()
 	new
 		name[64];
 	name = "OnUpd";
-	ASSERT(Hooks_MakeLongName(name) == 8);
+	ASSERT_EQ(Hooks_MakeLongName(name), 8);
 	ASSERT(!strcmp(name, "OnUpdate"));
 	name = "OnUpdD";
-	ASSERT(Hooks_MakeLongName(name) == 9);
+	ASSERT_EQ(Hooks_MakeLongName(name), 9);
 	ASSERT(!strcmp(name, "OnUpdateD"));
 	name = "OnUpda";
-	ASSERT(Hooks_MakeLongName(name) == 6);
+	ASSERT_EQ(Hooks_MakeLongName(name), 6);
 	ASSERT(!strcmp(name, "OnUpda"));
 }
 
@@ -720,25 +720,25 @@ TEST__ Hooks_MakeLongName1()
 	new
 		name[64];
 	name = "CP";
-	ASSERT(Hooks_MakeLongName(name) == 10);
+	ASSERT_EQ(Hooks_MakeLongName(name), 10);
 	ASSERT(!strcmp(name, "Checkpoint"));
 	name = "TD";
-	ASSERT(Hooks_MakeLongName(name) == 8);
+	ASSERT_EQ(Hooks_MakeLongName(name), 8);
 	ASSERT(!strcmp(name, "TextDraw"));
 	name = "Upd";
-	ASSERT(Hooks_MakeLongName(name) == 6);
+	ASSERT_EQ(Hooks_MakeLongName(name), 6);
 	ASSERT(!strcmp(name, "Update"));
 	name = "Dyn";
-	ASSERT(Hooks_MakeLongName(name) == 7);
+	ASSERT_EQ(Hooks_MakeLongName(name), 7);
 	ASSERT(!strcmp(name, "Dynamic"));
 	name = "Obj";
-	ASSERT(Hooks_MakeLongName(name) == 6);
+	ASSERT_EQ(Hooks_MakeLongName(name), 6);
 	ASSERT(!strcmp(name, "Object"));
 	name = "Cmd";
-	ASSERT(Hooks_MakeLongName(name) == 7);
+	ASSERT_EQ(Hooks_MakeLongName(name), 7);
 	ASSERT(!strcmp(name, "Command"));
 	name = "DynamicCP";
-	ASSERT(Hooks_MakeLongName(name) == 9);
+	ASSERT_EQ(Hooks_MakeLongName(name), 9);
 	ASSERT(!strcmp(name, "DynamicCP"));
 }
 
@@ -747,13 +747,13 @@ TEST__ Hooks_MakeLongName2()
 	new
 		name[64];
 	name = "OnUpdTDCP";
-	ASSERT(Hooks_MakeLongName(name) == 26);
+	ASSERT_EQ(Hooks_MakeLongName(name), 26);
 	ASSERT(!strcmp(name, "OnUpdateTextDrawCheckpoint"));
 	name = "OnUpdTDObjCmd";
-	ASSERT(Hooks_MakeLongName(name) == 29);
+	ASSERT_EQ(Hooks_MakeLongName(name), 29);
 	ASSERT(!strcmp(name, "OnUpdateTextDrawObjectCommand"));
 	name = "OnUpdTDCPObjCmd";
-	ASSERT(Hooks_MakeLongName(name) == 31);
+	ASSERT_EQ(Hooks_MakeLongName(name), 31);
 	ASSERT(!strcmp(name, "OnUpdateTextDrawCPObjectCommand"));
 }
 
@@ -762,16 +762,16 @@ TEST__ Hooks_MakeShortName1()
 	new
 		name[64];
 	name = "OnPlayerEnterRaceCP";
-	ASSERT(Hooks_MakeShortName(name) == 19);
+	ASSERT_EQ(Hooks_MakeShortName(name), 19);
 	ASSERT(!strcmp(name, "OnPlayerEnterRaceCP"));
 	name = "OnPlayerEnterRaceCheckpoint";
-	ASSERT(Hooks_MakeShortName(name) == 27);
+	ASSERT_EQ(Hooks_MakeShortName(name), 27);
 	ASSERT(!strcmp(name, "OnPlayerEnterRaceCheckpoint"));
 	name = "OnPlayerEnterDynamicCP";
-	ASSERT(Hooks_MakeShortName(name) == 22);
+	ASSERT_EQ(Hooks_MakeShortName(name), 22);
 	ASSERT(!strcmp(name, "OnPlayerEnterDynamicCP"));
 	name = "OnPlayerEnterDynamicRaceCheckpoint";
-	ASSERT(Hooks_MakeShortName(name) == 26);
+	ASSERT_EQ(Hooks_MakeShortName(name), 26);
 	ASSERT(!strcmp(name, "OnPlayerEnterDynamicRaceCP"));
 	name = "AAAAAAAAAAAAAAAAAAAUpdateTextDraw";
 	Hooks_MakeShortName(name);
@@ -786,19 +786,19 @@ TEST__ Hooks_MakeShortName2()
 	new
 		name[64];
 	name = "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC";
-	ASSERT(Hooks_MakeShortName(name) == 43);
+	ASSERT_EQ(Hooks_MakeShortName(name), 43);
 	ASSERT(!strcmp(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCCCCC"));
 	name = "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCommandCCCC";
-	ASSERT(Hooks_MakeShortName(name) == 45);
+	ASSERT_EQ(Hooks_MakeShortName(name), 45);
 	ASSERT(!strcmp(name, "AAAAAAAAAAAAAABBBBBBBBBBBBBBBBCCCCCCCCCmdCCCC"));
 }
 
 TEST__ Hooks_GetDefaultReturn()
 {
-	ASSERT(Hooks_GetDefaultReturn("OnHookRet\0\0\0\0\0\0\0\0") == 1);
-	ASSERT(Hooks_GetDefaultReturn("OnPlayerCommandText\0\0\0\0\0\0\0\0") == 0);
-	ASSERT(Hooks_GetDefaultReturn("OnHookRet2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0") == 0);
-	ASSERT(Hooks_GetDefaultReturn("OnPlayerConnect\0\0\0\0\0\0\0\0") == 1);
+	ASSERT_EQ(Hooks_GetDefaultReturn("OnHookRet\0\0\0\0\0\0\0\0"), 1);
+	ASSERT_EQ(Hooks_GetDefaultReturn("OnPlayerCommandText\0\0\0\0\0\0\0\0"), 0);
+	ASSERT_EQ(Hooks_GetDefaultReturn("OnHookRet2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"), 0);
+	ASSERT_EQ(Hooks_GetDefaultReturn("OnPlayerConnect\0\0\0\0\0\0\0\0"), 1);
 }
 
 DEFINE_HOOK_RETURN__(OnHookRet2, 0);
@@ -814,7 +814,7 @@ TEST__ y_hooks_CustomReplacement()
 {
 	g_y_hooksVar = 0;
 	CallLocalFunction("OnPlayerCustomReplacement", "");
-	ASSERT(g_y_hooksVar == 555);
+	ASSERT_EQ(g_y_hooksVar, 555);
 }
 
 #if !defined BAD_numargs
@@ -823,30 +823,30 @@ TEST__ y_hooks_CustomReplacement()
 
 HOOK__ OnTestNumArgs0(a, b, c, d, e, f)
 {
-	ASSERT(Hooks_NumArgs() == 6);
-	ASSERT(numargs() == 6);
+	ASSERT_EQ(Hooks_NumArgs(), 6);
+	ASSERT_EQ(numargs(), 6);
 }
 
 HOOK__ OnTestNumArgs1(a, b, c, d, f)
 {
-	ASSERT(Hooks_NumArgs() == 5);
-	ASSERT(BAD_numargs() != 5);
-	ASSERT(numargs() == 5);
+	ASSERT_EQ(Hooks_NumArgs(), 5);
+	ASSERT_NE(BAD_numargs(), 5);
+	ASSERT_EQ(numargs(), 5);
 }
 
 forward OnTestNumArgs1(a, b, c, d, f);
 public OnTestNumArgs1(a, b, c, d, f)
 {
-	ASSERT(Hooks_NumArgs() == 5);
-	ASSERT(BAD_numargs() != 5);
-	ASSERT(numargs() == 5);
+	ASSERT_EQ(Hooks_NumArgs(), 5);
+	ASSERT_NE(BAD_numargs(), 5);
+	ASSERT_EQ(numargs(), 5);
 }
 
 HOOK__ OnTestNumArgs2(a, b, c, f)
 {
-	ASSERT(Hooks_NumArgs() == 4);
-	ASSERT(BAD_numargs() != 4);
-	ASSERT(numargs() == 4);
+	ASSERT_EQ(Hooks_NumArgs(), 4);
+	ASSERT_NE(BAD_numargs(), 4);
+	ASSERT_EQ(numargs(), 4);
 }
 
 #tryinclude "..\YSI_Coding\y_unique"
@@ -854,22 +854,22 @@ HOOK__ OnTestNumArgs2(a, b, c, f)
 
 HOOK__ OnTestNumArgs2(a, b, c, f)
 {
-	ASSERT(Hooks_NumArgs() == 4);
-	ASSERT(BAD_numargs() != 4);
-	ASSERT(numargs() == 4);
+	ASSERT_EQ(Hooks_NumArgs(), 4);
+	ASSERT_NE(BAD_numargs(), 4);
+	ASSERT_EQ(numargs(), 4);
 }
 
 forward OnTestNumArgs2(a, b, c, f);
 public OnTestNumArgs2(a, b, c, f)
 {
-	ASSERT(Hooks_NumArgs() == 4);
-	ASSERT(BAD_numargs() != 4);
-	ASSERT(numargs() == 4);
+	ASSERT_EQ(Hooks_NumArgs(), 4);
+	ASSERT_NE(BAD_numargs(), 4);
+	ASSERT_EQ(numargs(), 4);
 }
 
 static OnTestNumArgs4(total, ...)
 {
-	ASSERT(numargs() == total + 1);
+	ASSERT_EQ(numargs(), total + 1);
 }
 
 TEST__ y_hooks_numargs()
@@ -910,14 +910,14 @@ TEST__ y_hooks_State1()
 {
 	state y_hooks_state : y_hooks_state_1;
 	CallLocalFunction("y_hooks_State1", "s", "1000 2000");
-	ASSERT(g_y_hooksVar == 1000);
+	ASSERT_EQ(g_y_hooksVar, 1000);
 	state y_hooks_state : y_hooks_state_2;
 	CallLocalFunction("y_hooks_State1", "s", "1000 2000");
-	ASSERT(g_y_hooksVar == 2000);
+	ASSERT_EQ(g_y_hooksVar, 2000);
 	state y_hooks_state : y_hooks_state_1;
 	CallLocalFunction("y_hooks_State1", "s", "1000 2000");
 	state y_hooks_state : y_hooks_state_3;
 	CallLocalFunction("y_hooks_State1", "s", "1000 2000");
-	ASSERT(g_y_hooksVar == 3000);
+	ASSERT_EQ(g_y_hooksVar, 3000);
 }
 

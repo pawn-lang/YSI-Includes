@@ -82,15 +82,15 @@ TEST__ y_bintree_1()
 	Bintree_Generate(tree, values);
 	for (new i = 0; i != sizeof (values); ++i)
 	{
-		ASSERT(Bintree_FindValue(tree, i) == i * 2 + 1);
+		ASSERT_EQ(Bintree_FindValue(tree, i), i * 2 + 1);
 	}
 	for (new i = -100; i != 0; ++i)
 	{
-		ASSERT(Bintree_FindValue(tree, i) == BINTREE_NOT_FOUND);
+		ASSERT_EQ(Bintree_FindValue(tree, i), BINTREE_NOT_FOUND);
 	}
 	for (new i = sizeof (values); i != 1000; ++i)
 	{
-		ASSERT(Bintree_FindValue(tree, i) == BINTREE_NOT_FOUND);
+		ASSERT_EQ(Bintree_FindValue(tree, i), BINTREE_NOT_FOUND);
 	}
 }
 

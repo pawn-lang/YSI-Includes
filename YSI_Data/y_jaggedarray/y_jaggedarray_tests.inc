@@ -73,28 +73,28 @@ Optional plugins:
 TEST__ Jagged_Declaration_1()
 {
 	new Jagged:array[5]<1, 2, 3, 4, 5>;
-	ASSERT(jaggedsizeof(array[0]) == 1);
-	ASSERT(jaggedsizeof(array[1]) == 2);
-	ASSERT(jaggedsizeof(array[2]) == 3);
-	ASSERT(jaggedsizeof(array[3]) == 4);
+	ASSERT_EQ(jaggedsizeof(array[0]), 1);
+	ASSERT_EQ(jaggedsizeof(array[1]), 2);
+	ASSERT_EQ(jaggedsizeof(array[2]), 3);
+	ASSERT_EQ(jaggedsizeof(array[3]), 4);
 	ASSERT(jaggedsizeof(array[4]) >= 5);
 }
 
 TEST__ Jagged_Declaration_2()
 {
 	new Jagged:array[10]<1, 2, 3, 4, 5>;
-	ASSERT(jaggedsizeof(array[0]) == 1);
-	ASSERT(jaggedsizeof(array[1]) == 2);
-	ASSERT(jaggedsizeof(array[2]) == 3);
-	ASSERT(jaggedsizeof(array[3]) == 4);
-	ASSERT(jaggedsizeof(array[4]) == 5);
+	ASSERT_EQ(jaggedsizeof(array[0]), 1);
+	ASSERT_EQ(jaggedsizeof(array[1]), 2);
+	ASSERT_EQ(jaggedsizeof(array[2]), 3);
+	ASSERT_EQ(jaggedsizeof(array[3]), 4);
+	ASSERT_EQ(jaggedsizeof(array[4]), 5);
 }
 
 TEST__ Jagged_Declaration_3()
 {
 	new Jagged:array[3]<12, 1, 1>;
-	ASSERT(jaggedsizeof(array[0]) == 12);
-	ASSERT(jaggedsizeof(array[1]) == 1);
+	ASSERT_EQ(jaggedsizeof(array[0]), 12);
+	ASSERT_EQ(jaggedsizeof(array[1]), 1);
 	ASSERT(jaggedsizeof(array[2]) >= 1);
 }
 
@@ -102,8 +102,8 @@ TEST__ Jagged_Resize()
 {
 	new array[3][6];
 	Jagged_Resize(array, {0, 3}, {1, 12}, {2, 3});
-	ASSERT(jaggedsizeof(array[0]) == 3);
-	ASSERT(jaggedsizeof(array[1]) == 12);
+	ASSERT_EQ(jaggedsizeof(array[0]), 3);
+	ASSERT_EQ(jaggedsizeof(array[1]), 12);
 	ASSERT(jaggedsizeof(array[2]) >= 3);
 }
 

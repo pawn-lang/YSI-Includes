@@ -75,9 +75,9 @@ TEST__ Player_Existing()
 	new
 		ret[E_USER_PRELOAD];
 	Player_Preload("TestPlayer", ret);
-	ASSERT(0 == ret[E_USER_PRELOAD_YID]);
-	ASSERT(Langs_GetLanguage("EN") == ret[E_USER_PRELOAD_LANG]);
-	ASSERT(0x12345678 == ret[E_USER_PRELOAD_BITS]);
+	ASSERT_EQ(0, ret[E_USER_PRELOAD_YID]);
+	ASSERT_EQ(Langs_GetLanguage("EN"), ret[E_USER_PRELOAD_LANG]);
+	ASSERT_EQ(0x12345678, ret[E_USER_PRELOAD_BITS]);
 	ASSERT(0xAABBCCDD >= ret[E_USER_PRELOAD_DATE]);
 	P:I("Note that if these tests fail, you will need to");
 	P:I("    first connect to the server as \"TestPlayer\".");
@@ -127,10 +127,10 @@ PTEST__ Player_ChangeLanguage(playerid)
 		ret[E_USER_PRELOAD];
 	// Check their language is English, then change it to Dutch.
 	Player_Preload("TestPlayer", ret);
-	ASSERT(Langs_GetLanguage("EN") == ret[E_USER_PRELOAD_LANG]);
+	ASSERT_EQ(Langs_GetLanguage("EN"), ret[E_USER_PRELOAD_LANG]);
 	Player_ChangeLanguage(gBot, "NL");
 	Player_Preload("TestPlayer", ret);
-	ASSERT(Langs_GetLanguage("NL") == ret[E_USER_PRELOAD_LANG]);
+	ASSERT_EQ(Langs_GetLanguage("NL"), ret[E_USER_PRELOAD_LANG]);
 }
 
 PTEST_CLOSE__ Player_ChangeLanguage(playerid)
@@ -177,9 +177,9 @@ PTEST__ Player_Preload(playerid)
 		ret[E_USER_PRELOAD];
 	//GetPlayerName(playerid, name, sizeof (name));
 	Player_Preload("TestPlayer", ret);
-	ASSERT(Player_GetYID(gBot) == ret[E_USER_PRELOAD_YID]);
-	ASSERT(Langs_GetPlayerLanguage(gBot) == ret[E_USER_PRELOAD_LANG]);
-	ASSERT(0x12345678 == ret[E_USER_PRELOAD_BITS]);
+	ASSERT_EQ(Player_GetYID(gBot), ret[E_USER_PRELOAD_YID]);
+	ASSERT_EQ(Langs_GetPlayerLanguage(gBot), ret[E_USER_PRELOAD_LANG]);
+	ASSERT_EQ(0x12345678, ret[E_USER_PRELOAD_BITS]);
 	ASSERT(gettime() >= ret[E_USER_PRELOAD_DATE]);
 }
 
@@ -191,6 +191,6 @@ PTEST_INIT__ Player_GetID(playerid)
 
 PTEST__ Player_GetID(playerid)
 {
-	ASSERT(Player_GetYID(gBot) == 0);
+	ASSERT_EQ(Player_GetYID(gBot), 0);
 	ASSERT(Player_GetYID(playerid) < 0);
 }
