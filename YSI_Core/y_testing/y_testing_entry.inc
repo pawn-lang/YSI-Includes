@@ -78,6 +78,7 @@ Optional plugins:
 forward bool:_Testing_End();
 
 #include "..\y_utils"
+#include "..\..\YSI_Server\y_stringise"
 
 #tryinclude "..\..\amx\amx_memory"
 #tryinclude <amx_assembly\amx_memory>
@@ -113,26 +114,10 @@ forward bool:_Testing_End();
 
 #define Y_TESTING_DIALOG_ID (0x7974) // "yt"
 
-#define TEST_TRUE(%0)  Testing_Test(!!%0)
-#define TEST_FALSE(%0) Testing_Test(!%0)
-#define TEST_NULL(%0)  Testing_Test(0 == %0)
-#define TEST_NOT_NULL(%0)  Testing_Test(0 != %0)
-#define TEST_N(%0,%1)  Testing_Test(%1 == %0)
+static stock const TEST_FAILED[] = "FAIL:";
+static stock const TEST_PASSED[] = "PASS!";
 
-#define TEST_TRUE_EX(%0,%2)  Testing_Test(bool:(%0), (%2))
-#define TEST_FALSE_EX(%0,%2) Testing_Test(!(%0), (%2))
-#define TEST_NULL_EX(%0,%2)  Testing_Test((%0) == 0, (%2))
-#define TEST_N_EX(%0,%1,%2)  Testing_Test((%0) == (%1), (%2))
-
-//#define TEST_MSG "\2\2\2\2\2"
-#define TEST_FAILED "FAIL:"
-#define TEST_PASSED "PASS!"
-
-#define _Y_TESTEQ`%0` "\"%0\""
-#define _Y_TESTDQ:%9`%0"%1"%2` _Y_TESTDQ:%9`%0\x22;%1\x22;%2`
-#define _Y_TESTOB:%9`%0(%1)%2` _Y_TESTOB:%9`%0\x28;%1\x29;%2`
-
-#define ASSERT(%0) Testing_Test(%0, "%s %s", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%0`)
+#define ASSERT(%0) Testing_Test(%0, "%s %s", STRINGISE__(%0))
 #define ASSERT_TRUE(%0) ASSERT(!!%0)
 #define ASSERT_FALSE(%0) ASSERT(!%0)
 #define ASSERT_NULL(%0) ASSERT(0 == %0)
@@ -152,21 +137,21 @@ forward bool:_Testing_End();
 #define Y_TESTING_AFTER _A<y@_Q>
 
 // Numbers.
-#define ASSERT_EQ(%1,%0) Testing_Test(J@ == (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 == %0`, (J@ = (%1)))
-#define ASSERT_NE(%1,%0) Testing_Test(J@ != (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 != %0`, (J@ = (%1)))
-#define ASSERT_LE(%1,%0) Testing_Test(J@ <= (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 <= %0`, (J@ = (%1)))
-#define ASSERT_LT(%1,%0) Testing_Test(J@ <  (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 <  %0`, (J@ = (%1)))
-#define ASSERT_GE(%1,%0) Testing_Test(J@ >= (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 >= %0`, (J@ = (%1)))
-#define ASSERT_GT(%1,%0) Testing_Test(J@ >  (%0), "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 >  %0`, (J@ = (%1)))
+#define ASSERT_EQ(%1,%0) Testing_Test(J@ == (%0), "%s %s (%d)", STRINGISE__(%1 == %0), (J@ = (%1)))
+#define ASSERT_NE(%1,%0) Testing_Test(J@ != (%0), "%s %s (%d)", STRINGISE__(%1 != %0), (J@ = (%1)))
+#define ASSERT_LE(%1,%0) Testing_Test(J@ <= (%0), "%s %s (%d)", STRINGISE__(%1 <= %0), (J@ = (%1)))
+#define ASSERT_LT(%1,%0) Testing_Test(J@ <  (%0), "%s %s (%d)", STRINGISE__(%1 <  %0), (J@ = (%1)))
+#define ASSERT_GE(%1,%0) Testing_Test(J@ >= (%0), "%s %s (%d)", STRINGISE__(%1 >= %0), (J@ = (%1)))
+#define ASSERT_GT(%1,%0) Testing_Test(J@ >  (%0), "%s %s (%d)", STRINGISE__(%1 >  %0), (J@ = (%1)))
 
 // Zeroes.
-#define ASSERT_ZE(%1) Testing_Test(J@ == 0, "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 == 0`, (J@ = (%1)))
-#define ASSERT_NZ(%1) Testing_Test(J@ != 0, "%s %s (%d)", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 != 0`, (J@ = (%1)))
+#define ASSERT_ZE(%1) Testing_Test(J@ == 0, "%s %s (%d)", STRINGISE__(%1 == 0), (J@ = (%1)))
+#define ASSERT_NZ(%1) Testing_Test(J@ != 0, "%s %s (%d)", STRINGISE__(%1 != 0), (J@ = (%1)))
 
 // Strings.
-#define ASSERT_SAME(%1,%0) Testing_Test(Q@[0] != '\0' && strcmp(Q@, (%0)      ) == 0, "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 == %0`, (strunpack(Q@, (%1)), Q@))
-#define ASSERT_DIFF(%1,%0) Testing_Test(Q@[0] == '\0' || strcmp(Q@, (%0)      ) != 0, "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 != %0`, (strunpack(Q@, (%1)), Q@))
-#define ASSERT_NEAR(%1,%0) Testing_Test(Q@[0] != '\0' && strcmp(Q@, (%0), true) == 0, "%s %s (\"%s\")", _Y_TESTOB:_Y_TESTDQ:_Y_TESTEQ`%1 ~= %0`, (strunpack(Q@, (%1)), Q@))
+#define ASSERT_SAME(%1,%0) Testing_Test(Q@[0] != '\0' && strcmp(Q@, (%0)      ) == 0, "%s %s (\"%s\")", STRINGISE__(%1 == %0), (strunpack(Q@, (%1)), Q@))
+#define ASSERT_DIFF(%1,%0) Testing_Test(Q@[0] == '\0' || strcmp(Q@, (%0)      ) != 0, "%s %s (\"%s\")", STRINGISE__(%1 != %0), (strunpack(Q@, (%1)), Q@))
+#define ASSERT_NEAR(%1,%0) Testing_Test(Q@[0] != '\0' && strcmp(Q@, (%0), true) == 0, "%s %s (\"%s\")", STRINGISE__(%1 ~= %0), (strunpack(Q@, (%1)), Q@))
 
 static stock
 	YSI_g_sCurTest = 0,
@@ -415,7 +400,7 @@ stock bool:_Testing_End()
 	{
 #if defined INCLUDE_TESTS || defined RUN_TESTS
 		++YSI_g_sFails;
-		printf(TEST_FAILED " Heap allocation leak - was: %d, now: %d", YSI_g_sCurHeap, space);
+		printf("%s Heap allocation leak - was: %d, now: %d", TEST_FAILED, YSI_g_sCurHeap, space);
 #endif
 	}
 	TEST_REPORT(" ");
@@ -698,7 +683,7 @@ Testing_Next_retry:
 			else
 			{
 				// Fail.
-				TEST_REPORT(TEST_FAILED " %s", YSI_g_sFailMessage);
+				TEST_REPORT("%s %s", TEST_FAILED, YSI_g_sFailMessage);
 				++YSI_g_sFails;
 			}
 			Testing_Next(playerid);
