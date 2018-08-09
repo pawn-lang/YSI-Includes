@@ -166,7 +166,7 @@ Optional plugins:
 #define YSIM_CLOUD_HOOK%0(%1)      HOOK__%0(%1)<>return 0;HOOK__%0(%1)<_YCM:y>
 #define YSIM_CLOUD_TASK%0[%3](%1)  task%0[%3](%1)<>{}public%0(%1)<_YCM:y>
 #define YSIM_CLOUD_PTSK%0[%3](%1)  ptask%0[%3](%1)<>{}public%0(%1)<_YCM:y>
-#define YSIM_CLOUD_FUNC%0(%1)<%9>  %0(%1);public%0(%1)<>{}public%0(%1)<_YCM:%9>
+#define YSIM_CLOUD_FUNC%0(%1)<%9>  %0(%1);public%0(%1)<>{}public%0(%1)<%9>
 #define YSIM_CLOUD_GRUP%0(%1)      _GROUP_MAKE_NAME<HOOK__%0...>(%1)<>{}_GROUP_MAKE_NAME<HOOK__%0...>(%1)<_YCM:y>
 #define YSIM_CLOUD_YCMD%0(%1)      @yC_%0(a,b[],c);@yC_%0(a,b[],c)<>{}@yC_%0(a,b[],c)<_YCM:y>U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 #define YSIM_CLOUD_ZERO%0(%1)      @yC_%0(a,b[],c,i);@yC_%0(a,b[],c,i)i==@_&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)

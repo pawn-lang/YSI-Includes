@@ -112,7 +112,7 @@ public YSI_g_sSomeThing@Dist(a[], s)<_YCM:y> Distribute_To(a, s, DIST_SIZE1:YSI_
 #define __declspec_dist_special%3:%0; %3:%0;static stock DIST_ST2:DIST_SPEC:< %0>|||;
 #define __declspec_dist_mspecial%3:%0; %3:%0;static stock DIST_ST2:DIST_MSPEC:< %0>|||;
 
-#define DIST_DO:<%0>%1; %0_Dist()Distribute_Do(#%0"@Dist",_:%0%1);master_func%0@Dist(a[],s)<y,_YCM:u>Distribute_To(a,s,_:%0%1);
+#define DIST_DO:<%0>%1; %0_Dist()Distribute_Do(#%0"@Dist",_:%0%1);master_func%0@Dist(a[],s)<_YCM:y,_YCM:u>Distribute_To(a,s,_:%0%1);
 //#define DIST_DO:<%0>%1; %0_Dist()Distribute_Do(#%0"@Dist",true,%0%1);forward%0@Dist(a[],s);public%0@Dist(a[],s)Distribute_To(a,s,%0%1);
 
 // #define Distribute_Do(%0|||%1) Distribute_Do(%0,%1)
@@ -123,7 +123,7 @@ public YSI_g_sSomeThing@Dist(a[], s)<_YCM:y> Distribute_To(a, s, DIST_SIZE1:YSI_
 #define DIST_MSPEC:%7<%0<%1>%3>%4|||%9; DIST_MA:%7<%0%3>%4,_:sizeof(%0%9);
 #define DIST_ST2:%7<%0[%1]%3>%4|||%9; DIST_ST2:%7<%0%3>%4,_:%1|||%9[];
 
-#define DIST_MA:<%0>%8|%1; %0_Dist()for(new i=0;i!=_:%8;++i)Distribute_So(#%0"@Dist",i,YSI_g_sMasterData,_:%0[i]%1);master_func%0@Dist(i,m,a[],s)<y,_YCM:u>YSI_g_sMasterData[i]=Bit:m,Distribute_To(a,s,_:%0[i]%1);
+#define DIST_MA:<%0>%8|%1; %0_Dist()for(new i=0;i!=_:%8;++i)Distribute_So(#%0"@Dist",i,YSI_g_sMasterData,_:%0[i]%1);master_func%0@Dist(i,m,a[],s)<_YCM:y,_YCM:u>YSI_g_sMasterData[i]=Bit:m,Distribute_To(a,s,_:%0[i]%1);
 
 stock Distribute_Do(func[], GLOBAL_TAG_TYPES:...)
 {
