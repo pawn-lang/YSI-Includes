@@ -5,14 +5,14 @@
  * </section>
  *  Similar to <c>#</c>, but more complete in that it handles brackets, commas,
  *  and more.  Note that the brackets it handles must be matched.  It is also
- *  different to <c>#</c> in other ways - quotes are converted, concatenation is
- *  not allowed:
+ *  different to <c>#</c> in other ways - quotes are converted to <c>`</c>,
+ *  concatenation is not allowed, and te output is enclosed in <c>"</c>s:
  *
  *            Input        |   Output
  *     --------------------------------
- *      #A "B"             | AB
+ *      #A "B"             | "AB"
  *      STRINGISE__(A)"B"  | <invalid>
- *      STRINGISE__(A "B") | A"B"
+ *      STRINGISE__(A "B") | "A`B`"
  *                         |
  *
  * <section>
