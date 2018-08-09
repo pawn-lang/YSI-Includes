@@ -114,10 +114,6 @@ Optional plugins:
 #define _Y_G@Q:%0&%1||| _Y_G@Q:%0%1|||
 #define _Y_G@R:%0||| %0
 
-// Set up the uniques to make removing them simpler.
-#define _GROUP_UNIQUE_SYMBOL 0
-#define _GROUP_UNIQUE_FUNCTION
-
 #if !defined MAX_GROUP_NAME
 	#define MAX_GROUP_NAME              (24)
 #endif

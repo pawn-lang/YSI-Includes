@@ -70,8 +70,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#define _GROUP_STOP_INCLUDES
-
 /*-------------------------------------------------------------------------*//**
  * <param name="%9">Check if the function exists?</param>
  * <param name="%0">Variable holding the function.</param>
@@ -350,13 +348,6 @@ HOOK__ OnScriptInit()
 	GROUP_CHAIN?<YSI_g_sNextInitFunc>(ni, na, nu);
 	//CallLocalFunction("_Group_SpecialInit", "");
 	heapspace(); // I'm sure there's a reason this is here.  But I forgot it!
-	#if defined _GROUP_INCLUDE_ALL_PREVIOUS
-		if (FALSE)
-		{
-			// Include, but never call, this function.
-			_GROUP_UNIQUE_FUNCTION();
-		}
-	#endif
 	P:1("Group_OnScriptInit end");
 	return 1;
 }
@@ -677,28 +668,6 @@ GLOBAL__ void:Group_SetPlayer(Group:g,p,bool:s)
 	//return 0;
 }
 
-stock Group:operator+(Group:g, o)
-{
-	Group_SetPlayer(g, o, true);
-	return g;
-}
-
-stock Group:operator-(Group:g, o)
-{
-	Group_SetPlayer(g, o, false);
-	return g;
-}
-
-stock bool:operator==(Group:g, o)
-{
-	return Group_GetPlayer(g, o);
-}
-
-stock bool:operator!=(Group:g, o)
-{
-	return !Group_GetPlayer(g, o);
-}
-
 /*-------------------------------------------------------------------------*//**
  * <param name="p">Player to set.</param>
  * <param name="g">The player's new groups.</param>
@@ -882,6 +851,28 @@ GLOBAL__ bool:Group_GetPlayer(Group:g,p)
 		//Bit_Set(YSI_gGroupPlayers[g], p, s, bits<MAX_PLAYERS>);
 	}
 	return false;
+}
+
+stock Group:operator+(Group:g, o)
+{
+	Group_SetPlayer(g, o, true);
+	return g;
+}
+
+stock Group:operator-(Group:g, o)
+{
+	Group_SetPlayer(g, o, false);
+	return g;
+}
+
+stock bool:operator==(Group:g, o)
+{
+	return Group_GetPlayer(g, o);
+}
+
+stock bool:operator!=(Group:g, o)
+{
+	return !Group_GetPlayer(g, o);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1544,35 +1535,35 @@ GLOBAL__ bool:Group_IsDescendant(Group:p, Group:c)
 	return false;
 }
 
-stock Group:operator+(Group:g, Group:o)
-{
-	Group_SetGroup(g, o, true);
-	return g;
-}
-
-stock Group:operator-(Group:g, Group:o)
-{
-	Group_SetGroup(g, o, false);
-	return g;
-}
-
-stock bool:operator>=(Group:g, Group:o)
-{
-	return Group_IsDescendant(g, o);
-}
-
-stock bool:operator>(Group:g, Group:o)
-{
-	return g != o && Group_IsDescendant(g, o);
-}
-
-stock bool:operator<=(Group:g, Group:o)
-{
-	return Group_IsDescendant(o, g);
-}
-
-stock bool:operator<(Group:g, Group:o)
-{
-	return g != o && Group_IsDescendant(o, g);
-}
+//stock Group:operator+(Group:g, Group:o)
+//{
+//	Group_SetGroup(g, o, true);
+//	return g;
+//}
+//
+//stock Group:operator-(Group:g, Group:o)
+//{
+//	Group_SetGroup(g, o, false);
+//	return g;
+//}
+//
+//stock bool:operator>=(Group:g, Group:o)
+//{
+//	return Group_IsDescendant(g, o);
+//}
+//
+//stock bool:operator>(Group:g, Group:o)
+//{
+//	return g != o && Group_IsDescendant(g, o);
+//}
+//
+//stock bool:operator<=(Group:g, Group:o)
+//{
+//	return Group_IsDescendant(o, g);
+//}
+//
+//stock bool:operator<(Group:g, Group:o)
+//{
+//	return g != o && Group_IsDescendant(o, g);
+//}
 

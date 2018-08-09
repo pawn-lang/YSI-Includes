@@ -142,12 +142,11 @@ static stock
 	#endif
 #elseif __COMPILER_1ST_PASS
 	#define GFOREIGN__%0...%1(%2) _GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<%0...>(%2);_GROUP_MAKE_NAME<%0...%1>(%2)
-	#define GGLOBAL__%0...%1(%2) static stock _GROUP_MAKE_FUNC<_@>:_GROUP_MAKE_NAME<%0...%1>(%2)
-	#define GPUBLIC__%0(%2) _GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<%0...>(%2);_GROUP_MAKE_NAME<%0...>(%2);static stock _GROUP_MAKE_FUNC<_@>:_GROUP_MAKE_NAME<%0...>(%2)
-	#define GCHAIN__%0(%2) _GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<%0...>(%2);_GROUP_MAKE_NAME<%0...>(%2);static stock _GROUP_MAKE_FUNC<_@>:_GROUP_MAKE_NAME<%0...>(%2)
+	#define GGLOBAL__%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
+	#define GPUBLIC__%0(%2) _GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<%0...>(%2);_GROUP_MAKE_NAME<%0...>(%2);static stock _GROUP_MAKE_NAME<%0...>(%2)
+	#define GCHAIN__%0(%2) _GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<%0...>(%2);_GROUP_MAKE_NAME<%0...>(%2);static stock _GROUP_MAKE_NAME<%0...>(%2)
 	#define _GROUP_SET_PLAYER(%0) P:E(#_GROUP_MAKE_NAME<..._SetPlayer> " called without y_groups")
 #else
-	#define GFOREIGN__%0...%1(%2);
 	#define GGLOBAL__%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
 	#define GPUBLIC__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
 	#define GCHAIN__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
@@ -823,71 +822,6 @@ GCHAIN__ _yGU(&pid, Bit:p[], Bit:c[])
  *  Also all variables as it turns out they were a problem too.
  * </remarks>
  *//*------------------------------------------------------------------------**/
-
-#if !defined _GROUP_STOP_INCLUDES
-	static stock _GROUP_PREVIOUS_FUNCTION()
-	{
-		#if defined _GROUP_INCLUDE_ALL_PREVIOUS
-			_GROUP_UNIQUE_FUNCTION();
-		#endif
-	}
-	
-	#include "y_groups__unique"
-	
-	stock _GROUP_UNIQUE_FUNCTION()
-	{
-		#if YSIM_HAS_MASTER
-			// Force the compiler to add the functions correctly.
-			#if !(_YSIM_IS_CLIENT || _YSIM_IS_STUB)
-				new
-					a = _yGI, b = _yGA, c = _yGU;
-				_GROUP_MAKE_NAME<_yGI...>(a, YSI_g_sMaxEncountered, c);
-				_GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<Group_Exclusive...>(Group:0, _GROUP_MAKE_TAG:0);
-				_GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<Group_GlobalExclusive...>(_GROUP_MAKE_TAG:0);
-				_GROUP_MAKE_NAME<_yGA...>(b);
-				_GROUP_MAKE_NAME<_yGU...>(c, Bit:"", Bit:"");
-				_GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<Group_Set...Default>(Group:0, false);
-				_GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<Group_SetGlobal...Default>(false);
-				_GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<Group_Set...New>(Group:0, false);
-				_GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<Group_SetGlobal...New>(false);
-				_GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<Group_Set...>(Group:0, _GROUP_MAKE_TAG:0, false);
-				_GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<Group_SetGlobal...>(_GROUP_MAKE_TAG:0, false);
-				_GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<Group_Get...>(Group:0, _GROUP_MAKE_TAG:0);
-				_GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<Group_GetGlobal...>(_GROUP_MAKE_TAG:0);
-				for (new i = 0; i != _GROUP_MAKE_LIMIT; ++i)
-				{
-					YSI_g_sElementMembership[i] = Bit:"";
-				}
-				YSI_g_sDefaultMembership = Bit:"";
-				YSI_g_sEmpty = Bit:"";
-				printf("", _:YSI_g_sElementMembership);
-				printf("", _yGI);
-				printf("", _:YSI_g_sDefaultMembership);
-				printf("", _yGU);
-				printf("", _:YSI_g_sEmpty);
-				printf("", _yGA);
-				_GROUP_SET_PLAYER(_GROUP_MAKE_TAG:0, 0, false);
-				MAKE_YCM<HANDOFF_SOURCE...Group>();
-			#endif
-		#else
-			new
-				a = _yGI, b = _yGA, c = _yGU;
-			_GROUP_MAKE_NAME<_yGI...>(a, YSI_g_sMaxEncountered, c);
-			_GROUP_MAKE_NAME<_yGA...>(b);
-			_GROUP_MAKE_NAME<_yGU...>(c, Bit:"", Bit:"");
-			printf("", YSI_g_sMaxEncountered);
-			printf("", _:YSI_g_sElementMembership);
-			printf("", _:YSI_g_sDefaultMembership);
-			printf("", _:YSI_g_sEmpty);
-			printf("", _yGI);
-			printf("", _yGA);
-			printf("", _yGU);
-		#endif
-		_GROUP_PREVIOUS_FUNCTION();
-	}
-	
-	#define _GROUP_INCLUDE_ALL_PREVIOUS
-#endif
 
 #undef _GROUP_MAKE_TAG
 #undef GCHAIN__
