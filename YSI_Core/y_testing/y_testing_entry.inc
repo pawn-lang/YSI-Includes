@@ -137,16 +137,16 @@ static stock const TEST_PASSED[] = "PASS!";
 #define Y_TESTING_AFTER _A<y@_Q>
 
 // Numbers.
-#define ASSERT_EQ(%1,%0) Testing_Test(J@ == (%0), "%s %s (%d)", STRINGISE__(%1 == %0), (J@ = (%1)))
-#define ASSERT_NE(%1,%0) Testing_Test(J@ != (%0), "%s %s (%d)", STRINGISE__(%1 != %0), (J@ = (%1)))
-#define ASSERT_LE(%1,%0) Testing_Test(J@ <= (%0), "%s %s (%d)", STRINGISE__(%1 <= %0), (J@ = (%1)))
-#define ASSERT_LT(%1,%0) Testing_Test(J@ <  (%0), "%s %s (%d)", STRINGISE__(%1 <  %0), (J@ = (%1)))
-#define ASSERT_GE(%1,%0) Testing_Test(J@ >= (%0), "%s %s (%d)", STRINGISE__(%1 >= %0), (J@ = (%1)))
-#define ASSERT_GT(%1,%0) Testing_Test(J@ >  (%0), "%s %s (%d)", STRINGISE__(%1 >  %0), (J@ = (%1)))
+#define ASSERT_EQ(%1,%0) Testing_Test(J@ == _:(%0), "%s %s (%d)", STRINGISE__(%1 == %0), (J@ = _:(%1)))
+#define ASSERT_NE(%1,%0) Testing_Test(J@ != _:(%0), "%s %s (%d)", STRINGISE__(%1 != %0), (J@ = _:(%1)))
+#define ASSERT_LE(%1,%0) Testing_Test(J@ <= _:(%0), "%s %s (%d)", STRINGISE__(%1 <= %0), (J@ = _:(%1)))
+#define ASSERT_LT(%1,%0) Testing_Test(J@ <  _:(%0), "%s %s (%d)", STRINGISE__(%1 <  %0), (J@ = _:(%1)))
+#define ASSERT_GE(%1,%0) Testing_Test(J@ >= _:(%0), "%s %s (%d)", STRINGISE__(%1 >= %0), (J@ = _:(%1)))
+#define ASSERT_GT(%1,%0) Testing_Test(J@ >  _:(%0), "%s %s (%d)", STRINGISE__(%1 >  %0), (J@ = _:(%1)))
 
 // Zeroes.
-#define ASSERT_ZE(%1) Testing_Test(J@ == 0, "%s %s (%d)", STRINGISE__(%1 == 0), (J@ = (%1)))
-#define ASSERT_NZ(%1) Testing_Test(J@ != 0, "%s %s (%d)", STRINGISE__(%1 != 0), (J@ = (%1)))
+#define ASSERT_ZE(%1) Testing_Test(J@ == 0, "%s %s (%d)", STRINGISE__(%1 == 0), (J@ = _:(%1)))
+#define ASSERT_NZ(%1) Testing_Test(J@ != 0, "%s %s (%d)", STRINGISE__(%1 != 0), (J@ = _:(%1)))
 
 // Strings.
 #define ASSERT_SAME(%1,%0) Testing_Test(Q@[0] != '\0' && strcmp(Q@, (%0)      ) == 0, "%s %s (\"%s\")", STRINGISE__(%1 == %0), (strunpack(Q@, (%1)), Q@))
