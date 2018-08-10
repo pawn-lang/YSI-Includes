@@ -170,7 +170,7 @@ static stock
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:_GROUP_MAKE_NAME<..._InitialiseFromGroups>(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
+stock _GROUP_MAKE_NAME<..._InitialiseFromGroups>(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
 {
 	P:4(#_GROUP_MAKE_NAME<..._InitialiseFromGroups> " called: %i", x);
 	// A new item has been added to the system - update all players according to
@@ -184,7 +184,7 @@ stock bool:_GROUP_MAKE_NAME<..._InitialiseFromGroups>(_GROUP_MAKE_TAG:x = _GROUP
 			Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultMembership, YSI_gGroupPlayers[playerid]);
 		}
 	}
-	return false;
+	return 0;
 }
 
 /*
