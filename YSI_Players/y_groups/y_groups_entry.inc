@@ -1,4 +1,4 @@
-/*                                                                                              *
+/*                                                                                             *
  *                                                                                             *
  *     _____ ______ ______   ____  ______ _      ______          __  ______ ____  _____        *
  *    / ____|  ____|  ____| |  _ \|  ____| |    / __ \ \        / / |  ____/ __ \|  __ \       *
@@ -90,7 +90,7 @@ Optional plugins:
 */
 
 #define _Y_GROUPS_INCLUDED
-
+#define _Y_GROUPS_USER_REQUESTED
 
 #if defined _inc_y_groups_entry
 	#undef _inc_y_groups_entry
@@ -100,11 +100,11 @@ Optional plugins:
 	#include "..\..\YSI_Core\y_utils"
 	#include "..\..\YSI_Data\y_bit"
 	
-	#if !defined _INC_y_groups__funcs
-		#define _INC_y_groups__funcs
-		#include "y_groups_setup"
-		#include "..\..\YSI_Data\y_iterate"
-	#endif
+	//#if !defined _INC_y_groups__funcs
+	//	#define _INC_y_groups__funcs
+	#include "y_groups_setup"
+	#include "..\..\YSI_Data\y_iterate"
+	//#endif
 	
 	#include "..\..\YSI_Data\y_playerarray"
 	
@@ -125,34 +125,7 @@ Optional plugins:
 	#include "..\..\YSI_Core\y_master"
 #endif
 
-#if defined GROUP_LIBRARY_NAME
-	#if defined GROUP_LIBRARY_SIZE
-		// Include the generic group code for this new custom group.
-		// User-inclusion.
-		#define _GROUP_MAKE_LIMIT       GROUP_LIBRARY_SIZE
-		#define _GROUP_MAKE_NAME        GROUP_LIBRARY_NAME
-		#if defined GROUP_LIBRARY_TAGS
-			#define _GROUP_MAKE_TAG         GROUP_LIBRARY_TAGS
-		#else
-			#define _GROUP_MAKE_TAG _
-		#endif
-		#include "y_groups__funcs"
-		// Now remove the defines.
-		#if defined GROUP_LIBRARY_TAGS
-			#undef GROUP_LIBRARY_TAGS
-		#endif
-		#undef _GROUP_MAKE_LIMIT
-		#undef _GROUP_MAKE_NAME
-		#undef GROUP_LIBRARY_NAME
-		#undef GROUP_LIBRARY_SIZE
-	#else
-		#error You must define both GROUP_LIBRARY_SIZE and GROUP_LIBRARY_NAME.
-	#endif
-#else
-	#if defined GROUP_LIBRARY_SIZE
-		#error You must define both GROUP_LIBRARY_SIZE and GROUP_LIBRARY_NAME.
-	#endif
-#endif
+#include "y_groups__include"
 
 // Only include the remainder just once.
 #if defined _INC_y_groups
@@ -166,7 +139,7 @@ Optional plugins:
 
 stock _YSI_HAS_y_groups(_do_not_call_me_ever_, _like_never_)
 {
-	P:E("You called _YSI_HAS_y_groups!  Bad, don't do that!", _do_not_call_me_ever_, _like_never_);
+	P:F("You called _YSI_HAS_y_groups!  Bad, don't do that!", _do_not_call_me_ever_, _like_never_);
 	assert(false);
 	return 0;
 }

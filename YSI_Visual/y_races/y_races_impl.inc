@@ -323,7 +323,7 @@ GLOBAL__ _Race_Create(l,e,c,a,f,x,i,w,r)
 	PA_Init(YSI_g_sRacers[raceid]);
 	Iter_Clear(YSI_g_sRacePeople[raceid]);
 	YSI_g_sRaceData[raceid][E_RACE_CP_START] = YSI_g_sCPIndex;
-	NO_GROUPS(raceid)
+	NO_GROUPS<Race>(raceid)
 	{
 	}
 	return raceid;
@@ -659,7 +659,7 @@ _Y_RACES_STATIC Race_CheckEnd(slot)
 			RaceArray_Shift(start + count, YSI_g_sCPIndex, start);
 			RaceArray_IndexShift(start, -count);
 			// Reset groups.
-			NO_GROUPS(slot)
+			NO_GROUPS<Race>(slot)
 			{
 			}
 		}
@@ -914,7 +914,7 @@ public Race_Countdown(race, time)
  * Sets up important variables
  *//*------------------------------------------------------------------------**/
 
-mhook OnScriptInit()
+MASTER_HOOK__ OnScriptInit()
 {
 	for (new i = 0; i < MAX_PLAYERS; i++)
 	{
@@ -931,7 +931,7 @@ mhook OnScriptInit()
  * checkpoint or calls Race_Finish.
  *//*------------------------------------------------------------------------**/
 
-mhook OnPlayerEnterRaceCP(playerid)
+MASTER_HOOK__ OnPlayerEnterRaceCP(playerid)
 {
 	return Race_DoEnterRaceCP(playerid);
 }
@@ -1021,7 +1021,7 @@ _Y_RACES_STATIC Race_DoEnterRaceCP(playerid)
  *  calls the relevant functions.
  *//*------------------------------------------------------------------------**/
 
-mhook OnPlayerStateChange(playerid, newstate, oldstate)
+MASTER_HOOK__ OnPlayerStateChange(playerid, newstate, oldstate)
 {
 	new
 		race = YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE];
@@ -1045,7 +1045,7 @@ mhook OnPlayerStateChange(playerid, newstate, oldstate)
  *  anymore.
  *//*------------------------------------------------------------------------**/
 
-mhook OnPlayerDisconnect(playerid, reason)
+MASTER_HOOK__ OnPlayerDisconnect(playerid, reason)
 {
 	new
 		race = YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_RACE];
@@ -1067,7 +1067,7 @@ mhook OnPlayerDisconnect(playerid, reason)
  * Just a fix for IsPlayerInRaceCheckpoint.
  *//*------------------------------------------------------------------------**/
 
-mhook OnPlayerConnect(playerid)
+MASTER_HOOK__ OnPlayerConnect(playerid)
 {
 	DisablePlayerRaceCheckpoint(playerid);
 	return 1;

@@ -403,7 +403,7 @@ GLOBAL__ Language:Langs_SetPlayerCode(playerid, string:code[])
  * <summary>-</summary>
  *//*------------------------------------------------------------------------**/
 
-mhook OnPlayerConnect(playerid)
+MASTER_HOOK__ OnPlayerConnect(playerid)
 {
 	for (new Language:i = Language:0; i != YSI_g_sLanguageCount; ++i)
 	{

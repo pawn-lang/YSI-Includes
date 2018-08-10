@@ -70,6 +70,11 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#if defined _INC_y_groups_setup
+	#endinput
+#endif
+#define _INC_y_groups_setup
+
 #define _GROUP_LOCAL_NAME               _GROUP_MAKE_TAG:e
 
 // Dummy values.
@@ -86,6 +91,11 @@ Optional plugins:
 #define GROUP_TEMP_FIX(%0)              ((%0)&~GROUP_MASK)
 #define GROUP_MANGLE(%0)                (Group:(%0) | GROUP_MASK)
 
+#define GFOREIGN__%1(%2); _GROUP_MAKE_NAME<FOREIGN__%1>(%2);
+#define GGLOBAL__%1(%2) _GROUP_MAKE_NAME<GLOBAL__%1>(%2)
+#define GPUBLIC__ MASTER_FUNC__
+//#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
+
 #define _GROUP_MAKE_FUNC<%4>:%0<%1> u@(u[_:_Y_G@C4:_Y_G@C5:0]);%0<%1><%4>$
 
 #define _Y_G@C4:_Y_G@C5:%0;%1<%2:%3><%4>$ %0;%1<%2:%4%3>
@@ -94,11 +104,10 @@ Optional plugins:
 // This is currently "leaking" code to the final script - code that we don't
 // want!  No longer.
 #if defined _YSI_HAS_y_groups || __COMPILER_1ST_PASS
-	#define NO_GROUPS(%0) if(_GROUP_INITIALISE(%0))
+	#define NO_GROUPS<%1>(%0) if(%1_InitialiseFromGroups(%0))
 #else
-	#define NO_GROUPS(%0)
+	#define NO_GROUPS<%1>(%0)
 #endif
-#define _GROUP_INITIALISE               _GROUP_MAKE_NAME<..._InitialiseFromGroups>
 
 // Chain init functions.
 #define GROUP_CHAIN%9<%0>(%1) (J@=_:(_Y_G@C_YES:_Y_G@C_NO:%0%9|||(_:_Y_G@C3:_Y_G@C2:_Y_G@C0:_Y_G@C1:%0(%1))))
@@ -178,3 +187,4 @@ stock
 
 stock const
 	BitArray:YSI_g_cEmptyGroups<_MAX_GROUPS_G>;
+

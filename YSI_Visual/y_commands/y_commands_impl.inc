@@ -399,7 +399,7 @@ GLOBAL__ Command_AddAlt(oidx, string:cmd[])
 		HashMap_Add(YSI_g_sCommandMap, sCmd, id),
 		// Add all players, or defer to y_groups.
 		PA_FastInit(YSI_g_sCommands[id][E_COMMAND_USERS]);
-		NO_GROUPS(id)
+		NO_GROUPS<Command>(id)
 		{
 			PA_Init(YSI_g_sCommands[id][E_COMMAND_USERS], true);
 		}
@@ -712,7 +712,7 @@ GLOBAL__ void:Command_TouchNamed(string:command[])
 		id = Command_Find(command);
 	if (id != COMMAND_NOT_FOUND)
 	{
-		NO_GROUPS(id)
+		NO_GROUPS<Command>(id)
 		{
 			return;
 		}
@@ -733,7 +733,7 @@ GLOBAL__ void:Command_Touch(command)
 {
 	if (_Command_IsValid(command))
 	{
-		NO_GROUPS(command)
+		NO_GROUPS<Command>(command)
 		{
 			return;
 		}
@@ -1325,7 +1325,7 @@ GLOBAL__ Iter_Func@PlayerCommand(start, pid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-mhook OnPlayerText(playerid, text[])
+MASTER_HOOK__ OnPlayerText(playerid, text[])
 {
 	// Is this prefix used anywhere?
 	if (_Command_IsPrefix(text[0]))
@@ -1356,7 +1356,7 @@ mhook OnPlayerText(playerid, text[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-mhook OnPlayerCommandText(playerid, cmdtext[])
+MASTER_HOOK__ OnPlayerCommandText(playerid, cmdtext[])
 {
 	// An interesting side-effect of this code is that, in theory, hacks that
 	// submit commands without the "/" will still work.  Or you could hook
@@ -1447,7 +1447,7 @@ HOOK__ OnScriptExit()
 }
 
 #if YSIM_HAS_MASTER
-	mhook OnMasterSystemClose(id)
+	MASTER_HOOK__ OnMasterSystemClose(id)
 	{
 		new
 			cmdname[32 char] = {_C<@_yC>, 0, 0, ...},
@@ -1626,7 +1626,7 @@ GLOBAL__ Command_Add(string:cmd[], ptr)
 		HashMap_Add(YSI_g_sCommandMap, cmd, id),
 		// Add all players, or defer to y_groups.
 		PA_FastInit(YSI_g_sCommands[id][E_COMMAND_USERS]);
-		NO_GROUPS(id)
+		NO_GROUPS<Command>(id)
 		{
 			PA_Init(YSI_g_sCommands[id][E_COMMAND_USERS], true);
 		}

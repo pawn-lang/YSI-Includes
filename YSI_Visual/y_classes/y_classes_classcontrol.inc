@@ -144,7 +144,7 @@ GLOBAL__ bool:Player_IsSpawned(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-mhook OnPlayerConnect(playerid)
+MASTER_HOOK__ OnPlayerConnect(playerid)
 {
 	YSI_g_sPlayerFlags[playerid] = e_SPAWN_FLAGS_RESELECT | e_SPAWN_FLAGS_ENABLED;
 	return 1;
@@ -190,7 +190,7 @@ stock Class_HideHold(playerid)
 	//SpawnPlayer(playerid);
 }
 
-mhook OnPlayerRequestClass(playerid, classid)
+MASTER_HOOK__ OnPlayerRequestClass(playerid, classid)
 {
 	//TogglePlayerSpectating(playerid, true);
 	YSI_g_sPlayerFlags[playerid] |= e_SPAWN_FLAGS_INSELECT;
@@ -229,7 +229,7 @@ mhook OnPlayerRequestClass(playerid, classid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-mhook OnPlayerSpawn(playerid)
+MASTER_HOOK__ OnPlayerSpawn(playerid)
 {
 	P:2("Class_OnPlayerSpawn called: %d", playerid);
 	if (YSI_g_sPlayerFlags[playerid] & e_SPAWN_FLAGS_HELD) return -1;

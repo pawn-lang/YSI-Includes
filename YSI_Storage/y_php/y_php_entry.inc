@@ -217,10 +217,10 @@ static stock _PHP_Send(string:name[], string:value[], bool:priority, type)
 	return 0;
 }
 
-task _PHP_ForceSend[5000]()
+MASTER_TASK__ _PHP_ForceSend[5000]()
 {
 	// This is run in all scripts, not just the master one, because there is no
-	// "mtask".  In retrospect, that seems like an oversight.
+	// "mtask".  In retrospect, that seems like an oversight.  Now there is one.
 	if (YSI_g_sIndex > PHP_HEADER_LENGTH)
 	{
 		// Send the data.
@@ -250,7 +250,7 @@ static stock PHP_EncodeFloat(value, dest[])
 	dest[4] = (value & 0x0F | 0xC0);
 }
 
-mhook OnScriptInit()
+MASTER_HOOK__ OnScriptInit()
 {
 	if (!strcmp(PHP_RECEIVE, "http://", true, 7))
 	{

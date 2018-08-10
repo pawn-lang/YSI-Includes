@@ -337,7 +337,7 @@ CHAIN_FORWARD:Class_OnPlayerRequestSpawn(playerid) = 1;
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-mhook OnPlayerSpawn(playerid)
+MASTER_HOOK__ OnPlayerSpawn(playerid)
 {
 	P:2("Class_OnPlayerSpawn called: %d", playerid);
 	new
@@ -380,11 +380,11 @@ mhook OnPlayerSpawn(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-mhook OnPlayerConnect(playerid)
+MASTER_HOOK__ OnPlayerConnect(playerid)
 {
 	YSI_g_sPlayerClass[playerid] = -1,
 	YSI_g_sInternalClass[playerid] = -1;
-	NO_GROUPS()
+	NO_GROUPS<Class>()
 	{
 		new
 			slot = PA_Slot(playerid),

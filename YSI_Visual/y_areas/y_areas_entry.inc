@@ -96,14 +96,15 @@ Optional plugins:
 	#error This version does not support more than 262142 areas.
 #endif
 
-// Set commands as master 50.
-#define YSIM_U_DISABLE
-#define MASTER 50
-#include "..\..\YSI_Core\y_master"
+#define Y_AREAS_GROUP_NAME<%0...%1> %0Area%1
+#define Y_AREAS_GROUP_LIMIT         MAX_AREAS
+#define Y_AREAS_GROUP_TAG           _
+#include "..\..\YSI_Players\y_groups\y_groups__include"
 
-#define _GROUP_MAKE_NAME<%0...%1> %0Area%1
-#define _GROUP_MAKE_LIMIT         MAX_AREAS
-#include "..\..\YSI_Players\y_groups\y_groups__funcs"
+// Set commands as master 50.
+#define MASTER 50
+#define YSIM_U_DISABLE
+#include "..\..\YSI_Core\y_master"
 
 #include "..\..\YSI_Coding\y_hooks"
 
@@ -384,7 +385,7 @@ forward Area_Loop();
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-mhook OnScriptInit()
+MASTER_HOOK__ OnScriptInit()
 {
 	for (new i = 0; i != MAX_AREAS - 1; ++i)
 	{
@@ -1182,7 +1183,7 @@ GLOBAL__ Area_AddCuboid(Float:x0,Float:y0,Float:z0,Float:x1,Float:y1,Float:z1)
 	YSI_g_sAreas[slot][E_AREA_POS][4] = y1;
 	YSI_g_sAreas[slot][E_AREA_POS][5] = z1;
 	PA_FastInit(YSI_g_sAreas[slot][E_AREA_PLAYERS]);
-	NO_GROUPS(slot)
+	NO_GROUPS<Area>(slot)
 	{
 		PA_Init(YSI_g_sAreas[slot][E_AREA_PLAYERS], true);
 	}
@@ -1262,7 +1263,7 @@ GLOBAL__ Area_AddBox(Float:minx, Float:miny, Float:maxx, Float:maxy)
 	YSI_g_sAreas[slot][E_AREA_POS][2] = maxx;
 	YSI_g_sAreas[slot][E_AREA_POS][3] = maxy;
 	PA_FastInit(YSI_g_sAreas[slot][E_AREA_PLAYERS]);
-	NO_GROUPS(slot)
+	NO_GROUPS<Area>(slot)
 	{
 		PA_Init(YSI_g_sAreas[slot][E_AREA_PLAYERS], true);
 	}
@@ -1327,7 +1328,7 @@ GLOBAL__ Area_AddOval(Float:x,Float:y,Float:rx,Float:ry,Float:h,Float:d)
 	YSI_g_sAreas[slot][E_AREA_POS][4] = h;
 	YSI_g_sAreas[slot][E_AREA_POS][5] = d;
 	PA_FastInit(YSI_g_sAreas[slot][E_AREA_PLAYERS]);
-	NO_GROUPS(slot)
+	NO_GROUPS<Area>(slot)
 	{
 		PA_Init(YSI_g_sAreas[slot][E_AREA_PLAYERS], true);
 	}
@@ -1411,7 +1412,7 @@ GLOBAL__ Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz)
 	YSI_g_sAreas[slot][E_AREA_POS][4] = ry * ry;
 	YSI_g_sAreas[slot][E_AREA_POS][5] = rz * rz;
 	PA_FastInit(YSI_g_sAreas[slot][E_AREA_PLAYERS]);
-	NO_GROUPS(slot)
+	NO_GROUPS<Area>(slot)
 	{
 		PA_Init(YSI_g_sAreas[slot][E_AREA_PLAYERS], true);
 	}
@@ -1632,7 +1633,7 @@ GLOBAL__ Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz)
 	YSI_g_sAreas[header][E_AREA_POLY_COUNT] = count;
 	YSI_g_sAreas[header][E_AREA_FLAGS] = e_AREA_FLAGS_POLY | e_AREA_FLAGS_ACTIVE;
 	PA_FastInit(YSI_g_sAreas[header][E_AREA_PLAYERS]);
-	NO_GROUPS(header)
+	NO_GROUPS<Area>(header)
 	{
 		PA_Init(YSI_g_sAreas[header][E_AREA_PLAYERS], true);
 	}
@@ -1745,13 +1746,13 @@ GLOBAL__ Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz)
  * <param name="playerid">Player who connected</param>
  *//*------------------------------------------------------------------------**/
 
-mhook OnPlayerConnect(playerid)
+MASTER_HOOK__ OnPlayerConnect(playerid)
 {
 	for (new i = 0; i != AREAS_MAX_OVERLAPS; ++i)
 	{
 		YSI_g_sPlayerArea[playerid][i] = NO_AREA;
 	}
-	NO_GROUPS()
+	NO_GROUPS<Area>()
 	{
 		new
 			slot = Bit_Slot(playerid) + 1,
@@ -2595,8 +2596,8 @@ static stock Area_DoLeave(playerid, areaid, idx)
 
 forward OnPlayerLeaveArea(playerid, areaid);
 
-#undef _GROUP_MAKE_LIMIT
-#undef _GROUP_MAKE_NAME
+//#undef _GROUP_MAKE_LIMIT
+//#undef _GROUP_MAKE_NAME
 
 #include "..\..\YSI_Core\y_master"
 

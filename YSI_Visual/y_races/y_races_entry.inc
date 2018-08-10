@@ -99,13 +99,14 @@ Optional plugins:
 	#define MAX_RACES 16
 #endif
 
-#define YSIM_U_DISABLE
-#define MASTER 53
-#include "..\..\YSI_Core\y_master"
+#define Y_RACES_GROUP_NAME<%0...%1> %0Race%1
+#define Y_RACES_GROUP_LIMIT         MAX_RACES
+#define Y_RACES_GROUP_TAG           _
+#include "..\..\YSI_Players\y_groups\y_groups__include"
 
-#define _GROUP_MAKE_NAME<%0...%1> %0Race%1
-#define _GROUP_MAKE_LIMIT         MAX_RACES
-#include "..\..\YSI_Players\y_groups\y_groups__funcs"
+#define MASTER 53
+#define YSIM_U_DISABLE
+#include "..\..\YSI_Core\y_master"
 
 #include "..\..\YSI_Coding\y_hooks"
 
@@ -146,8 +147,8 @@ FOREIGN__ Race_SetPlayer(race, playerid, bool:set);
 	// Get some new IDs.
 #endif
 
-#undef _GROUP_MAKE_LIMIT
-#undef _GROUP_MAKE_NAME
+//#undef _GROUP_MAKE_LIMIT
+//#undef _GROUP_MAKE_NAME
 
 #include "..\..\YSI_Core\y_master"
 

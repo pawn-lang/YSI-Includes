@@ -92,7 +92,7 @@ static stock
 	YSI_g_sZNTD[MAX_PLAYERS] = {INVALID_TEXT_DRAW, ...},
 	YSI_g_sZNCur[MAX_PLAYERS] = {cellmax, ...};
 
-mhook OnPlayerDisconnect(playerid, reason)
+MASTER_HOOK__ OnPlayerDisconnect(playerid, reason)
 {
 	#pragma unused reason
 	YSI_g_sZNShow[playerid] = 0,
@@ -101,13 +101,13 @@ mhook OnPlayerDisconnect(playerid, reason)
 	return 1;
 }
 
-mhook OnPlayerSpawn(playerid)
+MASTER_HOOK__ OnPlayerSpawn(playerid)
 {
 	YSI_g_sZNShow[playerid] = 1;
 	return 1;
 }
 
-mhook OnPlayerDeath(playerid, killerid, reason)
+MASTER_HOOK__ OnPlayerDeath(playerid, killerid, reason)
 {
 	#pragma unused killerid, reason
 	YSI_g_sZNShow[playerid] = 0;
@@ -145,7 +145,7 @@ stock ZoneNames_Show(playerid, id)
 	}
 }
 
-mhook OnPlayerEnterArea(playerid, areaid)
+MASTER_HOOK__ OnPlayerEnterArea(playerid, areaid)
 {
 	if (YSI_g_sZNShow[playerid])
 	{
@@ -159,7 +159,7 @@ mhook OnPlayerEnterArea(playerid, areaid)
 	return 1;
 }
 
-mhook OnPlayerLeaveArea(playerid, areaid)
+MASTER_HOOK__ OnPlayerLeaveArea(playerid, areaid)
 {
 	if (areaid != YSI_g_sZNCur[playerid])
 	{
@@ -183,7 +183,7 @@ mhook OnPlayerLeaveArea(playerid, areaid)
 	return 1;
 }
 
-mhook OnScriptInit()
+MASTER_HOOK__ OnScriptInit()
 {
 	#define SAZ_AddCuboid(%0) (YSI_g_sZoneIDs[Area_AddCuboid(%0)] = idx++)
 	#define SAZ_AddPoly(%0) (YSI_g_sZoneIDs[Area_AddPoly(%0)] = idx++)

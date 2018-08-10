@@ -90,17 +90,17 @@ Optional plugins:
 	#undef _inc_y_groups__funcs
 #endif
 
-#if !defined _INC_y_groups__funcs
-	#define _INC_y_groups__funcs
-	#include "..\..\YSI_Core\y_utils"
-	#include "..\..\YSI_Data\y_bit"
-	#include "y_groups_setup"
-	#include "..\..\YSI_Data\y_iterate"
-#endif
+//#if !defined _INC_y_groups__funcs
+//	#define _INC_y_groups__funcs
+//	#include "..\..\YSI_Core\y_utils"
+//	#include "..\..\YSI_Data\y_bit"
+//	#include "y_groups_setup"
+//	#include "..\..\YSI_Data\y_iterate"
+//#endif
 
-#if !defined _GROUP_MAKE_TAG
-	#define _GROUP_MAKE_TAG _
-#endif
+//#if !defined _GROUP_MAKE_TAG
+//	#define _GROUP_MAKE_TAG _
+//#endif
 
 // Start of the multi-use file.
 static stock
@@ -112,68 +112,57 @@ static stock
 	_yGU,
 	_yGA;
 
-// Define the callback chaining for the current 
-#if defined _YSI_HAS_y_groups
-	#define GFOREIGN__%1(%2); _GROUP_MAKE_NAME<FOREIGN__%1>(%2);
-	#define GGLOBAL__%1(%2) _GROUP_MAKE_NAME<GLOBAL__%1>(%2)
-	#define GPUBLIC__ MASTER_FUNC__
-	#if YSIM_HAS_MASTER
-		#if _YSIM_IS_CLIENT
-			#define GCHAIN__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
-			// Should never be needed.
-			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<_Error_..._Client_Set>
-		#elseif _YSIM_IS_SERVER
-			#define GCHAIN__%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
-			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
-		#elseif _YSIM_IS_STUB
-			#define GCHAIN__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
-			// Because of the interaction between the various things that the
-			// groups and master systems this will NEVER be called in a stub
-			// script - and if it is we now get a nice compile-time error
-			// telling us so!  It may, however, prove difficult to trace!
-			#define _GROUP_SET_PLAYER(%0) P:E(#_GROUP_MAKE_NAME<..._SetPlayer> " called in stub")
-		#else
-			#define GCHAIN__%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);public _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
-			#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
-		#endif
-	#else
+//// Define the callback chaining for the current 
+//#if defined _YSI_HAS_y_groups
+//	#define GFOREIGN__%1(%2); _GROUP_MAKE_NAME<FOREIGN__%1>(%2);
+//	#define GGLOBAL__%1(%2) _GROUP_MAKE_NAME<GLOBAL__%1>(%2)
+//	#define GPUBLIC__ MASTER_FUNC__
+#if YSIM_HAS_MASTER
+	#if _YSIM_IS_CLIENT
+		#define GCHAIN__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
+	#elseif _YSIM_IS_SERVER
 		#define GCHAIN__%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
-		#define _GROUP_SET_PLAYER _GROUP_MAKE_NAME<..._SetPlayer>
+	#elseif _YSIM_IS_STUB
+		#define GCHAIN__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
+	#else
+		#define GCHAIN__%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)<>GROUP_CHAIN?<%0>(%2);public _GROUP_MAKE_NAME<%0...>(%2)<_YCM:y>for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 	#endif
-#elseif __COMPILER_1ST_PASS
-	#define GFOREIGN__%0...%1(%2) _GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<%0...>(%2);_GROUP_MAKE_NAME<%0...%1>(%2)
-	#define GGLOBAL__%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
-	#define GPUBLIC__%0(%2) _GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<%0...>(%2);_GROUP_MAKE_NAME<%0...>(%2);static stock _GROUP_MAKE_NAME<%0...>(%2)
-	#define GCHAIN__%0(%2) _GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<%0...>(%2);_GROUP_MAKE_NAME<%0...>(%2);static stock _GROUP_MAKE_NAME<%0...>(%2)
-	#define _GROUP_SET_PLAYER(%0) P:E(#_GROUP_MAKE_NAME<..._SetPlayer> " called without y_groups")
 #else
-	#define GGLOBAL__%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
-	#define GPUBLIC__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
-	#define GCHAIN__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
-	#define _GROUP_SET_PLAYER(%0) P:E(#_GROUP_MAKE_NAME<..._SetPlayer> " called without y_groups")
+	#define GCHAIN__%0(%2) _GROUP_MAKE_NAME<%0...>(%2);public _GROUP_MAKE_NAME<%0...>(%2)for(J@=1;J@;GROUP_CHAIN?<%0>(%2))
 #endif
+//#elseif __COMPILER_1ST_PASS
+//	#define GFOREIGN__%0...%1(%2) _GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<%0...>(%2);_GROUP_MAKE_NAME<%0...%1>(%2)
+//	#define GGLOBAL__%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
+//	#define GPUBLIC__%0(%2) _GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<%0...>(%2);_GROUP_MAKE_NAME<%0...>(%2);static stock _GROUP_MAKE_NAME<%0...>(%2)
+//	#define GCHAIN__%0(%2) _GROUP_MAKE_FUNC<@@>:_GROUP_MAKE_NAME<%0...>(%2);_GROUP_MAKE_NAME<%0...>(%2);static stock _GROUP_MAKE_NAME<%0...>(%2)
+//	#define _GROUP_SET_PLAYER(%0) P:E(#_GROUP_MAKE_NAME<..._SetPlayer> " called without y_groups")
+//#else
+//	#define GGLOBAL__%0...%1(%2) static stock _GROUP_MAKE_NAME<%0...%1>(%2)
+//	#define GPUBLIC__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
+//	#define GCHAIN__%0(%2) static stock _GROUP_MAKE_NAME<%0...>(%2)
+//	#define _GROUP_SET_PLAYER(%0) P:E(#_GROUP_MAKE_NAME<..._SetPlayer> " called without y_groups")
+//#endif
 
-#if defined YSI_COMPAT || defined KEYWORD_gforeign
-	 #define gforeign GFOREIGN__
-#endif
-#if defined YSI_COMPAT || defined KEYWORD_gglobal
-	 #define gglobal GGLOBAL__
-#endif
-#if defined YSI_COMPAT || defined KEYWORD_gpublic
-	 #define gpublic GPUBLIC__
-#endif
-#if defined YSI_COMPAT || defined KEYWORD__gchain
-	 #define _gchain GCHAIN__
-#endif
+//#if defined YSI_COMPAT || defined KEYWORD_gforeign
+//	 #define gforeign GFOREIGN__
+//#endif
+//#if defined YSI_COMPAT || defined KEYWORD_gglobal
+//	 #define gglobal GGLOBAL__
+//#endif
+//#if defined YSI_COMPAT || defined KEYWORD_gpublic
+//	 #define gpublic GPUBLIC__
+//#endif
+//#if defined YSI_COMPAT || defined KEYWORD__gchain
+//	 #define _gchain GCHAIN__
+//#endif
 
 /*-------------------------------------------------------------------------*//**
  * <param name="x">The element that was added (maybe).</param>
  * <remarks>
- *  The name is a macro, so this function isn't actually called this.  This is
- *  called when a new element is created, and as such it is NOT chained to other
- *  parts of the groups system because each part handles one type of element.
- *  Loop through all players and set up the element for them if they are in a
- *  group that this is also in by default.
+ *  This is called when a new element is created, and as such it is NOT chained
+ *  to other parts of the groups system because each part handles one type of
+ *  element.  Loop through all players and set up the element for them if they
+ *  are in a group that this is also in by default.
  *
  *  If x is "_GROUP_MAKE_LIMIT" then this is the test used in OnPlayerConnect in
  *  various libraries to see if the groups system exists, and if not locally
@@ -181,23 +170,20 @@ static stock
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:_GROUP_INITIALISE(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
+stock bool:_GROUP_MAKE_NAME<..._InitialiseFromGroups>(_GROUP_MAKE_TAG:x = _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
 {
-	#if defined _YSI_HAS_y_groups
-		P:4(#_GROUP_INITIALISE " called: %i", x);
-		// A new item has been added to the system - update all players according to
-		// the default settings for a group.
-		if (x != _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
+	P:4(#_GROUP_MAKE_NAME<..._InitialiseFromGroups> " called: %i", x);
+	// A new item has been added to the system - update all players according to
+	// the default settings for a group.
+	if (x != _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
+	{
+		YSI_g_sElementMembership[_:x] = YSI_g_sDefaultMembership,
+		YSI_g_sMaxEncountered = max(YSI_g_sMaxEncountered, _:x);
+		foreach (new playerid : Player)
 		{
-			YSI_g_sElementMembership[_:x] = YSI_g_sDefaultMembership,
-			YSI_g_sMaxEncountered = max(YSI_g_sMaxEncountered, _:x);
-			foreach (new playerid : Player)
-			{
-				Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultMembership, YSI_gGroupPlayers[playerid]);
-			}
+			Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultMembership, YSI_gGroupPlayers[playerid]);
 		}
-	#endif
-	#pragma unused x
+	}
 	return false;
 }
 
@@ -422,7 +408,7 @@ GGLOBAL__ Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
 		{
 			YSI_g_sEmpty[i] = ~YSI_g_sDefaultMembership[i];
 		}
-		_GROUP_INITIALISE(el);
+		_GROUP_MAKE_NAME<..._InitialiseFromGroups>(el);
 		YSI_g_sDefaultMembership = YSI_gTempGroups;
 		YSI_g_sEmpty = YSI_g_cEmptyGroups;
 		return 1;
@@ -586,7 +572,7 @@ static stock void:Group_Handoff(i,a[],s)
 	}
 }
 
-GPUBLIC__ MAKE_YCM<HANDOFF_SOURCE...Group>()<_YCM:p>
+MASTER_FUNC__ MAKE_YCM<HANDOFF_SOURCE...Group>()<_YCM:p>
 {
 	// Pass data to the new group controller.
 	Group_Handoff(-1, _:YSI_g_sDefaultMembership, sizeof (YSI_g_sDefaultMembership));
@@ -653,7 +639,7 @@ static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
 		}
 		// Now can't.
 		P:7("Group_FullPlayerUpdate: %d %d could, now can't", playerid, el);
-		_GROUP_SET_PLAYER(_GROUP_MAKE_TAG:el, playerid, false);
+		_GROUP_MAKE_NAME<..._SetPlayer>(_GROUP_MAKE_TAG:el, playerid, false);
 		return;
 	}
 	// Couldn't see it before.
@@ -664,7 +650,7 @@ static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
 		// MULTIPLE times for an element, without anything actually changing.
 		// I.e. this could be set to "true" repeatedly while never being set
 		// to "false".
-		_GROUP_SET_PLAYER(_GROUP_MAKE_TAG:el, playerid, true);
+		_GROUP_MAKE_NAME<..._SetPlayer>(_GROUP_MAKE_TAG:el, playerid, true);
 		// We use "return" here because "_GROUPS_CHECK_ANY" MAY be a loop.
 		return;
 	}
@@ -792,8 +778,8 @@ GCHAIN__ _yGU(&pid, Bit:p[], Bit:c[])
 	// This code loops over every "thing" controlled by this script.  For every
 	// one it checks to see if the player can or can't see something that they
 	// previously could or couldn't see.  If their ability to see it has
-	// changed then the "_GROUP_SET_PLAYER" function in the controlling library
-	// is called to do the actual internal function of updating their state.
+	// changed then the `..._SetPlayer` function in the controlling library is
+	// called to do the actual internal function of updating their state.
 	for (new el = 0; el <= YSI_g_sMaxEncountered; ++el)
 	{
 		Group_FullPlayerUpdate(pid, el, p, c, YSI_g_sElementMembership[el]);
@@ -823,10 +809,9 @@ GCHAIN__ _yGU(&pid, Bit:p[], Bit:c[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#undef _GROUP_MAKE_TAG
 #undef GCHAIN__
-#undef _GROUP_SET_PLAYER
-#undef GFOREIGN__
-#undef GGLOBAL__
-#undef GPUBLIC__
+
+#undef _GROUP_MAKE_NAME
+#undef _GROUP_MAKE_LIMIT
+#undef _GROUP_MAKE_TAG
 

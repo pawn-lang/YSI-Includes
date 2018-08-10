@@ -661,13 +661,14 @@ TEST__ y_groups_SetBalancedInvalid()
 	call OnPlayerDisconnect(0, 0);
 }
 
+#define Y_GTEST_GROUP_NAME<%0...%1> %0Test%1
+#define Y_GTEST_GROUP_LIMIT 123
+#define Y_GTEST_GROUP_TAG _
+
+#include "y_groups__include"
+
 #define MASTER 60
 #include "..\..\YSI_Core\y_master"
-
-#define _GROUP_MAKE_NAME<%0...%1> %0Test%1
-#define _GROUP_MAKE_LIMIT 123
-
-#include "y_groups__funcs"
 
 static
 	gPl,
@@ -996,7 +997,4 @@ TEST__ y_groups_Iterator0()
 	Group_Destroy(g1),
 	Group_Destroy(g2);
 }
-
-#undef _GROUP_MAKE_LIMIT
-#undef _GROUP_MAKE_NAME
 
