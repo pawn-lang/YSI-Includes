@@ -131,6 +131,7 @@ static stock Functional_FoundStart(scanner[CodeScanner])
 		return -1;
 	P:4("Functional_FoundStart called");
 	YSI_g_sFunctionalStartPos = CodeScanGetMatchAddressData(scanner);
+	printf("Functional_FoundStart called: %08x", YSI_g_sFunctionalStartPos);
 	// NOP the call out.
 	CodeScanNOPMatch(scanner);
 	P:5("Functional_FoundStart done");
@@ -138,6 +139,7 @@ static stock Functional_FoundStart(scanner[CodeScanner])
 	{
 		YSI_g_sFunctionalExpectedDepth = CodeScanGetMatchStack(scanner);
 	}
+	printf("Functional_FoundStart done: %d", YSI_g_sFunctionalExpectedDepth);
 	return 0;
 }
 
@@ -170,10 +172,20 @@ static stock Functional_FoundAfter(scanner[CodeScanner])
 	return cellmin;
 }
 
-static stock Functional_FoundCall(scanner[CodeScanner])
+static stock Functional_FoundCall1(scanner[CodeScanner])
 {
-	new
-		nestingLevel = CodeScanGetMatchHole(scanner, 0);
+	Functional_FoundCall(scanner, CodeScanGetMatchHole(scanner, 0));
+}
+static stock Functional_FoundCall2(scanner[CodeScanner])
+{
+	Functional_FoundCall(scanner, 0);
+}
+
+static stock Functional_FoundCall(scanner[CodeScanner], nestingLevel)
+{
+	//new
+	//	nestingLevel = /*scanner[CodeScanMatcher_holeidx] == 0 ? 0 :*/ CodeScanGetMatchHole(scanner, 0);
+	printf("nesting %d", nestingLevel);
 	P:4("Functional_FoundCall called: %d", nestingLevel);
 	
 	// Found the code scanner itself - ignore this one.
@@ -314,6 +326,7 @@ static stock Functional_FoundCall(scanner[CodeScanner])
 		excess = CodeScanGetMatchStack(scanner) - YSI_g_sFunctionalExpectedDepth;
 	AsmInitPtr(ctx, callPos, 16);
 	// The relative jumps are all `+ 8` internally, since they add on the size of the `JUMP` OP.
+	printf("%08x %08x %d", YSI_g_sFunctionalStartPos, callPos, YSI_g_sFunctionalStartPos - callPos);
 	@emit JUMP.rel         (YSI_g_sFunctionalStartPos - callPos)
 	@emit LOAD.pri         ref(I@)
 	//@emit PUSH.C           -YSI_g_sFunctionalExpectedDepth
@@ -374,7 +387,7 @@ public OnCodeInit()
 	CodeScanInit(scanner);
 	
 	new lambdaCall0[CodeScanMatcher];
-	CodeScanMatcherInit(lambdaCall0, &Functional_FoundCall);
+	CodeScanMatcherInit(lambdaCall0, &Functional_FoundCall1);
 	CodeScanMatcherPattern(lambdaCall0,
 		OP(PUSH_C,             ???)
 		OP(PUSH_C,             4)
@@ -383,7 +396,7 @@ public OnCodeInit()
 	CodeScanAddMatcher(scanner, lambdaCall0);
 	
 	new lambdaCall1[CodeScanMatcher];
-	CodeScanMatcherInit(lambdaCall1, &Functional_FoundCall);
+	CodeScanMatcherInit(lambdaCall1, &Functional_FoundCall1);
 	CodeScanMatcherPattern(lambdaCall1,
 		OP(CONST_PRI,          ???)
 		OP(PUSH_PRI)
@@ -391,6 +404,16 @@ public OnCodeInit()
 		OP(CALL,               &LAM@0)
 	);
 	CodeScanAddMatcher(scanner, lambdaCall1);
+	
+	new lambdaCall2[CodeScanMatcher];
+	CodeScanMatcherInit(lambdaCall2, &Functional_FoundCall2);
+	CodeScanMatcherPattern(lambdaCall2,
+		OP(ZERO_PRI)
+		OP(PUSH_PRI)
+		OP(PUSH_C,             4)
+		OP(CALL,               &LAM@0)
+	);
+	CodeScanAddMatcher(scanner, lambdaCall2);
 	
 	CodeScanRun(scanner);
 	
