@@ -796,7 +796,7 @@ stock Testing_RunAll()
 			// that didn't pass.
 			while (YSI_g_sFailTests != 0)
 			{
-				printf("    - TEST__ %s (%d)", deref(YSI_g_sFailTests + 8), ReadAmxMemory(YSI_g_sFailTests + 4)),
+				printf("    - %s (%d)", deref(YSI_g_sFailTests + 8), ReadAmxMemory(YSI_g_sFailTests + 4)),
 				YSI_g_sFailTests = ReadAmxMemory(YSI_g_sFailTests);
 			}
 		}
