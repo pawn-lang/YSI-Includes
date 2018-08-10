@@ -131,7 +131,6 @@ static stock Functional_FoundStart(scanner[CodeScanner])
 		return -1;
 	P:4("Functional_FoundStart called");
 	YSI_g_sFunctionalStartPos = CodeScanGetMatchAddressData(scanner);
-	printf("Functional_FoundStart called: %08x", YSI_g_sFunctionalStartPos);
 	// NOP the call out.
 	CodeScanNOPMatch(scanner);
 	P:5("Functional_FoundStart done");
@@ -139,7 +138,6 @@ static stock Functional_FoundStart(scanner[CodeScanner])
 	{
 		YSI_g_sFunctionalExpectedDepth = CodeScanGetMatchStack(scanner);
 	}
-	printf("Functional_FoundStart done: %d", YSI_g_sFunctionalExpectedDepth);
 	return 0;
 }
 
@@ -183,9 +181,6 @@ static stock Functional_FoundCall2(scanner[CodeScanner])
 
 static stock Functional_FoundCall(scanner[CodeScanner], nestingLevel)
 {
-	//new
-	//	nestingLevel = /*scanner[CodeScanMatcher_holeidx] == 0 ? 0 :*/ CodeScanGetMatchHole(scanner, 0);
-	printf("nesting %d", nestingLevel);
 	P:4("Functional_FoundCall called: %d", nestingLevel);
 	
 	// Found the code scanner itself - ignore this one.
@@ -326,7 +321,6 @@ static stock Functional_FoundCall(scanner[CodeScanner], nestingLevel)
 		excess = CodeScanGetMatchStack(scanner) - YSI_g_sFunctionalExpectedDepth;
 	AsmInitPtr(ctx, callPos, 16);
 	// The relative jumps are all `+ 8` internally, since they add on the size of the `JUMP` OP.
-	printf("%08x %08x %d", YSI_g_sFunctionalStartPos, callPos, YSI_g_sFunctionalStartPos - callPos);
 	@emit JUMP.rel         (YSI_g_sFunctionalStartPos - callPos)
 	@emit LOAD.pri         ref(I@)
 	//@emit PUSH.C           -YSI_g_sFunctionalExpectedDepth
