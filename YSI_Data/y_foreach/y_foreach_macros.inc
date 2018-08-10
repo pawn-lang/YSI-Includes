@@ -517,8 +517,8 @@ P:D(Iter_Last(Iterator:iter<>));
 
 P:D(Iter_Next(Iterator:iter<>, cur));
 #define Iter_Next _ITER<Next>
-#define Iter_Next_InternalA(%0,%1,%9)    (%1[_:F@v:((%1[1]*%9),%9)])
-#define Iter_Next_InternalB(%0,%2,%1,%9) (%1[_:F@v:((%1[1]*%9),%9)])
+#define Iter_Next_InternalA(%0,%1,%9)    (%1[_:((%1[1]*%9),%9)])
+#define Iter_Next_InternalB(%0,%2,%1,%9) (%1[_:((%1[1]*%9),%9)])
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get the previous element in.</param>
@@ -530,7 +530,7 @@ P:D(Iter_Next(Iterator:iter<>, cur));
 
 P:D(Iter_Prev(Iterator:iter<>, cur));
 #define Iter_Prev _ITER<Prev>
-#define Iter_Prev_InternalA(%0,%1,%9)    (((%1[(_:((%1[1]/%1[1])*%9)-1)%F@s(%1)])-1)%F@s(%1))
+#define Iter_Prev_InternalA(%0,%1,%9)    (((%1[(_:((%1[1]*%9),%9)-1)%F@s(%1)])-1)%F@s(%1))
 #define Iter_Prev_InternalB(%0,%2,%1,%9) Iter_Prev_Internal(%1,F@s(%1)-F@s(%0),F@s(%1),_:F@v:((%1[1]*%9),%9))
 
 /*-------------------------------------------------------------------------*//**
