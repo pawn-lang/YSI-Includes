@@ -514,7 +514,7 @@ TEST__ y_iter_Remove1()
 	count = 0;
 	foreach (new i : iter)
 	{
-		ASSERT_EQ(i, 3 || i > 5);
+		ASSERT(i == 3 || i > 5);
 		++count;
 	}
 	ASSERT_EQ(count, 18);
@@ -522,7 +522,7 @@ TEST__ y_iter_Remove1()
 	count = 0;
 	foreach (new i : iter)
 	{
-		ASSERT_EQ(i, 3 || i > 5);
+		ASSERT(i == 3 || i > 5);
 		++count;
 	}
 	ASSERT_EQ(count, 18);
@@ -945,7 +945,7 @@ TEST__ y_iter_Starting()
 	j = Iter_Free(Test1_y_iter);
 	ASSERT(!Iter_Contains(Test1_y_iter, j));
 	j = Iter_Alloc(Test1_y_iter);
-	ASSERT_NE(Iter_Contains(Test1_y_iter, j));
+	ASSERT(Iter_Contains(Test1_y_iter, j));
 }
 
 TEST__ y_iter_Iter_Contains1()
@@ -1000,7 +1000,7 @@ TEST__ y_iter_Iter_Free()
 		Iterator:iter1<60>;
 	ASSERT_ZE(Iter_Free(iter1));
 	Iter_Add(iter1, 0);
-	ASSERT(Iter_Free(iter1), 0);
+	ASSERT_NE(Iter_Free(iter1), 0);
 	new
 		Iterator:iter2<5, 60>;
 	ASSERT_ZE(Iter_Free(iter2<>));
@@ -1041,7 +1041,7 @@ TEST__ y_iter_Tag()
 	Iter_Alloc(iter1);
 	foreach (new Group:i : iter1)
 	{
-		ASSERT_EQ(i / Group:11 * Group:11, i);
+		ASSERT_EQ(_:i / 11 * 11, _:i);
 	}
 }
 
@@ -3504,7 +3504,7 @@ TEST__ y_iter_yield6a()
 		idx = 0;
 	foreach (new i : y_iter_yield6)
 	{
-		ASSERT_EQ(idx < sizeof (answers) && i, answers[idx]);
+		ASSERT(idx < sizeof (answers) && i == answers[idx]);
 		++idx;
 	}
 	ASSERT_EQ(idx, sizeof(answers));
@@ -3558,7 +3558,7 @@ TEST__ y_iter_yield7a()
 		idx = 0;
 	foreach (new i : y_iter_yield7a[2])
 	{
-		ASSERT_EQ(idx < sizeof (answers) && i, answers[idx]);
+		ASSERT(idx < sizeof (answers) && i == answers[idx]);
 		++idx;
 	}
 	ASSERT_EQ(idx, sizeof(answers));
