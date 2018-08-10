@@ -3301,7 +3301,7 @@ iterfunc stock y_iter_yield1()
 {
 	for (new i = 0; i != 10; ++i)
 	{
-		yield return i;
+		YIELD__ return i;
 	}
 }
 #define Iterator@y_iter_yield1 iteryield
@@ -3339,7 +3339,7 @@ iterfunc stock y_iter_yield2(step, target = 100)
 		total = 0;
 	while (total < target)
 	{
-		yield return total;
+		YIELD__ return total;
 		total += step;
 	}
 }
@@ -3379,8 +3379,8 @@ iterfunc stock y_iter_yield3(step, target = 100)
 	for ( ; ; )
 	{
 		if (total >= target)
-			yield break;
-		yield return total;
+			YIELD__ break;
+		YIELD__ return total;
 		total += step;
 	}
 }
@@ -3417,7 +3417,7 @@ iterfunc stock y_iter_yield4(arr[], size = sizeof (arr))
 {
 	for (new i = 0; i != size; ++i)
 	{
-		yield return arr[i];
+		YIELD__ return arr[i];
 	}
 }
 #define Iterator@y_iter_yield4 iteryield
@@ -3446,7 +3446,7 @@ TEST__ y_iter_yield4a()
 				printf("%d%%...", i / 655);
 			for (new j = 0; j != 65536; ++j)
 			{
-				yield return k;
+				YIELD__ return k;
 				++k;
 			}
 		}
@@ -3486,13 +3486,13 @@ iterfunc stock y_iter_yield6()
 {
 	for (new i = 0; i != 3; ++i)
 	{
-		yield return i;
+		YIELD__ return i;
 	}
-	yield return 10;
-	yield return 20;
+	YIELD__ return 10;
+	YIELD__ return 20;
 	for (new i = 501; i != 505; ++i)
 	{
-		yield return i;
+		YIELD__ return i;
 	}
 }
 #define Iterator@y_iter_yield6 iteryield
@@ -3514,7 +3514,7 @@ iterfunc stock y_iter_yield7c(n)
 {
 	while (n--)
 	{
-		yield return 10;
+		YIELD__ return 10;
 	}
 }
 #define Iterator@y_iter_yield7c iteryield
@@ -3523,9 +3523,9 @@ iterfunc stock y_iter_yield7b()
 {
 	foreach (new i : y_iter_yield7c(4))
 	{
-		yield return i;
+		YIELD__ return i;
 	}
-	yield return 20;
+	YIELD__ return 20;
 }
 #define Iterator@y_iter_yield7b iteryield
 
@@ -3533,14 +3533,14 @@ iterfunc stock y_iter_yield7a(x)
 {
 	foreach (new i : y_iter_yield7b)
 	{
-		yield return i + 5;
-		yield return i + 6;
-		yield return i + 7;
-		yield return i + 9;
-		yield return i + 4;
-		yield return i + 3;
+		YIELD__ return i + 5;
+		YIELD__ return i + 6;
+		YIELD__ return i + 7;
+		YIELD__ return i + 9;
+		YIELD__ return i + 4;
+		YIELD__ return i + 3;
 	}
-	yield return x;
+	YIELD__ return x;
 }
 #define Iterator@y_iter_yield7a iteryield
 

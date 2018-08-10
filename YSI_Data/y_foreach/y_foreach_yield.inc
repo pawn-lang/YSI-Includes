@@ -2,9 +2,13 @@
 	#define MAX_NESTED_ITERATORS (4)
 #endif
 
-#define yield%0\32;%1; yield%0%1;
-#define yieldreturn%0; Iter_YieldReturn(%0);
-#define yieldbreak%0; return;
+#define YIELD__%0\32;%1; YIELD__%0%1;
+#define YIELD__return%0; Iter_YieldReturn(%0);
+#define YIELD__break%0; return;
+
+#if defined YSI_COMPAT || defined KEYWORD_yield
+	#define yield YIELD__
+#endif
 
 #define iteryield%9;_:(%9=Iter%9@%0$[_:%2]%9; F@o)&&(I@=-1,Iter_YieldEnter())))?I@:_:F@u:F@l:(F@C:Iter_Func@%0$(),--YSI_gIteratorDepth)?1:2;Iter_YieldLoop();
 #define F@C:%0(,%1) %0(%1)
