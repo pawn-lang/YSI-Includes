@@ -183,7 +183,7 @@ static stock const
 #define COMMAND CMD
 
 // Alt commands:
-#define _YCMD_4:@yC_%0(%9);%9(%9)%9;%9(%9);%9(%1)=%2; @y_C%0(){Command_AddAltNamed(#%2,#%1);}
+#define _YCMD_4:@yC_%0(%9);%9(%9)%9;%9(%9);%9(%1)=%2; INIT__%0(){Command_AddAltNamed(#%0,#%2);}
 
 #define @_yC%0\32; @_yC
 #define @y_C%0\32; @y_C
@@ -1426,13 +1426,6 @@ HOOK__ OnScriptInit()
 	}
 	if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();
 	if (funcidx(YSI_gscOPCP) != -1) Command_IncOPCP();
-	// Add all the predefined alt commands.
-	new
-		Func:ptr<>;
-	while ((idx = AMX_GetPublicPointerPrefix(idx, _:ptr, _A<@y_C>)))
-	{
-		@.ptr();
-	}
 }
 
 /*-------------------------------------------------------------------------*//**

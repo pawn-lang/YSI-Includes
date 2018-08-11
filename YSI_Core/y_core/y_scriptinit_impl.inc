@@ -208,6 +208,26 @@ public OnRuntimeError(code, &bool:suppress)
 
 */
 
+#define @yI_%0\32; @yI_
+
+#define INIT__%0(%1) @yI_%0(%1);@yI_%0(%1)
+
+#if YSI_KEYWORD(initfunc)
+	#define initfunc INIT__
+#endif
+
+#define FINAL__%0=%1; stock const %0;INIT__%0(){ScriptInit_ForceFinal_(%0,%1);}
+
+#if YSI_KEYWORD(final)
+	#define final FINAL__
+#endif
+
+stock ScriptInit_ForceFinal_(const &var, const val)
+{
+	#pragma unused var
+	setarg(0, 0, val);
+}
+
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="_script_init_fix_state : true"/>
  * <transition keep="true" target="_ALS : _ALS_go"/>
@@ -228,6 +248,7 @@ public OnFilterScriptInit()
 	#if defined ScriptInit_OnScriptInit
 		ScriptInit_OnScriptInit();
 	#endif
+	ScriptInit_InitFuncs_();
 	if (!YSI_g_sCodeJITing)
 	{
 		// Dump the final assembly of this script so we can inspect it.
@@ -280,6 +301,7 @@ public OnGameModeInit()
 		#if defined ScriptInit_OnScriptInit
 			ScriptInit_OnScriptInit();
 		#endif
+		ScriptInit_InitFuncs_();
 		if (!YSI_g_sCodeJITing)
 		{
 			// Dump the final assembly of this script so we can inspect it.
