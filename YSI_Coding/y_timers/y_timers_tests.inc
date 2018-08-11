@@ -124,7 +124,7 @@ timer BigMessage2[4000](playerid)
 
 PTEST__ Timer1(playerid)
 {
-	defer BigMessage1(playerid);
+	DEFER__ BigMessage1(playerid);
 	ASK("Is a green BIG MESSAGE appearing once after 4 seconds?");
 }
 
@@ -133,19 +133,19 @@ static
 
 PTEST__ Timer2(playerid)
 {
-	sgTimer = repeat BigMessage2(playerid);
+	sgTimer = REPEAT__ BigMessage2(playerid);
 	ASK("Is a green BIG MESSAGE appearing every 4 seconds?");
 }
 
 timer StopMessage1[4000](playerid)
 {
 	SendClientMessage(playerid, 0x00FF00AA, "BIG MESSAGE should stop now.");
-	stop sgTimer;
+	STOP__ sgTimer;
 }
 
 PTEST__ Timer3(playerid)
 {
-	defer StopMessage1(playerid);
+	DEFER__ StopMessage1(playerid);
 	ASK("Is the green BIG MESSAGE stopping appearing after 4 seconds?");
 }
 

@@ -1894,7 +1894,7 @@ stock TD_Garbage(Text:textDraw)
  * <param name="textDraw">Text to morph from it's current style to another style.</param>
  * <param name="style">The style to morph to.</param>
  * <param name="time">The time to take in this morph.</param>
- * <param name="defer">In how long to start this morph (default now).</param>
+ * <param name="delay">In how long to start this morph (default now).</param>
  * <remarks>
  *  Entry point for changing the apperance of a text draw to look like another
  *  one.  How smooth this is depends on the difference and the time given.  The
@@ -1922,7 +1922,7 @@ stock TD_Morph(Text:textDraw, Style:style, time, delay = 0)
 		//{
 			//TD_MorphInternal(playerid, textDraw, style);
 		SetTimerEx("TD_MorphTDInternal", delay + Y_TD_FRAME_TIME, 0, "iiiiii", _:textDraw, _:TD_GetDisplayStyle(textDraw), _:style, time, Y_TD_FRAME_TIME, YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_REVISION]); //, YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_REAL]);
-		//SetTimerEx("TD_MorphTDInternal", defer + Y_TD_FRAME_TIME, 0, "iiiiii", _:textDraw, TD_GetDisplayStyle());
+		//SetTimerEx("TD_MorphTDInternal", delay + Y_TD_FRAME_TIME, 0, "iiiiii", _:textDraw, TD_GetDisplayStyle());
 		//}
 		return 1;
 	}

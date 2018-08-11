@@ -464,21 +464,43 @@ stock _Timer_H(slot)
 	_Timer_F(~(slot - 1));
 }
 
-#define task%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s=-1;return _Timer_I(#%0,%1,g,s);}%0();public%0()
+#define TASK__%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s=-1;return _Timer_I(#%0,%1,g,s);}%0();public%0()
 
 // 
-#define ptask%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s[MAX_PLAYERS]={-1,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public%0(%2)
+#define PTASK__%0[%1](%2) @yT_%0(g,p);@yT_%0(g,p){static s[MAX_PLAYERS]={-1,...},a[2];return _Timer_D(#%0,%1,g,p,s,a);}%0(%2);public%0(%2)
 
 #define @yT_%0\32;%1(%2) @yT_%0%1(%2)
 //#define @_yT%0;\32%1(%2) @_yT%0%1(%2)
 
-#define pause%0; {J@=_:@Ym:@yT_%0(0,-1);}
-#define resume%0; {J@=_:@Ym:@yT_%0(1,-1);}
+#define PAUSE__%0; {J@=_:@Ym:@yT_%0(0,-1);}
+#define RESUME__%0; {J@=_:@Ym:@yT_%0(1,-1);}
 #define @Ym:%0[%1](%2,-1) %0(%2,%1)
 
-#define timerfunc YSI_timer
-
-#if !defined YSI_NO_timer
-	#define timer YSI_timer
+#if YSI_KEYWORD(stop)
+	#define stop STOP__
+#endif
+#if YSI_KEYWORD(defer)
+	#define defer DEFER__
+#endif
+#if YSI_KEYWORD(repeat)
+	#define repeat REPEAT__
+#endif
+#if YSI_KEYWORD(task)
+	#define task%0[%1]%3(%2) TASK__%0[%1]%3(%2)
+#endif
+#if YSI_KEYWORD(ptask)
+	#define ptask%0[%1]%3(%2) PTASK__%0[%1]%3(%2)
+#endif
+#if YSI_KEYWORD(pause)
+	#define pause PAUSE__
+#endif
+#if YSI_KEYWORD(resume)
+	#define resume RESUME__
+#endif
+#if YSI_KEYWORD(timerfunc)
+	#define timerfunc%0[%1]%3(%2) TIMER__%0[%1]%3(%2)
+#endif
+#if YSI_KEYWORD(timer)
+	#define timer%0[%1]%3(%2) TIMER__%0[%1]%3(%2)
 #endif
 

@@ -947,7 +947,7 @@ static stock Player_DoLogout(playerid, uid)
 	// Will be called AFTER all "OnPlayerDisconnect" callbacks are called when
 	// one player leaves, and if more leave it's still used for the last player
 	// in the list.
-	//defer _Player_CloseLogout();
+	//DEFER__ _Player_CloseLogout();
 	_Player_CloseLogout();
 	// By now "YSI_g_sOneLogoutFile" contains a handle to the user's file,
 	// either having just been opened, or invoked in a previous call to this

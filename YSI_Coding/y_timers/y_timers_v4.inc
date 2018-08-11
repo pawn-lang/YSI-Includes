@@ -1,5 +1,5 @@
 
-#define YSI_timer%0[%2](%1) FUNC_PARSER(TIMER,QAL:ARR_CST:REF_DEF:STR_CST_DEF:NUM_CST_DEF:)(%0(%1))(%0(%1))()(%2)()#
+#define TIMER__%0[%2](%1) FUNC_PARSER(TIMER,QAL:ARR_CST:REF_DEF:STR_CST_DEF:NUM_CST_DEF:)(%0(%1))(%0(%1))()(%2)()#
 
 // TIMER_STR(const, tag, name, size)rest$(original_call)(time)(pass_parameters)specifier#
 #define TIMER_STR(%6,%9,%2,%5,%9)%8$(%7)(%0)(%1)(%3)%4# %8$(%7)(%0,%6%2[%5])(%1)(%3,%2)%4s#

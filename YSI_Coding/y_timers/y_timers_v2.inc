@@ -86,11 +86,11 @@ Optional plugins:
 // Others.
 #define @Yh:#%0#%1|||%3|||%5,%6;%8>%9||| @Yf:@Yg:@Yh:#%0d#%1,%3|||%5|||%6;%8>%9,%3|||
 
-// Main entry point for defer type determination.
+// Main entry point for DEFER__ type determination.
 #define _YT@CR:%0,%1)%8>%2||| @Yf:@Yg:@Yh:#i#,@Yx:J@|||%0|||%1;%8>%2|||
 
-// Define for "defer" with timer, parameters and main function.
-#define YSI_timer%0[%1]%3(%2) stock%0_yT@(%2)return _Timer_C(O@(#%0@_yT,(I@==-1)?(%1):I@,J@,_YT@CR:%2,,)0>%0|||%0|||(%2)
+// Define for "DEFER__" with timer, parameters and main function.
+#define TIMER__%0[%1]%3(%2) stock%0_yT@(%2)return _Timer_C(O@(#%0@_yT,(I@==-1)?(%1):I@,J@,_YT@CR:%2,,)0>%0|||%0|||(%2)
 
 // Expand additional parameters out to three functions after processing.
 //#define @Yx:%0||||||;%1,%2|||%4||| %0),1);@Yu:%1@_yT(%2);public @Yu:%1@_yT(%2){%4(%2);}%4
@@ -109,11 +109,11 @@ Optional plugins:
 #define @Yk:%0);@Yl(@Yk:%1); @Yk:%0);
 #define @Yl if(!__r)_Timer_F
 
-#define defer%0(%1) (J@=0,I@=-1,Timer:%0_yT@(%1))
+#define DEFER__%0(%1) (J@=0,I@=-1,Timer:%0_yT@(%1))
 
-#define repeat%0(%1) (J@=1,I@=-1,Timer:%0_yT@(%1))
+#define REPEAT__%0(%1) (J@=1,I@=-1,Timer:%0_yT@(%1))
 
 // Custom time.
 #define Timer:%0[%1]_yT@(%2) I@=%1,Timer:%0_yT@(%2)
 
-#define stop%0; {_Timer_F(_:%0);}
+#define STOP__%0; {_Timer_F(_:%0);}

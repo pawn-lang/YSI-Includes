@@ -263,8 +263,8 @@ MASTER_HOOK__ OnScriptInit()
 	// Send '0' only once at server start to reset PHP.
 	HTTP(0, HTTP_HEAD, PHP_RECEIVE "?ID=0", "", "_PHP_Result");
 	//new TODO;
-	defer _PHP_FireOne[500](0, 0);
-	defer _PHP_FireOne[5500](0, 0);
+	DEFER__ _PHP_FireOne[500](0, 0);
+	DEFER__ _PHP_FireOne[5500](0, 0);
 	//SetTimer("_PHP_FireOne", 500, 0);
 	//SetTimer("_PHP_FireOne", 5500, 0);
 	//PHP_FireOne();
@@ -505,12 +505,12 @@ public _PHP_Result(index, response, data[])
 				}
 			}
 			//new TODO;
-			defer _PHP_FireOne(res, index);
+			DEFER__ _PHP_FireOne(res, index);
 		}
 	}
 	else
 	{
-		defer _PHP_FireOne[5000](0, 0);
+		DEFER__ _PHP_FireOne[5000](0, 0);
 	}
 }
 
