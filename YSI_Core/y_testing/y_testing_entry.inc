@@ -210,31 +210,31 @@ stock
 	#define TEST_COMPILE__%1() static stock Q@_y%1()
 #endif
 
-#if (defined YSI_COMPAT && defined YSI_KEYWORD_TestInit) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_TestInit)
+#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_TestInit) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_TestInit)
 	 #define TestInit:%1() TEST_INIT__ %1()
 #endif
-#if (defined YSI_COMPAT && defined YSI_KEYWORD_Test) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_Test)
+#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_Test) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_Test)
 	 #define Test:%1() TEST__ %1()
 #endif
-#if (defined YSI_COMPAT && defined YSI_KEYWORD_TestClose) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_TestClose)
+#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_TestClose) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_TestClose)
 	 #define TestClose:%1() TEST_CLOSE__ %1()
 #endif
-#if (defined YSI_COMPAT && defined YSI_KEYWORD_TestBeforeEach) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_TestBeforeEach)
+#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_TestBeforeEach) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_TestBeforeEach)
 	 #define TestBeforeEach:%1() TEST_BEFORE_EACH__ %1()
 #endif
-#if (defined YSI_COMPAT && defined YSI_KEYWORD_TestAfterEach) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_TestAfterEach)
+#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_TestAfterEach) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_TestAfterEach)
 	 #define TestAfterEach:%1() TEST_AFTER_EACH__ %1()
 #endif
-#if (defined YSI_COMPAT && defined YSI_KEYWORD_PTestInit) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_PTestInit)
+#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_PTestInit) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_PTestInit)
 	 #define PTestInit:%1(%2) PTEST_INIT__ %1(%2)
 #endif
-#if (defined YSI_COMPAT && defined YSI_KEYWORD_PTest) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_PTest)
+#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_PTest) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_PTest)
 	 #define PTest:%1(%2) PTEST__ %1(%2)
 #endif
-#if (defined YSI_COMPAT && defined YSI_KEYWORD_PTestClose) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_PTestClose)
+#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_PTestClose) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_PTestClose)
 	 #define PTestClose:%1(%2) PTEST_CLOSE__ %1(%2)
 #endif
-#if (defined YSI_COMPAT && defined YSI_KEYWORD_TestCompile) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_TestCompile)
+#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_TestCompile) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_TestCompile)
 	 #define TestCompile:%1() TEST_COMPILE__ %1()
 #endif
 

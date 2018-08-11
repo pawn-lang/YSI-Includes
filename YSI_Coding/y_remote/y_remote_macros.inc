@@ -75,16 +75,16 @@ Optional plugins:
 #define BROADCAST_FUNC__%0(%1) (J@=1,I@=-1,_@%0(%1))
 #define TARGET_FUNC__%0<%2>%9(%1) (J@=1,I@=(%2),_@%0(%1))
 
-#if (defined YSI_COMPAT && defined YSI_KEYWORD_remotefunc) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_remotefunc)
+#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_remotefunc) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_remotefunc)
 	#define remotefunc REMOTE_FUNC__
 #endif
-#if (defined YSI_COMPAT && defined YSI_KEYWORD_localfunc) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_localfunc)
+#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_localfunc) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_localfunc)
 	#define localfunc LOCAL_FUNC__
 #endif
-#if (defined YSI_COMPAT && defined YSI_KEYWORD_broadcastfunc) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_broadcastfunc)
+#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_broadcastfunc) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_broadcastfunc)
 	#define broadcastfunc BROADCAST_FUNC__
 #endif
-#if (defined YSI_COMPAT && defined YSI_KEYWORD_targetfunc) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_targetfunc)
+#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_targetfunc) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_targetfunc)
 	#define targetfunc TARGET_FUNC__
 #endif
 

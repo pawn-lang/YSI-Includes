@@ -143,16 +143,16 @@ static stock
 //	#define _GROUP_SET_PLAYER(%0) P:E(#_GROUP_MAKE_NAME<..._SetPlayer> " called without y_groups")
 //#endif
 
-//#if (defined YSI_COMPAT && defined YSI_KEYWORD_gforeign) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_gforeign)
+//#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_gforeign) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_gforeign)
 //	 #define gforeign GFOREIGN__
 //#endif
-//#if (defined YSI_COMPAT && defined YSI_KEYWORD_gglobal) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_gglobal)
+//#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_gglobal) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_gglobal)
 //	 #define gglobal GGLOBAL__
 //#endif
-//#if (defined YSI_COMPAT && defined YSI_KEYWORD_gpublic) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_gpublic)
+//#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_gpublic) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_gpublic)
 //	 #define gpublic GPUBLIC__
 //#endif
-//#if (defined YSI_COMPAT && defined YSI_KEYWORD__gchain) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD__gchain)
+//#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD__gchain) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD__gchain)
 //	 #define _gchain GCHAIN__
 //#endif
 
