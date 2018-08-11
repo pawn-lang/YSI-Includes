@@ -173,7 +173,7 @@ stock _GangZonePulse(@PlayerSet:ps, zone, from, to, time, delay = ZONE_PULSE_STA
 	else thereSub |= ((from >>> 8 & 0xFF) - (to >>> 8 & 0xFF)) / time << 8, backAdd |= ((from >>> 8 & 0xFF) - (to >>> 8 & 0xFF)) / time2 << 8;
 	if (to & 0xFF > from & 0xFF) thereAdd |= ((to & 0xFF) - (from & 0xFF)) / time, backSub |= ((to & 0xFF) - (from & 0xFF)) / time2;
 	else thereSub |= ((from & 0xFF) - (to & 0xFF)) / time, backAdd |= ((from & 0xFF) - (to & 0xFF)) / time2;*/
-	foreach (new p : PS(ps))
+	FOREACH__ (new p : PS(ps))
 	{
 		KillTimer(GetPVarInt(p, YSI_g_sTimer));
 		GangZoneShowForPlayer(p, zone, from);
@@ -193,7 +193,7 @@ stock _GangZoneStopPulse(@PlayerSet:ps, zone)
 	//	YSI_g_sTimer[32];
 	//format(YSI_g_sTimer, sizeof (YSI_g_sTimer), "y_zonepulse_%d", zone);
 	valstr(YSI_g_sTimer[12], zone);
-	foreach (new p : PS(ps))
+	FOREACH__ (new p : PS(ps))
 	{
 		KillTimer(GetPVarInt(p, YSI_g_sTimer));
 	}

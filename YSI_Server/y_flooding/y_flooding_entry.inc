@@ -165,7 +165,7 @@ HOOK__ OnPlayerConnect(playerid)
 		new
 			ip32 = IPToInt(ip);
 		YSI_g_sPlayerIPs[playerid] = ip32;
-		foreach (new i : Player)
+		FOREACH__ (new i : Player)
 		{
 			if (YSI_g_sPlayerIPs[i] == ip32)
 			{
@@ -186,7 +186,7 @@ HOOK__ OnPlayerConnect(playerid)
 				case e_FLOOD_ACTION_KICK:
 				{
 					// Kick all the players.
-					foreach (new i : FloodingPlayer)
+					FOREACH__ (new i : FloodingPlayer)
 					{
 						Kick(i);
 					}
@@ -201,7 +201,7 @@ HOOK__ OnPlayerConnect(playerid)
 					// Ban the IP.
 					BanEx(playerid, "YSI max connections auto-ban");
 					// Kick all the players.
-					foreach (new i : FloodingPlayer)
+					FOREACH__ (new i : FloodingPlayer)
 					{
 						Kick(i);
 					}

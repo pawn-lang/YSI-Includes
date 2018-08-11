@@ -516,7 +516,7 @@ TEST__ y_commands_iterator0()
 	new
 		found,
 		total = 0;
-	foreach (new c : Command())
+	FOREACH__ (new c : Command())
 	{
 		++total;
 		if (FALSE) {}
@@ -537,7 +537,7 @@ TEST__ y_commands_iterator1()
 	new
 		found,
 		total = 0;
-	foreach (new c : Command)
+	FOREACH__ (new c : Command)
 	{
 		++total;
 		if (FALSE) {}

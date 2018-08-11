@@ -179,7 +179,7 @@ TEST__ y_groups_Set1()
 	ASSERT_EQ(Group_GetCount(g), 1);
 	new
 		c = 0;
-	foreach (new p : GroupMember[g])
+	FOREACH__ (new p : GroupMember[g])
 	{
 		ASSERT_EQ(p, 42);
 		++c;
@@ -200,7 +200,7 @@ TEST__ y_groups_Set2()
 	ASSERT_ZE(Group_GetCount(g));
 	new
 		c = 0;
-	foreach (new p : GroupMember(g))
+	FOREACH__ (new p : GroupMember(g))
 	{
 		++c;
 	}
@@ -916,7 +916,7 @@ TEST__ y_groups_ChildIterator0()
 	Group_AddChild(g0, g2);
 	new
 		total = 0;
-	foreach (new Group:g : GroupChild(g0))
+	FOREACH__ (new Group:g : GroupChild(g0))
 	{
 		++total;
 	}
@@ -937,7 +937,7 @@ TEST__ y_groups_ChildIterator1()
 	ASSERT(Group_IsValid(g0));
 	ASSERT(Group_IsValid(g1));
 	ASSERT(Group_IsValid(g2));
-	foreach (new Group:g : GroupChild(g0))
+	FOREACH__ (new Group:g : GroupChild(g0))
 	{
 		Group_Destroy(g);
 	}
@@ -961,7 +961,7 @@ TEST__ y_groups_ChildIterator2()
 	ASSERT(Group_IsValid(g2));
 	new
 		total = 0;
-	foreach (new Group:g : GroupChild[g0])
+	FOREACH__ (new Group:g : GroupChild[g0])
 	{
 		Group_Destroy(g);
 		++total;
@@ -982,13 +982,13 @@ TEST__ y_groups_Iterator0()
 		Group:g2 = Group_Create();
 	new
 		total = 0;
-	foreach (new Group:g : CreatedGroup)
+	FOREACH__ (new Group:g : CreatedGroup)
 	{
 		++total;
 	}
 	ASSERT(total >= 3);
 	total = 0;
-	foreach (new Group:g : CreatedGroup())
+	FOREACH__ (new Group:g : CreatedGroup())
 	{
 		++total;
 	}

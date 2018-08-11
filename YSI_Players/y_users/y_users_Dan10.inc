@@ -412,7 +412,7 @@ HOOK__ OnScriptInit()
 HOOK__ OnScriptExit()
 {
 	// Loop through all players.
-	foreach (new i : Player)
+	FOREACH__ (new i : Player)
 	{
 		Player_DoDisconnect(i);
 	}

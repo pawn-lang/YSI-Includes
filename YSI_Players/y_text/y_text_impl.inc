@@ -1012,7 +1012,7 @@ stock _Text_Send(@PlayerSet:players, search[], ident[], GLOBAL_TAG_TYPES:...)
 	// "@PlayerVar" so that we can optimised for multiple languages.  Now it
 	// uses "@PlayerSet" instead because that's the new one designed for
 	// situations like this in which we want direct access to the variable.
-	foreach (new playerid : PS(players))
+	FOREACH__ (new playerid : PS(players))
 	//new playerid = 0;
 	{
 		new
@@ -1147,7 +1147,7 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 	// Loop through all the players passed to the function (however they were
 	// passed to the function).  This uses "@PlayerArray" instead of
 	// "@PlayerVar" so that we can optimised for multiple languages.
-	foreach (new playerid : PS(players))
+	FOREACH__ (new playerid : PS(players))
 	{
 		new
 			Language:lang = Langs_GetPlayerLanguage(playerid);

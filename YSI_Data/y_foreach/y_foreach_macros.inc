@@ -95,7 +95,10 @@ Optional plugins:
  *//*------------------------------------------------------------------------**/
 
 //P:D(foreach(expr));
-#define foreach(%0) for(new Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%0|||)
+#define FOREACH__(%0) for(new Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%0|||)
+#if defined YSI_COMPAT || defined KEYWORD_foreach
+	#define foreach FOREACH__
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <param name="params">The iterator function's parameters.</param>

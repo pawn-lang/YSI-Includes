@@ -127,11 +127,11 @@ stock
 	__ps_data[e_PLAYER_SET_HACK],
 	__ps_pointer = -1;
 
-#define @PlayerVar:%0) __ps_addr_t:__ps_addr,__ps_drop_t:%0)foreach(new %0:PS(__ps_addr))
+#define @PlayerVar:%0) __ps_addr_t:__ps_addr,__ps_drop_t:%0)FOREACH__(new %0:PS(__ps_addr))
 
 // More than one parameter.  This removes the need to redefine "for", which I'm
 // very happy about, by doing all detection in one go.
-#define __ps_addr_t:__ps_addr,__ps_drop_t:%0,%1)foreach(%2,%3:PS(__ps_addr)) __ps_addr_t:__ps_addr,%1)foreach(%2:PS(__ps_addr))
+#define __ps_addr_t:__ps_addr,__ps_drop_t:%0,%1)FOREACH__(%2,%3:PS(__ps_addr)) __ps_addr_t:__ps_addr,%1)FOREACH__(%2:PS(__ps_addr))
 
 // Only one parameter (not caught by the above statement).  The one is the
 // variable name we steal for the "foreach" loop.
@@ -326,7 +326,7 @@ stock Iter_Func@PS(cur, __ps_addr_t:addr)
 				// Boolean array.
 				__ps_type{__ps_pointer} = e_PLAYER_SET_TYPE_BOOL;
 				// Find the first set player.
-				foreach (cur : Player)
+				FOREACH__ (cur : Player)
 				{
 					// Now ANY true value is true.
 					if (__ps_data[e_PLAYER_SET_HACK_DATA][cur])
@@ -518,7 +518,7 @@ stock __PS_C(source[MAX_PLAYERS][], idx)
 	new
 		ret = (__ps_data[e_PLAYER_SET_HACK_DATA] = sFake),
 		e_PLAYER_SET_HACK:i = e_PLAYER_SET_HACK:0;
-	foreach (new playerid : Player)
+	FOREACH__ (new playerid : Player)
 	{
 		if (source[playerid][idx])
 		{
@@ -546,7 +546,7 @@ stock bool:__PS_A(@PlayerSet:addr, PlayerArray:ret<MAX_PLAYERS>)
 		return false;
 	}
 	PA_FastInit(ret);
-	foreach (new a : PS(addr))
+	FOREACH__ (new a : PS(addr))
 	{
 		PA_Let(ret, a);
 	}

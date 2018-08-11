@@ -350,7 +350,7 @@ GLOBAL__ void:_Race_Destroy(slot, refund)
 	{
 		if (YSI_g_sRaceData[slot][E_RACE_FLAGS] & e_RACE_FLAGS_STARTED)
 		{
-			foreach (new i : Player)
+			FOREACH__ (new i : Player)
 			{
 				if (PA_Get(YSI_g_sRacers[slot], i))
 				{
@@ -361,7 +361,7 @@ GLOBAL__ void:_Race_Destroy(slot, refund)
 		}
 		else
 		{
-			foreach (new i : Player)
+			FOREACH__ (new i : Player)
 			{
 				if (PA_Get(YSI_g_sRacers[slot], i))
 				{
@@ -821,7 +821,7 @@ GLOBAL__ Race_Start(race)
 		bool:exited = true,
 		j;
 	for (new i = Iter_First(YSI_g_sRacePeople[race]), k; (k = Iter_Next(YSI_g_sRacePeople[race], i)), i != Iter_End(YSI_g_sRacePeople[race]); i = k)
-	//foreach (new i : YSI_g_sRacePeople[race])
+	//FOREACH__ (new i : YSI_g_sRacePeople[race])
 	{
 		new
 			vehicleid;
@@ -893,7 +893,7 @@ public Race_Countdown(race, time)
 			vehicleid,
 			pos;
 		//for (new i = Iter_First(YSI_g_sRacePeople[race]), j; j = Iter_Next(YSI_g_sRacePeople[race], i), i != Iter_End(YSI_g_sRacePeople[race]); i = j)
-		foreach (new i : YSI_g_sRacePeople[race])
+		FOREACH__ (new i : YSI_g_sRacePeople[race])
 		{
 			if ((vehicleid = GetPlayerVehicleID(i)))
 			{
@@ -1108,7 +1108,7 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
 			{
 				return;
 			}
-			foreach (new playerid : YSI_g_sRacePeople[race])
+			FOREACH__ (new playerid : YSI_g_sRacePeople[race])
 			{
 				lap = YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_LAP],
 				cp = YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_CP] + start;
@@ -1148,7 +1148,7 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
 					time[8],
 					th[3];
 				format(time, sizeof (time), "%d:%02d", lap / 60, lap % 60);
-				foreach (new playerid : YSI_g_sRacePeople[race])
+				FOREACH__ (new playerid : YSI_g_sRacePeople[race])
 				{
 					pos = YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_POSITION];
 					switch (pos % 20)

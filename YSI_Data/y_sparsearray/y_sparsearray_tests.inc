@@ -32,7 +32,7 @@ TEST__ SparseArray()
 		ASSERT(Sparse_Contains(arr, idx));
 		ASSERT_EQ(Sparse_Get(arr, idx), val);
 	}
-	foreach (new idx : Bits(done))
+	FOREACH__ (new idx : Bits(done))
 	{
 		ASSERT(Sparse_Contains(arr, idx));
 		Sparse_UnSet(arr, idx);

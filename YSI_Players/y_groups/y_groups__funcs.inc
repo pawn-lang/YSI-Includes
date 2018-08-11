@@ -179,7 +179,7 @@ stock _GROUP_MAKE_NAME<..._InitialiseFromGroups>(_GROUP_MAKE_TAG:x = _GROUP_MAKE
 	{
 		YSI_g_sElementMembership[_:x] = YSI_g_sDefaultMembership,
 		YSI_g_sMaxEncountered = max(YSI_g_sMaxEncountered, _:x);
-		foreach (new playerid : Player)
+		FOREACH__ (new playerid : Player)
 		{
 			Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultMembership, YSI_gGroupPlayers[playerid]);
 		}
@@ -247,7 +247,7 @@ GGLOBAL__ Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
 			// Is this element in the current group?
 			Bit_Vet(YSI_gTempGroups, _:g);
 		}
-		foreach (new playerid : Player)
+		FOREACH__ (new playerid : Player)
 		{
 			if (YSI_gGroupPlayers[playerid][slot] & mask)
 			{
@@ -303,7 +303,7 @@ GGLOBAL__ Group_Set...Default(Group:g,bool:s)
 			slot = Bit_Slot(g),
 			Bit:mask = Bit_Mask(g),
 			Iterator:GP<MAX_PLAYERS>;
-		foreach (new playerid : Player)
+		FOREACH__ (new playerid : Player)
 		{
 			// Do this check here so it is only done once per player.  This is a
 			// good argument for moving iterators to be duplicated in every
@@ -329,7 +329,7 @@ GGLOBAL__ Group_Set...Default(Group:g,bool:s)
 				}
 				// Is this element NOT in the current group?
 				Bit_Let(sNext, _:g);
-				foreach (new playerid : GP)
+				FOREACH__ (new playerid : GP)
 				{
 					Group_FullPlayerUpdate(playerid, el, YSI_g_sElementMembership[el], sNext, YSI_gGroupPlayers[playerid]);
 				}
@@ -348,7 +348,7 @@ GGLOBAL__ Group_Set...Default(Group:g,bool:s)
 				}
 				// Is this element in the current group?
 				Bit_Vet(sNext, _:g);
-				foreach (new playerid : GP)
+				FOREACH__ (new playerid : GP)
 				{
 					Group_FullPlayerUpdate(playerid, el, YSI_g_sElementMembership[el], sNext, YSI_gGroupPlayers[playerid]);
 				}

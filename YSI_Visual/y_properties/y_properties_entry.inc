@@ -922,7 +922,7 @@ HOOK__ OnPlayerConnect(playerid)
 
 HOOK__ OnPlayerDisconnect(playerid, reason)
 {
-	foreach (new prop : Bits(YSI_g_sPlayerProperties[playerid]))
+	FOREACH__ (new prop : Bits(YSI_g_sPlayerProperties[playerid]))
 	{
 		new
 			e_PROP_FLAGS:flags = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
@@ -2052,7 +2052,7 @@ ptask Property_Loop[500](i)
 			}
 		}
 	}
-	foreach (Player, i)
+	FOREACH__ (Player, i)
 	{*/
 	P:3("Property_Loop() foreach start");
 	new

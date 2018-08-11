@@ -593,7 +593,7 @@ GLOBAL__ Class_Enable(classid, bool:toggle)
 		{
 			YSI_g_sClasses[classid][E_CLASS_FLAGS] &= ~e_CLASS_FLAGS_ENABLED;
 			// Hide the class for anyone currently viewing it.
-			foreach (new playerid : Player)
+			FOREACH__ (new playerid : Player)
 			{
 				P:5("Class_Enable: %d %d %d", playerid, _:YSI_g_sPlayerClass[playerid], _:e_PLAYER_CLASS_IN_SELECTION);
 				if (Player_InSelection(playerid))

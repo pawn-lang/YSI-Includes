@@ -2503,7 +2503,7 @@ GLOBAL__ bool:Area_IsEmpty(area)
 		z;
 	if (Area_IsActive(area))
 	{
-		foreach (new playerid : Player)
+		FOREACH__ (new playerid : Player)
 		{
 			for (new i = 0; ; ++i)
 			{

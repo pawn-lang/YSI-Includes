@@ -202,7 +202,7 @@ GLOBAL__ void:_Group_ReInitPlayers()
 	Iter_Init(GroupPlayers);
 	for (new i = 0; i != _MAX_GROUPS_G; ++i) if (_Group_IsActive(i))
 	{
-		foreach (new playerid : Player)
+		FOREACH__ (new playerid : Player)
 		{
 			if (_Group_HasPlayer(i, playerid)) Iter_Add(GroupPlayers[i], playerid);
 		}
@@ -394,7 +394,7 @@ remotefunc static void:_Group_Destroy(g, Iterator@gp[MAX_PLAYERS + 1], s)
 		// that other group as a direct result of being added to this group,
 		// but maybe they weren't - there's no way to know!
 		// Check it!  Local parameter iterator!
-		foreach (new p : gp)
+		FOREACH__ (new p : gp)
 		{
 			YSI_gTempGroups = YSI_gGroupPlayers[p];
 			// If these parameters were the other way round I could do this:
@@ -406,7 +406,7 @@ remotefunc static void:_Group_Destroy(g, Iterator@gp[MAX_PLAYERS + 1], s)
 	}
 	else
 	{
-		foreach (new p : gp)
+		FOREACH__ (new p : gp)
 		{
 			// Remove all players from this group.
 			YSI_gGroupPlayers[p][ps] &= pm;
@@ -492,7 +492,7 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 			if (_YCM@y)
 		#endif
 			{
-				foreach (new g : Bits(YSI_gGroupPlayers[playerid]))
+				FOREACH__ (new g : Bits(YSI_gGroupPlayers[playerid]))
 				{
 					Iter_Remove(GroupPlayers[g], playerid);
 					Bit_Vet(YSI_gGroupPlayers[playerid], g);
@@ -1396,7 +1396,7 @@ GLOBAL__ void:Group_SetGroup(Group:g,Group:el,bool:s)
 			}
 			Bit_Let(YSI_g_sChildGroups[_:g], _:el);
 			if (g == Group:_MAX_GROUPS) Bit_Let(YSI_g_sDefaultGroups, _:el);
-			foreach (new p : GroupPlayers[_:g])
+			FOREACH__ (new p : GroupPlayers[_:g])
 			{
 				if (!_Group_HasPlayer(el, p))
 				{

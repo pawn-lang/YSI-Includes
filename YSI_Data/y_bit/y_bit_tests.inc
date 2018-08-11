@@ -178,13 +178,13 @@ TEST__ Bit_Iterators()
 {
 	new
 		BitArray:bitArray<32>;
-	foreach (new b : Bits(bitArray))
+	FOREACH__ (new b : Bits(bitArray))
 	{
 		ASSERT(false);
 	}
 	new
 		called = 0;
-	foreach (new b : Blanks(bitArray))
+	FOREACH__ (new b : Blanks(bitArray))
 	{
 		++called;
 	}
@@ -194,11 +194,11 @@ TEST__ Bit_Iterators()
 	Bit_Set(bitArray, 9, true);
 	Bit_Set(bitArray, 11, true);
 	Bit_Set(bitArray, 13, true);
-	foreach (new b : Bits(bitArray))
+	FOREACH__ (new b : Bits(bitArray))
 	{
 		ASSERT(b == 5 || b == 7 || b == 9 || b == 11 || b == 13);
 	}
-	foreach (new b : Blanks(bitArray))
+	FOREACH__ (new b : Blanks(bitArray))
 	{
 		ASSERT(!(b == 5 || b == 7 || b == 9 || b == 11 || b == 13));
 	}

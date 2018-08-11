@@ -294,7 +294,7 @@ stock _Timer_D(func[], interval, const action, who, results[MAX_PLAYERS], a[2])
 			// Stop the timer.
 			if (who == -1)
 			{
-				foreach (who : Player)
+				FOREACH__ (who : Player)
 				{
 					if (results[who] != -1)
 					{
@@ -314,7 +314,7 @@ stock _Timer_D(func[], interval, const action, who, results[MAX_PLAYERS], a[2])
 			// Start the timer.
 			if (who == -1)
 			{
-				foreach (who : Player)
+				FOREACH__ (who : Player)
 				{
 					if (results[who] == -1)
 					{

@@ -152,7 +152,7 @@ TEST__ TestState1_y_iter()
 {
 	new
 		count = 0;
-	foreach (new i : TestState1_y_iter())
+	FOREACH__ (new i : TestState1_y_iter())
 	{
 		ASSERT_EQ(i, 800);
 		++count;
@@ -175,7 +175,7 @@ TEST__ TestState2_y_iter()
 {
 	new
 		count = 0;
-	foreach (new i : TestState2_y_iter())
+	FOREACH__ (new i : TestState2_y_iter())
 	{
 		if (count)
 			ASSERT_EQ(i, 600);
@@ -191,47 +191,47 @@ TEST__ y_iter_Range()
 	new
 		count;
 	count = 0;
-	foreach (new i : Range(0, 10))
+	FOREACH__ (new i : Range(0, 10))
 	{
 		ASSERT(0 <= i < 10);
 		++count;
 	}
 	ASSERT_EQ(count, 10);
 	count = 0;
-	foreach (new i : Range(0, 10, 2))
+	FOREACH__ (new i : Range(0, 10, 2))
 	{
 		ASSERT(0 <= i < 10);
 		++count;
 	}
 	ASSERT_EQ(count, 5);
 	count = 0;
-	foreach (new i : Range(0, 9, 2))
+	FOREACH__ (new i : Range(0, 9, 2))
 	{
 		ASSERT(0 <= i < 10);
 		++count;
 	}
 	ASSERT_EQ(count, 5);
 	count = 0;
-	foreach (new i : Range(-10, 10))
+	FOREACH__ (new i : Range(-10, 10))
 	{
 		ASSERT(-10 <= i < 10);
 		++count;
 	}
 	ASSERT_EQ(count, 20);
 	count = 0;
-	foreach (new i : Range(10, 10))
+	FOREACH__ (new i : Range(10, 10))
 	{
 		++count;
 	}
 	ASSERT_ZE(count);
 	count = 0;
-	foreach (new i : Range(10, 5, -1))
+	FOREACH__ (new i : Range(10, 5, -1))
 	{
 		++count;
 	}
 	ASSERT_EQ(count, 5);
 	count = 0;
-	foreach (new i : Range(10, 5, -5))
+	FOREACH__ (new i : Range(10, 5, -5))
 	{
 		++count;
 	}
@@ -253,7 +253,7 @@ TEST__ y_iter_Add1()
 		else ASSERT(!Iter_Contains(iter, i));
 	}
 	count = 0;
-	foreach (i : iter)
+	FOREACH__ (i : iter)
 	{
 		ASSERT_EQ(i, 5);
 		++count;
@@ -267,7 +267,7 @@ TEST__ y_iter_Add1()
 		else ASSERT(!Iter_Contains(iter, i));
 	}
 	count = 0;
-	foreach (i : iter)
+	FOREACH__ (i : iter)
 	{
 		ASSERT_EQ(i, 5);
 		++count;
@@ -291,7 +291,7 @@ TEST__ y_iter_Add2()
 		else ASSERT(!Iter_Contains(iter, i));
 	}
 	count = 0;
-	foreach (i : iter)
+	FOREACH__ (i : iter)
 	{
 		ASSERT(i == 3 || i == 15);
 		++count;
@@ -305,7 +305,7 @@ TEST__ y_iter_Add2()
 		else ASSERT(!Iter_Contains(iter, i));
 	}
 	count = 0;
-	foreach (i : iter)
+	FOREACH__ (i : iter)
 	{
 		ASSERT(i == 3 || i == 15);
 		++count;
@@ -319,7 +319,7 @@ TEST__ y_iter_Add2()
 		else ASSERT(!Iter_Contains(iter, i));
 	}
 	count = 0;
-	foreach (i : iter)
+	FOREACH__ (i : iter)
 	{
 		ASSERT(i == 3 || i == 15);
 		++count;
@@ -343,7 +343,7 @@ TEST__ y_iter_Prev()
 		else ASSERT(!Iter_Contains(iter, i));
 	}
 	count = 0;
-	foreach (i : iter)
+	FOREACH__ (i : iter)
 	{
 		ASSERT(i == 3 || i == 4);
 		++count;
@@ -386,7 +386,7 @@ TEST__ y_iter_Add3()
 		else ASSERT(!Iter_Contains(iter, i));
 	}
 	count = 0;
-	foreach (i : iter)
+	FOREACH__ (i : iter)
 	{
 		ASSERT_EQ(i, 4);
 		++count;
@@ -410,7 +410,7 @@ TEST__ y_iter_Add4()
 		else ASSERT(!Iter_Contains(iter, i));
 	}
 	count = 0;
-	foreach (i : iter)
+	FOREACH__ (i : iter)
 	{
 		ASSERT_ZE(i);
 		++count;
@@ -436,7 +436,7 @@ TEST__ y_iter_Add5()
 	}
 	ASSERT_EQ(Iter_Count(iter), 20);
 	count = 0;
-	foreach (i : iter)
+	FOREACH__ (i : iter)
 	{
 		ASSERT(0 <= i < 20);
 		++count;
@@ -463,14 +463,14 @@ TEST__ y_iter_MultiAdd1()
 	ASSERT_ZE(Iter_Count(iter<3>));
 	ASSERT_ZE(Iter_Count(iter<4>));
 	count = 0;
-	foreach (i : iter<0>)
+	FOREACH__ (i : iter<0>)
 	{
 		ASSERT(i == 0 || i == 1);
 		++count;
 	}
 	ASSERT_EQ(count, 2);
 	count = 0;
-	foreach (i : iter<2>)
+	FOREACH__ (i : iter<2>)
 	{
 		ASSERT_EQ(i, 2);
 		++count;
@@ -488,7 +488,7 @@ TEST__ y_iter_Remove1()
 		Iter_Add(iter, i * 2 + 1);
 	}
 	ASSERT_EQ(Iter_Count(iter), 20);
-	foreach (new i : iter)
+	FOREACH__ (new i : iter)
 	{
 		ASSERT_EQ((i & 1), 1);
 		++count;
@@ -512,7 +512,7 @@ TEST__ y_iter_Remove1()
 	ASSERT_EQ(Iter_Prev(iter, 7), 3);
 	ASSERT_EQ(Iter_Count(iter), 18);
 	count = 0;
-	foreach (new i : iter)
+	FOREACH__ (new i : iter)
 	{
 		ASSERT(i == 3 || i > 5);
 		++count;
@@ -520,7 +520,7 @@ TEST__ y_iter_Remove1()
 	ASSERT_EQ(count, 18);
 	Iter_Remove(iter, 1);
 	count = 0;
-	foreach (new i : iter)
+	FOREACH__ (new i : iter)
 	{
 		ASSERT(i == 3 || i > 5);
 		++count;
@@ -540,7 +540,7 @@ TEST__ y_iter_Reverse1()
 	Iter_Add(iter, 6);
 	Iter_Add(iter, 9);
 	count = 0;
-	foreach (new i : Reverse(iter))
+	FOREACH__ (new i : Reverse(iter))
 	{
 		++count;
 	}
@@ -817,13 +817,13 @@ TEST__ y_iter_Reverse2()
 	Iter_Add(iter<2>, 6);
 	Iter_Add(iter<2>, 9);
 	count = 0;
-	foreach (new i : Reverse(iter<1>))
+	FOREACH__ (new i : Reverse(iter<1>))
 	{
 		++count;
 	}
 	ASSERT_EQ(count, 3);
 	count = 0;
-	foreach (new i : Reverse(iter<2>))
+	FOREACH__ (new i : Reverse(iter<2>))
 	{
 		++count;
 	}
@@ -1039,7 +1039,7 @@ TEST__ y_iter_Tag()
 	/* ====================================================================== */
 	#pragma tabsize 4
 	Iter_Alloc(iter1);
-	foreach (new Group:i : iter1)
+	FOREACH__ (new Group:i : iter1)
 	{
 		ASSERT_EQ(_:i / 11 * 11, _:i);
 	}
@@ -1082,7 +1082,7 @@ TEST__ y_iter_Normal()
 	Iter_Add(Test1_y_iter, -7);
 	new
 		Test2_y_iter[100];
-	foreach (new i : Test1_y_iter)
+	FOREACH__ (new i : Test1_y_iter)
 	{
 		Test2_y_iter[i] = 1;
 	}
@@ -1114,7 +1114,7 @@ TEST__ y_iter_InfiniteLoop()
     Iter_Add(iter, 2);
     Iter_Remove(iter, 1);
     Iter_Remove(iter, 2);
-    foreach (new i : iter)
+    FOREACH__ (new i : iter)
     {
         ASSERT(false);
         return;
@@ -1135,72 +1135,72 @@ TEST__ y_iter_Syntax1()
 	Iter_Add(Test1_y_iter, 23);
 	new
 		count = 0;
-	foreach(new i:Test1_y_iter) { ++count; }
-	foreach(new i:Test1_y_iter ) { ++count; }
-	foreach(new i: Test1_y_iter) { ++count; }
-	foreach(new i: Test1_y_iter ) { ++count; }
-	foreach(new i :Test1_y_iter) { ++count; }
-	foreach(new i :Test1_y_iter ) { ++count; }
-	foreach(new i : Test1_y_iter) { ++count; }
-	foreach(new i : Test1_y_iter ) { ++count; }
-	foreach( new i:Test1_y_iter) { ++count; }
-	foreach( new i:Test1_y_iter ) { ++count; }
-	foreach( new i: Test1_y_iter) { ++count; }
-	foreach( new i: Test1_y_iter ) { ++count; }
-	foreach( new i :Test1_y_iter) { ++count; }
-	foreach( new i :Test1_y_iter ) { ++count; }
-	foreach( new i : Test1_y_iter) { ++count; }
-	foreach( new i : Test1_y_iter ) { ++count; }
-	foreach (new i:Test1_y_iter) { ++count; }
-	foreach (new i:Test1_y_iter ) { ++count; }
-	foreach (new i: Test1_y_iter) { ++count; }
-	foreach (new i: Test1_y_iter ) { ++count; }
-	foreach (new i :Test1_y_iter) { ++count; }
-	foreach (new i :Test1_y_iter ) { ++count; }
-	foreach (new i : Test1_y_iter) { ++count; }
-	foreach (new i : Test1_y_iter ) { ++count; }
-	foreach ( new i:Test1_y_iter) { ++count; }
-	foreach ( new i:Test1_y_iter ) { ++count; }
-	foreach ( new i: Test1_y_iter) { ++count; }
-	foreach ( new i: Test1_y_iter ) { ++count; }
-	foreach ( new i :Test1_y_iter) { ++count; }
-	foreach ( new i :Test1_y_iter ) { ++count; }
-	foreach ( new i : Test1_y_iter) { ++count; }
-	foreach ( new i : Test1_y_iter ) { ++count; }
+	FOREACH__(new i:Test1_y_iter) { ++count; }
+	FOREACH__(new i:Test1_y_iter ) { ++count; }
+	FOREACH__(new i: Test1_y_iter) { ++count; }
+	FOREACH__(new i: Test1_y_iter ) { ++count; }
+	FOREACH__(new i :Test1_y_iter) { ++count; }
+	FOREACH__(new i :Test1_y_iter ) { ++count; }
+	FOREACH__(new i : Test1_y_iter) { ++count; }
+	FOREACH__(new i : Test1_y_iter ) { ++count; }
+	FOREACH__( new i:Test1_y_iter) { ++count; }
+	FOREACH__( new i:Test1_y_iter ) { ++count; }
+	FOREACH__( new i: Test1_y_iter) { ++count; }
+	FOREACH__( new i: Test1_y_iter ) { ++count; }
+	FOREACH__( new i :Test1_y_iter) { ++count; }
+	FOREACH__( new i :Test1_y_iter ) { ++count; }
+	FOREACH__( new i : Test1_y_iter) { ++count; }
+	FOREACH__( new i : Test1_y_iter ) { ++count; }
+	FOREACH__ (new i:Test1_y_iter) { ++count; }
+	FOREACH__ (new i:Test1_y_iter ) { ++count; }
+	FOREACH__ (new i: Test1_y_iter) { ++count; }
+	FOREACH__ (new i: Test1_y_iter ) { ++count; }
+	FOREACH__ (new i :Test1_y_iter) { ++count; }
+	FOREACH__ (new i :Test1_y_iter ) { ++count; }
+	FOREACH__ (new i : Test1_y_iter) { ++count; }
+	FOREACH__ (new i : Test1_y_iter ) { ++count; }
+	FOREACH__ ( new i:Test1_y_iter) { ++count; }
+	FOREACH__ ( new i:Test1_y_iter ) { ++count; }
+	FOREACH__ ( new i: Test1_y_iter) { ++count; }
+	FOREACH__ ( new i: Test1_y_iter ) { ++count; }
+	FOREACH__ ( new i :Test1_y_iter) { ++count; }
+	FOREACH__ ( new i :Test1_y_iter ) { ++count; }
+	FOREACH__ ( new i : Test1_y_iter) { ++count; }
+	FOREACH__ ( new i : Test1_y_iter ) { ++count; }
 	new
 		j;
-	foreach(j:Test1_y_iter) { ++count; }
-	foreach(j:Test1_y_iter ) { ++count; }
-	foreach(j: Test1_y_iter) { ++count; }
-	foreach(j: Test1_y_iter ) { ++count; }
-	foreach(j :Test1_y_iter) { ++count; }
-	foreach(j :Test1_y_iter ) { ++count; }
-	foreach(j : Test1_y_iter) { ++count; }
-	foreach(j : Test1_y_iter ) { ++count; }
-	foreach( j:Test1_y_iter) { ++count; }
-	foreach( j:Test1_y_iter ) { ++count; }
-	foreach( j: Test1_y_iter) { ++count; }
-	foreach( j: Test1_y_iter ) { ++count; }
-	foreach( j :Test1_y_iter) { ++count; }
-	foreach( j :Test1_y_iter ) { ++count; }
-	foreach( j : Test1_y_iter) { ++count; }
-	foreach( j : Test1_y_iter ) { ++count; }
-	foreach (j:Test1_y_iter) { ++count; }
-	foreach (j:Test1_y_iter ) { ++count; }
-	foreach (j: Test1_y_iter) { ++count; }
-	foreach (j: Test1_y_iter ) { ++count; }
-	foreach (j :Test1_y_iter) { ++count; }
-	foreach (j :Test1_y_iter ) { ++count; }
-	foreach (j : Test1_y_iter) { ++count; }
-	foreach (j : Test1_y_iter ) { ++count; }
-	foreach ( j:Test1_y_iter) { ++count; }
-	foreach ( j:Test1_y_iter ) { ++count; }
-	foreach ( j: Test1_y_iter) { ++count; }
-	foreach ( j: Test1_y_iter ) { ++count; }
-	foreach ( j :Test1_y_iter) { ++count; }
-	foreach ( j :Test1_y_iter ) { ++count; }
-	foreach ( j : Test1_y_iter) { ++count; }
-	foreach ( j : Test1_y_iter ) { ++count; }
+	FOREACH__(j:Test1_y_iter) { ++count; }
+	FOREACH__(j:Test1_y_iter ) { ++count; }
+	FOREACH__(j: Test1_y_iter) { ++count; }
+	FOREACH__(j: Test1_y_iter ) { ++count; }
+	FOREACH__(j :Test1_y_iter) { ++count; }
+	FOREACH__(j :Test1_y_iter ) { ++count; }
+	FOREACH__(j : Test1_y_iter) { ++count; }
+	FOREACH__(j : Test1_y_iter ) { ++count; }
+	FOREACH__( j:Test1_y_iter) { ++count; }
+	FOREACH__( j:Test1_y_iter ) { ++count; }
+	FOREACH__( j: Test1_y_iter) { ++count; }
+	FOREACH__( j: Test1_y_iter ) { ++count; }
+	FOREACH__( j :Test1_y_iter) { ++count; }
+	FOREACH__( j :Test1_y_iter ) { ++count; }
+	FOREACH__( j : Test1_y_iter) { ++count; }
+	FOREACH__( j : Test1_y_iter ) { ++count; }
+	FOREACH__ (j:Test1_y_iter) { ++count; }
+	FOREACH__ (j:Test1_y_iter ) { ++count; }
+	FOREACH__ (j: Test1_y_iter) { ++count; }
+	FOREACH__ (j: Test1_y_iter ) { ++count; }
+	FOREACH__ (j :Test1_y_iter) { ++count; }
+	FOREACH__ (j :Test1_y_iter ) { ++count; }
+	FOREACH__ (j : Test1_y_iter) { ++count; }
+	FOREACH__ (j : Test1_y_iter ) { ++count; }
+	FOREACH__ ( j:Test1_y_iter) { ++count; }
+	FOREACH__ ( j:Test1_y_iter ) { ++count; }
+	FOREACH__ ( j: Test1_y_iter) { ++count; }
+	FOREACH__ ( j: Test1_y_iter ) { ++count; }
+	FOREACH__ ( j :Test1_y_iter) { ++count; }
+	FOREACH__ ( j :Test1_y_iter ) { ++count; }
+	FOREACH__ ( j : Test1_y_iter) { ++count; }
+	FOREACH__ ( j : Test1_y_iter ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -1218,72 +1218,72 @@ TEST__ y_iter_Syntax5a()
 	Iter_Add(Test5a_y_iter[2]<11>, 23);
 	new
 		count = 0;
-	foreach(new i:Test5a_y_iter[2] <11>) { ++count; }
-	foreach(new i:Test5a_y_iter[2] <11> ) { ++count; }
-	foreach(new i: Test5a_y_iter[2] <11>) { ++count; }
-	foreach(new i: Test5a_y_iter[2] <11> ) { ++count; }
-	foreach(new i :Test5a_y_iter[2] <11>) { ++count; }
-	foreach(new i :Test5a_y_iter[2] <11> ) { ++count; }
-	foreach(new i : Test5a_y_iter[2] <11>) { ++count; }
-	foreach(new i : Test5a_y_iter[2] <11> ) { ++count; }
-	foreach( new i:Test5a_y_iter[2] <11>) { ++count; }
-	foreach( new i:Test5a_y_iter[2] <11> ) { ++count; }
-	foreach( new i: Test5a_y_iter[2] <11>) { ++count; }
-	foreach( new i: Test5a_y_iter[2] <11> ) { ++count; }
-	foreach( new i :Test5a_y_iter[2] <11>) { ++count; }
-	foreach( new i :Test5a_y_iter[2] <11> ) { ++count; }
-	foreach( new i : Test5a_y_iter[2] <11>) { ++count; }
-	foreach( new i : Test5a_y_iter[2] <11> ) { ++count; }
-	foreach (new i:Test5a_y_iter[2] <11>) { ++count; }
-	foreach (new i:Test5a_y_iter[2] <11> ) { ++count; }
-	foreach (new i: Test5a_y_iter[2] <11>) { ++count; }
-	foreach (new i: Test5a_y_iter[2] <11> ) { ++count; }
-	foreach (new i :Test5a_y_iter[2] <11>) { ++count; }
-	foreach (new i :Test5a_y_iter[2] <11> ) { ++count; }
-	foreach (new i : Test5a_y_iter[2] <11>) { ++count; }
-	foreach (new i : Test5a_y_iter[2] <11> ) { ++count; }
-	foreach ( new i:Test5a_y_iter[2] <11>) { ++count; }
-	foreach ( new i:Test5a_y_iter[2] <11> ) { ++count; }
-	foreach ( new i: Test5a_y_iter[2] <11>) { ++count; }
-	foreach ( new i: Test5a_y_iter[2] <11> ) { ++count; }
-	foreach ( new i :Test5a_y_iter[2] <11>) { ++count; }
-	foreach ( new i :Test5a_y_iter[2] <11> ) { ++count; }
-	foreach ( new i : Test5a_y_iter[2] <11>) { ++count; }
-	foreach ( new i : Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__(new i:Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__(new i:Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__(new i: Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__(new i: Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__(new i :Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__(new i :Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__(new i : Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__(new i : Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__( new i:Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__( new i:Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__( new i: Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__( new i: Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__( new i :Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__( new i :Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__( new i : Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__( new i : Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__ (new i:Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__ (new i:Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__ (new i: Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__ (new i: Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__ (new i :Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__ (new i :Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__ (new i : Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__ (new i : Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__ ( new i:Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__ ( new i:Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__ ( new i: Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__ ( new i: Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__ ( new i :Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__ ( new i :Test5a_y_iter[2] <11> ) { ++count; }
+	FOREACH__ ( new i : Test5a_y_iter[2] <11>) { ++count; }
+	FOREACH__ ( new i : Test5a_y_iter[2] <11> ) { ++count; }
 	new
 		j;
-	foreach(j:Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach(j:Test5a_y_iter[ 2]< 11> ) { ++count; }
-	foreach(j: Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach(j: Test5a_y_iter[ 2]< 11> ) { ++count; }
-	foreach(j :Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach(j :Test5a_y_iter[ 2]< 11> ) { ++count; }
-	foreach(j : Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach(j : Test5a_y_iter[ 2]< 11> ) { ++count; }
-	foreach( j:Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach( j:Test5a_y_iter[ 2]< 11> ) { ++count; }
-	foreach( j: Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach( j: Test5a_y_iter[ 2]< 11> ) { ++count; }
-	foreach( j :Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach( j :Test5a_y_iter[ 2]< 11> ) { ++count; }
-	foreach( j : Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach( j : Test5a_y_iter[ 2]< 11> ) { ++count; }
-	foreach (j:Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach (j:Test5a_y_iter[ 2]< 11> ) { ++count; }
-	foreach (j: Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach (j: Test5a_y_iter[ 2]< 11> ) { ++count; }
-	foreach (j :Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach (j :Test5a_y_iter[ 2]< 11> ) { ++count; }
-	foreach (j : Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach (j : Test5a_y_iter[ 2]< 11> ) { ++count; }
-	foreach ( j:Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach ( j:Test5a_y_iter[ 2]< 11> ) { ++count; }
-	foreach ( j: Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach ( j: Test5a_y_iter[ 2]< 11> ) { ++count; }
-	foreach ( j :Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach ( j :Test5a_y_iter[ 2]< 11> ) { ++count; }
-	foreach ( j : Test5a_y_iter[ 2]< 11>) { ++count; }
-	foreach ( j : Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__(j:Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__(j:Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__(j: Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__(j: Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__(j :Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__(j :Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__(j : Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__(j : Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__( j:Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__( j:Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__( j: Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__( j: Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__( j :Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__( j :Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__( j : Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__( j : Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__ (j:Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__ (j:Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__ (j: Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__ (j: Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__ (j :Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__ (j :Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__ (j : Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__ (j : Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__ ( j:Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__ ( j:Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__ ( j: Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__ ( j: Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__ ( j :Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__ ( j :Test5a_y_iter[ 2]< 11> ) { ++count; }
+	FOREACH__ ( j : Test5a_y_iter[ 2]< 11>) { ++count; }
+	FOREACH__ ( j : Test5a_y_iter[ 2]< 11> ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -1301,72 +1301,72 @@ TEST__ y_iter_Syntax5b()
 	Iter_Add(Test5b_y_iter[2]<11>, 23);
 	new
 		count = 0;
-	foreach(new i:Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach(new i:Test5b_y_iter[ 2 ] < 11> ) { ++count; }
-	foreach(new i: Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach(new i: Test5b_y_iter[ 2 ] < 11> ) { ++count; }
-	foreach(new i :Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach(new i :Test5b_y_iter[ 2 ] < 11> ) { ++count; }
-	foreach(new i : Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach(new i : Test5b_y_iter[ 2 ] < 11> ) { ++count; }
-	foreach( new i:Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach( new i:Test5b_y_iter[ 2 ] < 11> ) { ++count; }
-	foreach( new i: Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach( new i: Test5b_y_iter[ 2 ] < 11> ) { ++count; }
-	foreach( new i :Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach( new i :Test5b_y_iter[ 2 ] < 11> ) { ++count; }
-	foreach( new i : Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach( new i : Test5b_y_iter[ 2 ] < 11> ) { ++count; }
-	foreach (new i:Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach (new i:Test5b_y_iter[ 2 ] < 11> ) { ++count; }
-	foreach (new i: Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach (new i: Test5b_y_iter[ 2 ] < 11> ) { ++count; }
-	foreach (new i :Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach (new i :Test5b_y_iter[ 2 ] < 11> ) { ++count; }
-	foreach (new i : Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach (new i : Test5b_y_iter[ 2 ] < 11> ) { ++count; }
-	foreach ( new i:Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach ( new i:Test5b_y_iter[ 2 ] < 11> ) { ++count; }
-	foreach ( new i: Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach ( new i: Test5b_y_iter[ 2 ] < 11> ) { ++count; }
-	foreach ( new i :Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach ( new i :Test5b_y_iter[ 2 ] < 11> ) { ++count; }
-	foreach ( new i : Test5b_y_iter[ 2 ] < 11>) { ++count; }
-	foreach ( new i : Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__(new i:Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__(new i:Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__(new i: Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__(new i: Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__(new i :Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__(new i :Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__(new i : Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__(new i : Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__( new i:Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__( new i:Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__( new i: Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__( new i: Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__( new i :Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__( new i :Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__( new i : Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__( new i : Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__ (new i:Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__ (new i:Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__ (new i: Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__ (new i: Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__ (new i :Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__ (new i :Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__ (new i : Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__ (new i : Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__ ( new i:Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__ ( new i:Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__ ( new i: Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__ ( new i: Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__ ( new i :Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__ ( new i :Test5b_y_iter[ 2 ] < 11> ) { ++count; }
+	FOREACH__ ( new i : Test5b_y_iter[ 2 ] < 11>) { ++count; }
+	FOREACH__ ( new i : Test5b_y_iter[ 2 ] < 11> ) { ++count; }
 	new
 		j;
-	foreach(j:Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach(j:Test5b_y_iter[2 ]<11 > ) { ++count; }
-	foreach(j: Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach(j: Test5b_y_iter[2 ]<11 > ) { ++count; }
-	foreach(j :Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach(j :Test5b_y_iter[2 ]<11 > ) { ++count; }
-	foreach(j : Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach(j : Test5b_y_iter[2 ]<11 > ) { ++count; }
-	foreach( j:Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach( j:Test5b_y_iter[2 ]<11 > ) { ++count; }
-	foreach( j: Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach( j: Test5b_y_iter[2 ]<11 > ) { ++count; }
-	foreach( j :Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach( j :Test5b_y_iter[2 ]<11 > ) { ++count; }
-	foreach( j : Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach( j : Test5b_y_iter[2 ]<11 > ) { ++count; }
-	foreach (j:Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach (j:Test5b_y_iter[2 ]<11 > ) { ++count; }
-	foreach (j: Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach (j: Test5b_y_iter[2 ]<11 > ) { ++count; }
-	foreach (j :Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach (j :Test5b_y_iter[2 ]<11 > ) { ++count; }
-	foreach (j : Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach (j : Test5b_y_iter[2 ]<11 > ) { ++count; }
-	foreach ( j:Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach ( j:Test5b_y_iter[2 ]<11 > ) { ++count; }
-	foreach ( j: Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach ( j: Test5b_y_iter[2 ]<11 > ) { ++count; }
-	foreach ( j :Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach ( j :Test5b_y_iter[2 ]<11 > ) { ++count; }
-	foreach ( j : Test5b_y_iter[2 ]<11 >) { ++count; }
-	foreach ( j : Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__(j:Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__(j:Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__(j: Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__(j: Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__(j :Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__(j :Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__(j : Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__(j : Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__( j:Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__( j:Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__( j: Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__( j: Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__( j :Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__( j :Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__( j : Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__( j : Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__ (j:Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__ (j:Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__ (j: Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__ (j: Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__ (j :Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__ (j :Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__ (j : Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__ (j : Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__ ( j:Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__ ( j:Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__ ( j: Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__ ( j: Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__ ( j :Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__ ( j :Test5b_y_iter[2 ]<11 > ) { ++count; }
+	FOREACH__ ( j : Test5b_y_iter[2 ]<11 >) { ++count; }
+	FOREACH__ ( j : Test5b_y_iter[2 ]<11 > ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -1384,72 +1384,72 @@ TEST__ y_iter_Syntax5c()
 	Iter_Add(Test5c_y_iter[2]<11>, 23);
 	new
 		count = 0;
-	foreach(new i:Test5c_y_iter [2] <11 >) { ++count; }
-	foreach(new i:Test5c_y_iter [2] <11 > ) { ++count; }
-	foreach(new i: Test5c_y_iter [2] <11 >) { ++count; }
-	foreach(new i: Test5c_y_iter [2] <11 > ) { ++count; }
-	foreach(new i :Test5c_y_iter [2] <11 >) { ++count; }
-	foreach(new i :Test5c_y_iter [2] <11 > ) { ++count; }
-	foreach(new i : Test5c_y_iter [2] <11 >) { ++count; }
-	foreach(new i : Test5c_y_iter [2] <11 > ) { ++count; }
-	foreach( new i:Test5c_y_iter [2] <11 >) { ++count; }
-	foreach( new i:Test5c_y_iter [2] <11 > ) { ++count; }
-	foreach( new i: Test5c_y_iter [2] <11 >) { ++count; }
-	foreach( new i: Test5c_y_iter [2] <11 > ) { ++count; }
-	foreach( new i :Test5c_y_iter [2] <11 >) { ++count; }
-	foreach( new i :Test5c_y_iter [2] <11 > ) { ++count; }
-	foreach( new i : Test5c_y_iter [2] <11 >) { ++count; }
-	foreach( new i : Test5c_y_iter [2] <11 > ) { ++count; }
-	foreach (new i:Test5c_y_iter [2] <11 >) { ++count; }
-	foreach (new i:Test5c_y_iter [2] <11 > ) { ++count; }
-	foreach (new i: Test5c_y_iter [2] <11 >) { ++count; }
-	foreach (new i: Test5c_y_iter [2] <11 > ) { ++count; }
-	foreach (new i :Test5c_y_iter [2] <11 >) { ++count; }
-	foreach (new i :Test5c_y_iter [2] <11 > ) { ++count; }
-	foreach (new i : Test5c_y_iter [2] <11 >) { ++count; }
-	foreach (new i : Test5c_y_iter [2] <11 > ) { ++count; }
-	foreach ( new i:Test5c_y_iter [2] <11 >) { ++count; }
-	foreach ( new i:Test5c_y_iter [2] <11 > ) { ++count; }
-	foreach ( new i: Test5c_y_iter [2] <11 >) { ++count; }
-	foreach ( new i: Test5c_y_iter [2] <11 > ) { ++count; }
-	foreach ( new i :Test5c_y_iter [2] <11 >) { ++count; }
-	foreach ( new i :Test5c_y_iter [2] <11 > ) { ++count; }
-	foreach ( new i : Test5c_y_iter [2] <11 >) { ++count; }
-	foreach ( new i : Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__(new i:Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__(new i:Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__(new i: Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__(new i: Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__(new i :Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__(new i :Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__(new i : Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__(new i : Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__( new i:Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__( new i:Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__( new i: Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__( new i: Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__( new i :Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__( new i :Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__( new i : Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__( new i : Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__ (new i:Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__ (new i:Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__ (new i: Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__ (new i: Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__ (new i :Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__ (new i :Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__ (new i : Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__ (new i : Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__ ( new i:Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__ ( new i:Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__ ( new i: Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__ ( new i: Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__ ( new i :Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__ ( new i :Test5c_y_iter [2] <11 > ) { ++count; }
+	FOREACH__ ( new i : Test5c_y_iter [2] <11 >) { ++count; }
+	FOREACH__ ( new i : Test5c_y_iter [2] <11 > ) { ++count; }
 	new
 		j;
-	foreach(j:Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach(j:Test5c_y_iter [ 2]< 11 > ) { ++count; }
-	foreach(j: Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach(j: Test5c_y_iter [ 2]< 11 > ) { ++count; }
-	foreach(j :Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach(j :Test5c_y_iter [ 2]< 11 > ) { ++count; }
-	foreach(j : Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach(j : Test5c_y_iter [ 2]< 11 > ) { ++count; }
-	foreach( j:Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach( j:Test5c_y_iter [ 2]< 11 > ) { ++count; }
-	foreach( j: Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach( j: Test5c_y_iter [ 2]< 11 > ) { ++count; }
-	foreach( j :Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach( j :Test5c_y_iter [ 2]< 11 > ) { ++count; }
-	foreach( j : Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach( j : Test5c_y_iter [ 2]< 11 > ) { ++count; }
-	foreach (j:Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach (j:Test5c_y_iter [ 2]< 11 > ) { ++count; }
-	foreach (j: Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach (j: Test5c_y_iter [ 2]< 11 > ) { ++count; }
-	foreach (j :Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach (j :Test5c_y_iter [ 2]< 11 > ) { ++count; }
-	foreach (j : Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach (j : Test5c_y_iter [ 2]< 11 > ) { ++count; }
-	foreach ( j:Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach ( j:Test5c_y_iter [ 2]< 11 > ) { ++count; }
-	foreach ( j: Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach ( j: Test5c_y_iter [ 2]< 11 > ) { ++count; }
-	foreach ( j :Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach ( j :Test5c_y_iter [ 2]< 11 > ) { ++count; }
-	foreach ( j : Test5c_y_iter [ 2]< 11 >) { ++count; }
-	foreach ( j : Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__(j:Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__(j:Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__(j: Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__(j: Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__(j :Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__(j :Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__(j : Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__(j : Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__( j:Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__( j:Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__( j: Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__( j: Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__( j :Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__( j :Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__( j : Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__( j : Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__ (j:Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__ (j:Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__ (j: Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__ (j: Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__ (j :Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__ (j :Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__ (j : Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__ (j : Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__ ( j:Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__ ( j:Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__ ( j: Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__ ( j: Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__ ( j :Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__ ( j :Test5c_y_iter [ 2]< 11 > ) { ++count; }
+	FOREACH__ ( j : Test5c_y_iter [ 2]< 11 >) { ++count; }
+	FOREACH__ ( j : Test5c_y_iter [ 2]< 11 > ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -1467,72 +1467,72 @@ TEST__ y_iter_Syntax5d()
 	Iter_Add(Test5d_y_iter[2]<11>, 23);
 	new
 		count = 0;
-	foreach(new i:Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach(new i:Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
-	foreach(new i: Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach(new i: Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
-	foreach(new i :Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach(new i :Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
-	foreach(new i : Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach(new i : Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
-	foreach( new i:Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach( new i:Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
-	foreach( new i: Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach( new i: Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
-	foreach( new i :Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach( new i :Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
-	foreach( new i : Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach( new i : Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
-	foreach (new i:Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach (new i:Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
-	foreach (new i: Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach (new i: Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
-	foreach (new i :Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach (new i :Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
-	foreach (new i : Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach (new i : Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
-	foreach ( new i:Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach ( new i:Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
-	foreach ( new i: Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach ( new i: Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
-	foreach ( new i :Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach ( new i :Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
-	foreach ( new i : Test5d_y_iter [ 2 ] < 11 >) { ++count; }
-	foreach ( new i : Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__(new i:Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__(new i:Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__(new i: Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__(new i: Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__(new i :Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__(new i :Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__(new i : Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__(new i : Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__( new i:Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__( new i:Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__( new i: Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__( new i: Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__( new i :Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__( new i :Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__( new i : Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__( new i : Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__ (new i:Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__ (new i:Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__ (new i: Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__ (new i: Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__ (new i :Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__ (new i :Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__ (new i : Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__ (new i : Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__ ( new i:Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__ ( new i:Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__ ( new i: Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__ ( new i: Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__ ( new i :Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__ ( new i :Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
+	FOREACH__ ( new i : Test5d_y_iter [ 2 ] < 11 >) { ++count; }
+	FOREACH__ ( new i : Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
 	new
 		j;
-	foreach(j:Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach(j:Test5d_y_iter [2 ]<11> ) { ++count; }
-	foreach(j: Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach(j: Test5d_y_iter [2 ]<11> ) { ++count; }
-	foreach(j :Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach(j :Test5d_y_iter [2 ]<11> ) { ++count; }
-	foreach(j : Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach(j : Test5d_y_iter [2 ]<11> ) { ++count; }
-	foreach( j:Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach( j:Test5d_y_iter [2 ]<11> ) { ++count; }
-	foreach( j: Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach( j: Test5d_y_iter [2 ]<11> ) { ++count; }
-	foreach( j :Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach( j :Test5d_y_iter [2 ]<11> ) { ++count; }
-	foreach( j : Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach( j : Test5d_y_iter [2 ]<11> ) { ++count; }
-	foreach (j:Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach (j:Test5d_y_iter [2 ]<11> ) { ++count; }
-	foreach (j: Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach (j: Test5d_y_iter [2 ]<11> ) { ++count; }
-	foreach (j :Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach (j :Test5d_y_iter [2 ]<11> ) { ++count; }
-	foreach (j : Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach (j : Test5d_y_iter [2 ]<11> ) { ++count; }
-	foreach ( j:Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach ( j:Test5d_y_iter [2 ]<11> ) { ++count; }
-	foreach ( j: Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach ( j: Test5d_y_iter [2 ]<11> ) { ++count; }
-	foreach ( j :Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach ( j :Test5d_y_iter [2 ]<11> ) { ++count; }
-	foreach ( j : Test5d_y_iter [2 ]<11>) { ++count; }
-	foreach ( j : Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__(j:Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__(j:Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__(j: Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__(j: Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__(j :Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__(j :Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__(j : Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__(j : Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__( j:Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__( j:Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__( j: Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__( j: Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__( j :Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__( j :Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__( j : Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__( j : Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__ (j:Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__ (j:Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__ (j: Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__ (j: Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__ (j :Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__ (j :Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__ (j : Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__ (j : Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__ ( j:Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__ ( j:Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__ ( j: Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__ ( j: Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__ ( j :Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__ ( j :Test5d_y_iter [2 ]<11> ) { ++count; }
+	FOREACH__ ( j : Test5d_y_iter [2 ]<11>) { ++count; }
+	FOREACH__ ( j : Test5d_y_iter [2 ]<11> ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -1550,72 +1550,72 @@ TEST__ y_iter_Syntax4a()
 	Iter_Add(Test4a_y_iter[3], 23);
 	new
 		count = 0;
-	foreach(new i:Test4a_y_iter[3]) { ++count; }
-	foreach(new i:Test4a_y_iter[3] ) { ++count; }
-	foreach(new i: Test4a_y_iter[3]) { ++count; }
-	foreach(new i: Test4a_y_iter[3] ) { ++count; }
-	foreach(new i :Test4a_y_iter[3]) { ++count; }
-	foreach(new i :Test4a_y_iter[3] ) { ++count; }
-	foreach(new i : Test4a_y_iter[3]) { ++count; }
-	foreach(new i : Test4a_y_iter[3] ) { ++count; }
-	foreach( new i:Test4a_y_iter[3]) { ++count; }
-	foreach( new i:Test4a_y_iter[3] ) { ++count; }
-	foreach( new i: Test4a_y_iter[3]) { ++count; }
-	foreach( new i: Test4a_y_iter[3] ) { ++count; }
-	foreach( new i :Test4a_y_iter[3]) { ++count; }
-	foreach( new i :Test4a_y_iter[3] ) { ++count; }
-	foreach( new i : Test4a_y_iter[3]) { ++count; }
-	foreach( new i : Test4a_y_iter[3] ) { ++count; }
-	foreach (new i:Test4a_y_iter[3]) { ++count; }
-	foreach (new i:Test4a_y_iter[3] ) { ++count; }
-	foreach (new i: Test4a_y_iter[3]) { ++count; }
-	foreach (new i: Test4a_y_iter[3] ) { ++count; }
-	foreach (new i :Test4a_y_iter[3]) { ++count; }
-	foreach (new i :Test4a_y_iter[3] ) { ++count; }
-	foreach (new i : Test4a_y_iter[3]) { ++count; }
-	foreach (new i : Test4a_y_iter[3] ) { ++count; }
-	foreach ( new i:Test4a_y_iter[3]) { ++count; }
-	foreach ( new i:Test4a_y_iter[3] ) { ++count; }
-	foreach ( new i: Test4a_y_iter[3]) { ++count; }
-	foreach ( new i: Test4a_y_iter[3] ) { ++count; }
-	foreach ( new i :Test4a_y_iter[3]) { ++count; }
-	foreach ( new i :Test4a_y_iter[3] ) { ++count; }
-	foreach ( new i : Test4a_y_iter[3]) { ++count; }
-	foreach ( new i : Test4a_y_iter[3] ) { ++count; }
+	FOREACH__(new i:Test4a_y_iter[3]) { ++count; }
+	FOREACH__(new i:Test4a_y_iter[3] ) { ++count; }
+	FOREACH__(new i: Test4a_y_iter[3]) { ++count; }
+	FOREACH__(new i: Test4a_y_iter[3] ) { ++count; }
+	FOREACH__(new i :Test4a_y_iter[3]) { ++count; }
+	FOREACH__(new i :Test4a_y_iter[3] ) { ++count; }
+	FOREACH__(new i : Test4a_y_iter[3]) { ++count; }
+	FOREACH__(new i : Test4a_y_iter[3] ) { ++count; }
+	FOREACH__( new i:Test4a_y_iter[3]) { ++count; }
+	FOREACH__( new i:Test4a_y_iter[3] ) { ++count; }
+	FOREACH__( new i: Test4a_y_iter[3]) { ++count; }
+	FOREACH__( new i: Test4a_y_iter[3] ) { ++count; }
+	FOREACH__( new i :Test4a_y_iter[3]) { ++count; }
+	FOREACH__( new i :Test4a_y_iter[3] ) { ++count; }
+	FOREACH__( new i : Test4a_y_iter[3]) { ++count; }
+	FOREACH__( new i : Test4a_y_iter[3] ) { ++count; }
+	FOREACH__ (new i:Test4a_y_iter[3]) { ++count; }
+	FOREACH__ (new i:Test4a_y_iter[3] ) { ++count; }
+	FOREACH__ (new i: Test4a_y_iter[3]) { ++count; }
+	FOREACH__ (new i: Test4a_y_iter[3] ) { ++count; }
+	FOREACH__ (new i :Test4a_y_iter[3]) { ++count; }
+	FOREACH__ (new i :Test4a_y_iter[3] ) { ++count; }
+	FOREACH__ (new i : Test4a_y_iter[3]) { ++count; }
+	FOREACH__ (new i : Test4a_y_iter[3] ) { ++count; }
+	FOREACH__ ( new i:Test4a_y_iter[3]) { ++count; }
+	FOREACH__ ( new i:Test4a_y_iter[3] ) { ++count; }
+	FOREACH__ ( new i: Test4a_y_iter[3]) { ++count; }
+	FOREACH__ ( new i: Test4a_y_iter[3] ) { ++count; }
+	FOREACH__ ( new i :Test4a_y_iter[3]) { ++count; }
+	FOREACH__ ( new i :Test4a_y_iter[3] ) { ++count; }
+	FOREACH__ ( new i : Test4a_y_iter[3]) { ++count; }
+	FOREACH__ ( new i : Test4a_y_iter[3] ) { ++count; }
 	new
 		j;
-	foreach(j:Test4a_y_iter[ 3]) { ++count; }
-	foreach(j:Test4a_y_iter[ 3] ) { ++count; }
-	foreach(j: Test4a_y_iter[ 3]) { ++count; }
-	foreach(j: Test4a_y_iter[ 3] ) { ++count; }
-	foreach(j :Test4a_y_iter[ 3]) { ++count; }
-	foreach(j :Test4a_y_iter[ 3] ) { ++count; }
-	foreach(j : Test4a_y_iter[ 3]) { ++count; }
-	foreach(j : Test4a_y_iter[ 3] ) { ++count; }
-	foreach( j:Test4a_y_iter[ 3]) { ++count; }
-	foreach( j:Test4a_y_iter[ 3] ) { ++count; }
-	foreach( j: Test4a_y_iter[ 3]) { ++count; }
-	foreach( j: Test4a_y_iter[ 3] ) { ++count; }
-	foreach( j :Test4a_y_iter[ 3]) { ++count; }
-	foreach( j :Test4a_y_iter[ 3] ) { ++count; }
-	foreach( j : Test4a_y_iter[ 3]) { ++count; }
-	foreach( j : Test4a_y_iter[ 3] ) { ++count; }
-	foreach (j:Test4a_y_iter[ 3]) { ++count; }
-	foreach (j:Test4a_y_iter[ 3] ) { ++count; }
-	foreach (j: Test4a_y_iter[ 3]) { ++count; }
-	foreach (j: Test4a_y_iter[ 3] ) { ++count; }
-	foreach (j :Test4a_y_iter[ 3]) { ++count; }
-	foreach (j :Test4a_y_iter[ 3] ) { ++count; }
-	foreach (j : Test4a_y_iter[ 3]) { ++count; }
-	foreach (j : Test4a_y_iter[ 3] ) { ++count; }
-	foreach ( j:Test4a_y_iter[ 3]) { ++count; }
-	foreach ( j:Test4a_y_iter[ 3] ) { ++count; }
-	foreach ( j: Test4a_y_iter[ 3]) { ++count; }
-	foreach ( j: Test4a_y_iter[ 3] ) { ++count; }
-	foreach ( j :Test4a_y_iter[ 3]) { ++count; }
-	foreach ( j :Test4a_y_iter[ 3] ) { ++count; }
-	foreach ( j : Test4a_y_iter[ 3]) { ++count; }
-	foreach ( j : Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__(j:Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__(j:Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__(j: Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__(j: Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__(j :Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__(j :Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__(j : Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__(j : Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__( j:Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__( j:Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__( j: Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__( j: Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__( j :Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__( j :Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__( j : Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__( j : Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__ (j:Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__ (j:Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__ (j: Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__ (j: Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__ (j :Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__ (j :Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__ (j : Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__ (j : Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__ ( j:Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__ ( j:Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__ ( j: Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__ ( j: Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__ ( j :Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__ ( j :Test4a_y_iter[ 3] ) { ++count; }
+	FOREACH__ ( j : Test4a_y_iter[ 3]) { ++count; }
+	FOREACH__ ( j : Test4a_y_iter[ 3] ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -1633,72 +1633,72 @@ TEST__ y_iter_Syntax4b()
 	Iter_Add(Test4b_y_iter[0], 23);
 	new
 		count = 0;
-	foreach(new i:Test4b_y_iter[ 0 ]) { ++count; }
-	foreach(new i:Test4b_y_iter[ 0 ] ) { ++count; }
-	foreach(new i: Test4b_y_iter[ 0 ]) { ++count; }
-	foreach(new i: Test4b_y_iter[ 0 ] ) { ++count; }
-	foreach(new i :Test4b_y_iter[ 0 ]) { ++count; }
-	foreach(new i :Test4b_y_iter[ 0 ] ) { ++count; }
-	foreach(new i : Test4b_y_iter[ 0 ]) { ++count; }
-	foreach(new i : Test4b_y_iter[ 0 ] ) { ++count; }
-	foreach( new i:Test4b_y_iter[ 0 ]) { ++count; }
-	foreach( new i:Test4b_y_iter[ 0 ] ) { ++count; }
-	foreach( new i: Test4b_y_iter[ 0 ]) { ++count; }
-	foreach( new i: Test4b_y_iter[ 0 ] ) { ++count; }
-	foreach( new i :Test4b_y_iter[ 0 ]) { ++count; }
-	foreach( new i :Test4b_y_iter[ 0 ] ) { ++count; }
-	foreach( new i : Test4b_y_iter[ 0 ]) { ++count; }
-	foreach( new i : Test4b_y_iter[ 0 ] ) { ++count; }
-	foreach (new i:Test4b_y_iter[ 0 ]) { ++count; }
-	foreach (new i:Test4b_y_iter[ 0 ] ) { ++count; }
-	foreach (new i: Test4b_y_iter[ 0 ]) { ++count; }
-	foreach (new i: Test4b_y_iter[ 0 ] ) { ++count; }
-	foreach (new i :Test4b_y_iter[ 0 ]) { ++count; }
-	foreach (new i :Test4b_y_iter[ 0 ] ) { ++count; }
-	foreach (new i : Test4b_y_iter[ 0 ]) { ++count; }
-	foreach (new i : Test4b_y_iter[ 0 ] ) { ++count; }
-	foreach ( new i:Test4b_y_iter[ 0 ]) { ++count; }
-	foreach ( new i:Test4b_y_iter[ 0 ] ) { ++count; }
-	foreach ( new i: Test4b_y_iter[ 0 ]) { ++count; }
-	foreach ( new i: Test4b_y_iter[ 0 ] ) { ++count; }
-	foreach ( new i :Test4b_y_iter[ 0 ]) { ++count; }
-	foreach ( new i :Test4b_y_iter[ 0 ] ) { ++count; }
-	foreach ( new i : Test4b_y_iter[ 0 ]) { ++count; }
-	foreach ( new i : Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__(new i:Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__(new i:Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__(new i: Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__(new i: Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__(new i :Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__(new i :Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__(new i : Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__(new i : Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__( new i:Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__( new i:Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__( new i: Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__( new i: Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__( new i :Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__( new i :Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__( new i : Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__( new i : Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__ (new i:Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__ (new i:Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__ (new i: Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__ (new i: Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__ (new i :Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__ (new i :Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__ (new i : Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__ (new i : Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__ ( new i:Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__ ( new i:Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__ ( new i: Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__ ( new i: Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__ ( new i :Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__ ( new i :Test4b_y_iter[ 0 ] ) { ++count; }
+	FOREACH__ ( new i : Test4b_y_iter[ 0 ]) { ++count; }
+	FOREACH__ ( new i : Test4b_y_iter[ 0 ] ) { ++count; }
 	new
 		j;
-	foreach(j:Test4b_y_iter[0 ]) { ++count; }
-	foreach(j:Test4b_y_iter[0 ] ) { ++count; }
-	foreach(j: Test4b_y_iter[0 ]) { ++count; }
-	foreach(j: Test4b_y_iter[0 ] ) { ++count; }
-	foreach(j :Test4b_y_iter[0 ]) { ++count; }
-	foreach(j :Test4b_y_iter[0 ] ) { ++count; }
-	foreach(j : Test4b_y_iter[0 ]) { ++count; }
-	foreach(j : Test4b_y_iter[0 ] ) { ++count; }
-	foreach( j:Test4b_y_iter[0 ]) { ++count; }
-	foreach( j:Test4b_y_iter[0 ] ) { ++count; }
-	foreach( j: Test4b_y_iter[0 ]) { ++count; }
-	foreach( j: Test4b_y_iter[0 ] ) { ++count; }
-	foreach( j :Test4b_y_iter[0 ]) { ++count; }
-	foreach( j :Test4b_y_iter[0 ] ) { ++count; }
-	foreach( j : Test4b_y_iter[0 ]) { ++count; }
-	foreach( j : Test4b_y_iter[0 ] ) { ++count; }
-	foreach (j:Test4b_y_iter[0 ]) { ++count; }
-	foreach (j:Test4b_y_iter[0 ] ) { ++count; }
-	foreach (j: Test4b_y_iter[0 ]) { ++count; }
-	foreach (j: Test4b_y_iter[0 ] ) { ++count; }
-	foreach (j :Test4b_y_iter[0 ]) { ++count; }
-	foreach (j :Test4b_y_iter[0 ] ) { ++count; }
-	foreach (j : Test4b_y_iter[0 ]) { ++count; }
-	foreach (j : Test4b_y_iter[0 ] ) { ++count; }
-	foreach ( j:Test4b_y_iter[0 ]) { ++count; }
-	foreach ( j:Test4b_y_iter[0 ] ) { ++count; }
-	foreach ( j: Test4b_y_iter[0 ]) { ++count; }
-	foreach ( j: Test4b_y_iter[0 ] ) { ++count; }
-	foreach ( j :Test4b_y_iter[0 ]) { ++count; }
-	foreach ( j :Test4b_y_iter[0 ] ) { ++count; }
-	foreach ( j : Test4b_y_iter[0 ]) { ++count; }
-	foreach ( j : Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__(j:Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__(j:Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__(j: Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__(j: Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__(j :Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__(j :Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__(j : Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__(j : Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__( j:Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__( j:Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__( j: Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__( j: Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__( j :Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__( j :Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__( j : Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__( j : Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__ (j:Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__ (j:Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__ (j: Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__ (j: Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__ (j :Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__ (j :Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__ (j : Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__ (j : Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__ ( j:Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__ ( j:Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__ ( j: Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__ ( j: Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__ ( j :Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__ ( j :Test4b_y_iter[0 ] ) { ++count; }
+	FOREACH__ ( j : Test4b_y_iter[0 ]) { ++count; }
+	FOREACH__ ( j : Test4b_y_iter[0 ] ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -1716,72 +1716,72 @@ TEST__ y_iter_Syntax4c()
 	Iter_Add(Test4c_y_iter[3], 23);
 	new
 		count = 0;
-	foreach(new i:Test4c_y_iter [3]) { ++count; }
-	foreach(new i:Test4c_y_iter [3] ) { ++count; }
-	foreach(new i: Test4c_y_iter [3]) { ++count; }
-	foreach(new i: Test4c_y_iter [3] ) { ++count; }
-	foreach(new i :Test4c_y_iter [3]) { ++count; }
-	foreach(new i :Test4c_y_iter [3] ) { ++count; }
-	foreach(new i : Test4c_y_iter [3]) { ++count; }
-	foreach(new i : Test4c_y_iter [3] ) { ++count; }
-	foreach( new i:Test4c_y_iter [3]) { ++count; }
-	foreach( new i:Test4c_y_iter [3] ) { ++count; }
-	foreach( new i: Test4c_y_iter [3]) { ++count; }
-	foreach( new i: Test4c_y_iter [3] ) { ++count; }
-	foreach( new i :Test4c_y_iter [3]) { ++count; }
-	foreach( new i :Test4c_y_iter [3] ) { ++count; }
-	foreach( new i : Test4c_y_iter [3]) { ++count; }
-	foreach( new i : Test4c_y_iter [3] ) { ++count; }
-	foreach (new i:Test4c_y_iter [3]) { ++count; }
-	foreach (new i:Test4c_y_iter [3] ) { ++count; }
-	foreach (new i: Test4c_y_iter [3]) { ++count; }
-	foreach (new i: Test4c_y_iter [3] ) { ++count; }
-	foreach (new i :Test4c_y_iter [3]) { ++count; }
-	foreach (new i :Test4c_y_iter [3] ) { ++count; }
-	foreach (new i : Test4c_y_iter [3]) { ++count; }
-	foreach (new i : Test4c_y_iter [3] ) { ++count; }
-	foreach ( new i:Test4c_y_iter [3]) { ++count; }
-	foreach ( new i:Test4c_y_iter [3] ) { ++count; }
-	foreach ( new i: Test4c_y_iter [3]) { ++count; }
-	foreach ( new i: Test4c_y_iter [3] ) { ++count; }
-	foreach ( new i :Test4c_y_iter [3]) { ++count; }
-	foreach ( new i :Test4c_y_iter [3] ) { ++count; }
-	foreach ( new i : Test4c_y_iter [3]) { ++count; }
-	foreach ( new i : Test4c_y_iter [3] ) { ++count; }
+	FOREACH__(new i:Test4c_y_iter [3]) { ++count; }
+	FOREACH__(new i:Test4c_y_iter [3] ) { ++count; }
+	FOREACH__(new i: Test4c_y_iter [3]) { ++count; }
+	FOREACH__(new i: Test4c_y_iter [3] ) { ++count; }
+	FOREACH__(new i :Test4c_y_iter [3]) { ++count; }
+	FOREACH__(new i :Test4c_y_iter [3] ) { ++count; }
+	FOREACH__(new i : Test4c_y_iter [3]) { ++count; }
+	FOREACH__(new i : Test4c_y_iter [3] ) { ++count; }
+	FOREACH__( new i:Test4c_y_iter [3]) { ++count; }
+	FOREACH__( new i:Test4c_y_iter [3] ) { ++count; }
+	FOREACH__( new i: Test4c_y_iter [3]) { ++count; }
+	FOREACH__( new i: Test4c_y_iter [3] ) { ++count; }
+	FOREACH__( new i :Test4c_y_iter [3]) { ++count; }
+	FOREACH__( new i :Test4c_y_iter [3] ) { ++count; }
+	FOREACH__( new i : Test4c_y_iter [3]) { ++count; }
+	FOREACH__( new i : Test4c_y_iter [3] ) { ++count; }
+	FOREACH__ (new i:Test4c_y_iter [3]) { ++count; }
+	FOREACH__ (new i:Test4c_y_iter [3] ) { ++count; }
+	FOREACH__ (new i: Test4c_y_iter [3]) { ++count; }
+	FOREACH__ (new i: Test4c_y_iter [3] ) { ++count; }
+	FOREACH__ (new i :Test4c_y_iter [3]) { ++count; }
+	FOREACH__ (new i :Test4c_y_iter [3] ) { ++count; }
+	FOREACH__ (new i : Test4c_y_iter [3]) { ++count; }
+	FOREACH__ (new i : Test4c_y_iter [3] ) { ++count; }
+	FOREACH__ ( new i:Test4c_y_iter [3]) { ++count; }
+	FOREACH__ ( new i:Test4c_y_iter [3] ) { ++count; }
+	FOREACH__ ( new i: Test4c_y_iter [3]) { ++count; }
+	FOREACH__ ( new i: Test4c_y_iter [3] ) { ++count; }
+	FOREACH__ ( new i :Test4c_y_iter [3]) { ++count; }
+	FOREACH__ ( new i :Test4c_y_iter [3] ) { ++count; }
+	FOREACH__ ( new i : Test4c_y_iter [3]) { ++count; }
+	FOREACH__ ( new i : Test4c_y_iter [3] ) { ++count; }
 	new
 		j;
-	foreach(j:Test4c_y_iter [ 3]) { ++count; }
-	foreach(j:Test4c_y_iter [ 3] ) { ++count; }
-	foreach(j: Test4c_y_iter [ 3]) { ++count; }
-	foreach(j: Test4c_y_iter [ 3] ) { ++count; }
-	foreach(j :Test4c_y_iter [ 3]) { ++count; }
-	foreach(j :Test4c_y_iter [ 3] ) { ++count; }
-	foreach(j : Test4c_y_iter [ 3]) { ++count; }
-	foreach(j : Test4c_y_iter [ 3] ) { ++count; }
-	foreach( j:Test4c_y_iter [ 3]) { ++count; }
-	foreach( j:Test4c_y_iter [ 3] ) { ++count; }
-	foreach( j: Test4c_y_iter [ 3]) { ++count; }
-	foreach( j: Test4c_y_iter [ 3] ) { ++count; }
-	foreach( j :Test4c_y_iter [ 3]) { ++count; }
-	foreach( j :Test4c_y_iter [ 3] ) { ++count; }
-	foreach( j : Test4c_y_iter [ 3]) { ++count; }
-	foreach( j : Test4c_y_iter [ 3] ) { ++count; }
-	foreach (j:Test4c_y_iter [ 3]) { ++count; }
-	foreach (j:Test4c_y_iter [ 3] ) { ++count; }
-	foreach (j: Test4c_y_iter [ 3]) { ++count; }
-	foreach (j: Test4c_y_iter [ 3] ) { ++count; }
-	foreach (j :Test4c_y_iter [ 3]) { ++count; }
-	foreach (j :Test4c_y_iter [ 3] ) { ++count; }
-	foreach (j : Test4c_y_iter [ 3]) { ++count; }
-	foreach (j : Test4c_y_iter [ 3] ) { ++count; }
-	foreach ( j:Test4c_y_iter [ 3]) { ++count; }
-	foreach ( j:Test4c_y_iter [ 3] ) { ++count; }
-	foreach ( j: Test4c_y_iter [ 3]) { ++count; }
-	foreach ( j: Test4c_y_iter [ 3] ) { ++count; }
-	foreach ( j :Test4c_y_iter [ 3]) { ++count; }
-	foreach ( j :Test4c_y_iter [ 3] ) { ++count; }
-	foreach ( j : Test4c_y_iter [ 3]) { ++count; }
-	foreach ( j : Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__(j:Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__(j:Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__(j: Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__(j: Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__(j :Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__(j :Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__(j : Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__(j : Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__( j:Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__( j:Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__( j: Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__( j: Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__( j :Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__( j :Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__( j : Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__( j : Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__ (j:Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__ (j:Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__ (j: Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__ (j: Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__ (j :Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__ (j :Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__ (j : Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__ (j : Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__ ( j:Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__ ( j:Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__ ( j: Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__ ( j: Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__ ( j :Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__ ( j :Test4c_y_iter [ 3] ) { ++count; }
+	FOREACH__ ( j : Test4c_y_iter [ 3]) { ++count; }
+	FOREACH__ ( j : Test4c_y_iter [ 3] ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -1799,72 +1799,72 @@ TEST__ y_iter_Syntax4d()
 	Iter_Add(Test4d_y_iter[0], 23);
 	new
 		count = 0;
-	foreach(new i:Test4d_y_iter [ 0 ]) { ++count; }
-	foreach(new i:Test4d_y_iter [ 0 ] ) { ++count; }
-	foreach(new i: Test4d_y_iter [ 0 ]) { ++count; }
-	foreach(new i: Test4d_y_iter [ 0 ] ) { ++count; }
-	foreach(new i :Test4d_y_iter [ 0 ]) { ++count; }
-	foreach(new i :Test4d_y_iter [ 0 ] ) { ++count; }
-	foreach(new i : Test4d_y_iter [ 0 ]) { ++count; }
-	foreach(new i : Test4d_y_iter [ 0 ] ) { ++count; }
-	foreach( new i:Test4d_y_iter [ 0 ]) { ++count; }
-	foreach( new i:Test4d_y_iter [ 0 ] ) { ++count; }
-	foreach( new i: Test4d_y_iter [ 0 ]) { ++count; }
-	foreach( new i: Test4d_y_iter [ 0 ] ) { ++count; }
-	foreach( new i :Test4d_y_iter [ 0 ]) { ++count; }
-	foreach( new i :Test4d_y_iter [ 0 ] ) { ++count; }
-	foreach( new i : Test4d_y_iter [ 0 ]) { ++count; }
-	foreach( new i : Test4d_y_iter [ 0 ] ) { ++count; }
-	foreach (new i:Test4d_y_iter [ 0 ]) { ++count; }
-	foreach (new i:Test4d_y_iter [ 0 ] ) { ++count; }
-	foreach (new i: Test4d_y_iter [ 0 ]) { ++count; }
-	foreach (new i: Test4d_y_iter [ 0 ] ) { ++count; }
-	foreach (new i :Test4d_y_iter [ 0 ]) { ++count; }
-	foreach (new i :Test4d_y_iter [ 0 ] ) { ++count; }
-	foreach (new i : Test4d_y_iter [ 0 ]) { ++count; }
-	foreach (new i : Test4d_y_iter [ 0 ] ) { ++count; }
-	foreach ( new i:Test4d_y_iter [ 0 ]) { ++count; }
-	foreach ( new i:Test4d_y_iter [ 0 ] ) { ++count; }
-	foreach ( new i: Test4d_y_iter [ 0 ]) { ++count; }
-	foreach ( new i: Test4d_y_iter [ 0 ] ) { ++count; }
-	foreach ( new i :Test4d_y_iter [ 0 ]) { ++count; }
-	foreach ( new i :Test4d_y_iter [ 0 ] ) { ++count; }
-	foreach ( new i : Test4d_y_iter [ 0 ]) { ++count; }
-	foreach ( new i : Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__(new i:Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__(new i:Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__(new i: Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__(new i: Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__(new i :Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__(new i :Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__(new i : Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__(new i : Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__( new i:Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__( new i:Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__( new i: Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__( new i: Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__( new i :Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__( new i :Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__( new i : Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__( new i : Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__ (new i:Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__ (new i:Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__ (new i: Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__ (new i: Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__ (new i :Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__ (new i :Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__ (new i : Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__ (new i : Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__ ( new i:Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__ ( new i:Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__ ( new i: Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__ ( new i: Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__ ( new i :Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__ ( new i :Test4d_y_iter [ 0 ] ) { ++count; }
+	FOREACH__ ( new i : Test4d_y_iter [ 0 ]) { ++count; }
+	FOREACH__ ( new i : Test4d_y_iter [ 0 ] ) { ++count; }
 	new
 		j;
-	foreach(j:Test4d_y_iter [0 ]) { ++count; }
-	foreach(j:Test4d_y_iter [0 ] ) { ++count; }
-	foreach(j: Test4d_y_iter [0 ]) { ++count; }
-	foreach(j: Test4d_y_iter [0 ] ) { ++count; }
-	foreach(j :Test4d_y_iter [0 ]) { ++count; }
-	foreach(j :Test4d_y_iter [0 ] ) { ++count; }
-	foreach(j : Test4d_y_iter [0 ]) { ++count; }
-	foreach(j : Test4d_y_iter [0 ] ) { ++count; }
-	foreach( j:Test4d_y_iter [0 ]) { ++count; }
-	foreach( j:Test4d_y_iter [0 ] ) { ++count; }
-	foreach( j: Test4d_y_iter [0 ]) { ++count; }
-	foreach( j: Test4d_y_iter [0 ] ) { ++count; }
-	foreach( j :Test4d_y_iter [0 ]) { ++count; }
-	foreach( j :Test4d_y_iter [0 ] ) { ++count; }
-	foreach( j : Test4d_y_iter [0 ]) { ++count; }
-	foreach( j : Test4d_y_iter [0 ] ) { ++count; }
-	foreach (j:Test4d_y_iter [0 ]) { ++count; }
-	foreach (j:Test4d_y_iter [0 ] ) { ++count; }
-	foreach (j: Test4d_y_iter [0 ]) { ++count; }
-	foreach (j: Test4d_y_iter [0 ] ) { ++count; }
-	foreach (j :Test4d_y_iter [0 ]) { ++count; }
-	foreach (j :Test4d_y_iter [0 ] ) { ++count; }
-	foreach (j : Test4d_y_iter [0 ]) { ++count; }
-	foreach (j : Test4d_y_iter [0 ] ) { ++count; }
-	foreach ( j:Test4d_y_iter [0 ]) { ++count; }
-	foreach ( j:Test4d_y_iter [0 ] ) { ++count; }
-	foreach ( j: Test4d_y_iter [0 ]) { ++count; }
-	foreach ( j: Test4d_y_iter [0 ] ) { ++count; }
-	foreach ( j :Test4d_y_iter [0 ]) { ++count; }
-	foreach ( j :Test4d_y_iter [0 ] ) { ++count; }
-	foreach ( j : Test4d_y_iter [0 ]) { ++count; }
-	foreach ( j : Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__(j:Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__(j:Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__(j: Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__(j: Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__(j :Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__(j :Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__(j : Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__(j : Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__( j:Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__( j:Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__( j: Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__( j: Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__( j :Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__( j :Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__( j : Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__( j : Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__ (j:Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__ (j:Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__ (j: Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__ (j: Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__ (j :Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__ (j :Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__ (j : Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__ (j : Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__ ( j:Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__ ( j:Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__ ( j: Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__ ( j: Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__ ( j :Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__ ( j :Test4d_y_iter [0 ] ) { ++count; }
+	FOREACH__ ( j : Test4d_y_iter [0 ]) { ++count; }
+	FOREACH__ ( j : Test4d_y_iter [0 ] ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -1881,72 +1881,72 @@ TEST__ y_iter_Syntax3a()
 	Iter_Add(Test3a_y_iter<4>, 23);
 	new
 		count = 0;
-	foreach(new i:Test3a_y_iter<4>) { ++count; }
-	foreach(new i:Test3a_y_iter<4> ) { ++count; }
-	foreach(new i: Test3a_y_iter<4>) { ++count; }
-	foreach(new i: Test3a_y_iter<4> ) { ++count; }
-	foreach(new i :Test3a_y_iter<4>) { ++count; }
-	foreach(new i :Test3a_y_iter<4> ) { ++count; }
-	foreach(new i : Test3a_y_iter<4>) { ++count; }
-	foreach(new i : Test3a_y_iter<4> ) { ++count; }
-	foreach( new i:Test3a_y_iter<4>) { ++count; }
-	foreach( new i:Test3a_y_iter<4> ) { ++count; }
-	foreach( new i: Test3a_y_iter<4>) { ++count; }
-	foreach( new i: Test3a_y_iter<4> ) { ++count; }
-	foreach( new i :Test3a_y_iter<4>) { ++count; }
-	foreach( new i :Test3a_y_iter<4> ) { ++count; }
-	foreach( new i : Test3a_y_iter<4>) { ++count; }
-	foreach( new i : Test3a_y_iter<4> ) { ++count; }
-	foreach (new i:Test3a_y_iter<4>) { ++count; }
-	foreach (new i:Test3a_y_iter<4> ) { ++count; }
-	foreach (new i: Test3a_y_iter<4>) { ++count; }
-	foreach (new i: Test3a_y_iter<4> ) { ++count; }
-	foreach (new i :Test3a_y_iter<4>) { ++count; }
-	foreach (new i :Test3a_y_iter<4> ) { ++count; }
-	foreach (new i : Test3a_y_iter<4>) { ++count; }
-	foreach (new i : Test3a_y_iter<4> ) { ++count; }
-	foreach ( new i:Test3a_y_iter<4>) { ++count; }
-	foreach ( new i:Test3a_y_iter<4> ) { ++count; }
-	foreach ( new i: Test3a_y_iter<4>) { ++count; }
-	foreach ( new i: Test3a_y_iter<4> ) { ++count; }
-	foreach ( new i :Test3a_y_iter<4>) { ++count; }
-	foreach ( new i :Test3a_y_iter<4> ) { ++count; }
-	foreach ( new i : Test3a_y_iter<4>) { ++count; }
-	foreach ( new i : Test3a_y_iter<4> ) { ++count; }
+	FOREACH__(new i:Test3a_y_iter<4>) { ++count; }
+	FOREACH__(new i:Test3a_y_iter<4> ) { ++count; }
+	FOREACH__(new i: Test3a_y_iter<4>) { ++count; }
+	FOREACH__(new i: Test3a_y_iter<4> ) { ++count; }
+	FOREACH__(new i :Test3a_y_iter<4>) { ++count; }
+	FOREACH__(new i :Test3a_y_iter<4> ) { ++count; }
+	FOREACH__(new i : Test3a_y_iter<4>) { ++count; }
+	FOREACH__(new i : Test3a_y_iter<4> ) { ++count; }
+	FOREACH__( new i:Test3a_y_iter<4>) { ++count; }
+	FOREACH__( new i:Test3a_y_iter<4> ) { ++count; }
+	FOREACH__( new i: Test3a_y_iter<4>) { ++count; }
+	FOREACH__( new i: Test3a_y_iter<4> ) { ++count; }
+	FOREACH__( new i :Test3a_y_iter<4>) { ++count; }
+	FOREACH__( new i :Test3a_y_iter<4> ) { ++count; }
+	FOREACH__( new i : Test3a_y_iter<4>) { ++count; }
+	FOREACH__( new i : Test3a_y_iter<4> ) { ++count; }
+	FOREACH__ (new i:Test3a_y_iter<4>) { ++count; }
+	FOREACH__ (new i:Test3a_y_iter<4> ) { ++count; }
+	FOREACH__ (new i: Test3a_y_iter<4>) { ++count; }
+	FOREACH__ (new i: Test3a_y_iter<4> ) { ++count; }
+	FOREACH__ (new i :Test3a_y_iter<4>) { ++count; }
+	FOREACH__ (new i :Test3a_y_iter<4> ) { ++count; }
+	FOREACH__ (new i : Test3a_y_iter<4>) { ++count; }
+	FOREACH__ (new i : Test3a_y_iter<4> ) { ++count; }
+	FOREACH__ ( new i:Test3a_y_iter<4>) { ++count; }
+	FOREACH__ ( new i:Test3a_y_iter<4> ) { ++count; }
+	FOREACH__ ( new i: Test3a_y_iter<4>) { ++count; }
+	FOREACH__ ( new i: Test3a_y_iter<4> ) { ++count; }
+	FOREACH__ ( new i :Test3a_y_iter<4>) { ++count; }
+	FOREACH__ ( new i :Test3a_y_iter<4> ) { ++count; }
+	FOREACH__ ( new i : Test3a_y_iter<4>) { ++count; }
+	FOREACH__ ( new i : Test3a_y_iter<4> ) { ++count; }
 	new
 		j;
-	foreach(j:Test3a_y_iter< 4>) { ++count; }
-	foreach(j:Test3a_y_iter< 4> ) { ++count; }
-	foreach(j: Test3a_y_iter< 4>) { ++count; }
-	foreach(j: Test3a_y_iter< 4> ) { ++count; }
-	foreach(j :Test3a_y_iter< 4>) { ++count; }
-	foreach(j :Test3a_y_iter< 4> ) { ++count; }
-	foreach(j : Test3a_y_iter< 4>) { ++count; }
-	foreach(j : Test3a_y_iter< 4> ) { ++count; }
-	foreach( j:Test3a_y_iter< 4>) { ++count; }
-	foreach( j:Test3a_y_iter< 4> ) { ++count; }
-	foreach( j: Test3a_y_iter< 4>) { ++count; }
-	foreach( j: Test3a_y_iter< 4> ) { ++count; }
-	foreach( j :Test3a_y_iter< 4>) { ++count; }
-	foreach( j :Test3a_y_iter< 4> ) { ++count; }
-	foreach( j : Test3a_y_iter< 4>) { ++count; }
-	foreach( j : Test3a_y_iter< 4> ) { ++count; }
-	foreach (j:Test3a_y_iter< 4>) { ++count; }
-	foreach (j:Test3a_y_iter< 4> ) { ++count; }
-	foreach (j: Test3a_y_iter< 4>) { ++count; }
-	foreach (j: Test3a_y_iter< 4> ) { ++count; }
-	foreach (j :Test3a_y_iter< 4>) { ++count; }
-	foreach (j :Test3a_y_iter< 4> ) { ++count; }
-	foreach (j : Test3a_y_iter< 4>) { ++count; }
-	foreach (j : Test3a_y_iter< 4> ) { ++count; }
-	foreach ( j:Test3a_y_iter< 4>) { ++count; }
-	foreach ( j:Test3a_y_iter< 4> ) { ++count; }
-	foreach ( j: Test3a_y_iter< 4>) { ++count; }
-	foreach ( j: Test3a_y_iter< 4> ) { ++count; }
-	foreach ( j :Test3a_y_iter< 4>) { ++count; }
-	foreach ( j :Test3a_y_iter< 4> ) { ++count; }
-	foreach ( j : Test3a_y_iter< 4>) { ++count; }
-	foreach ( j : Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__(j:Test3a_y_iter< 4>) { ++count; }
+	FOREACH__(j:Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__(j: Test3a_y_iter< 4>) { ++count; }
+	FOREACH__(j: Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__(j :Test3a_y_iter< 4>) { ++count; }
+	FOREACH__(j :Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__(j : Test3a_y_iter< 4>) { ++count; }
+	FOREACH__(j : Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__( j:Test3a_y_iter< 4>) { ++count; }
+	FOREACH__( j:Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__( j: Test3a_y_iter< 4>) { ++count; }
+	FOREACH__( j: Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__( j :Test3a_y_iter< 4>) { ++count; }
+	FOREACH__( j :Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__( j : Test3a_y_iter< 4>) { ++count; }
+	FOREACH__( j : Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__ (j:Test3a_y_iter< 4>) { ++count; }
+	FOREACH__ (j:Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__ (j: Test3a_y_iter< 4>) { ++count; }
+	FOREACH__ (j: Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__ (j :Test3a_y_iter< 4>) { ++count; }
+	FOREACH__ (j :Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__ (j : Test3a_y_iter< 4>) { ++count; }
+	FOREACH__ (j : Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__ ( j:Test3a_y_iter< 4>) { ++count; }
+	FOREACH__ ( j:Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__ ( j: Test3a_y_iter< 4>) { ++count; }
+	FOREACH__ ( j: Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__ ( j :Test3a_y_iter< 4>) { ++count; }
+	FOREACH__ ( j :Test3a_y_iter< 4> ) { ++count; }
+	FOREACH__ ( j : Test3a_y_iter< 4>) { ++count; }
+	FOREACH__ ( j : Test3a_y_iter< 4> ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -1963,72 +1963,72 @@ TEST__ y_iter_Syntax3b()
 	Iter_Add(Test3b_y_iter<6>, 23);
 	new
 		count = 0;
-	foreach(new i:Test3b_y_iter< 6 >) { ++count; }
-	foreach(new i:Test3b_y_iter< 6 > ) { ++count; }
-	foreach(new i: Test3b_y_iter< 6 >) { ++count; }
-	foreach(new i: Test3b_y_iter< 6 > ) { ++count; }
-	foreach(new i :Test3b_y_iter< 6 >) { ++count; }
-	foreach(new i :Test3b_y_iter< 6 > ) { ++count; }
-	foreach(new i : Test3b_y_iter< 6 >) { ++count; }
-	foreach(new i : Test3b_y_iter< 6 > ) { ++count; }
-	foreach( new i:Test3b_y_iter< 6 >) { ++count; }
-	foreach( new i:Test3b_y_iter< 6 > ) { ++count; }
-	foreach( new i: Test3b_y_iter< 6 >) { ++count; }
-	foreach( new i: Test3b_y_iter< 6 > ) { ++count; }
-	foreach( new i :Test3b_y_iter< 6 >) { ++count; }
-	foreach( new i :Test3b_y_iter< 6 > ) { ++count; }
-	foreach( new i : Test3b_y_iter< 6 >) { ++count; }
-	foreach( new i : Test3b_y_iter< 6 > ) { ++count; }
-	foreach (new i:Test3b_y_iter< 6 >) { ++count; }
-	foreach (new i:Test3b_y_iter< 6 > ) { ++count; }
-	foreach (new i: Test3b_y_iter< 6 >) { ++count; }
-	foreach (new i: Test3b_y_iter< 6 > ) { ++count; }
-	foreach (new i :Test3b_y_iter< 6 >) { ++count; }
-	foreach (new i :Test3b_y_iter< 6 > ) { ++count; }
-	foreach (new i : Test3b_y_iter< 6 >) { ++count; }
-	foreach (new i : Test3b_y_iter< 6 > ) { ++count; }
-	foreach ( new i:Test3b_y_iter< 6 >) { ++count; }
-	foreach ( new i:Test3b_y_iter< 6 > ) { ++count; }
-	foreach ( new i: Test3b_y_iter< 6 >) { ++count; }
-	foreach ( new i: Test3b_y_iter< 6 > ) { ++count; }
-	foreach ( new i :Test3b_y_iter< 6 >) { ++count; }
-	foreach ( new i :Test3b_y_iter< 6 > ) { ++count; }
-	foreach ( new i : Test3b_y_iter< 6 >) { ++count; }
-	foreach ( new i : Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__(new i:Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__(new i:Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__(new i: Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__(new i: Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__(new i :Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__(new i :Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__(new i : Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__(new i : Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__( new i:Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__( new i:Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__( new i: Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__( new i: Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__( new i :Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__( new i :Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__( new i : Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__( new i : Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__ (new i:Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__ (new i:Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__ (new i: Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__ (new i: Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__ (new i :Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__ (new i :Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__ (new i : Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__ (new i : Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__ ( new i:Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__ ( new i:Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__ ( new i: Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__ ( new i: Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__ ( new i :Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__ ( new i :Test3b_y_iter< 6 > ) { ++count; }
+	FOREACH__ ( new i : Test3b_y_iter< 6 >) { ++count; }
+	FOREACH__ ( new i : Test3b_y_iter< 6 > ) { ++count; }
 	new
 		j;
-	foreach(j:Test3b_y_iter<6 >) { ++count; }
-	foreach(j:Test3b_y_iter<6 > ) { ++count; }
-	foreach(j: Test3b_y_iter<6 >) { ++count; }
-	foreach(j: Test3b_y_iter<6 > ) { ++count; }
-	foreach(j :Test3b_y_iter<6 >) { ++count; }
-	foreach(j :Test3b_y_iter<6 > ) { ++count; }
-	foreach(j : Test3b_y_iter<6 >) { ++count; }
-	foreach(j : Test3b_y_iter<6 > ) { ++count; }
-	foreach( j:Test3b_y_iter<6 >) { ++count; }
-	foreach( j:Test3b_y_iter<6 > ) { ++count; }
-	foreach( j: Test3b_y_iter<6 >) { ++count; }
-	foreach( j: Test3b_y_iter<6 > ) { ++count; }
-	foreach( j :Test3b_y_iter<6 >) { ++count; }
-	foreach( j :Test3b_y_iter<6 > ) { ++count; }
-	foreach( j : Test3b_y_iter<6 >) { ++count; }
-	foreach( j : Test3b_y_iter<6 > ) { ++count; }
-	foreach (j:Test3b_y_iter<6 >) { ++count; }
-	foreach (j:Test3b_y_iter<6 > ) { ++count; }
-	foreach (j: Test3b_y_iter<6 >) { ++count; }
-	foreach (j: Test3b_y_iter<6 > ) { ++count; }
-	foreach (j :Test3b_y_iter<6 >) { ++count; }
-	foreach (j :Test3b_y_iter<6 > ) { ++count; }
-	foreach (j : Test3b_y_iter<6 >) { ++count; }
-	foreach (j : Test3b_y_iter<6 > ) { ++count; }
-	foreach ( j:Test3b_y_iter<6 >) { ++count; }
-	foreach ( j:Test3b_y_iter<6 > ) { ++count; }
-	foreach ( j: Test3b_y_iter<6 >) { ++count; }
-	foreach ( j: Test3b_y_iter<6 > ) { ++count; }
-	foreach ( j :Test3b_y_iter<6 >) { ++count; }
-	foreach ( j :Test3b_y_iter<6 > ) { ++count; }
-	foreach ( j : Test3b_y_iter<6 >) { ++count; }
-	foreach ( j : Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__(j:Test3b_y_iter<6 >) { ++count; }
+	FOREACH__(j:Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__(j: Test3b_y_iter<6 >) { ++count; }
+	FOREACH__(j: Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__(j :Test3b_y_iter<6 >) { ++count; }
+	FOREACH__(j :Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__(j : Test3b_y_iter<6 >) { ++count; }
+	FOREACH__(j : Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__( j:Test3b_y_iter<6 >) { ++count; }
+	FOREACH__( j:Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__( j: Test3b_y_iter<6 >) { ++count; }
+	FOREACH__( j: Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__( j :Test3b_y_iter<6 >) { ++count; }
+	FOREACH__( j :Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__( j : Test3b_y_iter<6 >) { ++count; }
+	FOREACH__( j : Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__ (j:Test3b_y_iter<6 >) { ++count; }
+	FOREACH__ (j:Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__ (j: Test3b_y_iter<6 >) { ++count; }
+	FOREACH__ (j: Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__ (j :Test3b_y_iter<6 >) { ++count; }
+	FOREACH__ (j :Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__ (j : Test3b_y_iter<6 >) { ++count; }
+	FOREACH__ (j : Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__ ( j:Test3b_y_iter<6 >) { ++count; }
+	FOREACH__ ( j:Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__ ( j: Test3b_y_iter<6 >) { ++count; }
+	FOREACH__ ( j: Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__ ( j :Test3b_y_iter<6 >) { ++count; }
+	FOREACH__ ( j :Test3b_y_iter<6 > ) { ++count; }
+	FOREACH__ ( j : Test3b_y_iter<6 >) { ++count; }
+	FOREACH__ ( j : Test3b_y_iter<6 > ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -2045,72 +2045,72 @@ TEST__ y_iter_Syntax3c()
 	Iter_Add(Test3c_y_iter<4>, 23);
 	new
 		count = 0;
-	foreach(new i:Test3c_y_iter <4>) { ++count; }
-	foreach(new i:Test3c_y_iter <4> ) { ++count; }
-	foreach(new i: Test3c_y_iter <4>) { ++count; }
-	foreach(new i: Test3c_y_iter <4> ) { ++count; }
-	foreach(new i :Test3c_y_iter <4>) { ++count; }
-	foreach(new i :Test3c_y_iter <4> ) { ++count; }
-	foreach(new i : Test3c_y_iter <4>) { ++count; }
-	foreach(new i : Test3c_y_iter <4> ) { ++count; }
-	foreach( new i:Test3c_y_iter <4>) { ++count; }
-	foreach( new i:Test3c_y_iter <4> ) { ++count; }
-	foreach( new i: Test3c_y_iter <4>) { ++count; }
-	foreach( new i: Test3c_y_iter <4> ) { ++count; }
-	foreach( new i :Test3c_y_iter <4>) { ++count; }
-	foreach( new i :Test3c_y_iter <4> ) { ++count; }
-	foreach( new i : Test3c_y_iter <4>) { ++count; }
-	foreach( new i : Test3c_y_iter <4> ) { ++count; }
-	foreach (new i:Test3c_y_iter <4>) { ++count; }
-	foreach (new i:Test3c_y_iter <4> ) { ++count; }
-	foreach (new i: Test3c_y_iter <4>) { ++count; }
-	foreach (new i: Test3c_y_iter <4> ) { ++count; }
-	foreach (new i :Test3c_y_iter <4>) { ++count; }
-	foreach (new i :Test3c_y_iter <4> ) { ++count; }
-	foreach (new i : Test3c_y_iter <4>) { ++count; }
-	foreach (new i : Test3c_y_iter <4> ) { ++count; }
-	foreach ( new i:Test3c_y_iter <4>) { ++count; }
-	foreach ( new i:Test3c_y_iter <4> ) { ++count; }
-	foreach ( new i: Test3c_y_iter <4>) { ++count; }
-	foreach ( new i: Test3c_y_iter <4> ) { ++count; }
-	foreach ( new i :Test3c_y_iter <4>) { ++count; }
-	foreach ( new i :Test3c_y_iter <4> ) { ++count; }
-	foreach ( new i : Test3c_y_iter <4>) { ++count; }
-	foreach ( new i : Test3c_y_iter <4> ) { ++count; }
+	FOREACH__(new i:Test3c_y_iter <4>) { ++count; }
+	FOREACH__(new i:Test3c_y_iter <4> ) { ++count; }
+	FOREACH__(new i: Test3c_y_iter <4>) { ++count; }
+	FOREACH__(new i: Test3c_y_iter <4> ) { ++count; }
+	FOREACH__(new i :Test3c_y_iter <4>) { ++count; }
+	FOREACH__(new i :Test3c_y_iter <4> ) { ++count; }
+	FOREACH__(new i : Test3c_y_iter <4>) { ++count; }
+	FOREACH__(new i : Test3c_y_iter <4> ) { ++count; }
+	FOREACH__( new i:Test3c_y_iter <4>) { ++count; }
+	FOREACH__( new i:Test3c_y_iter <4> ) { ++count; }
+	FOREACH__( new i: Test3c_y_iter <4>) { ++count; }
+	FOREACH__( new i: Test3c_y_iter <4> ) { ++count; }
+	FOREACH__( new i :Test3c_y_iter <4>) { ++count; }
+	FOREACH__( new i :Test3c_y_iter <4> ) { ++count; }
+	FOREACH__( new i : Test3c_y_iter <4>) { ++count; }
+	FOREACH__( new i : Test3c_y_iter <4> ) { ++count; }
+	FOREACH__ (new i:Test3c_y_iter <4>) { ++count; }
+	FOREACH__ (new i:Test3c_y_iter <4> ) { ++count; }
+	FOREACH__ (new i: Test3c_y_iter <4>) { ++count; }
+	FOREACH__ (new i: Test3c_y_iter <4> ) { ++count; }
+	FOREACH__ (new i :Test3c_y_iter <4>) { ++count; }
+	FOREACH__ (new i :Test3c_y_iter <4> ) { ++count; }
+	FOREACH__ (new i : Test3c_y_iter <4>) { ++count; }
+	FOREACH__ (new i : Test3c_y_iter <4> ) { ++count; }
+	FOREACH__ ( new i:Test3c_y_iter <4>) { ++count; }
+	FOREACH__ ( new i:Test3c_y_iter <4> ) { ++count; }
+	FOREACH__ ( new i: Test3c_y_iter <4>) { ++count; }
+	FOREACH__ ( new i: Test3c_y_iter <4> ) { ++count; }
+	FOREACH__ ( new i :Test3c_y_iter <4>) { ++count; }
+	FOREACH__ ( new i :Test3c_y_iter <4> ) { ++count; }
+	FOREACH__ ( new i : Test3c_y_iter <4>) { ++count; }
+	FOREACH__ ( new i : Test3c_y_iter <4> ) { ++count; }
 	new
 		j;
-	foreach(j:Test3c_y_iter < 4>) { ++count; }
-	foreach(j:Test3c_y_iter < 4> ) { ++count; }
-	foreach(j: Test3c_y_iter < 4>) { ++count; }
-	foreach(j: Test3c_y_iter < 4> ) { ++count; }
-	foreach(j :Test3c_y_iter < 4>) { ++count; }
-	foreach(j :Test3c_y_iter < 4> ) { ++count; }
-	foreach(j : Test3c_y_iter < 4>) { ++count; }
-	foreach(j : Test3c_y_iter < 4> ) { ++count; }
-	foreach( j:Test3c_y_iter < 4>) { ++count; }
-	foreach( j:Test3c_y_iter < 4> ) { ++count; }
-	foreach( j: Test3c_y_iter < 4>) { ++count; }
-	foreach( j: Test3c_y_iter < 4> ) { ++count; }
-	foreach( j :Test3c_y_iter < 4>) { ++count; }
-	foreach( j :Test3c_y_iter < 4> ) { ++count; }
-	foreach( j : Test3c_y_iter < 4>) { ++count; }
-	foreach( j : Test3c_y_iter < 4> ) { ++count; }
-	foreach (j:Test3c_y_iter < 4>) { ++count; }
-	foreach (j:Test3c_y_iter < 4> ) { ++count; }
-	foreach (j: Test3c_y_iter < 4>) { ++count; }
-	foreach (j: Test3c_y_iter < 4> ) { ++count; }
-	foreach (j :Test3c_y_iter < 4>) { ++count; }
-	foreach (j :Test3c_y_iter < 4> ) { ++count; }
-	foreach (j : Test3c_y_iter < 4>) { ++count; }
-	foreach (j : Test3c_y_iter < 4> ) { ++count; }
-	foreach ( j:Test3c_y_iter < 4>) { ++count; }
-	foreach ( j:Test3c_y_iter < 4> ) { ++count; }
-	foreach ( j: Test3c_y_iter < 4>) { ++count; }
-	foreach ( j: Test3c_y_iter < 4> ) { ++count; }
-	foreach ( j :Test3c_y_iter < 4>) { ++count; }
-	foreach ( j :Test3c_y_iter < 4> ) { ++count; }
-	foreach ( j : Test3c_y_iter < 4>) { ++count; }
-	foreach ( j : Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__(j:Test3c_y_iter < 4>) { ++count; }
+	FOREACH__(j:Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__(j: Test3c_y_iter < 4>) { ++count; }
+	FOREACH__(j: Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__(j :Test3c_y_iter < 4>) { ++count; }
+	FOREACH__(j :Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__(j : Test3c_y_iter < 4>) { ++count; }
+	FOREACH__(j : Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__( j:Test3c_y_iter < 4>) { ++count; }
+	FOREACH__( j:Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__( j: Test3c_y_iter < 4>) { ++count; }
+	FOREACH__( j: Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__( j :Test3c_y_iter < 4>) { ++count; }
+	FOREACH__( j :Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__( j : Test3c_y_iter < 4>) { ++count; }
+	FOREACH__( j : Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__ (j:Test3c_y_iter < 4>) { ++count; }
+	FOREACH__ (j:Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__ (j: Test3c_y_iter < 4>) { ++count; }
+	FOREACH__ (j: Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__ (j :Test3c_y_iter < 4>) { ++count; }
+	FOREACH__ (j :Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__ (j : Test3c_y_iter < 4>) { ++count; }
+	FOREACH__ (j : Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__ ( j:Test3c_y_iter < 4>) { ++count; }
+	FOREACH__ ( j:Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__ ( j: Test3c_y_iter < 4>) { ++count; }
+	FOREACH__ ( j: Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__ ( j :Test3c_y_iter < 4>) { ++count; }
+	FOREACH__ ( j :Test3c_y_iter < 4> ) { ++count; }
+	FOREACH__ ( j : Test3c_y_iter < 4>) { ++count; }
+	FOREACH__ ( j : Test3c_y_iter < 4> ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -2127,72 +2127,72 @@ TEST__ y_iter_Syntax3d()
 	Iter_Add(Test3d_y_iter<6>, 23);
 	new
 		count = 0;
-	foreach(new i:Test3d_y_iter < 6 >) { ++count; }
-	foreach(new i:Test3d_y_iter < 6 > ) { ++count; }
-	foreach(new i: Test3d_y_iter < 6 >) { ++count; }
-	foreach(new i: Test3d_y_iter < 6 > ) { ++count; }
-	foreach(new i :Test3d_y_iter < 6 >) { ++count; }
-	foreach(new i :Test3d_y_iter < 6 > ) { ++count; }
-	foreach(new i : Test3d_y_iter < 6 >) { ++count; }
-	foreach(new i : Test3d_y_iter < 6 > ) { ++count; }
-	foreach( new i:Test3d_y_iter < 6 >) { ++count; }
-	foreach( new i:Test3d_y_iter < 6 > ) { ++count; }
-	foreach( new i: Test3d_y_iter < 6 >) { ++count; }
-	foreach( new i: Test3d_y_iter < 6 > ) { ++count; }
-	foreach( new i :Test3d_y_iter < 6 >) { ++count; }
-	foreach( new i :Test3d_y_iter < 6 > ) { ++count; }
-	foreach( new i : Test3d_y_iter < 6 >) { ++count; }
-	foreach( new i : Test3d_y_iter < 6 > ) { ++count; }
-	foreach (new i:Test3d_y_iter < 6 >) { ++count; }
-	foreach (new i:Test3d_y_iter < 6 > ) { ++count; }
-	foreach (new i: Test3d_y_iter < 6 >) { ++count; }
-	foreach (new i: Test3d_y_iter < 6 > ) { ++count; }
-	foreach (new i :Test3d_y_iter < 6 >) { ++count; }
-	foreach (new i :Test3d_y_iter < 6 > ) { ++count; }
-	foreach (new i : Test3d_y_iter < 6 >) { ++count; }
-	foreach (new i : Test3d_y_iter < 6 > ) { ++count; }
-	foreach ( new i:Test3d_y_iter < 6 >) { ++count; }
-	foreach ( new i:Test3d_y_iter < 6 > ) { ++count; }
-	foreach ( new i: Test3d_y_iter < 6 >) { ++count; }
-	foreach ( new i: Test3d_y_iter < 6 > ) { ++count; }
-	foreach ( new i :Test3d_y_iter < 6 >) { ++count; }
-	foreach ( new i :Test3d_y_iter < 6 > ) { ++count; }
-	foreach ( new i : Test3d_y_iter < 6 >) { ++count; }
-	foreach ( new i : Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__(new i:Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__(new i:Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__(new i: Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__(new i: Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__(new i :Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__(new i :Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__(new i : Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__(new i : Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__( new i:Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__( new i:Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__( new i: Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__( new i: Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__( new i :Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__( new i :Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__( new i : Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__( new i : Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__ (new i:Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__ (new i:Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__ (new i: Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__ (new i: Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__ (new i :Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__ (new i :Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__ (new i : Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__ (new i : Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__ ( new i:Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__ ( new i:Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__ ( new i: Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__ ( new i: Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__ ( new i :Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__ ( new i :Test3d_y_iter < 6 > ) { ++count; }
+	FOREACH__ ( new i : Test3d_y_iter < 6 >) { ++count; }
+	FOREACH__ ( new i : Test3d_y_iter < 6 > ) { ++count; }
 	new
 		j;
-	foreach(j:Test3d_y_iter <6 >) { ++count; }
-	foreach(j:Test3d_y_iter <6 > ) { ++count; }
-	foreach(j: Test3d_y_iter <6 >) { ++count; }
-	foreach(j: Test3d_y_iter <6 > ) { ++count; }
-	foreach(j :Test3d_y_iter <6 >) { ++count; }
-	foreach(j :Test3d_y_iter <6 > ) { ++count; }
-	foreach(j : Test3d_y_iter <6 >) { ++count; }
-	foreach(j : Test3d_y_iter <6 > ) { ++count; }
-	foreach( j:Test3d_y_iter <6 >) { ++count; }
-	foreach( j:Test3d_y_iter <6 > ) { ++count; }
-	foreach( j: Test3d_y_iter <6 >) { ++count; }
-	foreach( j: Test3d_y_iter <6 > ) { ++count; }
-	foreach( j :Test3d_y_iter <6 >) { ++count; }
-	foreach( j :Test3d_y_iter <6 > ) { ++count; }
-	foreach( j : Test3d_y_iter <6 >) { ++count; }
-	foreach( j : Test3d_y_iter <6 > ) { ++count; }
-	foreach (j:Test3d_y_iter <6 >) { ++count; }
-	foreach (j:Test3d_y_iter <6 > ) { ++count; }
-	foreach (j: Test3d_y_iter <6 >) { ++count; }
-	foreach (j: Test3d_y_iter <6 > ) { ++count; }
-	foreach (j :Test3d_y_iter <6 >) { ++count; }
-	foreach (j :Test3d_y_iter <6 > ) { ++count; }
-	foreach (j : Test3d_y_iter <6 >) { ++count; }
-	foreach (j : Test3d_y_iter <6 > ) { ++count; }
-	foreach ( j:Test3d_y_iter <6 >) { ++count; }
-	foreach ( j:Test3d_y_iter <6 > ) { ++count; }
-	foreach ( j: Test3d_y_iter <6 >) { ++count; }
-	foreach ( j: Test3d_y_iter <6 > ) { ++count; }
-	foreach ( j :Test3d_y_iter <6 >) { ++count; }
-	foreach ( j :Test3d_y_iter <6 > ) { ++count; }
-	foreach ( j : Test3d_y_iter <6 >) { ++count; }
-	foreach ( j : Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__(j:Test3d_y_iter <6 >) { ++count; }
+	FOREACH__(j:Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__(j: Test3d_y_iter <6 >) { ++count; }
+	FOREACH__(j: Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__(j :Test3d_y_iter <6 >) { ++count; }
+	FOREACH__(j :Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__(j : Test3d_y_iter <6 >) { ++count; }
+	FOREACH__(j : Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__( j:Test3d_y_iter <6 >) { ++count; }
+	FOREACH__( j:Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__( j: Test3d_y_iter <6 >) { ++count; }
+	FOREACH__( j: Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__( j :Test3d_y_iter <6 >) { ++count; }
+	FOREACH__( j :Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__( j : Test3d_y_iter <6 >) { ++count; }
+	FOREACH__( j : Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__ (j:Test3d_y_iter <6 >) { ++count; }
+	FOREACH__ (j:Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__ (j: Test3d_y_iter <6 >) { ++count; }
+	FOREACH__ (j: Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__ (j :Test3d_y_iter <6 >) { ++count; }
+	FOREACH__ (j :Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__ (j : Test3d_y_iter <6 >) { ++count; }
+	FOREACH__ (j : Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__ ( j:Test3d_y_iter <6 >) { ++count; }
+	FOREACH__ ( j:Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__ ( j: Test3d_y_iter <6 >) { ++count; }
+	FOREACH__ ( j: Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__ ( j :Test3d_y_iter <6 >) { ++count; }
+	FOREACH__ ( j :Test3d_y_iter <6 > ) { ++count; }
+	FOREACH__ ( j : Test3d_y_iter <6 >) { ++count; }
+	FOREACH__ ( j : Test3d_y_iter <6 > ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -2208,7 +2208,7 @@ TEST__ y_iter_Syntax6a()
 {
 	new
 		count = 0;
-	foreach (new i : y_iter_Syntax6(1024))
+	FOREACH__ (new i : y_iter_Syntax6(1024))
 	{
 		ASSERT_ZE(i % 1048576);
 		++count;
@@ -2220,74 +2220,74 @@ TEST__ y_iter_Syntax6b()
 {
 	new
 		count = 0;
-	foreach(new i:y_iter_Syntax6(1024)) { ++count; }
-	foreach(new i:y_iter_Syntax6(1024) ) { ++count; }
-	foreach(new i: y_iter_Syntax6(1024)) { ++count; }
-	foreach(new i: y_iter_Syntax6(1024) ) { ++count; }
-	foreach(new i :y_iter_Syntax6(1024)) { ++count; }
-	foreach(new i :y_iter_Syntax6(1024) ) { ++count; }
-	foreach(new i : y_iter_Syntax6(1024)) { ++count; }
-	foreach(new i : y_iter_Syntax6(1024) ) { ++count; }
-	foreach( new i:y_iter_Syntax6(1024)) { ++count; }
-	foreach( new i:y_iter_Syntax6(1024) ) { ++count; }
-	foreach( new i: y_iter_Syntax6(1024)) { ++count; }
-	foreach( new i: y_iter_Syntax6(1024) ) { ++count; }
-	foreach( new i :y_iter_Syntax6(1024)) { ++count; }
-	foreach( new i :y_iter_Syntax6(1024) ) { ++count; }
-	foreach( new i : y_iter_Syntax6(1024)) { ++count; }
-	foreach( new i : y_iter_Syntax6(1024) ) { ++count; }
-	foreach (new i:y_iter_Syntax6(1024)) { ++count; }
-	foreach (new i:y_iter_Syntax6(1024) ) { ++count; }
-	foreach (new i: y_iter_Syntax6(1024)) { ++count; }
-	foreach (new i: y_iter_Syntax6(1024) ) { ++count; }
-	foreach (new i :y_iter_Syntax6(1024)) { ++count; }
-	foreach (new i :y_iter_Syntax6(1024) ) { ++count; }
-	foreach (new i : y_iter_Syntax6(1024)) { ++count; }
-	foreach (new i : y_iter_Syntax6(1024) ) { ++count; }
-	foreach ( new i:y_iter_Syntax6(1024)) { ++count; }
-	foreach ( new i:y_iter_Syntax6(1024) ) { ++count; }
-	foreach ( new i: y_iter_Syntax6(1024)) { ++count; }
-	foreach ( new i: y_iter_Syntax6(1024) ) { ++count; }
-	foreach ( new i :y_iter_Syntax6(1024)) { ++count; }
-	foreach ( new i :y_iter_Syntax6(1024) ) { ++count; }
-	foreach ( new i : y_iter_Syntax6(1024)) { ++count; }
-	foreach ( new i : y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__(new i:y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__(new i:y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__(new i: y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__(new i: y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__(new i :y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__(new i :y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__(new i : y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__(new i : y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__( new i:y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__( new i:y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__( new i: y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__( new i: y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__( new i :y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__( new i :y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__( new i : y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__( new i : y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__ (new i:y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__ (new i:y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__ (new i: y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__ (new i: y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__ (new i :y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__ (new i :y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__ (new i : y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__ (new i : y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__ ( new i:y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__ ( new i:y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__ ( new i: y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__ ( new i: y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__ ( new i :y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__ ( new i :y_iter_Syntax6(1024) ) { ++count; }
+	FOREACH__ ( new i : y_iter_Syntax6(1024)) { ++count; }
+	FOREACH__ ( new i : y_iter_Syntax6(1024) ) { ++count; }
 	ASSERT_EQ(count, 4095 * 1 * 32);
-	TODO(217, "Iterators with state in `foreach` without `new`.");
+	TODO(217, "Iterators with state in `FOREACH__` without `new`.");
 //	new
 //		j;
-//	foreach(j:y_iter_Syntax6(1024)) { ++count; }
-//	foreach(j:y_iter_Syntax6(1024) ) { ++count; }
-//	foreach(j: y_iter_Syntax6(1024)) { ++count; }
-//	foreach(j: y_iter_Syntax6(1024) ) { ++count; }
-//	foreach(j :y_iter_Syntax6(1024)) { ++count; }
-//	foreach(j :y_iter_Syntax6(1024) ) { ++count; }
-//	foreach(j : y_iter_Syntax6(1024)) { ++count; }
-//	foreach(j : y_iter_Syntax6(1024) ) { ++count; }
-//	foreach( j:y_iter_Syntax6(1024)) { ++count; }
-//	foreach( j:y_iter_Syntax6(1024) ) { ++count; }
-//	foreach( j: y_iter_Syntax6(1024)) { ++count; }
-//	foreach( j: y_iter_Syntax6(1024) ) { ++count; }
-//	foreach( j :y_iter_Syntax6(1024)) { ++count; }
-//	foreach( j :y_iter_Syntax6(1024) ) { ++count; }
-//	foreach( j : y_iter_Syntax6(1024)) { ++count; }
-//	foreach( j : y_iter_Syntax6(1024) ) { ++count; }
-//	foreach (j:y_iter_Syntax6(1024)) { ++count; }
-//	foreach (j:y_iter_Syntax6(1024) ) { ++count; }
-//	foreach (j: y_iter_Syntax6(1024)) { ++count; }
-//	foreach (j: y_iter_Syntax6(1024) ) { ++count; }
-//	foreach (j :y_iter_Syntax6(1024)) { ++count; }
-//	foreach (j :y_iter_Syntax6(1024) ) { ++count; }
-//	foreach (j : y_iter_Syntax6(1024)) { ++count; }
-//	foreach (j : y_iter_Syntax6(1024) ) { ++count; }
-//	foreach ( j:y_iter_Syntax6(1024)) { ++count; }
-//	foreach ( j:y_iter_Syntax6(1024) ) { ++count; }
-//	foreach ( j: y_iter_Syntax6(1024)) { ++count; }
-//	foreach ( j: y_iter_Syntax6(1024) ) { ++count; }
-//	foreach ( j :y_iter_Syntax6(1024)) { ++count; }
-//	foreach ( j :y_iter_Syntax6(1024) ) { ++count; }
-//	foreach ( j : y_iter_Syntax6(1024)) { ++count; }
-//	foreach ( j : y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__(j:y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__(j:y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__(j: y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__(j: y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__(j :y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__(j :y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__(j : y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__(j : y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__( j:y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__( j:y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__( j: y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__( j: y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__( j :y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__( j :y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__( j : y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__( j : y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__ (j:y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__ (j:y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__ (j: y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__ (j: y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__ (j :y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__ (j :y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__ (j : y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__ (j : y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__ ( j:y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__ ( j:y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__ ( j: y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__ ( j: y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__ ( j :y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__ ( j :y_iter_Syntax6(1024) ) { ++count; }
+//	FOREACH__ ( j : y_iter_Syntax6(1024)) { ++count; }
+//	FOREACH__ ( j : y_iter_Syntax6(1024) ) { ++count; }
 //	ASSERT_EQ(count, 4095 * 2 * 32);
 }
 
@@ -2295,74 +2295,74 @@ TEST__ y_iter_Syntax6c()
 {
 	new
 		count = 0;
-	foreach(new i:y_iter_Syntax6[1024]) { ++count; }
-	foreach(new i:y_iter_Syntax6[1024] ) { ++count; }
-	foreach(new i: y_iter_Syntax6[1024]) { ++count; }
-	foreach(new i: y_iter_Syntax6[1024] ) { ++count; }
-	foreach(new i :y_iter_Syntax6[1024]) { ++count; }
-	foreach(new i :y_iter_Syntax6[1024] ) { ++count; }
-	foreach(new i : y_iter_Syntax6[1024]) { ++count; }
-	foreach(new i : y_iter_Syntax6[1024] ) { ++count; }
-	foreach( new i:y_iter_Syntax6[1024]) { ++count; }
-	foreach( new i:y_iter_Syntax6[1024] ) { ++count; }
-	foreach( new i: y_iter_Syntax6[1024]) { ++count; }
-	foreach( new i: y_iter_Syntax6[1024] ) { ++count; }
-	foreach( new i :y_iter_Syntax6[1024]) { ++count; }
-	foreach( new i :y_iter_Syntax6[1024] ) { ++count; }
-	foreach( new i : y_iter_Syntax6[1024]) { ++count; }
-	foreach( new i : y_iter_Syntax6[1024] ) { ++count; }
-	foreach (new i:y_iter_Syntax6[1024]) { ++count; }
-	foreach (new i:y_iter_Syntax6[1024] ) { ++count; }
-	foreach (new i: y_iter_Syntax6[1024]) { ++count; }
-	foreach (new i: y_iter_Syntax6[1024] ) { ++count; }
-	foreach (new i :y_iter_Syntax6[1024]) { ++count; }
-	foreach (new i :y_iter_Syntax6[1024] ) { ++count; }
-	foreach (new i : y_iter_Syntax6[1024]) { ++count; }
-	foreach (new i : y_iter_Syntax6[1024] ) { ++count; }
-	foreach ( new i:y_iter_Syntax6[1024]) { ++count; }
-	foreach ( new i:y_iter_Syntax6[1024] ) { ++count; }
-	foreach ( new i: y_iter_Syntax6[1024]) { ++count; }
-	foreach ( new i: y_iter_Syntax6[1024] ) { ++count; }
-	foreach ( new i :y_iter_Syntax6[1024]) { ++count; }
-	foreach ( new i :y_iter_Syntax6[1024] ) { ++count; }
-	foreach ( new i : y_iter_Syntax6[1024]) { ++count; }
-	foreach ( new i : y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__(new i:y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__(new i:y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__(new i: y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__(new i: y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__(new i :y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__(new i :y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__(new i : y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__(new i : y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__( new i:y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__( new i:y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__( new i: y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__( new i: y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__( new i :y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__( new i :y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__( new i : y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__( new i : y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__ (new i:y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__ (new i:y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__ (new i: y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__ (new i: y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__ (new i :y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__ (new i :y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__ (new i : y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__ (new i : y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__ ( new i:y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__ ( new i:y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__ ( new i: y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__ ( new i: y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__ ( new i :y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__ ( new i :y_iter_Syntax6[1024] ) { ++count; }
+	FOREACH__ ( new i : y_iter_Syntax6[1024]) { ++count; }
+	FOREACH__ ( new i : y_iter_Syntax6[1024] ) { ++count; }
 	ASSERT_EQ(count, 4095 * 1 * 32);
-	TODO(217, "Iterators with state in `foreach` without `new`.");
+	TODO(217, "Iterators with state in `FOREACH__` without `new`.");
 //	new
 //		j;
-//	foreach(j:y_iter_Syntax6[1024]) { ++count; }
-//	foreach(j:y_iter_Syntax6[1024] ) { ++count; }
-//	foreach(j: y_iter_Syntax6[1024]) { ++count; }
-//	foreach(j: y_iter_Syntax6[1024] ) { ++count; }
-//	foreach(j :y_iter_Syntax6[1024]) { ++count; }
-//	foreach(j :y_iter_Syntax6[1024] ) { ++count; }
-//	foreach(j : y_iter_Syntax6[1024]) { ++count; }
-//	foreach(j : y_iter_Syntax6[1024] ) { ++count; }
-//	foreach( j:y_iter_Syntax6[1024]) { ++count; }
-//	foreach( j:y_iter_Syntax6[1024] ) { ++count; }
-//	foreach( j: y_iter_Syntax6[1024]) { ++count; }
-//	foreach( j: y_iter_Syntax6[1024] ) { ++count; }
-//	foreach( j :y_iter_Syntax6[1024]) { ++count; }
-//	foreach( j :y_iter_Syntax6[1024] ) { ++count; }
-//	foreach( j : y_iter_Syntax6[1024]) { ++count; }
-//	foreach( j : y_iter_Syntax6[1024] ) { ++count; }
-//	foreach (j:y_iter_Syntax6[1024]) { ++count; }
-//	foreach (j:y_iter_Syntax6[1024] ) { ++count; }
-//	foreach (j: y_iter_Syntax6[1024]) { ++count; }
-//	foreach (j: y_iter_Syntax6[1024] ) { ++count; }
-//	foreach (j :y_iter_Syntax6[1024]) { ++count; }
-//	foreach (j :y_iter_Syntax6[1024] ) { ++count; }
-//	foreach (j : y_iter_Syntax6[1024]) { ++count; }
-//	foreach (j : y_iter_Syntax6[1024] ) { ++count; }
-//	foreach ( j:y_iter_Syntax6[1024]) { ++count; }
-//	foreach ( j:y_iter_Syntax6[1024] ) { ++count; }
-//	foreach ( j: y_iter_Syntax6[1024]) { ++count; }
-//	foreach ( j: y_iter_Syntax6[1024] ) { ++count; }
-//	foreach ( j :y_iter_Syntax6[1024]) { ++count; }
-//	foreach ( j :y_iter_Syntax6[1024] ) { ++count; }
-//	foreach ( j : y_iter_Syntax6[1024]) { ++count; }
-//	foreach ( j : y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__(j:y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__(j:y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__(j: y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__(j: y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__(j :y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__(j :y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__(j : y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__(j : y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__( j:y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__( j:y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__( j: y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__( j: y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__( j :y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__( j :y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__( j : y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__( j : y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__ (j:y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__ (j:y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__ (j: y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__ (j: y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__ (j :y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__ (j :y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__ (j : y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__ (j : y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__ ( j:y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__ ( j:y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__ ( j: y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__ ( j: y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__ ( j :y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__ ( j :y_iter_Syntax6[1024] ) { ++count; }
+//	FOREACH__ ( j : y_iter_Syntax6[1024]) { ++count; }
+//	FOREACH__ ( j : y_iter_Syntax6[1024] ) { ++count; }
 //	ASSERT_EQ(count, 4095 * 2 * 32);
 }
 
@@ -2370,72 +2370,72 @@ TEST__ y_iter_Syntax2a()
 {
 	new
 		count = 0;
-	foreach(new i:Test2a_y_iter()) { ++count; }
-	foreach(new i:Test2a_y_iter() ) { ++count; }
-	foreach(new i: Test2a_y_iter()) { ++count; }
-	foreach(new i: Test2a_y_iter() ) { ++count; }
-	foreach(new i :Test2a_y_iter()) { ++count; }
-	foreach(new i :Test2a_y_iter() ) { ++count; }
-	foreach(new i : Test2a_y_iter()) { ++count; }
-	foreach(new i : Test2a_y_iter() ) { ++count; }
-	foreach( new i:Test2a_y_iter()) { ++count; }
-	foreach( new i:Test2a_y_iter() ) { ++count; }
-	foreach( new i: Test2a_y_iter()) { ++count; }
-	foreach( new i: Test2a_y_iter() ) { ++count; }
-	foreach( new i :Test2a_y_iter()) { ++count; }
-	foreach( new i :Test2a_y_iter() ) { ++count; }
-	foreach( new i : Test2a_y_iter()) { ++count; }
-	foreach( new i : Test2a_y_iter() ) { ++count; }
-	foreach (new i:Test2a_y_iter()) { ++count; }
-	foreach (new i:Test2a_y_iter() ) { ++count; }
-	foreach (new i: Test2a_y_iter()) { ++count; }
-	foreach (new i: Test2a_y_iter() ) { ++count; }
-	foreach (new i :Test2a_y_iter()) { ++count; }
-	foreach (new i :Test2a_y_iter() ) { ++count; }
-	foreach (new i : Test2a_y_iter()) { ++count; }
-	foreach (new i : Test2a_y_iter() ) { ++count; }
-	foreach ( new i:Test2a_y_iter()) { ++count; }
-	foreach ( new i:Test2a_y_iter() ) { ++count; }
-	foreach ( new i: Test2a_y_iter()) { ++count; }
-	foreach ( new i: Test2a_y_iter() ) { ++count; }
-	foreach ( new i :Test2a_y_iter()) { ++count; }
-	foreach ( new i :Test2a_y_iter() ) { ++count; }
-	foreach ( new i : Test2a_y_iter()) { ++count; }
-	foreach ( new i : Test2a_y_iter() ) { ++count; }
+	FOREACH__(new i:Test2a_y_iter()) { ++count; }
+	FOREACH__(new i:Test2a_y_iter() ) { ++count; }
+	FOREACH__(new i: Test2a_y_iter()) { ++count; }
+	FOREACH__(new i: Test2a_y_iter() ) { ++count; }
+	FOREACH__(new i :Test2a_y_iter()) { ++count; }
+	FOREACH__(new i :Test2a_y_iter() ) { ++count; }
+	FOREACH__(new i : Test2a_y_iter()) { ++count; }
+	FOREACH__(new i : Test2a_y_iter() ) { ++count; }
+	FOREACH__( new i:Test2a_y_iter()) { ++count; }
+	FOREACH__( new i:Test2a_y_iter() ) { ++count; }
+	FOREACH__( new i: Test2a_y_iter()) { ++count; }
+	FOREACH__( new i: Test2a_y_iter() ) { ++count; }
+	FOREACH__( new i :Test2a_y_iter()) { ++count; }
+	FOREACH__( new i :Test2a_y_iter() ) { ++count; }
+	FOREACH__( new i : Test2a_y_iter()) { ++count; }
+	FOREACH__( new i : Test2a_y_iter() ) { ++count; }
+	FOREACH__ (new i:Test2a_y_iter()) { ++count; }
+	FOREACH__ (new i:Test2a_y_iter() ) { ++count; }
+	FOREACH__ (new i: Test2a_y_iter()) { ++count; }
+	FOREACH__ (new i: Test2a_y_iter() ) { ++count; }
+	FOREACH__ (new i :Test2a_y_iter()) { ++count; }
+	FOREACH__ (new i :Test2a_y_iter() ) { ++count; }
+	FOREACH__ (new i : Test2a_y_iter()) { ++count; }
+	FOREACH__ (new i : Test2a_y_iter() ) { ++count; }
+	FOREACH__ ( new i:Test2a_y_iter()) { ++count; }
+	FOREACH__ ( new i:Test2a_y_iter() ) { ++count; }
+	FOREACH__ ( new i: Test2a_y_iter()) { ++count; }
+	FOREACH__ ( new i: Test2a_y_iter() ) { ++count; }
+	FOREACH__ ( new i :Test2a_y_iter()) { ++count; }
+	FOREACH__ ( new i :Test2a_y_iter() ) { ++count; }
+	FOREACH__ ( new i : Test2a_y_iter()) { ++count; }
+	FOREACH__ ( new i : Test2a_y_iter() ) { ++count; }
 	new
 		j;
-	foreach(j:Test2a_y_iter()) { ++count; }
-	foreach(j:Test2a_y_iter() ) { ++count; }
-	foreach(j: Test2a_y_iter()) { ++count; }
-	foreach(j: Test2a_y_iter() ) { ++count; }
-	foreach(j :Test2a_y_iter()) { ++count; }
-	foreach(j :Test2a_y_iter() ) { ++count; }
-	foreach(j : Test2a_y_iter()) { ++count; }
-	foreach(j : Test2a_y_iter() ) { ++count; }
-	foreach( j:Test2a_y_iter()) { ++count; }
-	foreach( j:Test2a_y_iter() ) { ++count; }
-	foreach( j: Test2a_y_iter()) { ++count; }
-	foreach( j: Test2a_y_iter() ) { ++count; }
-	foreach( j :Test2a_y_iter()) { ++count; }
-	foreach( j :Test2a_y_iter() ) { ++count; }
-	foreach( j : Test2a_y_iter()) { ++count; }
-	foreach( j : Test2a_y_iter() ) { ++count; }
-	foreach (j:Test2a_y_iter()) { ++count; }
-	foreach (j:Test2a_y_iter() ) { ++count; }
-	foreach (j: Test2a_y_iter()) { ++count; }
-	foreach (j: Test2a_y_iter() ) { ++count; }
-	foreach (j :Test2a_y_iter()) { ++count; }
-	foreach (j :Test2a_y_iter() ) { ++count; }
-	foreach (j : Test2a_y_iter()) { ++count; }
-	foreach (j : Test2a_y_iter() ) { ++count; }
-	foreach ( j:Test2a_y_iter()) { ++count; }
-	foreach ( j:Test2a_y_iter() ) { ++count; }
-	foreach ( j: Test2a_y_iter()) { ++count; }
-	foreach ( j: Test2a_y_iter() ) { ++count; }
-	foreach ( j :Test2a_y_iter()) { ++count; }
-	foreach ( j :Test2a_y_iter() ) { ++count; }
-	foreach ( j : Test2a_y_iter()) { ++count; }
-	foreach ( j : Test2a_y_iter() ) { ++count; }
+	FOREACH__(j:Test2a_y_iter()) { ++count; }
+	FOREACH__(j:Test2a_y_iter() ) { ++count; }
+	FOREACH__(j: Test2a_y_iter()) { ++count; }
+	FOREACH__(j: Test2a_y_iter() ) { ++count; }
+	FOREACH__(j :Test2a_y_iter()) { ++count; }
+	FOREACH__(j :Test2a_y_iter() ) { ++count; }
+	FOREACH__(j : Test2a_y_iter()) { ++count; }
+	FOREACH__(j : Test2a_y_iter() ) { ++count; }
+	FOREACH__( j:Test2a_y_iter()) { ++count; }
+	FOREACH__( j:Test2a_y_iter() ) { ++count; }
+	FOREACH__( j: Test2a_y_iter()) { ++count; }
+	FOREACH__( j: Test2a_y_iter() ) { ++count; }
+	FOREACH__( j :Test2a_y_iter()) { ++count; }
+	FOREACH__( j :Test2a_y_iter() ) { ++count; }
+	FOREACH__( j : Test2a_y_iter()) { ++count; }
+	FOREACH__( j : Test2a_y_iter() ) { ++count; }
+	FOREACH__ (j:Test2a_y_iter()) { ++count; }
+	FOREACH__ (j:Test2a_y_iter() ) { ++count; }
+	FOREACH__ (j: Test2a_y_iter()) { ++count; }
+	FOREACH__ (j: Test2a_y_iter() ) { ++count; }
+	FOREACH__ (j :Test2a_y_iter()) { ++count; }
+	FOREACH__ (j :Test2a_y_iter() ) { ++count; }
+	FOREACH__ (j : Test2a_y_iter()) { ++count; }
+	FOREACH__ (j : Test2a_y_iter() ) { ++count; }
+	FOREACH__ ( j:Test2a_y_iter()) { ++count; }
+	FOREACH__ ( j:Test2a_y_iter() ) { ++count; }
+	FOREACH__ ( j: Test2a_y_iter()) { ++count; }
+	FOREACH__ ( j: Test2a_y_iter() ) { ++count; }
+	FOREACH__ ( j :Test2a_y_iter()) { ++count; }
+	FOREACH__ ( j :Test2a_y_iter() ) { ++count; }
+	FOREACH__ ( j : Test2a_y_iter()) { ++count; }
+	FOREACH__ ( j : Test2a_y_iter() ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -2443,72 +2443,72 @@ TEST__ y_iter_Syntax2e()
 {
 	new
 		count = 0;
-	foreach(new i:Test2a_y_iter) { ++count; }
-	foreach(new i:Test2a_y_iter ) { ++count; }
-	foreach(new i: Test2a_y_iter) { ++count; }
-	foreach(new i: Test2a_y_iter ) { ++count; }
-	foreach(new i :Test2a_y_iter) { ++count; }
-	foreach(new i :Test2a_y_iter ) { ++count; }
-	foreach(new i : Test2a_y_iter) { ++count; }
-	foreach(new i : Test2a_y_iter ) { ++count; }
-	foreach( new i:Test2a_y_iter) { ++count; }
-	foreach( new i:Test2a_y_iter ) { ++count; }
-	foreach( new i: Test2a_y_iter) { ++count; }
-	foreach( new i: Test2a_y_iter ) { ++count; }
-	foreach( new i :Test2a_y_iter) { ++count; }
-	foreach( new i :Test2a_y_iter ) { ++count; }
-	foreach( new i : Test2a_y_iter) { ++count; }
-	foreach( new i : Test2a_y_iter ) { ++count; }
-	foreach (new i:Test2a_y_iter) { ++count; }
-	foreach (new i:Test2a_y_iter ) { ++count; }
-	foreach (new i: Test2a_y_iter) { ++count; }
-	foreach (new i: Test2a_y_iter ) { ++count; }
-	foreach (new i :Test2a_y_iter) { ++count; }
-	foreach (new i :Test2a_y_iter ) { ++count; }
-	foreach (new i : Test2a_y_iter) { ++count; }
-	foreach (new i : Test2a_y_iter ) { ++count; }
-	foreach ( new i:Test2a_y_iter) { ++count; }
-	foreach ( new i:Test2a_y_iter ) { ++count; }
-	foreach ( new i: Test2a_y_iter) { ++count; }
-	foreach ( new i: Test2a_y_iter ) { ++count; }
-	foreach ( new i :Test2a_y_iter) { ++count; }
-	foreach ( new i :Test2a_y_iter ) { ++count; }
-	foreach ( new i : Test2a_y_iter) { ++count; }
-	foreach ( new i : Test2a_y_iter ) { ++count; }
+	FOREACH__(new i:Test2a_y_iter) { ++count; }
+	FOREACH__(new i:Test2a_y_iter ) { ++count; }
+	FOREACH__(new i: Test2a_y_iter) { ++count; }
+	FOREACH__(new i: Test2a_y_iter ) { ++count; }
+	FOREACH__(new i :Test2a_y_iter) { ++count; }
+	FOREACH__(new i :Test2a_y_iter ) { ++count; }
+	FOREACH__(new i : Test2a_y_iter) { ++count; }
+	FOREACH__(new i : Test2a_y_iter ) { ++count; }
+	FOREACH__( new i:Test2a_y_iter) { ++count; }
+	FOREACH__( new i:Test2a_y_iter ) { ++count; }
+	FOREACH__( new i: Test2a_y_iter) { ++count; }
+	FOREACH__( new i: Test2a_y_iter ) { ++count; }
+	FOREACH__( new i :Test2a_y_iter) { ++count; }
+	FOREACH__( new i :Test2a_y_iter ) { ++count; }
+	FOREACH__( new i : Test2a_y_iter) { ++count; }
+	FOREACH__( new i : Test2a_y_iter ) { ++count; }
+	FOREACH__ (new i:Test2a_y_iter) { ++count; }
+	FOREACH__ (new i:Test2a_y_iter ) { ++count; }
+	FOREACH__ (new i: Test2a_y_iter) { ++count; }
+	FOREACH__ (new i: Test2a_y_iter ) { ++count; }
+	FOREACH__ (new i :Test2a_y_iter) { ++count; }
+	FOREACH__ (new i :Test2a_y_iter ) { ++count; }
+	FOREACH__ (new i : Test2a_y_iter) { ++count; }
+	FOREACH__ (new i : Test2a_y_iter ) { ++count; }
+	FOREACH__ ( new i:Test2a_y_iter) { ++count; }
+	FOREACH__ ( new i:Test2a_y_iter ) { ++count; }
+	FOREACH__ ( new i: Test2a_y_iter) { ++count; }
+	FOREACH__ ( new i: Test2a_y_iter ) { ++count; }
+	FOREACH__ ( new i :Test2a_y_iter) { ++count; }
+	FOREACH__ ( new i :Test2a_y_iter ) { ++count; }
+	FOREACH__ ( new i : Test2a_y_iter) { ++count; }
+	FOREACH__ ( new i : Test2a_y_iter ) { ++count; }
 	new
 		j;
-	foreach(j:Test2a_y_iter) { ++count; }
-	foreach(j:Test2a_y_iter ) { ++count; }
-	foreach(j: Test2a_y_iter) { ++count; }
-	foreach(j: Test2a_y_iter ) { ++count; }
-	foreach(j :Test2a_y_iter) { ++count; }
-	foreach(j :Test2a_y_iter ) { ++count; }
-	foreach(j : Test2a_y_iter) { ++count; }
-	foreach(j : Test2a_y_iter ) { ++count; }
-	foreach( j:Test2a_y_iter) { ++count; }
-	foreach( j:Test2a_y_iter ) { ++count; }
-	foreach( j: Test2a_y_iter) { ++count; }
-	foreach( j: Test2a_y_iter ) { ++count; }
-	foreach( j :Test2a_y_iter) { ++count; }
-	foreach( j :Test2a_y_iter ) { ++count; }
-	foreach( j : Test2a_y_iter) { ++count; }
-	foreach( j : Test2a_y_iter ) { ++count; }
-	foreach (j:Test2a_y_iter) { ++count; }
-	foreach (j:Test2a_y_iter ) { ++count; }
-	foreach (j: Test2a_y_iter) { ++count; }
-	foreach (j: Test2a_y_iter ) { ++count; }
-	foreach (j :Test2a_y_iter) { ++count; }
-	foreach (j :Test2a_y_iter ) { ++count; }
-	foreach (j : Test2a_y_iter) { ++count; }
-	foreach (j : Test2a_y_iter ) { ++count; }
-	foreach ( j:Test2a_y_iter) { ++count; }
-	foreach ( j:Test2a_y_iter ) { ++count; }
-	foreach ( j: Test2a_y_iter) { ++count; }
-	foreach ( j: Test2a_y_iter ) { ++count; }
-	foreach ( j :Test2a_y_iter) { ++count; }
-	foreach ( j :Test2a_y_iter ) { ++count; }
-	foreach ( j : Test2a_y_iter) { ++count; }
-	foreach ( j : Test2a_y_iter ) { ++count; }
+	FOREACH__(j:Test2a_y_iter) { ++count; }
+	FOREACH__(j:Test2a_y_iter ) { ++count; }
+	FOREACH__(j: Test2a_y_iter) { ++count; }
+	FOREACH__(j: Test2a_y_iter ) { ++count; }
+	FOREACH__(j :Test2a_y_iter) { ++count; }
+	FOREACH__(j :Test2a_y_iter ) { ++count; }
+	FOREACH__(j : Test2a_y_iter) { ++count; }
+	FOREACH__(j : Test2a_y_iter ) { ++count; }
+	FOREACH__( j:Test2a_y_iter) { ++count; }
+	FOREACH__( j:Test2a_y_iter ) { ++count; }
+	FOREACH__( j: Test2a_y_iter) { ++count; }
+	FOREACH__( j: Test2a_y_iter ) { ++count; }
+	FOREACH__( j :Test2a_y_iter) { ++count; }
+	FOREACH__( j :Test2a_y_iter ) { ++count; }
+	FOREACH__( j : Test2a_y_iter) { ++count; }
+	FOREACH__( j : Test2a_y_iter ) { ++count; }
+	FOREACH__ (j:Test2a_y_iter) { ++count; }
+	FOREACH__ (j:Test2a_y_iter ) { ++count; }
+	FOREACH__ (j: Test2a_y_iter) { ++count; }
+	FOREACH__ (j: Test2a_y_iter ) { ++count; }
+	FOREACH__ (j :Test2a_y_iter) { ++count; }
+	FOREACH__ (j :Test2a_y_iter ) { ++count; }
+	FOREACH__ (j : Test2a_y_iter) { ++count; }
+	FOREACH__ (j : Test2a_y_iter ) { ++count; }
+	FOREACH__ ( j:Test2a_y_iter) { ++count; }
+	FOREACH__ ( j:Test2a_y_iter ) { ++count; }
+	FOREACH__ ( j: Test2a_y_iter) { ++count; }
+	FOREACH__ ( j: Test2a_y_iter ) { ++count; }
+	FOREACH__ ( j :Test2a_y_iter) { ++count; }
+	FOREACH__ ( j :Test2a_y_iter ) { ++count; }
+	FOREACH__ ( j : Test2a_y_iter) { ++count; }
+	FOREACH__ ( j : Test2a_y_iter ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -2516,72 +2516,72 @@ TEST__ y_iter_Syntax2b()
 {
 	new
 		count = 0;
-	foreach(new i:Test2b_y_iter( )) { ++count; }
-	foreach(new i:Test2b_y_iter( ) ) { ++count; }
-	foreach(new i: Test2b_y_iter( )) { ++count; }
-	foreach(new i: Test2b_y_iter( ) ) { ++count; }
-	foreach(new i :Test2b_y_iter( )) { ++count; }
-	foreach(new i :Test2b_y_iter( ) ) { ++count; }
-	foreach(new i : Test2b_y_iter( )) { ++count; }
-	foreach(new i : Test2b_y_iter( ) ) { ++count; }
-	foreach( new i:Test2b_y_iter( )) { ++count; }
-	foreach( new i:Test2b_y_iter( ) ) { ++count; }
-	foreach( new i: Test2b_y_iter( )) { ++count; }
-	foreach( new i: Test2b_y_iter( ) ) { ++count; }
-	foreach( new i :Test2b_y_iter( )) { ++count; }
-	foreach( new i :Test2b_y_iter( ) ) { ++count; }
-	foreach( new i : Test2b_y_iter( )) { ++count; }
-	foreach( new i : Test2b_y_iter( ) ) { ++count; }
-	foreach (new i:Test2b_y_iter( )) { ++count; }
-	foreach (new i:Test2b_y_iter( ) ) { ++count; }
-	foreach (new i: Test2b_y_iter( )) { ++count; }
-	foreach (new i: Test2b_y_iter( ) ) { ++count; }
-	foreach (new i :Test2b_y_iter( )) { ++count; }
-	foreach (new i :Test2b_y_iter( ) ) { ++count; }
-	foreach (new i : Test2b_y_iter( )) { ++count; }
-	foreach (new i : Test2b_y_iter( ) ) { ++count; }
-	foreach ( new i:Test2b_y_iter( )) { ++count; }
-	foreach ( new i:Test2b_y_iter( ) ) { ++count; }
-	foreach ( new i: Test2b_y_iter( )) { ++count; }
-	foreach ( new i: Test2b_y_iter( ) ) { ++count; }
-	foreach ( new i :Test2b_y_iter( )) { ++count; }
-	foreach ( new i :Test2b_y_iter( ) ) { ++count; }
-	foreach ( new i : Test2b_y_iter( )) { ++count; }
-	foreach ( new i : Test2b_y_iter( ) ) { ++count; }
+	FOREACH__(new i:Test2b_y_iter( )) { ++count; }
+	FOREACH__(new i:Test2b_y_iter( ) ) { ++count; }
+	FOREACH__(new i: Test2b_y_iter( )) { ++count; }
+	FOREACH__(new i: Test2b_y_iter( ) ) { ++count; }
+	FOREACH__(new i :Test2b_y_iter( )) { ++count; }
+	FOREACH__(new i :Test2b_y_iter( ) ) { ++count; }
+	FOREACH__(new i : Test2b_y_iter( )) { ++count; }
+	FOREACH__(new i : Test2b_y_iter( ) ) { ++count; }
+	FOREACH__( new i:Test2b_y_iter( )) { ++count; }
+	FOREACH__( new i:Test2b_y_iter( ) ) { ++count; }
+	FOREACH__( new i: Test2b_y_iter( )) { ++count; }
+	FOREACH__( new i: Test2b_y_iter( ) ) { ++count; }
+	FOREACH__( new i :Test2b_y_iter( )) { ++count; }
+	FOREACH__( new i :Test2b_y_iter( ) ) { ++count; }
+	FOREACH__( new i : Test2b_y_iter( )) { ++count; }
+	FOREACH__( new i : Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ (new i:Test2b_y_iter( )) { ++count; }
+	FOREACH__ (new i:Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ (new i: Test2b_y_iter( )) { ++count; }
+	FOREACH__ (new i: Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ (new i :Test2b_y_iter( )) { ++count; }
+	FOREACH__ (new i :Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ (new i : Test2b_y_iter( )) { ++count; }
+	FOREACH__ (new i : Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ ( new i:Test2b_y_iter( )) { ++count; }
+	FOREACH__ ( new i:Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ ( new i: Test2b_y_iter( )) { ++count; }
+	FOREACH__ ( new i: Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ ( new i :Test2b_y_iter( )) { ++count; }
+	FOREACH__ ( new i :Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ ( new i : Test2b_y_iter( )) { ++count; }
+	FOREACH__ ( new i : Test2b_y_iter( ) ) { ++count; }
 	new
 		j;
-	foreach(j:Test2b_y_iter( )) { ++count; }
-	foreach(j:Test2b_y_iter( ) ) { ++count; }
-	foreach(j: Test2b_y_iter( )) { ++count; }
-	foreach(j: Test2b_y_iter( ) ) { ++count; }
-	foreach(j :Test2b_y_iter( )) { ++count; }
-	foreach(j :Test2b_y_iter( ) ) { ++count; }
-	foreach(j : Test2b_y_iter( )) { ++count; }
-	foreach(j : Test2b_y_iter( ) ) { ++count; }
-	foreach( j:Test2b_y_iter( )) { ++count; }
-	foreach( j:Test2b_y_iter( ) ) { ++count; }
-	foreach( j: Test2b_y_iter( )) { ++count; }
-	foreach( j: Test2b_y_iter( ) ) { ++count; }
-	foreach( j :Test2b_y_iter( )) { ++count; }
-	foreach( j :Test2b_y_iter( ) ) { ++count; }
-	foreach( j : Test2b_y_iter( )) { ++count; }
-	foreach( j : Test2b_y_iter( ) ) { ++count; }
-	foreach (j:Test2b_y_iter( )) { ++count; }
-	foreach (j:Test2b_y_iter( ) ) { ++count; }
-	foreach (j: Test2b_y_iter( )) { ++count; }
-	foreach (j: Test2b_y_iter( ) ) { ++count; }
-	foreach (j :Test2b_y_iter( )) { ++count; }
-	foreach (j :Test2b_y_iter( ) ) { ++count; }
-	foreach (j : Test2b_y_iter( )) { ++count; }
-	foreach (j : Test2b_y_iter( ) ) { ++count; }
-	foreach ( j:Test2b_y_iter( )) { ++count; }
-	foreach ( j:Test2b_y_iter( ) ) { ++count; }
-	foreach ( j: Test2b_y_iter( )) { ++count; }
-	foreach ( j: Test2b_y_iter( ) ) { ++count; }
-	foreach ( j :Test2b_y_iter( )) { ++count; }
-	foreach ( j :Test2b_y_iter( ) ) { ++count; }
-	foreach ( j : Test2b_y_iter( )) { ++count; }
-	foreach ( j : Test2b_y_iter( ) ) { ++count; }
+	FOREACH__(j:Test2b_y_iter( )) { ++count; }
+	FOREACH__(j:Test2b_y_iter( ) ) { ++count; }
+	FOREACH__(j: Test2b_y_iter( )) { ++count; }
+	FOREACH__(j: Test2b_y_iter( ) ) { ++count; }
+	FOREACH__(j :Test2b_y_iter( )) { ++count; }
+	FOREACH__(j :Test2b_y_iter( ) ) { ++count; }
+	FOREACH__(j : Test2b_y_iter( )) { ++count; }
+	FOREACH__(j : Test2b_y_iter( ) ) { ++count; }
+	FOREACH__( j:Test2b_y_iter( )) { ++count; }
+	FOREACH__( j:Test2b_y_iter( ) ) { ++count; }
+	FOREACH__( j: Test2b_y_iter( )) { ++count; }
+	FOREACH__( j: Test2b_y_iter( ) ) { ++count; }
+	FOREACH__( j :Test2b_y_iter( )) { ++count; }
+	FOREACH__( j :Test2b_y_iter( ) ) { ++count; }
+	FOREACH__( j : Test2b_y_iter( )) { ++count; }
+	FOREACH__( j : Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ (j:Test2b_y_iter( )) { ++count; }
+	FOREACH__ (j:Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ (j: Test2b_y_iter( )) { ++count; }
+	FOREACH__ (j: Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ (j :Test2b_y_iter( )) { ++count; }
+	FOREACH__ (j :Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ (j : Test2b_y_iter( )) { ++count; }
+	FOREACH__ (j : Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ ( j:Test2b_y_iter( )) { ++count; }
+	FOREACH__ ( j:Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ ( j: Test2b_y_iter( )) { ++count; }
+	FOREACH__ ( j: Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ ( j :Test2b_y_iter( )) { ++count; }
+	FOREACH__ ( j :Test2b_y_iter( ) ) { ++count; }
+	FOREACH__ ( j : Test2b_y_iter( )) { ++count; }
+	FOREACH__ ( j : Test2b_y_iter( ) ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -2589,72 +2589,72 @@ TEST__ y_iter_Syntax2c()
 {
 	new
 		count = 0;
-	foreach(new i:Test2c_y_iter ()) { ++count; }
-	foreach(new i:Test2c_y_iter () ) { ++count; }
-	foreach(new i: Test2c_y_iter ()) { ++count; }
-	foreach(new i: Test2c_y_iter () ) { ++count; }
-	foreach(new i :Test2c_y_iter ()) { ++count; }
-	foreach(new i :Test2c_y_iter () ) { ++count; }
-	foreach(new i : Test2c_y_iter ()) { ++count; }
-	foreach(new i : Test2c_y_iter () ) { ++count; }
-	foreach( new i:Test2c_y_iter ()) { ++count; }
-	foreach( new i:Test2c_y_iter () ) { ++count; }
-	foreach( new i: Test2c_y_iter ()) { ++count; }
-	foreach( new i: Test2c_y_iter () ) { ++count; }
-	foreach( new i :Test2c_y_iter ()) { ++count; }
-	foreach( new i :Test2c_y_iter () ) { ++count; }
-	foreach( new i : Test2c_y_iter ()) { ++count; }
-	foreach( new i : Test2c_y_iter () ) { ++count; }
-	foreach (new i:Test2c_y_iter ()) { ++count; }
-	foreach (new i:Test2c_y_iter () ) { ++count; }
-	foreach (new i: Test2c_y_iter ()) { ++count; }
-	foreach (new i: Test2c_y_iter () ) { ++count; }
-	foreach (new i :Test2c_y_iter ()) { ++count; }
-	foreach (new i :Test2c_y_iter () ) { ++count; }
-	foreach (new i : Test2c_y_iter ()) { ++count; }
-	foreach (new i : Test2c_y_iter () ) { ++count; }
-	foreach ( new i:Test2c_y_iter ()) { ++count; }
-	foreach ( new i:Test2c_y_iter () ) { ++count; }
-	foreach ( new i: Test2c_y_iter ()) { ++count; }
-	foreach ( new i: Test2c_y_iter () ) { ++count; }
-	foreach ( new i :Test2c_y_iter ()) { ++count; }
-	foreach ( new i :Test2c_y_iter () ) { ++count; }
-	foreach ( new i : Test2c_y_iter ()) { ++count; }
-	foreach ( new i : Test2c_y_iter () ) { ++count; }
+	FOREACH__(new i:Test2c_y_iter ()) { ++count; }
+	FOREACH__(new i:Test2c_y_iter () ) { ++count; }
+	FOREACH__(new i: Test2c_y_iter ()) { ++count; }
+	FOREACH__(new i: Test2c_y_iter () ) { ++count; }
+	FOREACH__(new i :Test2c_y_iter ()) { ++count; }
+	FOREACH__(new i :Test2c_y_iter () ) { ++count; }
+	FOREACH__(new i : Test2c_y_iter ()) { ++count; }
+	FOREACH__(new i : Test2c_y_iter () ) { ++count; }
+	FOREACH__( new i:Test2c_y_iter ()) { ++count; }
+	FOREACH__( new i:Test2c_y_iter () ) { ++count; }
+	FOREACH__( new i: Test2c_y_iter ()) { ++count; }
+	FOREACH__( new i: Test2c_y_iter () ) { ++count; }
+	FOREACH__( new i :Test2c_y_iter ()) { ++count; }
+	FOREACH__( new i :Test2c_y_iter () ) { ++count; }
+	FOREACH__( new i : Test2c_y_iter ()) { ++count; }
+	FOREACH__( new i : Test2c_y_iter () ) { ++count; }
+	FOREACH__ (new i:Test2c_y_iter ()) { ++count; }
+	FOREACH__ (new i:Test2c_y_iter () ) { ++count; }
+	FOREACH__ (new i: Test2c_y_iter ()) { ++count; }
+	FOREACH__ (new i: Test2c_y_iter () ) { ++count; }
+	FOREACH__ (new i :Test2c_y_iter ()) { ++count; }
+	FOREACH__ (new i :Test2c_y_iter () ) { ++count; }
+	FOREACH__ (new i : Test2c_y_iter ()) { ++count; }
+	FOREACH__ (new i : Test2c_y_iter () ) { ++count; }
+	FOREACH__ ( new i:Test2c_y_iter ()) { ++count; }
+	FOREACH__ ( new i:Test2c_y_iter () ) { ++count; }
+	FOREACH__ ( new i: Test2c_y_iter ()) { ++count; }
+	FOREACH__ ( new i: Test2c_y_iter () ) { ++count; }
+	FOREACH__ ( new i :Test2c_y_iter ()) { ++count; }
+	FOREACH__ ( new i :Test2c_y_iter () ) { ++count; }
+	FOREACH__ ( new i : Test2c_y_iter ()) { ++count; }
+	FOREACH__ ( new i : Test2c_y_iter () ) { ++count; }
 	new
 		j;
-	foreach(j:Test2c_y_iter ()) { ++count; }
-	foreach(j:Test2c_y_iter () ) { ++count; }
-	foreach(j: Test2c_y_iter ()) { ++count; }
-	foreach(j: Test2c_y_iter () ) { ++count; }
-	foreach(j :Test2c_y_iter ()) { ++count; }
-	foreach(j :Test2c_y_iter () ) { ++count; }
-	foreach(j : Test2c_y_iter ()) { ++count; }
-	foreach(j : Test2c_y_iter () ) { ++count; }
-	foreach( j:Test2c_y_iter ()) { ++count; }
-	foreach( j:Test2c_y_iter () ) { ++count; }
-	foreach( j: Test2c_y_iter ()) { ++count; }
-	foreach( j: Test2c_y_iter () ) { ++count; }
-	foreach( j :Test2c_y_iter ()) { ++count; }
-	foreach( j :Test2c_y_iter () ) { ++count; }
-	foreach( j : Test2c_y_iter ()) { ++count; }
-	foreach( j : Test2c_y_iter () ) { ++count; }
-	foreach (j:Test2c_y_iter ()) { ++count; }
-	foreach (j:Test2c_y_iter () ) { ++count; }
-	foreach (j: Test2c_y_iter ()) { ++count; }
-	foreach (j: Test2c_y_iter () ) { ++count; }
-	foreach (j :Test2c_y_iter ()) { ++count; }
-	foreach (j :Test2c_y_iter () ) { ++count; }
-	foreach (j : Test2c_y_iter ()) { ++count; }
-	foreach (j : Test2c_y_iter () ) { ++count; }
-	foreach ( j:Test2c_y_iter ()) { ++count; }
-	foreach ( j:Test2c_y_iter () ) { ++count; }
-	foreach ( j: Test2c_y_iter ()) { ++count; }
-	foreach ( j: Test2c_y_iter () ) { ++count; }
-	foreach ( j :Test2c_y_iter ()) { ++count; }
-	foreach ( j :Test2c_y_iter () ) { ++count; }
-	foreach ( j : Test2c_y_iter ()) { ++count; }
-	foreach ( j : Test2c_y_iter () ) { ++count; }
+	FOREACH__(j:Test2c_y_iter ()) { ++count; }
+	FOREACH__(j:Test2c_y_iter () ) { ++count; }
+	FOREACH__(j: Test2c_y_iter ()) { ++count; }
+	FOREACH__(j: Test2c_y_iter () ) { ++count; }
+	FOREACH__(j :Test2c_y_iter ()) { ++count; }
+	FOREACH__(j :Test2c_y_iter () ) { ++count; }
+	FOREACH__(j : Test2c_y_iter ()) { ++count; }
+	FOREACH__(j : Test2c_y_iter () ) { ++count; }
+	FOREACH__( j:Test2c_y_iter ()) { ++count; }
+	FOREACH__( j:Test2c_y_iter () ) { ++count; }
+	FOREACH__( j: Test2c_y_iter ()) { ++count; }
+	FOREACH__( j: Test2c_y_iter () ) { ++count; }
+	FOREACH__( j :Test2c_y_iter ()) { ++count; }
+	FOREACH__( j :Test2c_y_iter () ) { ++count; }
+	FOREACH__( j : Test2c_y_iter ()) { ++count; }
+	FOREACH__( j : Test2c_y_iter () ) { ++count; }
+	FOREACH__ (j:Test2c_y_iter ()) { ++count; }
+	FOREACH__ (j:Test2c_y_iter () ) { ++count; }
+	FOREACH__ (j: Test2c_y_iter ()) { ++count; }
+	FOREACH__ (j: Test2c_y_iter () ) { ++count; }
+	FOREACH__ (j :Test2c_y_iter ()) { ++count; }
+	FOREACH__ (j :Test2c_y_iter () ) { ++count; }
+	FOREACH__ (j : Test2c_y_iter ()) { ++count; }
+	FOREACH__ (j : Test2c_y_iter () ) { ++count; }
+	FOREACH__ ( j:Test2c_y_iter ()) { ++count; }
+	FOREACH__ ( j:Test2c_y_iter () ) { ++count; }
+	FOREACH__ ( j: Test2c_y_iter ()) { ++count; }
+	FOREACH__ ( j: Test2c_y_iter () ) { ++count; }
+	FOREACH__ ( j :Test2c_y_iter ()) { ++count; }
+	FOREACH__ ( j :Test2c_y_iter () ) { ++count; }
+	FOREACH__ ( j : Test2c_y_iter ()) { ++count; }
+	FOREACH__ ( j : Test2c_y_iter () ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -2662,72 +2662,72 @@ TEST__ y_iter_Syntax2d()
 {
 	new
 		count = 0;
-	foreach(new i:Test2d_y_iter ( )) { ++count; }
-	foreach(new i:Test2d_y_iter ( ) ) { ++count; }
-	foreach(new i: Test2d_y_iter ( )) { ++count; }
-	foreach(new i: Test2d_y_iter ( ) ) { ++count; }
-	foreach(new i :Test2d_y_iter ( )) { ++count; }
-	foreach(new i :Test2d_y_iter ( ) ) { ++count; }
-	foreach(new i : Test2d_y_iter ( )) { ++count; }
-	foreach(new i : Test2d_y_iter ( ) ) { ++count; }
-	foreach( new i:Test2d_y_iter ( )) { ++count; }
-	foreach( new i:Test2d_y_iter ( ) ) { ++count; }
-	foreach( new i: Test2d_y_iter ( )) { ++count; }
-	foreach( new i: Test2d_y_iter ( ) ) { ++count; }
-	foreach( new i :Test2d_y_iter ( )) { ++count; }
-	foreach( new i :Test2d_y_iter ( ) ) { ++count; }
-	foreach( new i : Test2d_y_iter ( )) { ++count; }
-	foreach( new i : Test2d_y_iter ( ) ) { ++count; }
-	foreach (new i:Test2d_y_iter ( )) { ++count; }
-	foreach (new i:Test2d_y_iter ( ) ) { ++count; }
-	foreach (new i: Test2d_y_iter ( )) { ++count; }
-	foreach (new i: Test2d_y_iter ( ) ) { ++count; }
-	foreach (new i :Test2d_y_iter ( )) { ++count; }
-	foreach (new i :Test2d_y_iter ( ) ) { ++count; }
-	foreach (new i : Test2d_y_iter ( )) { ++count; }
-	foreach (new i : Test2d_y_iter ( ) ) { ++count; }
-	foreach ( new i:Test2d_y_iter ( )) { ++count; }
-	foreach ( new i:Test2d_y_iter ( ) ) { ++count; }
-	foreach ( new i: Test2d_y_iter ( )) { ++count; }
-	foreach ( new i: Test2d_y_iter ( ) ) { ++count; }
-	foreach ( new i :Test2d_y_iter ( )) { ++count; }
-	foreach ( new i :Test2d_y_iter ( ) ) { ++count; }
-	foreach ( new i : Test2d_y_iter ( )) { ++count; }
-	foreach ( new i : Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__(new i:Test2d_y_iter ( )) { ++count; }
+	FOREACH__(new i:Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__(new i: Test2d_y_iter ( )) { ++count; }
+	FOREACH__(new i: Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__(new i :Test2d_y_iter ( )) { ++count; }
+	FOREACH__(new i :Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__(new i : Test2d_y_iter ( )) { ++count; }
+	FOREACH__(new i : Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__( new i:Test2d_y_iter ( )) { ++count; }
+	FOREACH__( new i:Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__( new i: Test2d_y_iter ( )) { ++count; }
+	FOREACH__( new i: Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__( new i :Test2d_y_iter ( )) { ++count; }
+	FOREACH__( new i :Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__( new i : Test2d_y_iter ( )) { ++count; }
+	FOREACH__( new i : Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ (new i:Test2d_y_iter ( )) { ++count; }
+	FOREACH__ (new i:Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ (new i: Test2d_y_iter ( )) { ++count; }
+	FOREACH__ (new i: Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ (new i :Test2d_y_iter ( )) { ++count; }
+	FOREACH__ (new i :Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ (new i : Test2d_y_iter ( )) { ++count; }
+	FOREACH__ (new i : Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ ( new i:Test2d_y_iter ( )) { ++count; }
+	FOREACH__ ( new i:Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ ( new i: Test2d_y_iter ( )) { ++count; }
+	FOREACH__ ( new i: Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ ( new i :Test2d_y_iter ( )) { ++count; }
+	FOREACH__ ( new i :Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ ( new i : Test2d_y_iter ( )) { ++count; }
+	FOREACH__ ( new i : Test2d_y_iter ( ) ) { ++count; }
 	new
 		j;
-	foreach(j:Test2d_y_iter ( )) { ++count; }
-	foreach(j:Test2d_y_iter ( ) ) { ++count; }
-	foreach(j: Test2d_y_iter ( )) { ++count; }
-	foreach(j: Test2d_y_iter ( ) ) { ++count; }
-	foreach(j :Test2d_y_iter ( )) { ++count; }
-	foreach(j :Test2d_y_iter ( ) ) { ++count; }
-	foreach(j : Test2d_y_iter ( )) { ++count; }
-	foreach(j : Test2d_y_iter ( ) ) { ++count; }
-	foreach( j:Test2d_y_iter ( )) { ++count; }
-	foreach( j:Test2d_y_iter ( ) ) { ++count; }
-	foreach( j: Test2d_y_iter ( )) { ++count; }
-	foreach( j: Test2d_y_iter ( ) ) { ++count; }
-	foreach( j :Test2d_y_iter ( )) { ++count; }
-	foreach( j :Test2d_y_iter ( ) ) { ++count; }
-	foreach( j : Test2d_y_iter ( )) { ++count; }
-	foreach( j : Test2d_y_iter ( ) ) { ++count; }
-	foreach (j:Test2d_y_iter ( )) { ++count; }
-	foreach (j:Test2d_y_iter ( ) ) { ++count; }
-	foreach (j: Test2d_y_iter ( )) { ++count; }
-	foreach (j: Test2d_y_iter ( ) ) { ++count; }
-	foreach (j :Test2d_y_iter ( )) { ++count; }
-	foreach (j :Test2d_y_iter ( ) ) { ++count; }
-	foreach (j : Test2d_y_iter ( )) { ++count; }
-	foreach (j : Test2d_y_iter ( ) ) { ++count; }
-	foreach ( j:Test2d_y_iter ( )) { ++count; }
-	foreach ( j:Test2d_y_iter ( ) ) { ++count; }
-	foreach ( j: Test2d_y_iter ( )) { ++count; }
-	foreach ( j: Test2d_y_iter ( ) ) { ++count; }
-	foreach ( j :Test2d_y_iter ( )) { ++count; }
-	foreach ( j :Test2d_y_iter ( ) ) { ++count; }
-	foreach ( j : Test2d_y_iter ( )) { ++count; }
-	foreach ( j : Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__(j:Test2d_y_iter ( )) { ++count; }
+	FOREACH__(j:Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__(j: Test2d_y_iter ( )) { ++count; }
+	FOREACH__(j: Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__(j :Test2d_y_iter ( )) { ++count; }
+	FOREACH__(j :Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__(j : Test2d_y_iter ( )) { ++count; }
+	FOREACH__(j : Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__( j:Test2d_y_iter ( )) { ++count; }
+	FOREACH__( j:Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__( j: Test2d_y_iter ( )) { ++count; }
+	FOREACH__( j: Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__( j :Test2d_y_iter ( )) { ++count; }
+	FOREACH__( j :Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__( j : Test2d_y_iter ( )) { ++count; }
+	FOREACH__( j : Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ (j:Test2d_y_iter ( )) { ++count; }
+	FOREACH__ (j:Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ (j: Test2d_y_iter ( )) { ++count; }
+	FOREACH__ (j: Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ (j :Test2d_y_iter ( )) { ++count; }
+	FOREACH__ (j :Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ (j : Test2d_y_iter ( )) { ++count; }
+	FOREACH__ (j : Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ ( j:Test2d_y_iter ( )) { ++count; }
+	FOREACH__ ( j:Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ ( j: Test2d_y_iter ( )) { ++count; }
+	FOREACH__ ( j: Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ ( j :Test2d_y_iter ( )) { ++count; }
+	FOREACH__ ( j :Test2d_y_iter ( ) ) { ++count; }
+	FOREACH__ ( j : Test2d_y_iter ( )) { ++count; }
+	FOREACH__ ( j : Test2d_y_iter ( ) ) { ++count; }
 	ASSERT_EQ(count, 7 * 2 * 32);
 }
 
@@ -2739,7 +2739,7 @@ TEST__ y_iter_Array()
 	#pragma unused Iter_Single@Test3
 	new
 		count = 0;
-	foreach (new i : Test3[1])
+	FOREACH__ (new i : Test3[1])
 	{
 		++count;
 	}
@@ -2753,7 +2753,7 @@ TEST__ y_iter_Multi()
 	#pragma unused Iter_Multi@Test4
 	new
 		count = 0;
-	foreach (new i : Test4<2>)
+	FOREACH__ (new i : Test4<2>)
 	{
 		++count;
 	}
@@ -2820,7 +2820,7 @@ TEST__ y_iter_ArrayMulti()
 		count = 0;
 	Iter_Init(Test5);
 	// Check the array is empty.
-	foreach (new i : Test5[4]<3>)
+	FOREACH__ (new i : Test5[4]<3>)
 	{
 		++count;
 	}
@@ -2834,13 +2834,13 @@ TEST__ y_iter_ArrayMulti()
 	Iter_Add(Test5[7]<40>, 16);
 	Iter_Add(Test5[7]<40>, 20);
 	Iter_Add(Test5[7]<40>, 24);
-	foreach (new i : Test5[4]<3>)
+	FOREACH__ (new i : Test5[4]<3>)
 	{
 		++count;
 	}
 	ASSERT_ZE(count);
 	count = 0;
-	foreach (new i : Test5[7]<40>)
+	FOREACH__ (new i : Test5[7]<40>)
 	{
 		++count;
 	}
@@ -2849,7 +2849,7 @@ TEST__ y_iter_ArrayMulti()
 	Iter_Remove(Test5[7]<40>, 24);
 	Iter_Remove(Test5[7]<40>, 25);
 	count = 0;
-	foreach (new i : Test5[7]<40>)
+	FOREACH__ (new i : Test5[7]<40>)
 	{
 		++count;
 	}
@@ -2859,7 +2859,7 @@ TEST__ y_iter_ArrayMulti()
 	Iter_Remove(Test5[7]<40>, 5);
 	ASSERT_EQ(Iter_Count(Test5[7]<40>), 5);
 	count = 0;
-	foreach (new i : Test5[7]<40>)
+	FOREACH__ (new i : Test5[7]<40>)
 	{
 		++count;
 	}
@@ -2869,7 +2869,7 @@ TEST__ y_iter_ArrayMulti()
 	count = 0;
 	ASSERT_EQ(Iter_Count(Test5[7]<40>), 5);
 	ASSERT_EQ(Iter_Count(Test5[7]<42>), 1);
-	foreach (new i : Test5[7]<42>)
+	FOREACH__ (new i : Test5[7]<42>)
 	{
 		++count;
 	}
@@ -2879,7 +2879,7 @@ TEST__ y_iter_ArrayMulti()
 	count = 0;
 	ASSERT_EQ(Iter_Count(Test5[7]<40>), 5);
 	ASSERT_EQ(Iter_Count(Test5[7]<42>), 1);
-	foreach (new i : Test5[7]<42>)
+	FOREACH__ (new i : Test5[7]<42>)
 	{
 		++count;
 	}
@@ -2888,7 +2888,7 @@ TEST__ y_iter_ArrayMulti()
 	count = 0;
 	ASSERT_EQ(Iter_Count(Test5[7]<40>), 5);
 	ASSERT_ZE(Iter_Count(Test5[7]<42>));
-	foreach (new i : Test5[7]<42>)
+	FOREACH__ (new i : Test5[7]<42>)
 	{
 		++count;
 	}
@@ -2902,7 +2902,7 @@ TEST__ y_iter_ArrayMulti()
 		/* ================================================================== */
 		/* | THERE IS MEANT TO BE A WARNING ON THIS LINE                    | */
 		/* |                                                                | */
-		/* | */ foreach (Player, i)                                      /* | */
+		/* | */ FOREACH__ (Player, i)                                      /* | */
 		/* |                                                                | */
 		/* | It tests that the old syntax is nicely deprecated.             | */
 		/* ================================================================== */
@@ -2916,12 +2916,12 @@ TEST__ y_iter_Random()
 {
 	new
 		c = 0;
-	foreach (new i : Random(10))
+	FOREACH__ (new i : Random(10))
 	{
 		++c;
 	}
 	ASSERT_EQ(c, 10);
-	foreach (new i : Random(1000, -5, 10))
+	FOREACH__ (new i : Random(1000, -5, 10))
 	{
 		++c;
 		ASSERT(-5 <= i < 10);
@@ -2933,10 +2933,10 @@ TEST__ y_iter_RandomNested()
 {
 	new
 		c = 0;
-	foreach (new i : Random(10, 20))
+	FOREACH__ (new i : Random(10, 20))
 	{
 		ASSERT(0 <= i < 20);
-		foreach (new j : Random(10, -20, 20))
+		FOREACH__ (new j : Random(10, -20, 20))
 		{
 			ASSERT(-20 <= j < 20);
 			++c;
@@ -2949,7 +2949,7 @@ TEST__ y_iter_Powers()
 {
 	new
 		c = 1;
-	foreach (new i : Powers(2))
+	FOREACH__ (new i : Powers(2))
 	{
 		ASSERT_EQ(i, c);
 		c *= 2;
@@ -2962,7 +2962,7 @@ TEST__ y_iter_Fib()
 	new
 		a = 0,
 		b = 1;
-	foreach (new i : Fib())
+	FOREACH__ (new i : Fib())
 	{
 		ASSERT_EQ(i, a);
 		b = a + b;
@@ -2975,7 +2975,7 @@ TEST__ y_iter_Null()
 	new
 		c = 0,
 		arr[10] = {1, 2, 0, 3, 4, 0, 5, 0, 0, 7};
-	foreach (new i : Null(arr))
+	FOREACH__ (new i : Null(arr))
 	{
 		++c;
 		ASSERT(i == 2 || i == 5 || i == 7 || i == 8);
@@ -2988,7 +2988,7 @@ TEST__ y_iter_Filter1()
 	new
 		c = 0,
 		arr[10] = {1, 2, 0, 3, 4, 0, 5, 0, 0, 7};
-	foreach (new i : Filter(0, arr))
+	FOREACH__ (new i : Filter(0, arr))
 	{
 		++c;
 		ASSERT(i == 2 || i == 5 || i == 7 || i == 8);
@@ -3001,7 +3001,7 @@ TEST__ y_iter_Filter2()
 	new
 		c = 0,
 		arr[10] = {1, 2, 0, 3, 2, 0, 5, 0, 2, 7};
-	foreach (new i : Filter(2, arr))
+	FOREACH__ (new i : Filter(2, arr))
 	{
 		++c;
 		ASSERT(i == 1 || i == 4 || i == 8);
@@ -3014,7 +3014,7 @@ TEST__ y_iter_NonNull()
 	new
 		c = 0,
 		arr[10] = {1, 2, 0, 3, 4, 0, 5, 0, 0, 7};
-	foreach (new i : NonNull(arr))
+	FOREACH__ (new i : NonNull(arr))
 	{
 		++c;
 		ASSERT(i != 2 && i != 5 && i != 7 && i != 8);
@@ -3027,7 +3027,7 @@ TEST__ y_iter_Until()
 	new
 		c = 0,
 		arr[10] = {1, 2, 0, 3, 4, 0, 5, 0, 0, 7};
-	foreach (new i : Until(5, arr))
+	FOREACH__ (new i : Until(5, arr))
 	{
 		++c;
 		ASSERT(0 <= i < 6);
@@ -3043,7 +3043,7 @@ TEST__ y_iter_All1()
 	Iter_Add(a, 7);
 	Iter_Add(a, 9);
 	new count = 0;
-	foreach (new i : All(a))
+	FOREACH__ (new i : All(a))
 	{
 		ASSERT(i == 3 || i == 4 || i == 7 || i == 9);
 		++count;
@@ -3059,7 +3059,7 @@ TEST__ y_iter_None1()
 	Iter_Add(a, 7);
 	Iter_Add(a, 9);
 	new count = 0;
-	foreach (new i : None(a))
+	FOREACH__ (new i : None(a))
 	{
 		ASSERT(i != 3 && i != 4 && i != 7 && i != 9);
 		++count;
@@ -3075,7 +3075,7 @@ TEST__ y_iter_All2()
 	Iter_Add(a<2>, 7);
 	Iter_Add(a<1>, 9);
 	new count = 0;
-	foreach (new i : All(a<>))
+	FOREACH__ (new i : All(a<>))
 	{
 		ASSERT(i == 3 || i == 4 || i == 7 || i == 9);
 		++count;
@@ -3091,7 +3091,7 @@ TEST__ y_iter_None2()
 	Iter_Add(a<0>, 7);
 	Iter_Add(a<0>, 9);
 	new count = 0;
-	foreach (new i : None(a<>))
+	FOREACH__ (new i : None(a<>))
 	{
 		ASSERT(i != 3 && i != 4 && i != 7 && i != 9);
 		++count;
@@ -3251,17 +3251,17 @@ iterfunc stock static y_iterDecl6X(&iterstate, cur) { return cur == -1 ? itersta
 TEST__ y_iter_MacroLess()
 {
 	new i;
-	foreach (i : y_iterDecl1()) { ASSERT_EQ(i, 5); }
+	FOREACH__ (i : y_iterDecl1()) { ASSERT_EQ(i, 5); }
 	ASSERT_EQ(i, cellmin);
-	foreach (i : y_iterDecl5()) { ASSERT_EQ(i, 5); }
+	FOREACH__ (i : y_iterDecl5()) { ASSERT_EQ(i, 5); }
 	ASSERT_ZE(i);
-	foreach (i : y_iterDecl3()) { ASSERT_EQ(i, 5); }
+	FOREACH__ (i : y_iterDecl3()) { ASSERT_EQ(i, 5); }
 	ASSERT_EQ(i, -1);
-	foreach (i : y_iterDecl2()) { ASSERT_EQ(i, 5); }
+	FOREACH__ (i : y_iterDecl2()) { ASSERT_EQ(i, 5); }
 	ASSERT_EQ(i, cellmin);
-	foreach (i : y_iterDecl4()) { ASSERT_EQ(i, 5); }
+	FOREACH__ (i : y_iterDecl4()) { ASSERT_EQ(i, 5); }
 	ASSERT_ZE(i);
-	foreach (new j : y_iterDecl6()) { ASSERT_EQ(j, 5); }
+	FOREACH__ (new j : y_iterDecl6()) { ASSERT_EQ(j, 5); }
 	ASSERT_ZE(i);
 }
 
@@ -3275,21 +3275,21 @@ TEST__ y_iter_yield0a()
 	new
 		count;
 	count = 0;
-	foreach (new i : y_iter_yield0())
+	FOREACH__ (new i : y_iter_yield0())
 	{
 		#pragma unused i
 		++count;
 	}
 	ASSERT_ZE(count);
 	count = 0;
-	foreach (new i : y_iter_yield0)
+	FOREACH__ (new i : y_iter_yield0)
 	{
 		#pragma unused i
 		++count;
 	}
 	ASSERT_ZE(count);
 	count = 0;
-	foreach (new i : y_iter_yield0[])
+	FOREACH__ (new i : y_iter_yield0[])
 	{
 		#pragma unused i
 		++count;
@@ -3311,21 +3311,21 @@ TEST__ y_iter_yield1a()
 	new
 		count;
 	count = 0;
-	foreach (new i : y_iter_yield1())
+	FOREACH__ (new i : y_iter_yield1())
 	{
 		#pragma unused i
 		++count;
 	}
 	ASSERT_EQ(count, 10);
 	count = 0;
-	foreach (new i : y_iter_yield1)
+	FOREACH__ (new i : y_iter_yield1)
 	{
 		#pragma unused i
 		++count;
 	}
 	ASSERT_EQ(count, 10);
 	count = 0;
-	foreach (new i : y_iter_yield1[])
+	FOREACH__ (new i : y_iter_yield1[])
 	{
 		#pragma unused i
 		++count;
@@ -3350,21 +3350,21 @@ TEST__ y_iter_yield2a()
 	new
 		count;
 	count = 0;
-	foreach (new i : y_iter_yield2(10))
+	FOREACH__ (new i : y_iter_yield2(10))
 	{
 		ASSERT_ZE(i % 10);
 		++count;
 	}
 	ASSERT_EQ(count, 10);
 	count = 0;
-	foreach (new i : y_iter_yield2(10, 20))
+	FOREACH__ (new i : y_iter_yield2(10, 20))
 	{
 		ASSERT(i == 0 || i == 10);
 		++count;
 	}
 	ASSERT_EQ(count, 2);
 	count = 0;
-	foreach (new i : y_iter_yield2[5])
+	FOREACH__ (new i : y_iter_yield2[5])
 	{
 		ASSERT_ZE(i % 5);
 		++count;
@@ -3391,21 +3391,21 @@ TEST__ y_iter_yield3a()
 	new
 		count;
 	count = 0;
-	foreach (new i : y_iter_yield3(10))
+	FOREACH__ (new i : y_iter_yield3(10))
 	{
 		ASSERT_ZE(i % 10);
 		++count;
 	}
 	ASSERT_EQ(count, 10);
 	count = 0;
-	foreach (new i : y_iter_yield3(10, 20))
+	FOREACH__ (new i : y_iter_yield3(10, 20))
 	{
 		ASSERT(i == 0 || i == 10);
 		++count;
 	}
 	ASSERT_EQ(count, 2);
 	count = 0;
-	foreach (new i : y_iter_yield3[5])
+	FOREACH__ (new i : y_iter_yield3[5])
 	{
 		ASSERT_ZE(i % 5);
 		++count;
@@ -3427,7 +3427,7 @@ TEST__ y_iter_yield4a()
 	new
 		count = 0,
 		arr[] = { 2, 3, 6, 7, 110, 5432 };
-	foreach (new i : y_iter_yield4(arr))
+	FOREACH__ (new i : y_iter_yield4(arr))
 	{
 		ASSERT(i == 2 || i == 3 || i == 6 || i == 7 || i == 110 || i == 5432);
 		++count;
@@ -3470,7 +3470,7 @@ TEST__ y_iter_yield4a()
 		new
 			count = 0,
 			bool:ever = false;
-		foreach (new i : y_iter_yield5)
+		FOREACH__ (new i : y_iter_yield5)
 		{
 			#pragma unused i
 			++count;
@@ -3502,7 +3502,7 @@ TEST__ y_iter_yield6a()
 	new
 		answers[] = { 0, 1, 2, 10, 20, 501, 502, 503, 504 },
 		idx = 0;
-	foreach (new i : y_iter_yield6)
+	FOREACH__ (new i : y_iter_yield6)
 	{
 		ASSERT(idx < sizeof (answers) && i == answers[idx]);
 		++idx;
@@ -3521,7 +3521,7 @@ iterfunc stock y_iter_yield7c(n)
 
 iterfunc stock y_iter_yield7b()
 {
-	foreach (new i : y_iter_yield7c(4))
+	FOREACH__ (new i : y_iter_yield7c(4))
 	{
 		YIELD__ return i;
 	}
@@ -3531,7 +3531,7 @@ iterfunc stock y_iter_yield7b()
 
 iterfunc stock y_iter_yield7a(x)
 {
-	foreach (new i : y_iter_yield7b)
+	FOREACH__ (new i : y_iter_yield7b)
 	{
 		YIELD__ return i + 5;
 		YIELD__ return i + 6;
@@ -3556,7 +3556,7 @@ TEST__ y_iter_yield7a()
 			2
 		},
 		idx = 0;
-	foreach (new i : y_iter_yield7a[2])
+	FOREACH__ (new i : y_iter_yield7a[2])
 	{
 		ASSERT(idx < sizeof (answers) && i == answers[idx]);
 		++idx;

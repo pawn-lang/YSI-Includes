@@ -1050,7 +1050,7 @@ stock TD_SetTime(Style:styleID, time, bool:existing = false)
 				index = Bit_Slot(next),
 				Bit:mod = Bit_Mask(next),
 				revision = ++YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_REVISION];
-			foreach (new playerid : Player)
+			FOREACH__ (new playerid : Player)
 			{
 				if (YSI_g_sPlayerDraws[playerid][index] & mod)
 				{
@@ -1199,7 +1199,7 @@ stock TD_UpdateOne(Text:slot, Style:id)
 		new
 			index = Bit_Slot(slot),
 			Bit:mod = Bit_Mask(slot);
-		foreach (new playerid : Player)
+		FOREACH__ (new playerid : Player)
 		{
 			if (YSI_g_sPlayerDraws[playerid][index] & mod)
 			{
@@ -1241,7 +1241,7 @@ stock TD_Delete(Style:styleId)
 		new
 			index = Bit_Slot(next),
 			Bit:mod = ~Bit_Mask(next);
-		foreach (new playerid : Player)
+		FOREACH__ (new playerid : Player)
 		{
 			// TODO: Update.
 			/*if (YSI_g_sTDTimers[next][playerid])
@@ -1336,7 +1336,7 @@ stock TD_Destroy(Text:textDraw)
 				new
 					index = Bit_Slot(textDraw),
 					Bit:mod = ~Bit_Mask(textDraw);
-				foreach (new playerid : Player)
+				FOREACH__ (new playerid : Player)
 				{
 					/*if (YSI_g_sTDTimers[textDraw][playerid])
 					{
@@ -1749,7 +1749,7 @@ stock TD_ShowForAll(Text:textDraw)
 			Bit:mod = Bit_Mask(textDraw),
 			time = YSI_g_sTDData[style][E_TD_DATA_TIME],
 			revision = YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_REVISION];
-		foreach (new playerid : Player)
+		FOREACH__ (new playerid : Player)
 		{
 			// Count the number of players with this TD (destroy it if none).
 			YSI_g_sPlayerDraws[playerid][index] |= mod;
@@ -1804,7 +1804,7 @@ stock TD_HideForAll(Text:textDraw)
 					// Hide it for all players but don't destroy it.
 					TextDrawHideForAll(real);
 					++YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_REVISION];
-					foreach (new playerid : Player)
+					FOREACH__ (new playerid : Player)
 					{
 						YSI_g_sPlayerDraws[playerid][index] &= inv;
 					}
@@ -1918,7 +1918,7 @@ stock TD_Morph(Text:textDraw, Style:style, time, delay = 0)
 	P:2("TD_Morph called: %d %d", TD_IsValidStyle(style), _TD_TextValid(textDraw));
 	if (TD_IsValidStyle(style) && _TD_TextValid(textDraw))
 	{
-		//foreach (new playerid : PS(players))
+		//FOREACH__ (new playerid : PS(players))
 		//{
 			//TD_MorphInternal(playerid, textDraw, style);
 		SetTimerEx("TD_MorphTDInternal", delay + Y_TD_FRAME_TIME, 0, "iiiiii", _:textDraw, _:TD_GetDisplayStyle(textDraw), _:style, time, Y_TD_FRAME_TIME, YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_REVISION]); //, YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_REAL]);
@@ -1969,7 +1969,7 @@ public TD_MorphTDInternal(Text:td, Style:from, Style:to, speed, pos, revision)
 			// Show for all players who had it before.
 			index = Bit_Slot(_:td);
 			mask = Bit_Mask(_:td);
-			foreach (new playerid : Player)
+			FOREACH__ (new playerid : Player)
 			{
 				if (YSI_g_sPlayerDraws[playerid][index] & mask)
 				{
@@ -2018,7 +2018,7 @@ public TD_MorphTDInternal(Text:td, Style:from, Style:to, speed, pos, revision)
 			// Show for all players who had it before.
 			index = Bit_Slot(_:td);
 			mask = Bit_Mask(_:td);
-			foreach (new playerid : Player)
+			FOREACH__ (new playerid : Player)
 			{
 				//printf("player %d");
 				if (YSI_g_sPlayerDraws[playerid][index] & mask)
