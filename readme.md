@@ -4,6 +4,7 @@
 
 * [installation](installation.md)
 * [troubleshooting](troubleshooting.md)
+* [YSI_COMPATIBILTY_MODE](YSI_COMPATIBILTY_MODE.md)
 
 ## Libraries
 
