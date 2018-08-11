@@ -87,17 +87,22 @@ Optional plugins:
 
 #define @yH_public%0\32;%1(%2);%3(%4) @yH_%0%1(%2);@yH_%0%1(%2)
 #define @yH_native%0\32;%1(%2);%3(%4) @Hy_%0%1(%2);@Hy_%0%1(%2)
+#define @yH_stock%0\32;%1(%2);%3(%4) @_Hy%0%1(%2);@_Hy%0%1(%2)
+
+#define HOOK_PUBLIC__%1(%2) forward UNIQUE_FUNCTION<@yH_%1@...>(%2);UNIQUE_FUNCTION<@yH_%1@...>(%2)
+#define HOOK_public__%1(%2) forward UNIQUE_FUNCTION<@yH_%1@...>(%2);UNIQUE_FUNCTION<@yH_%1@...>(%2)
+#define HOOK_NATIVE__%1(%2) forward UNIQUE_FUNCTION<@Hy_%1@...>(%2);UNIQUE_FUNCTION<@Hy_%1@...>(%2)
+#define HOOK_native__%1(%2) forward UNIQUE_FUNCTION<@Hy_%1@...>(%2);UNIQUE_FUNCTION<@Hy_%1@...>(%2)
+#define HOOK_STOCK__%1(%2) forward UNIQUE_FUNCTION<@_Hy%1@...>(%2);UNIQUE_FUNCTION<@_Hy%1@...>(%2)
+#define HOOK_stock__%1(%2) forward UNIQUE_FUNCTION<@_Hy%1@...>(%2);UNIQUE_FUNCTION<@_Hy%1@...>(%2)
 
 #define HOOK__%1(%2) forward UNIQUE_FUNCTION<@yH_%1@...>(%2);UNIQUE_FUNCTION<@yH_%1@...>(%2)
 #define REHOOK__ HOOK__
 
-// Strip out extra spaces (nicely recursive)
-#define @yH_%0\32; @yH_
-
 #define Y_HOOKS_CONTINUE_RETURN_1	(1)		// Continue the hook chain, return 1
 #define Y_HOOKS_CONTINUE_RETURN_0	(0)		// Continue the hook chain, return 0
-#define Y_HOOKS_BREAK_RETURN_0		(-1)	// Break the hook chain, return 0
-#define Y_HOOKS_BREAK_RETURN_1		(-2)	// Break the hook chain, return 1
+#define Y_HOOKS_BREAK_RETURN_0		(~0)	// Break the hook chain, return 0
+#define Y_HOOKS_BREAK_RETURN_1		(~1)	// Break the hook chain, return 1
 
 #if !defined MAX_HOOK_REPLACEMENTS
 	#define MAX_HOOK_REPLACEMENTS (16)
@@ -107,7 +112,9 @@ Optional plugins:
 // the same long name will collide at compile-time
 #define DEFINE_HOOK_REPLACEMENT__(%0,%1); forward @_yH%0(); public @_yH%0() { _Hooks_AddReplacement(#%0, #%1); }
 
-// Strip spaces from the generated function name.
+// Strip spaces from the generated function names.
+#define @yH_%0\32; @yH_
+#define @_Hy%0\32; @_Hy
 #define @_yH%0\32; @_yH
 #define @y_H%0\32; @y_H
 
@@ -116,7 +123,6 @@ Optional plugins:
 #if defined YSI_COMPAT || defined KEYWORD_DEFINE_HOOK_REPLACEMENT
 	#define DEFINE_HOOK_REPLACEMENT DEFINE_HOOK_REPLACEMENT__
 #endif
-
 #if defined YSI_COMPAT || defined KEYWORD_HOOK_RET
 	#define HOOK_RET:%0(%1) forward @y_H%0(); public @y_H%0()
 #endif

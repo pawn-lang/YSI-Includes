@@ -60,8 +60,17 @@
 // Note that this is all optional.  Not doing so will continue to work, but
 // give warnings.
 
-#define inline_return%0; {Callback_Return_(_:(%0));continue;}
-#define @return inline_return
+#if defined YSI_COMPAT || defined KEYWORD_inline
+	#define inline INLINE__
+#endif
+#if defined YSI_COMPAT || defined KEYWORD_inline_return
+	#define inline_return INLINE_RETURN__
+#endif
+#if defined YSI_COMPAT || defined KEYWORD_@return
+	#define @return INLINE_RETURN__
+#endif
+
+#define INLINE_RETURN__%0; {Callback_Return_(_:(%0));continue;}
 #define callback: F@_@:
 
 #define _F<%0> (#%0)
@@ -885,7 +894,8 @@ Note:
 
 // The "INLINE" in the types here will override "PARSER@" to "PARSE@INLINE",
 // because there is no colon (well not "because", but it helps).
-#define inline%0(%1) MAKE_PARSER(INLINE,ARR:REF:STR:NUM:QAL::INLINE)(%0(%1))()0()#
+#define INLINE__%0(%1) MAKE_PARSER(INLINE,ARR:REF:STR:NUM:QAL::INLINE)(%0(%1))()0()#
+#define INLINE_CONST__%0(%1) MAKE_PARSER(INLINE,ARR:REF:STR:NUM:QAL::INLINE)(%0(%1))()1()#
 
 // Follows the "code-parse.inc" internal structure.  Ugly but required, since we
 // are parsing functions, but not at a top level.
@@ -909,15 +919,32 @@ Note:
 #define INLINE_const(%9)%8$(%0)%1(%2) %8$(%0)1(%2)
 #define _@const%0\32; _@
 
+#define USING_INLINE__ (@Ik:@Il:Inline_UI_(),)
+#define USING__%0\32; (@Ip:@Iq:@Io:@Iu:@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
+#define USING_PUBLIC__ (@Ik:@Il:Inline_UP_(),)
+#define USING_CALLBACK__ (@Ik:@Il:Inline_UP_(),)
+#define USING_RESOLVED__ (@Ik:@Il:0,)
+
+// Old `using`.
+#if defined YSI_COMPAT || defined KEYWORD_callback_tag
+	#define callback_tag: (@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
+#endif
+#if defined YSI_COMPAT || defined KEYWORD_using
+	#define using USING__
+#endif
+
 // Parameter type for passing callbacks about.
-#define callback_tag: (@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
-#define using%0\32; (@Ip:@Iq:@Io:@Iu:@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
 #define @Ip:@Iq:@Io:@Iu:%0)inline @Ik:@Il:Inline_UI_(),)
 #define @Iq:@Io:@Iu:%0)callback @Ik:@Il:Inline_UP_(),)
 #define @Io:@Iu:%0)public @Ik:@Il:Inline_UP_(),)
 #define @Iu:%0)resolved @Ik:@Il:0,)
 
-// Detect a `using` parameter that is not the last parameter.
+// Detect a `using` parameter that is not the last parameter.  Actually handles
+// nested calls quite nicely - `X(Y(using inline Z), 5)` should be detected as a
+// final parameter, but this detects it instead and gives
+// `X(Y(Inline_UI_(Z)), 5)`, which is still correct.  This only falls down on
+// code like `X(Y(using inline Z) - 10, 5)`, which currently becomes
+// `X(Y(Inline_UI_(Z - 10)), 5)`
 #define @Ik:@Il:%0)%1, %0%1),
 
 // Detect a `using` parameter that is the last parameter.
@@ -926,8 +953,9 @@ Note:
 // Detect a callback with a tag.
 #define @Ir:%9#%1<%0>),F@_@:%2$) @It:%9#%1,#%0),F@_@%0:%2$)
 
-// Normally `F@_@` doesn't consume spaces because it is a valid tag on its own.  However, in this
-// case we know that extra specifiers after the tag prefix exist so we can check fairly safely.
+// Normally `F@_@` doesn't consume spaces because it is a valid tag on its own.
+// However, in this case we know that extra specifiers after the tag prefix
+// exist so we can check fairly safely.
 #define @It:%0),F@_@%9\32;%1:%2$) @It:%0),F@_@%9%1:%2$)
 
 // Detect a callback that starts with "On".  These are often redefined and we

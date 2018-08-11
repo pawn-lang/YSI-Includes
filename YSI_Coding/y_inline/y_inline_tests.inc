@@ -1019,3 +1019,403 @@ TEST__ y_inline_MetaData()
 	ASSERT_EQ(ret, 9);
 }
 
+// ========================================================================== //
+// ========================================================================== //
+// ========================================================================== //
+// ========================================================================== //
+
+TEST__ nu_y_inline1()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	INLINE__ func()
+	{
+		@return 42;
+	}
+	y_inline_Get(USING_INLINE__ func, cc);
+	ASSERT_EQ(Callback_Call(cc), 42);
+	Callback_Release(cc);
+}
+
+TEST__ nu_y_inline2()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	INLINE__ func(a)
+	{
+		@return a;
+	}
+	y_inline_Get(USING_INLINE__ func, cc);
+	ASSERT_EQ(Callback_Call(cc, 50), 50);
+	Callback_Release(cc);
+}
+
+TEST__ nu_y_inline3()
+{
+	new
+		cc[E_CALLBACK_DATA],
+		r = 100;
+	INLINE__ func(&r2)
+	{
+		#pragma unused r2
+		r2 = 99;
+	}
+	y_inline_Get(USING_INLINE__ func, cc);
+	Callback_Call(cc, r);
+	ASSERT_EQ(r, 99);
+	Callback_Release(cc);
+}
+
+TEST__ nu_y_inline4()
+{
+	new
+		cc[E_CALLBACK_DATA],
+		r = 100;
+	INLINE__ func(&r2)
+	{
+		#pragma unused r2
+		r = 99;
+	}
+	y_inline_Get(USING_INLINE__ func, cc);
+	Callback_Call(cc, r);
+	ASSERT_EQ(r, 100);
+	Callback_Release(cc);
+}
+
+TEST__ nu_y_inline5()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	INLINE__ func(a, b, c, d)
+	{
+		ASSERT_EQ(a, 1);
+		ASSERT_EQ(b, 11);
+		ASSERT_EQ(c, 111);
+		ASSERT_EQ(d, 1111);
+	}
+	y_inline_Get(USING_INLINE__ func, cc);
+	Callback_Call(cc, 1, 11, 111, 1111);
+	Callback_Release(cc);
+}
+
+TEST__ nu_y_inline6()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	INLINE__ func(string:g[])
+	{
+		#if !(sizeof (g) == YSI_MAX_STRING))
+			#error sizeof (g) != YSI_MAX_STRING
+		#endif
+		ASSERT_SAME(g, "hello");
+	}
+	y_inline_Get(USING_INLINE__ func, cc);
+	Callback_Call(cc, "hello");
+	Callback_Release(cc);
+}
+
+TEST__ nu_y_inline7b()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	INLINE__ func7b()
+	{
+	}
+	ASSERT_EQ(y_inline_Get(USING__ func7a, cc), false);
+	ASSERT(y_inline_Get(USING__ func7b, cc));
+	Callback_Release(cc);
+	ASSERT(y_inline_Get(USING_PUBLIC__ y_inline7a, cc));
+	Callback_Release(cc);
+	ASSERT(y_inline_Get(callback_tag:"func7b", cc));
+	Callback_Release(cc);
+	ASSERT(y_inline_Get(callback_tag:"y_inline7a", cc));
+	Callback_Release(cc);
+	ASSERT(y_inline_Get(USING__ func7b, cc));
+	Callback_Release(cc);
+	ASSERT(y_inline_Get(USING__ y_inline7a, cc));
+	Callback_Release(cc);
+}
+
+TEST__ nu_y_inline8()
+{
+	for (new i = 2; i--; )
+	{
+		new
+			cc[E_CALLBACK_DATA];
+		if (i)
+		{
+			INLINE__ func8b()
+			{
+			}
+		}
+		if (!i)
+		{
+			ASSERT_EQ(y_inline_Get(USING__ func8a, cc), false);
+			ASSERT_EQ(y_inline_Get(USING__ func8b, cc), false);
+			Callback_Release(cc);
+			ASSERT_EQ(y_inline_Get(USING_PUBLIC__ y_inline8, cc), false);
+			Callback_Release(cc);
+		}
+		if (i)
+		{
+			INLINE__ func8a()
+			{
+			}
+		}
+	}
+}
+
+TEST__ nu_y_inline9()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	ASSERT(y_inline_Get(USING__ public y_inline9, cc, _F<i>));
+	ASSERT_EQ(Callback_Call(cc, 67), 12345 + 67);
+	Callback_Release(cc);
+}
+
+TEST__ nu_y_inline10()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	ASSERT(y_inline_Get(USING_CALLBACK__ y_inline10, cc, _F<is>));
+	ASSERT_EQ(Callback_Call(cc, 67, "50"), 12345 + 67 + '5');
+	ASSERT(y_inline_Get(USING__ callback y_inline10<is>, cc));
+	ASSERT_EQ(Callback_Call(cc, 67, "50"), 12345 + 67 + '5');
+	Callback_Release(cc);
+}
+
+TEST__ nu_y_inline11()
+{
+	new
+		g = 5,
+		cc[E_CALLBACK_DATA];
+	INLINE__ func()
+	{
+		g = 11;
+	}
+	y_inline_Get(USING_INLINE__ func, cc);
+	ASSERT_EQ(g, 5);
+	Callback_Call(cc);
+	ASSERT_EQ(g, 5);
+	y_inline_Restore(cc);
+	ASSERT_EQ(g, 11);
+	Callback_Release(cc);
+}
+
+TEST__ nu_y_inline12()
+{
+	new
+		g = 5,
+		cc[E_CALLBACK_DATA];
+	INLINE__ func()
+	{
+		++g;
+	}
+	y_inline_Get(USING_INLINE__ func, cc);
+	Callback_Call(cc);
+	Callback_Call(cc);
+	Callback_Call(cc);
+	Callback_Call(cc);
+	y_inline_Restore(cc);
+	ASSERT_EQ(g, 9);
+	Callback_Release(cc);
+}
+
+TEST__ nu_y_inline13()
+{
+	new
+		g = 5,
+		cc[E_CALLBACK_DATA];
+	INLINE__ const func()
+	{
+		ASSERT_EQ(g, 5);
+		++g;
+		YSI_g_sRemoteTestVar = g;
+	}
+	y_inline_Get(USING_INLINE__ func, cc);
+	Callback_Call(cc);
+	Callback_Call(cc);
+	Callback_Call(cc);
+	YSI_g_sRemoteTestVar = 0;
+	Callback_Call(cc);
+	y_inline_Restore(cc);
+	ASSERT_EQ(g, 5);
+	ASSERT_EQ(YSI_g_sRemoteTestVar, 6);
+	Callback_Release(cc);
+}
+
+TEST__ nu_Callback_AA()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	INLINE__ func(&a)
+	{
+		a = 7;
+		#pragma unused a
+	}
+	y_inline_Get(USING_INLINE__ func, cc);
+	new
+		a = 0;
+	Callback_Call(cc, a);
+	ASSERT_EQ(a, 7);
+}
+
+TEST__ nu_Callback_Arr1()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	INLINE_CONST__ func(&a)
+	{
+		ASSERT_ZE(a);
+		a = 7;
+		ASSERT_EQ(a, 7);
+	}
+	y_inline_Get(USING__ inline func, cc);
+	new
+		a = 0;
+	ASSERT_ZE(a);
+	Callback_Call(cc, a);
+	ASSERT_EQ(a, 7);
+}
+
+TEST__ nu_Callback_Arr2()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	INLINE__ const func(string:str[])
+	{
+		ASSERT_SAME(str, "hello");
+	}
+	y_inline_Get(USING_INLINE__ func, cc);
+	new
+		str[YSI_MAX_STRING] = "hello";
+	Callback_Call(cc, str);
+	ASSERT_SAME(str, "hello");
+	Callback_Call(cc, "hello");
+}
+
+TEST__ nu_Callback_Arr3()
+{
+	new
+		cc[E_CALLBACK_DATA];
+	INLINE__ const func(a)
+	{
+		ASSERT_ZE(a);
+		a = 7;
+		ASSERT_EQ(a, 7);
+	}
+	y_inline_Get(USING_INLINE__ func, cc);
+	new
+		a = 0;
+	ASSERT_ZE(a);
+	Callback_Call(cc, a);
+	ASSERT_ZE(a);
+}
+
+TEST__ nu_Callback_Array0()
+{
+	new
+		g = 5,
+		cc[E_CALLBACK_DATA];
+	INLINE_CONST__ func()
+	{
+		ASSERT_EQ(g, 5);
+		++g;
+	}
+	y_inline_Get(USING__ inline func, cc);
+	// Test zero parameter calls.
+	Callback_Array(cc, "", 0);
+	Callback_Array(cc, "", 0);
+	Callback_Array(cc, "", 0);
+}
+
+TEST__ nu_Callback_Array1()
+{
+	#emit LCTRL 6
+	#emit LCTRL 6
+	#emit LCTRL 6
+	#emit LCTRL 6
+	new
+		cc[E_CALLBACK_DATA];
+	INLINE__ const func(&a, string:b[], c)
+	{
+		ASSERT_EQ(c, 6);
+		ASSERT_SAME(b, "hey");
+		a = 7;
+		#pragma unused a
+	}
+	//DisasmDump("inline6.asm");
+	y_inline_Get(USING_INLINE__ func, cc);
+	new
+		a = 0,
+		str[4] = "hey",
+		c = 6,
+		pars[3];
+	Callback_Call(cc, a, str, c);
+	ASSERT_EQ(a, 7);
+	pars[0] = ref(a);
+	pars[1] = ref(str);
+	pars[2] = ref(c);
+	// Test more parameters.
+	a = 2;
+	Callback_Array(cc, pars, 3);
+	ASSERT_EQ(a, 7);
+	a = 11;
+	Callback_Array(cc, pars, 3);
+	ASSERT_EQ(a, 7);
+	a = 32;
+	Callback_Array(cc, pars, 3);
+	ASSERT_EQ(a, 7);
+}
+
+TEST__ nu_y_inline_NewAPI1()
+{
+	new array[10] = { 0, 5, 1, 5, 2, 3, 4, 5, 5, 0 };
+	new count = 0;
+	INLINE__ IsFive(value)
+	{
+		if (value == 5)
+			++count;
+	}
+	y_inline_ForEach(array, USING_INLINE__ IsFive);
+	ASSERT_EQ(count, 4);
+}
+
+TEST__ nu_y_inline_NewAPI2()
+{
+	new array[10] = { 0, 5, 1, 5, 2, 3, 4, 5, 5, 0 };
+	new count = 0;
+	INLINE__ const IsFive(value)
+	{
+		if (value == 5)
+			++count;
+	}
+	y_inline_ForEach(array, USING_INLINE__ IsFive);
+	ASSERT_ZE(count);
+}
+
+TEST__ nu_y_inline_NewAPI3()
+{
+	new array[10] = { 5, 5, 1, 5, 2, 3, 4, 5, 5, 5 };
+	INLINE__ const IsFive(value, count)
+	{
+		if (value == 5)
+			inline_return count + 1;
+		inline_return count;
+	}
+	new count = y_inline_Fold(array, USING_INLINE__ IsFive, 0);
+	ASSERT_EQ(count, 6);
+}
+
+TEST__ nu_y_inline_MetaData()
+{
+	INLINE__ Dummy(a, b, string:c[])
+	{
+		ASSERT_SAME(c, "The Dummy Call");
+		inline_return a + b;
+	}
+	new ret = y_inline_MetaData(USING_INLINE__ Dummy);
+	ASSERT_EQ(ret, 9);
+}
+
