@@ -78,6 +78,7 @@ Optional plugins:
 #include "..\..\YSI_Core\y_utils"
 #include "..\y_inline"
 
+#include "y_functional_impl"
 #include "y_functional_funcs"
 #include "y_functional_rewrite"
 
