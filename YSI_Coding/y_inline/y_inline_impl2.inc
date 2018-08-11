@@ -60,13 +60,13 @@
 // Note that this is all optional.  Not doing so will continue to work, but
 // give warnings.
 
-#if defined YSI_COMPAT || defined KEYWORD_inline
+#if (defined YSI_COMPAT && defined YSI_KEYWORD_inline) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_inline)
 	#define inline INLINE__
 #endif
-#if defined YSI_COMPAT || defined KEYWORD_inline_return
+#if (defined YSI_COMPAT && defined YSI_KEYWORD_inline_return) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_inline_return)
 	#define inline_return INLINE_RETURN__
 #endif
-#if defined YSI_COMPAT || defined KEYWORD_@return
+#if (defined YSI_COMPAT && defined YSI_KEYWORD_@return) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_@return)
 	#define @return INLINE_RETURN__
 #endif
 
@@ -926,10 +926,10 @@ Note:
 #define USING_RESOLVED__ (@Ik:@Il:0,)
 
 // Old `using`.
-#if defined YSI_COMPAT || defined KEYWORD_callback_tag
+#if (defined YSI_COMPAT && defined YSI_KEYWORD_callback_tag) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_callback_tag)
 	#define callback_tag: (@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
 #endif
-#if defined YSI_COMPAT || defined KEYWORD_using
+#if (defined YSI_COMPAT && defined YSI_KEYWORD_using) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_using)
 	#define using USING__
 #endif
 

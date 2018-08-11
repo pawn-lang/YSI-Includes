@@ -205,25 +205,25 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 	#define Master_Caller() (((I@=V@(8,YSIM_CALLER))==0)?(@_):(I@))
 #endif
 
-#if defined YSI_COMPAT || defined KEYWORD_foreign
+#if (defined YSI_COMPAT && defined YSI_KEYWORD_foreign) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_foreign)
 	 #define foreign FOREIGN__
 #endif
-#if defined YSI_COMPAT || defined KEYWORD_global
+#if (defined YSI_COMPAT && defined YSI_KEYWORD_global) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_global)
 	 #define global GLOBAL__
 #endif
-#if defined YSI_COMPAT || defined KEYWORD_master_func
+#if (defined YSI_COMPAT && defined YSI_KEYWORD_master_func) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_master_func)
 	 #define master_func MASTER_FUNC__
 #endif
-#if defined YSI_COMPAT || defined KEYWORD_master_hook
+#if (defined YSI_COMPAT && defined YSI_KEYWORD_master_hook) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_master_hook)
 	 #define master_hook MASTER_HOOK__
 #endif
-#if defined YSI_COMPAT || defined KEYWORD_master_task
+#if (defined YSI_COMPAT && defined YSI_KEYWORD_master_task) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_master_task)
 	 #define master_task MASTER_TASK__
 #endif
-#if defined YSI_COMPAT || defined KEYWORD_master_ptask
+#if (defined YSI_COMPAT && defined YSI_KEYWORD_master_ptask) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_master_ptask)
 	 #define master_ptask MASTER_PTASK__
 #endif
-#if defined YSI_COMPAT || defined KEYWORD_group_hook
+#if (defined YSI_COMPAT && defined YSI_KEYWORD_group_hook) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_group_hook)
 	 #define group_hook GROUP_HOOK__
 #endif
 

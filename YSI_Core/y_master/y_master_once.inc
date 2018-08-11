@@ -110,13 +110,13 @@ Optional plugins:
 	#endif
 #endif
 
-#if defined YSI_COMPAT || defined KEYWORD_mhook
+#if (defined YSI_COMPAT && defined YSI_KEYWORD_mhook) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_mhook)
 	 #define mhook MASTER_HOOK__
 #endif
-#if defined YSI_COMPAT || defined KEYWORD_mtask
+#if (defined YSI_COMPAT && defined YSI_KEYWORD_mtask) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_mtask)
 	 #define mtask MASTER_TASK__
 #endif
-#if defined YSI_COMPAT || defined KEYWORD_mptask
+#if (defined YSI_COMPAT && defined YSI_KEYWORD_mptask) || (!defined YSI_COMPAT && !defined YSI_NO_KEYWORD_mptask)
 	 #define mptask MASTER_PTASK__
 #endif
 
