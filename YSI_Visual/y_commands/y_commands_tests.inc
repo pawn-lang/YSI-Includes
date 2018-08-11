@@ -351,6 +351,26 @@ TEST__ y_commands_3()
 	ASSERT_EQ(gSomeVar, 52);
 }
 
+YCMD:y_commands_4(playerid, cmdtext[], help)
+{
+	gSomeVar = playerid + strval(cmdtext);
+	return 1;
+}
+
+YCMD:y_commands_5(playerid, cmdtext[], help) = y_commands_4;
+
+TEST__ y_commands_4()
+{
+	call OnPlayerConnect(80);
+	gSomeVar = 42;
+	call OnPlayerCommandText(80, "/y_commands_4 40");
+	ASSERT_EQ(gSomeVar, 120);
+	call OnPlayerCommandText(80, "/y_commands_5 50");
+	ASSERT_EQ(gSomeVar, 130);
+	ASSERT_NE(YCMD:y_commands_4, COMMAND_NOT_FOUND);
+	ASSERT_NE(YCMD:y_commands_5, COMMAND_NOT_FOUND);
+}
+
 static stock
 	YSI_gsPlayerid,
 	YSI_gsParams[32],

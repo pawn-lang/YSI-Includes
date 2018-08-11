@@ -163,18 +163,32 @@ static stock const
 	YSI_gscISI[] = "isi",
 	YSI_gscISII[] = "isii";
 
-// "YCMD:" macros.  The true core is "RC:", which is in "y_master".
+// "YCMD:" macros.  The true core is "YSIM_COMMAND", which is in "y_master".
 #define _YCMD_0:(_:_YCMD_1:_YCMD_2:_YCMD_3:%0(%1[]%2) YSIM_COMMAND %0(%1[]%2)
 #define _YCMD_1:_YCMD_2:_YCMD_3:%0, Command_GetID(#%0)),
 #define _YCMD_2:_YCMD_3:%0)  Command_GetID(#%0)))
 #define _YCMD_3:%0;  Command_GetID(#%0));
 #define @YCMD:%0;  Command_TouchNamed(#%0);
 
-#define YCMD: _YCMD_0:(_:_YCMD_1:_YCMD_2:_YCMD_3:
+#define COMMAND__ YSIM_COMMAND
+#if YSI_KEYWORD(YCMD)
+	#define YCMD: _YCMD_0:(_:_YCMD_1:_YCMD_2:_YCMD_3:
+#else
+	// If we don't want the keyword, we still want the ID tag.
+	#define YCMD: (_:_YCMD_1:_YCMD_2:_YCMD_3:
+#endif
 
 // ZCMD compatibility.
 #define CMD:%0(%1) YSIM_COMMAND %0(%1,__help)if(__help)return 0;else
 #define COMMAND CMD
+
+// Alt commands:
+#define _YCMD_4:@yC_%0(%9);%9(%9)%9;%9(%9);%9(%1)=%2; @y_C%0(){Command_AddAltNamed(#%2,#%1);}
+
+#define @_yC%0\32; @_yC
+#define @y_C%0\32; @y_C
+#define @yC_%0\32; @yC_
+#define _@yC%0\32; _@yC
 
 // Forwards for optional command callbacks.
 forward e_COMMAND_ERRORS:OnPlayerCommandReceived(playerid, cmdtext[], e_COMMAND_ERRORS:success); 
@@ -1412,6 +1426,13 @@ HOOK__ OnScriptInit()
 	}
 	if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();
 	if (funcidx(YSI_gscOPCP) != -1) Command_IncOPCP();
+	// Add all the predefined alt commands.
+	new
+		Func:ptr<>;
+	while ((idx = AMX_GetPublicPointerPrefix(idx, _:ptr, _A<@y_C>)))
+	{
+		@.ptr();
+	}
 }
 
 /*-------------------------------------------------------------------------*//**
