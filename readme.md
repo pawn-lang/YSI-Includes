@@ -40,7 +40,7 @@ Data structures and algorithms.
 
 * [y_bintree](YSI_Data/y_bintree.md)
 * [y_bit](YSI_Data/y_bit.md)
-* [y_foreach](YSI_Data/y_foreach.md)
+* [y_iterate](YSI_Data/y_iterate.md) (AKA y_foreach)
 * [y_hashmap](YSI_Data/y_hashmap.md)
 * [y_jaggedarray](YSI_Data/y_jaggedarray.md)
 * [y_playerarray](YSI_Data/y_playerarray.md)
@@ -75,12 +75,12 @@ Libraries for managing players.
 
 Libraries for controlling the server.
 
-* [y_colours](YSI_Server/y_colours.md)
+* [y_colours](YSI_Server/y_colours.md) (AKA y_colors)
 * [y_flooding](YSI_Server/y_flooding.md)
 * [y_lock](YSI_Server/y_lock.md)
 * [y_punycode](YSI_Server/y_punycode.md)
 * [y_scriptinit](YSI_Server/y_scriptinit.md)
-* [y_stringise](YSI_Server/y_stringise.md)
+* [y_stringise](YSI_Server/y_stringise.md) (AKA y_stringize)
 * [y_td](YSI_Server/y_td.md)
 
 ### Storage
