@@ -6,7 +6,7 @@
 #define YIELD__return%0; Iter_YieldReturn(%0);
 #define YIELD__break%0; return;
 
-#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_yield) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_yield)
+#if YSI_KEYWORD(yield)
 	#define yield YIELD__
 #endif
 

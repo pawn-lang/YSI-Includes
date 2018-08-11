@@ -143,16 +143,16 @@ static stock
 //	#define _GROUP_SET_PLAYER(%0) P:E(#_GROUP_MAKE_NAME<..._SetPlayer> " called without y_groups")
 //#endif
 
-//#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_gforeign) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_gforeign)
+//#if YSI_KEYWORD(gforeign)
 //	 #define gforeign GFOREIGN__
 //#endif
-//#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_gglobal) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_gglobal)
+//#if YSI_KEYWORD(gglobal)
 //	 #define gglobal GGLOBAL__
 //#endif
-//#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_gpublic) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_gpublic)
+//#if YSI_KEYWORD(gpublic)
 //	 #define gpublic GPUBLIC__
 //#endif
-//#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD__gchain) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD__gchain)
+//#if YSI_KEYWORD(_gchain)
 //	 #define _gchain GCHAIN__
 //#endif
 

@@ -132,13 +132,13 @@ Optional plugins:
 // Note that this is all optional.  Not doing so will continue to work, but
 // give warnings.
 
-#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_inline) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_inline)
+#if YSI_KEYWORD(inline)
 	#define inline INLINE__
 #endif
-#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_inline_return) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_inline_return)
+#if YSI_KEYWORD(inline_return)
 	#define inline_return INLINE_RETURN__
 #endif
-#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_@return) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_@return)
+#if YSI_KEYWORD(@return)
 	#define @return INLINE_RETURN__
 #endif
 
@@ -965,10 +965,10 @@ Note:
 #define USING_RESOLVED__ (@Ik:@Il:0,)
 
 // Old `using`.
-#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_callback_tag) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_callback_tag)
+#if YSI_KEYWORD(callback_tag)
 	#define callback_tag: (@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
 #endif
-#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_using) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_using)
+#if YSI_KEYWORD(using)
 	#define using USING__
 #endif
 

@@ -120,19 +120,19 @@ Optional plugins:
 
 #define DEFINE_HOOK_RETURN__(%0,%1); forward @y_H%0(); public @y_H%0() { return (%1); }
 
-#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_HOOK_REPLACEMENT) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_HOOK_REPLACEMENT)
+#if YSI_KEYWORD(HOOK_REPLACEMENT)
 	#define DEFINE_HOOK_REPLACEMENT DEFINE_HOOK_REPLACEMENT__
 #endif
-#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_HOOK_RET) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_HOOK_RET)
+#if YSI_KEYWORD(HOOK_RET)
 	#define HOOK_RET:%0(%1) forward @y_H%0(); public @y_H%0()
 #endif
-#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_hook) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_hook)
+#if YSI_KEYWORD(hook)
 	#define hook HOOK__
 #endif
-#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_rehook) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_rehook)
+#if YSI_KEYWORD(rehook)
 	#define rehook HOOK__
 #endif
-#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_Hook) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_Hook)
+#if YSI_KEYWORD(Hook)
 	#define Hook:%0_%1(%2) forward public @yH_%1@%0(%2);@yH_%1@%0(%2)
 #endif
 

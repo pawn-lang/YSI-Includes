@@ -110,14 +110,35 @@ Optional plugins:
 	#endif
 #endif
 
-#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_mhook) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_mhook)
+#if YSI_KEYWORD(mhook)
 	 #define mhook MASTER_HOOK__
 #endif
-#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_mtask) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_mtask)
+#if YSI_KEYWORD(mtask)
 	 #define mtask MASTER_TASK__
 #endif
-#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_mptask) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_mptask)
+#if YSI_KEYWORD(mptask)
 	 #define mptask MASTER_PTASK__
+#endif
+#if YSI_KEYWORD(foreign)
+	 #define foreign FOREIGN__
+#endif
+#if YSI_KEYWORD(global)
+	 #define global GLOBAL__
+#endif
+#if YSI_KEYWORD(master_func)
+	 #define master_func MASTER_FUNC__
+#endif
+#if YSI_KEYWORD(master_hook)
+	 #define master_hook MASTER_HOOK__
+#endif
+#if YSI_KEYWORD(master_task)
+	 #define master_task MASTER_TASK__
+#endif
+#if YSI_KEYWORD(master_ptask)
+	 #define master_ptask MASTER_PTASK__
+#endif
+#if YSI_KEYWORD(group_hook)
+	 #define group_hook GROUP_HOOK__
 #endif
 
 // Because "Cloud" and "Client" start with the same letter, "YSIMC" would be

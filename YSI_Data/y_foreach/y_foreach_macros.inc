@@ -96,7 +96,7 @@ Optional plugins:
 
 //P:D(foreach(expr));
 #define FOREACH__(%0) for(new Y_FOREACH_SECOND|||Y_FOREACH_THIRD|||%0|||)
-#if (defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_foreach) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_foreach)
+#if YSI_KEYWORD(foreach)
 	#define foreach FOREACH__
 #endif
 

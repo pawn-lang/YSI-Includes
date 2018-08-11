@@ -78,6 +78,30 @@ Optional plugins:
 // These includes are in quite a strict order, since there's a lot of inter-
 // dependencies.  That's why they're all together in here.
 
+// Macro for checking if certain keywords should be defined.  Example:
+//
+//   #if YSI_KEYWORD(hook)
+//       #define hook HOOK__
+//   #endif
+//
+// This defines `hook` in the following cases:
+//
+//   1) Nothing special is defined (default, backwards-compatible).
+//   2) `YSI_KEYWORD_hook` is defined and `YSI_NO_KEYWORD_hook` is not defined
+//      (safest - will define `hook` even if someone else defines
+//      `YSI_COMPATIBILITY_MODE`).
+//   3) `YSI_KEYWORD_hook` and `YSI_COMPATIBILITY_MODE` are both defined.
+//   4) `YSI_COMPATIBILITY_MODE` is NOT defined and neither is
+//      `YSI_NO_KEYWORD_hook`.
+//
+// In short, if `YSI_COMPATIBILITY_MODE` is defined, custom keywords must be
+// explicity enabled with `YSI_KEYWORD_name`.  If `YSI_COMPATIBILITY_MODE` is
+// NOT defined, custom keywords must be explicitly disabled with
+// `YSI_NO_KEYWORD_name`.  Note that the name is exactly the custom keyword (or
+// more strictly, custom syntax), so may be lower- or mixed-case, not upper-case
+// as most macros are.
+#define YSI_KEYWORD(%0) ((defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_%0) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_%0))
+
 // Define `cellbytes` as a symbol that really should exist already!
 #if !defined cellbytes
 	#define cellbytes (cellbits / 8)
