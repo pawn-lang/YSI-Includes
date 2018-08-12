@@ -176,7 +176,7 @@ stock
 #define YSI_g_sHeapStart __YSI_g_sHeapStart
 #define YSI_g_sUnusedStart __YSI_g_sUnusedStart
 
-forward Alloc:Malloc_Allocate(size, const bool:clear = true);
+forward Alloc:Malloc_Allocate(size, const bool:clear = false);
 forward Alloc:calloc(size);
 
 #if defined YSI_NO_HEAP_MALLOC

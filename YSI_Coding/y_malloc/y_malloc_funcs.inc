@@ -594,7 +594,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 	stock Alloc:malloc(size)
 	{
 		new
-			Alloc:slot = Malloc_Allocate(size);
+			Alloc:slot = Malloc_Allocate(size, false);
 		P:C(if(!slot)P:E("Allocation failed (%d)", size););
 		return slot;
 	}
@@ -620,19 +620,19 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 stock Alloc:calloc(size)
 {
 	new
-		Alloc:slot = Malloc_Allocate(size);
-	if (slot)
-	{
-		new
-			temp = _:slot;
-		while (size--)
-		{
-			YSI_gMallocMemory[temp++] = 0;
-		}
-	}
-	#if defined YSI_MALLOC_SECURE
-		P:C(if(!slot)P:E("Allocation failed (%d)", size););
-	#endif
+		Alloc:slot = Malloc_Allocate(size, true);
+	//if (slot)
+	//{
+	//	new
+	//		temp = _:slot;
+	//	while (size--)
+	//	{
+	//		YSI_gMallocMemory[temp++] = 0;
+	//	}
+	//}
+	//#if defined YSI_MALLOC_SECURE
+	P:C(if(!slot)P:E("Allocation failed (%d)", size););
+	//#endif
 	return slot;
 }
 
@@ -672,7 +672,7 @@ stock Alloc:calloc(size)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Alloc:realloc(Alloc:slot, size, const bool:clear = true)
+stock Alloc:realloc(Alloc:slot, size, const bool:clear = false)
 {
 	if (!size || !slot || !Malloc_GetSlotSize(_:slot))
 	{
@@ -713,7 +713,7 @@ stock Alloc:realloc(Alloc:slot, size, const bool:clear = true)
 #if defined YSI_MALLOC_SECURE
 	static
 #endif
-		stock Alloc:Malloc_Allocate(size, const bool:clear = true)
+		stock Alloc:Malloc_Allocate(size, const bool:clear = false)
 		{
 			P:2("Malloc_Allocate called: %d, %d, %d, %d", size, YSI_g_sUnusedStart, YSI_g_sHeapStart, Malloc_GetSlotSize(YSI_g_sUnusedStart));
 			// We allocate `size + 1` cells - the extra cell comes before the
