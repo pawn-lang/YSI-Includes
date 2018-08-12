@@ -723,7 +723,7 @@ stock Alloc:realloc(Alloc:slot, size, const bool:clear = true)
 			// cells, INCLUDING the size.  Thus `size + 1` should be a multiple
 			// of 16.  Round up.
 			//size = ceildiv(size + 1, 16) * 16 - 1;
-			size = size / 16 * 16 + 15;
+			size = (size & ~15) + 15;
 			new
 				slot = YSI_g_sUnusedStart,
 				p = YSI_g_sHeapStart, // Was "0", now an offset to the heap.
