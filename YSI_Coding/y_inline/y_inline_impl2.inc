@@ -1936,9 +1936,9 @@ stock Inline_UI_(const &header)
 	P:3("Inline_UI_ called: %d", header);
 	new
 		ptr = Inline_Ref(header),
-		frm = ptr + AMX_Read(header + cellbytes),
+		frm = AMX_Read(header + cellbytes),
 		args = Inline_NumArgs(frm),
-		size = frm - ptr + 12 + args,
+		size = frm + 12 + args,
 		// The size of the allocation makes very little difference, so even if
 		// it isn't needed, we allocate extra memory here for the closure
 		// storage.  The other option would be allocating it separately later
@@ -1961,7 +1961,7 @@ stock Inline_UI_(const &header)
 	new
 		ResolvedAlloc:ra = Malloc_Resolve(closure);
 	rawMemcpy(_:ra + _:E_INLINE_CALL_PARAMS * cellbytes, ptr, size);
-	AMX_Write(_:ra + (_:E_INLINE_CALL_PARAMS + 2) * cellbytes + frm - ptr, args);
+	AMX_Write(_:ra + (_:E_INLINE_CALL_PARAMS + 2) * cellbytes + frm, args);
 	return Indirect_Ptr(ra);
 }
 
