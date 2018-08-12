@@ -160,12 +160,13 @@ __COMPILER_STATIC_ENUM e_INLINE_FLAG (<<= 1)
 	e_INLINE_FLAG_NONE = 0,
 	// Public function, don't do any stack restoration.
 	e_INLINE_FLAG_PUBLIC = 1,
-	// Cleared after a non-const function has been called.  If the function is never called, there's
-	// no point restoring.  If the function is deferred, there's no point restoring.  If the
-	// function is `const`, there's no point restoring.
+	// Cleared after a non-const function has been called.  If the function is
+	// never called, there's no point restoring.  If the function is deferred,
+	// there's no point restoring.  If the function is `const`, there's no point
+	// restoring.
 	e_INLINE_FLAG_CONST
-	// If any more flags are added, Callback_CallHandler_ needs updating, since it sets the flags to
-	// exactly `0`.
+	// If any more flags are added, Callback_CallHandler_ needs updating, since
+	// it sets the flags to exactly `0`.
 }
 
 __COMPILER_STATIC_ENUM E_INLINE_CALL
@@ -295,10 +296,11 @@ static stock
 	YSI_g_sInlineEndPoint,
 	YSI_g_sJumpOffset,
 	YSI_g_sCallbackCallAddress,
-	// This is the start of the linked list of inline functions.  Each time a function goes in to
-	// scope, the address of the local pointing to the function header data is pushed to this stack.
-	// Each time a function goes out of scope a destructor is used to remove that inline from the
-	// list again.  TODO:  If there is a crash, clear this list.
+	// This is the start of the linked list of inline functions.  Each time a
+	// function goes in to scope, the address of the local pointing to the
+	// function header data is pushed to this stack.  Each time a function goes
+	// out of scope a destructor is used to remove that inline from the list
+	// again.  TODO:  If there is a crash, clear this list.
 	YSI_g_sInlineLinkedList;
 
 stock I@T:I@T(const str[])
@@ -474,8 +476,9 @@ static stock Inline_FoundEnd(const scanner[CodeScanner], data[E_INLINE_DATA] = "
 
 static stock Inline_MakeScannerHappy(const data[E_INLINE_DATA])
 {
-	// This inserts an extra `stack` OP for no reason other than to make "codescan" happy, so it
-	// thinks the correct number of cells have been pushed and pulled.
+	// This inserts an extra `stack` OP for no reason other than to make
+	// "codescan" happy, so it thinks the correct number of cells have been
+	// pushed and pulled.
 	if (data[E_INLINE_DATA_STACK] == data[E_INLINE_DATA_LOCALS])
 	{
 		return;
@@ -498,16 +501,18 @@ static stock Inline_MakeScannerHappy(const data[E_INLINE_DATA])
 
 static stock Inline_StoreData(const data[E_INLINE_DATA])
 {
-	// `data[E_INLINE_DATA_NAME]` stores the address of a string with the inline function's name,
-	// followed by extra space for storing: a pointer to the name, a pointer to the function, a
-	// pointer to the next inline in the linked list of names, and something else?
+	// `data[E_INLINE_DATA_NAME]` stores the address of a string with the inline
+	// function's name, followed by extra space for storing: a pointer to the
+	// name, a pointer to the function, a pointer to the next inline in the
+	// linked list of names, and something else?
 	new
 		header = data[E_INLINE_DATA_NAME];
 	// Add a pointer to the function itself (after `JUMP`).
 	AMX_Write(header, data[E_INLINE_DATA_START] + 10 * cellbytes);
 	// Store the local stack size at this point.
 	AMX_Write(header + cellbytes, data[E_INLINE_DATA_LOCALS]);
-	// Store the tag data.  TODO: Put this in the compiler with `InlineName = tagof (InlineName);`.
+	// Store the tag data.  TODO: Put this in the compiler with
+	// `InlineName = tagof (InlineName);`.
 	new
 		tag[32] = "F@_@";
 	for (new cur = 0; cur != data[E_INLINE_DATA_PARAMETER_COUNT]; ++cur)
@@ -1333,13 +1338,14 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 				remote = bool:getarg(3 + __COMPILER_BUG_317);
 		}
 		P:2("Callback_Get called: %d %s %s", numArgs, name, expect);
-		// Check that the assumption made here is valid.  I can't imagine a case,
-		// given the number of libraries in use here, where it couldn't be!  We
-		// check this since any inline data pointer will point in to the `DAT`
-		// segment relative to the start of `COD`.  Any bare string will just be a
-		// normal string starting with an ASCII letter.  This is different to in the
-		// indirection include which knows to resolve the pointer before checking
-		// this, unlike here were we don't know the type.
+		// Check that the assumption made here is valid.  I can't imagine a
+		// case, given the number of libraries in use here, where it couldn't
+		// be!  We check this since any inline data pointer will point in to the
+		// `DAT` segment relative to the start of `COD`.  Any bare string will
+		// just be a normal string starting with an ASCII letter.  This is
+		// different to in the indirection include which knows to resolve the
+		// pointer before checking this, unlike here were we don't know the
+		// type.
 		assert(AMX_HEADER_DAT - AMX_HEADER_COD > 128);
 		ret = getarg(0 + __COMPILER_BUG_317);
 		if (ret == 0)
@@ -1375,9 +1381,12 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 			return true;
 		}
 		return false;
-	}
 #if __COMPILER_BUG_317
+	}
 	#define Callback_Get(%0) Callback_Get_(0,%0)
+#else
+	// Make brace finders and code folders happy.
+	}
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -1930,6 +1939,11 @@ stock Inline_UI_(const &header)
 		frm = ptr + AMX_Read(header + cellbytes),
 		args = Inline_NumArgs(frm),
 		size = frm - ptr + 12 + args,
+		// The size of the allocation makes very little difference, so even if
+		// it isn't needed, we allocate extra memory here for the closure
+		// storage.  The other option would be allocating it separately later
+		// when we determine it is needed, but that would be no faster in the
+		// common case, and slower in the uncommon case, so just do it together.
 		Alloc:closure = malloc(size / cellbytes + _:E_INLINE_CALL - 1);
 	P:5("Inline_UI_: %d %d %d %d %d", ptr, frm, size, _:closure, AMX_Read(header));
 	if (!closure)
