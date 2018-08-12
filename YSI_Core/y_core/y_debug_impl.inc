@@ -644,7 +644,7 @@ stock Debug_PrintArray(arr[], size = sizeof (arr))
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-public OnCodeInit()
+public OnCodeInit(scanner[CODE_SCANNER])
 {
 	Debug_SetState();
 	new
@@ -656,8 +656,9 @@ public OnCodeInit()
 	{
 		//goto Debug_OnCodeInit_no_fault();
 		#if defined Debug_OnCodeInit
-			return Debug_OnCodeInit();
+			return Debug_OnCodeInit(scanner);
 		#else
+			CodeScanRun(scanner);
 			return 1;
 		#endif
 	}
@@ -671,7 +672,7 @@ public OnCodeInit()
 #undef OnCodeInit
 #define OnCodeInit Debug_OnCodeInit
 #if defined Debug_OnCodeInit
-	forward Debug_OnCodeInit();
+	forward Debug_OnCodeInit(scanner[CODE_SCANNER]);
 #endif
 
 /*-------------------------------------------------------------------------*//**

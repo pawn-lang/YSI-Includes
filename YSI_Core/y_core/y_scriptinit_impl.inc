@@ -181,7 +181,8 @@ public OnJITCompile()
 	YSI_g_sCodeJITing = true;
 	//AddressofResolve();
 	#if defined ScriptInit_OnCodeInit
-		ScriptInit_OnCodeInit();
+		new scanner[CODE_SCANNER];
+		ScriptInit_OnCodeInit(scanner);
 	#endif
 	new ret = ScriptInit_OnJITCompile();
 	if (ret)
@@ -254,7 +255,8 @@ public OnFilterScriptInit()
 		DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 		//AddressofResolve();
 		#if defined ScriptInit_OnCodeInit
-			ScriptInit_OnCodeInit();
+			new scanner[CODE_SCANNER];
+			ScriptInit_OnCodeInit(scanner);
 		#endif
 	}
 	ScriptInit_PreInitFuncs_();
@@ -310,7 +312,8 @@ public OnGameModeInit()
 			DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 			//AddressofResolve();
 			#if defined ScriptInit_OnCodeInit
-				ScriptInit_OnCodeInit();
+				new scanner[CODE_SCANNER];
+				ScriptInit_OnCodeInit(scanner);
 			#endif
 		}
 		ScriptInit_PreInitFuncs_();
@@ -395,7 +398,7 @@ public OnGameModeExit()
 #endif
 #define OnCodeInit ScriptInit_OnCodeInit
 #if defined ScriptInit_OnCodeInit
-	forward ScriptInit_OnCodeInit();
+	forward ScriptInit_OnCodeInit(scanner[CODE_SCANNER]);
 #endif
 
 //CHAIN_FORWARD:ScriptInit_OnCodeInit() = 1;

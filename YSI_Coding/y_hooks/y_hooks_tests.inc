@@ -145,12 +145,14 @@ TEST__ OnScriptInit()
 static
 	bool:y_hooks_OnCodeInit_called = false;
 
-public OnCodeInit()
+public OnCodeInit(scanner[CODE_SCANNER])
 {
 	y_hooks_OnCodeInit_called = true;
 	
 	#if defined HooksTest_OnCodeInit
-		HooksTest_OnCodeInit();
+		HooksTest_OnCodeInit(scanner);
+	#else
+		CodeScanRun(scanner);
 	#endif
 	return 1;
 }
@@ -158,7 +160,7 @@ public OnCodeInit()
 #undef OnCodeInit
 #define OnCodeInit HooksTest_OnCodeInit
 #if defined HooksTest_OnCodeInit
-	forward HooksTest_OnCodeInit();
+	forward HooksTest_OnCodeInit(scanner[CODE_SCANNER]);
 #endif
 
 TEST__ OnCodeInit()

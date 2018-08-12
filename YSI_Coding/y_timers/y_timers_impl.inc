@@ -77,7 +77,7 @@ static stock
 	Alloc:YSI_g_sFirstSlot = NO_ALLOC,
 	YSI_g_sPlayerTimers = -1;
 
-public OnCodeInit()
+public OnCodeInit(scanner[CODE_SCANNER])
 {
 	P:1("hook Timers_OnScriptInit called");
 	new
@@ -162,7 +162,9 @@ public OnCodeInit()
 	P:1("hook Timers_OnScriptInit ended");
 	
 	#if defined Timers_OnCodeInit
-		Timers_OnCodeInit();
+		Timers_OnCodeInit(scanner);
+	#else
+		CodeScanRun(scanner);
 	#endif
 	return 1;
 }
@@ -170,7 +172,7 @@ public OnCodeInit()
 #undef OnCodeInit
 #define OnCodeInit Timers_OnCodeInit
 #if defined Timers_OnCodeInit
-	forward Timers_OnCodeInit();
+	forward Timers_OnCodeInit(scanner[CODE_SCANNER]);
 #endif
 
 HOOK__ OnPlayerConnect(playerid)

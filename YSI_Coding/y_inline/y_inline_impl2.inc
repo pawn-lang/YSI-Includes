@@ -621,7 +621,7 @@ public OnRuntimeError(code, &bool:suppress)
 	forward Inline_OnRuntimeError(code, &bool:suppress);
 #endif
 
-public OnCodeInit()
+public OnCodeInit(scanner[CODE_SCANNER])
 {
 	P:2("Inline_OnCodeInit called");
 	new
@@ -635,8 +635,8 @@ public OnCodeInit()
 	#emit STOR.pri         YSI_g_sCallbackCallAddress
 	YSI_g_sCallbackCallAddress += YSI_g_sJumpOffset;
 	
-	new scanner[CodeScanner];
-	CodeScanInit(scanner);
+	//new scanner[CodeScanner];
+	//CodeScanInit(scanner);
 	
 	// Allocate the inline scanning data on the stack, instead of globally.
 	new data[E_INLINE_DATA];
@@ -874,10 +874,11 @@ public OnCodeInit()
 	// TODO: Try and determine rough types for parent function parameters, using
 	// Opcodes like LREF, SREF, and IDXADDR (IDXARRAY?  Can't remember off the
 	// top of my head).
-	CodeScanRun(scanner);
 	
 	#if defined Inline_OnCodeInit
-		Inline_OnCodeInit();
+		Inline_OnCodeInit(scanner);
+	#else
+		CodeScanRun(scanner);
 	#endif
 	return 1;
 }
@@ -885,7 +886,7 @@ public OnCodeInit()
 #undef OnCodeInit
 #define OnCodeInit Inline_OnCodeInit
 #if defined Inline_OnCodeInit
-	forward Inline_OnCodeInit();
+	forward Inline_OnCodeInit(scanner[CODE_SCANNER]);
 #endif
 
 /*

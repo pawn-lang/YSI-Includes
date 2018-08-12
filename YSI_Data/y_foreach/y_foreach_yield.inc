@@ -49,13 +49,15 @@ static
  * </remarks>
  */
 
-public OnCodeInit()
+public OnCodeInit(scanner[CODE_SCANNER])
 {
 	#emit CONST.pri    YSI_g_sStack
 	#emit STOR.pri     YSI_g_sStackPtr
 	
 	#if defined Yield_OnCodeInit
-		Yield_OnCodeInit();
+		Yield_OnCodeInit(scanner);
+	#else
+		CodeScanRun(scanner);
 	#endif
 	return 1;
 }
@@ -63,7 +65,7 @@ public OnCodeInit()
 #undef OnCodeInit
 #define OnCodeInit Yield_OnCodeInit
 #if defined Yield_OnCodeInit
-	forward Yield_OnCodeInit();
+	forward Yield_OnCodeInit(scanner[CODE_SCANNER]);
 #endif
 
 /**

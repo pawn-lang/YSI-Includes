@@ -183,13 +183,15 @@ forward Alloc:calloc(size);
 	new
 		YSI_gMallocMemory[MALLOC_MEMORY];
 	
-	public OnCodeInit()
+	public OnCodeInit(scanner[CODE_SCANNER])
 	{
 		YSI_g_sHeapStart = 0;
 		YSI_gMallocMemory[0] = MALLOC_MEMORY - 1;
 		YSI_g_sUnusedStart = 1;
 		#if defined Malloc_OnCodeInit
-			Malloc_OnCodeInit();
+			Malloc_OnCodeInit(scanner);
+		#else
+			CodeScanRun(scanner);
 		#endif
 		return 1;
 	}
@@ -197,7 +199,7 @@ forward Alloc:calloc(size);
 	#undef OnCodeInit
 	#define OnCodeInit Malloc_OnCodeInit
 	#if defined Malloc_OnCodeInit
-		forward Malloc_OnCodeInit();
+		forward Malloc_OnCodeInit(scanner[CODE_SCANNER]);
 	#endif
 #else
 	new

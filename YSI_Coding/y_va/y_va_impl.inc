@@ -219,7 +219,7 @@ stock YVA2_DummyPush(const skippedBytes = 0, const pushedBytes = 0, const pushRe
 	return 0;
 }
 
-public OnCodeInit()
+public OnCodeInit(scanner[CODE_SCANNER])
 {
 	// To ensure it is correctly initialised with the JIT as well, since we
 	// switched to lazy loading.  VERY few YSI features can be used in
@@ -227,13 +227,13 @@ public OnCodeInit()
 	// correct response is "don't do that"!
 	P:3("YVA2_Initalise start");
 	new
-		scanner[CodeScanner],
+		//scanner[CodeScanner],
 		csmO0A[CodeScanMatcher],
 		csmO0B[CodeScanMatcher],
 		csmO1[CodeScanMatcher],
 		csm2[CodeScanMatcher],
 		csm3[CodeScanMatcher];
-	CodeScanInit(scanner);
+	//CodeScanInit(scanner);
 	/*
 		// O0:
 		const.pri 4
@@ -362,10 +362,11 @@ public OnCodeInit()
 	);
 	CodeScanAddMatcher(scanner, csm3);
 	// Replace calls with the correct parameter counts etc.
-	CodeScanRun(scanner);
 	
 	#if defined VA_OnCodeInit
-		VA_OnCodeInit();
+		VA_OnCodeInit(scanner);
+	#else
+		CodeScanRun(scanner);
 	#endif
 	return 1;
 }
@@ -373,7 +374,7 @@ public OnCodeInit()
 #undef OnCodeInit
 #define OnCodeInit VA_OnCodeInit
 #if defined VA_OnCodeInit
-	forward VA_OnCodeInit();
+	forward VA_OnCodeInit(scanner[CODE_SCANNER]);
 #endif
 
 static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skippedBytes/*, const depth*/, const offset)

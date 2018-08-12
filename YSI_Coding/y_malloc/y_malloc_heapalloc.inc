@@ -136,7 +136,7 @@ static Malloc_FindStackTop()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-public OnCodeInit()
+public OnCodeInit(scanner[CODE_SCANNER])
 {
 	P:1("Malloc_OnCodeInit called");
 	// First ever LEGITIMATE call to "heapspace"!
@@ -161,7 +161,9 @@ public OnCodeInit()
 	}
 	Malloc_TrySetup();
 	#if defined Malloc_OnCodeInit
-		Malloc_OnCodeInit();
+		Malloc_OnCodeInit(scanner);
+	#else
+		CodeScanRun(scanner);
 	#endif
 	SetTimer("Malloc_SolidifyTimer", 0, 0);
 	SetTimer("Malloc_SolidifyTimer", 0, 0);
@@ -171,7 +173,7 @@ public OnCodeInit()
 #undef OnCodeInit
 #define OnCodeInit Malloc_OnCodeInit
 #if defined Malloc_OnCodeInit
-	forward Malloc_OnCodeInit();
+	forward Malloc_OnCodeInit(scanner[CODE_SCANNER]);
 #endif
 
 /*-------------------------------------------------------------------------*//**
