@@ -56,7 +56,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 	
 	#if defined Yield_OnCodeInit
 		Yield_OnCodeInit(scanner);
-	#else
+	#elseif defined CodeScanRun
 		CodeScanRun(scanner);
 	#endif
 	return 1;

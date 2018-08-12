@@ -182,6 +182,9 @@ public OnJITCompile()
 	//AddressofResolve();
 	#if defined ScriptInit_OnCodeInit
 		new scanner[CODE_SCANNER];
+		#if defined CodeScanInit
+			CodeScanInit(scanner);
+		#endif
 		ScriptInit_OnCodeInit(scanner);
 	#endif
 	new ret = ScriptInit_OnJITCompile();
@@ -256,6 +259,9 @@ public OnFilterScriptInit()
 		//AddressofResolve();
 		#if defined ScriptInit_OnCodeInit
 			new scanner[CODE_SCANNER];
+			#if defined CodeScanInit
+				CodeScanInit(scanner);
+			#endif
 			ScriptInit_OnCodeInit(scanner);
 		#endif
 	}
@@ -313,6 +319,9 @@ public OnGameModeInit()
 			//AddressofResolve();
 			#if defined ScriptInit_OnCodeInit
 				new scanner[CODE_SCANNER];
+				#if defined CodeScanInit
+					CodeScanInit(scanner);
+				#endif
 				ScriptInit_OnCodeInit(scanner);
 			#endif
 		}

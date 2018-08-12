@@ -657,7 +657,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 		//goto Debug_OnCodeInit_no_fault();
 		#if defined Debug_OnCodeInit
 			return Debug_OnCodeInit(scanner);
-		#else
+		#elseif defined CodeScanRun
 			CodeScanRun(scanner);
 			return 1;
 		#endif

@@ -151,7 +151,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 	
 	#if defined HooksTest_OnCodeInit
 		HooksTest_OnCodeInit(scanner);
-	#else
+	#elseif defined CodeScanRun
 		CodeScanRun(scanner);
 	#endif
 	return 1;

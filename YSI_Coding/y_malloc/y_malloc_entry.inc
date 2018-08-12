@@ -190,7 +190,7 @@ forward Alloc:calloc(size);
 		YSI_g_sUnusedStart = 1;
 		#if defined Malloc_OnCodeInit
 			Malloc_OnCodeInit(scanner);
-		#else
+		#elseif defined CodeScanRun
 			CodeScanRun(scanner);
 		#endif
 		return 1;

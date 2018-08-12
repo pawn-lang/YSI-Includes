@@ -382,7 +382,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 	AddressofResolve();
 	#if defined ThirdParty_OnCodeInit
 		ThirdParty_OnCodeInit(scanner);
-	#else
+	#elseif defined CodeScanRun
 		CodeScanRun(scanner);
 	#endif
 	return 1;

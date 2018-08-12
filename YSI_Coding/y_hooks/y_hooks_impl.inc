@@ -1195,7 +1195,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 	//DisasmDump("YSI_TEST.asm");
 	#if defined Hooks_OnCodeInit
 		Hooks_OnCodeInit(scanner);
-	#else
+	#elseif defined CodeScanRun
 		CodeScanRun(scanner);
 	#endif
 	P:1("Hooks_OnCodeInit end");

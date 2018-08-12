@@ -163,7 +163,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 	
 	#if defined Timers_OnCodeInit
 		Timers_OnCodeInit(scanner);
-	#else
+	#elseif defined CodeScanRun
 		CodeScanRun(scanner);
 	#endif
 	return 1;

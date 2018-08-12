@@ -162,7 +162,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 	Malloc_TrySetup();
 	#if defined Malloc_OnCodeInit
 		Malloc_OnCodeInit(scanner);
-	#else
+	#elseif defined CodeScanRun
 		CodeScanRun(scanner);
 	#endif
 	SetTimer("Malloc_SolidifyTimer", 0, 0);

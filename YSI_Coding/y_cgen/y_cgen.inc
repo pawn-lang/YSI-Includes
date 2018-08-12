@@ -185,7 +185,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 	CGen_SetupCodeSpace();
 	#if defined CGen_OnCodeInit
 		CGen_OnCodeInit(scanner);
-	#else
+	#elseif defined CodeScanRun
 		CodeScanRun(scanner);
 	#endif
 	// Check that the code at this point is valid.  An OpCode is at most two
