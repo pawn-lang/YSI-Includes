@@ -162,12 +162,29 @@ native YSIPrintF(const format[], GLOBAL_TAG_TYPES:...) = printf;
 #include "y_utils_impl"
 
 // Part of "y_scriptinit", but requires "y_amx".
-ScriptInit_InitFuncs_()
+ScriptInit_PreInitFuncs_()
 {
 	new
 		idx,
 		ptr;
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@yI_>)))
+	{
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      36
+		#emit LCTRL      8
+		#emit PUSH.pri
+		#emit LOAD.S.pri ptr
+		#emit SCTRL      6
+	}
+}
+
+ScriptInit_PostInitFuncs_()
+{
+	new
+		idx,
+		ptr;
+	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@_yI>)))
 	{
 		#emit PUSH.C     0
 		#emit LCTRL      6

@@ -49,11 +49,22 @@ static
  * </remarks>
  */
 
-HOOK__ public OnCodeInit()
+public OnCodeInit()
 {
 	#emit CONST.pri    YSI_g_sStack
 	#emit STOR.pri     YSI_g_sStackPtr
+	
+	#if defined Yield_OnCodeInit
+		Yield_OnCodeInit();
+	#endif
+	return 1;
 }
+
+#undef OnCodeInit
+#define OnCodeInit Yield_OnCodeInit
+#if defined Yield_OnCodeInit
+	forward Yield_OnCodeInit();
+#endif
 
 /**
  * <remarks>

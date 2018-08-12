@@ -188,13 +188,17 @@ forward Alloc:calloc(size);
 		YSI_g_sHeapStart = 0;
 		YSI_gMallocMemory[0] = MALLOC_MEMORY - 1;
 		YSI_g_sUnusedStart = 1;
-		Malloc_OnCodeInit();
+		#if defined Malloc_OnCodeInit
+			Malloc_OnCodeInit();
+		#endif
 		return 1;
 	}
 	
-	CHAIN_FORWARD:Malloc_OnCodeInit() = 1;
 	#undef OnCodeInit
-	#define OnCodeInit(%0) CHAIN_PUBLIC:Malloc_OnCodeInit(%0)
+	#define OnCodeInit Malloc_OnCodeInit
+	#if defined Malloc_OnCodeInit
+		forward Malloc_OnCodeInit();
+	#endif
 #else
 	new
 		YSI_gMallocMemory[1];

@@ -1193,20 +1193,20 @@ public OnCodeInit()
 	P:1("Hooks_OnCodeInit chain");
 	// Dump the generated callbacks for debugging.
 	//DisasmDump("YSI_TEST.asm");
-	HookChain_OnCodeInit();
+	#if defined Hooks_OnCodeInit
+		Hooks_OnCodeInit();
+	#endif
 	P:1("Hooks_OnCodeInit end");
 	if (Server_JITExists())
 		Hooks_RepairJITInit();
 	return 1;
 }
 
-CHAIN_FORWARD:HookChain_OnCodeInit() = 1;
-#if defined _ALS_OnCodeInit
-	#undef OnCodeInit
-#else
-	#define _ALS_OnCodeInit
+#undef OnCodeInit
+#define OnCodeInit Hooks_OnCodeInit
+#if defined Hooks_OnCodeInit
+	forward Hooks_OnCodeInit();
 #endif
-#define OnCodeInit(%0) CHAIN_PUBLIC:HookChain_OnCodeInit(%0)
 
 /**--------------------------------------------------------------------------**\
 <summary>Hooks_RepairJITInit</summary>

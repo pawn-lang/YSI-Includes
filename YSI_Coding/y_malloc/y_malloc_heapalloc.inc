@@ -160,15 +160,19 @@ public OnCodeInit()
 		}
 	}
 	Malloc_TrySetup();
-	Malloc_OnCodeInit();
+	#if defined Malloc_OnCodeInit
+		Malloc_OnCodeInit();
+	#endif
 	SetTimer("Malloc_SolidifyTimer", 0, 0);
 	SetTimer("Malloc_SolidifyTimer", 0, 0);
 	return 1;
 }
 
-CHAIN_FORWARD:Malloc_OnCodeInit() = 1;
 #undef OnCodeInit
-#define OnCodeInit(%0) CHAIN_PUBLIC:Malloc_OnCodeInit(%0)
+#define OnCodeInit Malloc_OnCodeInit
+#if defined Malloc_OnCodeInit
+	forward Malloc_OnCodeInit();
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>

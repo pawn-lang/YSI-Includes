@@ -183,7 +183,9 @@ static stock CGen_SetupCodeSpace()
 public OnCodeInit()
 {
 	CGen_SetupCodeSpace();
-	CGen_OnCodeInit();
+	#if defined CGen_OnCodeInit
+		CGen_OnCodeInit();
+	#endif
 	// Check that the code at this point is valid.  An OpCode is at most two
 	// bytes (except "OP_SWITCH", but there are none of them in this area of
 	// code because there are no "switch"es).  If the code here fails to
@@ -203,13 +205,11 @@ public OnCodeInit()
 	return 1;
 }
 
-CHAIN_FORWARD:CGen_OnCodeInit() = 1;
-#if defined _ALS_OnCodeInit
-	#undef OnCodeInit
-#else
-	#define _ALS_OnCodeInit
+#undef OnCodeInit
+#define OnCodeInit CGen_OnCodeInit
+#if defined CGen_OnCodeInit
+	forward CGen_OnCodeInit();
 #endif
-#define OnCodeInit(%0) CHAIN_PUBLIC:CGen_OnCodeInit(%0)
 
 stock CGen_UseCodeSpace(ctx[AsmContext])
 {

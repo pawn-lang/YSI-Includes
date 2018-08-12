@@ -145,9 +145,24 @@ stock bool:Server_JITExists()
 	return YSI_g_sCodeJITing;
 }
 
-stock bool:JIT_Complete()
+stock bool:Server_JITComplete()
 {
 	return YSI_g_sCodeJITed;
+}
+
+stock bool:Server_IsFilterscript()
+{
+	return YSI_FILTERSCRIPT;
+}
+
+stock bool:Server_IsGameMode()
+{
+	return !YSI_FILTERSCRIPT;
+}
+
+stock bool:Server_CrashDetectExists()
+{
+	return YSI_g_sCrashdetect;
 }
 
 #if !defined _ALS_OnJITCompile
@@ -165,7 +180,9 @@ public OnJITCompile()
 	DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 	YSI_g_sCodeJITing = true;
 	//AddressofResolve();
-	ScriptInit_OnCodeInit();
+	#if defined ScriptInit_OnCodeInit
+		ScriptInit_OnCodeInit();
+	#endif
 	new ret = ScriptInit_OnJITCompile();
 	if (ret)
 		YSI_g_sCodeJITed = true;
@@ -173,11 +190,6 @@ public OnJITCompile()
 		Debug_Print0("\7*** YSI Warning: JIT disabled");
 	DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
 	return ret;
-}
-
-stock bool:Server_CrashDetectExists()
-{
-	return YSI_g_sCrashdetect;
 }
 
 #if !defined _ALS_OnRuntimeError
@@ -209,14 +221,12 @@ public OnRuntimeError(code, &bool:suppress)
 */
 
 #define @yI_%0\32; @yI_
+#define @_yI%0\32; @_yI
 
-#define INIT__%0(%1) @yI_%0(%1);@yI_%0(%1)
+#define PREINIT__%0(%1) @yI_%0(%1);@yI_%0(%1)
+#define POSTINIT__%0(%1) @_yI%0(%1);@_yI%0(%1)
 
-#if YSI_KEYWORD(initfunc)
-	#define initfunc INIT__
-#endif
-
-#define FINAL__%0=%1; stock const %0;INIT__%0(){ScriptInit_ForceFinal_(%0,%1);}
+#define FINAL__%0=%1; stock const %0;PREINIT__%0(){ScriptInit_ForceFinal_(%0,%1);}
 
 #if YSI_KEYWORD(final)
 	#define final FINAL__
@@ -243,12 +253,15 @@ public OnFilterScriptInit()
 	{
 		DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 		//AddressofResolve();
-		ScriptInit_OnCodeInit();
+		#if defined ScriptInit_OnCodeInit
+			ScriptInit_OnCodeInit();
+		#endif
 	}
+	ScriptInit_PreInitFuncs_();
 	#if defined ScriptInit_OnScriptInit
 		ScriptInit_OnScriptInit();
 	#endif
-	ScriptInit_InitFuncs_();
+	ScriptInit_PostInitFuncs_();
 	if (!YSI_g_sCodeJITing)
 	{
 		// Dump the final assembly of this script so we can inspect it.
@@ -296,12 +309,15 @@ public OnGameModeInit()
 		{
 			DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 			//AddressofResolve();
-			ScriptInit_OnCodeInit();
+			#if defined ScriptInit_OnCodeInit
+				ScriptInit_OnCodeInit();
+			#endif
 		}
+		ScriptInit_PreInitFuncs_();
 		#if defined ScriptInit_OnScriptInit
 			ScriptInit_OnScriptInit();
 		#endif
-		ScriptInit_InitFuncs_();
+		ScriptInit_PostInitFuncs_();
 		if (!YSI_g_sCodeJITing)
 		{
 			// Dump the final assembly of this script so we can inspect it.
@@ -373,12 +389,21 @@ public OnGameModeExit()
 
 */
 
-CHAIN_FORWARD:ScriptInit_OnCodeInit() = 1;
+//#undef OnCodeInit
 #if defined _ALS_OnCodeInit || defined OnCodeInit
 	#error OnCodeInit defined
 #endif
-#define _ALS_OnCodeInit
-#define OnCodeInit(%0) CHAIN_PUBLIC:ScriptInit_OnCodeInit(%0)
+#define OnCodeInit ScriptInit_OnCodeInit
+#if defined ScriptInit_OnCodeInit
+	forward ScriptInit_OnCodeInit();
+#endif
+
+//CHAIN_FORWARD:ScriptInit_OnCodeInit() = 1;
+//#if defined _ALS_OnCodeInit || defined OnCodeInit
+//	#error OnCodeInit defined
+//#endif
+//#define _ALS_OnCodeInit
+//#define OnCodeInit(%0) CHAIN_PUBLIC:ScriptInit_OnCodeInit(%0)
 
 CHAIN_FORWARD:ScriptInit_OnScriptInit() = 1;
 #if defined _ALS_OnScriptInit || defined OnScriptInit

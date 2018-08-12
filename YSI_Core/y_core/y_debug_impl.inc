@@ -655,7 +655,11 @@ public OnCodeInit()
 	if (s)
 	{
 		//goto Debug_OnCodeInit_no_fault();
-		return Debug_OnCodeInit();
+		#if defined Debug_OnCodeInit
+			return Debug_OnCodeInit();
+		#else
+			return 1;
+		#endif
 	}
 	P:F("YSI_FILTERSCRIPT == 0");
 	while (s != 10000000) ++s;
@@ -664,9 +668,11 @@ public OnCodeInit()
 	return 1;
 }
 
-CHAIN_FORWARD:Debug_OnCodeInit() = 1;
 #undef OnCodeInit
-#define OnCodeInit(%0) CHAIN_PUBLIC:Debug_OnCodeInit(%0)
+#define OnCodeInit Debug_OnCodeInit
+#if defined Debug_OnCodeInit
+	forward Debug_OnCodeInit();
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="ysi_debug : on" source="ysi_debug : "/>

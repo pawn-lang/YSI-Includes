@@ -246,16 +246,17 @@ public OnCodeInit()
 		YVA2_Initalise();
 		YSI_g_sInitialised = -1;
 	}
-	return VA_OnCodeInit();
+	#if defined VA_OnCodeInit
+		VA_OnCodeInit();
+	#endif
+	return 1;
 }
 
-CHAIN_FORWARD:VA_OnCodeInit() = 1;
-#if defined _ALS_OnCodeInit
-	#undef OnCodeInit
-#else
-	#define _ALS_OnCodeInit
+#undef OnCodeInit
+#define OnCodeInit VA_OnCodeInit
+#if defined VA_OnCodeInit
+	forward VA_OnCodeInit();
 #endif
-#define OnCodeInit(%0) CHAIN_PUBLIC:VA_OnCodeInit(%0)
 
 static stock YVA2_CodeGenPushSite(ctx[AsmContext], const pushedBytes, const skippedBytes/*, const depth*/, const offset)
 {
