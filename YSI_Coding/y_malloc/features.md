@@ -87,6 +87,18 @@ new Alloc:arr = malloc(16);
 arr = realloc(arr, 32);
 ```
 
+If the reallocation fails, the old pointer remains valid:
+
+```pawn
+new Alloc:arr = malloc(16);
+new Alloc:rea = realloc(arr, 32);
+if (!rea)
+{
+	P:E("Reallocation failed");
+	free(arr);
+}
+```
+
 ### Allocate A String
 
 This allocates enough memory to store a single string, then writes that string.
