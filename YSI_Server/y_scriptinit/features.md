@@ -110,6 +110,12 @@ main()
 
 This is also usable as `final` (without `YSI_NO_KEYWORD_final`).
 
+There is one problem with this currently.  You can set tags on the variables, but the tag of the value is not checked:
+
+```pawn
+FINAL__ Float:gMaxPlayers = GetMaxPlayers(); // No tag mismatch warning.
+```
+
 ## `OnScriptExit`
 
 Called when this script ends, regardless of the type.
