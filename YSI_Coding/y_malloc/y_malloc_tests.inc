@@ -150,19 +150,41 @@ TEST__ y_malloc_SlotSize()
 {
 	MALLOC_TEST(10)
 	{
-		ASSERT_EQ(Malloc_SlotSize(a), 10);
+		ASSERT_EQ(Malloc_SlotSize(a), 16 - 1);
 	}
 	MALLOC_TEST(100)
 	{
-		ASSERT_EQ(Malloc_SlotSize(a), 100);
+		ASSERT_EQ(Malloc_SlotSize(a), 112 - 1);
 	}
 	MALLOC_TEST(1000)
 	{
-		ASSERT_EQ(Malloc_SlotSize(a), 1000);
+		ASSERT_EQ(Malloc_SlotSize(a), 1008 - 1);
 	}
 	MALLOC_TEST(1)
 	{
-		ASSERT_EQ(Malloc_SlotSize(a), 1);
+		ASSERT_EQ(Malloc_SlotSize(a), 16 - 1);
+	}
+	MALLOC_TEST(15)
+	{
+		ASSERT_EQ(Malloc_SlotSize(a), 16 - 1);
+	}
+	MALLOC_TEST(16)
+	{
+		ASSERT_EQ(Malloc_SlotSize(a), 32 - 1);
+	}
+	for (new size = 1; size != 16; ++size)
+	{
+		MALLOC_TEST(size)
+		{
+			ASSERT_EQ(Malloc_SlotSize(a), 16 - 1);
+		}
+	}
+	for (new size = 16; size != 32; ++size)
+	{
+		MALLOC_TEST(size)
+		{
+			ASSERT_EQ(Malloc_SlotSize(a), 32 - 1);
+		}
 	}
 }
 

@@ -716,13 +716,23 @@ stock Alloc:realloc(Alloc:slot, size, const bool:clear = true)
 		stock Alloc:Malloc_Allocate(size, const bool:clear = true)
 		{
 			P:2("Malloc_Allocate called: %d, %d, %d, %d", size, YSI_g_sUnusedStart, YSI_g_sHeapStart, Malloc_GetSlotSize(YSI_g_sUnusedStart));
-			//P:0("Malloc_Allocate called: %d, %d, %d, %d", size, YSI_g_sUnusedStart, YSI_g_sHeapStart, Malloc_GetSlotSize(YSI_g_sUnusedStart));
+			// We allocate `size + 1` cells - the extra cell comes before the
+			// returned allocation, and is used to store the size of the
+			// allocation (for when we are freeing data).  To make allocations
+			// and de-allocations easier, we allocate memory in blocks of 16
+			// cells, INCLUDING the size.  Thus `size + 1` should be a multiple
+			// of 16.  Round up.
+			//size = ceildiv(size + 1, 16) * 16 - 1;
+			size = size / 16 * 16 + 15;
 			new
 				slot = YSI_g_sUnusedStart,
 				p = YSI_g_sHeapStart, // Was "0", now an offset to the heap.
 				cs,
 				nextSlot = 0;
 			#if _DEBUG > 4
+				// I think this is always generated, because `#emit` is not
+				// affected by `#if`.  The print isn't though, and it is just
+				// two extra instructions - not a huge burden!
 				#emit LCTRL         2
 				#emit STOR.S.alt    cs
 				printf("Malloc_Allocate: heap = %d", cs);
