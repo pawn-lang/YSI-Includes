@@ -1,15 +1,15 @@
 TODO(000, "Support localfunc and targetfunc");
 
-remotefunc stock yrt_1(hi);
+REMOTE_FUNC__ stock yrt_1(hi);
 
-remotefunc stock yrt_3(hi, string:you[], there[], len)
+REMOTE_FUNC__ stock yrt_3(hi, string:you[], there[], len)
 {
 	#pragma unused hi, you, there, len
 	// Impl...
 	return 99;
 }
 
-remotefunc Float:yrt_335(hi, string:you[], there[], len)
+REMOTE_FUNC__ Float:yrt_335(hi, string:you[], there[], len)
 {
 	#pragma unused hi, you, there, len
 	// Impl...
@@ -17,12 +17,12 @@ remotefunc Float:yrt_335(hi, string:you[], there[], len)
 	return float(hi);
 }
 
-remotefunc stock static void:yrt_4(hi)
+REMOTE_FUNC__ stock static void:yrt_4(hi)
 {
 	#pragma unused hi
 }
 
-remotefunc static stock string:yrt_5(hi, const string:you[], there[], tt, &other, const len = 7)
+REMOTE_FUNC__ static stock string:yrt_5(hi, const string:you[], there[], tt, &other, const len = 7)
 {
 	#pragma unused hi, you, there, tt, len
 	new str[144];
@@ -31,18 +31,9 @@ remotefunc static stock string:yrt_5(hi, const string:you[], there[], tt, &other
 	return str;
 }
 
-remotefunc Float:yrt_55(hi, const string:you[], there[], tt, &other, const len = 7)
-{
-	// Figure out why this fails with the "len" parameter (allocates too much
-	// heap data and doesn't fully clear it).
-	#pragma unused you, there, tt, len
-	other = hi + 5;
-	return 5.5;
-}
+REMOTE_FUNC__ stock Float:yrt_6(hi, string:you[], there[], len);
 
-remotefunc stock Float:yrt_6(hi, string:you[], there[], len);
-
-remotefunc static void:yrt_7(&a, &b, c, &d)
+REMOTE_FUNC__ static void:yrt_7(&a, &b, c, &d)
 {
 	a = 8;
 	b = a;
@@ -50,7 +41,7 @@ remotefunc static void:yrt_7(&a, &b, c, &d)
 	d -= 4;
 }
 
-remotefunc stock string:yrt_8();
+REMOTE_FUNC__ stock string:yrt_8();
 
 TEST__ y_remote_1()
 {
@@ -58,8 +49,8 @@ TEST__ y_remote_1()
 }
 
 TODO(244, "Allocates too much heap with `len`.");
-remotefunc static stock yrt_2(const hi, string:you[], there[], &other, &len = 7);
-remotefunc static stock string:yrt_2b(const hi, string:you[], there[], &other, &len = 7);
+REMOTE_FUNC__ static stock yrt_2(const hi, string:you[], there[], &other, &len = 7);
+REMOTE_FUNC__ static stock string:yrt_2b(const hi, string:you[], there[], &other, &len = 7);
 
 TEST__ y_remote_2()
 {
@@ -92,12 +83,25 @@ TEST__ y_remote_5()
 	ASSERT_EQ(other, 47);
 }
 
-TEST__ y_remote_55()
-{
-	new other = 42, arr[] = {5, 6, 7};
-	ASSERT_EQ(yrt_55(10, "hi", arr, sizeof (arr), other), 5.5);
-	ASSERT_EQ(other, 15);
-}
+#if __COMPILER_MODIFIED
+
+	REMOTE_FUNC__ Float:yrt_55(hi, const string:you[], there[], tt, &other, const len = 7)
+	{
+		// Figure out why this fails with the "len" parameter (allocates too much
+		// heap data and doesn't fully clear it).
+		#pragma unused you, there, tt, len
+		other = hi + 5;
+		return 5.5;
+	}
+
+	TEST__ y_remote_55()
+	{
+		new other = 42, arr[] = {5, 6, 7};
+		ASSERT_EQ(yrt_55(10, "hi", arr, sizeof (arr), other), 5.5);
+		ASSERT_EQ(other, 15);
+	}
+
+#endif
 
 TEST__ y_remote_6()
 {
@@ -119,7 +123,7 @@ TEST__ y_remote_8()
 	
 }
 
-remotefunc Float:yrt_9();
+REMOTE_FUNC__ Float:yrt_9();
 
 TEST__ y_remote_9()
 {
