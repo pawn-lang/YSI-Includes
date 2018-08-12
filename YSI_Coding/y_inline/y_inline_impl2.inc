@@ -1937,7 +1937,7 @@ stock Inline_UI_(const &header)
 	new
 		ptr = Inline_Ref(header),
 		frm = AMX_Read(header + cellbytes),
-		args = Inline_NumArgs(frm),
+		args = Inline_NumArgs(ptr + frm),
 		size = frm + 12 + args,
 		// The size of the allocation makes very little difference, so even if
 		// it isn't needed, we allocate extra memory here for the closure
