@@ -102,9 +102,6 @@ Optional plugins:
 // as most macros are.
 #define YSI_KEYWORD(%0) ((defined YSI_COMPATIBILITY_MODE && defined YSI_KEYWORD_%0) || (!defined YSI_COMPATIBILITY_MODE && !defined YSI_NO_KEYWORD_%0))
 
-// So we can use the code scanner, without actually including it.
-#define CODE_SCANNER (CodeScanner:(7 + 16 + 1 + 32 char + 2 + 32 * 4 + 2))
-
 // Define `cellbytes` as a symbol that really should exist already!
 #if !defined cellbytes
 	#define cellbytes (cellbits / 8)

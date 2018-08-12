@@ -198,10 +198,6 @@ Optional plugins:
 	#define AMX_INCLUDING_FAILED
 #endif
 
-#if CodeScanner:CodeScanner != CODE_SCANNER
-	#error CodeScanner sizes don't match - please adjust `CODE_SCANNER` in `y_core_entry.inc`.
-#endif
-
 #tryinclude "..\..\amx\amx_jit"
 #tryinclude <amx_assembly\amx_jit>
 #tryinclude "..\..\amx_assembly\amx_jit"
@@ -377,21 +373,20 @@ Optional plugins:
 // "y_thirdpartyinclude_tests" is NOT included here when tests are active, because it complicates
 // dependency orders massively!
 
-public OnCodeInit(scanner[CODE_SCANNER])
+public OnCodeInit()
 {
 	AddressofResolve();
 	#if defined ThirdParty_OnCodeInit
-		ThirdParty_OnCodeInit(scanner);
-	#elseif defined CodeScanRun
-		CodeScanRun(scanner);
+		return ThirdParty_OnCodeInit();
+	#else
+		return 1;
 	#endif
-	return 1;
 }
 
 #undef OnCodeInit
 #define OnCodeInit ThirdParty_OnCodeInit
 #if defined ThirdParty_OnCodeInit
-	forward ThirdParty_OnCodeInit(scanner[CODE_SCANNER]);
+	forward ThirdParty_OnCodeInit();
 #endif
 
 #if __COMPILER_WARNING_SUPPRESSION

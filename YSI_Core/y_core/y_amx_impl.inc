@@ -120,7 +120,7 @@ enum E_AMX_TABLE
 
 // This is based on the AMX version used in SA:MP - it DOES NOT match the code
 // found in the PAWN documentation as that's for a later version.
-public OnCodeInit(scanner[CODE_SCANNER])
+public OnCodeInit()
 {
 	new
 		addr,
@@ -201,9 +201,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 		GetServerVarAsString(YSI_gLockData, YSI_gLockData[5], sizeof (YSI_gLockData) - 5);
 	#endif
 	#if defined AMX_OnCodeInit
-		AMX_OnCodeInit(scanner);
-	#elseif defined CodeScanRun
-		CodeScanRun(scanner);
+		AMX_OnCodeInit();
 	#endif
 	return 1;
 }
@@ -211,7 +209,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 #undef OnCodeInit
 #define OnCodeInit AMX_OnCodeInit
 #if defined AMX_OnCodeInit
-	forward AMX_OnCodeInit(scanner[CODE_SCANNER]);
+	forward AMX_OnCodeInit();
 #endif
 
 stock AMX_GetGlobalAddress(...)

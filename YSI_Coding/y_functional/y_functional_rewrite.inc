@@ -369,7 +369,7 @@ static stock Functional_FoundCall(scanner[CodeScanner], nestingLevel)
 	return 1;
 }
 
-public OnCodeInit(scanner[CODE_SCANNER])
+public OnCodeInit()
 {
 	P:2("Functional_OnCodeInit called");
 	// Look for any calls to `LAM@0`, then find the next call to `LAM@1` with a matching parameter
@@ -377,8 +377,8 @@ public OnCodeInit(scanner[CODE_SCANNER])
 	// if the parameter is `> 0` ignore it - it's the code scanner itself).  Get rid of all the
 	// calls and change them in to jumps to each other.
 	
-	//new scanner[CodeScanner];
-	//CodeScanInit(scanner);
+	new scanner[CodeScanner];
+	CodeScanInit(scanner);
 	
 	new lambdaCall0[CodeScanMatcher];
 	CodeScanMatcherInit(lambdaCall0, &Functional_FoundCall1);
@@ -409,11 +409,10 @@ public OnCodeInit(scanner[CODE_SCANNER])
 	);
 	CodeScanAddMatcher(scanner, lambdaCall2);
 	
+	CodeScanRun(scanner);
 	
 	#if defined Functional_OnCodeInit
-		Functional_OnCodeInit(scanner);
-	#elseif defined CodeScanRun
-		CodeScanRun(scanner);
+		Functional_OnCodeInit();
 	#endif
 	return 1;
 }
@@ -421,7 +420,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 #undef OnCodeInit
 #define OnCodeInit Functional_OnCodeInit
 #if defined Functional_OnCodeInit
-	forward Functional_OnCodeInit(scanner[CODE_SCANNER]);
+	forward Functional_OnCodeInit();
 #endif
 
 /*

@@ -180,13 +180,11 @@ static stock CGen_SetupCodeSpace()
 	YSI_g_sCodeSpace += 12;
 }
 
-public OnCodeInit(scanner[CODE_SCANNER])
+public OnCodeInit()
 {
 	CGen_SetupCodeSpace();
 	#if defined CGen_OnCodeInit
-		CGen_OnCodeInit(scanner);
-	#elseif defined CodeScanRun
-		CodeScanRun(scanner);
+		CGen_OnCodeInit();
 	#endif
 	// Check that the code at this point is valid.  An OpCode is at most two
 	// bytes (except "OP_SWITCH", but there are none of them in this area of
@@ -210,24 +208,22 @@ public OnCodeInit(scanner[CODE_SCANNER])
 #undef OnCodeInit
 #define OnCodeInit CGen_OnCodeInit
 #if defined CGen_OnCodeInit
-	forward CGen_OnCodeInit(scanner[CODE_SCANNER]);
+	forward CGen_OnCodeInit();
 #endif
 
 stock CGen_UseCodeSpace(ctx[AsmContext])
 {
-	CGen_SetupCodeSpace();
 	AsmInitPtr(ctx, YSI_g_sCodeSpace, YSI_g_sCodeEnd - YSI_g_sCodeSpace);
 }
 
 stock CGen_GetCodeSpace()
 {
-	CGen_SetupCodeSpace();
 	return YSI_g_sCodeSpace;
 }
 
 stock CGen_AddCodeSpace(num)
 {
-	CGen_SetupCodeSpace();
-	YSI_g_sCodeSpace += num;
+	if (YSI_g_sCodeSpace == -1) P:E("YSI_g_sCodeSpace is -1 in \"CGen_AddCodeSpace\"");
+	else YSI_g_sCodeSpace += num;
 }
 

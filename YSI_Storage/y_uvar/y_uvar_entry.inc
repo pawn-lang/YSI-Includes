@@ -310,7 +310,7 @@ stock N@(volatile const vardata[], playerCount, dataSize, &pointer)
 	P:5("N@: %d", YSI_g_sFirstUVarData);
 }
 
-public OnCodeInit(scanner[CODE_SCANNER])
+public OnCodeInit()
 {
 	// List them all.
 	YSI_g_sFirstUVarData = -1;
@@ -330,9 +330,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 	}
 	
 	#if defined UVar_OnCodeInit
-		UVar_OnCodeInit(scanner);
-	#elseif defined CodeScanRun
-		CodeScanRun(scanner);
+		UVar_OnCodeInit();
 	#endif
 	return 1;
 }
@@ -340,7 +338,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 #undef OnCodeInit
 #define OnCodeInit UVar_OnCodeInit
 #if defined UVar_OnCodeInit
-	forward UVar_OnCodeInit(scanner[CODE_SCANNER]);
+	forward UVar_OnCodeInit();
 #endif
 
 /*public OnPlayerLogout(playerid, uid)

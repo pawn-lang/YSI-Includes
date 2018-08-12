@@ -341,7 +341,7 @@ Svar_Save()
 	INI_Close(__fwrite);
 }
 
-public OnCodeInit(scanner[CODE_SCANNER])
+public OnCodeInit()
 {
 	P:1("hook Svar_OnScriptInit called");
 	// List them all.
@@ -367,9 +367,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 	#endif
 	
 	#if defined SVar_OnCodeInit
-		SVar_OnCodeInit(scanner);
-	#elseif defined CodeScanRun
-		CodeScanRun(scanner);
+		SVar_OnCodeInit();
 	#endif
 	return 1;
 }
@@ -377,6 +375,6 @@ public OnCodeInit(scanner[CODE_SCANNER])
 #undef OnCodeInit
 #define OnCodeInit SVar_OnCodeInit
 #if defined SVar_OnCodeInit
-	forward SVar_OnCodeInit(scanner[CODE_SCANNER]);
+	forward SVar_OnCodeInit();
 #endif
 

@@ -1156,7 +1156,7 @@ static stock Hooks_SortReplacements()
  * <transition keep="true" target="_ALS : _ALS_go"/>
  *//*------------------------------------------------------------------------**/
 
-public OnCodeInit(scanner[CODE_SCANNER])
+public OnCodeInit()
 {
 	P:1("Hooks_OnCodeInit called");
 	state _ALS : _ALS_go;
@@ -1194,9 +1194,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 	// Dump the generated callbacks for debugging.
 	//DisasmDump("YSI_TEST.asm");
 	#if defined Hooks_OnCodeInit
-		Hooks_OnCodeInit(scanner);
-	#elseif defined CodeScanRun
-		CodeScanRun(scanner);
+		Hooks_OnCodeInit();
 	#endif
 	P:1("Hooks_OnCodeInit end");
 	if (Server_JITExists())
@@ -1207,7 +1205,7 @@ public OnCodeInit(scanner[CODE_SCANNER])
 #undef OnCodeInit
 #define OnCodeInit Hooks_OnCodeInit
 #if defined Hooks_OnCodeInit
-	forward Hooks_OnCodeInit(scanner[CODE_SCANNER]);
+	forward Hooks_OnCodeInit();
 #endif
 
 /**--------------------------------------------------------------------------**\
