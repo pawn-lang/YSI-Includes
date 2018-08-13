@@ -74,61 +74,61 @@ stock MySQL_PQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPE
 {
 	Indirect_Claim(cb);
 	mysql_format(handle, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, query, ___(3));
-	mysql_pquery(handle, YSI_UNSAFE_HUGE_STRING, "Inline_FromCallback", "ii", _:cb, true);
+	mysql_pquery(handle, YSI_UNSAFE_HUGE_STRING, "Indirect_FromCallback", "ii", _:cb, true);
 }
 
 stock MySQL_TQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPES:...)
 {
 	Indirect_Claim(cb);
 	mysql_format(handle, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, query, ___(3));
-	mysql_tquery(handle, YSI_UNSAFE_HUGE_STRING, "Inline_FromCallback", "ii", _:cb, true);
+	mysql_tquery(handle, YSI_UNSAFE_HUGE_STRING, "Indirect_FromCallback", "ii", _:cb, true);
 }
 
 stock ORM_SelectInline(ORM:id, Func:cb<>)
 {
 	Indirect_Claim(cb);
-	orm_select(id, "Inline_FromCallback", "ii", _:cb, true);
+	orm_select(id, "Indirect_FromCallback", "ii", _:cb, true);
 }
 
 stock ORM_UpdateInline(ORM:id, Func:cb<>)
 {
 	Indirect_Claim(cb);
-	orm_update(id, "Inline_FromCallback", "ii", _:cb, true);
+	orm_update(id, "Indirect_FromCallback", "ii", _:cb, true);
 }
 
 stock ORM_InsertInline(ORM:id, Func:cb<>)
 {
 	Indirect_Claim(cb);
-	orm_insert(id, "Inline_FromCallback", "ii", _:cb, true);
+	orm_insert(id, "Indirect_FromCallback", "ii", _:cb, true);
 }
 
 stock ORM_DeleteInline(ORM:id, Func:cb<>)
 {
 	Indirect_Claim(cb);
-	orm_delete(id, "Inline_FromCallback", "ii", _:cb, true);
+	orm_delete(id, "Indirect_FromCallback", "ii", _:cb, true);
 }
 
 stock ORM_LoadInline(ORM:id, Func:cb<>)
 {
 	Indirect_Claim(cb);
-	orm_load(id, "Inline_FromCallback", "ii", _:cb, true);
+	orm_load(id, "Indirect_FromCallback", "ii", _:cb, true);
 }
 
 stock ORM_SaveInline(ORM:id, Func:cb<>)
 {
 	Indirect_Claim(cb);
-	orm_save(id, "Inline_FromCallback", "ii", _:cb, true);
+	orm_save(id, "Indirect_FromCallback", "ii", _:cb, true);
 }
 
 stock BCrypt_CheckInline(text[], hash[], Func:cb<>)
 {
 	Indirect_Claim(cb);
-	bcrypt_check(text, hash, "Inline_FromCallback", "ii", _:cb, true);
+	bcrypt_check(text, hash, "Indirect_FromCallback", "ii", _:cb, true);
 }
 
 stock BCrypt_HashInline(text[], cost, Func:cb<>)
 {
 	Indirect_Claim(cb);
-	bcrypt_hash(text, cost, "Inline_FromCallback", "ii", _:cb, true);
+	bcrypt_hash(text, cost, "Indirect_FromCallback", "ii", _:cb, true);
 }
 
