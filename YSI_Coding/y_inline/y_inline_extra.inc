@@ -70,6 +70,15 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+forward Indirect_FromCallback(Func:cb<>, bool:release);
+
+public Indirect_FromCallback(Func:cb<>, bool:release)
+{
+	@.cb();
+	if (release)
+		Indirect_Release(cb);
+}
+
 stock MySQL_PQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPES:...)
 {
 	Indirect_Claim(cb);
