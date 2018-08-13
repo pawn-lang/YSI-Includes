@@ -93,6 +93,42 @@ stock MySQL_TQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPE
 	mysql_tquery(handle, YSI_UNSAFE_HUGE_STRING, "Inline_FromCallback", "ii", _:cb, true);
 }
 
+stock ORM_SelectInline(ORM:id, Func:cb<>)
+{
+	Indirect_Claim(cb);
+	orm_select(id, "Inline_FromCallback", "ii", _:cb, true);
+}
+
+stock ORM_UpdateInline(ORM:id, Func:cb<>)
+{
+	Indirect_Claim(cb);
+	orm_update(id, "Inline_FromCallback", "ii", _:cb, true);
+}
+
+stock ORM_InsertInline(ORM:id, Func:cb<>)
+{
+	Indirect_Claim(cb);
+	orm_insert(id, "Inline_FromCallback", "ii", _:cb, true);
+}
+
+stock ORM_DeleteInline(ORM:id, Func:cb<>)
+{
+	Indirect_Claim(cb);
+	orm_delete(id, "Inline_FromCallback", "ii", _:cb, true);
+}
+
+stock ORM_LoadInline(ORM:id, Func:cb<>)
+{
+	Indirect_Claim(cb);
+	orm_load(id, "Inline_FromCallback", "ii", _:cb, true);
+}
+
+stock ORM_SaveInline(ORM:id, Func:cb<>)
+{
+	Indirect_Claim(cb);
+	orm_save(id, "Inline_FromCallback", "ii", _:cb, true);
+}
+
 stock BCrypt_CheckInline(text[], hash[], Func:cb<>)
 {
 	Indirect_Claim(cb);
