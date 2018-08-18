@@ -1,6 +1,5 @@
 # y_stringise
 
-Provides a number of ways of dealing with multiple connections from the same IP, including banning the IP, rejecting too many connections, and more.
 Similar to `#`, but more complete in that it handles brackets, commas, and more.  Note that the brackets it handles must be matched.  It is also different to `#` in other ways - quotes are converted to `` ` ``, concatenation is not allowed, and te output is enclosed in `"`s:
 
 | Input                | Output      |
