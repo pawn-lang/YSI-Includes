@@ -1,3 +1,0 @@
-#undef __COMPILER_OS
-#define __COMPILER_OS __COMPILER_WINDOWS
-
