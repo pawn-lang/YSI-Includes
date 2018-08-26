@@ -866,6 +866,6 @@ stock const
 
 #undef Iterator
 P:D(Iterator:Iterator(name));
-#define Iterator:%1<%2> Iterator@%1[_:F@c:F@d:((%2)+1)]={(-(%2)*((%2)-1)),(-(%2)*((%2)-2)),...}F@a$,Iter_Single@%1 F@a$F@a$
+#define Iterator:%1<%2> Iterator@%1[_:F@c:F@d:((%2)+1)]={0,1,...}F@a$,Iter_Single@%1 F@a$F@a$
 #define IteratorArray Iterator
 

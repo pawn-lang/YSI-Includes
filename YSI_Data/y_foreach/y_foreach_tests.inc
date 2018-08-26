@@ -3564,3 +3564,14 @@ TEST__ y_iter_yield7a()
 	ASSERT_EQ(idx, sizeof(answers));
 }
 
+static Iterator:y_iter_huge<100000>;
+
+TEST__ y_iter_huge()
+{
+	for (new i = 0; i < 50000; i++)
+	{
+		Iter_Add(y_iter_huge, i);
+	}
+	ASSERT_EQ(Iter_Count(y_iter_huge), 50000);
+}
+
