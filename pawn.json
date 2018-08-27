@@ -1,6 +1,41 @@
 {
 	"user": "pawn-lang",
 	"repo": "YSI-Includes",
+	"contributors": [
+		"50p",
+		"Ahmad45123",
+		"breadfish",
+		"Chaprnks",
+		"Crayder",
+		"Dayvison",
+		"Fireburn",
+		"g_aSlice/Slice",
+		"irinel1996",
+		"JoeBullet/Google63",
+		"Konstantinos",
+		"koolk",
+		"Los",
+		"m0k1",
+		"maddinat0r",
+		"Masterchen09",
+		"Matite",
+		"Misiur",
+		"PatchwerkQWER",
+		"paulommu",
+		"Pixels^",
+		"RIDE2DAY",
+		"samphunter",
+		"Southclaws",
+		"spacemud",
+		"TheAlpha",
+		"tianmetal",
+		"udan111",
+		"Y_Less",
+		"Yiin-",
+		"yom",
+		"Zamaroht",
+		"Zeex"
+	],
 	"entry": "YSI_TEST.pwn",
 	"output": "YSI_TEST.amx",
 	"dependencies": [
@@ -69,47 +104,14 @@
 		"YSI-Visual/y_zonenames",
 		"YSI-Visual/y_zonepulse",
 		"YSI-Internal/y_core",
-		"YSI-Internal/y_cgen"
+		"YSI-Internal/y_cgen",
 		"YSI-Internal/y_thirdpartyinclude"
 	],
 	"dev_dependencies": [
 		"sampctl/samp-stdlib",
-		"Open-GTO/sa-mp-fixes"
-	],
-	"contributors": [
-		"50p",
-		"Ahmad45123",
-		"breadfish",
-		"Chaprnks",
-		"Crayder",
-		"Dayvison",
-		"Fireburn",
-		"g_aSlice/Slice",
-		"irinel1996",
-		"JoeBullet/Google63",
-		"Konstantinos",
-		"koolk",
-		"Los",
-		"m0k1",
-		"maddinat0r",
-		"Masterchen09",
-		"Matite",
-		"Misiur",
-		"PatchwerkQWER",
-		"paulommu",
-		"Pixels^",
-		"RIDE2DAY",
-		"samphunter",
-		"Southclaws",
-		"spacemud",
-		"TheAlpha",
-		"tianmetal",
-		"udan111",
-		"Y_Less",
-		"Yiin-",
-		"yom",
-		"Zamaroht",
-		"Zeex"
+		"Open-GTO/sa-mp-fixes",
+		"maddinat0r/sscanf",
+		"Southclaws/samp-whirlpool"
 	],
 	"builds": [
 		{
@@ -1860,7 +1862,6 @@
 				"YSI_IS_CLIENT=1"
 			]
 		},
-
 		{
 			"name": "debug_1_2_3_0",
 			"args": [
@@ -1904,7 +1905,7 @@
 				"_DEBUG=1",
 				"YSI_IS_CLIENT=1"
 			]
-		
+		},
 		{
 			"name": "test_1_2_3_0",
 			"args": [
@@ -2320,6 +2321,18 @@
 				"_YSI_NO_TEST_VERIFICATION=1",
 				"YSI_IS_CLIENT=1"
 			]
+		},
+		{
+			"name": "-l",
+			"args": [
+				"-l",
+				"-d2",
+				"-O0",
+				"-\\+",
+				"GTYPE=0",
+				"_DEBUG=1",
+				"YSI_NO_MASTER=1"
+			]
 		}
 	],
 	"runtime": {
@@ -2327,14 +2340,40 @@
 		"version": "0.3.7",
 		"mode": "server",
 		"echo": "-",
+		"rcon_password": "YSI_TEST",
 		"port": 7777,
+		"hostname": "YSI_TEST",
 		"maxplayers": 50,
 		"language": "",
-		"weburl": "www.y-less.com",
-		"rcon_password": "YSI_TEST",
-		"hostname": "YSI_TEST",
 		"mapname": "YSI_TEST",
-		"gamemodetext": "YSI_TEST"
+		"weburl": "www.y-less.com",
+		"gamemodetext": "YSI_TEST",
+		"announce": true,
+		"lanmode": false,
+		"query": true,
+		"rcon": false,
+		"logqueries": false,
+		"sleep": 5,
+		"maxnpc": 0,
+		"stream_rate": 1000,
+		"stream_distance": 200,
+		"onfoot_rate": 30,
+		"incar_rate": 30,
+		"weapon_rate": 30,
+		"chatlogging": true,
+		"timestamp": true,
+		"messageholelimit": 3000,
+		"messageslimit": 500,
+		"ackslimit": 3000,
+		"playertimeout": 10000,
+		"minconnectiontime": 0,
+		"lagcompmode": 1,
+		"connseedtime": 300000,
+		"db_logging": false,
+		"db_log_queries": false,
+		"conncookies": true,
+		"cookielogging": false,
+		"output": true
 	},
 	"runtimes": [
 		{
@@ -2342,15 +2381,40 @@
 			"version": "0.3.7",
 			"mode": "y_testing",
 			"echo": "-",
+			"rcon_password": "YSI_TEST",
 			"port": 7777,
+			"hostname": "YSI_TEST",
 			"maxplayers": 50,
 			"language": "",
-			"weburl": "www.y-less.com",
-			"rcon_password": "YSI_TEST",
-			"hostname": "YSI_TEST",
 			"mapname": "YSI_TEST",
-			"gamemodetext": "YSI_TEST"
+			"weburl": "www.y-less.com",
+			"gamemodetext": "YSI_TEST",
+			"announce": true,
+			"lanmode": false,
+			"query": true,
+			"rcon": false,
+			"logqueries": false,
+			"sleep": 5,
+			"maxnpc": 0,
+			"stream_rate": 1000,
+			"stream_distance": 200,
+			"onfoot_rate": 30,
+			"incar_rate": 30,
+			"weapon_rate": 30,
+			"chatlogging": true,
+			"timestamp": true,
+			"messageholelimit": 3000,
+			"messageslimit": 500,
+			"ackslimit": 3000,
+			"playertimeout": 10000,
+			"minconnectiontime": 0,
+			"lagcompmode": 1,
+			"connseedtime": 300000,
+			"db_logging": false,
+			"db_log_queries": false,
+			"conncookies": true,
+			"cookielogging": false,
+			"output": true
 		}
 	]
 }
-

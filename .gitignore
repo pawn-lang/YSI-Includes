@@ -1,3 +1,55 @@
+#
+# Package only files
+#
+
+# Compiled Bytecode, precompiled output and assembly
+*.amx
+*.lst
+*.asm
+
+# Vendor directory for dependencies
+dependencies/
+
+# Dependency versions lockfile
+pawn.lock
+
+
+#
+# Server/gamemode related files
+#
+
+# compiled settings file
+# keep `samp.json` file on version control
+# but make sure the `rcon_password` field is set externally
+# you can use the environment variable `SAMP_RCON_PASSWORD` to do this.
+server.cfg
+
+# Plugins directory
+plugins/
+
+# binaries
+*.exe
+*.dll
+*.so
+announce
+samp03svr
+samp-npc
+
+# logs
+logs/
+server_log.txt
+crashinfo.txt
+
+#
+# Common files
+#
+
+*.sublime-workspace
+
+#
+# Old YSI ignored files
+#
+
 /a_actor.inc
 /a_http.inc
 /a_npc.inc
@@ -14,3 +66,4 @@
 /string.inc
 /time.inc
 /y_inline_3.inc
+
