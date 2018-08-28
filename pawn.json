@@ -2801,6 +2801,166 @@
 				"_YSI_NO_TEST_VERIFICATION=1",
 				"YSI_IS_CLIENT=1"
 			]
+		},
+		{
+			"name": "pp_0_0",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=0",
+				"_DEBUG=0",
+				"YSI_NO_MASTER=1"
+			]
+		},
+		{
+			"name": "pp_0_1",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=0",
+				"_DEBUG=0",
+				"YSI_IS_SERVER=1"
+			]
+		},
+		{
+			"name": "pp_0_2",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=0",
+				"_DEBUG=0",
+				"YSI_IS_CLOUD=1"
+			]
+		},
+		{
+			"name": "pp_0_3",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=0",
+				"_DEBUG=0",
+				"YSI_IS_CLIENT=1"
+			]
+		},
+		{
+			"name": "pp_1_0",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=1",
+				"_DEBUG=0",
+				"YSI_NO_MASTER=1"
+			]
+		},
+		{
+			"name": "pp_1_1",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=1",
+				"_DEBUG=0",
+				"YSI_IS_SERVER=1"
+			]
+		},
+		{
+			"name": "pp_1_2",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=1",
+				"_DEBUG=0",
+				"YSI_IS_CLOUD=1"
+			]
+		},
+		{
+			"name": "pp_1_3",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=1",
+				"_DEBUG=0",
+				"YSI_IS_CLIENT=1"
+			]
+		},
+		{
+			"name": "pp_2_0",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=2",
+				"_DEBUG=0",
+				"YSI_NO_MASTER=1"
+			]
+		},
+		{
+			"name": "pp_2_1",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=2",
+				"_DEBUG=0",
+				"YSI_IS_SERVER=1"
+			]
+		},
+		{
+			"name": "pp_2_2",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=2",
+				"_DEBUG=0",
+				"YSI_IS_CLOUD=1"
+			]
+		},
+		{
+			"name": "pp_2_3",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=2",
+				"_DEBUG=0",
+				"YSI_IS_CLIENT=1"
+			]
+		},
+		{
+			"name": "pp_3_0",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=3",
+				"_DEBUG=0",
+				"YSI_NO_MASTER=1"
+			]
+		},
+		{
+			"name": "pp_3_1",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=3",
+				"_DEBUG=0",
+				"YSI_IS_SERVER=1"
+			]
+		},
+		{
+			"name": "pp_3_2",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=3",
+				"_DEBUG=0",
+				"YSI_IS_CLOUD=1"
+			]
+		},
+		{
+			"name": "pp_3_3",
+			"args": [
+				"-l",
+				"-\\+",
+				"GTYPE=3",
+				"_DEBUG=0",
+				"YSI_IS_CLIENT=1"
+			]
 		}
 	],
 	"runtime": {
