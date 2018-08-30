@@ -126,7 +126,7 @@ stock Sparse_TryGet(const name[], index, &dest)
 		dest = SparseArray_DoRead(id, name, index);
 		return true;
 	}
-	return true;
+	return false;
 }
 
 /*-------------------------------------------------------------------------*//**
