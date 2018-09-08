@@ -1,19 +1,19 @@
 /*
 Legal:
 	Version: MPL 1.1
-	
-	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 the "License"; you may not use this file except in compliance with 
-	the License. You may obtain a copy of the License at 
+
+	The contents of this file are subject to the Mozilla Public License Version
+	1.1 the "License"; you may not use this file except in compliance with
+	the License. You may obtain a copy of the License at
 	http://www.mozilla.org/MPL/
-	
+
 	Software distributed under the License is distributed on an "AS IS" basis,
 	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 	for the specific language governing rights and limitations under the
 	License.
-	
+
 	The Original Code is the YSI framework.
-	
+
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
@@ -72,16 +72,16 @@ Optional plugins:
 
 /*
 
-     ad88888ba                                              
-    d8"     "8b              ,d                             
-    Y8,                      88                             
-    `Y8aaaaa,    ,adPPYba, MM88MMM 88       88 8b,dPPYba,   
-      `"""""8b, a8P_____88   88    88       88 88P'    "8a  
-            `8b 8PP"""""""   88    88       88 88       d8  
-    Y8a     a8P "8b,   ,aa   88,   "8a,   ,a88 88b,   ,a8"  
-     "Y88888P"   `"Ybbd8"'   "Y888  `"YbbdP'Y8 88`YbbdP"'   
-                                               88           
-                                               88           
+     ad88888ba
+    d8"     "8b              ,d
+    Y8,                      88
+    `Y8aaaaa,    ,adPPYba, MM88MMM 88       88 8b,dPPYba,
+      `"""""8b, a8P_____88   88    88       88 88P'    "8a
+            `8b 8PP"""""""   88    88       88 88       d8
+    Y8a     a8P "8b,   ,aa   88,   "8a,   ,a88 88b,   ,a8"
+     "Y88888P"   `"Ybbd8"'   "Y888  `"YbbdP'Y8 88`YbbdP"'
+                                               88
+                                               88
 
 */
 
@@ -106,6 +106,10 @@ Optional plugins:
 
 #if !defined MAX_HOOK_REPLACEMENTS
 	#define MAX_HOOK_REPLACEMENTS (16)
+#endif
+
+#if !defined MAX_SINGLE_CALLBACK_HOOKS
+	#define MAX_SINGLE_CALLBACK_HOOKS (32)
 #endif
 
 // Generate a function name using only ONE of the parts, so two replacements for
@@ -135,4 +139,3 @@ Optional plugins:
 #if YSI_KEYWORD(Hook)
 	#define Hook:%0_%1(%2) forward public @yH_%1@%0(%2);@yH_%1@%0(%2)
 #endif
-

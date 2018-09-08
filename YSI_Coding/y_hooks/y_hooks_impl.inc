@@ -1,19 +1,19 @@
 /*
 Legal:
 	Version: MPL 1.1
-	
-	The contents of this file are subject to the Mozilla Public License Version 
-	1.1 the "License"; you may not use this file except in compliance with 
-	the License. You may obtain a copy of the License at 
+
+	The contents of this file are subject to the Mozilla Public License Version
+	1.1 the "License"; you may not use this file except in compliance with
+	the License. You may obtain a copy of the License at
 	http://www.mozilla.org/MPL/
-	
+
 	Software distributed under the License is distributed on an "AS IS" basis,
 	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
 	for the specific language governing rights and limitations under the
 	License.
-	
+
 	The Original Code is the YSI framework.
-	
+
 	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
 	Portions created by the Initial Developer are Copyright C 2011
 	the Initial Developer. All Rights Reserved.
@@ -72,16 +72,16 @@ Optional plugins:
 
 /*
 
-     ad88888ba                                              
-    d8"     "8b              ,d                             
-    Y8,                      88                             
-    `Y8aaaaa,    ,adPPYba, MM88MMM 88       88 8b,dPPYba,   
-      `"""""8b, a8P_____88   88    88       88 88P'    "8a  
-            `8b 8PP"""""""   88    88       88 88       d8  
-    Y8a     a8P "8b,   ,aa   88,   "8a,   ,a88 88b,   ,a8"  
-     "Y88888P"   `"Ybbd8"'   "Y888  `"YbbdP'Y8 88`YbbdP"'   
-                                               88           
-                                               88           
+     ad88888ba
+    d8"     "8b              ,d
+    Y8,                      88
+    `Y8aaaaa,    ,adPPYba, MM88MMM 88       88 8b,dPPYba,
+      `"""""8b, a8P_____88   88    88       88 88P'    "8a
+            `8b 8PP"""""""   88    88       88 88       d8
+    Y8a     a8P "8b,   ,aa   88,   "8a,   ,a88 88b,   ,a8"
+     "Y88888P"   `"Ybbd8"'   "Y888  `"YbbdP'Y8 88`YbbdP"'
+                                               88
+                                               88
 
 */
 
@@ -544,7 +544,7 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[128], idx, &namelen)
+_Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[MAX_SINGLE_CALLBACK_HOOKS], idx, &namelen)
 {
 	P:4("Hooks_GetAllHooks called: %s %d", name, idx);
 	// Start from the very start - repeats the first item.
@@ -608,34 +608,34 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
 	new
 		namelen = strlen(name);
 	// For this function, note that:
-	//   
+	//
 	//   hook OnPlayerConnect(playerid)
-	//   
+	//
 	// Compiles as:
-	//   
+	//
 	//   public @yH_OnPlayerConnect@XXX(playerid)
 	//   
 	// Where "XXX" is some unique number (the exact value is irrelevant, it just
 	// means that multiple hooks of the same function have different names).
 	static
 		sName[64],
-		sHooks[128];
+		sHooks[MAX_SINGLE_CALLBACK_HOOKS];
 	// The above now becomes:
-	//   
+	//
 	//   OnPlayerConnect
-	//   
+	//
 	// This also handles cases such as:
-	//   
+	//
 	//   @yH_OnPlayerEnterRaceCheckpoint@162
-	//   
+	//
 	// Being invalid (too long), so instead converts the shortened:
-	//   
+	//
 	//   @yH_OnPlayerEnterRaceCP@162
-	//   
+	//
 	// To:
-	//   
+	//
 	//   OnPlayerEnterRaceCheckpoint
-	//   
+	//
 	// Thus expanding common name length reductions.
 	strunpack(sName, name),
 	Hooks_IsolateName(sName),
@@ -668,11 +668,11 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(const name[64], const hooks[], count, write, 
 {
 	P:4("Hooks_GenerateCode called");
 	// We now have:
-	//  
+	//
 	//  1) All the hooks of this function.
 	//  2) The original function if it exists.
 	//  3) Special ALS chained functions if they exists.
-	//  
+	//
 	// This took huge chunks of complex code in the old version.  Now not so
 	// much!  I don't know if this code is faster (I suspect it is), but it is
 	// absolutely simpler!
@@ -709,14 +709,14 @@ _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 
 /*
 
-    88888888888                                        88                            88               ad88             
-    88                                           ,d    ""                            88              d8"               
-    88                                           88                                  88              88                
-    88aaaaa 88       88 8b,dPPYba,   ,adPPYba, MM88MMM 88  ,adPPYba,  8b,dPPYba,     88 8b,dPPYba, MM88MMM ,adPPYba,   
-    88""""" 88       88 88P'   `"8a a8"     ""   88    88 a8"     "8a 88P'   `"8a    88 88P'   `"8a  88   a8"     "8a  
-    88      88       88 88       88 8b           88    88 8b       d8 88       88    88 88       88  88   8b       d8  
-    88      "8a,   ,a88 88       88 "8a,   ,aa   88,   88 "8a,   ,a8" 88       88    88 88       88  88   "8a,   ,a8"  
-    88       `"YbbdP'Y8 88       88  `"Ybbd8"'   "Y888 88  `"YbbdP"'  88       88    88 88       88  88    `"YbbdP"'   
+    88888888888                                        88                            88               ad88
+    88                                           ,d    ""                            88              d8"
+    88                                           88                                  88              88
+    88aaaaa 88       88 8b,dPPYba,   ,adPPYba, MM88MMM 88  ,adPPYba,  8b,dPPYba,     88 8b,dPPYba, MM88MMM ,adPPYba,
+    88""""" 88       88 88P'   `"8a a8"     ""   88    88 a8"     "8a 88P'   `"8a    88 88P'   `"8a  88   a8"     "8a
+    88      88       88 88       88 8b           88    88 8b       d8 88       88    88 88       88  88   8b       d8
+    88      "8a,   ,a88 88       88 "8a,   ,aa   88,   88 "8a,   ,a8" 88       88    88 88       88  88   "8a,   ,a8"
+    88       `"YbbdP'Y8 88       88  `"Ybbd8"'   "Y888 88  `"YbbdP"'  88       88    88 88       88  88    `"YbbdP"'
 
 */
 
@@ -761,16 +761,16 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[64])
 
 /*
 
-      ,ad8888ba,                       88                                                
-     d8"'    `"8b                      88                                                
-    d8'                                88                                                
-    88             ,adPPYba,   ,adPPYb,88  ,adPPYba,  ,adPPYb,d8  ,adPPYba, 8b,dPPYba,   
-    88            a8"     "8a a8"    `Y88 a8P_____88 a8"    `Y88 a8P_____88 88P'   `"8a  
-    Y8,           8b       d8 8b       88 8PP""""""" 8b       88 8PP""""""" 88       88  
-     Y8a.    .a8P "8a,   ,a8" "8a,   ,d88 "8b,   ,aa "8a,   ,d88 "8b,   ,aa 88       88  
-      `"Y8888Y"'   `"YbbdP"'   `"8bbdP"Y8  `"Ybbd8"'  `"YbbdP"Y8  `"Ybbd8"' 88       88  
-                                                      aa,    ,88                         
-                                                       "Y8bbdP"                          
+      ,ad8888ba,                       88
+     d8"'    `"8b                      88
+    d8'                                88
+    88             ,adPPYba,   ,adPPYb,88  ,adPPYba,  ,adPPYb,d8  ,adPPYba, 8b,dPPYba,
+    88            a8"     "8a a8"    `Y88 a8P_____88 a8"    `Y88 a8P_____88 88P'   `"8a
+    Y8,           8b       d8 8b       88 8PP""""""" 8b       88 8PP""""""" 88       88
+     Y8a.    .a8P "8a,   ,a8" "8a,   ,d88 "8b,   ,aa "8a,   ,d88 "8b,   ,aa 88       88
+      `"Y8888Y"'   `"YbbdP"'   `"8bbdP"Y8  `"Ybbd8"'  `"YbbdP"Y8  `"Ybbd8"' 88       88
+                                                      aa,    ,88
+                                                       "Y8bbdP"
 
 */
 
@@ -802,13 +802,13 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	// Make sure the underlying system doesn't change without us.  Now supported
 	// natively.
 	CGen_UseCodeSpace(ctx);
-	
+
 	// Start of the function.
 	@emit PROC                          // 1
-	
+
 	// Allocate space for our "ret" variable at "frm - 4".
 	if (multiple) @emit PUSH.C  ret     // 3
-	
+
 	// Copy the stack to itself (MOVS).
 	// Allocate space.
 	@emit LOAD.S.pri    8               // 5
@@ -818,7 +818,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	@emit SUB                           // 11
 	@emit SCTRL         4               // 13
 	@emit XCHG                          // 14
-	
+
 	if (Server_JITExists())
 	{
 		// Need to use memcpy to move about in the stack.
@@ -840,7 +840,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		// generated AFTER the file is loaded so we bypass the data segment
 		// checks and can freely write wherever we want.
 		@emit STOR.pri      (CGen_GetCodeSpace() + (21 * 4) - (multiple ? 0 : 8)) // 16
-		
+
 		// Do the copying.  "alt" is already "STK", load the "FRM" offset.
 		@emit LCTRL         5           // 18
 		@emit ADD.C         12          // 20
@@ -848,7 +848,7 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		@emit MOVS          0           // 22 (- 1)
 	}
 	@emit Hooks_NoStackCopy:
-	
+
 	// Push the (fake) number of parameters.
 	@emit PUSH.C        -4
 	// Now loop over all our functions and insert "CALL" opcodes for them.
@@ -861,17 +861,17 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 			if (skipable)
 			{
 				// =====================================
-				//  THIS SECTION IS CURRENTLY 10 CELLS. 
+				//  THIS SECTION IS CURRENTLY 10 CELLS.
 				// =====================================
 				// Note: Including the original call...
-				//  
+				//
 				//  if (func() < 0) break;
 				//  else ret = ret & func();
-				//  
+				//
 				@emit ZERO.alt      // 3
 				@emit JSLESS.label  Hooks_EndCall // 5
 				// =========================
-				//  JUMP OVER THIS SECTION. 
+				//  JUMP OVER THIS SECTION.
 				// =========================
 			}
 			@emit LOAD.S.alt    -4   // 7
@@ -905,9 +905,9 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		// just discard everything we've written so far (reclaims the memory).
 		return 0;
 	}
-	
+
 	@emit Hooks_SkipInvert:
-	
+
 	// This is the point the small "JUMP" above goes to.
 	@emit MOVE.alt
 	// Remove the whole stack then get the return value.
@@ -915,26 +915,26 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	@emit SCTRL         4
 	//@emit LOAD.S.pri    -4
 	@emit MOVE.pri
-	
+
 	// Return.
 	@emit RETN
-	
+
 	// Return the number of bytes written.
 	return ctx[AsmContext_buffer_offset];
 }
 
 /*
 
-     ad88888ba                                 88                          
-    d8"     "8b                          ,d    ""                          
-    Y8,                                  88                                
-    `Y8aaaaa,    ,adPPYba,  8b,dPPYba, MM88MMM 88 8b,dPPYba,   ,adPPYb,d8  
-      `"""""8b, a8"     "8a 88P'   "Y8   88    88 88P'   `"8a a8"    `Y88  
-            `8b 8b       d8 88           88    88 88       88 8b       88  
-    Y8a     a8P "8a,   ,a8" 88           88,   88 88       88 "8a,   ,d88  
-     "Y88888P"   `"YbbdP"'  88           "Y888 88 88       88  `"YbbdP"Y8  
-                                                               aa,    ,88  
-                                                                "Y8bbdP"   
+     ad88888ba                                 88
+    d8"     "8b                          ,d    ""
+    Y8,                                  88
+    `Y8aaaaa,    ,adPPYba,  8b,dPPYba, MM88MMM 88 8b,dPPYba,   ,adPPYb,d8
+      `"""""8b, a8"     "8a 88P'   "Y8   88    88 88P'   `"8a a8"    `Y88
+            `8b 8b       d8 88           88    88 88       88 8b       88
+    Y8a     a8P "8a,   ,a8" 88           88,   88 88       88 "8a,   ,d88
+     "Y88888P"   `"YbbdP"'  88           "Y888 88 88       88  `"YbbdP"Y8
+                                                               aa,    ,88
+                                                                "Y8bbdP"
 
 */
 
@@ -1217,7 +1217,7 @@ public OnCodeInit()
 	When using the JIT, the initialisation functions may have already had their
 	indexes looked up prior to calling the plugin.  It that case we need to keep
 	the index constant, even if a different public is now in that slot.
-	
+
 	The stub is the function put in to that index, which redirects the first
 	call to one of those publics to the correct place and restores whatever
 	public was previously in that slot.
@@ -1335,4 +1335,3 @@ Hooks_NumArgs_negative:
 	#define _ALS_numargs
 #endif
 #define numargs Hooks_NumArgs
-
