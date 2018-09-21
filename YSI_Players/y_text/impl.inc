@@ -1852,7 +1852,7 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 		bool:wasOnce[YSI_MAX_LANGUAGES] = {false, ...},
 		bool:gotExtras[YSI_MAX_LANGUAGES] = {false, ...},
 		n = (numargs() - 11) * 4,
-		dialog = Dialog_ObtainID();//,
+		cd[E_CALLBACK_DATA]//,
 		//maxlen,
 		//owned = Text_IsLocalOwner(isearch, iident, maxlen);
 	// Loop through all the players passed to the function (however they were
@@ -2044,7 +2044,8 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 				wasOnce[lang] = !ret;
 			}
 			// Display the message.
-			Dialog_Show(playerid, style, YSI_g_sCaptionText[lang], YSI_g_sLangBuffer[lang], YSI_g_sButton1Text[lang], YSI_g_sButton2Text[lang], dialog);
+			Callback_Get(callback, cb, _F<iiiis>);
+			Dialog_ShowCallbackData(playerid, cb, style, YSI_g_sCaptionText[lang], YSI_g_sLangBuffer[lang], YSI_g_sButton1Text[lang], YSI_g_sButton2Text[lang]);
 		}
 	}
 	else
@@ -2202,16 +2203,11 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 				wasOnce[lang] = !ret;
 			}
 			// Display the message.
-			Dialog_Show(playerid, style, YSI_g_sCaptionText[lang], YSI_g_sLangBuffer[lang], YSI_g_sButton1Text[lang], YSI_g_sButton2Text[lang], dialog);
+			Callback_Get(callback, cb, _F<iiiis>);
+			Dialog_ShowCallbackData(playerid, cd, style, YSI_g_sCaptionText[lang], YSI_g_sLangBuffer[lang], YSI_g_sButton1Text[lang], YSI_g_sButton2Text[lang]);
 		}
 	}
-	// Sort out the callbacks etc for the dialog return.
-	new
-		cd[E_CALLBACK_DATA];
-	Callback_Get(callback, cd, _F<iiiis>);
-	Dialog_SetCallbackData(dialog, cd); //AMX_GetPublicPointer(callback));
-	// Automatically free the dialog when we're done.
-	Dialog_Garbage(dialog);
+
 	Format_SetListSeparator(", ");
 	return dialog;
 }
