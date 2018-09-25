@@ -87,15 +87,100 @@ Optional plugins:
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
+ * <param name="">Excluded elements.</param>
  * <remarks>
  *  Returns a random value from an iterator.
+ *  
+ *  If additional parameters are given they are excluded from consideration.
+ *  This allows you to chain calls to get multiple random values so follows:
+ *  
+ *      new president     = Iter_Random(Player);
+ *      new vicePresident = Iter_Random(Player, president);
+ *      new primeMinister = Iter_Random(Player, president, vicePresident);
+ *      new minister      = Iter_Random(Player, president, vicePresident, primeMinister);
+ *  
+ *  None of those values can be the same, and this saves horrible random-
+ *  dependent loops.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_Random_Internal(count, array[], start)
+stock Iter_Random_Internal(count, array[], start, ...)
 {
+	new
+		numArgs = (numargs() - 3);
+	if (numArgs)
+	{
+		// Get the number of VALID exclusions.
+		new
+			end,
+			excluded;
+		// Get the end of the variable arguments.
+		#emit ADDR.alt     24
+		#emit STOR.S.alt   excluded
+		#emit LOAD.S.pri   numArgs
+		#emit SHL.C.pri    2
+		#emit ADD
+		#emit STOR.S.pri   end
+		for (new rewrite = excluded, value; excluded != end; excluded += 4)
+		{
+			#emit LREF.S.pri   excluded
+			#emit LOAD.I
+			#emit STOR.S.pri   value
+			// First, check if this is valid.
+			if (0 <= value < start && array[value] > value)
+			{
+				// It does.  Optimise for the inner loop.  Do this by
+				// compressing valid values to the start of the list and storing
+				// the dereferenced versions instead of the addresses.
+				#emit LOAD.S.pri   value
+				#emit SREF.S.pri   rewrite
+				rewrite += 4;
+			}
+			else
+			{
+				// It does not.  Remove from the check.
+				--numArgs;
+			}
+		}
+		if (numArgs)
+		{
+			if (count <= numArgs)
+				return INVALID_ITERATOR_SLOT;
+			// There are enough elements to search from after exclusions.
+			count = random(count - numArgs);
+			#emit ADDR.alt     24
+			#emit LOAD.S.pri   numArgs
+			#emit SHL.C.pri    2
+			#emit ADD
+			#emit STOR.S.pri   end
+			do
+			{
+Iter_Random_Internal_next_loop:
+				// Load the start address.
+				#emit ADDR.pri     24
+				#emit STOR.S.pri   excluded
+				// Check if this is an excluded value.
+				start = array[start];
+				for ( ; excluded != end; excluded += 4)
+				{
+					#emit LREF.S.pri   excluded
+					#emit LOAD.S.alt   start
+					#emit JEQ          Iter_Random_Internal_next_loop
+					//#emit STOR.S.pri   value
+					//if (check == start)
+					//	goto Iter_Random_Internal_next_loop;
+				}
+				// The loop ended, all is good.
+			}
+			while (count--);
+			return start;
+		}
+		// After removing invalid exclusions, there are none left.  Fall through
+		// to the default implementation.
+	}
 	if (count)
 	{
+		// No exclutions, use the old code.
 		count = random(count);
 		do
 		{

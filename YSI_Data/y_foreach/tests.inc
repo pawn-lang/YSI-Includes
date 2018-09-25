@@ -3570,12 +3570,63 @@ Test:y_iter_yield7a()
 
 static Iterator:y_iter_huge<100000>;
 
-TEST__ y_iter_huge()
+Test:y_iter_huge()
 {
 	for (new i = 0; i < 50000; i++)
 	{
 		Iter_Add(y_iter_huge, i);
 	}
-	ASSERT_EQ(Iter_Count(y_iter_huge), 50000);
+	ASSERT(Iter_Count(y_iter_huge) == 50000);
+}
+
+Test:y_iter_random_exclusions()
+{
+	new
+		Iterator:rand<20>;
+	Iter_Add(rand, 5);
+	Iter_Add(rand, 6);
+	for (new i = 0; i < 100; i++)
+	{
+		ASSERT(Iter_Random(rand, 5) == 6);
+	}
+	Iter_Add(rand, 7);
+	Iter_Add(rand, 11);
+	Iter_Add(rand, 13);
+	for (new i = 0; i < 100; i++)
+	{
+		ASSERT(Iter_Random(rand, 5, 6, 11, 13) == 7);
+	}
+	for (new i = 0; i < 1000; i++)
+	{
+		new rnd = Iter_Random(rand, 7, 13, 14, 15, 17, 77, 123, 1, 0, -66);
+		ASSERT(rnd == 5 || rnd == 6 || rnd == 11);
+	}
+	new selected[20];
+	for (new i = 0; i < 1000; i++)
+	{
+		new rnd = Iter_Random(rand, 14, 15, 17, 77, 123, 1, 0, -66);
+		ASSERT(rnd == 5 || rnd == 6 || rnd == 7 || rnd == 11 || rnd == 13);
+		++selected[rnd];
+	}
+	ASSERT(!selected[0]);
+	ASSERT(!selected[1]);
+	ASSERT(!selected[2]);
+	ASSERT(!selected[3]);
+	ASSERT(!selected[4]);
+	ASSERT(!!selected[5]);
+	ASSERT(!!selected[6]);
+	ASSERT(!!selected[7]);
+	ASSERT(!selected[8]);
+	ASSERT(!selected[9]);
+	ASSERT(!selected[10]);
+	ASSERT(!!selected[11]);
+	ASSERT(!selected[12]);
+	ASSERT(!!selected[13]);
+	ASSERT(!selected[14]);
+	ASSERT(!selected[15]);
+	ASSERT(!selected[16]);
+	ASSERT(!selected[17]);
+	ASSERT(!selected[18]);
+	ASSERT(!selected[19]);
 }
 

@@ -371,8 +371,9 @@ P:D(Iter_RandomFree(Iterator:iter<>));
 
 P:D(Iter_Random(Iterator:iter<>));
 #define Iter_Random _ITER<Random>
-#define Iter_Random_InternalA(%0,%1)    Iter_Random_Internal(%0,_:%1,F@s(%1)-1)
-#define Iter_Random_InternalB(%0,%2,%1) Iter_Random_Internal(%0[%2],_:%1,F@s(%1)-1-(%2))
+#define Iter_Random_InternalA(%0,%1)    Iter_Random_Internal(%0,(_:%1),F@s(%1)-1)
+#define Iter_Random_InternalB(%0,%2,%1) Iter_Random_Internal(%0[%2],(_:%1),F@s(%1)-1-(%2))
+#define Iter_Random_Internal(%0,(_:%1,%2),F@s(%9)%3) Iter_Random_Internal(%0,(_:%1),F@s(%1)%3,%2)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get a random slot from.</param>
