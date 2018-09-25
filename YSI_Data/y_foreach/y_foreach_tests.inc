@@ -3575,3 +3575,54 @@ TEST__ y_iter_huge()
 	ASSERT_EQ(Iter_Count(y_iter_huge), 50000);
 }
 
+TEST__ y_iter_random_exclusions()
+{
+	new
+		Iterator:rand<20>;
+	Iter_Add(rand, 5);
+	Iter_Add(rand, 6);
+	for (new i = 0; i < 100; i++)
+	{
+		ASSERT_EQ(Iter_Random(rand, 5), 6);
+	}
+	Iter_Add(rand, 7);
+	Iter_Add(rand, 11);
+	Iter_Add(rand, 13);
+	for (new i = 0; i < 100; i++)
+	{
+		ASSERT_EQ(Iter_Random(rand, 5, 6, 11, 13), 7);
+	}
+	for (new i = 0; i < 1000; i++)
+	{
+		new rnd = Iter_Random(rand, 7, 13, 14, 15, 17, 77, 123, 1, 0, -66);
+		ASSERT(rnd == 5 || rnd == 6 || rnd == 11);
+	}
+	new selected[20];
+	for (new i = 0; i < 1000; i++)
+	{
+		new rnd = Iter_Random(rand, 14, 15, 17, 77, 123, 1, 0, -66);
+		ASSERT(rnd == 5 || rnd == 6 || rnd == 7 || rnd == 11 || rnd == 13);
+		++selected[rnd];
+	}
+	ASSERT_FALSE(selected[0]);
+	ASSERT_FALSE(selected[1]);
+	ASSERT_FALSE(selected[2]);
+	ASSERT_FALSE(selected[3]);
+	ASSERT_FALSE(selected[4]);
+	ASSERT_TRUE(selected[5]);
+	ASSERT_TRUE(selected[6]);
+	ASSERT_TRUE(selected[7]);
+	ASSERT_FALSE(selected[8]);
+	ASSERT_FALSE(selected[9]);
+	ASSERT_FALSE(selected[10]);
+	ASSERT_TRUE(selected[11]);
+	ASSERT_FALSE(selected[12]);
+	ASSERT_TRUE(selected[13]);
+	ASSERT_FALSE(selected[14]);
+	ASSERT_FALSE(selected[15]);
+	ASSERT_FALSE(selected[16]);
+	ASSERT_FALSE(selected[17]);
+	ASSERT_FALSE(selected[18]);
+	ASSERT_FALSE(selected[19]);
+}
+
