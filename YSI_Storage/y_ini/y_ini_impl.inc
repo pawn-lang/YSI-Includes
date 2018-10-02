@@ -641,7 +641,7 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
 		// Read the file.  We have no parent and want to be in read mode.  What we
 		// do with the lines is determined by the state and the current line type.
 		new parent[32] = "";
-		INI_ReadFile(fhnd, parent, start == -1),
+		INI_ReadFile(fhnd, parent, !!start),
 		fclose(fhnd);
 	}
 	return true;
