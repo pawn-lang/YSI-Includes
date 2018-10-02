@@ -212,8 +212,58 @@ TEST__ INI_IdentifyLineType5()
 	ASSERT(p0s == 3 && p0e == 8 && p1s == 15 && p1e == 26 && p2s == 31 && p2e == 46);
 }
 
-TEST__ INI_IdentifyLineType6()
+TEST__ INI_IdentifyLineType6a()
 {
+	state y_ini:y_ini_writing_fast;
+	new p0s, p0e, p1s, p1e, p2s, p2e;
+	// Continuation.
+	new
+		e_INI_LINE_TYPE:result;
+	result = INI_IdentifyLineType("hi = there\\ ", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT_EQ(result, e_INI_LINE_TYPE_CONT);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	result = INI_IdentifyLineType("hi = there\\\r", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT_EQ(result, e_INI_LINE_TYPE_CONT);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	result = INI_IdentifyLineType("hi = there\\\n", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT_EQ(result, e_INI_LINE_TYPE_CONT);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	result = INI_IdentifyLineType("hi = there\\ \n", p0s, p0e, p1s, p1e, p2s, p2e);
+	ASSERT_EQ(result, e_INI_LINE_TYPE_CONT);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	ASSERT(p0s == 0 && p1e == 10);
+	ASSERT_EQ(INI_IdentifyLineType("hi = there  \\   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
+	ASSERT(p0s == 0 && p1e == 12);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	ASSERT_EQ(INI_IdentifyLineType("hi =    \\   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
+	ASSERT(p0s == 0 && p0e == 2);
+	ASSERT(p1s == 8 && p1e == 8);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	ASSERT_EQ(INI_IdentifyLineType("hi =    \\;  Hello  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT(p0s == 0 && p0e == 2);
+	ASSERT(p1s == 8 && p1e == 17);
+	ASSERT_EQ(INI_IdentifyLineType("hi =    \\ ; Hello  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
+	ASSERT(p0s == 0 && p0e == 2);
+	ASSERT(p1s == 8 && p1e == 8);
+	ASSERT(p2s == 10 && p2e == 17);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	ASSERT_EQ(INI_IdentifyLineType("hello there ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
+	ASSERT_EQ(INI_IdentifyLineType("hello there \\  ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
+	ASSERT_EQ(INI_IdentifyLineType("hi = hello\\   ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_CONT);
+	ASSERT(p0s == 0 && p0e == 2);
+	ASSERT(p1s == 5 && p1e == 10);
+	ASSERT_EQ(INI_IdentifyLineType("hi = hello     ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT(p0s == 0 && p0e == 0);
+	ASSERT(p1s == 0 && p1e == 10);
+	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
+	ASSERT_EQ(INI_IdentifyLineType("hi = hello     ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
+	ASSERT(p0s == 0 && p0e == 2);
+	ASSERT(p1s == 5 && p1e == 10);
+}
+
+TEST__ INI_IdentifyLineType6b()
+{
+	state y_ini:y_ini_reading_yyyn;
 	new p0s, p0e, p1s, p1e, p2s, p2e;
 	// Continuation.
 	new
