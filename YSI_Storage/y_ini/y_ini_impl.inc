@@ -391,7 +391,7 @@ static stock Alloc:INI_GetKey(Alloc:cur, const key[], &Alloc:prev)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_INI_STATIC stock bool:INI_AddToBuffer(INI:file, const key[], const value[])
+_Y_INI_STATIC stock bool:INI_AddToBuffer(INI:file, const key[], const value[], semis = 0)
 {
 	P:4("INI_AddToBuffer called: %i, \"%s\", \"%s\"", _:file, key, value);
 	if (strfind(key, " ") != -1)
@@ -407,7 +407,7 @@ _Y_INI_STATIC stock bool:INI_AddToBuffer(INI:file, const key[], const value[])
 			return false;
 		}
 		new
-			len = strlen(key) + strlen(value) + 4, // 2 * NULL + next + keylen.
+			len = strlen(key) + strlen(value) + 4 + semis, // 2 * NULL + next + keylen + semis.
 			Alloc:prev,
 			Alloc:mem = INI_GetKey(YSI_g_sINICurrentTag[file], key, prev);
 		if (mem)
@@ -416,7 +416,28 @@ _Y_INI_STATIC stock bool:INI_AddToBuffer(INI:file, const key[], const value[])
 			if (Malloc_GetSlotSize(mem) >= len)
 			{
 				// Write this new value at the value offset.
-				msets(mem, mget(mem, 1) + 1, value);
+				if (semis)
+				{
+					// Get semi-colons we need to escape.  Do it the hard way.
+					len = 0,
+					semis = mget(mem, 1) + 1;
+					while ((_:file = strfind(value, ";", false, len)) != -1)
+					{
+						_YSI_ConstMod(value[_:file], '\0');
+						msets(mem, semis, value[len]);
+						semis += _:file - len;
+						mset(mem, semis, '\\');
+						mset(mem, semis, ';');
+						semis += 2;
+						_YSI_ConstMod(value[_:file], ';');
+						len = _:file + 1;
+					}
+					msets(mem, semis, value[len]);
+				}
+				else
+				{
+					msets(mem, mget(mem, 1) + 1, value);
+				}
 				return true;
 			}
 			// Not enough space to replace, so don't bother.  First remove it
@@ -431,9 +452,29 @@ _Y_INI_STATIC stock bool:INI_AddToBuffer(INI:file, const key[], const value[])
 			mem = malloc(len);
 			if (mem)
 			{
+				I@ = strlen(key),
+				msets(mem, 2, key),
+				mset(mem, 1, I@ + 2);
+				if (semis)
+				{
+					// Get semi-colons we need to escape.  Do it the hard way.
+					len = 0,
+					semis = I@ + 3;
+					for (new pos; (pos = strfind(value, ";", false, len)) != -1; len = pos + 1)
+					{
+						_YSI_ConstMod(value[pos], '\0');
+						msets(mem, semis, value[len]);
+						semis += pos - len;
+						mset(mem, semis, '\\');
+						mset(mem, semis + 1, ';');
+						semis += 2;
+						_YSI_ConstMod(value[pos], ';');
+					}
+					msets(mem, semis, value[len]);
+				}
+				else
+					msets(mem, I@ + 3, value);
 				return
-					// Add the strings, with the value offset.
-					INI_KeyListSetKeyValue(mem, key, value),
 					// Add this to the linked list.
 					INI_KeyListAdd(YSI_g_sINICurrentTag[file], mem),
 					true;
@@ -894,6 +935,20 @@ stock bool:INI_RemoveEntry(INI:file, const name[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+#if !defined Y_INI_NO_ESCAPES
+static stock INI_DealWithSemiColonEscape(str[], &pos, &end) <y_ini:y_ini_writing_fast, y_ini:y_ini_writing_slow>
+{
+	#pragma unused str // https://github.com/pawn-lang/compiler/issues/371
+	end = ++pos;
+}
+
+static stock INI_DealWithSemiColonEscape(str[], &pos, &end) <>
+{
+	strdel(str[pos - 1], 0, 1),
+	end = pos;
+}
+#endif
+
 _Y_INI_STATIC stock e_INI_LINE_TYPE:
 	INI_IdentifyLineType(str[MAX_INI_LINE], &p0s, &p0e, &p1s, &p1e, &p2s, &p2e)
 {
@@ -991,8 +1046,7 @@ state_in_continue_line:
 					strdel(str[pos - 1], 0, 1),
 					end = pos;
 				case ';':
-					strdel(str[pos - 1], 0, 1),
-					end = pos;
+					INI_DealWithSemiColonEscape(str, pos, end);
 #endif
 				default: for ( ; ; ) switch (str[pos])
 				{
@@ -1160,7 +1214,12 @@ state_in_continuation:
 stock bool:INI_WriteString(INI:file, const name[], const data[])
 {
 	P:3("INI_WriteString called: %i, \"%s\", \"%s\"", _:file, name, data);
-	return INI_AddToBuffer(file, name, data);
+	new
+		pos = 0,
+		semis = 0;
+	while ((pos = strfind(data, ";", false, pos) + 1))
+		++semis;
+	return INI_AddToBuffer(file, name, data, semis);
 }
 
 /*-------------------------------------------------------------------------*//**

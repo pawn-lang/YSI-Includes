@@ -797,6 +797,8 @@ TEST_CLOSE__ INI_WriteComments()
 	new INI:i = INI_Open("YSI/test_ini/test10.ini");
 	INI_SetTag(i, "tag_with_parent");
 	INI_WriteInt(i, "value", 5);
+	INI_WriteString(i, "value_three", "Some;semi;colons");
+	INI_WriteString(i, "value_four", "Some_semi_colons");
 	INI_Close(i);
 }
 
