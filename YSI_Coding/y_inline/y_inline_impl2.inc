@@ -1916,13 +1916,24 @@ public Callback_Release_(ResolvedAlloc:a)
 	free(Malloc_Reconcile(a));
 }
 
+#if __COMPILER_CONST_REF
+	#pragma warning push
+	#pragma warning disable 238
+#endif
 static stock Inline_Ref(const &ptr)
 {
 	#emit LOAD.S.pri       ptr
 	#emit RETN
 	__COMPILER_NAKED
 }
+#if __COMPILER_CONST_REF
+	#pragma warning pop
+#endif
 
+#if __COMPILER_CONST_REF
+	#pragma warning push
+	#pragma warning disable 238
+#endif
 stock Inline_UI_(const &header)
 {
 	// We use `&header` instead of `return` so that we can keep the tags
@@ -1969,6 +1980,9 @@ stock Inline_UI_(const &header)
 	AMX_Write(_:ra + (_:E_INLINE_CALL_PARAMS + 2) * cellbytes + frm, args);
 	return Indirect_Ptr(ra);
 }
+#if __COMPILER_CONST_REF
+	#pragma warning pop
+#endif
 
 stock Inline_UP_(const func[], const spec[] = "")
 {
