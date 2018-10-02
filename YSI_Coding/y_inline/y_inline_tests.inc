@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-static stock bool:y_inline_Get(callback:c, ret[E_CALLBACK_DATA], f[] = "")
+static stock bool:y_inline_Get(callback:c, ret[E_CALLBACK_DATA], const f[] = "")
 {
 	return Callback_Get(c, ret, f);
 }
@@ -856,7 +856,7 @@ static stock y_inline_TestFunc_7(lvar)
 	return lvar;
 }
 
-static stock y_inline_TestFunc_8(string:svar0[])
+static stock y_inline_TestFunc_8(const string:svar0[])
 {
 	new
 		svar0b[20];
@@ -883,7 +883,7 @@ static stock y_inline_TestFunc_9()
 	return 99;
 }
 
-static stock y_inline_TestFunc_10(string:svar0[])
+static stock y_inline_TestFunc_10(const string:svar0[])
 {
 	new
 		svar0b[20];

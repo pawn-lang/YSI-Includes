@@ -125,7 +125,7 @@ stock LAM@5(idx = 0, pattern0 = 1, pattern1 = 1, pattern2 = 1, pattern3 = 1)
 }
 #define CALL@LAM@5 LAM@5(1)
 
-static stock Functional_FoundStart(scanner[CodeScanner])
+static stock Functional_FoundStart(const scanner[CodeScanner])
 {
 	if (YSI_g_sFunctionalStartPos != 0)
 		return -1;
@@ -141,7 +141,7 @@ static stock Functional_FoundStart(scanner[CodeScanner])
 	return 0;
 }
 
-static stock Functional_FoundEnd(scanner[CodeScanner])
+static stock Functional_FoundEnd(const scanner[CodeScanner])
 {
 	// This must always immediately follow the corresponding `LAM@1`, so if we haven't seen the
 	// correct one yet, don't do anything.
@@ -156,7 +156,7 @@ static stock Functional_FoundEnd(scanner[CodeScanner])
 	return 0;
 }
 
-static stock Functional_FoundAfter(scanner[CodeScanner])
+static stock Functional_FoundAfter(const scanner[CodeScanner])
 {
 	if (YSI_g_sFunctionalAfterPos != 0)
 		return -1;
@@ -170,16 +170,16 @@ static stock Functional_FoundAfter(scanner[CodeScanner])
 	return cellmin;
 }
 
-static stock Functional_FoundCall1(scanner[CodeScanner])
+static stock Functional_FoundCall1(const scanner[CodeScanner])
 {
 	Functional_FoundCall(scanner, CodeScanGetMatchHole(scanner, 0));
 }
-static stock Functional_FoundCall2(scanner[CodeScanner])
+static stock Functional_FoundCall2(const scanner[CodeScanner])
 {
 	Functional_FoundCall(scanner, 0);
 }
 
-static stock Functional_FoundCall(scanner[CodeScanner], nestingLevel)
+static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 {
 	P:4("Functional_FoundCall called: %d", nestingLevel);
 	

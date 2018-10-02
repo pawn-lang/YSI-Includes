@@ -379,6 +379,9 @@ enum ALS
 #define ALS_KS_end_tag:%3:%0)   %3:%0)
 #define ALS_KS_end_array:%0[%1]) %0[%1])
 
+#define ALS_KS_const%9: const ALS_KS_%9:
+#define ALS_KS_%0\32; ALS_KS_
+
 #define ALS_TS_more:%0,         %0,ALS_TS_
 #define ALS_TS_string:%0[],     (%0),ALS_TS_
 #define ALS_TS_Float%0,         Float:%0,ALS_TS_
@@ -391,6 +394,9 @@ enum ALS
 #define ALS_TS_end_tag:%3:%0)   %3:%0)
 #define ALS_TS_end_array:%0[%1]) (%0))
 
+#define ALS_TS_const%9: ALS_TS_%9:
+#define ALS_TS_%0\32; ALS_TS_
+
 #define ALS_RS_more:%0,         %0,ALS_RS_
 #define ALS_RS_string:%0[],     ((%0[0])?(%0):NULL),ALS_RS_
 #define ALS_RS_Float:%0,        (_:%0),ALS_RS_
@@ -402,6 +408,9 @@ enum ALS
 #define ALS_RS_end_Float:%0)    (_:%0))
 #define ALS_RS_end_tag:%3:%0)   (_:%0))
 #define ALS_RS_end_array:%0[%1]) (_:%0))
+
+#define ALS_RS_const%9: ALS_RS_%9:
+#define ALS_RS_%0\32; ALS_RS_
 
 #define ALS_DO:%9<%0> ALS_DO_%0<%9>
 

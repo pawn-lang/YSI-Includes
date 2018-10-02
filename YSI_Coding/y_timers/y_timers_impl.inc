@@ -156,7 +156,7 @@ public OnCodeInit()
 			P:7("Timer_OnScriptInit: %s", unpack(buffer));
 			// Get the time offset for the current call.  This should mean that
 			// all the functions are nicely spread out.
-			SetTimerEx(buffer, time * pre / total, 0, "ii", 1, -1);
+			O@(buffer, time * pre / total, 0, "ii", 1, -1);
 		}
 	}
 	P:1("hook Timers_OnScriptInit ended");
@@ -247,7 +247,7 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 	return 1;
 }
 
-stock _Timer_I(func[], interval, action, &result)
+stock _Timer_I(const func[], interval, action, &result)
 {
 	P:3("_Timer_I called");
 	switch (action)
@@ -264,7 +264,7 @@ stock _Timer_I(func[], interval, action, &result)
 		{
 			if (result == -1)
 			{
-				result = SetTimer(func, interval, 1);
+				result = O@(func, interval, 1);
 			}
 		}
 	}
@@ -272,7 +272,7 @@ stock _Timer_I(func[], interval, action, &result)
 }
 
 // Attempt to stop or start a task, possibly for a single player.
-stock _Timer_D(func[], interval, const action, who, results[MAX_PLAYERS], a[2])
+stock _Timer_D(const func[], interval, const action, who, results[MAX_PLAYERS], a[2])
 {
 	P:3("_Timer_D called");
 	switch (action)
@@ -318,13 +318,13 @@ stock _Timer_D(func[], interval, const action, who, results[MAX_PLAYERS], a[2])
 				{
 					if (results[who] == -1)
 					{
-						results[who] = SetTimerEx(func, interval, true, "i", who);
+						results[who] = O@(func, interval, true, "i", who);
 					}
 				}
 			}
 			else if (results[who] == -1)
 			{
-				results[who] = SetTimerEx(func, interval, true, "i", who);
+				results[who] = O@(func, interval, true, "i", who);
 			}
 		}
 	}

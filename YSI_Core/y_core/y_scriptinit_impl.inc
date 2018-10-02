@@ -226,17 +226,11 @@ public OnRuntimeError(code, &bool:suppress)
 #define PREINIT__%0(%1) @yI_%0(%1);@yI_%0(%1)
 #define POSTINIT__%0(%1) @_yI%0(%1);@_yI%0(%1)
 
-#define FINAL__%0=%1; stock const %0;PREINIT__%0(){ScriptInit_ForceFinal_(_:%0,_:(%1));}
+#define FINAL__%0=%1; stock const %0;PREINIT__%0(){_YSI_ConstMod(_:%0,_:(%1));}
 
 #if YSI_KEYWORD(final)
 	#define final FINAL__
 #endif
-
-stock ScriptInit_ForceFinal_(const &var, const val)
-{
-	#emit LOAD.S.pri val
-	#emit SREF.S.pri var
-}
 
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="_script_init_fix_state : true"/>

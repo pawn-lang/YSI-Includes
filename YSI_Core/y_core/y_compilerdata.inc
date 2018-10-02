@@ -226,7 +226,9 @@ static stock const
 	#pragma warning disable 207
 	#pragma disablerecursion
 	#pragma warning pop
-	#pragma warning disable 238
+
+	// Disable the warning for `const &var`.
+	#define __COMPILER_CONST_REF (1)
 #else
 	#define __COMPILER_NAKED return 0;
 	#define __COMPILER_NESTED_ELLIPSIS (0)
@@ -236,6 +238,7 @@ static stock const
 	#define __COMPILER_BUGGED_STRING_RETURN (1)
 	#define __COMPILER_BUGGED_SYSREQ (1)
 	#define __COMPILER_WARNING_SUPPRESSION (0)
+	#define __COMPILER_CONST_REF (0)
 	
 	#include "y_funcinc"
 	

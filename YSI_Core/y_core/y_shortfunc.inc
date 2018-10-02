@@ -404,7 +404,7 @@ stock L@(GLOBAL_TAG_TYPES:...)
 	return 1;
 }
 
-stock T@(string:ret[YSI_MAX_STRING], GLOBAL_TAG_TYPES:...)
+stock T@(const string:ret[YSI_MAX_STRING], GLOBAL_TAG_TYPES:...)
 {
 	// Return possibly multiple values remotely.
 	setproperty(8, YSI_g_sPropEmpty, YSIM_STRING, ret);
@@ -423,7 +423,7 @@ native V@(GLOBAL_TAG_TYPES:id=0, const name[]="", value=cellmin, string[]="") = 
 // Define this command with basically every strong tag in existence to avoid
 // tag mismatch warnings with remote functions with strong tag parameters.
 native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallRemoteFunction;
-native O@(const function[], time, repeat, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
+native O@(const function[], time, repeat, const format[] = "", GLOBAL_TAG_TYPES:...) = SetTimerEx;
 
 stock S@(GLOBAL_TAG_TYPES:v = -1)
 {
@@ -456,7 +456,7 @@ stock Z@(GLOBAL_TAG_TYPES:v = -1)
 		getproperty(8, YSIM_RETURN);
 }
 
-stock R@(buffer[])
+stock R@(const buffer[])
 {
 	// To remove on completion of y_remote upgrade.
 	P:4("R@ called: \"%s\"", buffer);

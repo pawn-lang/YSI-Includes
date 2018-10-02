@@ -128,6 +128,9 @@ static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 #define __ALS_PS_end_Float:%0)    "%f"
 #define __ALS_PS_end_tag:%3:%0)   "%d"
 
+#define __ALS_PS_const%9: __ALS_PS_%9:
+#define __ALS_PS_%0\32; __ALS_PS_
+
 #define __ALS_R2_more:%0,         ,%0 __ALS_R2_
 #define __ALS_R2_string:%0[],     ,((%0[0])?(%0):NULL) __ALS_R2_
 #define __ALS_R2_Float:%0,        ,(_:%0) __ALS_R2_
@@ -138,13 +141,16 @@ static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 #define __ALS_R2_end_Float:%0)    ,(_:%0))
 #define __ALS_R2_end_tag:%3:%0)   ,(_:%0))
 
+#define __ALS_R2_const%9: __ALS_R2_%9:
+#define __ALS_R2_%0\32; __ALS_R2_
+
 #define __DO_PRINT(%9)<%0,%1>(%2) y_als_Print(%9,"On"#%0"("__ALS_PS_%2)")"__ALS_R2_%2);
 
 #define __PRINT<%0,%9> ALS_DO:__DO_PRINT(%9)<%0>
 
 // Set up a fake callback to test.
 #define ALS_R_FakeCallback 708
-#define ALS_DO_FakeCallback<%0> %0<FakeCallback,isfi>(more:playerid,string:text[],Float:pos,end:last)
+#define ALS_DO_FakeCallback<%0> %0<FakeCallback,isfi>(more:playerid,const string:text[],Float:pos,end:last)
 
 TEST__ y_als_Fake()
 {
@@ -159,7 +165,7 @@ TEST__ y_als_Fake()
 	__PRINT<FakeCallback, "OnFakeCallback(709, T_E_X_T_, 710.017028, 711)">
 }
 
-static stock y_als_DoCall(playerid, text[], Float:pos, last)
+static stock y_als_DoCall(playerid, const text[], Float:pos, last)
 {
 	ALS_CALL<FakeCallback>
 }
@@ -170,7 +176,7 @@ TEST__ y_als_Call()
 	ASSERT_EQ(y_als_DoCall(6000, "", 0.0, 0), 6000);
 }
 
-static stock y_als_DoGet(playerid, text[], Float:pos, last)
+static stock y_als_DoGet(playerid, const text[], Float:pos, last)
 {
 	new
 		ret = ALS_GET<FakeCallback>
@@ -185,8 +191,8 @@ TEST__ y_als_Get()
 }
 
 // The original version.
-forward OnFakeCallback(playerid, text[], Float:pos, last);
-public OnFakeCallback(playerid, text[], Float:pos, last)
+forward OnFakeCallback(playerid, const text[], Float:pos, last);
+public OnFakeCallback(playerid, const text[], Float:pos, last)
 {
 	return last;
 }
@@ -195,7 +201,7 @@ public OnFakeCallback(playerid, text[], Float:pos, last)
 ALS_FORWARD<FakeCallback>
 #define OnFakeCallback ALS_MAKE<..._OnFakeCallback>
 
-public OnFakeCallback(playerid, text[], Float:pos, last)
+public OnFakeCallback(playerid, const text[], Float:pos, last)
 {
 	return playerid;
 }

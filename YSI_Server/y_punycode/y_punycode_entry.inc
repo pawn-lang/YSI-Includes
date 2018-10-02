@@ -115,7 +115,7 @@ static stock const
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Puny_Decode(string:dst[], string:src[], wlen = sizeof (dst), const delimiter = PUNY_CHAR)
+stock Puny_Decode(string:dst[], const string:src[], wlen = sizeof (dst), const delimiter = PUNY_CHAR)
 {
 	new
 		rlen = strlen(src),
@@ -183,7 +183,7 @@ stock Puny_Decode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimiter = PUNY_CHAR)
+stock Puny_Encode(string:dst[], const string:src[], wlen = sizeof (dst), const delimiter = PUNY_CHAR)
 {
 	new
 		widx,
@@ -262,7 +262,7 @@ stock Puny_Encode(string:dst[], string:src[], wlen = sizeof (dst), const delimit
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Puny_EncodeHash(string:dst[], string:src[], &hash, wlen = sizeof (dst), const delimiter = PUNY_CHAR)
+stock Puny_EncodeHash(string:dst[], const string:src[], &hash, wlen = sizeof (dst), const delimiter = PUNY_CHAR)
 {
 	new
 		ch,
@@ -473,7 +473,7 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
  *//*------------------------------------------------------------------------**/
 
 #if defined PUNY_HTTP_HOOK
-	stock Puny_HTTP(index, type, url[], data[], callback[])
+	stock Puny_HTTP(index, type, const url[], const data[], const callback[])
 	{
 		static
 			sPart[64], // Maximum legal domain part length.
@@ -500,7 +500,8 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 				ch;
 			// There's no length parameter for "Puny_Encode", so we need a limit.
 			ch = url[idx],
-			url[idx] = sPart[0] = '\0';
+			_YSI_ConstMod(url[idx], '\0'),
+			sPart[0] = '\0';
 			switch (Puny_Encode(sPart, url[prev]))
 			{
 				// Encoding error.
@@ -525,7 +526,7 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 				case -1: format(sEncoded, sizeof (sEncoded), "%s%s%c", sEncoded, sPart, ch);
 			}
 			// Restore the data.
-			url[idx] = ch,
+			_YSI_ConstMod(url[idx], ch),
 			prev = idx + 1;
 		}
 		while (idx < end);

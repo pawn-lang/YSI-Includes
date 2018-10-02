@@ -330,7 +330,7 @@ Optional plugins:
 
 #if defined AMX_INCLUDING_FAILED
 	#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
-#elseif !defined CodeScanGetHoleCount
+#elseif !defined __REF
 	#error Please update "https://github.com/Zeex/amx_assembly" to the latest version.
 #endif
 
