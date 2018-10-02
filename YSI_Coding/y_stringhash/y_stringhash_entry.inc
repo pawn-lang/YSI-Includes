@@ -306,6 +306,19 @@ enum e_HASH_TYPE:
 
 stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstein, len = cellmax, pack = false)
 {
+	if (str[str[0] == '\1'] == '\0')
+	{
+		// NULL.
+		switch (type)
+		{
+		case hash_fnv1:
+			return 2166136261;
+		case hash_fnv1a:
+			return 2166136261;
+		default:
+			return -1;
+		}
+	}
 	P:3("YHash called: \"%s\", %i, %i, %i, %i", str, _:sensitive, _:type, len, pack);
 	len = min(len, strlen(str));
 	new
