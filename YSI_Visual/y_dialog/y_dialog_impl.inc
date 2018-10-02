@@ -94,7 +94,7 @@ remotefunc void:Dialog_Set(playerid, dialogid)
 	}
 }
 
-stock Dialog_ShowCallback(playerid, Func:callback<iiiis>, style, string:title[], string:caption[], string:button1[], string:button2[] = "")
+stock Dialog_ShowCallback(playerid, Func:callback<iiiis>, style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
 	new
 		ret = Dialog_Show(playerid, style, title, caption, button1, button2);
@@ -104,7 +104,7 @@ stock Dialog_ShowCallback(playerid, Func:callback<iiiis>, style, string:title[],
 }
 
 #pragma deprecated Use Dialog_ShowCallback
-stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, string:title[], string:caption[], string:button1[], string:button2[] = "")
+stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
 	new
 		ret = Dialog_Show(playerid, style, title, caption, button1, button2);
@@ -113,7 +113,7 @@ stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, string
 	return ret;
 }
 
-stock Dialog_Show(playerid, style, string:title[], string:caption[], string:button1[], string:button2[] = "")
+stock Dialog_Show(playerid, style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
 	broadcastfunc Dialog_Set(playerid, YSI_DIALOG_ID);
 	YSI_g_sPlayerMaster[playerid] = true;
@@ -169,7 +169,7 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		return Y_HOOKS_CONTINUE_RETURN_0;
 }
 
-stock _ShowPlayerDialog(playerid, dialog, style, string:title[], string:caption[], string:button1[], string:button2[])
+stock _ShowPlayerDialog(playerid, dialog, style, const string:title[], const string:caption[], const string:button1[], const string:button2[])
 {
 	// Fail.
 	if (dialog == YSI_DIALOG_ID)
