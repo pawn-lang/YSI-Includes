@@ -132,7 +132,10 @@ _Y_INI_STATIC stock
 	Alloc:YSI_g_sCurrentTag,
 	INI:YSI_g_sCurrentINI,
 	File:YSI_g_sCurrentFile,
-	bool:YSI_g_sNL;
+	bool:YSI_g_sNL,
+	bool:YSI_g_sTagNeeded;
+
+forward bool:INI_FindCallback(const cb[]);
 
 /*
 
@@ -259,7 +262,7 @@ P:D(INI_Array(const name[],variable[]));
 			YSI_g_sNL = true;                                                                       \
 		fwrite((%0), "["), fwrite((%0), %1);                                                        \
 		if (%2[0])                                                                                  \
-			fwrite((%0), "] :"), fwrite((%0), %2);                                                  \
+			fwrite((%0), "] : "), fwrite((%0), %2), %2[0] = '\0';                                   \
 		else                                                                                        \
 			fwrite((%0), "]");                                                                      \
 		YSI_g_sTagNeeded = false;                                                                   \
@@ -267,11 +270,11 @@ P:D(INI_Array(const name[],variable[]));
 
 #define INI_TagListGetEntries(%0) (Alloc:mget((%0), 0))
 #define INI_TagListGetNext(%0) (Alloc:mget((%0), 1))
-#define INI_TagListGetDelete(%0) (mget((%0), 2))
+#define INI_TagListGetDelete(%0) (bool:mget((%0), 2))
 #define INI_TagListGetName(%0) (mget((%0), 3))
 
 #define INI_TagListSetEntries(%0,%1) (mset((%0), 0, (%1)))
-#define INI_TagListSetNext(%0,%1) (mset((%0), 1, (%1)))
+#define INI_TagListSetNext(%0,%1) (mset((%0), 1, _:(%1)))
 #define INI_TagListSetDelete(%0,%1) (mset((%0), 2, (%1)))
 #define INI_TagListSetName(%0,%1) (msets((%0), 3, (%1)))
 
@@ -282,7 +285,7 @@ P:D(INI_Array(const name[],variable[]));
 #define INI_KeyListMakeWritable(%0) (mset((%0), mget((%0), 1), '='))
 
 #define INI_KeyListRemove(%0,%1) (mset((%0), 0, mget((%1), 0)))
-#define INI_KeyListAdd(%0,%1) (mset((%1), 0, mget((%0), 0)), mset((%0), 0, (%1)))
+#define INI_KeyListAdd(%0,%1) (mset((%1), 0, mget((%0), 0)), mset((%0), 0, _:(%1)))
 
 #define INI_KeyListSetNext(%0,%1) (mset((%0), 0, (%1)))
 #define INI_KeyListSetKeyValue(%0,%1,%2) (I@ = strlen(%1), msets((%0), 2, (%1)), mset((%0), 1, I@ + 2), msets((%0), I@ + 3, (%2)))
@@ -357,7 +360,7 @@ static stock Alloc:INI_GetTag(Alloc:cur, const tag[])
 
 static stock Alloc:INI_GetKey(Alloc:cur, const key[], &Alloc:prev)
 {
-	P:4("INI_GetKey called: prev = %d %s", cur, INI_TagListGetName(cur));
+	P:4("INI_GetKey called: prev = %d %s", _:cur, INI_TagListGetName(cur));
 	for ( ; ; )
 	{
 		prev = cur,
@@ -483,7 +486,7 @@ _Y_INI_STATIC stock bool:INI_AddToBuffer(INI:file, const key[], const value[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:bExtra = false, extra = 0, bool:bLocal = true, bool:bPassTag = false, bool:bPassFile = false)
+stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = false, bool:bExtra = false, extra = 0, bool:bLocal = true, bool:bPassTag = false, bool:bPassFile = false)
 {
 	P:4("INI_ParseFile called");
 	new
@@ -504,9 +507,6 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 	}
 	YSI_g_sRemote = !bLocal;
 	YSI_g_sExtra = extra;
-	// Read the file.  We have no parent and want to be in read mode.  What we
-	// do with the lines is determined by the state and the current line type.
-	new parent[32] = "";
 	if (bFileFirst)
 	{
 		if (bExtra)
@@ -596,8 +596,13 @@ stock bool:INI_ParseFile(fname[], remoteFormat[], bool:bFileFirst = false, bool:
 			cb[pos] = '_';
 		start = INI_FindCallback(cb);
 	}
-	INI_ReadFile(fhnd, parent, start == -1);
-	fclose(fhnd);
+	{
+		// Read the file.  We have no parent and want to be in read mode.  What we
+		// do with the lines is determined by the state and the current line type.
+		new parent[32] = "";
+		INI_ReadFile(fhnd, parent, start == -1),
+		fclose(fhnd);
+	}
 	return true;
 }
 
@@ -850,7 +855,7 @@ stock bool:INI_DeleteTag(INI:file, const tag[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:INI_RemoveEntry(INI:file, name[])
+stock bool:INI_RemoveEntry(INI:file, const name[])
 {
 	P:3("INI_RemoveEntry called: %i, \"%s\"", _:file, name);
 	return INI_AddToBuffer(file, name, "");
@@ -1086,10 +1091,7 @@ state_in_continuation:
 	if (!YSI_g_sExtendedName[0])
 	{
 		// Haven't yet stored the name of this line.  Do so.
-		end = str[p0e],
-		str[p0e] = '\0',
-		strcpy(YSI_g_sExtendedName, str[p0s]),
-		str[p0e] = end;
+		strcpy(YSI_g_sExtendedName, str[p0s], p0e - p0s + 1);
 	}
 	// Get the length of this new part.
 	pos = p1e - p1s;
@@ -1324,6 +1326,8 @@ static stock INI_ReadFile(File:fhnd, parent[32], bool:handle = true)
 					case 1:
 					{
 						// Only deal with local values.
+						strcpy(YSI_g_sTag, YSI_g_sCurLine[p0s], p0e - p0s + 1),
+						strcpy(YSI_g_sFormat, YSI_g_sCurLine[p1s], p1e - p1s + 1),
 						handle = true;
 						goto INI_ReadFile_cont;
 					}
@@ -1332,8 +1336,7 @@ static stock INI_ReadFile(File:fhnd, parent[32], bool:handle = true)
 				if (p1s != p1e)
 				{
 					// Is there a parent tag to deal with?
-					YSI_g_sCurLine[p1e] = '\0',
-					strcpy(parent, YSI_g_sCurLine[p1s]);
+					strcpy(parent, YSI_g_sCurLine[p1s], p1e - p1s + 1),
 					// Do local and parent values.
 					INI_ReadFile(fhnd, parent),
 					fseek(fhnd, pos, seek_start);
@@ -1441,6 +1444,7 @@ static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_writing_sl
 {
 	// Used when reading.  Checks if the key is being overwritten, and if not
 	// writes it out to the new file.
+	INI_WriteTag(YSI_g_sCurrentFile, YSI_g_sTag, YSI_g_sFormat);
 	if (YSI_g_sNL)
 	{
 		// Write a new line if needed.
@@ -1475,6 +1479,7 @@ static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_writing_fa
 {
 	// Nothing in the current tag is being overwritten, just dump this
 	// key/value pair straight to disk with no extra checks.
+	INI_WriteTag(YSI_g_sCurrentFile, YSI_g_sTag, YSI_g_sFormat);
 	if (YSI_g_sNL)
 	{
 		// Write a new line if needed.
@@ -1498,10 +1503,13 @@ static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_writing_fa
 static stock INI_HandleComment(const comment[]) <y_ini:y_ini_writing_fast, y_ini:y_ini_writing_slow>
 {
 	#pragma unused comment
+	INI_WriteTag(YSI_g_sCurrentFile, YSI_g_sTag, YSI_g_sFormat);
 	// Write the comment.
-
+	fwrite(YSI_g_sCurrentFile, " ; "),
+	fwrite(YSI_g_sCurrentFile, comment),
 	// Write a new line and mark as not needed.
-
+	fwrite(YSI_g_sCurrentFile, "\n"),
+	YSI_g_sNL = false;
 }
 
 static stock INI_HandleComment(const comment[]) <>
@@ -1521,6 +1529,8 @@ static stock INI_HandleComment(const comment[]) <>
 
 static stock INI_DumpTag(Alloc:dump)
 {
+	// Do we need the tag name or not?  Even for unknown tags.
+	INI_WriteTag(YSI_g_sCurrentFile, YSI_g_sTag, YSI_g_sFormat);
 	if (dump)
 	{
 		// We were writing a known tag.
@@ -1529,6 +1539,13 @@ static stock INI_DumpTag(Alloc:dump)
 		INI_TagListSetEntries(dump, 0);
 		while (next)
 		{
+			if (!INI_KeyListGetValue(next))
+			{
+				dump = next,
+				next = INI_KeyListGetNext(dump),
+				free(dump);
+				continue;
+			}
 			// Write a new line if needed.
 			if (YSI_g_sNL)
 			{
@@ -1591,16 +1608,17 @@ static stock INI_HandleTag(const tag[]) <y_ini:y_ini_writing_fast, y_ini:y_ini_w
 			state y_ini:y_ini_writing_fast;
 		}
 	}
-	// Write the tag.
-	if (YSI_g_sNL)
-	{
-		fwrite(YSI_g_sCurrentFile, "\n");
-	}
-	// TODO: Write parent.
-	fwrite(YSI_g_sCurrentFile, "["),
-	fwrite(YSI_g_sCurrentFile, tag),
-	fwrite(YSI_g_sCurrentFile, "]"),
-	YSI_g_sNL = true;
+	//// Write the tag.
+	YSI_g_sTagNeeded = true;
+	//if (YSI_g_sNL)
+	//{
+	//	fwrite(YSI_g_sCurrentFile, "\n");
+	//}
+	//// TODO: Write parent.
+	//fwrite(YSI_g_sCurrentFile, "["),
+	//fwrite(YSI_g_sCurrentFile, tag),
+	//fwrite(YSI_g_sCurrentFile, "]"),
+	//YSI_g_sNL = true;
 	// Parse this tag, but not its parents.
 	return 1;
 }
@@ -1618,7 +1636,7 @@ static stock INI_HandleTag(const tag[]) <
 	format(cb, sizeof (cb), YSI_g_sFormat, YSI_g_sFile, tag);
 	while ((pos = strfind(cb, " ", false, pos + 1)) != -1)
 		cb[pos] = '_';
-	return INI_FindCallback(cb);
+	return INI_FindCallback(cb) ? -1 : 0;
 }
 
 static stock INI_HandleTag(const tag[]) <
@@ -1634,49 +1652,49 @@ static stock INI_HandleTag(const tag[]) <
 	format(cb, sizeof (cb), YSI_g_sFormat, tag, YSI_g_sFile);
 	while ((pos = strfind(cb, " ", false, pos + 1)) != -1)
 		cb[pos] = '_';
-	return INI_FindCallback(cb);
+	return INI_FindCallback(cb) ? -1 : 0;
 }
 
-static stock INI_FindCallback(const cb[]) <y_ini:y_ini_reading_yyyy, y_ini:y_ini_reading_nyyy>
+static stock bool:INI_FindCallback(const cb[]) <y_ini:y_ini_reading_yyyy, y_ini:y_ini_reading_nyyy>
 {
 	Callback_Restore(YSI_g_sCB_issss);
-	return Callback_Find(cb, YSI_g_sCB_issss, YSI_g_sRemote) ? -1 : 0;
+	return Callback_Find(cb, YSI_g_sCB_issss, YSI_g_sRemote);
 }
 
-static stock INI_FindCallback(const cb[]) <y_ini:y_ini_reading_yyyn, y_ini:y_ini_reading_nyyn, y_ini:y_ini_reading_yyny, y_ini:y_ini_reading_nyny>
+static stock bool:INI_FindCallback(const cb[]) <y_ini:y_ini_reading_yyyn, y_ini:y_ini_reading_nyyn, y_ini:y_ini_reading_yyny, y_ini:y_ini_reading_nyny>
 {
 	Callback_Restore(YSI_g_sCB_isss);
-	return Callback_Find(cb, YSI_g_sCB_isss, YSI_g_sRemote) ? -1 : 0;
+	return Callback_Find(cb, YSI_g_sCB_isss, YSI_g_sRemote);
 }
 
-static stock INI_FindCallback(const cb[]) <y_ini:y_ini_reading_yynn, y_ini:y_ini_reading_nynn>
+static stock bool:INI_FindCallback(const cb[]) <y_ini:y_ini_reading_yynn, y_ini:y_ini_reading_nynn>
 {
 	Callback_Restore(YSI_g_sCB_iss);
-	return Callback_Find(cb, YSI_g_sCB_iss, YSI_g_sRemote) ? -1 : 0;
+	return Callback_Find(cb, YSI_g_sCB_iss, YSI_g_sRemote);
 }
 
-static stock INI_FindCallback(const cb[]) <y_ini:y_ini_reading_ynyy, y_ini:y_ini_reading_nnyy>
+static stock bool:INI_FindCallback(const cb[]) <y_ini:y_ini_reading_ynyy, y_ini:y_ini_reading_nnyy>
 {
 	Callback_Restore(YSI_g_sCB_ssss);
-	return Callback_Find(cb, YSI_g_sCB_ssss, YSI_g_sRemote) ? -1 : 0;
+	return Callback_Find(cb, YSI_g_sCB_ssss, YSI_g_sRemote);
 }
 
-static stock INI_FindCallback(const cb[]) <y_ini:y_ini_reading_ynyn, y_ini:y_ini_reading_nnyn, y_ini:y_ini_reading_ynny, y_ini:y_ini_reading_nnny>
+static stock bool:INI_FindCallback(const cb[]) <y_ini:y_ini_reading_ynyn, y_ini:y_ini_reading_nnyn, y_ini:y_ini_reading_ynny, y_ini:y_ini_reading_nnny>
 {
 	Callback_Restore(YSI_g_sCB_sss);
-	return Callback_Find(cb, YSI_g_sCB_sss, YSI_g_sRemote) ? -1 : 0;
+	return Callback_Find(cb, YSI_g_sCB_sss, YSI_g_sRemote);
 }
 
-static stock INI_FindCallback(const cb[]) <y_ini:y_ini_reading_ynnn, y_ini:y_ini_reading_nnnn>
+static stock bool:INI_FindCallback(const cb[]) <y_ini:y_ini_reading_ynnn, y_ini:y_ini_reading_nnnn>
 {
 	Callback_Restore(YSI_g_sCB_ss);
-	return Callback_Find(cb, YSI_g_sCB_ss, YSI_g_sRemote) ? -1 : 0;
+	return Callback_Find(cb, YSI_g_sCB_ss, YSI_g_sRemote);
 }
 
-static stock INI_FindCallback(const cb[]) <>
+static stock bool:INI_FindCallback(const cb[]) <>
 {
 	#pragma unused cb
-	return 0;
+	return false;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1760,6 +1778,7 @@ static stock INI_HandleEnd() <>
 static stock INI_Flush_(INI:file)
 {
 	YSI_g_sNL = false;
+	YSI_g_sTagNeeded = false;
 	YSI_g_sCurrentFile = ftemp();
 	if (!YSI_g_sCurrentFile)
 	{
@@ -1799,7 +1818,10 @@ static stock INI_Flush_(INI:file)
 		return;
 	}
 	// Now parse the file.
-	INI_ReadFile(fhnd, "");
+	{
+		new parent[32] = "";
+		INI_ReadFile(fhnd, parent);
+	}
 	// Now write it back out.
 	fseek(YSI_g_sCurrentFile, 0, seek_start);
 	fclose(fhnd);

@@ -70,6 +70,11 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#if __COMPILER_CONST_REF
+	#pragma warning push
+	#pragma warning disable 239
+#endif
+
 TEST__ INI_IdentifyLineType1()
 {
 	// Comment lines and blank lines may as well be treated as the same thing,
@@ -269,6 +274,10 @@ TEST__ INI_Continuation()
 	// Cleanup.
 	YSI_g_sExtendedName[0] = '\0', free(YSI_g_sExtendedLine), YSI_g_sExtendedLine = NO_ALLOC;
 }
+
+#if __COMPILER_CONST_REF
+	#pragma warning pop
+#endif
 
 TEST__ Trim1()
 {
@@ -773,6 +782,22 @@ TEST__ INI_Int1()
 	ASSERT_EQ(gs_K2, 45);
 	ASSERT_EQ(gs_K3, 47);
 	ASSERT_EQ(gs_K4, 46);
+}
+
+TEST__ INI_WriteComments()
+{
+	new INI:i = INI_Open("YSI/test_ini/test10.ini");
+	INI_SetTag(i, "tag_with_parent");
+	INI_RemoveEntry(i, "value");
+	INI_Close(i);
+}
+
+TEST_CLOSE__ INI_WriteComments()
+{
+	new INI:i = INI_Open("YSI/test_ini/test10.ini");
+	INI_SetTag(i, "tag_with_parent");
+	INI_WriteInt(i, "value", 5);
+	INI_Close(i);
 }
 
 forward INI_Inher0_tag0(string:tag[], string:name[], string:value[]);
