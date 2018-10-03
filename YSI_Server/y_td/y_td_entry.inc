@@ -164,7 +164,7 @@ static stock
 	//YSI_g_sTDTimers[Text:MAX_TEXT_DRAWS][MAX_PLAYERS],
 	// This is actually dual purpose.
 	Text:YSI_g_sUnused,
-	BitArray:YSI_g_sPlayerDraws[MAX_PLAYERS]<MAX_TEXT_DRAWS>;
+	BitArray:YSI_g_sPlayerDraws[MAX_PLAYERS]<_:MAX_TEXT_DRAWS>;
 	//Bit:YSI_g_sPlayerDraws[MAX_PLAYERS][Bit_Bits(MAX_TEXT_DRAWS)];
 
 //static stock TD_SetTimer(playerid, Text:td, time, revision)
@@ -221,7 +221,7 @@ HOOK__ OnScriptInit()
 		YSI_g_sTDDisplay[i][E_TD_DISPLAY_REAL] = Text:INVALID_TEXT_DRAW;
 		YSI_g_sTDDisplay[i][E_TD_DISPLAY_NEXT] = i + Text:1;
 	}
-	YSI_g_sTDDisplay[Text:(MAX_TEXT_DRAWS - 1)][E_TD_DISPLAY_NEXT] = TEXT_DRAW_NO_NEXT;
+	YSI_g_sTDDisplay[Text:MAX_TEXT_DRAWS - Text:1][E_TD_DISPLAY_NEXT] = TEXT_DRAW_NO_NEXT;
 	return 1;
 }
 
@@ -1092,15 +1092,15 @@ static stock Text:TD_RenderInternal(const text[], const style[E_TD_DATA], Float:
 			e_TD_BITS:bits = style[E_TD_DATA_BITS];
 		TextDrawLetterSize(textDraw, style[E_TD_DATA_LX], style[E_TD_DATA_LY]);
 		TextDrawTextSize(textDraw, style[E_TD_DATA_TX], style[E_TD_DATA_TY]);
-		TextDrawAlignment(textDraw, _:(bits & e_TD_BITS_ALIGN) >> 16);
+		TextDrawAlignment(textDraw, e_TEXT_DRAW_ALIGN:(_:(bits & e_TD_BITS_ALIGN) >> 16));
 		TextDrawColor(textDraw, style[E_TD_DATA_COLOUR]);
-		TextDrawUseBox(textDraw, (bits & e_TD_BITS_BOX) ? 1 : 0);
+		TextDrawUseBox(textDraw, !!(bits & e_TD_BITS_BOX));
 		TextDrawBoxColor(textDraw, style[E_TD_DATA_BOX]);
 		TextDrawSetShadow(textDraw, _:(bits & e_TD_BITS_SHADOW));
 		TextDrawSetOutline(textDraw, _:(bits & e_TD_BITS_OUTLINE) >> 8);
 		TextDrawBackgroundColor(textDraw, style[E_TD_DATA_BG]);
 		TextDrawFont(textDraw, _:(bits & e_TD_BITS_FONT) >> 20);
-		TextDrawSetProportional(textDraw, (bits & e_TD_BITS_PROP) ? 1 : 0);
+		TextDrawSetProportional(textDraw, !!(bits & e_TD_BITS_PROP));
 	}
 	return textDraw;
 }
@@ -1834,7 +1834,7 @@ stock TD_HideForAll(Text:textDraw)
 
 HOOK__ OnPlayerDisconnect(playerid, reason)
 {
-	for (new i = 0; i < bits<MAX_TEXT_DRAWS>; i++)
+	for (new i = 0; i < bits<_:MAX_TEXT_DRAWS>; i++)
 	{
 		new
 			Bit:s = YSI_g_sPlayerDraws[playerid][i],
@@ -2044,7 +2044,7 @@ public TD_MorphTDInternal(Text:td, Style:from, Style:to, speed, pos, revision)
 		// Even though "td" changes in the loop, the end condition is that "td"
 		// is the same as when the loop started, meaning that it's fine to reuse
 		// it here.
-		SetTimerEx("TD_MorphTDInternal", Y_TD_FRAME_TIME, 0, "iiiiii", _:td, _:from, _:to, speed, pos + Y_TD_FRAME_TIME, revision);
+		SetTimerEx("TD_MorphTDInternal", Y_TD_FRAME_TIME, false, "iiiiii", _:td, _:from, _:to, speed, pos + Y_TD_FRAME_TIME, revision);
 	}
 	return 1;
 }

@@ -1064,7 +1064,7 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_RemoteHandler_<x>));
 	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
+	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_PUBLIC_CALL_METADATA, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
@@ -1103,7 +1103,7 @@ stock Function:GetLocalFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_LocalHandler_<x>));
 	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
+	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_PUBLIC_CALL_METADATA, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
@@ -1199,7 +1199,7 @@ static stock Callback_InlineByName(const name[], tag)
 				mset(closure, _:E_INLINE_CALL_HANDLER, _:addressof (Callback_CallHandler_<x>));
 				mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_));
 				mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-				mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
+				mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
 				mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
 				mset(closure, _:E_INLINE_CALL_METADATA, 0);
 				mset(closure, _:E_INLINE_CALL_SIZE, size);
@@ -1411,7 +1411,7 @@ stock Callback_Release(const input[E_CALLBACK_DATA])
 static stock Callback_Claim_(func[E_INLINE_CALL])
 {
 	KillTimer(func[E_INLINE_CALL_TIMER]);
-	func[E_INLINE_CALL_TIMER] = SetTimerEx("Inline_MaybeConst_", 0, 0, "i", ref(func));
+	func[E_INLINE_CALL_TIMER] = SetTimerEx("Inline_MaybeConst_", 0, false, "i", ref(func));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1968,7 +1968,7 @@ stock Inline_UI_(const &header)
 	mset(closure, _:E_INLINE_CALL_HANDLER, _:addressof (Callback_CallHandler_<x>));
 	mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
+	mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
 	mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
 	mset(closure, _:E_INLINE_CALL_METADATA, 0);
 	mset(closure, _:E_INLINE_CALL_SIZE, size);

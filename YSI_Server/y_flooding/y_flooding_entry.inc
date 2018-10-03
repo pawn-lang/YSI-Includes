@@ -213,7 +213,7 @@ HOOK__ OnPlayerConnect(playerid)
 						cmd[22] = "banip ";
 					strcat(cmd, ip);
 					SendRconCommand(cmd);
-					SetTimerEx("Flooding_UnbanIP", 10000, 0, "i", ip32);
+					SetTimerEx("Flooding_UnbanIP", 10000, false, "i", ip32);
 				}
 				case e_FLOOD_ACTION_OTHER:
 				{
