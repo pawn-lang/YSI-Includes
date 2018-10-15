@@ -260,9 +260,9 @@ GLOBAL__ void:Langs_RemoveLanguage(Language:l)
  * <summary>-</summary>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ Language:Langs_GetLanguage(string:identifier[]);
+FOREIGN__ Language:Langs_GetLanguage(const string:identifier[]);
 
-GLOBAL__ Language:Langs_GetLanguage(string:identifier[])
+GLOBAL__ Language:Langs_GetLanguage(const string:identifier[])
 {
 	if (strlen(identifier) > 2)
 	{
@@ -392,9 +392,9 @@ GLOBAL__ Language:Langs_SetPlayerLanguage(playerid, Language:l)
  * <summary>-</summary>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ Language:Langs_SetPlayerCode(playerid, string:code[]);
+FOREIGN__ Language:Langs_SetPlayerCode(playerid, const string:code[]);
 
-GLOBAL__ Language:Langs_SetPlayerCode(playerid, string:code[])
+GLOBAL__ Language:Langs_SetPlayerCode(playerid, const string:code[])
 {
 	return Langs_SetPlayerLanguage(playerid, Langs_GetLanguage(code));
 }
