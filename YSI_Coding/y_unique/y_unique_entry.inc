@@ -141,13 +141,9 @@ Optional plugins:
 #endif
 
 #if defined YSI_LOCK_MODE
-	#if !defined YSI_gLockData
-	    new
-			YSI_gLockData[21];
-	#endif
 	#if Y_UNIQUE_LOCK_CONTRIBUTION < 2
 		forward UNIQUE_FUNCTION<@yH_OnScriptInit@...>();
-		
+
 		public UNIQUE_FUNCTION<@yH_OnScriptInit@...>()
 		{
 			#if Y_UNIQUE_LOCK_CONTRIBUTION == 0
@@ -160,7 +156,7 @@ Optional plugins:
 				YSI_gLockData{11} = 0;
 			#endif
 		}
-		
+
 		#include "y_unique_entry"
 	#endif
 #endif
