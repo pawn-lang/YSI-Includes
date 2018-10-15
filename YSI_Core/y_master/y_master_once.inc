@@ -521,7 +521,7 @@ public Master_Reassert()
 	#endinput
 #endif
 
-stock _Master_Relinquish(library[])
+stock _Master_Relinquish(const library[])
 {
 	//printf("STEAL %s %d", library, YSI_g_sMasterCount);
 	switch (YSI_g_sMasterCount)
@@ -552,7 +552,7 @@ stock _Master_Relinquish(library[])
  * <param name="library">The name of the library to try become master for.</param>
  *//*------------------------------------------------------------------------**/
 
-stock bool:_Master_Get(library[], bool:force = false)
+stock bool:_Master_Get(const library[], bool:force = false)
 {
 	new
 		bool:ret = true;
