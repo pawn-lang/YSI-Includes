@@ -110,7 +110,7 @@ enum e_TEXT_DISPLAY_TYPE:
 	loadtext core[%1]
 
 // Clever macros to load default values when not specified.
-//#define Text_Send(%0,%1) _Text_Send(%0,DEFAULT_TEXT_SET,#%1)
+#define Text_Send(%0,%1) _Text_Send(%0,DEFAULT_TEXT_SET,#%1)
 
 #define DO_TEXT_SET: _:HAS_TEXT_SET:NO_TEXT_SET:
 
@@ -296,7 +296,7 @@ static stock Text_LoadAll()
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-static stock Text_AddLocal(buffer[])
+static stock Text_AddLocal(const buffer[])
 {
 	P:4("Text_AddLocal called: \"%s\", %i", buffer);
 	// Check if this already exists.  If not, add it to a found free slot.
@@ -569,6 +569,8 @@ static stock Text_LoadLocals()
 
 stock _Text_CheckOwnership(file[], str[])
 {
+	#pragma unused file
+	#pragma unused str
 	// TODO...
 //	P:4("_Text_CheckOwnership called: %s, %s", file, str);
 //	format(YSI_g_sReturnText, sizeof (YSI_g_sReturnText), "%s:%s", file, str);
@@ -591,6 +593,7 @@ stock _Text_CheckOwnership(file[], str[])
 
 stock _Text_LookupName(name[])
 {
+    #pragma unused name
 	// TODO...
 //	P:4("_Text_LookupName called: %s, %s", name, YSI_g_sReturnText);
 //	new
@@ -933,7 +936,7 @@ static stock Text_GetFreeEntry()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Text_IsLocalOwner(search[], ident[], &len)
+static stock Text_IsLocalOwner(search[], const ident[], &len)
 {
 	// First, find out if this script owns it's own text for speed reasons, and
 	// if it does, save the handle to the text set.
