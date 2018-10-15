@@ -285,17 +285,17 @@ timer _PHP_FireOne[10](res, to)
 	HTTP(YSI_g_sID, HTTP_GET, sAddr, "", "_PHP_Result");
 }
 
-static stock PHP_GetNum32(str[])
+static stock PHP_GetNum32(const str[])
 {
 	return ((str[0] & ~0x80) << 25) | ((str[1] & ~0x80) << 18) | ((str[2] & ~0x80) << 11) | ((str[3] & ~0x80) << 4) | (str[4] & ~0xF0);
 }
 
-static stock PHP_GetNum8(str[])
+static stock PHP_GetNum8(const str[])
 {
 	return str[0] & ~0x80;
 }
 
-static stock PHP_GetNum6(str[])
+static stock PHP_GetNum6(const str[])
 {
 	return str[0] & ~0x40;
 }

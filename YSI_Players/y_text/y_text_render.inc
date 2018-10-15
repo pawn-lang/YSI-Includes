@@ -146,7 +146,7 @@ stock _Text_SetDialogMode()
 	YSI_g_sJustOne = true;
 }
 
-stock Format_SetListSeparator(string:lst[])
+stock Format_SetListSeparator(const string:lst[])
 {
 	strcpy(YSI_g_sListSep, lst);
 }
@@ -158,7 +158,7 @@ stock Format_SetListSeparator(string:lst[])
  * <transition keep="true" target="y_render_show : y_render_show_print" />
  *//*------------------------------------------------------------------------**/
 
-stock _Format_SetStyleData(master, index, style[E_STYLE_DATA], label[E_3D_DATA])
+stock _Format_SetStyleData(master, index, const style[E_STYLE_DATA], const label[E_3D_DATA])
 {
 	// =========================================================================
 	//  
@@ -815,22 +815,22 @@ static stock Format_DoDisplay(playerid, colour, out[]) <y_render_show : y_render
  * <param name="out">What the text to show is.</param>
  *//*------------------------------------------------------------------------**/
 
-stock Format_JustShow(playerid, out[]) <y_render_show : y_render_show_scm>
+stock Format_JustShow(playerid, const out[]) <y_render_show : y_render_show_scm>
 {
 	SendClientMessage(playerid, gInitialColour, out);
 }
 
-stock Format_JustShow(playerid, out[]) <y_render_show : y_render_show_print>
+stock Format_JustShow(playerid, const out[]) <y_render_show : y_render_show_print>
 {
 	P:0("Format_DoDisplay: %d, \"%s\"", playerid, out);
 }
 
-stock Format_JustShow(playerid, out[]) <y_render_show : y_render_show_gt>
+stock Format_JustShow(playerid, const out[]) <y_render_show : y_render_show_gt>
 {
 	GameTextForPlayer(playerid, out, YSI_g_sTempStyle[E_STYLE_DATA_TIME], YSI_g_sTempStyle[E_STYLE_DATA_STYLE]);
 }
 
-stock Format_JustShow(playerid, out[]) <y_render_show : y_render_show_td>
+stock Format_JustShow(playerid, const out[]) <y_render_show : y_render_show_td>
 {
 	TD_ShowForPlayer(playerid, Text:out[0]);
 }

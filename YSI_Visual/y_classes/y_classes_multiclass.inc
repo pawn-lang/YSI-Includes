@@ -534,9 +534,9 @@ stock Class_AddWithGroupSet(Group:group, skin, Float:x, Float:y, Float:z, Float:
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,w[],c,Group:f,Group:g);
+FOREIGN__ Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,const w[],c,Group:f,Group:g);
 
-GLOBAL__ Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,w[],c,Group:f,Group:g)
+GLOBAL__ Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,const w[],c,Group:f,Group:g)
 {
 	#pragma unused c
 	P:2("Class_AddClass called: %i, %f, %f, %f, %f, %s, %i, %i, %i", s, x, y, z, a, Debug_PrintArray(w, c), c, _:f, _:g);

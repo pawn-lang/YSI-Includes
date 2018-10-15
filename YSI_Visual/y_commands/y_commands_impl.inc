@@ -358,9 +358,9 @@ P:D(Command_Name(f));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ Command_GetID(string:function[]);
+FOREIGN__ Command_GetID(const string:function[]);
 
-GLOBAL__ Command_GetID(string:function[])
+GLOBAL__ Command_GetID(const string:function[])
 {
 	P:2("Command_GetID called: \"%s\"", function);
 	return Command_Find(function);
@@ -374,9 +374,9 @@ GLOBAL__ Command_GetID(string:function[])
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ Command_AddAlt(oidx, string:cmd[]);
+FOREIGN__ Command_AddAlt(oidx, const string:cmd[]);
 
-GLOBAL__ Command_AddAlt(oidx, string:cmd[])
+GLOBAL__ Command_AddAlt(oidx, const string:cmd[])
 {
 	static
 		sCmd[64],
@@ -642,9 +642,9 @@ GLOBAL__ bool:Command_GetPlayer(cmd, pid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ bool:Command_GetPlayerNamed(string:func[], playerid);
+FOREIGN__ bool:Command_GetPlayerNamed(const string:func[], playerid);
 
-GLOBAL__ bool:Command_GetPlayerNamed(string:func[], playerid)
+GLOBAL__ bool:Command_GetPlayerNamed(const string:func[], playerid)
 {
 	return Command_GetPlayer(Command_Find(func), playerid);
 }
@@ -680,9 +680,9 @@ GLOBAL__ void:Command_SetPlayer(c, p, bool:s)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ void:Command_SetPlayerNamed(string:f[],p,bool:s);
+FOREIGN__ void:Command_SetPlayerNamed(const string:f[],p,bool:s);
 
-GLOBAL__ void:Command_SetPlayerNamed(string:f[],p,bool:s)
+GLOBAL__ void:Command_SetPlayerNamed(const string:f[],p,bool:s)
 {
 	Command_SetPlayer(Command_Find(f), p, s);
 }
@@ -695,9 +695,9 @@ GLOBAL__ void:Command_SetPlayerNamed(string:f[],p,bool:s)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ Command_Find(string:cmd[]);
+FOREIGN__ Command_Find(const string:cmd[]);
 
-GLOBAL__ Command_Find(string:cmd[])
+GLOBAL__ Command_Find(const string:cmd[])
 {
 	static
 		sCmd[64] = "",
@@ -718,9 +718,9 @@ GLOBAL__ Command_Find(string:cmd[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ void:Command_TouchNamed(string:command[]);
+FOREIGN__ void:Command_TouchNamed(const string:command[]);
 
-GLOBAL__ void:Command_TouchNamed(string:command[])
+GLOBAL__ void:Command_TouchNamed(const string:command[])
 {
 	new
 		id = Command_Find(command);
@@ -870,9 +870,9 @@ GLOBAL__ bool:Command_GetDisconnectReturn()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ Command_AddAltNamed(string:function[], string:altname[]);
+FOREIGN__ Command_AddAltNamed(const string:function[], const string:altname[]);
 
-GLOBAL__ Command_AddAltNamed(string:function[], string:altname[])
+GLOBAL__ Command_AddAltNamed(const string:function[], const string:altname[])
 {
 	return Command_AddAlt(Command_Find(function), altname);
 }
@@ -910,9 +910,9 @@ GLOBAL__ void:Command_Remove(func)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ void:Command_RemoveNamed(string:func[]);
+FOREIGN__ void:Command_RemoveNamed(const string:func[]);
 
-GLOBAL__ void:Command_RemoveNamed(string:func[])
+GLOBAL__ void:Command_RemoveNamed(const string:func[])
 {
 	Command_Remove(Command_Find(func));
 }
@@ -1044,9 +1044,9 @@ GLOBAL__ string:Command_GetDisplay(funcid, playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ string:Command_GetDisplayNamed(string:func[], playerid);
+FOREIGN__ string:Command_GetDisplayNamed(const string:func[], playerid);
 
-GLOBAL__ string:Command_GetDisplayNamed(string:func[], playerid)
+GLOBAL__ string:Command_GetDisplayNamed(const string:func[], playerid)
 {
 	return
 		_Command_GetDisplay(Command_Find(func), playerid),

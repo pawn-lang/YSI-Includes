@@ -559,7 +559,7 @@ GGLOBAL__ Group_GlobalExclusive...(_GROUP_MAKE_TAG:el)
 
 */
 
-static stock void:Group_Handoff(i,a[],s)
+static stock void:Group_Handoff(i,const a[],s)
 {
 	s = min(s, bits<_:_MAX_GROUPS_G>);
 	if (i == -1)
@@ -604,7 +604,7 @@ MASTER_FUNC__ MAKE_YCM<HANDOFF_SOURCE...Group>()<_YCM:p>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Group_FullPlayerUpdate(playerid, el, Bit:p[], Bit:c[], Bit:r[])
+static stock Group_FullPlayerUpdate(playerid, el, const Bit:p[], const Bit:c[], const Bit:r[])
 {
 	// "_GROUPS_CHECK" is a macro that expands to a massive unrolled "if"
 	// statement checking up to 512 groups at once.  Any more than that and this
