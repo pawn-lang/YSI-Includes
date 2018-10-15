@@ -162,7 +162,7 @@ stock Distribute_Do(func[], GLOBAL_TAG_TYPES:...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Distribute_So(func[], idx, Bit:masters[], GLOBAL_TAG_TYPES:...)
+stock Distribute_So(func[], idx, const Bit:masters[], GLOBAL_TAG_TYPES:...)
 {
 	new
 		m = _:masters[idx] & ~Master_ID();
