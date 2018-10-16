@@ -200,6 +200,13 @@ Optional plugins:
 #define __COMPILER_FIRST_PASS  __COMPILER_1ST_PASS
 #define __COMPILER_SECOND_PASS __COMPILER_2ND_PASS
 
+// This will define a symbol - `__COMPILER_OS` equal to either `__COMPILER_UNIX`
+// or `__COMPILER_WINDOWS` depending on where the code is being built.
+#define __COMPILER_UNIX (0)
+#define __COMPILER_WINDOWS (1)
+#define __COMPILER_OS __COMPILER_UNIX
+#tryinclude "Y_dEtErMiNe_Os"
+
 /*-------------------------------------------------------------------------*//*+
  * <remarks>
  *  Exists purely to be detected before it is used.  If that check succeedes,
@@ -214,9 +221,26 @@ static stock __CompilerSecondPass() {}
 	#error YSI does not yet support PAWN 2.0/1.0
 #endif
 
+#define __COMPILER_BUG_317 (1)
+
+#define __COMPILER_STATIC_ENUM enum
+
 #if ((__Pawn & 0x0F) >= 0x0A) || ((__Pawn & 0xF0) >= 0xA0)
 	#define __COMPILER_MODIFIED (1)
 	#define __COMPILER_OFFICIAL (0)
+	#if defined __PawnBuild
+		#if __PawnBuild >= 2
+			#undef __COMPILER_STATIC_ENUM
+			#define __COMPILER_STATIC_ENUM static enum
+		#endif
+		#if __PawnBuild >= 4
+			#pragma option -(+
+		#endif
+		#if __PawnBuild >= 400
+			#undef __COMPILER_BUG_317
+			#define __COMPILER_BUG_317 (0)
+		#endif
+	#endif
 #else
 	#define __COMPILER_MODIFIED (0)
 	#define __COMPILER_OFFICIAL (1)
@@ -249,23 +273,99 @@ static stock __CompilerSecondPass() {}
 #define Debug_PrintD_OPEN (
 #define Debug_PrintD_CLOSE )
 
+enum __E_COMPILER_ENUM
+{
+	__E_COMPILER_ENUM_ENTRY[3],
+	__E_COMPILER_ENUM_AFTER
+}
+
+static stock const
+	__YSI_gsCompilerEnum[__E_COMPILER_ENUM];
+
+#if sizeof (__YSI_gsCompilerEnum[__E_COMPILER_ENUM_ENTRY]) == 3
+	#define __COMPILER_SIZEOF_ENUM (1)
+#else
+	#define __COMPILER_SIZEOF_ENUM (0)
+#endif
+
 #if __COMPILER_MODIFIED
+	#if 0
+		// TODO: Check for a minor version that might have this.
+		#define __COMPILER_NAKED __pragma(naked);
+	#else
+		#define __COMPILER_NAKED return 0;
+	#endif
 	#define __COMPILER_NESTED_ELLIPSIS (1)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) return __compiler_one_string_parameter:(%0)
 	#define __COMPILER_BUGGED_STRING_RETURN (0)
+	#define __COMPILER_BUGGED_SYSREQ (0)
+	#define __COMPILER_WARNING_SUPPRESSION (1)
+	
 	// Disable the recursion warning in the Russian compiler (and the unknown
 	// pragma warning in other compilers temporarily).
 	#pragma warning push
 	#pragma warning disable 207
 	#pragma disablerecursion
 	#pragma warning pop
+	#pragma warning disable 238
+	
+	// Check for accepted symbol names that are too long, since some (forked)
+	// compiler versions increase the limit but a lot of YSI code is hard-coded
+	// to 32 (31 + NULL).
+	#pragma warning push
+	#pragma warning disable 200
+	
+	#if !defined __COMPILER_sNAMEMAX
+		// Define a symbol of 32 characters.
+		#define __COMPILER_SYMBOL_NAME_CHECK_1F
+		// Then check if the same symbol extended to 32 characters exists.  If
+		// it does, it is because the 32 character version was truncated to 31
+		// characters (for which we temporarily disabled the warning), so the
+		// 31 character version was found instead.  This means we know that the
+		// limit (`sNAMEMAX`) is 31 characters.
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_1F_
+			#define __COMPILER_sNAMEMAX (31)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_3F__@@@@__32__DUMMY__BYTES__@@@@__
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_3F__@@@@__32__DUMMY__BYTES__@@@@___
+			#define __COMPILER_sNAMEMAX (63)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_7F__@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@__
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_7F__@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@___
+			#define __COMPILER_sNAMEMAX (127)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_FF__@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@__
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_FF__@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@___
+			#define __COMPILER_sNAMEMAX (255)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#warning Could not determine `sNAMEMAX`, falling back on 31.
+		#define __COMPILER_sNAMEMAX (31)
+	#endif
+	
+	#pragma warning pop
+	
+	// Disable the warning for `const &var`.
+	#define __COMPILER_CONST_REF (1)
 #else
+	#define __COMPILER_NAKED return 0;
 	#define __COMPILER_NESTED_ELLIPSIS (0)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) __CompilerStringReturn(%0);return (__compiler_one_string_parameter:(%0))
 	#define __CompilerStringReturn("%0"%1);return%8(%8:(%3)) return $
 	#define __COMPILER_BUGGED_STRING_RETURN (1)
+	#define __COMPILER_BUGGED_SYSREQ (1)
+	#define __COMPILER_WARNING_SUPPRESSION (0)
+	#define __COMPILER_CONST_REF (0)
+	#define __COMPILER_sNAMEMAX (31)
 	
 	#include "y_funcinc"
 	
@@ -338,4 +438,8 @@ static stock __CompilerSecondPass() {}
 
 // Should be an inbuilt constant!
 #define cellbytes (cellbits / 8)
+
+#if __COMPILER_sNAMEMAX != 31
+	#error YSI assumes `sNAMEMAX` is 31.
+#endif
 
