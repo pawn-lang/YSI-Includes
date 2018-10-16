@@ -138,7 +138,7 @@ stock PA_Set(PlayerArray:d<>, slot, bool:set)
 	}
 }
 
-stock Iter_Func@PA(start, PlayerArray:data<>)
+stock Iter_Func@PA(start, const PlayerArray:data<>)
 {
 	P:3("YSI_gAPAFunc called: %s, %i", Bit_Display(Bit:data[1]), start);
 	++start;

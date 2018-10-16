@@ -345,7 +345,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount, name[64], hooks[], &count)
+_Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount, const name[64], hooks[], &count)
 {
 	P:4("Hooks_GetPreHooks called");
 	new

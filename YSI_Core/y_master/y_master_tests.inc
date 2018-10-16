@@ -1,7 +1,7 @@
 // These really just test that all the combinations compile...
 
-YSIM_NONE_FOREIGN stock y_master_test_1(&a, &e, b[], c, string:d[]);
-YSIM_NONE_GLOBAL  stock y_master_test_1(&a, &e, b[], c, string:d[])
+YSIM_NONE_FOREIGN stock y_master_test_1(&a, &e, const b[], c, const string:d[]);
+YSIM_NONE_GLOBAL  stock y_master_test_1(&a, &e, const b[], c, const string:d[])
 {
 	#pragma unused a, e, b, c, d
 	a = c + 5;
@@ -10,16 +10,16 @@ YSIM_NONE_GLOBAL  stock y_master_test_1(&a, &e, b[], c, string:d[])
 	return 42;
 }
 
-YSIM_CLOUD_FOREIGN stock y_master_test_2(&a, &e, string:d[], b[], c = sizeof (b));
-YSIM_CLOUD_GLOBAL  stock y_master_test_2(&a, &e, string:d[], b[], c = sizeof (b))
+YSIM_CLOUD_FOREIGN stock y_master_test_2(&a, &e, const string:d[], const b[], c = sizeof (b));
+YSIM_CLOUD_GLOBAL  stock y_master_test_2(&a, &e, const string:d[], const b[], c = sizeof (b))
 {
 	#pragma unused a, e, b, c, d
 	a = c / 2;
 	return 43;
 }
 
-YSIM_SERVER_FOREIGN stock y_master_test_3(&a, &e, b[], c, string:d[] = "yo");
-YSIM_SERVER_GLOBAL  stock y_master_test_3(&a, &e, b[], c, string:d[] = "yo")
+YSIM_SERVER_FOREIGN stock y_master_test_3(&a, &e, const b[], c, const string:d[] = "yo");
+YSIM_SERVER_GLOBAL  stock y_master_test_3(&a, &e, const b[], c, const string:d[] = "yo")
 {
 	#pragma unused a, e, b, c, d
 	ASSERT_SAME(d, "yo");
@@ -27,8 +27,8 @@ YSIM_SERVER_GLOBAL  stock y_master_test_3(&a, &e, b[], c, string:d[] = "yo")
 	return 44;
 }
 
-YSIM_CLIENT_FOREIGN stock y_master_test_4(&a, &e, b[], c, string:d[]);
-YSIM_CLIENT_GLOBAL  stock y_master_test_4(&a, &e, b[], c, string:d[])
+YSIM_CLIENT_FOREIGN stock y_master_test_4(&a, &e, const b[], c, const string:d[]);
+YSIM_CLIENT_GLOBAL  stock y_master_test_4(&a, &e, const b[], c, const string:d[])
 {
 	#pragma unused a, e, b, c, d
 	a = 101;
@@ -36,7 +36,7 @@ YSIM_CLIENT_GLOBAL  stock y_master_test_4(&a, &e, b[], c, string:d[])
 	return 45;
 }
 
-YSIM_STUB_FOREIGN stock y_master_test_5(&a, &e, b[], c = sizeof (b), string:d[] = "hmm");
+YSIM_STUB_FOREIGN stock y_master_test_5(&a, &e, const b[], c = sizeof (b), const string:d[] = "hmm");
 
 TEST__ y_master_IntReturn()
 {
@@ -61,60 +61,60 @@ TEST__ y_master_IntReturn()
 	ASSERT_EQ(e, 4);
 }
 
-YSIM_NONE_FOREIGN stock string:y_master_test_1s(&a, &e, b[], c, string:d[]);
-YSIM_NONE_GLOBAL  stock string:y_master_test_1s(&a, &e, b[], c, string:d[])
+YSIM_NONE_FOREIGN stock string:y_master_test_1s(&a, &e, const b[], c, const string:d[]);
+YSIM_NONE_GLOBAL  stock string:y_master_test_1s(&a, &e, const b[], c, const string:d[])
 {
 	#pragma unused a, e, b, c, d
 	new ret[YSI_MAX_STRING] = "Returned.";
 	return ret;
 }
 
-YSIM_CLOUD_FOREIGN stock string:y_master_test_2s(&a, &e, b[], c, string:d[]);
-YSIM_CLOUD_GLOBAL  stock string:y_master_test_2s(&a, &e, b[], c, string:d[])
+YSIM_CLOUD_FOREIGN stock string:y_master_test_2s(&a, &e, const b[], c, const string:d[]);
+YSIM_CLOUD_GLOBAL  stock string:y_master_test_2s(&a, &e, const b[], c, const string:d[])
 {
 	#pragma unused a, e, b, c, d
 	new ret[YSI_MAX_STRING] = "Returned.";
 	return ret;
 }
 
-YSIM_SERVER_FOREIGN stock string:y_master_test_3s(&a, &e, b[], c, string:d[]);
-YSIM_SERVER_GLOBAL  stock string:y_master_test_3s(&a, &e, b[], c, string:d[])
+YSIM_SERVER_FOREIGN stock string:y_master_test_3s(&a, &e, const b[], c, const string:d[]);
+YSIM_SERVER_GLOBAL  stock string:y_master_test_3s(&a, &e, const b[], c, const string:d[])
 {
 	#pragma unused a, e, b, c, d
 	new ret[YSI_MAX_STRING] = "Returned.";
 	return ret;
 }
 
-YSIM_CLIENT_FOREIGN stock string:y_master_test_4s(&a, &e, b[], c, string:d[]);
-YSIM_CLIENT_GLOBAL  stock string:y_master_test_4s(&a, &e, b[], c, string:d[])
+YSIM_CLIENT_FOREIGN stock string:y_master_test_4s(&a, &e, const b[], c, const string:d[]);
+YSIM_CLIENT_GLOBAL  stock string:y_master_test_4s(&a, &e, const b[], c, const string:d[])
 {
 	#pragma unused a, e, b, c, d
 	new ret[YSI_MAX_STRING] = "Returned.";
 	return ret;
 }
 
-YSIM_STUB_FOREIGN stock string:y_master_test_5s(&a, &e, b[], c, string:d[]);
+YSIM_STUB_FOREIGN stock string:y_master_test_5s(&a, &e, const b[], c, const string:d[]);
 
-YSIM_NONE_FOREIGN stock void:y_master_test_1v(&a, &e, b[], c, string:d[]);
-YSIM_NONE_GLOBAL  stock void:y_master_test_1v(&a, &e, b[], c, string:d[])
+YSIM_NONE_FOREIGN stock void:y_master_test_1v(&a, &e, const b[], c, const string:d[]);
+YSIM_NONE_GLOBAL  stock void:y_master_test_1v(&a, &e, const b[], c, const string:d[])
 {
 	#pragma unused a, e, b, c, d
 }
 
-YSIM_CLOUD_FOREIGN stock void:y_master_test_2v(&a, &e, b[], c, string:d[]);
-YSIM_CLOUD_GLOBAL  stock void:y_master_test_2v(&a, &e, b[], c, string:d[])
+YSIM_CLOUD_FOREIGN stock void:y_master_test_2v(&a, &e, const b[], c, const string:d[]);
+YSIM_CLOUD_GLOBAL  stock void:y_master_test_2v(&a, &e, const b[], c, const string:d[])
 {
 	#pragma unused a, e, b, c, d
 }
 
-YSIM_SERVER_FOREIGN stock void:y_master_test_3v(&a, &e, b[], c, string:d[]);
-YSIM_SERVER_GLOBAL  stock void:y_master_test_3v(&a, &e, b[], c, string:d[])
+YSIM_SERVER_FOREIGN stock void:y_master_test_3v(&a, &e, const b[], c, const string:d[]);
+YSIM_SERVER_GLOBAL  stock void:y_master_test_3v(&a, &e, const b[], c, const string:d[])
 {
 	#pragma unused a, e, b, c, d
 }
 
-YSIM_CLIENT_FOREIGN stock void:y_master_test_4v(&a, &e, b[], c, string:d[]);
-YSIM_CLIENT_GLOBAL  stock void:y_master_test_4v(&a, &e, b[], c, string:d[])
+YSIM_CLIENT_FOREIGN stock void:y_master_test_4v(&a, &e, const b[], c, const string:d[]);
+YSIM_CLIENT_GLOBAL  stock void:y_master_test_4v(&a, &e, const b[], c, const string:d[])
 {
 	#pragma unused a, e, b, c, d
 }
@@ -128,28 +128,28 @@ YSIM_NONE_GLOBAL  stock Float:y_master_test_1f(&a, &e, b[], c, const string:d[])
 	return 44.0;
 }
 
-YSIM_CLOUD_FOREIGN stock Float:y_master_test_2f(&a, &e, b[], c, string:d[]);
-YSIM_CLOUD_GLOBAL  stock Float:y_master_test_2f(&a, &e, b[], c, string:d[])
+YSIM_CLOUD_FOREIGN stock Float:y_master_test_2f(&a, &e, const b[], c, const string:d[]);
+YSIM_CLOUD_GLOBAL  stock Float:y_master_test_2f(&a, &e, const b[], c, const string:d[])
 {
 	#pragma unused a, e, b, c, d
 	return 44.0;
 }
 
-YSIM_SERVER_FOREIGN stock Float:y_master_test_3f(&a, &e, b[], c, string:d[]);
-YSIM_SERVER_GLOBAL  stock Float:y_master_test_3f(&a, &e, b[], c, string:d[])
+YSIM_SERVER_FOREIGN stock Float:y_master_test_3f(&a, &e, const b[], c, const string:d[]);
+YSIM_SERVER_GLOBAL  stock Float:y_master_test_3f(&a, &e, const b[], c, const string:d[])
 {
 	#pragma unused a, e, b, c, d
 	return 44.0;
 }
 
-YSIM_CLIENT_FOREIGN stock Float:y_master_test_4f(&a, &e, b[], c, string:d[]);
-YSIM_CLIENT_GLOBAL  stock Float:y_master_test_4f(&a, &e, b[], c, string:d[])
+YSIM_CLIENT_FOREIGN stock Float:y_master_test_4f(&a, &e, const b[], c, const string:d[]);
+YSIM_CLIENT_GLOBAL  stock Float:y_master_test_4f(&a, &e, const b[], c, const string:d[])
 {
 	#pragma unused a, e, b, c, d
 	return 44.0;
 }
 
-YSIM_STUB_FOREIGN stock Float:y_master_test_5f(&a, &e, b[], c, string:d[]);
+YSIM_STUB_FOREIGN stock Float:y_master_test_5f(&a, &e, const b[], c, const string:d[]);
 
 YSIM_NONE_FOREIGN stock y_master_test_1n();
 YSIM_NONE_GLOBAL  stock y_master_test_1n()

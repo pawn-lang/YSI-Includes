@@ -3413,7 +3413,7 @@ TEST__ y_iter_yield3a()
 	ASSERT_EQ(count, 20);
 }
 
-iterfunc stock y_iter_yield4(arr[], size = sizeof (arr))
+iterfunc stock y_iter_yield4(const arr[], size = sizeof (arr))
 {
 	for (new i = 0; i != size; ++i)
 	{

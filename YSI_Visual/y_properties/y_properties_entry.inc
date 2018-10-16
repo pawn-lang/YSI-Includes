@@ -91,17 +91,28 @@ Optional plugins:
 	#define MAX_PROPERTIES 256
 #endif
 
-/*#if !defined GROUP_PROPERTY_BITS
+#if !defined MAX_CHECKPOINTS
+	#define MAX_CHECKPOINTS MAX_PROPERTIES
+#endif
+
+#if !defined GROUP_PROPERTY_BITS
 	#if MAX_PROPERTIES <= 32
 		#define GROUP_PROPERTY_BITS 2
 	#else
 		#define GROUP_PROPERTY_BITS Bit_Bits(MAX_PROPERTIES)
 	#endif
-#endif*/
+#endif
+
+#if !defined PLAYER_BIT_ARRAY
+	#define PLAYER_BIT_ARRAY Bit_Bits(MAX_PLAYERS)
+#endif
 
 #define NO_PROPERTY -1
+#define NO_CHECKPOINT -1
 
-#define WEAPON_ARMOUR 100
+#if !defined WEAPON_ARMOUR
+	#define WEAPON_ARMOUR 100
+#endif
 
 #define PROPERTY_SELL_PERCENT 60
 
@@ -907,7 +918,7 @@ Property_OnPlayerLeaveArea(playerid, area)
 HOOK__ OnPlayerConnect(playerid)
 {
 	YSI_g_sShopMenu[playerid][E_PROP_AMMU_MENU] = Menu:-1;
-	Bit_SetAll(YSI_g_sPlayerProperties[playerid], 0, GROUP_PROPERTY_BITS);
+	Bit_SetAll(YSI_g_sPlayerProperties[playerid], false, GROUP_PROPERTY_BITS);
 	for (new i = 0; i < 13; i++) YSI_g_sSpawnWeapons[playerid][i] = 0;
 	YSI_g_sMoney[playerid] = 0;
 	return 1;
@@ -922,26 +933,26 @@ HOOK__ OnPlayerConnect(playerid)
 
 HOOK__ OnPlayerDisconnect(playerid, reason)
 {
-	FOREACH__ (new prop : Bits(YSI_g_sPlayerProperties[playerid]))
+	FOREACH__ (new property : Bits(YSI_g_sPlayerProperties[playerid]))
 	{
 		new
-			e_PROP_FLAGS:flags = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
+			e_PROP_FLAGS:flags = YSI_g_sProperties[property][E_PROP_DATA_FLAGS];
 		if (flags & e_PROP_FLAGS_ACTIVE)
 		{
 			if ((flags & e_PROP_FLAGS_TYPES) == e_PROP_FLAGS_TYPE_PROP)
 			{
 				if (Property_GetOption(2, flags))
 				{
-					if (_:Bit_GetBit(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS], playerid))
+					if (_:Bit_GetBit(YSI_g_sProperties[property][E_PROP_DATA_PLAYERS], playerid))
 					{
-						Bit_Set(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS], playerid, 0, PLAYER_BIT_ARRAY);
+						Bit_Set(YSI_g_sProperties[property][E_PROP_DATA_PLAYERS], playerid, false);//, PLAYER_BIT_ARRAY);
 					}
 				}
 				else
 				{
-					if (_:(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] == Bit:playerid))
+					if (_:(YSI_g_sProperties[property][E_PROP_DATA_PLAYERS][0] == Bit:playerid))
 					{
-						YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] = Bit:INVALID_PLAYER_ID;
+						YSI_g_sProperties[property][E_PROP_DATA_PLAYERS][0] = Bit:INVALID_PLAYER_ID;
 					}
 				}
 				#pragma tabsize 4
@@ -955,9 +966,9 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 			}
 			else if ((flags & e_PROP_FLAGS_TYPES) == e_PROP_FLAGS_TYPE_HOUS)
 			{
-				if (_:(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] == Bit:playerid))
+				if (_:(YSI_g_sProperties[property][E_PROP_DATA_PLAYERS][0] == Bit:playerid))
 				{
-					YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] = Bit:INVALID_PLAYER_ID;
+					YSI_g_sProperties[property][E_PROP_DATA_PLAYERS][0] = Bit:INVALID_PLAYER_ID;
 				}
 			}
 		}
@@ -994,7 +1005,7 @@ HOOK__ OnPlayerSpawn(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-HOOK__ OnPlayerLeaveCheckpointEx(playerid, cpid)
+HOOK__ OnPlayerLeaveCPEx(playerid, cpid)
 {
 	new
 		cp = YSI_g_sCheckpointPointers[cpid];
@@ -1007,7 +1018,7 @@ HOOK__ OnPlayerLeaveCheckpointEx(playerid, cpid)
 		type = _:(_:flags & _:e_PROP_FLAGS_TYPES);
 	if ((type != _:e_PROP_FLAGS_TYPE_HOUS || YSI_g_sProperties[cp][E_PROP_DATA_PLAYERS][0] != Bit:playerid) && (type != _:e_PROP_FLAGS_TYPE_PROP || !Property_IsOwner(playerid, cp, flags)))
 	{
-		Bit_Set(YSI_g_sPlayerProperties[playerid], cp, 0, GROUP_PROPERTY_BITS);
+		Bit_Set(YSI_g_sPlayerProperties[playerid], cp, false);//, GROUP_PROPERTY_BITS);
 	}
 	return 1;
 }
@@ -1988,12 +1999,13 @@ YCMD:buy(playerid, params[], help)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-public Property_ResetRebuy(prop)
+forward Property_ResetRebuy(property);
+public Property_ResetRebuy(property)
 {
-	if (Property_IsActive(prop))
+	if (Property_IsActive(property))
 	{
 		new
-			e_PROP_FLAGS:flag = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
+			e_PROP_FLAGS:flag = YSI_g_sProperties[property][E_PROP_DATA_FLAGS];
 		if ((flag & e_PROP_FLAGS_TYPES) == e_PROP_FLAGS_TYPE_PROP)
 		{
 			#pragma tabsize 4
@@ -2069,17 +2081,17 @@ ptask Property_Loop[500](i)
 			if (props & slot)
 			{
 				new
-					prop = (j * 32) + bit,
-					flags = YSI_g_sProperties[prop][E_PROP_DATA_FLAGS];
+					property = (j * 32) + bit,
+					flags = YSI_g_sProperties[property][E_PROP_DATA_FLAGS];
 				if (flags & _:e_PROP_FLAGS_ACTIVE)
 				{
 					switch (flags & _:e_PROP_FLAGS_TYPES)
 					{
 						case e_PROP_FLAGS_TYPE_MONP, e_PROP_FLAGS_TYPE_MONA:
-							if (!YSI_g_sProperties[prop][E_PROP_DATA_DATA_2]) GivePlayerMoney(i, YSI_g_sProperties[prop][E_PROP_DATA_DATA_1]);
+							if (!YSI_g_sProperties[property][E_PROP_DATA_DATA_2]) GivePlayerMoney(i, YSI_g_sProperties[property][E_PROP_DATA_DATA_1]);
 						case e_PROP_FLAGS_TYPE_PROP:
 						{
-							if (((Property_GetOption(2, flags)) ? (_:Bit_GetBit(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS], i)) : (_:(YSI_g_sProperties[prop][E_PROP_DATA_PLAYERS][0] == Bit:i))) && !YSI_g_sProperties[prop][E_PROP_DATA_NAME][MAX_PROP_NAME - 1]) money += YSI_g_sProperties[prop][E_PROP_DATA_DATA_2] & 0x3FFFF;
+							if (((Property_GetOption(2, flags)) ? (_:Bit_GetBit(YSI_g_sProperties[property][E_PROP_DATA_PLAYERS], i)) : (_:(YSI_g_sProperties[property][E_PROP_DATA_PLAYERS][0] == Bit:i))) && !YSI_g_sProperties[property][E_PROP_DATA_NAME][MAX_PROP_NAME - 1]) money += YSI_g_sProperties[property][E_PROP_DATA_DATA_2] & 0x3FFFF;
 						}
 						case e_PROP_FLAGS_TYPE_RSRC:
 						{
@@ -2092,7 +2104,7 @@ ptask Property_Loop[500](i)
 							{
 								new Float:health;
 								GetPlayerHealth(i, health);
-								SetPlayerHealth(i, health - YSI_g_sProperties[prop][E_PROP_DATA_DATA_2]);
+								SetPlayerHealth(i, health - YSI_g_sProperties[property][E_PROP_DATA_DATA_2]);
 							}
 						}
 					}
@@ -2105,7 +2117,7 @@ ptask Property_Loop[500](i)
 	}
 	if (money)
 	{
-		Text_SendFormat(i, "YSI_PROP_EARNT", money);
+		Text_Send(i, $YSI_PROP_EARNT, money);
 		GivePlayerMoney(i, money);
 	}
 	if (!bad) GetPlayerPos(i, s_fLastGoodPos[i][0], s_fLastGoodPos[i][1], s_fLastGoodPos[i][2]);

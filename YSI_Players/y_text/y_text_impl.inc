@@ -296,7 +296,7 @@ static stock Text_LoadAll()
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-static stock Text_AddLocal(buffer[])
+static stock Text_AddLocal(const buffer[])
 {
 	P:4("Text_AddLocal called: \"%s\", %i", buffer);
 	// Check if this already exists.  If not, add it to a found free slot.
@@ -933,7 +933,7 @@ static stock Text_GetFreeEntry()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Text_IsLocalOwner(search[], ident[], &len)
+static stock Text_IsLocalOwner(search[], const ident[], &len)
 {
 	// First, find out if this script owns it's own text for speed reasons, and
 	// if it does, save the handle to the text set.

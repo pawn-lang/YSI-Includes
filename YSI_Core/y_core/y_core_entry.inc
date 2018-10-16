@@ -196,6 +196,20 @@ ScriptInit_PostInitFuncs_()
 	}
 }
 
+#if __COMPILER_CONST_REF
+	#pragma warning push
+	#pragma warning disable 238
+#endif
+stock _YSI_ConstMod(const &var, const val)
+{
+	#pragma unused var, val
+	#emit LOAD.S.pri val
+	#emit SREF.S.pri var
+}
+#if __COMPILER_CONST_REF
+	#pragma warning pop
+#endif
+
 // These are conditional, and use most of the preceeding code.
 #if defined YSI_TESTS
 	#include "..\y_testing"

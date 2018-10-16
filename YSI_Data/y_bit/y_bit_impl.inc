@@ -230,7 +230,7 @@ stock Bit_SetAll(BitArray:array<>, bool:set, size = sizeof (array))
  *//*------------------------------------------------------------------------**/
 
 #define Bit_Count Bit_GetCount
-stock Bit_GetCount(BitArray:array<>, size = sizeof (array))
+stock Bit_GetCount(const BitArray:array<>, size = sizeof (array))
 {
 	new
 		count;
@@ -241,7 +241,7 @@ stock Bit_GetCount(BitArray:array<>, size = sizeof (array))
 	return count;
 }
 
-stock Bit_Display(BitArray:array<>, size = sizeof (array))
+stock Bit_Display(const BitArray:array<>, size = sizeof (array))
 {
 	new
 		ret[YSI_MAX_STRING],
@@ -257,7 +257,7 @@ stock Bit_Display(BitArray:array<>, size = sizeof (array))
 
 #define bitsof(%0) (sizeof(%0)*cellbits)
 
-stock Iter_Func@Bits(start, BitArray:data<>, size = sizeof (data))
+stock Iter_Func@Bits(start, const BitArray:data<>, size = sizeof (data))
 {
 	P:3("Iter_Func@Bits called: %s, %i", Bit_Display(data, size), start);
 	new
@@ -286,7 +286,7 @@ stock Iter_Func@Bits(start, BitArray:data<>, size = sizeof (data))
 
 #define Iterator@Bits iterstart(-1)
 
-stock Iter_Func@Blanks(start, BitArray:data<>, size = sizeof (data))
+stock Iter_Func@Blanks(start, const BitArray:data<>, size = sizeof (data))
 {
 	P:3("Iter_Func@Blanks called: %s, %i", Bit_Display(data, size), start);
 	new

@@ -186,7 +186,7 @@ stock XML_Destroy(XML:rule)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock XML_Parse(XML:rule, filename[])
+stock XML_Parse(XML:rule, const filename[])
 {
 	P:3("XML_Parse called: %i, \"%s\"", _:rule, filename);
 	if (!XML_IsValid(rule)) return 0;
@@ -372,7 +372,7 @@ stock XML_Parse(XML:rule, filename[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock XML_Push(name[], text[], depth)
+stock XML_Push(const name[], const text[], depth)
 {
 	P:3("XML_Push called: \"%s\", \"%s\", %i, %i", name, text, depth, YSI_g_sCurBuffer);
 	if (YSI_g_sCurBuffer < XML_BUFFER_SIZE && YSI_g_sCurBuffer >= 0)
@@ -399,7 +399,7 @@ stock XML_Push(name[], text[], depth)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock XML_GetParameter(line[], &pos)
+stock XML_GetParameter(const line[], &pos)
 {
 	P:3("XML_GetParameter called: \"%s\", %i", line, pos);
 	new
@@ -472,7 +472,7 @@ stock XML_GetParameter(line[], &pos)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock XML_GetValue(line[], &pos)
+stock XML_GetValue(const line[], &pos)
 {
 	P:3("XML_GetValue called: \"%s\", %i", line, pos);
 	new
@@ -497,7 +497,7 @@ stock XML_GetValue(line[], &pos)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock XML_GetName(line[], &pos)
+stock XML_GetName(const line[], &pos)
 {
 	P:3("XML_GetName called: \"%s\", %i", line, pos);
 	new
@@ -520,7 +520,7 @@ stock XML_GetName(line[], &pos)
  * <param name="tagCount">New tree depth.</param>
  *//*------------------------------------------------------------------------**/
 
-stock XML_ParseTag(XML:rule, name[], tagCount)
+stock XML_ParseTag(XML:rule, const name[], tagCount)
 {
 	P:3("XML_ParseTag called: %i, \"%s\", %i", _:rule, name, tagCount);
 	new
@@ -645,7 +645,7 @@ stock XML_GetParentValue(const key[], value[])
  * <param name="function">Function to parse identifier in.</param>
  *//*------------------------------------------------------------------------**/
 
-stock XML_AddHandler(XML:rule, trigger[], function[])
+stock XML_AddHandler(XML:rule, const trigger[], const function[])
 {
 	P:3("XML_AddHandler called: %i, \"%s\", \"%s\"", _:rule, trigger, function);
 	new
@@ -662,7 +662,7 @@ stock XML_AddHandler(XML:rule, trigger[], function[])
  * <param name="trigger">Handler name to remove.</param>
  *//*------------------------------------------------------------------------**/
 
-stock XML_RemoveHandler(XML:rule, trigger[])
+stock XML_RemoveHandler(XML:rule, const trigger[])
 {
 	P:3("XML_RemoveHandler called: %i, \"%s\"", _:rule, trigger);
 	if (XML_IsValid(rule))
@@ -692,7 +692,7 @@ stock XML_RemoveHandler(XML:rule, trigger[])
  *//*------------------------------------------------------------------------**/
 
 //#define XML_AddSubEntry XML_AddParameter
-stock XMLEntry:XML_AddParameter(XMLEntry:parent, tag[], value[] = "")
+stock XMLEntry:XML_AddParameter(XMLEntry:parent, const tag[], const value[] = "")
 {
 	P:3("XMLEntry:XML_AddParameter called: %i, \"%s\", \"%s\"", _:parent, tag, value);
 	if (_:parent < YSI_g_sXMLWritePointer < XML_WRITE_BUFFER_SIZE)
@@ -719,7 +719,7 @@ stock XMLEntry:XML_AddParameter(XMLEntry:parent, tag[], value[] = "")
 
 #define XML_CreateEntry XML_AddItem
 #define XML_AddSubEntry XML_AddItem
-stock XMLEntry:XML_AddItem(tag[], name[] = "", XMLEntry:parent = XMLEntry:cellmax)
+stock XMLEntry:XML_AddItem(const tag[], const name[] = "", XMLEntry:parent = XMLEntry:cellmax)
 {
 	P:3("XMLEntry:XML_AddItem called: \"%s\", \"%s\", %i", tag, name, _:parent);
 	if (_:parent != cellmax)
@@ -748,7 +748,7 @@ stock XMLEntry:XML_AddItem(tag[], name[] = "", XMLEntry:parent = XMLEntry:cellma
  *//*------------------------------------------------------------------------**/
 
 #define XML_WriteEntry XML_WriteItem
-stock XML_WriteItem(filename[], XMLEntry:item, bool:bIncludeXML = true, bool:bFavourShort = false)
+stock XML_WriteItem(const filename[], XMLEntry:item, bool:bIncludeXML = true, bool:bFavourShort = false)
 {
 	P:3("XML_WriteItem called: \"%s\", %i", filename, _:item);
 	if (_:item < YSI_g_sXMLWritePointer)
@@ -952,7 +952,7 @@ static stock XML_WriteItemDataShort(item, File:fHnd, depth)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock XML_RemoveItem(file[], tag[], name[])
+stock XML_RemoveItem(const file[], const tag[], const name[])
 {
 	P:3("XML_RemoveItem called: \"%s\", \"%s\", \"%s\", ", file, tag, name);
 	return XML_ReplaceItem(file, tag, name, -1);
@@ -968,7 +968,7 @@ stock XML_RemoveItem(file[], tag[], name[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock XML_ReplaceItem(file[], tag[], name[], replacement)
+stock XML_ReplaceItem(const file[], const tag[], const name[], replacement)
 {
 	P:3("XML_ReplaceItem called: \"%s\", \"%s\", \"%s\", %i", file, tag, name, replacement);
 	if (fexist(file))

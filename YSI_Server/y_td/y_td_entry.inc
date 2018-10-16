@@ -164,7 +164,7 @@ static stock
 	//YSI_g_sTDTimers[Text:MAX_TEXT_DRAWS][MAX_PLAYERS],
 	// This is actually dual purpose.
 	Text:YSI_g_sUnused,
-	BitArray:YSI_g_sPlayerDraws[MAX_PLAYERS]<MAX_TEXT_DRAWS>;
+	BitArray:YSI_g_sPlayerDraws[MAX_PLAYERS]<_:MAX_TEXT_DRAWS>;
 	//Bit:YSI_g_sPlayerDraws[MAX_PLAYERS][Bit_Bits(MAX_TEXT_DRAWS)];
 
 //static stock TD_SetTimer(playerid, Text:td, time, revision)
@@ -221,7 +221,7 @@ HOOK__ OnScriptInit()
 		YSI_g_sTDDisplay[i][E_TD_DISPLAY_REAL] = Text:INVALID_TEXT_DRAW;
 		YSI_g_sTDDisplay[i][E_TD_DISPLAY_NEXT] = i + Text:1;
 	}
-	YSI_g_sTDDisplay[Text:(MAX_TEXT_DRAWS - 1)][E_TD_DISPLAY_NEXT] = TEXT_DRAW_NO_NEXT;
+	YSI_g_sTDDisplay[Text:MAX_TEXT_DRAWS - Text:1][E_TD_DISPLAY_NEXT] = TEXT_DRAW_NO_NEXT;
 	return 1;
 }
 
@@ -229,7 +229,7 @@ HOOK__ OnScriptInit()
  * <param name="filename">File to parse as a textdraw data file.</param>
  *//*------------------------------------------------------------------------**/
 
-stock TD_Parse(filename[])
+stock TD_Parse(const filename[])
 {
 	P:3("TD_Parse called: \"%s\"", filename);
 	return XML_Parse(YSI_g_sXMLRules, filename);
@@ -306,7 +306,7 @@ public TD_LoadColour()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Style:TD_Create(Float:x = 0.0, Float:y = 0.0, Float:letterX = 0.48, Float:letterY = 1.12, Float:textX = 1280.0, Float:textY = 1280.0, colour = 0xE1E1E1FF, boxColour = 0x80808080, bgColour = 0x000000FF, shadow = 2, outline = 0, align = _:td_align_none, font = 1, bool:proportional = false, bool:box = false, time = 0, name[] = "\1")
+stock Style:TD_Create(Float:x = 0.0, Float:y = 0.0, Float:letterX = 0.48, Float:letterY = 1.12, Float:textX = 1280.0, Float:textY = 1280.0, colour = 0xE1E1E1FF, boxColour = 0x80808080, bgColour = 0x000000FF, shadow = 2, outline = 0, align = _:td_align_none, font = 1, bool:proportional = false, bool:box = false, time = 0, const name[] = "\1")
 {
 	P:3("Text:TD_Create called: %f, %f, %f, %f, %f, %f, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, \"%s\"", x, y, letterX, letterY, textX, textY, colour, boxColour, bgColour, shadow, outline, align, font, _:proportional, _:box, time, name);
 	new
@@ -485,7 +485,7 @@ public TD_Textdraw()
  * <param name="name">A style name to get a style index for.</param>
  *//*------------------------------------------------------------------------**/
 
-stock Style:TD_GetNamed(name[])
+stock Style:TD_GetNamed(const name[])
 {
 	new
 		hash = bernstein(name);
@@ -523,7 +523,7 @@ stock Style:TD_GetID(hash)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 //#if 0
-stock Style:TD_Clone(Style:styleID, name[] = "\1")
+stock Style:TD_Clone(Style:styleID, const name[] = "\1")
 {
 	P:3("Text:TD_Clone called: %i, \"%s\"", _:styleID, name);
 	if (!TD_IsValidStyle(styleID))
@@ -582,7 +582,7 @@ stock TD_GetStyleData(Style:styleID, data[E_TD_DATA])
  * <param name="name">Name to give the style.</param>
  *//*------------------------------------------------------------------------**/
 
-stock TD_Name(Style:styleID, name[])
+stock TD_Name(Style:styleID, const name[])
 {
 	P:3("TD_Name called: %i, \"%s\"", _:styleID, name);
 	if (!TD_IsValidStyle(styleID))
@@ -1078,26 +1078,29 @@ stock TD_SetTime(Style:styleID, time, bool:existing = false)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Text:TD_RenderInternal(text[], style[E_TD_DATA], Float:x, Float:y)
+#if !defined CST_TextDrawCreate
+	native Text:CST_TextDrawCreate(Float:x, Float:y, const text[]) = TextDrawCreate;
+#endif
+static stock Text:TD_RenderInternal(const text[], const style[E_TD_DATA], Float:x, Float:y)
 {
 	//P:4("Text:TD_Render called: \"%s\", %i, %i", text, _:id, _:slot);
 	new
-		Text:textDraw = TextDrawCreate(x, y, text);
+		Text:textDraw = CST_TextDrawCreate(x, y, text);
 	if (textDraw != Text:INVALID_TEXT_DRAW)
 	{
 		new
 			e_TD_BITS:bits = style[E_TD_DATA_BITS];
 		TextDrawLetterSize(textDraw, style[E_TD_DATA_LX], style[E_TD_DATA_LY]);
 		TextDrawTextSize(textDraw, style[E_TD_DATA_TX], style[E_TD_DATA_TY]);
-		TextDrawAlignment(textDraw, _:(bits & e_TD_BITS_ALIGN) >> 16);
+		TextDrawAlignment(textDraw, e_TEXT_DRAW_ALIGN:(_:(bits & e_TD_BITS_ALIGN) >> 16));
 		TextDrawColor(textDraw, style[E_TD_DATA_COLOUR]);
-		TextDrawUseBox(textDraw, (bits & e_TD_BITS_BOX) ? 1 : 0);
+		TextDrawUseBox(textDraw, !!(bits & e_TD_BITS_BOX));
 		TextDrawBoxColor(textDraw, style[E_TD_DATA_BOX]);
 		TextDrawSetShadow(textDraw, _:(bits & e_TD_BITS_SHADOW));
 		TextDrawSetOutline(textDraw, _:(bits & e_TD_BITS_OUTLINE) >> 8);
 		TextDrawBackgroundColor(textDraw, style[E_TD_DATA_BG]);
 		TextDrawFont(textDraw, _:(bits & e_TD_BITS_FONT) >> 20);
-		TextDrawSetProportional(textDraw, (bits & e_TD_BITS_PROP) ? 1 : 0);
+		TextDrawSetProportional(textDraw, !!(bits & e_TD_BITS_PROP));
 	}
 	return textDraw;
 }
@@ -1116,7 +1119,7 @@ static stock Text:TD_RenderInternal(text[], style[E_TD_DATA], Float:x, Float:y)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Text:TD_Render(text[], Style:id, Text:slot)
+static stock Text:TD_Render(const text[], Style:id, Text:slot)
 {
 	P:4("Text:TD_Render called: \"%s\", %i, %i", text, _:id, _:slot);
 	return TD_RenderInternal(text, YSI_g_sTDData[id], YSI_g_sTDDisplay[slot][E_TD_DISPLAY_X], YSI_g_sTDDisplay[slot][E_TD_DISPLAY_Y]);
@@ -1428,7 +1431,7 @@ stock TD_Link(Text:base, Text:other)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Text:TD_Display(text[], Style:id, Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
+stock Text:TD_Display(const text[], Style:id, Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
 {
 	if (YSI_g_sUnused == TEXT_DRAW_NO_NEXT)
 	{
@@ -1482,7 +1485,7 @@ stock Text:TD_Display(text[], Style:id, Float:x = (Float:TEXT_DRAW_NAN), Float:y
 	return textDraw;
 }
 
-stock Text:TD_DisplayForPlayer(playerid, text[], Style:id, Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
+stock Text:TD_DisplayForPlayer(playerid, const text[], Style:id, Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
 {
 	new
 		Text:td = TD_Display(text, id, x, y);
@@ -1491,7 +1494,7 @@ stock Text:TD_DisplayForPlayer(playerid, text[], Style:id, Float:x = (Float:TEXT
 	return td;
 }
 
-stock Text:TD_DisplayForAll(text[], Style:id, Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
+stock Text:TD_DisplayForAll(const text[], Style:id, Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
 {
 	new
 		Text:td = TD_Display(text, id, x, y);
@@ -1517,7 +1520,11 @@ stock Style:TD_GetDisplayStyle(Text:td)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock TD_SetString(Text:td, text[])
+#if !defined CST_TextDrawSetString
+	native CST_TextDrawSetString(Text:text, const string[]) = TextDrawSetString;
+#endif
+
+stock TD_SetString(Text:td, const text[])
 {
 	P:3("TD_SetString called: %i, \"%s\"", _:td, text);
 	if (_TD_TextValid(td))
@@ -1532,7 +1539,7 @@ stock TD_SetString(Text:td, text[])
 			return 0;
 		}
 		// Get the style information for showing this TD.
-		TextDrawSetString(real, text);
+		CST_TextDrawSetString(real, text);
 	}
 	return 1;
 }
@@ -1543,7 +1550,7 @@ stock TD_SetString(Text:td, text[])
  * <param name="hash">Hashed style name for styling.</param>
  *//*------------------------------------------------------------------------**/
 
-stock Text:TD_DisplayHashed(text[], hash, Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
+stock Text:TD_DisplayHashed(const text[], hash, Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
 {
 	new
 		Style:id = TD_GetID(hash);
@@ -1554,7 +1561,7 @@ stock Text:TD_DisplayHashed(text[], hash, Float:x = (Float:TEXT_DRAW_NAN), Float
 	return Text:INVALID_TEXT_DRAW;
 }
 
-stock Text:TD_DisplayHashedForPlayer(playerid, text[], hash, Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
+stock Text:TD_DisplayHashedForPlayer(playerid, const text[], hash, Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
 {
 	new
 		Style:id = TD_GetID(hash);
@@ -1565,7 +1572,7 @@ stock Text:TD_DisplayHashedForPlayer(playerid, text[], hash, Float:x = (Float:TE
 	return Text:INVALID_TEXT_DRAW;
 }
 
-stock Text:TD_DisplayHashedForAll(text[], hash, Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
+stock Text:TD_DisplayHashedForAll(const text[], hash, Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
 {
 	new
 		Style:id = TD_GetID(hash);
@@ -1582,17 +1589,17 @@ stock Text:TD_DisplayHashedForAll(text[], hash, Float:x = (Float:TEXT_DRAW_NAN),
  * <param name="style">Named style to display the text with.</param>
  *//*------------------------------------------------------------------------**/
 
-stock Text:TD_DisplayNamed(text[], style[], Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
+stock Text:TD_DisplayNamed(const text[], const style[], Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
 {
 	return TD_DisplayHashed(text, bernstein(style), x, y);
 }
 
-stock Text:TD_DisplayNamedForPlayer(playerid, text[], style[], Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
+stock Text:TD_DisplayNamedForPlayer(playerid, const text[], const style[], Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
 {
 	return TD_DisplayHashedForPlayer(playerid, text, bernstein(style), x, y);
 }
 
-stock Text:TD_DisplayNamedForAll(text[], style[], Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
+stock Text:TD_DisplayNamedForAll(const text[], const style[], Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
 {
 	return TD_DisplayHashedForAll(text, bernstein(style), x, y);
 }
@@ -1827,7 +1834,7 @@ stock TD_HideForAll(Text:textDraw)
 
 HOOK__ OnPlayerDisconnect(playerid, reason)
 {
-	for (new i = 0; i < bits<MAX_TEXT_DRAWS>; i++)
+	for (new i = 0; i < bits<_:MAX_TEXT_DRAWS>; i++)
 	{
 		new
 			Bit:s = YSI_g_sPlayerDraws[playerid][i],
@@ -2037,7 +2044,7 @@ public TD_MorphTDInternal(Text:td, Style:from, Style:to, speed, pos, revision)
 		// Even though "td" changes in the loop, the end condition is that "td"
 		// is the same as when the loop started, meaning that it's fine to reuse
 		// it here.
-		SetTimerEx("TD_MorphTDInternal", Y_TD_FRAME_TIME, 0, "iiiiii", _:td, _:from, _:to, speed, pos + Y_TD_FRAME_TIME, revision);
+		SetTimerEx("TD_MorphTDInternal", Y_TD_FRAME_TIME, false, "iiiiii", _:td, _:from, _:to, speed, pos + Y_TD_FRAME_TIME, revision);
 	}
 	return 1;
 }

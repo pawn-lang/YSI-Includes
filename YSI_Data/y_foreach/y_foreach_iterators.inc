@@ -220,7 +220,7 @@ iterfunc stock Random(&iterstate, cur, count, min = cellmax, max = 0)
 
 #define iterstart@Random iterstate(cellmin, 0)
 
-iterfunc stock Null(cur, arr[], size = sizeof (arr))
+iterfunc stock Null(cur, const arr[], size = sizeof (arr))
 {
 	// Loop over all the indexes of this array that are zero.
 	//   
@@ -239,7 +239,7 @@ iterfunc stock Null(cur, arr[], size = sizeof (arr))
 	return -1;
 }
 
-iterfunc stock NonNull(cur, arr[], size = sizeof (arr))
+iterfunc stock NonNull(cur, const arr[], size = sizeof (arr))
 {
 	// Loop over all the indexes of this array that are not zero.
 	//   
@@ -258,7 +258,7 @@ iterfunc stock NonNull(cur, arr[], size = sizeof (arr))
 	return -1;
 }
 
-iterfunc stock Until(cur, val, arr[], size = sizeof (arr))
+iterfunc stock Until(cur, val, const arr[], size = sizeof (arr))
 {
 	// Loop over all the indexes of this array until one equals the given value:
 	//   
@@ -270,7 +270,7 @@ iterfunc stock Until(cur, val, arr[], size = sizeof (arr))
 	return (++cur >= size || arr[cur] == val) ? -1 : cur;
 }
 
-iterfunc stock Filter(cur, val, arr[], size = sizeof (arr))
+iterfunc stock Filter(cur, val, const arr[], size = sizeof (arr))
 {
 	while (++cur < size)
 	{
@@ -287,7 +287,7 @@ iterfunc stock Filter(cur, val, arr[], size = sizeof (arr))
 #define Iter_None_InternalA(%0,%1,%9) Iter_None_Internal(%1,F@s(%1)-1,%9)
 #define Iter_None_InternalB(%0,%2,%1,%9) Iter_None_Internal(%1,F@s(%1)-F@s(%0),%9)
 
-stock Iter_None_Internal(array[], size, value)
+stock Iter_None_Internal(const array[], size, value)
 {
 	// Loop over all values NOT in any iterator.  Similar to repeatedly calling
 	// "Iter_Free", though that will return the same value twice if called twice
@@ -307,7 +307,7 @@ stock Iter_None_Internal(array[], size, value)
 #define Iter_All_InternalA(%0,%1,%9) Iter_All_Internal(%1,F@s(%1)-1,%9)
 #define Iter_All_InternalB(%0,%2,%1,%9) Iter_All_Internal(%1,F@s(%1)-F@s(%0),%9)
 
-stock Iter_All_Internal(array[], size, value)
+stock Iter_All_Internal(const array[], size, value)
 {
 	// Loop over all values in any iterator.  This is different to looping over
 	// the iterator normally for multi-dimensional iterators, since it will

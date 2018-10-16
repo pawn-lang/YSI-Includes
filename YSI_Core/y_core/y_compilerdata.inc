@@ -220,6 +220,7 @@ static stock const
 	#define __COMPILER_BUGGED_STRING_RETURN (0)
 	#define __COMPILER_BUGGED_SYSREQ (0)
 	#define __COMPILER_WARNING_SUPPRESSION (1)
+	
 	// Disable the recursion warning in the Russian compiler (and the unknown
 	// pragma warning in other compilers temporarily).
 	#pragma warning push
@@ -227,6 +228,52 @@ static stock const
 	#pragma disablerecursion
 	#pragma warning pop
 	#pragma warning disable 238
+	
+	// Check for accepted symbol names that are too long, since some (forked)
+	// compiler versions increase the limit but a lot of YSI code is hard-coded
+	// to 32 (31 + NULL).
+	#pragma warning push
+	#pragma warning disable 200
+	
+	#if !defined __COMPILER_sNAMEMAX
+		// Define a symbol of 32 characters.
+		#define __COMPILER_SYMBOL_NAME_CHECK_1F
+		// Then check if the same symbol extended to 32 characters exists.  If
+		// it does, it is because the 32 character version was truncated to 31
+		// characters (for which we temporarily disabled the warning), so the
+		// 31 character version was found instead.  This means we know that the
+		// limit (`sNAMEMAX`) is 31 characters.
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_1F_
+			#define __COMPILER_sNAMEMAX (31)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_3F__@@@@__32__DUMMY__BYTES__@@@@__
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_3F__@@@@__32__DUMMY__BYTES__@@@@___
+			#define __COMPILER_sNAMEMAX (63)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_7F__@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@__
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_7F__@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@___
+			#define __COMPILER_sNAMEMAX (127)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_FF__@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@__
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_FF__@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@___
+			#define __COMPILER_sNAMEMAX (255)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#warning Could not determine `sNAMEMAX`, falling back on 31.
+		#define __COMPILER_sNAMEMAX (31)
+	#endif
+	
+	#pragma warning pop
+	
+	// Disable the warning for `const &var`.
+	#define __COMPILER_CONST_REF (1)
 #else
 	#define __COMPILER_NAKED return 0;
 	#define __COMPILER_NESTED_ELLIPSIS (0)
@@ -236,6 +283,8 @@ static stock const
 	#define __COMPILER_BUGGED_STRING_RETURN (1)
 	#define __COMPILER_BUGGED_SYSREQ (1)
 	#define __COMPILER_WARNING_SUPPRESSION (0)
+	#define __COMPILER_CONST_REF (0)
+	#define __COMPILER_sNAMEMAX (31)
 	
 	#include "y_funcinc"
 	
@@ -308,4 +357,8 @@ static stock const
 
 // Should be an inbuilt constant!
 #define cellbytes (cellbits / 8)
+
+#if __COMPILER_sNAMEMAX != 31
+	#error YSI assumes `sNAMEMAX` is 31.
+#endif
 

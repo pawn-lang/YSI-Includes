@@ -1988,7 +1988,7 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Area_CheckArea(playerid, world, area, Float:x, Float:y, Float:z, &next, areas[16], already)
+static stock Area_CheckArea(playerid, world, area, Float:x, Float:y, Float:z, &next, const areas[16], already)
 {
 	new
 		e_AREA_FLAGS:flags = YSI_g_sAreas[area][E_AREA_FLAGS];
@@ -2077,7 +2077,7 @@ static stock Area_CheckArea(playerid, world, area, Float:x, Float:y, Float:z, &n
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Area_IsInCircle(Float:x, Float:y, Float:z, Float:bounds[])
+static stock Area_IsInCircle(Float:x, Float:y, Float:z, const Float:bounds[])
 {
 	x -= bounds[0];
 	y -= bounds[1];
@@ -2112,7 +2112,7 @@ static stock Area_IsInCircle(Float:x, Float:y, Float:z, Float:bounds[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Area_IsInOvoid(Float:x, Float:y, Float:z, Float:bounds[])
+static stock Area_IsInOvoid(Float:x, Float:y, Float:z, const Float:bounds[])
 {
 	x -= bounds[0];
 	y -= bounds[1];
@@ -2243,7 +2243,7 @@ stock Area_IsInPoly(Float:x, Float:y, Float:z, header)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Area_IsInCube(Float:x, Float:y, Float:z, Float:bounds[])
+static stock Area_IsInCube(Float:x, Float:y, Float:z, const Float:bounds[])
 {
 	return (bounds[0] <= x <= bounds[3] && bounds[1] <= y <= bounds[4] && bounds[2] <= z <= bounds[5]);
 }

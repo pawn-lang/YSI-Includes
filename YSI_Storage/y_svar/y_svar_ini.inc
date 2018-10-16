@@ -122,7 +122,7 @@ public _y_svar_include_@()
 	INI_WriteArray(INI_NO_FILE, "", "", 0);
 }
 
-static stock Svar_FindData(const name[], data[])
+static stock Svar_FindData(const name[], const data[])
 {
 	// This function gets passed an empty string so that we can use "data" as a
 	// string, while secretly changing the pointer in AMX code.

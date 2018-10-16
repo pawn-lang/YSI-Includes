@@ -259,11 +259,16 @@ forward Inline_MaybeConst_(ResolvedAlloc:slot);
 #define CALL@I@F I@F()
 #define CALL@I@L I@L()
 #define CALL@I@K I@K(0)
-#define CALL@I@T I@T("")
+#define CALL@I@T I@T(__ARR)
 
-#define CALL@Inline_UI_ Inline_UI_(REF)
+#define CALL@Inline_UI_ Inline_UI_(__REF)
 
 #define CALL@Callback_Return_ Callback_Return_(0)
+
+static stock
+	YSI_g_sFakeE_INLINE_CALL[E_INLINE_CALL];
+	
+#define CALL@Callback_Claim_ Callback_Claim_(YSI_g_sFakeE_INLINE_CALL)
 
 #define MAX_INLINE_PARAMETERS (32)
 
@@ -1057,9 +1062,9 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 		return Function:0;
 	mset(closure, _:E_PUBLIC_CALL_NULL, 0);
 	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_RemoteHandler_<x>));
-	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_<a>));
+	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
+	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_PUBLIC_CALL_METADATA, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
@@ -1096,9 +1101,9 @@ stock Function:GetLocalFunction(const func[], const spec[])
 		return Function:0;
 	mset(closure, _:E_PUBLIC_CALL_NULL, 0);
 	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_LocalHandler_<x>));
-	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_<a>));
+	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
+	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_PUBLIC_CALL_METADATA, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
@@ -1192,9 +1197,9 @@ static stock Callback_InlineByName(const name[], tag)
 					return 0;
 				mset(closure, _:E_INLINE_CALL_NULL, 0);
 				mset(closure, _:E_INLINE_CALL_HANDLER, _:addressof (Callback_CallHandler_<x>));
-				mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_<a>));
+				mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_));
 				mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-				mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
+				mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
 				mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
 				mset(closure, _:E_INLINE_CALL_METADATA, 0);
 				mset(closure, _:E_INLINE_CALL_SIZE, size);
@@ -1397,7 +1402,7 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
  *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Remove or use `Indirect_Release(func);`.
-stock Callback_Release(input[E_CALLBACK_DATA])
+stock Callback_Release(const input[E_CALLBACK_DATA])
 {
 	Indirect_Release(input[E_CALLBACK_DATA_ALLOC]);
 	return 0;
@@ -1406,7 +1411,7 @@ stock Callback_Release(input[E_CALLBACK_DATA])
 static stock Callback_Claim_(func[E_INLINE_CALL])
 {
 	KillTimer(func[E_INLINE_CALL_TIMER]);
-	func[E_INLINE_CALL_TIMER] = SetTimerEx("Inline_MaybeConst_", 0, 0, "i", ref(func));
+	func[E_INLINE_CALL_TIMER] = SetTimerEx("Inline_MaybeConst_", 0, false, "i", ref(func));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1877,7 +1882,7 @@ static stock Inline_DoRetnGen(ctx[AsmContext], const scanner[CodeScanner], const
 
 #define CALL@Inline_OnAsmError Inline_OnAsmError("", ASM_ERROR_NONE)
 
-static stock Inline_OnAsmError(ctx[AsmContext], AsmError:error)
+static stock Inline_OnAsmError(const ctx[AsmContext], AsmError:error)
 {
 	switch (numargs() == 1 ? AsmGetError(ctx) : error)
 	{
@@ -1911,13 +1916,24 @@ public Callback_Release_(ResolvedAlloc:a)
 	free(Malloc_Reconcile(a));
 }
 
+#if __COMPILER_CONST_REF
+	#pragma warning push
+	#pragma warning disable 238
+#endif
 static stock Inline_Ref(const &ptr)
 {
 	#emit LOAD.S.pri       ptr
 	#emit RETN
 	__COMPILER_NAKED
 }
+#if __COMPILER_CONST_REF
+	#pragma warning pop
+#endif
 
+#if __COMPILER_CONST_REF
+	#pragma warning push
+	#pragma warning disable 238
+#endif
 stock Inline_UI_(const &header)
 {
 	// We use `&header` instead of `return` so that we can keep the tags
@@ -1950,9 +1966,9 @@ stock Inline_UI_(const &header)
 		return 0;
 	mset(closure, _:E_INLINE_CALL_NULL, 0);
 	mset(closure, _:E_INLINE_CALL_HANDLER, _:addressof (Callback_CallHandler_<x>));
-	mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_<a>));
+	mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, 0, "i", _:closure));
+	mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
 	mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
 	mset(closure, _:E_INLINE_CALL_METADATA, 0);
 	mset(closure, _:E_INLINE_CALL_SIZE, size);
@@ -1964,6 +1980,9 @@ stock Inline_UI_(const &header)
 	AMX_Write(_:ra + (_:E_INLINE_CALL_PARAMS + 2) * cellbytes + frm, args);
 	return Indirect_Ptr(ra);
 }
+#if __COMPILER_CONST_REF
+	#pragma warning pop
+#endif
 
 stock Inline_UP_(const func[], const spec[] = "")
 {

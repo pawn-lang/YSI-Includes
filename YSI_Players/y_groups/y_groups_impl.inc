@@ -379,7 +379,7 @@ public OnScriptExit()
  * <param name="group">Group to destroy from the system.</param>
  *//*------------------------------------------------------------------------**/
 
-remotefunc static void:_Group_Destroy(g, Iterator@gp[MAX_PLAYERS + 1], s)
+remotefunc static void:_Group_Destroy(g, const Iterator@gp[MAX_PLAYERS + 1], s)
 {
 	#pragma unused s
 	new
@@ -740,9 +740,9 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ Group:_Group_SetBalancedInternal(p,Group:gs[],c);
+FOREIGN__ Group:_Group_SetBalancedInternal(p,const Group:gs[],c);
 
-GLOBAL__ Group:_Group_SetBalancedInternal(p,Group:gs[],c)
+GLOBAL__ Group:_Group_SetBalancedInternal(p,const Group:gs[],c)
 {
 	// Find which of the listed groups has the least players in.
 	new
@@ -884,9 +884,9 @@ stock bool:operator!=(Group:g, o)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ void:Group_SetName(Group:g,string:n[]);
+FOREIGN__ void:Group_SetName(Group:g,const string:n[]);
 
-GLOBAL__ void:Group_SetName(Group:g,string:n[])
+GLOBAL__ void:Group_SetName(Group:g,const string:n[])
 {
 	P:2("Group_SetName called: %i, \"%s\"", _:g, n);
 	if (_Group_IsValid(g))
@@ -942,9 +942,9 @@ GLOBAL__ string:Group_GetName(Group:g)
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-FOREIGN__ Group:Group_GetID(string:name[]);
+FOREIGN__ Group:Group_GetID(const string:name[]);
 
-GLOBAL__ Group:Group_GetID(string:name[])
+GLOBAL__ Group:Group_GetID(const string:name[])
 {
 	P:2("Group_GetID called: %s", name);
 	new

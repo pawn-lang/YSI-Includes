@@ -104,7 +104,7 @@ Optional plugins:
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_Random_Internal(count, array[], start, ...)
+stock Iter_Random_Internal(count, const array[], start, ...)
 {
 	new
 		numArgs = (numargs() - 3);
@@ -246,7 +246,7 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_RandomFree_InternalC(count, array[], start)
+stock Iter_RandomFree_InternalC(count, const array[], start)
 {
 	count = start - count;
 	if (count)
@@ -263,7 +263,7 @@ stock Iter_RandomFree_InternalC(count, array[], start)
 	return INVALID_ITERATOR_SLOT;
 }
 
-stock Iter_RandomFree_InternalD(counts[], array[], start, slots)
+stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots)
 {
 	// This is subtly different to the "C" version - it operates on multi
 	// iterators, which have many counts, and thus we need to sum those first.
@@ -342,7 +342,7 @@ stock Iter_Alloc_InternalD(&count, array[], start, size)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_Free_Internal(array[], size)
+stock Iter_Free_Internal(const array[], size)
 {
 	// I tried to rewrite this to use the internal structure of a linked list to
 	// find a free slot.  The logic being that if the next used slot in the list
@@ -376,7 +376,7 @@ stock Iter_Free_Internal(array[], size)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_FreeMulti_Internal(array[], trueSize, start)
+stock Iter_FreeMulti_Internal(const array[], trueSize, start)
 {
     for (new i = 0; trueSize-- > start; ++i)
     {
@@ -455,7 +455,7 @@ stock Iter_Add_InternalD(&count, array[], start, size, value)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_Index_Internal(count, array[], start, size, index, bool:wrap = false)
+stock Iter_Index_Internal(count, const array[], start, size, index, bool:wrap = false)
 {
 	// If there are no elements in the iterator, we can't ever return the Nth
 	// item.  Also if the parameters are invalid.
@@ -555,14 +555,14 @@ stock Iter_SafeRemove_InternalD(&count, array[], start, size, value, &last)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_Contains_InternalC(array[], size, value)
+stock Iter_Contains_InternalC(const array[], size, value)
 {
 	// Only need to know that this element is in ANY list, because there is only
 	// one list it can be in.
 	return 0 <= value < size && array[value] > value;
 }
 
-stock Iter_Contains_InternalD(count, array[], size, start, value)
+stock Iter_Contains_InternalD(count, const array[], size, start, value)
 {
 	// Check the count first, and that this element is in ANY list.  There is no
 	// point searching an empty list for this element, hence the count check.
@@ -595,7 +595,7 @@ stock Iter_Contains_InternalD(count, array[], size, start, value)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_GetMulti_Internal(array[], trueSize, size, value)
+stock Iter_GetMulti_Internal(const array[], trueSize, size, value)
 {
     if (0 <= value < size && array[value] > value)
     {
@@ -675,7 +675,7 @@ stock Iter_Clear_InternalD(array[], size, entries, elems, counts[], start)
  *//*------------------------------------------------------------------------**/
 
 stock
-	Iter_Init_Internal(arr[][], first[], s0, s1, entries)
+	Iter_Init_Internal(array[][], first[], s0, s1, entries)
 {
 	new
 		elems = s1 - entries,
@@ -688,7 +688,7 @@ stock
 	}
 	while (++i != s0)
 	{
-		memcpy(arr[i], first, 0, s1 * 4, s1);
+		memcpy(array[i], first, 0, s1 * 4, s1);
 	}
 }
 
@@ -703,7 +703,7 @@ stock
  *//*------------------------------------------------------------------------**/
 
 stock
-	Iter_Prev_Internal(array[], elems, size, slot)
+	Iter_Prev_Internal(const array[], elems, size, slot)
 {
 	if ((slot < elems) ?
 		(0 <= slot < array[slot]) :
