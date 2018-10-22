@@ -1015,7 +1015,8 @@ TEST__ y_iter_Iter_Free()
 TEST__ y_iter_Tag()
 {
 	new
-		Iterator:Group:iter1<60>;
+		Iterator:Group:iter1<60>,
+		Iterator:Group:iter2[2]<60>;
 	Iter_Add(iter1, Group:33);
 	#pragma tabsize 4
 	/* ====================================================================== */

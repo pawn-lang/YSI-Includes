@@ -211,8 +211,8 @@ P:D(Iter_Init(Iterator:iter[]<>));
 
 P:D(Iter_Add(Iterator:iter<>, value));
 #define Iter_Add _ITER<Add>
-#define Iter_Add_InternalA(%0,%1,%9)    Iter_Add_InternalC(%0,_:%1,F@s(%1)-1,_:F@v:((%1[1]*%9),%9))
-#define Iter_Add_InternalB(%0,%2,%1,%9) Iter_Add_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:F@v:((%1[1]*%9),%9))
+#define Iter_Add_InternalA(%0,%1,%9)    Iter_Add_InternalC(%0,_:%1,F@s(%1)-1,_:F@v:(%1[(%9)-(%9)],%9))
+#define Iter_Add_InternalB(%0,%2,%1,%9) Iter_Add_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:F@v:(%1[(%9)-(%9)],%9))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to remove data from.</param>
@@ -227,8 +227,8 @@ P:D(Iter_Add(Iterator:iter<>, value));
 
 P:D(Iter_Remove(Iterator:iter<>, value));
 #define Iter_Remove _ITER<Remove>
-#define Iter_Remove_InternalA(%0,%1,%9)    Iter_Remove_InternalC(%0,_:%1,F@s(%1)-1,_:F@v:((%1[1]*%9),%9))
-#define Iter_Remove_InternalB(%0,%2,%1,%9) Iter_Remove_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:F@v:((%1[1]*%9),%9))
+#define Iter_Remove_InternalA(%0,%1,%9)    Iter_Remove_InternalC(%0,_:%1,F@s(%1)-1,_:F@v:(%1[(%9)-(%9)],%9))
+#define Iter_Remove_InternalB(%0,%2,%1,%9) Iter_Remove_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:F@v:(%1[(%9)-(%9)],%9))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get the first free slot in.</param>
@@ -275,8 +275,8 @@ P:D(Iter_FreeMulti(Iterator:iter<,>, ));
 
 P:D(bool:Iter_Contains(Iterator:iter<>, value));
 #define Iter_Contains(%0) (bool:_ITER<Contains>(%0))
-#define Iter_Contains_InternalA(%0,%1,%9)     Iter_Contains_InternalC(_:%1,F@s(%1)-F@s(%0),_:F@v:((%1[1]*%9),%9))
-#define Iter_Contains_InternalB(%0,%2,%1,%9)  Iter_Contains_InternalD(%0[%2],_:%1,F@s(%1)-F@s(%0),-%2+F@s(%1)-1,_:F@v:((%1[1]*%9),%9))
+#define Iter_Contains_InternalA(%0,%1,%9)     Iter_Contains_InternalC(_:%1,F@s(%1)-F@s(%0),_:F@v:(%1[(%9)-(%9)],%9))
+#define Iter_Contains_InternalB(%0,%2,%1,%9)  Iter_Contains_InternalD(%0[%2],_:%1,F@s(%1)-F@s(%0),-%2+F@s(%1)-1,_:F@v:(%1[(%9)-(%9)],%9))
 #define Iter_Contains_InternalD(%0,%1,%2,-+%8,%3) Iter_Contains_InternalC(%1,%2,%3)
 
 /*-------------------------------------------------------------------------*//**
@@ -295,8 +295,8 @@ P:D(bool:Iter_Contains(Iterator:iter<>, value));
 
 P:D(Iter_GetMulti(Iterator:iter<,>, value));
 #define Iter_GetMulti _ITER<GetMulti>
-#define Iter_GetMulti_InternalA(%0,%1,%9)    Iter_GetMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0),_:F@v:((%1[1]*%9),%9))
-#define Iter_GetMulti_InternalB(%0,%2,%1,%9) Iter_GetMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0),_:F@v:((%1[1]*%9),%9))
+#define Iter_GetMulti_InternalA(%0,%1,%9)    Iter_GetMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0),_:F@v:(%1[(%9)-(%9)],%9))
+#define Iter_GetMulti_InternalB(%0,%2,%1,%9) Iter_GetMulti_Internal(_:%1,F@s(%1),F@s(%1)-F@s(%0),_:F@v:(%1[(%9)-(%9)],%9))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to remove data from.</param>
@@ -314,8 +314,8 @@ P:D(Iter_GetMulti(Iterator:iter<,>, value));
 
 P:D(Iter_SafeRemove(Iterator:iter<>, value, &next));
 #define Iter_SafeRemove _ITER<SafeRemove>
-#define Iter_SafeRemove_InternalA(%0,%1,%9)    Iter_SafeRemove_InternalC(%0,_:%1,F@s(%1)-1,_:F@v:((%1[1]*%9),%9))
-#define Iter_SafeRemove_InternalB(%0,%2,%1,%9) Iter_SafeRemove_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:F@v:((%1[1]*%9),%9))
+#define Iter_SafeRemove_InternalA(%0,%1,%9)    Iter_SafeRemove_InternalC(%0,_:%1,F@s(%1)-1,_:F@v:(%1[(%9)-(%9)],%9))
+#define Iter_SafeRemove_InternalB(%0,%2,%1,%9) Iter_SafeRemove_InternalD(%0[%2],_:%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:F@v:(%1[(%9)-(%9)],%9))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to add a random slot to.</param>
@@ -521,8 +521,8 @@ P:D(Iter_Last(Iterator:iter<>));
 
 P:D(Iter_Next(Iterator:iter<>, cur));
 #define Iter_Next _ITER<Next>
-#define Iter_Next_InternalA(%0,%1,%9)    (%1[_:((%1[1]*%9),%9)])
-#define Iter_Next_InternalB(%0,%2,%1,%9) (%1[_:((%1[1]*%9),%9)])
+#define Iter_Next_InternalA(%0,%1,%9)    (%1[(%9)])
+#define Iter_Next_InternalB(%0,%2,%1,%9) (%1[(%9)])
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get the previous element in.</param>
@@ -534,8 +534,8 @@ P:D(Iter_Next(Iterator:iter<>, cur));
 
 P:D(Iter_Prev(Iterator:iter<>, cur));
 #define Iter_Prev _ITER<Prev>
-#define Iter_Prev_InternalA(%0,%1,%9)    (((%1[(_:((%1[1]*%9),%9)-1)%F@s(%1)])-1)%F@s(%1))
-#define Iter_Prev_InternalB(%0,%2,%1,%9) Iter_Prev_Internal(%1,F@s(%1)-F@s(%0),F@s(%1),_:F@v:((%1[1]*%9),%9))
+#define Iter_Prev_InternalA(%0,%1,%9)    (((%1[((%9)-1)%F@s(%1)])-1)%F@s(%1))
+#define Iter_Prev_InternalB(%0,%2,%1,%9) Iter_Prev_Internal(%1,F@s(%1)-F@s(%0),F@s(%1),_:F@v:(%1[(%9)-(%9)],%9))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get the true array of.</param>
@@ -619,8 +619,8 @@ P:D(Iter_Size(Iterator:iter<>));
 
 P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 #define Iter_Index _ITER<Index>
-#define Iter_Index_InternalA(%0,%1,%9)    Iter_Index_Internal(%0,%1,F@s(%1)-1,F@s(%1)-1,_:F@v:((%1[1]*%9),%9))
-#define Iter_Index_InternalB(%0,%2,%1,%9) Iter_Index_Internal(%0[%2],%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:F@v:((%1[1]*%9),%9))
+#define Iter_Index_InternalA(%0,%1,%9)    Iter_Index_Internal(%0,%1,F@s(%1)-1,F@s(%1)-1,_:F@v:(%1[(%9)-(%9)],%9))
+#define Iter_Index_InternalB(%0,%2,%1,%9) Iter_Index_Internal(%0[%2],%1,F@s(%1)-1-(%2),F@s(%1)-F@s(%0),_:F@v:(%1[(%9)-(%9)],%9))
 
 /*
 
@@ -690,25 +690,25 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 #define Iter_Func@File:         ITER_TAG_FUNC(File)
 #define Iter_Func@Float:        ITER_TAG_FUNC(Float)
 
-#define ITER_TAG(%0)%1={%2,%3,...}%4: %0:Iterator@%1={%0:%2,%0:%3,...}F@a$,Iter_Single@
-
-// Many tag types for declared iterators.
-#define Iterator@_:            ITER_TAG(_)
-#define Iterator@bool:         ITER_TAG(bool)
-#define Iterator@PlayerText3D: ITER_TAG(PlayerText3D)
-#define Iterator@Text3D:       ITER_TAG(Text3D)
-#define Iterator@DB:           ITER_TAG(DB)
-#define Iterator@DBResult:     ITER_TAG(DBResult)
-#define Iterator@Language:     ITER_TAG(Language)
-#define Iterator@Bit:          ITER_TAG(Bit)
-#define Iterator@Text:         ITER_TAG(Text)
-#define Iterator@Menu:         ITER_TAG(Menu)
-#define Iterator@Style:        ITER_TAG(Style)
-#define Iterator@XML:          ITER_TAG(XML)
-#define Iterator@Bintree:      ITER_TAG(Bintree)
-#define Iterator@Timer:        ITER_TAG(Timer)
-#define Iterator@File:         ITER_TAG(File)
-#define Iterator@Float:        ITER_TAG(Float)
+//#define ITER_TAG(%0)%1={%2,%3,...}%4: %0:Iterator@%1={%0:%2,%0:%3,...}F@a$,Iter_Single@
+//
+//// Many tag types for declared iterators.
+//#define Iterator@_:            ITER_TAG(_)
+//#define Iterator@bool:         ITER_TAG(bool)
+//#define Iterator@PlayerText3D: ITER_TAG(PlayerText3D)
+//#define Iterator@Text3D:       ITER_TAG(Text3D)
+//#define Iterator@DB:           ITER_TAG(DB)
+//#define Iterator@DBResult:     ITER_TAG(DBResult)
+//#define Iterator@Language:     ITER_TAG(Language)
+//#define Iterator@Bit:          ITER_TAG(Bit)
+//#define Iterator@Text:         ITER_TAG(Text)
+//#define Iterator@Menu:         ITER_TAG(Menu)
+//#define Iterator@Style:        ITER_TAG(Style)
+//#define Iterator@XML:          ITER_TAG(XML)
+//#define Iterator@Bintree:      ITER_TAG(Bintree)
+//#define Iterator@Timer:        ITER_TAG(Timer)
+//#define Iterator@File:         ITER_TAG(File)
+//#define Iterator@Float:        ITER_TAG(Float)
 
 // This iterator is both a special function AND a tag.  This is not natively
 // supported, so we need to invent some special macros to do so.  Fortunately,
@@ -727,11 +727,11 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 
 // Detect array declarations: "Iterator:X[20]<4>", "Iterator:X<10, 4>", and the
 // frankly silly "Iterator:X[20]<10, 4>".
-#define F@c:F@d:((%0,%1)+1)]%2$,Iter_Single@%9$%7$ F@d:((%0)+(%1))]={0,1,...}F@a$,Iter_Multi@%9$[%0]%7$
+#define F@c:F@d:((%0,%1)+1)]={%2}F@a$,Iter_Single@%9$%7$ F@d:((%0)+(%1))]={%2}F@a$,Iter_Multi@%9$[%0]%7$
 #if __COMPILER_NESTED_ELLIPSIS
-	#define F@d:%0]%2$,Iter_%8@%9[%3$%7$ %0]={{0,1,...},...},Iter_%8@%9[%3$%7$
+	#define F@d:%0]={%2}F@a$,Iter_%8@%9[%3$%7$ %0]={{%2},...},Iter_%8@%9[%3$%7$
 #else
-	#define F@d:%0]%2$,Iter_%8@%9[%3$%7$ %0],Iter_%8@%9[%3$%7$,F@g(Iter_Init@%9,)=F@s(Iter_%8@%9[%3$)
+	#define F@d:%0]={%2}F@a$,Iter_%8@%9[%3$%7$ %0],Iter_%8@%9[%3$%7$,F@g(Iter_Init@%9,)=F@s(Iter_%8@%9[%3$)
 #endif
 
 // Special "sizeof" that strips subscripts.  "|||" prevents "sizeof" recursion.
@@ -867,6 +867,7 @@ stock const
 
 #undef Iterator
 P:D(Iterator:Iterator(name));
-#define Iterator:%1<%2> Iterator@%1[_:F@c:F@d:((%2)+1)]={0,1,...}F@a$,Iter_Single@%1 F@a$F@a$
+#define iter_tag:Iterator@%1$[_:F@c:F@d:((%3:%2)+1)]%9$ %3:Iterator@%1$[F@c:F@d:((%2)+1)]={%3:0,%3:1,...}F@a$
+#define Iterator:%1<%2> iter_tag:Iterator@%1 F@a$[_:F@c:F@d:((%2)+1)]={iter_tag:0,iter_tag:1,...}F@a$,Iter_Single@%1 F@a$F@a$
 #define IteratorArray Iterator
 
