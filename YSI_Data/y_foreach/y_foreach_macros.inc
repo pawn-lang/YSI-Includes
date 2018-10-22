@@ -748,9 +748,9 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 // to match parameters outside the required area.
 #define F@v:(%0) F@t:F@B:`(%0)`
 #define F@B:`%0` %0
-#define F@t:%9`(%7(%8(%0,%1)),(%2,%1))` %9`(%7(%8(%0)),(%2)),%1`
-#define Iter_Tag(%1,%9) _:F@v:(_:F@D:(%1[0]*none@iter:(%9)),(%9))
-#define F@D:(%0*none@iter:(%1:%2)),(%9)) (%0*%1:(%2)),(%9))
+#define F@t:%9`(%6(%7(%8(%0,%1))):0,(%2,%1))` %9`(%6(%7(%8(%0))):0,(%2)),%1`
+#define Iter_Tag(%1,%9) _:F@v:(FALSE?(_:F@D:(%1[0]*none@iter:(%9))):0,(%9))
+#define F@D:(%0*none@iter:(%1:%2))):0,(%9)) (%0*%1:(%2))):0,(%9))
 
 // y_iterate parser.  Takes an array input, and splits up all the components.
 #define _ITER<%5>(%1) (_:F@i:F@j:$Iter_%5_Internal(%1))
