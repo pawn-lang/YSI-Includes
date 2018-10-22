@@ -1015,8 +1015,8 @@ TEST__ y_iter_Iter_Free()
 TEST__ y_iter_Tag()
 {
 	new
-		Iterator:Group:iter1<60>,
-		Iterator:Group:iter2[2]<60>;
+		Iterator:iter1<Group:60>,
+		Iterator:iter2[2]<Group:60>;
 	Iter_Add(iter1, Group:33);
 	#pragma tabsize 4
 	/* ====================================================================== */
@@ -1043,6 +1043,14 @@ TEST__ y_iter_Tag()
 	FOREACH__ (new Group:i : iter1)
 	{
 		ASSERT_EQ(_:i / 11 * 11, _:i);
+	}
+	Iter_Alloc(iter2[0]);
+	Iter_Alloc(iter2[0]);
+	Iter_Alloc(iter2[0]);
+	Iter_Alloc(iter2[0]);
+	FOREACH__ (new Group:i : iter2[0])
+	{
+		ASSERT(i < Group:4);
 	}
 }
 
