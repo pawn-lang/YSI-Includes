@@ -80,15 +80,15 @@ Optional plugins:
 #define NO_VALUE(%0) ((2*%0-1)==2*(%0-1))
 
 #if !defined TRUE
-new stock
+stock const
 	bool:TRUE = true;
 #endif
 #if !defined FALSE
-new stock
+stock const
 	bool:FALSE = false;
 #endif
 #if !defined NULL
-new stock
+stock const
 	NULL[2] = "\1";
 #endif
 
