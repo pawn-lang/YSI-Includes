@@ -139,11 +139,6 @@ Optional plugins:
 #define P_y@%0\32; P_y@
 
 // These all need to come AFTER the types are defined in case the have profilings.
-#include "..\YSI_Internal\y_version"
-
-#include "..\YSI_Storage\y_amx"
-#include "..\YSI_Internal\y_shortfunc"
-#include "y_debug"
 #include "y_utils"
 
 #include "..\YSI_Coding\y_va"
@@ -297,6 +292,4 @@ stock Profiling_RunAll()
 		SendRconCommand("exit");
 	#endif
 }
-
-#include "..\YSI_Internal\y_shortfunc"
 
