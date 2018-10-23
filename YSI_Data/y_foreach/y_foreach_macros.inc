@@ -745,25 +745,19 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 #define F@h:%0) %0 F@a$)
 
 // Sort out tagged parameters plus extra parameters.  Expanded so it will fail
-// to match parameters outside the required area.
-#if 0
-	// Given a solution to https://github.com/pawn-lang/compiler/issues/383
-	// (i.e. ipotent tags, which are entirely equivalent to no tag), this would
-	// be the best solution (`_` == `_no_iter_tag`).
-	#define F@v:(%0) F@t:F@B:`(%0)`
-	#define F@B:`%0` %0
-	#define F@t:%9`(%0?%3:(%2,%1))` %9`(%0?%3:(%2)),%1`
-	#define Iter_Tag(%1,%9) _:F@v:(FALSE?%1[0]:(%9))
-#else
-	// Note to self.  Using `TRUE?val:_:tag_check` is shorter in code, but
-	// longer (by one instruction on the critical path) in assembly.  They do
-	// both have the same number of TAKEN jumps.
-	#define F@v:(%0) F@t:F@B:`(%0)`
-	#define F@B:`%0` %0
-	#define F@t:%9`(%6(%7(%8(%0,%1))):_:(%2,%1))` %9`(%6(%7(%8(%0))):_:(%2)),%1`
-	#define Iter_Tag(%1,%9) _:F@v:(FALSE?(_:F@D:(%1[0]*(%9))):_:(%9))
-	#define F@D:(%0*(%1:%2))):_:(%9)) (%0*%1:(%2))):_:(%9))
-#endif
+// to match parameters outside the required area.  Note to self.  Using
+// `TRUE ? val : _:tag_check` is shorter in code, but longer (by one instruction
+// on the critical path) in assembly.  They do both have the same number of
+// TAKEN jumps.  If we could use `_no_iter_tag` as equivalent to `_` (see:
+// https://github.com/pawn-lang/compiler/issues/383) we could just do
+// `FALSE ? arr[0] : val`, which would use the compiler to check that the tags
+// of both returns of the ternary match without an additional multiplication
+// (though the multiplication is never actually performed).
+#define F@v:(%0) F@t:F@B:`(%0)`
+#define F@B:`%0` %0
+#define F@t:%9`(%6(%7(%8(%0,%1))):_:(%2,%1))` %9`(%6(%7(%8(%0))):_:(%2)),%1`
+#define Iter_Tag(%1,%9) _:F@v:(FALSE?(_:F@D:(%1[0]*(%9))):_:(%9))
+#define F@D:(%0*(%1:%2))):_:(%9)) (%0*%1:(%2))):_:(%9))
 
 // y_iterate parser.  Takes an array input, and splits up all the components.
 #define _ITER<%5>(%1) (_:F@i:F@j:$Iter_%5_Internal(%1))
