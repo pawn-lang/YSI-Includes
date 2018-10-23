@@ -1053,6 +1053,16 @@ TEST__ y_iter_Tag()
 	{
 		ASSERT(i < Group:4);
 	}
+	#pragma tabsize 4
+	/* ====================================================================== */
+	/* | THERE IS MEANT TO BE A WARNING ON THIS LINE                        | */
+	/* |                                                                    | */
+	/* | */ new Iterator:Group:iter3<10>;                                /* | */
+	/* |                                                                    | */
+	/* | It tests that the old syntax is deprecated and warn otherwise.     | */
+	/* ====================================================================== */
+	#pragma tabsize 4
+	#pragma unused Iter_Single@iter3, Iterator@iter3, using_deprecated_itertag_syntax
 }
 
 TEST__ y_iter_Iter_Alloc()

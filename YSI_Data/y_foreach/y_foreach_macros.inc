@@ -690,36 +690,36 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 #define Iter_Func@File:         ITER_TAG_FUNC(File)
 #define Iter_Func@Float:        ITER_TAG_FUNC(Float)
 
-//#define ITER_TAG(%0)%1={%2,%3,...}%4: %0:Iterator@%1={%0:%2,%0:%3,...}F@a$,Iter_Single@
-//
-//// Many tag types for declared iterators.
-//#define Iterator@_:            ITER_TAG(_)
-//#define Iterator@bool:         ITER_TAG(bool)
-//#define Iterator@PlayerText3D: ITER_TAG(PlayerText3D)
-//#define Iterator@Text3D:       ITER_TAG(Text3D)
-//#define Iterator@DB:           ITER_TAG(DB)
-//#define Iterator@DBResult:     ITER_TAG(DBResult)
-//#define Iterator@Language:     ITER_TAG(Language)
-//#define Iterator@Bit:          ITER_TAG(Bit)
-//#define Iterator@Text:         ITER_TAG(Text)
-//#define Iterator@Menu:         ITER_TAG(Menu)
-//#define Iterator@Style:        ITER_TAG(Style)
-//#define Iterator@XML:          ITER_TAG(XML)
-//#define Iterator@Bintree:      ITER_TAG(Bintree)
-//#define Iterator@Timer:        ITER_TAG(Timer)
-//#define Iterator@File:         ITER_TAG(File)
-//#define Iterator@Float:        ITER_TAG(Float)
+#define ITER_TAG(%0)%1={%2,%3,...}%4: using_deprecated_itertag_syntax,%0:Iterator@%1={%0:0,%0:1,...}F@a$,Iter_Single@
+
+// Many tag types for declared iterators.
+#define Iterator@_:            ITER_TAG(_)
+#define Iterator@bool:         ITER_TAG(bool)
+#define Iterator@PlayerText3D: ITER_TAG(PlayerText3D)
+#define Iterator@Text3D:       ITER_TAG(Text3D)
+#define Iterator@DB:           ITER_TAG(DB)
+#define Iterator@DBResult:     ITER_TAG(DBResult)
+#define Iterator@Language:     ITER_TAG(Language)
+#define Iterator@Bit:          ITER_TAG(Bit)
+#define Iterator@Text:         ITER_TAG(Text)
+#define Iterator@Menu:         ITER_TAG(Menu)
+#define Iterator@Style:        ITER_TAG(Style)
+#define Iterator@XML:          ITER_TAG(XML)
+#define Iterator@Bintree:      ITER_TAG(Bintree)
+#define Iterator@Timer:        ITER_TAG(Timer)
+#define Iterator@File:         ITER_TAG(File)
+#define Iterator@Float:        ITER_TAG(Float)
 
 // This iterator is both a special function AND a tag.  This is not natively
 // supported, so we need to invent some special macros to do so.  Fortunately,
 // it is not a state function, so some of the existing macros are not needed.
+
+// The `Iterator@GroupElse_` macro is in "y_groups", so you only get it if you
+// include both libraries.
 #define Iterator@Group I@ Iterator@GroupElse_(-1)
 
 // Tag.
 #define I@%0Iterator@GroupElse_(%1): ITER_TAG(Group)
-
-// The `Iterator@GroupElse_` macro is in "y_groups", so you only get it if you
-// include both libraries.
 
 // A nice "match" symbol that we can scan for, then remove after it is used.
 #define F@a$
@@ -748,7 +748,7 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 // to match parameters outside the required area.  Note to self.  Using
 // `TRUE ? val : _:tag_check` is shorter in code, but longer (by one instruction
 // on the critical path) in assembly.  They do both have the same number of
-// TAKEN jumps.  If we could use `_no_iter_tag` as equivalent to `_` (see:
+// TAKEN jumps.  If we could use `_no_itertag` as equivalent to `_` (see:
 // https://github.com/pawn-lang/compiler/issues/383) we could just do
 // `FALSE ? arr[0] : val`, which would use the compiler to check that the tags
 // of both returns of the ternary match without an additional multiplication
@@ -866,8 +866,8 @@ stock const
 	// This is the best I could do to warn about the old syntax.  That code
 	// should now be "foreach (new i : Player)".  It may become an error later.
 	bool:using_deprecated_foreach_syntax = false,
+	bool:using_deprecated_itertag_syntax = false,
 	F@o = 1;
-
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
@@ -877,16 +877,16 @@ stock const
 
 #undef Iterator
 P:D(Iterator:Iterator(name));
-#define _no_iter_tag:Iterator@%1$[_:F@c:F@d:((%3:%2)+1)]%9$ %3:Iterator@%1$[_:F@c:F@d:((%2)+1)]={%3:0,%3:1,...}F@a$
-#define Iterator:%1<%2> _no_iter_tag:Iterator@%1 F@a$[_:F@c:F@d:((%2)+1)]={_no_iter_tag:0,_no_iter_tag:1,...}F@a$,Iter_Single@%1 F@a$F@a$
+#define _no_itertag:Iterator@%1$[_:F@c:F@d:((%3:%2)+1)]%9$ %3:Iterator@%1$[_:F@c:F@d:((%2)+1)]={%3:0,%3:1,...}F@a$
+#define Iterator:%1<%2> _no_itertag:Iterator@%1 F@a$[_:F@c:F@d:((%2)+1)]={_no_itertag:0,_no_itertag:1,...}F@a$,Iter_Single@%1 F@a$F@a$
 #define IteratorArray Iterator
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Suppress warnings when `_:` is used (correctly) instead of `_no_iter_tag:`.
+ *  Suppress warnings when `_:` is used (correctly) instead of `_no_itertag:`.
  * </remarks>
  *//*------------------------------------------------------------------------**/
-stock operator*(_no_iter_tag:a, b)
+stock operator*(_no_itertag:a, b)
 {
 	#pragma unused a, b
 	return 0;
