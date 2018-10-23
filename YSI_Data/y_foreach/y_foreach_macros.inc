@@ -746,11 +746,24 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 
 // Sort out tagged parameters plus extra parameters.  Expanded so it will fail
 // to match parameters outside the required area.
-#define F@v:(%0) F@t:F@B:`(%0)`
-#define F@B:`%0` %0
-#define F@t:%9`(%6(%7(%8(%0,%1))):0,(%2,%1))` %9`(%6(%7(%8(%0))):0,(%2)),%1`
-#define Iter_Tag(%1,%9) _:F@v:(FALSE?(_:F@D:(%1[0]*none@iter:(%9))):0,(%9))
-#define F@D:(%0*none@iter:(%1:%2))):0,(%9)) (%0*%1:(%2))):0,(%9))
+#if 0
+	// Given a solution to https://github.com/pawn-lang/compiler/issues/383
+	// (i.e. ipotent tags, which are entirely equivalent to no tag), this would
+	// be the best solution (`_` == `_no_iter_tag`).
+	#define F@v:(%0) F@t:F@B:`(%0)`
+	#define F@B:`%0` %0
+	#define F@t:%9`(%0?%3:(%2,%1))` %9`(%0?%3:(%2)),%1`
+	#define Iter_Tag(%1,%9) _:F@v:(FALSE?%1[0]:(%9))
+#else
+	// Note to self.  Using `TRUE?val:_:tag_check` is shorter in code, but
+	// longer (by one instruction on the critical path) in assembly.  They do
+	// both have the same number of TAKEN jumps.
+	#define F@v:(%0) F@t:F@B:`(%0)`
+	#define F@B:`%0` %0
+	#define F@t:%9`(%6(%7(%8(%0,%1))):_:(%2,%1))` %9`(%6(%7(%8(%0))):_:(%2)),%1`
+	#define Iter_Tag(%1,%9) _:F@v:(FALSE?(_:F@D:(%1[0]*(%9))):_:(%9))
+	#define F@D:(%0*(%1:%2))):_:(%9)) (%0*%1:(%2))):_:(%9))
+#endif
 
 // y_iterate parser.  Takes an array input, and splits up all the components.
 #define _ITER<%5>(%1) (_:F@i:F@j:$Iter_%5_Internal(%1))
@@ -870,28 +883,18 @@ stock const
 
 #undef Iterator
 P:D(Iterator:Iterator(name));
-#define none@iter:Iterator@%1$[_:F@c:F@d:((%3:%2)+1)]%9$ %3:Iterator@%1$[_:F@c:F@d:((%2)+1)]={%3:0,%3:1,...}F@a$
-#define Iterator:%1<%2> none@iter:Iterator@%1 F@a$[_:F@c:F@d:((%2)+1)]={none@iter:0,none@iter:1,...}F@a$,Iter_Single@%1 F@a$F@a$
+#define _no_iter_tag:Iterator@%1$[_:F@c:F@d:((%3:%2)+1)]%9$ %3:Iterator@%1$[_:F@c:F@d:((%2)+1)]={%3:0,%3:1,...}F@a$
+#define Iterator:%1<%2> _no_iter_tag:Iterator@%1 F@a$[_:F@c:F@d:((%2)+1)]={_no_iter_tag:0,_no_iter_tag:1,...}F@a$,Iter_Single@%1 F@a$F@a$
 #define IteratorArray Iterator
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
- *  Suppress warnings when `_:` is used (correctly) instead of `none@iter:`.
+ *  Suppress warnings when `_:` is used (correctly) instead of `_no_iter_tag:`.
  * </remarks>
  *//*------------------------------------------------------------------------**/
-stock operator*(none@iter:a, b)
+stock operator*(_no_iter_tag:a, b)
 {
 	#pragma unused a, b
 	return 0;
 }
-
-///*-------------------------------------------------------------------------*//**
-// * <remarks>
-// *  Suppress warnings when `_:` is used (correctly) instead of `none@iter:`.
-// * </remarks>
-// *//*------------------------------------------------------------------------**/
-//stock operator=(none@iter:a)
-//{
-//	return a;
-//}
 

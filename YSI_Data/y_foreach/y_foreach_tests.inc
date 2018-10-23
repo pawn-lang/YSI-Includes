@@ -1016,7 +1016,7 @@ TEST__ y_iter_Tag()
 {
 	new
 		Iterator:iter1<Group:60>,
-		Iterator:iter2[2]<Group:60>;
+		Iterator:iter2[2]<Group:50>;
 	Iter_Add(iter1, Group:33);
 	#pragma tabsize 4
 	/* ====================================================================== */
@@ -1027,7 +1027,8 @@ TEST__ y_iter_Tag()
 	/* | It tests that iterators use tags correctly and warn otherwise.     | */
 	/* ====================================================================== */
 	#pragma tabsize 4
-	Iter_Add(iter1, Group:55);
+	new Group:toadd = Group:55;
+	Iter_Add(iter1, toadd);
 	Iter_Add(iter1, Group:22);
 	Iter_Add(iter1, Group:11);
 	#pragma tabsize 4
@@ -1047,7 +1048,7 @@ TEST__ y_iter_Tag()
 	Iter_Alloc(iter2[0]);
 	Iter_Alloc(iter2[0]);
 	Iter_Alloc(iter2[0]);
-	Iter_Alloc(iter2[0]);
+	Iter_Add(iter2[(0)], toadd);
 	FOREACH__ (new Group:i : iter2[0])
 	{
 		ASSERT(i < Group:4);
