@@ -2831,6 +2831,10 @@ TEST__ y_iter_Clear()
 	ASSERT_ZE(Iter_Count(c<2>));
 	ASSERT_ZE(Iter_Count(c<3>));
 	ASSERT_ZE(Iter_Count(c<4>));
+	Iter_Add(a, 2);
+	Iter_Add(a, 4);
+	Iter_Add(a, 6);
+	ASSERT_EQ(Iter_Count(a), 3);
 }
 
 TEST__ y_iter_ArrayMulti()

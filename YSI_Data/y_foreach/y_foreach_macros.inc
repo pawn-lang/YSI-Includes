@@ -412,9 +412,9 @@ P:D(Iter_Count(Iterator:iter<>));
 
 P:D(Iter_Clear(Iterator:iter<>));
 #define Iter_Clear _ITER<Clear>
-#define Iter_Clear_InternalA(%0,%1)           Iter_Clear_InternalC(_:%1,F@s(%1),F@s(%0),F@s(%1)-2,%0)
+#define Iter_Clear_InternalA(%0,%1)           Iter_Clear_InternalC(_:%1,F@s(%1),F@s(%0),%0)
 #define Iter_Clear_InternalB(%0,%2,%1)        Iter_Clear_InternalD(_:%1,F@s(%1),F@s(%0),F@s(%1)-F@s(%0),%0,%2)
-#define Iter_Clear_InternalD(%0,%1,%2,%3,%4,) Iter_Clear_InternalC(%0,%1,%2,%3-1,%4)
+#define Iter_Clear_InternalD(%0,%1,%2,%3,%4,) Iter_Clear_InternalC(%0,%1,%2,%4)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get the first free slot in.</param>
@@ -890,5 +890,25 @@ stock operator*(_no_itertag:a, b)
 {
 	#pragma unused a, b
 	return 0;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Suppress warnings when `_:` is used (correctly) instead of `_no_itertag:`.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+stock operator=(_no_itertag:a)
+{
+	return a;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  Suppress warnings when `_:` is used (correctly) instead of `_no_itertag:`.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+stock _no_itertag:operator=(a)
+{
+	return _no_itertag:a;
 }
 
