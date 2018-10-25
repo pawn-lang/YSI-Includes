@@ -358,7 +358,3 @@ static stock const
 // Should be an inbuilt constant!
 #define cellbytes (cellbits / 8)
 
-#if __COMPILER_sNAMEMAX != 31
-	#error YSI assumes `sNAMEMAX` is 31.
-#endif
-

@@ -116,6 +116,10 @@ Optional plugins:
 // used by literally any other include.
 #include "y_compilerdata"
 
+#if __COMPILER_sNAMEMAX != 31
+	#error YSI assumes `sNAMEMAX` is 31.
+#endif
+
 #if !defined HTTP
 	#tryinclude <a_http>
 #endif

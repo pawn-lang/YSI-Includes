@@ -221,13 +221,7 @@ HOOK__ OnPlayerConnect(playerid)
 				}
 			}
 		}
-		// Ultra fast iterator clear.
-		for (new i = Iter_Begin(FloodingPlayer); (ip32 = Iter_Next(FloodingPlayer, i)) != i; )
-		{
-			Iter_TrueArray(FloodingPlayer)[i] = i;
-			i = ip32;
-		}	
-		Iter_TrueCount(FloodingPlayer) = 0;
+		Iter_Clear(FloodingPlayer);
 	}
 	return ret;
 }

@@ -1015,7 +1015,8 @@ TEST__ y_iter_Iter_Free()
 TEST__ y_iter_Tag()
 {
 	new
-		Iterator:Group:iter1<60>;
+		Iterator:iter1<Group:60>,
+		Iterator:iter2[2]<Group:50>;
 	Iter_Add(iter1, Group:33);
 	#pragma tabsize 4
 	/* ====================================================================== */
@@ -1026,7 +1027,8 @@ TEST__ y_iter_Tag()
 	/* | It tests that iterators use tags correctly and warn otherwise.     | */
 	/* ====================================================================== */
 	#pragma tabsize 4
-	Iter_Add(iter1, Group:55);
+	new Group:toadd = Group:55;
+	Iter_Add(iter1, toadd);
 	Iter_Add(iter1, Group:22);
 	Iter_Add(iter1, Group:11);
 	#pragma tabsize 4
@@ -1043,6 +1045,24 @@ TEST__ y_iter_Tag()
 	{
 		ASSERT_EQ(_:i / 11 * 11, _:i);
 	}
+	Iter_Alloc(iter2[0]);
+	Iter_Alloc(iter2[0]);
+	Iter_Alloc(iter2[0]);
+	Iter_Add(iter2[(0)], toadd);
+	FOREACH__ (new Group:i : iter2[0])
+	{
+		ASSERT(i < Group:4);
+	}
+	#pragma tabsize 4
+	/* ====================================================================== */
+	/* | THERE IS MEANT TO BE A WARNING ON THIS LINE                        | */
+	/* |                                                                    | */
+	/* | */ new Iterator:Group:iter3<10>;                                /* | */
+	/* |                                                                    | */
+	/* | It tests that the old syntax is deprecated and warn otherwise.     | */
+	/* ====================================================================== */
+	#pragma tabsize 4
+	#pragma unused Iter_Single@iter3, Iterator@iter3, using_deprecated_itertag_syntax
 }
 
 TEST__ y_iter_Iter_Alloc()
@@ -2811,6 +2831,10 @@ TEST__ y_iter_Clear()
 	ASSERT_ZE(Iter_Count(c<2>));
 	ASSERT_ZE(Iter_Count(c<3>));
 	ASSERT_ZE(Iter_Count(c<4>));
+	Iter_Add(a, 2);
+	Iter_Add(a, 4);
+	Iter_Add(a, 6);
+	ASSERT_EQ(Iter_Count(a), 3);
 }
 
 TEST__ y_iter_ArrayMulti()

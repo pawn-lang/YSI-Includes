@@ -609,27 +609,48 @@ stock Iter_GetMulti_Internal(const array[], trueSize, size, value)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="array">iterator data.</param>
- * <param name="size">Size of base array.</param>
+ * <param name="size">Size of information.</param>
  * <param name="entries">Size of the count data.</param>
- * <param name="lst">Last valid index in the iterator array.</param>
  * <param name="">Optional single multi-iterator to clear.</param>
  * <remarks>
  *  Resets an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_Clear_InternalC(array[], size, entries, lst, ...)
+stock Iter_Clear_InternalC(array[], size, entries, ...)
 {
-	// Clear an entire iterator.
+	//if (entries == 1)
+	//{
+	//	// Common case.
+	//	new tmp = size;
+	//	do
+	//	{
+	//		// Just a swap.
+	//		entries = array[tmp],
+	//		array[tmp] = tmp,
+	//		tmp = entries;
+	//	}
+	//	while (tmp != size);
+	//	{}
+	//	#emit ZERO.pri
+	//	#emit SREF.S.pri 24
+	//}
+	//else
+	//{
+	//	// Clear an entire iterator.
+	//	for (size += entries; size--; )
+	//	{
+	//		array[size] = size;
+	//	}
+	//	while (entries--)
+	//	{
+	//		setarg(4, entries, 0);
+	//	}
+	//}
 	while (size--)
-	{
 		array[size] = size;
-	}
-	array[lst] = 0;
 	while (entries--)
-	{
-		setarg(4, entries, 0);
-	}
+		setarg(3, entries, 0);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -656,7 +677,7 @@ stock Iter_Clear_InternalD(array[], size, entries, elems, counts[], start)
 		while (entries < elems)
 		{
 			start = array[entries],
-			array[entries] = 0,
+			array[entries] = entries,
 			entries = start;
 		}
 	}

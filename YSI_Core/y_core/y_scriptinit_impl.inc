@@ -223,10 +223,14 @@ public OnRuntimeError(code, &bool:suppress)
 #define @yI_%0\32; @yI_
 #define @_yI%0\32; @_yI
 
-#define PREINIT__%0(%1) @yI_%0(%1);@yI_%0(%1)
-#define POSTINIT__%0(%1) @_yI%0(%1);@_yI%0(%1)
+#define INIT_STRIP_TAGS__:%3:%0(%1);INIT_THE_TAG__<%2>%9(%9) %2%0(%1);%2%0(%1)
+#define INIT_STRIP_TAGS_2__:@yI_%3:%0(%1);INIT_STRIP_TAGS_2__:%9(%9){_YSI_ConstMod(%4,(%5));} @yI_%0(%1);@yI_%0(%1){_YSI_ConstMod(_:%4,_:(%3:I@=(%5)));}
+#define INIT_THE_TAG__<%0> INIT_STRIP_TAGS__:%0
 
-#define FINAL__%0=%1; stock const %0;PREINIT__%0(){_YSI_ConstMod(_:%0,_:(%1));}
+#define PREINIT__%0(%1) INIT_STRIP_TAGS__:@yI_%0(%1);INIT_THE_TAG__<@yI_>%0(%1)
+#define POSTINIT__%0(%1) INIT_STRIP_TAGS__:@_yI%0(%1);INIT_THE_TAG__<@_yI>%0(%1)
+
+#define FINAL__%0=%1; stock const %0;INIT_STRIP_TAGS_2__:@yI_%0();INIT_STRIP_TAGS_2__:@yI_%0(){_YSI_ConstMod(%0,(%1));}
 
 #if YSI_KEYWORD(final)
 	#define final FINAL__
