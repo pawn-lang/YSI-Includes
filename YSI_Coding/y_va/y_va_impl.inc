@@ -744,3 +744,7 @@ stock va_fprintf(File:fhnd, const fmat[], va_args<>)
 	return fwrite(fhnd, va_return(fmat, va_start<2>));
 }
 
+stock va_SendRconCommand(const command[], va_args<>)
+{
+	return SendRconCommand(va_return(command, va_start<1>));
+}
