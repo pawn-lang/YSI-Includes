@@ -63,8 +63,6 @@ hook OnGameModeInit()
 
 Good:
 
-Bad:
-
 ```pawn
 #include <YSI_Coding\y_hooks>
 
