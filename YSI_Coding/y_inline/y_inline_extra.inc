@@ -72,63 +72,109 @@ Optional plugins:
 
 stock MySQL_PQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPES:...)
 {
-	Indirect_Claim(cb);
-	mysql_format(handle, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, query, ___(3));
-	mysql_pquery(handle, YSI_UNSAFE_HUGE_STRING, "Indirect_FromCallback", "ii", _:cb, true);
+	new ret = mysql_format(handle, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, query, ___(3));
+	if (ret)
+	{
+		ret = mysql_pquery(handle, YSI_UNSAFE_HUGE_STRING, "Indirect_FromCallback", "ii", _:cb, true);
+		if (ret)
+		{
+			Indirect_Claim(cb);
+		}
+	}
+	return ret;
 }
 
 stock MySQL_TQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPES:...)
 {
-	Indirect_Claim(cb);
-	mysql_format(handle, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, query, ___(3));
-	mysql_tquery(handle, YSI_UNSAFE_HUGE_STRING, "Indirect_FromCallback", "ii", _:cb, true);
+	new ret = mysql_format(handle, YSI_UNSAFE_HUGE_STRING, YSI_UNSAFE_HUGE_LENGTH, query, ___(3));
+	if (ret)
+	{
+		ret = mysql_tquery(handle, YSI_UNSAFE_HUGE_STRING, "Indirect_FromCallback", "ii", _:cb, true);
+		if (ret)
+		{
+			Indirect_Claim(cb);
+		}
+	}
+	return ret;
 }
 
 stock ORM_SelectInline(ORM:id, Func:cb<>)
 {
-	Indirect_Claim(cb);
-	orm_select(id, "Indirect_FromCallback", "ii", _:cb, true);
+	new ret = orm_select(id, "Indirect_FromCallback", "ii", _:cb, true);
+	if (ret)
+	{
+		Indirect_Claim(cb);
+	}
+	return ret;
 }
 
 stock ORM_UpdateInline(ORM:id, Func:cb<>)
 {
-	Indirect_Claim(cb);
-	orm_update(id, "Indirect_FromCallback", "ii", _:cb, true);
+	new ret = orm_update(id, "Indirect_FromCallback", "ii", _:cb, true);
+	if (ret)
+	{
+		Indirect_Claim(cb);
+	}
+	return ret;
 }
 
 stock ORM_InsertInline(ORM:id, Func:cb<>)
 {
-	Indirect_Claim(cb);
-	orm_insert(id, "Indirect_FromCallback", "ii", _:cb, true);
+	new ret = orm_insert(id, "Indirect_FromCallback", "ii", _:cb, true);
+	if (ret)
+	{
+		Indirect_Claim(cb);
+	}
+	return ret;
 }
 
 stock ORM_DeleteInline(ORM:id, Func:cb<>)
 {
-	Indirect_Claim(cb);
-	orm_delete(id, "Indirect_FromCallback", "ii", _:cb, true);
+	new ret = orm_delete(id, "Indirect_FromCallback", "ii", _:cb, true);
+	if (ret)
+	{
+		Indirect_Claim(cb);
+	}
+	return ret;
 }
 
 stock ORM_LoadInline(ORM:id, Func:cb<>)
 {
-	Indirect_Claim(cb);
-	orm_load(id, "Indirect_FromCallback", "ii", _:cb, true);
+	new ret = orm_load(id, "Indirect_FromCallback", "ii", _:cb, true);
+	if (ret)
+	{
+		Indirect_Claim(cb);
+	}
+	return ret;
 }
 
 stock ORM_SaveInline(ORM:id, Func:cb<>)
 {
-	Indirect_Claim(cb);
-	orm_save(id, "Indirect_FromCallback", "ii", _:cb, true);
+	new ret = orm_save(id, "Indirect_FromCallback", "ii", _:cb, true);
+	if (ret)
+	{
+		Indirect_Claim(cb);
+	}
+	return ret;
 }
 
 stock BCrypt_CheckInline(text[], hash[], Func:cb<>)
 {
-	Indirect_Claim(cb);
-	bcrypt_check(text, hash, "Indirect_FromCallback", "ii", _:cb, true);
+	new ret = bcrypt_check(text, hash, "Indirect_FromCallback", "ii", _:cb, true);
+	if (ret)
+	{
+		Indirect_Claim(cb);
+	}
+	return ret;
 }
 
 stock BCrypt_HashInline(text[], cost, Func:cb<>)
 {
-	Indirect_Claim(cb);
-	bcrypt_hash(text, cost, "Indirect_FromCallback", "ii", _:cb, true);
+	new ret = bcrypt_hash(text, cost, "Indirect_FromCallback", "ii", _:cb, true);
+	if (ret)
+	{
+		Indirect_Claim(cb);
+	}
+	return ret;
 }
 
