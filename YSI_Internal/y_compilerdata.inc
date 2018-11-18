@@ -347,7 +347,7 @@ static stock const
 		#endif
 	#endif
 	#if !defined __COMPILER_sNAMEMAX
-		#warning Could not determine `sNAMEMAX`, falling back on 31.
+		#include "y_compilerdata_warning"
 		#define __COMPILER_sNAMEMAX (31)
 	#endif
 	
