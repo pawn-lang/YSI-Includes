@@ -1005,7 +1005,7 @@ state_in_continue_line:
 	p1s = end = pos;
 	for ( ; ; ) switch (str[pos++])
 	{
-		case '\0':
+		case '\r', '\n':
 			if (YSI_g_sExtendedLine)
 			{
 				p1e = end,
@@ -1014,6 +1014,15 @@ state_in_continue_line:
 			}
 			else
 				return p1e = end, e_INI_LINE_TYPE_ENTRY;
+		case '\0':
+		{
+			// Couldn't fit the whole read line in to the given variable.  This
+			// is an implicit continuation - it isn't actually one, the line
+			// just spans multiple reads.
+			p1e = end,
+			ret  = e_INI_LINE_TYPE_CONT;
+			goto state_in_continuation;
+		}
 		case  ';':
 		{
 			p1e = end,
@@ -1022,29 +1031,37 @@ state_in_continue_line:
 		}
 		case '\\':
 		{
-			// Only allow ';' to immediately follow '\\'.
 			end = pos - 1;
 			switch (str[pos])
 			{
 #if defined Y_INI_NO_ESCAPES
 				case ';':
+					// Only allow ';' to immediately follow '\\'.
 					end = ++pos;
 #else
 				case 'n':
+				{
 					str[pos] = '\n',
 					strdel(str[pos - 1], 0, 1),
 					end = pos;
+				}
 				case 'r':
+				{
 					str[pos] = '\r',
 					strdel(str[pos - 1], 0, 1),
 					end = pos;
+				}
 				case 't':
+				{
 					str[pos] = '\t',
 					strdel(str[pos - 1], 0, 1),
 					end = pos;
+				}
 				case '\\':
+				{
 					strdel(str[pos - 1], 0, 1),
 					end = pos;
+				}
 				case ';':
 					INI_DealWithSemiColonEscape(str, pos, end);
 #endif
