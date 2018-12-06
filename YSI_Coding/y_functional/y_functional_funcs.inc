@@ -95,7 +95,7 @@ stock MapIdx(Func:cb<ii>, const arr[], dest[], al = sizeof (arr), dl = sizeof (d
 		dest[i] = @.cb(i, arr[i]);
 	}
 }
-#define MapIdx({%0}%1) LAMBDA_ii<IdxMap>{%0}(%1)
+#define MapIdx({%0}%1) LAMBDA_ii<MapIdx>{%0}(%1)
 
 stock MapIdx_(Func:cb<ii>, const arr[], len = sizeof (arr))
 {
@@ -104,7 +104,7 @@ stock MapIdx_(Func:cb<ii>, const arr[], len = sizeof (arr))
 		@.cb(i, arr[i]);
 	}
 }
-#define MapIdx_({%0}%1) LAMBDA_ii<IdxMap_>{%0}(%1)
+#define MapIdx_({%0}%1) LAMBDA_ii<MapIdx_>{%0}(%1)
 
 stock ZipWith(Func:cb<ii>, const l[], const r[], dest[], ls = sizeof (l), rs = sizeof (r), ds = sizeof (dest))
 {
@@ -149,7 +149,7 @@ stock ZipWithIdx(Func:cb<iii>, const l[], const r[], dest[], ls = sizeof (l), rs
 		dest[i] = @.cb(i, l[i], r[i]);
 	}
 }
-#define ZipWithIdx({%0}%1) LAMBDA_ii<ZipWith>{%0}(%1)
+#define ZipWithIdx({%0}%1) LAMBDA_iii<ZipWithIdx>{%0}(%1)
 
 stock ZipWithIdx_(Func:cb<iii>, const l[], const r[], ls = sizeof (l), rs = sizeof (r))
 {
@@ -158,7 +158,7 @@ stock ZipWithIdx_(Func:cb<iii>, const l[], const r[], ls = sizeof (l), rs = size
 		@.cb(i, l[i], r[i]);
 	}
 }
-#define ZipWithIdx_({%0}%1) LAMBDA_ii<ZipWith_>{%0}(%1)
+#define ZipWithIdx_({%0}%1) LAMBDA_iii<ZipWithIdx_>{%0}(%1)
 
 stock ZipWith3Idx(Func:cb<iiii>, const l[], const m[], const r[], dest[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r), ds = sizeof (dest))
 {
@@ -167,7 +167,7 @@ stock ZipWith3Idx(Func:cb<iiii>, const l[], const m[], const r[], dest[], ls = s
 		dest[i] = @.cb(i, l[i], m[i], r[i]);
 	}
 }
-#define ZipWith3Idx({%0}%1) LAMBDA_iii<ZipWith3>{%0}(%1)
+#define ZipWith3Idx({%0}%1) LAMBDA_iiii<ZipWith3Idx>{%0}(%1)
 
 stock ZipWith3Idx_(Func:cb<iiii>, const l[], const m[], const r[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r))
 {
@@ -176,7 +176,7 @@ stock ZipWith3Idx_(Func:cb<iiii>, const l[], const m[], const r[], ls = sizeof (
 		@.cb(i, l[i], m[i], r[i]);
 	}
 }
-#define ZipWith3Idx_({%0}%1) LAMBDA_iii<ZipWith3_>{%0}(%1)
+#define ZipWith3Idx_({%0}%1) LAMBDA_iiii<ZipWith3Idx_>{%0}(%1)
 
 stock FoldLIdx(Func:cb<iii>, n, const arr[], len = sizeof (arr))
 {
@@ -188,7 +188,7 @@ stock FoldLIdx(Func:cb<iii>, n, const arr[], len = sizeof (arr))
 	}
 	return cur;
 }
-#define FoldLIdx({%0}%1) LAMBDA_ii<FoldL>{%0}(%1)
+#define FoldLIdx({%0}%1) LAMBDA_iii<FoldLIdx>{%0}(%1)
 
 stock ScanLIdx(Func:cb<iii>, n, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
 {
@@ -205,7 +205,7 @@ stock ScanLIdx(Func:cb<iii>, n, const arr[], dest[], al = sizeof (arr), dl = siz
 	dest[i] = cur;
 	return 1;
 }
-#define ScanLIdx({%0}%1) LAMBDA_ii<ScanL>{%0}(%1)
+#define ScanLIdx({%0}%1) LAMBDA_iii<ScanLIdx>{%0}(%1)
 
 stock FoldRIdx(Func:cb<iii>, const arr[], n, len = sizeof (arr))
 {
@@ -217,7 +217,7 @@ stock FoldRIdx(Func:cb<iii>, const arr[], n, len = sizeof (arr))
 	}
 	return cur;
 }
-#define FoldRIdx({%0}%1) LAMBDA_ii<FoldR>{%0}(%1)
+#define FoldRIdx({%0}%1) LAMBDA_iii<FoldRIdx>{%0}(%1)
 
 stock ScanRIdx(Func:cb<iii>, n, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
 {
@@ -232,7 +232,7 @@ stock ScanRIdx(Func:cb<iii>, n, const arr[], dest[], al = sizeof (arr), dl = siz
 	}
 	return 1;
 }
-#define ScanRIdx({%0}%1) LAMBDA_ii<ScanR>{%0}(%1)
+#define ScanRIdx({%0}%1) LAMBDA_iii<ScanRIdx>{%0}(%1)
 
 stock FoldL1Idx(Func:cb<iii>, const arr[], len = sizeof (arr))
 {
@@ -245,7 +245,7 @@ stock FoldL1Idx(Func:cb<iii>, const arr[], len = sizeof (arr))
 	}
 	return cur;
 }
-#define FoldL1Idx({%0}%1) LAMBDA_ii<FoldL1>{%0}(%1)
+#define FoldL1Idx({%0}%1) LAMBDA_iii<FoldL1Idx>{%0}(%1)
 
 stock FoldR1Idx(Func:cb<iii>, const arr[], len = sizeof (arr))
 {
@@ -258,7 +258,7 @@ stock FoldR1Idx(Func:cb<iii>, const arr[], len = sizeof (arr))
 	}
 	return cur;
 }
-#define FoldR1Idx({%0}%1) LAMBDA_ii<FoldR1>{%0}(%1)
+#define FoldR1Idx({%0}%1) LAMBDA_iii<FoldR1Idx>{%0}(%1)
 
 stock FoldL(Func:cb<ii>, n, const arr[], len = sizeof (arr))
 {
@@ -388,7 +388,7 @@ stock bool:AllIdx(Func:cb<ii>, const arr[], len = sizeof (arr))
 	}
 	return true;
 }
-#define AllIdx({%0}%1) LAMBDA_i<All>{%0}(%1)
+#define AllIdx({%0}%1) LAMBDA_ii<AllIdx>{%0}(%1)
 
 stock bool:AnyIdx(Func:cb<ii>, const arr[], len = sizeof (arr))
 {
@@ -398,7 +398,7 @@ stock bool:AnyIdx(Func:cb<ii>, const arr[], len = sizeof (arr))
 	}
 	return false;
 }
-#define AnyIdx({%0}%1) LAMBDA_i<Any>{%0}(%1)
+#define AnyIdx({%0}%1) LAMBDA_ii<AnyIdx>{%0}(%1)
 
 stock Reverse(const arr[], len = sizeof (arr))
 {
