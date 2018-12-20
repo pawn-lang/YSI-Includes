@@ -366,7 +366,7 @@ Optional plugins:
 #tryinclude <indirection>
 #if !defined _INC_indirection
 	#error Could not include "https://github.com/Y-Less/indirection" - ensure its files are in "include\indirection\"
-#elseif !defined Indirect_SetMeta_
+#elseif !defined Indirect_Init
 	#error Please update "https://github.com/Y-Less/indirection" to the latest version.
 #endif
 
@@ -376,6 +376,7 @@ Optional plugins:
 public OnCodeInit()
 {
 	AddressofResolve();
+	Indirect_Init();
 	#if defined ThirdParty_OnCodeInit
 		return ThirdParty_OnCodeInit();
 	#else

@@ -2032,3 +2032,26 @@ stock Callback_Restore_(...)
 }
 #define Callback_Restore(%0) Callback_Restore_(_:%0)
 
+stock Inline_Debug(ptr)
+{
+	// Get back to normal memory.
+	new Alloc:data = Malloc_Reconcile(ResolvedAlloc:Indirect_DePtr(ptr));
+	printf("ptr:                    %d", _:ptr);
+	printf("resolved:               %d", _:Indirect_DePtr(ptr));
+	#emit CONST.alt     YSI_gMallocMemory
+	#emit STOR.S.alt    ptr
+	printf("memory:                 %d", _:ptr);
+	printf("slot:                   %d", _:data);
+	printf("E_INLINE_CALL_NULL:     %d", mget(data, E_INLINE_CALL_NULL));
+	printf("E_INLINE_CALL_HANDLER:  %d", mget(data, E_INLINE_CALL_HANDLER));
+	printf("E_INLINE_CALL_CLAIM:    %d", mget(data, E_INLINE_CALL_CLAIM));
+	printf("E_INLINE_CALL_RELEASE:  %d", mget(data, E_INLINE_CALL_RELEASE));
+	printf("E_INLINE_CALL_METADATA: %d", mget(data, E_INLINE_CALL_METADATA));
+	printf("E_INLINE_CALL_TIMER:    %d", mget(data, E_INLINE_CALL_TIMER));
+	printf("E_INLINE_CALL_FLAGS:    %d", mget(data, E_INLINE_CALL_FLAGS));
+	printf("E_INLINE_CALL_SIZE:     %d", mget(data, E_INLINE_CALL_SIZE));
+	printf("E_INLINE_CALL_SOURCE:   %d", mget(data, E_INLINE_CALL_SOURCE));
+	printf("E_INLINE_CALL_FUNCTION: %d", mget(data, E_INLINE_CALL_FUNCTION));
+	printf("E_INLINE_CALL_PARAMS:   %d", _:Malloc_Reconcile(ResolvedAlloc:mget(data, E_INLINE_CALL_FUNCTION)));
+}
+
