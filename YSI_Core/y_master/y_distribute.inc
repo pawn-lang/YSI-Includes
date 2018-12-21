@@ -125,7 +125,7 @@ public YSI_g_sSomeThing@Dist(a[], s)<_YCM:y> Distribute_To(a, s, DIST_SIZE1:YSI_
 
 #define DIST_MA:<%0>%8|%1; %0_Dist()for(new i=0;i!=_:%8;++i)Distribute_So(#%0"@Dist",i,YSI_g_sMasterData,_:%0[i]%1);MASTER_FUNC__%0@Dist(i,m,a[],s)<_YCM:y,_YCM:u>YSI_g_sMasterData[i]=Bit:m,Distribute_To(a,s,_:%0[i]%1);
 
-stock Distribute_Do(func[], GLOBAL_TAG_TYPES:...)
+stock Distribute_Do(const func[], GLOBAL_TAG_TYPES:...)
 {
 	// Get the data and the sizes.
 	new
@@ -162,7 +162,7 @@ stock Distribute_Do(func[], GLOBAL_TAG_TYPES:...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Distribute_So(func[], idx, const Bit:masters[], GLOBAL_TAG_TYPES:...)
+stock Distribute_So(const func[], idx, const Bit:masters[], GLOBAL_TAG_TYPES:...)
 {
 	new
 		m = _:masters[idx] & ~Master_ID();
@@ -202,7 +202,7 @@ stock Distribute_So(func[], idx, const Bit:masters[], GLOBAL_TAG_TYPES:...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Distribute_To(from[], ss, GLOBAL_TAG_TYPES:...)
+stock Distribute_To(const from[], ss, GLOBAL_TAG_TYPES:...)
 {
 	// Get the data and the sizes.
 	new
