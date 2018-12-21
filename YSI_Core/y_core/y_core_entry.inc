@@ -124,6 +124,13 @@ Optional plugins:
 	#tryinclude <a_http>
 #endif
 
+// Avoid an error with `forward OnRuntimeError(code, &bool:suppress);` in here after already ALS
+// hooking it (#266).
+#tryinclude "..\..\crashdetect"
+#tryinclude <crashdetect>
+#tryinclude "..\..\..\crashdetect"
+#tryinclude "crashdetect"
+
 // These three includes are just defines.  They declare no code at all, only
 // variables.
 #include "y_globaltags"
