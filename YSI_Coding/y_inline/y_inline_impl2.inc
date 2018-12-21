@@ -475,33 +475,7 @@ static stock Inline_FoundEnd(const scanner[CodeScanner], data[E_INLINE_DATA] = "
 	Inline_StoreData(data);
 	// Restart scanning for the next inline.
 	data[E_INLINE_DATA_STATE] = 0;
-	Inline_MakeScannerHappy(data);
 	return 0;
-}
-
-static stock Inline_MakeScannerHappy(const data[E_INLINE_DATA])
-{
-	// This inserts an extra `stack` OP for no reason other than to make
-	// "codescan" happy, so it thinks the correct number of cells have been
-	// pushed and pulled.
-	if (data[E_INLINE_DATA_STACK] == data[E_INLINE_DATA_LOCALS])
-	{
-		return;
-	}
-	new
-		dctx[DisasmContext];
-	DisasmInit(dctx, data[E_INLINE_DATA_CLEANUP]);
-	if (DisasmNextInsn(dctx) == OP_NOP && DisasmNextInsn(dctx) == OP_NOP)
-	{
-		new
-			ctx[AsmContext];
-		AsmInitPtr(ctx, data[E_INLINE_DATA_CLEANUP] + AMX_HEADER_COD, 8);
-		@emit STACK            (data[E_INLINE_DATA_STACK] - data[E_INLINE_DATA_LOCALS])
-	}
-	else
-	{
-		P:E("Inline_MakeScannerHappy: Out of cleanup space at %08x.", data[E_INLINE_DATA_CLEANUP]);
-	}
 }
 
 static stock Inline_StoreData(const data[E_INLINE_DATA])
@@ -1832,51 +1806,61 @@ static stock Inline_DoRetnGen(ctx[AsmContext], const scanner[CodeScanner], const
 			AMX_Write(DisasmGetCurIp(dctx) + 4, endaddrCOD);
 		}
 	}
+	// Save this end address for when we detect inline function destructor calls.  This way we don't
+	// destruct the inline within itself.
 	YSI_g_sInlineEndPoint = endaddrDAT;
 	endaddrDAT += AMX_HEADER_COD;
-	// Now at the end address, write the cleanup and return code.
-	if (data[E_INLINE_DATA_STACK])
-	{
-		AMX_Write(endaddrDAT, _:RelocateOpcode(OP_STACK));
-		AMX_Write(endaddrDAT + 4, data[E_INLINE_DATA_STACK]);
-	}
-	else
-	{
-		AMX_Write(endaddrDAT, nop);
-		AMX_Write(endaddrDAT + 4, nop);
-	}
-	AMX_Write(endaddrDAT + 8, _:RelocateOpcode(OP_ZERO_PRI));
-	AMX_Write(endaddrDAT + 12, _:RelocateOpcode(OP_RETN));
+
 	// Add the current inline to the linked list of in-scope inlines.  Also push
 	// the inline address and current frame data.
 	@emit PUSH             ref(YSI_g_sInlineLinkedList)
 	@emit PUSH.C           data[E_INLINE_DATA_NAME]
 	@emit ADDR.alt         -data[E_INLINE_DATA_LOCALS]
 	@emit STOR.alt         ref(YSI_g_sInlineLinkedList)
-	// Jump past the whole inline code.  Also remove trailing stack codes that
-	// would only remove our local data.
-	dctx[DisasmContext_end_ip] += 8;
-	if (DisasmNext(dctx) != DISASM_DONE && DisasmGetOpcode(dctx) == OP_STACK)
+	
+	// Size of inline parameters.
+	startaddr = data[E_INLINE_DATA_STACK] - data[E_INLINE_DATA_LOCALS];
+	if (startaddr)
 	{
-		// Remove any stack cleanup that only deals with the inline function's
-		// parameters.
-		startaddr = DisasmGetOperand(dctx) - data[E_INLINE_DATA_STACK] + data[E_INLINE_DATA_LOCALS];
-		if (startaddr == 0)
+		// Look for the next `stack`.
+		dctx[DisasmContext_end_ip] = 0;
+		while (DisasmNext(dctx) != DISASM_DONE && DisasmGetOpcode(dctx) != OP_STACK)
 		{
-			AMX_Write(endaddrDAT + 16, nop);
-			AMX_Write(endaddrDAT + 20, nop);
-			@emit JUMP             endaddrCOD + 24
+			AMX_Write(endaddrDAT, _:DisasmGetOpcode(dctx));
+			endaddrDAT += 4;
+			for (startaddr = 0; startaddr < DisasmGetNumOperands(dctx); ++startaddr)
+			{
+				AMX_Write(endaddrDAT, _:DisasmGetOperand(dctx, startaddr));
+				endaddrDAT += 4;
+			}
 		}
-		else
-		{
-			// Less cleanup required, but still some.
-			AMX_Write(endaddrDAT + 20, startaddr);
-			@emit JUMP             endaddrCOD + 16
-		}
+		//startaddr = DisasmGetCurIp(dctx) - 16;
+		//rawMemcpy(endaddrDAT, endaddrDAT + 16, startaddr - endaddrDAT);
+		@emit JUMP             endaddrDAT - AMX_HEADER_COD + YSI_g_sJumpOffset + 24
+		AMX_Write(endaddrDAT     , _:RelocateOpcode(OP_STACK));
+		AMX_Write(endaddrDAT + 4 , data[E_INLINE_DATA_STACK]);
+		AMX_Write(endaddrDAT + 8 , _:RelocateOpcode(OP_ZERO_PRI));
+		AMX_Write(endaddrDAT + 12, _:RelocateOpcode(OP_RETN));
+		//AMX_Write(endaddrDAT + 16, nop);
+		//AMX_Write(endaddrDAT + 20, nop);
+	}
+	else if (data[E_INLINE_DATA_STACK])
+	{
+		// No parameters, but some stack.
+		@emit JUMP             endaddrCOD + 16
+		AMX_Write(endaddrDAT     , _:RelocateOpcode(OP_STACK));
+		AMX_Write(endaddrDAT + 4 , data[E_INLINE_DATA_STACK]);
+		AMX_Write(endaddrDAT + 8 , _:RelocateOpcode(OP_ZERO_PRI));
+		AMX_Write(endaddrDAT + 12, _:RelocateOpcode(OP_RETN));
 	}
 	else
 	{
+		// No cleanup, no stack correction, no need to satisfy codescan.
 		@emit JUMP             endaddrCOD + 16
+		AMX_Write(endaddrDAT     , _:RelocateOpcode(OP_ZERO_PRI));
+		AMX_Write(endaddrDAT + 4 , _:RelocateOpcode(OP_RETN));
+		AMX_Write(endaddrDAT + 8 , nop);
+		AMX_Write(endaddrDAT + 12, nop);
 	}
 }
 
