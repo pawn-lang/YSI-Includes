@@ -77,6 +77,10 @@ Optional plugins:
 
 #include "..\y_utils"
 
+CHAIN_HOOK(Profiling)
+#undef CHAIN_ORDER
+#define CHAIN_ORDER CHAIN_NEXT(Profiling)
+
 #if defined YSI_PROFILINGS
 	#if defined INCLUDE_PROFILINGS
 		#error Incompatible profiling options (YSI_PROFILINGS + INCLUDE_PROFILINGS)
@@ -228,22 +232,16 @@ forward OnProfilingsComplete(profilings, fails);
 			// crashdetect plugin to function, but not to compile and run.
 			P:P("Error: Runtime error detected");
 		}
-		#if defined Profiling_OnRuntimeError
-			return Profiling_OnRuntimeError(code, suppress);
-		#else
-			return 1;
-		#endif
+		return Profiling_OnRuntimeError(code, suppress);
 	}
 	
+	CHAIN_FORWARD:Profiling_OnRuntimeError(code, &bool:suppress) = 1;
 	#if defined _ALS_OnRuntimeError
 		#undef OnRuntimeError
 	#else
 		#define _ALS_OnRuntimeError
 	#endif
-	#define OnRuntimeError Profiling_OnRuntimeError
-	#if defined Profiling_OnRuntimeError
-		forward Profiling_OnRuntimeError(code, &bool:suppress);
-	#endif
+	#define OnRuntimeError(%0) CHAIN_PUBLIC:Profiling_OnRuntimeError(%0)
 #endif
 
 stock Profiling_RunAll()

@@ -87,6 +87,10 @@ forward bool:_Testing_End();
 #tryinclude "amx_memory"
 #tryinclude <amx_memory>
 
+CHAIN_HOOK(Testing)
+#undef CHAIN_ORDER
+#define CHAIN_ORDER CHAIN_NEXT(Testing)
+
 #if !defined AMX_MEMORY_INC
 	#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
 #endif
@@ -718,22 +722,16 @@ Testing_Next_retry:
 			// crashdetect plugin to function, but not to compile and run.
 			Testing_Test(false, "Runtime error detected");
 		}
-		#if defined Testing_OnRuntimeError
-			return Testing_OnRuntimeError(code, suppress);
-		#else
-			return 1;
-		#endif
+		return Testing_OnRuntimeError(code, suppress);
 	}
 	
+	CHAIN_FORWARD:Testing_OnRuntimeError(code, &bool:suppress) = 1;
 	#if defined _ALS_OnRuntimeError
 		#undef OnRuntimeError
 	#else
 		#define _ALS_OnRuntimeError
 	#endif
-	#define OnRuntimeError Testing_OnRuntimeError
-	#if defined Testing_OnRuntimeError
-		forward Testing_OnRuntimeError(code, &bool:suppress);
-	#endif
+	#define OnRuntimeError(%0) CHAIN_PUBLIC:Testing_OnRuntimeError(%0)
 	
 	public OnPlayerSpawn(playerid)
 	{

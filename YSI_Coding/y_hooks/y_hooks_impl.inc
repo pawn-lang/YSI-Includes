@@ -379,6 +379,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
 _Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, const name[], nlen)
 {
 	P:4("Hooks_GetPointerRewrite called");
+	P:5("Hooks_GetPointerRewrite: (%s), num: %d, hoks: %08x, %08x, %08x, %08x", name, num, AMX_Read(hooks[0]), AMX_Read(hooks[1]), AMX_Read(hooks[2]), AMX_Read(hooks[3]));
 	switch (num)
 	{
 		case 0:

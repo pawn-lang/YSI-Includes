@@ -590,20 +590,17 @@ public OnRuntimeError(code, &bool:suppress)
 {
 	// No inlines are in scope, because the scope just crashed.  Clear the list.
 	YSI_g_sInlineLinkedList = 0;
-	#if defined Inline_OnRuntimeError
-		Inline_OnRuntimeError(code, suppress);
-	#endif
+	Inline_OnRuntimeError(code, suppress);
 	return 1;
 }
 
+CHAIN_FORWARD:Inline_OnRuntimeError(code, &bool:suppress) = 1;
 #if defined _ALS_OnRuntimeError
 	#undef OnRuntimeError
 #else
 	#define _ALS_OnRuntimeError
 #endif
-#if defined Inline_OnRuntimeError
-	forward Inline_OnRuntimeError(code, &bool:suppress);
-#endif
+#define OnRuntimeError(%0) CHAIN_PUBLIC:Inline_OnRuntimeError(%0)
 
 public OnCodeInit()
 {

@@ -281,9 +281,7 @@ public OnRuntimeError(code, &bool:suppress)
 		P:0(YSI_g_scErrorMessage2);
 		P:0(YSI_g_scErrorMessage3);
 	}
-	#if defined Malloc_OnRuntimeError
-		Malloc_OnRuntimeError(code, suppress);
-	#endif
+	Malloc_OnRuntimeError(code, suppress);
 	if (code == 12)
 	{
 		// Make sure our heap is correctly set still...
@@ -291,15 +289,14 @@ public OnRuntimeError(code, &bool:suppress)
 	}
 	else return 0;
 }
+
+CHAIN_FORWARD:Malloc_OnRuntimeError(code, &bool:suppress) = 1;
 #if defined _ALS_OnRuntimeError
 	#undef OnRuntimeError
 #else
 	#define _ALS_OnRuntimeError
 #endif
-#define OnRuntimeError Malloc_OnRuntimeError
-#if defined Malloc_OnRuntimeError
-	forward Malloc_OnRuntimeError(code, &bool:suppress);
-#endif
+#define OnRuntimeError(%0) CHAIN_PUBLIC:Malloc_OnRuntimeError(%0)
 
 forward Malloc_SolidifyTimer();
 
