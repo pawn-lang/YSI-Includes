@@ -84,6 +84,10 @@ Optional plugins:
 	#define _Y_HOOKS_STATIC static
 #endif
 
+#if !defined MAX_Y_HOOKS
+	#define MAX_Y_HOOKS (128)
+#endif
+
 #include "y_hooks_macros"
 #include "y_hooks_impl"
 

@@ -544,7 +544,7 @@ _Y_HOOKS_STATIC stock Hooks_GetStubEntry(stub)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[128], idx, &namelen)
+_Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[], idx, &namelen, size = sizeof (hooks))
 {
 	P:4("Hooks_GetAllHooks called: %s %d", name, idx);
 	// Start from the very start - repeats the first item.
@@ -570,7 +570,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[128], idx, &namelen)
 			// replacements.
 			if (count) namelen += len; // The first hook was already counted.
 			// Increment and count how many hooks of this type we have.
-			if (++count == sizeof (hooks))
+			if (++count == size)
 			{
 				P:W("Hooks_GetAllHooks: Potential overflow.");
 				break;
@@ -619,7 +619,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
 	// means that multiple hooks of the same function have different names).
 	static
 		sName[64],
-		sHooks[128];
+		sHooks[MAX_Y_HOOKS];
 	// The above now becomes:
 	//   
 	//   OnPlayerConnect
