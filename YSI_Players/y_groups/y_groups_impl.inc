@@ -425,7 +425,7 @@ GLOBAL__ void:Group_Destroy(Group:group)
 	if (_Group_IsValid(group) && group != GROUP_GLOBAL)
 	{
 		GROUP_FIX(group);
-		broadcastfunc _Group_Destroy(_:group, Iter_TrueArray(GroupPlayers[_:group]), sizeof (Iter_TrueArray(GroupPlayers[])));
+		broadcastfunc _Group_Destroy(_:group, Iter_TrueArray(GroupPlayers[_:group]), Iter_TrueSize(GroupPlayers[]));
 		YSI_gGroupData[_:group][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS:0;
 		YSI_gGroupData[_:group][E_GROUP_DATA_HASH] = 0;
 		Iter_Clear(GroupPlayers[_:group]);
@@ -459,7 +459,7 @@ GLOBAL__ void:_Group_TryRemove()
 		MASTER_EMPTY<i>
 		{
 			//printf("removing i");
-			broadcastfunc _Group_Destroy(i, Iter_TrueArray(GroupPlayers[i]), sizeof (Iter_TrueArray(GroupPlayers[])));
+			broadcastfunc _Group_Destroy(i, Iter_TrueArray(GroupPlayers[i]), Iter_TrueSize(GroupPlayers[]));
 			YSI_gGroupData[i][E_GROUP_DATA_FLAGS] = e_GROUP_FLAGS:0;
 			YSI_gGroupData[i][E_GROUP_DATA_HASH] = 0;
 			Iter_Clear(GroupPlayers[i]);
