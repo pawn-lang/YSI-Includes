@@ -572,7 +572,13 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[], idx, &namelen, si
 			// Increment and count how many hooks of this type we have.
 			if (++count == size)
 			{
-				P:W("Hooks_GetAllHooks: Potential overflow.");
+				P:W("Hooks_GetAllHooks: Potential overflow." "\n" \
+"\n" \
+"	`MAX_Y_HOOKS` is currently `%d`, recompile with a higher value for more hooks of a single callback:" "\n" \
+"\n" \
+"	#define MAX_Y_HOOKS (%d)" "\n" \
+"\n" \
+, MAX_Y_HOOKS, MAX_Y_HOOKS * 2);
 				break;
 			}
 		}
