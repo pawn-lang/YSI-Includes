@@ -222,6 +222,8 @@ public OnRuntimeError(code, &bool:suppress)
 
 #define @yI_%0\32; @yI_
 #define @_yI%0\32; @_yI
+#define @Iy_%0\32; @Iy_
+#define @_Iy%0\32; @_Iy
 
 #define INIT_STRIP_TAGS__:%3:%0(%1);INIT_THE_TAG__<%2>%9(%9) %2%0(%1);%2%0(%1)
 #define INIT_STRIP_TAGS_2__:@yI_%3:%0(%1);INIT_STRIP_TAGS_2__:%9(%9){_YSI_ConstMod(%4,(%5));} @yI_%0(%1);@yI_%0(%1){_YSI_ConstMod(_:%4,_:(%3:I@=(%5)));}
@@ -229,6 +231,9 @@ public OnRuntimeError(code, &bool:suppress)
 
 #define PREINIT__%0(%1) INIT_STRIP_TAGS__:@yI_%0(%1);INIT_THE_TAG__<@yI_>%0(%1)
 #define POSTINIT__%0(%1) INIT_STRIP_TAGS__:@_yI%0(%1);INIT_THE_TAG__<@_yI>%0(%1)
+
+#define PREEXIT__%0(%1) INIT_STRIP_TAGS__:@Iy_%0(%1);INIT_THE_TAG__<@Iy_>%0(%1)
+#define POSTEXIT__%0(%1) INIT_STRIP_TAGS__:@_Iy%0(%1);INIT_THE_TAG__<@_Iy>%0(%1)
 
 #define FINAL__%0=%1; stock const %0;INIT_STRIP_TAGS_2__:@yI_%0();INIT_STRIP_TAGS_2__:@yI_%0(){_YSI_ConstMod(%0,(%1));}
 
@@ -362,7 +367,11 @@ public OnFilterScriptExit()
 {
 	ScriptInit_OnFilterScriptExit();
 	if (YSI_FILTERSCRIPT)
+	{
+		ScriptInit_PreExitFuncs_();
 		ScriptInit_OnScriptExit();
+		ScriptInit_PostExitFuncs_();
+	}
 	return 1;
 }
 
@@ -370,7 +379,11 @@ public OnGameModeExit()
 {
 	ScriptInit_OnGameModeExit();
 	if (!YSI_FILTERSCRIPT)
+	{
+		ScriptInit_PreExitFuncs_();
 		ScriptInit_OnScriptExit();
+		ScriptInit_PostExitFuncs_();
+	}
 	return 1;
 }
 

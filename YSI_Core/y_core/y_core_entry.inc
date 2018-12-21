@@ -200,6 +200,40 @@ ScriptInit_PostInitFuncs_()
 	}
 }
 
+ScriptInit_PreExitFuncs_()
+{
+	new
+		idx,
+		ptr;
+	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@Iy_>)))
+	{
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      36
+		#emit LCTRL      8
+		#emit PUSH.pri
+		#emit LOAD.S.pri ptr
+		#emit SCTRL      6
+	}
+}
+
+ScriptInit_PostExitFuncs_()
+{
+	new
+		idx,
+		ptr;
+	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@_Iy>)))
+	{
+		#emit PUSH.C     0
+		#emit LCTRL      6
+		#emit ADD.C      36
+		#emit LCTRL      8
+		#emit PUSH.pri
+		#emit LOAD.S.pri ptr
+		#emit SCTRL      6
+	}
+}
+
 #if __COMPILER_CONST_REF
 	#pragma warning push
 	#pragma warning disable 238

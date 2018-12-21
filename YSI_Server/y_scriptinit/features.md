@@ -66,7 +66,7 @@ hook OnScriptInit()
 
 ## `PREINIT__`
 
-This is a macro for more light-weight initialisations.  It is called just before `OnScriptInit`, and is used for minor variables and settings.  Note that eac `INIT__` function must have a unique name, unlike hooks*.
+This is a macro for more light-weight initialisations.  It is called just before `OnScriptInit`, and is used for minor variables and settings.  Note that each `INIT__` function must have a unique name, unlike hooks*.
 
 ```pawn
 PREINIT__ VehicleStreamer()
@@ -80,6 +80,21 @@ PREINIT__ VehicleStreamer()
 ## `POSTINIT__`
 
 This is identical to `PREINIT__`, but called after `OnScriptInit`.
+
+```pawn
+POSTINIT__ VehicleStreamer()
+{
+	printf("Vehicle Streamer initialised");
+}
+```
+
+## `PREEXIT__`
+
+This is identical to `PREINIT__`, but called before `OnScriptExit`.
+
+## `POSTEXIT__`
+
+This is identical to `PREINIT__`, but called after `OnScriptExit`.
 
 ```pawn
 POSTINIT__ VehicleStreamer()
@@ -110,10 +125,10 @@ main()
 
 This is also usable as `final` (without `YSI_NO_KEYWORD_final`).
 
-There is one problem with this currently.  You can set tags on the variables, but the tag of the value is not checked:
+Tags are also checked:
 
 ```pawn
-FINAL__ Float:gMaxPlayers = GetMaxPlayers(); // No tag mismatch warning.
+FINAL__ Float:gMaxPlayers = GetMaxPlayers(); // Tag mismatch warning.
 ```
 
 ## `OnScriptExit`
