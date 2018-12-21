@@ -211,9 +211,44 @@ public OnCodeInit()
 	forward CGen_OnCodeInit();
 #endif
 
+forward CGen_OOM(ctx[AsmContext]);
+
+public CGen_OOM(ctx[AsmContext])
+{
+	switch (AsmGetError(ctx))
+	{
+	case ASM_ERROR_OPCODE:
+	{
+		P:E("Unknown opcode written to code generation (CGen) space.");
+	}
+	case ASM_ERROR_OPERAND:
+	{
+		P:E("Invalid operand written to code generation (CGen) space.");
+	}
+	case ASM_ERROR_SPACE:
+	{
+		static excess = 0;
+		// This is just an estimate of how much more space is required, assuming that each opcode
+		// has (on average) half a parameter.
+		excess += 6;
+		P:F("Out of code generation (CGen) space.  The current value of `CGEN_MEMORY` is `%d`, please recompile with a higher value (approximately %d).", CGEN_MEMORY, CGEN_MEMORY + excess);
+	}
+	case ASM_ERROR_LABEL_OVERFLOW:
+	{
+		P:F("Out of label space.  The current value of `ASM_MAX_LABELS` is `%d`, please recompile with a higher value.", ASM_MAX_LABELS);
+	}
+	case ASM_ERROR_LABEL_DUPLICATE:
+	{
+		P:F("Duplicate label in code generation.");
+	}
+	}
+	AsmClearError(ctx);
+}
+
 stock CGen_UseCodeSpace(ctx[AsmContext])
 {
 	AsmInitPtr(ctx, YSI_g_sCodeSpace, YSI_g_sCodeEnd - YSI_g_sCodeSpace);
+	AsmSetErrorHandlerName(ctx, "CGen_OOM");
 }
 
 stock CGen_GetCodeSpace()
