@@ -1833,16 +1833,21 @@ static stock Inline_DoRetnGen(ctx[AsmContext], const scanner[CodeScanner], const
 				AMX_Write(endaddrDAT, _:DisasmGetOperand(dctx, startaddr));
 				endaddrDAT += 4;
 			}
+			startaddr = 0;
 		}
-		//startaddr = DisasmGetCurIp(dctx) - 16;
-		//rawMemcpy(endaddrDAT, endaddrDAT + 16, startaddr - endaddrDAT);
 		@emit JUMP             endaddrDAT - AMX_HEADER_COD + YSI_g_sJumpOffset + 24
 		AMX_Write(endaddrDAT     , _:RelocateOpcode(OP_STACK));
 		AMX_Write(endaddrDAT + 4 , data[E_INLINE_DATA_STACK]);
 		AMX_Write(endaddrDAT + 8 , _:RelocateOpcode(OP_ZERO_PRI));
 		AMX_Write(endaddrDAT + 12, _:RelocateOpcode(OP_RETN));
-		//AMX_Write(endaddrDAT + 16, nop);
-		//AMX_Write(endaddrDAT + 20, nop);
+		if (!startaddr)
+		{
+			// The write extended beyond the limit of where codescan was up to.  Adjust the stack
+			// back down again by the size of the closure data (i.e. the data outside the current
+			// inline).  This is AFTER the return, since we don't actually want the code to run,
+			// just correct codescan's view of the world.
+			AMX_Write(DisasmGetCurIp(dctx) + 4, -data[E_INLINE_DATA_LOCALS]);
+		}
 	}
 	else if (data[E_INLINE_DATA_STACK])
 	{
