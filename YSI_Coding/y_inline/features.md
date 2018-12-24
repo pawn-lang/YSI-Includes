@@ -344,6 +344,44 @@ PrintLater(string:str[])
 
 The old y_inline API - `Callback_Get`, `Callback_Call`, `E_CALLBACK_DATA` etc. still work, but will now give deprecation and tag mismatch warnings.  The former is for the functions - all but `Callback_Restore` have been replaced by *indirection.inc*, the latter is for passing inlines since the old version didn't check that the given functions had the correct types.  Also, because `Callback_Get` is no longer required, inlines can be used anywhere in the callee stack, not just the first called function.
 
+## Destructors
+
+Be very careful when using tags with destructors around inline functions.  Consider the following code:
+
+```pawn
+operator~(Tag:data[], len)
+{
+	// Destructor code goes here.
+}
+
+main()
+{
+	new Tag:a;
+	
+	inline Inline()
+	{
+	}
+	DoCall(using inline Inline);
+}
+```
+
+The destructor for `a` will be called when `main` ends, but won't be called when `Inline` ends, despite the fact that it is in scope via the closure.  On the other hand, an explict return will cause the destructor to be called:
+
+```pawn
+main()
+{
+	new Tag:a;
+	
+	inline Inline()
+	{
+		return; // Destructor called.
+	}
+	DoCall(using inline Inline);
+}
+```
+
+Variables with destructors declared within the inline - either as parameters or locals, are always handled correctly.  It is only tagged destructors in the closure that are ambiguous (the correct behaviour isn't even obvious - should the destructor be called twice (or more, if the inline is called many times) on a single variable?)
+
 # Examples
 
 ## Login Dialog
