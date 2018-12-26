@@ -797,7 +797,7 @@ GLOBAL__ Group:_Group_SetBalancedInternal(p,const Group:gs[],c)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Group:Group_SetBalancedArray(p, Group:gs[], c = sizeof (gs))
+stock Group:Group_SetBalancedArray(p, const Group:gs[], c = sizeof (gs))
 {
 	if (!(0 <= p < MAX_PLAYERS)) return INVALID_GROUP;
 	return _Group_SetBalancedInternal(p, gs, c);
@@ -1105,9 +1105,9 @@ remotefunc static void:_Group_CreateChain(Group:g)
 	GROUP_CHAIN?<YSI_g_sNextAddFunc>(g);
 }
 
-FOREIGN__ Group:_Group_Create(string:name[]);
+FOREIGN__ Group:_Group_Create(const string:name[]);
 
-GLOBAL__ Group:_Group_Create(string:name[])
+GLOBAL__ Group:_Group_Create(const string:name[])
 {
 	P:2("Group:Group_Create called: \"%s\"", name);
 	P:2("Group_Create called in %d", Master_ID());
@@ -1153,7 +1153,7 @@ GLOBAL__ Group:_Group_Create(string:name[])
 	return GROUP_MANGLE(i);
 }
 
-stock Group:Group_Create(string:name[] = "")
+stock Group:Group_Create(const string:name[] = "")
 {
 	if (name[0])
 	{
