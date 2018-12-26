@@ -510,6 +510,7 @@ stock Iter_Remove_InternalD(&count, array[], start, size, value)
 
 stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
 {
+	last = size;
 	if (0 <= value < size++ && array[value] > value)
 	{
 		// This version has reverse iterators, which need maintaining, and can
@@ -526,11 +527,11 @@ stock Iter_SafeRemove_InternalC(&count, array[], size, value, &last)
 
 stock Iter_SafeRemove_InternalD(&count, array[], start, size, value, &last)
 {
+	last = start;
 	if (0 <= value < size && start >= size && count && array[value] > value)
 	{
 		// This version doesn't have reverse iterators, so we need to
 		// manually loop through the list.
-		last = start;
 		while ((start = array[last]) < size)
 		{
 			if (start == value)
