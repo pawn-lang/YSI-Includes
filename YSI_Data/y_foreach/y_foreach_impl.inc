@@ -485,16 +485,12 @@ stock Iter_Index_Internal(count, const array[], start, size, index, bool:wrap = 
 
 stock Iter_Remove_InternalC(&count, array[], size, value)
 {
-	new
-		last;
-	return Iter_SafeRemove_InternalC(count, array, size, value, last);
+	return Iter_SafeRemove_InternalC(count, array, size, value, value);
 }
 
 stock Iter_Remove_InternalD(&count, array[], start, size, value)
 {
-	new
-		last;
-	return Iter_SafeRemove_InternalD(count, array, start, size, value, last);
+	return Iter_SafeRemove_InternalD(count, array, start, size, value, value);
 }
 
 /*-------------------------------------------------------------------------*//**
