@@ -2,6 +2,23 @@
 
 Provides the `Profile:` macro for defining functions to profile and automatically running them when compiled with `RUN_PROFILINGS` defined.
 
+Profiled code is repeated multiple times to get accurate results, AND the profiling is repeated multiple times to sum and average the results.  The code is equivalent to:
+
+```pawn
+for (new i = 0; i != runs; ++i)
+{
+	start = GetTickCount();
+	for (new i = 0; i != repeats; ++i)
+	{
+		USER_CODE_HERE();
+	}
+	end = GetTickCount();
+	result[i] = end - start;
+}
+```
+
+This execution model, and the difference between `runs` and `repeats` is important for the rest of the documnetation.
+
 ## YSI
 
 For general YSI information, see the following links:

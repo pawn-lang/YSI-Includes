@@ -124,15 +124,25 @@ CHAIN_HOOK(Profiling)
 #endif
 
 #if defined RUN_PROFILINGS
-	#define ProfileInit:%0(%1) @yP_%0();@yP_%0()
-	#define Profile:%0(%1) __TZ:@y_P%0();__TZ:@y_P%0(%1)RUN_TIMING(#%0)y_P@%0();static y_P@%0()
-	#define ProfileClose:%0(%1) @P_y%0();@P_y%0()
+	#define PROFILE_INIT__%0(%1) @yP_%0();@yP_%0()
+	#define PROFILE__%0(%1) __TZ:@y_P%0();__TZ:@y_P%0(%1)RUN_TIMING(#%0)y_P@%0();static y_P@%0()
+	#define PROFILE_CLOSE__%0(%1) @P_y%0();@P_y%0()
 	#define __TZ:%0[%2](%1);%0[%2](%1)RUN_TIMING(%3)%4[%5](%6);%9[%5](%6) %0_%2(%1);%0_%2(%1)RUN_TIMING(%3,%2)%4_%2(%6);static %4_%2(%6)
 #else
-	#define ProfileInit:%0(%1) static stock yP_@%0()
-	#define Profile:%0(%1) static stock __TZ:y_P@%0()
-	#define ProfileClose:%0(%1) static stock P_y@%0()
+	#define PROFILE_INIT__%0(%1) static stock yP_@%0()
+	#define PROFILE__%0(%1) static stock __TZ:y_P@%0()
+	#define PROFILE_CLOSE__%0(%1) static stock P_y@%0()
 	#define __TZ:%0[%2](%1) __TZ:%0_%2(%1)
+#endif
+
+#if YSI_KEYWORD(ProfileInit)
+	#define ProfileInit:%1() PROFILE_INIT__ %1()
+#endif
+#if YSI_KEYWORD(Profile)
+	#define Profile:%1() PROFILE__ %1()
+#endif
+#if YSI_KEYWORD(ProfileClose)
+	#define ProfileClose:%1() PROFILE_CLOSE__ %1()
 #endif
 
 #define @yP_%0\32; @yP_
@@ -200,45 +210,16 @@ forward OnProfilingsComplete(profilings, fails);
 
 #if defined RUN_PROFILINGS
 	#if defined _AUTO_RUN_PROFILINGS
-		#if defined FILTERSCRIPT
-			// Hook main in gamemodes.
-			public OnFilterScriptInit()
-			{
-				#if defined Profiling_OnFilterScriptInit
-					Profiling_OnFilterScriptInit();
-				#endif
-				Profiling_RunAll();
-			}
-			
-			#if defined _ALS_OnFilterScriptInit
-				#undef OnFilterScriptInit
-			#else
-				#define _ALS_OnFilterScriptInit
-			#endif
-			#define OnFilterScriptInit Profiling_OnFilterScriptInit
-			#if defined Profiling_OnFilterScriptInit
-				forward Profiling_OnFilterScriptInit();
-			#endif
-		#else
-			// Hook main in gamemodes.
-			main()
-			{
-				#if defined Profiling_main
-					Profiling_main();
-				#endif
-				Profiling_RunAll();
-			}
-			
-			#if defined _ALS_main
-				#undef main
-			#else
-				#define _ALS_main
-			#endif
-			#define main forward Profiling_main(); public Profiling_main
-		#endif
+		public OnScriptInit()
+		{
+			Profiling_RunAll();
+			return Profiling_OnScriptInit();
+		}
+		
+		CHAIN_FORWARD:Profiling_OnScriptInit() = 1;
+		#undef OnScriptInit
+		#define OnScriptInit(%0) CHAIN_PUBLIC:Profiling_OnScriptInit(%0)
 	#endif
-	
-	forward OnRuntimeError(code, &bool:suppress);
 	
 	public OnRuntimeError(code, &bool:suppress)
 	{

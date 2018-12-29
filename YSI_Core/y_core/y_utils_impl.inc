@@ -150,17 +150,89 @@ stock __TU(t, iters)
 	return ret;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">The name of the profile.</param>
+ * <param name="timings">The raw profiling results.</param>
+ * <param name="iters">The number of iterations per run.</param>
+ * <param name="size">The number of repeats.</param>
+ * <remarks>
+ *  "WTF" here stands for "Write To File".  The output looks like:
+ *  
+ *  <code>
+ *      timestamp,runs,repeats,results (ms)
+ *      1546082820,10,1000000,122,121,121,120,121,121,121,119,119,121
+ *      1546082822,10,1000000,123,124,123,123,121,121,121,120,122,122
+ *  </code>
+ *  
+ *  The timestamp is the unix timestamp at which the line was WRITTEN, not the
+ *      time at which the profilings started or ended.
+ *  
+ *  "runs" is the number of times the whole profile was repeated.
+ *  
+ *  "repeats" is the number of times the code was run for each repeat.
+ *  
+ *  "results" are the total times for each repeat, in milliseconds.  The time
+ *      for an individual piece of code is <c>result[n] / repeats</c>.  This is
+ *      equivalent to:
+ *  
+ *  <code>
+ *      for (new i = 0; i != runs; ++i)
+ *      {
+ *          start = GetTickCount();
+ *          for (new i = 0; i != repeats; ++i)
+ *          {
+ *              USER_CODE_HERE();
+ *          }
+ *          end = GetTickCount();
+ *          WriteToFile(end - start);
+ *      }
+ *  </code>
+ *  
+ *  The repeats help to time very short pieces of code.  The runs help to
+ *  average.  The console reports average results (mean, mode, median, range).
+ *  Thus the even more accurate result for a single iteration would be:
+ *  <c>sum(results) / (runs * repeats)</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+// "Write To File", not another "WTF" meaning...
+stock y_profile_WTF(const name[], const timings[], iters, size = sizeof (timings))
+{
+	new File:fhnd;
+	if (fexist(name))
+	{
+		// File already exists.  Append.
+		fhnd = fopen(name, io_append);
+	}
+	else if ((fhnd = fopen(name, io_write)))
+	{
+		// File doesn't exist.  Create it and write the headers.
+		fwrite(fhnd, "timestamp,runs,repeats,results (ms)\n");
+	}
+	if (!fhnd)
+	{
+		P:W("Could not write to profiling results file \"%s\".", name);
+		return;
+	}
+	va_fprintf(fhnd, "%d,%d,%d", gettime(), size, iters);
+	for (new i = 0; i != size; ++i)
+	{
+		va_fprintf(fhnd, ",%d", timings[i]);
+	}
+	fwrite(fhnd, "\n");
+	fclose(fhnd);
+}
+
+#if !defined PROFILINGS_FILE
+	#define y_profile_WTF(%0)
+#endif
+
 #define RUN_TIMING(%0) \
 	for(new __TA[TIMING_ITERATIONS],__TC=sizeof __TA,__TE=_:__TX:__TY|||%0|||,__TS=printf("Timing \"%s\"...",%0);__TC; \
+		y_profile_WTF(PROFILINGS_FILE(%0),__TA,__TE), \
 		printf("\t  Mean = %s\n\t  Mode = %s\n\tMedian = %s\n\t Range = %s", \
 			__TU(Mean(__TA),__TE),__TU(Mode(__TA),__TE),__TU(Median(__TA),__TE),__TU(Range(__TA),__TE))) \
 	for(;(__TS=GetTickCount(),__TC);__TA[--__TC]=GetTickCount()-__TS) \
-	for(new __TI;__TI!=__TE;++__TI)
-
-#define CSV_TIMING(%0) \
-	for(new __TA[TIMING_ITERATIONS],__TC=sizeof __TA,__TE=_:__TX:__TY|||%0|||,__TS=printf("Timing \"%s\"...",%0),File:__TF=fopen(%0".csv",io_append);__TF&&__TC;\
-		va_fprintf(__TF,"%d,%d,%s,%s,%s,%s\n",gettime(),__TE,__TU(Mean(__TA),__TE),__TU(Mode(__TA),__TE),__TU(Median(__TA),__TE),__TU(Range(__TA),__TE)),fclose(__TF))\
-	for(;(__TS=GetTickCount(),__TC);__TA[--__TC]=GetTickCount()-__TS)\
 	for(new __TI;__TI!=__TE;++__TI)
 
 #if defined _samp_included

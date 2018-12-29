@@ -215,31 +215,31 @@ stock
 #endif
 
 #if YSI_KEYWORD(TestInit)
-	 #define TestInit:%1() TEST_INIT__ %1()
+	#define TestInit:%1() TEST_INIT__ %1()
 #endif
 #if YSI_KEYWORD(Test)
-	 #define Test:%1() TEST__ %1()
+	#define Test:%1() TEST__ %1()
 #endif
 #if YSI_KEYWORD(TestClose)
-	 #define TestClose:%1() TEST_CLOSE__ %1()
+	#define TestClose:%1() TEST_CLOSE__ %1()
 #endif
 #if YSI_KEYWORD(TestBeforeEach)
-	 #define TestBeforeEach:%1() TEST_BEFORE_EACH__ %1()
+	#define TestBeforeEach:%1() TEST_BEFORE_EACH__ %1()
 #endif
 #if YSI_KEYWORD(TestAfterEach)
-	 #define TestAfterEach:%1() TEST_AFTER_EACH__ %1()
+	#define TestAfterEach:%1() TEST_AFTER_EACH__ %1()
 #endif
 #if YSI_KEYWORD(PTestInit)
-	 #define PTestInit:%1(%2) PTEST_INIT__ %1(%2)
+	#define PTestInit:%1(%2) PTEST_INIT__ %1(%2)
 #endif
 #if YSI_KEYWORD(PTest)
-	 #define PTest:%1(%2) PTEST__ %1(%2)
+	#define PTest:%1(%2) PTEST__ %1(%2)
 #endif
 #if YSI_KEYWORD(PTestClose)
-	 #define PTestClose:%1(%2) PTEST_CLOSE__ %1(%2)
+	#define PTestClose:%1(%2) PTEST_CLOSE__ %1(%2)
 #endif
 #if YSI_KEYWORD(TestCompile)
-	 #define TestCompile:%1() TEST_COMPILE__ %1()
+	#define TestCompile:%1() TEST_COMPILE__ %1()
 #endif
 
 #define @y_Q%0\32; @y_Q
