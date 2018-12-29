@@ -19,6 +19,8 @@ for (new i = 0; i != runs; ++i)
 
 This execution model, and the difference between `runs` and `repeats` is important for the rest of the documnetation.
 
+PROFILING IS HARD!  Read the features for more details.
+
 ## YSI
 
 For general YSI information, see the following links:
