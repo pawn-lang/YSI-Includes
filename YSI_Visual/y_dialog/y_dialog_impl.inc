@@ -90,6 +90,7 @@ remotefunc void:Dialog_Set(playerid, dialogid)
 	if (YSI_g_sPlayerMaster[playerid])
 	{
 		Indirect_Release(YSI_g_sPlayerCallback[playerid]),
+		YSI_g_sPlayerCallback[playerid] = Func:0<iiiis>,
 		YSI_g_sPlayerMaster[playerid] = false;
 	}
 }
