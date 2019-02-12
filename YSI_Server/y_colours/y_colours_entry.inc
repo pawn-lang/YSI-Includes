@@ -173,7 +173,7 @@ stock SetColourHash(hash, color)
 }
 
 #define SetColorHash SetColourHash
-remotefunc void:_SetColourHash(hash, color)
+remotefunc static stock void:_SetColourHash(hash, color)
 {
 	P:3("SetColourHash called: %i, %i", hash, color);
 	color &= 0xFFFFFF00;

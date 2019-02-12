@@ -1095,7 +1095,7 @@ state_in_continue_line:
 				}
 			}
 		}
-		case '\1' .. ' ': {} // Whitespace, skip it.
+		case '\1' .. '\9', '\11', '\12', '\14' .. ' ': {} // Whitespace, skip it.
 		default: end = pos;  // Characters, save this position.
 	}
 state_in_tag:
