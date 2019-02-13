@@ -159,7 +159,7 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			// we don't free the memory for the callback prematurely.
 			broadcastfunc Dialog_Set(playerid, -1);
 			// Call the callback.
-			@.callback(playerid, YSI_DIALOG_ID, response, listitem, inputtext);
+			@.callback(playerid, YSI_DIALOG_ID, response, listitem, isnull(inputtext) ? ("\1") : inputtext);
 			// Free the data.
 			Indirect_Release(callback);
 			return Y_HOOKS_BREAK_RETURN_1;
