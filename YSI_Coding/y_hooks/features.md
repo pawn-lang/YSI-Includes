@@ -93,15 +93,9 @@ DEFINE_HOOK_REPLACEMENT__(DynamicCP , DynamicCP);
 
 That last one isn't pointless, it tricks the system in to NOT replacing the `CP` there with `Checkpoint` from the earlier defined replacement.  This is because `DynamicCP` is the correct full name in the streamer plugin.
 
+## Return Values
 
+While none of the examples above had returns, this was merely a simplification for those examples.  As with normal callbacks, hooks can return either `0` or `1`.  The exact meaning of the return depends on the callback in question.  For most callbacks the default return is 1, for `OnPlayerCommandText` and other text callbacks it is `0`.  The final value returned from an overall callback is the return from the final hook or public in the chain.
 
-
-
-
-
-
-
-
-
-
+This can, however, be overridden.  If a hook returns `~0` or `~1` instead, the chain is instantly ended and the corresponding value returned with no further hooks being called.  So `~0` is "halt processing and return 0 immediately", `~1` is "halt processing and return 1 immediately".  There are also very long macro names for these returns, but they are hard to remember, hard to type, and so now pointless (they used to be useful, until it was realised that `~0` and `~1` were far clearer).
 
