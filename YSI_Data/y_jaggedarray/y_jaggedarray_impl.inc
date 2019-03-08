@@ -390,6 +390,7 @@ stock Jagged_UnsafeResizeOne(array[][], slot, newSize)
 	// End.
 	#emit POP.pri
 	#emit RETN
+	__COMPILER_NAKED
 }
 
 //#define Jagged_UnsafeResizeOne(%0,%1) _Jagged_UnsafeResizeOne(_Jagged(%0),%1)
