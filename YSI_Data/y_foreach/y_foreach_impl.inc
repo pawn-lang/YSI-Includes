@@ -70,6 +70,77 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+static stock Iter_ResolveExtraParameters(excluded, array[], start)
+{
+	// This function takes almost no parameters, because it operates directly on
+	// the previous function's parameters.  It looks at all of the by-reference
+	// parameters (since they are always pass-by-reference with `...` sadly),
+	// resolves the address to instead have the value on the stack.  Then
+	// filters out all invalid values and duplicates.  Finally returns the
+	// number of valid exclusions (i.e. the number left on the stack).  Of
+	// course, since we need `RETN` to work correctly, all the parameters are
+	// still actually left on the stack, we just only use some of them and
+	// pretend the rest aren't gone.
+	new
+		numArgs,
+		end;
+	// y_hooks can mangle callback parameter counts, thus it redefines `numargs`
+	// to account for this and traverse the stack until it finds a valid value.
+	// However, because this internal function is never called directly from a
+	// callback, we don't need to worry about that here and can instead just use
+	// the previous function's parameter count directly.
+	#emit LOAD.S.pri   0   // Previous frame.
+	#emit ADD.C        8
+	#emit LOAD.I           // Previous numargs.
+	#emit MOVE.alt
+	#emit SHR.C.pri    2
+	#emit STOR.S.pri   numArgs
+	// Get the end of the last parameters.
+	#emit LOAD.S.pri   0
+	#emit ADD.C        12
+	#emit XCHG
+	// If we don't need `numArgs`, the lines above just become:
+//	#emit LOAD.S.alt   0
+//	#emit ADD.C        12
+	// And this all remains the same except for one line...
+	#emit ADD
+	#emit STOR.S.pri   end
+	// Get the start of the last parameters.
+	#emit LOAD.S.pri   excluded
+	#emit SHL.C.pri    2
+	#emit ADD
+	// ...This line.
+//	#emit ADD.C        12
+	#emit STOR.S.pri   excluded
+	if (excluded == end)
+	{
+		// Short-circuit the common-case where there are no exclusions.
+		return 0;
+	}
+	for (new rewrite = excluded, value; excluded != end; excluded += 4)
+	{
+		#emit LREF.S.pri   excluded
+		#emit LOAD.I
+		#emit STOR.S.pri   value
+		// First, check if this is valid.
+		if (0 <= value < start && array[value] > value)
+		{
+			// It does.  Optimise for the inner loop.  Do this by
+			// compressing valid values to the start of the list and storing
+			// the dereferenced versions instead of the addresses.
+			#emit LOAD.S.pri   value
+			#emit SREF.S.pri   rewrite
+			rewrite += 4;
+		}
+		else
+		{
+			// It does not.  Remove from the check.
+			--numArgs;
+		}
+	}
+	return 0;
+}
+
 /*
 
            db        88888888ba  88      ,ad8888ba,                       88             
@@ -196,22 +267,52 @@ Iter_Random_Internal_next_loop:
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
- * <param name="slots">Number of multi-iterator values.</param>
  * <remarks>
- *  Returns a random unused value from an iterator.
+ *  Adds a random value to an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_RandomAdd_InternalC(&count, array[], start)
+stock Iter_RandomAdd_InternalC(&count, array[], start, ...)
 {
-	return Iter_Add_InternalC(count, array, start, Iter_RandomFree_InternalC(count, array, start));
+	return Iter_Add_InternalC(count, array, start, Iter_RandomFree_InternalC(count, array, start, ___(3)));
 }
 
-stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot)
+/*-------------------------------------------------------------------------*//**
+ * <param name="counts">Number of items in each iterator part.</param>
+ * <param name="array">iterator data.</param>
+ * <param name="size">Size of the iterator.</param>
+ * <param name="slots">Number of multi-iterator values.</param>
+ * <param name="start"></param>
+ * <param name="slot">Multi-iterator slot to add to.</param>
+ * <remarks>
+ *  Adds a random value to an iterator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 {
 	// This is subtly different to the "C" version - it operates on multi
 	// iterators, which have many counts, and thus we need to sum those first.
-	return Iter_Add_InternalD(counts[slot], array, start, size, Iter_RandomFree_InternalD(counts, array, size, slots));
+	new
+		count = 0;
+	while (slots--)
+		count += counts[slots];
+	//return Iter_RandomFree_InternalC(count, array, start, ___(4));
+	return Iter_Add_InternalD(counts[slot], array, start, size, Iter_RandomFree_InternalC(count, array, size, ___(6)));
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="count">Number of items in the iterator.</param>
+ * <param name="array">iterator data.</param>
+ * <param name="start">Size of the iterator.</param>
+ * <remarks>
+ *  Removes a random value from an iterator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Iter_RandomRemove_InternalC(&count, array[], start, ...)
+{
+	return Iter_Remove_InternalC(count, array, start, Iter_Random_Internal(count, array, start, ___(3)));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -220,33 +321,27 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot)
  * <param name="start">Size of the iterator.</param>
  * <param name="slots">Number of multi-iterator values.</param>
  * <remarks>
- *  Returns a random unused value from an iterator.
+ *  Removes a random value from an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_RandomRemove_InternalC(&count, array[], start)
-{
-	return Iter_Remove_InternalC(count, array, start, Iter_Random_Internal(count, array, start));
-}
-
-stock Iter_RandomRemove_InternalD(&count, array[], size, start)
+stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
 {
 	// This is subtly different to the "C" version - it operates on multi
 	// iterators, which have many counts, and thus we need to sum those first.
-	return Iter_Remove_InternalD(count, array, start, size, Iter_Random_Internal(count, array, start));
+	return Iter_Remove_InternalD(count, array, start, size, Iter_Random_Internal(count, array, start, ___(4)));
 }
 
 /*-------------------------------------------------------------------------*//**
  * <param name="count">Number of items in the iterator.</param>
  * <param name="array">iterator data.</param>
  * <param name="start">Size of the iterator.</param>
- * <param name="slots">Number of multi-iterator values.</param>
  * <remarks>
  *  Returns a random unused value from an iterator.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_RandomFree_InternalC(count, const array[], start)
+stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 {
 	count = start - count;
 	if (count)
@@ -263,7 +358,17 @@ stock Iter_RandomFree_InternalC(count, const array[], start)
 	return INVALID_ITERATOR_SLOT;
 }
 
-stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots)
+/*-------------------------------------------------------------------------*//**
+ * <param name="counts">Number of items in each iterator part.</param>
+ * <param name="array">iterator data.</param>
+ * <param name="start">Size of the iterator.</param>
+ * <param name="slots">Number of multi-iterator values.</param>
+ * <remarks>
+ *  Returns a random unused value from an iterator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots, ...)
 {
 	// This is subtly different to the "C" version - it operates on multi
 	// iterators, which have many counts, and thus we need to sum those first.
@@ -271,7 +376,7 @@ stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots)
 		count = 0;
 	while (slots--)
 		count += counts[slots];
-	return Iter_RandomFree_InternalC(count, array, start);
+	return Iter_RandomFree_InternalC(count, array, start, ___(4));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -279,11 +384,12 @@ stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots)
  * <param name="array">iterator data.</param>
  * <param name="size">Array start index.</param>
  * <remarks>
- *  Finds the first free slot in the iterator and add it.
+ *  Finds the first free slot in the iterator and add it.  Excepting requested
+ *  values.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_Alloc_InternalC(&count, array[], size)
+stock Iter_Alloc_InternalC(&count, array[], size, ...)
 {
 	for (new value = 0; value != size; ++value)
 	{
@@ -308,7 +414,7 @@ stock Iter_Alloc_InternalC(&count, array[], size)
 	return INVALID_ITERATOR_SLOT;
 }
 
-stock Iter_Alloc_InternalD(&count, array[], start, size)
+stock Iter_Alloc_InternalD(&count, array[], start, size, ...)
 {
 	if (start >= size)
 	{
@@ -342,7 +448,7 @@ stock Iter_Alloc_InternalD(&count, array[], start, size)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_Free_Internal(const array[], size)
+stock Iter_Free_Internal(const array[], size, ...)
 {
 	// I tried to rewrite this to use the internal structure of a linked list to
 	// find a free slot.  The logic being that if the next used slot in the list
@@ -376,7 +482,7 @@ stock Iter_Free_Internal(const array[], size)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_FreeMulti_Internal(const array[], trueSize, start)
+stock Iter_FreeMulti_Internal(const array[], trueSize, start, ...)
 {
     for (new i = 0; trueSize-- > start; ++i)
     {
