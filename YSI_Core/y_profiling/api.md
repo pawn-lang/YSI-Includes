@@ -4,7 +4,7 @@
 
 Declare a profiler function.
 
-## 'ProfileInit:`
+## `ProfileInit:`
 
 An optional initialisation function called before a profiling:
 
@@ -22,7 +22,7 @@ Profile:CodeToProfile()
 
 This can be used to set things up for the profiling, such as loading data.  HOWEVER, there is a HUGE warning - this function is only called ONCE, before ALL the profiling iterations are run.  It cannot be used to reset state between profiling repeats.  In fact, nothing can, so ensure the code being profiled is idempotent.  Even something like sorting an array can be problematic - if you sort the same array 1,000,000 times in-place, only the first run will actaully do anything; all subsequent runs may simply see an already sorted array and end early.  This can totally destroy results - bubbleosrt is an AWFUL sorting method in the general case (i.e. when data is not sorted), but it will end early for sorted data.  Quicksort is a MUCH better sorting method in the general case, but will try fully sort an already sorted array.  In this example 999,999 iterations will see a pre-sorted array and bubblesort will seem faster, even though it isn't.
 
-## 'ProfileClose:`
+## `ProfileClose:`
 
 An optional teardown function called after a profiling:
 
