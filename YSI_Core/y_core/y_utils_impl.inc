@@ -1931,3 +1931,28 @@ stock LevenshteinDistance(const a[], const b[])
 	}
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="n">The numeric parameter position to print.</param>
+ * <returns>
+ *  Prints a string passed as a vararg to the calling function.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock PrintArg(n)
+{
+	#emit LOAD.S.pri   n
+	#emit SHL.C.pri    2
+	#emit ADD.C        12
+	#emit LOAD.S.alt   0
+	#emit ADD
+	#emit LOAD.I
+	#emit PUSH.pri
+	#emit PUSH.C       4
+	#emit SYSREQ.C     print
+	#emit STACK        8
+	#emit RETN
+	__COMPILER_NAKED
+}
+
+#define printarg PrintArg
+
