@@ -1856,3 +1856,78 @@ stock memcmp(arr1[], arr2[], count)
 	return 0;
 }
 
+#define MAX_LEVENSHTEIN_STRING (32)
+
+static stock DoLevenshteinDistance(const a[], lenA, const b[], lenB)
+{
+	// "a" is the shorter string in this call.
+	new
+		// Can only compare strings up to this length.
+		matrix[MAX_LEVENSHTEIN_STRING + 1] = {0, 1, ...};
+	// Initial subsequence equal.
+	//if (!strcmp(a, b, false, lenA))
+	//	return diff;
+	for (new i = 0; i != lenB; ++i)
+	{
+		// Loop over the characters in the longer string, and use the matrix for the shorter string.
+		new
+			prev = matrix[0];
+		matrix[0] = i + 1;
+		for (new j = 0; j != lenA; ++j)
+		{
+			new
+				distance = min(
+					matrix[j + 1] + 1     , /* Insertion cost.    */ min(
+					matrix[j] + 1         , /* Deletion cost.     */
+					prev + _:(b[i] != a[j]) /* Substitution cost. */ )
+				);
+			prev = matrix[j + 1];
+			matrix[j + 1] = distance;
+		}
+	}
+	return matrix[lenA];
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="a">First string to compare.</param>
+ * <param name="b">Second string to compare.</param>
+ * <returns>
+ *  The levenshtein difference (0 if the same).
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock LevenshteinDistance(const a[], const b[])
+{
+	if (!strcmp(a, b))
+	{
+		// Same string.
+		return 0;
+	}
+	// If a string is empty, the other length is the distance.
+	new
+		lenA = strlen(a),
+		lenB = strlen(b);
+	if (!lenA)
+		return lenB;
+	if (!lenB)
+		return lenA;
+	if (lenA > lenB)
+	{
+		if (lenB > MAX_LEVENSHTEIN_STRING)
+		{
+			P:E("`LevenshteinDistance` can currenly only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
+			return 1;
+		}
+		return DoLevenshteinDistance(b, lenB, a, lenA);
+	}
+	else
+	{
+		if (lenA > MAX_LEVENSHTEIN_STRING)
+		{
+			P:E("`LevenshteinDistance` can currently only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
+			return 1;
+		}
+		return DoLevenshteinDistance(a, lenA, b, lenB);
+	}
+}
+
