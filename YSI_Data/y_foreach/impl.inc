@@ -246,7 +246,7 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_RandomFree_InternalC(count, array[], start)
+stock Iter_RandomFree_InternalC(count, const array[], start)
 {
 	count = start - count;
 	if (count)
