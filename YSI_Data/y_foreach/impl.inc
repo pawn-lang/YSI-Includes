@@ -263,7 +263,7 @@ stock Iter_RandomFree_InternalC(count, array[], start)
 	return INVALID_ITERATOR_SLOT;
 }
 
-stock Iter_RandomFree_InternalD(counts[], array[], start, slots)
+stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots)
 {
 	// This is subtly different to the "C" version - it operates on multi
 	// iterators, which have many counts, and thus we need to sum those first.
