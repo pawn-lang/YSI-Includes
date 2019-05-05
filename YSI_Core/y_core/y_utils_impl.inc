@@ -224,7 +224,7 @@ stock y_profile_WTF(const name[], const timings[], iters, size = sizeof (timings
 }
 
 #if !defined PROFILINGS_FILE
-	#define y_profile_WTF(%0)
+	#define y_profile_WTF(%0),
 #endif
 
 #define RUN_TIMING(%0) \
