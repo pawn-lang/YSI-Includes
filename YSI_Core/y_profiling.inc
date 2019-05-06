@@ -127,7 +127,7 @@ CHAIN_HOOK(Profiling)
 	#define PROFILE_INIT__%0(%1) @yP_%0();@yP_%0()
 	#define PROFILE__%0(%1) __TZ:@y_P%0();__TZ:@y_P%0(%1)RUN_TIMING(#%0)y_P@%0();static y_P@%0()
 	#define PROFILE_CLOSE__%0(%1) @P_y%0();@P_y%0()
-	#define __TZ:%0[%2](%1);%0[%2](%1)RUN_TIMING(%3)%4[%5](%6);%9[%5](%6) %0_%2(%1);%0_%2(%1)RUN_TIMING(%3,%2)%4_%2(%6);static %4_%2(%6)
+	#define __TZ:%0[%2](%1);%0[%2](%1)RUN_TIMING(%3)%4[%5](%6);%9[%5](%6) %0(%1);%0(%1)RUN_TIMING(%3,%2)%4(%6);static %4(%6)
 #else
 	#define PROFILE_INIT__%0(%1) static stock yP_@%0()
 	#define PROFILE__%0(%1) static stock __TZ:y_P@%0()
