@@ -105,6 +105,7 @@ Optional plugins:
 */
 
 #include "..\..\YSI_Core\y_utils"
+#include "..\..\YSI_Coding\y_va"
 
 // "y_iterate" is always higher than "foreach".
 #define _Y_ITERATE_LOCAL_VERSION        43

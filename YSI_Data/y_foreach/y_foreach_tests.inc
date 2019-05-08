@@ -3599,7 +3599,28 @@ TEST__ y_iter_huge()
 	ASSERT_EQ(Iter_Count(y_iter_huge), 50000);
 }
 
-TEST__ y_iter_random_exclusions()
+TEST__ y_iter_RandomRepeatExclusions()
+{
+	new
+		Iterator:rand<20>;
+	Iter_Add(rand, 5);
+	Iter_Add(rand, 6);
+	Iter_Add(rand, 7);
+	Iter_Add(rand, 11);
+	Iter_Add(rand, 13);
+	for (new i = 0; i < 100; i++)
+	{
+		ASSERT_EQ(Iter_Random(rand, 6, 11, 13, 11, 5, 11, 11, 13, 5), 7);
+	}
+	for (new i = 0; i < 100; i++)
+	{
+		new
+			val = Iter_Random(rand, 11, 13, 11, 5, 11, 11, 13, 5);
+		ASSERT(val == 6 || val == 7);
+	}
+}
+
+TEST__ y_iter_RandomExclusions()
 {
 	new
 		Iterator:rand<20>;

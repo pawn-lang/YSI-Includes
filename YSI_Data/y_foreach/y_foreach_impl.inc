@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-static stock Iter_ResolveExtraParameters(excluded, array[], start)
+static stock Iter_ResolveExtraParameters(excluded, const array[], start, bool:inArray)
 {
 	// This function takes almost no parameters, because it operates directly on
 	// the previous function's parameters.  It looks at all of the by-reference
@@ -83,62 +83,128 @@ static stock Iter_ResolveExtraParameters(excluded, array[], start)
 	// pretend the rest aren't gone.
 	new
 		numArgs,
-		end;
+		rewrite,
+		first,
+		last;
 	// y_hooks can mangle callback parameter counts, thus it redefines `numargs`
 	// to account for this and traverse the stack until it finds a valid value.
 	// However, because this internal function is never called directly from a
 	// callback, we don't need to worry about that here and can instead just use
 	// the previous function's parameter count directly.
 	#emit LOAD.S.pri   0   // Previous frame.
-	#emit ADD.C        8
-	#emit LOAD.I           // Previous numargs.
+	#emit ADD.C        12  // Previous parameter offset.
 	#emit MOVE.alt
-	#emit SHR.C.pri    2
-	#emit STOR.S.pri   numArgs
-	// Get the end of the last parameters.
-	#emit LOAD.S.pri   0
-	#emit ADD.C        12
-	#emit XCHG
-	// If we don't need `numArgs`, the lines above just become:
-//	#emit LOAD.S.alt   0
-//	#emit ADD.C        12
-	// And this all remains the same except for one line...
+	#emit ADD.C        0xFFFFFFFC // -4
+	#emit LOAD.I           // Previous numargs.
 	#emit ADD
-	#emit STOR.S.pri   end
+	#emit STOR.S.pri   last
 	// Get the start of the last parameters.
 	#emit LOAD.S.pri   excluded
 	#emit SHL.C.pri    2
 	#emit ADD
-	// ...This line.
-//	#emit ADD.C        12
-	#emit STOR.S.pri   excluded
-	if (excluded == end)
+	#emit STOR.S.pri   first
+	// Final numargs.
+	#emit LOAD.S.alt   last
+	#emit SUB.alt
+	#emit SHR.C.pri    2
+	#emit STOR.S.pri   numArgs
+	if (numArgs == 0)
 	{
 		// Short-circuit the common-case where there are no exclusions.
 		return 0;
 	}
-	for (new rewrite = excluded, value; excluded != end; excluded += 4)
+	#define value (_:inArray)
+	if (inArray)
 	{
-		#emit LREF.S.pri   excluded
-		#emit LOAD.I
-		#emit STOR.S.pri   value
-		// First, check if this is valid.
-		if (0 <= value < start && array[value] > value)
+		for (rewrite = excluded = first; excluded != last; excluded += 4)
 		{
-			// It does.  Optimise for the inner loop.  Do this by
-			// compressing valid values to the start of the list and storing
-			// the dereferenced versions instead of the addresses.
-			#emit LOAD.S.pri   value
-			#emit SREF.S.pri   rewrite
-			rewrite += 4;
-		}
-		else
-		{
-			// It does not.  Remove from the check.
-			--numArgs;
+			#emit LREF.S.pri   excluded
+			#emit LOAD.I
+			#emit STOR.S.pri   inArray
+			// First, check if this is valid and IN the array.
+			if (0 <= value < start && array[value] > value)
+			{
+				// It is.  Optimise for the inner loop.  Do this by compressing
+				// valid values to the start of the list and storing the
+				// dereferenced versions instead of the addresses.
+				#emit LOAD.S.pri   inArray
+				#emit SREF.S.pri   rewrite
+				rewrite += 4;
+			}
+			else
+			{
+				// It is not.  Remove from the check.
+				--numArgs;
+			}
 		}
 	}
-	return 0;
+	else
+	{
+		for (rewrite = excluded = first; excluded != last; excluded += 4)
+		{
+			#emit LREF.S.pri   excluded
+			#emit LOAD.I
+			#emit STOR.S.pri   inArray
+			// First, check if this is valid and NOT in the array.
+			if (0 <= value < start && array[value] <= value)
+			{
+				// It is.  Optimise for the inner loop.  Do this by compressing
+				// valid values to the start of the list and storing the
+				// dereferenced versions instead of the addresses.
+				#emit LOAD.S.pri   inArray
+				#emit SREF.S.pri   rewrite
+				rewrite += 4;
+			}
+			else
+			{
+				// It is not.  Remove from the check.
+				--numArgs;
+			}
+		}
+	}
+	// Need to filter out here.  Other code relies on the values here being
+	// unique.  Can thus also sort them with a custom insertion sort I guess.
+	if (numArgs)
+	{
+		for (last = rewrite, excluded = first; excluded != last; excluded += 4)
+		{
+			#emit LREF.S.pri   excluded
+			#emit STOR.S.pri   inArray
+			for (rewrite = first; rewrite != excluded; rewrite += 4)
+			{
+				#emit LREF.S.pri   rewrite
+				#emit STOR.S.pri   start
+				if (value < start)
+				{
+					// Insert here.
+					do
+					{
+						#emit LOAD.S.pri   inArray
+						#emit SREF.S.pri   rewrite
+						inArray = bool:start;
+						rewrite += 4;
+						#emit LREF.S.pri   rewrite
+						#emit STOR.S.pri   start
+					}
+					while (rewrite != excluded);
+					#emit LOAD.S.pri   inArray
+					#emit SREF.S.pri   rewrite
+					break;
+				}
+				else if (value == start)
+				{
+					// Invalidate this slot (remove duplicates).
+					#emit CONST.pri    0x7FFFFFFF
+					#emit SREF.S.pri   excluded
+					--numArgs;
+					break;
+				}
+				// Otherwise, keep going.
+			}
+		}
+	}
+	#undef value
+	return numArgs;
 }
 
 /*
@@ -178,76 +244,44 @@ static stock Iter_ResolveExtraParameters(excluded, array[], start)
 stock Iter_Random_Internal(count, const array[], start, ...)
 {
 	new
-		numArgs = (numargs() - 3);
+		numArgs = Iter_ResolveExtraParameters(3, array, start, true);
 	if (numArgs)
 	{
-		// Get the number of VALID exclusions.
+		if (count <= numArgs)
+		{
+			return INVALID_ITERATOR_SLOT;
+		}
 		new
-			end,
-			excluded;
-		// Get the end of the variable arguments.
+			excluded,
+			end;
+		// There are enough elements to search from after exclusions.
+		count = random(count - numArgs);
 		#emit ADDR.alt     24
-		#emit STOR.S.alt   excluded
 		#emit LOAD.S.pri   numArgs
 		#emit SHL.C.pri    2
 		#emit ADD
 		#emit STOR.S.pri   end
-		for (new rewrite = excluded, value; excluded != end; excluded += 4)
+		do
 		{
-			#emit LREF.S.pri   excluded
-			#emit LOAD.I
-			#emit STOR.S.pri   value
-			// First, check if this is valid.
-			if (0 <= value < start && array[value] > value)
-			{
-				// It does.  Optimise for the inner loop.  Do this by
-				// compressing valid values to the start of the list and storing
-				// the dereferenced versions instead of the addresses.
-				#emit LOAD.S.pri   value
-				#emit SREF.S.pri   rewrite
-				rewrite += 4;
-			}
-			else
-			{
-				// It does not.  Remove from the check.
-				--numArgs;
-			}
-		}
-		if (numArgs)
-		{
-			if (count <= numArgs)
-				return INVALID_ITERATOR_SLOT;
-			// There are enough elements to search from after exclusions.
-			count = random(count - numArgs);
-			#emit ADDR.alt     24
-			#emit LOAD.S.pri   numArgs
-			#emit SHL.C.pri    2
-			#emit ADD
-			#emit STOR.S.pri   end
-			do
-			{
 Iter_Random_Internal_next_loop:
-				// Load the start address.
-				#emit ADDR.pri     24
-				#emit STOR.S.pri   excluded
-				// Check if this is an excluded value.
-				start = array[start];
-				for ( ; excluded != end; excluded += 4)
-				{
-					#emit LREF.S.pri   excluded
-					#emit LOAD.S.alt   start
-					#emit JEQ          Iter_Random_Internal_next_loop
-					//#emit STOR.S.pri   value
-					//if (check == start)
-					//	goto Iter_Random_Internal_next_loop;
-				}
-				// The loop ended, all is good.
+			// Load the start address.
+			#emit ADDR.pri     24
+			#emit STOR.S.pri   excluded
+			// Check if this is an excluded value.
+			start = array[start];
+			for ( ; excluded != end; excluded += 4)
+			{
+				#emit LREF.S.pri   excluded
+				#emit LOAD.S.alt   start
+				#emit JEQ          Iter_Random_Internal_next_loop
+				//#emit STOR.S.pri   value
+				//if (check == start)
+				//	goto Iter_Random_Internal_next_loop;
 			}
-			while (count--);
-			return start;
+			// The loop ended, all is good.
 		}
-		// After removing invalid exclusions, there are none left.  Fall through
-		// to the default implementation.
+		while (count--);
+		return start;
 	}
 	if (count)
 	{
