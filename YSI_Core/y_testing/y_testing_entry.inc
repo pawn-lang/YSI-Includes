@@ -829,6 +829,11 @@ stock Testing_TestRedirect(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 	ASSERT(!strcmp(str, "%s %s", false, 5));
 }
 
+stock Testing_SurpressOneFail()
+{
+	--YSI_g_sFails;
+}
+
 TEST__ y_testing_2()
 {
 	new
@@ -848,7 +853,7 @@ TEST__ y_testing_2()
 	ASSERT(false);
 	ASSERT(f + 1 == YSI_g_sFails); // Not a mistake.  Run this test twice to
 	ASSERT(f + 1 == YSI_g_sFails); // ensure the first one didn't fail too.
-	--YSI_g_sFails; // Reduce the failure count to not fail the whole suite.
+	Testing_SurpressOneFail(); // Reduce the failure count.
 }
 
 TEST_INIT__ y_testing_1()
