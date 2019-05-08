@@ -125,16 +125,6 @@ stock Iter_Random_Internal(count, const array[], start, ...)
 	#emit STOR.S.pri   last
 	#emit SHR.C.alt    2
 	#emit STOR.S.alt   numArgs
-	// I came up with two ways of doing this, but they are both the same length.
-	//#emit LOAD.S.pri   8
-	//#emit ADDR.alt     12
-	//#emit ADD
-	//#emit STOR.S.pri   last
-	//#emit ADDR.alt     24
-	//#emit STOR.S.alt   first
-	//#emit SUB.alt
-	//#emit SHR.C.pri    2
-	//#emit STOR.S.pri   numArgs
 	// Short-circuit the common-case where there are no exclusions.
 	if (numArgs)
 	{
@@ -255,7 +245,6 @@ stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 		count = 0;
 	while (slots--)
 		count += counts[slots];
-	//return Iter_RandomFree_InternalC(count, array, start, ___(4));
 	return Iter_Add_InternalD(counts[slot], array, start, size, Iter_RandomFree_InternalC(count, array, size, ___(6)));
 }
 

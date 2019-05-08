@@ -3599,7 +3599,7 @@ TEST__ y_iter_yield7a()
 //	ASSERT_EQ(Iter_Count(y_iter_huge), 50000);
 //}
 
-TEST__ y_iter_RandomFreeExclusions()
+TEST__ y_iter_RandomFreeExclude()
 {
 	new
 		Iterator:rand<20>;
@@ -3616,7 +3616,22 @@ TEST__ y_iter_RandomFreeExclusions()
 	}
 }
 
-TEST__ y_iter_RandomRepeatExclusions()
+TEST__ y_iter_RandomAddExclude()
+{
+	new
+		Iterator:rand<20>;
+	for (new i = 0; i < 1000; i++)
+	{
+		new
+			val = Iter_RandomAdd(rand, 0, 19);
+		ASSERT(!Iter_Contains(rand, 0));
+		ASSERT(!Iter_Contains(rand, 19));
+		Iter_RandomRemove(rand, 0, 19, 20, 22);
+		ASSERT_EQ(Iter_Count(rand), 0);
+	}
+}
+
+TEST__ y_iter_RandomRepeatExclude()
 {
 	new
 		Iterator:rand<20>;
@@ -3637,7 +3652,7 @@ TEST__ y_iter_RandomRepeatExclusions()
 	}
 }
 
-TEST__ y_iter_RandomExclusions()
+TEST__ y_iter_RandomExclude()
 {
 	new
 		Iterator:rand<20>;

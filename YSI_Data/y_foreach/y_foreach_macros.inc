@@ -329,8 +329,10 @@ P:D(Iter_SafeRemove(Iterator:iter<>, value, &next));
 
 P:D(Iter_RandomAdd(Iterator:iter<>));
 #define Iter_RandomAdd _ITER<RandomAdd>
-#define Iter_RandomAdd_InternalA(%0,%1)    Iter_RandomAdd_InternalC(%0,_:%1,F@s(%1)-1)
-#define Iter_RandomAdd_InternalB(%0,%2,%1) Iter_RandomAdd_InternalD(%0,_:%1,F@s(%1)-F@s(%0),F@s(%0),F@s(%1)-1-(%2),%2)
+#define Iter_RandomAdd_InternalA(%0,%1)    Iter_RandomAdd_InternalC(%0,(_:%1),F@s(%1)-1)
+#define Iter_RandomAdd_InternalB(%0,%2,%1) Iter_RandomAdd_InternalD(%0,(_:%1),F@s(%1)-F@s(%0),F@s(%0),F@s(%1)-1-(%2),%2)
+#define Iter_RandomAdd_InternalC(%0,(_:%1,%2),F@s(%9)%3) Iter_RandomAdd_InternalC(%0,(_:%1),F@s(%1)%3,%2)
+#define Iter_RandomAdd_InternalD(%0,(_:%1,%2),F@s(%9)%3,F@s(%9)%4) Iter_RandomAdd_InternalD(%0,(_:%1),F@s(%1)%3,F@s(%1)%4,%2)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to remove a random slot from.</param>
@@ -344,8 +346,10 @@ P:D(Iter_RandomAdd(Iterator:iter<>));
 
 P:D(Iter_RandomRemove(Iterator:iter<>));
 #define Iter_RandomRemove _ITER<RandomRemove>
-#define Iter_RandomRemove_InternalA(%0,%1)    Iter_RandomRemove_InternalC(%0,_:%1,F@s(%1)-1)
-#define Iter_RandomRemove_InternalB(%0,%2,%1) Iter_RandomRemove_InternalD(%0[%2],_:%1,F@s(%1)-F@s(%0),F@s(%1)-1-(%2))
+#define Iter_RandomRemove_InternalA(%0,%1)    Iter_RandomRemove_InternalC(%0,(_:%1),F@s(%1)-1)
+#define Iter_RandomRemove_InternalB(%0,%2,%1) Iter_RandomRemove_InternalD(%0[%2],(_:%1),F@s(%1)-F@s(%0),F@s(%1)-1-(%2))
+#define Iter_RandomRemove_InternalC(%0,(_:%1,%2),F@s(%9)%3) Iter_RandomRemove_InternalC(%0,(_:%1),F@s(%1)%3,%2)
+#define Iter_RandomRemove_InternalD(%0,(_:%1,%2),F@s(%9)%3,F@s(%9)%4) Iter_RandomRemove_InternalD(%0,(_:%1),F@s(%1)%3,F@s(%1)%4,%2)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get a random unused slot for.</param>
