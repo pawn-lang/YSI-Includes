@@ -173,6 +173,7 @@ static stock Iter_ResolveExtraParameters(excluded, const array[], start, bool:in
 			#emit LREF.S.pri   excluded
 			#emit LOAD.I
 			#emit STOR.S.pri   inArray
+			#emit SREF.S.pri   excluded
 			// First, check if this is valid and NOT in the array.
 			if (0 <= value < start && array[value] <= value)
 			{
@@ -259,17 +260,17 @@ stock Iter_Random_Internal(count, const array[], start, ...)
 {
 	new
 		numArgs = Iter_ResolveExtraParameters(3, array, start, true);
+	if (count <= numArgs)
+	{
+		return INVALID_ITERATOR_SLOT;
+	}
+	// There are enough elements to search from after exclusions.
+	count = random(count - numArgs);
 	if (numArgs)
 	{
-		if (count <= numArgs)
-		{
-			return INVALID_ITERATOR_SLOT;
-		}
 		new
 			excluded,
 			end;
-		// There are enough elements to search from after exclusions.
-		count = random(count - numArgs);
 		#emit ADDR.alt     24
 		#emit LOAD.S.pri   numArgs
 		#emit SHL.C.pri    2
@@ -277,7 +278,7 @@ stock Iter_Random_Internal(count, const array[], start, ...)
 		#emit STOR.S.pri   end
 		do
 		{
-Iter_Random_Internal_next_loop:
+Iter_Random_Internal_loop:
 			// Load the start address.
 			#emit ADDR.pri     24
 			#emit STOR.S.pri   excluded
@@ -287,28 +288,20 @@ Iter_Random_Internal_next_loop:
 			{
 				#emit LREF.S.pri   excluded
 				#emit LOAD.S.alt   start
-				#emit JEQ          Iter_Random_Internal_next_loop
-				//#emit STOR.S.pri   value
-				//if (check == start)
-				//	goto Iter_Random_Internal_next_loop;
+				#emit JEQ          Iter_Random_Internal_loop
 			}
 			// The loop ended, all is good.
 		}
 		while (count--);
 		return start;
 	}
-	if (count)
+	// No exclutions, use the old code.
+	do
 	{
-		// No exclutions, use the old code.
-		count = random(count);
-		do
-		{
-			start = array[start];
-		}
-		while (count--);
-		return start;
+		start = array[start];
 	}
-	return INVALID_ITERATOR_SLOT;
+	while (count--);
+	return start;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -392,18 +385,61 @@ stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
 stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 {
 	count = start - count;
-	if (count)
+	new
+		numArgs = Iter_ResolveExtraParameters(3, array, start, false);
+	if (count <= numArgs)
 	{
-		count = random(count);
-		while (start--)
+		return INVALID_ITERATOR_SLOT;
+	}
+	// There are enough elements to search from after exclusions.
+	count = random(count - numArgs);
+	if (numArgs)
+	{
+		new
+			excluded,
+			end;
+		#emit ADDR.alt     24
+		#emit LOAD.S.pri   numArgs
+		#emit SHL.C.pri    2
+		#emit ADD
+		#emit STOR.S.pri   end
+		for ( ; ; )
 		{
-			// Check if this value is not included in any iterator.  If it isn't
-			// then decrement the count until we have run out of values to test.
-			if (array[start] <= start && !count--)
+Iter_RandomFree_Internal_loop:
+			--start;
+			// Check if this is an excluded value.
+			if (array[start] > start)
+			{
+				continue;
+			}
+			{}
+			// Load the start address.
+			#emit ADDR.pri     24
+			#emit STOR.S.pri   excluded
+			for ( ; excluded != end; excluded += 4)
+			{
+				#emit LREF.S.pri   excluded
+				#emit LOAD.S.alt   start
+				#emit JEQ          Iter_RandomFree_Internal_loop
+			}
+			if (!count--)
+			{
 				return start;
+			}
 		}
 	}
-	return INVALID_ITERATOR_SLOT;
+	// No exclutions, use the old code.
+	for ( ; ; )
+	{
+		--start;
+		// Check if this value is not included in any iterator.  If it isn't
+		// then decrement the count until we have run out of values to test.
+		if (array[start] <= start && !count--)
+		{
+			break;
+		}
+	}
+	return start;
 }
 
 /*-------------------------------------------------------------------------*//**

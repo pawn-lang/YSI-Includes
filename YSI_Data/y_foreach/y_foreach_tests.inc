@@ -3588,15 +3588,32 @@ TEST__ y_iter_yield7a()
 	ASSERT_EQ(idx, sizeof(answers));
 }
 
-static Iterator:y_iter_huge<100000>;
+//static Iterator:y_iter_huge<100000>;
+//
+//TEST__ y_iter_huge()
+//{
+//	for (new i = 0; i < 50000; i++)
+//	{
+//		Iter_Add(y_iter_huge, i);
+//	}
+//	ASSERT_EQ(Iter_Count(y_iter_huge), 50000);
+//}
 
-TEST__ y_iter_huge()
+TEST__ y_iter_RandomFreeExclusions()
 {
-	for (new i = 0; i < 50000; i++)
+	new
+		Iterator:rand<20>;
+	Iter_Add(rand, 5);
+	Iter_Add(rand, 6);
+	Iter_Add(rand, 7);
+	Iter_Add(rand, 11);
+	Iter_Add(rand, 13);
+	for (new i = 0; i < 100; i++)
 	{
-		Iter_Add(y_iter_huge, i);
+		new
+			val = Iter_RandomFree(rand, 1, 2, 3, 4, 8, 9, 10);
+		ASSERT(val == 0 || val == 12 || val > 13);
 	}
-	ASSERT_EQ(Iter_Count(y_iter_huge), 50000);
 }
 
 TEST__ y_iter_RandomRepeatExclusions()
