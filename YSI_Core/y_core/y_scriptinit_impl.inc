@@ -178,12 +178,12 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 		YSIPrint(" |                                     | ");
 		if (!jit)
 		{
-			YSIPrint(" ======================================= ");
+			YSIPrint(" |=====================================| ");
 			YSIPrint(" |                                     | ");
 			YSIPrint(" | Note that these optimisations are   | ");
-			YSIPrint(" | designed to improve performace with | ");
-			YSIPrint(" | the JIT plugin, which you are not   | ");
-			YSIPrint(" | currently using.  Get it here:      | ");
+			YSIPrint(" | designed to improve performance     | ");
+			YSIPrint(" | with the JIT plugin, which you are  | ");
+			YSIPrint(" | not currently using.  Get it here:  | ");
 			YSIPrint(" |                                     | ");
 			YSIPrint(" |      https://git.io/jit-plugin      | ");
 			YSIPrint(" |                                     | ");
