@@ -121,14 +121,42 @@ static stock Iter_ResolveExtraParameters(excluded, const array[], start, bool:in
 			#emit LREF.S.pri   excluded
 			#emit LOAD.I
 			#emit STOR.S.pri   inArray
+			#emit SREF.S.pri   excluded
 			// First, check if this is valid and IN the array.
 			if (0 <= value < start && array[value] > value)
 			{
 				// It is.  Optimise for the inner loop.  Do this by compressing
-				// valid values to the start of the list and storing the
+				// valid values to the start of the list and sorting the
 				// dereferenced versions instead of the addresses.
-				#emit LOAD.S.pri   inArray
-				#emit SREF.S.pri   rewrite
+				for (new i2 = first, v2; i2 != rewrite; i2 += 4)
+				{
+					#emit LREF.S.pri   i2
+					#emit STOR.S.pri   v2
+					if (value < v2)
+					{
+						// Insert here.
+						do
+						{
+							#emit LOAD.S.pri   inArray
+							#emit SREF.S.pri   i2
+							value = v2;
+							i2 += 4;
+							#emit LREF.S.pri   i2
+							#emit STOR.S.pri   v2
+						}
+						while (i2 != rewrite);
+						#emit LOAD.S.pri   inArray
+						#emit SREF.S.pri   i2
+						break;
+					}
+					else if (value == v2)
+					{
+						--numArgs;
+						rewrite -= 4;
+						break;
+					}
+					// Otherwise, keep going.
+				}
 				rewrite += 4;
 			}
 			else
@@ -149,57 +177,43 @@ static stock Iter_ResolveExtraParameters(excluded, const array[], start, bool:in
 			if (0 <= value < start && array[value] <= value)
 			{
 				// It is.  Optimise for the inner loop.  Do this by compressing
-				// valid values to the start of the list and storing the
+				// valid values to the start of the list and sorting the
 				// dereferenced versions instead of the addresses.
-				#emit LOAD.S.pri   inArray
-				#emit SREF.S.pri   rewrite
+				for (new i2 = first, v2; i2 != rewrite; i2 += 4)
+				{
+					#emit LREF.S.pri   i2
+					#emit STOR.S.pri   v2
+					if (value < v2)
+					{
+						// Insert here.
+						do
+						{
+							#emit LOAD.S.pri   inArray
+							#emit SREF.S.pri   i2
+							value = v2;
+							i2 += 4;
+							#emit LREF.S.pri   i2
+							#emit STOR.S.pri   v2
+						}
+						while (i2 != rewrite);
+						#emit LOAD.S.pri   inArray
+						#emit SREF.S.pri   i2
+						break;
+					}
+					else if (value == v2)
+					{
+						--numArgs;
+						rewrite -= 4;
+						break;
+					}
+					// Otherwise, keep going.
+				}
 				rewrite += 4;
 			}
 			else
 			{
 				// It is not.  Remove from the check.
 				--numArgs;
-			}
-		}
-	}
-	// Need to filter out here.  Other code relies on the values here being
-	// unique.  Can thus also sort them with a custom insertion sort I guess.
-	if (numArgs)
-	{
-		for (last = rewrite, excluded = first; excluded != last; excluded += 4)
-		{
-			#emit LREF.S.pri   excluded
-			#emit STOR.S.pri   inArray
-			for (rewrite = first; rewrite != excluded; rewrite += 4)
-			{
-				#emit LREF.S.pri   rewrite
-				#emit STOR.S.pri   start
-				if (value < start)
-				{
-					// Insert here.
-					do
-					{
-						#emit LOAD.S.pri   inArray
-						#emit SREF.S.pri   rewrite
-						inArray = bool:start;
-						rewrite += 4;
-						#emit LREF.S.pri   rewrite
-						#emit STOR.S.pri   start
-					}
-					while (rewrite != excluded);
-					#emit LOAD.S.pri   inArray
-					#emit SREF.S.pri   rewrite
-					break;
-				}
-				else if (value == start)
-				{
-					// Invalidate this slot (remove duplicates).
-					#emit CONST.pri    0x7FFFFFFF
-					#emit SREF.S.pri   excluded
-					--numArgs;
-					break;
-				}
-				// Otherwise, keep going.
 			}
 		}
 	}
