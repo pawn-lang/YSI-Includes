@@ -70,158 +70,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-static stock Iter_ResolveExtraParameters(excluded, const array[], start, bool:inArray)
-{
-	// This function takes almost no parameters, because it operates directly on
-	// the previous function's parameters.  It looks at all of the by-reference
-	// parameters (since they are always pass-by-reference with `...` sadly),
-	// resolves the address to instead have the value on the stack.  Then
-	// filters out all invalid values and duplicates.  Finally returns the
-	// number of valid exclusions (i.e. the number left on the stack).  Of
-	// course, since we need `RETN` to work correctly, all the parameters are
-	// still actually left on the stack, we just only use some of them and
-	// pretend the rest aren't gone.
-	new
-		numArgs,
-		rewrite,
-		first,
-		last;
-	// y_hooks can mangle callback parameter counts, thus it redefines `numargs`
-	// to account for this and traverse the stack until it finds a valid value.
-	// However, because this internal function is never called directly from a
-	// callback, we don't need to worry about that here and can instead just use
-	// the previous function's parameter count directly.
-	#emit LOAD.S.pri   0   // Previous frame.
-	#emit ADD.C        12  // Previous parameter offset.
-	#emit MOVE.alt
-	#emit ADD.C        0xFFFFFFFC // -4
-	#emit LOAD.I           // Previous numargs.
-	#emit ADD
-	#emit STOR.S.pri   last
-	// Get the start of the last parameters.
-	#emit LOAD.S.pri   excluded
-	#emit SHL.C.pri    2
-	#emit ADD
-	#emit STOR.S.pri   first
-	// Final numargs.
-	#emit LOAD.S.alt   last
-	#emit SUB.alt
-	#emit SHR.C.pri    2
-	#emit STOR.S.pri   numArgs
-	if (numArgs == 0)
-	{
-		// Short-circuit the common-case where there are no exclusions.
-		return 0;
-	}
-	#define value (_:inArray)
-	if (inArray)
-	{
-		for (rewrite = excluded = first; excluded != last; excluded += 4)
-		{
-			#emit LREF.S.pri   excluded
-			#emit LOAD.I
-			#emit STOR.S.pri   inArray
-			#emit SREF.S.pri   excluded
-			// First, check if this is valid and IN the array.
-			if (0 <= value < start && array[value] > value)
-			{
-				// It is.  Optimise for the inner loop.  Do this by compressing
-				// valid values to the start of the list and sorting the
-				// dereferenced versions instead of the addresses.
-				for (new i2 = first, v2; i2 != rewrite; i2 += 4)
-				{
-					#emit LREF.S.pri   i2
-					#emit STOR.S.pri   v2
-					if (value < v2)
-					{
-						// Insert here.
-						do
-						{
-							#emit LOAD.S.pri   inArray
-							#emit SREF.S.pri   i2
-							value = v2;
-							i2 += 4;
-							#emit LREF.S.pri   i2
-							#emit STOR.S.pri   v2
-						}
-						while (i2 != rewrite);
-						#emit LOAD.S.pri   inArray
-						#emit SREF.S.pri   i2
-						break;
-					}
-					else if (value == v2)
-					{
-						--numArgs;
-						rewrite -= 4;
-						break;
-					}
-					// Otherwise, keep going.
-				}
-				rewrite += 4;
-			}
-			else
-			{
-				// It is not.  Remove from the check.
-				--numArgs;
-			}
-		}
-	}
-	else
-	{
-		for (rewrite = excluded = first; excluded != last; excluded += 4)
-		{
-			#emit LREF.S.pri   excluded
-			#emit LOAD.I
-			#emit STOR.S.pri   inArray
-			#emit SREF.S.pri   excluded
-			// First, check if this is valid and NOT in the array.
-			if (0 <= value < start && array[value] <= value)
-			{
-				// It is.  Optimise for the inner loop.  Do this by compressing
-				// valid values to the start of the list and sorting the
-				// dereferenced versions instead of the addresses.
-				for (new i2 = first, v2; i2 != rewrite; i2 += 4)
-				{
-					#emit LREF.S.pri   i2
-					#emit STOR.S.pri   v2
-					if (value < v2)
-					{
-						// Insert here.
-						do
-						{
-							#emit LOAD.S.pri   inArray
-							#emit SREF.S.pri   i2
-							value = v2;
-							i2 += 4;
-							#emit LREF.S.pri   i2
-							#emit STOR.S.pri   v2
-						}
-						while (i2 != rewrite);
-						#emit LOAD.S.pri   inArray
-						#emit SREF.S.pri   i2
-						break;
-					}
-					else if (value == v2)
-					{
-						--numArgs;
-						rewrite -= 4;
-						break;
-					}
-					// Otherwise, keep going.
-				}
-				rewrite += 4;
-			}
-			else
-			{
-				// It is not.  Remove from the check.
-				--numArgs;
-			}
-		}
-	}
-	#undef value
-	return numArgs;
-}
-
 /*
 
            db        88888888ba  88      ,ad8888ba,                       88             
@@ -259,7 +107,87 @@ static stock Iter_ResolveExtraParameters(excluded, const array[], start, bool:in
 stock Iter_Random_Internal(count, const array[], start, ...)
 {
 	new
-		numArgs = Iter_ResolveExtraParameters(3, array, start, true);
+		numArgs,
+		rewrite,
+		first,
+		last;
+	// y_hooks can mangle callback parameter counts, thus it redefines `numargs`
+	// to account for this and traverse the stack until it finds a valid value.
+	// However, because this internal function is never called directly from a
+	// callback, we don't need to worry about that here and can instead just use
+	// the previous function's parameter count directly.
+	#emit LOAD.S.pri   8
+	#emit ADD.C        0xFFFFFFF4
+	#emit ADDR.alt     24
+	#emit STOR.S.alt   first
+	#emit XCHG
+	#emit ADD
+	#emit STOR.S.pri   last
+	#emit SHR.C.alt    2
+	#emit STOR.S.alt   numArgs
+	// I came up with two ways of doing this, but they are both the same length.
+	//#emit LOAD.S.pri   8
+	//#emit ADDR.alt     12
+	//#emit ADD
+	//#emit STOR.S.pri   last
+	//#emit ADDR.alt     24
+	//#emit STOR.S.alt   first
+	//#emit SUB.alt
+	//#emit SHR.C.pri    2
+	//#emit STOR.S.pri   numArgs
+	// Short-circuit the common-case where there are no exclusions.
+	if (numArgs)
+	{
+		for (new value, excluded = rewrite = first; excluded != last; excluded += 4)
+		{
+			#emit LREF.S.pri   excluded
+			#emit LOAD.I
+			#emit STOR.S.pri   value
+			#emit SREF.S.pri   excluded
+			// First, check if this is valid and IN the array.
+			if (0 <= value < start && array[value] > value)
+			{
+				// It is.  Optimise for the inner loop.  Do this by compressing
+				// valid values to the start of the list and sorting the
+				// dereferenced versions instead of the addresses.
+				for (new i2 = first, v2; i2 != rewrite; i2 += 4)
+				{
+					#emit LREF.S.pri   i2
+					#emit STOR.S.pri   v2
+					if (value < v2)
+					{
+						// Insert here.
+						do
+						{
+							#emit LOAD.S.pri   value
+							#emit SREF.S.pri   i2
+							value = v2;
+							i2 += 4;
+							#emit LREF.S.pri   i2
+							#emit STOR.S.pri   v2
+						}
+						while (i2 != rewrite);
+						#emit LOAD.S.pri   value
+						#emit SREF.S.pri   i2
+						break;
+					}
+					else if (value == v2)
+					{
+						--numArgs;
+						rewrite -= 4;
+						break;
+					}
+					// Otherwise, keep going.
+				}
+				rewrite += 4;
+			}
+			else
+			{
+				// It is not.  Remove from the check.
+				--numArgs;
+			}
+		}
+	}
 	if (count <= numArgs)
 	{
 		return INVALID_ITERATOR_SLOT;
@@ -268,25 +196,14 @@ stock Iter_Random_Internal(count, const array[], start, ...)
 	count = random(count - numArgs);
 	if (numArgs)
 	{
-		new
-			excluded,
-			end;
-		#emit ADDR.alt     24
-		#emit LOAD.S.pri   numArgs
-		#emit SHL.C.pri    2
-		#emit ADD
-		#emit STOR.S.pri   end
 		do
 		{
 Iter_Random_Internal_loop:
-			// Load the start address.
-			#emit ADDR.pri     24
-			#emit STOR.S.pri   excluded
 			// Check if this is an excluded value.
 			start = array[start];
-			for ( ; excluded != end; excluded += 4)
+			for (last = first; last != rewrite; last += 4)
 			{
-				#emit LREF.S.pri   excluded
+				#emit LREF.S.pri   last
 				#emit LOAD.S.alt   start
 				#emit JEQ          Iter_Random_Internal_loop
 			}
@@ -386,7 +303,77 @@ stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 {
 	count = start - count;
 	new
-		numArgs = Iter_ResolveExtraParameters(3, array, start, false);
+		numArgs,
+		rewrite,
+		first,
+		last;
+	// y_hooks can mangle callback parameter counts, thus it redefines `numargs`
+	// to account for this and traverse the stack until it finds a valid value.
+	// However, because this internal function is never called directly from a
+	// callback, we don't need to worry about that here and can instead just use
+	// the previous function's parameter count directly.
+	#emit LOAD.S.pri   8
+	#emit ADD.C        0xFFFFFFF4
+	#emit ADDR.alt     24
+	#emit STOR.S.alt   first
+	#emit XCHG
+	#emit ADD
+	#emit STOR.S.pri   last
+	#emit SHR.C.alt    2
+	#emit STOR.S.alt   numArgs
+	// Short-circuit the common-case where there are no exclusions.
+	if (numArgs)
+	{
+		for (new value, excluded = rewrite = first; excluded != last; excluded += 4)
+		{
+			#emit LREF.S.pri   excluded
+			#emit LOAD.I
+			#emit STOR.S.pri   value
+			#emit SREF.S.pri   excluded
+			// First, check if this is valid and IN the array.
+			if (0 <= value < start && array[value] <= value)
+			{
+				// It is.  Optimise for the inner loop.  Do this by compressing
+				// valid values to the start of the list and sorting the
+				// dereferenced versions instead of the addresses.
+				for (new i2 = first, v2; i2 != rewrite; i2 += 4)
+				{
+					#emit LREF.S.pri   i2
+					#emit STOR.S.pri   v2
+					if (value < v2)
+					{
+						// Insert here.
+						do
+						{
+							#emit LOAD.S.pri   value
+							#emit SREF.S.pri   i2
+							value = v2;
+							i2 += 4;
+							#emit LREF.S.pri   i2
+							#emit STOR.S.pri   v2
+						}
+						while (i2 != rewrite);
+						#emit LOAD.S.pri   value
+						#emit SREF.S.pri   i2
+						break;
+					}
+					else if (value == v2)
+					{
+						--numArgs;
+						rewrite -= 4;
+						break;
+					}
+					// Otherwise, keep going.
+				}
+				rewrite += 4;
+			}
+			else
+			{
+				// It is not.  Remove from the check.
+				--numArgs;
+			}
+		}
+	}
 	if (count <= numArgs)
 	{
 		return INVALID_ITERATOR_SLOT;
@@ -395,14 +382,6 @@ stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 	count = random(count - numArgs);
 	if (numArgs)
 	{
-		new
-			excluded,
-			end;
-		#emit ADDR.alt     24
-		#emit LOAD.S.pri   numArgs
-		#emit SHL.C.pri    2
-		#emit ADD
-		#emit STOR.S.pri   end
 		for ( ; ; )
 		{
 Iter_RandomFree_Internal_loop:
@@ -412,13 +391,9 @@ Iter_RandomFree_Internal_loop:
 			{
 				continue;
 			}
-			{}
-			// Load the start address.
-			#emit ADDR.pri     24
-			#emit STOR.S.pri   excluded
-			for ( ; excluded != end; excluded += 4)
+			for (last = first; last != rewrite; last += 4)
 			{
-				#emit LREF.S.pri   excluded
+				#emit LREF.S.pri   last
 				#emit LOAD.S.alt   start
 				#emit JEQ          Iter_RandomFree_Internal_loop
 			}
