@@ -532,7 +532,7 @@ stock Iter_Alloc_InternalD(&count, array[], start, size, ...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_Free_Internal(const array[], size, ...)
+stock Iter_Free_Internal(const array[], size)
 {
 	// I tried to rewrite this to use the internal structure of a linked list to
 	// find a free slot.  The logic being that if the next used slot in the list
@@ -566,7 +566,7 @@ stock Iter_Free_Internal(const array[], size, ...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_FreeMulti_Internal(const array[], trueSize, start, ...)
+stock Iter_FreeMulti_Internal(const array[], trueSize, start)
 {
     for (new i = 0; trueSize-- > start; ++i)
     {
