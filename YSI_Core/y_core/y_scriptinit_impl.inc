@@ -165,6 +165,35 @@ stock bool:Server_CrashDetectExists()
 	return YSI_g_sCrashdetect;
 }
 
+static ScriptInit_CallOnCodeInit(bool:jit)
+{
+	#if defined ScriptInit_OnCodeInit
+		YSIPrint(" ");
+		YSIPrint(" ======================================= ");
+		YSIPrint(" |                                     | ");
+		YSIPrint(" |    Optimising code, this may take   | ");
+		YSIPrint(" |        a little bit of time.        | ");
+		YSIPrint(" |                                     | ");
+		YSIPrint(" |            Please wait...           | ");
+		YSIPrint(" |                                     | ");
+		if (!jit)
+		{
+			YSIPrint(" ======================================= ");
+			YSIPrint(" |                                     | ");
+			YSIPrint(" | Note that these optimisations are   | ");
+			YSIPrint(" | designed to improve performace with | ");
+			YSIPrint(" | the JIT plugin, which you are not   | ");
+			YSIPrint(" | currently using.  Get it here:      | ");
+			YSIPrint(" |                                     | ");
+			YSIPrint(" |      https://git.io/jit-plugin      | ");
+			YSIPrint(" |                                     | ");
+		}
+		YSIPrint(" ======================================= ");
+		YSIPrint(" ");
+		ScriptInit_OnCodeInit();
+	#endif
+}
+
 #if !defined _ALS_OnJITCompile
 	forward OnJITCompile();
 #endif
@@ -179,10 +208,7 @@ public OnJITCompile()
 		return 0;
 	DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 	YSI_g_sCodeJITing = true;
-	//AddressofResolve();
-	#if defined ScriptInit_OnCodeInit
-		ScriptInit_OnCodeInit();
-	#endif
+	ScriptInit_CallOnCodeInit(true);
 	new ret = ScriptInit_OnJITCompile();
 	if (ret)
 		YSI_g_sCodeJITed = true;
@@ -255,10 +281,7 @@ public OnFilterScriptInit()
 	if (!YSI_g_sCodeJITing)
 	{
 		DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
-		//AddressofResolve();
-		#if defined ScriptInit_OnCodeInit
-			ScriptInit_OnCodeInit();
-		#endif
+		ScriptInit_CallOnCodeInit(false);
 	}
 	ScriptInit_PreInitFuncs_();
 	#if defined ScriptInit_OnScriptInit
@@ -311,10 +334,7 @@ public OnGameModeInit()
 		if (!YSI_g_sCodeJITing)
 		{
 			DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
-			//AddressofResolve();
-			#if defined ScriptInit_OnCodeInit
-				ScriptInit_OnCodeInit();
-			#endif
+			ScriptInit_CallOnCodeInit(false);
 		}
 		ScriptInit_PreInitFuncs_();
 		#if defined ScriptInit_OnScriptInit
@@ -408,13 +428,6 @@ public OnGameModeExit()
 #if defined ScriptInit_OnCodeInit
 	forward ScriptInit_OnCodeInit();
 #endif
-
-//CHAIN_FORWARD:ScriptInit_OnCodeInit() = 1;
-//#if defined _ALS_OnCodeInit || defined OnCodeInit
-//	#error OnCodeInit defined
-//#endif
-//#define _ALS_OnCodeInit
-//#define OnCodeInit(%0) CHAIN_PUBLIC:ScriptInit_OnCodeInit(%0)
 
 CHAIN_FORWARD:ScriptInit_OnScriptInit() = 1;
 #if defined _ALS_OnScriptInit || defined OnScriptInit
