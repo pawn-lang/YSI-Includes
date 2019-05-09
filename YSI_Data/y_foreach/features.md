@@ -629,3 +629,375 @@ That code will print:
 
 
 
+## Special Array Iterators
+
+An example of owned vehicles could look like:
+
+```pawn
+new
+	Iterator:OwnedVehicle[MAX_PLAYERS]<MAX_VEHICLES>;
+Iter_Init(OwnedVehicle);
+// Add vehicles to players here...
+Iter_Add(OwnedVehicle[playerid], 42);
+Iter_Add(OwnedVehicle[playerid], 43);
+Iter_Add(OwnedVehicle[playerid], 44);
+// Other code...
+foreach (new vehicleid : OwnedVehicle[playerid])
+{
+	printf("Player %d owns vehicle %d", playerid, vehicleid).
+}
+```
+
+Like the `Admin` example this code works fine, but uses a lot of memory. For
+500 players and 2000 vehicles the main array takes up `500 * (2000 + 1)` cells,
+which is just over 3Mb. That's not a vast amount of memory on modern computers,
+but it might still be worth reducing. For some examples a reduction may not be
+possible, but in this case a vehicle can only have one owner so there's no point
+storing every vehicle for every player. A better storage option would be:
+
+```pawn
+new
+	gVehicleOwner[MAX_VEHICLES];
+```
+
+Here `gVehicleOwner` stores the player ID of the owning player for each vehicle.
+To print all the vehicles belonging to one player now looks like:
+
+```pawn
+for (new vehicleid = 0; vehicleid != MAX_VEHICLES; ++vehicleid)
+{
+	if (gVehicleOwner[vehicleid] == playerid)
+	{
+		printf("Player %d owns vehicle %d", playerid, vehicleid).
+	}
+}
+```
+
+This is a significant reduction in memory, but we had to re-write the code to
+accommodate it.  We know we can write special iterators that are
+functions, but look like normal iterators, can we also write a function to hide this
+representation as well, from an array of iterators? Yes - quite easily in fact. The original loop was:
+
+```pawn
+foreach (new vehicleid : OwnedVehicle[playerid])
+{
+	printf("Player %d owns vehicle %d", playerid, vehicleid).
+}
+```
+
+This is yet another use of `#define Iterator@` - allowing us to hide the fact that not only are varibles now functions, but also so are arrays:
+
+
+```pawn
+#define Iterator@OwnedVehicle iterstart(-1)
+
+iterfunc stock OwnedVehicle(cur, ownerid)
+{
+	do
+	{
+		// The initial value is "-1", increment it to 0, and always increment
+		// after that.
+		if (++cur == MAX_VEHICLES) return -1;
+		// Stay in this function until we find a vehicle this player owns, or
+		// we run out of vehicles to test.
+	}
+	while (gVehicleOwner[cur] != ownerid);
+	return cur;
+}
+
+foreach (new vehicleid : OwnedVehicle[playerid])
+{
+	printf("Player %d owns vehicle %d", playerid, vehicleid).
+}
+```
+
+An additional benefit is that you can't modify special iterators directly. If
+we use the first version of "OwnedVehicle" user code can include:
+
+```pawn
+Iter_Add(OwnedVehicle[playerid], 42);
+```
+
+If you use the special iterator version and try call that function it will
+generate a compile-time error. This makes it essentially a read-only iterator
+unless you have access to the underlying data store. If this iterator comes
+from a vehicle ownership library you may have a function such as:
+
+```pawn
+Vehicle_SetOwner(vehicleid, playerid);
+```
+
+Which will add that owner to the `gVehicleOwner` array, while checking that the
+vehicle isn't already owned and doing anything else. This way you can keep
+`gVehicleOwner` as `static` to your library so that no-one can access private
+data except through your well-defined API.
+
+## Multi-Dimensional Iterators
+
+The owned vehicles example above is such a common use-case that it has been integrated directly in to the library.  A vehicle can only have one owner, so an array of iterators is very inefficient:
+
+```pawn
+new
+	Iterator:OwnedVehicle[MAX_PLAYERS]<MAX_VEHICLES>;
+```
+
+Not only does this waste a lot of space, but there's nothign preventing this:
+
+```pawn
+Iter_Add(OwnedVehicle[4], 10);
+Iter_Add(OwnedVehicle[6], 10);
+```
+
+This will make both players 4 and 6 owner of vehicle 10.  The alternative is to make multiple intertwined iterators, so that each element can be a member of only one at once:
+
+```pawn
+new
+	Iterator:OwnedVehicle<MAX_PLAYERS, MAX_VEHICLES>;
+Iter_Add(OwnedVehicle<4>, 10); // Fine.
+Iter_Add(OwnedVehicle<6>, 10); // Will fail.
+```
+
+Several functions can take either a specific start, e.g. `<playerid>`, or operate over the whole set together with `<>`:
+
+```pawn
+Iter_Contains(OwnedVehicle<4>, 10); // true.
+Iter_Contains(OwnedVehicle<6>, 10); // false.
+Iter_Contains(OwnedVehicle<>, 10); // true.
+```
+
+Looping also takes a start point (you can't loop over `<>`):
+
+```pawn
+foreach (new vehicleid : OwnedVehicle<playerid>)
+{
+	printf("Player %d owns vehicle %d", playerid, vehicleid).
+}
+```
+
+## Existing Special Iterators
+
+### `Bits`
+
+"y_bit" provides the "Bits" iterator, which takes a bit array and loops over all
+the bits set within it:
+
+```pawn
+new
+	BitArray:arr<100>;
+Bit_Set(arr, 42, true);
+Bit_Set(arr, 82, true);
+Bit_Set(arr, 11, true);
+Bit_Set(arr, 99, true);
+Bit_Set(arr, 7, true);
+foreach (new c : Bits(arr))
+{
+	printf("%d", c);
+}
+```
+
+Output:
+
+```
+7
+11
+42
+82
+99
+```
+
+### `Blanks`
+
+Like `Bits`, but returns all the `0` slots instead.
+
+
+```pawn
+new
+	BitArray:arr<100>;
+Bit_SetAll(arr, true);
+Bit_Set(arr, 18, false);
+Bit_Set(arr, 9, false);
+Bit_Set(arr, 5, false);
+Bit_Set(arr, 80, false);
+Bit_Set(arr, 88, false);
+foreach (new c : Blanks(arr))
+{
+	printf("%d", c);
+}
+```
+
+Output:
+
+```
+5
+9
+18
+80
+88
+```
+
+### `Range`
+
+```pawn
+foreach (new i : Range(min, max))
+```
+
+Equivalent to:
+
+```pawn
+for (new i = min; i != max; ++i)
+```
+
+```pawn
+foreach (new i : Range(min, max, step))
+```
+
+Equivalent to:
+
+```pawn
+for (new i = min; i < max; i += step)
+```
+
+### `Powers`
+
+```pawn
+// Loop through the powers of 2 (1, 2, 4, 8, etc.)
+foreach (new i : Powers(2))
+```
+
+### `Fib`
+
+```pawn
+// Loop through the Fibbonacci sequence (1, 1, 2, 3, 5, 8, etc).
+foreach (new i : Fib())
+```
+
+### `Random`
+
+Generate a number of random numbers.  Uses:
+
+```pawn
+// Loop 5 times with any random number.
+foreach (new i : Random(5))
+```
+
+```pawn
+// Loop 5 times with any random number 0 <= n < 100
+foreach (new i : Random(5, 100))
+```
+
+```pawn
+// Loop 5 times with any random number 100 <= n < 1000
+foreach (new i : Random(5, 100, 1000))
+```
+
+### `Null`
+
+```pawn
+// Return every index of the array that contains `0`.
+foreach (new i : Null(arr))
+```
+
+### `NonNull`
+
+```pawn
+// Return every index of the array that doesn't contain `0`.
+foreach (new i : NonNull(arr))
+```
+
+### `Until`
+
+```pawn
+new arr[] = {
+	1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+}
+
+// Return every index until one equals the given value.
+foreach (new i : Until(6, arr))
+```
+
+Output:
+
+```
+0
+1
+2
+3
+4
+```
+
+Index `5` contains `6`, so the loop then ends.
+
+### `Filter`
+
+```pawn
+new arr[] = {
+	1, 6, 7, 8, 6, 2, 9, 6
+}
+
+// Return every index that contains the given value.
+foreach (new i : Filter(6, arr))
+```
+
+Output:
+
+```
+1
+4
+7
+```
+
+## Iterator Manipulators
+
+These special iterators themselves take an iterator.
+
+### `None`
+
+Return all values NOT in the given iterator:
+
+```pawn
+new Iterator:x<5>
+Iter_Add(x, 3);
+foreach (new i : None(x))
+```
+
+Output:
+
+```
+0
+1
+2
+4
+```
+
+Called `None` because it also works for multi-dimensional iterators:
+
+```pawn
+new Iterator:x<5, 5>
+foreach (new i : None(x<>))
+```
+
+### `All`
+
+This doesn't work:
+
+```pawn
+new Iterator:x<5, 5>
+foreach (new i : x<>)
+```
+
+That will not loop over every value in every slot of the multi-dimensional iterator.  However, this will:
+
+```pawn
+new Iterator:x<5, 5>
+foreach (new i : All(x<>))
+```
+
+### `Reverse`
+
+Goes through an iterator backwards:
+
+```pawn
+foreach (new i : Reverse(Player))
+```
+
+	
