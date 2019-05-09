@@ -385,5 +385,4 @@ they came from for EVERY iteration. Tracing the loop would give something like:
 7, 0 - End
 ```
 I did add efficient reverse iterators to the code once, but they doubled the
-memory usage and were rarely (if ever) used so were basically worthless.[/QUOTE]
-
+memory usage and were rarely (if ever) used so were basically worthless.
