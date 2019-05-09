@@ -430,5 +430,202 @@ foreach (new admin : Admin)
 }
 ```
 
+## More Advanced Special Iterators
+
+We can combine every feature so far - no y_iterate dependency, state, and more, in to one iterator:
+
+```pawn
+// Using `iterstate` not `iterstart` - either are acceptable here.
+#define Iterator@Admin iterstate(MAX_PLAYERS, 0)
+
+// The initial value of `cur` (i.e. the loop start value) is `0`.
+// The initial state (`i`) is 0, because we've not displayed any admins yet.
+
+stock Iter_Func@Admin(&i, cur, max = MAX_PLAYERS)
+{
+	// When `i == max` we've had enough admins listed.
+	if (i++ == max)
+	{
+		// Custom start/end value.
+		return MAX_PLAYERS;
+	}
+
+	// Loop over admins, but using an Iterator here as well.
+	while (Iter_Next(Player, cur) != Iter_End(Player))
+	{
+		if (IsPlayerAdmin(cur))
+		{
+			return cur;
+		}
+	}
+
+	// Out of players.
+	return MAX_PLAYERS;
+}
+```
+
+This code will list all the admins (note the lack of parameters):
+
+```pawn
+foreach (new i : Admin)
+{
+}
+```
+
+This code will list just five admins (we now have parameters):
+
+```pawn
+foreach (new i : Admin(5))
+{
+}
+```
+
+There is one tiny limitataion with special iterators.  If they have state (i.e. use `iterstate` not `iterstart` or no definition), this won't work:
+
+```pawn
+foreach (i : Admin(5))
+{
+}
+```
+
+Stateful special iterators MUST use `new`.  But there's a solution for this as well - move the state in to the function, and use `yield`...
+
+## `yield`
+
+`yield` (aka `YIELD__`) is a new keyword that can return control flow to an earlier point, then resume again later.  It is a form of context switching long built in to y_iterate.  Our `Admin` example would thus become:
+
+```pawn
+#define Iterator@Admin iteryield
+
+iterfunc stock Admin()
+{
+	foreach (new i : Player)
+	{
+		if (IsPlayerAdmin(i))
+		{
+			yield return i;
+		}
+	}
+}
+```
+
+This is again a silent special iterator; but instead of `iterstart` or `iterstate`, uses `iteryield`; and MUST be declared with `#define`, unlike earlier ones.  There are a few interesting things to note about this function:
+
+* There is no `return` at the end.  This isn't a mistake, and isn't a warning.  When the function ends without using `yield`, it signals the end of the iterator.
+
+* Because there is no end value (sentinel value) you can return every possible number from a `yield` iterator and still end the loop.  This is the only way to make a loop over every integer without needing to reserve one for the start and end conditions:
+
+```pawn
+#define Iterator@EveryInteger iteryield
+
+iterfunc stock EveryInteger()
+{
+	new i = cellmin;
+	do
+	{
+		yield return i;
+	}
+	while (++i != cellmin);
+}
+```
+
+* There is no state passed in, nor is there a `cur` variable.  All your state is stored locally in the function, using a closure.
+
+* You can return early, without using `yield` to end the loop:
+
+```pawn
+#define Iterator@RandomAmountOf100s iteryield
+
+iterfunc stock RandomAmountOf100s()
+{
+	for ( ; ; )
+	{
+		if (random(100) == 0)
+		{
+			return;
+		}
+		yield return 100;
+	}
+}
+```
+
+* You can have as many `yield`s in your function as you like:
+
+```pawn
+#define Iterator@ManyYields iteryield
+
+iterfunc stock ManyYields()
+{
+	for (new i = 0; i != 3; ++i)
+	{
+		yield return i;
+	}
+	yield return 10;
+	yield return 20;
+	for (new i = 501; i != 505; ++i)
+	{
+		yield return i;
+	}
+}
+```
+
+* `yield` iterators can call other `yield` iterators.  Indeed, because these iterators can be invisible special functions, you may again not know that the function called is an `iteryield` function:
+
+```pawn
+
+iterfunc stock Iter1(num, mul)
+{
+	while (num--)
+	{
+		yield return (num * mul);
+	}
+}
+#define Iterator@Iter1 iteryield
+
+iterfunc stock Iter2(end = -1)
+{
+	FOREACH__ (new i : Iter1(3, 10))
+	{
+		yield return i + 1;
+		yield return i + 2;
+		yield return i + 3;
+		yield return i + 4;
+		yield return i + 5;
+	}
+	
+	yield return end;
+}
+#define Iterator@Iter2 iteryield
+
+MyCode()
+{
+	foreach (new i : Iter2)
+	{
+		printf("%d", i);
+	}
+}
+```
+
+That code will print:
+
+```
+21
+22
+23
+24
+25
+11
+12
+13
+14
+15
+1
+2
+3
+4
+5
+-1
+```
+
 
 
