@@ -1,9 +1,5 @@
 # API
 
-Beside the well known functions and those listed above, there are many more
-available in "y_iterate". These are all documented in the main "foreach"
-release topic, but are duplicated here for additional information.
-
 * `Iter_Add(Iterator, value);` - Add an in-range value from an iterator:
 
 ```pawn
