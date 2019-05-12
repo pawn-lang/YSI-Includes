@@ -641,6 +641,36 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 
 */
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="iter">Name of the iterator to deal with safely.</param>
+ * <param name="index">Index.</param>
+ * <remarks>
+ *  Call functions that modify an iterator safely from inside a loop:
+ *
+ *  <code>
+ *      DestroyVehicle(vehicleid)
+ *      {
+ *          Iter_Remove(Vehicle, vehicleid);
+ *      }
+ *      
+ *      foreach (new vehicleid : Vehicle)
+ *      {
+ *          ITER_SAFE(Vehicle, vehicleid)
+ *          {
+ *              DestroyVehicle(vehicleid);
+ *          }
+ *      }
+ *  </code>
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#define _IterN@%0\32; _IterN@
+#define _IterL@%0\32; _IterL@
+
+P:D(ITER_SAFE(Iterator:iter<>, &index));
+#define ITER_SAFE(%0,%1) for (new _IterN@%0=Iter_Next(%0,%1),_IterL@%0=1;_IterL@%0;%1=_IterN@%0,--_IterL@%0)
+
 // Remove trailing spaces.  This looks really unsafe because of the "%0\32;"
 // allowing anything to come before the space, but it would have to be
 // "anything" not text immediately following a "YSII_X@" prefix.
