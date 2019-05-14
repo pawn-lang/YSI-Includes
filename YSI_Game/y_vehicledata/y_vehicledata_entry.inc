@@ -588,7 +588,7 @@ stock
 			_VEHICLE_FLAGS<Unique      | Van       >,
 			_VEHICLE_FLAGS<Sport       | Car       >,
 			_VEHICLE_FLAGS<Trailer     | Train     >,
-			_VEHICLE_FLAGS<Trailer     | Train     >,
+			_VEHICLE_FLAGS<Trailer     | Truck     >,
 			_VEHICLE_FLAGS<Airplane    | Plane     >,
 			_VEHICLE_FLAGS<Airplane    | Plane     >,
 			_VEHICLE_FLAGS<RC          | Flowerpot >,
