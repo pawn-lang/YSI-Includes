@@ -24,6 +24,7 @@ REMOTE_FUNC__ stock static void:yrt_4(hi)
 
 REMOTE_FUNC__ static stock string:yrt_5(hi, const string:you[], there[], tt, &other, const len = 7)
 {
+	//printf("yrt_5 called");
 	#pragma unused hi, you, there, tt, len
 	new str[144];
 	str = "Hello World";
@@ -35,6 +36,7 @@ REMOTE_FUNC__ stock Float:yrt_6(hi, string:you[], there[], len);
 
 REMOTE_FUNC__ static void:yrt_7(&a, &b, c, &d)
 {
+	//printf("yrt_7 called");
 	a = 8;
 	b = a;
 	c += d;
@@ -62,7 +64,23 @@ TEST__ y_remote_2()
 
 TEST__ y_remote_3()
 {
-	// Impl...
+	new
+		other = 1111111,
+		arr[10],
+		str[YSI_MAX_STRING];
+	str = localfunc yrt_5(5, "string", arr, sizeof (arr), other);
+	ASSERT_SAME(str, "Hello World");
+	ASSERT_EQ(other, 1111116);
+	new
+		a = 6789,
+		b = 6789,
+		c = 6789,
+		d = 6789;
+	localfunc yrt_7(a, b, c, d);
+	ASSERT_EQ(a, 8);
+	ASSERT_EQ(b, 8);
+	ASSERT_EQ(c, 6789);
+	ASSERT_EQ(d, 6785);
 }
 
 TEST__ y_remote_335()
@@ -74,6 +92,23 @@ TEST__ y_remote_335()
 
 TEST__ y_remote_4()
 {
+	new
+		other = 1111111,
+		arr[10],
+		str[YSI_MAX_STRING];
+	str = broadcastfunc yrt_5(5, "string", arr, sizeof (arr), other);
+	ASSERT_SAME(str, "Hello World");
+	ASSERT_EQ(other, 1111116);
+	new
+		a = 6789,
+		b = 6789,
+		c = 6789,
+		d = 6789;
+	broadcastfunc yrt_7(a, b, c, d);
+	ASSERT_EQ(a, 8);
+	ASSERT_EQ(b, 8);
+	ASSERT_EQ(c, 6789);
+	ASSERT_EQ(d, 6785);
 }
 
 TEST__ y_remote_5()

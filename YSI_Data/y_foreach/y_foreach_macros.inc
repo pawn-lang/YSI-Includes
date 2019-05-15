@@ -655,7 +655,7 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
  *      
  *      foreach (new vehicleid : Vehicle)
  *      {
- *          ITER_SAFE(Vehicle, vehicleid)
+ *          ITER_SAFE_REMOVE(Vehicle, vehicleid)
  *          {
  *              DestroyVehicle(vehicleid);
  *          }
@@ -668,8 +668,8 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
 #define _IterN@%0\32; _IterN@
 #define _IterL@%0\32; _IterL@
 
-P:D(ITER_SAFE(Iterator:iter<>, &index));
-#define ITER_SAFE(%0,%1) for (new _IterN@%0=Iter_Next(%0,%1),_IterL@%0=1;_IterL@%0;%1=_IterN@%0,--_IterL@%0)
+P:D(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
+#define ITER_SAFE_REMOVE(%0,%1) for (new _IterN@%0=Iter_Prev(%0,%1),_IterL@%0=1;_IterL@%0;%1=Iter_Next(%0,_IterN@%0)==%1?%1:_IterN@%0,--_IterL@%0)
 
 // Remove trailing spaces.  This looks really unsafe because of the "%0\32;"
 // allowing anything to come before the space, but it would have to be

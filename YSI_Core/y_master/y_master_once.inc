@@ -409,6 +409,7 @@ public OnScriptInit()
 {
 	P:1("Master_OnScriptInit");
 	state _ALS : _ALS_go;
+	@_ = 0;
 	// Properties get lost between script changes so we need to force a rebuild.
 	CallRemoteFunction("Master_Reassert", "");
 	new
