@@ -124,36 +124,53 @@ Optional plugins:
 // "foreign" declaration.
 #define @Zu:#%0,_YM@C%8:,,);return%1(%2);} @Z%8:#%0,#);return%1(%2);}
 
+// Detect `const` followed immediately by a space.
+#define @Zf:@Zg:__:%4:%2:#%0#%1|||%3|||%5,%6);%7} @Zn:@Zo:%2:#%0#%1|||%3|||%5,%6);%7}
+
+// Detect `const` in a variable name.
+#define @Zg:%9:%4:%2:#%0#%1|||%3|||%5,%6);%7} @Zn:@Zo:%2:#%0#%1|||const%4%3|||%5,%6);%7}
+
+// Detect `const`, then see if it is followed by a space.
+#define @Ze:@Zn:@Zo:%2:#%0#%1|||const%3\32;%4|||%5,%6);%7} @Zf:@Zg:_%3_:%3:%2:#%0#%1|||%4|||%5,%6);%7}
 
 // Second "foreign" declaration.
 // This has been updated to check for arrays, then check if the array is a
 // string, instead of the old method which checked for those separately.
 #define @Zn:@Zo:%2:#%0#%1|||%3[%4]|||%5,%6);%7} @Zm:@Zr:%2:#%0#%1|||%3|||%5,%6);%7}
 
-#define @Zm:@Zr:%2:#%0#%1|||%4string:%3|||%5,%6);%7} @Zn:@Zo:%2:#%0s#%1,%3|||%5|||%6);%7}
-#define @Zr:%2:#%0#%1|||%3|||%5,%6);%7} @Zn:@Zo:%2:#%0a#%1,%3|||%5|||%6);%7}
+#define @Zm:@Zr:%2:#%0#%1|||%4string:%3|||%5,%6);%7} @Ze:@Zn:@Zo:%2:#%0s#%1,%3|||%5|||%6);%7}
+#define @Zr:%2:#%0#%1|||%3|||%5,%6);%7} @Ze:@Zn:@Zo:%2:#%0a#%1,%3|||%5|||%6);%7}
 
-#define @Zo:%2:#%0#%1|||%3|||%5,%6);%7} @Zn:@Zo:%2:#%0i#%1,%3|||%5|||%6);%7}
+#define @Zo:%2:#%0#%1|||%3|||%5,%6);%7} @Ze:@Zn:@Zo:%2:#%0i#%1,%3|||%5|||%6);%7}
 
 #define @Zp:%0||||||);%1} @Zl:%0);%1}
 #define @Zy:%0||||||);%1} @Zj:%0);%1}
 
-#define _YM@Cl:%0,%1);%2} @Zn:@Zo:@Zp:##|||%0|||%1);%2}
-#define _YM@Cj:%0,%1);%2} @Zn:@Zo:@Zy:##|||%0|||%1);%2}
+#define _YM@Cl:%0,%1);%2} @Ze:@Zn:@Zo:@Zp:##|||%0|||%1);%2}
+#define _YM@Cj:%0,%1);%2} @Ze:@Zn:@Zo:@Zy:##|||%0|||%1);%2}
 
 #define @Zl:%0);%8void:%3(%1);} %0);}
 #define @Zj:%0);%8void:%3(%1);} %0);%3(%1);}
 
+// Detect `const` followed immediately by a space.
+#define @Zc:@Zd:__:%4:%0(%1|||%3|||%5,%6) @Zb:@Zh:@Zi:%0(%1|||%3|||%5,%6)
+
+// Detect `const` in a variable name.
+#define @Zd:%9:%4:%0(%1|||%3|||%5,%6) @Zb:@Zh:@Zi:%0(%1|||const%4%3|||%5,%6)
+
+// Detect `const`, then see if it is followed by a space.
+#define @Za:@Zb:@Zh:@Zi:%0(%1|||const%3\32;%4|||%5,%6) @Zc:@Zd:_%3_:%3:%0(%1|||%4|||%5,%6)
+
 // "global" declaration.
-#define @Zt:@Zb:@Zh:@Zi:%0(%1|||%2:%3|||%5,%6) @Zb:@Zh:@Zi:%0(%1|||%3|||%5,%6)
-#define @Zb:@Zh:@Zi:%0(%1|||%3[%4]|||%5,%6) @Zt:@Zb:@Zh:@Zi:%0(%1,%3|||%5|||%6)
-#define @Zh:@Zi:%0(%1|||%3|||%5,%6) @Zt:@Zb:@Zh:@Zi:%0(%1,%3|||%5|||%6)
+#define @Zt:@Za:@Zb:@Zh:@Zi:%0(%1|||%2:%3|||%5,%6) @Zb:@Zh:@Zi:%0(%1|||%3|||%5,%6)
+#define @Zb:@Zh:@Zi:%0(%1|||%3[%4]|||%5,%6) @Zt:@Za:@Zb:@Zh:@Zi:%0(%1,%3|||%5|||%6)
+#define @Zh:@Zi:%0(%1|||%3|||%5,%6) @Zt:@Za:@Zb:@Zh:@Zi:%0(%1,%3|||%5|||%6)
 
 #define @Zi:%0(,%1||||||) %0(%1)
 
 #define @Zk:_YM@CP:%0(,,) %0()
 
-#define _YM@CP:%0(%1,%2) @Zt:@Zb:@Zh:@Zi:%0(|||%1|||%2)
+#define _YM@CP:%0(%1,%2) @Zt:@Za:@Zb:@Zh:@Zi:%0(|||%1|||%2)
 
 #define X@(@Zk:_YM@CP:%0string:%1(%2)) R@(@Zk:_YM@CP:%1(%2))
 
