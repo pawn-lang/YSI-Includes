@@ -71,23 +71,30 @@ Optional plugins:
 */
 
 // These are the tag-type definitions for the various possible parameter types.
+
+#define @Y_CST(%4)#%0#%1|||%7||| @Yf:@Yg:@Yh:@Yx:#%0#%1|||%7|||
+#define @Y_MUT(%4)#%0#%1|||%7||| @Yf:@Yg:@Yh:@Yx:#%0#%1|||%4 %7|||
+
+// "const".
+#define @Yi:@Yf:@Yg:@Yh:@Yx:#%0#%1|||%4const%3\32;%7|||%5|||%2||| T@:O@$%3$const$(%4){@Y_CST,@Y_MUT}#%0#%1|||%7|||%5|||%2|||
+
 // Array-like definitions.
 #define @Yf:@Yg:@Yh:@Yx:#%0#%1|||%3[%4]|||%5,%6;%9||| @Ye:@Yw:#%0#%1|||%3[%4]|||%5,%6;%9|||
 
-#define @Ye:@Yw:#%0#%1|||%2string:%3[%4]|||%5,%6;%9||| @Yf:@Yg:@Yh:@Yx:#%0s#%1,%3|||%5|||%6;%9,%3|||
+#define @Ye:@Yw:#%0#%1|||%2string:%3[%4]|||%5,%6;%9||| @Yi:@Yf:@Yg:@Yh:@Yx:#%0s#%1,%3|||%5|||%6;%9,%3|||
 
 // This one has an extra parameter because arrays must always be followed by
 // their length.
-#define @Yw:#%0#%1|||%3[%4]|||%5,%6,%7;%9||| @Yf:@Yg:@Yh:@Yx:#%0ad#%1,%3,%5|||%6|||%7;%9,%3,%5|||
+#define @Yw:#%0#%1|||%3[%4]|||%5,%6,%7;%9||| @Yi:@Yf:@Yg:@Yh:@Yx:#%0ad#%1,%3,%5|||%6|||%7;%9,%3,%5|||
 
 // Tag-like definitions.
-#define @Yg:@Yh:@Yx:#%0#%1|||%2:%3|||%5,%6;%9||| @Yf:@Yg:@Yh:@Yx:#%0d#%1,%2:%3|||%5|||%6;%9,%2:%3|||
+#define @Yg:@Yh:@Yx:#%0#%1|||%2:%3|||%5,%6;%9||| @Yi:@Yf:@Yg:@Yh:@Yx:#%0d#%1,%2:%3|||%5|||%6;%9,%2:%3|||
 
 // Others.
-#define @Yh:@Yx:#%0#%1|||%3|||%5,%6;%9||| @Yf:@Yg:@Yh:@Yx:#%0d#%1,%3|||%5|||%6;%9,%3|||
+#define @Yh:@Yx:#%0#%1|||%3|||%5,%6;%9||| @Yi:@Yf:@Yg:@Yh:@Yx:#%0d#%1,%3|||%5|||%6;%9,%3|||
 
 // Main entry point for defer type determination.
-#define _YT@CR:%0,%1)%2||| @Yf:@Yg:@Yh:@Yx:##|||%0|||%1;%2|||
+#define _YT@CR:%0,%1)%2||| @Yi:@Yf:@Yg:@Yh:@Yx:##|||%0|||%1;%2|||
 
 // Define for "defer" with timer, parameters and main function.
 #define YSI_timer%0[%1]%3(%2) stock%0_yT@(%2)return SetTimerEx(#%0,(I@==-1)?(%1):I@,@Yj:J@,_YT@CR:%2,,)%0|||%0|||(%2)

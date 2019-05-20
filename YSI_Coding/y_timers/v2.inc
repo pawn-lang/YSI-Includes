@@ -71,29 +71,35 @@ Optional plugins:
 */
 
 // These are the tag-type definitions for the various possible parameter types.
+
+#define @Y_CST(%4)#%0#%1|||%7||| @Yf:@Yg:@Yh:#%0#%1|||%7|||
+#define @Y_MUT(%4)#%0#%1|||%7||| @Yf:@Yg:@Yh:#%0#%1|||%4 %7|||
+
+// "const".
+#define @Yi:@Yf:@Yg:@Yh:#%0#%1|||%4const%3\32;%7|||%5|||%2||| T@:O@$%3$const$(%4){@Y_CST,@Y_MUT}#%0#%1|||%7|||%5|||%2|||
+
 // Array-like definitions.
 #define @Yf:@Yg:@Yh:#%0#%1|||%3[%4]|||%5,%6;%8>%9||| @Ye:@Yw:#%0#%1|||%3[%4]|||%5,%6;%9|||
 
-#define @Ye:@Yw:#%0#%1|||%2string:%3[%4]|||%5,%6;%9||| @Yf:@Yg:@Yh:#%0d#%1,_Timer_S(%3)|||%5|||%6;1>%9,@Yv&%3&|||
+#define @Ye:@Yw:#%0#%1|||%2string:%3[%4]|||%5,%6;%9||| @Yi:@Yf:@Yg:@Yh:#%0d#%1,_Timer_S(%3)|||%5|||%6;1>%9,@Yv&%3&|||
 
 // This one has an extra parameter because arrays must always be followed by
 // their length.
-#define @Yw:#%0#%1|||%3[%4]|||%5,%6,%7;%9||| @Yf:@Yg:@Yh:#%0d#%1,_Timer_A(%3,%5)|||%5|||%6,%7;1>%9,@Yv&%3&|||
+#define @Yw:#%0#%1|||%3[%4]|||%5,%6,%7;%9||| @Yi:@Yf:@Yg:@Yh:#%0d#%1,_Timer_A(%3,%5)|||%5|||%6,%7;1>%9,@Yv&%3&|||
 
 // Tag-like definitions.
-#define @Yg:@Yh:#%0#%1|||%2:%3|||%5,%6;%8>%9||| @Yf:@Yg:@Yh:#%0d#%1,%2:%3|||%5|||%6;%8>%9,%2:%3|||
+//#define @Yg:@Yh:#%0#%1|||%2:%3|||%5,%6;%8>%9||| @Yi:@Yf:@Yg:@Yh:#%0d#%1,%2:%3|||%5|||%6;%8>%9,%2:%3|||
 
 // Others.
-#define @Yh:#%0#%1|||%3|||%5,%6;%8>%9||| @Yf:@Yg:@Yh:#%0d#%1,%3|||%5|||%6;%8>%9,%3|||
+#define @Yh:#%0#%1|||%3|||%5,%6;%8>%9||| @Yi:@Yf:@Yg:@Yh:#%0d#%1,%3|||%5|||%6;%8>%9,%3|||
 
 // Main entry point for defer type determination.
-#define _YT@CR:%0,%1)%8>%2||| @Yf:@Yg:@Yh:#i#,@Yx:J@|||%0|||%1;%8>%2|||
+#define _YT@CR:%0,%1)%8>%2||| @Yi:@Yf:@Yg:@Yh:#i#,@Yx:J@|||%0|||%1;%8>%2|||
 
 // Define for "defer" with timer, parameters and main function.
 #define YSI_timer%0[%1]%3(%2) stock%0_yT@(%2)return _Timer_C(O@(#%0@_yT,(I@==-1)?(%1):I@,J@,_YT@CR:%2,,)0>%0|||%0|||(%2)
 
 // Expand additional parameters out to three functions after processing.
-//#define @Yx:%0||||||;%1,%2|||%4||| %0),1);@Yu:%1@_yT(%2);public @Yu:%1@_yT(%2){%4(%2);}%4
 #define @Yx:%0||||||;%8>%1,%2|||%4||| %0),%8);@Yj:%1@_yT(__r,%2);public @Yj:%1@_yT(__r,%2){%4(%2);}%4
 
 // Can't believe I never thought of this before!  If only there was a way to
@@ -117,3 +123,4 @@ Optional plugins:
 #define Timer:%0[%1]_yT@(%2) I@=%1,Timer:%0_yT@(%2)
 
 #define stop%0; {_Timer_F(_:%0);}
+

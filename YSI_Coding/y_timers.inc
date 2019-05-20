@@ -108,6 +108,11 @@ Optional plugins:
 #include "..\YSI_Coding\y_hooks"
 #include "..\YSI_Core\y_debug"
 
+// Ripped from code-parse.inc.
+#define PARSER_ISOLATE(%9,%0,%1){%2,%3} _:T@:O@$%1$%0$(%9){%2,%3}
+#define T@:O@$$%0$(){%2,%3} %2(%0)
+#define O@$%1$%0$(%9){%2,%3} %3(%9%0%1)
+
 #include "y_timers/impl"
 #if defined _YSI_PLUGINS_FIXES_2
 	//#error V3

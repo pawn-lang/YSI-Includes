@@ -115,9 +115,9 @@ PTest:Counter(playerid)
 	ASK("Is the blue GLOBAL COUNTER going up?");
 }
 
-timer BigMessage1[4000](playerid)
+timer BigMessage1[4000](theconstPlayerid)
 {
-	SendClientMessage(playerid, 0x00FF00AA, "BIG MESSAGE appearing once.");
+	SendClientMessage(theconstPlayerid, 0x00FF00AA, "BIG MESSAGE appearing once.");
 }
 
 timer BigMessage2[4000](playerid)
@@ -140,10 +140,14 @@ PTest:Timer2(playerid)
 	ASK("Is a green BIG MESSAGE appearing every 4 seconds?");
 }
 
-timer StopMessage1[4000](playerid)
+timer StopMessage1[4000](const playerid)
 {
 	SendClientMessage(playerid, 0x00FF00AA, "BIG MESSAGE should stop now.");
 	stop sgTimer;
+}
+
+timer SendMessageString[4000](const string:str[], arr[], size, constness)
+{
 }
 
 PTest:Timer3(playerid)
