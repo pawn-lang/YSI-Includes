@@ -223,13 +223,15 @@ stock
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock _Testing_Start(name[])
+stock _Testing_Start(const name[])
 {
 	YSI_gTestComplete = false;
 	// Gets a reference to the name string, which is also an intrusive linked
 	// list of failures.
-	name[0] = name[1] = 0,
+	//name[0] = name[1] = 0,
 	YSI_g_sCurTest = ref(name);
+	AMX_Write(YSI_g_sCurTest, 0);
+	AMX_Write(YSI_g_sCurTest + cellbytes, 0);
 	// My very first legitimate usage of `heapspace()` for something other than
 	// as a dummy no-op function call!  I'm actually quite happy I found a use
 	// for it!
@@ -248,14 +250,14 @@ stock _Testing_Start(name[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Testing_Ask(playerid, str[] = "", va_args<>)
+stock Testing_Ask(playerid, const str[] = "", va_args<>)
 {
 	va_format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, va_start<2>);
 	ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
 	YSI_g_sAsked = true;
 }
 
-stock Testing_Test(bool:x, str[] = "", va_args<>)
+stock Testing_Test(bool:x, const str[] = "", va_args<>)
 {
 		P:3("Testing_Test called: %i, \"%s\"", x, str);
 		++YSI_g_sTests;
@@ -270,10 +272,13 @@ stock Testing_Test(bool:x, str[] = "", va_args<>)
 			{
 				if (str[0] == '\2')
 				{
-					strunpack(str, !TEST_FAILED, 6);
-					str[5] = ' ';
+					format(Q@, sizeof (Q@), "FAIL: %s", str);
+					P:T(Q@, va_start<2>);
 				}
-				P:T(str, va_start<2>);
+				else
+				{
+					P:T(str, va_start<2>);
+				}
 			}
 		}
 	#if defined TEST_SHOW_PASSES
@@ -718,7 +723,7 @@ stock Testing_RunAll()
 
 // Meta tests.
 
-stock Testing_TestRedirect(bool:x, str[] = "", va_args<>)
+stock Testing_TestRedirect(bool:x, const str[] = "", va_args<>)
 {
 	ASSERT(x == bool:YSI_g_sTestResult);
 	ASSERT(str[0] != '\0');

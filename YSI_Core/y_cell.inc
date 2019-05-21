@@ -577,7 +577,7 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
+stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, const masks[5])
 {
 	new t;
 	return
@@ -606,7 +606,7 @@ stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5])
+stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, const masks[5])
 {
 	new t;
 	return

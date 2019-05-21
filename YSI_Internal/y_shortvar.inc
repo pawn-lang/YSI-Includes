@@ -96,3 +96,5 @@ stock
 	I@,
 	J@;
 
+new Q@[YSI_MAX_STRING];
+
