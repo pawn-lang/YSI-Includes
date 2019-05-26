@@ -94,11 +94,12 @@ enum e_FLOOD_ACTION:(+= 0x00010000)
 
 static
 	YSI_g_sPlayerIPs[MAX_PLAYERS],
-	e_FLOOD_ACTION:YSI_g_sMaxConnections = e_FLOOD_ACTION_COUNT | e_FLOOD_ACTION_BLOCK;
+	e_FLOOD_ACTION:YSI_g_sMaxConnections = e_FLOOD_ACTION_COUNT | e_FLOOD_ACTION_BLOCK,
+	YSI_g_sOnIncomingConnection;
 
 forward OnFloodLimitExceeded(ip[16], count);
 
-stock
+new
 	Iterator:FloodingPlayer<MAX_PLAYERS>;
 
 /*-------------------------------------------------------------------------*//**
@@ -144,6 +145,7 @@ public Flooding_UnbanIP(ip32)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who joined.</param>
+ * <param name="ip">Their IP address as a string.</param>
  * <remarks>
  *  Checks for too many connections from the same IP address and acts
  *  accordingly.
@@ -153,15 +155,12 @@ public Flooding_UnbanIP(ip32)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-HOOK__ OnPlayerConnect(playerid)
+static Flooding_CheckIP(playerid, ip[])
 {
 	new
 		ret = 1;
 	if ((YSI_g_sMaxConnections & e_FLOOD_ACTION_COUNT) != e_FLOOD_ACTION_COUNT)
 	{
-		new
-			ip[16];
-		GetPlayerIp(playerid, ip, sizeof (ip));
 		new
 			ip32 = IPToInt(ip);
 		YSI_g_sPlayerIPs[playerid] = ip32;
@@ -217,12 +216,48 @@ HOOK__ OnPlayerConnect(playerid)
 				}
 				case e_FLOOD_ACTION_OTHER:
 				{
-					ret = CallLocalFunction("OnFloodLimitExceeded", "si", ip, Iter_Count(FloodingPlayer));
+					ret = CallRemoteFunction("OnFloodLimitExceeded", "si", ip, Iter_Count(FloodingPlayer));
 				}
 			}
 		}
 		Iter_Clear(FloodingPlayer);
 	}
 	return ret;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player who joined.</param>
+ * <param name="ip">Their IP address as a string.</param>
+ * <param name="port">Their port.</param>
+ * <remarks>
+ *  Called before much of the player structure is set up to check incoming
+ *  connections.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+HOOK__ OnIncomingConnection(playerid, ip_address[], port)
+{
+	YSI_g_sOnIncomingConnection = true;
+	return Flooding_CheckIP(playerid, ip_address);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player who joined.</param>
+ * <remarks>
+ *  Called when a player is connected, for checking on older versions.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+HOOK__ OnPlayerConnect(playerid)
+{
+	// To support older versions.
+	if (YSI_g_sOnIncomingConnection)
+	{
+		return 1;
+	}
+	new
+		ip[16];
+	GetPlayerIp(playerid, ip, sizeof (ip));
+	return Flooding_CheckIP(playerid, ip);
 }
 
