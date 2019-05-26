@@ -82,10 +82,11 @@ Optional plugins:
 */
 
 #if defined CUSTOM_TAG_TYPES
-	#define GLOBAL_TAG_TYPES {_,Language,Bit,Text,Menu,Style,XML,Bintree,Group,Timer,File,Float,Text3D,CUSTOM_TAG_TYPES}
+	#define File,Float, Float,File,Text3D,CUSTOM_TAG_TYPES
 #else
-	#define GLOBAL_TAG_TYPES {_,Language,Bit,Text,Menu,Style,XML,Bintree,Group,Timer,File,Float,Text3D}
+	#define File,Float, Float,File,Text3D
 #endif
+#define GLOBAL_TAG_TYPES {_,Language,Bit,Text,Menu,Style,XML,Bintree,Group,Timer,File,Float,}
 
 // Used to get rid of the "string:" tag once it has been used.
 #if !defined string
