@@ -85,6 +85,13 @@ public OnFloodLimitExceeded(ip[], count)
 Note that the `FloodingPlayer` iterator is only valid within the scope of
 `OnFloodLimitExceeded`.
 
+You can get the current count and action with:
+
+```pawn
+Flooding_GetMaxConnections();
+e_FLOOD_ACTION:Flooding_GetConnectionAction();
+```
+
 ## External Links
 
 These are links to external documentation and tutorials; both first- and third-party.  Note that these may be incomplete, obsolete, or otherwise inaccurate.
