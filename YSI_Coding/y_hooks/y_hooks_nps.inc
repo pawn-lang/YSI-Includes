@@ -1,5 +1,74 @@
 #define HOOK_NATIVE__%0(%1)
 
+#define HOOK_PUBLIC__%0(%1) FUNC_PARSER(YH_NPS,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:)(%0(%1))()()1$0$
+
+// Arrays.
+//
+// %0  = `const`
+// %1  = Tag (unused)
+// %2  = Name
+// %4+ = Dims
+#define YH_NPS_ARR(%0,%1,%2,%4)%8$ YH_NPS_BYREF(%0%2[%4],%2)%8$
+#define YH_NPS_ARR_ARR(%0,%1,%2,%4,%5)%8$ YH_NPS_BYREF(%0%2[%4][%5],%2)%8$
+#define YH_NPS_ARR_ARR_ARR(%0,%1,%2,%4,%5,%6)%8$ YH_NPS_BYREF(%0%2[%4][%5][%6],%2)%8$
+
+// Strings.
+//
+// %0  = `const`
+// %1  = Tag (unused)
+// %2  = Name
+// %4  = Size
+// %3  = Default (unused)
+#define YH_NPS_STR(%0,%1,%2,%4)%8$ YH_NPS_BYREF(%0%2[%4],%2)%8$
+#define YH_NPS_STR_DEF(%0,%1,%2,%4,%3)%8$ YH_NPS_BYREF(%0%2[%4],%2)%8$
+
+// Varargs.
+//
+// %0  = `const` (unused)
+// %1  = Tag
+// %2  = Name (unused)
+// %5  = Prototype parameters
+// %6  = Call parameters
+#define YH_NPS_EXT(%0,%1,%2)%8$(%5)(%6)%2$ %8$(%5,%1...)(%6)$
+
+// References.
+//
+// %0  = `const` (unused)
+// %1  = Tag (unused)
+// %2  = Name
+// %3  = Default (unused)
+#define YH_NPS_REF(%0,%1,%2)%8$ YH_NPS_BYREF(&%2,%2)%8$
+#define YH_NPS_REF_DEF(%0,%1,%2,%3)%8$ YH_NPS_BYREF(&%2,%2)%8$
+
+// Variables.
+//
+// %0  = `const`
+// %1  = Tag (unused)
+// %2  = Name
+// %3  = Default (unused)
+#define YH_NPS_NUM(%0,%1,%2)%8$ YH_NPS_BYVAL(%0%2,%2)%8$
+#define YH_NPS_NUM_DEF(%0,%1,%2,%3)%8$ YH_NPS_BYVAL(%0%2,%2)%8$
+
+// Generate the parameter descriptions.
+//
+// %0  = Name in prototype
+// %1  = Name in call
+// %2  = Shift
+// %5  = Prototype parameters
+// %6  = Call parameters
+#define YH_NPS_BYREF(%0,%1)%8$(%5)(%6)%2$ %8$(%5,%0)(%6,%1)%2+1$
+#define YH_NPS_BYVAL(%0,%1)%8$(%5)(%6)%2$ %8$(%5,%0)(%6,%1)%2+1$1<<%2|
+
+// End, generate the code.
+//
+// %0  = Name
+// %2  = Shift
+// %3  = Descriptor
+// %5  = Prototype parameters
+// %6  = Call parameters
+#define YH_NPS_END(%0)%8$(,%5)(%6)%2$%3$ %8$%0(%5) { %0(addr,%3%6); }
+#define YH_NPS_NUL(%0)%8$()()%2$%3$ %8$%0() { %0(%3); }
+
 /*
 
 Trampoline code, to add the indirection pattern to the start of the parameter
