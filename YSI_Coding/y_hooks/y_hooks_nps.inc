@@ -1,6 +1,9 @@
 #define HOOK_NATIVE__%0(%1)
 
-#define HOOK_PUBLIC__%0(%1) FUNC_PARSER(YH_NPS,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:)(%0(%1))()()1$0$
+#define HOOK_PUBLIC__%0(%1) FUNC_PARSER(YH_NPS,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:)(%0(%1))()()(1,0,(@H_y,@K_y))
+
+#define @H_y%0\32; @H_y // hook public
+#define @K_y%0\32; @K_y // public extras
 
 // Arrays.
 //
@@ -29,7 +32,7 @@
 // %2  = Name (unused)
 // %5  = Prototype parameters
 // %6  = Call parameters
-#define YH_NPS_EXT(%0,%1,%2)%8$(%5)(%6)%2$ %8$(%5,%1...)(%6)$
+#define YH_NPS_EXT(%0,%1,%2)%8$(%5)(%6)(%9,%4,%7) %8$(%5,%1...)(%6)(%9,%4,%7)
 
 // References.
 //
@@ -53,21 +56,44 @@
 //
 // %0  = Name in prototype
 // %1  = Name in call
-// %2  = Shift
 // %5  = Prototype parameters
 // %6  = Call parameters
-#define YH_NPS_BYREF(%0,%1)%8$(%5)(%6)%2$ %8$(%5,%0)(%6,%1)%2+1$
-#define YH_NPS_BYVAL(%0,%1)%8$(%5)(%6)%2$ %8$(%5,%0)(%6,%1)%2+1$1<<%2|
+// %9  = Shift
+// %4  = Existing values
+// %7  = Prefix
+#define YH_NPS_BYREF(%0,%1)%8$(%5)(%6)(%9,%4,%7) %8$(%5,%0)(%6,%1)(%9+1,%4,%7)
+#define YH_NPS_BYVAL(%0,%1)%8$(%5)(%6)(%9,%4,%7) %8$(%5,%0)(%6,%1)(%9+1,1<<%9|%4,%7)
 
 // End, generate the code.
 //
 // %0  = Name
-// %2  = Shift
 // %3  = Descriptor
 // %5  = Prototype parameters
 // %6  = Call parameters
-#define YH_NPS_END(%0)%8$(,%5)(%6)%2$%3$ %8$%0(%5) { %0(addr,%3%6); }
-#define YH_NPS_NUL(%0)%8$()()%2$%3$ %8$%0() { %0(%3); }
+// %9  = Shift
+// %4  = Existing values
+// %7  = Prefix0
+// %1  = Prefix1
+
+#define YH_NPS_END(%0)%8$(,%5)(,%6)(%9,%4,(%7,%1)) %8$ \
+	UNIQUE_FUNCTION<%7%0@...>(f__,a__,%5);                                     \
+	UNIQUE_FUNCTION<%1%0@...>(%5);                                             \
+	UNIQUE_FUNCTION<%1%0@...>(%5)                                              \
+	{                                                                          \
+		yH@_(%4);                                                              \
+		%0(%6);                                                                \
+	}                                                                          \
+	UNIQUE_FUNCTION<%7%0@...>(f__,a__,%5)
+
+#define YH_NPS_NUL(%0)%8$()()(%9,%4,(%7,%1)) %8$ \
+	UNIQUE_FUNCTION<%7%0@...>(f__,a__);                                        \
+	UNIQUE_FUNCTION<%1%0@...>();                                               \
+	UNIQUE_FUNCTION<%1%0@...>()                                                \
+	{                                                                          \
+		yH@_(%4);                                                              \
+		%0();                                                                  \
+	}                                                                          \
+	UNIQUE_FUNCTION<%7%0@...>(f__,a__)
 
 /*
 
@@ -93,8 +119,26 @@ This function is called, and just needs to insert a new function.
 
 */
 
-#define continue(%0) Hooks_Continue_(func__,args__,%0)
-#define args__,) args__)
+#define continue(%0) Hooks_Continue_(f__,a__,%0)
+#define a__,) a__)
+
+stock yH@_(compressedFormat)
+{
+	// TODO:
+	//
+	// 1) Get the next function call address, being the original function.  This
+	//    can also tell us if it is a native, public, or stock (which is a nice
+	//    side-effect I wasn't planning).
+	//
+	// 2) Store the parameter format (`compressedFormat`).
+	//
+	// Do a double return - exit the calling function as well as this function,
+	// so that the next call is never actually made.
+	#emit POP.pri
+	#emit SCTRL        5
+	#emit SCTRL        4
+	#emit RETN
+}
 
 stock Hooks_Continue_(target, args, ...)
 {
