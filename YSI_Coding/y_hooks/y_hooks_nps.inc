@@ -75,8 +75,8 @@
 // %4  = Existing values
 // %7  = Prefix0
 // %1  = Prefix1
-#define YH_NPS_END(%0)%8$(,%5)(,%6)(%9,%4,(%7,%1)) %8$_@Ky<%7%0>(f__,a__,%5);_@Ky<%1%0>(%5);_@Ky<%1%0>(%5)_@Ky(%4),%0(%6),_@yK();_@Ky<%7%0>(f__,a__,%5)
-#define YH_NPS_NUL(%0)%8$()()(%9,%4,(%7,%1)) %8$_@Ky<%7%0>(f__,a__);_@Ky<%1%0>();_@Ky<%1%0>()_@Ky(%4),%0(),_@yK();_@Ky<%7%0>(f__,a__)
+#define YH_NPS_END(%0)%8$(,%5)(,%6)(%9,%4,(%7,%1)) %8$_@Ky<%7%0>(%5);_@Ky<%1%0>(%5);_@Ky<%1%0>(%5)_@Ky(%4),%0(%6),_@yK();_@Ky<%7%0>(%5)
+#define YH_NPS_NUL(%0)%8$()() YH_NPS_END(%0)%8$(,)(,)
 
 // Helper macro to generate the unique function name without bloating the
 // generated code multiple times.
@@ -106,10 +106,13 @@ This function is called, and just needs to insert a new function.
 
 */
 
-#define continue(%0) Hooks_Continue_(%0)
+// TODO: Read this data directly in `Hooks_Continue_`.
+#define continue(%0) Hooks_Continue_(AMX_Read(YSI_g_sNPSStack),AMX_Read(YSI_g_sNPSStack+cellbytes),%0)
+#define AMX_Read(%0),) AMX_Read(%0))
 
-stock _@yK()
+stock _@yK(&a = 0, &b = 0, &c = 0)
 {
+	#pragma unused a, b, c
 	// This function does nothing.  It merely exists to be called - an operation
 	// which takes two cells, thus reserving two cells in the assembly.
 }
@@ -181,33 +184,48 @@ stock _@Ky(compressedFormat)
 	//   https://www.youtube.com/watch?v=geHqnV4Mk_4
 	//
 //26
-	// Why not use `HEAP 12`?  This is simpler than increasing `alt` repeatedly.
-	@emit HEAP         4
-	@emit LOAD.pri     ref(YSI_g_sNPSStack)
-	@emit STOR.I
-	@emit STOR.alt     YSI_g_sNPSStack
 
-	// Push the args format.
-	@emit HEAP         4
-	@emit CONST.pri    compressedFormat
-	@emit STOR.I
+	// Build the structure in the stack first.
+	@emit PUSH         ref(YSI_g_sNPSStack)
+	@emit PUSH.C       compressedFormat
+	@emit PUSH.C       addr
 
-	// Push the next chained address. TODO - REPLACE THIS!
-	@emit HEAP         4
-	@emit CONST.pri    addr
-	@emit STOR.I
+	// Copy 16 bytes over (includes the return address).
+	@emit HEAP         16
+	@emit LCTRL        4
+	@emit MOVS         16
+	@emit STOR.alt     ref(YSI_g_sNPSStack)
 
-	@emit HEAP         4
-	@emit POP.pri
-	@emit STOR.I
+	// Call, and return to here to clean up the heap.
+	@emit STACK        16
+	@emit CALL.abs     YSI_g_sNPSReplace
 
-	// Calculate the offset from here to the implementation function.
-	@emit CALL         YSI_g_sNPSReplace
+//	// Pop the stack.
+//	@emit LOAD.pri     ref(YSI_g_sNPSStack)
+//	@emit ADD.C        8
+//	@emit MOVE.alt
+//	@emit LOAD.I
+//	@emit STOR.pri     ref(YSI_g_sNPSStack)
+//
+//	// Get the return address.
+//	@emit MOVE.pri
+//	@emit ADD.C        4
+//	@emit LOAD.I
+//	@emit HEAP         -16
+//	@emit SCTRL        6
 
+	// Pop the stack.
+	@emit LCTRL        2
+	@emit ADD.C        -8
+	@emit LOAD.I
+	@emit STOR.pri     ref(YSI_g_sNPSStack)
 
-
-
-
+	// Get the return address.
+	@emit LCTRL        2
+	@emit ADD.C        -4
+	@emit LOAD.I
+	@emit HEAP         -16
+	@emit SCTRL        6
 
 	AsmEmitPadding(ctx);
 
