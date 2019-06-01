@@ -210,8 +210,6 @@ stock _@Ky(compressedFormat)
 	@emit PUSH.pri
 
 	// Copy from the heap.
-	//@emit LCTRL        2
-	//@emit ADD.C        -20
 	@emit LOAD.pri     ref(YSI_g_sNPSStack)
 	@emit MOVS         20
 
