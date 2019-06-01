@@ -106,12 +106,7 @@ This function is called, and just needs to insert a new function.
 
 */
 
-#define continue(%0) Hooks_Continue_(f__,a__,%0)
-#define a__,) a__)
-
-#define HOOKS_DEFER (
-
-#define Hooks_Continue_(f__,a__,%0___(%1)%2) Hooks_Continue_ HOOKS_DEFER f__,a__,%0___((%1) + 2)%2)
+#define continue(%0) Hooks_Continue_(%0)
 
 stock _@yK()
 {
@@ -121,7 +116,8 @@ stock _@yK()
 
 new
 	YSI_g_sNPSTrampoline,
-	YSI_g_sNPSReplace;
+	YSI_g_sNPSReplace,
+	YSI_g_sNPSStack;
 
 stock _@Ky(compressedFormat)
 {
@@ -177,24 +173,41 @@ stock _@Ky(compressedFormat)
 		printf("no");
 	}
 	}
-	{}
+
 	AsmInitPtr(ctx, YSI_g_sNPSTrampoline + AMX_HEADER_COD, YSI_g_sNPSReplace - YSI_g_sNPSTrampoline);
-	{}
-	// Forward the function, passing two additional parameters.  Note - no
+	// Forward the function, storing the chain data in the heap.   Note that no
 	// `PROC` is added to this new trambopoline:
 	//
 	//   https://www.youtube.com/watch?v=geHqnV4Mk_4
 	//
-	@emit POP.alt                       // Save the return address.
-	@emit POP.pri                       // Get the parameter count.
-	@emit PUSH.C       compressedFormat // Push the args format.
-	@emit PUSH.C       addr             // Push the next chained address. TEMP - REPLACE THIS!
-	@emit ADD.C        8                // Increase the parameter count.
-	@emit PUSH.pri
-	@emit PUSH.alt
-	
+//26
+	// Why not use `HEAP 12`?  This is simpler than increasing `alt` repeatedly.
+	@emit HEAP         4
+	@emit LOAD.pri     ref(YSI_g_sNPSStack)
+	@emit STOR.I
+	@emit STOR.alt     YSI_g_sNPSStack
+
+	// Push the args format.
+	@emit HEAP         4
+	@emit CONST.pri    compressedFormat
+	@emit STOR.I
+
+	// Push the next chained address. TODO - REPLACE THIS!
+	@emit HEAP         4
+	@emit CONST.pri    addr
+	@emit STOR.I
+
+	@emit HEAP         4
+	@emit POP.pri
+	@emit STOR.I
+
 	// Calculate the offset from here to the implementation function.
-	@emit JUMP.rel     YSI_g_sNPSReplace - YSI_g_sNPSTrampoline - 12 * cellbytes
+	@emit CALL         YSI_g_sNPSReplace
+
+
+
+
+
 
 	AsmEmitPadding(ctx);
 
