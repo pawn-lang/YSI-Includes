@@ -106,7 +106,7 @@ static stock YHNPS_Find(heap, end, value, ptr)
 	while (start <= end)
 	{
 		mid = (start + end) / 2;
-		new diff = AMX_Read(heap + mid * 8) - value;
+		new diff = value - AMX_Read(heap + mid * 8);
 		if (diff < 0)
 		{
 			start = mid + 1;
@@ -133,7 +133,7 @@ static stock YHNPS_Insert(heap, count, value, ptr)
 	{
 		mid = (start + end) / 2;
 		new
-			diff = AMX_Read(heap + mid * 8) - value;
+			diff = value - AMX_Read(heap + mid * 8);
 		if (diff < 0)
 		{
 			start = mid + 1;
