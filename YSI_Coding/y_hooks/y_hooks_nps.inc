@@ -122,14 +122,25 @@ public OnCodeInit()
 		YSI_g_sNPSReplace = AMX_Read(entry);
 		AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, name);
 		name{strfind(name, "@", .pos = 4)} = '\0';
-		if (strcmp(name[1], pn) || YSI_g_sNPSStack == cellmin)
+		if (YSI_g_sNPSStack == cellmin)
 		{
+			// New hook.
+			memcpy(pn, name[1], 0, 28, 32 char);
+		}
+		else if (strcmp(name[1], pn))
+		{
+			// `YSI_g_sNPSStack` points to the start of the last chain.  Store
+			// it.
 			// New hook.
 			memcpy(pn, name[1], 0, 28, 32 char);
 			YSI_g_sNPSStack = cellmin;
 		}
 		@.YSI_g_sNPSTrampoline();
 		YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+	}
+	if (YSI_g_sNPSStack != cellmin)
+	{
+		// Store the final chain.
 	}
 
 	// Step 2:
