@@ -74,26 +74,12 @@
 // %4  = Existing values
 // %7  = Prefix0
 // %1  = Prefix1
+#define YH_NPS_END(%0)%8$(,%5)(,%6)(%9,%4,(%7,%1)) %8$_@Ky<%7%0>(f__,a__,%5);_@Ky<%1%0>(%5);_@Ky<%1%0>(%5)_@Ky(%4),%0(%6),_@yK();_@Ky<%7%0>(f__,a__,%5)
+#define YH_NPS_NUL(%0)%8$()()(%9,%4,(%7,%1)) %8$_@Ky<%7%0>(f__,a__);_@Ky<%1%0>();_@Ky<%1%0>()_@Ky(%4),%0(),_@yK();_@Ky<%7%0>(f__,a__)
 
-#define YH_NPS_END(%0)%8$(,%5)(,%6)(%9,%4,(%7,%1)) %8$ \
-	UNIQUE_FUNCTION<%7%0@...>(f__,a__,%5);                                     \
-	UNIQUE_FUNCTION<%1%0@...>(%5);                                             \
-	UNIQUE_FUNCTION<%1%0@...>(%5)                                              \
-	{                                                                          \
-		yH@_(%4);                                                              \
-		%0(%6);                                                                \
-	}                                                                          \
-	UNIQUE_FUNCTION<%7%0@...>(f__,a__,%5)
-
-#define YH_NPS_NUL(%0)%8$()()(%9,%4,(%7,%1)) %8$ \
-	UNIQUE_FUNCTION<%7%0@...>(f__,a__);                                        \
-	UNIQUE_FUNCTION<%1%0@...>();                                               \
-	UNIQUE_FUNCTION<%1%0@...>()                                                \
-	{                                                                          \
-		yH@_(%4);                                                              \
-		%0();                                                                  \
-	}                                                                          \
-	UNIQUE_FUNCTION<%7%0@...>(f__,a__)
+// Helper macro to generate the unique function name without bloating the
+// generated code multiple times.
+#define _@Ky<%0> UNIQUE_FUNCTION<%0@...>
 
 /*
 
@@ -122,21 +108,101 @@ This function is called, and just needs to insert a new function.
 #define continue(%0) Hooks_Continue_(f__,a__,%0)
 #define a__,) a__)
 
-stock yH@_(compressedFormat)
+stock _@yK()
 {
+	// This function does nothing.  It merely exists to be called - an operation
+	// which takes two cells, thus reserving two cells in the assembly.
+}
+
+stock _@Ky(compressedFormat)
+{
+	#pragma unused compressedFormat
 	// TODO:
 	//
-	// 1) Get the next function call address, being the original function.  This
-	//    can also tell us if it is a native, public, or stock (which is a nice
-	//    side-effect I wasn't planning).
-	//
-	// 2) Store the parameter format (`compressedFormat`).
-	//
+	// Get the next function call address, being the original function.  This
+	// can also tell us if it is a native, public, or stock (which is a nice
+	// side-effect I wasn't planning).
+	new
+		dctx[DisasmContext],
+		ctx[AsmContext],
+		addr,
+		type = 0;
+	DisasmInit(dctx, GetCurrentFrameReturn());
+	while (DisasmNext(dctx))
+	{
+		switch (DisasmGetOpcode(dctx))
+		{
+		case OP_CALL:
+		{
+			addr = DisasmGetOperandReloc(dctx);
+			type = 1;
+			break;
+		}
+		case OP_SYSREQ_C:
+		{
+			addr = DisasmGetOperand(dctx);
+			type = 2;
+			break;
+		}
+		case OP_SYSREQ_D:
+		{
+			type = 3;
+			break;
+		}
+		}
+	}
+	switch (type)
+	{
+	case 1:
+	{
+		// Normal function call.
+		printf("addr: %08x", addr);
+	}
+	case 2:
+	{
+		// Native function call.
+		printf("ID: %d", addr);
+		addr = -addr;
+	}
+	default:
+	{
+		// Bad.
+		printf("no");
+	}
+	}
+	AsmInitPtr(ctx, GetCurrentFrameReturn() - 16 + AMX_HEADER_COD);
+	// This does nothing except clean up existing code from the old function.
+	@emit POP.pri
+	@emit RETN
+	// The old compiler doesn't like this.  Don't know why.
+	//@emit NOP
+
+	// Forward the function, passing two additional parameters.  Note - no
+	// `PROC` is added to this new trambopoline.
+	@emit POP.alt                       // Save the return address.
+
+	@emit POP.pri                       // Get the parameter count.
+
+	@emit PUSH.C       compressedFormat // Push the args format.
+
+	@emit PUSH.C       addr             // Push the next chained address. TEMP - REPLACE THIS!
+
+	@emit ADD.C        8                // Increase the parameter count.
+
+	@emit PUSH.pri
+
+	@emit PUSH.alt
+
+	@emit JUMP         0                // TODO: Jump to impl.
+
 	// Do a double return - exit the calling function as well as this function,
 	// so that the next call is never actually made.
-	#emit POP.pri
+	#emit LOAD.S.pri   0
 	#emit SCTRL        5
 	#emit SCTRL        4
+	// Clear faked parameter counts.   The outer public (maybe) expects lots of
+	// parameters.  We call it with none.
+	#emit ZERO.S       8
 	#emit RETN
 }
 
