@@ -91,6 +91,7 @@ public _@_y_funcinc_@_()
 	new _funcinc_a[1 char];
 	// This function calls any functions used in assembly code in YSI to ensure
 	// that they are included in the native function table.
+	print("");
 	printf("");
 	strunpack(_funcinc_a, "");
 	memcpy("", "", 0, 0, 0);
