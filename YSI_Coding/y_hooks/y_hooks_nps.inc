@@ -106,7 +106,8 @@ static stock YHNPS_Find(heap, end, value, ptr)
 	while (start <= end)
 	{
 		mid = (start + end) / 2;
-		new diff = value - AMX_Read(heap + mid * 8);
+		new
+			diff = value - AMX_Read(heap + mid * 8);
 		if (diff < 0)
 		{
 			start = mid + 1;
