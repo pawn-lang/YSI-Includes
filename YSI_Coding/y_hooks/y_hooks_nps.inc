@@ -190,21 +190,26 @@ stock _@Ky(compressedFormat)
 	@emit PUSH.C       addr
 
 	// Copy 16 bytes over (includes the return address).
-	@emit HEAP         16
+	@emit HEAP         8
 	@emit LCTRL        4
-	@emit MOVS         16
+	@emit MOVS         8
 	@emit STOR.alt     ref(YSI_g_sNPSStack)
 
 	// Call, and return to here to clean up the heap.
 	@emit STACK        16
 	@emit CALL.abs     YSI_g_sNPSReplace
 
-	// Third method, still not smaller.
-	@emit LCTRL        2
-	@emit ADD.C        -8
-	@emit STACK        8
+
+
+
+
+
+
+	@emit LOAD.pri     ref(YSI_g_sNPSStack)
+	@emit STACK        -16
 	@emit STACK        0
-	@emit MOVS         8
+	@emit MOVS         16
+	@emit STACK        8
 	@emit POP.pri
 	@emit STOR.pri     ref(YSI_g_sNPSStack)
 	@emit POP.pri
