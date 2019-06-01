@@ -107,8 +107,7 @@ This function is called, and just needs to insert a new function.
 */
 
 // TODO: Read this data directly in `Hooks_Continue_`.
-#define continue(%0) Hooks_Continue_(AMX_Read(YSI_g_sNPSStack+12),AMX_Read(YSI_g_sNPSStack+16),%0)
-#define AMX_Read(%0),) AMX_Read(%0))
+#define continue(%0) Hooks_Continue_(%0)
 
 stock _@yK(&a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0)
 {
@@ -238,11 +237,29 @@ stock _@Ky(compressedFormat)
 	#emit RETN
 }
 
-stock Hooks_Continue_(target, args, GLOBAL_TAG_TYPES:...)
+stock Hooks_Continue_(GLOBAL_TAG_TYPES:...)
 {
-	static addr;
-	#emit ADDR.pri     16
+	// func = YSI_g_sNPSStack + 12
+	// args = YSI_g_sNPSStack + 16
+	static
+		addr,
+		func,
+		args;
+
+	#emit ADDR.pri     8
 	#emit STOR.pri     addr
+
+	#emit LOAD.pri     YSI_g_sNPSStack
+	#emit ADD.C        12
+	#emit LOAD.I
+	#emit STOR.pri     func
+
+	#emit LOAD.pri     YSI_g_sNPSStack
+	#emit ADD.C        16
+	#emit LOAD.I
+	#emit STOR.pri     args
+
+	printf("calling %d %d", func, args);
 
 	while ((args >>>= 1))
 	{
@@ -256,21 +273,14 @@ stock Hooks_Continue_(target, args, GLOBAL_TAG_TYPES:...)
 	}
 
 	// `CALL` or `SYSREQ`.
-	if (target > 0)
+	if (func > 0)
 	{
-		// Subtract 8 from the parameter count.
-		#emit LOAD.S.pri   8
-		#emit ADD.C        0xFFFFFFF8 // -8
-		#emit STOR.S.pri   16
-
 		// Reset the current frame.
 		#emit POP.pri
 		#emit SCTRL        5
 
-		// Get the target, while moving the return address.
-		#emit POP.pri
-		#emit POP.alt
-		#emit SWAP.pri
+		// Jump to the function.
+		#emit LOAD.pri     func
 		#emit LCTRL        8
 		#emit SCTRL        6
 	}
@@ -282,26 +292,14 @@ stock Hooks_Continue_(target, args, GLOBAL_TAG_TYPES:...)
 		// Save the bottom of the stack.
 		#emit POP.pri
 		#emit STOR.pri     FRM
-
-		#emit POP.pri
-		#emit STOR.pri     RET
-
-		// Subtract 8 args.
-		#emit POP.pri
-		#emit ADD.C        0xFFFFFFF8 // -8
-
-		// Get the native (negatively), and store the new args.
 		#emit POP.alt
-		#emit SWAP.pri
 
-		// `pri` is `0` here, because it is the value of `args`, which was
-		// driven to 0 in the code above.  Thus `pri = -alt` becomes just:
-		#emit SUB
-
+		#emit LOAD.pri     func
+		#emit NEG
 		#emit SYSREQ.pri
 
 		// Returns to here.
-		#emit PUSH         RET
+		#emit PUSH.alt
 		#emit PUSH         FRM
 		#emit RETN
 	}
