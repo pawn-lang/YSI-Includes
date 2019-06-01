@@ -171,6 +171,81 @@ stock _@Ky(compressedFormat)
 	//   https://www.youtube.com/watch?v=geHqnV4Mk_4
 	//
 
+	// Update the stack pointer.
+	@emit HEAP         24 // Old heap in alt.
+	@emit LOAD.pri     ref(YSI_g_sNPSStack)
+	@emit STOR.I
+	@emit STOR.alt     ref(YSI_g_sNPSStack)
+
+	// Overlap the stack and heap.
+	@emit LCTRL        4 // Old stack in pri.
+	@emit SUB
+	@emit ADD.C        -4
+	@emit LOAD.S.alt   8
+	@emit ADD
+
+	// Move the stack to touch the heap.
+	@emit HEAP         0
+	@emit XCHG
+	@emit SCTRL        4
+
+	// Push the fake header.
+	@emit PUSH.C       compressedFormat
+	@emit PUSH.C       addr
+	@emit PUSH.alt
+	@emit PUSH.S       4
+	@emit PUSH.S       0
+
+	// The stack is now 4 bytes from the old heap position, and within the new
+	// heap.  Put it back where it was, with our data now in the heap.
+	@emit LCTRL        5
+	@emit LCTRL        4
+
+
+
+
+
+
+
+
+
+
+	@emit POP.pri      // Get the true return address.
+	@emit POP.alt      // Get the arg count.
+	@emit PUSH.alt
+	@emit PUSH.C       compressedFormat
+	@emit PUSH.C       addr
+	@emit PUSH.pri     // Swap later.
+
+	// Get the stack.
+	@emit LCTRL        4
+	@emit ADD.C        4
+	@emit ADD          4
+	@emit HEAP         24
+	@emit SUB
+
+	// Put the new arg count and original return on the stack.
+	@emit SWAP.pri
+	@emit PUSH.pri
+
+	@emit LCTRL       5
+	@emit PUSH.pri
+	
+	@emit PUSH        ref(YSI_g_sNPSStack)
+	@emit STOR.alt    ref(YSI_g_sNPSStack)
+	@emit LCTRL       4
+	@emit MOVS        24
+	@emit STACK       24
+	@emit CALL.abs     YSI_g_sNPSReplace
+
+//label_below:
+
+
+
+
+
+
+
 	// Build the structure in the stack first.
 	@emit POP.pri
 	@emit PUSH.C       compressedFormat
