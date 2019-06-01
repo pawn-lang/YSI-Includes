@@ -107,14 +107,16 @@ This function is called, and just needs to insert a new function.
 */
 
 // TODO: Read this data directly in `Hooks_Continue_`.
-#define continue(%0) Hooks_Continue_(AMX_Read(YSI_g_sNPSStack),AMX_Read(YSI_g_sNPSStack+cellbytes),%0)
+#define continue(%0) Hooks_Continue_(AMX_Read(YSI_g_sNPSStack+12),AMX_Read(YSI_g_sNPSStack+16),%0)
 #define AMX_Read(%0),) AMX_Read(%0))
 
-stock _@yK(&a = 0, &b = 0, &c = 0)
+stock _@yK(&a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0)
 {
-	#pragma unused a, b, c
-	// This function does nothing.  It merely exists to be called - an operation
-	// which takes two cells, thus reserving two cells in the assembly.
+	#pragma unused a, b, c, d, e, f
+	// This function does nothing.  It merely exists to reserve space for
+	// codegen.  According to my experiments, just 4 parameters are enough to
+	// reserve enough space (exactly) for the code generated below, even for a
+	// function with no parameters.  But better to be safe than sorry.
 }
 
 new
@@ -185,49 +187,45 @@ stock _@Ky(compressedFormat)
 	//
 
 	// Build the structure in the stack first.
-	@emit PUSH         ref(YSI_g_sNPSStack)
+	@emit POP.pri
 	@emit PUSH.C       compressedFormat
 	@emit PUSH.C       addr
+	@emit PUSH.C       8
+	@emit PUSH.pri     // Save the return address again.
+	@emit PUSH         ref(YSI_g_sNPSStack)
 
-	// Copy 16 bytes over (includes the return address).
-	@emit HEAP         8
+	// Copy 20 bytes over (includes the return address and fake param count).
+	@emit HEAP         20
 	@emit LCTRL        4
-	@emit MOVS         8
+	@emit MOVS         20
 	@emit STOR.alt     ref(YSI_g_sNPSStack)
 
 	// Call, and return to here to clean up the heap.
-	@emit STACK        16
+	@emit STACK        20
 	@emit CALL.abs     YSI_g_sNPSReplace
 
-
-
-
-
-
-
-	@emit LOAD.pri     ref(YSI_g_sNPSStack)
-	@emit STACK        -16
+	// Put data (and return value) on the stack.
+	@emit STACK        -20
 	@emit STACK        0
-	@emit MOVS         16
-	@emit STACK        8
-	@emit POP.pri
-	@emit STOR.pri     ref(YSI_g_sNPSStack)
-	@emit POP.pri
-	@emit HEAP         -16
-	@emit SCTRL        6
+	@emit PUSH.pri
 
-//	// Pop the stack.
-//	@emit LCTRL        2
-//	@emit ADD.C        -8
-//	@emit LOAD.I
-//	@emit STOR.pri     ref(YSI_g_sNPSStack)
-//
-//	// Get the return address.
-//	@emit LCTRL        2
-//	@emit ADD.C        -4
-//	@emit LOAD.I
-//	@emit HEAP         -16
-//	@emit SCTRL        6
+	// Copy from the heap.
+	//@emit LCTRL        2
+	//@emit ADD.C        -20
+	@emit LOAD.pri     ref(YSI_g_sNPSStack)
+	@emit MOVS         20
+
+	// Restore the return address and `continue` stack.
+	@emit POP.pri
+	@emit POP.alt
+	@emit STOR.alt     ref(YSI_g_sNPSStack)
+	@emit HEAP         -20
+
+	// Return from this "function", with our fake parameters and return address.
+	// We do this instead of using `SCTRL 6`, as is the normal way, to preserve
+	// `pri` as the return value.
+	@emit PROC
+	@emit RETN
 
 	AsmEmitPadding(ctx);
 
