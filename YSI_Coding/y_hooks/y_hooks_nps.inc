@@ -158,24 +158,10 @@ stock _@Ky(compressedFormat)
 		}
 		}
 	}
-	switch (type)
-	{
-	case 1:
-	{
-		// Normal function call.
-		printf("addr: %08x", addr);
-	}
-	case 2:
+	if (type == 2)
 	{
 		// Native function call.
-		printf("ID: %d", addr);
 		addr = -addr;
-	}
-	default:
-	{
-		// Bad.
-		printf("no");
-	}
 	}
 
 	AsmInitPtr(ctx, YSI_g_sNPSTrampoline + AMX_HEADER_COD, YSI_g_sNPSReplace - YSI_g_sNPSTrampoline);
@@ -239,27 +225,17 @@ stock _@Ky(compressedFormat)
 
 stock Hooks_Continue_(GLOBAL_TAG_TYPES:...)
 {
-	// func = YSI_g_sNPSStack + 12
-	// args = YSI_g_sNPSStack + 16
 	static
 		addr,
-		func,
 		args;
 
 	#emit ADDR.pri     8
 	#emit STOR.pri     addr
 
 	#emit LOAD.pri     YSI_g_sNPSStack
-	#emit ADD.C        12
-	#emit LOAD.I
-	#emit STOR.pri     func
-
-	#emit LOAD.pri     YSI_g_sNPSStack
 	#emit ADD.C        16
 	#emit LOAD.I
 	#emit STOR.pri     args
-
-	printf("calling %d %d", func, args);
 
 	while ((args >>>= 1))
 	{
@@ -271,36 +247,39 @@ stock Hooks_Continue_(GLOBAL_TAG_TYPES:...)
 			#emit SREF.pri     addr
 		}
 	}
+	{}
+
+	#emit LOAD.pri     YSI_g_sNPSStack
+	#emit ADD.C        12
+	#emit LOAD.I
+	#emit STOR.pri     addr
 
 	// `CALL` or `SYSREQ`.
-	if (func > 0)
+	if (addr > 0)
 	{
 		// Reset the current frame.
 		#emit POP.pri
 		#emit SCTRL        5
 
 		// Jump to the function.
-		#emit LOAD.pri     func
+		#emit LOAD.pri     addr
 		#emit LCTRL        8
 		#emit SCTRL        6
 	}
 	else
 	{
-		//target = -target;
-		static FRM, RET;
-
 		// Save the bottom of the stack.
-		#emit POP.pri
-		#emit STOR.pri     FRM
+		#emit POP.alt
+		#emit LOAD.pri     addr
+		#emit STOR.alt     addr
 		#emit POP.alt
 
-		#emit LOAD.pri     func
 		#emit NEG
 		#emit SYSREQ.pri
 
 		// Returns to here.
 		#emit PUSH.alt
-		#emit PUSH         FRM
+		#emit PUSH         addr
 		#emit RETN
 	}
 
