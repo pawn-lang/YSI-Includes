@@ -126,8 +126,6 @@ new
 stock _@Ky(compressedFormat)
 {
 	#pragma unused compressedFormat
-	// TODO:
-	//
 	// Get the next function call address, being the original function.  This
 	// can also tell us if it is a native, public, or stock (which is a nice
 	// side-effect I wasn't planning).
@@ -183,7 +181,10 @@ stock _@Ky(compressedFormat)
 	AsmInitPtr(ctx, YSI_g_sNPSTrampoline + AMX_HEADER_COD, YSI_g_sNPSReplace - YSI_g_sNPSTrampoline);
 	{}
 	// Forward the function, passing two additional parameters.  Note - no
-	// `PROC` is added to this new trambopoline.
+	// `PROC` is added to this new trambopoline:
+	//
+	//   https://www.youtube.com/watch?v=geHqnV4Mk_4
+	//
 	@emit POP.alt                       // Save the return address.
 	@emit POP.pri                       // Get the parameter count.
 	@emit PUSH.C       compressedFormat // Push the args format.
