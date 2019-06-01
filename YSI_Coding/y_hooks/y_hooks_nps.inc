@@ -183,7 +183,6 @@ stock _@Ky(compressedFormat)
 	//
 	//   https://www.youtube.com/watch?v=geHqnV4Mk_4
 	//
-//26
 
 	// Build the structure in the stack first.
 	@emit PUSH         ref(YSI_g_sNPSStack)
@@ -200,32 +199,30 @@ stock _@Ky(compressedFormat)
 	@emit STACK        16
 	@emit CALL.abs     YSI_g_sNPSReplace
 
+	// Third method, still not smaller.
+	@emit LCTRL        2
+	@emit ADD.C        -8
+	@emit STACK        8
+	@emit STACK        0
+	@emit MOVS         8
+	@emit POP.pri
+	@emit STOR.pri     ref(YSI_g_sNPSStack)
+	@emit POP.pri
+	@emit HEAP         -16
+	@emit SCTRL        6
+
 //	// Pop the stack.
-//	@emit LOAD.pri     ref(YSI_g_sNPSStack)
-//	@emit ADD.C        8
-//	@emit MOVE.alt
+//	@emit LCTRL        2
+//	@emit ADD.C        -8
 //	@emit LOAD.I
 //	@emit STOR.pri     ref(YSI_g_sNPSStack)
 //
 //	// Get the return address.
-//	@emit MOVE.pri
-//	@emit ADD.C        4
+//	@emit LCTRL        2
+//	@emit ADD.C        -4
 //	@emit LOAD.I
 //	@emit HEAP         -16
 //	@emit SCTRL        6
-
-	// Pop the stack.
-	@emit LCTRL        2
-	@emit ADD.C        -8
-	@emit LOAD.I
-	@emit STOR.pri     ref(YSI_g_sNPSStack)
-
-	// Get the return address.
-	@emit LCTRL        2
-	@emit ADD.C        -4
-	@emit LOAD.I
-	@emit HEAP         -16
-	@emit SCTRL        6
 
 	AsmEmitPadding(ctx);
 
