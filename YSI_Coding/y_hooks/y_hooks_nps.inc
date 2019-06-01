@@ -1,10 +1,15 @@
 #define HOOK_NATIVE__%0(%1)
 
-#define HOOK_PUBLIC__%0(%1) FUNC_PARSER(YH_NPS,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:)(%0(%1))()()(1,0,(@H_y,@K_y))
-#define HOOK_NATIVE__ HOOK_PUBLIC__
+#define HOOK_STOCK__%0(%1) FUNC_PARSER(YHNPS,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:)(%0(%1))()()(1,0)
+#define HOOK_NATIVE__ HOOK_STOCK__
 
+// Strip spaces from the generated function names.
+#define @yH_%0\32; @yH_ // hook
+#define @_Hy%0\32; @_Hy // extra stock/native info
+#define @Hy_%0\32; @Hy_ // hook stock/native
 #define @H_y%0\32; @H_y // hook public
-#define @K_y%0\32; @K_y // public extras
+#define @y_H%0\32; @y_H // DEFINE_HOOK_RETURN
+#define @_yH%0\32; @_yH // DEFINE_HOOK_REPLACEMENT
 
 // Arrays.
 //
@@ -12,9 +17,9 @@
 // %1  = Tag (unused)
 // %2  = Name
 // %4+ = Dims
-#define YH_NPS_ARR(%0,%1,%2,%4)%8$ YH_NPS_BYREF(%0%2[%4],%2)%8$
-#define YH_NPS_ARR_ARR(%0,%1,%2,%4,%5)%8$ YH_NPS_BYREF(%0%2[%4][%5],%2)%8$
-#define YH_NPS_ARR_ARR_ARR(%0,%1,%2,%4,%5,%6)%8$ YH_NPS_BYREF(%0%2[%4][%5][%6],%2)%8$
+#define YHNPS_ARR(%0,%1,%2,%4)%8$ YHNPS_BYREF(%0%2[%4],%2)%8$
+#define YHNPS_ARR_ARR(%0,%1,%2,%4,%5)%8$ YHNPS_BYREF(%0%2[%4][%5],%2)%8$
+#define YHNPS_ARR_ARR_ARR(%0,%1,%2,%4,%5,%6)%8$ YHNPS_BYREF(%0%2[%4][%5][%6],%2)%8$
 
 // Strings.
 //
@@ -23,8 +28,8 @@
 // %2  = Name
 // %4  = Size
 // %3  = Default (unused)
-#define YH_NPS_STR(%0,%1,%2,%4)%8$ YH_NPS_BYREF(%0%2[%4],%2)%8$
-#define YH_NPS_STR_DEF(%0,%1,%2,%4,%3)%8$ YH_NPS_BYREF(%0%2[%4],%2)%8$
+#define YHNPS_STR(%0,%1,%2,%4)%8$ YHNPS_BYREF(%0%2[%4],%2)%8$
+#define YHNPS_STR_DEF(%0,%1,%2,%4,%3)%8$ YHNPS_BYREF(%0%2[%4],%2)%8$
 
 // Varargs.
 //
@@ -33,7 +38,7 @@
 // %2  = Name (unused)
 // %5  = Prototype parameters
 // %6  = Call parameters
-#define YH_NPS_EXT(%0,%1,%2)%8$(%5)(%6)(%9,%4,%7) %8$(%5,%1...)(%6)(%9,%4,%7)
+#define YHNPS_EXT(%0,%1,%2)%8$(%5)(%6)(%9,%4) %8$(%5,%1...)(%6)(%9,%4)
 
 // References.
 //
@@ -41,8 +46,8 @@
 // %1  = Tag (unused)
 // %2  = Name
 // %3  = Default (unused)
-#define YH_NPS_REF(%0,%1,%2)%8$ YH_NPS_BYREF(&%2,%2)%8$
-#define YH_NPS_REF_DEF(%0,%1,%2,%3)%8$ YH_NPS_BYREF(&%2,%2)%8$
+#define YHNPS_REF(%0,%1,%2)%8$ YHNPS_BYREF(&%2,%2)%8$
+#define YHNPS_REF_DEF(%0,%1,%2,%3)%8$ YHNPS_BYREF(&%2,%2)%8$
 
 // Variables.
 //
@@ -50,8 +55,8 @@
 // %1  = Tag (unused)
 // %2  = Name
 // %3  = Default (unused)
-#define YH_NPS_NUM(%0,%1,%2)%8$ YH_NPS_BYVAL(%0%2,%2)%8$
-#define YH_NPS_NUM_DEF(%0,%1,%2,%3)%8$ YH_NPS_BYVAL(%0%2,%2)%8$
+#define YHNPS_NUM(%0,%1,%2)%8$ YHNPS_BYVAL(%0%2,%2)%8$
+#define YHNPS_NUM_DEF(%0,%1,%2,%3)%8$ YHNPS_BYVAL(%0%2,%2)%8$
 
 // Generate the parameter descriptions.
 //
@@ -62,8 +67,8 @@
 // %9  = Shift
 // %4  = Existing values
 // %7  = Prefix
-#define YH_NPS_BYREF(%0,%1)%8$(%5)(%6)(%9,%4,%7) %8$(%5,%0)(%6,%1)(%9+1,%4,%7)
-#define YH_NPS_BYVAL(%0,%1)%8$(%5)(%6)(%9,%4,%7) %8$(%5,%0)(%6,%1)(%9+1,1<<%9|%4,%7)
+#define YHNPS_BYREF(%0,%1)%8$(%5)(%6)(%9,%4) %8$(%5,%0)(%6,%1)(%9+1,%4)
+#define YHNPS_BYVAL(%0,%1)%8$(%5)(%6)(%9,%4) %8$(%5,%0)(%6,%1)(%9+1,1<<%9|%4)
 
 // End, generate the code.
 //
@@ -75,12 +80,73 @@
 // %4  = Existing values
 // %7  = Prefix0
 // %1  = Prefix1
-#define YH_NPS_END(%0)%8$(,%5)(,%6)(%9,%4,(%7,%1)) %8$_@Ky<%7%0>(%5);_@Ky<%1%0>(%5);_@Ky<%1%0>(%5)_@Ky(%4),%0(%6),_@yK();_@Ky<%7%0>(%5)
-#define YH_NPS_NUL(%0)%8$()() YH_NPS_END(%0)%8$(,)(,)
+#define YHNPS_END(%0)%8$(,%5)(,%6)(%9,%4) %8$YHNPS_U0<%0>(%5);YHNPS_U1<%0>(%5);YHNPS_U1<%0>(%5)_yH@(%4),%0(%6),_@yH();YHNPS_U0<%0>(%5)
+#define YHNPS_NUL(%0)%8$()() YHNPS_END(%0)%8$(,)(,)
 
 // Helper macro to generate the unique function name without bloating the
 // generated code multiple times.
-#define _@Ky<%0> UNIQUE_FUNCTION<%0@...>
+#define YHNPS_U0<%1> UNIQUE_FUNCTION<@Hy_%1@...>
+#define YHNPS_U1<%1> UNIQUE_FUNCTION<@_Hy%1@...>
+
+#define _yH@(%0),%1@%2(%3),_@yH(); _yH@(%0),%1(%3),_@yH();
+
+new
+	YSI_g_sNPSTrampoline,
+	YSI_g_sNPSReplace,
+	YSI_g_sNPSStack;
+
+public OnCodeInit()
+{
+	// Step 1:
+	//
+	//   Read the AMX header to loop over all the `@_Hy` functions.  These
+	//   contain the call to `_yH@` which generates the trambopoline code.
+	//
+	//   From this data we build a list of all calls to replace.
+	new
+		entry,
+		pn[32 char],
+		name[32 char],
+		idx;
+	YSI_g_sNPSStack = cellmin;
+	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@Hy_>)))
+	{
+		YSI_g_sNPSReplace = AMX_Read(entry);
+		AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, name);
+		name[0] = _A<@_Hy>;
+		AMX_GetPublicPointer(idx, YSI_g_sNPSTrampoline, name);
+		name{strfind(name, "@", .pos = 4)} = '\0';
+		if (strcmp(name[1], pn) || YSI_g_sNPSStack == cellmin)
+		{
+			// New hook.
+			memcpy(pn, name[1], 0, 28, 32 char);
+			YSI_g_sNPSStack = 1;
+			printf("New hook: %s", unpack(name[1]));
+			printf("New hook: %s", unpack(pn));
+		}
+		printf("Trampoline: %d", YSI_g_sNPSTrampoline);
+		printf("Replacement: %d", YSI_g_sNPSReplace);
+	}
+	
+
+	// Step 2:
+	//
+	//   Iterate over the entire mode and replace all relevant calls.
+	//
+
+	// Clear the stack.
+	YSI_g_sNPSStack = 0;
+	#if defined YHNPS_OnCodeInit
+		YHNPS_OnCodeInit();
+	#endif
+	return 1;
+}
+
+#undef OnCodeInit
+#define OnCodeInit YHNPS_OnCodeInit
+#if defined YHNPS_OnCodeInit
+	forward YHNPS_OnCodeInit();
+#endif
 
 /*
 
@@ -106,10 +172,9 @@ This function is called, and just needs to insert a new function.
 
 */
 
-// TODO: Read this data directly in `Hooks_Continue_`.
 #define continue(%0) Hooks_Continue_(%0)
 
-stock _@yK(&a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0)
+stock _@yH(&a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0)
 {
 	#pragma unused a, b, c, d, e, f
 	// This function does nothing.  It merely exists to reserve space for
@@ -118,12 +183,7 @@ stock _@yK(&a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0)
 	// function with no parameters.  But better to be safe than sorry.
 }
 
-new
-	YSI_g_sNPSTrampoline,
-	YSI_g_sNPSReplace,
-	YSI_g_sNPSStack;
-
-stock _@Ky(compressedFormat)
+stock _yH@(compressedFormat)
 {
 	#pragma unused compressedFormat
 	// Get the next function call address, being the original function.  This
@@ -170,81 +230,6 @@ stock _@Ky(compressedFormat)
 	//
 	//   https://www.youtube.com/watch?v=geHqnV4Mk_4
 	//
-
-	// Update the stack pointer.
-	@emit HEAP         24 // Old heap in alt.
-	@emit LOAD.pri     ref(YSI_g_sNPSStack)
-	@emit STOR.I
-	@emit STOR.alt     ref(YSI_g_sNPSStack)
-
-	// Overlap the stack and heap.
-	@emit LCTRL        4 // Old stack in pri.
-	@emit SUB
-	@emit ADD.C        -4
-	@emit LOAD.S.alt   8
-	@emit ADD
-
-	// Move the stack to touch the heap.
-	@emit HEAP         0
-	@emit XCHG
-	@emit SCTRL        4
-
-	// Push the fake header.
-	@emit PUSH.C       compressedFormat
-	@emit PUSH.C       addr
-	@emit PUSH.alt
-	@emit PUSH.S       4
-	@emit PUSH.S       0
-
-	// The stack is now 4 bytes from the old heap position, and within the new
-	// heap.  Put it back where it was, with our data now in the heap.
-	@emit LCTRL        5
-	@emit LCTRL        4
-
-
-
-
-
-
-
-
-
-
-	@emit POP.pri      // Get the true return address.
-	@emit POP.alt      // Get the arg count.
-	@emit PUSH.alt
-	@emit PUSH.C       compressedFormat
-	@emit PUSH.C       addr
-	@emit PUSH.pri     // Swap later.
-
-	// Get the stack.
-	@emit LCTRL        4
-	@emit ADD.C        4
-	@emit ADD          4
-	@emit HEAP         24
-	@emit SUB
-
-	// Put the new arg count and original return on the stack.
-	@emit SWAP.pri
-	@emit PUSH.pri
-
-	@emit LCTRL       5
-	@emit PUSH.pri
-	
-	@emit PUSH        ref(YSI_g_sNPSStack)
-	@emit STOR.alt    ref(YSI_g_sNPSStack)
-	@emit LCTRL       4
-	@emit MOVS        24
-	@emit STACK       24
-	@emit CALL.abs     YSI_g_sNPSReplace
-
-//label_below:
-
-
-
-
-
-
 
 	// Build the structure in the stack first.
 	@emit POP.pri
