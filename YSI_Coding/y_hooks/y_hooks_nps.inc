@@ -1,6 +1,7 @@
 #define HOOK_NATIVE__%0(%1)
 
 #define HOOK_PUBLIC__%0(%1) FUNC_PARSER(YH_NPS,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:)(%0(%1))()()(1,0,(@H_y,@K_y))
+#define HOOK_NATIVE__ HOOK_PUBLIC__
 
 #define @H_y%0\32; @H_y // hook public
 #define @K_y%0\32; @K_y // public extras
@@ -108,11 +109,19 @@ This function is called, and just needs to insert a new function.
 #define continue(%0) Hooks_Continue_(f__,a__,%0)
 #define a__,) a__)
 
+#define HOOKS_DEFER (
+
+#define Hooks_Continue_(f__,a__,%0___(%1)%2) Hooks_Continue_ HOOKS_DEFER f__,a__,%0___((%1) + 2)%2)
+
 stock _@yK()
 {
 	// This function does nothing.  It merely exists to be called - an operation
 	// which takes two cells, thus reserving two cells in the assembly.
 }
+
+new
+	YSI_g_sNPSTrampoline,
+	YSI_g_sNPSReplace;
 
 stock _@Ky(compressedFormat)
 {
@@ -170,30 +179,23 @@ stock _@Ky(compressedFormat)
 		printf("no");
 	}
 	}
-	AsmInitPtr(ctx, GetCurrentFrameReturn() - 16 + AMX_HEADER_COD);
-	// This does nothing except clean up existing code from the old function.
-	@emit POP.pri
-	@emit RETN
-	// The old compiler doesn't like this.  Don't know why.
-	//@emit NOP
-
+	{}
+	AsmInitPtr(ctx, YSI_g_sNPSTrampoline + AMX_HEADER_COD, YSI_g_sNPSReplace - YSI_g_sNPSTrampoline);
+	{}
 	// Forward the function, passing two additional parameters.  Note - no
 	// `PROC` is added to this new trambopoline.
 	@emit POP.alt                       // Save the return address.
-
 	@emit POP.pri                       // Get the parameter count.
-
 	@emit PUSH.C       compressedFormat // Push the args format.
-
 	@emit PUSH.C       addr             // Push the next chained address. TEMP - REPLACE THIS!
-
 	@emit ADD.C        8                // Increase the parameter count.
-
 	@emit PUSH.pri
-
 	@emit PUSH.alt
+	
+	// Calculate the offset from here to the implementation function.
+	@emit JUMP.rel     YSI_g_sNPSReplace - YSI_g_sNPSTrampoline - 12 * cellbytes
 
-	@emit JUMP         0                // TODO: Jump to impl.
+	AsmEmitPadding(ctx);
 
 	// Do a double return - exit the calling function as well as this function,
 	// so that the next call is never actually made.
@@ -206,7 +208,7 @@ stock _@Ky(compressedFormat)
 	#emit RETN
 }
 
-stock Hooks_Continue_(target, args, ...)
+stock Hooks_Continue_(target, args, GLOBAL_TAG_TYPES:...)
 {
 	static addr;
 	#emit ADDR.pri     16
