@@ -97,6 +97,8 @@ new
 
 public OnCodeInit()
 {
+	Indirect_Init();
+
 	// Step 1:
 	//
 	//   Read the AMX header to loop over all the `@_Hy` functions.  These
@@ -107,27 +109,28 @@ public OnCodeInit()
 		entry,
 		pn[32 char],
 		name[32 char],
-		idx;
+		idx1,
+		idx2;
 	YSI_g_sNPSStack = cellmin;
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@Hy_>)))
+	// Needs to be split over multiple lines because macros (`_A`).
+	while (
+		(idx1 = AMX_GetPublicEntryPrefix(idx1, entry, _A<@Hy_>))
+		&&
+		(idx2 = AMX_GetPublicPointerPrefix(idx2, YSI_g_sNPSTrampoline, _A<@_Hy>))
+	)
 	{
 		YSI_g_sNPSReplace = AMX_Read(entry);
 		AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, name);
-		name[0] = _A<@_Hy>;
-		AMX_GetPublicPointer(idx, YSI_g_sNPSTrampoline, name);
 		name{strfind(name, "@", .pos = 4)} = '\0';
 		if (strcmp(name[1], pn) || YSI_g_sNPSStack == cellmin)
 		{
 			// New hook.
 			memcpy(pn, name[1], 0, 28, 32 char);
-			YSI_g_sNPSStack = 1;
-			printf("New hook: %s", unpack(name[1]));
-			printf("New hook: %s", unpack(pn));
+			YSI_g_sNPSStack = cellmin;
 		}
-		printf("Trampoline: %d", YSI_g_sNPSTrampoline);
-		printf("Replacement: %d", YSI_g_sNPSReplace);
+		@.YSI_g_sNPSTrampoline();
+		YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
 	}
-	
 
 	// Step 2:
 	//
@@ -234,7 +237,17 @@ stock _yH@(compressedFormat)
 	// Build the structure in the stack first.
 	@emit POP.pri
 	@emit PUSH.C       compressedFormat
-	@emit PUSH.C       addr
+
+	// Chain the functions.
+	if (YSI_g_sNPSStack == cellmin)
+	{
+		@emit PUSH.C       addr
+	}
+	else
+	{
+		@emit PUSH.C       YSI_g_sNPSStack
+	}
+
 	@emit PUSH.C       8
 	@emit PUSH.pri     // Save the return address again.
 	@emit PUSH         ref(YSI_g_sNPSStack)
