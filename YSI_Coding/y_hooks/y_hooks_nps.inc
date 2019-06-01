@@ -147,11 +147,21 @@ static stock YHNPS_Insert(heap, count, value, ptr)
 			return;
 		}
 	}
-	printf("Inserting %d at index %d", value, mid);
-	// Shift all the greater values up.
-	rawMemcpy(heap + mid * 8 + 8, heap + mid * 8, (count - mid) * 8);
-	AMX_Write(heap + mid * 8, value);
-	AMX_Write(heap + mid * 8 + 4, ptr);
+	if (start == count)
+	{
+		printf("Inserting %d at index %d", value, count);
+		// Shift all the greater values up.
+		AMX_Write(heap + count * 8, value);
+		AMX_Write(heap + count * 8 + 4, ptr);
+	}
+	else
+	{
+		printf("Inserting %d at index %d", value, mid);
+		// Shift all the greater values up.
+		rawMemcpy(heap + mid * 8 + 8, heap + mid * 8, (count - mid) * 8);
+		AMX_Write(heap + mid * 8, value);
+		AMX_Write(heap + mid * 8 + 4, ptr);
+	}
 }
 
 static stock YHNPS_Push(heap, allocated, &nativeCount, &stockCount)
