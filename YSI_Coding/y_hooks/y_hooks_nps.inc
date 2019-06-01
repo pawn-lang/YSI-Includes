@@ -91,9 +91,100 @@
 #define _yH@(%0),%1@%2(%3),_@yH(); _yH@(%0),%1(%3),_@yH();
 
 new
+	YSI_g_sNPSBaseCall,
 	YSI_g_sNPSTrampoline,
 	YSI_g_sNPSReplace,
+	YSI_g_sNPSHeap,
 	YSI_g_sNPSStack;
+
+static stock YHNPS_Find(heap, end, value, ptr)
+{
+	new
+		start = 0,
+		mid;
+	--end;
+	while (start <= end)
+	{
+		mid = (start + end) / 2;
+		new diff = AMX_Read(heap + mid * 8) - value;
+		if (diff < 0)
+		{
+			start = mid + 1;
+		}
+		else if (diff > 0)
+		{
+			end = mid - 1;
+		}
+		else
+		{
+			return mid;
+		}
+	}
+	return -1;
+}
+
+static stock YHNPS_Insert(heap, count, value, ptr)
+{
+	new
+		start = 0,
+		mid,
+		end = count - 1;
+	while (start <= end)
+	{
+		mid = (start + end) / 2;
+		new
+			diff = AMX_Read(heap + mid * 8) - value;
+		if (diff < 0)
+		{
+			start = mid + 1;
+		}
+		else if (diff > 0)
+		{
+			end = mid - 1;
+		}
+		else
+		{
+			return;
+		}
+	}
+	printf("Inserting %d at index %d", value, mid);
+	// Shift all the greater values up.
+	rawMemcpy(heap + mid * 8 + 8, heap + mid * 8, (count - mid) * 8);
+	AMX_Write(heap + mid * 8, value);
+	AMX_Write(heap + mid * 8 + 4, ptr);
+}
+
+static stock YHNPS_Push(heap, allocated, &nativeCount, &stockCount)
+{
+	if (allocated == max(nativeCount, stockCount))
+	{
+		// Space to insert 32 new values for each hook type.
+		HeapAllocCells(6 * 32);
+		// Move the arrays up in memory.
+		if (nativeCount)
+		{
+			rawMemcpy(heap + allocated * 16 + 32 * 16, heap + allocated * 16, nativeCount * 8);
+		}
+		if (stockCount)
+		{
+			rawMemcpy(heap + allocated * 8 + 32 * 8, heap + allocated * 8, stockCount * 8);
+		}
+		allocated += 32;
+	}
+	if (YSI_g_sNPSBaseCall < 0)
+	{
+		printf("Insert native");
+		YHNPS_Insert(heap, nativeCount, -YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
+		YHNPS_Insert(heap + allocated * 16, nativeCount, GetNativeAddressFromIndex(-YSI_g_sNPSBaseCall), YSI_g_sNPSTrampoline);
+		++nativeCount;
+	}
+	else
+	{
+		printf("Insert stock");
+		YHNPS_Insert(heap + allocated * 8, stockCount, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
+		++stockCount;
+	}
+}
 
 public OnCodeInit()
 {
@@ -106,6 +197,10 @@ public OnCodeInit()
 	//
 	//   From this data we build a list of all calls to replace.
 	new
+		heap = GetAmxHeapTop(),
+		allocated = 0,
+		nativeCount = 0,
+		stockCount = 0,
 		entry,
 		pn[32 char],
 		name[32 char],
@@ -129,6 +224,7 @@ public OnCodeInit()
 		}
 		else if (strcmp(name[1], pn))
 		{
+			YHNPS_Push(heap, allocated, nativeCount, stockCount);
 			// `YSI_g_sNPSStack` points to the start of the last chain.  Store
 			// it.
 			// New hook.
@@ -141,6 +237,7 @@ public OnCodeInit()
 	if (YSI_g_sNPSStack != cellmin)
 	{
 		// Store the final chain.
+		YHNPS_Push(heap, allocated, nativeCount, stockCount);
 	}
 
 	// Step 2:
@@ -148,8 +245,12 @@ public OnCodeInit()
 	//   Iterate over the entire mode and replace all relevant calls.
 	//
 
+	// `SYSREQ.C` is always followed by `STACK`, except with `#emit` usage.  We
+	// need to change the pair in to a single `CALL`.  Don't forget `SYSREQ.D`.
+
 	// Clear the stack.
 	YSI_g_sNPSStack = 0;
+	HeapRelease(heap);
 	#if defined YHNPS_OnCodeInit
 		YHNPS_OnCodeInit();
 	#endif
@@ -253,6 +354,7 @@ stock _yH@(compressedFormat)
 	if (YSI_g_sNPSStack == cellmin)
 	{
 		@emit PUSH.C       addr
+		YSI_g_sNPSBaseCall = addr;
 	}
 	else
 	{
