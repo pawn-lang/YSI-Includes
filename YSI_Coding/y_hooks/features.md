@@ -226,3 +226,107 @@ Also, variable arguments.
 
 The only difference between `hook callback` and `hook function` (aside from the reversed call order) is that `hook function` confirms that the function being hooked really exists, while `hook callback` doesn't.  `hook function MyFunc()` will give an error if `MyFunc()` doesn't exist, `hook callback OnPlayerSpawn(playerid)` won't if there's no `public OnPlayerSpawn(playerid)`.
 
+## Synonyms
+
+There are multiple synonyms for various declarations, some used for compatibility.
+
+### `hook`
+
+* `HOOK__`
+
+### `hook function`
+
+* `hook native`
+* `hook stock`
+* `HOOK_FUNCTION__`
+* `HOOK_NATIVE__`
+* `HOOK_STOCK__`
+
+### `hook callback`
+
+* `HOOK_CALLBACK__`
+* `hook public`
+* `HOOK_PUBLIC__`
+
+## ALS
+
+ALS hooks look like this:
+
+```pawn
+My_SetPlayerPos(playerid, Float:x, Float:y, Float:z)
+{
+	return SetPlayerPos(playerid, x, y, z + 0.1);
+}
+
+#if defined _ALS_SetPlayerPos
+	#undef SetPlayerPos
+#else
+	#define _ALS_SetPlayerPos
+#endif
+
+#define SetPlayerPos My_SetPlayerPos
+```
+
+Function hooks like this this:
+
+```pawn
+hook function SetPlayerPos(playerid, Float:x, Float:y, Float:z)
+{
+	return continue(playerid, x, y, z + 0.1);
+}
+```
+
+They both have explicit chaining, and this is important.  ALS hooks and function hooks are totally equivalent - when intertwined in code they will be called in their declared order, working with each other:
+
+```pawn
+hook function SetPlayerPos@0(playerid, Float:x, Float:y, Float:z)
+{
+	printf("0(%d, %.2f, %.2f, %.2f)", playerid, x, y, z);
+	continue(playerid, x, y, z);
+}
+
+hook native SetPlayerPos@1(playerid, Float:x, Float:y, Float:z)
+{
+	printf("1(%d, %.2f, %.2f, %.2f)", playerid, x, y, z);
+	continue(playerid, x, y, z);
+}
+
+My_SetPlayerPos(playerid, Float:x, Float:y, Float:z)
+{
+	printf("2(%d, %.2f, %.2f, %.2f)", playerid, x, y, z);
+	return SetPlayerPos(playerid, x, y, z + 0.1);
+}
+
+#if defined _ALS_SetPlayerPos
+	#undef SetPlayerPos
+#else
+	#define _ALS_SetPlayerPos
+#endif
+
+#define SetPlayerPos My_SetPlayerPos
+
+HOOK_NATIVE__ SetPlayerPos@2(playerid, Float:x, Float:y, Float:z)
+{
+	printf("3(%d, %.2f, %.2f, %.2f)", playerid, x, y, z);
+	continue(playerid, x, y, z);
+}
+
+public OnPlayerSpawn(playerid)
+{
+	SetPlayerPos(playerid, 5.5, 6.6, 7.7);
+}
+```
+
+When called, the output of the code above will be the logical:
+
+```
+3(42, 5.50, 6.59, 7.69)
+2(42, 5.50, 6.59, 7.69)
+1(42, 5.50, 6.59, 7.79)
+0(42, 5.50, 6.59, 7.79)
+```
+
+With both hook functions and ALS functions called, intertwined and in reverse order.
+
+Note that the `@0`, `@1`, and `@2` allow for explicit hook ordering without re-including y_hooks or y_unique (basically, it generates a new unique name each time).
+

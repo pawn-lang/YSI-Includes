@@ -74,6 +74,8 @@ Optional plugins:
 #define HOOK_NATIVE__ HOOK_STOCK__
 #define HOOK_native__ HOOK_STOCK__
 #define HOOK_stock__ HOOK_STOCK__
+#define HOOK_FUNCTION__ HOOK_STOCK__
+#define HOOK_function__ HOOK_STOCK__
 
 // Strip spaces from the generated function names.
 #define @yH_%0\32; @yH_ // hook
@@ -371,11 +373,11 @@ public OnCodeInit()
 		}
 		case OP_CALL:
 		{
-			idx1 = YHNPS_Find(heap + allocated * 8, stockCount, DisasmGetOperand(dctx));
+			idx1 = YHNPS_Find(heap + allocated * 8, stockCount, DisasmGetOperandReloc(dctx));
 			if (idx1 != cellmin)
 			{
 				// Write a different target address.
-				AMX_Write(DisasmGetCurIp(dctx) + AMX_HEADER_COD + 4, idx1);
+				AMX_Write(DisasmGetCurIp(dctx) + 4, idx1);
 			}
 			continue;
 		}

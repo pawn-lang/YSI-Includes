@@ -85,9 +85,10 @@ Optional plugins:
 
 */
 
-#define @yH_public%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
+//#define @yH_public%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
 #define @yH_native%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
 #define @yH_stock%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
+#define @yH_function%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
 
 #define HOOK_PUBLIC__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
 #define HOOK_public__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
