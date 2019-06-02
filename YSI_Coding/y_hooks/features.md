@@ -217,6 +217,7 @@ hook function printf(const str[], GLOBAL_TAG_TYPES:...)
 	print(str);
 	return continue(str, ___(1));
 }
+```
 
 Also, variable arguments.
 
