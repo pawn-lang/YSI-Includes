@@ -1,3 +1,9 @@
+# FAQ
+
+## What order are different hooks called in?
+
+
+
 # Errors
 
 ## `error 021: symbol already defined: "@yH_OnGamemodeInit@003"`
@@ -76,6 +82,4 @@ hook OnGameModeInit()
 {
 }
 ```
-
-
 
