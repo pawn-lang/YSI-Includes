@@ -85,16 +85,12 @@ Optional plugins:
 
 */
 
-#define @yH_public%0\32;%1(%2);%3(%4) @H_y%0%1(%2);@H_y%0%1(%2)
-#define @yH_native%0\32;%1(%2);%3(%4) @Hy_%0%1(%2);@Hy_%0%1(%2)
-#define @yH_stock%0\32;%1(%2);%3(%4) @Hy_%0%1(%2);@Hy_%0%1(%2)
+#define @yH_public%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
+#define @yH_native%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
+#define @yH_stock%0\32;%1(%2);%3(%4) HOOK_REDO__ %0%1(%2)
 
 #define HOOK_PUBLIC__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
 #define HOOK_public__%1(%2) forward UNIQUE_FUNCTION<@H_y%1@...>(%2);UNIQUE_FUNCTION<@H_y%1@...>(%2)
-#define HOOK_NATIVE__%1(%2) forward UNIQUE_FUNCTION<@Hy_%1@...>(%2);UNIQUE_FUNCTION<@_Hy%1@...>(%2);UNIQUE_FUNCTION<@_Hy%1@...>(%2){%1(%2);}UNIQUE_FUNCTION<@Hy_%1@...>(%2)
-#define HOOK_native__%1(%2) forward UNIQUE_FUNCTION<@Hy_%1@...>(%2);UNIQUE_FUNCTION<@_Hy%1@...>(%2);UNIQUE_FUNCTION<@_Hy%1@...>(%2){%1(%2);}UNIQUE_FUNCTION<@Hy_%1@...>(%2)
-#define HOOK_STOCK__%1(%2) forward UNIQUE_FUNCTION<@Hy_%1@...>(%2);UNIQUE_FUNCTION<@_Hy%1@...>(%2);UNIQUE_FUNCTION<@_Hy%1@...>(%2){%1(%2);}UNIQUE_FUNCTION<@Hy_%1@...>(%2)
-#define HOOK_stock__%1(%2) forward UNIQUE_FUNCTION<@Hy_%1@...>(%2);UNIQUE_FUNCTION<@_Hy%1@...>(%2);UNIQUE_FUNCTION<@_Hy%1@...>(%2){%1(%2);}UNIQUE_FUNCTION<@Hy_%1@...>(%2)
 
 #define HOOK__%1(%2) forward UNIQUE_FUNCTION<@yH_%1@...>(%2);UNIQUE_FUNCTION<@yH_%1@...>(%2)
 #define REHOOK__ HOOK__

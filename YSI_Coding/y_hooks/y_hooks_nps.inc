@@ -1,7 +1,79 @@
-#define HOOK_NATIVE__%0(%1)
+/*
+Legal:
+	Version: MPL 1.1
+	
+	The contents of this file are subject to the Mozilla Public License Version 
+	1.1 the "License"; you may not use this file except in compliance with 
+	the License. You may obtain a copy of the License at 
+	http://www.mozilla.org/MPL/
+	
+	Software distributed under the License is distributed on an "AS IS" basis,
+	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+	for the specific language governing rights and limitations under the
+	License.
+	
+	The Original Code is the YSI framework.
+	
+	The Initial Developer of the Original Code is Alex "Y_Less" Cole.
+	Portions created by the Initial Developer are Copyright C 2011
+	the Initial Developer. All Rights Reserved.
+
+Contributors:
+	Y_Less
+	koolk
+	JoeBullet/Google63
+	g_aSlice/Slice
+	Misiur
+	samphunter
+	tianmeta
+	maddinat0r
+	spacemud
+	Crayder
+	Dayvison
+	Ahmad45123
+	Zeex
+	irinel1996
+	Yiin-
+	Chaprnks
+	Konstantinos
+	Masterchen09
+	Southclaws
+	PatchwerkQWER
+	m0k1
+	paulommu
+	udan111
+
+Thanks:
+	JoeBullet/Google63 - Handy arbitrary ASM jump code using SCTRL.
+	ZeeX - Very productive conversations.
+	koolk - IsPlayerinAreaEx code.
+	TheAlpha - Danish translation.
+	breadfish - German translation.
+	Fireburn - Dutch translation.
+	yom - French translation.
+	50p - Polish translation.
+	Zamaroht - Spanish translation.
+	Los - Portuguese translation.
+	Dracoblue, sintax, mabako, Xtreme, other coders - Producing other modes for
+		me to strive to better.
+	Pixels^ - Running XScripters where the idea was born.
+	Matite - Pestering me to release it and using it.
+
+Very special thanks to:
+	Thiadmer - PAWN, whose limits continue to amaze me!
+	Kye/Kalcor - SA:MP.
+	SA:MP Team past, present and future - SA:MP.
+
+Optional plugins:
+	Gamer_Z - GPS.
+	Incognito - Streamer.
+	Me - sscanf2, fixes2, Whirlpool.
+*/
 
 #define HOOK_STOCK__%0(%1) FUNC_PARSER(YHNPS,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:)(%0(%1))()()(1,0)
 #define HOOK_NATIVE__ HOOK_STOCK__
+#define HOOK_native__ HOOK_STOCK__
+#define HOOK_stock__ HOOK_STOCK__
 
 // Strip spaces from the generated function names.
 #define @yH_%0\32; @yH_ // hook
@@ -80,7 +152,7 @@
 // %4  = Existing values
 // %7  = Prefix0
 // %1  = Prefix1
-#define YHNPS_END(%0)%8$(,%5)(,%6)(%9,%4) %8$YHNPS_U0<%0>(%5);YHNPS_U1<%0>(%5);YHNPS_U1<%0>(%5)_yH@(%4),%0(%6),_@yH();YHNPS_U0<%0>(%5)
+#define YHNPS_END(%0)%8$(,%5)(,%6)(%9,%4) %8$forward YHNPS_U0<%0>(%5);YHNPS_U1<%0>(%5);YHNPS_U1<%0>(%5)_yH@(%4),%0(%6),_@yH();YHNPS_U0<%0>(%5)
 #define YHNPS_NUL(%0)%8$()() YHNPS_END(%0)%8$(,)(,)
 
 // Helper macro to generate the unique function name without bloating the
@@ -88,6 +160,26 @@
 #define YHNPS_U0<%1> UNIQUE_FUNCTION<@Hy_%1@...>
 #define YHNPS_U1<%1> UNIQUE_FUNCTION<@_Hy%1@...>
 
+// Doing `hook native` instead of `HOOK_NATIVE__` attaches the `forward` and
+// unique value earlier.  This just does all the same code, but with a reduced
+// ending name generation.
+#define HOOK_REDO__%0(%1) FUNC_PARSER(YHNPS2,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:)(%0(%1))()()(1,0)
+#define YHNPS2_ARR YHNPS_ARR
+#define YHNPS2_ARR_ARR YHNPS_ARR_ARR
+#define YHNPS2_ARR_ARR_ARR YHNPS_ARR_ARR_ARR
+#define YHNPS2_STR YHNPS_STR
+#define YHNPS2_STR_DEF YHNPS_STR_DEF
+#define YHNPS2_EXT YHNPS_EXT
+#define YHNPS2_REF YHNPS_REF
+#define YHNPS2_REF_DEF YHNPS_REF_DEF
+#define YHNPS2_NUM YHNPS_NUM
+#define YHNPS2_NUM_DEF YHNPS_NUM_DEF
+#define YHNPS2_BYREF YHNPS_BYREF
+#define YHNPS2_BYVAL YHNPS_BYVAL
+#define YHNPS2_END(%0)%8$(,%5)(,%6)(%9,%4) %8$@Hy_%0(%5);@_Hy%0(%5);@_Hy%0(%5)_yH@(%4),%0(%6),_@yH();@Hy_%0(%5)
+#define YHNPS2_NUL(%0)%8$()() YHNPS2_END(%0)%8$(,)(,)
+
+// Remove specified priorities from the original call.
 #define _yH@(%0),%1@%2(%3),_@yH(); _yH@(%0),%1(%3),_@yH();
 
 new
@@ -162,6 +254,11 @@ static stock YHNPS_Insert(heap, count, value, ptr)
 	}
 }
 
+Hooks_Continue_(GLOBAL_TAG_TYPES:...)
+{
+	return 0;
+}
+
 static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base)
 {
 	if (allocated == max(nativeCount, stockCount))
@@ -192,6 +289,15 @@ static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base)
 	}
 }
 
+_@yH(&a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0)
+{
+	#pragma unused a, b, c, d, e, f
+	// This function does nothing.  It merely exists to reserve space for
+	// codegen.  According to my experiments, just 4 parameters are enough to
+	// reserve enough space (exactly) for the code generated below, even for a
+	// function with no parameters.  But better to be safe than sorry.
+}
+
 public OnCodeInit()
 {
 	Indirect_Init();
@@ -208,8 +314,6 @@ public OnCodeInit()
 		nativeCount = 0,
 		stockCount = 0,
 		entry,
-		pn[32 char],
-		name[32 char],
 		idx1,
 		idx2,
 		trambopoline,
@@ -219,34 +323,39 @@ public OnCodeInit()
 		GetAmxHeader(hdr);
 		base = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
 	}
-	YSI_g_sNPSStack = cellmin;
-	// Needs to be split over multiple lines because macros (`_A`).
-	while (
-		(idx1 = AMX_GetPublicEntryPrefix(idx1, entry, _A<@Hy_>))
-		&&
-		(idx2 = AMX_GetPublicPointerPrefix(idx2, trambopoline, _A<@_Hy>))
-	)
 	{
-		YSI_g_sNPSReplace = AMX_Read(entry);
-		AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, name);
-		name{strfind(name, "@", .pos = 4)} = '\0';
-		if (YSI_g_sNPSStack == cellmin)
+		new
+			pn[32 char],
+			name[32 char];
+		YSI_g_sNPSStack = cellmin;
+		// Needs to be split over multiple lines because macros (`_A`).
+		while (
+			(idx1 = AMX_GetPublicEntryPrefix(idx1, entry, _A<@Hy_>))
+			&&
+			(idx2 = AMX_GetPublicPointerPrefix(idx2, trambopoline, _A<@_Hy>))
+		)
 		{
-			// New hook.
-			memcpy(pn, name[1], 0, 28, 32 char);
+			YSI_g_sNPSReplace = AMX_Read(entry);
+			AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, name);
+			name{strfind(name, "@", .pos = 4)} = '\0';
+			if (YSI_g_sNPSStack == cellmin)
+			{
+				// New hook.
+				memcpy(pn, name[1], 0, 28, 32 char);
+			}
+			else if (strcmp(name[1], pn))
+			{
+				YHNPS_Push(heap, allocated, nativeCount, stockCount, base);
+				// `YSI_g_sNPSStack` points to the start of the last chain.  Store
+				// it.
+				// New hook.
+				memcpy(pn, name[1], 0, 28, 32 char);
+				YSI_g_sNPSStack = cellmin;
+			}
+			YSI_g_sNPSTrampoline = trambopoline;
+			@.trambopoline();
+			YSI_g_sNPSStack = trambopoline;
 		}
-		else if (strcmp(name[1], pn))
-		{
-			YHNPS_Push(heap, allocated, nativeCount, stockCount, base);
-			// `YSI_g_sNPSStack` points to the start of the last chain.  Store
-			// it.
-			// New hook.
-			memcpy(pn, name[1], 0, 28, 32 char);
-			YSI_g_sNPSStack = cellmin;
-		}
-		YSI_g_sNPSTrampoline = trambopoline;
-		@.trambopoline();
-		YSI_g_sNPSStack = trambopoline;
 	}
 	if (YSI_g_sNPSStack != cellmin)
 	{
@@ -297,8 +406,6 @@ public OnCodeInit()
 		// `SYSREQ.C` is always followed by `STACK`, except with `#emit` usage.
 		// We need to change the pair in to a single `CALL`.  Don't forget
 		// `SYSREQ.D`.
-		printf("Found entry %d %d", DisasmGetOperand(dctx), entry);
-		printf("At %08x", DisasmGetCurIp(dctx) - AMX_HEADER_COD);
 		if (entry != cellmin)
 		{
 			// Write a different target address.
@@ -312,6 +419,12 @@ public OnCodeInit()
 			}
 		}
 	}
+
+	// Step 2:
+	//
+	//   Generate `continue`.
+	//
+	Hooks_GenerateContinue();
 
 	// Clear the stack.
 	YSI_g_sNPSStack = 0;
@@ -353,15 +466,6 @@ This function is called, and just needs to insert a new function.
 */
 
 #define continue(%0) Hooks_Continue_(%0)
-
-stock _@yH(&a = 0, &b = 0, &c = 0, &d = 0, &e = 0, &f = 0)
-{
-	#pragma unused a, b, c, d, e, f
-	// This function does nothing.  It merely exists to reserve space for
-	// codegen.  According to my experiments, just 4 parameters are enough to
-	// reserve enough space (exactly) for the code generated below, even for a
-	// function with no parameters.  But better to be safe than sorry.
-}
 
 stock _yH@(compressedFormat)
 {
@@ -474,131 +578,83 @@ stock _yH@(compressedFormat)
 	#emit RETN
 }
 
-stock Hooks_Continue_(GLOBAL_TAG_TYPES:...)
+static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 {
-	static
-		addr,
-		args;
+	// This generates new code in a given location.  That location just happens
+	// to entirely clobber `YHNPS_Push`, but we no longer need it.
+	new
+		ctx[AsmContext],
+		ptr = _:addressof(Hooks_Continue_<>);
 
-	#emit ADDR.pri     8
-	#emit STOR.pri     addr
+	AsmInitPtr(ctx, ptr + AMX_HEADER_COD, _:addressof(_@yH<>) - ptr);
 
-	#emit LOAD.pri     YSI_g_sNPSStack
-	#emit ADD.C        16
-	#emit LOAD.I
-	#emit STOR.pri     args
+	@emit PROC
+	@emit ADDR.pri     8
+	@emit PUSH.pri
 
-	while ((args >>>= 1))
-	{
-		addr += 4;
-		if (args & 1)
-		{
-			#emit LREF.pri     addr
-			#emit LOAD.I
-			#emit SREF.pri     addr
-		}
-	}
-	{}
+	@emit LOAD.pri     ref(YSI_g_sNPSStack)
+	@emit ADD.C        16
+	@emit LOAD.I
+	@emit MOVE.alt
 
-	#emit LOAD.pri     YSI_g_sNPSStack
-	#emit ADD.C        12
-	#emit LOAD.I
-	#emit STOR.pri     addr
+	@emit Hooks_Continue_loop:
 
-	// `CALL` or `SYSREQ`.
-	if (addr > 0)
-	{
-		// Reset the current frame.
-		#emit POP.pri
-		#emit SCTRL        5
+	@emit POP.pri
+	@emit ADD.C        4
+	@emit PUSH.pri
 
-		// Jump to the function.
-		#emit LOAD.pri     addr
-		#emit LCTRL        8
-		#emit SCTRL        6
-	}
-	else
-	{
-		// Save the bottom of the stack.
-		#emit POP.alt
-		#emit LOAD.pri     addr
-		#emit STOR.alt     addr
-		#emit POP.alt
+	// Check if `alt` is `0` (no parameters) or odd (move this parameter).
+	@emit CONST.pri    1
+	@emit SHR.C.alt    1
+	@emit JGRTR.label  Hooks_Continue_done
+	@emit AND
+	@emit JZER.label   Hooks_Continue_loop
 
-		#emit NEG
-		#emit SYSREQ.pri
+	// Adjust the given parameter.
+	@emit LREF.S.pri   -4
+	@emit LOAD.I
+	@emit SREF.S.pri   -4
+	@emit JUMP.label   Hooks_Continue_loop
 
-		// Returns to here.
-		#emit PUSH.alt
-		#emit PUSH         addr
-		#emit RETN
-	}
+	@emit Hooks_Continue_done:
 
-	return 0;
+	@emit POP.pri
 
-/*
-	Fast target jump code (for v0.2)
+	@emit LOAD.pri     ref(YSI_g_sNPSStack)
+	@emit ADD.C        12
+	@emit LOAD.I
 
-	// Replace calls to this function from:
+	// `alt` is `0` here, thanks to the loop above.
+	@emit JSLEQ.label  Hooks_Continue_native
 
-//	#emit PUSH.S       args__
-//	#emit PUSH.S       func__
-//	#emit PUSH.C       n
-//	#emit CALL         FastJump
+	@emit MOVE.alt
+	@emit POP.pri
+	@emit SCTRL        5
 
-	// To:
+	// Jump to the function.
+	@emit MOVE.pri
+	@emit LCTRL        8
+	@emit SCTRL        6
 
-//	#emit CONST.alt    ARGS
-//	#emit CONST.pri    FUNC + 4
-//	#emit PUSH.C       n - 8
-//	#emit CALL         FastJump
+	@emit Hooks_Continue_native:
 
-	// If `FUNC` is `0`:
+	static RET;
 
-//	#emit NOP
-//	#emit NOP
-//	#emit NOP
-//	#emit NOP
-//	#emit STACK        n - 8
-//	#emit CONST.pri    0
+	// Save the bottom of the stack.
+	@emit POP.alt
+	@emit STOR.alt     ref(RET)
+	@emit POP.alt
 
-	// Function:
+	@emit NEG
+	// Missed this one apparently...
+	AsmEmitSysreqPri(ctx);
+	//@emit SYSREQ.pri
 
-	#emit PROC                 // Auto-generated.
+	// Returns to here.
+	@emit PUSH.alt
+	@emit PUSH         ref(RET)
+	@emit RETN
 
-//	#emit JZER         FastJump_retn
-
-	#emit PUSH.pri             // Store the function to call.
-	// Get the start of the normal arguments.
-	#emit ADDR.pri     8
-	#emit PUSH.pri
-
-FastJump_loop:
-		#emit POP.pri
-		#emit ADD.C        4
-		#emit PUSH.pri
-
-		// Check if `alt` is `0` (no parameters) or odd (move this parameter).
-		#emit CONST.pri    1
-		#emit SHR.C.alt    1
-		#emit JGRTR        FastJump_done
-		#emit AND
-		#emit JZER         FastJump_loop
-
-		// Adjust the given parameter.
-		#emit LREF.S.pri   -8
-		#emit LOAD.I
-		#emit SREF.S.pri   -8
-		#emit JUMP         FastJump_loop
-
-FastJump_done:
-	#emit POP.pri
-	#emit POP.pri
-	#emit SCTRL        6
-
-//FastJump_retn:
-//	#emit RETN
-
-*/
+	AsmEmitPadding(ctx);
 }
 
