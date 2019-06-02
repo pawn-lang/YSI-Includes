@@ -94,10 +94,9 @@ new
 	YSI_g_sNPSBaseCall,
 	YSI_g_sNPSTrampoline,
 	YSI_g_sNPSReplace,
-	YSI_g_sNPSHeap,
 	YSI_g_sNPSStack;
 
-static stock YHNPS_Find(heap, end, value, ptr)
+static stock YHNPS_Find(heap, end, value)
 {
 	new
 		start = 0,
@@ -118,10 +117,10 @@ static stock YHNPS_Find(heap, end, value, ptr)
 		}
 		else
 		{
-			return mid;
+			return AMX_Read(heap + mid * 8 + 4);
 		}
 	}
-	return -1;
+	return cellmin;
 }
 
 static stock YHNPS_Insert(heap, count, value, ptr)
@@ -150,14 +149,12 @@ static stock YHNPS_Insert(heap, count, value, ptr)
 	}
 	if (start == count)
 	{
-		printf("Inserting %d at index %d", value, count);
 		// Shift all the greater values up.
 		AMX_Write(heap + count * 8, value);
 		AMX_Write(heap + count * 8 + 4, ptr);
 	}
 	else
 	{
-		printf("Inserting %d at index %d", value, mid);
 		// Shift all the greater values up.
 		rawMemcpy(heap + mid * 8 + 8, heap + mid * 8, (count - mid) * 8);
 		AMX_Write(heap + mid * 8, value);
@@ -165,7 +162,7 @@ static stock YHNPS_Insert(heap, count, value, ptr)
 	}
 }
 
-static stock YHNPS_Push(heap, allocated, &nativeCount, &stockCount)
+static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base)
 {
 	if (allocated == max(nativeCount, stockCount))
 	{
@@ -184,15 +181,13 @@ static stock YHNPS_Push(heap, allocated, &nativeCount, &stockCount)
 	}
 	if (YSI_g_sNPSBaseCall < 0)
 	{
-		printf("Insert native");
-		YHNPS_Insert(heap, nativeCount, -YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
-		YHNPS_Insert(heap + allocated * 16, nativeCount, GetNativeAddressFromIndex(-YSI_g_sNPSBaseCall), YSI_g_sNPSTrampoline);
+		YHNPS_Insert(heap, nativeCount, -YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline + base);
+		YHNPS_Insert(heap + allocated * 16, nativeCount, GetNativeAddressFromIndex(-YSI_g_sNPSBaseCall), YSI_g_sNPSTrampoline + base);
 		++nativeCount;
 	}
 	else
 	{
-		printf("Insert stock");
-		YHNPS_Insert(heap + allocated * 8, stockCount, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
+		YHNPS_Insert(heap + allocated * 8, stockCount, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline + base);
 		++stockCount;
 	}
 }
@@ -216,13 +211,20 @@ public OnCodeInit()
 		pn[32 char],
 		name[32 char],
 		idx1,
-		idx2;
+		idx2,
+		trambopoline,
+		base;
+	{
+		new hdr[AMX_HDR];
+		GetAmxHeader(hdr);
+		base = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
+	}
 	YSI_g_sNPSStack = cellmin;
 	// Needs to be split over multiple lines because macros (`_A`).
 	while (
 		(idx1 = AMX_GetPublicEntryPrefix(idx1, entry, _A<@Hy_>))
 		&&
-		(idx2 = AMX_GetPublicPointerPrefix(idx2, YSI_g_sNPSTrampoline, _A<@_Hy>))
+		(idx2 = AMX_GetPublicPointerPrefix(idx2, trambopoline, _A<@_Hy>))
 	)
 	{
 		YSI_g_sNPSReplace = AMX_Read(entry);
@@ -235,29 +237,81 @@ public OnCodeInit()
 		}
 		else if (strcmp(name[1], pn))
 		{
-			YHNPS_Push(heap, allocated, nativeCount, stockCount);
+			YHNPS_Push(heap, allocated, nativeCount, stockCount, base);
 			// `YSI_g_sNPSStack` points to the start of the last chain.  Store
 			// it.
 			// New hook.
 			memcpy(pn, name[1], 0, 28, 32 char);
 			YSI_g_sNPSStack = cellmin;
 		}
-		@.YSI_g_sNPSTrampoline();
-		YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+		YSI_g_sNPSTrampoline = trambopoline;
+		@.trambopoline();
+		YSI_g_sNPSStack = trambopoline;
 	}
 	if (YSI_g_sNPSStack != cellmin)
 	{
 		// Store the final chain.
-		YHNPS_Push(heap, allocated, nativeCount, stockCount);
+		YHNPS_Push(heap, allocated, nativeCount, stockCount, base);
 	}
 
 	// Step 2:
 	//
 	//   Iterate over the entire mode and replace all relevant calls.
 	//
-
-	// `SYSREQ.C` is always followed by `STACK`, except with `#emit` usage.  We
-	// need to change the pair in to a single `CALL`.  Don't forget `SYSREQ.D`.
+	new
+		Opcode:call = RelocateOpcode(OP_CALL),
+		Opcode:nop = RelocateOpcode(OP_NOP),
+		dctx[DisasmContext];
+	DisasmInit(dctx);
+	for ( ; ; )
+	{
+		switch (DisasmNextInsn(dctx))
+		{
+		case OP_NONE:
+		{
+			break;
+		}
+		case OP_SYSREQ_C:
+		{
+			entry = YHNPS_Find(heap, nativeCount, DisasmGetOperand(dctx));
+		}
+		case OP_SYSREQ_D:
+		{
+			entry = YHNPS_Find(heap + allocated * 16, nativeCount, DisasmGetOperand(dctx));
+		}
+		case OP_CALL:
+		{
+			entry = YHNPS_Find(heap + allocated * 8, stockCount, DisasmGetOperand(dctx));
+			if (entry != cellmin)
+			{
+				// Write a different target address.
+				AMX_Write(DisasmGetCurIp(dctx) + AMX_HEADER_COD + 4, entry);
+			}
+			continue;
+		}
+		default:
+		{
+			continue;
+		}
+		}
+		// `SYSREQ.C` is always followed by `STACK`, except with `#emit` usage.
+		// We need to change the pair in to a single `CALL`.  Don't forget
+		// `SYSREQ.D`.
+		printf("Found entry %d %d", DisasmGetOperand(dctx), entry);
+		printf("At %08x", DisasmGetCurIp(dctx) - AMX_HEADER_COD);
+		if (entry != cellmin)
+		{
+			// Write a different target address.
+			base = DisasmGetCurIp(dctx);
+			AMX_Write(base, _:call);
+			AMX_Write(base + 4, entry);
+			if (DisasmNextInsn(dctx) == OP_STACK)
+			{
+				AMX_Write(base + 8, _:nop);
+				AMX_Write(base + 12, _:nop);
+			}
+		}
+	}
 
 	// Clear the stack.
 	YSI_g_sNPSStack = 0;
