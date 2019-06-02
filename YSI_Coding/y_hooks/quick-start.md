@@ -17,7 +17,7 @@ hook OnPlayerConnect(playerid)
 
 The system will call each hook of a public in the order they are declared.  When one ends the next starts.  There is a way to stop the chain entirely, such that no more hooks are called, but this is all the control given.  These can hook callbacks that don't even exist, you don't need `public OnPlayerConnect` anywhere in code for this example to work.
 
-## Function1
+## Function
 
 A function hook hooks a function - i.e. something called within the script.  This includes pawn functions and natives:
 
