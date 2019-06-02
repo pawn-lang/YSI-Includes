@@ -259,7 +259,7 @@ Hooks_Continue_(GLOBAL_TAG_TYPES:...)
 	return 0;
 }
 
-static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base)
+static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base, find, replace)
 {
 	if (allocated == max(nativeCount, stockCount))
 	{
@@ -276,15 +276,15 @@ static stock YHNPS_Push(heap, &allocated, &nativeCount, &stockCount, base)
 		}
 		allocated += 32;
 	}
-	if (YSI_g_sNPSBaseCall < 0)
+	if (find < 0)
 	{
-		YHNPS_Insert(heap, nativeCount, -YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline + base);
-		YHNPS_Insert(heap + allocated * 16, nativeCount, GetNativeAddressFromIndex(-YSI_g_sNPSBaseCall), YSI_g_sNPSTrampoline + base);
+		YHNPS_Insert(heap, nativeCount, -find, replace + base);
+		YHNPS_Insert(heap + allocated * 16, nativeCount, GetNativeAddressFromIndex(-find), replace + base);
 		++nativeCount;
 	}
 	else
 	{
-		YHNPS_Insert(heap + allocated * 8, stockCount, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline + base);
+		YHNPS_Insert(heap + allocated * 8, stockCount, find, replace + base);
 		++stockCount;
 	}
 }
@@ -313,10 +313,8 @@ public OnCodeInit()
 		allocated = 0,
 		nativeCount = 0,
 		stockCount = 0,
-		entry,
 		idx1,
 		idx2,
-		trambopoline,
 		base;
 	{
 		new hdr[AMX_HDR];
@@ -324,43 +322,26 @@ public OnCodeInit()
 		base = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
 	}
 	{
-		new
-			pn[32 char],
-			name[32 char];
-		YSI_g_sNPSStack = cellmin;
+		YSI_g_sNPSBaseCall = cellmin;
 		// Needs to be split over multiple lines because macros (`_A`).
 		while (
-			(idx1 = AMX_GetPublicEntryPrefix(idx1, entry, _A<@Hy_>))
+			(idx1 = AMX_GetPublicPointerPrefix(idx1, YSI_g_sNPSReplace, _A<@Hy_>))
 			&&
-			(idx2 = AMX_GetPublicPointerPrefix(idx2, trambopoline, _A<@_Hy>))
+			(idx2 = AMX_GetPublicPointerPrefix(idx2, YSI_g_sNPSTrampoline, _A<@_Hy>))
 		)
 		{
-			YSI_g_sNPSReplace = AMX_Read(entry);
-			AMX_ReadString(AMX_Read(entry + 4) + AMX_BASE_ADDRESS, name);
-			name{strfind(name, "@", .pos = 4)} = '\0';
-			if (YSI_g_sNPSStack == cellmin)
+			@.YSI_g_sNPSTrampoline();
+			if (YSI_g_sNPSStack != YSI_g_sNPSTrampoline)
 			{
-				// New hook.
-				memcpy(pn, name[1], 0, 28, 32 char);
+				YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSReplace, YSI_g_sNPSStack);
+				YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
 			}
-			else if (strcmp(name[1], pn))
-			{
-				YHNPS_Push(heap, allocated, nativeCount, stockCount, base);
-				// `YSI_g_sNPSStack` points to the start of the last chain.  Store
-				// it.
-				// New hook.
-				memcpy(pn, name[1], 0, 28, 32 char);
-				YSI_g_sNPSStack = cellmin;
-			}
-			YSI_g_sNPSTrampoline = trambopoline;
-			@.trambopoline();
-			YSI_g_sNPSStack = trambopoline;
 		}
 	}
-	if (YSI_g_sNPSStack != cellmin)
+	if (YSI_g_sNPSBaseCall != cellmin)
 	{
 		// Store the final chain.
-		YHNPS_Push(heap, allocated, nativeCount, stockCount, base);
+		YHNPS_Push(heap, allocated, nativeCount, stockCount, base, YSI_g_sNPSBaseCall, YSI_g_sNPSTrampoline);
 	}
 
 	// Step 2:
@@ -382,19 +363,19 @@ public OnCodeInit()
 		}
 		case OP_SYSREQ_C:
 		{
-			entry = YHNPS_Find(heap, nativeCount, DisasmGetOperand(dctx));
+			idx1 = YHNPS_Find(heap, nativeCount, DisasmGetOperand(dctx));
 		}
 		case OP_SYSREQ_D:
 		{
-			entry = YHNPS_Find(heap + allocated * 16, nativeCount, DisasmGetOperand(dctx));
+			idx1 = YHNPS_Find(heap + allocated * 16, nativeCount, DisasmGetOperand(dctx));
 		}
 		case OP_CALL:
 		{
-			entry = YHNPS_Find(heap + allocated * 8, stockCount, DisasmGetOperand(dctx));
-			if (entry != cellmin)
+			idx1 = YHNPS_Find(heap + allocated * 8, stockCount, DisasmGetOperand(dctx));
+			if (idx1 != cellmin)
 			{
 				// Write a different target address.
-				AMX_Write(DisasmGetCurIp(dctx) + AMX_HEADER_COD + 4, entry);
+				AMX_Write(DisasmGetCurIp(dctx) + AMX_HEADER_COD + 4, idx1);
 			}
 			continue;
 		}
@@ -406,12 +387,12 @@ public OnCodeInit()
 		// `SYSREQ.C` is always followed by `STACK`, except with `#emit` usage.
 		// We need to change the pair in to a single `CALL`.  Don't forget
 		// `SYSREQ.D`.
-		if (entry != cellmin)
+		if (idx1 != cellmin)
 		{
 			// Write a different target address.
 			base = DisasmGetCurIp(dctx);
 			AMX_Write(base, _:call);
-			AMX_Write(base + 4, entry);
+			AMX_Write(base + 4, idx1);
 			if (DisasmNextInsn(dctx) == OP_STACK)
 			{
 				AMX_Write(base + 8, _:nop);
@@ -520,14 +501,19 @@ stock _yH@(compressedFormat)
 	@emit PUSH.C       compressedFormat
 
 	// Chain the functions.
-	if (YSI_g_sNPSStack == cellmin)
+	if (YSI_g_sNPSBaseCall == addr)
+	{
+		@emit PUSH.C       YSI_g_sNPSStack
+		YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+	}
+	else if (YSI_g_sNPSBaseCall == cellmin)
 	{
 		@emit PUSH.C       addr
-		YSI_g_sNPSBaseCall = addr;
+		YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
 	}
 	else
 	{
-		@emit PUSH.C       YSI_g_sNPSStack
+		@emit PUSH.C       addr
 	}
 
 	@emit PUSH.C       8
@@ -566,6 +552,9 @@ stock _yH@(compressedFormat)
 	@emit RETN
 
 	AsmEmitPadding(ctx);
+
+	YSI_g_sNPSReplace = YSI_g_sNPSBaseCall;
+	YSI_g_sNPSBaseCall = addr;
 
 	// Do a double return - exit the calling function as well as this function,
 	// so that the next call is never actually made.
