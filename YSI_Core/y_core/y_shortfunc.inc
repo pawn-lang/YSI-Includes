@@ -140,6 +140,8 @@ static stock const
 // CallRemoteFunction wrapper that handles references and string returns.
 stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
+	P:5("C@ called: %s, %s", function, fmat);
+
 	#pragma unused function, fmat
 	// New implementation of "CallRemoteFunction".  Wraps the old function
 	// efficiently (using assembly stack manipulation tricks, better even than
@@ -236,6 +238,7 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
 		{
 			YSI_g_sPropVarArg[1] = '@' + ++j,
+			P:7("C@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
 			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
 		}
 	}
@@ -280,6 +283,8 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 // CallRemoteFunction wrapper that handles references and regular returns.
 stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
+	P:5("D@ called: %s, %s", function, fmat);
+
 	#pragma unused function, fmat
 	// New implementation of "CallRemoteFunction".  Wraps the old function
 	// efficiently (using assembly stack manipulation tricks, better even than
@@ -348,6 +353,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
 		{
 			YSI_g_sPropVarArg[1] = '@' + ++j,
+			P:7("D@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
 			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
 		}
 	}
@@ -365,14 +371,12 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	return 0;
 }
 
-//#define C@(%9:%0);%1; C@(%0); // Get word.
-//#define D@(%9:%0);%1; D@(%0); // Get string.
-
 #define @@%0\32; @@
 #define _@%0\32; _@
 
 stock F@(calltype = 1, master = -1, heapptr = 0)
 {
+	P:5("F@ called: %d, %d, %d", calltype, master, heapptr);
 	// First copy the calltype to a global, so it can be read from the functions
 	// that actually call `CallLocalFunction` (0) and `CallRemoteFunction` (1).
 	YSI_g_sCallData = calltype;
@@ -392,12 +396,14 @@ stock F@(calltype = 1, master = -1, heapptr = 0)
 	return 0;
 }
 
-stock L@(GLOBAL_TAG_TYPES:...)
+stock L@(GLOBAL_TAG_TYPES:ret, GLOBAL_TAG_TYPES:...)
 {
+	P:5("L@ called: %d", ret);
 	// Return possibly multiple values remotely.
-	setproperty(8, YSI_g_sPropReturn, getarg(0));
+	setproperty(8, YSI_g_sPropReturn, ret);
 	for (new i = 1, j = numargs(); i != j; ++i)
 	{
+		P:7("L@: loop %d = %d", i, getarg(i));
 		YSI_g_sPropVarArg[1] = '@' + i,
 		setproperty(8, YSI_g_sPropVarArg, getarg(i));
 	}
@@ -406,10 +412,12 @@ stock L@(GLOBAL_TAG_TYPES:...)
 
 stock T@(const string:ret[YSI_MAX_STRING], GLOBAL_TAG_TYPES:...)
 {
+	P:5("T@ called: %s", ret);
 	// Return possibly multiple values remotely.
 	setproperty(8, YSI_g_sPropEmpty, YSIM_STRING, ret);
 	for (new i = 1, j = numargs(); i != j; ++i)
 	{
+		P:7("T@: loop %d = %d", i, getarg(i));
 		YSI_g_sPropVarArg[1] = '@' + i,
 		setproperty(8, YSI_g_sPropVarArg, getarg(i));
 	}

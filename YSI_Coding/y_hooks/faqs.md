@@ -1,3 +1,23 @@
+# FAQ
+
+## What order are callback hooks called in?
+
+1. Pre-Hooks.  These are a special type of hook used in some libraries to ensure that their callbacks pre-empt even y_hooks.
+
+2. y_hooks.  Normal `hook` hooks.
+
+3. ALS and callback hooks (i.e. `hook callback`).  These are called intertwined with each other, i.e. at the same priority defined only by code order.
+
+4. `public`.  The original callback.
+
+## What order are function hooks called in?
+
+Since there are only two types of function hook, this is much simpler to answer:
+
+1. ALS and function hooks (i.e. `hook function`).  These are called intertwined with each other, i.e. at the same priority defined only by code order in reverse.
+
+2. Original function (i.e. the native or function).
+
 # Errors
 
 ## `error 021: symbol already defined: "@yH_OnGamemodeInit@003"`
@@ -76,6 +96,4 @@ hook OnGameModeInit()
 {
 }
 ```
-
-
 

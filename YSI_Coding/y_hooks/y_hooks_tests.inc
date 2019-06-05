@@ -921,3 +921,31 @@ TEST__ y_hooks_State1()
 	ASSERT_EQ(g_y_hooksVar, 3000);
 }
 
+static stock y_hooks_CrashTrigger()
+{
+	#emit HALT 1
+}
+
+HOOK__ y_hooks_Crash@1()
+{
+}
+
+HOOK__ y_hooks_Crash@2()
+{
+}
+
+HOOK__ y_hooks_Crash@3()
+{
+	y_hooks_CrashTrigger();
+}
+
+HOOK__ y_hooks_Crash@4()
+{
+}
+
+TEST__ y_hooks_Crash()
+{
+	CallLocalFunction("y_hooks_Crash", "");
+	Testing_SurpressOneFail();
+}
+

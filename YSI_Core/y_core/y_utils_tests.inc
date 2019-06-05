@@ -73,3 +73,23 @@ TEST__ y_utils_va_return()
 	ASSERT_EQ(gCalls_y_utils_va_return, 4);
 }
 
+TEST__ y_utils_LevenshteinDistance()
+{
+	ASSERT_EQ(LevenshteinDistance("hello", "hello"), 0);
+	ASSERT_EQ(LevenshteinDistance("Hello", "hello"), 1);
+	ASSERT_EQ(LevenshteinDistance("helllo", "hello"), 1);
+	ASSERT_EQ(LevenshteinDistance("helo", "hello"), 1);
+	ASSERT_EQ(LevenshteinDistance("hellllo", "hello"), 2);
+	ASSERT_EQ(LevenshteinDistance("heo", "hello"), 2);
+	ASSERT_EQ(LevenshteinDistance("he,,o", "hello"), 2);
+	ASSERT_EQ(LevenshteinDistance("HhlTo", "hello"), 3);
+	ASSERT_EQ(LevenshteinDistance("hello", "there"), 4);
+	ASSERT_EQ(LevenshteinDistance("hello", ""), 5);
+	ASSERT_EQ(LevenshteinDistance("", "hello"), 5);
+	ASSERT_EQ(LevenshteinDistance("", "01234567890123456789012345678901234567890123456789012345678901234567890123456789"), 80);
+	ASSERT_EQ(LevenshteinDistance("01234567890123456789012345678901234567890123456789012345678901234567890123456789", "01234567890123456789012345678901234567890123456789012345678901234567890123456789"), 0);
+	ASSERT_EQ(LevenshteinDistance("aa", "01234567890123456789012345678901"), 32);
+	// Error case.
+	ASSERT_EQ(LevenshteinDistance("0123456789012345678901234567890123456789", "01234567890123456789012345678901234567890123456789012345678901234567890123456789"), 1);
+}
+

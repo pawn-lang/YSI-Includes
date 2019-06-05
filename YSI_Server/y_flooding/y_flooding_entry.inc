@@ -79,10 +79,8 @@ Optional plugins:
 #include "..\..\YSI_Data\y_iterate"
 #include "..\..\YSI_Coding\y_hooks"
 
-enum e_FLOOD_ACTION:(+= 0x00010000)
+enum e_FLOOD_ACTION
 {
-	e_FLOOD_ACTION_COUNT = 0x0000FFFF,
-	e_FLOOD_ACTION_ACTION = 0x000F0000,
 	e_FLOOD_ACTION_NOTHING = 0,
 	e_FLOOD_ACTION_BLOCK,
 	e_FLOOD_ACTION_KICK,
@@ -94,34 +92,59 @@ enum e_FLOOD_ACTION:(+= 0x00010000)
 
 static
 	YSI_g_sPlayerIPs[MAX_PLAYERS],
-	e_FLOOD_ACTION:YSI_g_sMaxConnections = e_FLOOD_ACTION_COUNT | e_FLOOD_ACTION_BLOCK;
+	YSI_g_sMaxConnections = -1,
+	e_FLOOD_ACTION:YSI_g_sConnectionAction,
+	YSI_g_sOnIncomingConnection;
 
 forward OnFloodLimitExceeded(ip[16], count);
 
-stock
+new
 	Iterator:FloodingPlayer<MAX_PLAYERS>;
 
 /*-------------------------------------------------------------------------*//**
  * <param name="max">Maximum number of connections allowed from the same IP.</param>
  * <param name="action">What to do if there's too many.</param>
  * <remarks>
- *  Sets the maximum connections allowed from a single IP.
- *
- *  Options:
- *
- *  e_FLOOD_ACTION_BLOCK - Kick the latest player on this IP.
- *  e_FLOOD_ACTION_KICK - Kick all players on this IP.
- *  e_FLOOD_ACTION_BAN - Ban the IP and have players time out.
- *  e_FLOOD_ACTION_FBAN - Ban the IP and kick all the players instantly.
- *  e_FLOOD_ACTION_GHOST - Silently force all players on the IP to reconnect.
- *  e_FLOOD_ACTION_OTHER - Call a callback.
+ *   Sets the maximum connections allowed from a single IP.
+ *   
+ *   Options:
+ *   
+ *   e_FLOOD_ACTION_BLOCK - Kick the latest player on this IP.
+ *   e_FLOOD_ACTION_KICK - Kick all players on this IP.
+ *   e_FLOOD_ACTION_BAN - Ban the IP and have players time out.
+ *   e_FLOOD_ACTION_FBAN - Ban the IP and kick all the players instantly.
+ *   e_FLOOD_ACTION_GHOST - Silently force all players on the IP to reconnect.
+ *   e_FLOOD_ACTION_OTHER - Call a callback.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
 stock SetMaxConnections(max = -1, e_FLOOD_ACTION:action = e_FLOOD_ACTION_BLOCK)
 {
 	P:3("SetMaxConnections called: %i, %i", max, _:action);
-	YSI_g_sMaxConnections = (e_FLOOD_ACTION:max & e_FLOOD_ACTION_COUNT) | action;
+	YSI_g_sMaxConnections = max;
+	YSI_g_sConnectionAction = action;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *   Gets the maximum connections allowed from a single IP.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Flooding_GetMaxConnections()
+{
+	return YSI_g_sMaxConnections;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *   Gets the action to perform when the limit is exceeded.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock e_FLOOD_ACTION:Flooding_GetConnectionAction()
+{
+	return YSI_g_sConnectionAction;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -144,6 +167,7 @@ public Flooding_UnbanIP(ip32)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player who joined.</param>
+ * <param name="ip">Their IP address as a string.</param>
  * <remarks>
  *  Checks for too many connections from the same IP address and acts
  *  accordingly.
@@ -153,18 +177,16 @@ public Flooding_UnbanIP(ip32)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-HOOK__ OnPlayerConnect(playerid)
+static Flooding_CheckIP(playerid, ip[])
 {
-	new
-		ret = 1;
-	if ((YSI_g_sMaxConnections & e_FLOOD_ACTION_COUNT) != e_FLOOD_ACTION_COUNT)
+	if (0 <= YSI_g_sMaxConnections < MAX_PLAYERS && YSI_g_sConnectionAction)
 	{
-		new
-			ip[16];
-		GetPlayerIp(playerid, ip, sizeof (ip));
 		new
 			ip32 = IPToInt(ip);
 		YSI_g_sPlayerIPs[playerid] = ip32;
+		// May not have been added to `Player` yet if this is called from
+		// `OnIncomingConnection`.
+		Iter_Add(FloodingPlayer, playerid);
 		FOREACH__ (new i : Player)
 		{
 			if (YSI_g_sPlayerIPs[i] == ip32)
@@ -172,11 +194,10 @@ HOOK__ OnPlayerConnect(playerid)
 				Iter_Add(FloodingPlayer, i);
 			}
 		}
-		if (Iter_Count(FloodingPlayer) > _:(YSI_g_sMaxConnections & e_FLOOD_ACTION_COUNT))
+		if (Iter_Count(FloodingPlayer) > YSI_g_sMaxConnections)
 		{
 			P:I("Max Connections exceeded");
-			ret = 0;
-			switch (YSI_g_sMaxConnections & e_FLOOD_ACTION_ACTION)
+			switch (YSI_g_sConnectionAction)
 			{
 				case e_FLOOD_ACTION_BLOCK:
 				{
@@ -217,12 +238,51 @@ HOOK__ OnPlayerConnect(playerid)
 				}
 				case e_FLOOD_ACTION_OTHER:
 				{
-					ret = CallLocalFunction("OnFloodLimitExceeded", "si", ip, Iter_Count(FloodingPlayer));
+					new
+						ret = CallLocalFunction("OnFloodLimitExceeded", "si", ip, Iter_Count(FloodingPlayer));
+					Iter_Clear(FloodingPlayer);
+					return ret;
 				}
 			}
 		}
 		Iter_Clear(FloodingPlayer);
 	}
-	return ret;
+	return 1;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player who joined.</param>
+ * <param name="ip">Their IP address as a string.</param>
+ * <param name="port">Their port.</param>
+ * <remarks>
+ *  Called before much of the player structure is set up to check incoming
+ *  connections.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+HOOK__ OnIncomingConnection(playerid, ip_address[], port)
+{
+	YSI_g_sOnIncomingConnection = true;
+	return Flooding_CheckIP(playerid, ip_address);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="playerid">Player who joined.</param>
+ * <remarks>
+ *  Called when a player is connected, for checking on older versions.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+HOOK__ OnPlayerConnect(playerid)
+{
+	// To support older versions.
+	if (YSI_g_sOnIncomingConnection)
+	{
+		return 1;
+	}
+	new
+		ip[16];
+	GetPlayerIp(playerid, ip, sizeof (ip));
+	return Flooding_CheckIP(playerid, ip);
 }
 

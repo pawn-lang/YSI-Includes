@@ -86,6 +86,90 @@ CountFives(array[], size)
 
 Even if `ForEach` is not modified, this will ALWAYS return `0` - because `count` is modified inside `IsFive`, but the new value is instantly forgotten when the current call ends.
 
+## `Callback_Restore`
+
+`Callback_Restore` copies the closure data back in to the original stack.  This is only useful when the inline isn't `const` (so there is modified data to copy) and the inline was instantly called (so the original stack still exists).  This is no use for callbacks or timers, because the original function ended before the inline was called, thus calling this will probably just corrupt random memory.
+
+### Non-`const` with `Callback_Restore`:
+
+```pawn
+CallAndCopy(Func:x<>)
+{
+	for (new i = 0; i != 10; ++i)
+	{
+		@.x();
+	}
+	Callback_Restore(x);
+}
+
+Test()
+{
+	new a = 1;
+	inline X()
+	{
+		printf("%d", a); // 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+		++a;
+	}
+	CallAndCopy(using inline X);
+	printf("%d", a); // 11
+}
+```
+
+Note that the value of `a` is modified and persisted, even after the calls to the inline have ended.
+
+### Non-`const` without `Callback_Restore`:
+
+```pawn
+CallNoCopy(Func:x<>)
+{
+	for (new i = 0; i != 10; ++i)
+	{
+		@.x();
+	}
+}
+
+Test()
+{
+	new a = 1;
+	inline X()
+	{
+		printf("%d", a); // 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+		++a;
+	}
+	CallNoCopy(using inline X);
+	printf("%d", a); // 1
+}
+```
+
+In this case, the value of `a` still increments within the inline, because the lack of `const` keeps the current value within the internal data memory for this function.  However, because `Callback_Restore` is never called, it is never copied back to the main stack at the end.
+
+### `const` with or without `Callback_Restore`:
+
+```pawn
+CallIrellevantCopy(Func:x<>)
+{
+	for (new i = 0; i != 10; ++i)
+	{
+		@.x();
+	}
+	Callback_Restore(x); // Irrelevant
+}
+
+Test()
+{
+	new a = 1;
+	inline const X()
+	{
+		printf("%d", a); // 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+		++a;
+	}
+	CallIrellevantCopy(using inline X);
+	printf("%d", a); // 11
+}
+```
+
+With `const`, the closure is never persisted, so the value of `a` never updates between calls.  The presense of `Callback_Restore` in that code WILL copy the data back in to the stack, but this is just copying data over identical data.  However, the call-site of an inline will not always know that the declaration was `const`, so this is not entirely pointless (because the source may also NOT be `const`).
+
 ## Manipulation
 
 Function handlers are just variables.  They can be stored, passed, and more:

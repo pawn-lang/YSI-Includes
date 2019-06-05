@@ -1005,7 +1005,9 @@ y_inline_MetaData(Func:cb<iis>)
 	ASSERT_ZE(Indirect_GetMeta(cb));
 	Indirect_SetMeta(cb, 42);
 	ASSERT_EQ(Indirect_GetMeta(cb), 42);
-	return @.cb(4, 5, "The Dummy Call");
+	new ret = @.cb(4, 5, "The Dummy Call");
+	Callback_Restore(cb);
+	return ret;
 }
 
 TEST__ y_inline_MetaData()
@@ -1417,5 +1419,107 @@ TEST__ nu_y_inline_MetaData()
 	}
 	new ret = y_inline_MetaData(USING_INLINE__ Dummy);
 	ASSERT_EQ(ret, 9);
+}
+
+TEST__ y_inline_DeeplyNested()
+{
+	new k = 0;
+	for (new i = 0; i != 10; ++i)
+	{
+		switch (i)
+		{
+		case 0, 2, 4, 6, 8:
+		{
+		}
+		case 1, 3, 5, 7:
+		{
+			if (i & 1)
+			{
+				switch (i)
+				{
+				case 0, 2, 4, 6, 8:
+				{
+				}
+				case 1, 3, 5, 7:
+				{
+					for (new j = 0; j != 2; ++j)
+					{
+						INLINE__ Dummy(a, b, string:c[])
+						{
+							ASSERT_SAME(c, "The Dummy Call");
+							++k;
+							inline_return a + b;
+						}
+						new ret = y_inline_MetaData(USING_INLINE__ Dummy);
+						ASSERT_EQ(ret, 9);
+					}
+				}
+				case 9:
+				{
+				}
+				default:
+				{
+					INLINE__ Dummy(a, b, string:c[])
+					{
+						ASSERT_SAME(c, "The Dummy Call");
+						inline_return a + b;
+					}
+					new ret = y_inline_MetaData(USING_INLINE__ Dummy);
+					ASSERT_EQ(ret, 9);
+				}
+				}
+			}
+			else
+			{
+				switch (i)
+				{
+				case 0, 2, 4, 6, 8:
+				{
+					INLINE__ Dummy(a, b, string:c[])
+					{
+						ASSERT_SAME(c, "The Dummy Call");
+						inline_return a + b;
+					}
+					new ret = y_inline_MetaData(USING_INLINE__ Dummy);
+					ASSERT_EQ(ret, 9);
+				}
+				case 1, 3, 5, 7:
+				{
+					for (new j = 0; j != 1; ++j)
+					{
+						INLINE__ Dummy(a, b, string:c[])
+						{
+							ASSERT_SAME(c, "The Dummy Call");
+							inline_return a + b;
+						}
+						new ret = y_inline_MetaData(USING_INLINE__ Dummy);
+						ASSERT_EQ(ret, 9);
+					}
+				}
+				case 9:
+				{
+					INLINE__ Dummy(a, b, string:c[])
+					{
+						ASSERT_SAME(c, "The Dummy Call");
+						inline_return a + b;
+					}
+					new ret = y_inline_MetaData(USING_INLINE__ Dummy);
+					ASSERT_EQ(ret, 9);
+				}
+				default:
+				{
+				}
+				}
+			}
+		}
+		case 9:
+		{
+		}
+		default:
+		{
+		}
+		}
+	}
+	ASSERT_EQ(k, 8);
 }
 

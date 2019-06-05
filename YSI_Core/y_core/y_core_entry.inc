@@ -255,6 +255,18 @@ stock _YSI_ConstMod(const &var, const val)
 	#pragma warning pop
 #endif
 
+#if defined CODE_SCAN_MAX_PATTERN
+	#if CODE_SCAN_MAX_PATTERN < (32)
+		#if defined CODESCAN_INC
+			#error Include "YSI" before "codescan", or increase `CODE_SCAN_MAX_PATTERN`.
+		#endif
+		#undef CODE_SCAN_MAX_PATTERN
+		#define CODE_SCAN_MAX_PATTERN (32)
+	#endif
+#else
+	#define CODE_SCAN_MAX_PATTERN (32)
+#endif
+
 // These are conditional, and use most of the preceeding code.
 #if defined YSI_TESTS
 	#include "..\y_testing"

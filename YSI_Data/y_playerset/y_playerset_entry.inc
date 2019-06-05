@@ -76,6 +76,7 @@ Optional plugins:
 */
 
 #include "..\..\YSI_Core\y_utils"
+#include "..\y_playerarray"
 #include "..\y_iterate"
 
 #if !defined MAX_PLAYER_SET_STACK

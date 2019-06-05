@@ -3588,18 +3588,71 @@ TEST__ y_iter_yield7a()
 	ASSERT_EQ(idx, sizeof(answers));
 }
 
-static Iterator:y_iter_huge<100000>;
+//static Iterator:y_iter_huge<100000>;
+//
+//TEST__ y_iter_huge()
+//{
+//	for (new i = 0; i < 50000; i++)
+//	{
+//		Iter_Add(y_iter_huge, i);
+//	}
+//	ASSERT_EQ(Iter_Count(y_iter_huge), 50000);
+//}
 
-TEST__ y_iter_huge()
+TEST__ y_iter_RandomFreeExclude()
 {
-	for (new i = 0; i < 50000; i++)
+	new
+		Iterator:rand<20>;
+	Iter_Add(rand, 5);
+	Iter_Add(rand, 6);
+	Iter_Add(rand, 7);
+	Iter_Add(rand, 11);
+	Iter_Add(rand, 13);
+	for (new i = 0; i < 100; i++)
 	{
-		Iter_Add(y_iter_huge, i);
+		new
+			val = Iter_RandomFree(rand, 1, 2, 3, 4, 8, 9, 10);
+		ASSERT(val == 0 || val == 12 || val > 13);
 	}
-	ASSERT_EQ(Iter_Count(y_iter_huge), 50000);
 }
 
-TEST__ y_iter_random_exclusions()
+TEST__ y_iter_RandomAddExclude()
+{
+	new
+		Iterator:rand<20>;
+	for (new i = 0; i < 1000; i++)
+	{
+		new
+			val = Iter_RandomAdd(rand, 0, 19);
+		ASSERT(!Iter_Contains(rand, 0));
+		ASSERT(!Iter_Contains(rand, 19));
+		Iter_RandomRemove(rand, 0, 19, 20, 22);
+		ASSERT_EQ(Iter_Count(rand), 0);
+	}
+}
+
+TEST__ y_iter_RandomRepeatExclude()
+{
+	new
+		Iterator:rand<20>;
+	Iter_Add(rand, 5);
+	Iter_Add(rand, 6);
+	Iter_Add(rand, 7);
+	Iter_Add(rand, 11);
+	Iter_Add(rand, 13);
+	for (new i = 0; i < 100; i++)
+	{
+		ASSERT_EQ(Iter_Random(rand, 6, 11, 13, 11, 5, 11, 11, 13, 5), 7);
+	}
+	for (new i = 0; i < 100; i++)
+	{
+		new
+			val = Iter_Random(rand, 11, 13, 11, 5, 11, 11, 13, 5);
+		ASSERT(val == 6 || val == 7);
+	}
+}
+
+TEST__ y_iter_RandomExclude()
 {
 	new
 		Iterator:rand<20>;

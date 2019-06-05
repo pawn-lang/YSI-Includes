@@ -96,18 +96,6 @@ Optional plugins:
 // internal include guards (or the compiler's one) will prevent their multiple
 // inclusions.  I don't know why I ever made YSI use its own internal version...
 
-#if defined CODE_SCAN_MAX_PATTERN
-	#if CODE_SCAN_MAX_PATTERN < (32)
-		#if defined CODESCAN_INC
-			#error Include "YSI" before "codescan", or increase `CODE_SCAN_MAX_PATTERN`.
-		#endif
-		#undef CODE_SCAN_MAX_PATTERN
-		#define CODE_SCAN_MAX_PATTERN (32)
-	#endif
-#else
-	#define CODE_SCAN_MAX_PATTERN (32)
-#endif
-
 #tryinclude "..\..\amx\addressof"
 #tryinclude <amx_assembly\addressof>
 #tryinclude "..\..\amx_assembly\addressof"
@@ -238,15 +226,15 @@ Optional plugins:
 	#define AMX_INCLUDING_FAILED
 #endif
 
-//#tryinclude "..\..\amx\heap_alloc"
-//#tryinclude <amx_assembly\heap_alloc>
-//#tryinclude "..\..\amx_assembly\heap_alloc"
-//#tryinclude "..\..\..\amx_assembly\heap_alloc"
-//#tryinclude "heap_alloc"
-//#tryinclude <heap_alloc>
-//#if !defined HEAP_ALLOC_INC
-//	#define AMX_INCLUDING_FAILED
-//#endif
+#tryinclude "..\..\amx\heap_alloc"
+#tryinclude <amx_assembly\heap_alloc>
+#tryinclude "..\..\amx_assembly\heap_alloc"
+#tryinclude "..\..\..\amx_assembly\heap_alloc"
+#tryinclude "heap_alloc"
+#tryinclude <heap_alloc>
+#if !defined HEAP_ALLOC_INC
+	#define AMX_INCLUDING_FAILED
+#endif
 
 //#tryinclude "..\..\amx\jit"
 //#tryinclude <amx_assembly\jit>
