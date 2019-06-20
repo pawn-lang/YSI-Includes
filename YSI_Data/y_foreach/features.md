@@ -21,8 +21,8 @@ Output:
 
 ```
 0
-4
-6
+42
+54
 ```
 
 This is how the `Player` iterator is defined and runs, as are many others.
