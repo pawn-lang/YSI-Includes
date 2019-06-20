@@ -30,20 +30,20 @@ msets(arr, idx, str, true);
 
 ```pawn
 new idx = 0;
+ // copy the contents back to buffer.
+new str[12];
 
-new str[];
-
-mgets(str, sizeof (str) arr, idx);
+mgets(str, sizeof (str), arr, idx);
 ```
 
 ### Read Packed
 
 ```pawn
 new idx = 5;
+ // copy the contents back to buffer.
+new str[12];
 
-new str[];
-
-mgets(str, sizeof (str) arr, idx, true);
+mgets(str, sizeof (str), arr, idx, true);
 ```
 
 ## Store Arrays
