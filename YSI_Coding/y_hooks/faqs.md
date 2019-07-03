@@ -20,6 +20,42 @@ Since there are only two types of function hook, this is much simpler to answer:
 
 # Errors
 
+## `YSI Fatal Error: Could not write function name in "Hooks_MakePublicPointer".`
+
+This is an unusual corner-case.  It happens when you have a single hook of a long function name, with many replacements, and no `public`:
+
+```pawn
+hook OnDynTDUpd()
+{
+	// Expands to `OnDynamicTextDrawUpdate`.
+}
+```
+
+The solutions are to either use a longer version of the name, add some dummy hooks, or add the original public:
+
+```pawn
+hook OnDynamicTDUpdate()
+{
+}
+```
+
+```pawn
+hook OnDynTDUpd()
+{
+}
+
+hook OnDynTDUpd@0(){}
+hook OnDynTDUpd@1(){}
+```
+
+```pawn
+public OnDynamicTextDrawUpdate()
+{
+}
+```
+
+It technically happens when the full name of the callback is more than 8 characters longer than the shor version.  In that case there is not enough space to write the long version back in te header.  This is only a problem with a single hook - when there are multiple hooks of the same callback, there is 2+ times as much space to write to.  Also, if there is a `public` version of he callback as well, there's no need to write the full name in the header.
+
 ## `error 021: symbol already defined: "@yH_OnGamemodeInit@003"`
 
 This applies to any `symbol already defined` error on a hook:
