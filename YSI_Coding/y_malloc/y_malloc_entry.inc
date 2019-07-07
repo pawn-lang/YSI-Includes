@@ -224,6 +224,7 @@ forward Alloc:calloc(size);
 	#define OnJITCompile(%0) CHAIN_PUBLIC:Malloc_OnJITCompile(%0)
 	
 	// Allocate space on the heap permanently.
+	#include "y_malloc_warning"
 	#include "y_malloc_heapalloc"
 #endif
 
