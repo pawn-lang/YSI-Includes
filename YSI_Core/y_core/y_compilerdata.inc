@@ -220,6 +220,7 @@ static stock const
 	#define __COMPILER_BUGGED_STRING_RETURN (0)
 	#define __COMPILER_BUGGED_SYSREQ (0)
 	#define __COMPILER_WARNING_SUPPRESSION (1)
+	#define __COMPILER_USER_WARNING (1)
 	
 	// Disable the recursion warning in the Russian compiler (and the unknown
 	// pragma warning in other compilers temporarily).
@@ -349,6 +350,7 @@ static stock const
 	#define __COMPILER_BUGGED_STRING_RETURN (1)
 	#define __COMPILER_BUGGED_SYSREQ (1)
 	#define __COMPILER_WARNING_SUPPRESSION (0)
+	#define __COMPILER_USER_WARNING (0)
 	#define __COMPILER_CONST_REF (0)
 	#define __COMPILER_sNAMEMAX (31)
 	
