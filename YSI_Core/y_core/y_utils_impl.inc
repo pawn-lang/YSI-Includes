@@ -370,6 +370,14 @@ P:D(bool:IS_IN_RANGE(value, lower, upper));
 P:D(bool:NOT_IN_RANGE(value, lower, upper));
 #define NOT_IN_RANGE(%0,%1,%2) (((%0)-((%1)+cellmin))>=((%2)-((%1)+cellmin)))
 
+#if __COMPILER_1ST_PASS && defined ceildiv
+	static stock ceildiv_defined__() {}
+#endif
+
+#if defined ceildiv_defined__
+	#undef ceildiv
+#endif
+
 /*-------------------------------------------------------------------------*//**
  * <param name="numerator">The top of the division.</param>
  * <param name="denominator">The bottom of the division.</param>
@@ -383,6 +391,15 @@ P:D(bool:NOT_IN_RANGE(value, lower, upper));
 
 P:D(ceildiv(numerator, denominator));
 #define ceildiv(%0,%1) (((%0)-1)/(%1)+1)
+#define _ALS_ceildiv
+
+#if __COMPILER_1ST_PASS && defined floordiv
+	static stock floordiv_defined__() {}
+#endif
+
+#if defined floordiv_defined__
+	#undef floordiv
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
@@ -401,6 +418,15 @@ P:D(ceildiv(numerator, denominator));
 
 P:D(floordiv(numerator, denominator));
 #define floordiv(%0,%1) ((%0)/(%1))
+#define _ALS_floordiv
+
+#if __COMPILER_1ST_PASS && defined isnull
+	static stock isnull_defined__() {}
+#endif
+
+#if defined isnull_defined__
+	#undef isnull
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to check if is null.</param>
@@ -416,6 +442,15 @@ P:D(floordiv(numerator, denominator));
 
 P:D(bool:isnull(str[]));
 #define isnull(%0) ((%0[(%0[0])=='\1'])=='\0')
+#define _ALS_isnull
+
+#if __COMPILER_1ST_PASS && defined isodd
+	static stock isodd_defined__() {}
+#endif
+
+#if defined isodd_defined__
+	#undef isodd
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to check if is odd.</param>
@@ -423,6 +458,15 @@ P:D(bool:isnull(str[]));
 
 P:D(bool:isodd(value));
 #define isodd(%1) ((%1)&1)
+#define _ALS_isodd
+
+#if __COMPILER_1ST_PASS && defined iseven
+	static stock iseven_defined__() {}
+#endif
+
+#if defined iseven_defined__
+	#undef iseven
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to check if is even.</param>
@@ -430,15 +474,24 @@ P:D(bool:isodd(value));
 
 P:D(bool:iseven(value));
 #define iseven(%1) (!isodd(%1))
+#define _ALS_iseven
 
-/*-------------------------------------------------------------------------*//**
- * <param name="dest">Destination string.</param>
- * <param name="src">Source string.</param>
- * <param name="len">(Implicit) maximum length of the destination.</param>
- *//*------------------------------------------------------------------------**/
+#if __COMPILER_1ST_PASS && !defined strcpy
+	static stock strcpy_undefined__() {}
 
-P:D(strcpy(dest[], const src[], len = sizeof (dest)));
-#define strcpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
+	/*---------------------------------------------------------------------*//**
+	 * <param name="dest">Destination string.</param>
+	 * <param name="src">Source string.</param>
+	 * <param name="len">(Implicit) maximum length of the destination.</param>
+	 *//*--------------------------------------------------------------------**/
+
+	P:D(strcpy(dest[], const src[], len = sizeof (dest)));
+#endif
+
+#if defined strcpy_undefined__
+	#define strcpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
+	#define _ALS_strcpy
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to convert.</param>
