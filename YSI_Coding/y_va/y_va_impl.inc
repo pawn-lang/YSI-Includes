@@ -616,7 +616,7 @@ static stock YVA2_Initalise()
 	);
 	CodeScanAddMatcher(scanner, csm3);
 	// Replace calls with the correct parameter counts etc.
-	CodeScanRun(scanner);
+	CodeScanRunFast(scanner, &YVA2_DummyPush);
 	//DisasmDump("yva2.asm");
 	return 1;
 }

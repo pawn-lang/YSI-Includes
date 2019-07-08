@@ -901,7 +901,8 @@ REHOOK__ y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_3>
 	g_y_hooksVar += strval(c[5]);
 }
 
-HOOK__ public y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_4>
+//HOOK__ public y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_4>
+hook y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_4>
 {
 	g_y_hooksVar = strval(c[5]);
 }

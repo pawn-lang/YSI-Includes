@@ -855,7 +855,7 @@ public OnCodeInit()
 	// TODO: Try and determine rough types for parent function parameters, using
 	// Opcodes like LREF, SREF, and IDXADDR (IDXARRAY?  Can't remember off the
 	// top of my head).
-	CodeScanRun(scanner);
+	CodeScanRunFast(scanner, &I@T);
 	
 	#if defined Inline_OnCodeInit
 		Inline_OnCodeInit();

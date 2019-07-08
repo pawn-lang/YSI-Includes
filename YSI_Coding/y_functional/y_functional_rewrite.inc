@@ -188,11 +188,6 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 	{
 		return -1;
 	}
-
-	if (heapspace() < 2000)
-	{
-		P:F("Insufficient stack space found.  Increase it (significantly over the default of 4096) with `#pragma dynamic` or `-S`.");
-	}
 	
 	new
 		callPos = CodeScanGetMatchAddressData(scanner);
@@ -416,7 +411,8 @@ public OnCodeInit()
 	);
 	CodeScanAddMatcher(scanner, lambdaCall2);
 	
-	CodeScanRun(scanner);
+	// Run fast, with an explicit search function.
+	CodeScanRunFast(scanner, &LAM@0);
 	
 	#if defined Functional_OnCodeInit
 		Functional_OnCodeInit();
