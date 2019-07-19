@@ -5,6 +5,6 @@
 #endif
 
 #if !defined YSI_YES_HEAP_MALLOC
-	#warning Heap allocation is VERY unstable.  Use `YSI_NO_HEAP_MALLOC` to disable it, or `YSI_YES_HEAP_MALLOC` to disable this warning.
+	#warning y_malloc heap allocation is unstable.  Use `YSI_NO_HEAP_MALLOC` to disable it, or `YSI_YES_HEAP_MALLOC` to disable this warning: git.io/YSI_HEAP_MALLOC
 #endif
 
