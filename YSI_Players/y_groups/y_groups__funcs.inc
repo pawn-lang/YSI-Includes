@@ -416,6 +416,40 @@ GGLOBAL__ Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
 	return 0;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <summary>Iter_Func@Group_...</summary>
+ * <param name="g">Group to iterate over.</param>
+ * <remarks>
+ *  Iterate over all the items in this group.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+GFOREIGN__ Iter_Func@Group_...(start, Group:g);
+
+GGLOBAL__ Iter_Func@Group_...(start, Group:g)
+{
+	P:3("Iter_Func@Group_... called: %i, %i", start, _:g);
+	if (GROUP_MASK <= g <= GROUP_GLOBAL)
+	{
+		GROUP_FIX(g);
+		new
+			Bit:mask = Bit_Mask(_:g),
+			slot = Bit_Slot(_:g);
+		while (++start != _GROUP_MAKE_LIMIT)
+		{
+			if (YSI_g_sElementMembership[start][slot] & mask)
+			{
+				return start;
+			}
+		}
+	}
+	return -1;
+}
+
+stock const
+	F@z:_GROUP_MAKE_NAME<Iterator@Group_...> = F@z:0,
+	_GROUP_MAKE_NAME<iterstart@Group_...> = -1;
+
 /*
 
       ,ad8888ba,  88             88                     88  
@@ -513,6 +547,35 @@ GGLOBAL__ Group_GlobalExclusive...(_GROUP_MAKE_TAG:el)
 	P:2(#_GROUP_MAKE_NAME<Group_GlobalExclusive...> " called: %i", el);
 	return _GROUP_MAKE_NAME<Group_Exclusive...>(GROUP_GLOBAL, el);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>Iter_Func@Group_...</summary>
+ * <remarks>
+ *  Iterate over all the items in this group.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+GFOREIGN__ Iter_Func@Group_Global...(start);
+
+GGLOBAL__ Iter_Func@Group_Global...(start)
+{
+	P:3("Iter_Func@Group_Global... called: %i", start);
+	new
+		Bit:mask = Bit_Mask(_:_MAX_GROUPS),
+		slot = Bit_Slot(_:_MAX_GROUPS);
+	while (++start != _GROUP_MAKE_LIMIT)
+	{
+		if (YSI_g_sElementMembership[start][slot] & mask)
+		{
+			return start;
+		}
+	}
+	return -1;
+}
+
+stock const
+	F@z:_GROUP_MAKE_NAME<Iterator@Group_Global...> = F@z:0,
+	_GROUP_MAKE_NAME<iterstart@Group_Global...> = -1;
 
 #if defined GROUP_LIBRARY_TAGS
 	
