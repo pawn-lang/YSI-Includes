@@ -190,6 +190,9 @@ new
 	YSI_g_sNPSReplace,
 	YSI_g_sNPSStack;
 
+static
+	YSI_g_sTempRet;
+
 static stock YHNPS_Find(heap, end, value)
 {
 	new
@@ -353,6 +356,7 @@ public OnCodeInit()
 	new
 		Opcode:call = RelocateOpcode(OP_CALL),
 		Opcode:nop = RelocateOpcode(OP_NOP),
+		Opcode:proc = RelocateOpcode(OP_PROC),
 		dctx[DisasmContext];
 	DisasmInit(dctx);
 	for ( ; ; )
@@ -365,10 +369,20 @@ public OnCodeInit()
 		}
 		case OP_SYSREQ_C:
 		{
+			// Check that the previous OP is `PUSH.C`.  That reqpresents a real native call, not our
+			// wrapper.
+			if (Opcode:AMX_Read(DisasmGetCurIp(dctx) - 8) == proc)
+			{
+				continue;
+			}
 			idx1 = YHNPS_Find(heap, nativeCount, DisasmGetOperand(dctx));
 		}
 		case OP_SYSREQ_D:
 		{
+			if (Opcode:AMX_Read(DisasmGetCurIp(dctx) - 8) == proc)
+			{
+				continue;
+			}
 			idx1 = YHNPS_Find(heap + allocated * 16, nativeCount, DisasmGetOperand(dctx));
 		}
 		case OP_CALL:
@@ -474,22 +488,22 @@ stock _yH@(compressedFormat)
 		}
 		case OP_SYSREQ_C:
 		{
-			addr = DisasmGetOperand(dctx);
-			type = 2;
+			addr = -DisasmGetOperand(dctx);
+			type = -(YSI_g_sNPSTrampoline + 39 * cellbytes);
 			break;
 		}
 		case OP_SYSREQ_D:
 		{
-			type = 3;
+			type = -(YSI_g_sNPSTrampoline + 39 * cellbytes);
 			break;
 		}
 		}
 	}
-	if (type == 2)
-	{
-		// Native function call.
-		addr = -addr;
-	}
+	//if (type < 0)
+	//{
+	//	// Native function call.
+	//	addr = -addr;
+	//}
 
 	AsmInitPtr(ctx, YSI_g_sNPSTrampoline + AMX_HEADER_COD, YSI_g_sNPSReplace - YSI_g_sNPSTrampoline);
 	// Forward the function, storing the chain data in the heap.   Note that no
@@ -499,63 +513,75 @@ stock _yH@(compressedFormat)
 	//
 
 	// Build the structure in the stack first.
-	@emit POP.pri
-	@emit PUSH.C       compressedFormat
+	@emit POP.pri                                                               // 1
+	@emit PUSH.C       compressedFormat                                         // 3
 
 	// Chain the functions.
 	if (YSI_g_sNPSBaseCall == addr)
 	{
-		@emit PUSH.C       YSI_g_sNPSStack
-		YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
+		@emit PUSH.C       YSI_g_sNPSStack                                      // 5
+		YSI_g_sNPSStack = YSI_g_sNPSTrampoline; // Replace.
 	}
 	else if (YSI_g_sNPSBaseCall == cellmin)
 	{
-		@emit PUSH.C       addr
+		@emit PUSH.C       (type < 0 ? type : addr)                             // 5
 		YSI_g_sNPSStack = YSI_g_sNPSTrampoline;
 	}
 	else
 	{
-		@emit PUSH.C       addr
+		@emit PUSH.C       (type < 0 ? type : addr)                             // 5
 	}
 
-	@emit PUSH.C       8
-	@emit PUSH.pri     // Save the return address again.
-	@emit PUSH         ref(YSI_g_sNPSStack)
+	@emit PUSH.C       8                                                        // 7
+	@emit PUSH.pri     // Save the return address again.                        // 8
+	@emit PUSH         ref(YSI_g_sNPSStack)                                     // 10
 
 	// Copy 20 bytes over (includes the return address and fake param count).
-	@emit HEAP         20
-	@emit LCTRL        4
-	@emit MOVS         20
-	@emit STOR.alt     ref(YSI_g_sNPSStack)
+	@emit HEAP         20                                                       // 12
+	@emit LCTRL        4                                                        // 14
+	@emit MOVS         20                                                       // 16
+	@emit STOR.alt     ref(YSI_g_sNPSStack)                                     // 18
 
 	// Call, and return to here to clean up the heap.
-	@emit STACK        20
-	@emit CALL.abs     YSI_g_sNPSReplace
+	@emit STACK        20                                                       // 20
+	@emit CALL.abs     YSI_g_sNPSReplace                                        // 22
 
 	// Put data (and return value) on the stack.
-	@emit STACK        -20
-	@emit STACK        0
-	@emit PUSH.pri
+	@emit STACK        -20                                                      // 24
+	@emit STACK        0                                                        // 26
+	@emit PUSH.pri                                                              // 27
 
 	// Copy from the heap.
-	@emit LOAD.pri     ref(YSI_g_sNPSStack)
-	@emit MOVS         20
+	@emit LOAD.pri     ref(YSI_g_sNPSStack)                                     // 29
+	@emit MOVS         20                                                       // 31
 
 	// Restore the return address and `continue` stack.
-	@emit POP.pri
-	@emit POP.alt
-	@emit STOR.alt     ref(YSI_g_sNPSStack)
-	@emit HEAP         -20
+	@emit POP.pri                                                               // 32
+	@emit POP.alt                                                               // 33
+	@emit STOR.alt     ref(YSI_g_sNPSStack)                                     // 35
+	@emit HEAP         -20                                                      // 37
 
 	// Return from this "function", with our fake parameters and return address.
 	// We do this instead of using `SCTRL 6`, as is the normal way, to preserve
 	// `pri` as the return value.
-	@emit PROC
-	@emit RETN
+	@emit PROC                                                                  // 38
+	@emit RETN                                                                  // 39
+
+	if (type < 0)
+	{
+		// Missed this one apparently...
+		@emit SYSREQ.C     -addr
+		//@emit SYSREQ.pri
+
+		// Returns to here.
+		@emit PUSH.alt
+		@emit PUSH         ref(YSI_g_sTempRet)
+		@emit RETN
+	}
 
 	AsmEmitPadding(ctx);
 
-	YSI_g_sNPSReplace = YSI_g_sNPSBaseCall;
+	YSI_g_sNPSReplace = YSI_g_sNPSBaseCall; // Find
 	YSI_g_sNPSBaseCall = addr;
 
 	// Do a double return - exit the calling function as well as this function,
@@ -629,22 +655,23 @@ static stock Hooks_GenerateContinue(GLOBAL_TAG_TYPES:...)
 
 	@emit Hooks_Continue_native:
 
-	static RET;
-
 	// Save the bottom of the stack.
 	@emit POP.alt
-	@emit STOR.alt     ref(RET)
+	@emit STOR.alt     ref(YSI_g_sTempRet)
 	@emit POP.alt
 
 	@emit NEG
-	// Missed this one apparently...
-	AsmEmitSysreqPri(ctx);
-	//@emit SYSREQ.pri
+	@emit LCTRL        8
+	@emit SCTRL        6
 
-	// Returns to here.
-	@emit PUSH.alt
-	@emit PUSH         ref(RET)
-	@emit RETN
+	//// Missed this one apparently...
+	//AsmEmitSysreqPri(ctx);
+	////@emit SYSREQ.pri
+    //
+	//// Returns to here.
+	//@emit PUSH.alt
+	//@emit PUSH         ref(YSI_g_sTempRet)
+	//@emit RETN
 
 	AsmEmitPadding(ctx);
 }
