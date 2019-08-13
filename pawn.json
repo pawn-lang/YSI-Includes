@@ -3,6 +3,7 @@
 	"repo": "YSI-Includes",
 	"dependencies": ["sampctl/samp-stdlib", "Zeex/amx_assembly"],
 	"contributors": [
+		"AliLogic",
 		"50p",
 		"Ahmad45123",
 		"breadfish",

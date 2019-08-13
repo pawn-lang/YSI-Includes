@@ -328,7 +328,7 @@ static stock YVA2_CodeGenPushVariable(ctx[AsmContext], stack)
 	@emit PUSH.S       stack
 }
 
-static stock YVA2_FoundCall(m[CodeScanner])
+static stock YVA2_FoundCall(const m[CodeScanner])
 {
 	if (YSI_g_sPassthroughNestings)
 	{
@@ -421,7 +421,7 @@ static stock YVA2_FoundCall(m[CodeScanner])
 	return -1;
 }
 
-static stock YVA2_FoundPush(m[CodeScanner])
+static stock YVA2_FoundPush(const m[CodeScanner])
 {
 	new
 		addr = CodeScanGetMatchAddress(m);

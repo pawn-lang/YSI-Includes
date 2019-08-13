@@ -344,7 +344,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_PRE_HOOK], &precoun
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_PRE_HOOK], precount, name[64], hooks[], &count)
+_Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_PRE_HOOK], precount, const name[64], hooks[], &count)
 {
 	P:4("Hooks_GetPreHooks called");
 	new
@@ -371,7 +371,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(preloads[][E_PRE_HOOK], precount, name[6
  * <param name="nlen">Space available in the header to write text in.</param>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(hooks[], num, &ptr, &next, name[], nlen)
+_Y_HOOKS_STATIC stock Hooks_GetPointerRewrite(const hooks[], num, &ptr, &next, const name[], nlen)
 {
 	P:4("Hooks_GetPointerRewrite called");
 	switch (num)
@@ -596,7 +596,7 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 	Hooks_SortPublics();
 }
 
-_Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], idx)
+_Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_PRE_HOOK], precount, const name[32], idx)
 {
 	P:4("Hooks_Collate called: %s %d", unpack(name), idx);
 	// This records the amount of space available in the nametable, currently
@@ -660,7 +660,7 @@ _Y_HOOKS_STATIC stock Hooks_Collate(preloads[][E_PRE_HOOK], precount, name[32], 
  * <param name="hasprehooks">Needs to call other stuff first.</param>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_GenerateCode(name[64], hooks[], count, write, bool:hasprehooks)
+_Y_HOOKS_STATIC Hooks_GenerateCode(name[64], const hooks[], count, write, bool:hasprehooks)
 {
 	P:4("Hooks_GenerateCode called");
 	// We now have:
