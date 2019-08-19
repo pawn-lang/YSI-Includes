@@ -215,17 +215,49 @@ new stock
 	#define YSIM_STRING (42)
 #endif
 
-#define FLOAT_INFINITY                  (Float:0x7F800000)
-#define FLOAT_NEG_INFINITY              (Float:0xFF800000)
-#define FLOAT_NEGATIVE_INFINITY         (Float:0xFF800000)
-#define FLOAT_NAN                       (Float:0x7FFFFFFF)
-#define FLOAT_NOT_A_NUMBER              (Float:0x7FFFFFFF)
-#define FLOAT_QNAN                      (Float:0x7FFFFFFF)
-#define FLOAT_QUIET_NAN                 (Float:0x7FFFFFFF)
-#define FLOAT_QUIET_NOT_A_NUMBER        (Float:0x7FFFFFFF)
-#define FLOAT_SNAN                      (Float:0x7FBFFFFF)
-#define FLOAT_SIGNALING_NAN             (Float:0x7FBFFFFF)
-#define FLOAT_SIGNALING_NOT_A_NUMBER    (Float:0x7FBFFFFF)
+#if !defined FLOAT_INFINITY
+	#define FLOAT_INFINITY                  (Float:0x7F800000)
+#endif
+
+#if !defined FLOAT_NEG_INFINITY
+	#define FLOAT_NEG_INFINITY              (Float:0xFF800000)
+#endif
+
+#if !defined FLOAT_NEGATIVE_INFINITY
+	#define FLOAT_NEGATIVE_INFINITY         (Float:0xFF800000)
+#endif
+
+#if !defined FLOAT_NAN
+	#define FLOAT_NAN                       (Float:0x7FFFFFFF)
+#endif
+
+#if !defined FLOAT_NOT_A_NUMBER
+	#define FLOAT_NOT_A_NUMBER              (Float:0x7FFFFFFF)
+#endif
+
+#if !defined FLOAT_QNAN
+	#define FLOAT_QNAN                      (Float:0x7FFFFFFF)
+#endif
+
+#if !defined FLOAT_QUIET_NAN
+	#define FLOAT_QUIET_NAN                 (Float:0x7FFFFFFF)
+#endif
+
+#if !defined FLOAT_QUIET_NOT_A_NUMBER
+	#define FLOAT_QUIET_NOT_A_NUMBER        (Float:0x7FFFFFFF)
+#endif
+
+#if !defined FLOAT_SNAN
+	#define FLOAT_SNAN                      (Float:0x7FBFFFFF)
+#endif
+
+#if !defined FLOAT_SIGNALING_NAN
+	#define FLOAT_SIGNALING_NAN             (Float:0x7FBFFFFF)
+#endif
+
+#if !defined FLOAT_SIGNALING_NOT_A_NUMBER
+	#define FLOAT_SIGNALING_NOT_A_NUMBER    (Float:0x7FBFFFFF)
+#endif
 
 //#pragma unused TRUE, FALSE, NULL
 
