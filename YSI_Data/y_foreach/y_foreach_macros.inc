@@ -209,7 +209,11 @@ P:D(Iter_Init(Iterator:iter[]<>));
  *//*------------------------------------------------------------------------**/
 
 P:D(Iter_InitAndClear(Iterator:iter[]<>));
-#define Iter_InitAndClear(%0) Iter_Init_Internal(F@r(Iterator@%0),F@r(Iterator@%0)[0],F@s(Iterator@%0),F@s(Iterator@%0[]),F@r(Iter_Init@%0))
+#if __COMPILER_NESTED_ELLIPSIS
+	#define Iter_InitAndClear(%0) Iter_Init_Internal(F@r(Iterator@%0),F@r(Iterator@%0)[0],F@s(Iterator@%0),F@s(Iterator@%0[]),F@s(Iter_Single@%0[]))
+#else
+	#define Iter_InitAndClear(%0) Iter_Init_Internal(F@r(Iterator@%0),F@r(Iterator@%0)[0],F@s(Iterator@%0),F@s(Iterator@%0[]),F@r(Iter_Init@%0))
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to add the data to.</param>
