@@ -89,12 +89,21 @@ Optional plugins:
 
 #if _FOREACH_PLAYERS
 	new
+		#if _FOREACH_STREAMED
+			Iterator:StreamedPlayer[MAX_PLAYERS]<MAX_PLAYERS>,
+		#endif
 		Iterator:Player<MAX_PLAYERS>;
 #endif
 
 #if _FOREACH_BOTS
 	new
+		#if _FOREACH_STREAMED
+			Iterator:StreamedBot[MAX_PLAYERS]<MAX_PLAYERS>,
+		#endif
 		Iterator:Bot<MAX_PLAYERS>,
+		#if _FOREACH_STREAMED
+			Iterator:StreamedCharacter[MAX_PLAYERS]<MAX_PLAYERS>,
+		#endif
 		Iterator:Character<MAX_PLAYERS>;
 	
 	#define Iter_Single@NPC Iter_Single@Bot
@@ -106,6 +115,9 @@ Optional plugins:
 		#if _FOREACH_LOCALS
 			Iterator:LocalActor<MAX_ACTORS>,
 		#endif
+		#if _FOREACH_STREAMED
+			Iterator:StreamedActor[MAX_PLAYERS]<MAX_ACTORS>,
+		#endif
 		Iterator:Actor<MAX_ACTORS>;
 #endif
 
@@ -113,6 +125,9 @@ Optional plugins:
 	new
 		#if _FOREACH_LOCALS
 			Iterator:LocalVehicle<MAX_VEHICLES>,
+		#endif
+		#if _FOREACH_STREAMED
+			Iterator:StreamedVehicle[MAX_PLAYERS]<MAX_VEHICLES>,
 		#endif
 		Iterator:Vehicle<MAX_VEHICLES>;
 #endif
@@ -348,11 +363,23 @@ stock Iter_All_Internal(const array[], size, value)
 	{
 		#if _FOREACH_VEHICLES
 			Iter_Clear(Vehicle);
+			#if _FOREACH_STREAMED
+				Iter_Init(StreamedVehicle);
+			#endif
 			for (new i = 1; i <= MAX_VEHICLES; ++i)
 			{
 				if (GetVehicleModel(i))
 				{
 					Iter_Add(Vehicle, i);
+					#if _FOREACH_STREAMED
+						for (new j = 0; j != MAX_PLAYERS; ++j)
+						{
+							if (IsVehicleStreamedIn(i, j))
+							{
+								Iter_Add(StreamedVehicle[j], i);
+							}
+						}
+					#endif
 				}
 			}
 		#endif
@@ -363,16 +390,35 @@ stock Iter_All_Internal(const array[], size, value)
 				if (IsValidActor(i))
 				{
 					Iter_Add(Actor, i);
+					#if _FOREACH_STREAMED
+						for (new j = 0; j != MAX_PLAYERS; ++j)
+						{
+							if (IsActorStreamedIn(i, j))
+							{
+								Iter_Add(StreamedActor[j], i);
+							}
+						}
+					#endif
 				}
 			}
+			#if _FOREACH_STREAMED
+				Iter_Init(StreamedActor);
+			#endif
 		#endif
 		#if _FOREACH_CHARACTERS
 			#if _FOREACH_BOTS
 				Iter_Clear(Bot);
 				Iter_Clear(Character);
+				#if _FOREACH_STREAMED
+					Iter_Init(StreamedBot);
+					Iter_Init(StreamedCharacter);
+				#endif
 			#endif
 			#if _FOREACH_PLAYERS
 				Iter_Clear(Player);
+				#if _FOREACH_STREAMED
+					Iter_Init(StreamedPlayer);
+				#endif
 			#endif
 			for (new i = 0; i != MAX_PLAYERS; ++i)
 			{
@@ -383,12 +429,34 @@ stock Iter_All_Internal(const array[], size, value)
 						if (IsPlayerNPC(i))
 						{
 							Iter_Add(Bot, i);
+							#if _FOREACH_STREAMED
+								for (new j = 0; j != MAX_PLAYERS; ++j)
+								{
+									if (IsPlayerStreamedIn(i, j))
+									{
+										Iter_Add(StreamedCharacter[j], i);
+										Iter_Add(StreamedBot[j], i);
+									}
+								}
+							#endif
 						}
 						else
 					#endif
 						{
 					#if _FOREACH_PLAYERS
 							Iter_Add(Player, i);
+							#if _FOREACH_STREAMED
+								for (new j = 0; j != MAX_PLAYERS; ++j)
+								{
+									if (IsPlayerStreamedIn(i, j))
+									{
+										#if _FOREACH_BOTS
+											Iter_Add(StreamedCharacter[j], i);
+										#endif
+										Iter_Add(StreamedPlayer[j], i);
+									}
+								}
+							#endif
 					#endif
 						}
 				}
@@ -494,6 +562,48 @@ stock Iter_All_Internal(const array[], size, value)
 		#endif
 			}
 	}
+
+	#if _FOREACH_STREAMED
+		HOOK__ OnPlayerStreamIn(playerid, forplayerid)
+		{
+			P:1("Iter_OnPlayerStreamIn called: %d, %d", playerid, forplayerid);
+			#if _FOREACH_BOTS
+				Iter_Add(StreamedCharacter[forplayerid], playerid);
+				if (IsPlayerNPC(playerid))
+				{
+					Iter_Add(StreamedBot[forplayerid], playerid);
+				}
+				else
+			#endif
+				{
+			#if _FOREACH_PLAYERS
+					Iter_Add(StreamedPlayer[forplayerid], playerid);
+			#endif
+				}
+			P:2("Iter_OnPlayerStreamIn end");
+			return 1;
+		}
+
+		HOOK__ OnPlayerStreamOut(playerid, forplayerid)
+		{
+			P:1("Iter_OnPlayerStreamOut called: %d, %d", playerid, forplayerid);
+			#if _FOREACH_BOTS
+				Iter_Remove(StreamedCharacter[forplayerid], playerid);
+				if (IsPlayerNPC(playerid))
+				{
+					Iter_Remove(StreamedBot[forplayerid], playerid);
+				}
+				else
+			#endif
+				{
+			#if _FOREACH_PLAYERS
+					Iter_Remove(StreamedPlayer[forplayerid], playerid);
+			#endif
+				}
+			P:2("Iter_OnPlayerStreamOut end");
+			return 1;
+		}
+	#endif
 #endif
 
 /*
@@ -553,6 +663,24 @@ stock Iter_All_Internal(const array[], size, value)
 		#define _ALS_DestroyActor
 	#endif
 	#define DestroyActor Iter_DestroyActor
+
+	#if _FOREACH_STREAMED
+		HOOK__ OnActorStreamIn(actorid, forplayerid)
+		{
+			P:1("Iter_OnActorStreamIn called: %d, %d", actorid, forplayerid);
+			Iter_Add(StreamedActor[forplayerid], actorid);
+			P:2("Iter_OnActorStreamIn end");
+			return 1;
+		}
+
+		HOOK__ OnActorStreamOut(actorid, forplayerid)
+		{
+			P:1("Iter_OnActorStreamOut called: %d, %d", actorid, forplayerid);
+			Iter_Remove(StreamedActor[forplayerid], actorid);
+			P:2("Iter_OnActorStreamOut end");
+			return 1;
+		}
+	#endif
 #endif
 
 /*
@@ -660,5 +788,23 @@ stock Iter_All_Internal(const array[], size, value)
 		#define _ALS_DestroyVehicle
 	#endif
 	#define DestroyVehicle Iter_DestroyVehicle
+
+	#if _FOREACH_STREAMED
+		HOOK__ OnVehicleStreamIn(vehicleid, forplayerid)
+		{
+			P:1("Iter_OnVehicleStreamIn called: %d, %d", vehicleid, forplayerid);
+			Iter_Add(StreamedVehicle[forplayerid], vehicleid);
+			P:2("Iter_OnVehicleStreamIn end");
+			return 1;
+		}
+
+		HOOK__ OnVehicleStreamOut(vehicleid, forplayerid)
+		{
+			P:1("Iter_OnVehicleStreamOut called: %d, %d", vehicleid, forplayerid);
+			Iter_Remove(StreamedVehicle[forplayerid], vehicleid);
+			P:2("Iter_OnVehicleStreamOut end");
+			return 1;
+		}
+	#endif
 #endif
 

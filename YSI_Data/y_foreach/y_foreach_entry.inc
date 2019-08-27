@@ -300,6 +300,22 @@ Optional plugins:
 
 #define _FOREACH_CHARACTERS (_FOREACH_BOTS || _FOREACH_PLAYERS)
 
+// 
+// _FOREACH_STREAMED
+// 
+// Include `Streamed...[playerid]` versions of all the iterators otherwise
+// included.
+// 
+
+#define _FOREACH_STREAMED 0
+
+#if defined IsPlayerStreamedIn
+	#if !defined FOREACH_NO_STREAMED
+		#undef _FOREACH_STREAMED
+		#define _FOREACH_STREAMED 1
+	#endif
+#endif
+
 #if !defined BOTSYNC_IS_BOT
 	forward Iter_OPDCInternal(playerid);
 #endif
