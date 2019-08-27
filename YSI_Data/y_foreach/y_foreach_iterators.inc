@@ -364,7 +364,7 @@ stock Iter_All_Internal(const array[], size, value)
 		#if _FOREACH_VEHICLES
 			Iter_Clear(Vehicle);
 			#if _FOREACH_STREAMED
-				Iter_Init(StreamedVehicle);
+				Iter_InitAndClear(StreamedVehicle);
 			#endif
 			for (new i = 1; i <= MAX_VEHICLES; ++i)
 			{
@@ -402,7 +402,7 @@ stock Iter_All_Internal(const array[], size, value)
 				}
 			}
 			#if _FOREACH_STREAMED
-				Iter_Init(StreamedActor);
+				Iter_InitAndClear(StreamedActor);
 			#endif
 		#endif
 		#if _FOREACH_CHARACTERS
@@ -410,14 +410,14 @@ stock Iter_All_Internal(const array[], size, value)
 				Iter_Clear(Bot);
 				Iter_Clear(Character);
 				#if _FOREACH_STREAMED
-					Iter_Init(StreamedBot);
-					Iter_Init(StreamedCharacter);
+					Iter_InitAndClear(StreamedBot);
+					Iter_InitAndClear(StreamedCharacter);
 				#endif
 			#endif
 			#if _FOREACH_PLAYERS
 				Iter_Clear(Player);
 				#if _FOREACH_STREAMED
-					Iter_Init(StreamedPlayer);
+					Iter_InitAndClear(StreamedPlayer);
 				#endif
 			#endif
 			for (new i = 0; i != MAX_PLAYERS; ++i)

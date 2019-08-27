@@ -199,6 +199,19 @@ P:D(Iter_Init(Iterator:iter[]<>));
 #endif
 
 /*-------------------------------------------------------------------------*//**
+ * <param name="iter">Name of the iterator array to initialise.</param>
+ * <remarks>
+ *  Wrapper for Iter_Init_Internal.  ALWAYS resets the array.
+ *
+ * <code>native Iter_InitAndClear(IteratorArray:Name[]&lt;&gt;);</code>
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Iter_InitAndClear(Iterator:iter[]<>));
+#define Iter_InitAndClear(%0) Iter_Init_Internal(F@r(Iterator@%0),F@r(Iterator@%0)[0],F@s(Iterator@%0),F@s(Iterator@%0[]),F@r(Iter_Init@%0))
+
+/*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to add the data to.</param>
  * <param name="value">Value to add to the iterator.</param>
  * <remarks>
