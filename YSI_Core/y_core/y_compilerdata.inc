@@ -181,14 +181,19 @@ static stock __CompilerSecondPass() {}
 	#define __COMPILER_INCLUDE_GUARDS (0)
 #endif
 
-#if __COMPILER_1ST_PASS && __COMPILER_MODIFIED
+#if __COMPILER_1ST_PASS
 	// Disable matching the resulting function against (most) macros that are
 	// defined with the same name (since the whole point of this is to provide a
 	// concrete implementation for documentation to see).
-	#define Debug_PrintD(%1(%2)); %1 Debug_PrintD_OPEN %2 Debug_PrintD_CLOSE { return 0; }
+	#define Debug_PrintD(%1(%2)); __MACRO__%1 Debug_PrintD_OPEN %2 Debug_PrintD_CLOSE { return 0; }
 #else
 	#define Debug_PrintD(%1);
 #endif
+#define __MACRO__bool: bool:__MACRO__
+#define __MACRO__Iterator: Iterator:__MACRO__
+#define __MACRO__Float: Float:__MACRO__
+#define __MACRO__Alloc: Alloc:__MACRO__
+
 #define Debug_PrintD_OPEN (
 #define Debug_PrintD_CLOSE )
 
