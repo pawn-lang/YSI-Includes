@@ -306,6 +306,7 @@ static stock const
 	#define __COMPILER_BUGGED_STRING_RETURN (0)
 	#define __COMPILER_BUGGED_SYSREQ (0)
 	#define __COMPILER_WARNING_SUPPRESSION (1)
+	#define __COMPILER_USER_WARNING (1)
 	
 	#define __COMPILER_FIX_TAGOF(%0);
 	
@@ -331,25 +332,91 @@ static stock const
 		// characters (for which we temporarily disabled the warning), so the
 		// 31 character version was found instead.  This means we know that the
 		// limit (`sNAMEMAX`) is 31 characters.
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_1F_
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_1F@
 			#define __COMPILER_sNAMEMAX (31)
 		#endif
 	#endif
 	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_3F__@@@@__32__DUMMY__BYTES__@@@@__
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_3F__@@@@__32__DUMMY__BYTES__@@@@___
+		#define __COMPILER_SYMBOL_NAME_CHECK_2F_________padding
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_2F_________padding@
+			#define __COMPILER_sNAMEMAX (47)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_3F_________padding_________padding
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_3F_________padding_________padding@
 			#define __COMPILER_sNAMEMAX (63)
 		#endif
 	#endif
 	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_7F__@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@__
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_7F__@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@___
+		#define __COMPILER_SYMBOL_NAME_CHECK_4F_________padding_________padding_________padding
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_4F_________padding_________padding_________padding@
+			#define __COMPILER_sNAMEMAX (79)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_5F_________padding_________padding_________padding_________padding
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_5F_________padding_________padding_________padding_________padding@
+			#define __COMPILER_sNAMEMAX (95)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_6F_________padding_________padding_________padding_________padding_________padding
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_6F_________padding_________padding_________padding_________padding_________padding@
+			#define __COMPILER_sNAMEMAX (111)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_7F_________padding_________padding_________padding_________padding_________padding_________padding
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_7F_________padding_________padding_________padding_________padding_________padding_________padding@
 			#define __COMPILER_sNAMEMAX (127)
 		#endif
 	#endif
 	#if !defined __COMPILER_sNAMEMAX
-		#define __COMPILER_SYMBOL_NAME_CHECK_FF__@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@__
-		#if defined __COMPILER_SYMBOL_NAME_CHECK_FF__@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@____@@@@__32__DUMMY__BYTES__@@@@___
+		#define __COMPILER_SYMBOL_NAME_CHECK_8F_________padding_________padding_________padding_________padding_________padding_________padding_________padding
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_8F_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
+			#define __COMPILER_sNAMEMAX (143)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_9F_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_9F_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
+			#define __COMPILER_sNAMEMAX (159)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_AF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_AF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
+			#define __COMPILER_sNAMEMAX (175)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_BF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_BF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
+			#define __COMPILER_sNAMEMAX (191)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_CF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_CF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
+			#define __COMPILER_sNAMEMAX (207)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_DF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_DF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
+			#define __COMPILER_sNAMEMAX (223)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_EF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_EF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
+			#define __COMPILER_sNAMEMAX (239)
+		#endif
+	#endif
+	#if !defined __COMPILER_sNAMEMAX
+		#define __COMPILER_SYMBOL_NAME_CHECK_FF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding
+		#if defined __COMPILER_SYMBOL_NAME_CHECK_FF_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding_________padding@
 			#define __COMPILER_sNAMEMAX (255)
 		#endif
 	#endif
@@ -371,6 +438,7 @@ static stock const
 	#define __COMPILER_BUGGED_STRING_RETURN (1)
 	#define __COMPILER_BUGGED_SYSREQ (1)
 	#define __COMPILER_WARNING_SUPPRESSION (0)
+	#define __COMPILER_USER_WARNING (0)
 	#define __COMPILER_CONST_REF (0)
 	#define __COMPILER_sNAMEMAX (31)
 	
