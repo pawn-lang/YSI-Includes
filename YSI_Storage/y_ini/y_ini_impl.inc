@@ -253,20 +253,26 @@ P:D(INI_Array(const name[],variable[]));
 
 #define INI_SkipWhitespace(%0,%1) while (IS_IN_RANGE(%0[%1], '\0' + 1, ' ' + 1)) ++%1
 
-#define INI_WriteTag(%0,%1,%2); \
-	if (YSI_g_sTagNeeded)                                                                           \
-	{                                                                                               \
-		if (YSI_g_sNL)                                                                              \
-			fwrite((%0), "\n");                                                                     \
-		else                                                                                        \
-			YSI_g_sNL = true;                                                                       \
-		fwrite((%0), "["), fwrite((%0), %1);                                                        \
-		if (%2[0])                                                                                  \
-			fwrite((%0), "] : "), fwrite((%0), %2), %2[0] = '\0';                                   \
-		else                                                                                        \
-			fwrite((%0), "]");                                                                      \
-		YSI_g_sTagNeeded = false;                                                                   \
+static stock INI_WriteTag(File:file, const tag[], format[])
+{
+	if (YSI_g_sTagNeeded)
+	{
+		YSI_g_sNL = !YSI_g_sNL || fwrite(file, "\n"),
+		fwrite(file, "["),
+		fwrite(file, tag),
+		YSI_g_sTagNeeded = false;
+		if (format[0])
+		{
+			fwrite(file, "] : "),
+			fwrite(file, format),
+			format[0] = '\0';
+		}
+		else
+		{
+			fwrite(file, "]");
+		}
 	}
+}
 
 #define INI_TagListGetEntries(%0) (Alloc:mget((%0), 0))
 #define INI_TagListGetNext(%0) (Alloc:mget((%0), 1))
