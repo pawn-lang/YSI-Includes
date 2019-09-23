@@ -4,6 +4,7 @@
 
 TEST_COMPILE__ y_utils()
 {
+#if __COMPILER_2ND_PASS
 	#assert NO_VALUE(Y_UTILS_NO_VALUE)
 	#assert !NO_VALUE(Y_UTILS_VALUE)
 	#assert IS_IN_RANGE(Y_UTILS_VALUE, -30, 43)
@@ -29,6 +30,7 @@ TEST_COMPILE__ y_utils()
 	#assert !isodd(8)
 	#assert iseven(8)
 	#assert !iseven(3)
+#endif
 	new str[32];
 	ASSERT(isnull(str));
 	StrToLower(str);
