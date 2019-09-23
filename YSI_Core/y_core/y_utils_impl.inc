@@ -1946,11 +1946,6 @@ static stock DoLevenshteinDistance(const a[], lenA, const b[], lenB)
 
 stock LevenshteinDistance(const a[], const b[])
 {
-	if (!strcmp(a, b))
-	{
-		// Same string.
-		return 0;
-	}
 	// If a string is empty, the other length is the distance.
 	new
 		lenA = strlen(a),
@@ -1968,15 +1963,17 @@ stock LevenshteinDistance(const a[], const b[])
 		}
 		return DoLevenshteinDistance(b, lenB, a, lenA);
 	}
-	else
+	else if (lenA == lenB && strcmp(a, b) == 0)
 	{
-		if (lenA > MAX_LEVENSHTEIN_STRING)
-		{
-			P:E("`LevenshteinDistance` can currently only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
-			return 1;
-		}
-		return DoLevenshteinDistance(a, lenA, b, lenB);
+		// Same string.
+		return 0;
 	}
+	if (lenA > MAX_LEVENSHTEIN_STRING)
+	{
+		P:E("`LevenshteinDistance` can currently only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
+		return 1;
+	}
+	return DoLevenshteinDistance(a, lenA, b, lenB);
 }
 
 /*-------------------------------------------------------------------------*//**
