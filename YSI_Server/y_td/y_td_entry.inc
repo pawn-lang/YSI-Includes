@@ -169,10 +169,10 @@ static stock
 
 //static stock TD_SetTimer(playerid, Text:td, time, revision)
 //{
-//	SetTimerEx("TD_HideForPlayer", time, 0, "iii", playerid, _:td, revision);
+//	YSI_SetTimerEx("TD_HideForPlayer", time, 0, "iii", playerid, _:td, revision);
 //}
 
-#define TD_SetTimer(%0,%1,%2,%3) SetTimerEx("TD_HideForPlayerPub", (%2), 0, "iii", (%0), _:(%1), (%3))
+#define TD_SetTimer(%0,%1,%2,%3) O@("TD_HideForPlayerPub", (%2), 0, "iii", (%0), _:(%1), (%3))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="id">Text draw style to check validity of,</param>
@@ -1158,7 +1158,7 @@ stock TD_Update(Style:id, bool:pos = false)
 	// Update the apperance after a load of updates have been applied.
 	if (YSI_g_sTDData[id][E_TD_DATA_UPDATE] == -1)
 	{
-		YSI_g_sTDData[id][E_TD_DATA_UPDATE] = SetTimerEx("TD_UpdateInternal", 1, 0, "i", _:id);
+		YSI_g_sTDData[id][E_TD_DATA_UPDATE] = YSI_SetTimerEx("TD_UpdateInternal", 1, 0, "i", _:id);
 	}
 }
 
@@ -1649,7 +1649,7 @@ stock TD_ShowForPlayer(playerid, Text:textDraw)
 		}*/
 		if (time)
 		{
-			//YSI_g_sTDTimers[textDraw][playerid] = SetTimerEx("TD_HideForPlayer", time, 0, "ii", playerid, _:textDraw);
+			//YSI_g_sTDTimers[textDraw][playerid] = YSI_SetTimerEx("TD_HideForPlayer", time, 0, "ii", playerid, _:textDraw);
 			TD_SetTimer(playerid, textDraw, time, YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_REVISION]);
 		}
 		return 1;
@@ -1928,8 +1928,8 @@ stock TD_Morph(Text:textDraw, Style:style, time, delay = 0)
 		//FOREACH__ (new playerid : PS(players))
 		//{
 			//TD_MorphInternal(playerid, textDraw, style);
-		SetTimerEx("TD_MorphTDInternal", delay + Y_TD_FRAME_TIME, 0, "iiiiii", _:textDraw, _:TD_GetDisplayStyle(textDraw), _:style, time, Y_TD_FRAME_TIME, YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_REVISION]); //, YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_REAL]);
-		//SetTimerEx("TD_MorphTDInternal", delay + Y_TD_FRAME_TIME, 0, "iiiiii", _:textDraw, TD_GetDisplayStyle());
+		YSI_SetTimerEx("TD_MorphTDInternal", delay + Y_TD_FRAME_TIME, 0, "iiiiii", _:textDraw, _:TD_GetDisplayStyle(textDraw), _:style, time, Y_TD_FRAME_TIME, YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_REVISION]); //, YSI_g_sTDDisplay[textDraw][E_TD_DISPLAY_REAL]);
+		//YSI_SetTimerEx("TD_MorphTDInternal", delay + Y_TD_FRAME_TIME, 0, "iiiiii", _:textDraw, TD_GetDisplayStyle());
 		//}
 		return 1;
 	}
@@ -2044,7 +2044,7 @@ public TD_MorphTDInternal(Text:td, Style:from, Style:to, speed, pos, revision)
 		// Even though "td" changes in the loop, the end condition is that "td"
 		// is the same as when the loop started, meaning that it's fine to reuse
 		// it here.
-		SetTimerEx("TD_MorphTDInternal", Y_TD_FRAME_TIME, false, "iiiiii", _:td, _:from, _:to, speed, pos + Y_TD_FRAME_TIME, revision);
+		YSI_SetTimerEx("TD_MorphTDInternal", Y_TD_FRAME_TIME, false, "iiiiii", _:td, _:from, _:to, speed, pos + Y_TD_FRAME_TIME, revision);
 	}
 	return 1;
 }

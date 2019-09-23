@@ -1084,7 +1084,7 @@ HOOK__ OnPlayerLeaveCPEx(playerid, cpid)
 					else Text_SendFormat(playerid, "YSI_PROP_HOUSE_OWNED", ReturnPlayerName(owner));
 				}
 			}
-			YSI_g_sPickupTimer[playerid] = SetTimerEx("Property_PickupTimeCheck", 500, 1, "ii", playerid, pickupid);
+			YSI_g_sPickupTimer[playerid] = YSI_SetTimerEx("Property_PickupTimeCheck", 500, 1, "ii", playerid, pickupid);
 		}
 		P:2("Property_OnPlayerPickUpPickup() end");
 		return 1;
@@ -1934,7 +1934,7 @@ YCMD:buy(playerid, params[], help)
 							}
 							else if (YSI_g_sRebuyDelay)
 							{
-								SetTimerEx("Property_ResetRebuy", YSI_g_sRebuyDelay, 0, "i", prop);
+								YSI_SetTimerEx("Property_ResetRebuy", YSI_g_sRebuyDelay, 0, "i", prop);
 								#if defined _YSI_VISUAL_PICKUPS
 									if (Property_GetOption(5, flag))
 										Pickup_Show(cpid, 0);

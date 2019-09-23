@@ -1,18 +1,4 @@
-/*+
- * <library name="y_funcinc">
- * <section>
- *  Description
- * </section>
- *  Calls functions which are used in SYSREQ.C calls before they are used.  The
- *  compiler crashes if the functions are not used in an included function
- *  before being used in a SYSREQ.C call as the function is not in the native
- *  functions table.
- * <section>
- *  Version
- * </section>
- *  1.0
- * </library>
- *//** *//*
+/*
 Legal:
 	Version: MPL 1.1
 	
@@ -84,28 +70,13 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-forward _@_y_funcinc_@_();
+// These should pretty much always exist, but are defined in "a_samp" in SA:MP,
+// when they should really be "core" functions.
+// 
+// TODO: Detect new line requirements.
+native YSI_Print(const string[]) = print;
+native YSI_PrintF(const format[], GLOBAL_TAG_TYPES:...) = printf;
 
-public _@_y_funcinc_@_()
-{
-	new tmp[2];
-	// This function calls any functions used in assembly code in YSI to ensure
-	// that they are included in the native function table.
-	print(tmp);
-	printf(tmp);
-	strunpack(tmp, tmp);
-	memcpy(tmp, tmp, 0, 0, 0);
-	format(tmp, 0, tmp);
-	strfind(tmp, tmp, false, 0);
-	strcat(tmp, tmp, 0);
-	strlen(tmp);
-	CallRemoteFunction(tmp, tmp);
-	CallLocalFunction(tmp, tmp);
-	SetTimerEx(tmp, 0, 0, tmp);
-	heapspace();
-	setproperty(0, tmp, 0, tmp);
-	getproperty(0, tmp, 0, tmp);
-	swapchars(0);
-	strcmp(tmp, tmp);
-}
+native YSI_SetTimer(const funcname[], interval, repeating) = SetTimer;
+native YSI_SetTimerEx(const funcname[], interval, repeating, const format[], GLOBAL_TAG_TYPES:...) = SetTimerEx;
 
