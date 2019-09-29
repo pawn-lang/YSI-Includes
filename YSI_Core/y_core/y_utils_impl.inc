@@ -313,6 +313,16 @@ stock y_profile_WTF(const name[], const timings[], iters, size = sizeof (timings
 	#endif
 #endif
 
+#if !defined __once
+	#define __once%1;%0) (__gOnce++)%1;(%0),__gOnce=0)
+	#define __gOnce++)%1;(), __gOnce++)%1;
+	stock __gOnce = 1;
+#endif
+
+#define if(new%0=%1) for(new%0=%1;__once;)if(%0)
+#define switch(new%0=%1) for(new%0=%1;__once;)switch(%0)
+#define for(%0;%1;%2;%3)%9(%4) for(%0;%2;%3)%9(%1)
+
 /*-------------------------------------------------------------------------*//**
  * <param name="value">The unsigned number to compare.</param>
  * <param name="upper">The upper limit.</param>
