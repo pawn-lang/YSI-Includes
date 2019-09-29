@@ -330,11 +330,11 @@ stock y_profile_WTF(const name[], const timings[], iters, size = sizeof (timings
 #define IF_PASS:%3;%4;%9)%8() %3;__once;)%8(%4 PP_RIGHT_BRACKET<>
 
 #if YSI_KEYWORD(if)
-	#define if(new%0\32;%1=%2) IF__(new%0 %1=%2)
+	#define if(new%0\32;%1=%2) for(IF_FAIL:new%0|||%1;%2)if()
 #endif
 
 #if YSI_KEYWORD(switch)
-	#define switch(new%0\32;%1=%2) SWITCH__(new%0 %1=%2)
+	#define switch(new%0\32;%1=%2) for(IF_FAIL:new%0|||%1;%2)switch()
 #endif
 
 /*-------------------------------------------------------------------------*//**
