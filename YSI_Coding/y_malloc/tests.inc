@@ -122,7 +122,7 @@ Test:y_malloc_Loads()
 	ASSERT(!free(a));
 }
 
-#define MALLOC_TEST(%0) for (new Alloc:a = malloc(%0), __loop = 1; a && (__loop || !free(a)); --__loop)
+#define MALLOC_TEST(%0) for (new Alloc:a = malloc(%0); __once && a; free(a))
 
 Test:y_malloc_mset()
 {

@@ -184,15 +184,15 @@ stock
 	YSI_gCurTestName[32];
 
 #if defined RUN_TESTS
-	#define Test:%1() forward bool:yQ@_%1(); public bool:yQ@_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())
-	#define TestInit:%1() forward _yQ@%1(); public _yQ@%1() for (new bool:__once = true; __once; __once = false)
-	#define TestClose:%1() forward yQ_@%1(); public yQ_@%1() for (new bool:__once = true; __once; __once = false)
+	#define Test:%1() forward bool:yQ@_%1(); public bool:yQ@_%1() for(_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())
+	#define TestInit:%1() forward _yQ@%1(); public _yQ@%1() for ( ; __once; )
+	#define TestClose:%1() forward yQ_@%1(); public yQ_@%1() for ( ; __once; )
 	#define TestBeforeEach:%1() forward yB_@%1(); public yB_@%1()
 	#define TestAfterEach:%1() forward yA_@%1(); public yA_@%1()
 
-	#define PTest:%1(%2) forward bool:_@yQ%1(%2); public bool:_@yQ%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())
-	#define PTestInit:%1(%2) forward _y@Q%1(%2); public _y@Q%1(%2) for (new bool:__once = true; __once; __once = false)
-	#define PTestClose:%1(%2) forward y_@Q%1(%2); public y_@Q%1(%2) for (new bool:__once = true; __once; __once = false)
+	#define PTest:%1(%2) forward bool:_@yQ%1(%2); public bool:_@yQ%1(%2) for(_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())
+	#define PTestInit:%1(%2) forward _y@Q%1(%2); public _y@Q%1(%2) for ( ; __once; )
+	#define PTestClose:%1(%2) forward y_@Q%1(%2); public y_@Q%1(%2) for ( ; __once; )
 #else
 	#define Test:%1() stock bool:yQ@_%1()
 	#define TestInit:%1() stock _yQ@%1()
