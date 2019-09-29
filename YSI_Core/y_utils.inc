@@ -336,9 +336,15 @@ public OnPlayerDisconnect(playerid, reason)
 	stock __gOnce = 1;
 #endif
 
-#define if(new%0=%1) for(new%0=%1;__once;)if(%0)
-#define switch(new%0=%1) for(new%0=%1;__once;)switch(%0)
-#define for(%0;%1;%2;%3)%9(%4) for(%0;%2;%3)%9(%1)
+#define PP_RIGHT_BRACKET<> )
+
+#define if(new%0\32;%1=%2) for(IF_FAIL:new%0|||%1;%2)if()
+#define switch(new%0\32;%1=%2) for(IF_FAIL:new%0|||%1;%2)switch()
+
+#define for(IF_FAIL:new|||%1;%2) for(IF_PASS:new %1=%2;%1;)
+
+#define IF_FAIL:new%0|||%1;%2)%8() ;__once;)%8(new%0 %1=%2 PP_RIGHT_BRACKET<>
+#define IF_PASS:%3;%4;%9)%8() %3;__once;)%8(%4 PP_RIGHT_BRACKET<>
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">The unsigned number to compare.</param>
