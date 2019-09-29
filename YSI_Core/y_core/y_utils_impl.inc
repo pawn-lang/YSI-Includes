@@ -319,6 +319,24 @@ stock y_profile_WTF(const name[], const timings[], iters, size = sizeof (timings
 	stock __gOnce = 1;
 #endif
 
+#define PP_RIGHT_BRACKET<> )
+
+#define IF__(new%0\32;%1=%2) for(IF_FAIL:new%0|||%1;%2)if()
+#define SWITCH__(new%0\32;%1=%2) for(IF_FAIL:new%0|||%1;%2)switch()
+
+#define for(IF_FAIL:new|||%1;%2) for(IF_PASS:new %1=%2;%1;)
+
+#define IF_FAIL:new%0|||%1;%2)%8() ;__once;)%8(new%0 %1=%2 PP_RIGHT_BRACKET<>
+#define IF_PASS:%3;%4;%9)%8() %3;__once;)%8(%4 PP_RIGHT_BRACKET<>
+
+#if YSI_KEYWORD(if)
+	#define if(new%0\32;%1=%2) IF__(new%0 %1=%2)
+#endif
+
+#if YSI_KEYWORD(switch)
+	#define switch(new%0\32;%1=%2) SWITCH__(new%0 %1=%2)
+#endif
+
 /*-------------------------------------------------------------------------*//**
  * <param name="value">The unsigned number to compare.</param>
  * <param name="upper">The upper limit.</param>
