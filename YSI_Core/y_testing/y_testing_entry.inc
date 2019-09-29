@@ -190,13 +190,13 @@ stock
 
 #if defined RUN_TESTS
 	#define TEST_INIT__%1() @y_Q%1();@y_Q%1()
-	#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1() for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())yQ_@%1();static yQ_@%1()
+	#define TEST__%1() bool:@yQ_%1();bool:@yQ_%1() for(_Testing_Start("\0\0"#%1), TEST_REPORT("*** Test %s start", YSI_gCurTestName); __once; _Testing_End())yQ_@%1();static yQ_@%1()
 	#define TEST_CLOSE__%1() @Qy_%1();@Qy_%1()
 	#define TEST_BEFORE_EACH__%1() forward y@Q_%1(); public y@Q_%1()
 	#define TEST_AFTER_EACH__%1() forward y@_Q%1(); public y@_Q%1()
 	
 	#define PTEST_INIT__%1(%2) @Q_y%1(%2);@Q_y%1(%2)
-	#define PTEST__%1(%2) bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(new bool:__once = (_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName) || true); __once; __once = _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
+	#define PTEST__%1(%2) bool:@_Qy%1(%2);bool:@_Qy%1(%2) for(_Testing_Start("\0\0"#%1), TEST_REPORT("*** Player Test %s start", YSI_gCurTestName); __once; _Testing_End())_Qy@%1(%2);static _Qy@%1(%2)
 	#define PTEST_CLOSE__%1(%2) @_yQ%1(%2);@_yQ%1(%2)
 	
 	#define TEST_COMPILE__%1() forward Q@y_%1();public Q@y_%1(){if(FALSE)Q@_y%1();P:W("Compile test " #%1 " called.");}static stock Q@_y%1()
