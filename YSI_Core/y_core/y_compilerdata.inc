@@ -237,7 +237,23 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	// like the MSVC `__pragma` - i.e. `__pragma(pack(0))` which would give
 	// `__pragma_pack(0)`.  Or `__pragma(naked)` -> `__pragma_naked`.
 	#define __pragma(%0) __pragma_%0
+	
+	// Tell the compiler that a function does return a value, even when it
+	// appears it doesn't.
+	// 
+	//   stock Func()
+	//   {
+	//       #emit RETN
+	//       __pragma(naked);
+	//   }
 	#define __pragma_naked return __COMPILER_DEFAULT
+	
+	// Return a version of `0` for any tag.
+	// 
+	//   stock Func()
+	//   {
+	//       new Float:a = __pragma(default);
+	//   }
 	#define __pragma_default __COMPILER_DEFAULT
 #endif
 
