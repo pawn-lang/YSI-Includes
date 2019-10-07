@@ -246,6 +246,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	//       #emit RETN
 	//       __pragma(naked);
 	//   }
+	// 
 	#define __pragma_naked return __COMPILER_DEFAULT
 	
 	// Return a version of `undefined` for any tag.
@@ -253,7 +254,16 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	//   new                Float:a = __pragma(default); // 0.0
 	//   new             Language:b = __pragma(default); // -1
 	//   new PR_PacketReliability:a = __pragma(default); // 6
+	// 
 	#define __pragma_default __COMPILER_DEFAULT
+	
+	// Don't warn about unused varaibles.
+	// 
+	//   __pragma(unused(a, b, c));
+	// 
+	//#define __pragma_unused(%0) H@(_:__COMPILER_UNUSED:%0,0)
+	//#define __COMPILER_UNUSED:%0, tagof(%0)+_:__COMPILER_UNUSED:
+	#define __pragma_unused(%0) H@(%0)
 #endif
 
 #if YSI_KEYWORD(default)
@@ -264,7 +274,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	//   new PR_PacketReliability:a = default(); // 6
 	#define default() __pragma(default)
 #endif
-#define DEFAULT__() __pragma(default)
+#define DEFAULT__ __pragma(default)
 
 #if __COMPILER_MODIFIED
 	#define __COMPILER_NAKED __pragma(naked);
