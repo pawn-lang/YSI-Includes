@@ -248,14 +248,23 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	//   }
 	#define __pragma_naked return __COMPILER_DEFAULT
 	
-	// Return a version of `0` for any tag.
+	// Return a version of `undefined` for any tag.
 	// 
-	//   stock Func()
-	//   {
-	//       new Float:a = __pragma(default);
-	//   }
+	//   new                Float:a = __pragma(default); // 0.0
+	//   new             Language:b = __pragma(default); // -1
+	//   new PR_PacketReliability:a = __pragma(default); // 6
 	#define __pragma_default __COMPILER_DEFAULT
 #endif
+
+#if YSI_KEYWORD(default)
+	// Return a version of `undefined` for any tag.
+	// 
+	//   new                Float:a = default(); // 0.0
+	//   new             Language:b = default(); // -1
+	//   new PR_PacketReliability:a = default(); // 6
+	#define default() __pragma(default)
+#endif
+#define DEFAULT__() __pragma(default)
 
 #if __COMPILER_MODIFIED
 	#define __COMPILER_NAKED __pragma(naked);
@@ -267,7 +276,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __COMPILER_WARNING_SUPPRESSION (1)
 	#define __COMPILER_USER_WARNING (1)
 	
-	#define __COMPILER_TAG_DATA(%0) stock %0:operator=(__CompilerDefault:a) return a, %0:(0)
+	#define __COMPILER_TAG_DATA(%0,%1) stock %0:operator=(__CompilerDefault:a) return a, %0:(%1)
 	
 	// Disable the recursion warning in the Russian compiler (and the unknown
 	// pragma warning in other compilers temporarily).
@@ -402,7 +411,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __COMPILER_sNAMEMAX (31)
 	
 	// It is sufficient simply for a variable to exist anywhere with the tag.
-	#define __COMPILER_TAG_DATA(%0) static stock const %0:__TAGOF__%0; stock %0:operator=(__CompilerDefault:a) return a, %0:(0)
+	#define __COMPILER_TAG_DATA(%0,%1) static stock const %0:__TAGOF__%0; stock %0:operator=(__CompilerDefault:a) return a, %0:(%1)
 	#define __TAGOF__%0\32; __TAGOF__
 	
 	#include "y_funcinc"
@@ -481,86 +490,86 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#error YSI assumes `sNAMEMAX` is 31.
 #endif
 
-__COMPILER_TAG_DATA(_);
-__COMPILER_TAG_DATA(bool);
-__COMPILER_TAG_DATA(Float);
-__COMPILER_TAG_DATA(File);
-__COMPILER_TAG_DATA(DB);
-__COMPILER_TAG_DATA(DBResult);
-__COMPILER_TAG_DATA(Text);
-__COMPILER_TAG_DATA(PlayerText);
-__COMPILER_TAG_DATA(Menu);
-__COMPILER_TAG_DATA(Text3D);
-__COMPILER_TAG_DATA(PlayerText3D);
-__COMPILER_TAG_DATA(filemode);
-__COMPILER_TAG_DATA(seek_whence);
+__COMPILER_TAG_DATA(_, 0);
+__COMPILER_TAG_DATA(bool, 0);
+__COMPILER_TAG_DATA(Float, 0);
+__COMPILER_TAG_DATA(File, 0);
+__COMPILER_TAG_DATA(DB, 0);
+__COMPILER_TAG_DATA(DBResult, 0);
+__COMPILER_TAG_DATA(Text, 65535);
+__COMPILER_TAG_DATA(PlayerText, 65535);
+__COMPILER_TAG_DATA(Menu, 255);
+__COMPILER_TAG_DATA(Text3D, 65535);
+__COMPILER_TAG_DATA(PlayerText3D, 65535);
+__COMPILER_TAG_DATA(filemode, 0);
+__COMPILER_TAG_DATA(seek_whence, 0);
 
-__COMPILER_TAG_DATA(Language);
-__COMPILER_TAG_DATA(Bit);
-__COMPILER_TAG_DATA(Style);
-__COMPILER_TAG_DATA(XML);
-__COMPILER_TAG_DATA(Bintree);
-__COMPILER_TAG_DATA(Group);
-__COMPILER_TAG_DATA(Timer);
-__COMPILER_TAG_DATA(INI);
+__COMPILER_TAG_DATA(Language, -1);
+__COMPILER_TAG_DATA(Bit, 0);
+__COMPILER_TAG_DATA(Style, 0);
+__COMPILER_TAG_DATA(XML, -1);
+__COMPILER_TAG_DATA(Bintree, 0);
+__COMPILER_TAG_DATA(Group, -1);
+__COMPILER_TAG_DATA(Timer, 0);
+__COMPILER_TAG_DATA(INI, -1);
 
-__COMPILER_TAG_DATA(ConstString);
-__COMPILER_TAG_DATA(String);
-__COMPILER_TAG_DATA(error_level);
-__COMPILER_TAG_DATA(locale_category);
-__COMPILER_TAG_DATA(filter_type);
-__COMPILER_TAG_DATA(handler_flags);
-__COMPILER_TAG_DATA(Variant);
-__COMPILER_TAG_DATA(ConstVariant);
-__COMPILER_TAG_DATA(Iter);
-__COMPILER_TAG_DATA(Handle);
-__COMPILER_TAG_DATA(tag_uid);
-__COMPILER_TAG_DATA(Task);
-__COMPILER_TAG_DATA(LinkedList);
-__COMPILER_TAG_DATA(List);
-__COMPILER_TAG_DATA(Map);
-__COMPILER_TAG_DATA(tag_op);
-__COMPILER_TAG_DATA(fork_level);
-__COMPILER_TAG_DATA(Amx);
-__COMPILER_TAG_DATA(Var);
-__COMPILER_TAG_DATA(amx_err);
-__COMPILER_TAG_DATA(str_create_mode);
-__COMPILER_TAG_DATA(AmxString);
-__COMPILER_TAG_DATA(ConstAmxString);
-__COMPILER_TAG_DATA(AmxStringBuffer);
-__COMPILER_TAG_DATA(AmxVariant);
-__COMPILER_TAG_DATA(ConstAmxVariant);
-__COMPILER_TAG_DATA(AmxVariantBuffer);
-__COMPILER_TAG_DATA(Guard);
+__COMPILER_TAG_DATA(ConstString, 0);
+__COMPILER_TAG_DATA(String, 0);
+__COMPILER_TAG_DATA(error_level, 0);
+__COMPILER_TAG_DATA(locale_category, 0);
+__COMPILER_TAG_DATA(filter_type, 0);
+__COMPILER_TAG_DATA(handler_flags, 0);
+__COMPILER_TAG_DATA(Variant, 0);
+__COMPILER_TAG_DATA(ConstVariant, 0);
+__COMPILER_TAG_DATA(Iter, 0);
+__COMPILER_TAG_DATA(Handle, 0);
+__COMPILER_TAG_DATA(tag_uid, 0);
+__COMPILER_TAG_DATA(Task, 0);
+__COMPILER_TAG_DATA(LinkedList, 0);
+__COMPILER_TAG_DATA(List, 0);
+__COMPILER_TAG_DATA(Map, 0);
+__COMPILER_TAG_DATA(tag_op, 0);
+__COMPILER_TAG_DATA(fork_level, 0);
+__COMPILER_TAG_DATA(Amx, 0);
+__COMPILER_TAG_DATA(Var, 0);
+__COMPILER_TAG_DATA(amx_err, 0);
+__COMPILER_TAG_DATA(str_create_mode, 0);
+__COMPILER_TAG_DATA(AmxString, 0);
+__COMPILER_TAG_DATA(ConstAmxString, 0);
+__COMPILER_TAG_DATA(AmxStringBuffer, 0);
+__COMPILER_TAG_DATA(AmxVariant, 0);
+__COMPILER_TAG_DATA(ConstAmxVariant, 0);
+__COMPILER_TAG_DATA(AmxVariantBuffer, 0);
+__COMPILER_TAG_DATA(Guard, 0);
 // I'm not doing the generic tags as well...
 
-__COMPILER_TAG_DATA(DynamicObject);
-__COMPILER_TAG_DATA(DynamicPickup);
-__COMPILER_TAG_DATA(DynamicCP);
-__COMPILER_TAG_DATA(DynamicRaceCP);
-__COMPILER_TAG_DATA(DynamicMapIcon);
-__COMPILER_TAG_DATA(DynamicText3D);
-__COMPILER_TAG_DATA(DynamicArea);
-__COMPILER_TAG_DATA(DynamicActor);
+__COMPILER_TAG_DATA(DynamicObject, 0);
+__COMPILER_TAG_DATA(DynamicPickup, 0);
+__COMPILER_TAG_DATA(DynamicCP, 0);
+__COMPILER_TAG_DATA(DynamicRaceCP, 0);
+__COMPILER_TAG_DATA(DynamicMapIcon, 0);
+__COMPILER_TAG_DATA(DynamicText3D, 0);
+__COMPILER_TAG_DATA(DynamicArea, 0);
+__COMPILER_TAG_DATA(DynamicActor, 0);
 
-__COMPILER_TAG_DATA(E_REGEX_GRAMMAR);
-__COMPILER_TAG_DATA(E_REGEX_FLAG);
-__COMPILER_TAG_DATA(E_MATCH_FLAG);
-__COMPILER_TAG_DATA(Regex);
-__COMPILER_TAG_DATA(regex);
-__COMPILER_TAG_DATA(RegexMatch);
-__COMPILER_TAG_DATA(match_results);
+__COMPILER_TAG_DATA(E_REGEX_GRAMMAR, 0);
+__COMPILER_TAG_DATA(E_REGEX_FLAG, 1);
+__COMPILER_TAG_DATA(E_MATCH_FLAG, 1);
+__COMPILER_TAG_DATA(Regex, 0);
+__COMPILER_TAG_DATA(regex, 0);
+__COMPILER_TAG_DATA(RegexMatch, 0);
+__COMPILER_TAG_DATA(match_results, 0);
 
-__COMPILER_TAG_DATA(PR_HandlerType);
-__COMPILER_TAG_DATA(PR_ValueType);
-__COMPILER_TAG_DATA(PR_PacketPriority);
-__COMPILER_TAG_DATA(PR_PacketReliability);
-__COMPILER_TAG_DATA(BitStream);
+__COMPILER_TAG_DATA(PR_HandlerType, 0);
+__COMPILER_TAG_DATA(PR_ValueType, 0);
+__COMPILER_TAG_DATA(PR_PacketPriority, 0);
+__COMPILER_TAG_DATA(PR_PacketReliability, 6);
+__COMPILER_TAG_DATA(BitStream, 0);
 
-__COMPILER_TAG_DATA(Opcode);
-__COMPILER_TAG_DATA(AsmError);
-__COMPILER_TAG_DATA(DisasmResult);
+__COMPILER_TAG_DATA(Opcode, 0);
+__COMPILER_TAG_DATA(AsmError, 0);
+__COMPILER_TAG_DATA(DisasmResult, 0);
 
-__COMPILER_TAG_DATA(hex);
-__COMPILER_TAG_DATA(E_SORT_ORDER);
+__COMPILER_TAG_DATA(hex, 0);
+__COMPILER_TAG_DATA(E_SORT_ORDER, 0);
 
