@@ -141,6 +141,8 @@ static stock __CompilerSecondPass() {}
 #endif
 
 #define __COMPILER_BUG_317 (1)
+#define __COMPILER_NAMEOF (0)
+#define __COMPILER_PRAGMA (0)
 
 #define __COMPILER_STATIC_ENUM enum
 
@@ -155,9 +157,17 @@ static stock __CompilerSecondPass() {}
 		#if __PawnBuild >= 4
 			#pragma option -(+
 		#endif
-		#if __PawnBuild >= 400
+		#if __PawnBuild >= 8
 			#undef __COMPILER_BUG_317
 			#define __COMPILER_BUG_317 (0)
+		#endif
+		#if __PawnBuild >= 10
+			#undef __COMPILER_NAMEOF
+			#define __COMPILER_NAMEOF (1)
+		#endif
+		#if 0
+			#undef __COMPILER_PRAGMA
+			#define __COMPILER_PRAGMA (1)
 		#endif
 	#endif
 #else
@@ -212,13 +222,24 @@ static stock const
 	#define __COMPILER_SIZEOF_ENUM (0)
 #endif
 
+#if !__COMPILER_NAMEOF
+	// Allow `__nameof(Float:)` `CoMPiler REMove CoLoN`.
+	#define __CMPREMCLN:tagof(%0:),%0:) tagof(%0),%0)
+	
+	// Check the symbol exists with `tagof`, then return the name as a string.
+	#define __nameof(%0) (__CMPREMCLN:tagof(%0),#%0)
+#endif
+
+#if !__COMPILER_PRAGMA
+	// TODO: Check for a minor version that might have this.  Assume this is
+	// like the MSVC `__pragma` - i.e. `__pragma(pack(0))` which would give
+	// `__pragma_pack(0)`.  Or `__pragma(naked)` -> `__pragma_naked`.
+	#define __pragma(%0) __pragma_%0
+	#define __pragma_naked return 0
+#endif
+
 #if __COMPILER_MODIFIED
-	#if 0
-		// TODO: Check for a minor version that might have this.
-		#define __COMPILER_NAKED __pragma(naked);
-	#else
-		#define __COMPILER_NAKED return 0;
-	#endif
+	#define __COMPILER_NAKED __pragma(naked);
 	#define __COMPILER_NESTED_ELLIPSIS (1)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) return __compiler_one_string_parameter:(%0)
@@ -349,7 +370,7 @@ static stock const
 	// Disable the warning for `const &var`.
 	#define __COMPILER_CONST_REF (1)
 #else
-	#define __COMPILER_NAKED return 0;
+	#define __COMPILER_NAKED __pragma(naked);
 	#define __COMPILER_NESTED_ELLIPSIS (0)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) __CompilerStringReturn(%0);return (__compiler_one_string_parameter:(%0))
