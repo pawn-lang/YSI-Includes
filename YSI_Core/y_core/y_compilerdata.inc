@@ -230,12 +230,15 @@ static stock const
 	#define __nameof(%0) (__CMPREMCLN:tagof(%0),#%0)
 #endif
 
+const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
+
 #if !__COMPILER_PRAGMA
 	// TODO: Check for a minor version that might have this.  Assume this is
 	// like the MSVC `__pragma` - i.e. `__pragma(pack(0))` which would give
 	// `__pragma_pack(0)`.  Or `__pragma(naked)` -> `__pragma_naked`.
 	#define __pragma(%0) __pragma_%0
-	#define __pragma_naked return 0
+	#define __pragma_naked return __COMPILER_DEFAULT
+	#define __pragma_default __COMPILER_DEFAULT
 #endif
 
 #if __COMPILER_MODIFIED
@@ -248,7 +251,7 @@ static stock const
 	#define __COMPILER_WARNING_SUPPRESSION (1)
 	#define __COMPILER_USER_WARNING (1)
 	
-	#define __COMPILER_FIX_TAGOF(%0);
+	#define __COMPILER_TAG_DATA(%0) stock %0:operator=(__CompilerDefault:a) return a, %0:(0)
 	
 	// Disable the recursion warning in the Russian compiler (and the unknown
 	// pragma warning in other compilers temporarily).
@@ -383,7 +386,7 @@ static stock const
 	#define __COMPILER_sNAMEMAX (31)
 	
 	// It is sufficient simply for a variable to exist anywhere with the tag.
-	#define __COMPILER_FIX_TAGOF(%0) static stock const %0:__TAGOF__%0
+	#define __COMPILER_TAG_DATA(%0) static stock const %0:__TAGOF__%0; stock %0:operator=(__CompilerDefault:a) return a, %0:(0)
 	#define __TAGOF__%0\32; __TAGOF__
 	
 	#include "y_funcinc"
@@ -462,85 +465,86 @@ static stock const
 	#error YSI assumes `sNAMEMAX` is 31.
 #endif
 
-__COMPILER_FIX_TAGOF(bool);
-__COMPILER_FIX_TAGOF(Float);
-__COMPILER_FIX_TAGOF(File);
-__COMPILER_FIX_TAGOF(DB);
-__COMPILER_FIX_TAGOF(DBResult);
-__COMPILER_FIX_TAGOF(Text);
-__COMPILER_FIX_TAGOF(PlayerText);
-__COMPILER_FIX_TAGOF(Menu);
-__COMPILER_FIX_TAGOF(Text3D);
-__COMPILER_FIX_TAGOF(PlayerText3D);
-__COMPILER_FIX_TAGOF(filemode);
-__COMPILER_FIX_TAGOF(seek_whence);
+__COMPILER_TAG_DATA(_);
+__COMPILER_TAG_DATA(bool);
+__COMPILER_TAG_DATA(Float);
+__COMPILER_TAG_DATA(File);
+__COMPILER_TAG_DATA(DB);
+__COMPILER_TAG_DATA(DBResult);
+__COMPILER_TAG_DATA(Text);
+__COMPILER_TAG_DATA(PlayerText);
+__COMPILER_TAG_DATA(Menu);
+__COMPILER_TAG_DATA(Text3D);
+__COMPILER_TAG_DATA(PlayerText3D);
+__COMPILER_TAG_DATA(filemode);
+__COMPILER_TAG_DATA(seek_whence);
 
-__COMPILER_FIX_TAGOF(Language);
-__COMPILER_FIX_TAGOF(Bit);
-__COMPILER_FIX_TAGOF(Style);
-__COMPILER_FIX_TAGOF(XML);
-__COMPILER_FIX_TAGOF(Bintree);
-__COMPILER_FIX_TAGOF(Group);
-__COMPILER_FIX_TAGOF(Timer);
-__COMPILER_FIX_TAGOF(INI);
+__COMPILER_TAG_DATA(Language);
+__COMPILER_TAG_DATA(Bit);
+__COMPILER_TAG_DATA(Style);
+__COMPILER_TAG_DATA(XML);
+__COMPILER_TAG_DATA(Bintree);
+__COMPILER_TAG_DATA(Group);
+__COMPILER_TAG_DATA(Timer);
+__COMPILER_TAG_DATA(INI);
 
-__COMPILER_FIX_TAGOF(ConstString);
-__COMPILER_FIX_TAGOF(String);
-__COMPILER_FIX_TAGOF(error_level);
-__COMPILER_FIX_TAGOF(locale_category);
-__COMPILER_FIX_TAGOF(filter_type);
-__COMPILER_FIX_TAGOF(handler_flags);
-__COMPILER_FIX_TAGOF(Variant);
-__COMPILER_FIX_TAGOF(ConstVariant);
-__COMPILER_FIX_TAGOF(Iter);
-__COMPILER_FIX_TAGOF(Handle);
-__COMPILER_FIX_TAGOF(tag_uid);
-__COMPILER_FIX_TAGOF(Task);
-__COMPILER_FIX_TAGOF(LinkedList);
-__COMPILER_FIX_TAGOF(List);
-__COMPILER_FIX_TAGOF(Map);
-__COMPILER_FIX_TAGOF(tag_op);
-__COMPILER_FIX_TAGOF(fork_level);
-__COMPILER_FIX_TAGOF(Amx);
-__COMPILER_FIX_TAGOF(Var);
-__COMPILER_FIX_TAGOF(amx_err);
-__COMPILER_FIX_TAGOF(str_create_mode);
-__COMPILER_FIX_TAGOF(AmxString);
-__COMPILER_FIX_TAGOF(ConstAmxString);
-__COMPILER_FIX_TAGOF(AmxStringBuffer);
-__COMPILER_FIX_TAGOF(AmxVariant);
-__COMPILER_FIX_TAGOF(ConstAmxVariant);
-__COMPILER_FIX_TAGOF(AmxVariantBuffer);
-__COMPILER_FIX_TAGOF(Guard);
+__COMPILER_TAG_DATA(ConstString);
+__COMPILER_TAG_DATA(String);
+__COMPILER_TAG_DATA(error_level);
+__COMPILER_TAG_DATA(locale_category);
+__COMPILER_TAG_DATA(filter_type);
+__COMPILER_TAG_DATA(handler_flags);
+__COMPILER_TAG_DATA(Variant);
+__COMPILER_TAG_DATA(ConstVariant);
+__COMPILER_TAG_DATA(Iter);
+__COMPILER_TAG_DATA(Handle);
+__COMPILER_TAG_DATA(tag_uid);
+__COMPILER_TAG_DATA(Task);
+__COMPILER_TAG_DATA(LinkedList);
+__COMPILER_TAG_DATA(List);
+__COMPILER_TAG_DATA(Map);
+__COMPILER_TAG_DATA(tag_op);
+__COMPILER_TAG_DATA(fork_level);
+__COMPILER_TAG_DATA(Amx);
+__COMPILER_TAG_DATA(Var);
+__COMPILER_TAG_DATA(amx_err);
+__COMPILER_TAG_DATA(str_create_mode);
+__COMPILER_TAG_DATA(AmxString);
+__COMPILER_TAG_DATA(ConstAmxString);
+__COMPILER_TAG_DATA(AmxStringBuffer);
+__COMPILER_TAG_DATA(AmxVariant);
+__COMPILER_TAG_DATA(ConstAmxVariant);
+__COMPILER_TAG_DATA(AmxVariantBuffer);
+__COMPILER_TAG_DATA(Guard);
 // I'm not doing the generic tags as well...
 
-__COMPILER_FIX_TAGOF(DynamicObject);
-__COMPILER_FIX_TAGOF(DynamicPickup);
-__COMPILER_FIX_TAGOF(DynamicCP);
-__COMPILER_FIX_TAGOF(DynamicRaceCP);
-__COMPILER_FIX_TAGOF(DynamicMapIcon);
-__COMPILER_FIX_TAGOF(DynamicText3D);
-__COMPILER_FIX_TAGOF(DynamicArea);
-__COMPILER_FIX_TAGOF(DynamicActor);
+__COMPILER_TAG_DATA(DynamicObject);
+__COMPILER_TAG_DATA(DynamicPickup);
+__COMPILER_TAG_DATA(DynamicCP);
+__COMPILER_TAG_DATA(DynamicRaceCP);
+__COMPILER_TAG_DATA(DynamicMapIcon);
+__COMPILER_TAG_DATA(DynamicText3D);
+__COMPILER_TAG_DATA(DynamicArea);
+__COMPILER_TAG_DATA(DynamicActor);
 
-__COMPILER_FIX_TAGOF(E_REGEX_GRAMMAR);
-__COMPILER_FIX_TAGOF(E_REGEX_FLAG);
-__COMPILER_FIX_TAGOF(E_MATCH_FLAG);
-__COMPILER_FIX_TAGOF(Regex);
-__COMPILER_FIX_TAGOF(regex);
-__COMPILER_FIX_TAGOF(RegexMatch);
-__COMPILER_FIX_TAGOF(match_results);
+__COMPILER_TAG_DATA(E_REGEX_GRAMMAR);
+__COMPILER_TAG_DATA(E_REGEX_FLAG);
+__COMPILER_TAG_DATA(E_MATCH_FLAG);
+__COMPILER_TAG_DATA(Regex);
+__COMPILER_TAG_DATA(regex);
+__COMPILER_TAG_DATA(RegexMatch);
+__COMPILER_TAG_DATA(match_results);
 
-__COMPILER_FIX_TAGOF(PR_HandlerType);
-__COMPILER_FIX_TAGOF(PR_ValueType);
-__COMPILER_FIX_TAGOF(PR_PacketPriority);
-__COMPILER_FIX_TAGOF(PR_PacketReliability);
-__COMPILER_FIX_TAGOF(BitStream);
+__COMPILER_TAG_DATA(PR_HandlerType);
+__COMPILER_TAG_DATA(PR_ValueType);
+__COMPILER_TAG_DATA(PR_PacketPriority);
+__COMPILER_TAG_DATA(PR_PacketReliability);
+__COMPILER_TAG_DATA(BitStream);
 
-__COMPILER_FIX_TAGOF(Opcode);
-__COMPILER_FIX_TAGOF(AsmError);
-__COMPILER_FIX_TAGOF(DisasmResult);
+__COMPILER_TAG_DATA(Opcode);
+__COMPILER_TAG_DATA(AsmError);
+__COMPILER_TAG_DATA(DisasmResult);
 
-__COMPILER_FIX_TAGOF(hex);
-__COMPILER_FIX_TAGOF(E_SORT_ORDER);
+__COMPILER_TAG_DATA(hex);
+__COMPILER_TAG_DATA(E_SORT_ORDER);
 
