@@ -1133,7 +1133,7 @@ Inline_NumArgs_load:
 	#emit JZER                Inline_NumArgs_load
 	#emit POP.pri
 	#emit RETN
-	__COMPILER_NAKED
+	__pragma(naked);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1455,7 +1455,7 @@ static Callback_CallHandler_(...)
 	#emit SCTRL            4                   // 65
 	#emit LOAD.pri         I@                  // 67
 	#emit RETN                                 // 68
-	__COMPILER_NAKED
+	__pragma(naked);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1504,7 +1504,7 @@ static stock Callback_RemoteHandler_(...)
 	#emit SCTRL            4
 	#emit MOVE.pri
 	#emit RETN
-	__COMPILER_NAKED
+	__pragma(naked);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1552,7 +1552,7 @@ static stock Callback_LocalHandler_(...)
 	#emit SCTRL            4
 	#emit MOVE.pri
 	#emit RETN
-	__COMPILER_NAKED
+	__pragma(naked);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1910,7 +1910,7 @@ static stock Inline_Ref(const &ptr)
 {
 	#emit LOAD.S.pri       ptr
 	#emit RETN
-	__COMPILER_NAKED
+	__pragma(naked);
 }
 #if __COMPILER_CONST_REF
 	#pragma warning pop

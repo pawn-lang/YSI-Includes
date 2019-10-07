@@ -1339,7 +1339,7 @@ Hooks_NumArgs_negative:
 	#emit LOAD.I
 	#emit SHR.C.pri           2
 	#emit RETN*/
-	__COMPILER_NAKED
+	__pragma(naked);
 }
 
 #if defined _ALS_numargs

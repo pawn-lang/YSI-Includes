@@ -391,7 +391,7 @@ stock Jagged_UnsafeResizeOne(array[][], slot, newSize)
 	#emit POP.pri
 	#emit RETN
 	
-	__COMPILER_NAKED
+	__pragma(naked);
 }
 
 //#define Jagged_UnsafeResizeOne(%0,%1) _Jagged_UnsafeResizeOne(_Jagged(%0),%1)
@@ -485,7 +485,7 @@ stock _Jagged_SizeOf(array[][], size1, size2, slot)
 			#emit ADD
 			#emit RETN
 			
-			__COMPILER_NAKED
+			__pragma(naked);
 		}
 
 /*-------------------------------------------------------------------------*//**
@@ -510,7 +510,7 @@ stock _Jagged_SizeOf(array[][], size1, size2, slot)
 			#emit IDXADDR
 			#emit RETN
 			
-			__COMPILER_NAKED
+			__pragma(naked);
 		}
 
 stock _Jagged_PrintHeader(array[][], size1, size2)
