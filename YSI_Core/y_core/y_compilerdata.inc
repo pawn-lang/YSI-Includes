@@ -261,9 +261,8 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	// 
 	//   __pragma(unused(a, b, c));
 	// 
-	//#define __pragma_unused(%0) H@(_:__COMPILER_UNUSED:%0,0)
-	//#define __COMPILER_UNUSED:%0, tagof(%0)+_:__COMPILER_UNUSED:
 	#define __pragma_unused(%0) H@(%0)
+	#define __pragma_unread(%0) H@(%0)
 #endif
 
 #if YSI_KEYWORD(default)
