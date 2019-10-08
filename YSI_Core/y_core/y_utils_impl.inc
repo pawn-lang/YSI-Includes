@@ -755,9 +755,9 @@ stock IPToInt(const ip[])
 
 stock bernstein(const string[] /* 12 */)
 {
-	new h = -1, i, j;
+	new h = 5381, i, j;
 	while ((j = string[i++]))
-		h = h * 33 + j;
+		h = h * 33 ^ j;
 	return h;
 }
 
