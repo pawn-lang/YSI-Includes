@@ -414,6 +414,20 @@ P:D(Iter_Clear(Iterator:iter<>));
 #define Iter_Clear_InternalD(%0,%1,%2,%3,%4,) Iter_Clear_InternalC(%0,%1,%2,%3-1,%4)
 
 /*-------------------------------------------------------------------------*//**
+ * <param name="iter">Name of the iterator to test emptiness of.</param>
+ * <remarks>
+ *
+ * native Iter_IsEmpty(Iterator:Name&lt;&gt;);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Iter_IsEmpty(Iterator:iter<>));
+#define Iter_IsEmpty _ITER<IsEmpty>
+#define Iter_IsEmpty_InternalA(%0,%1)    ((%0) == 0)
+#define Iter_IsEmpty_InternalB(%0,%2,%1) ((%0[%2]) == 0)
+
+/*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get the first free slot in.</param>
  * <remarks>
  *  Finds an empty slot in an iterator, adds that slot to the iterator, and
