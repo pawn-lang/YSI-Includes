@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#define HOOK_STOCK__%0(%1) FUNC_PARSER(YHNPS,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:)(%0(%1))()()(1,0)
+#define HOOK_STOCK__%0(%1) FUNC_PARSER(YHNPS,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:RET_TAG:)(%0(%1))()()(1,0)
 #define HOOK_NATIVE__ HOOK_STOCK__
 #define HOOK_native__ HOOK_STOCK__
 #define HOOK_stock__ HOOK_STOCK__
@@ -154,7 +154,9 @@ Optional plugins:
 // %4  = Existing values
 // %7  = Prefix0
 // %1  = Prefix1
+#define YHNPS_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$forward %7YHNPS_U0<%0>(%5);%7YHNPS_U1<%0>(%5);%7YHNPS_U1<%0>(%5)_yH@(%4),%0(%6),_@yH();%7YHNPS_U0<%0>(%5)
 #define YHNPS_END(%0)%8$(,%5)(,%6)(%9,%4) %8$forward YHNPS_U0<%0>(%5);YHNPS_U1<%0>(%5);YHNPS_U1<%0>(%5)_yH@(%4),%0(%6),_@yH();YHNPS_U0<%0>(%5)
+#define YHNPS_NUL_TAG(%7,%0)%8$()() YHNPS_END_TAG(%7,%0)%8$(,)(,)
 #define YHNPS_NUL(%0)%8$()() YHNPS_END(%0)%8$(,)(,)
 
 // Helper macro to generate the unique function name without bloating the
@@ -165,7 +167,7 @@ Optional plugins:
 // Doing `hook native` instead of `HOOK_NATIVE__` attaches the `forward` and
 // unique value earlier.  This just does all the same code, but with a reduced
 // ending name generation.
-#define HOOK_REDO__%0(%1) FUNC_PARSER(YHNPS2,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:)(%0(%1))()()(1,0)
+#define HOOK_REDO__%0(%1) FUNC_PARSER(YHNPS2,ARR_MUL_CST:STR_CST_DEF:NUM_CST_DEF:REF_DEF:EXT_TAG:RET_TAG:)(%0(%1))()()(1,0)
 #define YHNPS2_ARR YHNPS_ARR
 #define YHNPS2_ARR_ARR YHNPS_ARR_ARR
 #define YHNPS2_ARR_ARR_ARR YHNPS_ARR_ARR_ARR
@@ -178,7 +180,9 @@ Optional plugins:
 #define YHNPS2_NUM_DEF YHNPS_NUM_DEF
 #define YHNPS2_BYREF YHNPS_BYREF
 #define YHNPS2_BYVAL YHNPS_BYVAL
+#define YHNPS2_END_TAG(%7,%0)%8$(,%5)(,%6)(%9,%4) %8$%7@Hy_%0(%5);%7@_Hy%0(%5);%7@_Hy%0(%5)_yH@(%4),%0(%6),_@yH();%7@Hy_%0(%5)
 #define YHNPS2_END(%0)%8$(,%5)(,%6)(%9,%4) %8$@Hy_%0(%5);@_Hy%0(%5);@_Hy%0(%5)_yH@(%4),%0(%6),_@yH();@Hy_%0(%5)
+#define YHNPS2_NUL_TAG(%7,%0)%8$()() YHNPS2_END_TAG(%7,%0)%8$(,)(,)
 #define YHNPS2_NUL(%0)%8$()() YHNPS2_END(%0)%8$(,)(,)
 
 // Remove specified priorities from the original call.
