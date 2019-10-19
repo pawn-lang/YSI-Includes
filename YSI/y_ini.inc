@@ -70,12 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <YSI_Storage\y_ini>
-
-#if !defined __PawnBuild
-	static USE@YSI_Storage@y_ini;
-	#endinput
-#endif
-
-#warning Please use `#include <YSI_Storage\y_ini>`
+#error Use `#include <YSI_Storage\y_ini>`
 

@@ -70,12 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <YSI_Players\y_text>
-
-#if !defined __PawnBuild
-	static USE@YSI_Players@y_text;
-	#endinput
-#endif
-
-#warning Please use `#include <YSI_Players\y_text>`
+#error Use `#include <YSI_Players\y_text>`
 

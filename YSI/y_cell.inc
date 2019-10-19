@@ -70,12 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <YSI_Core\y_cell>
-
-#if !defined __PawnBuild
-	static USE@YSI_Core@y_cell;
-	#endinput
-#endif
-
-#warning Please use `#include <YSI_Core\y_cell>`
+#error Use `#include <YSI_Core\y_cell>`
 

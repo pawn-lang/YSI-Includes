@@ -70,12 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <YSI_Coding\y_remote>
-
-#if !defined __PawnBuild
-	static USE@YSI_Coding@y_remote;
-	#endinput
-#endif
-
-#warning Please use `#include <YSI_Coding\y_remote>`
+#error Use `#include <YSI_Coding\y_remote>`
 

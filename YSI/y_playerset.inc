@@ -70,12 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <YSI_Data\y_playerset>
-
-#if !defined __PawnBuild
-	static USE@YSI_Data@y_playerset;
-	#endinput
-#endif
-
-#warning Please use `#include <YSI_Data\y_playerset>`
+#error Use `#include <YSI_Data\y_playerset>`
 

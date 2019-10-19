@@ -70,12 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <YSI_Coding\y_inline>
-
-#if !defined __PawnBuild
-	static USE@YSI_Coding@y_inline;
-	#endinput
-#endif
-
-#warning Please use `#include <YSI_Coding\y_inline>`
+#error Use `#include <YSI_Coding\y_inline>`
 

@@ -70,12 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <YSI_Storage\y_amx>
-
-#if !defined __PawnBuild
-	static USE@YSI_Storage@y_amx;
-	#endinput
-#endif
-
-#warning Please use `#include <YSI_Storage\y_amx>`
+#error Use `#include <YSI_Storage\y_amx>`
 

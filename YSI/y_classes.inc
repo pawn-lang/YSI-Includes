@@ -70,12 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <YSI_Visual\y_classes>
-
-#if !defined __PawnBuild
-	static USE@YSI_Visual@y_classes;
-	#endinput
-#endif
-
-#warning Please use `#include <YSI_Visual\y_classes>`
+#error Use `#include <YSI_Visual\y_classes>`
 
