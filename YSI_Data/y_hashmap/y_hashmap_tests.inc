@@ -397,11 +397,11 @@ TEST__ y_hashmap_Set400Bug()
 	HashMap_Add(m, "hi307", 307);
 	HashMap_Add(m, "hi400", 400);
 	// The numbers above are all in the same bin (176).
-	printf("Set 0: %s %d %d %d %d %d", "hi141", bernstein("hi141"), YHash("hi141", true), YHash("hi141", true) & 255, HashMap_Get(m, "hi141"), 641);
-	printf("Set 0: %s %d %d %d %d %d", "hi400", bernstein("hi400"), YHash("hi400", true), YHash("hi400", true) & 255, HashMap_Get(m, "hi400"), 400);
+	ASSERT_EQ(HashMap_Get(m, "hi141"), 141);
+	ASSERT_EQ(HashMap_Get(m, "hi400"), 400);
 	HashMap_Set(m, "hi141", 641);
-	printf("Set 0: %s %d %d %d %d %d", "hi141", bernstein("hi141"), YHash("hi141", true), YHash("hi141", true) & 255, HashMap_Get(m, "hi141"), 641);
-	printf("Set 0: %s %d %d %d %d %d", "hi400", bernstein("hi400"), YHash("hi400", true), YHash("hi400", true) & 255, HashMap_Get(m, "hi400"), 400);
+	ASSERT_EQ(HashMap_Get(m, "hi141"), 641);
+	ASSERT_EQ(HashMap_Get(m, "hi400"), 400);
 }
 
 TEST__ y_hashmap_Set500()
