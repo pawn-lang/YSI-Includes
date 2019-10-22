@@ -387,41 +387,202 @@ TEST__ y_hashmap_Remove500()
 	}
 }
 
+static bool:FindBound(l, u)
+{
+	new HashMap:m<>;
+	new data[1000][E_HASH_MAP_TEST];
+	new str[6];
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
+	HashMap_Add(m, "hi141", 141);
+	HashMap_Add(m, "hi199", 199);
+	HashMap_Add(m, "hi242", 242);
+	for (new i = l; i != u; ++i)
+	{
+		format(str, sizeof (str), "hi%d", i);
+		HashMap_Add(m, str, i);
+	}
+	HashMap_Add(m, "hi308", 308);
+	HashMap_Add(m, "hi400", 400);
+//	format(str, sizeof (str), "hi%d", 400);
+	//printf("Set 0: %s %d %d %d %d %d", "hi400", bernstein("hi400"), YHash("hi400", true), YHash("hi400", true) & 255, HashMap_Get(m, "hi400"), 400);
+	HashMap_Set(m, "hi141", 641);
+	//printf("Set 0: %s %d %d %d %d %d", "hi141", bernstein("hi141"), YHash("hi141", true), YHash("hi141", true) & 255, HashMap_Get(m, "hi141"), 141 + 500);
+	//printf("Set 0: %s %d %d %d %d %d", "hi400", bernstein("hi400"), YHash("hi400", true), YHash("hi400", true) & 255, HashMap_Get(m, "hi400"), 400);
+	return HashMap_Get(m, "hi400") == -1;
+}
+
+TEST__ y_hashmap_Set400Bug()
+{
+//	new HashMap:m<>;
+//	new data[1000][E_HASH_MAP_TEST];
+	new str[6];
+//	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);<c>
+	const LL = 242 + 1, UU = 308;
+	new l = LL, u = UU;
+//	for (new i = LL; i != UU; ++i)
+//	{
+//		if (FindBound(i, UU))
+//		{
+//			printf("%d", i);
+//			l = max(l, i);
+//		}
+//	}
+//
+//	for (new i = l + 1; i != UU; ++i)
+//	{
+//		if (FindBound(LL, i))
+//		{
+//			printf("%d", i);
+//			u = min(u, i);
+//		}
+//	}
+//
+//	printf("%d : %d", l, u);
+	new HashMap:m<>;
+	new data[1000][E_HASH_MAP_TEST];
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
+	HashMap_Add(m, "hi141", 141);
+	HashMap_Add(m, "hi199", 199);
+	HashMap_Add(m, "hi242", 242);
+//	for (new i = l; i != u; ++i)
+//	{
+//		format(str, sizeof (str), "hi%d", i);
+//		HashMap_Add(m, str, i);
+//	}
+	HashMap_Add(m, "hi307", 307);
+	HashMap_Add(m, "hi308", 308);
+	HashMap_Add(m, "hi400", 400);
+	printf("Set 0: %s %d %d %d %d %d", "hi400", bernstein("hi400"), YHash("hi400", true), YHash("hi400", true) & 255, HashMap_Get(m, "hi400"), 400);
+	HashMap_Set(m, "hi141", 641);
+	printf("Set 0: %s %d %d %d %d %d", "hi141", bernstein("hi141"), YHash("hi141", true), YHash("hi141", true) & 255, HashMap_Get(m, "hi141"), 141 + 500);
+	printf("Set 0: %s %d %d %d %d %d", "hi400", bernstein("hi400"), YHash("hi400", true), YHash("hi400", true) & 255, HashMap_Get(m, "hi400"), 400);
+
+////	printf("Set 0: %s %d %d %d %d", "hi400", bernstein("hi400"), YHash("hi400", true) & 255, HashMap_Get(m, "hi400"), 400);
+////	printf("Set 0: %s %d %d %d %d", "hi141", bernstein("hi141"), YHash("hi141", true) & 255, HashMap_Get(m, "hi141"), 141);
+////	HashMap_Set(m, "hi400", 400);
+////	printf("Set 0: %s %d %d %d %d", "hi400", bernstein("hi400"), YHash("hi400", true) & 255, HashMap_Get(m, "hi400"), 400);
+////	printf("Set 0: %s %d %d %d %d", "hi141", bernstein("hi141"), YHash("hi141", true) & 255, HashMap_Get(m, "hi141"), 141);
+////	HashMap_Set(m, "hi141", 641);
+////	printf("Set 0: %s %d %d %d %d", "hi400", bernstein("hi400"), YHash("hi400", true) & 255, HashMap_Get(m, "hi400"), 400);
+////	printf("Set 0: %s %d %d %d %d", "hi141", bernstein("hi141"), YHash("hi141", true) & 255, HashMap_Get(m, "hi141"), 141);
+//	for (new i = 400; i != 500; ++i)
+//	{
+//		format(str, sizeof (str), "hi%d", i);
+//		HashMap_Add(m, str, i);
+//	}
+////	format(str, sizeof (str), "hi%d", 641 - 500);
+////	printf("Set 0: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), 641);
+////	format(str, sizeof (str), "hi%d", 400);
+////	printf("Set 0: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), 400);
+////	format(str, sizeof (str), "hi%d", 641 - 500);
+////	HashMap_Set(m, str, 641);
+////	format(str, sizeof (str), "hi%d", 641 - 500);
+////	printf("Set 0: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), 641);
+////	format(str, sizeof (str), "hi%d", 400);
+////	printf("Set 0: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), 400);
+//	for (new i = 639 - 500; i != 501; i += 2)
+//	{
+//		format(str, sizeof (str), "hi%d", 641 - 500);
+//		printf("Set 0: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), 641);
+//		format(str, sizeof (str), "hi%d", 400);
+//		printf("Set 0: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), 400);
+////	format(str, sizeof (str), "hi%d", 641);
+////	HashMap_Set(m, str, 641);
+//		format(str, sizeof (str), "hi%d", i);
+//		HashMap_Set(m, str, i + 500);
+////		printf("Set 0: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), i + 500);
+////		format(str, sizeof (str), "hi%d", 400);
+////		printf("Set 0: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), 400);
+//		format(str, sizeof (str), "hi%d", 641 - 500);
+//		printf("Set 0: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), 641);
+//		format(str, sizeof (str), "hi%d", 400);
+//		printf("Set 0: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), 400);
+//	}
+}
+
 TEST__ y_hashmap_Set500()
 {
 	ASSERT(heapspace() >= 145000);
 	new HashMap:m<>;
 	new data[1000][E_HASH_MAP_TEST];
+	new str[6];
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	// Add.
-	for (new i = 0, str[6]; i != 500; ++i)
+	for (new i = 0; i != 500; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
 		HashMap_Add(m, str, i);
+//		printf("Set 1: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), i);
 	}
+//	format(str, sizeof (str), "hi%d", 402);
+//	printf("Mid 1: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), 402);
 	// ASSERT.
-	for (new i = 0, str[6]; i != 500; ++i)
+	for (new i = 0; i != 500; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
 		ASSERT_EQ(HashMap_Get(m, str), i);
+//		if (HashMap_Get(m, str) != i)
+//		{
+//			printf("Failed (1) on: %s %d", str, HashMap_Get(m, str));
+//		}
+//		ASSERT_EQ(bernstein(str), YHash(str, true));
+		printf("Set 0: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), i);
+		format(str, sizeof (str), "hi%d", 400);
+		printf("Set 0: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), 400);
 	}
+//	format(str, sizeof (str), "hi%d", 402);
+//	printf("Mid 2: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), 402);
 	// Remove half.
-	for (new i = 1, str[6]; i != 501; i += 2)
+//	for (new i = 0; i != 1000; ++i)
+//	{
+//		printf("%i) %s %d %d %d", i, data[i][E_HASH_MAP_TEST_NAME], data[i][E_HASH_MAP_TEST_DATA][0], data[i][E_HASH_MAP_TEST_DATA][1], data[i][E_HASH_MAP_TEST_DATA][2]);
+//	}
+	for (new i = 1; i != 501; i += 2)
 	{
+//		format(str, sizeof (str), "hi%d", i - 1);
+//		printf("Set 2a: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), i - 1);
+//		format(str, sizeof (str), "hi%d", i);
+//		printf("Set 2a: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), i);
 		format(str, sizeof (str), "hi%d", i);
 		HashMap_Set(m, str, i + 500);
+		printf("Set 0: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), i + 500);
+		format(str, sizeof (str), "hi%d", 400);
+		printf("Set 0: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), 400);
+//		printf("Set 2b: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), i);
+//		format(str, sizeof (str), "hi%d", i - 1);
+//		printf("Set 2c: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), i - 1);
+//		format(str, sizeof (str), "hi%d", i);
+//		printf("Set 2c: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), i);
 	}
+//	for (new i = 0; i != 1000; ++i)
+//	{
+//		printf("%i) %s %d %d %d", i, data[i][E_HASH_MAP_TEST_NAME], data[i][E_HASH_MAP_TEST_DATA][0], data[i][E_HASH_MAP_TEST_DATA][1], data[i][E_HASH_MAP_TEST_DATA][2]);
+//	}
+//	format(str, sizeof (str), "hi%d", 402);
+//	printf("Mid 3: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), 402);
 	// ASSERT.
-	for (new i = 0, str[6]; i != 500; ++i)
+	for (new i = 0; i != 500; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
 		if (i & 1) ASSERT_EQ(HashMap_Get(m, str), i + 500);
 		else ASSERT_EQ(HashMap_Get(m, str), i);
+//		if ((i & 1) ? HashMap_Get(m, str) != i + 500 : HashMap_Get(m, str) != i)
+//		{
+//			printf("Failed (2) on: %s %d", str, HashMap_Get(m, str));
+//		}
+//		printf("Set 3: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), i);
 	}
-	for (new i = 500, str[6]; i != 1000; ++i)
+//	format(str, sizeof (str), "hi%d", 402);
+//	printf("Mid 4: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), 402);
+	for (new i = 500; i != 1000; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
 		ASSERT_EQ(HashMap_Get(m, str), -1);
+//		if (HashMap_Get(m, str) != -1)
+//		{
+//			printf("Failed (3) on: %s %d", str, HashMap_Get(m, str));
+//		}
+//		printf("Set 4: %s %d %d %d %d", str, bernstein(str), YHash(str, true), HashMap_Get(m, str), i);
 	}
 }
 
