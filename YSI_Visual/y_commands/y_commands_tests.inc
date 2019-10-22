@@ -365,6 +365,8 @@ YCMD:y_commands_4(playerid, cmdtext[], help)
 }
 
 YCMD:y_commands_5(playerid, cmdtext[], help) = y_commands_4;
+YCMD:y_commands_6(playerid, cmdtext[], help) = y_commands_5;
+YCMD:y_commands_8(playerid, cmdtext[], help) = y_commands_7;
 
 TEST__ y_commands_4()
 {
@@ -374,8 +376,13 @@ TEST__ y_commands_4()
 	ASSERT_EQ(gSomeVar, 120);
 	call OnPlayerCommandText(80, "/y_commands_5 50");
 	ASSERT_EQ(gSomeVar, 130);
+	call OnPlayerCommandText(80, "/y_commands_6 70");
+	ASSERT_EQ(gSomeVar, 150);
 	ASSERT_NE(YCMD:y_commands_4, COMMAND_NOT_FOUND);
 	ASSERT_NE(YCMD:y_commands_5, COMMAND_NOT_FOUND);
+	ASSERT_NE(YCMD:y_commands_6, COMMAND_NOT_FOUND);
+	ASSERT_EQ(YCMD:y_commands_7, COMMAND_NOT_FOUND);
+	ASSERT_EQ(YCMD:y_commands_8, COMMAND_NOT_FOUND);
 }
 
 static stock
