@@ -116,6 +116,27 @@ TEST__ y_punycode_2()
 	ASSERT_SAME(dst, "bcher-kva");
 }
 
+TEST__ y_punycode_hash()
+{
+	new
+		dst[32],
+		hash1,
+		hash2,
+		hash3;
+	Puny_EncodeHash(dst, "hello", hash1);
+	hash2 = YHash("hello");
+	hash3 = bernstein("hello");
+	ASSERT_EQ(hash1, hash2);
+	ASSERT_EQ(hash2, hash3);
+	ASSERT_EQ(hash3, hash1);
+	Puny_EncodeHash(dst, "world", hash1);
+	hash2 = YHash("world");
+	hash3 = bernstein("world");
+	ASSERT_EQ(hash1, hash2);
+	ASSERT_EQ(hash2, hash3);
+	ASSERT_EQ(hash3, hash1);
+}
+
 /*
 These all work in UTF-8, but can't be compiled in ANSI.
 
@@ -132,3 +153,4 @@ xn--zkc6cc5bi7f6e.xn--hlcj6aya9esc7a 	http://உதாரணம்.பரிட�
 xn--6dbbec0c.xn--deba0ad 	http://דוגמה.טעסט 	Hebrew 	Hebrew
 xn--fdbk5d8ap9b8a8d.xn--deba0ad 	http://בײַשפּיל.טעסט 	Hebrew 	Yiddish
 */
+

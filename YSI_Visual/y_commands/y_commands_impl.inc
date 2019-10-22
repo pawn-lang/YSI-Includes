@@ -394,7 +394,7 @@ GLOBAL__ Command_AddAlt(oidx, const string:cmd[])
 
 	// Now point this new command at the real (software) command.
 	strpack(sCmd, sCmd, cellmax);
-	if ((id = Command_Find(sCmd)) == COMMAND_NOT_FOUND)
+	if ((id = HashMap_Get(YSI_g_sCommandMap, sCmd)) == COMMAND_NOT_FOUND)
 	{
 		// Command doesn't already exist, add it.
 		if ((id = Command_GetEmptySlot()) == COMMAND_NOT_FOUND)
@@ -707,8 +707,6 @@ GLOBAL__ Command_Find(const string:cmd[])
 
 	return HashMap_Get(YSI_g_sCommandMap, sCmd);
 }
-
-
 
 /*-------------------------------------------------------------------------*//**
  * <param name="command">Command to "touch".</param>

@@ -389,6 +389,11 @@ TEST__ y_hashmap_Remove500()
 
 TEST__ y_hashmap_Set400Bug()
 {
+	// You have no idea how long it took me to whittle the code down to these
+	// numbers!  There is a pattern - they're all in the same hashmap bin, but
+	// while I spotted the pattern after quite a while I still wasn't sure
+	// because there were some false positives in the data set throwing the
+	// conclusions off.  I eventually managed to remove those though.
 	new HashMap:m<>;
 	new data[1000][E_HASH_MAP_TEST];
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
@@ -399,8 +404,8 @@ TEST__ y_hashmap_Set400Bug()
 	// The numbers above are all in the same bin (176).
 	ASSERT_EQ(HashMap_Get(m, "hi141"), 141);
 	ASSERT_EQ(HashMap_Get(m, "hi400"), 400);
-	HashMap_Set(m, "hi141", 641);
-	ASSERT_EQ(HashMap_Get(m, "hi141"), 641);
+	HashMap_RemoveKey(m, "hi141");
+	ASSERT_EQ(HashMap_Get(m, "hi141"), -1);
 	ASSERT_EQ(HashMap_Get(m, "hi400"), 400);
 }
 
