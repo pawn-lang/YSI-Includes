@@ -335,7 +335,7 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 				{
 					while (i != len)
 					{
-						hash = hash * 33 + str{i++};
+						hash = hash * 33 ^ str{i++};
 					}
 				}
 				else
@@ -343,7 +343,7 @@ stock YHash(const str[], bool:sensitive = true, e_HASH_TYPE:type = hash_bernstei
 					while (i != len)
 					{
 						pack = str{i++},
-						hash = hash * 33 + (IS_IN_RANGE(pack, 'A', 'Z' + 1) ? pack | 0x20 : pack);
+						hash = hash * 33 ^ (IS_IN_RANGE(pack, 'A', 'Z' + 1) ? pack | 0x20 : pack);
 					}
 				}
 				return hash;

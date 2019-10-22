@@ -70,6 +70,13 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+TEST__ y_commands_Simple()
+{
+	new
+		id = Command_Find("y_commands_1");
+	ASSERT_NE(id, -1);
+}
+
 TEST__ y_commands_Syntax()
 {
 	new

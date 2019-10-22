@@ -916,6 +916,30 @@ TEST__ y_stringhash__I8b()
 	ASSERT_EQ(h0, h1);
 }
 
+TEST__ y_stringhash_PackedS()
+{
+	new
+		h0 = YHash("hello", true),
+		h1 = YHash(!"hello", true);
+	ASSERT_EQ(h0, h1);
+}
+
+TEST__ y_stringhash_PackedI()
+{
+	new
+		h0 = YHash(!"HEllo", false),
+		h1 = YHash(!"heLLo", false);
+	ASSERT_EQ(h0, h1);
+}
+
+TEST__ y_stringhash_PackedP()
+{
+	new
+		h0 = YHash("HEllo", false),
+		h1 = YHash(!"heLLo", false);
+	ASSERT_EQ(h0, h1);
+}
+
 static stock _FIXES_Bernstein(const name[])
 {
 	new
