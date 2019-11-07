@@ -808,3 +808,15 @@ stock Iter_All_Internal(const array[], size, value)
 	#endif
 #endif
 
+iterfunc stock VehiclePassenger(vehicleid)
+{
+    FOREACH__ (new i : Player)
+    {
+        if (GetPlayerVehicleID(playerid) == vehicleid)
+        {
+            YIELD__ return i;
+        }
+    }
+}
+#define Iterator@VehiclePassenger iteryield
+
