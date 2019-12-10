@@ -281,6 +281,17 @@ stock y_profile_WTF(const name[], const timings[], iters, size = sizeof (timings
 	#if defined _y_utils_OnPlayerDisconnect
 		forward _y_utils_OnPlayerDisconnect(playerid, reason);
 	#endif
+
+	/*-------------------------------------------------------------------------*//**
+	 * <param name="playerid">Player to get IP of.</param>
+	 * <returns>
+	 *  IP as a 32bit int.
+	 * </returns>
+	 *//*------------------------------------------------------------------------**/
+
+	// Cunning macro only uses "%0" once, yet is still safe.
+	P:D(GetIP(playerid));
+	#define GetIP(%0) (YSI_gPlayerIP[min((%0) + cellmin, MAX_PLAYERS + cellmin) - cellmin])
 #endif
 
 #if defined YSI_LOCK_MODE
@@ -805,17 +816,6 @@ stock unpack(const str[])
 	}
 	return ret;
 }
-
-/*-------------------------------------------------------------------------*//**
- * <param name="playerid">Player to get IP of.</param>
- * <returns>
- *  IP as a 32bit int.
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-// Cunning macro only uses "%0" once, yet is still safe.
-P:D(GetIP(playerid));
-#define GetIP(%0) (YSI_gPlayerIP[min((%0) + cellmin, MAX_PLAYERS + cellmin) - cellmin])
 
 /*-------------------------------------------------------------------------*//**
  * <param name="idx">Index of the string in the parameters.</param>

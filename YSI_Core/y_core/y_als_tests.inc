@@ -162,7 +162,7 @@ TEST__ y_als_Fake()
 		Float:pos = 710.017,
 		last = 711;
 	// Floats don't print quite exactly.
-	__PRINT<FakeCallback, "OnFakeCallback(709, T_E_X_T_, 710.017028, 711)">
+	__PRINT<FakeCallback, "OnFakeCallback(709, T_E_X_T_, 710.017029, 711)">
 }
 
 static stock y_als_DoCall(playerid, const text[], Float:pos, last)
@@ -347,7 +347,7 @@ TEST__ y_als_Generation()
 		Float:fX = 10.24,
 		Float:fY = 11.34,
 		Float:fZ = 12.44;
-	__PRINT<PlayerClickMap, "OnPlayerClickMap(42, 10.239999, 11.340000, 12.439999)">
+	__PRINT<PlayerClickMap, "OnPlayerClickMap(42, 10.240000, 11.340000, 12.440000)">
 	__PRINT<PlayerCommandReceived, "OnPlayerCommandReceived(42, /help)">
 	__PRINT<PlayerCommandPerformed, "OnPlayerCommandPerformed(42, /help, -11)">
 	new
@@ -357,7 +357,7 @@ TEST__ y_als_Generation()
 		Float:new_z = 5.5;
 	#pragma unused new_x, new_y, new_z
 	#if defined GetServerTickRate
-		__PRINT<UnoccupiedVehicleUpdate, "OnUnoccupiedVehicleUpdate(606, 42, 70, 3.299999, 4.400000, 5.500000)">
+		__PRINT<UnoccupiedVehicleUpdate, "OnUnoccupiedVehicleUpdate(606, 42, 70, 3.30000, 4.400000, 5.500000)">
 	#else
 		__PRINT<UnoccupiedVehicleUpdate, "OnUnoccupiedVehicleUpdate(606, 42, 70)">
 	#endif
@@ -374,7 +374,7 @@ TEST__ y_als_Generation()
 		Float:fRotX = 20.24,
 		Float:fRotY = 21.34,
 		Float:fRotZ = 22.44;
-	__PRINT<PlayerEditObject, "OnPlayerEditObject(42, 2234, 1234, 404, 10.239999, 11.340000, 12.439999, 20.239999, 21.340000, 22.440000)">
+	__PRINT<PlayerEditObject, "OnPlayerEditObject(42, 2234, 1234, 404, 10.240000, 11.340000, 12.440000, 20.240000, 21.340000, 22.440001)">
 	#if __COMPILER_MODIFIED
 		// This ends up too long to compile :(.
 		new
@@ -387,7 +387,7 @@ TEST__ y_als_Generation()
 			Float:fScaleX = 404.04,
 			Float:fScaleY = 505.05,
 			Float:fScaleZ = 606.06;
-		__PRINT<PlayerEditAttachedObject, "OnPlayerEditAttachedObject(42, 404, 650, 651, 652, 101.010002, 202.020004, 303.029998, 20.239999, 21.340000, 22.440000, 404.040008, 505.049987, 606.059997)">
+		__PRINT<PlayerEditAttachedObject, "OnPlayerEditAttachedObject(42, 404, 650, 651, 652, 101.010002, 202.020004, 303.029999, 20.240000, 21.340000, 22.440001, 404.040009, 505.049988, 606.059998)">
 	#endif
 }
 

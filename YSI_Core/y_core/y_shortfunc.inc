@@ -186,13 +186,13 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	if (YSI_g_sCallData)
 	{
 		#emit STACK        28
-		#emit SYSREQ.C     CallRemoteFunction
+		#emit SYSREQ.C     W@
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	else
 	{
 		#emit STACK        28
-		#emit SYSREQ.C     CallLocalFunction
+		#emit SYSREQ.C     P@
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	{}
@@ -315,13 +315,13 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	if (YSI_g_sCallData)
 	{
 		#emit STACK        28
-		#emit SYSREQ.C     CallRemoteFunction
+		#emit SYSREQ.C     W@
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	else
 	{
 		#emit STACK        28
-		#emit SYSREQ.C     CallLocalFunction
+		#emit SYSREQ.C     P@
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	{}
@@ -423,15 +423,6 @@ stock T@(const string:ret[YSI_MAX_STRING], GLOBAL_TAG_TYPES:...)
 	}
 	return 1;
 }
-
-// Used by y_master and y_remote.  Re-evaluate after rewrites.
-native U@(id=0, const name[]="", value=cellmin, const string[]="") = setproperty;
-native V@(GLOBAL_TAG_TYPES:id=0, const name[]="", value=cellmin, string[]="") = getproperty;
-
-// Define this command with basically every strong tag in existence to avoid
-// tag mismatch warnings with remote functions with strong tag parameters.
-native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallRemoteFunction;
-native O@(const function[], time, repeat, const format[] = "", GLOBAL_TAG_TYPES:...) = SetTimerEx;
 
 stock S@(GLOBAL_TAG_TYPES:v = -1)
 {

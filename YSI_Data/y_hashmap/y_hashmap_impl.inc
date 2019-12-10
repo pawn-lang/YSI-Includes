@@ -590,9 +590,11 @@ stock bool:HashMap_RemoveValue(HashMap:m<>, value)
 
 stock HashMap_Set(HashMap:m<>, const str[], const value)
 {
+	new
+		hash = YHash(str, .sensitive = true);
 	return
-		HashMap_RemoveKey(m, str),
+		HashMap_RemoveKeyWithHash(m, str, hash),
 		HashMap_RemoveValue(m, value),
-		HashMap_Add(m, str, value);
+		HashMap_AddWithHash(m, str, hash, value);
 }
 

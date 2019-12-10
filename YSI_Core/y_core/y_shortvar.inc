@@ -115,3 +115,17 @@ stock
 #define YSI_UNSAFE_HUGE_STRING (YSI_gUnsafeHugeString[0])
 #define YSI_UNSAFE_HUGE_LENGTH (MAX_LANGUAGES * sizeof (YSI_gUnsafeHugeString[]))
 
+// Used by y_master and y_remote.  Re-evaluate after rewrites.
+native U@(id = 0, const name[] = "", value = cellmin, const string[] = "") = setproperty;
+native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] = "") = getproperty;
+
+#if defined OPENMP
+	native P@(const function[], const format[], GLOBAL_TAG_TYPES:...) = Script_Call;
+	native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = Script_CallAll;
+#else
+	// Define this command with basically every strong tag in existence to avoid
+	// tag mismatch warnings with remote functions with strong tag parameters.
+	native P@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallLocalFunction;
+	native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallRemoteFunction;
+#endif
+

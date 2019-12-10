@@ -272,6 +272,46 @@ public OnRuntimeError(code, &bool:suppress)
  * <transition keep="true" target="_ALS : _ALS_go"/>
  *//*------------------------------------------------------------------------**/
 
+ #if defined _ALS_OnCodeInit || defined OnCodeInit
+	#error OnCodeInit defined
+#endif
+
+#if defined _ALS_OnScriptInit || (__COMPILER_1ST_PASS && defined OnScriptInit)
+	#error defined OnScriptInit
+#endif
+
+#if defined Script_GetID
+	forward OnScriptInit(id);
+	public OnScriptInit(id)
+	{
+		if (id != Script_GetID())
+		{
+			return 0;
+		}
+		#if !defined FILTERSCRIPT
+			if (funcidx("OnFilterScriptInit") != -1)
+		#endif
+			{
+				// This is a legacy filterscript.
+				printf("*** This script has been detected as a legacy filterscript.");
+				P@("OnFilterScriptInit", "");
+			}
+		#if !defined FILTERSCRIPT
+			else
+			{
+				printf("*** This script has been detected as a legacy gamemode.");
+				W@("OnGameModeInit", "");
+			}
+		#endif
+		return 0;
+	}
+#endif
+
+/*-------------------------------------------------------------------------*//**
+ * <transition keep="true" target="_script_init_fix_state : true"/>
+ * <transition keep="true" target="_ALS : _ALS_go"/>
+ *//*------------------------------------------------------------------------**/
+
 public OnFilterScriptInit()
 {
 	YSI_FILTERSCRIPT = true;
@@ -421,18 +461,13 @@ public OnGameModeExit()
 */
 
 //#undef OnCodeInit
-#if defined _ALS_OnCodeInit || defined OnCodeInit
-	#error OnCodeInit defined
-#endif
 #define OnCodeInit ScriptInit_OnCodeInit
 #if defined ScriptInit_OnCodeInit
 	forward ScriptInit_OnCodeInit();
 #endif
 
 CHAIN_FORWARD:ScriptInit_OnScriptInit() = 1;
-#if defined _ALS_OnScriptInit || defined OnScriptInit
-	#error defined OnScriptInit
-#endif
+
 #define _ALS_OnScriptInit
 #define OnScriptInit(%0) CHAIN_PUBLIC:ScriptInit_OnScriptInit(%0)
 
