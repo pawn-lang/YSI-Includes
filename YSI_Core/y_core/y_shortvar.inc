@@ -122,7 +122,7 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 #if defined OPENMP
 	native P@(const function[], const format[], GLOBAL_TAG_TYPES:...) = Script_Call;
 	native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = Script_CallAll;
-	native O@(const function[], time, repeat, const format[] = "", GLOBAL_TAG_TYPES:...) = Timer_Create;
+	native O@(const function[], time, repeat, const format[] = "", GLOBAL_TAG_TYPES:...) = SetTimerEx;
 #else
 	// Define this command with basically every strong tag in existence to avoid
 	// tag mismatch warnings with remote functions with strong tag parameters.
