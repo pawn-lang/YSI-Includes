@@ -63,7 +63,7 @@ Output:
 ...
 ```
 
-At first glance that seems OK. We loop through every integer and add only the
+At first, glance that seems OK. We loop through every integer and add only the
 even ones. But there are two issues Firstly the `Iterator:` macro adds on an
 extra cell, so we end up with `EvenInt@YSII_Ag[cellmax + 1]`. `cellmax` is the
 highest possible integer value, so adding 1 to it is an invalid operation and
@@ -71,7 +71,7 @@ won't compile. But assuming that it is possible to do that, we would still end
 up with an array consisting of 2147483648 4-byte cells - that's exactly 8Gb of
 data in your compiled mode! Again, this won't compile.
 
-Fortunately there is another way in the form of a special iterator function:
+Fortunately, there is another way in the form of a special iterator function:
 
 ```pawn
 iterfunc stock EvenInt(cur)
@@ -111,7 +111,7 @@ The important difference is that this will compile and run, and won't be vast!
 iterfunc stock EvenInt(cur)
 ```
 
-This line actually starts ths special iterator function. `stock` is simply
+This line actually starts the special iterator function. `stock` is simply
 because you don't know if your iterator will be used or not and you don't want a
 warning (unless you have it in your mode and know you will use it, in which case
 don't use "stock"). The next part is the function name.
@@ -135,7 +135,7 @@ for (new i = -1; (i = FUNC(i)) != -1; )
 
 As a side note, this won't work for regular iterators because `-1` is not a
 valid array index, so can't be used as the start value without a significant
-loss in efficiency.
+loss inefficiency.
 
 Anyway, `-1` is passed to the special iterator function at the start of the loop
 to get the first value. Here the first value is the first positive even
@@ -152,7 +152,7 @@ case, we need to return `-1` when we run out of positive even integers. The
 last number available in signed 32bit integers is `2147483647` - defined in PAWN
 as `cellmax`, but this is odd so the last positive integer must be 1 less than
 that, i.e. `2147483646`, which can be written out in full or calculated as
-`cellmax - 1`. Therefore, when the input to the special iterator is the last
+`cellmax - 1`. Therefore, when the input to the special iterator is the least
 possible positive even integer there can be no further valid returns and instead
 `-1` is returned to mark the end of the loop.
 
@@ -282,7 +282,7 @@ for (new i = start, ...vars; (i = Random(i, ...vars)) != start; )
 }
 ```
 
-The first parameter to `iterstate` is the iterator sentinel - i.e. the invalid value that represents the start and end of the loop.  The rest are just pre-loop state.  The per-loop is important, because it means you could have nested special iterator loops if you wanted without them interferring with each other:
+The first parameter to `iterstate` is the iterator sentinel - i.e. the invalid value that represents the start and end of the loop.  The rest are just pre-loop state.  The per-loop is important, because it means you could have nested special iterator loops if you wanted without them interfering with each other:
 
 ```pawn
 foreach (new i : Random(10))
@@ -302,13 +302,13 @@ iterfunc stock Random(&iterstate, cur, count, min = cellmax, max = 0)
 ```
 
 `&iterstate` will be passed by-reference if there is only one, or as an array for multiple values.
-`cur` is, as before, the current iterator value (ignored in `Random` except to determine start of loop).
+`cur` is, as before, the current iterator value (ignored in `Random` except to determine the start of loop).
 `count` is the first explicit parameter, and always required.
 `min` and `max` are both optional, and if only `min` is given it is instead treated as `max`, with `min` becoming `0`.
 
 ### Example 4
 
-Lets say you want to write an iterator to loop through all currently connected
+Let's say you want to write an iterator to loop through all currently connected
 RCON admins. Resulting in the equivalent of:
 
 ```pawn
@@ -432,7 +432,7 @@ foreach (new admin : Admin)
 
 ## More Advanced Special Iterators
 
-We can combine every feature so far - no y_iterate dependency, state, and more, in to one iterator:
+We can combine every feature so far - no y_iterate dependency, state, and more, into one iterator:
 
 ```pawn
 // Using `iterstate` not `iterstart` - either are acceptable here.
@@ -480,7 +480,7 @@ foreach (new i : Admin(5))
 }
 ```
 
-There is one tiny limitataion with special iterators.  If they have state (i.e. use `iterstate` not `iterstart` or no definition), this won't work:
+There is one tiny limitation with special iterators.  If they have state (i.e. use `iterstate` not `iterstart` or no definition), this won't work:
 
 ```pawn
 foreach (i : Admin(5))
@@ -488,11 +488,11 @@ foreach (i : Admin(5))
 }
 ```
 
-Stateful special iterators MUST use `new`.  But there's a solution for this as well - move the state in to the function, and use `yield`...
+Stateful special iterators MUST use `new`.  But there's a solution for this as well - move the state into the function, and use `yield`...
 
 ## `yield`
 
-`yield` (aka `YIELD__`) is a new keyword that can return control flow to an earlier point, then resume again later.  It is a form of context switching long built in to y_iterate.  Our `Admin` example would thus become:
+`yield` (aka `YIELD__`) is a new keyword that can return control flow to an earlier point, then resume again later.  It is a form of context switching long built into y_iterate.  Our `Admin` example would thus become:
 
 ```pawn
 #define Iterator@Admin iteryield
@@ -734,21 +734,21 @@ data except through your well-defined API.
 
 ## Multi-Dimensional Iterators
 
-The owned vehicles example above is such a common use-case that it has been integrated directly in to the library.  A vehicle can only have one owner, so an array of iterators is very inefficient:
+The owned vehicles example above is such a common use-case that it has been integrated directly into the library.  A vehicle can only have one owner, so an array of iterators is very inefficient:
 
 ```pawn
 new
 	Iterator:OwnedVehicle[MAX_PLAYERS]<MAX_VEHICLES>;
 ```
 
-Not only does this waste a lot of space, but there's nothign preventing this:
+Not only does this waste a lot of space, but there's nothing preventing this:
 
 ```pawn
 Iter_Add(OwnedVehicle[4], 10);
 Iter_Add(OwnedVehicle[6], 10);
 ```
 
-This will make both players 4 and 6 owner of vehicle 10.  The alternative is to make multiple intertwined iterators, so that each element can be a member of only one at once:
+This will make both players 4 and 6 owners of vehicle 10.  The alternative is to make multiple intertwined iterators, so that each element can be a member of only one at once:
 
 ```pawn
 new
@@ -778,7 +778,7 @@ foreach (new vehicleid : OwnedVehicle<playerid>)
 
 ### `Bits`
 
-"y_bit" provides the "Bits" iterator, which takes a bit array and loops over all
+"y_bit" provides the "Bits" iterator, which takes a bit array and loops overall
 the bits set within it:
 
 ```pawn
