@@ -63,7 +63,7 @@ Output:
 ...
 ```
 
-At first, glance that seems OK. We loop through every integer and add only the
+At first glance that seems OK. We loop through every integer and add only the
 even ones. But there are two issues Firstly the `Iterator:` macro adds on an
 extra cell, so we end up with `EvenInt@YSII_Ag[cellmax + 1]`. `cellmax` is the
 highest possible integer value, so adding 1 to it is an invalid operation and
@@ -71,7 +71,7 @@ won't compile. But assuming that it is possible to do that, we would still end
 up with an array consisting of 2147483648 4-byte cells - that's exactly 8Gb of
 data in your compiled mode! Again, this won't compile.
 
-Fortunately, there is another way in the form of a special iterator function:
+Fortunately, there is another way, in the form of a special iterator function:
 
 ```pawn
 iterfunc stock EvenInt(cur)
@@ -135,7 +135,7 @@ for (new i = -1; (i = FUNC(i)) != -1; )
 
 As a side note, this won't work for regular iterators because `-1` is not a
 valid array index, so can't be used as the start value without a significant
-loss inefficiency.
+loss in efficiency.
 
 Anyway, `-1` is passed to the special iterator function at the start of the loop
 to get the first value. Here the first value is the first positive even
@@ -152,7 +152,7 @@ case, we need to return `-1` when we run out of positive even integers. The
 last number available in signed 32bit integers is `2147483647` - defined in PAWN
 as `cellmax`, but this is odd so the last positive integer must be 1 less than
 that, i.e. `2147483646`, which can be written out in full or calculated as
-`cellmax - 1`. Therefore, when the input to the special iterator is the least
+`cellmax - 1`. Therefore, when the input to the special iterator is the last
 possible positive even integer there can be no further valid returns and instead
 `-1` is returned to mark the end of the loop.
 
