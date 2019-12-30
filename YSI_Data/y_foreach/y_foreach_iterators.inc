@@ -717,10 +717,13 @@ stock Iter_All_Internal(const array[], size, value)
 			new
 				ret = CreateVehicle(modelid, x, y, z, angle, color1, color2, respawn_delay);
 		#endif
-		broadcastfunc Iter_VehicleDo(true, ret);
-		#if _FOREACH_LOCALS
-			Iter_Add(LocalVehicle, ret);
-		#endif
+		if (ret)
+		{
+			broadcastfunc Iter_VehicleDo(true, ret);
+			#if _FOREACH_LOCALS
+				Iter_Add(LocalVehicle, ret);
+			#endif
+		}
 		return ret;
 	}
 	
@@ -735,10 +738,13 @@ stock Iter_All_Internal(const array[], size, value)
 	{
 		new
 			ret = AddStaticVehicle(modelid, spawn_x, spawn_y, spawn_z, angle, color1, color2);
-		broadcastfunc Iter_VehicleDo(true, ret);
-		#if _FOREACH_LOCALS
-			Iter_Add(LocalVehicle, ret);
-		#endif
+		if (ret)
+		{
+			broadcastfunc Iter_VehicleDo(true, ret);
+			#if _FOREACH_LOCALS
+				Iter_Add(LocalVehicle, ret);
+			#endif
+		}
 		return ret;
 	}
 	
@@ -759,10 +765,13 @@ stock Iter_All_Internal(const array[], size, value)
 			new
 				ret = AddStaticVehicleEx(modelid, spawn_x, spawn_y, spawn_z, angle, color1, color2, respawn_delay);
 		#endif
-		broadcastfunc Iter_VehicleDo(true, ret);
-		#if _FOREACH_LOCALS
-			Iter_Add(LocalVehicle, ret);
-		#endif
+		if (ret)
+		{
+			broadcastfunc Iter_VehicleDo(true, ret);
+			#if _FOREACH_LOCALS
+				Iter_Add(LocalVehicle, ret);
+			#endif
+		}
 		return ret;
 	}
 	
