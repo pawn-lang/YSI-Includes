@@ -821,7 +821,7 @@ iterfunc stock VehiclePassenger(vehicleid)
 {
     FOREACH__ (new i : Player)
     {
-        if (GetPlayerVehicleID(playerid) == vehicleid)
+        if (GetPlayerVehicleID(i) == vehicleid)
         {
             YIELD__ return i;
         }
