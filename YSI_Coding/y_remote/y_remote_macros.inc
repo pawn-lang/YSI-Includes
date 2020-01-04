@@ -123,6 +123,6 @@ Optional plugins:
 //   
 // Assume that this is purely a forwarding declaration.  Make the function
 // uncallable.
-#define I@R:%9;%9;%9; static stock %9{}
-#define I@P:%9;%9;%9;%9; static stock %9{}
+#define I@R:%9;%9;%9;
+#define I@P:%9;%9;%9;%9;
 
