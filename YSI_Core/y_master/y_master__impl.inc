@@ -257,6 +257,13 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 stock
 	_E_YCM:_YCM@ = _E_YCM@u;
 
+#if defined YSIM_VERSION
+	// For making sure the latest version of a library is the one used.
+	public
+		MAKE_YCM<YSIM_VERSION> = YSIM_VERSION;
+	#undef YSIM_VERSION
+#endif
+
 forward _YCM();
 
 /*-----------------------------------------------------------------*//**
@@ -271,13 +278,20 @@ static stock Master_GetCurrentMaster()
 	// THIS CODE IS COPIED IN y_classes (mostly).
 	#if _YSIM_IS_SERVER
 		// Steal the master.
-		if (_Master_Get(#_YCM, true))
+		switch (_Master_Get(#_YCM, true))
+	#else //if _YSIM_IS_CLOUD
+		// See if this script should be master.
+		switch (_Master_Get(#_YCM, false))
+	#endif
+	{
+		case e_YSIM_GET_TYPE_NO_CONTEST:
 		{
 			// Nothing changed, or we took it without force.
+			P:2("Got master " #_YCM);
 			state _YCM:y;
 			_YCM@ = _E_YCM@y;
 		}
-		else
+		case e_YSIM_GET_TYPE_STOLE:
 		{
 			// Something changed, tell other scripts.
 			state _YCM:u;
@@ -287,20 +301,12 @@ static stock Master_GetCurrentMaster()
 			// Servers always get all data, so it doesn't matter that
 			// for now this is state "u".
 		}
-	#else //if _YSIM_IS_CLOUD
-		// See if this script should be master.
-		if (_Master_Get(#_YCM, false))
-		{
-			P:2("Got master " #_YCM);
-			state _YCM:y;
-			_YCM@ = _E_YCM@y;
-		}
-		else
+		case e_YSIM_GET_TYPE_NOT_GOT:
 		{
 			state _YCM:n;
 			_YCM@ = _E_YCM@n;
 		}
-	#endif
+	}
 }
 
 public OnMasterSystemInit(id)

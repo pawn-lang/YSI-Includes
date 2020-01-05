@@ -553,11 +553,18 @@ stock _Master_Relinquish(const library[])
  * <param name="library">The name of the library to try become master for.</param>
  *//*------------------------------------------------------------------------**/
 
-stock bool:_Master_Get(const library[], bool:force = false)
+enum e_YSIM_GET_TYPE
+{
+	e_YSIM_GET_TYPE_NO_CONTEST,
+	e_YSIM_GET_TYPE_STOLE,
+	e_YSIM_GET_TYPE_NOT_GOT,
+}
+
+stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 {
 	new
-		bool:ret = true;
-	P:3("bool:_Master_Get called: \"%s\", %i", library, _:force);
+		e_YSIM_GET_TYPE:ret = E_YSIM_GET_TYPE_NO_CONTEST;
+	P:3("E_YSIM_GET_TYPE:_Master_Get called: \"%s\", %i", library, _:force);
 	P:2("_Master_Get called");
 	if (existproperty(9, library))
 	{
@@ -567,9 +574,21 @@ stock bool:_Master_Get(const library[], bool:force = false)
 		if (master != -1)
 		{
 			P:4("_Master_Get: Prop set");
-			if (master == Master_ID()) return true; // Nothing has changed.
-			else if (force) ret = false; // A server is forcing itself.
-			else return false; // Not got the master.
+			if (master == Master_ID())
+			{
+				return e_YSIM_GET_TYPE_NO_CONTEST; // Nothing has changed.
+			}
+			else if (force)
+			{
+				ret = e_YSIM_GET_TYPE_STOLE; // A server is forcing itself.
+				
+			}
+			else
+			{
+				// Might still be able to steal the master if we're a higher version.
+				// First, check if there is a version.
+				return e_YSIM_GET_TYPE_NOT_GOT; // Not got the master.
+			}
 		}
 	}
 	P:4("_Master_Get: Get master.");

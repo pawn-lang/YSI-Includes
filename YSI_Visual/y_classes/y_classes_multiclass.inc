@@ -195,23 +195,31 @@ HOOK__ OnScriptInit()
 			P:4("Class_OnScriptInit: classes = %d %d %d", classLeft, classMiddle, classRight);
 			//printf("==========================");
 			#if !defined YSI_NO_MASTER
-				if (_Master_Get(#_YCM, true))
+				switch (_Master_Get(#_YCM, true))
 				{
-					// Nothing changed, or we took it without force.
-					state _YCM:y;
-					_YCM@ = _E_YCM@y;
-				}
-				else
-				{
-					// Something changed, tell other scripts.
-					state _YCM:u;
-					_YCM@ = _E_YCM@u;
-					// Determine the next unique name.
-					CallRemoteFunction(#_YCM, "");
-					// There is a note in y_master about this being safe
-					// because servers always get the data.  This is the server
-					// code, but may be in use by cloud systems.  This, however,
-					// is still not a problem because we never fully pass off.
+					case e_YSIM_GET_TYPE_NO_CONTEST:
+					{
+						// Nothing changed, or we took it without force.
+						P:2("Got master " #_YCM);
+						state _YCM:y;
+						_YCM@ = _E_YCM@y;
+					}
+					case e_YSIM_GET_TYPE_STOLE:
+					{
+						// Something changed, tell other scripts.
+						state _YCM:u;
+						_YCM@ = _E_YCM@u;
+						// Determine the next unique name.
+						CallRemoteFunction(#_YCM, "");
+						// There is a note in y_master about this being safe
+						// because servers always get the data.  This is the server
+						// code, but may be in use by cloud systems.  This, however,
+						// is still not a problem because we never fully pass off.
+					}
+					case e_YSIM_GET_TYPE_NOT_GOT:
+					{
+						P:E("`E_YSIM_GET_TYPE_NOT_GOT` with `force = true`");
+					}
 				}
 			#endif
 		}
