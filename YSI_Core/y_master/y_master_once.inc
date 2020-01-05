@@ -442,7 +442,7 @@ forward OnMasterSystemInit(id);
 
 /*-------------------------------------------------------------------------*//**
  * <returns>
- *  OnGameModeExit
+ *  OnScriptExit
  * </returns>
  * <remarks>
  *  Destructor.
@@ -485,6 +485,101 @@ CHAIN_FORWARD:Master_OnScriptExit() = 1;
 #endif
 #define OnScriptExit(%0) CHAIN_PUBLIC:Master_OnScriptExit(%0)
 forward OnMasterSystemClose(id);
+
+/*-------------------------------------------------------------------------*//**
+ * <returns>
+ *  OnGameModeExit
+ * </returns>
+ * <remarks>
+ *  Destructor.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+forward OnRconCommand(cmd[]);
+
+public OnRconCommand(cmd[])
+{
+	if (!YSI_FILTERSCRIPT)
+	{
+		if (!strcmp(cmd, "loadmodule ", true, 11))
+		{
+			if (cmd[11])
+			{
+				new nucmd[128];
+				format(nucmd, sizeof (nucmd), "loadfs ../modules/%s", cmd[11]);
+				SendRconCommand(nucmd);
+			}
+			else
+			{
+				P:F("No module specified for \"loadmodule\"");
+			}
+			return 1;
+		}
+		else if (!strcmp(cmd, "unloadmodule ", true, 13))
+		{
+			if (cmd[13])
+			{
+				new nucmd[128];
+				format(nucmd, sizeof (nucmd), "unloadfs ../modules/%s", cmd[13]);
+				SendRconCommand(nucmd);
+			}
+			else
+			{
+				P:F("No module specified for \"unloadmodule\"");
+			}
+			return 1;
+		}
+		else if (!strcmp(cmd, "reloadmodule ", true, 13))
+		{
+			if (cmd[13])
+			{
+				// We can't just use the default `reloads` command, because that will clear memory
+				// before the reload, thus we'll loose data.  Instead, we use a hack to load the FS
+				// twice at once!  We just alternate which is loaded and unloaded statelessly -
+				// detect which method succeeded.
+				new nucmd[128];
+				new masters = getproperty(8, YSIM_MASTER);
+				format(nucmd, sizeof (nucmd), "loadfs ../modules/%s", cmd[13]);
+				SendRconCommand(nucmd);
+				if (masters == getproperty(8, YSIM_MASTER))
+				{
+					// Didn't load, try the alternate version.
+					format(nucmd, sizeof (nucmd), "loadfs ./../modules/%s", cmd[13]);
+					SendRconCommand(nucmd);
+					if (masters == getproperty(8, YSIM_MASTER))
+					{
+						P:F("Could not reload module \"%s\"", cmd[13]);
+					}
+					else
+					{
+						format(nucmd, sizeof (nucmd), "unloadfs ../modules/%s", cmd[13]);
+						SendRconCommand(nucmd);
+					}
+				}
+				else
+				{
+					// Loaded a second version of the script.  Unload the first version.
+					format(nucmd, sizeof (nucmd), "unloadfs ./../modules/%s", cmd[13]);
+					SendRconCommand(nucmd);
+				}
+			}
+			else
+			{
+				P:F("No module specified for \"reloadmodule\"");
+			}
+			return 1;
+		}
+	}
+	return Master_OnRconCommand(cmd);
+}
+
+CHAIN_FORWARD:Master_OnRconCommand(cmd[]) = 1;
+#if defined _ALS_OnRconCommand
+	#undef OnRconCommand
+#else
+	#define _ALS_OnRconCommand
+#endif
+#define OnRconCommand(%0) CHAIN_PUBLIC:Master_OnRconCommand(%0)
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
