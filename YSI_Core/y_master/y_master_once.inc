@@ -522,6 +522,8 @@ public OnRconCommand(cmd[])
 				new nucmd[128];
 				format(nucmd, sizeof (nucmd), "unloadfs ../modules/%s", cmd[13]);
 				SendRconCommand(nucmd);
+				format(nucmd, sizeof (nucmd), "unloadfs ./../modules/%s", cmd[13]);
+				SendRconCommand(nucmd);
 			}
 			else
 			{
