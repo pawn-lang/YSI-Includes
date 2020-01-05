@@ -605,14 +605,14 @@ public OnRconCommand(cmd[])
 					SendRconCommand(nucmd);
 					if (masters == getproperty(8, YSIM_MASTER))
 					{
+						P:F("Could not reload module \"%s\"", cmd[13]);
+					}
+					else
+					{
 						format(nucmd, sizeof (nucmd), "unloadfs ../modules/%s", cmd[13]);
 						SendRconCommand(nucmd);
 						setproperty(10, cmd[13], 1);
 						printf("Module \"%s\" (re)loaded.", cmd[13]);
-					}
-					else
-					{
-						P:F("Could not reload module \"%s\"", cmd[13]);
 					}
 				}
 				else
