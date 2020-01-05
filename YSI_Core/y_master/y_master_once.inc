@@ -549,10 +549,6 @@ stock _Master_Relinquish(const library[])
 	}
 }
 
-/*-------------------------------------------------------------------------*//**
- * <param name="library">The name of the library to try become master for.</param>
- *//*------------------------------------------------------------------------**/
-
 enum e_YSIM_GET_TYPE
 {
 	e_YSIM_GET_TYPE_NO_CONTEST,
@@ -560,10 +556,14 @@ enum e_YSIM_GET_TYPE
 	e_YSIM_GET_TYPE_NOT_GOT,
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="library">The name of the library to try become master for.</param>
+ *//*------------------------------------------------------------------------**/
+
 stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 {
 	new
-		e_YSIM_GET_TYPE:ret = E_YSIM_GET_TYPE_NO_CONTEST;
+		e_YSIM_GET_TYPE:ret = e_YSIM_GET_TYPE_NO_CONTEST;
 	P:3("E_YSIM_GET_TYPE:_Master_Get called: \"%s\", %i", library, _:force);
 	P:2("_Master_Get called");
 	if (existproperty(9, library))
@@ -578,17 +578,25 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 			{
 				return e_YSIM_GET_TYPE_NO_CONTEST; // Nothing has changed.
 			}
-			else if (force)
+			else if (!force)
 			{
-				ret = e_YSIM_GET_TYPE_STOLE; // A server is forcing itself.
-				
-			}
-			else
-			{
-				// Might still be able to steal the master if we're a higher version.
+				new func[32];
+				format(func, sizeof (func), "YSIM_VERSION%s", library);
+				master = CallLocalFunction(library, "");
 				// First, check if there is a version.
-				return e_YSIM_GET_TYPE_NOT_GOT; // Not got the master.
+				if (!master)
+				{
+					return e_YSIM_GET_TYPE_NOT_GOT; // Not got the master.
+				}
+				// Might still be able to steal the master if we're a higher version.  We must be
+				// EXCLUSIVELY higher, not just same or higher.
+				CallRemoteFunction(library, "");
+				if (master <= getproperty(8, #YSIM_VERRET))
+				{
+					return e_YSIM_GET_TYPE_NOT_GOT; // Not got the master.
+				}
 			}
+			ret = e_YSIM_GET_TYPE_STOLE; // A server is forcing itself.
 		}
 	}
 	P:4("_Master_Get: Get master.");

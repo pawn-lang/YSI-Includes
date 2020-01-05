@@ -258,9 +258,21 @@ stock
 	_E_YCM:_YCM@ = _E_YCM@u;
 
 #if defined YSIM_VERSION
-	// For making sure the latest version of a library is the one used.
-	public
-		MAKE_YCM<YSIM_VERSION> = YSIM_VERSION;
+	forward MAKE_YCM<YSIM_VERSION...>();
+
+	public MAKE_YCM<YSIM_VERSION...>() <_YCM:y>
+	{
+		// For making sure the latest version of a library is the one used.
+		setproperty(8, #YSIM_VERRET, YSIM_VERSION);
+		return YSIM_VERSION;
+	}
+
+	public MAKE_YCM<YSIM_VERSION...>() <>
+	{
+		// Return here for local (current version) gets.
+		return YSIM_VERSION;
+	}
+
 	#undef YSIM_VERSION
 #endif
 
