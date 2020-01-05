@@ -394,6 +394,9 @@ enum _E_YCM
 #define _YCM@p (_YCM@==_E_YCM@p)
 #define _YCM@u (_YCM@==_E_YCM@u)
 
+static stock
+	YSI_g_sModuleName[32];
+
 /*-------------------------------------------------------------------------*//**
  * <returns>
  *  OnScriptInit
@@ -410,6 +413,7 @@ public OnScriptInit()
 	P:1("Master_OnScriptInit");
 	state _ALS : _ALS_go;
 	@_ = 0;
+	getproperty(8, "", YSIM_STRING + 1, YSI_g_sModuleName);
 	// Properties get lost between script changes so we need to force a rebuild.
 	CallRemoteFunction("Master_Reassert", "");
 	new
@@ -451,6 +455,10 @@ forward OnMasterSystemInit(id);
 
 public OnScriptExit()
 {
+	if (YSI_g_sModuleName[0])
+	{
+		deleteproperty(10, YSI_g_sModuleName);
+	}
 	P:1("MasterOnce_OnScriptExit called");
 	#if !defined YSI_NO_MASTER
 		// Loop through everything this script is master for and call the remote
@@ -505,9 +513,28 @@ public OnRconCommand(cmd[])
 		{
 			if (cmd[11])
 			{
-				new nucmd[128];
-				format(nucmd, sizeof (nucmd), "loadfs ../modules/%s", cmd[11]);
-				SendRconCommand(nucmd);
+				if (existproperty(10, cmd[11]))
+				{
+					P:E("Module \"%s\" already loaded.", cmd[11]);
+				}
+				else
+				{
+					setproperty(8, "", YSIM_STRING + 1, cmd[11]);
+					new
+						nucmd[128],
+						masters = getproperty(8, YSIM_MASTER);
+					format(nucmd, sizeof (nucmd), "loadfs ../modules/%s", cmd[11]);
+					SendRconCommand(nucmd);
+					if (masters == getproperty(8, YSIM_MASTER))
+					{
+						P:F("Could not load module \"%s\"", cmd[11]);
+					}
+					else
+					{
+						printf("Module \"%s\" loaded", cmd[11]);
+					}
+					deleteproperty(8, "", YSIM_STRING + 1);
+				}
 			}
 			else
 			{
@@ -519,11 +546,28 @@ public OnRconCommand(cmd[])
 		{
 			if (cmd[13])
 			{
-				new nucmd[128];
-				format(nucmd, sizeof (nucmd), "unloadfs ../modules/%s", cmd[13]);
-				SendRconCommand(nucmd);
-				format(nucmd, sizeof (nucmd), "unloadfs ./../modules/%s", cmd[13]);
-				SendRconCommand(nucmd);
+				if (existproperty(10, cmd[13]))
+				{
+					new
+						nucmd[128],
+						masters = getproperty(8, YSIM_MASTER);
+					format(nucmd, sizeof (nucmd), "unloadfs ../modules/%s", cmd[13]);
+					SendRconCommand(nucmd);
+					format(nucmd, sizeof (nucmd), "unloadfs ./../modules/%s", cmd[13]);
+					SendRconCommand(nucmd);
+					if (masters == getproperty(8, YSIM_MASTER))
+					{
+						P:F("Could not unload module \"%s\"", cmd[13]);
+					}
+					else
+					{
+						printf("Module \"%s\" unloaded.", cmd[13]);
+					}
+				}
+				else
+				{
+					P:E("Module \"%s\" not loaded.", cmd[13]);
+				}
 			}
 			else
 			{
@@ -535,12 +579,18 @@ public OnRconCommand(cmd[])
 		{
 			if (cmd[13])
 			{
+				setproperty(8, "", YSIM_STRING + 1, cmd[13]);
+				if (!existproperty(10, cmd[13]))
+				{
+					P:W("Module \"%s\" not loaded.", cmd[13]);
+				}
 				// We can't just use the default `reloads` command, because that will clear memory
 				// before the reload, thus we'll loose data.  Instead, we use a hack to load the FS
 				// twice at once!  We just alternate which is loaded and unloaded statelessly -
 				// detect which method succeeded.
-				new nucmd[128];
-				new masters = getproperty(8, YSIM_MASTER);
+				new
+					nucmd[128],
+					masters = getproperty(8, YSIM_MASTER);
 				format(nucmd, sizeof (nucmd), "loadfs ../modules/%s", cmd[13]);
 				SendRconCommand(nucmd);
 				if (masters == getproperty(8, YSIM_MASTER))
@@ -550,12 +600,14 @@ public OnRconCommand(cmd[])
 					SendRconCommand(nucmd);
 					if (masters == getproperty(8, YSIM_MASTER))
 					{
-						P:F("Could not reload module \"%s\"", cmd[13]);
+						format(nucmd, sizeof (nucmd), "unloadfs ../modules/%s", cmd[13]);
+						SendRconCommand(nucmd);
+						setproperty(10, cmd[13], 1);
+						printf("Module \"%s\" (re)loaded.", cmd[13]);
 					}
 					else
 					{
-						format(nucmd, sizeof (nucmd), "unloadfs ../modules/%s", cmd[13]);
-						SendRconCommand(nucmd);
+						P:F("Could not reload module \"%s\"", cmd[13]);
 					}
 				}
 				else
@@ -563,7 +615,10 @@ public OnRconCommand(cmd[])
 					// Loaded a second version of the script.  Unload the first version.
 					format(nucmd, sizeof (nucmd), "unloadfs ./../modules/%s", cmd[13]);
 					SendRconCommand(nucmd);
+					setproperty(10, cmd[13], 1);
+					printf("Module \"%s\" (re)loaded.", cmd[13]);
 				}
+				deleteproperty(8, "", YSIM_STRING + 1);
 			}
 			else
 			{
@@ -592,6 +647,10 @@ CHAIN_FORWARD:Master_OnRconCommand(cmd[]) = 1;
 public Master_Reassert()
 {
 	// Make sure that the caller parameter is always 0 by default.
+	if (YSI_g_sModuleName[0])
+	{
+		setproperty(10, YSI_g_sModuleName, 1);
+	}
 	U@(8, YSIM_CALLER, 0);
 	if (Master_ID())
 	{
