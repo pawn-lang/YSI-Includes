@@ -583,11 +583,6 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 				new func[32];
 				format(func, sizeof (func), "YSIM_VERSION%s", library);
 				master = CallLocalFunction(library, "");
-				// First, check if there is a version.
-				if (!master)
-				{
-					return e_YSIM_GET_TYPE_NOT_GOT; // Not got the master.
-				}
 				// Might still be able to steal the master if we're a higher version.  We must be
 				// EXCLUSIVELY higher, not just same or higher.
 				CallRemoteFunction(library, "");
