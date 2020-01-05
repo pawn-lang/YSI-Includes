@@ -104,6 +104,11 @@ DEFINE_HOOK_REPLACEMENT__(TextDraw  , TD );
 DEFINE_HOOK_REPLACEMENT__(Update    , Upd);
 DEFINE_HOOK_REPLACEMENT__(Object    , Obj);
 DEFINE_HOOK_REPLACEMENT__(Command   , Cmd);
+
+// SPECIAL HACK!  The streamer plugin already shortens "Checkpoint" to "CP", without this line
+// y_hooks will try to expand it again to `OnPlayerEnterDynamicCheckpoint`, which is a valid
+// callback name, but the wrong one.  Thus we prevent the final expansion with this seemingly
+// pointless replacement.  This is an internal detail you don't really need to worry about.
 DEFINE_HOOK_REPLACEMENT__(DynamicCP , DynamicCP);
 
 enum E_HOOK_NAME_REPLACEMENT_DATA
