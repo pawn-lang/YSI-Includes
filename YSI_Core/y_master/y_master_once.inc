@@ -397,6 +397,11 @@ enum _E_YCM
 static stock
 	YSI_g_sModuleName[32];
 
+stock Master_GetModuleName(ret[32])
+{
+	ret = YSI_g_sModuleName;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <returns>
  *  OnScriptInit
