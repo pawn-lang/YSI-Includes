@@ -305,7 +305,9 @@ static stock Master_GetCurrentMaster()
 		}
 		case e_YSIM_GET_TYPE_STOLE:
 		{
-			// Something changed, tell other scripts.
+			// Something changed, tell other scripts.  Set the state here to `:u` not `:y` so that
+			// the only call to a `:y` function does relinquishing.  We don't want to be set as
+			// master here then instantly relinquish everything.
 			state _YCM:u;
 			_YCM@ = _E_YCM@u;
 			// Determine the next unique name.
