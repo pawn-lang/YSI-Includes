@@ -580,7 +580,7 @@ public Master_OnCloseModules()
 	}
 }
 
-stock bool:Master_LoadModule(const module[])
+bool:Master_LoadModule(const module[])
 {
 	if (existproperty(10, module))
 	{
@@ -607,15 +607,15 @@ stock bool:Master_LoadModule(const module[])
 	return true;
 }
 
-stock bool:Master_IsModuleLoaded(const module[])
+bool:Master_IsModuleLoaded(const module[])
 {
 	return existproperty(10, module);
 }
 
-stock bool:Master_ReloadModule(const module[])
+bool:Master_ReloadModule(const module[])
 {
 	setproperty(8, "", YSIM_STRING + 1, module);
-	if (!existproperty(10, module))
+	if (!Master_IsModuleLoaded(module))
 	{
 		P:W("Module \"%s\" not loaded.", module);
 	}
@@ -656,7 +656,7 @@ stock bool:Master_ReloadModule(const module[])
 	return true;
 }
 
-stock bool:Master_UnloadModule(const module[])
+bool:Master_UnloadModule(const module[])
 {
 	if (existproperty(10, module))
 	{
