@@ -424,6 +424,7 @@ public OnScriptInit()
 	state _ALS : _ALS_go;
 	@_ = 0;
 	getproperty(8, "", YSIM_STRING + 1, YSI_g_sModuleName);
+	deleteproperty(8, "", YSIM_STRING + 1);
 	// Properties get lost between script changes so we need to force a rebuild.
 	CallRemoteFunction("Master_Reassert", "");
 	new
