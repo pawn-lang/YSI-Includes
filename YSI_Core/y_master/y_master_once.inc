@@ -632,15 +632,16 @@ forward OnMasterSystemClose(id);
 		// We just alternate which is loaded and unloaded statelessly - detect which method
 		// succeeded.
 		new
-			masters = getproperty(8, YSIM_MASTER);
+			oldMasters = getproperty(8, YSIM_MASTER),
+			newMasters;
 		format(Q@, sizeof (Q@), "loadfs ../modules/%s", module);
 		SendRconCommand(Q@);
-		if (masters == getproperty(8, YSIM_MASTER))
+		if (oldMasters == (newMasters = getproperty(8, YSIM_MASTER)))
 		{
 			// Didn't load, try the alternate version.
 			format(Q@, sizeof (Q@), "loadfs ./../modules/%s", module);
 			SendRconCommand(Q@);
-			if (masters == getproperty(8, YSIM_MASTER))
+			if (oldMasters == (newMasters = getproperty(8, YSIM_MASTER)))
 			{
 				P:F("Could not reload module \"%s\"", module);
 				y_rconfix_Load();
@@ -650,7 +651,7 @@ forward OnMasterSystemClose(id);
 			{
 				format(Q@, sizeof (Q@), "unloadfs ../modules/%s", module);
 				SendRconCommand(Q@);
-				setproperty(10, module, 1);
+				setproperty(10, module, newMasters & ~oldMasters);
 				P:0("Module \"%s\" (re)loaded.", module);
 			}
 		}
@@ -659,7 +660,7 @@ forward OnMasterSystemClose(id);
 			// Loaded a second version of the script.  Unload the first version.
 			format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", module);
 			SendRconCommand(Q@);
-			setproperty(10, module, 1);
+			setproperty(10, module, newMasters & ~oldMasters);
 			P:0("Module \"%s\" (re)loaded.", module);
 		}
 		deleteproperty(8, "", YSIM_STRING + 1);
@@ -772,7 +773,7 @@ public Master_Reassert()
 	#if !defined YSI_NO_MASTER
 		if (YSI_g_sModuleName[0])
 		{
-			setproperty(10, YSI_g_sModuleName, 1);
+			setproperty(10, YSI_g_sModuleName, Master_ID());
 		}
 	#endif
 	U@(8, YSIM_CALLER, 0);
