@@ -600,7 +600,7 @@ forward OnMasterSystemClose(id);
 			}
 			else
 			{
-				printf("Module \"%s\" loaded", module);
+				P:0("Module \"%s\" loaded", module);
 			}
 			deleteproperty(8, "", YSIM_STRING + 1);
 		}
@@ -642,7 +642,7 @@ forward OnMasterSystemClose(id);
 				format(Q@, sizeof (Q@), "unloadfs ../modules/%s", module);
 				SendRconCommand(Q@);
 				setproperty(10, module, 1);
-				printf("Module \"%s\" (re)loaded.", module);
+				P:0("Module \"%s\" (re)loaded.", module);
 			}
 		}
 		else
@@ -651,7 +651,7 @@ forward OnMasterSystemClose(id);
 			format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", module);
 			SendRconCommand(Q@);
 			setproperty(10, module, 1);
-			printf("Module \"%s\" (re)loaded.", module);
+			P:0("Module \"%s\" (re)loaded.", module);
 		}
 		deleteproperty(8, "", YSIM_STRING + 1);
 		return true;
@@ -674,7 +674,7 @@ forward OnMasterSystemClose(id);
 			}
 			else
 			{
-				printf("Module \"%s\" unloaded.", module);
+				P:0("Module \"%s\" unloaded.", module);
 				return true;
 			}
 		}
@@ -792,7 +792,7 @@ public Master_Reassert()
 
 stock _Master_Relinquish(const library[])
 {
-	//printf("STEAL %s %d", library, YSI_g_sMasterCount);
+	P:4("_Master_Relinquish called: %s %d", library, YSI_g_sMasterCount);
 	switch (YSI_g_sMasterCount)
 	{
 		case 0: return;
