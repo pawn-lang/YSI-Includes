@@ -4,7 +4,7 @@ foreign M_Func1();
 foreign M_Func2(in);
 foreign void:M_Func3(&ret, in);
 foreign string:M_Func4();
-foreign string:M_Func5(string:in[]);
+foreign string:M_Func5(const string:in[]);
 foreign M_Func6();
 
 static stock Master_TestAll(base)
@@ -29,7 +29,7 @@ TEST__ Master_ModulesPhase0()
 	// Run the tests, without any server module loaded.
 	new
 		ret;
-	ASSERT_EQ(M_Func1(), base);
+	ASSERT_EQ(M_Func1(), 0);
 	ASSERT_EQ(M_Func2(42), 0);
 	ret = 0;
 	M_Func3(ret, 11);

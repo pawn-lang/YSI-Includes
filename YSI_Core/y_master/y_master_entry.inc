@@ -160,6 +160,7 @@ Optional plugins:
 
 // Only include this lot once.
 #if defined YSI_TESTS
+	#include "..\..\YSI_Coding\y_hooks"
 	// Get the new master.
 	#define MASTER 58
 	#include "y_master_entry"

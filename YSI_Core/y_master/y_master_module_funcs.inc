@@ -2,7 +2,7 @@ foreign M_Func1();
 foreign M_Func2(in);
 foreign void:M_Func3(&ret, in);
 foreign string:M_Func4();
-foreign string:M_Func5(string:in[]);
+foreign string:M_Func5(const string:in[]);
 foreign M_Func6();
 
 global M_Func1()
@@ -28,7 +28,7 @@ global string:M_Func4()
 	return str;
 }
 
-global string:M_Func5(string:in[])
+global string:M_Func5(const string:in[])
 {
 	new
 		str[32];
