@@ -687,9 +687,16 @@ public _YCM() <_YCM:y>
 	if (getproperty(9, #_YCM) == Master_ID())
 	{
 		P:2(#_YCM " natural end");
+		if (YSI_gModuleShutdown)
+		{
+			// Disable the current mastership.
+			state _YCM:w;
+			_YCM@ = _E_YCM@w;
+			return;
+		}
 		// Disable the current mastership.
-		state _YCM:m;
-		_YCM@ = _E_YCM@m;
+		state _YCM:p;
+		_YCM@ = _E_YCM@p;
 		// Ending normally, relinquish control peacefully.
 		setproperty(9, #_YCM, -1);
 		// Called locally to begin the hand off process.
@@ -698,25 +705,35 @@ public _YCM() <_YCM:y>
 	else
 	{
 		P:2(#_YCM " stolen!");
-		// Brutally stolen!
+		// Brutally stolen, but can be later reclaimed.
+		state _YCM:n;
+		_YCM@ = _E_YCM@n;
 		_Master_Relinquish(#_YCM);
 	}
-	// This is where we need to to the handoff.
-	state _YCM:p;
-	_YCM@ = _E_YCM@p;
-	CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...>, "");
-	CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...Group>, "");
-	// Could, in theory, return to be master if the script doesn't end.
-	state _YCM:n;
-	_YCM@ = _E_YCM@n;
+	if (getproperty(9, #_YCM) != -1)
+	{
+		// This is where we need to to the handoff.
+		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...>, "");
+		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...Group>, "");
+	}
 }
 
 public _YCM() <_YCM:n>
 {
 	P:1("%d: " #_YCM "<n> called", Master_ID());
-	// This has been called remotely from a script which owns the
-	// library masterhood (that's the only way this can ever be called).
-	Master_GetCurrentMaster();
+	if (YSI_gModuleShutdown)
+	{
+		// This wasn't the master, but is in a module that's now shutting down.  null-route all
+		// further calls.
+		state _YCM:p;
+		_YCM@ = _E_YCM@p;
+	}
+	else
+	{
+		// This has been called remotely from a script which owns the
+		// library masterhood (that's the only way this can ever be called).
+		Master_GetCurrentMaster();
+	}
 }
 
 public _YCM() <_YCM:m, _YCM:p>
@@ -731,6 +748,25 @@ public _YCM() <_YCM:u>
 	P:1("%d: " #_YCM "<u> called", Master_ID());
 	state _YCM:y;
 	_YCM@ = _E_YCM@y;
+}
+
+public _YCM() <_YCM:w>
+{
+	P:1("%d: " #_YCM "<w> called", Master_ID());
+	// Disable the current mastership.
+	state _YCM:p;
+	_YCM@ = _E_YCM@p;
+	// Ending normally, relinquish control peacefully.
+	setproperty(9, #_YCM, -1);
+	// Called locally to begin the hand off process.
+	CallRemoteFunction(#_YCM, "");
+	// Now try pass everything off.
+	if (getproperty(9, #_YCM) != -1)
+	{
+		// This is where we need to to the handoff.
+		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...>, "");
+		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...Group>, "");
+	}
 }
 
 public _YCM() <>

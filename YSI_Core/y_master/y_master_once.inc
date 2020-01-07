@@ -381,11 +381,12 @@ forward Master_Reassert();
 
 enum _E_YCM
 {
-	_E_YCM@y,
-	_E_YCM@n,
-	_E_YCM@m,
-	_E_YCM@p,
-	_E_YCM@u
+	_E_YCM@y, // Is the current master.
+	_E_YCM@n, // Is not the current master.
+	_E_YCM@m, // Dummy state used purely for determining automata in global/foreign macros.
+	_E_YCM@p, // Was the master, now shut down and out the master system.
+	_E_YCM@u, // Have stolen the mastership, but not yet been handed off too.
+	_E_YCM@w  // Was the master, but not yet started looking for a new one.
 }
 
 #define _YCM@y (_YCM@==_E_YCM@y)
@@ -393,6 +394,10 @@ enum _E_YCM
 #define _YCM@m (_YCM@==_E_YCM@m)
 #define _YCM@p (_YCM@==_E_YCM@p)
 #define _YCM@u (_YCM@==_E_YCM@u)
+#define _YCM@w (_YCM@==_E_YCM@w)
+
+stock
+	YSI_gModuleShutdown;
 
 static stock
 	YSI_g_sModuleName[32];
@@ -449,6 +454,8 @@ forward OnMasterSystemInit(id);
 		YSI_g_sMasterData[MAX_MASTERS];
 #endif
 
+forward Master_OnCloseModules();
+
 /*-------------------------------------------------------------------------*//**
  * <returns>
  *  OnScriptExit
@@ -460,11 +467,19 @@ forward OnMasterSystemInit(id);
 
 public OnScriptExit()
 {
+	P:1("MasterOnce_OnScriptExit called");
 	if (YSI_g_sModuleName[0])
 	{
 		deleteproperty(10, YSI_g_sModuleName);
 	}
-	P:1("MasterOnce_OnScriptExit called");
+	// This is the main gamemode.  All "modules" are firmly attached to this, and should be
+	// unloaded with it.  First mark them as unavailable for handoff, then shut them down.
+	if (!YSI_FILTERSCRIPT)
+	{
+		setproperty(8, "", YSIM_STRING + 2, "");
+		// First call - disable all modules.
+		CallRemoteFunction("Master_OnCloseModules", "");
+	}
 	#if !defined YSI_NO_MASTER
 		// Loop through everything this script is master for and call the remote
 		// function for it.  EXCEPT for this script itself!
@@ -487,6 +502,26 @@ public OnScriptExit()
 	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~Master_ID()),
 	Master_OnScriptExit(),
 	CallRemoteFunction("OnMasterSystemClose", "i", Master_ID());
+	if (!YSI_FILTERSCRIPT)
+	{
+		// Second call - pass off module data.
+		CallRemoteFunction("Master_OnCloseModules", "");
+
+		// Finally shut down all the modules.
+		getproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
+		new
+			prev = 0,
+			next = 0;
+		while ((next = strfind(YSI_UNSAFE_HUGE_STRING, ";", false, prev)) != -1)
+		{
+			YSI_UNSAFE_HUGE_STRING[next] = '\0';
+			format(Q@, sizeof (Q@), "unloadfs ../modules/%s", YSI_UNSAFE_HUGE_STRING[prev]);
+			SendRconCommand(Q@);
+			format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", YSI_UNSAFE_HUGE_STRING[prev]);
+			SendRconCommand(Q@);
+			prev = next + 1;
+		}
+	}
 	return 1;
 }
 
@@ -501,7 +536,53 @@ forward OnMasterSystemClose(id);
 
 /*-------------------------------------------------------------------------*//**
  * <returns>
- *  OnGameModeExit
+ *  Master_OnCloseModules
+ * </returns>
+ * <remarks>
+ *  Destructor.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+public Master_OnCloseModules()
+{
+	P:1("Master_OnCloseModules called");
+	if (YSI_g_sModuleName[0])
+	{
+		// This is a module, and thus purely loaded for the sake of gamemodes.  Shut it down.
+		new
+			func[4];
+		YSI_gModuleShutdown = !YSI_gModuleShutdown;
+		for (new i = 0, j = YSI_g_sMasterCount; i != j; ++i)
+		{
+			// This is slightly slower for ending and starting scripts, but uses far
+			// less heap space, and these values are rarely used, so may as well
+			// pack them (which is what has happened here).
+			func[0] = YSI_g_sMasterData[i] & 0xFF,
+			func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF,
+			func[2] = YSI_g_sMasterData[i] >> 16,
+			CallLocalFunction(func, "");
+			P:5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
+			// The properties currently clear instantly, but that may not always be
+			// the case.
+		}
+		if (YSI_gModuleShutdown)
+		{
+			getproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
+			const end = strlen(YSI_UNSAFE_HUGE_STRING);
+			strcat(YSI_UNSAFE_HUGE_STRING[end], YSI_g_sModuleName);
+			strcat(YSI_UNSAFE_HUGE_STRING[end], ";");
+			setproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
+		}
+		else
+		{
+			YSI_g_sMasterCount = 0;
+		}
+	}
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <returns>
+ *  OnRconCommand
  * </returns>
  * <remarks>
  *  Destructor.
@@ -512,6 +593,7 @@ forward OnRconCommand(cmd[]);
 
 public OnRconCommand(cmd[])
 {
+	P:1("MasterOnce_OnRconCommand called");
 	if (!YSI_FILTERSCRIPT)
 	{
 		if (!strcmp(cmd, "loadmodule ", true, 11))
@@ -526,10 +608,9 @@ public OnRconCommand(cmd[])
 				{
 					setproperty(8, "", YSIM_STRING + 1, cmd[11]);
 					new
-						nucmd[128],
 						masters = getproperty(8, YSIM_MASTER);
-					format(nucmd, sizeof (nucmd), "loadfs ../modules/%s", cmd[11]);
-					SendRconCommand(nucmd);
+					format(Q@, sizeof (Q@), "loadfs ../modules/%s", cmd[11]);
+					SendRconCommand(Q@);
 					if (masters == getproperty(8, YSIM_MASTER))
 					{
 						P:F("Could not load module \"%s\"", cmd[11]);
@@ -554,12 +635,11 @@ public OnRconCommand(cmd[])
 				if (existproperty(10, cmd[13]))
 				{
 					new
-						nucmd[128],
 						masters = getproperty(8, YSIM_MASTER);
-					format(nucmd, sizeof (nucmd), "unloadfs ../modules/%s", cmd[13]);
-					SendRconCommand(nucmd);
-					format(nucmd, sizeof (nucmd), "unloadfs ./../modules/%s", cmd[13]);
-					SendRconCommand(nucmd);
+					format(Q@, sizeof (Q@), "unloadfs ../modules/%s", cmd[13]);
+					SendRconCommand(Q@);
+					format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", cmd[13]);
+					SendRconCommand(Q@);
 					if (masters == getproperty(8, YSIM_MASTER))
 					{
 						P:F("Could not unload module \"%s\"", cmd[13]);
@@ -594,23 +674,22 @@ public OnRconCommand(cmd[])
 				// twice at once!  We just alternate which is loaded and unloaded statelessly -
 				// detect which method succeeded.
 				new
-					nucmd[128],
 					masters = getproperty(8, YSIM_MASTER);
-				format(nucmd, sizeof (nucmd), "loadfs ../modules/%s", cmd[13]);
-				SendRconCommand(nucmd);
+				format(Q@, sizeof (Q@), "loadfs ../modules/%s", cmd[13]);
+				SendRconCommand(Q@);
 				if (masters == getproperty(8, YSIM_MASTER))
 				{
 					// Didn't load, try the alternate version.
-					format(nucmd, sizeof (nucmd), "loadfs ./../modules/%s", cmd[13]);
-					SendRconCommand(nucmd);
+					format(Q@, sizeof (Q@), "loadfs ./../modules/%s", cmd[13]);
+					SendRconCommand(Q@);
 					if (masters == getproperty(8, YSIM_MASTER))
 					{
 						P:F("Could not reload module \"%s\"", cmd[13]);
 					}
 					else
 					{
-						format(nucmd, sizeof (nucmd), "unloadfs ../modules/%s", cmd[13]);
-						SendRconCommand(nucmd);
+						format(Q@, sizeof (Q@), "unloadfs ../modules/%s", cmd[13]);
+						SendRconCommand(Q@);
 						setproperty(10, cmd[13], 1);
 						printf("Module \"%s\" (re)loaded.", cmd[13]);
 					}
@@ -618,8 +697,8 @@ public OnRconCommand(cmd[])
 				else
 				{
 					// Loaded a second version of the script.  Unload the first version.
-					format(nucmd, sizeof (nucmd), "unloadfs ./../modules/%s", cmd[13]);
-					SendRconCommand(nucmd);
+					format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", cmd[13]);
+					SendRconCommand(Q@);
 					setproperty(10, cmd[13], 1);
 					printf("Module \"%s\" (re)loaded.", cmd[13]);
 				}
