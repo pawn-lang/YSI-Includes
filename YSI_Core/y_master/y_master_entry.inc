@@ -194,6 +194,7 @@ Optional plugins:
 		#include "y_master_entry"
 	#elseif YSIM_TEST_MODULE == 4
 		#define MASTER 57
+		#define YSIM_VERSION 8
 		#include "y_master_entry"
 		#include "y_master_module_funcs"
 		#include "y_master_entry"
