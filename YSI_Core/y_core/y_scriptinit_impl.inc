@@ -168,7 +168,7 @@ stock bool:Server_CrashDetectExists()
 static ScriptInit_CallOnCodeInit(bool:jit)
 {
 	#if defined ScriptInit_OnCodeInit
-		#if defined YSI_NO_JIT_MESSAGE
+		#if defined YSI_NO_OPTIMISATION_MESSAGE
 			#pragma unused jit
 		#else
 			YSI_Print(" ");
@@ -181,7 +181,7 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 			YSI_Print(" |                                     | ");
 			YSI_Print(" | You can disabled this message with: | ");
 			YSI_Print(" |                                     | ");
-			YSI_Print(" |     #define YSI_NO_JIT_MESSAGE      | ");
+			YSI_Print(" | #define YSI_NO_OPTIMISATION_MESSAGE | ");
 			YSI_Print(" |                                     | ");
 			if (!jit)
 			{
