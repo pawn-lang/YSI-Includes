@@ -87,6 +87,9 @@ Optional plugins:
 #define MASTER_GET<%0> (YSI_g_sMasterData[_:(%0)])
 #define MASTER_COPY<%0,%1> (YSI_g_sMasterData[_:(%0)] = YSI_g_sMasterData[_:(%1)]);
 
+#define _@MAKE_YCM<%0...%1> MAKE_YCM<_@%0...%1>
+#define @@MAKE_YCM<%0...%1> MAKE_YCM<@@%0...%1>
+
 //#define Master_State(%0); {  }
 
 #if defined YSI_IS_CLIENT
@@ -174,12 +177,12 @@ Optional plugins:
 #define YSIM_CLIENT_FOREIGN        YSIM_PARSER(YSIM_UF)
 // Hide the local implementations.
 #define YSIM_CLIENT_GLOBAL%0(%1)   YSIM_PARSER(YSIM_UG)%0(%1)
-#define YSIM_CLIENT_HOOK%0(%1)     YSIM_PARSER(YSIM_UG)%0(%1)
+#define YSIM_CLIENT_HOOK%0(%1)     static stock _@%0(%1)
 #define YSIM_CLIENT_TASK%0[%3](%1) YSIM_PARSER(YSIM_UG)%0(%1)
 #define YSIM_CLIENT_PTSK%0[%3](%1) YSIM_PARSER(YSIM_UG)%0(%1)
-#define YSIM_CLIENT_FUNC%0(%1)<%9> YSIM_PARSER(YSIM_UG)%0(%1)
+#define YSIM_CLIENT_FUNC%0(%1)<%9> static stock %0(%1)
 #define YSIM_CLIENT_GRUP%0(%1)     YSIM_PARSER(YSIM_UG)%0(%1)
-#define YSIM_CLIENT_YCMD%0(%1)     static stock _@yC%0()	
+#define YSIM_CLIENT_YCMD%0(%1)     static stock _YCMD_6:_@yC%0(%1)
 #define YSIM_CLIENT_ZERO%0(%1)     YSIM_SERVER_ZERO%0(%1)
 
 #define YSIM_CLOUD_FOREIGN         YSIM_PARSER(YSIM_DF)

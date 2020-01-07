@@ -167,5 +167,35 @@ Optional plugins:
 	#include "y_master_tests"
 	// Pop the master.
 	#include "y_master_entry"
+
+	#define MASTER 57
+	#define YSIM_U_ENABLE
+	#include "y_master_entry"
+	#include "y_master_module_tests"
+	#include "y_master_entry"
+#elseif defined YSIM_TEST_MODULE
+	#if YSIM_TEST_MODULE == 1
+		#define MASTER 57
+		#include "y_master_entry"
+		#include "y_master_module_funcs"
+		#include "y_master_entry"
+	#elseif YSIM_TEST_MODULE == 2
+		#define MASTER 57
+		#define YSIM_S_ENABLE
+		#include "y_master_entry"
+		#include "y_master_module_funcs"
+		#include "y_master_entry"
+	#elseif YSIM_TEST_MODULE == 3
+		#define MASTER 57
+		#define YSIM_C_ENABLE
+		#include "y_master_entry"
+		#include "y_master_module_funcs"
+		#include "y_master_entry"
+	#elseif YSIM_TEST_MODULE == 4
+		#define MASTER 57
+		#include "y_master_entry"
+		#include "y_master_module_funcs"
+		#include "y_master_entry"
+	#endif
 #endif
 
