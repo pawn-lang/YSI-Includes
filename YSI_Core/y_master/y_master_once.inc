@@ -664,16 +664,15 @@ CHAIN_FORWARD:Master_OnFilterScriptExit() = 0;
 		// succeeded.
 		setproperty(8, "", YSIM_STRING + 1, module);
 		new
-			oldMasters = getproperty(8, YSIM_MASTER),
-			newMasters;
+			masters = getproperty(8, YSIM_MASTER);
 		format(Q@, sizeof (Q@), "loadfs ./../modules/%s", module);
 		SendRconCommand(Q@);
-		if (oldMasters == (newMasters = getproperty(8, YSIM_MASTER)))
+		if (masters == getproperty(8, YSIM_MASTER))
 		{
 			// Didn't load, try the alternate version.
 			format(Q@, sizeof (Q@), "loadfs ../modules/%s", module);
 			SendRconCommand(Q@);
-			if (oldMasters == (newMasters = getproperty(8, YSIM_MASTER)))
+			if (masters == getproperty(8, YSIM_MASTER))
 			{
 				P:F("Could not reload module \"%s\"", module);
 				y_rconfix_Load();
@@ -880,7 +879,7 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 		new
 			master = getproperty(9, library);
 		P:4("_Master_Get: Prop exists: %d %d", master, Master_ID());
-		if (master != -1)
+		if (master)
 		{
 			P:4("_Master_Get: Prop set");
 			if (master == Master_ID())
