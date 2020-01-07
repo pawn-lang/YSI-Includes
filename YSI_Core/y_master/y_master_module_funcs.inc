@@ -23,7 +23,7 @@ global void:M_Func3(&ret, in)
 global string:M_Func4()
 {
 	new
-		str[32];
+		str[YSI_MAX_STRING];
 	format(str, sizeof (str), "MODULE %d", YSIM_TEST_MODULE);
 	return str;
 }
@@ -31,7 +31,7 @@ global string:M_Func4()
 global string:M_Func5(const string:in[])
 {
 	new
-		str[32];
+		str[YSI_MAX_STRING];
 	format(str, sizeof (str), in, YSIM_TEST_MODULE);
 	return str;
 }
