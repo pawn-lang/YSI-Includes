@@ -396,10 +396,10 @@ enum _E_YCM
 #define _YCM@u (_YCM@==_E_YCM@u)
 #define _YCM@w (_YCM@==_E_YCM@w)
 
-stock
-	bool:YSI_gModuleShutdown = false;
-
 #if !defined YSI_NO_MASTER
+	stock
+		bool:YSI_gModuleShutdown = false;
+
 	static stock
 		YSI_g_sModuleName[32];
 
@@ -507,28 +507,30 @@ public OnScriptExit()
 	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~Master_ID()),
 	Master_OnScriptExit(),
 	CallRemoteFunction("OnMasterSystemClose", "i", Master_ID());
-	YSI_gModuleShutdown = true;
-	if (!YSI_FILTERSCRIPT)
-	{
-		// Second call - pass off module data.
-		setproperty(8, "", YSIM_STRING + 2, "");
-		CallRemoteFunction("Master_OnCloseModules", "");
-
-		// Finally shut down all the modules.
-		getproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
-		new
-			prev = 0,
-			next = 0;
-		while ((next = strfind(YSI_UNSAFE_HUGE_STRING, ";", false, prev)) != -1)
+	#if !defined YSI_NO_MASTER
+		YSI_gModuleShutdown = true;
+		if (!YSI_FILTERSCRIPT)
 		{
-			YSI_UNSAFE_HUGE_STRING[next] = '\0';
-			format(Q@, sizeof (Q@), "unloadfs ../modules/%s", YSI_UNSAFE_HUGE_STRING[prev]);
-			SendRconCommand(Q@);
-			format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", YSI_UNSAFE_HUGE_STRING[prev]);
-			SendRconCommand(Q@);
-			prev = next + 1;
+			// Second call - pass off module data.
+			setproperty(8, "", YSIM_STRING + 2, "");
+			CallRemoteFunction("Master_OnCloseModules", "");
+
+			// Finally shut down all the modules.
+			getproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
+			new
+				prev = 0,
+				next = 0;
+			while ((next = strfind(YSI_UNSAFE_HUGE_STRING, ";", false, prev)) != -1)
+			{
+				YSI_UNSAFE_HUGE_STRING[next] = '\0';
+				format(Q@, sizeof (Q@), "unloadfs ../modules/%s", YSI_UNSAFE_HUGE_STRING[prev]);
+				SendRconCommand(Q@);
+				format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", YSI_UNSAFE_HUGE_STRING[prev]);
+				SendRconCommand(Q@);
+				prev = next + 1;
+			}
 		}
-	}
+	#endif
 	return 1;
 }
 

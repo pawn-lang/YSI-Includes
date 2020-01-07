@@ -93,7 +93,6 @@ Optional plugins:
 
 #if !defined _INC_y_master
 	#include "..\..\YSI_Core\y_utils"
-	#include "..\..\YSI_Coding\y_hooks"
 
 	CHAIN_HOOK(Master)
 	#undef CHAIN_ORDER
@@ -103,7 +102,9 @@ Optional plugins:
 		#include "y_rconfix"
 	#endif
 	#include "y_master_once"
-	#include "y_distribute"
+	#if !defined YSI_NO_MASTER
+		#include "y_distribute"
+	#endif
 #endif
 
 // ALWAYS!  The compiler defines this automatically, don't use it as this is

@@ -243,13 +243,16 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 
 #if !_YSIM_IS_SERVER && !_YSIM_IS_CLOUD
 	#if YSIM_HAS_MASTER
+		// Client or stub - never master.
 		stock
 			_E_YCM:_YCM@ = _E_YCM@n;
 	#else
+		// No master system - always master.
 		stock
 			_E_YCM:_YCM@ = _E_YCM@y;
 	#endif
-	// THERES A `#endinput` HERE, because we don't need to co-ordinate.
+
+	// There's a `#endinput` here because we don't need to co-ordinate.
 	#endinput
 #endif
 
