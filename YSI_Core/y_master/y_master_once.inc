@@ -397,7 +397,7 @@ enum _E_YCM
 #define _YCM@w (_YCM@==_E_YCM@w)
 
 stock
-	YSI_gModuleShutdown;
+	bool:YSI_gModuleShutdown = false;
 
 static stock
 	YSI_g_sModuleName[32];
@@ -476,7 +476,6 @@ public OnScriptExit()
 	// unloaded with it.  First mark them as unavailable for handoff, then shut them down.
 	if (!YSI_FILTERSCRIPT)
 	{
-		setproperty(8, "", YSIM_STRING + 2, "");
 		// First call - disable all modules.
 		CallRemoteFunction("Master_OnCloseModules", "");
 	}
@@ -502,9 +501,11 @@ public OnScriptExit()
 	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~Master_ID()),
 	Master_OnScriptExit(),
 	CallRemoteFunction("OnMasterSystemClose", "i", Master_ID());
+	YSI_gModuleShutdown = true;
 	if (!YSI_FILTERSCRIPT)
 	{
 		// Second call - pass off module data.
+		setproperty(8, "", YSIM_STRING + 2, "");
 		CallRemoteFunction("Master_OnCloseModules", "");
 
 		// Finally shut down all the modules.
@@ -550,8 +551,9 @@ public Master_OnCloseModules()
 	{
 		// This is a module, and thus purely loaded for the sake of gamemodes.  Shut it down.
 		new
-			func[4];
-		YSI_gModuleShutdown = !YSI_gModuleShutdown;
+			func[4],
+			prev = YSI_gModuleShutdown;
+		YSI_gModuleShutdown = true;
 		for (new i = 0, j = YSI_g_sMasterCount; i != j; ++i)
 		{
 			// This is slightly slower for ending and starting scripts, but uses far
@@ -565,16 +567,14 @@ public Master_OnCloseModules()
 			// The properties currently clear instantly, but that may not always be
 			// the case.
 		}
-		if (YSI_gModuleShutdown)
+		if (prev)
 		{
+			// Second call.
 			getproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
 			const end = strlen(YSI_UNSAFE_HUGE_STRING);
 			strcat(YSI_UNSAFE_HUGE_STRING[end], YSI_g_sModuleName);
 			strcat(YSI_UNSAFE_HUGE_STRING[end], ";");
 			setproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
-		}
-		else
-		{
 			YSI_g_sMasterCount = 0;
 		}
 	}
