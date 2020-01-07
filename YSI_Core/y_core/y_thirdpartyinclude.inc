@@ -322,17 +322,17 @@ Optional plugins:
 	#error Please update "https://github.com/Zeex/amx_assembly" to the latest version.
 #endif
 
-#tryinclude "..\..\md-sort\md-sort"
-#tryinclude <md-sort\md-sort>
-#tryinclude "..\..\md-sort-master\md-sort"
-#tryinclude <md-sort-master\md-sort>
-#tryinclude "md-sort"
-#tryinclude <md-sort>
-#if !defined _INC_md_sort
-	#error Could not include "https://github.com/oscar-broman/md-sort" - ensure its files are in "include\md-sort\"
-#elseif !defined ResetDeepArray_Entry
-	#error Please update "https://github.com/oscar-broman/md-sort" to the latest version.
-#endif
+//#tryinclude "..\..\md-sort\md-sort"
+//#tryinclude <md-sort\md-sort>
+//#tryinclude "..\..\md-sort-master\md-sort"
+//#tryinclude <md-sort-master\md-sort>
+//#tryinclude "md-sort"
+//#tryinclude <md-sort>
+//#if !defined _INC_md_sort
+//	#error Could not include "https://github.com/oscar-broman/md-sort" - ensure its files are in "include\md-sort\"
+//#elseif !defined ResetDeepArray_Entry
+//	#error Please update "https://github.com/oscar-broman/md-sort" to the latest version.
+//#endif
 
 #tryinclude "..\..\code-parse\code-parse"
 #tryinclude <code-parse\code-parse>
@@ -381,4 +381,6 @@ public OnCodeInit()
 #if __COMPILER_WARNING_SUPPRESSION
 	#pragma warning pop
 #endif
+
+#include "y_codeparse"
 

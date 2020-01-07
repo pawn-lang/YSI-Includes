@@ -261,20 +261,34 @@ stock
 	_E_YCM:_YCM@ = _E_YCM@u;
 
 #if defined YSIM_VERSION
-	forward MAKE_YCM<YSIM_VERSION...>();
+	#if _YSIM_IS_SERVER
+		forward MAKE_YCM<YSIM_VERSION...>();
 
-	public MAKE_YCM<YSIM_VERSION...>() <_YCM:y>
-	{
-		// For making sure the latest version of a library is the one used.
-		setproperty(8, #YSIM_VERRET, YSIM_VERSION);
-		return YSIM_VERSION;
-	}
+		public MAKE_YCM<YSIM_VERSION...>()
+		{
+			P:3(#MAKE_YCM<YSIM_VERSION...> "() called");
+			// For making sure the latest version of a library is the one used.
+			setproperty(8, #YSIM_VERRET, YSIM_VERSION);
+			return YSIM_VERSION;
+		}
+	#elseif _YSIM_IS_CLOUD
+		forward MAKE_YCM<YSIM_VERSION...>();
 
-	public MAKE_YCM<YSIM_VERSION...>() <>
-	{
-		// Return here for local (current version) gets.
-		return YSIM_VERSION;
-	}
+		public MAKE_YCM<YSIM_VERSION...>() <_YCM:y>
+		{
+			P:3(#MAKE_YCM<YSIM_VERSION...> "() <y> called");
+			// For making sure the latest version of a library is the one used.
+			setproperty(8, #YSIM_VERRET, YSIM_VERSION);
+			return YSIM_VERSION;
+		}
+
+		public MAKE_YCM<YSIM_VERSION...>() <>
+		{
+			P:3(#MAKE_YCM<YSIM_VERSION...> "() <> called");
+			// Return here for local (current version) gets.
+			return YSIM_VERSION;
+		}
+	#endif
 
 	#undef YSIM_VERSION
 #endif
@@ -302,12 +316,13 @@ static stock Master_GetCurrentMaster()
 		case e_YSIM_GET_TYPE_NO_CONTEST:
 		{
 			// Nothing changed, or we took it without force.
-			P:2("Got master " #_YCM);
+			P:2("Master_GetCurrentMaster: Got master " #_YCM);
 			state _YCM:y;
 			_YCM@ = _E_YCM@y;
 		}
 		case e_YSIM_GET_TYPE_STOLE:
 		{
+			P:2("Master_GetCurrentMaster: Stole master " #_YCM);
 			// Something changed, tell other scripts.  Set the state here to `:u` not `:y` so that
 			// the only call to a `:y` function does relinquishing.  We don't want to be set as
 			// master here then instantly relinquish everything.
@@ -320,6 +335,13 @@ static stock Master_GetCurrentMaster()
 		}
 		case e_YSIM_GET_TYPE_NOT_GOT:
 		{
+			P:2("Master_GetCurrentMaster: Not master " #_YCM);
+			state _YCM:n;
+			_YCM@ = _E_YCM@n;
+		}
+		default:
+		{
+			P:E("Master_GetCurrentMaster: Unknown return " #_YCM);
 			state _YCM:n;
 			_YCM@ = _E_YCM@n;
 		}
@@ -686,7 +708,7 @@ public OnMasterSystemInit(id)
 
 public _YCM() <_YCM:y>
 {
-	P:1("%d: " #_YCM "<y> called, master = %d", Master_ID(), getproperty(9, #_YCM));
+	P:1("%d: " #_YCM "() <y> called, master = %d", Master_ID(), getproperty(9, #_YCM));
 	if (getproperty(9, #_YCM) == Master_ID())
 	{
 		P:2(#_YCM " natural end");
@@ -701,7 +723,7 @@ public _YCM() <_YCM:y>
 		state _YCM:p;
 		_YCM@ = _E_YCM@p;
 		// Ending normally, relinquish control peacefully.
-		setproperty(9, #_YCM, -1);
+		setproperty(9, #_YCM, 0);
 		// Called locally to begin the hand off process.
 		CallRemoteFunction(#_YCM, "");
 	}
@@ -713,7 +735,7 @@ public _YCM() <_YCM:y>
 		_YCM@ = _E_YCM@n;
 		_Master_Relinquish(#_YCM);
 	}
-	if (getproperty(9, #_YCM) != -1)
+	if (getproperty(9, #_YCM))
 	{
 		// This is where we need to to the handoff.
 		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...>, "");
@@ -723,7 +745,7 @@ public _YCM() <_YCM:y>
 
 public _YCM() <_YCM:n>
 {
-	P:1("%d: " #_YCM "<n> called", Master_ID());
+	P:1("%d: " #_YCM "() <n> called", Master_ID());
 	if (YSI_gModuleShutdown)
 	{
 		// This wasn't the master, but is in a module that's now shutting down.  null-route all
@@ -741,30 +763,30 @@ public _YCM() <_YCM:n>
 
 public _YCM() <_YCM:m, _YCM:p>
 {
-	P:1("%d: " #_YCM "<m,p> called", Master_ID());
+	P:1("%d: " #_YCM "() <m,p> called", Master_ID());
 	// Do nothing at all (just define states).
 }
 
 public _YCM() <_YCM:u>
 {
 	// Finish initialisation.
-	P:1("%d: " #_YCM "<u> called", Master_ID());
+	P:1("%d: " #_YCM "() <u> called", Master_ID());
 	state _YCM:y;
 	_YCM@ = _E_YCM@y;
 }
 
 public _YCM() <_YCM:w>
 {
-	P:1("%d: " #_YCM "<w> called", Master_ID());
+	P:1("%d: " #_YCM "() <w> called", Master_ID());
 	// Disable the current mastership.
 	state _YCM:p;
 	_YCM@ = _E_YCM@p;
 	// Ending normally, relinquish control peacefully.
-	setproperty(9, #_YCM, -1);
+	setproperty(9, #_YCM, 0);
 	// Called locally to begin the hand off process.
 	CallRemoteFunction(#_YCM, "");
 	// Now try pass everything off.
-	if (getproperty(9, #_YCM) != -1)
+	if (getproperty(9, #_YCM))
 	{
 		// This is where we need to to the handoff.
 		CallLocalFunction(#MAKE_YCM<HANDOFF_SOURCE...>, "");
@@ -775,6 +797,6 @@ public _YCM() <_YCM:w>
 public _YCM() <>
 {
 	// Do nothing at all (just define states).
-	P:E(#_YCM "() <> called");
+	P:E("%d: " #_YCM "() <> called", Master_ID());
 }
 

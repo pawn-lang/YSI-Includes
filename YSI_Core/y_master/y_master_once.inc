@@ -428,7 +428,6 @@ public OnScriptInit()
 {
 	P:1("Master_OnScriptInit");
 	state _ALS : _ALS_go;
-	@_ = 0;
 	#if !defined YSI_NO_MASTER
 		getproperty(8, "", YSIM_STRING + 1, YSI_g_sModuleName);
 		deleteproperty(8, "", YSIM_STRING + 1);
@@ -438,12 +437,19 @@ public OnScriptInit()
 		y_rconfix_Load();
 	#endif
 	// Properties get lost between script changes so we need to force a rebuild.
+	@_ = 0;
 	CallRemoteFunction("Master_Reassert", "");
 	new
 		masters = getproperty(8, YSIM_MASTER);
 	@_ = Cell_GetLowestEmpty(masters);
 	setproperty(8, YSIM_MASTER, masters | Master_ID());
 	C:1(if (!Master_ID()) P:E("MasterID not assigned"););
+	#if !defined YSI_NO_MASTER
+		if (Master_ID() && YSI_g_sModuleName[0])
+		{
+			setproperty(10, YSI_g_sModuleName, Master_ID());
+		}
+	#endif
 	// Make sure this is called before all other YSI initialisations, at least all the ones which
 	// use the master system.
 	CallLocalFunction("OnMasterSystemInit", "i", Master_ID());
@@ -772,18 +778,16 @@ forward OnMasterSystemClose(id);
 public Master_Reassert()
 {
 	// Make sure that the caller parameter is always 0 by default.
-	#if !defined YSI_NO_MASTER
-		if (YSI_g_sModuleName[0])
-		{
-			setproperty(10, YSI_g_sModuleName, Master_ID());
-		}
-	#endif
 	U@(8, YSIM_CALLER, 0);
 	if (Master_ID())
 	{
 		// Read this script's master value.
 		setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) | Master_ID());
 		#if !defined YSI_NO_MASTER
+			if (YSI_g_sModuleName[0])
+			{
+				setproperty(10, YSI_g_sModuleName, Master_ID());
+			}
 			// Readd this script's owned scripts.
 			new
 				func[4];
@@ -865,10 +869,10 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 			{
 				new func[32];
 				format(func, sizeof (func), "YSIM_VERSION%s", library);
-				master = CallLocalFunction(library, "");
+				master = CallLocalFunction(func, "");
 				// Might still be able to steal the master if we're a higher version.  We must be
 				// EXCLUSIVELY higher, not just same or higher.
-				CallRemoteFunction(library, "");
+				CallRemoteFunction(func, "");
 				if (master <= getproperty(8, #YSIM_VERRET))
 				{
 					return e_YSIM_GET_TYPE_NOT_GOT; // Not got the master.
