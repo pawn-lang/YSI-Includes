@@ -457,7 +457,7 @@ public OnScriptInit()
 	return 1;
 }
 
-CHAIN_FORWARD:Master_OnScriptInit() = 1;
+CHAIN_FORWARD:Master_OnScriptInit() = 0;
 #if defined _ALS_OnScriptInit
 	#undef OnScriptInit
 #else
@@ -540,7 +540,7 @@ public OnScriptExit()
 	return 1;
 }
 
-CHAIN_FORWARD:Master_OnScriptExit() = 1;
+CHAIN_FORWARD:Master_OnScriptExit() = 0;
 #if defined _ALS_OnScriptExit
 	#undef OnScriptExit
 #else
@@ -548,6 +548,30 @@ CHAIN_FORWARD:Master_OnScriptExit() = 1;
 #endif
 #define OnScriptExit(%0) CHAIN_PUBLIC:Master_OnScriptExit(%0)
 forward OnMasterSystemClose(id);
+
+///*-------------------------------------------------------------------------*//**
+// * <returns>
+// *  Master_OnFilterScriptExit
+// * </returns>
+// * <remarks>
+// *  Reasserts all other IDs when an FS ends early.
+// * </remarks>
+// *//*------------------------------------------------------------------------**/
+//
+//public OnFilterScriptExit()
+//{
+//	P:1("MasterOnce_OnScriptExit called");
+//	CallRemoteFunction("Master_Reassert", "");
+//	return Master_OnFilterScriptExit();
+//}
+
+CHAIN_FORWARD:Master_OnFilterScriptExit() = 0;
+#if defined _ALS_OnFilterScriptExit
+	#undef OnFilterScriptExit
+#else
+	#define _ALS_OnFilterScriptExit
+#endif
+#define OnFilterScriptExit(%0) CHAIN_PUBLIC:Master_OnFilterScriptExit(%0)
 
 /*-------------------------------------------------------------------------*//**
  * <returns>
@@ -628,26 +652,26 @@ forward OnMasterSystemClose(id);
 
 	bool:Master_ReloadModule(const module[])
 	{
-		// Free up a temporary filterscript slot for the swapping.  Handilly, we have one safe.
-		y_rconfix_Unload();
-		setproperty(8, "", YSIM_STRING + 1, module);
 		if (!Master_IsModuleLoaded(module))
 		{
 			P:W("Module \"%s\" not loaded.", module);
 		}
+		// Free up a temporary filterscript slot for the swapping.  Handilly, we have one safe.
+		y_rconfix_Unload();
 		// We can't just use the default `reloads` command, because that will clear memory before
 		// the reload, thus we'll loose data.  Instead, we use a hack to load the FS twice at once!
 		// We just alternate which is loaded and unloaded statelessly - detect which method
 		// succeeded.
+		setproperty(8, "", YSIM_STRING + 1, module);
 		new
 			oldMasters = getproperty(8, YSIM_MASTER),
 			newMasters;
-		format(Q@, sizeof (Q@), "loadfs ../modules/%s", module);
+		format(Q@, sizeof (Q@), "loadfs ./../modules/%s", module);
 		SendRconCommand(Q@);
 		if (oldMasters == (newMasters = getproperty(8, YSIM_MASTER)))
 		{
 			// Didn't load, try the alternate version.
-			format(Q@, sizeof (Q@), "loadfs ./../modules/%s", module);
+			format(Q@, sizeof (Q@), "loadfs ../modules/%s", module);
 			SendRconCommand(Q@);
 			if (oldMasters == (newMasters = getproperty(8, YSIM_MASTER)))
 			{
@@ -657,22 +681,20 @@ forward OnMasterSystemClose(id);
 			}
 			else
 			{
-				format(Q@, sizeof (Q@), "unloadfs ../modules/%s", module);
+				format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", module);
 				SendRconCommand(Q@);
-				setproperty(10, module, newMasters & ~oldMasters);
+				CallRemoteFunction("Master_Reassert", "");
 				P:0("Module \"%s\" (re)loaded.", module);
 			}
 		}
 		else
 		{
 			// Loaded a second version of the script.  Unload the first version.
-			format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", module);
+			format(Q@, sizeof (Q@), "unloadfs ../modules/%s", module);
 			SendRconCommand(Q@);
-			setproperty(10, module, newMasters & ~oldMasters);
+			CallRemoteFunction("Master_Reassert", "");
 			P:0("Module \"%s\" (re)loaded.", module);
 		}
-		deleteproperty(8, "", YSIM_STRING + 1);
-		y_rconfix_Load();
 		return true;
 	}
 
@@ -760,7 +782,7 @@ forward OnMasterSystemClose(id);
 		return Master_OnRconCommand(cmd);
 	}
 
-	CHAIN_FORWARD:Master_OnRconCommand(cmd[]) = 1;
+	CHAIN_FORWARD:Master_OnRconCommand(cmd[]) = 0;
 	#if defined _ALS_OnRconCommand
 		#undef OnRconCommand
 	#else
