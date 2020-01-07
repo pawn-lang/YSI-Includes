@@ -399,13 +399,19 @@ enum _E_YCM
 stock
 	bool:YSI_gModuleShutdown = false;
 
-static stock
-	YSI_g_sModuleName[32];
+#if !defined YSI_NO_MASTER
+	static stock
+		YSI_g_sModuleName[32];
 
-stock Master_GetModuleName(ret[32])
-{
-	ret = YSI_g_sModuleName;
-}
+	static
+		YSI_g_sMasterCount,
+		YSI_g_sMasterData[MAX_MASTERS];
+
+	stock Master_GetModuleName(ret[32])
+	{
+		ret = YSI_g_sModuleName;
+	}
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <returns>
@@ -423,8 +429,14 @@ public OnScriptInit()
 	P:1("Master_OnScriptInit");
 	state _ALS : _ALS_go;
 	@_ = 0;
-	getproperty(8, "", YSIM_STRING + 1, YSI_g_sModuleName);
-	deleteproperty(8, "", YSIM_STRING + 1);
+	#if !defined YSI_NO_MASTER
+		getproperty(8, "", YSIM_STRING + 1, YSI_g_sModuleName);
+		deleteproperty(8, "", YSIM_STRING + 1);
+		// This will fix `OnRconCommand` for the gamemode, so we can use the `module` commands.  It
+		// also takes up a filterscript slot, a fact we can abuse to get swap space while reloading
+		// modules (thus, even if you have the maximum modules loaded, you can still reload one).
+		y_rconfix_Load();
+	#endif
 	// Properties get lost between script changes so we need to force a rebuild.
 	CallRemoteFunction("Master_Reassert", "");
 	new
@@ -449,12 +461,6 @@ CHAIN_FORWARD:Master_OnScriptInit() = 1;
 
 forward OnMasterSystemInit(id);
 
-#if !defined YSI_NO_MASTER
-	static
-		YSI_g_sMasterCount,
-		YSI_g_sMasterData[MAX_MASTERS];
-#endif
-
 forward Master_OnCloseModules();
 
 /*-------------------------------------------------------------------------*//**
@@ -469,18 +475,18 @@ forward Master_OnCloseModules();
 public OnScriptExit()
 {
 	P:1("MasterOnce_OnScriptExit called");
-	if (YSI_g_sModuleName[0])
-	{
-		deleteproperty(10, YSI_g_sModuleName);
-	}
-	// This is the main gamemode.  All "modules" are firmly attached to this, and should be unloaded
-	// with it.  First mark them as unavailable for handoff, then shut them down.
-	if (!YSI_FILTERSCRIPT)
-	{
-		// First call - disable all modules.
-		CallRemoteFunction("Master_OnCloseModules", "");
-	}
 	#if !defined YSI_NO_MASTER
+		if (YSI_g_sModuleName[0])
+		{
+			deleteproperty(10, YSI_g_sModuleName);
+		}
+		// This is the main gamemode.  All "modules" are firmly attached to this, and should be
+		// unloaded with it.  First mark them as unavailable for handoff, then shut them down.
+		if (!YSI_FILTERSCRIPT)
+		{
+			// First call - disable all modules.
+			CallRemoteFunction("Master_OnCloseModules", "");
+		}
 		// Loop through everything this script is master for and call the remote function for it.
 		// EXCEPT for this script itself!
 		new
@@ -571,9 +577,9 @@ forward OnMasterSystemClose(id);
 			{
 				// Second call.
 				getproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
-				const end = strlen(YSI_UNSAFE_HUGE_STRING);
-				strcat(YSI_UNSAFE_HUGE_STRING[end], YSI_g_sModuleName);
-				strcat(YSI_UNSAFE_HUGE_STRING[end], ";");
+				prev = strlen(YSI_UNSAFE_HUGE_STRING);
+				strcat(YSI_UNSAFE_HUGE_STRING[prev], YSI_g_sModuleName);
+				strcat(YSI_UNSAFE_HUGE_STRING[prev], ";");
 				setproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
 				YSI_g_sMasterCount = 0;
 			}
@@ -609,11 +615,13 @@ forward OnMasterSystemClose(id);
 
 	bool:Master_IsModuleLoaded(const module[])
 	{
-		return existproperty(10, module);
+		return !!existproperty(10, module);
 	}
 
 	bool:Master_ReloadModule(const module[])
 	{
+		// Free up a temporary filterscript slot for the swapping.  Handilly, we have one safe.
+		y_rconfix_Unload();
 		setproperty(8, "", YSIM_STRING + 1, module);
 		if (!Master_IsModuleLoaded(module))
 		{
@@ -635,6 +643,7 @@ forward OnMasterSystemClose(id);
 			if (masters == getproperty(8, YSIM_MASTER))
 			{
 				P:F("Could not reload module \"%s\"", module);
+				y_rconfix_Load();
 				return false;
 			}
 			else
@@ -654,6 +663,7 @@ forward OnMasterSystemClose(id);
 			P:0("Module \"%s\" (re)loaded.", module);
 		}
 		deleteproperty(8, "", YSIM_STRING + 1);
+		y_rconfix_Load();
 		return true;
 	}
 
@@ -759,10 +769,12 @@ forward OnMasterSystemClose(id);
 public Master_Reassert()
 {
 	// Make sure that the caller parameter is always 0 by default.
-	if (YSI_g_sModuleName[0])
-	{
-		setproperty(10, YSI_g_sModuleName, 1);
-	}
+	#if !defined YSI_NO_MASTER
+		if (YSI_g_sModuleName[0])
+		{
+			setproperty(10, YSI_g_sModuleName, 1);
+		}
+	#endif
 	U@(8, YSIM_CALLER, 0);
 	if (Master_ID())
 	{
