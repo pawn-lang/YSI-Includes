@@ -1,6 +1,8 @@
 static stock const
 	FIXES_gscRconFixFS[] = "callbackfix.amx";
 
+native y_rconfix_SendRconCommand(const str[]) = SendRconCommand;
+
 y_rconfix_Load()
 {
 	// It is.  Create the file.
@@ -43,16 +45,16 @@ y_rconfix_Load()
 	}
 	if (fexist(FIXES_gscRconFixFS))
 	{
-		SendRconCommand("loadfs ../scriptfiles/callbackfix");
+		y_rconfix_SendRconCommand("loadfs ../scriptfiles/callbackfix");
 	}
 	else
 	{
-		print("\7\7\7\7\7*** fixes.inc error: Could not load RconCommand/ClientCheckResponse fix FS.");
+		P:E("Could not load RconCommand/ClientCheckResponse fix FS.");
 	}
 }
 
 y_rconfix_Unload()
 {
-	SendRconCommand("unloadfs ../scriptfiles/callbackfix");
+	y_rconfix_SendRconCommand("unloadfs ../scriptfiles/callbackfix");
 }
 
