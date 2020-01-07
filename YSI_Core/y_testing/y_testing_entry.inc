@@ -153,9 +153,9 @@ static stock const TEST_PASSED[] = "PASS!";
 #define ASSERT_NZ(%1) Testing_Test(J@ != 0, "%s %s (%d)", STRINGISE__(%1 != 0), (J@ = _:(%1)))
 
 // Strings.
-#define ASSERT_SAME(%1,%0) Testing_Test(Q@[0] != '\0' && strcmp(Q@, (%0)      ) == 0, "%s %s (\"%s\")", STRINGISE__(%1 == %0), (strunpack(Q@, (%1)), Q@))
-#define ASSERT_DIFF(%1,%0) Testing_Test(Q@[0] == '\0' || strcmp(Q@, (%0)      ) != 0, "%s %s (\"%s\")", STRINGISE__(%1 != %0), (strunpack(Q@, (%1)), Q@))
-#define ASSERT_NEAR(%1,%0) Testing_Test(Q@[0] != '\0' && strcmp(Q@, (%0), true) == 0, "%s %s (\"%s\")", STRINGISE__(%1 ~= %0), (strunpack(Q@, (%1)), Q@))
+#define ASSERT_SAME(%1,%0) Testing_Test(strlen(%0) ? (Q@[0] != '\0' && strcmp(Q@, (%0)) == 0) : (Q@[0] == '\0'), "%s %s (\"%s\")", STRINGISE__(%1 == %0), (strunpack(Q@, (%1)), Q@))
+#define ASSERT_DIFF(%1,%0) Testing_Test(strlen(%0) ? (Q@[0] == '\0' || strcmp(Q@, (%0)) != 0) : (Q@[0] != '\0'), "%s %s (\"%s\")", STRINGISE__(%1 != %0), (strunpack(Q@, (%1)), Q@))
+#define ASSERT_NEAR(%1,%0) Testing_Test(strlen(%0) ? (Q@[0] != '\0' && strcmp(Q@, (%0), true) == 0) : (Q@[0] == '\0'), "%s %s (\"%s\")", STRINGISE__(%1 ~= %0), (strunpack(Q@, (%1)), Q@))
 
 static stock
 	YSI_g_sCurTest = 0,
