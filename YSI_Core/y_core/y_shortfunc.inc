@@ -209,6 +209,7 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// backing them up on the heap (saved extra work now sorting out which saved
 	// parameter went where).
 	#emit SYSREQ.C     setproperty
+	
 	if (YSI_g_sCallData)
 	{
 		// Get the return value.  Already have most of the parameters pushed,
@@ -424,42 +425,11 @@ stock T@(const string:ret[YSI_MAX_STRING], GLOBAL_TAG_TYPES:...)
 	return 1;
 }
 
-stock S@(GLOBAL_TAG_TYPES:v = -1)
-{
-	P:4("S@ called");
-	return
-		getproperty(8, "", YSIM_STRING, Q@),
-		strunpack(Q@, Q@),
-		setproperty(8, YSIM_CALLER, v);
-}
-
 stock X@(GLOBAL_TAG_TYPES:n)
 {
 	// THIS MUST REMAIN FOREVER!  Detected by fixes.inc.
 	P:4("X@ called: %i", n);
-	setproperty(8, YSIM_RETURN, n);
-}
-
-stock E@()
-{
-	P:4("E@ called");
-	// Already returns the previous value.
-	return setproperty(8, YSIM_CALLER, Master_ID());
-}
-
-stock Z@(GLOBAL_TAG_TYPES:v = -1)
-{
-	P:4("Z@ called");
-	return
-		setproperty(8, YSIM_CALLER, v),
-		getproperty(8, YSIM_RETURN);
-}
-
-stock R@(const buffer[])
-{
-	// To remove on completion of y_remote upgrade.
-	P:4("R@ called: \"%s\"", buffer);
-	return setproperty(8, "", YSIM_STRING, buffer);
+	setproperty(8, YSI_g_sPropReturn, n);
 }
 
 stock H@(GLOBAL_TAG_TYPES:...)
