@@ -580,6 +580,110 @@ public Master_OnCloseModules()
 	}
 }
 
+stock bool:Master_LoadModule(const module[])
+{
+	if (existproperty(10, module))
+	{
+		P:E("Module \"%s\" already loaded.", module);
+	}
+	else
+	{
+		setproperty(8, "", YSIM_STRING + 1, module);
+		new
+			masters = getproperty(8, YSIM_MASTER);
+		format(Q@, sizeof (Q@), "loadfs ../modules/%s", module);
+		SendRconCommand(Q@);
+		if (masters == getproperty(8, YSIM_MASTER))
+		{
+			P:F("Could not load module \"%s\"", module);
+			return false;
+		}
+		else
+		{
+			printf("Module \"%s\" loaded", module);
+		}
+		deleteproperty(8, "", YSIM_STRING + 1);
+	}
+	return true;
+}
+
+stock bool:Master_IsModuleLoaded(const module[])
+{
+	return existproperty(10, module);
+}
+
+stock bool:Master_ReloadModule(const module[])
+{
+	setproperty(8, "", YSIM_STRING + 1, module);
+	if (!existproperty(10, module))
+	{
+		P:W("Module \"%s\" not loaded.", module);
+	}
+	// We can't just use the default `reloads` command, because that will clear memory before the
+	// reload, thus we'll loose data.  Instead, we use a hack to load the FS twice at once!  We just
+	// alternate which is loaded and unloaded statelessly - detect which method succeeded.
+	new
+		masters = getproperty(8, YSIM_MASTER);
+	format(Q@, sizeof (Q@), "loadfs ../modules/%s", module);
+	SendRconCommand(Q@);
+	if (masters == getproperty(8, YSIM_MASTER))
+	{
+		// Didn't load, try the alternate version.
+		format(Q@, sizeof (Q@), "loadfs ./../modules/%s", module);
+		SendRconCommand(Q@);
+		if (masters == getproperty(8, YSIM_MASTER))
+		{
+			P:F("Could not reload module \"%s\"", module);
+			return false;
+		}
+		else
+		{
+			format(Q@, sizeof (Q@), "unloadfs ../modules/%s", module);
+			SendRconCommand(Q@);
+			setproperty(10, module, 1);
+			printf("Module \"%s\" (re)loaded.", module);
+		}
+	}
+	else
+	{
+		// Loaded a second version of the script.  Unload the first version.
+		format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", module);
+		SendRconCommand(Q@);
+		setproperty(10, module, 1);
+		printf("Module \"%s\" (re)loaded.", module);
+	}
+	deleteproperty(8, "", YSIM_STRING + 1);
+	return true;
+}
+
+stock bool:Master_UnloadModule(const module[])
+{
+	if (existproperty(10, module))
+	{
+		new
+			masters = getproperty(8, YSIM_MASTER);
+		format(Q@, sizeof (Q@), "unloadfs ../modules/%s", module);
+		SendRconCommand(Q@);
+		format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", module);
+		SendRconCommand(Q@);
+		if (masters == getproperty(8, YSIM_MASTER))
+		{
+			P:F("Could not unload module \"%s\"", module);
+			return false;
+		}
+		else
+		{
+			printf("Module \"%s\" unloaded.", module);
+			return true;
+		}
+	}
+	else
+	{
+		P:E("Module \"%s\" not loaded.", module);
+		return false;
+	}
+}
+
 /*-------------------------------------------------------------------------*//**
  * <returns>
  *  OnRconCommand
@@ -600,27 +704,7 @@ public OnRconCommand(cmd[])
 		{
 			if (cmd[11])
 			{
-				if (existproperty(10, cmd[11]))
-				{
-					P:E("Module \"%s\" already loaded.", cmd[11]);
-				}
-				else
-				{
-					setproperty(8, "", YSIM_STRING + 1, cmd[11]);
-					new
-						masters = getproperty(8, YSIM_MASTER);
-					format(Q@, sizeof (Q@), "loadfs ../modules/%s", cmd[11]);
-					SendRconCommand(Q@);
-					if (masters == getproperty(8, YSIM_MASTER))
-					{
-						P:F("Could not load module \"%s\"", cmd[11]);
-					}
-					else
-					{
-						printf("Module \"%s\" loaded", cmd[11]);
-					}
-					deleteproperty(8, "", YSIM_STRING + 1);
-				}
+				Master_LoadModule(cmd[11]);
 			}
 			else
 			{
@@ -632,27 +716,7 @@ public OnRconCommand(cmd[])
 		{
 			if (cmd[13])
 			{
-				if (existproperty(10, cmd[13]))
-				{
-					new
-						masters = getproperty(8, YSIM_MASTER);
-					format(Q@, sizeof (Q@), "unloadfs ../modules/%s", cmd[13]);
-					SendRconCommand(Q@);
-					format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", cmd[13]);
-					SendRconCommand(Q@);
-					if (masters == getproperty(8, YSIM_MASTER))
-					{
-						P:F("Could not unload module \"%s\"", cmd[13]);
-					}
-					else
-					{
-						printf("Module \"%s\" unloaded.", cmd[13]);
-					}
-				}
-				else
-				{
-					P:E("Module \"%s\" not loaded.", cmd[13]);
-				}
+				Master_UnloadModule(cmd[13]);
 			}
 			else
 			{
@@ -664,45 +728,7 @@ public OnRconCommand(cmd[])
 		{
 			if (cmd[13])
 			{
-				setproperty(8, "", YSIM_STRING + 1, cmd[13]);
-				if (!existproperty(10, cmd[13]))
-				{
-					P:W("Module \"%s\" not loaded.", cmd[13]);
-				}
-				// We can't just use the default `reloads` command, because that will clear memory
-				// before the reload, thus we'll loose data.  Instead, we use a hack to load the FS
-				// twice at once!  We just alternate which is loaded and unloaded statelessly -
-				// detect which method succeeded.
-				new
-					masters = getproperty(8, YSIM_MASTER);
-				format(Q@, sizeof (Q@), "loadfs ../modules/%s", cmd[13]);
-				SendRconCommand(Q@);
-				if (masters == getproperty(8, YSIM_MASTER))
-				{
-					// Didn't load, try the alternate version.
-					format(Q@, sizeof (Q@), "loadfs ./../modules/%s", cmd[13]);
-					SendRconCommand(Q@);
-					if (masters == getproperty(8, YSIM_MASTER))
-					{
-						P:F("Could not reload module \"%s\"", cmd[13]);
-					}
-					else
-					{
-						format(Q@, sizeof (Q@), "unloadfs ../modules/%s", cmd[13]);
-						SendRconCommand(Q@);
-						setproperty(10, cmd[13], 1);
-						printf("Module \"%s\" (re)loaded.", cmd[13]);
-					}
-				}
-				else
-				{
-					// Loaded a second version of the script.  Unload the first version.
-					format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", cmd[13]);
-					SendRconCommand(Q@);
-					setproperty(10, cmd[13], 1);
-					printf("Module \"%s\" (re)loaded.", cmd[13]);
-				}
-				deleteproperty(8, "", YSIM_STRING + 1);
+				Master_ReloadModule(cmd[13]);
 			}
 			else
 			{
