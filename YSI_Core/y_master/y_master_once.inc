@@ -431,8 +431,8 @@ public OnScriptInit()
 	@_ = Cell_GetLowestEmpty(masters);
 	setproperty(8, YSIM_MASTER, masters | Master_ID());
 	C:1(if (!Master_ID()) P:E("MasterID not assigned"););
-	// Make sure this is called before all other YSI initialisations, at least
-	// all the ones which use the master system.
+	// Make sure this is called before all other YSI initialisations, at least all the ones which
+	// use the master system.
 	CallLocalFunction("OnMasterSystemInit", "i", Master_ID());
 	Master_OnScriptInit();
 	return 1;
@@ -472,30 +472,29 @@ public OnScriptExit()
 	{
 		deleteproperty(10, YSI_g_sModuleName);
 	}
-	// This is the main gamemode.  All "modules" are firmly attached to this, and should be
-	// unloaded with it.  First mark them as unavailable for handoff, then shut them down.
+	// This is the main gamemode.  All "modules" are firmly attached to this, and should be unloaded
+	// with it.  First mark them as unavailable for handoff, then shut them down.
 	if (!YSI_FILTERSCRIPT)
 	{
 		// First call - disable all modules.
 		CallRemoteFunction("Master_OnCloseModules", "");
 	}
 	#if !defined YSI_NO_MASTER
-		// Loop through everything this script is master for and call the remote
-		// function for it.  EXCEPT for this script itself!
+		// Loop through everything this script is master for and call the remote function for it.
+		// EXCEPT for this script itself!
 		new
 			func[4];
 		for (new i = 0, j = YSI_g_sMasterCount; i != j; ++i)
 		{
-			// This is slightly slower for ending and starting scripts, but uses far
-			// less heap space, and these values are rarely used, so may as well
-			// pack them (which is what has happened here).
+			// This is slightly slower for ending and starting scripts, but uses far less heap
+			// space, and these values are rarely used, so may as well pack them (which is what has
+			// happened here).
 			func[0] = YSI_g_sMasterData[i] & 0xFF,
 			func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF,
 			func[2] = YSI_g_sMasterData[i] >> 16,
 			CallLocalFunction(func, "");
 			P:5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
-			// The properties currently clear instantly, but that may not always be
-			// the case.
+			// The properties currently clear instantly, but that may not always be the case.
 		}
 	#endif
 	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~Master_ID()),
@@ -544,209 +543,211 @@ forward OnMasterSystemClose(id);
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-public Master_OnCloseModules()
-{
-	P:1("Master_OnCloseModules called");
-	if (YSI_g_sModuleName[0])
+#if !defined YSI_NO_MASTER
+	public Master_OnCloseModules()
 	{
-		// This is a module, and thus purely loaded for the sake of gamemodes.  Shut it down.
-		new
-			func[4],
-			prev = YSI_gModuleShutdown;
-		YSI_gModuleShutdown = true;
-		for (new i = 0, j = YSI_g_sMasterCount; i != j; ++i)
+		P:1("Master_OnCloseModules called");
+		if (YSI_g_sModuleName[0])
 		{
-			// This is slightly slower for ending and starting scripts, but uses far
-			// less heap space, and these values are rarely used, so may as well
-			// pack them (which is what has happened here).
-			func[0] = YSI_g_sMasterData[i] & 0xFF,
-			func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF,
-			func[2] = YSI_g_sMasterData[i] >> 16,
-			CallLocalFunction(func, "");
-			P:5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
-			// The properties currently clear instantly, but that may not always be
-			// the case.
-		}
-		if (prev)
-		{
-			// Second call.
-			getproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
-			const end = strlen(YSI_UNSAFE_HUGE_STRING);
-			strcat(YSI_UNSAFE_HUGE_STRING[end], YSI_g_sModuleName);
-			strcat(YSI_UNSAFE_HUGE_STRING[end], ";");
-			setproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
-			YSI_g_sMasterCount = 0;
+			// This is a module, and thus purely loaded for the sake of gamemodes.  Shut it down.
+			new
+				func[4],
+				prev = YSI_gModuleShutdown;
+			YSI_gModuleShutdown = true;
+			for (new i = 0, j = YSI_g_sMasterCount; i != j; ++i)
+			{
+				// This is slightly slower for ending and starting scripts, but uses far less heap
+				// space, and these values are rarely used, so may as well pack them (which is what
+				// has happened here).
+				func[0] = YSI_g_sMasterData[i] & 0xFF,
+				func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF,
+				func[2] = YSI_g_sMasterData[i] >> 16,
+				CallLocalFunction(func, "");
+				P:5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
+				// The properties currently clear instantly, but that may not always be the case.
+			}
+			if (prev)
+			{
+				// Second call.
+				getproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
+				const end = strlen(YSI_UNSAFE_HUGE_STRING);
+				strcat(YSI_UNSAFE_HUGE_STRING[end], YSI_g_sModuleName);
+				strcat(YSI_UNSAFE_HUGE_STRING[end], ";");
+				setproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
+				YSI_g_sMasterCount = 0;
+			}
 		}
 	}
-}
 
-bool:Master_LoadModule(const module[])
-{
-	if (existproperty(10, module))
+	bool:Master_LoadModule(const module[])
 	{
-		P:E("Module \"%s\" already loaded.", module);
+		if (existproperty(10, module))
+		{
+			P:E("Module \"%s\" already loaded.", module);
+		}
+		else
+		{
+			setproperty(8, "", YSIM_STRING + 1, module);
+			new
+				masters = getproperty(8, YSIM_MASTER);
+			format(Q@, sizeof (Q@), "loadfs ../modules/%s", module);
+			SendRconCommand(Q@);
+			if (masters == getproperty(8, YSIM_MASTER))
+			{
+				P:F("Could not load module \"%s\"", module);
+				return false;
+			}
+			else
+			{
+				printf("Module \"%s\" loaded", module);
+			}
+			deleteproperty(8, "", YSIM_STRING + 1);
+		}
+		return true;
 	}
-	else
+
+	bool:Master_IsModuleLoaded(const module[])
+	{
+		return existproperty(10, module);
+	}
+
+	bool:Master_ReloadModule(const module[])
 	{
 		setproperty(8, "", YSIM_STRING + 1, module);
+		if (!Master_IsModuleLoaded(module))
+		{
+			P:W("Module \"%s\" not loaded.", module);
+		}
+		// We can't just use the default `reloads` command, because that will clear memory before
+		// the reload, thus we'll loose data.  Instead, we use a hack to load the FS twice at once!
+		// We just alternate which is loaded and unloaded statelessly - detect which method
+		// succeeded.
 		new
 			masters = getproperty(8, YSIM_MASTER);
 		format(Q@, sizeof (Q@), "loadfs ../modules/%s", module);
 		SendRconCommand(Q@);
 		if (masters == getproperty(8, YSIM_MASTER))
 		{
-			P:F("Could not load module \"%s\"", module);
-			return false;
+			// Didn't load, try the alternate version.
+			format(Q@, sizeof (Q@), "loadfs ./../modules/%s", module);
+			SendRconCommand(Q@);
+			if (masters == getproperty(8, YSIM_MASTER))
+			{
+				P:F("Could not reload module \"%s\"", module);
+				return false;
+			}
+			else
+			{
+				format(Q@, sizeof (Q@), "unloadfs ../modules/%s", module);
+				SendRconCommand(Q@);
+				setproperty(10, module, 1);
+				printf("Module \"%s\" (re)loaded.", module);
+			}
 		}
 		else
 		{
-			printf("Module \"%s\" loaded", module);
-		}
-		deleteproperty(8, "", YSIM_STRING + 1);
-	}
-	return true;
-}
-
-bool:Master_IsModuleLoaded(const module[])
-{
-	return existproperty(10, module);
-}
-
-bool:Master_ReloadModule(const module[])
-{
-	setproperty(8, "", YSIM_STRING + 1, module);
-	if (!Master_IsModuleLoaded(module))
-	{
-		P:W("Module \"%s\" not loaded.", module);
-	}
-	// We can't just use the default `reloads` command, because that will clear memory before the
-	// reload, thus we'll loose data.  Instead, we use a hack to load the FS twice at once!  We just
-	// alternate which is loaded and unloaded statelessly - detect which method succeeded.
-	new
-		masters = getproperty(8, YSIM_MASTER);
-	format(Q@, sizeof (Q@), "loadfs ../modules/%s", module);
-	SendRconCommand(Q@);
-	if (masters == getproperty(8, YSIM_MASTER))
-	{
-		// Didn't load, try the alternate version.
-		format(Q@, sizeof (Q@), "loadfs ./../modules/%s", module);
-		SendRconCommand(Q@);
-		if (masters == getproperty(8, YSIM_MASTER))
-		{
-			P:F("Could not reload module \"%s\"", module);
-			return false;
-		}
-		else
-		{
-			format(Q@, sizeof (Q@), "unloadfs ../modules/%s", module);
+			// Loaded a second version of the script.  Unload the first version.
+			format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", module);
 			SendRconCommand(Q@);
 			setproperty(10, module, 1);
 			printf("Module \"%s\" (re)loaded.", module);
 		}
+		deleteproperty(8, "", YSIM_STRING + 1);
+		return true;
 	}
-	else
-	{
-		// Loaded a second version of the script.  Unload the first version.
-		format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", module);
-		SendRconCommand(Q@);
-		setproperty(10, module, 1);
-		printf("Module \"%s\" (re)loaded.", module);
-	}
-	deleteproperty(8, "", YSIM_STRING + 1);
-	return true;
-}
 
-bool:Master_UnloadModule(const module[])
-{
-	if (existproperty(10, module))
+	bool:Master_UnloadModule(const module[])
 	{
-		new
-			masters = getproperty(8, YSIM_MASTER);
-		format(Q@, sizeof (Q@), "unloadfs ../modules/%s", module);
-		SendRconCommand(Q@);
-		format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", module);
-		SendRconCommand(Q@);
-		if (masters == getproperty(8, YSIM_MASTER))
+		if (existproperty(10, module))
 		{
-			P:F("Could not unload module \"%s\"", module);
-			return false;
+			new
+				masters = getproperty(8, YSIM_MASTER);
+			format(Q@, sizeof (Q@), "unloadfs ../modules/%s", module);
+			SendRconCommand(Q@);
+			format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", module);
+			SendRconCommand(Q@);
+			if (masters == getproperty(8, YSIM_MASTER))
+			{
+				P:F("Could not unload module \"%s\"", module);
+				return false;
+			}
+			else
+			{
+				printf("Module \"%s\" unloaded.", module);
+				return true;
+			}
 		}
 		else
 		{
-			printf("Module \"%s\" unloaded.", module);
-			return true;
+			P:E("Module \"%s\" not loaded.", module);
+			return false;
 		}
 	}
-	else
+
+	/*-------------------------------------------------------------------------*//**
+	 * <returns>
+	 *  OnRconCommand
+	 * </returns>
+	 * <remarks>
+	 *  Destructor.
+	 * </remarks>
+	 *//*------------------------------------------------------------------------**/
+
+	forward OnRconCommand(cmd[]);
+
+	public OnRconCommand(cmd[])
 	{
-		P:E("Module \"%s\" not loaded.", module);
-		return false;
+		P:1("MasterOnce_OnRconCommand called");
+		if (!YSI_FILTERSCRIPT)
+		{
+			if (!strcmp(cmd, "loadmodule ", true, 11))
+			{
+				if (cmd[11])
+				{
+					Master_LoadModule(cmd[11]);
+				}
+				else
+				{
+					P:F("No module specified for \"loadmodule\"");
+				}
+				return 1;
+			}
+			else if (!strcmp(cmd, "unloadmodule ", true, 13))
+			{
+				if (cmd[13])
+				{
+					Master_UnloadModule(cmd[13]);
+				}
+				else
+				{
+					P:F("No module specified for \"unloadmodule\"");
+				}
+				return 1;
+			}
+			else if (!strcmp(cmd, "reloadmodule ", true, 13))
+			{
+				if (cmd[13])
+				{
+					Master_ReloadModule(cmd[13]);
+				}
+				else
+				{
+					P:F("No module specified for \"reloadmodule\"");
+				}
+				return 1;
+			}
+		}
+		return Master_OnRconCommand(cmd);
 	}
-}
 
-/*-------------------------------------------------------------------------*//**
- * <returns>
- *  OnRconCommand
- * </returns>
- * <remarks>
- *  Destructor.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-forward OnRconCommand(cmd[]);
-
-public OnRconCommand(cmd[])
-{
-	P:1("MasterOnce_OnRconCommand called");
-	if (!YSI_FILTERSCRIPT)
-	{
-		if (!strcmp(cmd, "loadmodule ", true, 11))
-		{
-			if (cmd[11])
-			{
-				Master_LoadModule(cmd[11]);
-			}
-			else
-			{
-				P:F("No module specified for \"loadmodule\"");
-			}
-			return 1;
-		}
-		else if (!strcmp(cmd, "unloadmodule ", true, 13))
-		{
-			if (cmd[13])
-			{
-				Master_UnloadModule(cmd[13]);
-			}
-			else
-			{
-				P:F("No module specified for \"unloadmodule\"");
-			}
-			return 1;
-		}
-		else if (!strcmp(cmd, "reloadmodule ", true, 13))
-		{
-			if (cmd[13])
-			{
-				Master_ReloadModule(cmd[13]);
-			}
-			else
-			{
-				P:F("No module specified for \"reloadmodule\"");
-			}
-			return 1;
-		}
-	}
-	return Master_OnRconCommand(cmd);
-}
-
-CHAIN_FORWARD:Master_OnRconCommand(cmd[]) = 1;
-#if defined _ALS_OnRconCommand
-	#undef OnRconCommand
-#else
-	#define _ALS_OnRconCommand
+	CHAIN_FORWARD:Master_OnRconCommand(cmd[]) = 1;
+	#if defined _ALS_OnRconCommand
+		#undef OnRconCommand
+	#else
+		#define _ALS_OnRconCommand
+	#endif
+	#define OnRconCommand(%0) CHAIN_PUBLIC:Master_OnRconCommand(%0)
 #endif
-#define OnRconCommand(%0) CHAIN_PUBLIC:Master_OnRconCommand(%0)
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
