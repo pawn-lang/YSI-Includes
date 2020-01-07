@@ -168,28 +168,36 @@ stock bool:Server_CrashDetectExists()
 static ScriptInit_CallOnCodeInit(bool:jit)
 {
 	#if defined ScriptInit_OnCodeInit
-		YSI_Print(" ");
-		YSI_Print(" ======================================= ");
-		YSI_Print(" |                                     | ");
-		YSI_Print(" |    Optimising code, this may take   | ");
-		YSI_Print(" |        a little bit of time.        | ");
-		YSI_Print(" |                                     | ");
-		YSI_Print(" |            Please wait...           | ");
-		YSI_Print(" |                                     | ");
-		if (!jit)
-		{
-			YSI_Print(" |=====================================| ");
+		#if defined YSI_NO_JIT_MESSAGE
+			#pragma unused jit
+		#else
+			YSI_Print(" ");
+			YSI_Print(" ======================================= ");
 			YSI_Print(" |                                     | ");
-			YSI_Print(" | Note that these optimisations are   | ");
-			YSI_Print(" | designed to improve performance     | ");
-			YSI_Print(" | with the JIT plugin, which you are  | ");
-			YSI_Print(" | not currently using.  Get it here:  | ");
+			YSI_Print(" |    Optimising code, this may take   | ");
+			YSI_Print(" |        a little bit of time.        | ");
 			YSI_Print(" |                                     | ");
-			YSI_Print(" |      https://git.io/jit-plugin      | ");
+			YSI_Print(" |            Please wait...           | ");
 			YSI_Print(" |                                     | ");
-		}
-		YSI_Print(" ======================================= ");
-		YSI_Print(" ");
+			YSI_Print(" | You can disabled this message with: | ");
+			YSI_Print(" |                                     | ");
+			YSI_Print(" |     #define YSI_NO_JIT_MESSAGE      | ");
+			YSI_Print(" |                                     | ");
+			if (!jit)
+			{
+				YSI_Print(" |=====================================| ");
+				YSI_Print(" |                                     | ");
+				YSI_Print(" | Note that these optimisations are   | ");
+				YSI_Print(" | designed to improve performance     | ");
+				YSI_Print(" | with the JIT plugin, which you are  | ");
+				YSI_Print(" | not currently using.  Get it here:  | ");
+				YSI_Print(" |                                     | ");
+				YSI_Print(" |      https://git.io/jit-plugin      | ");
+				YSI_Print(" |                                     | ");
+			}
+			YSI_Print(" ======================================= ");
+			YSI_Print(" ");
+		#endif
 		ScriptInit_OnCodeInit();
 	#endif
 }

@@ -101,6 +101,10 @@ CHAIN_FORWARD:YVers_OnScriptInit() = 1;
 
 #define YSI_VERSION                     #YSI_VERSION_MAJOR "." #YSI_VERSION_MINOR "." #YSI_VERSION_BUILD
 
+#if defined YSI_NO_VERSION_CHECK && !defined _YSI_NO_VERSION_CHECK
+	#define _YSI_NO_VERSION_CHECK
+#endif
+
 #if defined _YSI_NO_VERSION_CHECK
 	
 	public OnScriptInit()
@@ -154,6 +158,10 @@ CHAIN_FORWARD:YVers_OnScriptInit() = 1;
 			YSI_Print(" |   Unable to check the latest YSI    | ");
 			YSI_Print(" |  version, please watch the forums.  | ");
 			YSI_Print(" |                                     | ");
+			YSI_Print(" | You can disabled this message with: | ");
+			YSI_Print(" |                                     | ");
+			YSI_Print(" |     #define YSI_NO_VERSION_CHECK    | ");
+			YSI_Print(" |                                     | ");
 			YSI_Print(" ======================================= ");
 			YSI_Print(" ");
 			YVers_OnScriptInit();
@@ -192,6 +200,10 @@ CHAIN_FORWARD:YVers_OnScriptInit() = 1;
 		YSI_Print(" |        By Alex \"Y_Less\" Cole        | ");
 		//YSI_Print(" |                                     | ");
 		//YSI_Print(" |  Checking the latest YSI version..  | ");
+		YSI_Print(" |                                     | ");
+		YSI_Print(" | You can disabled this message with: | ");
+		YSI_Print(" |                                     | ");
+		YSI_Print(" |     #define YSI_NO_VERSION_CHECK    | ");
 		YSI_Print(" |                                     | ");
 		YSI_Print(" ======================================= ");
 		YSI_Print(" ");
