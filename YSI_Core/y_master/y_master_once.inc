@@ -710,6 +710,7 @@ CHAIN_FORWARD:Master_OnFilterScriptExit() = 0;
 			SendRconCommand(Q@);
 			format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", module);
 			SendRconCommand(Q@);
+			CallRemoteFunction("Master_Reassert", "");
 			if (masters == getproperty(8, YSIM_MASTER))
 			{
 				P:F("Could not unload module \"%s\"", module);
