@@ -165,14 +165,22 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	#emit SREF.S.alt   0xFFFFFFFC
 	#emit STACK        8
 	
+	// Clear the default return property.
+	#emit PUSH.C       YSI_g_sPropEmpty
+	#emit PUSH.C       0
+	#emit PUSH.C       YSI_g_sPropReturn
+	#emit PUSH.C       8
+	#emit PUSH.C       16
+	#emit SYSREQ.C     setproperty
+	
 	// Push the current master ID on to the master stack.  Returns the old
 	// master ID stored in the property, which we can shove on to the heap to
 	// restore later.
+	#emit STACK        20
 	#emit PUSH.C       Q@
 	#emit PUSH         @_
 	#emit PUSH.C       YSI_g_sPropCaller
-	#emit PUSH.C       8
-	#emit PUSH.C       16
+	#emit STACK        0xFFFFFFF8 // Already got the last two parameters.
 	#emit SYSREQ.C     setproperty
 	
 	// Back up the frame header information and the return value.  "MOVS" copies
@@ -187,13 +195,11 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	{
 		#emit STACK        28
 		#emit SYSREQ.C     W@
-		#emit STOR.pri     YSI_g_sCallData
 	}
 	else
 	{
 		#emit STACK        28
 		#emit SYSREQ.C     P@
-		#emit STOR.pri     YSI_g_sCallData
 	}
 	{}
 	
@@ -210,52 +216,37 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// parameter went where).
 	#emit SYSREQ.C     setproperty
 	
-	if (YSI_g_sCallData)
+	// Get the return value.  Already have most of the parameters pushed,
+	// just modify one of them (the name).
+	#emit CONST.pri    YSI_g_sPropEmpty
+	#emit STOR.S.pri   0xFFFFFFF4 // -12
+	#emit LOAD.pri     YSI_g_sYSIM_STRING
+	#emit STOR.S.pri   0xFFFFFFF8 // -8
+	#emit ZERO.pri
+	#emit STOR.pri     Q@
+	#emit SYSREQ.C     getproperty
+	
+	// Unpack the return to the previous function's return string.
+	#emit PUSH         YSI_g_sYSI_MAX_STRING
+	#emit PUSH.C       Q@
+	#emit LOAD.S.pri   0
+	#emit MOVE.alt
+	#emit ADD.C        8
+	#emit LOAD.I
+	#emit ADD.C        12
+	#emit ADD
+	#emit LOAD.I
+	#emit PUSH.pri
+	#emit PUSH.C       12
+	#emit SYSREQ.C     strunpack
+	
+	// Get all the varargs (without using our corrupted stack).
+	static i, j, ch;
+	for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
 	{
-		// Get the return value.  Already have most of the parameters pushed,
-		// just modify one of them (the name).
-		#emit CONST.pri    YSI_g_sPropEmpty
-		#emit STOR.S.pri   0xFFFFFFF4 // -12
-		#emit LOAD.pri     YSI_g_sYSIM_STRING
-		#emit STOR.S.pri   0xFFFFFFF8 // -8
-		#emit SYSREQ.C     getproperty
-		
-		// Unpack the return to the previous function's return string.
-		#emit PUSH         YSI_g_sYSI_MAX_STRING
-		#emit PUSH.C       Q@
-		#emit LOAD.S.pri   0
-		#emit MOVE.alt
-		#emit ADD.C        8
-		#emit LOAD.I
-		#emit ADD.C        12
-		#emit ADD
-		#emit LOAD.I
-		#emit PUSH.pri
-		#emit PUSH.C       12
-		#emit SYSREQ.C     strunpack
-		
-		// Get all the varargs (without using our corrupted stack).
-		static i, j, ch;
-		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
-		{
-			YSI_g_sPropVarArg[1] = '@' + ++j,
-			P:7("C@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
-			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
-		}
-	}
-	else
-	{
-		// NULL the return.
-		#emit LOAD.S.pri   0
-		#emit MOVE.alt
-		#emit ADD.C        8
-		#emit LOAD.I
-		#emit ADD.C        12
-		#emit ADD
-		#emit LOAD.I
-		#emit MOVE.alt
-		#emit ZERO.pri
-		#emit STOR.I
+		YSI_g_sPropVarArg[1] = '@' + ++j,
+		P:7("C@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
+		setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
 	}
 	{}
 	
@@ -295,14 +286,21 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// ones which don't work well for "CallRemoteFunction" (they depend on
 	// script call order).
 	
+	// Clear the string return property.
+	#emit PUSH.C       YSI_g_sPropEmpty
+	#emit PUSH         YSI_g_sYSIM_STRING
+	#emit PUSH.C       YSI_g_sPropEmpty
+	#emit PUSH.C       8
+	#emit PUSH.C       16
+	#emit SYSREQ.C     setproperty
+	
 	// Push the current master ID on to the master stack.  Returns the old
 	// master ID stored in the property, which we can shove on to the heap to
 	// restore later.
-	#emit PUSH.C       YSI_g_sPropEmpty
+	#emit STACK        16
 	#emit PUSH         @_
 	#emit PUSH.C       YSI_g_sPropCaller
-	#emit PUSH.C       8
-	#emit PUSH.C       16
+	#emit STACK        0xFFFFFFF8
 	#emit SYSREQ.C     setproperty
 	
 	// Back up the frame header information and the return value.  "MOVS" copies
@@ -317,13 +315,11 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	{
 		#emit STACK        28
 		#emit SYSREQ.C     W@
-		#emit STOR.pri     YSI_g_sCallData
 	}
 	else
 	{
 		#emit STACK        28
 		#emit SYSREQ.C     P@
-		#emit STOR.pri     YSI_g_sCallData
 	}
 	{}
 	
@@ -340,23 +336,20 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// parameter went where).
 	#emit SYSREQ.C     setproperty
 	
-	if (YSI_g_sCallData)
+	// Get the return value.  Already have most of the parameters pushed,
+	// just modify one of them (the name).
+	#emit CONST.pri    YSI_g_sPropReturn
+	#emit STOR.S.pri   0xFFFFFFF4 // -12
+	#emit SYSREQ.C     getproperty
+	#emit STOR.pri     YSI_g_sCallData
+	
+	// Get all the varargs (without using our corrupted stack).
+	static i, j, ch;
+	for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
 	{
-		// Get the return value.  Already have most of the parameters pushed,
-		// just modify one of them (the name).
-		#emit CONST.pri    YSI_g_sPropReturn
-		#emit STOR.S.pri   0xFFFFFFF4 // -12
-		#emit SYSREQ.C     getproperty
-		#emit STOR.pri     YSI_g_sCallData
-		
-		// Get all the varargs (without using our corrupted stack).
-		static i, j, ch;
-		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
-		{
-			YSI_g_sPropVarArg[1] = '@' + ++j,
-			P:7("D@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
-			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
-		}
+		YSI_g_sPropVarArg[1] = '@' + ++j,
+		P:7("D@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
+		setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
 	}
 	{}
 	
