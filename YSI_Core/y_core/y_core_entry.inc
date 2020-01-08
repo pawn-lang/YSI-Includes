@@ -140,7 +140,8 @@ Optional plugins:
 
 // A few nicely named short strings used for properties.
 #define YSIM_MASTER #M
-#define YSIM_VERRET #W
+stock const YSIM_VERRET[] = "W";
+stock const YSIM_VERMAX[] = "X";
 #define YSIM_RETURN #R
 #define YSIM_CALLER #C
 #define YSIM_TEXT_D #T

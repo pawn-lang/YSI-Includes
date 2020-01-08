@@ -901,9 +901,8 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 				master = CallLocalFunction(func, "");
 				// Might still be able to steal the master if we're a higher version.  We must be
 				// EXCLUSIVELY higher, not just same or higher.
-				setproperty(8, #YSIM_VERRET, master);
 				CallRemoteFunction(func, "");
-				if (master <= getproperty(8, #YSIM_VERRET))
+				if (master <= getproperty(8, YSIM_VERRET))
 				{
 					return e_YSIM_GET_TYPE_NOT_GOT; // Not got the master.
 				}
@@ -920,9 +919,9 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 			master = CallLocalFunction(func, "");
 		// Here we can be same OR higher to get the master, not exclusively higher, because we
 		// aren't stealing it.
-		setproperty(8, #YSIM_VERRET, master);
+		setproperty(8, YSIM_VERMAX, 0);
 		CallRemoteFunction(func, "");
-		if (master < getproperty(8, #YSIM_VERRET))
+		if (master < getproperty(8, YSIM_VERMAX))
 		{
 			return e_YSIM_GET_TYPE_NOT_GOT; // Not got the master.
 		}
