@@ -877,21 +877,22 @@ static stock const
 
 stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 {
+	P:2("_Master_Get called");
 	new
 		e_YSIM_GET_TYPE:ret = e_YSIM_GET_TYPE_NO_CONTEST;
-	P:3("E_YSIM_GET_TYPE:_Master_Get called: \"%s\", %i", library, _:force);
-	P:2("_Master_Get called");
-	if (existproperty(9, library))
+	new
+		master = getproperty(9, library);
+	P:3("E_YSIM_GET_TYPE:_Master_Get called: \"%s\", %i, %d", library, _:force, master);
+	if (master)
 	{
-		new
-			master = getproperty(9, library);
 		P:4("_Master_Get: Prop exists: %d %d", master, Master_ID());
 		if (master)
 		{
 			P:4("_Master_Get: Prop set");
 			if (master == Master_ID())
 			{
-				return e_YSIM_GET_TYPE_NO_CONTEST; // Nothing has changed.
+				// Nothing has changed.
+				return e_YSIM_GET_TYPE_NO_CONTEST;
 			}
 			else if (!force)
 			{
@@ -904,10 +905,12 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 				CallRemoteFunction(func, "");
 				if (master <= getproperty(8, YSIM_VERRET))
 				{
-					return e_YSIM_GET_TYPE_NOT_GOT; // Not got the master.
+					// Not got the master.
+					return e_YSIM_GET_TYPE_NOT_GOT;
 				}
 			}
-			ret = e_YSIM_GET_TYPE_STOLE; // A server is forcing itself.
+			// A server is forcing itself.
+			ret = e_YSIM_GET_TYPE_STOLE;
 		}
 	}
 	else if (!force)
@@ -915,15 +918,11 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 		new
 			func[32];
 		format(func, sizeof (func), YSI_g_scYSIM_VERSION, library);
-		new
-			master = CallLocalFunction(func, "");
-		// Here we can be same OR higher to get the master, not exclusively higher, because we
-		// aren't stealing it.
-		setproperty(8, YSIM_VERMAX, 0);
-		CallRemoteFunction(func, "");
-		if (master < getproperty(8, YSIM_VERMAX))
+		if (CallLocalFunction(func, "") < getproperty(8, YSIM_VERMAX))
 		{
-			return e_YSIM_GET_TYPE_NOT_GOT; // Not got the master.
+			// There's another pending library with a higher version than us.  If we're equal, its
+			// first-come, first-served.
+			return e_YSIM_GET_TYPE_NOT_GOT;
 		}
 	}
 	P:4("_Master_Get: Get master.");

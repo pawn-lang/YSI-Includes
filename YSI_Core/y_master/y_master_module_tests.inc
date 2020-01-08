@@ -118,12 +118,12 @@ TEST__ Master_ModulesPhase2b()
 
 TEST__ Master_ModulesPhase3a()
 {
-	// Unless the version is higher.
+	// Even if the version is higher.
 	Master_TestAll(0);
 	Master_LoadModule("y_master_test_2");
 	Master_TestAll(2);
 	Master_LoadModule("y_master_test_4");
-	Master_TestAll(4);
+	Master_TestAll(2);
 	Master_UnloadModule("y_master_test_4");
 	Master_TestAll(2);
 	Master_UnloadModule("y_master_test_2");
@@ -132,12 +132,12 @@ TEST__ Master_ModulesPhase3a()
 
 TEST__ Master_ModulesPhase3b()
 {
-	// Unless the version is higher.
+	// Even if the version is higher.
 	Master_TestAll(0);
 	Master_LoadModule("y_master_test_2");
 	Master_TestAll(2);
 	Master_LoadModule("y_master_test_4");
-	Master_TestAll(4);
+	Master_TestAll(2);
 	Master_UnloadModule("y_master_test_2");
 	Master_TestAll(4);
 	Master_UnloadModule("y_master_test_4");

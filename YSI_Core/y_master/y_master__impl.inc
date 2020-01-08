@@ -260,7 +260,33 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 stock
 	_E_YCM:_YCM@ = _E_YCM@u;
 
-#if _YSIM_IS_SERVER || _YSIM_IS_CLOUD
+#if _YSIM_IS_SERVER
+	forward MAKE_YCM<YSIM_VERSION...>();
+
+	public MAKE_YCM<YSIM_VERSION...>() <_YCM:y, _YCM:u>
+	{
+		P:3(#MAKE_YCM<YSIM_VERSION...> "() <y,u> called");
+		// For making sure the latest version of a library is the one used.
+		setproperty(8, YSIM_VERRET, cellmax);
+		setproperty(8, YSIM_VERMAX, cellmax);
+		return cellmax;
+	}
+
+	public MAKE_YCM<YSIM_VERSION...>() <_YCM:n>
+	{
+		P:3(#MAKE_YCM<YSIM_VERSION...> "() <n> called");
+		// For making sure the latest version of a library is the one used.
+		setproperty(8, YSIM_VERMAX, cellmax);
+		return cellmax;
+	}
+
+	public MAKE_YCM<YSIM_VERSION...>() <>
+	{
+		// Called if this script is ending.
+		P:3(#MAKE_YCM<YSIM_VERSION...> "() <> called");
+		return cellmax;
+	}
+#elseif _YSIM_IS_CLOUD
 		forward MAKE_YCM<YSIM_VERSION...>();
 
 		public MAKE_YCM<YSIM_VERSION...>() <>
@@ -734,7 +760,9 @@ public _YCM() <_YCM:y>
 		// Disable the current mastership.
 		state _YCM:p;
 		_YCM@ = _E_YCM@p;
-		// Ending normally, relinquish control peacefully.
+		// Ending normally, relinquish control peacefully to the highest version.
+		setproperty(8, YSIM_VERMAX, 0);
+		CallRemoteFunction(#MAKE_YCM<YSIM_VERSION...>, "");
 		setproperty(9, #_YCM, 0);
 		// Called locally to begin the hand off process.
 		CallRemoteFunction(#_YCM, "");
