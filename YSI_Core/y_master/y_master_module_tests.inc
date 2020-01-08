@@ -1,11 +1,11 @@
 // The prototypes to call.
 
-foreign M_Func1();
-foreign M_Func2(in);
-foreign void:M_Func3(&ret, in);
-foreign string:M_Func4();
-foreign string:M_Func5(const string:in[]);
-foreign M_Func6();
+FOREIGN__ M_Func1();
+FOREIGN__ M_Func2(in);
+FOREIGN__ void:M_Func3(&ret, in);
+FOREIGN__ string:M_Func4();
+FOREIGN__ string:M_Func5(const string:in[]);
+FOREIGN__ M_Func6();
 
 static stock Master_TestAll(base)
 {
