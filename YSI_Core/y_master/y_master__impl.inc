@@ -260,37 +260,39 @@ const static _YSIM_STORED_SETTINGS = YSIM_STORED_SETTINGS;
 stock
 	_E_YCM:_YCM@ = _E_YCM@u;
 
-#if defined YSIM_VERSION
-	#if _YSIM_IS_SERVER
+#if _YSIM_IS_SERVER || _YSIM_IS_CLOUD
 		forward MAKE_YCM<YSIM_VERSION...>();
-
-		public MAKE_YCM<YSIM_VERSION...>()
-		{
-			P:3(#MAKE_YCM<YSIM_VERSION...> "() called");
-			// For making sure the latest version of a library is the one used.
-			setproperty(8, #YSIM_VERRET, YSIM_VERSION);
-			return YSIM_VERSION;
-		}
-	#elseif _YSIM_IS_CLOUD
-		forward MAKE_YCM<YSIM_VERSION...>();
-
-		public MAKE_YCM<YSIM_VERSION...>() <_YCM:y>
-		{
-			P:3(#MAKE_YCM<YSIM_VERSION...> "() <y> called");
-			// For making sure the latest version of a library is the one used.
-			setproperty(8, #YSIM_VERRET, YSIM_VERSION);
-			return YSIM_VERSION;
-		}
 
 		public MAKE_YCM<YSIM_VERSION...>() <>
 		{
 			P:3(#MAKE_YCM<YSIM_VERSION...> "() <> called");
 			// Return here for local (current version) gets.
+
+	#if defined YSIM_VERSION
 			return YSIM_VERSION;
+		}
+	
+		public MAKE_YCM<YSIM_VERSION...>() <_YCM:y, _YCM:n>
+		{
+			P:3(#MAKE_YCM<YSIM_VERSION...> "() <y> called");
+			// For making sure the latest version of a library is the one used.
+			setproperty(8, #YSIM_VERRET, max(getproperty(8, #YSIM_VERRET), YSIM_VERSION));
+			return YSIM_VERSION;
+		}
+
+		#undef YSIM_VERSION
+	#else
+			return 0;
 		}
 	#endif
 
-	#undef YSIM_VERSION
+		public MAKE_YCM<YSIM_VERSION...>() <_YCM:u>
+		{
+			P:3(#MAKE_YCM<YSIM_VERSION...> "() <u> called");
+			// This script already claimed the master, we can't reverse that.
+			setproperty(8, #YSIM_VERRET, cellmax);
+			return cellmax;
+		}
 #endif
 
 forward _YCM();

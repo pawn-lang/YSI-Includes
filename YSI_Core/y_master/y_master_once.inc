@@ -872,6 +872,9 @@ enum e_YSIM_GET_TYPE
  * <param name="library">The name of the library to try become master for.</param>
  *//*------------------------------------------------------------------------**/
 
+static stock const
+	YSI_g_scYSIM_VERSION[] = "YSIM_VERSION%s";
+
 stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 {
 	new
@@ -892,11 +895,13 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 			}
 			else if (!force)
 			{
-				new func[32];
-				format(func, sizeof (func), "YSIM_VERSION%s", library);
+				new
+					func[32];
+				format(func, sizeof (func), YSI_g_scYSIM_VERSION, library);
 				master = CallLocalFunction(func, "");
 				// Might still be able to steal the master if we're a higher version.  We must be
 				// EXCLUSIVELY higher, not just same or higher.
+				setproperty(8, #YSIM_VERRET, master);
 				CallRemoteFunction(func, "");
 				if (master <= getproperty(8, #YSIM_VERRET))
 				{
@@ -904,6 +909,22 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 				}
 			}
 			ret = e_YSIM_GET_TYPE_STOLE; // A server is forcing itself.
+		}
+	}
+	else if (!force)
+	{
+		new
+			func[32];
+		format(func, sizeof (func), YSI_g_scYSIM_VERSION, library);
+		new
+			master = CallLocalFunction(func, "");
+		// Here we can be same OR higher to get the master, not exclusively higher, because we
+		// aren't stealing it.
+		setproperty(8, #YSIM_VERRET, master);
+		CallRemoteFunction(func, "");
+		if (master < getproperty(8, #YSIM_VERRET))
+		{
+			return e_YSIM_GET_TYPE_NOT_GOT; // Not got the master.
 		}
 	}
 	P:4("_Master_Get: Get master.");

@@ -52,6 +52,7 @@ TEST__ Master_ModulesPhase0a()
 
 TEST__ Master_ModulesPhase0b()
 {
+	Master_TestAll(0);
 	Master_LoadModule("y_master_test_1");
 	Master_TestAll(1);
 	Master_UnloadModule("y_master_test_1");
@@ -62,6 +63,7 @@ TEST__ Master_ModulesPhase0b()
 TEST__ Master_ModulesPhase1a()
 {
 	// Loading a server after a cloud will steal it.
+	Master_TestAll(0);
 	Master_LoadModule("y_master_test_1");
 	Master_TestAll(1);
 	Master_LoadModule("y_master_test_2");
@@ -69,13 +71,13 @@ TEST__ Master_ModulesPhase1a()
 	Master_UnloadModule("y_master_test_1");
 	Master_TestAll(2);
 	Master_UnloadModule("y_master_test_2");
-	// Check the string returns are cleared.
 	Master_TestAll(0);
 }
 
 TEST__ Master_ModulesPhase1b()
 {
 	// Loading a server after a cloud will steal it.
+	Master_TestAll(0);
 	Master_LoadModule("y_master_test_1");
 	Master_TestAll(1);
 	Master_LoadModule("y_master_test_2");
@@ -83,13 +85,13 @@ TEST__ Master_ModulesPhase1b()
 	Master_UnloadModule("y_master_test_2");
 	Master_TestAll(1);
 	Master_UnloadModule("y_master_test_1");
-	// Check the string returns are cleared.
 	Master_TestAll(0);
 }
 
 TEST__ Master_ModulesPhase2a()
 {
 	// Loading a cloud after a server won't.
+	Master_TestAll(0);
 	Master_LoadModule("y_master_test_2");
 	Master_TestAll(2);
 	Master_LoadModule("y_master_test_1");
@@ -97,13 +99,13 @@ TEST__ Master_ModulesPhase2a()
 	Master_UnloadModule("y_master_test_1");
 	Master_TestAll(2);
 	Master_UnloadModule("y_master_test_2");
-	// Check the string returns are cleared.
 	Master_TestAll(0);
 }
 
 TEST__ Master_ModulesPhase2b()
 {
 	// Loading a cloud after a server won't.
+	Master_TestAll(0);
 	Master_LoadModule("y_master_test_2");
 	Master_TestAll(2);
 	Master_LoadModule("y_master_test_1");
@@ -111,13 +113,13 @@ TEST__ Master_ModulesPhase2b()
 	Master_UnloadModule("y_master_test_2");
 	Master_TestAll(1);
 	Master_UnloadModule("y_master_test_1");
-	// Check the string returns are cleared.
 	Master_TestAll(0);
 }
 
 TEST__ Master_ModulesPhase3a()
 {
 	// Unless the version is higher.
+	Master_TestAll(0);
 	Master_LoadModule("y_master_test_2");
 	Master_TestAll(2);
 	Master_LoadModule("y_master_test_4");
@@ -125,13 +127,13 @@ TEST__ Master_ModulesPhase3a()
 	Master_UnloadModule("y_master_test_4");
 	Master_TestAll(2);
 	Master_UnloadModule("y_master_test_2");
-	// Check the string returns are cleared.
 	Master_TestAll(0);
 }
 
 TEST__ Master_ModulesPhase3b()
 {
 	// Unless the version is higher.
+	Master_TestAll(0);
 	Master_LoadModule("y_master_test_2");
 	Master_TestAll(2);
 	Master_LoadModule("y_master_test_4");
@@ -139,13 +141,13 @@ TEST__ Master_ModulesPhase3b()
 	Master_UnloadModule("y_master_test_2");
 	Master_TestAll(4);
 	Master_UnloadModule("y_master_test_4");
-	// Check the string returns are cleared.
 	Master_TestAll(0);
 }
 
 TEST__ Master_ModulesPhase4a()
 {
 	// Higher cloud version.
+	Master_TestAll(0);
 	Master_LoadModule("y_master_test_1");
 	Master_TestAll(1);
 	Master_LoadModule("y_master_test_4");
@@ -153,13 +155,13 @@ TEST__ Master_ModulesPhase4a()
 	Master_UnloadModule("y_master_test_1");
 	Master_TestAll(4);
 	Master_UnloadModule("y_master_test_4");
-	// Check the string returns are cleared.
 	Master_TestAll(0);
 }
 
 TEST__ Master_ModulesPhase4b()
 {
 	// Higher cloud version.
+	Master_TestAll(0);
 	Master_LoadModule("y_master_test_1");
 	Master_TestAll(1);
 	Master_LoadModule("y_master_test_4");
@@ -167,13 +169,13 @@ TEST__ Master_ModulesPhase4b()
 	Master_UnloadModule("y_master_test_4");
 	Master_TestAll(1);
 	Master_UnloadModule("y_master_test_1");
-	// Check the string returns are cleared.
 	Master_TestAll(0);
 }
 
 TEST__ Master_ModulesPhase5a()
 {
 	// Lower cloud version.
+	Master_TestAll(0);
 	Master_LoadModule("y_master_test_4");
 	Master_TestAll(4);
 	Master_LoadModule("y_master_test_1");
@@ -181,13 +183,13 @@ TEST__ Master_ModulesPhase5a()
 	Master_UnloadModule("y_master_test_1");
 	Master_TestAll(4);
 	Master_UnloadModule("y_master_test_4");
-	// Check the string returns are cleared.
 	Master_TestAll(0);
 }
 
 TEST__ Master_ModulesPhase5b()
 {
 	// Lower cloud version.
+	Master_TestAll(0);
 	Master_LoadModule("y_master_test_4");
 	Master_TestAll(4);
 	Master_LoadModule("y_master_test_1");
@@ -195,7 +197,28 @@ TEST__ Master_ModulesPhase5b()
 	Master_UnloadModule("y_master_test_4");
 	Master_TestAll(1);
 	Master_UnloadModule("y_master_test_1");
-	// Check the string returns are cleared.
+	Master_TestAll(0);
+}
+
+TEST__ Master_ModulesPhase6()
+{
+	// Loading a client won't make any difference.
+	Master_TestAll(0);
+	Master_LoadModule("y_master_test_3");
+	Master_TestAll(0);
+	Master_LoadModule("y_master_test_1");
+	Master_TestAll(1);
+	Master_LoadModule("y_master_test_4");
+	Master_TestAll(4);
+	Master_LoadModule("y_master_test_2");
+	Master_TestAll(2);
+	Master_UnloadModule("y_master_test_2");
+	Master_TestAll(4);
+	Master_UnloadModule("y_master_test_4");
+	Master_TestAll(1);
+	Master_UnloadModule("y_master_test_1");
+	Master_TestAll(0);
+	Master_UnloadModule("y_master_test_3");
 	Master_TestAll(0);
 }
 
