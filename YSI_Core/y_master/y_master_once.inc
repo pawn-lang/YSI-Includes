@@ -552,30 +552,6 @@ CHAIN_FORWARD:Master_OnScriptExit() = 0;
 #define OnScriptExit(%0) CHAIN_PUBLIC:Master_OnScriptExit(%0)
 forward OnMasterSystemClose(id);
 
-///*-------------------------------------------------------------------------*//**
-// * <returns>
-// *  Master_OnFilterScriptExit
-// * </returns>
-// * <remarks>
-// *  Reasserts all other IDs when an FS ends early.
-// * </remarks>
-// *//*------------------------------------------------------------------------**/
-//
-//public OnFilterScriptExit()
-//{
-//	P:1("MasterOnce_OnScriptExit called");
-//	CallRemoteFunction("Master_Reassert", "");
-//	return Master_OnFilterScriptExit();
-//}
-
-CHAIN_FORWARD:Master_OnFilterScriptExit() = 0;
-#if defined _ALS_OnFilterScriptExit
-	#undef OnFilterScriptExit
-#else
-	#define _ALS_OnFilterScriptExit
-#endif
-#define OnFilterScriptExit(%0) CHAIN_PUBLIC:Master_OnFilterScriptExit(%0)
-
 /*-------------------------------------------------------------------------*//**
  * <returns>
  *  Master_OnCloseModules
