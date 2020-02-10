@@ -259,36 +259,31 @@ public OnRuntimeError(code, &bool:suppress)
 #define @Iy_%0\32; @Iy_
 #define @_Iy%0\32; @_Iy
 
-//#define INIT_STRIP_TAGS__:%3:%0(%1);INIT_THE_TAG__<%2>%9(%9) %2%0(%1);%2%0(%1)
-//#define INIT_STRIP_TAGS_2__:@yI_%3:%0(%1);INIT_STRIP_TAGS_2__:%9(%9){_YSI_ConstMod(%4,(%5));} @yI_%0(%1);@yI_%0(%1){_YSI_ConstMod(_:%4,_:(%3:I@=(%5)));}
-//#define INIT_THE_TAG__<%0> INIT_STRIP_TAGS__:%0
-//
-//#define PREINIT__%0(%1) INIT_STRIP_TAGS__:@yI_%0(%1);INIT_THE_TAG__<@yI_>%0(%1)
-//#define POSTINIT__%0(%1) INIT_STRIP_TAGS__:@_yI%0(%1);INIT_THE_TAG__<@_yI>%0(%1)
-//
-//#define PREEXIT__%0(%1) INIT_STRIP_TAGS__:@Iy_%0(%1);INIT_THE_TAG__<@Iy_>%0(%1)
-//#define POSTEXIT__%0(%1) INIT_STRIP_TAGS__:@_Iy%0(%1);INIT_THE_TAG__<@_Iy>%0(%1)
-//
-//#define FINAL__%0=%1; stock const %0;INIT_STRIP_TAGS_2__:@yI_%0();INIT_STRIP_TAGS_2__:@yI_%0(){_YSI_ConstMod(%0,(%1));}
-
 #define u@$ 0]);
-//#define PARSER@FUNC:%0$ u@(u[_:%0 u@$
 
-// The indirection is so the second match tag isn't detected as a user tag.
-#define _y@I:%9:%0(%1);_@Iy<%9,%2>%9(%9) %2%0(%1);%2%0(%1)
+// Detect tags.
+#define _@Iy:%8$%3:%0(%1)<_> %8$%0(%1)<%3>
 
+// Detect arrays.
+#define _@yI:%8$%0[%4]%9(%1)<%3> %8$%0(%1)<%3>
+
+// Finish inits.
+#define _y@I:%8$%0(%1)<%3>(%2) %8$%3:%2%0(%1);%3:%2%0(%1)
+
+// Finish final.
+#define _I@y:%8$%0(%1)<%3>(%5) %8$@yI_%0();@yI_%0(){_YSI_ConstMod(_:%0,_:(%3:I@=(%5)));}
 // The assignment to `I@` is so any custom assignment operators are called and to check the tag is
 // correct, or give a mismatch warning.
-#define _@yI:@yI_%3:%0(%1);_@Iy<%9,%2>%9(%9){_YSI_ConstMod(%4,(%5));} %2%0(%1);%2%0(%1){_YSI_ConstMod(_:%4,_:(%3:I@=(%5)));}
-#define _@Iy<%0,%1> %0:%1
 
-#define PREINIT__%0(%1) _y@I:@yI_%0(%1);_@Iy<_y@I,@yI_>%0(%1)
-#define POSTINIT__%0(%1) _y@I:@_yI%0(%1);_@Iy<_y@I,@_yI>%0(%1)
+#define DO_YSI_INIT__%0(%1)<%2> u@(u[_:_@Iy:_@yI:_y@I:u@$%0(%1)<_>(%2)
 
-#define PREEXIT__%0(%1) _y@I:@Iy_%0(%1);_@Iy<_y@I,@Iy_>%0(%1)
-#define POSTEXIT__%0(%1) _y@I:@_Iy%0(%1);_@Iy<_y@I,@_Iy>%0(%1)
+#define PREINIT__%0(%1) DO_YSI_INIT__%0(%1)<@yI_>
+#define POSTINIT__%0(%1) DO_YSI_INIT__%0(%1)<@_yI>
 
-#define FINAL__%0=%1; stock const %0;_@yI:@yI_%0();_@Iy<_@yI,@yI_>%0(){_YSI_ConstMod(%0,(%1));}
+#define PREEXIT__%0(%1) DO_YSI_INIT__%0(%1)<@Iy_>
+#define POSTEXIT__%0(%1) DO_YSI_INIT__%0(%1)<@_Iy>
+
+#define FINAL__%0=%1; stock const %0;u@(u[_:_@Iy:_@yI:_I@y:u@$%0()<_>(%1)
 
 #if YSI_KEYWORD(final)
 	#define final FINAL__
