@@ -237,12 +237,16 @@ ScriptInit_PostExitFuncs_()
 	#pragma warning push
 	#pragma warning disable 238
 #endif
+
 stock _YSI_ConstMod(const &var, const val)
 {
 	#pragma unused var, val
 	#emit LOAD.S.pri val
 	#emit SREF.S.pri var
 }
+
+native _YSI_ConstCpy(const dst[], const src[], index, numbytes, maxlength) = memcpy;
+
 #if __COMPILER_CONST_REF
 	#pragma warning pop
 #endif

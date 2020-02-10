@@ -285,7 +285,16 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __COMPILER_BUGGED_SYSREQ (0)
 	#define __COMPILER_WARNING_SUPPRESSION (1)
 	#define __COMPILER_USER_WARNING (1)
+
+	// Error with:
+	//
+	//   const Float:X[] = Float:"hello";
+	//
+	#define __COMPILER_CONST_TAGGED (0)
 	
+	// This MAY need to have the same code as the old compiler - generating variables that define
+	// the tags.  This is because `param = tagof (Float:)` doesn't seem to work.  I.e. you can't
+	// have a default argument of a tagof of a constant tag.
 	#define __COMPILER_TAG_DATA(%0,%1) stock %0:operator=(__CompilerDefault:a) return a, %0:(%1)
 	
 	// Disable the recursion warning in the Russian compiler (and the unknown
@@ -419,6 +428,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __COMPILER_USER_WARNING (0)
 	#define __COMPILER_CONST_REF (0)
 	#define __COMPILER_sNAMEMAX (31)
+	#define __COMPILER_CONST_TAGGED (0)
 	
 	// It is sufficient simply for a variable to exist anywhere with the tag.
 	#define __COMPILER_TAG_DATA(%0,%1) static stock const %0:__TAGOF__%0; stock %0:operator=(__CompilerDefault:a) return a, %0:(%1)
@@ -466,6 +476,14 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 		return 0;
 	}
 	
+#endif
+
+#if !__COMPILER_CONST_TAGGED
+	// Fix for bugged const assignments.
+	#define _yI@%0\32; _yI@
+	#define const%0:%1[%2]=%3:%4; \
+		const _yI@%1[%2]=%4,%0:%1[sizeof(_yI@%1)]; \
+		PREINIT__ %1()_YSI_ConstCpy(_:(%1),(_yI@%1),0,sizeof(%1)*4,sizeof(%1));
 #endif
 
 // Consistent naming of compiler defined values. 
