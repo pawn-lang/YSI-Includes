@@ -711,7 +711,7 @@ stock va_TextDrawSetString(Text:text, const fmat[], va_args<>)
 
 stock va_PlayerTextDrawSetString(playerid, PlayerText:text, const fmat[], va_args<>)
 {
-	return PlayerTextDrawSetString(playerid, text, va_return(fmat, va_start<2>));
+	return PlayerTextDrawSetString(playerid, text, va_return(fmat, va_start<3>));
 }
 
 stock va_SendClientMessage(playerid, colour, const fmat[], va_args<>)
