@@ -704,6 +704,16 @@ stock Text:va_TextDrawCreate(Float:x, Float:y, const fmat[], va_args<>)
 	return TextDrawCreate(x, y, va_return(fmat, va_start<3>));
 }
 
+stock va_TextDrawSetString(Text:text, const fmat[], va_args<>)
+{
+	return TextDrawSetString(text, va_return(fmat, va_start<2>));
+}
+
+stock va_PlayerTextDrawSetString(playerid, PlayerText:text, const fmat[], va_args<>)
+{
+	return PlayerTextDrawSetString(playerid, text, va_return(fmat, va_start<3>));
+}
+
 stock va_SendClientMessage(playerid, colour, const fmat[], va_args<>)
 {
 	return SendClientMessage(playerid, colour, va_return(fmat, va_start<3>));
