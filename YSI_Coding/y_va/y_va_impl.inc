@@ -744,6 +744,11 @@ stock va_GameTextForAll(const fmat[], time, style, va_args<>)
 	return GameTextForAll(va_return(fmat, va_start<3>), time, style);
 }
 
+stock va_ShowPlayerDialog(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[], va_args<>)
+{
+	return ShowPlayerDialog(playerid, dialogid, style, caption, va_return(info, va_start<7>), button1, button2);
+}
+
 stock va_print(const fmat[], va_args<>)
 {
 	return print(va_return(fmat, va_start<1>));
