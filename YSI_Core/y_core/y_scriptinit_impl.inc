@@ -259,19 +259,22 @@ public OnRuntimeError(code, &bool:suppress)
 #define @Iy_%0\32; @Iy_
 #define @_Iy%0\32; @_Iy
 
+#define y_@I%0\32; y_@I
+
 #define u@$ 0]);
 
 // Detect tags.
 #define _@Iy:%8$%3:%0(%1)<_> %8$%0(%1)<%3>
 
 // Detect arrays, on `final` only.
-#define _@yI:_I@y:%8$%0[%4]%9(%1)<%3>(%5) %8$@yI_%0();@yI_%0(){new %3:y__[sizeof(%0)];y__=(%5);_YSI_ConstCpy(_:%0,_:y__,0,sizeof y__*4,sizeof y__);}
+#define _@yI:_I@y:%8$%0[%4]%9(%1)<%3> %8$@yI_%0();@yI_%0(){new %3:y__[sizeof(%0)];y_@I%0(y__);_YSI_ConstCpy(_:%0,_:y__,0,sizeof y__*4,sizeof y__);}static y_@I%0(%3:y__[sizeof(%0)])y__=
 
 // Finish inits.
 #define _y@I:%8$%0(%1)<%3>(%2) %8$%3:%2%0(%1);%3:%2%0(%1)
 
 // Finish final.
-#define _I@y:%8$%0(%1)<%3>(%5) %8$@yI_%0();@yI_%0(){_YSI_ConstMod(_:%0,_:(%3:I@=(%5)));}
+#define _I@y:%8$%0(%1)<%3> %8$@yI_%0();@yI_%0(){new %3:y__;y_@I%0(y__);_YSI_ConstMod(_:%0,_:y__);}static y_@I%0(&%3:y__)y__=
+
 // The assignment to `I@` is so any custom assignment operators are called and to check the tag is
 // correct, or give a mismatch warning.
 
@@ -283,7 +286,7 @@ public OnRuntimeError(code, &bool:suppress)
 #define PREEXIT__%0(%1) DO_YSI_INIT__%0(%1)<@Iy_>
 #define POSTEXIT__%0(%1) DO_YSI_INIT__%0(%1)<@_Iy>
 
-#define FINAL__%0=%1; stock const %0;u@(u[_:_@Iy:_@yI:_I@y:u@$%0()<_>(%1)
+#define FINAL__%0= stock const %0;u@(u[_:_@Iy:_@yI:_I@y:u@$%0()<_>
 
 #if YSI_KEYWORD(final)
 	#define final FINAL__
