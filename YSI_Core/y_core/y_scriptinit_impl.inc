@@ -264,8 +264,8 @@ public OnRuntimeError(code, &bool:suppress)
 // Detect tags.
 #define _@Iy:%8$%3:%0(%1)<_> %8$%0(%1)<%3>
 
-// Detect arrays.
-#define _@yI:%8$%0[%4]%9(%1)<%3> %8$%0(%1)<%3>
+// Detect arrays, on `final` only.
+#define _@yI:_I@y:%8$%0[%4]%9(%1)<%3>(%5) %8$@yI_%0();@yI_%0(){new %3:y__[sizeof(%0)];y__=(%5);_YSI_ConstCpy(_:%0,_:y__,0,sizeof y__*4,sizeof y__);}
 
 // Finish inits.
 #define _y@I:%8$%0(%1)<%3>(%2) %8$%3:%2%0(%1);%3:%2%0(%1)
@@ -275,7 +275,7 @@ public OnRuntimeError(code, &bool:suppress)
 // The assignment to `I@` is so any custom assignment operators are called and to check the tag is
 // correct, or give a mismatch warning.
 
-#define DO_YSI_INIT__%0(%1)<%2> u@(u[_:_@Iy:_@yI:_y@I:u@$%0(%1)<_>(%2)
+#define DO_YSI_INIT__%0(%1)<%2> u@(u[_:_@Iy:_y@I:u@$%0(%1)<_>(%2)
 
 #define PREINIT__%0(%1) DO_YSI_INIT__%0(%1)<@yI_>
 #define POSTINIT__%0(%1) DO_YSI_INIT__%0(%1)<@_yI>
