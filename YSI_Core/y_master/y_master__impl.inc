@@ -294,7 +294,12 @@ stock
 	{
 		// Called if this script is ending.
 		P:3(#MAKE_YCM<YSIM_VERSION...> "() <> called");
-		return cellmin;
+		if (YSI_gModuleShutdown)
+		{
+			return cellmin;
+		}
+		
+		return cellmax;
 	}
 #elseif _YSIM_IS_CLOUD
 		forward MAKE_YCM<YSIM_VERSION...>();
@@ -303,10 +308,15 @@ stock
 		{
 			// Return here for local (current version) gets.
 			P:3(#MAKE_YCM<YSIM_VERSION...> "() <> called");
-			return cellmin;
-		}
-		
+			if (YSI_gModuleShutdown)
+			{
+				return cellmin;
+			}
+
 	#if defined YSIM_VERSION
+			return YSIM_VERSION;
+		}
+
 		public MAKE_YCM<YSIM_VERSION...>() <_YCM:y>
 		{
 			P:3(#MAKE_YCM<YSIM_VERSION...> "() <y> called");
@@ -335,8 +345,11 @@ stock
 		}
 
 		#undef YSIM_VERSION
+	#else
+			return 0;
+		}
 	#endif
-		
+
 		public MAKE_YCM<YSIM_VERSION...>() <_YCM:u>
 		{
 			if (YSI_gModuleShutdown)
@@ -860,4 +873,3 @@ public _YCM() <>
 	// Do nothing at all (just define states).
 	P:E("%d: " #_YCM "() <> called", Master_ID());
 }
-
