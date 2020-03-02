@@ -98,10 +98,18 @@ CHAIN_HOOK(ScriptInit)
 stock
 	bool:YSI_FILTERSCRIPT = false;
 
+enum E_SCRIPTINIT_STATE (<<= 1)
+{
+	E_SCRIPTINIT_STATE_NONE,
+	E_SCRIPTINIT_STATE_JITING = 1,
+	E_SCRIPTINIT_STATE_JITED,
+	E_SCRIPTINIT_STATE_CRASHDETECT,
+	E_SCRIPTINIT_STATE_RELOAD,
+	E_SCRIPTINIT_STATE_DUMPED,
+}
+
 static
-	bool:YSI_g_sCrashdetect = false,
-	bool:YSI_g_sCodeJITed = false,
-	bool:YSI_g_sCodeJITing = false;
+	E_SCRIPTINIT_STATE:YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_NONE;
 
 #if defined _DEBUG
 	#if _DEBUG > 0
@@ -142,12 +150,22 @@ static
 
 stock bool:Server_JITExists()
 {
-	return YSI_g_sCodeJITing;
+	return !!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING);
 }
 
 stock bool:Server_JITComplete()
 {
-	return YSI_g_sCodeJITed;
+	return !!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITED);
+}
+
+stock bool:Server_CacheLoaded()
+{
+	return !!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD);
+}
+
+stock bool:Server_CacheSaved()
+{
+	return !!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_DUMPED);
 }
 
 stock bool:Server_IsFilterscript()
@@ -162,43 +180,95 @@ stock bool:Server_IsGameMode()
 
 stock bool:Server_CrashDetectExists()
 {
-	return YSI_g_sCrashdetect;
+	return !!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_CRASHDETECT);
 }
 
 static ScriptInit_CallOnCodeInit(bool:jit)
 {
 	#if defined ScriptInit_OnCodeInit
-		#if defined YSI_NO_OPTIMISATION_MESSAGE
-			#pragma unused jit
-		#else
-			YSI_Print(" ");
-			YSI_Print(" ======================================= ");
-			YSI_Print(" |                                     | ");
-			YSI_Print(" |    Optimising code, this may take   | ");
-			YSI_Print(" |        a little bit of time.        | ");
-			YSI_Print(" |                                     | ");
-			YSI_Print(" |            Please wait...           | ");
-			YSI_Print(" |                                     | ");
-			YSI_Print(" | You can disabled this message with: | ");
-			YSI_Print(" |                                     | ");
-			YSI_Print(" | #define YSI_NO_OPTIMISATION_MESSAGE | ");
-			YSI_Print(" |                                     | ");
-			if (!jit)
-			{
-				YSI_Print(" |=====================================| ");
+		if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD)
+		{
+			// Loaded from a file.
+			#if defined YSI_NO_CACHE_MESSAGE
+				YSI_Print(" ");
+				YSI_Print(" ======================================= ");
 				YSI_Print(" |                                     | ");
-				YSI_Print(" | Note that these optimisations are   | ");
-				YSI_Print(" | designed to improve performance     | ");
-				YSI_Print(" | with the JIT plugin, which you are  | ");
-				YSI_Print(" | not currently using.  Get it here:  | ");
+				YSI_Print(" |  File loaded from YSI code cache.   | ");
 				YSI_Print(" |                                     | ");
-				YSI_Print(" |      https://git.io/jit-plugin      | ");
+				YSI_Print(" | You can disabled this message with: | ");
 				YSI_Print(" |                                     | ");
-			}
-			YSI_Print(" ======================================= ");
-			YSI_Print(" ");
-		#endif
-		ScriptInit_OnCodeInit();
+				YSI_Print(" |    #define YSI_NO_CACHE_MESSAGE     | ");
+				YSI_Print(" |                                     | ");
+				YSI_Print(" ======================================= ");
+				YSI_Print(" ");
+			#endif
+		}
+		else
+		{
+			#if defined YSI_NO_OPTIMISATION_MESSAGE
+				#pragma unused jit
+			#else
+				YSI_Print(" ");
+				YSI_Print(" ======================================= ");
+				YSI_Print(" |                                     | ");
+				YSI_Print(" |    Optimising code, this may take   | ");
+				YSI_Print(" |        a little bit of time.        | ");
+				YSI_Print(" |                                     | ");
+				YSI_Print(" |            Please wait...           | ");
+				YSI_Print(" |                                     | ");
+				YSI_Print(" | You can disabled this message with: | ");
+				YSI_Print(" |                                     | ");
+				YSI_Print(" | #define YSI_NO_OPTIMISATION_MESSAGE | ");
+				YSI_Print(" |                                     | ");
+				if (!jit)
+				{
+					YSI_Print(" |=====================================| ");
+					YSI_Print(" |                                     | ");
+					YSI_Print(" | Note that these optimisations are   | ");
+					YSI_Print(" | designed to improve performance     | ");
+					YSI_Print(" | with the JIT plugin, which you are  | ");
+					YSI_Print(" | not currently using.  Get it here:  | ");
+					YSI_Print(" |                                     | ");
+					YSI_Print(" |      https://git.io/jit-plugin      | ");
+					YSI_Print(" |                                     | ");
+				}
+				YSI_Print(" ======================================= ");
+				YSI_Print(" ");
+			#endif
+			ScriptInit_OnCodeInit();
+			new tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED | E_SCRIPTINIT_STATE_CRASHDETECT);
+			// Set the variable to something unique for next load.  This will be written out, thus
+			// loaded in next time.
+			YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
+			//// TODO: Dump the entire AMX here.
+			//
+			// Clear this flag after dumping.  This is so we can tell when a mode is cached.
+			YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
+			//#if defined YSI_NO_CACHE_MESSAGE
+			//	YSI_Print(" ");
+			//	YSI_Print(" ======================================= ");
+			//	YSI_Print(" |                                     | ");
+			//	YSI_Print(" |   File dumped to YSI code cache:    | ");
+			//	YSI_Print(" |                                     | ");
+			//	YSI_Print(" |      scriptfiles/YSI_CACHE.amx      | ");
+			//	YSI_Print(" |                                     | ");
+			//	YSI_Print(" | Load this file instead to skip this | ");
+			//	YSI_Print(" | code optimisation step in the       | ");
+			//	YSI_Print(" | future.  Note that if you have      | ");
+			//	YSI_Print(" | multiple scripts loading at once    | ");
+			//	YSI_Print(" | (i.e. gamemodes, filterscripts, and | ");
+			//	YSI_Print(" | modules) you may need to load and   | ");
+			//	YSI_Print(" | cache them individually so that     | ");
+			//	YSI_Print(" | they don't clobber each other.      | ");
+			//	YSI_Print(" |                                     | ");
+			//	YSI_Print(" | You can disabled this message with: | ");
+			//	YSI_Print(" |                                     | ");
+			//	YSI_Print(" |    #define YSI_NO_CACHE_MESSAGE     | ");
+			//	YSI_Print(" |                                     | ");
+			//	YSI_Print(" ======================================= ");
+			//	YSI_Print(" ");
+			//#endif
+		}
 	#endif
 }
 
@@ -212,16 +282,22 @@ public OnJITCompile()
 	state _script_init_fix_state : false;
 	// Got it being called twice for some reason.  I think it was a file glitch,
 	// but just make sure.
-	if (YSI_g_sCodeJITing)
+	if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING)
+	{
 		return 0;
+	}
 	DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
-	YSI_g_sCodeJITing = true;
+	YSI_g_sScriptInitState |= E_SCRIPTINIT_STATE_JITING;
 	ScriptInit_CallOnCodeInit(true);
 	new ret = ScriptInit_OnJITCompile();
 	if (ret)
-		YSI_g_sCodeJITed = true;
+	{
+		YSI_g_sScriptInitState |= E_SCRIPTINIT_STATE_JITED;
+	}
 	else
+	{
 		Debug_Print0("\7*** YSI Warning: JIT disabled");
+	}
 	DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
 	return ret;
 }
@@ -234,7 +310,7 @@ public OnRuntimeError(code, &bool:suppress)
 {
 	if (code == 0x00495359)
 	{
-		YSI_g_sCrashdetect = true;
+		YSI_g_sScriptInitState != E_SCRIPTINIT_STATE_CRASHDETECT;
 		suppress = true;
 		return 1;
 	}
@@ -301,10 +377,6 @@ public OnRuntimeError(code, &bool:suppress)
 	#error OnCodeInit defined
 #endif
 
-#if defined _ALS_OnScriptInit || (__COMPILER_1ST_PASS && defined OnScriptInit)
-	#error defined OnScriptInit
-#endif
-
 #if defined Script_GetID
 	forward OnScriptInit(id);
 	public OnScriptInit(id)
@@ -330,6 +402,8 @@ public OnRuntimeError(code, &bool:suppress)
 		#endif
 		return 0;
 	}
+#elseif defined _ALS_OnScriptInit || (__COMPILER_1ST_PASS && defined OnScriptInit)
+	#error OnScriptInit defined
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -343,7 +417,7 @@ public OnFilterScriptInit()
 	state _script_init_fix_state : true;
 	state _ALS : _ALS_go;
 	// Dump the final assembly of this script so we can inspect it.
-	if (!YSI_g_sCodeJITing)
+	if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 	{
 		DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 		ScriptInit_CallOnCodeInit(false);
@@ -353,7 +427,7 @@ public OnFilterScriptInit()
 		ScriptInit_OnScriptInit();
 	#endif
 	ScriptInit_PostInitFuncs_();
-	if (!YSI_g_sCodeJITing)
+	if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 	{
 		// Dump the final assembly of this script so we can inspect it.
 		DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
@@ -396,7 +470,7 @@ public OnGameModeInit()
 	{
 		state _script_init_fix_state : false;
 		// Dump the final assembly of this script so we can inspect it.
-		if (!YSI_g_sCodeJITing)
+		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		{
 			DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 			ScriptInit_CallOnCodeInit(false);
@@ -406,7 +480,7 @@ public OnGameModeInit()
 			ScriptInit_OnScriptInit();
 		#endif
 		ScriptInit_PostInitFuncs_();
-		if (!YSI_g_sCodeJITing)
+		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		{
 			// Dump the final assembly of this script so we can inspect it.
 			DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
