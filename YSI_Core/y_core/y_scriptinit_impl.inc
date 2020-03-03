@@ -111,6 +111,9 @@ enum E_SCRIPTINIT_STATE (<<= 1)
 static
 	E_SCRIPTINIT_STATE:YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_NONE;
 
+#define Debug_PrintE(%1); \
+	Debug_Print0("\7\7\7*** YSI Error: " #%1);
+
 #if defined _DEBUG
 	#if _DEBUG > 0
 		#tryinclude "..\..\amx\disasm"
@@ -183,19 +186,26 @@ stock bool:Server_CrashDetectExists()
 	return !!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_CRASHDETECT);
 }
 
+forward bool:ScriptInit_DumpCache();
+
+static stock ScriptInit_WeirdBugFix()
+{
+	// Putting `ScriptInit_DumpCache` up here somehow calls `ScriptInit_CallOnCodeInit`...
+}
+
 static ScriptInit_CallOnCodeInit(bool:jit)
 {
 	#if defined ScriptInit_OnCodeInit
 		if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD)
 		{
 			// Loaded from a file.
-			#if defined YSI_NO_CACHE_MESSAGE
+			#if !defined YSI_NO_CACHE_MESSAGE
 				YSI_Print(" ");
 				YSI_Print(" ======================================= ");
 				YSI_Print(" |                                     | ");
 				YSI_Print(" |  File loaded from YSI code cache.   | ");
 				YSI_Print(" |                                     | ");
-				YSI_Print(" | You can disabled this message with: | ");
+				YSI_Print(" | You can disable this message with:  | ");
 				YSI_Print(" |                                     | ");
 				YSI_Print(" |    #define YSI_NO_CACHE_MESSAGE     | ");
 				YSI_Print(" |                                     | ");
@@ -216,7 +226,7 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 				YSI_Print(" |                                     | ");
 				YSI_Print(" |            Please wait...           | ");
 				YSI_Print(" |                                     | ");
-				YSI_Print(" | You can disabled this message with: | ");
+				YSI_Print(" | You can disable this message with:  | ");
 				YSI_Print(" |                                     | ");
 				YSI_Print(" | #define YSI_NO_OPTIMISATION_MESSAGE | ");
 				YSI_Print(" |                                     | ");
@@ -236,40 +246,112 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 				YSI_Print(" ");
 			#endif
 			ScriptInit_OnCodeInit();
-			new tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED | E_SCRIPTINIT_STATE_CRASHDETECT);
-			// Set the variable to something unique for next load.  This will be written out, thus
-			// loaded in next time.
-			YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
-			//// TODO: Dump the entire AMX here.
-			//
-			// Clear this flag after dumping.  This is so we can tell when a mode is cached.
-			YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
-			//#if defined YSI_NO_CACHE_MESSAGE
-			//	YSI_Print(" ");
-			//	YSI_Print(" ======================================= ");
-			//	YSI_Print(" |                                     | ");
-			//	YSI_Print(" |   File dumped to YSI code cache:    | ");
-			//	YSI_Print(" |                                     | ");
-			//	YSI_Print(" |      scriptfiles/YSI_CACHE.amx      | ");
-			//	YSI_Print(" |                                     | ");
-			//	YSI_Print(" | Load this file instead to skip this | ");
-			//	YSI_Print(" | code optimisation step in the       | ");
-			//	YSI_Print(" | future.  Note that if you have      | ");
-			//	YSI_Print(" | multiple scripts loading at once    | ");
-			//	YSI_Print(" | (i.e. gamemodes, filterscripts, and | ");
-			//	YSI_Print(" | modules) you may need to load and   | ");
-			//	YSI_Print(" | cache them individually so that     | ");
-			//	YSI_Print(" | they don't clobber each other.      | ");
-			//	YSI_Print(" |                                     | ");
-			//	YSI_Print(" | You can disabled this message with: | ");
-			//	YSI_Print(" |                                     | ");
-			//	YSI_Print(" |    #define YSI_NO_CACHE_MESSAGE     | ");
-			//	YSI_Print(" |                                     | ");
-			//	YSI_Print(" ======================================= ");
-			//	YSI_Print(" ");
-			//#endif
+			#if !defined YSI_NO_MODE_CACHE
+				new
+					E_SCRIPTINIT_STATE:tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED | E_SCRIPTINIT_STATE_CRASHDETECT);
+				// Set the variable to something unique for next load.  This will be written out, thus
+				// loaded in next time.
+				YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
+				if (ScriptInit_DumpCache())
+				{
+					// Clear this flag after dumping.  This is so we can tell when a mode is cached.
+					YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
+					#if !defined YSI_NO_CACHE_MESSAGE
+						YSI_Print(" ");
+						YSI_Print(" ======================================= ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" |   File dumped to YSI code cache:    | ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" |      scriptfiles/YSI_CACHE.amx      | ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" | Load this file instead to skip this | ");
+						YSI_Print(" | code optimisation step in the       | ");
+						YSI_Print(" | future.  Note that if you have      | ");
+						YSI_Print(" | multiple scripts loading at once    | ");
+						YSI_Print(" | (i.e. gamemodes, filterscripts, and | ");
+						YSI_Print(" | modules) you may need to load and   | ");
+						YSI_Print(" | cache them individually so that     | ");
+						YSI_Print(" | they don't clobber each other.      | ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" | You can disable this message with:  | ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" |    #define YSI_NO_CACHE_MESSAGE     | ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" | You can disable this caching with:  | ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" |    #define YSI_NO_MODE_CACHE        | ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" ======================================= ");
+						YSI_Print(" ");
+					#endif
+				}
+				//else
+				//{
+				//	YSI_g_sScriptInitState = tmp;
+				//	P:E("YSI code cache write failed");
+				//}
+			#endif
 		}
 	#endif
+}
+
+static bool:ScriptInit_DumpCache()
+{
+	new
+		File:f = fopen("YSI_CACHE.amx", io_write);
+	if (!f)
+	{
+		return false;
+	}
+	{}
+	new
+		addr,
+		size,
+		tmp,
+		i,
+		data[32];
+	
+	// Get the data offset and file size (in cells) from the header.
+	{
+		#emit LCTRL                     1
+		#emit NEG
+		#emit STOR.S.pri                addr
+		#emit LREF.S.pri                addr
+		#emit SHR.C.pri                 2
+		#emit STOR.S.pri                size
+	}
+	
+	// Loop over the whole file.
+	while (size--)
+	{
+		{
+			#emit LREF.S.pri                addr
+			#emit STOR.S.pri                tmp
+		}
+		addr += 4;
+		data[i++] = tmp;
+		if (i == sizeof (data))
+		{
+			// Dump the data and reset;
+			if (!fblockwrite(f, data, i))
+			{
+				fclose(f);
+				return false;
+			}
+			i = 0;
+		}
+	}
+	
+	// Dump the remainder.
+	if (i && !fblockwrite(f, data, i))
+	{
+		fclose(f);
+		return false;
+	}
+	
+	fclose(f);
+	return true;
 }
 
 #if !defined _ALS_OnJITCompile
@@ -310,7 +392,7 @@ public OnRuntimeError(code, &bool:suppress)
 {
 	if (code == 0x00495359)
 	{
-		YSI_g_sScriptInitState != E_SCRIPTINIT_STATE_CRASHDETECT;
+		YSI_g_sScriptInitState |= E_SCRIPTINIT_STATE_CRASHDETECT;
 		suppress = true;
 		return 1;
 	}
