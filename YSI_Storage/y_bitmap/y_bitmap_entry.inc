@@ -76,6 +76,7 @@ Optional plugins:
 */
 
 #include "..\..\YSI_Core\y_utils"
+#include "..\..\YSI_Data\y_bit"
 #include "..\..\YSI_Coding\y_malloc"
 // Because having colours is always good...
 #include "..\..\YSI_Server\y_colours"

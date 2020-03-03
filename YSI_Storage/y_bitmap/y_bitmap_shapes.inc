@@ -91,7 +91,7 @@ Optional plugins:
 // End the input above because all this code is being written with no testing
 // or compiling until I am home again.  So in the interests of leaving the code
 // stable, this is all ignored.
-stock Bitmap_DrawRectangle(Bitmap:ctx, const minX, const minY, const maxX, const maxY, fillColour, lineColour = 0, linePattern[] = "SOLID", fillPattern[] = "SOLID")
+stock Bitmap_DrawRectangle(Bitmap:ctx, const minX, const minY, const maxX, const maxY, fillColour, lineColour = 0, const linePattern[] = "SOLID", const fillPattern[] = "SOLID")
 {
 	if (fillColour)
 	{
@@ -132,7 +132,7 @@ stock Bitmap_DrawRectangle(Bitmap:ctx, const minX, const minY, const maxX, const
 	}
 }
 
-static stock _Bitmap_DoRectangle(Bitmap:ctx, minX, minY, maxX, maxY, colour, pattern[])
+static stock _Bitmap_DoRectangle(Bitmap:ctx, minX, minY, maxX, maxY, colour, const pattern[])
 {
 	new
 		width = Bitmap_Width(ctx);
@@ -204,7 +204,7 @@ static stock _Bitmap_RectangleRecopy(n, BitArray:pattern<PATTERN_MASK_X>)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Bitmap_DrawCircle(Bitmap:ctx, const x, const y, const Float:radius, fillColour, lineColour = 0, linePattern[] = "SOLID", fillPattern[] = "SOLID")
+stock Bitmap_DrawCircle(Bitmap:ctx, const x, const y, const Float:radius, fillColour, lineColour = 0, const linePattern[] = "SOLID", const fillPattern[] = "SOLID")
 {
 	P:3("Bitmap_DrawCircle called: %d, %d, %d, %.2f, 0x%04x%04x, 0x%04x%04x, \"%s\", \"%s\"", _:ctx, x, y, radius, fillColour >>> 16, fillColour & 0xFFFF, lineColour >>> 16, lineColour & 0xFFFF, linePattern, fillPattern);
 	Bitmap_DrawRing(ctx, x, y, 0.0, radius, fillColour, fillPattern);
@@ -226,7 +226,7 @@ stock Bitmap_DrawCircle(Bitmap:ctx, const x, const y, const Float:radius, fillCo
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Bitmap_DrawRing(Bitmap:ctx, x, y, Float:inner, Float:outer, colour, pattern[] = "SOLID")
+stock Bitmap_DrawRing(Bitmap:ctx, x, y, Float:inner, Float:outer, colour, const pattern[] = "SOLID")
 {
 	P:3("Bitmap_DrawRing called: %d, %d, %d, %.2f, %.2f, 0x%04x%04x, \"%s\"", _:ctx, x, y, inner, outer, colour >>> 16, colour & 0xFFFF, pattern);
 	new
