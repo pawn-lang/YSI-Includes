@@ -203,11 +203,14 @@ static stock DumpAMX_WriteEncoded(File:file, data[], &offset, compact, c, size) 
 
 static stock bool:DumpAMX_WriteAMXCode(File:file, data[], &offset, size, compact) {
 	new ctx[DisasmContext];
-	#if defined DisasmInit
-		DisasmInit(ctx);
-	#elseif !defined YSI_YES_MODE_CACHE && __COMPILER_2ND_PASS
-		#error YSI file caching requires amx_assembly, include it explicitly or compile with `#define YSI_YES_MODE_CACHE`
-	#endif
+	DisasmInit(ctx);
+	
+	new base;
+	{
+		new hdr[AMX_HDR];
+		GetAmxHeader(hdr);
+		base = GetAmxBaseAddress() + hdr[AMX_HDR_COD];
+	}
 
 	while (DisasmGetNextIp(ctx) < ctx[DisasmContext_end_ip])
 	{
@@ -223,14 +226,14 @@ static stock bool:DumpAMX_WriteAMXCode(File:file, data[], &offset, size, compact
 		switch (opcode) {
 			case OP_CASETBL: {
 				new num = DisasmGetNumOperands(ctx);
-				new rel_addr = DisasmGetOperand(ctx, 1) - gCodBase;
+				new rel_addr = DisasmGetOperand(ctx, 1) - base;
 				DumpAMX_WriteEncoded(file, data, offset, compact, _:opcode, size);
 				DumpAMX_WriteEncoded(file, data, offset, compact, num, size);
 				DumpAMX_WriteEncoded(file, data, offset, compact, rel_addr, size);
 				//fblockwrite(file, data, 3);
 				for (new i = 1; i <= num; i++) {
 					new val = DisasmGetOperand(ctx, i * 2);
-					rel_addr = DisasmGetOperand(ctx, i * 2 + 1) - gCodBase;
+					rel_addr = DisasmGetOperand(ctx, i * 2 + 1) - base;
 					DumpAMX_WriteEncoded(file, data, offset, compact, val, size);
 					DumpAMX_WriteEncoded(file, data, offset, compact, rel_addr, size);
 					//fblockwrite(file, data, 2);
@@ -292,4 +295,6 @@ stock bool:DumpAMX_Write(const filename[]) {
 	}
 	return false;
 }
+
+stock DumpAMX_Included_() {}
 
