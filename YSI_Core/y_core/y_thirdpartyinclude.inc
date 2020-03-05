@@ -383,4 +383,5 @@ public OnCodeInit()
 #endif
 
 #include "y_codeparse"
+#include "y_dumpamx"
 

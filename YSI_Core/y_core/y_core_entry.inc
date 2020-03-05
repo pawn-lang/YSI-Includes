@@ -268,3 +268,7 @@ native _YSI_ConstCpy(const dst[], const src[], index, numbytes, maxlength) = mem
 	#include "..\y_testing"
 #endif
 
+#if defined YSI_YES_MODE_CACHE
+	#include "y_thirdpartyinclude"
+#endif
+

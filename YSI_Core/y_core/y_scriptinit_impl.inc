@@ -240,53 +240,56 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 			YSI_Print(" ");
 		#endif
 		#if defined ScriptInit_OnCodeInit
-
 			ScriptInit_OnCodeInit();
 		#endif
 		#if !defined YSI_NO_MODE_CACHE
-			new
-				E_SCRIPTINIT_STATE:tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED | E_SCRIPTINIT_STATE_CRASHDETECT);
-			// Set the variable to something unique for next load.  This will be written out, thus
-			// loaded in next time.
-			YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
-			if (DisasmWrite("YSI_CACHE.amx", false))
-			{
-				// Clear this flag after dumping.  This is so we can tell when a mode is cached.
-				YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
-				#if !defined YSI_NO_CACHE_MESSAGE
-					YSI_Print(" ");
-					YSI_Print(" ======================================= ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" |   File dumped to YSI code cache:    | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" |      scriptfiles/YSI_CACHE.amx      | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" | Load this file instead to skip this | ");
-					YSI_Print(" | code optimisation step in the       | ");
-					YSI_Print(" | future.  Note that if you have      | ");
-					YSI_Print(" | multiple scripts loading at once    | ");
-					YSI_Print(" | (i.e. gamemodes, filterscripts, and | ");
-					YSI_Print(" | modules) you may need to load and   | ");
-					YSI_Print(" | cache them individually so that     | ");
-					YSI_Print(" | they don't clobber each other.      | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" | You can disable this message with:  | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" | #define YSI_NO_CACHE_MESSAGE        | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" | You can disable this caching with:  | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" | #define YSI_NO_MODE_CACHE           | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" ======================================= ");
-					YSI_Print(" ");
-				#endif
-			}
-			else
-			{
-				YSI_g_sScriptInitState = tmp;
-				P:E("YSI code cache write failed");
-			}
+			//#if defined DumpAMX_Write
+				new
+					E_SCRIPTINIT_STATE:tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED | E_SCRIPTINIT_STATE_CRASHDETECT);
+				// Set the variable to something unique for next load.  This will be written out, thus
+				// loaded in next time.
+				YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
+				if (DumpAMX_Write("YSI_CACHE.amx"))
+				{
+					// Clear this flag after dumping.  This is so we can tell when a mode is cached.
+					YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
+					#if !defined YSI_NO_CACHE_MESSAGE
+						YSI_Print(" ");
+						YSI_Print(" ======================================= ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" |   File dumped to YSI code cache:    | ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" |      scriptfiles/YSI_CACHE.amx      | ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" | Load this file instead to skip this | ");
+						YSI_Print(" | code optimisation step in the       | ");
+						YSI_Print(" | future.  Note that if you have      | ");
+						YSI_Print(" | multiple scripts loading at once    | ");
+						YSI_Print(" | (i.e. gamemodes, filterscripts, and | ");
+						YSI_Print(" | modules) you may need to load and   | ");
+						YSI_Print(" | cache them individually so that     | ");
+						YSI_Print(" | they don't clobber each other.      | ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" | You can disable this message with:  | ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" | #define YSI_NO_CACHE_MESSAGE        | ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" | You can disable this caching with:  | ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" | #define YSI_NO_MODE_CACHE           | ");
+						YSI_Print(" |                                     | ");
+						YSI_Print(" ======================================= ");
+						YSI_Print(" ");
+					#endif
+				}
+				else
+				{
+					YSI_g_sScriptInitState = tmp;
+					P:E("YSI code cache write failed");
+				}
+			//#elseif !defined YSI_YES_MODE_CACHE && __COMPILER_2ND_PASS
+			//	#error YSI file caching requires amx_assembly, include it explicitly or compile with `#define YSI_YES_MODE_CACHE`
+			//#endif
 		#endif
 	}
 }
