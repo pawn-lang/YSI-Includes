@@ -161,7 +161,7 @@ static stock __CompilerSecondPass() {}
 			#undef __COMPILER_BUG_317
 			#define __COMPILER_BUG_317 (0)
 		#endif
-		#if __PawnBuild >= 10
+		#if __PawnBuild >= 11
 			#undef __COMPILER_NAMEOF
 			#define __COMPILER_NAMEOF (1)
 		#endif
