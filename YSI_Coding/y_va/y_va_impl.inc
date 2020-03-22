@@ -749,7 +749,7 @@ stock va_print(const fmat[], va_args<>)
 	return print(va_return(fmat, va_start<1>));
 }
 
-stock va_fprintf(File:fhnd, const fmat[], va_args<>)
+stock va_fwritef(File:fhnd, const fmat[], va_args<>)
 {
 	return fwrite(fhnd, va_return(fmat, va_start<2>));
 }

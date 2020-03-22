@@ -214,10 +214,10 @@ stock y_profile_WTF(const name[], const timings[], iters, size = sizeof (timings
 		P:W("Could not write to profiling results file \"%s\".", name);
 		return;
 	}
-	va_fprintf(fhnd, "%d,%d,%d", gettime(), size, iters);
+	va_fwritef(fhnd, "%d,%d,%d", gettime(), size, iters);
 	for (new i = 0; i != size; ++i)
 	{
-		va_fprintf(fhnd, ",%d", timings[i]);
+		va_fwritef(fhnd, ",%d", timings[i]);
 	}
 	fwrite(fhnd, "\n");
 	fclose(fhnd);
