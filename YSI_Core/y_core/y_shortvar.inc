@@ -120,13 +120,13 @@ native U@(id = 0, const name[] = "", value = cellmin, const string[] = "") = set
 native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] = "") = getproperty;
 
 #if defined OPENMP
-	native P@(const function[], const format[], GLOBAL_TAG_TYPES:...) = Script_Call;
+	native R@(const function[], const format[], GLOBAL_TAG_TYPES:...) = Script_Call;
 	native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = Script_CallAll;
 	native O@(const function[], time, repeat, const format[] = "", GLOBAL_TAG_TYPES:...) = SetTimerEx;
 #else
 	// Define this command with basically every strong tag in existence to avoid
 	// tag mismatch warnings with remote functions with strong tag parameters.
-	native P@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallLocalFunction;
+	native R@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallLocalFunction;
 	native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallRemoteFunction;
 	native O@(const function[], time, repeat, const format[] = "", GLOBAL_TAG_TYPES:...) = SetTimerEx;
 #endif

@@ -14,7 +14,7 @@
  *  <symbol name="W@">Renaming of <symbolref name="__CallRemoteFunction" /> for size reasons.</symbol>
  *  <symbol name="V@">Renaming of <symbolref name="getproperty" /> for size reasons.</symbol>
  *  <symbol name="S@">Renaming of <symbolref name="setproperty" /> for size reasons.</symbol>
- *  <symbol name="P@">Renaming of <symbolref name="__CallLocalFunction" /> for size reasons.</symbol>
+ *  <symbol name="R@">Renaming of <symbolref name="__CallLocalFunction" /> for size reasons.</symbol>
  * </ul>
  * </library>
  *//** *//*
@@ -92,7 +92,7 @@ Optional plugins:
 // 
 // A@ - PARSER_DROP()
 // B@ - Fix "On"
-// C@ - CallRemoteFunction string return wrapper
+// C@ - New `C:`.
 // D@ - CallRemoteFunction wrapper
 // E@ - Set caller / LENGTH_REQUIRED{}
 // F@ - Also get string return without caller / PARSER_NO:
@@ -100,14 +100,14 @@ Optional plugins:
 // H@ - Ignore parameters / PARSER_ID:
 // I@ - Temp var
 // J@ - Temp var
-// K@ - SetTimer
+// K@ - CallRemoteFunction string return wrapper
 // L@ - Return storage / PARSER_WANT:
 // M@ - y_svar callback
 // N@ - y_uvar callback
 // O@ - SetTimerEx
-// P@ - CallLocalFunction
+// P@ - New `P:`.
 // Q@ - Temp string
-// R@ - Set string return
+// R@ - CallLocalFunction
 // S@ - Get string return
 // T@ - String return storage
 // U@ - setproperty
@@ -138,9 +138,9 @@ static stock const
 	YSI_g_sYSI_MAX_STRING = YSI_MAX_STRING;
 
 // CallRemoteFunction wrapper that handles references and string returns.
-stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
+stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
-	P:5("C@ called: %s, %s", function, fmat);
+	P:5("K@ called: %s, %s", function, fmat);
 
 	#pragma unused function, fmat
 	// New implementation of "CallRemoteFunction".  Wraps the old function
@@ -192,7 +192,7 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	else
 	{
 		#emit STACK        28
-		#emit SYSREQ.C     P@
+		#emit SYSREQ.C     R@
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	{}
@@ -239,7 +239,7 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
 		{
 			YSI_g_sPropVarArg[1] = '@' + ++j,
-			P:7("C@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
+			P:7("K@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
 			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
 		}
 	}
@@ -322,7 +322,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	else
 	{
 		#emit STACK        28
-		#emit SYSREQ.C     P@
+		#emit SYSREQ.C     R@
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	{}

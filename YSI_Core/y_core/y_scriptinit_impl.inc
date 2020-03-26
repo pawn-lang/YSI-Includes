@@ -417,7 +417,7 @@ public OnRuntimeError(code, &bool:suppress)
 			{
 				// This is a legacy filterscript.
 				printf("*** This script has been detected as a legacy filterscript.");
-				P@("OnFilterScriptInit", "");
+				R@("OnFilterScriptInit", "");
 			}
 		#if !defined FILTERSCRIPT
 			else

@@ -451,18 +451,18 @@ stock bool:Testing_Run(&tests, &fails, const lastfail[33] = "", bool:p = false)
 				if (buffer{i} != buffer2{i})
 					goto Testing_Run_before_fail;
 			}
-			P@(buffer2, "");
+			R@(buffer2, "");
 Testing_Run_before_fail:
 		}
 		// Call the setup function if there is one.
 		buffer[0] = Y_TESTING_INIT,
-		P@(buffer, ""),
+		R@(buffer, ""),
 		// Call the test.
 		buffer[0] = Y_TESTING_TEST,
 		fails = YSI_g_sFails;
 		P:5("Testing_Run(): Calling %s", unpack(buffer[1]));
 		YSI_g_sInTest = true,
-		P@(buffer, ""),
+		R@(buffer, ""),
 		YSI_g_sInTest = false;
 		++YSI_g_sTests;
 		if (!YSI_gTestComplete)
@@ -486,7 +486,7 @@ Testing_Run_before_fail:
 		}
 #endif
 		buffer[0] = Y_TESTING_SHUT,
-		P@(buffer, "");
+		R@(buffer, "");
 
 		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_AFTER)))
 		{
@@ -495,7 +495,7 @@ Testing_Run_before_fail:
 				if (buffer{i} != buffer2{i})
 					goto Testing_Run_after_fail;
 			}
-			P@(buffer2, "");
+			R@(buffer2, "");
 Testing_Run_after_fail:
 		}
 	}
@@ -544,13 +544,13 @@ Testing_Player_retry:
 #endif
 			// Call the setup function if there is one.
 			buffer[0] = Y_TESTING_PINIT,
-			P@(buffer, ""),
+			R@(buffer, ""),
 			// Call the test.
 			buffer[0] = Y_TESTING_PTEST,
 			fails = YSI_g_sFails;
 			P:5("Testing_Player(): Calling %s", unpack(buffer[1]));
 			YSI_g_sInTest = true;
-			P@(buffer, "");
+			R@(buffer, "");
 #if !defined TEST_SHOW_PASSES
 			if (YSI_g_sFails == fails)
 			{
@@ -625,7 +625,7 @@ forward OnTestsComplete(tests, fails);
 				{
 					// Call the shutdown function if there is one.
 					buffer[0] = Y_TESTING_PSHUT,
-					P@(buffer, "i", playerid);
+					R@(buffer, "i", playerid);
 				}
 #if defined JUST_TEST
 Testing_Next_retry:
@@ -640,12 +640,12 @@ Testing_Next_retry:
 					YSI_g_sAsked = false;
 					// Call the setup function if there is one.
 					buffer[0] = Y_TESTING_PINIT,
-					P@(buffer, ""),
+					R@(buffer, ""),
 					// Call the test.
 					buffer[0] = Y_TESTING_PTEST;
 					P:5("Testing_Next(): Calling %s", unpack(buffer[1]));
 					YSI_g_sInTest = true;
-					P@(buffer, "i", playerid);
+					R@(buffer, "i", playerid);
 				}
 				else
 				{
@@ -813,7 +813,7 @@ stock Testing_RunAll()
 	printf("*** Time: %dms", endTime - startTime);
 	TEST_REPORT(" ");
 	//state ysi_debug : on;
-	P@("OnTestsComplete", "ii", tests, fails);
+	R@("OnTestsComplete", "ii", tests, fails);
 	#if defined TEST_AUTO_EXIT
 		SendRconCommand("exit");
 	#endif

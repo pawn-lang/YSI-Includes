@@ -71,9 +71,9 @@ TEST__ y_utils_va_return()
 {
 	gCalls_y_utils_va_return = 0;
 	y_utils_va_return(va_return("Hello %s %d %.3f", "World", 42, 9.4554));
-	P@("y_utils_va_return", "s", va_return("Hello %s %d %.3f", "World", 42, 9.4554));
-	P@(va_return("%s_%s", "y_utils", "va_return"), "s", "Hello World 42 9.455");
-	P@(va_return("%s_%s", "y_utils", "va_return"), va_return("s"), va_return("Hello %s %d %.3f", "World", 42, 9.4554));
+	R@("y_utils_va_return", "s", va_return("Hello %s %d %.3f", "World", 42, 9.4554));
+	R@(va_return("%s_%s", "y_utils", "va_return"), "s", "Hello World 42 9.455");
+	R@(va_return("%s_%s", "y_utils", "va_return"), va_return("s"), va_return("Hello %s %d %.3f", "World", 42, 9.4554));
 	ASSERT_EQ(gCalls_y_utils_va_return, 4);
 }
 
