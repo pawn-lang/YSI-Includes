@@ -186,8 +186,10 @@ stock bool:Server_CrashDetectExists()
 	return !!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_CRASHDETECT);
 }
 
-#if !defined DumpAMX_Included_ && !defined YSI_YES_MODE_CACHE && __COMPILER_2ND_PASS
-	#error YSI file caching requires amx_assembly, include it explicitly or compile with `#define YSI_YES_MODE_CACHE`
+#if !defined YSI_NO_MODE_CACHE
+	#if !defined DumpAMX_Included_ && !defined YSI_YES_MODE_CACHE && __COMPILER_2ND_PASS
+		#error YSI file caching requires amx_assembly, include it explicitly or compile with `#define YSI_YES_MODE_CACHE`
+	#endif
 #endif
 
 forward bool:DumpAMX_Write(const filename[]);
