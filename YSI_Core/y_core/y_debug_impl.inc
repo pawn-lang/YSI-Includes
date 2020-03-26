@@ -93,13 +93,13 @@ stock YSI_gDebugLevel = 0;
  *  Code is not a variable, it's a code chunk and may be written as so:
  *
  *  <code>
- * Debug_Code1(if (bla == 2) { bla++; printf("%d", bla); });
+ * Debug_Code1(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
  *  </code>
  *
  *  Or:
  *
  *  <code>
- * C:1(if (bla == 2) { bla++; printf("%d", bla); });
+ * C:1(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
  *  </code>
  *
  *  The code must all be on one line to avoid errors.
@@ -118,13 +118,13 @@ P:D(Debug_Code1(code));
  *  Code is not a variable, it's a code chunk and may be written as so:
  *
  *  <code>
- * Debug_Code2(if (bla == 2) { bla++; printf("%d", bla); });
+ * Debug_Code2(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
  *  </code>
  *
  *  Or:
  *
  *  <code>
- * C:2(if (bla == 2) { bla++; printf("%d", bla); });
+ * C:2(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
  *  </code>
  *
  *  The code must all be on one line to avoid errors.
@@ -143,13 +143,13 @@ P:D(Debug_Code2(code));
  *  Code is not a variable, it's a code chunk and may be written as so:
  *
  *  <code>
- * Debug_Code3(if (bla == 2) { bla++; printf("%d", bla); });
+ * Debug_Code3(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
  *  </code>
  *
  *  Or:
  *
  *  <code>
- * C:3(if (bla == 2) { bla++; printf("%d", bla); });
+ * C:3(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
  *  </code>
  *
  *  The code must all be on one line to avoid errors.
@@ -168,13 +168,13 @@ P:D(Debug_Code3(code));
  *  Code is not a variable, it's a code chunk and may be written as so:
  *
  *  <code>
- * Debug_Code4(if (bla == 2) { bla++; printf("%d", bla); });
+ * Debug_Code4(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
  *  </code>
  *
  *  Or:
  *
  *  <code>
- * C:4(if (bla == 2) { bla++; printf("%d", bla); });
+ * C:4(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
  *  </code>
  *
  *  The code must all be on one line to avoid errors.
@@ -193,13 +193,13 @@ P:D(Debug_Code4(code));
  *  Code is not a variable, it's a code chunk and may be written as so:
  *
  *  <code>
- * Debug_Code5(if (bla == 2) { bla++; printf("%d", bla); });
+ * Debug_Code5(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
  *  </code>
  *
  *  Or:
  *
  *  <code>
- * C:5(if (bla == 2) { bla++; printf("%d", bla); });
+ * C:5(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
  *  </code>
  *
  *  The code must all be on one line to avoid errors.
@@ -218,13 +218,13 @@ P:D(Debug_Code5(code));
  *  Code is not a variable, it's a code chunk and may be written as so:
  *
  *  <code>
- * Debug_Code6(if (bla == 2) { bla++; printf("%d", bla); });
+ * Debug_Code6(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
  *  </code>
  *
  *  Or:
  *
  *  <code>
- * C:6(if (bla == 2) { bla++; printf("%d", bla); });
+ * C:6(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
  *  </code>
  *
  *  The code must all be on one line to avoid errors.
@@ -243,13 +243,13 @@ P:D(Debug_Code6(code));
  *  Code is not a variable, it's a code chunk and may be written as so:
  *
  *  <code>
- * Debug_Code7(if (bla == 2) { bla++; printf("%d", bla); });
+ * Debug_Code7(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
  *  </code>
  *
  *  Or:
  *
  *  <code>
- * C:7(if (bla == 2) { bla++; printf("%d", bla); });
+ * C:7(if (bla == 2) { bla++; YSI_PrintF("%d", bla); });
  *  </code>
  *
  *  The code must all be on one line to avoid errors.
@@ -482,52 +482,52 @@ P:D(Debug_Print6(const str[], GLOBAL_TAG_TYPES:...));
 P:D(Debug_Print7(const str[], GLOBAL_TAG_TYPES:...));
 
 #if _DEBUG == -1
-	#define Debug_Print1(%1); { if (YSI_gDebugLevel >= 1) printf(%1); }
-	#define Debug_Print2(%1); { if (YSI_gDebugLevel >= 2) printf(%1); }
-	#define Debug_Print3(%1); { if (YSI_gDebugLevel >= 3) printf(%1); }
-	#define Debug_Print4(%1); { if (YSI_gDebugLevel >= 4) printf(%1); }
-	#define Debug_Print5(%1); { if (YSI_gDebugLevel >= 5) printf(%1); }
-	#define Debug_Print6(%1); { if (YSI_gDebugLevel >= 6) printf(%1); }
-	#define Debug_Print7(%1); { if (YSI_gDebugLevel >= 7) printf(%1); }
+	#define Debug_Print1(%1); { if (YSI_gDebugLevel >= 1) YSI_PrintF(%1); }
+	#define Debug_Print2(%1); { if (YSI_gDebugLevel >= 2) YSI_PrintF(%1); }
+	#define Debug_Print3(%1); { if (YSI_gDebugLevel >= 3) YSI_PrintF(%1); }
+	#define Debug_Print4(%1); { if (YSI_gDebugLevel >= 4) YSI_PrintF(%1); }
+	#define Debug_Print5(%1); { if (YSI_gDebugLevel >= 5) YSI_PrintF(%1); }
+	#define Debug_Print6(%1); { if (YSI_gDebugLevel >= 6) YSI_PrintF(%1); }
+	#define Debug_Print7(%1); { if (YSI_gDebugLevel >= 7) YSI_PrintF(%1); }
 #else
 	#if _DEBUG >= 1
-		#define Debug_Print1(%1); printf(%1);
+		#define Debug_Print1(%1); YSI_PrintF(%1);
 	#else
 		#define Debug_Print1(%1);
 	#endif
 	
 	#if _DEBUG >= 2
-		#define Debug_Print2(%1); printf(%1);
+		#define Debug_Print2(%1); YSI_PrintF(%1);
 	#else
 		#define Debug_Print2(%1);
 	#endif
 	
 	#if _DEBUG >= 3
-		#define Debug_Print3(%1); printf(%1);
+		#define Debug_Print3(%1); YSI_PrintF(%1);
 	#else
 		#define Debug_Print3(%1);
 	#endif
 	
 	#if _DEBUG >= 4
-		#define Debug_Print4(%1); printf(%1);
+		#define Debug_Print4(%1); YSI_PrintF(%1);
 	#else
 		#define Debug_Print4(%1);
 	#endif
 	
 	#if _DEBUG >= 5
-		#define Debug_Print5(%1); printf(%1);
+		#define Debug_Print5(%1); YSI_PrintF(%1);
 	#else
 		#define Debug_Print5(%1);
 	#endif
 	
 	#if _DEBUG >= 6
-		#define Debug_Print6(%1); printf(%1);
+		#define Debug_Print6(%1); YSI_PrintF(%1);
 	#else
 		#define Debug_Print6(%1);
 	#endif
 	
 	#if _DEBUG >= 7
-		#define Debug_Print7(%1); printf(%1);
+		#define Debug_Print7(%1); YSI_PrintF(%1);
 	#else
 		#define Debug_Print7(%1);
 	#endif
@@ -579,7 +579,7 @@ stock Debug_Print0(const str[], GLOBAL_TAG_TYPES:...) <ysi_debug : on>
 	#emit STOR.pri     tmp1
 	#emit POP.alt
 	#emit STOR.alt     tmp2
-	#emit SYSREQ.C     printf
+	#emit SYSREQ.C     YSI_PrintF
 	#emit PUSH         tmp2
 	#emit PUSH         tmp1
 	#pragma unused str
