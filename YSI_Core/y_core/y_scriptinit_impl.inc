@@ -188,7 +188,7 @@ stock bool:Server_CrashDetectExists()
 
 #if !defined YSI_NO_MODE_CACHE
 	#if !defined DumpAMX_Included_ && !defined YSI_YES_MODE_CACHE && __COMPILER_2ND_PASS
-		#error YSI file caching requires amx_assembly, include it explicitly or compile with `#define YSI_YES_MODE_CACHE`
+		#error YSI file caching requires amx_assembly.  Include it explicitly, compile with `#define YSI_YES_MODE_CACHE`, or disable caching with `#define YSI_NO_MODE_CACHE`
 	#endif
 #endif
 
