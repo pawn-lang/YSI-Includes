@@ -862,34 +862,31 @@ stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 	if (master)
 	{
 		P:4("_Master_Get: Prop exists: %d %d", master, Master_ID());
-		if (master)
+		P:4("_Master_Get: Prop set");
+		if (master == Master_ID())
 		{
-			P:4("_Master_Get: Prop set");
-			if (master == Master_ID())
-			{
-				// Nothing has changed.
-				return e_YSIM_GET_TYPE_NO_CONTEST;
-			}
-			else if (!force)
-			{
-				new
-					func[32];
-				format(func, sizeof (func), YSI_g_scYSIM_VERSION, library);
-				master = CallLocalFunction(func, "");
-				// Might still be able to steal the master if we're a higher version.  We must be
-				// EXCLUSIVELY higher, not just same or higher.
-				CallRemoteFunction(func, "");
-				if (master <= getproperty(8, YSIM_VERRET))
-				{
-					// Not got the master.
-					return e_YSIM_GET_TYPE_NOT_GOT;
-				}
-			}
-			// A server is forcing itself.
-			ret = e_YSIM_GET_TYPE_STOLE;
+			// Nothing has changed.
+			return e_YSIM_GET_TYPE_NO_CONTEST;
 		}
+		else if (!force)
+		{
+			new
+				func[32];
+			format(func, sizeof (func), YSI_g_scYSIM_VERSION, library);
+			master = CallLocalFunction(func, "");
+			// Might still be able to steal the master if we're a higher version.  We must be
+			// EXCLUSIVELY higher, not just same or higher.
+			CallRemoteFunction(func, "");
+			if (master <= getproperty(8, YSIM_VERRET))
+			{
+				// Not got the master.
+				return e_YSIM_GET_TYPE_NOT_GOT;
+			}
+		}
+		// A server is forcing itself.
+		ret = e_YSIM_GET_TYPE_STOLE;
 	}
-	else if (!force)
+	else if (!force && existproperty(8, YSIM_VERMAX))
 	{
 		new
 			func[32];

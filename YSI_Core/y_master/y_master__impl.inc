@@ -294,7 +294,12 @@ stock
 	{
 		// Called if this script is ending.
 		P:3(#MAKE_YCM<YSIM_VERSION...> "() <> called");
-		return cellmin;
+		if (YSI_gModuleShutdown)
+		{
+			return cellmin;
+		}
+
+		return cellmax;
 	}
 #elseif _YSIM_IS_CLOUD
 		forward MAKE_YCM<YSIM_VERSION...>();
@@ -303,10 +308,15 @@ stock
 		{
 			// Return here for local (current version) gets.
 			P:3(#MAKE_YCM<YSIM_VERSION...> "() <> called");
-			return cellmin;
+			if (YSI_gModuleShutdown)
+			{
+				return cellmin;
+			}
+
+	#if defined YSIM_VERSION
+			return YSIM_VERSION;
 		}
 		
-	#if defined YSIM_VERSION
 		public MAKE_YCM<YSIM_VERSION...>() <_YCM:y>
 		{
 			P:3(#MAKE_YCM<YSIM_VERSION...> "() <y> called");
@@ -323,7 +333,7 @@ stock
 
 		public MAKE_YCM<YSIM_VERSION...>() <_YCM:n>
 		{
-			P:3(#MAKE_YCM<YSIM_VERSION...> "() <y> called");
+			P:3(#MAKE_YCM<YSIM_VERSION...> "() <n> called");
 			if (YSI_gModuleShutdown)
 			{
 				return cellmin;
@@ -335,6 +345,9 @@ stock
 		}
 
 		#undef YSIM_VERSION
+	#else
+			return 0;
+		}
 	#endif
 		
 		public MAKE_YCM<YSIM_VERSION...>() <_YCM:u>
@@ -410,6 +423,7 @@ static stock Master_GetCurrentMaster()
 public OnMasterSystemInit(id)
 {
 	P:1(#_YCM "_OGM");
+	deleteproperty(8, YSIM_VERMAX);
 	Master_GetCurrentMaster();
 	#if defined _ALS_OnMasterSystemInit
 		#undef OnMasterSystemInit
@@ -778,6 +792,7 @@ public _YCM() <_YCM:y>
 			_YCM@ = _E_YCM@w;
 			return;
 		}
+		P:2(#_YCM " not shut down");
 		// Disable the current mastership.
 		state _YCM:p;
 		_YCM@ = _E_YCM@p;
@@ -842,10 +857,14 @@ public _YCM() <_YCM:w>
 	// Disable the current mastership.
 	state _YCM:p;
 	_YCM@ = _E_YCM@p;
-	// Ending normally, relinquish control peacefully.
+	
+	// Ending normally, relinquish control peacefully to the highest version.
+	setproperty(8, YSIM_VERMAX, 0);
+	CallRemoteFunction(#MAKE_YCM<YSIM_VERSION...>, "");
 	setproperty(9, #_YCM, 0);
 	// Called locally to begin the hand off process.
 	CallRemoteFunction(#_YCM, "");
+
 	// Now try pass everything off.
 	if (getproperty(9, #_YCM))
 	{
