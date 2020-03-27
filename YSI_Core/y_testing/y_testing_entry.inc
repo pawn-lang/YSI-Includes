@@ -444,6 +444,7 @@ stock bool:Testing_Run(&tests, &fails, const lastfail[33] = "", bool:p = false)
 		if (strcmp(buffer[1], #JUST_TEST))
 			continue;
 #endif
+		Server_RestartLongCall();
 		while ((bidx = AMX_GetPublicNamePrefix(bidx, buffer2, Y_TESTING_BEFORE)))
 		{
 			for (new i = 4; buffer{i} && buffer2{i}; ++i)
