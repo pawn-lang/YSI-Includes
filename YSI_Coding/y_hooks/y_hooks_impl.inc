@@ -1436,8 +1436,11 @@ public OnRuntimeError(code, &bool:suppress)
 	return 1;
 }
 
-// No ALS check because it is done in `y_scriptinit`.
-#undef OnRuntimeError
+#if defined _ALS_OnRuntimeError
+	#undef OnRuntimeError
+#else
+	#define _ALS_OnRuntimeError
+#endif
 #define OnRuntimeError Hooks_OnRuntimeError
 
 #if defined Hooks_OnRuntimeError

@@ -709,6 +709,10 @@ CHAIN_FORWARD:ScriptInit_OnScriptExit() = 1;
 #endif
 #define OnScriptExit(%0) CHAIN_PUBLIC:ScriptInit_OnScriptExit(%0)
 
+#if !defined _ALS_OnRuntimeError
+	forward OnRuntimeError(code, &bool:suppress);
+#endif
+
 /*
 
      ad88888ba  88                                      88                                             
