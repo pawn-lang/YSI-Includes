@@ -103,7 +103,8 @@ enum E_SCRIPTINIT_STATE (<<= 1)
 	E_SCRIPTINIT_STATE_NONE,
 	E_SCRIPTINIT_STATE_JITING = 1,
 	E_SCRIPTINIT_STATE_JITED,
-	E_SCRIPTINIT_STATE_CRASHDETECT,
+	// No longer used, but kept for caching bit locations.
+	E_SCRIPTINIT_STATE_CRASHDETECT_,
 	E_SCRIPTINIT_STATE_RELOAD,
 	E_SCRIPTINIT_STATE_DUMPED,
 }
@@ -183,7 +184,87 @@ stock bool:Server_IsGameMode()
 
 stock bool:Server_CrashDetectExists()
 {
-	return !!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_CRASHDETECT);
+	// 0xFF is roughly flags, but some are mutually exclusive:
+	//
+	//   1 - Present (read only, write always 0).
+	//   2 - long_call_time checks enabled (write ignored when `server.cfg` has `long_call_time 0`).
+	//   4 - long_call_time reset to default time (write only, read always 0).
+	//   8 - long_call_time restart check from now (write only, read always 0).
+	//
+	#emit ZERO.pri
+	#emit LCTRL         0xFF
+	#emit NOT
+	#emit NOT
+	#emit RETN
+	return false;
+}
+
+stock Server_SetLongCallTime(usTime)
+{
+	// Setting this to `0` doesn't change the internal time, merely disables the check.
+	#emit LOAD.S.pri    usTime
+	#emit SCTRL         0xFE
+}
+
+stock Server_DisableLongCall()
+{
+	#emit CONST.pri     0
+	#emit SCTRL         0xFE
+}
+
+stock Server_EnableLongCall()
+{
+	#emit CONST.pri     2
+	#emit SCTRL         0xFF
+}
+
+stock Server_ResetLongCallTime()
+{
+	#emit CONST.pri     4
+	#emit SCTRL         0xFF
+}
+
+stock Server_RestartLongCall()
+{
+	#emit CONST.pri     8
+	#emit SCTRL         0xFF
+}
+
+stock bool:Server_IsLongCallEnabled()
+{
+	#emit ZERO.pri
+	#emit LCTRL         0xFF
+	#emit SHR.C.pri     1
+	#emit RETN
+	return false;
+}
+
+stock Server_GetLongCallTime()
+{
+	#emit ZERO.pri
+	#emit LCTRL         0xFE
+	#emit RETN
+	return 0;
+}
+
+// `GetCrashDetectDefaultLongCallTime` is too long.
+stock Server_GetLongCallDefault()
+{
+	// store the current value
+	#emit ZERO.pri
+	#emit LCTRL         0xFE
+	#emit MOVE.alt
+	// reset to and read the default
+	#emit CONST.pri     4
+	#emit SCTRL         0xFF
+	#emit ZERO.pri
+	#emit LCTRL         0xFE
+	// put the current value back
+	#emit XCHG
+	#emit SCTRL         0xFE
+	#emit MOVE.pri
+	#emit RETN
+	return 0;
 }
 
 #if !defined YSI_NO_MODE_CACHE
@@ -252,7 +333,7 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 		#endif
 		#if !defined YSI_NO_MODE_CACHE
 			new
-				E_SCRIPTINIT_STATE:tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED | E_SCRIPTINIT_STATE_CRASHDETECT);
+				E_SCRIPTINIT_STATE:tmp = YSI_g_sScriptInitState & (E_SCRIPTINIT_STATE_JITING | E_SCRIPTINIT_STATE_JITED);
 			// Set the variable to something unique for next load.  This will be written out, thus
 			// loaded in next time.
 			YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
@@ -330,21 +411,6 @@ public OnJITCompile()
 	}
 	DEBUG_MAYBE_DUMP("YSI_POST_INIT.asm");
 	return ret;
-}
-
-#if !defined _ALS_OnRuntimeError
-	forward OnRuntimeError(code, &bool:suppress);
-#endif
-
-public OnRuntimeError(code, &bool:suppress)
-{
-	if (code == 0x00495359)
-	{
-		YSI_g_sScriptInitState |= E_SCRIPTINIT_STATE_CRASHDETECT;
-		suppress = true;
-		return 1;
-	}
-	return ScriptInit_OnRuntimeError(code, suppress);
 }
 
 /*
@@ -484,7 +550,6 @@ public OnFilterScriptInit()
 		#endif
 	#endif
 	ScriptInit_OnFilterScriptInit();
-	#emit HALT 0x00495359 // "YSI".
 	return 1;
 }
 
@@ -532,10 +597,6 @@ public OnGameModeInit()
 		#endif
 	}
 	ScriptInit_OnGameModeInit();
-	if (!YSI_FILTERSCRIPT)
-	{
-		#emit HALT 0x00495359 // "YSI".
-	}
 	return 1;
 }
 
@@ -599,14 +660,6 @@ CHAIN_FORWARD:ScriptInit_OnScriptInit() = 1;
 
 #define _ALS_OnScriptInit
 #define OnScriptInit(%0) CHAIN_PUBLIC:ScriptInit_OnScriptInit(%0)
-
-CHAIN_FORWARD:ScriptInit_OnRuntimeError(code, &bool:suppress) = 1;
-#if defined _ALS_OnRuntimeError
-	#undef OnRuntimeError
-#else
-	#define _ALS_OnRuntimeError
-#endif
-#define OnRuntimeError(%0) CHAIN_PUBLIC:ScriptInit_OnRuntimeError(%0)
 
 CHAIN_FORWARD:ScriptInit_OnJITCompile() = 1;
 #if defined _ALS_OnJITCompile
