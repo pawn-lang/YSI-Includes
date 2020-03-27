@@ -298,6 +298,7 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 	}
 	else
 	{
+		Server_DisableLongCall();
 		#if defined YSI_NO_OPTIMISATION_MESSAGE
 			#pragma unused jit
 		#else
@@ -380,6 +381,7 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 				P:E("YSI code cache write failed");
 			}
 		#endif
+		Server_EnableLongCall();
 	}
 }
 
