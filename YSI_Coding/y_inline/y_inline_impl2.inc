@@ -910,7 +910,7 @@ Note:
 */
 
 // Make sure there's a space after the "return".
-#define return%0({%1}%2)%3; I@=%0({%1}%2)%3;return I@;
+//#define return%0({%1}%2)%3; I@=%0({%1}%2)%3;return I@;
 
 // The "INLINE" in the types here will override "PARSER@" to "PARSE@INLINE",
 // because there is no colon (well not "because", but it helps).
