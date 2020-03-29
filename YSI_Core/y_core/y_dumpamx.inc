@@ -155,40 +155,32 @@ static stock bool:DumpAMX_WriteAMXHeader(File:file, data[], &offset, compact)
 }
 
 #define ENC_MAX 5
-static stock DumpAMX_EncodeBytes(c, buffer[ENC_MAX char])
+static stock DumpAMX_EncodeBytes(c, buffer[ENC_MAX])
 {
-	// ported from the main compiler to ensure compatibility
+	// Ported from the main compiler to ensure compatibility.
 
-	buffer{4} = c & 0x7F; // store 7 bits
-	buffer{3} = (c >>> 7) & 0x7F; // store 7 bits
-	buffer{2} = (c >>> 14) & 0x7F; // store 7 bits
-	buffer{1} = (c >>> 21) & 0x7F; // store 7 bits
-	buffer{0} = (c >>> 28); // store 7 bits
+	buffer[4] = c & 0x7F,          // Store 7 bits.
+	buffer[3] = (c >>> 7) & 0x7F,  // Store 7 bits.
+	buffer[2] = (c >>> 14) & 0x7F, // Store 7 bits.
+	buffer[1] = (c >>> 21) & 0x7F, // Store 7 bits.
+	buffer[0] = (c >>> 28);        // Store 7 bits.
 
 	new index = -1;
-	// skip leading zeros
-	while (index < ENC_MAX - 2 && buffer{index + 1} == 0 && (buffer{index + 2} & 0x40) == 0)
-	{
-		index++;
-	}
 
-	// skip leading -1s
-	if (index == -1 && buffer{index + 1} == 0x0F && (buffer{index + 2} & 0x40) != 0)
-	{
-		index++;
-	}
+	// Skip leading zeros.
+	while (index < ENC_MAX - 2 && buffer[index + 1] == 0 && (buffer[index + 2] & 0x40) == 0)
+		++index;
 
-	while (index < ENC_MAX - 2 && buffer{index + 1} == 0x7F && (buffer{index + 2} & 0x40) != 0)
-	{
-		index++;
-	}
+	// Skip leading -1s.
+	if (index == -1 && buffer[0] == 0x0F && (buffer[1] & 0x40) != 0)
+		++index;
 
-	++index;
-	c = index;
+	while (index < ENC_MAX - 2 && buffer[index + 1] == 0x7F && (buffer[index + 2] & 0x40) != 0)
+		++index;
+
+	c = ++index;
 	while (index < ENC_MAX - 1)
-	{
-		buffer{index++} |= 0x80;
-	}
+		buffer[index++] |= 0x80;
 
 	return c;
 }
@@ -197,11 +189,11 @@ static stock DumpAMX_WriteEncoded(File:file, data[], &offset, compact, c)
 {
 	if (compact)
 	{
-		new buffer[ENC_MAX char];
+		new buffer[ENC_MAX];
 		new index = DumpAMX_EncodeBytes(c, buffer);
 		while (index < ENC_MAX)
 		{
-			data{offset ^ 0x03} = buffer{index++};
+			data{offset ^ 0x03} = buffer[index++];
 			if (++offset == DUMP_AMX_BLOCK_BYTES)
 			{
 				// Write the whole cell.
