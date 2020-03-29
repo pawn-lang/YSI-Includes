@@ -290,7 +290,7 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 			YSI_Print(" |                                     | ");
 			YSI_Print(" | You can disable this message with:  | ");
 			YSI_Print(" |                                     | ");
-			YSI_Print(" |    #define YSI_NO_CACHE_MESSAGE     | ");
+			YSI_Print(" |   #define YSI_NO_CACHE_MESSAGE      | ");
 			YSI_Print(" |                                     | ");
 			YSI_Print(" ======================================= ");
 			YSI_Print(" ");
@@ -361,15 +361,15 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 					YSI_Print(" |                                     | ");
 					YSI_Print(" | You can disable this message with:  | ");
 					YSI_Print(" |                                     | ");
-					YSI_Print(" | #define YSI_NO_CACHE_MESSAGE        | ");
+					YSI_Print(" |   #define YSI_NO_CACHE_MESSAGE      | ");
 					YSI_Print(" |                                     | ");
 					YSI_Print(" | You can disable this caching with:  | ");
 					YSI_Print(" |                                     | ");
-					YSI_Print(" | #define YSI_NO_MODE_CACHE           | ");
+					YSI_Print(" |   #define YSI_NO_MODE_CACHE         | ");
 					YSI_Print(" |                                     | ");
 					YSI_Print(" | You can explicitly enable it with:  | ");
 					YSI_Print(" |                                     | ");
-					YSI_Print(" | #define YSI_YES_MODE_CACHE          | ");
+					YSI_Print(" |   #define YSI_YES_MODE_CACHE        | ");
 					YSI_Print(" |                                     | ");
 					YSI_Print(" ======================================= ");
 					YSI_Print(" ");
