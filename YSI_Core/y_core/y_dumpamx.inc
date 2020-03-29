@@ -117,9 +117,9 @@ static stock bool:DumpAMX_WriteAMXHeader(File:file, data[], &offset, compact)
 	new start;
 	new end;
 
-	// YSI plays with the public function table start so don't use it directly
-	//start = plain_amxhdr[(AMX_HDR_OFFSET_PUBLICS / 4)] - dat;
-	start = AMX_HDR_BYTES - dat;
+	// YSI plays with the public function table start so don't use it directly.
+	// amx_assembly had this value wrong for a while.
+	start = /*AMX_HDR_BYTES*/ 56 - dat;
 
 	for (end = plain_amxhdr[AMX_HDR_OFFSET_NATIVES / 4] - dat; start < end; start += 8)
 	{
