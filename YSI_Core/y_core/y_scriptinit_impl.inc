@@ -279,6 +279,7 @@ forward bool:DumpAMX_Write(const filename[]);
 
 static ScriptInit_CallOnCodeInit(bool:jit)
 {
+	Server_DisableLongCall();
 	if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD)
 	{
 		// Loaded from a file.
@@ -298,7 +299,6 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 	}
 	else
 	{
-		Server_DisableLongCall();
 		#if defined YSI_NO_OPTIMISATION_MESSAGE
 			#pragma unused jit
 		#else
@@ -384,8 +384,8 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 				P:E("YSI code cache write failed");
 			}
 		#endif
-		Server_EnableLongCall();
 	}
+	Server_EnableLongCall();
 }
 
 #if !defined _ALS_OnJITCompile
