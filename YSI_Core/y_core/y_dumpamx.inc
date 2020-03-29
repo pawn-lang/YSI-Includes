@@ -74,7 +74,10 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-static stock bool:DumpAMX_WriteAMXData(File:file, data[], &offset, size, compact) {
+#define DUMP_AMX_BLOCK_CELLS (12)
+#define DUMP_AMX_BLOCK_BYTES (DUMP_AMX_BLOCK_CELLS * 4)
+
+static stock bool:DumpAMX_WriteAMXData(File:file, data[], &offset, compact) {
 	new hdr[AMX_HDR];
 	GetAmxHeader(hdr);
 
@@ -82,15 +85,15 @@ static stock bool:DumpAMX_WriteAMXData(File:file, data[], &offset, size, compact
 	new end = hdr[AMX_HDR_HEA] - hdr[AMX_HDR_DAT];
 
 	while (dat < end) {
-		DumpAMX_WriteEncoded(file, data, offset, compact, ReadAmxMemory(dat), size);
+		DumpAMX_WriteEncoded(file, data, offset, compact, ReadAmxMemory(dat));
 		dat += 4;
 	}
 
 	return true;
 }
 
-static stock bool:DumpAMX_WriteAMXHeader(File:file, data[], &offset, size, compact) {
-	#pragma unused size, compact
+static stock bool:DumpAMX_WriteAMXHeader(File:file, data[], &offset, compact) {
+	#pragma unused compact
 
 	new plain_amxhdr[AMX_HDR_CELLS];
 	GetRawAmxHeader(plain_amxhdr);
@@ -178,30 +181,30 @@ static stock DumpAMX_EncodeBytes(c, buffer[ENC_MAX char]) {
 	return ret;
 }
 
-static stock DumpAMX_WriteEncoded(File:file, data[], &offset, compact, c, size) {
+static stock DumpAMX_WriteEncoded(File:file, data[], &offset, compact, c) {
 	if (compact) {
 		new buffer[ENC_MAX char];
 		new index = DumpAMX_EncodeBytes(c, buffer);
 		while (index < ENC_MAX) {
-			data{offset++ ^ 0x03} = buffer{index++};
-			if (offset == size) {
+			data{offset ^ 0x03} = buffer{index++};
+			if (++offset == DUMP_AMX_BLOCK_BYTES) {
 				// Write the whole cell.
-				fblockwrite(file, data, size >>> 2);
+				fblockwrite(file, data, DUMP_AMX_BLOCK_CELLS);
 				offset = 0;
 			}
 		}
 	} else while (compact++ != 4) {
-		data{offset++ ^ 0x03} = c & 0xFF;
-		if (offset == size) {
+		data{offset ^ 0x03} = c & 0xFF;
+		if (++offset == DUMP_AMX_BLOCK_BYTES) {
 			// Write the whole cell.
-			fblockwrite(file, data, size >>> 2);
+			fblockwrite(file, data, DUMP_AMX_BLOCK_CELLS);
 			offset = 0;
 		}
 		c >>>= 8;
 	}
 }
 
-static stock bool:DumpAMX_WriteAMXCode(File:file, data[], &offset, size, compact) {
+static stock bool:DumpAMX_WriteAMXCode(File:file, data[], &offset, compact) {
 	new ctx[DisasmContext];
 	DisasmInit(ctx);
 	
@@ -216,7 +219,7 @@ static stock bool:DumpAMX_WriteAMXCode(File:file, data[], &offset, size, compact
 	{
 		if (!DisasmDecodeInsn(ctx)) {
 			new cip = DisasmGetNextIp(ctx);
-			DumpAMX_WriteEncoded(file, data, offset, compact, ReadAmxMemory(cip), size);
+			DumpAMX_WriteEncoded(file, data, offset, compact, ReadAmxMemory(cip));
 			//fblockwrite(file, data, 1);
 			continue;
 		}
@@ -227,15 +230,15 @@ static stock bool:DumpAMX_WriteAMXCode(File:file, data[], &offset, size, compact
 			case OP_CASETBL: {
 				new num = DisasmGetNumOperands(ctx);
 				new rel_addr = DisasmGetOperand(ctx, 1) - base;
-				DumpAMX_WriteEncoded(file, data, offset, compact, _:opcode, size);
-				DumpAMX_WriteEncoded(file, data, offset, compact, num, size);
-				DumpAMX_WriteEncoded(file, data, offset, compact, rel_addr, size);
+				DumpAMX_WriteEncoded(file, data, offset, compact, _:opcode);
+				DumpAMX_WriteEncoded(file, data, offset, compact, num);
+				DumpAMX_WriteEncoded(file, data, offset, compact, rel_addr);
 				//fblockwrite(file, data, 3);
 				for (new i = 1; i <= num; i++) {
 					new val = DisasmGetOperand(ctx, i * 2);
 					rel_addr = DisasmGetOperand(ctx, i * 2 + 1) - base;
-					DumpAMX_WriteEncoded(file, data, offset, compact, val, size);
-					DumpAMX_WriteEncoded(file, data, offset, compact, rel_addr, size);
+					DumpAMX_WriteEncoded(file, data, offset, compact, val);
+					DumpAMX_WriteEncoded(file, data, offset, compact, rel_addr);
 					//fblockwrite(file, data, 2);
 				}
 			}
@@ -243,16 +246,16 @@ static stock bool:DumpAMX_WriteAMXCode(File:file, data[], &offset, size, compact
 				// convert back to SYSREQ.C
 				new address = DisasmGetOperand(ctx);
 				new index = GetNativeIndexFromAddress(address);
-				DumpAMX_WriteEncoded(file, data, offset, compact, _:OP_SYSREQ_C, size);
-				DumpAMX_WriteEncoded(file, data, offset, compact, index, size);
+				DumpAMX_WriteEncoded(file, data, offset, compact, _:OP_SYSREQ_C);
+				DumpAMX_WriteEncoded(file, data, offset, compact, index);
 				//fblockwrite(file, data, 2);
 			}
 			default: {
-				DumpAMX_WriteEncoded(file, data, offset, compact, _:opcode, size);
+				DumpAMX_WriteEncoded(file, data, offset, compact, _:opcode);
 				new n = DisasmGetNumOperands(ctx);
 				for (new i = 0; i < n; i++) {
 					//data[i + 1] = DisasmGetOperandReloc(ctx, i);
-					DumpAMX_WriteEncoded(file, data, offset, compact, DisasmGetOperandReloc(ctx, i), size);
+					DumpAMX_WriteEncoded(file, data, offset, compact, DisasmGetOperandReloc(ctx, i));
 				}
 				//fblockwrite(file, data, n + 1);
 			}
@@ -267,7 +270,7 @@ stock bool:DumpAMX_Write(const filename[]) {
 	new File:file = fopen(filename, io_write);
 	if (file) {
 		new
-			data[12],
+			data[DUMP_AMX_BLOCK_CELLS],
 			offset,
 			compact;
 
@@ -277,9 +280,9 @@ stock bool:DumpAMX_Write(const filename[]) {
 			compact = hdr[AMX_HDR_FLAGS] & 2;
 		}
 
-		DumpAMX_WriteAMXHeader(file, data, offset, sizeof (data) * 4, compact);
-		DumpAMX_WriteAMXCode(file, data, offset, sizeof (data) * 4, compact);
-		DumpAMX_WriteAMXData(file, data, offset, sizeof (data) * 4, compact);
+		DumpAMX_WriteAMXHeader(file, data, offset, compact);
+		DumpAMX_WriteAMXCode(file, data, offset, compact);
+		DumpAMX_WriteAMXData(file, data, offset, compact);
 
 		compact = (offset + 3) / 4;
 		if (compact) {
