@@ -284,15 +284,15 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 		// Loaded from a file.
 		#if !defined YSI_NO_CACHE_MESSAGE
 			YSI_Print(" ");
-			YSI_Print(" ======================================= ");
-			YSI_Print(" |                                     | ");
-			YSI_Print(" |  File loaded from YSI code cache.   | ");
-			YSI_Print(" |                                     | ");
-			YSI_Print(" | You can disable this message with:  | ");
-			YSI_Print(" |                                     | ");
-			YSI_Print(" |   #define YSI_NO_CACHE_MESSAGE      | ");
-			YSI_Print(" |                                     | ");
-			YSI_Print(" ======================================= ");
+			YSI_Print(" ========================================== ");
+			YSI_Print(" |                                        | ");
+			YSI_Print(" |  File loaded from YSI code cache.      | ");
+			YSI_Print(" |                                        | ");
+			YSI_Print(" | You can disable this message with:     | ");
+			YSI_Print(" |                                        | ");
+			YSI_Print(" |   #define YSI_NO_CACHE_MESSAGE         | ");
+			YSI_Print(" |                                        | ");
+			YSI_Print(" ========================================== ");
 			YSI_Print(" ");
 		#endif
 	}
@@ -303,30 +303,30 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 			#pragma unused jit
 		#else
 			YSI_Print(" ");
-			YSI_Print(" ======================================= ");
-			YSI_Print(" |                                     | ");
-			YSI_Print(" |    Optimising code, this may take   | ");
-			YSI_Print(" |        a little bit of time.        | ");
-			YSI_Print(" |                                     | ");
-			YSI_Print(" |            Please wait...           | ");
-			YSI_Print(" |                                     | ");
-			YSI_Print(" | You can disable this message with:  | ");
-			YSI_Print(" |                                     | ");
-			YSI_Print(" | #define YSI_NO_OPTIMISATION_MESSAGE | ");
-			YSI_Print(" |                                     | ");
+			YSI_Print(" ========================================== ");
+			YSI_Print(" |                                        | ");
+			YSI_Print(" |    Optimising code, this may take a    | ");
+			YSI_Print(" |           little bit of time.          | ");
+			YSI_Print(" |                                        | ");
+			YSI_Print(" |             Please wait...             | ");
+			YSI_Print(" |                                        | ");
+			YSI_Print(" | You can disable this message with:     | ");
+			YSI_Print(" |                                        | ");
+			YSI_Print(" |   #define YSI_NO_OPTIMISATION_MESSAGE  | ");
+			YSI_Print(" |                                        | ");
 			if (!jit)
 			{
-				YSI_Print(" |=====================================| ");
-				YSI_Print(" |                                     | ");
-				YSI_Print(" | Note that these optimisations are   | ");
-				YSI_Print(" | designed to improve performance     | ");
-				YSI_Print(" | with the JIT plugin, which you are  | ");
-				YSI_Print(" | not currently using.  Get it here:  | ");
-				YSI_Print(" |                                     | ");
-				YSI_Print(" |      https://git.io/jit-plugin      | ");
-				YSI_Print(" |                                     | ");
+				YSI_Print(" ========================================== ");
+				YSI_Print(" |                                        | ");
+				YSI_Print(" | Note that these optimisations are      | ");
+				YSI_Print(" | designed to improve performance with   | ");
+				YSI_Print(" | the JIT plugin, which you are not      | ");
+				YSI_Print(" | currently using.  Get it here:         | ");
+				YSI_Print(" |                                        | ");
+				YSI_Print(" |        https://git.io/jit-plugin       | ");
+				YSI_Print(" |                                        | ");
 			}
-			YSI_Print(" ======================================= ");
+			YSI_Print(" ========================================== ");
 			YSI_Print(" ");
 		#endif
 		#if defined ScriptInit_OnCodeInit
@@ -344,34 +344,37 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 				YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
 				#if !defined YSI_NO_CACHE_MESSAGE
 					YSI_Print(" ");
-					YSI_Print(" ======================================= ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" |   File dumped to YSI code cache:    | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" |      scriptfiles/YSI_CACHE.amx      | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" | Load this file instead to skip this | ");
-					YSI_Print(" | code optimisation step in the       | ");
-					YSI_Print(" | future.  Note that if you have      | ");
-					YSI_Print(" | multiple scripts loading at once    | ");
-					YSI_Print(" | (i.e. gamemodes, filterscripts, and | ");
-					YSI_Print(" | modules) you may need to load and   | ");
-					YSI_Print(" | cache them individually so that     | ");
-					YSI_Print(" | they don't clobber each other.      | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" | You can disable this message with:  | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" |   #define YSI_NO_CACHE_MESSAGE      | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" | You can disable this caching with:  | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" |   #define YSI_NO_MODE_CACHE         | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" | You can explicitly enable it with:  | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" |   #define YSI_YES_MODE_CACHE        | ");
-					YSI_Print(" |                                     | ");
-					YSI_Print(" ======================================= ");
+					YSI_Print(" ========================================== ");
+					YSI_Print(" |                                        | ");
+					YSI_Print(" |   File dumped to YSI code cache:       | ");
+					YSI_Print(" |                                        | ");
+					YSI_Print(" |      scriptfiles/YSI_CACHE.amx         | ");
+					YSI_Print(" |                                        | ");
+					YSI_Print(" | Load this file instead to skip this    | ");
+					YSI_Print(" | code optimisation step in the future.  | ");
+					YSI_Print(" | Note that if you have multiple scripts | ");
+					YSI_Print(" | loading at once (i.e. gamemodes,       | ");
+					YSI_Print(" | filterscripts, and modules) you may    | ");
+					YSI_Print(" | need to load and cache them            | ");
+					YSI_Print(" | individually so that they don't        | ");
+					YSI_Print(" | each other.  If you don't, in          | ");
+					YSI_Print(" | \"server.cfg\", the following works:     | ");
+					YSI_Print(" |                                        | ");
+					YSI_Print(" |   gamemode0 ../scriptfiles/YSI_CACHE 1 | ");
+					YSI_Print(" |                                        | ");
+					YSI_Print(" | You can disable this message with:     | ");
+					YSI_Print(" |                                        | ");
+					YSI_Print(" |   #define YSI_NO_CACHE_MESSAGE         | ");
+					YSI_Print(" |                                        | ");
+					YSI_Print(" | You can disable this caching with:     | ");
+					YSI_Print(" |                                        | ");
+					YSI_Print(" |   #define YSI_NO_MODE_CACHE            | ");
+					YSI_Print(" |                                        | ");
+					YSI_Print(" | You can explicitly enable it with:     | ");
+					YSI_Print(" |                                        | ");
+					YSI_Print(" |   #define YSI_YES_MODE_CACHE           | ");
+					YSI_Print(" |                                        | ");
+					YSI_Print(" ========================================== ");
 					YSI_Print(" ");
 				#endif
 			}
