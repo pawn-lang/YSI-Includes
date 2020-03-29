@@ -159,12 +159,13 @@ static stock DumpAMX_EncodeBytes(c, buffer[ENC_MAX char])
 {
 	// ported from the main compiler to ensure compatibility
 
-	new index = ENC_MAX - 1;
-	do {
-		buffer{index--} = (c & 0x7F); // store 7 bits
-		c >>= 7;
-	} while (index >= 0);
+	buffer{4} = c & 0x7F; // store 7 bits
+	buffer{3} = (c >>> 7) & 0x7F; // store 7 bits
+	buffer{2} = (c >>> 14) & 0x7F; // store 7 bits
+	buffer{1} = (c >>> 21) & 0x7F; // store 7 bits
+	buffer{0} = (c >>> 28); // store 7 bits
 
+	new index = -1;
 	// skip leading zeros
 	while (index < ENC_MAX - 2 && buffer{index + 1} == 0 && (buffer{index + 2} & 0x40) == 0)
 	{
@@ -183,13 +184,13 @@ static stock DumpAMX_EncodeBytes(c, buffer[ENC_MAX char])
 	}
 
 	++index;
-	new ret = index;
+	c = index;
 	while (index < ENC_MAX - 1)
 	{
 		buffer{index++} |= 0x80;
 	}
 
-	return ret;
+	return c;
 }
 
 static stock DumpAMX_WriteEncoded(File:file, data[], &offset, compact, c)
