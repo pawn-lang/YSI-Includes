@@ -318,7 +318,7 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 			{
 				YSI_Print(" ========================================== ");
 				YSI_Print(" |                                        | ");
-				YSI_Print(" | Note that theis code generation works  | ");
+				YSI_Print(" | Note that this code generation works   | ");
 				YSI_Print(" | best with the JIT plugin, which you    | ");
 				YSI_Print(" | are not currently using.  Get it here: | ");
 				YSI_Print(" |                                        | ");
