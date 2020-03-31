@@ -305,7 +305,7 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 			YSI_Print(" ");
 			YSI_Print(" ========================================== ");
 			YSI_Print(" |                                        | ");
-			YSI_Print(" |    Optimising code, this may take a    | ");
+			YSI_Print(" |    Generating code, this may take a    | ");
 			YSI_Print(" |           little bit of time.          | ");
 			YSI_Print(" |                                        | ");
 			YSI_Print(" |             Please wait...             | ");
@@ -318,10 +318,9 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 			{
 				YSI_Print(" ========================================== ");
 				YSI_Print(" |                                        | ");
-				YSI_Print(" | Note that these optimisations are      | ");
-				YSI_Print(" | designed to improve performance with   | ");
-				YSI_Print(" | the JIT plugin, which you are not      | ");
-				YSI_Print(" | currently using.  Get it here:         | ");
+				YSI_Print(" | Note that theis code generation works  | ");
+				YSI_Print(" | best with the JIT plugin, which you    | ");
+				YSI_Print(" | are not currently using.  Get it here: | ");
 				YSI_Print(" |                                        | ");
 				YSI_Print(" |        https://git.io/jit-plugin       | ");
 				YSI_Print(" |                                        | ");
