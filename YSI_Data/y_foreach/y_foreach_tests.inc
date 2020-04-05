@@ -928,8 +928,10 @@ TEST__ y_iter_Starting()
 	Iter_Add(Test1_y_iter, 60);
 	ASSERT(Iter_Begin(Test1_y_iter) >= 100);
 	ASSERT_EQ(Iter_First(Test1_y_iter), 2);
-	ASSERT_EQ(Iter_Next(Test1_y_iter, Iter_First(Test1_y_iter)), 4);
-	ASSERT_EQ(Iter_Next(Test1_y_iter, Iter_Begin(Test1_y_iter)), 2);
+	i = Iter_Next(Test1_y_iter, Iter_First(Test1_y_iter));
+	ASSERT_EQ(i, 4);
+	i = Iter_Next(Test1_y_iter, Iter_Begin(Test1_y_iter));
+	ASSERT_EQ(i, 2);
 	i = Iter_Begin(Test1_y_iter);
 	ASSERT(!Iter_Contains(Test1_y_iter, i));
 	i = Iter_First(Test1_y_iter);
