@@ -1018,6 +1018,7 @@ TEST__ y_iter_Tag()
 	new
 		Iterator:iter1<Group:60>,
 		Iterator:iter2[2]<Group:50>;
+	Iter_Init(iter2);
 	Iter_Add(iter1, Group:33);
 	#pragma tabsize 4
 	/* ====================================================================== */
