@@ -131,3 +131,17 @@ native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] 
 	native O@(const function[], time, repeat, const format[] = "", GLOBAL_TAG_TYPES:...) = SetTimerEx;
 #endif
 
+#if !__COMPILER_MODIFIED
+	forward _@_y_shortvar_@_();
+
+	public _@_y_shortvar_@_()
+	{
+		new tmp[2];
+		// This function calls any functions used in assembly code in YSI to ensure
+		// that they are included in the native function table.
+		R@(tmp, tmp);
+		W@(tmp, tmp);
+		O@(tmp, 0, false);
+	}
+#endif
+
