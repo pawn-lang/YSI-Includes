@@ -503,6 +503,14 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 // Should be an inbuilt constant!
 #define cellbytes (cellbits / charbits)
 
+#if cellbits != 32
+	#error YSI assumes `cellbits` is 32.
+#endif
+
+#if charbits != 8
+	#error YSI assumes `charbits` is 8.
+#endif
+
 #if __COMPILER_sNAMEMAX != 31
 	#error YSI assumes `sNAMEMAX` is 31.
 #endif
