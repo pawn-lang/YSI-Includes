@@ -174,7 +174,7 @@ static stock __CompilerSecondPass() {}
 			#define __COMPILER_NAMEOF (1)
 			//#define __COMPILER_PRAGMA (1)
 		#endif
-	#endif
+		#endif
 #else
 	#define __COMPILER_MODIFIED (0)
 	#define __COMPILER_OFFICIAL (1)
@@ -261,7 +261,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __COMPILER_WARNING_SUPPRESSION (1)
 	#define __COMPILER_USER_WARNING (1)
 	#define __COMPILER___EMIT (1)
-	
+
 	stock YSI_gAMXAddress_;
 	
 	#if __COMPILER___EMIT_U
@@ -477,12 +477,19 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #define __Emit __emit
 #define __CellBytes cellbytes
 #define __CellBits cellbits
+#define __CellBits cellbits
+#define __CharBits charbits
+#define __CharMax charmax
+#define __UCharMax ucharmax
 
 // And the other way
 #define __cellbytes cellbytes
 #define __cellbits cellbits
 #define __cell_bytes cellbytes
 #define __cell_bits cellbits
+#define __char_bits charbits
+#define __char_max charmax
+#define __uchar_max ucharmax
 #define __pawn __Pawn
 
 // Don't define `__PawnBuild` if it doesn't exist, but do create an alternate
@@ -494,7 +501,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #endif
 
 // Should be an inbuilt constant!
-#define cellbytes (cellbits / 8)
+#define cellbytes (cellbits / charbits)
 
 #if __COMPILER_sNAMEMAX != 31
 	#error YSI assumes `sNAMEMAX` is 31.

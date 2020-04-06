@@ -104,7 +104,7 @@ Optional plugins:
 
 // Define `cellbytes` as a symbol that really should exist already!
 #if !defined cellbytes
-	#define cellbytes (cellbits / 8)
+	#define cellbytes (cellbits / charbits)
 #endif
 
 // Define "volatile" as nothing.
