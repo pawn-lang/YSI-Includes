@@ -70,28 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if defined _inc_y_groups
-	#undef _inc_y_groups
-#endif
-
-#if !defined _Y_GROUPS_INCLUDED
-	#tryinclude "..\YSI_Players\y_groups\y_groups_entry"
-#endif
-#if !defined _Y_GROUPS_INCLUDED
-	#tryinclude "YSI_Players\y_groups\y_groups_entry"
-#endif
-#if !defined _Y_GROUPS_INCLUDED
-	#tryinclude "YSI\YSI_Players\y_groups\y_groups_entry"
-#endif
-#if !defined _Y_GROUPS_INCLUDED
-	#tryinclude <YSI_Players\y_groups\y_groups_entry>
-#endif
-#if !defined _Y_GROUPS_INCLUDED
-	#tryinclude <YSI\YSI_Players\y_groups\y_groups_entry>
-#endif
-#if defined _Y_GROUPS_INCLUDED
-	#undef _Y_GROUPS_INCLUDED
-#else
-	#error Did you use `YSI/y_groups` instead of `YSI\y_groups`?
-#endif
+#error Use `#include <YSI_Players\y_groups>` not `#include <YSI\y_groups>` (including in dependencies).
 

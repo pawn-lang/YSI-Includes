@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_bitmap
-	#tryinclude "..\YSI_Storage\y_bitmap\y_bitmap_entry"
-#endif
-#if !defined _INC_y_bitmap
-	#tryinclude "YSI_Storage\y_bitmap\y_bitmap_entry"
-#endif
-#if !defined _INC_y_bitmap
-	#tryinclude "YSI\YSI_Storage\y_bitmap\y_bitmap_entry"
-#endif
-#if !defined _INC_y_bitmap
-	#tryinclude <YSI_Storage\y_bitmap\y_bitmap_entry>
-#endif
-#if !defined _INC_y_bitmap
-	#tryinclude <YSI\YSI_Storage\y_bitmap\y_bitmap_entry>
-#endif
-#if !defined _INC_y_bitmap
-	#error Could not find y_bitmap
-#endif
+#error Use `#include <YSI_Storage\y_bitmap>` not `#include <YSI\y_bitmap>` (including in dependencies).
 

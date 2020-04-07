@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_va
-	#tryinclude "..\YSI_Coding\y_va\y_va_entry"
-#endif
-#if !defined _INC_y_va
-	#tryinclude "YSI_Coding\y_va\y_va_entry"
-#endif
-#if !defined _INC_y_va
-	#tryinclude "YSI\YSI_Coding\y_va\y_va_entry"
-#endif
-#if !defined _INC_y_va
-	#tryinclude <YSI_Coding\y_va\y_va_entry>
-#endif
-#if !defined _INC_y_va
-	#tryinclude <YSI\YSI_Coding\y_va\y_va_entry>
-#endif
-#if !defined _INC_y_va
-	#error Could not find y_va
-#endif
+#error Use `#include <YSI_Coding\y_va>` not `#include <YSI\y_va>` (including in dependencies).
 

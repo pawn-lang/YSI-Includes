@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_debug
-	#tryinclude "..\YSI_Core\y_debug\y_debug_entry"
-#endif
-#if !defined _INC_y_debug
-	#tryinclude "YSI_Core\y_debug\y_debug_entry"
-#endif
-#if !defined _INC_y_debug
-	#tryinclude "YSI\YSI_Core\y_debug\y_debug_entry"
-#endif
-#if !defined _INC_y_debug
-	#tryinclude <YSI_Core\y_debug\y_debug_entry>
-#endif
-#if !defined _INC_y_debug
-	#tryinclude <YSI\YSI_Core\y_debug\y_debug_entry>
-#endif
-#if !defined _INC_y_debug
-	#error Could not find y_debug
-#endif
+#error Use `#include <YSI_Core\y_debug>` not `#include <YSI\y_debug>` (including in dependencies).
 

@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_stringhash
-	#tryinclude "..\YSI_Coding\y_stringhash\y_stringhash_entry"
-#endif
-#if !defined _INC_y_stringhash
-	#tryinclude "YSI_Coding\y_stringhash\y_stringhash_entry"
-#endif
-#if !defined _INC_y_stringhash
-	#tryinclude "YSI\YSI_Coding\y_stringhash\y_stringhash_entry"
-#endif
-#if !defined _INC_y_stringhash
-	#tryinclude <YSI_Coding\y_stringhash\y_stringhash_entry>
-#endif
-#if !defined _INC_y_stringhash
-	#tryinclude <YSI\YSI_Coding\y_stringhash\y_stringhash_entry>
-#endif
-#if !defined _INC_y_stringhash
-	#error Could not find y_stringhash
-#endif
+#error Use `#include <YSI_Coding\y_stringhash>` not `#include <YSI\y_stringhash>` (including in dependencies).
 

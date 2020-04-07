@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_colours
-	#tryinclude "..\YSI_Server\y_colours\y_colours_entry"
-#endif
-#if !defined _INC_y_colours
-	#tryinclude "YSI_Server\y_colours\y_colours_entry"
-#endif
-#if !defined _INC_y_colours
-	#tryinclude "YSI\YSI_Server\y_colours\y_colours_entry"
-#endif
-#if !defined _INC_y_colours
-	#tryinclude <YSI_Server\y_colours\y_colours_entry>
-#endif
-#if !defined _INC_y_colours
-	#tryinclude <YSI\YSI_Server\y_colours\y_colours_entry>
-#endif
-#if !defined _INC_y_colours
-	#error Could not find y_colours
-#endif
+#error Use `#include <YSI_Server\y_colours>` not `#include <YSI\y_colours>` (including in dependencies).
 

@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_dialog
-	#tryinclude "..\YSI_Visual\y_dialog\y_dialog_entry"
-#endif
-#if !defined _INC_y_dialog
-	#tryinclude "YSI_Visual\y_dialog\y_dialog_entry"
-#endif
-#if !defined _INC_y_dialog
-	#tryinclude "YSI\YSI_Visual\y_dialog\y_dialog_entry"
-#endif
-#if !defined _INC_y_dialog
-	#tryinclude <YSI_Visual\y_dialog\y_dialog_entry>
-#endif
-#if !defined _INC_y_dialog
-	#tryinclude <YSI\YSI_Visual\y_dialog\y_dialog_entry>
-#endif
-#if !defined _INC_y_dialog
-	#error Could not find y_dialog
-#endif
+#error Use `#include <YSI_Visual\y_dialog>` not `#include <YSI\y_dialog>` (including in dependencies).
 

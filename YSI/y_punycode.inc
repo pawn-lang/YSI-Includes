@@ -70,18 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_punycode
-	#tryinclude "..\YSI_Server\y_punycode\y_punycode_entry"
-#endif
-#if !defined _INC_y_punycode
-	#tryinclude "YSI_Server\y_punycode\y_punycode_entry"
-#endif
-#if !defined _INC_y_punycode
-	#tryinclude "YSI\YSI_Server\y_punycode\y_punycode_entry"
-#endif
-#if !defined _INC_y_punycode
-	#tryinclude <YSI_Server\y_punycode\y_punycode_entry>
-#endif
-#if !defined _INC_y_punycode
-	#tryinclude <YSI\YSI_Server\y_punycode\y_punycode_entry>
-#endif
+#error Use `#include <YSI_Server\y_punycode>` not `#include <YSI\y_punycode>` (including in dependencies).
+

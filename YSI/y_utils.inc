@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_utils
-	#tryinclude "..\YSI_Core\y_utils\y_utils_entry"
-#endif
-#if !defined _INC_y_utils
-	#tryinclude "YSI_Core\y_utils\y_utils_entry"
-#endif
-#if !defined _INC_y_utils
-	#tryinclude "YSI\YSI_Core\y_utils\y_utils_entry"
-#endif
-#if !defined _INC_y_utils
-	#tryinclude <YSI_Core\y_utils\y_utils_entry>
-#endif
-#if !defined _INC_y_utils
-	#tryinclude <YSI\YSI_Core\y_utils\y_utils_entry>
-#endif
-#if !defined _INC_y_utils
-	#error Could not find y_utils
-#endif
+#error Use `#include <YSI_Core\y_utils>` not `#include <YSI\y_utils>` (including in dependencies).
 

@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_classes
-	#tryinclude "..\YSI_Visual\y_classes\y_classes_entry"
-#endif
-#if !defined _INC_y_classes
-	#tryinclude "YSI_Visual\y_classes\y_classes_entry"
-#endif
-#if !defined _INC_y_classes
-	#tryinclude "YSI\YSI_Visual\y_classes\y_classes_entry"
-#endif
-#if !defined _INC_y_classes
-	#tryinclude <YSI_Visual\y_classes\y_classes_entry>
-#endif
-#if !defined _INC_y_classes
-	#tryinclude <YSI\YSI_Visual\y_classes\y_classes_entry>
-#endif
-#if !defined _INC_y_classes
-	#error Could not find y_classes
-#endif
+#error Use `#include <YSI_Visual\y_classes>` not `#include <YSI\y_classes>` (including in dependencies).
 

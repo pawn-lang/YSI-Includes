@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_races
-	#tryinclude "..\YSI_Visual\y_races\y_races_entry"
-#endif
-#if !defined _INC_y_races
-	#tryinclude "YSI_Visual\y_races\y_races_entry"
-#endif
-#if !defined _INC_y_races
-	#tryinclude "YSI\YSI_Visual\y_races\y_races_entry"
-#endif
-#if !defined _INC_y_races
-	#tryinclude <YSI_Visual\y_races\y_races_entry>
-#endif
-#if !defined _INC_y_races
-	#tryinclude <YSI\YSI_Visual\y_races\y_races_entry>
-#endif
-#if !defined _INC_y_races
-	#error Could not find y_races
-#endif
+#error Use `#include <YSI_Visual\y_races>` not `#include <YSI\y_races>` (including in dependencies).
 

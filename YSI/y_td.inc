@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_td
-	#tryinclude "..\YSI_Server\y_td\y_td_entry"
-#endif
-#if !defined _INC_y_td
-	#tryinclude "YSI_Server\y_td\y_td_entry"
-#endif
-#if !defined _INC_y_td
-	#tryinclude "YSI\YSI_Server\y_td\y_td_entry"
-#endif
-#if !defined _INC_y_td
-	#tryinclude <YSI_Server\y_td\y_td_entry>
-#endif
-#if !defined _INC_y_td
-	#tryinclude <YSI\YSI_Server\y_td\y_td_entry>
-#endif
-#if !defined _INC_y_td
-	#error Could not find y_td
-#endif
+#error Use `#include <YSI_Server\y_td>` not `#include <YSI\y_td>` (including in dependencies).
 

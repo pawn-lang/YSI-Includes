@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_svar
-	#tryinclude "..\YSI_Storage\y_svar\y_svar_entry"
-#endif
-#if !defined _INC_y_svar
-	#tryinclude "YSI_Storage\y_svar\y_svar_entry"
-#endif
-#if !defined _INC_y_svar
-	#tryinclude "YSI\YSI_Storage\y_svar\y_svar_entry"
-#endif
-#if !defined _INC_y_svar
-	#tryinclude <YSI_Storage\y_svar\y_svar_entry>
-#endif
-#if !defined _INC_y_svar
-	#tryinclude <YSI\YSI_Storage\y_svar\y_svar_entry>
-#endif
-#if !defined _INC_y_svar
-	#error Could not find y_svar
-#endif
+#error Use `#include <YSI_Storage\y_svar>` not `#include <YSI\y_svar>` (including in dependencies).
 

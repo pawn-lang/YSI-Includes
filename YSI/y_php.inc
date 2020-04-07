@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_php
-	#tryinclude "..\YSI_Storage\y_php\y_php_entry"
-#endif
-#if !defined _INC_y_php
-	#tryinclude "YSI_Storage\y_php\y_php_entry"
-#endif
-#if !defined _INC_y_php
-	#tryinclude "YSI\YSI_Storage\y_php\y_php_entry"
-#endif
-#if !defined _INC_y_php
-	#tryinclude <YSI_Storage\y_php\y_php_entry>
-#endif
-#if !defined _INC_y_php
-	#tryinclude <YSI\YSI_Storage\y_php\y_php_entry>
-#endif
-#if !defined _INC_y_php
-	#error Could not find y_php
-#endif
+#error Use `#include <YSI_Storage\y_php>` not `#include <YSI\y_php>` (including in dependencies).
 

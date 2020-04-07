@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_areas
-	#tryinclude "..\YSI_Visual\y_areas\y_areas_entry"
-#endif
-#if !defined _INC_y_areas
-	#tryinclude "YSI_Visual\y_areas\y_areas_entry"
-#endif
-#if !defined _INC_y_areas
-	#tryinclude "YSI\YSI_Visual\y_areas\y_areas_entry"
-#endif
-#if !defined _INC_y_areas
-	#tryinclude <YSI_Visual\y_areas\y_areas_entry>
-#endif
-#if !defined _INC_y_areas
-	#tryinclude <YSI\YSI_Visual\y_areas\y_areas_entry>
-#endif
-#if !defined _INC_y_areas
-	#error Could not find y_areas
-#endif
+#error Use `#include <YSI_Visual\y_areas>` not `#include <YSI\y_areas>` (including in dependencies).
 

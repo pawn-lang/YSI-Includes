@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_zonepulse
-	#tryinclude "..\YSI_Visual\y_zonepulse\y_zonepulse_entry"
-#endif
-#if !defined _INC_y_zonepulse
-	#tryinclude "YSI_Visual\y_zonepulse\y_zonepulse_entry"
-#endif
-#if !defined _INC_y_zonepulse
-	#tryinclude "YSI\YSI_Visual\y_zonepulse\y_zonepulse_entry"
-#endif
-#if !defined _INC_y_zonepulse
-	#tryinclude <YSI_Visual\y_zonepulse\y_zonepulse_entry>
-#endif
-#if !defined _INC_y_zonepulse
-	#tryinclude <YSI\YSI_Visual\y_zonepulse\y_zonepulse_entry>
-#endif
-#if !defined _INC_y_zonepulse
-	#error Could not find y_zonepulse
-#endif
+#error Use `#include <YSI_Visual\y_zonepulse>` not `#include <YSI\y_zonepulse>` (including in dependencies).
 

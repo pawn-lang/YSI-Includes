@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_als
-	#tryinclude "..\YSI_Core\y_als\y_als_entry"
-#endif
-#if !defined _INC_y_als
-	#tryinclude "YSI_Core\y_als\y_als_entry"
-#endif
-#if !defined _INC_y_als
-	#tryinclude "YSI\YSI_Core\y_als\y_als_entry"
-#endif
-#if !defined _INC_y_als
-	#tryinclude <YSI_Core\y_als\y_als_entry>
-#endif
-#if !defined _INC_y_als
-	#tryinclude <YSI\YSI_Core\y_als\y_als_entry>
-#endif
-#if !defined _INC_y_als
-	#error Could not find y_als
-#endif
+#error Use `#include <YSI_Core\y_als>` not `#include <YSI\y_als>` (including in dependencies).
 

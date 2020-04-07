@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_languages
-	#tryinclude "..\YSI_Players\y_languages\y_languages_entry"
-#endif
-#if !defined _INC_y_languages
-	#tryinclude "YSI_Players\y_languages\y_languages_entry"
-#endif
-#if !defined _INC_y_languages
-	#tryinclude "YSI\YSI_Players\y_languages\y_languages_entry"
-#endif
-#if !defined _INC_y_languages
-	#tryinclude <YSI_Players\y_languages\y_languages_entry>
-#endif
-#if !defined _INC_y_languages
-	#tryinclude <YSI\YSI_Players\y_languages\y_languages_entry>
-#endif
-#if !defined _INC_y_languages
-	#error Could not find y_languages
-#endif
+#error Use `#include <YSI_Players\y_languages>` not `#include <YSI\y_languages>` (including in dependencies).
 

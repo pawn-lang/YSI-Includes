@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_vehicledata
-	#tryinclude "..\YSI_Game\y_vehicledata\y_vehicledata_entry"
-#endif
-#if !defined _INC_y_vehicledata
-	#tryinclude "YSI_Game\y_vehicledata\y_vehicledata_entry"
-#endif
-#if !defined _INC_y_vehicledata
-	#tryinclude "YSI\YSI_Game\y_vehicledata\y_vehicledata_entry"
-#endif
-#if !defined _INC_y_vehicledata
-	#tryinclude <YSI_Game\y_vehicledata\y_vehicledata_entry>
-#endif
-#if !defined _INC_y_vehicledata
-	#tryinclude <YSI\YSI_Game\y_vehicledata\y_vehicledata_entry>
-#endif
-#if !defined _INC_y_vehicledata
-	#error Could not find y_vehicledata
-#endif
+#error Use `#include <YSI_Game\y_vehicledata>` not `#include <YSI\y_vehicledata>` (including in dependencies).
 

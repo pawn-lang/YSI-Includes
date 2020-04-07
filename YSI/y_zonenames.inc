@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_zonenames
-	#tryinclude "..\YSI_Visual\y_zonenames\y_zonenames_entry"
-#endif
-#if !defined _INC_y_zonenames
-	#tryinclude "YSI_Visual\y_zonenames\y_zonenames_entry"
-#endif
-#if !defined _INC_y_zonenames
-	#tryinclude "YSI\YSI_Visual\y_zonenames\y_zonenames_entry"
-#endif
-#if !defined _INC_y_zonenames
-	#tryinclude <YSI_Visual\y_zonenames\y_zonenames_entry>
-#endif
-#if !defined _INC_y_zonenames
-	#tryinclude <YSI\YSI_Visual\y_zonenames\y_zonenames_entry>
-#endif
-#if !defined _INC_y_zonenames
-	#error Could not find y_zonenames
-#endif
+#error Use `#include <YSI_Visual\y_zonenames>` not `#include <YSI\y_zonenames>` (including in dependencies).
 

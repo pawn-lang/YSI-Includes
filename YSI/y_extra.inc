@@ -70,22 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#if !defined _INC_y_extra
-	#tryinclude "..\YSI_Extra\y_extra\y_extra_entry"
-#endif
-#if !defined _INC_y_extra
-	#tryinclude "YSI_Extra\y_extra\y_extra_entry"
-#endif
-#if !defined _INC_y_extra
-	#tryinclude "YSI\YSI_Extra\y_extra\y_extra_entry"
-#endif
-#if !defined _INC_y_extra
-	#tryinclude <YSI_Extra\y_extra\y_extra_entry>
-#endif
-#if !defined _INC_y_extra
-	#tryinclude <YSI\YSI_Extra\y_extra\y_extra_entry>
-#endif
-#if !defined _INC_y_extra
-	#error Could not find y_extra
-#endif
+#error Use `#include <YSI_Extra\y_extra>` not `#include <YSI\y_extra>` (including in dependencies).
 
