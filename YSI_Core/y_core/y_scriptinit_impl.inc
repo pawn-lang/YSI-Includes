@@ -356,7 +356,7 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 					YSI_Print(" | filterscripts, and modules) you may    | ");
 					YSI_Print(" | need to load and cache them            | ");
 					YSI_Print(" | individually so that they don't        | ");
-					YSI_Print(" | each other.  If you don't, in          | ");
+					YSI_Print(" | clobber each other.  If you don't, in  | ");
 					YSI_Print(" | \"server.cfg\", the following works:     | ");
 					YSI_Print(" |                                        | ");
 					YSI_Print(" |   gamemode0 ../scriptfiles/YSI_CACHE 1 | ");
