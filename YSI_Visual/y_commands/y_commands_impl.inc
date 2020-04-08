@@ -117,6 +117,7 @@ enum e_COMMAND_ERRORS
 	COMMAND_DISABLED      = 7 , // All commands are disabled for this player.
 	COMMAND_BAD_PREFIX    = 8 , // Used "/" instead of "#", or something similar.
 	COMMAND_INVALID_INPUT = 10, // Didn't type "/something".
+	COMMAND_SILENT        = 11, // Just end.  Don't call the command or print anything.
 }
 
 enum e_COMMAND_FLAGS:(<<= 1)
@@ -131,6 +132,7 @@ enum e_COMMAND_FLAGS:(<<= 1)
 	e_COMMAND_FLAGS_DISABLED,      // All commands are disabled for this player.
 	e_COMMAND_FLAGS_BAD_PREFIX,
 	e_COMMAND_FLAGS_INVALID_INPUT, // Didn't type "/something".
+	e_COMMAND_FLAGS_SILENT,        // Do nothing.
 	// Save counts for callbacks.
 	e_COMM_FLAG_OPCP     = 0x00FF0000,
 	e_COMM_FLAG_OPCP_ADD = 0x00010000,
@@ -844,6 +846,29 @@ GLOBAL__ bool:Command_GetDisconnectReturn()
 	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_NO_PLAYER);
 }
 
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+FOREIGN__ void:Command_SetSilentReturn(bool:set);
+
+GLOBAL__ void:Command_SetSilentReturn(bool:set)
+{
+	if (set)
+		YSI_g_sCommandFlags |= e_COMMAND_FLAGS_SILENT;
+	else
+		YSI_g_sCommandFlags &= ~e_COMMAND_FLAGS_SILENT;
+}
+
+/*-------------------------------------------------------------------------*//**
+ *//*------------------------------------------------------------------------**/
+
+FOREIGN__ bool:Command_GetSilentReturn();
+
+GLOBAL__ bool:Command_GetSilentReturn()
+{
+	return bool:(YSI_g_sCommandFlags & e_COMMAND_FLAGS_SILENT);
+}
+
 /*
 
     88888888888                                                     db        88888888ba  88  
@@ -1385,7 +1410,7 @@ MASTER_HOOK__ OnPlayerCommandText(playerid, cmdtext[])
 HOOK__ OnScriptInit()
 {
 	P:1("Command_OnScriptInit called");
-	YSI_g_sCommandFlags = e_COMMAND_FLAGS_OK;
+	YSI_g_sCommandFlags = e_COMMAND_FLAGS_OK | e_COMMAND_FLAGS_SILENT;
 	#if YSIM_NOT_CLIENT
 		#if defined Y_COMMANDS_USE_CHARS
 			Bit_SetAll(YSI_g_sPrefixes, false),
