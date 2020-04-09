@@ -667,7 +667,7 @@ stock bool:INI_ParseFile(const fname[], const remoteFormat[], bool:bFileFirst = 
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:INI_Load(filename[], bool:bExtra = false, extra = 0, bool:bLocal = true)
+stock bool:INI_Load(const filename[], bool:bExtra = false, extra = 0, bool:bLocal = true)
 {
 	P:3("bool:INI_Load called: \"%s\", %i, %i, %i", filename, _:bExtra, extra, _:bLocal);
 	return INI_ParseFile(filename, "@INI_%s_%s", .bFileFirst = true, .bExtra = bExtra, .extra = extra, .bLocal = bLocal);
