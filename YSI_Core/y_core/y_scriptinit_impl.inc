@@ -277,6 +277,8 @@ stock Server_GetLongCallDefault()
 
 forward bool:DumpAMX_Write(const filename[]);
 
+forward OnCachedInit();
+
 static ScriptInit_CallOnCodeInit(bool:jit)
 {
 	Server_DisableLongCall();
@@ -296,6 +298,7 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 			YSI_Print(" ========================================== ");
 			YSI_Print(" ");
 		#endif
+		CallLocalFunction("OnCachedInit", "");
 	}
 	else
 	{
