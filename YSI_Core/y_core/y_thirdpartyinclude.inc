@@ -317,9 +317,11 @@ Optional plugins:
 //#endif
 
 #if defined AMX_INCLUDING_FAILED
-	#error Could not include "https://github.com/Zeex/amx_assembly" - ensure its files are in "include\amx_assembly\"
+	#define YSI_3P_WARNING 1
+	#include "y_thirdparty_warning"
 #elseif !defined CodeScanRunFast
-	#error Please update "https://github.com/Zeex/amx_assembly" to the latest version.
+	#define YSI_3P_WARNING 2
+	#include "y_thirdparty_warning"
 #endif
 
 //#tryinclude "..\..\md-sort\md-sort"
@@ -329,9 +331,11 @@ Optional plugins:
 //#tryinclude "md-sort"
 //#tryinclude <md-sort>
 //#if !defined _INC_md_sort
-//	#error Could not include "https://github.com/oscar-broman/md-sort" - ensure its files are in "include\md-sort\"
+//	#define YSI_3P_WARNING 3
+//	#include "y_thirdparty_warning"
 //#elseif !defined ResetDeepArray_Entry
-//	#error Please update "https://github.com/oscar-broman/md-sort" to the latest version.
+//	#define YSI_3P_WARNING 4
+//	#include "y_thirdparty_warning"
 //#endif
 
 #tryinclude "..\..\code-parse\code-parse"
@@ -343,7 +347,8 @@ Optional plugins:
 #tryinclude "code-parse"
 #tryinclude <code-parse>
 #if !defined _INC_code_parse_inc
-	#error Could not include "https://github.com/Y-Less/code-parse.inc" - ensure its files are in "include\code-parse\"
+	#define YSI_3P_WARNING 5
+	#include "y_thirdparty_warning"
 #endif
 
 #tryinclude "..\..\indirection\indirection"
@@ -353,9 +358,11 @@ Optional plugins:
 #tryinclude "indirection"
 #tryinclude <indirection>
 #if !defined _INC_indirection
-	#error Could not include "https://github.com/Y-Less/indirection" - ensure its files are in "include\indirection\"
+	#define YSI_3P_WARNING 7
+	#include "y_thirdparty_warning"
 #elseif !defined Indirect_Init
-	#error Please update "https://github.com/Y-Less/indirection" to the latest version.
+	#define YSI_3P_WARNING 8
+	#include "y_thirdparty_warning"
 #endif
 
 // "y_thirdpartyinclude_tests" is NOT included here when tests are active, because it complicates
@@ -380,6 +387,10 @@ public OnCodeInit()
 
 #if __COMPILER_WARNING_SUPPRESSION
 	#pragma warning pop
+#endif
+
+#if defined YSI_3P_ERROR
+	#error Third-party includes are missing.  See warnings above.
 #endif
 
 #include "y_codeparse"
