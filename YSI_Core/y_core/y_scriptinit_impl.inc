@@ -298,7 +298,7 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 			YSI_Print(" ========================================== ");
 			YSI_Print(" ");
 		#endif
-		CallLocalFunction("OnCachedInit", "");
+		R@("OnCachedInit", "");
 	}
 	else
 	{
