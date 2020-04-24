@@ -180,11 +180,42 @@ P:D(mget(Alloc:slot, index));
 #endif
 
 /*-------------------------------------------------------------------------*//**
+ * <param name="slot">The allocation unit to get float data from.</param>
+ * <param name="index">The location in the unit to get.</param>
+ * <returns>
+ *  The data
+ * </returns>
+ * <remarks>
+ *  Shorthand for <symbolref name="Malloc_GetFloat" />.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+P:D(mgetf(Alloc:slot, index));
+#if !defined YSI_MALLOC_NO_SHORT
+	#define mgetf(%1) \
+		Malloc_GetFloat(%1)
+#endif
+
+/*-------------------------------------------------------------------------*//**
  * <param name="slot">The allocation unit to set in.</param>
  * <param name="index">Where in the unit to set.</param>
  * <param name="value">The value to save.</param>
  * <remarks>
  *  Shorthand for <symbolref name="Malloc_Set" />.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(mset(Alloc:slot, index, value));
+#if !defined YSI_MALLOC_NO_SHORT
+	#define mset(%1) \
+		Malloc_Set(%1)
+#endif
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="slot">The allocation unit to set in.</param>
+ * <param name="index">Where in the unit to set.</param>
+ * <param name="value">The float value to save.</param>
+ * <remarks>
+ *  Shorthand for <symbolref name="Malloc_SetFloat" />.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
@@ -338,6 +369,54 @@ P:D(Malloc_NextSlot(slot));
 	#define Malloc_Set(%1,%2,%3) \
 		Malloc_SetData(%1, %2, %3)
 
+#endif
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="array">Data unit to put information in.</param>
+ * <param name="index">Index in the unit.</param>
+ * <param name="value">Float value to insert</param>
+ * <remarks>
+ *  Displays errors in secure mode.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#if defined YSI_MALLOC_SECURE
+
+	Float:Malloc_GetFloat(Alloc:array, index) {
+		P:3("Malloc_GetFloat: array = %d, index = %d.", _:array, index);
+		return Malloc_Get(array, index);
+	}
+    
+#else 
+
+	P:D(Float:Malloc_GetFloat(Alloc:array, index));
+	#define Malloc_GetFloat(%1,%2) \
+		Float:Malloc_Get(%1,%2)
+
+#endif
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="array">Data unit to put information in.</param>
+ * <param name="index">Index in the unit.</param>
+ * <param name="value">Float value to insert</param>
+ * <remarks>
+ *  Displays errors in secure mode.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#if defined YSI_MALLOC_SECURE
+
+	Malloc_SetFloat(Alloc:array, index, Float:value) {
+		P:3("Malloc_SetFloat called: %d, %d, %f", _:array, index, value);
+		return Malloc_Set(array, index, value);
+	}
+
+#else 
+
+	P:D(Malloc_SetFloat(Alloc:array,index, Float:value));
+	#define Malloc_SetFloat(%1,%2,%3) \
+		Malloc_Set(%1,%2,Float:%3)
+		
 #endif
 
 /*-------------------------------------------------------------------------*//**
