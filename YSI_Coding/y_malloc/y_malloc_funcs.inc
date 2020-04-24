@@ -219,10 +219,10 @@ P:D(mset(Alloc:slot, index, value));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-P:D(mset(Alloc:slot, index, value));
+P:D(msetf(Alloc:slot, index, value));
 #if !defined YSI_MALLOC_NO_SHORT
-	#define mset(%1) \
-		Malloc_Set(%1)
+	#define msetf(%1) \
+		Malloc_SetFloat(%1)
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -416,7 +416,7 @@ P:D(Malloc_NextSlot(slot));
 	P:D(Malloc_SetFloat(Alloc:array,index, Float:value));
 	#define Malloc_SetFloat(%1,%2,%3) \
 		Malloc_Set(%1,%2,Float:%3)
-		
+
 #endif
 
 /*-------------------------------------------------------------------------*//**
