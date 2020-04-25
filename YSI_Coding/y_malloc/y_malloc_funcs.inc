@@ -384,7 +384,7 @@ P:D(Malloc_NextSlot(slot));
 
 	Float:Malloc_GetFloat(Alloc:array, index) {
 		P:3("Malloc_GetFloat: array = %d, index = %d.", _:array, index);
-		return Malloc_Get(array, index);
+		return Malloc_Get(_:array, index);
 	}
     
 #else 
@@ -395,6 +395,7 @@ P:D(Malloc_NextSlot(slot));
 
 #endif
 
+
 /*-------------------------------------------------------------------------*//**
  * <param name="array">Data unit to put information in.</param>
  * <param name="index">Index in the unit.</param>
@@ -404,18 +405,20 @@ P:D(Malloc_NextSlot(slot));
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+
 #if defined YSI_MALLOC_SECURE
 
 	Malloc_SetFloat(Alloc:array, index, Float:value) {
-		P:3("Malloc_SetFloat called: %d, %d, %f", _:array, index, value);
-		return Malloc_Set(array, index, value);
+		P:3("Malloc_SetFloat called: %d, %d, %f", _:array, index, _:value);
+        Malloc_Set(_:array, index, _:value);
+        return 1;
 	}
 
 #else 
 
-	P:D(Malloc_SetFloat(Alloc:array,index, Float:value));
+	P:D(Malloc_SetFloat(Alloc:array, index, Float:value));
 	#define Malloc_SetFloat(%1,%2,%3) \
-		Malloc_Set(%1,%2,Float:%3)
+		Malloc_Set(%1,%2,%3)
 
 #endif
 
