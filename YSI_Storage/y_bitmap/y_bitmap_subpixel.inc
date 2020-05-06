@@ -70,6 +70,95 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-stock Bitmap_StraightLine(sX, sY, eX, eY, width, const pattern[] = "SOLID")
+stock Bitmap_StraightLine(Bitmap:ctx, sX, sY, eX, eY, Float:width, const pattern[] = "SOLID")
 {
+	P:3("Bitmap_DrawRing called: %d, %d, %d, %.2f, %.2f, 0x%04x%04x, \"%s\"", _:ctx, x, y, inner, outer, colour >>> 16, colour & 0xFFFF, pattern);
+	new
+		w2 = Bitmap_Width(ctx),
+		Float:angle,
+		minY = max(0, min(sY, eY)),
+		maxY = min(max(sY, eY), Bitmap_Height(ctx)),
+		minX = max(0, min(sX, eX)),
+		maxX = min(max(sX, eX), width);
+	
+	if (sY > eY)
+	{
+		// Going down.
+		if (sX > eX)
+		{
+			// Going left.
+			angle = atan((sY - eY) / (sX - eX)) + 180;
+		}
+		else if (eX > sX)
+		{
+			// Going right.
+			angle = atan((sY - eY) / (eX - sX)) + 270;
+		}
+		else
+		{
+			angle = 270;
+		}
+	}
+	else if (ey > sY)
+	{
+		// Going up.
+		if (sX > eX)
+		{
+			// Going left.
+			angle = atan((sY - eY) / (sX - eX));
+		}
+		else if (eX > sX)
+		{
+			// Going right.
+			angle = atan((sY - eY) / (eX - sX)) + 270;
+		}
+		else
+		{
+			angle = 270;
+		}
+	}
+	else if (sX > eX)
+	{
+	}
+	else
+	{
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	_Bitmap_MakePattern(pattern, minX, minY, 0, 0);
+	
+	
+	
+	
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
