@@ -106,3 +106,9 @@ stock Bitmap_Destroy(Bitmap:ctx)
 {
 	if (ctx) free(Alloc:(_:ctx - 3));
 }
+
+stock Bitmap_Clear(Bitmap:ctx, bgColour = 0xFFFFFFFF)
+{
+	memset(YSI_gMallocMemory[_:ctx], bgColour | 0xFF, mget(Alloc:(_:ctx - 3), 0));
+}
+
