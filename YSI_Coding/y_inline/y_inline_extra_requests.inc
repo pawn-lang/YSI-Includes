@@ -78,7 +78,7 @@ static stock
     Func:YSI_g_sRequestCallbackData[MAX_Y_REQUESTS]<iisi>,
     Func:YSI_g_sRequestCallbackJson[MAX_Y_REQUESTS]<iii>;
 
-stock Request:Request_Inline(RequestsClient:id, const path[], E_HTTP_METHOD:method, Func:callback<iisi>, body[] = "", Headers:headers = Headers:-1)
+stock Request:RequestCallback(RequestsClient:id, const path[], E_HTTP_METHOD:method, Func:callback<iisi>, body[] = "", Headers:headers = Headers:-1)
 {
     new Request:ret = Request(id, path, method, "OnGetRequestData", body, headers);
 
@@ -90,7 +90,7 @@ stock Request:Request_Inline(RequestsClient:id, const path[], E_HTTP_METHOD:meth
     return ret;
 }
 
-stock Request:RequestJSON_Inline(RequestsClient:id, const path[], E_HTTP_METHOD:method, Func:callback<iii>, Node:json = Node:-1, Headers:headers = Headers:-1)
+stock Request:RequestJSONCallback(RequestsClient:id, const path[], E_HTTP_METHOD:method, Func:callback<iii>, Node:json = Node:-1, Headers:headers = Headers:-1)
 {
     new Request:ret = RequestJSON(id, path, method, "OnGetRequestJson", json, headers);
 
