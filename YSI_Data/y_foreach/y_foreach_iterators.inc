@@ -361,110 +361,125 @@ stock Iter_All_Internal(const array[], size, value)
 #if _FOREACH_CHARACTERS || _FOREACH_VEHICLES || _FOREACH_ACTORS
 	HOOK__ OnScriptInit()
 	{
-		#if _FOREACH_VEHICLES
-			Iter_Clear(Vehicle);
-			#if _FOREACH_STREAMED
-				Iter_InitAndClear(StreamedVehicle);
-			#endif
-			for (new i = 1; i <= MAX_VEHICLES; ++i)
-			{
-				if (GetVehicleModel(i))
-				{
-					Iter_Add(Vehicle, i);
-					#if _FOREACH_STREAMED
-						for (new j = 0; j != MAX_PLAYERS; ++j)
-						{
-							if (IsVehicleStreamedIn(i, j))
-							{
-								Iter_Add(StreamedVehicle[j], i);
-							}
-						}
-					#endif
-				}
-			}
-		#endif
-		#if _FOREACH_ACTORS
-			Iter_Clear(Actor);
-			for (new i = 0; i != MAX_ACTORS; ++i)
-			{
-				if (IsValidActor(i))
-				{
-					Iter_Add(Actor, i);
-					#if _FOREACH_STREAMED
-						for (new j = 0; j != MAX_PLAYERS; ++j)
-						{
-							if (IsActorStreamedIn(i, j))
-							{
-								Iter_Add(StreamedActor[j], i);
-							}
-						}
-					#endif
-				}
-			}
-			#if _FOREACH_STREAMED
-				Iter_InitAndClear(StreamedActor);
-			#endif
-		#endif
-		#if _FOREACH_CHARACTERS
-			#if _FOREACH_BOTS
-				Iter_Clear(Bot);
-				Iter_Clear(Character);
-				#if _FOREACH_STREAMED
-					Iter_InitAndClear(StreamedBot);
-					Iter_InitAndClear(StreamedCharacter);
-				#endif
-			#endif
-			#if _FOREACH_PLAYERS
-				Iter_Clear(Player);
-				#if _FOREACH_STREAMED
-					Iter_InitAndClear(StreamedPlayer);
-				#endif
-			#endif
-			for (new i = 0; i != MAX_PLAYERS; ++i)
-			{
-				if (IsPlayerConnected(i))
-				{
-					#if _FOREACH_BOTS
-						Iter_Add(Character, i);
-						if (IsPlayerNPC(i))
-						{
-							Iter_Add(Bot, i);
-							#if _FOREACH_STREAMED
-								for (new j = 0; j != MAX_PLAYERS; ++j)
-								{
-									if (IsPlayerStreamedIn(i, j))
-									{
-										Iter_Add(StreamedCharacter[j], i);
-										Iter_Add(StreamedBot[j], i);
-									}
-								}
-							#endif
-						}
-						else
-					#endif
-						{
-					#if _FOREACH_PLAYERS
-							Iter_Add(Player, i);
-							#if _FOREACH_STREAMED
-								for (new j = 0; j != MAX_PLAYERS; ++j)
-								{
-									if (IsPlayerStreamedIn(i, j))
-									{
-										#if _FOREACH_BOTS
-											Iter_Add(StreamedCharacter[j], i);
-										#endif
-										Iter_Add(StreamedPlayer[j], i);
-									}
-								}
-							#endif
-					#endif
-						}
-				}
-			}
-		#endif
+		// The code that ran here to clear and setup the data inside
+		// Player/Vehicle etc. iterators now runs in the
+		// 'foreach_ClearIteratorsOnInit' timer function with a 0ms delay.
+		// This is because, it would appear, running the code here does not
+		// work after a GMX. Exact cause unknown.
+		// It works absolutely fine just after, though.
+
+		SetTimer("Iter_ClearIteratorsOnInit", 0, false);
+
 		return 1;
 	}
 #endif
+
+forward Iter_ClearIteratorsOnInit();
+public Iter_ClearIteratorsOnInit()
+{
+	#if _FOREACH_VEHICLES
+		Iter_Clear(Vehicle);
+		#if _FOREACH_STREAMED
+			Iter_InitAndClear(StreamedVehicle);
+		#endif
+		for (new i = 1; i <= MAX_VEHICLES; ++i)
+		{
+			if (GetVehicleModel(i))
+			{
+				Iter_Add(Vehicle, i);
+				#if _FOREACH_STREAMED
+					for (new j = 0; j != MAX_PLAYERS; ++j)
+					{
+						if (IsVehicleStreamedIn(i, j))
+						{
+							Iter_Add(StreamedVehicle[j], i);
+						}
+					}
+				#endif
+			}
+		}
+	#endif
+	#if _FOREACH_ACTORS
+		Iter_Clear(Actor);
+		for (new i = 0; i != MAX_ACTORS; ++i)
+		{
+			if (IsValidActor(i))
+			{
+				Iter_Add(Actor, i);
+				#if _FOREACH_STREAMED
+					for (new j = 0; j != MAX_PLAYERS; ++j)
+					{
+						if (IsActorStreamedIn(i, j))
+						{
+							Iter_Add(StreamedActor[j], i);
+						}
+					}
+				#endif
+			}
+		}
+		#if _FOREACH_STREAMED
+			Iter_InitAndClear(StreamedActor);
+		#endif
+	#endif
+	#if _FOREACH_CHARACTERS
+		#if _FOREACH_BOTS
+			Iter_Clear(Bot);
+			Iter_Clear(Character);
+			#if _FOREACH_STREAMED
+				Iter_InitAndClear(StreamedBot);
+				Iter_InitAndClear(StreamedCharacter);
+			#endif
+		#endif
+		#if _FOREACH_PLAYERS
+			Iter_Clear(Player);
+			#if _FOREACH_STREAMED
+				Iter_InitAndClear(StreamedPlayer);
+			#endif
+		#endif
+		for (new i = 0; i != MAX_PLAYERS; ++i)
+		{
+			if (IsPlayerConnected(i))
+			{
+				#if _FOREACH_BOTS
+					Iter_Add(Character, i);
+					if (IsPlayerNPC(i))
+					{
+						Iter_Add(Bot, i);
+						#if _FOREACH_STREAMED
+							for (new j = 0; j != MAX_PLAYERS; ++j)
+							{
+								if (IsPlayerStreamedIn(i, j))
+								{
+									Iter_Add(StreamedCharacter[j], i);
+									Iter_Add(StreamedBot[j], i);
+								}
+							}
+						#endif
+					}
+					else
+				#endif
+					{
+				#if _FOREACH_PLAYERS
+						Iter_Add(Player, i);
+						#if _FOREACH_STREAMED
+							for (new j = 0; j != MAX_PLAYERS; ++j)
+							{
+								if (IsPlayerStreamedIn(i, j))
+								{
+									#if _FOREACH_BOTS
+										Iter_Add(StreamedCharacter[j], i);
+									#endif
+									Iter_Add(StreamedPlayer[j], i);
+								}
+							}
+						#endif
+				#endif
+					}
+			}
+		}
+	#endif
+	return 1;
+}
 
 /*
 
