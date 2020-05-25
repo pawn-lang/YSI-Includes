@@ -158,7 +158,7 @@ stock ORM_SaveInline(ORM:id, Func:cb<>)
 	return ret;
 }
 
-stock BCrypt_CheckInline(text[], hash[], Func:cb<>)
+stock BCrypt_CheckInline(const text[], const hash[], Func:cb<>)
 {
 	new ret = bcrypt_check(text, hash, "Indirect_FromCallback", "ii", _:cb, true);
 	if (ret)
@@ -168,7 +168,7 @@ stock BCrypt_CheckInline(text[], hash[], Func:cb<>)
 	return ret;
 }
 
-stock BCrypt_HashInline(text[], cost, Func:cb<>)
+stock BCrypt_HashInline(const text[], cost, Func:cb<>)
 {
 	new ret = bcrypt_hash(text, cost, "Indirect_FromCallback", "ii", _:cb, true);
 	if (ret)
