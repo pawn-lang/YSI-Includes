@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-stock Bitmap_StraightLine(Bitmap:ctx, sX, sY, eX, eY, Float:lineWidth, const pattern[] = "SOLID")
+stock Bitmap_StraightLine(Bitmap:ctx, sX, sY, eX, eY, Float:lineWidth, colour, const pattern[] = "SOLID")
 {
 	P:3("Bitmap_DrawRing called: %d, %d, %d, %.2f, %.2f, 0x%04x%04x, \"%s\"", _:ctx, x, y, inner, outer, colour >>> 16, colour & 0xFFFF, pattern);
 	new
@@ -79,7 +79,15 @@ stock Bitmap_StraightLine(Bitmap:ctx, sX, sY, eX, eY, Float:lineWidth, const pat
 		maxY = Bitmap_Height(ctx), // = min(max(sY, eY), Bitmap_Height(ctx)),
 		minX = 0, // = max(0, min(sX, eX)),
 		maxX = Bitmap_Width(ctx), // = min(max(sX, eX), imageWidth),
-		Float:angle;
+		Float:angle,
+		read,
+		a = (colour & 0xFF) + 1,
+		na,
+		suba,
+		r = ((colour & 0xFF000000) >>> 16),
+		g = ((colour & 0x00FF0000) >>> 16),
+		b = ((colour & 0x0000FF00) >>>  8),
+		orig;
 	_Bitmap_MakePattern(pattern, minX, minY, 0, 0);
 
 	// Sort out the line angle, in degrees, to get the corners.
@@ -94,21 +102,23 @@ stock Bitmap_StraightLine(Bitmap:ctx, sX, sY, eX, eY, Float:lineWidth, const pat
 		sY ^= eY;
 	}
 	angle = (sX == eX) ? 0.0 : atan((eY - sY) / (eX - sX));
+
+	// Now we find the box to draw in by the corners, not the centre line.
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
 }
 

@@ -712,9 +712,9 @@ Testing_Next_retry:
 			forward Testing_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
 		#endif
 		
-		public OnPlayerSpawn(playerid)
+		public OnPlayerSpawn(playerid) //(Player:playerid)
 		{
-			if (YSI_g_sPlayer == cellmax && !IsPlayerNPC(playerid))
+			if (YSI_g_sPlayer == cellmax && !IsPlayerNPC(playerid)) //!Player_IsNPC(playerid))
 			{
 				TEST_REPORT(" ");
 				TEST_REPORT("  ||==========================||  ");
