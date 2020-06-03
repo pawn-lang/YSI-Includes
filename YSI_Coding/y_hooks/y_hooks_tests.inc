@@ -901,7 +901,8 @@ REHOOK__ y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_3>
 	g_y_hooksVar += strval(c[5]);
 }
 
-HOOK__ public y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_4>
+//HOOK__ public y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_4>
+hook y_hooks_State1(string:c[]) <y_hooks_state : y_hooks_state_4>
 {
 	g_y_hooksVar = strval(c[5]);
 }
@@ -919,5 +920,33 @@ TEST__ y_hooks_State1()
 	state y_hooks_state : y_hooks_state_3;
 	CallLocalFunction("y_hooks_State1", "s", "1000 2000");
 	ASSERT_EQ(g_y_hooksVar, 3000);
+}
+
+static stock y_hooks_CrashTrigger()
+{
+	#emit HALT 1
+}
+
+HOOK__ y_hooks_Crash@1()
+{
+}
+
+HOOK__ y_hooks_Crash@2()
+{
+}
+
+HOOK__ y_hooks_Crash@3()
+{
+	y_hooks_CrashTrigger();
+}
+
+HOOK__ y_hooks_Crash@4()
+{
+}
+
+TEST__ y_hooks_Crash()
+{
+	CallLocalFunction("y_hooks_Crash", "");
+	Testing_SurpressOneFail();
 }
 

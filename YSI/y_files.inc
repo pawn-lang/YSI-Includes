@@ -70,12 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <YSI_Extra\y_files>
-
-#if !defined __PawnBuild
-	static USE@YSI_Extra@y_files;
-	#endinput
-#endif
-
-#warning Please use `#include <YSI_Extra\y_files>`
+#error Use `#include <YSI_Extra\y_files>`
 

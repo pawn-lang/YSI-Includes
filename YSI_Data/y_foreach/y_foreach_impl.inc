@@ -107,163 +107,137 @@ Optional plugins:
 stock Iter_Random_Internal(count, const array[], start, ...)
 {
 	new
-		numArgs = (numargs() - 3);
+		numArgs,
+		rewrite,
+		first,
+		last;
+	// y_hooks can mangle callback parameter counts, thus it redefines `numargs`
+	// to account for this and traverse the stack until it finds a valid value.
+	// However, because this internal function is never called directly from a
+	// callback, we don't need to worry about that here and can instead just use
+	// the previous function's parameter count directly.
+	#emit LOAD.S.pri   8
+	#emit ADD.C        0xFFFFFFF4
+	#emit ADDR.alt     24
+	#emit STOR.S.alt   first
+	#emit XCHG
+	#emit ADD
+	#emit STOR.S.pri   last
+	#emit SHR.C.alt    2
+	#emit STOR.S.alt   numArgs
+	// Short-circuit the common-case where there are no exclusions.
 	if (numArgs)
 	{
-		// Get the number of VALID exclusions.
-		new
-			end,
-			excluded;
-		// Get the end of the variable arguments.
-		#emit ADDR.alt     24
-		#emit STOR.S.alt   excluded
-		#emit LOAD.S.pri   numArgs
-		#emit SHL.C.pri    2
-		#emit ADD
-		#emit STOR.S.pri   end
-		for (new rewrite = excluded, value; excluded != end; excluded += 4)
+		for (new value, excluded = rewrite = first; excluded != last; excluded += 4)
 		{
 			#emit LREF.S.pri   excluded
 			#emit LOAD.I
 			#emit STOR.S.pri   value
-			// First, check if this is valid.
+			#emit SREF.S.pri   excluded
+			// First, check if this is valid and IN the array.
 			if (0 <= value < start && array[value] > value)
 			{
-				// It does.  Optimise for the inner loop.  Do this by
-				// compressing valid values to the start of the list and storing
-				// the dereferenced versions instead of the addresses.
-				#emit LOAD.S.pri   value
-				#emit SREF.S.pri   rewrite
+				// It is.  Optimise for the inner loop.  Do this by compressing
+				// valid values to the start of the list and sorting the
+				// dereferenced versions instead of the addresses.
+				for (new i2 = first, v2; i2 != rewrite; i2 += 4)
+				{
+					#emit LREF.S.pri   i2
+					#emit STOR.S.pri   v2
+					if (value < v2)
+					{
+						// Insert here.
+						do
+						{
+							#emit LOAD.S.pri   value
+							#emit SREF.S.pri   i2
+							value = v2;
+							i2 += 4;
+							#emit LREF.S.pri   i2
+							#emit STOR.S.pri   v2
+						}
+						while (i2 != rewrite);
+						#emit LOAD.S.pri   value
+						#emit SREF.S.pri   i2
+						break;
+					}
+					else if (value == v2)
+					{
+						--numArgs;
+						rewrite -= 4;
+						break;
+					}
+					// Otherwise, keep going.
+				}
 				rewrite += 4;
 			}
 			else
 			{
-				// It does not.  Remove from the check.
+				// It is not.  Remove from the check.
 				--numArgs;
 			}
 		}
-		if (numArgs)
-		{
-			if (count <= numArgs)
-				return INVALID_ITERATOR_SLOT;
-			// There are enough elements to search from after exclusions.
-			count = random(count - numArgs);
-			#emit ADDR.alt     24
-			#emit LOAD.S.pri   numArgs
-			#emit SHL.C.pri    2
-			#emit ADD
-			#emit STOR.S.pri   end
-			do
-			{
-Iter_Random_Internal_next_loop:
-				// Load the start address.
-				#emit ADDR.pri     24
-				#emit STOR.S.pri   excluded
-				// Check if this is an excluded value.
-				start = array[start];
-				for ( ; excluded != end; excluded += 4)
-				{
-					#emit LREF.S.pri   excluded
-					#emit LOAD.S.alt   start
-					#emit JEQ          Iter_Random_Internal_next_loop
-					//#emit STOR.S.pri   value
-					//if (check == start)
-					//	goto Iter_Random_Internal_next_loop;
-				}
-				// The loop ended, all is good.
-			}
-			while (count--);
-			return start;
-		}
-		// After removing invalid exclusions, there are none left.  Fall through
-		// to the default implementation.
 	}
-	if (count)
+	if (count <= numArgs)
 	{
-		// No exclutions, use the old code.
-		count = random(count);
+		return INVALID_ITERATOR_SLOT;
+	}
+	// There are enough elements to search from after exclusions.
+	count = random(count - numArgs);
+	if (numArgs)
+	{
 		do
 		{
+Iter_Random_Internal_loop:
+			// Check if this is an excluded value.
 			start = array[start];
+			for (last = first; last != rewrite; last += 4)
+			{
+				#emit LREF.S.pri   last
+				#emit LOAD.S.alt   start
+				#emit JEQ          Iter_Random_Internal_loop
+			}
+			// The loop ended, all is good.
 		}
 		while (count--);
 		return start;
 	}
-	return INVALID_ITERATOR_SLOT;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <param name="count">Number of items in the iterator.</param>
- * <param name="array">iterator data.</param>
- * <param name="start">Size of the iterator.</param>
- * <param name="slots">Number of multi-iterator values.</param>
- * <remarks>
- *  Returns a random unused value from an iterator.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock Iter_RandomAdd_InternalC(&count, array[], start)
-{
-	return Iter_Add_InternalC(count, array, start, Iter_RandomFree_InternalC(count, array, start));
-}
-
-stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot)
-{
-	// This is subtly different to the "C" version - it operates on multi
-	// iterators, which have many counts, and thus we need to sum those first.
-	return Iter_Add_InternalD(counts[slot], array, start, size, Iter_RandomFree_InternalD(counts, array, size, slots));
-}
-
-/*-------------------------------------------------------------------------*//**
- * <param name="count">Number of items in the iterator.</param>
- * <param name="array">iterator data.</param>
- * <param name="start">Size of the iterator.</param>
- * <param name="slots">Number of multi-iterator values.</param>
- * <remarks>
- *  Returns a random unused value from an iterator.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock Iter_RandomRemove_InternalC(&count, array[], start)
-{
-	return Iter_Remove_InternalC(count, array, start, Iter_Random_Internal(count, array, start));
-}
-
-stock Iter_RandomRemove_InternalD(&count, array[], size, start)
-{
-	// This is subtly different to the "C" version - it operates on multi
-	// iterators, which have many counts, and thus we need to sum those first.
-	return Iter_Remove_InternalD(count, array, start, size, Iter_Random_Internal(count, array, start));
-}
-
-/*-------------------------------------------------------------------------*//**
- * <param name="count">Number of items in the iterator.</param>
- * <param name="array">iterator data.</param>
- * <param name="start">Size of the iterator.</param>
- * <param name="slots">Number of multi-iterator values.</param>
- * <remarks>
- *  Returns a random unused value from an iterator.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock Iter_RandomFree_InternalC(count, const array[], start)
-{
-	count = start - count;
-	if (count)
+	// No exclutions, use the old code.
+	do
 	{
-		count = random(count);
-		while (start--)
-		{
-			// Check if this value is not included in any iterator.  If it isn't
-			// then decrement the count until we have run out of values to test.
-			if (array[start] <= start && !count--)
-				return start;
-		}
+		start = array[start];
 	}
-	return INVALID_ITERATOR_SLOT;
+	while (count--);
+	return start;
 }
 
-stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots)
+/*-------------------------------------------------------------------------*//**
+ * <param name="count">Number of items in the iterator.</param>
+ * <param name="array">iterator data.</param>
+ * <param name="start">Size of the iterator.</param>
+ * <remarks>
+ *  Adds a random value to an iterator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Iter_RandomAdd_InternalC(&count, array[], start, ...)
+{
+	return Iter_Add_InternalC(count, array, start, Iter_RandomFree_InternalC(count, array, start, ___(3)));
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="counts">Number of items in each iterator part.</param>
+ * <param name="array">iterator data.</param>
+ * <param name="size">Size of the iterator.</param>
+ * <param name="slots">Number of multi-iterator values.</param>
+ * <param name="start"></param>
+ * <param name="slot">Multi-iterator slot to add to.</param>
+ * <remarks>
+ *  Adds a random value to an iterator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Iter_RandomAdd_InternalD(counts[], array[], size, slots, start, slot, ...)
 {
 	// This is subtly different to the "C" version - it operates on multi
 	// iterators, which have many counts, and thus we need to sum those first.
@@ -271,7 +245,186 @@ stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots)
 		count = 0;
 	while (slots--)
 		count += counts[slots];
-	return Iter_RandomFree_InternalC(count, array, start);
+	return Iter_Add_InternalD(counts[slot], array, start, size, Iter_RandomFree_InternalC(count, array, size, ___(6)));
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="count">Number of items in the iterator.</param>
+ * <param name="array">iterator data.</param>
+ * <param name="start">Size of the iterator.</param>
+ * <remarks>
+ *  Removes a random value from an iterator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Iter_RandomRemove_InternalC(&count, array[], start, ...)
+{
+	return Iter_Remove_InternalC(count, array, start, Iter_Random_Internal(count, array, start, ___(3)));
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="count">Number of items in the iterator.</param>
+ * <param name="array">iterator data.</param>
+ * <param name="start">Size of the iterator.</param>
+ * <param name="slots">Number of multi-iterator values.</param>
+ * <remarks>
+ *  Removes a random value from an iterator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Iter_RandomRemove_InternalD(&count, array[], size, start, ...)
+{
+	// This is subtly different to the "C" version - it operates on multi
+	// iterators, which have many counts, and thus we need to sum those first.
+	return Iter_Remove_InternalD(count, array, start, size, Iter_Random_Internal(count, array, start, ___(4)));
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="count">Number of items in the iterator.</param>
+ * <param name="array">iterator data.</param>
+ * <param name="start">Size of the iterator.</param>
+ * <remarks>
+ *  Returns a random unused value from an iterator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Iter_RandomFree_InternalC(count, const array[], start, ...)
+{
+	count = start - count;
+	new
+		numArgs,
+		rewrite,
+		first,
+		last;
+	// y_hooks can mangle callback parameter counts, thus it redefines `numargs`
+	// to account for this and traverse the stack until it finds a valid value.
+	// However, because this internal function is never called directly from a
+	// callback, we don't need to worry about that here and can instead just use
+	// the previous function's parameter count directly.
+	#emit LOAD.S.pri   8
+	#emit ADD.C        0xFFFFFFF4
+	#emit ADDR.alt     24
+	#emit STOR.S.alt   first
+	#emit XCHG
+	#emit ADD
+	#emit STOR.S.pri   last
+	#emit SHR.C.alt    2
+	#emit STOR.S.alt   numArgs
+	// Short-circuit the common-case where there are no exclusions.
+	if (numArgs)
+	{
+		for (new value, excluded = rewrite = first; excluded != last; excluded += 4)
+		{
+			#emit LREF.S.pri   excluded
+			#emit LOAD.I
+			#emit STOR.S.pri   value
+			#emit SREF.S.pri   excluded
+			// First, check if this is valid and IN the array.
+			if (0 <= value < start && array[value] <= value)
+			{
+				// It is.  Optimise for the inner loop.  Do this by compressing
+				// valid values to the start of the list and sorting the
+				// dereferenced versions instead of the addresses.
+				for (new i2 = first, v2; i2 != rewrite; i2 += 4)
+				{
+					#emit LREF.S.pri   i2
+					#emit STOR.S.pri   v2
+					if (value < v2)
+					{
+						// Insert here.
+						do
+						{
+							#emit LOAD.S.pri   value
+							#emit SREF.S.pri   i2
+							value = v2;
+							i2 += 4;
+							#emit LREF.S.pri   i2
+							#emit STOR.S.pri   v2
+						}
+						while (i2 != rewrite);
+						#emit LOAD.S.pri   value
+						#emit SREF.S.pri   i2
+						break;
+					}
+					else if (value == v2)
+					{
+						--numArgs;
+						rewrite -= 4;
+						break;
+					}
+					// Otherwise, keep going.
+				}
+				rewrite += 4;
+			}
+			else
+			{
+				// It is not.  Remove from the check.
+				--numArgs;
+			}
+		}
+	}
+	if (count <= numArgs)
+	{
+		return INVALID_ITERATOR_SLOT;
+	}
+	// There are enough elements to search from after exclusions.
+	count = random(count - numArgs);
+	if (numArgs)
+	{
+		for ( ; ; )
+		{
+Iter_RandomFree_Internal_loop:
+			--start;
+			// Check if this is an excluded value.
+			if (array[start] > start)
+			{
+				continue;
+			}
+			for (last = first; last != rewrite; last += 4)
+			{
+				#emit LREF.S.pri   last
+				#emit LOAD.S.alt   start
+				#emit JEQ          Iter_RandomFree_Internal_loop
+			}
+			if (!count--)
+			{
+				return start;
+			}
+		}
+	}
+	// No exclutions, use the old code.
+	for ( ; ; )
+	{
+		--start;
+		// Check if this value is not included in any iterator.  If it isn't
+		// then decrement the count until we have run out of values to test.
+		if (array[start] <= start && !count--)
+		{
+			break;
+		}
+	}
+	return start;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="counts">Number of items in each iterator part.</param>
+ * <param name="array">iterator data.</param>
+ * <param name="start">Size of the iterator.</param>
+ * <param name="slots">Number of multi-iterator values.</param>
+ * <remarks>
+ *  Returns a random unused value from an iterator.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots, ...)
+{
+	// This is subtly different to the "C" version - it operates on multi
+	// iterators, which have many counts, and thus we need to sum those first.
+	new
+		count = 0;
+	while (slots--)
+		count += counts[slots];
+	return Iter_RandomFree_InternalC(count, array, start, ___(4));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -279,11 +432,12 @@ stock Iter_RandomFree_InternalD(const counts[], const array[], start, slots)
  * <param name="array">iterator data.</param>
  * <param name="size">Array start index.</param>
  * <remarks>
- *  Finds the first free slot in the iterator and add it.
+ *  Finds the first free slot in the iterator and add it.  Excepting requested
+ *  values.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Iter_Alloc_InternalC(&count, array[], size)
+stock Iter_Alloc_InternalC(&count, array[], size, ...)
 {
 	for (new value = 0; value != size; ++value)
 	{
@@ -308,7 +462,7 @@ stock Iter_Alloc_InternalC(&count, array[], size)
 	return INVALID_ITERATOR_SLOT;
 }
 
-stock Iter_Alloc_InternalD(&count, array[], start, size)
+stock Iter_Alloc_InternalD(&count, array[], start, size, ...)
 {
 	if (start >= size)
 	{

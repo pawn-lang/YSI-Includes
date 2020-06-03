@@ -272,7 +272,7 @@ stock _Timer_I(const func[], interval, action, &result)
 }
 
 // Attempt to stop or start a task, possibly for a single player.
-stock _Timer_D(const func[], interval, const action, who, results[MAX_PLAYERS], a[2])
+stock _Timer_D(const func[], interval, const action, who, results[], a[2])
 {
 	P:3("_Timer_D called");
 	switch (action)

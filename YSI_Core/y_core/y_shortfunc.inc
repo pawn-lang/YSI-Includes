@@ -14,7 +14,7 @@
  *  <symbol name="W@">Renaming of <symbolref name="__CallRemoteFunction" /> for size reasons.</symbol>
  *  <symbol name="V@">Renaming of <symbolref name="getproperty" /> for size reasons.</symbol>
  *  <symbol name="S@">Renaming of <symbolref name="setproperty" /> for size reasons.</symbol>
- *  <symbol name="P@">Renaming of <symbolref name="__CallLocalFunction" /> for size reasons.</symbol>
+ *  <symbol name="R@">Renaming of <symbolref name="__CallLocalFunction" /> for size reasons.</symbol>
  * </ul>
  * </library>
  *//** *//*
@@ -92,7 +92,7 @@ Optional plugins:
 // 
 // A@ - PARSER_DROP()
 // B@ - Fix "On"
-// C@ - CallRemoteFunction string return wrapper
+// C@ - New `C:`.
 // D@ - CallRemoteFunction wrapper
 // E@ - Set caller / LENGTH_REQUIRED{}
 // F@ - Also get string return without caller / PARSER_NO:
@@ -100,14 +100,14 @@ Optional plugins:
 // H@ - Ignore parameters / PARSER_ID:
 // I@ - Temp var
 // J@ - Temp var
-// K@ - SetTimer
+// K@ - CallRemoteFunction string return wrapper
 // L@ - Return storage / PARSER_WANT:
 // M@ - y_svar callback
 // N@ - y_uvar callback
 // O@ - SetTimerEx
-// P@ - CallLocalFunction
+// P@ - New `P:`.
 // Q@ - Temp string
-// R@ - Set string return
+// R@ - CallLocalFunction
 // S@ - Get string return
 // T@ - String return storage
 // U@ - setproperty
@@ -138,8 +138,10 @@ static stock const
 	YSI_g_sYSI_MAX_STRING = YSI_MAX_STRING;
 
 // CallRemoteFunction wrapper that handles references and string returns.
-stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
+stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
+	P:5("K@ called: %s, %s", function, fmat);
+
 	#pragma unused function, fmat
 	// New implementation of "CallRemoteFunction".  Wraps the old function
 	// efficiently (using assembly stack manipulation tricks, better even than
@@ -184,13 +186,13 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	if (YSI_g_sCallData)
 	{
 		#emit STACK        28
-		#emit SYSREQ.C     CallRemoteFunction
+		#emit SYSREQ.C     W@
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	else
 	{
 		#emit STACK        28
-		#emit SYSREQ.C     CallLocalFunction
+		#emit SYSREQ.C     R@
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	{}
@@ -207,6 +209,7 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// backing them up on the heap (saved extra work now sorting out which saved
 	// parameter went where).
 	#emit SYSREQ.C     setproperty
+	
 	if (YSI_g_sCallData)
 	{
 		// Get the return value.  Already have most of the parameters pushed,
@@ -236,6 +239,7 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
 		{
 			YSI_g_sPropVarArg[1] = '@' + ++j,
+			P:7("K@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
 			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
 		}
 	}
@@ -280,6 +284,8 @@ stock C@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 // CallRemoteFunction wrapper that handles references and regular returns.
 stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 {
+	P:5("D@ called: %s, %s", function, fmat);
+
 	#pragma unused function, fmat
 	// New implementation of "CallRemoteFunction".  Wraps the old function
 	// efficiently (using assembly stack manipulation tricks, better even than
@@ -310,13 +316,13 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	if (YSI_g_sCallData)
 	{
 		#emit STACK        28
-		#emit SYSREQ.C     CallRemoteFunction
+		#emit SYSREQ.C     W@
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	else
 	{
 		#emit STACK        28
-		#emit SYSREQ.C     CallLocalFunction
+		#emit SYSREQ.C     R@
 		#emit STOR.pri     YSI_g_sCallData
 	}
 	{}
@@ -348,6 +354,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
 		{
 			YSI_g_sPropVarArg[1] = '@' + ++j,
+			P:7("D@: Write back: %d %d %d %s %d", i, j, ch, YSI_g_sPropVarArg, getproperty(8, YSI_g_sPropVarArg));
 			setarg(i + 2, 0, getproperty(8, YSI_g_sPropVarArg));
 		}
 	}
@@ -365,14 +372,12 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 	return 0;
 }
 
-//#define C@(%9:%0);%1; C@(%0); // Get word.
-//#define D@(%9:%0);%1; D@(%0); // Get string.
-
 #define @@%0\32; @@
 #define _@%0\32; _@
 
 stock F@(calltype = 1, master = -1, heapptr = 0)
 {
+	P:5("F@ called: %d, %d, %d", calltype, master, heapptr);
 	// First copy the calltype to a global, so it can be read from the functions
 	// that actually call `CallLocalFunction` (0) and `CallRemoteFunction` (1).
 	YSI_g_sCallData = calltype;
@@ -392,12 +397,14 @@ stock F@(calltype = 1, master = -1, heapptr = 0)
 	return 0;
 }
 
-stock L@(GLOBAL_TAG_TYPES:...)
+stock L@(GLOBAL_TAG_TYPES:ret, GLOBAL_TAG_TYPES:...)
 {
+	P:5("L@ called: %d", ret);
 	// Return possibly multiple values remotely.
-	setproperty(8, YSI_g_sPropReturn, getarg(0));
+	setproperty(8, YSI_g_sPropReturn, ret);
 	for (new i = 1, j = numargs(); i != j; ++i)
 	{
+		P:7("L@: loop %d = %d", i, getarg(i));
 		YSI_g_sPropVarArg[1] = '@' + i,
 		setproperty(8, YSI_g_sPropVarArg, getarg(i));
 	}
@@ -406,61 +413,23 @@ stock L@(GLOBAL_TAG_TYPES:...)
 
 stock T@(const string:ret[YSI_MAX_STRING], GLOBAL_TAG_TYPES:...)
 {
+	P:5("T@ called: %s", ret);
 	// Return possibly multiple values remotely.
 	setproperty(8, YSI_g_sPropEmpty, YSIM_STRING, ret);
 	for (new i = 1, j = numargs(); i != j; ++i)
 	{
+		P:7("T@: loop %d = %d", i, getarg(i));
 		YSI_g_sPropVarArg[1] = '@' + i,
 		setproperty(8, YSI_g_sPropVarArg, getarg(i));
 	}
 	return 1;
 }
 
-// Used by y_master and y_remote.  Re-evaluate after rewrites.
-native U@(id=0, const name[]="", value=cellmin, const string[]="") = setproperty;
-native V@(GLOBAL_TAG_TYPES:id=0, const name[]="", value=cellmin, string[]="") = getproperty;
-
-// Define this command with basically every strong tag in existence to avoid
-// tag mismatch warnings with remote functions with strong tag parameters.
-native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallRemoteFunction;
-native O@(const function[], time, repeat, const format[] = "", GLOBAL_TAG_TYPES:...) = SetTimerEx;
-
-stock S@(GLOBAL_TAG_TYPES:v = -1)
-{
-	P:4("S@ called");
-	return
-		getproperty(8, "", YSIM_STRING, Q@),
-		strunpack(Q@, Q@),
-		setproperty(8, YSIM_CALLER, v);
-}
-
 stock X@(GLOBAL_TAG_TYPES:n)
 {
 	// THIS MUST REMAIN FOREVER!  Detected by fixes.inc.
 	P:4("X@ called: %i", n);
-	setproperty(8, YSIM_RETURN, n);
-}
-
-stock E@()
-{
-	P:4("E@ called");
-	// Already returns the previous value.
-	return setproperty(8, YSIM_CALLER, Master_ID());
-}
-
-stock Z@(GLOBAL_TAG_TYPES:v = -1)
-{
-	P:4("Z@ called");
-	return
-		setproperty(8, YSIM_CALLER, v),
-		getproperty(8, YSIM_RETURN);
-}
-
-stock R@(const buffer[])
-{
-	// To remove on completion of y_remote upgrade.
-	P:4("R@ called: \"%s\"", buffer);
-	return setproperty(8, "", YSIM_STRING, buffer);
+	setproperty(8, YSI_g_sPropReturn, n);
 }
 
 stock H@(GLOBAL_TAG_TYPES:...)

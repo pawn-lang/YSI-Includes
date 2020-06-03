@@ -88,13 +88,13 @@ Optional plugins:
 // =============================
 
 // Signify the end with two "@" symbols.
-#define HASH@bernstein(%0) _REHASH@b(%0,@,@)
+#define HASH@bernstein(%0) HASH_:_REHASH@b(%0,@,@)
 
 // Internal call.
-#define _REHASH@b(%0,%1) _HASH@b_%0(%1,)(-1)
+#define _REHASH@b(%0,%1)%9) _HASH@b_%0(%1,)(5381))
 
 // The bit that actually does the work.
-#define _DOHASH@b(%0,%1,%2)(%8) _HASH@b_%1(%2)((%8*33+%0))
+#define _DOHASH@b(%0,%1,%2)(%8) _HASH@b_%1(%2)((%8*33^%0))
 
 // Space.
 #define _HASH@b_(%0)(%8) _DOHASH@b(32,%0)(%8)
@@ -193,13 +193,13 @@ Optional plugins:
 // ===============================
 
 // Signify the end with two "@" symbols.
-#define HASHi@bernstein(%0) _REHASH@ib(%0,@,@)
+#define HASHi@bernstein(%0) HASH_:_REHASH@ib(%0,@,@)
 
 // Internal call.
-#define _REHASH@ib(%0,%1) _HASH@ib_%0(%1,)(-1)
+#define _REHASH@ib(%0,%1)%9) _HASH@ib_%0(%1,)(5381))
 
 // The bit that actually does the work.
-#define _DOHASH@ib(%0,%1,%2)(%8) _HASH@ib_%1(%2)((%8*33+%0))
+#define _DOHASH@ib(%0,%1,%2)(%8) _HASH@ib_%1(%2)((%8*33^%0))
 
 // Space.
 #define _HASH@ib_(%0)(%8) _DOHASH@ib(32,%0)(%8)

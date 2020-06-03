@@ -70,12 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <YSI_Game\y_vehicledata>
-
-#if !defined __PawnBuild
-	static USE@YSI_Game@y_vehicledata;
-	#endinput
-#endif
-
-#warning Please use `#include <YSI_Game\y_vehicledata>`
+#error Use `#include <YSI_Game\y_vehicledata>`
 

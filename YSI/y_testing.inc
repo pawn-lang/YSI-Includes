@@ -70,12 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <YSI_Core\y_testing>
-
-#if !defined __PawnBuild
-	static USE@YSI_Core@y_testing;
-	#endinput
-#endif
-
-#warning Please use `#include <YSI_Core\y_testing>`
+#error Use `#include <YSI_Core\y_testing>`
 

@@ -135,7 +135,7 @@ static stock Bitmap_WriteHeader(Bitmap:ctx, File:bmp)
 	}
 }
 
-static stock Bitmap_WriteBlock(File:bmp, buf[], len)
+static stock Bitmap_WriteBlock(File:bmp, const buf[], len)
 {
 	for (new i = 0; i != len; ++i)
 	{

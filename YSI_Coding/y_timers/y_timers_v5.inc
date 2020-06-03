@@ -11,7 +11,7 @@
 // 
 //   +0 - TIMER function start pointer.
 //   +1 - Stack size.
-#define TIMER_END(%9)%8$(%0(%7))(,%1)(%5)(%3)%4# %8$_yT@%0(%7)return SetTimerEx(#%0,(I@==-1)?(%5):I@,J@,#%4%3)%0(%1);public %0(%1)
+#define TIMER_END(%9)%8$(%0(%7))(,%1)(%5)(%3)%4# %8$_yT@%0(%7)return O@(#%0,(I@==-1)?(%5):I@,J@,#%4%3)%0(%1);public %0(%1)
 #define TIMER_NUL(%9)%8$(%0(%7))(%1)(%5)(%3)%4# %8$_yT@%0()return SetTimer(#%0,(I@==-1)?(%5):I@,J@)%0();public %0()
 
 #define _yT@%0\32; _yT@
@@ -120,7 +120,7 @@ stock bool:Timer_RunPTask_(const name[], &ptr, const interval, const E_TIMER_ACT
 			{
 				KillTimer(results[playerid]);
 			}
-			results[playerid] = SetTimerEx(name, interval, true, "i", playerid);
+			results[playerid] = YSI_SetTimerEx(name, interval, true, "i", playerid);
 		}
 		case E_TIMER_ACTION_START_ALL:
 		{
@@ -130,7 +130,7 @@ stock bool:Timer_RunPTask_(const name[], &ptr, const interval, const E_TIMER_ACT
 				{
 					KillTimer(results[playerid]);
 				}
-				results[playerid] = SetTimerEx(name, interval, true, "i", playerid);
+				results[playerid] = YSI_SetTimerEx(name, interval, true, "i", playerid);
 			}
 		}
 		case E_TIMER_ACTION_STOP:

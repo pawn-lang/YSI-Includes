@@ -387,38 +387,60 @@ TEST__ y_hashmap_Remove500()
 	}
 }
 
+TEST__ y_hashmap_Set400Bug()
+{
+	// You have no idea how long it took me to whittle the code down to these
+	// numbers!  There is a pattern - they're all in the same hashmap bin, but
+	// while I spotted the pattern after quite a while I still wasn't sure
+	// because there were some false positives in the data set throwing the
+	// conclusions off.  I eventually managed to remove those though.
+	new HashMap:m<>;
+	new data[1000][E_HASH_MAP_TEST];
+	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
+	HashMap_Add(m, "hi141", 141);
+	HashMap_Add(m, "hi242", 242);
+	HashMap_Add(m, "hi307", 307);
+	HashMap_Add(m, "hi400", 400);
+	// The numbers above are all in the same bin (176).
+	ASSERT_EQ(HashMap_Get(m, "hi141"), 141);
+	ASSERT_EQ(HashMap_Get(m, "hi400"), 400);
+	HashMap_RemoveKey(m, "hi141");
+	ASSERT_EQ(HashMap_Get(m, "hi141"), -1);
+	ASSERT_EQ(HashMap_Get(m, "hi400"), 400);
+}
+
 TEST__ y_hashmap_Set500()
 {
 	ASSERT(heapspace() >= 145000);
 	new HashMap:m<>;
 	new data[1000][E_HASH_MAP_TEST];
+	new str[6];
 	HashMap_Init(m, data, E_HASH_MAP_TEST_DATA);
 	// Add.
-	for (new i = 0, str[6]; i != 500; ++i)
+	for (new i = 0; i != 500; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
 		HashMap_Add(m, str, i);
 	}
 	// ASSERT.
-	for (new i = 0, str[6]; i != 500; ++i)
+	for (new i = 0; i != 500; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
 		ASSERT_EQ(HashMap_Get(m, str), i);
 	}
-	// Remove half.
-	for (new i = 1, str[6]; i != 501; i += 2)
+	for (new i = 1; i != 501; i += 2)
 	{
 		format(str, sizeof (str), "hi%d", i);
 		HashMap_Set(m, str, i + 500);
 	}
 	// ASSERT.
-	for (new i = 0, str[6]; i != 500; ++i)
+	for (new i = 0; i != 500; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
 		if (i & 1) ASSERT_EQ(HashMap_Get(m, str), i + 500);
 		else ASSERT_EQ(HashMap_Get(m, str), i);
 	}
-	for (new i = 500, str[6]; i != 1000; ++i)
+	for (new i = 500; i != 1000; ++i)
 	{
 		format(str, sizeof (str), "hi%d", i);
 		ASSERT_EQ(HashMap_Get(m, str), -1);

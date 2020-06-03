@@ -4,6 +4,7 @@
 
 TEST_COMPILE__ y_utils()
 {
+#if __COMPILER_2ND_PASS
 	#assert NO_VALUE(Y_UTILS_NO_VALUE)
 	#assert !NO_VALUE(Y_UTILS_VALUE)
 	#assert IS_IN_RANGE(Y_UTILS_VALUE, -30, 43)
@@ -29,6 +30,7 @@ TEST_COMPILE__ y_utils()
 	#assert !isodd(8)
 	#assert iseven(8)
 	#assert !iseven(3)
+#endif
 	new str[32];
 	ASSERT(isnull(str));
 	StrToLower(str);
@@ -46,7 +48,9 @@ TEST_COMPILE__ y_utils()
 	bernstein(str);
 	ishex(str);
 	unpack(str);
-	ASSERT_ZE(GetIP(0));
+	#if defined _samp_included
+		ASSERT_ZE(GetIP(0));
+	#endif
 	returnstringarg(0);
 	va_return(str);
 	isnumeric(str);
@@ -67,9 +71,29 @@ TEST__ y_utils_va_return()
 {
 	gCalls_y_utils_va_return = 0;
 	y_utils_va_return(va_return("Hello %s %d %.3f", "World", 42, 9.4554));
-	CallLocalFunction("y_utils_va_return", "s", va_return("Hello %s %d %.3f", "World", 42, 9.4554));
-	CallLocalFunction(va_return("%s_%s", "y_utils", "va_return"), "s", "Hello World 42 9.455");
-	CallLocalFunction(va_return("%s_%s", "y_utils", "va_return"), va_return("s"), va_return("Hello %s %d %.3f", "World", 42, 9.4554));
+	R@("y_utils_va_return", "s", va_return("Hello %s %d %.3f", "World", 42, 9.4554));
+	R@(va_return("%s_%s", "y_utils", "va_return"), "s", "Hello World 42 9.455");
+	R@(va_return("%s_%s", "y_utils", "va_return"), va_return("s"), va_return("Hello %s %d %.3f", "World", 42, 9.4554));
 	ASSERT_EQ(gCalls_y_utils_va_return, 4);
+}
+
+TEST__ y_utils_LevenshteinDistance()
+{
+	ASSERT_EQ(LevenshteinDistance("hello", "hello"), 0);
+	ASSERT_EQ(LevenshteinDistance("Hello", "hello"), 1);
+	ASSERT_EQ(LevenshteinDistance("helllo", "hello"), 1);
+	ASSERT_EQ(LevenshteinDistance("helo", "hello"), 1);
+	ASSERT_EQ(LevenshteinDistance("hellllo", "hello"), 2);
+	ASSERT_EQ(LevenshteinDistance("heo", "hello"), 2);
+	ASSERT_EQ(LevenshteinDistance("he,,o", "hello"), 2);
+	ASSERT_EQ(LevenshteinDistance("HhlTo", "hello"), 3);
+	ASSERT_EQ(LevenshteinDistance("hello", "there"), 4);
+	ASSERT_EQ(LevenshteinDistance("hello", ""), 5);
+	ASSERT_EQ(LevenshteinDistance("", "hello"), 5);
+	ASSERT_EQ(LevenshteinDistance("", "01234567890123456789012345678901234567890123456789012345678901234567890123456789"), 80);
+	ASSERT_EQ(LevenshteinDistance("01234567890123456789012345678901234567890123456789012345678901234567890123456789", "01234567890123456789012345678901234567890123456789012345678901234567890123456789"), 0);
+	ASSERT_EQ(LevenshteinDistance("aa", "01234567890123456789012345678901"), 32);
+	// Error case.
+	ASSERT_EQ(LevenshteinDistance("0123456789012345678901234567890123456789", "01234567890123456789012345678901234567890123456789012345678901234567890123456789"), 1);
 }
 

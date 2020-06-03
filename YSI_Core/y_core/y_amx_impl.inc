@@ -839,7 +839,7 @@ stock AMX_GetEntryPointer(entry)
 {
 	#emit LREF.S.pri entry
 	#emit RETN
-	__COMPILER_NAKED
+	__pragma(naked);
 }
 
 /*stock bool:AMX_GetData(const name[], ret[E_AMX_HEADER], e_AMX_HEADER_TYPE:type = e_AMX_HEADER_TYPE_NONE)

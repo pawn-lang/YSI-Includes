@@ -70,12 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <YSI_Coding\y_timers>
-
-#if !defined __PawnBuild
-	static USE@YSI_Coding@y_timers;
-	#endinput
-#endif
-
-#warning Please use `#include <YSI_Coding\y_timers>`
+#error Use `#include <YSI_Coding\y_timers>`
 

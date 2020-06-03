@@ -114,9 +114,9 @@ static stock
 #define Languages_Add Langs_AddLanguage
 #define Languages_AddLanguage Langs_AddLanguage
 
-FOREIGN__ Language:_Langs_AddLanguage(string:code[], string:name[]);
+FOREIGN__ Language:_Langs_AddLanguage(const string:code[], const string:name[]);
 
-GLOBAL__ Language:_Langs_AddLanguage(string:code[], string:name[])
+GLOBAL__ Language:_Langs_AddLanguage(const string:code[], const string:name[])
 {
 	// Get the 2 character language short code.
 	P:2("_Langs_AddLanguage called: %s %s", code, name);
@@ -208,7 +208,7 @@ GLOBAL__ Language:_Langs_AddLanguage(string:code[], string:name[])
 	// disabled for this script so this is the only state that makes sense.
 	stock
 #endif
-		Language:Langs_AddLanguage(string:code[], string:name[])
+		Language:Langs_AddLanguage(const string:code[], const string:name[])
 		{
 			// This is done this way to give a compiler warning when it's not used.
 			return _Langs_AddLanguage(code, name);

@@ -70,12 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <YSI_Data\y_playerarray>
-
-#if !defined __PawnBuild
-	static USE@YSI_Data@y_playerarray;
-	#endinput
-#endif
-
-#warning Please use `#include <YSI_Data\y_playerarray>`
+#error Use `#include <YSI_Data\y_playerarray>`
 

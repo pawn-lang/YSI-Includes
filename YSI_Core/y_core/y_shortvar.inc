@@ -91,10 +91,10 @@ Optional plugins:
 	#define YSIM_STRING (1000)
 #endif
 
-// Public variable.
+// Public variable.  `-1` initially in case there is no master system.  So we respond to everything.
 #define Master_ID() (@_)
 public
-	@_ = 0;
+	@_ = -1;
 
 // J@ is a "nul" target - send things there if they need ignoring or if a
 // parameter needs using.  I@ is too now.
@@ -114,4 +114,20 @@ stock
 
 #define YSI_UNSAFE_HUGE_STRING (YSI_gUnsafeHugeString[0])
 #define YSI_UNSAFE_HUGE_LENGTH (MAX_LANGUAGES * sizeof (YSI_gUnsafeHugeString[]))
+
+// Used by y_master and y_remote.  Re-evaluate after rewrites.
+native U@(id = 0, const name[] = "", value = cellmin, const string[] = "") = setproperty;
+native V@(GLOBAL_TAG_TYPES:id = 0, const name[] = "", value = cellmin, string[] = "") = getproperty;
+
+#if defined OPENMP
+	native R@(const function[], const format[], GLOBAL_TAG_TYPES:...) = Script_Call;
+	native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = Script_CallAll;
+	native O@(const function[], time, repeat, const format[] = "", GLOBAL_TAG_TYPES:...) = SetTimerEx;
+#else
+	// Define this command with basically every strong tag in existence to avoid
+	// tag mismatch warnings with remote functions with strong tag parameters.
+	native R@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallLocalFunction;
+	native W@(const function[], const format[], GLOBAL_TAG_TYPES:...) = CallRemoteFunction;
+	native O@(const function[], time, repeat, const format[] = "", GLOBAL_TAG_TYPES:...) = SetTimerEx;
+#endif
 

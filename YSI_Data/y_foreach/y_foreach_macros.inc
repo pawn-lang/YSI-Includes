@@ -199,6 +199,23 @@ P:D(Iter_Init(Iterator:iter[]<>));
 #endif
 
 /*-------------------------------------------------------------------------*//**
+ * <param name="iter">Name of the iterator array to initialise.</param>
+ * <remarks>
+ *  Wrapper for Iter_Init_Internal.  ALWAYS resets the array.
+ *
+ * <code>native Iter_InitAndClear(IteratorArray:Name[]&lt;&gt;);</code>
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Iter_InitAndClear(Iterator:iter[]<>));
+#if __COMPILER_NESTED_ELLIPSIS
+	#define Iter_InitAndClear(%0) Iter_Init_Internal(F@r(Iterator@%0),F@r(Iterator@%0)[0],F@s(Iterator@%0),F@s(Iterator@%0[]),F@s(Iter_Single@%0[]))
+#else
+	#define Iter_InitAndClear(%0) Iter_Init_Internal(F@r(Iterator@%0),F@r(Iterator@%0)[0],F@s(Iterator@%0),F@s(Iterator@%0[]),F@r(Iter_Init@%0))
+#endif
+
+/*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to add the data to.</param>
  * <param name="value">Value to add to the iterator.</param>
  * <remarks>
@@ -329,8 +346,10 @@ P:D(Iter_SafeRemove(Iterator:iter<>, value, &next));
 
 P:D(Iter_RandomAdd(Iterator:iter<>));
 #define Iter_RandomAdd _ITER<RandomAdd>
-#define Iter_RandomAdd_InternalA(%0,%1)    Iter_RandomAdd_InternalC(%0,_:%1,F@s(%1)-1)
-#define Iter_RandomAdd_InternalB(%0,%2,%1) Iter_RandomAdd_InternalD(%0,_:%1,F@s(%1)-F@s(%0),F@s(%0),F@s(%1)-1-(%2),%2)
+#define Iter_RandomAdd_InternalA(%0,%1)    Iter_RandomAdd_InternalC(%0,(_:%1),F@s(%1)-1)
+#define Iter_RandomAdd_InternalB(%0,%2,%1) Iter_RandomAdd_InternalD(%0,(_:%1),F@s(%1)-F@s(%0),F@s(%0),F@s(%1)-1-(%2),%2)
+#define Iter_RandomAdd_InternalC(%0,(_:%1,%2),F@s(%9)%3) Iter_RandomAdd_InternalC(%0,(_:%1),F@s(%1)%3,%2)
+#define Iter_RandomAdd_InternalD(%0,(_:%1,%2),F@s(%9)%3,F@s(%9)%4) Iter_RandomAdd_InternalD(%0,(_:%1),F@s(%1)%3,F@s(%1)%4,%2)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to remove a random slot from.</param>
@@ -344,8 +363,10 @@ P:D(Iter_RandomAdd(Iterator:iter<>));
 
 P:D(Iter_RandomRemove(Iterator:iter<>));
 #define Iter_RandomRemove _ITER<RandomRemove>
-#define Iter_RandomRemove_InternalA(%0,%1)    Iter_RandomRemove_InternalC(%0,_:%1,F@s(%1)-1)
-#define Iter_RandomRemove_InternalB(%0,%2,%1) Iter_RandomRemove_InternalD(%0[%2],_:%1,F@s(%1)-F@s(%0),F@s(%1)-1-(%2))
+#define Iter_RandomRemove_InternalA(%0,%1)    Iter_RandomRemove_InternalC(%0,(_:%1),F@s(%1)-1)
+#define Iter_RandomRemove_InternalB(%0,%2,%1) Iter_RandomRemove_InternalD(%0[%2],(_:%1),F@s(%1)-F@s(%0),F@s(%1)-1-(%2))
+#define Iter_RandomRemove_InternalC(%0,(_:%1,%2),F@s(%9)%3) Iter_RandomRemove_InternalC(%0,(_:%1),F@s(%1)%3,%2)
+#define Iter_RandomRemove_InternalD(%0,(_:%1,%2),F@s(%9)%3,F@s(%9)%4) Iter_RandomRemove_InternalD(%0,(_:%1),F@s(%1)%3,F@s(%1)%4,%2)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get a random unused slot for.</param>
@@ -359,8 +380,10 @@ P:D(Iter_RandomRemove(Iterator:iter<>));
 
 P:D(Iter_RandomFree(Iterator:iter<>));
 #define Iter_RandomFree _ITER<RandomFree>
-#define Iter_RandomFree_InternalA(%0,%1)    Iter_RandomFree_InternalC(%0,_:%1,F@s(%1)-1)
-#define Iter_RandomFree_InternalB(%0,%2,%1) Iter_RandomFree_InternalD(%0,_:%1,F@s(%1)-F@s(%0),F@s(%0))
+#define Iter_RandomFree_InternalA(%0,%1)    Iter_RandomFree_InternalC(%0,(_:%1),F@s(%1)-1)
+#define Iter_RandomFree_InternalB(%0,%2,%1) Iter_RandomFree_InternalD(%0,(_:%1),F@s(%1)-F@s(%0),F@s(%0))
+#define Iter_RandomFree_InternalC(%0,(_:%1,%2),F@s(%9)%3) Iter_RandomFree_InternalC(%0,(_:%1),F@s(%1)%3,%2)
+#define Iter_RandomFree_InternalD(%0,(_:%1,%2),F@s(%9)%3,%4) Iter_RandomFree_InternalD(%0,(_:%1),F@s(%1)%3,%4,%2)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get a random slot from.</param>
@@ -415,6 +438,20 @@ P:D(Iter_Clear(Iterator:iter<>));
 #define Iter_Clear_InternalA(%0,%1)           Iter_Clear_InternalC(_:%1,F@s(%1),F@s(%0),%0)
 #define Iter_Clear_InternalB(%0,%2,%1)        Iter_Clear_InternalD(_:%1,F@s(%1),F@s(%0),F@s(%1)-F@s(%0),%0,%2)
 #define Iter_Clear_InternalD(%0,%1,%2,%3,%4,) Iter_Clear_InternalC(%0,%1,%2,%4)
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="iter">Name of the iterator to test emptiness of.</param>
+ * <remarks>
+ *
+ * native Iter_IsEmpty(Iterator:Name&lt;&gt;);
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+P:D(Iter_IsEmpty(Iterator:iter<>));
+#define Iter_IsEmpty _ITER<IsEmpty>
+#define Iter_IsEmpty_InternalA(%0,%1)    ((%0) == 0)
+#define Iter_IsEmpty_InternalB(%0,%2,%1) ((%0[%2]) == 0)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="iter">Name of the iterator to get the first free slot in.</param>
@@ -634,6 +671,36 @@ P:D(Iter_Index(Iterator:iter<>, index, bool:wrap = false));
     88     `8'     88 `"8bbdP"Y8  `"Ybbd8"' 88          `"YbbdP"'  `"YbbdP"'  
 
 */
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="iter">Name of the iterator to deal with safely.</param>
+ * <param name="index">Index.</param>
+ * <remarks>
+ *  Call functions that modify an iterator safely from inside a loop:
+ *
+ *  <code>
+ *      DestroyVehicle(vehicleid)
+ *      {
+ *          Iter_Remove(Vehicle, vehicleid);
+ *      }
+ *      
+ *      foreach (new vehicleid : Vehicle)
+ *      {
+ *          ITER_SAFE_REMOVE(Vehicle, vehicleid)
+ *          {
+ *              DestroyVehicle(vehicleid);
+ *          }
+ *      }
+ *  </code>
+ *
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#define _IterN@%0\32; _IterN@
+#define _IterL@%0\32; _IterL@
+
+P:D(ITER_SAFE_REMOVE(Iterator:iter<>, &index));
+#define ITER_SAFE_REMOVE(%0,%1) for (new _IterN@%0=Iter_Prev(%0,%1),_IterL@%0=1;_IterL@%0;%1=Iter_Next(%0,_IterN@%0)==%1?%1:_IterN@%0,--_IterL@%0)
 
 // Remove trailing spaces.  This looks really unsafe because of the "%0\32;"
 // allowing anything to come before the space, but it would have to be

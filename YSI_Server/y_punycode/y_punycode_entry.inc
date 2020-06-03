@@ -271,7 +271,7 @@ stock Puny_EncodeHash(string:dst[], const string:src[], &hash, wlen = sizeof (ds
 		sSrc[YSI_MAX_STRING],
 		bPacked = ispacked(src);
 	--wlen,
-	hash = -1;
+	hash = 5381;
 
 	if (bPacked) {
 		strunpack(sSrc, src);
@@ -295,14 +295,14 @@ stock Puny_EncodeHash(string:dst[], const string:src[], &hash, wlen = sizeof (ds
 			}
 			ch = tolower(ch),
 			dst[widx++] = ch,
-			hash = hash * 33 + ch;
+			hash = hash * 33 ^ ch;
 		}
 		else bb = false;
 	}
 	// Wrote out all the characters.
 	if (widx >= wlen) return (bPacked ? strpack(dst, dst, wlen) : 0), (dst[widx] = '\0'), rlen;
 	dst[widx++] = delimiter,
-	hash = hash * 33 + delimiter;
+	hash = hash * 33 ^ delimiter;
 	// Set up punycode variables.
 	for (
 		new
@@ -389,14 +389,14 @@ static stock Puny_EncodeVarHash(bias, delta, dst[], wlen, &hash)
 		new
 			c = t + (delta - t) % (PUNY_BASE - t);
 		dst[i] = _Puny_Basic(c),
-		hash = hash * 33 + dst[i++],
+		hash = hash * 33 ^ dst[i++],
 		delta = (delta - t) / (PUNY_BASE - t),
 		k += PUNY_BASE;
 	}
 	if (i < wlen)
 	{
 		dst[i] = _Puny_Basic(delta),
-		hash = hash * 33 + dst[i++];
+		hash = hash * 33 ^ dst[i++];
 	}
 	return i;
 }

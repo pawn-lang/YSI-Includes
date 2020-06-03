@@ -91,7 +91,7 @@ Optional plugins:
 #define HASH@fnv1(%0) HASH_:_REHASH@f(%0,@,@)
 
 // Internal call.
-#define _REHASH@f(%0,%1) _HASH@f_%0(%1,)(2166136261)
+#define _REHASH@f(%0,%1)%9) _HASH@f_%0(%1,)(2166136261))
 
 // The bit that actually does the work.
 #define _DOHASH@f(%0,%1,%2)(%8) _HASH@f_%1(%2)((%8*16777619^%0))
@@ -193,10 +193,10 @@ Optional plugins:
 // ===============================
 
 // Signify the end with two "@" symbols.
-#define HASHi@fnv1(%0) _REHASH@if(%0,@,@)
+#define HASHi@fnv1(%0) HASH_:_REHASH@if(%0,@,@)
 
 // Internal call.
-#define _REHASH@if(%0,%1) _HASH@if_%0(%1,)(2166136261)
+#define _REHASH@if(%0,%1)%9) _HASH@if_%0(%1,)(2166136261))
 
 // The bit that actually does the work.
 #define _DOHASH@if(%0,%1,%2)(%8) _HASH@if_%1(%2)((%8*16777619^%0))

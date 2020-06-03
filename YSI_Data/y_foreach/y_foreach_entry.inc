@@ -1,4 +1,4 @@
-/*                                                                                              *
+/*                                                                                             *
  *                                                                                             *
  *     _____ ______ ______   ____  ______ _      ______          __  ______ ____  _____        *
  *    / ____|  ____|  ____| |  _ \|  ____| |    / __ \ \        / / |  ____/ __ \|  __ \       *
@@ -105,6 +105,7 @@ Optional plugins:
 */
 
 #include "..\..\YSI_Core\y_utils"
+#include "..\..\YSI_Coding\y_va"
 
 // "y_iterate" is always higher than "foreach".
 #define _Y_ITERATE_LOCAL_VERSION        43
@@ -298,6 +299,22 @@ Optional plugins:
 // 
 
 #define _FOREACH_CHARACTERS (_FOREACH_BOTS || _FOREACH_PLAYERS)
+
+// 
+// _FOREACH_STREAMED
+// 
+// Include `Streamed...[playerid]` versions of all the iterators otherwise
+// included.
+// 
+
+#define _FOREACH_STREAMED 0
+
+#if defined IsPlayerStreamedIn
+	#if !defined FOREACH_NO_STREAMED
+		#undef _FOREACH_STREAMED
+		#define _FOREACH_STREAMED 1
+	#endif
+#endif
 
 #if !defined BOTSYNC_IS_BOT
 	forward Iter_OPDCInternal(playerid);

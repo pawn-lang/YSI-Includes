@@ -616,7 +616,7 @@ static stock YVA2_Initalise()
 	);
 	CodeScanAddMatcher(scanner, csm3);
 	// Replace calls with the correct parameter counts etc.
-	CodeScanRun(scanner);
+	CodeScanRunFast(scanner, &YVA2_DummyPush);
 	//DisasmDump("yva2.asm");
 	return 1;
 }
@@ -702,6 +702,16 @@ stock PlayerText:va_CreatePlayerTextDraw(playerid, Float:x, Float:y, const fmat[
 stock Text:va_TextDrawCreate(Float:x, Float:y, const fmat[], va_args<>)
 {
 	return TextDrawCreate(x, y, va_return(fmat, va_start<3>));
+}
+
+stock va_TextDrawSetString(Text:text, const fmat[], va_args<>)
+{
+	return TextDrawSetString(text, va_return(fmat, va_start<2>));
+}
+
+stock va_PlayerTextDrawSetString(playerid, PlayerText:text, const fmat[], va_args<>)
+{
+	return PlayerTextDrawSetString(playerid, text, va_return(fmat, va_start<3>));
 }
 
 stock va_SendClientMessage(playerid, colour, const fmat[], va_args<>)

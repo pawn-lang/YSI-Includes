@@ -116,10 +116,6 @@ Optional plugins:
 // used by literally any other include.
 #include "y_compilerdata"
 
-#if __COMPILER_sNAMEMAX != 31
-	#error YSI assumes `sNAMEMAX` is 31.
-#endif
-
 #if !defined HTTP
 	#tryinclude <a_http>
 #endif
@@ -137,19 +133,15 @@ Optional plugins:
 #include "y_pp"
 #include "y_prehook"
 #include "y_stripnumbers"
-
-// These should pretty much always exist, but are defined in "a_samp" in SA:MP,
-// when they should really be "core" functions.
-// 
-// TODO: Detect new line requirements.
-native YSIPrint(const string[]) = print;
-native YSIPrintF(const format[], GLOBAL_TAG_TYPES:...) = printf;
+#include "y_samp_natives"
 
 #include "y_shortvar"
 #include "y_als_impl"
 
 // A few nicely named short strings used for properties.
 #define YSIM_MASTER #M
+stock const YSIM_VERRET[] = "W";
+stock const YSIM_VERMAX[] = "X";
 #define YSIM_RETURN #R
 #define YSIM_CALLER #C
 #define YSIM_TEXT_D #T
@@ -245,18 +237,38 @@ ScriptInit_PostExitFuncs_()
 	#pragma warning push
 	#pragma warning disable 238
 #endif
+
 stock _YSI_ConstMod(const &var, const val)
 {
 	#pragma unused var, val
 	#emit LOAD.S.pri val
 	#emit SREF.S.pri var
 }
+
+native _YSI_ConstCpy(const dst[], const src[], index, numbytes, maxlength) = memcpy;
+
 #if __COMPILER_CONST_REF
 	#pragma warning pop
+#endif
+
+#if defined CODE_SCAN_MAX_PATTERN
+	#if CODE_SCAN_MAX_PATTERN < (32)
+		#if defined CODESCAN_INC
+			#error Include "YSI" before "codescan", or increase `CODE_SCAN_MAX_PATTERN`.
+		#endif
+		#undef CODE_SCAN_MAX_PATTERN
+		#define CODE_SCAN_MAX_PATTERN (32)
+	#endif
+#else
+	#define CODE_SCAN_MAX_PATTERN (32)
 #endif
 
 // These are conditional, and use most of the preceeding code.
 #if defined YSI_TESTS
 	#include "..\y_testing"
+#endif
+
+#if defined YSI_YES_MODE_CACHE
+	#include "y_thirdpartyinclude"
 #endif
 

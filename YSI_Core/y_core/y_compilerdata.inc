@@ -141,6 +141,8 @@ static stock __CompilerSecondPass() {}
 #endif
 
 #define __COMPILER_BUG_317 (1)
+#define __COMPILER_NAMEOF (0)
+#define __COMPILER_PRAGMA (0)
 
 #define __COMPILER_STATIC_ENUM enum
 
@@ -155,9 +157,17 @@ static stock __CompilerSecondPass() {}
 		#if __PawnBuild >= 4
 			#pragma option -(+
 		#endif
-		#if __PawnBuild >= 400
+		#if __PawnBuild >= 8
 			#undef __COMPILER_BUG_317
 			#define __COMPILER_BUG_317 (0)
+		#endif
+		#if __PawnBuild >= 11
+			#undef __COMPILER_NAMEOF
+			#define __COMPILER_NAMEOF (1)
+		#endif
+		#if 0
+			#undef __COMPILER_PRAGMA
+			#define __COMPILER_PRAGMA (1)
 		#endif
 	#endif
 #else
@@ -181,14 +191,19 @@ static stock __CompilerSecondPass() {}
 	#define __COMPILER_INCLUDE_GUARDS (0)
 #endif
 
-#if __COMPILER_1ST_PASS && __COMPILER_MODIFIED
+#if __COMPILER_1ST_PASS
 	// Disable matching the resulting function against (most) macros that are
 	// defined with the same name (since the whole point of this is to provide a
 	// concrete implementation for documentation to see).
-	#define Debug_PrintD(%1(%2)); %1 Debug_PrintD_OPEN %2 Debug_PrintD_CLOSE { return 0; }
+	#define Debug_PrintD(%1(%2)); __MACRO__%1 Debug_PrintD_OPEN %2 Debug_PrintD_CLOSE { return 0; }
 #else
 	#define Debug_PrintD(%1);
 #endif
+#define __MACRO__bool: bool:__MACRO__
+#define __MACRO__Iterator: Iterator:__MACRO__
+#define __MACRO__Float: Float:__MACRO__
+#define __MACRO__Alloc: Alloc:__MACRO__
+
 #define Debug_PrintD_OPEN (
 #define Debug_PrintD_CLOSE )
 
@@ -207,19 +222,80 @@ static stock const
 	#define __COMPILER_SIZEOF_ENUM (0)
 #endif
 
+#if !__COMPILER_NAMEOF
+	// Allow `__nameof(Float:)` `CoMPiler REMove CoLoN`.
+	#define __CMPREMCLN:tagof(%0:),%0:) tagof(%0),%0)
+	
+	// Check the symbol exists with `tagof`, then return the name as a string.
+	#define __nameof(%0) (__CMPREMCLN:tagof(%0),#%0)
+#endif
+
+const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
+
+#if !__COMPILER_PRAGMA
+	// TODO: Check for a minor version that might have this.  Assume this is
+	// like the MSVC `__pragma` - i.e. `__pragma(pack(0))` which would give
+	// `__pragma_pack(0)`.  Or `__pragma(naked)` -> `__pragma_naked`.
+	#define __pragma(%0) __pragma_%0
+	
+	// Tell the compiler that a function does return a value, even when it
+	// appears it doesn't.
+	// 
+	//   stock Func()
+	//   {
+	//       #emit RETN
+	//       __pragma(naked);
+	//   }
+	// 
+	#define __pragma_naked return __COMPILER_DEFAULT
+	
+	// Return a version of `undefined` for any tag.
+	// 
+	//   new                Float:a = __pragma(default); // 0.0
+	//   new             Language:b = __pragma(default); // -1
+	//   new PR_PacketReliability:a = __pragma(default); // 6
+	// 
+	#define __pragma_default __COMPILER_DEFAULT
+	
+	// Don't warn about unused varaibles.
+	// 
+	//   __pragma(unused(a, b, c));
+	// 
+	#define __pragma_unused(%0) H@(%0)
+	#define __pragma_unread(%0) H@(%0)
+	#define __pragma_unwritten(%0) H@(%0)
+#endif
+
+#if YSI_KEYWORD(default)
+	// Return a version of `undefined` for any tag.
+	// 
+	//   new                Float:a = default(); // 0.0
+	//   new             Language:b = default(); // -1
+	//   new PR_PacketReliability:a = default(); // 6
+	#define default() __pragma(default)
+#endif
+#define DEFAULT__ __pragma(default)
+
 #if __COMPILER_MODIFIED
-	#if 0
-		// TODO: Check for a minor version that might have this.
-		#define __COMPILER_NAKED __pragma(naked);
-	#else
-		#define __COMPILER_NAKED return 0;
-	#endif
+	#define __COMPILER_NAKED __pragma(naked);
 	#define __COMPILER_NESTED_ELLIPSIS (1)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) return __compiler_one_string_parameter:(%0)
 	#define __COMPILER_BUGGED_STRING_RETURN (0)
 	#define __COMPILER_BUGGED_SYSREQ (0)
 	#define __COMPILER_WARNING_SUPPRESSION (1)
+	#define __COMPILER_USER_WARNING (1)
+
+	// Error with:
+	//
+	//   const Float:X[] = Float:"hello";
+	//
+	#define __COMPILER_CONST_TAGGED (0)
+	
+	// This MAY need to have the same code as the old compiler - generating variables that define
+	// the tags.  This is because `param = tagof (Float:)` doesn't seem to work.  I.e. you can't
+	// have a default argument of a tagof of a constant tag.
+	#define __COMPILER_TAG_DATA(%0,%1) stock %0:operator=(__CompilerDefault:a) return a, %0:(%1)
 	
 	// Disable the recursion warning in the Russian compiler (and the unknown
 	// pragma warning in other compilers temporarily).
@@ -341,7 +417,7 @@ static stock const
 	// Disable the warning for `const &var`.
 	#define __COMPILER_CONST_REF (1)
 #else
-	#define __COMPILER_NAKED return 0;
+	#define __COMPILER_NAKED __pragma(naked);
 	#define __COMPILER_NESTED_ELLIPSIS (0)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) __CompilerStringReturn(%0);return (__compiler_one_string_parameter:(%0))
@@ -349,8 +425,14 @@ static stock const
 	#define __COMPILER_BUGGED_STRING_RETURN (1)
 	#define __COMPILER_BUGGED_SYSREQ (1)
 	#define __COMPILER_WARNING_SUPPRESSION (0)
+	#define __COMPILER_USER_WARNING (0)
 	#define __COMPILER_CONST_REF (0)
 	#define __COMPILER_sNAMEMAX (31)
+	#define __COMPILER_CONST_TAGGED (0)
+	
+	// It is sufficient simply for a variable to exist anywhere with the tag.
+	#define __COMPILER_TAG_DATA(%0,%1) static stock const %0:__TAGOF__%0; stock %0:operator=(__CompilerDefault:a) return a, %0:(%1)
+	#define __TAGOF__%0\32; __TAGOF__
 	
 	#include "y_funcinc"
 	
@@ -396,6 +478,12 @@ static stock const
 	
 #endif
 
+//#if !__COMPILER_CONST_TAGGED
+//	// Fix for bugged const assignments.
+//	#define _yI@%0\32; _yI@
+//	#define const%0:%1[%2]=%3:%4; const _yI@%1[%2]=%4,%0:%1[sizeof(_yI@%1)];PREINIT__ %1()_YSI_ConstCpy(_:(%1),(_yI@%1),0,sizeof(%1)*4,sizeof(%1));
+//#endif
+
 // Consistent naming of compiler defined values. 
 #define __Line __line
 #define __File __file
@@ -423,4 +511,90 @@ static stock const
 
 // Should be an inbuilt constant!
 #define cellbytes (cellbits / 8)
+
+#if __COMPILER_sNAMEMAX != 31
+	#error YSI assumes `sNAMEMAX` is 31.
+#endif
+
+__COMPILER_TAG_DATA(_, 0);
+__COMPILER_TAG_DATA(bool, 0);
+__COMPILER_TAG_DATA(Float, 0);
+__COMPILER_TAG_DATA(File, 0);
+__COMPILER_TAG_DATA(DB, 0);
+__COMPILER_TAG_DATA(DBResult, 0);
+__COMPILER_TAG_DATA(Text, 65535);
+__COMPILER_TAG_DATA(PlayerText, 65535);
+__COMPILER_TAG_DATA(Menu, 255);
+__COMPILER_TAG_DATA(Text3D, 65535);
+__COMPILER_TAG_DATA(PlayerText3D, 65535);
+__COMPILER_TAG_DATA(filemode, 0);
+__COMPILER_TAG_DATA(seek_whence, 0);
+
+__COMPILER_TAG_DATA(Language, -1);
+__COMPILER_TAG_DATA(Bit, 0);
+__COMPILER_TAG_DATA(Style, 0);
+__COMPILER_TAG_DATA(XML, -1);
+__COMPILER_TAG_DATA(Bintree, 0);
+__COMPILER_TAG_DATA(Group, -1);
+__COMPILER_TAG_DATA(Timer, 0);
+__COMPILER_TAG_DATA(INI, -1);
+
+__COMPILER_TAG_DATA(ConstString, 0);
+__COMPILER_TAG_DATA(String, 0);
+__COMPILER_TAG_DATA(error_level, 0);
+__COMPILER_TAG_DATA(locale_category, 0);
+__COMPILER_TAG_DATA(filter_type, 0);
+__COMPILER_TAG_DATA(handler_flags, 0);
+__COMPILER_TAG_DATA(Variant, 0);
+__COMPILER_TAG_DATA(ConstVariant, 0);
+__COMPILER_TAG_DATA(Iter, 0);
+__COMPILER_TAG_DATA(Handle, 0);
+__COMPILER_TAG_DATA(tag_uid, 0);
+__COMPILER_TAG_DATA(Task, 0);
+__COMPILER_TAG_DATA(LinkedList, 0);
+__COMPILER_TAG_DATA(List, 0);
+__COMPILER_TAG_DATA(Map, 0);
+__COMPILER_TAG_DATA(tag_op, 0);
+__COMPILER_TAG_DATA(fork_level, 0);
+__COMPILER_TAG_DATA(Amx, 0);
+__COMPILER_TAG_DATA(Var, 0);
+__COMPILER_TAG_DATA(amx_err, 0);
+__COMPILER_TAG_DATA(str_create_mode, 0);
+__COMPILER_TAG_DATA(AmxString, 0);
+__COMPILER_TAG_DATA(ConstAmxString, 0);
+__COMPILER_TAG_DATA(AmxStringBuffer, 0);
+__COMPILER_TAG_DATA(AmxVariant, 0);
+__COMPILER_TAG_DATA(ConstAmxVariant, 0);
+__COMPILER_TAG_DATA(AmxVariantBuffer, 0);
+__COMPILER_TAG_DATA(Guard, 0);
+// I'm not doing the generic tags as well...
+
+__COMPILER_TAG_DATA(DynamicObject, 0);
+__COMPILER_TAG_DATA(DynamicPickup, 0);
+__COMPILER_TAG_DATA(DynamicCP, 0);
+__COMPILER_TAG_DATA(DynamicRaceCP, 0);
+__COMPILER_TAG_DATA(DynamicMapIcon, 0);
+__COMPILER_TAG_DATA(DynamicText3D, 0);
+__COMPILER_TAG_DATA(DynamicArea, 0);
+__COMPILER_TAG_DATA(DynamicActor, 0);
+
+__COMPILER_TAG_DATA(E_REGEX_GRAMMAR, 0);
+__COMPILER_TAG_DATA(E_REGEX_FLAG, 1);
+__COMPILER_TAG_DATA(E_MATCH_FLAG, 1);
+__COMPILER_TAG_DATA(Regex, 0);
+__COMPILER_TAG_DATA(regex, 0);
+__COMPILER_TAG_DATA(RegexMatch, 0);
+__COMPILER_TAG_DATA(match_results, 0);
+
+__COMPILER_TAG_DATA(PR_HandlerType, 0);
+__COMPILER_TAG_DATA(PR_ValueType, 0);
+__COMPILER_TAG_DATA(PR_PacketPriority, 0);
+__COMPILER_TAG_DATA(PR_PacketReliability, 6);
+__COMPILER_TAG_DATA(BitStream, 0);
+
+__COMPILER_TAG_DATA(Opcode, 0);
+__COMPILER_TAG_DATA(AsmError, 0);
+__COMPILER_TAG_DATA(DisasmResult, 0);
+
+__COMPILER_TAG_DATA(E_SORT_ORDER, 0);
 

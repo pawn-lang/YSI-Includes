@@ -70,12 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <YSI_Server\y_scriptinit>
-
-#if !defined __PawnBuild
-	static USE@YSI_Server@y_scriptinit;
-	#endinput
-#endif
-
-#warning Please use `#include <YSI_Server\y_scriptinit>`
+#error Use `#include <YSI_Server\y_scriptinit>`
 

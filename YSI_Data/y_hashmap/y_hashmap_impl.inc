@@ -516,22 +516,21 @@ stock bool:HashMap_RemoveKeyWithHash(HashMap:m<>, const str[], hash, bool:ignore
 			AMX_Write(rVal + HASH_MAP_DIR_RIGHT, right),
 			AMX_Write(rVal + HASH_MAP_DIR_LEFT, left);
 		}
-		else
+		else if (lParent)
 		{
 			// Reduce the left (larger) branch.  This branch MAY NOT have a
 			// parent, if both branches are equal at one node high.
-			AMX_Write(prev, lVal);
-			if (lParent)
-			{
-				AMX_Write(lParent + HASH_MAP_DIR_RIGHT, AMX_Read(lVal + HASH_MAP_DIR_LEFT)),
-				AMX_Write(lVal + HASH_MAP_DIR_RIGHT, right),
-				AMX_Write(lVal + HASH_MAP_DIR_LEFT, left);
-			}
-			else
-			{
-				AMX_Write(lVal + HASH_MAP_DIR_RIGHT, right),
-				AMX_Write(lVal + HASH_MAP_DIR_LEFT, 0);
-			}
+			AMX_Write(prev, lVal),
+			AMX_Write(lParent + HASH_MAP_DIR_RIGHT, AMX_Read(lVal + HASH_MAP_DIR_LEFT)),
+			AMX_Write(lVal + HASH_MAP_DIR_RIGHT, right),
+			AMX_Write(lVal + HASH_MAP_DIR_LEFT, left);
+		}
+		else
+		{
+			// This branch doesn't have a parent, if both branches are equal at
+			// one node high.
+			AMX_Write(prev, lVal),
+			AMX_Write(lVal + HASH_MAP_DIR_RIGHT, right);
 		}
 	}
 	// Clear the removed node's pointers and string.
@@ -549,13 +548,8 @@ stock bool:HashMap_RemoveKey(HashMap:m<>, const str[], bool:ignorecase = false)
 static stock HashMap_GetBranchEnd(cur, &height, &parent, dir)
 {
 	// Find the node as close in (hash) value to the current node as possible.
-	static
-		next;
-	while ((next = AMX_Read(cur + dir)))
+	for (new next; (next = AMX_Read(cur + dir)); ++height, parent = cur, cur = next)
 	{
-		++height,
-		parent = cur,
-		cur = next;
 	}
 	return cur;
 }
@@ -596,9 +590,11 @@ stock bool:HashMap_RemoveValue(HashMap:m<>, value)
 
 stock HashMap_Set(HashMap:m<>, const str[], const value)
 {
+	new
+		hash = YHash(str, .sensitive = true);
 	return
-		HashMap_RemoveKey(m, str),
+		HashMap_RemoveKeyWithHash(m, str, hash),
 		HashMap_RemoveValue(m, value),
-		HashMap_Add(m, str, value);
+		HashMap_AddWithHash(m, str, hash, value);
 }
 

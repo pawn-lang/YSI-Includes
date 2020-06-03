@@ -90,7 +90,7 @@ Optional plugins:
 #define _YT@CR:%0,%1)%2||| @Yf:@Yg:@Yh:@Yx:##|||%0|||%1;%2|||
 
 // Define for "DEFER__" with timer, parameters and main function.
-#define TIMER__%0[%1]%3(%2) stock%0_yT@(%2)return SetTimerEx(#%0,(I@==-1)?(%1):I@,@Yj:J@,_YT@CR:%2,,)%0|||%0|||(%2)
+#define TIMER__%0[%1]%3(%2) stock%0_yT@(%2)return O@(#%0,(I@==-1)?(%1):I@,@Yj:J@,_YT@CR:%2,,)%0|||%0|||(%2)
 
 // Expand additional parameters out to three functions after processing.
 #define @Yx:%0||||||;%1,%2|||%4|||(%5) %0);%1(%5);public%4(%5)

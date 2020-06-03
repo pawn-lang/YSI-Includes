@@ -70,6 +70,6 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-stock Bitmap_StraightLine(sX, sY, eX, eY, width, pattern[] = "SOLID")
+stock Bitmap_StraightLine(sX, sY, eX, eY, width, const pattern[] = "SOLID")
 {
 }

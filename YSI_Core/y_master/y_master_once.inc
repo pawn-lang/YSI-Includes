@@ -87,6 +87,9 @@ Optional plugins:
 #define MASTER_GET<%0> (YSI_g_sMasterData[_:(%0)])
 #define MASTER_COPY<%0,%1> (YSI_g_sMasterData[_:(%0)] = YSI_g_sMasterData[_:(%1)]);
 
+#define _@MAKE_YCM<%0...%1> MAKE_YCM<_@%0...%1>
+#define @@MAKE_YCM<%0...%1> MAKE_YCM<@@%0...%1>
+
 //#define Master_State(%0); {  }
 
 #if defined YSI_IS_CLIENT
@@ -174,12 +177,12 @@ Optional plugins:
 #define YSIM_CLIENT_FOREIGN        YSIM_PARSER(YSIM_UF)
 // Hide the local implementations.
 #define YSIM_CLIENT_GLOBAL%0(%1)   YSIM_PARSER(YSIM_UG)%0(%1)
-#define YSIM_CLIENT_HOOK%0(%1)     YSIM_PARSER(YSIM_UG)%0(%1)
+#define YSIM_CLIENT_HOOK%0(%1)     static stock _@%0(%1)
 #define YSIM_CLIENT_TASK%0[%3](%1) YSIM_PARSER(YSIM_UG)%0(%1)
 #define YSIM_CLIENT_PTSK%0[%3](%1) YSIM_PARSER(YSIM_UG)%0(%1)
-#define YSIM_CLIENT_FUNC%0(%1)<%9> YSIM_PARSER(YSIM_UG)%0(%1)
+#define YSIM_CLIENT_FUNC%0(%1)<%9> static stock %0(%1)
 #define YSIM_CLIENT_GRUP%0(%1)     YSIM_PARSER(YSIM_UG)%0(%1)
-#define YSIM_CLIENT_YCMD%0(%1)     static stock _@yC%0()	
+#define YSIM_CLIENT_YCMD%0(%1)     static stock _YCMD_6:_@yC%0(%1)
 #define YSIM_CLIENT_ZERO%0(%1)     YSIM_SERVER_ZERO%0(%1)
 
 #define YSIM_CLOUD_FOREIGN         YSIM_PARSER(YSIM_DF)
@@ -304,17 +307,17 @@ Optional plugins:
 //   %8 - code-parse required (internal details, "$" delimited).
 //   %9 - Function name.
 //   
-#define YSIM_MF_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4%9(%1);@@%9(%2)L@(%9(%7)%0);forward @@%9(%2)
-#define YSIM_MF_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@@%9(%2)T@(%9(%7)%0);forward @@%9(%2)
-#define YSIM_MF_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@@%9(%2){%9(%7);L@(0%0);}forward @@%9(%2)
-#define YSIM_MF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5%9(%1);@@%9(%2)L@(%9(%7)%0);forward @@%9(%2)
-#define YSIM_MF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9();@@%9()L@(%9());forward @@%9()
-#define YSIM_MF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@@%9()T@(%9());forward @@%9()
-#define YSIM_MF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@@%9(){%9();L@(0);}forward @@%9()
-#define YSIM_MF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9();@@%9()L@(%9());forward @@%9()
+#define YSIM_MF_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4%9(%1);@@%9(%2)return L@(%9(%7)%0);forward @@%9(%2)
+#define YSIM_MF_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@@%9(%2)return T@(%9(%7)%0);forward @@%9(%2)
+#define YSIM_MF_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@@%9(%2){%9(%7);return L@(0%0);}forward @@%9(%2)
+#define YSIM_MF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5%9(%1);@@%9(%2)return L@(%9(%7)%0);forward @@%9(%2)
+#define YSIM_MF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9();@@%9()return L@(%9());forward @@%9()
+#define YSIM_MF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@@%9()return T@(%9());forward @@%9()
+#define YSIM_MF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@@%9(){%9();return L@(0);}forward @@%9()
+#define YSIM_MF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9();@@%9()return L@(%9());forward @@%9()
 
 #define YSIM_UF_END(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9(%1)return F@(),D@(#@@%9,%3%7);forward _@%9(%1)
-#define YSIM_UF_END_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9(%1)return F@(),C@(#@@%9,%3%7);forward _@%9(%1)
+#define YSIM_UF_END_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9(%1)return F@(),K@(#@@%9,%3%7);forward _@%9(%1)
 #define YSIM_UF_END_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9(%1)F@(),D@(#@@%9,%3%7);forward _@%9(%1)
 #define YSIM_UF_END_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9(%1)return F@(),%5D@(#@@%9,%3%7);forward %5_@%9(%1)
 #define YSIM_UF_NUL     YSIM_UF_END
@@ -331,23 +334,23 @@ Optional plugins:
 #define YSIM_UG_NUL_VOD YSIM_UG_END
 #define YSIM_UG_NUL_TAG YSIM_UG_END_TAG
 
-#define YSIM_DF_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4%9(%1);@@%9(%2);@@%9(%2)<>return
-#define YSIM_DF_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@@%9(%2);@@%9(%2)<>return
-#define YSIM_DF_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@@%9(%2);@@%9(%2)<>return
-#define YSIM_DF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5%9(%1);@@%9(%2);@@%9(%2)<>return
-#define YSIM_DF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9();@@%9();@@%9()<>return
-#define YSIM_DF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@@%9();@@%9()<>return
-#define YSIM_DF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@@%9();@@%9()<>return
-#define YSIM_DF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9();@@%9();@@%9()<>return
+#define YSIM_DF_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4%9(%1);@@%9(%2);@@%9(%2)<>return 1
+#define YSIM_DF_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@@%9(%2);@@%9(%2)<>return 1
+#define YSIM_DF_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@@%9(%2);@@%9(%2)<>return 1
+#define YSIM_DF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5%9(%1);@@%9(%2);@@%9(%2)<>return 1
+#define YSIM_DF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9();@@%9();@@%9()<>return 1
+#define YSIM_DF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@@%9();@@%9()<>return 1
+#define YSIM_DF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@@%9();@@%9()<>return 1
+#define YSIM_DF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9();@@%9();@@%9()<>return 1
 
-#define YSIM_DG_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4%9(%1)<>return F@(),D@(#@@%9,%3,%7);@@%9(%2)<_YCM:y>L@(%9(%7)%0);%9(%1)<_YCM:y>
-#define YSIM_DG_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1)<>return F@(),C@(#@@%9,%3,%7);@@%9(%2)<_YCM:y>T@(%9(%7)%0);%9(%1)<_YCM:y>
-#define YSIM_DG_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1)<>F@(),D@(#@@%9,%3,%7);@@%9(%2)<_YCM:y>{%9(%7);L@(0%0);}%9(%1)<_YCM:y>
-#define YSIM_DG_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5%9(%1)<>return F@(),%5D@(#@@%9,%3,%7);@@%9(%2)<_YCM:y>L@(%9(%7)%0);%5%9(%1)<_YCM:y>
-#define YSIM_DG_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9()<>return F@(),D@(#@@%9,%3);@@%9()<_YCM:y>L@(%9()%0);%9()<_YCM:y>
-#define YSIM_DG_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9()<>return F@(),C@(#@@%9,%3);@@%9()<_YCM:y>T@(%9()%0);%9()<_YCM:y>
-#define YSIM_DG_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9()<>F@(),D@(#@@%9,%3);@@%9()<_YCM:y>{%9();L@(0%0);}%9()<_YCM:y>
-#define YSIM_DG_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9()<>return F@(),%5D@(#@@%9,%3);@@%9()<_YCM:y>L@(%9()%0);%5%9()<_YCM:y>
+#define YSIM_DG_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4%9(%1)<>return F@(),D@(#@@%9,%3,%7);@@%9(%2)<_YCM:y>return L@(%9(%7)%0);%9(%1)<_YCM:y>
+#define YSIM_DG_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1)<>return F@(),K@(#@@%9,%3,%7);@@%9(%2)<_YCM:y>return T@(%9(%7)%0);%9(%1)<_YCM:y>
+#define YSIM_DG_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1)<>F@(),D@(#@@%9,%3,%7);@@%9(%2)<_YCM:y>{%9(%7);return L@(0%0);}%9(%1)<_YCM:y>
+#define YSIM_DG_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5%9(%1)<>return F@(),%5D@(#@@%9,%3,%7);@@%9(%2)<_YCM:y>return L@(%9(%7)%0);%5%9(%1)<_YCM:y>
+#define YSIM_DG_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9()<>return F@(),D@(#@@%9,%3);@@%9()<_YCM:y>return L@(%9()%0);%9()<_YCM:y>
+#define YSIM_DG_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9()<>return F@(),K@(#@@%9,%3);@@%9()<_YCM:y>return T@(%9()%0);%9()<_YCM:y>
+#define YSIM_DG_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9()<>F@(),D@(#@@%9,%3);@@%9()<_YCM:y>{%9();return L@(0%0);}%9()<_YCM:y>
+#define YSIM_DG_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9()<>return F@(),%5D@(#@@%9,%3);@@%9()<_YCM:y>return L@(%9()%0);%5%9()<_YCM:y>
 
 // These pieces of code give undefined errors if you try and use `global` with
 // `YSIM_IS_STUB`.
@@ -381,11 +384,12 @@ forward Master_Reassert();
 
 enum _E_YCM
 {
-	_E_YCM@y,
-	_E_YCM@n,
-	_E_YCM@m,
-	_E_YCM@p,
-	_E_YCM@u
+	_E_YCM@y, // Is the current master.
+	_E_YCM@n, // Is not the current master.
+	_E_YCM@m, // Dummy state used purely for determining automata in global/foreign macros.
+	_E_YCM@p, // Was the master, now shut down and out the master system.
+	_E_YCM@u, // Have stolen the mastership, but not yet been handed off too.
+	_E_YCM@w  // Was the master, but not yet started looking for a new one.
 }
 
 #define _YCM@y (_YCM@==_E_YCM@y)
@@ -393,6 +397,24 @@ enum _E_YCM
 #define _YCM@m (_YCM@==_E_YCM@m)
 #define _YCM@p (_YCM@==_E_YCM@p)
 #define _YCM@u (_YCM@==_E_YCM@u)
+#define _YCM@w (_YCM@==_E_YCM@w)
+
+#if !defined YSI_NO_MASTER
+	stock
+		bool:YSI_gModuleShutdown = false;
+
+	static stock
+		YSI_g_sModuleName[32];
+
+	static
+		YSI_g_sMasterCount,
+		YSI_g_sMasterData[MAX_MASTERS];
+
+	stock Master_GetModuleName(ret[32])
+	{
+		ret = YSI_g_sModuleName;
+	}
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <returns>
@@ -409,21 +431,36 @@ public OnScriptInit()
 {
 	P:1("Master_OnScriptInit");
 	state _ALS : _ALS_go;
+	#if !defined YSI_NO_MASTER
+		getproperty(8, "", YSIM_STRING + 1, YSI_g_sModuleName);
+		deleteproperty(8, "", YSIM_STRING + 1);
+		// This will fix `OnRconCommand` for the gamemode, so we can use the `module` commands.  It
+		// also takes up a filterscript slot, a fact we can abuse to get swap space while reloading
+		// modules (thus, even if you have the maximum modules loaded, you can still reload one).
+		y_rconfix_Load();
+	#endif
 	// Properties get lost between script changes so we need to force a rebuild.
+	@_ = 0;
 	CallRemoteFunction("Master_Reassert", "");
 	new
 		masters = getproperty(8, YSIM_MASTER);
 	@_ = Cell_GetLowestEmpty(masters);
 	setproperty(8, YSIM_MASTER, masters | Master_ID());
 	C:1(if (!Master_ID()) P:E("MasterID not assigned"););
-	// Make sure this is called before all other YSI initialisations, at least
-	// all the ones which use the master system.
+	#if !defined YSI_NO_MASTER
+		if (Master_ID() && YSI_g_sModuleName[0])
+		{
+			setproperty(10, YSI_g_sModuleName, Master_ID());
+		}
+	#endif
+	// Make sure this is called before all other YSI initialisations, at least all the ones which
+	// use the master system.
 	CallLocalFunction("OnMasterSystemInit", "i", Master_ID());
 	Master_OnScriptInit();
 	return 1;
 }
 
-CHAIN_FORWARD:Master_OnScriptInit() = 1;
+CHAIN_FORWARD:Master_OnScriptInit() = 0;
 #if defined _ALS_OnScriptInit
 	#undef OnScriptInit
 #else
@@ -433,15 +470,11 @@ CHAIN_FORWARD:Master_OnScriptInit() = 1;
 
 forward OnMasterSystemInit(id);
 
-#if !defined YSI_NO_MASTER
-	static
-		YSI_g_sMasterCount,
-		YSI_g_sMasterData[MAX_MASTERS];
-#endif
+forward Master_OnCloseModules();
 
 /*-------------------------------------------------------------------------*//**
  * <returns>
- *  OnGameModeExit
+ *  OnScriptExit
  * </returns>
  * <remarks>
  *  Destructor.
@@ -452,31 +485,65 @@ public OnScriptExit()
 {
 	P:1("MasterOnce_OnScriptExit called");
 	#if !defined YSI_NO_MASTER
-		// Loop through everything this script is master for and call the remote
-		// function for it.  EXCEPT for this script itself!
+		if (YSI_g_sModuleName[0])
+		{
+			deleteproperty(10, YSI_g_sModuleName);
+		}
+		// This is the main gamemode.  All "modules" are firmly attached to this, and should be
+		// unloaded with it.  First mark them as unavailable for handoff, then shut them down.
+		if (!YSI_FILTERSCRIPT)
+		{
+			// First call - disable all modules.
+			CallRemoteFunction("Master_OnCloseModules", "");
+		}
+		// Loop through everything this script is master for and call the remote function for it.
+		// EXCEPT for this script itself!
 		new
 			func[4];
 		for (new i = 0, j = YSI_g_sMasterCount; i != j; ++i)
 		{
-			// This is slightly slower for ending and starting scripts, but uses far
-			// less heap space, and these values are rarely used, so may as well
-			// pack them (which is what has happened here).
+			// This is slightly slower for ending and starting scripts, but uses far less heap
+			// space, and these values are rarely used, so may as well pack them (which is what has
+			// happened here).
 			func[0] = YSI_g_sMasterData[i] & 0xFF,
 			func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF,
 			func[2] = YSI_g_sMasterData[i] >> 16,
 			CallLocalFunction(func, "");
 			P:5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
-			// The properties currently clear instantly, but that may not always be
-			// the case.
+			// The properties currently clear instantly, but that may not always be the case.
 		}
 	#endif
 	setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) & ~Master_ID()),
 	Master_OnScriptExit(),
 	CallRemoteFunction("OnMasterSystemClose", "i", Master_ID());
+	#if !defined YSI_NO_MASTER
+		YSI_gModuleShutdown = true;
+		if (!YSI_FILTERSCRIPT)
+		{
+			// Second call - pass off module data.
+			setproperty(8, "", YSIM_STRING + 2, "");
+			CallRemoteFunction("Master_OnCloseModules", "");
+
+			// Finally shut down all the modules.
+			getproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
+			new
+				prev = 0,
+				next = 0;
+			while ((next = strfind(YSI_UNSAFE_HUGE_STRING, ";", false, prev)) != -1)
+			{
+				YSI_UNSAFE_HUGE_STRING[next] = '\0';
+				format(Q@, sizeof (Q@), "unloadfs ../modules/%s", YSI_UNSAFE_HUGE_STRING[prev]);
+				SendRconCommand(Q@);
+				format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", YSI_UNSAFE_HUGE_STRING[prev]);
+				SendRconCommand(Q@);
+				prev = next + 1;
+			}
+		}
+	#endif
 	return 1;
 }
 
-CHAIN_FORWARD:Master_OnScriptExit() = 1;
+CHAIN_FORWARD:Master_OnScriptExit() = 0;
 #if defined _ALS_OnScriptExit
 	#undef OnScriptExit
 #else
@@ -484,6 +551,224 @@ CHAIN_FORWARD:Master_OnScriptExit() = 1;
 #endif
 #define OnScriptExit(%0) CHAIN_PUBLIC:Master_OnScriptExit(%0)
 forward OnMasterSystemClose(id);
+
+/*-------------------------------------------------------------------------*//**
+ * <returns>
+ *  Master_OnCloseModules
+ * </returns>
+ * <remarks>
+ *  Destructor.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#if !defined YSI_NO_MASTER
+	public Master_OnCloseModules()
+	{
+		P:1("Master_OnCloseModules called");
+		if (YSI_g_sModuleName[0])
+		{
+			// This is a module, and thus purely loaded for the sake of gamemodes.  Shut it down.
+			new
+				func[4],
+				prev = YSI_gModuleShutdown;
+			YSI_gModuleShutdown = true;
+			for (new i = 0, j = YSI_g_sMasterCount; i != j; ++i)
+			{
+				// This is slightly slower for ending and starting scripts, but uses far less heap
+				// space, and these values are rarely used, so may as well pack them (which is what
+				// has happened here).
+				func[0] = YSI_g_sMasterData[i] & 0xFF,
+				func[1] = (YSI_g_sMasterData[i] >> 8) & 0xFF,
+				func[2] = YSI_g_sMasterData[i] >> 16,
+				CallLocalFunction(func, "");
+				P:5("Master_OnScriptExit: %d %d %s", i, YSI_g_sMasterCount, func);
+				// The properties currently clear instantly, but that may not always be the case.
+			}
+			if (prev)
+			{
+				// Second call.
+				getproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
+				prev = strlen(YSI_UNSAFE_HUGE_STRING);
+				strcat(YSI_UNSAFE_HUGE_STRING[prev], YSI_g_sModuleName);
+				strcat(YSI_UNSAFE_HUGE_STRING[prev], ";");
+				setproperty(8, "", YSIM_STRING + 2, YSI_UNSAFE_HUGE_STRING);
+				YSI_g_sMasterCount = 0;
+			}
+		}
+	}
+
+	bool:Master_LoadModule(const module[])
+	{
+		if (existproperty(10, module))
+		{
+			P:E("Module \"%s\" already loaded.", module);
+		}
+		else
+		{
+			setproperty(8, "", YSIM_STRING + 1, module);
+			new
+				masters = getproperty(8, YSIM_MASTER);
+			format(Q@, sizeof (Q@), "loadfs ../modules/%s", module);
+			SendRconCommand(Q@);
+			if (masters == getproperty(8, YSIM_MASTER))
+			{
+				P:F("Could not load module \"%s\"", module);
+				return false;
+			}
+			else
+			{
+				P:0("Module \"%s\" loaded", module);
+			}
+			deleteproperty(8, "", YSIM_STRING + 1);
+		}
+		return true;
+	}
+
+	bool:Master_IsModuleLoaded(const module[])
+	{
+		return !!existproperty(10, module);
+	}
+
+	bool:Master_ReloadModule(const module[])
+	{
+		if (!Master_IsModuleLoaded(module))
+		{
+			P:W("Module \"%s\" not loaded.", module);
+		}
+		// Free up a temporary filterscript slot for the swapping.  Handilly, we have one safe.
+		y_rconfix_Unload();
+		// We can't just use the default `reloads` command, because that will clear memory before
+		// the reload, thus we'll loose data.  Instead, we use a hack to load the FS twice at once!
+		// We just alternate which is loaded and unloaded statelessly - detect which method
+		// succeeded.
+		setproperty(8, "", YSIM_STRING + 1, module);
+		new
+			masters = getproperty(8, YSIM_MASTER);
+		format(Q@, sizeof (Q@), "loadfs ./../modules/%s", module);
+		SendRconCommand(Q@);
+		if (masters == getproperty(8, YSIM_MASTER))
+		{
+			// Didn't load, try the alternate version.
+			format(Q@, sizeof (Q@), "loadfs ../modules/%s", module);
+			SendRconCommand(Q@);
+			if (masters == getproperty(8, YSIM_MASTER))
+			{
+				P:F("Could not reload module \"%s\"", module);
+				y_rconfix_Load();
+				return false;
+			}
+			else
+			{
+				format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", module);
+				SendRconCommand(Q@);
+				CallRemoteFunction("Master_Reassert", "");
+				P:0("Module \"%s\" (re)loaded.", module);
+			}
+		}
+		else
+		{
+			// Loaded a second version of the script.  Unload the first version.
+			format(Q@, sizeof (Q@), "unloadfs ../modules/%s", module);
+			SendRconCommand(Q@);
+			CallRemoteFunction("Master_Reassert", "");
+			P:0("Module \"%s\" (re)loaded.", module);
+		}
+		return true;
+	}
+
+	bool:Master_UnloadModule(const module[])
+	{
+		if (existproperty(10, module))
+		{
+			new
+				masters = getproperty(8, YSIM_MASTER);
+			format(Q@, sizeof (Q@), "unloadfs ../modules/%s", module);
+			SendRconCommand(Q@);
+			format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", module);
+			SendRconCommand(Q@);
+			CallRemoteFunction("Master_Reassert", "");
+			if (masters == getproperty(8, YSIM_MASTER))
+			{
+				P:F("Could not unload module \"%s\"", module);
+				return false;
+			}
+			else
+			{
+				P:0("Module \"%s\" unloaded.", module);
+				return true;
+			}
+		}
+		else
+		{
+			P:E("Module \"%s\" not loaded.", module);
+			return false;
+		}
+	}
+
+	/*-------------------------------------------------------------------------*//**
+	 * <returns>
+	 *  OnRconCommand
+	 * </returns>
+	 * <remarks>
+	 *  Destructor.
+	 * </remarks>
+	 *//*------------------------------------------------------------------------**/
+
+	forward OnRconCommand(cmd[]);
+
+	public OnRconCommand(cmd[])
+	{
+		P:1("MasterOnce_OnRconCommand called");
+		if (!YSI_FILTERSCRIPT)
+		{
+			if (!strcmp(cmd, "loadmodule ", true, 11))
+			{
+				if (cmd[11])
+				{
+					Master_LoadModule(cmd[11]);
+				}
+				else
+				{
+					P:F("No module specified for \"loadmodule\"");
+				}
+				return 1;
+			}
+			else if (!strcmp(cmd, "unloadmodule ", true, 13))
+			{
+				if (cmd[13])
+				{
+					Master_UnloadModule(cmd[13]);
+				}
+				else
+				{
+					P:F("No module specified for \"unloadmodule\"");
+				}
+				return 1;
+			}
+			else if (!strcmp(cmd, "reloadmodule ", true, 13))
+			{
+				if (cmd[13])
+				{
+					Master_ReloadModule(cmd[13]);
+				}
+				else
+				{
+					P:F("No module specified for \"reloadmodule\"");
+				}
+				return 1;
+			}
+		}
+		return Master_OnRconCommand(cmd);
+	}
+
+	CHAIN_FORWARD:Master_OnRconCommand(cmd[]) = 0;
+	#if defined _ALS_OnRconCommand
+		#undef OnRconCommand
+	#else
+		#define _ALS_OnRconCommand
+	#endif
+	#define OnRconCommand(%0) CHAIN_PUBLIC:Master_OnRconCommand(%0)
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
@@ -500,6 +785,10 @@ public Master_Reassert()
 		// Read this script's master value.
 		setproperty(8, YSIM_MASTER, getproperty(8, YSIM_MASTER) | Master_ID());
 		#if !defined YSI_NO_MASTER
+			if (YSI_g_sModuleName[0])
+			{
+				setproperty(10, YSI_g_sModuleName, Master_ID());
+			}
 			// Readd this script's owned scripts.
 			new
 				func[4];
@@ -523,7 +812,7 @@ public Master_Reassert()
 
 stock _Master_Relinquish(const library[])
 {
-	//printf("STEAL %s %d", library, YSI_g_sMasterCount);
+	P:4("_Master_Relinquish called: %s %d", library, YSI_g_sMasterCount);
 	switch (YSI_g_sMasterCount)
 	{
 		case 0: return;
@@ -548,27 +837,65 @@ stock _Master_Relinquish(const library[])
 	}
 }
 
+enum e_YSIM_GET_TYPE
+{
+	e_YSIM_GET_TYPE_NO_CONTEST,
+	e_YSIM_GET_TYPE_STOLE,
+	e_YSIM_GET_TYPE_NOT_GOT,
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="library">The name of the library to try become master for.</param>
  *//*------------------------------------------------------------------------**/
 
-stock bool:_Master_Get(const library[], bool:force = false)
+static stock const
+	YSI_g_scYSIM_VERSION[] = "YSIM_VERSION%s";
+
+stock e_YSIM_GET_TYPE:_Master_Get(const library[], bool:force = false)
 {
-	new
-		bool:ret = true;
-	P:3("bool:_Master_Get called: \"%s\", %i", library, _:force);
 	P:2("_Master_Get called");
-	if (existproperty(9, library))
+	new
+		e_YSIM_GET_TYPE:ret = e_YSIM_GET_TYPE_NO_CONTEST;
+	new
+		master = getproperty(9, library);
+	P:3("E_YSIM_GET_TYPE:_Master_Get called: \"%s\", %i, %d", library, _:force, master);
+	if (master)
+	{
+		P:4("_Master_Get: Prop exists: %d %d", master, Master_ID());
+		P:4("_Master_Get: Prop set");
+		if (master == Master_ID())
+		{
+			// Nothing has changed.
+			return e_YSIM_GET_TYPE_NO_CONTEST;
+		}
+		else if (!force)
+		{
+			new
+				func[32];
+			format(func, sizeof (func), YSI_g_scYSIM_VERSION, library);
+			master = CallLocalFunction(func, "");
+			// Might still be able to steal the master if we're a higher version.  We must be
+			// EXCLUSIVELY higher, not just same or higher.
+			CallRemoteFunction(func, "");
+			if (master <= getproperty(8, YSIM_VERRET))
+			{
+				// Not got the master.
+				return e_YSIM_GET_TYPE_NOT_GOT;
+			}
+		}
+		// A server is forcing itself.
+		ret = e_YSIM_GET_TYPE_STOLE;
+	}
+	else if (!force && existproperty(8, YSIM_VERMAX))
 	{
 		new
-			master = getproperty(9, library);
-		P:4("_Master_Get: Prop exists: %d %d", master, Master_ID());
-		if (master != -1)
+			func[32];
+		format(func, sizeof (func), YSI_g_scYSIM_VERSION, library);
+		if (CallLocalFunction(func, "") < getproperty(8, YSIM_VERMAX))
 		{
-			P:4("_Master_Get: Prop set");
-			if (master == Master_ID()) return true; // Nothing has changed.
-			else if (force) ret = false; // A server is forcing itself.
-			else return false; // Not got the master.
+			// There's another pending library with a higher version than us.  If we're equal, its
+			// first-come, first-served.
+			return e_YSIM_GET_TYPE_NOT_GOT;
 		}
 	}
 	P:4("_Master_Get: Get master.");

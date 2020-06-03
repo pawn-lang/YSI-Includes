@@ -817,7 +817,7 @@ public OnCodeInit()
 		// We can't directly get the address of a destructor.  Instead, we need
 		// to create a local that will be destroyed and read the call from that.
 		// Use `[2]` so it doesn't match the scanner later.
-		new I@T:search[2];
+		new I@T:search[2] = {};
 		// THIS BLOCK IS NOT POINTLESS!  IT CALLS A REQUIRED DESTRUCTOR.
 	}
 	// Now we have the destructor address, replace all calls to it.  I've never
@@ -855,7 +855,7 @@ public OnCodeInit()
 	// TODO: Try and determine rough types for parent function parameters, using
 	// Opcodes like LREF, SREF, and IDXADDR (IDXARRAY?  Can't remember off the
 	// top of my head).
-	CodeScanRun(scanner);
+	CodeScanRunFast(scanner, &I@T);
 	
 	#if defined Inline_OnCodeInit
 		Inline_OnCodeInit();
@@ -910,7 +910,7 @@ Note:
 */
 
 // Make sure there's a space after the "return".
-#define return%0({%1}%2)%3; I@=%0({%1}%2)%3;return I@;
+//#define return%0({%1}%2)%3; I@=%0({%1}%2)%3;return I@;
 
 // The "INLINE" in the types here will override "PARSER@" to "PARSE@INLINE",
 // because there is no colon (well not "because", but it helps).
@@ -1035,7 +1035,7 @@ stock Function:GetRemoteFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_RemoteHandler_<x>));
 	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
+	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_PUBLIC_CALL_METADATA, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
@@ -1074,7 +1074,7 @@ stock Function:GetLocalFunction(const func[], const spec[])
 	mset(closure, _:E_PUBLIC_CALL_HANDLER, _:addressof (Callback_LocalHandler_<x>));
 	mset(closure, _:E_PUBLIC_CALL_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_PUBLIC_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_PUBLIC_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
+	mset(closure, _:E_PUBLIC_CALL_TIMER, YSI_SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
 	mset(closure, _:E_PUBLIC_CALL_FLAGS, e_INLINE_FLAG_PUBLIC);
 	mset(closure, _:E_PUBLIC_CALL_METADATA, 0);
 	msets(closure, _:E_PUBLIC_CALL_SPECIFIER, spec);
@@ -1133,7 +1133,7 @@ Inline_NumArgs_load:
 	#emit JZER                Inline_NumArgs_load
 	#emit POP.pri
 	#emit RETN
-	__COMPILER_NAKED
+	__pragma(naked);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1170,7 +1170,7 @@ static stock Callback_InlineByName(const name[], tag)
 				mset(closure, _:E_INLINE_CALL_HANDLER, _:addressof (Callback_CallHandler_<x>));
 				mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_));
 				mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-				mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
+				mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
 				mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
 				mset(closure, _:E_INLINE_CALL_METADATA, 0);
 				mset(closure, _:E_INLINE_CALL_SIZE, size);
@@ -1382,7 +1382,7 @@ stock Callback_Release(const input[E_CALLBACK_DATA])
 static stock Callback_Claim_(func[E_INLINE_CALL])
 {
 	KillTimer(func[E_INLINE_CALL_TIMER]);
-	func[E_INLINE_CALL_TIMER] = SetTimerEx("Inline_MaybeConst_", 0, false, "i", ref(func));
+	func[E_INLINE_CALL_TIMER] = YSI_SetTimerEx("Inline_MaybeConst_", 0, false, "i", ref(func));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1455,7 +1455,7 @@ static Callback_CallHandler_(...)
 	#emit SCTRL            4                   // 65
 	#emit LOAD.pri         I@                  // 67
 	#emit RETN                                 // 68
-	__COMPILER_NAKED
+	__pragma(naked);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1504,7 +1504,7 @@ static stock Callback_RemoteHandler_(...)
 	#emit SCTRL            4
 	#emit MOVE.pri
 	#emit RETN
-	__COMPILER_NAKED
+	__pragma(naked);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1552,7 +1552,7 @@ static stock Callback_LocalHandler_(...)
 	#emit SCTRL            4
 	#emit MOVE.pri
 	#emit RETN
-	__COMPILER_NAKED
+	__pragma(naked);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1910,7 +1910,7 @@ static stock Inline_Ref(const &ptr)
 {
 	#emit LOAD.S.pri       ptr
 	#emit RETN
-	__COMPILER_NAKED
+	__pragma(naked);
 }
 #if __COMPILER_CONST_REF
 	#pragma warning pop
@@ -1954,7 +1954,7 @@ stock Inline_UI_(const &header)
 	mset(closure, _:E_INLINE_CALL_HANDLER, _:addressof (Callback_CallHandler_<x>));
 	mset(closure, _:E_INLINE_CALL_CLAIM, _:addressof (Callback_Claim_));
 	mset(closure, _:E_INLINE_CALL_RELEASE, _:addressof (Callback_Release_<tResolvedAlloc:>));    
-	mset(closure, _:E_INLINE_CALL_TIMER, SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
+	mset(closure, _:E_INLINE_CALL_TIMER, YSI_SetTimerEx("Inline_MaybeFree_", 0, false, "i", _:closure));
 	mset(closure, _:E_INLINE_CALL_FLAGS, e_INLINE_FLAG_CONST);
 	mset(closure, _:E_INLINE_CALL_METADATA, 0);
 	mset(closure, _:E_INLINE_CALL_SIZE, size);

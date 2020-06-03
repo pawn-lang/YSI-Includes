@@ -11,11 +11,11 @@ For general YSI information, see the following links:
 
 ## Documentation
 
-* [Quick Start](y_iterate/quick-start.md) - One very simple example of getting started with this library.
-* [Features](y_iterate/features.md) - More features and examples.
-* [FAQs](y_iterate/faqs.md) - Frequently Asked Questions, including errors and solutions.
-* [API](y_iterate/api.md) - Full list of all functions and their meaning.
-* [Internal](y_iterate/internal.md) - Internal developer documentation for the system.
+* [Quick Start](y_foreach/quick-start.md) - One very simple example of getting started with this library.
+* [Features](y_foreach/features.md) - More features and examples.
+* [FAQs](y_foreach/faqs.md) - Frequently Asked Questions, including errors and solutions.
+* [API](y_foreach/api.md) - Full list of all functions and their meaning.
+* [Internal](y_foreach/internal.md) - Internal developer documentation for the system.
 
 ## External Links
 

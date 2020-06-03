@@ -185,7 +185,9 @@ static stock Functional_FoundCall(const scanner[CodeScanner], nestingLevel)
 	
 	// Found the code scanner itself - ignore this one.
 	if (nestingLevel > 0)
+	{
 		return -1;
+	}
 	
 	new
 		callPos = CodeScanGetMatchAddressData(scanner);
@@ -409,7 +411,8 @@ public OnCodeInit()
 	);
 	CodeScanAddMatcher(scanner, lambdaCall2);
 	
-	CodeScanRun(scanner);
+	// Run fast, with an explicit search function.
+	CodeScanRunFast(scanner, &LAM@0);
 	
 	#if defined Functional_OnCodeInit
 		Functional_OnCodeInit();

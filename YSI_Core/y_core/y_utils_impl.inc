@@ -150,17 +150,89 @@ stock __TU(t, iters)
 	return ret;
 }
 
+/*-------------------------------------------------------------------------*//**
+ * <param name="name">The name of the profile.</param>
+ * <param name="timings">The raw profiling results.</param>
+ * <param name="iters">The number of iterations per run.</param>
+ * <param name="size">The number of repeats.</param>
+ * <remarks>
+ *  "WTF" here stands for "Write To File".  The output looks like:
+ *  
+ *  <code>
+ *      timestamp,runs,repeats,results (ms)
+ *      1546082820,10,1000000,122,121,121,120,121,121,121,119,119,121
+ *      1546082822,10,1000000,123,124,123,123,121,121,121,120,122,122
+ *  </code>
+ *  
+ *  The timestamp is the unix timestamp at which the line was WRITTEN, not the
+ *      time at which the profilings started or ended.
+ *  
+ *  "runs" is the number of times the whole profile was repeated.
+ *  
+ *  "repeats" is the number of times the code was run for each repeat.
+ *  
+ *  "results" are the total times for each repeat, in milliseconds.  The time
+ *      for an individual piece of code is <c>result[n] / repeats</c>.  This is
+ *      equivalent to:
+ *  
+ *  <code>
+ *      for (new i = 0; i != runs; ++i)
+ *      {
+ *          start = GetTickCount();
+ *          for (new i = 0; i != repeats; ++i)
+ *          {
+ *              USER_CODE_HERE();
+ *          }
+ *          end = GetTickCount();
+ *          WriteToFile(end - start);
+ *      }
+ *  </code>
+ *  
+ *  The repeats help to time very short pieces of code.  The runs help to
+ *  average.  The console reports average results (mean, mode, median, range).
+ *  Thus the even more accurate result for a single iteration would be:
+ *  <c>sum(results) / (runs * repeats)</c>.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+// "Write To File", not another "WTF" meaning...
+stock y_profile_WTF(const name[], const timings[], iters, size = sizeof (timings))
+{
+	new File:fhnd;
+	if (fexist(name))
+	{
+		// File already exists.  Append.
+		fhnd = fopen(name, io_append);
+	}
+	else if ((fhnd = fopen(name, io_write)))
+	{
+		// File doesn't exist.  Create it and write the headers.
+		fwrite(fhnd, "timestamp,runs,repeats,results (ms)\n");
+	}
+	if (!fhnd)
+	{
+		P:W("Could not write to profiling results file \"%s\".", name);
+		return;
+	}
+	va_fprintf(fhnd, "%d,%d,%d", gettime(), size, iters);
+	for (new i = 0; i != size; ++i)
+	{
+		va_fprintf(fhnd, ",%d", timings[i]);
+	}
+	fwrite(fhnd, "\n");
+	fclose(fhnd);
+}
+
+#if !defined PROFILINGS_FILE
+	#define y_profile_WTF(%0),
+#endif
+
 #define RUN_TIMING(%0) \
 	for(new __TA[TIMING_ITERATIONS],__TC=sizeof __TA,__TE=_:__TX:__TY|||%0|||,__TS=printf("Timing \"%s\"...",%0);__TC; \
+		y_profile_WTF(PROFILINGS_FILE(%0),__TA,__TE), \
 		printf("\t  Mean = %s\n\t  Mode = %s\n\tMedian = %s\n\t Range = %s", \
 			__TU(Mean(__TA),__TE),__TU(Mode(__TA),__TE),__TU(Median(__TA),__TE),__TU(Range(__TA),__TE))) \
 	for(;(__TS=GetTickCount(),__TC);__TA[--__TC]=GetTickCount()-__TS) \
-	for(new __TI;__TI!=__TE;++__TI)
-
-#define CSV_TIMING(%0) \
-	for(new __TA[TIMING_ITERATIONS],__TC=sizeof __TA,__TE=_:__TX:__TY|||%0|||,__TS=printf("Timing \"%s\"...",%0),File:__TF=fopen(%0".csv",io_append);__TF&&__TC;\
-		va_fprintf(__TF,"%d,%d,%s,%s,%s,%s\n",gettime(),__TE,__TU(Mean(__TA),__TE),__TU(Mode(__TA),__TE),__TU(Median(__TA),__TE),__TU(Range(__TA),__TE)),fclose(__TF))\
-	for(;(__TS=GetTickCount(),__TC);__TA[--__TC]=GetTickCount()-__TS)\
 	for(new __TI;__TI!=__TE;++__TI)
 
 #if defined _samp_included
@@ -209,6 +281,17 @@ stock __TU(t, iters)
 	#if defined _y_utils_OnPlayerDisconnect
 		forward _y_utils_OnPlayerDisconnect(playerid, reason);
 	#endif
+
+	/*-------------------------------------------------------------------------*//**
+	 * <param name="playerid">Player to get IP of.</param>
+	 * <returns>
+	 *  IP as a 32bit int.
+	 * </returns>
+	 *//*------------------------------------------------------------------------**/
+
+	// Cunning macro only uses "%0" once, yet is still safe.
+	P:D(GetIP(playerid));
+	#define GetIP(%0) (YSI_gPlayerIP[min((%0) + cellmin, MAX_PLAYERS + cellmin) - cellmin])
 #endif
 
 #if defined YSI_LOCK_MODE
@@ -239,6 +322,30 @@ stock __TU(t, iters)
 	#if defined _y_utils_OnScriptInit
 		forward _y_utils_OnScriptInit();
 	#endif
+#endif
+
+#if !defined __once
+	#define __once%1;%0) (__gOnce++)%1;(%0),__gOnce=0)
+	#define __gOnce++)%1;(), __gOnce++)%1;
+	stock __gOnce = 1;
+#endif
+
+#define PP_RIGHT_BRACKET<> )
+
+#define IF__(new%0\32;%1=%2) for(IF_FAIL:new%0|||%1;%2)if()
+#define SWITCH__(new%0\32;%1=%2) for(IF_FAIL:new%0|||%1;%2)switch()
+
+#define for(IF_FAIL:new|||%1;%2) for(IF_PASS:new %1=%2;%1;)
+
+#define IF_FAIL:new%0|||%1;%2)%8() ;__once;)%8(new%0 %1=%2 PP_RIGHT_BRACKET<>
+#define IF_PASS:%3;%4;%9)%8() %3;__once;)%8(%4 PP_RIGHT_BRACKET<>
+
+#if YSI_KEYWORD(if)
+	#define if(new%0\32;%1=%2) for(IF_FAIL:new%0|||%1;%2)if()
+#endif
+
+#if YSI_KEYWORD(switch)
+	#define switch(new%0\32;%1=%2) for(IF_FAIL:new%0|||%1;%2)switch()
 #endif
 
 /*-------------------------------------------------------------------------*//**
@@ -310,7 +417,15 @@ P:D(bool:NOT_IN_RANGE(value, lower, upper));
  *//*------------------------------------------------------------------------**/
 
 P:D(ceildiv(numerator, denominator));
-#define ceildiv(%0,%1) (((%0)-1)/(%1)+1)
+#if defined ceildiv
+	#undef ceildiv
+#endif
+#if __COMPILER_1ST_PASS
+	#define ceildiv __MACRO__ceildiv
+#else
+	#define ceildiv(%0,%1) (((%0)-1)/(%1)+1)
+#endif
+#define _ALS_ceildiv
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
@@ -328,7 +443,15 @@ P:D(ceildiv(numerator, denominator));
  *//*------------------------------------------------------------------------**/
 
 P:D(floordiv(numerator, denominator));
-#define floordiv(%0,%1) ((%0)/(%1))
+#if defined floordiv
+	#undef floordiv
+#endif
+#if __COMPILER_1ST_PASS
+	#define floordiv __MACRO__floordiv
+#else
+	#define floordiv(%0,%1) ((%0)/(%1))
+#endif
+#define _ALS_floordiv
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to check if is null.</param>
@@ -343,30 +466,62 @@ P:D(floordiv(numerator, denominator));
  *//*------------------------------------------------------------------------**/
 
 P:D(bool:isnull(str[]));
-#define isnull(%0) ((%0[(%0[0])=='\1'])=='\0')
+#if defined isnull
+	#undef isnull
+#endif
+#if __COMPILER_1ST_PASS
+	#define isnull __MACRO__isnull
+#else
+	#define isnull(%0) ((%0[(%0[0])=='\1'])=='\0')
+#endif
+#define _ALS_isnull
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to check if is odd.</param>
  *//*------------------------------------------------------------------------**/
 
 P:D(bool:isodd(value));
-#define isodd(%1) ((%1)&1)
+#if defined isodd
+	#undef isodd
+#endif
+#if __COMPILER_1ST_PASS
+	#define isodd __MACRO__isodd
+#else
+	#define isodd(%1) ((%1)&1)
+#endif
+#define _ALS_isodd
 
 /*-------------------------------------------------------------------------*//**
  * <param name="value">Value to check if is even.</param>
  *//*------------------------------------------------------------------------**/
 
 P:D(bool:iseven(value));
-#define iseven(%1) (!isodd(%1))
+#if defined iseven
+	#undef iseven
+#endif
+#if __COMPILER_1ST_PASS
+	#define iseven __MACRO__iseven
+#else
+	#define iseven(%1) (!isodd(%1))
+#endif
+#define _ALS_iseven
 
-/*-------------------------------------------------------------------------*//**
- * <param name="dest">Destination string.</param>
- * <param name="src">Source string.</param>
- * <param name="len">(Implicit) maximum length of the destination.</param>
- *//*------------------------------------------------------------------------**/
+#if __COMPILER_1ST_PASS && !defined strcpy
+	static stock strcpy_undefined__() {}
 
-P:D(strcpy(dest[], const src[], len = sizeof (dest)));
-#define strcpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
+	/*---------------------------------------------------------------------*//**
+	 * <param name="dest">Destination string.</param>
+	 * <param name="src">Source string.</param>
+	 * <param name="len">(Implicit) maximum length of the destination.</param>
+	 *//*--------------------------------------------------------------------**/
+
+	P:D(strcpy(dest[], const src[], len = sizeof (dest)));
+#endif
+
+#if defined strcpy_undefined__
+	#define strcpy(%0,%1) strcat((%0[0] = '\0', %0), %1)
+	#define _ALS_strcpy
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <param name="str">String to convert.</param>
@@ -611,9 +766,9 @@ stock IPToInt(const ip[])
 
 stock bernstein(const string[] /* 12 */)
 {
-	new h = -1, i, j;
+	new h = 5381, i, j;
 	while ((j = string[i++]))
-		h = h * 33 + j;
+		h = h * 33 ^ j;
 	return h;
 }
 
@@ -661,17 +816,6 @@ stock unpack(const str[])
 	}
 	return ret;
 }
-
-/*-------------------------------------------------------------------------*//**
- * <param name="playerid">Player to get IP of.</param>
- * <returns>
- *  IP as a 32bit int.
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-// Cunning macro only uses "%0" once, yet is still safe.
-P:D(GetIP(playerid));
-#define GetIP(%0) (YSI_gPlayerIP[min((%0) + cellmin, MAX_PLAYERS + cellmin) - cellmin])
 
 /*-------------------------------------------------------------------------*//**
  * <param name="idx">Index of the string in the parameters.</param>
@@ -1114,7 +1258,7 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest),
 			#emit RETN
 		}
 	}
-	__COMPILER_NAKED
+	__pragma(naked);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1783,4 +1927,101 @@ stock memcmp(arr1[], arr2[], count)
 	}
 	return 0;
 }
+
+#define MAX_LEVENSHTEIN_STRING (32)
+
+static stock DoLevenshteinDistance(const a[], lenA, const b[], lenB)
+{
+	// "a" is the shorter string in this call.
+	new
+		// Can only compare strings up to this length.
+		matrix[MAX_LEVENSHTEIN_STRING + 1] = {0, 1, ...};
+	// Initial subsequence equal.
+	//if (!strcmp(a, b, false, lenA))
+	//	return diff;
+	for (new i = 0; i != lenB; ++i)
+	{
+		// Loop over the characters in the longer string, and use the matrix for the shorter string.
+		new
+			prev = matrix[0];
+		matrix[0] = i + 1;
+		for (new j = 0; j != lenA; ++j)
+		{
+			new
+				distance = min(
+					matrix[j + 1] + 1     , /* Insertion cost.    */ min(
+					matrix[j] + 1         , /* Deletion cost.     */
+					prev + _:(b[i] != a[j]) /* Substitution cost. */ )
+				);
+			prev = matrix[j + 1];
+			matrix[j + 1] = distance;
+		}
+	}
+	return matrix[lenA];
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="a">First string to compare.</param>
+ * <param name="b">Second string to compare.</param>
+ * <returns>
+ *  The levenshtein difference (0 if the same).
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock LevenshteinDistance(const a[], const b[])
+{
+	// If a string is empty, the other length is the distance.
+	new
+		lenA = strlen(a),
+		lenB = strlen(b);
+	if (!lenA)
+		return lenB;
+	if (!lenB)
+		return lenA;
+	if (lenA > lenB)
+	{
+		if (lenB > MAX_LEVENSHTEIN_STRING)
+		{
+			P:E("`LevenshteinDistance` can currenly only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
+			return 1;
+		}
+		return DoLevenshteinDistance(b, lenB, a, lenA);
+	}
+	else if (lenA == lenB && strcmp(a, b) == 0)
+	{
+		// Same string.
+		return 0;
+	}
+	if (lenA > MAX_LEVENSHTEIN_STRING)
+	{
+		P:E("`LevenshteinDistance` can currently only handle strings up to `MAX_LEVENSHTEIN_STRING` characters (%d).", MAX_LEVENSHTEIN_STRING);
+		return 1;
+	}
+	return DoLevenshteinDistance(a, lenA, b, lenB);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="n">The numeric parameter position to print.</param>
+ * <returns>
+ *  Prints a string passed as a vararg to the calling function.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+stock PrintArg(n)
+{
+	#emit LOAD.S.pri   n
+	#emit SHL.C.pri    2
+	#emit ADD.C        12
+	#emit LOAD.S.alt   0
+	#emit ADD
+	#emit LOAD.I
+	#emit PUSH.pri
+	#emit PUSH.C       4
+	#emit SYSREQ.C     print
+	#emit STACK        8
+	#emit RETN
+	__pragma(naked);
+}
+
+#define printarg PrintArg
 

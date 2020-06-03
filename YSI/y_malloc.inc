@@ -70,12 +70,5 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-#include <YSI_Coding\y_malloc>
-
-#if !defined __PawnBuild
-	static USE@YSI_Coding@y_malloc;
-	#endinput
-#endif
-
-#warning Please use `#include <YSI_Coding\y_malloc>`
+#error Use `#include <YSI_Coding\y_malloc>`
 

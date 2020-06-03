@@ -85,10 +85,6 @@ Optional plugins:
 
 */
 
-CHAIN_HOOK(HookChain)
-#undef CHAIN_ORDER
-#define CHAIN_ORDER CHAIN_NEXT(HookChain)
-
 enum E_CHAIN_HOOK
 {
 	E_CHAIN_HOOK_NAME[16],
@@ -108,6 +104,11 @@ DEFINE_HOOK_REPLACEMENT__(TextDraw  , TD );
 DEFINE_HOOK_REPLACEMENT__(Update    , Upd);
 DEFINE_HOOK_REPLACEMENT__(Object    , Obj);
 DEFINE_HOOK_REPLACEMENT__(Command   , Cmd);
+
+// SPECIAL HACK!  The streamer plugin already shortens "Checkpoint" to "CP", without this line
+// y_hooks will try to expand it again to `OnPlayerEnterDynamicCheckpoint`, which is a valid
+// callback name, but the wrong one.  Thus we prevent the final expansion with this seemingly
+// pointless replacement.  This is an internal detail you don't really need to worry about.
 DEFINE_HOOK_REPLACEMENT__(DynamicCP , DynamicCP);
 
 enum E_HOOK_NAME_REPLACEMENT_DATA
@@ -130,6 +131,7 @@ static stock
 	YSI_g_sInitGMIdx = -1,
 	YSI_g_sInitGMRep,
 	YSI_g_sInitPublicDiff,
+	YSI_g_sActiveHooks = 0,
 	bool:YSI_g_sSortedOnce = false;
 
 /*-------------------------------------------------------------------------*//**
@@ -813,32 +815,37 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	// Start of the function.
 	@emit PROC                          // 1
 	
-	// Allocate space for our "ret" variable at "frm - 4".
-	if (multiple) @emit PUSH.C  ret     // 3
+	// Allocate space for our "ret" variable at "frm - 4" (may be unused).
+	@emit PUSH.C        ret             // 3
+	
+	// Create the current active hooks stack at "frm - 8".
+	@emit PUSH          ref(YSI_g_sActiveHooks) // 5
+	@emit ADDR.pri      -8              // 7
+	@emit STOR.pri      ref(YSI_g_sActiveHooks) // 9
 	
 	// Copy the stack to itself (MOVS).
 	// Allocate space.
-	@emit LOAD.S.pri    8               // 5
-	@emit JZER.label    Hooks_NoStackCopy
-	@emit MOVE.alt                      // 8
-	@emit LCTRL         4               // 10
-	@emit SUB                           // 11
-	@emit SCTRL         4               // 13
-	@emit XCHG                          // 14
+	@emit LOAD.S.pri    8               // 11
+	@emit JZER.label    Hooks_NoStackCopy // 13
+	@emit MOVE.alt                      // 14
+	@emit LCTRL         4               // 16
+	@emit SUB                           // 17
+	@emit SCTRL         4               // 19
+	@emit XCHG                          // 20
 	
 	if (Server_JITExists())
 	{
 		// Need to use memcpy to move about in the stack.
-		@emit PUSH.C        4096        // 16
-		@emit PUSH.pri                  // 17
-		@emit PUSH.C        0           // 19
-		@emit LCTRL         5           // 21
-		@emit ADD.C         12          // 23
-		@emit PUSH.pri                  // 24
-		@emit PUSH.alt                  // 25
-		@emit PUSH.C        20          // 27
-		@emit SYSREQ        "memcpy"    // 29
-		@emit STACK         24          // 31
+		@emit PUSH.C        4096
+		@emit PUSH.pri
+		@emit PUSH.C        0
+		@emit LCTRL         5
+		@emit ADD.C         12
+		@emit PUSH.pri
+		@emit PUSH.alt
+		@emit PUSH.C        20
+		@emit SYSREQ        "memcpy"
+		@emit STACK         24
 	}
 	else
 	{
@@ -846,13 +853,13 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 		// to generate self-modifying code (just to be UBER meta)!  This code is
 		// generated AFTER the file is loaded so we bypass the data segment
 		// checks and can freely write wherever we want.
-		@emit STOR.pri      (CGen_GetCodeSpace() + (21 * 4) - (multiple ? 0 : 8)) // 16
+		@emit STOR.pri      (CGen_GetCodeSpace() + (27 * 4)) // 22
 		
 		// Do the copying.  "alt" is already "STK", load the "FRM" offset.
-		@emit LCTRL         5           // 18
-		@emit ADD.C         12          // 20
+		@emit LCTRL         5           // 24
+		@emit ADD.C         12          // 26
 		// This is the instruction we want to modify...
-		@emit MOVS          0           // 22 (- 1)
+		@emit MOVS          0           // 28 (- 1) = 27 (see above).
 	}
 	@emit Hooks_NoStackCopy:
 	
@@ -917,10 +924,14 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 	
 	// This is the point the small "JUMP" above goes to.
 	@emit MOVE.alt
+	
+	// Pop from the active hooks stack.
+	@emit LOAD.S.pri    -8
+	@emit STOR.pri      ref(YSI_g_sActiveHooks)
+	
 	// Remove the whole stack then get the return value.
 	@emit LCTRL         5
 	@emit SCTRL         4
-	//@emit LOAD.S.pri    -4
 	@emit MOVE.pri
 	
 	// Return.
@@ -1333,7 +1344,7 @@ Hooks_NumArgs_negative:
 	#emit LOAD.I
 	#emit SHR.C.pri           2
 	#emit RETN*/
-	__COMPILER_NAKED
+	__pragma(naked);
 }
 
 #if defined _ALS_numargs
@@ -1342,4 +1353,97 @@ Hooks_NumArgs_negative:
 	#define _ALS_numargs
 #endif
 #define numargs Hooks_NumArgs
+
+static stock Hooks_Ordinal(n)
+{
+	new str[8];
+	valstr(str, n);
+	switch (n % 100)
+	{
+	case 11, 12, 13:
+		strcat(str, "th");
+	default:
+		switch (n % 10)
+		{
+		case 1:
+			strcat(str, "st");
+		case 2:
+			strcat(str, "nd");
+		case 3:
+			strcat(str, "rd");
+		default:
+			strcat(str, "th");
+		}
+	}
+	return str;
+}
+
+public OnRuntimeError(code, &bool:suppress)
+{
+	#if defined Hooks_OnRuntimeError
+		Hooks_OnRuntimeError(code, suppress);
+	#endif
+	if (!suppress)
+	{
+		// TODO: y_hooks relies on the parameter counts being mangled, so we
+		// need to restore them after the current execution.  That's going to be
+		// tricky.  First we need to work out where in the stack the code will
+		// jump after this error is resolved, which will be wherever the current
+		// `CallLocalFunction` returns to, or nowhere for a callback.  The
+		// latter is easy because it means we have no work to do.  The former
+		// isn't.
+		//
+		// Tiny tiny crashdetect overhead in every hook stub:
+		//
+		//   #emit PUSH        YSI_g_sActiveHooks
+		//   #emit ADDR.pri    -8
+		//   #emit STOR.pri    YSI_g_sActiveHooks
+		//
+		// This makes a stack of active hooks.  When a crash occurs, we walk
+		// this stack and fix up all the parameter counts.
+		new
+			cur = YSI_g_sActiveHooks;
+		for (new i; cur; cur = AMX_Read(cur))
+		{
+			if (++i == 1)
+			{
+				printf("[debug]");
+				printf("[debug] Parameter count corrections:");
+				printf("[debug]");
+			}
+			// Not 8, because `cur` is `- 8`.
+			printf("[debug] The %s mangled argments (e.g. `<1073741823 arguments>`) below should read `<%d arguments>`", Hooks_Ordinal(i), AMX_Read(cur + 16) / 4);
+			//// Get the current parameter count.
+			//printf("count: %d", count);
+			//// Write this out to the lower parameter count copy.
+			//AMX_Write(cur - count - 4, count);
+			//// Fixed.
+		}
+		if (YSI_g_sActiveHooks)
+		{
+			printf("[debug]");
+			// Blank the active hooks value.  If this is the only public, this
+			// will reset it after the public is foribly ended.  If it isn't, it
+			// will be reset to a correct value when the next still active hook
+			// ends.  This is only a problem if there are two crashes at once,
+			// then the second corrections won't get displayed.
+			YSI_g_sActiveHooks = 0;
+		}
+		//new trace[32];
+		//GetStackTrace(trace);
+		//PrintStackTrace(trace);
+	}
+	return 1;
+}
+
+#if defined _ALS_OnRuntimeError
+	#undef OnRuntimeError
+#else
+	#define _ALS_OnRuntimeError
+#endif
+#define OnRuntimeError Hooks_OnRuntimeError
+
+#if defined Hooks_OnRuntimeError
+	forward Hooks_OnRuntimeError(code, &bool:suppress);
+#endif
 

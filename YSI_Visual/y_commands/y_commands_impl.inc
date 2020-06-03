@@ -183,7 +183,7 @@ static stock const
 #define COMMAND CMD
 
 // Alt commands:
-#define _YCMD_4:@yC_%0(%9);%9(%9)%9;%9(%9);%9(%1)=%2; POSTINIT__%0(){Command_AddAltNamed(#%0,#%2);}
+#define _YCMD_4:@yC_%0(%9);%9(%9)%9;%9(%9);%9(%1)=%2; POSTINIT__%0(){Command_AddAltNamed(#%2,#%0);}
 
 #define @_yC%0\32; @_yC
 #define @y_C%0\32; @y_C
@@ -310,7 +310,7 @@ P:D(bool:_Command_IsActive(command));
  *//*------------------------------------------------------------------------**/
 
 #if defined Y_COMMANDS_USE_CHARS
-	#define _Command_IsPrefix(%0) (IS_IN_RANGE((%0), 0, 128 + 1) && Bit_Get(YSI_g_sPrefixes, (%0)))
+	#define _Command_IsPrefix(%0) (IS_IN_RANGE((%0), 0, 128) && Bit_Get(YSI_g_sPrefixes, (%0)))
 #else
 	#define _Command_IsPrefix(%0) ((%0) == '/')
 #endif
@@ -394,7 +394,7 @@ GLOBAL__ Command_AddAlt(oidx, const string:cmd[])
 
 	// Now point this new command at the real (software) command.
 	strpack(sCmd, sCmd, cellmax);
-	if ((id = Command_Find(sCmd)) == COMMAND_NOT_FOUND)
+	if ((id = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd, sHash)) == COMMAND_NOT_FOUND)
 	{
 		// Command doesn't already exist, add it.
 		if ((id = Command_GetEmptySlot()) == COMMAND_NOT_FOUND)
@@ -705,10 +705,8 @@ GLOBAL__ Command_Find(const string:cmd[])
 
 	Puny_EncodeHash(sCmd, cmd, sHash, .delimiter = '@');
 
-	return HashMap_Get(YSI_g_sCommandMap, sCmd);
+	return HashMap_GetWithHash(YSI_g_sCommandMap, sCmd, sHash);
 }
-
-
 
 /*-------------------------------------------------------------------------*//**
  * <param name="command">Command to "touch".</param>
