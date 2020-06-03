@@ -1281,3 +1281,4 @@ stock _Text_Format(dest[], size, Language:lang, e_STYLE_TYPE:style, search[], id
 
 	return 1;
 }
+
