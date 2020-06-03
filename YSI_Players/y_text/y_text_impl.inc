@@ -1121,7 +1121,7 @@ static stock
 /*-------------------------------------------------------------------------*//**
  *//*------------------------------------------------------------------------**/
 
-stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], cident[], isearch[], iident[], b1search[], b1ident[], b2search[], b2ident[], GLOBAL_TAG_TYPES:...)
+stock _Text_DialogBox(@PlayerSet:players, style, Func:callback<iiiis>, csearch[], cident[], isearch[], iident[], b1search[], b1ident[], b2search[], b2ident[], GLOBAL_TAG_TYPES:...)
 {
 	// This is what the "@PlayerArray" macro expands to, but I needed more
 	// control to allow me to return a value.  The fact that I can't ATM is a
@@ -1129,7 +1129,6 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 	new
 		bool:wasOnce[YSI_MAX_LANGUAGES] = {false, ...},
 		bool:gotExtras[YSI_MAX_LANGUAGES] = {false, ...},
-		dialog = Dialog_ObtainID(),
 		maxlen,
 		source,
 		ret;
@@ -1137,7 +1136,7 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 	{
 		// Null - error.
 		P:E("Text_Send called with NULL");
-		return -1;
+		return;
 	}
 	if (isearch[0] == '\2')
 		source = cellmin;
@@ -1225,17 +1224,9 @@ stock _Text_DialogBox(@PlayerSet:players, style, callback:callback, csearch[], c
 			wasOnce[lang] = !ret;
 		}
 		// Display the message.
-		Dialog_Show(playerid, style, YSI_g_sCaptionText[lang], YSI_g_sLangBuffer[lang], YSI_g_sButton1Text[lang], YSI_g_sButton2Text[lang], dialog);
+		Dialog_ShowCallback(playerid, callback, style, YSI_g_sCaptionText[lang], YSI_g_sLangBuffer[lang], YSI_g_sButton1Text[lang], YSI_g_sButton2Text[lang]);
 	}
-	// Sort out the callbacks etc for the dialog return.
-	new
-		cd[E_CALLBACK_DATA];
-	Callback_Get(callback, cd, _F<iiiis>);
-	Dialog_SetCallbackData(dialog, cd); //AMX_GetPublicPointer(callback));
-	// Automatically free the dialog when we're done.
-	Dialog_Garbage(dialog);
 	Format_SetListSeparator(", ");
-	return dialog;
 }
 
 stock _Text_Format(dest[], size, Language:lang, e_STYLE_TYPE:style, search[], ident[], ...)
