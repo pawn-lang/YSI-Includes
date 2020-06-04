@@ -527,10 +527,10 @@ ShowLogin(MySQL:handle, playerid)
 			
 			// Called when the comparison between the stored and entered
 			// passwords is complete (so the login is complete).
-			inline const Checked()
+			inline const Checked(bool:same)
 			{
 				// Are the passwords the same?
-				if (bcrypt_is_equal())
+				if (same)
 				{
 					// The player logged in.  Tell everything else so they can
 					// respond appropriately (start loading data etc.)
@@ -577,4 +577,51 @@ public OnPlayerConnect(playerid)
 \* This is due to the way inlines are implemented with macros.  The compiler sees the outer function and any inline functions as one large function.  Thus, the compiler thinks that some parts of the large function has `return`s, while other parts don't.  This gives `warning 209: function "NAME" should return a value`.
 
 \*\* More strictly, the parameter itself IS stored in the closure, but the memory it points to isn't.  There is no good way at run-time to determine pointer parameters, and so their destination memory isn't stored, thus the target could be no longer valid, or garbage.
+
+# BCrypt
+
+There are two main BCrypt plugins, and YSI supports them both.  If you want to use the inline MySQL
+functions you just need to inline MySQL at some point, and the code will work.  However, because YSI
+needs to know WHICH BCrypt plugin you're using, you need to include them first:
+
+```pawn
+//
+//   #include <samp_bcrypt>
+//
+// OR
+//
+//   #include <bcrypt>
+//
+#include <YSI_Coding\y_inline>
+```
+
+After that, the code is exactly the same - y_inline unifies the APIs and passes you the results:
+
+## Hashing
+
+```pawn
+HashPassword(const input[])
+{
+	inline const OnHashed(string:result[])
+	{
+		printf("Hashed as: %s", result);
+	}
+	// Use `_` instead of `12` for the default cost parameter.
+	BCrypt_HashInline(input, 12, using inline OnHashed);
+}
+```
+
+## Checking
+
+```pawn
+CheckPassword(const input[], const hash[])
+{
+	inline const OnChecked(bool:same)
+	{
+		printf("Are they the same?: %s", same ? ("Yes") : ("No"));
+	}
+	// Use `_` instead of `12` for the default cost parameter.
+	BCrypt_CheckInline(input, hash, using inline OnChecked);
+}
+```
 

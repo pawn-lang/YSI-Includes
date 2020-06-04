@@ -89,6 +89,7 @@ CHAIN_HOOK(Inline)
 #define CHAIN_ORDER CHAIN_NEXT(Inline)
 
 #include "y_inline_impl2"
+
 #include "y_inline_extra"
 #include "y_inline_extra_requests"
 
