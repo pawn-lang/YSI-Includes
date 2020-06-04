@@ -685,3 +685,19 @@ The function parameter `outerString` is somewhere else in memory.  The local var
 is on the stack, within the closure stored for the inline function.  This also means that you can
 modify `innerString` and the change will persist if the inline function is not `const`.
 
+Note that this does NOT apply to strings passed to outer inline functions - those are already on the
+stack.  This is fine as-is:
+
+```pawn
+OuterFunc()
+{
+	inline InnerFunc1(string:innerString[])
+	{
+		inline InnerFunc2()
+		{
+			printf("%s", innerString);
+		}
+	}
+}
+```
+
