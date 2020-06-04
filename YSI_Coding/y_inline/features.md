@@ -581,7 +581,7 @@ public OnPlayerConnect(playerid)
 # BCrypt
 
 There are two main BCrypt plugins, and YSI supports them both.  If you want to use the inline MySQL
-functions you just need to inline MySQL at some point, and the code will work.  However, because YSI
+functions you just need to include MySQL at some point, and the code will work.  However, because YSI
 needs to know WHICH BCrypt plugin you're using, you need to include them first:
 
 ```pawn
