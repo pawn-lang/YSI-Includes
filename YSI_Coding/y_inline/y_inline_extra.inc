@@ -158,9 +158,12 @@ stock ORM_SaveInline(ORM:id, Func:cb<>)
 	return ret;
 }
 
+native _YSI_bcrypt_hash_const(const key[], cost = 12, const callback_name[], const callback_format[] = "", {Float, _}:...) = bcrypt_hash;
+native _YSI_bcrypt_check_const(const password[], const hash[], const callback_name[], const callback_format[] = "", {Float, _}:...) = bcrypt_check;
+
 stock BCrypt_CheckInline(const text[], const hash[], Func:cb<>)
 {
-	new ret = bcrypt_check(text, hash, "Indirect_FromCallback", "ii", _:cb, true);
+	new ret = _YSI_bcrypt_check_const(text, hash, "Indirect_FromCallback", "ii", _:cb, true);
 	if (ret)
 	{
 		Indirect_Claim(cb);
@@ -170,7 +173,7 @@ stock BCrypt_CheckInline(const text[], const hash[], Func:cb<>)
 
 stock BCrypt_HashInline(const text[], cost, Func:cb<>)
 {
-	new ret = bcrypt_hash(text, cost, "Indirect_FromCallback", "ii", _:cb, true);
+	new ret = _YSI_bcrypt_hash_const(text, cost, "Indirect_FromCallback", "ii", _:cb, true);
 	if (ret)
 	{
 		Indirect_Claim(cb);
