@@ -817,15 +817,28 @@ stock Iter_All_Internal(const array[], size, value)
 	#endif
 #endif
 
+iterfunc stock VehicleOccupant(vehicleid, bool:exclude_driver = false)
+{
+	FOREACH__ (new i : Player)
+	{
+		if (GetPlayerVehicleID(i) == vehicleid)
+		{
+			if (exclude_driver && GetPlayerVehicleSeat(i) == 0)
+			{
+				continue;
+			}
+			else
+			{
+				YIELD__ return i;
+			}
+		}
+	}
+}
+#define Iterator@VehicleOccupant iteryield
+
+#pragma deprecated Use VehicleOccupant
 iterfunc stock VehiclePassenger(vehicleid)
 {
-    FOREACH__ (new i : Player)
-    {
-        if (GetPlayerVehicleID(i) == vehicleid)
-        {
-            YIELD__ return i;
-        }
-    }
+    foreach (new i : VehicleOccupant(vehicleid)) YIELD__ return i;
 }
 #define Iterator@VehiclePassenger iteryield
-
