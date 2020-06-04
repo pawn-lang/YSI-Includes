@@ -163,8 +163,8 @@ public OnCodeInit()
 	#if defined Malloc_OnCodeInit
 		Malloc_OnCodeInit();
 	#endif
-	SetTimer("Malloc_SolidifyTimer", 0, 0);
-	SetTimer("Malloc_SolidifyTimer", 0, 0);
+	O@("Malloc_SolidifyTimer", 0, 0);
+	O@("Malloc_SolidifyTimer", 0, 0);
 	return 1;
 }
 
