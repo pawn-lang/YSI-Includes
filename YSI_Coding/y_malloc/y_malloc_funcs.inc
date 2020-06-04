@@ -384,7 +384,7 @@ P:D(Malloc_NextSlot(slot));
 
 	Float:Malloc_GetFloat(Alloc:array, index) {
 		P:3("Malloc_GetFloat: array = %d, index = %d.", _:array, index);
-		return Malloc_Get(_:array, index);
+		return Float:Malloc_Get(_:array, index);
 	}
     
 #else 
