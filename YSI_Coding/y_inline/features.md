@@ -611,6 +611,8 @@ HashPassword(const input[])
 }
 ```
 
+See below for an important note about string parameters.
+
 ## Checking
 
 ```pawn
@@ -624,4 +626,62 @@ CheckPassword(const input[], const hash[])
 	BCrypt_CheckInline(input, hash, using inline OnChecked);
 }
 ```
+
+See below for an important note about string parameters.
+
+# String Parameters
+
+When an inline function is called it can access variables from the surrounding function.  For
+example:
+
+```pawn
+OuterFunc(a)
+{
+	new b;
+	inline InnerFunc(c)
+	{
+		new d;
+		printf("%d, %d, %d, %d", a, b, c, d);
+	}
+}
+```
+
+But there are exceptions - pass-by-reference parameters.  Most importantly, that includes strings.
+Strings (`param[]`), arrays (`param[]`), references (`&param`), and varargs (`...`), are all pointers
+to elsewhere in memory.  But when an inline function is called that memory has probably changed in
+the meantime to something else entirely.  This means that using any of those from within an inline
+function might give rubbish or even crash.  Sadly, there's no easy way to fix this.  PawnPlus
+resolves this issue in `async` functions by making a copy of the whole of memory, which is an
+unacceptable performance loss IMHO, but does point to the better solution - make a copy of just the
+memory you need.
+
+Instead of:
+
+```pawn
+OuterFunc(string[])
+{
+	inline InnerFunc()
+	{
+		printf("%s", string);
+	}
+}
+```
+
+Simply cache the string like so:
+
+```pawn
+OuterFunc(outerString[])
+{
+	new innerString[32];
+	strcpy(innerString, outerString);
+	inline InnerFunc()
+	{
+		printf("%s", innerString);
+	}
+}
+```
+
+The function parameter `outerString` is somewhere else in memory.  The local variable `innerString`
+is on the stack, within the closure stored for the inline function.  This also means that you can
+modify `innerString` and the change will persist if the inline function is not `const`.
 
