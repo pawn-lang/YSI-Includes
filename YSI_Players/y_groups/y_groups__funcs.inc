@@ -219,33 +219,34 @@ GGLOBAL__ Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
 {
 	P:2(#_GROUP_MAKE_NAME<Group_Set...> " called: %i, %i, %i", _:g, _:el, s);
 	// Set wether a group can use this item.
-	if (0 <= _:el < _GROUP_MAKE_LIMIT && GROUP_MASK <= g <= GROUP_GLOBAL)
+	if (0 <= _:el < _GROUP_MAKE_LIMIT && g <= GROUP_GLOBAL)
 	{
 		// There is now NO validity check for reasons of distruibution.
 		GROUP_FIX(g);
 		new
 			slot = Bit_Slot(g),
 			Bit:mask = Bit_Mask(g);
+		P:5(#_GROUP_MAKE_NAME<Group_Set...> ": %i, %i", _:slot, _:mask);
 		if (s)
 		{
+			// Is this element in the current group?
 			YSI_gTempGroups = YSI_g_sElementMembership[_:el];
 			if (YSI_gTempGroups[slot] & mask)
 			{
 				// No point adding an element to a group that it is already in.
 				return 1;
 			}
-			// Is this element NOT in the current group?
-			Bit_Let(YSI_gTempGroups, _:g);
+			YSI_gTempGroups[slot] |= mask;
 		}
 		else
 		{
+			// Is this element NOT in the current group?
 			YSI_gTempGroups = YSI_g_sElementMembership[_:el];
 			if (!(YSI_gTempGroups[slot] & mask))
 			{
 				return 1;
 			}
-			// Is this element in the current group?
-			Bit_Vet(YSI_gTempGroups, _:g);
+			YSI_gTempGroups[slot] &= ~mask;
 		}
 		FOREACH__ (new playerid : Player)
 		{
@@ -276,7 +277,7 @@ GFOREIGN__ bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el);
 GGLOBAL__ bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el)
 {
 	P:2(#_GROUP_MAKE_NAME<Group_Get...> " called: %i, %i", _:g, _:el);
-	return (0 <= _:el < _GROUP_MAKE_LIMIT && GROUP_MASK <= g <= GROUP_GLOBAL && Bit_Get(YSI_g_sElementMembership[_:el], _:GROUP_TEMP_FIX(g)));
+	return (0 <= _:el < _GROUP_MAKE_LIMIT && g <= GROUP_GLOBAL && Bit_Get(YSI_g_sElementMembership[_:el], _:GROUP_TEMP_FIX(g)));
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -295,7 +296,7 @@ GFOREIGN__ Group_Set...Default(Group:g,bool:s);
 GGLOBAL__ Group_Set...Default(Group:g,bool:s)
 {
 	P:2(#_GROUP_MAKE_NAME<Group_Set...Default> " called: %i, %i", _:g, s);
-	if (GROUP_MASK <= g <= GROUP_GLOBAL)
+	if (g <= GROUP_GLOBAL)
 	{
 		// There is now NO validity check for reasons of distruibution.
 		GROUP_FIX(g);
@@ -375,7 +376,7 @@ GFOREIGN__ Group_Set...New(Group:g,bool:s);
 GGLOBAL__ Group_Set...New(Group:g,bool:s)
 {
 	P:2(#_GROUP_MAKE_NAME<Group_Set...New> " called: %i, %i", _:g, s);
-	if (GROUP_MASK <= g <= GROUP_GLOBAL)
+	if (g <= GROUP_GLOBAL)
 	{
 		// There is now NO validity check for reasons of distruibution.
 		Bit_Set(YSI_g_sDefaultMembership, _:GROUP_TEMP_FIX(g), s);
@@ -398,7 +399,7 @@ GFOREIGN__ Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el);
 
 GGLOBAL__ Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
 {
-	if (GROUP_MASK <= g <= GROUP_GLOBAL)
+	if (g <= GROUP_GLOBAL)
 	{
 		GROUP_FIX(g);
 		YSI_gTempGroups = YSI_g_sDefaultMembership;
@@ -429,7 +430,7 @@ GFOREIGN__ Iter_Func@Group_...(start, Group:g);
 GGLOBAL__ Iter_Func@Group_...(start, Group:g)
 {
 	P:3("Iter_Func@Group_... called: %i, %i", start, _:g);
-	if (GROUP_MASK <= g <= GROUP_GLOBAL)
+	if (g <= GROUP_GLOBAL)
 	{
 		GROUP_FIX(g);
 		new

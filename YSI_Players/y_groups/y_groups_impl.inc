@@ -190,7 +190,7 @@ static stock
 //	(0 <= (%0) < _MAX_GROUPS && Group_IsActive(%0))
 
 #define _Group_IsValid(%0) \
-	((_:GROUP_MASK<=_:(%0)<=_:GROUP_GLOBAL)&&(_Group_IsActive(GROUP_TEMP_FIX(%0))))
+	((_:(%0)<=_:GROUP_GLOBAL)&&(_Group_IsActive(GROUP_TEMP_FIX(%0))))
 
 //#define Group_IsActive(%0) 
 //	(YSI_gGroupData[_:GROUP_FIX(%0)][E_GROUP_DATA_FLAGS] & e_GROUP_FLAGS_ACTIVE)
@@ -620,7 +620,6 @@ static stock Bit:_Group_SetSome(playerid, group)
 			g = -1;
 		}
 	}
-	return YSI_gTempGroups;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -650,7 +649,8 @@ GLOBAL__ void:Group_SetPlayer(Group:g,p,bool:s)
 				// Added to a group they don't already have.  Make a new list of
 				// groups they're in, taking in to account the new groups
 				// hierarchy and pass that new array about.
-				broadcastfunc _Group_SetPlayer(p, _Group_SetSome(p, _:g), sizeof (YSI_gTempGroups));
+				_Group_SetSome(p, _:g);
+				broadcastfunc _Group_SetPlayer(p, YSI_gTempGroups, sizeof (YSI_gTempGroups));
 				return; //1;
 			}
 		}
@@ -1400,7 +1400,8 @@ GLOBAL__ void:Group_SetGroup(Group:g,Group:el,bool:s)
 			{
 				if (!_Group_HasPlayer(el, p))
 				{
-					broadcastfunc _Group_SetPlayer(p, _Group_SetSome(p, _:el), bits<_MAX_GROUPS_G>);
+					_Group_SetSome(p, _:el);
+					broadcastfunc _Group_SetPlayer(p, YSI_gTempGroups, bits<_MAX_GROUPS_G>);
 				}
 			}
 		}
@@ -1452,7 +1453,7 @@ FOREIGN__ bool:Group_GetGroup(Group:g,Group:el);
 GLOBAL__ bool:Group_GetGroup(Group:g,Group:el)
 {
 	P:2(#Group_GetGroup " called: %i, %i", _:g, _:el);
-	return (GROUP_MASK <= el <= GROUP_GLOBAL && GROUP_MASK <= g <= GROUP_GLOBAL && Bit_Get(YSI_g_sChildGroups[_:GROUP_TEMP_FIX(g)], _:GROUP_TEMP_FIX(el)));
+	return (el <= GROUP_GLOBAL && g <= GROUP_GLOBAL && Bit_Get(YSI_g_sChildGroups[_:GROUP_TEMP_FIX(g)], _:GROUP_TEMP_FIX(el)));
 }
 
 /*-------------------------------------------------------------------------*//**
