@@ -497,7 +497,7 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 			// Only encode the domain part.
 			if (!(-1 < idx < end)) idx = end;
 			static
-				ch;
+				ch = 0;
 			// There's no length parameter for "Puny_Encode", so we need a limit.
 			ch = url[idx],
 			_YSI_ConstMod(url[idx], '\0'),

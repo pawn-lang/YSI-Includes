@@ -106,10 +106,10 @@ static stock YVA2_DoPush(const skippedBytes, const pushedBytes, const pushRequir
 	// Used in reality, but copied to statics first.
 	#pragma unused pushedBytes, skippedBytes, pushRequirements
 	static
-		sReturnAddress,
-		sPushedParameters,
-		sParametersBase,
-		sTotalParameters;
+		sReturnAddress = 0,
+		sPushedParameters = 0,
+		sParametersBase = 0,
+		sTotalParameters = 0;
 	// Although "pushedBytes" is "const", we actually rewrite the value at
 	// the call site when the mode starts.  By default it is ALWAYS 0, because
 	// we have no way to determine the true value at compile time.  We must
@@ -298,7 +298,7 @@ static stock YVA2_CodeGenShiftCode(dest, src, end)
 static stock YVA2_CodeGenMainCleanup(ctx[AsmContext])
 {
 	static
-		sTemp;
+		sTemp = 0;
 	// Get the number of pushed parameters.
 	@emit POP.alt                 // 4
 	// Save the return value.

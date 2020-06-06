@@ -246,7 +246,7 @@ stock Bitmap_DrawRing(Bitmap:ctx, x, y, Float:inner, Float:outer, colour, const 
 		Float:outerMin = rootMax * rootMax,
 		Float:innerMax = inner + 1.0,
 		Float:rootMin = inner - 1.0,
-		Float:innerMin;
+		Float:innerMin = 0.0;
 	outerMax *= outerMax,
 	innerMax *= innerMax;
 	if (inner <= 0.0)

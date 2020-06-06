@@ -162,13 +162,13 @@ static stock
 	YSI_g_sCurHeap = 0,
 	YSI_g_sFailTests = 0,
 	YSI_g_sInTest = false,
-	YSI_g_sTestResult,
+	YSI_g_sTestResult = 0,
 	YSI_g_sFailMessage[512],
 	YSI_g_sPlayer = cellmax,
-	bool:YSI_gTestComplete,
-	bool:YSI_g_sAsked,
-	YSI_g_sTests,
-	YSI_g_sFails;
+	bool:YSI_gTestComplete = false,
+	bool:YSI_g_sAsked = false,
+	YSI_g_sTests = 0,
+	YSI_g_sFails = 0;
 
 stock
 	YSI_gCurTestName[32];
@@ -348,8 +348,8 @@ stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 	++YSI_g_sTests;
 	static
 		Testing_Test_msg[6],
-		Testing_Test_FRM,
-		Testing_Test_RET;
+		Testing_Test_FRM = 0,
+		Testing_Test_RET = 0;
 	if (!x)
 	{
 		++YSI_g_sFails;

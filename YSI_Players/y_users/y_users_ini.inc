@@ -97,7 +97,7 @@ enum E_USER_PRELOAD
 }
 
 static stock
-	YSI_g_sPlayerIndexFile,
+	YSI_g_sPlayerIndexFile = 0,
 	INI:YSI_g_sPlayerWriteFile = INI_NO_FILE,
 	YSI_g_sPlayerYID[MAX_PLAYERS] = {-2, ...},
 	YSI_g_sPreloadData[MAX_PLAYERS][E_USER_PRELOAD];
@@ -167,7 +167,7 @@ stock Player_Preload(string:name[], ret[E_USER_PRELOAD])
 	new
 		namelen = strlen(name),
 		filename[] = USER_FILE_PATH "ind_X.YSI",
-		File:fIndex;
+		File:fIndex = File:0;
 	Player_GetIndexFile(filename, name[0]);
 	fIndex = fopen(filename, io_read);
 	if (fIndex)
@@ -846,7 +846,7 @@ GLOBAL__ Player_TryRegister(playerid, string:password[])
 	//format(name, sizeof (name), "%" #MAX_PLAYER_NAME "s", name);
 	new
 		filename[64] = USER_FILE_PATH "ind_X.YSI",
-		File:fIndex;//,
+		File:fIndex = File:0;//,
 		//hash[MAX_PASSWORD_LENGTH + 1];
 	//Player_HashPass(password, hash);
 	Player_GetIndexFile(filename, name[0]);
@@ -969,7 +969,7 @@ static stock Player_RewritePreload(playerid)
 		new
 			namelen = strlen(name),
 			filename[] = USER_FILE_PATH "ind_X.YSI",
-			File:fIndex;
+			File:fIndex = File:0;
 		Player_GetIndexFile(filename, name[0]);
 		fIndex = fopen(filename, io_readwrite);
 		if (fIndex)

@@ -57,7 +57,7 @@ TEST_COMPILE__ y_utils()
 }
 
 static stock
-	gCalls_y_utils_va_return;
+	gCalls_y_utils_va_return = 0;
 
 forward y_utils_va_return(const str[]);
 

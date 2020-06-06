@@ -148,7 +148,7 @@ Optional plugins:
 #define _F<%0> (#%0)
 
 stock
-	InlineRet:YSI_gInlineRet;
+	InlineRet:YSI_gInlineRet = InlineRet:0;
 
 stock Callback_Return_(value)
 {
@@ -298,15 +298,15 @@ enum E_INLINE_DATA
 }
 
 static stock
-	YSI_g_sInlineEndPoint,
-	YSI_g_sJumpOffset,
-	YSI_g_sCallbackCallAddress,
+	YSI_g_sInlineEndPoint = 0,
+	YSI_g_sJumpOffset = 0,
+	YSI_g_sCallbackCallAddress = 0,
 	// This is the start of the linked list of inline functions.  Each time a
 	// function goes in to scope, the address of the local pointing to the
 	// function header data is pushed to this stack.  Each time a function goes
 	// out of scope a destructor is used to remove that inline from the list
 	// again.  TODO:  If there is a crash, clear this list.
-	YSI_g_sInlineLinkedList;
+	YSI_g_sInlineLinkedList = 0;
 
 stock I@T:I@T(const str[])
 {

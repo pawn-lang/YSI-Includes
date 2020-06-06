@@ -125,15 +125,15 @@ Optional plugins:
 
 static stock
 	YSI_g_sListSep[4] = ", ",
-	YSI_g_sFadeRedoTarget,
-	YSI_g_sFadeLength,
-	YSI_g_sFadeColour,
-	bool:YSI_g_sJustOne,
+	YSI_g_sFadeRedoTarget = 0,
+	YSI_g_sFadeLength = 0,
+	YSI_g_sFadeColour = 0,
+	bool:YSI_g_sJustOne = false,
 	YSI_g_sTempStyle[E_STYLE_DATA],
 	YSI_g_sTemp3D[E_3D_DATA],
-	YSI_g_sTempMaster,
+	YSI_g_sTempMaster = 0,
 	Text:YSI_g_sBaseTD = TEXT_DRAW_NO_NEXT,
-	gInitialColour;
+	gInitialColour = 0;
 
 /*-------------------------------------------------------------------------*//**
  * <transition keep="true" target="y_render_show : y_render_show_scm" />

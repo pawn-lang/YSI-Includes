@@ -71,7 +71,7 @@ Optional plugins:
 */
 
 static
-	gZone;
+	gZone = 0;
 
 // Test pulsing 1.
 PTEST_INIT__ GangZonePulse1(playerid)

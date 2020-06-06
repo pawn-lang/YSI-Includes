@@ -99,8 +99,8 @@ public
 // J@ is a "nul" target - send things there if they need ignoring or if a
 // parameter needs using.  I@ is too now.
 stock
-	I@,
-	J@;
+	I@ = 0,
+	J@ = 0;
 
 new
 	Q@[YSI_MAX_STRING];

@@ -1113,9 +1113,9 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
 				lap = YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_LAP],
 				cp = YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_CP] + start;
 				static
-					Float:x,
-					Float:y,
-					Float:z;
+					Float:x = 0.0,
+					Float:y = 0.0,
+					Float:z = 0.0;
 				GetPlayerPos(playerid, x, y, z);
 				// Get the player's (squared) distance to the next checkpoint.
 				x -= YSI_g_sRaceCheckpoints[cp][0];

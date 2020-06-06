@@ -407,7 +407,7 @@ enum _E_YCM
 		YSI_g_sModuleName[32];
 
 	static
-		YSI_g_sMasterCount,
+		YSI_g_sMasterCount = 0,
 		YSI_g_sMasterData[MAX_MASTERS];
 
 	stock Master_GetModuleName(ret[32])

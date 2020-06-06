@@ -179,10 +179,10 @@ public Styles_EntryTag()
 		name[MAX_XML_ENTRY_NAME],
 		val[MAX_XML_ENTRY_TEXT],
 		e_STYLE_TYPE:type = e_STYLE_TYPE_OTHER,
-		data,
-		colour,
-		id,
-		time;
+		data = 0,
+		colour = 0,
+		id = 0,
+		time = 0;
 	if (!XML_GetParentValue("name", val))
 	{
 		return 0;
@@ -326,12 +326,12 @@ public Styles_3DTag()
 		name[MAX_XML_ENTRY_NAME],
 		val[MAX_XML_ENTRY_TEXT],
 		#if !defined _inc_sscanf2 && !defined unformat
-			tmp,
+			tmp = 0,
 		#endif
-		Float:x,
-		Float:y,
-		Float:z,
-		e_3D_FLAGS:flags;
+		Float:x = 0.0,
+		Float:y = 0.0,
+		Float:z = 0.0,
+		e_3D_FLAGS:flags = e_3D_FLAGS:0;
 	if (YSI_g_sCur3D == MAX_3D_STYLES)
 	{
 		return -1;

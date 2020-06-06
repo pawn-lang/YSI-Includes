@@ -111,8 +111,8 @@ static stock
 	YSI_g_sFirstUVarData = -1,
 	// These three variables are used to speed up data loading through caching.
 	YSI_g_sLastName[32] = "\1\0",
-	YSI_g_sLastAddr,
-	YSI_g_sLastSize;
+	YSI_g_sLastAddr = 0,
+	YSI_g_sLastSize = 0;
 
 forward _y_svar_include_@();
 

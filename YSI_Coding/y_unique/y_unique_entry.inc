@@ -127,11 +127,11 @@ Optional plugins:
 		static stock const UNIQUE_SYMBOL_LESS_THAN_900 = UNIQUE_SYMBOL;
 		#include "y_unique__800_to_899"
 	#else
-		static stock const UNIQUE_SYMBOL_OTHER_VALUE;
+		static stock const UNIQUE_SYMBOL_OTHER_VALUE = cellmin;
 		#include "y_unique__900_to_999"
 	#endif
 #else
-	static stock const UNIQUE_SYMBOL_DOESNT_EXIST;
+	static stock const UNIQUE_SYMBOL_DOESNT_EXIST = cellmin;
 	#define UNIQUE_SYMBOL (0)
 	#define UNIQUE_FUNCTION<%0...%1> %0000%1
 #endif

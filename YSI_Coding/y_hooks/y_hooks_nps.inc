@@ -195,7 +195,7 @@ new
 	YSI_g_sNPSStack = 0;
 
 static
-	YSI_g_sTempRet;
+	YSI_g_sTempRet = 0;
 
 static stock YHNPS_Find(heap, end, value)
 {

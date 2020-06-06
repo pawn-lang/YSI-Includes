@@ -142,10 +142,10 @@ stock PlayerGroups(a, b)
 
 static
 	// Function pointers for chaining.
-	YSI_g_sNextInitFunc,
-	YSI_g_sNextUpdFunc,
-	YSI_g_sNextAddFunc,
-	YSI_g_sGroupCount;
+	YSI_g_sNextInitFunc = 0,
+	YSI_g_sNextUpdFunc = 0,
+	YSI_g_sNextAddFunc = 0,
+	YSI_g_sGroupCount = 0;
 
 static stock const
 	YSI_g_scGlobalName[] = "__GLOBAL",

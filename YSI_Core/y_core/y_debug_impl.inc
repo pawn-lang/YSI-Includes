@@ -574,7 +574,7 @@ P:D(Debug_Print7(const str[], GLOBAL_TAG_TYPES:...));
 
 stock Debug_Print0(const str[], GLOBAL_TAG_TYPES:...) <ysi_debug : on>
 {
-	static tmp1, tmp2;
+	static tmp1 = 0, tmp2 = 0;
 	#emit POP.pri
 	#emit STOR.pri     tmp1
 	#emit POP.alt

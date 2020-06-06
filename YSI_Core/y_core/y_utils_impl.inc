@@ -198,7 +198,7 @@ stock __TU(t, iters)
 // "Write To File", not another "WTF" meaning...
 stock y_profile_WTF(const name[], const timings[], iters, size = sizeof (timings))
 {
-	new File:fhnd;
+	new File:fhnd = File:0;
 	if (fexist(name))
 	{
 		// File already exists.  Append.
@@ -900,9 +900,9 @@ stock va_return(const fmat[], GLOBAL_TAG_TYPES:...)
 	#pragma unused fmat
 	
 	static
-		sFrm,
-		sRet,
-		sCnt,
+		sFrm = 0,
+		sRet = 0,
+		sCnt = 0,
 		scSize = YSI_MAX_STRING;
 	
 	// Store the function preamble.
@@ -1092,7 +1092,7 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest),
 		//sEncoding[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 		sEncoding[65 char] = !"DCBAHGFELKJIPONMTSRQXWVUbaZYfedcjihgnmlkrqpovutszyxw32107654/+98",
 		//tmp,
-		ret;
+		ret = 0;
 	num *= cellbytes;
 	if (len <= ceildiv(num, 3))
 	{
@@ -1281,8 +1281,8 @@ stock Base64Decode(dest[], const src[], len = sizeof (dest), offset = 0)
 			0x02010000, 0x06050403, 0x0A090807, 0x0E0D0C0B, 0x1211100F, 0x16151413, 0x00191817, 0x00000000,
 			0x1C1B1A00, 0x201F1E1D, 0x24232221, 0x28272625, 0x2C2B2A29, 0x302F2E2D, 0x00333231, 0x00000000
 		},
-		blocks,
-		num;
+		blocks = 0,
+		num = 0;
 	// Work out the final length.  Subtract some for incomplete bytes and
 	// insufficient destination data.
 	num = strlen(src);
@@ -1715,7 +1715,7 @@ stock InterpolateColour(startcolor, endcolor, value, maxvalue, minvalue = 0)
 {
     if (value >= maxvalue) return endcolor;
     if (value <= minvalue) return startcolor;
-	static r, g, b, a;
+	static r = 0, g = 0, b = 0, a = 0;
 	new
 		time  = maxvalue - minvalue,
 		stage = value    - minvalue;
@@ -1791,7 +1791,7 @@ static stock Utils_PreSort(arr[], num = sizeof (arr))
 {
 	// Very simple bubble sort (fast for pre-sorted arrays).
 	new
-		bool:sort;
+		bool:sort = false;
 	do
 	{
 		sort = false;

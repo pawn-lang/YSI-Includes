@@ -93,8 +93,8 @@ enum e_FLOOD_ACTION
 static
 	YSI_g_sPlayerIPs[MAX_PLAYERS],
 	YSI_g_sMaxConnections = -1,
-	e_FLOOD_ACTION:YSI_g_sConnectionAction,
-	YSI_g_sOnIncomingConnection;
+	e_FLOOD_ACTION:YSI_g_sConnectionAction = e_FLOOD_ACTION_NOTHING,
+	YSI_g_sOnIncomingConnection = 0;
 
 forward OnFloodLimitExceeded(ip[16], count);
 

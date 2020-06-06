@@ -73,7 +73,7 @@ Optional plugins:
 TEST__ y_bitmap_Fade1()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	for (new y = 0; y != 256; ++y)
 	{
@@ -89,7 +89,7 @@ TEST__ y_bitmap_Fade1()
 TEST__ y_bitmap_Fade2()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	for (new y = 0; y != 256; ++y)
 	{
@@ -106,7 +106,7 @@ TEST__ y_bitmap_Fade2()
 TEST__ y_bitmap_Rect1()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, Y_YELLOW | 0xFF);
 	Bitmap_Write(ctx, "y_bitmap_Rect1.bmp");
@@ -116,7 +116,7 @@ TEST__ y_bitmap_Rect1()
 TEST__ y_bitmap_Rect2()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 128, 192, Y_YELLOW | 0x80);
 	Bitmap_DrawRectangle(ctx, 128, 64, 192, 192, Y_ALICEBLUE | 0x80);
@@ -127,7 +127,7 @@ TEST__ y_bitmap_Rect2()
 TEST__ y_bitmap_Rect3()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 148, 192, Y_YELLOW | 0x80);
 	Bitmap_DrawRectangle(ctx, 108, 64, 192, 192, Y_ALICEBLUE | 0x80);
@@ -138,7 +138,7 @@ TEST__ y_bitmap_Rect3()
 TEST__ y_bitmap_FadeRect1()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	for (new y = 0; y != 256; ++y)
 	{
@@ -156,7 +156,7 @@ TEST__ y_bitmap_FadeRect1()
 TEST__ y_bitmap_Diagonal1()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	_BMP_PAT@DIAGONAL(0, 0, 0, 0, PATTERN(DIAGONAL, STRIPE1 = 4, STRIPE2 = 4));
 	for (new y = 0; y != 256; ++y)
@@ -183,7 +183,7 @@ TEST__ y_bitmap_Diagonal1()
 TEST__ y_bitmap_Diagonal2()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	_BMP_PAT@DIAGONAL(0, 0, 0, 0, PATTERN(DIAGONAL, STRIPE1 = 2, STRIPE2 = 2));
 	for (new y = 0; y != 256; ++y)
@@ -200,7 +200,7 @@ TEST__ y_bitmap_Diagonal2()
 TEST__ y_bitmap_Diagonal3()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	_BMP_PAT@DIAGONAL(0, 0, 0, 0, PATTERN(DIAGONAL, STRIPE1 = 3, STRIPE2 = 3));
 	for (new y = 0; y != 256; ++y)
@@ -217,7 +217,7 @@ TEST__ y_bitmap_Diagonal3()
 TEST__ y_bitmap_Diagonal4()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	_BMP_PAT@DIAGONAL(0, 0, 0, 0, PATTERN(DIAGONAL, STRIPE1 = 2, STRIPE2 = 4));
 	for (new y = 0; y != 256; ++y)
@@ -234,7 +234,7 @@ TEST__ y_bitmap_Diagonal4()
 TEST__ y_bitmap_Diagonal5()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	_BMP_PAT@DIAGONAL(0, 0, 0, 0, PATTERN(DIAGONAL, STRIPE1 = 4, STRIPE2 = 2));
 	for (new y = 0; y != 256; ++y)
@@ -251,7 +251,7 @@ TEST__ y_bitmap_Diagonal5()
 TEST__ y_bitmap_Diagonal6()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	_BMP_PAT@DIAGONAL(0, 0, 0, 0, PATTERN(DIAGONAL));
 	for (new y = 0; y != 256; ++y)
@@ -268,7 +268,7 @@ TEST__ y_bitmap_Diagonal6()
 TEST__ y_bitmap_Pattern1()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	for (new y = 0; y != 256; ++y)
 	{
@@ -286,7 +286,7 @@ TEST__ y_bitmap_Pattern1()
 TEST__ y_bitmap_Pattern2()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	for (new y = 0; y != 256; ++y)
 	{
@@ -304,7 +304,7 @@ TEST__ y_bitmap_Pattern2()
 TEST__ y_bitmap_Pattern3()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	for (new y = 0; y != 256; ++y)
 	{
@@ -322,7 +322,7 @@ TEST__ y_bitmap_Pattern3()
 TEST__ y_bitmap_Pattern4()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	for (new y = 0; y != 256; ++y)
 	{
@@ -340,7 +340,7 @@ TEST__ y_bitmap_Pattern4()
 TEST__ y_bitmap_Pattern5()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	for (new y = 0; y != 256; ++y)
 	{
@@ -358,7 +358,7 @@ TEST__ y_bitmap_Pattern5()
 TEST__ y_bitmap_Pattern6()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	for (new y = 0; y != 256; ++y)
 	{
@@ -376,7 +376,7 @@ TEST__ y_bitmap_Pattern6()
 TEST__ y_bitmap_Pattern7()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	for (new y = 0; y != 256; ++y)
 	{
@@ -394,7 +394,7 @@ TEST__ y_bitmap_Pattern7()
 TEST__ y_bitmap_Pattern8()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	for (new y = 0; y != 256; ++y)
 	{
@@ -412,7 +412,7 @@ TEST__ y_bitmap_Pattern8()
 TEST__ y_bitmap_Border1()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, 0, X11_ROYALBLUE);
 	Bitmap_Write(ctx, "y_bitmap_Border1.bmp");
@@ -422,7 +422,7 @@ TEST__ y_bitmap_Border1()
 TEST__ y_bitmap_Border2()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, 0, X11_ROYALBLUE, .linePattern = PATTERN(SOLID, BORDER = 16));
 	Bitmap_Write(ctx, "y_bitmap_Border2.bmp");
@@ -432,7 +432,7 @@ TEST__ y_bitmap_Border2()
 TEST__ y_bitmap_Border3()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, 0, X11_ROYALBLUE, .linePattern = PATTERN(DIAGONAL, BORDER = 32));
 	Bitmap_Write(ctx, "y_bitmap_Border3.bmp");
@@ -442,7 +442,7 @@ TEST__ y_bitmap_Border3()
 TEST__ y_bitmap_Border4()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, 0, X11_ROYALBLUE, .linePattern = PATTERN(DOTTED));
 	Bitmap_Write(ctx, "y_bitmap_Border4.bmp");
@@ -452,7 +452,7 @@ TEST__ y_bitmap_Border4()
 TEST__ y_bitmap_Border5()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, 0, X11_ROYALBLUE, .linePattern = PATTERN(DOTTED, STRIPE1 = 16, STRIPE2 = 4));
 	Bitmap_Write(ctx, "y_bitmap_Border5.bmp");
@@ -462,7 +462,7 @@ TEST__ y_bitmap_Border5()
 TEST__ y_bitmap_Border6()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(256, 256);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, 0, X11_ROYALBLUE, .linePattern = PATTERN(DOTTED, STRIPE1 = 1, STRIPE2 = 8));
 	Bitmap_Write(ctx, "y_bitmap_Border6.bmp");
@@ -472,7 +472,7 @@ TEST__ y_bitmap_Border6()
 TEST__ y_bitmap_Large1()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(512, 512);
 	Bitmap_DrawRectangle(ctx, 64, 64, 192, 192, Y_LAVENDER | 0xFF);
 	Bitmap_Write(ctx, "y_bitmap_Large1.bmp");
@@ -482,7 +482,7 @@ TEST__ y_bitmap_Large1()
 TEST__ y_bitmap_Large2()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(512, 512);
 	Bitmap_DrawRectangle(ctx, 0, 0, 256, 256, Y_LAVENDER | 0xFF);
 	Bitmap_Write(ctx, "y_bitmap_Large2.bmp");
@@ -492,7 +492,7 @@ TEST__ y_bitmap_Large2()
 TEST__ y_bitmap_Large3()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(512, 512);
 	Bitmap_DrawRectangle(ctx, 64, 64, 512, 512, Y_LAVENDER | 0xFF);
 	Bitmap_Write(ctx, "y_bitmap_Large3.bmp");
@@ -502,7 +502,7 @@ TEST__ y_bitmap_Large3()
 TEST__ y_bitmap_Large4()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(512, 512);
 	Bitmap_DrawRectangle(ctx, 64, 64, 70, 500, Y_LAVENDER | 0xFF);
 	Bitmap_Write(ctx, "y_bitmap_Large4.bmp");
@@ -512,7 +512,7 @@ TEST__ y_bitmap_Large4()
 TEST__ y_bitmap_Large5()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(512, 512);
 	Bitmap_DrawRectangle(ctx, 64, 64, 500, 70, Y_LAVENDER | 0xFF);
 	Bitmap_Write(ctx, "y_bitmap_Large5.bmp");
@@ -522,7 +522,7 @@ TEST__ y_bitmap_Large5()
 TEST__ y_bitmap_VLarge1()
 {
 	new
-		Bitmap:ctx;
+		Bitmap:ctx = Bitmap:0;
 	ctx = Bitmap_Create(1024, 1024);
 	Bitmap_DrawRectangle(ctx, 256, 256, 768, 768, Y_MINTCREAM | 0xFF);
 	Bitmap_Write(ctx, "y_bitmap_VLarge1.bmp");

@@ -267,8 +267,8 @@ stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignor
 		// pointers as 0...  I don't think there is a nice way to do this.
 		// if (AMX_Read(ptr + 4) || AMX_Read(ptr + 8)) return false;
 		static
-			ptr,
-			res;
+			ptr = 0,
+			res = 0;
 		// Add this entry to the correct binary tree.
 		P:5("HashMap_Add: mask = %d", hash & 0xFF);
 		new
@@ -378,7 +378,7 @@ stock HashMap_GetWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = fals
 		prev = ref(m[hash & 0xFF]),
 		next = 0;
 	static
-		res;
+		res = 0;
 	for ( ; ; )
 	{
 		#emit LREF.S.pri  prev

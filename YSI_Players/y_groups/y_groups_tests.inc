@@ -639,7 +639,7 @@ TEST__ y_groups_SetBalancedSingle()
 {
 	new
 		Group:g1 = Group_Create("Group 1"),
-		Group:result;
+		Group:result = Group:0;
 	call OnPlayerConnect(0);
 	
 	result = Group_SetBalanced(0, g1, Group:11);
@@ -652,7 +652,7 @@ TEST__ y_groups_SetBalancedSingle()
 TEST__ y_groups_SetBalancedInvalid()
 {
 	new
-		Group:result;
+		Group:result = Group:0;
 	call OnPlayerConnect(0);
 	
 	result = Group_SetBalanced(0, Group:99, Group:88);
@@ -671,9 +671,9 @@ TEST__ y_groups_SetBalancedInvalid()
 #include "..\..\YSI_Core\y_master"
 
 static
-	gPl,
-	gEl,
-	bool:gS;
+	gPl = 0,
+	gEl = 0,
+	bool:gS = false;
 
 Test_SetPlayer(el, playerid, bool:s)
 {

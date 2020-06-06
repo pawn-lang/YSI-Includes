@@ -122,7 +122,7 @@ enum E_XML_WRITE
 
 static stock
 	YSI_g_sXMLWriteBuffer[XML_WRITE_BUFFER_SIZE][E_XML_WRITE],
-	YSI_g_sXMLWritePointer,
+	YSI_g_sXMLWritePointer = 0,
 	YSI_g_sParameters[XML_BUFFER_SIZE][E_XML_PARA],
 	YSI_g_sHandlers[XML_MAX_XML_FILES][MAX_XML_HANDLERS][E_XML_HANDLER],
 	YSI_g_sCurHandler[XML_MAX_XML_FILES] = {-1, ...},
@@ -158,7 +158,7 @@ stock XML:XML_New()
 {
 	P:3("XML:XML_New called");
 	new
-		XML:i;
+		XML:i = XML:0;
 	while (i < XML_MAX_XML_FILES && YSI_g_sCurHandler[i] != -1) i++;
 	if (i == XML_MAX_XML_FILES) return NO_XML_FILE;
 	YSI_g_sCurHandler[i] = 0;

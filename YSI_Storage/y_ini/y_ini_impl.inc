@@ -103,23 +103,23 @@ enum e_INI_LINE_TYPE:
 
 // Variables for reading.
 _Y_INI_STATIC stock
-	Alloc:YSI_g_sExtendedLine,
+	Alloc:YSI_g_sExtendedLine = NO_ALLOC,
 	YSI_g_sExtendedName[MAX_INI_ENTRY_NAME],
-	YSI_g_sExtra,
+	YSI_g_sExtra = 0,
 	YSI_g_sFile[32],
 	YSI_g_sTag[32],
 	YSI_g_sFormat[32],
-	bool:YSI_g_sRemote,
+	bool:YSI_g_sRemote = false,
 	YSI_g_sCurLine[MAX_INI_LINE];
 
 // Variables for callbacks.
 static stock
-	Func:YSI_g_sCB_issss<issss>,
-	Func:YSI_g_sCB_isss<isss>,
-	Func:YSI_g_sCB_iss<iss>,
-	Func:YSI_g_sCB_ssss<ssss>,
-	Func:YSI_g_sCB_sss<sss>,
-	Func:YSI_g_sCB_ss<ss>;
+	Func:YSI_g_sCB_issss<issss> = Func:0<issss>,
+	Func:YSI_g_sCB_isss<isss>   = Func:0<isss>,
+	Func:YSI_g_sCB_iss<iss>     = Func:0<iss>,
+	Func:YSI_g_sCB_ssss<ssss>   = Func:0<ssss>,
+	Func:YSI_g_sCB_sss<sss>     = Func:0<sss>,
+	Func:YSI_g_sCB_ss<ss>       = Func:0<ss>;
 
 // Variables for writing.
 _Y_INI_STATIC stock
@@ -129,11 +129,11 @@ _Y_INI_STATIC stock
 	Alloc:YSI_g_sINITagBuffer[INI:INI_MAX_WRITES],
 	Alloc:YSI_g_sINICurrentTag[INI:INI_MAX_WRITES],
 	// The data being dumped.
-	Alloc:YSI_g_sCurrentTag,
-	INI:YSI_g_sCurrentINI,
-	File:YSI_g_sCurrentFile,
-	bool:YSI_g_sNL,
-	bool:YSI_g_sTagNeeded;
+	Alloc:YSI_g_sCurrentTag = NO_ALLOC,
+	INI:YSI_g_sCurrentINI = INI:0,
+	File:YSI_g_sCurrentFile = File:0,
+	bool:YSI_g_sNL = false,
+	bool:YSI_g_sTagNeeded = false;
 
 forward bool:INI_FindCallback(const cb[]);
 
@@ -824,7 +824,7 @@ stock INI:INI_Open(const filename[])
 		P:W("INI_Open could not find or create file %s", filename);
 	}
 	new
-		INI:i;
+		INI:i = INI:0;
 	while (i != INI:INI_MAX_WRITES && YSI_g_sINITagBuffer[i])
 	{
 		++i;
@@ -1790,7 +1790,7 @@ static stock INI_HandleEnd() <y_ini:y_ini_writing_fast, y_ini:y_ini_writing_slow
 	// Dump the remaining data.
 	INI_DumpTag(YSI_g_sCurrentTag);
 	new
-		Alloc:tag,
+		Alloc:tag = NO_ALLOC,
 		Alloc:next = YSI_g_sINITagBuffer[YSI_g_sCurrentINI];
 	while (next)
 	{

@@ -1058,9 +1058,9 @@ stock
 stock Vehicle_Speed(vehicleid)
 {
 	static 
-		Float:Vx,
-		Float:Vy,
-		Float:Vz
+		Float:Vx = 0.0,
+		Float:Vy = 0.0,
+		Float:Vz = 0.0
 	;
 	GetVehicleVelocity(vehicleid, Vx, Vy, Vz);
 	return floatround((floatsqroot((Vx * Vx) + (Vy * Vy) + (Vz * Vz)) * 136.666667));

@@ -302,7 +302,7 @@ TEST__ y_inline12()
 }
 
 static stock
-	YSI_g_sRemoteTestVar;
+	YSI_g_sRemoteTestVar = 0;
 
 TEST__ y_inline13()
 {
@@ -537,7 +537,7 @@ TEST__ CallStoredFunction0()
 // Test inline functions inside hooks, in which the parameter counts are mangled
 // so can't be used to allocate memory.
 static
-	YSI_g_sInlineTestVar0;
+	YSI_g_sInlineTestVar0 = 0;
 
 HOOK__ y_inline_InHook0@0()
 {
@@ -679,8 +679,8 @@ TEST__ y_inline_InHook2()
 }
 
 static stock
-	YSI_g_sInlineTestVar2,
-	YSI_g_sInlineTestVar3,
+	YSI_g_sInlineTestVar2 = 0,
+	YSI_g_sInlineTestVar3 = 0,
 	YSI_g_sInlineTestCB[E_CALLBACK_DATA];
 
 static stock y_inline_Getter(callback:cb)

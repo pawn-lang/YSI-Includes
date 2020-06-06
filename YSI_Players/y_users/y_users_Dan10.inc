@@ -115,13 +115,13 @@ enum E_USER_PRELOAD
 }
 
 static stock
-	YSI_g_sCurrentYID,
-	YSI_g_sModeNameLength,
+	YSI_g_sCurrentYID = 0,
+	YSI_g_sModeNameLength = 0,
 	YSI_g_sSQLBuffer[2048],
 	YSI_g_sSQLQuery[256],
-	SQL:YSI_g_sPreloadHandle,
-	SQL:YSI_g_sLoadHandle,
-	SQL:YSI_g_sWriteHandle,
+	SQL:YSI_g_sPreloadHandle = SQL:0,
+	SQL:YSI_g_sLoadHandle = SQL:0,
+	SQL:YSI_g_sWriteHandle = SQL:0,
 	YSI_g_sPlayerYID[MAX_PLAYERS] = {-2, ...},
 	YSI_g_sPreloadData[MAX_PLAYERS][E_USER_PRELOAD];
 
@@ -1198,7 +1198,7 @@ static stock Player_RewritePreload(playerid)
 		new
 			namelen = strlen(name),
 			filename[] = USER_FILE_PATH "ind_X.YSI",
-			File:fIndex;
+			File:fIndex = File:0;
 		Player_GetIndexFile(filename, name[0]);
 		fIndex = fopen(filename, io_readwrite);
 		if (fIndex)

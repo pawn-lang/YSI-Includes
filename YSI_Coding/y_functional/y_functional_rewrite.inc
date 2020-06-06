@@ -72,10 +72,10 @@ Optional plugins:
 
 static stock
 	YSI_g_sFunctionalLastEnd = cellmin,
-	YSI_g_sFunctionalExpectedDepth,
-	YSI_g_sFunctionalStartPos,
-	YSI_g_sFunctionalEndPos,
-	YSI_g_sFunctionalAfterPos;
+	YSI_g_sFunctionalExpectedDepth = 0,
+	YSI_g_sFunctionalStartPos = 0,
+	YSI_g_sFunctionalEndPos = 0,
+	YSI_g_sFunctionalAfterPos = 0;
 
 //static stock Functional_AddToStack()
 //{

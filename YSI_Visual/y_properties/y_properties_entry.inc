@@ -174,10 +174,10 @@ static
 	BitArray:YSI_g_sPlayerProperties[MAX_PLAYERS]<MAX_PROPERTIES>,
 	YSI_g_sSpawnWeapons[MAX_PLAYERS][13],
 	YSI_g_sShopMenu[MAX_PLAYERS][E_PROP_AMMU],
-	YSI_g_sRebuyDelay,
+	YSI_g_sRebuyDelay = 0,
 	#if defined _YSI_VISUAL_PICKUPS
 		YSI_g_sPickupPointers[MAX_DYN_PICKUPS],
-		YSI_g_sPickupProps,
+		YSI_g_sPickupProps = 0,
 		YSI_g_sPickupTimer[MAX_PLAYERS] = {-1, ...},
 		YSI_g_sPlayerPickup[MAX_PLAYERS] = {NO_PICKUP, ...},
 	#endif
@@ -2102,7 +2102,7 @@ ptask Property_Loop[500](i)
 							}
 							else
 							{
-								new Float:health;
+								new Float:health = 0.0;
 								GetPlayerHealth(i, health);
 								SetPlayerHealth(i, health - YSI_g_sProperties[property][E_PROP_DATA_DATA_2]);
 							}

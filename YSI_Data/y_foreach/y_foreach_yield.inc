@@ -35,13 +35,13 @@ enum E_ITER_YIELD
 static stock
 	YSI_g_sIteratorStack[MAX_NESTED_ITERATORS][E_ITER_YIELD],
 	YSI_g_sStack[MAX_YIELD_MEMORY],
-	YSI_g_sStackPtr;
+	YSI_g_sStackPtr = 0;
 
 stock
 	YSI_gIteratorDepth = -1;
 
 static
-	YSI_g_sPtr;
+	YSI_g_sPtr = 0;
 #pragma unused YSI_g_sPtr
 
 /**
@@ -165,8 +165,8 @@ stock bool:Iter_YieldEnter()
  */
 
 static stock
-	size_l,
-	src_l;
+	size_l = 0,
+	src_l = 0;
 
 stock bool:Iter_YieldLoop()
 {

@@ -71,7 +71,7 @@ Optional plugins:
 */
 
 static
-	YSI_g_sValue;
+	YSI_g_sValue = 0;
 
 #if !defined CHAIN_ORDER
 	#define CHAIN_ORDER() 0
@@ -625,7 +625,7 @@ TEST__ y_hooks_IsolateName2()
 	#undef FUNC
 }
 
-static g_y_hooksVar;
+static g_y_hooksVar = 0;
 
 TEST__ y_hooks_Customs()
 {

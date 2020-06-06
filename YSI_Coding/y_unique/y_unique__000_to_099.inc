@@ -70,7 +70,7 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
-static stock const Y_UNIQUE_000_to_099_CALLED;
+static stock const Y_UNIQUE_000_to_099_CALLED = cellmin;
 
 #if defined _inc_y_unique__000_to_099
 	#undef _inc_y_unique__000_to_099

@@ -129,7 +129,7 @@ PTEST__ Timer1(playerid)
 }
 
 static
-	Timer:sgTimer;
+	Timer:sgTimer = Timer:0;
 
 PTEST__ Timer2(playerid)
 {

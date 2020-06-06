@@ -316,7 +316,7 @@ TEST__ y_commands_Hashing()
 }
 
 static
-	gSomeVar;
+	gSomeVar = 0;
 
 YCMD:y_commands_1(playerid, cmdtext[], help)
 {
@@ -386,9 +386,9 @@ TEST__ y_commands_4()
 }
 
 static stock
-	YSI_gsPlayerid,
+	YSI_gsPlayerid = 0,
 	YSI_gsParams[32],
-	YSI_gsHelp;
+	YSI_gsHelp = 0;
 
 YCMD:y_commands_reprocess(playerid, params[], help)
 {

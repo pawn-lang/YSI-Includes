@@ -1646,7 +1646,7 @@ GLOBAL__ Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz)
 		slot = 0,
 		prev = header,
 		done = 0,
-		Float:cur,
+		Float:cur = 0.0,
 		Float:minx = FLOAT_INFINITY,
 		Float:miny = FLOAT_INFINITY,
 		Float:maxx = FLOAT_NEGATIVE_INFINITY,
@@ -1780,9 +1780,9 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
 	ptask Area_Loop[200](playerid)
 	{
 		new
-			Float:x,
-			Float:y,
-			Float:z,
+			Float:x = 0.0,
+			Float:y = 0.0,
+			Float:z = 0.0,
 			area = YSI_g_sPlayerArea[playerid],
 			world = GetPlayerVirtualWorld(playerid);
 		GetPlayerPos(playerid, x, y, z);
@@ -1813,13 +1813,13 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
 			// than the max that is globally stored, but still not infinate).
 			sAreas[16],
 			sZones[9],
-			Float:sX,
-			Float:sY,
-			Float:sZ,
-			sCur,
-			sNext,
-			sW,
-			sAlready;
+			Float:sX = 0.0,
+			Float:sY = 0.0,
+			Float:sZ = 0.0,
+			sCur = 0,
+			sNext = 0,
+			sW = 0,
+			sAlready = 0;
 		new
 			in = 0,
 			idx = 0;

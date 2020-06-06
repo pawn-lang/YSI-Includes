@@ -104,7 +104,7 @@ static stock
 	Language:YSI_g_sPlayerLanguage[MAX_PLAYERS] = {NO_LANGUAGE, ...},
 	YSI_g_sLanguageCodes[YSI_MAX_STRING],
 	YSI_g_sLanguages[YSI_MAX_LANGUAGES][MAX_LANGUAGE_NAME],
-	Language:YSI_g_sLanguageCount;
+	Language:YSI_g_sLanguageCount = Language:0;
 
 /*-------------------------------------------------------------------------*//**
  * <summary>-</summary>

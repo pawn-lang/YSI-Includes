@@ -1,5 +1,5 @@
 static
-	YSI_g_sVariable;
+	YSI_g_sVariable = 0;
 
 static stock y_va_CallRemoteFunction(va_args<>)
 {

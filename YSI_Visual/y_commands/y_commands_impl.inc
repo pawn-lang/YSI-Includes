@@ -150,7 +150,7 @@ static stock __declspec(dist_special) PlayerArray:YSI_g_sDisabledPlayers<MAX_PLA
 static stock
 	YSI_g_sCurrentID = COMMAND_NOT_FOUND,
 	BitArray:YSI_g_sPrefixes<128>,
-	YSI_g_sHighestID,
+	YSI_g_sHighestID = 0,
 	YSI_g_sReturnBuffer[YSI_MAX_STRING],
 	// Quickly reference and store commands by name.
 	HashMap:YSI_g_sCommandMap<>;
@@ -380,7 +380,7 @@ GLOBAL__ Command_AddAlt(oidx, const string:cmd[])
 {
 	static
 		sCmd[64],
-		sHash;
+		sHash = 0;
 
 	if (!_Command_IsValid(oidx)) return COMMAND_NOT_FOUND;
 	// Check the pointer is valid.
@@ -454,10 +454,10 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 {
 	static
 		sCmd[64] = "@yC_",
-		sPos,
-		sRet,
-		sHash,
-		e_COMMAND_ERRORS:sErr;
+		sPos = 0,
+		sRet = 0,
+		sHash = 0,
+		e_COMMAND_ERRORS:sErr = COMMAND_ZERO_RET;
 	// Check that the input is a valid command.  Note that changing the command
 	// prefix here would be VERY trivial!
 	if ((sRet = _:_Command_IsPrefix(c[0]))) // Relies on "true = 1" later on!
@@ -701,7 +701,7 @@ GLOBAL__ Command_Find(const string:cmd[])
 {
 	static
 		sCmd[64] = "",
-		sHash;
+		sHash = 0;
 
 	Puny_EncodeHash(sCmd, cmd, sHash, .delimiter = '@');
 

@@ -128,7 +128,7 @@ Optional plugins:
 
 static stock
 	YSI_g_sPropVarArg[3] = YSIM_VARARG,
-	YSI_g_sCallData;
+	YSI_g_sCallData = 0;
 
 static stock const
 	YSI_g_sPropCaller[] = YSIM_CALLER,
@@ -235,7 +235,7 @@ stock K@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		#emit SYSREQ.C     strunpack
 		
 		// Get all the varargs (without using our corrupted stack).
-		static i, j, ch;
+		static i = 0, j = 0, ch = 0;
 		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
 		{
 			YSI_g_sPropVarArg[1] = '@' + ++j,
@@ -350,7 +350,7 @@ stock D@(const function[], const fmat[], GLOBAL_TAG_TYPES:...)
 		#emit STOR.pri     YSI_g_sCallData
 		
 		// Get all the varargs (without using our corrupted stack).
-		static i, j, ch;
+		static i = 0, j = 0, ch = 0;
 		for (i = j = 0; (ch = fmat[i]); ++i) if (ch == 'd')
 		{
 			YSI_g_sPropVarArg[1] = '@' + ++j,

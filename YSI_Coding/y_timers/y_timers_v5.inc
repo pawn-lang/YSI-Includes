@@ -37,7 +37,7 @@ enum E_TIMER_ACTION
 #endif
 
 static stock
-	YSI_g_sPTaskCount,
+	YSI_g_sPTaskCount = 0,
 	YSI_g_sPTasks[MAX_PTASKS];
 
 #if 0

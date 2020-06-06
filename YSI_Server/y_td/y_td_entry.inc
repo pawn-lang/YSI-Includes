@@ -163,7 +163,7 @@ static stock
 	YSI_g_sTDDisplay[Text:MAX_TEXT_DRAWS][E_TD_DISPLAY],
 	//YSI_g_sTDTimers[Text:MAX_TEXT_DRAWS][MAX_PLAYERS],
 	// This is actually dual purpose.
-	Text:YSI_g_sUnused,
+	Text:YSI_g_sUnused = Text:0,
 	BitArray:YSI_g_sPlayerDraws[MAX_PLAYERS]<_:MAX_TEXT_DRAWS>;
 	//Bit:YSI_g_sPlayerDraws[MAX_PLAYERS][Bit_Bits(MAX_TEXT_DRAWS)];
 
@@ -216,7 +216,7 @@ HOOK__ OnScriptInit()
 			//XML_AddHandler(YSI_g_sXMLRules, "style", "TD_Style");
 		}
 	}
-	for (new Text:i; Text:i < Text:MAX_TEXT_DRAWS; i++)
+	for (new Text:i = Text:0; Text:i < Text:MAX_TEXT_DRAWS; i++)
 	{
 		YSI_g_sTDDisplay[i][E_TD_DISPLAY_REAL] = Text:INVALID_TEXT_DRAW;
 		YSI_g_sTDDisplay[i][E_TD_DISPLAY_NEXT] = i + Text:1;
@@ -310,7 +310,7 @@ stock Style:TD_Create(Float:x = 0.0, Float:y = 0.0, Float:letterX = 0.48, Float:
 {
 	P:3("Text:TD_Create called: %f, %f, %f, %f, %f, %f, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, \"%s\"", x, y, letterX, letterY, textX, textY, colour, boxColour, bgColour, shadow, outline, align, font, _:proportional, _:box, time, name);
 	new
-		Style:i;
+		Style:i = Style:0;
 	while (_TD_IsValid(i))
 	{
 		++i;
@@ -364,7 +364,7 @@ public TD_Textdraw()
 			name[MAX_XML_ENTRY_NAME],
 			val[MAX_XML_ENTRY_TEXT];
 		new
-			e_TD_BITS:bits,
+			e_TD_BITS:bits = e_TD_BITS:0,
 			// Bernstein hash of 1.
 			hash = -32;
 		// !"\1"
@@ -491,7 +491,7 @@ stock Style:TD_GetNamed(const name[])
 		hash = bernstein(name);
 	P:3("Text:TD_GetID called: %i", hash);
 	new
-		Style:i;
+		Style:i = Style:0;
 	while (i != MAX_TEXT_DRAW_STYLES && YSI_g_sTDData[i][E_TD_DATA_HASH] != hash)
 	{
 		++i;
@@ -507,7 +507,7 @@ stock Style:TD_GetID(hash)
 {
 	P:3("Text:TD_GetID called: %i", hash);
 	new
-		Style:i;
+		Style:i = Style:0;
 	while (i != MAX_TEXT_DRAW_STYLES && YSI_g_sTDData[i][E_TD_DATA_HASH] != hash)
 	{
 		++i;
@@ -531,7 +531,7 @@ stock Style:TD_Clone(Style:styleID, const name[] = "\1")
 		return MAX_TEXT_DRAW_STYLES;
 	}
 	new
-		Style:i;
+		Style:i = Style:0;
 	while (_TD_IsValid(i))
 	{
 		i++;

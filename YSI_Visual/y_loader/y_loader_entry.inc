@@ -78,8 +78,8 @@ static stock
 	#if defined _YSI_VISUAL_OBJECTS
 		YSI_g_sRaceObjects[ceildiv(MAX_DYN_OBJECTS, 4)] = {-1, ...},
 	#endif
-	YSI_g_sCurRace,
-	YSI_g_sCurWorld;
+	YSI_g_sCurRace = 0,
+	YSI_g_sCurWorld = 0;
 
 forward Loader_Spawn();
 forward Loader_Check();
@@ -301,9 +301,9 @@ public Loader_Check()
 			name[MAX_XML_ENTRY_NAME],
 			val[MAX_XML_ENTRY_TEXT];
 		new
-			Float:x,
-			Float:y,
-			Float:z;
+			Float:x = 0.0,
+			Float:y = 0.0,
+			Float:z = 0.0;
 		while (XML_GetKeyValue(name, val))
 		{
 			if (!strcmp(name, "position", true))
@@ -338,10 +338,10 @@ public Loader_Spawn()
 			name[MAX_XML_ENTRY_NAME],
 			val[MAX_XML_ENTRY_TEXT];
 		new
-			Float:x,
-			Float:y,
-			Float:z,
-			Float:rz;
+			Float:x = 0.0,
+			Float:y = 0.0,
+			Float:z = 0.0,
+			Float:rz = 0.0;
 		while (XML_GetKeyValue(name, val))
 		{
 			if (!strcmp(name, "position", true))

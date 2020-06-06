@@ -95,7 +95,7 @@ static stock
 	YSI_g_sClasses[MAX_CLASSES][E_CLASS],
 	YSI_g_sPlayerClass[MAX_PLAYERS],
 	YSI_g_sInternalClass[MAX_PLAYERS],
-	YSI_g_sClassCount,
+	YSI_g_sClassCount = 0,
 	YSI_g_sLastRefuse[MAX_PLAYERS];
 
 stock Class_ResolveGroups(class, Group:forgroup, bool:cp) <YSI_has_groups : n>

@@ -147,7 +147,7 @@ enum E_TEXT_ENTRY
 
 static stock
 	HashMap:YSI_g_sTextMap<>,
-	YSI_g_sTextLength,
+	YSI_g_sTextLength = 0,
 	YSI_g_sTextSets[Y_TEXT_MAX_SETS][E_TEXT_SETS],
 	YSI_g_sTextEntries[MAX_TEXT_ENTRIES][E_TEXT_ENTRY],
 	YSI_g_sTextStrings[MAX_TEXT_ENTRIES * _:YSI_MAX_LANGUAGES][MAX_INI_ENTRY_TEXT / 2],
@@ -274,7 +274,7 @@ static stock Text_LoadAll()
 	new
 		idx = 0,
 		buffer[32],
-		pos;
+		pos = 0;
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, _A<@yX_>)))
 	{
 		strunpack(buffer, buffer);
@@ -342,7 +342,7 @@ static stock bool:Text_InsertString(target[][], const str[], slot, number)
 	new
 		insert[3] = { '\05', 0, 0 },
 		oldlen = strlen(target[slot]) + 1,
-		largest;
+		largest = 0;
 	printf("%d %d %d %d %d", target[slot][0], target[slot][1], target[slot][2], target[slot][3], target[slot][4]);
 	// "oldlen" is +1 to cater for "NULL".  If the existing string doesn't
 	// begin with `\05`, it was not an extendable string.
@@ -440,7 +440,7 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 				fhash = YSI_g_sTextSets[i][E_TEXT_SETS_HASH],
 				len = strlen(name),
 				slot = name[--len],
-				number,
+				number = 0,
 				hash = 1;
 			P:6("Text_INILoad: Get Number");
 			// Find trailing numbers - they are used to concatenate strings, not
@@ -506,7 +506,7 @@ static stock Text_CompressLoaded(strings[][])
 	Jagged_PrintHeader(YSI_g_sTextStrings);
 	P:4("Text_CompressLoaded called");
 	// Remove all the "\05;\number;"s from the strings, now they are all loaded.
-	for (new i = 0, pos; i != YSI_g_sUnusedSlot; ++i)
+	for (new i = 0, pos = 0; i != YSI_g_sUnusedSlot; ++i)
 	{
 		while ((pos = strfind(strings[i], "\05;")) != -1)
 			strdel(strings[i], pos, pos + 2);
@@ -724,8 +724,8 @@ static stock Text_GetText(search[], name[], Language:l)
 	//static
 	//	ret[MAX_INI_ENTRY_TEXT];
 	new
-		pos,
-		lst;
+		pos = 0,
+		lst = 0;
 	state y_text_get_text:y;
 	while (search[lst])
 	{
@@ -822,7 +822,7 @@ static stock Text_AddEntry(set, name[], value[], hash)
 	// Insert the identifier.
 	new
 		idx = YSI_g_sTextSets[set][E_TEXT_SETS_INDEX],
-		next;
+		next = 0;
 	if (idx == -1)
 	{
 		YSI_g_sTextSets[set][E_TEXT_SETS_INDEX] = entry;
@@ -878,8 +878,8 @@ stock Text_DebugAllText()
 	for (new i = 0; i != YSI_g_sUnusedSlot; ++i)
 	{
 		new
-			next,
-			cur;
+			next = 0,
+			cur = 0;
 		printf("%d %d %d %d", i, cur, next, YSI_g_sUnusedSlot);
 		Text_GetCurNextOffset(i, cur, next);
 		printf("Offset: %d, Length: %d", cur, (next - cur) / 4);
@@ -938,9 +938,9 @@ static stock Text_IsLocalOwner(search[], const ident[], &len)
 	// First, find out if this script owns it's own text for speed reasons, and
 	// if it does, save the handle to the text set.
 	new
-		pos,
-		lst,
-		hash;
+		pos = 0,
+		lst = 0,
+		hash = 0;
 	while (search[lst])
 	{
 		pos = strfind(search[lst], "|");
@@ -991,9 +991,9 @@ stock _Text_Send(@PlayerSet:players, search[], ident[], GLOBAL_TAG_TYPES:...)
 	YSI_g_sTextLength = MAX_SINGLE_TEXT_ITEM - 1;
 	new
 		bool:wasOnce[YSI_MAX_LANGUAGES] = {false, ...},
-		maxlen,
-		source,
-		ret;
+		maxlen = 0,
+		source = 0,
+		ret = 0;
 	switch (search[0])
 	{
 		case '\1':
@@ -1071,9 +1071,9 @@ stock _Text_Render(playerid, search[], ident[], GLOBAL_TAG_TYPES:...)
 {
 	YSI_g_sTextLength = MAX_SINGLE_TEXT_ITEM - 1;
 	new
-		maxlen,
-		source,
-		ret;
+		maxlen = 0,
+		source = 0,
+		ret = 0;
 	switch (search[0])
 	{
 		case '\1':
@@ -1129,9 +1129,9 @@ stock _Text_DialogBox(@PlayerSet:players, style, Func:callback<iiiis>, csearch[]
 	new
 		bool:wasOnce[YSI_MAX_LANGUAGES] = {false, ...},
 		bool:gotExtras[YSI_MAX_LANGUAGES] = {false, ...},
-		maxlen,
-		source,
-		ret;
+		maxlen = 0,
+		source = 0,
+		ret = 0;
 	if (isearch[0] == '\1' || csearch[0] == '\1' || b1search[0] == '\1' || (b2ident[0] && b2search[0] == '\1')
 	{
 		// Null - error.

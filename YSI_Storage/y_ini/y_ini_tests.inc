@@ -350,7 +350,7 @@ TEST__ Trim1()
 }
 
 static stock
-	YSI_g_sINI_Parse0;
+	YSI_g_sINI_Parse0 = 0;
 
 forward TestINI_Parse0_test1(key[], value[]);
 
@@ -609,7 +609,7 @@ TEST__ INI_Parse11()
 TEST__ INI_Parse12()
 {
 	static
-		a;
+		a = 0;
 	inline const F_tag2_test1(string:key[], string:value[])
 	{
 		#pragma unused key, value
@@ -804,12 +804,12 @@ static stock DoINI_Int3()
 }
 
 static stock
-	gs_K0,
-	gs_K1,
-	gs_K2,
-	gs_K3,
-	gs_K4,
-	gs_K5;
+	gs_K0 = 0,
+	gs_K1 = 0,
+	gs_K2 = 0,
+	gs_K3 = 0,
+	gs_K4 = 0,
+	gs_K5 = 0;
 
 forward INI_PUB_Inl_(string:name[], string:value[]);
 

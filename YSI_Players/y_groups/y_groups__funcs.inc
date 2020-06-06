@@ -108,9 +108,9 @@ static stock
 	BitArray:YSI_g_sElementMembership[_GROUP_MAKE_LIMIT]<_:_MAX_GROUPS_G>,
 	BitArray:YSI_g_sDefaultMembership<_:_MAX_GROUPS_G>,
 	BitArray:YSI_g_sEmpty<_:_MAX_GROUPS_G>,
-	_yGI,
-	_yGU,
-	_yGA;
+	_yGI = 0,
+	_yGU = 0,
+	_yGA = 0;
 
 //// Define the callback chaining for the current 
 //#if defined _YSI_HAS_y_groups
