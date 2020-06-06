@@ -88,7 +88,7 @@ YCMD:language(playerid, params[], help)
 	else
 	{
 		new
-			lang;
+			lang = 0;
 		if (sscanf(params, "i", lang))
 		{
 			new

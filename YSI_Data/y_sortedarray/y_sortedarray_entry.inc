@@ -98,7 +98,7 @@ stock bool:_Sorted_Contains(arr[], last, value)
 {
 	new
 		first = 0,
-		mid;
+		mid = 0;
 	while (first < last)
 	{
 		mid = (first + last - 1) / 2;
@@ -132,7 +132,7 @@ stock _Sorted_FindInsert(arr[], last, value)
 {
 	new
 		first = 0,
-		mid;
+		mid = 0;
 	while (first < last)
 	{
 		mid = (first + last - 1) / 2;
@@ -166,7 +166,7 @@ stock _Sorted_Find(arr[], last, value)
 {
 	new
 		first = 0,
-		mid;
+		mid = 0;
 	while (first < last)
 	{
 		mid = (first + last - 1) / 2;

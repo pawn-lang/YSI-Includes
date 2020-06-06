@@ -398,14 +398,14 @@ stock CreateHouse(Float:extX, Float:extY, Float:extZ, Float:intX, Float:intY, Fl
 	P:2("CreateHouse() start 1");
 	P:2("CreateHouse() start 2");
 	new
-		i;
+		i = 0;
 	while (i < MAX_PROPERTIES && Property_IsActive(i))
 	{
 		i++;
 	}
 	if (i == MAX_PROPERTIES) return NO_PROPERTY;
 	new
-		cp;
+		cp = 0;
 	P:4("CreateHouse() Make");
 	#if defined _YSI_VISUAL_PICKUPS
 		if (!checkpoint)
@@ -470,14 +470,14 @@ stock CreateHouse(Float:extX, Float:extY, Float:extZ, Float:intX, Float:intY, Fl
 stock CreateProperty(name[], Float:x, Float:y, Float:z, price, reward, interval = 60000, sell = 0, multi = 0, reduce = 0, increase = 0, pickup = 0)
 {
 	new
-		i;
+		i = 0;
 	while (i < MAX_PROPERTIES && Property_IsActive(i))
 	{
 		i++;
 	}
 	if (i == MAX_PROPERTIES) return NO_PROPERTY;
 	new
-		cp;
+		cp = 0;
 	#if defined _YSI_VISUAL_PICKUPS
 		if (pickup)
 		{
@@ -520,7 +520,7 @@ stock CreateProperty(name[], Float:x, Float:y, Float:z, price, reward, interval 
 stock CreateBank(Float:x, Float:y, Float:z, name[] = "")
 {
 	new
-		i;
+		i = 0;
 	while (i < MAX_PROPERTIES)
 	{
 		if (!Property_IsActive(i)) break;
@@ -561,7 +561,7 @@ stock CreateAmmunation(Float:x, Float:y, Float:z, spawn, instant, ...)
 		num = numargs();
 	if (((num) <= 5) || (((num - 5) / 3) * 3 != (num - 5))) return NO_PROPERTY;
 	new
-		i;
+		i = 0;
 	while (i < MAX_PROPERTIES)
 	{
 		if (!Property_IsActive(i)) break;
@@ -574,7 +574,7 @@ stock CreateAmmunation(Float:x, Float:y, Float:z, spawn, instant, ...)
 	YSI_g_sProperties[i][E_PROP_DATA_FLAGS] = e_PROP_FLAGS_TYPE_AMMU | e_PROP_FLAGS_ACTIVE | e_PROP_FLAGS:cp | Property_SetOption(1, spawn) | Property_SetOption(2, instant);
 	new
 		pos = 5,
-		count;
+		count = 0;
 	while (pos < num)
 	{
 		switch (getarg(pos++))
@@ -742,7 +742,7 @@ stock CreateMoneyArea(area, money = 100, interval = 10000)
 {
 	if (area == NO_AREA) return NO_PROPERTY;
 	new
-		i;
+		i = 0;
 	while (i < MAX_PROPERTIES)
 	{
 		if (!Property_IsActive(i)) break;
@@ -772,7 +772,7 @@ stock CreateMoneyArea(area, money = 100, interval = 10000)
 stock CreateMoneyPoint(Float:x, Float:y, Float:z, Float:s, money = 100, interval = 10000)
 {
 	new
-		i;
+		i = 0;
 	while (i < MAX_PROPERTIES)
 	{
 		if (!Property_IsActive(i)) break;
@@ -807,7 +807,7 @@ stock CreateMoneyPoint(Float:x, Float:y, Float:z, Float:s, money = 100, interval
 stock CreateTeleport(Float:sx, Float:sy, Float:sz, Float:tx, Float:ty, Float:tz, cost = 0, name[] = "")
 {
 	new
-		i;
+		i = 0;
 	while (i < MAX_PROPERTIES)
 	{
 		if (!Property_IsActive(i)) break;
@@ -844,7 +844,7 @@ stock CreateForbiddenArea(area, kick = 0, health = 1000, invert = 0, name[] = ""
 {
 	if (area == NO_AREA) return NO_PROPERTY;
 	new
-		i;
+		i = 0;
 	while (i < MAX_PROPERTIES)
 	{
 		if (!Property_IsActive(i)) break;
@@ -1221,7 +1221,7 @@ Property_OnPlayerEnterCheckpointEx(playerid, cpid)
 static stock Property_GetWeapon(ammu, slot, &page = 0)
 {
 	new
-		weapon;
+		weapon = 0;
 	while (page < 40)
 	{
 		if (!page)
@@ -1360,8 +1360,8 @@ static stock Property_GetWeaponFromSlot(slot)
 stock Property_SavePlayerWeapon(playerid, weaponslot, ammo)
 {
 	new
-		slot,
-		weapon;
+		slot = 0,
+		weapon = 0;
 	switch (weaponslot)
 	{
 		case 0: slot = 0, weapon = WEAPON(WEAPON_BRASSKNUCKLE);
@@ -1526,9 +1526,9 @@ Property_OnPlayerSelectedMenuRow(playerid, row)
 		if (data & 0x01)
 		{
 			new
-				weapon,
+				weapon = 0,
 				flags = _:YSI_g_sProperties[ammu][E_PROP_DATA_FLAGS],
-				wdat;
+				wdat = 0;
 			wdat = Property_GetWeapon(ammu, slot, weapon);
 			if (GetPlayerMoney(playerid) >= Property_WeaponCost(wdat))
 			{
@@ -1581,7 +1581,7 @@ static stock Property_GenerateAmmuMenu(playerid, ammu, stage, page)
 	if (stage)
 	{
 		new
-			start,
+			start = 0,
 			weapon = Property_GetWeapon(ammu, page, start);
 		if (weapon)
 		{
@@ -1592,9 +1592,9 @@ static stock Property_GenerateAmmuMenu(playerid, ammu, stage, page)
 	else
 	{
 		new
-			weapon,
-			start,
-			row,
+			weapon = 0,
+			start = 0,
+			row = 0,
 			end = page + 12,
 			next = page,
 			money = GetPlayerMoney(playerid);
@@ -1856,7 +1856,7 @@ YCMD:buy(playerid, params[], help)
 	{
 		P:3("ycmd_buy() Not help");
 		new
-			cpid,
+			cpid = 0,
 			prop = NO_PROPERTY;
 		if (IsPlayerInCheckpoint(playerid))
 		{
@@ -2068,14 +2068,14 @@ ptask Property_Loop[500](i)
 	{*/
 	P:3("Property_Loop() foreach start");
 	new
-		money,
-		bad;
+		money = 0,
+		bad = 0;
 	for (new j = 0; j < GROUP_PROPERTY_BITS; j++)
 	{
 		new
 			props = _:YSI_g_sPlayerProperties[i][j],
 			slot = 1,
-			bit;
+			bit = 0;
 		while (props)
 		{
 			if (props & slot)
@@ -2145,7 +2145,7 @@ P:D(bool:Property_IsPlayerProperty(e_PROP_FLAGS:flags,playerid));
 stock Property_GetPlayerPropCount(playerid)
 {
 	new
-		count;
+		count = 0;
 	for (new i = 0; i < MAX_PROPERTIES; i++)
 	{
 		new
@@ -2283,7 +2283,7 @@ YCMD:enter(playerid, params[], help)
 	{
 		P:3("ycmd_enter() Not help");
 		new
-			cpid,
+			cpid = 0,
 			prop = NO_PROPERTY;
 		if (IsPlayerInCheckpoint(playerid))
 		{

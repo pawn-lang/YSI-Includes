@@ -1302,7 +1302,7 @@ native Callback_Strcat_(dest, const src[], len) = strcat;
 		new
 			name[32],
 			numArgs = numargs(),
-			ret,
+			ret = 0,
 			expect[32] = "F@_@",
 			bool:remote = false;
 		assert(2 + __COMPILER_BUG_317 <= numArgs <= 4 + __COMPILER_BUG_317);

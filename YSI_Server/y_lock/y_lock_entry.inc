@@ -145,7 +145,7 @@ _DoYLock(P:C(from);)
 	P:1("%d", from);
 	#pragma unused arr
 	#if !defined _DEBUG || _DEBUG < 1
-		new from;
+		new from = 0;
 	#endif
 	UNHOOK
 }

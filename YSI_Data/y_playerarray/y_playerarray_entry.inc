@@ -144,7 +144,7 @@ stock Iter_Func@PA(start, const PlayerArray:data<>)
 	++start;
 	YSI_gAPAFunc_loop:
 	new
-		cur,
+		cur = 0,
 		i = Bit_Slot(start) + 1;
 	if ((cur = (_:data[i] & (~((1 << start) - 1)))))
 	{

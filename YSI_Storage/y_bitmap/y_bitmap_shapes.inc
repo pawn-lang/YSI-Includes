@@ -142,15 +142,15 @@ static stock _Bitmap_DoRectangle(Bitmap:ctx, minX, minY, maxX, maxY, colour, con
 	maxX = min(maxX, width),
 	_Bitmap_MakePattern(pattern, minX, minY, 0, 0);
 	new
-		ya,
-		read,
+		ya = 0,
+		read = 0,
 		a = (colour & 0xFF) + 1,
-		na,
-		suba,
+		na = 0,
+		suba = 0,
 		r = ((colour & 0xFF000000) >>> 16),
 		g = ((colour & 0x00FF0000) >>> 16),
 		b = ((colour & 0x0000FF00) >>>  8),
-		orig;
+		orig = 0;
 	for (new y = minY; y != maxY; ++y)
 	{
 		read = Bitmap_IndexInt(ctx, minX, width, y),
@@ -260,21 +260,21 @@ stock Bitmap_DrawRing(Bitmap:ctx, x, y, Float:inner, Float:outer, colour, const 
 	//	Float:innerDiff = innerMax - innerMin;
 	_Bitmap_MakePattern(pattern, minX, minY, 0, 0);
 	new
-		ya,
+		ya = 0,
 		// Get the float co-ordinates for ease of calculation.
 		Float:fX = float(-rad), // Converted back from the integer version to.
-		Float:fXX,
+		Float:fXX = 0.0,
 		Float:fY = float(-rad), // Make up for rounding errors.
-		Float:fYY,
-		Float:pos,
-		read,
+		Float:fYY = 0.0,
+		Float:pos = 0.0,
+		read = 0,
 		a = (colour & 0xFF) + 1,
-		na,
-		suba,
+		na = 0,
+		suba = 0,
 		r = ((colour & 0xFF000000) >>> 16),
 		g = ((colour & 0x00FF0000) >>> 16),
 		b = ((colour & 0x0000FF00) >>>  8),
-		orig;
+		orig = 0;
 	P:5("Bitmap_DrawRing: minX = %d, minY = %d, width = %d, height = %d", minX, minY, width, Bitmap_Height(ctx));
 	for (y = minY; y != maxY; ++y, ++fY)
 	{

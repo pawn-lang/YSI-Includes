@@ -114,8 +114,8 @@ static stock bool:DumpAMX_WriteAMXHeader(File:file, data[], &offset, compact)
 		return false;
 	}
 
-	new start;
-	new end;
+	new start = 0;
+	new end = 0;
 
 	// YSI plays with the public function table start so don't use it directly.
 	// amx_assembly had this value wrong for a while.
@@ -218,7 +218,7 @@ static stock bool:DumpAMX_WriteAMXCode(File:file, data[], &offset, compact)
 	new ctx[DisasmContext];
 	DisasmInit(ctx);
 	
-	new base;
+	new base = 0;
 	{
 		new hdr[AMX_HDR];
 		GetAmxHeader(hdr);
@@ -285,8 +285,8 @@ stock bool:DumpAMX_Write(const filename[])
 	{
 		new
 			data[DUMP_AMX_BLOCK_CELLS],
-			offset,
-			compact;
+			offset = 0,
+			compact = 0;
 
 		{
 			new hdr[AMX_HDR];

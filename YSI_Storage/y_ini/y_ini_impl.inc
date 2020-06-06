@@ -414,7 +414,7 @@ _Y_INI_STATIC stock bool:INI_AddToBuffer(INI:file, const key[], const value[], s
 		}
 		new
 			len = strlen(key) + strlen(value) + 4 + semis, // 2 * NULL + next + keylen + semis.
-			Alloc:prev,
+			Alloc:prev = Alloc:0,
 			Alloc:mem = INI_GetKey(YSI_g_sINICurrentTag[file], key, prev);
 		if (mem)
 		{
@@ -466,7 +466,7 @@ _Y_INI_STATIC stock bool:INI_AddToBuffer(INI:file, const key[], const value[], s
 					// Get semi-colons we need to escape.  Do it the hard way.
 					len = 0,
 					semis = I@ + 3;
-					for (new pos; (pos = strfind(value, ";", false, len)) != -1; len = pos + 1)
+					for (new pos = 0; (pos = strfind(value, ";", false, len)) != -1; len = pos + 1)
 					{
 						_YSI_ConstMod(value[pos], '\0');
 						msets(mem, semis, value[len]);
@@ -962,9 +962,9 @@ _Y_INI_STATIC stock e_INI_LINE_TYPE:
 	p0s = p0e = p1s = p1e = p2s = p2e = 0;
 	// Do this purely with a single main loop, and a state machine.
 	new
-		end,
+		end = 0,
 		e_INI_LINE_TYPE:ret = e_INI_LINE_TYPE_DATALESS,
-		pos;
+		pos = 0;
 	// If there is memory allocated for a line continuation, that means the
 	// previous line ended with '\\', so this line is just part of that one,
 	// regardless of what it contains.
@@ -1207,7 +1207,7 @@ state_in_continuation:
 		str[p1e] = end,
 		// Store the new length.
 		mset(YSI_g_sExtendedLine, 0, mget(YSI_g_sExtendedLine, 0) + pos),
-		ret;
+		ret = 0;
 }
 
 /*
@@ -1357,8 +1357,8 @@ static stock INI_ReadFile(File:fhnd, parent[32], bool:handle = true)
 	new
 		bool:doneParent = false,
 		pos = 0,
-		rlen,
-		p0s, p0e, p1s, p1e, p2s, p2e;
+		rlen = 0,
+		p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Read from the start of the file.
 	fseek(fhnd, 0, seek_start);
 	while ((rlen = fread(fhnd, YSI_g_sCurLine)))
@@ -1533,7 +1533,7 @@ static stock INI_HandleEntry(const key[], const value[]) <y_ini:y_ini_writing_sl
 		fwrite(YSI_g_sCurrentFile, "\n");
 	}
 	new
-		Alloc:prev,
+		Alloc:prev = Alloc:0,
 		Alloc:mem = INI_GetKey(YSI_g_sCurrentTag, key, prev);
 	if (mem)
 	{

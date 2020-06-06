@@ -282,7 +282,7 @@ stock Race_Create(laps = 0, entry = 0, countdown = 3, bool:arial = false, bool:f
 GLOBAL__ _Race_Create(l,e,c,a,f,x,i,w,r)
 {
 	new
-		raceid;
+		raceid = 0;
 	for (raceid = 0; raceid < MAX_RACES; raceid++) if (!Race__IsActive(raceid)) break;
 	if (raceid == MAX_RACES) return NO_RACE;
 	YSI_g_sRaceData[raceid][E_RACE_FLAGS] = e_RACE_FLAGS_ACTIVE |
@@ -696,7 +696,7 @@ _Y_RACES_STATIC Race_PlayerDone(playerid)
 			//SetPlayerPos(playerid, YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_X], YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_Y], YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_Z]);
 			//SetPlayerFacingAngle(playerid, YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_A]);
 			new
-				vehicleid;
+				vehicleid = 0;
 			if ((vehicleid = GetPlayerVehicleID(playerid)))
 			{
 				SetVehiclePos(vehicleid, YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_X], YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_Y], YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_Z]);
@@ -797,7 +797,7 @@ _Y_RACES_STATIC Race_Finish(playerid)
 	YSI_g_sRaceData[slot][E_RACE_FINISHED]++;
 	Race_PlayerDone(playerid);
 	new
-		prize;
+		prize = 0;
 	if (winners < MAX_RACE_WINNERS) prize = YSI_g_sRaceData[slot][E_RACE_PRIZES][winners];
 	GivePlayerMoney(playerid, prize);
 	CallRemoteFunction("OnPlayerFinishRace", "iiiii", playerid, slot, winners + 1, prize, YSI_g_sPlayerRace[playerid][E_RACE_PLAYER_TIME]);
@@ -819,12 +819,12 @@ GLOBAL__ Race_Start(race)
 	if (!Race_IsValid(race)) return 0;
 	new
 		bool:exited = true,
-		j;
-	for (new i = Iter_First(YSI_g_sRacePeople[race]), k; (k = Iter_Next(YSI_g_sRacePeople[race], i)), i != Iter_End(YSI_g_sRacePeople[race]); i = k)
+		j = 0;
+	for (new i = Iter_First(YSI_g_sRacePeople[race]), k = 0; (k = Iter_Next(YSI_g_sRacePeople[race], i)), i != Iter_End(YSI_g_sRacePeople[race]); i = k)
 	//FOREACH__ (new i : YSI_g_sRacePeople[race])
 	{
 		new
-			vehicleid;
+			vehicleid = 0;
 		GetPlayerPos(i, YSI_g_sPlayerRace[i][E_RACE_PLAYER_X], YSI_g_sPlayerRace[i][E_RACE_PLAYER_Y], YSI_g_sPlayerRace[i][E_RACE_PLAYER_Z]);
 		if ((vehicleid = GetPlayerVehicleID(i)))
 		{
@@ -854,7 +854,7 @@ GLOBAL__ Race_Start(race)
 		if (YSI_g_sRaceData[race][E_RACE_FLAGS] & e_RACE_FLAGS_REL_WIN)
 		{
 			new
-				prize;
+				prize = 0;
 			if (j < MAX_RACE_WINNERS) prize = ((j * j) + j) / 2;
 			else prize = (MAX_RACE_WINNERS * (MAX_RACE_WINNERS + 1)) / 2;
 			new
@@ -890,9 +890,9 @@ public Race_Countdown(race, time)
 		Text_Send(YSI_g_sRacers[race], $YSI_RACE_GO);
 		new
 			startTime = GetTickCount(),
-			vehicleid,
-			pos;
-		//for (new i = Iter_First(YSI_g_sRacePeople[race]), j; j = Iter_Next(YSI_g_sRacePeople[race], i), i != Iter_End(YSI_g_sRacePeople[race]); i = j)
+			vehicleid = 0,
+			pos = 0;
+		//for (new i = Iter_First(YSI_g_sRacePeople[race]), j = 0; j = Iter_Next(YSI_g_sRacePeople[race], i), i != Iter_End(YSI_g_sRacePeople[race]); i = j)
 		FOREACH__ (new i : YSI_g_sRacePeople[race])
 		{
 			if ((vehicleid = GetPlayerVehicleID(i)))
@@ -1100,10 +1100,10 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
 		{
 			new
 				start = YSI_g_sRaceData[race][E_RACE_CP_START],
-				lap,
+				lap = 0,
 				cp = Iter_Count(YSI_g_sRacePeople[race]),
-				Float:togo,
-				pos;
+				Float:togo = 0.0,
+				pos = 0;
 			if (!cp)
 			{
 				return;

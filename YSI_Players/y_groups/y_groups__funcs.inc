@@ -786,7 +786,7 @@ GCHAIN__ _yGI(&ni, &na, &nu)
 		Bit_Let(YSI_g_sDefaultMembership, _MAX_GROUPS);
 		// Set up the function chaining.
 		new
-			x;
+			x = 0;
 		ni = AMX_GetPublicPointerPrefix(ni, x, _A<_yGI>);
 		_yGI = x;
 		na = AMX_GetPublicPointerPrefix(na, x, _A<_yGA>);

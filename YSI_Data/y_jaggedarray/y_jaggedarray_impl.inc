@@ -86,7 +86,7 @@ static stock Jagged_MovePtr(array[][], maxSize, slot, shift)
 	new
 		//tmp0,
 		//tmp1,
-		ptr;
+		ptr = 0;
 	// Get the slot pointer.
 	#emit LOAD.S.alt            array
 	#emit LOAD.S.pri            slot
@@ -516,7 +516,7 @@ stock _Jagged_SizeOf(array[][], size1, size2, slot)
 stock _Jagged_PrintHeader(array[][], size1, size2)
 {
 	#pragma unused size2
-	for (new ptr, slot = 0; slot != size1; ++slot)
+	for (new ptr = 0, slot = 0; slot != size1; ++slot)
 	{
 		// Get the slot pointer.
 		#emit LOAD.S.alt                array

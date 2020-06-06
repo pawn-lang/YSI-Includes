@@ -123,8 +123,8 @@ enum E_AMX_TABLE
 public OnCodeInit()
 {
 	new
-		addr,
-		data;
+		addr = 0,
+		data = 0;
 	#emit LCTRL                     1
 	#emit STOR.S.pri                addr
 	// Invert to get the prefix offset relative to the data.
@@ -215,7 +215,7 @@ public OnCodeInit()
 stock AMX_GetGlobalAddress(...)
 {
 	new
-		addr;
+		addr = 0;
 	// addr = numargs();
 	#emit LOAD.S.pri 8
 	#emit STOR.S.pri addr
@@ -234,7 +234,7 @@ stock AMX_GetGlobalAddress(...)
 stock AMX_GetRelativeAddress(...)
 {
 	new
-		addr;
+		addr = 0;
 	// addr = numargs();
 	#emit LOAD.S.pri 8
 	#emit STOR.S.pri addr
@@ -284,8 +284,8 @@ stock AMX_TraceCode(pattern[], &addrRet, &dataRet, size = sizeof (pattern))
 {
 	new
 		addr = AMX_HEADER_COD + addrRet,
-		data,
-		i;
+		data = 0,
+		i = 0;
 	while (addr < AMX_HEADER_DAT)
 	{
 		#emit LREF.S.pri      addr
@@ -320,8 +320,8 @@ stock AMX_TraceMemory(pattern[], &addrRet, &dataRet, size = sizeof (pattern))
 {
 	new
 		addr = AMX_HEADER_DAT + addrRet,
-		data,
-		i;
+		data = 0,
+		i = 0;
 	while (addr < AMX_HEADER_HEA)
 	{
 		#emit LREF.S.pri      addr
@@ -400,8 +400,8 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 {
 	P:7("AMX_GetEntry called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
-		base,
-		count;
+		base = 0,
+		count = 0;
 	AMX_GetBaseCount(table, base, count);
 	if (idx < count)
 	{
@@ -413,7 +413,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 		else
 		{
 			new
-				addr,
+				addr = 0,
 				pos = idx * 8 + base + 4,
 				str[32];
 			do
@@ -448,9 +448,9 @@ stock AMX_GetEntryPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
 	P:7("AMX_GetEntryPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
-		base,
-		count,
-		addr;
+		base = 0,
+		count = 0,
+		addr = 0;
 	AMX_GetBaseCount(table, base, count);
 	new
 		pos = idx * 8 + base + 4;
@@ -487,10 +487,10 @@ stock AMX_GetEntrySuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
 	P:7("AMX_GetEntrySuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
-		base,
-		count,
-		addr,
-		ch;
+		base = 0,
+		count = 0,
+		addr = 0,
+		ch = 0;
 	AMX_GetBaseCount(table, base, count);
 	new
 		pos = idx * 8 + base + 4;
@@ -551,9 +551,9 @@ stock AMX_GetName(E_AMX_TABLE:table, idx, buffer[32], const pattern[] = "", cons
 {
 	P:7("AMX_GetName called: %i, %i, \"%s\", \"%s\"", _:table, idx, buffer, pattern);
 	new
-		base,
-		count,
-		addr;
+		base = 0,
+		count = 0,
+		addr = 0;
 	AMX_GetBaseCount(table, base, count);
 	new
 		pos = idx * 8 + base + 4;
@@ -585,9 +585,9 @@ stock AMX_GetNamePrefix(E_AMX_TABLE:table, idx, buffer[32], pattern)
 {
 	P:7("AMX_GetNamePrefix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
 	new
-		base,
-		count,
-		addr;
+		base = 0,
+		count = 0,
+		addr = 0;
 	AMX_GetBaseCount(table, base, count);
 	new
 		pos = idx * 8 + base + 4;
@@ -626,10 +626,10 @@ stock AMX_GetNameSuffix(E_AMX_TABLE:table, idx, buffer[32], pattern)
 {
 	P:7("AMX_GetNameSuffix called: %i, %i, \"%s\", %i", _:table, idx, buffer, pattern);
 	new
-		base,
-		count,
-		addr,
-		ch;
+		base = 0,
+		count = 0,
+		addr = 0,
+		ch = 0;
 	AMX_GetBaseCount(table, base, count);
 	new
 		pos = idx * 8 + base + 4;
@@ -696,7 +696,7 @@ stock AMX_GetPointer(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", cons
 {
 	P:7("AMX_GetPointer called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
-		pointer;
+		pointer = 0;
 	idx = AMX_GetEntry(table, idx, pointer, pattern, exact);
 	if (idx)
 	{
@@ -716,7 +716,7 @@ stock AMX_GetPointerPrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
 	P:7("AMX_GetPointerPrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
-		pointer;
+		pointer = 0;
 	idx = AMX_GetEntryPrefix(table, idx, pointer, pattern);
 	if (idx)
 	{
@@ -736,7 +736,7 @@ stock AMX_GetPointerSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
 	P:7("AMX_GetPointerSuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
-		pointer;
+		pointer = 0;
 	idx = AMX_GetEntrySuffix(table, idx, pointer, pattern);
 	if (idx)
 	{
@@ -756,7 +756,7 @@ stock AMX_GetValue(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 {
 	P:7("AMX_GetValue called: %i, %i, %i, \"%s\", %i", _:table, idx, buffer, pattern, exact);
 	new
-		pointer;
+		pointer = 0;
 	idx = AMX_GetPointer(table, idx, pointer, pattern, exact);
 	if (idx)
 	{
@@ -776,7 +776,7 @@ stock AMX_GetValuePrefix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
 	P:7("AMX_GetValuePrefix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
-		pointer;
+		pointer = 0;
 	idx = AMX_GetPointerPrefix(table, idx, pointer, pattern);
 	if (idx)
 	{
@@ -796,7 +796,7 @@ stock AMX_GetValueSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 {
 	P:7("AMX_GetValueSuffix called: %i, %i, %i, %i", _:table, idx, buffer, pattern);
 	new
-		pointer;
+		pointer = 0;
 	idx = AMX_GetPointerSuffix(table, idx, pointer, pattern);
 	if (idx)
 	{
@@ -845,7 +845,7 @@ stock AMX_GetEntryPointer(entry)
 /*stock bool:AMX_GetData(const name[], ret[E_AMX_HEADER], e_AMX_HEADER_TYPE:type = e_AMX_HEADER_TYPE_NONE)
 {
 	new
-		entry;
+		entry = 0;
 	switch (type)
 	{
 		case e_AMX_HEADER_TYPE_NONE   :
@@ -865,7 +865,7 @@ stock AMX_GetEntryPointer(entry)
 	strpack(ret[E_AMX_HEADER_NAME], name),
 	ret[E_AMX_HEADER_TYPE] = type;
 	new
-		ptr;
+		ptr = 0;
 	#emit LREF.S.pri entry
 	#emit SREF.S.pri ptr
 	switch (type)
@@ -946,7 +946,7 @@ stock e_AMX_HEADER_TYPE:AMX_GetType(const name[])
 {
 	new
 		e_AMX_HEADER_TYPE:type = e_AMX_HEADER_TYPE_NONE,
-		entry;
+		entry = 0;
 	if (AMX_GetEntry(AMX_TABLE_PUBLICS,   0, entry, name)) type |= e_AMX_HEADER_TYPE_PUBLIC ;
 	if (AMX_GetEntry(AMX_TABLE_NATIVES,   0, entry, name)) type |= e_AMX_HEADER_TYPE_NATIVE ;
 	if (AMX_GetEntry(AMX_TABLE_LIBRARIES, 0, entry, name)) type |= e_AMX_HEADER_TYPE_LIBRARY;
@@ -958,8 +958,8 @@ stock e_AMX_HEADER_TYPE:AMX_GetType(const name[])
 stock AMX_ReadString(addr, str[], len = sizeof (str))
 {
 	new
-		buffer,
-		idx;
+		buffer = 0,
+		idx = 0;
 	do
 	{
 		// Read 4 bytes.
@@ -996,9 +996,9 @@ stock AMX_ReadUnpackedString(addr, str[], len = sizeof (str))
 stock AMX_WriteString(addr, const str[], len = sizeof (str))
 {
 	new
-		old,
-		buffer,
-		idx;
+		old = 0,
+		buffer = 0,
+		idx = 0;
 	do
 	{
 		buffer = str[idx];
@@ -1138,7 +1138,7 @@ stock AMX_WriteArray(addr, const src[], len = sizeof (src))
 stock AMX_DumpHeader()
 {
 	new
-		idx,
+		idx = 0,
 		buffer[32];
 	printf("================================");
 	while ((idx = AMX_GetPublicName(idx, buffer)))

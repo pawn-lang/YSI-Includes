@@ -137,7 +137,7 @@ stock _HashMap_Init(HashMap:m<>, &target, size1, size2, &t2)
 		HashMap:sInit<> = {0, ...};
 	m = sInit;
 	new
-		ptr;
+		ptr = 0;
 	// Save the pointer.
 	#emit LOAD.S.pri target
 	#emit STOR.S.pri ptr
@@ -273,7 +273,7 @@ stock bool:HashMap_AddWithHash(HashMap:m<>, const str[], hash, value, bool:ignor
 		P:5("HashMap_Add: mask = %d", hash & 0xFF);
 		new
 			prev = ref(m[hash & 0xFF]),
-			next;
+			next = 0;
 		for ( ; ; )
 		{
 			#emit LREF.S.pri  prev
@@ -376,7 +376,7 @@ stock HashMap_GetWithHash(HashMap:m<>, const str[], hash, bool:ignorecase = fals
 	P:3("HashMap_Get called: mask = %d (%d)", hash, hash & 0xFF);
 	new
 		prev = ref(m[hash & 0xFF]),
-		next;
+		next = 0;
 	static
 		res;
 	for ( ; ; )
@@ -436,9 +436,9 @@ stock bool:HashMap_RemoveKeyWithHash(HashMap:m<>, const str[], hash, bool:ignore
 	// First, find the key and it's parent.
 	new
 		prev = ref(m[hash & 0xFF]),
-		next;
+		next = 0;
 	static
-		res;
+		res = 0;
 	// First, find this key in the hashmap.
 	for ( ; ; )
 	{
@@ -548,7 +548,7 @@ stock bool:HashMap_RemoveKey(HashMap:m<>, const str[], bool:ignorecase = false)
 static stock HashMap_GetBranchEnd(cur, &height, &parent, dir)
 {
 	// Find the node as close in (hash) value to the current node as possible.
-	for (new next; (next = AMX_Read(cur + dir)); ++height, parent = cur, cur = next)
+	for (new next = 0; (next = AMX_Read(cur + dir)); ++height, parent = cur, cur = next)
 	{
 	}
 	return cur;

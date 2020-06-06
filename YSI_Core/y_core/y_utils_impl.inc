@@ -233,7 +233,7 @@ stock y_profile_WTF(const name[], const timings[], iters, size = sizeof (timings
 		printf("\t  Mean = %s\n\t  Mode = %s\n\tMedian = %s\n\t Range = %s", \
 			__TU(Mean(__TA),__TE),__TU(Mode(__TA),__TE),__TU(Median(__TA),__TE),__TU(Range(__TA),__TE))) \
 	for(;(__TS=GetTickCount(),__TC);__TA[--__TC]=GetTickCount()-__TS) \
-	for(new __TI;__TI!=__TE;++__TI)
+	for(new __TI=0;__TI!=__TE;++__TI)
 
 #if defined _samp_included
 	stock
@@ -532,7 +532,7 @@ stock StrToLower(str[], len = sizeof (str))
 {
 	new
 		i = -1,
-		ch;
+		ch = 0;
 	while ((ch = str[++i]) && len--)
 		str[i] = tolower(ch);
 }
@@ -546,7 +546,7 @@ stock StrToUpper(str[], len = sizeof (str))
 {
 	new
 		i = -1,
-		ch;
+		ch = 0;
 	while ((ch = str[++i]) && len--)
 		str[i] = toupper(ch);
 }
@@ -766,7 +766,7 @@ stock IPToInt(const ip[])
 
 stock bernstein(const string[] /* 12 */)
 {
-	new h = 5381, i, j;
+	new h = 5381, i = 0, j = 0;
 	while ((j = string[i++]))
 		h = h * 33 ^ j;
 	return h;
@@ -783,8 +783,8 @@ stock ishex(const str[])
 {
 	P:7("ishex called: \"%s\"", str);
 	new
-		i,
-		cur;
+		i = 0,
+		cur = 0;
 	if (str[0] == '0' && (str[1] | 0x20) == 'x') i = 2;
 	do
 	{
@@ -948,7 +948,7 @@ stock isnumeric(const str[])
 {
 	P:7("isnumeric called: \"%s\"", str);
 	new
-		i;
+		i = 0;
 	while (IS_IN_RANGE(str[i], '0', '9' + 1)) ++i;
 	//while ((ch = str[i++])) if (!('0' <= ch <= '9')) return 0;
 	return !str[i];
@@ -969,9 +969,9 @@ stock isnumeric(const str[])
 	stock hexstr(const string[])
 	{
 		new
-			ret,
-			val,
-			i;
+			ret = 0,
+			val = 0,
+			i = 0;
 		if (string[0] == '0' && string[1] | 0x20 == 'x') i = 2;
 		for ( ; ; )
 		{
@@ -1497,7 +1497,7 @@ native rawMemcpy_(dest, src, index, numbytes, maxlength) = memcpy;
 stock memset(arr[], val = 0, size = sizeof (arr))
 {
 	new
-		addr;
+		addr = 0;
 	#emit LOAD.S.pri arr
 	#emit STOR.S.pri addr
 	// Convert the size from cells to bytes.
@@ -1795,7 +1795,7 @@ static stock Utils_PreSort(arr[], num = sizeof (arr))
 	do
 	{
 		sort = false;
-		for (new j = 1, temp; j != num; ++j)
+		for (new j = 1, temp = 0; j != num; ++j)
 		{
 			if ((temp = arr[j]) < arr[j - 1])
 			{
@@ -1819,7 +1819,7 @@ static stock Utils_PreSort(arr[], num = sizeof (arr))
 stock Sum(const arr[], num = sizeof (arr))
 {
 	new
-		tot;
+		tot = 0;
 	while (num) tot += arr[--num];
 	return tot;
 }
@@ -1849,10 +1849,10 @@ stock Mode(arr[], num = sizeof (arr))
 {
 	Utils_PreSort(arr, num);
 	new
-		ret,
+		ret = 0,
 		count = 0,
-		cn,
-		cc;
+		cn = 0,
+		cc = 0;
 	for (new i = 0; i != num; ++i)
 	{
 		if (arr[i] == cn) ++cc;
@@ -1896,7 +1896,7 @@ stock Range(const arr[], num = sizeof (arr))
 	new
 		min2 = cellmax,
 		max2 = cellmin,
-		cur;
+		cur = 0;
 	while (num)
 	{
 		cur = arr[--num];
@@ -1919,7 +1919,7 @@ stock Range(const arr[], num = sizeof (arr))
 
 stock memcmp(arr1[], arr2[], count)
 {
-	for (new diff, i = 0; i != count; ++i)
+	for (new diff = 0, i = 0; i != count; ++i)
 	{
 		diff = arr1[i] - arr2[i];
 		if (diff)

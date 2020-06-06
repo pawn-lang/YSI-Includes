@@ -184,7 +184,7 @@ stock bool:Profiling_Run(&profilings)
 #if defined RUN_PROFILINGS
 	P:2("Profiling_Run() called");
 	new
-		idx,
+		idx = 0,
 		buffer[32];
 	while ((idx = AMX_GetPublicNamePrefix(idx, buffer, Y_PROFILING_PROFILE_SEARCH)))
 	{
@@ -245,9 +245,9 @@ stock Profiling_RunAll()
 {
 	// Disable error messages (as we're likely to generate them).
 	new
-		startTime,
-		endTime,
-		profilings;
+		startTime = 0,
+		endTime = 0,
+		profilings = 0;
 	// The timing will be inaccurate since it will include many prints, but it
 	// isn't that important to be accurate.
 	startTime = GetTickCount();

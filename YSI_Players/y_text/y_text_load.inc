@@ -387,13 +387,13 @@ stock Format_Standardise(input[], output[], len = sizeof (output), pt = false)
 {
 	P:2("Format_Standardise called: %s, %d, %d", input, len, pt);
 	new
-		ch,
+		ch = 0,
 		iIn = 0,
 		iOut = 0, //1,
 		bool:fade = false,
-		colour,
-		tmp,
-		steps;//,
+		colour = 0,
+		tmp = 0,
+		steps = 0;//,
 		//lastChar = 0;
 	// Adjust len so we know we can fit the NULL.
 	--len;
@@ -1057,7 +1057,7 @@ static stock Format_GetSpecifier(input[], &iIn)
 	new
 		ch = input[iIn],
 		e_COMPRESS_FORMAT_DATA:ret = e_COMPRESS_FORMAT_DATA:0,
-		width,
+		width = 0,
 		prec = -1;
 	for ( ; ; )
 	{

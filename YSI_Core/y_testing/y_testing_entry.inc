@@ -308,8 +308,8 @@ stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
 	#pragma unused str
 	new
-		i,
-		end; // 12 + 4 + 4.
+		i = 0,
+		end = 0; // 12 + 4 + 4.
 	// Get the stack position after `playerid`.
 	#emit ADDR.pri         16
 	#emit STOR.S.pri       end
@@ -433,8 +433,8 @@ stock bool:Testing_Run(&tests, &fails, const lastfail[33] = "", bool:p = false)
 #if defined RUN_TESTS
 	P:2("Testing_Run() called");
 	new
-		idx,
-		bidx,
+		idx = 0,
+		bidx = 0,
 		buffer2[32],
 		buffer[32];
 	YSI_g_sCurTest = YSI_g_sFailTests = 0;
@@ -772,10 +772,10 @@ stock Testing_RunAll()
 	// Disable error messages (as we're likely to generate them).
 	//state ysi_debug : off;
 	new
-		startTime,
-		endTime,
-		tests,
-		fails;
+		startTime = 0,
+		endTime = 0,
+		tests = 0,
+		fails = 0;
 	// The timing will be inaccurate since it will include many prints, but it
 	// isn't that important to be accurate.
 	startTime = GetTickCount();

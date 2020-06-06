@@ -72,7 +72,7 @@ Optional plugins:
 
 stock Map(Func:cb<i>, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
 {
-	for (new len = min(al, dl), i; i != len; ++i)
+	for (new len = min(al, dl), i = 0; i != len; ++i)
 	{
 		dest[i] = @.cb(arr[i]);
 	}
@@ -81,7 +81,7 @@ stock Map(Func:cb<i>, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest)
 
 stock Map_(Func:cb<i>, const arr[], len = sizeof (arr))
 {
-	for (new i; i != len; ++i)
+	for (new i = 0; i != len; ++i)
 	{
 		@.cb(arr[i]);
 	}
@@ -90,7 +90,7 @@ stock Map_(Func:cb<i>, const arr[], len = sizeof (arr))
 
 stock MapIdx(Func:cb<ii>, const arr[], dest[], al = sizeof (arr), dl = sizeof (dest))
 {
-	for (new len = min(al, dl), i; i != len; ++i)
+	for (new len = min(al, dl), i = 0; i != len; ++i)
 	{
 		dest[i] = @.cb(i, arr[i]);
 	}
@@ -99,7 +99,7 @@ stock MapIdx(Func:cb<ii>, const arr[], dest[], al = sizeof (arr), dl = sizeof (d
 
 stock MapIdx_(Func:cb<ii>, const arr[], len = sizeof (arr))
 {
-	for (new i; i != len; ++i)
+	for (new i = 0; i != len; ++i)
 	{
 		@.cb(i, arr[i]);
 	}
@@ -108,7 +108,7 @@ stock MapIdx_(Func:cb<ii>, const arr[], len = sizeof (arr))
 
 stock ZipWith(Func:cb<ii>, const l[], const r[], dest[], ls = sizeof (l), rs = sizeof (r), ds = sizeof (dest))
 {
-	for (new len = min(ds, min(ls, rs)), i; i != len; ++i)
+	for (new len = min(ds, min(ls, rs)), i = 0; i != len; ++i)
 	{
 		dest[i] = @.cb(l[i], r[i]);
 	}
@@ -117,7 +117,7 @@ stock ZipWith(Func:cb<ii>, const l[], const r[], dest[], ls = sizeof (l), rs = s
 
 stock ZipWith_(Func:cb<ii>, const l[], const r[], ls = sizeof (l), rs = sizeof (r))
 {
-	for (new len = min(ls, rs), i; i != len; ++i)
+	for (new len = min(ls, rs), i = 0; i != len; ++i)
 	{
 		@.cb(l[i], r[i]);
 	}
@@ -126,7 +126,7 @@ stock ZipWith_(Func:cb<ii>, const l[], const r[], ls = sizeof (l), rs = sizeof (
 
 stock ZipWith3(Func:cb<iii>, const l[], const m[], const r[], dest[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r), ds = sizeof (dest))
 {
-	for (new len = min(min(ms, ds), min(ls, rs)), i; i != len; ++i)
+	for (new len = min(min(ms, ds), min(ls, rs)), i = 0; i != len; ++i)
 	{
 		dest[i] = @.cb(l[i], m[i], r[i]);
 	}
@@ -135,7 +135,7 @@ stock ZipWith3(Func:cb<iii>, const l[], const m[], const r[], dest[], ls = sizeo
 
 stock ZipWith3_(Func:cb<iii>, const l[], const m[], const r[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r))
 {
-	for (new len = min(ms, min(ls, rs)), i; i != len; ++i)
+	for (new len = min(ms, min(ls, rs)), i = 0; i != len; ++i)
 	{
 		@.cb(l[i], m[i], r[i]);
 	}
@@ -144,7 +144,7 @@ stock ZipWith3_(Func:cb<iii>, const l[], const m[], const r[], ls = sizeof (l), 
 
 stock ZipWithIdx(Func:cb<iii>, const l[], const r[], dest[], ls = sizeof (l), rs = sizeof (r), ds = sizeof (dest))
 {
-	for (new len = min(ds, min(ls, rs)), i; i != len; ++i)
+	for (new len = min(ds, min(ls, rs)), i = 0; i != len; ++i)
 	{
 		dest[i] = @.cb(i, l[i], r[i]);
 	}
@@ -153,7 +153,7 @@ stock ZipWithIdx(Func:cb<iii>, const l[], const r[], dest[], ls = sizeof (l), rs
 
 stock ZipWithIdx_(Func:cb<iii>, const l[], const r[], ls = sizeof (l), rs = sizeof (r))
 {
-	for (new len = min(ls, rs), i; i != len; ++i)
+	for (new len = min(ls, rs), i = 0; i != len; ++i)
 	{
 		@.cb(i, l[i], r[i]);
 	}
@@ -162,7 +162,7 @@ stock ZipWithIdx_(Func:cb<iii>, const l[], const r[], ls = sizeof (l), rs = size
 
 stock ZipWith3Idx(Func:cb<iiii>, const l[], const m[], const r[], dest[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r), ds = sizeof (dest))
 {
-	for (new len = min(min(ms, ds), min(ls, rs)), i; i != len; ++i)
+	for (new len = min(min(ms, ds), min(ls, rs)), i = 0; i != len; ++i)
 	{
 		dest[i] = @.cb(i, l[i], m[i], r[i]);
 	}
@@ -171,7 +171,7 @@ stock ZipWith3Idx(Func:cb<iiii>, const l[], const m[], const r[], dest[], ls = s
 
 stock ZipWith3Idx_(Func:cb<iiii>, const l[], const m[], const r[], ls = sizeof (l), ms = sizeof (m), rs = sizeof (r))
 {
-	for (new len = min(ms, min(ls, rs)), i; i != len; ++i)
+	for (new len = min(ms, min(ls, rs)), i = 0; i != len; ++i)
 	{
 		@.cb(i, l[i], m[i], r[i]);
 	}
@@ -362,7 +362,7 @@ stock bool:Or(bool:arr[], len = sizeof (arr))
 
 stock bool:All(Func:cb<i>, const arr[], len = sizeof (arr))
 {
-	for (new i; i != len; ++i)
+	for (new i = 0; i != len; ++i)
 	{
 		if (!@.cb(arr[i])) return false;
 	}
@@ -372,7 +372,7 @@ stock bool:All(Func:cb<i>, const arr[], len = sizeof (arr))
 
 stock bool:Any(Func:cb<i>, const arr[], len = sizeof (arr))
 {
-	for (new i; i != len; ++i)
+	for (new i = 0; i != len; ++i)
 	{
 		if (@.cb(arr[i])) return true;
 	}
@@ -382,7 +382,7 @@ stock bool:Any(Func:cb<i>, const arr[], len = sizeof (arr))
 
 stock bool:AllIdx(Func:cb<ii>, const arr[], len = sizeof (arr))
 {
-	for (new i; i != len; ++i)
+	for (new i = 0; i != len; ++i)
 	{
 		if (!@.cb(i, arr[i])) return false;
 	}
@@ -392,7 +392,7 @@ stock bool:AllIdx(Func:cb<ii>, const arr[], len = sizeof (arr))
 
 stock bool:AnyIdx(Func:cb<ii>, const arr[], len = sizeof (arr))
 {
-	for (new i; i != len; ++i)
+	for (new i = 0; i != len; ++i)
 	{
 		if (@.cb(i, arr[i])) return true;
 	}
@@ -403,7 +403,7 @@ stock bool:AnyIdx(Func:cb<ii>, const arr[], len = sizeof (arr))
 stock Reverse(const arr[], len = sizeof (arr))
 {
 	new
-		temp;
+		temp = 0;
 	for (new i = 0; j = len - 1; i < j; ++i, --j)
 	{
 		temp   = arr[i],

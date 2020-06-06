@@ -145,7 +145,7 @@ TEST__ y_remote_6()
 
 TEST__ y_remote_7()
 {
-	new a, b, c = 123, d = 456;
+	new a = 1, b = 1, c = 123, d = 456;
 	yrt_7(a, b, c, d);
 	ASSERT_EQ(a, 8);
 	ASSERT_EQ(b, 8);

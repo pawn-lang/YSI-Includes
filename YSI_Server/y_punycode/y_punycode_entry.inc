@@ -186,7 +186,7 @@ stock Puny_Decode(string:dst[], const string:src[], wlen = sizeof (dst), const d
 stock Puny_Encode(string:dst[], const string:src[], wlen = sizeof (dst), const delimiter = PUNY_CHAR)
 {
 	new
-		widx,
+		widx = 0,
 		rlen = strlen(src);
 	--wlen;
 	for (new ridx = 0; ridx != rlen; ++ridx)
@@ -265,9 +265,9 @@ stock Puny_Encode(string:dst[], const string:src[], wlen = sizeof (dst), const d
 stock Puny_EncodeHash(string:dst[], const string:src[], &hash, wlen = sizeof (dst), const delimiter = PUNY_CHAR)
 {
 	new
-		ch,
-		widx,
-		rlen,
+		ch = 0,
+		widx = 0,
+		rlen = 0,
 		sSrc[YSI_MAX_STRING],
 		bPacked = ispacked(src);
 	--wlen,
@@ -378,7 +378,7 @@ static stock Puny_EncodeVarHash(bias, delta, dst[], wlen, &hash)
 	new
 		i = 0,
 		k = PUNY_BASE,
-		t;
+		t = 0;
 	while (i < wlen)
 	{
 		if (k <= bias) t = PUNY_TMIN;
@@ -417,7 +417,7 @@ static stock Puny_EncodeVar(bias, delta, dst[], wlen)
 	new
 		i = 0,
 		k = PUNY_BASE,
-		t;
+		t = 0;
 	while (i < wlen)
 	{
 		if (k <= bias) t = PUNY_TMIN;

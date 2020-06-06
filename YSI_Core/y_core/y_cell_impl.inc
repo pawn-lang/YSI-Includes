@@ -638,7 +638,7 @@ stock Cell_GetLowestEmpty(GLOBAL_TAG_TYPES:data)
 
 stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, const masks[5])
 {
-	new t;
+	new t = 0;
 	return
 		x = x & m,
 		t = x & masks[0], x = x ^ t | (t >>>  1),
@@ -667,7 +667,7 @@ stock Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, const masks[5])
 
 stock Cell_ExpandLeftPrecomputed(GLOBAL_TAG_TYPES:x, m, const masks[5])
 {
-	new t;
+	new t = 0;
 	return
 		t = x << 16, x = (((x ^ t) & masks[4]) ^ x),
 		t = x <<  8, x = (((x ^ t) & masks[3]) ^ x),
@@ -697,8 +697,8 @@ stock Cell_PrecomputeMaskPermutation(m)
 	// See also: <a href="http://www.hackersdelight.org/hdcodetxt/compress.c.txt" />
 	new
 		mk = ~m << 1,
-		mp,
-		mv,
+		mp = 0,
+		mv = 0,
 		masks[5];
 	// We will count 0's to right.
 	for (new i = 0; i != 5; ++i)

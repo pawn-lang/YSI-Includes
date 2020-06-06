@@ -71,7 +71,7 @@ Optional plugins:
 */
 
 new
-	g_sRaceID;
+	g_sRaceID = 0;
 
 TEST__ y_races_Create()
 {
@@ -179,8 +179,8 @@ static y_races_Position0(lap, cp, Float:togo, playerid)
 {
 	new
 		pos = 1,
-		opl,
-		opc;
+		opl = 0,
+		opc = 0;
 	for (new i = Iter_Begin(YSI_g_sRacePeople2); (i = Iter_Next(YSI_g_sRacePeople2, i)) != playerid; )
 	{
 		opl = YSI_g_sPlayerRace2[i][E_RACE_PLAYER_LAP];
@@ -392,11 +392,11 @@ TEST__ y_races_Position3()
 Profile:y_races_Position()
 {
 	new
-		t0,
-		t1,
-		t2,
-		t3,
-		t4;
+		t0 = 0,
+		t1 = 0,
+		t2 = 0,
+		t3 = 0,
+		t4 = 0;
 	t0 = GetTickCount();
 	for (new i = 0; i != 10000000; ++i)
 	{

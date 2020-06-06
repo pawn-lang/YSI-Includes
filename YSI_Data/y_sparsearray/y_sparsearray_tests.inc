@@ -14,7 +14,7 @@ TEST__ SparseArray()
 	ASSERT_EQ(Sparse_Get(arr, 42), cellmin);
 	new
 		BitArray:done<10000>;
-	for (new i = 0, idx, val; i != 1000; ++i)
+	for (new i = 0, idx = 0, val = 0; i != 1000; ++i)
 	{
 		do
 		{

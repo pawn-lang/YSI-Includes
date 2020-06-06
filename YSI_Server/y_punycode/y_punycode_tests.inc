@@ -98,7 +98,7 @@ TEST__ y_punycode_2()
 {
 	new
 		dst[32],
-		hash;
+		hash = 0;
 	Puny_EncodeHash(dst, "bücher", hash);
 	P:1("TEST__ y_punycode_2: dst = %s", dst);
 	ASSERT_SAME(dst, "bcher-kva");
@@ -120,9 +120,9 @@ TEST__ y_punycode_hash()
 {
 	new
 		dst[32],
-		hash1,
-		hash2,
-		hash3;
+		hash1 = 0,
+		hash2 = 0,
+		hash3 = 0;
 	Puny_EncodeHash(dst, "hello", hash1);
 	hash2 = YHash("hello");
 	hash3 = bernstein("hello");

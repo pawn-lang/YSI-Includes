@@ -107,10 +107,10 @@ Optional plugins:
 stock Iter_Random_Internal(count, const array[], start, ...)
 {
 	new
-		numArgs,
-		rewrite,
-		first,
-		last;
+		numArgs = 0,
+		rewrite = 0,
+		first = 0,
+		last = 0;
 	// y_hooks can mangle callback parameter counts, thus it redefines `numargs`
 	// to account for this and traverse the stack until it finds a valid value.
 	// However, because this internal function is never called directly from a
@@ -128,7 +128,7 @@ stock Iter_Random_Internal(count, const array[], start, ...)
 	// Short-circuit the common-case where there are no exclusions.
 	if (numArgs)
 	{
-		for (new value, excluded = rewrite = first; excluded != last; excluded += 4)
+		for (new value = 0, excluded = rewrite = first; excluded != last; excluded += 4)
 		{
 			#emit LREF.S.pri   excluded
 			#emit LOAD.I
@@ -140,7 +140,7 @@ stock Iter_Random_Internal(count, const array[], start, ...)
 				// It is.  Optimise for the inner loop.  Do this by compressing
 				// valid values to the start of the list and sorting the
 				// dereferenced versions instead of the addresses.
-				for (new i2 = first, v2; i2 != rewrite; i2 += 4)
+				for (new i2 = first, v2 = 0; i2 != rewrite; i2 += 4)
 				{
 					#emit LREF.S.pri   i2
 					#emit STOR.S.pri   v2
@@ -292,10 +292,10 @@ stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 {
 	count = start - count;
 	new
-		numArgs,
-		rewrite,
-		first,
-		last;
+		numArgs = 0,
+		rewrite = 0,
+		first = 0,
+		last = 0;
 	// y_hooks can mangle callback parameter counts, thus it redefines `numargs`
 	// to account for this and traverse the stack until it finds a valid value.
 	// However, because this internal function is never called directly from a
@@ -313,7 +313,7 @@ stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 	// Short-circuit the common-case where there are no exclusions.
 	if (numArgs)
 	{
-		for (new value, excluded = rewrite = first; excluded != last; excluded += 4)
+		for (new value = 0, excluded = rewrite = first; excluded != last; excluded += 4)
 		{
 			#emit LREF.S.pri   excluded
 			#emit LOAD.I
@@ -325,7 +325,7 @@ stock Iter_RandomFree_InternalC(count, const array[], start, ...)
 				// It is.  Optimise for the inner loop.  Do this by compressing
 				// valid values to the start of the list and sorting the
 				// dereferenced versions instead of the addresses.
-				for (new i2 = first, v2; i2 != rewrite; i2 += 4)
+				for (new i2 = first, v2 = 0; i2 != rewrite; i2 += 4)
 				{
 					#emit LREF.S.pri   i2
 					#emit STOR.S.pri   v2

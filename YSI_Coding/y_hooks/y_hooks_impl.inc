@@ -227,7 +227,7 @@ stock Hooks_MakeShortName(name[64])
 {
 	// Easy one.
 	new
-		len,
+		len = 0,
 		pos = -1,
 		idx = YSI_g_sReplacementsLongOrder[0];
 	for (new i = 0; (len = strlen(name)) >= 32 && i != YSI_g_sReplacePtr; )
@@ -286,12 +286,12 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 	--size,
 	precount = 0;
 	new
-		entry,
-		idx;
+		entry = 0,
+		idx = 0;
 	{
 		new
 			name[32 char],
-			addr;
+			addr = 0;
 		while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@CO_>)))
 		{
 			if (precount == size)
@@ -351,7 +351,7 @@ _Y_HOOKS_STATIC stock Hooks_GetPreHooks(const preloads[][E_CHAIN_HOOK], precount
 {
 	P:4("Hooks_GetPreHooks called");
 	new
-		idx,
+		idx = 0,
 		lfunc[64];
 	// Collect all the functions with something like this name.
 	P:2("Hooks_GetPreHooks start: %s", unpack(name));
@@ -553,7 +553,7 @@ _Y_HOOKS_STATIC stock Hooks_GetAllHooks(const name[], hooks[], idx, &namelen, si
 	// Start from the very start - repeats the first item.
 	new
 		len = strlen(name) + 1,
-		count,
+		count = 0,
 		tmpName[64];
 	while ((idx = AMX_GetPublicEntryPrefix(idx, hooks[count], _A<@yH_>)))
 	{
@@ -600,7 +600,7 @@ _Y_HOOKS_STATIC stock Hooks_DoAllHooks()
 	// Main loop
 	new
 		name[32],
-		idx;
+		idx = 0;
 	// Get the next hook type.
 	while ((idx = AMX_GetPublicNamePrefix(idx, name, _A<@yH_>)))
 	{
@@ -653,8 +653,9 @@ _Y_HOOKS_STATIC stock Hooks_Collate(const preloads[][E_CHAIN_HOOK], precount, co
 		// Get all the hooks of this type.  They are stored alphabetically.
 		hookCount = Hooks_GetAllHooks(sName, sHooks, idx, namelen),
 		writePtr = sHooks[0], // Header for the first found hook.
-		nextPtr,
-		pc, ph[16];
+		nextPtr = 0,
+		pc = 0,
+		ph[16];
 	// Get the preloads.
 	Hooks_GetPreHooks(preloads, precount, sName, ph, pc),
 	// Get where in the chain we are being inserted.
@@ -759,7 +760,7 @@ _Y_HOOKS_STATIC stock Hooks_GetDefaultReturn(const name[64])
 	strcat(dest, name);
 	Hooks_MakeShortName(dest);
 	new
-		ptr;
+		ptr = 0;
 	if (AMX_GetPublicEntry(0, ptr, dest, true))
 	{
 		// A "RET_OnWhatever" function exists - rationalise the return.
@@ -1092,9 +1093,9 @@ _Y_HOOKS_STATIC Hooks_CountInvalidPublics()
 {
 	P:4("Hooks_CountInvalidPublics called");
 	new
-		idx,
-		buf,
-		count;
+		idx = 0,
+		buf = 0,
+		count = 0;
 	// Search for functions whose names start with nothing.
 	while ((idx = AMX_GetPublicEntryPrefix(idx, buf, 0)))
 		++count;
@@ -1137,9 +1138,9 @@ stock _Hooks_AddReplacement(const longName[], const shortName[])
 static stock Hooks_SortReplacements()
 {
 	new
-		idx0,
-		idx1,
-		temp;
+		idx0 = 0,
+		idx1 = 0,
+		temp = 0;
 	for (new i = YSI_g_sReplacePtr - 1; i > 0; --i)
 	{
 		for (new j = 0; j != i; ++j)
@@ -1180,8 +1181,8 @@ public OnCodeInit()
 	state _ALS : _ALS_go;
 	// Get the replacements.
 	new
-		idx,
-		entry;
+		idx = 0,
+		entry = 0;
 	if (Server_JITExists())
 	{
 		// Get the indexes of the startup functions that get recorded before the
@@ -1294,9 +1295,8 @@ _Y_HOOKS_STATIC Hooks_RepairJITInit()
 	YSI_g_sInitFSPtr = GetPublicAddressFromName("OnFilterScriptInit");
 	YSI_g_sInitGMPtr = GetPublicAddressFromName("OnGameModeInit");
 	new
-		base,
-		stub;
-	base = AMX_HEADER_PUBLICS + YSI_g_sInitFSIdx * 8;
+		base = AMX_HEADER_PUBLICS + YSI_g_sInitFSIdx * 8,
+		stub = 0;
 	#emit CONST.pri           _Hooks_RepairStubFS
 	#emit STOR.S.pri          stub
 	YSI_g_sInitFSRep = AMX_Read(base),
@@ -1403,7 +1403,7 @@ public OnRuntimeError(code, &bool:suppress)
 		// this stack and fix up all the parameter counts.
 		new
 			cur = YSI_g_sActiveHooks;
-		for (new i; cur; cur = AMX_Read(cur))
+		for (new i = 0; cur; cur = AMX_Read(cur))
 		{
 			if (++i == 1)
 			{

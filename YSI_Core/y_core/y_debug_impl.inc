@@ -633,7 +633,7 @@ public OnCodeInit()
 {
 	Debug_SetState();
 	new
-		s;
+		s = 0;
 	// Test the ADDRESS of the variable, not the value.
 	#emit CONST.pri YSI_FILTERSCRIPT
 	#emit STOR.S.pri s

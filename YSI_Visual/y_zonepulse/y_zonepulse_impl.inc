@@ -161,10 +161,10 @@ stock _GangZonePulse(@PlayerSet:ps, zone, from, to, time, delay = ZONE_PULSE_STA
 	//  cur = from + fromAdd - fromSub;
 	//  
 	/*new
-		thereAdd,
-		thereSub,
-		backAdd,
-		backSub;
+		thereAdd = 0,
+		thereSub = 0,
+		backAdd = 0,
+		backSub = 0;
 	if (to >>> 24 > from >>> 24) thereAdd |= ((to >>> 24) - (from >>> 24)) / time << 24, backSub |= ((to >>> 24) - (from >>> 24)) / time2 << 24;
 	else thereSub |= ((from >>> 24) - (to >>> 24)) / time << 24, backAdd |= ((from >>> 24) - (to >>> 24)) / time2 << 24;
 	if (to >>> 16 & 0xFF > from >>> 16 & 0xFF) thereAdd |= ((to >>> 16 & 0xFF) - (from >>> 16 & 0xFF)) / time << 16, backSub |= ((to >>> 16 & 0xFF) - (from >>> 16 & 0xFF)) / time2 << 16;

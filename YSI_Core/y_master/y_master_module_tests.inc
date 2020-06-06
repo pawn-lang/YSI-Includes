@@ -10,7 +10,7 @@ FOREIGN__ M_Func6();
 static stock Master_TestAll(base)
 {
 	new
-		ret;
+		ret = 0;
 	ASSERT_EQ(M_Func1(), base);
 	ASSERT_EQ(M_Func2(42), 42 * base);
 	ret = 0;
@@ -39,7 +39,7 @@ TEST__ Master_ModulesPhase0a()
 {
 	// Run the tests, without any server module loaded.
 	new
-		ret;
+		ret = 0;
 	ASSERT_EQ(M_Func1(), 0);
 	ASSERT_EQ(M_Func2(42), 0);
 	ret = 0;

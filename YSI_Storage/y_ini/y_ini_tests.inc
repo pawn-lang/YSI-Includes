@@ -79,7 +79,7 @@ TEST__ INI_IdentifyLineType1()
 {
 	// Comment lines and blank lines may as well be treated as the same thing,
 	// except when rewriting the file.
-	new p0s, p0e, p1s, p1e, p2s, p2e;
+	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Comment lines.
 	ASSERT_EQ(INI_IdentifyLineType("; Hello", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
 	ASSERT_EQ(INI_IdentifyLineType("   ; There", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_DATALESS);
@@ -97,7 +97,7 @@ TEST__ INI_IdentifyLineType1()
 
 TEST__ INI_IdentifyLineType2()
 {
-	new p0s, p0e, p1s, p1e, p2s, p2e;
+	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Invalid lines.
 	new
 		e_INI_LINE_TYPE:result;
@@ -135,7 +135,7 @@ TEST__ INI_IdentifyLineType2()
 
 TEST__ INI_IdentifyLineType3()
 {
-	new p0s, p0e, p1s, p1e, p2s, p2e;
+	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Entry lines.
 	ASSERT_EQ(INI_IdentifyLineType("key = value", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_ENTRY);
 	ASSERT(p0s == 0 && p0e == 3 && p1s == 6 && p1e == 11 && p2s == p2e);
@@ -161,7 +161,7 @@ TEST__ INI_IdentifyLineType3()
 
 TEST__ INI_IdentifyLineType4()
 {
-	new p0s, p0e, p1s, p1e, p2s, p2e;
+	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Tag lines.
 	ASSERT_EQ(INI_IdentifyLineType("[hello]", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_TAG);
 	ASSERT(p0s == 1 && p0e == 6 && p1s == p1e && p2s == p2e);
@@ -183,7 +183,7 @@ TEST__ INI_IdentifyLineType4()
 
 TEST__ INI_IdentifyLineType5()
 {
-	new p0s, p0e, p1s, p1e, p2s, p2e;
+	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Inheritance.
 	ASSERT_EQ(INI_IdentifyLineType("[hello] : ", p0s, p0e, p1s, p1e, p2s, p2e), e_INI_LINE_TYPE_INVALID);
 	ASSERT(p0s == 1 && p0e == 6 && p1s == p1e && p2s == p2e);
@@ -215,7 +215,7 @@ TEST__ INI_IdentifyLineType5()
 TEST__ INI_IdentifyLineType6a()
 {
 	state y_ini:y_ini_writing_fast;
-	new p0s, p0e, p1s, p1e, p2s, p2e;
+	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Continuation.
 	new
 		e_INI_LINE_TYPE:result;
@@ -264,7 +264,7 @@ TEST__ INI_IdentifyLineType6a()
 TEST__ INI_IdentifyLineType6b()
 {
 	state y_ini:y_ini_reading_yyyn;
-	new p0s, p0e, p1s, p1e, p2s, p2e;
+	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	// Continuation.
 	new
 		e_INI_LINE_TYPE:result;
@@ -316,7 +316,7 @@ TEST__ INI_IdentifyLineType6b()
 
 TEST__ INI_Continuation()
 {
-	new p0s, p0e, p1s, p1e, p2s, p2e;
+	new p0s = 0, p0e = 0, p1s = 0, p1e = 0, p2s = 0, p2e = 0;
 	INI_IdentifyLineType("hi = hello \\\r\n", p0s, p0e, p1s, p1e, p2s, p2e);
 	INI_IdentifyLineType("world = the \\ ; Ignore me", p0s, p0e, p1s, p1e, p2s, p2e);
 	INI_IdentifyLineType("\\ whole string     ", p0s, p0e, p1s, p1e, p2s, p2e);
@@ -331,8 +331,7 @@ TEST__ INI_Continuation()
 
 TEST__ Trim1()
 {
-	new start, end;
-	start = 0, end = 9;
+	new start = 0, end = 9;
 	Trim("  hello  ", start, end);
 	ASSERT_EQ(start, 2);
 	ASSERT_EQ(end, 7);
@@ -596,7 +595,7 @@ TEST__ INI_Parse10()
 TEST__ INI_Parse11()
 {
 	new
-		a;
+		a = 0;
 	inline const F_tag2_test1(string:key[], string:value[])
 	{
 		#pragma unused key, value
@@ -624,7 +623,7 @@ TEST__ INI_Parse12()
 TEST__ INI_Parse13()
 {
 	new
-		a;
+		a = 0;
 	inline F_tag2_test1(string:key[], string:value[])
 	{
 		#pragma unused key, value
@@ -638,8 +637,8 @@ TEST__ INI_Parse13()
 TEST__ INI_ParseInline()
 {
 	new
-		num,
-		ret;
+		num = 0,
+		ret = 0;
 	inline Inline1(string:key[], string:value[])
 	{
 		#pragma unused key, value
@@ -687,11 +686,11 @@ TEST__ INI_Int0()
 static stock DoINI_Int0()
 {
 	new
-		k0,
-		k1,
-		k2,
-		k3,
-		k4;
+		k0 = 0,
+		k1 = 0,
+		k2 = 0,
+		k3 = 0,
+		k4 = 0;
 	inline Inl_(string:name[], string:value[])
 	{
 		INI_Int("key0", k0);
@@ -717,11 +716,11 @@ TEST__ INI_Int2()
 static stock DoINI_Int2()
 {
 	new
-		k0,
-		k1,
-		k2,
-		k3,
-		k4;
+		k0 = 0,
+		k1 = 0,
+		k2 = 0,
+		k3 = 0,
+		k4 = 0;
 	inline const Inl_(string:name[], string:value[])
 	{
 		INI_Int("key0", k0);
@@ -747,14 +746,14 @@ TEST__ INI_Int3()
 static stock DoINI_Int3()
 {
 	new
-		k0,
-		k1,
-		k2,
-		k3,
-		k4;
+		k0 = 0,
+		k1 = 0,
+		k2 = 0,
+		k3 = 0,
+		k4 = 0;
 	new
 		sk0[8],
-		Float:sk1,
+		Float:sk1 = 0.0,
 		bool:sk2 = true;
 	new
 		tk0[8],

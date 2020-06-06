@@ -79,15 +79,15 @@ stock Bitmap_StraightLine(Bitmap:ctx, sX, sY, eX, eY, Float:lineWidth, colour, c
 		maxY = Bitmap_Height(ctx), // = min(max(sY, eY), Bitmap_Height(ctx)),
 		minX = 0, // = max(0, min(sX, eX)),
 		maxX = Bitmap_Width(ctx), // = min(max(sX, eX), imageWidth),
-		Float:angle,
-		read,
+		Float:angle = 0.0,
+		read = 0,
 		a = (colour & 0xFF) + 1,
-		na,
-		suba,
+		na = 0,
+		suba = 0,
 		r = ((colour & 0xFF000000) >>> 16),
 		g = ((colour & 0x00FF0000) >>> 16),
 		b = ((colour & 0x0000FF00) >>>  8),
-		orig;
+		orig = 0;
 	_Bitmap_MakePattern(pattern, minX, minY, 0, 0);
 
 	// Sort out the line angle, in degrees, to get the corners.

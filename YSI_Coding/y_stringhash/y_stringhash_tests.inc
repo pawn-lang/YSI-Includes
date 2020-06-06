@@ -122,7 +122,7 @@ TEST__ y_stringhash__Empty()
 TEST__ y_stringhash__Chars0()
 {
 	new
-		hh;
+		hh = 0;
 	hh = _H<aabbccddeeff>;
 	ASSERT_EQ(hh, YHash("aabbccddeeff", .type = hash_bernstein));
 	hh = _H<gghhiijjkkll>;
@@ -193,7 +193,7 @@ TEST__ y_stringhash__Chars0()
 TEST__ y_stringhash__Chars1()
 {
 	new
-		hh;
+		hh = 0;
 	hh = _H@f<aabbccddeeff>;
 	ASSERT_EQ(hh, YHash("aabbccddeeff", .type = hash_fnv1));
 	hh = _H@f<gghhiijjkkll>;
@@ -264,7 +264,7 @@ TEST__ y_stringhash__Chars1()
 TEST__ y_stringhash__Chars2()
 {
 	new
-		hh;
+		hh = 0;
 	hh = _H@a<aabbccddeeff>;
 	ASSERT_EQ(hh, YHash("aabbccddeeff", .type = hash_fnv1a));
 	hh = _H@a<gghhiijjkkll>;
@@ -335,7 +335,7 @@ TEST__ y_stringhash__Chars2()
 TEST__ y_stringhash__Letters1()
 {
 	new
-		hh;
+		hh = 0;
 	hh = _I<A>;
 	ASSERT_EQ(hh, YHash("A", .sensitive = false));
 	hh = _I<A>;
@@ -355,7 +355,7 @@ TEST__ y_stringhash__Letters1()
 TEST__ y_stringhash__Letters2()
 {
 	new
-		hh;
+		hh = 0;
 	hh = _H<A>;
 	ASSERT_EQ(hh, YHash("A"));
 	hh = _H<A>;
@@ -375,8 +375,8 @@ TEST__ y_stringhash__Letters2()
 TEST__ y_stringhash__case()
 {
 	new
-		h0,
-		h1;
+		h0 = 0,
+		h1 = 0;
 	h0 = _H<HEllO>;
 	h1 = _H<HELLO>;
 	ASSERT_NE(h0, h1);
@@ -944,7 +944,7 @@ static stock _FIXES_Bernstein(const name[])
 {
 	new
 		i = -1,
-		ch,
+		ch = 0,
 		hash = 5381;
 	// In carcols.dat the vehicle names end at ",".  That makes this code
 	// very specific to a few use-cases.  It also works for hashing server vars,

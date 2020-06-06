@@ -690,10 +690,10 @@ remotefunc void:_Group_SetPlayer(p, Bit:g[sizeof RG@], s)
 				P:2("_Group_SetPlayer called: %i, %s, %s, %i", p, Bit_Display(YSI_gGroupPlayers[p]), Bit_Display(g), s);
 				// <a href="http://supertech.csail.mit.edu/papers/debruijn.pdf" />
 				new
-					Bit:cur,
-					Bit:exor,
-					Bit:bit,
-					group;
+					Bit:cur = Bit:0,
+					Bit:exor = Bit:0,
+					Bit:bit = Bit:0,
+					group = 0;
 				for (new i = 0; i != sizeof (g); ++i)
 				{
 					// Get the difference between the old and new groups.
@@ -948,7 +948,7 @@ GLOBAL__ Group:Group_GetID(const string:name[])
 {
 	P:2("Group_GetID called: %s", name);
 	new
-		i,
+		i = 0,
 		hash = YHash(name);
 	while (i != _MAX_GROUPS)
 	{
@@ -1112,7 +1112,7 @@ GLOBAL__ Group:_Group_Create(const string:name[])
 	P:2("Group:Group_Create called: \"%s\"", name);
 	P:2("Group_Create called in %d", Master_ID());
 	new
-		i;
+		i = 0;
 	if (!isnull(name))
 	{
 		// Get a group of the same name if it already exists.

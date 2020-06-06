@@ -540,8 +540,8 @@ static stock y_hooks_funcidx2(const str[])
 {
 	new
 		func[32],
-		buf,
-		idx;
+		buf = 0,
+		idx = 0;
 	while ((idx = AMX_GetPublicName(idx, func, str)))
 	{
 		if (!strcmp(func, str))
@@ -573,8 +573,8 @@ public y_hooks_Invalidate3() {}
 TEST__ y_hooks_Invalidate23()
 {
 	new
-		base0,
-		count0;
+		base0 = 0,
+		count0 = 0;
 	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base0, count0);
 	ASSERT_NE(funcidx("y_hooks_Invalidate2"), -1);
 	ASSERT_NE(funcidx("y_hooks_Invalidate3"), -1);
@@ -584,8 +584,8 @@ TEST__ y_hooks_Invalidate23()
 	ASSERT_EQ(funcidx("y_hooks_Invalidate2"), -1);
 	ASSERT_EQ(funcidx("y_hooks_Invalidate3"), -1);
 	new
-		base1,
-		count1;
+		base1 = 0,
+		count1 = 0;
 	AMX_GetBaseCount(AMX_TABLE_PUBLICS, base1, count1);
 	ASSERT(base1 > base0);
 	ASSERT(count1 < count0);

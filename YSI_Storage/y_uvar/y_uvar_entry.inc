@@ -205,7 +205,7 @@ public OnUserData[y_uvar](playerid, name[], value[])
 		{
 			new
 				len = strlen(value),
-				idx;
+				idx = 0;
 			pos += YSI_g_sLastSize * playerid;
 			// Save this pointer to an array variable for simplicity.
 			#emit LOAD.pri   YSI_g_sLastAddr
@@ -288,7 +288,7 @@ public OnUserData[y_uvar](playerid, name[], value[])
 stock N@(volatile const vardata[], playerCount, dataSize, &pointer)
 {
 	new
-		sAddr;
+		sAddr = 0;
 	// Store the basic data, including linked-list pointers and a pointer to the
 	// location at which the data is stored.
 	#emit LOAD.S.pri vardata
@@ -316,8 +316,8 @@ public OnCodeInit()
 	YSI_g_sFirstUVarData = -1;
 	// Call all @yA_ functions to get all required data.
 	new
-		idx,
-		buffer;
+		idx = 0,
+		buffer = 0;
 	while ((idx = AMX_GetPublicPointerSuffix(idx, buffer, _A<@yA_>)))
 	{
 		#emit PUSH.C     0
@@ -388,7 +388,7 @@ stock _Uvar_DoSavePlayer(playerid)
 	Player_SetTag("y_uvar");
 	new
 		p = YSI_g_sFirstUVarData,
-		temp;
+		temp = 0;
 	while (p != -1)
 	{
 		// DO NOT CHANGE THE CODE BELOW HERE!!!
@@ -447,7 +447,7 @@ HOOK__ OnPlayerConnect(playerid)
 	P:1("hook Users_OnPlayerConnect called: %i", playerid);
 	new
 		p = YSI_g_sFirstUVarData,
-		temp;
+		temp = 0;
 	while (p != -1)
 	{
 		// DO NOT CHANGE THE CODE BELOW HERE!!!

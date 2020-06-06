@@ -101,7 +101,7 @@ main()
 static Malloc_FindStackTop()
 {
 	new
-		frm_addr;
+		frm_addr = 0;
 	#emit LCTRL       5
 	#emit STOR.S.pri  frm_addr
 	// Loop until we hit a return address of 0.  Limited to being within the
@@ -186,7 +186,7 @@ static Malloc_TrySetup()
 {
 	P:1("Malloc_TrySetup called");
 	new
-		temp;
+		temp = 0;
 	#emit LCTRL       3
 	#emit STOR.S.pri  temp
 	if (temp > Malloc_FindStackTop() + 4)

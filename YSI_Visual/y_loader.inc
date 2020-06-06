@@ -283,19 +283,19 @@ public Loader_Obj()
 			name[MAX_XML_ENTRY_NAME],
 			val[MAX_XML_ENTRY_TEXT];
 		new
-			Float:x,
-			Float:y,
-			Float:z,
-			Float:rx,
-			Float:ry,
-			Float:rz,
-			model;
+			Float:x = 0.0,
+			Float:y = 0.0,
+			Float:z = 0.0,
+			Float:rx = 0.0,
+			Float:ry = 0.0,
+			Float:rz = 0.0,
+			model = 0;
 		while (XML_GetKeyValue(name, val))
 		{
 			if (!strcmp(name, "position", true))
 			{
 				new
-					pos;
+					pos = 0;
 				x = floatstr(val);
 				pos = chrfind(' ', val, pos);
 				y = floatstr(val[++pos]);
@@ -305,7 +305,7 @@ public Loader_Obj()
 			else if (!strcmp(name, "rotation", true))
 			{
 				new
-					pos;
+					pos = 0;
 				rz = floatstr(val);
 				pos = chrfind(' ', val, pos);
 				ry = floatstr(val[++pos]);
@@ -362,7 +362,7 @@ public Loader_Check()
 			if (!strcmp(name, "position", true))
 			{
 				new
-					pos;
+					pos = 0;
 				x = floatstr(val);
 				pos = chrfind(' ', val, pos);
 				y = floatstr(val[++pos]);
@@ -400,7 +400,7 @@ public Loader_Spawn()
 			if (!strcmp(name, "position", true))
 			{
 				new
-					pos;
+					pos = 0;
 				x = floatstr(val);
 				pos = chrfind(' ', val, pos);
 				y = floatstr(val[++pos]);

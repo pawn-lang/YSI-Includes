@@ -290,8 +290,8 @@ TEST__ y_commands_Hashing()
 	new
 		dst0[32],
 		dst1[32],
-		hash0,
-		hash1;
+		hash0 = 0,
+		hash1 = 0;
 	// CASE INSENSITIVE.
 	// V1.
 	Puny_Encode(dst0, "hello\x102;you", .delimiter = '@');
@@ -548,7 +548,7 @@ YCMD:y_commands_t111111(playerid, params[], help)
 TEST__ y_commands_iterator0()
 {
 	new
-		found,
+		found = 0,
 		total = 0;
 	FOREACH__ (new c : Command())
 	{
@@ -569,7 +569,7 @@ TEST__ y_commands_iterator0()
 TEST__ y_commands_iterator1()
 {
 	new
-		found,
+		found = 0,
 		total = 0;
 	FOREACH__ (new c : Command)
 	{

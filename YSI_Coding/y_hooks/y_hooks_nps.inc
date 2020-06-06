@@ -189,10 +189,10 @@ Optional plugins:
 #define _yH@(%0),%1@%2(%3),_@yH(); _yH@(%0),%1(%3),_@yH();
 
 new
-	YSI_g_sNPSBaseCall,
-	YSI_g_sNPSTrampoline,
-	YSI_g_sNPSReplace,
-	YSI_g_sNPSStack;
+	YSI_g_sNPSBaseCall = 0,
+	YSI_g_sNPSTrampoline = 0,
+	YSI_g_sNPSReplace = 0,
+	YSI_g_sNPSStack = 0;
 
 static
 	YSI_g_sTempRet;
@@ -201,7 +201,7 @@ static stock YHNPS_Find(heap, end, value)
 {
 	new
 		start = 0,
-		mid;
+		mid = 0;
 	--end;
 	while (start <= end)
 	{
@@ -228,7 +228,7 @@ static stock YHNPS_Insert(heap, count, value, ptr)
 {
 	new
 		start = 0,
-		mid,
+		mid = 0,
 		end = count - 1;
 	while (start <= end)
 	{
@@ -322,9 +322,9 @@ public OnCodeInit()
 		allocated = 0,
 		nativeCount = 0,
 		stockCount = 0,
-		idx1,
-		idx2,
-		base;
+		idx1 = 0,
+		idx2 = 0,
+		base = 0;
 	{
 		new hdr[AMX_HDR];
 		GetAmxHeader(hdr);
@@ -477,7 +477,7 @@ stock _yH@(compressedFormat)
 	new
 		dctx[DisasmContext],
 		ctx[AsmContext],
-		addr,
+		addr = 0,
 		type = 0;
 	DisasmInit(dctx, GetCurrentFrameReturn());
 	while (DisasmNext(dctx))

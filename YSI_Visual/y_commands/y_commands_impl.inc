@@ -1399,10 +1399,10 @@ HOOK__ OnScriptInit()
 	#endif
 	P:2("_Command_DoInit <> called");
 	new
-		entry,
+		entry = 0,
 		buffer[32 char],
-		idx,
-		id2;
+		idx = 0,
+		id2 = 0;
 	P:5("Command_OnScriptInit: Pre-loop");
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yC_>)))
 	{

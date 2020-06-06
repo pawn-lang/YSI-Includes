@@ -168,8 +168,8 @@ stock const YSIM_VERMAX[] = "X";
 ScriptInit_PreInitFuncs_()
 {
 	new
-		idx,
-		ptr;
+		idx = 0,
+		ptr = 0;
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@yI_>)))
 	{
 		#emit PUSH.C     0
@@ -185,8 +185,8 @@ ScriptInit_PreInitFuncs_()
 ScriptInit_PostInitFuncs_()
 {
 	new
-		idx,
-		ptr;
+		idx = 0,
+		ptr = 0;
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@_yI>)))
 	{
 		#emit PUSH.C     0
@@ -202,8 +202,8 @@ ScriptInit_PostInitFuncs_()
 ScriptInit_PreExitFuncs_()
 {
 	new
-		idx,
-		ptr;
+		idx = 0,
+		ptr = 0;
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@Iy_>)))
 	{
 		#emit PUSH.C     0
@@ -219,8 +219,8 @@ ScriptInit_PreExitFuncs_()
 ScriptInit_PostExitFuncs_()
 {
 	new
-		idx,
-		ptr;
+		idx = 0,
+		ptr = 0;
 	while ((idx = AMX_GetPublicPointerPrefix(idx, ptr, _A<@_Iy>)))
 	{
 		#emit PUSH.C     0

@@ -158,7 +158,7 @@ stock _Bitmap_Param(const str[], const find[])
 	new
 		pos = strfind(str, find, true),
 		len = strlen(str),
-		ch;
+		ch = 0;
 	if (0 < pos)
 	{
 		ch = str[pos - 1];

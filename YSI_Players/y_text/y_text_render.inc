@@ -82,7 +82,7 @@ Optional plugins:
 // Loops through all possible arguments in lists, functions and singles.  See
 // "case e_COMPRESS_FORMAT_DATA_CUSTOM:" for more details (an expanded macro
 // version can be found there).
-#define Y_RENDER_ARG for(new i,j,b=4;i!=2;++i)if(!i){if(ch&_:e_COMPRESS_FORMAT_DATA_FUNC){b=1,func="@yR_",va_getstring(func[4],curArg);if(funcidx(func)<0)func[b=2]='r';}else if(ch&_:e_COMPRESS_FORMAT_DATA_LIST)b=3;}else for(;(arg=b==1?W@(func,"iii",pid,(_:l),j):b==2?W@(func,"ii",(_:l),j):b==3?getarg(curArg,j++):getarg(curArg)),arg!=cellmin&&b||++curArg&0;b&=~4,++j)
+#define Y_RENDER_ARG for(new i=0,j=0,b=4;i!=2;++i)if(!i){if(ch&_:e_COMPRESS_FORMAT_DATA_FUNC){b=1,func="@yR_",va_getstring(func[4],curArg);if(funcidx(func)<0)func[b=2]='r';}else if(ch&_:e_COMPRESS_FORMAT_DATA_LIST)b=3;}else for(;(arg=b==1?W@(func,"iii",pid,(_:l),j):b==2?W@(func,"ii",(_:l),j):b==3?getarg(curArg,j++):getarg(curArg)),arg!=cellmin&&b||++curArg&0;b&=~4,++j)
 
 // Make the correct specifier string for the data stored in the compressed
 // specifier data.
@@ -102,9 +102,9 @@ Optional plugins:
 
 #define Y_RENDER_DO_DISPLAY() {output[p]='\0';if(!none)Format_DoDisplay(pid,gInitialColour,output);if(onlyOne)return one;output[0]=p=0;llen=maxlen;++one;}
 
-#define Y_RENDER_ADD(%1) for(new __added,__len=strlen((%1)),__done;(__added=Format_DoAddString(output,%1[__done],p,__len,llen,fakePos));__done+=__added,__len-=__added){if(fade)state y_render_fade:y_render_fade_fake;else Y_RENDER_DO_DISPLAY()}
+#define Y_RENDER_ADD(%1) for(new __added=0,__len=strlen((%1)),__done;(__added=Format_DoAddString(output,%1[__done],p,__len,llen,fakePos));__done+=__added,__len-=__added){if(fade)state y_render_fade:y_render_fade_fake;else Y_RENDER_DO_DISPLAY()}
 
-//#define Y_RENDER_ADD_EX(%1,%2,%3) for(new __added,__len=(%3),__done=%2;(__added=Format_DoAddString(output,%1[__done],p,__len,llen,fakePos));__done+=__added,__len-=__added){if(fade)state y_render_fade:y_render_fade_fake;else Y_RENDER_DO_DISPLAY()}
+//#define Y_RENDER_ADD_EX(%1,%2,%3) for(new __added=0,__len=(%3),__done=%2;(__added=Format_DoAddString(output,%1[__done],p,__len,llen,fakePos));__done+=__added,__len-=__added){if(fade)state y_render_fade:y_render_fade_fake;else Y_RENDER_DO_DISPLAY()}
 
 #define Y_RENDER_CHAR(%1) while(!Format_DoAddChar(output,(%1),p,llen,fakePos)){if(fade)state y_render_fade:y_render_fade_fake;else Y_RENDER_DO_DISPLAY()}
 
@@ -898,14 +898,14 @@ Format_Render_start:
 		scNewLineString[] = "~n~",
 		scDialogLineString[] = "\r\n";
 	new
-		ch,
+		ch = 0,
 		llen = maxlen,
 		//output[128], // Always 128.
 		p = 0,
 		curArg = 7, // Account for additionaly pushed arguments.
 		numArgs = numargs(),
 		//llen = sizeof (output) - 1,
-		arg,
+		arg = 0,
 		none = (target & e_FORMAT_FLAGS_NONE),
 		onlyOne = (target & e_FORMAT_FLAGS_ONE) | none | _:YSI_g_sJustOne,
 		bool:fade = false,
@@ -919,8 +919,8 @@ Format_Render_start:
 		// Was only "one" string display used and is this not per-player text?
 		one = 0,
 		// Start location of the current fade.
-		fadeStart,
-		fadeStartIdx;//,
+		fadeStart = 0,
+		fadeStartIdx = 0;//,
 		//fadeStartText;
 	//#emit LOAD.S.pri string
 	//#emit STOR.S.pri fadeStartText
@@ -935,9 +935,9 @@ Format_Render_start:
 	}
 	target &= e_FORMAT_FLAGS_INDEX;
 	/*new
-		fadeCurArg,
-		fadeArg,
-		fadeIdx;*/
+		fadeCurArg = 0,
+		fadeArg = 0,
+		fadeIdx = 0;*/
 	if ((YSI_g_sFadeRedoTarget = target))
 	{
 		YSI_g_sFadeRedoTarget &= ~Y_FORMAT_ALWAYS_SET;
@@ -1344,7 +1344,7 @@ Format_Render_start:
 						// extended versions (%k<DATE>) etc.
 						new
 							ffake[4 char],
-							fidx;
+							fidx = 0;
 						ffake[0] = string[idx];
 						if (ffake{1} == '@')
 						{
@@ -1392,7 +1392,7 @@ Format_Render_start:
 						// tracks which parameter part we are currently doing in
 						// the case of function or list inputs.
 						// 
-						for (new i, j, b = 4; i != 2; ++i)
+						for (new i = 0, j = 0, b = 4; i != 2; ++i)
 						{
 							if (!i)
 							{
@@ -1675,7 +1675,7 @@ Format_Render_start:
 					arg = 4 - (p & 0x03); // The number of spaces to add.
 					static
 						sTabs[] = "    ";
-					for (new __added; (__added = Format_DoAddString(output, sTabs[4 - arg], p, arg, llen, fakePos)); arg -= __added)
+					for (new __added = 0; (__added = Format_DoAddString(output, sTabs[4 - arg], p, arg, llen, fakePos)); arg -= __added)
 					{
 						if (fade) //flags & 4)
 						{

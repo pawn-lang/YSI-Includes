@@ -104,7 +104,7 @@ TEST__ y_cell_ReverseBits0()
 
 TEST__ y_cell_ExpandCompress()
 {
-	new o, x, m, n;
+	new o = 0, x = 0, m = 0, n = 0;
 	//printf("1");
 	o = 0b11110000101001011100001100001111;
 	m = 0b01010000000000000000000000000000;
@@ -505,7 +505,7 @@ TEST__ y_cell_CountBits0()
 	ASSERT_EQ(y_cell_CountBits_v4(0b1111000001111000011), 10);
 #if 0
 	new
-		t0, t1, t2, t3, t4;
+		t0 = 0, t1 = 0, t2 = 0, t3 = 0, t4 = 0;
 	t0 = GetTickCount();
 	for (new i = 0; i != 10000000; ++i)
 	{

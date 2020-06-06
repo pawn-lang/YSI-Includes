@@ -168,7 +168,7 @@ MASTER_HOOK__ OnPlayerLeaveArea(playerid, areaid)
 	YSI_g_sZNCur[playerid] = cellmax;
 	if (YSI_g_sZNShow[playerid])
 	{
-		for (new idx = 0, id; (id = Area_GetPlayerAreas(playerid, idx)) != NO_AREA; ++idx)
+		for (new idx = 0, id = 0; (id = Area_GetPlayerAreas(playerid, idx)) != NO_AREA; ++idx)
 		{
 			if ((id = YSI_g_sZoneIDs[id]) != -1)
 			{
@@ -188,7 +188,7 @@ MASTER_HOOK__ OnScriptInit()
 	#define SAZ_AddCuboid(%0) (YSI_g_sZoneIDs[Area_AddCuboid(%0)] = idx++)
 	#define SAZ_AddPoly(%0) (YSI_g_sZoneIDs[Area_AddPoly(%0)] = idx++)
 	new
-		idx;
+		idx = 0;
 	
 	SAZ_AddCuboid(-410.00, 1403.30, -3.00, -137.90, 1681.20, 200.00);
 	

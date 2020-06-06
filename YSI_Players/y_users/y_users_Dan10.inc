@@ -996,7 +996,7 @@ static stock Player_HashPass(pass[], target[])
 		new
 			s1 = 1,
 			s2 = 0,
-			i,
+			i = 0,
 			You_REALLY_shouldnt_use_Adler32;
 		while (pass[i])
 		{
@@ -1016,12 +1016,11 @@ static stock Player_HashPass(pass[], target[])
 			css = 99;
 		new
 			//target[MAX_PASSWORD_LENGTH + 1],
-			j,
-			sum = j,
+			j = strlen(pass),
+			sum = 0,
 			tmp = 0,
-			i,
-			mod;
-		j = strlen(pass);
+			i = 0,
+			mod = 0;
 		for (i = 0; i < MAX_PASSWORD_LENGTH || i < j; i++)
 		{
 			mod = i % MAX_PASSWORD_LENGTH,
@@ -1207,7 +1206,7 @@ static stock Player_RewritePreload(playerid)
 			P:5("Player_RewritePreload: fIndex OK");
 			new
 				line[INDEX_DATA_LINE_LENGTH],
-				len;
+				len = 0;
 			while ((len = fread(fIndex, line)))
 			{
 				P:6("Player_RewritePreload: while");

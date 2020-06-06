@@ -248,8 +248,8 @@ public TD_LoadColour()
 		name[MAX_XML_ENTRY_NAME],
 		val[MAX_XML_ENTRY_TEXT];
 	new
-		colour,
-		hash;
+		colour = 0,
+		hash = 0;
 	while (XML_GetKeyValue(name, val))
 	{
 		if (!strcmp(name, "name", true))
@@ -409,7 +409,7 @@ public TD_Textdraw()
 				// This could now be done with the sscanf "n" type for "number".
 				#if defined _inc_sscanf2 || defined unformat
 					new
-						colour;
+						colour = 0;
 					if (!unformat(val, "n", colour)) YSI_g_sTDData[i][E_TD_DATA_COLOUR] = colour;
 				#else
 					if (ishex(val)) YSI_g_sTDData[i][E_TD_DATA_COLOUR] = hexstr(val);
@@ -439,7 +439,7 @@ public TD_Textdraw()
 			{
 				#if defined _inc_sscanf2 || defined unformat
 					new
-						colour;
+						colour = 0;
 					if (!unformat(val, "n", colour)) YSI_g_sTDData[i][E_TD_DATA_BG] = colour;
 				#else
 					if (ishex(val)) YSI_g_sTDData[i][E_TD_DATA_BG] = hexstr(val);
@@ -1953,9 +1953,9 @@ public TD_MorphTDInternal(Text:td, Style:from, Style:to, speed, pos, revision)
 	// Get the current style data.
 	TD_GetStyleData(to, sTo);
 	new
-		Text:real,
-		index,
-		Bit:mask;
+		Text:real = Text:0,
+		index = 0,
+		Bit:mask = Bit:0;
 	if (pos >= speed)
 	{
 		// We could add a callback here to indicate that the morph is done.

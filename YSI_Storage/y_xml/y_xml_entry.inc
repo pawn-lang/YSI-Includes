@@ -197,22 +197,22 @@ stock XML_Parse(XML:rule, const filename[])
 	{
 		new
 			line[YSI_MAX_STRING],
-			tagCount,
-			gotLastValue,
-			inClose,
-			inOpen,
-			inComment,
-			lineOffset,
-			lineLen,
+			tagCount = 0,
+			gotLastValue = 0,
+			inClose = 0,
+			inOpen = 0,
+			inComment = 0,
+			lineOffset = 0,
+			lineLen = 0,
 			value[MAX_XML_ENTRY_TEXT],
 			name[MAX_XML_ENTRY_NAME],
-			inPar;
+			inPar = 0;
 		while ((lineLen = fread(xFile, line[lineOffset], sizeof (line) - lineOffset)))
 		{
 			P:5("XML_Parse() line: %s", line);
 			new
-				pos,
-				ch;
+				pos = 0,
+				ch = 0;
 			lineOffset = 0;
 			if (inComment)
 			{
@@ -403,9 +403,9 @@ stock XML_GetParameter(const line[], &pos)
 {
 	P:3("XML_GetParameter called: \"%s\", %i", line, pos);
 	new
-		ch,
+		ch = 0,
 		ret[MAX_XML_ENTRY_TEXT],
-		i;
+		i = 0;
 	while ((ch = line[pos++]) && ch != '"') {}
 	if (ch)
 	{
@@ -476,9 +476,9 @@ stock XML_GetValue(const line[], &pos)
 {
 	P:3("XML_GetValue called: \"%s\", %i", line, pos);
 	new
-		ch,
+		ch = 0,
 		ret[MAX_XML_ENTRY_TEXT],
-		i;
+		i = 0;
 	while (((ch = line[pos++]) >= ' ' || ch == '\t') && (ch != '<') && i < (sizeof (ret) - 1)) ret[i++] = ch;
 	pos--;
 	if (i == (sizeof (ret) - 1))
@@ -501,9 +501,9 @@ stock XML_GetName(const line[], &pos)
 {
 	P:3("XML_GetName called: \"%s\", %i", line, pos);
 	new
-		ch,
+		ch = 0,
 		ret[MAX_XML_ENTRY_NAME],
-		i;
+		i = 0;
 	while ((ch = line[pos++]) && XML_IsChar(ch) && i < (sizeof (ret) - 1)) ret[i++] = ch;
 	pos--;
 	if (i == (sizeof (ret) - 1))
@@ -524,7 +524,7 @@ stock XML_ParseTag(XML:rule, const name[], tagCount)
 {
 	P:3("XML_ParseTag called: %i, \"%s\", %i", _:rule, name, tagCount);
 	new
-		i,
+		i = 0,
 		j = YSI_g_sCurHandler[rule],
 		ret[MAX_XML_ENTRY_TEXT] = "\1";
 	YSI_g_sEndTag = tagCount;
@@ -649,7 +649,7 @@ stock XML_AddHandler(XML:rule, const trigger[], const function[])
 {
 	P:3("XML_AddHandler called: %i, \"%s\", \"%s\"", _:rule, trigger, function);
 	new
-		handle;
+		handle = 0;
 	if (!XML_IsValid(rule) || (handle = YSI_g_sCurHandler[rule]) >= MAX_XML_HANDLERS && handle >= 0) return 0;
 	strcpy(YSI_g_sHandlers[rule][handle][E_XML_HANDLER_TRIGGER], trigger, MAX_XML_ENTRY_NAME);
 	strcpy(YSI_g_sHandlers[rule][handle][E_XML_HANDLER_FUNCTION], function, MAX_XML_FUNCTION);
@@ -754,7 +754,7 @@ stock XML_WriteItem(const filename[], XMLEntry:item, bool:bIncludeXML = true, bo
 	if (_:item < YSI_g_sXMLWritePointer)
 	{
 		new
-			data;
+			data = 0;
 		if (fexist(filename))
 		{
 			new
@@ -770,8 +770,8 @@ stock XML_WriteItem(const filename[], XMLEntry:item, bool:bIncludeXML = true, bo
 					if (!data)
 					{
 						new
-							i,
-							ch;
+							i = 0,
+							ch = 0;
 						while ((ch = str[i++]) && ch <= ' ') {}
 						if (ch == '<')
 						{
@@ -979,15 +979,15 @@ stock XML_ReplaceItem(const file[], const tag[], const name[], replacement)
 		if (fHnd && __ftemp)
 		{
 			new
-				tagCount,
+				tagCount = 0,
 				line[YSI_MAX_STRING],
-				inTag,
-				atStart;
+				inTag = 0,
+				atStart = 0;
 			while (fread(fHnd, line))
 			{
 				new
-					pos,
-					ch;
+					pos = 0,
+					ch = 0;
 				while ((ch = line[pos]) && ch <= ' ') ++pos;
 				while (ch)
 				{

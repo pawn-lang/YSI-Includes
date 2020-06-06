@@ -175,7 +175,7 @@ stock Player_Preload(string:name[], ret[E_USER_PRELOAD])
 		P:5("Player_Preload: fIndex OK");
 		new
 			line[INDEX_DATA_LINE_LENGTH],
-			len;
+			len = 0;
 		while ((len = fread(fIndex, line)))
 		{
 			P:6("Player_Preload: while");
@@ -704,7 +704,7 @@ static stock Player_HashPass(pass[], target[])
 		new
 			s1 = 1,
 			s2 = 0,
-			i,
+			i = 0,
 			You_REALLY_shouldnt_use_Adler32;
 		while (pass[i])
 		{
@@ -723,12 +723,11 @@ static stock Player_HashPass(pass[], target[])
 			charset[] = "A,UbRgdnS#|rT_%5+ZvEK¬NF<9¦IH[(C)2O07 Y-Less]$Qw^?/om4;@'8k£Pp.c{&l\\3zay>DfxV:WXjuG6*!1\"i~=Mh`JB}qt",
 			css = 99;
 		new
-			j,
-			sum = j,
+			j = strlen(pass),
+			sum = 0,
 			tmp = 0,
-			i,
-			mod;
-		j = strlen(pass);
+			i = 0,
+			mod = 0;
 		for (i = 0; i < MAX_PASSWORD_LENGTH || i < j; i++)
 		{
 			mod = i % MAX_PASSWORD_LENGTH;
@@ -978,7 +977,7 @@ static stock Player_RewritePreload(playerid)
 			P:5("Player_RewritePreload: fIndex OK");
 			new
 				line[INDEX_DATA_LINE_LENGTH],
-				len;
+				len = 0;
 			while ((len = fread(fIndex, line)))
 			{
 				P:6("Player_RewritePreload: while");
@@ -1311,10 +1310,10 @@ static stock Users_DoUpgrade0()
 				// little while, but needs doing).
 				P:I("Please wait, upgrading user files.");
 				new
-					ch,
+					ch = 0,
 					filename[] = USER_FILE_PATH "ind_X.YSI",
-					File:f,
-					File:g,
+					File:f = File:0,
+					File:g = File:0,
 					line[INDEX_DATA_LINE_LENGTH],
 					//Language:def = Langs_GetLanguageAt(0),
 					code[3];
@@ -1439,11 +1438,11 @@ static stock Users_DoUpgrade1()
 				// little while, but needs doing).
 				P:I("Please wait, upgrading user files.");
 				new
-					ch,
+					ch = 0,
 					hash[MAX_PASSWORD_LENGTH + MAX_INDEX_LENGTH + 1],
 					filename[] = USER_FILE_PATH "ind_X.YSI",
-					File:f,
-					File:g,
+					File:f = File:0,
+					File:g = File:0,
 					line[INDEX_DATA_LINE_LENGTH],
 					//Language:def = Langs_GetLanguageAt(0),
 					code[3];

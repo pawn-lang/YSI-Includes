@@ -350,7 +350,7 @@ MASTER_HOOK__ OnPlayerSpawn(playerid)
 	P:2("Class_OnPlayerSpawn called: %d", playerid);
 	new
 		playerclass = YSI_g_sPlayerClass[playerid],
-		weapon;
+		weapon = 0;
 	for (new i = 0; i != MAX_CLASS_SPAWN_WEAPONS; ++i)
 	{
 		weapon = YSI_g_sClasses[playerclass][E_CLASS_WEAPONS][i];
@@ -438,9 +438,9 @@ stock Class_Add(skin, Float:x, Float:y, Float:z, Float:a, ...)
 	new
 		n = numargs(),
 		w = 5,
-		s,
+		s = 0,
 		weapons[MAX_CLASS_SPAWN_WEAPONS + 1],
-		cw;
+		cw = 0;
 	_CLASS_WEAPON_CODE
 	return Class_AddClass(skin, x, y, z, a, weapons, MAX_CLASS_SPAWN_WEAPONS + 1, Group:-1, Group:-1);
 }
@@ -466,9 +466,9 @@ stock Class_AddEx(Group:forgroup, Group:setgroup, skin, Float:x, Float:y, Float:
 	new
 		n = numargs(),
 		w = 7,
-		s,
+		s = 0,
 		weapons[MAX_CLASS_SPAWN_WEAPONS + 1],
-		cw;
+		cw = 0;
 	_CLASS_WEAPON_CODE
 	return Class_AddClass(skin, x, y, z, a, weapons, MAX_CLASS_SPAWN_WEAPONS + 1, forgroup, setgroup);
 }
@@ -492,9 +492,9 @@ stock Class_AddForGroup(Group:group, skin, Float:x, Float:y, Float:z, Float:a, .
 	new
 		n = numargs(),
 		w = 6,
-		s,
+		s = 0,
 		weapons[MAX_CLASS_SPAWN_WEAPONS + 1],
-		cw;
+		cw = 0;
 	_CLASS_WEAPON_CODE
 	return Class_AddClass(skin, x, y, z, a, weapons, MAX_CLASS_SPAWN_WEAPONS + 1, group, Group:-1);
 }
@@ -518,9 +518,9 @@ stock Class_AddWithGroupSet(Group:group, skin, Float:x, Float:y, Float:z, Float:
 	new
 		n = numargs(),
 		w = 6,
-		s,
+		s = 0,
 		weapons[MAX_CLASS_SPAWN_WEAPONS + 1],
-		cw;
+		cw = 0;
 	_CLASS_WEAPON_CODE
 	return Class_AddClass(skin, x, y, z, a, weapons, MAX_CLASS_SPAWN_WEAPONS + 1, Group:-1, group);
 }
@@ -549,7 +549,7 @@ GLOBAL__ Class_AddClass(s,Float:x,Float:y,Float:z,Float:a,const w[],c,Group:f,Gr
 	#pragma unused c
 	P:2("Class_AddClass called: %i, %f, %f, %f, %f, %s, %i, %i, %i", s, x, y, z, a, Debug_PrintArray(w, c), c, _:f, _:g);
 	new
-		i;
+		i = 0;
 	while (i != MAX_CLASSES && _Class_IsActive(i)) ++i;
 	if (i == MAX_CLASSES) return -1;
 	YSI_g_sClasses[i][E_CLASS_FLAGS] = e_CLASS_FLAGS_ACTIVE | e_CLASS_FLAGS_ENABLED | e_CLASS_FLAGS:s,

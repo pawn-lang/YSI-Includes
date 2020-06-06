@@ -241,7 +241,7 @@ stock Bitmap_AddSimpleLetter(Bitmap:ctx, colour, letter, &x, &y)
 
 stock Bitmap_AddSimpleString(Bitmap:ctx, colour, str[], &x, &y)
 {
-	for (new i = 0, ch; (ch = str[i]); ++i)
+	for (new i = 0, ch = 0; (ch = str[i]); ++i)
 	{
 		Bitmap_AddSimpleLetter(ctx, colour, ch, x, y);
 	}

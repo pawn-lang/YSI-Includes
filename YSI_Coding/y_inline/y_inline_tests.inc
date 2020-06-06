@@ -471,7 +471,7 @@ public y_inline_Remote1(v)
 TEST__ y_inline_Remote1()
 {
 	new
-		ret;
+		ret = 0;
 	
 	ret = strcmp("hello", "hello");
 	ASSERT(!ret);

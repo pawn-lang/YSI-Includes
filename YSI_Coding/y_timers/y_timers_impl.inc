@@ -81,10 +81,10 @@ public OnCodeInit()
 {
 	P:1("hook Timers_OnScriptInit called");
 	new
-		pointer,
-		time,
-		idx,
-		entry;
+		pointer = 0,
+		time = 0,
+		idx = 0,
+		entry = 0;
 	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yT_>)))
 	//while ((idx = AMX_GetPublicPointerSuffix(idx, pointer, _A<@yT_>)))
 	{
@@ -115,11 +115,11 @@ public OnCodeInit()
 			// more robust as it won't fail no matter how many different times
 			// there are - old ones relied on an array with a finite size.
 			new
-				pointer2,
-				time2,
-				idx2,
-				total,
-				pre;
+				pointer2 = 0,
+				time2 = 0,
+				idx2 = 0,
+				total = 0,
+				pre = 0;
 			while ((idx2 = AMX_GetPublicPointerPrefix(idx2, pointer2, _A<@yT_>)))
 			{
 				// Call the functions a second time to guarantee getting
@@ -180,7 +180,7 @@ HOOK__ OnPlayerConnect(playerid)
 	// linked list hidden in static variables (which are really global).
 	new
 		cur = YSI_g_sPlayerTimers,
-		data;
+		data = 0;
 	while (cur != -1)
 	{
 		#emit LREF.S.pri  cur
@@ -217,7 +217,7 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 	// linked list hidden in static variables (which are really global).
 	new
 		cur = YSI_g_sPlayerTimers,
-		data;
+		data = 0;
 	while (cur != -1)
 	{
 		#emit LREF.S.pri  cur
@@ -435,7 +435,7 @@ stock _Timer_F(slot)
 	if (slot & 0x80000000)
 	{
 		new
-			next;
+			next = 0;
 		slot = ~slot; //^= -1;
 		for ( ; ; )
 		{

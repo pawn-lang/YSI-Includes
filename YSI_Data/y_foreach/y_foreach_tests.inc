@@ -189,8 +189,7 @@ TEST__ TestState2_y_iter()
 TEST__ y_iter_Range()
 {
 	new
-		count;
-	count = 0;
+		count = 0;
 	FOREACH__ (new i : Range(0, 10))
 	{
 		ASSERT(0 <= i < 10);
@@ -243,8 +242,8 @@ TEST__ y_iter_Add1()
 	// Check we can only add a number once, and that we don't mess up the order.
 	new
 		Iterator:iter<20>,
-		count,
-		i;
+		count = 0,
+		i = 0;
 	Iter_Add(iter, 5);
 	ASSERT_EQ(Iter_Count(iter), 1);
 	for (i = 0; i != 20; ++i)
@@ -280,8 +279,8 @@ TEST__ y_iter_Add2()
 	// Check we can only add a number once, and that we don't mess up the order.
 	new
 		Iterator:iter<20>,
-		count,
-		i;
+		count = 0,
+		i = 0;
 	Iter_Add(iter, 3);
 	Iter_Add(iter, 15);
 	ASSERT_EQ(Iter_Count(iter), 2);
@@ -332,8 +331,8 @@ TEST__ y_iter_Prev()
 	// Check we can only add a number once, and that we don't mess up the order.
 	new
 		Iterator:iter<20>,
-		count,
-		i;
+		count = 0,
+		i = 0;
 	Iter_Add(iter, 3);
 	Iter_Add(iter, 4);
 	ASSERT_EQ(Iter_Count(iter), 2);
@@ -375,8 +374,8 @@ TEST__ y_iter_Add3()
 	// Check OOB numbers.
 	new
 		Iterator:iter<20>,
-		count,
-		i;
+		count = 0,
+		i = 0;
 	Iter_Add(iter, 4);
 	Iter_Add(iter, 20);
 	ASSERT_EQ(Iter_Count(iter), 1);
@@ -399,8 +398,8 @@ TEST__ y_iter_Add4()
 	// Check OOB numbers.
 	new
 		Iterator:iter<20>,
-		count,
-		i;
+		count = 0,
+		i = 0;
 	Iter_Add(iter, 0);
 	Iter_Add(iter, 50);
 	ASSERT_EQ(Iter_Count(iter), 1);
@@ -423,8 +422,8 @@ TEST__ y_iter_Add5()
 	// Add all numbers.
 	new
 		Iterator:iter<20>,
-		count,
-		i;
+		count = 0,
+		i = 0;
 	ASSERT_ZE(Iter_Count(iter));
 	for (i = 0; i != 20; ++i)
 	{
@@ -449,7 +448,7 @@ TEST__ y_iter_MultiAdd1()
 	// Add all numbers.
 	new
 		Iterator:iter<5, 15>,
-		count,
+		count = 0,
 		i = 6;
 	ASSERT_ZE(Iter_Add(iter<0>, 0));
 	ASSERT_NZ(Iter_Add(iter<0>, 0));
@@ -482,7 +481,7 @@ TEST__ y_iter_Remove1()
 {
 	new
 		Iterator:iter<50>,
-		count;
+		count = 0;
 	for (new i = 0; i != 20; ++i)
 	{
 		Iter_Add(iter, i * 2 + 1);
@@ -531,7 +530,7 @@ TEST__ y_iter_Remove1()
 TEST__ y_iter_Reverse1()
 {
 	new
-		count,
+		count = 0,
 		Iterator:iter<10>;
 	Iter_Add(iter, 2);
 	Iter_Add(iter, 4);
@@ -753,7 +752,7 @@ TEST__ y_iter_RandomFree3()
 	Iter_Add(iter[1], 3);
 	Iter_Add(iter[1], 6);
 	Iter_Add(iter[1], 9);
-	for (new v, i = 0; i != 10000; ++i)
+	for (new v = 0, i = 0; i != 10000; ++i)
 	{
 		v = Iter_RandomFree(iter[0]);
 		ASSERT_NE(v, 2);
@@ -807,7 +806,7 @@ TEST__ y_iter_RandomFree3()
 TEST__ y_iter_Reverse2()
 {
 	new
-		count,
+		count = 0,
 		Iterator:iter<5, 10>;
 	Iter_Add(iter<1>, 2);
 	Iter_Add(iter<1>, 4);
@@ -921,8 +920,8 @@ TEST__ y_iter_Starting()
 {
 	new
 		Iterator:Test1_y_iter<100>,
-		i,
-		j;
+		i = 0,
+		j = 0;
 	Iter_Add(Test1_y_iter, 4);
 	Iter_Add(Test1_y_iter, 8);
 	Iter_Add(Test1_y_iter, 2);
@@ -1188,7 +1187,7 @@ TEST__ y_iter_Syntax1()
 	FOREACH__ ( new i : Test1_y_iter) { ++count; }
 	FOREACH__ ( new i : Test1_y_iter ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test1_y_iter) { ++count; }
 	FOREACH__(j:Test1_y_iter ) { ++count; }
 	FOREACH__(j: Test1_y_iter) { ++count; }
@@ -1271,7 +1270,7 @@ TEST__ y_iter_Syntax5a()
 	FOREACH__ ( new i : Test5a_y_iter[2] <11>) { ++count; }
 	FOREACH__ ( new i : Test5a_y_iter[2] <11> ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test5a_y_iter[ 2]< 11>) { ++count; }
 	FOREACH__(j:Test5a_y_iter[ 2]< 11> ) { ++count; }
 	FOREACH__(j: Test5a_y_iter[ 2]< 11>) { ++count; }
@@ -1354,7 +1353,7 @@ TEST__ y_iter_Syntax5b()
 	FOREACH__ ( new i : Test5b_y_iter[ 2 ] < 11>) { ++count; }
 	FOREACH__ ( new i : Test5b_y_iter[ 2 ] < 11> ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test5b_y_iter[2 ]<11 >) { ++count; }
 	FOREACH__(j:Test5b_y_iter[2 ]<11 > ) { ++count; }
 	FOREACH__(j: Test5b_y_iter[2 ]<11 >) { ++count; }
@@ -1437,7 +1436,7 @@ TEST__ y_iter_Syntax5c()
 	FOREACH__ ( new i : Test5c_y_iter [2] <11 >) { ++count; }
 	FOREACH__ ( new i : Test5c_y_iter [2] <11 > ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test5c_y_iter [ 2]< 11 >) { ++count; }
 	FOREACH__(j:Test5c_y_iter [ 2]< 11 > ) { ++count; }
 	FOREACH__(j: Test5c_y_iter [ 2]< 11 >) { ++count; }
@@ -1520,7 +1519,7 @@ TEST__ y_iter_Syntax5d()
 	FOREACH__ ( new i : Test5d_y_iter [ 2 ] < 11 >) { ++count; }
 	FOREACH__ ( new i : Test5d_y_iter [ 2 ] < 11 > ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test5d_y_iter [2 ]<11>) { ++count; }
 	FOREACH__(j:Test5d_y_iter [2 ]<11> ) { ++count; }
 	FOREACH__(j: Test5d_y_iter [2 ]<11>) { ++count; }
@@ -1603,7 +1602,7 @@ TEST__ y_iter_Syntax4a()
 	FOREACH__ ( new i : Test4a_y_iter[3]) { ++count; }
 	FOREACH__ ( new i : Test4a_y_iter[3] ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test4a_y_iter[ 3]) { ++count; }
 	FOREACH__(j:Test4a_y_iter[ 3] ) { ++count; }
 	FOREACH__(j: Test4a_y_iter[ 3]) { ++count; }
@@ -1686,7 +1685,7 @@ TEST__ y_iter_Syntax4b()
 	FOREACH__ ( new i : Test4b_y_iter[ 0 ]) { ++count; }
 	FOREACH__ ( new i : Test4b_y_iter[ 0 ] ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test4b_y_iter[0 ]) { ++count; }
 	FOREACH__(j:Test4b_y_iter[0 ] ) { ++count; }
 	FOREACH__(j: Test4b_y_iter[0 ]) { ++count; }
@@ -1769,7 +1768,7 @@ TEST__ y_iter_Syntax4c()
 	FOREACH__ ( new i : Test4c_y_iter [3]) { ++count; }
 	FOREACH__ ( new i : Test4c_y_iter [3] ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test4c_y_iter [ 3]) { ++count; }
 	FOREACH__(j:Test4c_y_iter [ 3] ) { ++count; }
 	FOREACH__(j: Test4c_y_iter [ 3]) { ++count; }
@@ -1852,7 +1851,7 @@ TEST__ y_iter_Syntax4d()
 	FOREACH__ ( new i : Test4d_y_iter [ 0 ]) { ++count; }
 	FOREACH__ ( new i : Test4d_y_iter [ 0 ] ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test4d_y_iter [0 ]) { ++count; }
 	FOREACH__(j:Test4d_y_iter [0 ] ) { ++count; }
 	FOREACH__(j: Test4d_y_iter [0 ]) { ++count; }
@@ -1934,7 +1933,7 @@ TEST__ y_iter_Syntax3a()
 	FOREACH__ ( new i : Test3a_y_iter<4>) { ++count; }
 	FOREACH__ ( new i : Test3a_y_iter<4> ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test3a_y_iter< 4>) { ++count; }
 	FOREACH__(j:Test3a_y_iter< 4> ) { ++count; }
 	FOREACH__(j: Test3a_y_iter< 4>) { ++count; }
@@ -2016,7 +2015,7 @@ TEST__ y_iter_Syntax3b()
 	FOREACH__ ( new i : Test3b_y_iter< 6 >) { ++count; }
 	FOREACH__ ( new i : Test3b_y_iter< 6 > ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test3b_y_iter<6 >) { ++count; }
 	FOREACH__(j:Test3b_y_iter<6 > ) { ++count; }
 	FOREACH__(j: Test3b_y_iter<6 >) { ++count; }
@@ -2098,7 +2097,7 @@ TEST__ y_iter_Syntax3c()
 	FOREACH__ ( new i : Test3c_y_iter <4>) { ++count; }
 	FOREACH__ ( new i : Test3c_y_iter <4> ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test3c_y_iter < 4>) { ++count; }
 	FOREACH__(j:Test3c_y_iter < 4> ) { ++count; }
 	FOREACH__(j: Test3c_y_iter < 4>) { ++count; }
@@ -2180,7 +2179,7 @@ TEST__ y_iter_Syntax3d()
 	FOREACH__ ( new i : Test3d_y_iter < 6 >) { ++count; }
 	FOREACH__ ( new i : Test3d_y_iter < 6 > ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test3d_y_iter <6 >) { ++count; }
 	FOREACH__(j:Test3d_y_iter <6 > ) { ++count; }
 	FOREACH__(j: Test3d_y_iter <6 >) { ++count; }
@@ -2423,7 +2422,7 @@ TEST__ y_iter_Syntax2a()
 	FOREACH__ ( new i : Test2a_y_iter()) { ++count; }
 	FOREACH__ ( new i : Test2a_y_iter() ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test2a_y_iter()) { ++count; }
 	FOREACH__(j:Test2a_y_iter() ) { ++count; }
 	FOREACH__(j: Test2a_y_iter()) { ++count; }
@@ -2496,7 +2495,7 @@ TEST__ y_iter_Syntax2e()
 	FOREACH__ ( new i : Test2a_y_iter) { ++count; }
 	FOREACH__ ( new i : Test2a_y_iter ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test2a_y_iter) { ++count; }
 	FOREACH__(j:Test2a_y_iter ) { ++count; }
 	FOREACH__(j: Test2a_y_iter) { ++count; }
@@ -2569,7 +2568,7 @@ TEST__ y_iter_Syntax2b()
 	FOREACH__ ( new i : Test2b_y_iter( )) { ++count; }
 	FOREACH__ ( new i : Test2b_y_iter( ) ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test2b_y_iter( )) { ++count; }
 	FOREACH__(j:Test2b_y_iter( ) ) { ++count; }
 	FOREACH__(j: Test2b_y_iter( )) { ++count; }
@@ -2642,7 +2641,7 @@ TEST__ y_iter_Syntax2c()
 	FOREACH__ ( new i : Test2c_y_iter ()) { ++count; }
 	FOREACH__ ( new i : Test2c_y_iter () ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test2c_y_iter ()) { ++count; }
 	FOREACH__(j:Test2c_y_iter () ) { ++count; }
 	FOREACH__(j: Test2c_y_iter ()) { ++count; }
@@ -2715,7 +2714,7 @@ TEST__ y_iter_Syntax2d()
 	FOREACH__ ( new i : Test2d_y_iter ( )) { ++count; }
 	FOREACH__ ( new i : Test2d_y_iter ( ) ) { ++count; }
 	new
-		j;
+		j = 0;
 	FOREACH__(j:Test2d_y_iter ( )) { ++count; }
 	FOREACH__(j:Test2d_y_iter ( ) ) { ++count; }
 	FOREACH__(j: Test2d_y_iter ( )) { ++count; }
@@ -3274,7 +3273,7 @@ iterfunc stock static y_iterDecl6X(&iterstate, cur) { return cur == -1 ? itersta
 
 TEST__ y_iter_MacroLess()
 {
-	new i;
+	new i = 0;
 	FOREACH__ (i : y_iterDecl1()) { ASSERT_EQ(i, 5); }
 	ASSERT_EQ(i, cellmin);
 	FOREACH__ (i : y_iterDecl5()) { ASSERT_EQ(i, 5); }
@@ -3297,8 +3296,7 @@ iterfunc stock y_iter_yield0()
 TEST__ y_iter_yield0a()
 {
 	new
-		count;
-	count = 0;
+		count = 0;
 	FOREACH__ (new i : y_iter_yield0())
 	{
 		#pragma unused i
@@ -3333,8 +3331,7 @@ iterfunc stock y_iter_yield1()
 TEST__ y_iter_yield1a()
 {
 	new
-		count;
-	count = 0;
+		count = 0;
 	FOREACH__ (new i : y_iter_yield1())
 	{
 		#pragma unused i
@@ -3372,8 +3369,7 @@ iterfunc stock y_iter_yield2(step, target = 100)
 TEST__ y_iter_yield2a()
 {
 	new
-		count;
-	count = 0;
+		count = 0;
 	FOREACH__ (new i : y_iter_yield2(10))
 	{
 		ASSERT_ZE(i % 10);
@@ -3413,8 +3409,7 @@ iterfunc stock y_iter_yield3(step, target = 100)
 TEST__ y_iter_yield3a()
 {
 	new
-		count;
-	count = 0;
+		count = 0;
 	FOREACH__ (new i : y_iter_yield3(10))
 	{
 		ASSERT_ZE(i % 10);

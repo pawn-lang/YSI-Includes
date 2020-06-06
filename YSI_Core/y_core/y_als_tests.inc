@@ -81,8 +81,8 @@ static stock y_als_Print(const result[], const fmat[], GLOBAL_TAG_TYPES:...)
 	// This function formats the incoming data and compares it to the reference.
 	new
 		msg[512],
-		i,
-		end; // 12 + 4 + 4.
+		i = 0,
+		end = 0; // 12 + 4 + 4.
 	// Get the stack position after `result`.
 	#emit ADDR.pri         16
 	#emit STOR.S.pri       end
@@ -210,7 +210,7 @@ TEST__ y_als_call()
 {
 	// Test that "call" calls the original one, not the latest one.
 	new
-		ret;
+		ret = 0;
 	ret = call OnFakeCallback(6010, NULL, 0.0, 6011);
 	ASSERT_EQ(ret, 6011);
 }

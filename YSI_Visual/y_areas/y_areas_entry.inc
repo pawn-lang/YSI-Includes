@@ -405,7 +405,7 @@ MASTER_HOOK__ OnScriptInit()
 		if (!YSI_FILTERSCRIPT)
 		{
 			new
-				buffer;
+				buffer = 0;
 			YSI_g_sHasCallbacks = 0;
 			YSI_g_sHasCallbacks |= funcidx("OnPlayerEnterArea") == -1 ? 0 : 1;
 			YSI_g_sHasCallbacks |= funcidx("OnPlayerLeaveArea") == -1 ? 0 : 2;
@@ -418,7 +418,7 @@ MASTER_HOOK__ OnScriptInit()
 HOOK__ OnFilterScriptInit()
 {
 	new
-		buffer;
+		buffer = 0;
 	YSI_g_sHasCallbacks = 0;
 	YSI_g_sHasCallbacks |= funcidx("OnPlayerEnterArea") == -1 ? 0 : 1;
 	YSI_g_sHasCallbacks |= funcidx("OnPlayerLeaveArea") == -1 ? 0 : 2;
@@ -731,8 +731,8 @@ static stock Area_GetZones(Float:x, Float:y)
 static stock Area_DetermineZone(Float:minx, Float:miny, Float:maxx, Float:maxy, area, last)
 {
 	new
-		zx,
-		zy;
+		zx = 0,
+		zy = 0;
 	// This optimises based on the fact that (by definition) maxx can't be lower
 	// than minx and maxy can't be lower than miny, meaning we can skip certain
 	// checks in some cases.
@@ -1242,7 +1242,7 @@ GLOBAL__ Area_AddBox(Float:minx, Float:miny, Float:maxx, Float:maxy)
 {
 	
 	new
-		slot;
+		slot = 0;
 	if (minx > maxx)
 	{
 		slot = _:minx;
@@ -1643,7 +1643,7 @@ GLOBAL__ Area_AddOvoid(Float:x,Float:y,Float:z,Float:rx,Float:ry,Float:rz)
 	Area_SetAllWorlds(header, true);
 	// Now loop through and store all the data points.
 	new
-		slot,
+		slot = 0,
 		prev = header,
 		done = 0,
 		Float:cur,
@@ -1821,8 +1821,8 @@ MASTER_HOOK__ OnPlayerConnect(playerid)
 			sW,
 			sAlready;
 		new
-			in,
-			idx;
+			in = 0,
+			idx = 0;
 		// Get all the zones for this player.
 		GetPlayerPos(playerid, sX, sY, sZ);
 		P:7("Areas_OnPlayerUpdate: pos = %f %f %f", sX, sY, sZ);
@@ -2167,14 +2167,14 @@ stock Area_IsInPoly(Float:x, Float:y, Float:z, header)
 		// Only uses one single child slot.
 		header = YSI_g_sAreas[header][E_AREA_POLY_NEXT];
 		new
-			lines,
+			lines = 0,
 			done = 2,
 			Float:fx = YSI_g_sAreas[header][E_AREA_CHILD_ELEMS][0],
 			Float:fy = YSI_g_sAreas[header][E_AREA_CHILD_ELEMS][1],
 			Float:x0 = fx,
 			Float:y0 = fy,
-			Float:x1,
-			Float:y1;
+			Float:x1 = 0.0,
+			Float:y1 = 0.0;
 		while (done < count)
 		{
 			x1 = YSI_g_sAreas[header][E_AREA_CHILD_ELEMS][done++];
@@ -2197,15 +2197,15 @@ stock Area_IsInPoly(Float:x, Float:y, Float:z, header)
 		// Has multiple children
 		header = YSI_g_sAreas[header][E_AREA_POLY_NEXT];
 		new
-			stp,
-			lines,
+			stp = 0,
+			lines = 0,
 			done = 2,
 			Float:fx = YSI_g_sAreas[header][E_AREA_CHILD_ELEMS][0],
 			Float:fy = YSI_g_sAreas[header][E_AREA_CHILD_ELEMS][1],
 			Float:x0 = fx,
 			Float:y0 = fy,
-			Float:x1,
-			Float:y1;
+			Float:x1 = 0.0,
+			Float:y1 = 0.0;
 		while (count > 0)
 		{
 			stp = min(count, CHILD_AREA_SLOTS);
@@ -2500,7 +2500,7 @@ FOREIGN__ bool:Area_IsEmpty(area);
 GLOBAL__ bool:Area_IsEmpty(area)
 {
 	new
-		z;
+		z = 0;
 	if (Area_IsActive(area))
 	{
 		FOREACH__ (new playerid : Player)
@@ -2574,7 +2574,7 @@ static stock Area_DoLeave(playerid, areaid, idx)
 {
 	// Remove this area from the list of areas.
 	new
-		cur;
+		cur = 0;
 	// Shift up the zones.
 	while ((cur = _Area_GetPlayerAreas(playerid, idx + 1)) != NO_AREA)
 	{

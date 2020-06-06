@@ -501,7 +501,7 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
 {
 	P:3("Malloc_SetVAS called: %d, %d, %d", _:array, index, arg);
 	new
-		len;
+		len = 0;
 	#emit LOAD.S.pri arg
 	#emit SMUL.C     4
 	#emit LOAD.S.alt 0
@@ -613,7 +613,7 @@ stock Malloc_SetVAA(Alloc:array, index, arg)
 {
 	P:3("Malloc_SetVAA called: %d, %d, %d", _:array, index, arg);
 	new
-		len;
+		len = 0;
 	#emit LOAD.S.pri arg
 	#emit ADD.C      1
 	#emit SMUL.C     4

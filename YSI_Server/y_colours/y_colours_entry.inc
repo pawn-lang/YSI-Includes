@@ -383,7 +383,10 @@ stock Colours_SAMPToGT(colour, start)
 		r = colour >> 16,
 		g = (colour >> 8) & 0xFF,
 		b = colour & 0xFF,
-		tr, tg, tb, cur;
+		tr = 0,
+		tg = 0,
+		tb = 0,
+		cur = 0;
 	for ( ; start != sizeof (sc_aColours); ++start)
 	{
 		tr = r - sc_aColours[start][1],
@@ -406,7 +409,7 @@ stock Colours_SAMPToGT(colour, start)
 stock Colours_EncodeGameText(str[])
 {
 	new
-		ret;
+		ret = 0;
 	if (str[0] == '~')
 	{
 		switch (str[1] | 0x20)

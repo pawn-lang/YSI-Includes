@@ -185,7 +185,7 @@ public _Config_Load_y_svar(name[], value[])
 		// This must come BEFORE the "#emit" due to bugs with braces.
 		new
 			len = strlen(value),
-			idx;
+			idx = 0;
 		// Save this pointer to an array variable for simplicity.
 		#emit LOAD.pri   YSI_g_sLastAddr
 		#emit STOR.S.pri name
@@ -264,7 +264,7 @@ stock M@(volatile const vardata[], dataSize, &pointer, ds2 = 1)
 	dataSize *= ds2;
 	P:2("M@ called");
 	new
-		sAddr;
+		sAddr = 0;
 	// Store the basic data, including linked-list pointers and a pointer to the
 	// location at which the data is stored.
 	#emit LOAD.S.pri vardata
@@ -302,7 +302,7 @@ Svar_Save()
 	INI_SetTag(__fwrite, "y_svar");
 	new
 		p = YSI_g_sFirstUVarData,
-		temp;
+		temp = 0;
 	while (p != -1)
 	{
 		// DO NOT CHANGE THE CODE BELOW HERE!!!
@@ -348,8 +348,8 @@ public OnCodeInit()
 	YSI_g_sFirstUVarData = -1;
 	// Call all @yS_ functions to get all required data.
 	new
-		idx,
-		buffer;
+		idx = 0,
+		buffer = 0;
 	while ((idx = AMX_GetPublicPointerSuffix(idx, buffer, _A<@yS_>)))
 	{
 		#emit PUSH.C     0
