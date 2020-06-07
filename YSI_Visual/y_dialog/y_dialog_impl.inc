@@ -114,7 +114,11 @@ stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, const 
 	return ret;
 }
 
-native Dialog_ShowPlayerNative(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
+#if defined _ALS_ShowPlayerDialog
+	#define Dialog_ShowPlayerNative ShowPlayerDialog
+#else
+	native Dialog_ShowPlayerNative(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
+#endif
 
 stock Dialog_Show(playerid, style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
@@ -172,14 +176,14 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		return Y_HOOKS_CONTINUE_RETURN_0;
 }
 
-stock _ShowPlayerDialog(playerid, dialog, style, const string:title[], const string:caption[], const string:button1[], const string:button2[])
+stock Dialog_ShowPlayerDialog(playerid, dialog, style, const string:title[], const string:caption[], const string:button1[], const string:button2[])
 {
 	// Fail.
 	if (dialog == YSI_DIALOG_ID)
 		return 0;
 	broadcastfunc Dialog_Set(playerid, dialog);
 	YSI_g_sPlayerMaster[playerid] = true;
-	return ShowPlayerDialog(playerid, dialog, style, title, caption, button1, button2);
+	return Dialog_ShowPlayerNative(playerid, dialog, style, title, caption, button1, button2);
 }
 
 #if defined _ALS_ShowPlayerDialog
@@ -187,7 +191,7 @@ stock _ShowPlayerDialog(playerid, dialog, style, const string:title[], const str
 #else
 	#define _ALS_ShowPlayerDialog
 #endif
-#define ShowPlayerDialog _ShowPlayerDialog
+#define ShowPlayerDialog Dialog_ShowPlayerDialog
 
 #define _ALS_HidePlayerDialog
 #define HidePlayerDialog Dialog_Hide
