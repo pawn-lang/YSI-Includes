@@ -1088,6 +1088,28 @@ GLOBAL__ Group_GetCount(Group:g)
 }
 
 /*-------------------------------------------------------------------------*//**
+ * <returns>
+ *  The number of groups that exist.
+ * </returns>
+ *//*------------------------------------------------------------------------**/
+
+FOREIGN__ Group_Count(bool:g = false);
+
+GLOBAL__ Group_Count(bool:g = false)
+{
+	P:2("Group_Count called: %i", _:g);
+	new count = !!g;
+	for (new i = 0; i != _MAX_GROUPS; ++i)
+	{
+		if (_Group_IsActive(i))
+		{
+			++count;
+		}
+	}
+	return count;
+}
+
+/*-------------------------------------------------------------------------*//**
  * <param name="name">The optional name of the new group.</param>
  * <returns>
  *  The group ID with a tag of "Group:", or "INVALID_GROUP".
