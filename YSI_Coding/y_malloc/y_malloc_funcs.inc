@@ -549,7 +549,7 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="target">Target for the array.</param>
+ * <param name="dest">Target for the array.</param>
  * <param name="length">Length of the target.</param>
  * <param name="array">Data unit to put information in.</param>
  * <param name="index">Index in the unit.</param>
@@ -558,15 +558,15 @@ stock Malloc_SetVAS(Alloc:array, index, arg)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Malloc_GetA(target[], length, Alloc:array, index)
+stock Malloc_GetA(dest[], length, Alloc:array, index)
 {
-	P:3("Malloc_GetA called: array = %d, index = %d.", _:array, index);
+	P:3("Malloc_GetA called: array = %d, index = %d, length = %d.", _:array, index, length);
 	if (index >= 0)
 	{
 		new
 			size = Malloc_GetSlotSize(_:array);
-		P:5("Malloc_GetA: size = %d.", size);
-		memcpy(target, YSI_gMallocMemory, index + _:array, size * 4, length);
+		P:5("Malloc_GetA: size = %d, %d.", size, size - index);
+		memcpy(dest, YSI_gMallocMemory[index + _:array], 0, min(size - index, length) * 4, length);
 		#if defined YSI_MALLOC_SECURE
 			P:C(if(length > size)P:E("Out of buffer space."););
 		#endif
@@ -578,14 +578,14 @@ stock Malloc_GetA(target[], length, Alloc:array, index)
 /*-------------------------------------------------------------------------*//**
  * <param name="array">Data unit to put information in.</param>
  * <param name="index">Index in the unit.</param>
- * <param name="str">Array to insert.</param>
- * <param name="len">Length of the array.</param>
+ * <param name="source">Array to insert.</param>
+ * <param name="length">Length of the array.</param>
  * <remarks>
  *  Displays errors in secure mode.  Inserts an array.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Malloc_SetA(Alloc:array, index, const str[], len)
+stock Malloc_SetA(Alloc:array, index, const source[], length)
 {
 	P:3("Malloc_SetA: array = %d, index = %d.", _:array, index);
 	if (index >= 0)
@@ -593,9 +593,9 @@ stock Malloc_SetA(Alloc:array, index, const str[], len)
 		new
 			size = Malloc_GetSlotSize(_:array);
 		P:5("Malloc_SetA: size = %d.", size);
-		memcpy(YSI_gMallocMemory[index + _:array], str, 0, len * 4, size - index);
+		memcpy(YSI_gMallocMemory[index + _:array], source, 0, min(size - index, length) * 4, size - index);
 		#if defined YSI_MALLOC_SECURE
-			P:C(if(len > size - index)P:E("Out of buffer space."););
+			P:C(if(length > size - index)P:E("Out of buffer space."););
 		#endif
 	}
 }
