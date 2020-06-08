@@ -1,7 +1,11 @@
 static stock const
 	FIXES_gscRconFixFS[] = "callbackfix.amx";
 
-native y_rconfix_SendRconCommand(const str[]) = SendRconCommand;
+#if defined _ALS_SendRconCommand
+	#define y_rconfix_SendRconCommand SendRconCommand
+#else
+	native y_rconfix_SendRconCommand(const str[]) = SendRconCommand;
+#endif
 
 y_rconfix_Load()
 {

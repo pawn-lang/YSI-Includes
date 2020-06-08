@@ -1078,14 +1078,17 @@ stock TD_SetTime(Style:styleID, time, bool:existing = false)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#if !defined CST_TextDrawCreate
-	native Text:CST_TextDrawCreate(Float:x, Float:y, const text[]) = TextDrawCreate;
+#if defined _ALS_TextDrawCreate
+	#define TD_TextDrawCreate TextDrawCreate
+#else
+	native Text:TD_TextDrawCreate(Float:x, Float:y, const text[]) = TextDrawCreate;
 #endif
+
 static stock Text:TD_RenderInternal(const text[], const style[E_TD_DATA], Float:x, Float:y)
 {
 	//P:4("Text:TD_Render called: \"%s\", %i, %i", text, _:id, _:slot);
 	new
-		Text:textDraw = CST_TextDrawCreate(x, y, text);
+		Text:textDraw = TD_TextDrawCreate(x, y, text);
 	if (textDraw != Text:INVALID_TEXT_DRAW)
 	{
 		new
@@ -1520,8 +1523,10 @@ stock Style:TD_GetDisplayStyle(Text:td)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-#if !defined CST_TextDrawSetString
-	native CST_TextDrawSetString(Text:text, const string[]) = TextDrawSetString;
+#if defined _ALS_TextDrawSetString
+	#define TD_TextDrawSetString TextDrawSetString
+#else
+	native TD_TextDrawSetString(Text:text, const string[]) = TextDrawSetString;
 #endif
 
 stock TD_SetString(Text:td, const text[])
@@ -1539,7 +1544,7 @@ stock TD_SetString(Text:td, const text[])
 			return 0;
 		}
 		// Get the style information for showing this TD.
-		CST_TextDrawSetString(real, text);
+		TD_TextDrawSetString(real, text);
 	}
 	return 1;
 }
