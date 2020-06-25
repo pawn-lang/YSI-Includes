@@ -399,12 +399,19 @@ enum _E_YCM
 #define _YCM@u (_YCM@==_E_YCM@u)
 #define _YCM@w (_YCM@==_E_YCM@w)
 
+#if !defined YSI_MODULE_PATH
+	#define YSI_MODULE_PATH "../modules/"
+#endif
+
 #if !defined YSI_NO_MASTER
 	stock
 		bool:YSI_gModuleShutdown = false;
 
 	static stock
 		YSI_g_sModuleName[32];
+
+	static stock const
+		YSI_g_scModulePath[] = YSI_MODULE_PATH;
 
 	static
 		YSI_g_sMasterCount = 0,
@@ -532,9 +539,9 @@ public OnScriptExit()
 			while ((next = strfind(YSI_UNSAFE_HUGE_STRING, ";", false, prev)) != -1)
 			{
 				YSI_UNSAFE_HUGE_STRING[next] = '\0';
-				format(Q@, sizeof (Q@), "unloadfs ../modules/%s", YSI_UNSAFE_HUGE_STRING[prev]);
+				format(Q@, sizeof (Q@), "unloadfs %s%s", YSI_g_scModulePath, YSI_UNSAFE_HUGE_STRING[prev]);
 				SendRconCommand(Q@);
-				format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", YSI_UNSAFE_HUGE_STRING[prev]);
+				format(Q@, sizeof (Q@), "unloadfs ./%s%s", YSI_g_scModulePath, YSI_UNSAFE_HUGE_STRING[prev]);
 				SendRconCommand(Q@);
 				prev = next + 1;
 			}
@@ -608,7 +615,7 @@ forward OnMasterSystemClose(id);
 			setproperty(8, "", YSIM_STRING + 1, module);
 			new
 				masters = getproperty(8, YSIM_MASTER);
-			format(Q@, sizeof (Q@), "loadfs ../modules/%s", module);
+			format(Q@, sizeof (Q@), "loadfs %s%s", YSI_g_scModulePath, module);
 			SendRconCommand(Q@);
 			if (masters == getproperty(8, YSIM_MASTER))
 			{
@@ -644,12 +651,12 @@ forward OnMasterSystemClose(id);
 		setproperty(8, "", YSIM_STRING + 1, module);
 		new
 			masters = getproperty(8, YSIM_MASTER);
-		format(Q@, sizeof (Q@), "loadfs ./../modules/%s", module);
+		format(Q@, sizeof (Q@), "loadfs ./%s%s", YSI_g_scModulePath, module);
 		SendRconCommand(Q@);
 		if (masters == getproperty(8, YSIM_MASTER))
 		{
 			// Didn't load, try the alternate version.
-			format(Q@, sizeof (Q@), "loadfs ../modules/%s", module);
+			format(Q@, sizeof (Q@), "loadfs %s%s", YSI_g_scModulePath, module);
 			SendRconCommand(Q@);
 			if (masters == getproperty(8, YSIM_MASTER))
 			{
@@ -659,7 +666,7 @@ forward OnMasterSystemClose(id);
 			}
 			else
 			{
-				format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", module);
+				format(Q@, sizeof (Q@), "unloadfs ./%s%s", YSI_g_scModulePath, module);
 				SendRconCommand(Q@);
 				CallRemoteFunction("Master_Reassert", "");
 				P:0("Module \"%s\" (re)loaded.", module);
@@ -668,7 +675,7 @@ forward OnMasterSystemClose(id);
 		else
 		{
 			// Loaded a second version of the script.  Unload the first version.
-			format(Q@, sizeof (Q@), "unloadfs ../modules/%s", module);
+			format(Q@, sizeof (Q@), "unloadfs %s%s", YSI_g_scModulePath, module);
 			SendRconCommand(Q@);
 			CallRemoteFunction("Master_Reassert", "");
 			P:0("Module \"%s\" (re)loaded.", module);
@@ -682,9 +689,9 @@ forward OnMasterSystemClose(id);
 		{
 			new
 				masters = getproperty(8, YSIM_MASTER);
-			format(Q@, sizeof (Q@), "unloadfs ../modules/%s", module);
+			format(Q@, sizeof (Q@), "unloadfs %s%s", YSI_g_scModulePath, module);
 			SendRconCommand(Q@);
-			format(Q@, sizeof (Q@), "unloadfs ./../modules/%s", module);
+			format(Q@, sizeof (Q@), "unloadfs ./%s%s", YSI_g_scModulePath, module);
 			SendRconCommand(Q@);
 			CallRemoteFunction("Master_Reassert", "");
 			if (masters == getproperty(8, YSIM_MASTER))
