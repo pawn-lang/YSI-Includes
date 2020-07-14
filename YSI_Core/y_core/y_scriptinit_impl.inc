@@ -277,7 +277,9 @@ stock Server_GetLongCallDefault()
 
 forward bool:DumpAMX_Write(const filename[]);
 
-forward OnCachedInit();
+#if !defined _ALS_OnCachedInit
+	forward OnCachedInit();
+#endif
 
 static ScriptInit_CallOnCodeInit(bool:jit)
 {
