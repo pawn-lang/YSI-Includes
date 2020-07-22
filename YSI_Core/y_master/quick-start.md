@@ -37,15 +37,15 @@ So how does that work?  Each scripter has their own area of responsibility, and 
 #define MAX_PLAYERS 5 // Purely for small test servers.
 
 // External includes go here.
-#include <YSI_Core/y_master>
+#include <YSI_Core\y_master>
 
-#include <mode/jobs.inc>
-#include <mode/races.inc>
-#include <mode/vehicles.inc>
-#include <mode/vip.inc>
-#include <mode/minimodes.inc>
-#include <mode/phone.inc>
-#include <mode/admin.inc>
+#include <mode\jobs.inc>
+#include <mode\races.inc>
+#include <mode\vehicles.inc>
+#include <mode\vip.inc>
+#include <mode\minimodes.inc>
+#include <mode\phone.inc>
+#include <mode\admin.inc>
 ```
 
 Everyone has the included files, but they don't contain the bulk of the source.  Instead they look like this:
@@ -60,7 +60,7 @@ Everyone has the included files, but they don't contain the bulk of the source. 
 #endif
 
 #define MASTER 4 // Unique value < 28 for the jobs system.
-#include <YSI_Core/y_master> // Again.
+#include <YSI_Core\y_master> // Again.
 
 // "forward" the functions here:
 foreign JobID:GetCurrentJob(playerid);
@@ -70,7 +70,7 @@ foreign void:DestroyJob(JobID:jobid); // Returns nothing (`void:`).
 
 #if JOB_MASTER
   // We need the implementation.
-  #include "jobs/detail.inc"
+  #include "jobs\detail.inc"
 #endif
 ```
 
@@ -116,16 +116,16 @@ When you want to build the main mode that will go on your live server, this is d
 #include <a_samp>
 
 // External includes go here.
-#include <YSI_Core/y_master>
+#include <YSI_Core\y_master>
 
 // All these includes remain the same.
-#include <mode/jobs.inc>
-#include <mode/races.inc>
-#include <mode/vehicles.inc>
-#include <mode/vip.inc>
-#include <mode/minimodes.inc>
-#include <mode/phone.inc>
-#include <mode/admin.inc>
+#include <mode\jobs.inc>
+#include <mode\races.inc>
+#include <mode\vehicles.inc>
+#include <mode\vip.inc>
+#include <mode\minimodes.inc>
+#include <mode\phone.inc>
+#include <mode\admin.inc>
 ```
 
 So when *xX_h4cker_gUr1_69_Xx* decides to steal your code, they can only steal a small bit of it from the repos they had access to, along with some shared headers and compiled filterscripts that can only handle 5 players.  This is totally useless for running a server.  You can even go further with the filterscripts and include anti-deamx and y_lock:
@@ -140,7 +140,7 @@ public AntiDeAMX()
   // Whatever.
 }
 
-#include <YSI_Server/y_lock>
+#include <YSI_Server\y_lock>
 // ...
 ```
 

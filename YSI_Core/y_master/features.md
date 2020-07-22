@@ -55,7 +55,7 @@ For a whole module:
 #define YSI_IS_SERVER
 #define YSI_IS_CLIENT
 #define YSI_IS_STUB
-// No `YSI_IS_STUB` - that's the default.
+// No `YSI_IS_CLOUD` - that's the default.
 ```
 
 Per library.  These override the module settings:
