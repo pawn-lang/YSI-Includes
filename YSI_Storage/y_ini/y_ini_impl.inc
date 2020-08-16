@@ -1207,7 +1207,7 @@ state_in_continuation:
 		str[p1e] = end,
 		// Store the new length.
 		mset(YSI_g_sExtendedLine, 0, mget(YSI_g_sExtendedLine, 0) + pos),
-		ret = 0;
+		ret = e_INI_LINE_TYPE:0;
 }
 
 /*
