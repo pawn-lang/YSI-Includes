@@ -131,7 +131,7 @@ P:D(Bit_Mask(value));
  *//*------------------------------------------------------------------------**/
 
 P:D(bool:Bit_GetBit(BitArray:array<>,slot));
-#define Bit_GetBit(%1,%2) (%1[(%2)>>>CELLSHIFT]&Bit:(1<<((%2)&cellbits-1)))
+#define Bit_GetBit(%1,%2) (%1[(%2)>>>CELLSHIFT]>>>Bit:((%2)&cellbits-1)&Bit:1)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="array">Array of bits.</param>
@@ -149,7 +149,7 @@ P:D(bool:Bit_GetBit(BitArray:array<>,slot));
  *//*------------------------------------------------------------------------**/
 
 P:D(bool:Bit_Get(BitArray:array<>,slot));
-#define Bit_Get(%1,%2) bool:Bit_GetBit(Bit:%1,_:%2)
+#define Bit_Get(%1,%2) bool:Bit_GetBit(%1,_:%2)
 
 /*-------------------------------------------------------------------------*//**
  * <param name="array">Array of bits.</param>
@@ -160,7 +160,7 @@ P:D(bool:Bit_Get(BitArray:array<>,slot));
  *//*------------------------------------------------------------------------**/
 
 P:D(Bit_Let(BitArray:array<>,slot));
-#define Bit_Let(%1,%2) %1[(%2)>>>CELLSHIFT]|=Bit:(1<<((%2)&cellbits-1))
+#define Bit_Let(%1,%2) (%1[(%2)>>>CELLSHIFT]|=Bit:(1<<((%2)&cellbits-1)))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="array">Array of bits.</param>
@@ -171,7 +171,7 @@ P:D(Bit_Let(BitArray:array<>,slot));
  *//*------------------------------------------------------------------------**/
 
 P:D(Bit_Vet(BitArray:array<>,slot));
-#define Bit_Vet(%1,%2) %1[(%2)>>>CELLSHIFT]&=Bit:~(1<<((%2)&cellbits-1))
+#define Bit_Vet(%1,%2) (%1[(%2)>>>CELLSHIFT]&=Bit:~(1<<((%2)&cellbits-1)))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="array">Array of bits.</param>
