@@ -940,10 +940,11 @@ Note:
 #define _@const%0\32; _@
 
 #define USING_INLINE__ (@Ik:@Il:Inline_UI_(),)
-#define USING__%0\32; (@Ip:@Iq:@Io:@Iu:@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
+#define USING__%0\32; (@Ip:@Iq:@Io:@Iu:@Ia:@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
 #define USING_PUBLIC__ (@Ik:@Il:Inline_UP_(),)
 #define USING_CALLBACK__ (@Ik:@Il:Inline_UP_(),)
 #define USING_RESOLVED__ (@Ik:@Il:0,)
+#define USING_ASYNC__ (@Ik:@Il:Inline_UA_(),)
 
 // Old `using`.
 #if YSI_KEYWORD(callback_tag)
@@ -954,10 +955,11 @@ Note:
 #endif
 
 // Parameter type for passing callbacks about.
-#define @Ip:@Iq:@Io:@Iu:%0)inline @Ik:@Il:Inline_UI_(),)
-#define @Iq:@Io:@Iu:%0)callback @Ik:@Il:Inline_UP_(),)
-#define @Io:@Iu:%0)public @Ik:@Il:Inline_UP_(),)
+#define @Ip:%0)inline @Ik:@Il:Inline_UI_(),)
+#define @Iq:%0)callback @Ik:@Il:Inline_UP_(),)
+#define @Io:%0)public @Ik:@Il:Inline_UP_(),)
 #define @Iu:%0)resolved @Ik:@Il:0,)
+#define @Ia:%0)async @Ik:@Il:Inline_UA_(),)
 
 // Detect a `using` parameter that is not the last parameter.  Actually handles
 // nested calls quite nicely - `X(Y(using inline Z), 5)` should be detected as a
