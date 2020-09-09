@@ -53,11 +53,11 @@
 #define __async_context)+(%1),%5)->(%2)%3{ Async:@Ie:@Ig:@Ih:$__async_context)+(%1),%5)%3$(%2){
 
 // Detect `-> vars;)` (for).
-#define @Ie:%9$%0)+(%1),%5)%3;%4)$(%2) __AWAIT_FOR:%0)+(%1),%5)%3;%4)$(%2)
+#define @Ie:%9$%0)+(%1),%5)%3;%4)$(%2) %0)+(%1),%5)%3;%4)__AWAIT_FOR$(%2)
 // Detect `-> vars;` (statement).
-#define @If:%9$%0)+(%1),%5)%3;$(%2) __AWAIT_VAR:%0)+(%1),%5)%3;$(%2)
+#define @If:%9$%0)+(%1),%5)%3;$(%2) %0)+(%1),%5)%3;__AWAIT_VAR$(%2)
 // Detect `-> vars {}` (expression).
-#define @Ig:%9$%0)+(%1),%5)%3$(%2) __AWAIT_FOR:%0)+(%1),%5)%3$(%2)
+#define @Ig:%9$%0)+(%1),%5)%3$(%2) %0)+(%1),%5)%3 __AWAIT_FOR$(%2)
 // Finish (nothing).
 #define @Ih:%9$%0$ %0
 
@@ -83,7 +83,8 @@
 #define ASYNC_END(%9)%8$#%4, %8$I@,#%4),
 #define ASYNC_NUL(%9)%8$#%4, %8$I@,#%4),
 
-//#define __AWAIT_VAR(%2) new %2;???%2
+#define __AWAIT_VAR%9(%2) new %2;
+#define __AWAIT_FOR%9(%2) for (new %2;__once;)
 
 await SomeFunction();
 
