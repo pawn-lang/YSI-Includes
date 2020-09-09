@@ -62,18 +62,26 @@
 #define @Ih:%9$%0$ %0
 
 // We can use `@Ib` - `@Ij` at least, maybe more.
-#define Inline_UA_(),)%0)),_yA@%1()) @Id:ASYNC_PARSER(),)%0))*@Ic())
+#define Inline_UA_(),)%0)),_yA@%1()) @Id:ASYNC_PARSER(),F@_@:I@)%0))*@Ic())
 
-#define @Id:ASYNC_PARSER()%0$(%1) ASYNC_PARSER(%1)%0$(%1)
+#define @Id:ASYNC_PARSER()%0$(%1) ASYNC_PARSER(%1)%0`(%1)
 #define ASYNC_PARSER(%1) @Id:MAKE_PARSER(ASYNC,ARR:REF:STR:NUM:QAL::ASYNC)(_(%1))#
 
 // Follows the "code-parse.inc" internal structure.  Ugly but required, since we
 // are parsing functions, but not at a top level.
 #define I@O$
-#define PARSER@ASYNC:%0(%5)%6(%7)$ @Ib(_:%0(%5)%6(%7) I@O$)
+#define PARSER@ASYNC:%0(%5)%6(%7)$ @Ib(_:%0(%5)%6(%7) I@O$
 
 // @Ib - The function called to generate the inline stub.
 // @Ic - The function called after the inline using function ends.
+
+#define ASYNC_STR(%9,%9,%2,%9)%8$#%4,F@_@%3:I@) %8$#%4s,F@_@%3s:I@)
+#define ASYNC_ARR(%9,%9,%2,%9)%8$#%4,F@_@%3:I@) %8$#%4a,F@_@%3a:I@)
+#define ASYNC_NUM(%9,%9,%2)%8$#%4,F@_@%3:I@) %8$#%4i,F@_@%3i:I@)
+#define ASYNC_REF(%9,%9,%2)%8$#%4,F@_@%3:I@) %8$#%4v,F@_@%3v:I@)
+
+#define ASYNC_END(%9)%8$#%4, %8$I@,#%4),
+#define ASYNC_NUL(%9)%8$#%4, %8$I@,#%4),
 
 //#define __AWAIT_VAR(%2) new %2;???%2
 
@@ -108,6 +116,6 @@ for (new a, b, c; await SomeFunction() -> (d, e, string:f[]) && c; ++a)
 
 await SomeFunction(using async);
 
-await SomeFunction(using async) -> (a, b, string:c[], Float:d[50], len);
+await SomeFunction(first, second, using async, third, fourth) -> (a, b, string:c[], Float:d[50], len);
 
 
