@@ -1008,7 +1008,7 @@ To prove this, I'm going to take a common example - warrants:
 * Each player can have several warrants out on them.
 * A warrant has a time, issuing officer, and a message.
 
-The naieve coder will put all of this information in their monolithic `PlayerInfo` array:
+The naïve coder will put all of this information in their monolithic `PlayerInfo` array:
 
 ```pawn
 #define MAX_WARRANTS (5)
