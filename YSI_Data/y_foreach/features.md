@@ -1200,3 +1200,24 @@ foreach (new idx : gWarrants<player>)
 }
 ```
 
+For reference, this is just a wrapper around:
+
+
+```pawn
+enum E_PLAYER_WARRANT
+{
+	E_WARRANT_TIME,
+	E_WARRANT_ISSUER,
+	E_WARRANT_MESSAGE[MAX_WARRANT_MESSAGE]
+}
+
+static gWarrants[MAX_WARRANTS][E_PLAYER_WARRANT];
+static Iterator:gWarrants<MAX_WARRANTS, MAX_PLAYERS>;
+```
+
+Which works thanks to the fact that `Iterator:` mangles some names internally, allowing you to seemingly have to variables with the same name - the iterator and the data array.  This made the implementation of this feature exactly one line long:
+
+```pawn
+#define LIST__%0<%1,%2> Iterator:%0<%1,%2>,%0[%1]
+```
+
