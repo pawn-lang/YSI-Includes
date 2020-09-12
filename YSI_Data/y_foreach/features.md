@@ -627,8 +627,6 @@ That code will print:
 -1
 ```
 
-
-
 ## Special Array Iterators
 
 An example of owned vehicles could look like:
@@ -1000,4 +998,205 @@ Goes through an iterator backwards:
 foreach (new i : Reverse(Player))
 ```
 
+## You don't need n-dimensional arrays.
+
+### Introduction
+
+To prove this, I'm going to take a common example - warrants: 
+
+* Police can issue warrants for players' arrest.
+* Each player can have several warrants out on them.
+* A warrant has a time, issuing officer, and a message.
+
+The naieve coder will put all of this information in their monolithic `PlayerInfo` array:
+
+```pawn
+#define MAX_WARRANTS (5)
+#define MAX_WARRANT_MESSAGE (32)
+
+enum E_PLAYER_INFO
+{
+	// ...
+	E_WARRANT_TIME[MAX_WARRANTS],
+	E_WARRANT_ISSUER[MAX_WARRANTS],
+	E_WARRANT_MESSAGE[MAX_WARRANTS][MAX_WARRANT_MESSAGE]
+	// ...
+}
+
+new PlayerInfo[MAX_PLAYERS][E_PLAYER_INFO];
+```
+
+The slightly less stupid coder will know not to put everything in one huge array and will try keep things isolated:
+
+```pawn
+#define MAX_WARRANTS (5)
+#define MAX_WARRANT_MESSAGE (32)
+
+enum E_PLAYER_WARRANTS
+{
+	E_WARRANT_TIME[MAX_WARRANTS],
+	E_WARRANT_ISSUER[MAX_WARRANTS],
+	E_WARRANT_MESSAGE[MAX_WARRANTS][MAX_WARRANT_MESSAGE]
+}
+
+static gPlayerWarrants[MAX_PLAYERS][E_PLAYER_WARRANTS];
+```
+
+But there are already several obvious, and not so obvious, problems with this:
+
+1. That's a 2d array inside an enum (`E_WARRANT_MESSAGE`) - pawn can't do that (and this is a GOOD thing).
+2. There's a hard limit on warrants per-player.  What happens if someone gets a sixth?
+3. This is incredibly space inefficient.  You need to cater for the worst-case scenario, even though 90% of your players may never get a warrant.
+
+You end up wasting massive amounts of space, with hundreds of warrant slots never used, while still being very limited in how many warrants a single player could have.  If only there was a way to combine all players' warrants together so there was a single huge global limit, instead of a tiny per-player limit.  There is, and I'm going to show you how:
+
+```pawn
+#define MAX_WARRANTS (500)
+#define MAX_WARRANT_MESSAGE (32)
+
+enum E_PLAYER_WARRANT
+{
+	E_WARRANT_TIME,
+	E_WARRANT_ISSUER,
+	E_WARRANT_MESSAGE[MAX_WARRANT_MESSAGE]
+	E_WARRANT_NEXT,
+}
+
+static gWarrants[MAX_WARRANTS][E_PLAYER_WARRANTS];
+static gPlayerWarrants[MAX_PLAYERS];
+static gUnusedWarrants;
+```
+
+Assuming `MAX_PLAYERS` is 500, the old code used about 340kb of data for a maximum of 5 warrants per player.  This new version uses around 72kb and has a maximum number of warrants for one single player of 500.  If you wanted, you could assign every single warrant to one extremely bad player.  So work out how many TOTAL warrants you'll have an any one time and set the limit to exactly that number.  Now it might become a little clearer what we're going to do if you mentally replace `E_WARRANT_NEXT` with `E_WARRANT_PLAYER` - each slot knows which player it is assigned to, so you can loop through all the warrants to find just the ones for that player.  However, that would be very inefficient in time, and we can do one better.  This is where the fundamental idea of lists comes in.
+
+### Lists
+
+A list (more specifically a linked list) is a data structure where each element tells you where the next one is.  In our example `gPlayerWarrants` stores the index of the FIRST warrant for every player (`-1` if they don't have a warrant).  You go to that index in `gWarrants` and read the information.  Then, from that slot, you read `E_WARRANT_NEXT` and it tells you the index of the next warrant for that player (or `-1` if you've finished the list).  They may have warrants in slots `3`, `66`, and `209`, but you don't need to loop through the entire array to discover this fact.  You just follow the stored indexes.  `gUnusedWarrants` stores the index of the first free slot - that is, the first data available for storing a newly issued warrant; and that too is chained through the whole array.  Initialisation is simple:
+
+```pawn
+hook OnScriptInit()
+{
+	for (new i = 0; i != MAX_WARRANTS - 1; ++i)
+	{
+		// Construct the chain.
+		gWarrants[i][E_WARRANT_NEXT] = i + 1;
+	}
+	// Start of the list.
+	gUnusedWarrants = 0;
 	
+	// End of the list.
+	gWarrants[MAX_WARRANTS][E_WARRANT_NEXT - 1] = -1;
+}
+```
+
+To add a new warrant to a player, you remove it from the unused list (by changing the pointer of the first unused slot) and add it to that player's list (at the start is simplest):
+
+```pawn
+GetNewWarrant(playerid)
+{
+	// Get a free slot.
+	new idx = gUnusedWarrants;
+	if (idx == -1)
+	{
+		return -1;
+	}
+	
+	// Move the unused warrants pointer.
+	gUnusedWarrants = gWarrants[idx][E_WARRANT_NEXT];
+	
+	// Add this to the player's list.
+	gWarrants[idx][E_WARRANT_NEXT] = gPlayerWarrants[playerid];
+	gPlayerWarrants[playerid] = idx;
+	
+	// Return it, so we can write the data to `gWarrants[idx]`.
+	return idx;
+}
+```
+
+Some of you might even notice that this assignment code is actually simpler than it would be in the first enum version, where you have to loop over the whole set of per-player warrants and check if any one is empty.
+
+To loop over a player's warrants is simply traversing the list.  Incidentally, this is EXACTLY how y_iterate/foreach works:
+
+```pawn
+for (new idx = gPlayerWarrants[playerid]; idx != -1; idx = gWarrants[idx][E_WARRANT_NEXT])
+{
+	// `idx` is a valid index in to `gWarrants` pointing to a warrant for that player.
+}
+```
+
+Removing an item from a list is the most complex operation, especially when it is in the middle of the list.  You have to update the previous item (or initial pointer) to point to the following item, but even this isn't that complex:
+
+```pawn
+ReleaseWarrant(playerid, idx)
+{
+	// Is this the first one?
+	if (gPlayerWarrants[playerid] == idx)
+	{
+		// Yes, remove it.
+		gPlayerWarrants[playerid] = gWarrants[idx][E_WARRANT_NEXT];
+	}
+	else
+	{
+		// No, we need to loop.
+		new prev = gPlayerWarrants[playerid];
+		while (prev != -1)
+		{
+			// Check if the NEXT item is the one we want to remove.
+			new cur = gWarrants[prev][E_WARRANT_NEXT];
+			if (cur == idx)
+			{
+				// Found it in the list.
+				break;
+			}
+			// Not found it yet, move on.
+			prev = cur;
+		}
+
+		if (prev == -1)
+		{
+			// Not in this player's list.
+			return;
+		}
+		
+		// We've now found the item in the list BEFORE `idx`.
+		gWarrants[prev][E_WARRANT_NEXT] = gWarrants[idx][E_WARRANT_NEXT];
+	}
+
+	// And add it to the free list.
+	gWarrants[idx][E_WARRANT_NEXT] = gUnusedWarrants;
+	gUnusedWarrants = idx;
+}
+```
+
+### y_iterate
+
+Lets look at the previous example using the new y_iterate extension:
+
+```pawn
+enum E_PLAYER_WARRANT
+{
+	E_WARRANT_TIME,
+	E_WARRANT_ISSUER,
+	E_WARRANT_MESSAGE[MAX_WARRANT_MESSAGE]
+}
+
+static LIST__ gWarrants<MAX_WARRANTS, MAX_PLAYERS>[E_PLAYER_WARRANT];
+```
+
+Then you get all of y_iterate for free:
+
+```pawn
+new idx = Itter_Alloc(gWarrants<playerid>);
+```
+
+```pawn
+List_Remove(gWarrants<player>, idx);
+```
+
+```pawn
+foreach (new idx : gWarrants<player>)
+{
+}
+```
+
+

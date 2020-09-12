@@ -467,6 +467,12 @@ public OnJITCompile()
 #define PREEXIT__%0(%1) DO_YSI_INIT__%0(%1)<@Iy_>
 #define POSTEXIT__%0(%1) DO_YSI_INIT__%0(%1)<@_Iy>
 
+// Alternative spellings.
+#define PRE_INIT__ PREINIT__
+#define POST_INIT__ POSTINIT__
+#define PRE_EXIT__ PREEXIT__
+#define POST_EXIT__ POSTEXIT__
+
 #define FINAL__%0= stock const %0;u@(u[_:_@Iy:_@yI:_I@y:u@$%0()<_>
 
 #if YSI_KEYWORD(final)

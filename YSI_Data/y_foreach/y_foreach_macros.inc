@@ -945,8 +945,26 @@ stock const
 #undef Iterator
 P:D(Iterator:Iterator(name));
 #define _no_itertag:Iterator@%1$[_:F@c:F@d:((%3:%2)+1)]%9$ %3:Iterator@%1$[_:F@c:F@d:((%2)+1)]={%3:0,%3:1,...}F@a$
-#define Iterator:%1<%2> _no_itertag:Iterator@%1 F@a$[_:F@c:F@d:((%2)+1)]={_no_itertag:0,_no_itertag:1,...}F@a$,Iter_Single@%1 F@a$F@a$
-#define IteratorArray Iterator
+#define ITERATOR__%1<%2> _no_itertag:Iterator@%1 F@a$[_:F@c:F@d:((%2)+1)]={_no_itertag:0,_no_itertag:1,...}F@a$,Iter_Single@%1 F@a$F@a$
+
+#if YSI_KEYWORD(Iterator)
+	#define Iterator:%1<%2> ITERATOR__ %1<%2>
+#endif
+
+#if YSI_KEYWORD(IteratorArray)
+	#define IteratorArray:%1<%2> ITERATOR__ %1<%2>
+#endif
+
+/*-------------------------------------------------------------------------*//**
+ * <remarks>
+ *  An iterator with an associated array of information.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+#define LIST__%0<%1,%2> Iterator:%0<%1,%2>,%0[%1]
+#if YSI_KEYWORD(List)
+	#define List:%0<%1,%2> LIST__ %0<%1,%2>
+#endif
 
 /*-------------------------------------------------------------------------*//**
  * <remarks>
