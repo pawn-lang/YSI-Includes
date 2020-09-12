@@ -1196,6 +1196,7 @@ Iter_Remove(gWarrants<player>, idx);
 ```pawn
 foreach (new idx : gWarrants<player>)
 {
+	printf("Warrant issued at %d by %d", gWarrants[idx][E_WARRANT_TIME], gWarrants[idx][E_WARRANT_ISSUER]);
 }
 ```
 
