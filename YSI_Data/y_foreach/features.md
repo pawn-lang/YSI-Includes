@@ -1190,7 +1190,7 @@ new idx = Itter_Alloc(gWarrants<playerid>);
 ```
 
 ```pawn
-List_Remove(gWarrants<player>, idx);
+Iter_Remove(gWarrants<player>, idx);
 ```
 
 ```pawn
@@ -1198,5 +1198,4 @@ foreach (new idx : gWarrants<player>)
 {
 }
 ```
-
 
