@@ -285,6 +285,12 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __COMPILER_BUGGED_SYSREQ (0)
 	#define __COMPILER_WARNING_SUPPRESSION (1)
 	#define __COMPILER_USER_WARNING (1)
+	#define __COMPILER___EMIT (1)
+	
+	stock YSI_gAMXAddress_;
+	
+	#define AMX_Read(%0) __emit(load.u.pri %0, stor.pri YSI_gAMXAddress_, lref.pri YSI_gAMXAddress_)
+	#define AMX_Write(%0,%1) __emit(push.u %1, load.u.alt %0, stor.alt YSI_gAMXAddress_, pop.pri, sref.pri YSI_gAMXAddress_)
 
 	// Error with:
 	//
@@ -429,6 +435,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __COMPILER_CONST_REF (0)
 	#define __COMPILER_sNAMEMAX (31)
 	#define __COMPILER_CONST_TAGGED (0)
+	#define __COMPILER___EMIT (0)
 	
 	// It is sufficient simply for a variable to exist anywhere with the tag.
 	#define __COMPILER_TAG_DATA(%0,%1) static stock const %0:__TAGOF__%0; stock %0:operator=(__CompilerDefault:a) return a, %0:(%1)

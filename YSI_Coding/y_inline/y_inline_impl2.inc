@@ -2010,7 +2010,9 @@ stock Callback_Restore_(...)
 	}
 	new
 		ptr = AMX_Read(closure + _:E_INLINE_CALL_SOURCE * cellbytes),
-		frm = ptr + AMX_Read(AMX_Read(ptr) + cellbytes),
+		frm = AMX_Read(ptr) + cellbytes;
+	frm = ptr + AMX_Read(frm);
+	new
 		ret = GetFrameReturn(frm),
 		pfr = GetFramePreviousFrame(frm);
 	rawMemcpy(ptr, closure + _:E_INLINE_CALL_PARAMS * cellbytes, AMX_Read(closure + _:E_INLINE_CALL_SIZE * cellbytes)),

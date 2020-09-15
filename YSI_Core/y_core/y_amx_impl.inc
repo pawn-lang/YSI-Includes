@@ -964,9 +964,35 @@ stock AMX_ReadString(addr, str[], len = sizeof (str))
 	{
 		// Read 4 bytes.
 		#emit LREF.S.pri                addr
-		#emit STOR.S.pri                buffer
+		
+		// data = ((data & 0b11111111000000001111111100000000) >>> 8) | ((data & 0b00000000111111110000000011111111) << 8);
+		#emit PUSH.pri
+		#emit CONST.alt            0b11111111000000001111111100000000
+		#emit AND
+		#emit SHR.C.pri            8
+		#emit SWAP.pri
+		#emit CONST.alt            0b00000000111111110000000011111111
+		#emit AND
+		#emit SHL.C.pri            8
+		#emit POP.alt
+		#emit OR
+		
+		// data = ((data & 0b11111111111111110000000000000000) >>> 16) | ((data & 0b00000000000000001111111111111111) << 16);
+		#emit PUSH.pri
+		#emit CONST.alt            0b11111111111111110000000000000000
+		#emit AND
+		#emit SHR.C.pri            16
+		#emit SWAP.pri
+		#emit CONST.alt            0b00000000000000001111111111111111
+		#emit AND
+		#emit SHL.C.pri            16
+		#emit POP.alt
+		#emit OR
+		
 		// Write PACKED strings.
-		str[idx] = swapchars(buffer);
+		#emit STOR.S.pri                buffer
+		str[idx] = buffer;
+		
 		if (!(buffer & 0x000000FF && buffer & 0x0000FF00 && buffer & 0x00FF0000 && buffer & 0xFF000000))
 		{
 			return;
@@ -1059,35 +1085,6 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 		}
 	}
 	while (++idx < len);
-}
-
-stock AMX_Read(addr)
-{
-	#emit LREF.S.pri                    addr
-	#emit RETN
-	return 0;
-}
-
-stock AMX_Write(addr, value)
-{
-	P:7("AMX_Write called: %i, %i", addr, value);
-	#emit LOAD.S.pri                    value
-	#emit SREF.S.pri                    addr
-}
-
-stock AMX_RawRead(addr)
-{
-	P:7("AMX_RawRead called: %i", addr);
-	#emit LREF.S.pri                    addr
-	#emit RETN
-	return 0;
-}
-
-stock AMX_RawWrite(addr, value)
-{
-	P:7("AMX_RawWrite called: %i, %i", addr, value);
-	#emit LOAD.S.pri                    value
-	#emit SREF.S.pri                    addr
 }
 
 stock AMX_ReadArray(addr, dest[], len = sizeof (dest))
@@ -1452,4 +1449,24 @@ stock AMX_DumpHeader()
 #define H_Nc7(%0,%3) @C8:H_Sc(%0,8,%3)
 #define H_Nc8(%0,%3) @C9:H_Sc(%0,9,%3)
 #define H_Nc9(%0,%3) ()
+
+#if __COMPILER___EMIT
+	#endinput
+#endif
+
+// Function call versions of `AMX_Read` and `AMX_Write`.
+stock AMX_Write(addr, value)
+{
+	P:7("AMX_Write called: %i, %i", addr, value);
+	#emit LOAD.S.pri                    value
+	#emit SREF.S.pri                    addr
+}
+
+stock AMX_Read(addr)
+{
+	P:7("AMX_Read called: %i", addr);
+	#emit LREF.S.pri                    addr
+	#emit RETN
+	return 0;
+}
 

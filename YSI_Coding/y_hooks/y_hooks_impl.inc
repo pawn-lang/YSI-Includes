@@ -698,8 +698,9 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(const name[64], const hooks[], count, write, 
 	}
 	else
 	{
-		if (hasprehooks) AMX_Write(write, AMX_Read(hooks[0]) + (AMX_REAL_DATA + AMX_HEADER_COD));
-		else AMX_Write(write, AMX_Read(hooks[0]));
+		size = AMX_Read(hooks[0]);
+		if (hasprehooks) AMX_Write(write, size + (AMX_REAL_DATA + AMX_HEADER_COD));
+		else AMX_Write(write, size);
 	}
 }
 
@@ -714,7 +715,8 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(const name[64], const hooks[], count, write, 
 _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 {
 	P:4("Hooks_InvalidateName called");
-	AMX_Write(AMX_BASE_ADDRESS + AMX_Read(entry + 4), 0);
+	entry = AMX_Read(entry + 4);
+	AMX_Write(AMX_BASE_ADDRESS + entry, 0);
 }
 
 /*
@@ -1018,9 +1020,11 @@ _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 				// Swap them over.
 				new
 					tmpFunc = AMX_Read(idx0),
-					tmpName = AMX_Read(idx0 + 4);
-				AMX_Write(idx0, AMX_Read(idx1));
-				AMX_Write(idx0 + 4, AMX_Read(idx1 + 4));
+					tmpName = AMX_Read(idx0 + 4),
+					otherFunc = AMX_Read(idx1),
+					otherName = AMX_Read(idx1 + 4);
+				AMX_Write(idx0, otherFunc);
+				AMX_Write(idx0 + 4, otherName);
 				AMX_Write(idx1, tmpFunc);
 				AMX_Write(idx1 + 4, tmpName);
 				return;
@@ -1071,9 +1075,10 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 		// Update stored values in y_amx so they reflect the new structure.
 		if (!Server_JITExists() || YSI_g_sSortedOnce)
 		{
-			AMX_Write(AMX_BASE_ADDRESS + 32, AMX_Read(AMX_BASE_ADDRESS + 32) + YSI_g_sInitPublicDiff);
-			AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff;
-			ResetStaticAmxHeader();
+			oldCount = AMX_Read(AMX_BASE_ADDRESS + 32),
+			AMX_Write(AMX_BASE_ADDRESS + 32, oldCount + YSI_g_sInitPublicDiff),
+			AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff,
+			ResetStaticAmxHeader(),
 			YSI_g_sSortedOnce = true;
 		}
 	}
@@ -1250,9 +1255,10 @@ _Y_HOOKS_STATIC _Hooks_RepairStub()
 	// Move the header up for searching.
 	if (YSI_g_sInitPublicDiff)
 	{
-		AMX_Write(AMX_BASE_ADDRESS + 32, AMX_Read(AMX_BASE_ADDRESS + 32) + YSI_g_sInitPublicDiff);
-		AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff;
-		ResetStaticAmxHeader();
+		new tmp = AMX_Read(AMX_BASE_ADDRESS + 32);
+		AMX_Write(AMX_BASE_ADDRESS + 32, tmp + YSI_g_sInitPublicDiff),
+		AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff,
+		ResetStaticAmxHeader(),
 		YSI_g_sSortedOnce = true;
 	}
 }

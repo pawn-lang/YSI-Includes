@@ -156,7 +156,8 @@ public OnCodeInit()
 		{
 			// Found a bounds code.
 			AMX_Write(i, nop);
-			AMX_Write(i += 4, nop);
+			i += 4;
+			AMX_Write(i, nop);
 		}
 	}
 	Malloc_TrySetup();

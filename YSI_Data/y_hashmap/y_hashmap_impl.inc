@@ -512,7 +512,8 @@ stock bool:HashMap_RemoveKeyWithHash(HashMap:m<>, const str[], hash, bool:ignore
 			// no branch is empty, then this branch MUST be at least two nodes
 			// high, and so MUST have a parent.
 			AMX_Write(prev, rVal),
-			AMX_Write(rParent + HASH_MAP_DIR_LEFT, AMX_Read(rVal + HASH_MAP_DIR_RIGHT)),
+			rHeight = AMX_Read(rVal + HASH_MAP_DIR_RIGHT),
+			AMX_Write(rParent + HASH_MAP_DIR_LEFT, rHeight),
 			AMX_Write(rVal + HASH_MAP_DIR_RIGHT, right),
 			AMX_Write(rVal + HASH_MAP_DIR_LEFT, left);
 		}
@@ -521,7 +522,8 @@ stock bool:HashMap_RemoveKeyWithHash(HashMap:m<>, const str[], hash, bool:ignore
 			// Reduce the left (larger) branch.  This branch MAY NOT have a
 			// parent, if both branches are equal at one node high.
 			AMX_Write(prev, lVal),
-			AMX_Write(lParent + HASH_MAP_DIR_RIGHT, AMX_Read(lVal + HASH_MAP_DIR_LEFT)),
+			lHeight = AMX_Read(lVal + HASH_MAP_DIR_LEFT),
+			AMX_Write(lParent + HASH_MAP_DIR_RIGHT, lHeight),
 			AMX_Write(lVal + HASH_MAP_DIR_RIGHT, right),
 			AMX_Write(lVal + HASH_MAP_DIR_LEFT, left);
 		}
