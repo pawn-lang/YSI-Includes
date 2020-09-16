@@ -363,9 +363,9 @@ public OnCodeInit()
 		Opcode:proc = RelocateOpcode(OP_PROC),
 		dctx[DisasmContext];
 	DisasmInit(dctx);
-	for ( ; ; )
+	while (DisasmDecodeInsn(dctx))
 	{
-		switch (DisasmNextInsn(dctx))
+		switch (dctx[DisasmContext_opcode])
 		{
 		case OP_NONE:
 		{
