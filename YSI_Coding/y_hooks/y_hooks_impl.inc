@@ -1005,40 +1005,73 @@ _Y_HOOKS_STATIC Hooks_CompareNextCell(addr0, addr1)
 
 _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 {
-//	P:4("Hooks_ComparePublics called");
+	P:4("Hooks_ComparePublics called");
 	idx0 = idx0 * 8 + AMX_HEADER_PUBLICS;
 	idx1 = idx1 * 8 + AMX_HEADER_PUBLICS;
 	new
 		addr0 = AMX_BASE_ADDRESS + AMX_Read(idx0 + 4),
-		addr1 = AMX_BASE_ADDRESS + AMX_Read(idx1 + 4);
-	for ( ; ; )
+		addr1 = AMX_BASE_ADDRESS + AMX_Read(idx1 + 4),
+		s0,
+		s1,
+		cmp;
+	for ( ; ; addr0 += 4, addr1 += 4)
 	{
-		switch (Hooks_CompareNextCell(addr0, addr1))
+		s0 = AMX_Read(addr0);
+		s1 = AMX_Read(addr1);
+		cmp = __emit(addr.pri 0xFFFFFFF4, lodb.i 1, move.alt, addr.pri 0xFFFFFFF0, lodb.i 1, sub);
+		if (cmp > 0)
 		{
-			case -1:
-			{
-				// Swap them over.
-				new
-					tmpFunc = AMX_Read(idx0),
-					tmpName = AMX_Read(idx0 + 4),
-					otherFunc = AMX_Read(idx1),
-					otherName = AMX_Read(idx1 + 4);
-				AMX_Write(idx0, otherFunc);
-				AMX_Write(idx0 + 4, otherName);
-				AMX_Write(idx1, tmpFunc);
-				AMX_Write(idx1 + 4, tmpName);
-				return;
-			}
-			case 1:
-			{
-				// Already in order - good.
-				return;
-			}
-			// case 0: // Loop.
+			// Already in order - good.
+			return;
 		}
-		addr0 += 4;
-		addr1 += 4;
+		if (cmp < 0)
+		{
+			break;
+		}
+		cmp = __emit(addr.pri 0xFFFFFFF4, lodb.i 2, move.alt, addr.pri 0xFFFFFFF0, lodb.i 2, sub);
+		if (cmp > 0)
+		{
+			// Already in order - good.
+			return;
+		}
+		if (cmp < 0)
+		{
+			break;
+		}
+		cmp = __emit(load.s.alt 0xFFFFFFF4, load.s.pri 0xFFFFFFF0, shl.c.alt 8, shl.c.pri 8, sub);
+		if (cmp > 0)
+		{
+			// Already in order - good.
+			return;
+		}
+		if (cmp < 0)
+		{
+			break;
+		}
+		cmp = __emit(load.s.alt 0xFFFFFFF4, load.s.pri 0xFFFFFFF0, sub);
+		if (cmp > 0)
+		{
+			// Already in order - good.
+			return;
+		}
+		if (cmp < 0)
+		{
+			break;
+		}
+		// Loop.
 	}
+	// Swap them over.
+	// Read.
+	addr0 = AMX_Read(idx0),
+	addr1 = AMX_Read(idx0 + 4),
+	s0 = AMX_Read(idx1),
+	s1 = AMX_Read(idx1 + 4),
+	
+	// Write.
+	AMX_Write(idx0, s0),
+	AMX_Write(idx0 + 4, s1),
+	AMX_Write(idx1, addr0),
+	AMX_Write(idx1 + 4, addr1);
 }
 
 /*-------------------------------------------------------------------------*//**

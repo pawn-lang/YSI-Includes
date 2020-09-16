@@ -993,7 +993,8 @@ stock AMX_ReadString(addr, str[], len = sizeof (str))
 		#emit STOR.S.pri                buffer
 		str[idx] = buffer;
 		
-		if (!(buffer & 0x000000FF && buffer & 0x0000FF00 && buffer & 0x00FF0000 && buffer & 0xFF000000))
+		// https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
+		if ((buffer - 0x01010101) & ~buffer & 0x80808080)
 		{
 			return;
 		}
