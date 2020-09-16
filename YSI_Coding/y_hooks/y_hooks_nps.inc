@@ -363,7 +363,7 @@ public OnCodeInit()
 		Opcode:proc = RelocateOpcode(OP_PROC),
 		Opcode:o,
 		reloc = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS;
-	//if (IsOpcodeRelocationRequired())
+	if (IsOpcodeRelocationRequired())
 	{
 		for (new addr = AMX_HEADER_COD; addr < 0;)
 		{
@@ -402,7 +402,7 @@ public OnCodeInit()
 				}
 				default:
 				{
-					addr += (0 <= _:o < sizeof (gAMXOpcodeBaseSizes)) ? gAMXOpcodeBaseSizes[o] : 4;
+					addr += (0 <= _:o < sizeof (gAMXOpcodeBaseSizes)) ? (gAMXOpcodeBaseSizes[_:o]) : (4);
 					continue;
 				}
 			}
@@ -420,6 +420,71 @@ public OnCodeInit()
 				AMX_Write(addr + 4, idx1),
 				addr += 8;
 				if (UnrelocateOpcode(Opcode:ReadAmxMemory(addr)) == OP_STACK)
+				{
+					AMX_Write(addr, _:nop),
+					AMX_Write(addr + 4, _:nop),
+					addr += 8;
+				}
+			}
+		}
+	}
+	else
+	{
+		for (new addr = AMX_HEADER_COD; addr < 0;)
+		{
+			switch ((o = Opcode:ReadAmxMemory(addr)))
+			{
+				case OP_SYSREQ_C:
+				{
+					// Check that the previous OP is `PUSH.C`.  That represents a real native call,
+					// not our wrapper.
+					if (Opcode:AMX_Read(addr - 8) == proc)
+					{
+						addr += 8;
+						continue;
+					}
+					idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
+				}
+				case OP_SYSREQ_D:
+				{
+					if (Opcode:AMX_Read(addr - 8) == proc)
+					{
+						addr += 8;
+						continue;
+					}
+					idx1 = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
+				}
+				case OP_CALL:
+				{
+					idx1 = YHNPS_Find(heap + allocated * 8, stockCount, ReadAmxMemory(addr + 4) - reloc);
+					if (idx1 != cellmin)
+					{
+						// Write a different target address.
+						AMX_Write(addr + 4, idx1);
+					}
+					addr += 8;
+					continue;
+				}
+				default:
+				{
+					addr += (0 <= _:o < sizeof (gAMXOpcodeBaseSizes)) ? (gAMXOpcodeBaseSizes[_:o]) : (4);
+					continue;
+				}
+			}
+			// `SYSREQ.C` is always followed by `STACK`, except with `#emit` usage.
+			// We need to change the pair in to a single `CALL`.  Don't forget
+			// `SYSREQ.D`.
+			if (idx1 == cellmin)
+			{
+				addr += 8;
+			}
+			else
+			{
+				// Write a different target address.
+				AMX_Write(addr, _:call),
+				AMX_Write(addr + 4, idx1),
+				addr += 8;
+				if (Opcode:ReadAmxMemory(addr) == OP_STACK)
 				{
 					AMX_Write(addr, _:nop),
 					AMX_Write(addr + 4, _:nop),

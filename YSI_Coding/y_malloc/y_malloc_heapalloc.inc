@@ -152,7 +152,7 @@ public OnCodeInit()
 		// Make sure this isn't just something that LOOKS like "bounds 0",
 		// although I don't think there can be because "0" is not a valid
 		// opcode.
-		if (AMX_Read(i) == _:bounds && AMX_Read(i + 4) == 0)
+		if ((AMX_Read(i) == _:bounds) && (!AMX_Read(i + 4)))
 		{
 			// Found a bounds code.
 			AMX_Write(i, nop);
