@@ -965,9 +965,10 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
  * <remarks>
  *  Compares two public function entries, and if need-be, swaps them over.
  * </remarks>
+ * <returns>Did a swap happen?</returns>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
+_Y_HOOKS_STATIC bool:Hooks_ComparePublics(idx0, idx1)
 {
 	P:4("Hooks_ComparePublics called");
 	idx0 = idx0 * 8 + AMX_HEADER_PUBLICS;
@@ -992,7 +993,7 @@ _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 		if (cmp > 0)
 		{
 			// Already in order - good.
-			return;
+			return false;
 		}
 		if (cmp < 0)
 		{
@@ -1009,7 +1010,7 @@ _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 		if (cmp > 0)
 		{
 			// Already in order - good.
-			return;
+			return false;
 		}
 		if (cmp < 0)
 		{
@@ -1025,7 +1026,7 @@ _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 		if (cmp > 0)
 		{
 			// Already in order - good.
-			return;
+			return false;
 		}
 		if (cmp < 0)
 		{
@@ -1039,7 +1040,7 @@ _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 		if (cmp > 0)
 		{
 			// Already in order - good.
-			return;
+			return false;
 		}
 		if (cmp < 0)
 		{
@@ -1059,6 +1060,9 @@ _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 	AMX_Write(idx0 + 4, s1),
 	AMX_Write(idx1, addr0),
 	AMX_Write(idx1 + 4, addr1);
+	
+	// We swapped the two functions, so we need to keep running the sort step.
+	return true;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1080,13 +1084,11 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 	// that.  Fortunately I don't actually need to move the strings themselves
 	// around as they just sit nicely in the nametable; I only need to sort the
 	// pointers.
-	for (new i = oldCount - 1; i > 0; --i)
+	for (new i = 1; i < oldCount; ++i)
 	{
-		for (new j = 0; j != i; ++j)
+		for (new j = i; j > 0 && Hooks_ComparePublics(j - 1, j); --j)
 		{
-			// This neatly moves all the functions with blanked names to the
-			// start of the public functions table (which will soon be moved).
-			Hooks_ComparePublics(j, j + 1);
+			// Do nothing extra.
 		}
 	}
 	// Move the start address UP to reduce the VM's search space.
