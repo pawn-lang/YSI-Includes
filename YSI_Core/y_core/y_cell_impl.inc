@@ -74,7 +74,7 @@ Optional plugins:
  * <summary>
  *  Cell_ReverseBits(number);
  * </summary>
- * <param name="number">The number to manipulate.</param>
+ * <param name="data">The number to manipulate.</param>
  * <returns>
  *  All the bits in the input reversed.
  * </returns>
@@ -169,7 +169,7 @@ stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
  * <summary>
  *  Cell_ReverseNibbles(number);
  * </summary>
- * <param name="number">The number to manipulate.</param>
+ * <param name="data">The number to manipulate.</param>
  * <returns>
  *  All the nibbles (4-bit chunks) in the input reversed.
  * </returns>
@@ -239,7 +239,7 @@ stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
  * <summary>
  *  Cell_ReverseBytes(number);
  * </summary>
- * <param name="number">The number to manipulate.</param>
+ * <param name="data">The number to manipulate.</param>
  * <returns>
  *  All the bytes in the input reversed.
  * </returns>
@@ -296,7 +296,7 @@ stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
  * <summary>
  *  Cell_CountBits(number);
  * </summary>
- * <param name="number">The number to get the number of 1s in.</param>
+ * <param name="data">The number to get the number of 1s in.</param>
  * <returns>
  *  The number of 1s (set bits) in the input.
  * </returns>
@@ -358,7 +358,7 @@ stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
  * <summary>
  *  Cell_GetLowestBit(number);
  * </summary>
- * <param name="number">The number to get the lowest set bit of.</param>
+ * <param name="data">The number to get the lowest set bit of.</param>
  * <returns>
  *  The integer position of the lowest set bit.
  * </returns>
@@ -412,7 +412,7 @@ stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
  * <summary>
  *  Cell_GetLowestBitEx(number);
  * </summary>
- * <param name="number">The number to get the lowest set bit of PLUS ONE.</param>
+ * <param name="data">The number to get the lowest set bit of PLUS ONE.</param>
  * <returns>
  *  The integer position of the lowest set bit PLUS ONE.
  * </returns>
@@ -484,7 +484,7 @@ stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
  * <summary>
  *  Cell_CountBlanks(number);
  * </summary>
- * <param name="number">The number to get the number of 0s in.</param>
+ * <param name="data">The number to get the number of 0s in.</param>
  * <returns>
  *  The number of 0s (unset bits) in the input.
  * </returns>
@@ -533,7 +533,7 @@ stock Cell_CountBlanks(GLOBAL_TAG_TYPES:data)
  * <summary>
  *  Cell_GetLowestBlank(number);
  * </summary>
- * <param name="number">The number to get the lowest unset bit of.</param>
+ * <param name="data">The number to get the lowest unset bit of.</param>
  * <returns>
  *  The integer position of the lowest unset bit.
  * </returns>
@@ -572,7 +572,7 @@ stock Cell_GetLowestBlank(GLOBAL_TAG_TYPES:data)
  * <summary>
  *  Cell_GetLowestBlankEx(number);
  * </summary>
- * <param name="number">The number to get the lowest unset bit of PLUS ONE.</param>
+ * <param name="data">The number to get the lowest unset bit of PLUS ONE.</param>
  * <returns>
  *  The integer position of the lowest unset bit PLUS ONE.
  * </returns>
@@ -611,7 +611,7 @@ stock Cell_GetLowestBlankEx(GLOBAL_TAG_TYPES:data)
  * <summary>
  *  Cell_GetLowestComponent(number);
  * </summary>
- * <param name="number">The number to get the lowest 1 in.</param>
+ * <param name="data">The number to get the lowest 1 in.</param>
  * <returns>
  *  The lowest set bit.
  * </returns>
@@ -653,7 +653,7 @@ stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
  * <summary>
  *  Cell_GetLowestEmpty(number);
  * </summary>
- * <param name="number">The number to get the lowest 0 in.</param>
+ * <param name="data">The number to get the lowest 0 in.</param>
  * <returns>
  *  The lowest unset bit.
  * </returns>
@@ -669,6 +669,36 @@ stock Cell_GetLowestEmpty(GLOBAL_TAG_TYPES:data)
 	#emit INVERT
 	#emit MOVE.alt
 	#emit NEG
+	#emit AND
+	#emit RETN
+	
+	__pragma(naked);
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_HasZeroByte(number);
+ * </summary>
+ * <param name="data">The number to get the lowest 0 in.</param>
+ * <returns>
+ *  The lowest unset bit.
+ * </returns>
+ * <remarks>
+ *  Check if any of the 4 bytes are zero:
+ *  https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
+{
+	// return (data - 0x01010101) & ~data & 0x80808080;
+	#emit LOAD.S.pri           data
+	#emit INVERT
+	#emit MOVE.alt
+	#emit INVERT
+	#emit ADD.C                0xFEFEFEFE
+	#emit AND
+	#emit CONST.alt            0x80808080
 	#emit AND
 	#emit RETN
 	
