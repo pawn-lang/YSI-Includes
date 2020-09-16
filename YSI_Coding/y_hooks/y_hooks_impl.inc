@@ -960,42 +960,6 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 */
 
 /*-------------------------------------------------------------------------*//**
- * <param name="addr0">The 1st address to read.</param>
- * <param name="addr1">The 2nd address to read.</param>
- * <returns>
- *  -1 - The first address is bigger.
- *  0  - The addresses are the same
- *  1  - The second address is bigger.
- * </returns>
- * <remarks>
- *  Reads two addresses, converts them to big endian, and compares them as four
- *  characters of a string at once.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC Hooks_CompareNextCell(addr0, addr1)
-{
-//	P:4("Hooks_CompareNextCell called");
-	new
-		s0 = Cell_ReverseBytes(AMX_Read(addr0)),
-		s1 = Cell_ReverseBytes(AMX_Read(addr1));
-	// Propogate NULLs.
-	if (!(s0 & 0xFF000000)) s0 = 0;
-	else if (!(s0 & 0x00FF0000)) s0 &= 0xFF000000;
-	else if (!(s0 & 0x0000FF00)) s0 &= 0xFFFF0000;
-	else if (!(s0 & 0x000000FF)) s0 &= 0xFFFFFF00;
-	if (!(s1 & 0xFF000000)) s1 = 0;
-	else if (!(s1 & 0x00FF0000)) s1 &= 0xFF000000;
-	else if (!(s1 & 0x0000FF00)) s1 &= 0xFFFF0000;
-	else if (!(s1 & 0x000000FF)) s1 &= 0xFFFFFF00;
-	// We need the numbers to be compared as big-endian.  Now any trailing NULLs
-	// don't matter at all.
-	if (s1 > s0) return 1;
-	else if (s1 < s0) return -1;
-	else return 0;
-}
-
-/*-------------------------------------------------------------------------*//**
  * <param name="idx0">The index of the 1st public.</param>
  * <param name="idx1">The index of the 2nd public.</param>
  * <remarks>
@@ -1018,7 +982,13 @@ _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 	{
 		s0 = AMX_Read(addr0);
 		s1 = AMX_Read(addr1);
-		cmp = __emit(addr.pri 0xFFFFFFF4, lodb.i 1, move.alt, addr.pri 0xFFFFFFF0, lodb.i 1, sub);
+		#emit ADDR.pri   s0
+		#emit LODB.I     1
+		#emit MOVE.alt
+		#emit ADDR.pri   s1
+		#emit LODB.I     1
+		#emit SUB
+		#emit STOR.S.pri cmp
 		if (cmp > 0)
 		{
 			// Already in order - good.
@@ -1028,7 +998,14 @@ _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 		{
 			break;
 		}
-		cmp = __emit(addr.pri 0xFFFFFFF4, lodb.i 2, move.alt, addr.pri 0xFFFFFFF0, lodb.i 2, sub);
+		{}
+		#emit ADDR.pri   s0
+		#emit LODB.I     2
+		#emit MOVE.alt
+		#emit ADDR.pri   s1
+		#emit LODB.I     2
+		#emit SUB
+		#emit STOR.S.pri cmp
 		if (cmp > 0)
 		{
 			// Already in order - good.
@@ -1038,7 +1015,13 @@ _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 		{
 			break;
 		}
-		cmp = __emit(load.s.alt 0xFFFFFFF4, load.s.pri 0xFFFFFFF0, shl.c.alt 8, shl.c.pri 8, sub);
+		{}
+		#emit LOAD.S.alt s0
+		#emit LOAD.S.pri s1
+		#emit SHL.C.alt  8
+		#emit SHL.C.pri  8
+		#emit SUB
+		#emit STOR.S.pri cmp
 		if (cmp > 0)
 		{
 			// Already in order - good.
@@ -1048,7 +1031,11 @@ _Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
 		{
 			break;
 		}
-		cmp = __emit(load.s.alt 0xFFFFFFF4, load.s.pri 0xFFFFFFF0, sub);
+		{}
+		#emit LOAD.S.alt s0
+		#emit LOAD.S.pri s1
+		#emit SUB
+		#emit STOR.S.pri cmp
 		if (cmp > 0)
 		{
 			// Already in order - good.
