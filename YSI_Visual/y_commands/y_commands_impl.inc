@@ -455,7 +455,7 @@ GLOBAL__ Command_ReProcess(p,string:c[],h)
 	static
 		sCmd[64] = "@yC_",
 		sPos = 0,
-		sRet = 0,
+		sRet,
 		sHash = 0,
 		e_COMMAND_ERRORS:sErr = COMMAND_ZERO_RET;
 	// Check that the input is a valid command.  Note that changing the command

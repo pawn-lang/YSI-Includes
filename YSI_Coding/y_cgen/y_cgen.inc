@@ -241,6 +241,10 @@ public CGen_OOM(ctx[AsmContext])
 	{
 		P:F("Duplicate label in code generation.");
 	}
+	case ASM_ERROR_NONE:
+	{
+		// Do nothing, just for warning 244.
+	}
 	}
 	AsmClearError(ctx);
 }
