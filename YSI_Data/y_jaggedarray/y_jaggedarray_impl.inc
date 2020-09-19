@@ -368,7 +368,7 @@ stock _Jagged_Empty(array[][], size1, size2)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Jagged_UnsafeResizeOne(array[][], slot, newSize)
+stock __COMPILER_NAKED_DECL Jagged_UnsafeResizeOne(array[][], slot, newSize)
 {
 	// Get a pointer to the next slot.
 	#emit LOAD.S.alt array
@@ -391,7 +391,7 @@ stock Jagged_UnsafeResizeOne(array[][], slot, newSize)
 	#emit POP.pri
 	#emit RETN
 	
-	__pragma(naked);
+	__COMPILER_NAKED_RETURN;
 }
 
 //#define Jagged_UnsafeResizeOne(%0,%1) _Jagged_UnsafeResizeOne(_Jagged(%0),%1)
@@ -474,7 +474,7 @@ stock _Jagged_SizeOf(array[][], size1, size2, slot)
 #if _DEBUG == 0
 	static
 #endif
-		stock _Jagged_Address(array[][], slot)
+		stock __COMPILER_NAKED_DECL _Jagged_Address(array[][], slot)
 		{
 			// Get the slot pointer.
 			#emit LOAD.S.alt            array
@@ -485,7 +485,7 @@ stock _Jagged_SizeOf(array[][], size1, size2, slot)
 			#emit ADD
 			#emit RETN
 			
-			__pragma(naked);
+			__COMPILER_NAKED_RETURN;
 		}
 
 /*-------------------------------------------------------------------------*//**
@@ -500,7 +500,7 @@ stock _Jagged_SizeOf(array[][], size1, size2, slot)
 #if _DEBUG == 0
 	static
 #endif
-		stock _Jagged_End(array[][], size1, size2)
+		stock __COMPILER_NAKED_DECL _Jagged_End(array[][], size1, size2)
 		{
 			#emit LOAD.S.alt            size2
 			#emit INC.alt
@@ -510,7 +510,7 @@ stock _Jagged_SizeOf(array[][], size1, size2, slot)
 			#emit IDXADDR
 			#emit RETN
 			
-			__pragma(naked);
+			__COMPILER_NAKED_RETURN;
 		}
 
 stock _Jagged_PrintHeader(array[][], size1, size2)

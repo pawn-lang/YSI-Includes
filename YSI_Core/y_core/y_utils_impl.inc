@@ -1083,7 +1083,7 @@ stock isnumeric(const str[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest), offset = 0)
+stock __COMPILER_NAKED_DECL Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest), offset = 0)
 {
 	static
 		// This is what the encoding should look like.  We mangle it to make the
@@ -1258,7 +1258,7 @@ stock Base64Encode(dest[], const src[], num = sizeof (src), len = sizeof (dest),
 			#emit RETN
 		}
 	}
-	__pragma(naked);
+	__COMPILER_NAKED_RETURN;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -2007,7 +2007,7 @@ stock LevenshteinDistance(const a[], const b[])
  * </returns>
  *//*------------------------------------------------------------------------**/
 
-stock PrintArg(n)
+stock __COMPILER_NAKED_DECL PrintArg(n)
 {
 	#emit LOAD.S.pri   n
 	#emit SHL.C.pri    2
@@ -2020,7 +2020,7 @@ stock PrintArg(n)
 	#emit SYSREQ.C     print
 	#emit STACK        8
 	#emit RETN
-	__pragma(naked);
+	__COMPILER_NAKED_RETURN;
 }
 
 #define printarg PrintArg

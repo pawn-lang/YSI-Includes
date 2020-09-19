@@ -232,52 +232,25 @@ static stock const
 
 const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 
-#if !__COMPILER_PRAGMA
-	// TODO: Check for a minor version that might have this.  Assume this is
-	// like the MSVC `__pragma` - i.e. `__pragma(pack(0))` which would give
-	// `__pragma_pack(0)`.  Or `__pragma(naked)` -> `__pragma_naked`.
-	#define __pragma(%0) __pragma_%0
-	
-	// Tell the compiler that a function does return a value, even when it
-	// appears it doesn't.
-	// 
-	//   stock Func()
-	//   {
-	//       #emit RETN
-	//       __pragma(naked);
-	//   }
-	// 
-	#define __pragma_naked return __COMPILER_DEFAULT
-	
-	// Return a version of `undefined` for any tag.
-	// 
-	//   new                Float:a = __pragma(default); // 0.0
-	//   new             Language:b = __pragma(default); // -1
-	//   new PR_PacketReliability:a = __pragma(default); // 6
-	// 
-	#define __pragma_default __COMPILER_DEFAULT
-	
-	// Don't warn about unused varaibles.
-	// 
-	//   __pragma(unused(a, b, c));
-	// 
-	#define __pragma_unused(%0) H@(%0)
-	#define __pragma_unread(%0) H@(%0)
-	#define __pragma_unwritten(%0) H@(%0)
-#endif
-
 #if YSI_KEYWORD(default)
 	// Return a version of `undefined` for any tag.
 	// 
 	//   new                Float:a = default(); // 0.0
 	//   new             Language:b = default(); // -1
 	//   new PR_PacketReliability:a = default(); // 6
-	#define default() __pragma(default)
+	#define default() __COMPILER_DEFAULT
 #endif
-#define DEFAULT__ __pragma(default)
+#define DEFAULT__ __COMPILER_DEFAULT
 
 #if __COMPILER_MODIFIED
-	#define __COMPILER_NAKED __pragma(naked);
+	#define __COMPILER_NAKED_DECL
+	#if __COMPILER_PRAGMA
+		#define __COMPILER_NAKED_DECL __pragma("naked")
+		#define __COMPILER_NAKED_RETURN;
+	#else
+		#define __COMPILER_NAKED_DECL
+		#define __COMPILER_NAKED_RETURN return __COMPILER_DEFAULT
+	#endif
 	#define __COMPILER_NESTED_ELLIPSIS (1)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) return __compiler_one_string_parameter:(%0)
@@ -423,7 +396,8 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	// Disable the warning for `const &var`.
 	#define __COMPILER_CONST_REF (1)
 #else
-	#define __COMPILER_NAKED __pragma(naked);
+	#define __COMPILER_NAKED_DECL
+	#define __COMPILER_NAKED_RETURN return __COMPILER_DEFAULT
 	#define __COMPILER_NESTED_ELLIPSIS (0)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) __CompilerStringReturn(%0);return (__compiler_one_string_parameter:(%0))

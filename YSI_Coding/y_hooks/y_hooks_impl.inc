@@ -1340,7 +1340,7 @@ _Y_HOOKS_STATIC Hooks_RepairJITInit()
 	native BAD_numargs() = numargs;
 #endif
 
-stock Hooks_NumArgs()
+stock __COMPILER_NAKED_DECL Hooks_NumArgs()
 {
 	// Awkward code that allows us to jump backwards.  It might appear that this
 	// code pushes something on the stack before the JZER that is never removed,
@@ -1372,7 +1372,7 @@ Hooks_NumArgs_negative:
 	#emit LOAD.I
 	#emit SHR.C.pri           2
 	#emit RETN*/
-	__pragma(naked);
+	__COMPILER_NAKED_RETURN;
 }
 
 #if defined _ALS_numargs
