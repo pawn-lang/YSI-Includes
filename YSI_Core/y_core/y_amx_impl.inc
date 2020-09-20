@@ -814,11 +814,11 @@ stock AMX_GetValueSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	return idx;
 }
 
-stock __COMPILER_NAKED_DECL AMX_GetEntryPointer(entry)
+stock AMX_GetEntryPointer(entry)
 {
 	#emit LREF.S.pri entry
 	#emit RETN
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 stock AMX_GetEntryFromNativeIndex(index)

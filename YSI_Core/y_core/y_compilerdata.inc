@@ -242,13 +242,10 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 #define DEFAULT__ __COMPILER_DEFAULT
 
 #if __COMPILER_MODIFIED
-	#define __COMPILER_NAKED_DECL
 	#if __COMPILER_PRAGMA
-		#define __COMPILER_NAKED_DECL __pragma("naked")
-		#define __COMPILER_NAKED_RETURN;
+		#define __COMPILER_NAKED() __pragma("naked")
 	#else
-		#define __COMPILER_NAKED_DECL
-		#define __COMPILER_NAKED_RETURN return __COMPILER_DEFAULT
+		#define __COMPILER_NAKED() return __COMPILER_DEFAULT
 	#endif
 	#define __COMPILER_NESTED_ELLIPSIS (1)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
@@ -395,8 +392,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	// Disable the warning for `const &var`.
 	#define __COMPILER_CONST_REF (1)
 #else
-	#define __COMPILER_NAKED_DECL
-	#define __COMPILER_NAKED_RETURN return __COMPILER_DEFAULT
+	#define __COMPILER_NAKED() return __COMPILER_DEFAULT
 	#define __COMPILER_NESTED_ELLIPSIS (0)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) __CompilerStringReturn(%0);return (__compiler_one_string_parameter:(%0))

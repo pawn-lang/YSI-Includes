@@ -1121,7 +1121,7 @@ native Inline_Strcmp(const string1, const string2[], bool:ignorecase=false, leng
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock __COMPILER_NAKED_DECL Inline_NumArgs(frm)
+static stock Inline_NumArgs(frm)
 {
 	#emit LOAD.S.alt          frm
 Inline_NumArgs_load:
@@ -1135,7 +1135,7 @@ Inline_NumArgs_load:
 	#emit JZER                Inline_NumArgs_load
 	#emit POP.pri
 	#emit RETN
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1398,7 +1398,7 @@ static stock Callback_Claim_(func[E_INLINE_CALL])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static __COMPILER_NAKED_DECL Callback_CallHandler_(...)
+static Callback_CallHandler_(...)
 {
 	// This is called by `@`, and given the above enum in `INDIRECTION_DATA`.
 	// Get the size, and update `INDIRECTION_DATA` to point to the data.
@@ -1457,7 +1457,7 @@ static __COMPILER_NAKED_DECL Callback_CallHandler_(...)
 	#emit SCTRL            4                   // 65
 	#emit LOAD.pri         I@                  // 67
 	#emit RETN                                 // 68
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1471,7 +1471,7 @@ static __COMPILER_NAKED_DECL Callback_CallHandler_(...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock __COMPILER_NAKED_DECL Callback_RemoteHandler_(...)
+static stock Callback_RemoteHandler_(...)
 {
 	#emit LOAD.S.alt       8
 	#emit LCTRL            4
@@ -1506,7 +1506,7 @@ static stock __COMPILER_NAKED_DECL Callback_RemoteHandler_(...)
 	#emit SCTRL            4
 	#emit MOVE.pri
 	#emit RETN
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1519,7 +1519,7 @@ static stock __COMPILER_NAKED_DECL Callback_RemoteHandler_(...)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock __COMPILER_NAKED_DECL Callback_LocalHandler_(...)
+static stock Callback_LocalHandler_(...)
 {
 	#emit LOAD.S.alt       8
 	#emit LCTRL            4
@@ -1554,7 +1554,7 @@ static stock __COMPILER_NAKED_DECL Callback_LocalHandler_(...)
 	#emit SCTRL            4
 	#emit MOVE.pri
 	#emit RETN
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1910,11 +1910,11 @@ public Callback_Release_(ResolvedAlloc:a)
 	#pragma warning push
 	#pragma warning disable 238
 #endif
-static stock __COMPILER_NAKED_DECL Inline_Ref(const &ptr)
+static stock Inline_Ref(const &ptr)
 {
 	#emit LOAD.S.pri       ptr
 	#emit RETN
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 #if __COMPILER_CONST_REF
 	#pragma warning pop

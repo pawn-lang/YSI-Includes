@@ -93,7 +93,7 @@ Optional plugins:
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock __COMPILER_NAKED_DECL Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
+stock Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 {
 	// Swap adjacent bits.
 	// data = ((data & 0b10101010101010101010101010101010) >>> 1) | ((data & 0b01010101010101010101010101010101) << 1);
@@ -162,7 +162,7 @@ stock __COMPILER_NAKED_DECL Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
 	// return data;
 	#emit RETN
 	
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -188,7 +188,7 @@ stock __COMPILER_NAKED_DECL Cell_ReverseBits(GLOBAL_TAG_TYPES:data)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock __COMPILER_NAKED_DECL Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
+stock Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 {
 	#emit LOAD.S.pri           data
 	
@@ -232,7 +232,7 @@ stock __COMPILER_NAKED_DECL Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
 	// return data;
 	#emit RETN
 	
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -258,7 +258,7 @@ stock __COMPILER_NAKED_DECL Cell_ReverseNibbles(GLOBAL_TAG_TYPES:data)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock __COMPILER_NAKED_DECL Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
+stock Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 {
 	#emit LOAD.S.pri           data
 
@@ -289,7 +289,7 @@ stock __COMPILER_NAKED_DECL Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
 	// return data;
 	#emit RETN
 	
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -319,7 +319,7 @@ stock __COMPILER_NAKED_DECL Cell_ReverseBytes(GLOBAL_TAG_TYPES:data)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock __COMPILER_NAKED_DECL Cell_CountBits(GLOBAL_TAG_TYPES:data)
+stock Cell_CountBits(GLOBAL_TAG_TYPES:data)
 {
 	// This function is a perfect candidate for re-writing in pure assembly.
 	// data = data - ((data >>> 1) & 0x55555555);
@@ -351,7 +351,7 @@ stock __COMPILER_NAKED_DECL Cell_CountBits(GLOBAL_TAG_TYPES:data)
 	#emit SHR.C.pri            24
 	#emit RETN
 	
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -383,7 +383,7 @@ stock __COMPILER_NAKED_DECL Cell_CountBits(GLOBAL_TAG_TYPES:data)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock __COMPILER_NAKED_DECL Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
+stock Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 {
 	static const
 		scDeBruijn[] =
@@ -405,7 +405,7 @@ stock __COMPILER_NAKED_DECL Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
 	
 	#emit RETN
 	
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -441,7 +441,7 @@ stock __COMPILER_NAKED_DECL Cell_GetLowestBit(GLOBAL_TAG_TYPES:data)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock __COMPILER_NAKED_DECL Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
+stock Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 {
 	// Sadly these two arrays can't be shared because they have marginally
 	// different values.  We could write this code to use the other array and
@@ -477,7 +477,7 @@ stock __COMPILER_NAKED_DECL Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
 	{} // Zero-cost bug fix.
 	#emit RETN
 	
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -493,7 +493,7 @@ stock __COMPILER_NAKED_DECL Cell_GetLowestBitEx(GLOBAL_TAG_TYPES:data)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock __COMPILER_NAKED_DECL Cell_CountBlanks(GLOBAL_TAG_TYPES:data)
+stock Cell_CountBlanks(GLOBAL_TAG_TYPES:data)
 {
 	// This function is a perfect candidate for re-writing in pure assembly.
 	// data = data - ((data >>> 1) & 0x55555555);
@@ -526,7 +526,7 @@ stock __COMPILER_NAKED_DECL Cell_CountBlanks(GLOBAL_TAG_TYPES:data)
 	#emit SHR.C.pri            24
 	#emit RETN
 	
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -542,7 +542,7 @@ stock __COMPILER_NAKED_DECL Cell_CountBlanks(GLOBAL_TAG_TYPES:data)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock __COMPILER_NAKED_DECL Cell_GetLowestBlank(GLOBAL_TAG_TYPES:data)
+stock Cell_GetLowestBlank(GLOBAL_TAG_TYPES:data)
 {
 	static const
 		scDeBruijn[] =
@@ -565,7 +565,7 @@ stock __COMPILER_NAKED_DECL Cell_GetLowestBlank(GLOBAL_TAG_TYPES:data)
 	
 	#emit RETN
 	
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -581,7 +581,7 @@ stock __COMPILER_NAKED_DECL Cell_GetLowestBlank(GLOBAL_TAG_TYPES:data)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock __COMPILER_NAKED_DECL Cell_GetLowestBlankEx(GLOBAL_TAG_TYPES:data)
+stock Cell_GetLowestBlankEx(GLOBAL_TAG_TYPES:data)
 {
 	static const
 		scDeBruijn[] =
@@ -604,7 +604,7 @@ stock __COMPILER_NAKED_DECL Cell_GetLowestBlankEx(GLOBAL_TAG_TYPES:data)
 	{} // Zero-cost bug fix.
 	#emit RETN
 	
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -833,7 +833,7 @@ stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock __COMPILER_NAKED_DECL Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
+stock Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 {
 	// return data & -data;
 	#emit LOAD.S.pri           data
@@ -842,7 +842,7 @@ stock __COMPILER_NAKED_DECL Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
 	#emit AND
 	#emit RETN
 	
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -858,7 +858,7 @@ stock __COMPILER_NAKED_DECL Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock __COMPILER_NAKED_DECL Cell_GetLowestEmpty(GLOBAL_TAG_TYPES:data)
+stock Cell_GetLowestEmpty(GLOBAL_TAG_TYPES:data)
 {
 	// return ~data & -~data;
 	#emit LOAD.S.pri           data
@@ -868,7 +868,7 @@ stock __COMPILER_NAKED_DECL Cell_GetLowestEmpty(GLOBAL_TAG_TYPES:data)
 	#emit AND
 	#emit RETN
 	
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -885,7 +885,7 @@ stock __COMPILER_NAKED_DECL Cell_GetLowestEmpty(GLOBAL_TAG_TYPES:data)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock __COMPILER_NAKED_DECL Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
+stock Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
 {
 	// return (data - 0x01010101) & ~data & 0x80808080;
 	#emit LOAD.S.pri           data
@@ -898,6 +898,6 @@ stock __COMPILER_NAKED_DECL Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
 	#emit AND
 	#emit RETN
 	
-	__COMPILER_NAKED_RETURN;
+	__COMPILER_NAKED();
 }
 
