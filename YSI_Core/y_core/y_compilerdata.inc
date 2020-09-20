@@ -161,12 +161,13 @@ static stock __CompilerSecondPass() {}
 			#undef __COMPILER_BUG_317
 			#define __COMPILER_BUG_317 (0)
 		#endif
+		// Disable `__COMPILER_PRAGMA` for now, while there's no `PROC` generated.
 		#if __PawnBuild >= 11
 			#undef __COMPILER_NAMEOF
-			#undef __COMPILER_PRAGMA
+			//#undef __COMPILER_PRAGMA
 			
 			#define __COMPILER_NAMEOF (1)
-			#define __COMPILER_PRAGMA (1)
+			//#define __COMPILER_PRAGMA (1)
 		#endif
 	#endif
 #else
