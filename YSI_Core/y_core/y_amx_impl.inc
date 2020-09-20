@@ -889,7 +889,7 @@ stock AMX_ReadString(addr, str[], len = sizeof (str))
 		str[idx] = buffer;
 		
 		// https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
-		if ((buffer - 0x01010101) & ~buffer & 0x80808080)
+		if (Cell_HasZeroByte(buffer))
 		{
 			return;
 		}

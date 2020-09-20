@@ -609,104 +609,6 @@ stock __COMPILER_NAKED_DECL Cell_GetLowestBlankEx(GLOBAL_TAG_TYPES:data)
 
 /*-------------------------------------------------------------------------*//**
  * <summary>
- *  Cell_GetLowestComponent(number);
- * </summary>
- * <param name="data">The number to get the lowest 1 in.</param>
- * <returns>
- *  The lowest set bit.
- * </returns>
- * <remarks>
- *  Similar to Cell_GetLowestBit, but returns the bit, not the position of the
- *  bit.
- *
- *  1)
- *  Example: 0b00000000000000000000000000000001
- *  Returns: 0b00000000000000000000000000000001
- *
- *  2)
- *  Example: 0b00000000000000000000000000001000
- *  Returns: 0b00000000000000000000000000001000
- *
- *  3)
- *  Example: 0b00010001100011000011100010001000
- *  Returns: 0b00000000000000000000000000001000
- *
- *  4)
- *  Example: 0b00000000000000000000000000000000
- *  Returns: 0b00000000000000000000000000000000
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock __COMPILER_NAKED_DECL Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
-{
-	// return data & -data;
-	#emit LOAD.S.pri           data
-	#emit MOVE.alt
-	#emit NEG
-	#emit AND
-	#emit RETN
-	
-	__COMPILER_NAKED_RETURN;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <summary>
- *  Cell_GetLowestEmpty(number);
- * </summary>
- * <param name="data">The number to get the lowest 0 in.</param>
- * <returns>
- *  The lowest unset bit.
- * </returns>
- * <remarks>
- *  Like Cell_GetLowestComponent, but for 0s not 1s.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock __COMPILER_NAKED_DECL Cell_GetLowestEmpty(GLOBAL_TAG_TYPES:data)
-{
-	// return ~data & -~data;
-	#emit LOAD.S.pri           data
-	#emit INVERT
-	#emit MOVE.alt
-	#emit NEG
-	#emit AND
-	#emit RETN
-	
-	__COMPILER_NAKED_RETURN;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <summary>
- *  Cell_HasZeroByte(number);
- * </summary>
- * <param name="data">The number to get the lowest 0 in.</param>
- * <returns>
- *  The lowest unset bit.
- * </returns>
- * <remarks>
- *  Check if any of the 4 bytes are zero:
- *  https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-stock __COMPILER_NAKED_DECL Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
-{
-	// return (data - 0x01010101) & ~data & 0x80808080;
-	#emit LOAD.S.pri           data
-	#emit INVERT
-	#emit MOVE.alt
-	#emit INVERT
-	#emit ADD.C                0xFEFEFEFE
-	#emit AND
-	#emit CONST.alt            0x80808080
-	#emit AND
-	#emit RETN
-	
-	__COMPILER_NAKED_RETURN;
-}
-
-/*-------------------------------------------------------------------------*//**
- * <summary>
  *  Cell_CompressRightPrecomputed(GLOBAL_TAG_TYPES:x, m, masks[5]);
  * </summary>
  * <param name="x">The number to compress.</param>
@@ -867,5 +769,135 @@ stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 	// don't have...)
 	// 
 	return Cell_ExpandLeftPrecomputed(x, m, Cell_PrecomputeMaskPermutation(m));
+}
+
+#if __COMPILER___EMIT
+	#define Cell_GetLowestComponent(%0) \
+		__emit(                         \
+			LOAD.U.pri  %0             ,\
+			MOVE.alt                   ,\
+			NEG                        ,\
+			AND                         \
+		)
+
+	#define Cell_GetLowestEmpty(%0) \
+		__emit(                         \
+			LOAD.U.pri  %0             ,\
+			INVERT                     ,\
+			MOVE.alt                   ,\
+			NEG                        ,\
+			AND                         \
+		)
+
+	#define Cell_HasZeroByte(%0) \
+		__emit(                         \
+			LOAD.U.pri  %0             ,\
+			INVERT                     ,\
+			MOVE.alt                   ,\
+			INVERT                     ,\
+			ADD.C       0xFEFEFEFE     ,\
+			AND                        ,\
+			CONST.alt   0x80808080     ,\
+			AND                         \
+		)
+	#endinput
+#endif
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_GetLowestComponent(number);
+ * </summary>
+ * <param name="data">The number to get the lowest 1 in.</param>
+ * <returns>
+ *  The lowest set bit.
+ * </returns>
+ * <remarks>
+ *  Similar to Cell_GetLowestBit, but returns the bit, not the position of the
+ *  bit.
+ *
+ *  1)
+ *  Example: 0b00000000000000000000000000000001
+ *  Returns: 0b00000000000000000000000000000001
+ *
+ *  2)
+ *  Example: 0b00000000000000000000000000001000
+ *  Returns: 0b00000000000000000000000000001000
+ *
+ *  3)
+ *  Example: 0b00010001100011000011100010001000
+ *  Returns: 0b00000000000000000000000000001000
+ *
+ *  4)
+ *  Example: 0b00000000000000000000000000000000
+ *  Returns: 0b00000000000000000000000000000000
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock __COMPILER_NAKED_DECL Cell_GetLowestComponent(GLOBAL_TAG_TYPES:data)
+{
+	// return data & -data;
+	#emit LOAD.S.pri           data
+	#emit MOVE.alt
+	#emit NEG
+	#emit AND
+	#emit RETN
+	
+	__COMPILER_NAKED_RETURN;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_GetLowestEmpty(number);
+ * </summary>
+ * <param name="data">The number to get the lowest 0 in.</param>
+ * <returns>
+ *  The lowest unset bit.
+ * </returns>
+ * <remarks>
+ *  Like Cell_GetLowestComponent, but for 0s not 1s.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock __COMPILER_NAKED_DECL Cell_GetLowestEmpty(GLOBAL_TAG_TYPES:data)
+{
+	// return ~data & -~data;
+	#emit LOAD.S.pri           data
+	#emit INVERT
+	#emit MOVE.alt
+	#emit NEG
+	#emit AND
+	#emit RETN
+	
+	__COMPILER_NAKED_RETURN;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>
+ *  Cell_HasZeroByte(number);
+ * </summary>
+ * <param name="data">The number to get the lowest 0 in.</param>
+ * <returns>
+ *  The lowest unset bit.
+ * </returns>
+ * <remarks>
+ *  Check if any of the 4 bytes are zero:
+ *  https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock __COMPILER_NAKED_DECL Cell_HasZeroByte(GLOBAL_TAG_TYPES:data)
+{
+	// return (data - 0x01010101) & ~data & 0x80808080;
+	#emit LOAD.S.pri           data
+	#emit INVERT
+	#emit MOVE.alt
+	#emit INVERT
+	#emit ADD.C                0xFEFEFEFE
+	#emit AND
+	#emit CONST.alt            0x80808080
+	#emit AND
+	#emit RETN
+	
+	__COMPILER_NAKED_RETURN;
 }
 
