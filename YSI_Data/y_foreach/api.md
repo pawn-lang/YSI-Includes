@@ -299,3 +299,961 @@ Output:
 102
 ```
 
+﻿#### foreach
+>* **Parameters:**
+>	* `data`: data_INFO
+>	* `as`: as_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Not exactly the same as PHP foreach, just iterates through a list and
+>	returns the value of the current slot but uses that slot as the next index
+>	too.  Variables must be in the form @YSII_<gname>S for the start index and
+>	@YSII_<gname>A for the data array where <name> is what's entered in data.
+ 
+***
+
+#### iterfunc
+>* **Parameters:**
+
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Used to declare a special iterator function.
+ 
+***
+
+#### @iterfunc
+>* **Parameters:**
+
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Converts an array-like iterator to a special iterator.
+ 
+***
+
+#### iterstart
+>* **Parameters:**
+
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Used to declare the default special iterator value.
+ 
+***
+
+#### Reverse
+>* **Parameters:**
+
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Run an iterator backwards.
+ 
+***
+
+#### Iter_Init
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Wrapper for Iter_Init_Internal.  When "NESTED_ELLIPSIS" is set, this isn't
+>	needed because multi-dimensional iterators can be initialised with the new
+>	"{{0, 1, ...), ...}" feature.  In that case "I@ = 0" is called as a "void"
+>	function that does nothing but ends in a semi-colon ("I@" is used a lot in
+>	YSI as a "do nothing" enabler).
+>	native Iter_Init(IteratorArray:Name[]<>);
+ 
+***
+
+#### Iter_Add
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>	* `value`: value_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Wrapper for Iter_AddInternal.
+>	native Iter_Add(Iterator:Name<>, value);
+ 
+***
+
+#### Iter_Remove
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>	* `value`: value_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Wrapper for Iter_RemoveInternal.
+>	native Iter_Remove(Iterator:Name<>, value);
+ 
+***
+
+#### Iter_Free
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Wrapper for Iter_Free_Internal.  Returns a slot NOT in the current
+>	iterator.
+>	native Iter_Free(Iterator:Name<>);
+ 
+***
+
+#### Iter_FreeMulti
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Wrapper for Iter_FreeMulti_Internal.  Returns a slot NOT in the current
+>	multi-iterator.
+>	native Iter_FreeMulti(Iterator:Name<>);
+ 
+***
+
+#### Iter_Contains
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>	* `value`: value_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Checks if the given value is in the given iterator.
+>	native Iter_Contains(Iterator:Name<>, value);
+ 
+***
+
+#### Iter_GetMulti
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>	* `value`: value_INFO
+>* **Returns:**
+>	* Index in which the value is contained in the multi-iterator.
+>* **Remarks:**
+>	Checks if the given value is in the given iterator, and if it is return which index it is contained.
+>	native Iter_GetMulti(Iterator:Name<>, value);
+ 
+***
+
+#### Iter_SafeRemove
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>	* `value`: value_INFO
+>	* `next`: next_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Wrapper for Iter_SafeRemoveInternal.  Common use:
+>	Iter_SafeRemove(iter, i, i);
+>	native Iter_SafeRemove(Iterator:Name<>, value, &next);
+ 
+***
+
+#### Iter_Random
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Wrapper for Iter_RandomInternal.
+>	native Iter_Random(Iterator:Name<>);
+ 
+***
+
+#### Iter_Count
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Returns the number of items in this iterator.
+>	native Iter_Count(Iterator:Name<>);
+ 
+***
+
+#### Iter_Clear
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Wrapper for Iter_Clear_Internal.
+>	Although it doesn't fit my normal strict spacing, the end of "B" is correct,
+>	namely: "_:F@s(%0),%2)".  This uses the "_:%0,)" macro to consume
+>	a trailing comma when nothing is given in "%2", so I can't have a leading
+>	space sadly.
+>	"- 2" in place of the normal "- 1" is CORRECT!
+>	native Iter_Clear(IteratorArray:Name[]<>);
+ 
+***
+
+#### Iter_Alloc
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Finds an empty slot in an iterator, adds that slot to the iterator, and
+>	returns the now added slot.
+>	native Iter_Alloc(Iterator:Name<>);
+ 
+***
+
+#### Iter_FastClear
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Uses a static array copy to blank the iterator instead of a loop.
+>	BROKEN!
+>	native Iter_FastClear(IteratorArray:Name[]<>);
+ 
+***
+
+#### Iter_Begin
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Gets a point BEFORE the start of the iterator (the theoretical beginning).
+ 
+***
+
+#### Iter_End
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Gets a point AFTER the end of the iterator (think "MAX_PLAYERS").
+ 
+***
+
+#### Iter_First
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Gets the first element in an iterator.
+ 
+***
+
+#### Iter_Last
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Gets the last element in an iterator.  Works by getting the previous item
+>	from the one BEFORE the first element (i.e. the one before the sentinel).
+ 
+***
+
+#### Iter_Next
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>	* `cur`: cur_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Gets the element in an iterator after the current one.
+ 
+***
+
+#### Iter_Prev
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>	* `cur`: cur_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Gets the element in an iterator before the current one.  Slow.
+ 
+***
+
+#### Iter_TrueArray
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Accesses the internal array of an iterator.
+ 
+***
+
+#### Iter_TrueCount
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Accesses the internal count of an iterator.
+ 
+***
+
+#### Iter_TrueMulti
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Accesses the internal count of a multi-iterator.
+ 
+***
+
+#### Iter_TrueSize
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Accesses the internal size of an iterator.
+ 
+***
+
+#### Iter_Starts
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Accesses the number of starts in a multi-iterator.
+ 
+***
+
+#### Iter_Size
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Accesses the size of an iterator.
+ 
+***
+
+#### Iter_RandomInternal
+>* **Parameters:**
+>	* `count`: count_INFO
+>	* `array[]`: array[]_INFO
+>	* `start`: start_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Returns a random value from an iterator.
+ 
+***
+
+#### Iter_Free_Internal
+>* **Parameters:**
+>	* `array[]`: array[]_INFO
+>	* `size`: size_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Finds the first free slot in the iterator.
+ 
+***
+
+#### Iter_FreeMulti_Internal
+>* **Parameters:**
+>	* `array[]`: array[]_INFO
+>	* `trueSize`: trueSize_INFO
+>	* `start`: start_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Finds the first free multi index in the multi-iterator.
+ 
+***
+
+#### Iter_AddInternal
+>* **Parameters:**
+>	* `&start`: &start_INFO
+>	* `&count`: &count_INFO
+>	* `array[]`: array[]_INFO
+>	* `value`: value_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Adds a value to a given iterator set.  Now detects when you try and add the
+>	last item multiple times, as well as all the other items.  Now simplified
+>	even further with the new internal representation.  The modulo code is for
+>	iterator reversal.
+ 
+***
+
+#### Iter_RemoveInternal
+>* **Parameters:**
+>	* `&count`: &count_INFO
+>	* `array[]`: array[]_INFO
+>	* `size`: size_INFO
+>	* `value`: value_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Removes a value from an iterator.
+ 
+***
+
+#### Iter_SafeRemoveInternal
+>* **Parameters:**
+>	* `&count`: &count_INFO
+>	* `array[]`: array[]_INFO
+>	* `size`: size_INFO
+>	* `value`: value_INFO
+>	* `&last`: &last_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Removes a value from an iterator safely.
+ 
+***
+
+#### Iter_ContainsInternal
+>* **Parameters:**
+>	* `array[]`: array[]_INFO
+>	* `value`: value_INFO
+>	* `size`: size_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Checks if this item is in the iterator.
+ 
+***
+
+#### Iter_GetMulti_Internal
+>* **Parameters:**
+>	* `array[]`: array[]_INFO
+>	* `trueSize`: trueSize_INFO
+>	* `size`: size_INFO
+>	* `value`: value_INFO
+>* **Returns:**
+>	* -1 on failure.
+>	* Index of the multi-iterator the value is contained.
+>* **Remarks:**
+>	Checks if this item is in the multi-iterator at all, and if it is returns which index it is in.
+ 
+***
+
+#### Iter_Clear_Internal
+>* **Parameters:**
+>	* `array[]`: array[]_INFO
+>	* `size`: size_INFO
+>	* `entries`: entries_INFO
+>	* `&count`: &count_INFO
+>	* `elems`: elems_INFO
+>	* `lst`: lst_INFO
+>	* `start`: start_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Resets an iterator.
+ 
+***
+
+#### Iter_InitInternal
+>* **Parameters:**
+>	* `array[][]`: array[][]_INFO
+>	* `first[]`: first[]_INFO
+>	* `s0`: s0_INFO
+>	* `s1`: s1_INFO
+>	* `entries`: entries_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Multi-dimensional arrays can't be initialised at compile time, so need to be
+>	done at run time, which is slightly annoying.
+ 
+***
+
+#### Iter_PrevInternal
+>* **Parameters:**
+>	* `array[]`: array[]_INFO
+>	* `elems`: elems_INFO
+>	* `size`: size_INFO
+>	* `slot`: slot_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Gets the element in an iterator that points to the current element.
+ 
+***
+
+#### Iter_OnPlayerConnect
+>* **Parameters:**
+>	* `playerid`: playerid_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Adds a player to the loop data.  Now sorts the list too.  Note that I found
+>	the most bizzare bug ever (I *think* it may be a compiler but, but it
+>	requires further investigation), basically it seems that multiple variables
+>	were being treated as the same variable (namely @YSII_EgotS and
+>	@YSII_CgharacterS were the same and @YSII_EgotC and @YSII_CgharacterC were the
+>	same).  Adding print statements which reference these variables seem to fix
+>	the problem, and I've tried to make sure that the values will never actually
+>	get printed.
+ 
+***
+
+#### Iter_OnPlayerDisconnect
+>* **Parameters:**
+>	* `playerid`: playerid_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Removes a player from the loop data.  No longer uses "hook" to ENSURE
+>	that this is always last.  Previously I think that the order of
+>	evaluation in y_hooks meant that this got called before the user
+>	"OnPlayerDisconnect".
+ 
+***
+
+#### Iter_OPDCInternal
+>* **Parameters:**
+>	* `playerid`: playerid_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Called AFTER "OnPlayerDisconnect" so that using "Kick" inside a
+>	"foreach" loop doesn't crash the server due to an OOB error.
+ 
+***
+
+#### foreach
+>* **Parameters:**
+>	* `data`: data_INFO
+>	* `as`: as_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Not exactly the same as PHP foreach, just itterates through a list and
+>	returns the value of the current slot but uses that slot as the next index
+>	too.  Variables must be in the form @YSII_<gname>S for the start index and
+>	@YSII_<gname>A for the data array where <name> is what's entered in data.
+ 
+***
+
+#### Itter_Init2
+>* **Parameters:**
+>	* `itter`: itter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Wrapper for Itter_InitInternal.
+>	native Iter_Init(IteratorArray:Name[]<>);
+ 
+***
+
+#### Itter_Add
+>* **Parameters:**
+>	* `itter`: itter_INFO
+>	* `value`: value_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Wrapper for Itter_AddInternal.
+>	native Iter_Add(Iterator:Name<>, value);
+ 
+***
+
+#### Itter_Remove
+>* **Parameters:**
+>	* `itter`: itter_INFO
+>	* `value`: value_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Wrapper for Itter_RemoveInternal.
+>	native Iter_Remove(Iterator:Name<>, value);
+ 
+***
+
+#### Itter_Free
+>* **Parameters:**
+>	* `itter`: itter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Wrapper for Itter_FreeInternal.
+>	native Iter_Free(Iterator:Name<>);
+ 
+***
+
+#### Itter_Contains
+>* **Parameters:**
+>	* `itter`: itter_INFO
+>	* `value`: value_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Checks if the given value is in the given iterator.
+>	native Iter_Remove(Iterator:Name<>, value);
+ 
+***
+
+#### Itter_SafeRemove
+>* **Parameters:**
+>	* `itter`: itter_INFO
+>	* `value`: value_INFO
+>	* `next`: next_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Wrapper for Itter_SafeRemoveInternal.  Common use:
+>	Iter_SafeRemove(iter, i, i);
+>	native Iter_SafeRemove(Iterator:Name<>, value, &next);
+ 
+***
+
+#### Itter_Random
+>* **Parameters:**
+>	* `itter`: itter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Wrapper for Itter_RandomInternal.
+>	native Iter_Random(Iterator:Name<>);
+ 
+***
+
+#### Itter_Count
+>* **Parameters:**
+>	* `itter`: itter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Returns the number of items in this iterator.
+>	native Iter_Count(Iterator:Name<>);
+ 
+***
+
+#### Itter_Clear
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Wrapper for Itter_ClearInternal.
+>	native Iter_Clear(IteratorArray:Name[]<>);
+ 
+***
+
+#### Itter_FastClear
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Uses a static array copy to blank the iterator instead of a loop.
+>	native Iter_FastClear(IteratorArray:Name[]<>);
+ 
+***
+
+#### Iter_Begin
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Gets a point BEFORE the start of the iterator (the theoretical beginning).
+ 
+***
+
+#### Iter_End
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Gets a point AFTER the end of the iterator (think "MAX_PLAYERS").
+ 
+***
+
+#### Iter_First
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Gets the first element in an iterator.
+ 
+***
+
+#### Iter_Last
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Gets the last element in an iterator.  Works by getting the previous item
+>	from the one BEFORE the first element (i.e. the one before the sentinel).
+ 
+***
+
+#### Iter_Next
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>	* `cur`: cur_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Gets the element in an interator after the current one.
+ 
+***
+
+#### Iter_Prev
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>	* `cur`: cur_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Gets the element in an iterator before the current one.  Slow.
+ 
+***
+
+#### Iter_InternalArray
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Accesses the internal array of an iterator.
+ 
+***
+
+#### Iter_InternalSize
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Accesses the internal size of an iterator.
+ 
+***
+
+#### Iter_Size
+>* **Parameters:**
+>	* `iter`: iter_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Accesses the internal size of an iterator.
+ 
+***
+
+#### Itter_Create2
+>* **Parameters:**
+>	* `name`: name_INFO
+>	* `size0`: size0_INFO
+>	* `size1`: size1_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Creates a new array of iterator start/array pair.
+ 
+***
+
+#### foreachex
+>* **Parameters:**
+>	* `data`: data_INFO
+>	* `as`: as_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Similar to foreach but doesn't declare a new variable for the iterator.
+ 
+***
+
+#### Itter_OPDCInternal
+>* **Parameters:**
+>	* `playerid`: playerid_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Called AFTER "OnPlayerDisconnect" so that using "Kick" inside a "foreach"
+>	loop doesn't crash the server due to an OOB error.
+ 
+***
+
+#### Itter_OnFilterScriptInit
+>* **Parameters:**
+
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Fixes a bug where callbacks are not detected when "loadfs" is used after the
+>	GM has already started.  If this is a GM this is just never used called.
+ 
+***
+
+#### Itter_OnGameModeInit
+>* **Parameters:**
+
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	There are WIERD bugs in this script, seemingly caused by the compiler, so
+>	this hopefully fixes them.  The OnFilterScriptInit code is written to be
+>	very fast by utilising the internal array structure instead of the regular
+>	Add functions.
+ 
+***
+
+#### Itter_OnPlayerConnect
+>* **Parameters:**
+>	* `playerid`: playerid_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Adds a player to the loop data.  Now sorts the list too.  Note that I found
+>	the most bizzare bug ever (I *think* it may be a compiler but, but it
+>	requires further investigation), basically it seems that multiple variables
+>	were being treated as the same variable (namely @YSII_EgotS and
+>	@YSII_CgharacterS were the same and @YSII_EgotC and @YSII_CgharacterC were the
+>	same).  Adding print statements which reference these variables seem to fix
+>	the problem, and I've tried to make sure that the values will never actually
+>	get printed.
+ 
+***
+
+#### Itter_OnPlayerDisconnect
+>* **Parameters:**
+>	* `playerid`: playerid_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Removes a player from the loop data.  No longer uses "hook" to ENSURE that
+>	this is always last.  Previously I think that the order of evaluation in
+>	y_hooks meant that this got called before the user "OnPlayerDisconnect".
+ 
+***
+
+#### Itter_RandomInternal
+>* **Parameters:**
+>	* `count`: count_INFO
+>	* `array[]`: array[]_INFO
+>	* `size`: size_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Returns a random value from an iterator.
+ 
+***
+
+#### Itter_FreeInternal
+>* **Parameters:**
+>	* `count`: count_INFO
+>	* `array[]`: array[]_INFO
+>	* `size`: size_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Finds the first free slot in the iterator.  iterators now HAVE to be
+>	sorted for this function to work correctly as it uses that fact to decide
+>	wether a slot is unused or the last one.  If you want to use the slot
+>	straight after finding it the iterator will need to re-find it to add in
+>	the data.
+ 
+***
+
+#### Itter_AddInternal
+>* **Parameters:**
+>	* `&start`: &start_INFO
+>	* `&count`: &count_INFO
+>	* `array[]`: array[]_INFO
+>	* `value`: value_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Adds a value to a given iterator set.  Now detects when you try and add the
+>	last item multiple times, as well as all the other items.  Now simplified even
+>	further with the new internal representation.
+ 
+***
+
+#### Itter_RemoveInternal
+>* **Parameters:**
+>	* `&count`: &count_INFO
+>	* `array[]`: array[]_INFO
+>	* `value`: value_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Removes a value from an iterator.
+ 
+***
+
+#### Itter_SafeRemoveInternal
+>* **Parameters:**
+>	* `&count`: &count_INFO
+>	* `array[]`: array[]_INFO
+>	* `back[]`: back[]_INFO
+>	* `value`: value_INFO
+>	* `&last`: &last_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Removes a value from an iterator safely.
+ 
+***
+
+#### Itter_ContainsInternal
+>* **Parameters:**
+>	* `array[]`: array[]_INFO
+>	* `value`: value_INFO
+>	* `size`: size_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Checks if this item is in the iterator.
+ 
+***
+
+#### Itter_ClearInternal
+>* **Parameters:**
+>	* `&count`: &count_INFO
+>	* `array[]`: array[]_INFO
+>	* `back[]`: back[]_INFO
+>	* `size`: size_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Resets an iterator.
+ 
+***
+
+#### Itter_InitInternal
+>* **Parameters:**
+>	* `array[][]`: array[][]_INFO
+>	* `s0`: s0_INFO
+>	* `s1`: s1_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Multi-dimensional arrays can't be initialised at compile time, so need to be
+>	done at run time, which is slightly annoying.
+ 
+***
+
+#### Itter_PrevInternal
+>* **Parameters:**
+>	* `array[]`: array[]_INFO
+>	* `size`: size_INFO
+>	* `slot`: slot_INFO
+>* **Returns:**
+>	* -
+>* **Remarks:**
+>	Gets the element in an iterator that points to the current element.
+ 
+***
+

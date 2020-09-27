@@ -12,6 +12,7 @@ For general YSI information, see the following links:
 ## Documentation
 
 * [Quick Start](y_master/quick-start.md) - One very simple example of getting started with this library.
+* [Tutorial](y_master/tutorial.md) - Complete tutorial.
 * [Features](y_master/features.md) - More features and examples.
 * [FAQs](y_master/faqs.md) - Frequently Asked Questions, including errors and solutions.
 * [API](y_master/api.md) - Full list of all functions and their meaning.
