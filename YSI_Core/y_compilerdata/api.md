@@ -100,4 +100,51 @@ __COMPILER_BUGGED_STRING_RETURN
 
 // 1 when you can't call `SYSREQ.C` on unused natives, 0 otherwise.
 __COMPILER_BUGGED_SYSREQ
+
+// 1 when `#pragma warning` exists, 0 when it doesn't.
+__COMPILER_WARNING_SUPPRESSION
+
+// 1 when `#warning` exists, 0 when is doesn't.
+__COMPILER_USER_WARNING
+
+// 1 when `const &` is a warning, 0 when is isn't.
+__COMPILER_CONST_REF
+
+// Size of the internal `sNAMEMAX` compiler define for max symbol length.  Default 31.
+__COMPILER_sNAMEMAX
+
+// Does this compiler suffer from issue #317?
+__COMPILER_BUG_317
+
+// Does this compiler have native `__nameof`?
+__COMPILER_NAMEOF
+
+// Does this compiler have native `__pragma`?
+__COMPILER_PRAGMA
+
+// Default value for any tag type.
+__COMPILER_DEFAULT
 ```
+
+## Default Values
+
+When you declare a new variable it is by default `0`, even if that default doesn't make sense.  y_compilerdata adds a method to define defaults for any tag type.  Most tags are already defined, but you can add a new one with:
+
+```pawn
+// Set the default value for `Tag:` to `44`.
+__COMPILER_TAG_DATA(Tag, 44);
+```
+
+For example, the following is already defined:
+
+```pawn
+__COMPILER_TAG_DATA(PlayerText3D, 65535);
+```
+
+To use this, assign from `__COMPILER_DEFAULT` (or `default()` with `YSI_KEYWORD_default`, enabled by default):
+
+```pawn
+new PlayerText3D:var = default();
+```
+
+This also works for returns and macros, so you can set a sane initial value without even knowing the tag. 
