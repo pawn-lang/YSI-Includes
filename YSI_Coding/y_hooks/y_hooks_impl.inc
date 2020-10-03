@@ -286,21 +286,21 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 	--size,
 	precount = 0;
 	new
-		entry2 = 0,
+		publicTableEntry = 0,
 		idx = 0;
 	{
 		new
 			name[32 char],
 			addr = 0;
-		while ((idx = AMX_GetPublicEntryPrefix(idx, entry2, _A<@CO_>)))
+		while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@CO_>)))
 		{
 			if (precount == size)
 			{
 				P:E("y_hooks prehook array filled");
 				break;
 			}
-			addr = AMX_Read(entry2);
-			AMX_ReadString(AMX_Read(entry2 + 4) + AMX_BASE_ADDRESS + 4, name),
+			addr = AMX_Read(publicTableEntry);
+			AMX_ReadString(AMX_Read(publicTableEntry + 4) + AMX_BASE_ADDRESS + 4, name),
 			strunpack(preloads[precount][E_CHAIN_HOOK_NAME], name, 16),
 			preloads[precount][E_CHAIN_HOOK_VALUE] = CallFunction(addr),
 			++precount;
@@ -313,16 +313,16 @@ _Y_HOOKS_STATIC stock Hooks_GetPreloadLibraries(preloads[][E_CHAIN_HOOK], &preco
 			// }
 			// Remove this public from the publics table.  Means that future public
 			// function calls will be faster by having a smaller search space.
-			Hooks_InvalidateName(entry2);
+			Hooks_InvalidateName(publicTableEntry);
 		}
 	}
 	// Sort the preload libraries.
 	{
 		new
 			tmp[E_CHAIN_HOOK];
-		for (entry2 = precount - 1; entry2 > 0; --entry2)
+		for (publicTableEntry = precount - 1; publicTableEntry > 0; --publicTableEntry)
 		{
-			for (idx = 0; idx != entry2; ++idx)
+			for (idx = 0; idx != publicTableEntry; ++idx)
 			{
 				if (preloads[idx][E_CHAIN_HOOK_VALUE] > preloads[idx + 1][E_CHAIN_HOOK_VALUE])
 				{
@@ -1182,7 +1182,7 @@ public OnCodeInit()
 	// Get the replacements.
 	new
 		idx = 0,
-		entry2 = 0;
+		publicTableEntry = 0;
 	if (Server_JITExists())
 	{
 		// Get the indexes of the startup functions that get recorded before the
@@ -1195,19 +1195,19 @@ public OnCodeInit()
 	// "_Hooks_AddReplacement" function above.  If we were being REALLY clever,
 	// these functions could be removed from the public functions table
 	// afterwards (there is already code in y_hooks for this) to reduce is size.
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry2, _A<@_yH>)))
+	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@_yH>)))
 	{
 		// From "amx\dynamic_call.inc" - check it is included in "y_hooks.inc".
-		CallFunction(AMX_Read(entry2));
-		Hooks_InvalidateName(entry2);
+		CallFunction(AMX_Read(publicTableEntry));
+		Hooks_InvalidateName(publicTableEntry);
 	}
 	Hooks_SortReplacements();
 	Hooks_DoAllHooks();
 	// Remove a few other superfluous publics.
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry2, _A<_@_y>)))
-		Hooks_InvalidateName(entry2);
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry2, _A<@CO_>)))
-		Hooks_InvalidateName(entry2);
+	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<_@_y>)))
+		Hooks_InvalidateName(publicTableEntry);
+	while ((idx = AMX_GetPublicEntryPrefix(idx, publicTableEntry, _A<@CO_>)))
+		Hooks_InvalidateName(publicTableEntry);
 	Hooks_SortPublics();
 	P:1("Hooks_OnCodeInit chain");
 	// Dump the generated callbacks for debugging.
