@@ -84,12 +84,12 @@ public OnCodeInit()
 		pointer = 0,
 		time = 0,
 		idx = 0,
-		entry = 0;
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yT_>)))
+		entry2 = 0;
+	while ((idx = AMX_GetPublicEntryPrefix(idx, entry2, _A<@yT_>)))
 	//while ((idx = AMX_GetPublicPointerSuffix(idx, pointer, _A<@yT_>)))
 	{
-		P:6("Timer_OnScriptInit: entry: %d", entry);
-		#emit LREF.S.pri entry
+		P:6("Timer_OnScriptInit: entry2: %d", entry2);
+		#emit LREF.S.pri entry2
 		#emit STOR.S.pri pointer
 		//YSI_g_sCurFunc = pointer;
 		// Don't bother with the real name, call the function by address to get
@@ -149,8 +149,8 @@ public OnCodeInit()
 			// that time and how many have already been started.
 			new
 				buffer[32];
-			entry += 4;
-			#emit LREF.S.pri entry
+			entry2 += 4;
+			#emit LREF.S.pri entry2
 			#emit STOR.S.pri pointer
 			AMX_ReadString(AMX_BASE_ADDRESS + pointer, buffer);
 			P:7("Timer_OnScriptInit: %s", unpack(buffer));
