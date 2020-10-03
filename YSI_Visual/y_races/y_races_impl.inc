@@ -236,7 +236,7 @@ P:D(bool:Race_IsValid(raceid));
 
 /*-------------------------------------------------------------------------*//**
  * <param name="laps">Number of laps to race for.</param>
- * <param name="entry">Cost of entry.</param>
+ * <param name="entryCost">Cost of entry.</param>
  * <param name="countdown">Time to count down from for start.</param>
  * <param name="arial">Use arial checkpoints instead.</param>
  * <param name="fixedPrize">Set prize amounts manually.</param>
@@ -258,7 +258,7 @@ stock Races_SetupGroups() <>
 
 /*-------------------------------------------------------------------------*//**
  * <param name="laps">Number of laps to race for.</param>
- * <param name="entry">Cost of entry.</param>
+ * <param name="entryCost">Cost of entry.</param>
  * <param name="countdown">Time to count down from for start.</param>
  * <param name="arial">Use arial checkpoints instead.</param>
  * <param name="fixedPrize">Set prize amounts manually.</param>
@@ -274,9 +274,9 @@ stock Races_SetupGroups() <>
 
 FOREIGN__ _Race_Create(l,e,c,a,f,x,i,w,r);
 
-stock Race_Create(laps = 0, entry = 0, countdown = 3, bool:arial = false, bool:fixedPrize = true, exitTime = 0, interior = 0, world = 0, bool:restart = false)
+stock Race_Create(laps = 0, entryCost = 0, countdown = 3, bool:arial = false, bool:fixedPrize = true, exitTime = 0, interior = 0, world = 0, bool:restart = false)
 {
-	return _Race_Create(laps, entry, countdown, _:arial, _:fixedPrize, exitTime, interior, world, _:restart);
+	return _Race_Create(laps, entryCost, countdown, _:arial, _:fixedPrize, exitTime, interior, world, _:restart);
 }
 
 GLOBAL__ _Race_Create(l,e,c,a,f,x,i,w,r)
