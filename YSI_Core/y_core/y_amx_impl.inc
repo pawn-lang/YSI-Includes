@@ -827,17 +827,17 @@ enum E_AMX_HEADER
 	E_AMX_HEADER_NAME[32 char]
 }
 
-stock AMX_GetEntryData(entrySearch, ret[E_AMX_HEADER])
+stock AMX_GetEntryData(tableEntry, ret[E_AMX_HEADER])
 {
-	if ((ret[e_AMX_HEADER_TYPE] = AMX_GetEntryType(entrySearch)))
+	if ((ret[e_AMX_HEADER_TYPE] = AMX_GetEntryType(tableEntry)))
 	{
 
 	}
 }*/
 
-stock AMX_GetEntryPointer(entrySearch)
+stock AMX_GetEntryPointer(tableEntry)
 {
-	#emit LREF.S.pri entrySearch
+	#emit LREF.S.pri tableEntry
 	#emit RETN
 	__pragma(naked);
 }
@@ -845,28 +845,28 @@ stock AMX_GetEntryPointer(entrySearch)
 /*stock bool:AMX_GetData(const name[], ret[E_AMX_HEADER], e_AMX_HEADER_TYPE:type = e_AMX_HEADER_TYPE_NONE)
 {
 	new
-		entrySearch = 0;
+		tableEntry = 0;
 	switch (type)
 	{
 		case e_AMX_HEADER_TYPE_NONE   :
 		{
-			if (AMX_GetEntry(AMX_TABLE_PUBLICS,   0, entrySearch, name)) type |= e_AMX_HEADER_TYPE_PUBLIC ;
-			if (AMX_GetEntry(AMX_TABLE_NATIVES,   0, entrySearch, name)) type |= e_AMX_HEADER_TYPE_NATIVE ;
-			if (AMX_GetEntry(AMX_TABLE_LIBRARIES, 0, entrySearch, name)) type |= e_AMX_HEADER_TYPE_LIBRARY;
-			if (AMX_GetEntry(AMX_TABLE_PUBVARS,   0, entrySearch, name)) type |= e_AMX_HEADER_TYPE_PUBVAR ;
-			if (AMX_GetEntry(AMX_TABLE_TAGS,      0, entrySearch, name)) type |= e_AMX_HEADER_TYPE_TAG    ;
+			if (AMX_GetEntry(AMX_TABLE_PUBLICS,   0, tableEntry, name)) type |= e_AMX_HEADER_TYPE_PUBLIC ;
+			if (AMX_GetEntry(AMX_TABLE_NATIVES,   0, tableEntry, name)) type |= e_AMX_HEADER_TYPE_NATIVE ;
+			if (AMX_GetEntry(AMX_TABLE_LIBRARIES, 0, tableEntry, name)) type |= e_AMX_HEADER_TYPE_LIBRARY;
+			if (AMX_GetEntry(AMX_TABLE_PUBVARS,   0, tableEntry, name)) type |= e_AMX_HEADER_TYPE_PUBVAR ;
+			if (AMX_GetEntry(AMX_TABLE_TAGS,      0, tableEntry, name)) type |= e_AMX_HEADER_TYPE_TAG    ;
 		}
-		case e_AMX_HEADER_TYPE_PUBLIC : AMX_GetEntry(AMX_TABLE_PUBLICS,   0, entrySearch, name);
-		case e_AMX_HEADER_TYPE_NATIVE : AMX_GetEntry(AMX_TABLE_NATIVES,   0, entrySearch, name);
-		case e_AMX_HEADER_TYPE_LIBRARY: AMX_GetEntry(AMX_TABLE_LIBRARIES, 0, entrySearch, name);
-		case e_AMX_HEADER_TYPE_PUBVAR : AMX_GetEntry(AMX_TABLE_PUBVARS,   0, entrySearch, name);
-		case e_AMX_HEADER_TYPE_TAG    : AMX_GetEntry(AMX_TABLE_TAGS,      0, entrySearch, name);
+		case e_AMX_HEADER_TYPE_PUBLIC : AMX_GetEntry(AMX_TABLE_PUBLICS,   0, tableEntry, name);
+		case e_AMX_HEADER_TYPE_NATIVE : AMX_GetEntry(AMX_TABLE_NATIVES,   0, tableEntry, name);
+		case e_AMX_HEADER_TYPE_LIBRARY: AMX_GetEntry(AMX_TABLE_LIBRARIES, 0, tableEntry, name);
+		case e_AMX_HEADER_TYPE_PUBVAR : AMX_GetEntry(AMX_TABLE_PUBVARS,   0, tableEntry, name);
+		case e_AMX_HEADER_TYPE_TAG    : AMX_GetEntry(AMX_TABLE_TAGS,      0, tableEntry, name);
 	}
 	strpack(ret[E_AMX_HEADER_NAME], name),
 	ret[E_AMX_HEADER_TYPE] = type;
 	new
 		ptr = 0;
-	#emit LREF.S.pri entrySearch
+	#emit LREF.S.pri tableEntry
 	#emit SREF.S.pri ptr
 	switch (type)
 	{
@@ -874,17 +874,17 @@ stock AMX_GetEntryPointer(entrySearch)
 		{
 			// Has a pointer.
 			return
-				ret[E_AMX_HEADER_ENTRY] = entrySearch,
+				ret[E_AMX_HEADER_ENTRY] = tableEntry,
 				ret[E_AMX_HEADER_PTR] = ptr,
-				ret[E_AMX_HEADER_VALUE] = AMX_GetPublicIndexFromEntry(entrySearch);
+				ret[E_AMX_HEADER_VALUE] = AMX_GetPublicIndexFromEntry(tableEntry);
 		}
 		case e_AMX_HEADER_TYPE_NATIVE :
 		{
 			// Has a pointer.
 			return
-				ret[E_AMX_HEADER_ENTRY] = entrySearch, 
+				ret[E_AMX_HEADER_ENTRY] = tableEntry, 
 				ret[E_AMX_HEADER_PTR] = ptr,
-				ret[E_AMX_HEADER_VALUE] = AMX_GetNativeIndexFromEntry(entrySearch);
+				ret[E_AMX_HEADER_VALUE] = AMX_GetNativeIndexFromEntry(tableEntry);
 		}
 		case e_AMX_HEADER_TYPE_LIBRARY:
 		{
@@ -914,31 +914,31 @@ stock AMX_GetEntryFromPublicIndex(index)
 	return (index * 8) + AMX_HEADER_PUBLICS;
 }
 
-stock AMX_GetNativeIndexFromEntry(entrySearch) 
+stock AMX_GetNativeIndexFromEntry(tableEntry) 
 {
-	return (entrySearch - AMX_HEADER_NATIVES) / 8;
+	return (tableEntry - AMX_HEADER_NATIVES) / 8;
 }
 
-stock AMX_GetPublicIndexFromEntry(entrySearch)
+stock AMX_GetPublicIndexFromEntry(tableEntry)
 {
-	return (entrySearch - AMX_HEADER_PUBLICS) / 8;
+	return (tableEntry - AMX_HEADER_PUBLICS) / 8;
 }
 
-stock AMX_GetStringFromEntry(entrySearch, str[], size = sizeof (str))
+stock AMX_GetStringFromEntry(tableEntry, str[], size = sizeof (str))
 {
-	entrySearch += 4;
-	#emit LREF.S.pri entrySearch
-	#emit STOR.S.pri entrySearch
-	AMX_ReadString(AMX_BASE_ADDRESS + entrySearch, str, size);
+	tableEntry += 4;
+	#emit LREF.S.pri tableEntry
+	#emit STOR.S.pri tableEntry
+	AMX_ReadString(AMX_BASE_ADDRESS + tableEntry, str, size);
 }
 
-/*stock AMX_GetEntryType(entrySearch)
+/*stock AMX_GetEntryType(tableEntry)
 {
-	if (AMX_HEADER_PUBLICS <= entrySearch < AMX_HEADER_NATIVES) return e_AMX_HEADER_TYPE_PUBLIC;
-	else if (AMX_HEADER_NATIVES <= entrySearch < AMX_HEADER_LIBRARIES) return e_AMX_HEADER_TYPE_NATIVE;
-	else if (AMX_HEADER_LIBRARIES <= entrySearch < AMX_HEADER_PUBVARS) return e_AMX_HEADER_TYPE_LIBRARY;
-	else if (AMX_HEADER_PUBVARS <= entrySearch < AMX_HEADER_TAGS) return e_AMX_HEADER_TYPE_PUBVAR;
-	else if (AMX_HEADER_TAGS <= entrySearch < AMX_HEADER_NAMETABLE) return e_AMX_HEADER_TYPE_TAG;
+	if (AMX_HEADER_PUBLICS <= tableEntry < AMX_HEADER_NATIVES) return e_AMX_HEADER_TYPE_PUBLIC;
+	else if (AMX_HEADER_NATIVES <= tableEntry < AMX_HEADER_LIBRARIES) return e_AMX_HEADER_TYPE_NATIVE;
+	else if (AMX_HEADER_LIBRARIES <= tableEntry < AMX_HEADER_PUBVARS) return e_AMX_HEADER_TYPE_LIBRARY;
+	else if (AMX_HEADER_PUBVARS <= tableEntry < AMX_HEADER_TAGS) return e_AMX_HEADER_TYPE_PUBVAR;
+	else if (AMX_HEADER_TAGS <= tableEntry < AMX_HEADER_NAMETABLE) return e_AMX_HEADER_TYPE_TAG;
 	return e_AMX_HEADER_TYPE_NONE;
 }
 
@@ -946,12 +946,12 @@ stock e_AMX_HEADER_TYPE:AMX_GetType(const name[])
 {
 	new
 		e_AMX_HEADER_TYPE:type = e_AMX_HEADER_TYPE_NONE,
-		entrySearch = 0;
-	if (AMX_GetEntry(AMX_TABLE_PUBLICS,   0, entrySearch, name)) type |= e_AMX_HEADER_TYPE_PUBLIC ;
-	if (AMX_GetEntry(AMX_TABLE_NATIVES,   0, entrySearch, name)) type |= e_AMX_HEADER_TYPE_NATIVE ;
-	if (AMX_GetEntry(AMX_TABLE_LIBRARIES, 0, entrySearch, name)) type |= e_AMX_HEADER_TYPE_LIBRARY;
-	if (AMX_GetEntry(AMX_TABLE_PUBVARS,   0, entrySearch, name)) type |= e_AMX_HEADER_TYPE_PUBVAR ;
-	if (AMX_GetEntry(AMX_TABLE_TAGS,      0, entrySearch, name)) type |= e_AMX_HEADER_TYPE_TAG    ;
+		tableEntry = 0;
+	if (AMX_GetEntry(AMX_TABLE_PUBLICS,   0, tableEntry, name)) type |= e_AMX_HEADER_TYPE_PUBLIC ;
+	if (AMX_GetEntry(AMX_TABLE_NATIVES,   0, tableEntry, name)) type |= e_AMX_HEADER_TYPE_NATIVE ;
+	if (AMX_GetEntry(AMX_TABLE_LIBRARIES, 0, tableEntry, name)) type |= e_AMX_HEADER_TYPE_LIBRARY;
+	if (AMX_GetEntry(AMX_TABLE_PUBVARS,   0, tableEntry, name)) type |= e_AMX_HEADER_TYPE_PUBVAR ;
+	if (AMX_GetEntry(AMX_TABLE_TAGS,      0, tableEntry, name)) type |= e_AMX_HEADER_TYPE_TAG    ;
 	return type;
 }*/
 
