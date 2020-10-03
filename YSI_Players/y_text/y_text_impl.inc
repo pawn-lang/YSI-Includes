@@ -799,9 +799,9 @@ static stock Text_AddEntry(set, name[], value[], hash)
 {
 	P:4("Text_AddEntry called: %i, \"%s\", \"%s\", %i", set, name, value, hash);
 	new
-		entry = Text_GetFreeEntry(),
+		entryFree = Text_GetFreeEntry(),
 		slot = Text_GetFreeSlot();
-	if (entry == -1 || slot == -1)
+	if (entryFree == -1 || slot == -1)
 	{
 		P:E("Text buffer full!");
 		return;
@@ -813,19 +813,19 @@ static stock Text_AddEntry(set, name[], value[], hash)
 	//strcpy(YSI_g_sTextStrings[slot], value, MAX_INI_ENTRY_TEXT * 4);
 	// Save the identifier.
 	P:5("Text_AddEntry: slot = %d %d,%d,%d,%d,%d", slot, YSI_g_sTextStrings[slot][0], YSI_g_sTextStrings[slot][1], YSI_g_sTextStrings[slot][2], YSI_g_sTextStrings[slot][3], YSI_g_sTextStrings[slot][4]);
-	strpack(YSI_g_sTextEntries[entry][E_TEXT_ENTRY_NAME], name, MAX_INI_ENTRY_NAME * 4);
-	//strcpy(YSI_g_sTextEntries[entry][E_TEXT_ENTRY_NAME], name, MAX_INI_ENTRY_NAME * 4);
-	YSI_g_sTextEntries[entry][E_TEXT_ENTRY_HASH] = hash;
-	YSI_g_sTextEntries[entry][E_TEXT_ENTRY_POINTERS][langIndex] = slot;
+	strpack(YSI_g_sTextEntries[entryFree][E_TEXT_ENTRY_NAME], name, MAX_INI_ENTRY_NAME * 4);
+	//strcpy(YSI_g_sTextEntries[entryFree][E_TEXT_ENTRY_NAME], name, MAX_INI_ENTRY_NAME * 4);
+	YSI_g_sTextEntries[entryFree][E_TEXT_ENTRY_HASH] = hash;
+	YSI_g_sTextEntries[entryFree][E_TEXT_ENTRY_POINTERS][langIndex] = slot;
 	// Set the default style.
-	_Style_Init(entry);
+	_Style_Init(entryFree);
 	// Insert the identifier.
 	new
 		idx = YSI_g_sTextSets[set][E_TEXT_SETS_INDEX],
 		next = 0;
 	if (idx == -1)
 	{
-		YSI_g_sTextSets[set][E_TEXT_SETS_INDEX] = entry;
+		YSI_g_sTextSets[set][E_TEXT_SETS_INDEX] = entryFree;
 	}
 	else
 	{
@@ -838,7 +838,7 @@ static stock Text_AddEntry(set, name[], value[], hash)
 				next = YSI_g_sTextEntries[idx][E_TEXT_ENTRY_RIGHT];
 				if (next == -1)
 				{
-					YSI_g_sTextEntries[idx][E_TEXT_ENTRY_RIGHT] = entry;
+					YSI_g_sTextEntries[idx][E_TEXT_ENTRY_RIGHT] = entryFree;
 					return;
 				}
 			}
@@ -847,7 +847,7 @@ static stock Text_AddEntry(set, name[], value[], hash)
 				next = YSI_g_sTextEntries[idx][E_TEXT_ENTRY_LEFT];
 				if (next == -1)
 				{
-					YSI_g_sTextEntries[idx][E_TEXT_ENTRY_LEFT] = entry;
+					YSI_g_sTextEntries[idx][E_TEXT_ENTRY_LEFT] = entryFree;
 					return;
 				}
 			}

@@ -1399,27 +1399,27 @@ HOOK__ OnScriptInit()
 	#endif
 	P:2("_Command_DoInit <> called");
 	new
-		entry = 0,
+		entryPublic = 0,
 		buffer[32 char],
 		idx = 0,
 		id2 = 0;
 	P:5("Command_OnScriptInit: Pre-loop");
-	while ((idx = AMX_GetPublicEntryPrefix(idx, entry, _A<@yC_>)))
+	while ((idx = AMX_GetPublicEntryPrefix(idx, entryPublic, _A<@yC_>)))
 	{
 		// Add the command name and pointer, but skip the leading "@yC_".
-		P:6("Command_OnScriptInit: Adding %d", entry);
-		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entry + 4), buffer),
+		P:6("Command_OnScriptInit: Adding %d", entryPublic);
+		AMX_ReadString(AMX_BASE_ADDRESS + AMX_Read(entryPublic + 4), buffer),
 		// buffer[0] = ('@' << 24) | ('_' << 16) | ('y' << 08) | ('C' << 00),
 		buffer[0] = _C<@_yC>,
 		id2 = funcidx(buffer);
-		if (id2 != -1) entry = AMX_HEADER_PUBLICS + id2 * 8;
+		if (id2 != -1) entryPublic = AMX_HEADER_PUBLICS + id2 * 8;
 		// Check that the function name is all lower-case.
 		for (id2 = 4; buffer{id2}; ++id2)
 		{
 			if (buffer{id2} != tolower(buffer{id2})) P:E("Commands must be in lower-case in your source code.");
 		}
 		// Add the command regardless.
-		Command_Add(buffer[1], ResolveJITAddress(AMX_Read(entry)));
+		Command_Add(buffer[1], ResolveJITAddress(AMX_Read(entryPublic)));
 		P:6("Command_OnScriptInit: Name %s", unpack(buffer[1]));
 	}
 	if (funcidx(YSI_gscOPCR) != -1) Command_IncOPCR();

@@ -162,7 +162,7 @@ Loader_Loader()
 /*-------------------------------------------------------------------------*//**
  * <param name="filename">File to parse as an XML race file.</param>
  * <param name="laps">Number of laps to race for.</param>
- * <param name="entry">Cost of entry.</param>
+ * <param name="entryCost">Cost of entry.</param>
  * <param name="countdown">Time to count down from for start.</param>
  * <param name="arial">Use arial checkpoints instead.</param>
  * <param name="fixedPrize">Set prize amounts manually.</param>
@@ -176,11 +176,11 @@ Loader_Loader()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock Loader_Parse(filename[], laps = 0, entry = 0, countdown = 3, bool:arial = false, bool:fixedPrize = true, exitTime = 0, interior = 0, world = 0, bool:restart = false)
+stock Loader_Parse(filename[], laps = 0, entryCost = 0, countdown = 3, bool:arial = false, bool:fixedPrize = true, exitTime = 0, interior = 0, world = 0, bool:restart = false)
 {
 	if (!fexist(filename)) return NO_RACE;
 	new
-		race = Race_Create(laps, entry, countdown, arial, fixedPrize, exitTime, interior, world, restart);
+		race = Race_Create(laps, entryCost, countdown, arial, fixedPrize, exitTime, interior, world, restart);
 	if (race != NO_RACE)
 	{
 		YSI_g_sCurRace = race;
