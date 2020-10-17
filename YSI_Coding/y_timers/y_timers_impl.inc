@@ -358,7 +358,7 @@ static stock Alloc:Timer_GetSingleSlot(len)
 }
 
 // Allocate memory to store a string.
-stock _Timer_S(string:str[])
+stock _Timer_S(const string:str[])
 {
 	P:3("_Timer_S called");
 	new
@@ -378,7 +378,7 @@ stock _Timer_S(string:str[])
 }
 
 // Allocate memory to store an array.
-stock _Timer_A(str[], len)
+stock _Timer_A(const str[], len)
 {
 	P:3("_Timer_A called");
 	new
