@@ -318,13 +318,13 @@ stock _Timer_D(const func[], interval, const action, who, results[], a[2])
 				{
 					if (results[who] == -1)
 					{
-						results[who] = YSI_SetTimer(func, interval, true, "i", who);
+						results[who] = YSI_SetTimerEx(func, interval, true, "i", who);
 					}
 				}
 			}
 			else if (results[who] == -1)
 			{
-				results[who] = YSI_SetTimer(func, interval, true, "i", who);
+				results[who] = YSI_SetTimerEx(func, interval, true, "i", who);
 			}
 		}
 	}
