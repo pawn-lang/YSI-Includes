@@ -72,8 +72,10 @@ Optional plugins:
 
 // These are the tag-type definitions for the various possible parameter types.
 // Array-like definitions.
-#define @Yf:@Yg:@Yh:#%0#%1|||%3[%4]|||%5,%6;%8>%9||| @Ye:@Yw:#%0#%1|||%3[%4]|||%5,%6;%9|||
+#define @Yf:@Yg:@Yh:#%0#%1|||%3[%4]|||%5,%6;%8>%9||| @Yc:@Ye:@Yw:#%0#%1|||%3[%4]|||%5,%6;%9|||
 
+// `const`
+#define @Yc:@Ye:@Yw:#%0#%1|||%2const%3|||%5,%6;%9||| @Ye:@Yw:#%0#%1|||%3|||%5,%6;%9|||
 #define @Ye:@Yw:#%0#%1|||%2string:%3[%4]|||%5,%6;%9||| @Yf:@Yg:@Yh:#%0d#%1,_Timer_S(%3)|||%5|||%6;1>%9,@Yv&%3&|||
 
 // This one has an extra parameter because arrays must always be followed by
