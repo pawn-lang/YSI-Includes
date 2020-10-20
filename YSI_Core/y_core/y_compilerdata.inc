@@ -146,7 +146,7 @@ static stock __CompilerSecondPass() {}
 
 #define __COMPILER_STATIC_ENUM enum
 
-#if ((__Pawn & 0x0F) >= 0x0A) || ((__Pawn & 0xF0) >= 0xA0)
+#if (__Pawn & 0x0F) >= 0x0A
 	#define __COMPILER_MODIFIED (1)
 	#define __COMPILER_OFFICIAL (0)
 	#if defined __PawnBuild
