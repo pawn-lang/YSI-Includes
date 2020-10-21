@@ -1698,8 +1698,7 @@ static stock Inline_GeneratePreamble(ctx[AsmContext], locals)
 static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const count, bool:isConst, locals, inlineParams)
 {
 	new
-		bool:needStore = false,
-		accumulate = 0;
+		bool:needStore = false;
 	for (new i = 0; i != count; ++i)
 	{
 		if (parameters[i] == -1)
@@ -1736,7 +1735,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 			// two values on the stack for `memcpy` restoration.
 			@emit CONST.pri        8
 			@emit ADD
-			accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
+			Inline_GenerateLocalsStore(ctx, parameters, count);
 			// Restore the return value.
 			@emit SCTRL            4
 			@emit LOAD.pri         ref(I@)
@@ -1760,7 +1759,8 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 			@emit ADD.C            inlineParams - locals
 			@emit SUB
 			@emit SCTRL            4
-			accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
+			new
+				accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
 			if (accumulate)
 				@emit STACK            accumulate
 		}
