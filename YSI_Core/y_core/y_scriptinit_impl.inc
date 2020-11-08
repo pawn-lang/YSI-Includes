@@ -281,9 +281,8 @@ forward bool:DumpAMX_Write(const filename[]);
 	forward OnCachedInit();
 #endif
 
-static ScriptInit_CallOnCodeInit(bool:jit)
+static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 {
-	Server_DisableLongCall();
 	if (YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_RELOAD)
 	{
 		// Loaded from a file.
@@ -304,6 +303,41 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 	}
 	else
 	{
+		#if defined YSI_NO_MODE_CACHE
+			#pragma unused fs
+		#else
+			#if defined __date && defined __time && defined YSI_AUTO_LOAD_CACHE
+				new name[64];
+				format(name, sizeof (name), "YSI_CACHE.%s.%s", __date, __time);
+				if (fexist(name))
+				{
+					if (jit)
+					{
+						P:W("Could not auto-load YSI cache - script type (GM/FS) cannot be determined with JIT.");
+						strcat(name, ".amx");
+					}
+					else if (fs)
+					{
+						P:W("Could not auto-load YSI cache - current filterscript cannot be unloaded.");
+						strcat(name, ".amx");
+					}
+					else
+					{
+						Server_EnableLongCall();
+						format(name, sizeof (name), "changemode ../scriptfiles/%s", name);
+						SendRconCommand(name)
+						return false;
+					}
+				}
+				else
+				{
+					strcat(name, ".amx");
+				}
+			#else
+				static const name[] = "YSI_CACHE.amx";
+			#endif
+		#endif
+			Server_DisableLongCall();
 		#if defined YSI_NO_OPTIMISATION_MESSAGE
 			#pragma unused jit
 		#else
@@ -342,7 +376,7 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 			// Set the variable to something unique for next load.  This will be written out, thus
 			// loaded in next time.
 			YSI_g_sScriptInitState = E_SCRIPTINIT_STATE_RELOAD;
-			if (DumpAMX_Write("YSI_CACHE.amx"))
+			if (DumpAMX_Write(name))
 			{
 				// Clear this flag after dumping.  This is so we can tell when a mode is cached.
 				YSI_g_sScriptInitState = tmp | E_SCRIPTINIT_STATE_DUMPED;
@@ -387,9 +421,10 @@ static ScriptInit_CallOnCodeInit(bool:jit)
 				YSI_g_sScriptInitState = tmp;
 				P:E("YSI code cache write failed");
 			}
+			Server_EnableLongCall();
 		#endif
 	}
-	Server_EnableLongCall();
+	return true;
 }
 
 #if !defined _ALS_OnJITCompile
@@ -408,7 +443,8 @@ public OnJITCompile()
 	}
 	DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
 	YSI_g_sScriptInitState |= E_SCRIPTINIT_STATE_JITING;
-	ScriptInit_CallOnCodeInit(true);
+	if (!ScriptInit_CallOnCodeInit(true, false))
+		return 0;
 	new ret = ScriptInit_OnJITCompile();
 	if (ret)
 	{
@@ -531,7 +567,8 @@ public OnFilterScriptInit()
 	if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 	{
 		DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
-		ScriptInit_CallOnCodeInit(false);
+		if (!ScriptInit_CallOnCodeInit(false, true))
+			return 0;
 	}
 	ScriptInit_PreInitFuncs_();
 	#if defined ScriptInit_OnScriptInit
@@ -583,7 +620,8 @@ public OnGameModeInit()
 		if (!(YSI_g_sScriptInitState & E_SCRIPTINIT_STATE_JITING))
 		{
 			DEBUG_MAYBE_DUMP("YSI_PRE_INIT.asm");
-			ScriptInit_CallOnCodeInit(false);
+			if (!ScriptInit_CallOnCodeInit(false, false))
+				return 0;
 		}
 		ScriptInit_PreInitFuncs_();
 		#if defined ScriptInit_OnScriptInit
