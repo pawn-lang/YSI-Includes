@@ -96,8 +96,8 @@ CHAIN_FORWARD:YVers_OnScriptInit() = 1;
 #define YSI_VERSION_RESPO               2
 
 #define YSI_VERSION_MAJOR               5
-#define YSI_VERSION_MINOR               03
-#define YSI_VERSION_BUILD               0689
+#define YSI_VERSION_MINOR               04
+#define YSI_VERSION_BUILD               0100
 
 #define YSI_VERSION                     #YSI_VERSION_MAJOR "." #YSI_VERSION_MINOR "." #YSI_VERSION_BUILD
 
