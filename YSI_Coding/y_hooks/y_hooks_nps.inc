@@ -361,62 +361,135 @@ public OnCodeInit()
 		Opcode:call = RelocateOpcode(OP_CALL),
 		Opcode:nop = RelocateOpcode(OP_NOP),
 		Opcode:proc = RelocateOpcode(OP_PROC),
-		dctx[DisasmContext];
-	DisasmInit(dctx);
-	for ( ; ; )
+		Opcode:o,
+		reloc = (AMX_HEADER_COD - AMX_BASE_ADDRESS) + AMX_REAL_ADDRESS;
+	if (IsOpcodeRelocationRequired())
 	{
-		switch (DisasmNextInsn(dctx))
+		for (new addr = AMX_HEADER_COD; addr < 0;)
 		{
-		case OP_NONE:
-		{
-			break;
-		}
-		case OP_SYSREQ_C:
-		{
-			// Check that the previous OP is `PUSH.C`.  That reqpresents a real native call, not our
-			// wrapper.
-			if (Opcode:AMX_Read(DisasmGetCurIp(dctx) - 8) == proc)
+			switch ((o = UnrelocateOpcode(Opcode:ReadAmxMemory(addr))))
 			{
-				continue;
+				case OP_SYSREQ_C:
+				{
+					// Check that the previous OP is `PUSH.C`.  That represents a real native call,
+					// not our wrapper.
+					if (Opcode:AMX_Read(addr - 8) == proc)
+					{
+						addr += 8;
+						continue;
+					}
+					idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
+				}
+				case OP_SYSREQ_D:
+				{
+					if (Opcode:AMX_Read(addr - 8) == proc)
+					{
+						addr += 8;
+						continue;
+					}
+					idx1 = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
+				}
+				case OP_CALL:
+				{
+					idx1 = YHNPS_Find(heap + allocated * 8, stockCount, ReadAmxMemory(addr + 4) - reloc);
+					if (idx1 != cellmin)
+					{
+						// Write a different target address.
+						AMX_Write(addr + 4, idx1);
+					}
+					addr += 8;
+					continue;
+				}
+				default:
+				{
+					addr += (0 <= _:o < sizeof (gAMXOpcodeBaseSizes)) ? (gAMXOpcodeBaseSizes[_:o]) : (4);
+					continue;
+				}
 			}
-			idx1 = YHNPS_Find(heap, nativeCount, DisasmGetOperand(dctx));
-		}
-		case OP_SYSREQ_D:
-		{
-			if (Opcode:AMX_Read(DisasmGetCurIp(dctx) - 8) == proc)
+			// `SYSREQ.C` is always followed by `STACK`, except with `#emit` usage.
+			// We need to change the pair in to a single `CALL`.  Don't forget
+			// `SYSREQ.D`.
+			if (idx1 == cellmin)
 			{
-				continue;
+				addr += 8;
 			}
-			idx1 = YHNPS_Find(heap + allocated * 16, nativeCount, DisasmGetOperand(dctx));
-		}
-		case OP_CALL:
-		{
-			idx1 = YHNPS_Find(heap + allocated * 8, stockCount, DisasmGetOperandReloc(dctx));
-			if (idx1 != cellmin)
+			else
 			{
 				// Write a different target address.
-				AMX_Write(DisasmGetCurIp(dctx) + 4, idx1);
+				AMX_Write(addr, _:call),
+				AMX_Write(addr + 4, idx1),
+				addr += 8;
+				if (UnrelocateOpcode(Opcode:ReadAmxMemory(addr)) == OP_STACK)
+				{
+					AMX_Write(addr, _:nop),
+					AMX_Write(addr + 4, _:nop),
+					addr += 8;
+				}
 			}
-			continue;
 		}
-		default:
+	}
+	else
+	{
+		for (new addr = AMX_HEADER_COD; addr < 0;)
 		{
-			continue;
-		}
-		}
-		// `SYSREQ.C` is always followed by `STACK`, except with `#emit` usage.
-		// We need to change the pair in to a single `CALL`.  Don't forget
-		// `SYSREQ.D`.
-		if (idx1 != cellmin)
-		{
-			// Write a different target address.
-			base = DisasmGetCurIp(dctx);
-			AMX_Write(base, _:call);
-			AMX_Write(base + 4, idx1);
-			if (DisasmNextInsn(dctx) == OP_STACK)
+			switch ((o = Opcode:ReadAmxMemory(addr)))
 			{
-				AMX_Write(base + 8, _:nop);
-				AMX_Write(base + 12, _:nop);
+				case OP_SYSREQ_C:
+				{
+					// Check that the previous OP is `PUSH.C`.  That represents a real native call,
+					// not our wrapper.
+					if (Opcode:AMX_Read(addr - 8) == proc)
+					{
+						addr += 8;
+						continue;
+					}
+					idx1 = YHNPS_Find(heap, nativeCount, ReadAmxMemory(addr + 4));
+				}
+				case OP_SYSREQ_D:
+				{
+					if (Opcode:AMX_Read(addr - 8) == proc)
+					{
+						addr += 8;
+						continue;
+					}
+					idx1 = YHNPS_Find(heap + allocated * 16, nativeCount, ReadAmxMemory(addr + 4));
+				}
+				case OP_CALL:
+				{
+					idx1 = YHNPS_Find(heap + allocated * 8, stockCount, ReadAmxMemory(addr + 4) - reloc);
+					if (idx1 != cellmin)
+					{
+						// Write a different target address.
+						AMX_Write(addr + 4, idx1);
+					}
+					addr += 8;
+					continue;
+				}
+				default:
+				{
+					addr += (0 <= _:o < sizeof (gAMXOpcodeBaseSizes)) ? (gAMXOpcodeBaseSizes[_:o]) : (4);
+					continue;
+				}
+			}
+			// `SYSREQ.C` is always followed by `STACK`, except with `#emit` usage.
+			// We need to change the pair in to a single `CALL`.  Don't forget
+			// `SYSREQ.D`.
+			if (idx1 == cellmin)
+			{
+				addr += 8;
+			}
+			else
+			{
+				// Write a different target address.
+				AMX_Write(addr, _:call),
+				AMX_Write(addr + 4, idx1),
+				addr += 8;
+				if (Opcode:ReadAmxMemory(addr) == OP_STACK)
+				{
+					AMX_Write(addr, _:nop),
+					AMX_Write(addr + 4, _:nop),
+					addr += 8;
+				}
 			}
 		}
 	}

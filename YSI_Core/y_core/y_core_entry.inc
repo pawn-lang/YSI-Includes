@@ -159,9 +159,9 @@ stock const YSIM_VERMAX[] = "X";
 
 // More common utilities and user-facing functions.
 #include "y_debug_impl"
+#include "y_cell_impl"
 #include "y_amx_impl"
 #include "y_shortfunc"
-#include "y_cell_impl"
 #include "y_utils_impl"
 
 // Part of "y_scriptinit", but requires "y_amx".

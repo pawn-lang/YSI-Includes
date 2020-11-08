@@ -243,7 +243,7 @@ public CGen_OOM(ctx[AsmContext])
 	}
 	case ASM_ERROR_NONE:
 	{
-		// Do nothing (no error).
+		// Do nothing, just for warning 244.
 	}
 	}
 	AsmClearError(ctx);

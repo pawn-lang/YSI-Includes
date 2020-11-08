@@ -413,6 +413,7 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 		else
 		{
 			new
+				quick = (pattern[0]) | (pattern[1] << 8) | (pattern[2] << 16) | (pattern[3] << 24),
 				addr = 0,
 				pos = idx * 8 + base + 4,
 				str[32];
@@ -423,11 +424,18 @@ stock AMX_GetEntry(E_AMX_TABLE:table, idx, &buffer, const pattern[] = "", const 
 				#emit STOR.S.pri addr
 				if (addr)
 				{
-					AMX_ReadString(AMX_BASE_ADDRESS + addr, str);
-					if (exact ? (str{0} && !strcmp(str, pattern)) : (strfind(str, pattern) != -1))
+					// Get the 4 bytes 5 bytes before this position.
+					addr += AMX_BASE_ADDRESS;
+					#emit LREF.S.pri addr
+					#emit STOR.S.pri base
+					if (base == quick)
 					{
-						buffer = pos - 4;
-						return idx;
+						AMX_ReadString(addr, str);
+						if (exact ? (str{0} && !strcmp(str, pattern)) : (strfind(str, pattern) != -1))
+						{
+							buffer = pos - 4;
+							return idx;
+						}
 					}
 				}
 				pos += 8;
@@ -806,102 +814,12 @@ stock AMX_GetValueSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	return idx;
 }
 
-/*enum e_AMX_HEADER_TYPE:(<<= 1)
-{
-	e_AMX_HEADER_TYPE_NONE = 0,
-	e_AMX_HEADER_TYPE_PUBLIC = 1,
-	e_AMX_HEADER_TYPE_NATIVE,
-	e_AMX_HEADER_TYPE_LIBRARY,
-	e_AMX_HEADER_TYPE_PUBVAR,
-	e_AMX_HEADER_TYPE_TAG
-}
-
-enum E_AMX_HEADER
-{
-	e_AMX_HEADER_TYPE:E_AMX_HEADER_TYPE, // Public, native, tag, etc.
-	E_AMX_HEADER_ENTRY,
-	E_AMX_HEADER_PTR,
-	// For variables, this is their value.  For publics and natives, this is
-	// their table index (used by "funcidx" and "SYSREQ.C" respectively).
-	E_AMX_HEADER_VALUE,
-	E_AMX_HEADER_NAME[32 char]
-}
-
-stock AMX_GetEntryData(entry, ret[E_AMX_HEADER])
-{
-	if ((ret[e_AMX_HEADER_TYPE] = AMX_GetEntryType(entry)))
-	{
-
-	}
-}*/
-
 stock AMX_GetEntryPointer(entry)
 {
 	#emit LREF.S.pri entry
 	#emit RETN
-	__pragma(naked);
+	__COMPILER_NAKED();
 }
-
-/*stock bool:AMX_GetData(const name[], ret[E_AMX_HEADER], e_AMX_HEADER_TYPE:type = e_AMX_HEADER_TYPE_NONE)
-{
-	new
-		entry = 0;
-	switch (type)
-	{
-		case e_AMX_HEADER_TYPE_NONE   :
-		{
-			if (AMX_GetEntry(AMX_TABLE_PUBLICS,   0, entry, name)) type |= e_AMX_HEADER_TYPE_PUBLIC ;
-			if (AMX_GetEntry(AMX_TABLE_NATIVES,   0, entry, name)) type |= e_AMX_HEADER_TYPE_NATIVE ;
-			if (AMX_GetEntry(AMX_TABLE_LIBRARIES, 0, entry, name)) type |= e_AMX_HEADER_TYPE_LIBRARY;
-			if (AMX_GetEntry(AMX_TABLE_PUBVARS,   0, entry, name)) type |= e_AMX_HEADER_TYPE_PUBVAR ;
-			if (AMX_GetEntry(AMX_TABLE_TAGS,      0, entry, name)) type |= e_AMX_HEADER_TYPE_TAG    ;
-		}
-		case e_AMX_HEADER_TYPE_PUBLIC : AMX_GetEntry(AMX_TABLE_PUBLICS,   0, entry, name);
-		case e_AMX_HEADER_TYPE_NATIVE : AMX_GetEntry(AMX_TABLE_NATIVES,   0, entry, name);
-		case e_AMX_HEADER_TYPE_LIBRARY: AMX_GetEntry(AMX_TABLE_LIBRARIES, 0, entry, name);
-		case e_AMX_HEADER_TYPE_PUBVAR : AMX_GetEntry(AMX_TABLE_PUBVARS,   0, entry, name);
-		case e_AMX_HEADER_TYPE_TAG    : AMX_GetEntry(AMX_TABLE_TAGS,      0, entry, name);
-	}
-	strpack(ret[E_AMX_HEADER_NAME], name),
-	ret[E_AMX_HEADER_TYPE] = type;
-	new
-		ptr = 0;
-	#emit LREF.S.pri entry
-	#emit SREF.S.pri ptr
-	switch (type)
-	{
-		case e_AMX_HEADER_TYPE_PUBLIC :
-		{
-			// Has a pointer.
-			return
-				ret[E_AMX_HEADER_ENTRY] = entry,
-				ret[E_AMX_HEADER_PTR] = ptr,
-				ret[E_AMX_HEADER_VALUE] = AMX_GetPublicIndexFromEntry(entry);
-		}
-		case e_AMX_HEADER_TYPE_NATIVE :
-		{
-			// Has a pointer.
-			return
-				ret[E_AMX_HEADER_ENTRY] = entry,
-				ret[E_AMX_HEADER_PTR] = ptr,
-				ret[E_AMX_HEADER_VALUE] = AMX_GetNativeIndexFromEntry(entry);
-		}
-		case e_AMX_HEADER_TYPE_LIBRARY:
-		{
-		}
-		case e_AMX_HEADER_TYPE_PUBVAR :
-		{
-		}
-		case e_AMX_HEADER_TYPE_TAG    :
-		{
-		}
-	}
-	// Multiple matches found, or none.
-	return
-		ret[E_AMX_HEADER_INDEX] = -1,
-		ret[E_AMX_HEADER_PTR] = 0,
-		ret[E_AMX_HEADER_VALUE] = cellmin;
-}*/
 
 stock AMX_GetEntryFromNativeIndex(index)
 {
@@ -932,29 +850,6 @@ stock AMX_GetStringFromEntry(entry, str[], size = sizeof (str))
 	AMX_ReadString(AMX_BASE_ADDRESS + entry, str, size);
 }
 
-/*stock AMX_GetEntryType(entry)
-{
-	if (AMX_HEADER_PUBLICS <= entry < AMX_HEADER_NATIVES) return e_AMX_HEADER_TYPE_PUBLIC;
-	else if (AMX_HEADER_NATIVES <= entry < AMX_HEADER_LIBRARIES) return e_AMX_HEADER_TYPE_NATIVE;
-	else if (AMX_HEADER_LIBRARIES <= entry < AMX_HEADER_PUBVARS) return e_AMX_HEADER_TYPE_LIBRARY;
-	else if (AMX_HEADER_PUBVARS <= entry < AMX_HEADER_TAGS) return e_AMX_HEADER_TYPE_PUBVAR;
-	else if (AMX_HEADER_TAGS <= entry < AMX_HEADER_NAMETABLE) return e_AMX_HEADER_TYPE_TAG;
-	return e_AMX_HEADER_TYPE_NONE;
-}
-
-stock e_AMX_HEADER_TYPE:AMX_GetType(const name[])
-{
-	new
-		e_AMX_HEADER_TYPE:type = e_AMX_HEADER_TYPE_NONE,
-		entry = 0;
-	if (AMX_GetEntry(AMX_TABLE_PUBLICS,   0, entry, name)) type |= e_AMX_HEADER_TYPE_PUBLIC ;
-	if (AMX_GetEntry(AMX_TABLE_NATIVES,   0, entry, name)) type |= e_AMX_HEADER_TYPE_NATIVE ;
-	if (AMX_GetEntry(AMX_TABLE_LIBRARIES, 0, entry, name)) type |= e_AMX_HEADER_TYPE_LIBRARY;
-	if (AMX_GetEntry(AMX_TABLE_PUBVARS,   0, entry, name)) type |= e_AMX_HEADER_TYPE_PUBVAR ;
-	if (AMX_GetEntry(AMX_TABLE_TAGS,      0, entry, name)) type |= e_AMX_HEADER_TYPE_TAG    ;
-	return type;
-}*/
-
 stock AMX_ReadString(addr, str[], len = sizeof (str))
 {
 	new
@@ -964,10 +859,37 @@ stock AMX_ReadString(addr, str[], len = sizeof (str))
 	{
 		// Read 4 bytes.
 		#emit LREF.S.pri                addr
-		#emit STOR.S.pri                buffer
+		
+		// data = ((data & 0b11111111000000001111111100000000) >>> 8) | ((data & 0b00000000111111110000000011111111) << 8);
+		#emit PUSH.pri
+		#emit CONST.alt            0b11111111000000001111111100000000
+		#emit AND
+		#emit SHR.C.pri            8
+		#emit SWAP.pri
+		#emit CONST.alt            0b00000000111111110000000011111111
+		#emit AND
+		#emit SHL.C.pri            8
+		#emit POP.alt
+		#emit OR
+		
+		// data = ((data & 0b11111111111111110000000000000000) >>> 16) | ((data & 0b00000000000000001111111111111111) << 16);
+		#emit PUSH.pri
+		#emit CONST.alt            0b11111111111111110000000000000000
+		#emit AND
+		#emit SHR.C.pri            16
+		#emit SWAP.pri
+		#emit CONST.alt            0b00000000000000001111111111111111
+		#emit AND
+		#emit SHL.C.pri            16
+		#emit POP.alt
+		#emit OR
+		
 		// Write PACKED strings.
-		str[idx] = swapchars(buffer);
-		if (!(buffer & 0x000000FF && buffer & 0x0000FF00 && buffer & 0x00FF0000 && buffer & 0xFF000000))
+		#emit STOR.S.pri                buffer
+		str[idx] = buffer;
+		
+		// https://jameshfisher.com/2017/01/24/bitwise-check-for-zero-byte/
+		if (Cell_HasZeroByte(buffer))
 		{
 			return;
 		}
@@ -1059,35 +981,6 @@ stock AMX_WriteString(addr, const str[], len = sizeof (str))
 		}
 	}
 	while (++idx < len);
-}
-
-stock AMX_Read(addr)
-{
-	#emit LREF.S.pri                    addr
-	#emit RETN
-	return 0;
-}
-
-stock AMX_Write(addr, value)
-{
-	P:7("AMX_Write called: %i, %i", addr, value);
-	#emit LOAD.S.pri                    value
-	#emit SREF.S.pri                    addr
-}
-
-stock AMX_RawRead(addr)
-{
-	P:7("AMX_RawRead called: %i", addr);
-	#emit LREF.S.pri                    addr
-	#emit RETN
-	return 0;
-}
-
-stock AMX_RawWrite(addr, value)
-{
-	P:7("AMX_RawWrite called: %i, %i", addr, value);
-	#emit LOAD.S.pri                    value
-	#emit SREF.S.pri                    addr
 }
 
 stock AMX_ReadArray(addr, dest[], len = sizeof (dest))
@@ -1452,4 +1345,24 @@ stock AMX_DumpHeader()
 #define H_Nc7(%0,%3) @C8:H_Sc(%0,8,%3)
 #define H_Nc8(%0,%3) @C9:H_Sc(%0,9,%3)
 #define H_Nc9(%0,%3) ()
+
+#if __COMPILER___EMIT
+	#endinput
+#endif
+
+// Function call versions of `AMX_Read` and `AMX_Write`.
+stock AMX_Write(addr, value)
+{
+	P:7("AMX_Write called: %i, %i", addr, value);
+	#emit LOAD.S.pri                    value
+	#emit SREF.S.pri                    addr
+}
+
+stock AMX_Read(addr)
+{
+	P:7("AMX_Read called: %i", addr);
+	#emit LREF.S.pri                    addr
+	#emit RETN
+	return 0;
+}
 
