@@ -705,18 +705,18 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(const name[64], const hooks[], count, write, 
 }
 
 /*-------------------------------------------------------------------------*//**
- * <param name="entry">The public function slot to destroy.</param>
+ * <param name="tableEntry">The public function slot to destroy.</param>
  * <remarks>
  *  Basically, once we know a function has been included, wipe it from the AMX
  *  header.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_InvalidateName(entry)
+_Y_HOOKS_STATIC Hooks_InvalidateName(tableEntry)
 {
 	P:4("Hooks_InvalidateName called");
-	entry = AMX_Read(entry + 4);
-	AMX_Write(AMX_BASE_ADDRESS + entry, 0);
+	tableEntry = AMX_Read(tableEntry + 4);
+	AMX_Write(AMX_BASE_ADDRESS + tableEntry, 0);
 }
 
 /*

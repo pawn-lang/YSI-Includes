@@ -814,7 +814,7 @@ stock AMX_GetValueSuffix(E_AMX_TABLE:table, idx, &buffer, pattern)
 	return idx;
 }
 
-stock AMX_GetEntryPointer(entry)
+stock AMX_GetEntryPointer(tableEntry)
 {
 	#emit LREF.S.pri tableEntry
 	#emit RETN
