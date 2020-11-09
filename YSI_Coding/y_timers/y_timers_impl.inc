@@ -156,7 +156,7 @@ public OnCodeInit()
 			P:7("Timer_OnScriptInit: %s", unpack(buffer));
 			// Get the time offset for the current call.  This should mean that
 			// all the functions are nicely spread out.
-			O@(buffer, time * pre / total, 0, "ii", 1, -1);
+			YSI_SetTimerEx(buffer, time * pre / total, 0, "ii", 1, -1);
 		}
 	}
 	P:1("hook Timers_OnScriptInit ended");
@@ -264,7 +264,7 @@ stock _Timer_I(const func[], interval, action, &result)
 		{
 			if (result == -1)
 			{
-				result = O@(func, interval, 1);
+				result = YSI_SetTimer(func, interval, 1);
 			}
 		}
 	}
@@ -318,13 +318,13 @@ stock _Timer_D(const func[], interval, const action, who, results[], a[2])
 				{
 					if (results[who] == -1)
 					{
-						results[who] = O@(func, interval, true, "i", who);
+						results[who] = YSI_SetTimerEx(func, interval, true, "i", who);
 					}
 				}
 			}
 			else if (results[who] == -1)
 			{
-				results[who] = O@(func, interval, true, "i", who);
+				results[who] = YSI_SetTimerEx(func, interval, true, "i", who);
 			}
 		}
 	}
@@ -358,7 +358,7 @@ static stock Alloc:Timer_GetSingleSlot(len)
 }
 
 // Allocate memory to store a string.
-stock _Timer_S(string:str[])
+stock _Timer_S(const string:str[])
 {
 	P:3("_Timer_S called");
 	new
@@ -378,7 +378,7 @@ stock _Timer_S(string:str[])
 }
 
 // Allocate memory to store an array.
-stock _Timer_A(str[], len)
+stock _Timer_A(const str[], len)
 {
 	P:3("_Timer_A called");
 	new

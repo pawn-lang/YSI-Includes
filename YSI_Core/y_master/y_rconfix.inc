@@ -53,7 +53,8 @@ y_rconfix_Load()
 	}
 	else
 	{
-		P:E("Could not load RconCommand/ClientCheckResponse fix FS.");
+		P:W("Could not load RconCommand/ClientCheckResponse fix FS.");
+		P:I("Ignore this error if the FS already loaded.");
 	}
 }
 

@@ -252,16 +252,21 @@ enum (+= -1)
 // not get overridden.
 // =============================================================================
 // =============================================================================
-// This might just be the most complex enum I've ever made!
+// This might just be the most complex enum ever made!
+#if YSIM_HAS_MASTER
+	#define _E_AREA_RESET (1)
+#else
+	#define _E_AREA_RESET (0)
+#endif
 enum E_AREA
 {
+	#if YSIM_HAS_MASTER
+		E_AREA_MASTER,
+	#endif
 	//union
 	//{
 	//    struct
 	//    {
-			#if YSIM_HAS_MASTER
-				E_AREA_MASTER,
-			#endif
 			// This has increased from 4 to 6, so we can store cubes and ovoids
 			// in a single slot.
 			Float:E_AREA_POS[6],
@@ -281,15 +286,8 @@ enum E_AREA
 	//    // Start of poly data.
 	//    struct
 	//    {
-			// Reset the enum counter to 0 (on the next item).
-			_E_AREA_RESET_@1 = -1,
-			// Now restart.
-			#if YSIM_HAS_MASTER
-				// Skip the master flag if it exists.
-				_E_AREA_MASTER_@1,
-			#endif
 			// This is where polys differ from all others.
-			E_AREA_POLY_COUNT,
+			E_AREA_POLY_COUNT = _E_AREA_RESET,
 			E_AREA_POLY_NEXT,
 			//Float:E_AREA_POLY_POS[4],
 			// This slot holds ONLY the polygon bounding data, it doesn't hold
@@ -307,15 +305,8 @@ enum E_AREA
 	//    // Start of poly child data.
 	//    struct
 	//    {
-			// Reset the enum counter to 0 (on the next item).
-			_E_AREA_RESET_@2 = -1,
-			// Now restart.
-			#if YSIM_HAS_MASTER
-				// Skip the master flag if it exists.
-				_E_AREA_MASTER_@2,
-			#endif
 			// Store a link to the parent of this poly child.
-			E_AREA_CHILD_PARENT,
+			E_AREA_CHILD_PARENT = _E_AREA_RESET,
 			// And the next one in VERY rare cases (I hope).
 			// THIS SHARES A SLOT WITH "E_AREA_POLY_NEXT", so we can always just
 			// use that slot when iterating.

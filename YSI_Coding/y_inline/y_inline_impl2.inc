@@ -1135,7 +1135,7 @@ Inline_NumArgs_load:
 	#emit JZER                Inline_NumArgs_load
 	#emit POP.pri
 	#emit RETN
-	__pragma(naked);
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1457,7 +1457,7 @@ static Callback_CallHandler_(...)
 	#emit SCTRL            4                   // 65
 	#emit LOAD.pri         I@                  // 67
 	#emit RETN                                 // 68
-	__pragma(naked);
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1506,7 +1506,7 @@ static stock Callback_RemoteHandler_(...)
 	#emit SCTRL            4
 	#emit MOVE.pri
 	#emit RETN
-	__pragma(naked);
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1554,7 +1554,7 @@ static stock Callback_LocalHandler_(...)
 	#emit SCTRL            4
 	#emit MOVE.pri
 	#emit RETN
-	__pragma(naked);
+	__COMPILER_NAKED();
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1698,8 +1698,7 @@ static stock Inline_GeneratePreamble(ctx[AsmContext], locals)
 static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const count, bool:isConst, locals, inlineParams)
 {
 	new
-		bool:needStore = false,
-		accumulate = 0;
+		bool:needStore = false;
 	for (new i = 0; i != count; ++i)
 	{
 		if (parameters[i] == -1)
@@ -1736,7 +1735,7 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 			// two values on the stack for `memcpy` restoration.
 			@emit CONST.pri        8
 			@emit ADD
-			accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
+			Inline_GenerateLocalsStore(ctx, parameters, count);
 			// Restore the return value.
 			@emit SCTRL            4
 			@emit LOAD.pri         ref(I@)
@@ -1760,9 +1759,12 @@ static stock Inline_GeneratePostamble(ctx[AsmContext], const parameters[], const
 			@emit ADD.C            inlineParams - locals
 			@emit SUB
 			@emit SCTRL            4
-			accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
+			new
+				accumulate = Inline_GenerateLocalsStore(ctx, parameters, count);
 			if (accumulate)
+			{
 				@emit STACK            accumulate
+			}
 		}
 		else
 		{
@@ -1912,7 +1914,7 @@ static stock Inline_Ref(const &ptr)
 {
 	#emit LOAD.S.pri       ptr
 	#emit RETN
-	__pragma(naked);
+	__COMPILER_NAKED();
 }
 #if __COMPILER_CONST_REF
 	#pragma warning pop
@@ -2010,7 +2012,9 @@ stock Callback_Restore_(...)
 	}
 	new
 		ptr = AMX_Read(closure + _:E_INLINE_CALL_SOURCE * cellbytes),
-		frm = ptr + AMX_Read(AMX_Read(ptr) + cellbytes),
+		frm = AMX_Read(ptr) + cellbytes;
+	frm = ptr + AMX_Read(frm);
+	new
 		ret = GetFrameReturn(frm),
 		pfr = GetFramePreviousFrame(frm);
 	rawMemcpy(ptr, closure + _:E_INLINE_CALL_PARAMS * cellbytes, AMX_Read(closure + _:E_INLINE_CALL_SIZE * cellbytes)),

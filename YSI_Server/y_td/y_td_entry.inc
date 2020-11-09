@@ -172,7 +172,7 @@ static stock
 //	YSI_SetTimerEx("TD_HideForPlayer", time, 0, "iii", playerid, _:td, revision);
 //}
 
-#define TD_SetTimer(%0,%1,%2,%3) O@("TD_HideForPlayerPub", (%2), 0, "iii", (%0), _:(%1), (%3))
+#define TD_SetTimer(%0,%1,%2,%3) YSI_SetTimerEx("TD_HideForPlayerPub", (%2), 0, "iii", (%0), _:(%1), (%3))
 
 /*-------------------------------------------------------------------------*//**
  * <param name="id">Text draw style to check validity of,</param>

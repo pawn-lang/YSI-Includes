@@ -146,7 +146,7 @@ static stock __CompilerSecondPass() {}
 
 #define __COMPILER_STATIC_ENUM enum
 
-#if ((__Pawn & 0x0F) >= 0x0A) || ((__Pawn & 0xF0) >= 0xA0)
+#if (__Pawn & 0x0F) >= 0x0A
 	#define __COMPILER_MODIFIED (1)
 	#define __COMPILER_OFFICIAL (0)
 	#if defined __PawnBuild
@@ -161,13 +161,13 @@ static stock __CompilerSecondPass() {}
 			#undef __COMPILER_BUG_317
 			#define __COMPILER_BUG_317 (0)
 		#endif
+		// Disable `__COMPILER_PRAGMA` for now, while there's no `PROC` generated.
 		#if __PawnBuild >= 11
 			#undef __COMPILER_NAMEOF
+			//#undef __COMPILER_PRAGMA
+			
 			#define __COMPILER_NAMEOF (1)
-		#endif
-		#if 0
-			#undef __COMPILER_PRAGMA
-			#define __COMPILER_PRAGMA (1)
+			//#define __COMPILER_PRAGMA (1)
 		#endif
 	#endif
 #else
@@ -232,52 +232,22 @@ static stock const
 
 const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 
-#if !__COMPILER_PRAGMA
-	// TODO: Check for a minor version that might have this.  Assume this is
-	// like the MSVC `__pragma` - i.e. `__pragma(pack(0))` which would give
-	// `__pragma_pack(0)`.  Or `__pragma(naked)` -> `__pragma_naked`.
-	#define __pragma(%0) __pragma_%0
-	
-	// Tell the compiler that a function does return a value, even when it
-	// appears it doesn't.
-	// 
-	//   stock Func()
-	//   {
-	//       #emit RETN
-	//       __pragma(naked);
-	//   }
-	// 
-	#define __pragma_naked return __COMPILER_DEFAULT
-	
-	// Return a version of `undefined` for any tag.
-	// 
-	//   new                Float:a = __pragma(default); // 0.0
-	//   new             Language:b = __pragma(default); // -1
-	//   new PR_PacketReliability:a = __pragma(default); // 6
-	// 
-	#define __pragma_default __COMPILER_DEFAULT
-	
-	// Don't warn about unused varaibles.
-	// 
-	//   __pragma(unused(a, b, c));
-	// 
-	#define __pragma_unused(%0) H@(%0)
-	#define __pragma_unread(%0) H@(%0)
-	#define __pragma_unwritten(%0) H@(%0)
-#endif
-
 #if YSI_KEYWORD(default)
 	// Return a version of `undefined` for any tag.
 	// 
 	//   new                Float:a = default(); // 0.0
 	//   new             Language:b = default(); // -1
 	//   new PR_PacketReliability:a = default(); // 6
-	#define default() __pragma(default)
+	#define default() __COMPILER_DEFAULT
 #endif
-#define DEFAULT__ __pragma(default)
+#define DEFAULT__ __COMPILER_DEFAULT
 
 #if __COMPILER_MODIFIED
-	#define __COMPILER_NAKED __pragma(naked);
+	#if __COMPILER_PRAGMA
+		#define __COMPILER_NAKED() __pragma("naked")
+	#else
+		#define __COMPILER_NAKED() return __COMPILER_DEFAULT
+	#endif
 	#define __COMPILER_NESTED_ELLIPSIS (1)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) return __compiler_one_string_parameter:(%0)
@@ -285,6 +255,12 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __COMPILER_BUGGED_SYSREQ (0)
 	#define __COMPILER_WARNING_SUPPRESSION (1)
 	#define __COMPILER_USER_WARNING (1)
+	#define __COMPILER___EMIT (1)
+	
+	stock YSI_gAMXAddress_;
+	
+	#define AMX_Read(%0) __emit(load.u.pri %0, stor.pri YSI_gAMXAddress_, lref.pri YSI_gAMXAddress_)
+	#define AMX_Write(%0,%1) __emit(push.u %1, load.u.alt %0, stor.alt YSI_gAMXAddress_, pop.pri, sref.pri YSI_gAMXAddress_)
 
 	// Error with:
 	//
@@ -417,7 +393,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	// Disable the warning for `const &var`.
 	#define __COMPILER_CONST_REF (1)
 #else
-	#define __COMPILER_NAKED __pragma(naked);
+	#define __COMPILER_NAKED() return __COMPILER_DEFAULT
 	#define __COMPILER_NESTED_ELLIPSIS (0)
 	#define __compiler_one_string_parameter:%8(%0,%1) (%0)
 	#define __COMPILER_STRING_RETURN(%0) __CompilerStringReturn(%0);return (__compiler_one_string_parameter:(%0))
@@ -429,6 +405,7 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	#define __COMPILER_CONST_REF (0)
 	#define __COMPILER_sNAMEMAX (31)
 	#define __COMPILER_CONST_TAGGED (0)
+	#define __COMPILER___EMIT (0)
 	
 	// It is sufficient simply for a variable to exist anywhere with the tag.
 	#define __COMPILER_TAG_DATA(%0,%1) static stock const %0:__TAGOF__%0; stock %0:operator=(__CompilerDefault:a) return a, %0:(%1)

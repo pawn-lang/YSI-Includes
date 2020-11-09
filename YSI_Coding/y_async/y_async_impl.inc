@@ -1,6 +1,7 @@
 #define Task<%0> __TASK_%0
 #define __TASK_%0\32; __TASK_
 #define _yA@%0\32; _yA@
+#define _Ay@%0\32; _Ay@
 
 #define USING__%0\32; (@Ip:@Iq:@Io:@Iu:@Ia:@Ik:@Il:@Im:Callback_Find_(,I@),F@_@:I@)
 #define USING_ASYNC__ (@Ik:@Il:Inline_UA_(),)
@@ -119,4 +120,9 @@ await SomeFunction(using async);
 
 await SomeFunction(first, second, using async, third, fourth) -> (a, b, string:c[], Float:d[50], len);
 
+#define ASYNC__%0(%1) %0(%1)Async_B_(_:_Ay@%0(Async_A_()%1));stock _yA@%0()return tagged;static stock _Ay@%0(__async_context,%1)
+
+#if YSI_KEYWORD(async)
+	#define async ASYNC__
+#endif
 

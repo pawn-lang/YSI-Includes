@@ -304,6 +304,8 @@ stock _Testing_Start(const name[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+native YSI_ShowPlayerDialog(playerid, dialogid, style, const caption[], const info[], const button1[], const button2[]) = ShowPlayerDialog;
+
 stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
 	#pragma unused str
@@ -337,7 +339,7 @@ stock Testing_Ask(playerid, const str[] = "", GLOBAL_TAG_TYPES:...)
 	#emit ADD
 	#emit SCTRL            4
 	//format(YSI_g_sFailMessage, sizeof (YSI_g_sFailMessage), str, ___(2));
-	ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
+	YSI_ShowPlayerDialog(playerid, Y_TESTING_DIALOG_ID, DIALOG_STYLE_MSGBOX, "Did the test pass?", YSI_g_sFailMessage, "Yes", "No");
 	YSI_g_sAsked = true;
 }
 

@@ -698,8 +698,9 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(const name[64], const hooks[], count, write, 
 	}
 	else
 	{
-		if (hasprehooks) AMX_Write(write, AMX_Read(hooks[0]) + (AMX_REAL_DATA + AMX_HEADER_COD));
-		else AMX_Write(write, AMX_Read(hooks[0]));
+		size = AMX_Read(hooks[0]);
+		if (hasprehooks) AMX_Write(write, size + (AMX_REAL_DATA + AMX_HEADER_COD));
+		else AMX_Write(write, size);
 	}
 }
 
@@ -714,7 +715,8 @@ _Y_HOOKS_STATIC Hooks_GenerateCode(const name[64], const hooks[], count, write, 
 _Y_HOOKS_STATIC Hooks_InvalidateName(entry)
 {
 	P:4("Hooks_InvalidateName called");
-	AMX_Write(AMX_BASE_ADDRESS + AMX_Read(entry + 4), 0);
+	entry = AMX_Read(entry + 4);
+	AMX_Write(AMX_BASE_ADDRESS + entry, 0);
 }
 
 /*
@@ -958,83 +960,109 @@ _Y_HOOKS_STATIC Hooks_WriteFunction(const pointers[], const size, const ret = 1,
 */
 
 /*-------------------------------------------------------------------------*//**
- * <param name="addr0">The 1st address to read.</param>
- * <param name="addr1">The 2nd address to read.</param>
- * <returns>
- *  -1 - The first address is bigger.
- *  0  - The addresses are the same
- *  1  - The second address is bigger.
- * </returns>
- * <remarks>
- *  Reads two addresses, converts them to big endian, and compares them as four
- *  characters of a string at once.
- * </remarks>
- *//*------------------------------------------------------------------------**/
-
-_Y_HOOKS_STATIC Hooks_CompareNextCell(addr0, addr1)
-{
-//	P:4("Hooks_CompareNextCell called");
-	new
-		s0 = Cell_ReverseBytes(AMX_Read(addr0)),
-		s1 = Cell_ReverseBytes(AMX_Read(addr1));
-	// Propogate NULLs.
-	if (!(s0 & 0xFF000000)) s0 = 0;
-	else if (!(s0 & 0x00FF0000)) s0 &= 0xFF000000;
-	else if (!(s0 & 0x0000FF00)) s0 &= 0xFFFF0000;
-	else if (!(s0 & 0x000000FF)) s0 &= 0xFFFFFF00;
-	if (!(s1 & 0xFF000000)) s1 = 0;
-	else if (!(s1 & 0x00FF0000)) s1 &= 0xFF000000;
-	else if (!(s1 & 0x0000FF00)) s1 &= 0xFFFF0000;
-	else if (!(s1 & 0x000000FF)) s1 &= 0xFFFFFF00;
-	// We need the numbers to be compared as big-endian.  Now any trailing NULLs
-	// don't matter at all.
-	if (s1 > s0) return 1;
-	else if (s1 < s0) return -1;
-	else return 0;
-}
-
-/*-------------------------------------------------------------------------*//**
  * <param name="idx0">The index of the 1st public.</param>
  * <param name="idx1">The index of the 2nd public.</param>
  * <remarks>
  *  Compares two public function entries, and if need-be, swaps them over.
  * </remarks>
+ * <returns>Did a swap happen?</returns>
  *//*------------------------------------------------------------------------**/
 
-_Y_HOOKS_STATIC Hooks_ComparePublics(idx0, idx1)
+_Y_HOOKS_STATIC bool:Hooks_ComparePublics(idx0, idx1)
 {
-//	P:4("Hooks_ComparePublics called");
+	P:4("Hooks_ComparePublics called");
 	idx0 = idx0 * 8 + AMX_HEADER_PUBLICS;
 	idx1 = idx1 * 8 + AMX_HEADER_PUBLICS;
 	new
 		addr0 = AMX_BASE_ADDRESS + AMX_Read(idx0 + 4),
-		addr1 = AMX_BASE_ADDRESS + AMX_Read(idx1 + 4);
-	for ( ; ; )
+		addr1 = AMX_BASE_ADDRESS + AMX_Read(idx1 + 4),
+		s0,
+		s1,
+		cmp;
+	for ( ; ; addr0 += 4, addr1 += 4)
 	{
-		switch (Hooks_CompareNextCell(addr0, addr1))
+		s0 = AMX_Read(addr0);
+		s1 = AMX_Read(addr1);
+		#emit ADDR.pri   s0
+		#emit LODB.I     1
+		#emit MOVE.alt
+		#emit ADDR.pri   s1
+		#emit LODB.I     1
+		#emit SUB
+		#emit STOR.S.pri cmp
+		if (cmp > 0)
 		{
-			case -1:
-			{
-				// Swap them over.
-				new
-					tmpFunc = AMX_Read(idx0),
-					tmpName = AMX_Read(idx0 + 4);
-				AMX_Write(idx0, AMX_Read(idx1));
-				AMX_Write(idx0 + 4, AMX_Read(idx1 + 4));
-				AMX_Write(idx1, tmpFunc);
-				AMX_Write(idx1 + 4, tmpName);
-				return;
-			}
-			case 1:
-			{
-				// Already in order - good.
-				return;
-			}
-			// case 0: // Loop.
+			// Already in order - good.
+			return false;
 		}
-		addr0 += 4;
-		addr1 += 4;
+		if (cmp < 0)
+		{
+			break;
+		}
+		{}
+		#emit ADDR.pri   s0
+		#emit LODB.I     2
+		#emit MOVE.alt
+		#emit ADDR.pri   s1
+		#emit LODB.I     2
+		#emit SUB
+		#emit STOR.S.pri cmp
+		if (cmp > 0)
+		{
+			// Already in order - good.
+			return false;
+		}
+		if (cmp < 0)
+		{
+			break;
+		}
+		{}
+		#emit LOAD.S.alt s0
+		#emit LOAD.S.pri s1
+		#emit SHL.C.alt  8
+		#emit SHL.C.pri  8
+		#emit SUB
+		#emit STOR.S.pri cmp
+		if (cmp > 0)
+		{
+			// Already in order - good.
+			return false;
+		}
+		if (cmp < 0)
+		{
+			break;
+		}
+		{}
+		#emit LOAD.S.alt s0
+		#emit LOAD.S.pri s1
+		#emit SUB
+		#emit STOR.S.pri cmp
+		if (cmp > 0)
+		{
+			// Already in order - good.
+			return false;
+		}
+		if (cmp < 0)
+		{
+			break;
+		}
+		// Loop.
 	}
+	// Swap them over.
+	// Read.
+	addr0 = AMX_Read(idx0),
+	addr1 = AMX_Read(idx0 + 4),
+	s0 = AMX_Read(idx1),
+	s1 = AMX_Read(idx1 + 4),
+	
+	// Write.
+	AMX_Write(idx0, s0),
+	AMX_Write(idx0 + 4, s1),
+	AMX_Write(idx1, addr0),
+	AMX_Write(idx1 + 4, addr1);
+	
+	// We swapped the two functions, so we need to keep running the sort step.
+	return true;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -1056,13 +1084,11 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 	// that.  Fortunately I don't actually need to move the strings themselves
 	// around as they just sit nicely in the nametable; I only need to sort the
 	// pointers.
-	for (new i = oldCount - 1; i > 0; --i)
+	for (new i = 1; i < oldCount; ++i)
 	{
-		for (new j = 0; j != i; ++j)
+		for (new j = i; j > 0 && Hooks_ComparePublics(j - 1, j); --j)
 		{
-			// This neatly moves all the functions with blanked names to the
-			// start of the public functions table (which will soon be moved).
-			Hooks_ComparePublics(j, j + 1);
+			// Do nothing extra.
 		}
 	}
 	// Move the start address UP to reduce the VM's search space.
@@ -1071,9 +1097,10 @@ _Y_HOOKS_STATIC Hooks_SortPublics()
 		// Update stored values in y_amx so they reflect the new structure.
 		if (!Server_JITExists() || YSI_g_sSortedOnce)
 		{
-			AMX_Write(AMX_BASE_ADDRESS + 32, AMX_Read(AMX_BASE_ADDRESS + 32) + YSI_g_sInitPublicDiff);
-			AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff;
-			ResetStaticAmxHeader();
+			oldCount = AMX_Read(AMX_BASE_ADDRESS + 32),
+			AMX_Write(AMX_BASE_ADDRESS + 32, oldCount + YSI_g_sInitPublicDiff),
+			AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff,
+			ResetStaticAmxHeader(),
 			YSI_g_sSortedOnce = true;
 		}
 	}
@@ -1250,9 +1277,10 @@ _Y_HOOKS_STATIC _Hooks_RepairStub()
 	// Move the header up for searching.
 	if (YSI_g_sInitPublicDiff)
 	{
-		AMX_Write(AMX_BASE_ADDRESS + 32, AMX_Read(AMX_BASE_ADDRESS + 32) + YSI_g_sInitPublicDiff);
-		AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff;
-		ResetStaticAmxHeader();
+		new tmp = AMX_Read(AMX_BASE_ADDRESS + 32);
+		AMX_Write(AMX_BASE_ADDRESS + 32, tmp + YSI_g_sInitPublicDiff),
+		AMX_HEADER_PUBLICS += YSI_g_sInitPublicDiff,
+		ResetStaticAmxHeader(),
 		YSI_g_sSortedOnce = true;
 	}
 }
@@ -1344,7 +1372,7 @@ Hooks_NumArgs_negative:
 	#emit LOAD.I
 	#emit SHR.C.pri           2
 	#emit RETN*/
-	__pragma(naked);
+	__COMPILER_NAKED();
 }
 
 #if defined _ALS_numargs

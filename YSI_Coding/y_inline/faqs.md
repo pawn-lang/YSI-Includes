@@ -393,6 +393,32 @@ Caller(Func:callback<ii>)
 
 ## ``warning 213: tag mismatch: expected tag "F@_@", but found "F@_@<something>"``
 
+There are two possible causes to this:
+
+1. Wrong function type:
+
+`Dialog_ShowCallback` takes a callback, this callback expects five parameters:
+
+```pawn
+inline Response(playerid, dialogid, response, listitem, string:inputtext[])
+{
+}
+Dialog_ShowCallback(pid, using inline Response, ...);
+```
+
+That code is correct.  The following code is not:
+
+```pawn
+inline Response(playerid, dialogid, string:inputtext[])
+{
+}
+Dialog_ShowCallback(pid, using inline Response, ...);
+```
+
+Here, `Response` is missing two parameters.  This will trigger the warning ``warning 213: tag mismatch: expected tag "F@_@iiiis", but found "F@_@iis"``  The warning itself gives you some information - `iis` are the parameters that exist (number, number, string), `iiiis` are the ones that are expected.  So you're missing two.  The warning might also be the opposite, so you're missing some, even just `F@_@`, which means no parameters given/wanted.
+
+2. Legacy code:
+
 This indicates that you are passing an inline to an old-style function, one such as:
 
 ```pawn
