@@ -334,6 +334,7 @@ static bool:ScriptInit_CallOnCodeInit(bool:jit, bool:fs)
 					strcat(name, ".amx");
 				}
 			#else
+				#pragma unused fs
 				static const name[] = "YSI_CACHE.amx";
 			#endif
 		#endif
