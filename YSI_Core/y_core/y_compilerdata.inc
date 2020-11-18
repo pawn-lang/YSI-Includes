@@ -143,6 +143,7 @@ static stock __CompilerSecondPass() {}
 #define __COMPILER_BUG_317 (1)
 #define __COMPILER_NAMEOF (0)
 #define __COMPILER_PRAGMA (0)
+#define __COMPILER___EMIT_U (0)
 
 #define __COMPILER_STATIC_ENUM enum
 
@@ -160,6 +161,10 @@ static stock __CompilerSecondPass() {}
 		#if __PawnBuild >= 8
 			#undef __COMPILER_BUG_317
 			#define __COMPILER_BUG_317 (0)
+		#endif
+		#if __PawnBuild >= 10
+			#undef __COMPILER___EMIT_U
+			#define __COMPILER___EMIT_U (1)
 		#endif
 		// Disable `__COMPILER_PRAGMA` for now, while there's no `PROC` generated.
 		#if __PawnBuild >= 11
@@ -259,9 +264,11 @@ const __CompilerDefault:__COMPILER_DEFAULT = __CompilerDefault:0;
 	
 	stock YSI_gAMXAddress_;
 	
-	#define AMX_Read(%0) __emit(load.u.pri %0, stor.pri YSI_gAMXAddress_, lref.pri YSI_gAMXAddress_)
-	#define AMX_Write(%0,%1) __emit(push.u %1, load.u.alt %0, stor.alt YSI_gAMXAddress_, pop.pri, sref.pri YSI_gAMXAddress_)
-
+	#if __COMPILER___EMIT_U
+		#define AMX_Read(%0) __emit(load.u.pri %0, stor.pri YSI_gAMXAddress_, lref.pri YSI_gAMXAddress_)
+		#define AMX_Write(%0,%1) __emit(push.u %1, load.u.alt %0, stor.alt YSI_gAMXAddress_, pop.pri, sref.pri YSI_gAMXAddress_)
+	#endif
+	
 	// Error with:
 	//
 	//   const Float:X[] = Float:"hello";
