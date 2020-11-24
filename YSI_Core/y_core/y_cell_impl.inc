@@ -771,7 +771,7 @@ stock Cell_ExpandLeft(GLOBAL_TAG_TYPES:x, m)
 	return Cell_ExpandLeftPrecomputed(x, m, Cell_PrecomputeMaskPermutation(m));
 }
 
-#if __COMPILER___EMIT
+#if __COMPILER___EMIT_U
 	#define Cell_GetLowestComponent(%0) \
 		__emit(                         \
 			LOAD.U.pri  %0             ,\
