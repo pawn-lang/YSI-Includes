@@ -303,6 +303,13 @@ static stock Format_AddColour(str[], pos, &rem, &curCol, newCol) <y_render_show 
 	// differences detected by the human eye (especially when there are spaces).
 	new
 		rgb = newCol & 0x00FFFFFF;
+	if (YSI_g_sTempStyle[E_STYLE_DATA_TYPE] != e_STYLE_TYPE_DIALOG && pos == 0)
+	{
+		gInitialColour = newCol;
+		// Don't add the colour - this is handled in the text display function.
+		curCol = rgb;
+		return 0;
+	}
 	// Don't add the colour if there's no change from the last one.
 	if (rgb == curCol)
 	{
@@ -318,13 +325,6 @@ static stock Format_AddColour(str[], pos, &rem, &curCol, newCol) <y_render_show 
 				return 0;
 			}
 		}
-	}
-	if (YSI_g_sTempStyle[E_STYLE_DATA_TYPE] != e_STYLE_TYPE_DIALOG && pos == 0)
-	{
-		gInitialColour = newCol;
-		// Don't add the colour - this is handled in the text display function.
-		curCol = rgb;
-		return 0;
 	}
 	// Now try add the string version of the colour.
 	if (rem < Y_RENDER_SCM_COLOUR_LEN)
