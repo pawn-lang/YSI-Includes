@@ -448,9 +448,9 @@ GLOBAL__ Command_AddAlt(oidx, const string:cmd[])
 //P:D(Command_ReProcess(playerid,cmdtext,help,force));
 #define Command_ReProcess(%0,%1,%2,%3) Command_ReProcess(%0,%1, _:(%2)|(_:(%3)<<1))
 
-FOREIGN__ Command_ReProcess(p,string:c[],h);
+FOREIGN__ Command_ReProcess(p, const string:c[], h);
 
-GLOBAL__ Command_ReProcess(p,string:c[],h)
+GLOBAL__ Command_ReProcess(p, const string:c[], h)
 {
 	static
 		sCmd[64] = "@yC_",
