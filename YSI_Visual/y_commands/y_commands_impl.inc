@@ -453,7 +453,7 @@ FOREIGN__ Command_ReProcess(p, const string:c[], h);
 GLOBAL__ Command_ReProcess(p, const string:c[], h)
 {
 	static
-		sBuffer[sizeof c],
+		sBuffer[64],
 		sCmd[64] = "@yC_",
 		sPos = 0,
 		sRet = 0,
