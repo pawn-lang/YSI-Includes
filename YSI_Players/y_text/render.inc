@@ -88,10 +88,6 @@ Optional plugins:
 // specifier data.
 #define Y_RENDER_SPECIFIER(%0) ((ch&_:e_COMPRESS_FORMAT_DATA_ZERO)?((ch&_:e_COMPRESS_FORMAT_DATA_LEFT)?(scFormats[3][6]='%0',scFormats[3]):(scFormats[2][5]='%0',scFormats[2])):((ch&_:e_COMPRESS_FORMAT_DATA_LEFT)?(scFormats[1][5]='%0',scFormats[1]):(scFormats[0][4]='%0',scFormats[0])))
 
-// This makes hex and binary format specifiers display correctly with negative
-// numbers in all cases (e.g. %5x etc).
-#define Y_RENDER_FIX_NEGATIVE(%0:%1) if(width>%1)arg=(ch&_:e_COMPRESS_FORMAT_DATA_LEFT)?((ch&_:e_COMPRESS_FORMAT_DATA_ZERO)?format(ts,144,"%"#%0"%0-*"#%0,arg>>>32/%1,width-(%1-1),arg&(1<<32/%1)-1):format(ts,144,"%"#%0"%-*"#%0,arg>>>32/%1,width-(%1-1),arg&(1<<32/%1)-1)):(ch&_:e_COMPRESS_FORMAT_DATA_ZERO)?format(ts,144,"%0*"#%0"%"#%0,width-1,arg>>>32/%1,arg&(1<<32/%1)-1):format(ts,144,"%*"#%0"%"#%0,width-1,arg>>>32/%1,arg&(1<<32/%1)-1);else format(ts,144,"%"#%0"%"#%0,arg>>>32/%1,arg&(1<<32/%1)-1)
-
 // Try add a string to the current output.  This needs modifying to reset the
 // whole function after a string is displayed.  "onlyOne" is set in the case
 // where any line excess is cut off (e.g. in marquees).
@@ -888,7 +884,7 @@ Format_Render_start:
 		scSpecifier[8],
 		// =====================================================================
 		//  UPDATE Y_RENDER_FIX_NEGATIVE MACRO ON CHANGE!!!!!!!
-		ts[144],
+		ts[YSI_MAX_STRING],
 		//  Max handleable input string length is 128 (hopefully sufficient).
 		// =====================================================================
 		func[32],
@@ -1015,7 +1011,12 @@ Format_Render_start:
 						{
 							if (arg & 0x80000000)
 							{
-								Y_RENDER_FIX_NEGATIVE(x:8);
+								// This makes hex and binary format specifiers display correctly
+								// with negative numbers in all cases (e.g. %5x etc).
+								if(width>8)
+									arg=(ch&_:e_COMPRESS_FORMAT_DATA_LEFT)?((ch&_:e_COMPRESS_FORMAT_DATA_ZERO)?format(ts,YSI_MAX_STRING,"%"#x"x-*"#x,arg>>>32/8,width-(8-1),arg&(1<<32/8)-1):format(ts,YSI_MAX_STRING,"%"#x"%-*"#x,arg>>>32/8,width-(8-1),arg&(1<<32/8)-1)):(ch&_:e_COMPRESS_FORMAT_DATA_ZERO)?format(ts,YSI_MAX_STRING,"x*"#x"%"#x,width-1,arg>>>32/8,arg&(1<<32/8)-1):format(ts,YSI_MAX_STRING,"%*"#x"%"#x,width-1,arg>>>32/8,arg&(1<<32/8)-1);
+								else
+									format(ts,YSI_MAX_STRING,"%"#x"%"#x,arg>>>32/8,arg&(1<<32/8)-1);
 							}
 							else
 							{
@@ -1032,7 +1033,12 @@ Format_Render_start:
 						{
 							if (arg & 0x80000000)
 							{
-								Y_RENDER_FIX_NEGATIVE(b:32);
+								// This makes hex and binary format specifiers display correctly
+								// with negative numbers in all cases (e.g. %5x etc).
+								if(width>32)
+									arg=(ch&_:e_COMPRESS_FORMAT_DATA_LEFT)?((ch&_:e_COMPRESS_FORMAT_DATA_ZERO)?format(ts,YSI_MAX_STRING,"%"#b"b-*"#b,arg>>>32/32,width-(32-1),arg&(1<<32/32)-1):format(ts,YSI_MAX_STRING,"%"#b"%-*"#b,arg>>>32/32,width-(32-1),arg&(1<<32/32)-1)):(ch&_:e_COMPRESS_FORMAT_DATA_ZERO)?format(ts,YSI_MAX_STRING,"b*"#b"%"#b,width-1,arg>>>32/32,arg&(1<<32/32)-1):format(ts,YSI_MAX_STRING,"%*"#b"%"#b,width-1,arg>>>32/32,arg&(1<<32/32)-1);
+								else
+									format(ts,YSI_MAX_STRING,"%"#b"%"#b,arg>>>32/32,arg&(1<<32/32)-1);
 							}
 							else
 							{
