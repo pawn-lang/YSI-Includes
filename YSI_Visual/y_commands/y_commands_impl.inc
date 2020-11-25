@@ -453,37 +453,41 @@ FOREIGN__ Command_ReProcess(p, const string:c[], h);
 GLOBAL__ Command_ReProcess(p, const string:c[], h)
 {
 	static
+		sBuffer[sizeof c],
 		sCmd[64] = "@yC_",
 		sPos = 0,
 		sRet = 0,
 		sHash = 0,
 		e_COMMAND_ERRORS:sErr = COMMAND_ZERO_RET;
+	// Unfortunately people modify params in their commands. 
+	// They shouldn't, but they do, thus for legacy reasons this can't be const unless it is copied to another buffer.
+	strcat(sBuffer, c, sizeof sBuffer);
 	// Check that the input is a valid command.  Note that changing the command
 	// prefix here would be VERY trivial!
-	if ((sRet = _:_Command_IsPrefix(c[0]))) // Relies on "true = 1" later on!
+	if ((sRet = _:_Command_IsPrefix(sBuffer[0]))) // Relies on "true = 1" later on!
 	{
-		if (!c[1]) return Command_OnReceived(INVALID_INPUT, p, c);
+		if (!sBuffer[1]) return Command_OnReceived(INVALID_INPUT, p, sBuffer);
 	}
 	else
 	{
-		if (isnull(c)) return Command_OnReceived(INVALID_INPUT, p, NULL);
+		if (isnull(sBuffer)) return Command_OnReceived(INVALID_INPUT, p, NULL);
 	}
 	// Check for a valid player.
 	#if !defined Y_COMMANDS_NO_IPC
-		if (!IsPlayerConnected(p)) return Command_OnReceived(NO_PLAYER, p, c);
+		if (!IsPlayerConnected(p)) return Command_OnReceived(NO_PLAYER, p, sBuffer);
 	#endif
-	P:1("Commands_OnPlayerCommandText called: %d %s", p, c);
+	P:1("Commands_OnPlayerCommandText called: %d %s", p, sBuffer);
 	new
 		prevID = YSI_g_sCurrentID;
 	if (PA_Get(YSI_g_sDisabledPlayers, p))
 	{
-		sRet = Command_OnReceived(DISABLED, p, c);
+		sRet = Command_OnReceived(DISABLED, p, sBuffer);
 		if (sErr != COMMAND_OK)
 			return sRet;
 	}
 	// Get the hashed version of the decoded string, skipping the possible  "/".
-	sPos = Puny_EncodeHash(sCmd[4], c[sRet], sHash, .delimiter = '@') + sRet;
-	while (c[sPos] == ' ') ++sPos; // Better/slower: ('\0' < c[sPos] <= ' ').
+	sPos = Puny_EncodeHash(sCmd[4], sBuffer[sRet], sHash, .delimiter = '@') + sRet;
+	while (sBuffer[sPos] == ' ') ++sPos; // Better/slower: ('\0' < sBuffer[sPos] <= ' ').
 	// Find the command in the array.
 	YSI_g_sCurrentID = HashMap_GetWithHash(YSI_g_sCommandMap, sCmd[4], sHash);
 	P:5("Commands_OnPlayerCommandText: %s, %d, %d, %d", sCmd[4], sPos, sHash, YSI_g_sCurrentID);
@@ -491,22 +495,22 @@ GLOBAL__ Command_ReProcess(p, const string:c[], h)
 	{
 		return
 			YSI_g_sCurrentID = prevID,
-			Command_OnReceived(UNDEFINED, p, c);
+			Command_OnReceived(UNDEFINED, p, sBuffer);
 	}
 	#if defined Y_COMMANDS_USE_CHARS
-		if (sRet && _Command_GetPrefix(YSI_g_sCurrentID) != c[0])
+		if (sRet && _Command_GetPrefix(YSI_g_sCurrentID) != sBuffer[0])
 		{
 			// Have a prefix, but not the right one.  Calling this function
 			// directly always works for all possible command prefixes.
-			return Command_OnReceived(BAD_PREFIX, p, c);
+			return Command_OnReceived(BAD_PREFIX, p, sBuffer);
 		}
 	#endif
 	P:5("Commands_OnPlayerCommandText: Use %d", _Command_GetPlayer(YSI_g_sCurrentID, p));
 	// Can the player use this command?  `Command_OnReceived` sets "sErr".
 	if ((h&2) || _Command_GetPlayer(YSI_g_sCurrentID, p))
-		sRet = Command_OnReceived(OK, p, c);
+		sRet = Command_OnReceived(OK, p, sBuffer);
 	else
-		sRet = Command_OnReceived(DENIED, p, c);
+		sRet = Command_OnReceived(DENIED, p, sBuffer);
 	if (sErr != COMMAND_OK)
 	{
 		return
@@ -521,7 +525,7 @@ GLOBAL__ Command_ReProcess(p, const string:c[], h)
 		if (MASTER_EXCLUSIVE<YSI_g_sCurrentID>)
 	#endif
 		{
-			P:5("Commands_OnPlayerCommandText: Local %08x (%d, \"%s\", %d)", sHash, p, c[sPos], h & 1);
+			P:5("Commands_OnPlayerCommandText: Local %08x (%d, \"%s\", %d)", sHash, p, sBuffer[sPos], h & 1);
 			// In this script.  More to the point, in ONLY this script, so
 			// we can't have another script as the master.  I tried updating
 			// this code but then realised that the update would ignore the
@@ -553,7 +557,7 @@ GLOBAL__ Command_ReProcess(p, const string:c[], h)
 			// This is in another script, or multiple scripts.
 			// Call the command in another script.  If no particular script
 			// is set up as the "master", call it in the first one found...
-			if (c[sPos]) CallRemoteFunction(sCmd, YSI_gscISII, p, c[sPos], h&1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
+			if (c[sPos]) CallRemoteFunction(sCmd, YSI_gscISII, p, sBuffer[sPos], h&1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 			else CallRemoteFunction(sCmd, YSI_gscISII, p, NULL, h&1, Cell_GetLowestBit(_:MASTER_GET<YSI_g_sCurrentID>));
 			sRet = getproperty(8, YSIM_RETURN);
 		}
