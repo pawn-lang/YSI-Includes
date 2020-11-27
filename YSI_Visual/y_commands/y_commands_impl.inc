@@ -453,7 +453,7 @@ FOREIGN__ Command_ReProcess(p, const string:c[], h);
 GLOBAL__ Command_ReProcess(p, const string:c[], h)
 {
 	static
-		sBuffer[64],
+		sBuffer[144],
 		sCmd[64] = "@yC_",
 		sPos = 0,
 		sRet = 0,
@@ -461,7 +461,7 @@ GLOBAL__ Command_ReProcess(p, const string:c[], h)
 		e_COMMAND_ERRORS:sErr = COMMAND_ZERO_RET;
 	// Unfortunately people modify params in their commands. 
 	// They shouldn't, but they do, thus for legacy reasons this can't be const unless it is copied to another buffer.
-	strcat(sBuffer, c, sizeof sBuffer);
+	strcpy(sBuffer, c, sizeof sBuffer);
 	// Check that the input is a valid command.  Note that changing the command
 	// prefix here would be VERY trivial!
 	if ((sRet = _:_Command_IsPrefix(sBuffer[0]))) // Relies on "true = 1" later on!
