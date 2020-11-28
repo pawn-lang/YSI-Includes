@@ -188,3 +188,10 @@ stock
 stock const
 	BitArray:YSI_g_cEmptyGroups<_MAX_GROUPS_G>;
 
+enum E_GROUP_SET
+{
+	DENY  = 0x80000000,
+	CLEAR = 0,
+	ALLOW = 1,
+}
+
