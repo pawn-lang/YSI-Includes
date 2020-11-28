@@ -107,7 +107,8 @@ static stock
 	YSI_g_sMaxEncountered = -1,
 	BitArray:YSI_g_sElementAllowed[_GROUP_MAKE_LIMIT]<_:_MAX_GROUPS_G>,
 	BitArray:YSI_g_sElementDenied[_GROUP_MAKE_LIMIT]<_:_MAX_GROUPS_G>,
-	BitArray:YSI_g_sDefaultMembership<_:_MAX_GROUPS_G>,
+	BitArray:YSI_g_sDefaultAllowed<_:_MAX_GROUPS_G>,
+	BitArray:YSI_g_sDefaultDenied<_:_MAX_GROUPS_G>,
 	BitArray:YSI_g_sEmpty<_:_MAX_GROUPS_G>,
 	_yGI = 0,
 	_yGU = 0,
@@ -178,11 +179,11 @@ stock _GROUP_MAKE_NAME<..._InitialiseFromGroups>(_GROUP_MAKE_TAG:x = _GROUP_MAKE
 	// the default settings for a group.
 	if (x != _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
 	{
-		YSI_g_sElementAllowed[_:x] = YSI_g_sDefaultMembership,
+		YSI_g_sElementAllowed[_:x] = YSI_g_sDefaultAllowed,
 		YSI_g_sMaxEncountered = max(YSI_g_sMaxEncountered, _:x);
 		FOREACH__ (new playerid : Player)
 		{
-			Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultMembership, YSI_gGroupPlayers[playerid]);
+			Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultAllowed, YSI_gGroupPlayers[playerid]);
 		}
 	}
 	return 0;
@@ -334,6 +335,7 @@ GGLOBAL__ Group_Set...Default(Group:g,E_GROUP_SET:s)
 		new
 			slot = Bit_Slot(g),
 			Bit:mask = Bit_Mask(g),
+			Bit:inv = ~mask,
 			Iterator:GP<MAX_PLAYERS>;
 		FOREACH__ (new playerid : Player)
 		{
@@ -347,44 +349,82 @@ GGLOBAL__ Group_Set...Default(Group:g,E_GROUP_SET:s)
 				Iter_Add(GP, playerid);
 			}
 		}
-		static
-			BitArray:sNext<_MAX_GROUPS_G>;
-		if (s)
+		if (s == E_GROUP_SET:ALLOW)
 		{
-			Bit_Let(YSI_g_sDefaultMembership, _:g);
+			YSI_g_sDefaultAllowed[slot] |= mask;
+			YSI_g_sDefaultDenied[slot] &= inv;
 			for (new el = 0; el <= YSI_g_sMaxEncountered; ++el)
 			{
-				sNext = YSI_g_sElementAllowed[el];
-				if (sNext[slot] & mask)
+				// Check if this group already has this element.
+				YSI_gTempAllowed_ = YSI_g_sElementAllowed[el];
+				YSI_gTempDenied_ = YSI_g_sElementDenied[el];
+				if ((YSI_gTempAllowed_[slot] & mask) && !(YSI_gTempDenied_[slot] & mask))
 				{
+					// Could already be seen, thus no change.
+					continue;
+				}
+				YSI_gTempAllowed_[slot] |= mask;
+				YSI_gTempDenied_[slot] &= inv;
+				// Is this element NOT in the current group?
+				FOREACH__ (new playerid : GP)
+				{
+					Group_FullPlayerUpdate(playerid, el, YSI_g_sElementAllowed[el], YSI_gTempAllowed_, YSI_g_sElementDenied[el], YSI_gTempDenied_, YSI_gGroupPlayers[playerid]);
+				}
+				YSI_g_sElementAllowed[el][slot] |= mask;
+				YSI_g_sElementDenied[el][slot] &= inv;
+			}
+		}
+		else if (s == E_GROUP_SET:DENY)
+		{
+			YSI_g_sDefaultAllowed[slot] &= inv;
+			YSI_g_sDefaultDenied[slot] |= mask;
+			for (new el = 0; el <= YSI_g_sMaxEncountered; ++el)
+			{
+				YSI_gTempDenied_ = YSI_g_sElementDenied[el];
+				if (YSI_gTempDenied_[slot] & mask)
+				{
+					// Already denied.  Doesn't matter what the old `Allowed`
+					// state was because denials override them
+					Bit_Vet(YSI_g_sElementAllowed[el], _:g);
 					continue;
 				}
 				// Is this element NOT in the current group?
-				Bit_Let(sNext, _:g);
+				YSI_gTempDenied_[slot] |= mask;
 				FOREACH__ (new playerid : GP)
 				{
-					Group_FullPlayerUpdate(playerid, el, YSI_g_sElementAllowed[el], sNext, YSI_gGroupPlayers[playerid]);
+					// `YSI_gTempAllowed_` IS NEVER SET.  We don't need it at
+					// all in `Group_FullPlayerUpdate` because we know that
+					// `YSI_gTempDenied_` has at least one bit set, and will
+					// therefore prevent the current state of allows being
+					// checked.
+					Group_FullPlayerUpdate(playerid, el, YSI_g_sElementAllowed[el], YSI_gTempAllowed_, YSI_g_sElementDenied[el], YSI_gTempDenied_, YSI_gGroupPlayers[playerid]);
 				}
-				YSI_g_sElementAllowed[el] = sNext;
+				YSI_g_sElementAllowed[el][slot] &= inv;
+				YSI_g_sElementDenied[el][slot] |= mask;
 			}
 		}
 		else
 		{
-			Bit_Vet(YSI_g_sDefaultMembership, _:g);
+			YSI_g_sDefaultAllowed[slot] &= inv;
+			YSI_g_sDefaultDenied[slot] &= inv;
 			for (new el = 0; el <= YSI_g_sMaxEncountered; ++el)
 			{
-				sNext = YSI_g_sElementAllowed[el];
-				if (!(sNext[slot] & mask))
+				YSI_gTempAllowed_ = YSI_g_sElementAllowed[el];
+				YSI_gTempDenied_ = YSI_g_sElementDenied[el];
+				if (!(YSI_gTempAllowed_[slot] & mask) && !(YSI_gTempDenied_[slot] & mask))
 				{
+					// Nothing has changed.
 					continue;
 				}
 				// Is this element in the current group?
-				Bit_Vet(sNext, _:g);
+				YSI_gTempAllowed_[slot] &= inv;
+				YSI_gTempDenied_[slot] &= inv;
 				FOREACH__ (new playerid : GP)
 				{
-					Group_FullPlayerUpdate(playerid, el, YSI_g_sElementAllowed[el], sNext, YSI_gGroupPlayers[playerid]);
+					Group_FullPlayerUpdate(playerid, el, YSI_g_sElementAllowed[el], YSI_gTempAllowed_, YSI_g_sElementDenied[el], YSI_gTempDenied_, YSI_gGroupPlayers[playerid]);
 				}
-				YSI_g_sElementAllowed[el] = sNext;
+				YSI_g_sElementAllowed[el][slot] &= inv;
+				YSI_g_sElementDenied[el][slot] &= inv;
 			}
 		}
 		return 1;
@@ -410,7 +450,7 @@ GGLOBAL__ Group_Set...New(Group:g,E_GROUP_SET:s)
 	if (g <= GROUP_GLOBAL)
 	{
 		// There is now NO validity check for reasons of distruibution.
-		Bit_Set(YSI_g_sDefaultMembership, _:GROUP_TEMP_FIX(g), s);
+		Bit_Set(YSI_g_sDefaultAllowed, _:GROUP_TEMP_FIX(g), s);
 		return 1;
 	}
 	return 0;
@@ -433,15 +473,15 @@ GGLOBAL__ Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
 	if (g <= GROUP_GLOBAL)
 	{
 		GROUP_FIX(g);
-		YSI_gTempGroups = YSI_g_sDefaultMembership;
-		YSI_g_sDefaultMembership = YSI_g_cEmptyGroups;
-		Bit_Let(YSI_g_sDefaultMembership, _:g);
+		YSI_gTempGroups = YSI_g_sDefaultAllowed;
+		YSI_g_sDefaultAllowed = YSI_g_cEmptyGroups;
+		Bit_Let(YSI_g_sDefaultAllowed, _:g);
 		for (new i = 0; i != bits<_MAX_GROUPS_G>; ++i)
 		{
-			YSI_g_sEmpty[i] = ~YSI_g_sDefaultMembership[i];
+			YSI_g_sEmpty[i] = ~YSI_g_sDefaultAllowed[i];
 		}
 		_GROUP_MAKE_NAME<..._InitialiseFromGroups>(el);
-		YSI_g_sDefaultMembership = YSI_gTempGroups;
+		YSI_g_sDefaultAllowed = YSI_gTempGroups;
 		YSI_g_sEmpty = YSI_g_cEmptyGroups;
 		return 1;
 	}
@@ -701,7 +741,7 @@ static stock void:Group_Handoff(i,const a[],s)
 	s = min(s, bits<_:_MAX_GROUPS_G>);
 	if (i == -1)
 	{
-		memcpy(_:YSI_g_sDefaultMembership, a, 0, s * 4);
+		memcpy(_:YSI_g_sDefaultAllowed, a, 0, s * 4);
 	}
 	else if (i < sizeof (YSI_g_sElementAllowed))
 	{
@@ -712,7 +752,7 @@ static stock void:Group_Handoff(i,const a[],s)
 MASTER_FUNC__ MAKE_YCM<HANDOFF_SOURCE...Group>()<_YCM:p>
 {
 	// Pass data to the new group controller.
-	Group_Handoff(-1, _:YSI_g_sDefaultMembership, sizeof (YSI_g_sDefaultMembership));
+	Group_Handoff(-1, _:YSI_g_sDefaultAllowed, sizeof (YSI_g_sDefaultAllowed));
 	for (new i = 0; i != sizeof (YSI_g_sElementAllowed); ++i)
 	{
 		Group_Handoff(i, _:YSI_g_sElementAllowed[i], sizeof (YSI_g_sElementAllowed[]));
@@ -722,8 +762,10 @@ MASTER_FUNC__ MAKE_YCM<HANDOFF_SOURCE...Group>()<_YCM:p>
 /*-------------------------------------------------------------------------*//**
  * <param name="playerid">Player to check.</param>
  * <param name="el">Element to show or hide.</param>
- * <param name="previous">(p) The old state of affairs.</param>
- * <param name="current">(c) The new state of affairs.</param>
+ * <param name="previousAllowed">(p) The old allowed groups.</param>
+ * <param name="currentAllowed">(c) The new allowed groups.</param>
+ * <param name="previousDenied">(q) The old denied groups.</param>
+ * <param name="currentDenied">(d) The new denied groups.</param>
  * <param name="reference">(r) What to compare changes to.</param>
  * <remarks>
  *  I did have a good reason for calling this "FU", but I forgot it!  Anyway,
@@ -741,7 +783,7 @@ MASTER_FUNC__ MAKE_YCM<HANDOFF_SOURCE...Group>()<_YCM:p>
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-static stock Group_FullPlayerUpdate(playerid, el, const Bit:p[], const Bit:c[], const Bit:r[])
+static stock Group_FullPlayerUpdate(playerid, el, const Bit:p[], const Bit:c[], const Bit:q[], const Bit:d[], const Bit:r[])
 {
 	// "_GROUPS_CHECK" is a macro that expands to a massive unrolled "if"
 	// statement checking up to 512 groups at once.  Any more than that and this
@@ -763,6 +805,40 @@ static stock Group_FullPlayerUpdate(playerid, el, const Bit:p[], const Bit:c[], 
 		printf("Group_FullPlayerUpdate ("#_GROUP_MAKE_NAME<...>") called:\r\n\t%d, %d,\r\n\t%s,\r\n\t%s,\r\n\t%s,\r\n\t%s, %s",
 			playerid, el, Bit_Display(p, bits<_MAX_GROUPS_G>), Bit_Display(c, bits<_MAX_GROUPS_G>), Bit_Display(r, bits<_MAX_GROUPS_G>), debugA, debugB);
 	#endif
+	_GROUPS_CHECK_ANY(q,r)
+	{
+		// Were previously denied.
+		_GROUPS_CHECK_ANY(d,r)
+		{
+			// Still denied.
+			P:7("Group_FullPlayerUpdate: %d %d denied, still are", playerid, el);
+			return;
+		}
+		// They were previously denied, but now they aren't.  Does that mean
+		// then can now see it?
+		_GROUPS_CHECK_ANY(c,r)
+		{
+			P:7("Group_FullPlayerUpdate: %d %d denied, now can", playerid, el);
+			_GROUP_MAKE_NAME<..._SetPlayer>(_GROUP_MAKE_TAG:el, playerid, true);
+			return;
+		}
+		P:7("Group_FullPlayerUpdate: %d %d denied, now not", playerid, el);
+		return;
+	}
+	// Were not previously denied.  Are they now?
+	_GROUPS_CHECK_ANY(d,r)
+	{
+		_GROUPS_CHECK_ANY(p,r)
+		{
+			// Now denied.
+			P:7("Group_FullPlayerUpdate: %d %d allowed, now cant't", playerid, el);
+			_GROUP_MAKE_NAME<..._SetPlayer>(_GROUP_MAKE_TAG:el, playerid, false);
+			return;
+		}
+		P:7("Group_FullPlayerUpdate: %d %d allowed, now aren't", playerid, el);
+		return;
+	}
+	// No denies in force.  Check normal allows.
 	_GROUPS_CHECK_ANY(p,r)
 	{
 		// Could previously see this thing.  The thing about this design is that
@@ -835,18 +911,18 @@ GCHAIN__ _yGI(&ni, &na, &nu)
 		if (na)
 		{
 			// Called to "push" the default settings.
-			sStack = YSI_g_sDefaultMembership;
-			YSI_g_sDefaultMembership = YSI_g_cEmptyGroups;
-			Bit_Let(YSI_g_sDefaultMembership, nu);
+			sStack = YSI_g_sDefaultAllowed;
+			YSI_g_sDefaultAllowed = YSI_g_cEmptyGroups;
+			Bit_Let(YSI_g_sDefaultAllowed, nu);
 			for (new i = 0; i != bits<_MAX_GROUPS_G>; ++i)
 			{
-				YSI_g_sEmpty[i] = ~YSI_g_sDefaultMembership[i];
+				YSI_g_sEmpty[i] = ~YSI_g_sDefaultAllowed[i];
 			}
 		}
 		else
 		{
 			// Called to "pop" the default settings.
-			YSI_g_sDefaultMembership = sStack;
+			YSI_g_sDefaultAllowed = sStack;
 			YSI_g_sEmpty = YSI_g_cEmptyGroups;
 		}
 	}
@@ -856,7 +932,7 @@ GCHAIN__ _yGI(&ni, &na, &nu)
 		// Enable the default group.  If I'm right, this way is actually better than
 		// using variables as in most cases because "_MAX_GROUPS" is a constant so
 		// all the other maths will be constant.
-		Bit_Let(YSI_g_sDefaultMembership, _MAX_GROUPS);
+		Bit_Let(YSI_g_sDefaultAllowed, _MAX_GROUPS);
 		// Set up the function chaining.
 		new
 			x = 0;
@@ -888,7 +964,7 @@ GCHAIN__ _yGA(&group)
 		s = Bit_Slot(group),
 		Bit:m = ~Bit_Mask(group);
 	// Set the default "contains" for this group to false.
-	YSI_g_sDefaultMembership[s] &= m;
+	YSI_g_sDefaultAllowed[s] &= m;
 	// Disable every element in this group.  DOESN'T use "YSI_g_sMaxEncountered"
 	// because we need to set up for the future too.
 	for (new i = 0; i != _GROUP_MAKE_LIMIT; ++i)
