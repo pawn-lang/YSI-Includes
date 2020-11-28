@@ -183,7 +183,6 @@ Optional plugins:
 
 stock
 	BitArray:YSI_gGroupPlayers[MAX_PLAYERS]<_MAX_GROUPS_G>,
-	BitArray:YSI_gTempGroups<_MAX_GROUPS_G>,
 	BitArray:YSI_gTempAllowed_<_MAX_GROUPS_G>,
 	BitArray:YSI_gTempDenied_<_MAX_GROUPS_G>;
 	

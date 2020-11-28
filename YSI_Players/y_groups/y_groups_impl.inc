@@ -396,11 +396,11 @@ remotefunc static void:_Group_Destroy(g, const Iterator@gp[MAX_PLAYERS + 1], s)
 		// Check it!  Local parameter iterator!
 		FOREACH__ (new p : gp)
 		{
-			YSI_gTempGroups = YSI_gGroupPlayers[p];
+			YSI_gTempAllowed_ = YSI_gGroupPlayers[p];
 			// If these parameters were the other way round I could do this:
 			//GROUP_CHAIN<YSI_g_sNextUpdFunc>(p, (YSI_gGroupPlayers[p], YSI_gGroupPlayers[p][ps] &= pm), YSI_gGroupPlayers[p]);
 			// But they're currently not so I can't.
-			GROUP_CHAIN<YSI_g_sNextUpdFunc>(p, YSI_gTempGroups, YSI_gGroupPlayers[p]);
+			GROUP_CHAIN<YSI_g_sNextUpdFunc>(p, YSI_gTempAllowed_, YSI_gGroupPlayers[p]);
 			YSI_gGroupPlayers[p][ps] &= pm;
 		}
 	}
@@ -594,8 +594,8 @@ static stock Bit:_Group_SetSome(playerid, group)
 	new
 		g = -1,
 		s = 0;
-	YSI_gTempGroups = YSI_gGroupPlayers[playerid];
-	Bit_Let(YSI_gTempGroups, group);
+	YSI_gTempAllowed_ = YSI_gGroupPlayers[playerid];
+	Bit_Let(YSI_gTempAllowed_, group);
 	for ( ; ; )
 	{
 		g = Iter_Func@Bits(g, YSI_g_sChildGroups[group], bits<_MAX_GROUPS_G>);
@@ -609,10 +609,10 @@ static stock Bit:_Group_SetSome(playerid, group)
 			}
 			else break;
 		}
-		else if (!Bit_Get(YSI_gTempGroups, g))
+		else if (!Bit_Get(YSI_gTempAllowed_, g))
 		{
 			// This player isn't in this group, add them.
-			Bit_Let(YSI_gTempGroups, g);
+			Bit_Let(YSI_gTempAllowed_, g);
 			YSI_g_sRecursionStack[s][0] = g;
 			YSI_g_sRecursionStack[s][1] = group;
 			++s;
@@ -650,7 +650,7 @@ GLOBAL__ void:Group_SetPlayer(Group:g,p,bool:s)
 				// groups they're in, taking in to account the new groups
 				// hierarchy and pass that new array about.
 				_Group_SetSome(p, _:g);
-				broadcastfunc _Group_SetPlayer(p, YSI_gTempGroups, sizeof (YSI_gTempGroups));
+				broadcastfunc _Group_SetPlayer(p, YSI_gTempAllowed_, sizeof (YSI_gTempAllowed_));
 				return; //1;
 			}
 		}
@@ -658,9 +658,9 @@ GLOBAL__ void:Group_SetPlayer(Group:g,p,bool:s)
 		{
 			if (_Group_HasPlayer(g, p))
 			{
-				YSI_gTempGroups = YSI_gGroupPlayers[p];
-				Bit_Vet(YSI_gTempGroups, _:g);
-				broadcastfunc _Group_SetPlayer(p, YSI_gTempGroups, sizeof (YSI_gTempGroups));
+				YSI_gTempAllowed_ = YSI_gGroupPlayers[p];
+				Bit_Vet(YSI_gTempAllowed_, _:g);
+				broadcastfunc _Group_SetPlayer(p, YSI_gTempAllowed_, sizeof (YSI_gTempAllowed_));
 				return; //1;
 			}
 		}
@@ -1423,7 +1423,7 @@ GLOBAL__ void:Group_SetGroup(Group:g,Group:el,bool:s)
 				if (!_Group_HasPlayer(el, p))
 				{
 					_Group_SetSome(p, _:el);
-					broadcastfunc _Group_SetPlayer(p, YSI_gTempGroups, bits<_MAX_GROUPS_G>);
+					broadcastfunc _Group_SetPlayer(p, YSI_gTempAllowed_, bits<_MAX_GROUPS_G>);
 				}
 			}
 		}

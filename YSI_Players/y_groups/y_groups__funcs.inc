@@ -227,28 +227,43 @@ GGLOBAL__ Group_Set...(Group:g,_GROUP_MAKE_TAG:el,E_GROUP_SET:s)
 		GROUP_FIX(g);
 		new
 			slot = Bit_Slot(g),
-			Bit:mask = Bit_Mask(g);
+			Bit:mask = Bit_Mask(g),
+			Bit:neg = ~mask;
 		P:5(#_GROUP_MAKE_NAME<Group_Set...> ": %i, %i", _:slot, _:mask);
-		if (s)
+		YSI_gTempAllowed_ = YSI_g_sElementAllowed[_:el];
+		YSI_gTempDenied_ = YSI_g_sElementDenied[_:el];
+		if (s == E_GROUP_SET:ALLOW)
 		{
-			// Is this element in the current group?
-			YSI_gTempGroups = YSI_g_sElementAllowed[_:el];
-			if (YSI_gTempGroups[slot] & mask)
+			// Is this element allowed in the current group?
+			if ((YSI_gTempAllowed_[slot] & mask) && !(YSI_gTempDenied_[slot] & mask]))
 			{
 				// No point adding an element to a group that it is already in.
 				return 1;
 			}
-			YSI_gTempGroups[slot] |= mask;
+			YSI_gTempAllowed_[slot] |= mask;
+			YSI_gTempDenied_[slot] &= neg;
+		}
+		else if (s == E_GROUP_SET:DENY)
+		{
+			// Is this element denied in the current group?
+			if ((YSI_gTempDenied_[slot] & mask]))
+			{
+				// No point banning an element from a group that it is already in.
+				YSI_g_sElementAllowed[_:el][slot] &= neg;
+				return 1;
+			}
+			YSI_gTempAllowed_[slot] &= neg;
+			YSI_gTempDenied_[slot] |= mask;
 		}
 		else
 		{
 			// Is this element NOT in the current group?
-			YSI_gTempGroups = YSI_g_sElementAllowed[_:el];
-			if (!(YSI_gTempGroups[slot] & mask))
+			if (!(YSI_gTempAllowed_[slot] & mask) && !(YSI_gTempDenied_[slot] & mask))
 			{
 				return 1;
 			}
-			YSI_gTempGroups[slot] &= ~mask;
+			YSI_gTempAllowed_[slot] &= ~mask;
+			YSI_gTempDenied_[slot] &= ~mask;
 		}
 		FOREACH__ (new playerid : Player)
 		{
@@ -256,10 +271,11 @@ GGLOBAL__ Group_Set...(Group:g,_GROUP_MAKE_TAG:el,E_GROUP_SET:s)
 			{
 				// The player is in the group in question, so they need a full
 				// update.
-				Group_FullPlayerUpdate(playerid, _:el, YSI_g_sElementAllowed[_:el], YSI_gTempGroups, YSI_gGroupPlayers[playerid]);
+				Group_FullPlayerUpdate(playerid, _:el, YSI_g_sElementAllowed[_:el], YSI_gTempAllowed_, YSI_g_sElementDenied[_:el], YSI_gTempDenied_, YSI_gGroupPlayers[playerid]);
 			}
 		}
-		YSI_g_sElementAllowed[_:el] = YSI_gTempGroups;
+		YSI_g_sElementAllowed[_:el] = YSI_gTempAllowed_;
+		YSI_g_sElementDenied[_:el] = YSI_gTempDenied_;
 		return 1;
 	}
 	return 0;
@@ -473,7 +489,7 @@ GGLOBAL__ Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
 	if (g <= GROUP_GLOBAL)
 	{
 		GROUP_FIX(g);
-		YSI_gTempGroups = YSI_g_sDefaultAllowed;
+		YSI_gTempAllowed_ = YSI_g_sDefaultAllowed;
 		YSI_g_sDefaultAllowed = YSI_g_cEmptyGroups;
 		Bit_Let(YSI_g_sDefaultAllowed, _:g);
 		for (new i = 0; i != bits<_MAX_GROUPS_G>; ++i)
@@ -481,7 +497,7 @@ GGLOBAL__ Group_Exclusive...(Group:g, _GROUP_MAKE_TAG:el)
 			YSI_g_sEmpty[i] = ~YSI_g_sDefaultAllowed[i];
 		}
 		_GROUP_MAKE_NAME<..._InitialiseFromGroups>(el);
-		YSI_g_sDefaultAllowed = YSI_gTempGroups;
+		YSI_g_sDefaultAllowed = YSI_gTempAllowed_;
 		YSI_g_sEmpty = YSI_g_cEmptyGroups;
 		return 1;
 	}
