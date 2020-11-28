@@ -755,11 +755,15 @@ stock const
 static stock void:Group_Handoff(i,const a[],s)
 {
 	s = min(s, bits<_:_MAX_GROUPS_G>);
-	if (i == -1)
+	if (i == cellmin)
 	{
 		memcpy(_:YSI_g_sDefaultAllowed, a, 0, s * 4);
 	}
-	else if (i < sizeof (YSI_g_sElementAllowed))
+	else if (i < 0)
+	{
+		memcpy(_:YSI_g_sElementDenied[~i], a, 0, s * 4);
+	}
+	else
 	{
 		memcpy(_:YSI_g_sElementAllowed[i], a, 0, s * 4);
 	}
@@ -768,10 +772,11 @@ static stock void:Group_Handoff(i,const a[],s)
 MASTER_FUNC__ MAKE_YCM<HANDOFF_SOURCE...Group>()<_YCM:p>
 {
 	// Pass data to the new group controller.
-	Group_Handoff(-1, _:YSI_g_sDefaultAllowed, sizeof (YSI_g_sDefaultAllowed));
+	Group_Handoff(cellmin, _:YSI_g_sDefaultAllowed, sizeof (YSI_g_sDefaultAllowed));
 	for (new i = 0; i != sizeof (YSI_g_sElementAllowed); ++i)
 	{
 		Group_Handoff(i, _:YSI_g_sElementAllowed[i], sizeof (YSI_g_sElementAllowed[]));
+		Group_Handoff(~i, _:YSI_g_sElementDenied[i], sizeof (YSI_g_sElementDenied[]));
 	}
 }
 
