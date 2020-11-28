@@ -1011,9 +1011,54 @@ GCHAIN__ _yGU(&pid, Bit:p[], Bit:c[])
 	// called to do the actual internal function of updating their state.
 	for (new el = 0; el <= YSI_g_sMaxEncountered; ++el)
 	{
-		Group_FullPlayerUpdate(pid, el, p, c, YSI_g_sElementAllowed[el]);
+		Group_PartPlayerUpdate(pid, el, p, c, YSI_g_sElementAllowed[el], YSI_g_sElementDenied[el]);
 	}
-	//printf("Player membership: %s", Bit_Display(c));
+}
+
+static stock Group_PartPlayerUpdate(playerid, el, const Bit:p[], const Bit:c[], const Bit:a[], const Bit:d[])
+{
+	_GROUPS_CHECK_ANY(p,d)
+	{
+		// Any previous denials.
+		_GROUPS_CHECK_ANY(c,d)
+		{
+			// No change there.
+			return;
+		}
+		_GROUPS_CHECK_ANY(c,a)
+		{
+			// Now allowed.
+			_GROUP_MAKE_NAME<..._SetPlayer>(_GROUP_MAKE_TAG:el, playerid, true);
+			return;
+		}
+		return;
+	}
+	_GROUPS_CHECK_ANY(c,d)
+	{
+		_GROUPS_CHECK_ANY(p,a)
+		{
+			// Previously allowed, now denied.
+			_GROUP_MAKE_NAME<..._SetPlayer>(_GROUP_MAKE_TAG:el, playerid, false);
+			return;
+		}
+		return;
+	}
+	_GROUPS_CHECK_ANY(p,a)
+	{
+		_GROUPS_CHECK_ANY(c,a)
+		{
+			return;
+		}
+		// Were allowed, now aren't.
+		_GROUP_MAKE_NAME<..._SetPlayer>(_GROUP_MAKE_TAG:el, playerid, false);
+		return;
+	}
+	_GROUPS_CHECK_ANY(c,a)
+	{
+		// Currently allowed.
+		_GROUP_MAKE_NAME<..._SetPlayer>(_GROUP_MAKE_TAG:el, playerid, true);
+		return;
+	}
 }
 
 /*
