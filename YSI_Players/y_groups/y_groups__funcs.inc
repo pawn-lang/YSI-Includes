@@ -203,7 +203,7 @@ stock _GROUP_MAKE_NAME<..._InitialiseFromGroups>(_GROUP_MAKE_TAG:x = _GROUP_MAKE
 */
 
 /*-------------------------------------------------------------------------*//**
- * <summary>Group_Set...</summary>
+ * <summary>Group_Allow...</summary>
  * <param name="g">Group to set for.</param>
  * <param name="el">Element to set.</param>
  * <param name="s">Set or unset?</param>
@@ -213,11 +213,11 @@ stock _GROUP_MAKE_NAME<..._InitialiseFromGroups>(_GROUP_MAKE_TAG:x = _GROUP_MAKE
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-GFOREIGN__ Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s);
+GFOREIGN__ Group_Allow...(Group:g,_GROUP_MAKE_TAG:el,bool:s);
 
-GGLOBAL__ Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
+GGLOBAL__ Group_Allow...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
 {
-	P:2(#_GROUP_MAKE_NAME<Group_Set...> " called: %i, %i, %i", _:g, _:el, s);
+	P:2(#_GROUP_MAKE_NAME<Group_Allow...> " called: %i, %i, %i", _:g, _:el, s);
 	// Set wether a group can use this item.
 	if (0 <= _:el < _GROUP_MAKE_LIMIT && g <= GROUP_GLOBAL)
 	{
@@ -226,7 +226,7 @@ GGLOBAL__ Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
 		new
 			slot = Bit_Slot(g),
 			Bit:mask = Bit_Mask(g);
-		P:5(#_GROUP_MAKE_NAME<Group_Set...> ": %i, %i", _:slot, _:mask);
+		P:5(#_GROUP_MAKE_NAME<Group_Allow...> ": %i, %i", _:slot, _:mask);
 		if (s)
 		{
 			// Is this element in the current group?
@@ -263,6 +263,12 @@ GGLOBAL__ Group_Set...(Group:g,_GROUP_MAKE_TAG:el,bool:s)
 	return 0;
 }
 
+#pragma deprecated Use `Group_Allow...(group, element, bool:set)` (to mirror `Group_Deny...`).
+stock _GROUP_MAKE_NAME<Group_Set...>(Group:group, _GROUP_MAKE_TAG:element, bool:set)
+{
+	return _GROUP_MAKE_NAME<Group_Allow...>(group, element, set);
+}
+
 /*-------------------------------------------------------------------------*//**
  * <summary>Group_Get...</summary>
  * <param name="g">Group to get from.</param>
@@ -281,7 +287,7 @@ GGLOBAL__ bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <summary>Group_Set...Default</summary>
+ * <summary>Group_Allow...Default</summary>
  * <param name="g">Group to set for.</param>
  * <param name="s">Set or unset?</param>
  * <remarks>
@@ -291,11 +297,11 @@ GGLOBAL__ bool:Group_Get...(Group:g,_GROUP_MAKE_TAG:el)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-GFOREIGN__ Group_Set...Default(Group:g,bool:s);
+GFOREIGN__ Group_Allow...Default(Group:g,bool:s);
 
-GGLOBAL__ Group_Set...Default(Group:g,bool:s)
+GGLOBAL__ Group_Allow...Default(Group:g,bool:s)
 {
-	P:2(#_GROUP_MAKE_NAME<Group_Set...Default> " called: %i, %i", _:g, s);
+	P:2(#_GROUP_MAKE_NAME<Group_Allow...Default> " called: %i, %i", _:g, s);
 	if (g <= GROUP_GLOBAL)
 	{
 		// There is now NO validity check for reasons of distruibution.
@@ -361,21 +367,27 @@ GGLOBAL__ Group_Set...Default(Group:g,bool:s)
 	return 0;
 }
 
+#pragma deprecated Use `Group_Allow...Default(group, bool:set)` (to mirror `Group_Deny...Default`).
+stock _GROUP_MAKE_NAME<Group_Set...Default>(Group:group, bool:set)
+{
+	return _GROUP_MAKE_NAME<Group_Allow...Default>(group, set);
+}
+
 /*-------------------------------------------------------------------------*//**
- * <summary>Group_Set...New</summary>
+ * <summary>Group_Allow...New</summary>
  * <param name="g">Group to set for.</param>
  * <param name="s">Set or unset?</param>
  * <remarks>
- *  Similar to "Group_Set...Default", but doesn't reset all existing elements,
+ *  Similar to "Group_Allow...Default", but doesn't reset all existing elements,
  *  just sets the permissions for any future items.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-GFOREIGN__ Group_Set...New(Group:g,bool:s);
+GFOREIGN__ Group_Allow...New(Group:g,bool:s);
 
-GGLOBAL__ Group_Set...New(Group:g,bool:s)
+GGLOBAL__ Group_Allow...New(Group:g,bool:s)
 {
-	P:2(#_GROUP_MAKE_NAME<Group_Set...New> " called: %i, %i", _:g, s);
+	P:2(#_GROUP_MAKE_NAME<Group_Allow...New> " called: %i, %i", _:g, s);
 	if (g <= GROUP_GLOBAL)
 	{
 		// There is now NO validity check for reasons of distruibution.
@@ -383,6 +395,12 @@ GGLOBAL__ Group_Set...New(Group:g,bool:s)
 		return 1;
 	}
 	return 0;
+}
+
+#pragma deprecated Use `Group_Allow...New(group, bool:set)` (to mirror `Group_Deny...New`).
+stock _GROUP_MAKE_NAME<Group_Set...New>(Group:group, bool:set)
+{
+	return _GROUP_MAKE_NAME<Group_Allow...New>(group, set);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -465,7 +483,7 @@ stock const
 */
 
 /*-------------------------------------------------------------------------*//**
- * <summary>Group_SetGlobal...</summary>
+ * <summary>Group_AllowGlobal...</summary>
  * <param name="el">Element to set.</param>
  * <param name="s">Set or unset?</param>
  * <remarks>
@@ -474,12 +492,18 @@ stock const
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-GFOREIGN__ Group_SetGlobal...(_GROUP_MAKE_TAG:el,bool:s);
+GFOREIGN__ Group_AllowGlobal...(_GROUP_MAKE_TAG:el,bool:s);
 
-GGLOBAL__ Group_SetGlobal...(_GROUP_MAKE_TAG:el,bool:s)
+GGLOBAL__ Group_AllowGlobal...(_GROUP_MAKE_TAG:el,bool:s)
 {
-	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...> " called: %i, %i", _:el, s);
-	return _GROUP_MAKE_NAME<Group_Set...>(GROUP_GLOBAL, el, s);
+	P:2(#_GROUP_MAKE_NAME<Group_AllowGlobal...> " called: %i, %i", _:el, s);
+	return _GROUP_MAKE_NAME<Group_Allow...>(GROUP_GLOBAL, el, s);
+}
+
+#pragma deprecated Use `Group_AllowGlobal...(element, bool:set)` (to mirror `Group_DenyGlobal...`).
+stock _GROUP_MAKE_NAME<Group_SetGlobal...>(_GROUP_MAKE_TAG:element, bool:set)
+{
+	return _GROUP_MAKE_NAME<Group_AllowGlobal...>(element, set);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -499,7 +523,7 @@ GGLOBAL__ bool:Group_GetGlobal...(_GROUP_MAKE_TAG:el)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <summary>Group_SetGlobal...Default</summary>
+ * <summary>Group_AllowGlobal...Default</summary>
  * <param name="s">Set or unset?</param>
  * <remarks>
  *  If "s" is true, then all elements are added to the global group (i.e. the
@@ -508,28 +532,40 @@ GGLOBAL__ bool:Group_GetGlobal...(_GROUP_MAKE_TAG:el)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-GFOREIGN__ Group_SetGlobal...Default(bool:s);
+GFOREIGN__ Group_AllowGlobal...Default(bool:s);
 
-GGLOBAL__ Group_SetGlobal...Default(bool:s)
+GGLOBAL__ Group_AllowGlobal...Default(bool:s)
 {
-	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...Default> " called: %i", s);
-	return _GROUP_MAKE_NAME<Group_Set...Default>(GROUP_GLOBAL, s);
+	P:2(#_GROUP_MAKE_NAME<Group_AllowGlobal...Default> " called: %i", s);
+	return _GROUP_MAKE_NAME<Group_Allow...Default>(GROUP_GLOBAL, s);
+}
+
+#pragma deprecated Use `Group_AllowGlobal...Default(bool:set)` (to mirror `Group_DenyGlobal...Default`).
+stock _GROUP_MAKE_NAME<Group_SetGlobal...Default>(bool:set)
+{
+	return _GROUP_MAKE_NAME<Group_AllowGlobal...Default>(set);
 }
 
 /*-------------------------------------------------------------------------*//**
- * <summary>Group_SetGlobal...New</summary>
+ * <summary>Group_AllowGlobal...New</summary>
  * <param name="s">Set or unset?</param>
  * <remarks>
  *  All elements created FROM THIS POINT ON will have this default setting.
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-GFOREIGN__ Group_SetGlobal...New(bool:s);
+GFOREIGN__ Group_AllowGlobal...New(bool:s);
 
-GGLOBAL__ Group_SetGlobal...New(bool:s)
+GGLOBAL__ Group_AllowGlobal...New(bool:s)
 {
-	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...New> " called: %i", s);
-	return _GROUP_MAKE_NAME<Group_Set...New>(GROUP_GLOBAL, s);
+	P:2(#_GROUP_MAKE_NAME<Group_AllowGlobal...New> " called: %i", s);
+	return _GROUP_MAKE_NAME<Group_Allow...New>(GROUP_GLOBAL, s);
+}
+
+#pragma deprecated Use `Group_AllowGlobal...New(bool:set)` (to mirror `Group_DenyGlobal...New`).
+stock _GROUP_MAKE_NAME<Group_SetGlobal...New>(bool:set)
+{
+	return _GROUP_MAKE_NAME<Group_AllowGlobal...New>(set);
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -582,13 +618,13 @@ stock const
 	
 	stock Group:operator+(Group:g, GROUP_LIBRARY_TAGS:o)
 	{
-		_GROUP_MAKE_NAME<Group_Set...>(g, o, true);
+		_GROUP_MAKE_NAME<Group_Allow...>(g, o, true);
 		return g;
 	}
 	
 	stock Group:operator-(Group:g, GROUP_LIBRARY_TAGS:o)
 	{
-		_GROUP_MAKE_NAME<Group_Set...>(g, o, false);
+		_GROUP_MAKE_NAME<Group_Allow...>(g, o, false);
 		return g;
 	}
 	
