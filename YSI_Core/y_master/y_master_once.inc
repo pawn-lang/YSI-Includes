@@ -163,9 +163,9 @@ Optional plugins:
 // clients).
 #define YSIM_PARSER(%2)%0(%1) FUNC_PARSER(%2,NUM_CST_DEF:STR_CST_DEF:REF_DEF:ARR_CST:QAL:RET_VOD_STR_TAG:LEN:)(%0(%1))(%1)#()()()
 
-#define YSIM_SERVER_FOREIGN        YSIM_PARSER(YSIM_MF)
+#define YSIM_SERVER_FOREIGN%0(%1)  %0(%1);YSIM_PARSER(YSIM_MF)%0(%1)
 // The global is just the function implementation - doesn't need extra code.
-#define YSIM_SERVER_GLOBAL
+#define YSIM_SERVER_GLOBAL%0(%1)   %0(%1)
 #define YSIM_SERVER_HOOK%0(%1)     HOOK__%0(%1)
 #define YSIM_SERVER_TASK%0[%3](%1) task%0[%3](%1)
 #define YSIM_SERVER_PTSK%0[%3](%1) ptask%0[%3](%1)
@@ -174,7 +174,7 @@ Optional plugins:
 #define YSIM_SERVER_YCMD%0(%1)     _YCMD_4:@yC_%0(a,b[],c);_YCMD_4:@yC_%0(a,b[],c)U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 #define YSIM_SERVER_ZERO%0(%1)     _YCMD_4:@yC_%0(a,b[],c,i);_YCMD_4:@yC_%0(a,b[],c,i)i==@_&&U@(8,YSIM_RETURN,@_yC%0(a,b,c));@_yC%0(%1);@_yC%0(%1)
 
-#define YSIM_CLIENT_FOREIGN        YSIM_PARSER(YSIM_UF)
+#define YSIM_CLIENT_FOREIGN%0(%1)  %0(%1);YSIM_PARSER(YSIM_UF)%0(%1)
 // Hide the local implementations.
 #define YSIM_CLIENT_GLOBAL%0(%1)   YSIM_PARSER(YSIM_UG)%0(%1)
 #define YSIM_CLIENT_HOOK%0(%1)     static stock _@%0(%1)
@@ -185,8 +185,8 @@ Optional plugins:
 #define YSIM_CLIENT_YCMD%0(%1)     static stock _YCMD_6:_@yC%0(%1)
 #define YSIM_CLIENT_ZERO%0(%1)     YSIM_SERVER_ZERO%0(%1)
 
-#define YSIM_CLOUD_FOREIGN         YSIM_PARSER(YSIM_DF)
-#define YSIM_CLOUD_GLOBAL          YSIM_PARSER(YSIM_DG)
+#define YSIM_CLOUD_FOREIGN%0(%1)   %0(%1);YSIM_PARSER(YSIM_DF)%0(%1)
+#define YSIM_CLOUD_GLOBAL%0(%1)    YSIM_PARSER(YSIM_DG)%0(%1)
 #define YSIM_CLOUD_HOOK%0(%1)      HOOK__%0(%1)<>return 0;HOOK__%0(%1)<_YCM:y>
 #define YSIM_CLOUD_TASK%0[%3](%1)  task%0[%3](%1)<>{}public%0(%1)<_YCM:y>
 #define YSIM_CLOUD_PTSK%0[%3](%1)  ptask%0[%3](%1)<>{}public%0(%1)<_YCM:y>
@@ -197,7 +197,7 @@ Optional plugins:
 
 // A stub foreign is the same as a client foreign - define it as existing, but
 // not here.
-#define YSIM_STUB_FOREIGN          YSIM_PARSER(YSIM_UF)
+#define YSIM_STUB_FOREIGN%0(%1)    %0(%1);YSIM_PARSER(YSIM_UF)%0(%1)
 // There is no stub global - that makes no sense (give an error).  Still needs
 // parsing though to give the RIGHT error...
 #define YSIM_STUB_GLOBAL%0(%1)     YSIM_PARSER(YSIM_TG)%0(%1)
@@ -211,8 +211,8 @@ Optional plugins:
 #define stub_body_%0\32; stub_body_
 
 // If there is no master system, these are just forwards/declarations.
-#define YSIM_NONE_FOREIGN
-#define YSIM_NONE_GLOBAL
+#define YSIM_NONE_FOREIGN%0(%1)    %0(%1)
+#define YSIM_NONE_GLOBAL%0(%1)     %0(%1)
 #define YSIM_NONE_HOOK%0(%1)       HOOK__%0(%1)
 #define YSIM_NONE_TASK%0[%3](%1)   task%0[%3](%1)
 #define YSIM_NONE_PTSK%0[%3](%1)   ptask%0[%3](%1)
@@ -307,19 +307,20 @@ Optional plugins:
 //   %8 - code-parse required (internal details, "$" delimited).
 //   %9 - Function name.
 //   
-#define YSIM_MF_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4%9(%1);@@%9(%2)return L@(%9(%7)%0);forward @@%9(%2)
-#define YSIM_MF_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@@%9(%2)return T@(%9(%7)%0);forward @@%9(%2)
-#define YSIM_MF_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@@%9(%2){%9(%7);return L@(0%0);}forward @@%9(%2)
-#define YSIM_MF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5%9(%1);@@%9(%2)return L@(%9(%7)%0);forward @@%9(%2)
-#define YSIM_MF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9();@@%9()return L@(%9());forward @@%9()
-#define YSIM_MF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@@%9()return T@(%9());forward @@%9()
-#define YSIM_MF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@@%9(){%9();return L@(0);}forward @@%9()
-#define YSIM_MF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9();@@%9()return L@(%9());forward @@%9()
+// `forward` is required here to avoid a redefinition error.
+#define YSIM_MF_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$@@%9(%2)return L@(%9(%7)%0);forward @@%9(%2)
+#define YSIM_MF_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$@@%9(%2)return T@(%9(%7)%0);forward @@%9(%2)
+#define YSIM_MF_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$@@%9(%2){%9(%7);return L@(0%0);}forward @@%9(%2)
+#define YSIM_MF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$@@%9(%2)return L@(%9(%7)%0);forward @@%9(%2)
+#define YSIM_MF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$@@%9()return L@(%9());forward @@%9()
+#define YSIM_MF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$@@%9()return T@(%9());forward @@%9()
+#define YSIM_MF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$@@%9(){%9();return L@(0);}forward @@%9()
+#define YSIM_MF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$@@%9()return L@(%9());forward @@%9()
 
-#define YSIM_UF_END(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9(%1)return F@(),D@(#@@%9,%3%7);forward _@%9(%1)
-#define YSIM_UF_END_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9(%1)return F@(),K@(#@@%9,%3%7);forward _@%9(%1)
-#define YSIM_UF_END_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9(%1)F@(),D@(#@@%9,%3%7);forward _@%9(%1)
-#define YSIM_UF_END_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9(%1)return F@(),%5D@(#@@%9,%3%7);forward %5_@%9(%1)
+#define YSIM_UF_END(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9(%1)return F@(),D@(#@@%9,%3%7);_@%9(%1)
+#define YSIM_UF_END_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9(%1)return F@(),K@(#@@%9,%3%7);_@%9(%1)
+#define YSIM_UF_END_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9(%1)F@(),D@(#@@%9,%3%7);_@%9(%1)
+#define YSIM_UF_END_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9(%1)return F@(),%5D@(#@@%9,%3%7);%5_@%9(%1)
 #define YSIM_UF_NUL     YSIM_UF_END
 #define YSIM_UF_NUL_STR YSIM_UF_END_STR
 #define YSIM_UF_NUL_VOD YSIM_UF_END_VOD
@@ -334,14 +335,14 @@ Optional plugins:
 #define YSIM_UG_NUL_VOD YSIM_UG_END
 #define YSIM_UG_NUL_TAG YSIM_UG_END_TAG
 
-#define YSIM_DF_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4%9(%1);@@%9(%2);@@%9(%2)<>return 1
-#define YSIM_DF_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@@%9(%2);@@%9(%2)<>return 1
-#define YSIM_DF_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1);@@%9(%2);@@%9(%2)<>return 1
-#define YSIM_DF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$%4%5%9(%1);@@%9(%2);@@%9(%2)<>return 1
-#define YSIM_DF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$%4%9();@@%9();@@%9()<>return 1
-#define YSIM_DF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@@%9();@@%9()<>return 1
-#define YSIM_DF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$%4%9();@@%9();@@%9()<>return 1
-#define YSIM_DF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$%4%5%9();@@%9();@@%9()<>return 1
+#define YSIM_DF_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$@@%9(%2);@@%9(%2)<>return 1
+#define YSIM_DF_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$@@%9(%2);@@%9(%2)<>return 1
+#define YSIM_DF_END_VOD(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$@@%9(%2);@@%9(%2)<>return 1
+#define YSIM_DF_END_TAG(%5,%9)%8$%4(%1)%3(,%7)(,%2)(%0) %8$@@%9(%2);@@%9(%2)<>return 1
+#define YSIM_DF_NUL(%9)%8$%4(%1)%3(%7)(%2)(%0)          %8$@@%9();@@%9()<>return 1
+#define YSIM_DF_NUL_STR(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$@@%9();@@%9()<>return 1
+#define YSIM_DF_NUL_VOD(%9)%8$%4(%1)%3(%7)(%2)(%0)      %8$@@%9();@@%9()<>return 1
+#define YSIM_DF_NUL_TAG(%5,%9)%8$%4(%1)%3(%7)(%2)(%0)   %8$@@%9();@@%9()<>return 1
 
 #define YSIM_DG_END(%9)%8$%4(%1)%3(,%7)(,%2)(%0)        %8$%4%9(%1)<>return F@(),D@(#@@%9,%3,%7);@@%9(%2)<_YCM:y>return L@(%9(%7)%0);%9(%1)<_YCM:y>
 #define YSIM_DG_END_STR(%9)%8$%4(%1)%3(,%7)(,%2)(%0)    %8$%4%9(%1)<>return F@(),K@(#@@%9,%3,%7);@@%9(%2)<_YCM:y>return T@(%9(%7)%0);%9(%1)<_YCM:y>
