@@ -236,7 +236,7 @@ GGLOBAL__ Group_Set...(Group:g,_GROUP_MAKE_TAG:el,E_GROUP_SET:s)
 		if (s == E_GROUP_SET:ALLOW)
 		{
 			// Is this element allowed in the current group?
-			if ((YSI_gTempAllowed_[slot] & mask) && !(YSI_gTempDenied_[slot] & mask]))
+			if ((YSI_gTempAllowed_[slot] & mask) && !(YSI_gTempDenied_[slot] & mask))
 			{
 				// No point adding an element to a group that it is already in.
 				return 1;
@@ -247,7 +247,7 @@ GGLOBAL__ Group_Set...(Group:g,_GROUP_MAKE_TAG:el,E_GROUP_SET:s)
 		else if (s == E_GROUP_SET:DENY)
 		{
 			// Is this element denied in the current group?
-			if ((YSI_gTempDenied_[slot] & mask]))
+			if ((YSI_gTempDenied_[slot] & mask))
 			{
 				// No point banning an element from a group that it is already in.
 				YSI_g_sElementAllowed[_:el][slot] &= neg;
@@ -466,8 +466,23 @@ GGLOBAL__ Group_Set...New(Group:g,E_GROUP_SET:s)
 	P:2(#_GROUP_MAKE_NAME<Group_Set...New> " called: %i, %i", _:g, s);
 	if (g <= GROUP_GLOBAL)
 	{
+		GROUP_FIX(g);
 		// There is now NO validity check for reasons of distruibution.
-		Bit_Set(YSI_g_sDefaultAllowed, _:GROUP_TEMP_FIX(g), s);
+		if (s == E_GROUP_SET:ALLOW)
+		{
+			Bit_Let(YSI_g_sDefaultAllowed, _:g);
+			Bit_Vet(YSI_g_sDefaultDenied, _:g);
+		}
+		else if (s == E_GROUP_SET:DENY)
+		{
+			Bit_Vet(YSI_g_sDefaultAllowed, _:g);
+			Bit_Let(YSI_g_sDefaultDenied, _:g);
+		}
+		else
+		{
+			Bit_Vet(YSI_g_sDefaultAllowed, _:g);
+			Bit_Vet(YSI_g_sDefaultDenied, _:g);
+		}
 		return 1;
 	}
 	return 0;
@@ -571,21 +586,6 @@ GGLOBAL__ Group_SetGlobal...(_GROUP_MAKE_TAG:el,E_GROUP_SET:s)
 }
 
 /*-------------------------------------------------------------------------*//**
- * <summary>Group_GetGlobal...</summary>
- * <param name="el">Element to get.</param>
- * <returns>
- *  bool: Does the global group have the element?
- * </returns>
- *//*------------------------------------------------------------------------**/
-
-#pragma deprecated Use `Group_Global...Allowed` or `Group_Global...Denied`.
-stock bool:_GROUP_MAKE_NAME<Group_GetGlobal...>(_GROUP_MAKE_TAG:el)
-{
-	P:2(#_GROUP_MAKE_NAME<Group_GetGlobal...> " called: %i", _:el);
-	return _GROUP_MAKE_NAME<Group_...Allowed>(GROUP_GLOBAL, el) == E_GROUP_SET:ALLOW;
-}
-
-/*-------------------------------------------------------------------------*//**
  * <summary>Group_Global...Allowed</summary>
  * <param name="g">Group to get from.</param>
  * <param name="el">Element to get.</param>
@@ -614,6 +614,14 @@ stock bool:_GROUP_MAKE_NAME<Group_Global...Denied>(_GROUP_MAKE_TAG:el)
 	P:2(#_GROUP_MAKE_NAME<Group_Global...Denied> " called: %i", _:el);
 	return _GROUP_MAKE_NAME<Group_...Denied>(GROUP_GLOBAL, el);
 }
+
+/*-------------------------------------------------------------------------*//**
+ * <summary>Group_GetGlobal...</summary>
+ * <param name="el">Element to get.</param>
+ * <returns>
+ *  bool: Does the global group have the element?
+ * </returns>
+ *//*------------------------------------------------------------------------**/
 
 #pragma deprecated Use `Group_Global...Allowed` or `Group_Global...Denied`.
 stock E_GROUP_SET:_GROUP_MAKE_NAME<Group_GetGlobal...>(_GROUP_MAKE_TAG:el)
