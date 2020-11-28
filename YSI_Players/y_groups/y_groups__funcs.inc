@@ -180,10 +180,11 @@ stock _GROUP_MAKE_NAME<..._InitialiseFromGroups>(_GROUP_MAKE_TAG:x = _GROUP_MAKE
 	if (x != _GROUP_MAKE_TAG:_GROUP_MAKE_LIMIT)
 	{
 		YSI_g_sElementAllowed[_:x] = YSI_g_sDefaultAllowed,
+		YSI_g_sElementDenied[_:x] = YSI_g_sDefaultDenied,
 		YSI_g_sMaxEncountered = max(YSI_g_sMaxEncountered, _:x);
 		FOREACH__ (new playerid : Player)
 		{
-			Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultAllowed, YSI_gGroupPlayers[playerid]);
+			Group_FullPlayerUpdate(playerid, _:x, YSI_g_sEmpty, YSI_g_sDefaultAllowed, YSI_g_sEmpty, YSI_g_sDefaultDenied, YSI_gGroupPlayers[playerid]);
 		}
 	}
 	return 0;
@@ -759,6 +760,10 @@ static stock void:Group_Handoff(i,const a[],s)
 	{
 		memcpy(_:YSI_g_sDefaultAllowed, a, 0, s * 4);
 	}
+	else if (i == cellmax)
+	{
+		memcpy(_:YSI_g_sDefaultDenied, a, 0, s * 4);
+	}
 	else if (i < 0)
 	{
 		memcpy(_:YSI_g_sElementDenied[~i], a, 0, s * 4);
@@ -773,6 +778,7 @@ MASTER_FUNC__ MAKE_YCM<HANDOFF_SOURCE...Group>()<_YCM:p>
 {
 	// Pass data to the new group controller.
 	Group_Handoff(cellmin, _:YSI_g_sDefaultAllowed, sizeof (YSI_g_sDefaultAllowed));
+	Group_Handoff(cellmax, _:YSI_g_sDefaultDenied, sizeof (YSI_g_sDefaultDenied));
 	for (new i = 0; i != sizeof (YSI_g_sElementAllowed); ++i)
 	{
 		Group_Handoff(i, _:YSI_g_sElementAllowed[i], sizeof (YSI_g_sElementAllowed[]));
@@ -928,12 +934,15 @@ GCHAIN__ _yGI(&ni, &na, &nu)
 	{
 		P:4(#_GROUP_MAKE_NAME<_yGI...> " INIT");
 		static
-			BitArray:sStack<_MAX_GROUPS_G>;
+			BitArray:sAllowed<_MAX_GROUPS_G>,
+			BitArray:sDenied<_MAX_GROUPS_G>;
 		if (na)
 		{
 			// Called to "push" the default settings.
-			sStack = YSI_g_sDefaultAllowed;
+			sAllowed = YSI_g_sDefaultAllowed;
+			sDenied = YSI_g_sDefaultDenied;
 			YSI_g_sDefaultAllowed = YSI_g_cEmptyGroups;
+			YSI_g_sDefaultDenied = YSI_g_cEmptyGroups;
 			Bit_Let(YSI_g_sDefaultAllowed, nu);
 			for (new i = 0; i != bits<_MAX_GROUPS_G>; ++i)
 			{
@@ -943,7 +952,8 @@ GCHAIN__ _yGI(&ni, &na, &nu)
 		else
 		{
 			// Called to "pop" the default settings.
-			YSI_g_sDefaultAllowed = sStack;
+			YSI_g_sDefaultAllowed = sAllowed;
+			YSI_g_sDefaultDenied = sDenied;
 			YSI_g_sEmpty = YSI_g_cEmptyGroups;
 		}
 	}
@@ -986,11 +996,13 @@ GCHAIN__ _yGA(&group)
 		Bit:m = ~Bit_Mask(group);
 	// Set the default "contains" for this group to false.
 	YSI_g_sDefaultAllowed[s] &= m;
+	YSI_g_sDefaultDenied[s] &= m;
 	// Disable every element in this group.  DOESN'T use "YSI_g_sMaxEncountered"
 	// because we need to set up for the future too.
 	for (new i = 0; i != _GROUP_MAKE_LIMIT; ++i)
 	{
 		YSI_g_sElementAllowed[i][s] &= m;
+		YSI_g_sElementDenied[i][s] &= m;
 	}
 }
 
