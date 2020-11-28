@@ -308,7 +308,7 @@ stock E_GROUP_SET:_GROUP_MAKE_NAME<Group_Get...>(Group:g,_GROUP_MAKE_TAG:el)
 	return
 		_GROUP_MAKE_NAME<Group_...Denied>(g, el) ? E_GROUP_SET:DENY :
 		_GROUP_MAKE_NAME<Group_...Allowed>(g, el) ? E_GROUP_SET:ALLOW :
-		E_GROUP_SET:CLEAR;
+		E_GROUP_SET:UNDEF;
 }
 
 /*-------------------------------------------------------------------------*//**
@@ -568,7 +568,7 @@ stock E_GROUP_SET:_GROUP_MAKE_NAME<Group_GetGlobal...>(_GROUP_MAKE_TAG:el)
 	return
 		_GROUP_MAKE_NAME<Group_...Denied>(GROUP_GLOBAL, el) ? E_GROUP_SET:DENY :
 		_GROUP_MAKE_NAME<Group_...Allowed>(GROUP_GLOBAL, el) ? E_GROUP_SET:ALLOW :
-		E_GROUP_SET:CLEAR;
+		E_GROUP_SET:UNDEF;
 }
 
 /*-------------------------------------------------------------------------*//**

@@ -191,7 +191,8 @@ stock const
 enum E_GROUP_SET
 {
 	DENY  = 0x80000000,
-	CLEAR = 0,
+	UNDEF = 0,
+	UNDEFINED = 0,
 	ALLOW = 1,
 }
 
