@@ -368,6 +368,7 @@ GGLOBAL__ Group_Set...Default(Group:g,E_GROUP_SET:s)
 		}
 		if (s == E_GROUP_SET:ALLOW)
 		{
+			P:5(#_GROUP_MAKE_NAME<Group_Set...Default> ": ALLOW");
 			YSI_g_sDefaultAllowed[slot] |= mask;
 			YSI_g_sDefaultDenied[slot] &= inv;
 			for (new el = 0; el <= YSI_g_sMaxEncountered; ++el)
@@ -375,6 +376,7 @@ GGLOBAL__ Group_Set...Default(Group:g,E_GROUP_SET:s)
 				// Check if this group already has this element.
 				YSI_gTempAllowed_ = YSI_g_sElementAllowed[el];
 				YSI_gTempDenied_ = YSI_g_sElementDenied[el];
+				P:7(#_GROUP_MAKE_NAME<Group_Set...Default> ": element %d %d %d", _:el, YSI_gTempAllowed_[slot] & mask, YSI_gTempDenied_[slot] & mask);
 				if ((YSI_gTempAllowed_[slot] & mask) && !(YSI_gTempDenied_[slot] & mask))
 				{
 					// Could already be seen, thus no change.
@@ -393,11 +395,13 @@ GGLOBAL__ Group_Set...Default(Group:g,E_GROUP_SET:s)
 		}
 		else if (s == E_GROUP_SET:DENY)
 		{
+			P:5(#_GROUP_MAKE_NAME<Group_Set...Default> ": DENY");
 			YSI_g_sDefaultAllowed[slot] &= inv;
 			YSI_g_sDefaultDenied[slot] |= mask;
 			for (new el = 0; el <= YSI_g_sMaxEncountered; ++el)
 			{
 				YSI_gTempDenied_ = YSI_g_sElementDenied[el];
+				P:7(#_GROUP_MAKE_NAME<Group_Set...Default> ": element %d %d %d", _:el, YSI_g_sElementAllowed[el][slot] & mask, YSI_gTempDenied_[slot] & mask);
 				if (YSI_gTempDenied_[slot] & mask)
 				{
 					// Already denied.  Doesn't matter what the old `Allowed`
@@ -422,12 +426,14 @@ GGLOBAL__ Group_Set...Default(Group:g,E_GROUP_SET:s)
 		}
 		else
 		{
+			P:5(#_GROUP_MAKE_NAME<Group_Set...Default> ": UNDEF");
 			YSI_g_sDefaultAllowed[slot] &= inv;
 			YSI_g_sDefaultDenied[slot] &= inv;
 			for (new el = 0; el <= YSI_g_sMaxEncountered; ++el)
 			{
 				YSI_gTempAllowed_ = YSI_g_sElementAllowed[el];
 				YSI_gTempDenied_ = YSI_g_sElementDenied[el];
+				P:7(#_GROUP_MAKE_NAME<Group_Set...Default> ": element %d %d %d", _:el, YSI_gTempAllowed_[slot] & mask, YSI_gTempDenied_[slot] & mask);
 				if (!(YSI_gTempAllowed_[slot] & mask) && !(YSI_gTempDenied_[slot] & mask))
 				{
 					// Nothing has changed.
