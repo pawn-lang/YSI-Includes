@@ -24,12 +24,14 @@ Or, as with all groups:
 Group_SetDefault(GROUP_GLOBAL, UNDEF);
 ```
 
-## `ALLOW`/`DENY`/`UNDEF`.
+## `ALLOW`/`DENY`/`UNDEF`
 
 There are three states that an entity can be in a group:
 
 * `ALLOW` means that anyone in the group can use it (default for the global group).
-* `UNDEF` means that the group doesn't have any effect on this entity.  Being in this group doesn't allow of prevent you from doing something (default for created groups).
+
+* `UNDEF` means that the group doesn't have any effect on this entity.  Being in this group doesn't allow of prevent you from doing something (default for created groups).  If you are only in `UNDEF` groups (including the global group) you by default can't use an entity.  If you are in one `UNDEF` group and one `ALLOW` group, the `ALLOW` will be used and enable the entity for the player.
+
 * `DENY` means that anyone in this group is absolutely NOT allowed to use an entity.  This overrides `ALLOW`, so if you're in a group with `ALLOW` set on an area, and another group with `DENY` set on the same area, you can't use the area.  A good example of this is a `jailed` group, who can't use most commands:
 
 ```pawn
