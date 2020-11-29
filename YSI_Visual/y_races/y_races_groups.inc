@@ -72,7 +72,7 @@ Optional plugins:
 
 stock Races_SetupGroups() <YSI_has_groups:y>
 {
-	Group_SetGlobalRaceDefault(false);
+	Group_SetGlobalRaceDefault(E_GROUP_SET:UNDEF);
 	// This already is the default.
 	//Group_SetRaceDefault(false);
 }
