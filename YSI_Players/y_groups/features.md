@@ -38,7 +38,9 @@ There are three states that an entity can be in a group:
 final gJailed = Group_Create("jailed");
 
 Group_SetCommandDefault(gJailed, DENY);
-Group_SetCommand(gJailed, YCMD:appeal, ALLOW); // Override the default for just this one command.
+
+// Override the default for just this one command.
+Group_SetCommand(gJailed, YCMD:appeal, ALLOW);
 
 // /jail
 YCMD:jail()
@@ -47,3 +49,16 @@ YCMD:jail()
 }
 ```
 
+Note that functions such as `Group_Set...` used to use `true`/`false`.  That old code will still work, but will now give a tag warning, since the input has changed.
+
+## Check Permissions
+
+`Group_Get...` will return the `ALLOW`/`DENY`/`UNDEF` value for an entity, but is deprecated because this used to return `bool`.  Old code will probably still work, until you start using the new `DENY` value (`ALLOW` is the old `true` and `UNDEF` is the old `false`).  Instead, use `Group_...Allowed`, which returns true on `ALLOW` or `Group_...Denied`, which returns true on `DENY`.  If they're both false, it's `UNDEF`:
+
+```pawn
+if (Group_PropertyAllowed(group, property))
+{
+	// This group allows it, but a player can still only use it if none of their
+	// groups `DENY` it, and at least one `ALLOW`s it.
+}
+```
