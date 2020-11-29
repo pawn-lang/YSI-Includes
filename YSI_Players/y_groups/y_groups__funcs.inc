@@ -220,7 +220,7 @@ GFOREIGN__ Group_Set...(Group:g,_GROUP_MAKE_TAG:el,E_GROUP_SET:s);
 
 GGLOBAL__ Group_Set...(Group:g,_GROUP_MAKE_TAG:el,E_GROUP_SET:s)
 {
-	P:2(#_GROUP_MAKE_NAME<Group_Set...> " called: %i, %i, %i", _:g, _:el, s);
+	P:2(#_GROUP_MAKE_NAME<Group_Set...> " called: %i, %i, %i", _:g, _:el, _:s);
 	// Set wether a group can use this item.
 	if (0 <= _:el < _GROUP_MAKE_LIMIT && g <= GROUP_GLOBAL)
 	{
@@ -344,7 +344,7 @@ GFOREIGN__ Group_Set...Default(Group:g,E_GROUP_SET:s);
 
 GGLOBAL__ Group_Set...Default(Group:g,E_GROUP_SET:s)
 {
-	P:2(#_GROUP_MAKE_NAME<Group_Set...Default> " called: %i, %i", _:g, s);
+	P:2(#_GROUP_MAKE_NAME<Group_Set...Default> " called: %i, %i", _:g, _:s);
 	if (g <= GROUP_GLOBAL)
 	{
 		// There is now NO validity check for reasons of distruibution.
@@ -469,7 +469,7 @@ GFOREIGN__ Group_Set...New(Group:g,E_GROUP_SET:s);
 
 GGLOBAL__ Group_Set...New(Group:g,E_GROUP_SET:s)
 {
-	P:2(#_GROUP_MAKE_NAME<Group_Set...New> " called: %i, %i", _:g, s);
+	P:2(#_GROUP_MAKE_NAME<Group_Set...New> " called: %i, %i", _:g, _:s);
 	if (g <= GROUP_GLOBAL)
 	{
 		GROUP_FIX(g);
@@ -587,7 +587,7 @@ GFOREIGN__ Group_SetGlobal...(_GROUP_MAKE_TAG:el,E_GROUP_SET:s);
 
 GGLOBAL__ Group_SetGlobal...(_GROUP_MAKE_TAG:el,E_GROUP_SET:s)
 {
-	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...> " called: %i, %i", _:el, s);
+	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...> " called: %i, %i", _:el, _:s);
 	return _GROUP_MAKE_NAME<Group_Set...>(GROUP_GLOBAL, el, s);
 }
 
@@ -656,7 +656,7 @@ GFOREIGN__ Group_SetGlobal...Default(E_GROUP_SET:s);
 
 GGLOBAL__ Group_SetGlobal...Default(E_GROUP_SET:s)
 {
-	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...Default> " called: %i", s);
+	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...Default> " called: %i", _:s);
 	return _GROUP_MAKE_NAME<Group_Set...Default>(GROUP_GLOBAL, s);
 }
 
@@ -672,7 +672,7 @@ GFOREIGN__ Group_SetGlobal...New(E_GROUP_SET:s);
 
 GGLOBAL__ Group_SetGlobal...New(E_GROUP_SET:s)
 {
-	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...New> " called: %i", s);
+	P:2(#_GROUP_MAKE_NAME<Group_SetGlobal...New> " called: %i", _:s);
 	return _GROUP_MAKE_NAME<Group_Set...New>(GROUP_GLOBAL, s);
 }
 

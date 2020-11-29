@@ -728,7 +728,7 @@ TEST__ y_groups_Allow()
 	new Group:h = Group_Create();
 	//Group_SetTestDefault(g, UNDEF);
 	//Group_SetTestDefault(h, UNDEF);
-	Group_SetGlobalTestDefault(h, UNDEF);
+	Group_SetGlobalTestDefault(UNDEF);
 	Test_InitialiseFromGroups(9);
 	call OnPlayerConnect(47);
 	Group_SetPlayer(g, 47, true);
@@ -766,30 +766,230 @@ TEST__ y_groups_Allow()
 	ASSERT_EQ(gPl, 47);
 	ASSERT_EQ(gEl, 9);
 	ASSERT_EQ(gS, false);
-	//
-	//gPl = 3;
-	//gEl = 3;
-	//gS = false;
-	//Group_SetTest(g, 9, ALLOW);
-	//ASSERT_EQ(gPl, 47);
-	//ASSERT_EQ(gEl, 9);
-	//ASSERT_EQ(gS, true);
-	//
-	//gPl = 3;
-	//gEl = 3;
-	//gS = false;
-	//Group_SetTest(g, 9, ALLOW);
-	//ASSERT_EQ(gPl, 47);
-	//ASSERT_EQ(gEl, 9);
-	//ASSERT_EQ(gS, true);
-	//
-	//gPl = 3;
-	//gEl = 3;
-	//gS = false;
-	//Group_SetTest(g, 9, ALLOW);
-	//ASSERT_EQ(gPl, 47);
-	//ASSERT_EQ(gEl, 9);
-	//ASSERT_EQ(gS, true);
+	
+	// Clean up.
+	call OnPlayerDisconnect(43, 0);
+	Group_Destroy(g);
+	Group_Destroy(h);
+}
+
+TEST__ y_groups_Deny1()
+{
+	// Initialise.
+	new Group:g = Group_Create();
+	new Group:h = Group_Create();
+	//Group_SetTestDefault(g, UNDEF);
+	//Group_SetTestDefault(h, UNDEF);
+	Group_SetGlobalTestDefault(UNDEF);
+	Test_InitialiseFromGroups(9);
+	call OnPlayerConnect(47);
+	Group_SetPlayer(g, 47, true);
+	Group_SetPlayer(h, 47, true);
+	
+	// Tests
+	gPl = 0;
+	gEl = 0;
+	gS = false;
+	Group_SetTest(g, 9, ALLOW);
+	ASSERT_EQ(gPl, 47);
+	ASSERT_EQ(gEl, 9);
+	ASSERT_EQ(gS, true);
+	
+	gPl = 1;
+	gEl = 1;
+	gS = false;
+	Group_SetTest(h, 9, DENY);
+	ASSERT_EQ(gPl, 47);
+	ASSERT_EQ(gEl, 9);
+	ASSERT_EQ(gS, false);
+	
+	gPl = 2;
+	gEl = 2;
+	gS = false;
+	Group_SetTest(h, 9, UNDEF);
+	ASSERT_EQ(gPl, 47);
+	ASSERT_EQ(gEl, 9);
+	ASSERT_EQ(gS, true);
+	
+	gPl = 3;
+	gEl = 3;
+	gS = false;
+	Group_SetTest(g, 9, UNDEF);
+	ASSERT_EQ(gPl, 47);
+	ASSERT_EQ(gEl, 9);
+	ASSERT_EQ(gS, false);
+	
+	// Clean up.
+	call OnPlayerDisconnect(43, 0);
+	Group_Destroy(g);
+	Group_Destroy(h);
+}
+
+TEST__ y_groups_Deny2()
+{
+	// Initialise.
+	new Group:g = Group_Create();
+	new Group:h = Group_Create();
+	//Group_SetTestDefault(g, UNDEF);
+	//Group_SetTestDefault(h, UNDEF);
+	Group_SetGlobalTestDefault(UNDEF);
+	Test_InitialiseFromGroups(9);
+	call OnPlayerConnect(47);
+	Group_SetPlayer(g, 47, true);
+	Group_SetPlayer(h, 47, true);
+	
+	// Tests
+	gPl = 0;
+	gEl = 0;
+	gS = false;
+	Group_SetTest(g, 9, ALLOW);
+	ASSERT_EQ(gPl, 47);
+	ASSERT_EQ(gEl, 9);
+	ASSERT_EQ(gS, true);
+	
+	gPl = 1;
+	gEl = 1;
+	gS = false;
+	Group_SetTest(h, 9, DENY);
+	ASSERT_EQ(gPl, 47);
+	ASSERT_EQ(gEl, 9);
+	ASSERT_EQ(gS, false);
+	
+	gPl = 3;
+	gEl = 3;
+	gS = false;
+	Group_SetTest(g, 9, UNDEF);
+	ASSERT_EQ(gPl, 3);
+	ASSERT_EQ(gEl, 3);
+	ASSERT_EQ(gS, false);
+	
+	gPl = 2;
+	gEl = 2;
+	gS = false;
+	Group_SetTest(h, 9, UNDEF);
+	ASSERT_EQ(gPl, 2);
+	ASSERT_EQ(gEl, 2);
+	ASSERT_EQ(gS, false);
+	
+	// Clean up.
+	call OnPlayerDisconnect(43, 0);
+	Group_Destroy(g);
+	Group_Destroy(h);
+}
+
+TEST__ y_groups_Deny3()
+{
+	// Initialise.
+	new Group:g = Group_Create();
+	new Group:h = Group_Create();
+	//Group_SetTestDefault(g, UNDEF);
+	//Group_SetTestDefault(h, UNDEF);
+	Group_SetGlobalTestDefault(UNDEF);
+	Test_InitialiseFromGroups(9);
+	call OnPlayerConnect(47);
+	Group_SetPlayer(g, 47, true);
+	Group_SetPlayer(h, 47, true);
+	
+	// Tests
+	gPl = 0;
+	gEl = 0;
+	gS = false;
+	Group_SetTest(g, 9, ALLOW);
+	ASSERT_EQ(gPl, 47);
+	ASSERT_EQ(gEl, 9);
+	ASSERT_EQ(gS, true);
+	
+	gPl = 1;
+	gEl = 1;
+	gS = false;
+	Group_SetTest(h, 9, DENY);
+	ASSERT_EQ(gPl, 47);
+	ASSERT_EQ(gEl, 9);
+	ASSERT_EQ(gS, false);
+	
+	gPl = 3;
+	gEl = 3;
+	gS = false;
+	Group_SetTest(g, 9, UNDEF);
+	ASSERT_EQ(gPl, 3);
+	ASSERT_EQ(gEl, 3);
+	ASSERT_EQ(gS, false);
+	
+	gPl = 2;
+	gEl = 2;
+	gS = false;
+	Group_SetTest(h, 9, ALLOW);
+	ASSERT_EQ(gPl, 47);
+	ASSERT_EQ(gEl, 9);
+	ASSERT_EQ(gS, true);
+	
+	gPl = 4;
+	gEl = 4;
+	gS = false;
+	Group_SetTest(h, 9, UNDEF);
+	ASSERT_EQ(gPl, 47);
+	ASSERT_EQ(gEl, 9);
+	ASSERT_EQ(gS, false);
+	
+	// Clean up.
+	call OnPlayerDisconnect(43, 0);
+	Group_Destroy(g);
+	Group_Destroy(h);
+}
+
+TEST__ y_groups_DenyGlobal()
+{
+	// Initialise.
+	new Group:g = Group_Create();
+	new Group:h = Group_Create();
+	//Group_SetTestDefault(g, UNDEF);
+	//Group_SetTestDefault(h, UNDEF);
+	Group_SetGlobalTestDefault(DENY);
+	Test_InitialiseFromGroups(9);
+	call OnPlayerConnect(47);
+	Group_SetPlayer(g, 47, true);
+	Group_SetPlayer(h, 47, true);
+	
+	// Tests
+	gPl = 0;
+	gEl = 0;
+	gS = false;
+	Group_SetTest(g, 9, ALLOW);
+	ASSERT_EQ(gPl, 0);
+	ASSERT_EQ(gEl, 0);
+	ASSERT_EQ(gS, false);
+	
+	gPl = 1;
+	gEl = 1;
+	gS = false;
+	Group_SetTest(h, 9, ALLOW);
+	ASSERT_EQ(gPl, 1);
+	ASSERT_EQ(gEl, 1);
+	ASSERT_EQ(gS, false);
+	
+	gPl = 2;
+	gEl = 2;
+	gS = false;
+	Group_SetGlobalTest(9, UNDEF);
+	ASSERT_EQ(gPl, 47);
+	ASSERT_EQ(gEl, 9);
+	ASSERT_EQ(gS, true);
+	
+	gPl = 3;
+	gEl = 3;
+	gS = false;
+	Group_SetTest(g, 9, UNDEF);
+	ASSERT_EQ(gPl, 3);
+	ASSERT_EQ(gEl, 3);
+	ASSERT_EQ(gS, false);
+	
+	gPl = 4;
+	gEl = 4;
+	gS = false;
+	Group_SetTest(h, 9, UNDEF);
+	ASSERT_EQ(gPl, 47);
+	ASSERT_EQ(gEl, 9);
+	ASSERT_EQ(gS, false);
 	
 	// Clean up.
 	call OnPlayerDisconnect(43, 0);

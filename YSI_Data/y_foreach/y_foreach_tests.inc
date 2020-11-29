@@ -3617,8 +3617,7 @@ TEST__ y_iter_RandomAddExclude()
 		Iterator:rand<20>;
 	for (new i = 0; i < 1000; i++)
 	{
-		new
-			val = Iter_RandomAdd(rand, 0, 19);
+		Iter_RandomAdd(rand, 0, 19);
 		ASSERT(!Iter_Contains(rand, 0));
 		ASSERT(!Iter_Contains(rand, 19));
 		Iter_RandomRemove(rand, 0, 19, 20, 22);
