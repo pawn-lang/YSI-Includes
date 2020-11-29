@@ -105,6 +105,9 @@ stock const
 #define FLOAT_SNAN                      (Float:0x7FBFFFFF)
 #define FLOAT_SIGNALING_NAN             (Float:0x7FBFFFFF)
 #define FLOAT_SIGNALING_NOT_A_NUMBER    (Float:0x7FBFFFFF)
+#define FLOAT_E                         (Float:0x402DF854) // e
+#define FLOAT_PI                        (Float:0x40490FDB) // pi
+#define FLOAT_ROOT_2                    (Float:0x3FB504F3) // sqrt(2)
 
 //#pragma unused TRUE, FALSE, NULL
 
