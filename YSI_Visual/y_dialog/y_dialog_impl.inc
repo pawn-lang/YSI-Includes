@@ -95,11 +95,14 @@ remotefunc void:Dialog_Set(playerid, dialogid)
 	}
 }
 
-stock Dialog_ShowCallback(playerid, Func:callback<iiiis>, style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
+// Func:callback<iiiis> | Func:callback<iis>
+stock Dialog_ShowCallback(playerid, {F@_@iiiis, F@_@iis}:callback, style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "", tag = tagof (callback))
 {
 	new
 		ret = Dialog_Show(playerid, style, title, caption, button1, button2);
 	Indirect_Claim(callback);
+	Indirect_SetMeta(callback, tag);
+	// Works tag-safely because the compile-time tag check uses `<iiiis>`.
 	YSI_g_sPlayerCallback[playerid] = callback;
 	return ret;
 }
@@ -107,11 +110,7 @@ stock Dialog_ShowCallback(playerid, Func:callback<iiiis>, style, const string:ti
 #pragma deprecated Use Dialog_ShowCallback
 stock Dialog_ShowCallbackData(playerid, callback[E_CALLBACK_DATA], style, const string:title[], const string:caption[], const string:button1[], const string:button2[] = "")
 {
-	new
-		ret = Dialog_Show(playerid, style, title, caption, button1, button2);
-	Indirect_Claim(callback[0]);
-	YSI_g_sPlayerCallback[playerid] = F@_@iiiis:callback[0];
-	return ret;
+	return Dialog_ShowCallback(playerid, F@_@iiiis:callback[E_CALLBACK_DATA:0], style, title, caption, button1, button2);
 }
 
 #if defined _ALS_ShowPlayerDialog
@@ -165,7 +164,14 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 			// we don't free the memory for the callback prematurely.
 			broadcastfunc Dialog_Set(playerid, -1);
 			// Call the callback.
-			@.callback(playerid, YSI_DIALOG_ID, response, listitem, isnull(inputtext) ? ("\1") : inputtext);
+			if (Indirect_GetMeta(callback) == tagof (F@_@iiiis:))
+			{
+				Indirect_Call(_:callback, tagof (F@_@iiiis:), playerid, YSI_DIALOG_ID, response, listitem, isnull(inputtext) ? NULL : inputtext);
+			}
+			else
+			{
+				Indirect_Call(_:callback, tagof (F@_@iis:), response, listitem, isnull(inputtext) ? NULL : inputtext);
+			}
 			// Free the data.
 			Indirect_Release(callback);
 			return Y_HOOKS_BREAK_RETURN_1;
