@@ -624,7 +624,7 @@ forward OnTestsComplete(tests, fails);
 				new
 					fails = YSI_g_sFails;
 				// Get the last test (nicely fails for cellmax).
-				while ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH)))
+				if ((YSI_g_sPlayer = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH)))
 				{
 					// Call the shutdown function if there is one.
 					buffer[0] = Y_TESTING_PSHUT,
