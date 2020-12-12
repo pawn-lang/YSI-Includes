@@ -537,13 +537,19 @@ stock bool:Testing_Player(playerid, &idx, &tests, &fails, const lastfail[33] = "
 		new
 			buffer[32];
 #if defined JUST_TEST
-Testing_Player_retry:
-#endif
-		if ((idx = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH)))
+		new next;
+Testing_Next_retry:
+		// Get the new test, but don't store the index.
+		if ((next = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH)))
 		{
-#if defined JUST_TEST
 			if (strcmp(buffer[1], #JUST_TEST))
-				goto Testing_Player_retry;
+			{
+				YSI_g_sPlayer = next;
+				goto Testing_Next_retry;
+			}
+#else
+		if (AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH))
+		{
 #endif
 			// Call the setup function if there is one.
 			buffer[0] = Y_TESTING_PINIT,
