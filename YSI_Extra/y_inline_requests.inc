@@ -66,6 +66,25 @@ Optional plugins:
     Me - sscanf2, fixes2, Whirlpool.
 */
 
+#if !defined _INC_y_inline
+	#tryinclude "..\YSI_Coding\y_inline\y_inline_entry"
+#endif
+#if !defined _INC_y_inline
+	#tryinclude "YSI_Coding\y_inline\y_inline_entry"
+#endif
+#if !defined _INC_y_inline
+	#tryinclude "YSI\YSI_Coding\y_inline\y_inline_entry"
+#endif
+#if !defined _INC_y_inline
+	#tryinclude <YSI_Coding\y_inline\y_inline_entry>
+#endif
+#if !defined _INC_y_inline
+	#tryinclude <YSI\YSI_Coding\y_inline\y_inline_entry>
+#endif
+#if !defined _INC_y_inline
+	#error Could not find y_inline
+#endif
+
 #if defined MAX_REQUESTS
     #if !defined MAX_Y_REQUESTS
         #define MAX_Y_REQUESTS (MAX_REQUESTS)
@@ -129,3 +148,4 @@ public OnGetRequestJson(Request:id, E_HTTP_STATUS:status, Node:node)
 
     return 0;
 }
+

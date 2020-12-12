@@ -90,13 +90,15 @@ CHAIN_HOOK(Inline)
 
 #include "y_inline_impl2"
 
-#include "y_inline_extra_bcrypt"
-#include "y_inline_extra_mysql"
-#include "y_inline_extra_requests"
-#include "y_inline_extra_timers"
+// Not implemented errors.
+#include "y_inline_extra"
 
 #if defined YSI_TESTS
 	#include "..\y_hooks"
+	//#include "..\..\YSI_Extra\y_inline_bcrypt"
+	#include "..\..\YSI_Extra\y_inline_mysql"
+	#include "..\..\YSI_Extra\y_inline_requests"
+	#include "..\..\YSI_Extra\y_inline_timers"
 	#include "y_inline_tests"
 #endif
 

@@ -70,6 +70,25 @@ Optional plugins:
 	Me - sscanf2, fixes2, Whirlpool.
 */
 
+#if !defined _INC_y_inline
+	#tryinclude "..\YSI_Coding\y_inline\y_inline_entry"
+#endif
+#if !defined _INC_y_inline
+	#tryinclude "YSI_Coding\y_inline\y_inline_entry"
+#endif
+#if !defined _INC_y_inline
+	#tryinclude "YSI\YSI_Coding\y_inline\y_inline_entry"
+#endif
+#if !defined _INC_y_inline
+	#tryinclude <YSI_Coding\y_inline\y_inline_entry>
+#endif
+#if !defined _INC_y_inline
+	#tryinclude <YSI\YSI_Coding\y_inline\y_inline_entry>
+#endif
+#if !defined _INC_y_inline
+	#error Could not find y_inline
+#endif
+
 #if defined bcrypt_included
 
 	static stock const
@@ -164,5 +183,13 @@ Optional plugins:
 		return ret;
 	}
 
+#else
+	// We used to not have an error for this case, just gave undefined errors.  But now they must
+	// include it explicitly, so add a real error.
+	#error Please include either BCrypt plugin first.
+
+	// This is an alternative, but less clear, method - more unimplmented function errors.
+	forward BCrypt_CheckInline(const text[], const hash[], Func:cb<i>);
+	forward BCrypt_HashInline(const text[], cost = 12, Func:cb<s>);
 #endif
 

@@ -593,6 +593,7 @@ needs to know WHICH BCrypt plugin you're using, you need to include them first:
 //   #include <bcrypt>
 //
 #include <YSI_Coding\y_inline>
+#include <YSI_Extra\y_inline_bcrypt>
 ```
 
 After that, the code is exactly the same - y_inline unifies the APIs and passes you the results:
@@ -700,4 +701,120 @@ OuterFunc()
 	}
 }
 ```
+
+## Extras
+
+The "extras" are functions already wrapped for use with inlines.  Functions that would normally take
+or require a callback, but that can now be used with callbacks instead (i.e. inlines or callbacks).
+These, as special extras, are under `YSI_Extra`, and there are currently (at least) four groups:
+
+```pawn
+#include <YSI_Extra\y_inline_bcrypt>
+#include <YSI_Extra\y_inline_mysql>
+#include <YSI_Extra\y_inline_requests>
+#include <YSI_Extra\y_inline_timers>
+```
+
+They used to be automatically included with *y_inline*, but doing so bloated the code even if you
+didn't use them, so now you have to be more explicit.  If you used them before, and don't update
+your code, you will now get a warning like:
+
+    error 004: function "ORM_InsertInline" is not implemented
+
+### y_inline_bcrypt
+
+* `BCrypt_CheckInline(const text[], const hash[], Func:cb<i>);`
+* `BCrypt_HashInline(const text[], cost = 12, Func:cb<s>);`
+
+There are two different BCrypt plugins, these functions work with either - but you must include one
+of them first.
+
+```pawn
+//
+//   #include <samp_bcrypt>
+//
+// OR
+//
+//   #include <bcrypt>
+//
+#include <YSI_Coding\y_inline>
+#include <YSI_Extra\y_inline_bcrypt>
+
+ComparePassword(const input[], const hash[])
+{
+	inline const OnCompared(bool:match)
+	{
+		printf("The passwords %s match", match ? ("do") : ("do not"));
+	}
+	BCrypt_CheckInline(input, hash, using inline OnCompared);
+}
+```
+
+### y_inline_mysql
+
+* `MySQL_PQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPES:...);`
+* `MySQL_TQueryInline(MySQL:handle, Func:cb<>, const query[], GLOBAL_TAG_TYPES:...);`
+* `ORM_SelectInline(ORM:id, Func:cb<>);`
+* `ORM_UpdateInline(ORM:id, Func:cb<>);`
+* `ORM_InsertInline(ORM:id, Func:cb<>);`
+* `ORM_DeleteInline(ORM:id, Func:cb<>);`
+* `ORM_LoadInline(ORM:id, Func:cb<>);`
+* `ORM_SaveInline(ORM:id, Func:cb<>);`
+
+`MySQL_PQueryInline` and `MySQL_TQueryInline` both take variable parameters.  These are NOT passed
+to the inline function with the result (that's taken care of via closures).  Rather, they are
+formatting parameters for the query (wraps `mysql_format`).
+
+### y_inline_requests
+
+* `Request:RequestCallback(RequestsClient:id, const path[], E_HTTP_METHOD:method, Func:callback<iisi>, body[] = "", Headers:headers = Headers:-1);`
+* `Request:RequestJSONCallback(RequestsClient:id, const path[], E_HTTP_METHOD:method, Func:callback<iii>, Node:json = Node:-1, Headers:headers = Headers:-1);`
+
+### y_inline_timers
+
+* `Timer_CreateCallback(Func:func<>, initialOrTime, timeOrCount = 0, count = -1);`
+* `Timer_KillCallback(func);`
+
+There are several ways to use `Timer_CreateCallback` function:
+
+`Timer_CreateCallback(func, 100);` - Calls the function once every 100ms.
+
+`Timer_CreateCallback(func, 100, 0);` - Same as above (count is `0`, which means repeat forever).
+
+`Timer_CreateCallback(func, 100, 5);` - Calls the function once every 100ms, but only 5 times.
+
+`Timer_CreateCallback(func, 100, 200, 0);` - Calls the function once every 200ms, but the first call is after just 100ms.
+
+`Timer_CreateCallback(func, 100, 200, 42);` - Calls the function 42 times, first after 100ms, then every 200ms.
+
+In summary:
+
+When only one parameter is given its `time`.
+
+When two parameters are given they're `time` and `count`.
+
+When all three parameters are given they're `initial`, `time`, and `count`.
+
+Count is NOT like `repeat` in `SetTimer`.  `0` means repeat forever, anything not `0` means call it
+exactly that many times.
+
+`Timer_KillCallback` is used to kill a timer created by `Timer_CreateCallback`, since the normal
+`KillTimer` won't work for them:
+
+```pawn
+inline const AfterFiveSeconds()
+{
+	printf("Will never be called");
+}
+new timer = Timer_CreateCallback(using inline AfterFiveSeconds, 5000);
+Timer_KillCallback(timer);
+```
+
+There were two other functions, but they were quickly deprecated in favour of the open.mp-style
+function names above:
+
+* `SetCallbackTimer(Func:func<>, initialOrTime, timeOrCount = 0, count = -1);`
+* `KillCallbackTimer(func);`
+
+
 
