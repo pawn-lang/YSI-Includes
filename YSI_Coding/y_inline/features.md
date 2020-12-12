@@ -472,6 +472,7 @@ Variables with destructors declared within the inline - either as parameters or 
 
 ```pawn
 #include <YSI_Coding\y_inline>
+#include <YSI_Extra\y_inline_mysql>
 
 ShowLogin(MySQL:handle, playerid)
 {
