@@ -552,10 +552,10 @@ Testing_Next_retry:
 		{
 #endif
 			// Call the setup function if there is one.
-			buffer[0] = Y_TESTING_PINIT,
-			R@(buffer, ""),
+			buffer[0] = Y_TESTING_PINIT;
+			R@(buffer, "");
 			// Call the test.
-			buffer[0] = Y_TESTING_PTEST,
+			buffer[0] = Y_TESTING_PTEST;
 			fails = YSI_g_sFails;
 			P:5("Testing_Player(): Calling %s", unpack(buffer[1]));
 			YSI_g_sInTest = true;
@@ -653,11 +653,12 @@ Testing_Next_retry:
 #endif
 					YSI_g_sAsked = false;
 					// Call the setup function if there is one.
-					buffer[0] = Y_TESTING_PINIT,
-					R@(buffer, ""),
+					buffer[0] = Y_TESTING_PINIT;
+					P:5("Testing_Next(): Calling %s", unpack(buffer));
+					R@(buffer, "");
 					// Call the test.
 					buffer[0] = Y_TESTING_PTEST;
-					P:5("Testing_Next(): Calling %s", unpack(buffer[1]));
+					P:5("Testing_Next(): Calling %s", unpack(buffer));
 					YSI_g_sInTest = true;
 					R@(buffer, "i", playerid);
 				}
