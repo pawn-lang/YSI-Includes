@@ -82,7 +82,7 @@ public @y_inlineTimerCount(Func:func<>, time, count)
 	else
 	{
 		// Run again, to track the count.
-		new timer = SetTimerEx("@y_inlineTimerCount", time, false, "iii", _:func, time, count);
+		new timer = YSI_SetTimerEx("@y_inlineTimerCount", time, false, "iii", _:func, time, count);
 		Indirect_SetMeta(func, timer);
 	}
 	@.func();
@@ -101,7 +101,7 @@ forward @y_inlineTimerStart(Func:func<>, time);
 public @y_inlineTimerStart(Func:func<>, time)
 {
 	// Initial repeating timer, to set the time offset.
-	new timer = SetTimerEx("@y_inlineTimerRepeat", time, true, "i", _:func);
+	new timer = YSI_SetTimerEx("@y_inlineTimerRepeat", time, true, "i", _:func);
 	Indirect_SetMeta(func, timer);
 	// Call the function after setting the meta, incase it kills the timer.
 	@.func();
@@ -158,14 +158,14 @@ stock SetCallbackTimer(Func:func<>, initialOrTime, timeOrCount = 0, count = -1)
 	{
 		// Repeat forever, but DON'T repeat here, this is just the initial offset time.
 		Indirect_Claim(func);
-		new timer = SetTimerEx("@y_inlineTimerStart", initialOrTime, false, "ii", _:func, timeOrCount);
+		new timer = YSI_SetTimerEx("@y_inlineTimerStart", initialOrTime, false, "ii", _:func, timeOrCount);
 		Indirect_SetMeta(func, timer);
 	}
 	else
 	{
 		// Repeat N times.
 		Indirect_Claim(func);
-		new timer = SetTimerEx("@y_inlineTimerCount", initialOrTime, false, "iii", _:func, timeOrCount, count);
+		new timer = YSI_SetTimerEx("@y_inlineTimerCount", initialOrTime, false, "iii", _:func, timeOrCount, count);
 		Indirect_SetMeta(func, timer);
 	}
 	return _:func;

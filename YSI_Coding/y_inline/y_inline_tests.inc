@@ -1523,3 +1523,16 @@ TEST__ y_inline_DeeplyNested()
 	ASSERT_EQ(k, 8);
 }
 
+TEST__ y_inline_timer()
+{
+	// This is tricky to test, because we need to test it instantly, but the timer (by definition)
+	// is called in the future.  So we just test that a timer was probably started for now.
+	inline const X()
+	{
+	}
+	new timer = SetCallbackTimer(using inline X, 100);
+	ASSERT_NE(timer, 0);
+	ASSERT_NE(Indirect_GetMeta(timer), 0);
+	KillCallbackTimer(timer);
+}
+
