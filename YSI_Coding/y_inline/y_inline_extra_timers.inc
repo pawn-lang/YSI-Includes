@@ -142,7 +142,7 @@ public @y_inlineTimerStart(Func:func<>, time)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock SetCallbackTimer(Func:func<>, initialOrTime, timeOrCount = 0, count = -1)
+stock Timer_CreateCallback(Func:func<>, initialOrTime, timeOrCount = 0, count = -1)
 {
 	if (count == -1)
 	{
@@ -171,6 +171,12 @@ stock SetCallbackTimer(Func:func<>, initialOrTime, timeOrCount = 0, count = -1)
 	return _:func;
 }
 
+#pragma deprecated Use `Timer_CreateCallback`.
+stock SetCallbackTimer(Func:func<>, initialOrTime, timeOrCount = 0, count = -1)
+{
+	return Timer_CreateCallback(func, initialOrTime, timeOrCount, count);
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="func">Timer to kill.</param>
  * <remarks>
@@ -179,10 +185,16 @@ stock SetCallbackTimer(Func:func<>, initialOrTime, timeOrCount = 0, count = -1)
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock KillCallbackTimer(func)
+stock Timer_KillCallback(func)
 {
 	new timer = Indirect_GetMeta(func);
 	Indirect_Release(func);
 	return KillTimer(timer);
+}
+
+#pragma deprecated Use `Timer_KillCallback`.
+stock KillCallbackTimer(func)
+{
+	return Timer_KillCallback(func);
 }
 

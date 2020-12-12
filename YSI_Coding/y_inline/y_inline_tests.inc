@@ -1530,9 +1530,9 @@ TEST__ y_inline_timer()
 	inline const X()
 	{
 	}
-	new timer = SetCallbackTimer(using inline X, 100);
+	new timer = Timer_CreateCallback(using inline X, 100);
 	ASSERT_NE(timer, 0);
 	ASSERT_NE(Indirect_GetMeta(timer), 0);
-	KillCallbackTimer(timer);
+	Timer_KillCallback(timer);
 }
 
