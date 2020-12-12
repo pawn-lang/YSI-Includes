@@ -286,34 +286,17 @@ native _YSI_ConstCpy(const dst[], const src[], index, numbytes, maxlength) = mem
 	#undef SCM
 #endif
 
-// I tried 
+//
+// I yried so many ways to fully break `SCM` for all cases:
+//
+//     `#define` to give a redefinition warning.
+//     Using a function to stop `#undef`.
+//     Mixing compiler passes to make it both function and macro together.
+//
+// Couldn't get it to work in all cases.  There's always a way around it.
+//
+
 #pragma deprecated Stop using `SCM()` - Learn to code properly!
 forward STOP_USING_SCM(playerid, colour, const string[], GLOBAL_TAG_TYPES:...);
-//enum { SCM };
-//#if __COMPILER_1ST_PASS
 #define SCM STOP_USING_SCM
-//#else
-//	#pragma deprecated Stop using `SCM()` - Learn to code properly!
-//	stock SCM__(playerid, colour, const string[], GLOBAL_TAG_TYPES:...);
-//	//{
-//	//	#pragma unused playerid, colour, string
-//	//	printf("I told you not to use SCM.");
-//	//	#emit HALT 0
-//	//	return 0;
-//	//}
-//
-//	#define SCM SCM__
-//#else
-//	#pragma deprecated Stop using `SCM()` - Learn to code properly!
-//	forward SCM(playerid, colour, const string[], GLOBAL_TAG_TYPES:...);
-//	//{
-//	//	#pragma unused playerid, colour, string
-//	//	printf("I told you not to use SCM.");
-//	//	#emit HALT 0
-//	//	// `c` is not a string, to really give an error.
-//	//}
-//
-////	#define SCM(%0) SCM__ PP_LEFT_BRACKET<> %0 PP_RIGHT_BRACKET<>
-//	#define SCM__ SCM
-//#endif
 
