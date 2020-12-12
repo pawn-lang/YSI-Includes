@@ -150,6 +150,16 @@ stock const YSIM_VERMAX[] = "X";
 #define YSIM_LOG_IN #U
 #define YSIM_VARARG #V
 
+#define PP_LEFT_BRACKET<> (
+#define PP_RIGHT_BRACKET<> )
+#define PP_LEFT_BRACE<> {
+#define PP_RIGHT_BRACE<> }
+#define PP_LEFT_SQUARE_BRACKET<> [
+#define PP_RIGHT_SQUARE_BRACKET<> ]
+#define PP_LEFT_ANGLE_BRACKET<> <
+#define PP_RIGHT_ANGLE_BRACKET<> >
+#define PP_NULL<>
+
 // New create the `OnScriptInit` and `OnCodeInit` callbacks, which many YSI
 // includes use to start themselves.
 #include "y_scriptinit_impl"
@@ -271,4 +281,39 @@ native _YSI_ConstCpy(const dst[], const src[], index, numbytes, maxlength) = mem
 #if defined YSI_YES_MODE_CACHE
 	#include "y_thirdpartyinclude"
 #endif
+
+#if defined SCM //&& __COMPILER_1ST_PASS
+	#undef SCM
+#endif
+
+// I tried 
+#pragma deprecated Stop using `SCM()` - Learn to code properly!
+forward STOP_USING_SCM(playerid, colour, const string[], GLOBAL_TAG_TYPES:...);
+//enum { SCM };
+//#if __COMPILER_1ST_PASS
+#define SCM STOP_USING_SCM
+//#else
+//	#pragma deprecated Stop using `SCM()` - Learn to code properly!
+//	stock SCM__(playerid, colour, const string[], GLOBAL_TAG_TYPES:...);
+//	//{
+//	//	#pragma unused playerid, colour, string
+//	//	printf("I told you not to use SCM.");
+//	//	#emit HALT 0
+//	//	return 0;
+//	//}
+//
+//	#define SCM SCM__
+//#else
+//	#pragma deprecated Stop using `SCM()` - Learn to code properly!
+//	forward SCM(playerid, colour, const string[], GLOBAL_TAG_TYPES:...);
+//	//{
+//	//	#pragma unused playerid, colour, string
+//	//	printf("I told you not to use SCM.");
+//	//	#emit HALT 0
+//	//	// `c` is not a string, to really give an error.
+//	//}
+//
+////	#define SCM(%0) SCM__ PP_LEFT_BRACKET<> %0 PP_RIGHT_BRACKET<>
+//	#define SCM__ SCM
+//#endif
 
