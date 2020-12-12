@@ -631,14 +631,19 @@ forward OnTestsComplete(tests, fails);
 					R@(buffer, "i", playerid);
 				}
 #if defined JUST_TEST
+				new next;
 Testing_Next_retry:
-#endif
 				// Get the new test, but don't store the index.
+				if ((next = AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH)))
+				{
+					if (strcmp(buffer[1], #JUST_TEST))
+					{
+						YSI_g_sPlayer = next;
+						goto Testing_Next_retry;
+					}
+#else
 				if (AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH))
 				{
-#if defined JUST_TEST
-					if (strcmp(buffer[1], #JUST_TEST))
-						goto Testing_Next_retry;
 #endif
 					YSI_g_sAsked = false;
 					// Call the setup function if there is one.
