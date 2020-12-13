@@ -604,6 +604,8 @@ Testing_Next_retry:
 					TEST_REPORT("  ||==========================||  ");
 					TEST_REPORT(" ");
 				}
+				// So that user can define the public to handle when Player test results are in
+				R@("OnPlayerTestsComplete", "iii", playerid, YSI_g_sTests, YSI_g_sFails);
 			}
 			// If the test needs a player but doesn't ask them anything
 			// then we can't wait for "OnDialogResponse" to run the next
@@ -657,6 +659,7 @@ Testing_Next_retry:
 #endif
 
 forward OnTestsComplete(tests, fails);
+forward OnPlayerTestsComplete(playerid, tests, fails);
 
 #if defined RUN_TESTS
 	#if defined _AUTO_RUN_TESTS
