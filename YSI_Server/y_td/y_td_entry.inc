@@ -322,7 +322,7 @@ stock Style:TD_Create(Float:x = 0.0, Float:y = 0.0, Float:letterX = 0.48, Float:
 	#if !defined TEXT_DRAW_NO_STYLE_NAME
 		strpack(YSI_g_sTDData[i][E_TD_DATA_NAME], name, MAX_XML_ENTRY_NAME);
 	#endif
-	YSI_g_sTDData[i][E_TD_DATA_HASH] = bernstein(name);
+	YSI_g_sTDData[i][E_TD_DATA_HASH] = BernsteinHash(name);
 	YSI_g_sTDData[i][E_TD_DATA_X] = x;
 	YSI_g_sTDData[i][E_TD_DATA_Y] = y;
 	YSI_g_sTDData[i][E_TD_DATA_LX] = letterX;
@@ -466,7 +466,7 @@ public TD_Textdraw()
 				#if !defined TEXT_DRAW_NO_STYLE_NAME
 					strpack(YSI_g_sTDData[i][E_TD_DATA_NAME], val, MAX_XML_ENTRY_NAME);
 				#endif
-				hash = bernstein(val);
+				hash = BernsteinHash(val);
 			}
 		}
 		YSI_g_sTDData[i][E_TD_DATA_BITS] = bits;
@@ -474,7 +474,7 @@ public TD_Textdraw()
 		{
 			YSI_g_sTDData[i][E_TD_DATA_NAME] = 0x01000000;
 		}*/
-		//YSI_g_sTDData[i][E_TD_DATA_HASH] = bernstein(YSI_g_sTDData[i][E_TD_DATA_NAME]);
+		//YSI_g_sTDData[i][E_TD_DATA_HASH] = BernsteinHash(YSI_g_sTDData[i][E_TD_DATA_NAME]);
 		YSI_g_sTDData[i][E_TD_DATA_HASH] = hash;
 		P:5("TD data: %.2f %.2f %.2f %.2f %.2f %.2f %x %d %x %d %d", YSI_g_sTDData[i][E_TD_DATA_X], YSI_g_sTDData[i][E_TD_DATA_Y], YSI_g_sTDData[i][E_TD_DATA_LX], YSI_g_sTDData[i][E_TD_DATA_LY], YSI_g_sTDData[i][E_TD_DATA_TX], YSI_g_sTDData[i][E_TD_DATA_TY], YSI_g_sTDData[i][E_TD_DATA_COLOUR], YSI_g_sTDData[i][E_TD_DATA_BOX], YSI_g_sTDData[i][E_TD_DATA_BG], YSI_g_sTDData[i][E_TD_DATA_TIME], YSI_g_sTDData[i][E_TD_DATA_BITS]);//, YSI_g_sTDData[i][E_TD_DATA_NAME]);
 	}
@@ -488,7 +488,7 @@ public TD_Textdraw()
 stock Style:TD_GetNamed(const name[])
 {
 	new
-		hash = bernstein(name);
+		hash = BernsteinHash(name);
 	P:3("Text:TD_GetID called: %i", hash);
 	new
 		Style:i = Style:0;
@@ -544,7 +544,7 @@ stock Style:TD_Clone(Style:styleID, const name[] = "\1")
 	#if !defined TEXT_DRAW_NO_STYLE_NAME
 		strpack(YSI_g_sTDData[i][E_TD_DATA_NAME], name, MAX_XML_ENTRY_NAME);
 	#endif
-	YSI_g_sTDData[i][E_TD_DATA_HASH] = bernstein(name);
+	YSI_g_sTDData[i][E_TD_DATA_HASH] = BernsteinHash(name);
 	// memcpy?
 	/*YSI_g_sTDData[i][E_TD_DATA_X] = YSI_g_sTDData[styleID][E_TD_DATA_X];
 	YSI_g_sTDData[i][E_TD_DATA_Y] = YSI_g_sTDData[styleID][E_TD_DATA_Y];
@@ -592,7 +592,7 @@ stock TD_Name(Style:styleID, const name[])
 	#if !defined TEXT_DRAW_NO_STYLE_NAME
 		strpack(YSI_g_sTDData[styleID][E_TD_DATA_NAME], name, MAX_XML_ENTRY_NAME);
 	#endif
-	YSI_g_sTDData[styleID][E_TD_DATA_HASH] = bernstein(name);
+	YSI_g_sTDData[styleID][E_TD_DATA_HASH] = BernsteinHash(name);
 	return 1;
 }
 
@@ -1596,17 +1596,17 @@ stock Text:TD_DisplayHashedForAll(const text[], hash, Float:x = (Float:TEXT_DRAW
 
 stock Text:TD_DisplayNamed(const text[], const style[], Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
 {
-	return TD_DisplayHashed(text, bernstein(style), x, y);
+	return TD_DisplayHashed(text, BernsteinHash(style), x, y);
 }
 
 stock Text:TD_DisplayNamedForPlayer(playerid, const text[], const style[], Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
 {
-	return TD_DisplayHashedForPlayer(playerid, text, bernstein(style), x, y);
+	return TD_DisplayHashedForPlayer(playerid, text, BernsteinHash(style), x, y);
 }
 
 stock Text:TD_DisplayNamedForAll(const text[], const style[], Float:x = (Float:TEXT_DRAW_NAN), Float:y = (Float:TEXT_DRAW_NAN))
 {
-	return TD_DisplayHashedForAll(text, bernstein(style), x, y);
+	return TD_DisplayHashedForAll(text, BernsteinHash(style), x, y);
 }
 
 /*-------------------------------------------------------------------------*//**

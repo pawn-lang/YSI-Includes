@@ -767,12 +767,44 @@ stock IPToInt(const ip[])
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
+stock BernsteinHash(const string[] /* 12 */)
+{
+	new h = 5381, i = 0, j = 0;
+	while ((j = string[i++]))
+		h = h * 33 ^ j;
+	return h;
+}
+
+#pragma deprecated Use the new name `BernsteinHash()`.
 stock bernstein(const string[] /* 12 */)
 {
 	new h = 5381, i = 0, j = 0;
 	while ((j = string[i++]))
 		h = h * 33 ^ j;
 	return h;
+}
+
+/*-------------------------------------------------------------------------*//**
+ * <param name="string">the string to hash.</param>
+ * <returns>
+ *  the Jenkins hash of the input string
+ * </returns>
+ * <remarks>
+ *  This is a 32bit hash system so is not very secure, however we're only
+ *  using this as a string enumerator to uniquely identify strings easilly
+ *  and allow for a binary search of strings based on the hash of their name.
+ * </remarks>
+ *//*------------------------------------------------------------------------**/
+
+stock JenkinsHash(const string[] /* 12 */)
+{
+	new h = 0, i = 0, j = 0;
+	while ((j = string[i++]))
+		h += j, h += h << 10, h ^= h >> 6;
+	return
+		h += h << 3,
+		h ^= h >> 1,
+		h + (h << 15);
 }
 
 /*-------------------------------------------------------------------------*//**

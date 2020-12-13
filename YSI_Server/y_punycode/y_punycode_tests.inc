@@ -125,13 +125,13 @@ TEST__ y_punycode_hash()
 		hash3 = 0;
 	Puny_EncodeHash(dst, "hello", hash1);
 	hash2 = YHash("hello");
-	hash3 = bernstein("hello");
+	hash3 = BernsteinHash("hello");
 	ASSERT_EQ(hash1, hash2);
 	ASSERT_EQ(hash2, hash3);
 	ASSERT_EQ(hash3, hash1);
 	Puny_EncodeHash(dst, "world", hash1);
 	hash2 = YHash("world");
-	hash3 = bernstein("world");
+	hash3 = BernsteinHash("world");
 	ASSERT_EQ(hash1, hash2);
 	ASSERT_EQ(hash2, hash3);
 	ASSERT_EQ(hash3, hash1);

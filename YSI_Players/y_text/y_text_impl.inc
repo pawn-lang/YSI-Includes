@@ -311,7 +311,7 @@ static stock Text_AddLocal(const buffer[])
 	}
 	if (slot != -1)
 	{
-		YSI_g_sTextSets[slot][E_TEXT_SETS_HASH] = bernstein(buffer);
+		YSI_g_sTextSets[slot][E_TEXT_SETS_HASH] = BernsteinHash(buffer);
 		YSI_g_sTextSets[slot][E_TEXT_SETS_LOAD] = true;
 		strcpy(YSI_g_sTextSets[slot][E_TEXT_SETS_NAME], buffer, 28);
 	}
@@ -464,7 +464,7 @@ public Text_INILoad(Language:langIndex, file[], tag[], name[], value[])
 			else
 				number = 0;
 			// `len` is now useless.
-			hash = bernstein(name);
+			hash = BernsteinHash(name);
 			slot = Text_FindEntry(fhash, name, hash);
 			P:6("Text_INILoad: Check slot %d", slot);
 			if (slot == -1)
@@ -594,13 +594,13 @@ stock _Text_LookupName(name[])
 	// TODO...
 //	P:4("_Text_LookupName called: %s, %s", name, YSI_g_sReturnText);
 //	new
-//		sh = bernstein(YSI_g_sReturnText);
+//		sh = BernsteinHash(YSI_g_sReturnText);
 //	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 //	{
 //		if (sh == YSI_g_sTextSets[i][E_TEXT_SETS_HASH] && !strcmp(YSI_g_sReturnText, YSI_g_sTextSets[i][E_TEXT_SETS_NAME]))
 //		{
 //			// Got the start slot.
-//			return Text_FindEntry(YSI_g_sTextSets[i][E_TEXT_SETS_HASH], name, bernstein(name));
+//			return Text_FindEntry(YSI_g_sTextSets[i][E_TEXT_SETS_HASH], name, BernsteinHash(name));
 //		}
 //	}
 	return -1;
@@ -645,7 +645,7 @@ static stock Text_GetStandard(search[], nh, Language:l)
 	}
 	P:4("Text_GetStandard called");
 	new
-		sh = bernstein(search);//,
+		sh = BernsteinHash(search);//,
 		//fail[MAX_INI_ENTRY_TEXT] = "String not found";
 	for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 	{
@@ -735,7 +735,7 @@ static stock Text_GetText(search[], name[], Language:l)
 		if (existproperty(7, search[lst]))
 		{
 			// Only call other scripts if ANYONE owns this search.
-			CallRemoteFunction("Text_GetStandard", "sii", search[lst], bernstein(name), _:l);
+			CallRemoteFunction("Text_GetStandard", "sii", search[lst], BernsteinHash(name), _:l);
 			//P:7("Text_GetText: loop2 %s %d %d %s %d %d", search, lst, pos, search[lst], search[pos + 1], ret[0]);
 			search[lst + pos] = '|';
 			//if (ret[0] != '\1')
@@ -945,13 +945,13 @@ static stock Text_IsLocalOwner(search[], const ident[], &len)
 	{
 		pos = strfind(search[lst], "|");
 		search[lst + pos] = '\0';
-		hash = bernstein(search[lst]);
+		hash = BernsteinHash(search[lst]);
 		for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 		{
 			if (hash == YSI_g_sTextSets[i][E_TEXT_SETS_HASH] && !strcmp(search[lst], YSI_g_sTextSets[i][E_TEXT_SETS_NAME]))
 			{
 				new
-					ret = Text_FindEntry(YSI_g_sTextSets[i][E_TEXT_SETS_HASH], ident, bernstein(ident));
+					ret = Text_FindEntry(YSI_g_sTextSets[i][E_TEXT_SETS_HASH], ident, BernsteinHash(ident));
 				if (ret != -1)
 				{
 					search[lst + pos] = '|';
@@ -1243,7 +1243,7 @@ stock _Text_Format(dest[], size, Language:lang, e_STYLE_TYPE:style, search[], id
 
 	if (style != e_STYLE_TYPE_DIALOG)
 	{
-		new hash = bernstein(ident);
+		new hash = BernsteinHash(ident);
 		for (new i = 0; i != Y_TEXT_MAX_SETS; ++i)
 		{
 			new
