@@ -216,9 +216,9 @@ As explained above, you can't call commands directly in y_commands, and you shou
 Command_ReProcess("/mycommand");
 ```
 
-This is doing the wrong thing, and we want to make doing the wrong thing as hard as possible.  See (#so-what-is-the-solution)[*So what is the solution*] for what to do instead.
+This is doing the wrong thing, and we want to make doing the wrong thing as hard as possible.  See [*So what is the solution*](#so-what-is-the-solution) for what to do instead.
 
-## Isn't <other command processor> faster than this?
+## Isn't `other command processor` faster than this?
 
 Maybe.  So?  y_commands is as-fast, or slightly faster, than most other command processors (if you believe their graphs, but they all have an agenda), but with way more features.
 
