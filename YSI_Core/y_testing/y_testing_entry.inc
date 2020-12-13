@@ -606,7 +606,7 @@ Testing_Next_retry:
 			{
 				YSI_g_sAsked = true;
 				// No more tests.
-				printf("*** Test%s: %d, Check%s: %d, Fail%s: %d", YSI_g_sTests, Y_TESTING_S(YSI_g_sTests), YSI_g_sChecks, Y_TESTING_S(YSI_g_sChecks), YSI_g_sFails, Y_TESTING_S(YSI_g_sFails));
+				printf("*** Test%s: %d, Check%s: %d, Fail%s: %d", Y_TESTING_S(YSI_g_sTests), YSI_g_sTests, Y_TESTING_S(YSI_g_sChecks), YSI_g_sChecks, Y_TESTING_S(YSI_g_sFails), YSI_g_sFails);
 				if (!YSI_g_sFails)
 				{
 					TEST_REPORT(" ");
@@ -792,7 +792,7 @@ stock Testing_RunAll()
 	else
 #endif
 	{
-		printf("*** Test%s: %d, Check%s: %d, Fail%s: %d", tests, Y_TESTING_S(tests), checks, Y_TESTING_S(checks), fails, Y_TESTING_S(fails));
+		printf("*** Test%s: %d, Check%s: %d, Fail%s: %d", Y_TESTING_S(tests), tests, Y_TESTING_S(checks), checks, Y_TESTING_S(fails), fails);
 		if (fails)
 		{
 			// List all the failing tests, along with the number of "ASSERT"s
