@@ -843,14 +843,15 @@ TEST__ y_testing_2()
 {
 	new
 		t = YSI_g_sTests,
-		c = YSI_g_sChecks;
+		c = YSI_g_sChecks,
 		f = YSI_g_sFails;
 	ASSERT(false == false);
 	ASSERT(true == true);
 	ASSERT(TRUE != FALSE);
-	ASSERT(t + 3 == YSI_g_sChecks);
+	ASSERT(c + 3 == YSI_g_sChecks);
 	ASSERT(f == YSI_g_sFails);
-	ASSERT(t + 5 == YSI_g_sChecks);
+	ASSERT(c + 5 == YSI_g_sChecks);
+	ASSERT(t == YSI_g_sTests);
 	// Fail a fake test on purpose.
 	//state ysi_debug : on;
 	P:I("The next test hasn't really failed...");
