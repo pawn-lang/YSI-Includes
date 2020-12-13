@@ -173,6 +173,14 @@ stock Puny_Decode(string:dst[], const string:src[], wlen = sizeof (dst), const d
 	return 1;
 }
 
+stock Puny_DecodeHash(string:dst[], const string:src[], &hash, wlen = sizeof (dst), const delimiter = PUNY_CHAR)
+{
+	Puny_Decode(dst, src, wlen, delimiter);
+	// This can't be easily done inline
+	hash = BernsteinHash(dst);
+	return 1;
+}
+
 /*-------------------------------------------------------------------------*//**
  * <param name="dst">Where to store the converted string.</param>
  * <param name="src">The string to convert.</param>
@@ -547,7 +555,7 @@ static stock Puny_Adapt(delta, length, bool:firstTime)
 		
 		#define _ALS_HTTP
 	#endif
-	#define HTTP Puny_HTTP
+	#define HTTP( Puny_HTTP(
 #endif
 
 #undef _Puny_Basic

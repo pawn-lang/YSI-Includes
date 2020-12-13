@@ -168,10 +168,17 @@ static stock
 	bool:YSI_gTestComplete = false,
 	bool:YSI_g_sAsked = false,
 	YSI_g_sTests = 0,
+	YSI_g_sChecks = 0,
 	YSI_g_sFails = 0;
 
 stock
 	YSI_gCurTestName[32];
+
+static stock const
+	YSI_gscStringS[] = "s",
+	YSI_gscString_[] = "";
+
+#define Y_TESTING_S(%0) ((%0) == 1 ? YSI_gscString_ : YSI_gscStringS)
 
 // Each function type has a dedicated three letter prefix associated with it:
 //   
@@ -347,7 +354,7 @@ stock Testing_Test(bool:x, const str[] = "", GLOBAL_TAG_TYPES:...)
 {
 	#pragma unused str
 	P:3("Testing_Test called: %i, \"%s\"", x, str);
-	++YSI_g_sTests;
+	++YSI_g_sChecks;
 	static
 		Testing_Test_msg[6],
 		Testing_Test_FRM = 0,
@@ -401,7 +408,7 @@ stock bool:_Testing_End()
 	YSI_gTestComplete = true;
 	new
 		space = heapspace();
-	++YSI_g_sTests;
+	++YSI_g_sChecks;
 	if (YSI_g_sCurHeap != space)
 	{
 #if defined INCLUDE_TESTS || defined RUN_TESTS
@@ -428,7 +435,7 @@ stock bool:_Testing_End()
  * </remarks>
  *//*------------------------------------------------------------------------**/
 
-stock bool:Testing_Run(&tests, &fails, const lastfail[33] = "", bool:p = false)
+stock bool:Testing_Run(&tests, &checks, &fails, const lastfail[33] = "", bool:p = false)
 {
 	P:3("bool:Testing_Run called: %i, %i, \"%s\", %i", tests, fails, lastfail, p);
 	#pragma unused p, lastfail
@@ -503,6 +510,7 @@ Testing_Run_after_fail:
 		}
 	}
 	tests = YSI_g_sTests;
+	checks = YSI_g_sChecks;
 	fails = YSI_g_sFails;
 	return fails == 0;
 #else
@@ -515,6 +523,7 @@ Testing_Run_after_fail:
  * <param name="playerid">Player to test on.</param>
  * <param name="idx">Next test to run.</param>
  * <param name="tests">Number of tests run.</param>
+ * <param name="checks">Number of checks made.</param>
  * <param name="fails">Number of tests which failed.</param>
  * <param name="buffer">The name of the first test which failed.</param>
  * <returns>
@@ -529,7 +538,7 @@ Testing_Run_after_fail:
  *//*------------------------------------------------------------------------**/
 
 #if !defined NO_PLAYER_TESTS
-	stock bool:Testing_Player(playerid, &idx, &tests, &fails, const lastfail[33] = "", bool:p = false)
+	stock bool:Testing_Player(playerid, &idx, &tests, &checks, &fails, const lastfail[33] = "", bool:p = false)
 	{
 		if (YSI_g_sPlayer == cellmax && !IsPlayerNPC(playerid)) //!Player_IsNPC(playerid))
 		{
@@ -539,6 +548,7 @@ Testing_Run_after_fail:
 			TEST_REPORT("  ||==========================||  ");
 			TEST_REPORT(" ");
 			YSI_g_sTests = 0;
+			YSI_g_sChecks = 0;
 			YSI_g_sFails = 0;
 			Testing_Next(playerid);
 		}
@@ -580,6 +590,7 @@ Testing_Next_retry:
 			if (AMX_GetPublicNamePrefix(YSI_g_sPlayer, buffer, Y_TESTING_PTEST_SEARCH))
 			{
 #endif
+				++YSI_g_sTests;
 				YSI_g_sAsked = false;
 				// Call the setup function if there is one.
 				buffer[0] = Y_TESTING_PINIT;
@@ -595,7 +606,7 @@ Testing_Next_retry:
 			{
 				YSI_g_sAsked = true;
 				// No more tests.
-				printf("*** Tests: %d, Fails: %d", YSI_g_sTests, YSI_g_sFails);
+				printf("*** Test%s: %d, Check%s: %d, Fail%s: %d", YSI_g_sTests, Y_TESTING_S(YSI_g_sTests), YSI_g_sChecks, Y_TESTING_S(YSI_g_sChecks), YSI_g_sFails, Y_TESTING_S(YSI_g_sFails));
 				if (!YSI_g_sFails)
 				{
 					TEST_REPORT(" ");
@@ -604,8 +615,7 @@ Testing_Next_retry:
 					TEST_REPORT("  ||==========================||  ");
 					TEST_REPORT(" ");
 				}
-				// So that user can define the public to handle when Player test results are in
-				R@("OnPlayerTestsComplete", "iii", playerid, YSI_g_sTests, YSI_g_sFails);
+				R@("OnPlayerTestsComplete", "iiii", playerid, YSI_g_sTests, YSI_g_sChecks, YSI_g_sFails);
 			}
 			// If the test needs a player but doesn't ask them anything
 			// then we can't wait for "OnDialogResponse" to run the next
@@ -625,7 +635,7 @@ Testing_Next_retry:
 	{
 		if (dialogid == Y_TESTING_DIALOG_ID)
 		{
-			++YSI_g_sTests;
+			++YSI_g_sChecks;
 			if (response)
 			{
 				// Pass.
@@ -658,8 +668,8 @@ Testing_Next_retry:
 	#endif
 #endif
 
-forward OnTestsComplete(tests, fails);
-forward OnPlayerTestsComplete(playerid, tests, fails);
+forward OnTestsComplete(tests, checks, fails);
+forward OnPlayerTestsComplete(playerid, tests, checks, fails);
 
 #if defined RUN_TESTS
 	#if defined _AUTO_RUN_TESTS
@@ -711,6 +721,7 @@ forward OnPlayerTestsComplete(playerid, tests, fails);
 					TEST_REPORT("  ||==========================||  ");
 					TEST_REPORT(" ");
 					YSI_g_sTests = 0;
+					YSI_g_sChecks = 0;
 					YSI_g_sFails = 0;
 					Testing_Next(playerid);
 				}
@@ -765,6 +776,7 @@ stock Testing_RunAll()
 		startTime = 0,
 		endTime = 0,
 		tests = 0,
+		checks = 0,
 		fails = 0;
 	// The timing will be inaccurate since it will include many prints, but it
 	// isn't that important to be accurate.
@@ -774,13 +786,13 @@ stock Testing_RunAll()
 	TEST_REPORT("  || STARTING TESTS... ||  ");
 	TEST_REPORT("  ||===================||  ");
 	TEST_REPORT(" ");
-	Testing_Run(tests, fails, _, true);
+	Testing_Run(tests, checks, fails, _, true);
 #if !defined JUST_TEST && defined YSI_TESTS
 	if (YSI_g_sTestResult != 9) printf("*** Test system verification failed!");
 	else
 #endif
 	{
-		printf("*** Tests: %d, Fails: %d", tests, fails);
+		printf("*** Test%s: %d, Check%s: %d, Fail%s: %d", tests, Y_TESTING_S(tests), checks, Y_TESTING_S(checks), fails, Y_TESTING_S(fails));
 		if (fails)
 		{
 			// List all the failing tests, along with the number of "ASSERT"s
@@ -804,7 +816,7 @@ stock Testing_RunAll()
 	printf("*** Time: %dms", endTime - startTime);
 	TEST_REPORT(" ");
 	//state ysi_debug : on;
-	R@("OnTestsComplete", "ii", tests, fails);
+	R@("OnTestsComplete", "iii", tests, checks, fails);
 	#if defined TEST_AUTO_EXIT
 		SendRconCommand("exit");
 	#endif
@@ -831,13 +843,15 @@ TEST__ y_testing_2()
 {
 	new
 		t = YSI_g_sTests,
+		c = YSI_g_sChecks,
 		f = YSI_g_sFails;
 	ASSERT(false == false);
 	ASSERT(true == true);
 	ASSERT(TRUE != FALSE);
-	ASSERT(t + 3 == YSI_g_sTests);
+	ASSERT(c + 3 == YSI_g_sChecks);
 	ASSERT(f == YSI_g_sFails);
-	ASSERT(t + 5 == YSI_g_sTests);
+	ASSERT(c + 5 == YSI_g_sChecks);
+	ASSERT(t == YSI_g_sTests);
 	// Fail a fake test on purpose.
 	//state ysi_debug : on;
 	P:I("The next test hasn't really failed...");

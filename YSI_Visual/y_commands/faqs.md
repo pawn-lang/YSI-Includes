@@ -194,3 +194,51 @@ public OnPlayerClickPlayer(playerid, clickedplayerid, source)
 
 Now you are fully leveraging the power of the compiler - this is faster because it uses real parameters instead of strings, and it can check that all the parameters are correct.
 
+## Why is `Command_ReProcess` not `const`-correct?
+
+There are two reasons:
+
+1. People don't make their commands `const`-correct:
+
+```pawn
+YCMD:mycommand(playerid, params[], help)
+{
+}
+```
+
+Here, `params` isn't `const`, and very very frequently isn't.  Making `Command_ReProcess`, which calls the commands, `const`-correct would either mean slowing the function down slightly to copy data, or making every single command everywhere `const`-correct.  Other command processors can get away with this because they use a slower call method, which copies things, already.
+
+2. It encourages bad practices:
+
+As explained above, you can't call commands directly in y_commands, and you shouldn't be able to.  Making `Command_ReProcess` `const`-correct would make this code possible:
+
+```pawn
+Command_ReProcess("/mycommand");
+```
+
+This is doing the wrong thing, and we want to make doing the wrong thing as hard as possible.  See [*So what is the solution*](#so-what-is-the-solution) for what to do instead.
+
+## Isn't `other command processor` faster than this?
+
+Maybe.  So?  y_commands is as-fast, or slightly faster, than most other command processors (if you believe their graphs, but they all have an agenda), but with way more features.
+
+### How to make a slightly faster command processor:
+
+1. Remove checks:
+
+> ZCMD has loads of checks I don't understand, they must be pointless.
+
+2. Remove features:
+
+> No-one wants to check if a player can use this command, I'll just delete that.
+
+3. Actually work on the algorithms involved.
+
+Only y_commands bothers with this one.
+
+### What is being timed?
+
+Most command processors, when they claim they are faster, only time how long it takes to CALL the command.  Once code execution reaches the command, that's it.  But what happens inside the command?  For most people, the first thing they do is check if a player can use the command.  This permssion check isn't included in the command processor time because it is deemed part of the command itself.  y_commands, however, does these checks for you, and includes the time taken to do these checks in its reports.  Despite this overhead, it is still faster than many command processors.  So you can have a slightly faster processor and much slower commands, or a slighty slower command processor and much faster commands (because the processor does the hard work for you).
+
+But again, they won't tell you this.
+
