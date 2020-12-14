@@ -72,6 +72,10 @@ Optional plugins:
 
 #define YSI_DIALOG_ID _A<_yD@>
 
+CHAIN_HOOK(Dialog)
+#undef CHAIN_ORDER
+#define CHAIN_ORDER CHAIN_NEXT(Dialog)
+
 static stock
 	YSI_g_sPlayerDialog[MAX_PLAYERS] = {-1, ...},
 	bool:YSI_g_sPlayerMaster[MAX_PLAYERS] = {false, ...},
@@ -141,7 +145,7 @@ HOOK__ OnPlayerDisconnect(playerid, reason)
 	return 1;
 }
 
-HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 {
 	// Apparently there's a hack to alter this.
 	dialogid = YSI_g_sPlayerDialog[playerid];
@@ -175,6 +179,14 @@ HOOK__ OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	else
 		return Y_HOOKS_CONTINUE_RETURN_0;
 }
+
+#if defined _ALS_OnDialogResponse
+	#undef OnDialogResponse
+#else
+	#define _ALS_OnDialogResponse
+#endif
+#define OnDialogResponse(%0) CHAIN_PUBLIC:Dialog_OnDialogResponse(%0)
+CHAIN_FORWARD:Dialog_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) = 0;
 
 stock Dialog_ShowPlayerDialog(playerid, dialog, style, const string:title[], const string:caption[], const string:button1[], const string:button2[])
 {
